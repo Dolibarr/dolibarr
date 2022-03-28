@@ -88,7 +88,6 @@ if ($action == "save" && empty($cancel)) {
 
 	foreach ($triggers as $trigger) {
 		$keyparam = 'MAIN_AGENDA_ACTIONAUTO_'.$trigger['code'];
-		//print "param=".$param." - ".$_POST[$param];
 		if ($search_event === '' || preg_match('/'.preg_quote($search_event, '/').'/i', $keyparam)) {
 			$res = dolibarr_set_const($db, $keyparam, (GETPOST($keyparam, 'alpha') ?GETPOST($keyparam, 'alpha') : ''), 'chaine', 0, '', $conf->entity);
 			if (!($res > 0)) {
@@ -112,8 +111,11 @@ if ($action == "save" && empty($cancel)) {
  * View
  */
 
-$wikihelp = 'EN:Module_Agenda_En|FR:Module_Agenda|ES:Módulo_Agenda';
-llxHeader('', $langs->trans("AgendaSetup"), $wikihelp);
+// $wikihelp = 'EN:Module_Agenda_En|FR:Module_Agenda|ES:Módulo_Agenda';
+
+$help_url = 'EN:Module_Agenda_En|FR:Module_Agenda|ES:Módulo_Agenda';
+
+llxHeader('', $langs->trans("AgendaSetup"), $help_url);
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("AgendaSetup"), $linkback, 'title_setup');
@@ -189,6 +191,7 @@ if (!empty($triggers)) {
 			}
 
 			if ($search_event === '' || preg_match('/'.preg_quote($search_event, '/').'/i', $trigger['code'])) {
+				print '<!-- '.$trigger['position'].' -->';
 				print '<tr class="oddeven">';
 				print '<td>'.$trigger['code'].'</td>';
 				print '<td>'.$trigger['label'].'</td>';
@@ -206,9 +209,7 @@ print '</div>';
 
 print dol_get_fiche_end();
 
-print '<div class="center">';
-print '<input type="submit" name="save" class="button button-save" value="'.$langs->trans("Save").'">';
-print "</div>";
+print $form->buttonsSaveCancel("Save", '');
 
 print "</form>\n";
 

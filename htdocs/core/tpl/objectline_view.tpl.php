@@ -6,6 +6,7 @@
  * Copyright (C) 2012-2014  Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2017		Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2022		OpenDSI				<support@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,6 +80,7 @@ if (!empty($conf->global->INVOICE_POSITIVE_CREDIT_NOTE_SCREEN) && in_array($obje
 	$sign = -1;
 }
 
+
 $coldisplay = 0;
 ?>
 <!-- BEGIN PHP TEMPLATE objectline_view.tpl.php -->
@@ -132,10 +134,10 @@ if (($line->info_bits & 2) == 2) {
 		}
 	}
 } else {
-	$format = $conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE ? 'dayhour' : 'day';
+	$format = (!empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE) ? 'dayhour' : 'day');
 
 	if ($line->fk_product > 0) {
-		print $form->textwithtooltip($text, $description, 3, '', '', $i, 0, (!empty($line->fk_parent_line) ?img_picto('', 'rightarrow') : ''));
+		print $form->textwithtooltip($text, $description, 3, 0, '', $i, 0, (!empty($line->fk_parent_line) ?img_picto('', 'rightarrow') : ''));
 	} else {
 		$type = (!empty($line->product_type) ? $line->product_type : $line->fk_product_type);
 		if ($type == 1) {
@@ -146,7 +148,7 @@ if (($line->info_bits & 2) == 2) {
 
 		if (!empty($line->label)) {
 			$text .= ' <strong>'.$line->label.'</strong>';
-			print $form->textwithtooltip($text, dol_htmlentitiesbr($line->description), 3, '', '', $i, 0, (!empty($line->fk_parent_line) ?img_picto('', 'rightarrow') : ''));
+			print $form->textwithtooltip($text, dol_htmlentitiesbr($line->description), 3, 0, '', $i, 0, (!empty($line->fk_parent_line) ?img_picto('', 'rightarrow') : ''));
 		} else {
 			if (!empty($line->fk_parent_line)) {
 				print img_picto('', 'rightarrow');
@@ -161,34 +163,67 @@ if (($line->info_bits & 2) == 2) {
 	}
 
 	// Show date range
-	if ($line->element == 'facturedetrec') {
+	if ($line->element == 'facturedetrec' || $line->element == 'invoice_supplier_det_rec') {
+		if ($line->element == 'invoice_supplier_det_rec' && $line->product_type != Product::TYPE_PRODUCT) {
+			$line->date_start_fill = $line->date_start;
+			$line->date_end_fill = $line->date_end;
+		}
 		if ($line->date_start_fill || $line->date_end_fill) {
-			print '<br><div class="clearboth nowraponall">';
+			print '<div class="clearboth nowraponall daterangeofline-facturedetrec">';
 		}
 		if ($line->date_start_fill) {
-			print $langs->trans('AutoFillDateFromShort').': '.yn($line->date_start_fill);
+			print '<span class="opacitymedium" title="'.dol_escape_htmltag($langs->trans("AutoFillDateFrom")).'">'.$langs->trans('AutoFillDateFromShort').':</span> '.yn($line->date_start_fill);
 		}
 		if ($line->date_start_fill && $line->date_end_fill) {
 			print ' - ';
 		}
 		if ($line->date_end_fill) {
-			print $langs->trans('AutoFillDateToShort').': '.yn($line->date_end_fill);
+			print '<span class="opacitymedium" title="'.dol_escape_htmltag($langs->trans("AutoFillDateTo")).'">'.$langs->trans('AutoFillDateToShort').':</span> '.yn($line->date_end_fill);
 		}
 		if ($line->date_start_fill || $line->date_end_fill) {
 			print '</div>';
 		}
 	} else {
 		if ($line->date_start || $line->date_end) {
-			print '<br><div class="clearboth nowraponall">'.get_date_range($line->date_start, $line->date_end, $format).'</div>';
+			print '<div class="clearboth nowraponall opacitymedium daterangeofline">'.get_date_range($line->date_start, $line->date_end, $format).'</div>';
 		}
-		//print get_date_range($line->date_start, $line->date_end, $format);
+		if (!$line->date_start || !$line->date_end) {
+			// show warning under line
+			// we need to fetch product associated to line for some test
+			if ($object->element == 'propal'  || $object->element == 'order' || $object->element == 'propal_supplier' || $object->element == 'supplier_proposal' || $object->element == 'commande') {
+				$res = $line->fetch_product();
+				if ($res  > 0  ) {
+					if ($line->product->isService() && $line->product->isMandatoryPeriod()) {
+						print '<div><span class="clearboth nowraponall warning">'.$langs->trans("mandatoryPeriodNeedTobeSet").'</span></div>';
+					}
+				}
+			}
+		}
+
+		// If we show the lines in a context to create a recurring sale invoice
+		if (basename($_SERVER["PHP_SELF"]) == 'card-rec.php') {
+			$default_start_fill = getDolGlobalInt('INVOICEREC_SET_AUTOFILL_DATE_START');
+			$default_end_fill = getDolGlobalInt('INVOICEREC_SET_AUTOFILL_DATE_END');
+			print '<div class="clearboth nowraponall daterangeofline-facturedetrec">';
+			print '<span class="opacitymedium" title="'.dol_escape_htmltag($langs->trans("AutoFillDateFrom")).'">'.$langs->trans('AutoFillDateFromShort').':</span> '.yn($default_start_fill);
+			print ' - ';
+			print '<span class="opacitymedium" title="'.dol_escape_htmltag($langs->trans("AutoFillDateTo")).'">'.$langs->trans('AutoFillDateToShort').':</span> '.yn($default_end_fill);
+			print '</div>';
+		}
 	}
 
 	// Add description in form
 	if ($line->fk_product > 0 && !empty($conf->global->PRODUIT_DESC_IN_FORM)) {
-		print (!empty($line->description) && $line->description != $line->product_label) ? '<br>'.dol_htmlentitiesbr($line->description) : '';
+		if ($line->element == 'facturedetrec') {
+			print (!empty($line->description) && $line->description != $line->product_label) ? (($line->date_start_fill || $line->date_end_fill) ? '' : '<br>').'<br>'.dol_htmlentitiesbr($line->description) : '';
+		} elseif ($line->element == 'invoice_supplier_det_rec') {
+			print (!empty($line->description) && $line->description != $line->label) ? (($line->date_start || $line->date_end) ? '' : '<br>').'<br>'.dol_htmlentitiesbr($line->description) : '';
+		} else {
+			print (!empty($line->description) && $line->description != $line->product_label) ? (($line->date_start || $line->date_end) ? '' : '<br>').'<br>'.dol_htmlentitiesbr($line->description) : '';
+		}
 	}
-	//Line extrafield
+
+	// Line extrafield
 	if (!empty($extrafields)) {
 		$temps = $line->showOptionals($extrafields, 'view', array(), '', '', 1, 'line');
 		if (!empty($temps)) {
@@ -220,7 +255,7 @@ if (!empty($conf->accounting->enabled) && $line->fk_accounting_account > 0) {
 }
 
 print '</td>';
-if ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier') {	// We must have same test in printObjectLines
+if ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier' || $object->element == 'invoice_supplier_rec') {	// We must have same test in printObjectLines
 	print '<td class="linecolrefsupplier">';
 	print ($line->ref_fourn ? $line->ref_fourn : $line->ref_supplier);
 	print '</td>';
@@ -288,7 +323,7 @@ if (!empty($line->remise_percent) && $line->special_code != 3) {
 }
 
 // Fields for situation invoices
-if ($this->situation_cycle_ref) {
+if (isset($this->situation_cycle_ref) && $this->situation_cycle_ref) {
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 	$coldisplay++;
 	print '<td class="linecolcycleref nowrap right">'.$line->situation_percent.'%</td>';
@@ -353,20 +388,57 @@ if ($outputalsopricetotalwithtax) {
 	$coldisplay++;
 }
 
-if ($this->statut == 0 && ($object_rights->creer) && $action != 'selectlines') {
+if ($this->statut == 0 && !empty($object_rights->creer) && $action != 'selectlines') {
+	$situationinvoicelinewithparent = 0;
+	if ($line->fk_prev_id != null && in_array($object->element, array('facture', 'facturedet'))) {
+		if ($object->type == $object::TYPE_SITUATION) {	// The constant TYPE_SITUATION exists only for object invoice
+			// Set constant to disallow editing during a situation cycle
+			$situationinvoicelinewithparent = 1;
+		}
+	}
+
+	if (!empty($conf->asset->enabled) && $object->element == 'invoice_supplier') {
+		print '<td class="linecolasset center">';
+		$coldisplay++;
+		if (!empty($product_static->accountancy_code_buy) ||
+			!empty($product_static->accountancy_code_buy_intra) ||
+			!empty($product_static->accountancy_code_buy_export)
+		) {
+			$accountancy_category_asset = $conf->global->ASSET_ACCOUNTANCY_CATEGORY;
+			$filters = array();
+			if (!empty($product_static->accountancy_code_buy)) $filters[] = "account_number = '" . $this->db->escape($product_static->accountancy_code_buy) . "'";
+			if (!empty($product_static->accountancy_code_buy_intra)) $filters[] = "account_number = '" . $this->db->escape($product_static->accountancy_code_buy_intra) . "'";
+			if (!empty($product_static->accountancy_code_buy_export)) $filters[] = "account_number = '" . $this->db->escape($product_static->accountancy_code_buy_export) . "'";
+			$sql = "SELECT COUNT(*) AS found";
+			$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account";
+			$sql .= " WHERE pcg_type = '" . $this->db->escape($conf->global->ASSET_ACCOUNTANCY_CATEGORY) . "'";
+			$sql .= " AND (" . implode(' OR ', $filters). ")";
+			$resql_asset = $this->db->query($sql);
+			if (!$resql_asset) {
+				print 'Error SQL: ' . $this->db->lasterror();
+			} elseif ($obj = $this->db->fetch_object($resql_asset)) {
+				if (!empty($obj->found)) {
+					print '<a class="reposition" href="' . DOL_URL_ROOT . '/asset/card.php?action=create&supplier_invoice_id=' . $object->id . '&token=' . newToken() . '">';
+					print img_edit_add() . '</a>';
+				}
+			}
+		}
+		print '</td>';
+	}
+
 	print '<td class="linecoledit center">';
 	$coldisplay++;
 	if (($line->info_bits & 2) == 2 || !empty($disableedit)) {
 	} else { ?>
-		<a class="editfielda reposition" href="<?php print $_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=editline&amp;lineid='.$line->id.'#line_'.$line->id; ?>">
+		<a class="editfielda reposition" href="<?php print $_SERVER["PHP_SELF"].'?id='.$this->id.'&action=editline&token='.newToken().'&lineid='.$line->id.'#line_'.$line->id; ?>">
 		<?php print img_edit().'</a>';
 	}
 	print '</td>';
 
 	print '<td class="linecoldelete center">';
 	$coldisplay++;
-	if (($line->fk_prev_id == null) && empty($disableremove)) { //La suppression n'est autorisée que si il n'y a pas de ligne dans une précédente situation
-		print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=ask_deleteline&amp;lineid='.$line->id.'">';
+	if (!$situationinvoicelinewithparent && empty($disableremove)) { // For situation invoice, deletion is not possible if there is a parent company.
+		print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&action=ask_deleteline&token='.newToken().'&lineid='.$line->id.'">';
 		print img_delete();
 		print '</a>';
 	}
@@ -376,12 +448,12 @@ if ($this->statut == 0 && ($object_rights->creer) && $action != 'selectlines') {
 		print '<td class="linecolmove tdlineupdown center">';
 		$coldisplay++;
 		if ($i > 0) { ?>
-			<a class="lineupdown" href="<?php print $_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=up&amp;rowid='.$line->id; ?>">
+			<a class="lineupdown" href="<?php print $_SERVER["PHP_SELF"].'?id='.$this->id.'&action=up&token='.newToken().'&rowid='.$line->id; ?>">
 			<?php print img_up('default', 0, 'imgupforline'); ?>
 			</a>
 		<?php }
 		if ($i < $num - 1) { ?>
-			<a class="lineupdown" href="<?php print $_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=down&amp;rowid='.$line->id; ?>">
+			<a class="lineupdown" href="<?php print $_SERVER["PHP_SELF"].'?id='.$this->id.'&action=down&token='.newToken().'&rowid='.$line->id; ?>">
 			<?php print img_down('default', 0, 'imgdownforline'); ?>
 			</a>
 		<?php }

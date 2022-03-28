@@ -55,6 +55,12 @@ class Import
 	 */
 	public $errors = array();
 
+	// To store import templates
+	public $hexa; // List of fields in the export profile
+	public $datatoimport;
+	public $model_name; // Name of export profile
+	public $fk_user;
+
 
 	/**
 	 *    Constructor
@@ -266,11 +272,18 @@ class Import
 		$this->db->begin();
 
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'import_model (';
-		$sql .= 'fk_user, label, type, field';
+		$sql .= 'fk_user,';
+		$sql .= ' label,';
+		$sql .= ' type,';
+		$sql .= ' field';
 		$sql .= ')';
-		$sql .= " VALUES (".($user->id > 0 ? $user->id : 0).", '".$this->db->escape($this->model_name)."', '".$this->db->escape($this->datatoimport)."', '".$this->db->escape($this->hexa)."')";
+		$sql .= " VALUES (";
+		$sql .= (isset($this->fk_user) ? (int) $this->fk_user : 'null').",";
+		$sql .= " '".$this->db->escape($this->model_name)."',";
+		$sql .= " '".$this->db->escape($this->datatoimport)."',";
+		$sql .= " '".$this->db->escape($this->hexa)."'";
+		$sql .= ")";
 
-		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$this->db->commit();

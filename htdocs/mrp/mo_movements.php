@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2019 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2022 Ferran Marcet <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -12,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -64,8 +65,8 @@ $search_type_mouvement = GETPOST('search_type_mouvement', 'int');
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -133,11 +134,11 @@ $arrayfields = array(
 	//'m.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
 	//'m.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>500)
 );
-if (!empty($conf->global->PRODUCT_DISABLE_EATBY)) {
-	unset($arrayfields['pl.eatby']);
-}
 if (!empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
 	unset($arrayfields['pl.sellby']);
+}
+if (!empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+	unset($arrayfields['pl.eatby']);
 }
 $objectlist->fields = dol_sort_array($objectlist->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
@@ -154,6 +155,9 @@ $permissiontoupdatecost = $user->rights->bom->write; // User who can define cost
 if ($permissiontoupdatecost) {
 	$arrayfields['m.price']['enabled'] = 1;
 }
+
+$arrayofselected = array();
+
 
 /*
  * Actions
@@ -252,7 +256,9 @@ $productlot = new ProductLot($db);
 $warehousestatic = new Entrepot($db);
 $userstatic = new User($db);
 
-llxHeader('', $langs->trans('Mo'), '');
+$help_url = 'EN:Module_Manufacturing_Orders|FR:Module_Ordres_de_Fabrication';
+
+llxHeader('', $langs->trans('Mo'), $help_url);
 
 // Part to show record
 if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'))) {
@@ -326,7 +332,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 		if ($permissiontoadd) {
 			if ($action != 'classify') {
-				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
+				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
 			}
 			if ($action == 'classify') {
 				//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->fk_soc, $object->fk_project, 'projectid', 0, 0, 1, 1);
@@ -421,7 +427,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Add fields from extrafields
 	if (!empty($extrafields->attributes[$objectlist->table_element]['label'])) {
 		foreach ($extrafields->attributes[$objectlist->table_element]['label'] as $key => $val) {
-			$sql .= ($extrafields->attributes[$objectlist->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+			$sql .= ($extrafields->attributes[$objectlist->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
 		}
 	}
 	// Add fields from hooks
@@ -439,7 +445,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$sql .= " WHERE m.fk_product = p.rowid";
 	$sql .= " AND m.origintype = 'mo' AND m.fk_origin = ".(int) $object->id;
 	if ($msid > 0) {
-		$sql .= " AND m.rowid = ".$msid;
+		$sql .= " AND m.rowid = ".((int) $msid);
 	}
 	$sql .= " AND m.fk_entrepot = e.rowid";
 	$sql .= " AND e.entity IN (".getEntity('stock').")";
@@ -466,7 +472,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$sql .= natural_search('e.rowid', $search_warehouse, 2);
 	}
 	if (!empty($search_user)) {
-		$sql .= natural_search('u.login', $search_user);
+		$sql .= natural_search(array('u.lastname', 'u.firstname', 'u.login'), $search_user);
 	}
 	if (!empty($search_batch)) {
 		$sql .= natural_search('m.batch', $search_batch);
@@ -796,9 +802,28 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	}
 	$num = $db->num_rows($resql);
 
+	$totalarray = array();
 	$i = 0;
 	while ($i < ($limit ? min($num, $limit) : $num)) {
 		$objp = $db->fetch_object($resql);
+
+		// Multilangs
+		if (!empty($conf->global->MAIN_MULTILANGS)) { // If multilang is enabled
+			// TODO Use a cache here
+			$sql = "SELECT label";
+			$sql .= " FROM ".MAIN_DB_PREFIX."product_lang";
+			$sql .= " WHERE fk_product = ".((int) $objp->rowid);
+			$sql .= " AND lang = '".$db->escape($langs->getDefaultLang())."'";
+			$sql .= " LIMIT 1";
+
+			$result = $db->query($sql);
+			if ($result) {
+				$objtp = $db->fetch_object($result);
+				if (!empty($objtp->label)) {
+					$objp->produit = $objtp->label;
+				}
+			}
+		}
 
 		$userstatic->id = $objp->fk_user_author;
 		$userstatic->login = $objp->login;
@@ -833,7 +858,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		// Id movement
 		if (!empty($arrayfields['m.rowid']['checked'])) {
 			// This is primary not movement id
-			print '<td>'.$objp->mid.'</td>';
+			print '<td>'.dol_escape_htmltag($objp->mid).'</td>';
 		}
 		if (!empty($arrayfields['m.datem']['checked'])) {
 			// Date
@@ -856,7 +881,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			if ($productlot->id > 0) {
 				print $productlot->getNomUrl(1);
 			} else {
-				print $productlot->batch; // the id may not be defined if movement was entered when lot was not saved or if lot was removed after movement.
+				print dol_escape_htmltag($productlot->batch); // the id may not be defined if movement was entered when lot was not saved or if lot was removed after movement.
 			}
 			print '</td>';
 		}
@@ -882,13 +907,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			// Inventory code
 			print '<td>';
 			//print '<a href="' . DOL_URL_ROOT . '/product/stock/movement_card.php' . '?id=' . $objp->entrepot_id . '&amp;search_inventorycode=' . $objp->inventorycode . '&amp;search_type_mouvement=' . $objp->type_mouvement . '">';
-			print $objp->inventorycode;
+			print dol_escape_htmltag($objp->inventorycode);
 			//print '</a>';
 			print '</td>';
 		}
 		if (!empty($arrayfields['m.label']['checked'])) {
 			// Label of movement
-			print '<td class="tdoverflowmax300" title="'.dol_escape_htmltag($objp->label).'">'.$objp->label.'</td>';
+			print '<td class="tdoverflowmax300" title="'.dol_escape_htmltag($objp->label).'">'.dol_escape_htmltag($objp->label).'</td>';
 		}
 		if (!empty($arrayfields['m.type_mouvement']['checked'])) {
 			// Type of movement
@@ -909,7 +934,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		}
 		if (!empty($arrayfields['origin']['checked'])) {
 			// Origin of movement
-			print '<td class="nowraponall">'.$origin.'</td>';
+			print '<td class="nowraponall">'.dol_escape_htmltag($origin).'</td>';
 		}
 		if (!empty($arrayfields['m.fk_projet']['checked'])) {
 			// fk_project

@@ -198,7 +198,7 @@ class ProjectTest extends PHPUnit\Framework\TestCase
 	}
 
 	/**
-	 * testProjectClose
+	 * testProjectOther
 	 *
 	 * @param	Project	$localobject	Project
 	 * @return	int
@@ -227,7 +227,7 @@ class ProjectTest extends PHPUnit\Framework\TestCase
 	 * @param	int		$id		Id of project
 	 * @return	void
 	 *
-	 * @depends	testProjectClose
+	 * @depends	testProjectOther
 	 * The depends says test is run only if previous is ok
 	 */
 	public function testProjectDelete($id)

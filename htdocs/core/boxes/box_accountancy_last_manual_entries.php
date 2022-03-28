@@ -116,7 +116,7 @@ class box_accountancy_last_manual_entries extends ModeleBoxes
 					);
 
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="right"',
+						'td' => 'class="center nowraponall"',
 						'text' => dol_print_date($date, 'day'),
 						'asis' => 1,
 					);
@@ -134,7 +134,7 @@ class box_accountancy_last_manual_entries extends ModeleBoxes
 					);
 
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="nowraponall right"',
+						'td' => 'class="nowraponall right amount"',
 						'text' => price($amount, 0, $langs, 0, -1, -1, $conf->currency),
 					);
 

@@ -30,7 +30,7 @@ function partnershipAdminPrepareHead()
 {
 	global $langs, $conf;
 
-	$langs->load("partnership@partnership");
+	$langs->load("partnership");
 
 	$h = 0;
 	$head = array();
@@ -46,11 +46,17 @@ function partnershipAdminPrepareHead()
 	$head[$h][2] = 'partnership_extrafields';
 	$h++;
 
+	$head[$h][0] = dol_buildpath("/partnership/admin/website.php", 1);
+	$head[$h][1] = $langs->trans("BlankSubscriptionForm");
+	$head[$h][2] = 'website';
+	$h++;
 
+	/*
 	$head[$h][0] = dol_buildpath("/partnership/admin/about.php", 1);
 	$head[$h][1] = $langs->trans("About");
 	$head[$h][2] = 'about';
 	$h++;
+	*/
 
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
@@ -75,7 +81,7 @@ function partnershipPrepareHead($object)
 {
 	global $db, $langs, $conf;
 
-	$langs->load("partnership@partnership");
+	$langs->load("partnership");
 
 	$h = 0;
 	$head = array();
@@ -115,10 +121,10 @@ function partnershipPrepareHead($object)
 	$head[$h][2] = 'document';
 	$h++;
 
-	// $head[$h][0] = dol_buildpath("/partnership/partnership_agenda.php", 1).'?id='.$object->id;
-	// $head[$h][1] = $langs->trans("Events");
-	// $head[$h][2] = 'agenda';
-	// $h++;
+	$head[$h][0] = dol_buildpath("/partnership/partnership_agenda.php", 1).'?id='.$object->id;
+	$head[$h][1] = $langs->trans("Events");
+	$head[$h][2] = 'agenda';
+	$h++;
 
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
@@ -128,9 +134,9 @@ function partnershipPrepareHead($object)
 	//$this->tabs = array(
 	//	'entity:-tabname:Title:@partnership:/partnership/mypage.php?id=__ID__'
 	//); // to remove a tab
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'partnership@partnership');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'partnership');
 
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'partnership@partnership', 'remove');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'partnership', 'remove');
 
 	return $head;
 }

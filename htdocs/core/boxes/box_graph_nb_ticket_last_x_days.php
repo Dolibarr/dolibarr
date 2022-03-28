@@ -65,6 +65,8 @@ class box_graph_nb_ticket_last_x_days extends ModeleBoxes
 	public function loadBox($max = 5)
 	{
 		global $conf, $user, $langs;
+		$dataseries = array();
+		$graphtoshow = "";
 
 		$badgeStatus0 = '#cbd3d3'; // draft
 		$badgeStatus1 = '#bc9526'; // validated
@@ -78,45 +80,44 @@ class box_graph_nb_ticket_last_x_days extends ModeleBoxes
 		$badgeStatus7 = '#baa32b';
 		$badgeStatus8 = '#993013';
 		$badgeStatus9 = '#e7f0f0';
-		if (file_exists(DOL_DOCUMENT_ROOT . '/theme/' . $conf->theme . '/theme_vars.inc.php')) {
-			include DOL_DOCUMENT_ROOT . '/theme/' . $conf->theme . '/theme_vars.inc.php';
+		if (file_exists(DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php')) {
+			include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
 		}
 		$this->max = $max;
 
 
 		$param_day = 'DOLUSERCOOKIE_ticket_last_days';
-		if ($_POST[$param_day]) {
-			if ($_POST[$param_day] >= 15) {
+		if (GETPOST($param_day)) {
+			if (GETPOST($param_day) >= 15) {
 				$days = 14;
 			} else {
-				$days = $_POST[$param_day];
+				$days = GETPOST($param_day);
 			}
 		} else {
 			$days = 7;
 		}
 		require_once DOL_DOCUMENT_ROOT."/ticket/class/ticket.class.php";
-		$text = $langs->trans("BoxTicketLastXDays", $days).'&nbsp;' . img_picto('', 'filter.png', 'id="idsubimgDOLUSERCOOKIE_ticket_last_days" class="linkobject"');
+		$text = $langs->trans("BoxTicketLastXDays", $days).'&nbsp;'.img_picto('', 'filter.png', 'id="idsubimgDOLUSERCOOKIE_ticket_last_days" class="linkobject"');
 		$this->info_box_head = array(
 			'text' => $text,
 			'limit' => dol_strlen($text)
 		);
 		$today = date_time_set(date_create(), 0, 0);
 		$todayformat = date('Y-m-d', date_timestamp_get($today));
-		$intervaltosub = new DateInterval('P' . dol_escape_htmltag($days - 1) . 'D');
+		$intervaltosub = new DateInterval('P'.dol_escape_htmltag($days - 1).'D');
 		$intervaltoadd = new DateInterval('P1D');
 		$minimumdatec = date_sub($today, $intervaltosub);
 		$minimumdatecformated = date('Y-m-d', date_timestamp_get($minimumdatec));
 
 		if ($user->rights->ticket->read) {
 			$sql = "SELECT CAST(t.datec AS DATE) as datec, COUNT(t.datec) as nb";
-			$sql .= " FROM " . MAIN_DB_PREFIX . "ticket as t";
-			$sql .= " WHERE CAST(t.datec AS DATE) > DATE_SUB(CURRENT_DATE, INTERVAL " . $days . " DAY)";
+			$sql .= " FROM ".MAIN_DB_PREFIX."ticket as t";
+			$sql .= " WHERE CAST(t.datec AS DATE) > DATE_SUB(CURRENT_DATE, INTERVAL ".$days." DAY)";
 			$sql .= " GROUP BY CAST(t.datec AS DATE)";
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$num = $this->db->num_rows($resql);
 				$i = 0;
-				$dataseries = array();
 				while ($i < $num) {
 					$objp = $this->db->fetch_object($resql);
 					while ($minimumdatecformated < $objp->datec) {
@@ -139,7 +140,7 @@ class box_graph_nb_ticket_last_x_days extends ModeleBoxes
 				dol_print_error($this->db);
 			}
 			$stringtoshow = '<div class="div-table-responsive-no-min">';
-			$stringtoshow .= '<script type="text/javascript" language="javascript">
+			$stringtoshow .= '<script type="text/javascript">
 				jQuery(document).ready(function() {
 					jQuery("#idsubimgDOLUSERCOOKIE_ticket_last_days").click(function() {
 						jQuery("#idfilterDOLUSERCOOKIE_ticket_last_days").toggle();
@@ -147,12 +148,12 @@ class box_graph_nb_ticket_last_x_days extends ModeleBoxes
 				});
 				</script>';
 			$stringtoshow .= '<div class="center hideobject" id="idfilterDOLUSERCOOKIE_ticket_last_days">'; // hideobject is to start hidden
-			$stringtoshow .= '<form class="flat formboxfilter" method="POST" action="' . $_SERVER["PHP_SELF"] . '">';
-			$stringtoshow .= '<input type="hidden" name="token" value="' . newToken() . '">';
+			$stringtoshow .= '<form class="flat formboxfilter" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+			$stringtoshow .= '<input type="hidden" name="token" value="'.newToken().'">';
 			$stringtoshow .= '<input type="hidden" name="action" value="refresh">';
 			$stringtoshow .= '<input type="hidden" name="DOL_AUTOSET_COOKIE" value="DOLUSERCOOKIE_ticket_last_days:days">';
-			$stringtoshow .= ' <input class="flat" size="4" type="text" name="' . $param_day . '" value="' . $days . '">' . $langs->trans("Days");
-			$stringtoshow .= '<input type="image" alt="' . $langs->trans("Refresh") . '" src="' . img_picto($langs->trans("Refresh"), 'refresh.png', '', '', 1) . '">';
+			$stringtoshow .= ' <input class="flat" size="4" type="text" name="'.$param_day.'" value="'.$days.'">'.$langs->trans("Days");
+			$stringtoshow .= '<input type="image" alt="'.$langs->trans("Refresh").'" src="'.img_picto($langs->trans("Refresh"), 'refresh.png', '', '', 1).'">';
 			$stringtoshow .= '</form>';
 			$stringtoshow .= '</div>';
 
@@ -168,8 +169,9 @@ class box_graph_nb_ticket_last_x_days extends ModeleBoxes
 					$totalnb += $value['data'];
 				}
 				$px1->SetData($data);
-				$px1->setShowLegend(2);
-				$px1->SetType(array('bar'));
+				//$px1->setShowLegend(2);
+				$px1->setShowLegend(0);
+				$px1->SetType(array('bars'));
 				$px1->SetLegend(array($langs->trans('BoxNumberOfTicketByDay')));
 				$px1->SetMaxValue($px1->GetCeilMaxValue());
 				$px1->SetHeight(192);
@@ -179,21 +181,21 @@ class box_graph_nb_ticket_last_x_days extends ModeleBoxes
 				$px1->mode = 'depth';
 
 				$px1->draw('idgraphticketlastxdays');
-				$graphtoshow= $px1->show($totalnb ? 0 : 1);
+				$graphtoshow = $px1->show($totalnb ? 0 : 1);
 			}
 			if ($totalnb) {
 				$stringtoshow .= $graphtoshow;
 			}
 			$stringtoshow .= '</div>';
 			if ($totalnb) {
-				$this->info_box_contents[][]=array(
+				$this->info_box_contents[][] = array(
 					'td' => 'center',
 					'text' => $stringtoshow
 				);
 			} else {
 				$this->info_box_contents[0][0] = array(
 					'td' => 'class="center opacitymedium"',
-					'text' => $stringtoshow . $langs->trans("BoxNoTicketLastXDays", $days)
+					'text' => $stringtoshow.$langs->trans("BoxNoTicketLastXDays", $days)
 				);
 			}
 		} else {

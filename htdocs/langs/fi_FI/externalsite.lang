@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - externalsite
 ExternalSiteSetup=Setup linkki ulkoiseen sivustoon
-ExternalSiteURL=Ulkoisen sivuston osoite (URL)
+ExternalSiteURL=External Site URL of HTML iframe content
 ExternalSiteModuleNotComplete=Ulkoisen sivuston Moduuli ei ole oikein konfiguroitu.
 ExampleMyMenuEntry=Omassa valikossa

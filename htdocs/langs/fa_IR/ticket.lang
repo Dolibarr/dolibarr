@@ -34,7 +34,8 @@ TicketDictResolution=Ticket - Resolution
 
 TicketTypeShortCOM=سوال تجاری
 TicketTypeShortHELP=Request for functionnal help
-TicketTypeShortISSUE=Issue, bug or problem
+TicketTypeShortISSUE=Issue or bug
+TicketTypeShortPROBLEM=Problem
 TicketTypeShortREQUEST=Change or enhancement request
 TicketTypeShortPROJET=طرح
 TicketTypeShortOTHER=سایر
@@ -43,6 +44,8 @@ TicketSeverityShortLOW=کم
 TicketSeverityShortNORMAL=عادی
 TicketSeverityShortHIGH=زیاد
 TicketSeverityShortBLOCKING=Critical, Blocking
+
+TicketCategoryShortOTHER=سایر
 
 ErrorBadEmailAddress=بخش '%s' نادرست است
 MenuTicketMyAssign=برگه‌ها من
@@ -54,22 +57,25 @@ TypeContact_ticket_internal_SUPPORTTEC=کاربر نسبت داده شده
 TypeContact_ticket_external_SUPPORTCLI=طرف‌تماس‌مشتری / ره‌گیری حادثه
 TypeContact_ticket_external_CONTRIBUTOR=مشارکت‌کنندۀ بیرونی
 
-OriginEmail=منبع رایانامه
+OriginEmail=Reporter Email
 Notify_TICKET_SENTBYMAIL=ارسال پیام برگه با رایانامه
 
 # Status
 Read=خوانده‌شده
 Assigned=نسبت‌داده شده
 InProgress=در حال انجام
-NeedMoreInformation=در انتظار اطلاعات
+NeedMoreInformation=Waiting for reporter feedback
+NeedMoreInformationShort=Waiting for feedback
 Answered=پاسخ داده شده
 Waiting=در انتظار
-Closed=بسته
+SolvedClosed=Solved
 Deleted=حذف شده
 
 # Dict
 Type=نوع
 Severity=حساسیت
+TicketGroupIsPublic=Group is public
+TicketGroupIsPublicDesc=If a ticket group is public, it will be visible in the form when creating a ticket from the public interface
 
 # Email templates
 MailToSendTicketMessage=برای ارسال رایانامه از برگۀ پیا
@@ -114,8 +120,8 @@ TicketsShowModuleLogo=نمایش نماد واحد، در رابط عمومی
 TicketsShowModuleLogoHelp=این گزینه را برای پنهان کردن نماد واحد در صفحات رابط عمومی استفاده کنید
 TicketsShowCompanyLogo=نمایش نماد شرکت در رابط عمومی
 TicketsShowCompanyLogoHelp=این گزینه را برای پنعان کردن نماد شرکت اصلی در صفحات رابط عمومی استفاده کنید
-TicketsEmailAlsoSendToMainAddress=همچنین ارسال رایانامه به نشانی‌رایانامۀ اصلی
-TicketsEmailAlsoSendToMainAddressHelp=این گزینه را فعال کنید تا یک رایانامه به نشانی  "ارسال آگاهی‌رسانی از" فرستاده شود (تنظیمات زیر را ببینید)
+TicketsEmailAlsoSendToMainAddress=Also send a notification to the main email address
+TicketsEmailAlsoSendToMainAddressHelp=Enable this option to also send an email to the address defined into setup "%s" (see tab "%s")
 TicketsLimitViewAssignedOnly=محدود کردن نمایش برگۀ‌پشتیبانی به کاربر فعلی (برای کاربران خارجی مؤثر نیست، همواره محدود به شخص‌سومی که بدان مربوطند دارد)
 TicketsLimitViewAssignedOnlyHelp=تنها برگه‌هائی که به کاربر فعلی نسبت داده شده است قابل رؤیت است. این شامل کاربرانی که مجوزهای مدیریت برگه‌های پشتیبانی را دارند نمی‌شود.
 TicketsActivatePublicInterface=فعال کردن رابط عمومی
@@ -126,10 +132,10 @@ TicketNumberingModules=واحد شماره‌دهی برگه‌های پشتیب
 TicketsModelModule=Document templates for tickets
 TicketNotifyTiersAtCreation=اطلاع‌رسانی به شخص‌سوم در هنگام ساخت
 TicketsDisableCustomerEmail=همواره در هنگامی که یک برگۀ‌پشتیبانی از طریق رابط عمومی ساخته می‌شود، قابلیت رایانامه غیرفعال شود
-TicketsPublicNotificationNewMessage=Send email(s) when a new message is added
+TicketsPublicNotificationNewMessage=Send email(s) when a new message/comment is added to a ticket
 TicketsPublicNotificationNewMessageHelp=Send email(s) when a new message is added from public interface (to assigned user or the notifications email to (update) and/or the notifications email to)
 TicketPublicNotificationNewMessageDefaultEmail=Notifications email to (update)
-TicketPublicNotificationNewMessageDefaultEmailHelp=Send email new message notifications to this address if the ticket don't have a user assigned or the user don't have a email.
+TicketPublicNotificationNewMessageDefaultEmailHelp=Send an email to this address for each new message notifications if the ticket doesn't have a user assigned to it or if the user doesn't have any known email.
 #
 # Index & list page
 #
@@ -158,7 +164,7 @@ CreatedBy=ساخته‌شده توسط
 NewTicket=برگۀ جدید
 SubjectAnswerToTicket=پاسخ برگه
 TicketTypeRequest=نوع درخواست
-TicketCategory=گروه
+TicketCategory=Ticket categorization
 SeeTicket=نمایش برگه
 TicketMarkedAsRead=برگه به صورت خوانده شده علامت‌گذاری شد
 TicketReadOn=خواندن
@@ -176,15 +182,17 @@ MessageSuccessfullyAdded=برگه اضافه شد
 TicketMessageSuccessfullyAdded=پیام با موفقیت افزوده شد
 TicketMessagesList=فهرست پیام‌ها
 NoMsgForThisTicket=پیامی برای این برگه وجود ندارد
-Properties=طبقه‌بندی
+TicketProperties=طبقه‌بندی
 LatestNewTickets=آخرین %s برگۀ‌پشتیبانی جدید (خوانده نشده)
 TicketSeverity=درجۀ اهمیت
 ShowTicket=نمایش برگه
 RelatedTickets=برگه‌های مرتبط
 TicketAddIntervention=ایجاد پادرمیانی
-CloseTicket=بستن برگه
-CloseATicket=بستن یک برگۀ پشتیبانی
+CloseTicket=Close|Solve ticket
+AbandonTicket=Abandon ticket
+CloseATicket=Close|Solve a ticket
 ConfirmCloseAticket=توقف پشتیبانی را تائید کنید
+ConfirmAbandonTicket=Do you confirm the closing of the ticket to status 'Abandonned'
 ConfirmDeleteTicket=لطفا حذف برگۀ‌پشتیبانی را تائید کنید
 TicketDeletedSuccess=حذف برگه با موفقیت انجام شد
 TicketMarkedAsClosed=برگۀ‌پشتیبانی به حالت بسته درآمد
@@ -209,6 +217,7 @@ TicketMessageHelp=تنها این نوشته در فهرست پیام در کا�
 TicketMessageSubstitutionReplacedByGenericValues=متغیرهای جایگزین با مقادیر عمومی جایگزین خواهند شد
 TimeElapsedSince=زمان سپری شده از
 TicketTimeToRead=زمان سپری شد قبل از خوانده‌شدن
+TicketTimeElapsedBeforeSince=Time elapsed before / since
 TicketContacts=برگۀ طرف‌های تماس
 TicketDocumentsLinked=مستندات پیوند شده با برگۀ‌تماس
 ConfirmReOpenTicket=تائید بازگشائی این برگه؟
@@ -302,3 +311,14 @@ BoxLastModifiedTicket=آخرین برگه‌های ویرایش شده
 BoxLastModifiedTicketDescription=آخرین %s برگۀ‌پشتیبانی ویرایش شده
 BoxLastModifiedTicketContent=
 BoxLastModifiedTicketNoRecordedTickets=هیچ برگۀپشتیبانی ویرایش نشده شد
+BoxTicketType=Distribution of open tickets by type
+BoxTicketSeverity=Number of open tickets by severity
+BoxNoTicketSeverity=No tickets opened
+BoxTicketLastXDays=Number of new tickets by days the last %s days
+BoxTicketLastXDayswidget = Number of new tickets by days the last X days
+BoxNoTicketLastXDays=No new tickets the last %s days
+BoxNumberOfTicketByDay=Number of new tickets by day
+BoxNewTicketVSClose=Number of tickets versus closed tickets (today)
+TicketCreatedToday=Ticket created today
+TicketClosedToday=Ticket closed today
+KMFoundForTicketGroup=We found topics and FAQs that may answers your question, thanks to check them before submitting the ticket

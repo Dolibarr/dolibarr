@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2019  Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2019-2020  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2021  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2020 		Gauthier VERDOL <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -22,7 +22,7 @@
  * 	\defgroup   workstation     Module Workstation
  *  \brief      Workstation module descriptor.
  *
- *  \file       htdocs/workstation/core/modules/modWorkstation.class.php
+ *  \file       htdocs/core/modules/modWorkstation.class.php
  *  \ingroup    workstation
  *  \brief      Description and activation file for the module Workstation
  */
@@ -62,7 +62,7 @@ class modWorkstation extends DolibarrModules
 		// Used only if file README.md and README-LL.md not found.
 		$this->descriptionlong = "WorkstationsDescription";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'
-		$this->version = 'development';
+		$this->version = 'experimental';
 		// Url to the file with your last numberversion of this module
 		//$this->url_last_version = 'http://www.example.com/versionmodule.txt';
 
@@ -263,73 +263,12 @@ class modWorkstation extends DolibarrModules
 		$this->menu = array();
 		$r = 0;
 		// Add here entries to declare new menus
-		/* BEGIN MODULEBUILDER TOPMENU */
-		/*$this->menu[$r++] = array(
-			'fk_menu'=>'', // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-			'type'=>'top', // This is a Top menu entry
-			'titre'=>$langs->trans('GPAO'),
-			'mainmenu'=>'gpao',
-			'leftmenu'=>'',
-			'url'=>'/workstation/workstationindex.php',
-			'langs'=>'workstation@workstation', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-			'position'=>1000 + $r,
-			'enabled'=>'$conf->workstation->enabled', // Define condition to show or hide menu entry. Use '$conf->workstation->enabled' if entry must be visible if module is enabled.
-			'perms'=>'1', // Use 'perms'=>'$user->rights->workstation->workstation->read' if you want your menu with a permission rules
-			'target'=>'',
-			'user'=>2, // 0=Menu for internal users, 1=external users, 2=both
-		);*/
-		/* END MODULEBUILDER TOPMENU */
-		/* BEGIN MODULEBUILDER LEFTMENU WORKSTATION
-		$this->menu[$r++]=array(
-			'fk_menu'=>'fk_mainmenu=workstation',      // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-			'type'=>'left',                          // This is a Top menu entry
-			'titre'=>'Workstation',
-			'mainmenu'=>'workstation',
-			'leftmenu'=>'workstation',
-			'url'=>'/workstation/workstationindex.php',
-			'langs'=>'workstation@workstation',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-			'position'=>1000+$r,
-			'enabled'=>'$conf->workstation->enabled',  // Define condition to show or hide menu entry. Use '$conf->workstation->enabled' if entry must be visible if module is enabled.
-			'perms'=>'$user->rights->workstation->workstation->read',			                // Use 'perms'=>'$user->rights->workstation->level1->level2' if you want your menu with a permission rules
-			'target'=>'',
-			'user'=>2,				                // 0=Menu for internal users, 1=external users, 2=both
-		);
-		$this->menu[$r++]=array(
-			'fk_menu'=>'fk_mainmenu=workstation,fk_leftmenu=workstation',	    // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-			'type'=>'left',			                // This is a Left menu entry
-			'titre'=>'List_Workstation',
-			'mainmenu'=>'workstation',
-			'leftmenu'=>'workstation_workstation_list',
-			'url'=>'/workstation/workstation_list.php',
-			'langs'=>'workstation@workstation',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-			'position'=>1000+$r,
-			'enabled'=>'$conf->workstation->enabled',  // Define condition to show or hide menu entry. Use '$conf->workstation->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'perms'=>'$user->rights->workstation->workstation->read',			                // Use 'perms'=>'$user->rights->workstation->level1->level2' if you want your menu with a permission rules
-			'target'=>'',
-			'user'=>2,				                // 0=Menu for internal users, 1=external users, 2=both
-		);
-		$this->menu[$r++]=array(
-			'fk_menu'=>'fk_mainmenu=workstation,fk_leftmenu=workstation',	    // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-			'type'=>'left',			                // This is a Left menu entry
-			'titre'=>'New_Workstation',
-			'mainmenu'=>'workstation',
-			'leftmenu'=>'workstation_workstation_new',
-			'url'=>'/workstation/workstation_card.php?action=create',
-			'langs'=>'workstation@workstation',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-			'position'=>1000+$r,
-			'enabled'=>'$conf->workstation->enabled',  // Define condition to show or hide menu entry. Use '$conf->workstation->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'perms'=>'$user->rights->workstation->workstation->write',			                // Use 'perms'=>'$user->rights->workstation->level1->level2' if you want your menu with a permission rules
-			'target'=>'',
-			'user'=>2,				                // 0=Menu for internal users, 1=external users, 2=both
-		);
-		*/
-
 		$this->menu[$r++]=array(
 			// '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 			'fk_menu'=>'fk_mainmenu=mrp',
 			// This is a Left menu entry
 			'type'=>'left',
-			'titre'=>$langs->trans('Workstations'),
+			'titre'=>'Workstations',
 			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth"'),
 			'mainmenu'=>'mrp',
 			'leftmenu'=>'workstation_workstation',
@@ -350,7 +289,7 @@ class modWorkstation extends DolibarrModules
 			'fk_menu'=>'fk_mainmenu=mrp,fk_leftmenu=workstation_workstation',
 			// This is a Left menu entry
 			'type'=>'left',
-			'titre'=>$langs->trans('WorkstationCreate'),
+			'titre'=>'WorkstationCreate',
 			'mainmenu'=>'mrp',
 			'leftmenu'=>'workstation_workstation_left_create',
 			'url'=>'/workstation/workstation_card.php?action=create',
@@ -370,7 +309,7 @@ class modWorkstation extends DolibarrModules
 			'fk_menu'=>'fk_mainmenu=mrp,fk_leftmenu=workstation_workstation',
 			// This is a Left menu entry
 			'type'=>'left',
-			'titre'=>$langs->trans('List'),
+			'titre'=>'List',
 			'mainmenu'=>'mrp',
 			'leftmenu'=>'workstation_workstation_left_list',
 			'url'=>'/workstation/workstation_list.php',
@@ -451,7 +390,7 @@ class modWorkstation extends DolibarrModules
 	{
 		global $conf, $langs;
 
-		$result = $this->_load_tables('/workstation/sql/');
+		$result = $this->_load_tables('/install/mysql/tables/', 'workstation');
 		if ($result < 0) {
 			return -1; // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
 		}
@@ -496,10 +435,10 @@ class modWorkstation extends DolibarrModules
 				}
 
 				$sql = array_merge($sql, array(
-					"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'standard_".strtolower($myTmpObjectKey)."' AND type = '".strtolower($myTmpObjectKey)."' AND entity = ".$conf->entity,
-					"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('standard_".strtolower($myTmpObjectKey)."','".strtolower($myTmpObjectKey)."',".$conf->entity.")",
-					"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'generic_".strtolower($myTmpObjectKey)."_odt' AND type = '".strtolower($myTmpObjectKey)."' AND entity = ".$conf->entity,
-					"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('generic_".strtolower($myTmpObjectKey)."_odt', '".strtolower($myTmpObjectKey)."', ".$conf->entity.")"
+					"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'standard_".strtolower($myTmpObjectKey)."' AND type = '".$this->db->escape(strtolower($myTmpObjectKey))."' AND entity = ".((int) $conf->entity),
+					"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('standard_".strtolower($myTmpObjectKey)."','".$this->db->escape(strtolower($myTmpObjectKey))."',".((int) $conf->entity).")",
+					"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'generic_".strtolower($myTmpObjectKey)."_odt' AND type = '".$this->db->escape(strtolower($myTmpObjectKey))."' AND entity = ".((int) $conf->entity),
+					"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('generic_".strtolower($myTmpObjectKey)."_odt', '".$this->db->escape(strtolower($myTmpObjectKey))."', ".((int) $conf->entity).")"
 				));
 			}
 		}

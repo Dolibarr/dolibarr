@@ -85,7 +85,7 @@ class box_scheduled_jobs extends ModeleBoxes
 			$resultarray = array();
 
 			$result = 0;
-			$sql = "SELECT t.rowid, t.datelastrun, t.datenextrun,";
+			$sql = "SELECT t.rowid, t.datelastrun, t.datenextrun, t.datestart,";
 			$sql .= " t.label, t.status, t.test, t.lastresult";
 			$sql .= " FROM " . MAIN_DB_PREFIX . "cronjob as t";
 			$sql .= " WHERE status <> ".$cronstatic::STATUS_DISABLED;
@@ -102,7 +102,7 @@ class box_scheduled_jobs extends ModeleBoxes
 				while ($i < $num) {
 					$objp = $this->db->fetch_object($result);
 
-					if (dol_eval($objp->test, 1, 1)) {
+					if (dol_eval($objp->test, 1, 1, '')) {
 						$nextrun = $this->db->jdate($objp->datenextrun);
 						if (empty($nextrun)) {
 							$nextrun = $this->db->jdate($objp->datestart);
@@ -156,7 +156,7 @@ class box_scheduled_jobs extends ModeleBoxes
 					);
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right"',
-						'textnoformat' => (empty($resultarray[$line][2]) ? '' : $form->textwithpicto(dol_print_date($resultarray[$line][2], "dayhoursec"), $langs->trans("CurrentTimeZone")))
+						'textnoformat' => (empty($resultarray[$line][2]) ? '' : $form->textwithpicto(dol_print_date($resultarray[$line][2], "dayhoursec", 'tzserver'), $langs->trans("CurrentTimeZone")))
 					);
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="center" ',
@@ -170,7 +170,7 @@ class box_scheduled_jobs extends ModeleBoxes
 				);
 				$this->info_box_contents[$line][] = array(
 					'td' => 'class="center"',
-					'textnoformat' => ($nbjobsinerror ? '<a href="'.DOL_URL_ROOT.'/cron/list.php?search_lastresult='.urlencode('<>0').'"><div class="badge badge-danger"><i class="fa fa-exclamation-triangle"></i> '.$nbjobsinerror.'</div></a>' : '<div class="center badge-status4">0</div>')
+					'textnoformat' => ($nbjobsinerror ? '<a href="'.DOL_URL_ROOT.'/cron/list.php?search_lastresult='.urlencode('<>0').'"><div class="badge badge-danger"><i class="fa fa-exclamation-triangle"></i> '.$nbjobsinerror.'</div></a>' : '<a href="'.DOL_URL_ROOT.'/cron/list.php"><div class="center badge-status4">0</div></a>')
 				);
 			} else {
 				$this->info_box_contents[0][0] = array(

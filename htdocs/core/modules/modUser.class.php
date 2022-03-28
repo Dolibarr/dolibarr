@@ -49,7 +49,7 @@ class modUser extends DolibarrModules
 		$this->module_position = '05';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i', '', get_class($this));
-		$this->description = "Gestion des utilisateurs (requis)";
+		$this->description = "Management of users and groups of users (mandatory)";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = 'dolibarr';
@@ -90,7 +90,7 @@ class modUser extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 251;
-		$this->rights[$r][1] = 'Consulter les autres utilisateurs';
+		$this->rights[$r][1] = 'Read information of other users, groups and permissions';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'user';
@@ -98,15 +98,15 @@ class modUser extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 252;
-		$this->rights[$r][1] = 'Consulter les permissions des autres utilisateurs';
+		$this->rights[$r][1] = 'Read permissions of other users';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'user_advance';
+		$this->rights[$r][4] = 'user_advance'; // Visible if option MAIN_USE_ADVANCED_PERMS is on
 		$this->rights[$r][5] = 'readperms';
 
 		$r++;
 		$this->rights[$r][0] = 253;
-		$this->rights[$r][1] = 'Creer/modifier utilisateurs internes et externes';
+		$this->rights[$r][1] = 'Create/modify internal and external users, groups and permissions';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'user';
@@ -114,15 +114,15 @@ class modUser extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 254;
-		$this->rights[$r][1] = 'Creer/modifier utilisateurs externes seulement';
+		$this->rights[$r][1] = 'Create/modify external users only';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'user_advance';
+		$this->rights[$r][4] = 'user_advance'; // Visible if option MAIN_USE_ADVANCED_PERMS is on
 		$this->rights[$r][5] = 'write';
 
 		$r++;
 		$this->rights[$r][0] = 255;
-		$this->rights[$r][1] = 'Modifier le mot de passe des autres utilisateurs';
+		$this->rights[$r][1] = 'Modify the password of other users';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'user';
@@ -130,7 +130,7 @@ class modUser extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 256;
-		$this->rights[$r][1] = 'Supprimer ou desactiver les autres utilisateurs';
+		$this->rights[$r][1] = 'Delete or disable other users';
 		$this->rights[$r][2] = 'd';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'user';
@@ -138,7 +138,7 @@ class modUser extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 341;
-		$this->rights[$r][1] = 'Consulter ses propres permissions';
+		$this->rights[$r][1] = 'Read its own permissions';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'self_advance'; // Visible if option MAIN_USE_ADVANCED_PERMS is on
@@ -146,7 +146,7 @@ class modUser extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 342;
-		$this->rights[$r][1] = 'Creer/modifier ses propres infos utilisateur';
+		$this->rights[$r][1] = 'Create/modify of its own user';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'self';
@@ -154,7 +154,7 @@ class modUser extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 343;
-		$this->rights[$r][1] = 'Modifier son propre mot de passe';
+		$this->rights[$r][1] = 'Modify its own password';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'self';
@@ -162,7 +162,7 @@ class modUser extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 344;
-		$this->rights[$r][1] = 'Modifier ses propres permissions';
+		$this->rights[$r][1] = 'Modify its own permissions';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'self_advance'; // Visible if option MAIN_USE_ADVANCED_PERMS is on
@@ -170,7 +170,7 @@ class modUser extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 351;
-		$this->rights[$r][1] = 'Consulter les groupes';
+		$this->rights[$r][1] = 'Read groups';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'group_advance'; // Visible if option MAIN_USE_ADVANCED_PERMS is on
@@ -178,7 +178,7 @@ class modUser extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 352;
-		$this->rights[$r][1] = 'Consulter les permissions des groupes';
+		$this->rights[$r][1] = 'Read permissions of groups';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'group_advance'; // Visible if option MAIN_USE_ADVANCED_PERMS is on
@@ -186,7 +186,7 @@ class modUser extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 353;
-		$this->rights[$r][1] = 'Creer/modifier les groupes et leurs permissions';
+		$this->rights[$r][1] = 'Create/modify groups and permissions';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'group_advance'; // Visible if option MAIN_USE_ADVANCED_PERMS is on
@@ -194,7 +194,7 @@ class modUser extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 354;
-		$this->rights[$r][1] = 'Supprimer ou desactiver les groupes';
+		$this->rights[$r][1] = 'Delete groups';
 		$this->rights[$r][2] = 'd';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'group_advance'; // Visible if option MAIN_USE_ADVANCED_PERMS is on
@@ -202,7 +202,7 @@ class modUser extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 358;
-		$this->rights[$r][1] = 'Exporter les utilisateurs';
+		$this->rights[$r][1] = 'Export all users';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'user';
@@ -231,17 +231,19 @@ class modUser extends DolibarrModules
 			'u.birth'=>'DateOfBirth',
 			'u.datec'=>"DateCreation", 'u.tms'=>"DateLastModification",
 			'u.admin'=>"Administrator", 'u.statut'=>'Status', 'u.datelastlogin'=>'LastConnexion', 'u.datepreviouslogin'=>'PreviousConnexion',
-			'u.fk_socpeople'=>"IdContact", 'u.fk_soc'=>"IdCompany", 'u.fk_member'=>"MemberId"
+			'u.fk_socpeople'=>"IdContact", 'u.fk_soc'=>"IdCompany", 'u.fk_member'=>"MemberId",
+			'g.nom'=>"Group"
 		);
 		$this->export_TypeFields_array[$r] = array(
 			'u.rowid'=>'Numeric', 'u.login'=>"Text", 'u.lastname'=>"Text", 'u.firstname'=>"Text", 'u.employee'=>'Boolean', 'u.job'=>'Text',
 			'u.accountancy_code'=>'Text',
 			'u.address'=>"Text", 'u.zip'=>"Text", 'u.town'=>"Text",
 			'u.office_phone'=>'Text', 'u.user_mobile'=>'Text', 'u.office_fax'=>'Text',
-			'u.email'=>'Text', 'u.datec'=>"Date", 'u.tms'=>"Date", 'u.admin'=>"Boolean", 'u.statut'=>'Status', 'u.note'=>"Text", 'u.datelastlogin'=>'Date',
+			'u.email'=>'Text', 'u.datec'=>"Date", 'u.tms'=>"Date", 'u.admin'=>"Boolean", 'u.statut'=>'Status', 'u.note'=>"Text", 'u.signature'=>"Text", 'u.datelastlogin'=>'Date',
 			'u.fk_user'=>"List:user:login",
 			'u.birth'=>'Date',
-			'u.datepreviouslogin'=>'Date', 'u.fk_soc'=>"List:societe:nom:rowid", 'u.fk_member'=>"List:adherent:firstname"
+			'u.datepreviouslogin'=>'Date', 'u.fk_soc'=>"List:societe:nom:rowid", 'u.fk_member'=>"List:adherent:firstname",
+			'g.nom'=>"Text"
 		);
 		$this->export_entities_array[$r] = array(
 			'u.rowid'=>"user", 'u.login'=>"user", 'u.lastname'=>"user", 'u.firstname'=>"user", 'u.employee'=>'user', 'u.job'=>'user', 'u.gender'=>'user',
@@ -254,7 +256,8 @@ class modUser extends DolibarrModules
 			'u.birth'=>'user',
 			'u.datec'=>"user", 'u.tms'=>"user",
 			'u.admin'=>"user", 'u.statut'=>'user', 'u.datelastlogin'=>'user', 'u.datepreviouslogin'=>'user',
-			'u.fk_socpeople'=>"contact", 'u.fk_soc'=>"company", 'u.fk_member'=>"member"
+			'u.fk_socpeople'=>"contact", 'u.fk_soc'=>"company", 'u.fk_member'=>"member",
+			'g.nom'=>"Group"
 		);
 		$keyforselect = 'user';
 		$keyforelement = 'user';
@@ -267,6 +270,8 @@ class modUser extends DolibarrModules
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'user as u';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user_extrafields as extra ON u.rowid = extra.fk_object';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'usergroup_user as ug ON u.rowid = ug.fk_user';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'usergroup as g ON ug.fk_usergroup = g.rowid';
 		$this->export_sql_end[$r] .= ' WHERE u.entity IN ('.getEntity('user').')';
 
 		// Imports
@@ -293,7 +298,7 @@ class modUser extends DolibarrModules
 			'u.statut'=>'Status'
 		);
 		// Add extra fields
-		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'user' AND entity IN (0,".$conf->entity.")";
+		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE type <> 'separate' AND elementtype = 'user' AND entity IN (0,".$conf->entity.")";
 		$resql = $this->db->query($sql);
 		if ($resql) {    // This can fail when class is used on old database (during migration for example)
 			while ($obj = $this->db->fetch_object($resql)) {
@@ -317,7 +322,7 @@ class modUser extends DolibarrModules
 			'u.birth'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$'
 		);
 		$this->import_examplevalues_array[$r] = array(
-			'u.lastname'=>"Doe", 'u.firstname'=>'John', 'u.login'=>'jdoe', 'u.employee'=>'0 or 1', 'u.job'=>'CTO', 'u.gender'=>'0 or 1',
+			'u.lastname'=>"Doe", 'u.firstname'=>'John', 'u.login'=>'jdoe', 'u.employee'=>'0 or 1', 'u.job'=>'CTO', 'u.gender'=>'man or woman',
 			'u.pass_crypted'=>'Encrypted password',
 			'u.fk_soc'=>'0 (internal user) or company name (external user)', 'u.datec'=>dol_print_date(dol_now(), '%Y-%m-%d'), 'u.address'=>"61 jump street",
 			'u.zip'=>"123456", 'u.town'=>"Big town", 'u.fk_country'=>'US, FR, DE...', 'u.office_phone'=>"0101010101", 'u.office_fax'=>"0101010102",

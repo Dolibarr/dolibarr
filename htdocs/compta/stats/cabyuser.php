@@ -51,8 +51,8 @@ if (GETPOST("modecompta")) {
 	$modecompta = GETPOST("modecompta");
 }
 
-$sortorder = GETPOST("sortorder", 'aZ09');
-$sortfield = GETPOST("sortfield", 'aZ09');
+$sortorder = GETPOST("sortorder", 'aZ09comma');
+$sortfield = GETPOST("sortfield", 'aZ09comma');
 if (!$sortorder) {
 	$sortorder = "asc";
 }
@@ -262,7 +262,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 }
 $sql .= " AND f.entity IN (".getEntity('invoice').")";
 if ($socid) {
-	$sql .= " AND f.fk_soc = ".$socid;
+	$sql .= " AND f.fk_soc = ".((int) $socid);
 }
 $sql .= " GROUP BY u.rowid, u.lastname, u.firstname";
 $sql .= " ORDER BY u.rowid";

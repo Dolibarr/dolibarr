@@ -171,14 +171,15 @@ class SupplierOrders extends DolibarrApi
 		}
 		// Insert sale filter
 		if ($search_sale > 0) {
-			$sql .= " AND sc.fk_user = ".$search_sale;
+			$sql .= " AND sc.fk_user = ".((int) $search_sale);
 		}
 		// Add sql filters
 		if ($sqlfilters) {
-			if (!DolibarrApi::_checkFilters($sqlfilters)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+			$errormessage = '';
+			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
+				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
 			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
@@ -224,7 +225,7 @@ class SupplierOrders extends DolibarrApi
 	 */
 	public function post($request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->fournisseur->commande->creer || !DolibarrApiAccess::$user->rights->supplier_order->creer) {
+		if (empty(DolibarrApiAccess::$user->rights->fournisseur->commande->creer) && empty(DolibarrApiAccess::$user->rights->supplier_order->creer)) {
 			throw new RestException(401, "Insuffisant rights");
 		}
 		// Check mandatory fields
@@ -260,7 +261,7 @@ class SupplierOrders extends DolibarrApi
 	 */
 	public function put($id, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->fournisseur->commande->creer || !DolibarrApiAccess::$user->rights->supplier_order->creer) {
+		if (empty(DolibarrApiAccess::$user->rights->fournisseur->commande->creer) && empty(DolibarrApiAccess::$user->rights->supplier_order->creer)) {
 			throw new RestException(401);
 		}
 
@@ -308,7 +309,7 @@ class SupplierOrders extends DolibarrApi
 		}
 
 		if ($this->order->delete(DolibarrApiAccess::$user) < 0) {
-			throw new RestException(500);
+			throw new RestException(500, 'Error when deleting order');
 		}
 
 		return array(
@@ -340,7 +341,7 @@ class SupplierOrders extends DolibarrApi
 	 */
 	public function validate($id, $idwarehouse = 0, $notrigger = 0)
 	{
-		if (!DolibarrApiAccess::$user->rights->fournisseur->commande->creer || !DolibarrApiAccess::$user->rights->supplier_order->creer) {
+		if (empty(DolibarrApiAccess::$user->rights->fournisseur->commande->creer) && empty(DolibarrApiAccess::$user->rights->supplier_order->creer)) {
 			throw new RestException(401);
 		}
 		$result = $this->order->fetch($id);
@@ -364,6 +365,189 @@ class SupplierOrders extends DolibarrApi
 			'success' => array(
 				'code' => 200,
 				'message' => 'Order validated (Ref='.$this->order->ref.')'
+			)
+		);
+	}
+
+	/**
+	 * Approve an order
+	 *
+	 * @param   int $id             Order ID
+	 * @param   int $idwarehouse    Warehouse ID
+	 * @param   int $secondlevel      1=Does not execute triggers, 0= execute triggers
+	 *
+	 * @url POST    {id}/approve
+	 *
+	 * @return  array
+	 * FIXME An error 403 is returned if the request has an empty body.
+	 * Error message: "Forbidden: Content type `text/plain` is not supported."
+	 * Workaround: send this in the body
+	 * {
+	 *   "idwarehouse": 0,
+	 *   "secondlevel": 0
+	 * }
+	 */
+	public function approve($id, $idwarehouse = 0, $secondlevel = 0)
+	{
+		if (empty(DolibarrApiAccess::$user->rights->fournisseur->commande->creer) && empty(DolibarrApiAccess::$user->rights->supplier_order->creer)) {
+			throw new RestException(401);
+		}
+		$result = $this->order->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Order not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('fournisseur', $this->order->id, 'commande_fournisseur', 'commande')) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		$result = $this->order->approve(DolibarrApiAccess::$user, $idwarehouse, $secondlevel);
+		if ($result == 0) {
+			throw new RestException(304, 'Error nothing done. May be object is already approved');
+		}
+		if ($result < 0) {
+			throw new RestException(500, 'Error when approve Order: '.$this->order->error);
+		}
+
+		return array(
+			'success' => array(
+				'code' => 200,
+				'message' => 'Order approved (Ref='.$this->order->ref.')'
+			)
+		);
+	}
+
+
+	/**
+	 * Sends an order to the vendor
+	 *
+	 * @param   int		$id             Order ID
+	 * @param   integer	$date		Date (unix timestamp in sec)
+	 * @param   int		$method		Method
+	 * @param  string	$comment	Comment
+	 *
+	 * @url POST    {id}/makeorder
+	 *
+	 * @return  array
+	 * FIXME An error 403 is returned if the request has an empty body.
+	 * Error message: "Forbidden: Content type `text/plain` is not supported."
+	 * Workaround: send this in the body
+	 * {
+	 *   "date": 0,
+	 *   "method": 0,
+	 *   "comment": ""
+	 * }
+	 */
+	public function makeOrder($id, $date, $method, $comment = '')
+	{
+		if (empty(DolibarrApiAccess::$user->rights->fournisseur->commande->creer) && empty(DolibarrApiAccess::$user->rights->supplier_order->creer)) {
+			throw new RestException(401);
+		}
+		$result = $this->order->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Order not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('fournisseur', $this->order->id, 'commande_fournisseur', 'commande')) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		$result = $this->order->commande(DolibarrApiAccess::$user, $date, $method, $comment);
+		if ($result == 0) {
+			throw new RestException(304, 'Error nothing done. May be object is already sent');
+		}
+		if ($result < 0) {
+			throw new RestException(500, 'Error when sending Order: '.$this->order->error);
+		}
+
+		return array(
+			'success' => array(
+				'code' => 200,
+				'message' => 'Order sent (Ref='.$this->order->ref.')'
+			)
+		);
+	}
+
+		/**
+	 * Receives the order, dispatches products.
+		 *
+	 * Example:
+	 * <code> {
+	 *   "closeopenorder": 1,
+	 *   "comment": "",
+		 *   "lines": [{
+		 *      "id": 14,
+		 *      "fk_product": 112,
+		 *      "qty": 18,
+		 *      "warehouse": 1,
+		 *      "price": 114,
+		 *      "comment": "",
+		 *      "eatby": 0,
+		 *      "sellby": 0,
+		 *      "batch": 0,
+		 *      "notrigger": 0
+		 *   }]
+	 * }</code>
+		 *
+	 * @param   int		$id             Order ID
+	 * @param   integer	$closeopenorder	Close order if everything is received {@required false}
+	 * @param   string	$comment	Comment {@required false}
+	 * @param   array	$lines		Array of product dispatches
+	 *
+	 * @url POST    {id}/receive
+	 *
+	 * @return  array
+	 * FIXME An error 403 is returned if the request has an empty body.
+	 * Error message: "Forbidden: Content type `text/plain` is not supported."
+	 *
+	 */
+	public function receiveOrder($id, $closeopenorder, $comment, $lines)
+	{
+		if (empty(DolibarrApiAccess::$user->rights->fournisseur->commande->creer) && empty(DolibarrApiAccess::$user->rights->supplier_order->creer)) {
+			throw new RestException(401);
+		}
+		$result = $this->order->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Order not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('fournisseur', $this->order->id, 'commande_fournisseur', 'commande')) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		foreach ($lines as $line) {
+			$lineObj =(object) $line;
+
+			$result=$this->order->dispatchProduct(DolibarrApiAccess::$user,
+				  $lineObj->fk_product,
+				  $lineObj->qty,
+				  $lineObj->warehouse,
+				  $lineObj->price,
+				  $lineObj->comment,
+				  $lineObj->eatby,
+				  $lineObj->sellby,
+				  $lineObj->batch,
+				  $lineObj->id,
+				  $lineObj->notrigger);
+
+			if ($result < 0) {
+				throw new RestException(500, 'Error dispatch order line '.$line->id.': '.$this->order->error);
+			}
+		}
+
+		$result = $this->order->calcAndSetStatusDispatch(DolibarrApiAccess::$user, $closeopenorder, $comment);
+
+		if ($result == 0) {
+			throw new RestException(304, 'Error nothing done. May be object is already dispatched');
+		}
+		if ($result < 0) {
+			throw new RestException(500, 'Error when receivce order: '.$this->order->error);
+		}
+
+		return array(
+			'success' => array(
+				'code' => 200,
+				'message' => 'Order received (Ref='.$this->order->ref.')'
 			)
 		);
 	}

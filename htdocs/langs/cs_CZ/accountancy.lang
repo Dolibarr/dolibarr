@@ -16,8 +16,8 @@ ThisService=Tato služba
 ThisProduct=Tento výrobek
 DefaultForService=Výchozí nastavení pro službu
 DefaultForProduct=Výchozí produkt
-ProductForThisThirdparty=Product for this thirdparty
-ServiceForThisThirdparty=Service for this thirdparty
+ProductForThisThirdparty=Produkty pro tento subjekt
+ServiceForThisThirdparty=Služby pro tento subjekt
 CantSuggest=Nelze navrhnout
 AccountancySetupDoneFromAccountancyMenu=Většina nastavení účetnictví se provádí z nabídky %s
 ConfigAccountingExpert=Configuration of the module accounting (double entry)
@@ -37,8 +37,8 @@ OtherInfo=Jiná informace
 DeleteCptCategory=Odstraňte účetní účet ze skupiny
 ConfirmDeleteCptCategory=Opravdu chcete tento účtovací účet odstranit ze skupiny účetních účtů?
 JournalizationInLedgerStatus=Stav žurnalizace
-AlreadyInGeneralLedger=Already transferred in accounting journals and ledger
-NotYetInGeneralLedger=Not yet transferred in accouting journals and ledger
+AlreadyInGeneralLedger=Already transferred to accounting journals and ledger
+NotYetInGeneralLedger=Not yet transferred to accouting journals and ledger
 GroupIsEmptyCheckSetup=Skupina je prázdná, zkontrolujte nastavení personalizované účetní skupiny
 DetailByAccount=Zobrazit detail podle účtu
 AccountWithNonZeroValues=Účty s nenulovými hodnotami
@@ -48,7 +48,8 @@ CountriesNotInEEC=Země, které nejsou v EHS
 CountriesInEECExceptMe=Země v EHS kromě %s
 CountriesExceptMe=Všechny země kromě %s
 AccountantFiles=Export source documents
-ExportAccountingSourceDocHelp=With this tool, you can export the source events (list and PDFs) that were used to generate your accountancy. To export your journals, use the menu entry %s - %s.
+ExportAccountingSourceDocHelp=With this tool, you can export the source events (list in CSV and PDFs) that are used to generate your accountancy.
+ExportAccountingSourceDocHelp2=To export your journals, use the menu entry %s - %s.
 VueByAccountAccounting=View by accounting account
 VueBySubAccountAccounting=View by accounting subaccount
 
@@ -131,7 +132,7 @@ InvoiceLinesDone=Prověřené řádky faktury
 ExpenseReportLines=Řádky výkazů výdajů navázat
 ExpenseReportLinesDone=Vázané linie vyúčtování výdajů
 IntoAccount=Prověřit řádky v účetním účtu
-TotalForAccount=Celkem za účetní účet
+TotalForAccount=Total accounting account
 
 
 Ventilate=Prověřit
@@ -158,7 +159,7 @@ ACCOUNTING_LENGTH_AACCOUNT=Délka účtů účtů subjektů (Pokud zde nastavít
 ACCOUNTING_MANAGE_ZERO=Umožňuje spravovat různé počty nul na konci účetního účtu. Některé země potřebují (například Švýcarsko). Pokud je vypnuto (výchozí), můžete nastavit následující dva parametry a požádat aplikaci o přidání virtuálních nul.
 BANK_DISABLE_DIRECT_INPUT=Zakázat přímé nahrávání transakce v bankovním účtu
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Povolit návrh exportu v žurnálu
-ACCOUNTANCY_COMBO_FOR_AUX=Povolit seznam combo pro pomocný účet (může být pomalý, pokud máte spoustu třetích stran)
+ACCOUNTANCY_COMBO_FOR_AUX=Enable combo list for subsidiary account (may be slow if you have a lot of third parties, break ability to search on a part of value)
 ACCOUNTING_DATE_START_BINDING=Define a date to start binding & transfer in accountancy. Below this date, the transactions will not be transferred to accounting.
 ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=On accountancy transfer, select period show by default
 
@@ -202,14 +203,14 @@ Docref=Reference
 LabelAccount=Štítek účtu
 LabelOperation=Operace štítků
 Sens=Direction
-AccountingDirectionHelp=For an accounting account of a customer, use Credit to record a payment you received<br>For an accounting account of a supplier, use Debit to record a payment you make
+AccountingDirectionHelp=For an accounting account of a customer, use Credit to record a payment you have received<br>For an accounting account of a supplier, use Debit to record a payment you made
 LetteringCode=Písmenový kód
 Lettering=Nápis
 Codejournal=Deník
 JournalLabel=Označení časopisu
 NumPiece=počet kusů
 TransactionNumShort=Num. transakce
-AccountingCategory=Personalizované skupiny
+AccountingCategory=Custom group
 GroupByAccountAccounting=Group by general ledger account
 GroupBySubAccountAccounting=Group by subledger account
 AccountingAccountGroupsDesc=Zde můžete definovat některé skupiny účetních účtů. Budou se používat pro personalizované účetní výkazy.
@@ -245,9 +246,9 @@ DescThirdPartyReport=Zde naleznete seznam zákazníků a prodejců subjektů a j
 ListAccounts=Seznam účetních účtů
 UnknownAccountForThirdparty=Neznámý účet subjektu. Použijeme %s
 UnknownAccountForThirdpartyBlocking=Neznámý účet subjektu. Chyba blokování
-ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Účet subjektu není definován nebo subjekt je neznámý. Použijeme %s
+ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Subledger account not defined or third party or user unknown. We will use %s
 ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored=Neznámý a vedlejší účet subjektu pro platbu není definován. Hodnotu účtu vedlejších účtů ponecháme prázdnou.
-ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Účet subjektu není definován nebo neznámý subjekt. Chyba blokování.
+ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Subledger account not defined or third party or user unknown. Blocking error.
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Neznámý účet subjektu a účet čekání není definován. Chyba blokování
 PaymentsNotLinkedToProduct=Platba není spojena s žádným produktem / službou
 OpeningBalance=Počáteční zůstatek
@@ -285,7 +286,7 @@ ValidateMovements=Ověřte pohyby
 DescValidateMovements=Jakékoli úpravy nebo vymazání písem, nápisů a vymazání budou zakázány. Všechny přihlášky na cvičení musí být validovány, jinak nebude možné uzavřít
 
 ValidateHistory=Ověřit automaticky
-AutomaticBindingDone=Automatické vázání provedeno
+AutomaticBindingDone=Automatic bindings done (%s) - Automatic binding not possible for some record (%s)
 
 ErrorAccountancyCodeIsAlreadyUse=Chyba, nelze odstranit tento účetní účet, protože ho zrovna používáte
 MvtNotCorrectlyBalanced=Pohyb není správně vyvážený. Debit = %s | Úvěr = %s
@@ -297,7 +298,7 @@ NoNewRecordSaved=Žádný další záznam, který by se publikoval
 ListOfProductsWithoutAccountingAccount=Seznam výrobků, které nejsou vázány na kterémkoli účetním účtu
 ChangeBinding=Změnit vazby
 Accounted=Účtováno v knize
-NotYetAccounted=Zatím nebyl zaznamenán v knize
+NotYetAccounted=Not yet transferred to accounting
 ShowTutorial=Zobrazit výuku
 NotReconciled=Nesladěno
 WarningRecordWithoutSubledgerAreExcluded=Warning, all operations without subledger account defined are filtered and excluded from this view
@@ -328,6 +329,9 @@ ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Disable binding & transfer in accountanc
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Disable binding & transfer in accountancy on expense reports (expense reports will not be taken into account in accounting)
 
 ## Export
+NotifiedExportDate=Flag exported lines as exported (modification of the lines will not be possible)
+NotifiedValidationDate=Validate the exported entries (modification or deletion of the lines will not be possible)
+ConfirmExportFile=Confirmation of the generation of the accounting export file ?
 ExportDraftJournal=Exportovat deník návrhu
 Modelcsv=Model exportu
 Selectmodelcsv=Vyberte způsob exportu
@@ -335,11 +339,11 @@ Modelcsv_normal=Klasický export
 Modelcsv_CEGID=Export pro CEGID Expert Comptabilité
 Modelcsv_COALA=Export pro společnost Sage Coala
 Modelcsv_bob50=Export pro Sage BOB 50
-Modelcsv_ciel=Export pro Sage Ciel Compta nebo Compta Evolution
+Modelcsv_ciel=Export for Sage50, Ciel Compta or Compta Evo. (Format XIMPORT)
 Modelcsv_quadratus=Export pro Quadratus QuadraCompta
 Modelcsv_ebp=Export pro EBP
 Modelcsv_cogilog=Export pro Cogilog
-Modelcsv_agiris=Export pro Agiris
+Modelcsv_agiris=Export for Agiris Isacompta
 Modelcsv_LDCompta=Export pro LD Compta (v9) (Test)
 Modelcsv_LDCompta10=Export pro LD Compta (v10 a vyšší)
 Modelcsv_openconcerto=Export pro OpenConcerto (Test)
@@ -347,9 +351,10 @@ Modelcsv_configurable=Export CSV konfigurovatelný
 Modelcsv_FEC=Export FEC
 Modelcsv_FEC2=Export FEC (With dates generation writing / document reversed)
 Modelcsv_Sage50_Swiss=Export pro Sage 50 Švýcarsko
-Modelcsv_winfic=Exportovat Winfic - eWinfic - WinSis Compta
+Modelcsv_winfic=Export for Winfic - eWinfic - WinSis Compta
 Modelcsv_Gestinumv3=Export for Gestinum (v3)
-Modelcsv_Gestinumv5Export for Gestinum (v5)
+Modelcsv_Gestinumv5=Export for Gestinum (v5)
+Modelcsv_charlemagne=Export for Aplim Charlemagne
 ChartofaccountsId=Schéma Id účtů
 
 ## Tools - Init accounting account on product / service
@@ -382,7 +387,8 @@ SaleExport=Exportní prodej
 SaleEEC=Prodej v EHS
 SaleEECWithVAT=Prodej v EHS s nulovou DPH, takže předpokládáme, že se nejedná o intrakomunitní prodej a navrhovaný účet je standardní produktový účet.
 SaleEECWithoutVATNumber=Prodej v EHS bez DPH, ale DIČ třetí strany není definováno. Pro standardní prodej jsme upadli na produktový účet. V případě potřeby můžete opravit DIČ třetí strany nebo produktový účet.
-
+ForbiddenTransactionAlreadyExported=Forbidden: The transaction has been validated and/or exported.
+ForbiddenTransactionAlreadyValidated=Forbidden: The transaction has been validated.
 ## Dictionary
 Range=Řada účetních účtu
 Calculated=počítáno
@@ -399,10 +405,33 @@ NoJournalDefined=Žádný deník nebyl definován
 Binded=linky vázané
 ToBind=Linky k vazbě
 UseMenuToSetBindindManualy=Řádky, které ještě nejsou vázány, použijte nabídku <a href="%s"> %s </a> k vytvoření vazby ručně
+SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Sorry this module is not compatible with the experimental feature of situation invoices
 
 ## Import
 ImportAccountingEntries=Účetní zápisy
+ImportAccountingEntriesFECFormat=Accounting entries - FEC format
+FECFormatJournalCode=Code journal (JournalCode)
+FECFormatJournalLabel=Label journal (JournalLib)
+FECFormatEntryNum=Piece number (EcritureNum)
+FECFormatEntryDate=Piece date (EcritureDate)
+FECFormatGeneralAccountNumber=General account number (CompteNum)
+FECFormatGeneralAccountLabel=General account label (CompteLib)
+FECFormatSubledgerAccountNumber=Subledger account number (CompAuxNum)
+FECFormatSubledgerAccountLabel=Subledger account number (CompAuxLib)
+FECFormatPieceRef=Piece ref (PieceRef)
+FECFormatPieceDate=Piece date creation (PieceDate)
+FECFormatLabelOperation=Label operation (EcritureLib)
+FECFormatDebit=Debit (Debit)
+FECFormatCredit=Credit (Credit)
+FECFormatReconcilableCode=Reconcilable code (EcritureLet)
+FECFormatReconcilableDate=Reconcilable date (DateLet)
+FECFormatValidateDate=Piece date validated (ValidDate)
+FECFormatMulticurrencyAmount=Multicurrency amount (Montantdevise)
+FECFormatMulticurrencyCode=Multicurrency code (Idevise)
+
 DateExport=Datum exportu
 WarningReportNotReliable=Upozornění: Tento přehled není založen na záznamníku, takže neobsahuje transakci upravenou ručně v Knihovně. Je-li vaše deník aktuální, zobrazení účetnictví je přesnější.
 ExpenseReportJournal=Účet výkazů výdajů
 InventoryJournal=Inventářový věstník
+
+NAccounts=%s accounts

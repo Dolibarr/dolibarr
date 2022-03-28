@@ -366,20 +366,20 @@ if ($ok && GETPOST('standard', 'alpha')) {
 					$sql2 = "SELECT COUNT(*) as nb";
 					$sql2 .= " FROM ".MAIN_DB_PREFIX."const as c";
 					$sql2 .= " WHERE name = 'MAIN_MODULE_".$name."'";
-					$sql2 .= " AND entity = ".$obj->entity;
+					$sql2 .= " AND entity = ".((int) $obj->entity);
 					$resql2 = $db->query($sql2);
 					if ($resql2) {
 						$obj2 = $db->fetch_object($resql2);
 						if ($obj2 && $obj2->nb == 0) {
 							// Module not found, so we can remove entry
-							$sqldelete = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = '".$db->escape($obj->name)."' AND entity = ".$obj->entity;
+							$sqldelete = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = '".$db->escape($obj->name)."' AND entity = ".((int) $obj->entity);
 
 							if (GETPOST('standard', 'alpha') == 'confirmed') {
 								$db->query($sqldelete);
 
-								print '<tr><td>Widget '.$obj->name.' set in entity '.$obj->entity.' with value '.$obj->value.' -> Module '.$name.' not enabled in entity '.$obj->entity.', we delete record</td></tr>';
+								print '<tr><td>Widget '.$obj->name.' set in entity '.$obj->entity.' with value '.$obj->value.' -> Module '.$name.' not enabled in entity '.((int) $obj->entity).', we delete record</td></tr>';
 							} else {
-								print '<tr><td>Widget '.$obj->name.' set in entity '.$obj->entity.' with value '.$obj->value.' -> Module '.$name.' not enabled in entity '.$obj->entity.', we should delete record (not done, mode test)</td></tr>';
+								print '<tr><td>Widget '.$obj->name.' set in entity '.$obj->entity.' with value '.$obj->value.' -> Module '.$name.' not enabled in entity '.((int) $obj->entity).', we should delete record (not done, mode test)</td></tr>';
 							}
 						} else {
 							//print '<tr><td>Constant '.$obj->name.' set in entity '.$obj->entity.' with value '.$obj->value.' -> Module found in entity '.$obj->entity.', we keep record</td></tr>';
@@ -424,23 +424,23 @@ if ($ok && GETPOST('standard', 'alpha')) {
 					$sql2 = "SELECT COUNT(*) as nb";
 					$sql2 .= " FROM ".MAIN_DB_PREFIX."const as c";
 					$sql2 .= " WHERE name = 'MAIN_MODULE_".strtoupper($module)."'";
-					$sql2 .= " AND entity = ".$obj->entity;
+					$sql2 .= " AND entity = ".((int) $obj->entity);
 					$sql2 .= " AND value <> 0";
 					$resql2 = $db->query($sql2);
 					if ($resql2) {
 						$obj2 = $db->fetch_object($resql2);
 						if ($obj2 && $obj2->nb == 0) {
 							// Module not found, so we canremove entry
-							$sqldeletea = "DELETE FROM ".MAIN_DB_PREFIX."boxes WHERE entity = ".$obj->entity." AND box_id IN (SELECT rowid FROM ".MAIN_DB_PREFIX."boxes_def WHERE file = '".$db->escape($obj->file)."' AND entity = ".$obj->entity.")";
-							$sqldeleteb = "DELETE FROM ".MAIN_DB_PREFIX."boxes_def WHERE file = '".$db->escape($obj->file)."' AND entity = ".$obj->entity;
+							$sqldeletea = "DELETE FROM ".MAIN_DB_PREFIX."boxes WHERE entity = ".((int) $obj->entity)." AND box_id IN (SELECT rowid FROM ".MAIN_DB_PREFIX."boxes_def WHERE file = '".$db->escape($obj->file)."' AND entity = ".((int) $obj->entity).")";
+							$sqldeleteb = "DELETE FROM ".MAIN_DB_PREFIX."boxes_def WHERE file = '".$db->escape($obj->file)."' AND entity = ".((int) $obj->entity);
 
 							if (GETPOST('standard', 'alpha') == 'confirmed') {
 								$db->query($sqldeletea);
 								$db->query($sqldeleteb);
 
-								print '<tr><td>Constant '.$obj->file.' set in boxes_def for entity '.$obj->entity.' but MAIN_MODULE_'.strtoupper($module).' not defined in entity '.$obj->entity.', we delete record</td></tr>';
+								print '<tr><td>Constant '.$obj->file.' set in boxes_def for entity '.$obj->entity.' but MAIN_MODULE_'.strtoupper($module).' not defined in entity '.((int) $obj->entity).', we delete record</td></tr>';
 							} else {
-								print '<tr><td>Constant '.$obj->file.' set in boxes_def for entity '.$obj->entity.' but MAIN_MODULE_'.strtoupper($module).' not defined in entity '.$obj->entity.', we should delete record (not done, mode test)</td></tr>';
+								print '<tr><td>Constant '.$obj->file.' set in boxes_def for entity '.$obj->entity.' but MAIN_MODULE_'.strtoupper($module).' not defined in entity '.((int) $obj->entity).', we should delete record (not done, mode test)</td></tr>';
 							}
 						} else {
 							//print '<tr><td>Constant '.$obj->name.' set in entity '.$obj->entity.' with value '.$obj->value.' -> Module found in entity '.$obj->entity.', we keep record</td></tr>';
@@ -565,7 +565,7 @@ if ($ok && GETPOST('restore_user_pictures', 'alpha')) {
 				$filetotestsmall = $dolibarr_main_data_root.'/users/'.substr(sprintf('%08d', $obj->rowid), -1, 1).'/'.substr(sprintf('%08d', $obj->rowid), -2, 1).'/thumbs/'.$name.'_small'.$ext;
 				$filetotestmini = $dolibarr_main_data_root.'/users/'.substr(sprintf('%08d', $obj->rowid), -1, 1).'/'.substr(sprintf('%08d', $obj->rowid), -2, 1).'/thumbs/'.$name.'_mini'.$ext;
 				$exists = dol_is_file($filetotest);
-				print 'Check user '.$obj->rowid.' lastname='.$obj->lastname.' fistname='.$obj->firstname.' photo='.$obj->photo.' file '.$filetotest." exists=".$exists."<br>\n";
+				print 'Check user '.$obj->rowid.' lastname='.$obj->lastname.' firstname='.$obj->firstname.' photo='.$obj->photo.' file '.$filetotest." exists=".$exists."<br>\n";
 				if ($exists) {
 					$filetarget = $dolibarr_main_data_root.'/users/'.$obj->rowid.'/'.$name.$ext;
 					$filetargetsmall = $dolibarr_main_data_root.'/users/'.$obj->rowid.'/thumbs/'.$name.'_small'.$ext;
@@ -929,7 +929,7 @@ if ($ok && GETPOST('clean_product_stock_batch', 'alpha')) {
 								// TODO If it fails, we must make update
 								//$sql2 ="UPDATE ".MAIN_DB_PREFIX."product_batch";
 								//$sql2.=" SET ".$obj->psrowid.", '000000', ".($obj->reel - $obj->reelbatch).")";
-								//$sql2.=" WHERE fk_product_stock = ".$obj->psrowid"
+								//$sql2.=" WHERE fk_product_stock = ".((int) $obj->psrowid)
 							}
 						}
 					}
@@ -1082,7 +1082,7 @@ if ($ok && GETPOST('force_disable_of_modules_not_found', 'alpha')) {
 					$constantname = $obj->name; // Name of constant for hook or js or css declaration
 
 					print '<tr><td>';
-					print $constantname;
+					print dol_escape_htmltag($constantname);
 
 					$db->begin();
 
@@ -1106,7 +1106,8 @@ if ($ok && GETPOST('force_disable_of_modules_not_found', 'alpha')) {
 							if ($key == 'css') {
 								$value = $obj->value;
 								$valuearray = json_decode($value);
-								if ($value && count($valuearray) == 0) {
+								if ($value && (!is_array($valuearray) || count($valuearray) == 0)) {
+									$valuearray = array();
 									$valuearray[0] = $value; // If value was not a json array but a string
 								}
 								$reloffile = preg_replace('/^\//', '', $valuearray[0]);
@@ -1117,9 +1118,10 @@ if ($ok && GETPOST('force_disable_of_modules_not_found', 'alpha')) {
 								try {
 									$result = dol_buildpath($reloffile, 0, 2);
 								} catch (Exception $e) {
-									// No catch yet
-									$result = 'found'; // If error, we force lke if we found to avoid any deletion
+									$result = 'found'; // If error, we force like if we found to avoid any deletion
 								}
+							} else {
+								$result = 'found';	//
 							}
 
 							if (!$result) {
@@ -1178,9 +1180,11 @@ if ($ok && GETPOST('clean_perm_table', 'alpha')) {
 
 	$listofmods = '';
 	foreach ($conf->modules as $key => $val) {
-		$listofmods .= ($listofmods ? ',' : '')."'".$val."'";
+		$listofmods .= ($listofmods ? ',' : '')."'".$db->escape($val)."'";
 	}
-	$sql = 'SELECT id, libelle as label, module from '.MAIN_DB_PREFIX.'rights_def WHERE module NOT IN ('.$db->sanitize($listofmods).') AND id > 100000';
+
+	$sql = "SELECT id, libelle as label, module from ".MAIN_DB_PREFIX."rights_def WHERE module NOT IN (".$db->sanitize($listofmods, 1).") AND id > 100000";
+
 	$resql = $db->query($sql);
 	if ($resql) {
 		$num = $db->num_rows($resql);
@@ -1191,7 +1195,7 @@ if ($ok && GETPOST('clean_perm_table', 'alpha')) {
 				if ($obj->id > 0) {
 					print '<tr><td>Found line with id '.$obj->id.', label "'.$obj->label.'" of module "'.$obj->module.'" to delete';
 					if (GETPOST('clean_perm_table', 'alpha') == 'confirmed') {
-						$sqldelete = 'DELETE FROM '.MAIN_DB_PREFIX.'rights_def WHERE id = '.$obj->id;
+						$sqldelete = "DELETE FROM ".MAIN_DB_PREFIX."rights_def WHERE id = ".((int) $obj->id);
 						$resqldelete = $db->query($sqldelete);
 						if (!$resqldelete) {
 							dol_print_error($db);
@@ -1236,7 +1240,7 @@ if ($ok && GETPOST('force_utf8_on_tables', 'alpha')) {
 
 			print '<tr><td colspan="2">';
 			print $table;
-			$sql = 'ALTER TABLE '.$table.' CONVERT TO CHARACTER SET utf8 COLLATE utf8_unicode_ci';
+			$sql = "ALTER TABLE ".$table." CONVERT TO CHARACTER SET utf8 COLLATE utf8_unicode_ci";
 			print '<!-- '.$sql.' -->';
 			if ($force_utf8_on_tables == 'confirmed') {
 				$resql = $db->query($sql);
@@ -1282,8 +1286,8 @@ if ($ok && GETPOST('force_utf8mb4_on_tables', 'alpha')) {
 
 			print '<tr><td colspan="2">';
 			print $table;
-			$sql1 = 'ALTER TABLE '.$table.' ROW_FORMAT=dynamic;';
-			$sql2 = 'ALTER TABLE '.$table.' CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci';
+			$sql1 = "ALTER TABLE ".$table." ROW_FORMAT=dynamic";
+			$sql2 = "ALTER TABLE ".$table." CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci";
 			print '<!-- '.$sql1.' -->';
 			print '<!-- '.$sql2.' -->';
 			if ($force_utf8mb4_on_tables == 'confirmed') {
@@ -1407,25 +1411,25 @@ if ($ok && GETPOST('repair_link_dispatch_lines_supplier_order_lines')) {
 					$first_iteration = false;
 				} else {
 					$sql_attach_values = array(
-						$obj_dispatch->fk_commande,
-						$obj_dispatch->fk_product,
-						$obj_line->rowid,
-						$qty_for_line,
-						$obj_dispatch->fk_entrepot,
-						$obj_dispatch->fk_user,
-						$obj_dispatch->datec ? '"'.$db->escape($obj_dispatch->datec).'"' : 'NULL',
-						$obj_dispatch->comment ? '"'.$db->escape($obj_dispatch->comment).'"' : 'NULL',
-						$obj_dispatch->status ?: 'NULL',
-						$obj_dispatch->tms ? '"'.$db->escape($obj_dispatch->tms).'"' : 'NULL',
-						$obj_dispatch->batch ?: 'NULL',
-						$obj_dispatch->eatby ? '"'.$db->escape($obj_dispatch->eatby).'"' : 'NULL',
-						$obj_dispatch->sellby ? '"'.$db->escape($obj_dispatch->sellby).'"' : 'NULL'
+						((int) $obj_dispatch->fk_commande),
+						((int) $obj_dispatch->fk_product),
+						((int) $obj_line->rowid),
+						((float) $qty_for_line),
+						((int) $obj_dispatch->fk_entrepot),
+						((int) $obj_dispatch->fk_user),
+						$obj_dispatch->datec ? "'".$db->idate($db->jdate($obj_dispatch->datec))."'" : 'NULL',
+						$obj_dispatch->comment ? "'".$db->escape($obj_dispatch->comment)."'" : 'NULL',
+						$obj_dispatch->status ? ((int) $obj_dispatch->status) : 'NULL',
+						$obj_dispatch->tms ? "'".$db->idate($db->jdate($obj_dispatch->tms))."'" : 'NULL',
+						$obj_dispatch->batch ? "'".$db->escape($obj_dispatch->batch)."'" : 'NULL',
+						$obj_dispatch->eatby ? "'".$db->escape($obj_dispatch->eatby)."'" : 'NULL',
+						$obj_dispatch->sellby ? "'".$db->escape($obj_dispatch->sellby)."'" : 'NULL'
 					);
 					$sql_attach_values = join(', ', $sql_attach_values);
 
 					$sql_attach = 'INSERT INTO '.MAIN_DB_PREFIX.'commande_fournisseur_dispatch';
 					$sql_attach .= ' (fk_commande, fk_product, fk_commandefourndet, qty, fk_entrepot, fk_user, datec, comment, status, tms, batch, eatby, sellby)';
-					$sql_attach .= ' VALUES ('.$sql_attach_values.')';
+					$sql_attach .= " VALUES (".$sql_attach_values.")";
 				}
 
 				if ($repair_link_dispatch_lines_supplier_order_lines == 'confirmed') {

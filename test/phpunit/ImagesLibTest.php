@@ -29,6 +29,7 @@ global $conf,$user,$langs,$db;
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/images.lib.php';
+require_once dirname(__FILE__).'/../../htdocs/core/lib/files.lib.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
@@ -164,8 +165,16 @@ class ImagesLibTest extends PHPUnit\Framework\TestCase
 
 		$file=dirname(__FILE__).'/img250x20.png';
 		$filetarget=$conf->admin->dir_temp.'/img250x20.jpg';
+		dol_delete_file($filetarget);
 		$result = dol_imageResizeOrCrop($file, 0, 0, 0, 0, 0, $filetarget);
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals($filetarget, $result, 'Failed to convert into '.$filetarget);
+		$this->assertEquals($filetarget, $result, 'Failed to convert PNG '.$file.' into '.$filetarget);
+
+		/*$file=dirname(__FILE__).'/img250x20.png';
+		$filetarget=$conf->admin->dir_temp.'/img250x20.webp';
+		dol_delete_file($filetarget);
+		$result = dol_imageResizeOrCrop($file, 0, 0, 0, 0, 0, $filetarget);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals($filetarget, $result, 'Failed to convert PNG '.$file.' into WEBP '.$filetarget);*/
 	}
 }

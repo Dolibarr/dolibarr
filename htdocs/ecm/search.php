@@ -59,8 +59,8 @@ if (empty($module)) {
 $upload_dir = $conf->ecm->dir_output.'/'.$section;
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -82,6 +82,12 @@ if (!empty($section)) {
 		dol_print_error($db, $ecmdir->error);
 		exit;
 	}
+}
+
+$permtoread = $user->rights->ecm->read;
+
+if (!$permtoread) {
+	accessforbidden();
 }
 
 
@@ -233,7 +239,7 @@ $upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
 $filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
 
 $formfile = new FormFile($db);
-$param = '&amp;section='.$section;
+$param = '&section='.urlencode($section);
 $textifempty = ($section ? $langs->trans("NoFileFound") : $langs->trans("ECMSelectASection"));
 $formfile->list_of_documents($filearray, '', 'ecm', $param, 1, $relativepath, $user->rights->ecm->upload, 1, $textifempty);
 

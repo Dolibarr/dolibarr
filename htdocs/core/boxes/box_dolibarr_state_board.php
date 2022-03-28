@@ -60,13 +60,6 @@ class box_dolibarr_state_board extends ModeleBoxes
 		global $conf, $user;
 
 		$this->db = $db;
-
-		// disable box for such cases
-		if (!empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) {
-			$this->enabled = 0; // disabled by this option
-		}
-
-		$this->hidden = !($user->rights->societe->lire && empty($user->socid));
 	}
 
 	/**
@@ -112,7 +105,8 @@ class box_dolibarr_state_board extends ModeleBoxes
 				'supplier_invoices',
 				'contracts',
 				'interventions',
-				'ticket'
+				'ticket',
+				'dolresource'
 			);
 			$conditions = array(
 				'users' => $user->rights->user->user->lire,
@@ -139,7 +133,8 @@ class box_dolibarr_state_board extends ModeleBoxes
 				'projects' => !empty($conf->projet->enabled) && $user->rights->projet->lire,
 				'expensereports' => !empty($conf->expensereport->enabled) && $user->rights->expensereport->lire,
 				'holidays' => !empty($conf->holiday->enabled) && $user->rights->holiday->read,
-				'ticket' => !empty($conf->ticket->enabled) && $user->rights->ticket->read
+				'ticket' => !empty($conf->ticket->enabled) && $user->rights->ticket->read,
+				'dolresource' => !empty($conf->resource->enabled) && $user->rights->resource->read
 			);
 			$classes = array(
 				'users' => 'User',
@@ -163,6 +158,7 @@ class box_dolibarr_state_board extends ModeleBoxes
 				'expensereports' => 'ExpenseReport',
 				'holidays' => 'Holiday',
 				'ticket' => 'Ticket',
+				'dolresource' => 'Dolresource'
 			);
 			$includes = array(
 				'users' => DOL_DOCUMENT_ROOT . "/user/class/user.class.php",
@@ -185,7 +181,8 @@ class box_dolibarr_state_board extends ModeleBoxes
 				'projects' => DOL_DOCUMENT_ROOT . "/projet/class/project.class.php",
 				'expensereports' => DOL_DOCUMENT_ROOT . "/expensereport/class/expensereport.class.php",
 				'holidays' => DOL_DOCUMENT_ROOT . "/holiday/class/holiday.class.php",
-				'ticket' => DOL_DOCUMENT_ROOT . "/ticket/class/ticket.class.php"
+				'ticket' => DOL_DOCUMENT_ROOT . "/ticket/class/ticket.class.php",
+				'dolresource' => DOL_DOCUMENT_ROOT . "/resource/class/dolresource.class.php"
 			);
 			$links = array(
 				'users' => DOL_URL_ROOT . '/user/list.php',
@@ -208,7 +205,8 @@ class box_dolibarr_state_board extends ModeleBoxes
 				'projects' => DOL_URL_ROOT . '/projet/list.php?mainmenu=project',
 				'expensereports' => DOL_URL_ROOT . '/expensereport/list.php?mainmenu=hrm&leftmenu=expensereport',
 				'holidays' => DOL_URL_ROOT . '/holiday/list.php?mainmenu=hrm&leftmenu=holiday',
-				'ticket' => DOL_URL_ROOT . '/ticket/list.php?leftmenu=ticket'
+				'ticket' => DOL_URL_ROOT . '/ticket/list.php?leftmenu=ticket',
+				'dolresource' => DOL_URL_ROOT . '/resource/list.php?mainmenu=tools',
 			);
 			$titres = array(
 				'users' => "Users",
@@ -232,6 +230,7 @@ class box_dolibarr_state_board extends ModeleBoxes
 				'expensereports' => "ExpenseReports",
 				'holidays' => "Holidays",
 				'ticket' => "Ticket",
+				'dolresource' => "Resources",
 			);
 			$langfile = array(
 				'customers' => "companies",
@@ -273,7 +272,7 @@ class box_dolibarr_state_board extends ModeleBoxes
 					$boxstatItem .= '<a href="' . $links[$val] . '" class="boxstatsindicator thumbstat nobold nounderline">';
 					$boxstatItem .= '<div class="boxstats">';
 					$boxstatItem .= '<span class="boxstatstext" title="' . dol_escape_htmltag($text) . '">' . $text . '</span><br>';
-					$boxstatItem .= '<span class="boxstatsindicator">' . img_object("", $board->picto, 'class="inline-block"') . ' ' . ($board->nb[$val] ? $board->nb[$val] : 0) . '</span>';
+					$boxstatItem .= '<span class="boxstatsindicator">' . img_object("", $board->picto, 'class="inline-block"') . ' ' . (!empty($board->nb[$val]) ? $board->nb[$val] : 0) . '</span>';
 					$boxstatItem .= '</div>';
 					$boxstatItem .= '</a>';
 

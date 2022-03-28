@@ -88,6 +88,12 @@ class Salary extends CommonObject
 	 */
 	public $fk_user_modif;
 
+	/**
+	 * @var user	User
+	 */
+	public $user;
+
+
 	const STATUS_UNPAID = 0;
 	const STATUS_PAID = 1;
 
@@ -132,22 +138,20 @@ class Salary extends CommonObject
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."salary SET";
-
 		$sql .= " tms='".$this->db->idate(dol_now())."',";
-		$sql .= " fk_user=".$this->fk_user.",";
+		$sql .= " fk_user=".((int) $this->fk_user).",";
 		/*$sql .= " datep='".$this->db->idate($this->datep)."',";
 		$sql .= " datev='".$this->db->idate($this->datev)."',";*/
 		$sql .= " amount=".price2num($this->amount).",";
 		$sql .= " fk_projet=".((int) $this->fk_project).",";
-		$sql .= " fk_typepayment=".$this->type_payment.",";
+		$sql .= " fk_typepayment=".((int) $this->type_payment).",";
 		$sql .= " label='".$this->db->escape($this->label)."',";
 		$sql .= " datesp='".$this->db->idate($this->datesp)."',";
 		$sql .= " dateep='".$this->db->idate($this->dateep)."',";
 		$sql .= " note='".$this->db->escape($this->note)."',";
 		$sql .= " fk_bank=".($this->fk_bank > 0 ? (int) $this->fk_bank : "null").",";
 		$sql .= " fk_user_author=".((int) $this->fk_user_author).",";
-		$sql .= " fk_user_modif=".($this->fk_user_modif > 0 ? (int) $this->fk_user_modif : 'null');
-
+		$sql .= " fk_user_modif=".($this->fk_user_modif > 0 ? (int) $this->fk_user_modif : (int) $user->id);
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
@@ -282,7 +286,7 @@ class Salary extends CommonObject
 		/*if (!$error)
 		{
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."salary_extrafields";
-			$sql .= " WHERE fk_object=".$this->id;
+			$sql .= " WHERE fk_object = ".((int) $this->id);
 
 			$resql = $this->db->query($sql);
 			if (!$resql)
@@ -363,7 +367,7 @@ class Salary extends CommonObject
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Employee"));
 			return -4;
 		}
-		if ($this->amount < 0 || $this->amount == '') {
+		if ($this->amount == '') {
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Amount"));
 			return -5;
 		}
@@ -402,11 +406,11 @@ class Salary extends CommonObject
 		$sql .= "'".$this->db->escape($this->fk_user)."'";
 		//$sql .= ", '".$this->db->idate($this->datep)."'";
 		//$sql .= ", '".$this->db->idate($this->datev)."'";
-		$sql .= ", ".$this->amount;
-		$sql .= ", ".($this->fk_project > 0 ? $this->fk_project : 0);
-		$sql .= ", ".($this->salary > 0 ? $this->salary : "null");
-		$sql .= ", ".($this->type_payment > 0 ? $this->type_payment : 0);
-		$sql .= ", ".($this->accountid > 0 ? $this->accountid : "null");
+		$sql .= ", ".((double) $this->amount);
+		$sql .= ", ".($this->fk_project > 0 ? ((int) $this->fk_project) : 0);
+		$sql .= ", ".($this->salary > 0 ? ((double) $this->salary) : "null");
+		$sql .= ", ".($this->type_payment > 0 ? ((int) $this->type_payment) : 0);
+		$sql .= ", ".($this->accountid > 0 ? ((int) $this->accountid) : "null");
 		if ($this->note) $sql .= ", '".$this->db->escape($this->note)."'";
 		$sql .= ", '".$this->db->escape($this->label)."'";
 		$sql .= ", '".$this->db->idate($this->datesp)."'";
@@ -414,7 +418,7 @@ class Salary extends CommonObject
 		$sql .= ", '".$this->db->escape($user->id)."'";
 		$sql .= ", '".$this->db->idate($now)."'";
 		$sql .= ", NULL";
-		$sql .= ", ".$conf->entity;
+		$sql .= ", ".((int) $conf->entity);
 		$sql .= ")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -464,7 +468,7 @@ class Salary extends CommonObject
 	{
         // phpcs:enable
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'salary SET fk_bank = '.((int) $id_bank);
-		$sql .= ' WHERE rowid = '.$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 		$result = $this->db->query($sql);
 		if ($result) {
 			return 1;
@@ -498,6 +502,15 @@ class Salary extends CommonObject
 		$label = '<u>'.$langs->trans("Salary").'</u>';
 		$label .= '<br>';
 		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		if ($this->label) {
+			$label .= '<br><b>'.$langs->trans('Label').':</b> '.$this->label;
+		}
+		if ($this->datesp && $this->dateep) {
+			$label .= '<br><b>'.$langs->trans('Period').':</b> '.dol_print_date($this->datesp, 'day').' - '.dol_print_date($this->dateep, 'day');
+		}
+		if (isset($this->amount)) {
+			$label .= '<br><b>'.$langs->trans('Amount').':</b> '.price($this->amount);
+		}
 
 		$url = DOL_URL_ROOT.'/salaries/card.php?id='.$this->id;
 
@@ -537,7 +550,7 @@ class Salary extends CommonObject
 
 		global $action, $hookmanager;
 		$hookmanager->initHooks(array('salarypayment'));
-		$parameters = array('id'=>$this->id, 'getnomurl'=>$result);
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) $result = $hookmanager->resPrint;
 		else $result .= $hookmanager->resPrint;
@@ -557,7 +570,7 @@ class Salary extends CommonObject
 
 		$sql = 'SELECT sum(amount) as amount';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$table;
-		$sql .= ' WHERE '.$field.' = '.$this->id;
+		$sql .= " WHERE ".$field." = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::getSommePaiement", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -583,7 +596,7 @@ class Salary extends CommonObject
 	 */
 	public function info($id)
 	{
-		$sql = 'SELECT ps.rowid, ps.datec, ps.fk_user_author';
+		$sql = 'SELECT ps.rowid, ps.datec, ps.tms, ps.fk_user_author, ps.fk_user_modif';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'salary as ps';
 		$sql .= ' WHERE ps.rowid = '.((int) $id);
 
@@ -599,7 +612,14 @@ class Salary extends CommonObject
 					$cuser->fetch($obj->fk_user_author);
 					$this->user_creation = $cuser;
 				}
+
+				if ($obj->fk_user_modif) {
+					$muser = new User($this->db);
+					$muser->fetch($obj->fk_user_modif);
+					$this->user_modification = $muser;
+				}
 				$this->date_creation     = $this->db->jdate($obj->datec);
+				$this->date_modification = $this->db->jdate($obj->tms);
 			}
 			$this->db->free($result);
 		} else {
@@ -619,7 +639,7 @@ class Salary extends CommonObject
 		// phpcs:enable
 		$sql = "UPDATE ".MAIN_DB_PREFIX."salary SET";
 		$sql .= " paye = 1";
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 		$return = $this->db->query($sql);
 		if ($return) return 1;
 		else return -1;
@@ -637,7 +657,7 @@ class Salary extends CommonObject
 		// phpcs:enable
 		$sql = "UPDATE ".MAIN_DB_PREFIX."salary SET";
 		$sql .= " paye = 0";
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 		$return = $this->db->query($sql);
 		if ($return) return 1;
 		else return -1;
@@ -647,9 +667,9 @@ class Salary extends CommonObject
 	/**
 	 * Retourne le libelle du statut d'une facture (brouillon, validee, abandonnee, payee)
 	 *
-	 * @param	int		$mode       	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 * @param	int			$mode       	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 * @param   double		$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, 1 otherwise)
-	 * @return  string				Libelle
+	 * @return  string						Label
 	 */
 	public function getLibStatut($mode = 0, $alreadypaid = -1)
 	{
@@ -680,12 +700,12 @@ class Salary extends CommonObject
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			//$langs->load("mymodule");
-			$this->labelStatus[self::STATUS_UNPAID] = $langs->trans('BillStatusNotPaid');
-			$this->labelStatus[self::STATUS_PAID] = $langs->trans('BillStatusPaid');
-			if ($status == self::STATUS_UNPAID && $alreadypaid <> 0) $this->labelStatus[self::STATUS_UNPAID] = $langs->trans("BillStatusStarted");
-			$this->labelStatusShort[self::STATUS_UNPAID] = $langs->trans('BillStatusNotPaid');
-			$this->labelStatusShort[self::STATUS_PAID] = $langs->trans('BillStatusPaid');
-			if ($status == self::STATUS_UNPAID && $alreadypaid <> 0) $this->labelStatusShort[self::STATUS_UNPAID] = $langs->trans("BillStatusStarted");
+			$this->labelStatus[self::STATUS_UNPAID] = $langs->transnoentitiesnoconv('BillStatusNotPaid');
+			$this->labelStatus[self::STATUS_PAID] = $langs->transnoentitiesnoconv('BillStatusPaid');
+			if ($status == self::STATUS_UNPAID && $alreadypaid <> 0) $this->labelStatus[self::STATUS_UNPAID] = $langs->transnoentitiesnoconv("BillStatusStarted");
+			$this->labelStatusShort[self::STATUS_UNPAID] = $langs->transnoentitiesnoconv('BillStatusNotPaid');
+			$this->labelStatusShort[self::STATUS_PAID] = $langs->transnoentitiesnoconv('BillStatusPaid');
+			if ($status == self::STATUS_UNPAID && $alreadypaid <> 0) $this->labelStatusShort[self::STATUS_UNPAID] = $langs->transnoentitiesnoconv("BillStatusStarted");
 		}
 
 		$statusType = 'status1';

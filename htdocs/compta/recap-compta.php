@@ -189,7 +189,7 @@ if ($id > 0) {
 				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON p.fk_user_creat = u.rowid";
 				$sql .= " WHERE pf.fk_paiement = p.rowid";
 				$sql .= " AND p.entity = ".$conf->entity;
-				$sql .= " AND pf.fk_facture = ".$fac->id;
+				$sql .= " AND pf.fk_facture = ".((int) $fac->id);
 				$sql .= " ORDER BY p.datep ASC, p.rowid ASC";
 
 				$resqlp = $db->query($sql);

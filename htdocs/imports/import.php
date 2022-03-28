@@ -141,6 +141,7 @@ $endatlinenb		= (GETPOST('endatlinenb') ? GETPOST('endatlinenb') : '');
 $updatekeys			= (GETPOST('updatekeys', 'array') ? GETPOST('updatekeys', 'array') : array());
 $separator			= (GETPOST('separator', 'nohtml') ? GETPOST('separator', 'nohtml') : (!empty($conf->global->IMPORT_CSV_SEPARATOR_TO_USE) ? $conf->global->IMPORT_CSV_SEPARATOR_TO_USE : ','));
 $enclosure			= (GETPOST('enclosure', 'nohtml') ? GETPOST('enclosure', 'nohtml') : '"');
+$separator_used     = str_replace('\t', "\t", $separator);
 
 $objimport = new Import($db);
 $objimport->load_arrays($user, ($step == 1 ? '' : $datatoimport));
@@ -226,6 +227,7 @@ if ($action == 'add_import_model') {
 		$objimport->model_name = $import_name;
 		$objimport->datatoimport = $datatoimport;
 		$objimport->hexa = $hexa;
+		$objimport->fk_user = (GETPOST('visibility', 'aZ09') == 'all' ? 0 : $user->id);
 
 		$result = $objimport->create($user);
 		if ($result >= 0) {
@@ -461,10 +463,10 @@ if ($step == 2 && $datatoimport) {
 	print '<div class="underbanner clearboth"></div>';
 	print '<div class="fichecenter">';
 
-	print '<table width="100%" class="border tableforfield">';
+	print '<table class="border tableforfield centpercent">';
 
 	// Module
-	print '<tr><td class="titlefield">'.$langs->trans("Module").'</td>';
+	print '<tr><td class="titlefieldcreate">'.$langs->trans("Module").'</td>';
 	print '<td>';
 	$titleofmodule = $objimport->array_import_module[0]['module']->getName();
 	// Special cas for import common to module/services
@@ -474,7 +476,7 @@ if ($step == 2 && $datatoimport) {
 	print $titleofmodule;
 	print '</td></tr>';
 
-	// Lot de donnees a importer
+	// Dataset to import
 	print '<tr><td>'.$langs->trans("DatasetToImport").'</td>';
 	print '<td>';
 	$entity = preg_replace('/:.*$/', '', $objimport->array_import_icon[0]);
@@ -503,7 +505,7 @@ if ($step == 2 && $datatoimport) {
 	print '<br>';
 
 	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
-	print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+	print '<table class="noborder centpercent" cellpadding="4">';
 
 	$filetoimport = '';
 
@@ -518,7 +520,9 @@ if ($step == 2 && $datatoimport) {
 		$text = $objmodelimport->getDriverDescForKey($key);
 		print '<td>'.$form->textwithpicto($objmodelimport->getDriverLabelForKey($key), $text).'</td>';
 		print '<td style="text-align:center">';
-		print img_picto('', 'download', 'class="paddingright opacitymedium"').'<a href="'.DOL_URL_ROOT.'/imports/emptyexample.php?format='.$key.$param.'" target="_blank">'.$langs->trans("DownloadEmptyExample").'</a>';
+		print img_picto('', 'download', 'class="paddingright opacitymedium"').'<a href="'.DOL_URL_ROOT.'/imports/emptyexample.php?format='.$key.$param.'" target="_blank" rel="noopener noreferrer">'.$langs->trans("DownloadEmptyExample");
+		print '</a>';
+		print ' <span class="opacitymedium hideonsmartphone">('.$langs->trans("StarAreMandatory").')</span>';
 		print '</td>';
 		// Action button
 		print '<td style="text-align:right">';
@@ -568,10 +572,10 @@ if ($step == 3 && $datatoimport) {
 	print '<div class="underbanner clearboth"></div>';
 	print '<div class="fichecenter">';
 
-	print '<table width="100%" class="border tableforfield">';
+	print '<table class="border tableforfield centpercent">';
 
 	// Module
-	print '<tr><td class="titlefield">'.$langs->trans("Module").'</td>';
+	print '<tr><td class="titlefieldcreate">'.$langs->trans("Module").'</td>';
 	print '<td>';
 	$titleofmodule = $objimport->array_import_module[0]['module']->getName();
 	// Special cas for import common to module/services
@@ -600,12 +604,14 @@ if ($step == 3 && $datatoimport) {
 	print '<table width="100%" class="border tableforfield">';
 
 	// Source file format
-	print '<tr><td class="titlefield">'.$langs->trans("SourceFileFormat").'</td>';
-	print '<td>';
+	print '<tr><td class="titlefieldcreate">'.$langs->trans("SourceFileFormat").'</td>';
+	print '<td class="nowraponall">';
 	$text = $objmodelimport->getDriverDescForKey($format);
 	print $form->textwithpicto($objmodelimport->getDriverLabelForKey($format), $text);
 	print '</td><td style="text-align:right" class="nowrap">';
-	print img_picto('', 'download', 'class="paddingright opacitymedium"').'<a href="'.DOL_URL_ROOT.'/imports/emptyexample.php?format='.$format.$param.'" target="_blank">'.$langs->trans("DownloadEmptyExample").'</a>';
+	print img_picto('', 'download', 'class="paddingright opacitymedium"').'<a href="'.DOL_URL_ROOT.'/imports/emptyexample.php?format='.$format.$param.'" target="_blank" rel="noopener noreferrer">'.$langs->trans("DownloadEmptyExample");
+	print '</a>';
+	print ' <span class="opacitymedium hideonsmartphone">('.$langs->trans("StarAreMandatory").')</span>';
 	print '</td></tr>';
 
 	print '</table>';
@@ -640,18 +646,13 @@ if ($step == 3 && $datatoimport) {
 	print $s;
 	print '</span><br><br>';
 
-	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
-	print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
-
 	$filetoimport = '';
 
-	//print '<tr class="liste_titre"><td colspan="6">'.$langs->trans("FileWithDataToImport").'</td></tr>';
-
 	// Input file name box
-	print '<tr class="oddeven nohover"><td colspan="6">';
+	print '<div class="marginbottomonly">';
 	print '<input type="file" name="userfile" size="20" maxlength="80"> &nbsp; &nbsp; ';
 	$out = (empty($conf->global->MAIN_UPLOAD_DOC) ? ' disabled' : '');
-	print '<input type="submit" class="button" value="'.$langs->trans("AddFile").'"'.$out.' name="sendit">';
+	print '<input type="submit" class="button small" value="'.$langs->trans("AddFile").'"'.$out.' name="sendit">';
 	$out = '';
 	if (!empty($conf->global->MAIN_UPLOAD_DOC)) {
 		$max = $conf->global->MAIN_UPLOAD_DOC; // In Kb
@@ -704,12 +705,14 @@ if ($step == 3 && $datatoimport) {
 		$out .= ' ('.$langs->trans("UploadDisabled").')';
 	}
 	print $out;
-	print '</td>';
-	print "</tr>\n";
+	print '</div>';
 
 	// Search available imports
 	$filearray = dol_dir_list($conf->import->dir_temp, 'files', 0, '', '', 'name', SORT_DESC);
 	if (count($filearray) > 0) {
+		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+		print '<table class="noborder centpercent" width="100%" cellpadding="4">';
+
 		$dir = $conf->import->dir_temp;
 
 		// Search available files to import
@@ -731,9 +734,9 @@ if ($step == 3 && $datatoimport) {
 			$relativepath = $file;
 
 			print '<tr class="oddeven">';
-			print '<td width="16">'.img_mime($file).'</td>';
 			print '<td>';
-			print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&file='.urlencode($relativepath).'&step=3'.$param.'" target="_blank">';
+			print img_mime($file, '', 'pictofixedwidth');
+			print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&file='.urlencode($relativepath).'&step=3'.$param.'" target="_blank" rel="noopener noreferrer">';
 			print $file;
 			print '</a>';
 			print '</td>';
@@ -750,10 +753,10 @@ if ($step == 3 && $datatoimport) {
 			print '</td>';
 			print '</tr>';
 		}
-	}
 
-	print '</table>';
-	print '</div>';
+		print '</table>';
+		print '</div>';
+	}
 
 	print '</form>';
 }
@@ -771,7 +774,7 @@ if ($step == 4 && $datatoimport) {
 	require_once $dir.$file;
 	$obj = new $classname($db, $datatoimport);
 	if ($model == 'csv') {
-		$obj->separator = $separator;
+		$obj->separator = $separator_used;
 		$obj->enclosure = $enclosure;
 	}
 	if ($model == 'xlsx') {
@@ -874,7 +877,7 @@ if ($step == 4 && $datatoimport) {
 	print '<table width="100%" class="border tableforfield">';
 
 	// Module
-	print '<tr><td class="titlefield">'.$langs->trans("Module").'</td>';
+	print '<tr><td class="titlefieldcreate">'.$langs->trans("Module").'</td>';
 	print '<td>';
 	$titleofmodule = $objimport->array_import_module[0]['module']->getName();
 	// Special cas for import common to module/services
@@ -903,7 +906,7 @@ if ($step == 4 && $datatoimport) {
 	print '<table width="100%" class="border tableforfield">';
 
 	// Source file format
-	print '<tr><td class="titlefield">'.$langs->trans("SourceFileFormat").'</td>';
+	print '<tr><td class="titlefieldcreate">'.$langs->trans("SourceFileFormat").'</td>';
 	print '<td>';
 	$text = $objmodelimport->getDriverDescForKey($format);
 	print $form->textwithpicto($objmodelimport->getDriverLabelForKey($format), $text);
@@ -924,8 +927,8 @@ if ($step == 4 && $datatoimport) {
 		print $langs->trans("Separator").' : ';
 		print '<input type="text" size="1" name="separator" value="'.dol_escape_htmltag($separator).'"/>';
 		print '&nbsp;&nbsp;&nbsp;&nbsp;'.$langs->trans("Enclosure").' : ';
-		print '<input type="text" size="1" name="enclosure" value="'.dol_escape_htmltag($enclosure).'"/>';
-		print '<input name="update" type="submit" value="'.$langs->trans('Update').'" class="button" />';
+		print '<input type="text" size="1" name="enclosure" value="'.dol_escape_htmltag($enclosure).'"/> ';
+		print '<input name="update" type="submit" value="'.$langs->trans('Update').'" class="button small" />';
 		print '</form>';
 		print '</td></tr>';
 	}
@@ -935,7 +938,8 @@ if ($step == 4 && $datatoimport) {
 	print '<td>';
 	$modulepart = 'import';
 	$relativepath = GETPOST('filetoimport');
-	print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&file='.urlencode($relativepath).'&step=4'.$param.'" target="_blank">';
+	print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&file='.urlencode($relativepath).'&step=4'.$param.'" target="_blank" rel="noopener noreferrer">';
+	print img_mime($file, '', 'pictofixedwidth');
 	print $filetoimport;
 	print '</a>';
 	print '</td></tr>';
@@ -968,7 +972,7 @@ if ($step == 4 && $datatoimport) {
 	$s = str_replace('{s1}', img_picto('', 'grip_title', '', false, 0, 0, '', '', 0), $s);
 	print $s;
 	print '</span> ';
-	$htmlother->select_import_model($importmodelid, 'importmodelid', $datatoimport, 1);
+	$htmlother->select_import_model($importmodelid, 'importmodelid', $datatoimport, 1, $user->id);
 	print '<input type="submit" class="button" value="'.$langs->trans("Select").'">';
 	print '</div>';
 	print '</form>';
@@ -1050,8 +1054,8 @@ if ($step == 4 && $datatoimport) {
 		$entityicon = $entitytoicon[$entity] ? $entitytoicon[$entity] : $entity; // $entityicon must string name of picto of the field like 'project', 'company', 'contact', 'modulename', ...
 		$entitylang = $entitytolang[$entity] ? $entitytolang[$entity] : $objimport->array_import_label[0]; // $entitylang must be a translation key to describe object the field is related to, like 'Company', 'Contact', 'MyModyle', ...
 
-		print '<td class="nowrap" style="font-weight: normal">=>'.img_object('', $entityicon).' '.$langs->trans($entitylang).'</td>';
-		print '<td style="font-weight: normal">';
+		print '<td class="nowraponall" style="font-weight: normal">=>'.img_object('', $entityicon).' '.$langs->trans($entitylang).'</td>';
+		print '<td class="nowraponall" style="font-weight: normal">';
 		$newlabel = preg_replace('/\*$/', '', $label);
 		$text = $langs->trans($newlabel);
 		$more = '';
@@ -1066,7 +1070,7 @@ if ($step == 4 && $datatoimport) {
 		print $text;
 		print '</td>';
 		// Info field
-		print '<td style="font-weight:normal; text-align:right">';
+		print '<td class="nowraponall" style="font-weight:normal; text-align:right">';
 		$filecolumn = $array_match_database_to_file[$code];
 		// Source field info
 		$htmltext = '<b><u>'.$langs->trans("FieldSource").'</u></b><br>';
@@ -1125,7 +1129,6 @@ if ($step == 4 && $datatoimport) {
 		print '</td>';
 
 		print '</tr>';
-		$save_select .= $bit;
 	}
 	print '</table>';
 
@@ -1176,7 +1179,7 @@ if ($step == 4 && $datatoimport) {
 
 
 	if ($conf->use_javascript_ajax) {
-		print '<script type="text/javascript" language="javascript">';
+		print '<script type="text/javascript">';
 		print 'jQuery(function() {
                     jQuery("#left, #right").sortable({
                         /* placeholder: \'ui-state-highlight\', */
@@ -1204,7 +1207,7 @@ if ($step == 4 && $datatoimport) {
 		//                    async: false
 		//        });'."\n";
 		// Now reload page
-		print 'var newlocation= \''.$_SERVER["PHP_SELF"].'?step=4'.$param.'&action=saveorder&boxorder=\' + boxorder;'."\n";
+		print 'var newlocation= \''.$_SERVER["PHP_SELF"].'?step=4'.$param.'&action=saveorder&token='.newToken().'&boxorder=\' + boxorder;'."\n";
 		//print 'alert(newlocation);';
 		print 'window.location.href=newlocation;'."\n";
 		print '}'."\n";
@@ -1246,31 +1249,55 @@ if ($step == 4 && $datatoimport) {
 		print '<input type="hidden" value="'.dol_escape_htmltag($separator).'" name="separator">';
 		print '<input type="hidden" value="'.dol_escape_htmltag($enclosure).'" name="enclosure">';
 
+		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 		print '<table summary="selectofimportprofil" class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("ImportModelName").'</td>';
-		print '<td>&nbsp;</td>';
+		print '<td>'.$langs->trans("Visibility").'</td>';
+		print '<td></td>';
 		print '</tr>';
 
 		print '<tr class="oddeven">';
-		print '<td><input name="import_name" size="48" value=""></td><td style="text-align:right">';
+		print '<td><input name="import_name" value=""></td>';
+		print '<td>';
+		$arrayvisibility = array('private'=>$langs->trans("Private"), 'all'=>$langs->trans("Everybody"));
+		print $form->selectarray('visibility', $arrayvisibility, 'private');
+		print '</td>';
+		print '<td class="right">';
 		print '<input type="submit" class="button" value="'.$langs->trans("SaveImportProfile").'">';
 		print '</td></tr>';
 
 		// List of existing import profils
-		$sql = "SELECT rowid, label";
+		$sql = "SELECT rowid, label, fk_user, entity";
 		$sql .= " FROM ".MAIN_DB_PREFIX."import_model";
 		$sql .= " WHERE type = '".$db->escape($datatoimport)."'";
+		if (empty($conf->global->EXPORTS_SHARE_MODELS)) {	// EXPORTS_SHARE_MODELS means all templates are visible, whatever is owner.
+			$sql .= " AND fk_user IN (0, ".((int) $user->id).")";
+		}
 		$sql .= " ORDER BY rowid";
+
 		$resql = $db->query($sql);
 		if ($resql) {
 			$num = $db->num_rows($resql);
+
+			$tmpuser = new user($db);
+
 			$i = 0;
 			while ($i < $num) {
 				$obj = $db->fetch_object($resql);
+
 				print '<tr class="oddeven"><td>';
 				print $obj->label;
-				print '</td><td style="text-align:right">';
+				print '</td>';
+				print '<td>';
+				if (empty($obj->fk_user)) {
+					print $langs->trans("Everybody");
+				} else {
+					$tmpuser->fetch($obj->fk_user);
+					print $tmpuser->getNomUrl(1);
+				}
+				print '</td>';
+				print '<td class="right">';
 				print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?step='.$step.$param.'&action=deleteprof&token='.newToken().'&id='.$obj->rowid.'&filetoimport='.urlencode($filetoimport).'">';
 				print img_delete();
 				print '</a>';
@@ -1282,6 +1309,8 @@ if ($step == 4 && $datatoimport) {
 		}
 
 		print '</table>';
+		print '</div>';
+
 		print '</form>';
 	}
 }
@@ -1306,7 +1335,7 @@ if ($step == 5 && $datatoimport) {
 	require_once $dir.$file;
 	$obj = new $classname($db, $datatoimport);
 	if ($model == 'csv') {
-		$obj->separator = $separator;
+		$obj->separator = $separator_used;
 		$obj->enclosure = $enclosure;
 	}
 
@@ -1358,7 +1387,7 @@ if ($step == 5 && $datatoimport) {
 	print '<table width="100%" class="border tableforfield">';
 
 	// Module
-	print '<tr><td class="titlefield">'.$langs->trans("Module").'</td>';
+	print '<tr><td class="titlefieldcreate">'.$langs->trans("Module").'</td>';
 	print '<td>';
 	$titleofmodule = $objimport->array_import_module[0]['module']->getName();
 	// Special cas for import common to module/services
@@ -1387,7 +1416,7 @@ if ($step == 5 && $datatoimport) {
 	print '<table width="100%" class="border tableforfield">';
 
 	// Source file format
-	print '<tr><td class="titlefield">'.$langs->trans("SourceFileFormat").'</td>';
+	print '<tr><td class="titlefieldcreate">'.$langs->trans("SourceFileFormat").'</td>';
 	print '<td>';
 	$text = $objmodelimport->getDriverDescForKey($format);
 	print $form->textwithpicto($objmodelimport->getDriverLabelForKey($format), $text);
@@ -1407,7 +1436,8 @@ if ($step == 5 && $datatoimport) {
 	print '<td>';
 	$modulepart = 'import';
 	$relativepath = GETPOST('filetoimport');
-	print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&file='.urlencode($relativepath).'&step=4'.$param.'" target="_blank">';
+	print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&file='.urlencode($relativepath).'&step=4'.$param.'" target="_blank" rel="noopener noreferrer">';
+	print img_mime($file, '', 'pictofixedwidth');
 	print $filetoimport;
 	print '</a>';
 	print '</td></tr>';
@@ -1424,10 +1454,10 @@ if ($step == 5 && $datatoimport) {
 	print $langs->trans("ImportFromToLine");
 	print '</td><td>';
 	if ($action == 'launchsimu') {
-		print '<input type="number" class="maxwidth50" name="excludefirstlinebis" disabled="disabled" value="'.$excludefirstline.'">';
+		print '<input type="number" class="maxwidth50 right" name="excludefirstlinebis" disabled="disabled" value="'.$excludefirstline.'">';
 		print '<input type="hidden" name="excludefirstline" value="'.$excludefirstline.'">';
 	} else {
-		print '<input type="number" class="maxwidth50" name="excludefirstline" value="'.$excludefirstline.'">';
+		print '<input type="number" class="maxwidth50 right" name="excludefirstline" value="'.$excludefirstline.'">';
 		print $form->textwithpicto("", $langs->trans("SetThisValueTo2ToExcludeFirstLine"));
 	}
 	print ' - ';
@@ -1482,7 +1512,7 @@ if ($step == 5 && $datatoimport) {
 	print '<table width="100%" class="border tableforfield">';
 
 	// Tables imported
-	print '<tr><td class="titlefield">';
+	print '<tr><td class="titlefieldcreate">';
 	print $langs->trans("TablesTarget");
 	print '</td><td>';
 	$listtables = array();
@@ -1648,10 +1678,15 @@ if ($step == 5 && $datatoimport) {
 			print '<div class="center">'.img_picto($langs->trans("OK"), 'tick').' <b>'.$langs->trans("NoError").'</b></div><br><br>';
 			print '<div class="ok">';
 			print $langs->trans("NbInsert", empty($obj->nbinsert) ? 0 : $obj->nbinsert).'<br>';
-			print $langs->trans("NbUpdate", empty($obj->nbupdate) ? 0 : $obj->nbupdate).'<br><br>';
+			print $langs->trans("NbUpdate", empty($obj->nbupdate) ? 0 : $obj->nbupdate).'<br>';
 			print '</div>';
+			print '<br>';
 		} else {
-			print $langs->trans("NbOfLinesOK", $nbok).'<br><br>';
+			print '<br>';
+			print '<div class="info">';
+			print $langs->trans("NbOfLinesOK", $nbok).'<br>';
+			print '</div>';
+			print '<br>';
 		}
 
 		// Show Errors
@@ -1749,7 +1784,7 @@ if ($step == 6 && $datatoimport) {
 	require_once $dir.$file;
 	$obj = new $classname($db, $datatoimport);
 	if ($model == 'csv') {
-		$obj->separator = $separator;
+		$obj->separator = $separator_used;
 		$obj->enclosure = $enclosure;
 	}
 
@@ -1796,7 +1831,7 @@ if ($step == 6 && $datatoimport) {
 	print '<table width="100%" class="border">';
 
 	// Module
-	print '<tr><td class="titlefield">'.$langs->trans("Module").'</td>';
+	print '<tr><td class="titlefieldcreate">'.$langs->trans("Module").'</td>';
 	print '<td>';
 	$titleofmodule = $objimport->array_import_module[0]['module']->getName();
 	// Special cas for import common to module/services
@@ -1825,7 +1860,7 @@ if ($step == 6 && $datatoimport) {
 	print '<table width="100%" class="border">';
 
 	// Source file format
-	print '<tr><td class="titlefield">'.$langs->trans("SourceFileFormat").'</td>';
+	print '<tr><td class="titlefieldcreate">'.$langs->trans("SourceFileFormat").'</td>';
 	print '<td>';
 	$text = $objmodelimport->getDriverDescForKey($format);
 	print $form->textwithpicto($objmodelimport->getDriverLabelForKey($format), $text);
@@ -1847,7 +1882,8 @@ if ($step == 6 && $datatoimport) {
 	print '<td>';
 	$modulepart = 'import';
 	$relativepath = GETPOST('filetoimport');
-	print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&file='.urlencode($relativepath).'&step=4'.$param.'" target="_blank">';
+	print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&file='.urlencode($relativepath).'&step=4'.$param.'" target="_blank" rel="noopener noreferrer">';
+	print img_mime($file, '', 'pictofixedwidth');
 	print $filetoimport;
 	print '</a>';
 	print '</td></tr>';
@@ -2100,14 +2136,14 @@ function show_elem($fieldssource, $pos, $key, $var, $nostyle = '')
 		print '&nbsp;';
 		print '</td>';
 		print '</tr>';
-	} else // Print field of source file
-	{
+	} else {
+		// Print field of source file
 		print '<tr'.($nostyle ? '' : ' '.$bc[$var]).' style="height:'.$height.'">';
 		print '<td class="nocellnopadding" width="16" style="font-weight: normal">';
 		// The image must have the class 'boxhandle' beause it's value used in DOM draggable objects to define the area used to catch the full object
 		print img_picto($langs->trans("MoveField", $pos), 'grip_title', 'class="boxhandle" style="cursor:move;"');
 		print '</td>';
-		print '<td style="font-weight: normal">';
+		print '<td class="nowraponall" style="font-weight: normal">';
 		print $langs->trans("Field").' '.$pos;
 		$example = $fieldssource[$pos]['example1'];
 		if ($example) {

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003		Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015	Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2021	Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004		Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2011	Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Alexandre Spangaro   <aspangaro@open-dsi.fr>
@@ -48,8 +48,8 @@ if ($user->socid) {
 $result = restrictedArea($user, 'expensereport', '', '');
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -75,8 +75,8 @@ $tripandexpense_static = new ExpenseReport($db);
 $childids = $user->getAllChildIds();
 $childids[] = $user->id;
 
-//$help_url='EN:Module_Donations|FR:Module_Dons|ES:M&oacute;dulo_Donaciones';
-$help_url = '';
+$help_url = "EN:Module_Expense_Reports|FR:Module_Notes_de_frais";
+
 llxHeader('', $langs->trans("ListOfFees"), $help_url);
 
 
@@ -132,6 +132,30 @@ foreach ($listoftype as $code => $label) {
 	$dataseries[] = array($label, (isset($somme[$code]) ? (int) $somme[$code] : 0));
 }
 
+// Sort array with most important first
+$dataseries = dol_sort_array($dataseries, 1, 'desc');
+
+// Merge all entrie after the $KEEPNFIRST one into one entry called "Other..." (to avoid to have too much entries in graphic).
+$KEEPNFIRST = 7;	// Keep first $KEEPNFIRST one + 1 with the remain
+$i = 0;
+if (count($dataseries) > ($KEEPNFIRST + 1)) {
+	foreach ($dataseries as $key => $val) {
+		if ($i < $KEEPNFIRST) {
+			$i++;
+			continue;
+		}
+		// Here $key = $KEEPNFIRST
+		$dataseries[$KEEPNFIRST][0] = $langs->trans("Others").'...';
+		if ($key == $KEEPNFIRST) {
+			$i++;
+			continue;
+		}
+		$dataseries[$KEEPNFIRST][1] += $dataseries[$key][1];
+		unset($dataseries[$key]);
+		$i++;
+	}
+}
+
 if ($conf->use_javascript_ajax) {
 	print '<tr><td class="center" colspan="4">';
 
@@ -161,7 +185,7 @@ print '</div>';
 
 
 // Right area
-print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+print '</div><div class="fichetwothirdright">';
 
 
 $max = 10;
@@ -171,9 +195,6 @@ $langs->load("boxes");
 $sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.login, u.statut as user_status, u.photo, u.email, u.admin,";
 $sql .= " d.rowid, d.ref, d.date_debut as dated, d.date_fin as datef, d.date_create as dm, d.total_ht, d.total_ttc, d.fk_statut as status";
 $sql .= " FROM ".MAIN_DB_PREFIX."expensereport as d, ".MAIN_DB_PREFIX."user as u";
-if (!$user->rights->societe->client->voir && !$user->socid) {
-	$sql .= ", ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-}
 $sql .= " WHERE u.rowid = d.fk_user_author";
 // RESTRICT RIGHTS
 if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)
@@ -183,12 +204,6 @@ if (empty($user->rights->expensereport->readall) && empty($user->rights->expense
 	$sql .= " AND d.fk_user_author IN (".$db->sanitize(join(',', $childids)).")\n";
 }
 $sql .= ' AND d.entity IN ('.getEntity('expensereport').')';
-if (!$user->rights->societe->client->voir && !$user->socid) {
-	$sql .= " AND d.fk_user_author = s.rowid AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
-}
-if ($socid) {
-	$sql .= " AND d.fk_user_author = ".$socid;
-}
 $sql .= $db->order($sortfield, $sortorder);
 $sql .= $db->plimit($max, 0);
 
@@ -230,10 +245,10 @@ if ($result) {
 			$userstatic->photo = $obj->photo;
 
 			print '<tr class="oddeven">';
-			print '<td>'.$expensereportstatic->getNomUrl(1).'</td>';
-			print '<td>'.$userstatic->getNomUrl(-1).'</td>';
-			print '<td class="right">'.price($obj->total_ht).'</td>';
-			print '<td class="right">'.price($obj->total_ttc).'</td>';
+			print '<td class="tdoverflowmax200">'.$expensereportstatic->getNomUrl(1).'</td>';
+			print '<td class="tdoverflowmax150">'.$userstatic->getNomUrl(-1).'</td>';
+			print '<td class="right amount">'.price($obj->total_ht).'</td>';
+			print '<td class="right amount">'.price($obj->total_ttc).'</td>';
 			print '<td class="right">'.dol_print_date($db->jdate($obj->dm), 'day').'</td>';
 			print '<td class="right">';
 			print $expensereportstatic->getLibStatut(3);
@@ -250,7 +265,7 @@ if ($result) {
 	dol_print_error($db);
 }
 
-print '</div></div></div>';
+print '</div></div>';
 
 $parameters = array('user' => $user);
 $reshook = $hookmanager->executeHooks('dashboardExpenseReport', $parameters, $object); // Note that $action and $object may have been modified by hook

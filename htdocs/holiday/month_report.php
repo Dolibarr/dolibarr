@@ -6,7 +6,7 @@
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("holiday"));
+$langs->loadLangs(array('holiday', 'hrm'));
 
 // Security check
 $socid = 0;
@@ -54,7 +54,7 @@ $search_description = GETPOST('search_description', 'alphanohtml');
 
 $limit       = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield   = GETPOST('sortfield', 'aZ09comma');
-$sortorder   = GETPOST('sortorder', 'alpha');
+$sortorder   = GETPOST('sortorder', 'aZ09comma');
 
 if (!$sortfield) {
 	$sortfield = "cp.rowid";
@@ -112,7 +112,7 @@ if (empty($reshook)) {
 $arrayfields = array(
 	'cp.ref'=>array('label'=>$langs->trans('Ref'), 'checked'=>1),
 	'cp.fk_user'=>array('label'=>$langs->trans('Employee'), 'checked'=>1),
-	'ct.label'=>array('label'=>$langs->trans('Type'), 'checked'=>1),
+	'cp.fk_type'=>array('label'=>$langs->trans('Type'), 'checked'=>1),
 	'cp.date_debut'=>array('label'=>$langs->trans('DateDebCP'), 'checked'=>1),
 	'cp.date_fin'=>array('label'=>$langs->trans('DateFinCP'), 'checked'=>1),
 	'used_days'=>array('label'=>$langs->trans('NbUseDaysCPShort'), 'checked'=>1),
@@ -133,27 +133,31 @@ $holidaystatic = new Holiday($db);
 
 $listhalfday = array('morning'=>$langs->trans("Morning"), "afternoon"=>$langs->trans("Afternoon"));
 
-llxHeader('', $langs->trans('CPTitreMenu'));
+$title = $langs->trans('CPTitreMenu');
+
+llxHeader('', $title);
 
 $search_month = GETPOST("remonth", 'int') ?GETPOST("remonth", 'int') : date("m", time());
 $search_year = GETPOST("reyear", 'int') ?GETPOST("reyear", 'int') : date("Y", time());
 $year_month = sprintf("%04d", $search_year).'-'.sprintf("%02d", $search_month);
 
-$sql = "SELECT cp.rowid, cp.ref, cp.fk_user, cp.date_debut, cp.date_fin, ct.label, cp.description, cp.halfday";
+$sql = "SELECT cp.rowid, cp.ref, cp.fk_user, cp.date_debut, cp.date_fin, cp.fk_type, cp.description, cp.halfday";
 $sql .= " FROM ".MAIN_DB_PREFIX."holiday cp";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user u ON cp.fk_user = u.rowid";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_holiday_types ct ON cp.fk_type = ct.rowid";
 $sql .= " WHERE cp.rowid > 0";
-$sql .= " AND cp.statut = 3"; // 3 = Approved
-$sql .= " AND (date_format(cp.date_debut, '%Y-%m') = '".$db->escape($year_month)."' OR date_format(cp.date_fin, '%Y-%m') = '".$db->escape($year_month)."')";
-
+$sql .= " AND cp.statut = ".Holiday::STATUS_APPROVED;
+$sql .= " AND (";
+$sql .= " (date_format(cp.date_debut, '%Y-%m') = '".$db->escape($year_month)."' OR date_format(cp.date_fin, '%Y-%m') = '".$db->escape($year_month)."')";
+$sql .= " OR";	// For leave over several months
+$sql .= " (date_format(cp.date_debut, '%Y-%m') < '".$db->escape($year_month)."' AND date_format(cp.date_fin, '%Y-%m') > '".$db->escape($year_month)."') ";
+$sql .= " )";
 if (!empty($search_ref)) {
 	$sql .= natural_search('cp.ref', $search_ref);
 }
-if (!empty($search_employee)) {
-	$sql .= " AND cp.fk_user = '".$db->escape($search_employee)."'";
+if (!empty($search_employee) && $search_employee > 0) {
+	$sql .= " AND cp.fk_user = ".((int) $search_employee);
 }
-if (!empty($search_type)) {
+if (!empty($search_type) && $search_type != '-1') {
 	$sql .= ' AND cp.fk_type IN ('.$db->sanitize($search_type).')';
 }
 if (!empty($search_description)) {
@@ -239,7 +243,7 @@ if (!empty($arrayfields['cp.fk_user']['checked'])) {
 }
 
 // Filter: Type
-if (!empty($arrayfields['ct.label']['checked'])) {
+if (!empty($arrayfields['cp.fk_type']['checked'])) {
 	$typeleaves = $holidaystatic->getTypes(1, -1);
 	$arraytypeleaves = array();
 	foreach ($typeleaves as $key => $val) {
@@ -291,6 +295,9 @@ if (!empty($arrayfields['cp.ref']['checked'])) {
 }
 if (!empty($arrayfields['cp.fk_user']['checked'])) {
 	print_liste_field_titre($arrayfields['cp.fk_user']['label'], $_SERVER["PHP_SELF"], 'cp.fk_user', '', '', '', $sortfield, $sortorder);
+}
+if (!empty($arrayfields['cp.fk_type']['checked'])) {
+	print_liste_field_titre($arrayfields['cp.fk_type']['label'], $_SERVER["PHP_SELF"], 'cp.fk_type', '', '', '', $sortfield, $sortorder);
 }
 if (!empty($arrayfields['ct.label']['checked'])) {
 	print_liste_field_titre($arrayfields['ct.label']['label'], $_SERVER["PHP_SELF"], 'ct.label', '', '', '', $sortfield, $sortorder);
@@ -377,8 +384,8 @@ if ($num == 0) {
 		if (!empty($arrayfields['cp.fk_user']['checked'])) {
 			print '<td>'.$user->getFullName($langs).'</td>';
 		}
-		if (!empty($arrayfields['ct.label']['checked'])) {
-			print '<td>'.$obj->label.'</td>';
+		if (!empty($arrayfields['cp.fk_type']['checked'])) {
+			print '<td>'.$arraytypeleaves[$obj->fk_type].'</td>';
 		}
 
 		if (!empty($arrayfields['cp.date_debut']['checked'])) {
@@ -413,7 +420,7 @@ if ($num == 0) {
 			print '<td class="right">'.num_open_day($date_start_inmonth, $date_end_inmonth, 0, 1, $halfdayinmonth).'</td>';
 		}
 		if (!empty($arrayfields['cp.description']['checked'])) {
-			print '<td class="maxwidth300">'.dol_escape_htmltag(dolGetFirstLineOfText($obj->description)).'</td>';
+			print '<td class="maxwidth300 small">'.dolGetFirstLineOfText(dol_string_nohtmltag($obj->description, 1)).'</td>';
 		}
 
 		print '<td></td>';

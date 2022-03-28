@@ -1,0 +1,92 @@
+# Copyright (C) 2021		NextGestion			<contact@nextgestion.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+ModulePartnershipName=Håndtering av partnerskap
+PartnershipDescription=Modul for Partnerskapshåndtering
+PartnershipDescriptionLong= Modul for Partnerskapshåndtering
+Partnership=Partnerskap
+AddPartnership=Add partnership
+CancelPartnershipForExpiredMembers=Partnership: Cancel partnership of members with expired subscriptions
+PartnershipCheckBacklink=Partnership: Check referring backlink
+
+#
+# Menu
+#
+NewPartnership=Nytt partnerskap
+ListOfPartnerships=Liste over partnerskap
+
+#
+# Admin page
+#
+PartnershipSetup=Oppsett av partnerskap
+PartnershipAbout=Om partnerskap
+PartnershipAboutPage=Om Partnerskap-side
+partnershipforthirdpartyormember=Partner status must be set on a 'thirdparty' or a 'member'
+PARTNERSHIP_IS_MANAGED_FOR=Partnerskap administrert for
+PARTNERSHIP_BACKLINKS_TO_CHECK=Backlinks å sjekke
+PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Nb of days before cancelling status of a partnership when a subscription has expired
+ReferingWebsiteCheck=Check of website referring
+ReferingWebsiteCheckDesc=You can enable a feature to check that your partners has added a backlink to your website domains on their own website.
+
+#
+# Object
+#
+DeletePartnership=Slett et partnerskap
+PartnershipDedicatedToThisThirdParty=Partnerskap dedikert til denne tredjeparten
+PartnershipDedicatedToThisMember=Partnerskap dedikert til dette medlemmet
+DatePartnershipStart=Startdato
+DatePartnershipEnd=Sluttdato
+ReasonDecline=Årsak til avslag
+ReasonDeclineOrCancel=Avvis grunn
+PartnershipAlreadyExist=Partnerskap eksisterer allerede
+ManagePartnership=Manage partnership
+BacklinkNotFoundOnPartnerWebsite=Backlink ble ikke funnet på partnerens nettsted
+ConfirmClosePartnershipAsk=Er du sikker på at du vil avbryte dette partnerskapet?
+PartnershipType=Partnership type
+PartnershipRefApproved=Partnership %s approved
+
+#
+# Template Mail
+#
+SendingEmailOnPartnershipWillSoonBeCanceled=Partnerskap vil snart bli kansellert
+SendingEmailOnPartnershipRefused=Partnerskap nektet
+SendingEmailOnPartnershipAccepted=Partnerskap akseptert
+SendingEmailOnPartnershipCanceled=Partnerskapet kansellert
+
+YourPartnershipWillSoonBeCanceledTopic=Partnerskap vil snart bli kansellert
+YourPartnershipRefusedTopic=Partnerskap nektet
+YourPartnershipAcceptedTopic=Partnerskap akseptert
+YourPartnershipCanceledTopic=Partnerskapet kansellert
+
+YourPartnershipWillSoonBeCanceledContent=Vi informerer deg om at partnerskapet ditt snart vil bli kansellert (tilbakekobling ikke funnet)
+YourPartnershipRefusedContent=Vi informerer deg om at partnerskapsforespørselen din har blitt avslått.
+YourPartnershipAcceptedContent=Vi informerer deg om at din forespørsel om partnerskap er godtatt.
+YourPartnershipCanceledContent=Vi informerer deg om at partnerskapet ditt er kansellert.
+
+CountLastUrlCheckError=Number of errors for last URL check
+LastCheckBacklink=Date of last URL check
+ReasonDeclineOrCancel=Avvis grunn
+
+#
+# Status
+#
+PartnershipDraft=Kladd
+PartnershipAccepted=Akseptert
+PartnershipRefused=Avvist
+PartnershipCanceled=Kansellert
+PartnershipManagedFor=Partnere er

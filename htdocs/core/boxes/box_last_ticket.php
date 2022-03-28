@@ -93,12 +93,11 @@ class box_last_ticket extends ModeleBoxes
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_category as category ON category.code=t.category_code";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_severity as severity ON severity.code=t.severity_code";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid=t.fk_soc";
-
-			$sql .= " WHERE t.entity = ".$conf->entity;
+			$sql .= " WHERE t.entity IN (".getEntity('ticket').")";
 			//          $sql.= " AND e.rowid = er.fk_event";
-			//if (!$user->rights->societe->client->voir && !$user->socid) $sql.= " WHERE s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+			//if (empty($user->rights->societe->client->voir) && !$user->socid) $sql.= " WHERE s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			if ($user->socid) {
-				$sql .= " AND t.fk_soc= ".$user->socid;
+				$sql .= " AND t.fk_soc= ".((int) $user->socid);
 			}
 
 			//$sql.= " AND t.fk_statut > 9";
@@ -166,7 +165,7 @@ class box_last_ticket extends ModeleBoxes
 					// Date creation
 					$this->info_box_contents[$i][$r] = array(
 						'td' => 'class="right"',
-						'text' => dol_print_date($datec, 'dayhour'),
+						'text' => dol_print_date($datec, 'dayhour', 'tzuserrel'),
 					);
 					$r++;
 

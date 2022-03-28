@@ -33,12 +33,10 @@ $socid = GETPOST('socid', 'int');
 if (!empty($user->socid)) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'societe', '', '');
-
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -60,6 +58,12 @@ if ($socid > 0) {
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('thirdpartymargins', 'globalcard'));
+
+$result = restrictedArea($user, 'societe', $object->id, '');
+
+if (empty($user->rights->margins->liretous)) {
+	accessforbidden();
+}
 
 
 /*
@@ -109,13 +113,18 @@ if ($socid > 0) {
 	print '<div class="underbanner clearboth"></div>';
 	print '<table class="border tableforfield" width="100%">';
 
+	// Type Prospect/Customer/Supplier
+	print '<tr><td class="titlefield">'.$langs->trans('NatureOfThirdParty').'</td><td>';
+	print $object->getTypeUrl(1);
+	print '</td></tr>';
+
 	if ($object->client) {
 		print '<tr><td class="titlefield">';
 		print $langs->trans('CustomerCode').'</td><td colspan="3">';
 		print showValueWithClipboardCPButton(dol_escape_htmltag($object->code_client));
 		$tmpcheck = $object->check_codeclient();
 		if ($tmpcheck != 0 && $tmpcheck != -5) {
-			print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
+			print ' <span class="error">('.$langs->trans("WrongCustomerCode").')</span>';
 		}
 		print '</td></tr>';
 	}
@@ -126,14 +135,14 @@ if ($socid > 0) {
 		print showValueWithClipboardCPButton(dol_escape_htmltag($object->code_fournisseur));
 		$tmpcheck = $object->check_codefournisseur();
 		if ($tmpcheck != 0 && $tmpcheck != -5) {
-			print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
+			print ' <span class="error">('.$langs->trans("WrongSupplierCode").')</span>';
 		}
 		print '</td></tr>';
 	}
 
 	// Total Margin
 	print '<tr><td class="titlefield">'.$langs->trans("TotalMargin").'</td><td colspan="3">';
-	print '<span id="totalMargin"></span>'; // set by jquery (see below)
+	print '<span id="totalMargin" class="amount"></span>'; // set by jquery (see below)
 	print '</td></tr>';
 
 	// Margin Rate
@@ -233,9 +242,9 @@ if ($socid > 0) {
 				print "</td>\n";
 				print "<td class=\"center\">";
 				print dol_print_date($db->jdate($objp->datef), 'day')."</td>";
-				print "<td class=\"right\">".price(price2num($objp->selling_price, 'MT'))."</td>\n";
-				print "<td class=\"right\">".price(price2num(($objp->type == 2 ? -1 : 1) * $objp->buying_price, 'MT'))."</td>\n";
-				print "<td class=\"right\">".$sign.price(price2num($objp->marge, 'MT'))."</td>\n";
+				print "<td class=\"right amount\">".price(price2num($objp->selling_price, 'MT'))."</td>\n";
+				print "<td class=\"right amount\">".price(price2num(($objp->type == 2 ? -1 : 1) * $objp->buying_price, 'MT'))."</td>\n";
+				print "<td class=\"right amount\">".$sign.price(price2num($objp->marge, 'MT'))."</td>\n";
 				if (!empty($conf->global->DISPLAY_MARGIN_RATES)) {
 					print "<td class=\"right\">".(($marginRate === '') ? 'n/a' : $sign.price(price2num($marginRate, 'MT'))."%")."</td>\n";
 				}

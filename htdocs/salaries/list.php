@@ -124,7 +124,7 @@ foreach ($object->fields as $key => $val) {
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array();
 foreach ($object->fields as $key => $val) {
-	if ($val['searchall']) {
+	if (!empty($val['searchall'])) {
 		$fieldstosearchall['t.'.$key] = $val['label'];
 	}
 }
@@ -134,13 +134,13 @@ $arrayfields = array();
 foreach ($object->fields as $key => $val) {
 	// If $val['visible']==0, then we never show the field
 	if (!empty($val['visible'])) {
-		$visible = (int) dol_eval($val['visible'], 1);
+		$visible = (int) dol_eval($val['visible'], 1, 1, '1');
 		$arrayfields['t.'.$key] = array(
 			'label'=>$val['label'],
 			'checked'=>(($visible < 0) ? 0 : 1),
-			'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1)),
+			'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1, 1, '1')),
 			'position'=>$val['position'],
-			'help'=>$val['help']
+			'help'=> isset($val['help']) ? $val['help'] : ''
 		);
 	}
 }
@@ -260,12 +260,19 @@ if ($search_user) {
 if ($search_label) {
 	$sql .= natural_search(array('s.label'), $search_label);
 }
-if (!empty($search_date_start_from) && !empty($search_date_start_to)) {
-	$sql .= " AND s.datesp BETWEEN '".$db->idate($search_date_start_from)."' AND '".$db->idate($search_date_start_to)."'";
+if (!empty($search_date_start_from)) {
+	$sql .= " AND s.datesp >= '".$db->idate($search_date_start_from)."'";
 }
-if (!empty($search_date_end_from) && !empty($search_date_end_to)) {
-	$sql .= " AND s.dateep BETWEEN '".$db->idate($search_date_end_from)."' AND '".$db->idate($search_date_end_to)."'";
+if (!empty($search_date_end_from)) {
+	$sql .= " AND s.dateep >= '".$db->idate($search_date_end_from)."'";
 }
+if (!empty($search_date_start_to)) {
+	$sql .= " AND s.datesp <= '".$db->idate($search_date_start_to)."'";
+}
+if (!empty($search_date_end_to)) {
+	$sql .= " AND s.dateep <= '".$db->idate($search_date_end_to)."'";
+}
+
 if ($search_amount) {
 	$sql .= natural_search("s.amount", $search_amount, 1);
 }
@@ -273,10 +280,10 @@ if ($search_account > 0) {
 	$sql .= " AND s.fk_account=".((int) $search_account);
 }
 if ($search_status != '' && $search_status >= 0) {
-	$sql .= " AND s.paye = ".$db->escape($search_status);
+	$sql .= " AND s.paye = ".((int) $search_status);
 }
 if ($search_type_id) {
-	$sql .= " AND s.fk_typepayment=".$search_type_id;
+	$sql .= " AND s.fk_typepayment=".((int) $search_type_id);
 }
 $sql .= " GROUP BY u.rowid, u.lastname, u.firstname, u.login, u.email, u.admin, u.salary, u.fk_soc, u.statut,";
 $sql .= " s.rowid, s.fk_account, s.paye, s.fk_user, s.amount, s.salary, s.label, s.datesp, s.dateep, s.fk_typepayment, s.fk_bank,";
@@ -367,7 +374,7 @@ $arrayofmassactions = array(
 	//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 	//'buildsepa'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("BuildSepa"),	// TODO
 );
-//if ($permissiontodelete) $arrayofmassactions['predelete'] = img_picto('', 'delete').$langs->trans("Delete");
+//if ($permissiontodelete) $arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete'))) {
 	$arrayofmassactions = array();
 }
@@ -532,6 +539,10 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 
 	$salstatic->id = $obj->rowid;
 	$salstatic->ref = $obj->rowid;
+	$salstatic->label = $obj->label;
+	$salstatic->paye = $obj->paye;
+	$salstatic->datesp = $db->jdate($obj->datesp);
+	$salstatic->dateep = $db->jdate($obj->dateep);
 
 	// Show here line of result
 	print '<tr class="oddeven">';

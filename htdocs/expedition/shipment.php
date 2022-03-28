@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2012-2015	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2018       Philippe Grand          <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -48,7 +48,7 @@ if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) {
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array('orders', "companies", "bills", 'propal', 'deliveries', 'stocks', "productbatch", 'incoterm', 'other'));
+$langs->loadLangs(array('orders', 'sendings', 'companies', 'bills', 'propal', 'deliveries', 'stocks', 'productbatch', 'incoterm', 'other'));
 
 $id     = GETPOST('id', 'int'); // id of order
 $ref    = GETPOST('ref', 'alpha');
@@ -112,7 +112,6 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'setdatedelivery' && $user->rights->commande->creer) {
-		//print "x ".$_POST['liv_month'].", ".$_POST['liv_day'].", ".$_POST['liv_year'];
 		$datedelivery = dol_mktime(GETPOST('liv_hour', 'int'), GETPOST('liv_min', 'int'), 0, GETPOST('liv_month', 'int'), GETPOST('liv_day', 'int'), GETPOST('liv_year', 'int'));
 
 		$object->fetch($id);
@@ -232,7 +231,9 @@ if (!empty($conf->projet->enabled)) {
 	$formproject = new FormProjets($db);
 }
 
-llxHeader('', $langs->trans('OrderCard'), '');
+$title = $langs->trans('Order')." - ".$langs->trans('Shipments');
+$help_url = 'EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes|DE:Modul_Kundenaufträge';
+llxHeader('', $title, $help_url);
 
 
 if ($id > 0 || !empty($ref)) {
@@ -258,7 +259,7 @@ if ($id > 0 || !empty($ref)) {
 
 		// Confirm validation
 		if ($action == 'cloture') {
-			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF']."?id=".$id, $langs->trans("CloseShipment"), $langs->trans("ConfirmCloseShipment"), "confirm_cloture");
+			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF']."?id=".urlencode($id), $langs->trans("CloseShipment"), $langs->trans("ConfirmCloseShipment"), "confirm_cloture");
 		}
 
 		// Call Hook formConfirm
@@ -291,7 +292,7 @@ if ($id > 0 || !empty($ref)) {
 			$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 			if ($user->rights->commande->creer) {
 				if ($action != 'classify') {
-					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
+					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
 				}
 				if ($action == 'classify') {
 					//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
@@ -308,9 +309,10 @@ if ($id > 0 || !empty($ref)) {
 				if (!empty($object->fk_project)) {
 					$proj = new Project($db);
 					$proj->fetch($object->fk_project);
-					$morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$object->fk_project.'" title="'.$langs->trans('ShowProject').'">';
-					$morehtmlref .= $proj->ref;
-					$morehtmlref .= '</a>';
+					$morehtmlref .= ' : '.$proj->getNomUrl(1);
+					if ($proj->title) {
+						$morehtmlref .= ' - '.$proj->title;
+					}
 				} else {
 					$morehtmlref .= '';
 				}
@@ -355,7 +357,7 @@ if ($id > 0 || !empty($ref)) {
 		print '<tr><td>'.$langs->trans('Date').'</td>';
 		print '<td colspan="2">';
 		print dol_print_date($object->date, 'day');
-		if ($object->hasDelay() && empty($object->delivery_date)) {
+		if ($object->hasDelay() && empty($object->delivery_date)) {	// If there is a delivery date planned, warning should be on this date
 			print ' '.img_picto($langs->trans("Late").' : '.$object->showDelay(), "warning");
 		}
 		print '</td>';
@@ -368,7 +370,7 @@ if ($id > 0 || !empty($ref)) {
 		print '</td>';
 
 		if ($action != 'editdate_livraison') {
-			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDeliveryDate'), 1).'</a></td>';
+			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetDeliveryDate'), 1).'</a></td>';
 		}
 		print '</tr></table>';
 		print '</td><td colspan="2">';
@@ -377,7 +379,7 @@ if ($id > 0 || !empty($ref)) {
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="setdatedelivery">';
 			print $form->selectDate($object->delivery_date ? $object->delivery_date : -1, 'liv_', 1, 1, '', "setdate_livraison", 1, 0);
-			print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+			print '<input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
 			print '</form>';
 		} else {
 			print dol_print_date($object->delivery_date, 'dayhour');
@@ -392,13 +394,30 @@ if ($id > 0 || !empty($ref)) {
 		//print '</td>';
 		print '</tr>';
 
+		// Delivery delay
+		print '<tr><td height="10">';
+		print '<table class="nobordernopadding" width="100%"><tr><td>';
+		print $langs->trans('AvailabilityPeriod');
+		print '</td>';
+		if ($action != 'editavailability') {
+			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editavailability&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetAvailability'), 1).'</a></td>';
+		}
+		print '</tr></table>';
+		print '</td><td colspan="3">';
+		if ($action == 'editavailability') {
+			$form->form_availability($_SERVER['PHP_SELF'].'?id='.$object->id, $object->availability_id, 'availability_id', 1);
+		} else {
+			$form->form_availability($_SERVER['PHP_SELF'].'?id='.$object->id, $object->availability_id, 'none', 1);
+		}
+		print '</td></tr>';
+
 		// Shipping Method
 		print '<tr><td>';
 		print '<table width="100%" class="nobordernopadding"><tr><td>';
 		print $langs->trans('SendingMethod');
 		print '</td>';
 		if ($action != 'editshippingmethod' && $user->rights->expedition->creer) {
-			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editshippingmethod&amp;id='.$object->id.'">'.img_edit($langs->trans('SetShippingMode'), 1).'</a></td>';
+			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editshippingmethod&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetShippingMode'), 1).'</a></td>';
 		}
 		print '</tr></table>';
 		print '</td><td colspan="2">';
@@ -419,7 +438,7 @@ if ($id > 0 || !empty($ref)) {
 			print $langs->trans('Warehouse');
 			print '</td>';
 			if ($action != 'editwarehouse' && $user->rights->commande->creer) {
-				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editwarehouse&amp;id='.$object->id.'">'.img_edit($langs->trans('SetWarehouse'), 1).'</a></td>';
+				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editwarehouse&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetWarehouse'), 1).'</a></td>';
 			}
 			print '</tr></table>';
 			print '</td><td colspan="2">';
@@ -432,6 +451,22 @@ if ($id > 0 || !empty($ref)) {
 			print '</tr>';
 		}
 
+		// Source reason (why we have an order)
+		print '<tr><td height="10">';
+		print '<table class="nobordernopadding" width="100%"><tr><td>';
+		print $langs->trans('Source');
+		print '</td>';
+		if ($action != 'editdemandreason') {
+			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editdemandreason&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetDemandReason'), 1).'</a></td>';
+		}
+		print '</tr></table>';
+		print '</td><td colspan="3">';
+		if ($action == 'editdemandreason') {
+			$form->formInputReason($_SERVER['PHP_SELF'].'?id='.$object->id, $object->demand_reason_id, 'demand_reason_id', 1);
+		} else {
+			$form->formInputReason($_SERVER['PHP_SELF'].'?id='.$object->id, $object->demand_reason_id, 'none');
+		}
+
 		// Terms of payment
 		/*
 		print '<tr><td height="10">';
@@ -439,7 +474,7 @@ if ($id > 0 || !empty($ref)) {
 		print $langs->trans('PaymentConditionsShort');
 		print '</td>';
 
-		if ($action != 'editconditions' && $object->statut == Expedition::STATUS_VALIDATED) print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;id='.$object->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
+		if ($action != 'editconditions' && $object->statut == Expedition::STATUS_VALIDATED) print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editconditions&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
 		print '</tr></table>';
 		print '</td><td colspan="2">';
 		if ($action == 'editconditions')
@@ -457,7 +492,7 @@ if ($id > 0 || !empty($ref)) {
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
 		print $langs->trans('PaymentMode');
 		print '</td>';
-		if ($action != 'editmode' && $object->statut == Expedition::STATUS_VALIDATED) print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;id='.$object->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
+		if ($action != 'editmode' && $object->statut == Expedition::STATUS_VALIDATED) print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmode&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
 		print '</tr></table>';
 		print '</td><td colspan="2">';
 		if ($action == 'editmode')
@@ -469,39 +504,6 @@ if ($id > 0 || !empty($ref)) {
 			$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,$object->mode_reglement_id,'none');
 		}
 		print '</td></tr>';*/
-
-		// Availability
-		print '<tr><td height="10">';
-		print '<table class="nobordernopadding" width="100%"><tr><td>';
-		print $langs->trans('AvailabilityPeriod');
-		print '</td>';
-		if ($action != 'editavailability') {
-			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editavailability&amp;id='.$object->id.'">'.img_edit($langs->trans('SetAvailability'), 1).'</a></td>';
-		}
-		print '</tr></table>';
-		print '</td><td colspan="3">';
-		if ($action == 'editavailability') {
-			$form->form_availability($_SERVER['PHP_SELF'].'?id='.$object->id, $object->availability_id, 'availability_id', 1);
-		} else {
-			$form->form_availability($_SERVER['PHP_SELF'].'?id='.$object->id, $object->availability_id, 'none', 1);
-		}
-		print '</td></tr>';
-
-		// Source
-		print '<tr><td height="10">';
-		print '<table class="nobordernopadding" width="100%"><tr><td>';
-		print $langs->trans('Source');
-		print '</td>';
-		if ($action != 'editdemandreason') {
-			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editdemandreason&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDemandReason'), 1).'</a></td>';
-		}
-		print '</tr></table>';
-		print '</td><td colspan="3">';
-		if ($action == 'editdemandreason') {
-			$form->formInputReason($_SERVER['PHP_SELF'].'?id='.$object->id, $object->demand_reason_id, 'demand_reason_id', 1);
-		} else {
-			$form->formInputReason($_SERVER['PHP_SELF'].'?id='.$object->id, $object->demand_reason_id, 'none');
-		}
 
 		$tmparray = $object->getTotalWeightVolume();
 		$totalWeight = $tmparray['weight'];
@@ -526,7 +528,7 @@ if ($id > 0 || !empty($ref)) {
 			print $langs->trans('IncotermLabel');
 			print '<td><td class="right">';
 			if ($user->rights->commande->creer) {
-				print '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'/expedition/shipment.php?id='.$object->id.'&action=editincoterm">'.img_edit().'</a>';
+				print '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'/expedition/shipment.php?id='.$object->id.'&action=editincoterm&token='.newToken().'">'.img_edit().'</a>';
 			} else {
 				print '&nbsp;';
 			}
@@ -552,7 +554,6 @@ if ($id > 0 || !empty($ref)) {
 
 		print '</div>';
 		print '<div class="fichehalfright">';
-		print '<div class="ficheaddleft">';
 		print '<div class="underbanner clearboth"></div>';
 
 		print '<table class="border centpercent tableforfield">';
@@ -601,10 +602,8 @@ if ($id > 0 || !empty($ref)) {
 
 		print '</div>';
 		print '</div>';
-		print '</div>';
 
 		print '<div class="clearboth"></div><br>';
-
 
 
 		/**
@@ -615,16 +614,19 @@ if ($id > 0 || !empty($ref)) {
 
 		$sql = "SELECT cd.rowid, cd.fk_product, cd.product_type as type, cd.label, cd.description,";
 		$sql .= " cd.price, cd.tva_tx, cd.subprice,";
-		$sql .= " cd.qty,";
+		$sql .= " cd.qty, cd.fk_unit,";
 		$sql .= ' cd.date_start,';
 		$sql .= ' cd.date_end,';
 		$sql .= ' cd.special_code,';
 		$sql .= ' p.rowid as prodid, p.label as product_label, p.entity, p.ref, p.fk_product_type as product_type, p.description as product_desc,';
 		$sql .= ' p.weight, p.weight_units, p.length, p.length_units, p.width, p.width_units, p.height, p.height_units,';
 		$sql .= ' p.surface, p.surface_units, p.volume, p.volume_units';
+		$sql .= ', p.tobatch, p.tosell, p.tobuy, p.barcode';
+		$sql .= ', u.short_label as unit_order';
 		$sql .= " FROM ".MAIN_DB_PREFIX."commandedet as cd";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON cd.fk_product = p.rowid";
-		$sql .= " WHERE cd.fk_commande = ".$object->id;
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_units as u ON cd.fk_unit = u.rowid";
+		$sql .= " WHERE cd.fk_commande = ".((int) $object->id);
 		$sql .= " ORDER BY cd.rang, cd.rowid";
 
 		//print $sql;
@@ -685,8 +687,8 @@ if ($id > 0 || !empty($ref)) {
 
 							$outputlangs = $langs;
 							$newlang = '';
-							if (empty($newlang) && !empty($_REQUEST['lang_id'])) {
-								$newlang = $_REQUEST['lang_id'];
+							if (empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+								$newlang = GETPOST('lang_id', 'aZ09');
 							}
 							if (empty($newlang)) {
 								$newlang = $object->thirdparty->default_lang;
@@ -709,6 +711,10 @@ if ($id > 0 || !empty($ref)) {
 						$product_static->id = $objp->fk_product;
 						$product_static->ref = $objp->ref;
 						$product_static->entity = $objp->entity;
+						$product_static->status = $objp->tosell;
+						$product_static->status_buy = $objp->tobuy;
+						$product_static->status_batch = $objp->tobatch;
+						$product_static->barcode = $objp->barcode;
 
 						$product_static->weight = $objp->weight;
 						$product_static->weight_units = $objp->weight_units;
@@ -759,7 +765,7 @@ if ($id > 0 || !empty($ref)) {
 					}
 
 					// Qty ordered
-					print '<td class="center">'.$objp->qty.'</td>';
+					print '<td class="center">'.$objp->qty.($objp->unit_order ? ' '.$objp->unit_order : '').'</td>';
 
 					// Qty already shipped
 					$qtyProdCom = $objp->qty;
@@ -767,7 +773,7 @@ if ($id > 0 || !empty($ref)) {
 					// Nb of sending products for this line of order
 					$qtyAlreadyShipped = (!empty($object->expeditions[$objp->rowid]) ? $object->expeditions[$objp->rowid] : 0);
 					print $qtyAlreadyShipped;
-					print '</td>';
+					print ($objp->unit_order ? ' '.$objp->unit_order : '').'</td>';
 
 					// Qty remains to ship
 					print '<td class="center">';
@@ -778,7 +784,7 @@ if ($id > 0 || !empty($ref)) {
 					} else {
 						print '0 ('.$langs->trans("Service").')';
 					}
-					print '</td>';
+					print ($objp->unit_order ? ' '.$objp->unit_order : '').'</td>';
 
 					if ($objp->fk_product > 0) {
 						$product = new Product($db);

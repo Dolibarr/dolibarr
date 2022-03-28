@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2021 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -40,17 +40,14 @@ $fieldtype = (!empty($ref) ? 'ref' : 'rowid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('productstatscontract'));
-
-$mesg = '';
+$hookmanager->initHooks(array('productstatsmo'));
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -64,6 +61,8 @@ if (!$sortorder) {
 if (!$sortfield) {
 	$sortfield = "c.date_valid";
 }
+
+$result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 
 
 /*
@@ -128,17 +127,17 @@ if ($id > 0 || !empty($ref)) {
 		$now = dol_now();
 
 		$sql = "SELECT";
-		$sql .= ' sum('.$db->ifsql("cd.role='toconsume'", "cd.qty", 0).') as nb_toconsume,';
-		$sql .= ' sum('.$db->ifsql("cd.role='consumed'", "cd.qty", 0).') as nb_consumed,';
-		$sql .= ' sum('.$db->ifsql("cd.role='toproduce'", "cd.qty", 0).') as nb_toproduce,';
-		$sql .= ' sum('.$db->ifsql("cd.role='produced'", "cd.qty", 0).') as nb_produced,';
+		$sql .= " sum(".$db->ifsql("cd.role='toconsume'", "cd.qty", 0).') as nb_toconsume,';
+		$sql .= " sum(".$db->ifsql("cd.role='consumed'", "cd.qty", 0).') as nb_consumed,';
+		$sql .= " sum(".$db->ifsql("cd.role='toproduce'", "cd.qty", 0).') as nb_toproduce,';
+		$sql .= " sum(".$db->ifsql("cd.role='produced'", "cd.qty", 0).') as nb_produced,';
 		$sql .= " c.rowid as rowid, c.ref, c.date_valid, c.status";
 		//$sql .= " s.nom as name, s.rowid as socid, s.code_client";
 		$sql .= " FROM ".MAIN_DB_PREFIX."mrp_mo as c";
 		$sql .= ", ".MAIN_DB_PREFIX."mrp_production as cd";
 		$sql .= " WHERE c.rowid = cd.fk_mo";
 		$sql .= " AND c.entity IN (".getEntity('mo').")";
-		$sql .= " AND cd.fk_product =".$product->id;
+		$sql .= " AND cd.fk_product = ".((int) $product->id);
 		if ($socid) {
 			$sql .= " AND s.rowid = ".((int) $socid);
 		}
@@ -184,7 +183,7 @@ if ($id > 0 || !empty($ref)) {
 				print '<input type="hidden" name="sortorder" value="'.$sortorder.'"/>';
 			}
 
-			print_barre_liste($langs->trans("Mos"), $page, $_SERVER["PHP_SELF"], $option, $sortfield, $sortorder, '', $num, $totalofrecords, '', 0, '', '', $limit, 0, 0, 1);
+			print_barre_liste($langs->trans("MOs"), $page, $_SERVER["PHP_SELF"], $option, $sortfield, $sortorder, '', $num, $totalofrecords, '', 0, '', '', $limit, 0, 0, 1);
 
 			if (!empty($page)) {
 				$option .= '&page='.urlencode($page);
@@ -203,6 +202,7 @@ if ($id > 0 || !empty($ref)) {
 			print_liste_field_titre("QtyAlreadyConsumed", $_SERVER["PHP_SELF"], "", "", "&amp;id=".$product->id, '', $sortfield, $sortorder, 'center ');
 			print_liste_field_titre("QtyToProduce", $_SERVER["PHP_SELF"], "", "", "&amp;id=".$product->id, '', $sortfield, $sortorder, 'center ');
 			print_liste_field_titre("QtyAlreadyProduced", $_SERVER["PHP_SELF"], "", "", "&amp;id=".$product->id, '', $sortfield, $sortorder, 'center ');
+			print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "b.status", "", "&amp;id=".$product->id, '', $sortfield, $sortorder, 'right ');
 			print "</tr>\n";
 
 			$motmp = new Mo($db);
@@ -213,6 +213,7 @@ if ($id > 0 || !empty($ref)) {
 
 					$motmp->id = $objp->rowid;
 					$motmp->ref = $objp->ref;
+					$motmp->status = $objp->status;
 
 					print '<tr class="oddeven">';
 					print '<td>';
@@ -227,6 +228,7 @@ if ($id > 0 || !empty($ref)) {
 					print '<td class="center">'.($objp->nb_toproduce > 0 ? $objp->nb_toproduce : '').'</td>';
 					print '<td class="center">'.($objp->nb_produced > 0 ? $objp->nb_produced : '').'</td>';
 					//$mostatic->LibStatut($objp->statut,5).'</td>';
+					print '<td class="right">'.$motmp->getLibStatut(2).'</td>';
 					print "</tr>\n";
 					$i++;
 				}

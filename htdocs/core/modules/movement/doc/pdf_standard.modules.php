@@ -35,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 /**
  *	Class to build documents using ODF templates generator
  */
-class pdf_stdandard extends ModelePDFMovement
+class pdf_standard extends ModelePDFMovement
 {
 	/**
 	 * @var DoliDb Database handler
@@ -137,12 +137,12 @@ class pdf_stdandard extends ModelePDFMovement
 		$this->marge_haute = isset($conf->global->MAIN_PDF_MARGIN_TOP) ? $conf->global->MAIN_PDF_MARGIN_TOP : 10;
 		$this->marge_basse = isset($conf->global->MAIN_PDF_MARGIN_BOTTOM) ? $conf->global->MAIN_PDF_MARGIN_BOTTOM : 10;
 
-		$this->option_logo = 1; // Affiche logo
-		$this->option_codestockservice = 0; // Affiche code stock-service
-		$this->option_multilang = 1; // Dispo en plusieurs langues
+		$this->option_logo = 1; // Display logo
+		$this->option_codestockservice = 0; // Display stock-service code
+		$this->option_multilang = 1; // Available in several languages
 		$this->option_freetext = 0; // Support add of a personalised text
 
-		// Recupere emetteur
+		// Get source company
 		$this->emetteur = $mysoc;
 		if (!$this->emetteur->country_code) {
 			$this->emetteur->country_code = substr($langs->defaultlang, -2); // By default if not defined
@@ -238,8 +238,8 @@ class pdf_stdandard extends ModelePDFMovement
 
 		$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 		$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-		$sortfield = GETPOST("sortfield", 'alpha');
-		$sortorder = GETPOST("sortorder", 'alpha');
+		$sortfield = GETPOST('sortfield', 'aZ09comma');
+		$sortorder = GETPOST('sortorder', 'aZ09comma');
 		if (empty($page) || $page == -1) {
 			$page = 0;
 		}     // If $page is not defined, or '' or -1
@@ -278,7 +278,7 @@ class pdf_stdandard extends ModelePDFMovement
 		// Add fields from extrafields
 		if (!empty($extrafields->attributes[$element]['label'])) {
 			foreach ($extrafields->attributes[$element]['label'] as $key => $val) {
-				$sql .= ($extrafields->attributes[$element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+				$sql .= ($extrafields->attributes[$element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
 			}
 		}
 		// Add fields from hooks
@@ -295,7 +295,7 @@ class pdf_stdandard extends ModelePDFMovement
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_lot as pl ON m.batch = pl.batch AND m.fk_product = pl.fk_product";
 		$sql .= " WHERE m.fk_product = p.rowid";
 		if ($msid > 0) {
-			$sql .= " AND m.rowid = ".$msid;
+			$sql .= " AND m.rowid = ".((int) $msid);
 		}
 		$sql .= " AND m.fk_entrepot = e.rowid";
 		$sql .= " AND e.entity IN (".getEntity('stock').")";
@@ -303,13 +303,13 @@ class pdf_stdandard extends ModelePDFMovement
 			$sql .= " AND p.fk_product_type = 0";
 		}
 		if ($id > 0) {
-			$sql .= " AND e.rowid ='".$id."'";
+			$sql .= " AND e.rowid = ".((int) $id);
 		}
 		if ($month > 0) {
 			if ($year > 0) {
 				$sql .= " AND m.datem BETWEEN '".$this->db->idate(dol_get_first_day($year, $month, false))."' AND '".$this->db->idate(dol_get_last_day($year, $month, false))."'";
 			} else {
-				$sql .= " AND date_format(m.datem, '%m') = '$month'";
+				$sql .= " AND date_format(m.datem, '%m') = '".((int) $month)."'";
 			}
 		} elseif ($year > 0) {
 			$sql .= " AND m.datem BETWEEN '".$this->db->idate(dol_get_first_day($year, 1, false))."' AND '".$this->db->idate(dol_get_last_day($year, 12, false))."'";
@@ -499,14 +499,10 @@ class pdf_stdandard extends ModelePDFMovement
 
 				$tab_top = 42;
 				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD) ? 42 : 10);
-				$tab_height = 130;
-				$tab_height_newpage = 150;
 
-				/* ************************************************************************** */
-				/*                                                                            */
-				/* Affichage de la liste des produits du MouvementStock                           */
-				/*                                                                            */
-				/* ************************************************************************** */
+				$tab_height = $this->page_hauteur - $tab_top - $heightforfooter - $heightforfreetext;
+
+				// Show list of product of the MouvementStock
 
 				$nexY += 5;
 				$nexY = $pdf->GetY();
@@ -529,8 +525,8 @@ class pdf_stdandard extends ModelePDFMovement
 						if (!empty($conf->global->MAIN_MULTILANGS)) { // si l'option est active
 							$sql = "SELECT label";
 							$sql .= " FROM ".MAIN_DB_PREFIX."product_lang";
-							$sql .= " WHERE fk_product=".$objp->rowid;
-							$sql .= " AND lang='".$this->db->escape($langs->getDefaultLang())."'";
+							$sql .= " WHERE fk_product = ".((int) $objp->rowid);
+							$sql .= " AND lang = '".$this->db->escape($langs->getDefaultLang())."'";
 							$sql .= " LIMIT 1";
 
 							$result = $this->db->query($sql);
@@ -1158,7 +1154,7 @@ class pdf_stdandard extends ModelePDFMovement
 			$pdf->SetTextColor(0,0,0);
 			$pdf->SetFont('','', $default_font_size - 2);
 			$pdf->SetXY($posx,$posy-5);
-			$pdf->MultiCell(66,5, $outputlangs->transnoentities("BillFrom").":", 0, 'L');
+			$pdf->MultiCell(80, 5, $outputlangs->transnoentities("BillFrom"), 0, 'L');
 			$pdf->SetXY($posx,$posy);
 			$pdf->SetFillColor(230,230,230);
 			$pdf->MultiCell(82, $hautcadre, "", 0, 'R', 1);

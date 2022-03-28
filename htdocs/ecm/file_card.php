@@ -36,10 +36,6 @@ $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 
-if (!$user->rights->ecm->setup) {
-	accessforbidden();
-}
-
 // Get parameters
 $socid = GETPOST("socid", "int");
 
@@ -50,8 +46,8 @@ if ($user->socid > 0) {
 }
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -71,7 +67,7 @@ if (!$section) {
 	dol_print_error('', 'Error, section parameter missing');
 	exit;
 }
-$urlfile = (string) dol_sanitizePathName(GETPOST("urlfile"));
+$urlfile = (string) dol_sanitizePathName(GETPOST("urlfile"), '_', 0);
 if (!$urlfile) {
 	dol_print_error('', "ErrorParamNotDefined");
 	exit;
@@ -105,6 +101,14 @@ if ($result < 0) {
 	exit;
 }
 
+// Permissions
+$permtoread = $user->rights->ecm->read;
+$permtoadd = $user->rights->ecm->setup;
+$permtoupload = $user->rights->ecm->upload;
+
+if (!$permtoread) {
+	accessforbidden();
+}
 
 
 /*
@@ -123,11 +127,11 @@ if ($cancel) {
 }
 
 // Rename file
-if ($action == 'update') {
+if ($action == 'update' && $permtoadd) {
 	$error = 0;
 
 	$oldlabel = GETPOST('urlfile', 'alpha');
-	$newlabel = dol_sanitizeFileName(GETPOST('label', 'alpha'));
+	$newlabel = dol_sanitizeFileName(GETPOST('label', 'alpha'), '_', 0);
 	$shareenabled = GETPOST('shareenabled', 'alpha');
 
 	//$db->begin();
@@ -201,7 +205,7 @@ if ($action == 'update') {
 			$object->fullpath_orig = '';
 			$object->gen_or_uploaded = 'unknown';
 			$object->description = ''; // indexed content
-			$object->keyword = ''; // keyword content
+			$object->keywords = ''; // keyword content
 			$result = $object->create($user);
 			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'warnings');
@@ -401,18 +405,14 @@ print ajax_autoselect('downloadlink');
 print dol_get_fiche_end();
 
 if ($action == 'edit') {
-	print '<div class="center">';
-	print '<input type="submit" class="button button-save" name="submit" value="'.$langs->trans("Save").'">';
-	print ' &nbsp; &nbsp; ';
-	print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
-	print '</div>';
+	print $form->buttonsSaveCancel();
 
 	print '</form>';
 }
 
 
-// Confirmation de la suppression d'une ligne categorie
-if ($action == 'delete_file') {
+// Confirm deletion of a file
+if ($action == 'deletefile') {
 	print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.urlencode($section), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile', $urlfile), 'confirm_deletefile', '', 1, 1);
 }
 
@@ -426,7 +426,7 @@ if ($action != 'edit') {
 	/*
 	if ($user->rights->ecm->setup)
 	{
-		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=delete_file&token='.newToken().'&section='.$section.'&urlfile='.urlencode($urlfile).'">'.$langs->trans('Delete').'</a>';
+		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=deletefile&token='.newToken().'&section='.$section.'&urlfile='.urlencode($urlfile).'">'.$langs->trans('Delete').'</a>';
 	}
 	else
 	{

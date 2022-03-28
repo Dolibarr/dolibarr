@@ -47,8 +47,8 @@ $confirm = GETPOST('confirm', 'alpha');
 
 // Get parameters
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -77,6 +77,8 @@ if ($user->socid) {
 	$socid = $user->socid;
 }
 $result = restrictedArea($user, 'tax', $object->id, 'chargesociales', 'charges');
+
+$permissiontoadd = $user->rights->tax->charges->creer;	// Used by the include of actions_dellink.inc.php
 
 
 /*
@@ -125,9 +127,10 @@ if ($object->id) {
 		if (!empty($object->fk_project)) {
 			$proj = new Project($db);
 			$proj->fetch($object->fk_project);
-			$morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$object->fk_project.'" title="'.$langs->trans('ShowProject').'">';
-			$morehtmlref .= $proj->ref;
-			$morehtmlref .= '</a>';
+			$morehtmlref .= ' : '.$proj->getNomUrl(1);
+			if ($proj->title) {
+				$morehtmlref .= ' - '.$proj->title;
+			}
 		} else {
 			$morehtmlref .= '';
 		}
@@ -164,7 +167,7 @@ if ($object->id) {
 	print dol_get_fiche_end();
 
 	$modulepart = 'tax';
-	$permission = $user->rights->tax->charges->creer;
+	$permissiontoadd = $user->rights->tax->charges->creer;
 	$permtoedit = $user->rights->tax->charges->creer;
 	$param = '&id='.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';

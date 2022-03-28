@@ -5,8 +5,8 @@
  * Copyright (C) 2013		Cédric Salvador			<csalvador@gpcsolutions.fr>
  * Copyright (C) 2015		Jean-François Ferry		<jfefe@aternatik.fr>
  * Copyright (C) 2015		Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2017		Alexandre Spangaro		<aspangaro@open-dsi.fr>
- * Copyright (C) 2018		Ferran Marcet			<fmarcet@2byte.es>
+ * Copyright (C) 2017-2021	Alexandre Spangaro		<aspangaro@open-dsi.fr>
+ * Copyright (C) 2018-2021	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2018		Charlene Benke			<charlie@patas-monkey.com>
  * Copyright (C) 2020		Tobias Sekan			<tobias.sekan@startmail.com>
  *
@@ -31,13 +31,6 @@
  */
 
 require '../../main.inc.php';
-
-// Security check
-if ($user->socid) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'facture', $facid, '');
-
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
@@ -56,20 +49,30 @@ $contextpage		= GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'p
 $facid				= GETPOST('facid', 'int');
 $socid				= GETPOST('socid', 'int');
 $userid = GETPOST('userid', 'int');
-$day = GETPOST('day', 'int');
-$month				= GETPOST('month', 'int');
-$year = GETPOST('year', 'int');
+
+// Security check
+if ($user->socid) $socid = $user->socid;
+$result = restrictedArea($user, 'facture', $facid, '');
 
 $search_ref = GETPOST("search_ref", "alpha");
-$search_company		= GETPOST("search_company", 'alpha');
-$search_paymenttype	= GETPOST("search_paymenttype");
-$search_account		= GETPOST("search_account", "int");
-$search_payment_num	= GETPOST('search_payment_num', 'alpha');
+$search_date_startday = GETPOST('search_date_startday', 'int');
+$search_date_startmonth = GETPOST('search_date_startmonth', 'int');
+$search_date_startyear = GETPOST('search_date_startyear', 'int');
+$search_date_endday = GETPOST('search_date_endday', 'int');
+$search_date_endmonth = GETPOST('search_date_endmonth', 'int');
+$search_date_endyear = GETPOST('search_date_endyear', 'int');
+$search_date_start = dol_mktime(0, 0, 0, $search_date_startmonth, $search_date_startday, $search_date_startyear);	// Use tzserver
+$search_date_end = dol_mktime(23, 59, 59, $search_date_endmonth, $search_date_endday, $search_date_endyear);
+$search_company = GETPOST("search_company", 'alpha');
+$search_paymenttype = GETPOST("search_paymenttype");
+$search_account = GETPOST("search_account", "int");
+$search_payment_num = GETPOST('search_payment_num', 'alpha');
 $search_amount = GETPOST("search_amount", 'alpha'); // alpha because we must be able to search on "< x"
+$search_status = GETPOST('search_status', 'intcomma');
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield			= GETPOST("sortfield", 'alpha');
-$sortorder			= GETPOST("sortorder", 'alpha');
+$sortfield			= GETPOST('sortfield', 'aZ09comma');
+$sortorder			= GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 
 if (empty($page) || $page == -1) {
@@ -130,14 +133,20 @@ if (empty($reshook)) {
 	// All tests are required to be compatible with all browsers
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
 		$search_ref = '';
+		$search_date_startday = '';
+		$search_date_startmonth = '';
+		$search_date_startyear = '';
+		$search_date_endday = '';
+		$search_date_endmonth = '';
+		$search_date_endyear = '';
+		$search_date_start = '';
+		$search_date_end = '';
 		$search_account = '';
 		$search_amount = '';
 		$search_paymenttype = '';
 		$search_payment_num = '';
 		$search_company = '';
-		$day = '';
-		$year = '';
-		$month = '';
+		$search_status = '';
 		$option = '';
 		$toselect = '';
 		$search_array_options = array();
@@ -192,12 +201,12 @@ if (GETPOST("orphelins", "alpha")) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON p.rowid = pf.fk_paiement";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON pf.fk_facture = f.rowid";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON f.fk_soc = s.rowid";
-	if (!$user->rights->societe->client->voir && !$socid) {
+	if (empty($user->rights->societe->client->voir) && !$socid) {
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 	}
 	$sql .= " WHERE p.entity IN (".getEntity('invoice').")";
-	if (!$user->rights->societe->client->voir && !$socid) {
-		$sql .= " AND sc.fk_user = ".$user->id;
+	if (empty($user->rights->societe->client->voir) && !$socid) {
+		$sql .= " AND sc.fk_user = ".((int) $user->id);
 	}
 	if ($socid > 0) {
 		$sql .= " AND f.fk_soc = ".((int) $socid);
@@ -211,9 +220,14 @@ if (GETPOST("orphelins", "alpha")) {
 	}
 
 	// Search criteria
-	$sql .= dolSqlDateFilter("p.datep", $day, $month, $year);
 	if ($search_ref) {
 		$sql .= natural_search('p.ref', $search_ref);
+	}
+	if ($search_date_start) {
+		$sql .= " AND p.datep >= '" . $db->idate($search_date_start) . "'";
+	}
+	if ($search_date_end) {
+		$sql .= " AND p.datep <= '" . $db->idate($search_date_end) . "'";
 	}
 	if ($search_account > 0) {
 		$sql .= " AND b.fk_account=".((int) $search_account);
@@ -273,11 +287,46 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 if ($limit > 0 && $limit != $conf->liste_limit) {
 	$param .= '&limit='.urlencode($limit);
 }
-$param .= (GETPOST("orphelins") ? "&orphelins=1" : '');
-$param .= ($search_ref ? "&search_ref=".urlencode($search_ref) : '');
-$param .= ($search_company ? "&search_company=".urlencode($search_company) : '');
-$param .= ($search_amount ? "&search_amount=".urlencode($search_amount) : '');
-$param .= ($search_payment_num ? "&search_payment_num=".urlencode($search_payment_num) : '');
+
+if (GETPOST("orphelins")) {
+	$param .= '&orphelins=1';
+}
+if ($search_ref) {
+	$param .= '&search_ref='.urlencode($search_ref);
+}
+if ($search_date_startday) {
+	$param .= '&search_date_startday='.urlencode($search_date_startday);
+}
+if ($search_date_startmonth) {
+	$param .= '&search_date_startmonth='.urlencode($search_date_startmonth);
+}
+if ($search_date_startyear) {
+	$param .= '&search_date_startyear='.urlencode($search_date_startyear);
+}
+if ($search_date_endday) {
+	$param .= '&search_date_endday='.urlencode($search_date_endday);
+}
+if ($search_date_endmonth) {
+	$param .= '&search_date_endmonth='.urlencode($search_date_endmonth);
+}
+if ($search_date_endyear) {
+	$param .= '&search_date_endyear='.urlencode($search_date_endyear);
+}
+if ($search_company) {
+	$param .= '&search_company='.urlencode($search_company);
+}
+if ($search_amount != '') {
+	$param .= '&search_amount='.urlencode($search_amount);
+}
+if ($search_paymenttype) {
+	$param .= '&search_paymenttype='.urlencode($search_paymenttype);
+}
+if ($search_account) {
+	$param .= '&search_account='.urlencode($search_account);
+}
+if ($search_payment_num) {
+	$param .= '&search_payment_num='.urlencode($search_payment_num);
+}
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
 }
@@ -291,7 +340,6 @@ print '<input type="hidden" name="action" value="list">';
 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-print '<input type="hidden" name="search_status" value="'.$search_status.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 print_barre_liste($langs->trans("ReceivedCustomersPayments"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'bill', 0, '', '', $limit, 0, 0, 1);
@@ -305,10 +353,12 @@ if ($search_all) {
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
+$massactionbutton = '';
 if ($massactionbutton) {
 	$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
 }
 
+$moreforfilter = '';
 print '<div class="div-table-responsive">';
 print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : '').'">';
 
@@ -331,11 +381,12 @@ if (!empty($arrayfields['p.ref']['checked'])) {
 // Filter: Date
 if (!empty($arrayfields['p.datep']['checked'])) {
 	print '<td class="liste_titre center">';
-	if (!empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) {
-		print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="day" value="'.dol_escape_htmltag($day).'">';
-	}
-	print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="month" value="'.dol_escape_htmltag($month).'">';
-	$formother->select_year($year ? $year : -1, 'year', 1, 20, 5);
+	print '<div class="nowrap">';
+	print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+	print '</div>';
+	print '<div class="nowrap">';
+	print $form->selectDate($search_date_end ? $search_date_end : -1, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+	print '</div>';
 	print '</td>';
 }
 
@@ -476,10 +527,7 @@ while ($i < min($num, $limit)) {
 
 	// Date
 	if (!empty($arrayfields['p.datep']['checked'])) {
-		$dateformatforpayment = 'day';
-		if (!empty($conf->global->INVOICE_USE_HOURS_FOR_PAYMENT)) {
-			$dateformatforpayment = 'dayhour';
-		}
+		$dateformatforpayment = 'dayhour';
 		print '<td class="center">'.dol_print_date($db->jdate($objp->datep), $dateformatforpayment).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;

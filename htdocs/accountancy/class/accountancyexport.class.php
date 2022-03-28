@@ -5,7 +5,7 @@
  * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2016       Pierre-Henry Favre  <phf@atm-consulting.fr>
- * Copyright (C) 2016-2020  Alexandre Spangaro  <aspangaro@open-dsi.fr>
+ * Copyright (C) 2016-2021  Alexandre Spangaro  <aspangaro@open-dsi.fr>
  * Copyright (C) 2013-2017  Olivier Geffroy     <jeff@jeffinfo.com>
  * Copyright (C) 2017       Elarifr. Ari Elbaz  <github@accedinfo.com>
  * Copyright (C) 2017-2019  Frédéric France     <frederic.france@netlogic.fr>
@@ -59,9 +59,15 @@ class AccountancyExport
 	public static $EXPORT_TYPE_LDCOMPTA10 = 120;
 	public static $EXPORT_TYPE_GESTIMUMV3 = 130;
 	public static $EXPORT_TYPE_GESTIMUMV5 = 135;
+	public static $EXPORT_TYPE_ISUITEEXPERT = 200;
+	// Generic FEC after that
 	public static $EXPORT_TYPE_FEC = 1000;
 	public static $EXPORT_TYPE_FEC2 = 1010;
 
+	/**
+	 * @var DoliDB	Database handler
+	 */
+	public $db;
 
 	/**
 	 * @var string[] Error codes (or messages)
@@ -85,11 +91,11 @@ class AccountancyExport
 	 *
 	 * @param DoliDb $db Database handler
 	 */
-	public function __construct(DoliDB &$db)
+	public function __construct(DoliDB $db)
 	{
 		global $conf;
 
-		$this->db = &$db;
+		$this->db = $db;
 		$this->separator = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
 		$this->end_line = empty($conf->global->ACCOUNTING_EXPORT_ENDLINE) ? "\n" : ($conf->global->ACCOUNTING_EXPORT_ENDLINE == 1 ? "\n" : "\r\n");
 	}
@@ -119,10 +125,11 @@ class AccountancyExport
 			self::$EXPORT_TYPE_CHARLEMAGNE => $langs->trans('Modelcsv_charlemagne'),
 			self::$EXPORT_TYPE_LDCOMPTA => $langs->trans('Modelcsv_LDCompta'),
 			self::$EXPORT_TYPE_LDCOMPTA10 => $langs->trans('Modelcsv_LDCompta10'),
-			self::$EXPORT_TYPE_GESTIMUMV3 => $langs->trans('Modelcsv_Gestinum_v3'),
-			self::$EXPORT_TYPE_GESTIMUMV5 => $langs->trans('Modelcsv_Gestinum_v5'),
+			self::$EXPORT_TYPE_GESTIMUMV3 => $langs->trans('Modelcsv_Gestinumv3'),
+			self::$EXPORT_TYPE_GESTIMUMV5 => $langs->trans('Modelcsv_Gestinumv5'),
 			self::$EXPORT_TYPE_FEC => $langs->trans('Modelcsv_FEC'),
 			self::$EXPORT_TYPE_FEC2 => $langs->trans('Modelcsv_FEC2'),
+			self::$EXPORT_TYPE_ISUITEEXPERT => 'Export iSuite Expert',
 		);
 
 		ksort($listofexporttypes, SORT_NUMERIC);
@@ -158,6 +165,7 @@ class AccountancyExport
 			self::$EXPORT_TYPE_GESTIMUMV5 => 'gestimumv5',
 			self::$EXPORT_TYPE_FEC => 'fec',
 			self::$EXPORT_TYPE_FEC2 => 'fec2',
+			self::$EXPORT_TYPE_ISUITEEXPERT => 'isuiteexpert',
 		);
 
 		return $formatcode[$type];
@@ -242,6 +250,10 @@ class AccountancyExport
 				self::$EXPORT_TYPE_FEC2 => array(
 					'label' => $langs->trans('Modelcsv_FEC2'),
 					'ACCOUNTING_EXPORT_FORMAT' => 'txt',
+				),
+				self::$EXPORT_TYPE_ISUITEEXPERT => array(
+					'label' => 'iSuite Expert',
+					'ACCOUNTING_EXPORT_FORMAT' => 'csv',
 				),
 			),
 			'cr'=> array(
@@ -333,6 +345,9 @@ class AccountancyExport
 				break;
 			case self::$EXPORT_TYPE_FEC2:
 				$this->exportFEC2($TData);
+				break;
+			case self::$EXPORT_TYPE_ISUITEEXPERT :
+				$this->exportiSuiteExpert($TData);
 				break;
 			default:
 				$this->errors[] = $langs->trans('accountancy_error_modelnotfound');
@@ -466,38 +481,47 @@ class AccountancyExport
 	}
 
 	/**
-	 * Export format : CIEL
+	 * Export format : CIEL (Format XIMPORT)
+	 * Format since 2003 compatible CIEL version > 2002 / Sage50
+	 * Last review for this format : 2021-09-13 Alexandre Spangaro (aspangaro@open-dsi.fr)
+	 *
+	 * Help : https://sage50c.online-help.sage.fr/aide-technique/
+	 * In sage software | Use menu : "Exchange" > "Importing entries..."
+	 *
+	 * If you want to force filename to "XIMPORT.TXT" for automatically import file present in a directory :
+	 * use constant ACCOUNTING_EXPORT_XIMPORT_FORCE_FILENAME
 	 *
 	 * @param array $TData data
 	 * @return void
 	 */
 	public function exportCiel(&$TData)
 	{
-		global $conf;
-
 		$end_line = "\r\n";
 
 		$i = 1;
-		$date_ecriture = dol_print_date(dol_now(), $conf->global->ACCOUNTING_EXPORT_DATE); // format must be yyyymmdd
+
 		foreach ($TData as $data) {
-			$code_compta = $data->numero_compte;
+			$code_compta = length_accountg($data->numero_compte);
 			if (!empty($data->subledger_account)) {
-				$code_compta = $data->subledger_account;
+				$code_compta = length_accounta($data->subledger_account);
 			}
 
+			$date_document = dol_print_date($data->doc_date, '%Y%m%d');
+			$date_echeance = dol_print_date($data->date_lim_reglement, '%Y%m%d');
+
 			$Tab = array();
-			$Tab['num_ecriture'] = str_pad($i, 5);
-			$Tab['code_journal'] = str_pad($data->code_journal, 2);
-			$Tab['date_ecriture'] = $date_ecriture;
-			$Tab['date_ope'] = dol_print_date($data->doc_date, $conf->global->ACCOUNTING_EXPORT_DATE);
-			$Tab['num_piece'] = str_pad(self::trunc($data->piece_num, 12), 12);
+			$Tab['num_ecriture'] = str_pad($data->piece_num, 5);
+			$Tab['code_journal'] = str_pad(self::trunc($data->code_journal, 2), 2);
+			$Tab['date_ecriture'] = str_pad($date_document, 8, ' ', STR_PAD_LEFT);
+			$Tab['date_echeance'] = str_pad($date_echeance, 8, ' ', STR_PAD_LEFT);
+			$Tab['num_piece'] = str_pad(self::trunc($data->doc_ref, 12), 12);
 			$Tab['num_compte'] = str_pad(self::trunc($code_compta, 11), 11);
 			$Tab['libelle_ecriture'] = str_pad(self::trunc(dol_string_unaccent($data->doc_ref).dol_string_unaccent($data->label_operation), 25), 25);
-			$Tab['montant'] = str_pad(abs($data->debit - $data->credit), 13, ' ', STR_PAD_LEFT);
+			$Tab['montant'] = str_pad(price2fec(abs($data->debit - $data->credit)), 13, ' ', STR_PAD_LEFT);
 			$Tab['type_montant'] = str_pad($data->sens, 1);
-			$Tab['vide'] = str_repeat(' ', 18);
+			$Tab['vide'] = str_repeat(' ', 18); // Analytical accounting - Not managed in Dolibarr
 			$Tab['intitule_compte'] = str_pad(self::trunc(dol_string_unaccent($data->label_operation), 34), 34);
-			$Tab['end'] = 'O2003';
+			$Tab['end'] = 'O2003'; // 0 = EUR | 2003 = Format Ciel
 
 			$Tab['end_line'] = $end_line;
 
@@ -507,14 +531,19 @@ class AccountancyExport
 	}
 
 	/**
-	 * Export format : Quadratus
+	 * Export format : Quadratus (Format ASCII)
+	 * Format since 2015 compatible QuadraCOMPTA
+	 * Last review for this format : 2021/09/13 Alexandre Spangaro (aspangaro@open-dsi.fr)
+	 *
+	 * Help : https://docplayer.fr/20769649-Fichier-d-entree-ascii-dans-quadracompta.html
+	 * In QuadraCompta | Use menu : "Outils" > "Suivi des dossiers" > "Import ASCII(Compta)"
 	 *
 	 * @param array $TData data
 	 * @return void
 	 */
 	public function exportQuadratus(&$TData)
 	{
-		global $conf;
+		global $conf, $db;
 
 		$end_line = "\r\n";
 
@@ -525,6 +554,44 @@ class AccountancyExport
 			$code_compta = $data->numero_compte;
 			if (!empty($data->subledger_account)) {
 				$code_compta = $data->subledger_account;
+			}
+
+			$Tab = array();
+
+			if (!empty($data->subledger_account)) {
+				$Tab['type_ligne'] = 'C';
+				$Tab['num_compte'] = str_pad(self::trunc($data->subledger_account, 8), 8);
+				$Tab['lib_compte'] = str_pad(self::trunc($data->subledger_label, 30), 30);
+
+				if ($data->doc_type == 'customer_invoice') {
+					$Tab['lib_alpha'] = strtoupper(str_pad('C'.self::trunc($data->subledger_label, 6), 6));
+					$Tab['filler'] = str_repeat(' ', 52);
+					$Tab['coll_compte'] = str_pad(self::trunc($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER, 8), 8);
+				} elseif ($data->doc_type == 'supplier_invoice') {
+					$Tab['lib_alpha'] = strtoupper(str_pad('F'.self::trunc($data->subledger_label, 6), 6));
+					$Tab['filler'] = str_repeat(' ', 52);
+					$Tab['coll_compte'] = str_pad(self::trunc($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER, 8), 8);
+				} else {
+					$Tab['filler'] = str_repeat(' ', 59);
+					$Tab['coll_compte'] = str_pad(' ', 8);
+				}
+
+				$Tab['filler2'] = str_repeat(' ', 110);
+				$Tab['Maj'] = 2; // Partial update (alpha key, label, address, collectif, RIB)
+
+				if ($data->doc_type == 'customer_invoice') {
+					$Tab['type_compte'] = 'C';
+				} elseif ($data->doc_type == 'supplier_invoice') {
+					$Tab['coll_compte'] = 'F';
+				} else {
+					$Tab['coll_compte'] = 'G';
+				}
+
+				$Tab['filler3'] = str_repeat(' ', 235);
+
+				$Tab['end_line'] = $end_line;
+
+				print implode($Tab);
 			}
 
 			$Tab = array();
@@ -557,13 +624,13 @@ class AccountancyExport
 			$Tab['signe_montant'] = '+';
 
 			// The amount must be in centimes without decimal points.
-			$Tab['montant'] = str_pad(abs(($data->debit - $abs->credit) * 100), 12, '0', STR_PAD_LEFT);
+			$Tab['montant'] = str_pad(abs(($data->debit - $data->credit) * 100), 12, '0', STR_PAD_LEFT);
 			$Tab['contrepartie'] = str_repeat(' ', 8);
 
 			// Force date format : %d%m%y
-			if (!empty($data->date_echeance)) {
-				//$Tab['date_echeance'] = dol_print_date($data->date_echeance, $conf->global->ACCOUNTING_EXPORT_DATE);
-				$Tab['date_echeance'] = dol_print_date($data->date_echeance, '%d%m%y'); // Format must be ddmmyy
+			if (!empty($data->date_lim_reglement)) {
+				//$Tab['date_echeance'] = dol_print_date($data->date_lim_reglement, $conf->global->ACCOUNTING_EXPORT_DATE);
+				$Tab['date_echeance'] = dol_print_date($data->date_lim_reglement, '%d%m%y'); // Format must be ddmmyy
 			} else {
 				$Tab['date_echeance'] = '000000';
 			}
@@ -660,9 +727,9 @@ class AccountancyExport
 
 			$Tab['code_stat'] = str_repeat(' ', 4);
 
-			if (!empty($data->date_echeance)) {
-				//$Tab['date_echeance'] = dol_print_date($data->date_echeance, $conf->global->ACCOUNTING_EXPORT_DATE);
-				$Tab['date_echeance'] = dol_print_date($data->date_echeance, '%d%m%Y');
+			if (!empty($data->date_lim_reglement)) {
+				//$Tab['date_echeance'] = dol_print_date($data->date_lim_reglement, $conf->global->ACCOUNTING_EXPORT_DATE);
+				$Tab['date_echeance'] = dol_print_date($data->date_lim_reglement, '%d%m%Y');
 			} else {
 				$Tab['date_echeance'] = dol_print_date($data->doc_date, '%d%m%Y');
 			}
@@ -851,7 +918,8 @@ class AccountancyExport
 		print "ValidDate".$separator;
 		print "Montantdevise".$separator;
 		print "Idevise".$separator;
-		print "DateLimitReglmt";
+		print "DateLimitReglmt".$separator;
+		print "NumFacture";
 		print $end_line;
 
 		foreach ($objectLines as $line) {
@@ -861,8 +929,25 @@ class AccountancyExport
 				$date_creation = dol_print_date($line->date_creation, '%Y%m%d');
 				$date_document = dol_print_date($line->doc_date, '%Y%m%d');
 				$date_lettering = dol_print_date($line->date_lettering, '%Y%m%d');
-				$date_validation = dol_print_date($line->date_validated, '%Y%m%d');
+				$date_validation = dol_print_date($line->date_validation, '%Y%m%d');
 				$date_limit_payment = dol_print_date($line->date_lim_reglement, '%Y%m%d');
+
+				$refInvoice = '';
+				if ($line->doc_type == 'customer_invoice') {
+					// Customer invoice
+					require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+					$invoice = new Facture($this->db);
+					$invoice->fetch($line->fk_doc);
+
+					$refInvoice = $invoice->ref;
+				} elseif ($line->doc_type == 'supplier_invoice') {
+					// Supplier invoice
+					require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+					$invoice = new FactureFournisseur($this->db);
+					$invoice->fetch($line->fk_doc);
+
+					$refInvoice = $invoice->ref_supplier;
+				}
 
 				// FEC:JournalCode
 				print $line->code_journal . $separator;
@@ -916,10 +1001,13 @@ class AccountancyExport
 				print $line->multicurrency_amount . $separator;
 
 				// FEC:Idevise
-				print $line->multicurrency_code.$separator;
+				print $line->multicurrency_code . $separator;
 
 				// FEC_suppl:DateLimitReglmt
-				print $date_limit_payment;
+				print $date_limit_payment . $separator;
+
+				// FEC_suppl:NumFacture
+				print dol_trunc(self::toAnsi($refInvoice), 17, 'right', 'UTF-8', 1);
 
 				print $end_line;
 			}
@@ -957,7 +1045,8 @@ class AccountancyExport
 		print "ValidDate".$separator;
 		print "Montantdevise".$separator;
 		print "Idevise".$separator;
-		print "DateLimitReglmt";
+		print "DateLimitReglmt".$separator;
+		print "NumFacture";
 		print $end_line;
 
 		foreach ($objectLines as $line) {
@@ -967,8 +1056,25 @@ class AccountancyExport
 				$date_creation = dol_print_date($line->date_creation, '%Y%m%d');
 				$date_document = dol_print_date($line->doc_date, '%Y%m%d');
 				$date_lettering = dol_print_date($line->date_lettering, '%Y%m%d');
-				$date_validation = dol_print_date($line->date_validated, '%Y%m%d');
+				$date_validation = dol_print_date($line->date_validation, '%Y%m%d');
 				$date_limit_payment = dol_print_date($line->date_lim_reglement, '%Y%m%d');
+
+				$refInvoice = '';
+				if ($line->doc_type == 'customer_invoice') {
+					// Customer invoice
+					require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+					$invoice = new Facture($this->db);
+					$invoice->fetch($line->fk_doc);
+
+					$refInvoice = $invoice->ref;
+				} elseif ($line->doc_type == 'supplier_invoice') {
+					// Supplier invoice
+					require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+					$invoice = new FactureFournisseur($this->db);
+					$invoice->fetch($line->fk_doc);
+
+					$refInvoice = $invoice->ref_supplier;
+				}
 
 				// FEC:JournalCode
 				print $line->code_journal . $separator;
@@ -1025,7 +1131,11 @@ class AccountancyExport
 				print $line->multicurrency_code . $separator;
 
 				// FEC_suppl:DateLimitReglmt
-				print $date_limit_payment;
+				print $date_limit_payment . $separator;
+
+				// FEC_suppl:NumFacture
+				print dol_trunc(self::toAnsi($refInvoice), 17, 'right', 'UTF-8', 1);
+
 
 				print $end_line;
 			}
@@ -1287,7 +1397,9 @@ class AccountancyExport
 
 	/**
 	 * Export format : LD Compta version 10 & higher
-	 * http://www.ldsysteme.fr/fileadmin/telechargement/np/ldcompta/Documentation/IntCptW10.pdf
+	 * Last review for this format : 08-15-2021 Alexandre Spangaro (aspangaro@open-dsi.fr)
+	 *
+	 * Help : http://www.ldsysteme.fr/fileadmin/telechargement/np/ldcompta/Documentation/IntCptW10.pdf
 	 *
 	 * @param array $objectLines data
 	 *
@@ -1450,14 +1562,14 @@ class AccountancyExport
 			print $date_lim_reglement.$separator;
 			// CNPI
 			if ($line->doc_type == 'supplier_invoice') {
-				if (($line->debit - $line->credit) > 0) {
+				if (($line->amount) < 0) {		// Currently, only the sign of amount allows to know the type of invoice (standard or credit note). Other solution is to analyse debit/credit/role of account. TODO Add column doc_type_long or make amount mandatory with rule on sign.
 					$nature_piece = 'AF';
 				} else {
 					$nature_piece = 'FF';
 				}
 			} elseif ($line->doc_type == 'customer_invoice') {
-				if (($line->debit - $line->credit) < 0) {
-					$nature_piece = 'AC';
+				if (($line->amount) < 0) {
+					$nature_piece = 'AC';		// Currently, only the sign of amount allows to know the type of invoice (standard or credit note). Other solution is to analyse debit/credit/role of account. TODO Add column doc_type_long or make amount mandatory with rule on sign.
 				} else {
 					$nature_piece = 'FC';
 				}
@@ -1749,6 +1861,62 @@ class AccountancyExport
 				print 'EUR';
 				print $this->end_line;
 			}
+		}
+	}
+
+	/**
+	* Export format : iSuite Expert
+	*
+	* by OpenSolus [https://opensolus.fr]
+	*
+	* @param array $objectLines data
+	*
+	* @return void
+	*/
+	public function exportiSuiteExpert($objectLines)
+	{
+		$this->separator = ';';
+		$this->end_line = "\r\n";
+
+
+		foreach ($objectLines as $line) {
+			$tab = array();
+
+			$date = dol_print_date($line->doc_date, '%d/%m/%Y');
+
+			$tab[] = $line->piece_num;
+			$tab[] = $date;
+			$tab[] = substr($date, 6, 4);
+			$tab[] = substr($date, 3, 2);
+			$tab[] = substr($date, 0, 2);
+			$tab[] = $line->doc_ref;
+			//Conversion de chaine UTF8 en Latin9
+			$tab[] = mb_convert_encoding(str_replace(' - Compte auxiliaire', '', $line->label_operation), "Windows-1252", 'UTF-8');
+
+			//Calcul de la longueur des numéros de comptes
+			$taille_numero = strlen(length_accountg($line->numero_compte));
+
+			//Création du numéro de client générique
+			$numero_cpt_client = '411';
+			for ($i = 1; $i <= ($taille_numero - 3); $i++) {
+				$numero_cpt_client .= '0';
+			}
+
+			//Création des comptes auxiliaire des clients
+			if (length_accountg($line->numero_compte) == $numero_cpt_client) {
+				$tab[] = rtrim(length_accounta($line->subledger_account), "0");
+			} else {
+				$tab[] = length_accountg($line->numero_compte);
+			}
+			$nom_client = explode(" - ", $line->label_operation);
+			$tab[] = mb_convert_encoding($nom_client[0], "Windows-1252", 'UTF-8');
+			$tab[] = price($line->debit);
+			$tab[] = price($line->credit);
+			$tab[] = price($line->montant);
+			$tab[] = $line->code_journal;
+
+			$separator = $this->separator;
+			print implode($separator, $tab) . $this->end_line;
 		}
 	}
 

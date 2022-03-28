@@ -87,13 +87,13 @@ class AdherentTest extends PHPUnit\Framework\TestCase
 
 		if (! empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION)) {
 			print "\n".__METHOD__." Company must be setup to have name-firstname in order 'Firstname Lastname'\n";
-			die();
+			die(1);
 		}
 		if (! empty($conf->global->MAIN_MODULE_LDAP)) {
-			print "\n".__METHOD__." module LDAP must be disabled.\n"; die();
+			print "\n".__METHOD__." module LDAP must be disabled.\n"; die(1);
 		}
 		if (! empty($conf->global->MAIN_MODULE_MAILMANSPIP)) {
-			print "\n".__METHOD__." module MailmanSpip must be disabled.\n"; die();
+			print "\n".__METHOD__." module MailmanSpip must be disabled.\n"; die(1);
 		}
 
 		print __METHOD__."\n";
@@ -154,6 +154,7 @@ class AdherentTest extends PHPUnit\Framework\TestCase
 		$localobject->statut=1;
 		$localobject->label='Adherent type test';
 		$localobject->subscription=1;
+		$localobject->amount=0;
 		$localobject->vote=1;
 		$localobject->company='Old company label';
 		$result=$localobject->create($user);

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2007-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2014	   Juanjo Menent		<jmenent@2byte.es>
-/* Copyright (C) 2015      Ion Agorria          <ion@agorria.com>
+ * Copyright (C) 2015      Ion Agorria          <ion@agorria.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -100,15 +100,15 @@ class PriceGlobalVariableUpdater
 		$this->checkParameters();
 
 		// Insert request
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element." (";
+		$sql = "INSERT INTO ".$this->db->prefix().$this->table_element." (";
 		$sql .= "type, description, parameters, fk_variable, update_interval, next_update, last_status";
 		$sql .= ") VALUES (";
-		$sql .= " ".$this->type.",";
+		$sql .= " ".((int) $this->type).",";
 		$sql .= " ".(isset($this->description) ? "'".$this->db->escape($this->description)."'" : "''").",";
 		$sql .= " ".(isset($this->parameters) ? "'".$this->db->escape($this->parameters)."'" : "''").",";
-		$sql .= " ".$this->fk_variable.",";
-		$sql .= " ".$this->update_interval.",";
-		$sql .= " ".$this->next_update.",";
+		$sql .= " ".((int) $this->fk_variable).",";
+		$sql .= " ".((int) $this->update_interval).",";
+		$sql .= " ".((int) $this->next_update).",";
 		$sql .= " ".(isset($this->last_status) ? "'".$this->db->escape($this->last_status)."'" : "''");
 		$sql .= ")";
 
@@ -121,7 +121,7 @@ class PriceGlobalVariableUpdater
 		}
 
 		if (!$error) {
-			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
+			$this->id = $this->db->last_insert_id($this->db->prefix().$this->table_element);
 
 			if (!$notrigger) {
 				// Uncomment this and change MYOBJECT to your own tag if you
@@ -158,7 +158,7 @@ class PriceGlobalVariableUpdater
 	public function fetch($id)
 	{
 		$sql = "SELECT type, description, parameters, fk_variable, update_interval, next_update, last_status";
-		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element;
+		$sql .= " FROM ".$this->db->prefix().$this->table_element;
 		$sql .= " WHERE rowid = ".((int) $id);
 
 		dol_syslog(__METHOD__);
@@ -199,15 +199,15 @@ class PriceGlobalVariableUpdater
 		$this->checkParameters();
 
 		// Update request
-		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
-		$sql .= " type = ".$this->type.",";
+		$sql = "UPDATE ".$this->db->prefix().$this->table_element." SET";
+		$sql .= " type = ".((int) $this->type).",";
 		$sql .= " description = ".(isset($this->description) ? "'".$this->db->escape($this->description)."'" : "''").",";
 		$sql .= " parameters = ".(isset($this->parameters) ? "'".$this->db->escape($this->parameters)."'" : "''").",";
-		$sql .= " fk_variable = ".$this->fk_variable.",";
-		$sql .= " update_interval = ".$this->update_interval.",";
-		$sql .= " next_update = ".$this->next_update.",";
+		$sql .= " fk_variable = ".((int) $this->fk_variable).",";
+		$sql .= " update_interval = ".((int) $this->update_interval).",";
+		$sql .= " next_update = ".((int) $this->next_update).",";
 		$sql .= " last_status = ".(isset($this->last_status) ? "'".$this->db->escape($this->last_status)."'" : "''");
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$this->db->begin();
 
@@ -274,7 +274,7 @@ class PriceGlobalVariableUpdater
 		//}
 
 		if (!$error) {
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element;
+			$sql = "DELETE FROM ".$this->db->prefix().$this->table_element;
 			$sql .= " WHERE rowid = ".((int) $rowid);
 
 			dol_syslog(__METHOD__);
@@ -372,7 +372,7 @@ class PriceGlobalVariableUpdater
 	public function listUpdaters()
 	{
 		$sql = "SELECT rowid, type, description, parameters, fk_variable, update_interval, next_update, last_status";
-		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element;
+		$sql .= " FROM ".$this->db->prefix().$this->table_element;
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -409,7 +409,7 @@ class PriceGlobalVariableUpdater
 	public function listPendingUpdaters()
 	{
 		$sql = "SELECT rowid, type, description, parameters, fk_variable, update_interval, next_update, last_status";
-		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element;
+		$sql .= " FROM ".$this->db->prefix().$this->table_element;
 		$sql .= " WHERE next_update < ".dol_now();
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
@@ -568,9 +568,9 @@ class PriceGlobalVariableUpdater
 		$this->checkParameters();
 
 		// Update request
-		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
+		$sql = "UPDATE ".$this->db->prefix().$this->table_element." SET";
 		$sql .= " next_update = ".$this->next_update;
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$this->db->begin();
 
@@ -612,9 +612,9 @@ class PriceGlobalVariableUpdater
 		$this->checkParameters();
 
 		// Update request
-		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
+		$sql = "UPDATE ".$this->db->prefix().$this->table_element." SET";
 		$sql .= " last_status = ".(isset($this->last_status) ? "'".$this->db->escape($this->last_status)."'" : "''");
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$this->db->begin();
 

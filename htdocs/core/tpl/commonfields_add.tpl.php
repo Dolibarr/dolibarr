@@ -47,7 +47,7 @@ foreach ($object->fields as $key => $val) {
 	print '<tr class="field_'.$key.'">';
 	print '<td';
 	print ' class="titlefieldcreate';
-	if ($val['notnull'] > 0) {
+	if (isset($val['notnull']) && $val['notnull'] > 0) {
 		print ' fieldrequired';
 	}
 	if ($val['type'] == 'text' || $val['type'] == 'html') {
@@ -63,7 +63,7 @@ foreach ($object->fields as $key => $val) {
 	print '</td>';
 	print '<td class="valuefieldcreate">';
 	if (!empty($val['picto'])) {
-		print img_picto('', $val['picto']);
+		print img_picto('', $val['picto'], '', false, 0, 0, '', 'pictofixedwidth');
 	}
 	if (in_array($val['type'], array('int', 'integer'))) {
 		$value = GETPOST($key, 'int');
@@ -79,13 +79,20 @@ foreach ($object->fields as $key => $val) {
 		$value = (GETPOST($key) == 'on' ? 1 : 0);
 	} elseif ($val['type'] == 'price') {
 		$value = price2num(GETPOST($key));
+	} elseif ($key == 'lang') {
+		$value = GETPOST($key, 'aZ09');
 	} else {
 		$value = GETPOST($key, 'alphanohtml');
 	}
-	if ($val['noteditable']) {
+	if (!empty($val['noteditable'])) {
 		print $object->showOutputField($val, $key, $value, '', '', '', 0);
 	} else {
-		print $object->showInputField($val, $key, $value, '', '', '', 0);
+		if ($key == 'lang') {
+			print img_picto('', 'language', 'class="pictofixedwidth"');
+			print $formadmin->select_language($value, $key, 0, null, 1, 0, 0, 'minwidth300', 2);
+		} else {
+			print $object->showInputField($val, $key, $value, '', '', '', 0);
+		}
 	}
 	print '</td>';
 	print '</tr>';

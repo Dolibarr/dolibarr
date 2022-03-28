@@ -229,7 +229,7 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 				$out .= '>';
 				if (!empty($conf->use_javascript_ajax)) {
 					//$out.= '<table summary="" class="nobordernopadding" width="100%"><tr><td class="tdoverflowmax150 maxwidth150onsmartphone">';
-					$out .= '<div class="tdoverflowmax250 maxwidth150onsmartphone float">';
+					$out .= '<div class="tdoverflowmax400 maxwidth250onsmartphone float">';
 				}
 				if (!empty($head['text'])) {
 					$s = dol_trunc($head['text'], isset($head['limit']) ? $head['limit'] : $MAXLENGTHBOX);

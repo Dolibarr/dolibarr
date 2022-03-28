@@ -91,7 +91,7 @@ abstract class ModeleNumRefPartnership
 	public function info()
 	{
 		global $langs;
-		$langs->load("partnership@partnership");
+		$langs->load("partnership");
 		return $langs->trans("NoDescription");
 	}
 
@@ -103,7 +103,7 @@ abstract class ModeleNumRefPartnership
 	public function getExample()
 	{
 		global $langs;
-		$langs->load("partnership@partnership");
+		$langs->load("partnership");
 		return $langs->trans("NoExample");
 	}
 

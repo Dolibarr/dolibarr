@@ -7,6 +7,11 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
  * Dropdown of user popup
  */
 
+.bookmark-footer a.top-menu-dropdown-link {
+	white-space: normal;
+	word-break: break-word;
+}
+
 button.dropdown-item.global-search-item {
 	outline: none;
 }
@@ -14,6 +19,12 @@ button.dropdown-item.global-search-item {
 .open>.dropdown-search, .open>.dropdown-bookmark, .open>.dropdown-quickadd, .open>.dropdown-menu, .dropdown dd ul.open {
 	display: block;
 }
+
+#topmenu-bookmark-dropdown .dropdown-menu {
+	min-width: 300px;
+	max-width: 360px;
+}
+
 
 .dropdown-search {
 	border-color: #eee;
@@ -279,7 +290,7 @@ a.top-menu-dropdown-link {
 
 #topmenuloginmoreinfo-btn, #topmenulogincompanyinfo-btn {
 	display: block;
-	text-aling: right;
+	text-align: right;
 	color:#666;
 	cursor: pointer;
 }
@@ -359,11 +370,15 @@ a.top-menu-dropdown-link {
 	-webkit-font-smoothing: antialiased;
 	text-align:center;
 	text-decoration:none;
-	margin-right: 5px;
+	margin-<?php echo $right; ?>: 5px;
 	display: inline-block;
 	content: "\f0da";
 	/* color: rgba(0,0,0,0.3); */
 }
+.multicompany-item::before {
+	content: none !important;
+}
+
 .dropdown-item.bookmark-item-external::before {
 	content: "\f35d";
 }
@@ -392,16 +407,15 @@ a.top-menu-dropdown-link {
 	background-repeat: no-repeat;
 	background-size: 16px 16px;
 	background-position: 95% center;
-	border-radius: 10px;
+	border-radius: 20px;
 	border: 1px solid #c4c4c2 !important;
 	transition: all 250ms ease-in-out;
 	backface-visibility: hidden;
 	transform-style: preserve-3d;
-
 }
 
 .dropdown-search-input::placeholder {
-	color: color(#575756 a(0.8));
+	color: color(#575756);
 	letter-spacing: 1.5px;
 }
 

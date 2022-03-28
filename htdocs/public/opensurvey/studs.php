@@ -79,8 +79,8 @@ if (GETPOST('ajoutcomment', 'alpha')) {
 
 	$error = 0;
 
-	$comment = GETPOST("comment", 'restricthtml');
-	$comment_user = GETPOST('commentuser', 'nohtml');
+	$comment = GETPOST("comment", 'alphanohtml');
+	$comment_user = GETPOST('commentuser', 'alphanohtml');
 
 	if (!$comment) {
 		$error++;
@@ -165,7 +165,9 @@ if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x")) {		// bo
 
 						$application = ($conf->global->MAIN_APPLICATION_TITLE ? $conf->global->MAIN_APPLICATION_TITLE : 'Dolibarr ERP/CRM');
 
-						$body = str_replace('\n', '<br>', $langs->transnoentities('EmailSomeoneVoted', $nom, getUrlSondage($numsondage, true)));
+						$link = getUrlSondage($numsondage, true);
+						$link = '<a href="'.$link.'">'.$link.'</a>';
+						$body = str_replace('\n', '<br>', $langs->transnoentities('EmailSomeoneVoted', $nom, $link));
 						//var_dump($body);exit;
 
 						$cmailfile = new CMailFile("[".$application."] ".$langs->trans("Poll").': '.$object->title, $email, $conf->global->MAIN_MAIL_EMAIL_FROM, $body, null, null, null, '', '', 0, -1);
@@ -200,7 +202,6 @@ for ($i = 0; $i < $nblines; $i++) {
 }
 
 if ($testmodifier) {
-	//var_dump($_POST);exit;
 	$nouveauchoix = '';
 	for ($i = 0; $i < $nbcolonnes; $i++) {
 		if (GETPOSTISSET("choix".$i) && GETPOST("choix".$i) == '1') {
@@ -272,16 +273,23 @@ $toutsujet = str_replace("°", "'", $toutsujet);
 
 
 print '<div class="survey_invitation">'.$langs->trans("YouAreInivitedToVote").'</div>';
-print $langs->trans("OpenSurveyHowTo").'<br><br>';
+print $langs->trans("OpenSurveyHowTo").'<br>';
+if (empty($object->allow_spy)) {
+	print '<span class="opacitymedium">'.$langs->trans("YourVoteIsPrivate").'</span><br>';
+} else {
+	print $form->textwithpicto('<span class="opacitymedium">'.$langs->trans("YourVoteIsPublic").'</span>', $langs->trans("CanSeeOthersVote")).'<br>';
+}
+print '<br>';
 
 print '<div class="corps"> '."\n";
 
 // show title of survey
 $titre = str_replace("\\", "", $object->title);
-print '<strong>'.dol_htmlentities($titre).'</strong><br><br>'."\n";
+print '<strong>'.dol_htmlentities($titre).'</strong>';
 
 // show description of survey
 if ($object->description) {
+	print '<br><br>'."\n";
 	print dol_htmlentitiesbr($object->description);
 	print '<br>'."\n";
 }
@@ -290,7 +298,7 @@ print '</div>'."\n";
 
 //The survey has expired, users can't vote or do any action
 if (!$canbemodified) {
-	print '<div style="text-align: center"><p>'.$langs->trans('SurveyExpiredInfo').'</p></div>';
+	print '<br><center><div class="quatrevingtpercent center warning">'.$langs->trans('SurveyExpiredInfo').'</div></center>';
 	llxFooterSurvey();
 
 	$db->close();
@@ -609,7 +617,7 @@ if ($ligneamodifier < 0 && (!isset($_SESSION['nom']))) {
 	if (isset($_SESSION['nom'])) {
 		print '<input type=hidden name="nom" value="'.$_SESSION['nom'].'">'.$_SESSION['nom']."\n";
 	} else {
-		print '<input type="text" name="nom" placeholder="'.dol_escape_htmltag($langs->trans("Name")).'" maxlength="64" size="24">'."\n";
+		print '<input type="text" name="nom" placeholder="'.dol_escape_htmltag($langs->trans("Name")).'" maxlength="64" class=" minwidth175">'."\n";
 	}
 	print '</td>'."\n";
 
@@ -773,9 +781,9 @@ if ($comments) {
 if ($object->allow_comments) {
 	print '<br><div class="addcomment"><span class="opacitymedium">'.$langs->trans("AddACommentForPoll")."</span><br>\n";
 
-	print '<textarea name="comment" rows="'.ROWS_2.'" class="quatrevingtpercent">'.dol_escape_htmltag(GETPOST('comment', 'restricthtml'), 0, 1).'</textarea><br>'."\n";
+	print '<textarea name="comment" rows="'.ROWS_2.'" class="quatrevingtpercent">'.dol_escape_htmltag(GETPOST('comment', 'alphanohtml'), 0, 1).'</textarea><br>'."\n";
 	print $langs->trans("Name").': ';
-	print '<input type="text" name="commentuser" maxlength="64" value="'.GETPOST('commentuser', 'nohtml').'"> &nbsp; '."\n";
+	print '<input type="text" name="commentuser" maxlength="64" value="'.dol_escape_htmltag(GETPOST('commentuser', 'alphanohtml')).'"> &nbsp; '."\n";
 	print '<input type="submit" class="button" name="ajoutcomment" value="'.dol_escape_htmltag($langs->trans("AddComment")).'"><br>'."\n";
 	print '</form>'."\n";
 

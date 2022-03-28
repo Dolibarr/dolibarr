@@ -40,10 +40,11 @@ $year = GETPOST('year', 'int');
 
 $optioncss = GETPOST('optioncss', 'alpha');
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if ($page == -1 || $page == null) {
+if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
+	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
 }
 $offset = $limit * $page;
@@ -162,7 +163,7 @@ if ($resql) {
 
 			// Button to build doc
 			print '<td class="center">';
-			print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=builddoc&amp;page='.$page.'&amp;month='.$obj->month.'&amp;year='.$obj->year.'">'.img_picto($langs->trans('BuildDoc'), 'filenew').'</a>';
+			print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=builddoc&token='.newToken().'&page='.((int) $page).'&month='.((int) $obj->month).'&year='.((int) $obj->year).'">'.img_picto($langs->trans('BuildDoc'), 'filenew').'</a>';
 			print '</td>';
 
 			$name = "actions-".$obj->month."-".$obj->year.".pdf";
@@ -184,10 +185,7 @@ if ($resql) {
 				// Show file name with link to download
 				$out .= '<a href="'.$documenturl.'?modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).($param ? '&'.$param : '').'"';
 				$mime = dol_mimetype($relativepath, '', 0);
-				if (preg_match('/text/', $mime)) {
-					$out .= ' target="_blank"';
-				}
-				$out .= ' target="_blank">';
+				$out .= ' target="_blank" rel="noopener noreferrer">';
 				$out .= img_mime($filearray["name"], $langs->trans("File").': '.$filearray["name"]);
 				$out .= $filearray["name"];
 				$out .= '</a>'."\n";

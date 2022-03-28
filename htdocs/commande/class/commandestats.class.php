@@ -44,7 +44,10 @@ class CommandeStats extends Stats
 	public $userid;
 
 	public $from;
+	public $from_line;
 	public $field;
+	public $field_line;
+	public $categ_link;
 	public $where;
 	public $join;
 
@@ -77,6 +80,7 @@ class CommandeStats extends Stats
 			$this->field = 'total_ht';
 			$this->field_line = 'total_ht';
 			//$this->where .= " c.fk_statut > 0"; // Not draft and not cancelled
+			$this->categ_link = MAIN_DB_PREFIX.'categorie_societe';
 		} elseif ($mode == 'supplier') {
 			$object = new CommandeFournisseur($this->db);
 			$this->from = MAIN_DB_PREFIX.$object->table_element." as c";
@@ -84,18 +88,19 @@ class CommandeStats extends Stats
 			$this->field = 'total_ht';
 			$this->field_line = 'total_ht';
 			//$this->where .= " c.fk_statut > 2"; // Only approved & ordered
+			$this->categ_link = MAIN_DB_PREFIX.'categorie_fournisseur';
 		}
 		//$this->where.= " AND c.fk_soc = s.rowid AND c.entity = ".$conf->entity;
 		$this->where .= ($this->where ? ' AND ' : '').'c.entity IN ('.getEntity('commande').')';
 
-		if (!$user->rights->societe->client->voir && !$this->socid) {
-			$this->where .= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = ".$user->id;
+		if (empty($user->rights->societe->client->voir) && !$this->socid) {
+			$this->where .= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		if ($this->socid) {
-			$this->where .= " AND c.fk_soc = ".$this->socid;
+			$this->where .= " AND c.fk_soc = ".((int) $this->socid);
 		}
 		if ($this->userid > 0) {
-			$this->where .= ' AND c.fk_user_author = '.$this->userid;
+			$this->where .= ' AND c.fk_user_author = '.((int) $this->userid);
 		}
 
 		if ($typentid) {
@@ -104,7 +109,7 @@ class CommandeStats extends Stats
 		}
 
 		if ($categid) {
-			$this->join .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_societe as cats ON cats.fk_soc = c.fk_soc';
+			$this->join .= ' LEFT JOIN '.$this->categ_link.' as cats ON cats.fk_soc = c.fk_soc';
 			$this->join .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie as cat ON cat.rowid = cats.fk_categorie';
 			$this->where .= ' AND cat.rowid = '.((int) $categid);
 		}
@@ -123,7 +128,7 @@ class CommandeStats extends Stats
 
 		$sql = "SELECT date_format(c.date_commande,'%m') as dm, COUNT(*) as nb";
 		$sql .= " FROM ".$this->from;
-		if (!$user->rights->societe->client->voir && !$this->socid) {
+		if (empty($user->rights->societe->client->voir) && !$this->socid) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
 		$sql .= $this->join;
@@ -148,7 +153,7 @@ class CommandeStats extends Stats
 
 		$sql = "SELECT date_format(c.date_commande,'%Y') as dm, COUNT(*) as nb, SUM(c.".$this->field.")";
 		$sql .= " FROM ".$this->from;
-		if (!$user->rights->societe->client->voir && !$this->socid) {
+		if (empty($user->rights->societe->client->voir) && !$this->socid) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
 		$sql .= $this->join;
@@ -172,7 +177,7 @@ class CommandeStats extends Stats
 
 		$sql = "SELECT date_format(c.date_commande,'%m') as dm, SUM(c.".$this->field.")";
 		$sql .= " FROM ".$this->from;
-		if (!$user->rights->societe->client->voir && !$this->socid) {
+		if (empty($user->rights->societe->client->voir) && !$this->socid) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
 		$sql .= $this->join;
@@ -197,7 +202,7 @@ class CommandeStats extends Stats
 
 		$sql = "SELECT date_format(c.date_commande,'%m') as dm, AVG(c.".$this->field.")";
 		$sql .= " FROM ".$this->from;
-		if (!$user->rights->societe->client->voir && !$this->socid) {
+		if (empty($user->rights->societe->client->voir) && !$this->socid) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
 		$sql .= $this->join;
@@ -220,7 +225,7 @@ class CommandeStats extends Stats
 
 		$sql = "SELECT date_format(c.date_commande,'%Y') as year, COUNT(*) as nb, SUM(c.".$this->field.") as total, AVG(".$this->field.") as avg";
 		$sql .= " FROM ".$this->from;
-		if (!$user->rights->societe->client->voir && !$this->socid) {
+		if (empty($user->rights->societe->client->voir) && !$this->socid) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
 		$sql .= $this->join;
@@ -244,7 +249,7 @@ class CommandeStats extends Stats
 
 		$sql = "SELECT product.ref, COUNT(product.ref) as nb, SUM(tl.".$this->field_line.") as total, AVG(tl.".$this->field_line.") as avg";
 		$sql .= " FROM ".$this->from.", ".$this->from_line.", ".MAIN_DB_PREFIX."product as product";
-		if (!$user->rights->societe->client->voir && !$user->socid) {
+		if (empty($user->rights->societe->client->voir) && !$user->socid) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
 		$sql .= $this->join;

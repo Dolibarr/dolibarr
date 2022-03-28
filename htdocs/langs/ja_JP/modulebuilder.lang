@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - loan
-ModuleBuilderDesc=このツールは、経験豊富なユーザーまたは開発者のみが使用する必要がある。独自のモジュールを構築または編集するためのユーティリティを提供する。代替の<a href="%s" target="_blank">手動開発のドキュメントは、</a>にある。
+ModuleBuilderDesc=このツールは、経験豊富なユーザまたは開発者のみが使用する必要がある。独自のモジュールを構築または編集するためのユーティリティを提供する。代替の<a href="%s" target="_blank" rel="noopener noreferrer">手動開発のドキュメントは、ここ</a>にある。
 EnterNameOfModuleDesc=作成するモジュール/アプリケーションの名前をスペースなしで入力する。大文字を使用して単語を区切る(例：MyModule、EcommerceForShop、SyncWithMySystem ...)
 EnterNameOfObjectDesc=作成するオブジェクトの名前をスペースなしで入力する。大文字を使用して単語を区切る(例：MyObject、Student、Teacher ...)。 CRUDクラスファイルだけでなく、APIファイル、オブジェクトを一覧表示/追加/編集/削除するページ、およびSQLファイルが生成される。
 ModuleBuilderDesc2=モジュールが生成/編集されるパス(%sに定義された外部モジュールの最初のディレクトリ)：<strong> %s </strong>
@@ -85,7 +85,7 @@ ListOfPermissionsDefined=定義された権限のリスト
 SeeExamples=こちらの例をご覧ください
 EnabledDesc=このフィールドをアクティブにする条件(例：1または$ conf-> global-> MYMODULE_MYOPTION)
 VisibleDesc=フィールドは表示されているか？ (例：0 =表示されない、1 =リストおよび作成/更新/表示フォームで表示、2 =リストでのみ表示、3 =作成/更新/表示フォームでのみ表示(リストではない)、4 =リストおよび更新/表示フォームでのみ表示(作成しない)、5 =リストおよび表示フォームでのみ表示(作成しない、更新しない)<br> <br>負の値を使用すると、フィールドはデフォルトでリストに表示されないが、表示用に選択できる)。 <br> <br>これは、次のような式にできる。例: <br> preg_match('/public/', $_SERVER['PHP_SELF'])?0:<br>($user->rights->holiday->define_holiday ? 1 : 0)
-DisplayOnPdfDesc=互換性のあるPDFドキュメントでこのフィールドを表示する。「位置」フィールドで位置を管理できる。<br/>現在、既知の互換性のあるPDFモデルは次のとおり  : eratosthene (order), espadon (ship), sponge (invoices), cyan (propal/quotation), cornas (supplier order)<br/><br/><strong>ドキュメントに対して :</strong><br/>0 = 非表示 <br/>1 = 表示<br/>2 = 空でない場合のみ表示<br/><br/><strong>ドキュメント行に対して :</strong><br/>0 = 非表示 <br/>1 = カラム内で表示<br/>3 = 説明欄の後の行説明カラムの中で表示<br/>4 = 空でない場合のみ、説明欄の後の行説明カラムの中で表示
+DisplayOnPdfDesc=互換性のあるPDFドキュメントにこのフィールドを表示する。 "Position" フィールドで位置を管理できる。<br>現在、既知の互換性のあるPDFモデルは次のとおり : eratosthene (注文), espadon (発送), sponge (請求), cyan (提案/見積), cornas (仕入発注)<br><br><strong>ドキュメントの場合:</strong><br>0 = 非表示 <br>1 = 表示<br>2 = 空でない場合のみ表示<br><br><strong>ドキュメント行の場合 :</strong><br>0 = 非表示 <br>1 = カラムに表示<br>3 = 説明の後の説明カラムに表示<br>4 = 空でない場合のみ、説明の後の説明カラムに表示
 DisplayOnPdf=PDFで表示
 IsAMeasureDesc=フィールドの値を累積して、合計をリストに入れることはできるか？ (例：1または0)
 SearchAllDesc=クイック検索ツールから検索するためにフィールドが使用されているか？ (例：1または0)
@@ -95,12 +95,12 @@ MenusDefDesc=モジュールが提供するメニューをここで定義する
 DictionariesDefDesc=モジュールが提供する辞書をここで定義する
 PermissionsDefDesc=モジュールによって提供される新規権限をここで定義する
 MenusDefDescTooltip=モジュール/アプリケーションによって提供されるメニューは、モジュール記述子ファイルの配列<strong> $ this-> menus</strong>に定義されている。このファイルを手動で編集するか、埋め込みエディターを使用できる。 <br> <br>注：定義されると(およびモジュールが再アクティブ化されると)、メニューは%sの管理者ユーザーが使用できるメニューエディターにも表示される。
-DictionariesDefDescTooltip=モジュール/アプリケーションによって提供されるディクショナリは、モジュール記述子ファイルの配列<strong> $ this-> dictionaries</strong>に定義されている。このファイルを手動で編集するか、埋め込みエディターを使用できる。 <br> <br>注：定義(およびモジュールの再アクティブ化)が完了すると、%sの管理者ユーザーには辞書もセットアップ領域に表示される。
-PermissionsDefDescTooltip=モジュール/アプリケーションによって提供されるアクセス許可は、配列<strong> $ this-> rights</strong>にモジュール記述子ファイルに定義される。このファイルを手動で編集するか、埋め込みエディターを使用できる。 <br> <br>注：定義されると(およびモジュールが再アクティブ化されると)、アクセス許可はデフォルトのアクセス許可セットアップ%sに表示される。
+DictionariesDefDescTooltip=モジュール/アプリケーションによって提供されるディクショナリは、モジュール記述子ファイルの配列<strong> $ this-> dictionaries</strong>に定義されている。このファイルを手動で編集するか、埋め込みエディターを使用できる。 <br> <br>注：定義(およびモジュールの再アクティブ化)が完了すると、%sの管理者ユーザーには辞書も設定領域に表示される。
+PermissionsDefDescTooltip=モジュール/アプリケーションによって提供されるアクセス許可は、配列<strong> $ this-> rights</strong>にモジュール記述子ファイルに定義される。このファイルを手動で編集するか、埋め込みエディターを使用できる。 <br> <br>注：定義されると(およびモジュールが再アクティブ化されると)、アクセス許可はデフォルトのアクセス許可設定%sに表示される。
 HooksDefDesc=定義する：管理したいフックのコンテキストを <b>module_parts['hooks']</b> プロパティのモジュール記述子の中に。 (コンテキストのリストは、コアコードで '<b>initHooks(</b>' を検索すると見つかる).<br>編集する：フックされた関数のコードを追加するためのフックファイルを。 (フック可能な関数は、コアコードで '<b>executeHooks</b>' を検索すると見つかる).
-TriggerDefDesc=実行されるビジネスイベントごとに実行するコードをトリガーファイルで定義する。
+TriggerDefDesc=モジュールの外部のビジネスイベント（他のモジュールによってトリガーされるイベント）が実行されるときに実行するコードをトリガーファイルで定義する。
 SeeIDsInUse=インストールで使用されているIDを確認する
-SeeReservedIDsRangeHere=予約済みIDの範囲を参照すること
+SeeReservedIDsRangeHere=予約済IDの範囲を参照すること
 ToolkitForDevelopers=Dolibarr開発者向けのツールキット
 TryToUseTheModuleBuilder=SQLとPHPの知識がある場合は、ネイティブモジュールビルダーウィザードを使用できる。 <br>モジュール<strong>%s </strong>を有効にし、右上のメニューで<span class="fa fa-bug"></span>をクリックしてウィザードを使用する。 <br>警告：これは高度な開発者機能。本番サイトで</b>実験ではなく<b>を実行すること。
 SeeTopRightMenu=右上のメニューの<span class="fa fa-bug"></span>を参照すること
@@ -113,7 +113,7 @@ InitStructureFromExistingTable=既存のテーブルの構造体配列文字列�
 UseAboutPage=アバウトページを無効にする
 UseDocFolder=ドキュメントフォルダを無効にする
 UseSpecificReadme=特定のReadMeを使用する
-ContentOfREADMECustomized=注：README.mdファイルの内容は、ModuleBuilderのセットアップで定義された特定の値に置き換えられている。
+ContentOfREADMECustomized=注：README.mdファイルの内容は、ModuleBuilderの設定で定義された特定の値に置き換えられている。
 RealPathOfModule=モジュールの実際のパス
 ContentCantBeEmpty=ファイルの内容を空にすることはできない
 WidgetDesc=ここで、モジュールに埋め込まれるウィジェットを生成および編集できる。
@@ -133,7 +133,9 @@ IncludeDocGeneration=オブジェクトからいくつかのドキュメント�
 IncludeDocGenerationHelp=これをチェックすると、レコードに「ドキュメントの生成」ボックスを追加するためのコードが生成される。
 ShowOnCombobox=コンボボックスに値を表示する
 KeyForTooltip=ツールチップのキー
-CSSClass=CSSクラス
+CSSClass=フォーム 編集/作成 用のCSS
+CSSViewClass=読取フォーム用CSS
+CSSListClass=リストのCSS
 NotEditable=編集不可
 ForeignKey=外部キー
 TypeOfFieldsHelp=フィールドの種別:<br>varchar(99), double(24,8), real, text, html, datetime, timestamp, integer, integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]] ('1' は、コンボの後に+ボタンを追加してレコードを作成することを意味する、 'filter' は例えば、 'status=1 AND fk_user = __USER_ID AND entity IN (__SHARED_ENTITIES__)' )
@@ -141,3 +143,5 @@ AsciiToHtmlConverter=アスキーからHTMLへのコンバーター
 AsciiToPdfConverter=アスキーからPDFへのコンバーター
 TableNotEmptyDropCanceled=テーブルが空ではない。ドロップはキャンセルされた。
 ModuleBuilderNotAllowed=モジュールビルダーは利用できるが、あなたのユーザには許可されていない。
+ImportExportProfiles=プロファイルのインポートとエクスポート
+ValidateModBuilderDesc=このフィールドが $this->validateField() で検証済であるべき場合は 1 を、検証が必要な場合は 0 を入力する。

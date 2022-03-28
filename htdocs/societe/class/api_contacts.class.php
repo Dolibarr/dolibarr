@@ -75,7 +75,7 @@ class Contacts extends DolibarrApi
 			throw new RestException(401, 'No permission to read contacts');
 		}
 
-		if ($id == 0) {
+		if ($id === 0) {
 			$result = $this->contact->initAsSpecimen();
 		} else {
 			$result = $this->contact->fetch($id);
@@ -192,7 +192,7 @@ class Contacts extends DolibarrApi
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON t.fk_soc = s.rowid";
-		$sql .= ' WHERE t.entity IN ('.getEntity('socpeople').')';
+		$sql .= ' WHERE t.entity IN ('.getEntity('contact').')';
 		if ($socids) {
 			$sql .= " AND t.fk_soc IN (".$this->db->sanitize($socids).")";
 		}
@@ -210,16 +210,17 @@ class Contacts extends DolibarrApi
 
 		// Select contacts of given category
 		if ($category > 0) {
-			$sql .= " AND c.fk_categorie = ".$this->db->escape($category);
+			$sql .= " AND c.fk_categorie = ".((int) $category);
 			$sql .= " AND c.fk_socpeople = t.rowid ";
 		}
 
 		// Add sql filters
 		if ($sqlfilters) {
-			if (!DolibarrApi::_checkFilters($sqlfilters)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+			$errormessage = '';
+			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
+				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
 			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 

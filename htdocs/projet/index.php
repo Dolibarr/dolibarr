@@ -56,8 +56,8 @@ if (!$user->rights->projet->lire) {
 	accessforbidden();
 }
 
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 
 $max = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
 
@@ -95,9 +95,14 @@ $projectset = ($mine ? $mine : (empty($user->rights->projet->all->lire) ? 0 : 2)
 $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, $projectset, 1);
 //var_dump($projectsListId);
 
-llxHeader("", $langs->trans("Projects"), "EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos");
 
-$title = $langs->trans("ProjectsArea");
+$title = $langs->trans('ProjectsArea');
+
+$help_url = 'EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos|DE:Modul_Projekte';
+
+llxHeader('', $title, $help_url);
+
+
 //if ($mine) $title=$langs->trans("MyProjectsArea");
 
 
@@ -147,7 +152,7 @@ if ($resql) {
 	while ($i < $num) {
 		$objp = $db->fetch_object($resql);
 		$listofoppstatus[$objp->rowid] = $objp->percent;
-		$listofopplabel[$objp->rowid] = $objp->label;
+		$listofopplabel[$objp->rowid] = $objp->label;		// default label if translation from "OppStatus".code not found.
 		$listofoppcode[$objp->rowid] = $objp->code;
 		switch ($objp->code) {
 			case 'PROSP':
@@ -192,10 +197,10 @@ include DOL_DOCUMENT_ROOT.'/projet/graph_opportunities.inc.php';
 print_projecttasks_array($db, $form, $socid, $projectsListId, 0, 0, $listofoppstatus, array('projectlabel', 'plannedworkload', 'declaredprogress', 'prospectionstatus', 'projectstatus'));
 
 
-print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+print '</div><div class="fichetwothirdright">';
 
 // Latest modified projects
-$sql = "SELECT p.rowid, p.ref, p.title, p.fk_statut as status, p.tms as datem";
+$sql = "SELECT p.rowid, p.ref, p.title, p.dateo, p.datee, p.fk_statut as status, p.tms as datem";
 $sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
 $sql .= ", s.code_client, s.code_compta, s.client";
 $sql .= ", s.code_fournisseur, s.code_compta_fournisseur, s.fournisseur";
@@ -208,7 +213,7 @@ if ($mine || empty($user->rights->projet->all->lire)) {
 	$sql .= " AND p.rowid IN (".$db->sanitize($projectsListId).")"; // If we have this test true, it also means projectset is not 2
 }
 if ($socid) {
-	$sql .= " AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
+	$sql .= " AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".((int) $socid).")";
 }
 $sql .= " ORDER BY p.tms DESC";
 $sql .= $db->plimit($max, 0);
@@ -218,7 +223,7 @@ if ($resql) {
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
-	print '<th colspan="4">'.$langs->trans("LatestModifiedProjects", $max).'</th>';
+	print '<th colspan="5">'.$langs->trans("LatestModifiedProjects", $max).'</th>';
 	print '</tr>';
 
 	$num = $db->num_rows($resql);
@@ -234,8 +239,6 @@ if ($resql) {
 			$projectstatic->id = $obj->rowid;
 			$projectstatic->ref = $obj->ref;
 			$projectstatic->title = $obj->title;
-			$projectstatic->dateo = $obj->dateo;
-			$projectstatic->datep = $obj->datep;
 			$projectstatic->thirdparty_name = $obj->name;
 			$projectstatic->status = $obj->status;
 
@@ -272,12 +275,22 @@ if ($resql) {
 
 			print '</td>';
 
+			// Label
+			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->title).'">';
+			print $projectstatic->title;
+			print '</td>';
+
+			// Thirdparty
 			print '<td class="nowrap">';
 			if ($companystatic->id > 0) {
 				print $companystatic->getNomUrl(1, 'company', 16);
 			}
 			print '</td>';
+
+			// Date
 			print '<td>'.dol_print_date($db->jdate($obj->datem), 'day').'</td>';
+
+			// Status
 			print '<td class="right">'.$projectstatic->LibStatut($obj->status, 3).'</td>';
 			print '</tr>';
 			$i++;
@@ -405,7 +418,7 @@ if (empty($conf->global->PROJECT_HIDE_PROJECT_LIST_ON_PROJECT_AREA)) {
 	print_projecttasks_array($db, $form, $socid, $projectsListId, 0, 1, $listofoppstatus, array());
 }
 
-print '</div></div></div>';
+print '</div></div>';
 
 $parameters = array('user' => $user);
 $reshook = $hookmanager->executeHooks('dashboardProjects', $parameters, $projectstatic); // Note that $action and $object may have been modified by hook

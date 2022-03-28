@@ -45,8 +45,8 @@ $type = GETPOST("type", "int");
 $diroutputmassaction = $conf->product->dir_output.'/temp/massgeneration/'.$user->id;
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = (GETPOST("page", 'int') ?GETPOST("page", 'int') : 0);
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -207,7 +207,7 @@ $sql = 'SELECT DISTINCT i.rowid, i.type_declaration, i.type_export, i.periods, i
 /*
 // Add fields from extrafields
 if (! empty($extrafields->attributes[$object->table_element]['label'])) {
-	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
 }
 */
 // Add fields from hooks
@@ -237,8 +237,8 @@ if (dol_strlen($search_type) && $search_type != '-1') {
 if ($search_ref)     $sql .= natural_search('i.ref', $search_ref);
 if ($search_label)   $sql .= natural_search('i.label', $search_label);
 if ($search_barcode) $sql .= natural_search('i.barcode', $search_barcode);
-if (isset($search_tosell) && dol_strlen($search_tosell) > 0  && $search_tosell!=-1) $sql.= " AND i.tosell = ".$db->escape($search_tosell);
-if (isset($search_tobuy) && dol_strlen($search_tobuy) > 0  && $search_tobuy!=-1)   $sql.= " AND i.tobuy = ".$db->escape($search_tobuy);
+if (isset($search_tosell) && dol_strlen($search_tosell) > 0  && $search_tosell!=-1) $sql.= " AND i.tosell = ".((int) $search_tosell);
+if (isset($search_tobuy) && dol_strlen($search_tobuy) > 0  && $search_tobuy!=-1)   $sql.= " AND i.tobuy = ".((int) $search_tobuy);
 if (dol_strlen($canvas) > 0)                    $sql.= " AND i.canvas = '".$db->escape($canvas)."'";
 */
 
@@ -251,7 +251,7 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 
-$sql .= " GROUP BY i.rowid";
+$sql .= " GROUP BY i.rowid, i.type_declaration, i.type_export, i.periods, i.mode, i.entity";
 
 /*
 // Add fields from extrafields
@@ -348,7 +348,7 @@ if ($resql) {
 		print '<input type="hidden" name="search_type" value="'.dol_escape_htmltag($search_type).'">';
 	}
 
-	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_products.png', 0, $newcardbutton, '', $limit);
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'intracommreport', 0, $newcardbutton, '', $limit);
 
 	$topicmail = "Information";
 	$modelmail = "product";

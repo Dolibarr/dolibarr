@@ -80,8 +80,9 @@ include DOL_DOCUMENT_ROOT.'/core/actions_comments.inc.php';
  * View
 */
 
+$title = $langs->trans('CommentPage');
 
-llxHeader('', $langs->trans("CommentPage"));
+llxHeader('', $title, '');
 
 $form = new Form($db);
 $formother = new FormOther($db);
@@ -102,13 +103,13 @@ $morehtmlref = '<div class="refidno">';
 // Title
 $morehtmlref .= $object->title;
 // Thirdparty
-if ($object->thirdparty->id > 0) {
+if (!empty($object->thirdparty->id) && $object->thirdparty->id > 0) {
 	$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1, 'project');
 }
 $morehtmlref .= '</div>';
 
 // Define a complementary filter for search of next/prev ref.
-if (!$user->rights->projet->all->lire) {
+if (empty($user->rights->projet->all->lire)) {
 	$objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
 	$object->next_prev_filter = " rowid IN (".$db->sanitize(count($objectsListId) ? join(',', array_keys($objectsListId)) : '0').")";
 }
@@ -154,7 +155,6 @@ print '</table>';
 
 print '</div>';
 print '<div class="fichehalfright">';
-print '<div class="ficheaddleft">';
 print '<div class="underbanner clearboth"></div>';
 
 print '<table class="border centpercent">';
@@ -178,7 +178,6 @@ print '</td></tr>';
 
 print '</table>';
 
-print '</div>';
 print '</div>';
 print '</div>';
 

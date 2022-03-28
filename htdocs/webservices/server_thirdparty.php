@@ -103,7 +103,7 @@ $thirdparty_fields = array(
 		'address' => array('name'=>'address', 'type'=>'xsd:string'),
 		'zip' => array('name'=>'zip', 'type'=>'xsd:string'),
 		'town' => array('name'=>'town', 'type'=>'xsd:string'),
-		'province_id' => array('name'=>'province_id', 'type'=>'xsd:string'),
+		'region_code' => array('name'=>'region_code', 'type'=>'xsd:string'),
 		'country_id' => array('name'=>'country_id', 'type'=>'xsd:string'),
 		'country_code' => array('name'=>'country_code', 'type'=>'xsd:string'),
 		'country' => array('name'=>'country', 'type'=>'xsd:string'),
@@ -214,7 +214,7 @@ $styleuse = 'encoded'; // encoded/literal/literal wrapped
 $server->register(
 	'getThirdParty',
 	// Entry values
-	array('authentication'=>'tns:authentication', 'id'=>'xsd:string', 'ref'=>'xsd:string', 'ref_ext'=>'xsd:string'),
+	array('authentication'=>'tns:authentication', 'id'=>'xsd:string', 'ref'=>'xsd:string', 'ref_ext'=>'xsd:string', 'barcode'=>'xsd:string', 'profid1'=>'xsd:string', 'profid2'=>'xsd:string'),
 	// Exit values
 	array('result'=>'tns:result', 'thirdparty'=>'tns:thirdparty'),
 	$ns,
@@ -290,13 +290,16 @@ $server->register(
  * @param	string		$id		    		internal id
  * @param	string		$ref		    	internal reference
  * @param	string		$ref_ext	   		external reference
+ * @param	string		$barcode	   		barcode
+ * @param	string		$profid1	   		profid1
+ * @param	string		$profid2	   		profid2
  * @return	array							Array result
  */
-function getThirdParty($authentication, $id = '', $ref = '', $ref_ext = '')
+function getThirdParty($authentication, $id = '', $ref = '', $ref_ext = '', $barcode = '', $profid1 = '', $profid2 = '')
 {
 	global $db, $conf;
 
-	dol_syslog("Function: getThirdParty login=".$authentication['login']." id=".$id." ref=".$ref." ref_ext=".$ref_ext);
+	dol_syslog("Function: getThirdParty login=".$authentication['login']." id=".$id." ref=".$ref." ref_ext=".$ref_ext." barcode=".$barcode." profid1=".$profid1." profid2=".$profid2);
 
 	if ($authentication['entity']) {
 		$conf->entity = $authentication['entity'];
@@ -320,7 +323,7 @@ function getThirdParty($authentication, $id = '', $ref = '', $ref_ext = '')
 
 		if ($fuser->rights->societe->lire) {
 			$thirdparty = new Societe($db);
-			$result = $thirdparty->fetch($id, $ref, $ref_ext);
+			$result = $thirdparty->fetch($id, $ref, $ref_ext, $barcode, $profid1, $profid2);
 			if ($result > 0) {
 				$thirdparty_result_fields = array(
 						'id' => $thirdparty->id,
@@ -340,7 +343,7 @@ function getThirdParty($authentication, $id = '', $ref = '', $ref_ext = '')
 						'address' => $thirdparty->address,
 						'zip' => $thirdparty->zip,
 						'town' => $thirdparty->town,
-						'province_id' => $thirdparty->state_id,
+						'region_code' => $thirdparty->region_code,
 						'country_id' => $thirdparty->country_id,
 						'country_code' => $thirdparty->country_code,
 						'country' => $thirdparty->country,
@@ -459,7 +462,7 @@ function createThirdParty($authentication, $thirdparty)
 		if ($thirdparty['country_code']) {
 			$newobject->country_id = getCountry($thirdparty['country_code'], 3);
 		}
-		$newobject->province_id = $thirdparty['province_id'];
+		$newobject->region_code = empty($thirdparty['region_code']) ? '' : $thirdparty['region_code'];
 		//if ($thirdparty['province_code']) $newobject->province_code=getCountry($thirdparty['province_code'],3);
 
 		$newobject->phone = $thirdparty['phone'];
@@ -594,7 +597,7 @@ function updateThirdParty($authentication, $thirdparty)
 			if ($thirdparty['country_code']) {
 				$object->country_id = getCountry($thirdparty['country_code'], 3);
 			}
-			$object->province_id = $thirdparty['province_id'];
+			$object->region_code = $thirdparty['region_code'];
 			//if ($thirdparty['province_code']) $newobject->province_code=getCountry($thirdparty['province_code'],3);
 
 			$object->phone = $thirdparty['phone'];
@@ -704,13 +707,13 @@ function getListOfThirdParties($authentication, $filterthirdparty)
 				$sql .= " AND s.name LIKE '%".$db->escape($val)."%'";
 			}
 			if ($key == 'client' && (int) $val > 0) {
-				$sql .= " AND s.client = ".$db->escape($val);
+				$sql .= " AND s.client = ".((int) $val);
 			}
 			if ($key == 'supplier' && (int) $val > 0) {
-				$sql .= " AND s.fournisseur = ".$db->escape($val);
+				$sql .= " AND s.fournisseur = ".((int) $val);
 			}
 			if ($key == 'category' && (int) $val > 0) {
-				$sql .= " AND s.rowid IN (SELECT fk_soc FROM ".MAIN_DB_PREFIX."categorie_societe WHERE fk_categorie=".$db->escape($val).") ";
+				$sql .= " AND s.rowid IN (SELECT fk_soc FROM ".MAIN_DB_PREFIX."categorie_societe WHERE fk_categorie = ".((int) $val).") ";
 			}
 		}
 		dol_syslog("Function: getListOfThirdParties", LOG_DEBUG);

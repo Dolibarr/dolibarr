@@ -52,7 +52,7 @@ abstract class ModelePDFMo extends CommonDocGenerator
 		// phpcs:enable
 		global $conf;
 
-		$type = 'mo';
+		$type = 'mrp';
 		$list = array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';

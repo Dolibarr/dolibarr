@@ -40,6 +40,13 @@ if (!defined('NOBROWSERNOTIF')) {
 }
 // If this page is public (can be called outside logged session)
 
+// For MultiCompany module.
+// Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
+$entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
+if (is_numeric($entity)) {
+	define("DOLENTITY", $entity);
+}
+
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/ticket/class/actions_ticket.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formticket.class.php';
@@ -70,6 +77,12 @@ if (isset($_SESSION['email_customer'])) {
 
 $object = new Ticket($db);
 
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('ticketpubliclist', 'globalcard'));
+
+if (empty($conf->ticket->enabled)) {
+	accessforbidden('', 0, 0, 1);
+}
 
 
 
@@ -151,10 +164,6 @@ if ($action == "view_ticketlist") {
 	}
 }
 
-//$object->doActions($action);
-
-
-
 /*
  * View
  */
@@ -212,6 +221,9 @@ if ($action == "view_ticketlist") {
 
 		$filter = array();
 		$param = 'action=view_ticketlist';
+		if (!empty($entity) && !empty($conf->multicompany->enabled)) {
+			$param .= '&entity='.$entity;
+		}
 
 		// Definition of fields for list
 		$arrayfields = array(
@@ -285,8 +297,8 @@ if ($action == "view_ticketlist") {
 
 		require DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
-		$sortfield = GETPOST("sortfield", 'alpha');
-		$sortorder = GETPOST("sortorder", 'alpha');
+		$sortfield = GETPOST('sortfield', 'aZ09comma');
+		$sortorder = GETPOST('sortorder', 'aZ09comma');
 
 		if (!$sortfield) {
 			$sortfield = 't.datec';
@@ -332,7 +344,7 @@ if ($action == "view_ticketlist") {
 		// Add fields for extrafields
 		if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 			foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-				$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+				$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
 			}
 		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."ticket as t";
@@ -359,28 +371,28 @@ if ($action == "view_ticketlist") {
 		if (!empty($filter)) {
 			foreach ($filter as $key => $value) {
 				if (strpos($key, 'date')) { // To allow $filter['YEAR(s.dated)']=>$year
-					$sql .= ' AND '.$key.' = \''.$value.'\'';
+					$sql .= " AND ".$key." = '".$db->escape($value)."'";
 				} elseif (($key == 't.fk_user_assign') || ($key == 't.type_code') || ($key == 't.category_code') || ($key == 't.severity_code')) {
 					$sql .= " AND ".$key." = '".$db->escape($value)."'";
 				} elseif ($key == 't.fk_statut') {
 					if (is_array($value) && count($value) > 0) {
-						$sql .= 'AND '.$key.' IN ('.$db->sanitize(implode(',', $value)).')';
+						$sql .= " AND ".$key." IN (".$db->sanitize(implode(',', $value)).")";
 					} else {
-						$sql .= ' AND '.$key.' = '.$db->escape($value);
+						$sql .= " AND ".$key." = ".((int) $value);
 					}
 				} else {
-					$sql .= ' AND '.$key.' LIKE \'%'.$value.'%\'';
+					$sql .= " AND ".$key." LIKE '%".$db->escape($value)."%'";
 				}
 			}
 		}
 		//$sql .= " GROUP BY t.track_id";
-		$sql .= " ORDER BY ".$sortfield.' '.$sortorder;
+		$sql .= $db->order($sortfield, $sortorder);
 
 		$resql = $db->query($sql);
 		if ($resql) {
 			$num_total = $db->num_rows($resql);
 			if (!empty($limit)) {
-				$sql .= ' '.$db->plimit($limit + 1, $offset);
+				$sql .= $db->plimit($limit + 1, $offset);
 			}
 
 			$resql = $db->query($sql);
@@ -389,7 +401,7 @@ if ($action == "view_ticketlist") {
 				print_barre_liste($langs->trans('TicketList'), $page, 'public/list.php', $param, $sortfield, $sortorder, '', $num, $num_total, 'ticket');
 
 				// Search bar
-				print '<form method="get" action="'.$url_form.'" id="searchFormList" >'."\n";
+				print '<form method="POST" action="'.$_SERVER['PHP_SELF'].(!empty($entity) && !empty($conf->multicompany->enabled)?'?entity='.$entity:'').'" id="searchFormList" >'."\n";
 				print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 				print '<input type="hidden" name="action" value="view_ticketlist">';
 				print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
@@ -397,6 +409,11 @@ if ($action == "view_ticketlist") {
 
 				$varpage = empty($contextpage) ? $url_page_current : $contextpage;
 				$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
+
+				// allow to display information before list
+				$parameters=array('arrayfields'=>$arrayfields);
+				$reshook=$hookmanager->executeHooks('printFieldListHeader', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
+				print $hookmanager->resPrint;
 
 				print '<table class="liste '.($moreforfilter ? "listwithfilterbefore" : "").'">';
 
@@ -561,14 +578,19 @@ if ($action == "view_ticketlist") {
 					// Ref
 					if (!empty($arrayfields['t.ref']['checked'])) {
 						print '<td class="nowraponall">';
+						print '<a rel="nofollow" href="javascript:viewticket(\''.dol_escape_js($obj->track_id).'\',\''.dol_escape_js($_SESSION['email_customer']).'\');">';
+						print img_picto('', 'ticket', 'class="paddingrightonly"');
 						print $obj->ref;
+						print '</a>';
 						print '</td>';
 					}
 
 					// Subject
 					if (!empty($arrayfields['t.subject']['checked'])) {
 						print '<td>';
-						print '<a rel="nofollow" href="javascript:viewticket(\''.$obj->track_id.'\',\''.$_SESSION['email_customer'].'\');">'.$obj->subject.'</a>';
+						print '<a rel="nofollow" href="javascript:viewticket(\''.dol_escape_js($obj->track_id).'\',\''.dol_escape_js($_SESSION['email_customer']).'\');">';
+						print $obj->subject;
+						print '</a>';
 						print '</td>';
 					}
 
@@ -602,13 +624,14 @@ if ($action == "view_ticketlist") {
 
 					// Message author
 					if (!empty($arrayfields['t.fk_user_create']['checked'])) {
-						print '<td>';
+						print '<td title="'.dol_escape_htmltag($obj->origin_email).'">';
 						if ($obj->fk_user_create > 0) {
 							$user_create->firstname = (!empty($obj->user_create_firstname) ? $obj->user_create_firstname : '');
 							$user_create->name = (!empty($obj->user_create_lastname) ? $obj->user_create_lastname : '');
 							$user_create->id = (!empty($obj->fk_user_create) ? $obj->fk_user_create : '');
 							print $user_create->getFullName($langs);
 						} else {
+							print img_picto('', 'email', 'class="paddingrightonly"');
 							print $langs->trans('Email');
 						}
 						print '</td>';
@@ -617,10 +640,11 @@ if ($action == "view_ticketlist") {
 					// Assigned author
 					if (!empty($arrayfields['t.fk_user_assign']['checked'])) {
 						print '<td>';
-						if ($obj->fk_user_assig > 0) {
+						if ($obj->fk_user_assign > 0) {
 							$user_assign->firstname = (!empty($obj->user_assign_firstname) ? $obj->user_assign_firstname : '');
 							$user_assign->lastname = (!empty($obj->user_assign_lastname) ? $obj->user_assign_lastname : '');
 							$user_assign->id = (!empty($obj->fk_user_assign) ? $obj->fk_user_assign : '');
+							print img_picto('', 'user', 'class="paddingrightonly"');
 							print $user_assign->getFullName($langs);
 						}
 						print '</td>';
@@ -641,7 +665,7 @@ if ($action == "view_ticketlist") {
 								}
 								print '>';
 								$tmpkey = 'options_'.$key;
-								print $extrafields->showOutputField($key, $obj->$tmpkey, '', 1);
+								print $extrafields->showOutputField($key, $obj->$tmpkey, '', $object->table_element);
 								print '</td>';
 							}
 						}
@@ -664,7 +688,7 @@ if ($action == "view_ticketlist") {
 				print '</table>';
 				print '</form>';
 
-				print '<form method="post" id="form_view_ticket" name="form_view_ticket" enctype="multipart/form-data" action="'.dol_buildpath('/public/ticket/view.php', 1).'" style="display:none;">';
+				print '<form method="post" id="form_view_ticket" name="form_view_ticket" action="'.dol_buildpath('/public/ticket/view.php', 1).(!empty($entity) && !empty($conf->multicompany->enabled)?'?entity='.$entity:'').'" style="display:none;">';
 				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="action" value="view_ticket">';
 				print '<input type="hidden" name="btn_view_ticket_list" value="1">';
@@ -689,7 +713,7 @@ if ($action == "view_ticketlist") {
 	print '<br>';
 
 	print '<div id="form_view_ticket">';
-	print '<form method="post" name="form_view_ticketlist"  enctype="multipart/form-data" action="'.$_SERVER['PHP_SELF'].'">';
+	print '<form method="post" name="form_view_ticketlist" action="'.$_SERVER['PHP_SELF'].(!empty($entity) && !empty($conf->multicompany->enabled)?'?entity='.$entity:'').'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="view_ticketlist">';
 	//print '<input type="hidden" name="search_fk_status" value="non_closed">';
@@ -703,7 +727,7 @@ if ($action == "view_ticketlist") {
 	print '</p>';
 
 	print '<p style="text-align: center; margin-top: 1.5em;">';
-	print '<input class="button" type="submit" name="btn_view_ticket_list" value="'.$langs->trans('ViewMyTicketList').'" />';
+	print '<input type="submit" class="button" name="btn_view_ticket_list" value="'.$langs->trans('ViewMyTicketList').'" />';
 	print "</p>\n";
 
 	print "</form>\n";

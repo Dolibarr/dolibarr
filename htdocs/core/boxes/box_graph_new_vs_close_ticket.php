@@ -2,7 +2,7 @@
 /* Module descriptor for ticket system
  * Copyright (C) 2013-2016  Jean-François FERRY     <hello@librethic.io>
  *               2016       Christophe Battarel     <christophe@altairis.fr>
- * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2021  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
  */
 
 /**
- *     \file        core/boxes/box_nb_ticket_last_x_days.php
+ *     \file        htdocs/core/boxes/box_graph_new_vs_close_ticket.php
  *     \ingroup     ticket
  *     \brief       This box shows the number of new daily tickets the last X days
  */
@@ -89,7 +89,7 @@ class box_graph_new_vs_close_ticket extends ModeleBoxes
 			$data = array();
 			$totalnb = 0;
 			$sql = "SELECT COUNT(t.datec) as nb";
-			$sql .= " FROM " . MAIN_DB_PREFIX . "ticket as t";
+			$sql .= " FROM ".MAIN_DB_PREFIX."ticket as t";
 			$sql .= " WHERE CAST(t.datec AS DATE) = CURRENT_DATE";
 			$sql .= " AND t.fk_statut <> 8";
 			$sql .= " GROUP BY CAST(t.datec AS DATE)";
@@ -98,16 +98,16 @@ class box_graph_new_vs_close_ticket extends ModeleBoxes
 				$num = $this->db->num_rows($resql);
 				if ($num > 0) {
 					$objp = $this->db->fetch_object($resql);
-					$data[] = array($langs->trans('TicketCreatedToday'), $objp->nb);
+					$data[] = array($langs->transnoentitiesnoconv('TicketCreatedToday'), $objp->nb);
 					$totalnb += $objp->nb;
 				} else {
-					$data[] = array($langs->trans('TicketCreatedToday'), 0);
+					$data[] = array($langs->transnoentitiesnoconv('TicketCreatedToday'), 0);
 				}
 			} else {
 				dol_print_error($this->db);
 			}
 			$sql = "SELECT COUNT(t.date_close) as nb";
-			$sql .= " FROM " . MAIN_DB_PREFIX . "ticket as t";
+			$sql .= " FROM ".MAIN_DB_PREFIX."ticket as t";
 			$sql .= " WHERE CAST(t.date_close AS DATE) = CURRENT_DATE";
 			$sql .= " AND t.fk_statut = 8";
 			$sql .= " GROUP BY CAST(t.date_close AS DATE)";
@@ -116,10 +116,10 @@ class box_graph_new_vs_close_ticket extends ModeleBoxes
 				$num = $this->db->num_rows($resql);
 				if ($num > 0) {
 					$objp = $this->db->fetch_object($resql);
-					$data[] = array($langs->trans('TicketClosedToday'), $objp->nb);
+					$data[] = array($langs->transnoentitiesnoconv('TicketClosedToday'), $objp->nb);
 					$totalnb += $objp->nb;
 				} else {
-					$data[] = array($langs->trans('TicketClosedToday'), 0);
+					$data[] = array($langs->transnoentitiesnoconv('TicketClosedToday'), 0);
 				}
 			} else {
 				dol_print_error($this->db);
@@ -137,6 +137,9 @@ class box_graph_new_vs_close_ticket extends ModeleBoxes
 					$px1->SetDataColor(array_values($colorseries));
 					$px1->SetData($data);
 					$px1->setShowLegend(2);
+					if (!empty($conf->dol_optimize_smallscreen)) {
+						$px1->SetWidth(320);
+					}
 					$px1->SetType(array('pie'));
 					$px1->SetMaxValue($px1->GetCeilMaxValue());
 					$px1->SetShading(3);
@@ -148,8 +151,8 @@ class box_graph_new_vs_close_ticket extends ModeleBoxes
 					$stringtoprint .= $px1->show($totalnb ? 0 : 1);
 				}
 				$stringtoprint .= '</div>';
-				$this->info_box_contents[][]=array(
-					'td' => 'center',
+				$this->info_box_contents[][] = array(
+					'td' => 'class="center"',
 					'text' => $stringtoprint
 				);
 			} else {

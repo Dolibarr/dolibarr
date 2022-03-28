@@ -49,7 +49,7 @@ if (GETPOST('addfile', 'alpha')) {
 /*
  * Remove file in email form
  */
-if (!empty($_POST['removedfile']) && empty($_POST['removAll'])) {
+if (GETPOST('removedfile') && !GETPOST('removAll')) {
 	$trackid = GETPOST('trackid', 'aZ09');
 
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -103,7 +103,7 @@ if (GETPOST('removAll', 'alpha')) {
 /*
  * Send mail
  */
-if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST['removAll'] && !$_POST['removedfile'] && !$_POST['cancel'] && !$_POST['modelselected']) {
+if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPOST('removAll') && !GETPOST('removedfile') && !GETPOST('cancel') && !GETPOST('modelselected')) {
 	if (empty($trackid)) {
 		$trackid = GETPOST('trackid', 'aZ09');
 	}
@@ -171,7 +171,7 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 		$sendtoccuserid = array();
 
 		// Define $sendto
-		$receiver = $_POST['receiver'];
+		$receiver = GETPOST('receiver', 'alphawithlgt');
 		if (!is_array($receiver)) {
 			if ($receiver == '-1') {
 				$receiver = array();
@@ -182,8 +182,13 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 
 		$tmparray = array();
 		if (trim($_POST['sendto'])) {
-			// Recipients are provided into free text
-			$tmparray[] = trim($_POST['sendto']);
+			// Recipients are provided into free text field
+			$tmparray[] = trim(GETPOST('sendto', 'alphawithlgt'));
+		}
+
+		if (trim($_POST['tomail'])) {
+			// Recipients are provided into free hidden text field
+			$tmparray[] = trim(GETPOST('tomail', 'alphawithlgt'));
 		}
 
 		if (count($receiver) > 0) {
@@ -202,7 +207,7 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 		}
 
 		if (!empty($conf->global->MAIN_MAIL_ENABLED_USER_DEST_SELECT)) {
-			$receiveruser = $_POST['receiveruser'];
+			$receiveruser = GETPOST('receiveruser', 'alphawithlgt');
 			if (is_array($receiveruser) && count($receiveruser) > 0) {
 				$fuserdest = new User($db);
 				foreach ($receiveruser as $key => $val) {
@@ -215,7 +220,7 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 		$sendto = implode(',', $tmparray);
 
 		// Define $sendtocc
-		$receivercc = $_POST['receivercc'];
+		$receivercc = GETPOST('receivercc', 'alphawithlgt');
 		if (!is_array($receivercc)) {
 			if ($receivercc == '-1') {
 				$receivercc = array();
@@ -225,7 +230,7 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 		}
 		$tmparray = array();
 		if (trim($_POST['sendtocc'])) {
-			$tmparray[] = trim($_POST['sendtocc']);
+			$tmparray[] = trim(GETPOST('sendtocc', 'alphawithlgt'));
 		}
 		if (count($receivercc) > 0) {
 			foreach ($receivercc as $key => $val) {
@@ -243,7 +248,7 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 			}
 		}
 		if (!empty($conf->global->MAIN_MAIL_ENABLED_USER_DEST_SELECT)) {
-			$receiverccuser = $_POST['receiverccuser'];
+			$receiverccuser = GETPOST('receiverccuser', 'alphawithlgt');
 
 			if (is_array($receiverccuser) && count($receiverccuser) > 0) {
 				$fuserdest = new User($db);
@@ -288,10 +293,10 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 					$from = dol_string_nospecial($obj->label, ' ', array(",")).' <'.$obj->email.'>';
 				}
 			} else {
-				$from = dol_string_nospecial($_POST['fromname'], ' ', array(",")).' <'.$_POST['frommail'].'>';
+				$from = dol_string_nospecial(GETPOST('fromname'), ' ', array(",")).' <'.GETPOST('frommail').'>';
 			}
 
-			$replyto = dol_string_nospecial($_POST['replytoname'], ' ', array(",")).' <'.$_POST['replytomail'].'>';
+			$replyto = dol_string_nospecial(GETPOST('replytoname'), ' ', array(",")).' <'.GETPOST('replytomail').'>';
 			$message = GETPOST('message', 'restricthtml');
 			$subject = GETPOST('subject', 'restricthtml');
 
@@ -308,10 +313,10 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 				$sendtobcc .= (empty($conf->global->$autocopy) ? '' : (($sendtobcc ? ", " : "").$conf->global->$autocopy));
 			}
 
-			$deliveryreceipt = $_POST['deliveryreceipt'];
+			$deliveryreceipt = GETPOST('deliveryreceipt');
 
 			if ($action == 'send' || $action == 'relance') {
-				$actionmsg2 = $langs->transnoentities('MailSentBy').' '.CMailFile::getValidAddress($from, 4, 0, 1).' '.$langs->transnoentities('at').' '.CMailFile::getValidAddress($sendto, 4, 0, 1);
+				$actionmsg2 = $langs->transnoentities('MailSentBy').' '.CMailFile::getValidAddress($from, 4, 0, 1).' '.$langs->transnoentities('To').' '.CMailFile::getValidAddress($sendto, 4, 0, 1);
 				if ($message) {
 					$actionmsg = $langs->transnoentities('MailFrom').': '.dol_escape_htmltag($from);
 					$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('MailTo').': '.dol_escape_htmltag($sendto));
@@ -337,7 +342,7 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 			// Make substitution in email content
 			$substitutionarray = getCommonSubstitutionArray($langs, 0, null, $object);
 			$substitutionarray['__EMAIL__'] = $sendto;
-			$substitutionarray['__CHECK_READ__'] = (is_object($object) && is_object($object->thirdparty)) ? '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.$object->thirdparty->tag.'&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" width="1" height="1" style="width:1px;height:1px" border="0"/>' : '';
+			$substitutionarray['__CHECK_READ__'] = (is_object($object) && is_object($object->thirdparty)) ? '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.urlencode($object->thirdparty->tag).'&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" width="1" height="1" style="width:1px;height:1px" border="0"/>' : '';
 
 			$parameters = array('mode'=>'formemail');
 			complete_substitutions_array($substitutionarray, $langs, $object, $parameters);
@@ -345,7 +350,7 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 			$subject = make_substitutions($subject, $substitutionarray);
 			$message = make_substitutions($message, $substitutionarray);
 
-			if (method_exists($object, 'makeSubstitution')) {
+			if (is_object($object) && method_exists($object, 'makeSubstitution')) {
 				$subject = $object->makeSubstitution($subject);
 				$message = $object->makeSubstitution($message);
 			}

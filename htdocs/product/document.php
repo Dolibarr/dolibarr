@@ -58,8 +58,8 @@ $hookmanager->initHooks(array('productdocuments'));
 
 // Get parameters
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -95,9 +95,19 @@ if ($id > 0 || !empty($ref)) {
 }
 $modulepart = 'produit';
 
-$permissiontoadd = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->creer) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->creer));
 
-$result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
+if ($object->id > 0) {
+	if ($object->type == $object::TYPE_PRODUCT) {
+		restrictedArea($user, 'produit', $object->id, 'product&product', '', '');
+	}
+	if ($object->type == $object::TYPE_SERVICE) {
+		restrictedArea($user, 'service', $object->id, 'product&product', '', '');
+	}
+} else {
+	restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
+}
+
+$permissiontoadd = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->creer) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->creer));
 
 
 /*
@@ -113,7 +123,7 @@ if ($reshook < 0) {
 if (empty($reshook)) {
 	// Delete line if product propal merge is linked to a file
 	if (!empty($conf->global->PRODUIT_PDF_MERGE_PROPAL)) {
-		if ($action == 'confirm_deletefile' && $confirm == 'yes') {
+		if ($action == 'confirm_deletefile' && $confirm == 'yes' && $permissiontoadd) {
 			//extract file name
 			$urlfile = GETPOST('urlfile', 'alpha');
 			$filename = basename($urlfile);
@@ -131,7 +141,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 }
 
-if ($action == 'filemerge') {
+if ($action == 'filemerge' && $permissiontoadd) {
 	$is_refresh = GETPOST('refresh');
 	if (empty($is_refresh)) {
 		$filetomerge_file_array = GETPOST('filetoadd');

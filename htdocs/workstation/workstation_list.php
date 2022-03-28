@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2007-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2020 Gauthier VERDOL <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2020      Gauthier VERDOL <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,6 +71,7 @@ $search_array_options = $extrafields->getOptionalsFromPost($object->table_elemen
 
 // Default sort order (if not yet defined by previous GETPOST)
 if (!$sortfield) {
+	reset($object->fields);					// Reset is required to avoid key() to return null.
 	$sortfield = "t.".key($object->fields); // Set here default search field. By default 1st field in definition.
 }
 if (!$sortorder) {
@@ -91,13 +92,13 @@ foreach ($object->fields as $key => $val) {
 	}
 }
 
-$groups = GETPOST('groups');
-$resources = GETPOST('resources');
+$groups = GETPOST('groups', 'array:int');
+$resources = GETPOST('resources', 'array:int');
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array();
 foreach ($object->fields as $key => $val) {
-	if ($val['searchall']) {
+	if (!empty($val['searchall'])) {
 		$fieldstosearchall['t.'.$key] = $val['label'];
 	}
 }
@@ -107,31 +108,31 @@ $arrayfields = array();
 foreach ($object->fields as $key => $val) {
 	// If $val['visible']==0, then we never show the field
 	if (!empty($val['visible'])) {
-		$visible = (int) dol_eval($val['visible'], 1);
+		$visible = (int) dol_eval($val['visible'], 1, 1, '1');
 		$arrayfields['t.'.$key] = array(
 			'label'=>$val['label'],
 			'checked'=>(($visible < 0) ? 0 : 1),
-			'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1)),
+			'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1, 1, '1')),
 			'position'=>$val['position'],
-			'help'=>$val['help']
+			'help' => empty($val['help']) ? '' : $val['help']
 		);
 	}
 }
 
 $arrayfields['wug.fk_usergroup'] = array(
-	'label'=>$langs->trans('Groups'),
+	'label'=>$langs->trans('UserGroups'),
 	'checked'=>(($visible < 0) ? 0 : 1),
 	'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1)),
 	'position'=>1000,
-	'help'=>$val['help']
+	'help' => empty($val['help']) ? '' : $val['help']
 );
 
 $arrayfields['wr.fk_resource'] = array(
 	'label'=>$langs->trans('Resources'),
 	'checked'=>(($visible < 0) ? 0 : 1),
-	'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1)),
+	'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1, 1, '1')),
 	'position'=>1001,
-	'help'=>$val['help']
+	'help' => empty($val['help']) ? '' : $val['help']
 );
 
 // Extra fields
@@ -145,7 +146,7 @@ $permissiontoadd = $user->rights->workstation->workstation->write;
 $permissiontodelete = $user->rights->workstation->workstation->delete;
 
 // Security check
-restrictedArea($user, $object->element, 0, '', 'workstation');
+restrictedArea($user, $object->element, 0, $object->table_element, 'workstation');
 
 
 /*
@@ -219,7 +220,7 @@ $sql .= $object->getFieldList('t');
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? "ef.".$key.' as options_'.$key.', ' : '');
+		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key.', ' : '');
 	}
 }
 // Add fields from hooks
@@ -252,8 +253,8 @@ foreach ($search as $key => $val) {
 			continue;
 		}
 		$mode_search = (($object->isInt($object->fields[$key]) || $object->isFloat($object->fields[$key])) ? 1 : 0);
-		if ((strpos($object->fields[$key]['type'], 'integer:') === 0) || (strpos($object->fields[$key]['type'], 'sellist:') === 0)) {
-			if ($search[$key] == '-1' || $search[$key] === '0') {
+		if ((strpos($object->fields[$key]['type'], 'integer:') === 0) || (strpos($object->fields[$key]['type'], 'sellist:') === 0) || !empty($object->fields[$key]['arrayofkeyval'])) {
+			if ($search[$key] == '-1' || ($search[$key] === '0' && (empty($object->fields[$key]['arrayofkeyval']) || !array_key_exists('0', $object->fields[$key]['arrayofkeyval'])))) {
 				$search[$key] = '';
 			}
 			$mode_search = 2;
@@ -263,10 +264,10 @@ foreach ($search as $key => $val) {
 		}
 	} else {
 		if (preg_match('/(_dtstart|_dtend)$/', $key) && $search[$key] != '') {
-			$columnName=preg_replace('/(_dtstart|_dtend)$/', '', $key);
+			$columnName = preg_replace('/(_dtstart|_dtend)$/', '', $key);
 			if (preg_match('/^(date|timestamp|datetime)/', $object->fields[$columnName]['type'])) {
 				if (preg_match('/_dtstart$/', $key)) {
-					$sql .= " AND t." . $columnName . " >= '" . $db->idate($search[$key]) . "'";
+					$sql .= " AND t.".$columnName." >= '".$db->idate($search[$key])."'";
 				}
 				if (preg_match('/_dtend$/', $key)) {
 					$sql .= " AND t." . $columnName . " <= '" . $db->idate($search[$key]) . "'";
@@ -283,12 +284,12 @@ if ($search_all) {
 
 // usergroups
 if (!empty($groups)) {
-	$sql.= ' AND wug.fk_usergroup IN('.implode(',', $groups).')';
+	$sql.= ' AND wug.fk_usergroup IN('.$db->sanitize(implode(',', $groups)).')';
 }
 
 // resources
 if (!empty($resources)) {
-	$sql.= ' AND wr.fk_resource IN('.implode(',', $resources).')';
+	$sql.= ' AND wr.fk_resource IN('.$db->sanitize(implode(',', $resources)).')';
 }
 
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
@@ -299,18 +300,19 @@ $sql .= $hookmanager->resPrint;
 
 $sql.= " GROUP BY ";
 foreach ($object->fields as $key => $val) {
-	$sql.='t.'.$key.', ';
+	$sql .= "t.".$key.", ";
 }
 // Add fields from extrafields
 if (! empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? "ef.".$key.', ' : '');
 }
 // Add where from hooks
-$parameters=array();
-$reshook=$hookmanager->executeHooks('printFieldListGroupBy', $parameters, $object);    // Note that $action and $object may have been modified by hook
-$sql.=$hookmanager->resPrint;
-$sql=preg_replace('/,\s*$/', '', $sql);
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListGroupBy', $parameters, $object);    // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
+$sql = preg_replace('/,\s*$/', '', $sql);
 $sql .= $db->order($sortfield, $sortorder);
+//print $sql;
 
 // Count total nb of records
 $nbtotalofrecords = '';
@@ -343,7 +345,7 @@ if (is_numeric($nbtotalofrecords) && ($limit > $nbtotalofrecords || empty($limit
 if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $search_all && !$page) {
 	$obj = $db->fetch_object($resql);
 	$id = $obj->rowid;
-	header("Location: ".dol_buildpath('/workstation/workstation_card.php', 1).'?id='.$id);
+	header("Location: ".DOL_URL_ROOT.'/workstation/workstation_card.php?id='.$id);
 	exit;
 }
 
@@ -352,21 +354,6 @@ if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $
 // --------------------------------------------------------------------
 
 llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'classforhorizontalscrolloftabs');
-
-// Example : Adding jquery code
-print '<script type="text/javascript" language="javascript">
-jQuery(document).ready(function() {
-	function init_myfunc()
-	{
-		jQuery("#myid").removeAttr(\'disabled\');
-		jQuery("#myid").attr(\'disabled\',\'disabled\');
-	}
-	init_myfunc();
-	jQuery("#mybutton").click(function() {
-		init_myfunc();
-	});
-});
-</script>';
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
@@ -629,9 +616,15 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
-			if (!empty($val['isameasure'])) {
+			if (!empty($val['isameasure']) && $val['isameasure'] == 1) {
 				if (!$i) {
 					$totalarray['pos'][$totalarray['nbfield']] = 't.'.$key;
+				}
+				if (!isset($totalarray['val'])) {
+					$totalarray['val'] = array();
+				}
+				if (!isset($totalarray['val']['t.'.$key])) {
+					$totalarray['val']['t.'.$key] = 0;
 				}
 				$totalarray['val']['t.'.$key] += $object->$key;
 			}
@@ -640,25 +633,39 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 
 	if (!empty($arrayfields['wug.fk_usergroup']['checked'])) {
 		$toprint = array();
+		$cssforli = '';
+		if (count($object->usergroups) >= 4) {
+			$cssforli = 'tdoverflowmax60';
+		} elseif (count($object->usergroups) >= 2) {
+			$cssforli = 'tdoverflowmax80';
+		}
 		foreach ($object->usergroups as $id_group) {
 			$g = new UserGroup($db);
 			$g->fetch($id_group);
-			$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #bbb">' . $g->getNomUrl(1) . '</li>';
+			$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories'.($cssforli ? ' '.$cssforli : '').'" style="background: #bbb">' . $g->getNomUrl(1, '', 0, 'categtextwhite') . '</li>';
 		}
+
 		print '<td>';
-		print '<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">' . implode(' ', $toprint) . '</ul></div>';
+		print '<div class="select2-container-multi-dolibarr"><ul class="select2-choices-dolibarr">' . implode(' ', $toprint) . '</ul></div>';
 		print '</td>';
 	}
 
 	if (!empty($arrayfields['wr.fk_resource']['checked'])) {
 		$toprint = array();
+		$cssforli = '';
+		if (count($object->resources) >= 4) {
+			$cssforli = 'tdoverflowmax60';
+		} elseif (count($object->resources) >= 2) {
+			$cssforli = 'tdoverflowmax80';
+		}
 		foreach ($object->resources as $id_resource) {
 			$r = new Dolresource($db);
 			$r->fetch($id_resource);
-			$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #bbb">' . $r->getNomUrl(1) . '</li>';
+			$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories'.($cssforli ? ' '.$cssforli : '').'" style="background: #bbb">' . $r->getNomUrl(1, '', '', 0, 'categtextwhite') . '</li>';
 		}
+
 		print '<td>';
-		print '<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">' . implode(' ', $toprint) . '</ul></div>';
+		print '<div class="select2-container-multi-dolibarr"><ul class="select2-choices-dolibarr">' . implode(' ', $toprint) . '</ul></div>';
 		print '</td>';
 	}
 

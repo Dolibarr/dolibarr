@@ -28,7 +28,6 @@
  */
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/cactioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncommreminder.class.php';
 
@@ -125,14 +124,15 @@ class ActionComm extends CommonObject
 	public $label;
 
 	/**
+	 * @var string Agenda event label
+	 * @deprecated Use $label
+	 */
+	public $libelle;
+
+	/**
 	 * @var integer Date creation record (datec)
 	 */
 	public $datec;
-
-	/**
-	 * @var integer Date end record (datef)
-	 */
-	public $datef;
 
 	/**
 	 * @var integer Duration (duree)
@@ -174,6 +174,21 @@ class ActionComm extends CommonObject
 	public $datep;
 
 	/**
+	 * @var integer Date action end (datef)
+	 */
+	public $datef;
+
+	/**
+	 * @var integer This is date start action (datep) but modified to not be outside calendar view.
+	 */
+	public $date_start_in_calendar;
+
+	/**
+	 * @var integer This is date end action (datef) but modified to not be outside calendar view.
+	 */
+	public $date_end_in_calendar;
+
+	/**
 	 * @var integer Date action end (datep2)
 	 */
 	public $datep2;
@@ -188,6 +203,11 @@ class ActionComm extends CommonObject
 	 * @var int 1=Event on full day
 	 */
 	public $fulldayevent = 0;
+
+	/**
+	 * @var int 1=???
+	 */
+	public $ponctuel;
 
 	/**
 	 * @var integer Percentage
@@ -220,8 +240,7 @@ class ActionComm extends CommonObject
 	public $userownerid;
 
 	/**
-	 * @var int Id of user done (deprecated)
-	 * @deprecated
+	 * @var int Id of user that has done the event. Used only if AGENDA_ENABLE_DONEBY is set.
 	 */
 	public $userdoneid;
 
@@ -241,20 +260,6 @@ class ActionComm extends CommonObject
 	public $reminders = array();
 
 	/**
-	 * @var User Object user of owner
-	 * @deprecated
-	 * @see $userownerid
-	 */
-	public $usertodo;
-
-	/**
-	 * @var User Object user that did action
-	 * @deprecated
-	 * @see $userdoneid
-	 */
-	public $userdone;
-
-	/**
 	 * @var int thirdparty id linked to action
 	 */
 	public $socid;
@@ -262,7 +267,7 @@ class ActionComm extends CommonObject
 	/**
 	 * @var int socpeople id linked to action
 	 */
-	public $contactid;
+	public $contact_id;
 
 	/**
 	 * @var Societe|null Company linked to action (optional)
@@ -274,7 +279,7 @@ class ActionComm extends CommonObject
 	/**
 	 * @var Contact|null Contact linked to action (optional)
 	 * @deprecated
-	 * @see $contactid
+	 * @see $contact_id
 	 */
 	public $contact;
 
@@ -382,6 +387,7 @@ class ActionComm extends CommonObject
 	 * Typical value for a event that is in a finished state
 	 */
 	const EVENT_FINISHED = 100;
+
 
 	/**
 	 *      Constructor
@@ -542,18 +548,22 @@ class ActionComm extends CommonObject
 		$sql .= (isset($this->type_id) ? $this->type_id : "null").",";
 		$sql .= ($code ? ("'".$this->db->escape($code)."'") : "null").", ";
 		$sql .= (!empty($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : "null").", ";
-		$sql .= ((isset($this->socid) && $this->socid > 0) ? $this->socid : "null").", ";
-		$sql .= ((isset($this->fk_project) && $this->fk_project > 0) ? $this->fk_project : "null").", ";
+		$sql .= ((isset($this->socid) && $this->socid > 0) ? ((int) $this->socid) : "null").", ";
+		$sql .= ((isset($this->fk_project) && $this->fk_project > 0) ? ((int) $this->fk_project) : "null").", ";
 		$sql .= " '".$this->db->escape($this->note_private)."', ";
-		$sql .= ((isset($this->contact_id) && $this->contact_id > 0) ? $this->contact_id : "null").", "; // deprecated, use ->socpeopleassigned
+		$sql .= ((isset($this->contact_id) && $this->contact_id > 0) ? ((int) $this->contact_id) : "null").", "; // deprecated, use ->socpeopleassigned
 		$sql .= (isset($user->id) && $user->id > 0 ? $user->id : "null").", ";
 		$sql .= ($userownerid > 0 ? $userownerid : "null").", ";
 		$sql .= ($userdoneid > 0 ? $userdoneid : "null").", ";
-		$sql .= "'".$this->db->escape($this->label)."','".$this->db->escape($this->percentage)."','".$this->db->escape($this->priority)."','".$this->db->escape($this->fulldayevent)."','".$this->db->escape($this->location)."', ";
+		$sql .= "'".$this->db->escape($this->label)."', ";
+		$sql .= "'".$this->db->escape($this->percentage)."', ";
+		$sql .= "'".$this->db->escape($this->priority)."', ";
+		$sql .= "'".$this->db->escape($this->fulldayevent)."', ";
+		$sql .= "'".$this->db->escape($this->location)."', ";
 		$sql .= "'".$this->db->escape($this->transparency)."', ";
-		$sql .= (!empty($this->fk_element) ? $this->fk_element : "null").", ";
+		$sql .= (!empty($this->fk_element) ? ((int) $this->fk_element) : "null").", ";
 		$sql .= (!empty($this->elementtype) ? "'".$this->db->escape($this->elementtype)."'" : "null").", ";
-		$sql .= $conf->entity.",";
+		$sql .= ((int) $conf->entity).",";
 		$sql .= (!empty($this->extraparams) ? "'".$this->db->escape($this->extraparams)."'" : "null").", ";
 		// Fields emails
 		$sql .= (!empty($this->email_msgid) ? "'".$this->db->escape($this->email_msgid)."'" : "null").", ";
@@ -585,15 +595,18 @@ class ActionComm extends CommonObject
 				//dol_syslog(var_export($this->userassigned, true));
 				$already_inserted = array();
 				foreach ($this->userassigned as $key => $val) {
-					if (!is_array($val)) {	// For backward compatibility when val=id
+					// Common value with new behavior is to have $val = array('id'=>iduser, 'transparency'=>0|1) and $this->userassigned is an array of iduser => $val.
+					if (!is_array($val)) {	// For backward compatibility when $val='id'.
 						$val = array('id'=>$val);
 					}
 
 					if ($val['id'] > 0) {
-						if (!empty($already_inserted[$val['id']])) continue;
+						if (!empty($already_inserted[$val['id']])) {
+							continue;
+						}
 
 						$sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm_resources(fk_actioncomm, element_type, fk_element, mandatory, transparency, answer_status)";
-						$sql .= " VALUES(".$this->id.", 'user', ".$val['id'].", ".(empty($val['mandatory']) ? '0' : $val['mandatory']).", ".(empty($val['transparency']) ? '0' : $val['transparency']).", ".(empty($val['answer_status']) ? '0' : $val['answer_status']).")";
+						$sql .= " VALUES(".((int) $this->id).", 'user', ".((int) $val['id']).", ".(empty($val['mandatory']) ? '0' : ((int) $val['mandatory'])).", ".(empty($val['transparency']) ? '0' : ((int) $val['transparency'])).", ".(empty($val['answer_status']) ? '0' : ((int) $val['answer_status'])).")";
 
 						$resql = $this->db->query($sql);
 						if (!$resql) {
@@ -612,10 +625,13 @@ class ActionComm extends CommonObject
 				if (!empty($this->socpeopleassigned)) {
 					$already_inserted = array();
 					foreach ($this->socpeopleassigned as $id => $val) {
-						if (!empty($already_inserted[$val['id']])) continue;
+						// Common value with new behavior is to have $val = iduser and $this->socpeopleassigned is an array of iduser => $val.
+						if (!empty($already_inserted[$id])) {
+							continue;
+						}
 
 						$sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm_resources(fk_actioncomm, element_type, fk_element, mandatory, transparency, answer_status)";
-						$sql .= " VALUES(".$this->id.", 'socpeople', ".$id.", 0, 0, 0)";
+						$sql .= " VALUES(".((int) $this->id).", 'socpeople', ".((int) $id).", 0, 0, 0)";
 
 						$resql = $this->db->query($sql);
 						if (!$resql) {
@@ -623,7 +639,7 @@ class ActionComm extends CommonObject
 							dol_syslog('Error to process socpeopleassigned: ' . $this->db->lasterror(), LOG_ERR);
 							$this->errors[] = $this->db->lasterror();
 						} else {
-							$already_inserted[$val['id']] = true;
+							$already_inserted[$id] = true;
 						}
 					}
 				}
@@ -729,15 +745,21 @@ class ActionComm extends CommonObject
 	/**
 	 *  Load object from database
 	 *
-	 *  @param  int		$id     		Id of action to get
-	 *  @param  string	$ref    		Ref of action to get
-	 *  @param  string	$ref_ext		Ref ext to get
-	 *  @param	string	$email_msgid	Email msgid
-	 *  @return	int						<0 if KO, >0 if OK
+	 *  @param  int		$id     			Id of action to get
+	 *  @param  string	$ref    			Ref of action to get
+	 *  @param  string	$ref_ext			Ref ext to get
+	 *  @param	string	$email_msgid		Email msgid
+	 *  @param	string	$loadresources		1=Load also resources
+	 *  @return	int							<0 if KO, >0 if OK
 	 */
-	public function fetch($id, $ref = '', $ref_ext = '', $email_msgid = '')
+	public function fetch($id, $ref = '', $ref_ext = '', $email_msgid = '', $loadresources = 1)
 	{
 		global $langs;
+
+		if (empty($id) && empty($ref) && empty($ref_ext) && empty($email_msgid)) {
+			dol_syslog(get_class($this)."::fetch Bad parameters", LOG_WARNING);
+			return -1;
+		}
 
 		$sql = "SELECT a.id,";
 		$sql .= " a.ref as ref,";
@@ -748,7 +770,7 @@ class ActionComm extends CommonObject
 		$sql .= " a.durationp,"; // deprecated
 		$sql .= " a.datec,";
 		$sql .= " a.tms as datem,";
-		$sql .= " a.code, a.label, a.note,";
+		$sql .= " a.code, a.label, a.note as note_private,";
 		$sql .= " a.fk_soc,";
 		$sql .= " a.fk_project,";
 		$sql .= " a.fk_user_author, a.fk_user_mod,";
@@ -807,26 +829,25 @@ class ActionComm extends CommonObject
 				$this->datec = $this->db->jdate($obj->datec);
 				$this->datem = $this->db->jdate($obj->datem);
 
-				$this->note = $obj->note; // deprecated
-				$this->note_private = $obj->note;
+				$this->note = $obj->note_private; // deprecated
+				$this->note_private = $obj->note_private;
 				$this->percentage = $obj->percentage;
 
 				$this->authorid = $obj->fk_user_author;
 				$this->usermodid = $obj->fk_user_mod;
 
 				if (!is_object($this->author)) {
-					$this->author = new stdClass(); // To avoid warning
+					$this->author = new User($this->db); // To avoid warning
 				}
 				$this->author->id = $obj->fk_user_author; // deprecated
 				$this->author->firstname = $obj->firstname; // deprecated
 				$this->author->lastname = $obj->lastname; // deprecated
 				if (!is_object($this->usermod)) {
-					$this->usermod = new stdClass(); // To avoid warning
+					$this->usermod = new User($this->db); // To avoid warning
 				}
 				$this->usermod->id = $obj->fk_user_mod; // deprecated
 
 				$this->userownerid = $obj->fk_user_action;
-				$this->userdoneid = $obj->fk_user_done;
 				$this->priority				= $obj->priority;
 				$this->fulldayevent			= $obj->fulldayevent;
 				$this->location				= $obj->location;
@@ -847,8 +868,13 @@ class ActionComm extends CommonObject
 				$this->event_paid = $obj->event_paid;
 				$this->status = $obj->status;
 
-				$this->fetchResources();
+				$this->fetch_optionals();
+
+				if ($loadresources) {
+					$this->fetchResources();
+				}
 			}
+
 			$this->db->free($resql);
 		} else {
 			$this->error = $this->db->lasterror();
@@ -870,7 +896,7 @@ class ActionComm extends CommonObject
 
 		$sql = 'SELECT fk_actioncomm, element_type, fk_element, answer_status, mandatory, transparency';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'actioncomm_resources';
-		$sql .= ' WHERE fk_actioncomm = '.$this->id;
+		$sql .= ' WHERE fk_actioncomm = '.((int) $this->id);
 		$sql .= " AND element_type IN ('user', 'socpeople')";
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -914,7 +940,7 @@ class ActionComm extends CommonObject
 		// phpcs:enable
 		$sql = "SELECT fk_actioncomm, element_type, fk_element, answer_status, mandatory, transparency";
 		$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm_resources";
-		$sql .= " WHERE element_type = 'user' AND fk_actioncomm = ".$this->id;
+		$sql .= " WHERE element_type = 'user' AND fk_actioncomm = ".((int) $this->id);
 
 		$resql2 = $this->db->query($sql);
 		if ($resql2) {
@@ -968,7 +994,7 @@ class ActionComm extends CommonObject
 		// remove categorie association
 		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_actioncomm";
-			$sql .= " WHERE fk_actioncomm=".$this->id;
+			$sql .= " WHERE fk_actioncomm=".((int) $this->id);
 
 			$res = $this->db->query($sql);
 			if (!$res) {
@@ -980,7 +1006,7 @@ class ActionComm extends CommonObject
 		// remove actioncomm_resources
 		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."actioncomm_resources";
-			$sql .= " WHERE fk_actioncomm=".$this->id;
+			$sql .= " WHERE fk_actioncomm=".((int) $this->id);
 
 			$res = $this->db->query($sql);
 			if (!$res) {
@@ -991,7 +1017,7 @@ class ActionComm extends CommonObject
 
 		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."actioncomm_reminder";
-			$sql .= " WHERE fk_actioncomm = ".$this->id;
+			$sql .= " WHERE fk_actioncomm = ".((int) $this->id);
 
 			$res = $this->db->query($sql);
 			if (!$res) {
@@ -1012,7 +1038,7 @@ class ActionComm extends CommonObject
 		// remove actioncomm
 		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."actioncomm";
-			$sql .= " WHERE id=".$this->id;
+			$sql .= " WHERE id=".((int) $this->id);
 
 			$res = $this->db->query($sql);
 			if (!$res) {
@@ -1113,18 +1139,18 @@ class ActionComm extends CommonObject
 		$sql .= ", datep2 = ".(strval($this->datef) != '' ? "'".$this->db->idate($this->datef)."'" : 'null');
 		$sql .= ", durationp = ".(isset($this->durationp) && $this->durationp >= 0 && $this->durationp != '' ? "'".$this->db->escape($this->durationp)."'" : "null"); // deprecated
 		$sql .= ", note = '".$this->db->escape($this->note_private)."'";
-		$sql .= ", fk_project =".($this->fk_project > 0 ? $this->fk_project : "null");
-		$sql .= ", fk_soc =".($socid > 0 ? $socid : "null");
-		$sql .= ", fk_contact =".($contactid > 0 ? $contactid : "null");
+		$sql .= ", fk_project =".($this->fk_project > 0 ? ((int) $this->fk_project) : "null");
+		$sql .= ", fk_soc =".($socid > 0 ? ((int) $socid) : "null");
+		$sql .= ", fk_contact =".($contactid > 0 ? ((int) $contactid) : "null");
 		$sql .= ", priority = '".$this->db->escape($this->priority)."'";
 		$sql .= ", fulldayevent = '".$this->db->escape($this->fulldayevent)."'";
 		$sql .= ", location = ".($this->location ? "'".$this->db->escape($this->location)."'" : "null");
 		$sql .= ", transparency = '".$this->db->escape($this->transparency)."'";
-		$sql .= ", fk_user_mod = ".$user->id;
-		$sql .= ", fk_user_action = ".($userownerid > 0 ? "'".$this->db->escape($userownerid)."'" : "null");
-		$sql .= ", fk_user_done = ".($userdoneid > 0 ? "'".$this->db->escape($userdoneid)."'" : "null");
+		$sql .= ", fk_user_mod = ".((int) $user->id);
+		$sql .= ", fk_user_action = ".($userownerid > 0 ? ((int) $userownerid) : "null");
+		$sql .= ", fk_user_done = ".($userdoneid > 0 ? ((int) $userdoneid) : "null");
 		if (!empty($this->fk_element)) {
-			$sql .= ", fk_element=".($this->fk_element ? $this->db->escape($this->fk_element) : "null");
+			$sql .= ", fk_element=".($this->fk_element ? ((int) $this->fk_element) : "null");
 		}
 		if (!empty($this->elementtype)) {
 			$sql .= ", elementtype=".($this->elementtype ? "'".$this->db->escape($this->elementtype)."'" : "null");
@@ -1154,7 +1180,7 @@ class ActionComm extends CommonObject
 
 			// Now insert assignedusers
 			if (!$error) {
-				$sql = "DELETE FROM ".MAIN_DB_PREFIX."actioncomm_resources where fk_actioncomm = ".$this->id." AND element_type = 'user'";
+				$sql = "DELETE FROM ".MAIN_DB_PREFIX."actioncomm_resources where fk_actioncomm = ".((int) $this->id)." AND element_type = 'user'";
 				$resql = $this->db->query($sql);
 
 				$already_inserted = array();
@@ -1165,7 +1191,7 @@ class ActionComm extends CommonObject
 					if (!empty($already_inserted[$val['id']])) continue;
 
 					$sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm_resources(fk_actioncomm, element_type, fk_element, mandatory, transparency, answer_status)";
-					$sql .= " VALUES(".$this->id.", 'user', ".$val['id'].", ".(empty($val['mandatory']) ? '0' : $val['mandatory']).", ".(empty($val['transparency']) ? '0' : $val['transparency']).", ".(empty($val['answer_status']) ? '0' : $val['answer_status']).")";
+					$sql .= " VALUES(".((int) $this->id).", 'user', ".((int) $val['id']).", ".(empty($val['mandatory']) ? '0' : ((int) $val['mandatory'])).", ".(empty($val['transparency']) ? '0' : ((int) $val['transparency'])).", ".(empty($val['answer_status']) ? '0' : ((int) $val['answer_status'])).")";
 
 					$resql = $this->db->query($sql);
 					if (!$resql) {
@@ -1179,7 +1205,7 @@ class ActionComm extends CommonObject
 			}
 
 			if (!$error) {
-				$sql = "DELETE FROM ".MAIN_DB_PREFIX."actioncomm_resources where fk_actioncomm = ".$this->id." AND element_type = 'socpeople'";
+				$sql = "DELETE FROM ".MAIN_DB_PREFIX."actioncomm_resources where fk_actioncomm = ".((int) $this->id)." AND element_type = 'socpeople'";
 				$resql = $this->db->query($sql);
 
 				if (!empty($this->socpeopleassigned)) {
@@ -1188,7 +1214,7 @@ class ActionComm extends CommonObject
 						if (!empty($already_inserted[$val['id']])) continue;
 
 						$sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm_resources(fk_actioncomm, element_type, fk_element, mandatory, transparency, answer_status)";
-						$sql .= " VALUES(".$this->id.", 'socpeople', ".$id.", 0, 0, 0)";
+						$sql .= " VALUES(".((int) $this->id).", 'socpeople', ".((int) $id).", 0, 0, 0)";
 
 						$resql = $this->db->query($sql);
 						if (!$resql) {
@@ -1229,7 +1255,6 @@ class ActionComm extends CommonObject
 	 *  Load all objects with filters.
 	 *  @todo WARNING: This make a fetch on all records instead of making one request with a join.
 	 *
-	 *  @param		DoliDb	$db				Not used
 	 *  @param		int		$socid			Filter by thirdparty
 	 *  @param		int		$fk_element		Id of element action is linked to
 	 *  @param		string	$elementtype	Type of element action is linked to
@@ -1239,7 +1264,7 @@ class ActionComm extends CommonObject
 	 *  @param		string	$limit			Limit number of answers
 	 *  @return		array|string			Error string if KO, array with actions if OK
 	 */
-	public static function getActions($db, $socid = 0, $fk_element = 0, $elementtype = '', $filter = '', $sortfield = 'a.datep', $sortorder = 'DESC', $limit = 0)
+	public function getActions($socid = 0, $fk_element = 0, $elementtype = '', $filter = '', $sortfield = 'a.datep', $sortorder = 'DESC', $limit = 0)
 	{
 		global $conf, $langs;
 
@@ -1261,33 +1286,33 @@ class ActionComm extends CommonObject
 				$sql .= " (SELECT fk_actioncomm FROM ".MAIN_DB_PREFIX."actioncomm_resources WHERE";
 				$sql .= " element_type = 'socpeople' AND fk_element = ".((int) $fk_element).')';
 			} else {
-				$sql .= " AND a.fk_element = ".((int) $fk_element)." AND a.elementtype = '".$db->escape($elementtype)."'";
+				$sql .= " AND a.fk_element = ".((int) $fk_element)." AND a.elementtype = '".$this->db->escape($elementtype)."'";
 			}
 		}
 		if (!empty($filter)) {
 			$sql .= $filter;
 		}
 		if ($sortorder && $sortfield) {
-			$sql .= $db->order($sortfield, $sortorder);
+			$sql .= $this->db->order($sortfield, $sortorder);
 		}
-		$sql .= $db->plimit($limit, 0);
+		$sql .= $this->db->plimit($limit, 0);
 
-		$resql = $db->query($sql);
+		$resql = $this->db->query($sql);
 		if ($resql) {
-			$num = $db->num_rows($resql);
+			$num = $this->db->num_rows($resql);
 
 			if ($num) {
 				for ($i = 0; $i < $num; $i++) {
-					$obj = $db->fetch_object($resql);
-					$actioncommstatic = new ActionComm($db);
+					$obj = $this->db->fetch_object($resql);
+					$actioncommstatic = new ActionComm($this->db);
 					$actioncommstatic->fetch($obj->id);
 					$resarray[$i] = $actioncommstatic;
 				}
 			}
-			$db->free($resql);
+			$this->db->free($resql);
 			return $resarray;
 		} else {
-			return $db->lasterror();
+			return $this->db->lasterror();
 		}
 	}
 
@@ -1311,11 +1336,11 @@ class ActionComm extends CommonObject
 			$sql = "SELECT count(a.id) as nb";
 		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
-		if (!$user->rights->societe->client->voir && !$user->socid) {
+		if (empty($user->rights->societe->client->voir) && !$user->socid) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
 		}
-		if (!$user->rights->agenda->allactions->read) {
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."actioncomm_resources AS ar ON a.id = ar.fk_actioncomm AND ar.element_type ='user' AND ar.fk_element = ".$user->id;
+		if (empty($user->rights->agenda->allactions->read)) {
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."actioncomm_resources AS ar ON a.id = ar.fk_actioncomm AND ar.element_type ='user' AND ar.fk_element = ".((int) $user->id);
 		}
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
 		$sql .= " WHERE 1 = 1";
@@ -1323,15 +1348,15 @@ class ActionComm extends CommonObject
 			$sql .= " AND a.percent >= 0 AND a.percent < 100";
 		}
 		$sql .= " AND a.entity IN (".getEntity('agenda').")";
-		if (!$user->rights->societe->client->voir && !$user->socid) {
-			$sql .= " AND (a.fk_soc IS NULL OR sc.fk_user = ".$user->id.")";
+		if (empty($user->rights->societe->client->voir) && !$user->socid) {
+			$sql .= " AND (a.fk_soc IS NULL OR sc.fk_user = ".((int) $user->id).")";
 		}
 		if ($user->socid) {
-			$sql .= " AND a.fk_soc = ".$user->socid;
+			$sql .= " AND a.fk_soc = ".((int) $user->socid);
 		}
-		if (!$user->rights->agenda->allactions->read) {
-			$sql .= " AND (a.fk_user_author = ".$user->id." OR a.fk_user_action = ".$user->id." OR a.fk_user_done = ".$user->id;
-			$sql .= " OR ar.fk_element = ".$user->id; // Added by PV
+		if (empty($user->rights->agenda->allactions->read)) {
+			$sql .= " AND (a.fk_user_author = ".((int) $user->id)." OR a.fk_user_action = ".((int) $user->id)." OR a.fk_user_done = ".((int) $user->id);
+			$sql .= " OR ar.fk_element = ".((int) $user->id);
 			$sql .= ")";
 		}
 
@@ -1343,7 +1368,7 @@ class ActionComm extends CommonObject
 				$response->warning_delay = $conf->agenda->warning_delay / 60 / 60 / 24;
 				$response->label = $langs->trans("ActionsToDo");
 				$response->labelShort = $langs->trans("ActionsToDoShort");
-				$response->url = DOL_URL_ROOT.'/comm/action/list.php?action=show_list&actioncode=0&status=todo&mainmenu=agenda';
+				$response->url = DOL_URL_ROOT.'/comm/action/list.php?mode=show_list&actioncode=0&status=todo&mainmenu=agenda';
 				if ($user->rights->agenda->allactions->read) {
 					$response->url .= '&filtert=-1';
 				}
@@ -1423,9 +1448,9 @@ class ActionComm extends CommonObject
 
 
 	/**
-	 *  Return label of status
+	 *  Return the label of the status
 	 *
-	 *  @param	int		$mode           0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *  @param  int		$mode           0=Long label, 1=Short label, 2=Picto+Short label, 3=Picto, 4=Picto+Short label, 5=Short label+Picto, 6=Picto+Long label, 7=Very short label+Picto
 	 *  @param  int		$hidenastatus   1=Show nothing if status is "Not applicable"
 	 *  @return string          		String with status
 	 */
@@ -1449,18 +1474,18 @@ class ActionComm extends CommonObject
 		// phpcs:enable
 		global $langs;
 
-		$labelStatus = $langs->trans('StatusNotApplicable');
+		$labelStatus = $langs->transnoentitiesnoconv('StatusNotApplicable');
 		if ($percent == -1 && !$hidenastatus) {
-			$labelStatus = $langs->trans('StatusNotApplicable');
+			$labelStatus = $langs->transnoentitiesnoconv('StatusNotApplicable');
 		} elseif ($percent == 0) {
-			$labelStatus = $langs->trans('StatusActionToDo').' (0%)';
+			$labelStatus = $langs->transnoentitiesnoconv('StatusActionToDo').' (0%)';
 		} elseif ($percent > 0 && $percent < 100) {
-			$labelStatus = $langs->trans('StatusActionInProcess').' ('.$percent.'%)';
+			$labelStatus = $langs->transnoentitiesnoconv('StatusActionInProcess').' ('.$percent.'%)';
 		} elseif ($percent >= 100) {
-			$labelStatus = $langs->trans('StatusActionDone').' (100%)';
+			$labelStatus = $langs->transnoentitiesnoconv('StatusActionDone').' (100%)';
 		}
 
-		$labelStatusShort = $langs->trans('StatusNotApplicable');
+		$labelStatusShort = $langs->transnoentitiesnoconv('StatusNotApplicable');
 		if ($percent == -1 && !$hidenastatus) {
 			$labelStatusShort = $langs->trans('NA');
 		} elseif ($percent == 0) {
@@ -1612,41 +1637,39 @@ class ActionComm extends CommonObject
 		}
 
 		if ($withpicto == 2) {
-			$libelle = $label;
 			if (!empty($conf->global->AGENDA_USE_EVENT_TYPE)) {
-				$libelle = $labeltype;
+				$label = $labeltype;
 			}
-			$libelleshort = '';
+			$labelshort = '';
 		} else {
-			$libelle = (empty($this->libelle) ? $label : $this->libelle.(($label && $label != $this->libelle) ? ' '.$label : ''));
-			if (!empty($conf->global->AGENDA_USE_EVENT_TYPE) && empty($libelle)) {
-				$libelle = $labeltype;
+			if (!empty($conf->global->AGENDA_USE_EVENT_TYPE) && empty($label)) {
+				$label = $labeltype;
 			}
 			if ($maxlength < 0) {
-				$libelleshort = $this->ref;
+				$labelshort = $this->ref;
 			} else {
-				$libelleshort = dol_trunc($libelle, $maxlength);
+				$labelshort = dol_trunc($label, $maxlength);
 			}
 		}
 
 		if ($withpicto) {
 			if (!empty($conf->global->AGENDA_USE_EVENT_TYPE)) {	// Add code into ()
 				if ($labeltype) {
-					$libelle .= (preg_match('/'.preg_quote($labeltype, '/').'/', $libelle) ? '' : ' ('.$langs->transnoentities("Action".$this->type_code).')');
+					$label .= (preg_match('/'.preg_quote($labeltype, '/').'/', $label) ? '' : ' ('.$langs->transnoentities("Action".$this->type_code).')');
 				}
 			}
 		}
 
 		$result .= $linkstart;
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $langs->trans("ShowAction").': '.$libelle), ($overwritepicto ? $overwritepicto : 'action'), (($this->type_color && $overwritepicto) ? 'style="color: #'.$this->type_color.' !important;" ' : '').($notooltip ? 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'"' : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+			$result .= img_object(($notooltip ? '' : $langs->trans("ShowAction").': '.$label), ($overwritepicto ? $overwritepicto : 'action'), (($this->type_color && $overwritepicto) ? 'style="color: #'.$this->type_color.' !important;" ' : '').($notooltip ? 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'"' : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
 		}
-		$result .= $libelleshort;
+		$result .= $labelshort;
 		$result .= $linkend;
 
 		global $action;
 		$hookmanager->initHooks(array('actiondao'));
-		$parameters = array('id'=>$this->id, 'getnomurl'=>$result);
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -1818,7 +1841,7 @@ class ActionComm extends CommonObject
 			$sql .= " a.datep2,"; // End
 			$sql .= " a.durationp,"; // deprecated
 			$sql .= " a.datec, a.tms as datem,";
-			$sql .= " a.label, a.code, a.note, a.fk_action as type_id,";
+			$sql .= " a.label, a.code, a.note as note_private, a.fk_action as type_id,";
 			$sql .= " a.fk_soc,";
 			$sql .= " a.fk_user_author, a.fk_user_mod,";
 			$sql .= " a.fk_user_action,";
@@ -1897,10 +1920,16 @@ class ActionComm extends CommonObject
 					$userforfilter = new User($this->db);
 					$result = $userforfilter->fetch('', $logint);
 					if ($result > 0) {
-						$sql .= " AND ar.fk_element = ".$userforfilter->id;
+						$sql .= " AND ar.fk_element = ".((int) $userforfilter->id);
 					} elseif ($result < 0 || $condition == '=') {
 						$sql .= " AND ar.fk_element = 0";
 					}
+				}
+				if ($key == 'module') {
+					$sql .= " AND c.module LIKE '%".$this->db->escape($value)."'";
+				}
+				if ($key == 'status') {
+					$sql .= " AND a.status =".((int) $value);
 				}
 			}
 
@@ -1926,20 +1955,21 @@ class ActionComm extends CommonObject
 					$event = array();
 					$event['uid'] = 'dolibarragenda-'.$this->db->database_name.'-'.$obj->id."@".$_SERVER["SERVER_NAME"];
 					$event['type'] = $type;
+
 					$datestart = $this->db->jdate($obj->datep) - (empty($conf->global->AGENDA_EXPORT_FIX_TZ) ? 0 : ($conf->global->AGENDA_EXPORT_FIX_TZ * 3600));
 
 					// fix for -> Warning: A non-numeric value encountered
 					if (is_numeric($this->db->jdate($obj->datep2))) {
-						$dateend = $this->db->jdate($obj->datep2)
-								 - (empty($conf->global->AGENDA_EXPORT_FIX_TZ) ? 0 : ($conf->global->AGENDA_EXPORT_FIX_TZ * 3600));
+						$dateend = $this->db->jdate($obj->datep2) - (empty($conf->global->AGENDA_EXPORT_FIX_TZ) ? 0 : ($conf->global->AGENDA_EXPORT_FIX_TZ * 3600));
 					} else {
-						// use start date as fall-back to avoid import erros on empty end date
+						// use start date as fall-back to avoid pb with empty end date on ICS readers
 						$dateend = $datestart;
 					}
 
 					$duration = ($datestart && $dateend) ? ($dateend - $datestart) : 0;
 					$event['summary'] = $obj->label.($obj->socname ? " (".$obj->socname.")" : "");
-					$event['desc'] = $obj->note;
+
+					$event['desc'] = $obj->note_private;
 					$event['startdate'] = $datestart;
 					$event['enddate'] = $dateend; // Not required with type 'journal'
 					$event['duration'] = $duration; // Not required with type 'journal'
@@ -2214,7 +2244,7 @@ class ActionComm extends CommonObject
 		//Select all action comm reminders for event
 		$sql = "SELECT rowid as id, typeremind, dateremind, status, offsetvalue, offsetunit, fk_user";
 		$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm_reminder";
-		$sql .= " WHERE fk_actioncomm = ".$this->id;
+		$sql .= " WHERE fk_actioncomm = ".((int) $this->id);
 		if ($onlypast) {
 			$sql .= " AND dateremind <= '".$this->db->idate(dol_now())."'";
 		}
@@ -2290,14 +2320,16 @@ class ActionComm extends CommonObject
 
 		$this->db->begin();
 
-		//Select all action comm reminder
+		//Select all action comm reminders
 		$sql = "SELECT rowid as id FROM ".MAIN_DB_PREFIX."actioncomm_reminder";
 		$sql .= " WHERE typeremind = 'email' AND status = 0";
-		$sql .= " AND dateremind <= '".$this->db->idate(dol_now())."'";
+		$sql .= " AND dateremind <= '".$this->db->idate($now)."'";
+		$sql .= " AND entity IN (".getEntity('actioncomm').")";
 		$sql .= $this->db->order("dateremind", "ASC");
 		$resql = $this->db->query($sql);
 
 		if ($resql) {
+			require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 			$formmail = new FormMail($this->db);
 
 			while ($obj = $this->db->fetch_object($resql)) {
@@ -2326,7 +2358,7 @@ class ActionComm extends CommonObject
 						$sendContent = make_substitutions($langs->trans($arraymessage->content), $substitutionarray);
 
 						//Topic
-						$sendTopic = (!empty($arraymessage->topic)) ? $arraymessage->topic : html_entity_decode($langs->trans('EventReminder'));
+						$sendTopic = (!empty($arraymessage->topic)) ? $arraymessage->topic : html_entity_decode($langs->transnoentities('EventReminder'));
 
 						// Recipient
 						$recipient = new User($this->db);
@@ -2402,7 +2434,7 @@ class ActionComm extends CommonObject
 			// Delete also very old past events (we do not keep more than 1 month record in past)
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."actioncomm_reminder";
 			$sql .= " WHERE dateremind < '".$this->db->idate($now - (3600 * 24 * 32))."'";
-			$sql .= " AND status = ".$actionCommReminder::STATUS_DONE;
+			$sql .= " AND status = ".((int) $actionCommReminder::STATUS_DONE);
 			$resql = $this->db->query($sql);
 
 			if (!$resql) {
@@ -2435,7 +2467,7 @@ class ActionComm extends CommonObject
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."actioncomm ";
 		$sql .= " SET percent = ".(int) $percent;
-		$sql .= " WHERE id=".$id;
+		$sql .= " WHERE id = ".((int) $id);
 
 		if ($this->db->query($sql)) {
 			$this->db->commit();

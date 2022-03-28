@@ -75,9 +75,6 @@ $filename = $langs->trans("ExampleOfImportFile").'_'.$datatoimport.'.'.$format;
 $objimport = new Import($db);
 $objimport->load_arrays($user, $datatoimport);
 // Load arrays from descriptor module
-$entity = $objimport->array_import_entities[0][$code];
-$entityicon = $entitytoicon[$entity] ? $entitytoicon[$entity] : $entity;
-$entitylang = $entitytolang[$entity] ? $entitytolang[$entity] : $entity;
 $fieldstarget = $objimport->array_import_fields[0];
 $valuestarget = $objimport->array_import_examplevalues[0];
 
@@ -102,13 +99,13 @@ if ($attachment) {
 
 
 // List of targets fields
-$headerlinefields = array();
-$contentlinevalues = array();
+$headerlinefields = array();	// Array of fields (label to show)
+$contentlinevalues = array();	// Array of example values
 $i = 0;
 foreach ($fieldstarget as $code => $label) {
 	$withoutstar = preg_replace('/\*/', '', $fieldstarget[$code]);
 	$headerlinefields[] = $langs->transnoentities($withoutstar).($withoutstar != $fieldstarget[$code] ? '*' : '').' ('.$code.')';
-	$contentlinevalues[] = $valuestarget[$code];
+	$contentlinevalues[] = (isset($valuestarget[$code]) ? $valuestarget[$code] : '');
 }
 //var_dump($headerlinefields);
 //var_dump($contentlinevalues);

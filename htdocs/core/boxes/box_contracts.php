@@ -86,16 +86,16 @@ class box_contracts extends ModeleBoxes
 			$sql .= " c.rowid, c.ref, c.statut as fk_statut, c.date_contrat, c.datec, c.fin_validite, c.date_cloture";
 			$sql .= ", c.ref_customer, c.ref_supplier";
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c";
-			if (!$user->rights->societe->client->voir && !$user->socid) {
+			if (empty($user->rights->societe->client->voir) && !$user->socid) {
 				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			}
 			$sql .= " WHERE c.fk_soc = s.rowid";
 			$sql .= " AND c.entity = ".$conf->entity;
-			if (!$user->rights->societe->client->voir && !$user->socid) {
-				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+			if (empty($user->rights->societe->client->voir) && !$user->socid) {
+				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			if ($user->socid) {
-				$sql .= " AND s.rowid = ".$user->socid;
+				$sql .= " AND s.rowid = ".((int) $user->socid);
 			}
 			if (! empty($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE)) {
 				$sql .= " ORDER BY c.date_contrat DESC, c.ref DESC ";
@@ -156,7 +156,7 @@ class box_contracts extends ModeleBoxes
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right"',
-						'text' => dol_print_date($datec, 'day'),
+						'text' => dol_print_date($datec, 'day', 'tzuserrel'),
 					);
 
 					$this->info_box_contents[$line][] = array(

@@ -1,0 +1,32 @@
+# Dolibarr language file - Source file is en_US - oauth
+ConfigOAuth=OAuth конфигурациясы
+OAuthServices=OAuth қызметтері
+ManualTokenGeneration=Қолмен таңбалау генерациясы
+TokenManager=Токен менеджері
+IsTokenGenerated=Токен жасалды ма?
+NoAccessToken=Жергілікті дерекқорға кіру белгісі сақталмады
+HasAccessToken=Таңбалауыш жасалды және жергілікті мәліметтер базасына сақталды
+NewTokenStored=Токен алды және сақтады
+ToCheckDeleteTokenOnProvider=%s OAuth провайдері сақтаған авторизацияны тексеру/жою үшін мына жерді басыңыз
+TokenDeleted=Белгі жойылды
+RequestAccess=Кіруді сұрау/жаңарту және сақтау үшін жаңа белгі алу үшін мына жерді басыңыз
+DeleteAccess=Белгіні жою үшін мына жерді басыңыз
+UseTheFollowingUrlAsRedirectURI=OAuth провайдерімен тіркелгі деректерін жасау кезінде келесі URL мекенжайын қайта бағыттау URI ретінде пайдаланыңыз:
+ListOfSupportedOauthProviders=OAuth2 провайдері берген тіркелгі деректерін енгізіңіз. Мұнда тек қолдау көрсетілетін OAuth2 провайдерлері көрсетілген. Бұл қызметтерді OAuth2 аутентификациясын қажет ететін басқа модульдер қолдануы мүмкін.
+OAuthSetupForLogin=OAuth таңбалауышын жасауға арналған бет
+SeePreviousTab=Алдыңғы қойындыны қараңыз
+OAuthIDSecret=OAuth идентификаторы мен құпиясы
+TOKEN_REFRESH=Жаңарту белгісі
+TOKEN_EXPIRED=Токеннің мерзімі бітті
+TOKEN_EXPIRE_AT=Токеннің мерзімі аяқталады
+TOKEN_DELETE=Сақталған белгіні жою
+OAUTH_GOOGLE_NAME=OAuth Google қызметі
+OAUTH_GOOGLE_ID=OAuth Google идентификаторы
+OAUTH_GOOGLE_SECRET=OAuth Google құпиясы
+OAUTH_GOOGLE_DESC=<a class="notasortlink" href="https://console.developers.google.com/" target="_blank"> осы бетке өтіңіз </a> содан кейін OAuth тіркелгі деректерін жасау үшін «Тіркелу деректері»
+OAUTH_GITHUB_NAME=OAuth GitHub қызметі
+OAUTH_GITHUB_ID=OAuth GitHub идентификаторы
+OAUTH_GITHUB_SECRET=OAuth GitHub құпиясы
+OAUTH_GITHUB_DESC=<a class="notasortlink" href="https://github.com/settings/developers" target="_blank"> осы бетке өтіңіз </a> содан кейін OAuth тіркелгі деректерін жасау үшін «Жаңа қосымшаны тіркеңіз».
+OAUTH_STRIPE_TEST_NAME=OAuth жолақ сынағы
+OAUTH_STRIPE_LIVE_NAME=OAuth Stripe тікелей эфирі

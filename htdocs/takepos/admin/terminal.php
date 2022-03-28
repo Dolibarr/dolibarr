@@ -152,6 +152,7 @@ $atleastonefound = 0;
 if (!empty($conf->banque->enabled)) {
 	print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountForSell").'</td>';
 	print '<td>';
+	print img_picto('', 'bank_account', 'class="pictofixedwidth"');
 	$form->select_comptes($conf->global->{'CASHDESK_ID_BANKACCOUNT_CASH'.$terminaltouse}, 'CASHDESK_ID_BANKACCOUNT_CASH'.$terminaltouse, 0, "courant=2", 1);
 	if (!empty($conf->global->{'CASHDESK_ID_BANKACCOUNT_CASH'.$terminaltouse})) {
 		$atleastonefound++;
@@ -159,6 +160,7 @@ if (!empty($conf->banque->enabled)) {
 	print '</td></tr>';
 	print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountForCheque").'</td>';
 	print '<td>';
+	print img_picto('', 'bank_account', 'class="pictofixedwidth"');
 	$form->select_comptes($conf->global->{'CASHDESK_ID_BANKACCOUNT_CHEQUE'.$terminaltouse}, 'CASHDESK_ID_BANKACCOUNT_CHEQUE'.$terminaltouse, 0, "courant=1", 1);
 	if (!empty($conf->global->{'CASHDESK_ID_BANKACCOUNT_CHEQUE'.$terminaltouse})) {
 		$atleastonefound++;
@@ -166,6 +168,7 @@ if (!empty($conf->banque->enabled)) {
 	print '</td></tr>';
 	print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountForCB").'</td>';
 	print '<td>';
+	print img_picto('', 'bank_account', 'class="pictofixedwidth"');
 	$form->select_comptes($conf->global->{'CASHDESK_ID_BANKACCOUNT_CB'.$terminaltouse}, 'CASHDESK_ID_BANKACCOUNT_CB'.$terminaltouse, 0, "courant=1", 1);
 	if (!empty($conf->global->{'CASHDESK_ID_BANKACCOUNT_CB'.$terminaltouse})) {
 		$atleastonefound++;
@@ -174,6 +177,7 @@ if (!empty($conf->banque->enabled)) {
 	if ($conf->global->TAKEPOS_ENABLE_SUMUP) {
 		print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountForSumup").'</td>';
 		print '<td>';
+		print img_picto('', 'bank_account', 'class="pictofixedwidth"');
 		$form->select_comptes($conf->global->{'CASHDESK_ID_BANKACCOUNT_SUMUP'.$terminaltouse}, 'CASHDESK_ID_BANKACCOUNT_SUMUP'.$terminaltouse, 0, "courant=1", 1);
 		if (!empty($conf->global->{'CASHDESK_ID_BANKACCOUNT_SUMUP'.$terminaltouse})) {
 			$atleastonefound++;
@@ -192,6 +196,7 @@ if (!empty($conf->banque->enabled)) {
 			$atleastonefound++;
 		}
 		$cour = preg_match('/^LIQ.*/', $modep->code) ? 2 : 1;
+		print img_picto('', 'bank_account', 'class="pictofixedwidth"');
 		$form->select_comptes($conf->global->$name, $name, 0, "courant=".$cour, 1);
 		print '</td></tr>';
 	}
@@ -217,6 +222,7 @@ if (!empty($conf->stock->enabled)) {
 	print '<tr class="oddeven"><td>'.$langs->trans("CashDeskIdWareHouse").'</td>'; // Force warehouse (this is not a default value)
 	print '<td class="minwidth300">';
 	if (!$disabled) {
+		print img_picto('', 'bank_account', 'class="pictofixedwidth"');
 		print $formproduct->selectWarehouses($conf->global->{'CASHDESK_ID_WAREHOUSE'.$terminal}, 'CASHDESK_ID_WAREHOUSE'.$terminal, '', 1, $disabled, 0, '', 0, 0, array(), 'maxwidth250');
 		print ' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?&terminal='.$terminal).'"><span class="fa fa-plus-circle valignmiddle"></span></a>';
 	} else {
@@ -403,7 +409,7 @@ if ($atleastonefound == 0 && !empty($conf->banque->enabled)) {
 
 print '<br>';
 
-print '<div class="center"><input type="submit" class="button button-save" value="'.$langs->trans("Save").'"></div>';
+print $form->buttonsSaveCancel("Save", '');
 
 print "</form>\n";
 

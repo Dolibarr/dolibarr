@@ -16,9 +16,9 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
- use Luracast\Restler\RestException;
+use Luracast\Restler\RestException;
 
- require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
+require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 
 /**
  * API class for donations
@@ -33,7 +33,7 @@ class Donations extends DolibarrApi
 	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
 	 */
 	public static $FIELDS = array(
-		'socid'
+		'amount'
 	);
 
 	/**
@@ -123,15 +123,16 @@ class Donations extends DolibarrApi
 			$sql .= " AND t.fk_soc = sc.fk_soc";
 		}
 		if ($thirdparty_ids) {
-			$sql .= " AND t.fk_soc = ".$thirdparty_ids." ";
+			$sql .= " AND t.fk_soc = ".((int) $thirdparty_ids)." ";
 		}
 
 		// Add sql filters
 		if ($sqlfilters) {
-			if (!DolibarrApi::_checkFilters($sqlfilters)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+			$errormessage = '';
+			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
+				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
 			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
@@ -199,7 +200,7 @@ class Donations extends DolibarrApi
 		}*/
 
 		if ($this->don->create(DolibarrApiAccess::$user) < 0) {
-			throw new RestException(500, "Error creating order", array_merge(array($this->don->error), $this->don->errors));
+			throw new RestException(500, "Error creating donation", array_merge(array($this->don->error), $this->don->errors));
 		}
 
 		return $this->don->id;
@@ -292,7 +293,7 @@ class Donations extends DolibarrApi
 	 * @throws RestException 304
 	 * @throws RestException 401
 	 * @throws RestException 404
-	 * @throws RestException 500
+	 * @throws RestException 500 System error
 	 *
 	 * @return  array
 	 */
@@ -311,7 +312,7 @@ class Donations extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		$result = $this->don->valid(DolibarrApiAccess::$user, $idwarehouse, $notrigger);
+		$result = $this->don->valid_promesse($id, DolibarrApiAccess::$user->id, $notrigger);
 		if ($result == 0) {
 			throw new RestException(304, 'Error nothing done. May be object is already validated');
 		}
@@ -364,7 +365,7 @@ class Donations extends DolibarrApi
 	private function _validate($data)
 	{
 		$don = array();
-		foreach (Orders::$FIELDS as $field) {
+		foreach (Donations::$FIELDS as $field) {
 			if (!isset($data[$field])) {
 				throw new RestException(400, $field." field missing");
 			}

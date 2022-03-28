@@ -183,7 +183,7 @@ class CoreObject extends CommonObject
 
 				$this->{$className} = array();
 
-				$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.$childTable.' WHERE '.$this->fk_element.' = '.$this->id;
+				$sql = "SELECT rowid FROM ".$this->db->prefix().$childTable." WHERE ".$this->fk_element." = ".((int) $this->id);
 				$res = $this->db->query($sql);
 
 				if ($res) {

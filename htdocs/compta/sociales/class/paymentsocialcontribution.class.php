@@ -181,8 +181,8 @@ class PaymentSocialContribution extends CommonObject
 			$sql .= " fk_typepaiement, num_paiement, note, fk_user_creat, fk_bank)";
 			$sql .= " VALUES ($this->chid, '".$this->db->idate($now)."',";
 			$sql .= " '".$this->db->idate($this->datepaye)."',";
-			$sql .= " ".$totalamount.",";
-			$sql .= " ".$this->paiementtype.", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note)."', ".$user->id.",";
+			$sql .= " ".((float) $totalamount).",";
+			$sql .= " ".((int) $this->paiementtype).", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note)."', ".$user->id.",";
 			$sql .= " 0)";
 
 			$resql = $this->db->query($sql);
@@ -600,7 +600,7 @@ class PaymentSocialContribution extends CommonObject
 							$result = $acc->add_url_line(
 								$bank_line_id,
 								$socialcontrib->fk_user,
-								DOL_URL_ROOT . '/user/card.php?id=',
+								DOL_URL_ROOT.'/user/card.php?id=',
 								$fuser->getFullName($langs),
 								'user'
 							);
@@ -777,7 +777,7 @@ class PaymentSocialContribution extends CommonObject
 
 		$type = 'bank';
 
-		$sql = " SELECT COUNT(ab.rowid) as nb FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as ab WHERE ab.doc_type='".$this->db->escape($type)."' AND ab.fk_doc = ".$this->bank_line;
+		$sql = " SELECT COUNT(ab.rowid) as nb FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as ab WHERE ab.doc_type='".$this->db->escape($type)."' AND ab.fk_doc = ".((int) $this->bank_line);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);

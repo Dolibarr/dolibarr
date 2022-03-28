@@ -45,8 +45,8 @@ $search_account = GETPOST('search_account', 'int');
 $search_amount = GETPOST('search_amount', 'alpha');
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -104,7 +104,7 @@ if ($search_ref) {
 	$sql .= natural_search("bc.ref", $search_ref);
 }
 if ($search_account > 0) {
-	$sql .= " AND bc.fk_bank_account=".$search_account;
+	$sql .= " AND bc.fk_bank_account = ".((int) $search_account);
 }
 if ($search_amount) {
 	$sql .= natural_search("bc.amount", price2num($search_amount));

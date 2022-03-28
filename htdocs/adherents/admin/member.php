@@ -9,7 +9,6 @@
  * Copyright (C) 2012      J. Fernando Lagrange <fernando@demo-tic.org>
  * Copyright (C) 2015      Jean-François Ferry  <jfefe@aternatik.fr>
  * Copyright (C) 2020-2021 Frédéric France      <frederic.france@netlogic.fr>
- * Copyright (C) 2021      Waël Almoman         <info@almoman.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +25,7 @@
  */
 
 /**
- *   	\file       htdocs/adherents/admin/adherent.php
+ *   	\file       htdocs/adherents/admin/member.php
  *		\ingroup    member
  *		\brief      Page to setup the module Foundation
  */
@@ -34,7 +33,6 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "members"));
@@ -74,12 +72,12 @@ if ($action == 'set_default') {
 } elseif ($action == 'setdoc') {
 	// Set default model
 	if (dolibarr_set_const($db, "MEMBER_ADDON_PDF_ODT", $value, 'chaine', 0, '', $conf->entity)) {
-		// La constante qui a ete lue en avant du nouveau set
-		// on passe donc par une variable pour avoir un affichage coherent
+		// The constant that was read ahead of the new set
+		// we therefore go through a variable to have a consistent display
 		$conf->global->MEMBER_ADDON_PDF_ODT = $value;
 	}
 
-	// On active le modele
+	// We activate the model
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0) {
 		$ret = addDocumentModel($value, $type, $label, $scandir);
@@ -107,6 +105,7 @@ if ($action == 'set_default') {
 	$res1 = dolibarr_set_const($db, 'ADHERENT_LOGIN_NOT_REQUIRED', GETPOST('ADHERENT_LOGIN_NOT_REQUIRED', 'alpha') ? 0 : 1, 'chaine', 0, '', $conf->entity);
 	$res2 = dolibarr_set_const($db, 'ADHERENT_MAIL_REQUIRED', GETPOST('ADHERENT_MAIL_REQUIRED', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res3 = dolibarr_set_const($db, 'ADHERENT_DEFAULT_SENDINFOBYMAIL', GETPOST('ADHERENT_DEFAULT_SENDINFOBYMAIL', 'alpha'), 'chaine', 0, '', $conf->entity);
+	$res3 = dolibarr_set_const($db, 'ADHERENT_CREATE_EXTERNAL_USER_LOGIN', GETPOST('ADHERENT_CREATE_EXTERNAL_USER_LOGIN', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res4 = dolibarr_set_const($db, 'ADHERENT_BANK_USE', GETPOST('ADHERENT_BANK_USE', 'alpha'), 'chaine', 0, '', $conf->entity);
 	// Use vat for invoice creation
 	if ($conf->facture->enabled) {
@@ -197,27 +196,44 @@ print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="updateall">';
 
+
+// Mains options
+
 print load_fiche_titre($langs->trans("MemberMainOptions"), '', '');
+
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Description").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
 print "</tr>\n";
 
-// Login/Pass required for members
-print '<tr class="oddeven"><td>'.$langs->trans("AdherentLoginRequired").'</td><td>';
-print $form->selectyesno('ADHERENT_LOGIN_NOT_REQUIRED', (!empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED) ? 0 : 1), 1);
-print "</td></tr>\n";
-
 // Mail required for members
 print '<tr class="oddeven"><td>'.$langs->trans("AdherentMailRequired").'</td><td>';
 print $form->selectyesno('ADHERENT_MAIL_REQUIRED', (!empty($conf->global->ADHERENT_MAIL_REQUIRED) ? $conf->global->ADHERENT_MAIL_REQUIRED : 0), 1);
+print "</td></tr>\n";
+
+// Login/Pass required for members
+print '<tr class="oddeven"><td>'.$langs->trans("AdherentLoginRequired").'</td><td>';
+print $form->selectyesno('ADHERENT_LOGIN_NOT_REQUIRED', (!empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED) ? 0 : 1), 1);
 print "</td></tr>\n";
 
 // Send mail information is on by default
 print '<tr class="oddeven"><td>'.$langs->trans("MemberSendInformationByMailByDefault").'</td><td>';
 print $form->selectyesno('ADHERENT_DEFAULT_SENDINFOBYMAIL', (!empty($conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL) ? $conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL : 0), 1);
 print "</td></tr>\n";
+
+// Create an external user login for each new member subscription validated
+print '<tr class="oddeven"><td>'.$langs->trans("MemberCreateAnExternalUserForSubscriptionValidated").'</td><td>';
+print $form->selectyesno('ADHERENT_CREATE_EXTERNAL_USER_LOGIN', (!empty($conf->global->ADHERENT_CREATE_EXTERNAL_USER_LOGIN) ? $conf->global->ADHERENT_CREATE_EXTERNAL_USER_LOGIN : 0), 1);
+print "</td></tr>\n";
+
+// Allow members to change type on renewal forms
+/* To test during next beta
+print '<tr class="oddeven"><td>'.$langs->trans("MemberAllowchangeOfType").'</td><td>';
+print $form->selectyesno('MEMBER_ALLOW_CHANGE_OF_TYPE', (!empty($conf->global->MEMBER_ALLOW_CHANGE_OF_TYPE) ? 0 : 1), 1);
+print "</td></tr>\n";
+*/
 
 // Insert subscription into bank account
 print '<tr class="oddeven"><td>'.$langs->trans("MoreActionsOnSubscription").'</td>';
@@ -257,6 +273,7 @@ if ($conf->facture->enabled) {
 		print '<tr class="oddeven"><td>'.$langs->trans("ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS").'</td>';
 		print '<td>';
 		$selected = (empty($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS) ? '' : $conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS);
+		print img_picto('', 'product', 'class="pictofixedwidth"');
 		$form->select_produits($selected, 'ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS', '', 0);
 		print '</td>';
 	}
@@ -264,6 +281,7 @@ if ($conf->facture->enabled) {
 }
 
 print '</table>';
+print '</div>';
 
 print '<div class="center">';
 print '<input type="submit" class="button" value="'.$langs->trans("Update").'" name="Button">';
@@ -271,51 +289,15 @@ print '</div>';
 
 print '</form>';
 
-print '<br>';
-
-
-/*
- * Edit info of model document
- */
-$constantes = array(
-		'ADHERENT_CARD_TYPE',
-		//'ADHERENT_CARD_BACKGROUND',
-		'ADHERENT_CARD_HEADER_TEXT',
-		'ADHERENT_CARD_TEXT',
-		'ADHERENT_CARD_TEXT_RIGHT',
-		'ADHERENT_CARD_FOOTER_TEXT'
-);
-
-print load_fiche_titre($langs->trans("MembersCards"), '', '');
-
-$helptext = '*'.$langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
-$helptext .= '__DOL_MAIN_URL_ROOT__, __ID__, __FIRSTNAME__, __LASTNAME__, __FULLNAME__, __LOGIN__, __PASSWORD__, ';
-$helptext .= '__COMPANY__, __ADDRESS__, __ZIP__, __TOWN__, __COUNTRY__, __EMAIL__, __BIRTH__, __PHOTO__, __TYPE__, ';
-$helptext .= '__YEAR__, __MONTH__, __DAY__';
-
-form_constantes($constantes, 0, $helptext);
 
 print '<br>';
 
 
-/*
- * Edit info of model document
- */
-$constantes = array('ADHERENT_ETIQUETTE_TYPE', 'ADHERENT_ETIQUETTE_TEXT');
-
-print load_fiche_titre($langs->trans("MembersTickets"), '', '');
-
-$helptext = '*'.$langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
-$helptext .= '__DOL_MAIN_URL_ROOT__, __ID__, __FIRSTNAME__, __LASTNAME__, __FULLNAME__, __LOGIN__, __PASSWORD__, ';
-$helptext .= '__COMPANY__, __ADDRESS__, __ZIP__, __TOWN__, __COUNTRY__, __EMAIL__, __BIRTH__, __PHOTO__, __TYPE__, ';
-$helptext .= '__YEAR__, __MONTH__, __DAY__';
-
-form_constantes($constantes, 0, $helptext);
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
-// Defini tableau def des modeles
+// Defined model definition table
 $def = array();
-$sql = "SELECT nom";
+$sql = "SELECT nom as name";
 $sql .= " FROM ".MAIN_DB_PREFIX."document_model";
 $sql .= " WHERE type = '".$db->escape($type)."'";
 $sql .= " AND entity = ".$conf->entity;
@@ -324,16 +306,18 @@ if ($resql) {
 	$i = 0;
 	$num_rows = $db->num_rows($resql);
 	while ($i < $num_rows) {
-		$array = $db->fetch_array($resql);
-		array_push($def, $array[0]);
+		$obj = $db->fetch_object($resql);
+		array_push($def, $obj->name);
 		$i++;
 	}
 } else {
 	dol_print_error($db);
 }
 
+
 print load_fiche_titre($langs->trans("MembersDocModules"), '', '');
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
@@ -388,13 +372,13 @@ foreach ($dirmodels as $reldir) {
 								// Active
 								if (in_array($name, $def)) {
 									print '<td class="center">'."\n";
-									print '<a href="'.$_SERVER["PHP_SELF"].'?action=del_default&amp;token='.newToken().'&amp;value='.$name.'">';
+									print '<a href="'.$_SERVER["PHP_SELF"].'?action=del_default&token='.newToken().'&value='.$name.'">';
 									print img_picto($langs->trans("Enabled"), 'switch_on');
 									print '</a>';
 									print '</td>';
 								} else {
 									print '<td class="center">'."\n";
-									print '<a href="'.$_SERVER["PHP_SELF"].'?action=set_default&amp;token='.newToken().'&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+									print '<a href="'.$_SERVER["PHP_SELF"].'?action=set_default&token='.newToken().'&value='.$name.'&scandir='.$module->scandir.'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 									print "</td>";
 								}
 
@@ -403,7 +387,7 @@ foreach ($dirmodels as $reldir) {
 								if ($conf->global->MEMBER_ADDON_PDF == $name) {
 									print img_picto($langs->trans("Default"), 'on');
 								} else {
-									print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;token='.newToken().'&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+									print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.$name.'&scandir='.$module->scandir.'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 								}
 								print '</td>';
 
@@ -442,6 +426,57 @@ foreach ($dirmodels as $reldir) {
 }
 
 print '</table>';
+print '</div>';
+
+
+
+/*
+TODO Use a global form instead of embeded form into table
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
+print '<input type="hidden" name="action" value="updateall">';
+*/
+
+/*
+ * Edit info of model document
+ */
+$constantes = array(
+		'ADHERENT_CARD_TYPE',
+		//'ADHERENT_CARD_BACKGROUND',
+		'ADHERENT_CARD_HEADER_TEXT',
+		'ADHERENT_CARD_TEXT',
+		'ADHERENT_CARD_TEXT_RIGHT',
+		'ADHERENT_CARD_FOOTER_TEXT'
+);
+
+print load_fiche_titre($langs->trans("MembersCards"), '', '');
+
+$helptext = '*'.$langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
+$helptext .= '__DOL_MAIN_URL_ROOT__, __ID__, __FIRSTNAME__, __LASTNAME__, __FULLNAME__, __LOGIN__, __PASSWORD__, ';
+$helptext .= '__COMPANY__, __ADDRESS__, __ZIP__, __TOWN__, __COUNTRY__, __EMAIL__, __BIRTH__, __PHOTO__, __TYPE__, ';
+$helptext .= '__YEAR__, __MONTH__, __DAY__';
+
+form_constantes($constantes, 0, $helptext);
+
+print '<br>';
+
+
+/*
+ * Edit info of model document
+ */
+$constantes = array('ADHERENT_ETIQUETTE_TYPE', 'ADHERENT_ETIQUETTE_TEXT');
+
+print load_fiche_titre($langs->trans("MembersTickets"), '', '');
+
+$helptext = '*'.$langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
+$helptext .= '__DOL_MAIN_URL_ROOT__, __ID__, __FIRSTNAME__, __LASTNAME__, __FULLNAME__, __LOGIN__, __PASSWORD__, ';
+$helptext .= '__COMPANY__, __ADDRESS__, __ZIP__, __TOWN__, __COUNTRY__, __EMAIL__, __BIRTH__, __PHOTO__, __TYPE__, ';
+$helptext .= '__YEAR__, __MONTH__, __DAY__';
+
+form_constantes($constantes, 0, $helptext);
+
+//print '</form>';
+
 print "<br>";
 
 print dol_get_fiche_end();

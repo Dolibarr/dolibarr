@@ -39,6 +39,7 @@ $langs->loadLangs(array("orders", "receptions"));
 $reception = new Reception($db);
 
 // Security check
+$socid = '';
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -86,15 +87,15 @@ $sql .= " FROM ".MAIN_DB_PREFIX."reception as e";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON e.rowid = el.fk_target AND el.targettype = 'reception'";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."commande_fournisseur as c ON el.fk_source = c.rowid";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = e.fk_soc";
-if (!$user->rights->societe->client->voir && !$socid) {
+if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON e.fk_soc = sc.fk_soc";
-	$sql .= $clause." sc.fk_user = ".$user->id;
+	$sql .= $clause." sc.fk_user = ".((int) $user->id);
 	$clause = " AND ";
 }
 $sql .= $clause." e.fk_statut = 0";
 $sql .= " AND e.entity IN (".getEntity('reception').")";
 if ($socid) {
-	$sql .= " AND c.fk_soc = ".$socid;
+	$sql .= " AND c.fk_soc = ".((int) $socid);
 }
 
 $resql = $db->query($sql);
@@ -135,8 +136,7 @@ if ($resql) {
 }
 
 
-//print '</td><td valign="top" width="70%">';
-print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+print '</div><div class="fichetwothirdright">';
 
 $max = 5;
 
@@ -151,16 +151,16 @@ $sql .= " FROM ".MAIN_DB_PREFIX."reception as e";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON e.rowid = el.fk_target AND el.targettype = 'reception' AND el.sourcetype IN ('order_supplier')";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."commande_fournisseur as c ON el.fk_source = c.rowid AND el.sourcetype IN ('order_supplier') AND el.targettype = 'reception'";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = e.fk_soc";
-if (!$user->rights->societe->client->voir && !$socid) {
+if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON e.fk_soc = sc.fk_soc";
 }
 $sql .= " WHERE e.entity IN (".getEntity('reception').")";
-if (!$user->rights->societe->client->voir && !$socid) {
-	$sql .= " AND sc.fk_user = ".$user->id;
+if (empty($user->rights->societe->client->voir) && !$socid) {
+	$sql .= " AND sc.fk_user = ".((int) $user->id);
 }
 $sql .= " AND e.fk_statut = 1";
 if ($socid) {
-	$sql .= " AND c.fk_soc = ".$socid;
+	$sql .= " AND c.fk_soc = ".((int) $socid);
 }
 $sql .= " ORDER BY e.date_delivery DESC";
 $sql .= $db->plimit($max, 0);
@@ -212,17 +212,17 @@ if ($resql) {
 $sql = "SELECT c.rowid, c.ref, c.ref_supplier as ref_supplier, c.fk_statut as status, c.billed as billed, s.nom as name, s.rowid as socid";
 $sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as c,";
 $sql .= " ".MAIN_DB_PREFIX."societe as s";
-if (!$user->rights->societe->client->voir && !$socid) {
+if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 $sql .= " WHERE c.fk_soc = s.rowid";
 $sql .= " AND c.entity IN (".getEntity('supplier_order').")";
 $sql .= " AND c.fk_statut IN (".CommandeFournisseur::STATUS_ORDERSENT.", ".CommandeFournisseur::STATUS_RECEIVED_PARTIALLY.")";
 if ($socid > 0) {
-	$sql .= " AND c.fk_soc = ".$socid;
+	$sql .= " AND c.fk_soc = ".((int) $socid);
 }
-if (!$user->rights->societe->client->voir && !$socid) {
-	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+if (empty($user->rights->societe->client->voir) && !$socid) {
+	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 $sql .= " ORDER BY c.rowid ASC";
 $resql = $db->query($sql);
@@ -265,7 +265,7 @@ if ($resql) {
 	}
 }
 
-print '</div></div></div>';
+print '</div></div>';
 
 $parameters = array('user' => $user);
 $reshook = $hookmanager->executeHooks('dashboardWarehouseReceptions', $parameters, $object); // Note that $action and $object may have been modified by hook

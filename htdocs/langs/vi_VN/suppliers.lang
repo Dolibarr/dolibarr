@@ -1,6 +1,7 @@
 # Dolibarr language file - Source file is en_US - vendors
 Suppliers=Nhà cung cấp
 SuppliersInvoice=Hóa đơn nhà cung cấp
+SupplierInvoices=Hóa đơn nhà cung cấp
 ShowSupplierInvoice=Hiển thị hóa đơn nhà cung cấp
 NewSupplier=Nhà cung cấp mới
 History=Lịch sử

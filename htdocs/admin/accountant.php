@@ -17,7 +17,7 @@
 
 /**
  *	\file       htdocs/admin/accountant.php
- *	\ingroup    accountant
+ *	\ingroup    core
  *	\brief      Setup page to configure accountant / auditor
  */
 
@@ -85,39 +85,41 @@ print load_fiche_titre($langs->trans("CompanyFoundation"), '', 'title_setup');
 
 $head = company_admin_prepare_head();
 
-print dol_get_fiche_head($head, 'accountant', $langs->trans("Company"), -1, 'company');
+print dol_get_fiche_head($head, 'accountant', '', -1, '');
 
 $form = new Form($db);
 $formother = new FormOther($db);
 $formcompany = new FormCompany($db);
 
-$countrynotdefined = '<font class="error">'.$langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')</font>';
+$countrynotdefined = '<span class="error">'.$langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')</span>';
 
 print '<span class="opacitymedium">'.$langs->trans("AccountantDesc")."</span><br>\n";
-print "<br>\n";
+print "<br><br>\n";
 
 /**
  * Edit parameters
  */
-print "\n".'<script type="text/javascript" language="javascript">';
-print '$(document).ready(function () {
+if (!empty($conf->use_javascript_ajax)) {
+	print "\n".'<script type="text/javascript">';
+	print '$(document).ready(function () {
 		  $("#selectcountry_id").change(function() {
 			document.form_index.action.value="updateedit";
 			document.form_index.submit();
 		  });
 	  });';
-print '</script>'."\n";
+	print '</script>'."\n";
+}
 
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'" name="form_index">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';
 
 print '<table class="noborder centpercent editmode">';
-print '<tr class="liste_titre"><th class="titlefield wordbreak">'.$langs->trans("CompanyInfo").'</th><th>'.$langs->trans("Value").'</th></tr>'."\n";
+print '<tr class="liste_titre"><th class="titlefieldcreate wordbreak">'.$langs->trans("CompanyInfo").'</th><th>'.$langs->trans("Value").'</th></tr>'."\n";
 
 // Name
 print '<tr class="oddeven"><td><label for="name">'.$langs->trans("CompanyName").'</label></td><td>';
-print '<input name="nom" id="name" class="minwidth200" value="'.(GETPOSTISSET('nom') ? GETPOST('nom', 'nohtml') : (!empty($conf->global->MAIN_INFO_ACCOUNTANT_NAME) ? $conf->global->MAIN_INFO_ACCOUNTANT_NAME : '')).'"'.(empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) ? '' : ' autofocus="autofocus"').'></td></tr>'."\n";
+print '<input name="nom" id="name" class="minwidth200" value="'.(GETPOSTISSET('nom') ? GETPOST('nom', 'nohtml') : (!empty($conf->global->MAIN_INFO_ACCOUNTANT_NAME) ? $conf->global->MAIN_INFO_ACCOUNTANT_NAME : '')).'"'.(empty($conf->global->MAIN_INFO_ACCOUNTANT_NAME) ? ' autofocus="autofocus"' : '').'></td></tr>'."\n";
 
 // Address
 print '<tr class="oddeven"><td><label for="address">'.$langs->trans("CompanyAddress").'</label></td><td>';
@@ -131,7 +133,7 @@ print '<input name="town" class="minwidth100" id="town" value="'.(GETPOSTISSET('
 
 // Country
 print '<tr class="oddeven"><td><label for="selectcountry_id">'.$langs->trans("Country").'</label></td><td class="maxwidthonsmartphone">';
-print img_picto('', 'globe-americas', 'class="paddingrightonly"');
+print img_picto('', 'globe-americas', 'class="pictofixedwidth"');
 print $form->select_country((GETPOSTISSET('country_id') ? GETPOST('country_id', 'int') : (!empty($conf->global->MAIN_INFO_ACCOUNTANT_COUNTRY) ? $conf->global->MAIN_INFO_ACCOUNTANT_COUNTRY : '')), 'country_id');
 if ($user->admin) {
 	print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
@@ -139,28 +141,29 @@ if ($user->admin) {
 print '</td></tr>'."\n";
 
 print '<tr class="oddeven"><td><label for="state_id">'.$langs->trans("State").'</label></td><td class="maxwidthonsmartphone">';
-$formcompany->select_departement((GETPOSTISSET('state_id') ? GETPOST('state_id', 'alpha') : (!empty($conf->global->MAIN_INFO_ACCOUNTANT_STATE) ? $conf->global->MAIN_INFO_ACCOUNTANT_STATE : '')), (GETPOSTISSET('country_id') ? GETPOST('country_id', 'int') : (!empty($conf->global->MAIN_INFO_ACCOUNTANT_COUNTRY) ? $conf->global->MAIN_INFO_ACCOUNTANT_COUNTRY : '')), 'state_id');
+print img_picto('', 'state', 'class="pictofixedwidth"');
+print $formcompany->select_state((GETPOSTISSET('state_id') ? GETPOST('state_id', 'alpha') : (!empty($conf->global->MAIN_INFO_ACCOUNTANT_STATE) ? $conf->global->MAIN_INFO_ACCOUNTANT_STATE : '')), (GETPOSTISSET('country_id') ? GETPOST('country_id', 'int') : (!empty($conf->global->MAIN_INFO_ACCOUNTANT_COUNTRY) ? $conf->global->MAIN_INFO_ACCOUNTANT_COUNTRY : '')), 'state_id');
 print '</td></tr>'."\n";
 
 print '<tr class="oddeven"><td><label for="phone">'.$langs->trans("Phone").'</label></td><td>';
-print img_picto('', 'object_phoning', '', false, 0, 0, '', 'paddingright');
-print '<input name="tel" id="phone" value="'.(GETPOSTISSET('tel') ? GETPOST('tel', 'alpha') : (!empty($conf->global->MAIN_INFO_ACCOUNTANT_PHONE) ? $conf->global->MAIN_INFO_ACCOUNTANT_PHONE : '')).'"></td></tr>';
+print img_picto('', 'object_phoning', '', false, 0, 0, '', 'pictofixedwidth');
+print '<input name="tel" id="phone" class="maxwidth150 widthcentpercentminusx" value="'.(GETPOSTISSET('tel') ? GETPOST('tel', 'alpha') : (!empty($conf->global->MAIN_INFO_ACCOUNTANT_PHONE) ? $conf->global->MAIN_INFO_ACCOUNTANT_PHONE : '')).'"></td></tr>';
 print '</td></tr>'."\n";
 
 print '<tr class="oddeven"><td><label for="fax">'.$langs->trans("Fax").'</label></td><td>';
-print img_picto('', 'object_phoning_fax', '', false, 0, 0, '', 'paddingright');
-print '<input name="fax" id="fax" value="'.(GETPOSTISSET('fax') ? GETPOST('fax', 'alpha') : (!empty($conf->global->MAIN_INFO_ACCOUNTANT_FAX) ? $conf->global->MAIN_INFO_ACCOUNTANT_FAX : '')).'"></td></tr>';
+print img_picto('', 'object_phoning_fax', '', false, 0, 0, '', 'pictofixedwidth');
+print '<input name="fax" id="fax" class="maxwidth150 widthcentpercentminusx" value="'.(GETPOSTISSET('fax') ? GETPOST('fax', 'alpha') : (!empty($conf->global->MAIN_INFO_ACCOUNTANT_FAX) ? $conf->global->MAIN_INFO_ACCOUNTANT_FAX : '')).'"></td></tr>';
 print '</td></tr>'."\n";
 
 print '<tr class="oddeven"><td><label for="email">'.$langs->trans("EMail").'</label></td><td>';
-print img_picto('', 'object_email', '', false, 0, 0, '', 'paddingright');
-print '<input name="mail" id="email" class="minwidth200" value="'.(GETPOSTISSET('mail') ? GETPOST('mail', 'alpha') : (!empty($conf->global->MAIN_INFO_ACCOUNTANT_MAIL) ? $conf->global->MAIN_INFO_ACCOUNTANT_MAIL : '')).'"></td></tr>';
+print img_picto('', 'object_email', '', false, 0, 0, '', 'pictofixedwidth');
+print '<input name="mail" id="email" class="maxwidth300 widthcentpercentminusx" value="'.(GETPOSTISSET('mail') ? GETPOST('mail', 'alpha') : (!empty($conf->global->MAIN_INFO_ACCOUNTANT_MAIL) ? $conf->global->MAIN_INFO_ACCOUNTANT_MAIL : '')).'"></td></tr>';
 print '</td></tr>'."\n";
 
 // Web
 print '<tr class="oddeven"><td><label for="web">'.$langs->trans("Web").'</label></td><td>';
-print img_picto('', 'globe', '', false, 0, 0, '', 'paddingright');
-print '<input name="web" id="web" class="minwidth300" value="'.(GETPOSTISSET('web') ? GETPOST('web', 'alpha') : (!empty($conf->global->MAIN_INFO_ACCOUNTANT_WEB) ? $conf->global->MAIN_INFO_ACCOUNTANT_WEB : '')).'"></td></tr>';
+print img_picto('', 'globe', '', false, 0, 0, '', 'pictofixedwidth');
+print '<input name="web" id="web" class="maxwidth300 widthcentpercentminusx" value="'.(GETPOSTISSET('web') ? GETPOST('web', 'alpha') : (!empty($conf->global->MAIN_INFO_ACCOUNTANT_WEB) ? $conf->global->MAIN_INFO_ACCOUNTANT_WEB : '')).'"></td></tr>';
 print '</td></tr>'."\n";
 
 // Code
@@ -174,12 +177,7 @@ print '</td></tr>';
 
 print '</table>';
 
-print '<br><div class="center">';
-print '<input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'">';
-//print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-//print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
-print '</div>';
-//print '<br>';
+print $form->buttonsSaveCancel("Save", '');
 
 print '</form>';
 

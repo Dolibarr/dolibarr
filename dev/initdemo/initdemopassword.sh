@@ -39,7 +39,7 @@ if [ "x$confirm" != "xconfirm" ]
 then
 	echo "----- $0 -----"
 	echo "Usage: initdemopassword.sh confirm [base port login pass password_hash_algo]"
-	echo "password_hash_algo can be md5 of password_hash"
+	echo "password_hash_algo can be md5 or password_hash"
 	exit
 fi
 
@@ -149,21 +149,32 @@ then
 fi
 #echo "mysql -P$port -u$admin $passwd $base < $mydir/$dumpfile"
 #mysql -P$port -u$admin $passwd $base < $mydir/$dumpfile
-echo "echo \"UPDATE llx_user SET pass_crypted = MD5('$demopass') WHERE login = '$demologin';\" | mysql -P$port $base"
 
-if [ "x$demopasshash" != "xpassword_hash" ]
+if [ "x${demopasshash}" != "xpassword_hash" ]
 then
-	newpass=`echo '<?php echo md5("$demopass"); ?>' | php`
+	echo '<?php echo MD5("$demopass"); ?>' > /tmp/tmp.php 
+	newpass=`php -f /tmp/tmp.php`
+	rm /tmp/tmp.php
 else
-	newpass=`echo '<?php echo password_hash("$demopass", PASSWORD_DEFAULT); ?>' | php`
+	echo '<?php echo password_hash("'$demopass'", PASSWORD_DEFAULT); ?>' > /tmp/tmp.php
+	newpass=`php -f /tmp/tmp.php`
+	rm /tmp/tmp.php
 fi
 
+echo "echo \"UPDATE llx_user SET pass_crypted = '$newpass' WHERE login = '$demologin';\" | mysql -P$port $base"
 echo "UPDATE llx_user SET pass_crypted = '$newpass' WHERE login = '$demologin';" | mysql -P$port $base
 export res=$?
 
 if [ $res -ne 0 ]; then
 	echo "Error to execute sql with mysql -P$port -u$admin -p***** $base"
 	exit
+fi 
+
+if [ -s "$mydir/initdemopostsql.sql" ]; then
+	echo A file initdemopostsql.sql was found, we execute it.
+	mysql -P$port $base < "$mydir/initdemopostsql.sql"
+else
+	echo No file initdemopostsql.sql found, we extra sql action done.
 fi 
 
 

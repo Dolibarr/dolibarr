@@ -35,9 +35,7 @@ if (!empty($conf->projet->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 
-$langs->load("orders");
-$langs->load("receptions");
-$langs->load("companies");
+$langs->loadLangs(array("orders", "receptions", "companies"));
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
@@ -62,7 +60,6 @@ if ($id > 0 || !empty($ref)) {
 	}
 }
 
-
 // Security check
 if ($user->socid > 0) {
 	$socid = $user->socid;
@@ -70,11 +67,8 @@ if ($user->socid > 0) {
 if ($origin == 'reception') {
 	$result = restrictedArea($user, $origin, $object->id);
 } else {
-	$result = restrictedArea($user, 'reception');
-	if ($origin == 'supplierorder') {
-		if (empty($user->rights->fournisseur->commande->lire) && empty($user->rights->fournisseur->commande->read)) {
-			accessforbidden();
-		}
+	if ($origin == 'supplierorder' || $origin == 'order_supplier') {
+		$result = restrictedArea($user, 'fournisseur', $origin_id, 'commande_fournisseur', 'commande');
 	} elseif (empty($user->rights->{$origin}->lire) && empty($user->rights->{$origin}->read)) {
 		accessforbidden();
 	}
@@ -119,13 +113,6 @@ if ($action == 'addcontact' && $user->rights->reception->creer) {
 		dol_print_error($db);
 	}
 }
-/*
-elseif ($action == 'setaddress' && $user->rights->reception->creer)
-{
-	$object->fetch($id);
-	$result=$object->setDeliveryAddress($_POST['fk_address']);
-	if ($result < 0) dol_print_error($db,$object->error);
-}*/
 
 
 /*
@@ -141,11 +128,7 @@ $contactstatic = new Contact($db);
 $userstatic = new User($db);
 
 
-/* *************************************************************************** */
-/*                                                                             */
-/* Mode vue et edition                                                         */
-/*                                                                             */
-/* *************************************************************************** */
+// View mode
 
 if ($id > 0 || !empty($ref)) {
 	$langs->trans("OrderCard");
@@ -169,7 +152,7 @@ if ($id > 0 || !empty($ref)) {
 		$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 		if (0) {    // Do not change on reception
 			if ($action != 'classify') {
-				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
+				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
 			}
 			if ($action == 'classify') {
 				// $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
@@ -177,7 +160,7 @@ if ($id > 0 || !empty($ref)) {
 				$morehtmlref .= '<input type="hidden" name="action" value="classin">';
 				$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
 				$morehtmlref .= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
-				$morehtmlref .= '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+				$morehtmlref .= '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
 				$morehtmlref .= '</form>';
 			} else {
 				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
@@ -189,9 +172,10 @@ if ($id > 0 || !empty($ref)) {
 			if (!empty($objectsrc->fk_project)) {
 				$proj = new Project($db);
 				$proj->fetch($objectsrc->fk_project);
-				$morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$objectsrc->fk_project.'" title="'.$langs->trans('ShowProject').'">';
-				$morehtmlref .= $proj->ref;
-				$morehtmlref .= '</a>';
+				$morehtmlref .= ' : '.$proj->getNomUrl(1);
+				if ($proj->title) {
+					$morehtmlref .= ' - '.$proj->title;
+				}
 			} else {
 				$morehtmlref .= '';
 			}
@@ -199,7 +183,6 @@ if ($id > 0 || !empty($ref)) {
 	}
 	$morehtmlref .= '</div>';
 
-	$object->picto = 'sending';
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
 
@@ -235,11 +218,9 @@ if ($id > 0 || !empty($ref)) {
 
 	//print '</div>';
 	//print '<div class="fichehalfright">';
-	//print '<div class="ficheaddleft">';
 	//print '<div class="underbanner clearboth"></div>';
 
 
-	//print '</div>';
 	//print '</div>';
 	print '</div>';
 

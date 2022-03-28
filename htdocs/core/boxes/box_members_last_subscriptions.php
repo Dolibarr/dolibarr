@@ -67,7 +67,7 @@ class box_members_last_subscriptions extends ModeleBoxes
 			$this->enabled = 0; // disabled for external users
 		}
 
-		$this->hidden = !($user->rights->adherent->lire);
+		$this->hidden = !(!empty($conf->adherent->enabled) && $user->rights->adherent->lire);
 	}
 
 	/**
@@ -142,7 +142,7 @@ class box_members_last_subscriptions extends ModeleBoxes
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
-						'text' => $staticmember->getNomUrl(-1, 32, 'subscription'),
+						'text' => $staticmember->getNomUrl(-1, 32, 'card'),
 						'asis' => 1,
 					);
 
@@ -152,13 +152,13 @@ class box_members_last_subscriptions extends ModeleBoxes
 					);
 
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="right" width="18"',
-						'text' => '<span class="amount">'.price($obj->subscription).'</span>',
+						'td' => 'class="nowraponall right amount" width="18"',
+						'text' => price($obj->subscription),
 					);
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right tdoverflowmax150 maxwidth150onsmartphone"',
-						'text' => dol_print_date($this->db->jdate($obj->datem ? $obj->datem : $obj->datec), 'dayhour'),
+						'text' => dol_print_date($this->db->jdate($obj->datem ? $obj->datem : $obj->datec), 'dayhour', 'tzuserrel'),
 					);
 
 					$line++;

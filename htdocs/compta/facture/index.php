@@ -16,7 +16,7 @@
  */
 
 /**
- *	\file		htdocs/compat/facture/index.php
+ *	\file		htdocs/compta/facture/index.php
 *	\ingroup	facture
  *	\brief		Home page of customer invoices area
  */
@@ -43,9 +43,8 @@ if (isset($user->socid) && $user->socid > 0) {
 $max = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
 
 // Maximum elements of the tables
-$maxDraftCount = empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD;
-$maxLatestEditCount = 5;
-$maxOpenCount = empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD;
+$maxDraftCount = empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? $max : $conf->global->MAIN_MAXLIST_OVERLOAD;
+$maxOpenCount = empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? $max : $conf->global->MAIN_MAXLIST_OVERLOAD;
 
 
 /*
@@ -59,21 +58,33 @@ print load_fiche_titre($langs->trans("CustomersInvoicesArea"), '', 'bill');
 print '<div class="fichecenter">';
 
 print '<div class="fichethirdleft">';
-
-print getCustomerInvoicePieChart($socid);
-print '<br>';
-print getCustomerInvoiceDraftTable($max, $socid);
+$tmp = getNumberInvoicesPieChart('customers');
+if ($tmp) {
+	print $tmp;
+	print '<br>';
+}
+$tmp = getCustomerInvoiceDraftTable($maxDraftCount, $socid);
+if ($tmp) {
+	print $tmp;
+	print '<br>';
+}
 
 print '</div>';
 
 print '<div class="fichetwothirdright">';
-print '<div class="ficheaddleft">';
 
-print getCustomerInvoiceLatestEditTable($maxLatestEditCount, $socid);
-print '<br>';
-print getCustomerInvoiceUnpaidOpenTable($max, $socid);
+$tmp = getCustomerInvoiceLatestEditTable($max, $socid);
+if ($tmp) {
+	print $tmp;
+	print '<br>';
+}
 
-print '</div>';
+$tmp = getCustomerInvoiceUnpaidOpenTable($maxOpenCount, $socid);
+if ($tmp) {
+	print $tmp;
+	print '<br>';
+}
+
 print '</div>';
 
 print '</div>';

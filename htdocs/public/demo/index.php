@@ -118,7 +118,7 @@ if (empty($reshook)) {
 									'mailmanspip', 'notification', 'oauth', 'syslog', 'user', 'webservices', 'workflow',
 									// Extended modules
 									'memcached', 'numberwords', 'zipautofillfr');
-	$alwayshiddenuncheckedmodules = array('collab', 'dav', 'debugbar', 'emailcollector', 'ftp', 'hrm', 'modulebuilder', 'printing', 'webservicesclient', 'zappier',
+	$alwayshiddenuncheckedmodules = array('cashdesk', 'collab', 'dav', 'debugbar', 'emailcollector', 'ftp', 'hrm', 'modulebuilder', 'printing', 'webservicesclient', 'zappier',
 									// Extended modules
 									'awstats', 'bittorrent', 'bootstrap', 'cabinetmed', 'cmcic', 'concatpdf', 'customfield', 'datapolicy', 'deplacement', 'dolicloud', 'filemanager', 'lightbox', 'mantis', 'monitoring', 'moretemplates', 'multicompany', 'nltechno', 'numberingpack', 'openstreetmap',
 									'ovh', 'phenix', 'phpsysinfo', 'pibarcode', 'postnuke', 'dynamicprices', 'receiptprinter', 'selectbank', 'skincoloreditor', 'submiteverywhere', 'survey', 'thomsonphonebook', 'topten', 'tvacerfa', 'voyage', 'webcalendar', 'webmail');
@@ -212,7 +212,7 @@ if (GETPOST('action', 'aZ09') == 'gotodemo') {     // Action run when we click o
 	// If we disable modules using personalized list
 	foreach ($modules as $val) {
 		$modulekeyname = strtolower($val->name);
-		if (empty($_POST[$modulekeyname]) && empty($val->always_enabled) && !in_array($modulekeyname, $alwayscheckedmodules)) {
+		if (!GETPOST($modulekeyname) && empty($val->always_enabled) && !in_array($modulekeyname, $alwayscheckedmodules)) {
 			$disablestring .= $modulekeyname.',';
 			if ($modulekeyname == 'propale') {
 				$disablestring .= 'propal,';
@@ -250,17 +250,18 @@ jQuery(document).ready(function () {
     jQuery(".modulelineshow").attr("href","#a1profdemoall");
     jQuery(".cursorpointer").css("cursor","pointer");
     jQuery(".modulelineshow").click(function() {
-    var idstring=$(this).attr("id");
-    if (typeof idstring != "undefined")
-    {
-        var currentId = idstring.substring(2);
-        jQuery("tr.moduleline").hide();
-        if (currentId != openedId)
-        {
-            openedId=currentId;
-            jQuery("#tr1"+currentId).show();
-            jQuery("#tr2"+currentId).show();
-        }
+		console.log("We select the custom demo");
+	    var idstring=$(this).attr("id");
+	    if (typeof idstring != "undefined")
+	    {
+	        var currentId = idstring.substring(2);
+	        jQuery("tr.moduleline").hide();
+	        if (currentId != openedId)
+	        {
+	            openedId=currentId;
+	            jQuery("#tr1"+currentId).show();
+	            jQuery("#tr2"+currentId).show();
+	        }
             else openedId = "";
         }
     });
@@ -281,7 +282,7 @@ print '</div>';
 print '<div class="demobantext" style="max-width: 1024px;">';
 print '<div style="font-size: 20px; padding: 40px;">';
 print '<div class="hideonsmartphone" style="text-align: justify;">'.$langs->trans("DemoDesc").'</div><br>';
-print '<div class="titre"><font style="font-size: 20px">'.$langs->trans("ChooseYourDemoProfil").'</font></div>';
+print '<div class="titre"><span style="font-size: 20px">'.$langs->trans("ChooseYourDemoProfil").'</span></div>';
 print '</div>';
 print '</div>';
 
@@ -350,15 +351,15 @@ foreach ($demoprofiles as $profilearray) {
 
 		// Modules (a profile you must choose modules)
 		if (empty($profilearray['url'])) {
-			print '<div id="tr1'.$profilearray['key'].'" class="moduleline hidden" style="margin-left: 8px; margin-right: 8px; text-align: justify; font-size:14px; line-height: 130%; padding-bottom: 8px">';
+			print '<div id="tr1'.$profilearray['key'].'" class="moduleline hidden" style="margin-left: 8px; margin-right: 8px; text-align: justify; font-size:0.75em; line-height: 130%; padding-bottom: 8px">';
 
-			print $langs->trans("ThisIsListOfModules").'<br><br>';
+			print '<span class="opacitymedium">'.$langs->trans("ThisIsListOfModules").'</span><br><br>';
 
 			print '<div class="csscolumns">';
 
 			$listofdisabledmodules = explode(',', $profilearray['disablemodules']);
 			$j = 0;
-			$nbcolsmod = empty($conf->dol_optimize_smallscreen) ? 4 : 3;
+			//$nbcolsmod = empty($conf->dol_optimize_smallscreen) ? 4 : 3;
 			//var_dump($modules);
 			foreach ($orders as $index => $key) { // Loop on qualified (enabled) modules
 				//print $index.' '.$key;
@@ -369,10 +370,10 @@ foreach ($demoprofiles as $profilearray) {
 				if (!empty($val->always_enabled) || in_array($modulekeyname, $alwayshiddenuncheckedmodules)) {
 					$modulequalified = 0;
 				}
-				if ($val->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2 && !$conf->global->$const_name) {
+				if ($val->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2 && empty($conf->global->$const_name)) {
 					$modulequalified = 0;
 				}
-				if ($val->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1 && !$conf->global->$const_name) {
+				if ($val->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1 && empty($conf->global->$const_name)) {
 					$modulequalified = 0;
 				}
 				if (!$modulequalified) {
@@ -383,18 +384,28 @@ foreach ($demoprofiles as $profilearray) {
 					print "\n".'<!-- Module '.$modulekeyname.' hidden and always checked -->';
 					print '<input type="hidden" name="'.$modulekeyname.'" value="1">';
 				} else {
-					$modulo = ($j % $nbcolsmod);
+					//$modulo = ($j % $nbcolsmod);
 					//if ($modulo == 0) print '<tr>';
 					print '<!-- id='.$val->numero.' -->';
 					print '<div class="nowrap">';
-					print '<input type="checkbox" class="checkbox" id="id'.$modulekeyname.'" name="'.$modulekeyname.'" value="1" title="'.dol_escape_htmltag($val->getName()).'"';
+					print '<input type="checkbox" class="checkbox valignmiddle paddingright" id="id'.$modulekeyname.'" name="'.$modulekeyname.'" value="1" title="'.dol_escape_htmltag($val->getName()).'"';
+					$disabled = '';
 					if (in_array($modulekeyname, $alwaysuncheckedmodules)) {
-						print ' disabled';
+						$disabled = 'disabled';
+						print ' '.$disabled;
 					}
 					if (!in_array($modulekeyname, $alwaysuncheckedmodules) && (!in_array($modulekeyname, $listofdisabledmodules) || in_array($modulekeyname, $alwayscheckedmodules))) {
 						print ' checked';
 					}
-					print '> <label for="id'.$modulekeyname.'" class="inline-block demomaxoveflow" title="'.dol_escape_htmltag($val->getName()).'">'.$val->getName().'</label><br>';
+					print '>';
+					/*
+					$s = img_picto('', $modulekeyname, 'class="pictofixedwidth paddingleft"');
+					if ($s) {
+						print $s;
+					} else {
+						print img_picto('', 'generic', 'class="pictofixedwidth paddingleft"');
+					}*/
+					print '<label for="id'.$modulekeyname.'" class="inline-block demomaxoveflow valignmiddle paddingleft'.($disabled ? ' opacitymedium' : '').'" title="'.dol_escape_htmltag($val->getName()).'">'.$val->getName().'</label><br>';
 					print '</div>';
 					//if ($modulo == ($nbcolsmod - 1)) print '</tr>';
 					$j++;
@@ -405,6 +416,7 @@ foreach ($demoprofiles as $profilearray) {
 
 			print '<br><div class="center">';
 			print '<input type="submit" value=" &nbsp; &nbsp; '.$langs->trans("Start").' &nbsp; &nbsp; " class="button">';
+			print '<br><br>';
 			print '</div>';
 
 			print '</div>';
@@ -418,6 +430,8 @@ foreach ($demoprofiles as $profilearray) {
 }
 
 print '</div>';
+
+print '<br>';
 
 
 // TODO Replace this with a hook

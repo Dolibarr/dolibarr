@@ -259,8 +259,8 @@ print "<br>\n";
 
 
 print '<div class="center">';
-print '<input type="submit" class="button" value="'.$langs->trans("Modify").'" name="button">';
-print '<br/><br/>';
+print '<input type="submit" class="button button-edit" name="Button"value="'.$langs->trans("Modify").'">';
+print '<br><br>';
 print '</div>';
 
 print '</form>';
@@ -270,7 +270,7 @@ print '</form>';
 echo '<div>';
 echo '<table class="noborder centpercent">';
 echo '<thead>';
-echo '<tr class="liste_titre"><th>' . $langs->trans('Parameter') . '</th><th>' . $langs->trans('Value') . '</th></tr>';
+echo '<tr class="liste_titre"><th>'.$langs->trans('Parameter').'</th><th>'.$langs->trans('Value').'</th></tr>';
 echo '</thead>';
 echo '<tbody>';
 

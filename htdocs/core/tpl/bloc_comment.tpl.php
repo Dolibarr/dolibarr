@@ -49,7 +49,7 @@ if ($action !== 'editcomment') {
 	print '</td>';
 
 	print '<td class="center">';
-	print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
+	print '<input type="submit" class="button button-add" value="'.$langs->trans("Add").'">';
 	print '</td></tr>';
 }
 
@@ -80,9 +80,9 @@ if (!empty($object->comments)) {
 		print '<div class="width75p float comment comment-table" style="background-color:#'.$TColors[$fk_user]['bgcolor'].'">';
 		print '<div class="comment-info comment-cell">';
 		if (!empty($user->photo)) {
-			print Form::showphoto('userphoto', $userstatic, 80, 0, 0, '', 'small', 0, 1).'<br/>';
+			print Form::showphoto('userphoto', $userstatic, 80, 0, 0, '', 'small', 0, 1).'<br>';
 		}
-		print $langs->trans('User').' : '.$userstatic->getNomUrl().'<br/>';
+		print $langs->trans('User').' : '.$userstatic->getNomUrl().'<br>';
 		print $langs->trans('Date').' : '.dol_print_date($comment->datec, 'dayhoursec');
 		print '</div>'; // End comment-info
 

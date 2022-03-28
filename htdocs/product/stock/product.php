@@ -9,6 +9,7 @@
  * Copyright (C) 2014-2015 Cédric Gross            <c.gross@kreiz-it.fr>
  * Copyright (C) 2015      Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2018-2019 Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2021	   Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -76,13 +77,12 @@ $batchnumber = GETPOST('batch_number', 'san_alpha');
 if (!empty($batchnumber)) {
 	$batchnumber = trim($batchnumber);
 }
+$cost_price = GETPOST('cost_price', 'alpha');
 
 // Security check
 if ($user->socid) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'produit&stock', $id, 'product&product', '', '', $fieldid);
-
 
 $object = new Product($db);
 $extrafields = new ExtraFields($db);
@@ -114,6 +114,20 @@ $hookmanager->initHooks(array('stockproductcard', 'globalcard'));
 
 $error = 0;
 
+$usercanread = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->lire) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->lire));
+$usercancreate = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->creer) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->creer));
+
+if ($object->id > 0) {
+	if ($object->type == $object::TYPE_PRODUCT) {
+		restrictedArea($user, 'produit', $object->id, 'product&product', '', '');
+	}
+	if ($object->type == $object::TYPE_SERVICE) {
+		restrictedArea($user, 'service', $object->id, 'product&product', '', '');
+	}
+} else {
+	restrictedArea($user, 'produit|service', $id, 'product&product', '', '', $fieldid);
+}
+
 
 /*
  *	Actions
@@ -127,6 +141,21 @@ $parameters = array('id'=>$id, 'ref'=>$ref, 'objcanvas'=>$objcanvas);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
+
+if ($action == 'setcost_price') {
+	if ($id) {
+		$result = $object->fetch($id);
+		$object->cost_price = price2num($cost_price);
+		$result = $object->update($object->id, $user);
+		if ($result > 0) {
+			setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
+			$action = '';
+		} else {
+			$error++;
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+	}
 }
 
 if ($action == 'addlimitstockwarehouse' && !empty($user->rights->produit->creer)) {
@@ -467,8 +496,8 @@ if ($action == 'updateline' && GETPOST('save') == $langs->trans("Save")) {
 			if ((!GETPOST("sellby")) && (!GETPOST("eatby")) && (!$batchnumber)) {
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("atleast1batchfield")), null, 'errors');
 			} else {
-				$d_eatby = dol_mktime(0, 0, 0, $_POST['eatbymonth'], $_POST['eatbyday'], $_POST['eatbyyear']);
-				$d_sellby = dol_mktime(0, 0, 0, $_POST['sellbymonth'], $_POST['sellbyday'], $_POST['sellbyyear']);
+				$d_eatby = dol_mktime(0, 0, 0, GETPOST('eatbymonth', 'int'), GETPOST('eatbyday', 'int'), GETPOST('eatbyyear', 'int'));
+				$d_sellby = dol_mktime(0, 0, 0, GETPOST('sellbymonth', 'int'), GETPOST('sellbyday', 'int'), GETPOST('sellbyyear', 'int'));
 				$pdluo->batch = $batchnumber;
 				$pdluo->eatby = $d_eatby;
 				$pdluo->sellby = $d_sellby;
@@ -521,6 +550,51 @@ if ($id > 0 || $ref) {
 
 	llxHeader('', $title, $helpurl);
 
+	if (!empty($conf->use_javascript_ajax)) {
+		?>
+		<script type="text/javascript">
+			$(document).ready(function() {
+				$(".collapse_batch").click(function() {
+					console.log("We click on collapse_batch");
+					var id_entrepot = $(this).attr('id').replace('ent', '');
+
+					if($(this).text().indexOf('+') > 0) {
+						$(".batch_warehouse" + id_entrepot).show();
+						$(this).html('(-)');
+						jQuery("#show_all").hide();
+						jQuery("#hide_all").show();
+					}
+					else {
+						$(".batch_warehouse" + id_entrepot).hide();
+						$(this).html('(+)');
+					}
+
+					return false;
+				});
+
+				$("#show_all").click(function() {
+					console.log("We click on show_all");
+					$("[class^=batch_warehouse]").show();
+					$("[class^=collapse_batch]").html('(-)');
+					jQuery("#show_all").hide();
+					jQuery("#hide_all").show();
+					return false;
+				});
+
+				$("#hide_all").click(function() {
+					console.log("We click on hide_all");
+					$("[class^=batch_warehouse]").hide();
+					$("[class^=collapse_batch]").html('(+)');
+					jQuery("#hide_all").hide();
+					jQuery("#show_all").show();
+					return false;
+				});
+
+			});
+		</script>
+		<?php
+	}
+
 	if ($result > 0) {
 		$head = product_prepare_head($object);
 		$titre = $langs->trans("CardProduct".$object->type);
@@ -547,8 +621,18 @@ if ($id > 0 || $ref) {
 
 			print '<table class="border tableforfield centpercent">';
 
+			// Type
+			if (!empty($conf->product->enabled) && !empty($conf->service->enabled)) {
+				$typeformat = 'select;0:'.$langs->trans("Product").',1:'.$langs->trans("Service");
+				print '<tr><td class="">';
+				print (empty($conf->global->PRODUCT_DENY_CHANGE_PRODUCT_TYPE)) ? $form->editfieldkey("Type", 'fk_product_type', $object->type, $object, 0, $typeformat) : $langs->trans('Type');
+				print '</td><td>';
+				print $form->editfieldval("Type", 'fk_product_type', $object->type, $object, 0, $typeformat);
+				print '</td></tr>';
+			}
+
 			if ($conf->productbatch->enabled) {
-				print '<tr><td class="titlefield">'.$langs->trans("ManageLotSerial").'</td><td>';
+				print '<tr><td class="">'.$langs->trans("ManageLotSerial").'</td><td>';
 				print $object->getLibStatut(0, 2);
 				print '</td></tr>';
 			}
@@ -559,7 +643,7 @@ if ($id > 0 || $ref) {
 			$textdesc .= "<br>".$langs->trans("CostPriceUsage");
 			$text = $form->textwithpicto($langs->trans("CostPrice"), $textdesc, 1, 'help', '');
 			print $form->editfieldkey($text, 'cost_price', $object->cost_price, $object, $usercancreate, 'amount:6');
-			print '</td><td colspan="2">';
+			print '</td><td>';
 			print $form->editfieldval($text, 'cost_price', $object->cost_price, $object, $usercancreate, 'amount:6');
 			print '</td></tr>';
 
@@ -625,7 +709,7 @@ if ($id > 0 || $ref) {
 			print '</table>';
 
 			print '</div>';
-			print '<div class="fichehalfright"><div class="ficheaddleft"><div class="underbanner clearboth"></div>';
+			print '<div class="fichehalfright"><div class="underbanner clearboth"></div>';
 
 			print '<table class="border tableforfield centpercent">';
 
@@ -679,7 +763,7 @@ if ($id > 0 || $ref) {
 				if ($result < 0) {
 					dol_print_error($db, $object->error);
 				}
-				$helpondiff .= ' ('.$langs->trans("ProductQtyInDraft").': '.$object->stats_commande['qty'].')';
+				$helpondiff .= ' <span class="opacitymedium">('.$langs->trans("ProductQtyInDraft").': '.$object->stats_commande['qty'].')</span>';
 			}
 
 			// Number of product from customer order already sent (partial shipping)
@@ -713,7 +797,7 @@ if ($id > 0 || $ref) {
 				if ($result < 0) {
 					dol_print_error($db, $object->error);
 				}
-				$helpondiff .= ' ('.$langs->trans("ProductQtyInDraftOrWaitingApproved").': '.$object->stats_commande_fournisseur['qty'].')';
+				$helpondiff .= ' <span class="opacitymedium">('.$langs->trans("ProductQtyInDraftOrWaitingApproved").': '.$object->stats_commande_fournisseur['qty'].')</span>';
 			}
 
 			// Number of product from supplier order already received (partial receipt)
@@ -779,7 +863,6 @@ if ($id > 0 || $ref) {
 
 			print "</table>";
 
-			print '</div>';
 			print '</div>';
 			print '</div>';
 
@@ -857,17 +940,25 @@ if (!$variants) {
 	print '<td></td>';
 	print '<td></td>';
 	print '</tr>';
+
 	if ((!empty($conf->productbatch->enabled)) && $object->hasbatch()) {
 		$colspan = 3;
-		print '<tr class="liste_titre"><td class="width25"></td>';
-		print '<td class="right">'.$langs->trans("batch_number").'</td>';
-		if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
-			$colspan--;
-			print '<td class="center width75">'.$langs->trans("EatByDate").'</td>';
+		print '<tr class="liste_titre"><td class="minwidth200">';
+		if (!empty($conf->use_javascript_ajax)) {
+			print '<a id="show_all" href="#" class="hideobject">'.img_picto('', 'folder-open', 'class="paddingright"').$langs->trans("ShowAllLots").'</a>';
+			//print ' &nbsp; ';
+			print '<a id="hide_all" href="#">'.img_picto('', 'folder', 'class="paddingright"').$langs->trans("HideLots").'</a>';
+			//print '&nbsp;'.$form->textwithpicto('', $langs->trans('CollapseBatchDetailHelp'), 1, 'help', '');
 		}
+		print '</td>';
+		print '<td class="right">'.$langs->trans("batch_number").'</td>';
 		if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
 			$colspan--;
-			print '<td class="center width75">'.$langs->trans("SellByDate").'</td>';
+			print '<td class="center width100">'.$langs->trans("SellByDate").'</td>';
+		}
+		if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+			$colspan--;
+			print '<td class="center width100">'.$langs->trans("EatByDate").'</td>';
 		}
 		print '<td colspan="'.$colspan.'"></td>';
 		print '<td></td>';
@@ -886,12 +977,13 @@ if (!$variants) {
 	$sql .= " WHERE ps.reel != 0";
 	$sql .= " AND ps.fk_entrepot = e.rowid";
 	$sql .= " AND e.entity IN (".getEntity('stock').")";
-	$sql .= " AND ps.fk_product = ".$object->id;
+	$sql .= " AND ps.fk_product = ".((int) $object->id);
 	$sql .= " ORDER BY e.ref";
 
 	$entrepotstatic = new Entrepot($db);
 	$product_lot_static = new Productlot($db);
 
+	$num = 0;
 	$total = 0;
 	$totalvalue = $totalvaluesell = 0;
 
@@ -914,26 +1006,65 @@ if (!$variants) {
 
 			$stock_real = price2num($obj->reel, 'MS');
 			print '<tr class="oddeven">';
-			print '<td colspan="4">'.$entrepotstatic->getNomUrl(1).'</td>';
-			print '<td class="right">'.$stock_real.($stock_real < 0 ? ' '.img_warning() : '').'</td>';
-			// PMP
-			print '<td class="right">'.(price2num($object->pmp) ? price2num($object->pmp, 'MU') : '').'</td>';
-			// Value purchase
-			print '<td class="right">'.(price2num($object->pmp) ? price(price2num($object->pmp * $obj->reel, 'MT')) : '').'</td>';
-			// Sell price
-			print '<td class="right">';
-			if (empty($conf->global->PRODUIT_MULTIPRICES)) {
-				print price(price2num($object->price, 'MU'), 1);
-			} else {
-				print $langs->trans("Variable");
+
+			// Warehouse
+			print '<td colspan="4">';
+			print $entrepotstatic->getNomUrl(1);
+			if (!empty($conf->use_javascript_ajax) && !empty($conf->productbatch->enabled) && $object->hasbatch()) {
+				print '<a class="collapse_batch marginleftonly" id="ent' . $entrepotstatic->id . '" href="#">';
+				print (empty($conf->global->STOCK_SHOW_ALL_BATCH_BY_DEFAULT) ? '(+)' : '(-)');
+				print '</a>';
 			}
 			print '</td>';
-			// Value sell
+
+			print '<td class="right">'.$stock_real.($stock_real < 0 ? ' '.img_warning() : '').'</td>';
+
+			// PMP
+			print '<td class="right nowraponall">'.(price2num($object->pmp) ? price2num($object->pmp, 'MU') : '').'</td>';
+
+			// Value purchase
+			print '<td class="right amount nowraponall">'.(price2num($object->pmp) ? price(price2num($object->pmp * $obj->reel, 'MT')) : '').'</td>';
+
+			// Sell price
+			$minsellprice = null; $maxsellprice = null;
 			print '<td class="right">';
-			if (empty($conf->global->PRODUIT_MULTIPRICES)) {
-				print price(price2num($object->price * $obj->reel, 'MT'), 1);
+			if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
+				foreach ($object->multiprices as $priceforlevel) {
+					if (is_numeric($priceforlevel)) {
+						if (is_null($maxsellprice) || $priceforlevel > $maxsellprice) {
+							$maxsellprice = $priceforlevel;
+						}
+						if (is_null($minsellprice) || $priceforlevel < $minsellprice) {
+							$minsellprice = $priceforlevel;
+						}
+					}
+				}
+				print '<span class="valignmiddle">';
+				if ($minsellprice != $maxsellprice) {
+					print price(price2num($minsellprice, 'MU'), 1).' - '.price(price2num($maxsellprice, 'MU'), 1);
+				} else {
+					print price(price2num($minsellprice, 'MU'), 1);
+				}
+				print '</span>';
+				print $form->textwithpicto('', $langs->trans("Variable"));
 			} else {
-				print $langs->trans("Variable");
+				print price(price2num($object->price, 'MU'), 1);
+			}
+			print '</td>';
+
+			// Value sell
+			print '<td class="right amount nowraponall">';
+			if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
+				print '<span class="valignmiddle">';
+				if ($minsellprice != $maxsellprice) {
+					print price(price2num($minsellprice * $obj->reel, 'MT'), 1).' - '.price(price2num($maxsellprice * $obj->reel, 'MT'), 1);
+				} else {
+					print price(price2num($minsellprice * $obj->reel, 'MT'), 1);
+				}
+				print '</span>';
+				print $form->textwithpicto('', $langs->trans("Variable"));
+			} else {
+				print price(price2num($object->price * $obj->reel, 'MT'), 1);
 			}
 			print '</td>';
 			print '<td></td>';
@@ -964,14 +1095,14 @@ if (!$variants) {
 						print '<input type="hidden" name="token" value="'.newToken().'">';
 						print '<input type="hidden" name="pdluoid" value="'.$pdluo->id.'"><input type="hidden" name="action" value="updateline"><input type="hidden" name="id" value="'.$id.'"><table class="noborder centpercent"><tr><td width="10%"></td>';
 						print '<td class="right" width="10%"><input type="text" name="batch_number" value="'.$pdluo->batch.'"></td>';
-						if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
-							print '<td class="center" width="10%">';
-							print $form->selectDate($pdluo->eatby, 'eatby', '', '', 1, '', 1, 0);
-							print '</td>';
-						}
 						if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
 							print '<td class="center" width="10%">';
 							print $form->selectDate($pdluo->sellby, 'sellby', '', '', 1, '', 1, 0);
+							print '</td>';
+						}
+						if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+							print '<td class="center" width="10%">';
+							print $form->selectDate($pdluo->eatby, 'eatby', '', '', 1, '', 1, 0);
 							print '</td>';
 						}
 						print '<td class="right" colspan="3">'.$pdluo->qty.($pdluo->qty < 0 ? ' '.img_warning() : '').'</td>';
@@ -984,23 +1115,23 @@ if (!$variants) {
 						print '<td></td>';
 						print '</tr>';
 					} else {
-						print "\n".'<tr><td class="left">';
+						print "\n".'<tr style="display:'.(empty($conf->global->STOCK_SHOW_ALL_BATCH_BY_DEFAULT) ? 'none' : 'visible').';" class="batch_warehouse'.$entrepotstatic->id.'"><td class="left">';
 						print '</td>';
 						print '<td class="right nowraponall">';
 						print $product_lot_static->getNomUrl(1);
 						print '</td>';
 						$colspan = 3;
-						if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
-							$colspan--;
-							print '<td class="center">'.dol_print_date($pdluo->eatby, 'day').'</td>';
-						}
 						if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
 							$colspan--;
 							print '<td class="center">'.dol_print_date($pdluo->sellby, 'day').'</td>';
 						}
+						if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+							$colspan--;
+							print '<td class="center">'.dol_print_date($pdluo->eatby, 'day').'</td>';
+						}
 						print '<td class="right" colspan="'.$colspan.'">'.$pdluo->qty.($pdluo->qty < 0 ? ' '.img_warning() : '').'</td>';
 						print '<td colspan="4"></td>';
-						print '<td>';
+						print '<td class="center">';
 						if ($entrepotstatic->status != $entrepotstatic::STATUS_CLOSED) {
 							print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;id_entrepot='.$entrepotstatic->id.'&amp;action=transfert&amp;pdluoid='.$pdluo->id.'">';
 							print img_picto($langs->trans("TransferStock"), 'add', 'class="hideonsmartphone paddingright" style="color: #a69944"');
@@ -1008,11 +1139,11 @@ if (!$variants) {
 							print '</a>';
 							// Disabled, because edition of stock content must use the "Correct stock menu".
 							// Do not use this, or data will be wrong (bad tracking of movement label, inventory code, ...
-							//print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&amp;action=editline&amp;lineid='.$pdluo->id.'#'.$pdluo->id.'">';
+							//print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=editline&token='.newToken().'&lineid='.$pdluo->id.'#'.$pdluo->id.'">';
 							//print img_edit().'</a>';
 						}
 						print '</td>';
-						print '<td>';
+						print '<td class="center">';
 						if ($entrepotstatic->status != $entrepotstatic::STATUS_CLOSED) {
 							print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;id_entrepot='.$entrepotstatic->id.'&amp;action=correction&amp;pdluoid='.$pdluo->id.'">';
 							print img_picto($langs->trans("CorrectStock"), 'add', 'class="hideonsmartphone paddingright" style="color: #a69944"');
@@ -1020,7 +1151,7 @@ if (!$variants) {
 							print '</a>';
 							// Disabled, because edition of stock content must use the "Correct stock menu".
 							// Do not use this, or data will be wrong (bad tracking of movement label, inventory code, ...
-							//print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&amp;action=editline&amp;lineid='.$pdluo->id.'#'.$pdluo->id.'">';
+							//print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=editline&token='.newToken().'&lineid='.$pdluo->id.'#'.$pdluo->id.'">';
 							//print img_edit().'</a>';
 						}
 						print '</td>';
@@ -1045,18 +1176,28 @@ if (!$variants) {
 	print $totalvalue ? price(price2num($totalvalue, 'MT'), 1) : '&nbsp;';
 	print '</td>';
 	print '<td class="liste_total right">';
-	if (empty($conf->global->PRODUIT_MULTIPRICES)) {
-		print ($total ? price($totalvaluesell / $total, 1) : '&nbsp;');
-	} else {
-		print $langs->trans("Variable");
+	if ($num) {
+		if ($total) {
+			print '<span class="valignmiddle">';
+			if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
+				print $form->textwithpicto('', $langs->trans("Variable"));
+			} else {
+				print price($totalvaluesell / $total, 1);
+			}
+			print '</span>';
+		}
 	}
 	print '</td>';
 	// Value to sell
-	print '<td class="liste_total right">';
-	if (empty($conf->global->PRODUIT_MULTIPRICES)) {
-		print price(price2num($totalvaluesell, 'MT'), 1);
-	} else {
-		print $langs->trans("Variable");
+	print '<td class="liste_total right amount">';
+	if ($num) {
+		print '<span class="valignmiddle">';
+		if (empty($conf->global->PRODUIT_MULTIPRICES)) {
+			print price(price2num($totalvaluesell, 'MT'), 1);
+		} else {
+			print $form->textwithpicto('', $langs->trans("Variable"));
+		}
+		print '</span>';
 	}
 	print '</td>';
 	print '<td></td>';
@@ -1078,13 +1219,13 @@ if (!$variants) {
 		}
 		print '<table class="noborder centpercent">';
 		if (!empty($user->rights->produit->creer)) {
-			print '<tr class="liste_titre"><td width="40%">'.$formproduct->selectWarehouses('', 'fk_entrepot').'</td>';
+			print '<tr class="liste_titre"><td>'.$formproduct->selectWarehouses('', 'fk_entrepot').'</td>';
 			print '<td class="right"><input name="seuil_stock_alerte" type="text" placeholder="'.$langs->trans("StockLimit").'" /></td>';
 			print '<td class="right"><input name="desiredstock" type="text" placeholder="'.$langs->trans("DesiredStock").'" /></td>';
 			print '<td class="right"><input type="submit" value="'.$langs->trans("Save").'" class="button button-save" /></td>';
 			print '</tr>';
 		} else {
-			print '<tr class="liste_titre"><td width="40%">'.$langs->trans("Warehouse").'</td>';
+			print '<tr class="liste_titre"><td>'.$langs->trans("Warehouse").'</td>';
 			print '<td class="right">'.$langs->trans("StockLimit").'</td>';
 			print '<td class="right">'.$langs->trans("DesiredStock").'</td>';
 			print '</tr>';
@@ -1098,7 +1239,7 @@ if (!$variants) {
 			foreach ($lines as $line) {
 				$ent = new Entrepot($db);
 				$ent->fetch($line['fk_entrepot']);
-				print '<tr class="oddeven"><td width="40%">'.$ent->getNomUrl(3).'</td>';
+				print '<tr class="oddeven"><td>'.$ent->getNomUrl(3).'</td>';
 				print '<td class="right">'.$line['seuil_stock_alerte'].'</td>';
 				print '<td class="right">'.$line['desiredstock'].'</td>';
 				if (!empty($user->rights->produit->creer)) {

@@ -18,17 +18,7 @@
 /**
  * \file    core/triggers/interface_99_modZapier_ZapierTriggers.class.php
  * \ingroup zapier
- * \brief   Example trigger.
- *
- *
- * \remarks You can create other triggers by copying this one.
- * - File name should be either:
- *      - interface_99_modZapier_MyTrigger.class.php
- *      - interface_99_all_MyTrigger.class.php
- * - The file must stay in core/triggers
- * - The class name must be InterfaceMytrigger
- * - The constructor method must be named InterfaceMytrigger
- * - The name property name must be MyTrigger
+ * \brief   File for Zappier Triggers.
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
@@ -111,13 +101,9 @@ class InterfaceZapierTriggers extends DolibarrTriggers
 			//case 'USER_NEW_PASSWORD':
 			//case 'USER_ENABLEDISABLE':
 			//case 'USER_DELETE':
-			//case 'USER_SETINGROUP':
-			//case 'USER_REMOVEFROMGROUP':
-			// case 'USER_LOGIN':
-			// case 'USER_LOGIN_FAILED':
-			// case 'USER_LOGOUT':
-			// Warning: To increase performances, this action is triggered only if constant MAIN_ACTIVATE_UPDATESESSIONTRIGGER is set to 1.
-			// // case 'USER_UPDATE_SESSION':
+			//case 'USER_LOGIN':
+			//case 'USER_LOGIN_FAILED':
+			//case 'USER_LOGOUT':
 
 			// Actions
 			case 'ACTION_MODIFY':
@@ -178,8 +164,27 @@ class InterfaceZapierTriggers extends DolibarrTriggers
 
 			// Contacts
 			case 'CONTACT_CREATE':
+				$resql = $this->db->query($sql);
+				while ($resql && $obj = $this->db->fetch_array($resql)) {
+					$cleaned = cleanObjectDatas(dol_clone($object));
+					$json = json_encode($cleaned);
+					// call the zapierPostWebhook() function
+					zapierPostWebhook($obj['url'], $json);
+				}
+				$logtriggeraction = true;
+				break;
 			case 'CONTACT_MODIFY':
+				$resql = $this->db->query($sql);
+				while ($resql && $obj = $this->db->fetch_array($resql)) {
+					$cleaned = cleanObjectDatas(dol_clone($object));
+					$json = json_encode($cleaned);
+					// call the zapierPostWebhook() function
+					zapierPostWebhook($obj['url'], $json);
+				}
+				$logtriggeraction = true;
+				break;
 			case 'CONTACT_DELETE':
+				break;
 			case 'CONTACT_ENABLEDISABLE':
 				break;
 			// Products
@@ -324,10 +329,28 @@ class InterfaceZapierTriggers extends DolibarrTriggers
 			// case 'LINEFICHINTER_DELETE':
 
 			// Members
-			// case 'MEMBER_CREATE':
+			case 'MEMBER_CREATE':
+				$resql = $this->db->query($sql);
+				while ($resql && $obj = $this->db->fetch_array($resql)) {
+					$cleaned = cleanObjectDatas(dol_clone($object));
+					$json = json_encode($cleaned);
+					// call the zapierPostWebhook() function
+					zapierPostWebhook($obj['url'], $json);
+				}
+				$logtriggeraction = true;
+				break;
+			case 'MEMBER_MODIFY':
+				$resql = $this->db->query($sql);
+				while ($resql && $obj = $this->db->fetch_array($resql)) {
+					$cleaned = cleanObjectDatas(dol_clone($object));
+					$json = json_encode($cleaned);
+					// call the zapierPostWebhook() function
+					zapierPostWebhook($obj['url'], $json);
+				}
+				$logtriggeraction = true;
+				break;
 			// case 'MEMBER_VALIDATE':
 			// case 'MEMBER_SUBSCRIPTION':
-			// case 'MEMBER_MODIFY':
 			// case 'MEMBER_NEW_PASSWORD':
 			// case 'MEMBER_RESILIATE':
 			// case 'MEMBER_DELETE':

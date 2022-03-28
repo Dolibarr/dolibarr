@@ -1,5 +1,9 @@
 <?php
 
+// $keyforselect = name of main table
+// keyforelement = name of picto
+// $keyforaliasextra = a key to avoid conflict with extrafields of other objects
+
 if (empty($keyforselect) || empty($keyforelement) || empty($keyforaliasextra)) {
 	//print $keyforselet.' - '.$keyforelement.' - '.$keyforaliasextra;
 	dol_print_error('', 'include of file extrafieldsinexport.inc.php was done but var $keyforselect or $keyforelement or $keyforaliasextra was not set');
@@ -32,9 +36,10 @@ if ($resql) {    // This can fail when class is used on old database (during mig
 			case 'boolean':
 				$typeFilter = "Boolean";
 				break;
+			case 'checkbox':
 			case 'select':
 				if (!empty($conf->global->EXPORT_LABEL_FOR_SELECT)) {
-					$tmpparam = unserialize($obj->param); // $tmpparam may be array with 'options' = array(key1=>val1, key2=>val2 ...)
+					$tmpparam = jsonOrUnserialize($obj->param); // $tmpparam may be array with 'options' = array(key1=>val1, key2=>val2 ...)
 					if ($tmpparam['options'] && is_array($tmpparam['options'])) {
 						$typeFilter = "Select:".$obj->param;
 					}
@@ -42,8 +47,8 @@ if ($resql) {    // This can fail when class is used on old database (during mig
 				break;
 			case 'sellist':
 				$tmp = '';
-				$tmpparam = unserialize($obj->param); // $tmp ay be array 'options' => array 'c_currencies:code_iso:code_iso' => null
-				if ($tmpparam['options'] && is_array($tmpparam['options'])) {
+				$tmpparam = jsonOrUnserialize($obj->param); // $tmp may be array 'options' => array 'c_currencies:code_iso:code_iso' => null
+				if (is_array($tmpparam) && array_key_exists('options', $tmpparam) &&  $tmpparam['options'] && is_array($tmpparam['options'])) {
 					$tmpkeys = array_keys($tmpparam['options']);
 					$tmp = array_shift($tmpkeys);
 				}

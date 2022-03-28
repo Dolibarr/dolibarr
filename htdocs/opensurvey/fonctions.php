@@ -116,6 +116,12 @@ function llxHeaderSurvey($title, $head = "", $disablejs = 0, $disablehead = 0, $
 		print '</div>';
 	}
 
+	if (!empty($conf->global->OPENSURVEY_IMAGE_PUBLIC_INTERFACE)) {
+		print '<div class="backimagepublicopensurvey">';
+		print '<img id="idOPENSURVEY_IMAGE_PUBLIC_INTERFACE" src="'.$conf->global->OPENSURVEY_IMAGE_PUBLIC_INTERFACE.'">';
+		print '</div>';
+	}
+
 	print '<div style="margin-left: 50px; margin-right: 50px; text-align: start;"><br>';
 }
 
@@ -200,7 +206,7 @@ function getUrlSondage($id, $admin = false)
 /**
  * 	Generate a random id
  *
- *	@param	string	$car	Char to generate key
+ *	@param	int		$car	Length of string to generate key
  * 	@return	string
  */
 function dol_survey_random($car)

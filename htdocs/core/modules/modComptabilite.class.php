@@ -57,7 +57,7 @@ class modComptabilite extends DolibarrModules
 		$this->version = 'dolibarr';
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->picto = 'accounting';
+		$this->picto = 'accountancy';
 
 		// Config pages
 		$this->config_page_url = array("compta.php");

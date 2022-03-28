@@ -45,100 +45,125 @@ $fieldtype = (!empty($ref) ? 'ref' : 'rowid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
+
+if ($id > 0 || !empty($ref)) {
+	$object = new Product($db);
+	$object->fetch($id, $ref);
+}
+
+if ($object->id > 0) {
+	if ($object->type == $object::TYPE_PRODUCT) {
+		restrictedArea($user, 'produit', $object->id, 'product&product', '', '');
+	}
+	if ($object->type == $object::TYPE_SERVICE) {
+		restrictedArea($user, 'service', $object->id, 'product&product', '', '');
+	}
+} else {
+	restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
+}
+
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('producttranslationcard', 'globalcard'));
 
 
 /*
  * Actions
  */
 
-// retour a l'affichage des traduction si annulation
-if ($cancel == $langs->trans("Cancel")) {
-	$action = '';
+$parameters = array('id'=>$id, 'ref'=>$ref);
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
-
-if ($action == 'delete' && GETPOST('langtodelete', 'alpha')) {
-	$object = new Product($db);
-	$object->fetch($id);
-	$object->delMultiLangs(GETPOST('langtodelete', 'alpha'), $user);
-	setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
-	$action = '';
-}
-
-// Add translation
-if ($action == 'vadd' && $cancel != $langs->trans("Cancel") && ($user->rights->produit->creer || $user->rights->service->creer)) {
-	$object = new Product($db);
-	$object->fetch($id);
-	$current_lang = $langs->getDefaultLang();
-
-	// update de l'objet
-	if (GETPOST("forcelangprod") == $current_lang) {
-		$object->label		 = GETPOST("libelle");
-		$object->description = dol_htmlcleanlastbr(GETPOST("desc", 'restricthtml'));
-		$object->other		 = dol_htmlcleanlastbr(GETPOST("other", 'restricthtml'));
-
-		$object->update($object->id, $user);
-	} else {
-		$object->multilangs[GETPOST("forcelangprod")]["label"]		= GETPOST("libelle");
-		$object->multilangs[GETPOST("forcelangprod")]["description"] = dol_htmlcleanlastbr(GETPOST("desc", 'restricthtml'));
-		$object->multilangs[GETPOST("forcelangprod")]["other"]		= dol_htmlcleanlastbr(GETPOST("other", 'restricthtml'));
-	}
-
-	// save in database
-	if (GETPOST("forcelangprod")) {
-		$result = $object->setMultiLangs($user);
-	} else {
-		$object->error = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Language"));
-		$result = -1;
-	}
-
-	if ($result > 0) {
+if (empty($reshook)) {
+	// retour a l'affichage des traduction si annulation
+	if ($cancel == $langs->trans("Cancel")) {
 		$action = '';
-	} else {
-		$action = 'add';
-		setEventMessages($object->error, $object->errors, 'errors');
 	}
-}
 
-// Edit translation
-if ($action == 'vedit' && $cancel != $langs->trans("Cancel") && ($user->rights->produit->creer || $user->rights->service->creer)) {
-	$object = new Product($db);
-	$object->fetch($id);
-	$current_lang = $langs->getDefaultLang();
+	if ($action == 'delete' && GETPOST('langtodelete', 'alpha')) {
+		$object = new Product($db);
+		$object->fetch($id);
+		$object->delMultiLangs(GETPOST('langtodelete', 'alpha'), $user);
+		setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
+		$action = '';
+	}
 
-	foreach ($object->multilangs as $key => $value) { // enregistrement des nouvelles valeurs dans l'objet
-		if ($key == $current_lang) {
-			$object->label		 = GETPOST("libelle-".$key);
-			$object->description = dol_htmlcleanlastbr(GETPOST("desc-".$key, 'restricthtml'));
-			$object->other		 = dol_htmlcleanlastbr(GETPOST("other-".$key, 'restricthtml'));
+	// Add translation
+	if ($action == 'vadd' && $cancel != $langs->trans("Cancel") && ($user->rights->produit->creer || $user->rights->service->creer)) {
+		$object = new Product($db);
+		$object->fetch($id);
+		$current_lang = $langs->getDefaultLang();
+
+		// update de l'objet
+		if (GETPOST("forcelangprod") == $current_lang) {
+			$object->label = GETPOST("libelle");
+			$object->description = dol_htmlcleanlastbr(GETPOST("desc", 'restricthtml'));
+			$object->other = dol_htmlcleanlastbr(GETPOST("other", 'restricthtml'));
+
+			$object->update($object->id, $user);
 		} else {
-			$object->multilangs[$key]["label"]		 = GETPOST("libelle-".$key);
-			$object->multilangs[$key]["description"] = dol_htmlcleanlastbr(GETPOST("desc-".$key, 'restricthtml'));
-			$object->multilangs[$key]["other"]		 = dol_htmlcleanlastbr(GETPOST("other-".$key, 'restricthtml'));
+			$object->multilangs[GETPOST("forcelangprod")]["label"] = GETPOST("libelle");
+			$object->multilangs[GETPOST("forcelangprod")]["description"] = dol_htmlcleanlastbr(GETPOST("desc", 'restricthtml'));
+			$object->multilangs[GETPOST("forcelangprod")]["other"] = dol_htmlcleanlastbr(GETPOST("other", 'restricthtml'));
+		}
+
+		// save in database
+		if (GETPOST("forcelangprod")) {
+			$result = $object->setMultiLangs($user);
+		} else {
+			$object->error = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Language"));
+			$result = -1;
+		}
+
+		if ($result > 0) {
+			$action = '';
+		} else {
+			$action = 'add';
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
 
-	$result = $object->setMultiLangs($user);
-	if ($result > 0) {
-		$action = '';
-	} else {
-		$action = 'edit';
-		setEventMessages($object->error, $object->errors, 'errors');
+	// Edit translation
+	if ($action == 'vedit' && $cancel != $langs->trans("Cancel") && ($user->rights->produit->creer || $user->rights->service->creer)) {
+		$object = new Product($db);
+		$object->fetch($id);
+		$current_lang = $langs->getDefaultLang();
+
+		foreach ($object->multilangs as $key => $value) { // enregistrement des nouvelles valeurs dans l'objet
+			if ($key == $current_lang) {
+				$object->label = GETPOST("libelle-" . $key);
+				$object->description = dol_htmlcleanlastbr(GETPOST("desc-" . $key, 'restricthtml'));
+				$object->other = dol_htmlcleanlastbr(GETPOST("other-" . $key, 'restricthtml'));
+			} else {
+				$object->multilangs[$key]["label"] = GETPOST("libelle-" . $key);
+				$object->multilangs[$key]["description"] = dol_htmlcleanlastbr(GETPOST("desc-" . $key, 'restricthtml'));
+				$object->multilangs[$key]["other"] = dol_htmlcleanlastbr(GETPOST("other-" . $key, 'restricthtml'));
+			}
+		}
+
+		$result = $object->setMultiLangs($user);
+		if ($result > 0) {
+			$action = '';
+		} else {
+			$action = 'edit';
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	}
-}
 
-// Delete translation
-if ($action == 'vdelete' && $cancel != $langs->trans("Cancel") && ($user->rights->produit->creer || $user->rights->service->creer)) {
-	$object = new Product($db);
-	$object->fetch($id);
-	$langtodelete = GETPOST('langdel', 'alpha');
+	// Delete translation
+	if ($action == 'vdelete' && $cancel != $langs->trans("Cancel") && ($user->rights->produit->creer || $user->rights->service->creer)) {
+		$object = new Product($db);
+		$object->fetch($id);
+		$langtodelete = GETPOST('langdel', 'alpha');
 
-	$result = $object->delMultiLangs($langtodelete, $user);
-	if ($result > 0) {
-		$action = '';
-	} else {
-		$action = 'edit';
-		setEventMessages($object->error, $object->errors, 'errors');
+		$result = $object->delMultiLangs($langtodelete, $user);
+		if ($result > 0) {
+			$action = '';
+		} else {
+			$action = 'edit';
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	}
 }
 
@@ -201,11 +226,15 @@ print dol_get_fiche_end();
  */
 print "\n".'<div class="tabsAction">'."\n";
 
-if ($action == '') {
-	if ($user->rights->produit->creer || $user->rights->service->creer) {
-		print '<a class="butAction" href="'.DOL_URL_ROOT.'/product/traduction.php?action=add&id='.$object->id.'">'.$langs->trans("Add").'</a>';
-		if ($cnt_trans > 0) {
-			print '<a class="butAction" href="'.DOL_URL_ROOT.'/product/traduction.php?action=edit&id='.$object->id.'">'.$langs->trans("Update").'</a>';
+$parameters = array();
+$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
+if (empty($reshook)) {
+	if ($action == '') {
+		if ($user->rights->produit->creer || $user->rights->service->creer) {
+			print '<a class="butAction" href="' . DOL_URL_ROOT . '/product/traduction.php?action=add&token='.newToken().'&id=' . $object->id . '">' . $langs->trans("Add") . '</a>';
+			if ($cnt_trans > 0) {
+				print '<a class="butAction" href="' . DOL_URL_ROOT . '/product/traduction.php?action=edit&token='.newToken().'&id=' . $object->id . '">' . $langs->trans("Modify") . '</a>';
+			}
 		}
 	}
 }
@@ -248,13 +277,12 @@ if ($action == 'edit') {
 		}
 	}
 
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+
 	print '<br>';
 
-	print '<div class="center">';
-	print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
-	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
-	print '</div>';
+	print $form->buttonsSaveCancel();
 
 	print '</form>';
 } elseif ($action != 'add') {
@@ -319,13 +347,12 @@ if ($action == 'add' && ($user->rights->produit->creer || $user->rights->service
 	}
 	print '</table>';
 
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+
 	print dol_get_fiche_end();
 
-	print '<div class="center">';
-	print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
-	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
-	print '</div>';
+	print $form->buttonsSaveCancel();
 
 	print '</form>';
 

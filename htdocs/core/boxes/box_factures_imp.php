@@ -88,7 +88,12 @@ class box_factures_imp extends ModeleBoxes
 
 		if ($user->rights->facture->lire) {
 			$sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias";
-			$sql .= ", s.code_client, s.code_compta, s.client";
+			$sql .= ", s.code_client, s.client";
+			if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
+				$sql .= ", spe.accountancy_code_customer as code_compta";
+			} else {
+				$sql .= ", s.code_compta";
+			}
 			$sql .= ", s.logo, s.email, s.entity";
 			$sql .= ", s.tva_intra, s.siren as idprof1, s.siret as idprof2, s.ape as idprof3, s.idprof4, s.idprof5, s.idprof6";
 			$sql .= ", f.ref, f.date_lim_reglement as datelimite";
@@ -100,7 +105,10 @@ class box_factures_imp extends ModeleBoxes
 			$sql .= ", f.paye, f.fk_statut as status, f.rowid as facid";
 			$sql .= ", sum(pf.amount) as am";
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-			if (!$user->rights->societe->client->voir && !$user->socid) {
+			if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
+				$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe_perentity as spe ON spe.fk_soc = s.rowid AND spe.entity = " . ((int) $conf->entity);
+			}
+			if (empty($user->rights->societe->client->voir) && !$user->socid) {
 				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			}
 			$sql .= ", ".MAIN_DB_PREFIX."facture as f";
@@ -109,13 +117,18 @@ class box_factures_imp extends ModeleBoxes
 			$sql .= " AND f.entity IN (".getEntity('invoice').")";
 			$sql .= " AND f.paye = 0";
 			$sql .= " AND fk_statut = 1";
-			if (!$user->rights->societe->client->voir && !$user->socid) {
-				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+			if (empty($user->rights->societe->client->voir) && !$user->socid) {
+				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			if ($user->socid) {
-				$sql .= " AND s.rowid = ".$user->socid;
+				$sql .= " AND s.rowid = ".((int) $user->socid);
 			}
-			$sql .= " GROUP BY s.rowid, s.nom, s.name_alias, s.code_client, s.code_compta, s.client, s.logo, s.email, s.entity, s.tva_intra, s.siren, s.siret, s.ape, s.idprof4, s.idprof5, s.idprof6,";
+			$sql .= " GROUP BY s.rowid, s.nom, s.name_alias, s.code_client, s.client, s.logo, s.email, s.entity, s.tva_intra, s.siren, s.siret, s.ape, s.idprof4, s.idprof5, s.idprof6,";
+			if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
+				$sql .= " spe.accountancy_code_customer as code_compta,";
+			} else {
+				$sql .= " s.code_compta,";
+			}
 			$sql .= " f.ref, f.date_lim_reglement,";
 			$sql .= " f.type, f.datef, f.total_ht, f.total_tva, f.total_ttc, f.paye, f.fk_statut, f.rowid";
 			//$sql.= " ORDER BY f.datef DESC, f.ref DESC ";
@@ -132,7 +145,9 @@ class box_factures_imp extends ModeleBoxes
 
 				while ($line < $num) {
 					$objp = $this->db->fetch_object($result);
+
 					$datelimite = $this->db->jdate($objp->datelimite);
+
 					$facturestatic->id = $objp->facid;
 					$facturestatic->ref = $objp->ref;
 					$facturestatic->type = $objp->type;
@@ -163,7 +178,7 @@ class box_factures_imp extends ModeleBoxes
 
 					$late = '';
 					if ($facturestatic->hasDelay()) {
-						$late = img_warning(sprintf($l_due_date, dol_print_date($datelimite, 'day')));
+						$late = img_warning(sprintf($l_due_date, dol_print_date($datelimite, 'day', 'tzuserrel')));
 					}
 
 					$this->info_box_contents[$line][] = array(
@@ -180,13 +195,13 @@ class box_factures_imp extends ModeleBoxes
 					);
 
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="nowraponall right"',
+						'td' => 'class="nowraponall right amount"',
 						'text' => price($objp->total_ht, 0, $langs, 0, -1, -1, $conf->currency),
 					);
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right"',
-						'text' => dol_print_date($datelimite, 'day'),
+						'text' => dol_print_date($datelimite, 'day', 'tzuserrel'),
 					);
 
 					$this->info_box_contents[$line][] = array(

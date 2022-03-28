@@ -44,8 +44,8 @@ if (GETPOST("modecompta")) {
 	$modecompta = GETPOST("modecompta");
 }
 
-$sortorder = GETPOST("sortorder", 'aZ09');
-$sortfield = GETPOST("sortfield", 'aZ09');
+$sortorder = GETPOST("sortorder", 'aZ09comma');
+$sortfield = GETPOST("sortfield", 'aZ09comma');
 if (!$sortorder) {
 	$sortorder = "asc";
 }
@@ -405,7 +405,8 @@ print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" :
 // Category filter
 print '<tr class="liste_titre">';
 print '<td>';
-print $langs->trans("Category").': '.$formother->select_categories(Categorie::TYPE_CUSTOMER, $selected_cat, 'search_categ', true);
+print img_picto('', 'category', 'class="paddingrightonly"');
+print $formother->select_categories(Categorie::TYPE_CUSTOMER, $selected_cat, 'search_categ', 0, $langs->trans("Category"));
 print ' ';
 print $langs->trans("SubCats").'? ';
 print '<input type="checkbox" name="subcat" value="yes"';
@@ -420,13 +421,13 @@ print '</tr>';
 
 print '<tr class="liste_titre">';
 print '<td class="liste_titre left">';
-print '<input class="flat" size="6" type="text" name="search_societe" value="'.$search_societe.'">';
+print '<input class="flat" size="6" type="text" name="search_societe" value="'.dol_escape_htmltag($search_societe).'">';
 print '</td>';
 print '<td class="liste_titre left">';
-print '<input class="flat" size="6" type="text" name="search_zip" value="'.$search_zip.'">';
+print '<input class="flat" size="6" type="text" name="search_zip" value="'.dol_escape_htmltag($search_zip).'">';
 print '</td>';
 print '<td class="liste_titre left">';
-print '<input class="flat" size="6" type="text" name="search_town" value="'.$search_town.'">';
+print '<input class="flat" size="6" type="text" name="search_town" value="'.dol_escape_htmltag($search_town).'">';
 print '</td>';
 print '<td class="liste_titre left">';
 print $form->select_country($search_country, 'search_country');

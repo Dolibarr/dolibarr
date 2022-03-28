@@ -24,7 +24,7 @@
 /**
  *	\file       htdocs/public/project/new.php
  *	\ingroup    project
- *	\brief      Example of form to add a new lead
+ *	\brief      Page to record a message/lead into a project/lead
  */
 
 if (!defined('NOLOGIN')) {
@@ -60,18 +60,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 
 // Init vars
 $errmsg = '';
-$num = 0;
 $error = 0;
 $backtopage = GETPOST('backtopage', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
 // Load translation files
-$langs->loadLangs(array("main", "members", "companies", "install", "other"));
-
-// Security check
-if (empty($conf->projet->enabled)) {
-	accessforbidden('', 0, 0, 1);
-}
+$langs->loadLangs(array("members", "companies", "install", "other", "projects"));
 
 if (empty($conf->global->PROJECT_ENABLE_PUBLIC)) {
 	print $langs->trans("Form for public lead registration has not been enabled");
@@ -86,6 +80,11 @@ $extrafields = new ExtraFields($db);
 $object = new Project($db);
 
 $user->loadDefaultValues();
+
+// Security check
+if (empty($conf->projet->enabled)) {
+	accessforbidden('', 0, 0, 1);
+}
 
 
 /**
@@ -119,6 +118,7 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
 	}
 
 	print '<div class="center">';
+
 	// Output html code for logo
 	if ($urllogo) {
 		print '<div class="backgreypublicpayment">';
@@ -131,6 +131,13 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
 		}
 		print '</div>';
 	}
+
+	if (!empty($conf->global->PROJECT_IMAGE_PUBLIC_ORGANIZEDEVENT)) {
+		print '<div class="backimagepublicorganizedevent">';
+		print '<img id="idPROJECT_IMAGE_PUBLIC_ORGANIZEDEVENT" src="'.$conf->global->PROJECT_IMAGE_PUBLIC_ORGANIZEDEVENT.'">';
+		print '</div>';
+	}
+
 	print '</div>';
 
 	print '<div class="divmainbodylarge">';
@@ -304,7 +311,7 @@ if (empty($reshook) && $action == 'add') {
 				$urlback = $conf->global->PROJECT_URL_REDIRECT_LEAD;
 				// TODO Make replacement of __AMOUNT__, etc...
 			} else {
-				$urlback = $_SERVER["PHP_SELF"]."?action=added";
+				$urlback = $_SERVER["PHP_SELF"]."?action=added&token=".newToken();
 			}
 
 			if (!empty($entity)) {
@@ -374,7 +381,7 @@ print '<div class="center subscriptionformhelptext justify">';
 if (!empty($conf->global->PROJECT_NEWFORM_TEXT)) {
 	print $langs->trans($conf->global->PROJECT_NEWFORM_TEXT)."<br>\n";
 } else {
-	print $langs->trans("NewLeadDesc", $conf->global->MAIN_INFO_SOCIETE_MAIL)."<br>\n";
+	print $langs->trans("FormForNewLeadDesc", $conf->global->MAIN_INFO_SOCIETE_MAIL)."<br>\n";
 }
 print '</div>';
 
@@ -408,9 +415,9 @@ jQuery(document).ready(function () {
 print '<table class="border" summary="form to subscribe" id="tablesubscribe">'."\n";
 
 // Lastname
-print '<tr><td>'.$langs->trans("Lastname").' <FONT COLOR="red">*</FONT></td><td><input type="text" name="lastname" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('lastname')).'"></td></tr>'."\n";
+print '<tr><td>'.$langs->trans("Lastname").' <span style="color: red">*</span></td><td><input type="text" name="lastname" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('lastname')).'"></td></tr>'."\n";
 // Firstname
-print '<tr><td>'.$langs->trans("Firstname").' <FONT COLOR="red">*</FONT></td><td><input type="text" name="firstname" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('firstname')).'"></td></tr>'."\n";
+print '<tr><td>'.$langs->trans("Firstname").' <span style="color: red">*</span></td><td><input type="text" name="firstname" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('firstname')).'"></td></tr>'."\n";
 // Company
 print '<tr id="trcompany" class="trcompany"><td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('societe')).'"></td></tr>'."\n";
 // Address
@@ -453,7 +460,7 @@ if (empty($conf->global->SOCIETE_DISABLE_STATE)) {
 	print '</td></tr>';
 }
 // EMail
-print '<tr><td>'.$langs->trans("Email").' <FONT COLOR="red">*</FONT></td><td><input type="text" name="email" maxlength="255" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('email')).'"></td></tr>'."\n";
+print '<tr><td>'.$langs->trans("Email").' <span style="color: red">*</span></td><td><input type="text" name="email" maxlength="255" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('email')).'"></td></tr>'."\n";
 // Other attributes
 $tpl_context = 'public'; // define template context to public
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';

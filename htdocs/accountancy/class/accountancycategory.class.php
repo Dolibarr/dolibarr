@@ -201,7 +201,7 @@ class AccountancyCategory // extends CommonObject
 		$sql .= "entity";
 		$sql .= ") VALUES (";
 		if ($this->rowid > 0) {
-			$sql .= " ".$this->rowid.",";
+			$sql .= " ".((int) $this->rowid).",";
 		}
 		$sql .= " ".(!isset($this->code) ? 'NULL' : "'".$this->db->escape($this->code)."'").",";
 		$sql .= " ".(!isset($this->label) ? 'NULL' : "'".$this->db->escape($this->label)."'").",";
@@ -209,10 +209,10 @@ class AccountancyCategory // extends CommonObject
 		$sql .= " ".(!isset($this->sens) ? 'NULL' : "'".$this->db->escape($this->sens)."'").",";
 		$sql .= " ".(!isset($this->category_type) ? 'NULL' : "'".$this->db->escape($this->category_type)."'").",";
 		$sql .= " ".(!isset($this->formula) ? 'NULL' : "'".$this->db->escape($this->formula)."'").",";
-		$sql .= " ".(!isset($this->position) ? 'NULL' : $this->db->escape($this->position)).",";
-		$sql .= " ".(!isset($this->fk_country) ? 'NULL' : $this->db->escape($this->fk_country)).",";
-		$sql .= " ".(!isset($this->active) ? 'NULL' : $this->db->escape($this->active));
-		$sql .= ", ".$conf->entity;
+		$sql .= " ".(!isset($this->position) ? 'NULL' : ((int) $this->position)).",";
+		$sql .= " ".(!isset($this->fk_country) ? 'NULL' : ((int) $this->fk_country)).",";
+		$sql .= " ".(!isset($this->active) ? 'NULL' : ((int) $this->active));
+		$sql .= ", ".((int) $conf->entity);
 		$sql .= ")";
 
 		$this->db->begin();
@@ -263,7 +263,7 @@ class AccountancyCategory // extends CommonObject
 		if ($id) {
 			$sql .= " WHERE t.rowid = ".((int) $id);
 		} else {
-			$sql .= " WHERE t.entity IN (".getEntity('c_accounting_category').")"; // Dont't use entity if you use rowid
+			$sql .= " WHERE t.entity IN (".getEntity('c_accounting_category').")"; // Don't use entity if you use rowid
 			if ($code) {
 				$sql .= " AND t.code = '".$this->db->escape($code)."'";
 			} elseif ($label) {
@@ -433,7 +433,7 @@ class AccountancyCategory // extends CommonObject
 
 		$this->lines_display = array();
 
-		dol_syslog(__METHOD__." sql=".$sql, LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -473,7 +473,7 @@ class AccountancyCategory // extends CommonObject
 		$sql .= " SELECT DISTINCT aa.account_number";
 		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_account as aa";
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";
-		$sql .= " AND asy.rowid = ".$conf->global->CHARTOFACCOUNTS;
+		$sql .= " AND asy.rowid = ".((int) $conf->global->CHARTOFACCOUNTS);
 		$sql .= " AND aa.active = 1";
 		$sql .= " AND aa.entity = ".$conf->entity.")";
 		$sql .= " GROUP BY t.numero_compte, t.label_operation, t.doc_ref";
@@ -562,7 +562,7 @@ class AccountancyCategory // extends CommonObject
 		$sql = "SELECT aa.rowid, aa.account_number";
 		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_account as aa";
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";
-		$sql .= " AND asy.rowid = ".$conf->global->CHARTOFACCOUNTS;
+		$sql .= " AND asy.rowid = ".((int) $conf->global->CHARTOFACCOUNTS);
 		$sql .= " AND aa.active = 1";
 		$sql .= " AND aa.entity = ".$conf->entity;
 		$sql .= " ORDER BY LENGTH(aa.account_number) DESC;"; // LENGTH is ok with mysql and postgresql
@@ -589,8 +589,8 @@ class AccountancyCategory // extends CommonObject
 				$accountincptsadded[$account_number_formated] = 1;
 				// We found an account number that is in list $cpts of account to add
 				$sql = "UPDATE ".MAIN_DB_PREFIX."accounting_account";
-				$sql .= " SET fk_accounting_category=".$id_cat;
-				$sql .= " WHERE rowid=".$obj->rowid;
+				$sql .= " SET fk_accounting_category=".((int) $id_cat);
+				$sql .= " WHERE rowid=".((int) $obj->rowid);
 				dol_syslog(__METHOD__, LOG_DEBUG);
 				$resqlupdate = $this->db->query($sql);
 				if (!$resqlupdate) {
@@ -629,10 +629,10 @@ class AccountancyCategory // extends CommonObject
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."accounting_account as aa";
 		$sql .= " SET fk_accounting_category= 0";
-		$sql .= " WHERE aa.rowid= ".$cpt_id;
+		$sql .= " WHERE aa.rowid = ".((int) $cpt_id);
 		$this->db->begin();
 
-		dol_syslog(__METHOD__." sql=".$sql, LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
 			$error++;
@@ -675,7 +675,7 @@ class AccountancyCategory // extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_accounting_category as c";
 		$sql .= " WHERE c.active = 1";
 		$sql .= " AND c.entity = ".$conf->entity;
-		$sql .= " AND (c.fk_country = ".$mysoc->country_id." OR c.fk_country = 0)";
+		$sql .= " AND (c.fk_country = ".((int) $mysoc->country_id)." OR c.fk_country = 0)";
 		$sql .= " AND cat.rowid = t.fk_accounting_category";
 		$sql .= " AND t.entity = ".$conf->entity;
 		$sql .= " ORDER BY cat.position ASC";
@@ -806,7 +806,7 @@ class AccountancyCategory // extends CommonObject
 		if ($categorytype >= 0) {
 			$sql .= " AND c.category_type = 1";
 		}
-		$sql .= " AND (c.fk_country = ".$mysoc->country_id." OR c.fk_country = 0)";
+		$sql .= " AND (c.fk_country = ".((int) $mysoc->country_id)." OR c.fk_country = 0)";
 		$sql .= " ORDER BY c.position ASC";
 
 		$resql = $this->db->query($sql);

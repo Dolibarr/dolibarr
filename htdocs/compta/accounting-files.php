@@ -57,12 +57,12 @@ $date_start = GETPOST('date_start', 'alpha');
 $date_startDay = GETPOST('date_startday', 'int');
 $date_startMonth = GETPOST('date_startmonth', 'int');
 $date_startYear = GETPOST('date_startyear', 'int');
-$date_start = ($date_startDay ? dol_mktime(0, 0, 0, $date_startMonth, $date_startDay, $date_startYear, 'tzuserrel') : dol_stringtotime($date_start));
+$date_start = dol_mktime(0, 0, 0, $date_startMonth, $date_startDay, $date_startYear, 'tzuserrel');
 $date_stop = GETPOST('date_stop', 'alpha');
 $date_stopDay = GETPOST('date_stopday', 'int');
 $date_stopMonth = GETPOST('date_stopmonth', 'int');
 $date_stopYear = GETPOST('date_stopyear', 'int');
-$date_stop = ($date_stopDay ? dol_mktime(23, 59, 59, $date_stopMonth, $date_stopDay, $date_stopYear, 'tzuserrel') : dol_stringtotime($date_stop));
+$date_stop = dol_mktime(23, 59, 59, $date_stopMonth, $date_stopDay, $date_stopYear, 'tzuserrel');
 $action = GETPOST('action', 'aZ09');
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
@@ -170,7 +170,7 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 			if (!empty($sql)) {
 				$sql .= " UNION ALL";
 			}
-			$sql .= "SELECT t.rowid as id, t.entity, t.ref, t.paye as paid, t.total_ht, t.total_ttc, t.total_tva, t.multicurrency_code as currency, t.fk_soc, t.datef as date, t.date_lim_reglement as date_due, 'Invoice' as item, s.nom as thirdparty_name, s.code_client as thirdparty_code, c.code as country_code, s.tva_intra as vatnum, ".PAY_CREDIT." as sens";
+			$sql .= "SELECT t.rowid as id, t.entity, t.ref, t.paye as paid, t.total_ht, t.total_ttc, t.total_tva as total_vat, t.multicurrency_code as currency, t.fk_soc, t.datef as date, t.date_lim_reglement as date_due, 'Invoice' as item, s.nom as thirdparty_name, s.code_client as thirdparty_code, c.code as country_code, s.tva_intra as vatnum, ".PAY_CREDIT." as sens";
 			$sql .= " FROM ".MAIN_DB_PREFIX."facture as t LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = t.fk_soc LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON c.rowid = s.fk_pays";
 			$sql .= " WHERE datef between ".$wheretail;
 			$sql .= " AND t.entity IN (".$db->sanitize($entity == 1 ? '0,1' : $entity).')';
@@ -348,8 +348,8 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 							$nofile = array();
 							$nofile['id'] = $objd->id;
 							$nofile['entity'] = $objd->entity;
-							$nofile['date'] = $db->idate($objd->date);
-							$nofile['date_due'] = $db->idate($objd->date_due);
+							$nofile['date'] = $db->jdate($objd->date);
+							$nofile['date_due'] = $db->jdate($objd->date_due);
 							$nofile['paid'] = $objd->paid;
 							$nofile['amount_ht'] = $objd->total_ht;
 							$nofile['amount_ttc'] = $objd->total_ttc;
@@ -368,8 +368,8 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 							foreach ($files as $key => $file) {
 								$file['id'] = $objd->id;
 								$file['entity'] = $objd->entity;
-								$file['date'] = $db->idate($objd->date);
-								$file['date_due'] = $db->idate($objd->date_due);
+								$file['date'] = $db->jdate($objd->date);
+								$file['date_due'] = $db->jdate($objd->date_due);
 								$file['paid'] = $objd->paid;
 								$file['amount_ht'] = $objd->total_ht;
 								$file['amount_ttc'] = $objd->total_ttc;
@@ -460,7 +460,7 @@ if ($result && $action == "dl" && !$error) {
 	$log .= ','.$langs->transnoentitiesnoconv("Country");
 	$log .= ','.$langs->transnoentitiesnoconv("VATIntra");
 	$log .= ','.$langs->transnoentitiesnoconv("Sens")."\n";
-	$zipname = $dirfortmpfile.'/'.dol_print_date($date_start, 'dayrfc')."-".dol_print_date($date_stop, 'dayrfc').'_export.zip';
+	$zipname = $dirfortmpfile.'/'.dol_print_date($date_start, 'dayrfc', 'tzuserrel')."-".dol_print_date($date_stop, 'dayrfc', 'tzuserrel').'_export.zip';
 
 	dol_delete_file($zipname);
 
@@ -499,7 +499,7 @@ if ($result && $action == "dl" && !$error) {
 		$zip->addFromString('transactions.csv', $log);
 		$zip->close();
 
-		///Then download the zipped file.
+		// Then download the zipped file.
 		header('Content-Type: application/zip');
 		header('Content-disposition: attachment; filename='.basename($zipname));
 		header('Content-Length: '.filesize($zipname));
@@ -547,7 +547,11 @@ print dol_get_fiche_head($head, 'AccountancyFiles');
 print '<form name="searchfiles" action="?action=searchfiles" method="POST">'."\n";
 print '<input type="hidden" name="token" value="'.newToken().'">';
 
-print '<span class="opacitymedium">'.$langs->trans("ExportAccountingSourceDocHelp", $langs->transnoentitiesnoconv("Accounting"), $langs->transnoentitiesnoconv("Journals")).'</span><br>';
+print '<span class="opacitymedium">'.$langs->trans("ExportAccountingSourceDocHelp");
+if (!empty($conf->accounting->enabled)) {
+	print ' '.$langs->trans("ExportAccountingSourceDocHelp2", $langs->transnoentitiesnoconv("Accounting"), $langs->transnoentitiesnoconv("Journals"));
+}
+print '</span><br>';
 print '<br>';
 
 print $langs->trans("ReportPeriod").': ';
@@ -574,7 +578,7 @@ print '<br>';
 
 foreach ($listofchoices as $choice => $val) {
 	if (empty($val['enabled'])) {
-		continue;		// list not qualified
+		continue; // list not qualified
 	}
 	$disabled = '';
 	if (empty($val['perms'])) {
@@ -584,7 +588,7 @@ foreach ($listofchoices as $choice => $val) {
 	print '<div class="paddingleft inline-block marginrightonly"><input type="checkbox" id="'.$choice.'" name="'.$choice.'" value="1"'.$checked.$disabled.'> <label for="'.$choice.'">'.$langs->trans($val['label']).'</label></div>';
 }
 
-print '<input class="button" type="submit" name="search" value="'.$langs->trans("Search").'">';
+print '<input type="submit" class="button" name="search" value="'.$langs->trans("Search").'">';
 
 print '</form>'."\n";
 
@@ -604,10 +608,14 @@ if (!empty($date_start) && !empty($date_stop)) {
 	print '<form name="dl" action="'.$_SERVER["PHP_SELF"].'?action=dl" method="POST">'."\n";
 	print '<input type="hidden" name="token" value="'.currentToken().'">';
 
-	echo dol_print_date($date_start, 'day')." - ".dol_print_date($date_stop, 'day');
+	echo dol_print_date($date_start, 'day', 'tzuserrel')." - ".dol_print_date($date_stop, 'day', 'tzuserrel');
 
-	print '<input type="hidden" name="date_start" value="'.dol_print_date($date_start, 'dayxcard').'" />';
-	print '<input type="hidden" name="date_stop"  value="'.dol_print_date($date_stop, 'dayxcard').'" />';
+	print '<input type="hidden" name="date_startday" value="'.GETPOST('date_startday', 'int').'" />';
+	print '<input type="hidden" name="date_startmonth" value="'.GETPOST('date_startmonth', 'int').'" />';
+	print '<input type="hidden" name="date_startyear" value="'.GETPOST('date_startyear', 'int').'" />';
+	print '<input type="hidden" name="date_stopday" value="'.GETPOST('date_stopday', 'int').'" />';
+	print '<input type="hidden" name="date_stopmonth" value="'.GETPOST('date_stopmonth', 'int').'" />';
+	print '<input type="hidden" name="date_stopyear" value="'.GETPOST('date_stopyear', 'int').'" />';
 	foreach ($listofchoices as $choice => $val) {
 		print '<input type="hidden" name="'.$choice.'" value="'.GETPOST($choice).'">';
 	}
@@ -728,7 +736,7 @@ if (!empty($date_start) && !empty($date_stop)) {
 				print '<td>';
 				if (!empty($data['files'])) {
 					foreach ($data['files'] as $id => $filecursor) {
-						print '<a href='.DOL_URL_ROOT.'/'.$filecursor['link'].' target="_blank">'.($filecursor['name'] ? $filecursor['name'] : $filecursor['ref']).'</a>&nbsp;'.$formfile->showPreview($filecursor, $filecursor['modulepart'], $filecursor['subdir'].'/'.$filecursor['name']).'<br>';
+						print '<a href='.DOL_URL_ROOT.'/'.$filecursor['link'].' target="_blank" rel="noopener noreferrer">'.($filecursor['name'] ? $filecursor['name'] : $filecursor['ref']).'</a>&nbsp;'.$formfile->showPreview($filecursor, $filecursor['modulepart'], $filecursor['subdir'].'/'.$filecursor['name']).'<br>';
 					}
 				}
 				print "</td>\n";
@@ -737,19 +745,19 @@ if (!empty($date_start) && !empty($date_stop)) {
 				print '<td aling="left">'.$data['paid'].'</td>';
 
 				// Total ET
-				print '<td align="right">'.price($data['sens'] ? $data['amount_ht'] : -$data['amount_ht'])."</td>\n";
+				print '<td align="right">'.price(price2num($data['sens'] ? $data['amount_ht'] : -$data['amount_ht'], 'MT'))."</td>\n";
 				// Total IT
-				print '<td align="right">'.price($data['sens'] ? $data['amount_ttc'] : -$data['amount_ttc'])."</td>\n";
+				print '<td align="right">'.price(price2num($data['sens'] ? $data['amount_ttc'] : -$data['amount_ttc'], 'MT'))."</td>\n";
 				// Total VAT
-				print '<td align="right">'.price($data['sens'] ? $data['amount_vat'] : -$data['amount_vat'])."</td>\n";
+				print '<td align="right">'.price(price2num($data['sens'] ? $data['amount_vat'] : -$data['amount_vat'], 'MT'))."</td>\n";
 
-				print '<td class="tdoverflowmax150" title="'.$data['thirdparty_name'].'">'.$data['thirdparty_name']."</td>\n";
+				print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($data['thirdparty_name']).'">'.dol_escape_htmltag($data['thirdparty_name'])."</td>\n";
 
 				print '<td class="center">'.$data['thirdparty_code']."</td>\n";
 
 				print '<td class="center">'.$data['country_code']."</td>\n";
 
-				print '<td align="right">'.$data['vatnum']."</td>\n";
+				print '<td class="tdoverflowmax150 right" title="'.dol_escape_htmltag($data['vatnum']).'">'.dol_escape_htmltag($data['vatnum'])."</td>\n";
 
 				if ($data['sens']) {
 					$totalET_credit += $data['amount_ht'];

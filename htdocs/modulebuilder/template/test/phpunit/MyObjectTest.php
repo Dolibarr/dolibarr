@@ -40,7 +40,10 @@ $langs->load("main");
 
 /**
  * Class MyObjectTest
- * @package Testmymodule
+ *
+ * @backupGlobals disabled
+ * @backupStaticAttributes enabled
+ * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
 class MyObjectTest extends \PHPUnit_Framework_TestCase
 {
@@ -53,7 +56,7 @@ class MyObjectTest extends \PHPUnit_Framework_TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
-	 * @return MyObject
+	 * @return MyObjectTest
 	 */
 	public function __construct()
 	{
@@ -73,6 +76,7 @@ class MyObjectTest extends \PHPUnit_Framework_TestCase
 
 	/**
 	 * Global test setup
+	 *
 	 * @return void
 	 */
 	public static function setUpBeforeClass()
@@ -85,6 +89,7 @@ class MyObjectTest extends \PHPUnit_Framework_TestCase
 
 	/**
 	 * Unit test setup
+	 *
 	 * @return void
 	 */
 	protected function setUp()
@@ -100,6 +105,7 @@ class MyObjectTest extends \PHPUnit_Framework_TestCase
 
 	/**
 	 * Unit test teardown
+	 *
 	 * @return void
 	 */
 	protected function tearDown()
@@ -109,6 +115,7 @@ class MyObjectTest extends \PHPUnit_Framework_TestCase
 
 	/**
 	 * Global test teardown
+	 *
 	 * @return void
 	 */
 	public static function tearDownAfterClass()

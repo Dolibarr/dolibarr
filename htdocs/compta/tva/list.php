@@ -31,6 +31,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 
@@ -55,8 +56,8 @@ $search_amount 				= GETPOST('search_amount', 'alpha');
 $search_status = GETPOST('search_status', 'int');
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield					= GETPOST('sortfield', 'alpha');
-$sortorder					= GETPOST('sortorder', 'alpha');
+$sortfield					= GETPOST('sortfield', 'aZ09comma');
+$sortorder					= GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST('page', 'int');
 
 if (empty($page) || $page == -1) {
@@ -135,6 +136,7 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 $formother = new FormOther($db);
+$formfile = new FormFile($db);
 $tva_static = new Tva($db);
 $bankstatic = new Account($db);
 $accountingjournal = new AccountingJournal($db);
@@ -159,28 +161,28 @@ if (!empty($search_label)) {
 	$sql .= natural_search('t.label', $search_label);
 }
 if (!empty($search_dateend_start)) {
-	$sql .= ' AND t.datev >= "'.$db->idate($search_dateend_start).'"';
+	$sql .= " AND t.datev >= '".$db->idate($search_dateend_start)."'";
 }
 if (!empty($search_dateend_end)) {
-	$sql .= ' AND t.datev <= "'.$db->idate($search_dateend_end).'"';
+	$sql .= " AND t.datev <= '".$db->idate($search_dateend_end)."'";
 }
 if (!empty($search_datepayment_start)) {
-	$sql .= ' AND t.datep >= "'.$db->idate($search_datepayment_start).'"';
+	$sql .= " AND t.datep >= '".$db->idate($search_datepayment_start)."'";
 }
 if (!empty($search_datepayment_end)) {
-	$sql .= ' AND t.datep <= "'.$db->idate($search_datepayment_end).'"';
+	$sql .= " AND t.datep <= '".$db->idate($search_datepayment_end)."'";
 }
 if (!empty($search_type) && $search_type > 0) {
-	$sql .= ' AND t.fk_typepayment='.$search_type;
+	$sql .= ' AND t.fk_typepayment = '.((int) $search_type);
 }
 if (!empty($search_account) && $search_account > 0) {
-	$sql .= ' AND t.fk_account='.$search_account;
+	$sql .= ' AND t.fk_account = '.((int) $search_account);
 }
 if (!empty($search_amount)) {
 	$sql .= natural_search('t.amount', price2num(trim($search_amount)), 1);
 }
 if ($search_status != '' && $search_status >= 0) {
-	$sql .= " AND t.paye = ".$db->escape($search_status);
+	$sql .= " AND t.paye = ".((int) $search_status);
 }
 
 $sql .= " GROUP BY t.rowid, t.amount, t.label, t.datev, t.datep, t.paye, t.fk_typepayment, t.fk_account, ba.label, ba.ref, ba.number, ba.account_number, ba.iban_prefix, ba.bic, ba.currency_code, ba.clos, t.num_payment, pst.code";
@@ -445,7 +447,13 @@ while ($i < min($num, $limit)) {
 
 	// Ref
 	if (!empty($arrayfields['t.rowid']['checked'])) {
-		print '<td>'.$tva_static->getNomUrl(1).'</td>';
+		print '<td>';
+		print $tva_static->getNomUrl(1);
+		$filename = dol_sanitizeFileName($tva_static->ref);
+		$filedir = $conf->tax->dir_output.'/vat/'.dol_sanitizeFileName($tva_static->ref);
+		$urlsource = $_SERVER['PHP_SELF'].'?id='.$tva_static->id;
+		print $formfile->getDocumentsLink($tva_static->element, $filename, $filedir, '', 'valignmiddle paddingleft2imp');
+		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}

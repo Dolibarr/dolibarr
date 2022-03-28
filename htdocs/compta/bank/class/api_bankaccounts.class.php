@@ -29,7 +29,6 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
  */
 class BankAccounts extends DolibarrApi
 {
-
 	/**
 	 * array $FIELDS Mandatory fields, checked when creating an object
 	 */
@@ -78,14 +77,15 @@ class BankAccounts extends DolibarrApi
 		$sql .= ' WHERE t.entity IN ('.getEntity('bank_account').')';
 		// Select accounts of given category
 		if ($category > 0) {
-			$sql .= " AND c.fk_categorie = ".$this->db->escape($category)." AND c.fk_account = t.rowid ";
+			$sql .= " AND c.fk_categorie = ".((int) $category)." AND c.fk_account = t.rowid";
 		}
 		// Add sql filters
 		if ($sqlfilters) {
-			if (!DolibarrApi::_checkFilters($sqlfilters)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+			$errormessage = '';
+			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
+				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
 			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
@@ -158,7 +158,7 @@ class BankAccounts extends DolibarrApi
 
 		$account = new Account($this->db);
 		foreach ($request_data as $field => $value) {
-			$account->$field = $value;
+			$account->$field = $this->_checkValForAPI($field, $value, $account);
 		}
 		// Date of the initial balance (required to create an account).
 		$account->date_solde = time();
@@ -249,6 +249,10 @@ class BankAccounts extends DolibarrApi
 			$typeto = 'LIQ';
 		}
 
+		// Clean data
+		$description = checkVal($description, 'alphanohtml');
+
+
 		/**
 		 * Creating bank line records
 		 */
@@ -295,7 +299,9 @@ class BankAccounts extends DolibarrApi
 			return array(
 				'success' => array(
 					'code' => 201,
-					'message' => 'Internal wire transfer created successfully.'
+					'message' => 'Internal wire transfer created successfully.',
+					'bank_id_from' => $bank_line_id_from,
+					'bank_id_to' => $bank_line_id_to,
 				)
 			);
 		} else {
@@ -327,7 +333,7 @@ class BankAccounts extends DolibarrApi
 			if ($field == 'id') {
 				continue;
 			}
-			$account->$field = $value;
+			$account->$field = $this->_checkValForAPI($field, $value, $account);
 		}
 
 		if ($account->update(DolibarrApiAccess::$user) > 0) {
@@ -433,10 +439,11 @@ class BankAccounts extends DolibarrApi
 
 		// Add sql filters
 		if ($sqlfilters) {
-			if (!DolibarrApi::_checkFilters($sqlfilters)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+			$errormessage = '';
+			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
+				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
 			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
@@ -475,7 +482,7 @@ class BankAccounts extends DolibarrApi
 	 * @param string $accountancycode  Accountancy code {@from body}
 	 * @param int    $datev            Payment date value (timestamp) {@from body} {@type timestamp}
 	 * @param string $num_releve       Bank statement numero {@from body}
-	 * @return int  ID of line
+	 * @return int  				   ID of line
 	 *
 	 * @url POST {id}/lines
 	 */
@@ -490,6 +497,14 @@ class BankAccounts extends DolibarrApi
 		if (!$result) {
 			throw new RestException(404, 'account not found');
 		}
+
+		$type = checkVal($type);
+		$label = checkVal($label);
+		$cheque_number = checkVal($cheque_number);
+		$cheque_writer = checkVal($cheque_writer);
+		$cheque_bank = checkVal($cheque_bank);
+		$accountancycode = checkVal($accountancycode);
+		$num_releve = checkVal($num_releve);
 
 		$result = $account->addline(
 			$date,
@@ -541,6 +556,10 @@ class BankAccounts extends DolibarrApi
 		if (!$result) {
 			throw new RestException(404, 'account line not found');
 		}
+
+		$url = checkVal($url);
+		$label = checkVal($label);
+		$type = checkVal($type);
 
 		$result = $account->add_url_line($line_id, $url_id, $url, $label, $type);
 		if ($result < 0) {

@@ -222,7 +222,8 @@ if ($action == 'edit') {
 	print '<input type="hidden" name="action" value="update">';
 
 	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("DelaysOfToleranceBeforeWarning").'</td><td class="center" width="120px">'.$langs->trans("Value").'</td></tr>';
+	print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("DelaysOfToleranceBeforeWarning").'</td>';
+	print '<td class="right">'.$langs->trans("LateWarningAfter").'</td></tr>';
 
 	foreach ($modules as $module => $delays) {
 		if (!empty($conf->$module->enabled)) {
@@ -230,7 +231,7 @@ if ($action == 'edit') {
 				$value = (!empty($conf->global->{$delay['code']}) ? $conf->global->{$delay['code']}:0);
 				print '<tr class="oddeven">';
 				print '<td width="20px">'.img_object('', $delay['img']).'</td>';
-				print '<td>'.$langs->trans('Delays_'.$delay['code']).'</td><td class="nowraponall">';
+				print '<td>'.$langs->trans('Delays_'.$delay['code']).'</td><td class="nowraponall right">';
 				print '<input class="right maxwidth75" type="number" name="'.$delay['code'].'" value="'.$value.'"> '.$langs->trans("days").'</td></tr>';
 			}
 		}
@@ -242,10 +243,10 @@ if ($action == 'edit') {
 
 	// Show if meteo is enabled
 	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td class="center" width="120px">'.$langs->trans("Value").'</td></tr>';
+	print '<tr class="liste_titre"><td>'.$langs->trans("Option").'</td><td class="right">'.$langs->trans("Value").'</td></tr>';
 
 	print '<tr class="oddeven">';
-	print '<td>'.$langs->trans("MAIN_DISABLE_METEO").'</td><td class="center">';
+	print '<td>'.$langs->trans("MAIN_DISABLE_METEO").'</td><td class="right">';
 	print $form->selectarray('MAIN_DISABLE_METEO', $labelmeteo, (empty($conf->global->MAIN_DISABLE_METEO) ? 0 : $conf->global->MAIN_DISABLE_METEO));
 	print '</td></tr>';
 
@@ -256,7 +257,7 @@ if ($action == 'edit') {
 	 */
 
 	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("DelaysOfToleranceBeforeWarning").'</td><td class="center" width="120px">'.$langs->trans("Value").'</td></tr>';
+	print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("DelaysOfToleranceBeforeWarning").'</td><td class="right">'.$langs->trans("Value").'</td></tr>';
 
 	foreach ($modules as $module => $delays) {
 		if (!empty($conf->$module->enabled)) {
@@ -276,7 +277,7 @@ if ($action == 'edit') {
 
 	// Show if meteo is enabled
 	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td class="center" width="120px">'.$langs->trans("Value").'</td></tr>';
+	print '<tr class="liste_titre"><td>'.$langs->trans("Option").'</td><td class="right">'.$langs->trans("Value").'</td></tr>';
 
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("MAIN_DISABLE_METEO").'</td><td class="center">';
@@ -289,7 +290,7 @@ if ($action == 'edit') {
 print '<br>';
 
 
-if ($conf->global->MAIN_DISABLE_METEO != 1) {
+if (empty($conf->global->MAIN_DISABLE_METEO) || $conf->global->MAIN_DISABLE_METEO != 1) {
 	// Show logo for weather
 	print '<span class="opacitymedium">'.$langs->trans("DescWeather").'</span> ';
 
@@ -301,8 +302,8 @@ if ($conf->global->MAIN_DISABLE_METEO != 1) {
 		} else {
 			$str_mode_enabled = $str_mode_percentage;
 		}
-		print '<a href="#" onclick="return false;" id="change_mode">'.$str_mode_enabled.'</a>';
-		print '<input type="hidden" id="MAIN_USE_METEO_WITH_PERCENTAGE" name="MAIN_USE_METEO_WITH_PERCENTAGE" value="'.$conf->global->MAIN_USE_METEO_WITH_PERCENTAGE.'" />';
+		print '<br><a href="#" onclick="return false;" id="change_mode">'.$str_mode_enabled.'</a>';
+		print '<input type="hidden" id="MAIN_USE_METEO_WITH_PERCENTAGE" name="MAIN_USE_METEO_WITH_PERCENTAGE" value="'.(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE) ? $conf->global->MAIN_USE_METEO_WITH_PERCENTAGE : '').'" />';
 
 		print '<br><br>';
 	} else {
@@ -359,16 +360,16 @@ if ($conf->global->MAIN_DISABLE_METEO != 1) {
 		print '<div>';
 		print '<div class="inline-block" style="padding-right: 20px">';
 		print img_weather($text, 0, $options);
-		print ' &lt;= <input type="text" size="2" name="MAIN_METEO_PERCENTAGE_LEVEL0" value="'.$conf->global->MAIN_METEO_PERCENTAGE_LEVEL0.'"/>&nbsp;%</td>';
+		print ' &lt;= <input type="text" size="2" name="MAIN_METEO_PERCENTAGE_LEVEL0" value="'.getDolGlobalString('MAIN_METEO_PERCENTAGE_LEVEL0').'"/>&nbsp;%</td>';
 		print '</div><div class="inline-block" style="padding-right: 20px">';
 		print img_weather($text, 1, $options);
-		print ' &lt;= <input type="text" size="2" name="MAIN_METEO_PERCENTAGE_LEVEL1" value="'.$conf->global->MAIN_METEO_PERCENTAGE_LEVEL1.'"/>&nbsp;%</td>';
+		print ' &lt;= <input type="text" size="2" name="MAIN_METEO_PERCENTAGE_LEVEL1" value="'.getDolGlobalString('MAIN_METEO_PERCENTAGE_LEVEL1').'"/>&nbsp;%</td>';
 		print '</div><div class="inline-block" style="padding-right: 20px">';
 		print img_weather($text, 2, $options);
-		print ' &lt;= <input type="text" size="2" name="MAIN_METEO_PERCENTAGE_LEVEL2" value="'.$conf->global->MAIN_METEO_PERCENTAGE_LEVEL2.'"/>&nbsp;%</td>';
+		print ' &lt;= <input type="text" size="2" name="MAIN_METEO_PERCENTAGE_LEVEL2" value="'.getDolGlobalString('MAIN_METEO_PERCENTAGE_LEVEL2').'"/>&nbsp;%</td>';
 		print '</div><div class="inline-block" style="padding-right: 20px">';
 		print img_weather($text, 3, $options);
-		print ' &lt;= <input type="text" size="2" name="MAIN_METEO_PERCENTAGE_LEVEL3" value="'.$conf->global->MAIN_METEO_PERCENTAGE_LEVEL3.'"/>&nbsp;%</td>';
+		print ' &lt;= <input type="text" size="2" name="MAIN_METEO_PERCENTAGE_LEVEL3" value="'.getDolGlobalString('MAIN_METEO_PERCENTAGE_LEVEL3').'"/>&nbsp;%</td>';
 		print '</div>';
 		print '</div>';
 
@@ -448,11 +449,12 @@ if ($conf->global->MAIN_DISABLE_METEO != 1) {
 
 
 if ($action == 'edit') {
-	print '<br><div class="center"><input type="submit" class="button button-save" value="'.$langs->trans("Save").'"></div>';
-	print '<br></form>';
+	print $form->buttonsSaveCancel("Save", '');
+	print '</form>';
 } else {
-	print '<br><div class="tabsAction">';
-	print '<a class="butAction" href="delais.php?action=edit">'.$langs->trans("Modify").'</a></div>';
+	print '<br><br><div class="tabsAction">';
+	print '<a class="butAction" href="delais.php?action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a>';
+	print '</div>';
 }
 
 // End of page

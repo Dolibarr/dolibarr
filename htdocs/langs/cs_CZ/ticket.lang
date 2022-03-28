@@ -34,7 +34,8 @@ TicketDictResolution=Vstupenka - rozlišení
 
 TicketTypeShortCOM=Obchodní otázka
 TicketTypeShortHELP=Žádost o funkční pomoc
-TicketTypeShortISSUE=Problém, chyba nebo problém
+TicketTypeShortISSUE=Issue or bug
+TicketTypeShortPROBLEM=Problem
 TicketTypeShortREQUEST=Žádost o změnu nebo vylepšení
 TicketTypeShortPROJET=Projekt
 TicketTypeShortOTHER=Jiný
@@ -43,6 +44,8 @@ TicketSeverityShortLOW=Nízký
 TicketSeverityShortNORMAL=Normální
 TicketSeverityShortHIGH=Vysoký
 TicketSeverityShortBLOCKING=Critical, Blocking
+
+TicketCategoryShortOTHER=Jiný
 
 ErrorBadEmailAddress=Pole '%s' nesprávné
 MenuTicketMyAssign=Moje jízdenky
@@ -54,22 +57,25 @@ TypeContact_ticket_internal_SUPPORTTEC=Přiřazený uživatel
 TypeContact_ticket_external_SUPPORTCLI=Kontakt zákazníka / sledování incidentů
 TypeContact_ticket_external_CONTRIBUTOR=Externí přispěvatel
 
-OriginEmail=Zdroj e-mailu
+OriginEmail=Reporter Email
 Notify_TICKET_SENTBYMAIL=Odeslat e-mailem zprávu o lince
 
 # Status
 Read=Číst
 Assigned=Přidělené
 InProgress=probíhá
-NeedMoreInformation=Čekání na informace
+NeedMoreInformation=Waiting for reporter feedback
+NeedMoreInformationShort=Waiting for feedback
 Answered=Odpovězeno
 Waiting=Čekání
-Closed=Zavřeno
+SolvedClosed=Solved
 Deleted=Smazáno
 
 # Dict
 Type=Typ
 Severity=Vážnost
+TicketGroupIsPublic=Group is public
+TicketGroupIsPublicDesc=If a ticket group is public, it will be visible in the form when creating a ticket from the public interface
 
 # Email templates
 MailToSendTicketMessage=Chcete-li poslat e-mail z lístkové zprávy
@@ -114,8 +120,8 @@ TicketsShowModuleLogo=Zobrazit logo modulu ve veřejném rozhraní
 TicketsShowModuleLogoHelp=Povolte tuto možnost, pokud chcete skrýt modul loga na stránkách veřejného rozhraní
 TicketsShowCompanyLogo=Zobrazit logo společnosti ve veřejném rozhraní
 TicketsShowCompanyLogoHelp=Povolte tuto možnost, pokud chcete skrýt logo hlavní společnosti na stránkách veřejného rozhraní
-TicketsEmailAlsoSendToMainAddress=Také poslat oznámení na hlavní e-mailovou adresu
-TicketsEmailAlsoSendToMainAddressHelp=Povolte tuto možnost a odešlete e-mail na adresu „Oznámení e-mailem z adresy“ (viz nastavení níže)
+TicketsEmailAlsoSendToMainAddress=Also send a notification to the main email address
+TicketsEmailAlsoSendToMainAddressHelp=Enable this option to also send an email to the address defined into setup "%s" (see tab "%s")
 TicketsLimitViewAssignedOnly=Omezit zobrazení na vstupenky přiřazené aktuálnímu uživateli (neúčinné pro externí uživatele, vždy omezeno na třetí stranu, na které závisí)
 TicketsLimitViewAssignedOnlyHelp=Viditelné budou pouze vstupenky přiřazené aktuálnímu uživateli. Nevztahuje se na uživatele s právy správy vstupenek.
 TicketsActivatePublicInterface=Aktivovat veřejné rozhraní
@@ -126,10 +132,10 @@ TicketNumberingModules=Modul číslování vstupenek
 TicketsModelModule=Document templates for tickets
 TicketNotifyTiersAtCreation=Upozornit subjekt na vytvoření
 TicketsDisableCustomerEmail=Pokud je lístek vytvořen z veřejného rozhraní, vždy zakažte e-maily
-TicketsPublicNotificationNewMessage=Po přidání nové zprávy odešlete e-mail(y)
+TicketsPublicNotificationNewMessage=Send email(s) when a new message/comment is added to a ticket
 TicketsPublicNotificationNewMessageHelp=Odeslat e-mail(y) při přidání nové zprávy z veřejného rozhraní (přiřazenému uživateli nebo e-mailu s oznámením do (aktualizace) a/nebo e-mailu s oznámením do)
 TicketPublicNotificationNewMessageDefaultEmail=E-mail s oznámeními (aktualizace)
-TicketPublicNotificationNewMessageDefaultEmailHelp=Pokud na lístek není přiřazen uživatel nebo nemá e-mail, zašlete na tuto adresu e-mailem oznámení o nové zprávě.
+TicketPublicNotificationNewMessageDefaultEmailHelp=Send an email to this address for each new message notifications if the ticket doesn't have a user assigned to it or if the user doesn't have any known email.
 #
 # Index & list page
 #
@@ -158,7 +164,7 @@ CreatedBy=Vytvořil
 NewTicket=Nová vstupenka
 SubjectAnswerToTicket=Odpověď na lístek
 TicketTypeRequest=Typ požadavku
-TicketCategory=Skupina
+TicketCategory=Ticket categorization
 SeeTicket=Viz lístek
 TicketMarkedAsRead=Lístek byl označen jako přečtený
 TicketReadOn=Číst dál
@@ -176,15 +182,17 @@ MessageSuccessfullyAdded=Přidána vstupenka
 TicketMessageSuccessfullyAdded=Zpráva byla úspěšně přidána
 TicketMessagesList=Seznam zpráv
 NoMsgForThisTicket=Žádná zpráva pro tuto letenku
-Properties=Klasifikace
+TicketProperties=Klasifikace
 LatestNewTickets=Nejnovější %s nejnovější vstupenky (nečtené)
 TicketSeverity=Vážnost
 ShowTicket=Viz lístek
 RelatedTickets=Související vstupenky
 TicketAddIntervention=Vytvořit intervenci
-CloseTicket=Zavřete lístek
-CloseATicket=Zavřete lístek
+CloseTicket=Close|Solve ticket
+AbandonTicket=Abandon ticket
+CloseATicket=Close|Solve a ticket
 ConfirmCloseAticket=Potvrďte uzavření lístku
+ConfirmAbandonTicket=Do you confirm the closing of the ticket to status 'Abandonned'
 ConfirmDeleteTicket=Potvrďte prosím vymazání lístku
 TicketDeletedSuccess=Lístek byl vymazán s úspěchem
 TicketMarkedAsClosed=Lístek označený jako zavřený
@@ -209,6 +217,7 @@ TicketMessageHelp=Pouze tento text bude uložen do seznamu zpráv na kartě lís
 TicketMessageSubstitutionReplacedByGenericValues=Substituční proměnné jsou nahrazeny obecnými hodnotami.
 TimeElapsedSince=Čas uplynul od
 TicketTimeToRead=Čas uplynul před čtením
+TicketTimeElapsedBeforeSince=Time elapsed before / since
 TicketContacts=Kontaktní lístek
 TicketDocumentsLinked=Dokumenty spojené s lístkem
 ConfirmReOpenTicket=Potvrďte znovutevření tento lístek?
@@ -302,3 +311,14 @@ BoxLastModifiedTicket=Poslední změněné vstupenky
 BoxLastModifiedTicketDescription=Poslední %s změněné vstupenky
 BoxLastModifiedTicketContent=
 BoxLastModifiedTicketNoRecordedTickets=Žádné poslední změněné vstupenky
+BoxTicketType=Distribution of open tickets by type
+BoxTicketSeverity=Number of open tickets by severity
+BoxNoTicketSeverity=No tickets opened
+BoxTicketLastXDays=Number of new tickets by days the last %s days
+BoxTicketLastXDayswidget = Number of new tickets by days the last X days
+BoxNoTicketLastXDays=No new tickets the last %s days
+BoxNumberOfTicketByDay=Number of new tickets by day
+BoxNewTicketVSClose=Number of tickets versus closed tickets (today)
+TicketCreatedToday=Ticket created today
+TicketClosedToday=Ticket closed today
+KMFoundForTicketGroup=We found topics and FAQs that may answers your question, thanks to check them before submitting the ticket

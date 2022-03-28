@@ -147,10 +147,11 @@ class Contracts extends DolibarrApi
 		}
 		// Add sql filters
 		if ($sqlfilters) {
-			if (!DolibarrApi::_checkFilters($sqlfilters)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+			$errormessage = '';
+			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
+				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
 			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
@@ -274,7 +275,12 @@ class Contracts extends DolibarrApi
 		if (!DolibarrApi::_checkAccessToResource('contrat', $this->contract->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
+
 		$request_data = (object) $request_data;
+
+		$request_data->desc = checkVal($request_data->desc, 'restricthtml');
+		$request_data->price_base_type = checkVal($request_data->price_base_type);
+
 		$updateRes = $this->contract->addline(
 			$request_data->desc,
 			$request_data->subprice,
@@ -286,7 +292,7 @@ class Contracts extends DolibarrApi
 			$request_data->remise_percent,
 			$request_data->date_start, // date_start = date planned start, date ouverture = date_start_real
 			$request_data->date_end, // date_end = date planned end, date_cloture = date_end_real
-			$request_data->HT,
+			$request_data->price_base_type ? $request_data->price_base_type : 'HT',
 			$request_data->subprice_excl_tax,
 			$request_data->info_bits,
 			$request_data->fk_fournprice,
@@ -330,6 +336,9 @@ class Contracts extends DolibarrApi
 
 		$request_data = (object) $request_data;
 
+		$request_data->desc = checkVal($request_data->desc, 'restricthtml');
+		$request_data->price_base_type = checkVal($request_data->price_base_type);
+
 		$updateRes = $this->contract->updateline(
 			$lineid,
 			$request_data->desc,
@@ -343,7 +352,7 @@ class Contracts extends DolibarrApi
 			$request_data->localtax2_tx,
 			$request_data->date_ouverture,
 			$request_data->date_cloture,
-			'HT',
+			$request_data->price_base_type ? $request_data->price_base_type : 'HT',
 			$request_data->info_bits,
 			$request_data->fk_fourn_price,
 			$request_data->pa_ht,
@@ -425,8 +434,6 @@ class Contracts extends DolibarrApi
 		if (!DolibarrApi::_checkAccessToResource('contrat', $this->contract->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
-
-		// $request_data = (object) $request_data;
 
 		$updateRes = $this->contract->close_line(DolibarrApiAccess::$user, $lineid, $datestart, $comment);
 

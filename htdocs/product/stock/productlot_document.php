@@ -58,8 +58,8 @@ $hookmanager->initHooks(array('productlotdocuments'));
 
 // Get parameters
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -94,10 +94,13 @@ $usercanread = $user->rights->produit->lire;
 $usercancreate = $user->rights->produit->creer;
 $usercandelete = $user->rights->produit->supprimer;
 
-$upload_dir = $conf->productbatch->multidir_output[$conf->entity];
+if (empty($upload_dir)) {
+	$upload_dir = $conf->productbatch->multidir_output[$conf->entity];
+}
 
 $permissiontoread = $usercanread;
 $permissiontoadd = $usercancreate;
+$permtoedit = $user->rights->produit->creer;
 //$permissiontodelete = $usercandelete;
 
 // Security check
@@ -110,7 +113,9 @@ if ($user->socid > 0) { // Protection if external user
 	accessforbidden();
 }
 //$result = restrictedArea($user, 'productbatch');
-if (!$permissiontoread) accessforbidden();
+if (!$permissiontoread) {
+	accessforbidden();
+}
 
 
 /*
@@ -127,8 +132,6 @@ if (empty($reshook)) {
 	// Action submit/delete file/link
 	include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 }
-
-$permtoedit = $user->rights->produit->creer;
 
 
 /*
@@ -191,7 +194,6 @@ if ($object->id) {
 
 	print dol_get_fiche_end();
 
-	$permission = ($user->rights->produit->creer);
 	$param = '&id='.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 } else {

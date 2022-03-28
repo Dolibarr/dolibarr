@@ -110,7 +110,7 @@ class mailing_thirdparties_services_expired extends MailingTargets
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c";
 		$sql .= ", ".MAIN_DB_PREFIX."contratdet as cd, ".MAIN_DB_PREFIX."product as p";
 		$sql .= " WHERE s.entity IN (".getEntity('societe').")";
-		$sql .= " AND s.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".$mailing_id.")";
+		$sql .= " AND s.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".((int) $mailing_id).")";
 		$sql .= " AND s.rowid = c.fk_soc AND cd.fk_contrat = c.rowid AND s.email != ''";
 		$sql .= " AND cd.statut= 4 AND cd.fk_product=p.rowid AND p.ref = '".$this->db->escape($product)."'";
 		$sql .= " AND cd.date_fin_validite < '".$this->db->idate($now)."'";
@@ -215,10 +215,9 @@ class mailing_thirdparties_services_expired extends MailingTargets
 	{
 		global $langs;
 
-		$s = $langs->trans("ProductOrService");
-		$s .= '<select name="filter" class="flat">';
+		$s .= '<select id="filter_services_expired" name="filter" class="flat">';
 		if (count($this->arrayofproducts)) {
-			$s .= '<option value="0">&nbsp;</option>';
+			$s .= '<option value="-1">'.$langs->trans("ProductOrService").'</option>';
 		} else {
 			$s .= '<option value="0">'.$langs->trans("ContactsAllShort").'</option>';
 		}
@@ -226,6 +225,7 @@ class mailing_thirdparties_services_expired extends MailingTargets
 			$s .= '<option value="'.$key.'">'.$val.'</option>';
 		}
 		$s .= '</select>';
+		$s .= ajax_combobox("filter_services_expired");
 		return $s;
 	}
 

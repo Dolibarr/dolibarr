@@ -7,6 +7,7 @@
  * Copyright (C) 2016      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2019      Thibault FOUCART     <support@ptibogxiv.net>
  * Copyright (C) 2019-2020 Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2021      Maxime DEMAREST      <maxime@indelog.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -352,6 +353,13 @@ class Don extends CommonObject
 		$this->town = ($this->town > 0 ? $this->town : $this->town);
 		$this->country_id = ($this->country_id > 0 ? $this->country_id : $this->country_id);
 		$this->country = ($this->country ? $this->country : $this->country);
+		$this->amount = price2num($this->amount);
+
+		// Check parameters
+		if ($this->amount < 0) {
+			$this->error = $langs->trans('FieldCannotBeNegative', $langs->transnoentitiesnoconv("Amount"));
+			return -1;
+		}
 
 		$this->db->begin();
 
@@ -379,9 +387,9 @@ class Don extends CommonObject
 		$sql .= ", phone";
 		$sql .= ", phone_mobile";
 		$sql .= ") VALUES (";
-		$sql .= "'".$this->db->idate($now)."'";
-		$sql .= ", ".$conf->entity;
-		$sql .= ", ".price2num($this->amount);
+		$sql .= "'".$this->db->idate($this->date ? $this->date : $now)."'";
+		$sql .= ", ".((int) $conf->entity);
+		$sql .= ", ".((float) $this->amount);
 		$sql .= ", ".($this->modepaymentid ? $this->modepaymentid : "null");
 		$sql .= ", ".($this->socid > 0 ? $this->socid : "null");
 		$sql .= ", '".$this->db->escape($this->firstname)."'";
@@ -395,7 +403,7 @@ class Don extends CommonObject
 		$sql .= ", ".($this->fk_project > 0 ? (int) $this->fk_project : "null");
 		$sql .= ", ".(!empty($this->note_private) ? ("'".$this->db->escape($this->note_private)."'") : "NULL");
 		$sql .= ", ".(!empty($this->note_public) ? ("'".$this->db->escape($this->note_public)."'") : "NULL");
-		$sql .= ", ".$user->id;
+		$sql .= ", ".((int) $user->id);
 		$sql .= ", null";
 		$sql .= ", '".$this->db->idate($this->date)."'";
 		$sql .= ", '".$this->db->escape(trim($this->email))."'";
@@ -463,30 +471,37 @@ class Don extends CommonObject
 		$this->town = ($this->town > 0 ? $this->town : $this->town);
 		$this->country_id = ($this->country_id > 0 ? $this->country_id : $this->country_id);
 		$this->country = ($this->country ? $this->country : $this->country);
+		$this->amount = price2num($this->amount);
+
+		// Check parameters
+		if ($this->amount < 0) {
+			$this->error = $langs->trans('FieldCannotBeNegative', $langs->transnoentitiesnoconv("Amount"));
+			return -1;
+		}
 
 		$this->db->begin();
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."don SET ";
-		$sql .= "amount = ".price2num($this->amount);
-		$sql .= ",fk_payment = ".($this->modepaymentid ? $this->modepaymentid : "null");
-		$sql .= ",firstname = '".$this->db->escape($this->firstname)."'";
-		$sql .= ",lastname='".$this->db->escape($this->lastname)."'";
-		$sql .= ",societe='".$this->db->escape($this->societe)."'";
-		$sql .= ",address='".$this->db->escape($this->address)."'";
-		$sql .= ",zip='".$this->db->escape($this->zip)."'";
-		$sql .= ",town='".$this->db->escape($this->town)."'";
-		$sql .= ",fk_country = ".($this->country_id > 0 ? $this->country_id : '0');
-		$sql .= ",public=".$this->public;
-		$sql .= ",fk_projet=".($this->fk_project > 0 ? $this->fk_project : 'null');
-		$sql .= ",note_private=".(!empty($this->note_private) ? ("'".$this->db->escape($this->note_private)."'") : "NULL");
-		$sql .= ",note_public=".(!empty($this->note_public) ? ("'".$this->db->escape($this->note_public)."'") : "NULL");
-		$sql .= ",datedon='".$this->db->idate($this->date)."'";
-		$sql .= ",date_valid=".($this->date_valid ? "'".$this->db->idate($this->date)."'" : "null");
-		$sql .= ",email='".$this->db->escape(trim($this->email))."'";
-		$sql .= ",phone='".$this->db->escape(trim($this->phone))."'";
-		$sql .= ",phone_mobile='".$this->db->escape(trim($this->phone_mobile))."'";
-		$sql .= ",fk_statut=".$this->statut;
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql = "UPDATE ".MAIN_DB_PREFIX."don SET";
+		$sql .= " amount = ".((float) $this->amount);
+		$sql .= ", fk_payment = ".($this->modepaymentid ? $this->modepaymentid : "null");
+		$sql .= ", firstname = '".$this->db->escape($this->firstname)."'";
+		$sql .= ", lastname='".$this->db->escape($this->lastname)."'";
+		$sql .= ", societe='".$this->db->escape($this->societe)."'";
+		$sql .= ", address='".$this->db->escape($this->address)."'";
+		$sql .= ", zip='".$this->db->escape($this->zip)."'";
+		$sql .= ", town='".$this->db->escape($this->town)."'";
+		$sql .= ", fk_country = ".($this->country_id > 0 ? ((int) $this->country_id) : '0');
+		$sql .= ", public=".((int) $this->public);
+		$sql .= ", fk_projet=".($this->fk_project > 0 ? $this->fk_project : 'null');
+		$sql .= ", note_private=".(!empty($this->note_private) ? ("'".$this->db->escape($this->note_private)."'") : "NULL");
+		$sql .= ", note_public=".(!empty($this->note_public) ? ("'".$this->db->escape($this->note_public)."'") : "NULL");
+		$sql .= ", datedon='".$this->db->idate($this->date)."'";
+		$sql .= ", date_valid=".($this->date_valid ? "'".$this->db->idate($this->date)."'" : "null");
+		$sql .= ", email='".$this->db->escape(trim($this->email))."'";
+		$sql .= ", phone='".$this->db->escape(trim($this->phone))."'";
+		$sql .= ", phone_mobile='".$this->db->escape(trim($this->phone_mobile))."'";
+		$sql .= ", fk_statut=".((int) $this->statut);
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::Update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -554,7 +569,7 @@ class Don extends CommonObject
 		// Delete donation
 		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."don_extrafields";
-			$sql .= " WHERE fk_object=".$this->id;
+			$sql .= " WHERE fk_object = ".((int) $this->id);
 
 			$resql = $this->db->query($sql);
 			if (!$resql) {
@@ -612,7 +627,7 @@ class Don extends CommonObject
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON d.fk_country = c.rowid";
 		$sql .= " WHERE d.entity IN (".getEntity('donation').")";
 		if (!empty($id)) {
-			$sql .= " AND d.rowid=".$id;
+			$sql .= " AND d.rowid=".((int) $id);
 		} elseif (!empty($ref)) {
 			$sql .= " AND d.ref='".$this->db->escape($ref)."'";
 		}
@@ -898,7 +913,7 @@ class Don extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $notooltip = 0, $moretitle = '', $save_lastsearch_value = -1)
 	{
-		global $conf, $langs;
+		global $conf, $langs, $hookmanager;
 
 		if (!empty($conf->dol_no_mouse_hover)) {
 			$notooltip = 1; // Force disable tooltips
@@ -938,7 +953,15 @@ class Don extends CommonObject
 			$result .= $this->ref;
 		}
 		$result .= $linkend;
-
+		global $action;
+		$hookmanager->initHooks(array($this->element . 'dao'));
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
+		}
 		return $result;
 	}
 
@@ -1097,5 +1120,32 @@ class Don extends CommonObject
 		);
 
 		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+	}
+
+	/**
+	 * Function to get reamain to pay for a donation
+	 *
+	 * @return   int      					<0 if KO, > reamain to pay if  OK
+	 */
+	public function getRemainToPay()
+	{
+		dol_syslog(__METHOD__, LOG_DEBUG);
+
+		if (empty($this->id)) {
+			$this->error = 'Missing object id';
+			$this->errors[] = $this->error;
+			dol_syslog(__METHOD__.' : '.$this->error, LOG_ERR);
+			return -1;
+		}
+
+		$sql = "SELECT SUM(amount) as sum_amount FROM ".MAIN_DB_PREFIX."payment_donation WHERE fk_donation = ".((int) $this->id);
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			dol_print_error($this->db);
+			return -2;
+		} else {
+			$sum_amount = (float) $this->db->fetch_object($resql)->sum_amount;
+			return (float) $this->amount - $sum_amount;
+		}
 	}
 }

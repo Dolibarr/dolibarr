@@ -28,6 +28,7 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/propal.lib.php';
 
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager = new HookManager($db);
@@ -45,6 +46,7 @@ if (isset($user->socid) && $user->socid > 0) {
 	$action = '';
 	$socid = $user->socid;
 }
+
 restrictedArea($user, 'propal');
 
 
@@ -65,124 +67,11 @@ print load_fiche_titre($langs->trans("ProspectionArea"), '', 'propal');
 print '<div class="fichecenter">';
 print '<div class="fichethirdleft">';
 
-/*
- * Statistics
- */
-
-$listofstatus = array(Propal::STATUS_DRAFT, Propal::STATUS_VALIDATED, Propal::STATUS_SIGNED, Propal::STATUS_NOTSIGNED, Propal::STATUS_BILLED);
-
-$sql = "SELECT count(p.rowid) as nb, p.fk_statut as status";
-$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-$sql .= ", ".MAIN_DB_PREFIX."propal as p";
-if (!$user->rights->societe->client->voir && !$socid) {
-	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-}
-$sql .= " WHERE p.entity IN (".getEntity($propalstatic->element).")";
-$sql .= " AND p.fk_soc = s.rowid";
-if ($user->socid) {
-	$sql .= ' AND p.fk_soc = '.$user->socid;
-}
-if (!$user->rights->societe->client->voir && !$socid) {
-	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
-}
-$sql .= " AND p.fk_statut IN (".$db->sanitize(implode(" ,", $listofstatus)).")";
-$sql .= " GROUP BY p.fk_statut";
-$resql = $db->query($sql);
-if ($resql) {
-	$num = $db->num_rows($resql);
-	$i = 0;
-	$total = 0;
-	$totalinprocess = 0;
-	$dataseries = array();
-	$colorseries = array();
-	$vals = array();
-
-	while ($i < $num) {
-		$obj = $db->fetch_object($resql);
-		if ($obj) {
-			$vals[$obj->status] = $obj->nb;
-			$totalinprocess += $obj->nb;
-
-			$total += $obj->nb;
-		}
-		$i++;
-	}
-	$db->free($resql);
-
-	include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
-
-	print '<div class="div-table-responsive-no-min">';
-	print '<table class="noborder nohover centpercent">';
-
-	print '<tr class="liste_titre">';
-	print '<td colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("Proposals").'</td>';
-	print '</tr>';
-
-	foreach ($listofstatus as $status) {
-		$dataseries[] = array($propalstatic->LibStatut($status, 1), (isset($vals[$status]) ? (int) $vals[$status] : 0));
-		if ($status == Propal::STATUS_DRAFT) {
-			$colorseries[$status] = '-'.$badgeStatus0;
-		}
-		if ($status == Propal::STATUS_VALIDATED) {
-			$colorseries[$status] = $badgeStatus1;
-		}
-		if ($status == Propal::STATUS_SIGNED) {
-			$colorseries[$status] = $badgeStatus4;
-		}
-		if ($status == Propal::STATUS_NOTSIGNED) {
-			$colorseries[$status] = $badgeStatus9;
-		}
-		if ($status == Propal::STATUS_BILLED) {
-			$colorseries[$status] = $badgeStatus6;
-		}
-
-		if (empty($conf->use_javascript_ajax)) {
-			print '<tr class="oddeven">';
-			print '<td>'.$propalstatic->LibStatut($status, 0).'</td>';
-			print '<td class="right"><a href="list.php?statut='.$status.'">'.(isset($vals[$status]) ? $vals[$status] : 0).'</a></td>';
-			print "</tr>\n";
-		}
-	}
-
-	if ($conf->use_javascript_ajax) {
-		print '<tr>';
-		print '<td align="center" colspan="2">';
-
-		include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
-		$dolgraph = new DolGraph();
-		$dolgraph->SetData($dataseries);
-		$dolgraph->SetDataColor(array_values($colorseries));
-		$dolgraph->setShowLegend(2);
-		$dolgraph->setShowPercent(1);
-		$dolgraph->SetType(array('pie'));
-		$dolgraph->setHeight('200');
-		$dolgraph->draw('idgraphthirdparties');
-		print $dolgraph->show($total ? 0 : 1);
-
-		print '</td>';
-		print '</tr>';
-	}
-
-	//if ($totalinprocess != $total)
-	//{
-	//	print '<tr class="liste_total">';
-	//	print '<td>'.$langs->trans("Total").' ('.$langs->trans("CustomersOrdersRunning").')</td>';
-	//	print '<td class="right">'.$totalinprocess.'</td>';
-	//	print '</tr>';
-	//}
-
-	print '<tr class="liste_total">';
-	print '<td>'.$langs->trans("Total").'</td>';
-	print '<td class="right">'.$total.'</td>';
-	print '</tr>';
-
-	print '</table>';
-	print '</div>';
+$tmp = getCustomerProposalPieChart($socid);
+if ($tmp) {
+	print $tmp;
 	print '<br>';
-} else {
-	dol_print_error($db);
 }
-
 
 /*
  * Draft proposals
@@ -192,17 +81,17 @@ if (!empty($conf->propal->enabled)) {
 	$sql .= ", s.rowid as socid, s.nom as name, s.client, s.canvas, s.code_client, s.email, s.entity, s.code_compta";
 	$sql .= " FROM ".MAIN_DB_PREFIX."propal as p";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
-	if (!$user->rights->societe->client->voir && !$socid) {
+	if (empty($user->rights->societe->client->voir) && !$socid) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= " WHERE p.entity IN (".getEntity($propalstatic->element).")";
 	$sql .= " AND p.fk_soc = s.rowid";
 	$sql .= " AND p.fk_statut =".Propal::STATUS_DRAFT;
-	if (!$user->rights->societe->client->voir && !$socid) {
-		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+	if (empty($user->rights->societe->client->voir) && !$socid) {
+		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	if ($socid) {
-		$sql .= " AND p.fk_soc = ".$socid;
+		$sql .= " AND p.fk_soc = ".((int) $socid);
 	}
 
 	$resql = $db->query($sql);
@@ -211,8 +100,8 @@ if (!empty($conf->propal->enabled)) {
 		$nbofloop = min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD));
 		startSimpleTable("DraftPropals", "comm/propal/list.php", "search_status=".Propal::STATUS_DRAFT, 2, $num);
 
+		$total = 0;
 		if ($num) {
-			$total = 0;
 			$i = 0;
 
 			while ($i < $nbofloop) {
@@ -257,27 +146,26 @@ if (!empty($conf->propal->enabled)) {
 print '</div>';
 
 print '<div class="fichetwothirdright">';
-print '<div class="ficheaddleft">';
 
 /*
  * Last modified proposals
  */
 
 $sql = "SELECT c.rowid, c.entity, c.ref, c.fk_statut, date_cloture as datec";
-$sql .= ", s.nom as socname, s.rowid as socid, s.canvas, s.client";
+$sql .= ", s.nom as socname, s.rowid as socid, s.canvas, s.client, s.email, s.code_compta";
 $sql .= " FROM ".MAIN_DB_PREFIX."propal as c";
 $sql .= ", ".MAIN_DB_PREFIX."societe as s";
-if (!$user->rights->societe->client->voir && !$socid) {
+if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 $sql .= " WHERE c.entity IN (".getEntity($propalstatic->element).")";
 $sql .= " AND c.fk_soc = s.rowid";
 //$sql.= " AND c.fk_statut > 2";
 if ($socid) {
-	$sql .= " AND c.fk_soc = ".$socid;
+	$sql .= " AND c.fk_soc = ".((int) $socid);
 }
-if (!$user->rights->societe->client->voir && !$socid) {
-	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+if (empty($user->rights->societe->client->voir) && !$socid) {
+	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 $sql .= " ORDER BY c.tms DESC";
 $sql .= $db->plimit($max, 0);
@@ -299,6 +187,8 @@ if ($resql) {
 			$companystatic->name = $obj->socname;
 			$companystatic->client = $obj->client;
 			$companystatic->canvas = $obj->canvas;
+			$companystatic->email = $obj->email;
+			$companystatic->code_compta = $obj->code_compta;
 
 			$filename = dol_sanitizeFileName($obj->ref);
 			$filedir = $conf->propal->multidir_output[$obj->entity].'/'.dol_sanitizeFileName($obj->ref);
@@ -337,18 +227,18 @@ if ($resql) {
  * Open (validated) proposals
  */
 if (!empty($conf->propal->enabled) && $user->rights->propale->lire) {
-	$sql = "SELECT s.nom as socname, s.rowid as socid, s.canvas, s.client";
+	$sql = "SELECT s.nom as socname, s.rowid as socid, s.canvas, s.client, s.email, s.code_compta";
 	$sql .= ", p.rowid as propalid, p.entity, p.total_ttc, p.total_ht, p.ref, p.fk_statut, p.datep as dp, p.fin_validite as dfv";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 	$sql .= ", ".MAIN_DB_PREFIX."propal as p";
-	if (!$user->rights->societe->client->voir && !$socid) {
+	if (empty($user->rights->societe->client->voir) && !$socid) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= " WHERE p.fk_soc = s.rowid";
 	$sql .= " AND p.entity IN (".getEntity($propalstatic->element).")";
 	$sql .= " AND p.fk_statut = ".Propal::STATUS_VALIDATED;
-	if (!$user->rights->societe->client->voir && !$socid) {
-		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+	if (empty($user->rights->societe->client->voir) && !$socid) {
+		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	if ($socid) {
 		$sql .= " AND s.rowid = ".((int) $socid);
@@ -374,6 +264,8 @@ if (!empty($conf->propal->enabled) && $user->rights->propale->lire) {
 				$companystatic->name = $obj->socname;
 				$companystatic->client = $obj->client;
 				$companystatic->canvas = $obj->canvas;
+				$companystatic->email = $obj->email;
+				$companystatic->code_compta = $obj->code_compta;
 
 				$filename = dol_sanitizeFileName($obj->ref);
 				$filedir = $conf->propal->multidir_output[$obj->entity].'/'.dol_sanitizeFileName($obj->ref);
@@ -424,12 +316,12 @@ if (! empty($conf->propal->enabled))
 	$sql = "SELECT c.rowid, c.ref, c.fk_statut, s.nom as name, s.rowid as socid";
 	$sql.=" FROM ".MAIN_DB_PREFIX."propal as c";
 	$sql.= ", ".MAIN_DB_PREFIX."societe as s";
-	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	if (empty($user->rights->societe->client->voir) && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= " WHERE c.fk_soc = s.rowid";
 	$sql.= " AND c.entity = ".$conf->entity;
 	$sql.= " AND c.fk_statut = 1";
-	if ($socid) $sql.= " AND c.fk_soc = ".$socid;
-	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+	if ($socid) $sql.= " AND c.fk_soc = ".((int) $socid);
+	if (empty($user->rights->societe->client->voir) && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .((int) $user->id);
 	$sql.= " ORDER BY c.rowid DESC";
 
 	$resql=$db->query($sql);
@@ -499,12 +391,12 @@ if (! empty($conf->propal->enabled))
 	$sql = "SELECT c.rowid, c.ref, c.fk_statut, c.facture, s.nom as name, s.rowid as socid";
 	$sql.= " FROM ".MAIN_DB_PREFIX."commande as c";
 	$sql.= ", ".MAIN_DB_PREFIX."societe as s";
-	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	if (empty($user->rights->societe->client->voir) && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= " WHERE c.fk_soc = s.rowid";
 	$sql.= " AND c.entity = ".$conf->entity;
 	$sql.= " AND c.fk_statut = 2 ";
-	if ($socid) $sql.= " AND c.fk_soc = ".$socid;
-	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+	if ($socid) $sql.= " AND c.fk_soc = ".((int) $socid);
+	if (empty($user->rights->societe->client->voir) && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .((int) $user->id);
 	$sql.= " ORDER BY c.rowid DESC";
 
 	$resql=$db->query($sql);
@@ -563,7 +455,6 @@ if (! empty($conf->propal->enabled))
 }
 */
 
-print '</div>';
 print '</div>';
 print '</div>';
 

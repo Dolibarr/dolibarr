@@ -27,6 +27,14 @@ if (empty($conf) || !is_object($conf)) {
 	exit;
 }
 
+// DDOS protection
+$size = (int) $_SERVER['CONTENT_LENGTH'];
+if ($size > 10000) {
+	http_response_code(413);
+	$langs->loadLangs(array("errors", "install"));
+	accessforbidden('<center>'.$langs->trans("ErrorRequestTooLarge").'<br><a href="'.DOL_URL_ROOT.'">'.$langs->trans("ClickHereToGoToApp").'</a></center>', 0, 0, 1);
+	exit;
+}
 
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
@@ -60,7 +68,18 @@ $php_self = str_replace('action=validatenewpassword', '', $php_self);
 
 $titleofpage = $langs->trans('SendNewPassword');
 
-print top_htmlhead('', $titleofpage);
+// Javascript code on logon page only to detect user tz, dst_observed, dst_first, dst_second
+$arrayofjs = array();
+
+$disablenofollow = 1;
+if (!preg_match('/'.constant('DOL_APPLICATION_TITLE').'/', $title)) {
+	$disablenofollow = 0;
+}
+if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+	$disablenofollow = 0;
+}
+
+print top_htmlhead('', $titleofpage, 0, 0, $arrayofjs, array(), 1, $disablenofollow);
 
 
 $colorbackhmenu1 = '60,70,100'; // topmenu
@@ -91,7 +110,7 @@ $(document).ready(function () {
 <div class="login_vertical_align">
 
 <form id="login" name="login" method="POST" action="<?php echo $php_self; ?>">
-<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>">
+<input type="hidden" name="token" value="<?php echo newToken(); ?>">
 <input type="hidden" name="action" value="buildnewpassword">
 
 
@@ -99,7 +118,7 @@ $(document).ready(function () {
 <div class="login_table_title center" title="<?php echo dol_escape_htmltag($title); ?>">
 <?php
 if (!empty($disablenofollow)) {
-	echo '<a class="login_table_title" href="https://www.dolibarr.org" target="_blank">';
+	echo '<a class="login_table_title" href="https://www.dolibarr.org" target="_blank" rel="noopener noreferrer external">';
 }
 echo dol_escape_htmltag($title);
 if (!empty($disablenofollow)) {
@@ -129,7 +148,7 @@ if (!empty($disablenofollow)) {
 <div class="tagtd nowraponall center valignmiddle tdinputlogin">
 <!-- <span class="span-icon-user">-->
 <span class="fa fa-user"></span>
-<input type="text" placeholder="<?php echo $langs->trans("Login"); ?>" <?php echo $disabled; ?> id="username" name="username" class="flat input-icon-user minwidth150" value="<?php echo dol_escape_htmltag($username); ?>" tabindex="1" />
+<input type="text" maxlength="255" placeholder="<?php echo $langs->trans("Login"); ?>" <?php echo $disabled; ?> id="username" name="username" class="flat input-icon-user minwidth150" value="<?php echo dol_escape_htmltag($username); ?>" tabindex="1" />
 </div>
 </div>
 
@@ -146,11 +165,11 @@ if (!empty($captcha)) {
 	?>
 	<!-- Captcha -->
 	<div class="trinputlogin">
-	<div class="tagtd tdinputlogin nowraponall none valignmiddle">
+	<div class="tagtd tdinputlogin nowrap none valignmiddle">
 
 	<span class="fa fa-unlock"></span>
 	<span class="nofa inline-block">
-	<input id="securitycode" placeholder="<?php echo $langs->trans("SecurityCode"); ?>" class="flat input-icon-security width150" type="text" maxlength="5" name="code" tabindex="3" autocomplete="off" />
+	<input id="securitycode" placeholder="<?php echo $langs->trans("SecurityCode"); ?>" class="flat input-icon-security width125" type="text" maxlength="5" name="code" tabindex="3" autocomplete="off" />
 	</span>
 	<span class="nowrap inline-block">
 	<img class="inline-block valignmiddle" src="<?php echo DOL_URL_ROOT ?>/core/antispamimage.php" border="0" width="80" height="32" id="img_securitycode" />
@@ -186,7 +205,7 @@ if (!empty($morelogincontent)) {
 <div id="login_line2" style="clear: both">
 
 <!-- Button "Regenerate and Send password" -->
-<br><input type="submit" <?php echo $disabled; ?> class="button" name="button_password" value="<?php echo $langs->trans('SendNewPassword'); ?>" tabindex="4" />
+<br><input type="submit" <?php echo $disabled; ?> class="button small" name="button_password" value="<?php echo $langs->trans('SendNewPassword'); ?>" tabindex="4" />
 
 <br>
 <div class="center" style="margin-top: 15px;">
@@ -216,7 +235,7 @@ if (!empty($morelogincontent)) {
 </form>
 
 
-<div class="center login_main_home divpasswordmessagedesc paddingtopbottom<?php echo empty($conf->global->MAIN_LOGIN_BACKGROUND) ? '' : ' backgroundsemitransparent'; ?>" style="max-width: 70%">
+<div class="center login_main_home divpasswordmessagedesc paddingtopbottom<?php echo empty($conf->global->MAIN_LOGIN_BACKGROUND) ? '' : ' backgroundsemitransparent boxshadow'; ?>" style="max-width: 70%">
 <?php if ($mode == 'dolibarr' || !$disabled) { ?>
 	<span class="passwordmessagedesc">
 	<?php echo $langs->trans('SendNewPasswordDesc'); ?>

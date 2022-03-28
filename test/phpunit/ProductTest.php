@@ -83,7 +83,7 @@ class ProductTest extends PHPUnit\Framework\TestCase
 		global $conf,$user,$langs,$db;
 
 		if (empty($conf->produit->enabled)) {
-			print __METHOD__." Module Product must be enabled.\n"; die();
+			print __METHOD__." Module Product must be enabled.\n"; die(1);
 		}
 
 		$db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
@@ -199,7 +199,7 @@ class ProductTest extends PHPUnit\Framework\TestCase
 		$localobject->note_private = 'New private note after update';
 		$result=$localobject->update($localobject->id, $user);
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
-		$this->assertLessThan($result, 0);
+		$this->assertLessThan($result, 0, 'Error '.$localobject->error);
 
 		return $localobject;
 	}

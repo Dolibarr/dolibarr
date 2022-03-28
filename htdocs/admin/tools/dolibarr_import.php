@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2021	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2006-2012	Regis Houssin		<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,6 +21,10 @@
  *		\ingroup	core
  * 		\brief      Page to import database
  */
+
+if (! defined('CSRFCHECK_WITH_TOKEN')) {
+	define('CSRFCHECK_WITH_TOKEN', '1');		// Force use of CSRF protection with tokens even for GET
+}
 
 require '../../main.inc.php';
 
@@ -72,7 +76,7 @@ jQuery(document).ready(function() {
 
 print load_fiche_titre($langs->trans("Restore"), '', 'title_setup');
 
-print '<div class="center opacitymedium">';
+print '<div class="center">';
 print $langs->trans("RestoreDesc", DOL_DATA_ROOT);
 print '</div>';
 print '<br>';
@@ -81,7 +85,9 @@ print '<br>';
 <fieldset>
 <legend style="font-size: 3em">1</legend>
 <?php
+print '<span class="opacitymedium">';
 print $langs->trans("RestoreDesc2", DOL_DATA_ROOT).'<br><br>';
+print '</span>';
 ?>
 </fieldset>
 
@@ -90,7 +96,9 @@ print $langs->trans("RestoreDesc2", DOL_DATA_ROOT).'<br><br>';
 <fieldset>
 <legend style="font-size: 3em">2</legend>
 <?php
+print '<span class="opacitymedium">';
 print $langs->trans("RestoreDesc3", $dolibarr_main_db_name).'<br><br>';
+print '</span>';
 ?>
 
 <?php print $langs->trans("DatabaseName").' : <b>'.$dolibarr_main_db_name.'</b>'; ?><br><br>
@@ -199,6 +207,9 @@ if (in_array($type, array('mysql', 'mysqli'))) {
 	//if (empty($_GET["showpass"]) && $dolibarr_main_db_pass) print '<br><a href="'.$_SERVER["PHP_SELF"].'?showpass=1&amp;radio_dump=postgresql_options">'.$langs->trans("UnHidePassword").'</a>';
 	//else print '<br><a href="'.$_SERVER["PHP_SELF"].'?showpass=0&amp;radio_dump=mysql_options">'.$langs->trans("HidePassword").'</a>';
 	print '</div>';
+
+	print '<br>';
+
 	print '</fieldset>';
 }
 

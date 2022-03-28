@@ -101,7 +101,7 @@ if ($id > 0) {
 	if (empty($object->public)) {
 		 print $langs->trans("ErrorThisMemberIsNotPublic");
 	} else {
-		print '<table class="public_border" cellspacing="0" width="100%" cellpadding="3">';
+		print '<table class="public_border" width="100%" cellpadding="3">';
 
 		print '<tr><td width="15%">'.$langs->trans("Type").'</td><td class="valeur">'.$object->type."</td></tr>\n";
 		print '<tr><td>'.$langs->trans("Person").'</td><td class="valeur">'.$object->morphy.'</td></tr>';

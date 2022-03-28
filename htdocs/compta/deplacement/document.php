@@ -42,12 +42,6 @@ $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 
-// Security check
-if ($user->socid) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'deplacement', $id, '');
-
 
 // Get parameters
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
@@ -73,6 +67,14 @@ $object->fetch($id, $ref);
 
 $upload_dir = $conf->deplacement->dir_output.'/'.dol_sanitizeFileName($object->ref);
 $modulepart = 'trip';
+
+// Security check
+if ($user->socid) {
+	$socid = $user->socid;
+}
+$result = restrictedArea($user, 'deplacement', $id, '');
+
+$permissiontoadd = $user->rights->deplacement->creer;	// Used by the include of actions_dellink.inc.php
 
 
 /*
@@ -126,7 +128,7 @@ if ($object->id) {
 	print '</div>';
 
 	$modulepart = 'deplacement';
-	$permission = $user->rights->deplacement->creer;
+	$permissiontoadd = $user->rights->deplacement->creer;
 	$param = '&id='.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 } else {

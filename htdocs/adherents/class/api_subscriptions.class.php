@@ -100,10 +100,11 @@ class Subscriptions extends DolibarrApi
 		$sql .= ' WHERE 1 = 1';
 		// Add sql filters
 		if ($sqlfilters) {
-			if (!DolibarrApi::_checkFilters($sqlfilters)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+			$errormessage = '';
+			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
+				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
 			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
@@ -158,7 +159,7 @@ class Subscriptions extends DolibarrApi
 			$subscription->$field = $value;
 		}
 		if ($subscription->create(DolibarrApiAccess::$user) < 0) {
-			throw new RestException(500, 'Error when creating subscription', array_merge(array($subscription->error), $subscription->errors));
+			throw new RestException(500, 'Error when creating contribution', array_merge(array($subscription->error), $subscription->errors));
 		}
 		return $subscription->id;
 	}
@@ -192,7 +193,7 @@ class Subscriptions extends DolibarrApi
 		if ($subscription->update(DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, $subscription->error);
+			throw new RestException(500, 'Error when updating contribution: '.$subscription->error);
 		}
 	}
 

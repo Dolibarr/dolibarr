@@ -22,7 +22,7 @@
 /**
  *  \file       htdocs/ecm/file_note.php
  *  \ingroup    ecm
- *  \brief      Fiche de notes sur une ecm file
+ *  \brief      Tab for notes on an ECM file
  */
 
 require '../main.inc.php';
@@ -39,10 +39,6 @@ $ref = GETPOST('ref', 'alpha');
 $socid = GETPOST('socid', 'int');
 $action = GETPOST('action', 'aZ09');
 
-if (!$user->rights->ecm->setup) {
-	accessforbidden();
-}
-
 // Get parameters
 $socid = GETPOST("socid", "int");
 // Security check
@@ -52,8 +48,8 @@ if ($user->socid > 0) {
 }
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -108,6 +104,13 @@ if ($result < 0) {
 }
 
 $permissionnote = $user->rights->ecm->setup; // Used by the include of actions_setnotes.inc.php
+
+$permtoread = $user->rights->ecm->read;
+
+if (!$permtoread) {
+	accessforbidden();
+}
+
 
 /*
  * Actions

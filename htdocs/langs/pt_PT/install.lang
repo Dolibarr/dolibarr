@@ -21,6 +21,7 @@ ErrorPHPDoesNotSupportCurl=A sua instalação PHP não suporta Curl.
 ErrorPHPDoesNotSupportCalendar=Your PHP installation does not support php calendar extensions.
 ErrorPHPDoesNotSupportUTF8=Sua instalação do PHP não suporta funções UTF8. Dolibarr não pode funcionar corretamente. Resolva isso antes de instalar o Dolibarr.
 ErrorPHPDoesNotSupportIntl=Your PHP installation does not support Intl functions.
+ErrorPHPDoesNotSupportMbstring=Your PHP installation does not support mbstring functions.
 ErrorPHPDoesNotSupportxDebug=Your PHP installation does not support extend debug functions.
 ErrorPHPDoesNotSupport=Your PHP installation does not support %s functions.
 ErrorDirDoesNotExists=A diretoria %s não existe.
@@ -206,6 +207,7 @@ MigrationUserPhotoPath=Migration of photo paths for users
 MigrationFieldsSocialNetworks=Migration of users fields social networks (%s)
 MigrationReloadModule=Recarregar módulo %s
 MigrationResetBlockedLog=Restabelecer o módulo BlockedLog para o algoritmo v7
+MigrationImportOrExportProfiles=Migration of import or export profiles (%s)
 ShowNotAvailableOptions=Mostrar opções indisponíveis
 HideNotAvailableOptions=Ocultar opções indisponíveis
 ErrorFoundDuringMigration=Erro (s) foram relatados durante o processo de migração, portanto, a próxima etapa não está disponível. Para ignorar erros, você pode <a href="%s"> clicar aqui </a>, mas o aplicativo ou alguns recursos podem não funcionar corretamente até que os erros sejam resolvidos.

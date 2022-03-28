@@ -99,6 +99,8 @@ if ($action == 'setvalue' && $user->admin) {
  * View
  */
 
+$form = new Form($db);
+
 llxHeader('', $langs->trans("LDAPSetup"), 'EN:Module_LDAP_En|FR:Module_LDAP|ES:M&oacute;dulo_LDAP');
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 
@@ -118,10 +120,8 @@ print $langs->trans("LDAPDescGroups").'<br>';
 print '<br>';
 
 
-print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=setvalue">';
+print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=setvalue&token='.newToken().'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
-
-$form = new Form($db);
 
 print '<table class="noborder centpercent">';
 
@@ -130,20 +130,23 @@ print '<td colspan="4">'.$langs->trans("LDAPSynchronizeGroups").'</td>';
 print "</tr>\n";
 
 // DN pour les groupes
-print '<tr class="oddeven"><td width="25%"><span class="fieldrequired">'.$langs->trans("LDAPGroupDn").'</span></td><td>';
+print '<!-- LDAP_GROUP_DN -->';
+print '<tr class="oddeven"><td><span class="fieldrequired">'.$langs->trans("LDAPGroupDn").'</span></td><td>';
 print '<input size="48" type="text" name="group" value="'.$conf->global->LDAP_GROUP_DN.'">';
 print '</td><td>'.$langs->trans("LDAPGroupDnExample").'</td>';
 print '<td>&nbsp;</td>';
 print '</tr>';
 
 // List of object class used to define attributes in structure
-print '<tr class="oddeven"><td width="25%"><span class="fieldrequired">'.$langs->trans("LDAPGroupObjectClassList").'</span></td><td>';
+print '<!-- LDAP_GROUP_OBJECT_CLASS -->';
+print '<tr class="oddeven"><td><span class="fieldrequired">'.$langs->trans("LDAPGroupObjectClassList").'</span></td><td>';
 print '<input size="48" type="text" name="objectclass" value="'.$conf->global->LDAP_GROUP_OBJECT_CLASS.'">';
 print '</td><td>'.$langs->trans("LDAPGroupObjectClassListExample").'</td>';
 print '<td>&nbsp;</td>';
 print '</tr>';
 
 // Filter, used to filter search
+print '<!-- LDAP_GROUP_FILTER -->';
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFilterConnection").'</td><td>';
 print '<input size="48" type="text" name="filter" value="'.$conf->global->LDAP_GROUP_FILTER.'">';
 print '</td><td>'.$langs->trans("LDAPGroupFilterExample").'</td>';
@@ -151,11 +154,13 @@ print '<td></td>';
 print '</tr>';
 
 print '</table>';
+
 print '<br>';
+
 print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
-print '<td width="25%">'.$langs->trans("LDAPDolibarrMapping").'</td>';
+print '<td>'.$langs->trans("LDAPDolibarrMapping").'</td>';
 print '<td colspan="2">'.$langs->trans("LDAPLdapMapping").'</td>';
 print '<td class="right">'.$langs->trans("LDAPNamingAttribute").'</td>';
 print "</tr>\n";
@@ -205,7 +210,7 @@ print info_admin($langs->trans("LDAPDescValues"));
 
 print dol_get_fiche_end();
 
-print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></div>';
+print $form->buttonsSaveCancel("Modify", '');
 
 print '</form>';
 
@@ -213,7 +218,7 @@ print '</form>';
 /*
  * Test de la connexion
  */
-if ($conf->global->LDAP_SYNCHRO_ACTIVE == 'dolibarr2ldap') {
+if (getDolGlobalInt('LDAP_SYNCHRO_ACTIVE') === Ldap::SYNCHRO_DOLIBARR_TO_LDAP) {
 	$butlabel = $langs->trans("LDAPTestSynchroGroup");
 	$testlabel = 'testgroup';
 	$key = $conf->global->LDAP_KEY_GROUPS;
@@ -221,7 +226,7 @@ if ($conf->global->LDAP_SYNCHRO_ACTIVE == 'dolibarr2ldap') {
 	$objectclass = $conf->global->LDAP_GROUP_OBJECT_CLASS;
 
 	show_ldap_test_button($butlabel, $testlabel, $key, $dn, $objectclass);
-} elseif ($conf->global->LDAP_SYNCHRO_ACTIVE == 'ldap2dolibarr') {
+} elseif (getDolGlobalInt('LDAP_SYNCHRO_ACTIVE') === Ldap::SYNCHRO_LDAP_TO_DOLIBARR) {
 	$butlabel = $langs->trans("LDAPTestSearch");
 	$testlabel = 'testsearchgroup';
 	$key = $conf->global->LDAP_KEY_GROUPS;
@@ -255,12 +260,12 @@ if (function_exists("ldap_connect")) {
 
 			if ($result2 > 0) {
 				print img_picto('', 'info').' ';
-				print '<font class="ok">'.$langs->trans("LDAPSynchroOK").'</font><br>';
+				print '<span class="ok">'.$langs->trans("LDAPSynchroOK").'</span><br>';
 			} else {
 				print img_picto('', 'error').' ';
-				print '<font class="error">'.$langs->trans("LDAPSynchroKOMayBePermissions");
+				print '<span class="error">'.$langs->trans("LDAPSynchroKOMayBePermissions");
 				print ': '.$ldap->error;
-				print '</font><br>';
+				print '</span><br>';
 				print $langs->trans("ErrorLDAPMakeManualTest", $conf->ldap->dir_temp).'<br>';
 			}
 
@@ -270,9 +275,9 @@ if (function_exists("ldap_connect")) {
 			print "\n<br>";
 		} else {
 			print img_picto('', 'error').' ';
-			print '<font class="error">'.$langs->trans("LDAPSynchroKO");
+			print '<span class="error">'.$langs->trans("LDAPSynchroKO");
 			print ': '.$ldap->error;
-			print '</font><br>';
+			print '</span><br>';
 			print $langs->trans("ErrorLDAPMakeManualTest", $conf->ldap->dir_temp).'<br>';
 		}
 	}
@@ -326,9 +331,9 @@ if (function_exists("ldap_connect")) {
 			print "\n<br>";
 		} else {
 			print img_picto('', 'error').' ';
-			print '<font class="error">'.$langs->trans("LDAPSynchroKO");
+			print '<span class="error">'.$langs->trans("LDAPSynchroKO");
 			print ': '.$ldap->error;
-			print '</font><br>';
+			print '</span><br>';
 			print $langs->trans("ErrorLDAPMakeManualTest", $conf->ldap->dir_temp).'<br>';
 		}
 	}

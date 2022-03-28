@@ -33,6 +33,32 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonstickergenerator.class.php';
  */
 class pdf_standard extends CommonStickerGenerator
 {
+	/**
+	 * Dolibarr version of the loaded document
+	 * @var string
+	 */
+	public $version = 'dolibarr';
+
+
+	/**
+	 *	Constructor
+	 *
+	 *  @param		DoliDB		$db      Database handler
+	 */
+	public function __construct($db)
+	{
+		global $conf, $langs, $mysoc;
+
+		// Translations
+		$langs->loadLangs(array("main", "admin"));
+
+		$this->db = $db;
+		$this->name = "standard";
+		$this->description = $langs->trans('TemplateforBusinessCards');
+		//$this->update_main_doc_field = 1; // Save the name of generated file as the main doc when generating a doc with this template
+
+		$this->type = 'pdf-various-sizes';
+	}
 
 	/**
 	 * Output a sticker on page at position _COUNTX, _COUNTY (_COUNTX and _COUNTY start from 0)
@@ -243,9 +269,10 @@ class pdf_standard extends CommonStickerGenerator
 	 *	@param	string		$srctemplatepath	Full path of source filename for generator using a template file. Example: '5161', 'AVERYC32010', 'CARD', ...
 	 *	@param	string		$mode				Tell if doc module is called for 'member', ...
 	 *  @param  int         $nooutput           1=Generate only file on disk and do not return it on response
+	 *  @param	string		$filename			Name of output file (without extension)
 	 *	@return	int								1=OK, 0=KO
 	 */
-	public function write_file($object, $outputlangs, $srctemplatepath, $mode = 'member', $nooutput = 0)
+	public function write_file($object, $outputlangs, $srctemplatepath, $mode = 'member', $nooutput = 0, $filename = 'tmp_cards')
 	{
 		// phpcs:enable
 		global $user, $conf, $langs, $mysoc, $_Avery_Labels;
@@ -282,7 +309,7 @@ class pdf_standard extends CommonStickerGenerator
 				'__MONTH__'=>$month,
 				'__DAY__'=>$day,
 				'__DOL_MAIN_URL_ROOT__'=>DOL_MAIN_URL_ROOT,
-				'__SERVER__'=>"http://".$_SERVER["SERVER_NAME"]."/"
+				'__SERVER__'=>"https://".$_SERVER["SERVER_NAME"]."/"
 			);
 			complete_substitutions_array($substitutionarray, $langs);
 
@@ -320,7 +347,10 @@ class pdf_standard extends CommonStickerGenerator
 			dol_print_error('', 'ErrorBadTypeForCard'.$this->code);
 			exit;
 		}
+
 		$this->type = 'pdf';
+		$filename .= '.pdf';
+
 		// standard format or custom
 		if ($this->Tformat['paper-size'] != 'custom') {
 			$this->format = $this->Tformat['paper-size'];
@@ -349,7 +379,7 @@ class pdf_standard extends CommonStickerGenerator
 			return -1;
 		}
 
-		$filename = 'tmp_cards.pdf';
+
 		if (is_object($object)) {
 			$outputdir = $conf->adherent->dir_output;
 			$dir = $outputdir."/".get_exdir(0, 0, 0, 0, $object, 'member');

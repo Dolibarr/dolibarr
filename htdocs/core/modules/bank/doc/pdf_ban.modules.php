@@ -72,9 +72,9 @@ class pdf_ban extends ModeleBankAccountDoc
 		$this->marge_haute = isset($conf->global->MAIN_PDF_MARGIN_TOP) ? $conf->global->MAIN_PDF_MARGIN_TOP : 10;
 		$this->marge_basse = isset($conf->global->MAIN_PDF_MARGIN_BOTTOM) ? $conf->global->MAIN_PDF_MARGIN_BOTTOM : 10;
 
-		$this->option_logo = 1; // Affiche logo FAC_PDF_LOGO
-		$this->option_tva = 1; // Gere option tva FACTURE_TVAOPTION
-		$this->option_codeproduitservice = 1; // Affiche code produit-service
+		$this->option_logo = 1; // Display logo FAC_PDF_LOGO
+		$this->option_tva = 1; // Manage the vat option FACTURE_TVAOPTION
+		$this->option_codeproduitservice = 1; // Display product-service code
 
 		// Retrieves transmitter
 		$this->emetteur = $mysoc;
@@ -186,9 +186,9 @@ class pdf_ban extends ModeleBankAccountDoc
 				$pdf->SetTextColor(0, 0, 0);
 
 				$tab_top = 50;
-				$tab_height = 200;
 				$tab_top_newpage = 40;
-				$tab_height_newpage = 210;
+
+				$tab_height = $this->page_hauteur - $tab_top - $heightforfooter - $heightforfreetext;
 
 				// Affiche notes
 				if (!empty($object->note_public)) {

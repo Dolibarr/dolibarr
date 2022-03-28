@@ -2,7 +2,7 @@
 /* Module descriptor for ticket system
  * Copyright (C) 2013-2016  Jean-François FERRY     <hello@librethic.io>
  *               2016       Christophe Battarel     <christophe@altairis.fr>
- * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2021  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
  */
 
 /**
- *     \file        core/boxes/box_ticket_by_severity.php
+ *     \file        htdocs/core/boxes/box_graph_ticket_by_severity.php
  *     \ingroup     ticket
  *     \brief       This box shows open tickets by severity
  */
@@ -30,7 +30,6 @@ require_once DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php";
  */
 class box_graph_ticket_by_severity extends ModeleBoxes
 {
-
 	public $boxcode = "box_ticket_by_severity";
 	public $boximg = "ticket";
 	public $boxlabel;
@@ -168,16 +167,17 @@ class box_graph_ticket_by_severity extends ModeleBoxes
 				$mesg = $px1->isGraphKo();
 				$totalnb = 0;
 				if (!$mesg) {
-					$px1->SetDataColor(array_values($colorseriesstat));
+					//$px1->SetDataColor(array_values($colorseriesstat));
 					$data = array();
 					$legend = array();
 					foreach ($dataseries as $value) {
 						$data[] = array($value['label'], $value['data']);
 						$totalnb += $value['data'];
 					}
+
 					$px1->SetData($data);
-					$px1->setShowLegend(2);
-					$px1->SetType(array('pie'));
+					$px1->setShowLegend(0);
+					$px1->SetType(array('bars'));
 					$px1->SetLegend($legend);
 					$px1->SetMaxValue($px1->GetCeilMaxValue());
 					//$px1->SetHeight($HEIGHT);

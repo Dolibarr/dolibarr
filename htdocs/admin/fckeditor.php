@@ -47,6 +47,8 @@ if (!$user->admin) {
 
 // Constant and translation of the module description
 $modules = array(
+	'NOTE_PUBLIC' => 'FCKeditorForNotePublic',
+	'NOTE_PRIVATE' => 'FCKeditorForNotePrivate',
 	'SOCIETE' => 'FCKeditorForCompany',
 	'PRODUCTDESC' => 'FCKeditorForProduct',
 	'DETAILS' => 'FCKeditorForProductDetails',
@@ -54,11 +56,11 @@ $modules = array(
 	'MAILING' => 'FCKeditorForMailing',
 	'MAIL' => 'FCKeditorForMail',
 	'TICKET' => 'FCKeditorForTicket',
-	'NOTE_PUBLIC' => 'FCKeditorForNotePublic',
-	'NOTE_PRIVATE' => 'FCKeditorForNotePrivate',
 );
 // Conditions for the option to be offered
 $conditions = array(
+	'NOTE_PUBLIC' => 1,
+	'NOTE_PRIVATE' => 1,
 	'SOCIETE' => 1,
 	'PRODUCTDESC' => (!empty($conf->product->enabled) || !empty($conf->service->enabled)),
 	'DETAILS' => (!empty($conf->facture->enabled) || !empty($conf->propal->enabled) || !empty($conf->commande->enabled) || !empty($conf->supplier_proposal->enabled) || (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)),
@@ -66,11 +68,11 @@ $conditions = array(
 	'MAILING' => !empty($conf->mailing->enabled),
 	'MAIL' => (!empty($conf->facture->enabled) || !empty($conf->propal->enabled) || !empty($conf->commande->enabled)),
 	'TICKET' => !empty($conf->ticket->enabled),
-	'NOTE_PUBLIC' => 1,
-	'NOTE_PRIVATE' => 1,
 );
 // Picto
 $picto = array(
+	'NOTE_PUBLIC' => 'generic',
+	'NOTE_PRIVATE' => 'generic',
 	'SOCIETE' => 'generic',
 	'PRODUCTDESC' => 'product',
 	'DETAILS' => 'product',
@@ -78,8 +80,6 @@ $picto = array(
 	'MAILING' => 'email',
 	'MAIL' => 'email',
 	'TICKET' => 'ticket',
-	'NOTE_PUBLIC' => 'generic',
-	'NOTE_PRIVATE' => 'generic',
 );
 
 
@@ -117,7 +117,7 @@ if (GETPOST('save', 'alpha')) {
 		$error++;
 	}
 
-	$fckeditor_test = GETPOST('formtestfield');
+	$fckeditor_test = GETPOST('formtestfield', 'restricthtml');
 	if (!empty($fckeditor_test)) {
 		if (!dolibarr_set_const($db, 'FCKEDITOR_TEST', $fckeditor_test, 'chaine', 0, '', $conf->entity)) {
 			$error++;
@@ -159,11 +159,12 @@ if (empty($conf->use_javascript_ajax)) {
 			continue;
 		}
 
+		$constante = 'FCKEDITOR_ENABLE_'.$const;
+		print '<!-- constant = '.$constante.' -->'."\n";
 		print '<tr class="oddeven">';
 		print '<td width="16">'.img_object("", $picto[$const]).'</td>';
 		print '<td>'.$langs->trans($desc).'</td>';
 		print '<td class="center" width="100">';
-		$constante = 'FCKEDITOR_ENABLE_'.$const;
 		$value = (isset($conf->global->$constante) ? $conf->global->$constante : 0);
 		if ($value == 0) {
 			print '<a href="'.$_SERVER['PHP_SELF'].'?action=enable_'.strtolower($const).'&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
@@ -192,7 +193,7 @@ if (empty($conf->use_javascript_ajax)) {
 		if ($linkstomode) {
 			$linkstomode .= ' - ';
 		}
-		$linkstomode .= '<a href="'.$_SERVER["PHP_SELF"].'?mode='.$newmode.'">';
+		$linkstomode .= '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?mode='.$newmode.'">';
 		if ($mode == $newmode) {
 			$linkstomode .= '<strong>';
 		}
@@ -215,14 +216,14 @@ if (empty($conf->use_javascript_ajax)) {
 		print $conf->global->FCKEDITOR_TEST;
 		print '</div>';
 	}
-	print '<br><div class="center"><input class="button button-save" type="submit" name="save" value="'.$langs->trans("Save").'"></div>'."\n";
+	print $form->buttonsSaveCancel("Save", '');
 	print '<div id="divforlog"></div>';
 	print '</form>'."\n";
 
 	// Add env of ckeditor
 	// This is to show how CKEditor detect browser to understand why editor is disabled or not. To help debug.
 	/*
-		print '<br><script language="javascript">
+		print '<br><script type="text/javascript">
 		function jsdump(obj, id) {
 			var out = \'\';
 			for (var i in obj) {

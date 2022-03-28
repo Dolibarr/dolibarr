@@ -1,36 +1,39 @@
 # Dolibarr language file - Source file is en_US - resource
-MenuResourceIndex=Resources
-MenuResourceAdd=New resource
-DeleteResource=Delete resource
-ConfirmDeleteResourceElement=Confirm delete the resource for this element
-NoResourceInDatabase=No resource in database.
-NoResourceLinked=No resource linked
+MenuResourceIndex=Resurslar
+MenuResourceAdd=Yangi manba
+DeleteResource=Resursni o'chirish
+ConfirmDeleteResourceElement=Ushbu element uchun manbani o'chirishni tasdiqlang
+NoResourceInDatabase=Ma'lumotlar bazasida manba yo'q.
+NoResourceLinked=Hech qanday manbaga ulanmagan
+ActionsOnResource=Ushbu manbaga oid tadbirlar
+ResourcePageIndex=Resurslar ro'yxati
+ResourceSingular=Manba
+ResourceCard=Resurs kartasi
+AddResource=Resurs yarating
+ResourceFormLabel_ref=Resurs nomi
+ResourceType=Resurs turi
+ResourceFormLabel_description=Resurs tavsifi
 
-ResourcePageIndex=Resources list
-ResourceSingular=Resource
-ResourceCard=Resource card
-AddResource=Create a resource
-ResourceFormLabel_ref=Resource name
-ResourceType=Resource type
-ResourceFormLabel_description=Resource description
+ResourcesLinkedToElement=Element bilan bog'langan manbalar
 
-ResourcesLinkedToElement=Resources linked to element
+ShowResource=Resursni ko'rsatish
 
-ShowResource=Show resource
+ResourceElementPage=Element manbalari
+ResourceCreatedWithSuccess=Resurs muvaffaqiyatli yaratildi
+RessourceLineSuccessfullyDeleted=Resurs liniyasi muvaffaqiyatli o'chirildi
+RessourceLineSuccessfullyUpdated=Resurs liniyasi muvaffaqiyatli yangilandi
+ResourceLinkedWithSuccess=Resurs muvaffaqiyat bilan bog'liq
 
-ResourceElementPage=Element resources
-ResourceCreatedWithSuccess=Resource successfully created
-RessourceLineSuccessfullyDeleted=Resource line successfully deleted
-RessourceLineSuccessfullyUpdated=Resource line successfully updated
-ResourceLinkedWithSuccess=Resource linked with success
+ConfirmDeleteResource=Ushbu manbani o'chirishni tasdiqlang
+RessourceSuccessfullyDeleted=Resurs o'chirildi
+DictionaryResourceType=Resurslar turi
 
-ConfirmDeleteResource=Confirm to delete this resource
-RessourceSuccessfullyDeleted=Resource successfully deleted
-DictionaryResourceType=Type of resources
+SelectResource=Resursni tanlang
 
-SelectResource=Select resource
+IdResource=Id resursi
+AssetNumber=Ishlab chiqarish raqami
+ResourceTypeCode=Resurs turi kodi
+ImportDataset_resource_1=Resurslar
 
-IdResource=Id resource
-AssetNumber=Serial number
-ResourceTypeCode=Resource type code
-ImportDataset_resource_1=Resources
+ErrorResourcesAlreadyInUse=Ba'zi manbalardan foydalanilmoqda
+ErrorResourceUseInEvent=%s tadbirida ishlatiladigan %s

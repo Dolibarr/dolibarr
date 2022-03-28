@@ -3,6 +3,7 @@
  * Copyright (C) 2006-2019 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006-2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2018	   Ferran Marcet        <fmarcet@2byte.es>
+ * Copyright (C) 2021      Alexandre Spangaro   <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,12 +40,12 @@ $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOST('show_files', 'int');
 $confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
+$optioncss = GETPOST('optioncss', 'aZ09');
 
 $id = GETPOST('id', 'int');
 
 $search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 $search_categ = GETPOST("search_categ", 'alpha');
-$search_project = GETPOST('search_project');
 
 $search_projectstatus = GETPOST('search_projectstatus');
 if (!isset($search_projectstatus) || $search_projectstatus === '') {
@@ -61,22 +62,36 @@ $search_task_ref = GETPOST('search_task_ref');
 $search_task_label = GETPOST('search_task_label');
 $search_task_description = GETPOST('search_task_description');
 $search_task_ref_parent = GETPOST('search_task_ref_parent');
-$search_project_user = GETPOST('search_project_user');
-$search_task_user = GETPOST('search_task_user');
+$search_project_user = GETPOST('search_project_user', 'int');
+$search_task_user = GETPOST('search_task_user', 'int');
 $search_task_progress = GETPOST('search_task_progress');
+$search_task_budget_amount = GETPOST('search_task_budget_amount');
 $search_societe = GETPOST('search_societe');
+$search_opp_status = GETPOST("search_opp_status", 'alpha');
 
-$mine = $_REQUEST['mode'] == 'mine' ? 1 : 0;
+$mine = GETPOST('mode', 'alpha') == 'mine' ? 1 : 0;
 if ($mine) {
-	$search_task_user = $user->id; $mine = 0;
+	$search_task_user = $user->id;
+	$mine = 0;
 }
+$type = GETPOST('type');
 
-$search_sday	= GETPOST('search_sday', 'int');
-$search_smonth	= GETPOST('search_smonth', 'int');
-$search_syear	= GETPOST('search_syear', 'int');
-$search_eday	= GETPOST('search_eday', 'int');
-$search_emonth	= GETPOST('search_emonth', 'int');
-$search_eyear	= GETPOST('search_eyear', 'int');
+$search_date_startday = GETPOST('search_date_startday', 'int');
+$search_date_startmonth = GETPOST('search_date_startmonth', 'int');
+$search_date_startyear = GETPOST('search_date_startyear', 'int');
+$search_date_endday = GETPOST('search_date_endday', 'int');
+$search_date_endmonth = GETPOST('search_date_endmonth', 'int');
+$search_date_endyear = GETPOST('search_date_endyear', 'int');
+$search_date_start = dol_mktime(0, 0, 0, $search_date_startmonth, $search_date_startday, $search_date_startyear);	// Use tzserver
+$search_date_end = dol_mktime(23, 59, 59, $search_date_endmonth, $search_date_endday, $search_date_endyear);
+$search_datelimit_startday = GETPOST('search_datelimit_startday', 'int');
+$search_datelimit_startmonth = GETPOST('search_datelimit_startmonth', 'int');
+$search_datelimit_startyear = GETPOST('search_datelimit_startyear', 'int');
+$search_datelimit_endday = GETPOST('search_datelimit_endday', 'int');
+$search_datelimit_endmonth = GETPOST('search_datelimit_endmonth', 'int');
+$search_datelimit_endyear = GETPOST('search_datelimit_endyear', 'int');
+$search_datelimit_start = dol_mktime(0, 0, 0, $search_datelimit_startmonth, $search_datelimit_startday, $search_datelimit_startyear);
+$search_datelimit_end = dol_mktime(23, 59, 59, $search_datelimit_endmonth, $search_datelimit_endday, $search_datelimit_endyear);
 
 // Initialize context for list
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'tasklist';
@@ -100,8 +115,8 @@ if (!$user->rights->projet->lire) {
 $diroutputmassaction = $conf->projet->dir_output.'/tasks/temp/massgeneration/'.$user->id;
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -143,6 +158,7 @@ $arrayfields = array(
 	't.progress_calculated'=>array('label'=>"ProgressCalculated", 'checked'=>1, 'position'=>104),
 	't.progress'=>array('label'=>"ProgressDeclared", 'checked'=>1, 'position'=>105),
 	't.progress_summary'=>array('label'=>"TaskProgressSummary", 'checked'=>1, 'position'=>106),
+	't.budget_amount'=>array('label'=>"Budget", 'checked'=>1, 'position'=>107),
 	't.tobill'=>array('label'=>"TimeToBill", 'checked'=>0, 'position'=>110),
 	't.billed'=>array('label'=>"TimeBilled", 'checked'=>0, 'position'=>111),
 	't.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
@@ -181,7 +197,6 @@ if (empty($reshook)) {
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
 		$search_all = "";
 		$search_categ = "";
-		$search_project = "";
 		$search_projectstatus = -1;
 		$search_project_ref = "";
 		$search_project_title = "";
@@ -190,14 +205,25 @@ if (empty($reshook)) {
 		$search_task_description = "";
 		$search_task_ref_parent = "";
 		$search_task_progress = "";
+		$search_task_budget_amount = "";
 		$search_task_user = -1;
 		$search_project_user = -1;
-		$search_sday = '';
-		$search_smonth = '';
-		$search_syear = '';
-		$search_eday = '';
-		$search_emonth = '';
-		$search_eyear = '';
+		$search_date_startday = '';
+		$search_date_startmonth = '';
+		$search_date_startyear = '';
+		$search_date_endday = '';
+		$search_date_endmonth = '';
+		$search_date_endyear = '';
+		$search_date_start = '';
+		$search_date_end = '';
+		$search_datelimit_startday = '';
+		$search_datelimit_startmonth = '';
+		$search_datelimit_startyear = '';
+		$search_datelimit_endday = '';
+		$search_datelimit_endmonth = '';
+		$search_datelimit_endyear = '';
+		$search_datelimit_start = '';
+		$search_datelimit_end = '';
 		$toselect = '';
 		$search_array_options = array();
 	}
@@ -250,7 +276,7 @@ if ($id) {
 }
 
 // Get list of project id allowed to user (in a string list separated by coma)
-if (!$user->rights->projet->all->lire) {
+if (empty($user->rights->projet->all->lire)) {
 	$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1, $socid);
 }
 //var_dump($projectsListId);
@@ -294,6 +320,7 @@ $sql .= " s.nom as name, s.rowid as socid,";
 $sql .= " t.datec as date_creation, t.dateo as date_start, t.datee as date_end, t.tms as date_update,";
 $sql .= " t.rowid as id, t.ref, t.label, t.planned_workload, t.duration_effective, t.progress, t.fk_statut, ";
 $sql .= " t.description, t.fk_task_parent";
+$sql .= " ,t.budget_amount";
 // We'll need these fields in order to filter by categ
 if ($search_categ) {
 	$sql .= ", cs.fk_categorie, cs.fk_project";
@@ -305,7 +332,7 @@ if (!empty($arrayfields['t.tobill']['checked']) || !empty($arrayfields['t.billed
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
 	}
 }
 // Add fields from hooks
@@ -322,7 +349,7 @@ $sql .= ", ".MAIN_DB_PREFIX."projet_task as t";
 if (!empty($arrayfields['t.tobill']['checked']) || !empty($arrayfields['t.billed']['checked'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task_time as tt ON tt.fk_task = t.rowid";
 }
-if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
+if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (t.rowid = ef.fk_object)";
 }
 if ($search_project_user > 0) {
@@ -333,7 +360,7 @@ if ($search_task_user > 0) {
 }
 $sql .= " WHERE t.fk_projet = p.rowid";
 $sql .= " AND p.entity IN (".getEntity('project').')';
-if (!$user->rights->projet->all->lire) {
+if (empty($user->rights->projet->all->lire)) {
 	$sql .= " AND p.rowid IN (".$db->sanitize($projectsListId ? $projectsListId : '0').")"; // public and assigned to projects, or restricted to company for external users
 }
 if (is_object($projectstatic) && $projectstatic->id > 0) {
@@ -370,11 +397,24 @@ if ($search_task_ref_parent) {
 if ($search_task_progress) {
 	$sql .= natural_search('t.progress', $search_task_progress, 1);
 }
+if ($search_task_budget_amount) {
+	$sql .= natural_search('t.budget_amount', $search_task_budget_amount, 1);
+}
 if ($search_societe) {
 	$sql .= natural_search('s.nom', $search_societe);
 }
-$sql .= dolSqlDateFilter('t.dateo', $search_sday, $search_smonth, $search_syear);
-$sql .= dolSqlDateFilter('t.datee', $search_eday, $search_emonth, $search_eyear);
+if ($search_date_start) {
+	$sql .= " AND t.dateo >= '".$db->idate($search_date_start)."'";
+}
+if ($search_date_end) {
+	$sql .= " AND t.dateo <= '".$db->idate($search_date_end)."'";
+}
+if ($search_datelimit_start) {
+	$sql .= " AND t.datee >= '".$db->idate($search_datelimit_start)."'";
+}
+if ($search_datelimit_end) {
+	$sql .= " AND t.datee <= '".$db->idate($search_datelimit_end)."'";
+}
 if ($search_all) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 }
@@ -382,17 +422,14 @@ if ($search_projectstatus >= 0) {
 	if ($search_projectstatus == 99) {
 		$sql .= " AND p.fk_statut <> 2";
 	} else {
-		$sql .= " AND p.fk_statut = ".$db->escape($search_projectstatus);
+		$sql .= " AND p.fk_statut = ".((int) $search_projectstatus);
 	}
 }
-if ($search_public != '') {
-	$sql .= " AND p.public = ".$db->escape($search_public);
-}
 if ($search_project_user > 0) {
-	$sql .= " AND ecp.fk_c_type_contact IN (".$db->sanitize(join(',', array_keys($listofprojectcontacttype))).") AND ecp.element_id = p.rowid AND ecp.fk_socpeople = ".$search_project_user;
+	$sql .= " AND ecp.fk_c_type_contact IN (".$db->sanitize(join(',', array_keys($listofprojectcontacttype))).") AND ecp.element_id = p.rowid AND ecp.fk_socpeople = ".((int) $search_project_user);
 }
 if ($search_task_user > 0) {
-	$sql .= " AND ect.fk_c_type_contact IN (".$db->sanitize(join(',', array_keys($listoftaskcontacttype))).") AND ect.element_id = t.rowid AND ect.fk_socpeople = ".$search_task_user;
+	$sql .= " AND ect.fk_c_type_contact IN (".$db->sanitize(join(',', array_keys($listoftaskcontacttype))).") AND ect.element_id = t.rowid AND ect.fk_socpeople = ".((int) $search_task_user);
 }
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
@@ -404,7 +441,7 @@ if (!empty($arrayfields['t.tobill']['checked']) || !empty($arrayfields['t.billed
 	$sql .= " GROUP BY p.rowid, p.ref, p.title, p.fk_statut, p.datee, p.fk_opp_status, p.public, p.fk_user_creat,";
 	$sql .= " s.nom, s.rowid,";
 	$sql .= " t.datec, t.dateo, t.datee, t.tms,";
-	$sql .= " t.rowid, t.ref, t.label, t.planned_workload, t.duration_effective, t.progress, t.fk_statut";
+	$sql .= " t.rowid, t.ref, t.label, t.planned_workload, t.duration_effective, t.progress,t.budget_amount, t.fk_statut";
 	if ($search_categ) {
 		$sql .= ", cs.fk_categorie, cs.fk_project";
 	}
@@ -458,23 +495,44 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 if ($limit > 0 && $limit != $conf->liste_limit) {
 	$param .= '&limit='.urlencode($limit);
 }
-if ($search_sday) {
-	$param .= '&search_sday='.urlencode($search_sday);
+if ($search_date_startday) {
+	$param .= '&search_date_startday='.urlencode($search_date_startday);
 }
-if ($search_smonth) {
-	$param .= '&search_smonth='.urlencode($search_smonth);
+if ($search_date_startmonth) {
+	$param .= '&search_date_startmonth='.urlencode($search_date_startmonth);
 }
-if ($search_syear) {
-	$param .= '&search_syear='.urlencode($search_syear);
+if ($search_date_startyear) {
+	$param .= '&search_date_startyear='.urlencode($search_date_startyear);
 }
-if ($search_eday) {
-	$param .= '&search_eday='.urlencode($search_eday);
+if ($search_date_endday) {
+	$param .= '&search_date_endday='.urlencode($search_date_endday);
 }
-if ($search_emonth) {
-	$param .= '&search_emonth='.urlencode($search_emonth);
+if ($search_date_endmonth) {
+	$param .= '&search_date_endmonth='.urlencode($search_date_endmonth);
 }
-if ($search_eyear) {
-	$param .= '&search_eyear='.urlencode($search_eyear);
+if ($search_date_endyear) {
+	$param .= '&search_date_endyear='.urlencode($search_date_endyear);
+}
+if ($search_datelimit_startday)	{
+	$param .= '&search_datelimit_startday='.urlencode($search_datelimit_startday);
+}
+if ($search_datelimit_startmonth) {
+	$param .= '&search_datelimit_startmonth='.urlencode($search_datelimit_startmonth);
+}
+if ($search_datelimit_startyear) {
+	$param .= '&search_datelimit_startyear='.urlencode($search_datelimit_startyear);
+}
+if ($search_datelimit_endday) {
+	$param .= '&search_datelimit_endday='.urlencode($search_datelimit_endday);
+}
+if ($search_datelimit_endmonth) {
+	$param .= '&search_datelimit_endmonth='.urlencode($search_datelimit_endmonth);
+}
+if ($search_datelimit_endyear) {
+	$param .= '&search_datelimit_endyear='.urlencode($search_datelimit_endyear);
+}
+if ($search_task_budget_amount) {
+	$param .= '&search_task_budget_amount='.urlencode($search_task_budget_amount);
 }
 if ($socid) {
 	$param .= '&socid='.urlencode($socid);
@@ -489,13 +547,13 @@ if ($search_project_title != '') {
 	$param .= '&search_project_title='.urlencode($search_project_title);
 }
 if ($search_task_ref != '') {
-	$param .= '&search_task_ref='.urlencode($search_ref);
+	$param .= '&search_task_ref='.urlencode($search_task_ref);
 }
 if ($search_task_label != '') {
-	$param .= '&search_task_label='.urlencode($search_label);
+	$param .= '&search_task_label='.urlencode($search_task_label);
 }
 if ($search_task_description != '') {
-	$param .= '&search_task_description='.urlencode($search_description);
+	$param .= '&search_task_description='.urlencode($search_task_description);
 }
 if ($search_task_ref_parent != '') {
 	$param .= '&search_task_ref_parent='.urlencode($search_task_ref_parent);
@@ -511,9 +569,6 @@ if ($search_projectstatus != '') {
 }
 if ((is_numeric($search_opp_status) && $search_opp_status >= 0) || in_array($search_opp_status, array('all', 'none'))) {
 	$param .= '&search_opp_status='.urlencode($search_opp_status);
-}
-if ($search_public != '') {
-	$param .= '&search_public='.urlencode($search_public);
 }
 if ($search_project_user != '') {
 	$param .= '&search_project_user='.urlencode($search_project_user);
@@ -552,7 +607,9 @@ print '<input type="hidden" name="action" value="list">';
 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-print '<input type="hidden" name="type" value="'.$type.'">';
+if (!empty($type)) {
+	print '<input type="hidden" name="type" value="'.$type.'">';
+}
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 // Show description of content
@@ -582,7 +639,7 @@ if ($search_all) {
 	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).join(', ', $fieldstosearchall).'</div>';
 }
 
-$morehtmlfilter = '';
+$moreforfilter = '';
 
 // Filter on categories
 if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire) {
@@ -653,22 +710,26 @@ if (!empty($arrayfields['t.description']['checked'])) {
 }
 // Start date
 if (!empty($arrayfields['t.dateo']['checked'])) {
-	print '<td class="liste_titre center minwidth150">';
-	if (!empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) {
-		print '<input class="flat" type="text" size="1" maxlength="2" name="search_sday" value="'.$search_sday.'">';
-	}
-	print '<input class="flat" type="text" size="1" maxlength="2" name="search_smonth" value="'.$search_smonth.'">';
-	print $formother->selectyear($search_syear ? $search_syear : -1, 'search_syear', 1, 20, 5, 0, 0, '', 'valignmiddle width75', 1);
+	print '<td class="liste_titre center">';
+	print '<div class="nowrap">';
+	print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+	print '</div>';
+	print '<div class="nowrap">';
+	print $form->selectDate($search_date_end ? $search_date_end : -1, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+	print '</div>';
 	print '</td>';
 }
 // End date
 if (!empty($arrayfields['t.datee']['checked'])) {
-	print '<td class="liste_titre center minwidth150">';
-	if (!empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) {
-		print '<input class="flat" type="text" size="1" maxlength="2" name="search_eday" value="'.$search_eday.'">';
-	}
-	print '<input class="flat" type="text" size="1" maxlength="2" name="search_emonth" value="'.$search_emonth.'">';
-	print $formother->selectyear($search_eyear ? $search_eyear : -1, 'search_eyear', 1, 20, 5, 0, 0, '', 'valignmiddle width75', 1);
+	print '<td class="liste_titre center">';
+	print '<div class="nowrap">';
+	print $form->selectDate($search_datelimit_start ? $search_datelimit_start : -1, 'search_datelimit_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+	print '</div>';
+	print '<div class="nowrap">';
+	print $form->selectDate($search_datelimit_end ? $search_datelimit_end : -1, 'search_datelimit_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+	// TODO Add option late
+	//print '<br><input type="checkbox" name="search_option" value="late"'.($option == 'late' ? ' checked' : '').'> '.$langs->trans("Alert");
+	print '</div>';
 	print '</td>';
 }
 if (!empty($arrayfields['p.ref']['checked'])) {
@@ -714,6 +775,13 @@ if (!empty($arrayfields['t.progress']['checked'])) {
 if (!empty($arrayfields['t.progress_summary']['checked'])) {
 	print '<td class="liste_titre"></td>';
 }
+
+if (!empty($arrayfields['t.budget_amount']['checked'])) {
+	print '<td class="liste_titre center">';
+	print '<input type="text" class="flat" name="search_task_budget_amount" value="'.$search_task_budget_amount.'" size="4">';
+	print '</td>';
+}
+
 if (!empty($arrayfields['t.tobill']['checked'])) {
 	print '<td class="liste_titre"></td>';
 }
@@ -789,16 +857,43 @@ if (!empty($arrayfields['t.progress']['checked'])) {
 if (!empty($arrayfields['t.progress_summary']['checked'])) {
 	print_liste_field_titre($arrayfields['t.progress_summary']['label'], $_SERVER["PHP_SELF"], "t.progress", "", $param, '', $sortfield, $sortorder, 'center ');
 }
+if (!empty($arrayfields['t.budget_amount']['checked'])) {
+	print_liste_field_titre($arrayfields['t.budget_amount']['label'], $_SERVER["PHP_SELF"], "t.budget_amount", "", $param, '', $sortfield, $sortorder, 'center ');
+}
 if (!empty($arrayfields['t.tobill']['checked'])) {
 	print_liste_field_titre($arrayfields['t.tobill']['label'], $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'center ');
 }
 if (!empty($arrayfields['t.billed']['checked'])) {
 	print_liste_field_titre($arrayfields['t.billed']['label'], $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'center ');
 }
+$totalarray = array(
+	'nbfield' => 0,
+	'val' => array(
+		't.planned_workload' => 0,
+		't.duration_effective' => 0,
+		't.progress' => 0,
+		't.budget_amount' => 0,
+	),
+	'totalplannedworkload' => 0,
+	'totaldurationeffective' => 0,
+	'totaldurationdeclared' => 0,
+	'totaltobillfield' => 0,
+	'totalbilledfield' => 0,
+	'totalbudget_amountfield' => 0,
+	'totalbudgetamount' => 0,
+	'totaltobill' => 0,
+	'totalbilled' => 0,
+);
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
-$parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
+$parameters = array(
+	'arrayfields' => $arrayfields,
+	'param' => $param,
+	'sortfield' => $sortfield,
+	'sortorder' => $sortorder,
+	'totalarray' => &$totalarray,
+);
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 if (!empty($arrayfields['t.datec']['checked'])) {
@@ -821,7 +916,6 @@ if (!empty($conf->global->PROJECT_TIMES_SPENT_FORMAT)) {
 }
 
 $i = 0;
-$totalarray = array();
 while ($i < min($num, $limit)) {
 	$obj = $db->fetch_object($resql);
 
@@ -831,6 +925,7 @@ while ($i < min($num, $limit)) {
 	$object->description = $obj->description;
 	$object->fk_statut = $obj->fk_statut;
 	$object->progress = $obj->progress;
+	$object->budget_amount = $obj->budget_amount;
 	$object->date_start = $db->jdate($obj->date_start);
 	$object->date_end = $db->jdate($obj->date_end);
 	$object->planned_workload = $obj->planned_workload;
@@ -883,8 +978,8 @@ while ($i < min($num, $limit)) {
 		}
 		// Label
 		if (!empty($arrayfields['t.label']['checked'])) {
-			print '<td>';
-			print $object->label;
+			print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($object->label).'">';
+			print dol_escape_htmltag($object->label);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -893,7 +988,7 @@ while ($i < min($num, $limit)) {
 		// Description
 		if (!empty($arrayfields['t.description']['checked'])) {
 			print '<td>';
-			print $object->description;
+			print dol_escape_htmltag($object->description);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1070,6 +1165,22 @@ while ($i < min($num, $limit)) {
 				$totalarray['totalprogress_summary'] = $totalarray['nbfield'];
 			}
 		}
+		if (!empty($arrayfields['t.budget_amount']['checked'])) {
+			print '<td class="center">';
+			print price($object->budget_amount, 0, $langs, 1, 0, 0, $conf->currency);
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+			if (!$i) {
+				$totalarray['pos'][$totalarray['nbfield']] = 't.budget_amount';
+			}
+			$totalarray['val']['t.budget_amount'] += $obj->budget_amount;
+			if (!$i) {
+				$totalarray['totalbudget_amountfield'] = $totalarray['nbfield'];
+			}
+			$totalarray['totalbudgetamount'] += $obj->budget_amount;
+			print '</td>';
+		}
 		// Time not billed
 		if (!empty($arrayfields['t.tobill']['checked'])) {
 			print '<td class="center">';
@@ -1186,6 +1297,8 @@ if (isset($totalarray['totaldurationeffectivefield']) || isset($totalarray['tota
 			print '<td class="center">'.convertSecondToTime($totalarray['totaltobill'], $plannedworkloadoutputformat).'</td>';
 		} elseif ($totalarray['totalbilledfield'] == $i) {
 			print '<td class="center">'.convertSecondToTime($totalarray['totalbilled'], $plannedworkloadoutputformat).'</td>';
+		} elseif ($totalarray['totalbudget_amountfield'] == $i) {
+			print '<td class="center">'.price($totalarray['totalbudgetamount'], 0, $langs, 1, 0, 0, $conf->currency).'</td>';
 		} else {
 			print '<td></td>';
 		}

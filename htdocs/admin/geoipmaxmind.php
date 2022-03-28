@@ -107,7 +107,7 @@ print '<input type="hidden" name="action" value="set">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td>';
-print '<td class="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+print '<td class="right"><input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'"></td>';
 print "</tr>\n";
 
 // Lib version
@@ -132,7 +132,7 @@ print '<td colspan="2">';
 if ($conf->global->GEOIP_VERSION == 'php') {
 	print 'Using geoip PHP internal functions. Value must be '.geoip_db_filename(GEOIP_COUNTRY_EDITION).' or '.geoip_db_filename(GEOIP_CITY_EDITION_REV1).' or /pathtodatafile/GeoLite2-Country.mmdb<br>';
 }
-print '<input size="50" type="text" name="GEOIPMAXMIND_COUNTRY_DATAFILE" value="'.dol_escape_htmltag($conf->global->GEOIPMAXMIND_COUNTRY_DATAFILE).'">';
+print '<input type="text" class="minwidth200" name="GEOIPMAXMIND_COUNTRY_DATAFILE" value="'.dol_escape_htmltag($conf->global->GEOIPMAXMIND_COUNTRY_DATAFILE).'">';
 print '</td></tr>';
 
 print '</table>';
@@ -144,12 +144,12 @@ print '<br>';
 print $langs->trans("NoteOnPathLocation").'<br>';
 
 $url1 = 'http://www.maxmind.com/en/city?rId=awstats';
-print $langs->trans("YouCanDownloadFreeDatFileTo", '<a href="'.$url1.'" target="_blank">'.$url1.'</a>');
+print $langs->trans("YouCanDownloadFreeDatFileTo", '<a href="'.$url1.'" target="_blank" rel="noopener noreferrer external">'.$url1.'</a>');
 
 print '<br>';
 
 $url2 = 'http://www.maxmind.com/en/city?rId=awstats';
-print $langs->trans("YouCanDownloadAdvancedDatFileTo", '<a href="'.$url2.'" target="_blank">'.$url2.'</a>');
+print $langs->trans("YouCanDownloadAdvancedDatFileTo", '<a href="'.$url2.'" target="_blank" rel="noopener noreferrer external">'.$url2.'</a>');
 
 if ($geoip) {
 	print '<br><br>';

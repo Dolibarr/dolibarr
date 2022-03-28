@@ -44,13 +44,6 @@ $confirm = GETPOST('confirm', 'alpha');
 
 $childids = $user->getAllChildIds(1);
 
-// Security check
-if ($user->socid) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'expensereport', $id, 'expensereport');
-
-
 // Get parameters
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -81,6 +74,12 @@ $modulepart = 'trip';
 // Load object
 //include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
 
+// Security check
+if ($user->socid) {
+	$socid = $user->socid;
+}
+$result = restrictedArea($user, 'expensereport', $id, 'expensereport');
+
 if ($object->id > 0) {
 	// Check current user can read this expense report
 	$canread = 0;
@@ -94,6 +93,8 @@ if ($object->id > 0) {
 		accessforbidden();
 	}
 }
+
+$permissiontoadd = $user->rights->expensereport->creer;	// Used by the include of actions_dellink.inc.php
 
 
 /*
@@ -110,8 +111,9 @@ include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 $form = new Form($db);
 
 $title = $langs->trans("ExpenseReport")." - ".$langs->trans("Documents");
-$helpurl = "EN:Module_Expense_Reports";
-llxHeader("", $title, $helpurl);
+$help_url = "EN:Module_Expense_Reports|FR:Module_Notes_de_frais";
+
+llxHeader("", $title, $help_url);
 
 if ($object->id) {
 	$object->fetch_thirdparty();
@@ -153,7 +155,7 @@ if ($object->id) {
 
 
 	$modulepart = 'expensereport';
-	$permission = $user->rights->expensereport->creer;
+	$permissiontoadd = $user->rights->expensereport->creer;
 	$permtoedit = $user->rights->expensereport->creer;
 	$param = '&id='.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';

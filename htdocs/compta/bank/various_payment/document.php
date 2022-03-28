@@ -69,6 +69,9 @@ $object->fetch($id, $ref);
 $upload_dir = $conf->bank->dir_output.'/'.dol_sanitizeFileName($object->id);
 $modulepart = 'banque';
 
+$permissiontoadd = $user->rights->banque->modifier;	// Used by the include of actions_dellink.inc.php
+
+
 
 /*
  * Actions
@@ -99,7 +102,7 @@ if ($object->id) {
 		$morehtmlref .= $langs->trans('Project').' : ';
 		if ($user->rights->banque->modifier && 0) {
 			if ($action != 'classify') {
-				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
+				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
 			}
 			if ($action == 'classify') {
 				//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
@@ -150,7 +153,7 @@ if ($object->id) {
 	print dol_get_fiche_end();
 
 	$modulepart = 'banque';
-	$permission = $user->rights->banque->modifier;
+	$permissiontoadd = $user->rights->banque->modifier;
 	$param = '&id='.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 } else {

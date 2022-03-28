@@ -35,7 +35,7 @@ $toselect = GETPOST('toselect', 'array');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'bookmarklist'; // To manage different context of search
 
 // Security check
-if (!$user->rights->bookmark->lire) {
+if (empty($user->rights->bookmark->lire)) {
 	restrictedArea($user, 'bookmarks');
 }
 $optioncss = GETPOST('optioncss', 'alpha');
@@ -62,9 +62,9 @@ $id = GETPOST("id", 'int');
 
 $object = new Bookmark($db);
 
-$permissiontoread = $user->rights->bookmark->lire;
-$permissiontoadd = $user->rights->bookmark->write;
-$permissiontodelete = $user->rights->bookmark->delete;
+$permissiontoread = !empty($user->rights->bookmark->lire);
+$permissiontoadd = !empty($user->rights->bookmark->creer);
+$permissiontodelete = !empty($user->rights->bookmark->supprimer);
 
 
 /*
@@ -86,7 +86,7 @@ if ($action == 'delete') {
  * View
  */
 
-$userstatic = new User($db);
+$form = new Form($db);
 
 $title = $langs->trans("ListOfBookmarks");
 
@@ -98,7 +98,7 @@ $sql .= " FROM ".MAIN_DB_PREFIX."bookmark as b LEFT JOIN ".MAIN_DB_PREFIX."user 
 $sql .= " WHERE 1=1";
 $sql .= " AND b.entity IN (".getEntity('bookmark').")";
 if (!$user->admin) {
-	$sql .= " AND (b.fk_user = ".$user->id." OR b.fk_user is NULL OR b.fk_user = 0)";
+	$sql .= " AND (b.fk_user = ".((int) $user->id)." OR b.fk_user is NULL OR b.fk_user = 0)";
 }
 
 $sql .= $db->order($sortfield.", position", $sortorder);
@@ -143,13 +143,13 @@ $moreforfilter = '';
 
 // List of mass actions available
 $arrayofmassactions = array(
-	//'validate'=>$langs->trans("Validate"),
-	//'generate_doc'=>$langs->trans("ReGeneratePDF"),
-	//'builddoc'=>$langs->trans("PDFMerge"),
-	//'presend'=>$langs->trans("SendByMail"),
+	//'validate'=>img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Validate"),
+	//'generate_doc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("ReGeneratePDF"),
+	//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
+	//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 );
 if ($permissiontodelete) {
-	$arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
+	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
 if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete'))) {
 	$arrayofmassactions = array();
@@ -175,13 +175,13 @@ print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sort
 print '<div class="div-table-responsive">';
 print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
-print "<tr class=\"liste_titre\">";
+print '<tr class="liste_titre">';
 //print "<td>&nbsp;</td>";
 print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "b.rowid", "", $param, 'align="left"', $sortfield, $sortorder);
 print_liste_field_titre("Title", $_SERVER["PHP_SELF"], "b.title", "", $param, 'align="left"', $sortfield, $sortorder);
 print_liste_field_titre("Link", $_SERVER["PHP_SELF"], "b.url", "", $param, 'align="left"', $sortfield, $sortorder);
 print_liste_field_titre("Target", '', '', '', '', 'align="center"');
-print_liste_field_titre("Owner", $_SERVER["PHP_SELF"], "u.lastname", "", $param, 'align="center"', $sortfield, $sortorder);
+print_liste_field_titre("Visibility", $_SERVER["PHP_SELF"], "u.lastname", "", $param, 'align="center"', $sortfield, $sortorder);
 print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "b.dateb", "", $param, 'align="center"', $sortfield, $sortorder);
 print_liste_field_titre("Position", $_SERVER["PHP_SELF"], "b.position", "", $param, 'class="right"', $sortfield, $sortorder);
 print_liste_field_titre('');
@@ -199,13 +199,15 @@ while ($i < min($num, $limit)) {
 	print '<tr class="oddeven">';
 
 	// Id
-	print '<td class="left">';
+	print '<td class="nowraponall">';
 	print $object->getNomUrl(1);
 	print '</td>';
 
 	$linkintern = 0;
-	$title = $obj->title;
-	$link = $obj->url;
+	$title      = $obj->title;
+	$link       = $obj->url;
+	$canedit    = $user->rights->bookmark->supprimer;
+	$candelete  = $user->rights->bookmark->creer;
 
 	// Title
 	print "<td>";
@@ -251,7 +253,11 @@ while ($i < min($num, $limit)) {
 		$tmpuser = $cacheOfUsers[$obj->fk_user];
 		print $tmpuser->getNomUrl(1);
 	} else {
-		print $langs->trans("Public");
+		print '<span class="opacitymedium">'.$langs->trans("Everybody").'</span>';
+		if (!$user->admin) {
+			$candelete = false;
+			$canedit = false;
+		}
 	}
 	print "</td>\n";
 
@@ -262,14 +268,12 @@ while ($i < min($num, $limit)) {
 	print '<td class="right">'.$obj->position."</td>";
 
 	// Actions
-	print '<td class="nowrap right">';
-	if ($user->rights->bookmark->creer) {
-		print '<a class="editfielda" href="'.DOL_URL_ROOT.'/bookmarks/card.php?action=edit&token='.newToken().'&id='.$obj->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"]).'">'.img_edit()."</a>";
+	print '<td class="nowraponall right">';
+	if ($canedit) {
+		print '<a class="editfielda marginleftonly" href="'.DOL_URL_ROOT.'/bookmarks/card.php?action=edit&token='.newToken().'&id='.$obj->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"]).'">'.img_edit()."</a>";
 	}
-	if ($user->rights->bookmark->supprimer) {
+	if ($candelete) {
 		print '<a class="marginleftonly" href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$obj->rowid.'">'.img_delete().'</a>';
-	} else {
-		print "&nbsp;";
 	}
 	print "</td>";
 	print "</tr>\n";

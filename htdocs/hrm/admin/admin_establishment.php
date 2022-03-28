@@ -21,7 +21,7 @@
  * \brief 	HRM Establishment module setup page
  */
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/hrm.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/hrm/lib/hrm.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/hrm/class/establishment.class.php';
 
 // Load translation files required by the page
@@ -55,11 +55,13 @@ if (empty($permissiontoread)) accessforbidden();
 $form = new Form($db);
 $establishmenttmp = new Establishment($db);
 
-llxHeader('', $langs->trans("Establishments"));
+$title = $langs->trans('Establishments');
+
+llxHeader('', $title, '');
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$sortorder     = GETPOST("sortorder", 'alpha');
-$sortfield     = GETPOST("sortfield", 'alpha');
+$sortorder     = GETPOST('sortorder', 'aZ09comma');
+$sortfield     = GETPOST('sortfield', 'aZ09comma');
 if (!$sortorder) {
 	$sortorder = "DESC";
 }
@@ -78,12 +80,12 @@ $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 
 // Subheader
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
-print load_fiche_titre($langs->trans("HRMSetup"), $linkback);
+print load_fiche_titre($langs->trans("HRMSetup"), $linkback, 'title_setup');
 
 $newcardbutton = dolGetButtonTitle($langs->trans('NewEstablishment'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/hrm/establishment/card.php?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $permissiontoadd);
 
 // Configuration header
-$head = hrm_admin_prepare_head();
+$head = hrmAdminPrepareHead();
 print dol_get_fiche_head($head, 'establishments', $langs->trans("HRM"), -1, "user", 0, $newcardbutton);
 
 $sql = "SELECT e.rowid, e.rowid as ref, e.label, e.address, e.zip, e.town, e.status";
@@ -97,7 +99,6 @@ if ($result) {
 	$num = $db->num_rows($result);
 	$i = 0;
 
-	// Load attribute_label
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "e.ref", "", "", "", $sortfield, $sortorder);

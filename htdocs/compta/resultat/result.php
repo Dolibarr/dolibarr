@@ -334,7 +334,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 
 				//var_dump($result);
 				//$r = $AccCat->calculate($result);
-				$r = dol_eval($result, 1);
+				$r = dol_eval($result, 1, 1, '1');
 				//var_dump($r);
 
 				print '<td class="liste_total right"><span class="amount">'.price($r).'</span></td>';
@@ -353,7 +353,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 				$result = strtr($formula, $vars);
 
 				//$r = $AccCat->calculate($result);
-				$r = dol_eval($result, 1);
+				$r = dol_eval($result, 1, 1, 1);
 
 				print '<td class="liste_total right"><span class="amount">'.price($r).'</span></td>';
 				$sommes[$code]['N'] += $r;
@@ -367,7 +367,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 						$result = strtr($formula, $vars);
 
 						//$r = $AccCat->calculate($result);
-						$r = dol_eval($result, 1);
+						$r = dol_eval($result, 1, 1, 1);
 
 						print '<td class="liste_total right"><span class="amount">'.price($r).'</span></td>';
 						$sommes[$code]['M'][$k] += $r;
@@ -381,7 +381,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 						$result = strtr($formula, $vars);
 
 						//$r = $AccCat->calculate($result);
-						$r = dol_eval($result, 1);
+						$r = dol_eval($result, 1, 1, 1);
 
 						print '<td class="liste_total right"><span class="amount">'.price($r).'</span></td>';
 						$sommes[$code]['M'][$k] += $r;
@@ -506,12 +506,12 @@ if ($modecompta == 'CREANCES-DETTES') {
 				// Each month
 				foreach ($totCat['M'] as $k => $v) {
 					if (($k + 1) >= $date_startmonth) {
-						print '<td class="right"><span class="amount">'.price($v).'</span></td>';
+						print '<td class="right nowraponall"><span class="amount">'.price($v).'</span></td>';
 					}
 				}
 				foreach ($totCat['M'] as $k => $v) {
 					if (($k + 1) < $date_startmonth) {
-						print '<td class="right"><span class="amount">'.price($v).'</span></td>';
+						print '<td class="right nowraponall"><span class="amount">'.price($v).'</span></td>';
 					}
 				}
 
@@ -538,7 +538,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 							foreach ($months as $k => $v) {
 								if (($k + 1) >= $date_startmonth) {
 									$resultM = $totPerAccount[$cpt['account_number']]['M'][$k];
-									print '<td class="right"><span class="amount">'.price($resultM).'</span>/td>';
+									print '<td class="right"><span class="amount">'.price($resultM).'</span></td>';
 								}
 							}
 							foreach ($months as $k => $v) {

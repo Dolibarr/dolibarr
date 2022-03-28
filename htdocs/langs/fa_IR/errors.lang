@@ -4,13 +4,14 @@
 NoErrorCommitIsDone=خطائی نیست، حرکت می‌کنیم
 # Errors
 ErrorButCommitIsDone=علیرغم وجود خطا، تائید می‌شود
-ErrorBadEMail=رایانامۀ %s غلط است
-ErrorBadMXDomain=Email %s seems wrong (domain has no valid MX record)
-ErrorBadUrl=نشانی‌اینترنتی %s اشتباه است
+ErrorBadEMail=Email %s is incorrect
+ErrorBadMXDomain=Email %s seems incorrect (domain has no valid MX record)
+ErrorBadUrl=Url %s is incorrect
 ErrorBadValueForParamNotAString=برای مؤلفۀ موردنظر مقدار خطائی وارد شده است. عموما در هنگام فقدان ترجمه، الحاق می‌شود.
 ErrorRefAlreadyExists=Reference <b>%s</b> already exists.
 ErrorLoginAlreadyExists=نام‌کاربری %s قبلا وجود داشته است.
 ErrorGroupAlreadyExists=گروه %s قبلا وجود داشته است.
+ErrorEmailAlreadyExists=Email %s already exists.
 ErrorRecordNotFound=ردیف موجود نیست.
 ErrorFailToCopyFile=نسخه‌برداری از فایل '<b>%s</b>' به '<b>%s</b>' موفق نبود.
 ErrorFailToCopyDir=نسخه‌برداری از پوشۀ '<b>%s</b>' به '<b>%s</b>' موفق نبود.
@@ -26,7 +27,9 @@ ErrorThisContactIsAlreadyDefinedAsThisType=این طرف‌تماس قبلا ب�
 ErrorCashAccountAcceptsOnlyCashMoney=این حساب‌بانکی نقدی است و تنها پرداخت‌های نقدی را می‌پذیرد.
 ErrorFromToAccountsMustDiffers=مبدأ و مقصد حساب‌های بانکی باید متفاوت باشد.
 ErrorBadThirdPartyName=مقدار غیرقابل‌قبول برای نام شخص‌سوم
+ForbiddenBySetupRules=Forbidden by setup rules
 ErrorProdIdIsMandatory=بخش %s الزامی است
+ErrorAccountancyCodeCustomerIsMandatory=The accountancy code of customer %s is mandatory
 ErrorBadCustomerCodeSyntax=روش‌درج برای کدمشتری اشتباه است
 ErrorBadBarCodeSyntax=روش درج بارکد اشتباه است. ممکناست یک نوع بارکد اشتباه تنظیم کرده باشید یا یک پوشش-ماسک بارکد برای عددهی انتخاب کرده‌اید که با مقدار اسکن شده همخوان نیست.
 ErrorCustomerCodeRequired=کدمشتری الزامی است
@@ -46,8 +49,8 @@ ErrorWrongDate=تاریخ، صحیح نمی‌باشد!
 ErrorFailedToWriteInDir=امکان نوشتن در پوشۀ %s وجود ندارد
 ErrorFoundBadEmailInFile=برای %s سطر در فایل روش‌اشتباه درج رایانامه پیدا شد (مثلا سطر %s با email=%s)
 ErrorUserCannotBeDelete=امکان حذف کاربر وجود ندارد. ممکن است با سایر اجزای Dolibarr در ارتباط باشد.
-ErrorFieldsRequired=برخی از بخش‌های الزامی، پر نشده‌اند.
-ErrorSubjectIsRequired=موضوع رایانامه الزامی است.
+ErrorFieldsRequired=Some required fields have been left blank.
+ErrorSubjectIsRequired=The email subject is required
 ErrorFailedToCreateDir=ایجاد یک پوشه با شکست مواجه شد. بررسی کنید، کاربر سرور وب، دارای مجوزهای نوشتاری بر روی پوشۀ documents مربوط به Dolibarr باشد در صورتی که مؤلفۀ <b>safe_mode</b> روی این نسخه از PHP فعال باشد، بررسی کنید فایل‌های PHP مربوط به Dolibarr متعلق به کاربر سرور وب (یا گروه مربوطه) باشد.
 ErrorNoMailDefinedForThisUser=نشانی رایانامه برای این کاربر تعریف نشده است
 ErrorSetupOfEmailsNotComplete=Setup of emails is not complete
@@ -59,6 +62,7 @@ ErrorDirNotFound=پوشۀ <b>%s</b> یافت نشد. (مسیر نادرست، م
 ErrorFunctionNotAvailableInPHP=برای این قابلیت، تابع <b>%s</b> نیاز است اما در این برپاسازی/نسخۀ PHP موجود نیست.
 ErrorDirAlreadyExists=قبلا یک پوشه با همین نام وجود داشته است.
 ErrorFileAlreadyExists=قبلا یک فایل به همین نام وجود داشته است.
+ErrorDestinationAlreadyExists=Another file with the name <b>%s</b> already exists.
 ErrorPartialFile=فایل به طور کامل توسط سرور دریافت نشده است.
 ErrorNoTmpDir=پوشۀ موقت %s وجود ندارد.
 ErrorUploadBlockedByAddon=امکان ارسال توسط یک افزونۀ PHP/Apache مسدود شده است
@@ -81,7 +85,7 @@ ErrorCantSaveADoneUserWithZeroPercentage=در صورتی که بخش "انجام
 ErrorRefAlreadyExists=Reference <b>%s</b> already exists.
 ErrorPleaseTypeBankTransactionReportName=لطفا نام اطلاعیۀ بانک را در خصوص چگونگی گزارش ورودی وارد کنید (حالت YYYYMM  یا YYYYMMDD)
 ErrorRecordHasChildren=هنگامی که یک ردیف دارای زیرمجموعه است، امکان حذف آن وجود ندارد.
-ErrorRecordHasAtLeastOneChildOfType=این شیء حداقل یک فرزند از نوع %s دارد
+ErrorRecordHasAtLeastOneChildOfType=Object %s has at least one child of type %s
 ErrorRecordIsUsedCantDelete=امکان حذف این ردیف نیست، زیرا در یک شیء دیگر شامل شده یا مورد استفاده اسن.
 ErrorModuleRequireJavascript=برای کار کردن این قابلیت، جاواسکریپت نباید غیر فعال بشد. برای فعال کردن/غیرفعال کردن جاوااسکریپت، به فهرست خانه->برپاسازی->نمایش مراجعه کنید.
 ErrorPasswordsMustMatch=هر دو گذرواژۀ وارد شده باید مطابق با هم باشند
@@ -109,6 +113,7 @@ ErrorFailedToLoadRSSFile=دریافت خوراک RSS ممکن نبود. در ص�
 ErrorForbidden=دسترسی بسته است. <br> شما در تلاشید به صفحه، بخش یا قابلیتی از یک واحد غیرفعال مراجعه نموده یا این‌که این تلاش برای دسترسی توسط یک نشست بدون مجوز که برای نام کاربری شما مجاز نیست انجام می‌شود.
 ErrorForbidden2=مجوزهای این کاربر از فهرست %s->%s از صفحۀ مدیر Dolibarr قابل تعیین کردن است.
 ErrorForbidden3=به نظر می‌رسد Dolibarr از طریق یک نشست تصدیق شده مورد استفاده قرار نگرفته است. نگاهی به مستندات راهنمای برپاسازی Dolibarr نموده تا چگونگی مدیریت تصدیق‌ها را بدانید (htaccess، mod_auth یا غیره...).
+ErrorForbidden4=Note: clear your browser cookies to destroy existing sessions for this login.
 ErrorNoImagickReadimage=کلاس Imagick در این نسخۀ PHP یافت نشد. امکان ارائۀ پیش‌نمایش وجود ندارد. مدیران می‌توانند این زبانه را از فهرست برپاسازی - نمایش غیرفعال کنند.
 ErrorRecordAlreadyExists=این ردیف قبلا وجود داشته است
 ErrorLabelAlreadyExists=این برچسب قبلا وجود داشته است
@@ -116,7 +121,7 @@ ErrorCantReadFile=امکان خواندن فایل '%s' نبود
 ErrorCantReadDir=امکان خواندن پوشۀ '%s' نبود
 ErrorBadLoginPassword=مقدار نادرست نام‌ورود و گذرواژه
 ErrorLoginDisabled=حساب شما غیر فعال شده است
-ErrorFailedToRunExternalCommand=اجرای دستور خارجی موفقیت‌آمیز نبود. مطمئن شوید در سرور PHP فعال و قابل اجراست. در صورتی که حالت <b>Safe Mode</b> در PHP فعال باشد، بررسی کنید دستور در پوشه‌ای است که توسط مؤلفۀ <b>safe_mode_exec_dir</b> قرار گرفته باشد.
+ErrorFailedToRunExternalCommand=Failed to run external command. Check it is available and runnable by your PHP server user. Check also the command is not protected on shell level by a security layer like apparmor.
 ErrorFailedToChangePassword=تغییر گذرواژه موفقیت‌آمیز نبود
 ErrorLoginDoesNotExists=کاربری که از نام‌ورود <b>%s</b> استفاده کند، پیدا نشد
 ErrorLoginHasNoEmail=کاربر هیچ نشانی رایانامه‌‌ای ندارد. پردازش متوقف شد.
@@ -225,7 +230,9 @@ ErrorAPageWithThisNameOrAliasAlreadyExists=صفحه/دربردارندۀ <strong
 ErrorDuringChartLoad=خطا در هنگام بارگذاری نمودار حساب‌ها. در صورتی برخی حساب‌ها بارگذاری نشوند، همچنان می‌توانید به طور دستی آن‌ها را وارد کنید
 ErrorBadSyntaxForParamKeyForContent=برای مؤلفۀ keyforcontent نگارش بدی وارد شده است. باید مقداری داشته باشد که با %s یا %s آغاز شود.
 ErrorVariableKeyForContentMustBeSet=خطا، مقدارثابت با نام %s (با محتوای متنی قابل نمایش) یا %s (با نشانی بیرونی قابل نمایش) باید تنظیم شده باشد.
+ErrorURLMustEndWith=URL %s must end %s
 ErrorURLMustStartWithHttp=نشانی اینترنتی %s باید با http://  یا  https:// آغاز گرد
+ErrorHostMustNotStartWithHttp=Host name %s must NOT start with http:// or https://
 ErrorNewRefIsAlreadyUsed=خطا، ارجاع جدید قبلا استفاده شده است
 ErrorDeletePaymentLinkedToAClosedInvoiceNotPossible=Error, delete payment linked to a closed invoice is not possible.
 ErrorSearchCriteriaTooSmall=Search criteria too small.
@@ -255,6 +262,21 @@ ErrorPublicInterfaceNotEnabled=Public interface was not enabled
 ErrorLanguageRequiredIfPageIsTranslationOfAnother=The language of new page must be defined if it is set as a translation of another page
 ErrorLanguageMustNotBeSourceLanguageIfPageIsTranslationOfAnother=The language of new page must not be the source language if it is set as a translation of another page
 ErrorAParameterIsRequiredForThisOperation=A parameter is mandatory for this operation
+ErrorDateIsInFuture=Error, the date can't be in the future
+ErrorAnAmountWithoutTaxIsRequired=Error, amount is mandatory
+ErrorAPercentIsRequired=Error, please fill in the percentage correctly
+ErrorYouMustFirstSetupYourChartOfAccount=You must first setup your chart of account
+ErrorFailedToFindEmailTemplate=Failed to find template with code name %s
+ErrorDurationForServiceNotDefinedCantCalculateHourlyPrice=Duration not defined on service. No way to calculate the hourly price.
+ErrorActionCommPropertyUserowneridNotDefined=User's owner is required
+ErrorActionCommBadType=Selected event type (id: %n, code: %s) do not exist in Event Type dictionary
+CheckVersionFail=Version check fail
+ErrorWrongFileName=Name of the file cannot have __SOMETHING__ in it
+ErrorNotInDictionaryPaymentConditions=Not in Payment Terms Dictionary, please modify.
+ErrorIsNotADraft=%s is not a draft
+ErrorExecIdFailed=Can't execute command "id"
+ErrorBadCharIntoLoginName=Unauthorized character in the login name
+ErrorRequestTooLarge=Error, request too large
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Your PHP parameter upload_max_filesize (%s) is higher than PHP parameter post_max_size (%s). This is not a consistent setup.
@@ -287,3 +309,26 @@ WarningFailedToAddFileIntoDatabaseIndex=Warning, failed to add file entry into E
 WarningTheHiddenOptionIsOn=Warning, the hidden option <b>%s</b> is on.
 WarningCreateSubAccounts=Warning, you can't create directly a sub account, you must create a third party or an user and assign them an accounting code to find them in this list
 WarningAvailableOnlyForHTTPSServers=Available only if using HTTPS secured connection.
+WarningModuleXDisabledSoYouMayMissEventHere=Module %s has not been enabled. So you may miss a lot of event here.
+WarningPaypalPaymentNotCompatibleWithStrict=The value 'Strict' makes the online payment features not working correctly. Use 'Lax' instead.
+
+# Validate
+RequireValidValue = Value not valid
+RequireAtLeastXString = Requires at least %s character(s)
+RequireXStringMax = Requires %s character(s) max
+RequireAtLeastXDigits = Requires at least %s digit(s)
+RequireXDigitsMax = Requires %s digit(s) max
+RequireValidNumeric = Requires a numeric value
+RequireValidEmail = Email address is not valid
+RequireMaxLength = Length must be less than %s chars
+RequireMinLength = Length must be more than %s char(s)
+RequireValidUrl = Require valid URL
+RequireValidDate = Require a valid date
+RequireANotEmptyValue = Is required
+RequireValidDuration = Require a valid duration
+RequireValidExistingElement = Require an existing value
+RequireValidBool = Require a valid boolean
+BadSetupOfField = Error bad setup of field
+BadSetupOfFieldClassNotFoundForValidation = Error bad setup of field : Class not found for validation
+BadSetupOfFieldFileNotFound = Error bad setup of field : File not found for inclusion
+BadSetupOfFieldFetchNotCallable = Error bad setup of field : Fetch not callable on class

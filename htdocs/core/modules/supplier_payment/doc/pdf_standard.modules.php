@@ -2,6 +2,7 @@
 /* Copyright (C) 2010-2011      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2010-2014 		Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2015           Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2022           Ferran Marcet        <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -132,7 +133,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 		$this->db = $db;
 		$this->name = "standard";
 		$this->description = $langs->trans('DocumentModelStandardPDF');
-		$this->update_main_doc_field = 1;		// Save the name of generated file as the main doc when generating a doc with this template
+		$this->update_main_doc_field = 0;	// Save the name of generated file as the main doc when generating a doc with this template
 
 		// Page size for A4 format
 		$this->type = 'pdf';
@@ -168,6 +169,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 		}
 
 		$this->tva = array();
+		$this->tva_array = array();
 		$this->localtax1 = array();
 		$this->localtax2 = array();
 		$this->atleastoneratenotnull = 0;
@@ -220,7 +222,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 			$sql .= ', f.fk_statut, s.nom as name, s.rowid as socid';
 			$sql .= ' FROM '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf,'.MAIN_DB_PREFIX.'facture_fourn as f,'.MAIN_DB_PREFIX.'societe as s';
 			$sql .= ' WHERE pf.fk_facturefourn = f.rowid AND f.fk_soc = s.rowid';
-			$sql .= ' AND pf.fk_paiementfourn = '.$object->id;
+			$sql .= ' AND pf.fk_paiementfourn = '.((int) $object->id);
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				if ($this->db->num_rows($resql) > 0) {
@@ -317,8 +319,8 @@ class pdf_standard extends ModelePDFSuppliersPayments
 
 				$tab_top = 90;
 				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD) ? 42 : 10);
-				$tab_height = 130;
-				$tab_height_newpage = 150;
+
+				$tab_height = $this->page_hauteur - $tab_top - $heightforfooter - $heightforfreetext;
 
 				// Incoterm
 				$height_incoterms = 0;
@@ -757,7 +759,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 			$pdf->SetTextColor(0, 0, 0);
 			$pdf->SetFont('', '', $default_font_size - 2);
 			$pdf->SetXY($posx, $posy - 5);
-			$pdf->MultiCell(66, 5, $outputlangs->transnoentities("PayedBy").":", 0, 'L');
+			$pdf->MultiCell(80, 5, $outputlangs->transnoentities("PayedBy"), 0, 'L');
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetFillColor(230, 230, 230);
 			$pdf->MultiCell(82, $hautcadre, "", 0, 'R', 1);
@@ -798,7 +800,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 			$pdf->SetTextColor(0, 0, 0);
 			$pdf->SetFont('', '', $default_font_size - 2);
 			$pdf->SetXY($posx + 2, $posy - 5);
-			$pdf->MultiCell($widthrecbox, 5, $outputlangs->transnoentities("PayedTo").":", 0, 'L');
+			$pdf->MultiCell($widthrecbox, 5, $outputlangs->transnoentities("PayedTo"), 0, 'L');
 			$pdf->Rect($posx, $posy, $widthrecbox, $hautcadre);
 
 			// Show recipient name
@@ -812,6 +814,25 @@ class pdf_standard extends ModelePDFSuppliersPayments
 			$pdf->SetFont('', '', $default_font_size - 1);
 			$pdf->SetXY($posx + 2, $posy);
 			$pdf->MultiCell($widthrecbox, 4, $carac_client, 0, 'L');
+
+			// Show default IBAN account
+			$sql = "SELECT iban_prefix as iban";
+			$sql .= " FROM ".MAIN_DB_PREFIX."societe_rib as rib";
+			$sql .= " WHERE fk_soc = ".($object->thirdparty->id);
+			$sql .= " AND rib.default_rib = 1";
+			$sql .= " AND rib.type = 'ban'";
+			$sql .= " LIMIT 1";
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				$obj = $this->db->fetch_object($resql);
+				$iban = $obj->iban;
+			}
+
+			if (!empty($iban)) {
+				$pdf->SetFont('', '', $default_font_size - 1);
+				$pdf->SetXY($posx + 2, $posy + 15);
+				$pdf->MultiCell($widthrecbox, 4, $langs->trans("IBAN").': '.$iban, 0, 'L');
+			}
 		}
 	}
 

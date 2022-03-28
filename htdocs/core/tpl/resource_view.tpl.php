@@ -33,7 +33,7 @@ if ((array) $linked_resources && count($linked_resources) > 0) {
 
 		//$element_id = $linked_resource['rowid'];
 
-		if ($mode == 'edit' && $linked_resource['rowid'] == GETPOST('lineid')) {
+		if ($mode == 'edit' && $linked_resource['rowid'] == GETPOST('lineid', 'int')) {
 			print '<div class="tagtr oddeven">';
 			print '<input type="hidden" name="lineid" value="'.$linked_resource['rowid'].'" />';
 			print '<input type="hidden" name="element" value="'.$element.'" />';
@@ -47,7 +47,7 @@ if ((array) $linked_resources && count($linked_resources) > 0) {
 			print '</div>';
 		} else {
 			$class = '';
-			if ($linked_resource['rowid'] == GETPOST('lineid')) {
+			if ($linked_resource['rowid'] == GETPOST('lineid', 'int')) {
 				$class = 'highlight';
 			}
 

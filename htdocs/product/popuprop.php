@@ -30,7 +30,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('commande', 'propal', 'bills', 'other'));
+$langs->loadLangs(array('commande', 'propal', 'bills', 'other', 'products'));
 
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
@@ -44,8 +44,8 @@ if (!empty($user->socid)) {
 }
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -60,9 +60,7 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-$staticproduct = new Product($db);
-
-$result = restrictedArea($user, 'produit|service', 0, 'product&product');
+restrictedArea($user, 'produit|service', 0, 'product&product', '', '');
 
 
 /*
@@ -180,7 +178,7 @@ $arrayofmode = array(
 	'facture' => 'Facture'
 	);
 $title .= ' '.$form->selectarray('mode', $arrayofmode, $mode, 1);
-$title .= ' <input type="submit" class="button" name="refresh" value="'.$langs->trans("Refresh").'">';
+$title .= ' <input type="submit" class="button small" name="refresh" value="'.$langs->trans("Refresh").'">';
 
 
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
@@ -200,7 +198,7 @@ print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sort
 
 print '<table class="noborder centpercent">';
 
-print "<tr class=\"liste_titre\">";
+print '<tr class="liste_titre">';
 print_liste_field_titre('Ref', $_SERVER["PHP_SELF"], 'p.ref', '', $param, '', $sortfield, $sortorder);
 print_liste_field_titre('Type', $_SERVER["PHP_SELF"], 'p.fk_product_type', '', $param, '', $sortfield, $sortorder);
 print_liste_field_titre('Label', $_SERVER["PHP_SELF"], 'p.label', '', $param, '', $sortfield, $sortorder);
@@ -213,8 +211,8 @@ if ($mode && $mode != '-1') {
 		if (!empty($conf->global->MAIN_MULTILANGS)) { // si l'option est active
 			$sql = "SELECT label";
 			$sql .= " FROM ".MAIN_DB_PREFIX."product_lang";
-			$sql .= " WHERE fk_product=".$prodid;
-			$sql .= " AND lang='".$db->escape($langs->getDefaultLang())."'";
+			$sql .= " WHERE fk_product = ".((int) $prodid);
+			$sql .= " AND lang = '".$db->escape($langs->getDefaultLang())."'";
 			$sql .= " LIMIT 1";
 
 			$resultp = $db->query($sql);

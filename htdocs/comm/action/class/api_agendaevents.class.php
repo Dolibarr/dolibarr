@@ -158,10 +158,11 @@ class AgendaEvents extends DolibarrApi
 		}
 		// Add sql filters
 		if ($sqlfilters) {
-			if (!DolibarrApi::_checkFilters($sqlfilters)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+			$errormessage = '';
+			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
+				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
 			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
@@ -217,7 +218,7 @@ class AgendaEvents extends DolibarrApi
 		$result = $this->_validate($request_data);
 
 		foreach ($request_data as $field => $value) {
-			$this->actioncomm->$field = $value;
+			$this->actioncomm->$field = $this->_checkValForAPI($field, $value, $this->actioncomm);
 		}
 		/*if (isset($request_data["lines"])) {
 		  $lines = array();
@@ -226,6 +227,7 @@ class AgendaEvents extends DolibarrApi
 		  }
 		  $this->expensereport->lines = $lines;
 		}*/
+
 		if ($this->actioncomm->create(DolibarrApiAccess::$user) < 0) {
 			throw new RestException(500, "Error creating event", array_merge(array($this->actioncomm->error), $this->actioncomm->errors));
 		}
@@ -268,7 +270,8 @@ class AgendaEvents extends DolibarrApi
 			if ($field == 'id') {
 				continue;
 			}
-			$this->actioncomm->$field = $value;
+
+			$this->actioncomm->$field = $this->_checkValForAPI($field, $value, $this->actioncomm);
 		}
 
 		if ($this->actioncomm->update(DolibarrApiAccess::$user, 1) > 0) {
@@ -299,7 +302,7 @@ class AgendaEvents extends DolibarrApi
 		}
 
 		if (!DolibarrApiAccess::$user->rights->agenda->allactions->delete && DolibarrApiAccess::$user->id != $this->actioncomm->userownerid) {
-			throw new RestException(401, "Insufficient rights to delete an Agenda Event of owner id ".$request_data['userownerid'].' Your id is '.DolibarrApiAccess::$user->id);
+			throw new RestException(401, "Insufficient rights to delete an Agenda Event of owner id ".$this->actioncomm->userownerid.' Your id is '.DolibarrApiAccess::$user->id);
 		}
 
 		if (!$result) {
@@ -398,9 +401,12 @@ class AgendaEvents extends DolibarrApi
 		unset($object->civility_id);
 		unset($object->contact);
 		unset($object->societe);
-
+		unset($object->demand_reason_id);
+		unset($object->transport_mode_id);
+		unset($object->region_id);
 		unset($object->actions);
 		unset($object->lines);
+		unset($object->modelpdf);
 
 		return $object;
 	}

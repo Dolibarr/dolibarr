@@ -16,6 +16,7 @@
  *
  * Output code for the filemanager
  * $module must be defined ('ecm', 'medias', ...)
+ * $formalreadyopen can be set to 1 to avoid to open the <form> to submit files a second time
  */
 
 // Protection to avoid direct call of template
@@ -32,6 +33,8 @@ if (empty($conf) || !is_object($conf)) {
 <?php
 
 require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
+
+$langs->load("ecm");
 
 if (empty($module)) {
 	$module = 'ecm';
@@ -71,33 +74,64 @@ print '<div class="inline-block toolbarbutton centpercent">';
 
 // Toolbar
 if ($permtoadd) {
-	$websitekeyandpageid = (!empty($websitekey) ? '&website='.$websitekey : '').(!empty($pageid) ? '&pageid='.$pageid : '');
-	print '<a href="'.DOL_URL_ROOT.'/ecm/dir_add_card.php?action=create&module='.urlencode($module).$websitekeyandpageid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?file_manager=1'.$websitekeyandpageid).'" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.dol_escape_htmltag($langs->trans('ECMAddSection')).'">';
+	$websitekeyandpageid = (!empty($websitekey) ? '&website='.urlencode($websitekey) : '').(!empty($pageid) ? '&pageid='.urlencode($pageid) : '');
+	print '<a id="acreatedir" href="'.DOL_URL_ROOT.'/ecm/dir_add_card.php?action=create&module='.urlencode($module).$websitekeyandpageid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?file_manager=1'.$websitekeyandpageid).'" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.dol_escape_htmltag($langs->trans('ECMAddSection')).'">';
 	print img_picto('', 'folder-plus', '', false, 0, 0, '', 'size15x marginrightonly');
 	print '</a>';
 } else {
-	print '<a href="#" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.$langs->trans("NotAllowed").'">';
+	print '<a id="acreatedir" href="#" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.$langs->trans("NotAllowed").'">';
 	print img_picto('', 'folder-plus', 'disabled', false, 0, 0, '', 'size15x marginrightonly');
 	print '</a>';
 }
 if ($module == 'ecm') {
 	$tmpurl = ((!empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS)) ? '#' : ($_SERVER["PHP_SELF"].'?action=refreshmanual'.($module ? '&amp;module='.$module : '').($section ? '&amp;section='.$section : '')));
-	print '<a href="'.$tmpurl.'" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.dol_escape_htmltag($langs->trans('ReSyncListOfDir')).'">';
+	print '<a id="arefreshbutton" href="'.$tmpurl.'" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.dol_escape_htmltag($langs->trans('ReSyncListOfDir')).'">';
 	print img_picto('', 'refresh', 'id="refreshbutton"', false, 0, 0, '', 'size15x marginrightonly');
 	print '</a>';
 }
 if ($permtoadd && GETPOSTISSET('website')) {	// If on file manager to manage medias of a web site
-	print '<a href="'.$_SERVER["PHP_SELF"].'?action=confirmconvertimgwebp&website='.$website->ref.'" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.dol_escape_htmltag($langs->trans("GenerateImgWebp")).'">';
+	print '<a id="agenerateimgwebp" href="'.$_SERVER["PHP_SELF"].'?action=confirmconvertimgwebp&website='.$website->ref.'" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.dol_escape_htmltag($langs->trans("GenerateImgWebp")).'">';
+	print img_picto('', 'images', '', false, 0, 0, '', 'size15x flip marginrightonly');
+	print '</a>';
+} elseif ($permtoadd && $module == 'ecm') {	// If on file manager medias in ecm
+	print '<a id="agenerateimgwebp" href="'.$_SERVER["PHP_SELF"].'?action=confirmconvertimgwebp" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.dol_escape_htmltag($langs->trans("GenerateImgWebp")).'">';
 	print img_picto('', 'images', '', false, 0, 0, '', 'size15x flip marginrightonly');
 	print '</a>';
 }
+
+print "<script>
+$('#acreatedir').on('click', function() {
+	try{
+		section_dir = $('.directory.expanded')[$('.directory.expanded').length-1].children[0].rel;
+		section = $('.directory.expanded')[$('.directory.expanded').length-1].children[0].id.split('_')[2];
+	} catch{
+		section_dir = '/';
+		section = 0;
+	}
+	console.log('We click to create a new directory, we set current section_dir='+section_dir+' into href url of button acreatedir');
+	$('#acreatedir').attr('href', $('#acreatedir').attr('href')+'&section_dir='+encodeURI(section_dir)+'&section='+encodeURI(section));
+	console.log($('#acreatedir').attr('href'));
+});
+$('#agenerateimgwebp').on('click', function() {
+	try{
+		section_dir = $('.directory.expanded')[$('.directory.expanded').length-1].children[0].rel;
+		section = $('.directory.expanded')[$('.directory.expanded').length-1].children[0].id.split('_')[2];
+	} catch{
+		section_dir = '/';
+		section = 0;
+	}
+	console.log('We click to generate webp image, we set current section_dir='+section_dir+' into href url of button agenerateimgwebp');
+	$('#agenerateimgwebp').attr('href', $('#agenerateimgwebp').attr('href')+'&section_dir='+encodeURI(section_dir)+'&section='+encodeURI(section));
+	console.log($('#agenerateimgwebp').attr('href'));
+});
+</script>";
 
 // Start "Add new file" area
 $nameforformuserfile = 'formuserfileecm';
 
 print '<div class="inline-block valignmiddle floatright">';
 
-// To attach new file
+// For to attach a new file
 if ((!empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS)) || !empty($section)) {
 	if ((empty($section) || $section == -1) && ($module != 'medias')) {
 		?>
@@ -110,10 +144,11 @@ if ((!empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE
 	}
 
 	$sectiondir = GETPOST('file', 'alpha') ?GETPOST('file', 'alpha') : GETPOST('section_dir', 'alpha');
+
 	print '<!-- Start form to attach new file in filemanager.tpl.php sectionid='.$section.' sectiondir='.$sectiondir.' -->'."\n";
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 	$formfile = new FormFile($db);
-	$formfile->form_attach_new_file($_SERVER["PHP_SELF"], 'none', 0, ($section ? $section : -1), $permtoupload, 48, null, '', 0, '', 0, $nameforformuserfile, '', $sectiondir);
+	print $formfile->form_attach_new_file($_SERVER["PHP_SELF"], 'none', 0, ($section ? $section : -1), $permtoupload, 48, null, '', 0, '', 0, $nameforformuserfile, '', $sectiondir, empty($formalreadyopen) ? 0 : $formalreadyopen, 0, 0, 1);
 } else {
 	print '&nbsp;';
 }
@@ -138,33 +173,52 @@ if ($action == 'delete_section') {
 }
 // End confirm
 
+// Ask confirmation to build webp images
 if ($action == 'confirmconvertimgwebp') {
-	print $form->formconfirm($_SERVER["PHP_SELF"].'?website='.$website->ref, $langs->trans('ConfirmImgWebpCreation'), $langs->trans('ConfirmGenerateImgWebp', $object->ref), 'convertimgwebp', '', "yes", 1);
+	$langs->load("ecm");
+
+	$section_dir=GETPOST('section_dir', 'alpha');
+	$section=GETPOST('section', 'alpha');
+	$form = new Form($db);
+	$formquestion['section_dir']=array('type'=>'hidden', 'value'=>$section_dir, 'name'=>'section_dir');
+	$formquestion['section']=array('type'=>'hidden', 'value'=>$section, 'name'=>'section');
+	if ($module == 'medias') {
+		$formquestion['website']=array('type'=>'hidden', 'value'=>$website->ref, 'name'=>'website');
+	}
+	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans('ConfirmImgWebpCreation'), $langs->trans('ConfirmGenerateImgWebp', $object->ref), 'convertimgwebp', $formquestion, "yes", 1);
 	$action = 'file_manager';
 }
 
+// Duplicate images into .webp
 if ($action == 'convertimgwebp' && $permtoadd) {
 	if ($module == 'medias') {
-		$imagefolder = $conf->website->dir_output.'/'.$websitekey.'/medias/image/'.$websitekey.'/';
+		$imagefolder = $conf->website->dir_output.'/'.$websitekey.'/medias/'.dol_sanitizePathName(GETPOST('section_dir', 'alpha'));
 	} else {
-		$imagefolder = $conf->ecm->dir_output;
+		$imagefolder = $conf->ecm->dir_output.'/'.dol_sanitizePathName(GETPOST('section_dir', 'alpha'));
 	}
 
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 
 	$regeximgext = getListOfPossibleImageExt();
 
-	$filelist = dol_dir_list($imagefolder, "all", 1, $regeximgext);
+	$filelist = dol_dir_list($imagefolder, "files", 0, $regeximgext);
+
+	$nbconverted = 0;
 
 	foreach ($filelist as $filename) {
 		$filepath = $filename['fullname'];
 		if (!(substr_compare($filepath, 'webp', -strlen('webp')) === 0)) {
 			if (image_format_supported($filepath) == 1) {
-				$filepathnoext = preg_replace("/\..*/", "", $filepath);
-				$result = dol_imageResizeOrCrop($filepath, 0, 0, 0, 0, 0, $filepathnoext.'.webp');
-				if (!dol_is_file($result)) {
-					$error++;
-					setEventMessages($result, null, 'errors');
+				$filepathnoext = preg_replace("/\.[a-z0-9]+$/i", "", $filepath);
+
+				if (! dol_is_file($filepathnoext.'.webp')) {	// If file does not exists yet
+					$result = dol_imageResizeOrCrop($filepath, 0, 0, 0, 0, 0, $filepathnoext.'.webp', 90);
+					if (!dol_is_file($result)) {
+						$error++;
+						setEventMessages($result, null, 'errors');
+					} else {
+						$nbconverted++;
+					}
 				}
 			}
 		}
@@ -181,12 +235,12 @@ if ($action == 'convertimgwebp' && $permtoadd) {
 if (empty($action) || $action == 'editfile' || $action == 'file_manager' || preg_match('/refresh/i', $action) || $action == 'delete') {
 	$langs->load("ecm");
 
-	print '<table width="100%" class="liste noborderbottom">'."\n";
+	print '<table class="liste centpercent">'."\n";
 
 	print '<!-- Title for manual directories -->'."\n";
 	print '<tr class="liste_titre">'."\n";
 	print '<th class="liste_titre left">';
-	print '&nbsp;'.$langs->trans("ECMSections");
+	print '<span style="padding-left: 5px; padding-right: 5px;">'.$langs->trans("ECMSections").'</span>';
 	print '</th></tr>';
 
 	$showonrightsize = '';
@@ -197,7 +251,7 @@ if (empty($action) || $action == 'editfile' || $action == 'file_manager' || preg
 	if (!empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS)) {
 		// Show the link to "Root"
 		if ($showroot) {
-			print '<tr><td><div style="padding-left: 5px; padding-right: 5px;"><a href="'.$_SERVER["PHP_SELF"].'?file_manager=1&pageid='.$pageid.'">';
+			print '<tr><td><div style="padding-left: 5px; padding-right: 5px;"><a href="'.$_SERVER["PHP_SELF"].'?file_manager=1'.(!empty($websitekey) ? '&website='.urlencode($websitekey) : '').'&pageid='.urlencode($pageid).'">';
 			if ($module == 'medias') {
 				print $langs->trans("RootOfMedias");
 			} else {

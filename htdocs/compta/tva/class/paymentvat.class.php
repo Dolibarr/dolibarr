@@ -180,8 +180,8 @@ class PaymentVAT extends CommonObject
 			$sql .= " fk_typepaiement, num_paiement, note, fk_user_creat, fk_bank)";
 			$sql .= " VALUES ($this->chid, '".$this->db->idate($now)."',";
 			$sql .= " '".$this->db->idate($this->datepaye)."',";
-			$sql .= " ".$totalamount.",";
-			$sql .= " ".$this->paiementtype.", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note)."', ".$user->id.",";
+			$sql .= " ".((float) $totalamount).",";
+			$sql .= " ".((int) $this->paiementtype).", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note)."', ".$user->id.",";
 			$sql .= " 0)";
 
 			$resql = $this->db->query($sql);
@@ -620,7 +620,7 @@ class PaymentVAT extends CommonObject
 	public function update_fk_bank($id_bank)
 	{
         // phpcs:enable
-		$sql = "UPDATE ".MAIN_DB_PREFIX."payment_vat SET fk_bank = ".((int) $id_bank)." WHERE rowid = ".$this->id;
+		$sql = "UPDATE ".MAIN_DB_PREFIX."payment_vat SET fk_bank = ".((int) $id_bank)." WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update_fk_bank", LOG_DEBUG);
 		$result = $this->db->query($sql);

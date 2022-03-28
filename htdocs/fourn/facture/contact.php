@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2005		Patrick Rouillon	<patrick@rouillon.net>
- * Copyright (C) 2005-2015	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
+/* Copyright (C) 2005		Patrick Rouillon		<patrick@rouillon.net>
+ * Copyright (C) 2005-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2017		Ferran Marcet       	<fmarcet@2byte.es>
+ * Copyright (C) 2021		Frédéric France			<frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,6 +46,7 @@ if ($user->socid) {
 	$socid = $user->socid;
 }
 $result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture');
+$hookmanager->initHooks(array('invoicesuppliercardcontact'));
 
 $object = new FactureFournisseur($db);
 
@@ -141,7 +143,7 @@ if ($id > 0 || !empty($ref)) {
 			$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 			if ($user->rights->facture->creer) {
 				if ($action != 'classify') {
-					//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+					//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 					$morehtmlref .= ' : ';
 				}
 				if ($action == 'classify') {
@@ -159,9 +161,10 @@ if ($id > 0 || !empty($ref)) {
 				if (!empty($object->fk_project)) {
 					$proj = new Project($db);
 					$proj->fetch($object->fk_project);
-					$morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$object->fk_project.'" title="'.$langs->trans('ShowProject').'">';
-					$morehtmlref .= $proj->ref;
-					$morehtmlref .= '</a>';
+					$morehtmlref .= ' : '.$proj->getNomUrl(1);
+					if ($proj->title) {
+						$morehtmlref .= ' - '.$proj->title;
+					}
 				} else {
 					$morehtmlref .= '';
 				}
@@ -180,7 +183,9 @@ if ($id > 0 || !empty($ref)) {
 
 		// Type
 		print '<tr><td class="titlefield">'.$langs->trans('Type').'</td><td colspan="4">';
+		print '<span class="badgeneutral">';
 		print $object->getLibType();
+		print '</span>';
 		if ($object->type == FactureFournisseur::TYPE_REPLACEMENT) {
 			$facreplaced = new FactureFournisseur($db);
 			$facreplaced->fetch($object->fk_facture_source);
@@ -194,25 +199,19 @@ if ($id > 0 || !empty($ref)) {
 
 		$facidavoir = $object->getListIdAvoirFromInvoice();
 		if (count($facidavoir) > 0) {
-			print ' ('.$langs->transnoentities("InvoiceHasAvoir");
-			$i = 0;
-			foreach ($facidavoir as $fid) {
-				if ($i == 0) {
-					print ' ';
-				} else {
-					print ',';
-				}
+			$invoicecredits = array();
+			foreach ($facidavoir as $facid) {
 				$facavoir = new FactureFournisseur($db);
-				$facavoir->fetch($fid);
-				print $facavoir->getNomUrl(1);
+				$facavoir->fetch($facid);
+				$invoicecredits[] = $facavoir->getNomUrl(1);
 			}
-			print ')';
+			print ' ('.$langs->transnoentities("InvoiceHasAvoir") . (count($invoicecredits) ? ' ' : '') . implode(',', $invoicecredits) . ')';
 		}
-		if ($facidnext > 0) {
-			$facthatreplace = new FactureFournisseur($db);
-			$facthatreplace->fetch($facidnext);
-			print ' ('.$langs->transnoentities("ReplacedByInvoice", $facthatreplace->getNomUrl(1)).')';
-		}
+		//if ($facidnext > 0) {
+		//	$facthatreplace = new FactureFournisseur($db);
+		//	$facthatreplace->fetch($facidnext);
+		//	print ' ('.$langs->transnoentities("ReplacedByInvoice", $facthatreplace->getNomUrl(1)).')';
+		//}
 		print '</td></tr>';
 
 		// Label
@@ -226,13 +225,13 @@ if ($id > 0 || !empty($ref)) {
 
 		// Amount Local Taxes
 		//TODO: Place into a function to control showing by country or study better option
-		if ($societe->localtax1_assuj == "1") { //Localtax1
-			print '<tr><td>'.$langs->transcountry("AmountLT1", $societe->country_code).'</td>';
+		if ($mysoc->localtax1_assuj == "1" || $object->total_localtax1 != 0) { //Localtax1
+			print '<tr><td>'.$langs->transcountry("AmountLT1", $mysoc->country_code).'</td>';
 			print '<td>'.price($object->total_localtax1, 1, $langs, 0, -1, -1, $conf->currency).'</td>';
 			print '</tr>';
 		}
-		if ($societe->localtax2_assuj == "1") { //Localtax2
-			print '<tr><td>'.$langs->transcountry("AmountLT2", $societe->country_code).'</td>';
+		if ($mysoc->localtax2_assuj == "1" || $object->total_localtax2 != 0) { //Localtax2
+			print '<tr><td>'.$langs->transcountry("AmountLT2", $mysoc->country_code).'</td>';
 			print '<td>'.price($object->total_localtax2, 1, $langs, 0, -1, -1, $conf->currency).'</td>';
 			print '</tr>';
 		}

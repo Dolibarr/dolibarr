@@ -121,7 +121,7 @@ $form = new Form($db);
 $productstatic = new Product($db);
 $companystatic = new Societe($db);
 
-$title = $langs->trans("ProductsAndServices");
+$title = $langs->trans('Supplier')." - ".$langs->trans('ProductsAndServices');
 
 if ($fourn_id) {
 	$supplier = new Fournisseur($db);
@@ -131,12 +131,12 @@ if ($fourn_id) {
 
 
 $arrayofmassactions = array(
-	'generate_doc'=>$langs->trans("ReGeneratePDF"),
-	'builddoc'=>$langs->trans("PDFMerge"),
-	'presend'=>$langs->trans("SendByMail"),
+	'generate_doc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("ReGeneratePDF"),
+	'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
+	'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 );
 if ($user->rights->mymodule->supprimer) {
-	$arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
+	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
 if (in_array($massaction, array('presend', 'predelete'))) {
 	$arrayofmassactions = array();
@@ -158,8 +158,8 @@ $sql .= " FROM ".MAIN_DB_PREFIX."product as p";
 if ($catid) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
 }
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as ppf ON p.rowid = ppf.fk_product";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON ppf.fk_soc = s.rowid";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as ppf ON p.rowid = ppf.fk_product AND p.entity = ppf.entity";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON ppf.fk_soc = s.rowid AND s.entity IN (".getEntity('societe').")";
 $sql .= " WHERE p.entity IN (".getEntity('product').")";
 if ($sRefSupplier) {
 	$sql .= natural_search('ppf.ref_fourn', $sRefSupplier);
@@ -174,10 +174,10 @@ if ($snom) {
 	$sql .= natural_search('p.label', $snom);
 }
 if ($catid) {
-	$sql .= " AND cp.fk_categorie = ".$catid;
+	$sql .= " AND cp.fk_categorie = ".((int) $catid);
 }
 if ($fourn_id > 0) {
-	$sql .= " AND ppf.fk_soc = ".$fourn_id;
+	$sql .= " AND ppf.fk_soc = ".((int) $fourn_id);
 }
 
 // Add WHERE filters from hooks
@@ -257,6 +257,7 @@ if ($resql) {
 	$trackid = 'prod'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
+	print '<div class="div-table-responsive-no-min">';
 	print '<table class="liste centpercent">';
 
 	// Fields title search
@@ -357,7 +358,7 @@ if ($resql) {
 	}
 	$db->free($resql);
 
-	print "</table>";
+	print "</table></div>";
 
 	print '</form>';
 } else {

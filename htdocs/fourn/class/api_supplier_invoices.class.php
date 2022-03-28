@@ -155,14 +155,15 @@ class SupplierInvoices extends DolibarrApi
 		}
 		// Insert sale filter
 		if ($search_sale > 0) {
-			$sql .= " AND sc.fk_user = ".$search_sale;
+			$sql .= " AND sc.fk_user = ".((int) $search_sale);
 		}
 		// Add sql filters
 		if ($sqlfilters) {
-			if (!DolibarrApi::_checkFilters($sqlfilters)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+			$errormessage = '';
+			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
+				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
 			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
@@ -201,12 +202,16 @@ class SupplierInvoices extends DolibarrApi
 	/**
 	 * Create supplier invoice object
 	 *
+	 * Note: soc_id = dolibarr_order_id
+	 *
+	 * Example: {'ref': 'auto', 'ref_supplier': '7985630', 'socid': 1, 'note': 'Inserted with Python', 'order_supplier': 1, 'date': '2021-07-28'}
+	 *
 	 * @param array $request_data Request datas
 	 *
 	 * @return int  ID of supplier invoice
 	 *
 	 * @throws RestException 401
-	 * @throws RestException 500
+	 * @throws RestException 500	System error
 	 */
 	public function post($request_data = null)
 	{
@@ -278,7 +283,7 @@ class SupplierInvoices extends DolibarrApi
 	 *
 	 * @throws RestException 401
 	 * @throws RestException 404
-	 * @throws RestException 500
+	 * @throws RestException 500	System error
 	 */
 	public function delete($id)
 	{
@@ -295,7 +300,7 @@ class SupplierInvoices extends DolibarrApi
 		}
 
 		if ($this->invoice->delete(DolibarrApiAccess::$user) < 0) {
-			throw new RestException(500);
+			throw new RestException(500, 'Error when deleting invoice');
 		}
 
 		return array(
@@ -321,7 +326,7 @@ class SupplierInvoices extends DolibarrApi
 	 * @throws RestException 401
 	 * @throws RestException 404
 	 * @throws RestException 405
-	 * @throws RestException 500
+	 * @throws RestException 500	System error
 	 */
 	public function validate($id, $idwarehouse = 0, $notrigger = 0)
 	{
@@ -525,6 +530,10 @@ class SupplierInvoices extends DolibarrApi
 	/**
 	 * Add a line to given supplier invoice
 	 *
+	 * Note: socid = dolibarr_order_id, pu_ht = net price, remise = discount
+	 *
+	 * Example: {'socid': 1, 'qty': 1, 'pu_ht': 21.0, 'tva_tx': 25.0, 'fk_product': '1189', 'product_type': 0, 'remise_percent': 1.0, 'vat_src_code': None}
+	 *
 	 * @param int   $id             Id of supplier invoice to update
 	 * @param array $request_data   supplier invoice line data
 	 *
@@ -546,7 +555,11 @@ class SupplierInvoices extends DolibarrApi
 		if (!DolibarrApi::_checkAccessToResource('fournisseur', $this->invoice->id, 'facture_fourn', 'facture')) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
+
 		$request_data = (object) $request_data;
+
+		$request_data->description = checkVal($request_data->description, 'restricthtml');
+		$request_data->ref_supplier = checkVal($request_data->ref_supplier);
 
 		$updateRes = $this->invoice->addline(
 			$request_data->description,
@@ -561,7 +574,7 @@ class SupplierInvoices extends DolibarrApi
 			$request_data->date_end,
 			$request_data->ventil,
 			$request_data->info_bits,
-			'HT',
+			$request_data->price_base_type ? $request_data->price_base_type : 'HT',
 			$request_data->product_type,
 			$request_data->rang,
 			false,
@@ -609,7 +622,12 @@ class SupplierInvoices extends DolibarrApi
 		if (!DolibarrApi::_checkAccessToResource('fournisseur', $this->invoice->id, 'facture_fourn', 'facture')) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
+
 		$request_data = (object) $request_data;
+
+		$request_data->description = checkVal($request_data->description, 'restricthtml');
+		$request_data->ref_supplier = checkVal($request_data->ref_supplier);
+
 		$updateRes = $this->invoice->updateline(
 			$lineid,
 			$request_data->description,
@@ -619,7 +637,7 @@ class SupplierInvoices extends DolibarrApi
 			$request_data->localtax2_tx,
 			$request_data->qty,
 			$request_data->fk_product,
-			'HT',
+			$request_data->price_base_type ? $request_data->price_base_type : 'HT',
 			$request_data->info_bits,
 			$request_data->product_type,
 			$request_data->remise_percent,

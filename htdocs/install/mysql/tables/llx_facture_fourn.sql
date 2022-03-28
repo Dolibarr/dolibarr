@@ -61,6 +61,7 @@ create table llx_facture_fourn
   fk_user_valid			integer,                       -- user validating
   fk_user_closing		integer,					   -- user closing
 
+  fk_fac_rec_source		integer,					   -- facture rec source
   fk_facture_source		integer,                       -- facture origine si facture avoir
   fk_projet				integer,                       -- projet auquel est associee la facture
 
@@ -74,7 +75,7 @@ create table llx_facture_fourn
   fk_incoterms          integer,						-- for incoterms
   location_incoterms    varchar(255),					-- for incoterms
 
-  fk_mode_transport     integer,						-- for intracomm report
+  fk_transport_mode     integer,						-- for intracomm report
 
   model_pdf				varchar(255),
   last_main_doc			varchar(255),					-- relative filepath+filename of last main generated document
@@ -83,7 +84,7 @@ create table llx_facture_fourn
   extraparams			varchar(255),					-- for stock other parameters with json format
   
   fk_multicurrency		integer,
-  multicurrency_code			varchar(255),
+  multicurrency_code			varchar(3),
   multicurrency_tx			double(24,8) DEFAULT 1,
   multicurrency_total_ht		double(24,8) DEFAULT 0,
   multicurrency_total_tva	double(24,8) DEFAULT 0,

@@ -39,6 +39,8 @@ if (empty($object) || !is_object($object)) {
 	exit;
 }
 print "<!-- BEGIN PHP TEMPLATE objectline_title.tpl.php -->\n";
+
+
 // Title line
 print "<thead>\n";
 
@@ -49,8 +51,13 @@ if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
 	print '<td class="linecolnum center">&nbsp;</td>';
 }
 
-// Description
-print '<td class="linecoldescription">'.$langs->trans('Description').'</td>';
+// Product or sub-bom
+print '<td class="linecoldescription">'.$langs->trans('Description');
+if (!empty($conf->global->BOM_SUB_BOM)) {
+	print ' &nbsp; <a id="show_all" href="#">'.img_picto('', 'folder-open', 'class="paddingright"').$langs->trans("ExpandAll").'</a>&nbsp;&nbsp;';
+	print '<a id="hide_all" href="#">'.img_picto('', 'folder', 'class="paddingright"').$langs->trans("UndoExpandAll").'</a>&nbsp;';
+}
+print '</td>';
 
 // Qty
 print '<td class="linecolqty right">'.$form->textwithpicto($langs->trans('Qty'), $langs->trans("QtyRequiredIfNoLoss")).'</td>';

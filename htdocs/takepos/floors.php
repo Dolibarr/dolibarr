@@ -70,7 +70,7 @@ if (empty($user->rights->takepos->run)) {
  */
 
 if ($action == "getTables") {
-	$sql = "SELECT rowid, entity, label, leftpos, toppos, floor FROM ".MAIN_DB_PREFIX."takepos_floor_tables where floor=".$floor;
+	$sql = "SELECT rowid, entity, label, leftpos, toppos, floor FROM ".MAIN_DB_PREFIX."takepos_floor_tables where floor = ".((int) $floor);
 	$resql = $db->query($sql);
 	$rows = array();
 	while ($row = $db->fetch_array($resql)) {
@@ -93,9 +93,9 @@ if ($action == "update") {
 		$top = 95;
 	}
 	if ($left > 3 or $top > 4) {
-		$db->query("UPDATE ".MAIN_DB_PREFIX."takepos_floor_tables set leftpos=".$left.", toppos=".$top." WHERE rowid='".$place."'");
+		$db->query("UPDATE ".MAIN_DB_PREFIX."takepos_floor_tables set leftpos = ".((int) $left).", toppos = ".((int) $top)." WHERE rowid = ".((int) $place));
 	} else {
-		$db->query("DELETE from ".MAIN_DB_PREFIX."takepos_floor_tables where rowid='".$place."'");
+		$db->query("DELETE from ".MAIN_DB_PREFIX."takepos_floor_tables where rowid = ".((int) $place));
 	}
 }
 
@@ -104,11 +104,11 @@ if ($action == "updatename") {
 	if (strlen($newname) > 3) {
 		$newname = substr($newname, 0, 3); // Only 3 chars
 	}
-	$db->query("UPDATE ".MAIN_DB_PREFIX."takepos_floor_tables set label='".$db->escape($newname)."' WHERE rowid='".$place."'");
+	$db->query("UPDATE ".MAIN_DB_PREFIX."takepos_floor_tables set label='".$db->escape($newname)."' WHERE rowid = ".((int) $place));
 }
 
 if ($action == "add") {
-	$sql = "INSERT INTO ".MAIN_DB_PREFIX."takepos_floor_tables(entity, label, leftpos, toppos, floor) VALUES (".$conf->entity.", '', '45', '45', ".$floor.")";
+	$sql = "INSERT INTO ".MAIN_DB_PREFIX."takepos_floor_tables(entity, label, leftpos, toppos, floor) VALUES (".$conf->entity.", '', '45', '45', ".((int) $floor).")";
 	$asdf = $db->query($sql);
 	$db->query("update ".MAIN_DB_PREFIX."takepos_floor_tables set label=rowid where label=''"); // No empty table names
 }
@@ -154,10 +154,10 @@ function updateplace(idplace, left, top) {
 	console.log("updateplace idplace="+idplace+" left="+left+" top="+top);
 	$.ajax({
 		type: "POST",
-		url: "floors.php",
-		data: { action: "update", left: left, top: top, place: idplace }
-		}).done(function( msg ) {
-		window.location.href='floors.php?mode=edit&floor=<?php echo $floor; ?>';
+		url: "<?php echo DOL_URL_ROOT.'/takepos/floors.php'; ?>",
+		data: { action: "update", left: left, top: top, place: idplace, token: '<?php echo currentToken(); ?>' }
+	}).done(function( msg ) {
+		window.location.href='floors.php?mode=edit&floor=<?php echo urlencode($floor); ?>';
 	});
 }
 
@@ -166,12 +166,12 @@ function updatename(rowid) {
 	console.log("updatename rowid="+rowid+" after="+after);
 	$.ajax({
 		type: "POST",
-		url: "floors.php",
-		data: { action: "updatename", place: rowid, newname: after }
-		}).done(function( msg ) {
-		window.location.href='floors.php?mode=edit&floor=<?php echo $floor; ?>';
-		});
-	}
+		url: "<?php echo DOL_URL_ROOT.'/takepos/floors.php'; ?>",
+		data: { action: "updatename", place: rowid, newname: after, token: '<?php echo currentToken(); ?>' }
+	}).done(function( msg ) {
+		window.location.href='floors.php?mode=edit&floor=<?php echo urlencode($floor); ?>';
+	});
+}
 
 function LoadPlace(place){
 	parent.location.href='index.php?place='+place;
@@ -212,9 +212,9 @@ $( document ).ready(function() {
 <?php if ($user->admin) {?>
 <div style="position: absolute; left: 0.1%; top: 0.8%; width:8%; height:11%;">
 	<?php if ($mode == "edit") {?>
-<a id="add" onclick="window.location.href='floors.php?mode=edit&action=add&floor=<?php echo $floor; ?>';"><?php echo $langs->trans("AddTable"); ?></a>
+<a id="add" onclick="window.location.href='floors.php?mode=edit&action=add&token=<?php echo newToken() ?>&floor=<?php echo $floor; ?>';"><?php echo $langs->trans("AddTable"); ?></a>
 	<?php } else { ?>
-<a onclick="window.location.href='floors.php?mode=edit&floor=<?php echo $floor; ?>';"><?php echo $langs->trans("Edit"); ?></a>
+<a onclick="window.location.href='floors.php?mode=edit&token=<?php echo newToken() ?>&floor=<?php echo $floor; ?>';"><?php echo $langs->trans("Edit"); ?></a>
 	<?php } ?>
 </div>
 <?php }

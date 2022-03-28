@@ -112,7 +112,7 @@ print $langs->trans("LDAPDescMembersTypes").'<br>';
 print '<br>';
 
 
-print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?action=setvalue">';
+print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?action=setvalue&token='.newToken().'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 
 $form = new Form($db);
@@ -124,25 +124,29 @@ print '<td colspan="4">'.$langs->trans("LDAPSynchronizeMembersTypes").'</td>';
 print "</tr>\n";
 
 // DN pour les types de membres
-print '<tr class="oddeven"><td width="25%"><span class="fieldrequired">'.$langs->trans("LDAPMemberTypeDn").'</span></td><td>';
+print '<!-- LDAP_MEMBER_TYPE_DN -->';
+print '<tr class="oddeven"><td><span class="fieldrequired">'.$langs->trans("LDAPMemberTypeDn").'</span></td><td>';
 print '<input size="48" type="text" name="membertype" value="'.$conf->global->LDAP_MEMBER_TYPE_DN.'">';
 print '</td><td>'.$langs->trans("LDAPMemberTypepDnExample").'</td>';
 print '<td>&nbsp;</td>';
 print '</tr>';
 
 // List of object class used to define attributes in structure
-print '<tr class="oddeven"><td width="25%"><span class="fieldrequired">'.$langs->trans("LDAPMemberTypeObjectClassList").'</span></td><td>';
+print '<!-- LDAP_MEMBER_TYPE_OBJECT_CLASS -->';
+print '<tr class="oddeven"><td><span class="fieldrequired">'.$langs->trans("LDAPMemberTypeObjectClassList").'</span></td><td>';
 print '<input size="48" type="text" name="objectclass" value="'.$conf->global->LDAP_MEMBER_TYPE_OBJECT_CLASS.'">';
 print '</td><td>'.$langs->trans("LDAPMemberTypeObjectClassListExample").'</td>';
 print '<td>&nbsp;</td>';
 print '</tr>';
 
 print '</table>';
+
 print '<br>';
+
 print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
-print '<td width="25%">'.$langs->trans("LDAPDolibarrMapping").'</td>';
+print '<td>'.$langs->trans("LDAPDolibarrMapping").'</td>';
 print '<td colspan="2">'.$langs->trans("LDAPLdapMapping").'</td>';
 print '<td class="right">'.$langs->trans("LDAPNamingAttribute").'</td>';
 print "</tr>\n";
@@ -176,7 +180,7 @@ print info_admin($langs->trans("LDAPDescValues"));
 
 print dol_get_fiche_end();
 
-print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></div>';
+print $form->buttonsSaveCancel("Modify", '');
 
 print '</form>';
 
@@ -184,7 +188,7 @@ print '</form>';
 /*
  * Test de la connexion
  */
-if ($conf->global->LDAP_MEMBER_TYPE_ACTIVE == '1') {
+if (getDolGlobalInt('LDAP_MEMBER_TYPE_ACTIVE') === Ldap::SYNCHRO_DOLIBARR_TO_LDAP) {
 	$butlabel = $langs->trans("LDAPTestSynchroMemberType");
 	$testlabel = 'testmembertype';
 	$key = $conf->global->LDAP_KEY_MEMBERS_TYPES;
@@ -219,12 +223,12 @@ if (function_exists("ldap_connect")) {
 
 			if ($result2 > 0) {
 				print img_picto('', 'info').' ';
-				print '<font class="ok">'.$langs->trans("LDAPSynchroOK").'</font><br>';
+				print '<span class="ok">'.$langs->trans("LDAPSynchroOK").'</span><br>';
 			} else {
 				print img_picto('', 'error').' ';
-				print '<font class="error">'.$langs->trans("LDAPSynchroKOMayBePermissions");
+				print '<span class="error">'.$langs->trans("LDAPSynchroKOMayBePermissions");
 				print ': '.$ldap->error;
-				print '</font><br>';
+				print '</span><br>';
 				print $langs->trans("ErrorLDAPMakeManualTest", $conf->ldap->dir_temp).'<br>';
 			}
 
@@ -234,9 +238,9 @@ if (function_exists("ldap_connect")) {
 			print "\n<br>";
 		} else {
 			print img_picto('', 'error').' ';
-			print '<font class="error">'.$langs->trans("LDAPSynchroKO");
+			print '<span class="error">'.$langs->trans("LDAPSynchroKO");
 			print ': '.$ldap->error;
-			print '</font><br>';
+			print '</span><br>';
 			print $langs->trans("ErrorLDAPMakeManualTest", $conf->ldap->dir_temp).'<br>';
 		}
 	}

@@ -160,7 +160,7 @@ if ($action == 'setremise' && $user->rights->societe->creer) {
 	$amount_ht = price2num(GETPOST('amount_ht', 'alpha'));
 	$desc = GETPOST('desc', 'alpha');
 	$tva_tx = GETPOST('tva_tx', 'alpha');
-	$discount_type = !empty($_POST['discount_type']) ?GETPOST('discount_type', 'alpha') : 0;
+	$discount_type = GETPOSTISSET('discount_type') ? GETPOST('discount_type', 'alpha') : 0;
 
 	if ($amount_ht > 0) {
 		$error = 0;
@@ -267,8 +267,8 @@ if ($socid > 0) {
 		$remise_all = $remise_user = 0;
 		$sql = "SELECT SUM(rc.amount_ht) as amount, rc.fk_user";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except as rc";
-		$sql .= " WHERE rc.fk_soc = ".$object->id;
-		$sql .= " AND rc.entity = ".$conf->entity;
+		$sql .= " WHERE rc.fk_soc = ".((int) $object->id);
+		$sql .= " AND rc.entity = ".((int) $conf->entity);
 		$sql .= " AND discount_type = 0"; // Exclude supplier discounts
 		$sql .= " AND (fk_facture_line IS NULL AND fk_facture IS NULL)";
 		$sql .= " GROUP BY rc.fk_user";
@@ -297,8 +297,8 @@ if ($socid > 0) {
 		$remise_all = $remise_user = 0;
 		$sql = "SELECT SUM(rc.amount_ht) as amount, rc.fk_user";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except as rc";
-		$sql .= " WHERE rc.fk_soc = ".$object->id;
-		$sql .= " AND rc.entity = ".$conf->entity;
+		$sql .= " WHERE rc.fk_soc = ".((int) $object->id);
+		$sql .= " AND rc.entity = ".((int) $conf->entity);
 		$sql .= " AND discount_type = 1"; // Exclude customer discounts
 		$sql .= " AND (fk_invoice_supplier_line IS NULL AND fk_invoice_supplier IS NULL)";
 		$sql .= " GROUP BY rc.fk_user";
@@ -408,8 +408,8 @@ if ($socid > 0) {
 		$sql .= " fa.ref as ref, fa.type as type";
 		$sql .= " FROM  ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."societe_remise_except as rc";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture as fa ON rc.fk_facture_source = fa.rowid";
-		$sql .= " WHERE rc.fk_soc = ".$object->id;
-		$sql .= " AND rc.entity = ".$conf->entity;
+		$sql .= " WHERE rc.fk_soc = ".((int) $object->id);
+		$sql .= " AND rc.entity = ".((int) $conf->entity);
 		$sql .= " AND u.rowid = rc.fk_user";
 		$sql .= " AND rc.discount_type = 0"; // Eliminate supplier discounts
 		$sql .= " AND (rc.fk_facture_line IS NULL AND rc.fk_facture IS NULL)";
@@ -532,7 +532,6 @@ if ($socid > 0) {
 		if ($isCustomer) {
 			print '</div>'; // class="fichehalfleft"
 			print '<div class="fichehalfright fichehalfright-lg">';
-			print '<div class="ficheaddleft">';
 			print load_fiche_titre($langs->trans("SupplierDiscounts"), '', '');
 		}
 
@@ -547,8 +546,8 @@ if ($socid > 0) {
 		$sql .= " fa.ref, fa.type as type";
 		$sql .= " FROM  ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."societe_remise_except as rc";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture_fourn as fa ON rc.fk_invoice_supplier_source = fa.rowid";
-		$sql .= " WHERE rc.fk_soc = ".$object->id;
-		$sql .= " AND rc.entity = ".$conf->entity;
+		$sql .= " WHERE rc.fk_soc = ".((int) $object->id);
+		$sql .= " AND rc.entity = ".((int) $conf->entity);
 		$sql .= " AND u.rowid = rc.fk_user";
 		$sql .= " AND rc.discount_type = 1"; // Eliminate customer discounts
 		$sql .= " AND (rc.fk_invoice_supplier IS NULL AND rc.fk_invoice_supplier_line IS NULL)";
@@ -667,7 +666,6 @@ if ($socid > 0) {
 		}
 
 		if ($isCustomer) {
-			print '</div>'; // class="ficheaddleft"
 			print '</div>'; // class="fichehalfright"
 			print '</div>'; // class="fichecenter"
 		}
@@ -700,7 +698,7 @@ if ($socid > 0) {
 		$sql .= " , ".MAIN_DB_PREFIX."facturedet as fc";
 		$sql .= " , ".MAIN_DB_PREFIX."societe_remise_except as rc";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture as fa ON rc.fk_facture_source = fa.rowid";
-		$sql .= " WHERE rc.fk_soc =".$object->id;
+		$sql .= " WHERE rc.fk_soc = ".((int) $object->id);
 		$sql .= " AND rc.fk_facture_line = fc.rowid";
 		$sql .= " AND fc.fk_facture = f.rowid";
 		$sql .= " AND rc.fk_user = u.rowid";
@@ -709,8 +707,8 @@ if ($socid > 0) {
 		//$sql.= " UNION ";
 		// Discount linked to invoices
 		$sql2 = "SELECT rc.rowid, rc.amount_ht, rc.amount_tva, rc.amount_ttc, rc.tva_tx, rc.vat_src_code,";
-		$sql2 .= " rc.datec as dc, rc.description, rc.fk_facture_line, rc.fk_facture,";
-		$sql2 .= " rc.fk_facture_source,";
+		$sql2 .= " rc.multicurrency_amount_ht, rc.multicurrency_amount_tva, rc.multicurrency_amount_ttc,";
+		$sql2 .= " rc.datec as dc, rc.description, rc.fk_facture, rc.fk_facture_source,";
 		$sql2 .= " u.login, u.rowid as user_id,";
 		$sql2 .= " f.rowid as invoiceid, f.ref,";
 		$sql2 .= " fa.ref as invoice_source_ref, fa.type as type";
@@ -718,7 +716,7 @@ if ($socid > 0) {
 		$sql2 .= " , ".MAIN_DB_PREFIX."user as u";
 		$sql2 .= " , ".MAIN_DB_PREFIX."societe_remise_except as rc";
 		$sql2 .= " LEFT JOIN ".MAIN_DB_PREFIX."facture as fa ON rc.fk_facture_source = fa.rowid";
-		$sql2 .= " WHERE rc.fk_soc =".$object->id;
+		$sql2 .= " WHERE rc.fk_soc = ".((int) $object->id);
 		$sql2 .= " AND rc.fk_facture = f.rowid";
 		$sql2 .= " AND rc.fk_user = u.rowid";
 		$sql2 .= " AND rc.discount_type = 0"; // Eliminate supplier discounts
@@ -843,14 +841,13 @@ if ($socid > 0) {
 		if ($isCustomer) {
 			print '</div>'; // class="fichehalfleft"
 			print '<div class="fichehalfright fichehalfright-lg">';
-			print '<div class="ficheaddleft">';
 			print load_fiche_titre($langs->trans("SupplierDiscounts"), '', '');
 		}
 
 		// Discount linked to invoice lines
 		$sql = "SELECT rc.rowid, rc.amount_ht, rc.amount_tva, rc.amount_ttc, rc.tva_tx, rc.vat_src_code,";
 		$sql .= " rc.multicurrency_amount_ht, rc.multicurrency_amount_tva, rc.multicurrency_amount_ttc,";
-		$sql .= " rc.datec as dc, rc.description, rc.fk_invoice_supplier_line, rc.fk_invoice_supplier,";
+		$sql .= " rc.datec as dc, rc.description, rc.fk_invoice_supplier_line,";
 		$sql .= " rc.fk_invoice_supplier_source,";
 		$sql .= " u.login, u.rowid as user_id,";
 		$sql .= " f.rowid as invoiceid, f.ref as ref,";
@@ -860,7 +857,7 @@ if ($socid > 0) {
 		$sql .= " , ".MAIN_DB_PREFIX."facture_fourn_det as fc";
 		$sql .= " , ".MAIN_DB_PREFIX."societe_remise_except as rc";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture_fourn as fa ON rc.fk_invoice_supplier_source = fa.rowid";
-		$sql .= " WHERE rc.fk_soc =".$object->id;
+		$sql .= " WHERE rc.fk_soc = ".((int) $object->id);
 		$sql .= " AND rc.fk_invoice_supplier_line = fc.rowid";
 		$sql .= " AND fc.fk_facture_fourn = f.rowid";
 		$sql .= " AND rc.fk_user = u.rowid";
@@ -869,7 +866,8 @@ if ($socid > 0) {
 		//$sql.= " UNION ";
 		// Discount linked to invoices
 		$sql2 = "SELECT rc.rowid, rc.amount_ht, rc.amount_tva, rc.amount_ttc, rc.tva_tx, rc.vat_src_code,";
-		$sql2 .= " rc.datec as dc, rc.description, rc.fk_invoice_supplier_line, rc.fk_invoice_supplier,";
+		$sql2 .= " rc.multicurrency_amount_ht, rc.multicurrency_amount_tva, rc.multicurrency_amount_ttc,";
+		$sql2 .= " rc.datec as dc, rc.description, rc.fk_invoice_supplier,";
 		$sql2 .= " rc.fk_invoice_supplier_source,";
 		$sql2 .= " u.login, u.rowid as user_id,";
 		$sql2 .= " f.rowid as invoiceid, f.ref as ref,";
@@ -878,7 +876,7 @@ if ($socid > 0) {
 		$sql2 .= " , ".MAIN_DB_PREFIX."user as u";
 		$sql2 .= " , ".MAIN_DB_PREFIX."societe_remise_except as rc";
 		$sql2 .= " LEFT JOIN ".MAIN_DB_PREFIX."facture_fourn as fa ON rc.fk_invoice_supplier_source = fa.rowid";
-		$sql2 .= " WHERE rc.fk_soc =".$object->id;
+		$sql2 .= " WHERE rc.fk_soc = ".((int) $object->id);
 		$sql2 .= " AND rc.fk_invoice_supplier = f.rowid";
 		$sql2 .= " AND rc.fk_user = u.rowid";
 		$sql2 .= " AND rc.discount_type = 1"; // Eliminate customer discounts
@@ -999,7 +997,6 @@ if ($socid > 0) {
 		}
 
 		if ($isCustomer) {
-			print '</div>'; // class="ficheaddleft"
 			print '</div>'; // class="fichehalfright"
 			print '</div>'; // class="fichecenter"
 		}

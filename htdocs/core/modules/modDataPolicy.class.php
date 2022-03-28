@@ -132,7 +132,7 @@ class modDataPolicy extends DolibarrModules {
 			array('DATAPOLICY_ADHERENT', 'chaine', '', $langs->trans('NUMBER_MONTH_BEFORE_DELETION'), 0),
 		);
 
-		$country = explode(":", $conf->global->MAIN_INFO_SOCIETE_COUNTRY);
+		$country = explode(":", empty($conf->global->MAIN_INFO_SOCIETE_COUNTRY) ? '' : $conf->global->MAIN_INFO_SOCIETE_COUNTRY);
 
 		// Some keys to add into the overwriting translation tables
 		/* $this->overwrite_translation = array(
@@ -210,8 +210,6 @@ class modDataPolicy extends DolibarrModules {
 	public function init($options = '')
 	{
 		global $langs;
-
-		$this->_load_tables('/datapolicy/sql/');
 
 		// Create extrafields
 		include_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';

@@ -237,7 +237,7 @@ class ActionsCardProduct
 	 *
 	 *  @return	void
 	 */
-	private function getFieldList()
+	private function getFieldListCanvas()
 	{
 		global $conf, $langs;
 
@@ -296,7 +296,7 @@ class ActionsCardProduct
 		// phpcs:enable
 		global $conf, $langs;
 
-		$this->getFieldList();
+		$this->getFieldListCanvas();
 
 		$this->list_datas = array();
 
@@ -349,11 +349,11 @@ class ActionsCardProduct
 			}
 		}
 
-		if (isset($_GET["tosell"]) && dol_strlen($_GET["tosell"]) > 0) {
-			$sql .= " AND p.tosell = ".$this->db->escape($_GET["tosell"]);
+		if (GETPOSTISSET("tosell")) {
+			$sql .= " AND p.tosell = ".((int) GETPOST("tosell", "int"));
 		}
-		if (isset($_GET["canvas"]) && dol_strlen($_GET["canvas"]) > 0) {
-			$sql .= " AND p.canvas = '".$this->db->escape($_GET["canvas"])."'";
+		if (GETPOSTISSET("canvas")) {
+			$sql .= " AND p.canvas = '".$this->db->escape(GETPOST("canvas"))."'";
 		}
 		$sql .= $this->db->order($sortfield, $sortorder);
 		$sql .= $this->db->plimit($limit + 1, $offset);

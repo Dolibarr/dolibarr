@@ -38,8 +38,8 @@ if (GETPOST("modecompta")) {
 	$modecompta = GETPOST("modecompta");
 }
 
-$sortorder = GETPOST("sortorder", 'aZ09');
-$sortfield = GETPOST("sortfield", 'aZ09');
+$sortorder = GETPOST("sortorder", 'aZ09comma');
+$sortfield = GETPOST("sortfield", 'aZ09comma');
 if (!$sortorder) {
 	$sortorder = "asc";
 }
@@ -200,18 +200,19 @@ if ($modecompta == "CREANCES-DETTES") {
 	$calcmode = $langs->trans("CalcModeDebt");
 	//$calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modecompta=RECETTES-DEPENSES">','</a>').')';
 	$description = $langs->trans("RulesPurchaseTurnoverDue");
-	$builddate = dol_now();
 	//$exportlink=$langs->trans("NotYetAvailable");
 } elseif ($modecompta == "RECETTES-DEPENSES") {
 	$name = $langs->trans("PurchaseTurnoverCollected").', '.$langs->trans("ByThirdParties");
 	$calcmode = $langs->trans("CalcModeEngagement");
 	//$calcmode.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modecompta=CREANCES-DETTES">','</a>').')';
 	$description = $langs->trans("RulesPurchaseTurnoverIn");
-	$builddate = dol_now();
 	//$exportlink=$langs->trans("NotYetAvailable");
 } elseif ($modecompta == "BOOKKEEPING") {
+	// TODO
 } elseif ($modecompta == "BOOKKEEPINGCOLLECTED") {
+	// TODO
 }
+$builddate = dol_now();
 $period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0, 0, '', '', '', '', 1, '', '', 'tzserver');
 $period .= ' - ';
 $period .= $form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0, 0, '', '', '', '', 1, '', '', 'tzserver');
@@ -296,11 +297,11 @@ if (!empty($search_town)) {
 	$sql .= natural_search('s.town', $search_town);
 }
 if ($search_country > 0) {
-	$sql .= ' AND s.fk_pays = '.$search_country.'';
+	$sql .= ' AND s.fk_pays = '.((int) $search_country);
 }
 $sql .= " AND f.entity IN (".getEntity('supplier_invoice').")";
 if ($socid) {
-	$sql .= " AND f.fk_soc = ".$socid;
+	$sql .= " AND f.fk_soc = ".((int) $socid);
 }
 $sql .= " GROUP BY s.rowid, s.nom, s.zip, s.town, s.fk_pays";
 $sql .= " ORDER BY s.rowid";
@@ -344,7 +345,8 @@ print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" :
 // Category filter
 print '<tr class="liste_titre">';
 print '<td>';
-print $langs->trans("Category").': '.$formother->select_categories(Categorie::TYPE_SUPPLIER, $selected_cat, 'search_categ', true);
+print img_picto('', 'category', 'class="paddingrightonly"');
+print $formother->select_categories(Categorie::TYPE_SUPPLIER, $selected_cat, 'search_categ', 0, $langs->trans("Category"));
 print ' ';
 print $langs->trans("SubCats").'? ';
 print '<input type="checkbox" name="subcat" value="yes"';
@@ -359,13 +361,13 @@ print '</tr>';
 
 print '<tr class="liste_titre">';
 print '<td class="liste_titre left">';
-print '<input class="flat" size="6" type="text" name="search_societe" value="'.$search_societe.'">';
+print '<input class="flat" size="6" type="text" name="search_societe" value="'.dol_escape_htmltag($search_societe).'">';
 print '</td>';
 print '<td class="liste_titre left">';
-print '<input class="flat" size="6" type="text" name="search_zip" value="'.$search_zip.'">';
+print '<input class="flat" size="6" type="text" name="search_zip" value="'.dol_escape_htmltag($search_zip).'">';
 print '</td>';
 print '<td class="liste_titre left">';
-print '<input class="flat" size="6" type="text" name="search_town" value="'.$search_town.'">';
+print '<input class="flat" size="6" type="text" name="search_town" value="'.dol_escape_htmltag($search_town).'">';
 print '</td>';
 print '<td class="liste_titre left">';
 print $form->select_country($search_country, 'search_country');

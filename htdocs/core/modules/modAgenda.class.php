@@ -325,7 +325,7 @@ class modAgenda extends DolibarrModules
 			'type'=>'left',
 			'titre'=>'List',
 			'mainmenu'=>'agenda',
-			'url'=>'/comm/action/list.php?action=show_list&amp;mainmenu=agenda&amp;leftmenu=agenda',
+			'url'=>'/comm/action/list.php?mode=show_list&amp;mainmenu=agenda&amp;leftmenu=agenda',
 			'langs'=>'agenda',
 			'position'=>110,
 			'perms'=>'$user->rights->agenda->myactions->read',
@@ -339,7 +339,7 @@ class modAgenda extends DolibarrModules
 			'type'=>'left',
 			'titre'=>'MenuToDoMyActions',
 			'mainmenu'=>'agenda',
-			'url'=>'/comm/action/list.php?action=show_list&amp;mainmenu=agenda&amp;leftmenu=agenda&amp;status=todo&amp;filter=mine',
+			'url'=>'/comm/action/list.php?mode=show_list&amp;mainmenu=agenda&amp;leftmenu=agenda&amp;status=todo&amp;filter=mine',
 			'langs'=>'agenda',
 			'position'=>111,
 			'perms'=>'$user->rights->agenda->myactions->read',
@@ -353,7 +353,7 @@ class modAgenda extends DolibarrModules
 			'type'=>'left',
 			'titre'=>'MenuDoneMyActions',
 			'mainmenu'=>'agenda',
-			'url'=>'/comm/action/list.php?action=show_list&amp;mainmenu=agenda&amp;leftmenu=agenda&amp;status=done&amp;filter=mine',
+			'url'=>'/comm/action/list.php?mode=show_list&amp;mainmenu=agenda&amp;leftmenu=agenda&amp;status=done&amp;filter=mine',
 			'langs'=>'agenda',
 			'position'=>112,
 			'perms'=>'$user->rights->agenda->myactions->read',
@@ -367,7 +367,7 @@ class modAgenda extends DolibarrModules
 			'type'=>'left',
 			'titre'=>'MenuToDoActions',
 			'mainmenu'=>'agenda',
-			'url'=>'/comm/action/list.php?action=show_list&amp;mainmenu=agenda&amp;leftmenu=agenda&amp;status=todo&amp;filtert=-1',
+			'url'=>'/comm/action/list.php?mode=show_list&amp;mainmenu=agenda&amp;leftmenu=agenda&amp;status=todo&amp;filtert=-1',
 			'langs'=>'agenda',
 			'position'=>113,
 			'perms'=>'$user->rights->agenda->allactions->read',
@@ -381,7 +381,7 @@ class modAgenda extends DolibarrModules
 			'type'=>'left',
 			'titre'=>'MenuDoneActions',
 			'mainmenu'=>'agenda',
-			'url'=>'/comm/action/list.php?action=show_list&amp;mainmenu=agenda&amp;leftmenu=agenda&amp;status=done&amp;filtert=-1',
+			'url'=>'/comm/action/list.php?mode=show_list&amp;mainmenu=agenda&amp;leftmenu=agenda&amp;status=done&amp;filtert=-1',
 			'langs'=>'agenda',
 			'position'=>114,
 			'perms'=>'$user->rights->agenda->allactions->read',
@@ -415,7 +415,7 @@ class modAgenda extends DolibarrModules
 			'langs' => 'agenda',
 			'position' => 170,
 			'perms' => '$user->rights->agenda->allactions->read',
-			'enabled' => '$conf->categorie->enabled&&$conf->categorie->enabled',
+			'enabled' => '$conf->categorie->enabled',
 			'target' => '',
 			'user' => 2
 		);
@@ -456,8 +456,12 @@ class modAgenda extends DolibarrModules
 			'p.ref' => 'project',
 		);
 
+		$keyforselect = 'actioncomm'; $keyforelement = 'action'; $keyforaliasextra = 'extra';
+		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
+
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 		$this->export_sql_end[$r]  = ' FROM  '.MAIN_DB_PREFIX.'actioncomm as ac';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'actioncomm_extrafields as extra ON ac.id = extra.fk_object';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_actioncomm as cac on ac.fk_action = cac.id';
 		if (!empty($user) && empty($user->rights->agenda->allactions->read)) {
 			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'actioncomm_resources acr on ac.id = acr.fk_actioncomm';

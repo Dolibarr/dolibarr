@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2021       Anthony Berton          <bertonanthony@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,8 +53,8 @@ $colorbacktabcard1 = '255,255,255'; // card
 $colorbacktabactive = '234,234,234';
 $colorbacklineimpair1 = '255,255,255'; // line impair
 $colorbacklineimpair2 = '255,255,255'; // line impair
-$colorbacklinepair1 = '248,248,248'; // line pair
-$colorbacklinepair2 = '246,246,246'; // line pair
+$colorbacklinepair1 = '251,251,251'; // line pair
+$colorbacklinepair2 = '248,248,248'; // line pair
 $colorbacklinepairhover = '230,237,244'; // line hover
 $colorbacklinepairchecked = '230,237,244'; // line checked
 $colorbacklinebreak = '250,246,251';
@@ -65,6 +66,11 @@ $colortext = '0,0,0';
 $colortextlink = '0,0,120';
 $fontsize = '14';
 $fontsizesmaller = '11';
+$topMenuFontSize = '1.1em';
+$toolTipBgColor = 'rgba(255, 255, 255, 0.96)';
+$toolTipFontColor = '#333';
+$butactionbg = '150, 110, 162, 0.95';
+$textbutaction = '255, 255, 255, 255';
 
 // text color
 $textSuccess   = '#28a745';
@@ -76,25 +82,40 @@ $colorblind_deuteranopes_textWarning = $textWarning; // currently not tested wit
 // Badges colors
 $badgePrimary   = '#007bff';
 $badgeSecondary = '#999999';
+$badgeInfo      = '#17a2b8';
 $badgeSuccess   = '#28a745';
 $badgeWarning   = '#a37c0d'; // See $textWarning
 $badgeDanger    = '#8c4446'; // See $textDanger
-$badgeInfo      = '#17a2b8';
 $badgeDark      = '#343a40';
 $badgeLight     = '#f8f9fa';
 
+// badge color ajustement for color blind
+$colorblind_deuteranopes_badgeSuccess   = '#37de5d'; //! text color black
+$colorblind_deuteranopes_badgeSuccess_textColor7 = '#000';
+$colorblind_deuteranopes_badgeWarning   = '#e4e411';
+$colorblind_deuteranopes_badgeDanger    = $badgeDanger; // currently not tested with a color blind people so use default color
+
 /* default color for status : After a quick check, somme status can have oposite function according to objects
 *  So this badges status uses default value according to theme eldy status img
-*  TODO: use color definition vars above for define badges color status X -> expemple $badgeStatusValidate, $badgeStatusClosed, $badgeStatusActive ....
+*  TODO: use color definition vars above for define badges color status X -> exemple $badgeStatusValidate, $badgeStatusClosed, $badgeStatusActive ....
 */
-$badgeStatus0 = '#cbd3d3';
-$badgeStatus1 = '#bc9526';
-$badgeStatus2 = '#e6f0f0';
+$badgeStatus0 = '#cbd3d3'; // draft
+$badgeStatus1 = '#bc9526'; // validated
+$badgeStatus1b = '#bc9526'; // validated
+$badgeStatus2 = '#e6f0f0'; // approved
 $badgeStatus3 = '#bca52b';
-$badgeStatus4 = '#277d1e';
+$badgeStatus4 = '#25a580'; // Color ok
+$badgeStatus4b = '#25a580'; // Color ok
 $badgeStatus5 = '#cad2d2';
 $badgeStatus6 = '#cad2d2';
 $badgeStatus7 = '#277d1e';
 $badgeStatus8 = '#993013';
 $badgeStatus9 = '#e7f0f0';
 $badgeStatus10 = '#993013';
+$badgeStatus11 = '#15a540';
+
+// status color ajustement for color blind
+$colorblind_deuteranopes_badgeStatus4 = $colorblind_deuteranopes_badgeStatus7 = $colorblind_deuteranopes_badgeSuccess; //! text color black
+$colorblind_deuteranopes_badgeStatus_textColor4 = $colorblind_deuteranopes_badgeStatus_textColor7 = '#000';
+$colorblind_deuteranopes_badgeStatus1 = $colorblind_deuteranopes_badgeWarning;
+$colorblind_deuteranopes_badgeStatus_textColor1 = '#000';

@@ -321,9 +321,9 @@ class Opensurveysondage extends CommonObject
 		$sql .= " date_fin=".(dol_strlen($this->date_fin) != 0 ? "'".$this->db->idate($this->date_fin)."'" : 'null').",";
 		$sql .= " status=".(isset($this->status) ? "'".$this->db->escape($this->status)."'" : "null").",";
 		$sql .= " format=".(isset($this->format) ? "'".$this->db->escape($this->format)."'" : "null").",";
-		$sql .= " mailsonde=".(isset($this->mailsonde) ? $this->db->escape($this->mailsonde) : "null").",";
-		$sql .= " allow_comments=".$this->db->escape($this->allow_comments).",";
-		$sql .= " allow_spy=".$this->db->escape($this->allow_spy);
+		$sql .= " mailsonde=".(isset($this->mailsonde) ? ((int) $this->mailsonde) : "null").",";
+		$sql .= " allow_comments=".((int) $this->allow_comments).",";
+		$sql .= " allow_spy=".((int) $this->allow_spy);
 		$sql .= " WHERE id_sondage='".$this->db->escape($this->id_sondage)."'";
 
 		$this->db->begin();
@@ -492,10 +492,12 @@ class Opensurveysondage extends CommonObject
 	public function fetch_lines()
 	{
 		// phpcs:enable
-		$ret = array();
+		$this->lines = array();
 
-		$sql = "SELECT id_users, nom as name, reponses FROM ".MAIN_DB_PREFIX."opensurvey_user_studs";
+		$sql = "SELECT id_users, nom as name, reponses";
+		$sql .= " FROM ".MAIN_DB_PREFIX."opensurvey_user_studs";
 		$sql .= " WHERE id_sondage = '".$this->db->escape($this->id_sondage)."'";
+
 		$resql = $this->db->query($sql);
 
 		if ($resql) {
@@ -505,14 +507,12 @@ class Opensurveysondage extends CommonObject
 				$obj = $this->db->fetch_object($resql);
 				$tmp = array('id_users'=>$obj->id_users, 'nom'=>$obj->name, 'reponses'=>$obj->reponses);
 
-				$ret[] = $tmp;
+				$this->lines[] = $tmp;
 				$i++;
 			}
 		} else {
 			dol_print_error($this->db);
 		}
-
-		$this->lines = $ret;
 
 		return count($this->lines);
 	}
@@ -652,12 +652,12 @@ class Opensurveysondage extends CommonObject
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			//$langs->load("mymodule");
-			$this->labelStatus[self::STATUS_DRAFT] = $langs->trans('Draft');
-			$this->labelStatus[self::STATUS_VALIDATED] = $langs->trans('Opened');
-			$this->labelStatus[self::STATUS_CLOSED] = $langs->trans('Closed');
-			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->trans('Draft');
-			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->trans('Opened');
-			$this->labelStatusShort[self::STATUS_CLOSED] = $langs->trans('Closed');
+			$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
+			$this->labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Opened');
+			$this->labelStatus[self::STATUS_CLOSED] = $langs->transnoentitiesnoconv('Closed');
+			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
+			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Opened');
+			$this->labelStatusShort[self::STATUS_CLOSED] = $langs->transnoentitiesnoconv('Closed');
 		}
 
 		$statusType = 'status'.$status;

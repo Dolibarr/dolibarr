@@ -3,10 +3,10 @@
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2016 Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2011-2014 Juanjo Menent	<jmenent@2byte.es>
+ * Copyright (C) 2011-2014 Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
- * Copyright (C) 2021		Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2021      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,8 +62,8 @@ if (!$year) {
 $search_account = GETPOST('search_account', 'int');
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -138,7 +138,7 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire) {
 
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
-	print_liste_field_titre("PeriodEndDate", $_SERVER["PHP_SELF"], "cs.date_ech", "", $param, 'width="140px"', $sortfield, $sortorder);
+	print_liste_field_titre("PeriodEndDate", $_SERVER["PHP_SELF"], "cs.date_ech", "", $param, '', $sortfield, $sortorder, 'nowraponall ');
 	print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "c.libelle", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "cs.fk_type", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("ExpectedToPay", $_SERVER["PHP_SELF"], "cs.amount", "", $param, 'class="right"', $sortfield, $sortorder);
@@ -227,9 +227,10 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire) {
 					$accountstatic->id = $obj->bid;
 					$accountstatic->ref = $obj->bref;
 					$accountstatic->number = $obj->bnumber;
-					$accountstatic->accountancy_number = $obj->account_number;
-					$accountstatic->accountancy_journal = $obj->accountancy_journal;
+					$accountstatic->account_number = $obj->account_number;
+					$accountstatic->fk_accountancy_journal = $obj->fk_accountancy_journal;
 					$accountstatic->label = $obj->blabel;
+
 					print $accountstatic->getNomUrl(1);
 				} else {
 					print '&nbsp;';
@@ -298,7 +299,7 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire) {
 		$total = 0;
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
-		print_liste_field_titre("PeriodEndDate", $_SERVER["PHP_SELF"], "pv.datev", "", $param, 'width="140px"', $sortfield, $sortorder);
+		print_liste_field_titre("PeriodEndDate", $_SERVER["PHP_SELF"], "pv.datev", "", $param, '', $sortfield, $sortorder, 'nowraponall ');
 		print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "pv.label", "", $param, '', $sortfield, $sortorder);
 		print_liste_field_titre("ExpectedToPay", $_SERVER["PHP_SELF"], "pv.amount", "", $param, 'class="right"', $sortfield, $sortorder);
 		print_liste_field_titre("RefPayment", $_SERVER["PHP_SELF"], "ptva.rowid", "", $param, '', $sortfield, $sortorder);
@@ -348,9 +349,10 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire) {
 					$accountstatic->id = $obj->bid;
 					$accountstatic->ref = $obj->bref;
 					$accountstatic->number = $obj->bnumber;
-					$accountstatic->accountancy_number = $obj->account_number;
-					$accountstatic->accountancy_journal = $obj->accountancy_journal;
+					$accountstatic->account_number = $obj->account_number;
+					$accountstatic->fk_accountancy_journal = $obj->fk_accountancy_journal;
 					$accountstatic->label = $obj->blabel;
+
 					print $accountstatic->getNomUrl(1);
 				} else {
 					print '&nbsp;';
