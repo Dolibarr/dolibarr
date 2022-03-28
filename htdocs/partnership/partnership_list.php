@@ -245,10 +245,8 @@ if (empty($reshook)) {
 		$nbok = 0;
 		foreach ($toselect as $toselectid) {
 			$result = $objecttmp->fetch($toselectid);
-			var_dump($objecttmp->status);
 			if ($result > 0) {
 				$result = $objecttmp->cancel($user, 0);
-				var_dump($result);
 				if ($result == 0) {
 					setEventMessages($langs->trans('StatusOfRefMustBe', $objecttmp->ref, $objecttmp->LibStatut($objecttmp::STATUS_APPROVED)), null, 'warnings');
 					$error++;

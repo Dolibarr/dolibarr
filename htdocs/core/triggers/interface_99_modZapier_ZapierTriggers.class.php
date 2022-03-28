@@ -18,17 +18,7 @@
 /**
  * \file    core/triggers/interface_99_modZapier_ZapierTriggers.class.php
  * \ingroup zapier
- * \brief   Example trigger.
- *
- *
- * \remarks You can create other triggers by copying this one.
- * - File name should be either:
- *      - interface_99_modZapier_MyTrigger.class.php
- *      - interface_99_all_MyTrigger.class.php
- * - The file must stay in core/triggers
- * - The class name must be InterfaceMytrigger
- * - The constructor method must be named InterfaceMytrigger
- * - The name property name must be MyTrigger
+ * \brief   File for Zappier Triggers.
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';

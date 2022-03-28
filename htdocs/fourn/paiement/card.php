@@ -344,7 +344,7 @@ if ($result > 0) {
 
 	// Send by mail
 	if ($user->socid == 0 && $action == '') {
-		$usercansend = (empty($conf->global->MAIN_USE_ADVANCED_PERMS));
+		$usercansend = (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->fournisseur->supplier_invoice_advance->send)));
 		if ($usercansend) {
 			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a>';
 		} else {

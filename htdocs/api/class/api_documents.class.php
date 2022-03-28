@@ -126,7 +126,7 @@ class Documents extends DolibarrApi
 	 * @param	string	$langcode		Language code like 'en_US', 'fr_FR', 'es_ES', ... (If not set, use the default language).
 	 * @return  array                   List of documents
 	 *
-	 * @throws RestException 500
+	 * @throws RestException 500 System error
 	 * @throws RestException 501
 	 * @throws RestException 400
 	 * @throws RestException 401
@@ -249,7 +249,7 @@ class Documents extends DolibarrApi
 	 * @throws RestException 400
 	 * @throws RestException 401
 	 * @throws RestException 404
-	 * @throws RestException 500
+	 * @throws RestException 500 System error
 	 *
 	 * @url GET /
 	 */
@@ -546,7 +546,7 @@ class Documents extends DolibarrApi
 	 * @throws RestException 400
 	 * @throws RestException 401
 	 * @throws RestException 404
-	 * @throws RestException 500
+	 * @throws RestException 500 System error
 	 *
 	 * @url POST /upload
 	 */

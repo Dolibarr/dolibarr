@@ -666,7 +666,7 @@ if ($resql) {
 			}
 		}
 		if (!empty($arrayfields['f.description']['checked'])) {
-			print '<td>'.dol_trunc(dolGetFirstLineOfText($obj->description), 48).'</td>';
+			print '<td>'.dol_trunc(dolGetFirstLineOfText(dol_string_nohtmltag($obj->description, 1)), 48).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -723,7 +723,7 @@ if ($resql) {
 		}
 		// Fields of detail of line
 		if (!empty($arrayfields['fd.description']['checked'])) {
-			print '<td>'.dolGetFirstLineOfText($obj->descriptiondetail).'</td>';
+			print '<td>'.dol_trunc(dolGetFirstLineOfText(dol_string_nohtmltag($obj->descriptiondetail, 1)), 48).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

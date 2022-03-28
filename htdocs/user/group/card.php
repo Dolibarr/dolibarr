@@ -206,8 +206,8 @@ if (empty($reshook)) {
 
 			$object->oldcopy = clone $object;
 
-			$object->name	= GETPOST("nom", 'nohtml');
-			$object->note	= dol_htmlcleanlastbr(trim(GETPOST("note", 'restricthtml')));
+			$object->name = GETPOST("nom", 'nohtml');
+			$object->note = dol_htmlcleanlastbr(trim(GETPOST("note", 'restricthtml')));
 
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
@@ -217,8 +217,8 @@ if (empty($reshook)) {
 
 			if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
 				$object->entity = 0;
-			} else {
-				$object->entity = GETPOST("entity");
+			} elseif (GETPOSTISSET("entity")) {
+				$object->entity = GETPOST("entity", "int");
 			}
 
 			$ret = $object->update();

@@ -1933,7 +1933,7 @@ class Ticket extends CommonObject
 
 		// Generation requete recherche
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."socpeople";
-		$sql .= " WHERE entity IN (".getEntity('socpeople').")";
+		$sql .= " WHERE entity IN (".getEntity('contact').")";
 		if (!empty($socid)) {
 			$sql .= " AND fk_soc='".$this->db->escape($socid)."'";
 		}

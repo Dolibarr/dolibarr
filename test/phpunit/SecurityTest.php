@@ -604,7 +604,7 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 
 		$login=checkLoginPassEntity('admin', 'admin', 1, array('forceuser'));
 		print __METHOD__." login=".$login."\n";
-		$this->assertEquals($login, '');    // Expected '' because should failed because login 'auto' does not exists
+		$this->assertEquals('', $login, 'Error');    // Expected '' because should failed because login 'auto' does not exists
 	}
 
 	/**
