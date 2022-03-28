@@ -268,6 +268,8 @@ if (empty($reshook)) {
 					$result = $inventoryline->fetch($lineid);
 					if ($result > 0) {
 						$inventoryline->qty_view = null;			// The new value we want
+						$inventoryline->pmp_real = price2num(GETPOST('realpmp_'.$lineid, 'alpha'), 'MS');
+						$inventoryline->pmp_expected = price2num(GETPOST('expectedpmp_'.$lineid, 'alpha'), 'MS');
 						$resultupdate = $inventoryline->update($user);
 					}
 				}
