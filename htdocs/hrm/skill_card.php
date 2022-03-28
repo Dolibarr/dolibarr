@@ -109,8 +109,8 @@ if (empty($reshook)) {
 
 	$backurlforlist = DOL_URL_ROOT.'/hrm/skill_list.php';
 
-	if (!empty($backtopage) || ($cancel && empty($id))) {
-		if (!empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
+	if (empty($backtopage) || ($cancel && empty($id))) {
+		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
 			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
 				$backtopage = $backurlforlist;
 			} else {
