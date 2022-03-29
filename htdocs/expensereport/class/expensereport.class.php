@@ -2063,7 +2063,7 @@ class ExpenseReport extends CommonObject
 	 * @param   int         $fk_ecm_files           Id of ECM file to link to this expensereport line
 	 * @return  int                                 <0 if KO, >0 if OK
 	 */
-	public function updateline($rowid, $type_fees_id, $projet_id, $vatrate, $comments, $qty, $value_unit, $date, $expensereport_id, $fk_c_exp_tax_cat = 0, $fk_ecm_files = 0)
+	public function updateline($rowid, $type_fees_id, $projet_id, $vatrate, $comments, $qty, $value_unit, $date, $expensereport_id, $fk_c_exp_tax_cat = 0, $fk_ecm_files = 0, $notrigger = 0)
 	{
 		global $user, $mysoc;
 
@@ -2153,9 +2153,19 @@ class ExpenseReport extends CommonObject
 
 			$this->applyOffset();
 			$this->checkRules();
-
+			$error = 0;
 			$result = $this->line->update($user);
-			if ($result > 0) {
+
+			if ($result > 0 && !$notrigger) {
+				// Call triggers
+				$result = $this->call_trigger('EXPENSE_REPORT_DET_UPDATE', $user);
+				if ($result < 0) {
+					$error++;
+				}
+				// End call triggers
+			}
+
+			if ($result > 0 && $error == 0) {
 				$this->db->commit();
 				return 1;
 			} else {
@@ -2174,16 +2184,29 @@ class ExpenseReport extends CommonObject
 	 * @param   User    $fuser      User
 	 * @return  int                 <0 if KO, >0 if OK
 	 */
-	public function deleteline($rowid, $fuser = '')
+	public function deleteline($rowid, $fuser = '', $notrigger = 0)
 	{
+		$error=0;
+
 		$this->db->begin();
 
-		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element_line;
+		if (!$notrigger) {
+			// Call triggers
+			$result = $this->call_trigger('EXPENSE_REPORT_DET_DELETE', $fuser);
+			if ($result < 0) {
+				$error++;
+			}
+			// End call triggers
+		}
+
+
+		$sql = ' DELETE FROM '.MAIN_DB_PREFIX.$this->table_element_line;
 		$sql .= ' WHERE rowid = '.((int) $rowid);
 
 		dol_syslog(get_class($this)."::deleteline sql=".$sql);
 		$result = $this->db->query($sql);
-		if (!$result) {
+
+		if (!$result || $error > 0 ) {
 			$this->error = $this->db->error();
 			dol_syslog(get_class($this)."::deleteline  Error ".$this->error, LOG_ERR);
 			$this->db->rollback();
