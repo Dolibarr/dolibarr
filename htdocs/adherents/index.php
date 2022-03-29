@@ -202,7 +202,7 @@ if ($conf->use_javascript_ajax) {
 	include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 	$dolgraph = new DolGraph();
 	$dolgraph->SetData($dataseries);
-	$dolgraph->SetDataColor(array('-'.$badgeStatus0, $badgeStatus4, $badgeStatus1, '-'.$badgeStatus8, $badgeStatus6));
+	$dolgraph->SetDataColor(array('-'.$badgeStatus0, $badgeStatus4, '-'.$badgeStatus1, '-'.$badgeStatus8, $badgeStatus6));
 	$dolgraph->setShowLegend(2);
 	$dolgraph->setShowPercent(1);
 	$dolgraph->SetType(array('pie'));
