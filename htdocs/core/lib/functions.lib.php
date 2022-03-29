@@ -5351,11 +5351,16 @@ function price2num($amount, $rounding = '', $option = 0)
 	// Decimal delimiter for PHP and database SQL requests must be '.'
 	$dec = ',';
 	$thousand = ' ';
-	if ($langs->transnoentitiesnoconv("SeparatorDecimal") != "SeparatorDecimal") {
-		$dec = $langs->transnoentitiesnoconv("SeparatorDecimal");
-	}
-	if ($langs->transnoentitiesnoconv("SeparatorThousand") != "SeparatorThousand") {
-		$thousand = $langs->transnoentitiesnoconv("SeparatorThousand");
+	if (is_null($langs)) {	// $langs is not defined, we use english values.
+		$dec = '.';
+		$thousand = ',';
+	} else {
+		if ($langs->transnoentitiesnoconv("SeparatorDecimal") != "SeparatorDecimal") {
+			$dec = $langs->transnoentitiesnoconv("SeparatorDecimal");
+		}
+		if ($langs->transnoentitiesnoconv("SeparatorThousand") != "SeparatorThousand") {
+			$thousand = $langs->transnoentitiesnoconv("SeparatorThousand");
+		}
 	}
 	if ($thousand == 'None') {
 		$thousand = '';
