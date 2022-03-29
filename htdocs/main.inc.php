@@ -271,6 +271,7 @@ if (!empty($_POST["DOL_AUTOSET_COOKIE"])) {
 	if (PHP_VERSION_ID < 70300) {
 		setcookie($cookiename, empty($cookievalue) ? '' : $cookievalue, empty($cookievalue) ? 0 : (time() + (86400 * 354)), '/', null, (empty($dolibarr_main_force_https) ? false : true), true); // keep cookie 1 year and add tag httponly
 	} else {
+		// Only available for php >= 7.3
 		$cookieparams = array(
 			'expires' => empty($cookievalue) ? 0 : (time() + (86400 * 354)),
 			'path' => '/',
@@ -308,6 +309,7 @@ if (!defined('NOSESSION')) {
 	if (PHP_VERSION_ID < 70300) {
 		session_set_cookie_params(0, '/', null, (empty($dolibarr_main_force_https) ? false : true), true); // Add tag secure and httponly on session cookie (same as setting session.cookie_httponly into php.ini). Must be called before the session_start.
 	} else {
+		// Only available for php >= 7.3
 		$sessioncookieparams = array(
 			'lifetime' => 0,
 			'path' => '/',
