@@ -1424,6 +1424,8 @@ WatermarkOnDraftInvoices=Watermark on draft invoices (none if empty)
 PaymentsNumberingModule=Payments numbering model
 SuppliersPayment=Vendor payments
 SupplierPaymentSetup=Vendor payments setup
+InvoiceCheckPosteriorDate=Check facture date before validation
+InvoiceCheckPosteriorDateHelp=Validating an invoice will be forbidden if its date is anterior to the date of last invoice of same type.
 ##### Proposals #####
 PropalSetup=Commercial proposals module setup
 ProposalsNumberingModules=Commercial proposal numbering models
