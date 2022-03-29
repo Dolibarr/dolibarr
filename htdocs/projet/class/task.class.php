@@ -59,7 +59,9 @@ class Task extends CommonObjectLine
 	/**
 	 * @var array	List of child tables. To test if we can delete object.
 	 */
-	protected $childtables = array('projet_task_time');
+	protected $childtables = array(
+		'projet_task_time' => array('name' => 'Task', 'parent' => 'projet_task', 'parentkey' => 'fk_task')
+	);
 
 	/**
 	 * @var int ID parent task
