@@ -257,6 +257,8 @@ ErrorLanguageRequiredIfPageIsTranslationOfAnother=The language of new page must 
 ErrorLanguageMustNotBeSourceLanguageIfPageIsTranslationOfAnother=The language of new page must not be the source language if it is set as a translation of another page
 ErrorAParameterIsRequiredForThisOperation=A parameter is mandatory for this operation
 ErrorYouMustFirstSetupYourChartOfAccount=You must first setup your chart of account
+ErrorInvoiceLoadThirdParty=Can't load third-party object for invoice "%s"
+ErrorInvoiceLoadThirdPartyKey=Third-party key "%s" no set for invoice "%s"
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Your PHP parameter upload_max_filesize (%s) is higher than PHP parameter post_max_size (%s). This is not a consistent setup.
