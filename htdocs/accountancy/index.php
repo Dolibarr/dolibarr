@@ -187,7 +187,6 @@ if (!empty($conf->global->INVOICE_USE_SITUATION) && $conf->global->INVOICE_USE_S
 		print $s;
 		print "<br>\n";
 
-
 		print '<br>';
 	}
 
