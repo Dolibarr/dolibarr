@@ -631,7 +631,7 @@ function DisplayPositionList()
 	print '<input type="hidden" name="page" value="' . $page . '">';
 	print '<input type="hidden" name="contextpage" value="' . $contextpage . '">';
 
-	$newcardbutton = dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', dol_buildpath('/hrm/position.php', 1) . '?action=create&backtopage=' . urlencode($_SERVER['PHP_SELF']).'&fk_job=' . $fk_job, '', $permissiontoadd);
+	$newcardbutton = dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', dol_buildpath('/hrm/position.php', 1).'?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']).'&fk_job='.((int) $fk_job), '', $permissiontoadd);
 
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'object_' . $object->picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
 
