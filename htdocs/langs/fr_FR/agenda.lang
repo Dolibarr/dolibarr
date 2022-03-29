@@ -14,7 +14,7 @@ EventsNb=Nombre d'événements
 ListOfActions=Liste des événements
 EventReports=Rapport des évènements
 Location=Lieu
-ToUserOfGroup=à tout utilisateur du groupe
+ToUserOfGroup=Événement assigné à tout utilisateur du groupe
 EventOnFullDay=Événement sur la(les) journée(s)
 MenuToDoActions=Événements incomplets
 MenuDoneActions=Événements terminés
@@ -86,6 +86,8 @@ ProposalDeleted=Proposition commerciale supprimée
 OrderDeleted=Commande supprimée
 InvoiceDeleted=Facture supprimée
 DraftInvoiceDeleted=Facture brouillon supprimée
+CONTACT_CREATEInDolibarr=Contact/Adresse %s créé
+CONTACT_DELETEInDolibarr=Contact/Adresse %s supprimé
 PRODUCT_CREATEInDolibarr=Produit %s créé
 PRODUCT_MODIFYInDolibarr=Produit %s modifié
 PRODUCT_DELETEInDolibarr=Produit%ssupprimé
@@ -121,10 +123,10 @@ MRP_MO_CANCELInDolibarr=OF annulé
 AgendaModelModule=Modèle de document pour les événements
 DateActionStart=Date de début
 DateActionEnd=Date de fin
-AgendaUrlOptions1=Vous pouvez aussi ajouter les paramètres suivants pour filtrer les réponses :
+AgendaUrlOptions1=Vous pouvez aussi ajouter les paramètres suivants pour filtrer les réponses :
 AgendaUrlOptions3=<b>logina=%s</b> pour limiter l'export aux actions dont l'utilisateur <b>%s</b> est propriétaire.
-AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> pour limiter l'export aux actions non assignées à l'utilisateur <b>%s</b>.
-AgendaUrlOptions4=<b>logint=%s</b> pour limiter l'export aux actions assignées à l'utilisateur <b>%s</b> (propriétaire et autres).
+AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> pour limiter l'export aux actions n'appartenant pas à l'utilisateur <b>%s</b>.
+AgendaUrlOptions4=<b>logint=%s</b>pour limiter l'export aux actions assignées à l'utilisateur <b>%s</b> (propriétaire et autres).
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> pour restreindre aux événements associés au projet <b>__PROJECT_ID__</b>.
 AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> pour exclure les événements automatiques.
 AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b> pour inclure les événements de type congé.
@@ -150,6 +152,7 @@ ActionType=Type événement
 DateActionBegin=Date début événément
 ConfirmCloneEvent=Êtes-vous sûr de vouloir cloner cet événement <b>%s</b> ?
 RepeatEvent=Evénement répétitif
+OnceOnly=Une seule fois
 EveryWeek=Chaque semaine
 EveryMonth=Chaque mois
 DayOfMonth=Jour du mois
@@ -158,3 +161,9 @@ DateStartPlusOne=Date de début + 1 heure
 SetAllEventsToTodo=Réglez tous les événements à "A faire"
 SetAllEventsToInProgress=Définir tous les événements à "En cours"
 SetAllEventsToFinished=Définir tous les événements sur "Terminés"
+ReminderTime=Période de rappel avant l'événement
+TimeType=Type de durée
+ReminderType=Type de rappel
+AddReminder=Créer une notification de rappel automatique pour cet événement
+ErrorReminderActionCommCreation=Erreur lors de la création de la notification de rappel pour cet événement
+BrowserPush=Notification par Popup navigateur

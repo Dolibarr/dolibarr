@@ -25,22 +25,22 @@ include_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
  */
 class mailing_advthirdparties extends MailingTargets
 {
-    public $name = 'ThirdPartyAdvancedTargeting';
+	public $name = 'ThirdPartyAdvancedTargeting';
 	// This label is used if no translation is found for key XXX neither MailingModuleDescXXX where XXX=name is found
-    public $desc = "Third parties";
-    public $require_admin = 0;
+	public $desc = "Third parties";
+	public $require_admin = 0;
 
-    public $require_module = array("none"); // This module should not be displayed as Selector in mailling
-
-    /**
-     * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
-     */
-    public $picto = 'company';
+	public $require_module = array("none"); // This module should not be displayed as Selector in mailling
 
 	/**
-     * @var DoliDB Database handler.
-     */
-    public $db;
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
+	public $picto = 'company';
+
+	/**
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
 
 
 	/**
@@ -54,7 +54,7 @@ class mailing_advthirdparties extends MailingTargets
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *    This is the main function that returns the array of emails
 	 *
@@ -66,7 +66,7 @@ class mailing_advthirdparties extends MailingTargets
 	 */
 	public function add_to_target_spec($mailing_id, $socid, $type_of_target, $contactid)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf, $langs;
 
 		dol_syslog(get_class($this)."::add_to_target_spec socid=".var_export($socid, true).' contactid='.var_export($contactid, true));
@@ -83,43 +83,41 @@ class mailing_advthirdparties extends MailingTargets
 				$sql .= " AND s.rowid IN (".implode(',', $socid).")";
 				$sql .= " ORDER BY email";
 
-    			// Stock recipients emails into targets table
-    			$result = $this->db->query($sql);
-    			if ($result)
-    			{
-    				$num = $this->db->num_rows($result);
-    				$i = 0;
+				// Stock recipients emails into targets table
+				$result = $this->db->query($sql);
+				if ($result)
+				{
+					$num = $this->db->num_rows($result);
+					$i = 0;
 
-    				dol_syslog(get_class($this)."::add_to_target_spec mailing ".$num." targets found", LOG_DEBUG);
+					dol_syslog(get_class($this)."::add_to_target_spec mailing ".$num." targets found", LOG_DEBUG);
 
-    				while ($i < $num)
-    				{
-    					$obj = $this->db->fetch_object($result);
+					while ($i < $num)
+					{
+						$obj = $this->db->fetch_object($result);
 
-    					if (!empty($obj->email) && filter_var($obj->email, FILTER_VALIDATE_EMAIL)) {
-    						if (!array_key_exists($obj->email, $cibles)) {
-    							$cibles[$obj->email] = array(
-    								'email' => $obj->email,
-    								'fk_contact' => $obj->fk_contact,
-    								'name' => $obj->name,
-    								'firstname' => $obj->firstname,
-    								'other' => '',
-    								'source_url' => $this->url($obj->id, 'thirdparty'),
-    								'source_id' => $obj->id,
-    								'source_type' => 'thirdparty'
-    							);
-    						}
-    					}
+						if (!empty($obj->email) && filter_var($obj->email, FILTER_VALIDATE_EMAIL)) {
+							if (!array_key_exists($obj->email, $cibles)) {
+								$cibles[$obj->email] = array(
+									'email' => $obj->email,
+									'fk_contact' => $obj->fk_contact,
+									'name' => $obj->name,
+									'firstname' => $obj->firstname,
+									'other' => '',
+									'source_url' => $this->url($obj->id, 'thirdparty'),
+									'source_id' => $obj->id,
+									'source_type' => 'thirdparty'
+								);
+							}
+						}
 
-    					$i++;
-    				}
-    			}
-    			else
-    			{
-    				dol_syslog($this->db->error());
-    				$this->error = $this->db->error();
-    				return -1;
-    			}
+						$i++;
+					}
+				} else {
+					dol_syslog($this->db->error());
+					$this->error = $this->db->error();
+					return -1;
+				}
 			}
 		}
 
@@ -138,43 +136,41 @@ class mailing_advthirdparties extends MailingTargets
 				}
 				$sql .= " ORDER BY email";
 
-    			// Stock recipients emails into targets table
-    			$result = $this->db->query($sql);
-    			if ($result)
-    			{
-    				$num = $this->db->num_rows($result);
-    				$i = 0;
+				// Stock recipients emails into targets table
+				$result = $this->db->query($sql);
+				if ($result)
+				{
+					$num = $this->db->num_rows($result);
+					$i = 0;
 
-    				dol_syslog(get_class($this)."::add_to_target_spec mailing ".$num." targets found");
+					dol_syslog(get_class($this)."::add_to_target_spec mailing ".$num." targets found");
 
-    				while ($i < $num)
-    				{
-    					$obj = $this->db->fetch_object($result);
+					while ($i < $num)
+					{
+						$obj = $this->db->fetch_object($result);
 
-    					if (!empty($obj->email) && filter_var($obj->email, FILTER_VALIDATE_EMAIL)) {
-    						if (!array_key_exists($obj->email, $cibles)) {
-    							$cibles[$obj->email] = array(
-    								'email' => $obj->email,
-    								'fk_contact' =>$obj->id,
-    								'lastname' => $obj->lastname,
-    								'firstname' => $obj->firstname,
-    								'other' => '',
-    								'source_url' => $this->url($obj->id, 'contact'),
-    								'source_id' => $obj->id,
-    								'source_type' => 'contact'
-    							);
-    						}
-    					}
+						if (!empty($obj->email) && filter_var($obj->email, FILTER_VALIDATE_EMAIL)) {
+							if (!array_key_exists($obj->email, $cibles)) {
+								$cibles[$obj->email] = array(
+									'email' => $obj->email,
+									'fk_contact' =>$obj->id,
+									'lastname' => $obj->lastname,
+									'firstname' => $obj->firstname,
+									'other' => '',
+									'source_url' => $this->url($obj->id, 'contact'),
+									'source_id' => $obj->id,
+									'source_type' => 'contact'
+								);
+							}
+						}
 
-    					$i++;
-    				}
-    			}
-    			else
-    			{
-    				dol_syslog($this->db->error());
-    				$this->error = $this->db->error();
-    				return -1;
-    			}
+						$i++;
+					}
+				} else {
+					dol_syslog($this->db->error());
+					$this->error = $this->db->error();
+					return -1;
+				}
 			}
 		}
 
@@ -272,9 +268,7 @@ class mailing_advthirdparties extends MailingTargets
 				$s .= '</option>';
 				$i++;
 			}
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 		}
 

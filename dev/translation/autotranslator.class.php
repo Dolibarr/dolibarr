@@ -77,7 +77,7 @@ class autoTranslator
 
 		$files = $this->getTranslationFilesArray($this->_refLang);
 		$counter = 1;
-		foreach($files as $file)
+		foreach ($files as $file)
 		{
 			if ($this->_limittofile && $this->_limittofile != $file) continue;
 			$counter++;
@@ -94,7 +94,7 @@ class autoTranslator
 
 				// If we must process all languages
 				$arraytmp=dol_dir_list($this->_langDir, 'directories', 0);
-				foreach($arraytmp as $dirtmp)
+				foreach ($arraytmp as $dirtmp)
 				{
 					if ($dirtmp['name'] === $this->_refLang) continue;	// We discard source language
 					$tmppart=explode('_', $dirtmp['name']);
@@ -112,7 +112,7 @@ class autoTranslator
 			}
 
 			// Process translation of source file for each target languages
-			foreach($targetlangs as $my_destlang)
+			foreach ($targetlangs as $my_destlang)
 			{
 				$this->_translatedFiles = array();
 
@@ -124,15 +124,14 @@ class autoTranslator
 					echo "File not found: " . $destPath . ". We generate it.<br>\n";
 					$this->createTranslationFile($destPath, $my_destlang);
 				}
-				else
-				{
+				else {
 					echo "Updating file: " . $destPath . "<br>\n";
 				}
 
 				// Translate lines
 				$fileContentDest = file($destPath, FILE_IGNORE_NEW_LINES|FILE_SKIP_EMPTY_LINES);
 				$newlines=0;
-				foreach($fileContent as $line){
+				foreach ($fileContent as $line){
 					$key = $this->getLineKey($line);
 					$value = $this->getLineValue($line);
 					if ($key && $value)
@@ -167,7 +166,7 @@ class autoTranslator
 			fwrite($fp, "\n");
 			fwrite($fp, "// START - Lines generated via autotranslator.php tool (".$this->_time.").\n");
 			fwrite($fp, "// Reference language: ".$this->_refLang." -> ".$my_destlang."\n");
-			foreach($this->_translatedFiles[$file] as $line) {
+			foreach ($this->_translatedFiles[$file] as $line) {
 				fwrite($fp, $line . "\n");
 			}
 			fwrite($fp, "// STOP - Lines generated via autotranslator.php tool (".$this->_time_end.").\n");
@@ -209,7 +208,7 @@ class autoTranslator
 	{
 
 		//print "key    =".$key."\n";
-		foreach($content as $line) {
+		foreach ($content as $line) {
 			$destKey = $this->getLineKey($line);
 			$destValue = $this->getLineValue($line);
 			// If translated return
@@ -273,8 +272,8 @@ class autoTranslator
 	private function getTranslationFilesArray($lang)
 	{
 		$dir = new DirectoryIterator($this->_langDir.$lang);
-		while($dir->valid()) {
-			if(!$dir->isDot() && $dir->isFile() && ! preg_match('/^\./', $dir->getFilename())) {
+		while ($dir->valid()) {
+			if (!$dir->isDot() && $dir->isFile() && ! preg_match('/^\./', $dir->getFilename())) {
 				$files[] =  $dir->getFilename();
 			}
 			$dir->next();

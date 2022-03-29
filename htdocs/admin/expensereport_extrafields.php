@@ -44,7 +44,7 @@ $tmptype2label = ExtraFields::$type2label;
 $type2label = array('');
 foreach ($tmptype2label as $key => $val) $type2label[$key] = $langs->transnoentitiesnoconv($val);
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $attrname = GETPOST('attrname', 'alpha');
 $elementtype = 'expensereport'; //Must be the $table_element of the class that manage extrafield
 
@@ -70,11 +70,11 @@ print load_fiche_titre($langs->trans("ExpenseReportsSetup"), $linkback, 'title_s
 
 $head = expensereport_admin_prepare_head();
 
-dol_fiche_head($head, 'attributes', $langs->trans("ExpenseReports"), -1, 'trip');
+print dol_get_fiche_head($head, 'attributes', $langs->trans("ExpenseReports"), -1, 'trip');
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 
 // Buttons

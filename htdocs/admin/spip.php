@@ -55,50 +55,48 @@ if ($action == 'update' || $action == 'add')
 	$consttypearray = GETPOST("consttype", 'array');
 	$constnotearray = GETPOST("constnote", 'array');
 
-    // Action mise a jour ou ajout d'une constante
-    if ($action == 'update' || $action == 'add')
-    {
-    	foreach ($constnamearray as $key => $val)
-    	{
-    		$constname = dol_escape_htmltag($constnamearray[$key]);
-    		$constvalue = dol_escape_htmltag($constvaluearray[$key]);
-    		$consttype = dol_escape_htmltag($consttypearray[$key]);
-    		$constnote = dol_escape_htmltag($constnotearray[$key]);
+	// Action mise a jour ou ajout d'une constante
+	if ($action == 'update' || $action == 'add')
+	{
+		foreach ($constnamearray as $key => $val)
+		{
+			$constname = dol_escape_htmltag($constnamearray[$key]);
+			$constvalue = dol_escape_htmltag($constvaluearray[$key]);
+			$consttype = dol_escape_htmltag($consttypearray[$key]);
+			$constnote = dol_escape_htmltag($constnotearray[$key]);
 
-        	$res = dolibarr_set_const($db, $constname, $constvalue, $type[$consttype], 0, $constnote, $conf->entity);
+			$res = dolibarr_set_const($db, $constname, $constvalue, $type[$consttype], 0, $constnote, $conf->entity);
 
-    		if (!$res > 0) $error++;
-    	}
+			if (!($res > 0)) $error++;
+		}
 
-     	if (!$error)
-        {
-            setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-        }
-        else
-        {
-            setEventMessages($langs->trans("Error"), null, 'errors');
-        }
-    }
+	 	if (!$error)
+		{
+			setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+		} else {
+			setEventMessages($langs->trans("Error"), null, 'errors');
+		}
+	}
 }
 
 // Action activation d'un sous module du module adherent
 if ($action == 'set')
 {
-    $result = dolibarr_set_const($db, $_GET["name"], $_GET["value"], '', 0, '', $conf->entity);
-    if ($result < 0)
-    {
-        dol_print_error($db);
-    }
+	$result = dolibarr_set_const($db, $_GET["name"], $_GET["value"], '', 0, '', $conf->entity);
+	if ($result < 0)
+	{
+		dol_print_error($db);
+	}
 }
 
 // Action desactivation d'un sous module du module adherent
 if ($action == 'unset')
 {
-    $result = dolibarr_del_const($db, $_GET["name"], $conf->entity);
-    if ($result < 0)
-    {
-        dol_print_error($db);
-    }
+	$result = dolibarr_del_const($db, $_GET["name"], $conf->entity);
+	if ($result < 0)
+	{
+		dol_print_error($db);
+	}
 }
 
 
@@ -128,43 +126,41 @@ if (!empty($conf->global->ADHERENT_USE_SPIP))
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 
-	dol_fiche_head($head, 'spip', $langs->trans("Setup"), -1, 'user');
+	print dol_get_fiche_head($head, 'spip', $langs->trans("Setup"), -1, 'user');
 
-    //$link=img_picto($langs->trans("Active"),'tick').' ';
-    $link = '<a href="'.$_SERVER["PHP_SELF"].'?action=unset&value=0&name=ADHERENT_USE_SPIP">';
-    //$link.=$langs->trans("Disable");
-    $link .= img_picto($langs->trans("Activated"), 'switch_on');
-    $link .= '</a>';
-    // Edition des varibales globales
-    $constantes = array(
-    	'ADHERENT_SPIP_SERVEUR',
-    	'ADHERENT_SPIP_DB',
-    	'ADHERENT_SPIP_USER',
-    	'ADHERENT_SPIP_PASS'
+	//$link=img_picto($langs->trans("Active"),'tick').' ';
+	$link = '<a href="'.$_SERVER["PHP_SELF"].'?action=unset&token='.newToken().'&value=0&name=ADHERENT_USE_SPIP">';
+	//$link.=$langs->trans("Disable");
+	$link .= img_picto($langs->trans("Activated"), 'switch_on');
+	$link .= '</a>';
+	// Edition des varibales globales
+	$constantes = array(
+		'ADHERENT_SPIP_SERVEUR',
+		'ADHERENT_SPIP_DB',
+		'ADHERENT_SPIP_USER',
+		'ADHERENT_SPIP_PASS'
 	);
 
-    print load_fiche_titre($langs->trans('SPIPTitle'), $link, '');
+	print load_fiche_titre($langs->trans('SPIPTitle'), $link, '');
 	print '<br>';
 
 	form_constantes($constantes, 2);
 
-    dol_fiche_end();
+	print dol_get_fiche_end();
 
-    print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Update").'" name="update"></div>';
+	print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Update").'" name="update"></div>';
 
-    print '</form>';
-}
-else
-{
-    dol_fiche_head($head, 'spip', $langs->trans("Setup"), 0, 'user');
+	print '</form>';
+} else {
+	print dol_get_fiche_head($head, 'spip', $langs->trans("Setup"), 0, 'user');
 
-    $link = '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=set&value=1&name=ADHERENT_USE_SPIP">';
-    //$link.=$langs->trans("Activate");
-    $link .= img_picto($langs->trans("Disabled"), 'switch_off');
-    $link .= '</a>';
-    print load_fiche_titre($langs->trans('SPIPTitle'), $link, '');
+	$link = '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=set&amp;token='.newToken().'&amp;value=1&amp;name=ADHERENT_USE_SPIP">';
+	//$link.=$langs->trans("Activate");
+	$link .= img_picto($langs->trans("Disabled"), 'switch_off');
+	$link .= '</a>';
+	print load_fiche_titre($langs->trans('SPIPTitle'), $link, '');
 
-    dol_fiche_end();
+	print dol_get_fiche_end();
 }
 
 // End of page

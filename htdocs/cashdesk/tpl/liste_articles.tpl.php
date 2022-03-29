@@ -49,24 +49,23 @@ $tab = (!empty($_SESSION['poscart']) ? $_SESSION['poscart'] : array());
 
 $tab_size = count($tab);
 if ($tab_size <= 0) print '<div class="center">'.$langs->trans("NoArticle").'</div><br>';
-else
-{
-    for ($i = 0; $i < $tab_size; $i++)
-    {
-        echo ('<div class="cadre_article">'."\n");
-        echo ('<p><a href="facturation_verif.php?action=suppr_article&suppr_id='.$tab[$i]['id'].'" title="'.$langs->trans("DeleteArticle").'">'.$tab[$i]['ref'].' - '.$tab[$i]['label'].'</a></p>'."\n");
+else {
+	for ($i = 0; $i < $tab_size; $i++)
+	{
+		echo ('<div class="cadre_article">'."\n");
+		echo ('<p><a href="facturation_verif.php?action=suppr_article&suppr_id='.$tab[$i]['id'].'" title="'.$langs->trans("DeleteArticle").'">'.$tab[$i]['ref'].' - '.$tab[$i]['label'].'</a></p>'."\n");
 
-        if ($tab[$i]['remise_percent'] > 0) {
-            $remise_percent = ' -'.$tab[$i]['remise_percent'].'%';
-        } else {
-            $remise_percent = '';
-        }
+		if ($tab[$i]['remise_percent'] > 0) {
+			$remise_percent = ' -'.$tab[$i]['remise_percent'].'%';
+		} else {
+			$remise_percent = '';
+		}
 
-        $remise = $tab[$i]['remise'];
+		$remise = $tab[$i]['remise'];
 
-        echo ('<p>'.$tab[$i]['qte'].' x '.price2num($tab[$i]['price'], 'MT').$remise_percent.' = '.price(price2num($tab[$i]['total_ht'], 'MT'), 0, $langs, 0, 0, -1, $conf->currency).' '.$langs->trans("HT").' ('.price(price2num($tab[$i]['total_ttc'], 'MT'), 0, $langs, 0, 0, -1, $conf->currency).' '.$langs->trans("TTC").')</p>'."\n");
-        echo ('</div>'."\n");
-    }
+		echo ('<p>'.$tab[$i]['qte'].' x '.price2num($tab[$i]['price'], 'MT').$remise_percent.' = '.price(price2num($tab[$i]['total_ht'], 'MT'), 0, $langs, 0, 0, -1, $conf->currency).' '.$langs->trans("HT").' ('.price(price2num($tab[$i]['total_ttc'], 'MT'), 0, $langs, 0, 0, -1, $conf->currency).' '.$langs->trans("TTC").')</p>'."\n");
+		echo ('</div>'."\n");
+	}
 }
 
 echo ('<p class="cadre_prix_total">'.$langs->trans("Total").' : '.price(price2num($total_ttc, 'MT'), 0, $langs, 0, 0, -1, $conf->currency).'<br></p>'."\n");

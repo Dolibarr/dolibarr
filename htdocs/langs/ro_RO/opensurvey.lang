@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - opensurvey
 Survey=Sondaj
 Surveys=Sondaje
-OrganizeYourMeetingEasily=Organize your meetings and polls easily. First select the type of poll...
+OrganizeYourMeetingEasily=Organizați-vă ușor întâlnirile și chestionarele. Mai întâi selectați tipul de sondaj...
 NewSurvey=Sondaj nou
 OpenSurveyArea=Sondaje
 AddACommentForPoll=Puteţi adăuga un comentariu în sondaj...
@@ -37,7 +37,7 @@ ExpireDate=Data limită
 NbOfSurveys=Numărul sondajelor
 NbOfVoters=Numărul de alegători
 SurveyResults=Rezultate
-PollAdminDesc=Vi se permite să schimbaţi toate liniile de vot ale acestui sondaj cu butonul "Editează". Puteți, de asemenea, elimina o coloană sau o linie cu % s. Puteți adăuga, de asemenea, o nouă coloană cu % s.
+PollAdminDesc=Vi se permite să schimbaţi toate liniile de vot ale acestui sondaj cu butonul "Editează". Puteți, de asemenea, elimina o coloană sau o linie cu %s. Puteți adăuga, de asemenea, o nouă coloană cu %s.
 5MoreChoices=Mai mult de 5 alegeri
 Against=Împotrivă
 YouAreInivitedToVote=Sunteţi invitaţi să votaţi acest sondaj

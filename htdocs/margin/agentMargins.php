@@ -36,8 +36,8 @@ $mesg = '';
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST('sortfield', 'alpha');
-$sortorder = GETPOST('sortorder', 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
@@ -48,8 +48,7 @@ if (!$sortfield)
 {
 	if ($agentid > 0)
 		$sortfield = "s.nom";
-	else
-	    $sortfield = "u.lastname";
+	else $sortfield = "u.lastname";
 }
 
 $startdate = $enddate = '';
@@ -62,15 +61,15 @@ $enddatemonth   = GETPOST('enddatemonth', 'int');
 $enddateyear    = GETPOST('enddateyear', 'int');
 
 if (!empty($startdatemonth))
-    $startdate  = dol_mktime(0, 0, 0, $startdatemonth, $startdateday, $startdateyear);
+	$startdate = dol_mktime(0, 0, 0, $startdatemonth, $startdateday, $startdateyear);
 if (!empty($enddatemonth))
-    $enddate = dol_mktime(23, 59, 59, $enddatemonth, $enddateday, $enddateyear);
+	$enddate = dol_mktime(23, 59, 59, $enddatemonth, $enddateday, $enddateyear);
 
 // Security check
 if ($user->rights->margins->read->all) {
-    $agentid = GETPOST('agentid', 'int');
+	$agentid = GETPOST('agentid', 'int');
 } else {
-    $agentid = $user->id;
+	$agentid = $user->id;
 }
 $result = restrictedArea($user, 'margins');
 
@@ -107,14 +106,15 @@ $titre = $langs->trans("Margins");
 $picto = 'margin';
 
 print '<form method="post" name="sel" action="'.$_SERVER['PHP_SELF'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 
-dol_fiche_head($head, 'agentMargins', $titre, 0, $picto);
+print dol_get_fiche_head($head, 'agentMargins', $titre, 0, $picto);
 
 print '<table class="border centpercent">';
 
 print '<tr><td class="titlefield">'.$langs->trans('ContactOfInvoice').'</td>';
 print '<td class="maxwidthonsmartphone" colspan="4">';
-print $form->select_dolusers($agentid, 'agentid', 1, '', $user->rights->margins->read->all ? 0 : 1, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
+print img_picto('', 'user').$form->select_dolusers($agentid, 'agentid', 1, '', $user->rights->margins->read->all ? 0 : 1, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
 print '</td></tr>';
 
 // Start date
@@ -131,7 +131,7 @@ print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->t
 print '</td></tr>';
 print "</table>";
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '</form>';
 
@@ -156,23 +156,25 @@ $sql .= " AND sc.fk_soc = f.fk_soc";
 $sql .= " AND (d.product_type = 0 OR d.product_type = 1)";
 if (!empty($conf->global->AGENT_CONTACT_TYPE))
 	$sql .= " AND ((e.fk_socpeople IS NULL AND sc.fk_user = u.rowid) OR (e.fk_socpeople IS NOT NULL AND e.fk_socpeople = u.rowid))";
-else
-	$sql .= " AND sc.fk_user = u.rowid";
+else $sql .= " AND sc.fk_user = u.rowid";
 $sql .= " AND f.fk_statut NOT IN (".implode(', ', $invoice_status_except_list).")";
 $sql .= ' AND s.entity IN ('.getEntity('societe').')';
 $sql .= " AND d.fk_facture = f.rowid";
 if ($agentid > 0) {
 	if (!empty($conf->global->AGENT_CONTACT_TYPE))
   		$sql .= " AND ((e.fk_socpeople IS NULL AND sc.fk_user = ".$agentid.") OR (e.fk_socpeople IS NOT NULL AND e.fk_socpeople = ".$agentid."))";
-	else
-	    $sql .= " AND sc.fk_user = ".$agentid;
+	else $sql .= " AND sc.fk_user = ".$agentid;
 }
 if (!empty($startdate))
   $sql .= " AND f.datef >= '".$db->idate($startdate)."'";
 if (!empty($enddate))
   $sql .= " AND f.datef <= '".$db->idate($enddate)."'";
 $sql .= " AND d.buy_price_ht IS NOT NULL";
-if (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 1) $sql .= " AND d.buy_price_ht <> 0";
+// We should not use this here. Option ForceBuyingPriceIfNull should have effect only when inserting data. Once data is recorded, it must be used as it is for report.
+// We keep it with value ForceBuyingPriceIfNull = 2 for retroactive effect but results are unpredicable.
+if (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 2) {
+	$sql .= " AND d.buy_price_ht <> 0";
+}
 //if ($agentid > 0) $sql.= " GROUP BY s.rowid, s.nom, s.code_client, s.client, u.rowid, u.login, u.lastname, u.firstname";
 //else $sql.= " GROUP BY u.rowid, u.login, u.lastname, u.firstname";
 $sql .= " GROUP BY s.rowid, s.nom, s.code_client, s.client, u.rowid, u.login, u.lastname, u.firstname";
@@ -204,9 +206,9 @@ if ($result)
 	print_barre_liste($langs->trans("MarginDetails"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num, $num, '', 0, '', '', 0, 1);
 
 	if ($conf->global->MARGIN_TYPE == "1")
-	    $labelcostprice = 'BuyingPrice';
-	else   // value is 'costprice' or 'pmp'
-	    $labelcostprice = 'CostPrice';
+		$labelcostprice = 'BuyingPrice';
+	else // value is 'costprice' or 'pmp'
+		$labelcostprice = 'CostPrice';
 
 	$moreforfilter = '';
 
@@ -217,8 +219,7 @@ if ($result)
 	print '<tr class="liste_titre">';
 	if ($agentid > 0)
 		print_liste_field_titre("Customer", $_SERVER["PHP_SELF"], "s.nom", "", $param, '', $sortfield, $sortorder);
-	else
-		print_liste_field_titre("SalesRepresentative", $_SERVER["PHP_SELF"], "u.lastname", "", $param, '', $sortfield, $sortorder);
+	else print_liste_field_titre("SalesRepresentative", $_SERVER["PHP_SELF"], "u.lastname", "", $param, '', $sortfield, $sortorder);
 
 	print_liste_field_titre("SellingPrice", $_SERVER["PHP_SELF"], "selling_price", "", $param, '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre($labelcostprice, $_SERVER["PHP_SELF"], "buying_price", "", $param, '', $sortfield, $sortorder, 'right ');
@@ -229,98 +230,88 @@ if ($result)
 		print_liste_field_titre("MarkRate", $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'right ');
 	print "</tr>\n";
 
-    if ($num > 0)
-    {
-        $group_list = array();
-        while ($objp = $db->fetch_object($result)) {
-            if ($agentid > 0) {
-                $group_id = $objp->socid;
-            } else {
-                $group_id = $objp->agent;
-            }
+	if ($num > 0)
+	{
+		$group_list = array();
+		while ($objp = $db->fetch_object($result)) {
+			if ($agentid > 0) {
+				$group_id = $objp->socid;
+			} else {
+				$group_id = $objp->agent;
+			}
 
-            if (!isset($group_list[$group_id])) {
-                if ($agentid > 0) {
-                    $group_name = $objp->name;
-                    $companystatic->id = $objp->socid;
-                    $companystatic->name = $objp->name;
-                    $companystatic->client = $objp->client;
-                    $group_htmlname = $companystatic->getNomUrl(1, 'customer');
-                } else {
-                    $group_name = $objp->lastname;
-                    $userstatic->fetch($objp->agent);
-                    $group_htmlname = $userstatic->getFullName($langs, 0, 0, 0);
-                }
-                $group_list[$group_id] = array('name' => $group_name, 'htmlname' => $group_htmlname, 'selling_price' => 0, 'buying_price' => 0, 'marge' => 0);
-            }
+			if (!isset($group_list[$group_id])) {
+				if ($agentid > 0) {
+					$group_name = $objp->name;
+					$companystatic->id = $objp->socid;
+					$companystatic->name = $objp->name;
+					$companystatic->client = $objp->client;
+					$group_htmlname = $companystatic->getNomUrl(1, 'customer');
+				} else {
+					$group_name = $objp->lastname;
+					$userstatic->fetch($objp->agent);
+					$group_htmlname = $userstatic->getFullName($langs, 0, 0, 0);
+				}
+				$group_list[$group_id] = array('name' => $group_name, 'htmlname' => $group_htmlname, 'selling_price' => 0, 'buying_price' => 0, 'marge' => 0);
+			}
 
-            $seller_nb = 1;
-            if ($objp->socid > 0) {
-                // sql nb sellers
-                $sql_seller  = "SELECT COUNT(sc.rowid) as nb";
-                $sql_seller .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-                $sql_seller .= " WHERE sc.fk_soc = ".$objp->socid;
-                $sql_seller .= " LIMIT 1";
+			$seller_nb = 1;
+			if ($objp->socid > 0) {
+				// sql nb sellers
+				$sql_seller  = "SELECT COUNT(sc.rowid) as nb";
+				$sql_seller .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+				$sql_seller .= " WHERE sc.fk_soc = ".$objp->socid;
+				$sql_seller .= " LIMIT 1";
 
-                $resql_seller = $db->query($sql_seller);
-                if (!$resql_seller) {
-                    dol_print_error($db);
-                } else {
-                    if ($obj_seller = $db->fetch_object($resql_seller)) {
-                        if ($obj_seller->nb > 0) {
-                            $seller_nb = $obj_seller->nb;
-                        }
-                    }
-                }
-            }
+				$resql_seller = $db->query($sql_seller);
+				if (!$resql_seller) {
+					dol_print_error($db);
+				} else {
+					if ($obj_seller = $db->fetch_object($resql_seller)) {
+						if ($obj_seller->nb > 0) {
+							$seller_nb = $obj_seller->nb;
+						}
+					}
+				}
+			}
 
-            $group_list[$group_id]['selling_price'] += $objp->selling_price / $seller_nb;
-            $group_list[$group_id]['buying_price'] += $objp->buying_price / $seller_nb;
-            $group_list[$group_id]['marge'] += $objp->marge / $seller_nb;
-        }
+			$group_list[$group_id]['selling_price'] += $objp->selling_price / $seller_nb;
+			$group_list[$group_id]['buying_price'] += $objp->buying_price / $seller_nb;
+			$group_list[$group_id]['marge'] += $objp->marge / $seller_nb;
+		}
 
-        // sort group array by sortfield
-        if ($sortfield == 'u.lastname' || $sortfield == 's.nom') {
-            $sortfield = 'name';
-        }
-        $group_list = dol_sort_array($group_list, $sortfield, $sortorder);
+		// sort group array by sortfield
+		if ($sortfield == 'u.lastname' || $sortfield == 's.nom') {
+			$sortfield = 'name';
+		}
+		$group_list = dol_sort_array($group_list, $sortfield, $sortorder);
 
-        foreach ($group_list as $group_id => $group_array) {
-            $pa = $group_array['buying_price'];
-            $pv = $group_array['selling_price'];
-            $marge = $group_array['marge'];
+		foreach ($group_list as $group_id => $group_array) {
+			$pa = $group_array['buying_price'];
+			$pv = $group_array['selling_price'];
+			$marge = $group_array['marge'];
 
-            $marginRate = ($pa != 0) ? (100 * $marge / $pa) : '';
-            $markRate = ($pv != 0) ? (100 * $marge / $pv) : '';
+			$marginRate = ($pa != 0) ? (100 * $marge / $pa) : '';
+			$markRate = ($pv != 0) ? (100 * $marge / $pv) : '';
 
-            print '<tr class="oddeven">';
-            print "<td>".$group_array['htmlname']."</td>\n";
-            print "<td class=\"right\">".price(price2num($pv, 'MT'))."</td>\n";
-            print "<td class=\"right\">".price(price2num($pa, 'MT'))."</td>\n";
-            print "<td class=\"right\">".price(price2num($marge, 'MT'))."</td>\n";
-            if (!empty($conf->global->DISPLAY_MARGIN_RATES))
-            	print "<td class=\"right\">".(($marginRate === '') ? 'n/a' : price(price2num($marginRate, 'MT'))."%")."</td>\n";
-            if (!empty($conf->global->DISPLAY_MARK_RATES))
-            	print "<td class=\"right\">".(($markRate === '') ? 'n/a' : price(price2num($markRate, 'MT'))."%")."</td>\n";
-            print "</tr>\n";
-        }
-    }
+			print '<tr class="oddeven">';
+			print "<td>".$group_array['htmlname']."</td>\n";
+			print "<td class=\"right\">".price(price2num($pv, 'MT'))."</td>\n";
+			print "<td class=\"right\">".price(price2num($pa, 'MT'))."</td>\n";
+			print "<td class=\"right\">".price(price2num($marge, 'MT'))."</td>\n";
+			if (!empty($conf->global->DISPLAY_MARGIN_RATES))
+				print "<td class=\"right\">".(($marginRate === '') ? 'n/a' : price(price2num($marginRate, 'MT'))."%")."</td>\n";
+			if (!empty($conf->global->DISPLAY_MARK_RATES))
+				print "<td class=\"right\">".(($markRate === '') ? 'n/a' : price(price2num($markRate, 'MT'))."%")."</td>\n";
+			print "</tr>\n";
+		}
+	}
 	print "</table>";
 	print '</div>';
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 $db->free($result);
-
-print "\n".'<script type="text/javascript">
-$(document).ready(function() {
-  $("#agentid").change(function() {
-     $("div.fiche form").submit();
-  });
-});
-</script>'."\n";
 
 // End of page
 llxFooter();

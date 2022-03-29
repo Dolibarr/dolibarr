@@ -1,0 +1,10 @@
+# Dolibarr language file - Source file is en_US - recruitment
+ModuleRecruitmentName =Reclutamiento
+ModuleRecruitmentDesc =Gestione y de seguimiento a campañas de reclutamiento para nuevos puestos de trabajo.
+RecruitmentSetup =Configuración de reclutamiento
+RecruitmentArea=Área de reclutamiento
+RecruitmentAbout =Sobre el reclutamiento
+RecruitmentAboutPage =Página acerca de reclutamiento
+NbOfEmployeesExpected=Número esperado de empleados
+ResponsibleOfRecruitement=Responsable de reclutamiento
+IfJobIsLocatedAtAPartner=Si el trabajo se encuentra en un el lugar de un asociado

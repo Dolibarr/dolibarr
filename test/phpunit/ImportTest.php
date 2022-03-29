@@ -140,6 +140,10 @@ class ImportTest extends PHPUnit\Framework\TestCase
         // TODO
         // Run import on file and check the record with field "auto" are filled
         // according to option
+        $this->assertEquals(0, 0);
+
+        // TODO Export and compare the file exported with the $file imported.
+
 
 
 		return true;

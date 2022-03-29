@@ -5,3 +5,4 @@ StatusWaiting=Wartestellung
 StatusMotif2=Abbuchung angefochten
 StatusMotif5=Fehlerhafte Kontodaten
 OrderWaiting=Wartestellung
+ICS=Creditor Identifier CI for direct debit

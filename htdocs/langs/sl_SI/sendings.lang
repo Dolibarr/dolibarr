@@ -30,6 +30,7 @@ OtherSendingsForSameOrder=Ostale pošiljke za to naročilo
 SendingsAndReceivingForSameOrder=Shipments and receipts for this order
 SendingsToValidate=Pošiljke za potrditev
 StatusSendingCanceled=Preklicano
+StatusSendingCanceledShort=Preklicano
 StatusSendingDraft=Osnutek
 StatusSendingValidated=Potrjeno (proizvodi za pošiljanje ali že poslani)
 StatusSendingProcessed=Obdelani
@@ -65,6 +66,7 @@ ValidateOrderFirstBeforeShipment=You must first validate the order before being 
 # Sending methods
 # ModelDocument
 DocumentModelTyphon=Popolnejši vzorec dobavnice (logo...)
+DocumentModelStorm=More complete document model for delivery receipts and extrafields compatibility (logo...)
 Error_EXPEDITION_ADDON_NUMBER_NotDefined==
 SumOfProductVolumes=Vsota volumnov proizvodov
 SumOfProductWeights=Vsota tež proizvodov

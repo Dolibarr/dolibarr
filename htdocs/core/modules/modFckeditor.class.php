@@ -69,12 +69,12 @@ class modFckeditor extends DolibarrModules
 
 		// Constants
 		$this->const = array();
-        $this->const[0]  = array("FCKEDITOR_ENABLE_SOCIETE", "yesno", "1", "WYSIWIG for description and note (except products/services)");
-        $this->const[1]  = array("FCKEDITOR_ENABLE_PRODUCTDESC", "yesno", "1", "WYSIWIG for products/services description and note");
-        $this->const[2]  = array("FCKEDITOR_ENABLE_MAILING", "yesno", "1", "WYSIWIG for mass emailings");
-        $this->const[3]  = array("FCKEDITOR_ENABLE_DETAILS", "yesno", "1", "WYSIWIG for products details lines for all entities");
-        $this->const[4]  = array("FCKEDITOR_ENABLE_USERSIGN", "yesno", "1", "WYSIWIG for user signature");
-        $this->const[5]  = array("FCKEDITOR_ENABLE_MAIL", "yesno", "1", "WYSIWIG for products details lines for all entities");
+		$this->const[0]  = array("FCKEDITOR_ENABLE_SOCIETE", "yesno", "1", "WYSIWIG for description and note (except products/services)");
+		$this->const[1]  = array("FCKEDITOR_ENABLE_PRODUCTDESC", "yesno", "1", "WYSIWIG for products/services description and note");
+		$this->const[2]  = array("FCKEDITOR_ENABLE_MAILING", "yesno", "1", "WYSIWIG for mass emailings");
+		$this->const[3]  = array("FCKEDITOR_ENABLE_DETAILS", "yesno", "1", "WYSIWIG for products details lines for all entities");
+		$this->const[4]  = array("FCKEDITOR_ENABLE_USERSIGN", "yesno", "1", "WYSIWIG for user signature");
+		$this->const[5]  = array("FCKEDITOR_ENABLE_MAIL", "yesno", "1", "WYSIWIG for products details lines for all entities");
 		$this->const[6] = array("FCKEDITOR_SKIN", "string", "moono-lisa", "Skin by default for fckeditor");
 
 		// Boxes

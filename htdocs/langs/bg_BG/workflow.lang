@@ -16,5 +16,10 @@ descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Класифициране на с�
 # Autoclassify purchase order
 descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Класифициране на свързаното за запитване към доставчик - първоизточник като фактурираното след валидиране на доставната фактура (и ако стойността на фактурата е същата като общата сума на свързаното запитване)
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Класифициране на свързаната поръчка за покупка - първоизточник като фактурирана след валидиране на доставна фактура (и ако стойността на фактурата е същата като общата сума на свързаната поръчка)
+descWORKFLOW_BILL_ON_RECEPTION=Classify receptions to "billed" when a linked supplier order is validated
+# Autoclose intervention
+descWORKFLOW_TICKET_CLOSE_INTERVENTION=Close all interventions linked to the ticket when a ticket is closed
 AutomaticCreation=Автоматично създаване
 AutomaticClassification=Автоматично класифициране
+# Autoclassify shipment
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Classify linked source shipment as closed when customer invoice is validated

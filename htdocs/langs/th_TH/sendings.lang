@@ -30,6 +30,7 @@ OtherSendingsForSameOrder=การจัดส่งอื่น ๆ สำห�
 SendingsAndReceivingForSameOrder=Shipments and receipts for this order
 SendingsToValidate=ในการตรวจสอบการจัดส่ง
 StatusSendingCanceled=ยกเลิก
+StatusSendingCanceledShort=ยกเลิก
 StatusSendingDraft=ร่าง
 StatusSendingValidated=การตรวจสอบ (สินค้าจะจัดส่งหรือจัดส่งแล้ว)
 StatusSendingProcessed=การประมวลผล
@@ -65,6 +66,7 @@ ValidateOrderFirstBeforeShipment=You must first validate the order before being 
 # Sending methods
 # ModelDocument
 DocumentModelTyphon=รูปแบบเอกสารที่สมบูรณ์มากขึ้นสำหรับการจัดส่งใบเสร็จรับเงิน (โลโก้ ... )
+DocumentModelStorm=More complete document model for delivery receipts and extrafields compatibility (logo...)
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=EXPEDITION_ADDON_NUMBER คงที่ไม่ได้กำหนดไว้
 SumOfProductVolumes=ผลรวมของปริมาณสินค้า
 SumOfProductWeights=ผลรวมของน้ำหนักสินค้า

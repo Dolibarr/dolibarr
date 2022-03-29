@@ -7,13 +7,14 @@ Permission23103 = Radera schemalagt jobb
 Permission23104 = Utför schemalagt jobb
 # Admin
 CronSetup=Planerad jobbhantering installation
-URLToLaunchCronJobs=URL för att kontrollera och starta kvalificerade cron-jobb
-OrToLaunchASpecificJob=Eller för att kontrollera och starta ett specifikt arbete
+URLToLaunchCronJobs=URL to check and launch qualified cron jobs from a browser
+OrToLaunchASpecificJob=Or to check and launch a specific job from a browser
 KeyForCronAccess=Säkerhetsnyckel för URL för att lansera cron-jobb
 FileToLaunchCronJobs=Kommandorad för att kontrollera och starta kvalificerade cron-jobb
 CronExplainHowToRunUnix=I en Unix-miljö bör följande rad läggas i crontab så kommandot exekveras var 5:e minut.
 CronExplainHowToRunWin=I Microsoft (tm) Windows-miljö kan du använda Schemalagda uppgiftsverktyg för att köra kommandoraden var 5: e minut
 CronMethodDoesNotExists=Klass %s innehåller ingen metod %s
+CronMethodNotAllowed=Method %s of class %s is in blacklist of forbidden methods
 CronJobDefDesc=Cron-jobbprofiler definieras i modulbeskrivningsfilen. När modulen är aktiverad laddas de och är tillgängliga så att du kan administrera jobben från adminverktygsmenyn %s.
 CronJobProfiles=Förteckning över fördefinierade cron jobbprofiler
 # Menu
@@ -42,10 +43,11 @@ CronModule=Modul
 CronNoJobs=Inga jobb registrerade
 CronPriority=Prioritet
 CronLabel=Etikett
-CronNbRun=Antal lanseringar
+CronNbRun=Number of launches
 CronMaxRun=Maximalt antal lanseringar
 CronEach=Varje
 JobFinished=Job lanserad och klar
+Scheduled=Scheduled
 #Page card
 CronAdd= Lägg till jobb
 CronEvery=Utför jobbet vardera
@@ -56,7 +58,7 @@ CronNote=Kommentar
 CronFieldMandatory=Fält %s är obligatoriskt
 CronErrEndDateStartDt=Slutdatum kan inte vara före startdatum
 StatusAtInstall=Status vid modulinstallation
-CronStatusActiveBtn=Aktivera
+CronStatusActiveBtn=Schedule
 CronStatusInactiveBtn=Inaktivera
 CronTaskInactive=Det här jobbet är avaktiverat
 CronId=Id
@@ -76,8 +78,14 @@ CronType_method=Samtalsmetod för en PHP-klass
 CronType_command=Skalkommando
 CronCannotLoadClass=Kan inte ladda klassfilen %s (för att använda klass %s)
 CronCannotLoadObject=Klassfilen %s laddades, men objektet %s kunde inte hittas i det
-UseMenuModuleToolsToAddCronJobs=Gå till menyn "Hem - Adminverktyg - Schemalagda jobb" för att se och redigera schemalagda jobb.
+UseMenuModuleToolsToAddCronJobs=Go into menu "<a href="%s">Home - Admin tools - Scheduled jobs</a>" to see and edit scheduled jobs.
 JobDisabled=Jobb inaktiverat
 MakeLocalDatabaseDumpShort=Lokal databas säkerhetskopia
 MakeLocalDatabaseDump=Skapa en lokal databasdump. Parametrarna är: komprimering ('gz' eller 'bz' eller 'none'), säkerhetskopieringstyp ('mysql', 'pgsql', 'auto'), 1, 'auto' eller filnamn att bygga, antal backupfiler för att hålla
 WarningCronDelayed=Uppmärksamhet, för prestationsändamål, vad som än är nästa datum för utförande av aktiverade jobb, kan dina jobb försenas till högst %s timmar innan de körs.
+DATAPOLICYJob=Data cleaner and anonymizer
+JobXMustBeEnabled=Job %s must be enabled
+# Cron Boxes
+LastExecutedScheduledJob=Last executed scheduled job
+NextScheduledJobExecute=Next scheduled job to execute
+NumberScheduledJobError=Number of scheduled jobs in error

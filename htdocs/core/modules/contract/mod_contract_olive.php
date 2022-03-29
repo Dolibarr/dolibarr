@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/contract/modules_contract.php';
  */
 class mod_contract_olive extends ModelNumRefContracts
 {
-    /**
+	/**
 	 * @var string Nom du modele
 	 * @deprecated
 	 * @see $name
@@ -53,9 +53,9 @@ class mod_contract_olive extends ModelNumRefContracts
 	public $code_null = 1; // Code facultatif
 
 	/**
-     * Dolibarr version of the loaded document
-     * @var string
-     */
+	 * Dolibarr version of the loaded document
+	 * @var string
+	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
 	/**
@@ -114,8 +114,7 @@ class mod_contract_olive extends ModelNumRefContracts
 		if (empty($code) && $this->code_null && empty($conf->global->MAIN_CONTARCT_CODE_ALWAYS_REQUIRED))
 		{
 			$result = 0;
-		}
-		elseif (empty($code) && (!$this->code_null || !empty($conf->global->MAIN_CONTARCT_CODE_ALWAYS_REQUIRED)))
+		} elseif (empty($code) && (!$this->code_null || !empty($conf->global->MAIN_CONTARCT_CODE_ALWAYS_REQUIRED)))
 		{
 			$result = -2;
 		}

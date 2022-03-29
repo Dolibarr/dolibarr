@@ -11,8 +11,9 @@ CloseEtablishment=Lukk firma
 # Dictionary
 DictionaryPublicHolidays=HRM - Helligdager
 DictionaryDepartment=HRM - Departementliste
-DictionaryFunction=HRM - Job positions
+DictionaryFunction=HRM - Jobbstillinger
 # Module
 Employees=Ansatte
 Employee=Ansatt
 NewEmployee=Ny ansatt
+ListOfEmployees=Liste over ansatte

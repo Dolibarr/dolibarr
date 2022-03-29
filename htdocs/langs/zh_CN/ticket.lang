@@ -31,10 +31,8 @@ TicketDictType=Ticket - Types
 TicketDictCategory=Ticket - Groupes
 TicketDictSeverity=Ticket - Severities
 TicketDictResolution=Ticket - Resolution
-TicketTypeShortBUGSOFT=软件故障
-TicketTypeShortBUGHARD=硬件故障
-TicketTypeShortCOM=商业问题
 
+TicketTypeShortCOM=商业问题
 TicketTypeShortHELP=Request for functionnal help
 TicketTypeShortISSUE=Issue, bug or problem
 TicketTypeShortREQUEST=Change or enhancement request
@@ -44,7 +42,7 @@ TicketTypeShortOTHER=其他
 TicketSeverityShortLOW=低
 TicketSeverityShortNORMAL=正常
 TicketSeverityShortHIGH=高
-TicketSeverityShortBLOCKING=临界/阻塞
+TicketSeverityShortBLOCKING=Critical, Blocking
 
 ErrorBadEmailAddress=字段'%s'不正确
 MenuTicketMyAssign=我的票据
@@ -60,7 +58,6 @@ OriginEmail=电邮来源
 Notify_TICKET_SENTBYMAIL=Send ticket message by email
 
 # Status
-NotRead=没看过
 Read=阅读
 Assigned=分配
 InProgress=进行中
@@ -72,7 +69,6 @@ Deleted=删除
 
 # Dict
 Type=类型
-Category=Analytic code
 Severity=严重
 
 # Email templates
@@ -127,8 +123,8 @@ TicketsActivatePublicInterfaceHelp=公共接口允许任何访问者创建票证
 TicketsAutoAssignTicket=自动分配创建故障单的用户
 TicketsAutoAssignTicketHelp=创建故障单时，可以自动将用户分配给故障单。
 TicketNumberingModules=票据编号模块
+TicketsModelModule=Document templates for tickets
 TicketNotifyTiersAtCreation=Notify third party at creation
-TicketGroup=组
 TicketsDisableCustomerEmail=Always disable emails when a ticket is created from public interface
 TicketsPublicNotificationNewMessage=Send email(s) when a new message is added
 TicketsPublicNotificationNewMessageHelp=Send email(s) when a new message is added from public interface (to assigned user or the notifications email to (update) and/or the notifications email to)
@@ -162,7 +158,7 @@ CreatedBy=制作：
 NewTicket=新票据
 SubjectAnswerToTicket=票据应答
 TicketTypeRequest=请求类型
-TicketCategory=Analytic code
+TicketCategory=组
 SeeTicket=查看票据
 TicketMarkedAsRead=票据已标记为已读
 TicketReadOn=请继续阅读
@@ -235,7 +231,6 @@ TicketLogStatusChanged=Status changed: %s to %s
 TicketNotNotifyTiersAtCreate=不在创建时通知公司
 Unread=Unread
 TicketNotCreatedFromPublicInterface=Not available. Ticket was not created from public interface.
-PublicInterfaceNotEnabled=Public interface was not enabled
 ErrorTicketRefRequired=Ticket reference name is required
 
 #

@@ -141,11 +141,12 @@ OrderByEMail=E-pasts
 OrderByWWW=Online
 OrderByPhone=Telefons
 # Documents models
-PDFEinsteinDescription=Pilns pasūtījuma modelis 
+PDFEinsteinDescription=Pilns pasūtījuma modelis (Eratosthene veidnes vecā ieviešana)
 PDFEratostheneDescription=Pilns pasūtījuma modelis
 PDFEdisonDescription=Vienkāršs pasūtīt modeli
 PDFProformaDescription=Pilnīga Proforma rēķina veidne
 CreateInvoiceForThisCustomer=Rēķinu pasūtījumi
+CreateInvoiceForThisSupplier=Rēķinu pasūtījumi
 NoOrdersToInvoice=Nav pasūtījumi apmaksājamo
 CloseProcessedOrdersAutomatically=Klasificēt &quot;apstrādā&quot; visus atlasītos pasūtījumus.
 OrderCreation=Pasūtījumu izveide

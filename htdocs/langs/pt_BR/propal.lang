@@ -34,7 +34,6 @@ RefProposal=Ref. Orçamento
 SendPropalByMail=Enviar Orçamento por E-mail
 DatePropal=Data da Proposta
 ValidityDuration=Validade da proposta
-CloseAs=Configurar status para
 SetAcceptedRefused=Configurar aceito/recusado
 AddToDraftProposals=Adicionar a projeto de proposta
 NoDraftProposals=Não há projetos de propostas

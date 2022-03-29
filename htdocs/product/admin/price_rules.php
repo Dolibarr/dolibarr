@@ -15,8 +15,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
- * Page to set how to autocalculate price for each level when option
- * PRODUCT_MULTIPRICE is on.
+ * Page to set how to autocalculate price for each level when option PRODUCT_MULTIPRICE is on.
+ * This page is a tab in the setup of module Product if option PRODUIT_MULTIPRICES_ALLOW_AUTOCALC_PRICELEVEL is set.
  */
 
 require '../../main.inc.php';
@@ -26,15 +26,20 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'products'));
 
+$action = GETPOST('action', 'aZ09');
+
 // Security check
 if (!$user->admin || (empty($conf->product->enabled) && empty($conf->service->enabled)))
 	accessforbidden();
+
+$error = 0;
+
 
 /**
  * Actions
  */
 
-if ($_POST) {
+if ($action == 'update') {
 	$var_percent = GETPOST('var_percent', 'array');
 	$var_min_percent = GETPOST('var_min_percent', 'array');
 	$fk_level = GETPOST('fk_level', 'array');
@@ -52,6 +57,7 @@ if ($_POST) {
 
 		$i_var_percent = 0;
 
+		// Set $i_var_percent, the percent of price for level compared to an other level
 		if ($i != 1) {
 			$i_var_percent = (float) price2num($var_percent[$i]);
 		}
@@ -64,34 +70,35 @@ if ($_POST) {
 			$check2 = $i_var_min_percent;
 		} else {
 			$check1 = $i_fk_level >= 1 && $i_fk_level <= $conf->global->PRODUIT_MULTIPRICES_LIMIT;
-			$check2 = $i_var_percent && $i_var_min_percent;
+			$check2 = $i_var_percent && ($i_var_min_percent || (string) $i_var_min_percent === '0');
 		}
 
-		if (!$check1 || !$check2) {
+		if (empty($i_var_percent) && empty($i_var_min_percent)) {
 			//If the level is between range but percent fields are empty, then we ensure it does not exist in DB
-			if ($check1) {
-				$db->query("DELETE FROM ".MAIN_DB_PREFIX."product_pricerules WHERE level = ".(int) $i);
-			}
-
+			$db->query("DELETE FROM ".MAIN_DB_PREFIX."product_pricerules WHERE level = ".((int) $i));
 			continue;
 		}
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_pricerules (level, fk_level, var_percent, var_min_percent) VALUES (
-		".(int) $i.", ".$db->escape($i_fk_level).", ".$i_var_percent.", ".$i_var_min_percent.")";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_pricerules (level, fk_level, var_percent, var_min_percent) VALUES (";
+		$sql .= ((int) $i).", ".$db->escape($i_fk_level).", ".$i_var_percent.", ".$i_var_min_percent.")";
 
 		if (!$db->query($sql)) {
 			//If we could not create, then we try updating
-			$sql = "UPDATE ".MAIN_DB_PREFIX."product_pricerules
-			SET fk_level = ".$db->escape($i_fk_level).", var_percent = ".$i_var_percent.", var_min_percent = ".$i_var_min_percent." WHERE level = ".$i;
+			$sql = "UPDATE ".MAIN_DB_PREFIX."product_pricerules";
+			$sql .= " SET fk_level = ".$db->escape($i_fk_level).", var_percent = ".$i_var_percent.", var_min_percent = ".$i_var_min_percent." WHERE level = ".$i;
 
 			if (!$db->query($sql)) {
 				setEventMessages($langs->trans('ErrorSavingChanges'), null, 'errors');
+				$error++;
 			}
 		}
 	}
 
-	setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
+	if (!$error) {
+		setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
+	}
 }
+
 
 /*
  * View
@@ -124,36 +131,24 @@ $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_valu
 print load_fiche_titre($title, $linkback, 'title_setup');
 
 
-
-print '<form method="POST">';
+print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
+print '<input type="hidden" name="action" value="update">';
 
 $head = product_admin_prepare_head();
-dol_fiche_head($head, 'generator', $tab, 0, 'product');
+print dol_get_fiche_head($head, 'generator', $tab, -1, 'product');
 
-print $langs->trans("MultiPriceRuleDesc").'<br><br>';
+print '<span class="opacitymedium">'.$langs->trans("MultiPriceRuleDesc").'</span><br><br>';
 
-print load_fiche_titre($langs->trans('MultipriceRules'), '', '');
-
-//Array that contains the number of prices available
+// Array that contains the number of prices available
 $price_options = array();
 
 for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++) {
 	$price_options[$i] = $langs->trans('SellingPrice').' '.$i;
 }
-
-$genPriceOptions = function ($level) use ($price_options) {
-
-	$return = array();
-
-	for ($i = 1; $i < $level; $i++) {
-		$return[$i] = $price_options[$i];
-	}
-
-	return $return;
-};
 ?>
 
-	<table class="noborder">
+	<table class="noborder centpercent">
 		<tr class="liste_titre">
 			<td style="text-align: center"><?php echo $langs->trans('PriceLevel') ?></td>
 			<td style="text-align: center"><?php echo $langs->trans('Price') ?></td>
@@ -176,7 +171,15 @@ $genPriceOptions = function ($level) use ($price_options) {
 					</td>
 				<td style="text-align: center">
 					<input type="text" style="text-align: right" name="var_percent[<?php echo $i ?>]" size="5" value="<?php echo price(isset($rules[$i]) ? $rules[$i]->var_percent : 0, 2) ?>">
-					<?php echo $langs->trans('PercentVariationOver', Form::selectarray("fk_level[$i]", $genPriceOptions($i), (isset($rules[$i]) ? $rules[$i]->fk_level : null))) ?>
+					<?php
+					$return = array();
+					for ($j = 1; $j < $i; $j++) {
+						$return[$j] = $price_options[$j];
+					}
+					$texttoshow = $langs->trans('PercentVariationOver', '{s1}');
+					$texttoshow = str_replace('{s1}', Form::selectarray("fk_level[$i]", $return, (isset($rules[$i]) ? $rules[$i]->fk_level : null)), $texttoshow);
+					print $texttoshow;
+					?>
 				</td>
 				<td style="text-align: center">
 					<input type="text" style="text-align: right" name="var_min_percent[<?php echo $i ?>]" size="5" value="<?php echo price(isset($rules[$i]) ? $rules[$i]->var_min_percent : 0, 2) ?>">
@@ -188,10 +191,10 @@ $genPriceOptions = function ($level) use ($price_options) {
 
 <?php
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '<div style="text-align: center">
-		<input type="submit" value="'.$langs->trans('Save').'" class="button">
+		<input type="submit" value="'.$langs->trans("Save").'" class="button button-save">
 	</div>';
 
 print '</form>';

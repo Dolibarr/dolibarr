@@ -13,4 +13,7 @@ BOMsSetup=Configuración de módulo de BOM
 ListOfBOMs=Lista de Listas de materiales - BOM
 ListOfManufacturingOrders=Lista de Ordenes de Fabricación
 NewBOM=Nueva Lista de materiales
+ConfirmCloneBillOfMaterials=Are you sure you want to clone the bill of material %s ?
+ConfirmDeleteBillOfMaterials=Are you sure you want to delete this Bill Of Material?
+ConfirmDeleteMo=Are you sure you want to delete this Bill Of Material?
 MenuMRP=Ordenes de Fabricación

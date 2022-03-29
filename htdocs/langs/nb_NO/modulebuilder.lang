@@ -40,6 +40,7 @@ PageForCreateEditView=PHP-side for å lage/redigere/vise en post
 PageForAgendaTab=PHP-side for hendelsesfanen
 PageForDocumentTab=PHP-side for dokumentfan
 PageForNoteTab=PHP-side for notatfane
+PageForContactTab=PHP-side for kontaktfanen
 PathToModulePackage=Sti til zip-fil av modul/applikasjonspakke
 PathToModuleDocumentation=Sti til fil med modul/applikasjonsdokumentasjon (%s)
 SpaceOrSpecialCharAreNotAllowed=Mellomrom eller spesialtegn er ikke tillatt.
@@ -77,13 +78,13 @@ IsAMeasure=Er en måling
 DirScanned=Mappe skannet
 NoTrigger=Ingen utløser
 NoWidget=Ingen widget
-GoToApiExplorer=Gå til API-utforsker
+GoToApiExplorer=API-utforsker
 ListOfMenusEntries=Liste over menyoppføringer
 ListOfDictionariesEntries=Liste over ordbokinnføringer
 ListOfPermissionsDefined=Liste over definerte tillatelser
 SeeExamples=Se eksempler her
 EnabledDesc=Betingelse for å ha dette feltet aktivt (Eksempler: 1 eller $conf->global->MYMODULE_MYOPTION)
-VisibleDesc=Is the field visible ? (Examples: 0=Never visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create), 5=Visible on list end view form only (not create, not update).<br><br>Using a negative value means field is not shown by default on list but can be selected for viewing).<br><br>It can be an expression, for example:<br>preg_match('/public/', $_SERVER['PHP_SELF'])?0:1<br>($user->rights->holiday->define_holiday ? 1 : 0)
+VisibleDesc=Er feltet synlig? (Eksempler: 0=Aldri synlig, 1=Synlig på liste og opprett/oppdater/vis skjemaer, 2=Synlig bare på liste, 3=Synlig bare på opprett/oppdater/vis skjema (ikke liste), 4=Synlig bare på liste og oppdaterings-/visningsskjema  (ikke opprett), 5=Synlig på listens sluttformular (ikke opprett, ikke oppdatering). <br><br>Bruk av negativ verdi betyr at feltet ikke vises som standard på listen, men kan velges for visning). <br><br>Det kan være et uttrykk, for eksempel:<br>preg_match('/public/', $_SERVER['PHP_SELF'])?0:1<br>($user->rights->holiday->define_holiday ? 1 : 0)
 DisplayOnPdfDesc=Vis dette feltet på kompatible PDF-dokumenter, du kan administrere posisjon med "Posisjon" -feltet.<br/>Kjente kompatible PDF-modeller er: Eratosthenes (Ordre), espadon (Forsendelse), sponge (Fakturaer), cyan (Tilbud), cornas (Leverandørordre)<br/><br/><strong>For dokument:</strong><br/>0 = Vises ikke <br/> 1 = Vises<br/> 2 = Vises bare hvis ikke tom<br/><br/><strong>For dokumentlinjer:</strong><br/>0 = Vises ikke <br/> 1 = Vises i en kolonne <br/> 3 = vises i linje etter beskrivelsen <br/> 4 = vises etter beskrivelse hvis ikke tom
 DisplayOnPdf=Vis på PDF
 IsAMeasureDesc=Kan verdien av feltet bli kumulert for å få en total i listen? (Eksempler: 1 eller 0)
@@ -105,7 +106,7 @@ TryToUseTheModuleBuilder=Hvis du har kunnskap i SQL og PHP, kan du prøve å bru
 SeeTopRightMenu=Se <span class="fa fa-bug"></span> i øverste høyre meny
 AddLanguageFile=Legg til språkfil
 YouCanUseTranslationKey=Her kan du bruke en nøkkel som er oversettelsesnøkkelen funnet i språkfilen (se kategorien "Språk")
-DropTableIfEmpty=(Slett tabell hvis tom)
+DropTableIfEmpty=(Fjern tabellen hvis den er tom)
 TableDoesNotExists=Tabellen %s finnes ikke
 TableDropped=Tabell %s slettet
 InitStructureFromExistingTable=Bygg struktur-matrisestrengen fra en eksisterende tabell
@@ -126,7 +127,6 @@ UseSpecificEditorURL = Bruk en bestemt editor-URL
 UseSpecificFamily = Bruk en bestemt familie
 UseSpecificAuthor = Bruk en bestemt forfatter
 UseSpecificVersion = Bruk en bestemt innledende versjon
-ModuleMustBeEnabled=Modulen/applikasjonen må først aktiveres
 IncludeRefGeneration=Referansen til objektet må genereres automatisk
 IncludeRefGenerationHelp=Merk av for dette hvis du vil inkludere kode for å administrere genereringen av referansen automatisk
 IncludeDocGeneration=Jeg vil generere noen dokumenter fra objektet
@@ -139,4 +139,5 @@ ForeignKey=Fremmed nøkkel
 TypeOfFieldsHelp=Type felt: <br> varchar (99), dobbel (24,8), ekte, tekst, html, datetime, tidstempel, heltall, heltall:ClassName:relativepath/to/classfile.class.php [:1[:filter]] ('1' betyr at vi legger til en + -knapp etter kombinasjonsboksen for å opprette posten, 'filter' kan være 'status=1 OG fk_user=__USER_ID OG enhet IN (__SHARED_ENTITIES__)' for eksempel)
 AsciiToHtmlConverter=Ascii til HTML konverter
 AsciiToPdfConverter=Ascii til PDF konverter
-TableNotEmptyDropCanceled=Table not empty. Drop has been canceled.
+TableNotEmptyDropCanceled=Tabellen er ikke tom. Drop har blitt kansellert.
+ModuleBuilderNotAllowed=Modulbyggeren er tilgjengelig, men ikke tillatt for brukeren din.

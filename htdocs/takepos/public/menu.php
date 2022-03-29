@@ -23,6 +23,7 @@
 
 if (!defined("NOLOGIN"))       define("NOLOGIN", '1'); // If this page is public (can be called outside logged session)
 if (!defined('NOIPCHECK'))	   define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
+if (!defined('NOBROWSERNOTIF')) define('NOBROWSERNOTIF', '1');
 
 require '../../main.inc.php';
 
@@ -53,14 +54,14 @@ $categories = $categorie->get_full_arbo('product', (($conf->global->TAKEPOS_ROOT
 $levelofrootcategory = 0;
 if ($conf->global->TAKEPOS_ROOT_CATEGORY_ID > 0)
 {
-    foreach ($categories as $key => $categorycursor)
-    {
-        if ($categorycursor['id'] == $conf->global->TAKEPOS_ROOT_CATEGORY_ID)
-        {
-            $levelofrootcategory = $categorycursor['level'];
-            break;
-        }
-    }
+	foreach ($categories as $key => $categorycursor)
+	{
+		if ($categorycursor['id'] == $conf->global->TAKEPOS_ROOT_CATEGORY_ID)
+		{
+			$levelofrootcategory = $categorycursor['level'];
+			break;
+		}
+	}
 }
 $levelofmaincategories = $levelofrootcategory + 1;
 
@@ -68,17 +69,17 @@ $maincategories = array();
 $subcategories = array();
 foreach ($categories as $key => $categorycursor)
 {
-    if ($categorycursor['level'] == $levelofmaincategories)
-    {
-        $maincategories[$key] = $categorycursor;
-    } else {
-        $subcategories[$key] = $categorycursor;
-    }
+	if ($categorycursor['level'] == $levelofmaincategories)
+	{
+		$maincategories[$key] = $categorycursor;
+	} else {
+		$subcategories[$key] = $categorycursor;
+	}
 }
 
 $maincategories = dol_sort_array($maincategories, 'label');
 
-foreach ($maincategories as $cat){
+foreach ($maincategories as $cat) {
 	print '<div class="text-center">
             <a id="'.$cat['id'].'"></a><h3>'.$cat['label'].'</h3>
           </div>
@@ -87,7 +88,7 @@ foreach ($maincategories as $cat){
 	$object = new Categorie($db);
 	$result = $object->fetch($cat['id']);
 	$prods = $object->getObjectsInCateg("product", 0, 0, 0, $conf->global->TAKEPOS_SORTPRODUCTFIELD, 'ASC');
-	foreach ($prods as $pro){
+	foreach ($prods as $pro) {
 		print '
 		<div class="cell small-6 medium-4">
 			<div class="item">

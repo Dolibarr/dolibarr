@@ -63,17 +63,13 @@ if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 	$q = GETPOST("q", "int");
 	if (empty($q))
 	{
-		if (GETPOST("month", "int")) { $date_start = dol_get_first_day($year_start, GETPOST("month", "int"), false); $date_end = dol_get_last_day($year_start, GETPOST("month", "int"), false); }
-		else
-		{
+		if (GETPOST("month", "int")) { $date_start = dol_get_first_day($year_start, GETPOST("month", "int"), false); $date_end = dol_get_last_day($year_start, GETPOST("month", "int"), false); } else {
 			$date_start = dol_get_first_day($year_start, empty($conf->global->SOCIETE_FISCAL_MONTH_START) ? 1 : $conf->global->SOCIETE_FISCAL_MONTH_START, false);
 			if (empty($conf->global->MAIN_INFO_VAT_RETURN) || $conf->global->MAIN_INFO_VAT_RETURN == 2) $date_end = dol_time_plus_duree($date_start, 3, 'm') - 1;
 			elseif ($conf->global->MAIN_INFO_VAT_RETURN == 3) $date_end = dol_time_plus_duree($date_start, 1, 'y') - 1;
 			elseif ($conf->global->MAIN_INFO_VAT_RETURN == 1) $date_end = dol_time_plus_duree($date_start, 1, 'm') - 1;
 		}
-	}
-	else
-	{
+	} else {
 		if ($q == 1) { $date_start = dol_get_first_day($year_start, 1, false); $date_end = dol_get_last_day($year_start, 3, false); }
 		if ($q == 2) { $date_start = dol_get_first_day($year_start, 4, false); $date_end = dol_get_last_day($year_start, 6, false); }
 		if ($q == 3) { $date_start = dol_get_first_day($year_start, 7, false); $date_end = dol_get_last_day($year_start, 9, false); }
@@ -138,7 +134,7 @@ $calcmode = '';
 if ($modetax == 0) $calcmode = $langs->trans('OptionVATDefault');
 if ($modetax == 1) $calcmode = $langs->trans('OptionVATDebitOption');
 if ($modetax == 2) $calcmode = $langs->trans('OptionPaymentForProductAndServices');
-$calcmode .= '<br>('.$langs->trans("TaxModuleSetupToModifyRules", DOL_URL_ROOT.'/admin/taxes.php').')';
+$calcmode .= ' <span class="opacitymedium">('.$langs->trans("TaxModuleSetupToModifyRules", DOL_URL_ROOT.'/admin/taxes.php').')</span>';
 // Set period
 $period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 $prevyear = $year_start;
@@ -146,16 +142,16 @@ $prevquarter = $q;
 if ($prevquarter > 1) {
 	$prevquarter--;
 } else {
-    $prevquarter = 4;
-    $prevyear--;
+	$prevquarter = 4;
+	$prevyear--;
 }
 $nextyear = $year_start;
 $nextquarter = $q;
 if ($nextquarter < 4) {
 	$nextquarter++;
 } else {
-    $nextquarter = 1;
-    $nextyear++;
+	$nextquarter = 1;
+	$nextyear++;
 }
 $description .= $fsearch;
 $builddate = dol_now();
@@ -204,12 +200,13 @@ if ($local == 1) {
 }
 
 // VAT Received and paid
+print '<div class="div-table-responsive">';
 echo '<table class="noborder centpercent">';
 
 $y = $year_current;
 $total = 0;
 $i = 0;
-$columns = 5;
+$columns = 4;
 
 // Load arrays of datas
 $x_coll = tax_by_rate('localtax'.$local, $db, 0, 0, $date_start, $date_end, $modetax, 'sell');
@@ -222,11 +219,8 @@ if (!is_array($x_coll) || !is_array($x_paye))
 		print '<tr><td colspan="'.$columns.'">'.$langs->trans("ErrorNoAccountancyModuleLoaded").'</td></tr>';
 	elseif ($x_coll == -2)
 		print '<tr><td colspan="'.$columns.'">'.$langs->trans("FeatureNotYetAvailable").'</td></tr>';
-	else
-		print '<tr><td colspan="'.$columns.'">'.$langs->trans("Error").'</td></tr>';
-}
-else
-{
+	else print '<tr><td colspan="'.$columns.'">'.$langs->trans("Error").'</td></tr>';
+} else {
 	$x_both = array();
 
 	//now, from these two arrays, get another array with one rate per line
@@ -317,8 +311,9 @@ else
 	$x_paye_sum = 0;
 	$x_paye_ht = 0;
 
-	$span = $columns;
-	if ($modetax != 1) $span += 2;
+	$span = $columns - 1;
+	if ($modetax != 2) $span += 1;
+	if ($modetax != 1) $span += 1;
 
 	// Customers invoices
 	print '<tr class="liste_titre">';
@@ -372,17 +367,15 @@ else
 						$product_static->type = $fields['ptype'];
 						print $product_static->getNomUrl(1);
 						if (dol_string_nohtmltag($fields['descr'])) print ' - '.dol_trunc(dol_string_nohtmltag($fields['descr']), 16);
-					}
-					else
-					{
+					} else {
 						if ($type) $text = img_object($langs->trans('Service'), 'service');
 						else $text = img_object($langs->trans('Product'), 'product');
-			            if (preg_match('/^\((.*)\)$/', $fields['descr'], $reg))
-			            {
-			                if ($reg[1] == 'DEPOSIT') $fields['descr'] = $langs->transnoentitiesnoconv('Deposit');
-			                elseif ($reg[1] == 'CREDIT_NOTE') $fields['descr'] = $langs->transnoentitiesnoconv('CreditNote');
-			                else $fields['descr'] = $langs->transnoentitiesnoconv($reg[1]);
-			            }
+						if (preg_match('/^\((.*)\)$/', $fields['descr'], $reg))
+						{
+							if ($reg[1] == 'DEPOSIT') $fields['descr'] = $langs->transnoentitiesnoconv('Deposit');
+							elseif ($reg[1] == 'CREDIT_NOTE') $fields['descr'] = $langs->transnoentitiesnoconv('CreditNote');
+							else $fields['descr'] = $langs->transnoentitiesnoconv($reg[1]);
+						}
 						print $text.' '.dol_trunc(dol_string_nohtmltag($fields['descr']), 16);
 
 						// Show range
@@ -416,8 +409,7 @@ else
 						if ($type == 0)
 						{
 							print $langs->trans("NotUsedForGoods");
-						}
-						else {
+						} else {
 							print price($fields['payment_amount']);
 							if (isset($fields['payment_amount'])) print ' ('.round($ratiopaymentinvoice * 100, 2).'%)';
 						}
@@ -446,41 +438,41 @@ else
 			}
 		}
 
-	    // Total customers for this vat rate
-	    print '<tr class="liste_total">';
-	    print '<td></td>';
-	    print '<td class="right">'.$langs->trans("Total").':</td>';
-	    if ($modetax != 1)
-	    {
-	        print '<td class="nowrap right">&nbsp;</td>';
-	        print '<td class="right">&nbsp;</td>';
-	    }
-	    print '<td class="right">'.price(price2num($subtot_coll_total_ht, 'MT')).'</td>';
-	    print '<td class="nowrap right">'.price(price2num($subtot_coll_vat, 'MT')).'</td>';
-	    print '</tr>';
+		// Total customers for this vat rate
+		print '<tr class="liste_total">';
+		print '<td></td>';
+		print '<td class="right">'.$langs->trans("Total").':</td>';
+		if ($modetax != 1)
+		{
+			print '<td class="nowrap right">&nbsp;</td>';
+			print '<td class="right">&nbsp;</td>';
+		}
+		print '<td class="right">'.price(price2num($subtot_coll_total_ht, 'MT')).'</td>';
+		print '<td class="nowrap right">'.price(price2num($subtot_coll_vat, 'MT')).'</td>';
+		print '</tr>';
 	}
 
-    if (count($x_coll) == 0)   // Show a total ine if nothing shown
-    {
-        print '<tr class="liste_total">';
-        print '<td>&nbsp;</td>';
-        print '<td class="right">'.$langs->trans("Total").':</td>';
-        if ($modetax == 0)
-        {
-            print '<td class="nowrap right">&nbsp;</td>';
-            print '<td class="right">&nbsp;</td>';
-        }
-        print '<td class="right">'.price(price2num(0, 'MT')).'</td>';
-        print '<td class="nowrap right">'.price(price2num(0, 'MT')).'</td>';
-        print '</tr>';
-    }
+	if (count($x_coll) == 0)   // Show a total ine if nothing shown
+	{
+		print '<tr class="liste_total">';
+		print '<td>&nbsp;</td>';
+		print '<td class="right">'.$langs->trans("Total").':</td>';
+		if ($modetax == 0)
+		{
+			print '<td class="nowrap right">&nbsp;</td>';
+			print '<td class="right">&nbsp;</td>';
+		}
+		print '<td class="right">'.price(price2num(0, 'MT')).'</td>';
+		print '<td class="nowrap right">'.price(price2num(0, 'MT')).'</td>';
+		print '</tr>';
+	}
 
-    // Blank line
+	// Blank line
 	print '<tr><td colspan="'.($span + 1).'">&nbsp;</td></tr>';
-	print '</table>';
+	//print '</table>';
 	$diff = $x_coll_sum;
 
-	echo '<table class="noborder centpercent">';
+	//echo '<table class="noborder centpercent">';
 	//print table headers for this quadri - expenses now
 	print '<tr class="liste_titre">';
 	print '<td class="left">'.$elementsup.'</td>';
@@ -532,9 +524,7 @@ else
 						$product_static->type = $fields['ptype'];
 						print $product_static->getNomUrl(1);
 						if (dol_string_nohtmltag($fields['descr'])) print ' - '.dol_trunc(dol_string_nohtmltag($fields['descr']), 16);
-					}
-					else
-					{
+					} else {
 						if ($type) $text = img_object($langs->trans('Service'), 'service');
 						else $text = img_object($langs->trans('Product'), 'product');
 						print $text.' '.dol_trunc(dol_string_nohtmltag($fields['descr']), 16);
@@ -572,9 +562,7 @@ else
 						if ($type == 0)
 						{
 							print $langs->trans("NA");
-						}
-						else
-						{
+						} else {
 							print price(price2num($fields['payment_amount'], 'MT'));
 							if (isset($fields['payment_amount'])) {
 								print ' ('.round($ratiopaymentinvoice * 100, 2).'%)';
@@ -604,18 +592,18 @@ else
 			}
 		}
 
-	    // Total suppliers for this vat rate
-	    print '<tr class="liste_total">';
-	    print '<td>&nbsp;</td>';
-	    print '<td class="right">'.$langs->trans("Total").':</td>';
-	    if ($modetax != 1)
-	    {
-	        print '<td class="nowrap right">&nbsp;</td>';
-	        print '<td class="right">&nbsp;</td>';
-	    }
-	    print '<td class="right">'.price(price2num($subtot_paye_total_ht, 'MT')).'</td>';
-	    print '<td class="nowrap right">'.price(price2num($subtot_paye_vat, 'MT')).'</td>';
-	    print '</tr>';
+		// Total suppliers for this vat rate
+		print '<tr class="liste_total">';
+		print '<td>&nbsp;</td>';
+		print '<td class="right">'.$langs->trans("Total").':</td>';
+		if ($modetax != 1)
+		{
+			print '<td class="nowrap right">&nbsp;</td>';
+			print '<td class="right">&nbsp;</td>';
+		}
+		print '<td class="right">'.price(price2num($subtot_paye_total_ht, 'MT')).'</td>';
+		print '<td class="nowrap right">'.price(price2num($subtot_paye_vat, 'MT')).'</td>';
+		print '</tr>';
 	}
 
 	if (count($x_paye) == 0) {  // Show a total line if nothing shown
@@ -631,12 +619,8 @@ else
 		print '</tr>';
 	}
 
-	print '</table>';
-
 	// Total to pay
-    print '<br><br>';
-    print '<table class="noborder centpercent">';
-    $diff = $x_coll_sum - $x_paye_sum;
+	$diff = $x_coll_sum - $x_paye_sum;
 	print '<tr class="liste_total">';
 	print '<td class="liste_total" colspan="'.$span.'">'.$langs->trans("TotalToPay").($q ? ', '.$langs->trans("Quadri").' '.$q : '').'</td>';
 	print '<td class="liste_total nowrap right"><b>'.price(price2num($diff, 'MT'))."</b></td>\n";
@@ -644,7 +628,9 @@ else
 
 	$i++;
 }
+
 print '</table>';
+print '</div>';
 
 // End of page
 llxFooter();

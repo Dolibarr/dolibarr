@@ -18,7 +18,6 @@
 require '../main.inc.php';
 require DOL_DOCUMENT_ROOT.'/variants/class/ProductAttribute.class.php';
 
-$id = GETPOST('id', 'int');
 $action = GETPOST('action', 'aZ09');
 $object = new ProductAttribute($db);
 
@@ -59,14 +58,14 @@ llxHeader('', $title);
 $newcardbutton = '';
 if ($user->rights->produit->creer)
 {
-    $newcardbutton .= dolGetButtonTitle($langs->trans('Create'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/variants/create.php');
+	$newcardbutton .= dolGetButtonTitle($langs->trans('Create'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/variants/create.php');
 }
 
 print load_fiche_titre($title, $newcardbutton, 'product');
 
 $forcereloadpage = empty($conf->global->MAIN_FORCE_RELOAD_PAGE) ? 0 : 1;
 ?>
-	<script type="text/javascript">
+	<script>
 		$(document).ready(function(){
 			$(".imgupforline, .imgdownforline").hide();
 			$(".lineupdown").removeAttr('href');
@@ -127,7 +126,7 @@ foreach ($variants as $key => $attribute) {
 	print '<td class="right">'.$attribute->countChildProducts().'</td>';
 	print '<td class="right">';
 	print '<a class="editfielda marginrightonly paddingleftonly" href="card.php?id='.$attribute->id.'&action=edit">'.img_edit().'</a>';
-	print '<a class="marginrightonly paddingleftonlyhref="card.php?id='.$attribute->id.'&action=delete">'.img_delete().'</a>';
+	print '<a class="marginrightonly paddingleftonlyhref="card.php?id='.$attribute->id.'&action=delete&token='.newToken().'">'.img_delete().'</a>';
 	print '</td>';
 	print '<td class="center linecolmove tdlineupdown">';
 	if ($key > 0) {

@@ -52,18 +52,15 @@ if ($auth->fetch(0, $signature) <= 0) {
 
 if (!empty($hash)) {
 	echo $auth->checkBlockchain($hash) ? 'hashisok' : 'hashisjunk';
-}
-elseif (!empty($newblock)) {
+} elseif (!empty($newblock)) {
 	if ($auth->checkBlock($newblock)) {
 		$auth->addBlock($newblock);
 		$auth->update($user);
 
 		echo 'blockadded';
-	}
-	else {
+	} else {
 		echo 'blockalreadyadded';
 	}
-}
-else {
+} else {
 	echo 'idontunderstandwhatihavetodo';
 }

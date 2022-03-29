@@ -44,15 +44,15 @@ class ExpeditionLineBatch extends CommonObject
 	public $fk_origin_stock;
 	public $fk_expeditiondet;
 
-    /**
-     *  Constructor
-     *
-     *  @param	DoliDb		$db      Database handler
-     */
-    public function __construct($db)
-    {
-        $this->db = $db;
-    }
+	/**
+	 *  Constructor
+	 *
+	 *  @param	DoliDb		$db      Database handler
+	 */
+	public function __construct($db)
+	{
+		$this->db = $db;
+	}
 
 	/**
 	 * Fill object based on a product-warehouse-batch's record
@@ -90,9 +90,7 @@ class ExpeditionLineBatch extends CommonObject
 			$this->db->free($resql);
 
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->error = "Error ".$this->db->lasterror();
 			return -1;
 		}
@@ -132,16 +130,14 @@ class ExpeditionLineBatch extends CommonObject
 
 		if (!$error)
 		{
-            $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.self::$_table_element);
+			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.self::$_table_element);
 			$this->fk_expeditiondet = $id_line_expdet;
 			return $this->id;
-		}
-		else
-		{
+		} else {
 			foreach ($this->errors as $errmsg)
 			{
-	            dol_syslog(get_class($this)."::create ".$errmsg, LOG_ERR);
-	            $this->error .= ($this->error ? ', '.$errmsg : $errmsg);
+				dol_syslog(get_class($this)."::create ".$errmsg, LOG_ERR);
+				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
 			$this->db->rollback();
 			return -1 * $error;
@@ -157,18 +153,14 @@ class ExpeditionLineBatch extends CommonObject
 	 */
 	public static function deletefromexp($db, $id_expedition)
 	{
-		$id_expedition = (int) $id_expedition;
-
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX.self::$_table_element;
-		$sql .= " WHERE fk_expeditiondet in (SELECT rowid FROM ".MAIN_DB_PREFIX."expeditiondet WHERE fk_expedition=".$id_expedition.")";
+		$sql .= " WHERE fk_expeditiondet in (SELECT rowid FROM ".MAIN_DB_PREFIX."expeditiondet WHERE fk_expedition=".((int) $id_expedition).")";
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		if ($db->query($sql))
 		{
 			return 1;
-		}
-		else
-		{
+		} else {
 			return -1;
 		}
 	}
@@ -230,9 +222,7 @@ class ExpeditionLineBatch extends CommonObject
 			}
 			$db->free($resql);
 			return $ret;
-		}
-		else
-		{
+		} else {
 			dol_print_error($db);
 			return -1;
 		}

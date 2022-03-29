@@ -16,3 +16,4 @@ DictionaryFunction=HRM - Job positions
 Employees=Zaposleni
 Employee=Zaposleni
 NewEmployee=Novi zaposleni
+ListOfEmployees=Lista zaposlenih

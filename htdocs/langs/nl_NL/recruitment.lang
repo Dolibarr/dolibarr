@@ -1,0 +1,76 @@
+# Copyright (C) 2020 Laurent Destailleur
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+
+# Module label 'ModuleRecruitmentName'
+ModuleRecruitmentName = Werving
+# Module description 'ModuleRecruitmentDesc'
+ModuleRecruitmentDesc = Beheer en volg wervingscampagnes voor nieuwe vacatures
+
+#
+# Admin page
+#
+RecruitmentSetup = Werving instellingen
+Settings = Instellingen
+RecruitmentSetupPage = Stel hier de hoofdopties voor de recruitment module in
+RecruitmentArea=Werving gebied
+PublicInterfaceRecruitmentDesc=Openbare pagina's met vacatures zijn openbare URL's om openstaande vacatures weer te geven en te beantwoorden. Er is een verschillende link voor elke openstaande vacature, te vinden op elk vacatureblad.
+EnablePublicRecruitmentPages=Schakel openbare pagina's van open vacatures in
+
+#
+# About page
+#
+About = Over
+RecruitmentAbout = Over werving
+RecruitmentAboutPage = Over Werving pagina
+NbOfEmployeesExpected=Verwacht aantal werknemers
+JobLabel=Label van de vacature
+WorkPlace=Werkplek
+DateExpected=Verwachte datum
+FutureManager=Toekomstige manager
+ResponsibleOfRecruitement=Verantwoordelijk voor werving
+IfJobIsLocatedAtAPartner=Als baan zich op een partnerlocatie bevindt
+PositionToBeFilled=Functie
+PositionsToBeFilled=Vacature
+ListOfPositionsToBeFilled=Lijst met vacatures
+NewPositionToBeFilled=Nieuwe vacatures
+
+JobOfferToBeFilled=Functie die moet worden vervuld
+ThisIsInformationOnJobPosition=Informatie over de te vervullen vacature
+ContactForRecruitment=Contactpersoon voor werving
+EmailRecruiter=E-mail de recruiter
+ToUseAGenericEmail=Om een generiek e-mailadres te gebruiken. Indien niet gedefinieerd, wordt het e-mailadres van de rekruteringsverantwoordelijke gebruikt
+NewCandidature=Nieuwe applicatie
+ListOfCandidatures=Lijst met applicaties
+RequestedRemuneration=Gevraagde vergoeding
+ProposedRemuneration=Voorgestelde vergoeding
+ContractProposed=Contractvoorstel gedaan
+ContractSigned=Contract getekend
+ContractRefused=Contract geweigerd
+RecruitmentCandidature=Toepassing
+JobPositions=Vacature
+RecruitmentCandidatures=Toepassingen
+InterviewToDo=Te maken interview
+AnswerCandidature=Toepassing antwoord
+YourCandidature=Jouw toepassing
+YourCandidatureAnswerMessage=Bedankt voor je aanmelding. <br> ...
+JobClosedTextCandidateFound=De vacature is gesloten. De functie is vervuld.
+JobClosedTextCanceled=De vacature is gesloten.
+ExtrafieldsJobPosition=Complementaire attributen (functieposities)
+ExtrafieldsCandidatures=Aanvullende attributen (sollicitaties)
+MakeOffer=Doe een aanbod

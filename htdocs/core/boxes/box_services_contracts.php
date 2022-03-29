@@ -32,20 +32,20 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
  */
 class box_services_contracts extends ModeleBoxes
 {
-    public $boxcode = "lastproductsincontract";
-    public $boximg = "object_product";
-    public $boxlabel = "BoxLastProductsInContract";
-    public $depends = array("service", "contrat");
+	public $boxcode = "lastproductsincontract";
+	public $boximg = "object_product";
+	public $boxlabel = "BoxLastProductsInContract";
+	public $depends = array("service", "contrat");
 
 	/**
-     * @var DoliDB Database handler.
-     */
-    public $db;
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
 
-    public $param;
+	public $param;
 
-    public $info_box_head = array();
-    public $info_box_contents = array();
+	public $info_box_head = array();
+	public $info_box_contents = array();
 
 
 	/**
@@ -56,18 +56,18 @@ class box_services_contracts extends ModeleBoxes
 	 */
 	public function __construct($db, $param)
 	{
-	    global $user;
+		global $user;
 
-	    $this->db = $db;
+		$this->db = $db;
 
-	    $this->hidden = !($user->rights->service->lire && $user->rights->contrat->lire);
+		$this->hidden = !($user->rights->service->lire && $user->rights->contrat->lire);
 	}
 
 	/**
 	 *  Load data into info_box_contents array to show array later.
 	 *
 	 *  @param	int		$max        Maximum number of records to load
-     *  @return	void
+	 *  @return	void
 	 */
 	public function loadBox($max = 5)
 	{
@@ -83,14 +83,14 @@ class box_services_contracts extends ModeleBoxes
 
 		if ($user->rights->service->lire && $user->rights->contrat->lire)
 		{
-		    $contractstatic = new Contrat($this->db);
-		    $contractlinestatic = new ContratLigne($this->db);
-		    $thirdpartytmp = new Societe($this->db);
-		    $productstatic = new Product($this->db);
+			$contractstatic = new Contrat($this->db);
+			$contractlinestatic = new ContratLigne($this->db);
+			$thirdpartytmp = new Societe($this->db);
+			$productstatic = new Product($this->db);
 
 			$sql = "SELECT s.nom as name, s.rowid as socid, s.email, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur,";
 			$sql .= " c.rowid, c.ref, c.statut as contract_status, c.ref_customer, c.ref_supplier,";
-			$sql .= " cd.rowid as cdid, cd.label, cd.description, cd.tms as datem, cd.statut, cd.product_type as type, cd.date_fin_validite as date_line,";
+			$sql .= " cd.rowid as cdid, cd.label, cd.description, cd.tms as datem, cd.statut as contractline_status, cd.product_type as type, cd.date_fin_validite as date_line,";
 			$sql .= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.fk_product_type as product_type, p.entity, p.tobuy, p.tosell";
 			$sql .= " FROM (".MAIN_DB_PREFIX."societe as s";
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."contrat as c ON s.rowid = c.fk_soc";
@@ -126,6 +126,7 @@ class box_services_contracts extends ModeleBoxes
 					$contractlinestatic->product_id = $objp->product_id;
 					$contractlinestatic->product_ref = $objp->product_ref;
 					$contractlinestatic->product_type = $objp->product_type;
+					$contractlinestatic->statut = $objp->contractline_status;
 
 					$contractstatic->id = $objp->rowid;
 					$contractstatic->ref = $objp->ref;
@@ -144,24 +145,7 @@ class box_services_contracts extends ModeleBoxes
 					$thirdpartytmp->code_compta_fournisseur = $objp->code_compta_fournisseur;
 
 					$dateline = $this->db->jdate($objp->date_line);
-					if ($contractstatic->statut == Contrat::STATUS_VALIDATED && $objp->statut == ContratLigne::STATUS_OPEN && !empty($dateline) && ($dateline + $conf->contrat->services->expires->warning_delay) < $now) $late = img_warning($langs->trans("Late"));
-
-					// Multilangs
-					if (!empty($conf->global->MAIN_MULTILANGS) && $objp->product_id > 0) // if option multilang is on
-					{
-						$sqld = "SELECT label";
-						$sqld .= " FROM ".MAIN_DB_PREFIX."product_lang";
-						$sqld .= " WHERE fk_product=".$objp->product_id;
-						$sqld .= " AND lang='".$langs->getDefaultLang()."'";
-						$sqld .= " LIMIT 1";
-
-						$resultd = $this->db->query($sqld);
-						if ($resultd)
-						{
-							$objtp = $this->db->fetch_object($resultd);
-							if ($objtp->label != '') $contractlinestatic->label = $objtp->label;
-						}
-					}
+					if ($contractstatic->statut == Contrat::STATUS_VALIDATED && $objp->contractline_status == ContratLigne::STATUS_OPEN && !empty($dateline) && ($dateline + $conf->contrat->services->expires->warning_delay) < $now) $late = img_warning($langs->trans("Late"));
 
 					// Label
 					if ($objp->product_id > 0)
@@ -191,41 +175,39 @@ class box_services_contracts extends ModeleBoxes
 							$description = ''; // Already added into main visible desc
 						}
 
-						$s = $form->textwithtooltip($text, $description, 3, '', '', $cursorline, 0, (!empty($line->fk_parent_line) ?img_picto('', 'rightarrow') : ''));
-					}
-					else
-					{
+						$s = $form->textwithtooltip($text, $description, 3, '', '', '', 0, (!empty($objp->fk_parent_line) ?img_picto('', 'rightarrow') : ''));
+					} else {
 						$s = img_object($langs->trans("ShowProductOrService"), ($objp->product_type ? 'service' : 'product')).' '.dol_htmlentitiesbr($objp->description);
 					}
 
 
 					$this->info_box_contents[$i][] = array(
-                        'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
-                        'text' => $s,
-                        'asis' => 1
-                    );
+						'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
+						'text' => $s,
+						'asis' => 1
+					);
 
 					$this->info_box_contents[$i][] = array(
-                        'td' => 'class="nowraponall"',
-                        'text' => $contractstatic->getNomUrl(1),
-                        'asis' => 1
-                    );
+						'td' => 'class="nowraponall"',
+						'text' => $contractstatic->getNomUrl(1),
+						'asis' => 1
+					);
 
 					$this->info_box_contents[$i][] = array(
-                        'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
-                        'text' => $thirdpartytmp->getNomUrl(1),
-                        'asis' => 1
-                    );
+						'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
+						'text' => $thirdpartytmp->getNomUrl(1),
+						'asis' => 1
+					);
 
 					$this->info_box_contents[$i][] = array(
-                        'td' => '',
-                        'text' => dol_print_date($datem, 'day'),
+						'td' => '',
+						'text' => dol_print_date($datem, 'day'),
 						'text2'=> $late,
-                    );
+					);
 
 					$this->info_box_contents[$i][] = array(
-                        'td' => 'class="right" width="18"',
-                        'text' => $contractlinestatic->LibStatut($objp->statut, 3)
+						'td' => 'class="right" width="18"',
+						'text' => $contractlinestatic->getLibStatut(3)
 					);
 
 					$i++;
@@ -236,20 +218,17 @@ class box_services_contracts extends ModeleBoxes
 				);
 
 				$this->db->free($result);
-			}
-			else
-			{
+			} else {
 				$this->info_box_contents[0][0] = array(
-                    'td' => '',
-                    'maxlength' => 500,
-                    'text' => ($this->db->error().' sql='.$sql),
-                );
+					'td' => '',
+					'maxlength' => 500,
+					'text' => ($this->db->error().' sql='.$sql),
+				);
 			}
-		}
-		else {
+		} else {
 			$this->info_box_contents[0][0] = array(
-			    'td' => 'class="nohover opacitymedium left"',
-                'text' => $langs->trans("ReadPermissionNotAllowed")
+				'td' => 'class="nohover opacitymedium left"',
+				'text' => $langs->trans("ReadPermissionNotAllowed")
 			);
 		}
 	}
@@ -262,8 +241,8 @@ class box_services_contracts extends ModeleBoxes
 	 *  @param	int		$nooutput	No print, only return string
 	 *	@return	string
 	 */
-    public function showBox($head = null, $contents = null, $nooutput = 0)
-    {
-        return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
-    }
+	public function showBox($head = null, $contents = null, $nooutput = 0)
+	{
+		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
+	}
 }

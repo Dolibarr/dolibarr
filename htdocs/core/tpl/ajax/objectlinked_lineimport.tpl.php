@@ -25,13 +25,13 @@ if (empty($conf) || !is_object($conf))
 $objectUrl = $object->getNomUrl(0, '', 0, 1);
 if ($object->element == 'propal')
 {
-    $objectUrl = DOL_URL_ROOT.'/comm/propal/card.php?id='.$object->id;
+	$objectUrl = DOL_URL_ROOT.'/comm/propal/card.php?id='.$object->id;
 }
 
 ?>
 
 <!-- START TEMPLATE IMPORT OBJECT LINKED LINES -->
-<script type="text/javascript">
+<script>
 
 $(document).ready(function(){
 	$('.objectlinked_importbtn').click(function (e) {
@@ -83,7 +83,7 @@ $(document).ready(function(){
     	      	        	$("#" + formId).append('<input type="hidden" name="fromelementid" value="' + fromelementid + '" />');
     	      	        	$("#" + formId).submit();
 	                    },
-	                    "<?php echo $langs->trans('Cancel'); ?>": function() {
+	                    "<?php echo $langs->trans("Cancel"); ?>": function() {
 	                      $( this ).dialog( "close" );
 	                    }
 	            }

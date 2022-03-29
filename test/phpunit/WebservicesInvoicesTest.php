@@ -61,6 +61,9 @@ class WebservicesInvoicesTest extends PHPUnit\Framework\TestCase
 
 	protected $ns = 'http://www.dolibarr.org/ns/';
 
+	protected $pass = 'admin';
+
+
 	/**
 	 * Constructor
 	 * We save global variables into local variables
@@ -101,6 +104,8 @@ class WebservicesInvoicesTest extends PHPUnit\Framework\TestCase
     public static function setUpBeforeClass()
     {
         global $conf,$user,$langs,$db;
+
+        $now = dol_now();
 
 		// create a third_party, needed to create an invoice
 		//
@@ -246,7 +251,7 @@ class WebservicesInvoicesTest extends PHPUnit\Framework\TestCase
     	'dolibarrkey'=>$conf->global->WEBSERVICES_KEY,
     	'sourceapplication'=>'DEMO',
     	'login'=>'admin',
-    	'password'=>'admin',
+    	'password'=>$this->pass,
     	'entity'=>'');
 
     	// Test URL
@@ -255,9 +260,7 @@ class WebservicesInvoicesTest extends PHPUnit\Framework\TestCase
     	print __METHOD__." call method ".$WS_METHOD."\n";
     	try {
     		$result = $this->soapclient->call($WS_METHOD, $parameters, $this->ns, '');
-    	}
-    	catch(SoapFault $exception)
-    	{
+    	} catch (SoapFault $exception) {
     		echo $exception;
     		$result=0;
     	}
@@ -272,7 +275,7 @@ class WebservicesInvoicesTest extends PHPUnit\Framework\TestCase
     		print "\n";
     	}
 
-    	print __METHOD__." result=".$result['result']['result_code']."\n";
+    	print __METHOD__." result=".$result['result']['result_code']." ".$result['result']['result_label']."\n";
     	$this->assertEquals('OK', $result['result']['result_code']);
     	$this->assertEquals('ref-phpunit-2', $result['ref_ext']);
 
@@ -304,7 +307,7 @@ class WebservicesInvoicesTest extends PHPUnit\Framework\TestCase
     	'dolibarrkey'=>$conf->global->WEBSERVICES_KEY,
     	'sourceapplication'=>'DEMO',
     	'login'=>'admin',
-    	'password'=>'admin',
+    	'password'=>$this->pass,
     	'entity'=>'');
 
     	// Test URL
@@ -313,8 +316,7 @@ class WebservicesInvoicesTest extends PHPUnit\Framework\TestCase
     	print __METHOD__." call method ".$WS_METHOD."\n";
     	try {
     		$result = $this->soapclient->call($WS_METHOD, $parameters, $this->ns, '');
-    	}
-    	catch(SoapFault $exception)
+    	} catch (SoapFault $exception)
     	{
     		echo $exception;
     		$result=0;
@@ -404,7 +406,7 @@ class WebservicesInvoicesTest extends PHPUnit\Framework\TestCase
     	'dolibarrkey'=>$conf->global->WEBSERVICES_KEY,
     	'sourceapplication'=>'DEMO',
     	'login'=>'admin',
-    	'password'=>'admin',
+    	'password'=>$this->pass,
     	'entity'=>'');
 
     	// Test URL
@@ -413,8 +415,7 @@ class WebservicesInvoicesTest extends PHPUnit\Framework\TestCase
     	print __METHOD__." call method ".$WS_METHOD."\n";
     	try {
     		$result = $this->soapclient->call($WS_METHOD, $parameters, $this->ns, '');
-    	}
-    	catch(SoapFault $exception)
+    	} catch (SoapFault $exception)
     	{
     		echo $exception;
     		$result=0;
@@ -432,7 +433,6 @@ class WebservicesInvoicesTest extends PHPUnit\Framework\TestCase
     	print __METHOD__." result=".$result['result']['result_code'].$result['result']['result_label']."\n";
     	$this->assertEquals('OK', $result['result']['result_code']);
     	$this->assertEquals('ref-phpunit-2', $result['ref_ext']);
-
 
     	return $result;
     }

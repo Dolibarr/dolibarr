@@ -29,11 +29,11 @@ class TaskStats extends Stats
 	public $socid;
 	public $year;
 
-    /**
-     * Constructor of the class
-     *
-     * @param   DoliDb  $db     Database handler
-     */
+	/**
+	 * Constructor of the class
+	 *
+	 * @param   DoliDb  $db     Database handler
+	 */
 	public function __construct($db)
 	{
 		$this->db = $db;
@@ -82,9 +82,7 @@ class TaskStats extends Stats
 						$row[1],
 						$row[0]
 					);
-				}
-				else
-					$other += $row[1];
+				} else $other += $row[1];
 				$i++;
 			}
 			if ($num > $limit)
@@ -163,7 +161,7 @@ class TaskStats extends Stats
 	 * Return Task number by month for a year
 	 *
 	 * @param 	int 	$year 		Year to scan
-     * @param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
+	 * @param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
 	 * @return 	array 				Array of values
 	 */
 	public function getNbByMonth($year, $format = 0)

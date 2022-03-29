@@ -13,6 +13,7 @@ SupplierProposalArea=Vendor proposals area
 SupplierProposalShort=Vendor proposal
 SupplierProposals=Vendor proposals
 SupplierProposalsShort=Vendor proposals
+AskPrice=Price request
 NewAskPrice=New price request
 ShowSupplierProposal=Show price request
 AddSupplierProposal=Create a price request

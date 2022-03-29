@@ -31,10 +31,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
  */
 class AccountancyCategory // extends CommonObject
 {
-    /**
-     * @var DoliDB Database handler.
-     */
-    public $db;
+	/**
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
 
 	/**
 	 * @var string 		Error string
@@ -63,9 +63,9 @@ class AccountancyCategory // extends CommonObject
 	public $rowid;
 
 	/**
-     * @var int ID
-     */
-    public $id;
+	 * @var int ID
+	 */
+	public $id;
 
 	/**
 	 * @var string Accountancy code
@@ -73,11 +73,11 @@ class AccountancyCategory // extends CommonObject
 	public $code;
 
 	/**
-     * @var string Accountancy Category label
-     */
-    public $label;
+	 * @var string Accountancy Category label
+	 */
+	public $label;
 
-    /**
+	/**
 	 * @var string Accountancy range account
 	 */
 	public $range_account;
@@ -209,9 +209,7 @@ class AccountancyCategory // extends CommonObject
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else
-		{
+		} else {
 			$this->db->commit();
 			return $this->id;
 		}
@@ -241,8 +239,7 @@ class AccountancyCategory // extends CommonObject
 		$sql .= " t.active";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_accounting_category as t";
 		if ($id)   $sql .= " WHERE t.rowid = ".$id;
-		else
-		{
+		else {
 			$sql .= " WHERE t.entity IN (".getEntity('c_accounting_category').")"; // Dont't use entity if you use rowid
 			if ($code) $sql .= " AND t.code = '".$this->db->escape($code)."'";
 			elseif ($label) $sql .= " AND t.label = '".$this->db->escape($label)."'";
@@ -270,9 +267,7 @@ class AccountancyCategory // extends CommonObject
 			$this->db->free($resql);
 
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->error = "Error ".$this->db->lasterror();
 			return -1;
 		}
@@ -335,9 +330,7 @@ class AccountancyCategory // extends CommonObject
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else
-		{
+		} else {
 			$this->db->commit();
 			return 1;
 		}
@@ -375,9 +368,7 @@ class AccountancyCategory // extends CommonObject
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else
-		{
+		} else {
 			$this->db->commit();
 			return 1;
 		}
@@ -390,8 +381,8 @@ class AccountancyCategory // extends CommonObject
 	 * @param int $id Id
 	 * @return int <0 if KO, 0 if not found, >0 if OK
 	 */
-    public function display($id)
-    {
+	public function display($id)
+	{
 		global $conf;
 		$sql = "SELECT t.rowid, t.account_number, t.label";
 		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_account as t";
@@ -417,7 +408,7 @@ class AccountancyCategory // extends CommonObject
 
 			return -1;
 		}
-    }
+	}
 
 	/**
 	 * Function to select accounting category of an accounting account present in chart of accounts
@@ -426,8 +417,8 @@ class AccountancyCategory // extends CommonObject
 	 *
 	 * @return int <0 if KO, 0 if not found, >0 if OK
 	 */
-    public function getCptBK($id)
-    {
+	public function getCptBK($id)
+	{
 		global $conf;
 
 		$sql = "SELECT t.numero_compte, t.label_operation, t.doc_ref";
@@ -466,7 +457,7 @@ class AccountancyCategory // extends CommonObject
 
 			return -1;
 		}
-    }
+	}
 
 	/**
 	 * Function to select accounting category of an accounting account present in chart of accounts
@@ -475,41 +466,41 @@ class AccountancyCategory // extends CommonObject
 	 *
 	 * @return int <0 if KO, 0 if not found, >0 if OK
 	 */
-    public function getAccountsWithNoCategory($id)
-    {
-        global $conf;
+	public function getAccountsWithNoCategory($id)
+	{
+		global $conf;
 
-	    $sql = "SELECT aa.account_number as numero_compte, aa.label as label_compte";
-	    $sql .= " FROM ".MAIN_DB_PREFIX."accounting_account as aa";
-	    $sql .= " INNER JOIN ".MAIN_DB_PREFIX."accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";
-	    $sql .= " WHERE (aa.fk_accounting_category != ".$id." OR aa.fk_accounting_category IS NULL)";
-	    $sql .= " AND asy.rowid = ".$conf->global->CHARTOFACCOUNTS;
-	    $sql .= " AND aa.active = 1";
-	    $sql .= " AND aa.entity = ".$conf->entity;
-	    $sql .= " GROUP BY aa.account_number, aa.label";
-	    $sql .= " ORDER BY aa.account_number, aa.label";
+		$sql = "SELECT aa.account_number as numero_compte, aa.label as label_compte";
+		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_account as aa";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";
+		$sql .= " WHERE (aa.fk_accounting_category != ".$id." OR aa.fk_accounting_category IS NULL)";
+		$sql .= " AND asy.rowid = ".$conf->global->CHARTOFACCOUNTS;
+		$sql .= " AND aa.active = 1";
+		$sql .= " AND aa.entity = ".$conf->entity;
+		$sql .= " GROUP BY aa.account_number, aa.label";
+		$sql .= " ORDER BY aa.account_number, aa.label";
 
-	    $this->lines_CptBk = array();
+		$this->lines_CptBk = array();
 
-	    dol_syslog(__METHOD__, LOG_DEBUG);
-	    $resql = $this->db->query($sql);
-	    if ($resql) {
-	        $num = $this->db->num_rows($resql);
-	        if ($num) {
-	            while ($obj = $this->db->fetch_object($resql)) {
-	                $this->lines_cptbk[] = $obj;
-	            }
-	        }
+		dol_syslog(__METHOD__, LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$num = $this->db->num_rows($resql);
+			if ($num) {
+				while ($obj = $this->db->fetch_object($resql)) {
+					$this->lines_cptbk[] = $obj;
+				}
+			}
 
-	        return $num;
-	    } else {
-	        $this->error = "Error ".$this->db->lasterror();
-	        $this->errors[] = $this->error;
-	        dol_syslog(__METHOD__." ".implode(','.$this->errors), LOG_ERR);
+			return $num;
+		} else {
+			$this->error = "Error ".$this->db->lasterror();
+			$this->errors[] = $this->error;
+			dol_syslog(__METHOD__." ".implode(','.$this->errors), LOG_ERR);
 
-	        return -1;
-	    }
-    }
+			return -1;
+		}
+	}
 
 	/**
 	 * Function to add an accounting account in an accounting category
@@ -519,8 +510,8 @@ class AccountancyCategory // extends CommonObject
 	 *
 	 * @return int <0 if KO, >0 if OK
 	 */
-    public function updateAccAcc($id_cat, $cpts = array())
-    {
+	public function updateAccAcc($id_cat, $cpts = array())
+	{
 		global $conf;
 		$error = 0;
 
@@ -532,7 +523,7 @@ class AccountancyCategory // extends CommonObject
 		$sql .= " AND asy.rowid = ".$conf->global->CHARTOFACCOUNTS;
 		$sql .= " AND aa.active = 1";
 		$sql .= " AND aa.entity = ".$conf->entity;
-        $sql .= " ORDER BY LENGTH(aa.account_number) DESC;"; // LENGTH is ok with mysql and postgresql
+		$sql .= " ORDER BY LENGTH(aa.account_number) DESC;"; // LENGTH is ok with mysql and postgresql
 
 		$this->db->begin();
 
@@ -548,13 +539,13 @@ class AccountancyCategory // extends CommonObject
 		$accountincptsadded = array();
 		while ($obj = $this->db->fetch_object($resql))
 		{
-		    $account_number_formated = length_accountg($obj->account_number);
-		    if (!empty($accountincptsadded[$account_number_formated])) continue;
+			$account_number_formated = length_accountg($obj->account_number);
+			if (!empty($accountincptsadded[$account_number_formated])) continue;
 
-		    if (array_key_exists($account_number_formated, $cpts))
+			if (array_key_exists($account_number_formated, $cpts))
 			{
-			    $accountincptsadded[$account_number_formated] = 1;
-			    // We found an account number that is in list $cpts of account to add
+				$accountincptsadded[$account_number_formated] = 1;
+				// We found an account number that is in list $cpts of account to add
 				$sql = "UPDATE ".MAIN_DB_PREFIX."accounting_account";
 				$sql .= " SET fk_accounting_category=".$id_cat;
 				$sql .= " WHERE rowid=".$obj->rowid;
@@ -581,7 +572,7 @@ class AccountancyCategory // extends CommonObject
 
 			return 1;
 		}
-    }
+	}
 
 	/**
 	 * Function to delete an accounting account from an accounting category
@@ -590,8 +581,8 @@ class AccountancyCategory // extends CommonObject
 	 *
 	 * @return int <0 if KO, >0 if OK
 	 */
-    public function deleteCptCat($cpt_id)
-    {
+	public function deleteCptCat($cpt_id)
+	{
 		$error = 0;
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."accounting_account as aa";
@@ -607,7 +598,7 @@ class AccountancyCategory // extends CommonObject
 		}
 
 		// Commit or rollback
-        if ($error) {
+		if ($error) {
 			foreach ($this->errors as $errmsg) {
 				dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
 				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
@@ -615,12 +606,12 @@ class AccountancyCategory // extends CommonObject
 			$this->db->rollback();
 
 			return -1 * $error;
-        } else {
+		} else {
 			$this->db->commit();
 
-            return 1;
-        }
-    }
+			return 1;
+		}
+	}
 
 	/**
 	 * Function to know all category from accounting account
@@ -709,9 +700,7 @@ class AccountancyCategory // extends CommonObject
 				$listofaccount .= "'".$cptcursor."'";
 			}
 			$sql .= " AND t.numero_compte IN (".$listofaccount.")";
-		}
-		else
-		{
+		} else {
 			$sql .= " AND t.numero_compte = '".$this->db->escape($cpt)."'";
 		}
 		if (!empty($date_start) && !empty($date_end) && (empty($month) || empty($year)))	// If month/year provided, it is stronger than filter date_start/date_end
@@ -792,7 +781,7 @@ class AccountancyCategory // extends CommonObject
 							'formula' => $obj->formula,
 							'position' => $obj->position,
 							'category_type' => $obj->category_type,
-					        'bc' => $obj->sens
+							'bc' => $obj->sens
 					);
 					$i++;
 				}
@@ -833,9 +822,7 @@ class AccountancyCategory // extends CommonObject
 			$sql .= " WHERE t.fk_accounting_category = ".$cat_id;
 			$sql .= " AND t.entity = ".$conf->entity;
 			$sql .= " ORDER BY t.account_number";
-		}
-		else
-		{
+		} else {
 			$sql = "SELECT t.rowid, t.account_number, t.label as account_label";
 			$sql .= " FROM ".MAIN_DB_PREFIX."accounting_account as t";
 			$sql .= " WHERE ".$predefinedgroupwhere;

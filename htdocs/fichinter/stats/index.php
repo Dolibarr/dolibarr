@@ -37,8 +37,8 @@ $socid = GETPOST('socid', 'int');
 // Security check
 if ($user->socid > 0)
 {
-    $action = '';
-    $socid = $user->socid;
+	$action = '';
+	$socid = $user->socid;
 }
 
 $nowyear = strftime("%Y", dol_now());
@@ -70,7 +70,7 @@ print load_fiche_titre($title, '', 'intervention');
 dol_mkdir($dir);
 
 $stats = new FichinterStats($db, $socid, $mode, ($userid > 0 ? $userid : 0));
-if ($object_status != '' && $object_status > -1) $stats->where .= ' AND c.fk_statut IN ('.$db->escape($object_status).')';
+if ($object_status != '' && $object_status > -1) $stats->where .= ' AND c.fk_statut IN ('.$db->sanitize($db->escape($object_status)).')';
 
 // Build graphic number of object
 $data = $stats->getNbByMonthWithPrevYear($endyear, $startyear);
@@ -79,38 +79,36 @@ $data = $stats->getNbByMonthWithPrevYear($endyear, $startyear);
 
 if (!$user->rights->societe->client->voir || $user->socid)
 {
-    $filenamenb = $dir.'/interventionsnbinyear-'.$user->id.'-'.$year.'.png';
-    $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=interventionstats&file=interventionsnbinyear-'.$user->id.'-'.$year.'.png';
-}
-else
-{
-    $filenamenb = $dir.'/interventionsnbinyear-'.$year.'.png';
-    $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=interventionstats&file=interventionsnbinyear-'.$year.'.png';
+	$filenamenb = $dir.'/interventionsnbinyear-'.$user->id.'-'.$year.'.png';
+	$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=interventionstats&file=interventionsnbinyear-'.$user->id.'-'.$year.'.png';
+} else {
+	$filenamenb = $dir.'/interventionsnbinyear-'.$year.'.png';
+	$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=interventionstats&file=interventionsnbinyear-'.$year.'.png';
 }
 
 $px1 = new DolGraph();
 $mesg = $px1->isGraphKo();
 if (!$mesg)
 {
-    $px1->SetData($data);
-    $i = $startyear; $legend = array();
-    while ($i <= $endyear)
-    {
-        $legend[] = $i;
-        $i++;
-    }
-    $px1->SetLegend($legend);
-    $px1->SetMaxValue($px1->GetCeilMaxValue());
-    $px1->SetMinValue(min(0, $px1->GetFloorMinValue()));
-    $px1->SetWidth($WIDTH);
-    $px1->SetHeight($HEIGHT);
-    $px1->SetYLabel($langs->trans("NbOfIntervention"));
-    $px1->SetShading(3);
-    $px1->SetHorizTickIncrement(1);
-    $px1->mode = 'depth';
-    $px1->SetTitle($langs->trans("NumberOfInterventionsByMonth"));
+	$px1->SetData($data);
+	$i = $startyear; $legend = array();
+	while ($i <= $endyear)
+	{
+		$legend[] = $i;
+		$i++;
+	}
+	$px1->SetLegend($legend);
+	$px1->SetMaxValue($px1->GetCeilMaxValue());
+	$px1->SetMinValue(min(0, $px1->GetFloorMinValue()));
+	$px1->SetWidth($WIDTH);
+	$px1->SetHeight($HEIGHT);
+	$px1->SetYLabel($langs->trans("NbOfIntervention"));
+	$px1->SetShading(3);
+	$px1->SetHorizTickIncrement(1);
+	$px1->mode = 'depth';
+	$px1->SetTitle($langs->trans("NumberOfInterventionsByMonth"));
 
-    $px1->draw($filenamenb, $fileurlnb);
+	$px1->draw($filenamenb, $fileurlnb);
 }
 
 // Build graphic amount of object
@@ -119,38 +117,36 @@ $data = $stats->getAmountByMonthWithPrevYear($endyear, $startyear);
 
 if (!$user->rights->societe->client->voir || $user->socid)
 {
-    $filenameamount = $dir.'/interventionsamountinyear-'.$user->id.'-'.$year.'.png';
-    $fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=interventionstats&file=interventionsamountinyear-'.$user->id.'-'.$year.'.png';
-}
-else
-{
-    $filenameamount = $dir.'/interventionsamountinyear-'.$year.'.png';
-    $fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=interventionstats&file=interventionsamountinyear-'.$year.'.png';
+	$filenameamount = $dir.'/interventionsamountinyear-'.$user->id.'-'.$year.'.png';
+	$fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=interventionstats&file=interventionsamountinyear-'.$user->id.'-'.$year.'.png';
+} else {
+	$filenameamount = $dir.'/interventionsamountinyear-'.$year.'.png';
+	$fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=interventionstats&file=interventionsamountinyear-'.$year.'.png';
 }
 
 $px2 = new DolGraph();
 $mesg = $px2->isGraphKo();
 if (!$mesg)
 {
-    $px2->SetData($data);
-    $i = $startyear; $legend = array();
-    while ($i <= $endyear)
-    {
-        $legend[] = $i;
-        $i++;
-    }
-    $px2->SetLegend($legend);
-    $px2->SetMaxValue($px2->GetCeilMaxValue());
-    $px2->SetMinValue(min(0, $px2->GetFloorMinValue()));
-    $px2->SetWidth($WIDTH);
-    $px2->SetHeight($HEIGHT);
-    $px2->SetYLabel($langs->trans("AmountOfinterventions"));
-    $px2->SetShading(3);
-    $px2->SetHorizTickIncrement(1);
-    $px2->mode = 'depth';
-    $px2->SetTitle($langs->trans("AmountOfinterventionsByMonthHT"));
+	$px2->SetData($data);
+	$i = $startyear; $legend = array();
+	while ($i <= $endyear)
+	{
+		$legend[] = $i;
+		$i++;
+	}
+	$px2->SetLegend($legend);
+	$px2->SetMaxValue($px2->GetCeilMaxValue());
+	$px2->SetMinValue(min(0, $px2->GetFloorMinValue()));
+	$px2->SetWidth($WIDTH);
+	$px2->SetHeight($HEIGHT);
+	$px2->SetYLabel($langs->trans("AmountOfinterventions"));
+	$px2->SetShading(3);
+	$px2->SetHorizTickIncrement(1);
+	$px2->mode = 'depth';
+	$px2->SetTitle($langs->trans("AmountOfinterventionsByMonthHT"));
 
-    $px2->draw($filenameamount, $fileurlamount);
+	$px2->draw($filenameamount, $fileurlamount);
 }
 
 
@@ -158,38 +154,36 @@ $data = $stats->getAverageByMonthWithPrevYear($endyear, $startyear);
 
 if (!$user->rights->societe->client->voir || $user->socid)
 {
-    $filename_avg = $dir.'/interventionsaverage-'.$user->id.'-'.$year.'.png';
-    $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=interventionstats&file=interventionsaverage-'.$user->id.'-'.$year.'.png';
-}
-else
-{
-    $filename_avg = $dir.'/interventionsaverage-'.$year.'.png';
-    $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=interventionstats&file=interventionsaverage-'.$year.'.png';
+	$filename_avg = $dir.'/interventionsaverage-'.$user->id.'-'.$year.'.png';
+	$fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=interventionstats&file=interventionsaverage-'.$user->id.'-'.$year.'.png';
+} else {
+	$filename_avg = $dir.'/interventionsaverage-'.$year.'.png';
+	$fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=interventionstats&file=interventionsaverage-'.$year.'.png';
 }
 
 $px3 = new DolGraph();
 $mesg = $px3->isGraphKo();
 if (!$mesg)
 {
-    $px3->SetData($data);
-    $i = $startyear; $legend = array();
-    while ($i <= $endyear)
-    {
-        $legend[] = $i;
-        $i++;
-    }
-    $px3->SetLegend($legend);
-    $px3->SetYLabel($langs->trans("AmountAverage"));
-    $px3->SetMaxValue($px3->GetCeilMaxValue());
-    $px3->SetMinValue($px3->GetFloorMinValue());
-    $px3->SetWidth($WIDTH);
-    $px3->SetHeight($HEIGHT);
-    $px3->SetShading(3);
-    $px3->SetHorizTickIncrement(1);
-    $px3->mode = 'depth';
-    $px3->SetTitle($langs->trans("AmountAverage"));
+	$px3->SetData($data);
+	$i = $startyear; $legend = array();
+	while ($i <= $endyear)
+	{
+		$legend[] = $i;
+		$i++;
+	}
+	$px3->SetLegend($legend);
+	$px3->SetYLabel($langs->trans("AmountAverage"));
+	$px3->SetMaxValue($px3->GetCeilMaxValue());
+	$px3->SetMinValue($px3->GetFloorMinValue());
+	$px3->SetWidth($WIDTH);
+	$px3->SetHeight($HEIGHT);
+	$px3->SetShading(3);
+	$px3->SetHorizTickIncrement(1);
+	$px3->mode = 'depth';
+	$px3->SetTitle($langs->trans("AmountAverage"));
 
-    $px3->draw($filename_avg, $fileurl_avg);
+	$px3->draw($filename_avg, $fileurl_avg);
 }
 
 
@@ -215,7 +209,7 @@ $type = 'fichinter_stats';
 
 complete_head_from_modules($conf, $langs, null, $head, $h, $type);
 
-dol_fiche_head($head, 'byyear', $langs->trans("Statistics"), -1);
+print dol_get_fiche_head($head, 'byyear', $langs->trans("Statistics"), -1);
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
@@ -232,7 +226,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 	print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
 	// Company
 	print '<tr><td class="left">'.$langs->trans("ThirdParty").'</td><td class="left">';
-    $filter = 's.client IN (1,2,3)';
+	$filter = 's.client IN (1,2,3)';
 	print $form->select_company($socid, 'socid', $filter, 1, 0, 0, array(), 0, '', 'style="width: 95%"');
 	print '</td></tr>';
 	// User
@@ -276,7 +270,7 @@ foreach ($data as $val)
 	$year = $val['year'];
 	while (!empty($year) && $oldyear > $year + 1)
 	{
-        // If we have empty year
+		// If we have empty year
 		$oldyear--;
 
 		print '<tr class="oddeven" height="24">';
@@ -313,10 +307,9 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 // Show graphs
 print '<table class="border centpercent"><tr class="pair nohover"><td class="center">';
-if ($mesg) { print $mesg; }
-else {
-    print $px1->show();
-    /*print "<br>\n";
+if ($mesg) { print $mesg; } else {
+	print $px1->show();
+	/*print "<br>\n";
     print $px2->show();
     print "<br>\n";
     print $px3->show();*/
@@ -327,7 +320,7 @@ print '</td></tr></table>';
 print '</div></div></div>';
 print '<div style="clear:both"></div>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 
 llxFooter();

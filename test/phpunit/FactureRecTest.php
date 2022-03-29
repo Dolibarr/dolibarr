@@ -128,7 +128,7 @@ class FactureRecTest extends PHPUnit\Framework\TestCase
     }
 
     /**
-     * testFactureCreate
+     * testFactureRecCreate
      *
      * @return int
      */
@@ -142,19 +142,44 @@ class FactureRecTest extends PHPUnit\Framework\TestCase
 
 		$localobjectinv=new Facture($this->savdb);
 		$localobjectinv->initAsSpecimen();
-		$localobjectinv->create($user);
+		$result = $localobjectinv->create($user);
+
+		print __METHOD__." result=".$result."\n";
 
 		$localobject=new FactureRec($this->savdb);
     	$localobject->initAsSpecimen();
-    	$result=$localobject->create($user, $localobjectinv->id);
+    	$result = $localobject->create($user, $localobjectinv->id);
 
-    	$this->assertLessThan($result, 0);
     	print __METHOD__." result=".$result."\n";
+    	$this->assertGreaterThan(0, $result, 'Create recurring invoice from common invoice');
+
     	return $result;
     }
 
+    /**
+     * testFactureRecFetch
+     *
+     * @param  int 	$id  	Id of created recuriing invoice
+     * @return int
+     *
+	 * @depends testFactureRecCreate
+     * The depends says test is run only if previous is ok
+     */
+    public function testFactureRecFetch($id)
+    {
+    	global $conf,$user,$langs,$db;
+    	$conf=$this->savconf;
+    	$user=$this->savuser;
+    	$langs=$this->savlangs;
+    	$db=$this->savdb;
 
+    	$localobject=new FactureRec($this->savdb);
+    	$result = $localobject->fetch($id);
 
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertGreaterThan(0, $result);
+    	return $result;
+    }
 
 
 
@@ -183,24 +208,18 @@ class FactureRecTest extends PHPUnit\Framework\TestCase
     {
         $retAr=array();
 
-        if (get_class($oA) !== get_class($oB))
-        {
+        if (get_class($oA) !== get_class($oB)) {
             $retAr[]="Supplied objects are not of same class.";
-        }
-        else
-        {
+        } else {
             $oVarsA=get_object_vars($oA);
             $oVarsB=get_object_vars($oB);
             $aKeys=array_keys($oVarsA);
-            foreach($aKeys as $sKey)
-            {
+            foreach ($aKeys as $sKey) {
                 if (in_array($sKey, $fieldstoignorearray)) continue;
-                if (! $ignoretype && $oVarsA[$sKey] !== $oVarsB[$sKey])
-                {
+                if (! $ignoretype && ($oVarsA[$sKey] !== $oVarsB[$sKey])) {
                     $retAr[]=$sKey.' : '.(is_object($oVarsA[$sKey])?get_class($oVarsA[$sKey]):$oVarsA[$sKey]).' <> '.(is_object($oVarsB[$sKey])?get_class($oVarsB[$sKey]):$oVarsB[$sKey]);
                 }
-                if ($ignoretype && $oVarsA[$sKey] != $oVarsB[$sKey])
-                {
+                if ($ignoretype && ($oVarsA[$sKey] != $oVarsB[$sKey])) {
                     $retAr[]=$sKey.' : '.(is_object($oVarsA[$sKey])?get_class($oVarsA[$sKey]):$oVarsA[$sKey]).' <> '.(is_object($oVarsB[$sKey])?get_class($oVarsB[$sKey]):$oVarsB[$sKey]);
                 }
             }

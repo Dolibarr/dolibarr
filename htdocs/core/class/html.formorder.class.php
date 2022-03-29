@@ -31,42 +31,42 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 class FormOrder extends Form
 {
 
-    /**
-     *  Return combo list of differents status of a orders
-     *
-     *  @param	string	$selected   Preselected value
-     *  @param	int		$short		Use short labels
-     *  @param	string	$hmlname	Name of HTML select element
-     *  @return	void
-     */
-    public function selectSupplierOrderStatus($selected = '', $short = 0, $hmlname = 'order_status')
-    {
-	    $options = array();
+	/**
+	 *  Return combo list of differents status of a orders
+	 *
+	 *  @param	string	$selected   Preselected value
+	 *  @param	int		$short		Use short labels
+	 *  @param	string	$hmlname	Name of HTML select element
+	 *  @return	void
+	 */
+	public function selectSupplierOrderStatus($selected = '', $short = 0, $hmlname = 'order_status')
+	{
+		$options = array();
 
-	    // 7 is same label than 6. 8 does not exists (billed is another field)
-	    $statustohow = array(
-		    '0' => '0',
-		    '1' => '1',
-		    '2' => '2',
-		    '3' => '3',
-		    '4' => '4',
-		    '5' => '5',
-		    '6' => '6,7',
-		    '9' => '9'
-	    );
+		// 7 is same label than 6. 8 does not exists (billed is another field)
+		$statustohow = array(
+			'0' => '0',
+			'1' => '1',
+			'2' => '2',
+			'3' => '3',
+			'4' => '4',
+			'5' => '5',
+			'6' => '6,7',
+			'9' => '9'
+		);
 
-	    $tmpsupplierorder = new CommandeFournisseur($this->db);
+		$tmpsupplierorder = new CommandeFournisseur($this->db);
 
-	    foreach ($statustohow as $key => $value) {
-		    $tmpsupplierorder->statut = $key;
-		    $options[$value] = $tmpsupplierorder->getLibStatut($short);
-	    }
+		foreach ($statustohow as $key => $value) {
+			$tmpsupplierorder->statut = $key;
+			$options[$value] = $tmpsupplierorder->getLibStatut($short);
+		}
 
-	    if (is_array($selected)) $selectedarray = $selected;
-	    else $selectedarray = explode(',', $selected);
+		if (is_array($selected)) $selectedarray = $selected;
+		else $selectedarray = explode(',', $selected);
 
-	    print Form::multiselectarray($hmlname, $options, $selectedarray, 0);
-    }
+		print Form::multiselectarray($hmlname, $options, $selectedarray, 0);
+	}
 
 	/**
 	 *	Return list of input method (mode used to receive order, like order received by email, fax, online)
@@ -81,7 +81,7 @@ class FormOrder extends Form
 	{
 		global $langs;
 
-        $listofmethods = array();
+		$listofmethods = array();
 
 		$sql = "SELECT rowid, code, libelle as label";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_input_method";

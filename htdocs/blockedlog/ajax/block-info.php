@@ -39,6 +39,8 @@ $block = new BlockedLog($db);
 
 if ((!$user->admin && !$user->rights->blockedlog->read) || empty($conf->blockedlog->enabled)) accessforbidden();
 
+$langs->loadLangs(array("admin"));
+
 
 /*
  * View
@@ -51,8 +53,7 @@ if ($block->fetch($id) > 0)
 {
 	$objtoshow = $block->object_data;
 	print formatObject($objtoshow, '');
-}
-else {
+} else {
 	print 'Error, failed to get unalterable log with id '.$id;
 }
 
@@ -94,18 +95,14 @@ function formatObject($objtoshow, $prefix)
 					var_dump(@get_class($val));
 					var_dump($val);*/
 					$s .= dol_print_date($val, 'dayhour');
-				}
-				else
-				{
+				} else {
 					$s .= $val;
 				}
 				$s .= '</td></tr>';
-			}
-			elseif (is_array($val))
+			} elseif (is_array($val))
 			{
 				$s .= formatObject($val, ($prefix ? $prefix.' > ' : '').$key);
-			}
-			elseif (is_object($val))
+			} elseif (is_object($val))
 			{
 				$s .= formatObject($val, ($prefix ? $prefix.' > ' : '').$key);
 			}

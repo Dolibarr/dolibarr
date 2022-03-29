@@ -35,7 +35,7 @@ CREATE TABLE llx_ecm_files
   gen_or_uploaded   varchar(12),                    -- 'generated' or 'uploaded' 
   extraparams		varchar(255),					-- for stocking other parameters with json format
   date_c			datetime,
-  date_m			timestamp,
+  tms				timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_user_c			integer,
   fk_user_m			integer,
   acl				text							-- for future permission 'per file'

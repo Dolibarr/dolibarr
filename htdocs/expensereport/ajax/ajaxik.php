@@ -52,22 +52,18 @@ $fk_c_exp_tax_cat = GETPOST('fk_c_exp_tax_cat');
 
 if (empty($fk_expense) || $fk_expense < 0) echo json_encode(array('error' => $langs->transnoentitiesnoconv('ErrorBadValueForParameter', $fk_expense, 'fk_expense')));
 elseif (empty($fk_c_exp_tax_cat) || $fk_c_exp_tax_cat < 0) echo json_encode(array('error' => $langs->transnoentitiesnoconv('ErrorBadValueForParameter', $fk_c_exp_tax_cat, 'fk_c_exp_tax_cat')));
-else
-{
+else {
 	// @see ndfp.class.php:3576 (method: compute_total_km)
 	$expense = new ExpenseReport($db);
 	if ($expense->fetch($fk_expense) <= 0) echo json_encode(array('error' => $langs->transnoentitiesnoconv('ErrorRecordNotFound'), 'fk_expense' => $fk_expense));
-	else
-	{
+	else {
 		$userauthor = new User($db);
 		if ($userauthor->fetch($expense->fk_user_author) <= 0) echo json_encode(array('error' => $langs->transnoentitiesnoconv('ErrorRecordNotFound'), 'fk_user_author' => $expense->fk_user_author));
-		else
-		{
+		else {
 			$range = ExpenseReportIk::getRangeByUser($userauthor, $fk_c_exp_tax_cat);
 
 			if (empty($range)) echo json_encode(array('error' => $langs->transnoentitiesnoconv('ErrorRecordNotFound'), 'range' => $range));
-			else
-			{
+			else {
 				$ikoffset = price($range->ikoffset, 0, $langs, 1, -1, -1, $conf->currency);
 				echo json_encode(array('up' => $range->coef, 'ikoffset' => $range->ikoffset, 'title' => $langs->transnoentitiesnoconv('ExpenseRangeOffset', $offset), 'comment' => 'offset should be apply on addline or updateline'));
 			}

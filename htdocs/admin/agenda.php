@@ -29,12 +29,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
 
 if (!$user->admin)
-    accessforbidden();
+	accessforbidden();
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'other', 'agenda'));
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 
 $search_event = GETPOST('search_event', 'alpha');
@@ -61,9 +61,7 @@ if ($resql)
 		$i++;
 	}
 	$db->free($resql);
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 
@@ -88,9 +86,9 @@ if (GETPOST('button_search_x', 'alpha') || GETPOST('button_search.x', 'alpha') |
 
 if ($action == "save" && empty($cancel))
 {
-    $i = 0;
+	$i = 0;
 
-    $db->begin();
+	$db->begin();
 
 	foreach ($triggers as $trigger)
 	{
@@ -99,20 +97,18 @@ if ($action == "save" && empty($cancel))
 		if ($search_event === '' || preg_match('/'.preg_quote($search_event, '/').'/i', $keyparam))
 		{
 			$res = dolibarr_set_const($db, $keyparam, (GETPOST($keyparam, 'alpha') ?GETPOST($keyparam, 'alpha') : ''), 'chaine', 0, '', $conf->entity);
-			if (!$res > 0) $error++;
+			if (!($res > 0)) $error++;
 		}
 	}
 
  	if (!$error)
-    {
-        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-        $db->commit();
-    }
-    else
-    {
-        setEventMessages($langs->trans("Error"), null, 'errors');
-        $db->rollback();
-    }
+	{
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+		$db->commit();
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'errors');
+		$db->rollback();
+	}
 }
 
 
@@ -136,7 +132,7 @@ $param .= '&search_event='.urlencode($search_event);
 
 $head = agenda_prepare_head();
 
-dol_fiche_head($head, 'autoactions', $langs->trans("Agenda"), -1, 'action');
+print dol_get_fiche_head($head, 'autoactions', $langs->trans("Agenda"), -1, 'action');
 
 print '<span class="opacitymedium">'.$langs->trans("AgendaAutoActionDesc")." ".$langs->trans("OnlyActiveElementsAreShown", 'modules.php').'</span><br>';
 print "<br>\n";
@@ -169,6 +165,7 @@ if (!empty($triggers))
 		if ($module == 'member') $module = 'adherent';
 		if ($module == 'project') $module = 'projet';
 		if ($module == 'proposal_supplier') $module = 'supplier_proposal';
+		if ($module == 'contact') $module = 'societe';
 
 		// If 'element' value is myobject@mymodule instead of mymodule
 		$tmparray = explode('@', $module);
@@ -176,7 +173,7 @@ if (!empty($triggers))
 			$module = $tmparray[1];
 		}
 
-		//print 'module='.$module.'<br>';
+		//print 'module='.$module.' code='.$trigger['code'].'<br>';
 		if (!empty($conf->$module->enabled))
 		{
 			// Discard special case: If option FICHINTER_CLASSIFY_BILLED is not set, we discard both trigger FICHINTER_CLASSIFY_BILLED and FICHINTER_CLASSIFY_UNBILLED
@@ -200,10 +197,10 @@ if (!empty($triggers))
 print '</table>';
 print '</div>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '<div class="center">';
-print '<input type="submit" name="save" class="button" value="'.$langs->trans("Save").'">';
+print '<input type="submit" name="save" class="button button-save" value="'.$langs->trans("Save").'">';
 print "</div>";
 
 print "</form>\n";

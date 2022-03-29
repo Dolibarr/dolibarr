@@ -6,7 +6,7 @@
 
 	<exclude-pattern type="relative">build/html</exclude-pattern>
 	<exclude-pattern type="relative">build/aps</exclude-pattern>
-	<exclude-pattern type="relative">dev/namespacemig</exclude-pattern>
+	<exclude-pattern type="relative">dev/tools/test/namespacemig</exclude-pattern>
 	<exclude-pattern type="relative">dev/initdata/dbf/includes</exclude-pattern>
 	<exclude-pattern type="relative">documents</exclude-pattern>
 	<exclude-pattern type="relative">htdocs/core/class/lessc.class.php</exclude-pattern>
@@ -17,6 +17,7 @@
 	<exclude-pattern type="relative">*/nltechno*</exclude-pattern>
 	<exclude-pattern type="relative">*/htdocs/includes</exclude-pattern>
 	<exclude-pattern type="relative">*/htdocs/includes</exclude-pattern>
+	<exclude-pattern type="relative">.git</exclude-pattern>
 
 	<!-- List of all tests -->
 
@@ -27,7 +28,7 @@
 
 
 	<!-- Rules from Generic Standard -->
-	
+
 	<!-- We want to allow empty statement: It allows to put some code comments into the else for examples -->
 	<rule ref="Generic.CodeAnalysis.EmptyStatement">
         <exclude name="Generic.CodeAnalysis.EmptyStatement.DetectedIf"/>
@@ -101,7 +102,7 @@
 			<property name="error" value="false"/>
 		</properties>
 		</rule>
-	-->    
+	-->
 	<!--  We want to allow 'if () { ...small code... }' on same line for better code compacity and readability -->
 	<rule ref="Generic.Formatting.DisallowMultipleStatements">
 		<severity>0</severity>
@@ -117,7 +118,7 @@
 		</properties>
 		</rule>
 	-->
-	
+
 	<rule ref="Generic.Formatting.SpaceAfterCast" />
 
     <rule ref="Generic.Functions.CallTimePassByReference" />
@@ -188,8 +189,8 @@
 	</rule>
 
     <!-- Check for duplicate class names -->
-    <!-- Disabled: We need this for dependency injection. 
-    <rule ref="Generic.Classes.DuplicateClassName" /> 
+    <!-- Disabled: We need this for dependency injection.
+    <rule ref="Generic.Classes.DuplicateClassName" />
     -->
 
 
@@ -212,6 +213,10 @@
 
     <rule ref="Squiz.WhiteSpace.ControlStructureSpacing.SpacingAfterOpen" />
     <rule ref="Squiz.WhiteSpace.ControlStructureSpacing.SpacingBeforeClose" />
+
+    <!-- <rule ref="Squiz.ControlStructures.ControlSignature.SpaceAfterCloseParenthesis" /> -->
+    <!-- <rule ref="Squiz.ControlStructures.ControlSignature.SpaceAfterCloseBrace" /> -->
+    <rule ref="Squiz.ControlStructures.ControlSignature.SpaceAfterKeyword" />
 
     <rule ref="Squiz.ControlStructures.ForEachLoopDeclaration.SpaceAfterOpen" />
     <rule ref="Squiz.ControlStructures.ForEachLoopDeclaration.SpaceBeforeClose" />
@@ -309,16 +314,16 @@
     <rule ref="PEAR.Files.IncludingFile.UseInclude">
         <severity>0</severity>
     </rule>
-    
+
     <!-- We disable this. We must be allowed to use strict require instead of non strict include anywhere -->
     <rule ref="PEAR.Files.IncludingFile.UseIncludeOnce">
         <severity>0</severity>
     </rule>
-    
+
     <rule ref="PEAR.Files.IncludingFile.UseRequire">
      	<severity>0</severity>
     </rule>
-    
+
     <!-- We disable this: We want to allow include_once -->
     <rule ref="PEAR.Files.IncludingFile.UseRequireOnce">
         <severity>0</severity>
@@ -332,7 +337,7 @@
     <rule ref="PEAR.Functions.FunctionCallSignature.CloseBracketLine">
         <severity>0</severity>
     </rule>
-    
+
     <!-- We disable this: We want to allow small function on 1 line -->
     <rule ref="PEAR.Functions.FunctionCallSignature.ContentAfterOpenBracket">
         <severity>0</severity>
@@ -385,7 +390,7 @@
 	<!--<rule ref="PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps">
         <severity>0</severity>
 	</rule>-->
-	
+
 	<!-- We disable this: We don't want to have private methods prefixed with an underscore -->
 	<rule ref="PEAR.NamingConventions.ValidFunctionName.PrivateNoUnderscore">
         <severity>0</severity>
@@ -426,5 +431,5 @@
 	<rule ref="PSR2.Classes.PropertyDeclaration.VarUsed" />
     <!-- The closing ?> tag MUST be omitted from files containing only PHP. -->
     <rule ref="PSR2.Files.ClosingTag"/>
-	
+
 </ruleset>

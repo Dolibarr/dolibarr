@@ -30,6 +30,7 @@ OtherSendingsForSameOrder=Άλλες αποστολές για αυτό το σ�
 SendingsAndReceivingForSameOrder=Αποστολές και αποδείξεις για αυτήν την παραγγελία
 SendingsToValidate=Αποστολές για επικύρωση
 StatusSendingCanceled=Ακυρώθηκε
+StatusSendingCanceledShort=Ακυρώθηκε
 StatusSendingDraft=Σχέδιο
 StatusSendingValidated=Επικυρωμένη (προϊόντα για αποστολή ή που έχουν ήδη αποσταλεί)
 StatusSendingProcessed=Επεξεργασμένα
@@ -65,6 +66,7 @@ ValidateOrderFirstBeforeShipment=Θα πρέπει πρώτα να επικυρ�
 # Sending methods
 # ModelDocument
 DocumentModelTyphon=Πληρέστερο πρότυπο έγγραφο για αποδεικτικά παράδοσης (logo. ..)
+DocumentModelStorm=More complete document model for delivery receipts and extrafields compatibility (logo...)
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Σταθερή EXPEDITION_ADDON_NUMBER δεν ορίζεται
 SumOfProductVolumes=Άθροισμα όγκου του προϊόντος
 SumOfProductWeights=Άθροισμα το βάρος των προϊόντων

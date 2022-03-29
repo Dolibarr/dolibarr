@@ -43,7 +43,7 @@ if ($action == 'up' && $permissiontoedit)
 	}
 
 	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
-		$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+		$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 	}
 
 	header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'#'.GETPOST('rowid'));
@@ -64,7 +64,7 @@ if ($action == 'down' && $permissiontoedit)
 		$outputlangs->setDefaultLang($newlang);
 	}
 	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
-		$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+		$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 	}
 
 	header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'#'.GETPOST('rowid'));

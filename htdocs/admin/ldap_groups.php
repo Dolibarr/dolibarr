@@ -61,21 +61,19 @@ if ($action == 'setvalue' && $user->admin)
 	if (!dolibarr_set_const($db, 'LDAP_GROUP_FIELD_GROUPID', GETPOST("fieldgroupid", 'alphanohtml'), 'chaine', 0, '', $conf->entity)) $error++;
 
 	// This one must be after the others
-    $valkey = '';
-    $key = GETPOST("key");
-    if ($key) $valkey = $conf->global->$key;
-    if (!dolibarr_set_const($db, 'LDAP_KEY_GROUPS', $valkey, 'chaine', 0, '', $conf->entity)) $error++;
+	$valkey = '';
+	$key = GETPOST("key");
+	if ($key) $valkey = $conf->global->$key;
+	if (!dolibarr_set_const($db, 'LDAP_KEY_GROUPS', $valkey, 'chaine', 0, '', $conf->entity)) $error++;
 
-    if (!$error)
-    {
-    	$db->commit();
-    	setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else
-    {
-    	$db->rollback();
-    	dol_print_error($db);
-    }
+	if (!$error)
+	{
+		$db->commit();
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		$db->rollback();
+		dol_print_error($db);
+	}
 }
 
 
@@ -97,7 +95,7 @@ if (!function_exists("ldap_connect"))
 	setEventMessages($langs->trans("LDAPFunctionsNotAvailableOnPHP"), null, 'errors');
 }
 
-dol_fiche_head($head, 'groups', $langs->trans("LDAPSetup"), -1);
+print dol_get_fiche_head($head, 'groups', $langs->trans("LDAPSetup"), -1);
 
 
 print $langs->trans("LDAPDescGroups").'<br>';
@@ -182,7 +180,7 @@ print '</table>';
 
 print info_admin($langs->trans("LDAPDescValues"));
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></div>';
 
@@ -233,9 +231,7 @@ if (function_exists("ldap_connect"))
 			{
 				print img_picto('', 'info').' ';
 				print '<font class="ok">'.$langs->trans("LDAPSynchroOK").'</font><br>';
-			}
-			else
-			{
+			} else {
 				print img_picto('', 'error').' ';
 				print '<font class="error">'.$langs->trans("LDAPSynchroKOMayBePermissions");
 				print ': '.$ldap->error;
@@ -247,9 +243,7 @@ if (function_exists("ldap_connect"))
 			print "LDAP input file used for test:<br><br>\n";
 			print nl2br($ldap->dump_content($dn, $info));
 			print "\n<br>";
-		}
-		else
-		{
+		} else {
 			print img_picto('', 'error').' ';
 			print '<font class="error">'.$langs->trans("LDAPSynchroKO");
 			print ': '.$ldap->error;

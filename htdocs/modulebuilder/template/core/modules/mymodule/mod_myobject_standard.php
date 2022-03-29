@@ -91,8 +91,7 @@ class mod_myobject_standard extends ModeleNumRefMyObject
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
 		if ($object->ismultientitymanaged == 1) {
 			$sql .= " AND entity = ".$conf->entity;
-		}
-		elseif ($object->ismultientitymanaged == 2) {
+		} elseif ($object->ismultientitymanaged == 2) {
 			// TODO
 		}
 
@@ -129,8 +128,7 @@ class mod_myobject_standard extends ModeleNumRefMyObject
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
 		if ($object->ismultientitymanaged == 1) {
 			$sql .= " AND entity = ".$conf->entity;
-		}
-		elseif ($object->ismultientitymanaged == 2) {
+		} elseif ($object->ismultientitymanaged == 2) {
 			// TODO
 		}
 
@@ -140,9 +138,7 @@ class mod_myobject_standard extends ModeleNumRefMyObject
 			$obj = $db->fetch_object($resql);
 			if ($obj) $max = intval($obj->max);
 			else $max = 0;
-		}
-		else
-		{
+		} else {
 			dol_syslog("mod_myobject_standard::getNextValue", LOG_DEBUG);
 			return -1;
 		}

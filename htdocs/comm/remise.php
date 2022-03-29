@@ -47,8 +47,8 @@ $backtopage = GETPOST('backtopage', 'alpha');
 
 if (GETPOST('cancel', 'alpha') && !empty($backtopage))
 {
-     header("Location: ".$backtopage);
-     exit;
+	 header("Location: ".$backtopage);
+	 exit;
 }
 
 if (GETPOST('action', 'aZ09') == 'setremise')
@@ -66,19 +66,15 @@ if (GETPOST('action', 'aZ09') == 'setremise')
 
 	if ($result > 0)
 	{
-	    if (!empty($backtopage))
-	    {
-    		header("Location: ".$backtopage);
-    		exit;
-	    }
-	    else
-	    {
-    		header("Location: remise.php?id=".$_GET["id"]);
-    		exit;
-	    }
-	}
-	else
-	{
+		if (!empty($backtopage))
+		{
+			header("Location: ".$backtopage);
+			exit;
+		} else {
+			header("Location: remise.php?id=".$_GET["id"]);
+			exit;
+		}
+	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
@@ -112,28 +108,28 @@ if ($socid > 0)
 	print '<form method="POST" action="remise.php?id='.$object->id.'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="setremise">';
-    print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
-	dol_fiche_head($head, 'relativediscount', $langs->trans("ThirdParty"), -1, 'company');
+	print dol_get_fiche_head($head, 'relativediscount', $langs->trans("ThirdParty"), -1, 'company');
 
-    dol_banner_tab($object, 'socid', '', ($user->socid ? 0 : 1), 'rowid', 'nom');
+	dol_banner_tab($object, 'socid', '', ($user->socid ? 0 : 1), 'rowid', 'nom');
 
-    print '<div class="fichecenter">';
+	print '<div class="fichecenter">';
 
-    print '<div class="underbanner clearboth"></div>';
+	print '<div class="underbanner clearboth"></div>';
 
-    if (!$isCustomer && !$isSupplier) {
-    	print '<p class="opacitymedium">'.$langs->trans('ThirdpartyIsNeitherCustomerNorClientSoCannotHaveDiscounts').'</p>';
+	if (!$isCustomer && !$isSupplier) {
+		print '<p class="opacitymedium">'.$langs->trans('ThirdpartyIsNeitherCustomerNorClientSoCannotHaveDiscounts').'</p>';
 
-    	dol_fiche_end();
+		print dol_get_fiche_end();
 
-    	print '</form>';
+		print '</form>';
 
-    	// End of page
-        llxFooter();
-        $db->close();
-    	exit;
-    }
+		// End of page
+		llxFooter();
+		$db->close();
+		exit;
+	}
 
 	print '<table class="border centpercent">';
 
@@ -176,7 +172,7 @@ if ($socid > 0)
 			print '<input type="radio" name="discount_type" id="discount_type_0" checked value="0"/> <label for="discount_type_0">'.$langs->trans('Customer').'</label>';
 		}
 		if ($isSupplier) {
-		    print ' <input type="radio" name="discount_type" id="discount_type_1"'.($isCustomer ? '' : ' checked').' value="1"/> <label for="discount_type_1">'.$langs->trans('Supplier').'</label>';
+			print ' <input type="radio" name="discount_type" id="discount_type_1"'.($isCustomer ? '' : ' checked').' value="1"/> <label for="discount_type_1">'.$langs->trans('Supplier').'</label>';
 		}
 		print '</td></tr>';
 	}
@@ -193,15 +189,15 @@ if ($socid > 0)
 
 	print '</div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-    if (!empty($backtopage))
-    {
-        print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	    print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-    }
+	if (!empty($backtopage))
+	{
+		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+		print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
+	}
 	print '</div>';
 
 	print "</form>";
@@ -238,30 +234,26 @@ if ($socid > 0)
 			print '<td class="center">'.$langs->trans("User").'</td>';
 			print '</tr>';
 			$num = $db->num_rows($resql);
-	        if ($num > 0)
-	        {
-			    $i = 0;
-	            while ($i < $num)
-	    		{
-	    			$obj = $db->fetch_object($resql);
-	    			print '<tr class="oddeven">';
-	    			print '<td>'.dol_print_date($db->jdate($obj->dc), "dayhour").'</td>';
-	    			print '<td class="center">'.price2num($obj->remise_percent).'%</td>';
-	    			print '<td class="left">'.$obj->note.'</td>';
-	    			print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"), 'user').' '.$obj->login.'</a></td>';
-	    			print '</tr>';
-	    			$i++;
-	    		}
-			}
-			else
+			if ($num > 0)
 			{
-			    print '<tr><td colspan="8" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+				$i = 0;
+				while ($i < $num)
+				{
+					$obj = $db->fetch_object($resql);
+					print '<tr class="oddeven">';
+					print '<td>'.dol_print_date($db->jdate($obj->dc), "dayhour").'</td>';
+					print '<td class="center">'.price2num($obj->remise_percent).'%</td>';
+					print '<td class="left">'.$obj->note.'</td>';
+					print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"), 'user').' '.$obj->login.'</a></td>';
+					print '</tr>';
+					$i++;
+				}
+			} else {
+				print '<tr><td colspan="8" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 			}
 			$db->free($resql);
 			print "</table>";
-		}
-		else
-		{
+		} else {
 			dol_print_error($db);
 		}
 	}
@@ -311,16 +303,12 @@ if ($socid > 0)
 					print '</tr>';
 					$i++;
 				}
-			}
-			else
-			{
+			} else {
 				print '<tr><td colspan="8" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 			}
 			$db->free($resql);
 			print "</table>";
-		}
-		else
-		{
+		} else {
 			dol_print_error($db);
 		}
 

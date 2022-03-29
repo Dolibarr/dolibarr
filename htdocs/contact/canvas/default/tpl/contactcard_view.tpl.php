@@ -144,7 +144,7 @@ if (empty($user->socid)) {
 	}
 
 	if ($user->rights->societe->contact->supprimer) {
-		print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$this->control->tpl['id'].'&amp;action=delete&amp;canvas='.$canvas.'">'.$langs->trans('Delete').'</a>';
+		print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$this->control->tpl['id'].'&amp;action=delete&amp;token='.newToken().'&amp;canvas='.$canvas.'">'.$langs->trans('Delete').'</a>';
 	}
 
 	print '</div><br>';

@@ -133,3 +133,4 @@ KeysToUseForUpdates=Clave (columna) a usar para <b>actualizar</b> datos existent
 NbInsert=Número de líneas añadidas: %s
 NbUpdate=Número de líneas actualizadas: %s
 MultipleRecordFoundWithTheseFilters=Se han encontrado varios registros con estos filtros: %s
+StocksWithBatch=Existencias y ubicación (almacén) de productos con número de lote / serie

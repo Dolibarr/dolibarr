@@ -51,7 +51,7 @@ $result = $object->fetch($rowid);
 
 $head = subscription_prepare_head($object);
 
-dol_fiche_head($head, 'info', $langs->trans("Subscription"), -1, 'payment');
+print dol_get_fiche_head($head, 'info', $langs->trans("Subscription"), -1, 'payment');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/adherents/subscription/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
@@ -72,7 +72,7 @@ print '</td></tr></table>';
 print '</div>';
 
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();

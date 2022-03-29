@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2015-2021 Frederic France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,27 +32,27 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
  */
 class box_clients extends ModeleBoxes
 {
-    public $boxcode = "lastcustomers";
-    public $boximg = "object_company";
-    public $boxlabel = "BoxLastCustomers";
-    public $depends = array("societe");
+	public $boxcode = "lastcustomers";
+	public $boximg = "object_company";
+	public $boxlabel = "BoxLastCustomers";
+	public $depends = array("societe");
 
 	/**
-     * @var DoliDB Database handler.
-     */
-    public $db;
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
 
-    public $enabled = 1;
+	public $enabled = 1;
 
-    public $info_box_head = array();
-    public $info_box_contents = array();
+	public $info_box_head = array();
+	public $info_box_contents = array();
 
 
 	/**
 	 *  Constructor
 	 *
 	 *  @param  DoliDB	$db      	Database handler
-     *  @param	string	$param		More parameters
+	 *  @param	string	$param		More parameters
 	 */
 	public function __construct($db, $param = '')
 	{
@@ -67,10 +67,10 @@ class box_clients extends ModeleBoxes
 	}
 
 	/**
-     *  Load data for box to show them later
-     *
-     *  @param	int		$max        Maximum number of records to load
-     *  @return	void
+	 *  Load data for box to show them later
+	 *
+	 *  @param	int		$max        Maximum number of records to load
+	 *  @return	void
 	 */
 	public function loadBox($max = 5)
 	{
@@ -79,29 +79,23 @@ class box_clients extends ModeleBoxes
 
 		$this->max = $max;
 
-        include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
-        $thirdpartystatic = new Societe($this->db);
+		include_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
+		$thirdpartystatic = new Client($this->db);
 
-        $this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedCustomers", $max));
+		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedCustomers", $max));
 
 		if ($user->rights->societe->lire)
 		{
-			$sql = "SELECT s.nom as name, s.rowid as socid";
-            $sql .= ", s.code_client";
-            $sql .= ", s.client";
-            $sql .= ", s.code_fournisseur";
-            $sql .= ", s.fournisseur";
-            $sql .= ", s.code_compta";
-            $sql .= ", s.code_compta_fournisseur";
-            $sql .= ", s.logo";
-            $sql .= ", s.email";
-            $sql .= ", s.datec, s.tms, s.status, s.entity";
+			$sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias";
+			$sql .= ", s.code_client, s.code_compta, s.client";
+			$sql .= ", s.logo, s.email, s.entity";
+			$sql .= ", s.datec, s.tms, s.status";
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			$sql .= " WHERE s.client IN (1, 3)";
 			$sql .= " AND s.entity IN (".getEntity('societe').")";
 			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
-			if ($user->socid) $sql .= " AND s.rowid = $user->socid";
+			if ($user->socid) $sql .= " AND s.rowid = ".$user->socid;
 			$sql .= " ORDER BY s.tms DESC";
 			$sql .= $this->db->plimit($max, 0);
 
@@ -117,33 +111,32 @@ class box_clients extends ModeleBoxes
 					$objp = $this->db->fetch_object($result);
 					$datec = $this->db->jdate($objp->datec);
 					$datem = $this->db->jdate($objp->tms);
-                    $thirdpartystatic->id = $objp->socid;
-                    $thirdpartystatic->name = $objp->name;
-                    $thirdpartystatic->code_client = $objp->code_client;
-                    $thirdpartystatic->code_fournisseur = $objp->code_fournisseur;
-                    $thirdpartystatic->code_compta = $objp->code_compta;
-                    $thirdpartystatic->code_compta_fournisseur = $objp->code_compta_fournisseur;
-                    $thirdpartystatic->client = $objp->client;
-                    $thirdpartystatic->fournisseur = $objp->fournisseur;
-                    $thirdpartystatic->logo = $objp->logo;
-                    $thirdpartystatic->email = $objp->email;
+
+					$thirdpartystatic->id = $objp->socid;
+					$thirdpartystatic->name = $objp->name;
+					$thirdpartystatic->name_alias = $objp->name_alias;
+					$thirdpartystatic->code_client = $objp->code_client;
+					$thirdpartystatic->code_compta = $objp->code_compta;
+					$thirdpartystatic->client = $objp->client;
+					$thirdpartystatic->logo = $objp->logo;
+					$thirdpartystatic->email = $objp->email;
 					$thirdpartystatic->entity = $objp->entity;
 
-                    $this->info_box_contents[$line][] = array(
-                        'td' => '',
-                        'text' => $thirdpartystatic->getNomUrl(1),
-                        'asis' => 1,
-                    );
+					$this->info_box_contents[$line][] = array(
+						'td' => '',
+						'text' => $thirdpartystatic->getNomUrl(1),
+						'asis' => 1,
+					);
 
-                    $this->info_box_contents[$line][] = array(
-                        'td' => 'class="right"',
-                        'text' => dol_print_date($datem, "day")
-                    );
+					$this->info_box_contents[$line][] = array(
+						'td' => 'class="right"',
+						'text' => dol_print_date($datem, "day")
+					);
 
-                    $this->info_box_contents[$line][] = array(
-                        'td' => 'class="right" width="18"',
-                        'text' => $thirdpartystatic->LibStatut($objp->status, 3)
-                    );
+					$this->info_box_contents[$line][] = array(
+						'td' => 'class="right" width="18"',
+						'text' => $thirdpartystatic->LibStatut($objp->status, 3)
+					);
 
 					$line++;
 				}
@@ -154,19 +147,17 @@ class box_clients extends ModeleBoxes
 				);
 
 				$this->db->free($result);
-			}
-			else {
+			} else {
 				$this->info_box_contents[0][0] = array(
-                    'td' => '',
-                    'maxlength'=>500,
-                    'text' => ($this->db->error().' sql='.$sql)
-                );
+					'td' => '',
+					'maxlength'=>500,
+					'text' => ($this->db->error().' sql='.$sql)
+				);
 			}
-		}
-		else {
+		} else {
 			$this->info_box_contents[0][0] = array(
-			    'td' => 'class="nohover opacitymedium left"',
-                'text' => $langs->trans("ReadPermissionNotAllowed")
+				'td' => 'class="nohover opacitymedium left"',
+				'text' => $langs->trans("ReadPermissionNotAllowed")
 			);
 		}
 	}
@@ -179,8 +170,8 @@ class box_clients extends ModeleBoxes
 	 *  @param	int		$nooutput	No print, only return string
 	 *	@return	string
 	 */
-    public function showBox($head = null, $contents = null, $nooutput = 0)
-    {
+	public function showBox($head = null, $contents = null, $nooutput = 0)
+	{
 		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}
 }

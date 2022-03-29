@@ -133,3 +133,4 @@ KeysToUseForUpdates=Nøgle (kolonne), der skal bruges til <b> opdatering </ b> e
 NbInsert=Number of inserted lines: %s
 NbUpdate=Number of updated lines: %s
 MultipleRecordFoundWithTheseFilters=Multiple records have been found with these filters: %s
+StocksWithBatch=Lager og placering (lager) af produkter med batch / serienummer

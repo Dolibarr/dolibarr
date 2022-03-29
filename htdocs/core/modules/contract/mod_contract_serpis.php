@@ -29,9 +29,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/contract/modules_contract.php';
 class mod_contract_serpis extends ModelNumRefContracts
 {
 	/**
-     * Dolibarr version of the loaded document
-     * @var string
-     */
+	 * Dolibarr version of the loaded document
+	 * @var string
+	 */
 	public $version = 'dolibarr';
 
 	public $prefix = 'CT';
@@ -64,11 +64,11 @@ class mod_contract_serpis extends ModelNumRefContracts
 	 *
 	 *	@return     string      text description
 	 */
-    public function info()
-    {
-    	global $langs;
-      	return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
-    }
+	public function info()
+	{
+		global $langs;
+	  	return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
+	}
 
 
 	/**
@@ -138,9 +138,7 @@ class mod_contract_serpis extends ModelNumRefContracts
 			$obj = $db->fetch_object($resql);
 			if ($obj) $max = intval($obj->max);
 			else $max = 0;
-		}
-		else
-		{
+		} else {
 			dol_syslog("mod_contract_serpis::getNextValue", LOG_DEBUG);
 			return -1;
 		}
@@ -156,7 +154,7 @@ class mod_contract_serpis extends ModelNumRefContracts
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Return next value
 	 *
@@ -166,7 +164,7 @@ class mod_contract_serpis extends ModelNumRefContracts
 	 */
 	public function contract_get_num($objsoc, $objforref)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		return $this->getNextValue($objsoc, $objforref);
 	}
 }

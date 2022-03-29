@@ -30,21 +30,26 @@
  */
 function cronadmin_prepare_head()
 {
-    global $langs, $conf, $user;
-    $h = 0;
-    $head = array();
+	global $langs, $conf, $user;
+	$h = 0;
+	$head = array();
 
-    $head[$h][0] = dol_buildpath('/cron/admin/cron.php', 1);
-    $head[$h][1] = $langs->trans("Miscellaneous");
-    $head[$h][2] = 'setup';
-    $h++;
+	$head[$h][0] = dol_buildpath('/cron/admin/cron.php', 1);
+	$head[$h][1] = $langs->trans("Miscellaneous");
+	$head[$h][2] = 'setup';
+	$h++;
 
-    complete_head_from_modules($conf, $langs, null, $head, $h, 'cronadmin');
+	$head[$h][0] = dol_buildpath('/cron/list.php?mode=modulesetup', 1);
+	$head[$h][1] = $langs->trans("Module2300Name");
+	$head[$h][2] = 'jobs';
+	$h++;
 
-    complete_head_from_modules($conf, $langs, null, $head, $h, 'cronadmin', 'remove');
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'cronadmin');
+
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'cronadmin', 'remove');
 
 
-    return $head;
+	return $head;
 }
 
 /**
@@ -99,8 +104,8 @@ function dol_print_cron_urls()
 	print ' '.$langs->trans("OrToLaunchASpecificJob").'<br>';
 	$url = $urlwithroot.'/public/cron/cron_run_jobs.php?'.(empty($conf->global->CRON_KEY) ? '' : 'securitykey='.$conf->global->CRON_KEY.'&').'userlogin='.$user->login.'&id=cronjobid';
 	print img_picto('', 'globe').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
-    print '</div>';
-    print '<br>';
+	print '</div>';
+	print '<br>';
 
 	$logintouse = 'firstadmin';
 	if ($user->admin) $logintouse = $user->login;
@@ -114,20 +119,18 @@ function dol_print_cron_urls()
 	// Add note
 	if (empty($conf->global->CRON_DISABLE_TUTORIAL_CRON))
 	{
-    	$linuxlike = 1;
-    	if (preg_match('/^win/i', PHP_OS)) $linuxlike = 0;
-    	if (preg_match('/^mac/i', PHP_OS)) $linuxlike = 0;
-    	print $langs->trans("Note").': ';
-    	if ($linuxlike)
-    	{
-    		print $langs->trans("CronExplainHowToRunUnix");
-    		print '<br>';
-    		print '<textarea class="quatrevingtpercent">*/5 * * * * pathtoscript/scripts/cron/cron_run_jobs.php '.(empty($conf->global->CRON_KEY) ? 'securitykey' : ''.$conf->global->CRON_KEY.'').' '.$logintouse.' &gt; '.DOL_DATA_ROOT.'/cron_run_jobs.php.log</textarea><br>';
-    	}
-    	else
-    	{
-    		print $langs->trans("CronExplainHowToRunWin");
-    	}
+		$linuxlike = 1;
+		if (preg_match('/^win/i', PHP_OS)) $linuxlike = 0;
+		if (preg_match('/^mac/i', PHP_OS)) $linuxlike = 0;
+		print $langs->trans("Note").': ';
+		if ($linuxlike)
+		{
+			print $langs->trans("CronExplainHowToRunUnix");
+			print '<br>';
+			print '<textarea class="quatrevingtpercent">*/5 * * * * pathtoscript/scripts/cron/cron_run_jobs.php '.(empty($conf->global->CRON_KEY) ? 'securitykey' : ''.$conf->global->CRON_KEY.'').' '.$logintouse.' &gt; '.DOL_DATA_ROOT.'/cron_run_jobs.php.log</textarea><br>';
+		} else {
+			print $langs->trans("CronExplainHowToRunWin");
+		}
 	}
 
 	return 0;

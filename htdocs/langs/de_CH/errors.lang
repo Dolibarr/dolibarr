@@ -27,7 +27,6 @@ ErrorPleaseTypeBankTransactionReportName=Gib hier den Bankkontoauszug im Format 
 ErrorProdIdAlreadyExist=%s wurde bereits einem Geschäftspartner zugewiesen
 ErrorForbidden3=Es scheint keine ordnungsgemässe Authentifizierung für das System vorzuliegen. Bitte werfen Sie einen Blick auf die Systemdokumentation um die entsprechenden Authentifizierungsoptionen zu verwalten (htaccess, mod_auth oder andere...)
 ErrorBadValueForCode=Unzulässiger Code-Wert. Versuchen Sie es mit einem anderen Wert erneut...
-ErrorDateMustBeBeforeToday=Datum darf nicht in der Zukunft sein
 ErrorWarehouseRequiredIntoShipmentLine=Warenlager ist auf der Lieferzeile erforderlich.
 ErrorFileMustHaveFormat=Datei muss das Format %s haben
 ErrorsThirdpartyMerge=Die zwei Einträge können nicht zusammengeführt werden. Aktion abgebrochen.

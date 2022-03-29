@@ -62,8 +62,7 @@ if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_e
 	elseif ($element == 'order_supplier') {
 		$element = 'fournisseur';
 		$subelement = 'commande';
-	}
-	elseif ($element == 'invoice_supplier') {
+	} elseif ($element == 'invoice_supplier') {
 		$element = 'fournisseur';
 		$subelement = 'facture';
 	}
@@ -83,8 +82,7 @@ if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_e
 			{
 				$ret = $form->$methodname();
 				if ($ret > 0) echo json_encode($form->$cachename);
-			}
-			elseif (!empty($ext_element))
+			} elseif (!empty($ext_element))
 			{
 				$module = $subelement = $ext_element;
 				if (preg_match('/^([^_]+)_([^_]+)/i', $ext_element, $regs))
@@ -99,16 +97,12 @@ if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_e
 				$ret = $object->$methodname($fk_element);
 				if ($ret > 0) echo json_encode($object->$cachename);
 			}
-		}
-		else
-		{
+		} else {
 			$object = new GenericObject($db);
 			$value = $object->$loadmethod($table_element, $fk_element, $field);
 			echo $value;
 		}
-	}
-	else
-	{
+	} else {
 		echo $langs->transnoentities('NotEnoughPermissions');
 	}
 }

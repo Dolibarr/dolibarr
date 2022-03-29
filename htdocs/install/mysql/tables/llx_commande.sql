@@ -32,7 +32,7 @@ create table llx_commande
   fk_soc					integer NOT NULL,
   fk_projet					integer DEFAULT NULL,			-- projet auquel est rattache la commande
 
-  tms						timestamp,
+  tms						timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   date_creation				datetime,						-- date de creation 
   date_valid				datetime,						-- date de validation
   date_cloture				datetime,						-- date de cloture
@@ -64,8 +64,8 @@ create table llx_commande
   fk_currency				varchar(3),						-- currency code
   fk_cond_reglement			integer,						-- condition de reglement
   fk_mode_reglement			integer,						-- mode de reglement
-  
-  date_livraison			date 	  default NULL,
+
+  date_livraison			datetime 	  default NULL,
   fk_shipping_method		integer,						-- shipping method id
   fk_warehouse				integer default NULL,
   fk_availability			integer NULL,

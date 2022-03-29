@@ -55,9 +55,7 @@ if ($query == "cat")
 		if ($obj['photo_vignette'])
 		{
 			$filename = $obj['photo_vignette'];
-		}
-		else
-		{
+		} else {
 			$filename = $obj['photo'];
 		}
 		$file = DOL_URL_ROOT.'/viewimage.php?cache=1&publictakepos=1&modulepart=category&entity='.$object->entity.'&file='.urlencode($pdir.$filename);
@@ -65,8 +63,7 @@ if ($query == "cat")
 		exit;
 	}
 	header('Location: ../../public/theme/common/nophoto.png');
-}
-elseif ($query == "pro")
+} elseif ($query == "pro")
 {
 	require_once DOL_DOCUMENT_ROOT."/product/class/product.class.php";
 
@@ -86,7 +83,7 @@ elseif ($query == "pro")
 		}
 	}
 } else {
-    // TODO We don't need this. Size of image must be defined on HTML page, image must NOT be resize when downloaded.
+	// TODO We don't need this. Size of image must be defined on HTML page, image must NOT be resize when downloaded.
 
 	// The file
 	$filename = $query.".jpg";

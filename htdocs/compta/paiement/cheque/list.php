@@ -69,11 +69,11 @@ $accountstatic = new Account($db);
 // If click on purge search criteria ?
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
 {
-    $search_ref = '';
-    $search_amount = '';
-    $search_account = '';
-    $year = '';
-    $month = '';
+	$search_ref = '';
+	$search_amount = '';
+	$search_account = '';
+	$year = '';
+	$month = '';
 }
 
 
@@ -121,14 +121,12 @@ if ($resql)
 	$num = $db->num_rows($resql);
 	$i = 0;
 	$param = '';
-    if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.$contextpage;
+	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.$contextpage;
 	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.$limit;
 
-	$newcardbutton = '';
-	if ($user->rights->banque->cheque)
-	{
-        $newcardbutton .= dolGetButtonTitle($langs->trans('NewCheckDeposit'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/compta/paiement/cheque/card.php?action=new');
-	}
+	$url = DOL_URL_ROOT.'/compta/paiement/cheque/card.php?action=new';
+	if (!empty($socid)) $url .= '&socid='.$socid;
+	$newcardbutton = dolGetButtonTitle($langs->trans('NewCheckDeposit'), '', 'fa fa-plus-circle', $url, '', $user->rights->banque->cheque);
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -143,34 +141,34 @@ if ($resql)
 
 	$moreforfilter = '';
 
-    print '<div class="div-table-responsive">';
-    print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
+	print '<div class="div-table-responsive">';
+	print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 	// Fields title search
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre" align="left">';
 	print '<input class="flat" type="text" size="4" name="search_ref" value="'.$search_ref.'">';
-    print '</td>';
+	print '</td>';
 	print '<td class="liste_titre" align="center">';
-    if (!empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="day" value="'.$day.'">';
-    print '<input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
-    $formother->select_year($year ? $year : -1, 'year', 1, 20, 5);
-    print '</td>';
-    print '<td class="liste_titre">';
-    $form->select_comptes($search_account, 'search_account', 0, '', 1);
-    print '</td>';
+	if (!empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="day" value="'.$day.'">';
+	print '<input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
+	$formother->select_year($year ? $year : -1, 'year', 1, 20, 5);
+	print '</td>';
+	print '<td class="liste_titre">';
+	$form->select_comptes($search_account, 'search_account', 0, '', 1);
+	print '</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre right">';
 	print '<input class="flat maxwidth50" type="text" name="search_amount" value="'.$search_amount.'">';
 	print '</td>';
 	print '<td class="liste_titre"></td>';
-    print '<td class="liste_titre maxwidthsearch">';
-    $searchpicto = $form->showFilterAndCheckAddButtons(0);
-    print $searchpicto;
-    print '</td>';
-    print "</tr>\n";
+	print '<td class="liste_titre maxwidthsearch">';
+	$searchpicto = $form->showFilterAndCheckAddButtons(0);
+	print $searchpicto;
+	print '</td>';
+	print "</tr>\n";
 
-    print '<tr class="liste_titre">';
+	print '<tr class="liste_titre">';
 	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "bc.ref", "", $param, "", $sortfield, $sortorder);
 	print_liste_field_titre("DateCreation", $_SERVER["PHP_SELF"], "dp", "", $param, 'align="center"', $sortfield, $sortorder);
 	print_liste_field_titre("Account", $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
@@ -180,60 +178,56 @@ if ($resql)
 	print_liste_field_titre('');
 	print "</tr>\n";
 
-    if ($num > 0)
-    {
-    	while ($i < min($num, $limit))
-    	{
-    		$objp = $db->fetch_object($resql);
+	if ($num > 0)
+	{
+		while ($i < min($num, $limit))
+		{
+			$objp = $db->fetch_object($resql);
 
-    		print '<tr class="oddeven">';
+			print '<tr class="oddeven">';
 
-    		// Num ref cheque
-    		print '<td>';
-    		$checkdepositstatic->id = $objp->rowid;
-    		$checkdepositstatic->ref = ($objp->ref ? $objp->ref : $objp->rowid);
-    		$checkdepositstatic->statut = $objp->statut;
-    		print $checkdepositstatic->getNomUrl(1);
-    		print '</td>';
+			// Num ref cheque
+			print '<td>';
+			$checkdepositstatic->id = $objp->rowid;
+			$checkdepositstatic->ref = ($objp->ref ? $objp->ref : $objp->rowid);
+			$checkdepositstatic->statut = $objp->statut;
+			print $checkdepositstatic->getNomUrl(1);
+			print '</td>';
 
-    		// Date
-    		print '<td class="center">'.dol_print_date($db->jdate($objp->dp), 'day').'</td>'; // TODO Use date hour
+			// Date
+			print '<td class="center">'.dol_print_date($db->jdate($objp->dp), 'day').'</td>'; // TODO Use date hour
 
-    		// Bank
-    		print '<td>';
-    		if ($objp->bid) print '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?account='.$objp->bid.'">'.img_object($langs->trans("ShowAccount"), 'account').' '.$objp->label.'</a>';
-    		else print '&nbsp;';
-    		print '</td>';
+			// Bank
+			print '<td>';
+			if ($objp->bid) print '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?account='.$objp->bid.'">'.img_object($langs->trans("ShowAccount"), 'account').' '.$objp->label.'</a>';
+			else print '&nbsp;';
+			print '</td>';
 
-    		// Number of cheques
-    		print '<td class="right">'.$objp->nbcheque.'</td>';
+			// Number of cheques
+			print '<td class="right">'.$objp->nbcheque.'</td>';
 
-    		// Amount
-    		print '<td class="right">'.price($objp->amount).'</td>';
+			// Amount
+			print '<td class="right">'.price($objp->amount).'</td>';
 
-    		// Statut
-    		print '<td class="right">';
-    		print $checkdepositstatic->LibStatut($objp->statut, 5);
-    		print '</td>';
+			// Statut
+			print '<td class="right">';
+			print $checkdepositstatic->LibStatut($objp->statut, 5);
+			print '</td>';
 
-    		print '<td></td>';
+			print '<td></td>';
 
-            print "</tr>\n";
-    		$i++;
-    	}
-    }
-    else
-    {
+			print "</tr>\n";
+			$i++;
+		}
+	} else {
    		print '<tr class="oddeven">';
    		print '<td colspan="7" class="opacitymedium">'.$langs->trans("None")."</td>";
    		print '</tr>';
-    }
+	}
 	print "</table>";
 	print "</div>";
 	print "</form>\n";
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 

@@ -26,7 +26,7 @@
 
 $sapi_type = php_sapi_name();
 $script_file = basename(__FILE__);
-$path=dirname(__FILE__).'/';
+$path=__DIR__.'/';
 
 // Test si mode batch
 if (substr($sapi_type, 0, 3) == 'cgi') {
@@ -120,8 +120,8 @@ $sqls=array(
         "DELETE FROM ".MAIN_DB_PREFIX."expedition where date_creation < '__DATE__'",
     ),
     'delivery'=>array(
-        "DELETE FROM ".MAIN_DB_PREFIX."livraisondet WHERE fk_livraison IN (select rowid FROM ".MAIN_DB_PREFIX."livraison where date_creation < '__DATE__')",
-        "DELETE FROM ".MAIN_DB_PREFIX."livraison where date_creation < '__DATE__'",
+        "DELETE FROM ".MAIN_DB_PREFIX."deliverydet WHERE fk_delivery IN (select rowid FROM ".MAIN_DB_PREFIX."delivery where date_creation < '__DATE__')",
+        "DELETE FROM ".MAIN_DB_PREFIX."delivery where date_creation < '__DATE__'",
     ),
     'contract'=>array(
         "DELETE FROM ".MAIN_DB_PREFIX."contratdet_extrafields WHERE fk_object IN (select rowid FROM ".MAIN_DB_PREFIX."contratdet WHERE fk_contrat IN (select rowid FROM ".MAIN_DB_PREFIX."contrat where datec < '__DATE__'))",
@@ -198,7 +198,7 @@ if (empty($option))
 if ($option != 'all')
 {
     $listofoptions=explode(',', $option);
-    foreach($listofoptions as $cursoroption)
+    foreach ($listofoptions as $cursoroption)
     {
         if (! in_array($cursoroption, array_keys($sqls))) {
             print "Usage:  $script_file (test|confirm) (all|option) (all|YYYY-MM-DD) [dbtype dbhost dbuser dbpassword dbname dbport]\n";
@@ -264,7 +264,7 @@ function processfamily($family, $date)
     global $db, $sqls;
 
     $error=0;
-    foreach($sqls[$family] as $sql)
+    foreach ($sqls[$family] as $sql)
     {
         if (preg_match('/^@/', $sql))
         {
@@ -302,10 +302,10 @@ function processfamily($family, $date)
 $db->begin();
 
 $listofoptions=explode(',', $option);
-foreach($listofoptions as $cursoroption)
+foreach ($listofoptions as $cursoroption)
 {
     $oldfamily='';
-    foreach($sqls as $family => $familysql)
+    foreach ($sqls as $family => $familysql)
     {
         if ($cursoroption && $cursoroption != 'all' && $cursoroption != $family) continue;
 
@@ -325,9 +325,7 @@ if ($error || $mode != 'confirm')
 {
     print "\nRollback any changes.\n";
     $db->rollback();
-}
-else
-{
+} else {
     print "Commit all changes.\n";
     $db->commit();
 }

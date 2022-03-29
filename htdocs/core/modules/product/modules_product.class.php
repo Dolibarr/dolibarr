@@ -137,10 +137,18 @@ abstract class ModeleProductCode
 		global $langs;
 		$langs->load("admin");
 
-		if ($this->version == 'development') return $langs->trans("VersionDevelopment");
-		if ($this->version == 'experimental') return $langs->trans("VersionExperimental");
-		if ($this->version == 'dolibarr') return DOL_VERSION;
-		if ($this->version) return $this->version;
+		if ($this->version == 'development') {
+			return $langs->trans("VersionDevelopment");
+		}
+		if ($this->version == 'experimental') {
+			return $langs->trans("VersionExperimental");
+		}
+		if ($this->version == 'dolibarr') {
+			return DOL_VERSION;
+		}
+		if ($this->version) {
+			return $this->version;
+		}
 		return $langs->trans("NotAvailable");
 	}
 
@@ -159,19 +167,15 @@ abstract class ModeleProductCode
 		$sql = "";
 
 		$resql = $db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$num = $db->num_rows($resql);
 			$i = 0;
-			while ($i < $num)
-			{
+			while ($i < $num) {
 				$row = $db->fetch_row($resql);
 				$liste[$row[0]] = $row[1];
 				$i++;
 			}
-		}
-		else
-		{
+		} else {
 			return -1;
 		}
 		return $liste;
@@ -190,39 +194,37 @@ abstract class ModeleProductCode
 		global $conf;
 
 		$langs->load("admin");
-
+		$strikestart = '';
+		$strikeend = '';
+		if (!empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && !empty($this->code_null)) {
+			$strikestart = '<strike>';
+			$strikeend = '</strike> '.yn(1, 1, 2).' ('.$langs->trans("ForcedToByAModule", $langs->transnoentities("yes")).')';
+		}
 		$s = '';
 		if ($type == -1) {
 			$s .= $langs->trans("Name").': <b>'.$this->getNom($langs).'</b><br>';
 			$s .= $langs->trans("Version").': <b>'.$this->getVersion().'</b><br>';
+		} elseif ($type == 0) {
+			$s .= $langs->trans("ProductCodeDesc").'<br>';
+		} elseif ($type == 1) {
+			$s .= $langs->trans("ServiceCodeDesc").'<br>';
 		}
-		if ($type == 0)  $s .= $langs->trans("ProductCodeDesc").'<br>';
-		if ($type == 1)  $s .= $langs->trans("ServiceCodeDesc").'<br>';
-		if ($type != -1) $s .= $langs->trans("ValidityControledByModule").': <b>'.$this->getNom($langs).'</b><br>';
+		if ($type != -1) {
+			$s .= $langs->trans("ValidityControledByModule").': <b>'.$this->getNom($langs).'</b><br>';
+		}
 		$s .= '<br>';
 		$s .= '<u>'.$langs->trans("ThisIsModuleRules").':</u><br>';
-		if ($type == 0)
-		{
-			$s .= $langs->trans("RequiredIfProduct").': ';
-			if (!empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && !empty($this->code_null)) $s .= '<strike>';
-			$s .= yn(!$this->code_null, 1, 2);
-			if (!empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && !empty($this->code_null)) $s .= '</strike> '.yn(1, 1, 2).' ('.$langs->trans("ForcedToByAModule", $langs->transnoentities("yes")).')';
+		if ($type == 0) {
+			$s .= $langs->trans("RequiredIfProduct").': '.$strikestart;
+			$s .= yn(!$this->code_null, 1, 2).$strikeend;
 			$s .= '<br>';
-		}
-		elseif ($type == 1)
-		{
-			$s .= $langs->trans("RequiredIfService").': ';
-			if (!empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && !empty($this->code_null)) $s .= '<strike>';
-			$s .= yn(!$this->code_null, 1, 2);
-			if (!empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && !empty($this->code_null)) $s .= '</strike> '.yn(1, 1, 2).' ('.$langs->trans("ForcedToByAModule", $langs->transnoentities("yes")).')';
+		} elseif ($type == 1) {
+			$s .= $langs->trans("RequiredIfService").': '.$strikestart;
+			$s .= yn(!$this->code_null, 1, 2).$strikeend;
 			$s .= '<br>';
-		}
-		elseif ($type == -1)
-		{
-			$s .= $langs->trans("Required").': ';
-			if (!empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && !empty($this->code_null)) $s .= '<strike>';
-			$s .= yn(!$this->code_null, 1, 2);
-			if (!empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && !empty($this->code_null)) $s .= '</strike> '.yn(1, 1, 2).' ('.$langs->trans("ForcedToByAModule", $langs->transnoentities("yes")).')';
+		} elseif ($type == -1) {
+			$s .= $langs->trans("Required").': '.$strikestart;
+			$s .= yn(!$this->code_null, 1, 2).$strikeend;
 			$s .= '<br>';
 		}
 		$s .= $langs->trans("CanBeModifiedIfOk").': ';
@@ -231,16 +233,18 @@ abstract class ModeleProductCode
 		$s .= $langs->trans("CanBeModifiedIfKo").': '.yn($this->code_modifiable_invalide, 1, 2).'<br>';
 		$s .= $langs->trans("AutomaticCode").': '.yn($this->code_auto, 1, 2).'<br>';
 		$s .= '<br>';
-		if ($type == 0 || $type == -1)
-		{
+		if ($type == 0 || $type == -1) {
 			$nextval = $this->getNextValue($product, 0);
-			if (empty($nextval)) $nextval = $langs->trans("Undefined");
+			if (empty($nextval)) {
+				$nextval = $langs->trans("Undefined");
+			}
 			$s .= $langs->trans("NextValue").($type == -1 ? ' ('.$langs->trans("Product").')' : '').': <b>'.$nextval.'</b><br>';
 		}
-		if ($type == 1 || $type == -1)
-		{
+		if ($type == 1 || $type == -1) {
 			$nextval = $this->getNextValue($product, 1);
-			if (empty($nextval)) $nextval = $langs->trans("Undefined");
+			if (empty($nextval)) {
+				$nextval = $langs->trans("Undefined");
+			}
 			$s .= $langs->trans("NextValue").($type == -1 ? ' ('.$langs->trans("Service").')' : '').': <b>'.$nextval.'</b>';
 		}
 		return $s;

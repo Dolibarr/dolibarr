@@ -50,15 +50,16 @@ if (empty($argv[1])) {
     print "Example: ".$script_file." release=6.0.0 includecustom=1 includeconstant=FR:INVOICE_CAN_ALWAYS_BE_REMOVED:0 includeconstant=all:MAILING_NO_USING_PHPMAIL:1\n";
     exit -1;
 }
+
 parse_str($argv[1]);
 
 $i=0;
 while ($i < $argc) {
     if (! empty($argv[$i])) parse_str($argv[$i]);
     if (preg_match('/includeconstant=/', $argv[$i])) {
-        $tmp=explode(':', $includeconstant, 3);
+    	$tmp=explode(':', $includeconstant, 3);			// $includeconstant has been set with previous parse_str()
         if (count($tmp) != 3) {
-            print "Error: Bad parameter includeconstant ".$includeconstant."\n";
+        	print "Error: Bad parameter includeconstant=".$includeconstant."\n";
             exit -1;
         }
         $includeconstants[$tmp[0]][$tmp[1]] = $tmp[2];
@@ -105,12 +106,12 @@ if (empty($includecustom)) {
     }
 }
 
-print "Release                        : ".$release."\n";
 print "Working on files into          : ".DOL_DOCUMENT_ROOT."\n";
+print "Release                        : ".$release."\n";
 print "Include custom in signature    : ".$includecustom."\n";
 print "Include constants in signature : ";
 foreach ($includeconstants as $countrycode => $tmp) {
-    foreach($tmp as $constname => $constvalue) {
+    foreach ($tmp as $constname => $constvalue) {
         print $constname.'='.$constvalue." ";
     }
 }
@@ -125,12 +126,17 @@ $checksumconcat=array();
 
 $outputfile=$outputdir.'/filelist-'.$release.'.xml';
 $fp = fopen($outputfile, 'w');
+if (empty($fp)) {
+	print 'Failed to open file '.$outputfile."\n";
+	exit(-1);
+}
+
 fputs($fp, '<?xml version="1.0" encoding="UTF-8" ?>'."\n");
 fputs($fp, '<checksum_list version="'.$release.'" date="'.dol_print_date(dol_now(), 'dayhourrfc').'" generator="'.$script_file.'">'."\n");
 
 foreach ($includeconstants as $countrycode => $tmp) {
     fputs($fp, '<dolibarr_constants country="'.$countrycode.'">'."\n");
-    foreach($tmp as $constname => $constvalue) {
+    foreach ($tmp as $constname => $constvalue) {
         $valueforchecksum=(empty($constvalue)?'0':$constvalue);
         $checksumconcat[]=$valueforchecksum;
         fputs($fp, '    <constant name="'.$constname.'">'.$valueforchecksum.'</constant>'."\n");
@@ -146,8 +152,9 @@ $iterator1 = new RecursiveIteratorIterator($dir_iterator1);
 $files = new RegexIterator($iterator1, '#^(?:[A-Z]:)?(?:/(?!(?:'.($includecustom?'':'custom\/|').'documents\/|conf\/|install\/))[^/]+)+/[^/]+\.(?:php|css|html|js|json|tpl|jpg|png|gif|sql|lang)$#i');
 */
 $regextoinclude='\.(php|php3|php4|php5|phtml|phps|phar|inc|css|scss|html|xml|js|json|tpl|jpg|jpeg|png|gif|ico|sql|lang|txt|yml|md|mp3|mp4|wav|mkv|z|gz|zip|rar|tar|less|svg|eot|woff|woff2|ttf|manifest)$';
-$regextoexclude='('.($includecustom?'':'custom|').'documents|conf|install|public\/test|sabre\/sabre\/.*\/tests|Shared\/PCLZip|nusoap\/lib\/Mail|php\/example|php\/test|geoip\/sample.*\.php|ckeditor\/samples|ckeditor\/adapters)$';  // Exclude dirs
+$regextoexclude='('.($includecustom?'':'custom|').'documents|conf|install|dejavu-fonts-ttf-.*|public\/test|sabre\/sabre\/.*\/tests|Shared\/PCLZip|nusoap\/lib\/Mail|php\/example|php\/test|geoip\/sample.*\.php|ckeditor\/samples|ckeditor\/adapters)$';  // Exclude dirs
 $files = dol_dir_list(DOL_DOCUMENT_ROOT, 'files', 1, $regextoinclude, $regextoexclude, 'fullname');
+
 $dir='';
 $needtoclose=0;
 foreach ($files as $filetmp) {
@@ -155,9 +162,10 @@ foreach ($files as $filetmp) {
     //$newdir = str_replace(dirname(__FILE__).'/../htdocs', '', dirname($file));
     $newdir = str_replace(DOL_DOCUMENT_ROOT, '', dirname($file));
     if ($newdir!=$dir) {
-        if ($needtoclose)
+    	if ($needtoclose) {
             fputs($fp, '  </dir>'."\n");
-        fputs($fp, '  <dir name="'.$newdir.'" >'."\n");
+    	}
+        fputs($fp, '  <dir name="'.$newdir.'">'."\n");
         $dir = $newdir;
         $needtoclose=1;
     }

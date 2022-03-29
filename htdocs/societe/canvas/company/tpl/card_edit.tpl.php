@@ -75,7 +75,7 @@ $contact = $GLOBALS['objcanvas']->control->object;
 			<tr>
 				<td>
 				<?php if ($this->control->tpl['ismodifiable_customercode']) { ?>
-				<input type="text" name="code_client" size="16" value="<?php echo $this->control->tpl['customercode']; ?>" maxlength="15">
+				<input type="text" name="code_client" size="16" value="<?php echo $this->control->tpl['customercode']; ?>" maxlength="24">
 				<?php } else { ?>
 					<?php echo $this->control->tpl['customercode']; ?>
 				<input type="hidden" name="code_client" value="<?php echo $this->control->tpl['customercode']; ?>">
@@ -96,7 +96,7 @@ $contact = $GLOBALS['objcanvas']->control->object;
 			<tr>
 				<td>
 				<?php if ($this->control->tpl['ismodifiable_suppliercode']) { ?>
-				<input type="text" name="code_fournisseur" size="16" value="<?php echo $this->control->tpl['suppliercode']; ?>" maxlength="15">
+				<input type="text" name="code_fournisseur" size="16" value="<?php echo $this->control->tpl['suppliercode']; ?>" maxlength="24">
 				<?php } else { ?>
 					<?php echo $this->control->tpl['suppliercode']; ?>
 				<input type="hidden" name="code_fournisseur" value="<?php echo $this->control->tpl['suppliercode']; ?>">
@@ -116,7 +116,7 @@ if ($this->control->tpl['fournisseur']) {
 	<td colspan="3"><?php echo $this->control->tpl['select_suppliercategory']; ?></td>
 </tr>
 		<?php
-    }
+	}
 }
 
 if (!empty($conf->barcode->enabled)) { ?>
@@ -215,9 +215,9 @@ if (!empty($this->control->tpl['localtax'])) echo $this->control->tpl['localtax'
 <br>
 
 <div class="center">
-<input type="submit" class="button" name="save" value="<?php echo $langs->trans("Save"); ?>">
+<input type="submit" class="button button-save" name="save" value="<?php echo $langs->trans("Save"); ?>">
 &nbsp; &nbsp;
-<input type="submit" class="button" name="cancel" value="<?php echo $langs->trans("Cancel"); ?>">
+<input type="submit" class="button button-cancel" name="cancel" value="<?php echo $langs->trans("Cancel"); ?>">
 </div>
 
 </form>

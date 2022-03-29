@@ -64,3 +64,5 @@ InterLineDuration=Duración línea intervención
 InterLineDesc=Descripción línea intervención
 RepeatableIntervention=Plantilla de intervención
 ToCreateAPredefinedIntervention=Para crear una intervención predefinida o recurrente, cree una intervención común y conviértala en plantilla de intervención
+Reopen=Reabrir
+ConfirmReopenIntervention=¿Está seguro de querer volver a abrir la intervención <b> %s </b>?

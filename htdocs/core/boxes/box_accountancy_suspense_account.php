@@ -32,57 +32,57 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
  */
 class box_accountancy_suspense_account extends ModeleBoxes
 {
-    public $boxcode = "accountancy_suspense_account";
-    public $boximg = "object_invoice";
-    public $boxlabel = "BoxSuspenseAccount";
-    public $depends = array("accounting");
+	public $boxcode = "accountancy_suspense_account";
+	public $boximg = "object_invoice";
+	public $boxlabel = "BoxSuspenseAccount";
+	public $depends = array("accounting");
 
-    /**
-     * @var DoliDB Database handler.
-     */
-    public $db;
+	/**
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
 
-    public $param;
+	public $param;
 
-    public $info_box_head = array();
-    public $info_box_contents = array();
+	public $info_box_head = array();
+	public $info_box_contents = array();
 
 
-    /**
-     *  Constructor
-     *
-     *  @param  DoliDB  $db         Database handler
-     *  @param  string  $param      More parameters
-     */
-    public function __construct($db, $param)
-    {
-        global $user;
+	/**
+	 *  Constructor
+	 *
+	 *  @param  DoliDB  $db         Database handler
+	 *  @param  string  $param      More parameters
+	 */
+	public function __construct($db, $param)
+	{
+		global $user;
 
-        $this->db = $db;
+		$this->db = $db;
 
-        $this->hidden = !($user->rights->accounting->mouvements->lire);
-    }
+		$this->hidden = !($user->rights->accounting->mouvements->lire);
+	}
 
-    /**
-     *  Load data for box to show them later
-     *
-     *  @return	void
-     */
-    public function loadBox()
-    {
-        global $user, $langs, $conf;
+	/**
+	 *  Load data for box to show them later
+	 *
+	 *  @return	void
+	 */
+	public function loadBox()
+	{
+		global $user, $langs, $conf;
 
-        include_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
+		include_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
 
-        //$bookkeepingstatic = new BookKeeping($this->db);
+		//$bookkeepingstatic = new BookKeeping($this->db);
 
-        $this->info_box_head = array('text' => $langs->trans("BoxTitleSuspenseAccount"));
+		$this->info_box_head = array('text' => $langs->trans("BoxTitleSuspenseAccount"));
 
-        if ($user->rights->accounting->mouvements->lire)
-        {
+		if ($user->rights->accounting->mouvements->lire)
+		{
 			$suspenseAccount = $conf->global->ACCOUNTING_ACCOUNT_SUSPENSE;
-        	if (!empty($suspenseAccount) && $suspenseAccount > 0)
-        	{
+			if (!empty($suspenseAccount) && $suspenseAccount > 0)
+			{
 				$sql = "SELECT COUNT(*) as nb_suspense_account";
 				$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as b";
 				$sql .= " WHERE b.numero_compte = ".$suspenseAccount;
@@ -112,13 +112,13 @@ class box_accountancy_suspense_account extends ModeleBoxes
 					'text' => '<span class="opacitymedium">'.$langs->trans("SuspenseAccountNotDefined").'</span>'
 				);
 			}
-        } else {
-            $this->info_box_contents[0][0] = array(
-                'td' => 'class="nohover"',
-            	'text' => '<span class="opacitymedium">'.$langs->trans("ReadPermissionNotAllowed").'</span>'
-            );
-        }
-    }
+		} else {
+			$this->info_box_contents[0][0] = array(
+				'td' => 'class="nohover"',
+				'text' => '<span class="opacitymedium">'.$langs->trans("ReadPermissionNotAllowed").'</span>'
+			);
+		}
+	}
 
 	/**
 	 *	Method to show box
@@ -128,8 +128,8 @@ class box_accountancy_suspense_account extends ModeleBoxes
 	 *  @param	int		$nooutput	No print, only return string
 	 *	@return	string
 	 */
-    public function showBox($head = null, $contents = null, $nooutput = 0)
-    {
-        return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
-    }
+	public function showBox($head = null, $contents = null, $nooutput = 0)
+	{
+		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
+	}
 }

@@ -32,13 +32,13 @@ if (!defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL', 1);
 //if (! defined('NOLOGIN')) define('NOLOGIN',1);					// Not disabled cause need to load personalized language
 if (!defined('NOREQUIREMENU'))  define('NOREQUIREMENU', 1);
 if (!defined('NOREQUIREHTML'))  define('NOREQUIREHTML', 1);
+if (!defined('NOBROWSERNOTIF')) define('NOBROWSERNOTIF', 1);
 
 if (!defined('DISABLE_JQUERY_TABLEDND'))   define('DISABLE_JQUERY_TABLEDND', 1);
 if (!defined('DISABLE_JQUERY_JNOTIFY'))    define('DISABLE_JQUERY_JNOTIFY', 1);
 if (!defined('DISABLE_JQUERY_FLOT'))       define('DISABLE_JQUERY_FLOT', 1);
 if (!defined('DISABLE_JQUERY_JEDITABLE'))  define('DISABLE_JQUERY_JEDITABLE', 1);
 if (!defined('DISABLE_CKEDITOR'))          define('DISABLE_CKEDITOR', 1);
-if (!defined('DISABLE_BROWSER_NOTIF'))     define('DISABLE_BROWSER_NOTIF', 1);
 if (!defined('DISABLE_DATE_PICKER'))       define('DISABLE_DATE_PICKER', 1);
 if (!defined('DISABLE_SELECT2'))           define('DISABLE_SELECT2', 1);
 
@@ -177,15 +177,14 @@ $(document).ready(function(){
 if (empty($user->socid))	// If internal user or not defined
 {
 	$conf->standard_menu = (empty($conf->global->MAIN_MENU_STANDARD_FORCED) ? (empty($conf->global->MAIN_MENU_STANDARD) ? 'eldy_menu.php' : $conf->global->MAIN_MENU_STANDARD) : $conf->global->MAIN_MENU_STANDARD_FORCED);
-}
-else                        	// If external user
+} else // If external user
 {
 	$conf->standard_menu = (empty($conf->global->MAIN_MENUFRONT_STANDARD_FORCED) ? (empty($conf->global->MAIN_MENUFRONT_STANDARD) ? 'eldy_menu.php' : $conf->global->MAIN_MENUFRONT_STANDARD) : $conf->global->MAIN_MENUFRONT_STANDARD_FORCED);
 }
 
 // Load the menu manager (only if not already done)
 $file_menu = $conf->standard_menu;
-if (GETPOST('menu', 'aZ09')) $file_menu = GETPOST('menu', 'aZ09');     // example: menu=eldy_menu.php
+if (GETPOST('menu', 'aZ09')) $file_menu = GETPOST('menu', 'aZ09'); // example: menu=eldy_menu.php
 if (!class_exists('MenuManager'))
 {
 	$menufound = 0;

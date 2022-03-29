@@ -126,9 +126,14 @@ if (g.getDivId() != null)
 			$projecttmp = new Project($db);
 			$projecttmp->fetch($t['task_project_id']);
 			$tmpt = array(
-				'task_id'=> '-'.$t['task_project_id'], 'task_alternate_id'=> '-'.$t['task_project_id'], 'task_name'=>$projecttmp->ref.' '.$projecttmp->title, 'task_resources'=>'',
-				'task_start_date'=>'', 'task_end_date'=>'',
-				'task_is_group'=>1, 'task_position'=>0, 'task_css'=>'ggroupblack', 'task_milestone'=> 0, 'task_parent'=>0, 'task_parent_alternate_id'=>0, 'task_notes'=>'',
+				'task_id'=> '-'.$t['task_project_id'],
+				'task_alternate_id'=> '-'.$t['task_project_id'],
+				'task_name'=>$projecttmp->ref.' '.$projecttmp->title,
+				'task_resources'=>'',
+				'task_start_date'=>'',
+				'task_end_date'=>'',
+				'task_is_group'=>1, 'task_position'=>0, 'task_css'=>'ggroupblack', 'task_milestone'=> 0, 'task_parent'=>0, 'task_parent_alternate_id'=>0,
+				'task_notes'=>'',
 				'task_planned_workload'=>0
 			);
 			constructGanttLine($tasks, $tmpt, array(), 0, $t['task_project_id']);
@@ -180,6 +185,7 @@ function constructGanttLine($tarr, $task, $task_dependencies, $level = 0, $proje
 	$end_date = dol_print_date($end_date, $dateformatinput2);
 	// Resources
 	$resources = $task["task_resources"];
+
 	// Define depend (ex: "", "4,13", ...)
 	$depend = '';
 	$count = 0;
@@ -195,9 +201,7 @@ function constructGanttLine($tarr, $task, $task_dependencies, $level = 0, $proje
 	if ($project_id && $level < 0)
 	{
 		$parent = '-'.$project_id;
-	}
-	else
-	{
+	} else {
 		$parent = $task["task_parent_alternate_id"];
 		//$parent = $task["task_parent"];
 	}
@@ -208,9 +212,7 @@ function constructGanttLine($tarr, $task, $task_dependencies, $level = 0, $proje
 	{
 		//$link=DOL_URL_ROOT.'/projet/tasks.php?withproject=1&id='.abs($task["task_id"]);
 		$link = '';
-	}
-	else
-	{
+	} else {
 		$link = DOL_URL_ROOT.'/projet/tasks/contact.php?withproject=1&id='.$task["task_id"];
 	}
 

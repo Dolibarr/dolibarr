@@ -8,4 +8,4 @@ LinkRemoved=Linkul %s a fost înlăturat
 ErrorFailedToDeleteLink= Eşec la înlăturarea  linkului '<b>%s</b>'
 ErrorFailedToUpdateLink= Eşec la modificarea linkului '<b>%s</b>'
 URLToLink=URL la link
-OverwriteIfExists=Overwrite file if exists
+OverwriteIfExists=Suprascrie dacă fişierul există

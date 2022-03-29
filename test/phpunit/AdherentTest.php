@@ -411,30 +411,30 @@ class AdherentTest extends PHPUnit\Framework\TestCase
         $thirdparty = new Societe($db);
         $thirdparty->initAsSpecimen();
         $result = $thirdparty->create($user);
-        print __METHOD__." id=".$localobject->id." third party id=".$thirdparty->id." result=".$result."\n";
-        $this->assertTrue($result > 0);
+        print __METHOD__." third party id=".$thirdparty->id." result=".$result."\n";
+        $this->assertTrue($result > 0, 'Test to create a thirdparty specimen to use it to set as thirdparty of a member');
 
         //Set Third Party ID
         $result = $localobject->setThirdPartyId($thirdparty->id);
-        $this->assertEquals($result, 1);
+        $this->assertEquals($result, 1, 'Set thirdparty');
         print __METHOD__." id=".$localobject->id." result=".$result."\n";
 
         //Adherent is updated with new data
         $localobject->fetch($localobject->id);
-        $this->assertEquals($localobject->fk_soc, $thirdparty->id);
+        $this->assertEquals($localobject->fk_soc, $thirdparty->id, 'Fetch member');
         print __METHOD__." id=".$localobject->id." result=".$result."\n";
 
         //We remove the third party association
         $result = $localobject->setThirdPartyId(0);
-        $this->assertEquals($result, 1);
+        $this->assertEquals($result, 1, 'Removed the link with thirdparty');
 
         //And check if it has been updated
         $localobject->fetch($localobject->id);
-        $this->assertNull($localobject->fk_soc);
+        $this->assertNull($localobject->fk_soc, 'Check field is null');
 
         //Now we remove the third party
         $result = $thirdparty->delete($thirdparty->id, $user);
-        $this->assertEquals($result, 1);
+        $this->assertEquals($result, 1, 'Delete thirdparty');
 
         return $localobject;
     }

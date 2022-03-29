@@ -1,14 +1,14 @@
 # Dolibarr language file - Source file is en_US - ftp
-FTPClientSetup=FTPクライアントモジュールの設定
-NewFTPClient=新しいFTP接続のセットアップ
-FTPArea=FTPエリア
-FTPAreaDesc=この画面には、FTPサーバビューのコンテンツを表示する
-SetupOfFTPClientModuleNotComplete=FTPクライアントモジュールのセットアップが完了していないと思われる
-FTPFeatureNotSupportedByYourPHP=あなたのPHPは、FTP機能をサポートしていません。
-FailedToConnectToFTPServer=サーバー（サーバー%s、ポート%s）のFTPに接続に失敗しました。
-FailedToConnectToFTPServerWithCredentials=定義されたログイン/パスワードでFTPサーバーにログインに失敗しました
-FTPFailedToRemoveFile=ファイルの<b>%sを</b>削除できませんでした。
-FTPFailedToRemoveDir=（アクセス権を確認し、そのディレクトリが空の）ディレクトリの<b>%sを</b>削除できませんでした。
+FTPClientSetup=FTPまたはSFTPクライアントモジュールの設定
+NewFTPClient=新規FTP / FTPS接続の設定
+FTPArea=FTP / FTPSエリア
+FTPAreaDesc=この画面には、FTPおよびSFTPサーバのビューが表示される。
+SetupOfFTPClientModuleNotComplete=FTPまたはSFTPクライアントモジュールの設定が不完全なようです
+FTPFeatureNotSupportedByYourPHP=お使いのPHPはFTPまたはSFTP機能をサポートしていない
+FailedToConnectToFTPServer=サーバ(サーバ%s、ポート%s)への接続に失敗した
+FailedToConnectToFTPServerWithCredentials=定義されたログイン/パスワードでサーバにログインできなかった
+FTPFailedToRemoveFile=ファイルの<b>%s</b>を削除できなかった。
+FTPFailedToRemoveDir=ディレクトリ<b>%s </b>の削除に失敗した：権限を確認し、ディレクトリが空であることを確認すること。
 FTPPassiveMode=パッシブモード
-ChooseAFTPEntryIntoMenu=メニューのFTPエントリを選択...
-FailedToGetFile=ファイル%sの取得に失敗しました
+ChooseAFTPEntryIntoMenu=メニューからFTP / SFTPサイトを選択する...
+FailedToGetFile=ファイル%sの取得に失敗した

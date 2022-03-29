@@ -64,20 +64,18 @@ if (GETPOST('newcompany') || GETPOST('socid', 'int') || GETPOST('id_fourn'))
 	$sql .= " WHERE s.entity IN (".getEntity('societe').")";
 	if ($socid)
 	{
-        $sql .= " AND (";
-        // Add criteria on name/code
-        if (!empty($conf->global->COMPANY_DONOTSEARCH_ANYWHERE))   // Can use index
-        {
-            $sql .= "nom LIKE '".$db->escape($socid)."%'";
-            $sql .= " OR code_client LIKE '".$db->escape($socid)."%'";
-            $sql .= " OR code_fournisseur LIKE '".$db->escape($socid)."%'";
-        }
-        else
-        {
-    		$sql .= "nom LIKE '%".$db->escape($socid)."%'";
-    		$sql .= " OR code_client LIKE '%".$db->escape($socid)."%'";
-    		$sql .= " OR code_fournisseur LIKE '%".$db->escape($socid)."%'";
-        }
+		$sql .= " AND (";
+		// Add criteria on name/code
+		if (!empty($conf->global->COMPANY_DONOTSEARCH_ANYWHERE))   // Can use index
+		{
+			$sql .= "nom LIKE '".$db->escape($socid)."%'";
+			$sql .= " OR code_client LIKE '".$db->escape($socid)."%'";
+			$sql .= " OR code_fournisseur LIKE '".$db->escape($socid)."%'";
+		} else {
+			$sql .= "nom LIKE '%".$db->escape($socid)."%'";
+			$sql .= " OR code_client LIKE '%".$db->escape($socid)."%'";
+			$sql .= " OR code_fournisseur LIKE '%".$db->escape($socid)."%'";
+		}
 		if (!empty($conf->global->SOCIETE_ALLOW_SEARCH_ON_ROWID)) $sql .= " OR rowid = '".$db->escape($socid)."'";
 		$sql .= ")";
 	}
@@ -90,23 +88,19 @@ if (GETPOST('newcompany') || GETPOST('socid', 'int') || GETPOST('id_fourn'))
 	{
 		while ($row = $db->fetch_array($resql))
 		{
-		    $label = $row['nom'];
-		    if ($socid) $label = preg_replace('/('.preg_quote($socid, '/').')/i', '<strong>$1</strong>', $label, 1);
+			$label = $row['nom'];
+			if ($socid) $label = preg_replace('/('.preg_quote($socid, '/').')/i', '<strong>$1</strong>', $label, 1);
 			$row_array['label'] = $label;
 			$row_array['value'] = $row['nom'];
-	        $row_array['key'] = $row['rowid'];
+			$row_array['key'] = $row['rowid'];
 
-	        array_push($return_arr, $row_array);
-	    }
+			array_push($return_arr, $row_array);
+		}
 
-	    echo json_encode($return_arr);
+		echo json_encode($return_arr);
+	} else {
+		echo json_encode(array('nom'=>'Error', 'label'=>'Error', 'key'=>'Error', 'value'=>'Error'));
 	}
-	else
-	{
-	    echo json_encode(array('nom'=>'Error', 'label'=>'Error', 'key'=>'Error', 'value'=>'Error'));
-	}
-}
-else
-{
-    echo json_encode(array('nom'=>'ErrorBadParameter', 'label'=>'ErrorBadParameter', 'key'=>'ErrorBadParameter', 'value'=>'ErrorBadParameter'));
+} else {
+	echo json_encode(array('nom'=>'ErrorBadParameter', 'label'=>'ErrorBadParameter', 'key'=>'ErrorBadParameter', 'value'=>'ErrorBadParameter'));
 }

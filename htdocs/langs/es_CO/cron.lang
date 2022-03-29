@@ -1,4 +1,9 @@
 # Dolibarr language file - Source file is en_US - cron
+Permission23101 =Leer trabajo programado
+Permission23102 =Crear / actualizar trabajo programado
+Permission23103 =Eliminar trabajo programado
+Permission23104 =Ejecutar trabajo programado
+CronList=Trabajos programados
 CronMethod=Método
 CronModule=Módulo
 CronArgs=Parámetros

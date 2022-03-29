@@ -15,7 +15,7 @@ if (!empty($extrafieldsobjectkey))	// $extrafieldsobject is the $object->table_e
 {
 	if (is_array($extrafields->attributes[$extrafieldsobjectkey]['label']) && count($extrafields->attributes[$extrafieldsobjectkey]['label']))
 	{
-        if (empty($extrafieldsobjectprefix)) $extrafieldsobjectprefix = 'ef.';
+		if (empty($extrafieldsobjectprefix)) $extrafieldsobjectprefix = 'ef.';
 
 		foreach ($extrafields->attributes[$extrafieldsobjectkey]['label'] as $key => $val)
 		{
@@ -26,10 +26,8 @@ if (!empty($extrafieldsobjectkey))	// $extrafieldsobject is the $object->table_e
 				if (!empty($extrafields->attributes[$extrafieldsobjectkey]['computed'][$key])) $sortonfield = '';
 				if ($extrafields->attributes[$extrafieldsobjectkey]['type'][$key] == 'separate') {
 					print '<th class="liste_titre thseparator"></th>';
-				}
-				else
-				{
-					if (! empty($extrafields->attributes[$extrafieldsobjectkey]['langfile'][$key]) && is_object($langs)) {
+				} else {
+					if (!empty($extrafields->attributes[$extrafieldsobjectkey]['langfile'][$key]) && is_object($langs)) {
 						$langs->load($extrafields->attributes[$extrafieldsobjectkey]['langfile'][$key]);
 					}
 

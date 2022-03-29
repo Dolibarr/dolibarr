@@ -31,10 +31,8 @@ TicketDictType=Τύπος εισιτηρίου
 TicketDictCategory=Εισιτήριο - Ομαδοποιεί
 TicketDictSeverity=Εισιτήριο - Βαρύτητα
 TicketDictResolution=Εισιτήριο - Ανάλυση
-TicketTypeShortBUGSOFT=Λογική δυσλειτουργίας
-TicketTypeShortBUGHARD=Dysfonctionnement υλικά
-TicketTypeShortCOM=Εμπορική ερώτηση
 
+TicketTypeShortCOM=Εμπορική ερώτηση
 TicketTypeShortHELP=Αίτημα για λειτουργική βοήθεια
 TicketTypeShortISSUE=Θέμα, σφάλμα ή πρόβλημα
 TicketTypeShortREQUEST=Αίτημα αλλαγής ή βελτίωσης
@@ -44,7 +42,7 @@ TicketTypeShortOTHER=Άλλο
 TicketSeverityShortLOW=Χαμηλή
 TicketSeverityShortNORMAL=Κανονικός
 TicketSeverityShortHIGH=Υψηλή
-TicketSeverityShortBLOCKING=Κρίσιμη / Αποκλεισμός
+TicketSeverityShortBLOCKING=Critical, Blocking
 
 ErrorBadEmailAddress=Το πεδίο &#39;%s&#39; είναι εσφαλμένο
 MenuTicketMyAssign=Τα εισιτήριά μου
@@ -60,7 +58,6 @@ OriginEmail=Πηγή ηλεκτρονικού ταχυδρομείου
 Notify_TICKET_SENTBYMAIL=Στείλτε μήνυμα εισιτηρίου μέσω ηλεκτρονικού ταχυδρομείου
 
 # Status
-NotRead=Δεν διαβάζεται
 Read=Ανάγνωση
 Assigned=Ανατεθεί
 InProgress=Σε εξέλιξη
@@ -72,7 +69,6 @@ Deleted=Διαγράφηκε
 
 # Dict
 Type=Τύπος
-Category=Αναλυτικός κώδικας
 Severity=Δριμύτητα
 
 # Email templates
@@ -127,8 +123,8 @@ TicketsActivatePublicInterfaceHelp=Η δημόσια διεπαφή επιτρέ
 TicketsAutoAssignTicket=Ορίστε αυτόματα τον χρήστη που δημιούργησε το εισιτήριο
 TicketsAutoAssignTicketHelp=Κατά τη δημιουργία ενός εισιτηρίου, ο χρήστης μπορεί να αντιστοιχιστεί αυτόματα στο εισιτήριο.
 TicketNumberingModules=Μονάδα αρίθμησης εισιτηρίων
+TicketsModelModule=Document templates for tickets
 TicketNotifyTiersAtCreation=Ειδοποιήστε τρίτο μέρος στη δημιουργία
-TicketGroup=Ομάδα
 TicketsDisableCustomerEmail=Πάντα να απενεργοποιείτε τα μηνύματα ηλεκτρονικού ταχυδρομείου όταν δημιουργείται ένα εισιτήριο από τη δημόσια διασύνδεση
 TicketsPublicNotificationNewMessage=Send email(s) when a new message is added
 TicketsPublicNotificationNewMessageHelp=Send email(s) when a new message is added from public interface (to assigned user or the notifications email to (update) and/or the notifications email to)
@@ -162,7 +158,7 @@ CreatedBy=Δημιουργήθηκε από
 NewTicket=Νέο εισιτήριο
 SubjectAnswerToTicket=Απάντηση εισιτηρίου
 TicketTypeRequest=Τύπος αιτήματος
-TicketCategory=Αναλυτικός κώδικας
+TicketCategory=Ομάδα
 SeeTicket=Δείτε εισιτήριο
 TicketMarkedAsRead=Το εισιτήριο έχει επισημανθεί ως αναγνωσμένο
 TicketReadOn=Συνέχισε να διαβάζεις
@@ -235,7 +231,6 @@ TicketLogStatusChanged=Η κατάσταση άλλαξε: %s to %s
 TicketNotNotifyTiersAtCreate=Μην ειδοποιείτε την εταιρεία στη δημιουργία
 Unread=Αδιάβαστος
 TicketNotCreatedFromPublicInterface=Μη διαθέσιμος. Το εισιτήριο δεν δημιουργήθηκε από το δημόσιο περιβάλλον.
-PublicInterfaceNotEnabled=Η δημόσια διεπαφή δεν ήταν ενεργοποιημένη
 ErrorTicketRefRequired=Το όνομα αναφοράς Eισιτηρίου είναι υποχρεωτικό
 
 #

@@ -179,8 +179,7 @@ while ($fields = $db->fetch_array($resql)) {
 	$object->town = trim($fields['FVILLE']);
 	if ($fields['FPAYS'])
 		$object->country_id = dol_getIdFromCode($db, trim(ucwords(strtolower($fields['FPAYS']))), 'c_country', 'label', 'rowid');
-	else
-		$object->country_id = 1;
+	else $object->country_id = 1;
 	$object->phone = trim($fields['FTEL']) ? trim($fields['FTEL']) : trim($fields['FCONTACT']);
 	$object->phone = substr($object->phone, 0, 20);
 	$object->fax = trim($fields['FFAX']) ? trim($fields['FFAX']) : trim($fields['FCONTACT']);
@@ -299,8 +298,7 @@ while ($fields = $db->fetch_array($resql)) {
 		$contact->town = trim($fields['LVILLE']);
 		if ($fields['FPAYS'])
 			$contact->country_id = dol_getIdFromCode($db, trim(ucwords(strtolower($fields['LPAYS']))), 'c_country', 'label', 'rowid');
-		else
-			$contact->country_id = 1;
+		else $contact->country_id = 1;
 		$contact->email = $fields['LMAIL'];
 		$contact->phone = trim($fields['LTEL']) ? trim($fields['LTEL']) : trim($fields['LCONTACT']);
 		$contact->fax = trim($fields['LFAX']) ? trim($fields['LFAX']) : trim($fields['LCONTACT']);
@@ -340,8 +338,7 @@ while ($fields = $db->fetch_array($resql)) {
 		$error++;    // $errorrecord will be reset
 	}
 	$j++;
-} else
-    die("error : $sql");
+} else die("error : $sql");
 
 $db->commit();
 

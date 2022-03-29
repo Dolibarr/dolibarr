@@ -27,9 +27,10 @@ QtyInOtherShipments=Q.ta in altre spedizioni
 KeepToShip=Ancora da spedire
 KeepToShipShort=Rimanente
 OtherSendingsForSameOrder=Altre Spedizioni per questo ordine
-SendingsAndReceivingForSameOrder=Spedizioni e ricezioni per questo ordini
+SendingsAndReceivingForSameOrder=Spedizioni e ricezioni per questo ordine
 SendingsToValidate=Spedizione da convalidare
 StatusSendingCanceled=Annullato
+StatusSendingCanceledShort=Annullata
 StatusSendingDraft=Bozza
 StatusSendingValidated=Convalidata (prodotti per la spedizione o già spediti)
 StatusSendingProcessed=Processato
@@ -65,6 +66,7 @@ ValidateOrderFirstBeforeShipment=È necessario convalidare l'ordine prima di pot
 # Sending methods
 # ModelDocument
 DocumentModelTyphon=Modello più completo di documento per le ricevute di consegna (logo. ..)
+DocumentModelStorm=Modello di documento più completo per ricevute di consegna e compatibilità con campi extra (logo...)
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=EXPEDITION_ADDON_NUMBER costante non definita
 SumOfProductVolumes=Totale volume prodotti
 SumOfProductWeights=Totale peso prodotti

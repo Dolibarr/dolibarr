@@ -28,8 +28,8 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/sendings.lib.php';
 if (!empty($conf->projet->enabled)) {
-    require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-    require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 
 // Load translation files required by the page
@@ -37,7 +37,7 @@ $langs->loadLangs(array('sendings', 'companies', 'bills', 'deliveries', 'orders'
 
 $id = (GETPOST('id', 'int') ?GETPOST('id', 'int') : GETPOST('facid', 'int')); // For backward compatibility
 $ref = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 // Security check
 $socid = '';
@@ -47,27 +47,27 @@ $result = restrictedArea($user, $origin, $origin_id);
 $object = new Expedition($db);
 if ($id > 0 || !empty($ref))
 {
-    $object->fetch($id, $ref);
-    $object->fetch_thirdparty();
+	$object->fetch($id, $ref);
+	$object->fetch_thirdparty();
 
-    if (!empty($object->origin))
-    {
-        $typeobject = $object->origin;
-        $origin = $object->origin;
-        $object->fetch_origin();
-    }
+	if (!empty($object->origin))
+	{
+		$typeobject = $object->origin;
+		$origin = $object->origin;
+		$object->fetch_origin();
+	}
 
-    // Linked documents
-    if ($typeobject == 'commande' && $object->$typeobject->id && !empty($conf->commande->enabled))
-    {
-        $objectsrc = new Commande($db);
-        $objectsrc->fetch($object->$typeobject->id);
-    }
-    if ($typeobject == 'propal' && $object->$typeobject->id && !empty($conf->propal->enabled))
-    {
-        $objectsrc = new Propal($db);
-        $objectsrc->fetch($object->$typeobject->id);
-    }
+	// Linked documents
+	if ($typeobject == 'commande' && $object->$typeobject->id && !empty($conf->commande->enabled))
+	{
+		$objectsrc = new Commande($db);
+		$objectsrc->fetch($object->$typeobject->id);
+	}
+	if ($typeobject == 'propal' && $object->$typeobject->id && !empty($conf->propal->enabled))
+	{
+		$objectsrc = new Propal($db);
+		$objectsrc->fetch($object->$typeobject->id);
+	}
 }
 
 $permissionnote = $user->rights->expedition->creer; // Used by the include of actions_setnotes.inc.php
@@ -91,7 +91,7 @@ $form = new Form($db);
 if ($id > 0 || !empty($ref))
 {
 	$head = shipping_prepare_head($object);
-	dol_fiche_head($head, 'note', $langs->trans("Shipment"), -1, 'sending');
+	print dol_get_fiche_head($head, 'note', $langs->trans("Shipment"), -1, 'sending');
 
 
 	// Shipment card
@@ -103,52 +103,52 @@ if ($id > 0 || !empty($ref))
 	$morehtmlref .= $form->editfieldval("RefCustomer", '', $object->ref_customer, $object, $user->rights->expedition->creer, 'string', '', null, null, '', 1);
 	// Thirdparty
 	$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1);
-    // Project
-    if (!empty($conf->projet->enabled)) {
-        $langs->load("projects");
-        $morehtmlref .= '<br>'.$langs->trans('Project').' ';
-        if (0) {    // Do not change on shipment
-            if ($action != 'classify') {
-                $morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
-            }
-            if ($action == 'classify') {
-                // $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
-                $morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
-                $morehtmlref .= '<input type="hidden" name="action" value="classin">';
-                $morehtmlref .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-                $morehtmlref .= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
-                $morehtmlref .= '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-                $morehtmlref .= '</form>';
-            } else {
-                $morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
-            }
-        } else {
-            // We don't have project on shipment, so we will use the project or source object instead
-            // TODO Add project on shipment
-            $morehtmlref .= ' : ';
-            if (!empty($objectsrc->fk_project)) {
-                $proj = new Project($db);
-                $proj->fetch($objectsrc->fk_project);
-                $morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$objectsrc->fk_project.'" title="'.$langs->trans('ShowProject').'">';
-                $morehtmlref .= $proj->ref;
-                $morehtmlref .= '</a>';
-            } else {
-                $morehtmlref .= '';
-            }
-        }
-    }
-    $morehtmlref .= '</div>';
+	// Project
+	if (!empty($conf->projet->enabled)) {
+		$langs->load("projects");
+		$morehtmlref .= '<br>'.$langs->trans('Project').' ';
+		if (0) {    // Do not change on shipment
+			if ($action != 'classify') {
+				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
+			}
+			if ($action == 'classify') {
+				// $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
+				$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+				$morehtmlref .= '<input type="hidden" name="action" value="classin">';
+				$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
+				$morehtmlref .= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+				$morehtmlref .= '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+				$morehtmlref .= '</form>';
+			} else {
+				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+			}
+		} else {
+			// We don't have project on shipment, so we will use the project or source object instead
+			// TODO Add project on shipment
+			$morehtmlref .= ' : ';
+			if (!empty($objectsrc->fk_project)) {
+				$proj = new Project($db);
+				$proj->fetch($objectsrc->fk_project);
+				$morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$objectsrc->fk_project.'" title="'.$langs->trans('ShowProject').'">';
+				$morehtmlref .= $proj->ref;
+				$morehtmlref .= '</a>';
+			} else {
+				$morehtmlref .= '';
+			}
+		}
+	}
+	$morehtmlref .= '</div>';
 
 
-    dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
 
-    print '<div class="underbanner clearboth"></div>';
+	print '<div class="underbanner clearboth"></div>';
 
 	$cssclass = 'titlefield';
 	include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 }
 
 // End of page

@@ -37,8 +37,8 @@ llxHeader();
 // Security check
 if ($user->socid > 0)
 {
-    $action = '';
-    $socid = $user->socid;
+	$action = '';
+	$socid = $user->socid;
 }
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
@@ -69,21 +69,21 @@ $sql .= " AND s.entity IN (".getEntity('societe').")";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 
 if (dol_strlen($stcomm)) {
-    $sql .= " AND s.fk_stcomm=$stcomm";
+	$sql .= " AND s.fk_stcomm=$stcomm";
 }
 
 if (dol_strlen($begin)) {
-    $sql .= " AND p.name LIKE '$begin%'";
+	$sql .= " AND p.name LIKE '$begin%'";
 }
 
 if ($contactname) {
-    $sql .= " AND p.name LIKE '%".strtolower($contactname)."%'";
-    $sortfield = "p.name";
-    $sortorder = "ASC";
+	$sql .= " AND p.name LIKE '%".strtolower($contactname)."%'";
+	$sortfield = "p.name";
+	$sortorder = "ASC";
 }
 
 if ($socid) {
-    $sql .= " AND s.rowid = ".$socid;
+	$sql .= " AND s.rowid = ".$socid;
 }
 
 $sql .= " ORDER BY $sortfield $sortorder ";
@@ -92,42 +92,40 @@ $sql .= $db->plimit($limit, $offset);
 $result = $db->query($sql);
 if ($result)
 {
-    $num = $db->num_rows($result);
+	$num = $db->num_rows($result);
 
-    $title = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("ListOfContacts") : $langs->trans("ListOfContactsAddresses"));
-    print_barre_liste($title." (".$langs->trans("Suppliers").")", $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, "", $num);
+	$title = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("ListOfContacts") : $langs->trans("ListOfContactsAddresses"));
+	print_barre_liste($title." (".$langs->trans("Suppliers").")", $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, "", $num);
 
-    print '<table class="liste centpercent">';
-    print '<tr class="liste_titre">';
-    print_liste_field_titre("Lastname", $_SERVER["PHP_SELF"], "p.name", $begin, "", "", $sortfield, $sortorder);
-    print_liste_field_titre("Firstname", $_SERVER["PHP_SELF"], "p.firstname", $begin, "", "", $sortfield, $sortorder);
-    print_liste_field_titre("Company", $_SERVER["PHP_SELF"], "s.nom", $begin, "", "", $sortfield, $sortorder);
-    print_liste_field_titre("Email");
-    print_liste_field_titre("Phone");
-    print "</tr>\n";
+	print '<table class="liste centpercent">';
+	print '<tr class="liste_titre">';
+	print_liste_field_titre("Lastname", $_SERVER["PHP_SELF"], "p.name", $begin, "", "", $sortfield, $sortorder);
+	print_liste_field_titre("Firstname", $_SERVER["PHP_SELF"], "p.firstname", $begin, "", "", $sortfield, $sortorder);
+	print_liste_field_titre("Company", $_SERVER["PHP_SELF"], "s.nom", $begin, "", "", $sortfield, $sortorder);
+	print_liste_field_titre("Email");
+	print_liste_field_titre("Phone");
+	print "</tr>\n";
 
-    $i = 0;
-    while ($i < min($num, $limit))
-    {
-        $obj = $db->fetch_object($result);
+	$i = 0;
+	while ($i < min($num, $limit))
+	{
+		$obj = $db->fetch_object($result);
 
-        print '<tr class="oddeven">';
+		print '<tr class="oddeven">';
 
-        print '<td><a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$obj->cidp.'">'.img_object($langs->trans("ShowContact"), "contact").' '.$obj->lastname.'</a></td>';
-        print '<td>'.$obj->firstname.'</td>';
-        print '<td><a href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"), "company").' '.$obj->name.'</a></td>';
-        print '<td>'.$obj->email.'</td>';
-        print '<td>'.$obj->phone.'</td>';
+		print '<td><a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$obj->cidp.'">'.img_object($langs->trans("ShowContact"), "contact").' '.$obj->lastname.'</a></td>';
+		print '<td>'.$obj->firstname.'</td>';
+		print '<td><a href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"), "company").' '.$obj->name.'</a></td>';
+		print '<td>'.$obj->email.'</td>';
+		print '<td>'.$obj->phone.'</td>';
 
-        print "</tr>\n";
-        $i++;
-    }
-    print "</table>";
-    $db->free($result);
-}
-else
-{
-    dol_print_error($db);
+		print "</tr>\n";
+		$i++;
+	}
+	print "</table>";
+	$db->free($result);
+} else {
+	dol_print_error($db);
 }
 
 // End of page

@@ -51,6 +51,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 {
 	global $conf, $user, $langs, $db, $hookmanager;
 	global $begin_h, $end_h, $begin_d, $end_d;
+	global $massaction;
 
 	$langs->load("companies");
 
@@ -63,70 +64,58 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 	print '<input type="hidden" name="year" value="'.$year.'">';
 	print '<input type="hidden" name="month" value="'.$month.'">';
 	print '<input type="hidden" name="day" value="'.$day.'">';
-	print '<input type="hidden" name="action" value="'.$action.'">';
+	if ($massaction != 'predelete') {		// When $massaction == 'predelete', action may be already output to 'delete' by the mass action system.
+		print '<input type="hidden" name="action" value="'.$action.'">';
+	}
 	print '<input type="hidden" name="search_showbirthday" value="'.$showbirthday.'">';
-
-	print '<div class="fichecenter">';
-
-	if ($conf->browser->layout == 'phone') print '<div class="fichehalfleft">';
-	else print '<table class="nobordernopadding centpercent"><tr><td class="borderright">';
-
-	print '<table class="nobordernopadding centpercent tableforfield">';
 
 	if ($canedit)
 	{
+		print '<div class="divsearchfield">';
 		// Type
-		print '<tr>';
-		print '<td class="nowrap">';
-		print $langs->trans("Type");
-		print '</td><td class="nowraponall">';
+		print '<span class="fas fa-square inline-block fawidth30" style=" color: #ddd;"></span>';
+		print '<span class="hideonsmartphone">'.$langs->trans("Type").'</span>';
 		$multiselect = 0;
 		if (!empty($conf->global->MAIN_ENABLE_MULTISELECT_TYPE))     // We use an option here because it adds bugs when used on agenda page "peruser" and "list"
 		{
 			$multiselect = (!empty($conf->global->AGENDA_USE_EVENT_TYPE));
 		}
-		print '<span class="fas fa-square inline-block fawidth30" style=" color: #ddd;"></span>';
 		print $formactions->select_type_actions($actioncode, "search_actioncode", $excludetype, (empty($conf->global->AGENDA_USE_EVENT_TYPE) ? 1 : -1), 0, $multiselect, 0, 'maxwidth500');
-		print '</td></tr>';
+		print '</div>';
 
 		// Assigned to
-		print '<tr>';
-		print '<td class="nowrap">';
-		print $langs->trans("ActionsToDoBy").' &nbsp; ';
-		print '</td><td>';
+		print '<div class="divsearchfield">';
 		print img_picto('', 'user', 'class="fawidth30 inline-block"');
-		print $form->select_dolusers($filtert, 'search_filtert', 1, '', !$canedit, '', '', 0, 0, 0, '', 0, '', 'maxwidth500');
-		if (empty($conf->dol_optimize_smallscreen)) print ' &nbsp; '.$langs->trans("or").' '.$langs->trans("ToUserOfGroup").' &nbsp; ';
-		else print '<br>';
+		print '<span class="hideonsmartphone">'.$langs->trans("ActionsToDoBy").'</span>';
+		print $form->select_dolusers($filtert, 'search_filtert', 1, '', !$canedit, '', '', 0, 0, 0, '', 0, '', 'maxwidth500 widthcentpercentminusxx');
+		print '</div>';
+		print '<div class="divsearchfield">';
 		print img_picto('', 'object_group', 'class="fawidth30 inline-block"');
+		print '<span class="hideonsmartphone">'.$langs->trans("ToUserOfGroup").'</span>';
 		print $form->select_dolgroups($usergroupid, 'usergroup', 1, '', !$canedit, '', '', '0', false, 'maxwidth500');
-		print '</td></tr>';
+		print '</div>';
 
 		if ($conf->resource->enabled)
 		{
-		    include_once DOL_DOCUMENT_ROOT.'/resource/class/html.formresource.class.php';
-		    $formresource = new FormResource($db);
+			include_once DOL_DOCUMENT_ROOT.'/resource/class/html.formresource.class.php';
+			$formresource = new FormResource($db);
 
-    		// Resource
-    		print '<tr>';
-    		print '<td class="nowrap">';
-    		print $langs->trans("Resource");
-    		print '</td><td class="nowraponall">';
-    		print img_picto('', 'object_resource', 'class="fawidth30 inline-block"');
-    		print $formresource->select_resource_list($resourceid, "search_resourceid", '', 1, 0, 0, null, '', 2, 0, 'maxwidth500');
-    		print '</td></tr>';
+			// Resource
+			print '<div class="divsearchfield">';
+			print img_picto('', 'object_resource', 'class="fawidth30 inline-block"');
+			print '<span class="hideonsmartphone">'.$langs->trans("Resource").'</span>';
+			print $formresource->select_resource_list($resourceid, "search_resourceid", '', 1, 0, 0, null, '', 2, 0, 'maxwidth500');
+			print '</div>';
 		}
 	}
 
 	if (!empty($conf->societe->enabled) && $user->rights->societe->lire)
 	{
-		print '<tr>';
-		print '<td class="nowrap">';
-		print $langs->trans("ThirdParty").' &nbsp; ';
-		print '</td><td class="nowraponall">';
+		print '<div class="divsearchfield">';
 		print img_picto('', 'company', 'class="fawidth30 inline-block"');
+		print '<span class="hideonsmartphone">'.$langs->trans("ThirdParty").'</span>';
 		print $form->select_company($socid, 'search_socid', '', '&nbsp;', 0, 0, null, 0, 'minwidth100 maxwidth500');
-		print '</td></tr>';
+		print '</div>';
 	}
 
 	if (!empty($conf->projet->enabled) && $user->rights->projet->lire)
@@ -134,80 +123,29 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 		$formproject = new FormProjets($db);
 
-		print '<tr>';
-		print '<td class="nowrap">';
-		print $langs->trans("Project").' &nbsp; ';
-		print '</td><td class="nowraponall">';
+		print '<div class="divsearchfield">';
 		print img_picto('', 'project', 'class="fawidth30 inline-block"');
+		print '<span class="hideonsmartphone">'.$langs->trans("Project").'</span>';
 		print $formproject->select_projects($socid ? $socid : -1, $pid, 'search_projectid', 0, 0, 1, 0, 0, 0, 0, '', 1, 0, 'maxwidth500');
-		print '</td></tr>';
+		print '</div>';
 	}
 
 	if ($canedit && !preg_match('/list/', $_SERVER["PHP_SELF"]))
 	{
 		// Status
-		print '<tr>';
-		print '<td class="nowrap">';
-		print $langs->trans("Status");
-		print ' &nbsp;</td><td class="nowraponall">';
+		print '<div class="divsearchfield">';
+		print img_picto('', 'setup', 'class="fawidth30 inline-block"');
+		print '<span class="hideonsmartphone">'.$langs->trans("Status").'</span>';
 		$formactions->form_select_status_action('formaction', $status, 1, 'search_status', 1, 2, 'minwidth100');
-		print '</td></tr>';
-	}
-
-	if ($canedit && $action == 'show_peruser')
-	{
-		// Filter on hours
-		print '<tr>';
-		print '<td class="nowrap">'.$langs->trans("VisibleTimeRange").'</td>';
-		print "<td class='nowrap'>";
-		print '<div class="ui-grid-a"><div class="ui-block-a">';
-		print '<input type="number" class="short" name="begin_h" value="'.$begin_h.'" min="0" max="23">';
-		if (empty($conf->dol_use_jmobile)) print ' - ';
-		else print '</div><div class="ui-block-b">';
-		print '<input type="number" class="short" name="end_h" value="'.$end_h.'" min="1" max="24">';
-		if (empty($conf->dol_use_jmobile)) print ' '.$langs->trans("H");
-		print '</div></div>';
-		print '</td></tr>';
-
-		// Filter on days
-		print '<tr>';
-		print '<td class="nowrap">'.$langs->trans("VisibleDaysRange").'</td>';
-		print "<td class='nowrap'>";
-		print '<div class="ui-grid-a"><div class="ui-block-a">';
-		print '<input type="number" class="short" name="begin_d" value="'.$begin_d.'" min="1" max="7">';
-		if (empty($conf->dol_use_jmobile)) print ' - ';
-		else print '</div><div class="ui-block-b">';
-		print '<input type="number" class="short" name="end_d" value="'.$end_d.'" min="1" max="7">';
-		print '</div></div>';
-		print '</td></tr>';
+		print '</div>';
 	}
 
 	// Hooks
 	$parameters = array('canedit'=>$canedit, 'pid'=>$pid, 'socid'=>$socid);
+	$object = null;
 	$reshook = $hookmanager->executeHooks('searchAgendaFrom', $parameters, $object, $action); // Note that $action and $object may have been
 
-	print '</table>';
-
-	if ($conf->browser->layout == 'phone') print '</div>';
-	else print '</td>';
-
-	if ($conf->browser->layout == 'phone') print '<div class="fichehalfright">';
-	else print '<td class="center nowrap" valign="middle">';
-
-	print '<table class="centpercent"><tr><td align="center">';
-	print '<div class="formleftzone">';
-	print '<input type="submit" class="button" style="min-width:120px" name="refresh" value="'.$langs->trans("Refresh").'">';
-	print '</div>';
-	print '</td></tr>';
-	print '</table>';
-
-	if ($conf->browser->layout == 'phone') print '</div>';
-	else print '</td></tr></table>';
-
-	print '</div>'; // Close fichecenter
 	print '<div style="clear:both"></div>';
-
-	//print '</form>';
 }
 
 
@@ -226,15 +164,17 @@ function show_array_actions_to_do($max = 5)
 	include_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 	include_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
 
-	$sql = "SELECT a.id, a.label, a.datep as dp, a.datep2 as dp2, a.fk_user_author, a.percent,";
-	$sql .= " c.code, c.libelle as type_label,";
-	$sql .= " s.nom as sname, s.rowid, s.client";
+	$sql = "SELECT a.id, a.label, a.datep as dp, a.datep2 as dp2, a.fk_user_author, a.percent";
+	$sql .= ", c.code, c.libelle as type_label";
+	$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
+	$sql .= ", s.code_client, s.code_compta, s.client";
+	$sql .= ", s.logo, s.email, s.entity";
 	$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a LEFT JOIN ";
 	$sql .= " ".MAIN_DB_PREFIX."c_actioncomm as c ON c.id = a.fk_action";
-    $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql .= " WHERE a.entity IN (".getEntity('agenda').")";
-    $sql .= " AND ((a.percent >= 0 AND a.percent < 100) OR (a.percent = -1 AND a.datep2 > '".$db->idate($now)."'))";
+	$sql .= " AND ((a.percent >= 0 AND a.percent < 100) OR (a.percent = -1 AND a.datep2 > '".$db->idate($now)."'))";
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 	if ($socid) $sql .= " AND s.rowid = ".$socid;
 	$sql .= " ORDER BY a.datep DESC, a.id DESC";
@@ -243,49 +183,54 @@ function show_array_actions_to_do($max = 5)
 	$resql = $db->query($sql);
 	if ($resql)
 	{
-	    $num = $db->num_rows($resql);
+		$num = $db->num_rows($resql);
 
 		print '<div class="div-table-responsive-no-min">';
-	    print '<table class="noborder centpercent">';
-	    print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("LastActionsToDo", $max).'</th>';
-		print '<th colspan="2" class="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/comm/action/list.php?status=todo">'.$langs->trans("FullList").'</a></th>';
+		print '<table class="noborder centpercent">';
+		print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("LastActionsToDo", $max).'</th>';
+		print '<th colspan="2" class="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/comm/action/list.php?action=show_list&status=todo">'.$langs->trans("FullList").'</a></th>';
 		print '</tr>';
 
-		$var = true;
-	    $i = 0;
+		$i = 0;
 
 		$staticaction = new ActionComm($db);
-	    $customerstatic = new Client($db);
+		$customerstatic = new Client($db);
 
-        while ($i < $num)
-        {
-            $obj = $db->fetch_object($resql);
+		while ($i < $num)
+		{
+			$obj = $db->fetch_object($resql);
 
 
-            print '<tr class="oddeven">';
+			print '<tr class="oddeven">';
 
-            $staticaction->type_code = $obj->code;
-            $staticaction->label = ($obj->label ? $obj->label : $obj->type_label);
-            $staticaction->id = $obj->id;
-            print '<td>'.$staticaction->getNomUrl(1, 34).'</td>';
+			$staticaction->type_code = $obj->code;
+			$staticaction->label = ($obj->label ? $obj->label : $obj->type_label);
+			$staticaction->id = $obj->id;
+			print '<td>'.$staticaction->getNomUrl(1, 34).'</td>';
 
-            // print '<td>'.dol_trunc($obj->label,22).'</td>';
+			// print '<td>'.dol_trunc($obj->label,22).'</td>';
 
-            print '<td>';
-            if ($obj->rowid > 0)
-            {
-            	$customerstatic->id = $obj->rowid;
-            	$customerstatic->name = $obj->sname;
-            	$customerstatic->client = $obj->client;
-            	print $customerstatic->getNomUrl(1, '', 16);
-            }
-            print '</td>';
+			print '<td>';
+			if ($obj->socid > 0)
+			{
+				$customerstatic->id = $obj->socid;
+				$customerstatic->name = $obj->name;
+				//$customerstatic->name_alias = $obj->name_alias;
+				$customerstatic->code_client = $obj->code_client;
+				$customerstatic->code_compta = $obj->code_compta;
+				$customerstatic->client = $obj->client;
+				$customerstatic->logo = $obj->logo;
+				$customerstatic->email = $obj->email;
+				$customerstatic->entity = $obj->entity;
+				print $customerstatic->getNomUrl(1, '', 40);
+			}
+			print '</td>';
 
-            $datep = $db->jdate($obj->dp);
-            $datep2 = $db->jdate($obj->dp2);
+			$datep = $db->jdate($obj->dp);
+			$datep2 = $db->jdate($obj->dp2);
 
-            // Date
-			print '<td width="100" class="right">'.dol_print_date($datep, 'day').'&nbsp;';
+			// Date
+			print '<td width="100" class="right tddate">'.dol_print_date($datep, 'day').'&nbsp;';
 			$late = 0;
 			if ($obj->percent == 0 && $datep && $datep < time()) $late = 1;
 			if ($obj->percent == 0 && !$datep && $datep2 && $datep2 < time()) $late = 1;
@@ -299,15 +244,13 @@ function show_array_actions_to_do($max = 5)
 
 			print "</tr>\n";
 
-            $i++;
-        }
-	    print "</table></div><br>";
+			$i++;
+		}
+		print "</table></div><br>";
 
-	    $db->free($resql);
-	}
-	else
-	{
-	    dol_print_error($db);
+		$db->free($resql);
+	} else {
+		dol_print_error($db);
 	}
 }
 
@@ -324,17 +267,19 @@ function show_array_last_actions_done($max = 5)
 
 	$now = dol_now();
 
-	$sql = "SELECT a.id, a.percent, a.datep as da, a.datep2 as da2, a.fk_user_author, a.label,";
-	$sql .= " c.code, c.libelle,";
-	$sql .= " s.rowid, s.nom as sname, s.client";
+	$sql = "SELECT a.id, a.percent, a.datep as da, a.datep2 as da2, a.fk_user_author, a.label";
+	$sql .= ", c.code, c.libelle";
+	$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
+	$sql .= ", s.code_client, s.code_compta, s.client";
+	$sql .= ", s.logo, s.email, s.entity";
 	$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a LEFT JOIN ";
 	$sql .= " ".MAIN_DB_PREFIX."c_actioncomm as c ON c.id = a.fk_action ";
-    $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql .= " WHERE a.entity IN (".getEntity('agenda').")";
-    $sql .= " AND (a.percent >= 100 OR (a.percent = -1 AND a.datep2 <= '".$db->idate($now)."'))";
+	$sql .= " AND (a.percent >= 100 OR (a.percent = -1 AND a.datep2 <= '".$db->idate($now)."'))";
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
-    if ($socid) $sql .= " AND s.rowid = ".$socid;
+	if ($socid) $sql .= " AND s.rowid = ".$socid;
 	$sql .= " ORDER BY a.datep2 DESC";
 	$sql .= $db->plimit($max, 0);
 
@@ -346,13 +291,13 @@ function show_array_last_actions_done($max = 5)
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("LastDoneTasks", $max).'</th>';
-		print '<th colspan="2" class="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/comm/action/list.php?status=done">'.$langs->trans("FullList").'</a></th>';
+		print '<th colspan="2" class="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/comm/action/list.php?action=show_list&status=done">'.$langs->trans("FullList").'</a></th>';
 		print '</tr>';
-		$var = true;
+
 		$i = 0;
 
-	    $staticaction = new ActionComm($db);
-	    $customerstatic = new Societe($db);
+		$staticaction = new ActionComm($db);
+		$customerstatic = new Societe($db);
 
 		while ($i < $num)
 		{
@@ -366,24 +311,30 @@ function show_array_last_actions_done($max = 5)
 			$staticaction->id = $obj->id;
 			print '<td>'.$staticaction->getNomUrl(1, 34).'</td>';
 
-            //print '<td>'.dol_trunc($obj->label,24).'</td>';
+			//print '<td>'.dol_trunc($obj->label,24).'</td>';
 
 			print '<td>';
-			if ($obj->rowid > 0)
+			if ($obj->socid > 0)
 			{
-                $customerstatic->id = $obj->rowid;
-                $customerstatic->name = $obj->sname;
-                $customerstatic->client = $obj->client;
-			    print $customerstatic->getNomUrl(1, '', 24);
+				$customerstatic->id = $obj->socid;
+				$customerstatic->name = $obj->name;
+				//$customerstatic->name_alias = $obj->name_alias;
+				$customerstatic->code_client = $obj->code_client;
+				$customerstatic->code_compta = $obj->code_compta;
+				$customerstatic->client = $obj->client;
+				$customerstatic->logo = $obj->logo;
+				$customerstatic->email = $obj->email;
+				$customerstatic->entity = $obj->entity;
+				print $customerstatic->getNomUrl(1, '', 30);
 			}
 			print '</td>';
 
 			// Date
-			print '<td width="100" class="right">'.dol_print_date($db->jdate($obj->da2), 'day');
+			print '<td width="100" class="right tddate">'.dol_print_date($db->jdate($obj->da2), 'day');
 			print "</td>";
 
-			// Statut
-			print "<td class=\"right\" width=\"14\">".$staticaction->LibStatut($obj->percent, 3)."</td>\n";
+			// Status
+			print '<td class="right" width="14">'.$staticaction->LibStatut($obj->percent, 3)."</td>\n";
 
 			print "</tr>\n";
 			$i++;
@@ -393,9 +344,7 @@ function show_array_last_actions_done($max = 5)
 		print "</table></div><br>";
 
 		$db->free($resql);
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }
@@ -422,13 +371,10 @@ function agenda_prepare_head()
 	$head[$h][2] = 'autoactions';
 	$h++;
 
-	if ($conf->global->MAIN_FEATURES_LEVEL > 0)
-	{
-	    $head[$h][0] = DOL_URL_ROOT."/admin/agenda_reminder.php";
-	    $head[$h][1] = $langs->trans("Reminders");
-	    $head[$h][2] = 'reminders';
-	    $h++;
-	}
+	$head[$h][0] = DOL_URL_ROOT."/admin/agenda_reminder.php";
+	$head[$h][1] = $langs->trans("Reminders");
+	$head[$h][2] = 'reminders';
+	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT."/admin/agenda_xcal.php";
 	$head[$h][1] = $langs->trans("ExportCal");
@@ -471,32 +417,32 @@ function actions_prepare_head($object)
 	$head[$h][2] = 'card';
 	$h++;
 
-    // Tab to link resources
+	// Tab to link resources
 	if ($conf->resource->enabled)
 	{
-	    include_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
-	    $resource = new DolResource($db);
+		include_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
+		$resource = new DolResource($db);
 
 		$head[$h][0] = DOL_URL_ROOT.'/resource/element_resource.php?element=action&element_id='.$object->id;
-        $listofresourcelinked = $resource->getElementResources($object->element, $object->id);
-        $nbResources = (is_array($listofresourcelinked) ?count($listofresourcelinked) : 0);
+		$listofresourcelinked = $resource->getElementResources($object->element, $object->id);
+		$nbResources = (is_array($listofresourcelinked) ?count($listofresourcelinked) : 0);
 		$head[$h][1] = $langs->trans("Resources");
 		if ($nbResources > 0) $head[$h][1] .= (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) ? '<span class="badge marginleftonlyshort">'.($nbResources).'</span>' : '');
 		$head[$h][2] = 'resources';
 		$h++;
 	}
 
-    // Attached files
-    require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-    require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
-    $upload_dir = $conf->agenda->dir_output."/".$object->id;
-    $nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
-    $nbLinks = Link::count($db, $object->element, $object->id);
-    $head[$h][0] = DOL_URL_ROOT.'/comm/action/document.php?id='.$object->id;
-    $head[$h][1] = $langs->trans("Documents");
-    if (($nbFiles + $nbLinks) > 0) $head[$h][1] .= (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) ? '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>' : '');
-    $head[$h][2] = 'documents';
-    $h++;
+	// Attached files
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
+	$upload_dir = $conf->agenda->dir_output."/".$object->id;
+	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
+	$nbLinks = Link::count($db, $object->element, $object->id);
+	$head[$h][0] = DOL_URL_ROOT.'/comm/action/document.php?id='.$object->id;
+	$head[$h][1] = $langs->trans("Documents");
+	if (($nbFiles + $nbLinks) > 0) $head[$h][1] .= (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) ? '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>' : '');
+	$head[$h][2] = 'documents';
+	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/comm/action/info.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('Info');
@@ -519,55 +465,55 @@ function actions_prepare_head($object)
  */
 function calendars_prepare_head($param)
 {
-    global $langs, $conf, $user;
+	global $langs, $conf, $user;
 
-    $h = 0;
-    $head = array();
+	$h = 0;
+	$head = array();
 
-    $head[$h][0] = DOL_URL_ROOT.'/comm/action/list.php'.($param ? '?'.$param : '');
-    $head[$h][1] = $langs->trans("ViewList");
-    $head[$h][2] = 'cardlist';
-    $h++;
+	$head[$h][0] = DOL_URL_ROOT.'/comm/action/list.php?action=show_list'.($param ? '&'.$param : '');
+	$head[$h][1] = $langs->trans("ViewList");
+	$head[$h][2] = 'cardlist';
+	$h++;
 
-    $head[$h][0] = DOL_URL_ROOT.'/comm/action/index.php?action=show_month'.($param ? '&'.$param : '');
-    $head[$h][1] = $langs->trans("ViewCal");
-    $head[$h][2] = 'cardmonth';
-    $h++;
+	$head[$h][0] = DOL_URL_ROOT.'/comm/action/index.php?action=show_month'.($param ? '&'.$param : '');
+	$head[$h][1] = $langs->trans("ViewCal");
+	$head[$h][2] = 'cardmonth';
+	$h++;
 
-    $head[$h][0] = DOL_URL_ROOT.'/comm/action/index.php?action=show_week'.($param ? '&'.$param : '');
-    $head[$h][1] = $langs->trans("ViewWeek");
-    $head[$h][2] = 'cardweek';
-    $h++;
+	$head[$h][0] = DOL_URL_ROOT.'/comm/action/index.php?action=show_week'.($param ? '&'.$param : '');
+	$head[$h][1] = $langs->trans("ViewWeek");
+	$head[$h][2] = 'cardweek';
+	$h++;
 
-    $head[$h][0] = DOL_URL_ROOT.'/comm/action/index.php?action=show_day'.($param ? '&'.$param : '');
-    $head[$h][1] = $langs->trans("ViewDay");
-    $head[$h][2] = 'cardday';
-    $h++;
+	$head[$h][0] = DOL_URL_ROOT.'/comm/action/index.php?action=show_day'.($param ? '&'.$param : '');
+	$head[$h][1] = $langs->trans("ViewDay");
+	$head[$h][2] = 'cardday';
+	$h++;
 
-    //if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
-    if (!empty($conf->global->AGENDA_SHOW_PERTYPE))
-    {
-        $head[$h][0] = DOL_URL_ROOT.'/comm/action/pertype.php'.($param ? '?'.$param : '');
-        $head[$h][1] = $langs->trans("ViewPerType");
-        $head[$h][2] = 'cardpertype';
-        $h++;
-    }
+	//if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
+	if (!empty($conf->global->AGENDA_SHOW_PERTYPE))
+	{
+		$head[$h][0] = DOL_URL_ROOT.'/comm/action/pertype.php'.($param ? '?'.$param : '');
+		$head[$h][1] = $langs->trans("ViewPerType");
+		$head[$h][2] = 'cardpertype';
+		$h++;
+	}
 
-    $newparam = $param;
-    $newparam = preg_replace('/&?search_filtert=\d+/', '', $newparam);
-    $head[$h][0] = DOL_URL_ROOT.'/comm/action/peruser.php'.($newparam ? '?'.$newparam : '');
-    $head[$h][1] = $langs->trans("ViewPerUser");
-    $head[$h][2] = 'cardperuser';
-    $h++;
+	$newparam = $param;
+	$newparam = preg_replace('/&?search_filtert=\d+/', '', $newparam);
+	$head[$h][0] = DOL_URL_ROOT.'/comm/action/peruser.php'.($newparam ? '?'.$newparam : '');
+	$head[$h][1] = $langs->trans("ViewPerUser");
+	$head[$h][2] = 'cardperuser';
+	$h++;
 
 
-    // Show more tabs from modules
-    // Entries must be declared in modules descriptor with line
-    // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
-    // $this->tabs = array('entity:-tabname);   												to remove a tab
-    complete_head_from_modules($conf, $langs, null, $head, $h, 'agenda');
+	// Show more tabs from modules
+	// Entries must be declared in modules descriptor with line
+	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+	// $this->tabs = array('entity:-tabname);   												to remove a tab
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'agenda');
 
-    complete_head_from_modules($conf, $langs, null, $head, $h, 'agenda', 'remove');
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'agenda', 'remove');
 
-    return $head;
+	return $head;
 }

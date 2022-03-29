@@ -68,7 +68,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('thirdpartycontact', 'globalcard'));
 
-if ($action == 'view' && $object->fetch($socid) <= 0)
+if ($object->fetch($socid) <= 0 && $action == 'view')
 {
 	$langs->load("errors");
 	print($langs->trans('ErrorRecordNotFound'));
@@ -76,21 +76,18 @@ if ($action == 'view' && $object->fetch($socid) <= 0)
 }
 
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
-$object->getCanvas($socid);
 $canvas = $object->canvas ? $object->canvas : GETPOST("canvas");
 $objcanvas = null;
 if (!empty($canvas))
 {
-    require_once DOL_DOCUMENT_ROOT.'/core/class/canvas.class.php';
-    $objcanvas = new Canvas($db, $action);
-    $objcanvas->getCanvas('thirdparty', 'card', $canvas);
+	require_once DOL_DOCUMENT_ROOT.'/core/class/canvas.class.php';
+	$objcanvas = new Canvas($db, $action);
+	$objcanvas->getCanvas('thirdparty', 'card', $canvas);
 }
 
 // Security check
-$result = restrictedArea($user, 'societe', $socid, '&societe', '', 'fk_soc', 'rowid', $objcanvas);
+$result = restrictedArea($user, 'societe', $socid, '&societe', '', 'fk_soc', 'rowid', 0);
 if (empty($user->rights->societe->contact->lire)) accessforbidden();
-
-
 
 
 /*
@@ -104,17 +101,17 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 if (empty($reshook))
 {
 	if ($cancel)
-    {
-        $action = '';
-        if (!empty($backtopage))
-        {
-            header("Location: ".$backtopage);
-            exit;
-        }
-    }
+	{
+		$action = '';
+		if (!empty($backtopage))
+		{
+			header("Location: ".$backtopage);
+			exit;
+		}
+	}
 
-    // Selection of new fields
-    include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
+	// Selection of new fields
+	include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 }
 
 
@@ -129,7 +126,7 @@ $formcompany = new FormCompany($db);
 
 if ($socid > 0 && empty($object->id))
 {
-    $result = $object->fetch($socid);
+	$result = $object->fetch($socid);
 	if ($result <= 0) dol_print_error('', $object->error);
 }
 
@@ -147,13 +144,13 @@ if (!empty($object->id)) $res = $object->fetch_optionals();
 
 $head = societe_prepare_head($object);
 
-dol_fiche_head($head, 'contact', $langs->trans("ThirdParty"), 0, 'company');
+print dol_get_fiche_head($head, 'contact', $langs->trans("ThirdParty"), 0, 'company');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 dol_banner_tab($object, 'socid', $linkback, ($user->socid ? 0 : 1), 'rowid', 'nom', '', '', 0, '', '', 'arearefnobottom');
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '<br>';
 

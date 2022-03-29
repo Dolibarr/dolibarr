@@ -23,46 +23,48 @@
  *	\brief      File of class with all html predefined components
  */
 
+include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+
 
 /**
  *	Class to manage generation of HTML components for bank module
  */
 class FormBank
 {
-    /**
-     * @var DoliDB Database handler.
-     */
-    public $db;
+	/**
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
 
-    /**
+	/**
 	 * @var string Error code (or message)
 	 */
 	public $error = '';
 
 
-    /**
-     * Constructor
-     *
-     * @param		DoliDB		$db      Database handler
-     */
-    public function __construct($db)
-    {
-        $this->db = $db;
-    }
+	/**
+	 * Constructor
+	 *
+	 * @param		DoliDB		$db      Database handler
+	 */
+	public function __construct($db)
+	{
+		$this->db = $db;
+	}
 
-    /**
-     *  Retourne la liste des types de comptes financiers
-     *
-     *  @param	integer	$selected        Type pre-selectionne
-     *  @param  string	$htmlname        Nom champ formulaire
-     *  @return	void
-     */
-    public function selectTypeOfBankAccount($selected = Account::TYPE_CURRENT, $htmlname = 'type')
-    {
-        $account = new Account($this->db);
+	/**
+	 *  Retourne la liste des types de comptes financiers
+	 *
+	 *  @param	integer	$selected        Type pre-selectionne
+	 *  @param  string	$htmlname        Nom champ formulaire
+	 *  @return	void
+	 */
+	public function selectTypeOfBankAccount($selected = Account::TYPE_CURRENT, $htmlname = 'type')
+	{
+		$account = new Account($this->db);
 
-        print Form::selectarray($htmlname, $account->type_lib, $selected);
-    }
+		print Form::selectarray($htmlname, $account->type_lib, $selected);
+	}
 
 	/**
 	 * Returns the name of the Iban label. India uses 'IFSC' and the rest of the world 'IBAN' name.

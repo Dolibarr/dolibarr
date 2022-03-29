@@ -34,7 +34,7 @@ $res = require '../../main.inc.php';
 
 $id = GETPOST('id', 'int');
 $element = GETPOST('element', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 if ($element === 'facture') {
 	require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';

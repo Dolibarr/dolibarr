@@ -34,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/action/rapport.pdf.php';
 // Load translation files required by the page
 $langs->loadLangs(array("agenda", "commercial"));
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $month = GETPOST('month', 'int');
 $year = GETPOST('year', 'int');
 
@@ -91,13 +91,13 @@ $sql .= " ORDER BY year DESC, month DESC, df DESC";
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
-    $result = $db->query($sql);
-    $nbtotalofrecords = $db->num_rows($result);
-    if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
-    {
-    	$page = 0;
-    	$offset = 0;
-    }
+	$result = $db->query($sql);
+	$nbtotalofrecords = $db->num_rows($result);
+	if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	{
+		$page = 0;
+		$offset = 0;
+	}
 }
 
 $sql .= $db->plimit($limit + 1, $offset);
@@ -113,7 +113,7 @@ if ($resql)
 	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.$limit;
 
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
-    if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="action" value="list">';
@@ -125,10 +125,10 @@ if ($resql)
 	$moreforfilter = '';
 
 	$i = 0;
-    print '<div class="div-table-responsive">';
-    print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
+	print '<div class="div-table-responsive">';
+	print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
-    print '<tr class="liste_titre">';
+	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Period").'</td>';
 	print '<td class="center">'.$langs->trans("EventsNb").'</td>';
 	print '<td class="center">'.$langs->trans("Action").'</td>';
@@ -185,8 +185,7 @@ if ($resql)
 				print '</td>';
 				print '<td class="center">'.dol_print_date(dol_filemtime($file), 'dayhour').'</td>';
 				print '<td class="center">'.dol_print_size(dol_filesize($file)).'</td>';
-			}
-			else {
+			} else {
 				print '<td>&nbsp;</td>';
 				print '<td>&nbsp;</td>';
 				print '<td>&nbsp;</td>';
@@ -201,9 +200,7 @@ if ($resql)
 	print '</form>';
 
 	$db->free($resql);
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 

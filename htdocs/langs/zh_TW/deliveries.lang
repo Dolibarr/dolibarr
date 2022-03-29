@@ -27,5 +27,6 @@ Recipient=收貨人
 ErrorStockIsNotEnough=庫存不足
 Shippable=可運送
 NonShippable=無法運送
+ShowShippableStatus=顯示可運送狀態
 ShowReceiving=顯示交貨單
 NonExistentOrder=不存在的訂單

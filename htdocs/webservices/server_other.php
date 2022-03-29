@@ -145,7 +145,7 @@ $server->register(
  */
 function getVersions($authentication)
 {
-	global $db, $conf, $langs;
+	global $conf;
 
 	dol_syslog("Function: getVersions login=".$authentication['login']);
 
@@ -188,7 +188,7 @@ function getVersions($authentication)
  */
 function getDocument($authentication, $modulepart, $file, $refname = '')
 {
-	global $db, $conf, $langs, $mysoc;
+	global $db, $conf;
 
 	dol_syslog("Function: getDocument login=".$authentication['login'].' - modulepart='.$modulepart.' - file='.$file);
 
@@ -208,7 +208,7 @@ function getDocument($authentication, $modulepart, $file, $refname = '')
 
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 
-	if ($fuser->societe_id) $socid = $fuser->societe_id;
+	if ($fuser->socid) $socid = $fuser->socid;
 
 	// Check parameters
 	if (!$error && (!$file || !$modulepart))
@@ -234,7 +234,7 @@ function getDocument($authentication, $modulepart, $file, $refname = '')
 		$original_file              = $check_access['original_file'];
 
 		// Basic protection (against external users only)
-		if ($fuser->societe_id > 0)
+		if ($fuser->socid > 0)
 		{
 			if ($sqlprotectagainstexternals)
 			{
@@ -246,7 +246,7 @@ function getDocument($authentication, $modulepart, $file, $refname = '')
 					while ($i < $num)
 					{
 						$obj = $db->fetch_object($resql);
-						if ($fuser->societe_id != $obj->fk_soc)
+						if ($fuser->socid != $obj->fk_soc)
 						{
 							$accessallowed = 0;
 							break;
@@ -283,10 +283,7 @@ function getDocument($authentication, $modulepart, $file, $refname = '')
 		{
 			if (file_exists($original_file))
 			{
-				dol_syslog("Function: getDocument $original_file $filename content-type=$type");
-
-				$file = $fileparams['fullname'];
-				$filename = basename($file);
+				dol_syslog("Function: getDocument $original_file  content-type=$type");
 
 				$f = fopen($original_file, 'r');
 				$content_file = fread($f, filesize($original_file));
@@ -304,8 +301,7 @@ function getDocument($authentication, $modulepart, $file, $refname = '')
 					'document'=>$objectret
 				);
 			}
-			else
-			{
+			else {
 				dol_syslog("File doesn't exist ".$original_file);
 				$errorcode = 'NOT_FOUND';
 				$errorlabel = '';

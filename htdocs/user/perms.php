@@ -5,6 +5,7 @@
  * Copyright (C) 2004		Eric Seigne				<eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2012		Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2020		Tobias Sekan			<tobias.sekan@startmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,9 +22,11 @@
  */
 
 /**
- *       \file       htdocs/user/perms.php
- *       \brief      Onglet user et permissions de la fiche utilisateur
+ *		\file		htdocs/user/perms.php
+ *		\brief		Page to set permission of a user record
  */
+
+if (!defined('CSRFCHECK_WITH_TOKEN')) define('CSRFCHECK_WITH_TOKEN', '1'); // Force use of CSRF protection with tokens even for GET
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
@@ -34,7 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 $langs->loadLangs(array('users', 'admin'));
 
 $id = GETPOST('id', 'int');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $module = GETPOST('module', 'alpha');
 $rights = GETPOST('rights', 'int');
@@ -86,7 +89,7 @@ $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook)) {
-	if ($action == 'addrights' && $caneditperms) {
+	if ($action == 'addrights' && $caneditperms && $confirm == 'yes') {
 		$edituser = new User($db);
 		$edituser->fetch($object->id);
 		$result = $edituser->addrights($rights, $module, '', $entity);
@@ -106,7 +109,7 @@ if (empty($reshook)) {
 		$object->getrights();
 	}
 
-	if ($action == 'delrights' && $caneditperms) {
+	if ($action == 'delrights' && $caneditperms && $confirm == 'yes') {
 		$edituser = new User($db);
 		$edituser->fetch($object->id);
 		$result = $edituser->delrights($rights, $module, '', $entity);
@@ -139,7 +142,7 @@ llxHeader('', $langs->trans("Permissions"));
 $head = user_prepare_head($object);
 
 $title = $langs->trans("User");
-dol_fiche_head($head, 'rights', $title, -1, 'user');
+print dol_get_fiche_head($head, 'rights', $title, -1, 'user');
 
 
 $db->begin();
@@ -164,25 +167,25 @@ foreach ($modulesdir as $dir)
 					include_once $dir.$file;
 					$objMod = new $modName($db);
 
-    	            // Load all lang files of module
-    	            if (isset($objMod->langfiles) && is_array($objMod->langfiles))
-    	            {
-    	            	foreach ($objMod->langfiles as $domain)
-    	            	{
-    	            		$langs->load($domain);
-    	            	}
-    	            }
-    	            // Load all permissions
-    	            if ($objMod->rights_class)
-    	            {
-    	                $ret = $objMod->insert_permissions(0, $entity);
-    	                $modules[$objMod->rights_class] = $objMod;
-    	                //print "modules[".$objMod->rights_class."]=$objMod;";
-    	            }
-    	        }
-    	    }
-    	}
-    }
+					// Load all lang files of module
+					if (isset($objMod->langfiles) && is_array($objMod->langfiles))
+					{
+						foreach ($objMod->langfiles as $domain)
+						{
+							$langs->load($domain);
+						}
+					}
+					// Load all permissions
+					if ($objMod->rights_class)
+					{
+						$ret = $objMod->insert_permissions(0, $entity);
+						$modules[$objMod->rights_class] = $objMod;
+						//print "modules[".$objMod->rights_class."]=$objMod;";
+					}
+				}
+			}
+		}
+	}
 }
 
 $db->commit();
@@ -208,9 +211,7 @@ if ($result)
 		$i++;
 	}
 	$db->free($result);
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 
@@ -239,9 +240,7 @@ if ($result)
 		$i++;
 	}
 	$db->free($result);
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 
@@ -281,14 +280,15 @@ if (($caneditperms && empty($objMod->rights_admin_allowed)) || empty($object->ad
 	if ($caneditperms)
 	{
 		print '<td class="center nowrap">';
-		print '<a class="reposition commonlink" title="'.dol_escape_htmltag($langs->trans("All")).'" alt="'.dol_escape_htmltag($langs->trans("All")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=addrights&amp;entity='.$entity.'&amp;module=allmodules">'.$langs->trans("All")."</a>";
+		print '<a class="reposition commonlink" title="'.dol_escape_htmltag($langs->trans("All")).'" alt="'.dol_escape_htmltag($langs->trans("All")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=addrights&amp;entity='.$entity.'&amp;module=allmodules&amp;confirm=yes&amp;token='.newToken().'">'.$langs->trans("All")."</a>";
 		print ' / ';
-		print '<a class="reposition commonlink" title="'.dol_escape_htmltag($langs->trans("None")).'" alt="'.dol_escape_htmltag($langs->trans("None")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delrights&amp;entity='.$entity.'&amp;module=allmodules">'.$langs->trans("None")."</a>";
+		print '<a class="reposition commonlink" title="'.dol_escape_htmltag($langs->trans("None")).'" alt="'.dol_escape_htmltag($langs->trans("None")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delrights&amp;entity='.$entity.'&amp;module=allmodules&amp;confirm=yes&amp;token='.newToken().'">'.$langs->trans("None")."</a>";
 		print '</td>';
 	}
 	print '<td class="center" width="24">&nbsp;</td>';
 }
 print '<td>'.$langs->trans("Permissions").'</td>';
+if ($user->admin) print '<td class="right">'.$langs->trans("ID").'</td>';
 print '</tr>'."\n";
 
 //print "xx".$conf->global->MAIN_USE_ADVANCED_PERMS;
@@ -325,8 +325,8 @@ if ($result)
 				// TODO Define familyposition
 				$family = $modules[$obj->module]->family_position;
 				$familyposition = 0;
-				$sqlupdate = 'UPDATE '.MAIN_DB_PREFIX."rights_def SET module_position = ".$modules[$obj->module]->module_position.",";
-				$sqlupdate .= " family_position = ".$familyposition;
+				$sqlupdate = 'UPDATE '.MAIN_DB_PREFIX."rights_def SET module_position = ".((int) $modules[$obj->module]->module_position).",";
+				$sqlupdate .= " family_position = ".((int) $familyposition);
 				$sqlupdate .= " WHERE module_position = 0 AND module = '".$db->escape($obj->module)."'";
 				$db->query($sqlupdate);
 			}
@@ -340,35 +340,39 @@ if ($result)
 			$objMod = $modules[$obj->module];
 			$picto = ($objMod->picto ? $objMod->picto : 'generic');
 
-    		// Show break line
-    		print '<tr class="oddeven trforbreak">';
-    		print '<td class="maxwidthonsmartphone tdoverflowonsmartphone">';
-    		print img_object('', $picto, 'class="pictoobjectwidth paddingright"').' '.$objMod->getName();
-    		print '<a name="'.$objMod->getName().'"></a>';
-    		print '</td>';
-    		if (($caneditperms && empty($objMod->rights_admin_allowed)) || empty($object->admin))
-    		{
-    			if ($caneditperms)
-    			{
-    				print '<td class="center nowrap">';
-    				print '<a class="reposition" title="'.dol_escape_htmltag($langs->trans("All")).'" alt="'.dol_escape_htmltag($langs->trans("All")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=addrights&amp;entity='.$entity.'&amp;module='.$obj->module.'">'.$langs->trans("All")."</a>";
-    				print ' / ';
-    				print '<a class="reposition" title="'.dol_escape_htmltag($langs->trans("None")).'" alt="'.dol_escape_htmltag($langs->trans("None")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delrights&amp;entity='.$entity.'&amp;module='.$obj->module.'">'.$langs->trans("None")."</a>";
-    				print '</td>';
-    			}
-    			print '<td>&nbsp;</td>';
-    		} else {
-    			if ($caneditperms)
-    			{
-			    	print '<td>&nbsp;</td>';
-    			}
-    			print '<td>&nbsp;</td>';
-		    }
-    		print '<td>&nbsp;</td>';
-    		print '</tr>'."\n";
-        }
+			// Show break line
+			print '<tr class="oddeven trforbreak">';
+			print '<td class="maxwidthonsmartphone tdoverflowonsmartphone">';
+			print img_object('', $picto, 'class="pictoobjectwidth paddingright"').' '.$objMod->getName();
+			print '<a name="'.$objMod->getName().'"></a>';
+			print '</td>';
+			if (($caneditperms && empty($objMod->rights_admin_allowed)) || empty($object->admin))
+			{
+				if ($caneditperms)
+				{
+					print '<td class="center nowrap">';
+					print '<a class="reposition" title="'.dol_escape_htmltag($langs->trans("All")).'" alt="'.dol_escape_htmltag($langs->trans("All")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=addrights&amp;entity='.$entity.'&amp;module='.$obj->module.'&amp;confirm=yes&amp;token='.newToken().'">'.$langs->trans("All")."</a>";
+					print ' / ';
+					print '<a class="reposition" title="'.dol_escape_htmltag($langs->trans("None")).'" alt="'.dol_escape_htmltag($langs->trans("None")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delrights&amp;entity='.$entity.'&amp;module='.$obj->module.'&amp;confirm=yes&amp;token='.newToken().'">'.$langs->trans("None")."</a>";
+					print '</td>';
+				}
+				print '<td>&nbsp;</td>';
+			} else {
+				if ($caneditperms)
+				{
+					print '<td>&nbsp;</td>';
+				}
+				print '<td>&nbsp;</td>';
+			}
+			print '<td>&nbsp;</td>';
 
-        print '<!-- '.$obj->module.'->'.$obj->perms.($obj->subperms ? '->'.$obj->subperms : '').' -->'."\n";
+			// Permission id
+			if ($user->admin) print '<td class="right"></td>';
+
+			print '</tr>'."\n";
+		}
+
+		print '<!-- '.$obj->module.'->'.$obj->perms.($obj->subperms ? '->'.$obj->subperms : '').' -->'."\n";
 		print '<tr class="oddeven">';
 
 		// Picto and label of module
@@ -376,71 +380,83 @@ if ($result)
 		//print img_object('', $picto, 'class="pictoobjectwidth"').' '.$objMod->getName();
 		print '</td>';
 
-        // Permission and tick
-        if (!empty($object->admin) && !empty($objMod->rights_admin_allowed))    // Permission granted because admin
-        {
-        	if ($caneditperms)
-        	{
-        		print '<td class="center">'.img_picto($langs->trans("Administrator"), 'star').'</td>';
-        	}
-        	print '<td class="center nowrap">';
-        	print img_picto($langs->trans("Active"), 'tick');
-        	print '</td>';
-        }
-        elseif (in_array($obj->id, $permsuser))					// Permission granted by user
-        {
-        	if ($caneditperms)
-        	{
-        		print '<td class="center"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delrights&amp;entity='.$entity.'&amp;rights='.$obj->id.'">'.img_edit_remove($langs->trans("Remove")).'</a></td>';
-        	}
-        	print '<td class="center nowrap">';
-        	print img_picto($langs->trans("Active"), 'tick');
-        	print '</td>';
-        }
-        elseif (is_array($permsgroupbyentity[$entity]))
-        {
-        	if (in_array($obj->id, $permsgroupbyentity[$entity]))	// Permission granted by group
-	        {
-	        	if ($caneditperms)
-	        	{
-	        		print '<td class="center">';
-	        		print $form->textwithtooltip($langs->trans("Inherited"), $langs->trans("PermissionInheritedFromAGroup"));
-	        		print '</td>';
-	        	}
-	        	print '<td class="center nowrap">';
-	        	print img_picto($langs->trans("Active"), 'tick');
-	        	print '</td>';
-	        }
-	        else
-	        {
-	        	// Do not own permission
-	        	if ($caneditperms)
-	        	{
-	        		print '<td class="center"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=addrights&amp;entity='.$entity.'&amp;rights='.$obj->id.'">'.img_edit_add($langs->trans("Add")).'</a></td>';
-	        	}
-	        	print '<td>&nbsp</td>';
-	        }
-        }
-        else
-        {
-        	// Do not own permission
-        	if ($caneditperms)
-        	{
-        		print '<td class="center"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=addrights&amp;entity='.$entity.'&amp;rights='.$obj->id.'">'.img_edit_add($langs->trans("Add")).'</a></td>';
-        	}
-        	print '<td>&nbsp</td>';
-        }
+		// Permission and tick
+		if (!empty($object->admin) && !empty($objMod->rights_admin_allowed))    // Permission granted because admin
+		{
+			if ($caneditperms)
+			{
+				print '<td class="center">'.img_picto($langs->trans("Administrator"), 'star').'</td>';
+			}
+			print '<td class="center nowrap">';
+			print img_picto($langs->trans("Active"), 'tick');
+			print '</td>';
+		} elseif (in_array($obj->id, $permsuser))					// Permission granted by user
+		{
+			if ($caneditperms)
+			{
+				print '<td class="center"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delrights&amp;entity='.$entity.'&amp;rights='.$obj->id.'&amp;confirm=yes&amp;token='.newToken().'">';
+				//print img_edit_remove($langs->trans("Remove"));
+				print img_picto($langs->trans("Remove"), 'switch_on');
+				print '</a></td>';
+			}
+			print '<td class="center nowrap">';
+			print img_picto($langs->trans("Active"), 'tick');
+			print '</td>';
+		} elseif (is_array($permsgroupbyentity[$entity]))
+		{
+			if (in_array($obj->id, $permsgroupbyentity[$entity]))	// Permission granted by group
+			{
+				if ($caneditperms)
+				{
+					print '<td class="center">';
+					print $form->textwithtooltip($langs->trans("Inherited"), $langs->trans("PermissionInheritedFromAGroup"));
+					print '</td>';
+				}
+				print '<td class="center nowrap">';
+				print img_picto($langs->trans("Active"), 'tick');
+				print '</td>';
+			} else {
+				// Do not own permission
+				if ($caneditperms)
+				{
+					print '<td class="center"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=addrights&amp;entity='.$entity.'&amp;rights='.$obj->id.'&amp;confirm=yes&amp;token='.newToken().'">';
+					//print img_edit_add($langs->trans("Add"));
+					print img_picto($langs->trans("Add"), 'switch_off');
+					print '</a></td>';
+				}
+				print '<td>&nbsp</td>';
+			}
+		} else {
+			// Do not own permission
+			if ($caneditperms)
+			{
+				print '<td class="center"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=addrights&amp;entity='.$entity.'&amp;rights='.$obj->id.'&amp;confirm=yes&amp;token='.newToken().'">';
+				//print img_edit_add($langs->trans("Add"));
+				print img_picto($langs->trans("Add"), 'switch_off');
+				print '</a></td>';
+			}
+			print '<td>&nbsp</td>';
+		}
 
-        // Label
-		$permlabel = ($conf->global->MAIN_USE_ADVANCED_PERMS && ($langs->trans("PermissionAdvanced".$obj->id) != ("PermissionAdvanced".$obj->id)) ? $langs->trans("PermissionAdvanced".$obj->id) : (($langs->trans("Permission".$obj->id) != ("Permission".$obj->id)) ? $langs->trans("Permission".$obj->id) : $langs->trans($obj->label)));
-		print '<td class="maxwidthonsmartphone">'.$permlabel.'</td>';
+		// Label of permission
+		$permlabel = (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ($langs->trans("PermissionAdvanced".$obj->id) != ("PermissionAdvanced".$obj->id)) ? $langs->trans("PermissionAdvanced".$obj->id) : (($langs->trans("Permission".$obj->id) != ("Permission".$obj->id)) ? $langs->trans("Permission".$obj->id) : $langs->trans($obj->label)));
+		print '<td class="maxwidthonsmartphone">';
+		print $permlabel;
+		if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
+			if (preg_match('/_advance$/', $obj->perms)) {
+				print ' <span class="opacitymedium">('.$langs->trans("AdvancedModeOnly").')</span>';
+			}
+		}
+		print '</td>';
+
+		// Permission id
+		if ($user->admin) print '<td class="right"><span class="opacitymedium">'.$obj->id.'</span></td>';
 
 		print '</tr>'."\n";
 
 		$i++;
 	}
-}
-else dol_print_error($db);
+} else dol_print_error($db);
 print '</table>';
 print '</div>';
 
@@ -449,7 +465,7 @@ $reshook = $hookmanager->executeHooks('insertExtraFooter', $parameters, $object,
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();

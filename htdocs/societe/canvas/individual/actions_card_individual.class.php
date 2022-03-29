@@ -30,63 +30,63 @@ include_once DOL_DOCUMENT_ROOT.'/societe/canvas/actions_card_common.class.php';
  */
 class ActionsCardIndividual extends ActionsCardCommon
 {
-    /**
+	/**
 	 *    Constructor
 	 *
-     *    @param	DoliDB	$db				Handler acces base de donnees
-     *    @param	string	$dirmodule		Name of directory of module
-     *    @param	string	$targetmodule	Name of directory of module where canvas is stored
-     *    @param	string	$canvas			Name of canvas
-     *    @param	string	$card			Name of tab (sub-canvas)
-     */
-    public function __construct($db, $dirmodule, $targetmodule, $canvas, $card)
-    {
-        $this->db = $db;
-        $this->dirmodule = $dirmodule;
-        $this->targetmodule = $targetmodule;
-        $this->canvas = $canvas;
-        $this->card = $card;
-    }
+	 *    @param	DoliDB	$db				Handler acces base de donnees
+	 *    @param	string	$dirmodule		Name of directory of module
+	 *    @param	string	$targetmodule	Name of directory of module where canvas is stored
+	 *    @param	string	$canvas			Name of canvas
+	 *    @param	string	$card			Name of tab (sub-canvas)
+	 */
+	public function __construct($db, $dirmodule, $targetmodule, $canvas, $card)
+	{
+		$this->db = $db;
+		$this->dirmodule = $dirmodule;
+		$this->targetmodule = $targetmodule;
+		$this->canvas = $canvas;
+		$this->card = $card;
+	}
 
 
-    /**
-     *  Return the title of card
-     *
-     *  @param	string	$action		Action code
-     *  @return	string				Title
-     */
-    private function getTitle($action)
-    {
-        global $langs;
+	/**
+	 *  Return the title of card
+	 *
+	 *  @param	string	$action		Action code
+	 *  @return	string				Title
+	 */
+	private function getTitle($action)
+	{
+		global $langs;
 
-        $out = '';
+		$out = '';
 
-        if ($action == 'view')      $out .= $langs->trans("Individual");
-        if ($action == 'edit')      $out .= $langs->trans("EditCompany");
-        if ($action == 'create')    $out .= $langs->trans("NewCompany");
+		if ($action == 'view')      $out .= $langs->trans("Individual");
+		if ($action == 'edit')      $out .= $langs->trans("EditCompany");
+		if ($action == 'create')    $out .= $langs->trans("NewCompany");
 
-        return $out;
-    }
+		return $out;
+	}
 
 
 	/**
 	 * Execute actions
-     * @deprecated Use the doActions of hooks instead of this.
+	 * @deprecated Use the doActions of hooks instead of this.
 	 *
 	 * @param	string	$action	Action
 	 * @param	int		$id			Id of object (may be empty for creation)
 	 * @return	int					<0 if KO, >0 if OK
 	 */
-    public function doActions(&$action, $id)
-    {
+	public function doActions(&$action, $id)
+	{
 		$ret = $this->getObject($id);
 
 		$return = parent::doActions($action);
 
 		return $return;
-    }
+	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *    Assign custom values for canvas (for example into this->tpl to be used by templates)
 	 *
@@ -95,9 +95,9 @@ class ActionsCardIndividual extends ActionsCardCommon
 	 *    @param	string	$ref		Ref of object
 	 *    @return	void
 	 */
-    public function assign_values(&$action, $id = 0, $ref = '')
-    {
-        // phpcs:enable
+	public function assign_values(&$action, $id = 0, $ref = '')
+	{
+		// phpcs:enable
 		global $conf, $langs;
 		global $form, $formcompany;
 
@@ -105,21 +105,19 @@ class ActionsCardIndividual extends ActionsCardCommon
 
 		parent::assign_values($action);
 
-        $this->tpl['title'] = load_fiche_titre($this->getTitle($action));
+		$this->tpl['title'] = load_fiche_titre($this->getTitle($action));
 
 		if ($action == 'create' || $action == 'edit')
 		{
 			$this->tpl['select_civility'] = $formcompany->select_civility(GETPOST('civility_id'));
-		}
-		else
-		{
+		} else {
 			// Confirm delete third party
 			if ($action == 'delete' || $conf->use_javascript_ajax)
 			{
 				$this->tpl['action_delete'] = $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$this->object->id, $langs->trans("DeleteAnIndividual"), $langs->trans("ConfirmDeleteIndividual"), "confirm_delete", '', 0, "1,action-delete");
 			}
 		}
-    }
+	}
 
 	/**
 	 * 	Check permissions of a user to show a page and an object. Check read permission
@@ -134,8 +132,8 @@ class ActionsCardIndividual extends ActionsCardCommon
 	 *  @param      string	$dbt_select		Field name for select if not rowid. (optional)
 	 *  @return		int						1
 	 */
-    public function restrictedArea($user, $features = 'societe', $objectid = 0, $dbtablename = '', $feature2 = '', $dbt_keyfield = 'fk_soc', $dbt_select = 'rowid')
-    {
-        return restrictedArea($user, $features, $objectid, $dbtablename, $feature2, $dbt_keyfield, $dbt_select);
-    }
+	public function restrictedArea($user, $features = 'societe', $objectid = 0, $dbtablename = '', $feature2 = '', $dbt_keyfield = 'fk_soc', $dbt_select = 'rowid')
+	{
+		return restrictedArea($user, $features, $objectid, $dbtablename, $feature2, $dbt_keyfield, $dbt_select);
+	}
 }

@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - stocks
-SelectProductInAndOutWareHouse=Kies een product, een aantal, een van-magazijn, een naar-magazijn, en klik "%s".  Als alle nodige bewegingen zijn aangeduid, klik op "%s".
+QtyToDispatchShort=Aantal te verzenden
 inventoryDraft=Actief
 inventoryConfirmCreate=Aanmaken
 inventoryDeleteLine=Verwijder lijn

@@ -25,6 +25,9 @@
  * \ingroup ldap member
  * \brief Script to update members types into Dolibarr from LDAP
  */
+
+if (!defined('NOSESSION')) define('NOSESSION', '1');
+
 $sapi_type = php_sapi_name();
 $script_file = basename(__FILE__);
 $path = __DIR__.'/';
@@ -43,7 +46,7 @@ require_once DOL_DOCUMENT_ROOT."/adherents/class/adherent_type.class.php";
 $langs->loadLangs(array("main", "errors"));
 
 // Global variables
-$version = DOL_VERSION;
+$version = constant('DOL_VERSION');
 $error = 0;
 $forcecommit = 0;
 $confirmed = 0;
@@ -162,8 +165,7 @@ if ($result >= 0) {
 		if (!$error || $forcecommit) {
 			if (!$error)
 				print $langs->transnoentities("NoErrorCommitIsDone")."\n";
-			else
-				print $langs->transnoentities("ErrorButCommitIsDone")."\n";
+			else print $langs->transnoentities("ErrorButCommitIsDone")."\n";
 			$db->commit();
 		} else {
 			print $langs->transnoentities("ErrorSomeErrorWereFoundRollbackIsDone", $error)."\n";

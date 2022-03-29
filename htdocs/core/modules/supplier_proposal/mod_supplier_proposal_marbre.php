@@ -108,9 +108,7 @@ class mod_supplier_proposal_marbre extends ModeleNumRefSupplierProposal
 		if (!$pryymm || preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i', $pryymm))
 		{
 			return true;
-		}
-		else
-		{
+		} else {
 			$langs->load("errors");
 			$this->error = $langs->trans('ErrorNumRefModel', $max);
 			return false;
@@ -141,9 +139,7 @@ class mod_supplier_proposal_marbre extends ModeleNumRefSupplierProposal
 			$obj = $db->fetch_object($resql);
 			if ($obj) $max = intval($obj->max);
 			else $max = 0;
-		}
-		else
-		{
+		} else {
 			dol_syslog(get_class($this)."::getNextValue", LOG_DEBUG);
 			return -1;
 		}

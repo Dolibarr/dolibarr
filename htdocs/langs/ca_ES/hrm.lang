@@ -1,9 +1,9 @@
 # Dolibarr language file - en_US - hrm
 # Admin
-HRM_EMAIL_EXTERNAL_SERVICE=Correu electrònic per prevenir serveis externs HRM
+HRM_EMAIL_EXTERNAL_SERVICE=Correu electrònic per a evitar el servei extern de HRM
 Establishments=Establiments
 Establishment=Establiment
-NewEstablishment=Nou establiment
+NewEstablishment=Establiment nou
 DeleteEstablishment=Elimina l'establiment
 ConfirmDeleteEstablishment=Vols eliminar aquest establiment?
 OpenEtablishment=Obre l'establiment
@@ -11,8 +11,9 @@ CloseEtablishment=Tanca l'establiment
 # Dictionary
 DictionaryPublicHolidays=HRM - Festius
 DictionaryDepartment=HRM - Llistat de departament
-DictionaryFunction=HRM - Job positions
+DictionaryFunction=HRM: llocs de treball
 # Module
 Employees=Empleats
 Employee=Empleat
-NewEmployee=Nou empleat
+NewEmployee=Empleat nou
+ListOfEmployees=Llistat d'empleats

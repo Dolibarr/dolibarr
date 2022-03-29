@@ -59,9 +59,7 @@ print '<head>'."\n";
 if (GETPOST('mode') && GETPOST('mode') == 'test')
 {
 	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/core/js/lib_head.js.php"></script>'."\n";
-}
-else
-{
+} else {
 	print '<title>'.$langs->trans("Calendar").'</title>';
 }
 
@@ -109,9 +107,7 @@ if ($qualified)
 {
 	//print $_GET["cm"].",".$_GET["sd"].",".$_GET["m"].",".$_GET["y"];exit;
 	displayBox(GETPOST("sd", 'alpha'), GETPOST("m", 'int'), GETPOST("y", 'int'));
-}
-else
-{
+} else {
 	dol_print_error('', 'ErrorBadParameters');
 }
 
@@ -154,9 +150,7 @@ function displayBox($selectedDate, $month, $year)
 	{
 		$selDate = xyzToUnixTimestamp($selectedDate);
 		$xyz = dol_print_date($selDate, "%Y%m%d");
-	}
-	else
-	{
+	} else {
 		$selDate = 0;
 		$xyz = 0;
 	}
@@ -220,9 +214,7 @@ function displayBox($selectedDate, $month, $year)
 				echo "<td>&nbsp;</td>";
 				$cols++;
 			}
-		}
-		else
-		{
+		} else {
 			if ($mydate["wday"] == $startday)
 			{
 				echo "<tr class=\"dpWeek\">";
@@ -255,9 +247,7 @@ function displayBox($selectedDate, $month, $year)
 		if ($thedate == '')
 		{
 			$stoploop = 1;
-		}
-		else
-		{
+		} else {
 			$mydate = dol_getdate($thedate);
 			if ($firstdate["month"] != $mydate["month"]) $stoploop = 1;
 		}
@@ -277,9 +267,7 @@ function displayBox($selectedDate, $month, $year)
 			print $langs->trans("Month".$selectMonth)." ";
 			print sprintf("%02s", $tempDate["mday"]);
 			print ", ".$selectYear;
-		}
-		else
-		{
+		} else {
 			print "Click a Date";
 		}
 		?></td>

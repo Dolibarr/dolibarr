@@ -44,17 +44,17 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
 	public $libversion = array();
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Load into memory list of available export format
 	 *
-     *  @param	DoliDB	$db     			Database handler
-     *  @param  integer	$maxfilenamelength  Max length of value to show
-     *  @return	array						List of templates (same content than array this->driverlabel)
+	 *  @param	DoliDB	$db     			Database handler
+	 *  @param  integer	$maxfilenamelength  Max length of value to show
+	 *  @return	array						List of templates (same content than array this->driverlabel)
 	 */
 	public function liste_modeles($db, $maxfilenamelength = 0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		dol_syslog(get_class($this)."::liste_modeles");
 
 		$dir = DOL_DOCUMENT_ROOT."/core/modules/export/";
@@ -62,40 +62,40 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
 
 		// Recherche des fichiers drivers exports disponibles
 		$i = 0;
-        if (is_resource($handle))
-        {
-    		while (($file = readdir($handle)) !== false)
-    		{
-    			if (preg_match("/^export_(.*)\.modules\.php$/i", $file, $reg))
-    			{
-    				$moduleid = $reg[1];
+		if (is_resource($handle))
+		{
+			while (($file = readdir($handle)) !== false)
+			{
+				if (preg_match("/^export_(.*)\.modules\.php$/i", $file, $reg))
+				{
+					$moduleid = $reg[1];
 
-    				// Loading Class
-    				$file = $dir."export_".$moduleid.".modules.php";
-    				$classname = "Export".ucfirst($moduleid);
+					// Loading Class
+					$file = $dir."export_".$moduleid.".modules.php";
+					$classname = "Export".ucfirst($moduleid);
 
-    				require_once $file;
-    				if (class_exists($classname))
-    				{
-        				$module = new $classname($db);
+					require_once $file;
+					if (class_exists($classname))
+					{
+						$module = new $classname($db);
 
-        				// Picto
-        				$this->picto[$module->id] = $module->picto;
-        				// Driver properties
-        				$this->driverlabel[$module->id] = $module->getDriverLabel().(empty($module->disabled) ? '' : ' __(Disabled)__'); // '__(Disabled)__' is a key
-        				$this->driverdesc[$module->id] = $module->getDriverDesc();
-        				$this->driverversion[$module->id] = $module->getDriverVersion();
-        				// If use an external lib
-        				$this->liblabel[$module->id] = $module->getLibLabel();
-        				$this->libversion[$module->id] = $module->getLibVersion();
-    				}
-    				$i++;
-    			}
-    		}
-    		closedir($handle);
-        }
+						// Picto
+						$this->picto[$module->id] = $module->picto;
+						// Driver properties
+						$this->driverlabel[$module->id] = $module->getDriverLabel().(empty($module->disabled) ? '' : ' __(Disabled)__'); // '__(Disabled)__' is a key
+						$this->driverdesc[$module->id] = $module->getDriverDesc();
+						$this->driverversion[$module->id] = $module->getDriverVersion();
+						// If use an external lib
+						$this->liblabel[$module->id] = $module->getLibLabel();
+						$this->libversion[$module->id] = $module->getLibVersion();
+					}
+					$i++;
+				}
+			}
+			closedir($handle);
+		}
 
-        asort($this->driverlabel);
+		asort($this->driverlabel);
 
 		return $this->driverlabel;
 	}

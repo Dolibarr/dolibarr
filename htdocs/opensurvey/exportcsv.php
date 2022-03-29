@@ -39,6 +39,11 @@ $object = new Opensurveysondage($db);
 $result = $object->fetch(0, $numsondage);
 if ($result <= 0) dol_print_error('', 'Failed to get survey id '.$numsondage);
 
+// Security check
+if (empty($user->rights->opensurvey->read)) {
+	accessforbidden();
+}
+
 
 /*
  * Actions
@@ -108,14 +113,11 @@ if ($resql)
 			{
 				$input .= 'OK;';
 				$somme[$k]++;
-			}
-			elseif ($car == "2")
+			} elseif ($car == "2")
 			{
 				$input .= 'KO;';
 				$somme[$k]++;
-			}
-			else
-			{
+			} else {
 				$input .= ';';
 			}
 		}
@@ -123,8 +125,7 @@ if ($resql)
 		$input .= "\r\n";
 		$i++;
 	}
-}
-else dol_print_error($db);
+} else dol_print_error($db);
 
 
 $filesize = strlen($input);

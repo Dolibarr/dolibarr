@@ -31,10 +31,8 @@ TicketDictType=Ticket-Typ
 TicketDictCategory=Ticket-Kategorien
 TicketDictSeverity=Ticket-Dringlichkeiten
 TicketDictResolution=Ticket-Auflösung
-TicketTypeShortBUGSOFT=Softwarefehler
-TicketTypeShortBUGHARD=Hardwarefehler
-TicketTypeShortCOM=Anfrage an Verkauf
 
+TicketTypeShortCOM=Anfrage an Verkauf
 TicketTypeShortHELP=Erbitte funktionale Hilfestellung
 TicketTypeShortISSUE=Aspekt, Fehler oder Problem
 TicketTypeShortREQUEST=Änderungs- oder Erweiterungsanforderung
@@ -44,7 +42,7 @@ TicketTypeShortOTHER=Sonstige
 TicketSeverityShortLOW=Niedrig
 TicketSeverityShortNORMAL=Normal
 TicketSeverityShortHIGH=Hoch
-TicketSeverityShortBLOCKING=Kritisch/Blockierend
+TicketSeverityShortBLOCKING=Kritisch, blockierend
 
 ErrorBadEmailAddress=Feld '%s' ungültig
 MenuTicketMyAssign=Meine Tickets
@@ -60,7 +58,6 @@ OriginEmail=E-Mail Absender
 Notify_TICKET_SENTBYMAIL=Ticket Nachricht per E-Mail versenden
 
 # Status
-NotRead=Nicht gelesen
 Read=Lesen
 Assigned=Zugewiesen
 InProgress=in Bearbeitung
@@ -72,7 +69,6 @@ Deleted=Gelöscht
 
 # Dict
 Type=Typ
-Category=Analyse-Code
 Severity=Dringlichkeit
 
 # Email templates
@@ -127,13 +123,13 @@ TicketsActivatePublicInterfaceHelp=Mit dem öffentlichen Interface können alle 
 TicketsAutoAssignTicket=Den Ersteller automatisch dem Ticket zuweisen
 TicketsAutoAssignTicketHelp=Wenn ein Ticket erstellt wird, kann der Ersteller automatisch dem Ticket zugewiesen werden.
 TicketNumberingModules=Ticketnummerierungsmodul
+TicketsModelModule=Dokumentvorlagen für Tickets
 TicketNotifyTiersAtCreation=Partner über Ticketerstellung informieren
-TicketGroup=Gruppe
 TicketsDisableCustomerEmail=E-Mails immer deaktivieren, wenn ein Ticket über die öffentliche Oberfläche erstellt wird
-TicketsPublicNotificationNewMessage=Send email(s) when a new message is added
-TicketsPublicNotificationNewMessageHelp=Send email(s) when a new message is added from public interface (to assigned user or the notifications email to (update) and/or the notifications email to)
-TicketPublicNotificationNewMessageDefaultEmail=Notifications email to (update)
-TicketPublicNotificationNewMessageDefaultEmailHelp=Send email new message notifications to this address if the ticket don't have a user assigned or the user don't have a email.
+TicketsPublicNotificationNewMessage=Senden Sie E-Mails, wenn eine neue Nachricht hinzugefügt wird
+TicketsPublicNotificationNewMessageHelp=E-Mail (s) senden, wenn eine neue Nachricht von der öffentlichen Oberfläche hinzugefügt wird (an den zugewiesenen Benutzer oder die Benachrichtigungs-E-Mail an (Update) und / oder die Benachrichtigungs-E-Mail an)
+TicketPublicNotificationNewMessageDefaultEmail=Benachrichtigungen per E-Mail an (Update)
+TicketPublicNotificationNewMessageDefaultEmailHelp=Sende E-Mail-Benachrichtigungen über neue Nachrichten an diese Adresse, wenn dem Ticket kein Benutzer zugewiesen ist oder der Benutzer keine E-Mail hat.
 #
 # Index & list page
 #
@@ -162,7 +158,7 @@ CreatedBy=Erstellt durch
 NewTicket=Ticket erstellen
 SubjectAnswerToTicket=Ticketantwort
 TicketTypeRequest=Anfrageart
-TicketCategory=Analyse-Code
+TicketCategory=Gruppe
 SeeTicket=Ticket zeigen
 TicketMarkedAsRead=Ticket als gelesen markiert
 TicketReadOn=Gelesen um
@@ -235,7 +231,6 @@ TicketLogStatusChanged=Status von %s zu  %s geändert
 TicketNotNotifyTiersAtCreate=Firma bei Erstellen nicht Benachrichtigen
 Unread=Ungelesen
 TicketNotCreatedFromPublicInterface=Nicht verfügbar. Ticket wurde nicht über die öffentliche Schnittstelle erstellt.
-PublicInterfaceNotEnabled=Öffentliche Schnittstelle wurde nicht aktiviert
 ErrorTicketRefRequired=Ein Ticket-Betreff ist erforderlich
 
 #

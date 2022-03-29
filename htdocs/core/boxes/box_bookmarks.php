@@ -28,20 +28,20 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
  */
 class box_bookmarks extends ModeleBoxes
 {
-    public $boxcode = "bookmarks";
-    public $boximg = "bookmark";
-    public $boxlabel = "BoxMyLastBookmarks";
-    public $depends = array("bookmark");
+	public $boxcode = "bookmarks";
+	public $boximg = "bookmark";
+	public $boxlabel = "BoxMyLastBookmarks";
+	public $depends = array("bookmark");
 
 	/**
-     * @var DoliDB Database handler.
-     */
-    public $db;
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
 
-    public $param;
+	public $param;
 
-    public $info_box_head = array();
-    public $info_box_contents = array();
+	public $info_box_head = array();
+	public $info_box_contents = array();
 
 
 	/**
@@ -52,18 +52,18 @@ class box_bookmarks extends ModeleBoxes
 	 */
 	public function __construct($db, $param)
 	{
-	    global $user;
+		global $user;
 
-	    $this->db = $db;
+		$this->db = $db;
 
-	    $this->hidden = !($user->rights->bookmark->lire);
+		$this->hidden = !($user->rights->bookmark->lire);
 	}
 
 	/**
-     *  Load data for box to show them later
-     *
-     *  @param	int		$max        Maximum number of records to load
-     *  @return	void
+	 *  Load data for box to show them later
+	 *
+	 *  @param	int		$max        Maximum number of records to load
+	 *  @return	void
 	 */
 	public function loadBox($max = 5)
 	{
@@ -73,15 +73,13 @@ class box_bookmarks extends ModeleBoxes
 		$this->max = $max;
 
 		$this->info_box_head = array(
-            'text' => $langs->trans("BoxMyLastBookmarks", $max),
-            'sublink' => DOL_URL_ROOT.'/bookmarks/list.php',
-        );
-        if ($user->rights->bookmark->creer) {
+			'text' => $langs->trans("BoxMyLastBookmarks", $max),
+			'sublink' => DOL_URL_ROOT.'/bookmarks/list.php',
+		);
+		if ($user->rights->bookmark->creer) {
 			$this->info_box_head['subpicto'] = 'bookmark';
 			$this->info_box_head['subtext'] = $langs->trans("BookmarksManagement");
-		}
-		else
-		{
+		} else {
 			$this->info_box_head['subpicto'] = 'bookmark';
 			$this->info_box_head['subtext'] = $langs->trans("ListOfBookmark");
 		}
@@ -91,7 +89,7 @@ class box_bookmarks extends ModeleBoxes
 			$sql = "SELECT b.title, b.url, b.target, b.favicon";
 			$sql .= " FROM ".MAIN_DB_PREFIX."bookmark as b";
 			$sql .= " WHERE fk_user = ".$user->id;
-            $sql .= " AND b.entity = ".$conf->entity;
+			$sql .= " AND b.entity = ".$conf->entity;
 			$sql .= $this->db->order("position", "ASC");
 			$sql .= $this->db->plimit($max, 0);
 
@@ -102,63 +100,63 @@ class box_bookmarks extends ModeleBoxes
 
 				$line = 0;
 
-                while ($line < $num) {
-                    $objp = $this->db->fetch_object($result);
+				while ($line < $num) {
+					$objp = $this->db->fetch_object($result);
 
-                    $this->info_box_contents[$line][0] = array(
-                        'td' => 'class="left" width="16"',
-                        'logo' => $this->boximg,
-                        'url' => $objp->url,
-                        'tooltip' => $objp->title,
-                        'target' => $objp->target ? 'newtab' : '',
-                    );
-                    $this->info_box_contents[$line][1] = array(
-                        'td' => '',
-                        'text' => $objp->title,
-                        'url' => $objp->url,
-                        'tooltip' => $objp->title,
-                        'target' => $objp->target ? 'newtab' : '',
-                    );
+					$this->info_box_contents[$line][0] = array(
+						'td' => 'class="left" width="16"',
+						'logo' => $this->boximg,
+						'url' => $objp->url,
+						'tooltip' => $objp->title,
+						'target' => $objp->target ? 'newtab' : '',
+					);
+					$this->info_box_contents[$line][1] = array(
+						'td' => '',
+						'text' => $objp->title,
+						'url' => $objp->url,
+						'tooltip' => $objp->title,
+						'target' => $objp->target ? 'newtab' : '',
+					);
 
-                    $line++;
-                }
+					$line++;
+				}
 
-                if ($num == 0) {
-                    $mytxt = $langs->trans("NoRecordedBookmarks");
-                    if ($user->rights->bookmark->creer) $mytxt .= ' '.$langs->trans("ClickToAdd");
-                    $this->info_box_contents[$line][0] = array(
-                        'td' => 'class="center" colspan="2"',
-                        'tooltip' => $mytxt,
-                        'url'=> DOL_URL_ROOT.'/bookmarks/list.php', 'text'=>$mytxt,
-                    );
-                }
+				if ($num == 0) {
+					$mytxt = $langs->trans("NoRecordedBookmarks");
+					if ($user->rights->bookmark->creer) $mytxt .= ' '.$langs->trans("ClickToAdd");
+					$this->info_box_contents[$line][0] = array(
+						'td' => 'class="center" colspan="2"',
+						'tooltip' => $mytxt,
+						'url'=> DOL_URL_ROOT.'/bookmarks/list.php', 'text'=>$mytxt,
+					);
+				}
 
-                $this->db->free($result);
-            } else {
-                $this->info_box_contents[0][0] = array(
-                    'td' => '',
-                    'maxlength'=>500,
-                    'text' => ($this->db->error().' sql='.$sql),
-                );
-            }
-        } else {
-            $this->info_box_contents[0][0] = array(
-                'td' => 'class="nohover opacitymedium left"',
-                'text' => $langs->trans("ReadPermissionNotAllowed")
-            );
-        }
-    }
+				$this->db->free($result);
+			} else {
+				$this->info_box_contents[0][0] = array(
+					'td' => '',
+					'maxlength'=>500,
+					'text' => ($this->db->error().' sql='.$sql),
+				);
+			}
+		} else {
+			$this->info_box_contents[0][0] = array(
+				'td' => 'class="nohover opacitymedium left"',
+				'text' => $langs->trans("ReadPermissionNotAllowed")
+			);
+		}
+	}
 
-    /**
-     *  Method to show box
-     *
-     *  @param	array	$head       Array with properties of box title
-     *  @param  array	$contents   Array with properties of box lines
-     *  @param	int		$nooutput	No print, only return string
-     *  @return	string
-     */
-    public function showBox($head = null, $contents = null, $nooutput = 0)
-    {
-        return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
-    }
+	/**
+	 *  Method to show box
+	 *
+	 *  @param	array	$head       Array with properties of box title
+	 *  @param  array	$contents   Array with properties of box lines
+	 *  @param	int		$nooutput	No print, only return string
+	 *  @return	string
+	 */
+	public function showBox($head = null, $contents = null, $nooutput = 0)
+	{
+		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
+	}
 }

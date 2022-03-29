@@ -30,6 +30,7 @@ OtherSendingsForSameOrder=Andra sändningar för denna beställning
 SendingsAndReceivingForSameOrder=Sändningar och kvitton för denna beställning
 SendingsToValidate=Transporter för att bekräfta
 StatusSendingCanceled=Annullerad
+StatusSendingCanceledShort=Annullerad
 StatusSendingDraft=Förslag
 StatusSendingValidated=Bekräftat (produkter till ett fartyg eller som redan sänts)
 StatusSendingProcessed=Bearbetade
@@ -65,6 +66,7 @@ ValidateOrderFirstBeforeShipment=Du måste först validera ordern innan du kan g
 # Sending methods
 # ModelDocument
 DocumentModelTyphon=Mer komplett dokument modell för leverans intäkter (logo. ..)
+DocumentModelStorm=More complete document model for delivery receipts and extrafields compatibility (logo...)
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Konstant EXPEDITION_ADDON_NUMBER definieras inte
 SumOfProductVolumes=Summan av produktvolymer
 SumOfProductWeights=Summan av produktvikter

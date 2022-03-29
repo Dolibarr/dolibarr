@@ -2,6 +2,7 @@
 -- Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2008      Laurent Destailleur  <eldy@users.sourceforge.net>
 -- Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
+-- Copyright (C) 2020      Open-Dsi        		<support@open-dsi.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -22,7 +23,7 @@ create table llx_socpeople
 (
   rowid				integer AUTO_INCREMENT PRIMARY KEY,
   datec				datetime,
-  tms				timestamp,
+  tms				timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_soc			integer,									-- lien vers la societe
   entity			integer DEFAULT 1 NOT NULL,					-- multi company id
   ref_ext           varchar(255),                               -- reference into an external system (not used by dolibarr)
@@ -57,6 +58,8 @@ create table llx_socpeople
   photo				varchar(255),
   no_email			smallint NOT NULL DEFAULT 0,				-- deprecated. Use table llx_mailing_unsubscribe instead
   priv				smallint NOT NULL DEFAULT 0,
+  fk_prospectcontactlevel  	varchar(12),                         		-- prospect level (in llx_c_prospectcontactlevel)
+  fk_stcommcontact  		integer        DEFAULT 0 NOT NULL,      	-- commercial statut
   fk_user_creat		integer DEFAULT 0,							-- user qui a creel'enregistrement
   fk_user_modif		integer,
   note_private		text,

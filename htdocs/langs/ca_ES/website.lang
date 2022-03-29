@@ -4,7 +4,7 @@ WebsiteSetupDesc=Creeu aquí els llocs web que voleu utilitzar. A continuació, 
 DeleteWebsite=Elimina la pàgina web
 ConfirmDeleteWebsite=Esteu segur que voleu suprimir aquest lloc web? Totes les seves pàgines i contingut també se suprimiran. Els fitxers penjats (com al directori de suports, el mòdul ECM, ...) romandran.
 WEBSITE_TYPE_CONTAINER=Tipus de pàgina/contenidor
-WEBSITE_PAGE_EXAMPLE=Pàgina web per utilitzar com a exemple
+WEBSITE_PAGE_EXAMPLE=Pàgina web per a utilitzar com a exemple
 WEBSITE_PAGENAME=Nom/alies de pàgina
 WEBSITE_ALIASALT=Noms de pàgina alternatius / àlies
 WEBSITE_ALIASALTDesc=Utilitzeu aquí la llista d'altres noms / àlies, per la qual cosa també es pot accedir a la pàgina amb altres noms / àlies (per exemple, el nom antic després de canviar el nom de l'àlies per mantenir el vincle d'enllaç a l'antic vincle / nom de treball). La sintaxi és: <br> alternativament1, alternativament2, ...
@@ -30,16 +30,15 @@ EditInLine=Editar en línia
 AddWebsite=Afegir lloc web
 Webpage=Pàgina/contenidor web
 AddPage=Afegeix pàgina/contenidor
-HomePage=Pàgina d'inici
-PageContainer=Pàgina/contenidor
+PageContainer=Pàgina
 PreviewOfSiteNotYetAvailable=Vista prèvia del seu lloc web <strong>%s</strong> encara no està disponible. Primer ha de '<strong>Importar plantilla web</strong>' o sols '<strong>Afegir pàgina/contenidor</strong>'.
 RequestedPageHasNoContentYet=La pàgina sol·licitada amb l'identificador %s encara no té contingut, o el fitxer de memòria cau .tpl.php s'ha eliminat. Edita el contingut de la pàgina per solucionar-ho.
 SiteDeleted=Lloc web '%s' eliminat
 PageContent=Pàgina/Contenidor
 PageDeleted=Pàgina/Contenidor '%s' del lloc web %s eliminat
 PageAdded=Pàgina/Contenidor '%s' afegit
-ViewSiteInNewTab=Mostra el lloc en una nova pestanya
-ViewPageInNewTab=Mostra la pàgina en una nova pestanya
+ViewSiteInNewTab=Mostra el lloc en una pestanya nova
+ViewPageInNewTab=Mostra la pàgina en una pestanya nova
 SetAsHomePage=Indica com a Pàgina principal
 RealURL=URL real
 ViewWebsiteInProduction=Mostra la pàgina web utilitzant les URLs d'inici
@@ -52,21 +51,21 @@ ReadPerm=Llegit
 WritePerm=Escriu
 TestDeployOnWeb=Prova / implantació a la web
 PreviewSiteServedByWebServer=<LI>Vista prèvia %s en una nova pestanya.</LI><br><br>El %s serà servit per un servidor web extern (com ara Apache, Nginx, IIS). Heu d'instal·lar i configurar aquest servidor abans d'apuntar al directori:<br><strong>%s</strong><br> URL servit per un servidor extern:<br><strong>%s</strong><br>
-PreviewSiteServedByDolibarr=<u> Previsualitza  %s en una nova pestanya. </li> <br> <br> El servidor %s serà servit pel servidor Dolibarr d'aquesta manera no es necessita instal·la cap servidor web addicional (com ara Apache, Nginx, IIS).<br>L'inconvenient és que l'URL de les pàgines no son amigables i començen per la ruta del vostre Dolibarr. <br>URL servit per Dolibarr:<br><strong> %s </strong> <br> <br> Per utilitzar el vostre propi servidor web extern per a servir a aquest lloc web, creeu un amfitrió ('host') virtual al vostre servidor web que apunti al directori<br><strong> %s </strong><br>, llavors introduïu el nom d'aquest servidor virtual i feu clic a l'altre botó de vista prèvia (botó de 'preview').
+PreviewSiteServedByDolibarr=<u> Previsualitza %s en una nova pestanya. </u><br> <br> El %s serà servit pel servidor Dolibarr així que no cal instal·lar cap servidor web addicional (com ara Apache, Nginx, IIS).<br>L'inconvenient és que l'URL de les pàgines no són amigables i comencen per la ruta del vostre Dolibarr. <br>URL servit per Dolibarr:<br><strong> %s </strong> <br> <br> Per a utilitzar el vostre propi servidor web extern per a servir a aquest lloc web, creeu un amfitrió virtual al vostre servidor web que apunti al directori<br><strong> %s </strong><br>, llavors introduïu el nom d'aquest servidor virtual i feu clic a l'altre botó de vista prèvia.
 VirtualHostUrlNotDefined=No s'ha definit la URL de l'amfitrió virtual que serveix el servidor web extern
 NoPageYet=Encara sense pàgines
 YouCanCreatePageOrImportTemplate=Podeu crear una pàgina nova o importar una plantilla completa del lloc web
 SyntaxHelp=Ajuda sobre consells de sintaxi específics
 YouCanEditHtmlSourceckeditor=Podeu editar el codi font HTML usant el botó "Codi font" a l'editor.
-YouCanEditHtmlSource=<br><span class="fa fa-bug"></span> You can include PHP code into this source using tags <strong>&lt;?php ?&gt;</strong>. The following global variables are available: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug"></span> You can also include content of another Page/Container with the following syntax:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug"></span> You can make a redirect to another Page/Container with the following syntax (Note: do not output any content before a redirect):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br><br><span class="fa fa-link"></span> To add a link to another page, use the syntax:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br><span class="fa fa-download"></span> To include a <strong>link to download</strong> a file stored into the <strong>documents</strong> directory, use the <strong>document.php</strong> wrapper:<br>Example, for a file into documents/ecm (need to be logged), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file into documents/medias (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file shared with a share link (open access using the sharing hash key of file), syntax is:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br><br><span class="fa fa-picture-o"></span> To include an <strong>image</strong> stored into the <strong>documents</strong> directory, use the <strong>viewimage.php</strong> wrapper:<br>Example, for an image into documents/medias (open directory for public access), syntax is:<br><strong>&lt;img src="/viewimage.php?modulepart=medias&amp;file=[relative_dir/]filename.ext"&gt;</strong><br>
+YouCanEditHtmlSource= <br> <span class="fa fa-bug"> </span> Podeu incloure el codi PHP en aquesta font mitjançant les etiquetes <strong> &lt;? php? &gt; a0a65d071f6fc9z Estan disponibles les variables globals següents: $ conf, $ db, $ mysoc, $ user, $ lloc web, $ pàgina web, $ weblangs, $ pagelangs. <br> <br> <span class="fa fa-bug"> </span> També podeu incloure contingut d'una altra pàgina / contenidor amb la següent sintaxi: <br> <strong> a03900dfdf ? &gt; </strong> <br> <br> <span class="fa fa-bug"> </span> Vostè pot fer una redirecció a una altra pàgina / Contenidor amb la següent sintaxi (Nota: no emeten cap contingut abans d'una redirecció) :? <br> <strong> &lt; php redirectToContainer ( 'alias_of_container_to_redirect_to'); ? &gt; </strong> <br> <br> <span class="fa fa-link"> </span> Per afegir un vincle a una altra pàgina, utilitzeu la sintaxi: <br> <strong> &lt;a href = "alias_of_page_to_link_to.php" &gt;mylink&lt;a&gt; </strong> <br> <br> <span class="fa fa-download"> </span> Per incloure un enllaç per a descàrrega <strong> </strong> un arxiu emmagatzemat en els documents <strong> un directori </strong>, utilitzeu el document <strong> document.php </strong> embolcall: <br> Exemple, per a un fitxer a documents / ecm (cal registrar-se)? ] nom de fitxer.ext "&gt; </strong> <br> Per a un fitxer a documents / suports (directori obert per a accés públic), la sintaxi és: <br> <strong> a03900dfre31ecz "/document.php?modulepart=medias&file=[relative_dir/ Alanfilename.ext"&gt; </strong> <br> Per a un fitxer compartit amb un enllaç compartit (accés obert mitjançant la tecla hash compartida del fitxer), una sintaxis es0a0z0z0a009 /document.php?hashp=publicsharekeyoffile"&gt; </strong> <br> <br> <span class="fa fa-picture-o"> </span> per incloure un </strong> imatge <strong> emmagatzemat en els documents <strong> </strong> directori, utilitzeu el <strong> viewimage.php </strong> embolcall: <br> exemple, per a una imatge en documents / arxius multimèdia (obert directori d’accés públic), la sintaxi és: <br> <strong> &lt;img src = "/ viewimage.php? modulepart = medias&amp;file = [relative_dir /] filename.ext" a0129
 #YouCanEditHtmlSource2=<br><span class="fa fa-picture-o"></span> To include a <strong>image</strong> shared publicaly, use the <strong>viewimage.php</strong> wrapper:<br>Example with a shared key 123456789, syntax is:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
-YouCanEditHtmlSource2=For an image shared with a share link (open access using the sharing hash key of file), syntax is:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
-YouCanEditHtmlSourceMore=<br>More examples of HTML or dynamic code available on <a href="%s" target="_blank">the wiki documentation</a><br>.
+YouCanEditHtmlSource2=Per a una imatge compartida amb un enllaç compartit (accés obert mitjançant la tecla hash compartida del fitxer), la sintaxi és: <br> <strong> &lt;img src = "/ viewimage.php? Hashp = 12345679012 ..." a0012c7dcbe087987
+YouCanEditHtmlSourceMore= <br> Més exemples de codi HTML o dinàmic disponibles a <a href="%s" target="_blank"> la documentació wiki </a> <br>.
 ClonePage=Clona la pàgina/contenidor
 CloneSite=Clona el lloc
 SiteAdded=S'ha afegit el lloc web
 ConfirmClonePage=Introduïu el codi/àlies de la pàgina nova i si és una traducció de la pàgina clonada.
-PageIsANewTranslation=La nova pàgina és una traducció de la pàgina actual?
+PageIsANewTranslation=La pàgina nova és una traducció de la pàgina actual?
 LanguageMustNotBeSameThanClonedPage=Cloneu una pàgina com a una traducció. L'idioma de la nova pàgina ha de ser diferent del llenguatge de la pàgina d'origen.
 ParentPageId=ID de la pàgina pare
 WebsiteId=ID del lloc web
@@ -87,7 +86,7 @@ MyContainerTitle=Títol del meu lloc web
 AnotherContainer=Així s’inclou contingut d’una altra pàgina / contenidor (pot ser que tingueu un error aquí si activeu el codi dinàmic perquè pot no existir el subconjunt incrustat)
 SorryWebsiteIsCurrentlyOffLine=Ho sentim, actualment aquest lloc web està fora de línia. Per favor com a més endavant ...
 WEBSITE_USE_WEBSITE_ACCOUNTS=Activa la taula del compte del lloc web
-WEBSITE_USE_WEBSITE_ACCOUNTSTooltip=Activeu la taula per emmagatzemar comptes del lloc web (login/contrasenya) per a cada lloc web de tercers
+WEBSITE_USE_WEBSITE_ACCOUNTSTooltip=Activeu la taula per a emmagatzemar comptes de lloc web (nom d'usuari / contrasenya) per a cada lloc web / tercer
 YouMustDefineTheHomePage=Primer heu de definir la pàgina d'inici predeterminada
 OnlyEditionOfSourceForGrabbedContentFuture=Avís: la creació d'una pàgina web mitjançant la importació d'una pàgina web externa es reserva per a usuaris experimentats. Segons la complexitat de la pàgina d'origen, el resultat de la importació pot diferir de l'original. També si la pàgina font utilitza estils CSS comuns o Javascript en conflicte, pot trencar l'aspecte o les funcions de l'editor del lloc web quan es treballi en aquesta pàgina. Aquest mètode és una manera més ràpida de crear una pàgina, però es recomana crear la vostra pàgina nova des de zero o des d’una plantilla de pàgina suggerida. <br> Tingueu en compte també que l'editor en línia pot no funcionar correctament quan s'utilitza en una pàgina creada a partir d'importar una externa.
 OnlyEditionOfSourceForGrabbedContent=Només l'edició de codi HTML és possible quan el contingut s'ha capturat d'un lloc extern
@@ -101,7 +100,7 @@ EmptyPage=Pàgina buida
 ExternalURLMustStartWithHttp=L'URL externa ha de començar amb http:// o https://
 ZipOfWebsitePackageToImport=Carregueu el fitxer Zip del paquet de plantilles del lloc web
 ZipOfWebsitePackageToLoad=o trieu un paquet de plantilles de lloc web incrustat disponible
-ShowSubcontainers=Inclou contingut dinàmic
+ShowSubcontainers=Mostra contingut dinàmic
 InternalURLOfPage=URL interna de la pàgina
 ThisPageIsTranslationOf=Aquesta pàgina/contenidor és una traducció de
 ThisPageHasTranslationPages=Aquesta pàgina/contenidor té traducció
@@ -115,7 +114,7 @@ DeleteAlsoMedias=Voleu suprimir també tots els fitxers de mitjans específics d
 MyWebsitePages=Les meves pàgines web
 SearchReplaceInto=Cercar | Substituïu-lo a
 ReplaceString=Cadena nova
-CSSContentTooltipHelp=Introduïu aquí contingut CSS. Per evitar qualsevol conflicte amb el CSS de l’aplicació, assegureu-vos que preposeu tota declaració amb la classe .bodywebsite. Per exemple: <br><br> #mycssselector, input.myclass: hover {...} <br> ha de ser <br> .bodywebsite #mycssselector, .bodywebsite input.myclass: hover {...} <br><br> Nota: Si teniu un fitxer gran sense aquest prefix, podeu fer servir 'lessc' per convertir-lo per afegir el prefix .bodywebs site arreu.
+CSSContentTooltipHelp=Introduïu aquí contingut CSS. Per a evitar qualsevol conflicte amb el CSS de l’aplicació, assegureu-vos que preposeu tota declaració amb la classe .bodywebsite. Per exemple: <br><br> #mycssselector, input.myclass: hover {...} <br> ha de ser <br> .bodywebsite #mycssselector, .bodywebsite input.myclass: hover {...} <br><br> Nota: Si teniu un fitxer gran sense aquest prefix, podeu fer servir 'lessc' per a convertir-lo per a afegir el prefix .bodywebsite arreu.
 LinkAndScriptsHereAreNotLoadedInEditor=Avís: aquest contingut només es produeix quan s'accedeix al lloc des d'un servidor. No s'utilitza en mode Edit, de manera que si necessiteu carregar fitxers Javascript també en mode d'edició, només heu d'afegir la vostra etiqueta 'script src = ...' a la pàgina.
 Dynamiccontent=Exemple d’una pàgina amb contingut dinàmic
 ImportSite=Importa la plantilla del lloc web
@@ -124,7 +123,7 @@ ShowSubContainersOnOff=El mode per executar &quot;contingut dinàmic&quot; és %
 GlobalCSSorJS=Fitxer CSS / JS / Capçalera global del lloc web
 BackToHomePage=Torna a la pàgina principal...
 TranslationLinks=Enllaços de traducció
-YouTryToAccessToAFileThatIsNotAWebsitePage=You try to access to a page that is not available.<br>(ref=%s, type=%s, status=%s)
+YouTryToAccessToAFileThatIsNotAWebsitePage=Intenteu accedir a una pàgina que no està disponible. <br> (ref = %s, type = %s, status = %s)
 UseTextBetween5And70Chars=Per seguir bones pràctiques de SEO, utilitzeu un text entre 5 i 70 caràcters
 MainLanguage=Idioma principal
 OtherLanguages=Altres idiomes
@@ -134,4 +133,7 @@ AvailableLanguagesAreDefinedIntoWebsiteProperties=Els idiomes disponibles es def
 ReplacementDoneInXPages=Substitució realitzada  %s pàgines o contenidors
 RSSFeed=Fils RSS
 RSSFeedDesc=Podeu obtenir un feed RSS dels darrers articles amb el tipus "blogpost" mitjançant aquesta URL
-PagesRegenerated=%s page(s)/container(s) regenerated
+PagesRegenerated=%s pàgina (es) / contenidor (s) regenerada
+RegenerateWebsiteContent=Regenera els fitxers de memòria cau del lloc web
+AllowedInFrames=Es permet en marcs
+DefineListOfAltLanguagesInWebsiteProperties=Definiu la llista de tots els idiomes disponibles a les propietats del lloc web.

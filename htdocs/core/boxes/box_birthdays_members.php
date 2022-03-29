@@ -32,27 +32,27 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
  */
 class box_birthdays_members extends ModeleBoxes
 {
-    public $boxcode = "birthdays_members";
-    public $boximg = "object_user";
-    public $boxlabel = "BoxTitleMemberNextBirthdays";
-    public $depends = array("adherent");
+	public $boxcode = "birthdays_members";
+	public $boximg = "object_user";
+	public $boxlabel = "BoxTitleMemberNextBirthdays";
+	public $depends = array("adherent");
 
 	/**
-     * @var DoliDB Database handler.
-     */
-    public $db;
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
 
-    public $enabled = 1;
+	public $enabled = 1;
 
-    public $info_box_head = array();
-    public $info_box_contents = array();
+	public $info_box_head = array();
+	public $info_box_contents = array();
 
 
 	/**
 	 *  Constructor
 	 *
 	 *  @param  DoliDB	$db      	Database handler
-     *  @param	string	$param		More parameters
+	 *  @param	string	$param		More parameters
 	 */
 	public function __construct($db, $param = '')
 	{
@@ -64,10 +64,10 @@ class box_birthdays_members extends ModeleBoxes
 	}
 
 	/**
-     *  Load data for box to show them later
-     *
-     *  @param	int		$max        Maximum number of records to load
-     *  @return	void
+	 *  Load data for box to show them later
+	 *
+	 *  @param	int		$max        Maximum number of records to load
+	 *  @return	void
 	 */
 	public function loadBox($max = 20)
 	{
@@ -78,9 +78,9 @@ class box_birthdays_members extends ModeleBoxes
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 		include_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
-        $memberstatic = new Adherent($this->db);
+		$memberstatic = new Adherent($this->db);
 
-        $this->info_box_head = array('text' => $langs->trans("BoxTitleMemberNextBirthdays"));
+		$this->info_box_head = array('text' => $langs->trans("BoxTitleMemberNextBirthdays"));
 
 		if ($user->rights->adherent->lire)
 		{
@@ -89,9 +89,9 @@ class box_birthdays_members extends ModeleBoxes
 			$sql = "SELECT u.rowid, u.firstname, u.lastname, u.birth";
 			$sql .= " FROM ".MAIN_DB_PREFIX."adherent as u";
 			$sql .= " WHERE u.entity IN (".getEntity('adherent').")";
-      		$sql .= " AND u.statut = 1";
-      		$sql .= dolSqlDateFilter('u.birth', 0, $tmparray['mon'], 0);
-			$sql .= " ORDER BY u.birth ASC";
+	  		$sql .= " AND u.statut = 1";
+	  		$sql .= dolSqlDateFilter('u.birth', 0, $tmparray['mon'], 0);
+			$sql .= " ORDER BY DAY(u.birth) ASC";
 			$sql .= $this->db->plimit($max, 0);
 
 			dol_syslog(get_class($this)."::loadBox", LOG_DEBUG);
@@ -104,25 +104,25 @@ class box_birthdays_members extends ModeleBoxes
 				while ($line < $num)
 				{
 					$objp = $this->db->fetch_object($result);
-                    $memberstatic->id = $objp->rowid;
-                    $memberstatic->firstname = $objp->firstname;
-                    $memberstatic->lastname = $objp->lastname;
-                    $memberstatic->email = $objp->email;
-                    $dateb = $this->db->jdate($objp->birth);
-                    $age = date('Y', dol_now()) - date('Y', $dateb);
+					$memberstatic->id = $objp->rowid;
+					$memberstatic->firstname = $objp->firstname;
+					$memberstatic->lastname = $objp->lastname;
+					$memberstatic->email = $objp->email;
+					$dateb = $this->db->jdate($objp->birth);
+					$age = date('Y', dol_now()) - date('Y', $dateb);
 
-                    $this->info_box_contents[$line][] = array(
-                        'td' => '',
-                        'text' => $memberstatic->getNomUrl(1),
-                        'asis' => 1,
-                    );
+					$this->info_box_contents[$line][] = array(
+						'td' => '',
+						'text' => $memberstatic->getNomUrl(1),
+						'asis' => 1,
+					);
 
-                    $this->info_box_contents[$line][] = array(
-                        'td' => 'class="right"',
-                        'text' => dol_print_date($dateb, "day").' - '.$age.' '.$langs->trans('DurationYears')
-                    );
+					$this->info_box_contents[$line][] = array(
+						'td' => 'class="right"',
+						'text' => dol_print_date($dateb, "day").' - '.$age.' '.$langs->trans('DurationYears')
+					);
 
-                    /*$this->info_box_contents[$line][] = array(
+					/*$this->info_box_contents[$line][] = array(
                         'td' => 'class="right" width="18"',
                         'text' => $memberstatic->LibStatut($objp->status, 3)
                     );*/
@@ -133,19 +133,17 @@ class box_birthdays_members extends ModeleBoxes
 				if ($num == 0) $this->info_box_contents[$line][0] = array('td' => 'class="center opacitymedium"', 'text'=>$langs->trans("None"));
 
 				$this->db->free($result);
-			}
-			else {
+			} else {
 				$this->info_box_contents[0][0] = array(
-                    'td' => '',
-                    'maxlength'=>500,
-                    'text' => ($this->db->error().' sql='.$sql)
-                );
+					'td' => '',
+					'maxlength'=>500,
+					'text' => ($this->db->error().' sql='.$sql)
+				);
 			}
-		}
-		else {
+		} else {
 			$this->info_box_contents[0][0] = array(
-			    'td' => 'class="nohover opacitymedium left"',
-                'text' => $langs->trans("ReadPermissionNotAllowed")
+				'td' => 'class="nohover opacitymedium left"',
+				'text' => $langs->trans("ReadPermissionNotAllowed")
 			);
 		}
 	}
@@ -158,8 +156,8 @@ class box_birthdays_members extends ModeleBoxes
 	 *  @param	int		$nooutput	No print, only return string
 	 *	@return	string
 	 */
-    public function showBox($head = null, $contents = null, $nooutput = 0)
-    {
+	public function showBox($head = null, $contents = null, $nooutput = 0)
+	{
 		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}
 }

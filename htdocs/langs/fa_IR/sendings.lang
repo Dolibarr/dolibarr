@@ -30,6 +30,7 @@ OtherSendingsForSameOrder=دیگر محموله برای این منظور
 SendingsAndReceivingForSameOrder=Shipments and receipts for this order
 SendingsToValidate=حمل و نقل به اعتبار
 StatusSendingCanceled=لغو شد
+StatusSendingCanceledShort=لغو ظده
 StatusSendingDraft=پیش نویس
 StatusSendingValidated=اعتبار (محصولات به کشتی و یا در حال حمل می شود)
 StatusSendingProcessed=پردازش
@@ -65,6 +66,7 @@ ValidateOrderFirstBeforeShipment=You must first validate the order before being 
 # Sending methods
 # ModelDocument
 DocumentModelTyphon=مدل سند کامل بیشتر برای رسید تحویل (logo. ..)
+DocumentModelStorm=More complete document model for delivery receipts and extrafields compatibility (logo...)
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=EXPEDITION_ADDON_NUMBER ثابت تعریف نشده
 SumOfProductVolumes=مجموع حجم محصول
 SumOfProductWeights=مجموع وزن محصول

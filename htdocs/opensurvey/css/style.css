@@ -363,6 +363,7 @@ div.cadre td.non {
 div.cadre td.vide {
 	background-color: #DDDDDD;
 	text-align:center;
+	padding: 4px;
 }
 /*Case de tableau contenant les noms dans affichage de sondage*/
 div.cadre td.nom {
@@ -403,17 +404,6 @@ div.cadre td.mois {
 	padding:1px 5px;
 }
 
-/*affichage du calendrier*/
-div.calendrier {
-	padding:10px;
-	background-color: #AAA;
-	width:490px;
-	font-size:12px;
-	font-family:arial, sans-serif;
-    margin-left: 30%;
-    margin-right: 30%;
-	position:static;
-}
 /*jour de la semaine dans calendrier*/
 div.calendrier td.joursemaine {
 	width:65px;
@@ -432,19 +422,16 @@ div.calendrier td.jourwe {
 	background-color: #C0C0C0;
 }
 /*jour avant le premier jour du mois dans calendrier*/
-div.calendrier td.avant {
+div.calendrier td.avant, div.calendrier td.libre {
 	width:65px;
 	text-align: center;
 	border: 2px;
 	font-family:arial, sans-serif;
-	font-size:13px;
+	font-size: 1.1em;
 	background-color: #DDDDDD;
 }
 /*jour libre dans calendrier*/
 div.calendrier td.libre {
-	width:65px;
-	text-align: center;
-	border: 2px;
 	background-color: #66FF99;
 }
 /*jour deja selectionné dans calendrier*/
@@ -458,7 +445,6 @@ div.calendrier td.choisi {
 p.affichageresultats{
 	text-align: center;
 	font-family:arial, sans-serif;
-	font-size:13px;
 }
 
 div.comment{
@@ -485,13 +471,16 @@ div.titregestionadmin{
 
 
 .bouton {
-	width: 65px;
+	/* width: 65px; */
 	border:0;
 	padding:0 0 0 0;
 	margin:0;
 	cursor:pointer;
 	font-family:arial, sans-serif;
-	font-size:13px;
+	background: transparent !important;
+}
+.choisi .bouton {
+	color: #fff;
 }
 /*les boutons pour choisir un jour non selectionné*/
 .ON {

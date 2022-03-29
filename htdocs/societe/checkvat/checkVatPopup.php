@@ -49,9 +49,7 @@ if (!$vatNumber)
 {
 	print '<br>';
 	print '<font class="error">'.$langs->transnoentities("ErrorFieldRequired", $langs->trans("VATIntraShort")).'</font><br>';
-}
-else
-{
+} else {
 	$vatNumber = preg_replace('/\^\w/', '', $vatNumber);
 	$vatNumber = str_replace(array(' ', '.'), '', $vatNumber);
 	$countryCode = substr($vatNumber, 0, 2);
@@ -67,10 +65,10 @@ else
 
 	// Set the WebService URL
 	dol_syslog("Create nusoap_client for URL=".$WS_DOL_URL." WSDL=".$WS_DOL_URL_WSDL);
-    require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-    $params = getSoapParams();
-    //ini_set('default_socket_timeout', $params['response_timeout']);
-    //$soapclient = new SoapClient($WS_DOL_URL_WSDL,$params);
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+	$params = getSoapParams();
+	//ini_set('default_socket_timeout', $params['response_timeout']);
+	//$soapclient = new SoapClient($WS_DOL_URL_WSDL,$params);
 	$soapclient = new nusoap_client($WS_DOL_URL_WSDL, true, $params['proxy_host'], $params['proxy_port'], $params['proxy_login'], $params['proxy_password'], $params['connection_timeout'], $params['response_timeout']);
 	$soapclient->soap_defencoding = 'utf-8';
 	$soapclient->xml_encoding = 'utf-8';
@@ -102,18 +100,15 @@ else
 	{
 		print '<font class="error">'.$langs->trans("ErrorServiceUnavailableTryLater").'</font><br>';
 		$messagetoshow = $soapclient->response;
-	}
-	elseif (preg_match('/TIMEOUT/i', $result['faultstring']))
+	} elseif (preg_match('/TIMEOUT/i', $result['faultstring']))
 	{
 		print '<font class="error">'.$langs->trans("ErrorServiceUnavailableTryLater").'</font><br>';
 		$messagetoshow = $soapclient->response;
-	}
-	elseif (preg_match('/SERVER_BUSY/i', $result['faultstring']))
+	} elseif (preg_match('/SERVER_BUSY/i', $result['faultstring']))
 	{
 		print '<font class="error">'.$langs->trans("ErrorServiceUnavailableTryLater").'</font><br>';
 		$messagetoshow = $soapclient->response;
-	}
-	elseif ($result['faultstring'])
+	} elseif ($result['faultstring'])
 	{
 		print '<font class="error">'.$langs->trans("Error").'</font><br>';
 		$messagetoshow = $result['faultstring'];
@@ -126,9 +121,7 @@ else
 		print $langs->trans("VATIntraSyntaxIsValid").': <font class="error">'.$langs->trans("No").'</font> (Might be a non europeen VAT)<br>';
 		print $langs->trans("ValueIsValid").': <font class="error">'.$langs->trans("No").'</font> (Might be a non europeen VAT)<br>';
 		//$messagetoshow=$soapclient->response;
-	}
-	else
-	{
+	} else {
 		// Syntaxe ok
 		if ($result['requestDate']) print $langs->trans("Date").': '.$result['requestDate'].'<br>';
 		print $langs->trans("VATIntraSyntaxIsValid").': <font class="ok">'.$langs->trans("Yes").'</font><br>';
@@ -136,18 +129,14 @@ else
 		if (preg_match('/MS_UNAVAILABLE/i', $result['faultstring']))
 		{
 			print '<font class="error">'.$langs->trans("ErrorVATCheckMS_UNAVAILABLE", $countryCode).'</font><br>';
-		}
-		else
-		{
+		} else {
 			if (!empty($result['valid']) && ($result['valid'] == 1 || $result['valid'] == 'true'))
 			{
 				print '<font class="ok">'.$langs->trans("Yes").'</font>';
 				print '<br>';
 				print $langs->trans("Name").': '.$result['name'].'<br>';
 				print $langs->trans("Address").': '.$result['address'].'<br>';
-			}
-			else
-			{
+			} else {
 				print '<font class="error">'.$langs->trans("No").'</font>';
 				print '<br>'."\n";
 			}

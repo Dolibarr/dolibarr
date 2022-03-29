@@ -16,3 +16,4 @@ DictionaryFunction=HRM - Job stillinger
 Employees=Medarbejdere
 Employee=Employee
 NewEmployee=Ny medarbejder
+ListOfEmployees=Liste over medarbejdere

@@ -16,3 +16,4 @@ DictionaryFunction=HRM - Pracovní pozice
 Employees=Zaměstnanci
 Employee=Zaměstnanec
 NewEmployee=Nový zaměstnanec
+ListOfEmployees=List of employees

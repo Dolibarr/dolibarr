@@ -38,9 +38,9 @@ $langs->loadLangs(array('admin', 'oauth'));
 
 // Security check
 if (!$user->admin)
-    accessforbidden();
+	accessforbidden();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 
 /*
@@ -49,23 +49,23 @@ $action = GETPOST('action', 'alpha');
 
 if ($action == 'update')
 {
-    $error = 0;
+	$error = 0;
 
-    foreach ($list as $constname) {
-        $constvalue = GETPOST($constname[1], 'alpha');
-        if (!dolibarr_set_const($db, $constname[1], $constvalue, 'chaine', 0, '', $conf->entity))
-            $error++;
-        $constvalue = GETPOST($constname[2], 'alpha');
-        if (!dolibarr_set_const($db, $constname[2], $constvalue, 'chaine', 0, '', $conf->entity))
-            $error++;
-    }
+	foreach ($list as $constname) {
+		$constvalue = GETPOST($constname[1], 'alpha');
+		if (!dolibarr_set_const($db, $constname[1], $constvalue, 'chaine', 0, '', $conf->entity))
+			$error++;
+		$constvalue = GETPOST($constname[2], 'alpha');
+		if (!dolibarr_set_const($db, $constname[2], $constvalue, 'chaine', 0, '', $conf->entity))
+			$error++;
+	}
 
-    if (!$error)
-    {
-        setEventMessages($langs->trans("SetupSaved"), null);
-    } else {
-        setEventMessages($langs->trans("Error"), null, 'errors');
-    }
+	if (!$error)
+	{
+		setEventMessages($langs->trans("SetupSaved"), null);
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
 }
 
 /*
@@ -85,7 +85,7 @@ print '<input type="hidden" name="action" value="update">';
 
 $head = oauthadmin_prepare_head();
 
-dol_fiche_head($head, 'services', '', -1, 'technic');
+print dol_get_fiche_head($head, 'services', '', -1, 'technic');
 
 
 print '<span class="opacitymedium">'.$langs->trans("ListOfSupportedOauthProviders").'</span><br><br>';
@@ -97,53 +97,51 @@ $i = 0;
 // $list is defined into oauth.lib.php
 foreach ($list as $key)
 {
-    $supported = 0;
-    if (in_array($key[0], array_keys($supportedoauth2array))) $supported = 1;
-    if (!$supported) continue; // show only supported
+	$supported = 0;
+	if (in_array($key[0], array_keys($supportedoauth2array))) $supported = 1;
+	if (!$supported) continue; // show only supported
 
-    $i++;
+	$i++;
 
-    print '<tr class="liste_titre'.($i > 1 ? ' liste_titre_add' : '').'">';
-    // Api Name
-    $label = $langs->trans($key[0]);
-    print '<td>'.$label.'</td>';
-    print '<td>';
-    if (!empty($key[3])) print $langs->trans($key[3]);
-    print '</td>';
-    print '</tr>';
+	print '<tr class="liste_titre'.($i > 1 ? ' liste_titre_add' : '').'">';
+	// Api Name
+	$label = $langs->trans($key[0]);
+	print '<td>'.$label.'</td>';
+	print '<td>';
+	if (!empty($key[3])) print $langs->trans($key[3]);
+	print '</td>';
+	print '</tr>';
 
-    if ($supported)
-    {
-        $redirect_uri = $urlwithroot.'/core/modules/oauth/'.$supportedoauth2array[$key[0]].'_oauthcallback.php';
-        print '<tr class="oddeven value">';
-        print '<td>'.$langs->trans("UseTheFollowingUrlAsRedirectURI").'</td>';
-        print '<td><input style="width: 80%" type"text" name="uri'.$key[0].'" value="'.$redirect_uri.'">';
-        print '</td></tr>';
-    }
-    else
-    {
-        print '<tr class="oddeven value">';
-        print '<td>'.$langs->trans("UseTheFollowingUrlAsRedirectURI").'</td>';
-        print '<td>'.$langs->trans("FeatureNotYetSupported").'</td>';
-        print '</td></tr>';
-    }
+	if ($supported)
+	{
+		$redirect_uri = $urlwithroot.'/core/modules/oauth/'.$supportedoauth2array[$key[0]].'_oauthcallback.php';
+		print '<tr class="oddeven value">';
+		print '<td>'.$langs->trans("UseTheFollowingUrlAsRedirectURI").'</td>';
+		print '<td><input style="width: 80%" type"text" name="uri'.$key[0].'" value="'.$redirect_uri.'">';
+		print '</td></tr>';
+	} else {
+		print '<tr class="oddeven value">';
+		print '<td>'.$langs->trans("UseTheFollowingUrlAsRedirectURI").'</td>';
+		print '<td>'.$langs->trans("FeatureNotYetSupported").'</td>';
+		print '</td></tr>';
+	}
 
-    // Api Id
-    print '<tr class="oddeven value">';
-    print '<td><label for="'.$key[1].'">'.$langs->trans($key[1]).'</label></td>';
-    print '<td><input type="text" size="100" id="'.$key[1].'" name="'.$key[1].'" value="'.$conf->global->{$key[1]}.'">';
-    print '</td></tr>';
+	// Api Id
+	print '<tr class="oddeven value">';
+	print '<td><label for="'.$key[1].'">'.$langs->trans($key[1]).'</label></td>';
+	print '<td><input type="text" size="100" id="'.$key[1].'" name="'.$key[1].'" value="'.$conf->global->{$key[1]}.'">';
+	print '</td></tr>';
 
-    // Api Secret
-    print '<tr class="oddeven value">';
-    print '<td><label for="'.$key[2].'">'.$langs->trans($key[2]).'</label></td>';
-    print '<td><input type="password" size="100" id="'.$key[2].'" name="'.$key[2].'" value="'.$conf->global->{$key[2]}.'">';
-    print '</td></tr>';
+	// Api Secret
+	print '<tr class="oddeven value">';
+	print '<td><label for="'.$key[2].'">'.$langs->trans($key[2]).'</label></td>';
+	print '<td><input type="password" size="100" id="'.$key[2].'" name="'.$key[2].'" value="'.$conf->global->{$key[2]}.'">';
+	print '</td></tr>';
 }
 
 print '</table>'."\n";
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '<div class="center"><input type="submit" class="button" value="'.$langs->trans('Modify').'" name="button"></div>';
 

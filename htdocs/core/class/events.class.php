@@ -43,10 +43,10 @@ class Events // extends CommonObject
 	 */
 	public $id;
 
-    /**
-     * @var DoliDB Database handler.
-     */
-    public $db;
+	/**
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
 
 	/**
 	 * @var string Error code (or message)
@@ -58,7 +58,7 @@ class Events // extends CommonObject
 	 */
 	public $tms;
 
-    /**
+	/**
 	 * @var string Type
 	 */
 	public $type;
@@ -94,7 +94,7 @@ class Events // extends CommonObject
 	public $eventstolog = array(
 		array('id'=>'USER_LOGIN', 'test'=>1),
 		array('id'=>'USER_LOGIN_FAILED', 'test'=>1),
-	    array('id'=>'USER_LOGOUT', 'test'=>1),
+		array('id'=>'USER_LOGOUT', 'test'=>1),
 		array('id'=>'USER_CREATE', 'test'=>1),
 		array('id'=>'USER_MODIFY', 'test'=>1),
 		array('id'=>'USER_NEW_PASSWORD', 'test'=>1),
@@ -141,7 +141,7 @@ class Events // extends CommonObject
 
 		// Clean parameters
 		$this->description = trim($this->description);
-		if (empty($this->user_agent) && !empty($_SERVER['HTTP_USER_AGENT'])) $this->user_agent = $_SERVER['HTTP_USER_AGENT'];
+		if (empty($this->user_agent)) $this->user_agent = (empty($_SERVER['HTTP_USER_AGENT']) ? '' : $_SERVER['HTTP_USER_AGENT']);
 
 		// Check parameters
 		if (empty($this->description)) { $this->error = 'ErrorBadValueForParameterCreateEventDesc'; return -1; }
@@ -173,9 +173,7 @@ class Events // extends CommonObject
 		{
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."events");
 			return $this->id;
-		}
-		else
-		{
+		} else {
 			$this->error = "Error ".$this->db->lasterror();
 			return -1;
 		}
@@ -189,7 +187,7 @@ class Events // extends CommonObject
 	 * @param   int		$notrigger	    0=no, 1=yes (no update trigger)
 	 * @return  int         			<0 if KO, >0 if OK
 	 */
-    public function update($user = null, $notrigger = 0)
+	public function update($user = null, $notrigger = 0)
 	{
 		// Clean parameters
 		$this->id = (int) $this->id;
@@ -224,7 +222,7 @@ class Events // extends CommonObject
 	 *  @param  User	$user       User that load
 	 *  @return int         		<0 if KO, >0 if OK
 	 */
-    public function fetch($id, $user = null)
+	public function fetch($id, $user = null)
 	{
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
@@ -260,9 +258,7 @@ class Events // extends CommonObject
 			$this->db->free($resql);
 
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->error = "Error ".$this->db->lasterror();
 			return -1;
 		}
@@ -275,7 +271,7 @@ class Events // extends CommonObject
 	 *	@param	User	$user       User that delete
 	 *	@return	int					<0 if KO, >0 if OK
 	 */
-    public function delete($user)
+	public function delete($user)
 	{
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."events";
 		$sql .= " WHERE rowid=".$this->id;
@@ -293,13 +289,13 @@ class Events // extends CommonObject
 
 
 	/**
-     *  Initialise an instance with random values.
-     *  Used to build previews or test instances.
-     *	id must be 0 if object instance is a specimen.
-     *
-     *  @return	void
-     */
-    public function initAsSpecimen()
+	 *  Initialise an instance with random values.
+	 *  Used to build previews or test instances.
+	 *	id must be 0 if object instance is a specimen.
+	 *
+	 *  @return	void
+	 */
+	public function initAsSpecimen()
 	{
 		$this->id = 0;
 
@@ -310,5 +306,5 @@ class Events // extends CommonObject
 		$this->ip = '1.2.3.4';
 		$this->user_agent = 'Mozilla specimen User Agent X.Y';
 		$this->prefix_session = dol_getprefix();
-    }
+	}
 }

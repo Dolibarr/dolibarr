@@ -25,8 +25,8 @@
  * Put detailed description here.
  */
 
-/** Includes */
 include_once DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php";
+
 
 /**
  * Class to manage the box
@@ -206,6 +206,6 @@ class mymodulewidget1 extends ModeleBoxes
 	{
 		// You may make your own code here…
 		// … or use the parent's class function using the provided head and contents templates
-		parent::showBox($this->info_box_head, $this->info_box_contents);
+		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}
 }

@@ -52,7 +52,7 @@ if ($object->fetch($id) >= 0)
 {
 	$head = emailing_prepare_head($object);
 
-	dol_fiche_head($head, 'info', $langs->trans("Mailing"), -1, 'email');
+	print dol_get_fiche_head($head, 'info', $langs->trans("Mailing"), -1, 'email');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/comm/mailing/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
@@ -81,7 +81,7 @@ if ($object->fetch($id) >= 0)
 	//print '</td></tr></table>';
 
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 }
 
 // End of page

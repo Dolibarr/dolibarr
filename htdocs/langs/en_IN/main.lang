@@ -19,7 +19,6 @@ FormatDateHourShort=%d/%m/%Y %I:%M %p
 FormatDateHourSecShort=%d/%m/%Y %I:%M:%S %p
 FormatDateHourTextShort=%b %d, %Y, %I:%M %p
 FormatDateHourText=%B %d, %Y, %I:%M %p
-EmptySearchString=Enter non empty search criterias
 CommercialProposalsShort=Quotations
 LinkToProposal=Link to quotation
 SearchIntoCustomerProposals=Quotations

@@ -77,6 +77,6 @@ DOL_VALUE_CUSTOMER_ACCOUNT_BALANCE=Zůstatek na účtu zákazníka
 DOL_VALUE_MYSOC_NAME=Název vaší společnosti
 VendorLastname=Příjmení dodavatele
 VendorFirstname=Jméno dodavatele
-VendorEmail=Vendor email
+VendorEmail=E-mail dodavatele
 DOL_VALUE_CUSTOMER_POINTS=Zákaznické body
 DOL_VALUE_OBJECT_POINTS=Body bodů

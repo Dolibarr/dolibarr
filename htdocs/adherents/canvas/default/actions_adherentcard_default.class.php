@@ -31,21 +31,21 @@ include_once DOL_DOCUMENT_ROOT.'/adherents/canvas/actions_adherentcard_common.cl
 class ActionsAdherentCardDefault extends ActionsAdherentCardCommon
 {
 	/**
-     *	Constructor
-     *
-     *	@param	DoliDB	$db				Handler acces data base
-     *	@param	string	$dirmodule		Name of directory of module
-     *	@param	string	$targetmodule	Name of directory of module where canvas is stored
-     *	@param	string	$canvas			Name of canvas
-     *	@param	string	$card			Name of tab (sub-canvas)
+	 *	Constructor
+	 *
+	 *	@param	DoliDB	$db				Handler acces data base
+	 *	@param	string	$dirmodule		Name of directory of module
+	 *	@param	string	$targetmodule	Name of directory of module where canvas is stored
+	 *	@param	string	$canvas			Name of canvas
+	 *	@param	string	$card			Name of tab (sub-canvas)
 	 */
 	public function __construct($db, $dirmodule, $targetmodule, $canvas, $card)
 	{
-        $this->db               = $db;
-        $this->dirmodule = $dirmodule;
-        $this->targetmodule     = $targetmodule;
-        $this->canvas           = $canvas;
-        $this->card             = $card;
+		$this->db               = $db;
+		$this->dirmodule = $dirmodule;
+		$this->targetmodule     = $targetmodule;
+		$this->canvas           = $canvas;
+		$this->card             = $card;
 	}
 
 	/**
@@ -67,7 +67,7 @@ class ActionsAdherentCardDefault extends ActionsAdherentCardCommon
 		return $out;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Assign custom values for canvas
 	 *
@@ -77,52 +77,47 @@ class ActionsAdherentCardDefault extends ActionsAdherentCardCommon
 	 */
 	public function assign_values(&$action, $id)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $limit, $offset, $sortfield, $sortorder;
 		global $conf, $db, $langs, $user;
 		global $form;
 
 		$ret = $this->getObject($id);
 
-        parent::assign_values($action, $id);
+		parent::assign_values($action, $id);
 
-        $this->tpl['title'] = $this->getTitle($action);
-        $this->tpl['error'] = $this->error;
-        $this->tpl['errors'] = $this->errors;
+		$this->tpl['title'] = $this->getTitle($action);
+		$this->tpl['error'] = $this->error;
+		$this->tpl['errors'] = $this->errors;
 
-		if ($action == 'view')
-		{
-            // Card header
-            $head = member_prepare_head($this->object);
-            $title = $this->getTitle($action);
+		if ($action == 'view') {
+			// Card header
+			$head = member_prepare_head($this->object);
+			$title = $this->getTitle($action);
 
-		    $this->tpl['showhead'] = dol_get_fiche_head($head, 'card', $title, 0, 'adherent');
-		    $this->tpl['showend'] = dol_get_fiche_end();
+			$this->tpl['showhead'] = dol_get_fiche_head($head, 'card', $title, 0, 'adherent');
+			$this->tpl['showend'] = dol_get_fiche_end();
 
-        	$objsoc = new Societe($db);
-            $objsoc->fetch($this->object->socid);
+			$objsoc = new Societe($db);
+			$objsoc->fetch($this->object->socid);
 
-            $this->tpl['actionstodo'] = show_actions_todo($conf, $langs, $db, $objsoc, $this->object, 1);
+			$this->tpl['actionstodo'] = show_actions_todo($conf, $langs, $db, $objsoc, $this->object, 1);
 
-            $this->tpl['actionsdone'] = show_actions_done($conf, $langs, $db, $objsoc, $this->object, 1);
-		}
-		else
-		{
+			$this->tpl['actionsdone'] = show_actions_done($conf, $langs, $db, $objsoc, $this->object, 1);
+		} else {
 			// Confirm delete contact
-        	if ($action == 'delete' && $user->rights->adherent->supprimer)
-        	{
-        		$this->tpl['action_delete'] = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$this->object->id, $langs->trans("DeleteAdherent"), $langs->trans("ConfirmDeleteAdherent"), "confirm_delete", '', 0, 1);
-        	}
+			if ($action == 'delete' && $user->rights->adherent->supprimer) {
+				$this->tpl['action_delete'] = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$this->object->id, $langs->trans("DeleteAdherent"), $langs->trans("ConfirmDeleteAdherent"), "confirm_delete", '', 0, 1);
+			}
 		}
 
-		if ($action == 'list')
-		{
-	        $this->LoadListDatas($limit, $offset, $sortfield, $sortorder);
+		if ($action == 'list') {
+			$this->LoadListDatas($limit, $offset, $sortfield, $sortorder);
 		}
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * 	Fetch datas list and save into ->list_datas
 	 *
@@ -134,11 +129,11 @@ class ActionsAdherentCardDefault extends ActionsAdherentCardCommon
 	 */
 	public function LoadListDatas($limit, $offset, $sortfield, $sortorder)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf, $langs;
 
-        //$this->getFieldList();
+		//$this->getFieldList();
 
-        $this->list_datas = array();
+		$this->list_datas = array();
 	}
 }

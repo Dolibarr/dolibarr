@@ -43,8 +43,8 @@ function establishment_prepare_head($object)
 
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
-    // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
-    // $this->tabs = array('entity:-tabname);   												to remove a tab
+	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+	// $this->tabs = array('entity:-tabname);   												to remove a tab
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'establishment');
 
 	$head[$h][0] = DOL_URL_ROOT.'/hrm/establishment/info.php?id='.$object->id;
@@ -64,30 +64,30 @@ function establishment_prepare_head($object)
  */
 function hrm_admin_prepare_head()
 {
-    global $langs, $conf, $user;
+	global $langs, $conf, $user;
 
-    $langs->load('hrm');
+	$langs->load('hrm');
 
-    $h = 0;
-    $head = array();
+	$h = 0;
+	$head = array();
 
 	$head[$h][0] = DOL_URL_ROOT.'/hrm/admin/admin_hrm.php';
-    $head[$h][1] = $langs->trans("Parameters");
-    $head[$h][2] = 'parameters';
-    $h++;
+	$head[$h][1] = $langs->trans("Parameters");
+	$head[$h][2] = 'parameters';
+	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/hrm/admin/admin_establishment.php';
-    $head[$h][1] = $langs->trans("Establishments");
-    $head[$h][2] = 'establishments';
-    $h++;
+	$head[$h][1] = $langs->trans("Establishments");
+	$head[$h][2] = 'establishments';
+	$h++;
 
-    // Show more tabs from modules
-    // Entries must be declared in modules descriptor with line
-    // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
-    // $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
-    complete_head_from_modules($conf, $langs, '', $head, $h, 'hrm_admin');
+	// Show more tabs from modules
+	// Entries must be declared in modules descriptor with line
+	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'hrm_admin');
 
-    complete_head_from_modules($conf, $langs, '', $head, $h, 'hrm_admin', 'remove');
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'hrm_admin', 'remove');
 
-    return $head;
+	return $head;
 }

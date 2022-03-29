@@ -16,7 +16,6 @@ YourPaymentHasBeenRecorded=Esta página confirma que su pago ha sido registrado.
 YourPaymentHasNotBeenRecorded=Su pago NO ha sido registrado y la transacción ha sido cancelada. Gracias.
 InformationToFindParameters=Ayuda para encontrar la información de su cuenta %s
 PAYBOX_CGI_URL_V2=URL del módulo CGI para pago con Paybox
-VendorName=Nombre del proveedor
 CSSUrlForPaymentForm=URL de hoja de estilo CSS para formulario de pago
 NewPayboxPaymentReceived=Nuevo pago de Paybox recibido
 NewPayboxPaymentFailed=Se intentó un nuevo pago de Paybox pero falló

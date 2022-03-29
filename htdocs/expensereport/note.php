@@ -35,7 +35,9 @@ $langs->loadLangs(array('trips', 'companies', 'bills', 'orders'));
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $socid = GETPOST('socid', 'int');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
+
+$childids = $user->getAllChildIds(1);
 
 // Security check
 $socid = 0;
@@ -50,6 +52,18 @@ if (!$object->fetch($id, $ref) > 0)
 }
 
 $permissionnote = $user->rights->expensereport->creer; // Used by the include of actions_setnotes.inc.php
+
+if ($object->id > 0)
+{
+	// Check current user can read this expense report
+	$canread = 0;
+	if (!empty($user->rights->expensereport->readall)) $canread = 1;
+	if (!empty($user->rights->expensereport->lire) && in_array($object->fk_user_author, $childids)) $canread = 1;
+	if (!$canread)
+	{
+		accessforbidden();
+	}
+}
 
 
 /*
@@ -76,7 +90,7 @@ if ($id > 0 || !empty($ref))
 
 	$head = expensereport_prepare_head($object);
 
-	dol_fiche_head($head, 'note', $langs->trans("ExpenseReport"), -1, 'trip');
+	print dol_get_fiche_head($head, 'note', $langs->trans("ExpenseReport"), -1, 'trip');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/expensereport/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
@@ -94,7 +108,7 @@ if ($id > 0 || !empty($ref))
 
 	print '</div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 }
 
 // End of page

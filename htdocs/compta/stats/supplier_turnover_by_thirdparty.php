@@ -47,8 +47,11 @@ $socid = GETPOST('socid', 'int');
 $selected_cat = (int) GETPOST('search_categ', 'int');
 $subcat = false;
 if (GETPOST('subcat', 'alpha') === 'yes') {
-    $subcat = true;
+	$subcat = true;
 }
+
+// Hook
+$hookmanager->initHooks(array('supplierturnoverbythirdpartylist'));
 
 // Security check
 if ($user->socid > 0) $socid = $user->socid;
@@ -107,9 +110,7 @@ if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 	if ($q == 2) { $date_start = dol_get_first_day($year_start, 4, false); $date_end = dol_get_last_day($year_start, 6, false); }
 	if ($q == 3) { $date_start = dol_get_first_day($year_start, 7, false); $date_end = dol_get_last_day($year_start, 9, false); }
 	if ($q == 4) { $date_start = dol_get_first_day($year_start, 10, false); $date_end = dol_get_last_day($year_start, 12, false); }
-}
-else
-{
+} else {
 	// TODO We define q
 }
 
@@ -148,7 +149,7 @@ $headerparams = array_merge($commonparams, $headerparams);
 $tableparams = array_merge($commonparams, $tableparams);
 
 foreach ($allparams as $key => $value) {
-    $paramslink .= '&'.$key.'='.$value;
+	$paramslink .= '&'.$key.'='.$value;
 }
 
 
@@ -175,8 +176,7 @@ if ($modecompta == "CREANCES-DETTES")
 	$description = $langs->trans("RulesPurchaseTurnoverDue");
 	$builddate = dol_now();
 	//$exportlink=$langs->trans("NotYetAvailable");
-}
-elseif ($modecompta == "RECETTES-DEPENSES")
+} elseif ($modecompta == "RECETTES-DEPENSES")
 {
 	$name = $langs->trans("PurchaseTurnoverCollected").', '.$langs->trans("ByThirdParties");
 	$calcmode = $langs->trans("CalcModeEngagement");
@@ -184,11 +184,9 @@ elseif ($modecompta == "RECETTES-DEPENSES")
 	$description = $langs->trans("RulesPurchaseTurnoverIn");
 	$builddate = dol_now();
 	//$exportlink=$langs->trans("NotYetAvailable");
-}
-elseif ($modecompta == "BOOKKEEPING")
+} elseif ($modecompta == "BOOKKEEPING")
 {
-}
-elseif ($modecompta == "BOOKKEEPINGCOLLECTED")
+} elseif ($modecompta == "BOOKKEEPINGCOLLECTED")
 {
 }
 $period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
@@ -199,7 +197,7 @@ report_header($name, '', $period, $periodlink, $description, $builddate, $export
 
 if (!empty($conf->accounting->enabled) && $modecompta != 'BOOKKEEPING')
 {
-    print info_admin($langs->trans("WarningReportNotReliable"), 0, 0, 1);
+	print info_admin($langs->trans("WarningReportNotReliable"), 0, 0, 1);
 }
 
 // Show Array
@@ -214,26 +212,24 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f, ".MAIN_DB_PREFIX."societe as s";
 	if ($selected_cat === -2)	// Without any category
 	{
-	    $sql .= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."categorie_societe as cs ON s.rowid = cs.fk_soc";
-	}
-	elseif ($selected_cat) 	// Into a specific category
+		$sql .= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."categorie_societe as cs ON s.rowid = cs.fk_soc";
+	} elseif ($selected_cat) 	// Into a specific category
 	{
-	    $sql .= ", ".MAIN_DB_PREFIX."categorie as c, ".MAIN_DB_PREFIX."categorie_societe as cs";
+		$sql .= ", ".MAIN_DB_PREFIX."categorie as c, ".MAIN_DB_PREFIX."categorie_societe as cs";
 	}
 	$sql .= " WHERE f.fk_statut in (1,2)";
 	$sql .= " AND f.type IN (0,2)";
 	$sql .= " AND f.fk_soc = s.rowid";
 	if ($date_start && $date_end) {
-	    $sql .= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
+		$sql .= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 	}
 	if ($selected_cat === -2)	// Without any category
 	{
-	    $sql .= " AND cs.fk_soc is null";
-	}
-	elseif ($selected_cat) {	// Into a specific category
-	    $sql .= " AND (c.rowid = ".$db->escape($selected_cat);
-	    if ($subcat) $sql .= " OR c.fk_parent = ".$db->escape($selected_cat);
-	    $sql .= ")";
+		$sql .= " AND cs.fk_soc is null";
+	} elseif ($selected_cat) {	// Into a specific category
+		$sql .= " AND (c.rowid = ".$db->escape($selected_cat);
+		if ($subcat) $sql .= " OR c.fk_parent = ".$db->escape($selected_cat);
+		$sql .= ")";
 		$sql .= " AND cs.fk_categorie = c.rowid AND cs.fk_soc = s.rowid";
 	}
 } else {
@@ -244,26 +240,24 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
 	if ($selected_cat === -2)	// Without any category
 	{
-	    $sql .= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."categorie_societe as cs ON s.rowid = cs.fk_soc";
-	}
-	elseif ($selected_cat) 	// Into a specific category
+		$sql .= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."categorie_societe as cs ON s.rowid = cs.fk_soc";
+	} elseif ($selected_cat) 	// Into a specific category
 	{
-	    $sql .= ", ".MAIN_DB_PREFIX."categorie as c, ".MAIN_DB_PREFIX."categorie_societe as cs";
+		$sql .= ", ".MAIN_DB_PREFIX."categorie as c, ".MAIN_DB_PREFIX."categorie_societe as cs";
 	}
 	$sql .= " WHERE p.rowid = pf.fk_paiementfourn";
 	$sql .= " AND pf.fk_facturefourn = f.rowid";
 	$sql .= " AND f.fk_soc = s.rowid";
 	if ($date_start && $date_end) {
-	    $sql .= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
+		$sql .= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
 	}
 	if ($selected_cat === -2)	// Without any category
 	{
-	    $sql .= " AND cs.fk_soc is null";
-	}
-	elseif ($selected_cat) {	// Into a specific category
-	    $sql .= " AND (c.rowid = ".$selected_cat;
-	    if ($subcat) $sql .= " OR c.fk_parent = ".$selected_cat;
-	    $sql .= ")";
+		$sql .= " AND cs.fk_soc is null";
+	} elseif ($selected_cat) {	// Into a specific category
+		$sql .= " AND (c.rowid = ".$selected_cat;
+		if ($subcat) $sql .= " OR c.fk_parent = ".$selected_cat;
+		$sql .= ")";
 		$sql .= " AND cs.fk_categorie = c.rowid AND cs.fk_soc = s.rowid";
 	}
 }
@@ -284,15 +278,15 @@ if ($result) {
 	$i = 0;
 	while ($i < $num) {
 		$obj = $db->fetch_object($result);
-	        $amount_ht[$obj->socid] = $obj->amount;
-	        $amount[$obj->socid] = $obj->amount_ttc;
-	        $name[$obj->socid] = $obj->name.' '.$obj->firstname;
+			$amount_ht[$obj->socid] = $obj->amount;
+			$amount[$obj->socid] = $obj->amount_ttc;
+			$name[$obj->socid] = $obj->name.' '.$obj->firstname;
 			$address_zip[$obj->socid] = $obj->zip;
 			$address_town[$obj->socid] = $obj->town;
 			$address_pays[$obj->socid] = getCountry($obj->fk_pays);
-	        $catotal_ht += $obj->amount;
-	        $catotal += $obj->amount_ttc;
-	        $i++;
+			$catotal_ht += $obj->amount;
+			$catotal += $obj->amount_ttc;
+			$i++;
 	}
 } else {
 	dol_print_error($db);
@@ -305,7 +299,7 @@ print '<input type="hidden" name="token" value="'.newToken().'">'."\n";
 // Extra parameters management
 foreach ($headerparams as $key => $value)
 {
-     print '<input type="hidden" name="'.$key.'" value="'.$value.'">';
+	 print '<input type="hidden" name="'.$key.'" value="'.$value.'">';
 }
 
 $moreforfilter = '';
@@ -321,7 +315,7 @@ print ' ';
 print $langs->trans("SubCats").'? ';
 print '<input type="checkbox" name="subcat" value="yes"';
 if ($subcat) {
-    print ' checked';
+	print ' checked';
 }
 print'></td>';
 print '<td colspan="7" class="right">';
@@ -388,18 +382,18 @@ print_liste_field_titre(
 	$sortfield, $sortorder
 	);
 if ($modecompta == 'CREANCES-DETTES') {
-    print_liste_field_titre(
-           $langs->trans('AmountHT'),
-           $_SERVER["PHP_SELF"],
-           "amount_ht",
-           "",
-           $paramslink,
-           'class="right"',
-           $sortfield,
-           $sortorder
-    );
+	print_liste_field_titre(
+		   $langs->trans('AmountHT'),
+		   $_SERVER["PHP_SELF"],
+		   "amount_ht",
+		   "",
+		   $paramslink,
+		   'class="right"',
+		   $sortfield,
+		   $sortorder
+	);
 } else {
-    print_liste_field_titre('');
+	print_liste_field_titre('');
 }
 print_liste_field_titre(
 	$langs->trans("AmountTTC"),
@@ -444,12 +438,12 @@ if (count($amount)) {
 		$arrayforsort = $name;
 	}
 	if ($sortfield == 'amount_ht' && $sortorder == 'asc') {
-	    asort($amount_ht);
-	    $arrayforsort = $amount_ht;
+		asort($amount_ht);
+		$arrayforsort = $amount_ht;
 	}
 	if ($sortfield == 'amount_ht' && $sortorder == 'desc') {
-	    arsort($amount_ht);
-	    $arrayforsort = $amount_ht;
+		arsort($amount_ht);
+		$arrayforsort = $amount_ht;
 	}
 	if ($sortfield == 'amount_ttc' && $sortorder == 'asc') {
 		asort($amount);
@@ -490,10 +484,10 @@ if (count($amount)) {
 		// Third party
 		$fullname = $name[$key];
 		if ($key > 0) {
-		    $thirdparty_static->id = $key;
-		    $thirdparty_static->name = $fullname;
-		    $thirdparty_static->client = 1;
-		    $linkname = $thirdparty_static->getNomUrl(1, 'supplier');
+			$thirdparty_static->id = $key;
+			$thirdparty_static->name = $fullname;
+			$thirdparty_static->client = 1;
+			$linkname = $thirdparty_static->getNomUrl(1, 'supplier');
 		} else {
 			$linkname = $langs->trans("PaymentsNotLinkedToInvoice");
 		}
@@ -514,35 +508,35 @@ if (count($amount)) {
 		// Amount w/o VAT
 		print '<td class="right">';
 		if ($modecompta != 'CREANCES-DETTES') {
-            if ($key > 0) {
-                print '<a href="'.DOL_URL_ROOT.'/fourn/facture/paiement/list.php?socid='.$key.'">';
-		    } else {
-                print '<a href="'.DOL_URL_ROOT.'/fourn/facture/paiement/list.php?socid=-1">';
-            }
+			if ($key > 0) {
+				print '<a href="'.DOL_URL_ROOT.'/fourn/facture/paiement/list.php?socid='.$key.'">';
+			} else {
+				print '<a href="'.DOL_URL_ROOT.'/fourn/facture/paiement/list.php?socid=-1">';
+			}
 		} else {
-		    if ($key > 0) {
-                print '<a href="'.DOL_URL_ROOT.'/fourn/facture/list.php?socid='.$key.'">';
-		    } else {
-                print '<a href="#">';
-		    }
-            print price($amount_ht[$key]);
+			if ($key > 0) {
+				print '<a href="'.DOL_URL_ROOT.'/fourn/facture/list.php?socid='.$key.'">';
+			} else {
+				print '<a href="#">';
+			}
+			print price($amount_ht[$key]);
 		}
 		print '</td>';
 
 		// Amount with VAT
 		print '<td class="right">';
 		if ($modecompta != 'CREANCES-DETTES') {
-            if ($key > 0) {
-                print '<a href="'.DOL_URL_ROOT.'/fourn/facture/paiement/list.php?socid='.$key.'">';
-		    } else {
-                print '<a href="'.DOL_URL_ROOT.'/fourn/facture/paiement/list.php?orphelins=1">';
-		    }
+			if ($key > 0) {
+				print '<a href="'.DOL_URL_ROOT.'/fourn/facture/paiement/list.php?socid='.$key.'">';
+			} else {
+				print '<a href="'.DOL_URL_ROOT.'/fourn/facture/paiement/list.php?orphelins=1">';
+			}
 		} else {
-            if ($key > 0) {
-                print '<a href="'.DOL_URL_ROOT.'/fourn/facture/list.php?socid='.$key.'">';
-		    } else {
-                print '<a href="#">';
-		    }
+			if ($key > 0) {
+				print '<a href="'.DOL_URL_ROOT.'/fourn/facture/list.php?socid='.$key.'">';
+			} else {
+				print '<a href="#">';
+			}
 		}
 		print price($amount[$key]);
 		print '</a>';
@@ -551,21 +545,21 @@ if (count($amount)) {
 		// Percent;
 		print '<td class="right">'.($catotal > 0 ? round(100 * $amount[$key] / $catotal, 2).'%' : '&nbsp;').'</td>';
 
-        // Other stats
-        print '<td class="center">';
-        if (!empty($conf->supplier_proposal->enabled) && $key > 0) {
-            print '&nbsp;<a href="'.DOL_URL_ROOT.'/comm/propal/stats/index.php?socid='.$key.'">'.img_picto($langs->trans("ProposalStats"), "stats").'</a>&nbsp;';
-        }
-        if (!empty($conf->fournisseur->enabled) && $key > 0) {
-            print '&nbsp;<a href="'.DOL_URL_ROOT.'/commande/stats/index.php?mode=supplier&socid='.$key.'">'.img_picto($langs->trans("OrderStats"), "stats").'</a>&nbsp;';
-        }
-        if (!empty($conf->fournisseur->enabled) && $key > 0) {
-            print '&nbsp;<a href="'.DOL_URL_ROOT.'/compta/facture/stats/index.php?mode=supplier&socid='.$key.'">'.img_picto($langs->trans("InvoiceStats"), "stats").'</a>&nbsp;';
-        }
-        print '</td>';
-        print "</tr>\n";
-        $i++;
-    }
+		// Other stats
+		print '<td class="center">';
+		if (!empty($conf->supplier_proposal->enabled) && $key > 0) {
+			print '&nbsp;<a href="'.DOL_URL_ROOT.'/comm/propal/stats/index.php?socid='.$key.'">'.img_picto($langs->trans("ProposalStats"), "stats").'</a>&nbsp;';
+		}
+		if (!empty($conf->fournisseur->enabled) && $key > 0) {
+			print '&nbsp;<a href="'.DOL_URL_ROOT.'/commande/stats/index.php?mode=supplier&socid='.$key.'">'.img_picto($langs->trans("OrderStats"), "stats").'</a>&nbsp;';
+		}
+		if (!empty($conf->fournisseur->enabled) && $key > 0) {
+			print '&nbsp;<a href="'.DOL_URL_ROOT.'/compta/facture/stats/index.php?mode=supplier&socid='.$key.'">'.img_picto($langs->trans("InvoiceStats"), "stats").'</a>&nbsp;';
+		}
+		print '</td>';
+		print "</tr>\n";
+		$i++;
+	}
 
 	// Total
 	print '<tr class="liste_total">';
@@ -574,9 +568,9 @@ if (count($amount)) {
 	print '<td>&nbsp;</td>';
 	print '<td>&nbsp;</td>';
 	if ($modecompta != 'CREANCES-DETTES') {
-	    print '<td></td>';
+		print '<td></td>';
 	} else {
-	    print '<td class="right">'.price($catotal_ht).'</td>';
+		print '<td class="right">'.price($catotal_ht).'</td>';
 	}
 	print '<td class="right">'.price($catotal).'</td>';
 	print '<td>&nbsp;</td>';

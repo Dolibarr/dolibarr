@@ -147,7 +147,7 @@ class ProductTest extends PHPUnit\Framework\TestCase
         $result=$localobject->create($user);
 
         print __METHOD__." result=".$result."\n";
-        $this->assertLessThanOrEqual($result, 0);
+        $this->assertLessThanOrEqual($result, 0, "Creation of product");
 
         return $result;
     }
@@ -178,31 +178,6 @@ class ProductTest extends PHPUnit\Framework\TestCase
     }
 
     /**
-     * testProductGetArboEachProd
-     *
-     * @return  void
-     */
-    public function testProductGetArboEachProd()
-    {
-    	global $conf,$user,$langs,$db;
-    	$conf=$this->savconf;
-    	$user=$this->savuser;
-    	$langs=$this->savlangs;
-    	$db=$this->savdb;
-
-		/*
-    	$localobject=new Product($db);
-    	$localobject->fetch(208);
-    	$localobject->get_sousproduits_arbo();
-    	$localobject->get_arbo_each_prod();
-
-    	var_dump($localobject->res); print (json_encode($localobject->res)); exit;
-		*/
-
-    	return;
-    }
-
-    /**
      * testProductUpdate
      *
      * @param   Product $localobject    Product
@@ -219,7 +194,8 @@ class ProductTest extends PHPUnit\Framework\TestCase
         $langs=$this->savlangs;
         $db=$this->savdb;
 
-        $localobject->note='New note after update';
+        $localobject->note_public = 'New public note after update';
+        $localobject->note_private = 'New private note after update';
         $result=$localobject->update($localobject->id, $user);
         print __METHOD__." id=".$localobject->id." result=".$result."\n";
         $this->assertLessThan($result, 0);
@@ -244,6 +220,7 @@ class ProductTest extends PHPUnit\Framework\TestCase
         $langs=$this->savlangs;
         $db=$this->savdb;
 
+        $this->assertEquals(0, 0);
 
         return $localobject->id;
     }
@@ -273,24 +250,5 @@ class ProductTest extends PHPUnit\Framework\TestCase
         $this->assertLessThan($result, 0);
 
         return $result;
-    }
-
-    /**
-     * testProductStatic
-     *
-     * @return  void
-     */
-    public function testProductStatic()
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
-
-        $localobject=new Product($db);
-
-
-        return;
     }
 }

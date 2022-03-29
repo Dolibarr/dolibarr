@@ -1,14 +1,14 @@
 # Dolibarr language file - Source file is en_US - loan
 Loan=Kredit
 Loans=Kredite
-NewLoan=Neuer Kredit
-ShowLoan=Zeige Kredit
-PaymentLoan=Kreditauszahlung
-LoanPayment=Kreditauszahlung
-ShowLoanPayment=Zeige Kreditauszahlung
+NewLoan=neuer Kredit
+ShowLoan=zeige Kredit
+PaymentLoan=Kreditzahlung
+LoanPayment=Kreditzahlung
+ShowLoanPayment=zeige Kreditzahlung
 LoanCapital=Kapital
 Insurance=Versicherung
-Interest=Zins
+Interest=Zinsen
 Nbterms=Anzahl der Bedingungen
 Term=Bedingungen
 LoanAccountancyCapitalCode=Buchhaltungskonto Kapital
@@ -21,11 +21,11 @@ LoanPaid=Kredit bezahlt
 ListLoanAssociatedProject=Liste der Darlehen in dem Projekt
 AddLoan=Darlehen erstellen
 FinancialCommitment=Finanzielle Verpflichtung
-InterestAmount=Zins
+InterestAmount=Zinsen
 CapitalRemain=Verbleibendes Kapital
-TermPaidAllreadyPaid = This term is allready paid
-CantUseScheduleWithLoanStartedToPaid = Can't use scheduler for a loan with payment started
-CantModifyInterestIfScheduleIsUsed = You can't modify interest if you use schedule
+TermPaidAllreadyPaid = Diese Laufzeit ist bereits bezahlt
+CantUseScheduleWithLoanStartedToPaid = Der Scheduler kann nicht für ein Darlehen verwendet werden, bei dem die Zahlung gestartet wurde.
+CantModifyInterestIfScheduleIsUsed = Sie können die Zinsen nicht ändern, wenn Sie den Zeitplan verwenden.
 # Admin
 ConfigLoan=Konfiguration des Modul Kredite
 LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Standard-Buchhaltungskonto Kapital

@@ -34,7 +34,7 @@ require '../../main.inc.php'; // Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
 
 $idbom = GETPOST('idbom', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 
 /*
@@ -49,8 +49,6 @@ if ($result > 0)
 	unset($object->fields);
 	unset($object->db);
 	echo json_encode($object);
-}
-else
-{
+} else {
    	echo 'Failed to load category with id='.$idbom;
 }

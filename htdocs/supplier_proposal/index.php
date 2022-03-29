@@ -67,15 +67,15 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 
 if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useless due to the global search combo
 {
-    print '<form method="post" action="'.DOL_URL_ROOT.'/supplier_proposal/list.php">';
-    print '<input type="hidden" name="token" value="'.newToken().'">';
-    print '<div class="div-table-responsive-no-min">';
-    print '<table class="noborder nohover centpercent">';
-    print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
-    print '<tr class="oddeven"><td>';
-    print $langs->trans("SupplierProposal").':</td><td><input type="text" class="flat" name="sall" size="18"></td><td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
-    print '</tr>';
-    print "</table></div></form><br>\n";
+	print '<form method="post" action="'.DOL_URL_ROOT.'/supplier_proposal/list.php">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<div class="div-table-responsive-no-min">';
+	print '<table class="noborder nohover centpercent">';
+	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
+	print '<tr class="oddeven"><td>';
+	print $langs->trans("SupplierProposal").':</td><td><input type="text" class="flat" name="sall" size="18"></td><td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
+	print '</tr>';
+	print "</table></div></form><br>\n";
 }
 
 
@@ -94,78 +94,76 @@ $sql .= " GROUP BY p.fk_statut";
 $resql = $db->query($sql);
 if ($resql)
 {
-    $num = $db->num_rows($resql);
-    $i = 0;
+	$num = $db->num_rows($resql);
+	$i = 0;
 
-    $total = 0;
-    $totalinprocess = 0;
-    $dataseries = array();
-    $colorseries = array();
-    $vals = array();
-    // -1=Canceled, 0=Draft, 1=Validated, (2=Accepted/On process not managed for customer orders), 3=Closed (Sent/Received, billed or not)
-    while ($i < $num)
-    {
-        $row = $db->fetch_row($resql);
-        if ($row)
-        {
-            //if ($row[1]!=-1 && ($row[1]!=3 || $row[2]!=1))
-            {
-                $vals[$row[1]] = $row[0];
-                $totalinprocess += $row[0];
-            }
-            $total += $row[0];
-        }
-        $i++;
-    }
-    $db->free($resql);
+	$total = 0;
+	$totalinprocess = 0;
+	$dataseries = array();
+	$colorseries = array();
+	$vals = array();
+	// -1=Canceled, 0=Draft, 1=Validated, (2=Accepted/On process not managed for customer orders), 3=Closed (Sent/Received, billed or not)
+	while ($i < $num)
+	{
+		$row = $db->fetch_row($resql);
+		if ($row)
+		{
+			//if ($row[1]!=-1 && ($row[1]!=3 || $row[2]!=1))
+			{
+				$vals[$row[1]] = $row[0];
+				$totalinprocess += $row[0];
+			}
+			$total += $row[0];
+		}
+		$i++;
+	}
+	$db->free($resql);
 
-    include_once DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
+	include_once DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
 
-    print '<div class="div-table-responsive-no-min">';
-    print '<table class="noborder centpercent">';
-    print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("CommRequests").'</th></tr>'."\n";
-    $listofstatus = array(0, 1, 2, 3, 4);
-    foreach ($listofstatus as $status)
-    {
-    	$dataseries[] = array($supplier_proposalstatic->LibStatut($status, 1), (isset($vals[$status]) ? (int) $vals[$status] : 0));
-    	if ($status == SupplierProposal::STATUS_DRAFT) $colorseries[$status] = '-'.$badgeStatus0;
-    	if ($status == SupplierProposal::STATUS_VALIDATED) $colorseries[$status] = $badgeStatus1;
-    	if ($status == SupplierProposal::STATUS_SIGNED) $colorseries[$status] = $badgeStatus4;
-    	if ($status == SupplierProposal::STATUS_NOTSIGNED) $colorseries[$status] = $badgeStatus9;
-    	if ($status == SupplierProposal::STATUS_CLOSE) $colorseries[$status] = $badgeStatus6;
+	print '<div class="div-table-responsive-no-min">';
+	print '<table class="noborder centpercent">';
+	print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("CommRequests").'</th></tr>'."\n";
+	$listofstatus = array(0, 1, 2, 3, 4);
+	foreach ($listofstatus as $status)
+	{
+		$dataseries[] = array($supplier_proposalstatic->LibStatut($status, 1), (isset($vals[$status]) ? (int) $vals[$status] : 0));
+		if ($status == SupplierProposal::STATUS_DRAFT) $colorseries[$status] = '-'.$badgeStatus0;
+		if ($status == SupplierProposal::STATUS_VALIDATED) $colorseries[$status] = $badgeStatus1;
+		if ($status == SupplierProposal::STATUS_SIGNED) $colorseries[$status] = $badgeStatus4;
+		if ($status == SupplierProposal::STATUS_NOTSIGNED) $colorseries[$status] = $badgeStatus9;
+		if ($status == SupplierProposal::STATUS_CLOSE) $colorseries[$status] = $badgeStatus6;
 
-    	if (empty($conf->use_javascript_ajax))
-    	{
-    		print '<tr class="oddeven">';
-    		print '<td>'.$supplier_proposalstatic->LibStatut($status, 0).'</td>';
-    		print '<td class="right"><a href="list.php?statut='.$status.'">'.(isset($vals[$status]) ? $vals[$status] : 0).'</a></td>';
-    		print "</tr>\n";
-    	}
-    }
-    if ($conf->use_javascript_ajax)
-    {
-        print '<tr><td class="center" colspan="2">';
+		if (empty($conf->use_javascript_ajax))
+		{
+			print '<tr class="oddeven">';
+			print '<td>'.$supplier_proposalstatic->LibStatut($status, 0).'</td>';
+			print '<td class="right"><a href="list.php?statut='.$status.'">'.(isset($vals[$status]) ? $vals[$status] : 0).'</a></td>';
+			print "</tr>\n";
+		}
+	}
+	if ($conf->use_javascript_ajax)
+	{
+		print '<tr><td class="center" colspan="2">';
 
-        include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
-        $dolgraph = new DolGraph();
-        $dolgraph->SetData($dataseries);
-        $dolgraph->SetDataColor(array_values($colorseries));
-        $dolgraph->setShowLegend(2);
-        $dolgraph->setShowPercent(1);
-        $dolgraph->SetType(array('pie'));
-        $dolgraph->setHeight('200');
-        $dolgraph->draw('idgraphstatus');
-        print $dolgraph->show($total ? 0 : 1);
+		include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
+		$dolgraph = new DolGraph();
+		$dolgraph->SetData($dataseries);
+		$dolgraph->SetDataColor(array_values($colorseries));
+		$dolgraph->setShowLegend(2);
+		$dolgraph->setShowPercent(1);
+		$dolgraph->SetType(array('pie'));
+		$dolgraph->setHeight('200');
+		$dolgraph->draw('idgraphstatus');
+		print $dolgraph->show($total ? 0 : 1);
 
-        print '</td></tr>';
-    }
+		print '</td></tr>';
+	}
 
-    print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td class="right">'.$total.'</td></tr>';
-    print "</table></div><br>";
-}
-else
-{
-    dol_print_error($db);
+	print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td class="right">'.$total.'</td></tr>';
+	print "</table></div><br>";
+} else {
+	dol_print_error($db);
 }
 
 
@@ -187,7 +185,7 @@ if (!empty($conf->supplier_proposal->enabled))
 	$resql = $db->query($sql);
 	if ($resql)
 	{
-        print '<div class="div-table-responsive-no-min">';
+		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<th colspan="2">'.$langs->trans("DraftRequests").'</th></tr>';
@@ -244,7 +242,7 @@ $sql .= $db->plimit($max, 0);
 $resql = $db->query($sql);
 if ($resql)
 {
-    print '<div class="div-table-responsive-no-min">';
+	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<th colspan="4">'.$langs->trans("LastModifiedRequests", $max).'</th></tr>';
@@ -294,8 +292,7 @@ if ($resql)
 		}
 	}
 	print "</table></div><br>";
-}
-else dol_print_error($db);
+} else dol_print_error($db);
 
 
 /*
@@ -326,7 +323,7 @@ if (!empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposa
 		$i = 0;
 		if ($num > 0)
 		{
-            print '<div class="div-table-responsive-no-min">';
+			print '<div class="div-table-responsive-no-min">';
 			print '<table class="noborder centpercent">';
 			print '<tr class="liste_titre"><th colspan="5">'.$langs->trans("RequestsOpened").' <a href="'.DOL_URL_ROOT.'/supplier_proposal/list.php?search_status=1"><span class="badge">'.$num.'</span></a></th></tr>';
 
@@ -376,16 +373,13 @@ if (!empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposa
 			if ($num > $nbofloop)
 			{
 				print '<tr class="liste_total"><td colspan="5">'.$langs->trans("XMoreLines", ($num - $nbofloop))."</td></tr>";
-			}
-			elseif ($total > 0)
+			} elseif ($total > 0)
 			{
 				print '<tr class="liste_total"><td colspan="3">'.$langs->trans("Total").'</td><td class="right">'.price($total)."</td><td>&nbsp;</td></tr>";
 			}
 			print "</table></div><br>";
 		}
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }

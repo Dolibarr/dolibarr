@@ -36,7 +36,7 @@ $id     = GETPOST('id', 'int');
 $ref    = GETPOST('ref', 'alpha');
 $lineid = GETPOST('lineid', 'int');
 $socid  = GETPOST('socid', 'int');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 $mine   = GETPOST('mode') == 'mine' ? 1 : 0;
 //if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
@@ -65,43 +65,38 @@ if ($action == 'addcontact' && $user->rights->projet->creer)
 
 	if ($result > 0 && $id > 0)
 	{
-		$contactid = (GETPOST('userid') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
-		$result = $object->add_contact($contactid, $_POST["type"], $_POST["source"]);
+  		$contactid = (GETPOST('userid') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
+  		$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
+  		$result = $object->add_contact($contactid, $typeid, GETPOST("source", 'aZ09'));
 	}
 
 	if ($result >= 0)
 	{
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;
-	}
-	else
-	{
+	} else {
 		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 		{
 			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), null, 'errors');
-		}
-		else
-		{
+		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
 }
 
-// bascule du statut d'un contact
+// Change contact's status
 if ($action == 'swapstatut' && $user->rights->projet->creer)
 {
 	if ($object->fetch($id))
 	{
 		$result = $object->swapContactStatus(GETPOST('ligne', 'int'));
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }
 
-// Efface un contact
+// Delete a contact
 if (($action == 'deleteline' || $action == 'deletecontact') && $user->rights->projet->creer)
 {
 	$object->fetch($id);
@@ -111,9 +106,7 @@ if (($action == 'deleteline' || $action == 'deletecontact') && $user->rights->pr
 	{
 		header("Location: contact.php?id=".$object->id);
 		exit;
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }
@@ -136,7 +129,7 @@ $userstatic = new User($db);
 
 /* *************************************************************************** */
 /*                                                                             */
-/* Mode vue et edition                                                         */
+/* Edition and view mode                                                       */
 /*                                                                             */
 /* *************************************************************************** */
 
@@ -150,7 +143,7 @@ if ($id > 0 || !empty($ref))
 	//print "userAccess=".$userAccess." userWrite=".$userWrite." userDelete=".$userDelete;
 
 	$head = project_prepare_head($object);
-	dol_fiche_head($head, 'contact', $langs->trans("Project"), -1, ($object->public ? 'projectpub' : 'project'));
+	print dol_get_fiche_head($head, 'contact', $langs->trans("Project"), -1, ($object->public ? 'projectpub' : 'project'));
 
 
 	// Project card
@@ -184,8 +177,7 @@ if ($id > 0 || !empty($ref))
 	print '<table class="border tableforfield centpercent">';
 
 	// Usage
-	if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES) || empty($conf->global->PROJECT_HIDE_TASKS))
-	{
+	if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES) || empty($conf->global->PROJECT_HIDE_TASKS)) {
 		print '<tr><td class="tdtop">';
 		print $langs->trans("Usage");
 		print '</td>';
@@ -213,6 +205,7 @@ if ($id > 0 || !empty($ref))
 		}
 		print '</td></tr>';
 	}
+
 	// Visibility
 	print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
 	if ($object->public) print $langs->trans('SharedProject');
@@ -286,7 +279,7 @@ if ($id > 0 || !empty($ref))
 
 	print '<div class="clearboth"></div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<br>';
 

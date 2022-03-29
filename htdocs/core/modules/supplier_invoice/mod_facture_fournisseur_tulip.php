@@ -37,15 +37,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/supplier_invoice/modules_facturefo
 class mod_facture_fournisseur_tulip extends ModeleNumRefSuppliersInvoices
 {
 	/**
-     * Dolibarr version of the loaded document
-     * @var string
-     */
+	 * Dolibarr version of the loaded document
+	 * @var string
+	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
 	/**
-     * @var string Error code (or message)
-     */
-    public $error = '';
+	 * @var string Error code (or message)
+	 */
+	public $error = '';
 
 	/**
 	 * @var string Nom du modele
@@ -60,17 +60,17 @@ class mod_facture_fournisseur_tulip extends ModeleNumRefSuppliersInvoices
 	public $name = 'Tulip';
 
 
-    /**
-     *  Returns the description of the model numbering
-     *
-     * 	@return     string      Description Text
-     */
-    public function info()
-    {
-        global $conf, $langs;
+	/**
+	 *  Returns the description of the model numbering
+	 *
+	 * 	@return     string      Description Text
+	 */
+	public function info()
+	{
+		global $conf, $langs;
 
 		// Load translation files required by the page
-        $langs->loadLangs(array("bills", "admin"));
+		$langs->loadLangs(array("bills", "admin"));
 
 		$form = new Form($this->db);
 
@@ -79,8 +79,8 @@ class mod_facture_fournisseur_tulip extends ModeleNumRefSuppliersInvoices
 		$texte .= '<input type="hidden" name="token" value="'.newToken().'">';
 		$texte .= '<input type="hidden" name="action" value="updateMask">';
 		$texte .= '<input type="hidden" name="maskconstinvoice" value="SUPPLIER_INVOICE_TULIP_MASK">';
-        $texte .= '<input type="hidden" name="maskconstreplacement" value="SUPPLIER_REPLACEMENT_TULIP_MASK">';
-        $texte .= '<input type="hidden" name="maskconstcredit" value="SUPPLIER_CREDIT_TULIP_MASK">';
+		$texte .= '<input type="hidden" name="maskconstreplacement" value="SUPPLIER_REPLACEMENT_TULIP_MASK">';
+		$texte .= '<input type="hidden" name="maskconstcredit" value="SUPPLIER_CREDIT_TULIP_MASK">';
 		$texte .= '<input type="hidden" name="maskconstdeposit" value="SUPPLIER_DEPOSIT_TULIP_MASK">';
 		$texte .= '<table class="nobordernopadding" width="100%">';
 
@@ -106,36 +106,36 @@ class mod_facture_fournisseur_tulip extends ModeleNumRefSuppliersInvoices
 
 		if ($conf->global->MAIN_FEATURE_LEVEL >= 2)
 		{
-    		// Parametrage du prefix des replacement
-    		$texte .= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("InvoiceReplacement").'):</td>';
-    		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskreplacement" value="'.$conf->global->SUPPLIER_REPLACEMENT_TULIP_MASK.'">', $tooltip, 1, 1).'</td>';
-    		$texte .= '</tr>';
+			// Parametrage du prefix des replacement
+			$texte .= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("InvoiceReplacement").'):</td>';
+			$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskreplacement" value="'.$conf->global->SUPPLIER_REPLACEMENT_TULIP_MASK.'">', $tooltip, 1, 1).'</td>';
+			$texte .= '</tr>';
 
 
-    		// Parametrage du prefix des acomptes
-    		$texte .= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("InvoiceDeposit").'):</td>';
-    		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskdeposit" value="'.$conf->global->SUPPLIER_DEPOSIT_TULIP_MASK.'">', $tooltip, 1, 1).'</td>';
-    		$texte .= '</tr>';
+			// Parametrage du prefix des acomptes
+			$texte .= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("InvoiceDeposit").'):</td>';
+			$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskdeposit" value="'.$conf->global->SUPPLIER_DEPOSIT_TULIP_MASK.'">', $tooltip, 1, 1).'</td>';
+			$texte .= '</tr>';
 		}
 
 		$texte .= '</table>';
 		$texte .= '</form>';
 
 		return $texte;
-    }
+	}
 
-    /**
-     *  Returns a numbering example
-     *
-     *  @return     string     Example
-     */
-    public function getExample()
-    {
-    	global $conf, $langs, $mysoc;
+	/**
+	 *  Returns a numbering example
+	 *
+	 *  @return     string     Example
+	 */
+	public function getExample()
+	{
+		global $conf, $langs, $mysoc;
 
-    	$old_code_client = $mysoc->code_client;
-    	$mysoc->code_client = 'CCCCCCCCCC';
-    	$numExample = $this->getNextValue($mysoc, '');
+		$old_code_client = $mysoc->code_client;
+		$mysoc->code_client = 'CCCCCCCCCC';
+		$numExample = $this->getNextValue($mysoc, '');
 		$mysoc->code_client = $old_code_client;
 
 		if (!$numExample)
@@ -143,18 +143,18 @@ class mod_facture_fournisseur_tulip extends ModeleNumRefSuppliersInvoices
 			$numExample = $langs->trans('NotConfigured');
 		}
 		return $numExample;
-    }
+	}
 
 	/**
 	 * Return next value
 	 *
 	 * @param	Societe		$objsoc     Object third party
 	 * @param  	Object	    $object		Object invoice
-     * @param	string		$mode       'next' for next value or 'last' for last value
-     * @return 	string      			Value if OK, 0 if KO
+	 * @param	string		$mode       'next' for next value or 'last' for last value
+	 * @return 	string      			Value if OK, 0 if KO
 	 */
-    public function getNextValue($objsoc, $object, $mode = 'next')
-    {
+	public function getNextValue($objsoc, $object, $mode = 'next')
+	{
 		global $db, $conf;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -168,8 +168,7 @@ class mod_facture_fournisseur_tulip extends ModeleNumRefSuppliersInvoices
 			{
 				$mask = $conf->global->SUPPLIER_INVOICE_TULIP_MASK;
 			}
-		}
-		elseif (is_object($object) && $object->type == 2) $mask = $conf->global->SUPPLIER_CREDIT_TULIP_MASK;
+		} elseif (is_object($object) && $object->type == 2) $mask = $conf->global->SUPPLIER_CREDIT_TULIP_MASK;
 		elseif (is_object($object) && $object->type == 3) $mask = $conf->global->SUPPLIER_DEPOSIT_TULIP_MASK;
 		else $mask = $conf->global->SUPPLIER_INVOICE_TULIP_MASK;
 		if (!$mask)
@@ -182,18 +181,18 @@ class mod_facture_fournisseur_tulip extends ModeleNumRefSuppliersInvoices
 		$numFinal = get_next_value($db, $mask, 'facture_fourn', 'ref', '', $objsoc, $object->date);
 
 		return  $numFinal;
-    }
+	}
 
-    /**
-     * Return next free value
-     *
-     *  @param  Societe     $objsoc         Object third party
-     *  @param  string      $objforref      Object for number to search
-     *  @param  string      $mode           'next' for next value or 'last' for last value
-     *  @return string                      Next free value
-     */
-    public function getNumRef($objsoc, $objforref, $mode = 'next')
-    {
-        return $this->getNextValue($objsoc, $objforref, $mode);
-    }
+	/**
+	 * Return next free value
+	 *
+	 *  @param  Societe     $objsoc         Object third party
+	 *  @param  string      $objforref      Object for number to search
+	 *  @param  string      $mode           'next' for next value or 'last' for last value
+	 *  @return string                      Next free value
+	 */
+	public function getNumRef($objsoc, $objforref, $mode = 'next')
+	{
+		return $this->getNextValue($objsoc, $objforref, $mode);
+	}
 }

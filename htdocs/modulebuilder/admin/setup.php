@@ -27,9 +27,9 @@ global $conf, $langs, $user, $db;
 $langs->loadLangs(array("admin", "other", "modulebuilder"));
 
 if (!$user->admin || empty($conf->modulebuilder->enabled))
-    accessforbidden();
+	accessforbidden();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 
 /*
@@ -37,47 +37,46 @@ $backtopage = GETPOST('backtopage', 'alpha');
  */
 if ($action == "update")
 {
-    $res1 = dolibarr_set_const($db, 'MODULEBUILDER_SPECIFIC_README', GETPOST('MODULEBUILDER_SPECIFIC_README', 'none'), 'chaine', 0, '', $conf->entity);
-    $res2 = dolibarr_set_const($db, 'MODULEBUILDER_ASCIIDOCTOR', GETPOST('MODULEBUILDER_ASCIIDOCTOR', 'nohtml'), 'chaine', 0, '', $conf->entity);
-    $res3 = dolibarr_set_const($db, 'MODULEBUILDER_ASCIIDOCTORPDF', GETPOST('MODULEBUILDER_ASCIIDOCTORPDF', 'nohtml'), 'chaine', 0, '', $conf->entity);
-    $res4 = dolibarr_set_const($db, 'MODULEBUILDER_SPECIFIC_EDITOR_NAME', GETPOST('MODULEBUILDER_SPECIFIC_EDITOR_NAME', 'nohtml'), 'chaine', 0, '', $conf->entity);
-    $res5 = dolibarr_set_const($db, 'MODULEBUILDER_SPECIFIC_EDITOR_URL', GETPOST('MODULEBUILDER_SPECIFIC_EDITOR_URL', 'nohtml'), 'chaine', 0, '', $conf->entity);
-    $res6 = dolibarr_set_const($db, 'MODULEBUILDER_SPECIFIC_FAMILY', GETPOST('MODULEBUILDER_SPECIFIC_FAMILY', 'nohtml'), 'chaine', 0, '', $conf->entity);
-    $res7 = dolibarr_set_const($db, 'MODULEBUILDER_SPECIFIC_AUTHOR', GETPOST('MODULEBUILDER_SPECIFIC_AUTHOR', 'html'), 'chaine', 0, '', $conf->entity);
-    $res8 = dolibarr_set_const($db, 'MODULEBUILDER_SPECIFIC_VERSION', GETPOST('MODULEBUILDER_SPECIFIC_VERSION', 'nohtml'), 'chaine', 0, '', $conf->entity);
-    if ($res1 < 0 || $res2 < 0 || $res3 < 0 || $res4 < 0 || $res5 < 0 || $res6 < 0 || $res7 < 0 || $res8 < 0) {
-        setEventMessages('ErrorFailedToSaveDate', null, 'errors');
-        $db->rollback();
-    }
-    else
-    {
-        setEventMessages('RecordModifiedSuccessfully', null, 'mesgs');
-        $db->commit();
-    }
+	$res1 = dolibarr_set_const($db, 'MODULEBUILDER_SPECIFIC_README', GETPOST('MODULEBUILDER_SPECIFIC_README', 'restricthtml'), 'chaine', 0, '', $conf->entity);
+	$res2 = dolibarr_set_const($db, 'MODULEBUILDER_ASCIIDOCTOR', GETPOST('MODULEBUILDER_ASCIIDOCTOR', 'nohtml'), 'chaine', 0, '', $conf->entity);
+	$res3 = dolibarr_set_const($db, 'MODULEBUILDER_ASCIIDOCTORPDF', GETPOST('MODULEBUILDER_ASCIIDOCTORPDF', 'nohtml'), 'chaine', 0, '', $conf->entity);
+	$res4 = dolibarr_set_const($db, 'MODULEBUILDER_SPECIFIC_EDITOR_NAME', GETPOST('MODULEBUILDER_SPECIFIC_EDITOR_NAME', 'nohtml'), 'chaine', 0, '', $conf->entity);
+	$res5 = dolibarr_set_const($db, 'MODULEBUILDER_SPECIFIC_EDITOR_URL', GETPOST('MODULEBUILDER_SPECIFIC_EDITOR_URL', 'nohtml'), 'chaine', 0, '', $conf->entity);
+	$res6 = dolibarr_set_const($db, 'MODULEBUILDER_SPECIFIC_FAMILY', GETPOST('MODULEBUILDER_SPECIFIC_FAMILY', 'nohtml'), 'chaine', 0, '', $conf->entity);
+	$res7 = dolibarr_set_const($db, 'MODULEBUILDER_SPECIFIC_AUTHOR', GETPOST('MODULEBUILDER_SPECIFIC_AUTHOR', 'html'), 'chaine', 0, '', $conf->entity);
+	$res8 = dolibarr_set_const($db, 'MODULEBUILDER_SPECIFIC_VERSION', GETPOST('MODULEBUILDER_SPECIFIC_VERSION', 'nohtml'), 'chaine', 0, '', $conf->entity);
+	if ($res1 < 0 || $res2 < 0 || $res3 < 0 || $res4 < 0 || $res5 < 0 || $res6 < 0 || $res7 < 0 || $res8 < 0) {
+		setEventMessages('ErrorFailedToSaveDate', null, 'errors');
+		$db->rollback();
+	} else {
+		setEventMessages('RecordModifiedSuccessfully', null, 'mesgs');
+		$db->commit();
+	}
 }
 
+$reg = array();
 if (preg_match('/set_(.*)/', $action, $reg)) {
-    $code = $reg[1];
-    $values = GETPOST($code);
-    if (is_array($values))
-        $values = implode(',', $values);
+	$code = $reg[1];
+	$values = GETPOST($code);
+	if (is_array($values))
+		$values = implode(',', $values);
 
-    if (dolibarr_set_const($db, $code, $values, 'chaine', 0, '', $conf->entity) > 0) {
-        header("Location: ".$_SERVER["PHP_SELF"]);
-        exit;
-    } else {
-        dol_print_error($db);
-    }
+	if (dolibarr_set_const($db, $code, $values, 'chaine', 0, '', $conf->entity) > 0) {
+		header("Location: ".$_SERVER["PHP_SELF"]);
+		exit;
+	} else {
+		dol_print_error($db);
+	}
 }
 
 if (preg_match('/del_(.*)/', $action, $reg)) {
-    $code = $reg[1];
-    if (dolibarr_del_const($db, $code, 0) > 0) {
-        Header("Location: ".$_SERVER["PHP_SELF"]);
-        exit;
-    } else {
-        dol_print_error($db);
-    }
+	$code = $reg[1];
+	if (dolibarr_del_const($db, $code, 0) > 0) {
+		Header("Location: ".$_SERVER["PHP_SELF"]);
+		exit;
+	} else {
+		dol_print_error($db);
+	}
 }
 
 
@@ -98,7 +97,7 @@ print '<input type="hidden" name="action" value="update">';
 print load_fiche_titre($langs->trans("ModuleSetup").' '.$langs->trans('Modulebuilder'), $linkback);
 
 if (GETPOST('withtab', 'alpha')) {
-    dol_fiche_head($head, 'modulebuilder', '', -1);
+	print dol_get_fiche_head($head, 'modulebuilder', '', -1);
 }
 
 print '<span class="opacitymedium">'.$langs->trans("ModuleBuilderDesc")."</span><br>\n";
@@ -115,56 +114,56 @@ print "</tr>\n";
 
 if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 {
-	// What is use cas of this 2 options ?
+	// What is use case of this 2 options ?
 
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("UseAboutPage").'</td>';
 	print '<td class="center">';
 	if ($conf->use_javascript_ajax) {
-	    print ajax_constantonoff('MODULEBUILDER_USE_ABOUT');
+		print ajax_constantonoff('MODULEBUILDER_USE_ABOUT');
 	} else {
-	    if (empty($conf->global->MODULEBUILDER_USE_ABOUT)) {
-	        print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_MODULEBUILDER_USE_ABOUT">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
-	    } else {
-	        print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_MODULEBUILDER_USE_ABOUT">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
-	    }
+		if (empty($conf->global->MODULEBUILDER_USE_ABOUT)) {
+			print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=set_MODULEBUILDER_USE_ABOUT&amp;token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+		} else {
+			print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=del_MODULEBUILDER_USE_ABOUT&amp;token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+		}
 	}
 	print '</td></tr>';
 
-    print '<tr class="oddeven">';
-    print '<td class="tdtop">'.$langs->trans("UseSpecificEditorName").'</td>';
-    print '<td>';
-    print '<input type="text" name="MODULEBUILDER_SPECIFIC_EDITOR_NAME" value="'.$conf->global->MODULEBUILDER_SPECIFIC_EDITOR_NAME.'">';
-    print '</td>';
-    print '</tr>';
+	print '<tr class="oddeven">';
+	print '<td class="tdtop">'.$langs->trans("UseSpecificEditorName").'</td>';
+	print '<td>';
+	print '<input type="text" name="MODULEBUILDER_SPECIFIC_EDITOR_NAME" value="'.$conf->global->MODULEBUILDER_SPECIFIC_EDITOR_NAME.'">';
+	print '</td>';
+	print '</tr>';
 
-    print '<tr class="oddeven">';
-    print '<td class="tdtop">'.$langs->trans("UseSpecificEditorURL").'</td>';
-    print '<td>';
-    print '<input type="text" name="MODULEBUILDER_SPECIFIC_EDITOR_URL" value="'.$conf->global->MODULEBUILDER_SPECIFIC_EDITOR_URL.'">';
-    print '</td>';
-    print '</tr>';
+	print '<tr class="oddeven">';
+	print '<td class="tdtop">'.$langs->trans("UseSpecificEditorURL").'</td>';
+	print '<td>';
+	print '<input type="text" name="MODULEBUILDER_SPECIFIC_EDITOR_URL" value="'.$conf->global->MODULEBUILDER_SPECIFIC_EDITOR_URL.'">';
+	print '</td>';
+	print '</tr>';
 
-    print '<tr class="oddeven">';
-    print '<td class="tdtop">'.$langs->trans("UseSpecificFamily").'</td>';
-    print '<td>';
-    print '<input type="text" name="MODULEBUILDER_SPECIFIC_FAMILY" value="'.$conf->global->MODULEBUILDER_SPECIFIC_FAMILY.'">';
-    print '</td>';
-    print '</tr>';
+	print '<tr class="oddeven">';
+	print '<td class="tdtop">'.$langs->trans("UseSpecificFamily").'</td>';
+	print '<td>';
+	print '<input type="text" name="MODULEBUILDER_SPECIFIC_FAMILY" value="'.$conf->global->MODULEBUILDER_SPECIFIC_FAMILY.'">';
+	print '</td>';
+	print '</tr>';
 
-    print '<tr class="oddeven">';
-    print '<td class="tdtop">'.$langs->trans("UseSpecificAuthor").'</td>';
-    print '<td>';
-    print '<input type="text" name="MODULEBUILDER_SPECIFIC_AUTHOR" value="'.$conf->global->MODULEBUILDER_SPECIFIC_AUTHOR.'">';
-    print '</td>';
-    print '</tr>';
+	print '<tr class="oddeven">';
+	print '<td class="tdtop">'.$langs->trans("UseSpecificAuthor").'</td>';
+	print '<td>';
+	print '<input type="text" name="MODULEBUILDER_SPECIFIC_AUTHOR" value="'.$conf->global->MODULEBUILDER_SPECIFIC_AUTHOR.'">';
+	print '</td>';
+	print '</tr>';
 
-    print '<tr class="oddeven">';
-    print '<td class="tdtop">'.$langs->trans("UseSpecificVersion").'</td>';
-    print '<td>';
-    print '<input type="text" name="MODULEBUILDER_SPECIFIC_VERSION" value="'.$conf->global->MODULEBUILDER_SPECIFIC_VERSION.'">';
-    print '</td>';
-    print '</tr>';
+	print '<tr class="oddeven">';
+	print '<td class="tdtop">'.$langs->trans("UseSpecificVersion").'</td>';
+	print '<td>';
+	print '<input type="text" name="MODULEBUILDER_SPECIFIC_VERSION" value="'.$conf->global->MODULEBUILDER_SPECIFIC_VERSION.'">';
+	print '</td>';
+	print '</tr>';
 }
 
 print '<tr class="oddeven">';
@@ -192,10 +191,10 @@ print '</tr>';
 
 print '</table>';
 
-print '<center><input type="submit" class="button" value="'.$langs->trans("Save").'" name="Button"></center>';
+print '<center><input type="submit" class="button button-save" value="'.$langs->trans("Save").'" name="Button"></center>';
 
 if (GETPOST('withtab', 'alpha')) {
-    dol_fiche_end();
+	print dol_get_fiche_end();
 }
 
 print '<br>';

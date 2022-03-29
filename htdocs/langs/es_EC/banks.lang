@@ -117,6 +117,4 @@ ShowVariousPayment=Mostrar pago misceláneo
 AddVariousPayment=Agregar pago misceláneo
 FindYourSEPAMandate=Este es su mandato de SEPA para autorizar a nuestra empresa a realizar un pedido de débito directo a su banco. Devuélvalo firmado (escaneo del documento firmado) o envíelo por correo a
 AutoReportLastAccountStatement=Rellene automáticamente el campo 'número de extracto bancario' con el último número de extracto al realizar la conciliación
-CashControl=POS Limite de efectivo
-NewCashFence=Nuevo limite de efectivo
 BankColorizeMovementDesc=Si esta función está habilitada, puede elegir un color de fondo específico para los movimientos de débito o crédito

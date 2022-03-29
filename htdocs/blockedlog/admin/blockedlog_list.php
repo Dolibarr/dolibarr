@@ -35,7 +35,7 @@ $langs->loadLangs(array("admin", "other", "blockedlog", "bills"));
 
 if ((!$user->admin && !$user->rights->blockedlog->read) || empty($conf->blockedlog->enabled)) accessforbidden();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'blockedloglist'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
 $optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
@@ -56,8 +56,8 @@ if (($search_start == -1 || empty($search_start)) && !GETPOSTISSET('search_start
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST('sortfield', 'alpha');
-$sortorder = GETPOST('sortorder', 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
@@ -133,15 +133,11 @@ if ($action === 'downloadblockchain') {
 			{
 				$previoushash = $block_static->getPreviousHash(0, $obj->rowid);
 				$firstid = $obj->rowid;
-			}
-			else
-			{	// If not data found for filter, we do not need previoushash neither firstid
+			} else {	// If not data found for filter, we do not need previoushash neither firstid
 				$previoushash = 'nodata';
 				$firstid = '';
 			}
-		}
-		else
-		{
+		} else {
 			$error++;
 			setEventMessages($db->lasterror, null, 'errors');
 		}
@@ -211,9 +207,7 @@ if ($action === 'downloadblockchain') {
 					$statusofrecord = 'Valid';
 					if ($loweridinerror > 0) $statusofrecordnote = 'ValidButFoundAPreviousKO';
 					else $statusofrecordnote = '';
-				}
-				else
-				{
+				} else {
 					$statusofrecord = 'KO';
 					$statusofrecordnote = 'LineCorruptedOrNotMatchingPreviousOne';
 					$loweridinerror = $obj->rowid;
@@ -245,9 +239,7 @@ if ($action === 'downloadblockchain') {
 			}
 
 			exit;
-		}
-		else
-		{
+		} else {
 			setEventMessages($db->lasterror, null, 'errors');
 		}
 	}
@@ -263,9 +255,7 @@ $form = new Form($db);
 if (GETPOST('withtab', 'alpha'))
 {
 	$title = $langs->trans("ModuleSetup").' '.$langs->trans('BlockedLog');
-}
-else
-{
+} else {
 	$title = $langs->trans("BrowseBlockedLog");
 }
 
@@ -279,9 +269,7 @@ if (!is_array($blocks))
 	if ($blocks == -2)
 	{
 		setEventMessages($langs->trans("TooManyRecordToScanRestrictFilters", $MAXLINES), null, 'errors');
-	}
-	else
-	{
+	} else {
 		dol_print_error($block_static->db, $block_static->error, $block_static->errors);
 		exit;
 	}
@@ -298,7 +286,7 @@ print load_fiche_titre($title, $linkback);
 if (GETPOST('withtab', 'alpha'))
 {
 	$head = blockedlogadmin_prepare_head();
-	dol_fiche_head($head, 'fingerprints', '', -1);
+	print dol_get_fiche_head($head, 'fingerprints', '', -1);
 }
 
 print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("FingerprintsDesc")."<br></span>\n";
@@ -323,6 +311,7 @@ if (GETPOST('withtab', 'alpha')) $param .= '&withtab='.urlencode(GETPOST('withta
 //include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 
 print '<div class="right">';
 print $langs->trans("RestrictYearToExport").': ';
@@ -440,9 +429,7 @@ if (!empty($conf->global->BLOCKEDLOG_SCAN_ALL_FOR_LOWERIDINERROR)) {
 
 	// TODO Make a full scan of table in reverse order of id of $block, so we can use the parameter $previoushash into checkSignature to save requests
 	// to find the $loweridinerror.
-}
-else
-{
+} else {
 	// This is version that optimize the memory (but will not report errors that are outside the filter range)
 	$loweridinerror = 0;
 	$checkresult = array();
@@ -510,9 +497,7 @@ if (is_array($blocks))
 		   	{
 		   		if ($checkresult[$block->id]) print img_picto($langs->trans('OkCheckFingerprintValidityButChainIsKo'), 'statut4');
 		   		else print img_picto($langs->trans('KoCheckFingerprintValidity'), 'statut8');
-		   	}
-		   	else
-		   	{
+		   	} else {
 		   		print img_picto($langs->trans('OkCheckFingerprintValidity'), 'statut4');
 		   	}
 
@@ -574,7 +559,7 @@ jQuery(document).ready(function () {
 
 if (!empty($conf->global->BLOCKEDLOG_USE_REMOTE_AUTHORITY) && !empty($conf->global->BLOCKEDLOG_AUTHORITY_URL))
 {
-    ?>
+	?>
 		<script type="text/javascript">
 
 			$.ajax({
@@ -597,7 +582,7 @@ if (!empty($conf->global->BLOCKEDLOG_USE_REMOTE_AUTHORITY) && !empty($conf->glob
 
 if (GETPOST('withtab', 'alpha'))
 {
-	dol_fiche_end();
+	print dol_get_fiche_end();
 }
 
 print '<br><br>';

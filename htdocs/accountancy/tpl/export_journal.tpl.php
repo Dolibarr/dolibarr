@@ -16,6 +16,8 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+// $formatexportset ùust be defined
+
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf))
 {

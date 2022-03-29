@@ -2,7 +2,7 @@
 /* Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
  * Copyright (C) 2007-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2019       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2019      Frédéric France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,11 +38,11 @@ $dirsmartphone = array();
 $dirmenus = array_merge(array("/core/menus/"), (array) $conf->modules_parts['menus']);
 foreach ($dirmenus as $dirmenu)
 {
-    $dirstandard[] = $dirmenu.'standard';
-    $dirsmartphone[] = $dirmenu.'smartphone';
+	$dirstandard[] = $dirmenu.'standard';
+	$dirsmartphone[] = $dirmenu.'smartphone';
 }
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 
 $menu_handler_top = $conf->global->MAIN_MENU_STANDARD;
@@ -118,9 +118,7 @@ if ($action == 'up')
 	$sql .= " WHERE m.rowid = ".$previous['rowid']; // Descend celui du dessus
 	dol_syslog("admin/menus/index.php ".$sql);
 	$db->query($sql);
-}
-
-elseif ($action == 'down')
+} elseif ($action == 'down')
 {
 	$current = array();
 	$next = array();
@@ -174,9 +172,7 @@ elseif ($action == 'down')
 	$sql .= " WHERE m.rowid = ".$next['rowid'];
 	dol_syslog("admin/menus/index.php ".$sql);
 	$db->query($sql);
-}
-
-elseif ($action == 'confirm_delete' && $confirm == 'yes')
+} elseif ($action == 'confirm_delete' && $confirm == 'yes')
 {
 	$db->begin();
 
@@ -191,9 +187,7 @@ elseif ($action == 'confirm_delete' && $confirm == 'yes')
 
 		header("Location: ".DOL_URL_ROOT.'/admin/menus/index.php?menu_handler='.$menu_handler);
 		exit;
-	}
-	else
-	{
+	} else {
 		$db->rollback();
 
 		$reload = 0;
@@ -230,12 +224,7 @@ $head[$h][1] = $langs->trans("MenuAdmin");
 $head[$h][2] = 'editor';
 $h++;
 
-$head[$h][0] = DOL_URL_ROOT."/admin/menus/other.php";
-$head[$h][1] = $langs->trans("Miscellaneous");
-$head[$h][2] = 'misc';
-$h++;
-
-dol_fiche_head($head, 'editor', '', -1);
+print dol_get_fiche_head($head, 'editor', '', -1);
 
 print '<span class="opacitymedium">'.$langs->trans("MenusEditorDesc")."</span><br>\n";
 print "<br>\n";
@@ -250,13 +239,13 @@ if ($action == 'delete')
 	$result = $db->query($sql);
 	$obj = $db->fetch_object($result);
 
-    print $form->formconfirm("index.php?menu_handler=".$menu_handler."&menuId=".GETPOST('menuId', 'int'), $langs->trans("DeleteMenu"), $langs->trans("ConfirmDeleteMenu", $obj->title), "confirm_delete");
+	print $form->formconfirm("index.php?menu_handler=".$menu_handler."&menuId=".GETPOST('menuId', 'int'), $langs->trans("DeleteMenu"), $langs->trans("ConfirmDeleteMenu", $obj->title), "confirm_delete");
 }
 
 $newcardbutton = '';
 if ($user->admin)
 {
-    $newcardbutton .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/admin/menus/edit.php?menuId=0&action=create&menu_handler='.urlencode($menu_handler).'&backtopage='.urlencode($_SERVER['PHP_SELF']));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/admin/menus/edit.php?menuId=0&action=create&menu_handler='.urlencode($menu_handler).'&backtopage='.urlencode($_SERVER['PHP_SELF']));
 }
 
 print '<form name="newmenu" class="nocellnopadd" action="'.$_SERVER["PHP_SELF"].'">';
@@ -303,7 +292,7 @@ if ($conf->use_javascript_ajax)
 
 	//il faut d'abord declarer un element racine de l'arbre
 
-    $data[] = array('rowid'=>0, 'fk_menu'=>-1, 'title'=>"racine", 'mainmenu'=>'', 'leftmenu'=>'', 'fk_mainmenu'=>'', 'fk_leftmenu'=>'');
+	$data[] = array('rowid'=>0, 'fk_menu'=>-1, 'title'=>"racine", 'mainmenu'=>'', 'leftmenu'=>'', 'fk_mainmenu'=>'', 'fk_leftmenu'=>'');
 
 	//puis tous les elements enfants
 
@@ -326,33 +315,33 @@ if ($conf->use_javascript_ajax)
 			$titre = $langs->trans($menu['titre']);
 
 			$entry = '<table class="nobordernopadding centpercent"><tr><td>';
-			$entry .= '<strong> &nbsp; <a href="edit.php?menu_handler='.$menu_handler_to_search.'&action=edit&menuId='.$menu['rowid'].'">'.$titre.'</a></strong>';
+			$entry .= '<strong> &nbsp; <a href="edit.php?menu_handler='.$menu_handler_to_search.'&action=edit&token='.newToken().'&menuId='.$menu['rowid'].'">'.$titre.'</a></strong>';
 			$entry .= '</td><td class="right">';
-			$entry .= '<a class="editfielda marginleftonly marginrightonly" href="edit.php?menu_handler='.$menu_handler_to_search.'&action=edit&menuId='.$menu['rowid'].'">'.img_edit('default', 0, 'class="menuEdit" id="edit'.$menu['rowid'].'"').'</a> ';
-			$entry .= '<a class="marginleftonly marginrightonly" href="edit.php?menu_handler='.$menu_handler_to_search.'&action=create&menuId='.$menu['rowid'].'">'.img_edit_add('default').'</a> ';
-			$entry .= '<a class="marginleftonly marginrightonly" href="index.php?menu_handler='.$menu_handler_to_search.'&action=delete&menuId='.$menu['rowid'].'">'.img_delete('default').'</a> ';
+			$entry .= '<a class="editfielda marginleftonly marginrightonly" href="edit.php?menu_handler='.$menu_handler_to_search.'&action=edit&token='.newToken().'&menuId='.$menu['rowid'].'">'.img_edit('default', 0, 'class="menuEdit" id="edit'.$menu['rowid'].'"').'</a> ';
+			$entry .= '<a class="marginleftonly marginrightonly" href="edit.php?menu_handler='.$menu_handler_to_search.'&action=create&token='.newToken().'&menuId='.$menu['rowid'].'">'.img_edit_add('default').'</a> ';
+			$entry .= '<a class="marginleftonly marginrightonly" href="index.php?menu_handler='.$menu_handler_to_search.'&action=delete&token='.newToken().'&menuId='.$menu['rowid'].'">'.img_delete('default').'</a> ';
 			$entry .= '&nbsp; &nbsp; &nbsp;';
-			$entry .= '<a class="marginleftonly marginrightonly" href="index.php?menu_handler='.$menu_handler_to_search.'&action=up&menuId='.$menu['rowid'].'">'.img_picto("Up", "1uparrow").'</a><a href="index.php?menu_handler='.$menu_handler_to_search.'&action=down&menuId='.$menu['rowid'].'">'.img_picto("Down", "1downarrow").'</a>';
+			$entry .= '<a class="marginleftonly marginrightonly" href="index.php?menu_handler='.$menu_handler_to_search.'&action=up&token='.newToken().'&menuId='.$menu['rowid'].'">'.img_picto("Up", "1uparrow").'</a><a href="index.php?menu_handler='.$menu_handler_to_search.'&action=down&menuId='.$menu['rowid'].'">'.img_picto("Down", "1downarrow").'</a>';
 			$entry .= '</td></tr></table>';
 
-			$buttons = '<a class="editfielda marginleftonly marginrightonly" href="edit.php?menu_handler='.$menu_handler_to_search.'&action=edit&menuId='.$menu['rowid'].'">'.img_edit('default', 0, 'class="menuEdit" id="edit'.$menu['rowid'].'"').'</a> ';
-			$buttons .=	'<a class="marginleftonly marginrightonly" href="edit.php?menu_handler='.$menu_handler_to_search.'&action=create&menuId='.$menu['rowid'].'">'.img_edit_add('default').'</a> ';
-			$buttons .=	'<a class="marginleftonly marginrightonly" href="index.php?menu_handler='.$menu_handler_to_search.'&action=delete&menuId='.$menu['rowid'].'">'.img_delete('default').'</a> ';
-			$buttons .=	'&nbsp; &nbsp; &nbsp;';
-			$buttons .=	'<a class="marginleftonly marginrightonly" href="index.php?menu_handler='.$menu_handler_to_search.'&action=up&menuId='.$menu['rowid'].'">'.img_picto("Up", "1uparrow").'</a><a href="index.php?menu_handler='.$menu_handler_to_search.'&action=down&menuId='.$menu['rowid'].'">'.img_picto("Down", "1downarrow").'</a>';
+			$buttons = '<a class="editfielda marginleftonly marginrightonly" href="edit.php?menu_handler='.$menu_handler_to_search.'&action=edit&token='.newToken().'&menuId='.$menu['rowid'].'">'.img_edit('default', 0, 'class="menuEdit" id="edit'.$menu['rowid'].'"').'</a> ';
+			$buttons .= '<a class="marginleftonly marginrightonly" href="edit.php?menu_handler='.$menu_handler_to_search.'&action=create&token='.newToken().'&menuId='.$menu['rowid'].'">'.img_edit_add('default').'</a> ';
+			$buttons .= '<a class="marginleftonly marginrightonly" href="index.php?menu_handler='.$menu_handler_to_search.'&action=delete&token='.newToken().'&menuId='.$menu['rowid'].'">'.img_delete('default').'</a> ';
+			$buttons .= '&nbsp; &nbsp; &nbsp;';
+			$buttons .= '<a class="marginleftonly marginrightonly" href="index.php?menu_handler='.$menu_handler_to_search.'&action=up&token='.newToken().'&menuId='.$menu['rowid'].'">'.img_picto("Up", "1uparrow").'</a><a href="index.php?menu_handler='.$menu_handler_to_search.'&action=down&menuId='.$menu['rowid'].'">'.img_picto("Down", "1downarrow").'</a>';
 
 			$data[] = array(
 				'rowid'=>$menu['rowid'],
-			    'module'=>$menu['module'],
+				'module'=>$menu['module'],
 				'fk_menu'=>$menu['fk_menu'],
 				'title'=>$titre,
-			    'mainmenu'=>$menu['mainmenu'],
+				'mainmenu'=>$menu['mainmenu'],
 				'leftmenu'=>$menu['leftmenu'],
 				'fk_mainmenu'=>$menu['fk_mainmenu'],
 				'fk_leftmenu'=>$menu['fk_leftmenu'],
-			    'position'=>$menu['position'],
+				'position'=>$menu['position'],
 				'entry'=>$entry,
-			    'buttons'=>$buttons
+				'buttons'=>$buttons
 			);
 			$i++;
 		}
@@ -375,42 +364,40 @@ if ($conf->use_javascript_ajax)
 
 
 	// Process remaining records (records that are not linked to root by any path)
-    $remainingdata = array();
+	$remainingdata = array();
 	foreach ($data as $datar)
 	{
-	    if (empty($datar['rowid']) || $tree_recur_alreadyadded[$datar['rowid']]) continue;
-	    $remainingdata[] = $datar;
+		if (empty($datar['rowid']) || $tree_recur_alreadyadded[$datar['rowid']]) continue;
+		$remainingdata[] = $datar;
 	}
 
 	if (count($remainingdata))
 	{
-    	print '<table class="noborder centpercent">';
+		print '<table class="noborder centpercent">';
 
-    	print '<tr class="liste_titre">';
-    	print '<td>'.$langs->trans("NotTopTreeMenuPersonalized").'</td>';
-    	print '<td class="right"></td>';
-    	print '</tr>';
+		print '<tr class="liste_titre">';
+		print '<td>'.$langs->trans("NotTopTreeMenuPersonalized").'</td>';
+		print '<td class="right"></td>';
+		print '</tr>';
 
-    	print '<tr>';
-    	print '<td colspan="2">';
-    	foreach ($remainingdata as $datar)
-    	{
-            $father = array('rowid'=>$datar['rowid'], 'title'=>"???", 'mainmenu'=>$datar['fk_mainmenu'], 'leftmenu'=>$datar['fk_leftmenu'], 'fk_mainmenu'=>'', 'fk_leftmenu'=>'');
-    	    //print 'Start with rowid='.$datar['rowid'].' mainmenu='.$father ['mainmenu'].' leftmenu='.$father ['leftmenu'].'<br>'."\n";
-    	    tree_recur($data, $father, 0, 'iddivjstree'.$datar['rowid'], 1, 1);
-    	}
+		print '<tr>';
+		print '<td colspan="2">';
+		foreach ($remainingdata as $datar)
+		{
+			$father = array('rowid'=>$datar['rowid'], 'title'=>"???", 'mainmenu'=>$datar['fk_mainmenu'], 'leftmenu'=>$datar['fk_leftmenu'], 'fk_mainmenu'=>'', 'fk_leftmenu'=>'');
+			//print 'Start with rowid='.$datar['rowid'].' mainmenu='.$father ['mainmenu'].' leftmenu='.$father ['leftmenu'].'<br>'."\n";
+			tree_recur($data, $father, 0, 'iddivjstree'.$datar['rowid'], 1, 1);
+		}
 
-    	print '</td>';
+		print '</td>';
 
-    	print '</tr>';
+		print '</tr>';
 
-    	print '</table>';
+		print '</table>';
 	}
 
 	print '</div>';
-}
-else
-{
+} else {
 	$langs->load("errors");
 	setEventMessages($langs->trans("ErrorFeatureNeedJavascript"), null, 'errors');
 }

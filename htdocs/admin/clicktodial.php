@@ -33,7 +33,7 @@ if (!$user->admin) accessforbidden();
 
 $action = GETPOST('action', 'aZ09');
 
-if (! in_array('clicktodial', $conf->modules)) {
+if (!in_array('clicktodial', $conf->modules)) {
 	accessforbidden($langs->trans("WarningModuleNotActive", $langs->transnoentitiesnoconv("Module58Name")));
 }
 
@@ -44,17 +44,15 @@ if (! in_array('clicktodial', $conf->modules)) {
 
 if ($action == 'setvalue' && $user->admin)
 {
-    $result1 = dolibarr_set_const($db, "CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS", GETPOST("CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS"), 'chaine', 0, '', $conf->entity);
-    $result2 = dolibarr_set_const($db, "CLICKTODIAL_URL", GETPOST("CLICKTODIAL_URL"), 'chaine', 0, '', $conf->entity);
+	$result1 = dolibarr_set_const($db, "CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS", GETPOST("CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS"), 'chaine', 0, '', $conf->entity);
+	$result2 = dolibarr_set_const($db, "CLICKTODIAL_URL", GETPOST("CLICKTODIAL_URL"), 'chaine', 0, '', $conf->entity);
 
-    if ($result1 >= 0 && $result2 >= 0)
-    {
+	if ($result1 >= 0 && $result2 >= 0)
+	{
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else
-    {
-        setEventMessages($langs->trans("Error"), null, 'errors');
-    }
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
 }
 
 
@@ -127,7 +125,7 @@ if (!empty($conf->global->CLICKTODIAL_URL))
 	if (GETPOST('phonefortest')) $phonefortest = GETPOST('phonefortest');
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'">';
-    print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print $langs->trans("LinkToTestClickToDial", $user->login).' : ';
 	print '<input class="flat" type="text" name="phonefortest" value="'.dol_escape_htmltag($phonefortest).'">';
 	print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("RefreshPhoneLink")).'">';
@@ -141,9 +139,7 @@ if (!empty($conf->global->CLICKTODIAL_URL))
 	if ($setupcomplete)
 	{
 		print $langs->trans("LinkToTest", $user->login).': '.dol_print_phone($phonefortest, '', 0, 0, 'AC_TEL');
-	}
-	else
-	{
+	} else {
 		$langs->load("errors");
 		print '<div class="warning">'.$langs->trans("WarningClickToDialUserSetupNotComplete").'</div>';
 	}

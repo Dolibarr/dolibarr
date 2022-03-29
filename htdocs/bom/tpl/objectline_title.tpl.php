@@ -54,7 +54,7 @@ print '<td class="linecoldescription">'.$langs->trans('Description').'</td>';
 // Qty
 print '<td class="linecolqty right">'.$form->textwithpicto($langs->trans('Qty'), $langs->trans("QtyRequiredIfNoLoss")).'</td>';
 
-if ($conf->global->PRODUCT_USE_UNITS)
+if (!empty($conf->global->PRODUCT_USE_UNITS))
 {
 	print '<td class="linecoluseunit left">'.$langs->trans('Unit').'</td>';
 }

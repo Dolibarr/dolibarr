@@ -1,0 +1,76 @@
+# Copyright (C) 2020 Laurent Destailleur
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+
+# Module label 'ModuleRecruitmentName'
+ModuleRecruitmentName = Contractació
+# Module description 'ModuleRecruitmentDesc'
+ModuleRecruitmentDesc = Gestiona i segueix les campanyes de contractació de llocs de treball nous
+
+#
+# Admin page
+#
+RecruitmentSetup = Configuració de la contractació
+Settings = Configuració
+RecruitmentSetupPage = Introduïu aquí la configuració de les opcions principals del mòdul de contractació
+RecruitmentArea=Àrea de contractació
+PublicInterfaceRecruitmentDesc=Les pàgines públiques de feines són URL públiques per a mostrar i respondre a feines actives. Hi ha un enllaç diferent per a cada treball actiu que es troba a cada registre de la feina.
+EnablePublicRecruitmentPages=Activa les pàgines públiques de treballs actius
+
+#
+# About page
+#
+About = Sobre
+RecruitmentAbout = Quant a la contractació
+RecruitmentAboutPage = Pàgina quant a la contractació
+NbOfEmployeesExpected=Nombre previst d'empleats
+JobLabel=Descripció del lloc de treball
+WorkPlace=Lloc de treball
+DateExpected=Data prevista
+FutureManager=Futur gerent
+ResponsibleOfRecruitement=Responsable de la contractació
+IfJobIsLocatedAtAPartner=Si la feina es troba en l'espai del client
+PositionToBeFilled=Càrrec laboral
+PositionsToBeFilled=Llocs de treball
+ListOfPositionsToBeFilled=Llista de llocs de treball
+NewPositionToBeFilled=Llocs de treball nous
+
+JobOfferToBeFilled=Lloc de treball a cobrir
+ThisIsInformationOnJobPosition=Informació del lloc de treball a ocupar
+ContactForRecruitment=Contacte per a la contractació
+EmailRecruiter=El reclutador de correu electrònic
+ToUseAGenericEmail=Per a utilitzar un correu electrònic genèric. Si no està definit, s’utilitzarà el correu electrònic del responsable de la contractació
+NewCandidature=Candidatura nova
+ListOfCandidatures=Llista de candidatures
+RequestedRemuneration=Retribució sol·licitada
+ProposedRemuneration=Retribució proposada
+ContractProposed=Contracte proposat
+ContractSigned=Contracte signat
+ContractRefused=Contracte denegat
+RecruitmentCandidature=Candidatura
+JobPositions=Llocs de treball
+RecruitmentCandidatures=Candidatures
+InterviewToDo=Entrevista per a fer
+AnswerCandidature=Resposta de la candidatura
+YourCandidature=La teva candidatura
+YourCandidatureAnswerMessage=Gràcies per la teva candidatura. <br> ...
+JobClosedTextCandidateFound=L’oferta de feina està tancada. El lloc s'ha cobert.
+JobClosedTextCanceled=L’oferta de feina està tancada.
+ExtrafieldsJobPosition=Atributs complementaris (llocs de treball)
+ExtrafieldsCandidatures=Atributs complementaris (sol·licituds de feina)
+MakeOffer=Feu una oferta

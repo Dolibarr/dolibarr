@@ -102,7 +102,6 @@ $sql .= ", u.ldap_sid";
 $sql .= ", u.photo";
 $sql .= ", u.admin";
 $sql .= ", u.email";
-$sql .= ", u.skype";
 $sql .= ", s.nom as name";
 $sql .= ", s.code_client";
 $sql .= ", s.canvas";
@@ -129,7 +128,7 @@ if ($resql)
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("LastUsersCreated", min($num, $max)).'</td>';
 	print '<td class="right" colspan="2"><a class="commonlink" href="'.DOL_URL_ROOT.'/user/list.php?sortfield=u.datec&sortorder=DESC">'.$langs->trans("FullList").'</td>';
-	print '</tr>';
+	print '</tr>'."\n";
 	$i = 0;
 
 	while ($i < $num && $i < $max)
@@ -144,7 +143,6 @@ if ($resql)
 		$fuserstatic->photo = $obj->photo;
 		$fuserstatic->admin = $obj->admin;
 		$fuserstatic->email = $obj->email;
-		$fuserstatic->skype = $obj->skype;
 		$fuserstatic->socid = $obj->fk_soc;
 
 		$companystatic->id = $obj->fk_soc;
@@ -154,12 +152,11 @@ if ($resql)
 
 		print '<tr class="oddeven">';
 		print '<td class="nowraponall">';
-        print $fuserstatic->getNomUrl(-1);
+		print $fuserstatic->getNomUrl(-1);
 		if (!empty($conf->multicompany->enabled) && $obj->admin && !$obj->entity)
 		{
 			print img_picto($langs->trans("SuperAdministrator"), 'redstar');
-		}
-		elseif ($obj->admin)
+		} elseif ($obj->admin)
 		{
 			print img_picto($langs->trans("Administrator"), 'star');
 		}
@@ -168,10 +165,8 @@ if ($resql)
 		print "<td>";
 		if ($obj->fk_soc)
 		{
-            print $companystatic->getNomUrl(1);
-		}
-		else
-		{
+			print $companystatic->getNomUrl(1);
+		} else {
 			print $langs->trans("InternalUser");
 		}
 		if ($obj->ldap_sid)
@@ -181,26 +176,24 @@ if ($resql)
 
 		$entity = $obj->entity;
 		$entitystring = '';
-        // TODO Set of entitystring should be done with a hook
+		// TODO Set of entitystring should be done with a hook
 		if (!empty($conf->multicompany->enabled) && is_object($mc))
 		{
 			if (empty($entity))
 			{
 				$entitystring = $langs->trans("AllEntities");
-			}
-			else
-			{
+			} else {
 				$mc->getInfo($entity);
 				$entitystring = $mc->label;
 			}
 		}
-        print ($entitystring ? ' ('.$entitystring.')' : '');
+		print ($entitystring ? ' ('.$entitystring.')' : '');
 
 		print '</td>';
 		print '<td class="center nowrap">'.dol_print_date($db->jdate($obj->datec), 'dayhour').'</td>';
-        print '<td class="right">';
-        print $fuserstatic->getLibStatut(3);
-        print '</td>';
+		print '<td class="right">';
+		print $fuserstatic->getLibStatut(3);
+		print '</td>';
 
 		print '</tr>';
 		$i++;
@@ -209,9 +202,7 @@ if ($resql)
 	print "</div><br>";
 
 	$db->free($resql);
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 
@@ -228,9 +219,7 @@ if ($canreadperms)
 	if (!empty($conf->multicompany->enabled) && $conf->entity == 1 && ($conf->global->MULTICOMPANY_TRANSVERSE_MODE || ($user->admin && !$user->entity)))
 	{
 		$sql .= " WHERE g.entity IS NOT NULL";
-	}
-	else
-	{
+	} else {
 		$sql .= " WHERE g.entity IN (0,".$conf->entity.")";
 	}
 	$sql .= $db->order("g.datec", "DESC");
@@ -270,10 +259,10 @@ if ($canreadperms)
 			print "</td>";
 			if (!empty($conf->multicompany->enabled) && is_object($mc))
 			{
-	        	$mc->getInfo($obj->entity);
-	        	print '<td>';
-	        	print $mc->label;
-	        	print '</td>';
+				$mc->getInfo($obj->entity);
+				print '<td>';
+				print $mc->label;
+				print '</td>';
 			}
 			print '<td class="nowrap right">'.dol_print_date($db->jdate($obj->datec), 'dayhour').'</td>';
 			print "</tr>";
@@ -283,9 +272,7 @@ if ($canreadperms)
 		print "</div><br>";
 
 		$db->free($resql);
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }

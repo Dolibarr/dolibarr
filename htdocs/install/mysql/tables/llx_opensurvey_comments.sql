@@ -19,7 +19,7 @@ CREATE TABLE llx_opensurvey_comments (
     id_comment INTEGER unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
     id_sondage CHAR(16) NOT NULL,
     comment text NOT NULL,
-    tms timestamp,
+    tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     usercomment text
 ) ENGINE=innodb;
 

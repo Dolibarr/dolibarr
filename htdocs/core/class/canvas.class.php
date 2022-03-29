@@ -29,9 +29,9 @@
 class Canvas
 {
 	/**
-     * @var DoliDB Database handler.
-     */
-    public $db;
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
 
 	/**
 	 * @var string Error code (or message)
@@ -45,16 +45,16 @@ class Canvas
 
 	public $actiontype;
 
-    public $dirmodule; // Module directory
-    public $targetmodule; // Module concerned by canvas (ex: thirdparty, contact, ...)
-    public $canvas; // Name of canvas (ex: company, individual, product, service, ...)
-    public $card; // Tab (sub-canvas)
+	public $dirmodule; // Module directory
+	public $targetmodule; // Module concerned by canvas (ex: thirdparty, contact, ...)
+	public $canvas; // Name of canvas (ex: company, individual, product, service, ...)
+	public $card; // Tab (sub-canvas)
 
-    public $template_dir; // Initialized by getCanvas with templates directory
-    public $control; // Initialized by getCanvas with controller instance
+	public $template_dir; // Initialized by getCanvas with templates directory
+	public $control; // Initialized by getCanvas with controller instance
 
 
-    /**
+	/**
 	 *   Constructor
 	 *
 	 *   @param     DoliDB	$db          	Database handler
@@ -75,11 +75,11 @@ class Canvas
 	 */
 	private function _cleanaction($action)
 	{
-	    $newaction = $action;
-	    if ($newaction == 'add')    $newaction = 'create';
-	    if ($newaction == 'update') $newaction = 'edit';
-	    if (empty($newaction) || $newaction == 'delete' || $newaction == 'create_user' || $newaction == 'presend' || $newaction == 'send') $newaction = 'view';
-	    return $newaction;
+		$newaction = $action;
+		if ($newaction == 'add')    $newaction = 'create';
+		if ($newaction == 'update') $newaction = 'edit';
+		if (empty($newaction) || $newaction == 'delete' || $newaction == 'create_user' || $newaction == 'presend' || $newaction == 'send') $newaction = 'view';
+		return $newaction;
 	}
 
 
@@ -96,45 +96,45 @@ class Canvas
 		global $conf, $langs;
 
 		// Set properties with value specific to dolibarr core: this->targetmodule, this->card, this->canvas
-        $this->targetmodule = $module;
-        $this->canvas = $canvas;
-        $this->card = $card;
-        $this->dirmodule = $module;
-        // Correct values if canvas is into an external module
+		$this->targetmodule = $module;
+		$this->canvas = $canvas;
+		$this->card = $card;
+		$this->dirmodule = $module;
+		// Correct values if canvas is into an external module
 		if (preg_match('/^([^@]+)@([^@]+)$/i', $canvas, $regs))
 		{
-            $this->canvas = $regs[1];
-		    $this->dirmodule = $regs[2];
+			$this->canvas = $regs[1];
+			$this->dirmodule = $regs[2];
 		}
 		// For compatibility
-        if ($this->dirmodule == 'thirdparty') { $this->dirmodule = 'societe'; }
+		if ($this->dirmodule == 'thirdparty') { $this->dirmodule = 'societe'; }
 
-        // Control file
+		// Control file
 		$controlclassfile = dol_buildpath('/'.$this->dirmodule.'/canvas/'.$this->canvas.'/actions_'.$this->card.'_'.$this->canvas.'.class.php');
 		if (file_exists($controlclassfile))
 		{
-            // Include actions class (controller)
-            $this->control_file = $controlclassfile;
-            require_once $controlclassfile;
+			// Include actions class (controller)
+			$this->control_file = $controlclassfile;
+			require_once $controlclassfile;
 
-            // Instantiate actions class (controller)
-            $controlclassname = 'Actions'.ucfirst($this->card).ucfirst($this->canvas);
-            $this->control = new $controlclassname($this->db, $this->dirmodule, $this->targetmodule, $this->canvas, $this->card);
+			// Instantiate actions class (controller)
+			$controlclassname = 'Actions'.ucfirst($this->card).ucfirst($this->canvas);
+			$this->control = new $controlclassname($this->db, $this->dirmodule, $this->targetmodule, $this->canvas, $this->card);
 		}
 
 		// Template dir
 		$this->template_dir = dol_buildpath('/'.$this->dirmodule.'/canvas/'.$this->canvas.'/tpl/');
-        if (!is_dir($this->template_dir))
-        {
-            $this->template_dir = '';
-        }
+		if (!is_dir($this->template_dir))
+		{
+			$this->template_dir = '';
+		}
 
-        //print 'dimodule='.$dirmodule.' canvas='.$this->canvas.'<br>';
-        //print ' => template_dir='.$this->template_dir.'<br>';
+		//print 'dimodule='.$dirmodule.' canvas='.$this->canvas.'<br>';
+		//print ' => template_dir='.$this->template_dir.'<br>';
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-    /**
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
 	 * 	Shared method for canvas to assign values for templates
 	 *
 	 * 	@param		string		$action	Action string
@@ -144,25 +144,25 @@ class Canvas
 	 */
 	public function assign_values(&$action = 'view', $id = 0, $ref = '')
 	{
-        // phpcs:enable
+		// phpcs:enable
 		if (method_exists($this->control, 'assign_values')) $this->control->assign_values($action, $id, $ref);
 	}
 
-    /**
-     *	Return the template to display canvas (if it exists)
+	/**
+	 *	Return the template to display canvas (if it exists)
 	 *
 	 *	@param	string	$action		Action code
-     *	@return	int		0=Canvas template file does not exist, 1=Canvas template file exists
-     */
-    public function displayCanvasExists($action)
-    {
-        if (empty($this->template_dir)) return 0;
+	 *	@return	int		0=Canvas template file does not exist, 1=Canvas template file exists
+	 */
+	public function displayCanvasExists($action)
+	{
+		if (empty($this->template_dir)) return 0;
 
-        if (file_exists($this->template_dir.(!empty($this->card) ? $this->card.'_' : '').$this->_cleanaction($action).'.tpl.php')) return 1;
-        else return 0;
-    }
+		if (file_exists($this->template_dir.(!empty($this->card) ? $this->card.'_' : '').$this->_cleanaction($action).'.tpl.php')) return 1;
+		else return 0;
+	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Display a canvas page. This will include the template for output.
 	 *	Variables used by templates may have been defined or loaded before into the assign_values function.
@@ -172,7 +172,7 @@ class Canvas
 	 */
 	public function display_canvas($action)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $db, $conf, $langs, $user, $canvas;
 		global $form, $formfile;
 
@@ -191,12 +191,12 @@ class Canvas
 	 */
 	public function hasActions()
 	{
-        return (is_object($this->control));
+		return (is_object($this->control));
 	}
 
 	/**
 	 * 	Shared method for canvas to execute actions.
-     *  @deprecated Use the doActions of hooks instead of this.
+	 *  @deprecated Use the doActions of hooks instead of this.
 	 * 	            This function is called if you add a doActions class inside your canvas. Try to not
 	 * 				do that and add action code into a hook instead.
 	 *

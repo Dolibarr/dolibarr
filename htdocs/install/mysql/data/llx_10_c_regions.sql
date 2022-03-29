@@ -380,3 +380,7 @@ insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9,931,
 insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9,932, '新',0,'新疆维吾尔自治区');
 insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9,933, '港',0,'香港特别行政区');
 insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9,934, '澳',0,'澳门特别行政区');
+
+-- Regions Angola (rowid country=35)
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES (35, 35001, 'AO', NULL, 'Angola');
+

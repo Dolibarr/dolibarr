@@ -27,7 +27,7 @@ if (!defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
 require '../../main.inc.php';
 
 $id = GETPOST('id', 'int');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $htmlname	= GETPOST('htmlname', 'alpha');
 $selected	= (GETPOST('selected') ?GETPOST('selected') : '-1');
 $productid = (GETPOST('productid', 'int') ?GETPOST('productid', 'int') : 0);
@@ -52,9 +52,7 @@ if (!empty($id) && !empty($action) && !empty($htmlname))
 	{
 		$seller = $mysoc;
 		$buyer = $soc;
-	}
-	else
-	{
+	} else {
 		$buyer = $mysoc;
 		$seller = $soc;
 	}

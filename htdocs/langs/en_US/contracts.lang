@@ -99,3 +99,6 @@ TypeContact_contrat_internal_SALESREPFOLL=Sales representative following-up cont
 TypeContact_contrat_external_BILLING=Billing customer contact
 TypeContact_contrat_external_CUSTOMER=Follow-up customer contact
 TypeContact_contrat_external_SALESREPSIGN=Signing contract customer contact
+HideClosedServiceByDefault=Hide closed services by default
+ShowClosedServices=Show Closed Services
+HideClosedServices=Hide Closed Services

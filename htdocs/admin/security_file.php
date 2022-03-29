@@ -34,7 +34,7 @@ $langs->loadLangs(array('users', 'admin', 'other'));
 if (!$user->admin)
 	accessforbidden();
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 
 $upload_dir = $conf->admin->dir_temp;
 
@@ -45,15 +45,15 @@ $upload_dir = $conf->admin->dir_temp;
 
 if (GETPOST('sendit') && !empty($conf->global->MAIN_UPLOAD_DOC))
 {
-    require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-    dol_add_file_process($upload_dir, 0, 0, 'userfile');
+	dol_add_file_process($upload_dir, 1, 0, 'userfile');
 }
 
 if ($action == 'updateform')
 {
-	$antivircommand = GETPOST('MAIN_ANTIVIRUS_COMMAND', 'none'); // Use GETPOST none because we must accept ". Example c:\Progra~1\ClamWin\bin\clamscan.exe
-	$antivirparam = GETPOST('MAIN_ANTIVIRUS_PARAM', 'none'); // Use GETPOST none because we must accept ". Example --database="C:\Program Files (x86)\ClamWin\lib"
+	$antivircommand = GETPOST('MAIN_ANTIVIRUS_COMMAND', 'restricthtml'); // Use GETPOST restricthtml because we must accept ". Example c:\Progra~1\ClamWin\bin\clamscan.exe
+	$antivirparam = GETPOST('MAIN_ANTIVIRUS_PARAM', 'restricthtml'); // Use GETPOST restricthtml because we must accept ". Example --database="C:\Program Files (x86)\ClamWin\lib"
 	$antivircommand = dol_string_nospecial($antivircommand, '', array("|", ";", "<", ">", "&")); // Sanitize command
 	$antivirparam = dol_string_nospecial($antivirparam, '', array("|", ";", "<", ">", "&")); // Sanitize params
 
@@ -100,7 +100,7 @@ print '<input type="hidden" name="action" value="updateform">';
 
 $head = security_prepare_head();
 
-dol_fiche_head($head, 'file', $langs->trans("Security"), -1);
+print dol_get_fiche_head($head, 'file', '', -1);
 
 
 // Upload options
@@ -144,16 +144,19 @@ print '</td>';
 print '<td>';
 if (ini_get('safe_mode') && !empty($conf->global->MAIN_ANTIVIRUS_COMMAND))
 {
-    $langs->load("errors");
-    $basedir = preg_replace('/"/', '', dirname($conf->global->MAIN_ANTIVIRUS_COMMAND));
-    $listdir = explode(';', ini_get('safe_mode_exec_dir'));
-    if (!in_array($basedir, $listdir))
-    {
-        print img_warning($langs->trans('WarningSafeModeOnCheckExecDir'));
-        dol_syslog("safe_mode is on, basedir is ".$basedir.", safe_mode_exec_dir is ".ini_get('safe_mode_exec_dir'), LOG_WARNING);
-    }
+	$langs->load("errors");
+	$basedir = preg_replace('/"/', '', dirname($conf->global->MAIN_ANTIVIRUS_COMMAND));
+	$listdir = explode(';', ini_get('safe_mode_exec_dir'));
+	if (!in_array($basedir, $listdir))
+	{
+		print img_warning($langs->trans('WarningSafeModeOnCheckExecDir'));
+		dol_syslog("safe_mode is on, basedir is ".$basedir.", safe_mode_exec_dir is ".ini_get('safe_mode_exec_dir'), LOG_WARNING);
+	}
 }
-print '<input type="text" name="MAIN_ANTIVIRUS_COMMAND" class="minwidth500imp" value="'.(!empty($conf->global->MAIN_ANTIVIRUS_COMMAND) ?dol_escape_htmltag($conf->global->MAIN_ANTIVIRUS_COMMAND) : '').'">';
+print '<input type="text" '.(defined('MAIN_ANTIVIRUS_COMMAND') ? 'disabled ' : '').'name="MAIN_ANTIVIRUS_COMMAND" class="minwidth500imp" value="'.(!empty($conf->global->MAIN_ANTIVIRUS_COMMAND) ?dol_escape_htmltag($conf->global->MAIN_ANTIVIRUS_COMMAND) : '').'">';
+if (defined('MAIN_ANTIVIRUS_COMMAND')) {
+	print '<br><span class="opacitymedium">'.$langs->trans("ValueIsForcedBySystem").'</span>';
+}
 print "</td>";
 print '</tr>';
 
@@ -164,14 +167,17 @@ print '<td colspan="2">'.$langs->trans("AntiVirusParam").'<br>';
 print '<span class="opacitymedium">'.$langs->trans("AntiVirusParamExample").'</span>';
 print '</td>';
 print '<td>';
-print '<input type="text" name="MAIN_ANTIVIRUS_PARAM" class="minwidth500imp" value="'.(!empty($conf->global->MAIN_ANTIVIRUS_PARAM) ?dol_escape_htmltag($conf->global->MAIN_ANTIVIRUS_PARAM) : '').'">';
+print '<input type="text" '.(defined('MAIN_ANTIVIRUS_PARAM') ? 'disabled ' : '').'name="MAIN_ANTIVIRUS_PARAM" class="minwidth500imp" value="'.(!empty($conf->global->MAIN_ANTIVIRUS_PARAM) ?dol_escape_htmltag($conf->global->MAIN_ANTIVIRUS_PARAM) : '').'">';
+if (defined('MAIN_ANTIVIRUS_PARAM')) {
+	print '<br><span class="opacitymedium">'.$langs->trans("ValueIsForcedBySystem").'</span>';
+}
 print "</td>";
 print '</tr>';
 
 print '</table>';
 print '</div>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '<div class="center"><input type="submit" class="button" name="button" value="'.$langs->trans("Modify").'"></div>';
 

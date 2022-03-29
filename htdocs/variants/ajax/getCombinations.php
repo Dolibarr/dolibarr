@@ -31,18 +31,18 @@ header('Content-Type: application/json');
 $id = GETPOST('id', 'int');
 
 if (!$id) {
-    print json_encode(array(
-        'error' => 'ID not set'
-    ));
-    exit();
+	print json_encode(array(
+		'error' => 'ID not set'
+	));
+	exit();
 }
 
 $product = new Product($db);
 
 if ($product->fetch($id) < 0) {
-    print json_encode(array(
-        'error' => 'Product not found'
-    ));
+	print json_encode(array(
+		'error' => 'Product not found'
+	));
 }
 
 $prodcomb = new ProductCombination($db);

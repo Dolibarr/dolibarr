@@ -24,7 +24,7 @@ $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $value = GETPOST('value', 'alpha');
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 
@@ -87,7 +87,7 @@ $head[$h][1] = $langs->trans("ProductAttributeName");
 $head[$h][2] = 'variant';
 $h++;
 
-dol_fiche_head($head, 'variant', $langs->trans('ProductAttributeName'), -1, 'generic');
+print dol_get_fiche_head($head, 'variant', $langs->trans('ProductAttributeName'), -1, 'generic');
 
 print '<div class="fichecenter">';
 print '<div class="underbanner clearboth"></div>';
@@ -106,7 +106,7 @@ print '<div class="underbanner clearboth"></div>';
 <?php
 print '</div>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '<br>';
 
@@ -119,7 +119,7 @@ print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
 print load_fiche_titre($langs->trans('NewProductAttributeValue'));
 
-dol_fiche_head();
+print dol_get_fiche_head();
 
 ?>
 	<table class="border" style="width: 100%">
@@ -134,12 +134,12 @@ dol_fiche_head();
 	</table>
 <?php
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 print '<div class="center">';
 print '<input type="submit" class="button" name="create" value="'.$langs->trans("Create").'">';
 print ' &nbsp; ';
-print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 print '</div>';
 
 print '</form>';

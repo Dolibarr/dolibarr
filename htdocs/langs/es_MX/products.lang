@@ -5,6 +5,7 @@ ErrorProductBadRefOrLabel=Valor incorrecto para referencia o etiqueta.
 ProductsAndServicesArea=Área de productos y servicios
 ProductsArea=Área de producto
 SetDefaultBarcodeType=Establecer el tipo de código de barras
+AssociatedProductsAbility=Enable Kits (set of several products)
 KeywordFilter=Filtro de palabras clave
 NoMatchFound=No se encontraron coincidencias
 DeleteProduct=Eliminar un producto / servicio

@@ -37,16 +37,16 @@ class ExportCsv extends ModeleExports
 	public $id;
 
 	/**
-     * @var string export files label
-     */
-    public $label;
+	 * @var string export files label
+	 */
+	public $label;
 
 	public $extension;
 
 	/**
-     * Dolibarr version of the loaded document
-     * @var string
-     */
+	 * Dolibarr version of the loaded document
+	 * @var string
+	 */
 	public $version = 'dolibarr';
 
 	public $label_lib;
@@ -156,7 +156,7 @@ class ExportCsv extends ModeleExports
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Open output file
 	 *
@@ -166,7 +166,7 @@ class ExportCsv extends ModeleExports
 	 */
 	public function open_file($file, $outputlangs)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $langs;
 
 		dol_syslog("ExportCsv::open_file file=".$file);
@@ -185,7 +185,7 @@ class ExportCsv extends ModeleExports
 		return $ret;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * 	Output header into file
 	 *
@@ -194,32 +194,30 @@ class ExportCsv extends ModeleExports
 	 */
 	public function write_header($outputlangs)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		return 0;
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * 	Output title line into file
 	 *
-     *  @param      array		$array_export_fields_label   	Array with list of label of fields
-     *  @param      array		$array_selected_sorted       	Array with list of field to export
-     *  @param      Translate	$outputlangs    				Object lang to translate values
-     *  @param		array		$array_types					Array with types of fields
+	 *  @param      array		$array_export_fields_label   	Array with list of label of fields
+	 *  @param      array		$array_selected_sorted       	Array with list of field to export
+	 *  @param      Translate	$outputlangs    				Object lang to translate values
+	 *  @param		array		$array_types					Array with types of fields
 	 * 	@return		int											<0 if KO, >0 if OK
 	 */
 	public function write_title($array_export_fields_label, $array_selected_sorted, $outputlangs, $array_types)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf;
 
 		if (!empty($conf->global->EXPORT_CSV_FORCE_CHARSET))
 		{
 			$outputlangs->charset_output = $conf->global->EXPORT_CSV_FORCE_CHARSET;
-		}
-		else
-		{
+		} else {
 			$outputlangs->charset_output = 'ISO-8859-1';
 		}
 
@@ -235,27 +233,25 @@ class ExportCsv extends ModeleExports
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-    /**
-     *	Output record line into file
-     *
-     *  @param     	array		$array_selected_sorted      Array with list of field to export
-     *  @param     	resource	$objp                       A record from a fetch with all fields from select
-     *  @param     	Translate	$outputlangs    			Object lang to translate values
-     *  @param		array		$array_types				Array with types of fields
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *	Output record line into file
+	 *
+	 *  @param     	array		$array_selected_sorted      Array with list of field to export
+	 *  @param     	resource	$objp                       A record from a fetch with all fields from select
+	 *  @param     	Translate	$outputlangs    			Object lang to translate values
+	 *  @param		array		$array_types				Array with types of fields
 	 * 	@return		int										<0 if KO, >0 if OK
 	 */
 	public function write_record($array_selected_sorted, $objp, $outputlangs, $array_types)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf;
 
 		if (!empty($conf->global->EXPORT_CSV_FORCE_CHARSET))
 		{
 			$outputlangs->charset_output = $conf->global->EXPORT_CSV_FORCE_CHARSET;
-		}
-		else
-		{
+		} else {
 			$outputlangs->charset_output = 'ISO-8859-1';
 		}
 
@@ -292,7 +288,7 @@ class ExportCsv extends ModeleExports
 		return 0;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * 	Output footer into file
 	 *
@@ -301,11 +297,11 @@ class ExportCsv extends ModeleExports
 	 */
 	public function write_footer($outputlangs)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		return 0;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * 	Close file handle
 	 *
@@ -313,7 +309,7 @@ class ExportCsv extends ModeleExports
 	 */
 	public function close_file()
 	{
-        // phpcs:enable
+		// phpcs:enable
 		fclose($this->handle);
 		return 0;
 	}
@@ -332,7 +328,6 @@ class ExportCsv extends ModeleExports
 	{
 		global $conf;
 		$addquote = 0;
-
 
 		// Rule Dolibarr: No HTML
    		//print $charset.' '.$newvalue."\n";

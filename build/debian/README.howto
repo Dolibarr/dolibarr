@@ -306,7 +306,7 @@ If script fails with error Bad certificate, you can set "export PERL_LWP_SSL_VER
 - htdocs/includes/jquery/plugins/datatables
 - htdocs/includes/jszip
 - htdocs/includes/mike42
-- htdocs/includes/phpexcel or htdocs/includes/phpoffice
+- htdocs/includes/phpoffice
 - htdocs/includes/restler/framework/Luracast/Restler/explorer
 - htdocs/includes/swiftmailer
 - htdocs/includes/tcpdf or htdocs/includes/tecnickcom

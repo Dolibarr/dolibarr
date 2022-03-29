@@ -12,10 +12,10 @@ ShowSalaryPayment=Zeige Lohnzahlung
 THM=Durchschnittlicher Stundensatz
 TJM=Durchschnittlicher Tagessatz
 CurrentSalary=aktueller  Lohn
-THMDescription=Dieser Wert kann verwendet werden, um die Kosten für die verbrauchte Zeit eines Anwender zu berechnen, wenn das Modul Projektverwaltung verwendet wird,
+THMDescription=Dieser Wert kann verwendet werden, um die Kosten für die verwendete Zeit eines Anwender zu berechnen, wenn das Modul Projektverwaltung verwendet wird,
 TJMDescription=Dieser Wert ist aktuell nur zu Informationszwecken und wird nicht für eine Berechnung verwendet
 LastSalaries=Letzte %s Lohnzahlungen
-AllSalaries=Alle Lohnzahlungen
+AllSalaries=Alle Gehaltszahlungen
 SalariesStatistics=Statistik Gehälter
 # Export
-SalariesAndPayments=Salaries and payments
+SalariesAndPayments=Gehälter und Gehaltszahlungen

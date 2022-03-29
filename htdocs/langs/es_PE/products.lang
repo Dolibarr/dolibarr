@@ -3,4 +3,5 @@ ProductRef=Ref. de producto
 ProductLabel=Etiqueta del producto
 ProductServiceCard=Ficha Productos/Servicios
 ProductOrService=Producto o Servicio
+AssociatedProductsAbility=Enable Kits (set of several products)
 ExportDataset_produit_1=Productos

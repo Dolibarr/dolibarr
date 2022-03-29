@@ -58,7 +58,7 @@ if ($boxid > 0 && $zone != '' && $userid > 0)
 	$nbboxonright = substr_count($tmp[1], ',');
 	print $nbboxonleft.'-'.$nbboxonright;
 	if ($nbboxonleft > $nbboxonright) $boxorder = preg_replace('/B:/', 'B:'.$boxid.',', $boxorder); // Insert id of new box into list
-    else $boxorder = preg_replace('/^A:/', 'A:'.$boxid.',', $boxorder); // Insert id of new box into list
+	else $boxorder = preg_replace('/^A:/', 'A:'.$boxid.',', $boxorder); // Insert id of new box into list
 }
 
 // Registering the location of boxes after a move
@@ -70,10 +70,10 @@ if ($boxorder && $zone != '' && $userid > 0)
 	$result = InfoBox::saveboxorder($db, $zone, $boxorder, $userid);
 	if ($result > 0)
 	{
-	    $langs->load("boxes");
-	    if (!GETPOST('closing'))
-	    {
-	        setEventMessages($langs->trans("BoxAdded"), null);
-	    }
+		$langs->load("boxes");
+		if (!GETPOST('closing'))
+		{
+			setEventMessages($langs->trans("BoxAdded"), null);
+		}
 	}
 }

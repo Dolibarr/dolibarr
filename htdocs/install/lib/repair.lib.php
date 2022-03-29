@@ -40,8 +40,7 @@ function checkElementExist($id, $table)
 		$num = $db->num_rows($resql);
 		if ($num > 0) return true;
 		else return false;
-	}
-	else return true; // for security
+	} else return true; // for security
 }
 
 /**
@@ -131,14 +130,13 @@ function clean_data_ecm_directories()
 			$newlabel = dol_sanitizeFileName($label);
 			if ($label != $newlabel)
 			{
-				$sqlupdate = "UPDATE ".MAIN_DB_PREFIX."ecm_directories set label='".$newlabel."' WHERE rowid=".$id;
+				$sqlupdate = "UPDATE ".MAIN_DB_PREFIX."ecm_directories set label='".$db->escape($newlabel)."' WHERE rowid=".$id;
 				print '<tr><td>'.$sqlupdate."</td></tr>\n";
 				$resqlupdate = $db->query($sqlupdate);
 				if (!$resqlupdate) dol_print_error($db, 'Failed to update');
 			}
 		}
-	}
-	else dol_print_error($db, 'Failed to run request');
+	} else dol_print_error($db, 'Failed to run request');
 
 	return;
 }

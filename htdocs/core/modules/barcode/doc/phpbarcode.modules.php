@@ -33,9 +33,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/barcode.lib.php'; // This is to includ
 class modPhpbarcode extends ModeleBarCode
 {
 	/**
-     * Dolibarr version of the loaded document
-     * @var string
-     */
+	 * Dolibarr version of the loaded document
+	 * @var string
+	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
 	/**
@@ -93,7 +93,7 @@ class modPhpbarcode extends ModeleBarCode
 	public function encodingIsSupported($encoding)
 	{
 		global $genbarcode_loc;
-        //print 'genbarcode_loc='.$genbarcode_loc.' encoding='.$encoding;exit;
+		//print 'genbarcode_loc='.$genbarcode_loc.' encoding='.$encoding;exit;
 
 		$supported = 0;
 		if ($encoding == 'EAN13') $supported = 1;
@@ -109,7 +109,7 @@ class modPhpbarcode extends ModeleBarCode
 		return $supported;
 	}
 
-    /**
+	/**
 	 *	Return an image file on the fly (no need to write on disk)
 	 *
 	 *	@param	string   	$code			  Value to encode
@@ -118,8 +118,8 @@ class modPhpbarcode extends ModeleBarCode
 	 *	@param	integer		$scale			  Scale
 	 *  @param  integer     $nooutputiferror  No output if error
 	 *	@return	int							  <0 if KO, >0 if OK
-     */
-    public function buildBarCode($code, $encoding, $readable = 'Y', $scale = 1, $nooutputiferror = 0)
+	 */
+	public function buildBarCode($code, $encoding, $readable = 'Y', $scale = 1, $nooutputiferror = 0)
 	{
 		global $_GET, $_SERVER;
 		global $conf;

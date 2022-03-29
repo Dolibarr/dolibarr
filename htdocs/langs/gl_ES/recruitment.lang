@@ -1,0 +1,76 @@
+# Copyright (C) 2020 Laurent Destailleur
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+
+# Module label 'ModuleRecruitmentName'
+ModuleRecruitmentName = Contratación
+# Module description 'ModuleRecruitmentDesc'
+ModuleRecruitmentDesc = Xestionar e seguir campañas de contratación para novos postos de traballo
+
+#
+# Admin page
+#
+RecruitmentSetup = Configuración da contratación
+Settings = Configuracións
+RecruitmentSetupPage = Introduza aquí a configuración das principais opcións para o módulo de contratación
+RecruitmentArea=Área de contratación
+PublicInterfaceRecruitmentDesc=As páxinas públicas dos traballos son URL públicas para mostrar e responder aos traballos dispoñibles. Hai un enlace diferente para cada traballo dispoñible, que se atopa en cada rexistro de traballo.
+EnablePublicRecruitmentPages=Activar páxinas públicas de traballos dispoñibles
+
+#
+# About page
+#
+About = page
+RecruitmentAbout = Acerca de contratación
+RecruitmentAboutPage = Páxina acerca de contratación
+NbOfEmployeesExpected=Número esperado de empregados
+JobLabel=Etiqueta de posto de traballo
+WorkPlace=Lugar de traballo
+DateExpected=Data agardado
+FutureManager=Xestor de futuro
+ResponsibleOfRecruitement=Responsable da contratación
+IfJobIsLocatedAtAPartner=Se o traballo está situado nun lugar asociado
+PositionToBeFilled=Posto de traballo
+PositionsToBeFilled=Listaxe de postos de traballo
+ListOfPositionsToBeFilled=List of job positions
+NewPositionToBeFilled=Novos postos de traballo
+
+JobOfferToBeFilled=Posto de traballo a ocupar
+ThisIsInformationOnJobPosition=Información do posto de traballo a ocupar
+ContactForRecruitment=Contacto para a contratación
+EmailRecruiter=Correo electrónico do responsable de contratación
+ToUseAGenericEmail=Para usar un correo electrónico xenérico. Se non se define, utilizarase o correo electrónico do responsable de contratación
+NewCandidature=Nova aplicación
+ListOfCandidatures=Listaxe de aplicacións
+RequestedRemuneration=Remuneración solicitada
+ProposedRemuneration=Proposta de remuneración
+ContractProposed=Poroposta de contrato
+ContractSigned=Contrato asinado
+ContractRefused=Rexeitouse o contrato
+RecruitmentCandidature=Solicitude
+JobPositions=Postos de traballo
+RecruitmentCandidatures=Solicitudes
+InterviewToDo=Entrevista a realizar
+AnswerCandidature=Resposta da solicitude
+YourCandidature=A súa solicitude
+YourCandidatureAnswerMessage=Grazas pola túa solicitude.<br>...
+JobClosedTextCandidateFound=O posto de traballo está pechado. O posto foi cuberto.
+JobClosedTextCanceled=O posto de traballo está pechado
+ExtrafieldsJobPosition=Atributos complementarios (postos de traballo)
+ExtrafieldsCandidatures=Atributos complementarios (solicitudes de traballo)
+MakeOffer=Facer unha oferta

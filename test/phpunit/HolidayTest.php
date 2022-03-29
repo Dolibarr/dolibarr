@@ -366,7 +366,7 @@ class HolidayTest extends PHPUnit\Framework\TestCase
     	$localobjecta=new Holiday($this->savdb);
 
     	$localobjecta->updateConfCP('lastUpdate', '20100101120000');
-
-    	$localobjecta->updateBalance();
+    	$result = $localobjecta->updateBalance();
+    	$this->assertEquals($result, 1);
     }
 }

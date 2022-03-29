@@ -1,6 +1,6 @@
 # Dolibarr language file - en_US - hrm
 # Admin
-HRM_EMAIL_EXTERNAL_SERVICE=Ma
+HRM_EMAIL_EXTERNAL_SERVICE=Email per prevenire il servizio esterno HRM
 Establishments=Aziende
 Establishment=Azienda
 NewEstablishment=Nuova azienda
@@ -11,8 +11,9 @@ CloseEtablishment=Chiudi azienda
 # Dictionary
 DictionaryPublicHolidays=HRM - Giorni festivi
 DictionaryDepartment=HRM - Lista dipartimenti
-DictionaryFunction=HRM - Job positions
+DictionaryFunction=HRM - Posizioni di lavoro
 # Module
 Employees=Dipendenti
 Employee=Dipendente
 NewEmployee=Nuovo dipendente
+ListOfEmployees=Lista dei dipendenti

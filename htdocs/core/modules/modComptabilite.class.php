@@ -35,11 +35,11 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 class modComptabilite extends DolibarrModules
 {
 
-    /**
-     *   Constructor. Define names, constants, directories, boxes, permissions
-     *
-     *   @param      DoliDB		$db      Database handler
-     */
+	/**
+	 *   Constructor. Define names, constants, directories, boxes, permissions
+	 *
+	 *   @param      DoliDB		$db      Database handler
+	 */
 	public function __construct($db)
 	{
 		global $conf;
@@ -57,7 +57,7 @@ class modComptabilite extends DolibarrModules
 		$this->version = 'dolibarr';
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-        $this->picto = 'accounting';
+		$this->picto = 'accounting';
 
 		// Config pages
 		$this->config_page_url = array("compta.php");
@@ -72,12 +72,12 @@ class modComptabilite extends DolibarrModules
 		$this->const = array();
 
 		// Data directories to create when module is enabled
-        $this->dirs = array(
-            "/comptabilite/temp",
-            "/comptabilite/rapport",
-            "/comptabilite/export",
-            "/comptabilite/bordereau"
-        );
+		$this->dirs = array(
+			"/comptabilite/temp",
+			"/comptabilite/rapport",
+			"/comptabilite/export",
+			"/comptabilite/bordereau"
+		);
 
 		// Boxes
 		$this->boxes = array();
@@ -102,16 +102,16 @@ class modComptabilite extends DolibarrModules
 	}
 
 
-    /**
-     *  Function called when module is enabled.
+	/**
+	 *  Function called when module is enabled.
 	 *  The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
 	 *  It also creates data directories
 	 *
-     *  @param      string	$options    Options when enabling module ('', 'noboxes')
-     *  @return     int             	1 if OK, 0 if KO
-    */
-    public function init($options = '')
-    {
+	 *  @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *  @return     int             	1 if OK, 0 if KO
+	 */
+	public function init($options = '')
+	{
 		global $conf;
 
 		// Nettoyage avant activation

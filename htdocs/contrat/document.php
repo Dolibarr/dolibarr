@@ -74,7 +74,7 @@ if ($object->id > 0)
 	$object->fetch_thirdparty();
 }
 
-$upload_dir = $conf->contrat->dir_output.'/'.dol_sanitizeFileName($object->ref);
+$upload_dir = $conf->contrat->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
 $modulepart = 'contract';
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
@@ -101,7 +101,7 @@ if ($object->id)
 {
 	$head = contract_prepare_head($object);
 
-	dol_fiche_head($head, 'documents', $langs->trans("Contract"), -1, 'contract');
+	print dol_get_fiche_head($head, 'documents', $langs->trans("Contract"), -1, 'contract');
 
 
 	// Build file list
@@ -179,23 +179,21 @@ if ($object->id)
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
 
-    print '<table class="border tableforfield centpercent">';
-    print '<tr><td class="titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
-    print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize, 1, 1).'</td></tr>';
-    print '</table>';
+	print '<table class="border tableforfield centpercent">';
+	print '<tr><td class="titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
+	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize, 1, 1).'</td></tr>';
+	print '</table>';
 
-    print '</div>';
+	print '</div>';
 
-    dol_fiche_end();
+	print dol_get_fiche_end();
 
-    $modulepart = 'contract';
-    $permission = $user->rights->contrat->creer;
-    $permtoedit = $user->rights->contrat->creer;
-    $param = '&id='.$object->id;
-    include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
-}
-else
-{
+	$modulepart = 'contract';
+	$permission = $user->rights->contrat->creer;
+	$permtoedit = $user->rights->contrat->creer;
+	$param = '&id='.$object->id;
+	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
+} else {
 	print $langs->trans("ErrorUnknown");
 }
 

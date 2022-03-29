@@ -14,35 +14,16 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #
-# Générique
+# Generic
 #
 
 # Module label 'ModuleZapierForDolibarrName'
-ModuleZapierForDolibarrName = ZapierForDolibarr
+ModuleZapierForDolibarrName = Zapier pour Dolibarr
 # Module description 'ModuleZapierForDolibarrDesc'
-ModuleZapierForDolibarrDesc = Description de ZapierForDolibarr
+ModuleZapierForDolibarrDesc = Module Zapier pour Dolibarr
 
 #
-# Page d'administration
+# Admin page
 #
-ZapierForDolibarrSetup = Configuration du module ZapierForDolibarr
-Settings = Réglages
-ZapierForDolibarrSetupPage = Page de configuration du module ZapierForDolibarr
-
-#
-# Page À propos
-#
-About = À propos
-ZapierForDolibarrAbout = À propos de ZapierForDolibarr
-ZapierForDolibarrAboutPage = Page à propos de ZapierForDolibarr
-
-#
-# Page d'exemple
-#
-MyPageName = Nom de ma page
-
-#
-# Box d'exemple
-#
-MyWidget = Mon widget
-MyWidgetDescription = Description de mon widget
+ZapierForDolibarrSetup = Configuration de Zapier pour Dolibarr
+ZapierDescription=Interface avec Zapier

@@ -64,7 +64,7 @@ if (empty($reshook)) {
 	if ($action == 'update' && $user->rights->user->user->creer && !$_POST["cancel"]) {
 		$db->begin();
 
-		$res = $object->update_note(dol_html_entity_decode(GETPOST('note_private', 'none'), ENT_QUOTES));
+		$res = $object->update_note(dol_html_entity_decode(GETPOST('note_private', 'restricthtml'), ENT_QUOTES | ENT_HTML5));
 		if ($res < 0) {
 			$mesg = '<div class="error">'.$adh->error.'</div>';
 			$db->rollback();
@@ -88,7 +88,7 @@ if ($id)
 	$head = user_prepare_head($object);
 
 	$title = $langs->trans("User");
-	dol_fiche_head($head, 'note', $title, -1, 'user');
+	print dol_get_fiche_head($head, 'note', $title, -1, 'user');
 
 	$linkback = '';
 
@@ -96,48 +96,48 @@ if ($id)
 		$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 	}
 
-    dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
+	dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
 
-    print '<div class="underbanner clearboth"></div>';
+	print '<div class="underbanner clearboth"></div>';
 
-    print "<form method=\"post\" action=\"".$_SERVER['PHP_SELF']."\">";
+	print "<form method=\"post\" action=\"".$_SERVER['PHP_SELF']."\">";
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 
 	print '<div class="fichecenter">';
-    print '<table class="border centpercent tableforfield">';
+	print '<table class="border centpercent tableforfield">';
 
-    // Login
-    print '<tr><td class="titlefield">'.$langs->trans("Login").'</td><td class="valeur">'.$object->login.'&nbsp;</td></tr>';
+	// Login
+	print '<tr><td class="titlefield">'.$langs->trans("Login").'</td><td class="valeur">'.$object->login.'&nbsp;</td></tr>';
+
+	$editenabled = (($action == 'edit') && !empty($user->rights->user->user->creer));
 
 	// Note
-    print '<tr><td class="tdtop">'.$langs->trans("Note").'</td>';
-	print '<td class="sensiblehtmlcontent">';
-	if ($action == 'edit' && $user->rights->user->user->creer)
+	print '<tr><td class="tdtop">'.$langs->trans("Note").'</td>';
+	print '<td class="'.($editenabled ? '' : 'sensiblehtmlcontent').'">';
+	if ($editenabled)
 	{
 		print "<input type=\"hidden\" name=\"action\" value=\"update\">";
 		print "<input type=\"hidden\" name=\"id\" value=\"".$object->id."\">";
-	    // Editeur wysiwyg
+		// Editeur wysiwyg
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 		$doleditor = new DolEditor('note_private', $object->note_private, '', 280, 'dolibarr_notes', 'In', true, false, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_8, '90%');
 		$doleditor->Create();
-	}
-	else
-	{
+	} else {
 		print dol_string_onlythesehtmltags(dol_htmlentitiesbr($object->note_private));
 	}
 	print "</td></tr>";
 
-    print "</table>";
-    print '</div>';
+	print "</table>";
+	print '</div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	if ($action == 'edit')
 	{
 		print '<div class="center">';
-		print '<input type="submit" class="button" name="update" value="'.$langs->trans("Save").'">';
+		print '<input type="submit" class="button button-save" name="update" value="'.$langs->trans("Save").'">';
 		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+		print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 		print '</div>';
 	}
 
@@ -146,14 +146,14 @@ if ($id)
      * Actions
      */
 
-    print '<div class="tabsAction">';
+	print '<div class="tabsAction">';
 
-    if ($user->rights->user->user->creer && $action != 'edit')
-    {
-        print "<a class=\"butAction\" href=\"note.php?id=".$object->id."&amp;action=edit\">".$langs->trans('Modify')."</a>";
-    }
+	if ($user->rights->user->user->creer && $action != 'edit')
+	{
+		print "<a class=\"butAction\" href=\"note.php?id=".$object->id."&amp;action=edit\">".$langs->trans('Modify')."</a>";
+	}
 
-    print "</div>";
+	print "</div>";
 
 	print "</form>\n";
 }

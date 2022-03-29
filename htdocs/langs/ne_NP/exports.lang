@@ -133,3 +133,4 @@ KeysToUseForUpdates=Key (column) to use for <b>updating</b> existing data
 NbInsert=Number of inserted lines: %s
 NbUpdate=Number of updated lines: %s
 MultipleRecordFoundWithTheseFilters=Multiple records have been found with these filters: %s
+StocksWithBatch=Stocks and location (warehouse) of products with batch/serial number

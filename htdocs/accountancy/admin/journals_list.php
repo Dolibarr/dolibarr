@@ -22,6 +22,8 @@
  * \brief		Setup page to configure journals
  */
 
+if (!defined('CSRFCHECK_WITH_TOKEN')) define('CSRFCHECK_WITH_TOKEN', '1'); // Force use of CSRF protection with tokens even for GET
+
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
@@ -238,13 +240,10 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha'))
 		{
 			setEventMessages($langs->transnoentities("RecordSaved"), null, 'mesgs');
 			$_POST = array('id'=>$id); // Clean $_POST array, we keep only
-		}
-		else
-		{
+		} else {
 			if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 				setEventMessages($langs->transnoentities("ErrorRecordAlreadyExists"), null, 'errors');
-			}
-			else {
+			} else {
 				dol_print_error($db);
 			}
 		}
@@ -253,8 +252,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha'))
 	// Si verif ok et action modify, on modifie la ligne
 	if ($ok && GETPOST('actionmodify', 'alpha'))
 	{
-		if ($tabrowid[$id]) { $rowidcol = $tabrowid[$id]; }
-		else { $rowidcol = "rowid"; }
+		if ($tabrowid[$id]) { $rowidcol = $tabrowid[$id]; } else { $rowidcol = "rowid"; }
 
 		// Modify entry
 		$sql = "UPDATE ".$tabname[$id]." SET ";
@@ -269,8 +267,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha'))
 		{
 			if ($field == 'price' || preg_match('/^amount/i', $field) || $field == 'taux') {
 				$_POST[$listfieldvalue[$i]] = price2num($_POST[$listfieldvalue[$i]], 'MU');
-			}
-			elseif ($field == 'entity') {
+			} elseif ($field == 'entity') {
 				$_POST[$listfieldvalue[$i]] = $conf->entity;
 			}
 			if ($i) $sql .= ",";
@@ -279,7 +276,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha'))
 			else $sql .= "'".$db->escape($_POST[$listfieldvalue[$i]])."'";
 			$i++;
 		}
-		$sql .= " WHERE ".$rowidcol." = '".$rowid."'";
+		$sql .= " WHERE ".$rowidcol." = ".((int) $rowid);
 		$sql .= " AND entity = ".$conf->entity;
 
 		dol_syslog("actionmodify", LOG_DEBUG);
@@ -300,10 +297,9 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha'))
 
 if ($action == 'confirm_delete' && $confirm == 'yes')       // delete
 {
-	if ($tabrowid[$id]) { $rowidcol = $tabrowid[$id]; }
-	else { $rowidcol = "rowid"; }
+	if ($tabrowid[$id]) { $rowidcol = $tabrowid[$id]; } else { $rowidcol = "rowid"; }
 
-	$sql = "DELETE from ".$tabname[$id]." WHERE ".$rowidcol."='".$rowid."'";
+	$sql = "DELETE from ".$tabname[$id]." WHERE ".$rowidcol." = ".((int) $rowid);
 	$sql .= " AND entity = ".$conf->entity;
 
 	dol_syslog("delete", LOG_DEBUG);
@@ -313,9 +309,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes')       // delete
 		if ($db->errno() == 'DB_ERROR_CHILD_EXISTS')
 		{
 			setEventMessages($langs->transnoentities("ErrorRecordIsUsedByChild"), null, 'errors');
-		}
-		else
-		{
+		} else {
 			dol_print_error($db);
 		}
 	}
@@ -324,14 +318,12 @@ if ($action == 'confirm_delete' && $confirm == 'yes')       // delete
 // activate
 if ($action == $acts[0])
 {
-	if ($tabrowid[$id]) { $rowidcol = $tabrowid[$id]; }
-	else { $rowidcol = "rowid"; }
+	if ($tabrowid[$id]) { $rowidcol = $tabrowid[$id]; } else { $rowidcol = "rowid"; }
 
 	if ($rowid) {
-		$sql = "UPDATE ".$tabname[$id]." SET active = 1 WHERE ".$rowidcol."='".$rowid."'";
-	}
-	elseif ($code) {
-		$sql = "UPDATE ".$tabname[$id]." SET active = 1 WHERE code='".$code."'";
+		$sql = "UPDATE ".$tabname[$id]." SET active = 1 WHERE ".$rowidcol." = ".((int) $rowid);
+	} elseif ($code) {
+		$sql = "UPDATE ".$tabname[$id]." SET active = 1 WHERE code='".$db->escape($code)."'";
 	}
 	$sql .= " AND entity = ".$conf->entity;
 
@@ -345,14 +337,12 @@ if ($action == $acts[0])
 // disable
 if ($action == $acts[1])
 {
-	if ($tabrowid[$id]) { $rowidcol = $tabrowid[$id]; }
-	else { $rowidcol = "rowid"; }
+	if ($tabrowid[$id]) { $rowidcol = $tabrowid[$id]; } else { $rowidcol = "rowid"; }
 
 	if ($rowid) {
-		$sql = "UPDATE ".$tabname[$id]." SET active = 0 WHERE ".$rowidcol."='".$rowid."'";
-	}
-	elseif ($code) {
-		$sql = "UPDATE ".$tabname[$id]." SET active = 0 WHERE code='".$code."'";
+		$sql = "UPDATE ".$tabname[$id]." SET active = 0 WHERE ".$rowidcol." = ".((int) $rowid);
+	} elseif ($code) {
+		$sql = "UPDATE ".$tabname[$id]." SET active = 0 WHERE code='".$db->escape($code)."'";
 	}
 	$sql .= " AND entity = ".$conf->entity;
 
@@ -417,8 +407,6 @@ if ($id)
 	// Form to add a new line
 	if ($tabname[$id])
 	{
-		$alabelisused = 0;
-
 		$fieldlist = explode(',', $tabfield[$id]);
 
 		// Line for title
@@ -430,15 +418,15 @@ if ($id)
 			$valuetoshow = ucfirst($fieldlist[$field]); // Par defaut
 			$valuetoshow = $langs->trans($valuetoshow); // try to translate
 			$class = "left";
-            if ($fieldlist[$field] == 'code') {
-                $valuetoshow = $langs->trans("Code");
-            }
+			if ($fieldlist[$field] == 'code') {
+				$valuetoshow = $langs->trans("Code");
+			}
 			if ($fieldlist[$field] == 'libelle' || $fieldlist[$field] == 'label') {
 				$valuetoshow = $langs->trans("Label");
 			}
-            if ($fieldlist[$field] == 'nature') {
-                $valuetoshow = $langs->trans("NatureOfJournal");
-            }
+			if ($fieldlist[$field] == 'nature') {
+				$valuetoshow = $langs->trans("NatureOfJournal");
+			}
 
 			if ($valuetoshow != '') {
 				print '<td class="'.$class.'">';
@@ -447,7 +435,6 @@ if ($id)
 				else print $valuetoshow;
 				print '</td>';
 			}
-			if ($fieldlist[$field] == 'libelle' || $fieldlist[$field] == 'label') $alabelisused = 1;
 		}
 
 		print '<td>';
@@ -550,14 +537,14 @@ if ($id)
 			$valuetoshow = ucfirst($fieldlist[$field]); // By defaut
 			$valuetoshow = $langs->trans($valuetoshow); // try to translate
 			if ($fieldlist[$field] == 'code') {
-                $valuetoshow = $langs->trans("Code");
-            }
+				$valuetoshow = $langs->trans("Code");
+			}
 			if ($fieldlist[$field] == 'libelle' || $fieldlist[$field] == 'label') {
-                $valuetoshow = $langs->trans("Label");
-            }
+				$valuetoshow = $langs->trans("Label");
+			}
 			if ($fieldlist[$field] == 'nature') {
-                $valuetoshow = $langs->trans("NatureOfJournal");
-            }
+				$valuetoshow = $langs->trans("NatureOfJournal");
+			}
 
 			// Affiche nom du champ
 			if ($showfield) {
@@ -592,12 +579,10 @@ if ($id)
 					print '<input type="hidden" name="page" value="'.$page.'">';
 					print '<input type="hidden" name="rowid" value="'.$rowid.'">';
 					print '<input type="submit" class="button" name="actionmodify" value="'.$langs->trans("Modify").'">';
-					print '<input type="submit" class="button" name="actioncancel" value="'.$langs->trans("Cancel").'">';
+					print '<input type="submit" class="button button-cancel" name="actioncancel" value="'.$langs->trans("Cancel").'">';
 					print '<div name="'.(!empty($obj->rowid) ? $obj->rowid : $obj->code).'"></div>';
 					print '</td>';
-				}
-				else
-				{
+				} else {
 				  	$tmpaction = 'view';
 					$parameters = array('var'=>$var, 'fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
 					$reshook = $hookmanager->executeHooks('viewDictionaryFieldlist', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
@@ -606,7 +591,7 @@ if ($id)
 
 					if (empty($reshook))
 					{
-                        $langs->load("accountancy");
+						$langs->load("accountancy");
 						foreach ($fieldlist as $field => $value)
 						{
 							$showfield = 1;
@@ -614,14 +599,12 @@ if ($id)
 							$valuetoshow = $obj->{$fieldlist[$field]};
 							if ($valuetoshow == 'all') {
 								$valuetoshow = $langs->trans('All');
-							}
-							elseif ($fieldlist[$field] == 'nature' && $tabname[$id] == MAIN_DB_PREFIX.'accounting_journal') {
+							} elseif ($fieldlist[$field] == 'nature' && $tabname[$id] == MAIN_DB_PREFIX.'accounting_journal') {
 								$key = $langs->trans("AccountingJournalType".strtoupper($obj->nature));
 								$valuetoshow = ($obj->nature && $key != "AccountingJournalType".strtoupper($langs->trans($obj->nature)) ? $key : $obj->{$fieldlist[$field]});
-							}
-							elseif ($fieldlist[$field] == 'label' && $tabname[$id] == MAIN_DB_PREFIX.'accounting_journal') {
+							} elseif ($fieldlist[$field] == 'label' && $tabname[$id] == MAIN_DB_PREFIX.'accounting_journal') {
 								$valuetoshow = $langs->trans($obj->label);
-                            }
+							}
 
 							$class = 'tddict';
 							// Show value for field
@@ -633,15 +616,15 @@ if ($id)
 					$iserasable = 1; $canbedisabled = 1; $canbemodified = 1; // true by default
 					if (isset($obj->code) && $id != 10) {
 						if (($obj->code == '0' || $obj->code == '' || preg_match('/unknown/i', $obj->code))) {
-                            $iserasable = 0;
-                            $canbedisabled = 0;
-                        } elseif ($obj->code == 'RECEP') {
-                            $iserasable = 0;
-                            $canbedisabled = 0;
-                        } elseif ($obj->code == 'EF0') {
-                            $iserasable = 0;
-                            $canbedisabled = 0;
-                        }
+							$iserasable = 0;
+							$canbedisabled = 0;
+						} elseif ($obj->code == 'RECEP') {
+							$iserasable = 0;
+							$canbedisabled = 0;
+						} elseif ($obj->code == 'EF0') {
+							$iserasable = 0;
+							$canbedisabled = 0;
+						}
 					}
 
 					$canbemodified = $iserasable;
@@ -652,23 +635,22 @@ if ($id)
 
 					// Active
 					print '<td class="nowrap center">';
-					if ($canbedisabled) print '<a href="'.$url.'action='.$acts[$obj->active].'">'.$actl[$obj->active].'</a>';
+					if ($canbedisabled) print '<a href="'.$url.'action='.$acts[$obj->active].'&token='.newToken().'">'.$actl[$obj->active].'</a>';
 					else print $langs->trans("AlwaysActive");
 					print "</td>";
 
 					// Modify link
-					if ($canbemodified) print '<td class="center"><a class="reposition editfielda" href="'.$url.'action=edit">'.img_edit().'</a></td>';
+					if ($canbemodified) print '<td class="center"><a class="reposition editfielda" href="'.$url.'action=edit&token='.newToken().'">'.img_edit().'</a></td>';
 					else print '<td>&nbsp;</td>';
 
 					// Delete link
 					if ($iserasable)
 					{
 						print '<td class="center">';
-						if ($user->admin) print '<a href="'.$url.'action=delete">'.img_delete().'</a>';
+						if ($user->admin) print '<a href="'.$url.'action=delete&token='.newToken().'">'.img_delete().'</a>';
 						//else print '<a href="#">'.img_delete().'</a>';    // Some dictionary can be edited by other profile than admin
 						print '</td>';
-					}
-					else print '<td>&nbsp;</td>';
+					} else print '<td>&nbsp;</td>';
 
 					print '<td></td>';
 
@@ -679,8 +661,7 @@ if ($id)
 				$i++;
 			}
 		}
-	}
-	else {
+	} else {
 		dol_print_error($db);
 	}
 
@@ -724,12 +705,9 @@ function fieldListJournal($fieldlist, $obj = '', $tabname = '', $context = '')
 			print '<td>';
 			print $form->selectarray('nature', $sourceList, (!empty($obj->{$fieldlist[$field]}) ? $obj->{$fieldlist[$field]}:''));
 			print '</td>';
-		}
-		elseif ($fieldlist[$field] == 'code' && isset($obj->{$fieldlist[$field]})) {
+		} elseif ($fieldlist[$field] == 'code' && isset($obj->{$fieldlist[$field]})) {
 			print '<td><input type="text" class="flat minwidth100" value="'.(!empty($obj->{$fieldlist[$field]}) ? $obj->{$fieldlist[$field]}:'').'" name="'.$fieldlist[$field].'"></td>';
-		}
-		else
-		{
+		} else {
 			print '<td>';
 			$size = ''; $class = '';
 			if ($fieldlist[$field] == 'code')  $class = 'maxwidth100';

@@ -32,129 +32,134 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
  */
 class box_fournisseurs extends ModeleBoxes
 {
-    public $boxcode = "lastsuppliers";
-    public $boximg = "object_company";
-    public $boxlabel = "BoxLastSuppliers";
-    public $depends = array("fournisseur");
+	public $boxcode = "lastsuppliers";
+	public $boximg = "object_company";
+	public $boxlabel = "BoxLastSuppliers";
+	public $depends = array("fournisseur");
 
 	/**
-     * @var DoliDB Database handler.
-     */
-    public $db;
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
 
-    public $param;
+	public $param;
 
-    public $info_box_head = array();
-    public $info_box_contents = array();
+	public $info_box_head = array();
+	public $info_box_contents = array();
 
 
-    /**
-     *  Constructor
-     *
-     *  @param  DoliDB  $db         Database handler
-     *  @param  string  $param      More parameters
-     */
-    public function __construct($db, $param)
-    {
-        global $user;
+	/**
+	 *  Constructor
+	 *
+	 *  @param  DoliDB  $db         Database handler
+	 *  @param  string  $param      More parameters
+	 */
+	public function __construct($db, $param)
+	{
+		global $user;
 
-        $this->db = $db;
+		$this->db = $db;
 
-        $this->hidden = !($user->rights->societe->lire && empty($user->socid));
-    }
+		$this->hidden = !($user->rights->societe->lire && empty($user->socid));
+	}
 
-    /**
+	/**
 	 *  Load data into info_box_contents array to show array later.
 	 *
 	 *  @param	int		$max        Maximum number of records to load
-     *  @return	void
-     */
-    public function loadBox($max = 5)
-    {
-        global $conf, $user, $langs;
-        $langs->load("boxes");
+	 *  @return	void
+	 */
+	public function loadBox($max = 5)
+	{
+		global $conf, $user, $langs;
+		$langs->load("boxes");
 
 		$this->max = $max;
 
-        include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
-        $thirdpartystatic = new Societe($this->db);
 		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
-		$thirdpartytmp = new Fournisseur($this->db);
+		$thirdpartystatic = new Fournisseur($this->db);
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedSuppliers", $max));
 
-        if ($user->rights->societe->lire)
-        {
-            $sql = "SELECT s.nom as name, s.rowid as socid, s.datec, s.tms, s.status,";
-            $sql .= " s.code_fournisseur, s.email as semail,";
-            $sql .= " s.logo, s.code_compta_fournisseur, s.entity";
-            $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-            if (!$user->rights->societe->client->voir && !$user->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-            $sql .= " WHERE s.fournisseur = 1";
-            $sql .= " AND s.entity IN (".getEntity('societe').")";
-            if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
-            if ($user->socid) $sql .= " AND s.rowid = ".$user->socid;
-            $sql .= " ORDER BY s.tms DESC ";
-            $sql .= $this->db->plimit($max, 0);
+		if ($user->rights->societe->lire)
+		{
+			$sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias";
+			$sql .= ", s.code_fournisseur, s.code_compta_fournisseur, s.fournisseur";
+			$sql .= ", s.logo, s.email, s.entity";
+			$sql .= ", s.datec, s.tms, s.status";
+			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
+			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			$sql .= " WHERE s.fournisseur = 1";
+			$sql .= " AND s.entity IN (".getEntity('societe').")";
+			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+			if ($user->socid) $sql .= " AND s.rowid = ".$user->socid;
+			$sql .= " ORDER BY s.tms DESC ";
+			$sql .= $this->db->plimit($max, 0);
 
-            $result = $this->db->query($sql);
-            if ($result)
-            {
-                $num = $this->db->num_rows($result);
+			$result = $this->db->query($sql);
+			if ($result)
+			{
+				$num = $this->db->num_rows($result);
 
-                $line = 0;
-                while ($line < $num)
-                {
-                    $objp = $this->db->fetch_object($result);
-    				$datec = $this->db->jdate($objp->datec);
-    				$datem = $this->db->jdate($objp->tms);
-					$thirdpartytmp->id = $objp->socid;
-                    $thirdpartytmp->name = $objp->name;
-                    $thirdpartytmp->email = $objp->semail;
-                    $thirdpartytmp->code_client = $objp->code_client;
-                    $thirdpartytmp->logo = $objp->logo;
-                    $thirdpartytmp->code_compta_fournisseur = $objp->code_compta_fournisseur;
-                    $thirdpartytmp->entity = $objp->entity;
+				$line = 0;
+				while ($line < $num)
+				{
+					$objp = $this->db->fetch_object($result);
+					$datec = $this->db->jdate($objp->datec);
+					$datem = $this->db->jdate($objp->tms);
 
-                   	$this->info_box_contents[$line][] = array(
-                        'td' => '',
-                        'text' => $thirdpartytmp->getNomUrl(1, '', 40),
-                        'asis' => 1,
-                    );
+					$thirdpartystatic->id = $objp->socid;
+					$thirdpartystatic->name = $objp->name;
+					$thirdpartystatic->name_alias = $objp->name_alias;
+					$thirdpartystatic->code_fournisseur = $objp->code_fournisseur;
+					$thirdpartystatic->code_compta_fournisseur = $objp->code_compta_fournisseur;
+					$thirdpartystatic->fournisseur = $objp->fournisseur;
+					$thirdpartystatic->logo = $objp->logo;
+					$thirdpartystatic->email = $objp->email;
+					$thirdpartystatic->entity = $objp->entity;
 
-                    $this->info_box_contents[$line][] = array(
-                        'td' => 'class="right"',
-                        'text' => dol_print_date($datem, "day"),
-                    );
+				   	$this->info_box_contents[$line][] = array(
+						'td' => '',
+						'text' => $thirdpartystatic->getNomUrl(1, '', 40),
+						'asis' => 1,
+					);
 
-                    $this->info_box_contents[$line][] = array(
-                        'td' => 'class="right" width="18"',
-                        'text' => $thirdpartystatic->LibStatut($objp->status, 3),
-                    );
+					$this->info_box_contents[$line][] = array(
+						'td' => 'class="right"',
+						'text' => dol_print_date($datem, "day"),
+					);
 
-                    $line++;
-                }
+					$this->info_box_contents[$line][] = array(
+						'td' => 'class="right" width="18"',
+						'text' => $thirdpartystatic->LibStatut($objp->status, 3),
+					);
 
-                if ($num == 0) $this->info_box_contents[$line][0] = array(
-                    'td' => 'class="center opacitymedium"',
-                    'text'=>$langs->trans("NoRecordedSuppliers"),
-                );
+					$line++;
+				}
 
-                $this->db->free($result);
-            } else {
-                $this->info_box_contents[0][0] = array(
-                    'td' => '',
-                    'maxlength'=>500,
-                    'text' => ($this->db->error().' sql='.$sql),
-                );
-            }
-        } else {
-            $this->info_box_contents[0][0] = array(
-                'td' => 'class="nohover opacitymedium left"',
-                'text' => $langs->trans("ReadPermissionNotAllowed")
-            );
-        }
-    }
+				if ($num == 0) {
+					$langs->load("suppliers");
+					$this->info_box_contents[$line][0] = array(
+						'td' => 'class="center opacitymedium"',
+						'text'=>$langs->trans("NoRecordedSuppliers"),
+					);
+				}
+
+				$this->db->free($result);
+			} else {
+				$this->info_box_contents[0][0] = array(
+					'td' => '',
+					'maxlength'=>500,
+					'text' => ($this->db->error().' sql='.$sql),
+				);
+			}
+		} else {
+			$this->info_box_contents[0][0] = array(
+				'td' => 'class="nohover opacitymedium left"',
+				'text' => $langs->trans("ReadPermissionNotAllowed")
+			);
+		}
+	}
 
 	/**
 	 *	Method to show box
@@ -164,8 +169,8 @@ class box_fournisseurs extends ModeleBoxes
 	 *  @param	int		$nooutput	No print, only return string
 	 *	@return	string
 	 */
-    public function showBox($head = null, $contents = null, $nooutput = 0)
-    {
-        return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
-    }
+	public function showBox($head = null, $contents = null, $nooutput = 0)
+	{
+		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
+	}
 }

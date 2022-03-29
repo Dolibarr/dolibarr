@@ -130,7 +130,7 @@ class FilesLibTest extends PHPUnit\Framework\TestCase
 	/**
      * testDolBasename
      *
-     * @return	int
+     * @return	void
      */
     public function testDolBasename()
     {
@@ -239,7 +239,7 @@ class FilesLibTest extends PHPUnit\Framework\TestCase
     /**
      * testDolMimeType
      *
-     * @return	string
+     * @return	void
      */
     public function testDolMimeType()
     {
@@ -285,7 +285,7 @@ class FilesLibTest extends PHPUnit\Framework\TestCase
     /**
      * testDolDeleteDir
      *
-     * @return	int
+     * @return	void
      */
     public function testDolDeleteDir()
     {
@@ -323,10 +323,7 @@ class FilesLibTest extends PHPUnit\Framework\TestCase
     /**
      * testDolCopyMoveDelete
      *
-     * @return	int
-     *
-     * @depends	testDolDeleteDir
-     * The depends says test is run only if previous is ok
+     * @return	void
      */
     public function testDolCopyMoveDelete()
     {
@@ -362,7 +359,7 @@ class FilesLibTest extends PHPUnit\Framework\TestCase
         $this->assertTrue($result, 'move with default mask');
 
         // To test a move that should work with forced mask
-        $result=dol_move($conf->admin->dir_temp.'/file2.csv', $conf->admin->dir_temp.'/file3.csv', '0754', 1); // file shoutld be rwxr-wr--
+        $result=dol_move($conf->admin->dir_temp.'/file2.csv', $conf->admin->dir_temp.'/file3.csv', '0754', 1); // file should be rwxr-wr--
         print __METHOD__." result=".$result."\n";
         $this->assertTrue($result, 'move with forced mask');
 
@@ -395,10 +392,7 @@ class FilesLibTest extends PHPUnit\Framework\TestCase
     /**
      * testDolCompressUnCompress
      *
-     * @return	string
-     *
-     * @depends	testDolCopyMoveDelete
-     * The depends says test is run only if previous is ok
+     * @return	void
      */
     public function testDolCompressUnCompress()
     {
@@ -419,19 +413,31 @@ class FilesLibTest extends PHPUnit\Framework\TestCase
 
         $errorstring = '';
 
+        dol_mkdir($conf->admin->dir_temp);
+        $conf->global->MAIN_ENABLE_LOG_TO_HTML=1; $conf->syslog->enabled=1; $_REQUEST['logtohtml']=1;
+        $conf->logbuffer=array();
+
         $result=dol_compress_file($filein, $fileout, $format, $errorstring);
         print __METHOD__." result=".$result."\n";
+        print join(', ', $conf->logbuffer);
         $this->assertGreaterThanOrEqual(1, $result, "Pb with dol_compress_file on ".$filein." into ".$fileout." : ".$errorstring);
 
         $result=dol_uncompress($fileout, $dirout);
         print __METHOD__." result=".join(',', $result)."\n";
         $this->assertEquals(0, count($result), "Pb with dol_uncompress_file of file ".$fileout);
+
+        $excludefiles = '/(\.back|\.old|\.log|documents[\/\\\]admin[\/\\\]documents[\/\\\])/i';
+        if (preg_match($excludefiles, 'a/temp/b')) { echo '----- Regex OK -----'."\n"; }
+        $result=dol_compress_dir($dirout, $conf->admin->dir_temp.'/testdir.zip', 'zip', $excludefiles);
+        print __METHOD__." result=".$result."\n";
+        print join(', ', $conf->logbuffer);
+        $this->assertGreaterThanOrEqual(1, $result, "Pb with dol_compress_dir of ".$dirout." into ".$conf->admin->dir_temp.'/testdir.zip');
     }
 
     /**
      * testDolDirList
      *
-     * @return	string
+     * @return	void
      *
      * @depends	testDolCompressUnCompress
      * The depends says test is run only if previous is ok

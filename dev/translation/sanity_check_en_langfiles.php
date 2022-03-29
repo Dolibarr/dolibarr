@@ -360,16 +360,14 @@ if ((! empty($_REQUEST['unused']) && $_REQUEST['unused'] == 'true') || (isset($a
    			$unused[$value] = $line;
        		echo $line;        // $trad contains the \n
 		}
-		else
-		{
+		else {
 		    unset($output);
 		    //print 'X'.$output.'Y';
 		}
 	}
 
 	if (empty($unused)) print "No string not used found.\n";
-	else
-	{
+	else {
         $filetosave='/tmp/'.($argv[2]?$argv[2]:"").'notused.lang';
         print "Strings in en_US that are never used are saved into file ".$filetosave.":\n";
         file_put_contents($filetosave, implode("", $unused));

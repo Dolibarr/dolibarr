@@ -35,16 +35,14 @@ if (!$user->rights->opensurvey->write) accessforbidden();
 
 $langs->load("opensurvey");
 
-// On teste toutes les variables pour supprimer l'ensemble des warnings PHP
-// On transforme en entites html les données afin éviter les failles XSS
-$post_var = array('titre', 'commentaires', 'mailsonde', 'creation_sondage_date', 'creation_sondage_autre');
-foreach ($post_var as $var)
-{
-	$$var = GETPOST($var);
-}
+$title = GETPOST('title');
+$description = GETPOST('description', 'restricthtml');
+$mailsonde = GETPOST('mailsonde');
+$creation_sondage_date = GETPOST('creation_sondage_date');
+$creation_sondage_autre = GETPOST('creation_sondage_autre');
 
-// On initialise egalement la session car sinon bonjour les warning :-)
-$session_var = array('titre', 'commentaires', 'mailsonde');
+// We init some session variable to avoir warning
+$session_var = array('title', 'description', 'mailsonde');
 foreach ($session_var as $var)
 {
 	if (isset($_SESSION[$var])) $_SESSION[$var] = null;
@@ -55,10 +53,10 @@ $cocheplus = '';
 $cochemail = '';
 
 // Jump to correct page
-if (GETPOST("creation_sondage_date") || GETPOST("creation_sondage_autre"))
+if (!empty($creation_sondage_date) || !empty($creation_sondage_autre))
 {
-	$_SESSION["titre"] = $titre;
-	$_SESSION["commentaires"] = $commentaires;
+	$_SESSION["title"] = $title;
+	$_SESSION["description"] = $description;
 
 	if (GETPOST('mailsonde') == 'on') {
 		$_SESSION["mailsonde"] = true;
@@ -88,9 +86,7 @@ if (GETPOST("creation_sondage_date") || GETPOST("creation_sondage_autre"))
 		{
 			$testdate = true;
 			$_SESSION['champdatefin'] = dol_print_date($champdatefin, 'dayrfc');
-		}
-		else
-		{
+		} else {
 			$testdate = true;
 			$_SESSION['champdatefin'] = dol_print_date($champdatefin, 'dayrfc');
 			//$testdate = false;
@@ -103,7 +99,7 @@ if (GETPOST("creation_sondage_date") || GETPOST("creation_sondage_autre"))
 		setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("ExpireDate")), null, 'errors');
 	}
 
-	if ($titre && $testdate)
+	if ($title && $testdate)
 	{
 		if (!empty($creation_sondage_date))
 		{
@@ -138,20 +134,20 @@ print load_fiche_titre($langs->trans("CreatePoll").' (1 / 2)');
 print '<form name="formulaire" action="" method="POST">'."\n";
 print '<input type="hidden" name="token" value="'.newToken().'">';
 
-dol_fiche_head();
+print dol_get_fiche_head();
 
 // Affichage des différents champs textes a remplir
 print '<table class="border centpercent">'."\n";
 
-print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("PollTitle").'</td><td><input type="text" name="titre" size="40" maxlength="80" value="'.$_SESSION["titre"].'"></td>'."\n";
-if (!$_SESSION["titre"] && (GETPOST('creation_sondage_date') || GETPOST('creation_sondage_autre')))
+print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("PollTitle").'</td><td><input type="text" name="title" class="minwidth300" maxlength="80" value="'.$_SESSION["title"].'"></td>'."\n";
+if (!$_SESSION["title"] && (GETPOST('creation_sondage_date') || GETPOST('creation_sondage_autre')))
 {
 	setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("PollTitle")), null, 'errors');
 }
 
 print '</tr>'."\n";
 print '<tr><td>'.$langs->trans("Description").'</td><td>';
-$doleditor = new DolEditor('commentaires', $_SESSION["commentaires"], '', 120, 'dolibarr_notes', 'In', 1, 1, 1, ROWS_7, '90%');
+$doleditor = new DolEditor('description', $_SESSION["description"], '', 120, 'dolibarr_notes', 'In', 1, 1, 1, ROWS_7, '90%');
 $doleditor->Create(0, '');
 print '</td>'."\n";
 print '</tr>'."\n";
@@ -163,11 +159,11 @@ print $form->selectDate($champdatefin ? $champdatefin : -1, 'champdatefin', '', 
 print '</tr>'."\n";
 print '</table>'."\n";
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 //focus javascript sur le premier champ
 print '<script type="text/javascript">'."\n";
-print 'document.formulaire.titre.focus();'."\n";
+print 'document.formulaire.title.focus();'."\n";
 print '</script>'."\n";
 
 print '<br>'."\n";
@@ -179,11 +175,11 @@ if ($_SESSION["mailsonde"]) $cochemail = "checked";
 print '<input type="checkbox" name="mailsonde" '.$cochemail.'> '.$langs->trans("ToReceiveEMailForEachVote").'<br>'."\n";
 
 if ($_SESSION['allow_comments']) $allow_comments = 'checked';
-if (isset($_POST['allow_comments'])) $allow_comments = GETPOST('allow_comments') ? 'checked' : '';
+if (GETPOSTISSET('allow_comments')) $allow_comments = GETPOST('allow_comments') ? 'checked' : '';
 print '<input type="checkbox" name="allow_comments" '.$allow_comments.'"> '.$langs->trans('CanComment').'<br>'."\n";
 
 if ($_SESSION['allow_spy']) $allow_spy = 'checked';
-if (isset($_POST['allow_spy'])) $allow_spy = GETPOST('allow_spy') ? 'checked' : '';
+if (GETPOSTISSET('allow_spy')) $allow_spy = GETPOST('allow_spy') ? 'checked' : '';
 print '<input type="checkbox" name="allow_spy" '.$allow_spy.'> '.$langs->trans('CanSeeOthersVote').'<br>'."\n";
 
 if (GETPOST('choix_sondage'))
@@ -192,9 +188,7 @@ if (GETPOST('choix_sondage'))
 	else print '<input type="hidden" name="creation_sondage_autre" value="autre">';
 	print '<input type="hidden" name="choix_sondage" value="'.GETPOST('choix_sondage').'">';
 	print '<br><input type="submit" class="button" name="submit" value="'.$langs->trans("CreatePoll").' ('.(GETPOST('choix_sondage') == 'date' ? $langs->trans("TypeDate") : $langs->trans("TypeClassic")).')">';
-}
-else
-{
+} else {
 	// Show image to selecte between date survey or other survey
 	print '<br><table>'."\n";
 	print '<tr><td>'.$langs->trans("CreateSurveyDate").'</td><td></td> '."\n";

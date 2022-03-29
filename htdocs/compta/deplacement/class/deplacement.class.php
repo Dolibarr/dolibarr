@@ -43,12 +43,12 @@ class Deplacement extends CommonObject
 	public $table_element = 'deplacement';
 
 	/**
-	 * @var int    Name of subtable line
+	 * @var string    Name of subtable line
 	 */
 	public $table_element_line = '';
 
 	/**
-	 * @var int Field with ID of parent key if this field has a parent
+	 * @var string Fieldname with ID of parent key if this field has a parent
 	 */
 	public $fk_element = '';
 
@@ -59,22 +59,22 @@ class Deplacement extends CommonObject
 	public $ismultientitymanaged = 0;
 
 	/**
-     * Date creation record (datec)
-     *
-     * @var integer
-     */
-    public $datec;
+	 * Date creation record (datec)
+	 *
+	 * @var integer
+	 */
+	public $datec;
 
-    /**
-     * Date (dated)
-     *
-     * @var integer
-     */
+	/**
+	 * Date (dated)
+	 *
+	 * @var integer
+	 */
 	public $dated;
 
 	/**
-     * @var int ID
-     */
+	 * @var int ID
+	 */
 	public $fk_user_author;
 
 	/**
@@ -82,20 +82,20 @@ class Deplacement extends CommonObject
 	 */
 	public $fk_user;
 
-    /**
-     * @var string km value formatted
-     */
-    public $km;
+	/**
+	 * @var string km value formatted
+	 */
+	public $km;
 
-    /**
-     * @var int Thirdparty id
-     */
+	/**
+	 * @var int Thirdparty id
+	 */
 	public $socid;
 
-    /**
-     * @var int Status 0=draft, 1=validated, 2=Refunded
-     */
-    public $statut;
+	/**
+	 * @var int Status 0=draft, 1=validated, 2=Refunded
+	 */
+	public $statut;
 	public $extraparams = array();
 
 	public $statuts = array();
@@ -116,7 +116,7 @@ class Deplacement extends CommonObject
 	 */
 	const STATUS_REFUNDED = 2;
 
-    /**
+	/**
 	 * Constructor
 	 *
 	 * @param	DoliDB		$db		Database handler
@@ -125,8 +125,8 @@ class Deplacement extends CommonObject
 	{
 		$this->db = $db;
 
-        $this->statuts_short = array(0 => 'Draft', 1 => 'Validated', 2 => 'Refunded');
-        $this->statuts = array(0 => 'Draft', 1 => 'Validated', 2 => 'Refunded');
+		$this->statuts_short = array(0 => 'Draft', 1 => 'Validated', 2 => 'Refunded');
+		$this->statuts = array(0 => 'Draft', 1 => 'Validated', 2 => 'Refunded');
 	}
 
 	/**
@@ -152,9 +152,9 @@ class Deplacement extends CommonObject
 			return -1;
 		}
 
-        $now = dol_now();
+		$now = dol_now();
 
-        $this->db->begin();
+		$this->db->begin();
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."deplacement (";
 		$sql .= "datec";
@@ -185,30 +185,26 @@ class Deplacement extends CommonObject
 		{
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."deplacement");
 
-            // Call trigger
-            $result = $this->call_trigger('DEPLACEMENT_CREATE', $user);
-            if ($result < 0)
-            {
-            	$this->db->rollback();
-            	return -2;
-            }
-            // End call triggers
+			// Call trigger
+			$result = $this->call_trigger('DEPLACEMENT_CREATE', $user);
+			if ($result < 0)
+			{
+				$this->db->rollback();
+				return -2;
+			}
+			// End call triggers
 
 			$result = $this->update($user);
 			if ($result > 0)
 			{
 				$this->db->commit();
 				return $this->id;
-			}
-			else
-			{
+			} else {
 				$this->error = $this->db->error();
 				$this->db->rollback();
 				return $result;
 			}
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->error()." sql=".$sql;
 			$this->db->rollback();
 			return -1;
@@ -230,12 +226,12 @@ class Deplacement extends CommonObject
 
 		// Check parameters
 		if (!is_numeric($this->km)) $this->km = 0;
-        if (empty($this->date))
-        {
-            $this->error = 'ErrorBadParameter';
-            return -1;
-        }
-        if (empty($this->type) || $this->type < 0)
+		if (empty($this->date))
+		{
+			$this->error = 'ErrorBadParameter';
+			return -1;
+		}
+		if (empty($this->type) || $this->type < 0)
 		{
 			$this->error = 'ErrorBadParameter';
 			return -1;
@@ -267,16 +263,14 @@ class Deplacement extends CommonObject
 		{
 			$this->db->commit();
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror();
 			$this->db->rollback();
 			return -1;
 		}
 	}
 
-    /**
+	/**
 	 * Load an object from database
 	 *
 	 * @param	int		$id		Id of record to load
@@ -312,15 +306,13 @@ class Deplacement extends CommonObject
 			$this->extraparams	= (array) json_decode($obj->extraparams, true);
 
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->error();
 			return -1;
 		}
 	}
 
-    /**
+	/**
 	 *	Delete record
 	 *
 	 *	@param	int		$id		Id of record to delete
@@ -338,9 +330,7 @@ class Deplacement extends CommonObject
 		{
 			$this->db->commit();
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->error();
 			$this->db->rollback();
 			return -1;
@@ -359,7 +349,7 @@ class Deplacement extends CommonObject
 		return $this->LibStatut($this->statut, $mode);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Renvoi le libelle d'un statut donne
 	 *
@@ -369,36 +359,31 @@ class Deplacement extends CommonObject
 	 */
 	public function LibStatut($status, $mode = 0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $langs;
 
 		if ($mode == 0)
 		{
 			return $langs->trans($this->statuts[$status]);
-		}
-		elseif ($mode == 1)
+		} elseif ($mode == 1)
 		{
 			return $langs->trans($this->statuts_short[$status]);
-		}
-		elseif ($mode == 2)
+		} elseif ($mode == 2)
 		{
 			if ($status == 0) return img_picto($langs->trans($this->statuts_short[$status]), 'statut0').' '.$langs->trans($this->statuts_short[$status]);
 			elseif ($status == 1) return img_picto($langs->trans($this->statuts_short[$status]), 'statut4').' '.$langs->trans($this->statuts_short[$status]);
 			elseif ($status == 2) return img_picto($langs->trans($this->statuts_short[$status]), 'statut6').' '.$langs->trans($this->statuts_short[$status]);
-		}
-		elseif ($mode == 3)
+		} elseif ($mode == 3)
 		{
 			if ($status == 0 && !empty($this->statuts_short[$status])) return img_picto($langs->trans($this->statuts_short[$status]), 'statut0');
 			elseif ($status == 1 && !empty($this->statuts_short[$status])) return img_picto($langs->trans($this->statuts_short[$status]), 'statut4');
 			elseif ($status == 2 && !empty($this->statuts_short[$status])) return img_picto($langs->trans($this->statuts_short[$status]), 'statut6');
-		}
-		elseif ($mode == 4)
+		} elseif ($mode == 4)
 		{
 			if ($status == 0 && !empty($this->statuts_short[$status])) return img_picto($langs->trans($this->statuts_short[$status]), 'statut0').' '.$langs->trans($this->statuts[$status]);
 			elseif ($status == 1 && !empty($this->statuts_short[$status])) return img_picto($langs->trans($this->statuts_short[$status]), 'statut4').' '.$langs->trans($this->statuts[$status]);
 			elseif ($status == 2 && !empty($this->statuts_short[$status])) return img_picto($langs->trans($this->statuts_short[$status]), 'statut6').' '.$langs->trans($this->statuts[$status]);
-		}
-		elseif ($mode == 5)
+		} elseif ($mode == 5)
 		{
 			if ($status == 0 && !empty($this->statuts_short[$status])) return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]), 'statut0');
 			elseif ($status == 1 && !empty($this->statuts_short[$status])) return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]), 'statut4');
@@ -417,15 +402,15 @@ class Deplacement extends CommonObject
 		global $langs;
 
 		$result = '';
-        $label = $langs->trans("Show").': '.$this->ref;
+		$label = $langs->trans("Show").': '.$this->ref;
 
-        $link = '<a href="'.DOL_URL_ROOT.'/compta/deplacement/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+		$link = '<a href="'.DOL_URL_ROOT.'/compta/deplacement/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$linkend = '</a>';
 
 		$picto = 'trip';
 
 
-        if ($withpicto) $result .= ($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);
+		if ($withpicto) $result .= ($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);
 		if ($withpicto && $withpicto != 2) $result .= ' ';
 		if ($withpicto != 2) $result .= $link.$this->ref.$linkend;
 		return $result;
@@ -440,33 +425,31 @@ class Deplacement extends CommonObject
 	 */
 	public function listOfTypes($active = 1)
 	{
-	    global $langs;
+		global $langs;
 
-	    $ret = array();
+		$ret = array();
 
-        $sql = "SELECT id, code, label";
-        $sql .= " FROM ".MAIN_DB_PREFIX."c_type_fees";
-        $sql .= " WHERE active = ".$active;
+		$sql = "SELECT id, code, label";
+		$sql .= " FROM ".MAIN_DB_PREFIX."c_type_fees";
+		$sql .= " WHERE active = ".$active;
 
-        dol_syslog(get_class($this)."::listOfTypes", LOG_DEBUG);
-        $result = $this->db->query($sql);
-        if ($result)
-        {
-            $num = $this->db->num_rows($result);
-            $i = 0;
-            while ($i < $num)
-            {
-                $obj = $this->db->fetch_object($result);
-                $ret[$obj->code] = (($langs->trans($obj->code) != $obj->code) ? $langs->trans($obj->code) : $obj->label);
-                $i++;
-            }
-        }
-        else
-        {
-        	dol_print_error($this->db);
-        }
+		dol_syslog(get_class($this)."::listOfTypes", LOG_DEBUG);
+		$result = $this->db->query($sql);
+		if ($result)
+		{
+			$num = $this->db->num_rows($result);
+			$i = 0;
+			while ($i < $num)
+			{
+				$obj = $this->db->fetch_object($result);
+				$ret[$obj->code] = (($langs->trans($obj->code) != $obj->code) ? $langs->trans($obj->code) : $obj->label);
+				$i++;
+			}
+		} else {
+			dol_print_error($this->db);
+		}
 
-        return $ret;
+		return $ret;
 	}
 
 	/**
@@ -507,9 +490,7 @@ class Deplacement extends CommonObject
 				$this->date_modification = $this->db->jdate($obj->tms);
 			}
 			$this->db->free($result);
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 		}
 	}

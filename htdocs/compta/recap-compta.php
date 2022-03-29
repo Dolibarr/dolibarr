@@ -46,8 +46,8 @@ $hookmanager->initHooks(array('recapcomptacard', 'globalcard'));
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST('sortfield', 'alpha');
-$sortorder = GETPOST('sortorder', 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
@@ -58,8 +58,8 @@ if (!$sortorder) $sortorder = "DESC";
 
 
 $arrayfields = array(
-    'f.datef'=>array('label'=>"Date", 'checked'=>1),
-    //...
+	'f.datef'=>array('label'=>"Date", 'checked'=>1),
+	//...
 );
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
@@ -90,14 +90,14 @@ llxHeader('', $title, $help_url);
 
 if ($id > 0)
 {
-    $param = '';
-    if ($id > 0) $param .= '&socid='.$id;
+	$param = '';
+	if ($id > 0) $param .= '&socid='.$id;
 
-    $head = societe_prepare_head($object);
+	$head = societe_prepare_head($object);
 
-	dol_fiche_head($head, 'customer', $langs->trans("ThirdParty"), 0, 'company');
+	print dol_get_fiche_head($head, 'customer', $langs->trans("ThirdParty"), 0, 'company');
 	dol_banner_tab($object, 'socid', '', ($user->socid ? 0 : 1), 'rowid', 'nom', '', '', 0, '', '', 1);
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 	{
@@ -106,7 +106,7 @@ if ($id > 0)
 
 		print '<table class="noborder tagtable liste centpercent">';
 		print '<tr class="liste_titre">';
-        if (!empty($arrayfields['f.datef']['checked']))  print_liste_field_titre($arrayfields['f.datef']['label'], $_SERVER["PHP_SELF"], "f.datef", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
+		if (!empty($arrayfields['f.datef']['checked']))  print_liste_field_titre($arrayfields['f.datef']['label'], $_SERVER["PHP_SELF"], "f.datef", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
 		print '<td>'.$langs->trans("Element").'</td>';
 		print '<td>'.$langs->trans("Status").'</td>';
 		print '<td class="right">'.$langs->trans("Debit").'</td>';
@@ -211,15 +211,11 @@ if ($id > 0)
 					}
 
 					$db->free($resqlp);
-				}
-				else
-				{
+				} else {
 					dol_print_error($db);
 				}
 			}
-		}
-		else
-		{
+		} else {
 			dol_print_error($db);
 		}
 
@@ -288,9 +284,7 @@ if ($id > 0)
 
 		print "</table>";
 	}
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 

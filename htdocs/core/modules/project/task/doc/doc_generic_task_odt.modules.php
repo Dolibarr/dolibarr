@@ -62,15 +62,15 @@ class doc_generic_task_odt extends ModelePDFTask
 	public $emetteur;
 
 	/**
-     * @var array Minimum version of PHP required by module.
-     * e.g.: PHP ≥ 5.5 = array(5, 5)
-     */
-	public $phpmin = array(5, 5);
+	 * @var array Minimum version of PHP required by module.
+	 * e.g.: PHP ≥ 5.6 = array(5, 6)
+	 */
+	public $phpmin = array(5, 6);
 
 	/**
-     * Dolibarr version of the loaded document
-     * @var string
-     */
+	 * Dolibarr version of the loaded document
+	 * @var string
+	 */
 	public $version = 'dolibarr';
 
 
@@ -79,12 +79,12 @@ class doc_generic_task_odt extends ModelePDFTask
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-    public function __construct($db)
+	public function __construct($db)
 	{
 		global $conf, $langs, $mysoc;
 
 		// Load translation files required by the page
-        $langs->loadLangs(array("main", "companies"));
+		$langs->loadLangs(array("main", "companies"));
 
 		$this->db = $db;
 		$this->name = "ODT templates";
@@ -118,33 +118,33 @@ class doc_generic_task_odt extends ModelePDFTask
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Define array with couple substitution key => substitution value
 	 *
 	 * @param   Project			$object             Main object to use as data source
 	 * @param   Translate		$outputlangs        Lang object to use for output
-     * @param   string		    $array_key	        Name of the key for return array
+	 * @param   string		    $array_key	        Name of the key for return array
 	 * @return	array								Array of substitution
 	 */
 	public function get_substitutionarray_object($object, $outputlangs, $array_key = 'object')
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf, $extrafields;
 
 		$resarray = array(
-            $array_key.'_id'=>$object->id,
-            $array_key.'_ref'=>$object->ref,
-            $array_key.'_title'=>$object->title,
-            $array_key.'_description'=>$object->description,
-            $array_key.'_date_creation'=>dol_print_date($object->date_c, 'day'),
-            $array_key.'_date_modification'=>dol_print_date($object->date_m, 'day'),
-            $array_key.'_date_start'=>dol_print_date($object->date_start, 'day'),
-            $array_key.'_date_end'=>dol_print_date($object->date_end, 'day'),
-            $array_key.'_note_private'=>$object->note_private,
-            $array_key.'_note_public'=>$object->note_public,
-            $array_key.'_public'=>$object->public,
-            $array_key.'_statut'=>$object->getLibStatut()
+			$array_key.'_id'=>$object->id,
+			$array_key.'_ref'=>$object->ref,
+			$array_key.'_title'=>$object->title,
+			$array_key.'_description'=>$object->description,
+			$array_key.'_date_creation'=>dol_print_date($object->date_c, 'day'),
+			$array_key.'_date_modification'=>dol_print_date($object->date_m, 'day'),
+			$array_key.'_date_start'=>dol_print_date($object->date_start, 'day'),
+			$array_key.'_date_end'=>dol_print_date($object->date_end, 'day'),
+			$array_key.'_note_private'=>$object->note_private,
+			$array_key.'_note_public'=>$object->note_public,
+			$array_key.'_public'=>$object->public,
+			$array_key.'_statut'=>$object->getLibStatut()
 		);
 
 		// Retrieve extrafields
@@ -158,7 +158,7 @@ class doc_generic_task_odt extends ModelePDFTask
 		return $resarray;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Define array with couple substitution key => substitution value
 	 *
@@ -167,43 +167,43 @@ class doc_generic_task_odt extends ModelePDFTask
 	 *  @param  string		    $array_key	        Name of the key for return array
 	 *  @return	array								Return a substitution array
 	 */
-    public function get_substitutionarray_tasks($task, $outputlangs, $array_key = 'task')
-    {
-        // phpcs:enable
-        global $conf, $extrafields;
+	public function get_substitutionarray_tasks($task, $outputlangs, $array_key = 'task')
+	{
+		// phpcs:enable
+		global $conf, $extrafields;
 
-	    $resarray = array(
-            'task_ref'=>$task->ref,
-            'task_fk_project'=>$task->fk_project,
-            'task_projectref'=>$task->projectref,
-            'task_projectlabel'=>$task->projectlabel,
-            'task_label'=>$task->label,
-            'task_description'=>$task->description,
-            'task_fk_parent'=>$task->fk_parent,
+		$resarray = array(
+			'task_ref'=>$task->ref,
+			'task_fk_project'=>$task->fk_project,
+			'task_projectref'=>$task->projectref,
+			'task_projectlabel'=>$task->projectlabel,
+			'task_label'=>$task->label,
+			'task_description'=>$task->description,
+			'task_fk_parent'=>$task->fk_parent,
 			'task_duration'=>$task->duration_effective,
-            'task_duration_formated'=>convertSecondToTime($task->duration_effective, 'allhourmin'),
-            'task_planned_workload'=>$task->planned_workload,
-            'task_planned_workload_formated'=>convertSecondToTime($task->planned_workload, 'allhourmin'),
-            'task_progress'=>$task->progress,
-            'task_public'=>$task->public,
-            'task_date_start'=>dol_print_date($task->date_start, 'day'),
-            'task_date_end'=>dol_print_date($task->date_end, 'day'),
-            'task_note_private'=>$task->note_private,
-            'task_note_public'=>$task->note_public
-        );
+			'task_duration_formated'=>convertSecondToTime($task->duration_effective, 'allhourmin'),
+			'task_planned_workload'=>$task->planned_workload,
+			'task_planned_workload_formated'=>convertSecondToTime($task->planned_workload, 'allhourmin'),
+			'task_progress'=>$task->progress,
+			'task_public'=>$task->public,
+			'task_date_start'=>dol_print_date($task->date_start, 'day'),
+			'task_date_end'=>dol_print_date($task->date_end, 'day'),
+			'task_note_private'=>$task->note_private,
+			'task_note_public'=>$task->note_public
+		);
 
-	    // Retrieve extrafields
-	    if (is_array($task->array_options) && count($task->array_options))
-	    {
-		    $task->fetch_optionals();
+		// Retrieve extrafields
+		if (is_array($task->array_options) && count($task->array_options))
+		{
+			$task->fetch_optionals();
 
-		    $resarray = $this->fill_substitutionarray_with_extrafields($task, $resarray, $extrafields, $array_key, $outputlangs);
-	    }
+			$resarray = $this->fill_substitutionarray_with_extrafields($task, $resarray, $extrafields, $array_key, $outputlangs);
+		}
 
-	    return $resarray;
-    }
+		return $resarray;
+	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Define array with couple substitution key => substitution value
 	 *
@@ -213,7 +213,7 @@ class doc_generic_task_odt extends ModelePDFTask
 	 */
 	public function get_substitutionarray_project_contacts($contact, $outputlangs)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf;
 
 		return array(
@@ -228,7 +228,7 @@ class doc_generic_task_odt extends ModelePDFTask
 		);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Define array with couple substitution key => substitution value
 	 *
@@ -238,7 +238,7 @@ class doc_generic_task_odt extends ModelePDFTask
 	 */
 	public function get_substitutionarray_project_file($file, $outputlangs)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf;
 
 		return array(
@@ -248,7 +248,7 @@ class doc_generic_task_odt extends ModelePDFTask
 		);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Define array with couple substitution key => substitution value
 	 *
@@ -258,7 +258,7 @@ class doc_generic_task_odt extends ModelePDFTask
 	 */
 	public function get_substitutionarray_project_reference($refdetail, $outputlangs)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf;
 
 		return array(
@@ -272,7 +272,7 @@ class doc_generic_task_odt extends ModelePDFTask
 		);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Define array with couple substitution key => substitution value
 	 *
@@ -282,7 +282,7 @@ class doc_generic_task_odt extends ModelePDFTask
 	 */
 	public function get_substitutionarray_tasksressource($taskressource, $outputlangs)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf;
 		//dol_syslog(get_class($this).'::get_substitutionarray_tasksressource taskressource='.var_export($taskressource,true),LOG_DEBUG);
 		return array(
@@ -296,7 +296,7 @@ class doc_generic_task_odt extends ModelePDFTask
 		);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Define array with couple substitution key => substitution value
 	 *
@@ -306,7 +306,7 @@ class doc_generic_task_odt extends ModelePDFTask
 	 */
 	public function get_substitutionarray_taskstime($tasktime, $outputlangs)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf;
 
 		return array(
@@ -321,7 +321,7 @@ class doc_generic_task_odt extends ModelePDFTask
 		);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Define array with couple substitution key => substitution value
 	 *
@@ -331,7 +331,7 @@ class doc_generic_task_odt extends ModelePDFTask
 	 */
 	public function get_substitutionarray_task_file($file, $outputlangs)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf;
 
 		return array(
@@ -353,7 +353,7 @@ class doc_generic_task_odt extends ModelePDFTask
 		global $conf, $langs;
 
 		// Load translation files required by the page
-        $langs->loadLangs(array("errors", "companies"));
+		$langs->loadLangs(array("errors", "companies"));
 
 		$form = new Form($this->db);
 
@@ -377,8 +377,7 @@ class doc_generic_task_odt extends ModelePDFTask
 				unset($listofdir[$key]); continue;
 			}
 			if (!is_dir($tmpdir)) $texttitle .= img_warning($langs->trans("ErrorDirNotFound", $tmpdir), 0);
-			else
-			{
+			else {
 				$tmpfiles = dol_dir_list($tmpdir, 'files', 0, '\.(ods|odt)');
 				if (count($tmpfiles)) $listoffiles = array_merge($listoffiles, $tmpfiles);
 			}
@@ -410,10 +409,10 @@ class doc_generic_task_odt extends ModelePDFTask
 
 		if ($nbofiles)
 		{
-   			$texte .= '<div id="div_'.get_class($this).'" class="hidden">';
-   			foreach ($listoffiles as $file)
-   			{
-                $texte .= $file['name'].'<br>';
+   			$texte .= '<div id="div_'.get_class($this).'" class="hiddenx">';
+   			// Show list of found files
+   			foreach ($listoffiles as $file) {
+   				$texte .= '- '.$file['name'].' <a href="'.DOL_URL_ROOT.'/document.php?modulepart=doctemplates&file=tasks/'.urlencode(basename($file['name'])).'">'.img_picto('', 'listlight').'</a><br>';
    			}
    			$texte .= '</div>';
 		}
@@ -431,7 +430,7 @@ class doc_generic_task_odt extends ModelePDFTask
 		return $texte;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Function to build a document on disk using the generic odt module.
 	 *
@@ -442,7 +441,7 @@ class doc_generic_task_odt extends ModelePDFTask
 	 */
 	public function write_file($object, $outputlangs, $srctemplatepath)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $user, $langs, $conf, $mysoc, $hookmanager;
 
 		if (empty($srctemplatepath))
@@ -523,7 +522,7 @@ class doc_generic_task_odt extends ModelePDFTask
 				// Open and load template
 				require_once ODTPHP_PATH.'odf.php';
 				try {
-                    $odfHandler = new odf(
+					$odfHandler = new odf(
 						$srctemplatepath,
 						array(
 						'PATH_TO_TMP'	  => $conf->projet->dir_temp,
@@ -532,8 +531,7 @@ class doc_generic_task_odt extends ModelePDFTask
 						'DELIMITER_RIGHT' => '}'
 						)
 					);
-				}
-				catch (Exception $e)
+				} catch (Exception $e)
 				{
 					$this->error = $e->getMessage();
 					return -1;
@@ -564,19 +562,17 @@ class doc_generic_task_odt extends ModelePDFTask
 						{
 							if (file_exists($value)) $odfHandler->setImage($key, $value);
 							else $odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
-						}
-						else    // Text
+						} else // Text
 						{
 							$odfHandler->setVars($key, $value, true, 'UTF-8');
 						}
 					} catch (OdfException $e) {
-                        dol_syslog($e->getMessage(), LOG_INFO);
+						dol_syslog($e->getMessage(), LOG_INFO);
 					}
 				}
 
 				// Replace tags of lines for tasks
-				try
-				{
+				try {
 					// Security check
 					$socid = 0;
 					if (!empty($project->fk_soc)) $socid = $project->fk_soc;
@@ -632,8 +628,7 @@ class doc_generic_task_odt extends ModelePDFTask
 									$listlinestaskres->setVars($key, $val, true, 'UTF-8');
 								} catch (OdfException $e) {
 									dol_syslog($e->getMessage(), LOG_INFO);
-								}
-								catch (SegmentException $e) {
+								} catch (SegmentException $e) {
 									dol_syslog($e->getMessage(), LOG_INFO);
 								}
 							}
@@ -674,15 +669,12 @@ class doc_generic_task_odt extends ModelePDFTask
 
 							foreach ($tmparray as $key => $val)
 							{
-								try
-								{
+								try {
 									$listlinestasktime->setVars($key, $val, true, 'UTF-8');
-								}
-								catch (OdfException $e)
+								} catch (OdfException $e)
 								{
 									dol_syslog($e->getMessage(), LOG_INFO);
-								}
-								catch (SegmentException $e)
+								} catch (SegmentException $e)
 								{
 									dol_syslog($e->getMessage(), LOG_INFO);
 								}
@@ -709,15 +701,12 @@ class doc_generic_task_odt extends ModelePDFTask
 						//dol_syslog(get_class($this).'::main $tmparray'.var_export($tmparray,true));
 						foreach ($tmparray as $key => $val)
 						{
-							try
-							{
+							try {
 								$listtasksfiles->setVars($key, $val, true, 'UTF-8');
-							}
-							catch (OdfException $e)
+							} catch (OdfException $e)
 							{
 								dol_syslog($e->getMessage(), LOG_INFO);
-							}
-							catch (SegmentException $e)
+							} catch (SegmentException $e)
 							{
 								dol_syslog($e->getMessage(), LOG_INFO);
 							}
@@ -727,8 +716,7 @@ class doc_generic_task_odt extends ModelePDFTask
 					//$listlines->merge();
 
 					$odfHandler->mergeSegment($listtasksfiles);
-				}
-				catch (OdfException $e)
+				} catch (OdfException $e)
 				{
 					$this->error = $e->getMessage();
 					dol_syslog($this->error, LOG_WARNING);
@@ -738,8 +726,7 @@ class doc_generic_task_odt extends ModelePDFTask
 
 
 				// Replace tags of project files
-				try
-				{
+				try {
 					$listlines = $odfHandler->setSegment('projectfiles');
 
 					$upload_dir = $conf->projet->dir_output.'/'.dol_sanitizeFileName($object->ref);
@@ -753,15 +740,12 @@ class doc_generic_task_odt extends ModelePDFTask
 
 						foreach ($tmparray as $key => $val)
 						{
-							try
-							{
+							try {
 								$listlines->setVars($key, $val, true, 'UTF-8');
-							}
-							catch (OdfException $e)
+							} catch (OdfException $e)
 							{
 								dol_syslog($e->getMessage(), LOG_INFO);
-							}
-							catch (SegmentException $e)
+							} catch (SegmentException $e)
 							{
 								dol_syslog($e->getMessage(), LOG_INFO);
 							}
@@ -769,8 +753,7 @@ class doc_generic_task_odt extends ModelePDFTask
 						$listlines->merge();
 					}
 					$odfHandler->mergeSegment($listlines);
-				}
-				catch (OdfException $e)
+				} catch (OdfException $e)
 				{
 					$this->error = $e->getMessage();
 					dol_syslog($this->error, LOG_WARNING);
@@ -789,8 +772,7 @@ class doc_generic_task_odt extends ModelePDFTask
 				}
 				if ((is_array($contact_arrray) && count($contact_arrray) > 0))
 				{
-					try
-					{
+					try {
 						$listlines = $odfHandler->setSegment('projectcontacts');
 
 						foreach ($contact_arrray as $contact)
@@ -813,15 +795,12 @@ class doc_generic_task_odt extends ModelePDFTask
 
 							foreach ($tmparray as $key => $val)
 							{
-								try
-								{
+								try {
 									$listlines->setVars($key, $val, true, 'UTF-8');
-								}
-								catch (OdfException $e)
+								} catch (OdfException $e)
 								{
 									dol_syslog($e->getMessage(), LOG_INFO);
-								}
-								catch (SegmentException $e)
+								} catch (SegmentException $e)
 								{
 									dol_syslog($e->getMessage(), LOG_INFO);
 								}
@@ -829,8 +808,7 @@ class doc_generic_task_odt extends ModelePDFTask
 							$listlines->merge();
 						}
 						$odfHandler->mergeSegment($listlines);
-					}
-					catch (OdfException $e)
+					} catch (OdfException $e)
 					{
 						$this->error = $e->getMessage();
 						dol_syslog($this->error, LOG_WARNING);
@@ -850,16 +828,15 @@ class doc_generic_task_odt extends ModelePDFTask
 						$odfHandler->exportAsAttachedPDF($file);
 					} catch (Exception $e) {
 						$this->error = $e->getMessage();
-                        dol_syslog($e->getMessage(), LOG_INFO);
+						dol_syslog($e->getMessage(), LOG_INFO);
 						return -1;
 					}
-				}
-				else {
+				} else {
 					try {
 						$odfHandler->saveToDisk($file);
 					} catch (Exception $e) {
 						$this->error = $e->getMessage();
-                        dol_syslog($e->getMessage(), LOG_INFO);
+						dol_syslog($e->getMessage(), LOG_INFO);
 						return -1;
 					}
 				}
@@ -874,9 +851,7 @@ class doc_generic_task_odt extends ModelePDFTask
 				$this->result = array('fullpath'=>$file);
 
 				return 1; // Success
-			}
-			else
-			{
+			} else {
 				$this->error = $langs->transnoentities("ErrorCanNotCreateDir", $dir);
 				return -1;
 			}

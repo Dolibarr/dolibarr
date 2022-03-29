@@ -32,13 +32,6 @@ if (!$user->admin)
 
 $error = 0;
 
-// List of statut
-static $tmpstatus2label = array(
-		'0'=>'OpenEtablishment',
-		'1'=>'CloseEtablishment'
-);
-$status2label = array('');
-foreach ($tmpstatus2label as $key => $val) $status2label[$key] = $langs->trans($val);
 
 /*
  * Actions
@@ -51,11 +44,14 @@ foreach ($tmpstatus2label as $key => $val) $status2label[$key] = $langs->trans($
  * View
  */
 
+$form = new Form($db);
+$establishmenttmp = new Establishment($db);
+
 llxHeader('', $langs->trans("Establishments"));
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$sortorder     = GETPOST("sortorder");
-$sortfield     = GETPOST("sortfield");
+$sortorder     = GETPOST("sortorder", 'alpha');
+$sortfield     = GETPOST("sortfield", 'alpha');
 if (!$sortorder) $sortorder = "DESC";
 if (!$sortfield) $sortfield = "e.rowid";
 
@@ -68,20 +64,15 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 
-$form = new Form($db);
-$establishmenttmp = new Establishment($db);
-
-dol_htmloutput_mesg($mesg);
-
 // Subheader
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("HRMSetup"), $linkback);
 
 // Configuration header
 $head = hrm_admin_prepare_head();
-dol_fiche_head($head, 'establishments', $langs->trans("HRM"), -1, "user");
+print dol_get_fiche_head($head, 'establishments', $langs->trans("HRM"), -1, "user");
 
-$sql = "SELECT e.rowid, e.name, e.address, e.zip, e.town, e.status";
+$sql = "SELECT e.rowid, e.label, e.address, e.zip, e.town, e.status";
 $sql .= " FROM ".MAIN_DB_PREFIX."establishment as e";
 $sql .= " WHERE e.entity IN (".getEntity('establishment').')';
 $sql .= $db->order($sortfield, $sortorder);
@@ -96,57 +87,55 @@ if ($result)
 	// Load attribute_label
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
-	print_liste_field_titre("Name", $_SERVER["PHP_SELF"], "e.name", "", "", "", $sortfield, $sortorder);
+	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "e.ref", "", "", "", $sortfield, $sortorder);
+	print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "e.label", "", "", "", $sortfield, $sortorder);
 	print_liste_field_titre("Address", $_SERVER["PHP_SELF"], "e.address", "", "", "", $sortfield, $sortorder);
-	print_liste_field_titre("Zipcode", $_SERVER["PHP_SELF"], "e.zip", "", "", "", $sortfield, $sortorder);
+	print_liste_field_titre("Zip", $_SERVER["PHP_SELF"], "e.zip", "", "", "", $sortfield, $sortorder);
 	print_liste_field_titre("Town", $_SERVER["PHP_SELF"], "e.town", "", "", "", $sortfield, $sortorder);
 	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "e.status", "", "", '', $sortfield, $sortorder, 'right ');
 	print "</tr>\n";
 
 	if ($num > 0)
-    {
-	    $establishmentstatic = new Establishment($db);
+	{
+		$establishmentstatic = new Establishment($db);
 
 		while ($i < min($num, $limit))
 		{
-            $obj = $db->fetch_object($result);
+			$obj = $db->fetch_object($result);
 
 			$establishmentstatic->id = $obj->rowid;
-			$establishmentstatic->name = $obj->name;
+			$establishmentstatic->ref = $obj->ref;
+			$establishmentstatic->label = $obj->label;
 			$establishmentstatic->status = $obj->status;
 
 
 			print '<tr class="oddeven">';
 			print '<td>'.$establishmentstatic->getNomUrl(1).'</td>';
-            print '<td class="left">'.$obj->address.'</td>';
+			print '<td>'.$obj->label.'</td>';
+			print '<td class="left">'.$obj->address.'</td>';
 			print '<td class="left">'.$obj->zip.'</td>';
 			print '<td class="left">'.$obj->town.'</td>';
-
-            print '<td class="right">';
+			print '<td class="right">';
 			print $establishmentstatic->getLibStatut(5);
 			print '</td>';
-            print "</tr>\n";
+			print "</tr>\n";
 
-            $i++;
-        }
-    }
-    else
-    {
-        print '<tr class="oddeven"><td colspan="6" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
-    }
+			$i++;
+		}
+	} else {
+		print '<tr class="oddeven"><td colspan="7" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+	}
 
 	print '</table>';
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 // Buttons
 print '<div class="tabsAction">';
-print '<a class="butAction" href="../establishment/card.php?action=create">'.$langs->trans("NewEstablishment").'</a>';
+print '<a class="butAction" href="'.DOL_URL_ROOT.'/hrm/establishment/card.php?action=create">'.$langs->trans("NewEstablishment").'</a>';
 print '</div>';
 
 // End of page

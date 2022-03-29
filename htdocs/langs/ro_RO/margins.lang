@@ -16,29 +16,30 @@ MarginDetails=Detalii Marjă
 ProductMargins=Marjă Produs
 CustomerMargins=Marje Client
 SalesRepresentativeMargins=Marje Reprezentanţi vănzări
+ContactOfInvoice=Contact pentru factură
 UserMargins=Marje Utilizator
 ProductService=Produs sau serviciu
 AllProducts=Toate produsele şi serviciile
 ChooseProduct/Service=Alege produs sau serviciu
-ForceBuyingPriceIfNull=Force buying/cost price to selling price if not defined
-ForceBuyingPriceIfNullDetails=If buying/cost price not defined, and this option "ON", margin will be zero on line (buying/cost price = selling price), otherwise ("OFF"), marge will be equal to suggested default.
+ForceBuyingPriceIfNull=Forțaţi prețul de cumpărare / de cost la prețul de vânzare, dacă nu este definit
+ForceBuyingPriceIfNullDetails=Dacă prețul de cumpărare / cost nu este definit și această opțiune este "ON", marja va fi zero pe linie (cumpărarea / prețul de cost = prețul de vânzare), în caz contrar ("OFF"), marginea va fi egală cu cea indicată.
 MARGIN_METHODE_FOR_DISCOUNT=Metoda marje pentru discounturi globale
 UseDiscountAsProduct=Ca produs
 UseDiscountAsService=Ca serviciu
 UseDiscountOnTotal=Pe subtotal
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Definiti daca discontul global e tratat ca un produs, serviciu, sau numai pe total la calcularea marjei.
-MARGIN_TYPE=Buying/Cost price suggested by default for margin calculation
-MargeType1=Margin on Best vendor price
-MargeType2=Margin on Weighted Average Price (WAP)
-MargeType3=Margin on Cost Price
-MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Price (WAP) = Selling price - Product Weighted Average Price (WAP) or best supplier price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAP if cost price not defined, or best supplier price if WAP not yet defined
+MARGIN_TYPE=Prețul de cumpărare / cost sugerat implicit pentru calcularea marjei
+MargeType1=Marja la prețul cel mai bun al furnizororului
+MargeType2=Marja privind prețul mediu ponderat (WAP)
+MargeType3=Marja pe prețul de cost
+MarginTypeDesc=* Marja la prețul cel mai bun de cumpărare = Prețul de vânzare - Cel mai bun preț al furnizorului definit pe cardul de produs <br> * Marja pe prețul mediu ponderat (WAP) = Prețul de vânzare - prețul mediu ponderat al produsului(WAP)sau cel mai bun preț al furnizorului dacă WAP nu este definit încă <br> Marja pe prețul de preț = prețul de vânzare - prețul de cost definit pe cardul de produs sau WAP dacă prețul de cost nu este definit sau cel mai bun preț al vânzătorului dacă WAP nu este încă definit
 CostPrice=Preţ de cost
 UnitCharges=Cheluieli unitare
 Charges=Cheltuieli
 AgentContactType=Tip contact agent comercial
-AgentContactTypeDetails=Defineşte ce tip de contact ( legat pe factură) va fi utilizat pentru raportul marjei pe reprezentanti de vânzări
+AgentContactTypeDetails= Definiți ce tip de contact (legat pe facturi) va fi utilizat pentru raportarea marjei pentru fiecare persoană de contact / adresă. Rețineți că citirea statisticilor referitoare la un contact nu este fiabilă, deoarece în cele mai multe cazuri, contactul nu poate fi definit explicit pe facturi.
 rateMustBeNumeric=Rata trebuie să fie numerică
 markRateShouldBeLesserThan100=Rata mîrcii trebuie să fie mai mica de 100
 ShowMarginInfos=Arată informaţii marjă
-CheckMargins=Margins detail
-MarginPerSaleRepresentativeWarning=The report of margin per user use the link between third parties and sale representatives to calculate the margin of each sale representative. Because some thirdparties may not have any ddiated sale representative and some thirdparties may be linked to several, some amounts may not be included into this report (if there is no sale representative) and some may appear on different lines (for each sale representative).
+CheckMargins=Detaliu marjă
+MarginPerSaleRepresentativeWarning=Raportul privind marja per utilizator utilizează legătura dintre terți și reprezentanții de vânzare pentru a calcula marja fiecărui reprezentant de vânzare. Deoarece unii terți nu pot avea un reprezentant dedicat vânzării și unii terți pot fi legate de mai mulți, este posibil ca anumite sume să nu fie incluse în acest raport (dacă nu există reprezentant de vânzare) și unele pot apărea pe diferite linii (pentru fiecare reprezentant de vânzare) .

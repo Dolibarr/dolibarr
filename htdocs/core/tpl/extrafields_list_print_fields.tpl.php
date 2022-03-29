@@ -14,18 +14,18 @@ if (!empty($extrafieldsobjectkey))	// $extrafieldsobject is the $object->table_e
 {
 	if (is_array($extrafields->attributes[$extrafieldsobjectkey]['label']) && count($extrafields->attributes[$extrafieldsobjectkey]['label']))
 	{
-        if (empty($extrafieldsobjectprefix)) $extrafieldsobjectprefix = 'ef.';
+		if (empty($extrafieldsobjectprefix)) $extrafieldsobjectprefix = 'ef.';
 
-        foreach ($extrafields->attributes[$extrafieldsobjectkey]['label'] as $key => $val)
+		foreach ($extrafields->attributes[$extrafieldsobjectkey]['label'] as $key => $val)
 		{
 			if (!empty($arrayfields[$extrafieldsobjectprefix.$key]['checked']))
 			{
 				$align = $extrafields->getAlignFlag($key, $extrafieldsobjectkey);
 				print '<td';
-                if ($align) print ' class="'.$align.'"';
-                print ' data-key="'.$key.'"';
-                print '>';
-                $tmpkey = 'options_'.$key;
+				if ($align) print ' class="'.$align.'"';
+				print ' data-key="'.$key.'"';
+				print '>';
+				$tmpkey = 'options_'.$key;
 
 				if (in_array($extrafields->attributes[$extrafieldsobjectkey]['type'][$key], array('date', 'datetime', 'timestamp')) && !is_numeric($obj->$tmpkey))
 				{
@@ -35,9 +35,7 @@ if (!empty($extrafieldsobjectkey))	// $extrafieldsobject is the $object->table_e
 						$datenotinstring = $db->jdate($datenotinstring);
 					}
 					$value = $datenotinstring;
-				}
-				else
-				{
+				} else {
 					$value = $obj->$tmpkey;
 				}
 				// If field is a computed field, we make computation to get value
@@ -55,13 +53,13 @@ if (!empty($extrafieldsobjectkey))	// $extrafieldsobject is the $object->table_e
 				print '</td>';
 				if (!$i) $totalarray['nbfield']++;
 
-                if ($extrafields->attributes[$extrafieldsobjectkey]['totalizable'][$key]) {
-                    if (!$i) {
-                        // we keep position for the first line
-                        $totalarray['totalizable'][$key]['pos'] = $totalarray['nbfield'];
-                    }
-	                if (is_numeric($obj->$tmpkey)) $totalarray['totalizable'][$key]['total'] += $obj->$tmpkey;
-                }
+				if ($extrafields->attributes[$extrafieldsobjectkey]['totalizable'][$key]) {
+					if (!$i) {
+						// we keep position for the first line
+						$totalarray['totalizable'][$key]['pos'] = $totalarray['nbfield'];
+					}
+					if (is_numeric($obj->$tmpkey)) $totalarray['totalizable'][$key]['total'] += $obj->$tmpkey;
+				}
 				if (!empty($val['isameasure']))
 				{
 					if (!$i) $totalarray['pos'][$totalarray['nbfield']] = $extrafieldsobjectprefix.$tmpkey;

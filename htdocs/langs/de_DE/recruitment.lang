@@ -1,0 +1,76 @@
+# Copyright (C) 2020 Laurent Destailleur
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+
+# Module label 'ModuleRecruitmentName'
+ModuleRecruitmentName = Rekrutierung
+# Module description 'ModuleRecruitmentDesc'
+ModuleRecruitmentDesc = Verwalten und verfolgen Sie Personalbeschaffung-Kampagnen für neue Job-Positionen.
+
+#
+# Admin page
+#
+RecruitmentSetup = Personalbeschaffungs-Konfiguration
+Settings = Einstellungen
+RecruitmentSetupPage = Geben Sie hier die Konfiguration der Haupteinstellungen für das Modul Personalbeschaffung ein
+RecruitmentArea=Personalbeschaffungs-Bereich
+PublicInterfaceRecruitmentDesc=Öffentliche Seiten von Stellen sind öffentliche URLs um offene Stellen anzeigen und darauf antworten zu können. Für jede offene Stelle existiert ein eigener Link zu jedem Stelleneintrag.
+EnablePublicRecruitmentPages=Öffentliche Seiten von offenen Stellen aktivieren
+
+#
+# About page
+#
+About = Über
+RecruitmentAbout = Über Personalbeschaffung
+RecruitmentAboutPage = Personalbeschaffung über Seite
+NbOfEmployeesExpected=Erwartete Anzahl von Mitarbeitern
+JobLabel=Bezeichnung der beruflichen Position
+WorkPlace=Arbeitsplatz
+DateExpected=Erwartetes Datum
+FutureManager=Zukünftiger Manager
+ResponsibleOfRecruitement=Verantwortlich für die Rekrutierung
+IfJobIsLocatedAtAPartner=Wenn sich der Job an einem Partnerort befindet
+PositionToBeFilled=Position
+PositionsToBeFilled=Berufspositionen
+ListOfPositionsToBeFilled=Liste der Stellen
+NewPositionToBeFilled=Neue Stellen
+
+JobOfferToBeFilled=Zu besetzende Stelle
+ThisIsInformationOnJobPosition=Information über die zu besetzende Position
+ContactForRecruitment=Kontakt für die Personalbeschaffung
+EmailRecruiter=Recruiter per E-Mail anschreiben
+ToUseAGenericEmail=So verwenden Sie eine generische E-Mail. Falls nicht definiert, wird die E-Mail-Adresse des für die Personalbeschaffung Verantwortlichen verwendet
+NewCandidature=Neue Bewerbung
+ListOfCandidatures=Liste der Bewerbungen
+RequestedRemuneration=gewünschtes Gehalt
+ProposedRemuneration=vorgeschlagenes Gehalt
+ContractProposed=Vertrag unterbreitet
+ContractSigned=Vertrag unterschrieben
+ContractRefused=Vertrag abgelehnt
+RecruitmentCandidature=Bewerbung
+JobPositions=Berufspositionen
+RecruitmentCandidatures=Bewerbungen
+InterviewToDo=Bewerbungsgespräch machen
+AnswerCandidature=Antwort auf die Bewerbung
+YourCandidature=Ihre Bewerbung
+YourCandidatureAnswerMessage=Vielen Dank für Ihre Bewerbung. <br> ...
+JobClosedTextCandidateFound=Die Stelle ist geschlossen. Die Position wurde besetzt.
+JobClosedTextCanceled=Die Stelle ist geschlossen.
+ExtrafieldsJobPosition=Ergänzende Attribute (Stellenangebote)
+ExtrafieldsCandidatures=Ergänzende Attribute (Bewerbungen)
+MakeOffer=Machen Sie ein Angebot

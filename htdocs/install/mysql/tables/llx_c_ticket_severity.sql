@@ -22,7 +22,7 @@ create table llx_c_ticket_severity
   code			varchar(32)				NOT NULL,
   pos			varchar(32)				NOT NULL,
   label			varchar(128)			NOT NULL,
-  color			varchar(10)				NOT NULL,
+  color			varchar(10)				NULL,
   active		integer DEFAULT 1,
   use_default	integer DEFAULT 1,
   description	varchar(255)

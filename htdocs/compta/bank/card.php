@@ -99,9 +99,7 @@ if ($action == 'add')
 	if (empty($account_number) || $account_number == '-1')
 	{
 		$object->account_number = '';
-	}
-	else
-	{
+	} else {
 		$object->account_number = $account_number;
 	}
 	$fk_accountancy_journal  = GETPOST('fk_accountancy_journal', 'int');
@@ -117,7 +115,7 @@ if ($action == 'add')
 
 	$object->min_allowed     = GETPOST("account_min_allowed", 'int');
 	$object->min_desired     = GETPOST("account_min_desired", 'int');
-	$object->comment         = trim(GETPOST("account_comment", 'none'));
+	$object->comment         = trim(GETPOST("account_comment", 'restricthtml'));
 
 	$object->fk_user_author  = $user->id;
 
@@ -155,8 +153,7 @@ if ($action == 'add')
 			$_GET["id"] = $id; // Force chargement page en mode visu
 
 			$action = '';
-		}
-		else {
+		} else {
 			$error++;
 			setEventMessages($object->error, $object->errors, 'errors');
 
@@ -167,9 +164,7 @@ if ($action == 'add')
 	if (!$error)
 	{
 		$db->commit();
-	}
-	else
-	{
+	} else {
 		$db->rollback();
 	}
 }
@@ -205,9 +200,7 @@ if ($action == 'update')
 	if (empty($account_number) || $account_number == '-1')
 	{
 		$object->account_number = '';
-	}
-	else
-	{
+	} else {
 		$object->account_number = $account_number;
 	}
 	$fk_accountancy_journal  = GETPOST('fk_accountancy_journal', 'int');
@@ -220,7 +213,7 @@ if ($action == 'update')
 
 	$object->min_allowed     = GETPOST("account_min_allowed", 'int');
 	$object->min_desired     = GETPOST("account_min_desired", 'int');
-	$object->comment         = trim(GETPOST("account_comment", 'none'));
+	$object->comment         = trim(GETPOST("account_comment", 'restricthtml'));
 
 	if ($conf->global->MAIN_BANK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED && empty($object->account_number))
 	{
@@ -259,9 +252,7 @@ if ($action == 'update')
 			$object->setCategories($categories);
 
 			$_GET["id"] = $_POST["id"]; // Force chargement page en mode visu
-		}
-		else
-		{
+		} else {
 			$error++;
 			setEventMessages($object->error, $object->errors, 'errors');
 			$action = 'edit'; // Force chargement page edition
@@ -271,9 +262,7 @@ if ($action == 'update')
 	if (!$error)
 	{
 		$db->commit();
-	}
-	else
-	{
+	} else {
 		$db->rollback();
 	}
 }
@@ -290,9 +279,7 @@ if ($action == 'confirm_delete' && $_POST["confirm"] == "yes" && $user->rights->
 		setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
 		header("Location: ".DOL_URL_ROOT."/compta/bank/list.php");
 		exit;
-	}
-	else
-	{
+	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
 		$action = '';
 	}
@@ -344,7 +331,7 @@ if ($action == 'create')
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="clos" value="0">';
 
-	dol_fiche_head('');
+	print dol_get_fiche_head('');
 
 	print '<table class="border centpercent">';
 
@@ -359,7 +346,7 @@ if ($action == 'create')
 	// Type
 	print '<tr><td class="fieldrequired">'.$langs->trans("AccountType").'</td>';
 	print '<td>';
-	$formbank->selectTypeOfBankAccount(isset($_POST["type"]) ? $_POST["type"] : Account::TYPE_CURRENT, "type");
+	$formbank->selectTypeOfBankAccount(GETPOSTISSET("type") ? GETPOST("type") : Account::TYPE_CURRENT, "type");
 	print '</td></tr>';
 
 	// Currency
@@ -367,7 +354,7 @@ if ($action == 'create')
 	print '<td>';
 	$selectedcode = $object->currency_code;
 	if (!$selectedcode) $selectedcode = $conf->currency;
-	print $form->selectCurrency((isset($_POST["account_currency_code"]) ? $_POST["account_currency_code"] : $selectedcode), 'account_currency_code');
+	print $form->selectCurrency((GETPOSTISSET("account_currency_code") ? GETPOST("account_currency_code") : $selectedcode), 'account_currency_code');
 	//print $langs->trans("Currency".$conf->currency);
 	//print '<input type="hidden" name="account_currency_code" value="'.$conf->currency.'">';
 	print '</td></tr>';
@@ -380,11 +367,9 @@ if ($action == 'create')
 
 	// Country
 	$selectedcode = '';
-	if (isset($_POST["account_country_id"]))
-	{
-		$selectedcode = $_POST["account_country_id"] ? $_POST["account_country_id"] : $object->country_code;
-	}
-	elseif (empty($selectedcode)) $selectedcode = $mysoc->country_code;
+	if (GETPOSTISSET("account_country_id")) {
+		$selectedcode = GETPOST("account_country_id") ? GETPOST("account_country_id") : $object->country_code;
+	} elseif (empty($selectedcode)) $selectedcode = $mysoc->country_code;
 	$object->country_code = getCountry($selectedcode, 2); // Force country code on account to have following field on bank fields matching country rules
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("BankAccountCountry").'</td>';
@@ -397,10 +382,8 @@ if ($action == 'create')
 	print '<tr><td>'.$langs->trans('State').'</td><td>';
 	if ($selectedcode)
 	{
-		$formcompany->select_departement(isset($_POST["account_state_id"]) ? $_POST["account_state_id"] : '', $selectedcode, 'account_state_id');
-	}
-	else
-	{
+		$formcompany->select_departement(GETPOSTISSET("account_state_id") ? GETPOST("account_state_id") : '', $selectedcode, 'account_state_id');
+	} else {
 		print $countrynotdefined;
 	}
 	print '</td></tr>';
@@ -424,7 +407,7 @@ if ($action == 'create')
 				$arrayselected[] = $cat->id;
 			}
 		}
-		print $form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, '', 0, '100%');
+		print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 		print "</td></tr>";
 	}
 
@@ -544,9 +527,7 @@ if ($action == 'create')
 		print '<td>';
 		print $formaccounting->select_account($object->account_number, 'account_number', 1, '', 1, 1);
 		print '</td></tr>';
-	}
-	else
-	{
+	} else {
 		print '<tr><td class="'.$fieldrequired.'titlefieldcreate">'.$langs->trans("AccountancyCode").'</td>';
 		print '<td><input type="text" name="account_number" value="'.(GETPOST("account_number") ?GETPOST('account_number', 'alpha') : $object->account_number).'"></td></tr>';
 	}
@@ -562,25 +543,23 @@ if ($action == 'create')
 
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input type="submit" class="button" value="'.$langs->trans("CreateAccount").'">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input type="button" class="button" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
+	print '<input type="button" class="button button-cancel" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
 	print '</div>';
 
 	print '</form>';
-}
-/* ************************************************************************** */
-/*                                                                            */
-/* Visu et edition                                                            */
-/*                                                                            */
-/* ************************************************************************** */
-else
-{
-	if (($_GET["id"] || $_GET["ref"]) && $action != 'edit')
-	{
+} else {
+	/* ************************************************************************** */
+	/*                                                                            */
+	/* Visu et edition                                                            */
+	/*                                                                            */
+	/* ************************************************************************** */
+
+	if (($_GET["id"] || $_GET["ref"]) && $action != 'edit') {
 		$object = new Account($db);
 		if ($_GET["id"])
 		{
@@ -594,7 +573,7 @@ else
 
 		// Show tabs
 		$head = bank_prepare_head($object);
-		dol_fiche_head($head, 'bankname', $langs->trans("FinancialAccount"), -1, 'account');
+		print dol_get_fiche_head($head, 'bankname', $langs->trans("FinancialAccount"), -1, 'account');
 
 		$formconfirm = '';
 
@@ -772,7 +751,7 @@ else
 
 		print '<div class="clearboth"></div>';
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 		/*
 		 * Barre d'actions
@@ -781,13 +760,13 @@ else
 
 		if ($user->rights->banque->configurer)
 		{
-			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&id='.$object->id.'">'.$langs->trans("Modify").'</a>';
+			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Modify").'</a>';
 		}
 
 		$canbedeleted = $object->can_be_deleted(); // Renvoi vrai si compte sans mouvements
 		if ($user->rights->banque->configurer && $canbedeleted)
 		{
-			print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&id='.$object->id.'">'.$langs->trans("Delete").'</a>';
+			print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Delete").'</a>';
 		}
 
 		print '</div>';
@@ -830,7 +809,7 @@ else
 		print '<input type="hidden" name="action" value="update">';
 		print '<input type="hidden" name="id" value="'.$_REQUEST["id"].'">'."\n\n";
 
-		dol_fiche_head(array(), 0, '', 0);
+		print dol_get_fiche_head(array(), 0, '', 0);
 
 		//print '<div class="underbanner clearboth"></div>';
 
@@ -838,16 +817,16 @@ else
 
 		// Ref
 		print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("Ref").'</td>';
-		print '<td><input type="text" class="flat maxwidth200" name="ref" value="'.dol_escape_htmltag(isset($_POST["ref"]) ?GETPOST("ref") : $object->ref).'"></td></tr>';
+		print '<td><input type="text" class="flat maxwidth200" name="ref" value="'.dol_escape_htmltag(GETPOSTISSET("ref") ? GETPOST("ref") : $object->ref).'"></td></tr>';
 
 		// Label
 		print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td>';
-		print '<td><input type="text" class="flat minwidth300" name="label" value="'.dol_escape_htmltag(isset($_POST["label"]) ?GETPOST("label") : $object->label).'"></td></tr>';
+		print '<td><input type="text" class="flat minwidth300" name="label" value="'.dol_escape_htmltag(GETPOSTISSET("label") ? GETPOST("label") : $object->label).'"></td></tr>';
 
 		// Type
 		print '<tr><td class="fieldrequired">'.$langs->trans("AccountType").'</td>';
 		print '<td class="maxwidth200onsmartphone">';
-		$formbank->selectTypeOfBankAccount((isset($_POST["type"]) ? $_POST["type"] : $object->type), "type");
+		$formbank->selectTypeOfBankAccount((GETPOSTISSET("type") ? GETPOST("type") : $object->type), "type");
 		print '</td></tr>';
 
 		// Currency
@@ -857,7 +836,7 @@ else
 		print '<td class="maxwidth200onsmartphone">';
 		$selectedcode = $object->currency_code;
 		if (!$selectedcode) $selectedcode = $conf->currency;
-		print $form->selectCurrency((isset($_POST["account_currency_code"]) ? $_POST["account_currency_code"] : $selectedcode), 'account_currency_code');
+		print $form->selectCurrency((GETPOSTISSET("account_currency_code") ? GETPOST("account_currency_code") : $selectedcode), 'account_currency_code');
 		//print $langs->trans("Currency".$conf->currency);
 		//print '<input type="hidden" name="account_currency_code" value="'.$conf->currency.'">';
 		print '</td></tr>';
@@ -865,13 +844,13 @@ else
 		// Status
 		print '<tr><td class="fieldrequired">'.$langs->trans("Status").'</td>';
 		print '<td class="maxwidth200onsmartphone">';
-		print $form->selectarray("clos", $object->status, (isset($_POST["clos"]) ? $_POST["clos"] : $object->clos));
+		print $form->selectarray("clos", $object->status, (GETPOSTISSET("clos") ? GETPOST("clos") : $object->clos));
 		print '</td></tr>';
 
 		// Country
 		$object->country_id = $object->country_id ? $object->country_id : $mysoc->country_id;
 		$selectedcode = $object->country_code;
-		if (isset($_POST["account_country_id"])) $selectedcode = $_POST["account_country_id"];
+		if (GETPOSTISSET("account_country_id")) $selectedcode = GETPOST("account_country_id");
 		elseif (empty($selectedcode)) $selectedcode = $mysoc->country_code;
 		$object->country_code = getCountry($selectedcode, 2); // Force country code on account to have following field on bank fields matching country rules
 
@@ -885,10 +864,8 @@ else
 		print '<tr><td>'.$langs->trans('State').'</td><td class="maxwidth200onsmartphone">';
 		if ($selectedcode)
 		{
-			print $formcompany->select_state(isset($_POST["account_state_id"]) ? $_POST["account_state_id"] : $object->state_id, $selectedcode, 'account_state_id');
-		}
-		else
-		{
+			print $formcompany->select_state(GETPOSTISSET("account_state_id") ? GETPOST("account_state_id") : $object->state_id, $selectedcode, 'account_state_id');
+		} else {
 			print $countrynotdefined;
 		}
 		print '</td></tr>';
@@ -904,14 +881,14 @@ else
 
 		// Balance
 		print '<tr><td>'.$langs->trans("BalanceMinimalAllowed").'</td>';
-		print '<td><input size="12" type="text" class="flat" name="account_min_allowed" value="'.(isset($_POST["account_min_allowed"]) ?GETPOST("account_min_allowed") : $object->min_allowed).'"></td></tr>';
+		print '<td><input size="12" type="text" class="flat" name="account_min_allowed" value="'.(GETPOSTISSET("account_min_allowed") ? GETPOST("account_min_allowed") : $object->min_allowed).'"></td></tr>';
 
 		print '<tr><td>'.$langs->trans("BalanceMinimalDesired").'</td>';
-		print '<td><input size="12" type="text" class="flat" name="account_min_desired" value="'.(isset($_POST["account_min_desired"]) ?GETPOST("account_min_desired") : $object->min_desired).'"></td></tr>';
+		print '<td><input size="12" type="text" class="flat" name="account_min_desired" value="'.(GETPOSTISSET("account_min_desired") ? GETPOST("account_min_desired") : $object->min_desired).'"></td></tr>';
 
 		// Web
 		print '<tr><td>'.$langs->trans("Web").'</td>';
-		print '<td><input class="maxwidth200onsmartphone" type="text" class="flat" name="url" value="'.(isset($_POST["url"]) ?GETPOST("url") : $object->url).'">';
+		print '<td><input class="maxwidth200onsmartphone" type="text" class="flat" name="url" value="'.(GETPOSTISSET("url") ? GETPOST("url") : $object->url).'">';
 		print '</td></tr>';
 
 		// Tags-Categories
@@ -927,7 +904,7 @@ else
 					$arrayselected[] = $cat->id;
 				}
 			}
-			print $form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, '', 0, '100%');
+			print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 			print "</td></tr>";
 		}
 
@@ -1050,12 +1027,12 @@ else
 			print '</table>';
 		}
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 		print '<div class="center">';
 		print '<input value="'.$langs->trans("Modify").'" type="submit" class="button">';
 		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-		print '<input name="cancel" value="'.$langs->trans("Cancel").'" type="submit" class="button">';
+		print '<input name="cancel" value="'.$langs->trans("Cancel").'" type="submit" class="button button-cancel">';
 		print '</div>';
 
 		print '</form>';

@@ -40,7 +40,7 @@ class ExpenseReportIk extends CoreObject
 	public $table_element = 'expensereport_ik';
 
 	/**
-	 * @var int Field with ID of parent key if this field has a parent
+	 * @var string Field with ID of parent key if this field has a parent
 	 */
 	public $fk_element = 'fk_expense_ik';
 
@@ -68,28 +68,28 @@ class ExpenseReportIk extends CoreObject
 	 */
 	public $ikoffset;
 
-    /**
-     * Attribute object linked with database
-     * @var array
-     */
+	/**
+	 * Attribute object linked with database
+	 * @var array
+	 */
 	public $fields = array(
 		'rowid'=>array('type'=>'integer', 'index'=>true)
 		,'fk_c_exp_tax_cat'=>array('type'=>'integer', 'index'=>true)
-	    ,'fk_range'=>array('type'=>'integer', 'index'=>true)
+		,'fk_range'=>array('type'=>'integer', 'index'=>true)
 		,'coef'=>array('type'=>'double')
 		,'ikoffset'=>array('type'=>'double')
 	);
 
-    /**
-     *  Constructor
-     *
-     *  @param      DoliDB		$db      Database handler
-     */
+	/**
+	 *  Constructor
+	 *
+	 *  @param      DoliDB		$db      Database handler
+	 */
 	public function __construct(DoliDB &$db)
 	{
 		global $conf;
 
-        parent::__construct($db);
+		parent::__construct($db);
 		parent::init();
 
 		$this->errors = array();
@@ -122,24 +122,22 @@ class ExpenseReportIk extends CoreObject
 			{
 				$categories[$obj->rowid] = $obj;
 			}
-		}
-		else
-		{
+		} else {
 			dol_print_error($db);
 		}
 
 		return $categories;
 	}
 
-    /**
-     * Return an array of ranges for a user
-     *
-     * @param User  $userauthor         user author id
-     * @param int   $fk_c_exp_tax_cat   category
-     * @return boolean|array
-     */
-    public static function getRangeByUser(User $userauthor, $fk_c_exp_tax_cat)
-    {
+	/**
+	 * Return an array of ranges for a user
+	 *
+	 * @param User  $userauthor         user author id
+	 * @param int   $fk_c_exp_tax_cat   category
+	 * @return boolean|array
+	 */
+	public static function getRangeByUser(User $userauthor, $fk_c_exp_tax_cat)
+	{
 		$default_range = (int) $userauthor->default_range; // if not defined, then 0
 		$ranges = self::getRangesByCategory($fk_c_exp_tax_cat);
 
@@ -182,9 +180,7 @@ class ExpenseReportIk extends CoreObject
 					$ranges[] = $object;
 				}
 			}
-		}
-		else
-		{
+		} else {
 			dol_print_error($db);
 		}
 
@@ -222,9 +218,7 @@ class ExpenseReportIk extends CoreObject
 				if (!isset($ranges[$obj->fk_c_exp_tax_cat])) $ranges[$obj->fk_c_exp_tax_cat] = array('label' => $obj->label, 'active' => $obj->cat_active, 'ranges' => array());
 				$ranges[$obj->fk_c_exp_tax_cat]['ranges'][] = $obj;
 			}
-		}
-		else
-		{
+		} else {
 			dol_print_error($db);
 		}
 
@@ -255,9 +249,7 @@ class ExpenseReportIk extends CoreObject
 		{
 			$obj = $db->fetch_object($resql);
 			return $obj->nbRange;
-		}
-		else
-		{
+		} else {
 			dol_print_error($db);
 		}
 
