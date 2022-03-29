@@ -265,18 +265,18 @@ if (!empty($_POST["DOL_AUTOSET_COOKIE"])) {
 			$cookiearrayvalue[$tmpkey] = $_POST[$postkey];
 		}
 	}
-	$cookiename = (empty($dolibarr_main_force_https) ? $tmpautoset[0] : '__Secure-'.$tmpautoset[0]); // __Secure- || __Host-
+	$cookiename = ((empty($dolibarr_main_force_https) && isHTTPS() === false) ? $tmpautoset[0] : '__Secure-'.$tmpautoset[0]); // __Secure- || __Host-
 	$cookievalue = json_encode($cookiearrayvalue);
 	//var_dump('setcookie cookiename='.$cookiename.' cookievalue='.$cookievalue);
 	if (PHP_VERSION_ID < 70300) {
-		setcookie($cookiename, empty($cookievalue) ? '' : $cookievalue, empty($cookievalue) ? 0 : (time() + (86400 * 354)), '/', null, (empty($dolibarr_main_force_https) ? false : true), true); // keep cookie 1 year and add tag httponly
+		setcookie($cookiename, empty($cookievalue) ? '' : $cookievalue, empty($cookievalue) ? 0 : (time() + (86400 * 354)), '/', null, ((empty($dolibarr_main_force_https) && isHTTPS() === false) ? false : true), true); // keep cookie 1 year and add tag httponly
 	} else {
 		// Only available for php >= 7.3
 		$cookieparams = array(
 			'expires' => empty($cookievalue) ? 0 : (time() + (86400 * 354)),
 			'path' => '/',
 			//'domain' => '.mywebsite.com', // the dot at the beginning allows compatibility with subdomains
-			'secure' => (empty($dolibarr_main_force_https) ? false : true),
+			'secure' => ((empty($dolibarr_main_force_https) && isHTTPS() === false) ? false : true),
 			'httponly' => true,
 			'samesite' => 'Lax'	// None || Lax  || Strict
 		);
@@ -297,7 +297,7 @@ if (!empty($php_session_save_handler) && $php_session_save_handler == 'db') {
 // Must be done after the include of filefunc.inc.php so global variables of conf file are defined (like $dolibarr_main_instance_unique_id or $dolibarr_main_force_https).
 // Note: the function dol_getprefix() is defined into functions.lib.php but may have been defined to return a different key to manage another area to protect.
 $prefix = dol_getprefix('');
-$sessionname = (empty($dolibarr_main_force_https) ? 'DOLSESSID_'.$prefix : '__Secure-DOLSESSID_'.$prefix); // __Secure- || __Host-
+$sessionname = ((empty($dolibarr_main_force_https) && isHTTPS() === false) ? 'DOLSESSID_'.$prefix : '__Secure-DOLSESSID_'.$prefix); // __Secure- || __Host-
 $sessiontimeout = 'DOLSESSTIMEOUT_'.$prefix;
 if (!empty($_COOKIE[$sessiontimeout])) {
 	ini_set('session.gc_maxlifetime', $_COOKIE[$sessiontimeout]);
@@ -307,14 +307,14 @@ if (!empty($_COOKIE[$sessiontimeout])) {
 // We need this lock as long as we read/write $_SESSION ['vars']. We can remove lock when finished.
 if (!defined('NOSESSION')) {
 	if (PHP_VERSION_ID < 70300) {
-		session_set_cookie_params(0, '/', null, (empty($dolibarr_main_force_https) ? false : true), true); // Add tag secure and httponly on session cookie (same as setting session.cookie_httponly into php.ini). Must be called before the session_start.
+		session_set_cookie_params(0, '/', null, ((empty($dolibarr_main_force_https) && isHTTPS() === false) ? false : true), true); // Add tag secure and httponly on session cookie (same as setting session.cookie_httponly into php.ini). Must be called before the session_start.
 	} else {
 		// Only available for php >= 7.3
 		$sessioncookieparams = array(
 			'lifetime' => 0,
 			'path' => '/',
 			//'domain' => '.mywebsite.com', // the dot at the beginning allows compatibility with subdomains
-			'secure' => (empty($dolibarr_main_force_https) ? false : true),
+			'secure' => ((empty($dolibarr_main_force_https) && isHTTPS() === false) ? false : true),
 			'httponly' => true,
 			'samesite' => 'Lax'	// None || Lax  || Strict
 		);
