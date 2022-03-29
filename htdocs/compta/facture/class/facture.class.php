@@ -2670,47 +2670,38 @@ class Facture extends CommonInvoice
 		}
 
 		// Check for mandatory fields in thirdparty (defined into setup)
-		$array_to_check = array('IDPROF1', 'IDPROF2', 'IDPROF3', 'IDPROF4', 'IDPROF5', 'IDPROF6', 'EMAIL');
-		foreach ($array_to_check as $key) {
-			$keymin = strtolower($key);
-			$i = (int) preg_replace('/[^0-9]/', '', $key);
-			if ($i == 1) {
-				if (!is_object($this->thirdparty)) {
-					$langs->load('errors');
-					$this->error = $langs->trans('ErrorInvoiceLoadThirdParty', $this->ref);
-					dol_syslog(__METHOD__.' '.$this->error, LOG_ERR);
-					return -1;
+		if (!empty($this->thirdparty) && is_object($this->thirdparty)) {
+			$array_to_check = array('IDPROF1', 'IDPROF2', 'IDPROF3', 'IDPROF4', 'IDPROF5', 'IDPROF6', 'EMAIL');
+			foreach ($array_to_check as $key) {
+				$keymin = strtolower($key);
+				if (!property_exists($this->thirdparty, $keymin)) {
+					continue;
 				}
-			}
-			if (!property_exists($this->thirdparty, $keymin)) {
-				$langs->load('errors');
-				$this->error = $langs->trans('ErrorInvoiceLoadThirdPartyKey', $keymin, $this->ref);
-				dol_syslog(__METHOD__.' '.$this->error, LOG_ERR);
-				return -1;
-			}
-			$vallabel = $this->thirdparty->$keymin;
+				$vallabel = $this->thirdparty->$keymin;
 
-			if ($i > 0) {
-				if ($this->thirdparty->isACompany()) {
-					// Check for mandatory prof id (but only if country is other than ours)
-					if ($mysoc->country_id > 0 && $this->thirdparty->country_id == $mysoc->country_id) {
-						$idprof_mandatory = 'SOCIETE_'.$key.'_INVOICE_MANDATORY';
-						if (!$vallabel && !empty($conf->global->$idprof_mandatory)) {
+				$i = (int) preg_replace('/[^0-9]/', '', $key);
+				if ($i > 0) {
+					if ($this->thirdparty->isACompany()) {
+						// Check for mandatory prof id (but only if country is other than ours)
+						if ($mysoc->country_id > 0 && $this->thirdparty->country_id == $mysoc->country_id) {
+							$idprof_mandatory = 'SOCIETE_'.$key.'_INVOICE_MANDATORY';
+							if (!$vallabel && !empty($conf->global->$idprof_mandatory)) {
+								$langs->load("errors");
+								$this->error = $langs->trans('ErrorProdIdIsMandatory', $langs->transcountry('ProfId'.$i, $this->thirdparty->country_code)).' ('.$langs->trans("ForbiddenBySetupRules").') ['.$langs->trans('Company').' : '.$this->thirdparty->name.']';
+								dol_syslog(__METHOD__.' '.$this->error, LOG_ERR);
+								return -1;
+							}
+						}
+					}
+				} else {
+					if ($key == 'EMAIL') {
+						// Check for mandatory
+						if (!empty($conf->global->SOCIETE_EMAIL_INVOICE_MANDATORY) && !isValidEMail($this->thirdparty->email)) {
 							$langs->load("errors");
-							$this->error = $langs->trans('ErrorProdIdIsMandatory', $langs->transcountry('ProfId'.$i, $this->thirdparty->country_code)).' ('.$langs->trans("ForbiddenBySetupRules").') ['.$langs->trans('Company').' : '.$this->thirdparty->name.']';
+							$this->error = $langs->trans("ErrorBadEMail", $this->thirdparty->email).' ('.$langs->trans("ForbiddenBySetupRules").') ['.$langs->trans('Company').' : '.$this->thirdparty->name.']';
 							dol_syslog(__METHOD__.' '.$this->error, LOG_ERR);
 							return -1;
 						}
-					}
-				}
-			} else {
-				if ($key == 'EMAIL') {
-					// Check for mandatory
-					if (!empty($conf->global->SOCIETE_EMAIL_INVOICE_MANDATORY) && !isValidEMail($this->thirdparty->email)) {
-						$langs->load("errors");
-						$this->error = $langs->trans("ErrorBadEMail", $this->thirdparty->email).' ('.$langs->trans("ForbiddenBySetupRules").') ['.$langs->trans('Company').' : '.$this->thirdparty->name.']';
-						dol_syslog(__METHOD__.' '.$this->error, LOG_ERR);
-						return -1;
 					}
 				}
 			}

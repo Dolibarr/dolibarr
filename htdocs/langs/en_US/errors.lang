@@ -275,8 +275,6 @@ ErrorIsNotADraft=%s is not a draft
 ErrorExecIdFailed=Can't execute command "id"
 ErrorBadCharIntoLoginName=Unauthorized character in the login name
 ErrorNotApproverForHoliday=You are not the approver for leave %s 
-ErrorInvoiceLoadThirdParty=Can't load third-party object for invoice "%s"
-ErrorInvoiceLoadThirdPartyKey=Third-party key "%s" no set for invoice "%s"
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Your PHP parameter upload_max_filesize (%s) is higher than PHP parameter post_max_size (%s). This is not a consistent setup.
