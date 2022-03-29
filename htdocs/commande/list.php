@@ -338,7 +338,7 @@ if ($action == 'shipped' && $permissiontoadd) {
 		$error = 0;
 		foreach ($toselect as $checked) {
 			if ($objecttmp->fetch($checked)) {
-				if ($objecttmp->statut == 1) {
+				if ($objecttmp->statut == 1 || $objecttmp->statut == 2) {
 					if ($objecttmp->cloture($user)) {
 						setEventMessage($langs->trans('PassedInClosedStatus', $objecttmp->ref), 'mesgs');
 					} else {
