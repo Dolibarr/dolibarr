@@ -260,7 +260,7 @@ if (!empty($morelogincontent)) {
 <!-- Button Connection -->
 <br>
 <div id="login-submit-wrapper">
-<input type="submit" class="button" value="&nbsp; <?php echo $langs->trans('Connection'); ?> &nbsp;" tabindex="5" />
+<input type="submit" class="butAction" value="&nbsp; <?php echo $langs->trans('Connection'); ?> &nbsp;" tabindex="5" />
 </div>
 
 <?php
