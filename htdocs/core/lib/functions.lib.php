@@ -765,6 +765,7 @@ function sanitizeVal($out = '', $check = 'alphanohtml', $filter = null, $options
 {
 	global $conf;
 
+	// TODO : use class "Validate" to perform tests (and add missing tests) if needed for factorize
 	// Check is done after replacement
 	switch ($check) {
 		case 'none':
