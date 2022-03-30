@@ -1000,7 +1000,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				$object->client = 3;
 			}
 		}
-		if (!empty($conf->global->SOCIETE_DISABLE_PROSPECTSCUSTOMERS)) {
+		if (!empty($conf->global->SOCIETE_DISABLE_PROSPECTSCUSTOMERS) && $object->client == 3) {
 			$object->client = 1;
 		}
 		if (GETPOST("type", 'aZ') == 'p') {
