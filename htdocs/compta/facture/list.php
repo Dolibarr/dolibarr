@@ -139,7 +139,6 @@ $search_btn = GETPOST('button_search', 'alpha');
 $search_remove_btn = GETPOST('button_removefilter', 'alpha');
 $optioncss = GETPOST('optioncss', 'alpha');
 
-
 $option = GETPOST('search_option');
 if ($option == 'late') {
 	$search_status = '1';
