@@ -66,6 +66,7 @@
 -- Peru
 -- Portugal
 -- Romania
+-- San Salvador -> El Salvador 
 -- Slovenia (need to check code SI-Id)
 -- Switzerland / Suisse
 -- Taiwan
@@ -378,6 +379,7 @@ INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc
 INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (7001, 'VID', '', 0, 'VID', 'Vichada');
 INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (7001, 'CES', '', 0, 'CES', 'Cesar');
 INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (7001, 'MAG', '', 0, 'MAG', 'Magdalena');
+
 
 -- Croatia Departments (id country=76)
 INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (7601, 'HR-01', 'Bjelovar', 0, NULL, 'Bjelovarsko-bilogorska županija');
@@ -1080,6 +1082,23 @@ INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc
 INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (18801, 'VN', '', 0, '', 'Vrancea');
 
 
+-- San Salvador / El Salvador Departmentos (id country=86)
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (8601, 'SS', '', 0, '', 'San Salvador');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (8601, 'LL', '', 0, '', 'La Libertad');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (8601, 'CH', '', 0, '', 'Chalatenango');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (8601, 'CA', '', 0, '', 'Cabañas');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (8601, 'LP', '', 0, '', 'La Paz');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (8601, 'SV', '', 0, '', 'San Vicente');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (8601, 'CU', '', 0, '', 'Cuscatlan');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (8602, 'US', '', 0, '', 'Usulutan');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (8602, 'SM', '', 0, '', 'San Miguel');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (8602, 'MO', '', 0, '', 'Morazan');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (8602, 'LU', '', 0, '', 'La Union');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (8603, 'AH', '', 0, '', 'Ahuachapan');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (8603, 'SA', '', 0, '', 'Santa Ana');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (8603, 'SO', '', 0, '', 'Sonsonate');
+
+
 -- Slovenia Provinces (rowid country=202)
 INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (20203, 'SI031', NULL, NULL, 'MURA', 'Mura');
 INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (20203, 'SI032', NULL, NULL, 'DRAVA', 'Drava');
@@ -1601,24 +1620,6 @@ INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc
 INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('813', 704, NULL, 0,NULL, 'Co. Down', 1);
 INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('814', 704, NULL, 0,NULL, 'Co. Fermanagh', 1);
 INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('815', 704, NULL, 0,NULL, 'Co. Londonderry', 1);
-
-
-
--- San Salvador (id country=86)
-INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('SS', 8601, '', 0, '', 'San Salvador', 1);
-INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('SA', 8603, '', 0, '', 'Santa Ana', 1);
-INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('AH', 8603, '', 0, '', 'Ahuachapan', 1);
-INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('SO', 8603, '', 0, '', 'Sonsonate', 1);
-INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('US', 8602, '', 0, '', 'Usulutan', 1);
-INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('SM', 8602, '', 0, '', 'San Miguel', 1);
-INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('MO', 8602, '', 0, '', 'Morazan', 1);
-INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('LU', 8602, '', 0, '', 'La Union', 1);
-INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('LL', 8601, '', 0, '', 'La Libertad', 1);
-INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('CH', 8601, '', 0, '', 'Chalatenango', 1);
-INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('CA', 8601, '', 0, '', 'Cabañas', 1);
-INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('LP', 8601, '', 0, '', 'La Paz', 1);
-INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('SV', 8601, '', 0, '', 'San Vicente', 1);
-INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('CU', 8601, '', 0, '', 'Cuscatlan', 1);
 
 
 -- Provinces India (id country=117)
