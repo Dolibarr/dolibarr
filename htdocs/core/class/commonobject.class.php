@@ -7860,7 +7860,7 @@ abstract class CommonObject
 						}
 
 						// if colspan=0 or 1, the second column is not extended, so the separator must be on 2 columns
-						$out .= $extrafields->showSeparator($key, $this, ($colspan ? $colspan + 1 : 2), $display_type);
+						$out .= $extrafields->showSeparator($key, $this, ($colspan ? $colspan + 1 : 2), $display_type, $mode);
 					} else {
 						$class = (!empty($extrafields->attributes[$this->table_element]['hidden'][$key]) ? 'hideobject ' : '');
 						$csstyle = '';
@@ -7993,7 +7993,7 @@ abstract class CommonObject
 					$out .= $this->getJSListDependancies();
 				}
 
-				$out .= '<!-- /showOptionals --> '."\n";
+				$out .= '<!-- commonobject:showOptionals end --> '."\n";
 			}
 		}
 

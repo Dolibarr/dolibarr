@@ -1856,9 +1856,10 @@ class ExtraFields
 	 * @param	string	$object			Object
 	 * @param	int		$colspan		Value of colspan to use (it must includes the first column with title)
 	 * @param	string	$display_type	"card" for form display, "line" for document line display (extrafields on propal line, order line, etc...)
+	 * @param 	string  $mode           Show output ('view') or input ('create' or 'edit') for extrafield
 	 * @return 	string					HTML code with line for separator
 	 */
-	public function showSeparator($key, $object, $colspan = 2, $display_type = 'card')
+	public function showSeparator($key, $object, $colspan = 2, $display_type = 'card', $mode = '')
 	{
 		global $conf, $langs;
 
@@ -1882,11 +1883,16 @@ class ExtraFields
 			$extrafield_collapse_display_value = intval($extrafield_param_list[0]);
 			$expand_display = ((isset($_COOKIE['DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key]) || GETPOST('ignorecollapsesetup', 'int')) ? ($_COOKIE['DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key] ? true : false) : ($extrafield_collapse_display_value == 2 ? false : true));
 		}
+		if ($mode == 'create') {
+			$extrafield_collapse_display_value = 0;
+		}
 
 		$out = '<'.$tagtype.' id="trextrafieldseparator'.$key.(!empty($object->id)?'_'.$object->id:'').'" class="trextrafieldseparator trextrafieldseparator'.$key.(!empty($object->id)?'_'.$object->id:'').'">';
 		$out .= '<'.$tagtype_dyn.' '.(!empty($colspan)?'colspan="' . $colspan . '"':'').'>';
 		// Some js code will be injected here to manage the collapsing of extrafields
-		$out .= '<span class="cursorpointer '.($extrafield_collapse_display_value == 0 ? 'fas fa-square opacitymedium' : 'far fa-'.(($expand_display ? 'minus' : 'plus').'-square')).'"></span>&nbsp;';
+		// Output the picto
+		$out .= '<span class="cursorpointer '.($extrafield_collapse_display_value == 0 ? 'fas fa-square opacitymedium' : 'far fa-'.(($expand_display ? 'minus' : 'plus').'-square')).'"></span>';
+		$out .= '&nbsp;';
 		$out .= '<strong>';
 		$out .= $langs->trans($this->attributes[$object->table_element]['label'][$key]);
 		$out .= '</strong>';
@@ -1900,7 +1906,7 @@ class ExtraFields
 			// Set the collapse_display status to cookie in priority or if ignorecollapsesetup is 1, if cookie and ignorecollapsesetup not defined, use the setup.
 			$this->expand_display[$collapse_group] = $expand_display;
 
-			if (!empty($conf->use_javascript_ajax)) {
+			if (!empty($conf->use_javascript_ajax) && $mode != 'create') {
 				$out .= '<!-- Add js script to manage the collapse/uncollapse of extrafields separators '.$key.' -->'."\n";
 				$out .= '<script type="text/javascript">'."\n";
 				$out .= 'jQuery(document).ready(function(){'."\n";
