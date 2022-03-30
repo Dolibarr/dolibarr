@@ -1,9 +1,10 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2015 Laurent Destailleur  <eldy@users.sourceforge.org>
- * Copyright (C) 2013      Juanjo Menent		    <jmenent@2byte.es>
+ * Copyright (C) 2013      Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2015      Bahfir Abbes         <contact@dolibarrpar.org>
  * Copyright (C) 2020      Thibault FOUCART     <suport@ptibogxiv.net>
+ * Copyright (C) 2022      Anthony Berton     	<anthony.berton@bb2a.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -267,7 +268,8 @@ $constantes = array();
 foreach ($listofnotifiedevents as $notifiedevent) {
 	$label = $langs->trans("Notify_".$notifiedevent['code']); //!=$langs->trans("Notify_".$notifiedevent['code'])?$langs->trans("Notify_".$notifiedevent['code']):$notifiedevent['label'];
 	$elementLabel = $langs->trans(ucfirst($notifiedevent['elementtype']));
-	$model = $notifiedevent['elementtype'].'_send';
+
+	$model = $notifiedevent['elementtype'];
 
 	if ($notifiedevent['elementtype'] == 'order_supplier') {
 		$elementLabel = $langs->trans('SupplierOrder');

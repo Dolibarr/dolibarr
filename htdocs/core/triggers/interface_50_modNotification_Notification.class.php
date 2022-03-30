@@ -2,6 +2,7 @@
 /* Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2011      Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013-2014 Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2022      Anthony Berton     	<anthony.berton@bb2a.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -90,8 +91,24 @@ class InterfaceNotification extends DolibarrTriggers
 	public function getListOfManagedEvents()
 	{
 		global $conf;
+		global $hookmanager;
+
+
+		if (!is_object($hookmanager)) {
+			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+			$hookmanager = new HookManager($this->db);
+		}
+		$hookmanager->initHooks(array('notification'));
+
+		$reshook = $hookmanager->executeHooks('notifsupported', $parameters, $object, $action);
+		if (empty($reshook)) {
+			if (!empty($hookmanager->resArray['arrayofnotifsupported'])) {
+				$this->listofmanagedevents = array_merge($this->listofmanagedevents, $hookmanager->resArray['arrayofnotifsupported']);
+			}
+		}
 
 		$ret = array();
+
 
 		$sql = "SELECT rowid, code, label, description, elementtype";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_action_trigger";
