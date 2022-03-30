@@ -156,12 +156,12 @@ if (!empty($conf->global->INVOICE_USE_RETAINED_WARRANTY)) {
 }
 
 // Security check
-$fieldid = (!empty($ref) ? 'ref' : 'rowid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
 $isdraft = (($object->statut == Facture::STATUS_DRAFT) ? 1 : 0);
-$result = restrictedArea($user, 'facture', $object->id, '', '', 'fk_soc', $fieldid, $isdraft);
+
+$result = restrictedArea($user, 'facture', $object->id, '', '', 'fk_soc', 'rowid', $isdraft);
 
 
 /*
@@ -546,7 +546,8 @@ if (empty($reshook)) {
 		$object->fetch($id);
 		$result = $object->setDiscount($user, price2num(GETPOST('remise_percent'), '', 2));
 	} elseif ($action == "setabsolutediscount" && $usercancreate) {
-		// POST[remise_id] or POST[remise_id_for_payment]
+		// We have POST[remise_id] or POST[remise_id_for_payment]
+		$db->begin();
 
 		// We use the credit to reduce amount of invoice
 		if (GETPOST("remise_id", 'int') > 0) {
@@ -557,7 +558,8 @@ if (empty($reshook)) {
 					setEventMessages($object->error, $object->errors, 'errors');
 				}
 			} else {
-				dol_print_error($db, $object->error);
+				$error++;
+				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
 		// We use the credit to reduce remain to pay
@@ -568,7 +570,8 @@ if (empty($reshook)) {
 
 			//var_dump($object->getRemainToPay(0));
 			//var_dump($discount->amount_ttc);exit;
-			if (price2num($discount->amount_ttc) > price2num($object->getRemainToPay(0))) {
+			$remaintopay = $object->getRemainToPay(0);
+			if (price2num($discount->amount_ttc) > price2num($remaintopay)) {
 				// TODO Split the discount in 2 automatically
 				$error++;
 				setEventMessages($langs->trans("ErrorDiscountLargerThanRemainToPaySplitItBefore"), null, 'errors');
@@ -577,12 +580,26 @@ if (empty($reshook)) {
 			if (!$error) {
 				$result = $discount->link_to_invoice(0, $id);
 				if ($result < 0) {
+					$error++;
 					setEventMessages($discount->error, $discount->errors, 'errors');
+				}
+			}
+
+			if (!$error) {
+				$newremaintopay = $object->getRemainToPay(0);
+				if ($newremaintopay == 0) {
+					$object->setPaid($user);
 				}
 			}
 		}
 
-		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+		if (!$error) {
+			$db->commit();
+		} else {
+			$db->rollback();
+		}
+
+		if (empty($error) && empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 			$outputlangs = $langs;
 			$newlang = '';
 			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
