@@ -779,9 +779,9 @@ class Products extends DolibarrApi
 		}
 
 		// Clean data
-		$ref_fourn = checkVal($ref_fourn, 'alphanohtml');
-		$desc_fourn = checkVal($desc_fourn, 'restricthtml');
-		$barcode = checkVal($barcode, 'alphanohtml');
+		$ref_fourn = sanitizeVal($ref_fourn, 'alphanohtml');
+		$desc_fourn = sanitizeVal($desc_fourn, 'restricthtml');
+		$barcode = sanitizeVal($barcode, 'alphanohtml');
 
 		$result = $this->productsupplier->update_buyprice($qty, $buyprice, DolibarrApiAccess::$user, $price_base_type, $fourn, $availability, $ref_fourn, $tva_tx, $charges, $remise_percent, $remise, $newnpr, $delivery_time_days, $supplier_reputation, $localtaxes_array, $newdefaultvatcode, $multicurrency_buyprice, $multicurrency_price_base_type, $multicurrency_tx, $multicurrency_code, $desc_fourn, $barcode, $fk_barcode_type);
 

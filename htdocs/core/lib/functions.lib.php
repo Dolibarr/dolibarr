@@ -683,11 +683,11 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 				$tmpcheck = 'alphanohtml';
 			}
 			foreach ($out as $outkey => $outval) {
-				$out[$outkey] = checkVal($outval, $tmpcheck, $filter, $options);
+				$out[$outkey] = sanitizeVal($outval, $tmpcheck, $filter, $options);
 			}
 		}
 	} else {
-		$out = checkVal($out, $check, $filter, $options);
+		$out = sanitizeVal($out, $check, $filter, $options);
 	}
 
 	// Sanitizing for special parameters.
@@ -736,9 +736,11 @@ function GETPOSTINT($paramname, $method = 0)
 	return (int) GETPOST($paramname, 'int', $method, null, null, 0);
 }
 
+
 /**
- *  Return a value after checking on a rule. A sanitization may also have been done.
+ *  Return a sanitized or empty value after checking value against a rule.
  *
+ *  @deprecated
  *  @param  string|array  	$out	     Value to check/clear.
  *  @param  string  		$check	     Type of check/sanitizing
  *  @param  int     		$filter      Filter to apply when $check is set to 'custom'. (See http://php.net/manual/en/filter.filters.php for détails)
@@ -746,6 +748,20 @@ function GETPOSTINT($paramname, $method = 0)
  *  @return string|array    		     Value sanitized (string or array). It may be '' if format check fails.
  */
 function checkVal($out = '', $check = 'alphanohtml', $filter = null, $options = null)
+{
+	return sanitizeVal($out, $check, $filter, $options);
+}
+
+/**
+ *  Return a sanitized or empty value after checking value against a rule.
+ *
+ *  @param  string|array  	$out	     Value to check/clear.
+ *  @param  string  		$check	     Type of check/sanitizing
+ *  @param  int     		$filter      Filter to apply when $check is set to 'custom'. (See http://php.net/manual/en/filter.filters.php for détails)
+ *  @param  mixed   		$options     Options to pass to filter_var when $check is set to 'custom'
+ *  @return string|array    		     Value sanitized (string or array). It may be '' if format check fails.
+ */
+function sanitizeVal($out = '', $check = 'alphanohtml', $filter = null, $options = null)
 {
 	global $conf;
 

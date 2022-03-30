@@ -343,8 +343,8 @@ class Proposals extends DolibarrApi
 
 		$request_data = (object) $request_data;
 
-		$request_data->desc = checkVal($request_data->desc, 'restricthtml');
-		$request_data->label = checkVal($request_data->label);
+		$request_data->desc = sanitizeVal($request_data->desc, 'restricthtml');
+		$request_data->label = sanitizeVal($request_data->label);
 
 		$updateRes = $this->propal->addline(
 			$request_data->desc,
@@ -488,8 +488,8 @@ class Proposals extends DolibarrApi
 
 		$request_data = (object) $request_data;
 
-		$request_data->desc = checkVal($request_data->desc, 'restricthtml');
-		$request_data->label = checkVal($request_data->label);
+		$request_data->desc = sanitizeVal($request_data->desc, 'restricthtml');
+		$request_data->label = sanitizeVal($request_data->label);
 
 		$propalline = new PropaleLigne($this->db);
 		$result = $propalline->fetch($lineid);

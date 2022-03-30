@@ -302,7 +302,7 @@ class Export
 	public function build_filterQuery($TypeField, $NameField, $ValueField)
 	{
 		// phpcs:enable
-		$NameField = checkVal($NameField, 'aZ09');
+		$NameField = sanitizeVal($NameField, 'aZ09');
 		$szFilterQuery = '';
 
 		//print $TypeField." ".$NameField." ".$ValueField;

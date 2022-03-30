@@ -218,7 +218,7 @@ class KnowledgeManagement extends DolibarrApi
 		}
 
 		// Clean data
-		// $this->knowledgerecord->abc = checkVal($this->knowledgerecord->abc, 'alphanohtml');
+		// $this->knowledgerecord->abc = sanitizeVal($this->knowledgerecord->abc, 'alphanohtml');
 
 		if ($this->knowledgerecord->create(DolibarrApiAccess::$user)<0) {
 			throw new RestException(500, "Error creating KnowledgeRecord", array_merge(array($this->knowledgerecord->error), $this->knowledgerecord->errors));
@@ -260,7 +260,7 @@ class KnowledgeManagement extends DolibarrApi
 		}
 
 		// Clean data
-		// $this->knowledgerecord->abc = checkVal($this->knowledgerecord->abc, 'alphanohtml');
+		// $this->knowledgerecord->abc = sanitizeVal($this->knowledgerecord->abc, 'alphanohtml');
 
 		if ($this->knowledgerecord->update(DolibarrApiAccess::$user, false) > 0) {
 			return $this->get($id);
