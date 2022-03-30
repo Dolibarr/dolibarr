@@ -10,7 +10,7 @@
  * Copyright (C) 2013      Florian Henry         <florian.henry@open-concept.pro>
  * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015      Jean-François Ferry   <jfefe@aternatik.fr>
- * Copyright (C) 2015-2021 Ferran Marcet         <fmarcet@2byte.es>
+ * Copyright (C) 2015-2022 Ferran Marcet         <fmarcet@2byte.es>
  * Copyright (C) 2017      Josep Lluís Amador    <joseplluis@lliuretic.cat>
  * Copyright (C) 2018      Charlene Benke        <charlie@patas-monkey.com>
  * Copyright (C) 2019-2021 Alexandre Spangaro    <aspangaro@open-dsi.fr>
@@ -2060,7 +2060,7 @@ if ($resql) {
 				// Sales representatives
 				print '<td>';
 				if ($obj->socid > 0) {
-					$listsalesrepresentatives = $thirdpartystatic->getSalesRepresentatives($user);
+					$listsalesrepresentatives = $companystatic->getSalesRepresentatives($user);
 					if ($listsalesrepresentatives < 0) {
 						dol_print_error($db);
 					}
