@@ -214,28 +214,28 @@ class modHRM extends DolibarrModules
 		$r++;
 
 		// Evaluation
-		$this->rights[$r][0] = 4020; // Permission id (must not be already used)
+		$this->rights[$r][0] = 4021; // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Read evaluations'; // Permission label
 		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'evaluation';
 		$this->rights[$r][5] = 'read'; // In php code, permission will be checked by test if ($user->rights->hrm->evaluation->read)
 		$r++;
 
-		$this->rights[$r][0] = 4021; // Permission id (must not be already used)
+		$this->rights[$r][0] = 4022; // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Create/modify your evaluation'; // Permission label
 		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'evaluation';
 		$this->rights[$r][5] = 'write'; // In php code, permission will be checked by test if ($user->rights->hrm->evaluation->write)
 		$r++;
 
-		$this->rights[$r][0] = 4022; // Permission id (must not be already used)
+		$this->rights[$r][0] = 4023; // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Validate evaluation'; // Permission label
 		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'evaluation_advance';
 		$this->rights[$r][5] = 'validate'; // In php code, permission will be checked by test if ($user->rights->hrm->evaluation->validate)
 		$r++;
 
-		$this->rights[$r][0] = 4023; // Permission id (must not be already used)
+		$this->rights[$r][0] = 4025; // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Delete evaluations'; // Permission label
 		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'evaluation';
@@ -243,7 +243,7 @@ class modHRM extends DolibarrModules
 		$r++;
 
 		// Comparison
-		$this->rights[$r][0] = 4030; // Permission id (must not be already used)
+		$this->rights[$r][0] = 4028; // Permission id (must not be already used)
 		$this->rights[$r][1] = 'See comparison menu'; // Permission label
 		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'compare_advance';
