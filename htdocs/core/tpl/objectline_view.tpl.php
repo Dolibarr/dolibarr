@@ -172,13 +172,13 @@ if (($line->info_bits & 2) == 2) {
 			print '<div class="clearboth nowraponall daterangeofline-facturedetrec">';
 		}
 		if ($line->date_start_fill) {
-			print '<span class="opacitymedium">'.$langs->trans('AutoFillDateFromShort').':</span> '.yn($line->date_start_fill);
+			print '<span class="opacitymedium" title="'.dol_escape_htmltag($langs->trans("AutoFillDateFrom")).'">'.$langs->trans('AutoFillDateFromShort').':</span> '.yn($line->date_start_fill);
 		}
 		if ($line->date_start_fill && $line->date_end_fill) {
 			print ' - ';
 		}
 		if ($line->date_end_fill) {
-			print '<span class="opacitymedium">'.$langs->trans('AutoFillDateToShort').':</span> '.yn($line->date_end_fill);
+			print '<span class="opacitymedium" title="'.dol_escape_htmltag($langs->trans("AutoFillDateTo")).'">'.$langs->trans('AutoFillDateToShort').':</span> '.yn($line->date_end_fill);
 		}
 		if ($line->date_start_fill || $line->date_end_fill) {
 			print '</div>';
@@ -200,7 +200,16 @@ if (($line->info_bits & 2) == 2) {
 			}
 		}
 
-		//print get_date_range($line->date_start, $line->date_end, $format);
+		// If we show the lines in a context to create a recurring sale invoice
+		if (basename($_SERVER["PHP_SELF"]) == 'card-rec.php') {
+			$default_start_fill = getDolGlobalInt('INVOICEREC_SET_AUTOFILL_DATE_START');
+			$default_end_fill = getDolGlobalInt('INVOICEREC_SET_AUTOFILL_DATE_END');
+			print '<div class="clearboth nowraponall daterangeofline-facturedetrec">';
+			print '<span class="opacitymedium" title="'.dol_escape_htmltag($langs->trans("AutoFillDateFrom")).'">'.$langs->trans('AutoFillDateFromShort').':</span> '.yn($default_start_fill);
+			print ' - ';
+			print '<span class="opacitymedium" title="'.dol_escape_htmltag($langs->trans("AutoFillDateTo")).'">'.$langs->trans('AutoFillDateToShort').':</span> '.yn($default_end_fill);
+			print '</div>';
+		}
 	}
 
 	// Add description in form

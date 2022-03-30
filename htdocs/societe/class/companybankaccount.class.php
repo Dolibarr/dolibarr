@@ -289,8 +289,6 @@ class CompanyBankAccount extends Account
 	 */
 	public function delete(User $user = null, $notrigger = 0)
 	{
-		global $conf;
-
 		$error = 0;
 
 		dol_syslog(get_class($this)."::delete ".$this->id, LOG_DEBUG);

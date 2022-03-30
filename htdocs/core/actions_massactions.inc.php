@@ -635,6 +635,7 @@ if ($massaction == 'confirm_createbills') {   // Create bills from orders.
 
 	$TFact = array();
 	$TFactThird = array();
+	$TFactThirdNbLines = array();
 
 	$nb_bills_created = 0;
 	$lastid= 0;
@@ -685,6 +686,7 @@ if ($massaction == 'confirm_createbills') {   // Create bills from orders.
 				$lastid = $objecttmp->id;
 
 				$TFactThird[$cmd->socid] = $objecttmp;
+				$TFactThirdNbLines[$cmd->socid] = 0; //init nblines to have lines ordered by expedition and rang
 			} else {
 				$langs->load("errors");
 				$errors[] = $cmd->ref.' : '.$langs->trans($objecttmp->error);
@@ -774,6 +776,11 @@ if ($massaction == 'confirm_createbills') {   // Create bills from orders.
 
 						$objecttmp->context['createfromclone'];
 
+						$rang = $lines[$i]->rang;
+						//there may already be rows from previous orders
+						if (!empty($createbills_onebythird))
+							$rang = $TFactThirdNbLines[$cmd->socid];
+
 						$result = $objecttmp->addline(
 							$desc,
 							$lines[$i]->subprice,
@@ -791,7 +798,7 @@ if ($massaction == 'confirm_createbills') {   // Create bills from orders.
 							'HT',
 							0,
 							$product_type,
-							$lines[$i]->rang,
+							$rang,
 							$lines[$i]->special_code,
 							$objecttmp->origin,
 							$lines[$i]->rowid,
@@ -806,6 +813,8 @@ if ($massaction == 'confirm_createbills') {   // Create bills from orders.
 						);
 						if ($result > 0) {
 							$lineid = $result;
+							if (!empty($createbills_onebythird)) //increment rang to keep order
+								$TFactThirdNbLines[$rcp->socid]++;
 						} else {
 							$lineid = 0;
 							$error++;
@@ -1208,6 +1217,26 @@ if (!$error && $massaction == 'validate' && $permissiontoadd) {
 		$langs->load("errors");
 		setEventMessages($langs->trans('ErrorMassValidationNotAllowedWhenStockIncreaseOnAction'), null, 'errors');
 		$error++;
+	}
+	if ($objecttmp->element == 'facture') {
+		if (!empty($toselect) && !empty($conf->global->INVOICE_CHECK_POSTERIOR_DATE)) {
+			// order $toselect by date
+			$sql  = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture";
+			$sql .= " WHERE rowid IN (".$db->sanitize(implode(",", $toselect)).")";
+			$sql .= " ORDER BY datef";
+
+			$resql = $db->query($sql);
+			if ($resql) {
+				$toselectnew = [];
+				while ( !empty($arr = $db->fetch_row($resql))) {
+					$toselectnew[] = $arr[0];
+				}
+				$toselect = (empty($toselectnew)) ? $toselect : $toselectnew;
+			} else {
+				dol_print_error($db);
+				$error++;
+			}
+		}
 	}
 	if (!$error) {
 		$db->begin();

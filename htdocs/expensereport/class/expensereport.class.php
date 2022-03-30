@@ -26,6 +26,7 @@
  *       \brief      File to manage Expense Reports
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport_ik.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport_rule.class.php';
 
@@ -2545,7 +2546,7 @@ class ExpenseReport extends CommonObject
 /**
  * Class of expense report details lines
  */
-class ExpenseReportLine
+class ExpenseReportLine extends CommonObjectLine
 {
 	/**
 	 * @var DoliDB Database handler.
@@ -2751,6 +2752,17 @@ class ExpenseReportLine
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'expensereport_det');
+
+
+			if (!$error && !$notrigger) {
+				// Call triggers
+				$result = $this->call_trigger('EXPENSE_REPORT_DET_CREATE', $user);
+				if ($result < 0) {
+					$error++;
+				}
+				// End call triggers
+			}
+
 
 			if (!$fromaddline) {
 				$tmpparent = new ExpenseReport($this->db);

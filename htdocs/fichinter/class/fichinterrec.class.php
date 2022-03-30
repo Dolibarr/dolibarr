@@ -348,6 +348,8 @@ class FichinterRec extends Fichinter
 	public function fetch_lines($sall = 0)
 	{
 		// phpcs:enable
+		$this->lines = array();
+
 		$sql = 'SELECT l.rowid, l.fk_product, l.product_type, l.label as custom_label, l.description, ';
 		$sql .= ' l.price, l.qty, l.tva_tx, l.remise, l.remise_percent, l.subprice, l.duree, ';
 		$sql .= ' l.total_ht, l.total_tva, l.total_ttc,';
@@ -358,13 +360,15 @@ class FichinterRec extends Fichinter
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product = p.rowid';
 		$sql .= ' WHERE l.fk_fichinter = '.((int) $this->id);
 
-		dol_syslog('FichInter-rec::fetch_lines', LOG_DEBUG);
+		dol_syslog('FichinterRec::fetch_lines', LOG_DEBUG);
+
 		$result = $this->db->query($sql);
 		if ($result) {
 			$num = $this->db->num_rows($result);
 			$i = 0;
 			while ($i < $num) {
 				$objp = $this->db->fetch_object($result);
+
 				$line = new FichinterLigne($this->db);
 
 				$line->id = $objp->rowid;

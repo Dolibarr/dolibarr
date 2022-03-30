@@ -499,7 +499,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 			if (!empty($conf->banque->enabled)) {
 				print '<tr><td class="fieldrequired">'.$langs->trans('Account').'</td><td>';
 				print img_picto('', 'bank_account', 'class="pictofixedwidth"');
-				$form->select_comptes(empty($accountid) ? $obj->fk_account : $accountid, 'accountid', 0, '', 2);
+				print $form->select_comptes(empty($accountid) ? $obj->fk_account : $accountid, 'accountid', 0, '', 2, '', 0, 'widthcentpercentminusx maxwidth500', 1);
 				print '</td></tr>';
 			} else {
 				print '<tr><td>&nbsp;</td></tr>';

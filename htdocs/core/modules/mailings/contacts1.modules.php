@@ -78,7 +78,7 @@ class mailing_contacts1 extends MailingTargets
 		$statssql[0] = "SELECT '".$this->db->escape($langs->trans("NbOfCompaniesContacts"))."' as label,";
 		$statssql[0] .= " count(distinct(c.email)) as nb";
 		$statssql[0] .= " FROM ".MAIN_DB_PREFIX."socpeople as c";
-		$statssql[0] .= " WHERE c.entity IN (".getEntity('socpeople').")";
+		$statssql[0] .= " WHERE c.entity IN (".getEntity('contact').")";
 		$statssql[0] .= " AND c.email <> ''"; // Note that null != '' is false
 		$statssql[0] .= " AND (SELECT count(*) FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE email = c.email) = 0";
 		$statssql[0] .= " AND c.statut = 1";
@@ -102,7 +102,7 @@ class mailing_contacts1 extends MailingTargets
 		$sql = "SELECT count(distinct(c.email)) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as c";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = c.fk_soc";
-		$sql .= " WHERE c.entity IN (".getEntity('socpeople').")";
+		$sql .= " WHERE c.entity IN (".getEntity('contact').")";
 		$sql .= " AND c.email <> ''"; // Note that null != '' is false
 		$sql .= " AND (SELECT count(*) FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE email = c.email) = 0";
 		// exclude unsubscribed users
@@ -130,7 +130,7 @@ class mailing_contacts1 extends MailingTargets
 		// Add filter on job position
 		$sql = "SELECT sp.poste, count(distinct(sp.email)) AS nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as sp";
-		$sql .= " WHERE sp.entity IN (".getEntity('socpeople').")";
+		$sql .= " WHERE sp.entity IN (".getEntity('contact').")";
 		$sql .= " AND sp.email <> ''";    // Note that null != '' is false
 		$sql .= " AND sp.statut = 1";
 		$sql .= " AND (sp.poste IS NOT NULL AND sp.poste <> '')";
@@ -165,7 +165,7 @@ class mailing_contacts1 extends MailingTargets
 		$sql .= " ".MAIN_DB_PREFIX."socpeople as sp,";
 		$sql .= " ".MAIN_DB_PREFIX."categorie as c,";
 		$sql .= " ".MAIN_DB_PREFIX."categorie_contact as cs";
-		$sql .= " WHERE sp.entity IN (".getEntity('socpeople').")";
+		$sql .= " WHERE sp.entity IN (".getEntity('contact').")";
 		$sql .= " AND sp.email <> ''";    // Note that null != '' is false
 		$sql .= " AND sp.statut = 1";
 		$sql .= " AND cs.fk_categorie = c.rowid";
@@ -238,7 +238,7 @@ class mailing_contacts1 extends MailingTargets
 		$sql .= " ".MAIN_DB_PREFIX."socpeople as sp,";
 		$sql .= " ".MAIN_DB_PREFIX."categorie as c,";
 		$sql .= " ".MAIN_DB_PREFIX."categorie_societe as cs";
-		$sql .= " WHERE sp.entity IN (".getEntity('socpeople').")";
+		$sql .= " WHERE sp.entity IN (".getEntity('contact').")";
 		$sql .= " AND sp.email <> ''";    // Note that null != '' is false
 		$sql .= " AND sp.statut = 1";
 		$sql .= " AND cs.fk_categorie = c.rowid";
@@ -275,7 +275,7 @@ class mailing_contacts1 extends MailingTargets
 		$sql .= " ".MAIN_DB_PREFIX."socpeople as sp,";
 		$sql .= " ".MAIN_DB_PREFIX."categorie as c,";
 		$sql .= " ".MAIN_DB_PREFIX."categorie_fournisseur as cs";
-		$sql .= " WHERE sp.entity IN (".getEntity('socpeople').")";
+		$sql .= " WHERE sp.entity IN (".getEntity('contact').")";
 		$sql .= " AND sp.email <> ''";    // Note that null != '' is false
 		$sql .= " AND sp.statut = 1";
 		$sql .= " AND cs.fk_categorie = c.rowid";
@@ -375,7 +375,7 @@ class mailing_contacts1 extends MailingTargets
 			$sql .= ", ".MAIN_DB_PREFIX."categorie as c3";
 			$sql .= ", ".MAIN_DB_PREFIX."categorie_fournisseur as c3s";
 		}
-		$sql .= " WHERE sp.entity IN (".getEntity('socpeople').")";
+		$sql .= " WHERE sp.entity IN (".getEntity('contact').")";
 		$sql .= " AND sp.email <> ''";
 		$sql .= " AND (SELECT count(*) FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE email = sp.email) = 0";
 		// Exclude unsubscribed email adresses
