@@ -371,6 +371,32 @@ function GETPOSTISSET($paramname)
 }
 
 /**
+ * Return true if the parameter $paramname is submit from a POST OR GET as an array.
+ * Can be used before GETPOST to know if the $check param of GETPOST need to check an array or a string
+ *
+ * @param 	string	$paramname		Name or parameter to test
+ *  @param	int		$method	     Type of method (0 = get then post, 1 = only get, 2 = only post, 3 = post then get)
+ * @return 	bool 				True if we have just submit a POST or GET request with the parameter provided (even if param is empty)
+ */
+function GETPOSTISARRAY($paramname, $method = 0)
+{
+	// for $method test need return the same $val as GETPOST
+	if (empty($method)) {
+		$val = isset($_GET[$paramname]) ? $_GET[$paramname] : (isset($_POST[$paramname]) ? $_POST[$paramname] : '');
+	} elseif ($method == 1) {
+		$val = isset($_GET[$paramname]) ? $_GET[$paramname] : '';
+	} elseif ($method == 2) {
+		$val = isset($_POST[$paramname]) ? $_POST[$paramname] : '';
+	} elseif ($method == 3) {
+		$val = isset($_POST[$paramname]) ? $_POST[$paramname] : (isset($_GET[$paramname]) ? $_GET[$paramname] : '');
+	} else {
+		$val = 'BadFirstParameterForGETPOST';
+	}
+
+	return is_array($val);
+}
+
+/**
  *  Return value of a param into GET or POST supervariable.
  *  Use the property $user->default_values[path]['createform'] and/or $user->default_values[path]['filters'] and/or $user->default_values[path]['sortorder']
  *  Note: The property $user->default_values is loaded by main.php when loading the user.
