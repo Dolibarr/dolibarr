@@ -1676,23 +1676,23 @@ class Task extends CommonObjectLine
 
 		$this->db->begin();
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."projet_task_time";
-		$sql .= " WHERE rowid = ".((int) $this->timespent_id);
-
-		dol_syslog(get_class($this)."::delTimeSpent", LOG_DEBUG);
-		$resql = $this->db->query($sql);
-		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+		if (!$notrigger) {
+			// Call trigger
+			$result = $this->call_trigger('TASK_TIMESPENT_DELETE', $user);
+			if ($result < 0) {
+				$error++;
+			}
+			// End call triggers
 		}
 
 		if (!$error) {
-			if (!$notrigger) {
-				// Call trigger
-				$result = $this->call_trigger('TASK_TIMESPENT_DELETE', $user);
-				if ($result < 0) {
-					$error++;
-				}
-				// End call triggers
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."projet_task_time";
+			$sql .= " WHERE rowid = ".((int) $this->timespent_id);
+
+			dol_syslog(get_class($this)."::delTimeSpent", LOG_DEBUG);
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$error++; $this->errors[] = "Error ".$this->db->lasterror();
 			}
 		}
 

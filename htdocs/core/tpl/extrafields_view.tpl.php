@@ -156,6 +156,7 @@ if (empty($reshook) && isset($extrafields->attributes[$object->table_element]['l
 			//var_dump($user->rights);
 			$permok = false;
 			$keyforperm = $object->element;
+
 			if ($object->element == 'fichinter') {
 				$keyforperm = 'ficheinter';
 			}

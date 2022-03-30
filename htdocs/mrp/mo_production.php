@@ -735,9 +735,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			print $langs->trans("Warehouse");
 		}
 		print '</td>';
-		if ($conf->productbatch->enabled) {
+		if ($conf->stock->enabled) {
 			// Available
-			print '<td>';
+			print '<td align="right">';
 			if ($collapse || in_array($action, array('consumeorproduce', 'consumeandproduceall'))) {
 				print $langs->trans("Stock");
 			}
@@ -958,12 +958,14 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						}
 
 						// Lot Batch
-						print '<td>';
-						if ($line2['batch'] != '') {
-							$tmpbatch->fetch(0, $line2['fk_product'], $line2['batch']);
-							print $tmpbatch->getNomUrl(1);
+						if ($conf->productbatch->enabled) {
+							print '<td>';
+							if ($line2['batch'] != '') {
+								$tmpbatch->fetch(0, $line2['fk_product'], $line2['batch']);
+								print $tmpbatch->getNomUrl(1);
+							}
+							print '</td>';
 						}
-						print '</td>';
 
 						// Action delete line
 						if ($permissiontodelete) {

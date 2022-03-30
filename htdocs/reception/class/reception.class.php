@@ -565,7 +565,7 @@ class Reception extends CommonObject
 
 			// Loop on each product line to add a stock movement
 			// TODO in future, reception lines may not be linked to order line
-			$sql = "SELECT cd.fk_product, cd.subprice,";
+			$sql = "SELECT cd.fk_product, cd.subprice, cd.remise_percent,";
 			$sql .= " ed.rowid, ed.qty, ed.fk_entrepot,";
 			$sql .= " ed.eatby, ed.sellby, ed.batch,";
 			$sql .= " ed.cost_price";
@@ -593,6 +593,12 @@ class Reception extends CommonObject
 					$mouvS->origin = &$this;
 					$mouvS->setOrigin($this->element, $this->id);
 
+					// get unit price with discount
+					$up_ht_disc = $obj->subprice;
+					if (!empty($obj->remise_percent) && empty($conf->global->STOCK_EXCLUDE_DISCOUNT_FOR_PMP)) {
+						$up_ht_disc = price2num($up_ht_disc * (100 - $obj->remise_percent) / 100, 'MU');
+					}
+
 					if (empty($obj->batch)) {
 						// line without batch detail
 
@@ -601,8 +607,9 @@ class Reception extends CommonObject
 						if (!empty($conf->global->STOCK_CALCULATE_ON_RECEPTION || $conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE)) {
 							$result = $mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->cost_price, $langs->trans("ReceptionValidatedInDolibarr", $numref), '', '', '', '', 0, $inventorycode);
 						} else {
-							$result = $mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->subprice, $langs->trans("ReceptionValidatedInDolibarr", $numref), '', '', '', '', 0, $inventorycode);
+							$result = $mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $qty, $up_ht_disc, $langs->trans("ReceptionValidatedInDolibarr", $numref), '', '', '', '', 0, $inventorycode);
 						}
+
 						if ($result < 0) {
 							$error++;
 							$this->errors[] = $mouvS->error;
@@ -618,8 +625,9 @@ class Reception extends CommonObject
 						if (!empty($conf->global->STOCK_CALCULATE_ON_RECEPTION || $conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE)) {
 							$result = $mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->cost_price, $langs->trans("ReceptionValidatedInDolibarr", $numref), $this->db->jdate($obj->eatby), $this->db->jdate($obj->sellby), $obj->batch, '', 0, $inventorycode);
 						} else {
-							$result = $mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->subprice, $langs->trans("ReceptionValidatedInDolibarr", $numref), $this->db->jdate($obj->eatby), $this->db->jdate($obj->sellby), $obj->batch, '', 0, $inventorycode);
+							$result = $mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $qty, $up_ht_disc, $langs->trans("ReceptionValidatedInDolibarr", $numref), $this->db->jdate($obj->eatby), $this->db->jdate($obj->sellby), $obj->batch, '', 0, $inventorycode);
 						}
+
 						if ($result < 0) {
 							$error++;
 							$this->errors[] = $mouvS->error;
