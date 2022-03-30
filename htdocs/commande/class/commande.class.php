@@ -266,6 +266,11 @@ class Commande extends CommonOrder
 	 */
 	public $expeditions;
 
+	/**
+	 * @var string payment url
+	 */
+	public $online_payment_url;
+
 
 	/**
 	 *  'type' if the field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
