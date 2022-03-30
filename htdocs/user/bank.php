@@ -78,8 +78,8 @@ if (empty($account->userid)) {
 
 
 // Define value to know what current user can do on users
-$canadduser = (!empty($user->admin) || $user->rights->user->user->creer || $user->rights->hrm->write_employee->write);
-$canreaduser = (!empty($user->admin) || $user->rights->user->user->lire || $user->rights->hrm->read_employee->read);
+$canadduser = (!empty($user->admin) || $user->rights->user->user->creer || $user->rights->hrm->write_personal_information->write);
+$canreaduser = (!empty($user->admin) || $user->rights->user->user->lire || $user->rights->hrm->read_personal_information->read);
 $permissiontoaddbankaccount = (!empty($user->rights->salaries->write) || !empty($user->rights->hrm->employee->write) || !empty($user->rights->user->creer));
 
 // Ok if user->rights->salaries->read or user->rights->hrm->read
@@ -281,7 +281,7 @@ llxHeader(null, $langs->trans("BankAccounts"));
 
 $head = user_prepare_head($object);
 
-if ($id && $bankid && $action == 'edit' && ($user->rights->user->user->creer || $user->rights->hrm->write_employee->write)) {
+if ($id && $bankid && $action == 'edit' && ($user->rights->user->user->creer || $user->rights->hrm->write_personal_information->write)) {
 	print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="post">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
@@ -446,7 +446,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 	print "</tr>\n";
 
 	// Date of birth
-	if ($user->rights->hrm->read_employee->read || $user->rights->hrm->write_employee->write) {
+	if ($user->rights->hrm->read_personal_information->read || $user->rights->hrm->write_personal_information->write) {
 		print '<tr>';
 		print '<td>';
 		print $form->editfieldkey("DateOfBirth", 'birth', $object->birth, $object, $user->rights->user->user->creer);
@@ -457,23 +457,23 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 	}
 
 	// Personal email
-	if ($user->rights->hrm->read_employee->read || $user->rights->hrm->write_employee->write) {
+	if ($user->rights->hrm->read_personal_information->read || $user->rights->hrm->write_personal_information->write) {
 		print '<tr class="nowrap">';
 		print '<td>';
-		print $form->editfieldkey("UserPersonalEmail", 'personal_email', $object->personal_email, $object, $user->rights->user->user->creer || $user->rights->hrm->write_employee->write);
+		print $form->editfieldkey("UserPersonalEmail", 'personal_email', $object->personal_email, $object, $user->rights->user->user->creer || $user->rights->hrm->write_personal_information->write);
 		print '</td><td>';
-		print $form->editfieldval("UserPersonalEmail", 'personal_email', $object->personal_email, $object, $user->rights->user->user->creer || $user->rights->hrm->write_employee->write, 'email', '', null, null, '', 0, 'dol_print_email');
+		print $form->editfieldval("UserPersonalEmail", 'personal_email', $object->personal_email, $object, $user->rights->user->user->creer || $user->rights->hrm->write_personal_information->write, 'email', '', null, null, '', 0, 'dol_print_email');
 		print '</td>';
 		print '</tr>';
 	}
 
 	// Personal phone
-	if ($user->rights->hrm->read_employee->read || $user->rights->hrm->write_employee->write) {
+	if ($user->rights->hrm->read_personal_information->read || $user->rights->hrm->write_personal_information->write) {
 		print '<tr class="nowrap">';
 		print '<td>';
-		print $form->editfieldkey("UserPersonalMobile", 'personal_mobile', $object->personal_mobile, $object, $user->rights->user->user->creer || $user->rights->hrm->write_employee->write);
+		print $form->editfieldkey("UserPersonalMobile", 'personal_mobile', $object->personal_mobile, $object, $user->rights->user->user->creer || $user->rights->hrm->write_personal_information->write);
 		print '</td><td>';
-		print $form->editfieldval("UserPersonalMobile", 'personal_mobile', $object->personal_mobile, $object, $user->rights->user->user->creer || $user->rights->hrm->write_employee->write, 'string', '', null, null, '', 0, 'dol_print_phone');
+		print $form->editfieldval("UserPersonalMobile", 'personal_mobile', $object->personal_mobile, $object, $user->rights->user->user->creer || $user->rights->hrm->write_personal_information->write, 'string', '', null, null, '', 0, 'dol_print_phone');
 		print '</td>';
 		print '</tr>';
 	}
@@ -533,23 +533,23 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 	}
 
 	// Employee Number
-	if ($user->rights->hrm->read_employee->read || $user->rights->hrm->write_employee->write) {
+	if ($user->rights->hrm->read_personal_information->read || $user->rights->hrm->write_personal_information->write) {
 		print '<tr class="nowrap">';
 		print '<td>';
-		print $form->editfieldkey("RefEmployee", 'ref_employee', $object->ref_employee, $object, $user->rights->user->user->creer || $user->rights->hrm->write_employee->write);
+		print $form->editfieldkey("RefEmployee", 'ref_employee', $object->ref_employee, $object, $user->rights->user->user->creer || $user->rights->hrm->write_personal_information->write);
 		print '</td><td>';
-		print $form->editfieldval("RefEmployee", 'ref_employee', $object->ref_employee, $object, $user->rights->user->user->creer || $user->rights->hrm->write_employee->write, 'string', $object->ref_employee);
+		print $form->editfieldval("RefEmployee", 'ref_employee', $object->ref_employee, $object, $user->rights->user->user->creer || $user->rights->hrm->write_personal_information->write, 'string', $object->ref_employee);
 		print '</td>';
 		print '</tr>';
 	}
 
 	// National registration number
-	if ($user->rights->hrm->read_employee->read || $user->rights->hrm->write_employee->write) {
+	if ($user->rights->hrm->read_personal_information->read || $user->rights->hrm->write_personal_information->write) {
 		print '<tr class="nowrap">';
 		print '<td>';
-		print $form->editfieldkey("NationalRegistrationNumber", 'national_registration_number', $object->national_registration_number, $object, $user->rights->user->user->creer || $user->rights->hrm->write_employee->write);
+		print $form->editfieldkey("NationalRegistrationNumber", 'national_registration_number', $object->national_registration_number, $object, $user->rights->user->user->creer || $user->rights->hrm->write_personal_information->write);
 		print '</td><td>';
-		print $form->editfieldval("NationalRegistrationNumber", 'national_registration_number', $object->national_registration_number, $object, $user->rights->user->user->creer || $user->rights->hrm->write_employee->write, 'string', $object->national_registration_number);
+		print $form->editfieldval("NationalRegistrationNumber", 'national_registration_number', $object->national_registration_number, $object, $user->rights->user->user->creer || $user->rights->hrm->write_personal_information->write, 'string', $object->national_registration_number);
 		print '</td>';
 		print '</tr>';
 	}
