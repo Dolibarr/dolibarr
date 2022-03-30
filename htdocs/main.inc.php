@@ -492,6 +492,7 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt(
 			$sensitiveget = true;
 		}
 	}
+
 	// Check a token is provided for all cases that need a mandatory token
 	// (all POST actions + all login, actions and mass actions on pages with CSRFCHECK_WITH_TOKEN set + all sensitive GET actions)
 	if (
