@@ -721,7 +721,6 @@ if ($resql) {
 			if (!empty($arrayfields['f.titre']['checked'])) {
 				print '<td class="nowrap tdoverflowmax200">';
 				print $invoicerectmp->getNomUrl(1);
-				print "</a>";
 				print "</td>\n";
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -765,7 +764,7 @@ if ($resql) {
 			}
 			// Payment term
 			if (!empty($arrayfields['f.fk_cond_reglement']['checked'])) {
-				print '<td class="right">';
+				print '<td class="tdoverflowmax150">';
 				$form->form_conditions_reglement('', $objp->fk_cond_reglement, 'none');
 				print '</td>'."\n";
 				if (!$i) {
@@ -774,7 +773,7 @@ if ($resql) {
 			}
 			// Payment mode
 			if (!empty($arrayfields['f.fk_mode_reglement']['checked'])) {
-				print '<td class="right">';
+				print '<td class="tdoverflowmax150">';
 				$form->form_modes_reglement('', $objp->fk_mode_reglement, 'none');
 				print '</td>'."\n";
 				if (!$i) {

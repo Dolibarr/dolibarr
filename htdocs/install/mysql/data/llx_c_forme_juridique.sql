@@ -11,6 +11,7 @@
 -- Copyright (C) 2012	   Ricardo Schluter     <info@ripasch.nl>
 -- Copyright (C) 2013	   Cedric GROSS		    <c.gross@kreiz-it.fr>
 -- Copyright (C) 2020-2021 Udo Tamm       	    <dev@dolibit.de>
+-- Copyright (C) 2022      Miro Sertić       	<miro.sertic0606@gmail.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -382,3 +383,16 @@ INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (20, '2009', '
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (20, '2010', 'Enkelt bolag');
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (20, '2011', 'Ideell förening');
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (20, '2012', 'Stiftelse');
+
+-- Croatia (id country=76)
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (76, '7601', 'Društvo s ograničenom odgovornošću (d.o.o.)');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (76, '7602', 'Jednostavno društvo s ograničenom odgovornošću (j.d.o.o.)');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (76, '7603', 'Dioničko društvo (d.d.)');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (76, '7604', 'Obrt');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (76, '7605', 'Javno trgovačko društvo (j.t.d.)');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (76, '7606', 'Komanditno društvo (k.d.)');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (76, '7607', 'Gospodarsko interesno udruženje (GIU)');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (76, '7608', 'Predstavništvo');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (76, '7609', 'Državno tijelo');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (76, '7610', 'Kućna radinost');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (76, '7611', 'Sporedno zanimanje');

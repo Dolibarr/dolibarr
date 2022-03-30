@@ -796,9 +796,9 @@ class Delivery extends CommonObject
 			$num = $this->db->num_rows($resql);
 			$i = 0;
 			while ($i < $num) {
-				$line = new DeliveryLine($this->db);
-
 				$obj = $this->db->fetch_object($resql);
+
+				$line = new DeliveryLine($this->db);
 
 				$line->id = $obj->rowid;
 				$line->label = $obj->custom_label;
