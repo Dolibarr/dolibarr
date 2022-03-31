@@ -7468,6 +7468,11 @@ div.clipboardCPValue.hidewithsize {
 		margin-top: 30px;
 	}
 
+
+	.underbanner.underbanner-before-box {
+		border-bottom: none;
+	}
+
 	.valuefield.fieldname_type span.badgeneutral {
 		margin-top: 5px;
 		display: inline-block;
