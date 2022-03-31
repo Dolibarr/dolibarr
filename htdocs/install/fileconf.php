@@ -174,7 +174,9 @@ if (!empty($force_install_noedit)) {
 	<tr>
 		<td class="label"><label for="main_data_dir"><b><?php print $langs->trans("DocumentsDirectory"); ?></b></label></td>
 		<?php
-		$dolibarr_main_data_root = @$force_install_main_data_root;
+		if (!empty($force_install_main_data_root)) {
+			$dolibarr_main_data_root = @$force_install_main_data_root;
+		}
 		if (empty($dolibarr_main_data_root)) {
 			$dolibarr_main_data_root = GETPOSTISSET('main_data_dir', 'alpha') ? GETPOST('main_data_dir') : detect_dolibarr_main_data_root($dolibarr_main_document_root);
 		}
@@ -293,7 +295,7 @@ if (!empty($force_install_noedit)) {
 		<td class="label">
 		<?php
 
-		$defaultype = !empty($dolibarr_main_db_type) ? $dolibarr_main_db_type : ($force_install_type ? $force_install_type : 'mysqli');
+		$defaultype = !empty($dolibarr_main_db_type) ? $dolibarr_main_db_type : (empty($force_install_type) ? 'mysqli' : $force_install_type);
 
 		$modules = array();
 		$nbok = $nbko = 0;
