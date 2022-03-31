@@ -123,6 +123,7 @@ if (empty($reshook)) {
 				if ($ret < 0) setEventMessage($skillAdded->error, 'errors');
 				//else unset($TSkillsToAdd);
 			}
+			if ($ret > 0) setEventMessage($langs->trans("SaveAddSkill"));
 		}
 	} elseif ($action == 'saveSkill') {
 		if (!empty($TNote)) {
@@ -135,10 +136,14 @@ if (empty($reshook)) {
 					}
 				}
 			}
+			setEventMessage($langs->trans("SaveLevelSkill"));
+			header("Location: " . dol_buildpath('/hrm/skill_tab.php', 1) . '?id=' . $id. '&objecttype=job');
+			exit;
 		}
 	} elseif ($action == 'confirm_deleteskill' && $confirm == 'yes') {
 		$skillToDelete = new SkillRank($db);
 		$ret = $skillToDelete->fetch($lineid);
+		setEventMessage($langs->trans("DeleteSkill"));
 		if ($ret > 0) {
 			$skillToDelete->delete($user);
 		}

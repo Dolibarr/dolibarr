@@ -4374,9 +4374,10 @@ abstract class CommonObject
 	 *  Check is done into this->childtables. There is no check into llx_element_element.
 	 *
 	 *  @param	int		$id			Force id of object
+	 *  @param	int		$entity		Force entity to check
 	 *  @return	int					<0 if KO, 0 if not used, >0 if already used
 	 */
-	public function isObjectUsed($id = 0)
+	public function isObjectUsed($id = 0, $entity = 0)
 	{
 		global $langs;
 
@@ -4399,11 +4400,25 @@ abstract class CommonObject
 
 		// Test if child exists
 		$haschild = 0;
-		foreach ($arraytoscan as $table => $elementname) {
+		foreach ($arraytoscan as $table => $element) {
 			//print $id.'-'.$table.'-'.$elementname.'<br>';
-			// Check if third party can be deleted
-			$sql = "SELECT COUNT(*) as nb from ".$this->db->prefix().$table;
-			$sql .= " WHERE ".$this->fk_element." = ".((int) $id);
+			// Check if element can be deleted
+			$sql = "SELECT COUNT(*) as nb";
+			$sql.= " FROM ".$this->db->prefix().$table." as c";
+			if (!empty($element['parent']) && !empty($element['parentkey'])) {
+				$sql.= ", ".$this->db->prefix().$element['parent']." as p";
+			}
+			$sql.= " WHERE c.".$this->fk_element." = ".((int) $id);
+			if (!empty($element['parent']) && !empty($element['parentkey'])) {
+				$sql.= " AND c.".$element['parentkey']." = p.rowid";
+			}
+			if (!empty($entity)) {
+				if (!empty($element['parent']) && !empty($element['parentkey'])) {
+					$sql.= " AND p.entity = ".((int) $entity);
+				} else {
+					$sql.= " AND c.entity = ".((int) $entity);
+				}
+			}
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$obj = $this->db->fetch_object($resql);
@@ -4411,11 +4426,12 @@ abstract class CommonObject
 					$langs->load("errors");
 					//print 'Found into table '.$table.', type '.$langs->transnoentitiesnoconv($elementname).', haschild='.$haschild;
 					$haschild += $obj->nb;
-					if (is_numeric($elementname)) {	// old usage
-						$this->errors[] = $langs->transnoentities("ErrorRecordHasAtLeastOneChildOfType", method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref, $table);
-					} else // new usage: $elementname=Translation key
-					{
-						$this->errors[] = $langs->transnoentities("ErrorRecordHasAtLeastOneChildOfType", method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref, $langs->transnoentitiesnoconv($elementname));
+					if (is_numeric($element)) {	// very old usage array('table1', 'table2', ...)
+						$this->errors[] = $langs->transnoentitiesnoconv("ErrorRecordHasAtLeastOneChildOfType", method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref, $table);
+					} elseif (is_string($element)) { // old usage array('table1' => 'TranslateKey1', 'table2' => 'TranslateKey2', ...)
+						$this->errors[] = $langs->transnoentitiesnoconv("ErrorRecordHasAtLeastOneChildOfType",  method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref, $langs->transnoentitiesnoconv($element));
+					} else { // new usage: $element['name']=Translation key
+						$this->errors[] = $langs->transnoentitiesnoconv("ErrorRecordHasAtLeastOneChildOfType",  method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref, $langs->transnoentitiesnoconv($element['name']));
 					}
 					break; // We found at least one, we stop here
 				}
@@ -7844,7 +7860,7 @@ abstract class CommonObject
 						}
 
 						// if colspan=0 or 1, the second column is not extended, so the separator must be on 2 columns
-						$out .= $extrafields->showSeparator($key, $this, ($colspan ? $colspan + 1 : 2), $display_type);
+						$out .= $extrafields->showSeparator($key, $this, ($colspan ? $colspan + 1 : 2), $display_type, $mode);
 					} else {
 						$class = (!empty($extrafields->attributes[$this->table_element]['hidden'][$key]) ? 'hideobject ' : '');
 						$csstyle = '';
@@ -7977,7 +7993,7 @@ abstract class CommonObject
 					$out .= $this->getJSListDependancies();
 				}
 
-				$out .= '<!-- /showOptionals --> '."\n";
+				$out .= '<!-- commonobject:showOptionals end --> '."\n";
 			}
 		}
 

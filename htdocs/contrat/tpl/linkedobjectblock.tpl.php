@@ -49,7 +49,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 	<td class="nowraponall"><?php echo $objectlink->getNomUrl(1); ?></td>
 	<td></td>
 	<td class="center"><?php echo dol_print_date($objectlink->date_contrat, 'day'); ?></td>
-	<td class="right"><?php
+	<td class="nowraponall right"><?php
 	// Price of contract is not shown by default because a contract is a list of service with
 	// start and end date that change with time andd that may be different that the period of reference for price.
 	// So price of a contract does often means nothing. Prices is on the different invoices done on same contract.
