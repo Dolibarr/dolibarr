@@ -110,7 +110,7 @@ if ($id > 0 || $ref) {
 
 			print '<tr><td>'.$langs->trans("TransData").'</td><td>';
 			print dol_print_date($object->date_trans, 'day');
-			print ' <span class="opacitymedium">'.$langs->trans("By").'</span> '.$muser->getFullName($langs).'</td></tr>';
+			print ' <span class="opacitymedium">'.$langs->trans("By").'</span> '.$muser->getNomUrl(-1).'</td></tr>';
 			print '<tr><td>'.$langs->trans("TransMetod").'</td><td>';
 			print $object->methodes_trans[$object->method_trans];
 			print '</td></tr>';
