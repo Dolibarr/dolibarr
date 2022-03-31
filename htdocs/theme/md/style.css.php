@@ -7280,6 +7280,15 @@ div.clipboardCPValue.hidewithsize {
 	.a-mesure, .a-mesure-disabled {
 		text-align: center;
 	}
+	
+		
+	.underbanner.underbanner-before-box {
+		border-bottom: none;
+	}
+	
+	div.divButAction {
+		margin-bottom: 0.5em;
+	}
 }
 
 

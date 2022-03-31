@@ -686,7 +686,7 @@ if ($object->id > 0) {
 	}
 
 	print '</div><div class="fichehalfright">';
-	print '<div class="underbanner clearboth"></div>';
+	print '<div class="underbanner underbanner-before-box clearboth"></div>';
 
 	$boxstat = '';
 
@@ -694,7 +694,7 @@ if ($object->id > 0) {
 	$MAXLIST = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
 
 	// Lien recap
-	$boxstat .= '<div class="box">';
+	$boxstat .= '<div class="box box-halfright">';
 	$boxstat .= '<table summary="'.dol_escape_htmltag($langs->trans("DolibarrStateBoard")).'" class="border boxtable boxtablenobottom boxtablenotop" width="100%">';
 	$boxstat .= '<tr class="impair nohover"><td colspan="2" class="tdboxstats nohover">';
 
