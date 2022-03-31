@@ -535,6 +535,7 @@ if ($action == "addline") {
 	}
 
 	$idoflineadded = 0;
+	// Group if enabled. Skip group if line already sent to the printer
 	if (!empty($conf->global->TAKEPOS_GROUP_SAME_PRODUCT) && $line->special_code != "4") {
 		foreach ($invoice->lines as $line) {
 			if ($line->product_ref == $prod->ref) {
