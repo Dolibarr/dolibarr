@@ -142,8 +142,8 @@ if (!empty($force_install_message)) {
 	<tr>
 		<td class="label"><label for="main_dir"><b><?php print $langs->trans("WebPagesDirectory"); ?></b></label></td>
 <?php
-if (empty($dolibarr_main_url_root)) {
-	$dolibarr_main_document_root = detect_dolibarr_main_document_root();
+if (empty($dolibarr_main_document_root)) {
+	$dolibarr_main_document_root = GETPOSTISSET('main_dir', 'alpha') ? GETPOST('main_dir') : detect_dolibarr_main_document_root();
 }
 ?>
 		<td class="label">
@@ -176,7 +176,7 @@ if (!empty($force_install_noedit)) {
 		<?php
 		$dolibarr_main_data_root = @$force_install_main_data_root;
 		if (empty($dolibarr_main_data_root)) {
-			$dolibarr_main_data_root = detect_dolibarr_main_data_root($dolibarr_main_document_root);
+			$dolibarr_main_data_root = GETPOSTISSET('main_data_dir', 'alpha') ? GETPOST('main_data_dir') : detect_dolibarr_main_data_root($dolibarr_main_document_root);
 		}
 		?>
 		<td class="label">
@@ -205,7 +205,7 @@ if (!empty($force_install_noedit)) {
 	<!-- Root URL $dolibarr_main_url_root -->
 	<?php
 	if (empty($dolibarr_main_url_root)) {
-		$dolibarr_main_url_root = detect_dolibarr_main_url_root();
+		$dolibarr_main_url_root = GETPOSTISSET('main_url', 'alpha') ? GETPOST('main_url') : detect_dolibarr_main_url_root();
 	}
 	?>
 	<tr>
@@ -532,7 +532,7 @@ if (!empty($force_install_noedit)) {
 				   id="db_user_root"
 				   name="db_user_root"
 				   class="needroot"
-				   value="<?php print (!empty($force_install_databaserootlogin)) ? $force_install_databaserootlogin : (isset($db_user_root) ? $db_user_root : ''); ?>"
+				   value="<?php print (!empty($force_install_databaserootlogin)) ? $force_install_databaserootlogin : (GETPOSTISSET('db_user_root') ? GETPOST('db_user_root') : (isset($db_user_root) ? $db_user_root : '')); ?>"
 				<?php if ($force_install_noedit > 0 && !empty($force_install_databaserootlogin)) {
 					print ' disabled';
 				} ?>
