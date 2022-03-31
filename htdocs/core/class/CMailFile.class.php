@@ -252,9 +252,31 @@ class CMailFile
 			}
 		}
 
-		// Add autocopy to if not already in $to (Note: Adding bcc for specific modules are also done from pages)
-		if (!empty($conf->global->MAIN_MAIL_AUTOCOPY_TO) && !preg_match('/'.preg_quote($conf->global->MAIN_MAIL_AUTOCOPY_TO, '/').'/i', $to)) {
-			$addr_bcc .= ($addr_bcc ? ', ' : '').$conf->global->MAIN_MAIL_AUTOCOPY_TO;
+		// Add auto copy to if not already in $to (Note: Adding bcc for specific modules are also done from pages)
+		// For example MAIN_MAIL_AUTOCOPY_TO can be 'email@example.com, __USER_EMAIL__, ...'
+		if (!empty($conf->global->MAIN_MAIL_AUTOCOPY_TO)) {
+			$listofemailstoadd = explode(',', $conf->global->MAIN_MAIL_AUTOCOPY_TO);
+			foreach ($listofemailstoadd as $key => $val) {
+				$emailtoadd = $listofemailstoadd[$key];
+				if (trim($emailtoadd) == '__USER_EMAIL__') {
+					if (!empty($user) && !empty($user->email)) {
+						$emailtoadd = $user->email;
+					} else {
+						$emailtoadd = '';
+					}
+				}
+				if ($emailtoadd && preg_match('/'.preg_quote($emailtoadd, '/').'/i', $to)) {
+					$emailtoadd = '';	// Email already in the "To"
+				}
+				if ($emailtoadd) {
+					$listofemailstoadd[$key] = $emailtoadd;
+				} else {
+					unset($listofemailstoadd[$key]);
+				}
+			}
+			if (!empty($listofemailstoadd)) {
+				$addr_bcc .= ($addr_bcc ? ', ' : '').join(', ', $listofemailstoadd);
+			}
 		}
 		if (!empty($user->mail_autocopy)) {
 			$addr_bcc .= ($addr_bcc ? ', ' : '').$user->email;

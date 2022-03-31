@@ -90,7 +90,7 @@ $coldisplay = 0;
 
 $coldisplay++;
 ?>
-	<td>
+	<td class="linecoldesc minwidth250onall">
 	<div id="line_<?php echo $line->id; ?>"></div>
 
 	<input type="hidden" name="lineid" value="<?php echo $line->id; ?>">
@@ -196,7 +196,7 @@ $coldisplay++;
 	if ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier' || $object->element == 'invoice_supplier_rec') {	// We must have same test in printObjectLines
 		$coldisplay++;
 		?>
-		<td class="right"><input id="fourn_ref" name="fourn_ref" class="flat minwidth50 maxwidth150" value="<?php echo GETPOSTISSET('fourn_ref') ? GETPOST('fourn_ref') : ($line->ref_supplier ? $line->ref_supplier : $line->ref_fourn); ?>"></td>
+		<td class="right linecolrefsupplier"><input id="fourn_ref" name="fourn_ref" class="flat minwidth50 maxwidth125 maxwidth125onsmartphone" value="<?php echo GETPOSTISSET('fourn_ref') ? GETPOST('fourn_ref') : ($line->ref_supplier ? $line->ref_supplier : $line->ref_fourn); ?>"></td>
 		<?php
 	}
 
@@ -265,7 +265,7 @@ $coldisplay++;
 	}
 	?>
 
-	<td class="nowrap right">
+	<td class="nowraponall right linecoldiscount">
 	<?php $coldisplay++;
 	if (($line->info_bits & 2) != 2) {
 		print '<input size="1" type="text" class="flat right" name="remise_percent" id="remise_percent" value="'.(GETPOSTISSET('remise_percent') ? GETPOST('remise_percent') : $line->remise_percent).'"';

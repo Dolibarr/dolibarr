@@ -165,7 +165,7 @@ foreach ($object->fields as $key => $val) {
 		$arrayfields['t.'.$key] = array(
 			'label'=>$val['label'],
 			'checked'=>(($visible < 0) ? 0 : 1),
-			'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1)),
+			'enabled'=>(abs($visible) != 3 && dol_eval($val['enabled'], 1)),
 			'position'=>$val['position'],
 			'help'=> isset($val['help']) ? $val['help'] : ''
 		);
@@ -257,7 +257,7 @@ $form = new Form($db);
 
 $now = dol_now();
 
-//$help_url="EN:Module_MyObject|FR:Module_MyObject_FR|ES:Módulo_MyObject";
+//$help_url = "EN:Module_MyObject|FR:Module_MyObject_FR|ES:Módulo_MyObject";
 $help_url = '';
 $title = $langs->trans('ListOf', $langs->transnoentitiesnoconv("MyObjects"));
 $morejs = array();
@@ -369,10 +369,14 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 	/* The slow method does not consume memory on mysql (not tested on pgsql) */
 	/*$resql = $db->query($sql, 0, 'auto', 1);
 	while ($db->fetch_object($resql)) {
-		$nbtotalofrecords++;
-	}*/
+		if (empty($nbtotalofrecords)) {
+			$nbtotalofrecords = 1;    // We can't make +1 because init value is ''
+		 } else {
+			 $nbtotalofrecords++;
+		 }
+	 }*/
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
-	$sqlforcount = preg_replace('/^SELECT[a-z0-9\._\s\(\),]+FROM/i', 'SELECT COUNT(*) as nbtotalofrecords FROM', $sql);
+	$sqlforcount = preg_replace('/^SELECT[a-zA-Z0-9\._\s\(\),=<>\:\-\']+\sFROM/', 'SELECT COUNT(*) as nbtotalofrecords FROM', $sql);
 	$resql = $db->query($sqlforcount);
 	$objforcount = $db->fetch_object($resql);
 	$nbtotalofrecords = $objforcount->nbtotalofrecords;
@@ -671,7 +675,7 @@ while ($i < $imaxinloop) {
 	} else {
 		// Show here line of result
 		$j = 0;
-		print '<tr class="oddeven">';
+		print '<tr data-rowid="'.$object->id.'" class="oddeven">';
 		foreach ($object->fields as $key => $val) {
 			$cssforfield = (empty($val['csslist']) ? (empty($val['css']) ? '' : $val['css']) : $val['csslist']);
 			if (in_array($val['type'], array('date', 'datetime', 'timestamp'))) {

@@ -26,6 +26,7 @@
  *       \brief      File to manage Expense Reports
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport_ik.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport_rule.class.php';
 
@@ -2047,7 +2048,7 @@ class ExpenseReport extends CommonObject
 	}
 
 	/**
-	 * Update an expense report line
+	 * Update an expense report line.
 	 *
 	 * @param   int         $rowid                  Line to edit
 	 * @param   int         $type_fees_id           Type payment
@@ -2060,9 +2061,10 @@ class ExpenseReport extends CommonObject
 	 * @param   int         $expensereport_id       Expense report id
 	 * @param   int         $fk_c_exp_tax_cat       Id of category of car
 	 * @param   int         $fk_ecm_files           Id of ECM file to link to this expensereport line
+	 * @param   int     	$notrigger      		1=No trigger
 	 * @return  int                                 <0 if KO, >0 if OK
 	 */
-	public function updateline($rowid, $type_fees_id, $projet_id, $vatrate, $comments, $qty, $value_unit, $date, $expensereport_id, $fk_c_exp_tax_cat = 0, $fk_ecm_files = 0)
+	public function updateline($rowid, $type_fees_id, $projet_id, $vatrate, $comments, $qty, $value_unit, $date, $expensereport_id, $fk_c_exp_tax_cat = 0, $fk_ecm_files = 0, $notrigger = 0)
 	{
 		global $user, $mysoc;
 
@@ -2152,9 +2154,19 @@ class ExpenseReport extends CommonObject
 
 			$this->applyOffset();
 			$this->checkRules();
-
+			$error = 0;
 			$result = $this->line->update($user);
-			if ($result > 0) {
+
+			if ($result > 0 && !$notrigger) {
+				// Call triggers
+				$result = $this->call_trigger('EXPENSE_REPORT_DET_UPDATE', $user);
+				if ($result < 0) {
+					$error++;
+				}
+				// End call triggers
+			}
+
+			if ($result > 0 && $error == 0) {
 				$this->db->commit();
 				return 1;
 			} else {
@@ -2169,20 +2181,33 @@ class ExpenseReport extends CommonObject
 	/**
 	 * deleteline
 	 *
-	 * @param   int     $rowid      Row id
-	 * @param   User    $fuser      User
-	 * @return  int                 <0 if KO, >0 if OK
+	 * @param   int     $rowid      	Row id
+	 * @param   User    $fuser      	User
+	 * @param   int     $notrigger      1=No trigger
+	 * @return  int                 	<0 if KO, >0 if OK
 	 */
-	public function deleteline($rowid, $fuser = '')
+	public function deleteline($rowid, $fuser = '', $notrigger = 0)
 	{
+		$error=0;
+
 		$this->db->begin();
 
-		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element_line;
+		if (!$notrigger) {
+			// Call triggers
+			$result = $this->call_trigger('EXPENSE_REPORT_DET_DELETE', $fuser);
+			if ($result < 0) {
+				$error++;
+			}
+			// End call triggers
+		}
+
+		$sql = ' DELETE FROM '.MAIN_DB_PREFIX.$this->table_element_line;
 		$sql .= ' WHERE rowid = '.((int) $rowid);
 
 		dol_syslog(get_class($this)."::deleteline sql=".$sql);
 		$result = $this->db->query($sql);
-		if (!$result) {
+
+		if (!$result || $error > 0 ) {
 			$this->error = $this->db->error();
 			dol_syslog(get_class($this)."::deleteline  Error ".$this->error, LOG_ERR);
 			$this->db->rollback();
@@ -2545,7 +2570,7 @@ class ExpenseReport extends CommonObject
 /**
  * Class of expense report details lines
  */
-class ExpenseReportLine
+class ExpenseReportLine extends CommonObjectLine
 {
 	/**
 	 * @var DoliDB Database handler.
@@ -2751,6 +2776,17 @@ class ExpenseReportLine
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'expensereport_det');
+
+
+			if (!$error && !$notrigger) {
+				// Call triggers
+				$result = $this->call_trigger('EXPENSE_REPORT_DET_CREATE', $user);
+				if ($result < 0) {
+					$error++;
+				}
+				// End call triggers
+			}
+
 
 			if (!$fromaddline) {
 				$tmpparent = new ExpenseReport($this->db);
