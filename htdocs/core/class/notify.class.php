@@ -362,7 +362,7 @@ class Notify
 		}
 		$hookmanager->initHooks(array('notification'));
 
-
+		$parameters = array('notifcode' => $notifcode);
 		$reshook = $hookmanager->executeHooks('notifsupported', $parameters, $object, $action);
 		if (empty($reshook)) {
 			if (!empty($hookmanager->resArray['arrayofnotifsupported'])) {
