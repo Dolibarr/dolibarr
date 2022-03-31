@@ -939,7 +939,7 @@ class DoliDBMysqli extends DoliDB
 	public function DDLCreateUser($dolibarr_main_db_host, $dolibarr_main_db_user, $dolibarr_main_db_pass, $dolibarr_main_db_name)
 	{
 		// phpcs:enable
-		$sql = "CREATE USER '".$this->escape($dolibarr_main_db_user)."'@'".$this->escape($dolibarr_main_db_host)."' IDENTIFIED BY '".$this->escape($dolibarr_main_db_pass)."'";
+		$sql = "CREATE USER '".$this->escape($dolibarr_main_db_user)."' IDENTIFIED BY '".$this->escape($dolibarr_main_db_pass)."'";
 		dol_syslog(get_class($this)."::DDLCreateUser", LOG_DEBUG); // No sql to avoid password in log
 		$resql = $this->query($sql);
 		if (!$resql) {
