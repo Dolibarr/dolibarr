@@ -73,18 +73,18 @@ class Societe extends CommonObject
 	 * @var array	List of child tables. To test if we can delete object.
 	 */
 	protected $childtables = array(
-		"supplier_proposal" => 'SupplierProposal',
-		"propal" => 'Proposal',
-		"commande" => 'Order',
-		"facture" => 'Invoice',
-		"facture_rec" => 'RecurringInvoiceTemplate',
-		"contrat" => 'Contract',
-		"fichinter" => 'Fichinter',
-		"facture_fourn" => 'SupplierInvoice',
-		"commande_fournisseur" => 'SupplierOrder',
-		"projet" => 'Project',
-		"expedition" => 'Shipment',
-		"prelevement_lignes" => 'DirectDebitRecord',
+		'supplier_proposal' => array('name' => 'SupplierProposal'),
+		'propal' => array('name' => 'Proposal'),
+		'commande' => array('name' => 'Order'),
+		'facture' => array('name' => 'Invoice'),
+		'facture_rec' => array('name' => 'RecurringInvoiceTemplate'),
+		'contrat' => array('name' => 'Contract'),
+		'fichinter' => array('name' => 'Fichinter'),
+		'facture_fourn' => array('name' => 'SupplierInvoice'),
+		'commande_fournisseur' => array('name' => 'SupplierOrder'),
+		'projet' => array('name' => 'Project'),
+		'expedition' => array('name' => 'Shipment'),
+		'prelevement_lignes' => array('name' => 'DirectDebitRecord'),
 	);
 
 	/**
@@ -92,22 +92,22 @@ class Societe extends CommonObject
 	 *               if name like with @ClassName:FilePathClass:ParentFkFieldName' it will call method deleteByParentField (with parentId as parameters) and FieldName to fetch and delete child object
 	 */
 	protected $childtablesoncascade = array(
-		"societe_prices",
-		"societe_address",
-		"product_fournisseur_price",
-		"product_customer_price_log",
-		"product_customer_price",
-		"@Contact:/contact/class/contact.class.php:fk_soc",
-		"adherent",
-		"societe_account",
-		"societe_rib",
-		"societe_remise",
-		"societe_remise_except",
-		"societe_commerciaux",
-		"categorie",
-		"notify",
-		"notify_def",
-		"actioncomm",
+		'societe_prices',
+		'societe_address',
+		'product_fournisseur_price',
+		'product_customer_price_log',
+		'product_customer_price',
+		'@Contact:/contact/class/contact.class.php:fk_soc',
+		'adherent',
+		'societe_account',
+		'societe_rib',
+		'societe_remise',
+		'societe_remise_except',
+		'societe_commerciaux',
+		'categorie',
+		'notify',
+		'notify_def',
+		'actioncomm',
 	);
 
 	/**
@@ -2530,9 +2530,10 @@ class Societe extends CommonObject
 	 *      @param	int  	$notooltip		          1=Disable tooltip
 	 *      @param  int     $save_lastsearch_value    -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *      @param	int		$noaliasinname			  1=Do not add alias into the link ref
+	 *      @param	string	$target			  		  add attribute target
 	 *		@return	string					          String with URL
 	 */
-	public function getNomUrl($withpicto = 0, $option = '', $maxlen = 0, $notooltip = 0, $save_lastsearch_value = -1, $noaliasinname = 0)
+	public function getNomUrl($withpicto = 0, $option = '', $maxlen = 0, $notooltip = 0, $save_lastsearch_value = -1, $noaliasinname = 0, $target = '')
 	{
 		global $conf, $langs, $hookmanager;
 
@@ -2705,6 +2706,10 @@ class Societe extends CommonObject
 			}
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
 			$linkclose .= ' class="classfortooltip refurl"';
+			$target_value = array('_self', '_blank', '_parent', '_top');
+			if (in_array($target, $target_value)) {
+				$linkclose .= ' target="'.dol_escape_htmltag($target).'"';
+			}
 
 			/*
 			$hookmanager->initHooks(array('thirdpartydao'));

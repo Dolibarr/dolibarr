@@ -286,7 +286,7 @@ a.top-menu-dropdown-link {
 
 #topmenuloginmoreinfo-btn, #topmenulogincompanyinfo-btn {
 	display: block;
-	text-aling: right;
+	text-align: right;
 	color:#666;
 	cursor: pointer;
 }
@@ -459,7 +459,7 @@ a.top-menu-dropdown-link {
 
 
 .dropdown-search-input::placeholder {
-	color: color(#575756 a(0.8));
+	color: color(#575756);
 	letter-spacing: 1.5px;
 }
 

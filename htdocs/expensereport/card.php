@@ -2042,25 +2042,25 @@ if ($action == 'create') {
 			if (!empty($object->lines)) {
 				$i = 0; $total = 0;
 
-				print '<tr class="liste_titre">';
-				print '<td class="center">'.$langs->trans('LineNb').'</td>';
+				print '<tr class="liste_titre headerexpensereportdet">';
+				print '<td class="center linecollinenb">'.$langs->trans('LineNb').'</td>';
 				//print '<td class="center">'.$langs->trans('Piece').'</td>';
-				print '<td class="center">'.$langs->trans('Date').'</td>';
+				print '<td class="center linecoldate">'.$langs->trans('Date').'</td>';
 				if (!empty($conf->projet->enabled)) {
-					print '<td class="minwidth100imp">'.$langs->trans('Project').'</td>';
+					print '<td class="minwidth100imp linecolproject">'.$langs->trans('Project').'</td>';
 				}
-				print '<td class="center">'.$langs->trans('Type').'</td>';
+				print '<td class="center linecoltype">'.$langs->trans('Type').'</td>';
 				if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) {
-					print '<td>'.$langs->trans('CarCategory').'</td>';
+					print '<td class="center linecolcarcategory">'.$langs->trans('CarCategory').'</td>';
 				}
-				print '<td>'.$langs->trans('Description').'</td>';
-				print '<td class="right">'.$langs->trans('VAT').'</td>';
-				print '<td class="right">'.$langs->trans('PriceUHT').'</td>';
-				print '<td class="right">'.$langs->trans('PriceUTTC').'</td>';
-				print '<td class="right">'.$langs->trans('Qty').'</td>';
+				print '<td class="center linecoldescription">'.$langs->trans('Description').'</td>';
+				print '<td class="right linecolvat">'.$langs->trans('VAT').'</td>';
+				print '<td class="right linecolpriceuht">'.$langs->trans('PriceUHT').'</td>';
+				print '<td class="right linecolpriceuttc">'.$langs->trans('PriceUTTC').'</td>';
+				print '<td class="right linecolqty">'.$langs->trans('Qty').'</td>';
 				if ($action != 'editline') {
-					print '<td class="right">'.$langs->trans('AmountHT').'</td>';
-					print '<td class="right">'.$langs->trans('AmountTTC').'</td>';
+					print '<td class="right linecolamountht">'.$langs->trans('AmountHT').'</td>';
+					print '<td class="right linecolamountttc">'.$langs->trans('AmountTTC').'</td>';
 				}
 				// Picture
 				print '<td>';
@@ -2080,19 +2080,19 @@ if ($action == 'create') {
 					$numline = $i + 1;
 
 					if ($action != 'editline' || $line->rowid != GETPOST('rowid', 'int')) {
-						print '<tr class="oddeven">';
+						print '<tr class="oddeven linetr" data-id="'.$line->id.'">';
 
 						// Num
-						print '<td class="center">';
+						print '<td class="center linecollinenb">';
 						print $numline;
 						print '</td>';
 
 						// Date
-						print '<td class="center">'.dol_print_date($db->jdate($line->date), 'day').'</td>';
+						print '<td class="center linecoldate">'.dol_print_date($db->jdate($line->date), 'day').'</td>';
 
 						// Project
 						if (!empty($conf->projet->enabled)) {
-							print '<td>';
+							print '<td class="center dateproject">';
 							if ($line->fk_project > 0) {
 								$projecttmp->id = $line->fk_project;
 								$projecttmp->ref = $line->projet_ref;
@@ -2118,26 +2118,26 @@ if ($action == 'create') {
 						}
 
 						// Type of fee
-						print '<td class="center" title="'.dol_escape_htmltag($titlealt).'">';
+						print '<td class="center linecoltype" title="'.dol_escape_htmltag($titlealt).'">';
 						$labeltype = ($langs->trans(($line->type_fees_code)) == $line->type_fees_code ? $line->type_fees_libelle : $langs->trans($line->type_fees_code));
 						print $labeltype;
 						print '</td>';
 
 						// IK
 						if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) {
-							print '<td class="fk_c_exp_tax_cat">';
+							print '<td class="fk_c_exp_tax_cat linecoltaxcat">';
 							print dol_getIdFromCode($db, $line->fk_c_exp_tax_cat, 'c_exp_tax_cat', 'rowid', 'label');
 							print '</td>';
 						}
 
 						// Comment
-						print '<td class="left">'.dol_nl2br($line->comments).'</td>';
+						print '<td class="left linecolcomment">'.dol_nl2br($line->comments).'</td>';
 
 						// VAT rate
-						print '<td class="right">'.vatrate($line->vatrate.($line->vat_src_code ? ' ('.$line->vat_src_code.')' : ''), true).'</td>';
+						print '<td class="right linecolvatrate">'.vatrate($line->vatrate.($line->vat_src_code ? ' ('.$line->vat_src_code.')' : ''), true).'</td>';
 
 						// Unit price HT
-						print '<td class="right">';
+						print '<td class="right linecolunitht">';
 						if (!empty($line->value_unit_ht)) {
 							print price($line->value_unit_ht);
 						} else {
@@ -2147,17 +2147,17 @@ if ($action == 'create') {
 						}
 						print '</td>';
 
-						print '<td class="right">'.price($line->value_unit).'</td>';
+						print '<td class="right linecolunitttc">'.price($line->value_unit).'</td>';
 
-						print '<td class="right">'.dol_escape_htmltag($line->qty).'</td>';
+						print '<td class="right linecolqty">'.dol_escape_htmltag($line->qty).'</td>';
 
 						if ($action != 'editline') {
-							print '<td class="right">'.price($line->total_ht).'</td>';
-							print '<td class="right">'.price($line->total_ttc).'</td>';
+							print '<td class="right linecoltotalht">'.price($line->total_ht).'</td>';
+							print '<td class="right linecoltotalttc">'.price($line->total_ttc).'</td>';
 						}
 
 						// Column with preview
-						print '<td class="center">';
+						print '<td class="center linecolpreview">';
 						if ($line->fk_ecm_files > 0) {
 							$modulepart = 'expensereport';
 							$maxheightmini = 32;
@@ -2227,13 +2227,13 @@ if ($action == 'create') {
 						}
 						print '</td>';
 
-						print '<td class="nowrap right">';
+						print '<td class="nowrap right linecolwarning">';
 						print !empty($line->rule_warning_message) ? img_warning(html_entity_decode($line->rule_warning_message)) : '&nbsp;';
 						print '</td>';
 
 						// Ajout des boutons de modification/suppression
 						if (($object->status < ExpenseReport::STATUS_VALIDATED || $object->status == ExpenseReport::STATUS_REFUSED) && $user->rights->expensereport->creer) {
-							print '<td class="nowrap right">';
+							print '<td class="nowrap right linecolaction">';
 
 							print '<a class="editfielda reposition paddingrightonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=editline&token='.newToken().'&rowid='.$line->rowid.'">';
 							print img_edit();
@@ -2420,7 +2420,7 @@ if ($action == 'create') {
 
 				// Add line with link to add new file or attach to an existing file
 				print '<tr class="liste_titre">';
-				print '<td colspan="'.$colspan.'" class="liste_titre">';
+				print '<td colspan="'.$colspan.'" class="liste_titre expensereportautoload">';
 				print '<a href="" class="commonlink auploadnewfilenow reposition">'.$langs->trans("UploadANewFileNow");
 				print img_picto($langs->trans("UploadANewFileNow"), 'chevron-down', '', false, 0, 0, '', 'marginleftonly');
 				print '</a>';
@@ -2473,21 +2473,21 @@ if ($action == 'create') {
 				include DOL_DOCUMENT_ROOT.'/expensereport/tpl/expensereport_linktofile.tpl.php';
 				include DOL_DOCUMENT_ROOT.'/expensereport/tpl/expensereport_addfile.tpl.php';
 
-				print '<tr class="liste_titre">';
+				print '<tr class="liste_titre expensereportcreate">';
 				print '<td></td>';
-				print '<td class="center">'.$langs->trans('Date').'</td>';
+				print '<td class="center expensereportcreatedate">'.$langs->trans('Date').'</td>';
 				if (!empty($conf->projet->enabled)) {
 					print '<td class="minwidth100imp">'.$form->textwithpicto($langs->trans('Project'), $langs->trans("ClosedProjectsAreHidden")).'</td>';
 				}
-				print '<td class="center">'.$langs->trans('Type').'</td>';
+				print '<td class="center expensereportcreatetype">'.$langs->trans('Type').'</td>';
 				if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) {
 					print '<td>'.$langs->trans('CarCategory').'</td>';
 				}
-				print '<td>'.$langs->trans('Description').'</td>';
-				print '<td class="right">'.$langs->trans('VAT').'</td>';
-				print '<td class="right">'.$langs->trans('PriceUHT').'</td>';
-				print '<td class="right">'.$langs->trans('PriceUTTC').'</td>';
-				print '<td class="right">'.$langs->trans('Qty').'</td>';
+				print '<td class="right expensereportcreatedescription">'.$langs->trans('Description').'</td>';
+				print '<td class="right expensereportcreatevat">'.$langs->trans('VAT').'</td>';
+				print '<td class="right expensereportcreatepriceuth">'.$langs->trans('PriceUHT').'</td>';
+				print '<td class="right expensereportcreatepricettc">'.$langs->trans('PriceUTTC').'</td>';
+				print '<td class="right expensereportcreateqty">'.$langs->trans('Qty').'</td>';
 				print '<td></td>';
 				print '<td></td>';
 				print '<td></td>';

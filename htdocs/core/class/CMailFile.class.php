@@ -140,7 +140,7 @@ class CMailFile
 	 */
 	public function __construct($subject, $to, $from, $msg, $filename_list = array(), $mimetype_list = array(), $mimefilename_list = array(), $addr_cc = "", $addr_bcc = "", $deliveryreceipt = 0, $msgishtml = 0, $errors_to = '', $css = '', $trackid = '', $moreinheader = '', $sendcontext = 'standard', $replyto = '')
 	{
-		global $conf, $dolibarr_main_data_root;
+		global $conf, $dolibarr_main_data_root, $user;
 
 		// Clean values of $mimefilename_list
 		if (is_array($mimefilename_list)) {
@@ -251,9 +251,31 @@ class CMailFile
 			}
 		}
 
-		// Add autocopy to if not already in $to (Note: Adding bcc for specific modules are also done from pages)
-		if (!empty($conf->global->MAIN_MAIL_AUTOCOPY_TO) && !preg_match('/'.preg_quote($conf->global->MAIN_MAIL_AUTOCOPY_TO, '/').'/i', $to)) {
-			$addr_bcc .= ($addr_bcc ? ', ' : '').$conf->global->MAIN_MAIL_AUTOCOPY_TO;
+		// Add auto copy to if not already in $to (Note: Adding bcc for specific modules are also done from pages)
+		// For example MAIN_MAIL_AUTOCOPY_TO can be 'email@example.com, __USER_EMAIL__, ...'
+		if (!empty($conf->global->MAIN_MAIL_AUTOCOPY_TO)) {
+			$listofemailstoadd = explode(',', $conf->global->MAIN_MAIL_AUTOCOPY_TO);
+			foreach ($listofemailstoadd as $key => $val) {
+				$emailtoadd = $listofemailstoadd[$key];
+				if (trim($emailtoadd) == '__USER_EMAIL__') {
+					if (!empty($user) && !empty($user->email)) {
+						$emailtoadd = $user->email;
+					} else {
+						$emailtoadd = '';
+					}
+				}
+				if ($emailtoadd && preg_match('/'.preg_quote($emailtoadd, '/').'/i', $to)) {
+					$emailtoadd = '';	// Email already in the "To"
+				}
+				if ($emailtoadd) {
+					$listofemailstoadd[$key] = $emailtoadd;
+				} else {
+					unset($listofemailstoadd[$key]);
+				}
+			}
+			if (!empty($listofemailstoadd)) {
+				$addr_bcc .= ($addr_bcc ? ', ' : '').join(', ', $listofemailstoadd);
+			}
 		}
 
 		$this->subject = $subject;

@@ -64,13 +64,13 @@ class Product extends CommonObject
 	 * @var array	List of child tables. To test if we can delete object.
 	 */
 	protected $childtables = array(
-		'supplier_proposaldet',
-		'propaldet',
-		'commandedet',
-		'facturedet',
-		'contratdet',
-		'facture_fourn_det',
-		'commande_fournisseurdet'
+		'supplier_proposaldet' => array('name' => 'SupplierProposal', 'parent' => 'supplier_proposal', 'parentkey' => 'fk_supplier_proposal'),
+		'propaldet' => array('name' => 'Proposal', 'parent' => 'propal', 'parentkey' => 'fk_propal'),
+		'commandedet' => array('name' => 'Order', 'parent' => 'commande', 'parentkey' => 'fk_commande'),
+		'facturedet' => array('name' => 'Invoice', 'parent' => 'facture', 'parentkey' => 'fk_facture'),
+		'contratdet' => array('name' => 'Contract', 'parent' => 'contrat', 'parentkey' => 'fk_contrat'),
+		'facture_fourn_det' => array('name' => 'SupplierInvoice', 'parent' => 'facture_fourn', 'parentkey' => 'fk_facture_fourn'),
+		'commande_fournisseurdet' => array('name' => 'SupplierOrder', 'parent' => 'commande_fournisseur', 'parentkey' => 'fk_commande')
 	);
 
 	/**
@@ -272,7 +272,7 @@ class Product extends CommonObject
 	public $fk_default_bom;
 
 	/**
-	 * We must manage lot/batch number, sell-by date and so on : '1':yes '0':no
+	 * We must manage lot/batch number, sell-by date and so on : '0':no, '1':yes, '2": yes with unique serial number
 	 *
 	 * @var int
 	 */
@@ -1979,7 +1979,10 @@ class Product extends CommonObject
 				$sql .= " pfp.multicurrency_price, pfp.multicurrency_unitprice, pfp.multicurrency_tx, pfp.fk_multicurrency, pfp.multicurrency_code,";
 				$sql .= " pfp.packaging";
 				$sql .= " FROM ".$this->db->prefix()."product_fournisseur_price as pfp";
-				$sql .= " WHERE pfp.fk_product = ".((int) $product_id);
+				$sql .= " WHERE 1 = 1";
+				if ($product_id > 0) {
+					$sql .= " AND pfp.fk_product = ".((int) $product_id);
+				}
 				if ($fourn_ref != 'none') {
 					$sql .= " AND pfp.ref_fourn = '".$this->db->escape($fourn_ref)."'";
 				}
@@ -2221,7 +2224,8 @@ class Product extends CommonObject
 				$this->db->commit();
 			} else {
 				$this->db->rollback();
-				dol_print_error($this->db);
+				$this->error = $this->db->lasterror();
+				return -1;
 			}
 		}
 
@@ -5679,7 +5683,7 @@ class Product extends CommonObject
 	public function load_state_board()
 	{
 		// phpcs:enable
-		global $conf, $user, $hookmanager;
+		global $hookmanager;
 
 		$this->nb = array();
 
@@ -5689,7 +5693,7 @@ class Product extends CommonObject
 		// Add where from hooks
 		if (is_object($hookmanager)) {
 			$parameters = array();
-			$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
+			$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $this); // Note that $action and $object may have been modified by hook
 			$sql .= $hookmanager->resPrint;
 		}
 		$sql .= ' GROUP BY fk_product_type';

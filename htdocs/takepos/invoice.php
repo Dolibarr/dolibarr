@@ -912,6 +912,7 @@ $form = new Form($db);
 <script type="text/javascript">
 var selectedline=0;
 var selectedtext="";
+<?php if ($action=="valid") echo "var place=0;";?> // Set to default place after close sale
 var placeid=<?php echo ($placeid > 0 ? $placeid : 0); ?>;
 $(document).ready(function() {
 	var idoflineadded = <?php echo (empty($idoflineadded) ? 0 : $idoflineadded); ?>;
@@ -1606,7 +1607,7 @@ if (($action == "valid" || $action == "history") && $invoice->type != Facture::T
 
 if ($action == "search") {
 	print '<center>
-	<input type="text" id="search" name="search" onkeyup="Search2();" name="search" style="width:80%;font-size: 150%;" placeholder=' . $langs->trans('Search').'
+	<input type="text" id="search" class="input-search-takepos" name="search" onkeyup="Search2();" style="width: 80%; font-size: 150%;" placeholder="'.dol_escape_htmltag($langs->trans('Search')).'">
 	</center>';
 }
 

@@ -65,6 +65,7 @@ function SetCurrentFolder( resourceType, folderPath )
 
 function OnSubmit()
 {
+	console.log("Click on OnSubmit");
 	if ( document.getElementById('NewFile').value.length == 0 )
 	{
 		alert( 'Please select a file from your computer' );
@@ -80,6 +81,8 @@ function OnSubmit()
 
 function OnUploadCompleted( errorNumber, data )
 {
+	console.log("errorNumber = "+errorNumber);
+
 	// Reset the Upload Worker Frame.
 	window.parent.frames['frmUploadWorker'].location = 'javascript:void(0)' ;
 
@@ -106,7 +109,7 @@ function OnUploadCompleted( errorNumber, data )
 			alert( 'A file with the same name is already available. The uploaded file has been renamed to "' + data + '"' );
 			break;
 		case 202:
-			alert( 'Invalid file' );
+			alert( 'Invalid file (Bad extension)' );
 			break;
 		default:
 			alert( 'Error on file upload. Error number: ' + errorNumber );

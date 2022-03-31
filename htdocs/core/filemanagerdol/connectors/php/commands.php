@@ -203,12 +203,17 @@ function FileUpload($resourceType, $currentFolder, $sCommand, $CKEcallback = '')
 
 		$oFile = isset($_FILES['NewFile']) ? $_FILES['NewFile'] : $_FILES['upload'];
 
+		// $resourceType should be 'Image';
+		$detectHtml = 0;
+
 		// Map the virtual path to the local server path.
 		$sServerDir = ServerMapFolder($resourceType, $currentFolder, $sCommand);
 
 		// Get the uploaded file name.
 		$sFileName = $oFile['name'];
-		$sFileName = SanitizeFileName($sFileName);
+
+		//$sFileName = SanitizeFileName($sFileName);
+		$sFileName = dol_sanitizeFileName($sFileName);
 
 		$sOriginalFileName = $sFileName;
 
@@ -216,6 +221,8 @@ function FileUpload($resourceType, $currentFolder, $sCommand, $CKEcallback = '')
 		$sExtension = substr($sFileName, (strrpos($sFileName, '.') + 1));
 		$sExtension = strtolower($sExtension);
 
+		//var_dump($Config);
+		/*
 		if (isset($Config['SecureImageUploads'])) {
 			if (($isImageValid = IsImageValid($oFile['tmp_name'], $sExtension)) === false) {
 				$sErrorNumber = '202';
@@ -228,6 +235,14 @@ function FileUpload($resourceType, $currentFolder, $sCommand, $CKEcallback = '')
 				$sErrorNumber = '202';
 			}
 		}
+		*/
+
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
+		$isImageValid = image_format_supported($sFileName) > 0 ? true : false;
+		if (!$isImageValid) {
+			$sErrorNumber = '202';
+		}
+
 
 		// Check if it is an allowed extension.
 		if (!$sErrorNumber && IsAllowedExt($sExtension, $resourceType)) {
@@ -241,7 +256,8 @@ function FileUpload($resourceType, $currentFolder, $sCommand, $CKEcallback = '')
 					$sFileName = RemoveExtension($sOriginalFileName).'('.$iCounter.').'.$sExtension;
 					$sErrorNumber = '201';
 				} else {
-					move_uploaded_file($oFile['tmp_name'], $sFilePath);
+					include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+					dol_move_uploaded_file($oFile['tmp_name'], $sFilePath, 0, 0);
 
 					if (is_file($sFilePath)) {
 						if (isset($Config['ChmodOnUpload']) && !$Config['ChmodOnUpload']) {

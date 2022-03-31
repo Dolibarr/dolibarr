@@ -126,7 +126,7 @@ print '</td>';
 $total_cost = 0;
 print '<td id="costline_'.$line->id.'" class="linecolcost nowrap right">';
 $coldisplay++;
-echo price($line->total_cost);
+echo '<span class="amount">'.price($line->total_cost).'</span>';
 print '</td>';
 
 if ($this->status == 0 && ($object_rights->write) && $action != 'selectlines') {
@@ -152,12 +152,12 @@ if ($this->status == 0 && ($object_rights->write) && $action != 'selectlines') {
 		print '<td class="linecolmove tdlineupdown center">';
 		$coldisplay++;
 		if ($i > 0) {
-			print '<a class="lineupdown" href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=up&amp;rowid='.$line->id.'">';
+			print '<a class="lineupdown" href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&action=up&token='.newToken().'&rowid='.$line->id.'">';
 			echo img_up('default', 0, 'imgupforline');
 			print '</a>';
 		}
 		if ($i < $num - 1) {
-			print '<a class="lineupdown" href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=down&amp;rowid='.$line->id.'">';
+			print '<a class="lineupdown" href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&action=down&token='.newToken().'&rowid='.$line->id.'">';
 			echo img_down('default', 0, 'imgdownforline');
 			print '</a>';
 		}
@@ -236,15 +236,16 @@ if ($resql) {
 		// Efficiency
 		print '<td class="linecolefficiency nowrap right" id="sub_bom_efficiency_'.$sub_bom_line->id.'">'.$sub_bom_line->efficiency.'</td>';
 
+		// Cost
 		if (!empty($sub_bom->id)) {
 			$sub_bom->calculateCosts();
-			print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'">'.price($sub_bom->total_cost * $sub_bom_line->qty * $line->qty).'</td>';
+			print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'"><span class="amount">'.price($sub_bom->total_cost * $sub_bom_line->qty * $line->qty).'</span></td>';
 			$total_cost+= $sub_bom->total_cost * $sub_bom_line->qty * $line->qty;
 		} elseif ($sub_bom_product->cost_price > 0) {
-			print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'">'.price($sub_bom_product->cost_price * $sub_bom_line->qty * $line->qty).'</td>';
+			print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'"><span class="amount">'.price($sub_bom_product->cost_price * $sub_bom_line->qty * $line->qty).'</span></td>';
 			$total_cost+= $sub_bom_product->cost_price * $sub_bom_line->qty * $line->qty;
 		} elseif ($sub_bom_product->pmp > 0) {	// PMP if cost price isn't defined
-			print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'">'.price($sub_bom_product->pmp * $sub_bom_line->qty * $line->qty).'</td>';
+			print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'"><span class="amount">'.price($sub_bom_product->pmp * $sub_bom_line->qty * $line->qty).'</span></td>';
 			$total_cost.= $sub_bom_product->pmp * $sub_bom_line->qty * $line->qty;
 		} else {	// Minimum purchase price if cost price and PMP aren't defined
 			$sql_supplier_price = 'SELECT MIN(price) AS min_price, quantity AS qty FROM '.MAIN_DB_PREFIX.'product_fournisseur_price';
@@ -254,7 +255,7 @@ if ($resql) {
 				$obj = $object->db->fetch_object($resql_supplier_price);
 				$line_cost = $obj->min_price/$obj->qty * $sub_bom_line->qty * $line->qty;
 
-				print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'">'.price($line_cost).'</td>';
+				print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'"><span class="amount">'.price($line_cost).'</span></td>';
 				$total_cost+= $line_cost;
 			}
 		}
@@ -266,11 +267,12 @@ if ($resql) {
 }
 
 // Replace of the total_cost value by the sum of all sub-BOM lines total_cost
+// TODO Remove this bad practice. We should not replace content of ouput using javascript but value should be good during generation of output.
 if ($total_cost > 0) {
 	$line->total_cost = price($total_cost);
 	?>
 	<script>
-		$('#costline_<?php echo $line->id?>').html("<?php echo "".price($total_cost)?>");
+		$('#costline_<?php echo $line->id?>').html('<?php echo "<span class=\"amount\">".price($total_cost)."</span>"; ?>');
 	</script>
 	<?php
 }
