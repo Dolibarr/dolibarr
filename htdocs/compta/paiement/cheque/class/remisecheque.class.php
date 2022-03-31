@@ -730,7 +730,7 @@ class RemiseCheque extends CommonObject
 		$bankline = new AccountLine($db);
 		$bankline->fetch($bank_id);
 
-		/* Conciliation is allowed because when check is returned, a new line is created onto bank transaction log.
+		/* Reconciliation is allowed because when check is returned, a new line is created onto bank transaction log.
 		if ($bankline->rappro)
 		{
 			$this->error='ActionRefusedLineAlreadyConciliated';
@@ -739,7 +739,7 @@ class RemiseCheque extends CommonObject
 
 		$this->db->begin();
 
-		// Not conciliated, we can delete it
+		// Not reconciled, we can delete it
 		//$bankline->delete($user);    // We delete
 
 		$bankaccount = $payment->fk_account;

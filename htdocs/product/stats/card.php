@@ -51,9 +51,12 @@ $error = 0;
 $mesg = '';
 $graphfiles = array();
 
-$socid = '';
+$socid = GETPOST('socid', 'int');
 if (!empty($user->socid)) {
 	$socid = $user->socid;
+}
+if ($socid < 0) {
+	$socid = 0;
 }
 
 // Security check
@@ -174,7 +177,7 @@ if ((!($id > 0) && empty($ref)) || $notab) {
 	$head[$h][2] = 'popularity';
 	$h++;
 
-	print dol_get_fiche_head($head, 'chart', $langs->trans("Statistics"), -1);
+	print dol_get_fiche_head($head, 'chart', '', -1);
 }
 
 
@@ -228,6 +231,13 @@ if ($result || !($id > 0)) {
 	arsort($arrayyears);
 	print $form->selectarray('search_year', $arrayyears, $search_year, 1, 0, 0, '', 0, 0, 0, '', 'width75');
 	print '</td></tr>';
+
+	// thirdparty
+	print '<tr><td class="titlefield">'.$langs->trans("ThirdParty").'</td><td>';
+	print img_picto('', 'company', 'class="pictofixedwidth"');
+	print $form->select_company($socid, 'socid', '', 1, 0, 0, array(), 0, 'widthcentpercentminusx maxwidth400');
+	print '</td></tr>';
+
 	print '</table>';
 	print '<div class="center"><input type="submit" name="submit" class="button small" value="'.$langs->trans("Refresh").'"></div>';
 	print '</form><br>';
@@ -235,13 +245,19 @@ if ($result || !($id > 0)) {
 	print '<br>';
 
 
+	$param = '';
+	$param .= (GETPOSTISSET('id') ? '&id='.GETPOST('id', 'int') : '&id='.$object->id).(($type != '' && $type != '-1') ? '&type='.((int) $type) : '').'&search_year='.((int) $search_year).($notab ? '&notab='.$notab : '');
+	if ($socid > 0) {
+		$param .= '&socid='.((int) $socid);
+	}
+
 	// Choice of stats mode (byunit or bynumber)
 	if (!empty($conf->dol_use_jmobile)) {
 		print "\n".'<div class="fichecenter"><div class="nowrap">'."\n";
 	}
 
 	if ($mode == 'bynumber') {
-		print '<a class="a-mesure-disabled marginleftonly marginrightonly reposition" href="'.$_SERVER["PHP_SELF"].'?'.(GETPOSTISSET('id') ? 'id='.GETPOST('id', 'int') : 'id='.$object->id).(($type != '' && $type != '-1') ? '&type='.((int) $type) : '').'&mode=byunit&search_year='.((int) $search_year).($notab ? '&notab='.$notab : '').'">';
+		print '<a class="a-mesure-disabled marginleftonly marginrightonly reposition" href="'.$_SERVER["PHP_SELF"].'?mode=byunit'.$param.'">';
 	} else {
 		print '<span class="a-mesure marginleftonly marginrightonly">';
 	}
@@ -257,7 +273,7 @@ if ($result || !($id > 0)) {
 	}
 
 	if ($mode == 'byunit') {
-		print '<a class="a-mesure-disabled marginleftonly marginrightonly reposition" href="'.$_SERVER["PHP_SELF"].'?'.(GETPOSTISSET('id') ? 'id='.GETPOST('id', 'int') : 'id='.$object->id).(($type != '' && $type != '-1') ? '&type='.((int) $type) : '').'&mode=bynumber&search_year='.((int) $search_year).($notab ? '&notab='.$notab : '').'">';
+		print '<a class="a-mesure-disabled marginleftonly marginrightonly reposition" href="'.$_SERVER["PHP_SELF"].'?mode=bynumber'.$param.'">';
 	} else {
 		print '<span class="a-mesure marginleftonly marginrightonly">';
 	}

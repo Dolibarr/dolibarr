@@ -30,9 +30,14 @@
 -- -- VPGSQL8.2 SELECT dol_util_rebuild_sequences();
 
 
+ALTER TABLE llx_holiday ADD COLUMN nb_open_day double(24,8) DEFAULT NULL;
+
 -- Missing in v15 or lower
 
+ALTER TABLE llx_c_actioncomm MODIFY COLUMN libelle varchar(128);
 ALTER TABLE llx_c_availability MODIFY COLUMN label varchar(128);
+ALTER TABLE llx_c_barcode_type MODIFY COLUMN libelle varchar(128);
+ALTER TABLE llx_c_chargesociales MODIFY COLUMN libelle varchar(128);
 ALTER TABLE llx_c_civility MODIFY COLUMN label varchar(128);
 ALTER TABLE llx_c_country MODIFY COLUMN label varchar(128);
 ALTER TABLE llx_c_currencies MODIFY COLUMN label varchar(128);
@@ -40,8 +45,10 @@ ALTER TABLE llx_c_effectif MODIFY COLUMN libelle varchar(128);
 ALTER TABLE llx_c_exp_tax_cat MODIFY COLUMN label varchar(128);
 ALTER TABLE llx_c_hrm_department MODIFY COLUMN label varchar(128);
 ALTER TABLE llx_c_hrm_function MODIFY COLUMN label varchar(128);
+ALTER TABLE llx_c_input_method MODIFY COLUMN libelle varchar(128);
 ALTER TABLE llx_c_input_reason MODIFY COLUMN label varchar(128);
 ALTER TABLE llx_c_lead_status MODIFY COLUMN label varchar(128);
+ALTER TABLE llx_c_paiement MODIFY COLUMN libelle varchar(128);
 ALTER TABLE llx_c_paper_format MODIFY COLUMN label varchar(128);
 ALTER TABLE llx_c_partnership_type MODIFY COLUMN label varchar(128);
 ALTER TABLE llx_c_product_nature MODIFY COLUMN label varchar(128);
@@ -50,25 +57,21 @@ ALTER TABLE llx_c_propalst MODIFY COLUMN label varchar(128);
 ALTER TABLE llx_c_prospectcontactlevel MODIFY COLUMN label varchar(128);
 ALTER TABLE llx_c_prospectlevel MODIFY COLUMN label varchar(128);
 ALTER TABLE llx_c_recruitment_origin MODIFY COLUMN label varchar(128);
-ALTER TABLE llx_c_shipment_package_type MODIFY COLUMN label varchar(128);
-ALTER TABLE llx_c_type_container MODIFY COLUMN label varchar(128);
-ALTER TABLE llx_c_type_fees MODIFY COLUMN label varchar(128);
-ALTER TABLE llx_c_type_resource MODIFY COLUMN label varchar(128);
-ALTER TABLE llx_c_units MODIFY COLUMN label varchar(128);
-ALTER TABLE llx_c_actioncomm MODIFY COLUMN libelle varchar(128);
-ALTER TABLE llx_c_barcode_type MODIFY COLUMN libelle varchar(128);
-ALTER TABLE llx_c_chargesociales MODIFY COLUMN libelle varchar(128);
-ALTER TABLE llx_c_input_method MODIFY COLUMN libelle varchar(128);
-ALTER TABLE llx_c_paiement MODIFY COLUMN libelle varchar(128);
 ALTER TABLE llx_c_shipment_mode MODIFY COLUMN libelle varchar(128);
+ALTER TABLE llx_c_shipment_package_type MODIFY COLUMN label varchar(128);
 ALTER TABLE llx_c_stcomm MODIFY COLUMN libelle varchar(128);
 ALTER TABLE llx_c_stcommcontact MODIFY COLUMN libelle varchar(128);
 ALTER TABLE llx_c_type_contact MODIFY COLUMN libelle varchar(128);
+ALTER TABLE llx_c_type_container MODIFY COLUMN label varchar(128);
+ALTER TABLE llx_c_type_fees MODIFY COLUMN label varchar(128);
+ALTER TABLE llx_c_type_resource MODIFY COLUMN label varchar(128);
 ALTER TABLE llx_c_typent MODIFY COLUMN libelle varchar(128);
+ALTER TABLE llx_c_units MODIFY COLUMN label varchar(128);
+
 
 UPDATE llx_rights_def SET perms = 'writeall' WHERE perms = 'writeall_advance' AND module = 'holiday';
 
-
+-- Insert company legal forms of Mexico   
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (154, '15401', '601 - General de Ley Personas Morales', 1);
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (154, '15402', '603 - Personas Morales con Fines no Lucrativos', 1);
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (154, '15403', '605 - Sueldos y Salarios e Ingresos Asimilados a Salarios', 1);
@@ -88,6 +91,10 @@ INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (154, 
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (154, '15417', '624 - Coordinados', 1);
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (154, '15418', '625 - Régimen de las Actividades Empresariales con ingresos a través de Plataformas Tecnológicas', 1);
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (154, '15419', '626 - Régimen Simplificado de Confianza', 1);
+
+
+ALTER TABLE llx_partnership ADD UNIQUE INDEX uk_fk_type_fk_soc (fk_type, fk_soc, date_partnership_start);
+ALTER TABLE llx_partnership ADD UNIQUE INDEX uk_fk_type_fk_member (fk_type, fk_member, date_partnership_start);
 
 
 -- v16
@@ -188,40 +195,40 @@ ALTER TABLE llx_facture_fourn_rec_extrafields ADD INDEX idx_facture_fourn_rec_ex
 
 CREATE TABLE llx_facture_fourn_det_rec
 (
-    rowid				integer AUTO_INCREMENT PRIMARY KEY,
-    fk_facture_fourn		integer NOT NULL,
-    fk_parent_line	integer NULL,
-    fk_product		integer NULL,
-    ref               varchar(50),
-    label				varchar(255) DEFAULT NULL,
-    description		text,
-    pu_ht             double(24,8),
-  pu_ttc            double(24,8),
-  qty               real,
-  remise_percent	real       DEFAULT 0,
-  fk_remise_except	integer    NULL,
-  vat_src_code					varchar(10)  DEFAULT '',
-  tva_tx			double(7,4),
-  localtax1_tx      double(7,4) DEFAULT 0,
-  localtax1_type	varchar(10) NULL,
-  localtax2_tx      double(7,4) DEFAULT 0,
-  localtax2_type	varchar(10)	 NULL,
-  total_ht			double(24,8),
-  total_tva			double(24,8),
-  total_localtax1	double(24,8) DEFAULT 0,
-  total_localtax2	double(24,8) DEFAULT 0,
-  total_ttc			double(24,8),
-  product_type		integer DEFAULT 0,
-  date_start        integer   DEFAULT NULL,
-  date_end          integer   DEFAULT NULL,
-  info_bits			integer DEFAULT 0,
-  special_code		integer UNSIGNED DEFAULT 0,
-  rang				integer DEFAULT 0,
-  fk_unit           integer    DEFAULT NULL,
-  import_key		varchar(14),
-  fk_user_author	integer,
-  fk_user_modif     integer,
-  fk_multicurrency          integer,
+  rowid                 integer AUTO_INCREMENT PRIMARY KEY,
+  fk_facture_fourn  	integer NOT NULL,
+  fk_parent_line        integer NULL,
+  fk_product            integer NULL,
+  ref                   varchar(50),
+  label                 varchar(255) DEFAULT NULL,
+  description           text,
+  pu_ht                 double(24,8),
+  pu_ttc                double(24,8),
+  qty                   real,
+  remise_percent        real       DEFAULT 0,
+  fk_remise_except      integer    NULL,
+  vat_src_code          varchar(10)  DEFAULT '',
+  tva_tx                double(7,4),
+  localtax1_tx          double(7,4) DEFAULT 0,
+  localtax1_type        varchar(10) NULL,
+  localtax2_tx          double(7,4) DEFAULT 0,
+  localtax2_type        varchar(10)	 NULL,
+  total_ht              double(24,8),
+  total_tva             double(24,8),
+  total_localtax1       double(24,8) DEFAULT 0,
+  total_localtax2       double(24,8) DEFAULT 0,
+  total_ttc             double(24,8),
+  product_type          integer   DEFAULT 0,
+  date_start            integer   DEFAULT NULL,
+  date_end              integer   DEFAULT NULL,
+  info_bits             integer   DEFAULT 0,
+  special_code          integer  UNSIGNED DEFAULT 0,
+  rang                  integer   DEFAULT 0,
+  fk_unit               integer   DEFAULT NULL,
+  import_key            varchar(14),
+  fk_user_author        integer,
+  fk_user_modif         integer,
+  fk_multicurrency      integer,
   multicurrency_code        varchar(3),
   multicurrency_subprice    double(24,8) DEFAULT 0,
   multicurrency_total_ht    double(24,8) DEFAULT 0,
@@ -252,10 +259,9 @@ ALTER TABLE llx_product_attribute_value MODIFY COLUMN value VARCHAR(255) NOT NUL
 ALTER TABLE llx_product_attribute_value ADD COLUMN position INTEGER NOT NULL DEFAULT 0;
 ALTER TABLE llx_product_attribute CHANGE rang position INTEGER DEFAULT 0 NOT NULL;
 
-
 ALTER TABLE llx_advtargetemailing RENAME TO llx_mailing_advtarget;
 
-ALTER TABLE llx_mailing ADD UNIQUE uk_mailing(titre, entity);
+ALTER TABLE llx_mailing ADD UNIQUE INDEX uk_mailing(titre, entity);
 
 create table llx_inventory_extrafields
 (
@@ -264,8 +270,8 @@ create table llx_inventory_extrafields
     fk_object                 integer NOT NULL,
     import_key                varchar(14)                          		-- import key
 ) ENGINE=innodb;
-ALTER TABLE llx_inventory_extrafields ADD INDEX idx_inventory_extrafields (fk_object);
 
+ALTER TABLE llx_inventory_extrafields ADD INDEX idx_inventory_extrafields (fk_object);
 
 ALTER TABLE llx_reception MODIFY COLUMN ref_supplier varchar(128);
 
@@ -280,3 +286,15 @@ ALTER TABLE llx_propal ADD last_main_doc VARCHAR(255) NULL AFTER model_pdf;
 
 UPDATE llx_c_country SET eec=0 WHERE eec IS NULL;
 ALTER TABLE llx_c_country MODIFY COLUMN eec tinyint DEFAULT 0 NOT NULL;
+
+ALTER TABLE llx_chargesociales ADD COLUMN note_private text;
+ALTER TABLE llx_chargesociales ADD COLUMN note_public text;
+
+ALTER TABLE llx_c_availability ADD COLUMN type_duration varchar(1);
+ALTER TABLE llx_c_availability ADD COLUMN qty real DEFAULT 0;
+
+UPDATE llx_c_availability SET type_duration = null, qty = 0 WHERE code = 'AV_NOW';
+UPDATE llx_c_availability SET type_duration = 'w', qty = 1 WHERE code = 'AV_1W';
+UPDATE llx_c_availability SET type_duration = 'w', qty = 2 WHERE code = 'AV_2W';
+UPDATE llx_c_availability SET type_duration = 'w', qty = 3 WHERE code = 'AV_3W';
+UPDATE llx_c_availability SET type_duration = 'w', qty = 4 WHERE code = 'AV_4W';

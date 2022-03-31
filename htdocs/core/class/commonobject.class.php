@@ -2931,15 +2931,20 @@ abstract class CommonObject
 			return -1;
 		}
 
+		$fieldposition = 'rang'; // @todo Rename 'rang' into 'position'
+		if (in_array($this->table_element_line, array('bom_bomline', 'ecm_files', 'emailcollector_emailcollectoraction', 'product_attribute_value'))) {
+			$fieldposition = 'position';
+		}
+
 		// Count number of lines to reorder (according to choice $renum)
 		$nl = 0;
 		$sql = "SELECT count(rowid) FROM ".$this->db->prefix().$this->table_element_line;
 		$sql .= " WHERE ".$this->fk_element." = ".((int) $this->id);
 		if (!$renum) {
-			$sql .= ' AND rang = 0';
+			$sql .= " AND " . $fieldposition . " = 0";
 		}
 		if ($renum) {
-			$sql .= ' AND rang <> 0';
+			$sql .= " AND " . $fieldposition . " <> 0";
 		}
 
 		dol_syslog(get_class($this)."::line_order", LOG_DEBUG);
@@ -2960,7 +2965,7 @@ abstract class CommonObject
 			if ($fk_parent_line) {
 				$sql .= ' AND fk_parent_line IS NULL';
 			}
-			$sql .= " ORDER BY rang ASC, rowid ".$rowidorder;
+			$sql .= " ORDER BY " . $fieldposition . " ASC, rowid " . $rowidorder;
 
 			dol_syslog(get_class($this)."::line_order search all parent lines", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -3001,12 +3006,17 @@ abstract class CommonObject
 	 */
 	public function getChildrenOfLine($id, $includealltree = 0)
 	{
+		$fieldposition = 'rang'; // @todo Rename 'rang' into 'position'
+		if (in_array($this->table_element_line, array('bom_bomline', 'ecm_files', 'emailcollector_emailcollectoraction', 'product_attribute_value'))) {
+			$fieldposition = 'position';
+		}
+
 		$rows = array();
 
 		$sql = "SELECT rowid FROM ".$this->db->prefix().$this->table_element_line;
 		$sql .= " WHERE ".$this->fk_element." = ".((int) $this->id);
 		$sql .= ' AND fk_parent_line = '.((int) $id);
-		$sql .= ' ORDER BY rang ASC';
+		$sql .= " ORDER BY " . $fieldposition . " ASC";
 
 		dol_syslog(get_class($this)."::getChildrenOfLine search children lines for line ".$id, LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -3077,7 +3087,7 @@ abstract class CommonObject
 	{
 		global $hookmanager;
 		$fieldposition = 'rang'; // @todo Rename 'rang' into 'position'
-		if (in_array($this->table_element_line, array('bom_bomline', 'ecm_files', 'emailcollector_emailcollectoraction'))) {
+		if (in_array($this->table_element_line, array('bom_bomline', 'ecm_files', 'emailcollector_emailcollectoraction', 'product_attribute_value'))) {
 			$fieldposition = 'position';
 		}
 
@@ -3123,13 +3133,13 @@ abstract class CommonObject
 	{
 		if ($rang > 1) {
 			$fieldposition = 'rang';
-			if (in_array($this->table_element_line, array('ecm_files', 'emailcollector_emailcollectoraction'))) {
+			if (in_array($this->table_element_line, array('ecm_files', 'emailcollector_emailcollectoraction', 'product_attribute_value'))) {
 				$fieldposition = 'position';
 			}
 
 			$sql = "UPDATE ".$this->db->prefix().$this->table_element_line." SET ".$fieldposition." = ".((int) $rang);
 			$sql .= " WHERE ".$this->fk_element." = ".((int) $this->id);
-			$sql .= ' AND rang = '.((int) ($rang - 1));
+			$sql .= " AND " . $fieldposition . " = " . ((int) ($rang - 1));
 			if ($this->db->query($sql)) {
 				$sql = "UPDATE ".$this->db->prefix().$this->table_element_line." SET ".$fieldposition." = ".((int) ($rang - 1));
 				$sql .= ' WHERE rowid = '.((int) $rowid);
@@ -3154,13 +3164,13 @@ abstract class CommonObject
 	{
 		if ($rang < $max) {
 			$fieldposition = 'rang';
-			if (in_array($this->table_element_line, array('ecm_files', 'emailcollector_emailcollectoraction'))) {
+			if (in_array($this->table_element_line, array('ecm_files', 'emailcollector_emailcollectoraction', 'product_attribute_value'))) {
 				$fieldposition = 'position';
 			}
 
 			$sql = "UPDATE ".$this->db->prefix().$this->table_element_line." SET ".$fieldposition." = ".((int) $rang);
 			$sql .= " WHERE ".$this->fk_element." = ".((int) $this->id);
-			$sql .= ' AND rang = '.((int) ($rang + 1));
+			$sql .= " AND " . $fieldposition . " = " . ((int) ($rang + 1));
 			if ($this->db->query($sql)) {
 				$sql = "UPDATE ".$this->db->prefix().$this->table_element_line." SET ".$fieldposition." = ".((int) ($rang + 1));
 				$sql .= ' WHERE rowid = '.((int) $rowid);
@@ -3181,7 +3191,12 @@ abstract class CommonObject
 	 */
 	public function getRangOfLine($rowid)
 	{
-		$sql = "SELECT rang FROM ".$this->db->prefix().$this->table_element_line;
+		$fieldposition = 'rang';
+		if (in_array($this->table_element_line, array('ecm_files', 'emailcollector_emailcollectoraction', 'product_attribute_value'))) {
+			$fieldposition = 'position';
+		}
+
+		$sql = "SELECT " . $fieldposition . " FROM ".$this->db->prefix().$this->table_element_line;
 		$sql .= " WHERE rowid = ".((int) $rowid);
 
 		dol_syslog(get_class($this)."::getRangOfLine", LOG_DEBUG);
@@ -3200,9 +3215,14 @@ abstract class CommonObject
 	 */
 	public function getIdOfLine($rang)
 	{
+		$fieldposition = 'rang';
+		if (in_array($this->table_element_line, array('ecm_files', 'emailcollector_emailcollectoraction', 'product_attribute_value'))) {
+			$fieldposition = 'position';
+		}
+
 		$sql = "SELECT rowid FROM ".$this->db->prefix().$this->table_element_line;
 		$sql .= " WHERE ".$this->fk_element." = ".((int) $this->id);
-		$sql .= " AND rang = ".((int) $rang);
+		$sql .= " AND " . $fieldposition . " = ".((int) $rang);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$row = $this->db->fetch_row($resql);
@@ -3221,7 +3241,7 @@ abstract class CommonObject
 	{
 		// phpcs:enable
 		$positionfield = 'rang';
-		if ($this->table_element == 'bom_bom') {
+		if (in_array($this->table_element, array('bom_bom', 'product_attribute'))) {
 			$positionfield = 'position';
 		}
 
@@ -4354,9 +4374,10 @@ abstract class CommonObject
 	 *  Check is done into this->childtables. There is no check into llx_element_element.
 	 *
 	 *  @param	int		$id			Force id of object
+	 *  @param	int		$entity		Force entity to check
 	 *  @return	int					<0 if KO, 0 if not used, >0 if already used
 	 */
-	public function isObjectUsed($id = 0)
+	public function isObjectUsed($id = 0, $entity = 0)
 	{
 		global $langs;
 
@@ -4379,11 +4400,25 @@ abstract class CommonObject
 
 		// Test if child exists
 		$haschild = 0;
-		foreach ($arraytoscan as $table => $elementname) {
+		foreach ($arraytoscan as $table => $element) {
 			//print $id.'-'.$table.'-'.$elementname.'<br>';
-			// Check if third party can be deleted
-			$sql = "SELECT COUNT(*) as nb from ".$this->db->prefix().$table;
-			$sql .= " WHERE ".$this->fk_element." = ".((int) $id);
+			// Check if element can be deleted
+			$sql = "SELECT COUNT(*) as nb";
+			$sql.= " FROM ".$this->db->prefix().$table." as c";
+			if (!empty($element['parent']) && !empty($element['parentkey'])) {
+				$sql.= ", ".$this->db->prefix().$element['parent']." as p";
+			}
+			$sql.= " WHERE c.".$this->fk_element." = ".((int) $id);
+			if (!empty($element['parent']) && !empty($element['parentkey'])) {
+				$sql.= " AND c.".$element['parentkey']." = p.rowid";
+			}
+			if (!empty($entity)) {
+				if (!empty($element['parent']) && !empty($element['parentkey'])) {
+					$sql.= " AND p.entity = ".((int) $entity);
+				} else {
+					$sql.= " AND c.entity = ".((int) $entity);
+				}
+			}
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$obj = $this->db->fetch_object($resql);
@@ -4391,11 +4426,12 @@ abstract class CommonObject
 					$langs->load("errors");
 					//print 'Found into table '.$table.', type '.$langs->transnoentitiesnoconv($elementname).', haschild='.$haschild;
 					$haschild += $obj->nb;
-					if (is_numeric($elementname)) {	// old usage
-						$this->errors[] = $langs->transnoentities("ErrorRecordHasAtLeastOneChildOfType", method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref, $table);
-					} else // new usage: $elementname=Translation key
-					{
-						$this->errors[] = $langs->transnoentities("ErrorRecordHasAtLeastOneChildOfType", method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref, $langs->transnoentitiesnoconv($elementname));
+					if (is_numeric($element)) {	// very old usage array('table1', 'table2', ...)
+						$this->errors[] = $langs->transnoentitiesnoconv("ErrorRecordHasAtLeastOneChildOfType", method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref, $table);
+					} elseif (is_string($element)) { // old usage array('table1' => 'TranslateKey1', 'table2' => 'TranslateKey2', ...)
+						$this->errors[] = $langs->transnoentitiesnoconv("ErrorRecordHasAtLeastOneChildOfType",  method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref, $langs->transnoentitiesnoconv($element));
+					} else { // new usage: $element['name']=Translation key
+						$this->errors[] = $langs->transnoentitiesnoconv("ErrorRecordHasAtLeastOneChildOfType",  method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref, $langs->transnoentitiesnoconv($element['name']));
 					}
 					break; // We found at least one, we stop here
 				}
@@ -6648,7 +6684,7 @@ abstract class CommonObject
 
 		// Add validation state class
 		if (!empty($validationClass)) {
-			$morecss.= ' '.$validationClass;
+			$morecss.= $validationClass;
 		}
 
 		if (in_array($type, array('date'))) {
@@ -7067,6 +7103,8 @@ abstract class CommonObject
 					$paramforthenewlink = '';
 					$paramforthenewlink .= (GETPOSTISSET('action') ? '&action='.GETPOST('action', 'aZ09') : '');
 					$paramforthenewlink .= (GETPOSTISSET('id') ? '&id='.GETPOST('id', 'int') : '');
+					$paramforthenewlink .= (GETPOSTISSET('origin') ? '&origin='.GETPOST('origin', 'aZ09') : '');
+					$paramforthenewlink .= (GETPOSTISSET('originid') ? '&originid='.GETPOST('originid', 'int') : '');
 					$paramforthenewlink .= '&fk_'.strtolower($class).'=--IDFORBACKTOPAGE--';
 					// TODO Add Javascript code to add input fields already filled into $paramforthenewlink so we won't loose them when going back to main page
 					$out .= '<a class="butActionNew" title="'.$langs->trans("New").'" href="'.$url_path.'?action=create&backtopage='.urlencode($_SERVER['PHP_SELF'].($paramforthenewlink ? '?'.$paramforthenewlink : '')).'"><span class="fa fa-plus-circle valignmiddle"></span></a>';
@@ -7822,7 +7860,7 @@ abstract class CommonObject
 						}
 
 						// if colspan=0 or 1, the second column is not extended, so the separator must be on 2 columns
-						$out .= $extrafields->showSeparator($key, $this, ($colspan ? $colspan + 1 : 2), $display_type);
+						$out .= $extrafields->showSeparator($key, $this, ($colspan ? $colspan + 1 : 2), $display_type, $mode);
 					} else {
 						$class = (!empty($extrafields->attributes[$this->table_element]['hidden'][$key]) ? 'hideobject ' : '');
 						$csstyle = '';
@@ -7955,7 +7993,7 @@ abstract class CommonObject
 					$out .= $this->getJSListDependancies();
 				}
 
-				$out .= '<!-- /showOptionals --> '."\n";
+				$out .= '<!-- commonobject:showOptionals end --> '."\n";
 			}
 		}
 

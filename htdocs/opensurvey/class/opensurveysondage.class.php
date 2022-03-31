@@ -492,10 +492,12 @@ class Opensurveysondage extends CommonObject
 	public function fetch_lines()
 	{
 		// phpcs:enable
-		$ret = array();
+		$this->lines = array();
 
-		$sql = "SELECT id_users, nom as name, reponses FROM ".MAIN_DB_PREFIX."opensurvey_user_studs";
+		$sql = "SELECT id_users, nom as name, reponses";
+		$sql .= " FROM ".MAIN_DB_PREFIX."opensurvey_user_studs";
 		$sql .= " WHERE id_sondage = '".$this->db->escape($this->id_sondage)."'";
+
 		$resql = $this->db->query($sql);
 
 		if ($resql) {
@@ -505,14 +507,12 @@ class Opensurveysondage extends CommonObject
 				$obj = $this->db->fetch_object($resql);
 				$tmp = array('id_users'=>$obj->id_users, 'nom'=>$obj->name, 'reponses'=>$obj->reponses);
 
-				$ret[] = $tmp;
+				$this->lines[] = $tmp;
 				$i++;
 			}
 		} else {
 			dol_print_error($this->db);
 		}
-
-		$this->lines = $ret;
 
 		return count($this->lines);
 	}
