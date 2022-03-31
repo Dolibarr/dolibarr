@@ -73,7 +73,7 @@ if (empty($reshook)) {
 			dol_print_error('', $object->error, $object->errors);
 		}
 	}
-// TODO do action
+	// TODO do action
 	if ($action == 'save') {
 		$error = 0;
 
@@ -107,11 +107,11 @@ if (empty($reshook)) {
 			$object->setValues($_POST);
 
 			if ($apply_to == 'U') {
-				$object->fk_user = (int)$fk_user;
+				$object->fk_user = (int) $fk_user;
 				$object->fk_usergroup = 0;
 				$object->is_for_all = 0;
 			} elseif ($apply_to == 'G') {
-				$object->fk_usergroup = (int)$fk_usergroup;
+				$object->fk_usergroup = (int) $fk_usergroup;
 				$object->fk_user = 0;
 				$object->is_for_all = 0;
 			} elseif ($apply_to == 'A') {
@@ -179,52 +179,10 @@ if (empty($reshook)) {
 	echo '<span class="opacitymedium">' . $langs->trans('ExpenseReportRulesDesc') . '</span>';
 	print '<br><br>';
 
-	if ($action != 'edit') {
-		echo '<form action="' . $_SERVER['PHP_SELF'] . '" method="post">';
-		echo '<input type="hidden" name="token" value="' . newToken() . '" />';
-		echo '<input type="hidden" name="action" value="save" />';
-
-		echo '<table class="noborder centpercent">';
-
-		echo '<tr class="liste_titre">';
-		echo '<th>' . $langs->trans('ExpenseReportApplyTo') . '</th>';
-		echo '<th>' . $langs->trans('Type') . '</th>';
-		echo '<th>' . $langs->trans('ExpenseReportLimitOn') . '</th>';
-		echo '<th>' . $langs->trans('ExpenseReportDateStart') . '</th>';
-		echo '<th>' . $langs->trans('ExpenseReportDateEnd') . '</th>';
-		echo '<th>' . $langs->trans('ExpenseReportLimitAmount') . '</th>';
-		echo '<th>' . $langs->trans('ExpenseReportRestrictive') . '</th>';
-		echo '<th>&nbsp;</th>';
-		echo '</tr>';
-
-		echo '<tr class="oddeven">';
-		echo '<td>';
-		echo '<div class="float">' . $form->selectarray('apply_to', $tab_apply, '', 0) . '</div>';
-		echo '<div id="user" class="float">' . $form->select_dolusers('', 'fk_user') . '</div>';
-		echo '<div id="group" class="float">' . $form->select_dolgroups('', 'fk_usergroup') . '</div>';
-		echo '</td>';
-
-		echo '<td>' . $form->selectExpense('', 'fk_c_type_fees', 0, 1, 1) . '</td>';
-		echo '<td>' . $form->selectarray('code_expense_rules_type', $tab_rules_type, '', 0) . '</td>';
-		echo '<td>' . $form->selectDate(strtotime(date('Y-m-01', dol_now())), 'start', '', '', 0, '', 1, 0) . '</td>';
-		echo '<td>' . $form->selectDate(strtotime(date('Y-m-t', dol_now())), 'end', '', '', 0, '', 1, 0) . '</td>';
-		echo '<td><input type="text" value="" class="maxwidth100" name="amount" class="amount" /> ' . $conf->currency . '</td>';
-		echo '<td>' . $form->selectyesno('restrictive', 0, 1) . '</td>';
-		echo '<td class="right"><input type="submit" class="button button-add" value="' . $langs->trans('Add') . '" /></td>';
-		echo '</tr>';
-
-		echo '</table>';
-		echo '</form>';
-	}
-
-
+if ($action != 'edit') {
 	echo '<form action="' . $_SERVER['PHP_SELF'] . '" method="post">';
 	echo '<input type="hidden" name="token" value="' . newToken() . '" />';
-
-	if ($action == 'edit') {
-		echo '<input type="hidden" name="id" value="' . $object->id . '" />';
-		echo '<input type="hidden" name="action" value="save" />';
-	}
+	echo '<input type="hidden" name="action" value="save" />';
 
 	echo '<table class="noborder centpercent">';
 
@@ -239,103 +197,145 @@ if (empty($reshook)) {
 	echo '<th>&nbsp;</th>';
 	echo '</tr>';
 
-	foreach ($rules as $rule) {
-		echo '<tr class="oddeven">';
+	echo '<tr class="oddeven">';
+	echo '<td>';
+	echo '<div class="float">' . $form->selectarray('apply_to', $tab_apply, '', 0) . '</div>';
+	echo '<div id="user" class="float">' . $form->select_dolusers('', 'fk_user') . '</div>';
+	echo '<div id="group" class="float">' . $form->select_dolgroups('', 'fk_usergroup') . '</div>';
+	echo '</td>';
 
-		echo '<td>';
-		if ($action == 'edit' && $object->id == $rule->id) {
-			$selected = ($object->is_for_all > 0) ? 'A' : ($object->fk_usergroup > 0 ? 'G' : 'U');
-			echo '<div class="float">' . $form->selectarray('apply_to', $tab_apply, $selected, 0) . '</div>';
-			echo '<div id="user" class="float">' . $form->select_dolusers($object->fk_user, 'fk_user') . '</div>';
-			echo '<div id="group" class="float">' . $form->select_dolgroups($object->fk_usergroup, 'fk_usergroup') . '</div>';
-		} else {
-			if ($rule->is_for_all > 0) {
-				echo $tab_apply['A'];
-			} elseif ($rule->fk_usergroup > 0) {
-				echo $tab_apply['G'] . ' (' . $rule->getGroupLabel() . ')';
-			} elseif ($rule->fk_user > 0) {
-				echo $tab_apply['U'] . ' (' . $rule->getUserName() . ')';
-			}
+	echo '<td>' . $form->selectExpense('', 'fk_c_type_fees', 0, 1, 1) . '</td>';
+	echo '<td>' . $form->selectarray('code_expense_rules_type', $tab_rules_type, '', 0) . '</td>';
+	echo '<td>' . $form->selectDate(strtotime(date('Y-m-01', dol_now())), 'start', '', '', 0, '', 1, 0) . '</td>';
+	echo '<td>' . $form->selectDate(strtotime(date('Y-m-t', dol_now())), 'end', '', '', 0, '', 1, 0) . '</td>';
+	echo '<td><input type="text" value="" class="maxwidth100" name="amount" class="amount" /> ' . $conf->currency . '</td>';
+	echo '<td>' . $form->selectyesno('restrictive', 0, 1) . '</td>';
+	echo '<td class="right"><input type="submit" class="button button-add" value="' . $langs->trans('Add') . '" /></td>';
+	echo '</tr>';
+
+	echo '</table>';
+	echo '</form>';
+}
+
+
+	echo '<form action="' . $_SERVER['PHP_SELF'] . '" method="post">';
+	echo '<input type="hidden" name="token" value="' . newToken() . '" />';
+
+if ($action == 'edit') {
+	echo '<input type="hidden" name="id" value="' . $object->id . '" />';
+	echo '<input type="hidden" name="action" value="save" />';
+}
+
+	echo '<table class="noborder centpercent">';
+
+	echo '<tr class="liste_titre">';
+	echo '<th>' . $langs->trans('ExpenseReportApplyTo') . '</th>';
+	echo '<th>' . $langs->trans('Type') . '</th>';
+	echo '<th>' . $langs->trans('ExpenseReportLimitOn') . '</th>';
+	echo '<th>' . $langs->trans('ExpenseReportDateStart') . '</th>';
+	echo '<th>' . $langs->trans('ExpenseReportDateEnd') . '</th>';
+	echo '<th>' . $langs->trans('ExpenseReportLimitAmount') . '</th>';
+	echo '<th>' . $langs->trans('ExpenseReportRestrictive') . '</th>';
+	echo '<th>&nbsp;</th>';
+	echo '</tr>';
+
+foreach ($rules as $rule) {
+	echo '<tr class="oddeven">';
+
+	echo '<td>';
+	if ($action == 'edit' && $object->id == $rule->id) {
+		$selected = ($object->is_for_all > 0) ? 'A' : ($object->fk_usergroup > 0 ? 'G' : 'U');
+		echo '<div class="float">' . $form->selectarray('apply_to', $tab_apply, $selected, 0) . '</div>';
+		echo '<div id="user" class="float">' . $form->select_dolusers($object->fk_user, 'fk_user') . '</div>';
+		echo '<div id="group" class="float">' . $form->select_dolgroups($object->fk_usergroup, 'fk_usergroup') . '</div>';
+	} else {
+		if ($rule->is_for_all > 0) {
+			echo $tab_apply['A'];
+		} elseif ($rule->fk_usergroup > 0) {
+			echo $tab_apply['G'] . ' (' . $rule->getGroupLabel() . ')';
+		} elseif ($rule->fk_user > 0) {
+			echo $tab_apply['U'] . ' (' . $rule->getUserName() . ')';
 		}
-		echo '</td>';
-
-
-		echo '<td>';
-		if ($action == 'edit' && $object->id == $rule->id) {
-			echo $form->selectExpense($object->fk_c_type_fees, 'fk_c_type_fees', 0, 1, 1);
-		} else {
-			if ($rule->fk_c_type_fees == -1) {
-				echo $langs->trans('AllExpenseReport');
-			} else {
-				$key = getDictionaryValue(MAIN_DB_PREFIX . 'c_type_fees', 'code', $rule->fk_c_type_fees, false, 'id');
-				if ($key && $key != $langs->trans($key)) {
-					echo $langs->trans($key);
-				} else {
-					$value = getDictionaryValue(MAIN_DB_PREFIX . 'c_type_fees', 'label', $rule->fk_c_type_fees, false, 'id');
-					echo $langs->trans($value ? $value : 'Undefined'); // TODO check to return trans of 'code'
-				}
-			}
-		}
-		echo '</td>';
-
-
-		echo '<td>';
-		if ($action == 'edit' && $object->id == $rule->id) {
-			echo $form->selectarray('code_expense_rules_type', $tab_rules_type, $object->code_expense_rules_type, 0);
-		} else {
-			echo $tab_rules_type[$rule->code_expense_rules_type];
-		}
-		echo '</td>';
-
-
-		echo '<td>';
-		if ($action == 'edit' && $object->id == $rule->id) {
-			print $form->selectDate(strtotime(date('Y-m-d', $object->dates)), 'start', '', '', 0, '', 1, 0);
-		} else {
-			echo dol_print_date($rule->dates, 'day');
-		}
-		echo '</td>';
-
-
-		echo '<td>';
-		if ($action == 'edit' && $object->id == $rule->id) {
-			print $form->selectDate(strtotime(date('Y-m-d', $object->datee)), 'end', '', '', 0, '', 1, 0);
-		} else {
-			echo dol_print_date($rule->datee, 'day');
-		}
-		echo '</td>';
-
-
-		echo '<td>';
-		if ($action == 'edit' && $object->id == $rule->id) {
-			echo '<input type="text" value="' . price2num($object->amount) . '" name="amount" class="amount" />' . $conf->currency;
-		} else {
-			echo price($rule->amount, 0, $langs, 1, -1, -1, $conf->currency);
-		}
-		echo '</td>';
-
-
-		echo '<td>';
-		if ($action == 'edit' && $object->id == $rule->id) {
-			echo $form->selectyesno('restrictive', $object->restrictive, 1);
-		} else {
-			echo yn($rule->restrictive, 1, 1);
-		}
-		echo '</td>';
-
-
-		echo '<td class="center">';
-		if ($object->id != $rule->id) {
-			echo '<a class="editfielda paddingright paddingleft" href="' . $_SERVER['PHP_SELF'] . '?action=edit&token=' . newToken() . '&id=' . $rule->id . '">' . img_edit() . '</a>&nbsp;';
-			echo '<a class="paddingright paddingleft" href="' . $_SERVER['PHP_SELF'] . '?action=delete&token=' . newToken() . '&id=' . $rule->id . '">' . img_delete() . '</a>';
-		} else {
-			echo '<input type="submit" class="button button-edit" value="' . $langs->trans('Update') . '" />&nbsp;';
-			echo '<a href="' . $_SERVER['PHP_SELF'] . '" class="button button-cancel">' . $langs->trans("Cancel") . '</a>';
-		}
-		echo '</td>';
-
-		echo '</tr>';
 	}
+	echo '</td>';
+
+
+	echo '<td>';
+	if ($action == 'edit' && $object->id == $rule->id) {
+		echo $form->selectExpense($object->fk_c_type_fees, 'fk_c_type_fees', 0, 1, 1);
+	} else {
+		if ($rule->fk_c_type_fees == -1) {
+			echo $langs->trans('AllExpenseReport');
+		} else {
+			$key = getDictionaryValue(MAIN_DB_PREFIX . 'c_type_fees', 'code', $rule->fk_c_type_fees, false, 'id');
+			if ($key && $key != $langs->trans($key)) {
+				echo $langs->trans($key);
+			} else {
+				$value = getDictionaryValue(MAIN_DB_PREFIX . 'c_type_fees', 'label', $rule->fk_c_type_fees, false, 'id');
+				echo $langs->trans($value ? $value : 'Undefined'); // TODO check to return trans of 'code'
+			}
+		}
+	}
+	echo '</td>';
+
+
+	echo '<td>';
+	if ($action == 'edit' && $object->id == $rule->id) {
+		echo $form->selectarray('code_expense_rules_type', $tab_rules_type, $object->code_expense_rules_type, 0);
+	} else {
+		echo $tab_rules_type[$rule->code_expense_rules_type];
+	}
+	echo '</td>';
+
+
+	echo '<td>';
+	if ($action == 'edit' && $object->id == $rule->id) {
+		print $form->selectDate(strtotime(date('Y-m-d', $object->dates)), 'start', '', '', 0, '', 1, 0);
+	} else {
+		echo dol_print_date($rule->dates, 'day');
+	}
+	echo '</td>';
+
+
+	echo '<td>';
+	if ($action == 'edit' && $object->id == $rule->id) {
+		print $form->selectDate(strtotime(date('Y-m-d', $object->datee)), 'end', '', '', 0, '', 1, 0);
+	} else {
+		echo dol_print_date($rule->datee, 'day');
+	}
+	echo '</td>';
+
+
+	echo '<td>';
+	if ($action == 'edit' && $object->id == $rule->id) {
+		echo '<input type="text" value="' . price2num($object->amount) . '" name="amount" class="amount" />' . $conf->currency;
+	} else {
+		echo price($rule->amount, 0, $langs, 1, -1, -1, $conf->currency);
+	}
+	echo '</td>';
+
+
+	echo '<td>';
+	if ($action == 'edit' && $object->id == $rule->id) {
+		echo $form->selectyesno('restrictive', $object->restrictive, 1);
+	} else {
+		echo yn($rule->restrictive, 1, 1);
+	}
+	echo '</td>';
+
+
+	echo '<td class="center">';
+	if ($object->id != $rule->id) {
+		echo '<a class="editfielda paddingright paddingleft" href="' . $_SERVER['PHP_SELF'] . '?action=edit&token=' . newToken() . '&id=' . $rule->id . '">' . img_edit() . '</a>&nbsp;';
+		echo '<a class="paddingright paddingleft" href="' . $_SERVER['PHP_SELF'] . '?action=delete&token=' . newToken() . '&id=' . $rule->id . '">' . img_delete() . '</a>';
+	} else {
+		echo '<input type="submit" class="button button-edit" value="' . $langs->trans('Update') . '" />&nbsp;';
+		echo '<a href="' . $_SERVER['PHP_SELF'] . '" class="button button-cancel">' . $langs->trans("Cancel") . '</a>';
+	}
+	echo '</td>';
+
+	echo '</tr>';
+}
 
 
 	echo '</table>';
