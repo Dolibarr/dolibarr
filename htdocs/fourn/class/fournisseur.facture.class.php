@@ -126,6 +126,13 @@ class FactureFournisseur extends CommonInvoice
 	public $statut;
 
 	/**
+	 * Supplier invoice status
+	 * @var int
+	 * @see FactureFournisseur::STATUS_DRAFT, FactureFournisseur::STATUS_VALIDATED, FactureFournisseur::STATUS_PAID, FactureFournisseur::STATUS_ABANDONED
+	 */
+	public $status;
+
+	/**
 	 * ! Closing after partial payment: discount_vat, badsupplier, abandon
 	 * ! Closing when no payment: replaced, abandoned
 	 * @var string Close code
@@ -881,7 +888,7 @@ class FactureFournisseur extends CommonInvoice
 		$sql .= " t.total_ht,";
 		$sql .= " t.total_tva,";
 		$sql .= " t.total_ttc,";
-		$sql .= " t.fk_statut,";
+		$sql .= " t.fk_statut as status,";
 		$sql .= " t.fk_user_author,";
 		$sql .= " t.fk_user_valid,";
 		$sql .= " t.fk_facture_source,";
@@ -947,8 +954,9 @@ class FactureFournisseur extends CommonInvoice
 				$this->total_ht				= $obj->total_ht;
 				$this->total_tva			= $obj->total_tva;
 				$this->total_ttc			= $obj->total_ttc;
-				$this->fk_statut			= $obj->fk_statut;
-				$this->statut				= $obj->fk_statut;
+				$this->status				= $obj->status;
+				$this->statut				= $obj->status;	// For backward compatibility
+				$this->fk_statut			= $obj->status;	// For backward compatibility
 				$this->fk_user_author = $obj->fk_user_author;
 				$this->author				= $obj->fk_user_author;
 				$this->fk_user_valid = $obj->fk_user_valid;
@@ -1200,6 +1208,9 @@ class FactureFournisseur extends CommonInvoice
 		if (isset($this->statut)) {
 			$this->statut = (int) $this->statut;
 		}
+		if (isset($this->status)) {
+			$this->status = (int) $this->status;
+		}
 		if (isset($this->author)) {
 			$this->author = trim($this->author);
 		}
@@ -1257,7 +1268,7 @@ class FactureFournisseur extends CommonInvoice
 		$sql .= " total_ht=".(isset($this->total_ht) ? $this->total_ht : "null").",";
 		$sql .= " total_tva=".(isset($this->total_tva) ? $this->total_tva : "null").",";
 		$sql .= " total_ttc=".(isset($this->total_ttc) ? $this->total_ttc : "null").",";
-		$sql .= " fk_statut=".(isset($this->statut) ? $this->statut : "null").",";
+		$sql .= " fk_statut=".(isset($this->status) ? $this->status : (isset($this->statut) ? $this->statut : "null")).",";
 		$sql .= " fk_user_author=".(isset($this->author) ? $this->author : "null").",";
 		$sql .= " fk_user_valid=".(isset($this->fk_user_valid) ? $this->fk_user_valid : "null").",";
 		$sql .= " fk_facture_source=".(isset($this->fk_facture_source) ? $this->fk_facture_source : "null").",";
@@ -2634,7 +2645,7 @@ class FactureFournisseur extends CommonInvoice
 		// phpcs:enable
 		global $conf, $langs;
 
-		$sql = 'SELECT ff.rowid, ff.date_lim_reglement as datefin, ff.fk_statut';
+		$sql = 'SELECT ff.rowid, ff.date_lim_reglement as datefin, ff.fk_statut as status';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as ff';
 		if (empty($user->rights->societe->client->voir) && !$user->socid) {
 			$sql .= " JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON ff.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
@@ -2656,14 +2667,15 @@ class FactureFournisseur extends CommonInvoice
 			$response->label = $langs->trans("SupplierBillsToPay");
 			$response->labelShort = $langs->trans("StatusToPay");
 
-			$response->url = DOL_URL_ROOT.'/fourn/facture/list.php?search_status=1&amp;mainmenu=billing&amp;leftmenu=suppliers_bills';
+			$response->url = DOL_URL_ROOT.'/fourn/facture/list.php?search_status=1&mainmenu=billing&leftmenu=suppliers_bills';
 			$response->img = img_object($langs->trans("Bills"), "bill");
 
 			$facturestatic = new FactureFournisseur($this->db);
 
 			while ($obj = $this->db->fetch_object($resql)) {
 				$facturestatic->date_echeance = $this->db->jdate($obj->datefin);
-				$facturestatic->statut = $obj->fk_statut;
+				$facturestatic->statut = $obj->status;	// For backward compatibility
+				$facturestatic->status = $obj->status;
 
 				$response->nbtodo++;
 				$response->total += $obj->total_ht;
@@ -3040,7 +3052,8 @@ class FactureFournisseur extends CommonInvoice
 		// Load source object
 		$object->fetch($fromid);
 		$object->id = 0;
-		$object->statut = self::STATUS_DRAFT;
+		$object->statut = self::STATUS_DRAFT;	// For backward compatibility
+		$object->status = self::STATUS_DRAFT;
 
 		$object->fetch_thirdparty(); // We need it to recalculate VAT localtaxes according to main sale taxes and vendor
 
@@ -3173,7 +3186,9 @@ class FactureFournisseur extends CommonInvoice
 			return false;
 		}
 
-		return ($this->statut == self::STATUS_VALIDATED) && ($this->date_echeance < ($now - $conf->facture->fournisseur->warning_delay));
+		$status = isset($this->status) ? $this->status : $this->statut;
+
+		return ($status == self::STATUS_VALIDATED) && ($this->date_echeance < ($now - $conf->facture->fournisseur->warning_delay));
 	}
 
 	/**
