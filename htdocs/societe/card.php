@@ -6,7 +6,7 @@
  * Copyright (C) 2005-2017  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2008       Patrick Raguin          <patrick.raguin@auguria.net>
  * Copyright (C) 2010-2020  Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2011-2013  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2011-2022  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
@@ -986,21 +986,24 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		$modCodeFournisseur = new $module;
 
 		// Define if customer/prospect or supplier status is set or not
-		if (GETPOST("type") != 'f') {
+		if (GETPOST("type", 'aZ') != 'f') {
 			$object->client = -1;
 			if (!empty($conf->global->THIRDPARTY_CUSTOMERPROSPECT_BY_DEFAULT)) {
 				$object->client = 3;
 			}
 		}
 		// Prospect / Customer
-		if (GETPOST("type") == 'c') {
+		if (GETPOST("type", 'aZ') == 'c') {
 			if (!empty($conf->global->THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT)) {
 				$object->client = $conf->global->THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT;
 			} else {
 				$object->client = 3;
 			}
 		}
-		if (GETPOST("type") == 'p') {
+		if (!empty($conf->global->SOCIETE_DISABLE_PROSPECTSCUSTOMERS) && $object->client == 3) {
+			$object->client = 1;
+		}
+		if (GETPOST("type", 'aZ') == 'p') {
 			$object->client = 2;
 		}
 		if (((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) && (GETPOST("type") == 'f' || (GETPOST("type") == '' && !empty($conf->global->THIRDPARTY_SUPPLIER_BY_DEFAULT)))) {
@@ -1757,21 +1760,21 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			if (GETPOSTISSET('name')) {
 				// We overwrite with values if posted
-				$object->name = GETPOST('name', 'alphanohtml');
-				$object->prefix_comm			= GETPOST('prefix_comm', 'alphanohtml');
-				$object->client = GETPOST('client', 'int');
-				$object->code_client			= GETPOST('customer_code', 'alpha');
-				$object->fournisseur			= GETPOST('fournisseur', 'int');
-				$object->code_fournisseur = GETPOST('supplier_code', 'alpha');
-				$object->address = GETPOST('address', 'alphanohtml');
-				$object->zip = GETPOST('zipcode', 'alphanohtml');
-				$object->town = GETPOST('town', 'alphanohtml');
-				$object->country_id = GETPOST('country_id') ?GETPOST('country_id', 'int') : $mysoc->country_id;
-				$object->state_id = GETPOST('state_id', 'int');
-				//$object->skype				= GETPOST('skype', 'alpha');
-				//$object->twitter				= GETPOST('twitter', 'alpha');
-				//$object->facebook				= GETPOST('facebook', 'alpha');
-				//$object->linkedin				= GETPOST('linkedin', 'alpha');
+				$object->name				= GETPOST('name', 'alphanohtml');
+				$object->prefix_comm		= GETPOST('prefix_comm', 'alphanohtml');
+				$object->client				= GETPOST('client', 'int');
+				$object->code_client		= GETPOST('customer_code', 'alpha');
+				$object->fournisseur		= GETPOST('fournisseur', 'int');
+				$object->code_fournisseur	= GETPOST('supplier_code', 'alpha');
+				$object->address			= GETPOST('address', 'alphanohtml');
+				$object->zip				= GETPOST('zipcode', 'alphanohtml');
+				$object->town				= GETPOST('town', 'alphanohtml');
+				$object->country_id			= GETPOST('country_id') ?GETPOST('country_id', 'int') : $mysoc->country_id;
+				$object->state_id			= GETPOST('state_id', 'int');
+				//$object->skype			= GETPOST('skype', 'alpha');
+				//$object->twitter			= GETPOST('twitter', 'alpha');
+				//$object->facebook			= GETPOST('facebook', 'alpha');
+				//$object->linkedin			= GETPOST('linkedin', 'alpha');
 				$object->socialnetworks = array();
 				if (!empty($conf->socialnetworks->enabled)) {
 					foreach ($socialnetworks as $key => $value) {

@@ -179,7 +179,7 @@ if (empty($reshook)) {
 		$action = 'create';
 	}
 
-	if ($action == 'delete') {
+	if ($action == 'confirm_delete' && $confirm == 'yes') {
 		$result = $object->fetch($id);
 
 		if ($object->rappro == 0) {
@@ -546,6 +546,12 @@ if ($id) {
 		);
 
 		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneVariousPayment', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 350);
+	}
+
+	// Confirmation of the removal of the Various Payment
+	if ($action == 'delete') {
+		$text = $langs->trans('ConfirmDeleteVariousPayment');
+		print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans('DeleteVariousPayment'), $text, 'confirm_delete', '', '', 2);
 	}
 
 	print dol_get_fiche_head($head, 'card', $langs->trans("VariousPayment"), -1, $object->picto);
