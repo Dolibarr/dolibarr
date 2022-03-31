@@ -2265,7 +2265,7 @@ if ($action == 'create') {
 						print $numline;
 						print '</td>';
 
-						print '<td colspan="'.($colspan - 1).'" class="liste_titre">';
+						print '<td colspan="'.($colspan - 1).'" class="liste_titre"> ';
 						print '<a href="" class="commonlink auploadnewfilenow reposition">'.$langs->trans("UploadANewFileNow");
 						print img_picto($langs->trans("UploadANewFileNow"), 'chevron-down', '', false, 0, 0, '', 'marginleftonly');
 						print '</a>';
@@ -2493,6 +2493,8 @@ if ($action == 'create') {
 				print '<td></td>';
 				print '<td></td>';
 				print '<td></td>';
+				print '<td></td>';
+				print '<td></td>';
 				print '</tr>';
 
 				print '<tr class="oddeven nohover">';
@@ -2501,19 +2503,19 @@ if ($action == 'create') {
 				print '<td></td>';
 
 				// Select date
-				print '<td class="center">';
+				print '<td class="center inputdate">';
 				print $form->selectDate($date ? $date : -1, 'date', 0, 0, 0, '', 1, 1);
 				print '</td>';
 
 				// Select project
 				if (!empty($conf->projet->enabled)) {
-					print '<td>';
+					print '<td class="inputproject">';
 					$formproject->select_projects(-1, $fk_project, 'fk_project', 0, 0, $projectRequired ? 0 : 1, -1, 0, 0, 0, '', 0, 0, 'maxwidth300');
 					print '</td>';
 				}
 
 					// Select type
-					print '<td class="center">';
+					print '<td class="center inputtype">';
 					print $formexpensereport->selectTypeExpenseReport($fk_c_type_fees, 'fk_c_type_fees', 1);
 					print '</td>';
 
@@ -2525,12 +2527,12 @@ if ($action == 'create') {
 				}
 
 				// Add comments
-				print '<td>';
+				print '<td class="inputcomment">';
 				print '<textarea class="flat_ndf centpercent" name="comments" rows="'.ROWS_2.'">'.dol_escape_htmltag($comments, 0, 1).'</textarea>';
 				print '</td>';
 
 				// Select VAT
-				print '<td class="right">';
+				print '<td class="right inputvat">';
 				$defaultvat = -1;
 				if (!empty($conf->global->EXPENSEREPORT_NO_DEFAULT_VAT)) {
 					$conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS = 'none';
@@ -2539,17 +2541,17 @@ if ($action == 'create') {
 				print '</td>';
 
 				// Unit price net
-				print '<td class="right">';
+				print '<td class="right inputpricenet">';
 				print '<input type="text" class="right maxwidth50" id="value_unit_ht" name="value_unit_ht" value="'.dol_escape_htmltag($value_unit_ht).'"'.$taxlessUnitPriceDisabled.' />';
 				print '</td>';
 
 				// Unit price with tax
-				print '<td class="right">';
+				print '<td class="right inputtax">';
 				print '<input type="text" class="right maxwidth50" id="value_unit" name="value_unit" value="'.dol_escape_htmltag($value_unit).'">';
 				print '</td>';
 
 				// Quantity
-				print '<td class="right">';
+				print '<td class="right inputqty">';
 				print '<input type="text" min="0" class="right maxwidth50" name="qty" value="'.dol_escape_htmltag($qty ? $qty : 1).'">'; // We must be able to enter decimal qty
 				print '</td>';
 
@@ -2561,7 +2563,7 @@ if ($action == 'create') {
 					print '<td class="right"></td>';
 				}
 
-				print '<td class="center">';
+				print '<td class="center inputbuttons">';
 				print $form->buttonsSaveCancel("Add", '', '', 1);
 				print '</td>';
 
