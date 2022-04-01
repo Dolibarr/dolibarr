@@ -782,17 +782,15 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0) {
 	}
 
 	$massactionbutton = '';
-	if ($projectstatic->usage_bill_time) {
-		$arrayofmassactions = array(
-			'generateinvoice'=>$langs->trans("GenerateBill"),
-			//'builddoc'=>$langs->trans("PDFMerge"),
-		);
-		//if ($user->rights->projet->creer) $arrayofmassactions['predelete']='<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
-		if (in_array($massaction, array('presend', 'predelete', 'generateinvoice'))) {
-			$arrayofmassactions = array();
-		}
-		$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
+	$arrayofmassactions = array(
+		//'builddoc'=>$langs->trans("PDFMerge"),
+	);
+	if ($projectstatic->usage_bill_time) $arrayofmassactions['generateinvoice'] = $langs->trans("GenerateBill");
+	//if ($user->rights->projet->creer) $arrayofmassactions['predelete']='<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
+	if (in_array($massaction, array('presend', 'predelete', 'generateinvoice'))) {
+		$arrayofmassactions = array();
 	}
+	$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
 	// Show section with information of task. If id of task is not defined and project id defined, then $projectidforalltimes is not empty.
 	if (empty($projectidforalltimes)) {
@@ -899,12 +897,26 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0) {
 
 
 	if ($projectstatic->id > 0) {
-		if ($action == 'deleteline' && !empty($projectidforalltimes)) {
-			print $form->formconfirm($_SERVER["PHP_SELF"]."?".($object->id > 0 ? "id=".$object->id : 'projectid='.$projectstatic->id).'&lineid='.GETPOST('lineid', 'int').($withproject ? '&withproject=1' : ''), $langs->trans("DeleteATimeSpent"), $langs->trans("ConfirmDeleteATimeSpent"), "confirm_delete", '', '', 1);
-		}
-
 		// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
 		$hookmanager->initHooks(array('tasktimelist'));
+
+		$formconfirm = '';
+
+		if ($action == 'deleteline' && !empty($projectidforalltimes)) {
+			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"]."?".($object->id > 0 ? "id=".$object->id : 'projectid='.$projectstatic->id).'&lineid='.GETPOST('lineid', 'int').($withproject ? '&withproject=1' : ''), $langs->trans("DeleteATimeSpent"), $langs->trans("ConfirmDeleteATimeSpent"), "confirm_delete", '', '', 1);
+		}
+
+		// Call Hook formConfirm
+		$parameters = array('formConfirm' => $formconfirm, 'lineid' => $lineid, "projectstatic" => $projectstatic, "withproject" => $withproject);
+		$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+		if (empty($reshook)) {
+			$formconfirm .= $hookmanager->resPrint;
+		} elseif ($reshook > 0) {
+			$formconfirm = $hookmanager->resPrint;
+		}
+
+		// Print form confirm
+		print $formconfirm;
 
 		// Definition of fields for list
 		$arrayfields = array();
@@ -967,6 +979,10 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0) {
 		if ($withproject) {
 			$param .= '&withproject='.urlencode($withproject);
 		}
+		// Add $param from hooks
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object); // Note that $action and $object may have been modified by hook
+		$param .= $hookmanager->resPrint;
 
 		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 		if ($optioncss != '') {
@@ -1067,6 +1083,19 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0) {
 			}
 		}
 
+		// Allow Pre-Mass-Action hook (eg for confirmation dialog)
+		$parameters = array(
+			'toselect' => $toselect,
+			'uploaddir' => isset($uploaddir) ? $uploaddir : null
+		);
+
+		$reshook = $hookmanager->executeHooks('doPreMassActions', $parameters, $object, $action);
+		if ($reshook < 0) {
+			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+		} else {
+			print $hookmanager->resPrint;
+		}
+
 		/*
 		 *	List of time spent
 		 */
@@ -1075,11 +1104,20 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0) {
 		$sql = "SELECT t.rowid, t.fk_task, t.task_date, t.task_datehour, t.task_date_withhour, t.task_duration, t.fk_user, t.note, t.thm,";
 		$sql .= " pt.ref, pt.label,";
 		$sql .= " u.lastname, u.firstname, u.login, u.photo, u.statut as user_status,";
-		$sql .= " il.fk_facture as invoice_id, inv.fk_statut";
+		$sql .= " il.fk_facture as invoice_id, inv.fk_statut,";
+		// Add fields from hooks
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object); // Note that $action and $object may have been modified by hook
+		$sql .= preg_replace('/^,/', '', $hookmanager->resPrint);
+		$sql = preg_replace('/,\s*$/', '', $sql);
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as t";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facturedet as il ON il.rowid = t.invoice_line_id";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture as inv ON inv.rowid = il.fk_facture,";
-		$sql .= " ".MAIN_DB_PREFIX."projet_task as pt, ".MAIN_DB_PREFIX."user as u";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture as inv ON inv.rowid = il.fk_facture";
+		// Add table from hooks
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
+		$sql .= $hookmanager->resPrint;
+		$sql .= ", ".MAIN_DB_PREFIX."projet_task as pt, ".MAIN_DB_PREFIX."user as u";
 		$sql .= " WHERE t.fk_user = u.rowid AND t.fk_task = pt.rowid";
 
 		if (empty($projectidforalltimes)) {
@@ -1106,6 +1144,10 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0) {
 			$sql .= ' AND (t.invoice_id = 0 OR t.invoice_id IS NULL)';
 		}
 		$sql .= dolSqlDateFilter('t.task_datehour', $search_day, $search_month, $search_year);
+		// Add where from hooks
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
+		$sql .= $hookmanager->resPrint;
 		$sql .= $db->order($sortfield, $sortorder);
 
 		// Count total nb of records
@@ -1189,6 +1231,10 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0) {
 			if (empty($conf->global->PROJECT_HIDE_TASKS) && !empty($conf->global->PROJECT_BILL_TIME_SPENT)) {
 				print '<td></td>';
 			}
+			// Hook fields
+			$parameters = array('mode' => 'create');
+			$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
+			print $hookmanager->resPrint;
 			print '<td></td>';
 			print "</tr>\n";
 
@@ -1254,6 +1300,11 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0) {
 				print '<td>';
 				print '</td>';
 			}
+
+			// Fields from hook
+			$parameters = array('mode' => 'create');
+			$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
+			print $hookmanager->resPrint;
 
 			print '<td class="center">';
 			print '<input type="submit" name="save" class="button buttongen marginleftonly margintoponlyshort marginbottomonlyshort" value="'.$langs->trans("Add").'">';
@@ -1742,7 +1793,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0) {
 				 */
 
 				// Fields from hook
-				$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$task_time);
+				$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$task_time, 'mode' => 'split1');
 				$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
 				print $hookmanager->resPrint;
 
@@ -1870,7 +1921,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0) {
 				 */
 
 				// Fields from hook
-				$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$task_time);
+				$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$task_time, 'mode' => 'split2');
 				$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
 				print $hookmanager->resPrint;
 
@@ -1921,6 +1972,9 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0) {
 			print '</td></tr>';
 		}
 
+		$parameters = array('arrayfields'=>$arrayfields, 'sql'=>$sql);
+		$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters); // Note that $action and $object may have been modified by hook
+		print $hookmanager->resPrint;
 
 		print "</table>";
 		print '</div>';
