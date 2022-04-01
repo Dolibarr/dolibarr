@@ -139,7 +139,7 @@ if ($action == 'getProducts') {
 			}
 
 			if (isset($barcode_value_list['ref'])) {
-				//search product from reference
+				// search product from reference
 				$sql  = "SELECT rowid, ref, label, tosell, tobuy, barcode, price";
 				$sql .= " FROM " . MAIN_DB_PREFIX . "product as p";
 				$sql .= " WHERE entity IN (" . getEntity('product') . ")";
@@ -148,6 +148,7 @@ if ($action == 'getProducts') {
 					$sql .= " AND EXISTS (SELECT cp.fk_product FROM ". MAIN_DB_PREFIX . "categorie_product as cp WHERE cp.fk_product = p.rowid AND cp.fk_categorie IN (".$db->sanitize($filteroncategids)."))";
 				}
 				$sql .= " AND tosell = 1";
+				$sql .= " AND (barcode IS NULL OR barcode != '" . $db->escape($term) . "')";
 
 				$resql = $db->query($sql);
 				if ($resql && $db->num_rows($resql) == 1) {
@@ -223,7 +224,8 @@ if ($action == 'getProducts') {
 				'tobuy' => $obj->tobuy,
 				'barcode' => $obj->barcode,
 				'price' => $obj->price,
-			'object' => 'product'
+				'object' => 'product',
+				'qty' => 1,
 				//'price_formated' => price(price2num($obj->price, 'MU'), 1, $langs, 1, -1, -1, $conf->currency)
 			);
 		}
