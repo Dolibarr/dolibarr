@@ -1153,34 +1153,6 @@ if ($resql) {
 				}
 				print '</td>';
 
-				/*
-				$fieldsforcontent = array('content');
-				if (! empty($conf->global->MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES))
-				{
-					$fieldsforcontent = array('content', 'content_lines');
-				}
-				foreach ($fieldsforcontent as $tmpfieldlist)
-				{
-					$showfield = 1;
-					$align = "left";
-					$valuetoshow = $obj->{$tmpfieldlist};
-
-					$class = 'tddict';
-					// Show value for field
-					if ($showfield) {
-
-						print '</tr><tr class="oddeven" nohover tr-'.$tmpfieldlist.'-'.$i.' "><td colspan="5">'; // To create an artificial CR for the current tr we are on
-						$okforextended = true;
-						if (empty($conf->global->FCKEDITOR_ENABLE_MAIL))
-							$okforextended = false;
-						$doleditor = new DolEditor($tmpfieldlist.'-'.$i, (! empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : ''), '', 140, 'dolibarr_mailings', 'In', 0, true, $okforextended, ROWS_6, '90%', 1);
-						print $doleditor->Create(1);
-						print '</td>';
-						print '<td></td><td></td><td></td>';
-
-					}
-				}*/
-
 				print "</tr>\n";
 			}
 
