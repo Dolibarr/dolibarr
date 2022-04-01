@@ -394,7 +394,7 @@ class DoliDBSqlite3 extends DoliDB
 	 * 									Note that with Mysql, this parameter is not used as Myssql can already commit a transaction even if one request is in error, without using savepoints.
 	 *  @param  string	$type           Type of SQL order ('ddl' for insert, update, select, delete or 'dml' for create, alter...)
 	 * @param	int		$result_mode	Result mode (not used with sqlite)
-	 *	@return	SQLite3Result			Resultset of answer
+	 *	@return	bool|SQLite3Result		Resultset of answer
 	 */
 	public function query($query, $usesavepoint = 0, $type = 'auto', $result_mode = 0)
 	{
@@ -407,6 +407,7 @@ class DoliDBSqlite3 extends DoliDB
 		$this->error = '';
 
 		// Convert MySQL syntax to SQLite syntax
+		$reg = array();
 		if (preg_match('/ALTER\s+TABLE\s*(.*)\s*ADD\s+CONSTRAINT\s+(.*)\s*FOREIGN\s+KEY\s*\(([\w,\s]+)\)\s*REFERENCES\s+(\w+)\s*\(([\w,\s]+)\)/i', $query, $reg)) {
 			// Ajout d'une clef étrangère à la table
 			// procédure de remplacement de la table pour ajouter la contrainte
@@ -646,6 +647,17 @@ class DoliDBSqlite3 extends DoliDB
 	}
 
 	/**
+	 *	Escape a string to insert data
+	 *
+	 *	@param	string	$stringtoencode		String to escape
+	 *	@return	string						String escaped
+	 */
+	public function escapeunderscore($stringtoencode)
+	{
+		return str_replace('_', '\_', $stringtoencode);
+	}
+
+	/**
 	 *	Renvoie le code erreur generique de l'operation precedente.
 	 *
 	 *	@return	string		Error code (Exemples: DB_ERROR_TABLE_ALREADY_EXISTS, DB_ERROR_RECORD_ALREADY_EXISTS...)
@@ -864,9 +876,13 @@ class DoliDBSqlite3 extends DoliDB
 
 		$like = '';
 		if ($table) {
-			$like = "LIKE '".$table."'";
+			$tmptable = preg_replace('/[^a-z0-9\.\-\_%]/i', '', $table);
+
+			$like = "LIKE '".$this->escape($tmptable)."'";
 		}
-		$sql = "SHOW TABLES FROM ".$database." ".$like.";";
+		$tmpdatabase = preg_replace('/[^a-z0-9\.\-\_]/i', '', $database);
+
+		$sql = "SHOW TABLES FROM ".$tmpdatabase." ".$like.";";
 		//print $sql;
 		$result = $this->query($sql);
 		if ($result) {
@@ -890,7 +906,9 @@ class DoliDBSqlite3 extends DoliDB
 		// phpcs:enable
 		$infotables = array();
 
-		$sql = "SHOW FULL COLUMNS FROM ".$table.";";
+		$tmptable = preg_replace('/[^a-z0-9\.\-\_]/i', '', $table);
+
+		$sql = "SHOW FULL COLUMNS FROM ".$tmptable.";";
 
 		dol_syslog($sql, LOG_DEBUG);
 		$result = $this->query($sql);
@@ -991,7 +1009,9 @@ class DoliDBSqlite3 extends DoliDB
 	public function DDLDropTable($table)
 	{
 		// phpcs:enable
-		$sql = "DROP TABLE ".$table;
+		$tmptable = preg_replace('/[^a-z0-9\.\-\_]/i', '', $table);
+
+		$sql = "DROP TABLE ".$tmptable;
 
 		if (!$this->query($sql)) {
 			return -1;
@@ -1101,8 +1121,9 @@ class DoliDBSqlite3 extends DoliDB
 	public function DDLDropField($table, $field_name)
 	{
 		// phpcs:enable
-		$sql = "ALTER TABLE ".$table." DROP COLUMN `".$field_name."`";
-		dol_syslog(get_class($this)."::DDLDropField ".$sql, LOG_DEBUG);
+		$tmp_field_name = preg_replace('/[^a-z0-9\.\-\_]/i', '', $field_name);
+
+		$sql = "ALTER TABLE ".$table." DROP COLUMN `".$tmp_field_name."`";
 		if (!$this->query($sql)) {
 			$this->error = $this->lasterror();
 			return -1;

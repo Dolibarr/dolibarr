@@ -46,6 +46,8 @@
  */
 function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLength = 2, $autoselect = 0, $ajaxoptions = array(), $moreparams = '')
 {
+	global $conf;
+
 	if (empty($minLength)) {
 		$minLength = 1;
 	}
@@ -561,9 +563,9 @@ function ajax_constantonoff($code, $input = array(), $entity = null, $revertonof
 
 	if (empty($conf->use_javascript_ajax) || $forcenoajax) {
 		if (empty($conf->global->$code)) {
-			print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_'.$code.'&token='.newToken().'&entity='.$entity.($mode ? '&mode='.$mode : '').'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+			print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_'.$code.'&token='.newToken().'&entity='.$entity.($mode ? '&mode='.$mode : '').($forcereload ? '&dol_resetcache=1' : '').'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 		} else {
-			print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_'.$code.'&token='.newToken().'&entity='.$entity.($mode ? '&mode='.$mode : '').'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+			print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_'.$code.'&token='.newToken().'&entity='.$entity.($mode ? '&mode='.$mode : '').($forcereload ? '&dol_resetcache=1' : '').'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 		}
 	} else {
 		$out = "\n<!-- Ajax code to switch constant ".$code." -->".'
@@ -571,10 +573,10 @@ function ajax_constantonoff($code, $input = array(), $entity = null, $revertonof
 			$(document).ready(function() {
 				var input = '.json_encode($input).';
 				var url = \''.DOL_URL_ROOT.'/core/ajax/constantonoff.php\';
-				var code = \''.$code.'\';
-				var entity = \''.$entity.'\';
-				var strict = \''.$strict.'\';
-				var userid = \''.$user->id.'\';
+				var code = \''.dol_escape_js($code).'\';
+				var entity = \''.dol_escape_js($entity).'\';
+				var strict = \''.dol_escape_js($strict).'\';
+				var userid = \''.dol_escape_js($user->id).'\';
 				var yesButton = \''.dol_escape_js($langs->transnoentities("Yes")).'\';
 				var noButton = \''.dol_escape_js($langs->transnoentities("No")).'\';
 				var token = \''.currentToken().'\';
@@ -586,7 +588,7 @@ function ajax_constantonoff($code, $input = array(), $entity = null, $revertonof
 						if (input.alert.set.noButton)  noButton = input.alert.set.noButton;
 						confirmConstantAction("set", url, code, input, input.alert.set, entity, yesButton, noButton, strict, userid, token);
 					} else {
-						setConstant(url, code, input, entity, 0, '.$forcereload.', userid, token);
+						setConstant(url, code, input, entity, 0, '.((int) $forcereload).', userid, token);
 					}
 				});
 
@@ -598,9 +600,9 @@ function ajax_constantonoff($code, $input = array(), $entity = null, $revertonof
 						confirmConstantAction("del", url, code, input, input.alert.del, entity, yesButton, noButton, strict, userid, token);
 					} else {';
 		if (empty($setzeroinsteadofdel)) {
-			$out .=' 	delConstant(url, code, input, entity, 0, '.$forcereload.', userid, token);';
+			$out .=' 	delConstant(url, code, input, entity, 0, '.((int) $forcereload).', userid, token);';
 		} else {
-			$out .=' 	setConstant(url, code, input, entity, 0, '.$forcereload.', userid, token, 0);';
+			$out .=' 	setConstant(url, code, input, entity, 0, '.((int) $forcereload).', userid, token, 0);';
 		}
 		$out .= '	}
 				});

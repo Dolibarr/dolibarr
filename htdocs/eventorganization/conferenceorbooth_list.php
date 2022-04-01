@@ -31,9 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorbooth.class.php';
 require_once DOL_DOCUMENT_ROOT.'/eventorganization/lib/eventorganization_conferenceorbooth.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorboothattendee.class.php';
-if ($conf->categorie->enabled) {
-	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-}
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 global $dolibarr_main_url_root;
 
@@ -41,7 +39,7 @@ global $dolibarr_main_url_root;
 //dol_include_once('/othermodule/class/otherobject.class.php');
 
 // Load translation files required by the page
-$langs->loadLangs(array("eventorganization", "other", "projects"));
+$langs->loadLangs(array("eventorganization", "other", "projects", "companies"));
 
 $action     = GETPOST('action', 'aZ09') ?GETPOST('action', 'aZ09') : 'view'; // The action 'add', 'create', 'edit', 'update', 'view', ...
 $massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
@@ -55,6 +53,7 @@ $optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always ''
 
 $id = GETPOST('id', 'int');
 $projectid = GETPOST('projectid', 'int');
+$projectref = GETPOST('ref');
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
@@ -115,11 +114,11 @@ $arrayfields = array();
 foreach ($object->fields as $key => $val) {
 	// If $val['visible']==0, then we never show the field
 	if (!empty($val['visible'])) {
-		$visible = (int) dol_eval($val['visible'], 1);
+		$visible = (int) dol_eval($val['visible'], 1, 1, '1');
 		$arrayfields['t.'.$key] = array(
 			'label'=>$val['label'],
 			'checked'=>(($visible < 0) ? 0 : 1),
-			'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1)),
+			'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1, 1, '1')),
 			'position'=>$val['position'],
 			'help'=> isset($val['help']) ? $val['help'] : ''
 		);
@@ -152,12 +151,12 @@ if (!$permissiontoread) accessforbidden();
  * Actions
  */
 
-if (preg_match('/^set/', $action) && $projectid > 0) {
+if (preg_match('/^set/', $action) && ($projectid > 0 || $projectref) && !empty($user->rights->eventorganization->write)) {
 	$project = new Project($db);
 	//If "set" fields keys is in projects fields
 	$project_attr=preg_replace('/^set/', '', $action);
 	if (array_key_exists($project_attr, $project->fields)) {
-		$result = $project->fetch($projectid);
+		$result = $project->fetch($projectid, $projectref);
 		if ($result < 0) {
 			setEventMessages(null, $project->errors, 'errors');
 		} else {
@@ -230,15 +229,17 @@ if (empty($reshook)) {
 $form = new Form($db);
 $now = dol_now();
 
+$title = $langs->trans('ListOfConferencesOrBooths');
 //$help_url="EN:Module_ConferenceOrBooth|FR:Module_ConferenceOrBooth_FR|ES:Módulo_ConferenceOrBooth";
 $help_url = '';
-$title = $langs->trans('ListOfConferencesOrBooths');
 
-if ($projectid > 0) {
+if ($projectid > 0 || $projectref) {
 	$project = new Project($db);
-	$result = $project->fetch($projectid);
+	$result = $project->fetch($projectid, $projectref);
 	if ($result < 0) {
 		setEventMessages(null, $project->errors, 'errors');
+	} else {
+		$projectid = $project->id;
 	}
 	$result = $project->fetch_thirdparty();
 	if ($result < 0) {
@@ -279,13 +280,13 @@ if ($projectid > 0) {
 	// Title
 	$morehtmlref .= $project->title;
 	// Thirdparty
-	if ($project->thirdparty->id > 0) {
+	if (isset($project->thirdparty->id) && $project->thirdparty->id > 0) {
 		$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$project->thirdparty->getNomUrl(1, 'project');
 	}
 	$morehtmlref .= '</div>';
 
 	// Define a complementary filter for search of next/prev ref.
-	if (!$user->rights->project->all->lire) {
+	if (empty($user->rights->project->all->lire)) {
 		$objectsListId = $project->getProjectsAuthorizedForUser($user, 0, 0);
 		$project->next_prev_filter = " rowid IN (".$db->sanitize(count($objectsListId) ? join(',', array_keys($objectsListId)) : '0').")";
 	}
@@ -299,34 +300,36 @@ if ($projectid > 0) {
 	print '<table class="border tableforfield centpercent">';
 
 	// Usage
-	print '<tr><td class="tdtop">';
-	print $langs->trans("Usage");
-	print '</td>';
-	print '<td>';
-	if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
-		print '<input type="checkbox" disabled name="usage_opportunity"'.($project->usage_opportunity ? ' checked="checked"' : '').'"> ';
-		$htmltext = $langs->trans("ProjectFollowOpportunity");
-		print $form->textwithpicto($langs->trans("ProjectFollowOpportunity"), $htmltext);
-		print '<br>';
+	if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES) || empty($conf->global->PROJECT_HIDE_TASKS) || !empty($conf->eventorganization->enabled)) {
+		print '<tr><td class="tdtop">';
+		print $langs->trans("Usage");
+		print '</td>';
+		print '<td>';
+		if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
+			print '<input type="checkbox" disabled name="usage_opportunity"'.($project->usage_opportunity ? ' checked="checked"' : '').'"> ';
+			$htmltext = $langs->trans("ProjectFollowOpportunity");
+			print $form->textwithpicto($langs->trans("ProjectFollowOpportunity"), $htmltext);
+			print '<br>';
+		}
+		if (empty($conf->global->PROJECT_HIDE_TASKS)) {
+			print '<input type="checkbox" disabled name="usage_task"'.($project->usage_task ? ' checked="checked"' : '').'"> ';
+			$htmltext = $langs->trans("ProjectFollowTasks");
+			print $form->textwithpicto($langs->trans("ProjectFollowTasks"), $htmltext);
+			print '<br>';
+		}
+		if (empty($conf->global->PROJECT_HIDE_TASKS) && !empty($conf->global->PROJECT_BILL_TIME_SPENT)) {
+			print '<input type="checkbox" disabled name="usage_bill_time"'.($project->usage_bill_time ? ' checked="checked"' : '').'"> ';
+			$htmltext = $langs->trans("ProjectBillTimeDescription");
+			print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
+			print '<br>';
+		}
+		if (!empty($conf->eventorganization->enabled)) {
+			print '<input type="checkbox" disabled name="usage_organize_event"'.($project->usage_organize_event ? ' checked="checked"' : '').'"> ';
+			$htmltext = $langs->trans("EventOrganizationDescriptionLong");
+			print $form->textwithpicto($langs->trans("ManageOrganizeEvent"), $htmltext);
+		}
+		print '</td></tr>';
 	}
-	if (empty($conf->global->PROJECT_HIDE_TASKS)) {
-		print '<input type="checkbox" disabled name="usage_task"'.($project->usage_task ? ' checked="checked"' : '').'"> ';
-		$htmltext = $langs->trans("ProjectFollowTasks");
-		print $form->textwithpicto($langs->trans("ProjectFollowTasks"), $htmltext);
-		print '<br>';
-	}
-	if (!empty($conf->global->PROJECT_BILL_TIME_SPENT)) {
-		print '<input type="checkbox" disabled name="usage_bill_time"'.($project->usage_bill_time ? ' checked="checked"' : '').'"> ';
-		$htmltext = $langs->trans("ProjectBillTimeDescription");
-		print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
-		print '<br>';
-	}
-	if (!empty($conf->eventorganization->enabled)) {
-		print '<input type="checkbox" disabled name="usage_organize_event"'.($project->usage_organize_event ? ' checked="checked"' : '').'"> ';
-		$htmltext = $langs->trans("EventOrganizationDescriptionLong");
-		print $form->textwithpicto($langs->trans("ManageOrganizeEvent"), $htmltext);
-	}
-	print '</td></tr>';
 
 	// Visibility
 	print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
@@ -367,7 +370,6 @@ if ($projectid > 0) {
 
 	print '</div>';
 	print '<div class="fichehalfright">';
-	print '<div class="ficheaddleft">';
 	print '<div class="underbanner clearboth"></div>';
 
 	print '<table class="border tableforfield centpercent">';
@@ -379,7 +381,7 @@ if ($projectid > 0) {
 
 	// Categories
 	if ($conf->categorie->enabled) {
-		print '<tr><td valign="middle">'.$langs->trans("Categories").'</td><td>';
+		print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
 		print $form->showCategories($project->id, Categorie::TYPE_PROJECT, 1);
 		print "</td></tr>";
 	}
@@ -418,8 +420,8 @@ if ($projectid > 0) {
 	$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT;
 
 	// Show message
-	$message = '<a target="_blank" href="'.$urlwithroot.'/public/agenda/agendaexport.php?format=ical'.($conf->entity > 1 ? "&entity=".$conf->entity : "");
-	$message .= '&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY ?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) : '...');
+	$message = '<a target="_blank" rel="noopener noreferrer" href="'.$urlwithroot.'/public/agenda/agendaexport.php?format=ical'.($conf->entity > 1 ? "&entity=".$conf->entity : "");
+	$message .= '&exportkey='.urlencode(getDolGlobalString('MAIN_AGENDA_XCAL_EXPORTKEY', '...'));
 	$message .= "&project=".$projectid.'&module='.urlencode('@eventorganization').'&status='.ConferenceOrBooth::STATUS_CONFIRMED.'">'.$langs->trans('DownloadICSLink').img_picto('', 'download', 'class="paddingleft"').'</a>';
 	print $message;
 	print "</td></tr>";
@@ -430,13 +432,13 @@ if ($projectid > 0) {
 	print $form->textwithpicto($langs->trans("SuggestOrVoteForConfOrBooth"), $langs->trans("EvntOrgRegistrationHelpMessage"));
 	//print '</span>';
 	print '</td><td>';
-	$linksuggest = $dolibarr_main_url_root.'/public/project/index.php?id='.$project->id;
-	$encodedsecurekey = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$project->id, 'md5');
+	$linksuggest = $dolibarr_main_url_root.'/public/project/index.php?id='.((int) $project->id);
+	$encodedsecurekey = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY').'conferenceorbooth'.((int) $project->id), 'md5');
 	$linksuggest .= '&securekey='.urlencode($encodedsecurekey);
 	//print '<div class="urllink">';
 	//print '<input type="text" value="'.$linksuggest.'" id="linkregister" class="quatrevingtpercent paddingrightonly">';
 	print '<div class="tdoverflowmax200 inline-block valignmiddle"><a target="_blank" href="'.$linksuggest.'" class="quatrevingtpercent">'.$linksuggest.'</a></div>';
-	print '<a target="_blank" href="'.$linksuggest.'">'.img_picto('', 'globe').'</a>';
+	print '<a target="_blank" rel="noopener noreferrer" href="'.$linksuggest.'">'.img_picto('', 'globe').'</a>';
 	//print '</div>';
 	//print ajax_autoselect("linkregister");
 	print '</td></tr>';
@@ -447,20 +449,19 @@ if ($projectid > 0) {
 	print $langs->trans("PublicAttendeeSubscriptionGlobalPage");
 	//print '</span>';
 	print '</td><td>';
-	$link_subscription = $dolibarr_main_url_root.'/public/eventorganization/attendee_registration.php?id='.$project->id.'&type=global';
-	$encodedsecurekey = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$project->id, 'md5');
+	$link_subscription = $dolibarr_main_url_root.'/public/eventorganization/attendee_new.php?id='.((int) $project->id).'&type=global';
+	$encodedsecurekey = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY').'conferenceorbooth'.((int) $project->id), 'md5');
 	$link_subscription .= '&securekey='.urlencode($encodedsecurekey);
 	//print '<div class="urllink">';
 	//print '<input type="text" value="'.$linkregister.'" id="linkregister" class="quatrevingtpercent paddingrightonly">';
 	print '<div class="tdoverflowmax200 inline-block valignmiddle"><a target="_blank" href="'.$link_subscription.'" class="quatrevingtpercent">'.$link_subscription.'</a></div>';
-	print '<a target="_blank" href="'.$link_subscription.'">'.img_picto('', 'globe').'</a>';
+	print '<a target="_blank" rel="noopener noreferrer" rel="noopener noreferrer" href="'.$link_subscription.'">'.img_picto('', 'globe').'</a>';
 	//print '</div>';
 	//print ajax_autoselect("linkregister");
 	print '</td></tr>';
 
 	print '</table>';
 
-	print '</div>';
 	print '</div>';
 	print '</div>';
 
@@ -472,7 +473,8 @@ if ($projectid > 0) {
 if (!empty($project->id)) {
 	$head = conferenceorboothProjectPrepareHead($project);
 	$tab = 'conferenceorbooth';
-	print dol_get_fiche_head($head, $tab, $langs->trans("Project"), -1, ($project->public ? 'projectpub' : 'project'), 0, '', '');
+
+	print dol_get_fiche_head($head, $tab, $langs->trans("Project"), -1, ($project->public ? 'projectpub' : 'project'), 0, '', 'reposition');
 }
 
 // Build and execute select
@@ -483,7 +485,7 @@ $sql .= $object->getFieldList('t');
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key.', ' : '');
+		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
 	}
 }
 // Add fields from hooks
@@ -492,7 +494,7 @@ $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $obje
 $sql .= preg_replace('/^,/', '', $hookmanager->resPrint);
 $sql = preg_replace('/,\s*$/', '', $sql);
 $sql .= " FROM ".MAIN_DB_PREFIX.$object->table_element." as t";
-if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
+if (!empty($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (t.id = ef.fk_object)";
 }
 $sql .= " INNER JOIN ".MAIN_DB_PREFIX."c_actioncomm as cact ON cact.id=t.fk_action AND cact.module LIKE '%@eventorganization'";
@@ -582,7 +584,7 @@ if (is_numeric($nbtotalofrecords) && ($limit > $nbtotalofrecords || empty($limit
 if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $search_all && !$page) {
 	$obj = $db->fetch_object($resql);
 	$id = $obj->rowid;
-	header("Location: ".dol_buildpath('/eventorganization/conferenceorbooth_card.php', 1).'?id='.$id);
+	header("Location: ".DOL_URL_ROOT.'/eventorganization/conferenceorbooth_card.php?id='.((int) $id));
 	exit;
 }
 
@@ -619,13 +621,13 @@ $arrayofmassactions = array(
 	//'validate'=>img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Validate"),
 	//'generate_doc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("ReGeneratePDF"),
 	//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
-	'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail").' - '.$langs->trans("ConferenceOrBooth"),
-	'presend_attendees'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail").' - '.$langs->trans("Attendees"),
+	'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail").' ('.$langs->trans("ToSpeakers").')',
+	//'presend_attendees'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail").' - '.$langs->trans("Attendees"),
 );
 if ($permissiontodelete) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
-if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'presend_attendees', 'predelete'))) {
+if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete'))) {
 	$arrayofmassactions = array();
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
@@ -640,6 +642,7 @@ print '<input type="hidden" name="action" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
+print '<input type="hidden" name="page_y" value="">';
 
 $title = $langs->trans("ListOfConferencesOrBooths");
 
@@ -647,12 +650,13 @@ $newcardbutton = dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle'
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, $object->picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
 
+
 // Add code for pre mass action (confirmation or email presend form)
-$topicmail = $object->ref;
+$topicmail = $projectstatic->title;
 $modelmail = "conferenceorbooth";
 $objecttmp = new ConferenceOrBooth($db);
 $trackid = 'conferenceorbooth_'.$object->id;
-include DOL_DOCUMENT_ROOT.'/eventorganization/tpl/massactions_mail_pre.tpl.php';
+$withmaindocfilemail = 0;
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 
@@ -686,6 +690,7 @@ $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
+
 print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
@@ -695,6 +700,7 @@ print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwit
 print '<tr class="liste_titre">';
 foreach ($object->fields as $key => $val) {
 	$cssforfield = (empty($val['css']) ? '' : $val['css']);
+	$searchkey = (empty($search[$key]) ? '' : $search[$key]);
 	if ($key == 'status') {
 		$cssforfield .= ($cssforfield ? ' ' : '').'center';
 	} elseif (in_array($val['type'], array('date', 'datetime', 'timestamp'))) {
@@ -707,11 +713,11 @@ foreach ($object->fields as $key => $val) {
 	if (!empty($arrayfields['t.'.$key]['checked'])) {
 		print '<td class="liste_titre'.($cssforfield ? ' '.$cssforfield : '').'">';
 		if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
-			print $form->selectarray('search_'.$key, $val['arrayofkeyval'], $search[$key], $val['notnull'], 0, 0, '', 1, 0, 0, '', 'maxwidth100', 1);
+			print $form->selectarray('search_'.$key, $val['arrayofkeyval'], $searchkey, $val['notnull'], 0, 0, '', 1, 0, 0, '', 'maxwidth100', 1);
 		} elseif ((strpos($val['type'], 'integer:') === 0) || (strpos($val['type'], 'sellist:')=== 0)) {
-			print $object->showInputField($val, $key, $search[$key], '', '', 'search_', 'maxwidth125', 1);
+			print $object->showInputField($val, $key, $searchkey, '', '', 'search_', 'maxwidth125', 1);
 		} elseif (!preg_match('/^(date|timestamp|datetime)/', $val['type'])) {
-			print '<input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag($search[$key]).'">';
+			print '<input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag($searchkey).'">';
 		} elseif (preg_match('/^(date|timestamp|datetime)/', $val['type'])) {
 			print '<div class="nowrap">';
 			print $form->selectDate($search[$key.'_dtstart'] ? $search[$key.'_dtstart'] : '', "search_".$key."_dtstart", 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
@@ -769,7 +775,7 @@ print '</tr>'."\n";
 
 // Detect if we need a fetch on each output line
 $needToFetchEachLine = 0;
-if (is_array($extrafields->attributes[$object->table_element]['computed']) && count($extrafields->attributes[$object->table_element]['computed']) > 0) {
+if (!empty($extrafields->attributes[$object->table_element]['computed']) && is_array($extrafields->attributes[$object->table_element]['computed']) && count($extrafields->attributes[$object->table_element]['computed']) > 0) {
 	foreach ($extrafields->attributes[$object->table_element]['computed'] as $key => $val) {
 		if (preg_match('/\$object/', $val)) {
 			$needToFetchEachLine++; // There is at least one compute field that use $object
@@ -793,6 +799,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 
 	// Show here line of result
 	print '<tr class="oddeven">';
+	$totalarray['nbfield'] = 0;
 	foreach ($object->fields as $key => $val) {
 		$cssforfield = (empty($val['css']) ? '' : $val['css']);
 		if (in_array($val['type'], array('date', 'datetime', 'timestamp'))) {
@@ -825,7 +832,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
-			if (!empty($val['isameasure'])) {
+			if (!empty($val['isameasure']) && $val['isameasure'] == 1) {
 				if (!$i) {
 					$totalarray['pos'][$totalarray['nbfield']] = 't.'.$key;
 				}

@@ -107,7 +107,14 @@ if (!GETPOSTISSET('date_startmonth') && (empty($date_start) || empty($date_end))
 
 $sql = "SELECT f.rowid, f.ref, f.type, f.datef as df, f.ref_client, f.date_lim_reglement as dlr, f.close_code,";
 $sql .= " fd.rowid as fdid, fd.description, fd.product_type, fd.total_ht, fd.total_tva, fd.total_localtax1, fd.total_localtax2, fd.tva_tx, fd.total_ttc, fd.situation_percent, fd.vat_src_code,";
-$sql .= " s.rowid as socid, s.nom as name, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur,";
+$sql .= " s.rowid as socid, s.nom as name, s.code_client, s.code_fournisseur,";
+if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
+	$sql .= " spe.accountancy_code_customer as code_compta,";
+	$sql .= " spe.accountancy_code_supplier as code_compta_fournisseur,";
+} else {
+	$sql .= " s.code_compta as code_compta,";
+	$sql .= " s.code_compta_fournisseur,";
+}
 $sql .= " p.rowid as pid, p.ref as pref, aa.rowid as fk_compte, aa.account_number as compte, aa.label as label_compte,";
 if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
 	$sql .= " ppe.accountancy_code_sell";
@@ -122,6 +129,9 @@ if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa ON aa.rowid = fd.fk_code_ventilation";
 $sql .= " JOIN ".MAIN_DB_PREFIX."facture as f ON f.rowid = fd.fk_facture";
 $sql .= " JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = f.fk_soc";
+if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
+	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe_perentity as spe ON spe.fk_soc = s.rowid AND spe.entity = " . ((int) $conf->entity);
+}
 $sql .= " WHERE fd.fk_code_ventilation > 0";
 $sql .= " AND f.entity IN (".getEntity('invoice', 0).')'; // We don't share object for accountancy, we use source object sharing
 $sql .= " AND f.fk_statut > 0";
@@ -402,8 +412,13 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping->fk_docdet = 0; // Useless, can be several lines that are source of this record to add
 					$bookkeeping->thirdparty_code = $companystatic->code_client;
 
-					$bookkeeping->subledger_account = '';
-					$bookkeeping->subledger_label = '';
+					if ($k == getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT')) {
+						$bookkeeping->subledger_account = $tabcompany[$key]['code_compta'];
+						$bookkeeping->subledger_label = $tabcompany[$key]['name'];
+					} else {
+						$bookkeeping->subledger_account = '';
+						$bookkeeping->subledger_label = '';
+					}
 
 					$bookkeeping->numero_compte = $k;
 					$bookkeeping->label_compte = $label_account;
@@ -706,7 +721,7 @@ if (empty($action) || $action == 'view') {
 		print $desc;
 		print '</div>';
 	}
-	print '<div class="tabsAction tabsActionNoBottom">';
+	print '<div class="tabsAction tabsActionNoBottom centerimp">';
 	if (!empty($conf->global->ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL) && $in_bookkeeping == 'notyet') {
 		print '<input type="button" class="butAction" name="exportcsv" value="'.$langs->trans("ExportDraftJournal").'" onclick="launch_export();" />';
 	}
@@ -876,6 +891,13 @@ if (empty($action) || $action == 'view') {
 			print "</td>";
 			// Subledger account
 			print "<td>";
+			if ($k == getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT')) {
+				if (($accountoshow == "") || $accountoshow == 'NotDefined') {
+					print '<span class="error">'.$langs->trans("ThirdpartyAccountNotDefined").'</span>';
+				} else {
+					print length_accounta($tabcompany[$key]['code_compta']);
+				}
+			}
 			print '</td>';
 			$companystatic->id = $tabcompany[$key]['id'];
 			$companystatic->name = $tabcompany[$key]['name'];

@@ -213,7 +213,7 @@ print '<div class="tabsAction">';
 if (empty($action)) {
 	if ($user->rights->don->supprimer) {
 		if (!$disable_delete) {
-			print '<a class="butActionDelete" href="card.php?id='.$object->id.'&amp;action=delete&amp;token='.newToken().'">'.$langs->trans('Delete').'</a>';
+			print '<a class="butActionDelete" href="card.php?id='.$object->id.'&amp;action=delete&token='.newToken().'">'.$langs->trans('Delete').'</a>';
 		} else {
 			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("CantRemovePaymentWithOneInvoicePaid")).'">'.$langs->trans('Delete').'</a>';
 		}

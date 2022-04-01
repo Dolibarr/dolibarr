@@ -321,28 +321,28 @@ class pdf_strato extends ModelePDFContract
 
 						// Description of product line
 
-						if ($objectligne->date_ouverture_prevue) {
-							$datei = dol_print_date($objectligne->date_ouverture_prevue, 'day', false, $outputlangs, true);
+						if (!empty($objectligne->date_start)) {
+							$datei = dol_print_date((int) $objectligne->date_start, 'day', false, $outputlangs, true);
 						} else {
 							$datei = $langs->trans("Unknown");
 						}
 
-						if ($objectligne->date_fin_validite) {
-							$durationi = convertSecondToTime($objectligne->date_fin_validite - $objectligne->date_ouverture_prevue, 'allwithouthour');
-							$datee = dol_print_date($objectligne->date_fin_validite, 'day', false, $outputlangs, true);
+						if (!empty($objectligne->date_end)) {
+							$durationi = convertSecondToTime((int) $objectligne->date_end - (int) $objectligne->date_start, 'allwithouthour');
+							$datee = dol_print_date($objectligne->date_end, 'day', false, $outputlangs, true);
 						} else {
 							$durationi = $langs->trans("Unknown");
 							$datee = $langs->trans("Unknown");
 						}
 
-						if ($objectligne->date_ouverture) {
-							$daters = dol_print_date($objectligne->date_ouverture, 'day', false, $outputlangs, true);
+						if (!empty($objectligne->date_start_real)) {
+							$daters = dol_print_date((int) $objectligne->date_start_real, 'day', false, $outputlangs, true);
 						} else {
 							$daters = $langs->trans("Unknown");
 						}
 
-						if ($objectligne->date_cloture) {
-							$datere = dol_print_date($objectligne->date_cloture, 'day', false, $outputlangs, true);
+						if (!empty($objectligne->date_end_real)) {
+							$datere = dol_print_date((int) $objectligne->date_end_real, 'day', false, $outputlangs, true);
 						} else {
 							$datere = $langs->trans("Unknown");
 						}
@@ -363,7 +363,7 @@ class pdf_strato extends ModelePDFContract
 						if (empty($conf->global->CONTRACT_HIDE_REAL_DATE_ON_PDF)) {
 							$txt .= '<br>';
 							$txt .= $outputlangs->transnoentities("DateStartRealShort")." : <strong>".$daters.'</strong>';
-							if ($objectligne->date_cloture) {
+							if (!empty($objectligne->date_end_real)) {
 								$txt .= " - ".$outputlangs->transnoentities("DateEndRealShort")." : '<strong>'".$datere.'</strong>';
 							}
 						}
@@ -720,7 +720,7 @@ class pdf_strato extends ModelePDFContract
 			$this->recipient = $object->thirdparty;
 
 			// Recipient name
-			if ($usecontact && ($object->contact->fk_soc != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)))) {
+			if ($usecontact && ($object->contact->socid != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)))) {
 				$thirdparty = $object->contact;
 			} else {
 				$thirdparty = $object->thirdparty;

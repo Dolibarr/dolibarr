@@ -30,14 +30,16 @@ ManageLotMask=Aangepast masker
 CustomMasks=Optie om voor elk product een ander soort nummer te gebruiken
 BatchLotNumberingModules=Regel voor automatische generatie van het lot nummer
 BatchSerialNumberingModules=Regel voor de automatische generatie van het serienummer (alleen voor producten met een uniek serienummer per product)
-QtyToAddAfterBarcodeScan=Aantal toe te voegen voor elke gescande barcode/lot/serie
+QtyToAddAfterBarcodeScan=Qty to %s for each barcode/lot/serial scanned
 LifeTime=Levensduur (in dagen)
 EndOfLife=Einde van het leven
 ManufacturingDate=Fabricage datum
 DestructionDate=Vernietigingsdatum:
 FirstUseDate=Datum eerste gebruik
 QCFrequency=Frequentie kwaliteitscontrole (in dagen)
-
+ShowAllLots=Toon alle kavels
+HideLots=Verberg kavels
 #Traceability - qc status
 OutOfOrder=Buiten gebruik
 InWorkingOrder=In werkende staat
+ToReplace=vervang

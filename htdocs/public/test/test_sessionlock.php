@@ -52,11 +52,15 @@ print '<br>';
 
 require '../../main.inc.php';
 
-/* No need for this.
+// Security
 if ($dolibarr_main_prod) {
 	accessforbidden();
 }
-*/
+
+
+/*
+ * View
+ */
 
 print 'session_status='.session_status().' (after main.inc.php)';
 print '<br>';

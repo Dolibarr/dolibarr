@@ -88,9 +88,9 @@ if (function_exists('exec')) {
 }
 print '<br>';
 
-print "<strong>PHP session.use_strict_mode</strong> = ".(ini_get('session.use_strict_mode') ? ini_get('session.use_strict_mode') : yn(0)).' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", '1').")</span><br>\n";
-print "<strong>PHP session.use_only_cookies</strong> = ".(ini_get('session.use_only_cookies') ? ini_get('session.use_only_cookies') : yn(0)).' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", '1').")</span><br>\n";
-print "<strong>PHP session.cookie_httponly</strong> = ".(ini_get('session.cookie_httponly') ? ini_get('session.cookie_httponly') : '').' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", '1').")</span><br>\n";
+print "<strong>PHP session.use_strict_mode</strong> = ".(ini_get('session.use_strict_mode') ? '' : img_warning().' ').(ini_get('session.use_strict_mode') ? ini_get('session.use_strict_mode') : yn(0)).' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", '1').")</span><br>\n";
+print "<strong>PHP session.use_only_cookies</strong> = ".(ini_get('session.use_only_cookies') ? '' : img_warning().' ').(ini_get('session.use_only_cookies') ? ini_get('session.use_only_cookies') : yn(0)).' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", '1').")</span><br>\n";
+print "<strong>PHP session.cookie_httponly</strong> = ".(ini_get('session.cookie_httponly') ? '' : img_warning().' ').(ini_get('session.cookie_httponly') ? ini_get('session.cookie_httponly') : '').' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", '1').")</span><br>\n";
 print "<strong>PHP session.cookie_samesite</strong> = ".(ini_get('session.cookie_samesite') ? ini_get('session.cookie_samesite') : 'None');
 if (!ini_get('session.cookie_samesite') || ini_get('session.cookie_samesite') == 'Lax') {
 	print ' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", 'Lax').")</span>";
@@ -98,7 +98,8 @@ if (!ini_get('session.cookie_samesite') || ini_get('session.cookie_samesite') ==
 	print ' &nbsp; '.img_warning().' <span class="opacitymedium">'.$langs->trans("WarningPaypalPaymentNotCompatibleWithStrict")."</span>";
 }
 print "<br>\n";
-print "<strong>PHP open_basedir</strong> = ".(ini_get('open_basedir') ? ini_get('open_basedir') : yn(0).' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", $langs->transnoentitiesnoconv("ARestrictedPath").', '.$langs->transnoentitiesnoconv("Example").' '.$_SERVER["DOCUMENT_ROOT"]).')</span>')."<br>\n";
+print "<strong>PHP open_basedir</strong> = ".(ini_get('open_basedir') ? ini_get('open_basedir') : yn(0).' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", $langs->transnoentitiesnoconv("ARestrictedPath").', '.$langs->transnoentitiesnoconv("Example").': '.$_SERVER["DOCUMENT_ROOT"].','.DOL_DATA_ROOT).')</span>')."<br>\n";
+print "<strong>PHP short_open_tag</strong> = ".((empty(ini_get('short_open_tag')) || ini_get('short_open_tag') == 'Off') ? yn(0) : img_warning().' '.yn(0)).' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", $langs->transnoentitiesnoconv("No")).')</span>'."<br>\n";
 print "<strong>PHP allow_url_fopen</strong> = ".(ini_get('allow_url_fopen') ? img_picto($langs->trans("YouShouldSetThisToOff"), 'warning').' '.ini_get('allow_url_fopen') : yn(0)).' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", $langs->transnoentitiesnoconv("No")).")</span><br>\n";
 print "<strong>PHP allow_url_include</strong> = ".(ini_get('allow_url_include') ? img_picto($langs->trans("YouShouldSetThisToOff"), 'warning').' '.ini_get('allow_url_include') : yn(0)).' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", $langs->transnoentitiesnoconv("No")).")</span><br>\n";
 //print "<strong>PHP safe_mode</strong> = ".(ini_get('safe_mode') ? ini_get('safe_mode') : yn(0)).' &nbsp; <span class="opacitymedium">'.$langs->trans("Deprecated")." (removed in PHP 5.4)</span><br>\n";
@@ -163,7 +164,7 @@ print '<br>';
 
 // XDebug
 print '<strong>'.$langs->trans("XDebug").'</strong>: ';
-$test = !function_exists('xdebug_is_enabled');
+$test = !function_exists('xdebug_is_enabled') && !extension_loaded('xdebug');
 if ($test) {
 	print img_picto('', 'tick.png').' '.$langs->trans("NotInstalled").' - '.$langs->trans("NotRiskOfLeakWithThis");
 } else {
@@ -258,6 +259,8 @@ print '<br>';
 print '<strong>$dolibarr_nocsrfcheck</strong>: '.(empty($dolibarr_nocsrfcheck) ? '0' : $dolibarr_nocsrfcheck);
 if (!empty($dolibarr_nocsrfcheck)) {
 	print ' &nbsp; '.img_picto('', 'warning').' '.$langs->trans("IfYouAreOnAProductionSetThis", 0);
+} else {
+	print ' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': 0)</span>';
 }
 print '<br>';
 
@@ -304,7 +307,7 @@ print empty($conf->global->MAIN_ANTIVIRUS_COMMAND) ? '' : img_picto('', 'tick').
 print yn(empty($conf->global->MAIN_ANTIVIRUS_COMMAND) ? 0 : 1);
 if (!empty($conf->global->MAIN_ANTIVIRUS_COMMAND)) {
 	print ' &nbsp; - '.$conf->global->MAIN_ANTIVIRUS_COMMAND;
-	if (defined('MAIN_ANTIVIRUS_COMMAND')) {
+	if (defined('MAIN_ANTIVIRUS_COMMAND') && !defined('MAIN_ANTIVIRUS_BYPASS_COMMAND_AND_PARAM')) {
 		print ' - <span class="opacitymedium">'.$langs->trans("ValueIsForcedBySystem").'</span>';
 	}
 }
@@ -340,69 +343,6 @@ if (empty($out)) {
 }
 
 print '<br>';
-print '<br>';
-print '<br>';
-print '<br>';
-
-
-print load_fiche_titre($langs->trans("OtherSetup").' ('.$langs->trans("Experimental").')', '', 'folder');
-
-
-//print '<strong>'.$langs->trans("PasswordEncryption").'</strong>: ';
-print '<strong>MAIN_SECURITY_HASH_ALGO</strong> = '.(empty($conf->global->MAIN_SECURITY_HASH_ALGO) ? '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>' : $conf->global->MAIN_SECURITY_HASH_ALGO)." &nbsp; ";
-if (empty($conf->global->MAIN_SECURITY_HASH_ALGO)) {
-	print '<span class="opacitymedium"> &nbsp; &nbsp; If unset: \'md5\'</span>';
-}
-if ($conf->global->MAIN_SECURITY_HASH_ALGO != 'password_hash') {
-	print '<br><strong>MAIN_SECURITY_SALT</strong> = '.(empty($conf->global->MAIN_SECURITY_SALT) ? '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>' : $conf->global->MAIN_SECURITY_SALT).'<br>';
-} else {
-	print '<span class="opacitymedium">('.$langs->trans("Recommended").': password_hash)</span>';
-	print '<br>';
-}
-if ($conf->global->MAIN_SECURITY_HASH_ALGO != 'password_hash') {
-	print '<div class="info">The recommanded value for MAIN_SECURITY_HASH_ALGO is now \'password_hash\' but setting it now will make ALL existing passwords of all users not valid, so update is not possible.<br>';
-	print 'If you really want to switch, you must:<br>';
-	print '- Go on home - setup - other and add constant MAIN_SECURITY_HASH_ALGO to value \'password_hash\'<br>';
-	print '- In same session, WITHOUT LOGGING OUT, go into your admin user record and set a new password<br>';
-	print '- You can now logout and login with this new password. You must now reset password of all other users.<br>';
-	print '</div><br>';
-}
-print '<br>';
-
-print '<strong>MAIN_SECURITY_ANTI_SSRF_SERVER_IP</strong> = '.(empty($conf->global->MAIN_SECURITY_ANTI_SSRF_SERVER_IP) ? '<span class="opacitymedium">'.$langs->trans("Undefined").'</span> &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': List of static IPs of server separated with coma - '.$langs->trans("Note").': common loopback ip like 127.*.*.*, [::1] are already added)</span>' : $conf->global->MAIN_SECURITY_ANTI_SSRF_SERVER_IP)."<br>";
-print '<br>';
-
-print '<strong>MAIN_ALLOW_SVG_FILES_AS_IMAGES</strong> = '.(empty($conf->global->MAIN_ALLOW_SVG_FILES_AS_IMAGES) ? '0' : $conf->global->MAIN_ALLOW_SVG_FILES_AS_IMAGES).' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': 0)</span><br>';
-print '<br>';
-
-print '<strong>MAIN_ALWAYS_CREATE_LOCK_AFTER_LAST_UPGRADE</strong> = '.(empty($conf->global->MAIN_ALWAYS_CREATE_LOCK_AFTER_LAST_UPGRADE) ? '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>' : $conf->global->MAIN_ALWAYS_CREATE_LOCK_AFTER_LAST_UPGRADE).' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': 1)</span><br>';
-print '<br>';
-
-print '<strong>MAIN_RESTRICTHTML_ONLY_VALID_HTML</strong> = '.(empty($conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML) ? '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Recommended").': 1)</span>' : $conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML)."<br>";
-print '<br>';
-
-print '<strong>MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES</strong> = '.(empty($conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES) ? '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Recommended").': 1)</span>' : $conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES)."<br>";
-print '<br>';
-
-print '<strong>MAIN_EXEC_USE_POPEN</strong> = ';
-if (empty($conf->global->MAIN_EXEC_USE_POPEN)) {
-	print '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>';
-} else {
-	print $conf->global->MAIN_EXEC_USE_POPEN;
-}
-if ($execmethod == 1) {
-	print '<span class="opacitymedium">, "exec" PHP method will be used for shell commands';
-	print ' &nbsp; ('.$langs->trans("Recommended").': '.$langs->trans("Undefined").' '.$langs->trans("or").' 1)';
-	print '</span>';
-}
-if ($execmethod == 2) {
-	print '<span class="opacitymedium">, "popen" PHP method will be used for shell commands';
-	print ' &nbsp; ('.$langs->trans("Recommended").': '.$langs->trans("Undefined").' '.$langs->trans("or").' 1)';
-	print '</span>';
-}
-print "<br>";
-print '<br>';
-
 
 
 // Modules/Applications
@@ -454,13 +394,88 @@ if (empty($conf->api->enabled) && empty($conf->webservices->enabled)) {
 		print '<br>';
 	}
 	if (!empty($conf->api->enabled)) {
-		print '<strong>API_ENDPOINT_RULES</strong> = '.(empty($conf->global->API_ENDPOINT_RULES) ? '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Example").': endpoint1:1,endpoint2:1,...)</span>' : $conf->global->API_ENDPOINT_RULES)."<br>\n";
+		print '<strong>API_ENDPOINT_RULES</strong> = '.(empty($conf->global->API_ENDPOINT_RULES) ? '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Example").': login:0,users:0,setup:1,status:1,tickets:1,...)</span>' : $conf->global->API_ENDPOINT_RULES)."<br>\n";
 		print '<br>';
 	}
 }
 
 
 print '<br><br>';
+
+
+print '<br>';
+
+
+print load_fiche_titre($langs->trans("OtherSetup"), '', 'folder');
+
+
+//print '<strong>'.$langs->trans("PasswordEncryption").'</strong>: ';
+print '<strong>MAIN_SECURITY_HASH_ALGO</strong> = '.(empty($conf->global->MAIN_SECURITY_HASH_ALGO) ? '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>' : $conf->global->MAIN_SECURITY_HASH_ALGO)." &nbsp; ";
+if (empty($conf->global->MAIN_SECURITY_HASH_ALGO)) {
+	print '<span class="opacitymedium"> &nbsp; &nbsp; If unset: \'md5\'</span>';
+}
+if ($conf->global->MAIN_SECURITY_HASH_ALGO != 'password_hash') {
+	print '<br><strong>MAIN_SECURITY_SALT</strong> = '.(empty($conf->global->MAIN_SECURITY_SALT) ? '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>' : $conf->global->MAIN_SECURITY_SALT).'<br>';
+} else {
+	print '<span class="opacitymedium">('.$langs->trans("Recommended").': password_hash)</span>';
+	print '<br>';
+}
+if ($conf->global->MAIN_SECURITY_HASH_ALGO != 'password_hash') {
+	print '<div class="info">The recommanded value for MAIN_SECURITY_HASH_ALGO is now \'password_hash\' but setting it now will make ALL existing passwords of all users not valid, so update is not possible.<br>';
+	print 'If you really want to switch, you must:<br>';
+	print '- Go on home - setup - other and add constant MAIN_SECURITY_HASH_ALGO to value \'password_hash\'<br>';
+	print '- In same session, WITHOUT LOGGING OUT, go into your admin user record and set a new password<br>';
+	print '- You can now logout and login with this new password. You must now reset password of all other users.<br>';
+	print '</div><br>';
+}
+print '<br>';
+
+print '<strong>MAIN_SECURITY_ANTI_SSRF_SERVER_IP</strong> = '.(empty($conf->global->MAIN_SECURITY_ANTI_SSRF_SERVER_IP) ? '<span class="opacitymedium">'.$langs->trans("Undefined").'</span> &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': List of static IPs of server separated with coma - '.$langs->trans("Note").': common loopback ip like 127.*.*.*, [::1] are already added)</span>' : $conf->global->MAIN_SECURITY_ANTI_SSRF_SERVER_IP)."<br>";
+print '<br>';
+
+print '<strong>MAIN_ALLOW_SVG_FILES_AS_IMAGES</strong> = '.(empty($conf->global->MAIN_ALLOW_SVG_FILES_AS_IMAGES) ? '0' : $conf->global->MAIN_ALLOW_SVG_FILES_AS_IMAGES).' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': 0)</span><br>';
+print '<br>';
+
+print '<strong>MAIN_ALWAYS_CREATE_LOCK_AFTER_LAST_UPGRADE</strong> = '.(empty($conf->global->MAIN_ALWAYS_CREATE_LOCK_AFTER_LAST_UPGRADE) ? '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>' : $conf->global->MAIN_ALWAYS_CREATE_LOCK_AFTER_LAST_UPGRADE).' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': 1)</span><br>';
+print '<br>';
+
+print '<strong>MAIN_SECURITY_CSRF_WITH_TOKEN</strong> = '.(empty($conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN) ? '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>' : $conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN).' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': 2)</span>'."<br>";
+print '<br>';
+
+print '<br>';
+print '<br>';
+
+
+print load_fiche_titre($langs->trans("OtherSetup").' ('.$langs->trans("Experimental").')', '', 'folder');
+
+print '<strong>MAIN_RESTRICTHTML_ONLY_VALID_HTML</strong> = '.(empty($conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML) ? '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Recommended").': 1)</span>' : $conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML)."<br>";
+print '<br>';
+
+print '<strong>MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES</strong> = '.(empty($conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES) ? '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Recommended").': 1)</span>' : $conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES)."<br>";
+print '<br>';
+
+print '<strong>MAIN_SECURITY_CSRF_TOKEN_RENEWAL_ON_EACH_CALL</strong> = '.(empty($conf->global->MAIN_SECURITY_CSRF_TOKEN_RENEWAL_ON_EACH_CALL) ? '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Recommended").': '.$langs->trans("Undefined").' '.$langs->trans("or").' 0)</span>' : $conf->global->MAIN_SECURITY_CSRF_TOKEN_RENEWAL_ON_EACH_CALL)."<br>";
+print '<br>';
+
+print '<strong>MAIN_EXEC_USE_POPEN</strong> = ';
+if (empty($conf->global->MAIN_EXEC_USE_POPEN)) {
+	print '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>';
+} else {
+	print $conf->global->MAIN_EXEC_USE_POPEN;
+}
+if ($execmethod == 1) {
+	print '<span class="opacitymedium">, "exec" PHP method will be used for shell commands';
+	print ' &nbsp; ('.$langs->trans("Recommended").': '.$langs->trans("Undefined").' '.$langs->trans("or").' 1)';
+	print '</span>';
+}
+if ($execmethod == 2) {
+	print '<span class="opacitymedium">, "popen" PHP method will be used for shell commands';
+	print ' &nbsp; ('.$langs->trans("Recommended").': '.$langs->trans("Undefined").' '.$langs->trans("or").' 1)';
+	print '</span>';
+}
+print "<br>";
+print '<br>';
+
 
 // End of page
 llxFooter();

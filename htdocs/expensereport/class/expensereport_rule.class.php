@@ -148,20 +148,19 @@ class ExpenseReportRule extends CoreObject
 	 * @param int        $fk_user		    user of expense
 	 * @return array                        Array with ExpenseReportRule
 	 */
-	public static function getAllRule($fk_c_type_fees = '', $date = '', $fk_user = '')
+	public function getAllRule($fk_c_type_fees = '', $date = '', $fk_user = '')
 	{
-		global $db;
-
 		$rules = array();
+
 		$sql = 'SELECT er.rowid';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'expensereport_rules er';
-		$sql .= ' WHERE er.entity IN (0,'.getEntity('').')';
+		$sql .= ' WHERE er.entity IN (0,'.getEntity($this->element).')';
 		if (!empty($fk_c_type_fees)) {
 			$sql .= ' AND er.fk_c_type_fees IN (-1, '.((int) $fk_c_type_fees).')';
 		}
 		if (!empty($date)) {
-			$sql .= " AND er.dates <= '".dol_print_date($date, '%Y-%m-%d')."'";
-			$sql .= " AND er.datee >= '".dol_print_date($date, '%Y-%m-%d')."'";
+			$sql .= " AND er.dates <= '".$this->db->idate($date)."'";
+			$sql .= " AND er.datee >= '".$this->db->idate($date)."'";
 		}
 		if ($fk_user > 0) {
 			$sql .= ' AND (er.is_for_all = 1';
@@ -172,18 +171,18 @@ class ExpenseReportRule extends CoreObject
 
 		dol_syslog("ExpenseReportRule::getAllRule");
 
-		$resql = $db->query($sql);
+		$resql = $this->db->query($sql);
 		if ($resql) {
-			while ($obj = $db->fetch_object($resql)) {
-				$rule = new ExpenseReportRule($db);
+			while ($obj = $this->db->fetch_object($resql)) {
+				$rule = new ExpenseReportRule($this->db);
 				if ($rule->fetch($obj->rowid) > 0) {
 					$rules[$rule->id] = $rule;
 				} else {
-					dol_print_error($db);
+					dol_print_error($this->db);
 				}
 			}
 		} else {
-			dol_print_error($db);
+			dol_print_error($this->db);
 		}
 
 		return $rules;
@@ -201,7 +200,7 @@ class ExpenseReportRule extends CoreObject
 		if ($this->fk_usergroup > 0) {
 			$group = new UserGroup($this->db);
 			if ($group->fetch($this->fk_usergroup) > 0) {
-				return $group->nom;
+				return $group->name;
 			} else {
 				$this->error = $group->error;
 				$this->errors[] = $this->error;

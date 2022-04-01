@@ -110,7 +110,7 @@ if (!empty($conf->syslog->enabled)) {
 
 print '<input type="radio" name="choice" id="choicetempfiles" value="tempfiles"';
 print (!$choice || $choice == 'tempfiles' || $choice == 'allfiles') ? ' checked' : '';
-print '> <label for="choicetempfiles">'.$langs->trans("PurgeDeleteTemporaryFiles").'</label><br><br>';
+print '> <label for="choicetempfiles">'.$langs->trans("PurgeDeleteTemporaryFilesShort").'</label><br><br>';
 
 print '<input type="radio" name="choice" id="choiceallfiles" value="confirm_allfiles"';
 print ($choice && $choice == 'confirm_allfiles') ? ' checked' : '';

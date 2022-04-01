@@ -127,7 +127,7 @@ class FormSms
 		print "\n<!-- Begin form SMS -->\n";
 
 		print '
-<script language="javascript">
+<script type="text/javascript">
 function limitChars(textarea, limit, infodiv)
 {
     var text = textarea.value;
@@ -178,7 +178,7 @@ function limitChars(textarea, limit, infodiv)
 				} else {
 					if ($this->fromtype) {
 						$langs->load("errors");
-						print '<font class="warning"> &lt;'.$langs->trans("ErrorNoPhoneDefinedForThisUser").'&gt; </font>';
+						print '<span class="warning"> &lt;'.$langs->trans("ErrorNoPhoneDefinedForThisUser").'&gt; </span>';
 					}
 				}
 				print "</td></tr>\n";

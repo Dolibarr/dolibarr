@@ -80,8 +80,8 @@ $actl[1] = img_picto($langs->trans("Activated"), 'switch_on', 'class="size15x"')
 $listoffset = GETPOST('listoffset', 'alpha');
 $listlimit = GETPOST('listlimit', 'alpha') > 0 ?GETPOST('listlimit', 'alpha') : 1000;
 
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -160,6 +160,7 @@ if (empty($conf->global->MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES)) {
 
 $tabhelp = array();
 $tabhelp[25] = array(
+	'label'=>$langs->trans('EnterAnyCode'),
 	'topic'=>'<span class="small">'.$helpsubstit.'</span>',
 	'joinfiles'=>$langs->trans('AttachMainDocByDefault'),
 	'content'=>'<span class="small">'.$helpsubstit.'</span>',
@@ -204,7 +205,7 @@ if (!empty($conf->expedition->enabled)) {
 	$elementList['shipping_send'] = img_picto('', 'dolly', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToSendShipment'));
 }
 if (!empty($conf->reception->enabled)) {
-	$elementList['reception_send'] = img_picto('', 'dolly', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToSendReception'));
+	$elementList['reception_send'] = img_picto('', 'dollyrevert', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToSendReception'));
 }
 if (!empty($conf->ficheinter->enabled)) {
 	$elementList['fichinter_send'] = img_picto('', 'intervention', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToSendIntervention'));
@@ -224,11 +225,14 @@ if (!empty($conf->contrat->enabled) && !empty($user->rights->contrat->lire)) {
 if (!empty($conf->ticket->enabled) && !empty($user->rights->ticket->read)) {
 	$elementList['ticket_send'] = img_picto('', 'ticket', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToTicket'));
 }
+if (!empty($conf->expensereport->enabled) && !empty($user->rights->expensereport->lire)) {
+	$elementList['expensereport_send'] = img_picto('', 'trip', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToTExpenseReport'));
+}
 if (!empty($conf->agenda->enabled)) {
 	$elementList['actioncomm_send'] = img_picto('', 'action', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToSendEventPush'));
 }
 if (!empty($conf->eventorganization->enabled) && !empty($user->rights->eventorganization->read)) {
-	$elementList['eventorganization_send'] = img_picto('', 'action', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToSendEventOrganization'));
+	$elementList['conferenceorbooth'] = img_picto('', 'action', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToSendEventOrganization'));
 }
 if (!empty($conf->partnership->enabled) && !empty($user->rights->partnership->read)) {
 	$elementList['partnership_send'] = img_picto('', 'partnership', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToPartnership'));
@@ -242,9 +246,12 @@ if ($reshook == 0) {
 	}
 }
 
+$permissiontoadd = 1;
+
 //asort($elementList);
 
 $id = 25;
+
 
 
 /*
@@ -301,7 +308,7 @@ if (empty($reshook)) {
 
 			// Rename some POST variables into a generic name
 			if (GETPOST('actionmodify', 'alpha') && $value == 'topic') {
-				$_POST['topic'] = $_POST['topic-'.$rowid];
+				$_POST['topic'] = GETPOST('topic-'.$rowid);
 			}
 
 			if ((!GETPOSTISSET($value) || GETPOST($value) == '' || GETPOST($value) == '-1') && $value != 'lang' && $value != 'fk_user' && $value != 'position') {
@@ -334,6 +341,7 @@ if (empty($reshook)) {
 				}
 
 				setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->transnoentities($fieldnamekey)), null, 'errors');
+				$action = 'add';
 			}
 		}
 
@@ -407,6 +415,7 @@ if (empty($reshook)) {
 				} else {
 					dol_print_error($db);
 				}
+				$action = 'add';
 			}
 		}
 
@@ -485,6 +494,7 @@ if (empty($reshook)) {
 				setEventMessages($langs->transnoentities("RecordSaved"), null, 'mesgs');
 			} else {
 				setEventMessages($db->error(), null, 'errors');
+				$action = 'edit';
 			}
 		}
 	}
@@ -511,7 +521,7 @@ if (empty($reshook)) {
 	if ($action == $acts[0]) {
 		$rowidcol = "rowid";
 
-		$sql = "UPDATE ".$tabname[$id]." SET active = 1 WHERE ".$rowidcol."=".((int) $rowid);
+		$sql = "UPDATE ".$tabname[$id]." SET active = 1 WHERE rowid = ".((int) $rowid);
 
 		$result = $db->query($sql);
 		if (!$result) {
@@ -523,7 +533,7 @@ if (empty($reshook)) {
 	if ($action == $acts[1]) {
 		$rowidcol = "rowid";
 
-		$sql = "UPDATE ".$tabname[$id]." SET active = 0 WHERE ".$rowidcol."=".((int) $rowid);
+		$sql = "UPDATE ".$tabname[$id]." SET active = 0 WHERE rowid = ".((int) $rowid);
 
 		$result = $db->query($sql);
 		if (!$result) {
@@ -541,18 +551,38 @@ $form = new Form($db);
 $formadmin = new FormAdmin($db);
 
 $help_url = '';
-$title = $langs->trans("EMailsSetup");
+if (!empty($user->admin) && (empty($_SESSION['leftmenu']) || $_SESSION['leftmenu'] != 'email_templates')) {
+	$title = $langs->trans("EMailsSetup");
+} else {
+	$title = $langs->trans("EMailsTemplates");
+}
 
 llxHeader('', $title, $help_url);
 
 $linkback = '';
 $titlepicto = 'title_setup';
 
-print load_fiche_titre($title, $linkback, $titlepicto);
 
-$head = email_admin_prepare_head();
+$url = DOL_URL_ROOT.'/admin/mails_templates.php?action=add';
+$newcardbutton = dolGetButtonTitle($langs->trans('NewEMailTemplate'), '', 'fa fa-plus-circle', $url, '', $permissiontoadd);
 
-print dol_get_fiche_head($head, 'templates', '', -1);
+
+if (!empty($user->admin) && (empty($_SESSION['leftmenu']) || $_SESSION['leftmenu'] != 'email_templates')) {
+	print load_fiche_titre($title, '', $titlepicto);
+} else {
+	print load_fiche_titre($title, $newcardbutton, $titlepicto);
+}
+
+if (!empty($user->admin) && (empty($_SESSION['leftmenu']) || $_SESSION['leftmenu'] != 'email_templates')) {
+	$head = email_admin_prepare_head();
+
+	print dol_get_fiche_head($head, 'templates', '', -1);
+
+	if (!empty($user->admin) && (empty($_SESSION['leftmenu']) || $_SESSION['leftmenu'] != 'email_templates')) {
+		print load_fiche_titre('', $newcardbutton, '');
+	}
+}
+
 
 // Confirmation de la suppression de la ligne
 if ($action == 'delete') {
@@ -595,7 +625,7 @@ $sql .= $db->plimit($listlimit + 1, $offset);
 
 $fieldlist = explode(',', $tabfield[$id]);
 
-if ($action == 'view') {
+if ($action == 'add') {
 	// Form to add a new line
 	print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -653,7 +683,7 @@ if ($action == 'view') {
 		if ($valuetoshow != '') {
 			print '<td class="'.$align.'">';
 			if (!empty($tabhelp[$id][$value]) && preg_match('/^http(s*):/i', $tabhelp[$id][$value])) {
-				print '<a href="'.$tabhelp[$id][$value].'" target="_blank">'.$valuetoshow.' '.img_help(1, $valuetoshow).'</a>';
+				print '<a href="'.$tabhelp[$id][$value].'" target="_blank" rel="noopener noreferrer">'.$valuetoshow.' '.img_help(1, $valuetoshow).'</a>';
 			} elseif (!empty($tabhelp[$id][$value])) {
 				if (in_array($value, array('topic'))) {
 					print $form->textwithpicto($valuetoshow, $tabhelp[$id][$value], 1, 'help', '', 0, 2, $value); // Tooltip on click
@@ -683,8 +713,8 @@ if ($action == 'view') {
 
 	$tmpaction = 'create';
 	$parameters = array(
-	'fieldlist' => $fieldlist,
-	'tabname' => $tabname[$id]
+		'fieldlist' => $fieldlist,
+		'tabname' => $tabname[$id]
 	);
 	$reshook = $hookmanager->executeHooks('createEmailTemplateFieldlist', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
 	$error = $hookmanager->error;
@@ -746,7 +776,8 @@ if ($action == 'view') {
 		if ($tmpfieldlist == 'topic') {
 			print '<td class="center" rowspan="'.(count($fieldsforcontent)).'">';
 			if ($action != 'edit') {
-				print '<input type="submit" class="button button-add" name="actionadd" value="'.$langs->trans("Add").'">';
+				print '<input type="submit" class="button button-add" name="actionadd" value="'.$langs->trans("Add").'"><br>';
+				print '<input type="submit" class="button button-cancel" name="actioncancel" value="'.$langs->trans("Cancel").'">';
 			}
 			print '</td>';
 		}
@@ -822,7 +853,7 @@ if ($resql) {
 			print '</td>';
 		} elseif ($value == 'fk_user') {
 			print '<td class="liste_titre">';
-			print $form->select_dolusers($search_fk_user, 'search_fk_user', 1, null, 0, ($user->admin ? '' : 'hierarchyme'), null, 0, 0, 1, '', 0, '', 'maxwidth150');
+			print $form->select_dolusers($search_fk_user, 'search_fk_user', 1, null, 0, ($user->admin ? '' : 'hierarchyme'), null, 0, 0, 0, '', 0, '', 'maxwidth150');
 			print '</td>';
 		} elseif ($value == 'topic') {
 			print '<td class="liste_titre"><input type="text" name="search_topic" value="'.dol_escape_htmltag($search_topic).'"></td>';
@@ -893,7 +924,7 @@ if ($resql) {
 			$valuetoshow = $langs->trans("Content"); $showfield = 0;
 		}
 		if ($fieldlist[$field] == 'content_lines') {
-			$valuetoshow = $langs->trans("ContentLines"); $showfield = 0;
+			$valuetoshow = $langs->trans("ContentForLines"); $showfield = 0;
 		}
 
 		// Show fields
@@ -935,7 +966,7 @@ if ($resql) {
 				print '<td class="center">';
 				print '<input type="hidden" name="page" value="'.$page.'">';
 				print '<input type="hidden" name="rowid" value="'.$rowid.'">';
-				print '<input type="submit" class="button buttongen" name="actionmodify" value="'.$langs->trans("Modify").'">';
+				print '<input type="submit" class="button buttongen button-save" name="actionmodify" value="'.$langs->trans("Modify").'">';
 				print '<div name="'.(!empty($obj->rowid) ? $obj->rowid : $obj->code).'"></div>';
 				print '<input type="submit" class="button buttongen button-cancel" name="actioncancel" value="'.$langs->trans("Cancel").'">';
 				print '</td>';
@@ -972,6 +1003,14 @@ if ($resql) {
 							$doleditor = new DolEditor($tmpfieldlist.'-'.$rowid, (!empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : ''), '', 500, 'dolibarr_mailings', 'In', 0, true, $okforextended, ROWS_6, '90%');
 							print $doleditor->Create(1);
 						}
+						if ($tmpfieldlist == 'content_lines') {
+							print $form->textwithpicto($langs->trans("ContentForLines"), $tabhelp[$id][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'<br>';
+							$okforextended = true;
+							if (empty($conf->global->FCKEDITOR_ENABLE_MAIL))
+								$okforextended = false;
+							$doleditor = new DolEditor($tmpfieldlist.'-'.$rowid, (! empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : ''), '', 140, 'dolibarr_mailings', 'In', 0, false, $okforextended, ROWS_6, '90%');
+							print $doleditor->Create(1);
+						}
 						print '</td>';
 						print '<td></td>';
 						print '<td></td>';
@@ -995,7 +1034,7 @@ if ($resql) {
 					continue; // It means this is a type of template not into elementList (may be because enabled condition of this type is false because module is not enabled)
 				}
 				// Test on 'enabled'
-				if (!dol_eval($obj->enabled, 1)) {
+				if (!dol_eval($obj->enabled, 1, 1, '1')) {
 					$i++;
 					continue; // Email template not qualified
 				}
@@ -1071,8 +1110,8 @@ if ($resql) {
 						if ($showfield) {
 							print '<!-- '.$fieldlist[$field].' -->';
 							print '<td class="'.$class.'"';
-							if ($value == 'topic') {
-								print ' title="'.$valuetoshow.'"';
+							if (in_array($value, array('code', 'label', 'topic'))) {
+								print ' title="'.dol_escape_htmltag($valuetoshow).'"';
 							}
 							print '>';
 							print $valuetoshow;
@@ -1159,7 +1198,10 @@ print '</div>';
 print '</form>';
 
 
-print dol_get_fiche_end();
+if (!empty($user->admin) && (empty($_SESSION['leftmenu']) || $_SESSION['leftmenu'] != 'email_templates')) {
+	print dol_get_fiche_end();
+}
+
 
 // End of page
 llxFooter();
@@ -1187,7 +1229,7 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 		if ($value == 'fk_user') {
 			print '<td>';
 			if ($user->admin) {
-				print $form->select_dolusers(empty($obj->{$value}) ? '' : $obj->{$value}, 'fk_user', 1, null, 0, ($user->admin ? '' : 'hierarchyme'), null, 0, 0, 1, '', 0, '', 'maxwidth200');
+				print $form->select_dolusers(empty($obj->{$value}) ? '' : $obj->{$value}, 'fk_user', 1, null, 0, ($user->admin ? '' : 'hierarchyme'), null, 0, 0, 0, '', 0, '', 'minwidth150 maxwidth300');
 			} else {
 				if ($context == 'add') {	// I am not admin and we show the add form
 					print $user->getNomUrl(1); // Me

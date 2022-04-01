@@ -45,6 +45,8 @@ TicketSeverityShortNORMAL=عادی
 TicketSeverityShortHIGH=زیاد
 TicketSeverityShortBLOCKING=Critical, Blocking
 
+TicketCategoryShortOTHER=سایر
+
 ErrorBadEmailAddress=بخش '%s' نادرست است
 MenuTicketMyAssign=برگه‌ها من
 MenuTicketMyAssignNonClosed=برگه‌های باز من
@@ -180,7 +182,7 @@ MessageSuccessfullyAdded=برگه اضافه شد
 TicketMessageSuccessfullyAdded=پیام با موفقیت افزوده شد
 TicketMessagesList=فهرست پیام‌ها
 NoMsgForThisTicket=پیامی برای این برگه وجود ندارد
-Properties=طبقه‌بندی
+TicketProperties=طبقه‌بندی
 LatestNewTickets=آخرین %s برگۀ‌پشتیبانی جدید (خوانده نشده)
 TicketSeverity=درجۀ اهمیت
 ShowTicket=نمایش برگه
@@ -316,6 +318,7 @@ BoxTicketLastXDays=Number of new tickets by days the last %s days
 BoxTicketLastXDayswidget = Number of new tickets by days the last X days
 BoxNoTicketLastXDays=No new tickets the last %s days
 BoxNumberOfTicketByDay=Number of new tickets by day
-BoxNewTicketVSClose=Number of today's new tickets versus today's closed tickets
+BoxNewTicketVSClose=Number of tickets versus closed tickets (today)
 TicketCreatedToday=Ticket created today
 TicketClosedToday=Ticket closed today
+KMFoundForTicketGroup=We found topics and FAQs that may answers your question, thanks to check them before submitting the ticket

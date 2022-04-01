@@ -86,7 +86,7 @@ foreach ($object->fields as $key => $val) {
 		$value = GETPOSTISSET($key) ? GETPOST($key, 'alpha') : $object->$key;
 	}
 	//var_dump($val.' '.$key.' '.$value);
-	if ($val['noteditable']) {
+	if (!empty($val['noteditable'])) {
 		print $object->showOutputField($val, $key, $value, '', '', '', 0);
 	} else {
 		if ($key == 'lang') {

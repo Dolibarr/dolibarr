@@ -18,59 +18,59 @@
 #
 
 # Module label 'ModuleRecruitmentName'
-ModuleRecruitmentName = Recruitment
+ModuleRecruitmentName = Ҷалби кадрҳо
 # Module description 'ModuleRecruitmentDesc'
-ModuleRecruitmentDesc = Manage and follow recruitment campaigns for new job positions
+ModuleRecruitmentDesc = Маъракаҳои ҷалбкуниро барои ҷойҳои нави корӣ идора ва пайравӣ кунед
 
 #
 # Admin page
 #
-RecruitmentSetup = Recruitment setup
-Settings = Settings
-RecruitmentSetupPage = Enter here the setup of main options for the recruitment module
-RecruitmentArea=Recruitement area
-PublicInterfaceRecruitmentDesc=Public pages of jobs are public URLs to show and answer to open jobs. There is one different link for each open job, found on each job record.
-EnablePublicRecruitmentPages=Enable public pages of open jobs
+RecruitmentSetup = Танзими кадрӣ
+Settings = Танзимот
+RecruitmentSetupPage = Танзимоти имконоти асосии модули ҷалбкуниро дар ин ҷо ворид кунед
+RecruitmentArea=Минтақаи қабул
+PublicInterfaceRecruitmentDesc=Саҳифаҳои оммавии ҷойҳои корӣ URLҳои оммавӣ барои нишон додан ва ҷавоб додан ба ҷойҳои кушод мебошанд. Барои ҳар як кори кушод як истиноди гуногун мавҷуд аст, ки дар ҳар дафтарчаи корӣ мавҷуд аст.
+EnablePublicRecruitmentPages=Саҳифаҳои оммавии ҷойҳои кории кушодро фаъол созед
 
 #
 # About page
 #
-About = About
-RecruitmentAbout = About Recruitment
-RecruitmentAboutPage = Recruitment about page
-NbOfEmployeesExpected=Expected nb of employees
-JobLabel=Label of job position
-WorkPlace=Work place
-DateExpected=Expected date
-FutureManager=Future manager
-ResponsibleOfRecruitement=Responsible of recruitment
-IfJobIsLocatedAtAPartner=If job is located at a partner place
-PositionToBeFilled=Job position
-PositionsToBeFilled=Job positions
-ListOfPositionsToBeFilled=List of job positions
-NewPositionToBeFilled=New job positions
+About = Дар бораи
+RecruitmentAbout = Дар бораи ҷалби кадрҳо
+RecruitmentAboutPage = Ҷалб дар бораи саҳифа
+NbOfEmployeesExpected=Шумораи интизории кормандон
+JobLabel=Нишондиҳандаи ҷои кор
+WorkPlace=Ҷои кор
+DateExpected=Санаи пешбинишуда
+FutureManager=Менеҷери оянда
+ResponsibleOfRecruitement=Масъулияти ба кор қабул кардан
+IfJobIsLocatedAtAPartner=Агар кор дар ҷои шарик ҷойгир бошад
+PositionToBeFilled=Мавқеи кор
+PositionsToBeFilled=Ҷойҳои корӣ
+ListOfPositionsToBeFilled=Рӯйхати ҷойҳои корӣ
+NewPositionToBeFilled=Ҷойҳои нави корӣ
 
-JobOfferToBeFilled=Job position to be filled
-ThisIsInformationOnJobPosition=Information of the job position to be filled
-ContactForRecruitment=Contact for recruitment
-EmailRecruiter=Email recruiter
-ToUseAGenericEmail=To use a generic email. If not defined, the email of the responsible of recruitment will be used
-NewCandidature=New application
-ListOfCandidatures=List of applications
-RequestedRemuneration=Requested remuneration
-ProposedRemuneration=Proposed remuneration
-ContractProposed=Contract proposed
-ContractSigned=Contract signed
-ContractRefused=Contract refused
-RecruitmentCandidature=Application
-JobPositions=Job positions
-RecruitmentCandidatures=Applications
-InterviewToDo=Interview to do
-AnswerCandidature=Application answer
-YourCandidature=Your application
-YourCandidatureAnswerMessage=Thanks you for your application.<br>...
-JobClosedTextCandidateFound=The job position is closed. The position has been filled.
-JobClosedTextCanceled=The job position is closed.
-ExtrafieldsJobPosition=Complementary attributes (job positions)
-ExtrafieldsApplication=Complementary attributes (job applications)
-MakeOffer=Make an offer
+JobOfferToBeFilled=Вазифаи корӣ бояд пур карда шавад
+ThisIsInformationOnJobPosition=Маълумот дар бораи вазифае, ки бояд пур карда шавад
+ContactForRecruitment=Барои ба кор қабул кардан тамос гиред
+EmailRecruiter=Иштироки почтаи электронӣ
+ToUseAGenericEmail=Барои истифодаи почтаи электронӣ. Агар номаълум набошад, почтаи электронии масъули ҷалбкунӣ истифода мешавад
+NewCandidature=Барномаи нав
+ListOfCandidatures=Рӯйхати барномаҳо
+RequestedRemuneration=Музди дархостшуда
+ProposedRemuneration=Мукофоти пешниҳодшуда
+ContractProposed=Шартнома таклиф этилди
+ContractSigned=Шартнома ба имзо расид
+ContractRefused=Шартнома рад кард
+RecruitmentCandidature=Ариза
+JobPositions=Ҷойҳои корӣ
+RecruitmentCandidatures=Барномаҳо
+InterviewToDo=Мусоҳиба кардан
+AnswerCandidature=Ҷавоби ариза
+YourCandidature=Аризаи шумо
+YourCandidatureAnswerMessage=Ташаккур ба шумо барои дархостатон. <br> ...
+JobClosedTextCandidateFound=Вазифаи корӣ баста аст. Вазифа пур карда шуд.
+JobClosedTextCanceled=Вазифаи корӣ баста аст.
+ExtrafieldsJobPosition=Хусусиятҳои иловагӣ (мансабҳои корӣ)
+ExtrafieldsApplication=Хусусиятҳои иловагӣ (дархостҳои корӣ)
+MakeOffer=Пешниҳод кунед

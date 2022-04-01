@@ -95,9 +95,10 @@ $head = security_prepare_head();
 
 print dol_get_fiche_head($head, 'proxy', '', -1);
 
+print '<br>';
 
 if ($conf->use_javascript_ajax) {
-	print "\n".'<script type="text/javascript" language="javascript">';
+	print "\n".'<script type="text/javascript">';
 	print 'jQuery(document).ready(function () {
                 function initfields()
                 {

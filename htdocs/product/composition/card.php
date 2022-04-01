@@ -24,7 +24,7 @@
 /**
  *  \file       htdocs/product/composition/card.php
  *  \ingroup    product
- *  \brief      Page de la fiche produit
+ *  \brief      Page of product file
  */
 
 require '../../main.inc.php';
@@ -132,6 +132,8 @@ if ($action == 'add_prod' && ($user->rights->produit->creer || $user->rights->se
 		setEventMessages('RecordSaved', null);
 	}
 	$action = '';
+	header("Location: ".$_SERVER["PHP_SELF"].'?id='.$object->id);
+	exit;
 }
 
 
@@ -264,11 +266,26 @@ if ($id > 0 || !empty($ref)) {
 
 		print dol_get_fiche_end();
 
+
+		print '<div class="fichecenter">';
+		print '<div class="underbanner clearboth"></div>';
+		print '</div>';
+
 		print '<br>';
 
 		$prodsfather = $object->getFather(); // Parent Products
 		$object->get_sousproduits_arbo(); // Load $object->sousprods
+		$parent_label = $object->label;
 		$prods_arbo = $object->get_arbo_each_prod();
+
+		$tmpid = $id;
+		if (! empty($conf->use_javascript_ajax)) {
+			$nboflines = $prods_arbo;
+			$table_element_line='product_association';
+
+			include DOL_DOCUMENT_ROOT . '/core/tpl/ajaxrow.tpl.php';
+		}
+		$id = $tmpid;
 
 		$nbofsubsubproducts = count($prods_arbo); // This include sub sub product into nb
 		$prodschild = $object->getChildsArbo($id, 1);
@@ -323,18 +340,29 @@ if ($id > 0 || !empty($ref)) {
 		print '<input type="hidden" name="action" value="save_composed_product" />';
 		print '<input type="hidden" name="id" value="'.$id.'" />';
 
-		print '<table class="liste">';
+		print '<table id="tablelines" class="ui-sortable liste nobottom">';
 
-		print '<tr class="liste_titre">';
+		print '<tr class="liste_titre nodrag nodrop">';
+		// Rank
+		print '<td>'.$langs->trans('Position').'</td>';
+		// Product ref
 		print '<td>'.$langs->trans('ComposedProduct').'</td>';
+		// Product label
 		print '<td>'.$langs->trans('Label').'</td>';
+		// Min supplier price
 		print '<td class="right" colspan="2">'.$langs->trans('MinSupplierPrice').'</td>';
+		// Min customer price
 		print '<td class="right" colspan="2">'.$langs->trans('MinCustomerPrice').'</td>';
+		// Stock
 		if (!empty($conf->stock->enabled)) {
 			print '<td class="right">'.$langs->trans('Stock').'</td>';
 		}
+		// Qty in kit
 		print '<td class="center">'.$langs->trans('Qty').'</td>';
+		// Stoc inc/dev
 		print '<td class="center">'.$langs->trans('ComposedProductIncDecStock').'</td>';
+		// Move
+		print '<td class="linecolmove" style="width: 10px"></td>';
 		print '</tr>'."\n";
 
 		$totalsell = 0;
@@ -343,12 +371,18 @@ if ($id > 0 || !empty($ref)) {
 				$productstatic->fetch($value['id']);
 
 				if ($value['level'] <= 1) {
-					print '<tr class="oddeven">';
+					print '<tr id="'.$object->sousprods[$parent_label][$value['id']][6].'" class="drag drop oddeven level1">';
+
+					// Rank
+					print '<td>'.$object->sousprods[$parent_label][$value['id']][7].'</td>';
 
 					$notdefined = 0;
 					$nb_of_subproduct = $value['nb'];
 
+					// Product ref
 					print '<td>'.$productstatic->getNomUrl(1, 'composition').'</td>';
+
+					// Product label
 					print '<td>'.$productstatic->label.'</td>';
 
 					// Best buying price
@@ -372,8 +406,8 @@ if ($id > 0 || !empty($ref)) {
 					$totalline = price2num($value['nb'] * ($fourn_unitprice * (1 - ($fourn_remise_percent / 100)) - $fourn_remise), 'MT');
 					$total += $totalline;
 
-					print '<td class="right">';
-					print ($notdefined ? '' : ($value['nb'] > 1 ? $value['nb'].'x' : '').price($unitline, '', '', 0, 0, -1, $conf->currency));
+					print '<td class="right nowraponall">';
+					print ($notdefined ? '' : ($value['nb'] > 1 ? $value['nb'].'x ' : '').'<span class="amount">'.price($unitline, '', '', 0, 0, -1, $conf->currency)).'</span>';
 					print '</td>';
 
 					// Best selling price
@@ -385,11 +419,11 @@ if ($id > 0 || !empty($ref)) {
 						$totalsell += $totallinesell;
 					}
 					print '<td class="right" colspan="2">';
-					print ($notdefined ? '' : ($value['nb'] > 1 ? $value['nb'].'x' : ''));
+					print ($notdefined ? '' : ($value['nb'] > 1 ? $value['nb'].'x ' : ''));
 					if (is_numeric($pricesell)) {
-						print price($pricesell, '', '', 0, 0, -1, $conf->currency);
+						print '<span class="amount">'.price($pricesell, '', '', 0, 0, -1, $conf->currency).'</span>';
 					} else {
-						print $langs->trans($pricesell);
+						print '<span class="opacitymedium">'.$langs->trans($pricesell).'</span>';
 					}
 					print '</td>';
 
@@ -407,6 +441,9 @@ if ($id > 0 || !empty($ref)) {
 						print '<td>'.($value['incdec'] == 1 ? 'x' : '').'</td>';
 					}
 
+					// Move action
+					print '<td class="linecolmove tdlineupdown center"></td>';
+
 					print '</tr>'."\n";
 				} else {
 					$hide = '';
@@ -414,15 +451,22 @@ if ($id > 0 || !empty($ref)) {
 						$hide = ' hideobject'; // By default, we do not show this. It makes screen very difficult to understand
 					}
 
-					print '<tr class="oddeven'.$hide.'" id="sub-'.$value['id_parent'].'">';
+					print '<tr class="oddeven'.$hide.'" id="sub-'.$value['id_parent'].'" data-ignoreidfordnd=1>';
 
 					//$productstatic->ref=$value['label'];
 					$productstatic->ref = $value['ref'];
+
+					// Rankd
+					print '<td></td>';
+
+					// Product ref
 					print '<td>';
 					for ($i = 0; $i < $value['level']; $i++) {
 						print ' &nbsp; &nbsp; '; // Add indentation
 					}
 					print $productstatic->getNomUrl(1, 'composition').'</td>';
+
+					// Product label
 					print '<td>'.$productstatic->label.'</td>';
 
 					// Best buying price
@@ -432,18 +476,36 @@ if ($id > 0 || !empty($ref)) {
 					print '<td>&nbsp;</td>';
 					print '<td>&nbsp;</td>';
 
+					// Stock
 					if (!empty($conf->stock->enabled)) {
 						print '<td></td>'; // Real stock
 					}
+
+					// Qty in kit
 					print '<td class="center">'.$value['nb'].'</td>';
+
+					// Inc/dec
+					print '<td>&nbsp;</td>';
+
+					// Action move
 					print '<td>&nbsp;</td>';
 
 					print '</tr>'."\n";
 				}
 			}
 
+
+			// Total
+
 			print '<tr class="liste_total">';
+
+			// Rank
+			print '<td></td>';
+
+			// Product ref
 			print '<td class="liste_total"></td>';
+
+			// Product label
 			print '<td class="liste_total"></td>';
 
 			// Minimum buying price
@@ -475,11 +537,16 @@ if ($id > 0 || !empty($ref)) {
 				print '<td class="liste_total right">&nbsp;</td>';
 			}
 
-			print '<td class="right" colspan="2">';
+			print '<td></td>';
+
+			print '<td class="center">';
 			if ($user->rights->produit->creer || $user->rights->service->creer) {
 				print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
 			}
 			print '</td>';
+
+			print '<td></td>';
+
 			print '</tr>'."\n";
 		} else {
 			$colspan = 8;
@@ -541,6 +608,7 @@ if ($id > 0 || !empty($ref)) {
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="add_prod">';
 			print '<input type="hidden" name="id" value="'.$id.'">';
+
 			print '<table class="noborder centpercent">';
 			print '<tr class="liste_titre">';
 			print '<th class="liste_titre">'.$langs->trans("ComposedProduct").'</td>';

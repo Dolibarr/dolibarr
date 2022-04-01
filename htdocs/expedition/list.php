@@ -95,7 +95,7 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-$search_status = GETPOST('search_status');
+$search_status = GETPOST('search_status', 'intcomma');
 
 $diroutputmassaction = $conf->expedition->dir_output.'/sending/temp/massgeneration/'.$user->id;
 
@@ -116,7 +116,7 @@ $fieldstosearchall = array(
 	'e.ref'=>"Ref",
 	's.nom'=>"ThirdParty",
 	'e.note_public'=>'NotePublic',
-	'e.shipping_method_id'=>'SendingMethod',
+	//'e.fk_shipping_method'=>'SendingMethod', // TODO fix this, does not work
 	'e.tracking_number'=>"TrackingNumber",
 );
 if (empty($user->socid)) {
@@ -134,7 +134,7 @@ $arrayfields = array(
 	'country.code_iso'=>array('label'=>$langs->trans("Country"), 'checked'=>0, 'position'=>7),
 	'typent.code'=>array('label'=>$langs->trans("ThirdPartyType"), 'checked'=>$checkedtypetiers, 'position'=>8),
 	'e.date_delivery'=>array('label'=>$langs->trans("DateDeliveryPlanned"), 'checked'=>1, 'position'=>9),
-	'e.shipping_method_id'=>array('label'=>$langs->trans('SendingMethod'), 'checked'=>1, 'position'=>10),
+	'e.fk_shipping_method'=>array('label'=>$langs->trans('SendingMethod'), 'checked'=>1, 'position'=>10),
 	'e.tracking_number'=>array('label'=>$langs->trans("TrackingNumber"), 'checked'=>1, 'position'=>11),
 	'e.weight'=>array('label'=>$langs->trans("Weight"), 'checked'=>0, 'position'=>12),
 	'e.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
@@ -253,7 +253,7 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 $sql .= " FROM ".MAIN_DB_PREFIX."expedition as e";
-if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
+if (!empty($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (e.rowid = ef.fk_object)";
 }
 if ($sall || $search_product_category > 0) {
@@ -277,21 +277,27 @@ if ($search_user > 0) {		// Get link to order to get the order id in eesource.fk
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as eesource ON eesource.fk_target = e.rowid AND eesource.targettype = 'shipping' AND eesource.sourcetype = 'commande'";
 }
 // We'll need this table joined to the select in order to filter by sale
-if ($search_sale > 0 || (!$user->rights->societe->client->voir && !$socid)) {
+if ($search_sale > 0 || (empty($user->rights->societe->client->voir) && !$socid)) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 if ($search_user > 0) {
 	$sql .= ", ".MAIN_DB_PREFIX."element_contact as ec";
 	$sql .= ", ".MAIN_DB_PREFIX."c_type_contact as tc";
 }
+
+// Add table from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
+
 $sql .= " WHERE e.entity IN (".getEntity('expedition').")";
 if ($search_product_category > 0) {
 	$sql .= " AND cp.fk_categorie = ".((int) $search_product_category);
 }
 if ($socid > 0) {
-	$sql .= ' AND s.rowid = '.$socid;
+	$sql .= " AND s.rowid = ".((int) $socid);
 }
-if (!$user->rights->societe->client->voir && !$socid) {	// Internal user with no permission to see all
+if (empty($user->rights->societe->client->voir) && !$socid) {	// Internal user with no permission to see all
 	$sql .= " AND e.fk_soc = sc.fk_soc";
 	$sql .= " AND sc.fk_user = ".((int) $user->id);
 }
@@ -374,6 +380,11 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 
+// Add HAVING from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListHaving', $parameters, $object); // Note that $action and $object may have been modified by hook
+$sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPrint;
+
 $sql .= $db->order($sortfield, $sortorder);
 
 $nbtotalofrecords = '';
@@ -409,16 +420,16 @@ if ($limit > 0 && $limit != $conf->liste_limit) {
 	$param .= '&limit='.urlencode($limit);
 }
 if ($sall) {
-	$param .= "&amp;sall=".urlencode($sall);
+	$param .= "&sall=".urlencode($sall);
 }
 if ($search_ref_exp) {
-	$param .= "&amp;search_ref_exp=".urlencode($search_ref_exp);
+	$param .= "&search_ref_exp=".urlencode($search_ref_exp);
 }
 if ($search_ref_liv) {
-	$param .= "&amp;search_ref_liv=".urlencode($search_ref_liv);
+	$param .= "&search_ref_liv=".urlencode($search_ref_liv);
 }
 if ($search_ref_customer) {
-	$param .= "&amp;search_ref_customer=".urlencode($search_ref_customer);
+	$param .= "&search_ref_customer=".urlencode($search_ref_customer);
 }
 if ($search_user > 0) {
 	$param .= '&search_user='.urlencode($search_user);
@@ -427,13 +438,13 @@ if ($search_sale > 0) {
 	$param .= '&search_sale='.urlencode($search_sale);
 }
 if ($search_company) {
-	$param .= "&amp;search_company=".urlencode($search_company);
+	$param .= "&search_company=".urlencode($search_company);
 }
 if ($search_shipping_method_id) {
 	$param .= "&amp;search_shipping_method_id=".urlencode($search_shipping_method_id);
 }
 if ($search_tracking) {
-	$param .= "&amp;search_tracking=".urlencode($search_tracking);
+	$param .= "&search_tracking=".urlencode($search_tracking);
 }
 if ($search_town) {
 	$param .= '&search_town='.urlencode($search_town);
@@ -470,6 +481,11 @@ if ($optioncss != '') {
 }
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
+
+// Add $param from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object); // Note that $action and $object may have been modified by hook
+$param .= $hookmanager->resPrint;
 
 $arrayofmassactions = array(
 	'builddoc' => img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
@@ -638,7 +654,7 @@ if (!empty($arrayfields['e.date_delivery']['checked'])) {
 	print '</div>';
 	print '</td>';
 }
-if (!empty($arrayfields['e.shipping_method_id']['checked'])) {
+if (!empty($arrayfields['e.fk_shipping_method']['checked'])) {
 	// Delivery method
 	print '<td class="liste_titre center">';
 	$shipment->fetch_delivery_methods();
@@ -735,8 +751,8 @@ if (!empty($arrayfields['e.weight']['checked'])) {
 if (!empty($arrayfields['e.date_delivery']['checked'])) {
 	print_liste_field_titre($arrayfields['e.date_delivery']['label'], $_SERVER["PHP_SELF"], "e.date_delivery", "", $param, '', $sortfield, $sortorder, 'center ');
 }
-if (!empty($arrayfields['e.shipping_method_id']['checked'])) {
-	print_liste_field_titre($arrayfields['e.shipping_method_id']['label'], $_SERVER["PHP_SELF"], "e.fk_shipping_method", "", $param, '', $sortfield, $sortorder, 'center ');
+if (!empty($arrayfields['e.fk_shipping_method']['checked'])) {
+	print_liste_field_titre($arrayfields['e.fk_shipping_method']['label'], $_SERVER["PHP_SELF"], "e.fk_shipping_method", "", $param, '', $sortfield, $sortorder, 'center ');
 }
 if (!empty($arrayfields['e.tracking_number']['checked'])) {
 	print_liste_field_titre($arrayfields['e.tracking_number']['label'], $_SERVER["PHP_SELF"], "e.tracking_number", "", $param, '', $sortfield, $sortorder, 'center ');
@@ -771,6 +787,7 @@ print "</tr>\n";
 $typenArray = $formcompany->typent_array(1);
 $i = 0;
 $totalarray = array();
+$totalarray['nbfield'] = 0;
 while ($i < min($num, $limit)) {
 	$obj = $db->fetch_object($resql);
 
@@ -789,7 +806,7 @@ while ($i < min($num, $limit)) {
 
 	// Ref
 	if (!empty($arrayfields['e.ref']['checked'])) {
-		print "<td>";
+		print '<td class="nowraponall">';
 		print $shipment->getNomUrl(1);
 		print "</td>\n";
 		if (!$i) {
@@ -809,7 +826,7 @@ while ($i < min($num, $limit)) {
 
 	// Third party
 	if (!empty($arrayfields['s.nom']['checked'])) {
-		print '<td>';
+		print '<td class="tdoverflowmax150">';
 		print $companystatic->getNomUrl(1);
 		print '</td>';
 		if (!$i) {
@@ -827,7 +844,7 @@ while ($i < min($num, $limit)) {
 	}
 	// Zip
 	if (!empty($arrayfields['s.zip']['checked'])) {
-		print '<td class="nocellnopadd">';
+		print '<td class="nocellnopadd center">';
 		print $obj->zip;
 		print '</td>';
 		if (!$i) {
@@ -836,7 +853,7 @@ while ($i < min($num, $limit)) {
 	}
 	// State
 	if (!empty($arrayfields['state.nom']['checked'])) {
-		print "<td>".$obj->state_name."</td>\n";
+		print '<td class="center">'.$obj->state_name."</td>\n";
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -884,7 +901,7 @@ while ($i < min($num, $limit)) {
 		print dol_print_date($db->jdate($obj->delivery_date), "dayhour");
 		print "</td>\n";
 	}
-	if (!empty($arrayfields['e.shipping_method_id']['checked'])) {
+	if (!empty($arrayfields['e.fk_shipping_method']['checked'])) {
 		// Get code using getLabelFromKey
 		$code=$langs->getLabelFromKey($db, $shipment->shipping_method_id, 'c_shipment_mode', 'rowid', 'code');
 		print '<td class="center">';

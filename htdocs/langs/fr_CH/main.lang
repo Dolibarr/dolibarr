@@ -19,5 +19,6 @@ FormatDateHourShort=%d.%m.%Y %H:%M %p
 FormatDateHourSecShort=%d.%m.%Y %H:%M:%S %p
 FormatDateHourTextShort=%d %b %Y, %H:%M %p
 FormatDateHourText=%d %B %Y, %H:%M %p
+Unknown=Inconnue
 MenuMembers=Membres
 SearchIntoMembers=Membres

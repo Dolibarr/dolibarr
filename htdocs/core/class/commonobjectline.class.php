@@ -26,6 +26,8 @@
 /**
  *  Parent class for class inheritance lines of business objects
  *  This class is useless for the moment so no inherit are done on it
+ *
+ *  TODO For the moment we use the extends on CommonObject until PHP min is 5.4 so we can use Traits.
  */
 abstract class CommonObjectLine extends CommonObject
 {
@@ -44,10 +46,20 @@ abstract class CommonObjectLine extends CommonObject
 	public $rowid;
 
 	/**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
+	public $picto = 'line';
+
+	/**
 	 * Product/service unit code ('km', 'm', 'p', ...)
 	 * @var string
 	 */
 	public $fk_unit;
+
+	public $date_debut_prevue;
+	public $date_debut_reel;
+	public $date_fin_prevue;
+	public $date_fin_reel;
 
 
 	/**
@@ -61,7 +73,7 @@ abstract class CommonObjectLine extends CommonObject
 	}
 
 	/**
-	 *	Returns the label, shot_label or code found in units dictionary from ->fk_unit.
+	 *	Returns the label, short_label or code found in units dictionary from ->fk_unit.
 	 *  A langs->trans() must be called on result to get translated value.
 	 *
 	 * 	@param	string $type 	Label type ('long', 'short' or 'code'). This can be a translation key.
@@ -86,7 +98,7 @@ abstract class CommonObjectLine extends CommonObject
 			$label_type = 'code';
 		}
 
-		$sql = "SELECT ".$label_type.", code from ".MAIN_DB_PREFIX."c_units where rowid = ".((int) $this->fk_unit);
+		$sql = "SELECT ".$label_type.", code from ".$this->db->prefix()."c_units where rowid = ".((int) $this->fk_unit);
 
 		$resql = $this->db->query($sql);
 		if ($resql && $this->db->num_rows($resql) > 0) {
@@ -104,7 +116,20 @@ abstract class CommonObjectLine extends CommonObject
 			return -1;
 		}
 	}
-	// Currently we need function at end of file CommonObject for all object lines. Should find a way to avoid duplicate code.
 
-	// For the moment we use the extends on CommonObject until PHP min is 5.4 so use Traits.
+	/**
+	 * Empty function to prevent errors on call of this function must be overload if usefull
+	 *
+	 * @param string $sortorder Sort Order
+	 * @param string $sortfield Sort field
+	 * @param int $limit offset limit
+	 * @param int $offset offset limit
+	 * @param array $filter filter array
+	 * @param string $filtermode filter mode (AND or OR)
+	 * @return int <0 if KO, >0 if OK
+	 */
+	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
+	{
+		return 0;
+	}
 }

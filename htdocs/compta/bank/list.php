@@ -79,8 +79,8 @@ if (!$allowed) {
 $diroutputmassaction = $conf->bank->dir_output.'/temp/massgeneration/'.$user->id;
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -506,6 +506,8 @@ print "</tr>\n";
 
 $totalarray = array();
 $totalarray['nbfield'] = 0;
+$totalarray['val'] = array('balance'=>0);
+$total = array();
 $found = 0;
 $i = 0;
 $lastcurrencycode = '';
@@ -624,7 +626,7 @@ foreach ($accounts as $key => $type) {
 			if ($result < 0) {
 				setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
 			} else {
-				print '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?action=reconcile&sortfield=b.datev,b.dateo,b.rowid&sortorder=asc,asc,asc&id='.$objecttmp->id.'&search_account='.$objecttmp->id.'&search_conciliated=0&contextpage=banktransactionlist">';
+				print '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?action=reconcile&sortfield=b.datev,b.dateo,b.rowid&sortorder=desc,desc,desc&id='.$objecttmp->id.'&search_account='.$objecttmp->id.'&search_conciliated=0&contextpage=banktransactionlist">';
 				print '<span class="badge badge-info classfortooltip" title="'.dol_htmlentities($langs->trans("TransactionsToConciliate")).'">';
 				print $result->nbtodo;
 				print '</span>';
@@ -714,7 +716,11 @@ foreach ($accounts as $key => $type) {
 
 	print '</tr>';
 
-	$total[$objecttmp->currency_code] += $solde;
+	if (empty($total[$objecttmp->currency_code])) {
+		$total[$objecttmp->currency_code] = $solde;
+	} else {
+		$total[$objecttmp->currency_code] += $solde;
+	}
 
 	$i++;
 }

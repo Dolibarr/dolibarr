@@ -495,7 +495,7 @@ class DoliDBPgsql extends DoliDB
 	 * @param	int		$usesavepoint	0=Default mode, 1=Run a savepoint before and a rollback to savepoint if error (this allow to have some request with errors inside global transactions).
 	 * @param   string	$type           Type of SQL order ('ddl' for insert, update, select, delete or 'dml' for create, alter...)
 	 * @param	int		$result_mode	Result mode (not used with pgsql)
-	 * @return	false|resource			Resultset of answer
+	 * @return	bool|resource			Resultset of answer
 	 */
 	public function query($query, $usesavepoint = 0, $type = 'auto', $result_mode = 0)
 	{
@@ -714,6 +714,17 @@ class DoliDBPgsql extends DoliDB
 	}
 
 	/**
+	 *	Escape a string to insert data
+	 *
+	 *	@param	string	$stringtoencode		String to escape
+	 *	@return	string						String escaped
+	 */
+	public function escapeunderscore($stringtoencode)
+	{
+		return str_replace('_', '\_', $stringtoencode);
+	}
+
+	/**
 	 *  Format a SQL IF
 	 *
 	 *  @param	string	$test           Test string (example: 'cd.statut=0', 'field IS NULL')
@@ -926,7 +937,9 @@ class DoliDBPgsql extends DoliDB
 
 		$escapedlike = '';
 		if ($table) {
-			$escapedlike = " AND table_name LIKE '".$this->escape($table)."'";
+			$tmptable = preg_replace('/[^a-z0-9\.\-\_%]/i', '', $table);
+
+			$escapedlike = " AND table_name LIKE '".$this->escape($tmptable)."'";
 		}
 		$result = pg_query($this->db, "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'".$escapedlike." ORDER BY table_name");
 		if ($result) {
@@ -962,8 +975,8 @@ class DoliDBPgsql extends DoliDB
 		$sql .= "	'' as \"Extra\",";
 		$sql .= "	'' as \"Privileges\"";
 		$sql .= "	FROM information_schema.columns infcol";
-		$sql .= "	WHERE table_schema='public' ";
-		$sql .= "	AND table_name='".$this->escape($table)."'";
+		$sql .= "	WHERE table_schema = 'public' ";
+		$sql .= "	AND table_name = '".$this->escape($table)."'";
 		$sql .= "	ORDER BY ordinal_position;";
 
 		dol_syslog($sql, LOG_DEBUG);
@@ -1067,7 +1080,9 @@ class DoliDBPgsql extends DoliDB
 	public function DDLDropTable($table)
 	{
 		// phpcs:enable
-		$sql = "DROP TABLE ".$table;
+		$tmptable = preg_replace('/[^a-z0-9\.\-\_]/i', '', $table);
+
+		$sql = "DROP TABLE ".$tmptable;
 
 		if (!$this->query($sql)) {
 			return -1;
@@ -1225,8 +1240,9 @@ class DoliDBPgsql extends DoliDB
 	public function DDLDropField($table, $field_name)
 	{
 		// phpcs:enable
-		$sql = "ALTER TABLE ".$table." DROP COLUMN ".$field_name;
-		dol_syslog($sql, LOG_DEBUG);
+		$tmp_field_name = preg_replace('/[^a-z0-9\.\-\_]/i', '', $field_name);
+
+		$sql = "ALTER TABLE ".$table." DROP COLUMN ".$tmp_field_name;
 		if (!$this->query($sql)) {
 			$this->error = $this->lasterror();
 			return -1;

@@ -160,7 +160,7 @@ if ($action == 'setremise' && $user->rights->societe->creer) {
 	$amount_ht = price2num(GETPOST('amount_ht', 'alpha'));
 	$desc = GETPOST('desc', 'alpha');
 	$tva_tx = GETPOST('tva_tx', 'alpha');
-	$discount_type = !empty($_POST['discount_type']) ?GETPOST('discount_type', 'alpha') : 0;
+	$discount_type = GETPOSTISSET('discount_type') ? GETPOST('discount_type', 'alpha') : 0;
 
 	if ($amount_ht > 0) {
 		$error = 0;
@@ -532,7 +532,6 @@ if ($socid > 0) {
 		if ($isCustomer) {
 			print '</div>'; // class="fichehalfleft"
 			print '<div class="fichehalfright fichehalfright-lg">';
-			print '<div class="ficheaddleft">';
 			print load_fiche_titre($langs->trans("SupplierDiscounts"), '', '');
 		}
 
@@ -667,7 +666,6 @@ if ($socid > 0) {
 		}
 
 		if ($isCustomer) {
-			print '</div>'; // class="ficheaddleft"
 			print '</div>'; // class="fichehalfright"
 			print '</div>'; // class="fichecenter"
 		}
@@ -843,7 +841,6 @@ if ($socid > 0) {
 		if ($isCustomer) {
 			print '</div>'; // class="fichehalfleft"
 			print '<div class="fichehalfright fichehalfright-lg">';
-			print '<div class="ficheaddleft">';
 			print load_fiche_titre($langs->trans("SupplierDiscounts"), '', '');
 		}
 
@@ -1000,7 +997,6 @@ if ($socid > 0) {
 		}
 
 		if ($isCustomer) {
-			print '</div>'; // class="ficheaddleft"
 			print '</div>'; // class="fichehalfright"
 			print '</div>'; // class="fichecenter"
 		}

@@ -19,7 +19,7 @@
 ModulePartnershipName=パートナーシップ管理
 PartnershipDescription=モジュールパートナーシップ管理
 PartnershipDescriptionLong= モジュールパートナーシップ管理
-
+Partnership=パートナーシップ
 AddPartnership=パートナーシップを追加
 CancelPartnershipForExpiredMembers=パートナーシップ: サブスクリプションの有効期限が切れた会員のパートナーシップをキャンセル
 PartnershipCheckBacklink=パートナーシップ: 参照元のバックリンクを確認する
@@ -58,6 +58,7 @@ ManagePartnership=パートナーシップを管理する
 BacklinkNotFoundOnPartnerWebsite=パートナーのウェブサイトにバックリンクが見つからない
 ConfirmClosePartnershipAsk=このパートナーシップをキャンセルしてもよいか？
 PartnershipType=パートナーシップの種類
+PartnershipRefApproved=パートナーシップ%sは承認済
 
 #
 # Template Mail

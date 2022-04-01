@@ -148,8 +148,8 @@ class modMyModule extends DolibarrModules
 		$this->need_dolibarr_version = array(11, -3); // Minimum version of Dolibarr required by module
 
 		// Messages at activation
-		$this->warnings_activation = array(); // Warning to show when we activate module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
-		$this->warnings_activation_ext = array(); // Warning to show when we activate an external module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
+		$this->warnings_activation = array(); // Warning to show when we activate module. array('always'='text') or array('FR'='textfr','MX'='textmx'...)
+		$this->warnings_activation_ext = array(); // Warning to show when we activate an external module. array('always'='text') or array('FR'='textfr','MX'='textmx'...)
 		//$this->automatic_activation = array('FR'=>'MyModuleWasAutomaticallyActivatedBecauseOfYourCountryChoice');
 		//$this->always_enabled = true;								// If true, can't be disabled
 
@@ -305,7 +305,7 @@ class modMyModule extends DolibarrModules
 		/* BEGIN MODULEBUILDER LEFTMENU MYOBJECT
 		$this->menu[$r++]=array(
 			'fk_menu'=>'fk_mainmenu=mymodule',      // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-			'type'=>'left',                          // This is a Top menu entry
+			'type'=>'left',                          // This is a Left menu entry
 			'titre'=>'MyObject',
 			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth valignmiddle"'),
 			'mainmenu'=>'mymodule',
@@ -411,6 +411,7 @@ class modMyModule extends DolibarrModules
 	{
 		global $conf, $langs;
 
+		//$result = $this->_load_tables('/install/mysql/tables/', 'mymodule');
 		$result = $this->_load_tables('/mymodule/sql/');
 		if ($result < 0) {
 			return -1; // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
@@ -431,7 +432,7 @@ class modMyModule extends DolibarrModules
 		$sql = array();
 
 		// Document templates
-		$moduledir = 'mymodule';
+		$moduledir = dol_sanitizeFileName('mymodule');
 		$myTmpObjects = array();
 		$myTmpObjects['MyObject'] = array('includerefgeneration'=>0, 'includedocgeneration'=>0);
 
@@ -440,8 +441,8 @@ class modMyModule extends DolibarrModules
 				continue;
 			}
 			if ($myTmpObjectArray['includerefgeneration']) {
-				$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/mymodule/template_myobjects.odt';
-				$dirodt = DOL_DATA_ROOT.'/doctemplates/mymodule';
+				$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/'.$moduledir.'/template_myobjects.odt';
+				$dirodt = DOL_DATA_ROOT.'/doctemplates/'.$moduledir;
 				$dest = $dirodt.'/template_myobjects.odt';
 
 				if (file_exists($src) && !file_exists($dest)) {

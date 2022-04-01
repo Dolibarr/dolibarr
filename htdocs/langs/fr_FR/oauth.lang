@@ -23,10 +23,10 @@ TOKEN_DELETE=Supprimer jeton enregistré
 OAUTH_GOOGLE_NAME=Service Oauth Google
 OAUTH_GOOGLE_ID=Oauth Google Id
 OAUTH_GOOGLE_SECRET=Oauth Google secret
-OAUTH_GOOGLE_DESC=Allez sur <a class="notasortlink" href="https://console.developers.google.com/" target="_blank">cette page</a> puis «Autorisation» pour créer les informations d'identification OAuth
+OAUTH_GOOGLE_DESC=Allez sur <a class="notasortlink" href="https://console.developers.google.com/" target="_blank" rel="noopener noreferrer external"> cette page </a> puis "Identifiants" pour créer des identifiants OAuth
 OAUTH_GITHUB_NAME=Service Oauth GitHub
 OAUTH_GITHUB_ID=Oauth GitHub Id
 OAUTH_GITHUB_SECRET=Secret Oauth GitHub
-OAUTH_GITHUB_DESC=Allez sur <a class="notasortlink" href="https://github.com/settings/developers" target="_blank">cette page</a> , puis "Enregistrer une nouvelle application" pour créer les informations d'identification OAuth
+OAUTH_GITHUB_DESC=Allez sur <a class="notasortlink" href="https://github.com/settings/developers" target="_blank" rel="noopener noreferrer external"> cette page </a> puis "Enregistrer une nouvelle application" pour créer des identifiants OAuth
 OAUTH_STRIPE_TEST_NAME=OAuth Stripe Test
 OAUTH_STRIPE_LIVE_NAME=OAuth Stripe Live

@@ -36,6 +36,7 @@ if ($conf->categorie->enabled) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
 
+global $dolibarr_main_url_root;
 
 // for other modules
 //dol_include_once('/othermodule/class/otherobject.class.php');
@@ -96,7 +97,7 @@ if (!$sortorder) {
 }
 
 // Initialize array of search criterias
-$search_all = GETPOST('search_all', 'alphanohtml') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml');
+$search_all = GETPOST('search_all', 'alphanohtml');
 $search = array();
 foreach ($object->fields as $key => $val) {
 	if (GETPOST('search_'.$key, 'alpha') !== '') {
@@ -121,11 +122,11 @@ $arrayfields = array();
 foreach ($object->fields as $key => $val) {
 	// If $val['visible']==0, then we never show the field
 	if (!empty($val['visible'])) {
-		$visible = (int) dol_eval($val['visible'], 1);
+		$visible = (int) dol_eval($val['visible'], 1, 1, '1');
 		$arrayfields['t.'.$key] = array(
 			'label'=>$val['label'],
 			'checked'=>(($visible < 0) ? 0 : 1),
-			'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1)),
+			'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1, 1, '1')),
 			'position'=>$val['position'],
 			'help'=> isset($val['help']) ? $val['help'] : ''
 		);
@@ -158,11 +159,31 @@ if (!$permissiontoread) accessforbidden();
  * Actions
  */
 
+if (preg_match('/^set/', $action) && $projectid > 0 && !empty($user->rights->eventorganization->write)) {
+	$project = new Project($db);
+	//If "set" fields keys is in projects fields
+	$project_attr=preg_replace('/^set/', '', $action);
+	if (array_key_exists($project_attr, $project->fields)) {
+		$result = $project->fetch($projectid);
+		if ($result < 0) {
+			setEventMessages(null, $project->errors, 'errors');
+		} else {
+			$project->{$project_attr}=GETPOST($project_attr);
+			$result=$project->update($user);
+			if ($result < 0) {
+				setEventMessages(null, $project->errors, 'errors');
+			}
+		}
+	}
+}
+
 if (GETPOST('cancel', 'alpha')) {
 	$action = 'list';
 	$massaction = '';
 }
-if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
+if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend'
+&& $massaction != 'presend'
+&& $massaction != 'confirm_presend') {
 	$massaction = '';
 }
 
@@ -197,6 +218,7 @@ if (empty($reshook)) {
 	$objectclass = 'ConferenceOrBoothAttendee';
 	$objectlabel = 'ConferenceOrBoothAttendee';
 	$uploaddir = $conf->eventorganization->dir_output;
+	include DOL_DOCUMENT_ROOT.'/eventorganization/core/actions_massactions_mail.inc.php';
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
@@ -244,7 +266,7 @@ $sql .= $object->getFieldList('t');
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key.', ' : '');
+		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
 	}
 }
 // Add fields from hooks
@@ -350,8 +372,6 @@ if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $
 }
 
 
-// Output page
-// --------------------------------------------------------------------
 
 llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'classforhorizontalscrolloftabs');
 
@@ -392,7 +412,7 @@ if ($projectstatic->id > 0 || $confOrBooth > 0) {
 		$morehtmlref .= '</div>';
 
 		// Define a complementary filter for search of next/prev ref.
-		if (!$user->rights->projet->all->lire) {
+		if (empty($user->rights->projet->all->lire)) {
 			$objectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 0);
 			$projectstatic->next_prev_filter = " rowid IN (".$db->sanitize(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
 		}
@@ -477,7 +497,6 @@ if ($projectstatic->id > 0 || $confOrBooth > 0) {
 		print '</div>';
 
 		print '<div class="fichehalfright">';
-		print '<div class="ficheaddleft">';
 		print '<div class="underbanner clearboth"></div>';
 
 		print '<table class="border tableforfield centpercent">';
@@ -528,7 +547,7 @@ if ($projectstatic->id > 0 || $confOrBooth > 0) {
 		$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT;
 
 		// Show message
-		$message = '<a target="_blank" href="'.$urlwithroot.'/public/agenda/agendaexport.php?format=ical'.($conf->entity > 1 ? "&entity=".$conf->entity : "");
+		$message = '<a target="_blank" rel="noopener noreferrer" href="'.$urlwithroot.'/public/agenda/agendaexport.php?format=ical'.($conf->entity > 1 ? "&entity=".$conf->entity : "");
 		$message .= '&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY ?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) : '...');
 		$message .= "&project=".$projectstatic->id.'&module='.urlencode('@eventorganization').'&status='.ConferenceOrBooth::STATUS_CONFIRMED.'">'.$langs->trans('DownloadICSLink').img_picto('', 'download', 'class="paddingleft"').'</a>';
 		print $message;
@@ -541,12 +560,12 @@ if ($projectstatic->id > 0 || $confOrBooth > 0) {
 		//print '</span>';
 		print '</td><td>';
 		$linksuggest = $dolibarr_main_url_root.'/public/project/index.php?id='.$projectstatic->id;
-		$encodedsecurekey = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$projectstatic->id, 2);
+		$encodedsecurekey = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$projectstatic->id, 'md5');
 		$linksuggest .= '&securekey='.urlencode($encodedsecurekey);
 		//print '<div class="urllink">';
 		//print '<input type="text" value="'.$linksuggest.'" id="linkregister" class="quatrevingtpercent paddingrightonly">';
-		print '<div class="tdoverflowmax200 inline-block valignmiddle"><a target="_blank" href="'.$linksuggest.'" class="quatrevingtpercent">'.$linksuggest.'</a></div>';
-		print '<a target="_blank" href="'.$linksuggest.'">'.img_picto('', 'globe').'</a>';
+		print '<div class="tdoverflowmax200 inline-block valignmiddle"><a target="_blank" rel="noopener noreferrer" href="'.$linksuggest.'" class="quatrevingtpercent">'.$linksuggest.'</a></div>';
+		print '<a target="_blank" rel="noopener noreferrer" href="'.$linksuggest.'">'.img_picto('', 'globe').'</a>';
 		//print '</div>';
 		//print ajax_autoselect("linkregister");
 		print '</td></tr>';
@@ -557,20 +576,19 @@ if ($projectstatic->id > 0 || $confOrBooth > 0) {
 		print $langs->trans("PublicAttendeeSubscriptionGlobalPage");
 		//print '</span>';
 		print '</td><td>';
-		$link_subscription = $dolibarr_main_url_root.'/public/eventorganization/attendee_registration.php?id='.$projectstatic->id.'&type=global';
-		$encodedsecurekey = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$projectstatic->id, 2);
+		$link_subscription = $dolibarr_main_url_root.'/public/eventorganization/attendee_new.php?id='.$projectstatic->id.'&type=global';
+		$encodedsecurekey = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$projectstatic->id, 'md5');
 		$link_subscription .= '&securekey='.urlencode($encodedsecurekey);
 		//print '<div class="urllink">';
 		//print '<input type="text" value="'.$linkregister.'" id="linkregister" class="quatrevingtpercent paddingrightonly">';
 		print '<div class="tdoverflowmax200 inline-block valignmiddle"><a target="_blank" href="'.$link_subscription.'" class="quatrevingtpercent">'.$link_subscription.'</a></div>';
-		print '<a target="_blank" href="'.$link_subscription.'">'.img_picto('', 'globe').'</a>';
+		print '<a target="_blank" rel="noopener noreferrer" href="'.$link_subscription.'">'.img_picto('', 'globe').'</a>';
 		//print '</div>';
 		//print ajax_autoselect("linkregister");
 		print '</td></tr>';
 
 		print '</table>';
 
-		print '</div>';
 		print '</div>';
 		print '</div>';
 
@@ -581,7 +599,7 @@ if ($projectstatic->id > 0 || $confOrBooth > 0) {
 		if (empty($confOrBooth->id)) {
 			$head = conferenceorboothProjectPrepareHead($projectstatic);
 			$tab = 'attendees';
-			print dol_get_fiche_head($head, $tab, $langs->trans("Project"), -1, ($project->public ? 'projectpub' : 'project'), 0, '', '');
+			print dol_get_fiche_head($head, $tab, $langs->trans("Project"), -1, ($project->public ? 'projectpub' : 'project'), 0, '', 'reposition');
 		}
 	}
 
@@ -627,22 +645,25 @@ if ($limit > 0 && $limit != $conf->liste_limit) {
 foreach ($search as $key => $val) {
 	if (is_array($search[$key]) && count($search[$key])) {
 		foreach ($search[$key] as $skey) {
-			$param .= '&search_'.$key.'[]='.urlencode($skey);
+			if ($skey != '') {
+				$param .= '&search_'.$key.'[]='.urlencode($skey);
+			}
 		}
-	} else {
+	} elseif ($search[$key] != '') {
 		$param .= '&search_'.$key.'='.urlencode($search[$key]);
 	}
 }
 if ($confOrBooth->id > 0) {
-	$param .= '&conforboothid='.urlencode($confOrBooth->id).$withProjectUrl;
+	$param .= '&conforboothid='.urlencode($confOrBooth->id);
 }
 if ($projectstatic->id > 0) {
-	$param .= '&fk_project='.urlencode($projectstatic->id).$withProjectUrl;
+	$param .= '&fk_project='.urlencode($projectstatic->id);
 }
-
+$param .= $withProjectUrl;
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
 }
+
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 // Add $param from hooks
@@ -655,7 +676,7 @@ $arrayofmassactions = array(
 	//'validate'=>img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Validate"),
 	//'generate_doc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("ReGeneratePDF"),
 	//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
-	//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
+	'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 );
 if ($permissiontodelete) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
@@ -675,17 +696,24 @@ print '<input type="hidden" name="action" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
+print '<input type="hidden" name="withproject" value="'.$withproject.'">';
+print '<input type="hidden" name="fk_project" value="'.$fk_project.'">';
+print '<input type="hidden" name="page_y" value="">';
 
-$newcardbutton = dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/eventorganization/conferenceorboothattendee_card.php?action=create'.(!empty($confOrBooth->id)?'&conforboothid='.$confOrBooth->id:'').(!empty($projectstatic->id)?'&fk_project='.$projectstatic->id:'').$withProjectUrl.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?projectid='.$projectstatic->id.(empty($confOrBooth->id) ? '' : '&conforboothid='.$confOrBooth->id).$withProjectUrl), '', $permissiontoadd);
+$params = array('morecss'=>'reposition');
+$newcardbutton = dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/eventorganization/conferenceorboothattendee_card.php?action=create'.(!empty($confOrBooth->id)?'&conforboothid='.$confOrBooth->id:'').(!empty($projectstatic->id)?'&fk_project='.$projectstatic->id:'').$withProjectUrl.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?projectid='.$projectstatic->id.(empty($confOrBooth->id) ? '' : '&conforboothid='.$confOrBooth->id).$withProjectUrl), '', $permissiontoadd, $params);
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, $object->picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
 
+
 // Add code for pre mass action (confirmation or email presend form)
-$topicmail = "SendConferenceOrBoothAttendeeRef";
-$modelmail = "conferenceorboothattendee";
+$topicmail = $projectstatic->title;
+$modelmail = "conferenceorbooth";
 $objecttmp = new ConferenceOrBoothAttendee($db);
-$trackid = 'xxxx'.$object->id;
+$trackid = 'conferenceorbooth_'.$object->id;
+$withmaindocfilemail = 0;
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
+
 
 if ($search_all) {
 	foreach ($fieldstosearchall as $key => $val) {
@@ -860,7 +888,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
-			if (!empty($val['isameasure'])) {
+			if (!empty($val['isameasure']) && $val['isameasure'] == 1) {
 				if (!$i) {
 					$totalarray['pos'][$totalarray['nbfield']] = 't.'.$key;
 				}

@@ -103,6 +103,7 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 	public $batch;
 	public $eatby = '';
 	public $sellby = '';
+	public $cost_price = 0;
 
 
 
@@ -189,7 +190,8 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 		$sql .= "batch,";
 		$sql .= "eatby,";
 		$sql .= "sellby,";
-		$sql .= "fk_reception";
+		$sql .= "fk_reception,";
+		$sql .= "cost_price";
 
 
 		$sql .= ") VALUES (";
@@ -205,7 +207,8 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 		$sql .= " ".(!isset($this->batch) ? 'NULL' : "'".$this->db->escape($this->batch)."'").",";
 		$sql .= " ".(!isset($this->eatby) || dol_strlen($this->eatby) == 0 ? 'NULL' : "'".$this->db->idate($this->eatby)."'").",";
 		$sql .= " ".(!isset($this->sellby) || dol_strlen($this->sellby) == 0 ? 'NULL' : "'".$this->db->idate($this->sellby)."'").",";
-		$sql .= " ".(!isset($this->fk_reception) ? 'NULL' : "'".$this->db->escape($this->fk_reception)."'")."";
+		$sql .= " ".(!isset($this->fk_reception) ? 'NULL' : "'".$this->db->escape($this->fk_reception)."'").",";
+		$sql .= " ".(!isset($this->cost_price) ? '0' : "'".$this->db->escape($this->cost_price)."'")."";
 		$sql .= ")";
 
 		$this->db->begin();
@@ -283,7 +286,7 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
 		if ($ref) {
-			$sql .= " WHERE t.ref = '".$ref."'";
+			$sql .= " WHERE t.ref = '".$this->db->escape($ref)."'";
 		} else {
 			$sql .= " WHERE t.rowid = ".((int) $id);
 		}
@@ -371,7 +374,6 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
-
 		$sql .= " fk_commande=".(isset($this->fk_commande) ? $this->fk_commande : "null").",";
 		$sql .= " fk_product=".(isset($this->fk_product) ? $this->fk_product : "null").",";
 		$sql .= " fk_commandefourndet=".(isset($this->fk_commandefourndet) ? $this->fk_commandefourndet : "null").",";
@@ -385,8 +387,6 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 		$sql .= " batch=".(isset($this->batch) ? "'".$this->db->escape($this->batch)."'" : "null").",";
 		$sql .= " eatby=".(dol_strlen($this->eatby) != 0 ? "'".$this->db->idate($this->eatby)."'" : 'null').",";
 		$sql .= " sellby=".(dol_strlen($this->sellby) != 0 ? "'".$this->db->idate($this->sellby)."'" : 'null')."";
-
-
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();

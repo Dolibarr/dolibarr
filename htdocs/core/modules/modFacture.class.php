@@ -99,14 +99,6 @@ class modFacture extends DolibarrModules
 		$this->const[$r][4] = 0;
 		$r++;
 
-		/*$this->const[$r][0] = "FACTURE_DRAFT_WATERMARK";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "__(Draft)__";
-		$this->const[$r][3] = 'Watermark to show on draft invoices';
-		$this->const[$r][4] = 0;
-		$r++;*/
-
-
 		// Boxes
 		//$this->boxes = array(0=>array(1=>'box_factures_imp.php'),1=>array(1=>'box_factures.php'));
 		$this->boxes = array(
@@ -142,7 +134,7 @@ class modFacture extends DolibarrModules
 				'objectname'=>'Facture',
 				'method'=>'sendEmailsRemindersOnInvoiceDueDate',
 				'parameters'=>"10,all,EmailTemplateCode",
-				'comment'=>'Send an emails when the unpaid invoices reach a due date + n days = today. First param is the offset n of days, second parameter is "all" or a payment mode code, last paramater is the code of email template to use (an email template with EmailTemplateCode must exists. the version in the language of the thirdparty will be used in priority).',
+				'comment'=>'Send an emails when the unpaid invoices reach a due date + n days = today. First param is the offset n of days, second parameter is "all" or a payment mode code, last parameter is the code of email template to use (an email template with EmailTemplateCode must exists. the version in the language of the thirdparty will be used in priority).',
 				'frequency'=>1,
 				'unitfrequency'=>3600 * 24,
 				'priority'=>50,
@@ -270,6 +262,13 @@ class modFacture extends DolibarrModules
 			$this->export_fields_array[$r]['f.module_source'] = 'Module';
 			$this->export_fields_array[$r]['f.pos_source'] = 'POSTerminal';
 		}
+		// Add multicompany field
+		if (!empty($conf->global->MULTICOMPANY_ENTITY_IN_EXPORT_IF_SHARED)) {
+			$nbofallowedentities = count(explode(',', getEntity('invoice')));
+			if (!empty($conf->multicompany->enabled) && $nbofallowedentities > 1) {
+				$this->export_fields_array[$r]['f.entity'] = 'Entity';
+			}
+		}
 		$this->export_TypeFields_array[$r] = array(
 			's.rowid'=>'Numeric', 's.nom'=>'Text', 'ps.nom'=>'Text', 's.code_client'=>'Text', 's.address'=>'Text', 's.zip'=>'Text', 's.town'=>'Text', 'c.code'=>'Text', 'cd.nom'=>'Text', 's.phone'=>'Text', 's.siren'=>'Text',
 			's.siret'=>'Text', 's.ape'=>'Text', 's.idprof4'=>'Text', 's.code_compta'=>'Text', 's.code_compta_fournisseur'=>'Text', 's.tva_intra'=>'Text',
@@ -280,7 +279,8 @@ class modFacture extends DolibarrModules
 			'pj.ref'=>'Text', 'pj.title'=>'Text', 'fd.rowid'=>'Numeric', 'fd.label'=>'Text', 'fd.description'=>"Text", 'fd.subprice'=>"Numeric", 'fd.tva_tx'=>"Numeric",
 			'fd.qty'=>"Numeric", 'fd.total_ht'=>"Numeric", 'fd.total_tva'=>"Numeric", 'fd.total_ttc'=>"Numeric", 'fd.date_start'=>"Date", 'fd.date_end'=>"Date",
 			'fd.special_code'=>'Numeric', 'fd.product_type'=>"Numeric", 'fd.fk_product'=>'List:product:label', 'p.ref'=>'Text', 'p.label'=>'Text',
-			$alias_product_perentity . '.accountancy_code_sell'=>'Text'
+			$alias_product_perentity . '.accountancy_code_sell'=>'Text',
+			'f.entity'=>'List:entity:label:rowid',
 		);
 		if (!empty($conf->cashdesk->enabled) || !empty($conf->takepos->enabled) || !empty($conf->global->INVOICE_SHOW_POS)) {
 			$this->export_TypeFields_array[$r]['f.module_source'] = 'Text';

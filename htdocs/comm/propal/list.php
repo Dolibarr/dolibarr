@@ -13,9 +13,9 @@
  * Copyright (C) 2016-2021 Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2017-2018 Charlene Benke			<charlie@patas-monkey.com>
  * Copyright (C) 2018	   Nicolas ZABOURI			<info@inovea-conseil.com>
- * Copyright (C) 2019	   Alexandre Spangaro		<aspangaro@open-dsi.fr>
+ * Copyright (C) 2019-2021 Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2021	   Anthony Berton			<anthony.berton@bb2a.fr>
- * Copyright (C) 2021		Frédéric France			<frederic.france@netlogic.fr>
+ * Copyright (C) 2021      Frédéric France			<frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,6 +42,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formpropal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+if (!empty($conf->margin->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmargin.class.php';
+}
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
@@ -88,12 +91,30 @@ $search_zip = GETPOST('search_zip', 'alpha');
 $search_state = GETPOST("search_state");
 $search_country = GETPOST("search_country", 'int');
 $search_type_thirdparty = GETPOST("search_type_thirdparty", 'int');
-$search_date_start = dol_mktime(0, 0, 0, GETPOST('search_date_startmonth', 'int'), GETPOST('search_date_startday', 'int'), GETPOST('search_date_startyear', 'int'));
-$search_date_end = dol_mktime(23, 59, 59, GETPOST('search_date_endmonth', 'int'), GETPOST('search_date_endday', 'int'), GETPOST('search_date_endyear', 'int'));
-$search_dateend_start = dol_mktime(0, 0, 0, GETPOST('search_dateend_startmonth', 'int'), GETPOST('search_dateend_startday', 'int'), GETPOST('search_dateend_startyear', 'int'));
-$search_dateend_end = dol_mktime(23, 59, 59, GETPOST('search_dateend_endmonth', 'int'), GETPOST('search_dateend_endday', 'int'), GETPOST('search_dateend_endyear', 'int'));
-$search_datedelivery_start = dol_mktime(0, 0, 0, GETPOST('search_datedelivery_startmonth', 'int'), GETPOST('search_datedelivery_startday', 'int'), GETPOST('search_datedelivery_startyear', 'int'));
-$search_datedelivery_end = dol_mktime(23, 59, 59, GETPOST('search_datedelivery_endmonth', 'int'), GETPOST('search_datedelivery_endday', 'int'), GETPOST('search_datedelivery_endyear', 'int'));
+$search_date_startday = GETPOST('search_date_startday', 'int');
+$search_date_startmonth = GETPOST('search_date_startmonth', 'int');
+$search_date_startyear = GETPOST('search_date_startyear', 'int');
+$search_date_endday = GETPOST('search_date_endday', 'int');
+$search_date_endmonth = GETPOST('search_date_endmonth', 'int');
+$search_date_endyear = GETPOST('search_date_endyear', 'int');
+$search_date_start = dol_mktime(0, 0, 0, $search_date_startmonth, $search_date_startday, $search_date_startyear);	// Use tzserver
+$search_date_end = dol_mktime(23, 59, 59, $search_date_endmonth, $search_date_endday, $search_date_endyear);
+$search_date_end_startday = GETPOST('search_date_end_startday', 'int');
+$search_date_end_startmonth = GETPOST('search_date_end_startmonth', 'int');
+$search_date_end_startyear = GETPOST('search_date_end_startyear', 'int');
+$search_date_end_endday = GETPOST('search_date_end_endday', 'int');
+$search_date_end_endmonth = GETPOST('search_date_end_endmonth', 'int');
+$search_date_end_endyear = GETPOST('search_date_end_endyear', 'int');
+$search_date_end_start = dol_mktime(0, 0, 0, $search_date_end_startmonth, $search_date_end_startday, $search_date_end_startyear);	// Use tzserver
+$search_date_end_end = dol_mktime(23, 59, 59, $search_date_end_endmonth, $search_date_end_endday, $search_date_end_endyear);
+$search_date_delivery_startday = GETPOST('search_date_delivery_startday', 'int');
+$search_date_delivery_startmonth = GETPOST('search_date_delivery_startmonth', 'int');
+$search_date_delivery_startyear = GETPOST('search_date_delivery_startyear', 'int');
+$search_date_delivery_endday = GETPOST('search_date_delivery_endday', 'int');
+$search_date_delivery_endmonth = GETPOST('search_date_delivery_endmonth', 'int');
+$search_date_delivery_endyear = GETPOST('search_date_delivery_endyear', 'int');
+$search_date_delivery_start = dol_mktime(0, 0, 0, $search_date_delivery_startmonth, $search_date_delivery_startday, $search_date_delivery_startyear);
+$search_date_delivery_end = dol_mktime(23, 59, 59, $search_date_delivery_endmonth, $search_date_delivery_endday, $search_date_delivery_endyear);
 $search_availability = GETPOST('search_availability', 'int');
 $search_categ_cus = GETPOST("search_categ_cus", 'int');
 $search_fk_cond_reglement = GETPOST("search_fk_cond_reglement", 'int');
@@ -112,8 +133,8 @@ $mesg = (GETPOST("msg") ? GETPOST("msg") : GETPOST("mesg"));
 
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1 || !empty($search_btn) || !empty($search_remove_btn) || (empty($toselect) && $massaction === '0')) {
 	$page = 0;
@@ -205,6 +226,10 @@ $arrayfields = array(
 	'p.multicurrency_total_invoiced'=>array('label'=>'MulticurrencyAmountInvoicedTTC', 'checked'=>0, 'enabled'=>!empty($conf->multicurrency->enabled) && !empty($conf->global->PROPOSAL_SHOW_INVOICED_AMOUNT)),
 	'u.login'=>array('label'=>"Author", 'checked'=>1, 'position'=>10),
 	'sale_representative'=>array('label'=>"SaleRepresentativesOfThirdParty", 'checked'=>-1),
+	'total_pa' => array('label' => ($conf->global->MARGIN_TYPE == '1' ? 'BuyingPrice' : 'CostPrice'), 'checked' => 0, 'position' => 300, 'enabled' => (empty($conf->margin->enabled) || !$user->rights->margins->liretous ? 0 : 1)),
+	'total_margin' => array('label' => 'Margin', 'checked' => 0, 'position' => 301, 'enabled' => (empty($conf->margin->enabled) || !$user->rights->margins->liretous ? 0 : 1)),
+	'total_margin_rate' => array('label' => 'MarginRate', 'checked' => 0, 'position' => 302, 'enabled' => (empty($conf->margin->enabled) || !$user->rights->margins->liretous || empty($conf->global->DISPLAY_MARGIN_RATES) ? 0 : 1)),
+	'total_mark_rate' => array('label' => 'MarkRate', 'checked' => 0, 'position' => 303, 'enabled' => (empty($conf->margin->enabled) || !$user->rights->margins->liretous || empty($conf->global->DISPLAY_MARK_RATES) ? 0 : 1)),
 	'p.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
 	'p.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>500),
 	'p.date_cloture'=>array('label'=>"DateClosing", 'checked'=>0, 'position'=>500),
@@ -278,12 +303,30 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_type = '';
 	$search_country = '';
 	$search_type_thirdparty = '';
+	$search_date_startday = '';
+	$search_date_startmonth = '';
+	$search_date_startyear = '';
+	$search_date_endday = '';
+	$search_date_endmonth = '';
+	$search_date_endyear = '';
 	$search_date_start = '';
 	$search_date_end = '';
-	$search_dateend_start = '';
-	$search_dateend_end = '';
-	$search_datedelivery_start = '';
-	$search_datedelivery_end = '';
+	$search_date_end_startday = '';
+	$search_date_end_startmonth = '';
+	$search_date_end_startyear = '';
+	$search_date_end_endday = '';
+	$search_date_end_endmonth = '';
+	$search_date_end_endyear = '';
+	$search_date_end_start = '';
+	$search_date_end_end = '';
+	$search_date_delivery_startday = '';
+	$search_date_delivery_startmonth = '';
+	$search_date_delivery_startyear = '';
+	$search_date_delivery_endday = '';
+	$search_date_delivery_endmonth = '';
+	$search_date_delivery_endyear = '';
+	$search_date_delivery_start = '';
+	$search_date_delivery_end = '';
 	$search_availability = '';
 	$search_status = '';
 	$object_statut = '';
@@ -313,20 +356,21 @@ if ($action == 'validate' && $permissiontovalidate) {
 		$db->begin();
 		$error = 0;
 		foreach ($toselect as $checked) {
-			if ($tmpproposal->fetch($checked)) {
-				if ($tmpproposal->statut == 0) {
-					if ($tmpproposal->valid($user)) {
-						setEventMessage($tmpproposal->ref." ".$langs->trans('PassedInOpenStatus'), 'mesgs');
+			if ($tmpproposal->fetch($checked) > 0) {
+				if ($tmpproposal->statut == $tmpproposal::STATUS_DRAFT) {
+					if ($tmpproposal->valid($user) > 0) {
+						setEventMessage($langs->trans('hasBeenValidated', $tmpproposal->ref), 'mesgs');
 					} else {
-						setEventMessage($langs->trans('CantBeValidated'), 'errors');
+						setEventMessage($tmpproposal->error, $tmpproposal->errors, 'errors');
 						$error++;
 					}
 				} else {
-					setEventMessage($tmpproposal->ref." ".$langs->trans('IsNotADraft'), 'errors');
+					$langs->load("errors");
+					setEventMessage($langs->trans('ErrorIsNotADraft', $tmpproposal->ref), 'errors');
 					$error++;
 				}
 			} else {
-				dol_print_error($db);
+				setEventMessages($tmpproposal->error, $tmpproposal->errors, 'errors');
 				$error++;
 			}
 		}
@@ -344,21 +388,21 @@ if ($action == "sign" && $permissiontoclose) {
 		$db->begin();
 		$error = 0;
 		foreach ($toselect as $checked) {
-			if ($tmpproposal->fetch($checked)) {
+			if ($tmpproposal->fetch($checked) > 0) {
 				if ($tmpproposal->statut == $tmpproposal::STATUS_VALIDATED) {
 					$tmpproposal->statut = $tmpproposal::STATUS_SIGNED;
-					if ($tmpproposal->closeProposal($user, $tmpproposal::STATUS_SIGNED)) {
+					if ($tmpproposal->closeProposal($user, $tmpproposal::STATUS_SIGNED) >= 0) {
 						setEventMessage($tmpproposal->ref." ".$langs->trans('Signed'), 'mesgs');
 					} else {
-						dol_print_error($db);
+						setEventMessages($tmpproposal->error, $tmpproposal->errors, 'errors');
 						$error++;
 					}
 				} else {
-					setEventMessage($tmpproposal->ref." ".$langs->trans('CantBeSign'), 'errors');
+					setEventMessage($langs->trans('MustBeValidatedToBeSigned', $tmpproposal->ref), 'errors');
 					$error++;
 				}
 			} else {
-				dol_print_error($db);
+				setEventMessages($tmpproposal->error, $tmpproposal->errors, 'errors');
 				$error++;
 			}
 		}
@@ -369,27 +413,28 @@ if ($action == "sign" && $permissiontoclose) {
 		}
 	}
 }
+
 if ($action == "nosign" && $permissiontoclose) {
 	if (GETPOST('confirm') == 'yes') {
 		$tmpproposal = new Propal($db);
 		$db->begin();
 		$error = 0;
 		foreach ($toselect as $checked) {
-			if ($tmpproposal->fetch($checked)) {
+			if ($tmpproposal->fetch($checked) > 0) {
 				if ($tmpproposal->statut == $tmpproposal::STATUS_VALIDATED) {
 					$tmpproposal->statut = $tmpproposal::STATUS_NOTSIGNED;
-					if ($tmpproposal->closeProposal($user, $tmpproposal::STATUS_NOTSIGNED)) {
+					if ($tmpproposal->closeProposal($user, $tmpproposal::STATUS_NOTSIGNED) > 0) {
 						setEventMessage($tmpproposal->ref." ".$langs->trans('NoSigned'), 'mesgs');
 					} else {
-						dol_print_error($db);
+						setEventMessages($tmpproposal->error, $tmpproposal->errors, 'errors');
 						$error++;
 					}
 				} else {
-					setEventMessage($tmpproposal->ref." ".$langs->trans('CantBeClosed'), 'errors');
+					setEventMessage($tmpproposal->ref." ".$langs->trans('CantBeNoSign'), 'errors');
 					$error++;
 				}
 			} else {
-				dol_print_error($db);
+				setEventMessages($tmpproposal->error, $tmpproposal->errors, 'errors');
 				$error++;
 			}
 		}
@@ -449,6 +494,10 @@ $form = new Form($db);
 $formother = new FormOther($db);
 $formfile = new FormFile($db);
 $formpropal = new FormPropal($db);
+$formmargin = null;
+if (!empty($conf->margin->enabled)) {
+	$formmargin = new FormMargin($db);
+}
 $companystatic = new Societe($db);
 $projectstatic = new Project($db);
 $formcompany = new FormCompany($db);
@@ -471,11 +520,11 @@ $sql .= ' p.datec as date_creation, p.tms as date_update, p.date_cloture as date
 $sql .= ' p.note_public, p.note_private,';
 $sql .= ' p.fk_cond_reglement,p.fk_mode_reglement,p.fk_shipping_method,p.fk_input_reason,';
 $sql .= " pr.rowid as project_id, pr.ref as project_ref, pr.title as project_label,";
-$sql .= ' u.login, u.lastname, u.firstname, u.email, u.statut, u.entity as user_entity, u.photo, u.office_phone, u.office_fax, u.user_mobile, u.job, u.gender';
-if (!$user->rights->societe->client->voir && !$socid) {
+$sql .= ' u.login, u.lastname, u.firstname, u.email as user_email, u.statut as user_statut, u.entity as user_entity, u.photo, u.office_phone, u.office_fax, u.user_mobile, u.job, u.gender';
+if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= ", sc.fk_soc, sc.fk_user";
 }
-if ($search_categ_cus) {
+if (!empty($search_categ_cus) && $search_categ_cus != '-1') {
 	$sql .= ", cc.fk_categorie, cc.fk_soc";
 }
 // Add fields from extrafields
@@ -493,11 +542,11 @@ $sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s';
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = s.fk_pays)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_typent as typent on (typent.id = s.fk_typent)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = s.fk_departement)";
-if (!empty($search_categ_cus)) {
+if (!empty($search_categ_cus) && $search_categ_cus != '-1') {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_societe as cc ON s.rowid = cc.fk_soc"; // We'll need this table joined to the select in order to filter by categ
 }
 $sql .= ', '.MAIN_DB_PREFIX.'propal as p';
-if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
+if (!empty($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (p.rowid = ef.fk_object)";
 }
 if ($sall || $search_product_category > 0) {
@@ -510,7 +559,7 @@ $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as u ON p.fk_user_author = u.rowid';
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as pr ON pr.rowid = p.fk_projet";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_availability as ava on (ava.rowid = p.fk_availability)";
 // We'll need this table joined to the select in order to filter by sale
-if ($search_sale > 0 || (!$user->rights->societe->client->voir && !$socid)) {
+if ($search_sale > 0 || (empty($user->rights->societe->client->voir) && !$socid)) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 if ($search_user > 0) {
@@ -525,7 +574,7 @@ $sql .= $hookmanager->resPrint;
 
 $sql .= ' WHERE p.fk_soc = s.rowid';
 $sql .= ' AND p.entity IN ('.getEntity('propal').')';
-if (!$user->rights->societe->client->voir && !$socid) { //restriction
+if (empty($user->rights->societe->client->voir) && !$socid) { //restriction
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 
@@ -598,6 +647,7 @@ if ($search_multicurrency_montant_ttc != '') {
 if ($sall) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $sall);
 }
+
 if ($search_categ_cus > 0) {
 	$sql .= " AND cc.fk_categorie = ".((int) $search_categ_cus);
 }
@@ -633,17 +683,17 @@ if ($search_date_start) {
 if ($search_date_end) {
 	$sql .= " AND p.datep <= '".$db->idate($search_date_end)."'";
 }
-if ($search_dateend_start) {
-	$sql .= " AND p.fin_validite >= '".$db->idate($search_dateend_start)."'";
+if ($search_date_end_start) {
+	$sql .= " AND p.fin_validite >= '".$db->idate($search_date_end_start)."'";
 }
-if ($search_dateend_end) {
-	$sql .= " AND p.fin_validite <= '".$db->idate($search_dateend_end)."'";
+if ($search_date_end_end) {
+	$sql .= " AND p.fin_validite <= '".$db->idate($search_date_end_end)."'";
 }
-if ($search_datedelivery_start) {
-	$sql .= " AND p.date_livraison >= '".$db->idate($search_datedelivery_start)."'";
+if ($search_date_delivery_start) {
+	$sql .= " AND p.date_livraison >= '".$db->idate($search_date_delivery_start)."'";
 }
-if ($search_datedelivery_end) {
-	$sql .= " AND p.date_livraison <= '".$db->idate($search_datedelivery_end)."'";
+if ($search_date_delivery_end) {
+	$sql .= " AND p.date_livraison <= '".$db->idate($search_date_delivery_end)."'";
 }
 if ($search_sale > 0) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $search_sale);
@@ -658,6 +708,11 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
+
+// Add HAVING from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListHaving', $parameters, $object); // Note that $action and $object may have been modified by hook
+$sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPrint;
 
 $sql .= $db->order($sortfield, $sortorder);
 $sql .= ', p.ref DESC';
@@ -718,12 +773,60 @@ if ($resql) {
 	if ($sall) {
 		$param .= '&sall='.urlencode($sall);
 	}
-	if ($search_date_start)				$param .= '&search_date_startday='.urlencode(dol_print_date($search_date_start, '%d')).'&search_date_startmonth='.urlencode(dol_print_date($search_date_start, '%m')).'&search_date_startyear='.urlencode(dol_print_date($search_date_start, '%Y'));
-	if ($search_date_end)				$param .= '&search_date_endday='.urlencode(dol_print_date($search_date_end, '%d')).'&search_date_endmonth='.urlencode(dol_print_date($search_date_end, '%m')).'&search_date_endyear='.urlencode(dol_print_date($search_date_end, '%Y'));
-	if ($search_dateend_start)			$param .= '&search_dateend_startday='.urlencode(dol_print_date($search_dateend_start, '%d')).'&search_dateend_startmonth='.urlencode(dol_print_date($search_dateend_start, '%m')).'&search_dateend_startyear='.urlencode(dol_print_date($search_dateend_start, '%Y'));
-	if ($search_dateend_end)			$param .= '&search_dateend_endday='.urlencode(dol_print_date($search_dateend_end, '%d')).'&search_dateend_endmonth='.urlencode(dol_print_date($search_dateend_end, '%m')).'&search_dateend_endyear='.urlencode(dol_print_date($search_dateend_end, '%Y'));
-	if ($search_datedelivery_start)		$param .= '&search_datedelivery_startday='.urlencode(dol_print_date($search_datedelivery_start, '%d')).'&search_datedelivery_startmonth='.urlencode(dol_print_date($search_datedelivery_start, '%m')).'&search_datedelivery_startyear='.urlencode(dol_print_date($search_datedelivery_start, '%Y'));
-	if ($search_datedelivery_end)		$param .= '&search_datedelivery_endday='.urlencode(dol_print_date($search_datedelivery_end, '%d')).'&search_datedelivery_endmonth='.urlencode(dol_print_date($search_datedelivery_end, '%m')).'&search_datedelivery_endyear='.urlencode(dol_print_date($search_datedelivery_end, '%Y'));
+	if ($search_date_startday) {
+		$param .= '&search_date_startday='.urlencode($search_date_startday);
+	}
+	if ($search_date_startmonth) {
+		$param .= '&search_date_startmonth='.urlencode($search_date_startmonth);
+	}
+	if ($search_date_startyear) {
+		$param .= '&search_date_startyear='.urlencode($search_date_startyear);
+	}
+	if ($search_date_endday) {
+		$param .= '&search_date_endday='.urlencode($search_date_endday);
+	}
+	if ($search_date_endmonth) {
+		$param .= '&search_date_endmonth='.urlencode($search_date_endmonth);
+	}
+	if ($search_date_endyear) {
+		$param .= '&search_date_endyear='.urlencode($search_date_endyear);
+	}
+	if ($search_date_end_startday) {
+		$param .= '&search_date_end_startday='.urlencode($search_date_end_startday);
+	}
+	if ($search_date_end_startmonth) {
+		$param .= '&search_date_end_startmonth='.urlencode($search_date_end_startmonth);
+	}
+	if ($search_date_end_startyear) {
+		$param .= '&search_date_end_startyear='.urlencode($search_date_end_startyear);
+	}
+	if ($search_date_end_endday) {
+		$param .= '&search_date_end_endday='.urlencode($search_date_end_endday);
+	}
+	if ($search_date_end_endmonth) {
+		$param .= '&search_date_end_endmonth='.urlencode($search_date_end_endmonth);
+	}
+	if ($search_date_end_endyear) {
+		$param .= '&search_date_end_endyear='.urlencode($search_date_end_endyear);
+	}
+	if ($search_date_delivery_startday)	{
+		$param .= '&search_date_delivery_startday='.urlencode($search_date_delivery_startday);
+	}
+	if ($search_date_delivery_startmonth) {
+		$param .= '&search_date_delivery_startmonth='.urlencode($search_date_delivery_startmonth);
+	}
+	if ($search_date_delivery_startyear) {
+		$param .= '&search_date_delivery_startyear='.urlencode($search_date_delivery_startyear);
+	}
+	if ($search_date_delivery_endday) {
+		$param .= '&search_date_delivery_endday='.urlencode($search_date_delivery_endday);
+	}
+	if ($search_date_delivery_endmonth) {
+		$param .= '&search_date_delivery_endmonth='.urlencode($search_date_delivery_endmonth);
+	}
+	if ($search_date_delivery_endyear) {
+		$param .= '&search_date_delivery_endyear='.urlencode($search_date_delivery_endyear);
+	}
 	if ($search_ref) {
 		$param .= '&search_ref='.urlencode($search_ref);
 	}
@@ -817,6 +920,10 @@ if ($resql) {
 
 	// Add $param from extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
+	// Add $param from hooks
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object); // Note that $action and $object may have been modified by hook
+	$param .= $hookmanager->resPrint;
 
 	// List of mass actions available
 	$arrayofmassactions = array(
@@ -897,14 +1004,14 @@ if ($resql) {
 		$langs->load("commercial");
 		$moreforfilter .= '<div class="divsearchfield">';
 		$tmptitle = $langs->trans('ThirdPartiesOfSaleRepresentative');
-		$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$formother->select_salesrepresentatives($search_sale, 'search_sale', $user, 0, $tmptitle, 'maxwidth250');
+		$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$formother->select_salesrepresentatives($search_sale, 'search_sale', $user, 0, $tmptitle, 'maxwidth250 widthcentpercentminusx');
 		$moreforfilter .= '</div>';
 	}
 	// If the user can view prospects other than his'
 	if ($user->rights->societe->client->voir || $socid) {
 		$moreforfilter .= '<div class="divsearchfield">';
 		$tmptitle =  $langs->trans('LinkedToSpecificUsers');
-		$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$form->select_dolusers($search_user, 'search_user', $tmptitle, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth250');
+		$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$form->select_dolusers($search_user, 'search_user', $tmptitle, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth250 widthcentpercentminusx');
 		$moreforfilter .= '</div>';
 	}
 	// If the user can view products
@@ -913,14 +1020,14 @@ if ($resql) {
 		$moreforfilter .= '<div class="divsearchfield">';
 		$tmptitle = $langs->trans('IncludingProductWithTag');
 		$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, null, 'parent', null, null, 1);
-		$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$form->selectarray('search_product_category', $cate_arbo, $search_product_category, $tmptitle, 0, 0, '', 0, 0, 0, 0, (empty($conf->dol_optimize_smallscreen) ? 'maxwidth300' : 'maxwidth250'), 1);
+		$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$form->selectarray('search_product_category', $cate_arbo, $search_product_category, $tmptitle, 0, 0, '', 0, 0, 0, 0, (empty($conf->dol_optimize_smallscreen) ? 'maxwidth300 widthcentpercentminusx' : 'maxwidth250 widthcentpercentminusx'), 1);
 		$moreforfilter .= '</div>';
 	}
 	if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire) {
 		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		$moreforfilter .= '<div class="divsearchfield">';
 		$tmptitle = $langs->trans('CustomersProspectsCategoriesShort');
-		$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$formother->select_categories('customer', $search_categ_cus, 'search_categ_cus', 1, $tmptitle, (empty($conf->dol_optimize_smallscreen) ? 'maxwidth300' : 'maxwidth250'));
+		$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$formother->select_categories('customer', $search_categ_cus, 'search_categ_cus', 1, $tmptitle, (empty($conf->dol_optimize_smallscreen) ? 'maxwidth300 widthcentpercentminusx' : 'maxwidth250 widthcentpercentminusx'));
 		$moreforfilter .= '</div>';
 	}
 	if (!empty($conf->stock->enabled) && !empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_PROPAL)) {
@@ -1023,10 +1130,10 @@ if ($resql) {
 	if (!empty($arrayfields['p.fin_validite']['checked'])) {
 		print '<td class="liste_titre center">';
 		print '<div class="nowrap">';
-		print $form->selectDate($search_dateend_start ? $search_dateend_start : -1, 'search_dateend_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+		print $form->selectDate($search_date_end_start ? $search_date_end_start : -1, 'search_date_end_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 		print '</div>';
 		print '<div class="nowrap">';
-		print $form->selectDate($search_dateend_end ? $search_dateend_end : -1, 'search_dateend_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+		print $form->selectDate($search_date_end_end ? $search_date_end_end : -1, 'search_date_end_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 		print '</div>';
 		print '</td>';
 	}
@@ -1034,10 +1141,10 @@ if ($resql) {
 	if (!empty($arrayfields['p.date_livraison']['checked'])) {
 		print '<td class="liste_titre center">';
 		print '<div class="nowrap">';
-		print $form->selectDate($search_datedelivery_start ? $search_datedelivery_start : -1, 'search_datedelivery_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+		print $form->selectDate($search_date_delivery_start ? $search_date_delivery_start : -1, 'search_date_delivery_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 		print '</div>';
 		print '<div class="nowrap">';
-		print $form->selectDate($search_datedelivery_end ? $search_datedelivery_end : -1, 'search_datedelivery_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+		print $form->selectDate($search_date_delivery_end ? $search_date_delivery_end : -1, 'search_date_delivery_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 		print '</div>';
 		print '</td>';
 	}
@@ -1148,6 +1255,22 @@ if ($resql) {
 	}
 	if (!empty($arrayfields['sale_representative']['checked'])) {
 		print '<td class="liste_titre"></td>';
+	}
+	if (!empty($arrayfields['total_pa']['checked'])) {
+		print '<td class="liste_titre right">';
+		print '</td>';
+	}
+	if (!empty($arrayfields['total_margin']['checked'])) {
+		print '<td class="liste_titre right">';
+		print '</td>';
+	}
+	if (!empty($arrayfields['total_margin_rate']['checked'])) {
+		print '<td class="liste_titre right">';
+		print '</td>';
+	}
+	if (!empty($arrayfields['total_mark_rate']['checked'])) {
+		print '<td class="liste_titre right">';
+		print '</td>';
 	}
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
@@ -1297,10 +1420,36 @@ if ($resql) {
 	if (!empty($arrayfields['sale_representative']['checked'])) {
 		print_liste_field_titre($arrayfields['sale_representative']['label'], $_SERVER["PHP_SELF"], "", "", "$param", '', $sortfield, $sortorder);
 	}
+	if (!empty($arrayfields['total_pa']['checked'])) {
+		print_liste_field_titre($arrayfields['total_pa']['label'], $_SERVER['PHP_SELF'], '', '', $param, 'class="right"', $sortfield, $sortorder);
+	}
+	if (!empty($arrayfields['total_margin']['checked'])) {
+		print_liste_field_titre($arrayfields['total_margin']['label'], $_SERVER['PHP_SELF'], '', '', $param, 'class="right"', $sortfield, $sortorder);
+	}
+	if (!empty($arrayfields['total_margin_rate']['checked'])) {
+		print_liste_field_titre($arrayfields['total_margin_rate']['label'], $_SERVER['PHP_SELF'], '', '', $param, 'class="right"', $sortfield, $sortorder);
+	}
+	if (!empty($arrayfields['total_mark_rate']['checked'])) {
+		print_liste_field_titre($arrayfields['total_mark_rate']['label'], $_SERVER['PHP_SELF'], '', '', $param, 'class="right"', $sortfield, $sortorder);
+	}
+	$totalarray = array(
+		'nbfield' => 0,
+		'val' => array(
+			'p.total_ht' => 0,
+			'p.total_tva' => 0,
+			'p.total_ttc' => 0,
+		),
+	);
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 	// Hook fields
-	$parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
+	$parameters = array(
+		'arrayfields' => $arrayfields,
+		'param' => $param,
+		'sortfield' => $sortfield,
+		'sortorder' => $sortorder,
+		'totalarray' => &$totalarray,
+	);
 	$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	if (!empty($arrayfields['p.datec']['checked'])) {
@@ -1326,15 +1475,23 @@ if ($resql) {
 
 	$now = dol_now();
 	$i = 0;
-	$totalarray = array();
-	$totalarray['nbfield'] = 0;
-	$totalarray['val'] = array();
-	$totalarray['val']['p.total_ht'] = 0;
-	$totalarray['val']['p.total_tva'] = 0;
-	$totalarray['val']['p.total_ttc'] = 0;
 	$typenArray = null;
 
-	while ($i < min($num, $limit)) {
+	$with_margin_info = false;
+	if (!empty($conf->margin->enabled) && (
+		!empty($arrayfields['total_pa']['checked'])
+		|| !empty($arrayfields['total_margin']['checked'])
+		|| !empty($arrayfields['total_margin_rate']['checked'])
+		|| !empty($arrayfields['total_mark_rate']['checked'])
+		)
+	) {
+		$with_margin_info = true;
+	}
+	$total_ht = 0;
+	$total_margin = 0;
+
+	$last_num = min($num, $limit);
+	while ($i < $last_num) {
 		$obj = $db->fetch_object($resql);
 
 		$objectstatic->id = $obj->rowid;
@@ -1382,6 +1539,14 @@ if ($resql) {
 				$multicurrency_totalInvoicedHT += $invoice->multicurrency_total_ht;
 				$multicurrency_totalInvoicedTTC += $invoice->multicurrency_total_ttc;
 			}
+		}
+
+		$marginInfo = array();
+		if ($with_margin_info === true) {
+			$objectstatic->fetch_lines();
+			$marginInfo = $formmargin->getMarginInfosArray($objectstatic);
+			$total_ht += $obj->total_ht;
+			$total_margin += $marginInfo['total_margin'];
 		}
 
 		print '<tr class="oddeven">';
@@ -1714,8 +1879,8 @@ if ($resql) {
 		$userstatic->login = $obj->login;
 		$userstatic->lastname = $obj->lastname;
 		$userstatic->firstname = $obj->firstname;
-		$userstatic->email = $obj->email;
-		$userstatic->statut = $obj->statut;
+		$userstatic->email = $obj->user_email;
+		$userstatic->statut = $obj->user_statut;
 		$userstatic->entity = $obj->user_entity;
 		$userstatic->photo = $obj->photo;
 		$userstatic->office_phone = $obj->office_phone;
@@ -1781,6 +1946,49 @@ if ($resql) {
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
+			}
+		}
+
+		// Total buying or cost price
+		if (!empty($arrayfields['total_pa']['checked'])) {
+			print '<td class="right nowrap">'.price($marginInfo['pa_total']).'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Total margin
+		if (!empty($arrayfields['total_margin']['checked'])) {
+			print '<td class="right nowrap">'.price($marginInfo['total_margin']).'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+			if (!$i) {
+				$totalarray['pos'][$totalarray['nbfield']] = 'total_margin';
+			}
+			$totalarray['val']['total_margin'] = $total_margin;
+		}
+		// Total margin rate
+		if (!empty($arrayfields['total_margin_rate']['checked'])) {
+			print '<td class="right nowrap">'.(($marginInfo['total_margin_rate'] == '') ? '' : price($marginInfo['total_margin_rate'], null, null, null, null, 2).'%').'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Total mark rate
+		if (!empty($arrayfields['total_mark_rate']['checked'])) {
+			print '<td class="right nowrap">'.(($marginInfo['total_mark_rate'] == '') ? '' : price($marginInfo['total_mark_rate'], null, null, null, null, 2).'%').'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+			if (!$i) {
+				$totalarray['pos'][$totalarray['nbfield']] = 'total_mark_rate';
+			}
+			if ($i >= $last_num - 1) {
+				if (!empty($total_ht)) {
+					$totalarray['val']['total_mark_rate'] = price2num($total_margin * 100 / $total_ht, 'MT');
+				} else {
+					$totalarray['val']['total_mark_rate'] = '';
+				}
 			}
 		}
 

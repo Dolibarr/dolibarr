@@ -244,7 +244,7 @@ if (empty($reshook)) {
 			}
 		}
 	} elseif ($action == 'setdate_livraison' && $usercancreate) {
-		$result = $object->setDeliveryDate($user, dol_mktime(12, 0, 0, $_POST['liv_month'], $_POST['liv_day'], $_POST['liv_year']));
+		$result = $object->setDeliveryDate($user, dol_mktime(12, 0, 0, GETPOST('liv_month', 'int'), GETPOST('liv_day', 'int'), GETPOST('liv_year', 'int')));
 		if ($result < 0) {
 			dol_print_error($db, $object->error);
 		}
@@ -541,21 +541,28 @@ if (empty($reshook)) {
 		$product_desc = (GETPOSTISSET('dp_desc') ? GETPOST('dp_desc', 'restricthtml') : '');
 		$date_start = dol_mktime(GETPOST('date_start'.$predef.'hour'), GETPOST('date_start'.$predef.'min'), GETPOST('date_start'.$predef.'sec'), GETPOST('date_start'.$predef.'month'), GETPOST('date_start'.$predef.'day'), GETPOST('date_start'.$predef.'year'));
 		$date_end = dol_mktime(GETPOST('date_end'.$predef.'hour'), GETPOST('date_end'.$predef.'min'), GETPOST('date_end'.$predef.'sec'), GETPOST('date_end'.$predef.'month'), GETPOST('date_end'.$predef.'day'), GETPOST('date_end'.$predef.'year'));
+
 		$ref_supplier = GETPOST('fourn_ref', 'alpha');
+
 		$prod_entry_mode = GETPOST('prod_entry_mode');
 		if ($prod_entry_mode == 'free')	{
 			$idprod = 0;
-			$price_ht = price2num(GETPOST('price_ht'), 'MU', 2);
-			$tva_tx = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);
 		} else {
 			$idprod = GETPOST('idprod', 'int');
-			$price_ht = price2num(GETPOST('price_ht'), 'MU', 2);
-			$tva_tx = '';
 		}
 
-		$qty = price2num(GETPOST('qty'.$predef, 'alpha'), 'MS');
-		$remise_percent = price2num(GETPOST('remise_percent'.$predef), 2);
+		$tva_tx = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);		// Can be '1.2' or '1.2 (CODE)'
+
+		$price_ht = price2num(GETPOST('price_ht'), 'MU', 2);
 		$price_ht_devise = price2num(GETPOST('multicurrency_price_ht'), 'CU', 2);
+		$price_ttc = price2num(GETPOST('price_ttc'), 'MU', 2);
+		$price_ttc_devise = price2num(GETPOST('multicurrency_price_ttc'), 'CU', 2);
+		$qty = price2num(GETPOST('qty'.$predef, 'alpha'), 'MS');
+
+		$remise_percent = (GETPOSTISSET('remise_percent'.$predef) ? price2num(GETPOST('remise_percent'.$predef, 'alpha'), '', 2) : 0);
+		if (empty($remise_percent)) {
+			$remise_percent = 0;
+		}
 
 		// Extrafields
 		$extralabelsline = $extrafields->fetch_name_optionals_label($object->table_element_line);
@@ -568,6 +575,10 @@ if (empty($reshook)) {
 			}
 		}
 
+		if ($prod_entry_mode == 'free' && GETPOST('price_ht') < 0 && $qty < 0) {
+			setEventMessages($langs->trans('ErrorBothFieldCantBeNegative', $langs->transnoentitiesnoconv('UnitPrice'), $langs->transnoentitiesnoconv('Qty')), null, 'errors');
+			$error++;
+		}
 		if ($prod_entry_mode == 'free' && (empty($idprod) || $idprod < 0) && GETPOST('type') < 0) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), null, 'errors');
 			$error++;
@@ -589,10 +600,7 @@ if (empty($reshook)) {
 
 			$db->begin();
 
-			// Ecrase $pu par celui du produit
-			// Ecrase $desc par celui du produit
-			// Ecrase $txtva par celui du produit
-			if (($prod_entry_mode != 'free') && empty($error)) {	// With combolist mode idprodfournprice is > 0 or -1. With autocomplete, idprodfournprice is > 0 or ''
+			if ($prod_entry_mode != 'free' && empty($error)) {	// With combolist mode idprodfournprice is > 0 or -1. With autocomplete, idprodfournprice is > 0 or ''
 				$productsupplier = new ProductFournisseur($db);
 
 				$idprod = 0;
@@ -603,7 +611,7 @@ if (empty($reshook)) {
 				$reg = array();
 				if (preg_match('/^idprod_([0-9]+)$/', GETPOST('idprodfournprice', 'alpha'), $reg)) {
 					$idprod = $reg[1];
-					$res = $productsupplier->fetch($idprod); // Load product from its ID
+					$res = $productsupplier->fetch($idprod); // Load product from its id
 					// Call to init some price properties of $productsupplier
 					// So if a supplier price already exists for another thirdparty (first one found), we use it as reference price
 					if (!empty($conf->global->SUPPLIER_TAKE_FIRST_PRICE_IF_NO_PRICE_FOR_CURRENT_SUPPLIER)) {
@@ -626,42 +634,85 @@ if (empty($reshook)) {
 				if ($idprod > 0) {
 					$label = $productsupplier->label;
 
-					// if we use supplier description of the products
-					if (!empty($productsupplier->desc_supplier) && !empty($conf->global->PRODUIT_FOURN_TEXTS)) {
-						$desc = $productsupplier->desc_supplier;
+					// Define output language
+					if (!empty($conf->global->MAIN_MULTILANGS) && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
+						$outputlangs = $langs;
+						$newlang = '';
+						if (empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+							$newlang = GETPOST('lang_id', 'aZ09');
+						}
+						if (empty($newlang)) {
+							$newlang = $object->thirdparty->default_lang;
+						}
+						if (!empty($newlang)) {
+							$outputlangs = new Translate("", $conf);
+							$outputlangs->setDefaultLang($newlang);
+						}
+						$desc = (!empty($productsupplier->multilangs[$outputlangs->defaultlang]["description"])) ? $productsupplier->multilangs[$outputlangs->defaultlang]["description"] : $productsupplier->description;
 					} else {
 						$desc = $productsupplier->description;
 					}
+					// if we use supplier description of the products
+					if (!empty($productsupplier->desc_supplier) && !empty($conf->global->PRODUIT_FOURN_TEXTS)) {
+						$desc = $productsupplier->desc_supplier;
+					}
 
-					if (trim($product_desc) != trim($desc)) {
+					//If text set in desc is the same as product descpription (as now it's preloaded) whe add it only one time
+					if (trim($product_desc) == trim($desc) && !empty($conf->global->PRODUIT_AUTOFILL_DESC)) {
+						$product_desc='';
+					}
+
+					if (!empty($product_desc) && !empty($conf->global->MAIN_NO_CONCAT_DESCRIPTION)) {
+						$desc = $product_desc;
+					}
+					if (!empty($product_desc) && trim($product_desc) != trim($desc)) {
 						$desc = dol_concatdesc($desc, $product_desc, '', !empty($conf->global->MAIN_CHANGE_ORDER_CONCAT_DESCRIPTION));
 					}
 
-					$type = $productsupplier->type;
-					$price_base_type = ($productsupplier->fourn_price_base_type ? $productsupplier->fourn_price_base_type : 'HT');
-
 					$ref_supplier = $productsupplier->ref_supplier;
 
-					$tva_tx = get_default_tva($object->thirdparty, $mysoc, $productsupplier->id, GETPOST('idprodfournprice', 'alpha'));
-					$tva_npr = get_default_npr($object->thirdparty, $mysoc, $productsupplier->id, GETPOST('idprodfournprice', 'alpha'));
+					// Get vat rate
+					if (!GETPOSTISSET('tva_tx')) {	// If vat rate not provided from the form (the form has the priority)
+						$tva_tx = get_default_tva($object->thirdparty, $mysoc, $productsupplier->id, GETPOST('idprodfournprice', 'alpha'));
+						$tva_npr = get_default_npr($object->thirdparty, $mysoc, $productsupplier->id, GETPOST('idprodfournprice', 'alpha'));
+					}
 					if (empty($tva_tx)) {
 						$tva_npr = 0;
 					}
 					$localtax1_tx = get_localtax($tva_tx, 1, $mysoc, $object->thirdparty, $tva_npr);
 					$localtax2_tx = get_localtax($tva_tx, 2, $mysoc, $object->thirdparty, $tva_npr);
 
-					if (empty($pu_ht)) {
-						$pu_ht = 0; // If pu is '' or null, we force to have a numeric value
+					$type = $productsupplier->type;
+					if (GETPOST('price_ht') != '' || GETPOST('price_ht_devise') != '') {
+						$price_base_type = 'HT';
+						$pu = price2num($price_ht, 'MU');
+						$pu_devise = price2num($price_ht_devise, 'CU');
+					} elseif (GETPOST('price_ttc') != '' || GETPOST('price_ttc_devise') != '') {
+						$price_base_type = 'TTC';
+						$pu = price2num($price_ttc, 'MU');
+						$pu_devise = price2num($price_ttc_devise, 'CU');
+					} else {
+						$price_base_type = ($productsupplier->fourn_price_base_type ? $productsupplier->fourn_price_base_type : 'HT');
+						if (empty($object->multicurrency_code) || ($productsupplier->fourn_multicurrency_code != $object->multicurrency_code)) {	// If object is in a different currency and price not in this currency
+							$pu = $productsupplier->fourn_pu;
+							$pu_devise = 0;
+						} else {
+							$pu = $productsupplier->fourn_pu;
+							$pu_devise = $productsupplier->fourn_multicurrency_unitprice;
+						}
+					}
+
+					if (empty($pu)) {
+						$pu = 0; // If pu is '' or null, we force to have a numeric value
 					}
 
 					// If GETPOST('idprodfournprice') is a numeric, we can use it. If it is empty or if it is 'idprod_123', we should use -1 (not used)
 					$fournprice = (is_numeric(GETPOST('idprodfournprice', 'alpha')) ? GETPOST('idprodfournprice', 'alpha') : -1);
 					$buyingprice = 0;
-					$pu_ht_devise = price2num($price_ht_devise, 'MU');
 
 					$result = $object->addline(
 						$desc,
-						$pu_ht,
+						($price_base_type == 'HT' ? $pu : 0),
 						$qty,
 						$tva_tx,
 						$localtax1_tx,
@@ -669,7 +720,7 @@ if (empty($reshook)) {
 						$productsupplier->id,
 						$remise_percent,
 						$price_base_type,
-						$pu_ttc,
+						($price_base_type == 'TTC' ? $pu : 0),
 						$tva_npr,
 						$type,
 						-1,
@@ -683,7 +734,7 @@ if (empty($reshook)) {
 						$productsupplier->fk_unit,
 						'',
 						0,
-						$pu_ht_devise,
+						$pu_devise,
 						$date_start,
 						$date_end
 					);
@@ -709,6 +760,7 @@ if (empty($reshook)) {
 			} elseif ((GETPOST('price_ht') !== '' || GETPOST('price_ttc') !== '' || GETPOST('multicurrency_price_ht') != '') && empty($error)) {    // Free product.  // $price_ht is already set
 				$pu_ht = price2num($price_ht, 'MU');
 				$pu_ttc = price2num(GETPOST('price_ttc'), 'MU');
+
 				$tva_npr = (preg_match('/\*/', $tva_tx) ? 1 : 0);
 				$tva_tx = str_replace('*', '', $tva_tx);
 				$label = (GETPOST('product_label') ? GETPOST('product_label') : '');
@@ -718,21 +770,22 @@ if (empty($reshook)) {
 				$fk_unit = GETPOST('units', 'alpha');
 
 				if (!preg_match('/\((.*)\)/', $tva_tx)) {
-					$tva_tx = price2num($tva_tx); // When vat is text input field
+					$tva_tx = price2num($tva_tx); // $txtva can have format '5,1' or '5.1' or '5.1(XXX)', we must clean only if '5,1'
 				}
 
 				// Local Taxes
 				$localtax1_tx = get_localtax($tva_tx, 1, $mysoc, $object->thirdparty);
 				$localtax2_tx = get_localtax($tva_tx, 2, $mysoc, $object->thirdparty);
 
-				if ($price_ht !== '') {
+				if (GETPOST('price_ht') != '' || GETPOST('price_ht_devise') != '') {
 					$pu_ht = price2num($price_ht, 'MU'); // $pu_ht must be rounded according to settings
 				} else {
 					$pu_ttc = price2num(GETPOST('price_ttc'), 'MU');
 					$pu_ht = price2num($pu_ttc / (1 + ($tva_tx / 100)), 'MU'); // $pu_ht must be rounded according to settings
 				}
 				$price_base_type = 'HT';
-				$pu_ht_devise = price2num($price_ht_devise, 'MU');
+				$pu_ht_devise = price2num($price_ht_devise, 'CU');
+				$info_bits = 0;
 
 				$result = $object->addline(
 					$desc,
@@ -800,6 +853,7 @@ if (empty($reshook)) {
 				unset($_POST['price_ht']);
 				unset($_POST['multicurrency_price_ht']);
 				unset($_POST['price_ttc']);
+				unset($_POST['fourn_ref']);
 				unset($_POST['tva_tx']);
 				unset($_POST['label']);
 				unset($_POST['product_ref']);
@@ -813,6 +867,8 @@ if (empty($reshook)) {
 				unset($_POST['np_markRate']);
 				unset($_POST['dp_desc']);
 				unset($_POST['idprodfournprice']);
+				unset($_POST['units']);
+
 				unset($_POST['idprod']);
 
 				unset($_POST['date_starthour']);
@@ -852,10 +908,9 @@ if (empty($reshook)) {
 		$localtax2_rate = get_localtax($vat_rate, 2, $mysoc, $object->thirdparty);
 
 		if (GETPOST('price_ht') != '') {
+			$price_base_type = 'HT';
 			$ht = price2num(GETPOST('price_ht'), '', 2);
-		}
-
-		if (GETPOST('price_ttc') != '') {
+		} else {
 			$reg = array();
 			$vatratecleaned = $vat_rate;
 			if (preg_match('/^(.*)\s*\((.*)\)$/', $vat_rate, $reg)) {      // If vat is "xx (yy)"
@@ -865,10 +920,10 @@ if (empty($reshook)) {
 
 			$ttc = price2num(GETPOST('price_ttc'), '', 2);
 			$ht = $ttc / (1 + ($vatratecleaned / 100));
+			$price_base_type = 'HT';
 		}
 
-		$price_base_type = 'HT';
-		$pu_ht_devise = price2num(GETPOST('multicurrency_subprice'), 'CU');
+		$pu_ht_devise = price2num(GETPOST('multicurrency_subprice'), 'CU', 2);
 
 		// Add buying price
 		$fournprice = (GETPOST('fournprice') ? GETPOST('fournprice') : '');
@@ -895,7 +950,7 @@ if (empty($reshook)) {
 		if (!empty($productid)) {
 			$productsupplier = new ProductFournisseur($db);
 			if (!empty($conf->global->SUPPLIER_PROPOSAL_WITH_PREDEFINED_PRICES_ONLY)) {
-				if ($productid > 0 && $productsupplier->get_buyprice(0, price2num($_POST['qty']), $productid, 'none', GETPOST('socid', 'int')) < 0) {
+				if ($productid > 0 && $productsupplier->get_buyprice(0, price2num(GETPOST('qty')), $productid, 'none', GETPOST('socid', 'int')) < 0) {
 					setEventMessages($langs->trans("ErrorQtyTooLowForThisSupplier"), null, 'warnings');
 				}
 			}
@@ -1007,7 +1062,7 @@ if (empty($reshook)) {
 		$object->setProject(GETPOST('projectid'), 'int');
 	} elseif ($action == 'setavailability' && $usercancreate) {
 		// Delivery delay
-		$result = $object->availability($_POST['availability_id']);
+		$result = $object->availability(GETPOST('availability_id'));
 	} elseif ($action == 'setconditions' && $usercancreate) {
 		// Terms of payments
 		$result = $object->setPaymentTerms(GETPOST('cond_reglement_id', 'int'));
@@ -1148,6 +1203,18 @@ if ($action == 'create') {
 	} else {
 		print '<td colspan="2">';
 		print img_picto('', 'company').$form->select_company('', 'socid', 's.fournisseur=1', 'SelectThirdParty', 0, 0, null, 0, 'minwidth300');
+		// reload page to retrieve customer informations
+		if (!empty($conf->global->RELOAD_PAGE_ON_SUPPLIER_CHANGE)) {
+			print '<script>
+			$(document).ready(function() {
+				$("#socid").change(function() {
+					var socid = $(this).val();
+					// reload page
+					window.location.href = "'.$_SERVER["PHP_SELF"].'?action=create&socid="+socid;
+				});
+			});
+			</script>';
+		}
 		print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&client=0&fournisseur=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddThirdParty").'"></span></a>';
 		print '</td>';
 	}
@@ -1249,7 +1316,7 @@ if ($action == 'create') {
 	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	if (empty($reshook)) {
-		print $object->showOptionals($extrafields, 'edit', $parameters);
+		print $object->showOptionals($extrafields, 'create', $parameters);
 	}
 
 
@@ -1463,7 +1530,7 @@ if ($action == 'create') {
 		$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 		if ($usercancreate) {
 			if ($action != 'classify') {
-				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
+				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
 			}
 			if ($action == 'classify') {
 				//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
@@ -1480,9 +1547,10 @@ if ($action == 'create') {
 			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
 				$proj->fetch($object->fk_project);
-				$morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$object->fk_project.'" title="'.$langs->trans('ShowProject').'">';
-				$morehtmlref .= $proj->ref;
-				$morehtmlref .= '</a>';
+				$morehtmlref .= ' : '.$proj->getNomUrl(1);
+				if ($proj->title) {
+					$morehtmlref .= ' - '.$proj->title;
+				}
 			} else {
 				$morehtmlref .= '';
 			}
@@ -1529,7 +1597,7 @@ if ($action == 'create') {
 	print $langs->trans('PaymentConditionsShort');
 	print '</td>';
 	if ($action != 'editconditions' && $object->statut != SupplierProposal::STATUS_NOTSIGNED) {
-		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetConditions'), 1).'</a></td>';
+		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editconditions&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetConditions'), 1).'</a></td>';
 	}
 	print '</tr></table>';
 	print '</td><td class="valuefield">';
@@ -1548,7 +1616,7 @@ if ($action == 'create') {
 	print $langs->trans('DeliveryDate');
 	print '</td>';
 	if ($action != 'editdate_livraison' && $object->statut == SupplierProposal::STATUS_VALIDATED) {
-		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetDeliveryDate'), 1).'</a></td>';
+		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetDeliveryDate'), 1).'</a></td>';
 	}
 	print '</tr></table>';
 	print '</td><td class="valuefield">';
@@ -1572,7 +1640,7 @@ if ($action == 'create') {
 	print $langs->trans('PaymentMode');
 	print '</td>';
 	if ($action != 'editmode' && $object->statut != SupplierProposal::STATUS_NOTSIGNED) {
-		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetMode'), 1).'</a></td>';
+		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmode&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetMode'), 1).'</a></td>';
 	}
 	print '</tr></table>';
 	print '</td><td class="valuefield">';
@@ -1592,7 +1660,7 @@ if ($action == 'create') {
 		print $form->editfieldkey('Currency', 'multicurrency_code', '', $object, 0);
 		print '</td>';
 		if ($action != 'editmulticurrencycode' && $object->statut == $object::STATUS_VALIDATED) {
-			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmulticurrencycode&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1).'</a></td>';
+			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmulticurrencycode&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1).'</a></td>';
 		}
 		print '</tr></table>';
 		print '</td><td class="valuefield">';
@@ -1611,7 +1679,7 @@ if ($action == 'create') {
 			print $form->editfieldkey('CurrencyRate', 'multicurrency_tx', '', $object, 0);
 			print '</td>';
 			if ($action != 'editmulticurrencyrate' && $object->statut == $object::STATUS_VALIDATED && $object->multicurrency_code && $object->multicurrency_code != $conf->currency) {
-				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmulticurrencyrate&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1).'</a></td>';
+				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmulticurrencyrate&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1).'</a></td>';
 			}
 			print '</tr></table>';
 			print '</td><td class="valuefield">';
@@ -1653,7 +1721,7 @@ if ($action == 'create') {
 		print $langs->trans('BankAccount');
 		print '</td>';
 		if ($action != 'editbankaccount' && $usercancreate) {
-			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&amp;id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'), 1).'</a></td>';
+			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'), 1).'</a></td>';
 		}
 		print '</tr></table>';
 		print '</td><td class="valuefield">';
@@ -1673,7 +1741,6 @@ if ($action == 'create') {
 
 	print '</div>';
 	print '<div class="fichehalfright">';
-	print '<div class="ficheaddleft">';
 	print '<div class="underbanner clearboth"></div>';
 
 	print '<table class="border tableforfield centpercent">';
@@ -1729,7 +1796,6 @@ if ($action == 'create') {
 	   $formmargin->displayMarginInfos($object);
 	}*/
 
-	print '</div>';
 	print '</div>';
 	print '</div>';
 
@@ -1848,12 +1914,12 @@ if ($action == 'create') {
 
 				// Edit
 				if ($object->statut == SupplierProposal::STATUS_VALIDATED && $usercancreate) {
-					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=modif">'.$langs->trans('Modify').'</a></div>';
+					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=modif&token='.newToken().'">'.$langs->trans('Modify').'</a></div>';
 				}
 
 				// ReOpen
 				if (($object->statut == SupplierProposal::STATUS_SIGNED || $object->statut == SupplierProposal::STATUS_NOTSIGNED || $object->statut == SupplierProposal::STATUS_CLOSE) && $usercanclose) {
-					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen'.(empty($conf->global->MAIN_JUMP_TAG) ? '' : '#reopen').'"';
+					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=reopen&token='.newToken().(empty($conf->global->MAIN_JUMP_TAG) ? '' : '#reopen').'"';
 					print '>'.$langs->trans('ReOpen').'</a></div>';
 				}
 
@@ -1861,7 +1927,7 @@ if ($action == 'create') {
 				if (empty($user->socid)) {
 					if ($object->statut == SupplierProposal::STATUS_VALIDATED || $object->statut == SupplierProposal::STATUS_SIGNED) {
 						if ($usercansend) {
-							print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a></div>';
+							print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&token='.newToken().'&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a></div>';
 						} else {
 							print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#">'.$langs->trans('SendMail').'</a></div>';
 						}
@@ -1889,12 +1955,12 @@ if ($action == 'create') {
 
 				// Clone
 				if ($usercancreate) {
-					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;socid='.$object->socid.'&amp;action=clone&amp;object='.$object->element.'">'.$langs->trans("ToClone").'</a></div>';
+					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&socid='.$object->socid.'&action=clone&object='.$object->element.'">'.$langs->trans("ToClone").'</a></div>';
 				}
 
 				// Delete
 				if (($object->statut == SupplierProposal::STATUS_DRAFT && $usercancreate) || $usercandelete) {
-					print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete&amp;token='.newToken().'"';
+					print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().'"';
 					print '>'.$langs->trans('Delete').'</a></div>';
 				}
 			}
@@ -1923,14 +1989,14 @@ if ($action == 'create') {
 		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 
-		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+		print '</div><div class="fichehalfright">';
 
 		// List of actions on element
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 		$formactions = new FormActions($db);
 		$somethingshown = $formactions->showactions($object, 'supplier_proposal', $socid, 1);
 
-		print '</div></div></div>';
+		print '</div></div>';
 	}
 
 	// Select mail models is same action as presend

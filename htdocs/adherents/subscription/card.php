@@ -48,7 +48,7 @@ $note = GETPOST('note', 'alpha');
 $typeid = (int) GETPOST('typeid', 'int');
 $amount = price2num(GETPOST('amount', 'alpha'), 'MT');
 
-if (!$user->rights->adherent->cotisation->lire) {
+if (empty($user->rights->adherent->cotisation->lire)) {
 	 accessforbidden();
 }
 
@@ -59,7 +59,7 @@ $permissiontoedit = $user->rights->adherent->cotisation->creer; // Used by the i
 $hookmanager->initHooks(array('subscriptioncard', 'globalcard'));
 
 // Security check
-$result = restrictedArea($user, 'subscription', 0);		// TODO Check on object id
+$result = restrictedArea($user, 'subscription', 0); // TODO Check on object id
 
 
 /*
@@ -93,8 +93,8 @@ if ($user->rights->adherent->cotisation->creer && $action == 'update' && !$cance
 			if ($accountline->rappro) {
 				$errmsg = $langs->trans("SubscriptionLinkedToConciliatedTransaction");
 			} else {
-				$accountline->datev = dol_mktime($_POST['datesubhour'], $_POST['datesubmin'], 0, $_POST['datesubmonth'], $_POST['datesubday'], $_POST['datesubyear']);
-				$accountline->dateo = dol_mktime($_POST['datesubhour'], $_POST['datesubmin'], 0, $_POST['datesubmonth'], $_POST['datesubday'], $_POST['datesubyear']);
+				$accountline->datev = dol_mktime(GETPOST('datesubhour', 'int'), GETPOST('datesubmin', 'int'), 0, GETPOST('datesubmonth', 'int'), GETPOST('datesubday', 'int'), GETPOST('datesubyear', 'int'));
+				$accountline->dateo = dol_mktime(GETPOST('datesubhour', 'int'), GETPOST('datesubmin', 'int'), 0, GETPOST('datesubmonth', 'int'), GETPOST('datesubday', 'int'), GETPOST('datesubyear', 'int'));
 				$accountline->amount = $amount;
 				$result = $accountline->update($user);
 				if ($result < 0) {
@@ -105,12 +105,12 @@ if ($user->rights->adherent->cotisation->creer && $action == 'update' && !$cance
 
 		if (!$errmsg) {
 			// Modify values
-			$object->dateh = dol_mktime($_POST['datesubhour'], $_POST['datesubmin'], 0, $_POST['datesubmonth'], $_POST['datesubday'], $_POST['datesubyear']);
-			$object->datef = dol_mktime($_POST['datesubendhour'], $_POST['datesubendmin'], 0, $_POST['datesubendmonth'], $_POST['datesubendday'], $_POST['datesubendyear']);
+			$object->dateh = dol_mktime(GETPOST('datesubhour', 'int'), GETPOST('datesubmin', 'int'), 0, GETPOST('datesubmonth', 'int'), GETPOST('datesubday', 'int'), GETPOST('datesubyear', 'int'));
+			$object->datef = dol_mktime(GETPOST('datesubendhour', 'int'), GETPOST('datesubendmin', 'int'), 0, GETPOST('datesubendmonth', 'int'), GETPOST('datesubendday', 'int'), GETPOST('datesubendyear', 'int'));
 			$object->fk_type = $typeid;
 			$object->note = $note;
+			$object->note_private = $note;
 			$object->amount = $amount;
-			//print 'datef='.$object->datef.' '.$_POST['datesubendday'];
 
 			$result = $object->update($user);
 			if ($result >= 0 && !count($object->errors)) {
@@ -388,16 +388,16 @@ if ($rowid && $action != 'edit') {
 	if ($linktoelem) print ($somethingshown?'':'<br>').$linktoelem;
 	*/
 
-	print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+	print '</div><div class="fichehalfright">';
 
 	// List of actions on element
 	/*
 	include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
 	$formactions = new FormActions($db);
-	$somethingshown = $formactions->showactions($object, 'invoice', $socid, 1);
+	$somethingshown = $formactions->showactions($object, $object->element, $socid, 1);
 	*/
 
-	print '</div></div></div>';
+	print '</div></div>';
 }
 
 // End of page

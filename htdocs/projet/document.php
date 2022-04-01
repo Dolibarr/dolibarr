@@ -32,6 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('projects', 'other'));
+$hookmanager->initHooks(array('projectcarddocument'));
 
 $action		= GETPOST('action', 'alpha');
 $confirm	= GETPOST('confirm', 'alpha');
@@ -53,8 +54,8 @@ if ($id > 0 || !empty($ref)) {
 
 // Get parameters
 $limit 		= GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield	= GETPOST("sortfield", 'alpha');
-$sortorder	= GETPOST("sortorder", 'alpha');
+$sortfield	= GETPOST('sortfield', 'aZ09comma');
+$sortorder	= GETPOST('sortorder', 'aZ09comma');
 $page		= GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -82,6 +83,7 @@ $socid = 0;
 //if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
 $result = restrictedArea($user, 'projet', $id, 'projet&project');
 
+$permissiontoadd = $user->rights->projet->creer;
 
 
 /*
@@ -134,13 +136,13 @@ if ($object->id > 0) {
 	// Title
 	$morehtmlref .= $object->title;
 	// Thirdparty
-	if ($object->thirdparty->id > 0) {
+	if (!empty($object->thirdparty->id) && $object->thirdparty->id > 0) {
 		$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1, 'project');
 	}
 	$morehtmlref .= '</div>';
 
 	// Define a complementary filter for search of next/prev ref.
-	if (!$user->rights->projet->all->lire) {
+	if (empty($user->rights->projet->all->lire)) {
 		$objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
 		$object->next_prev_filter = " rowid IN (".$db->sanitize(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
 	}

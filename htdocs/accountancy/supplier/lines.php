@@ -140,9 +140,9 @@ if (is_array($changeaccount) && count($changeaccount) > 0 && $user->rights->acco
 	if (!$error) {
 		$db->begin();
 
-		$sql1 = "UPDATE ".MAIN_DB_PREFIX."facture_fourn_det as l";
-		$sql1 .= " SET l.fk_code_ventilation=".(GETPOST('account_parent', 'int') > 0 ? GETPOST('account_parent', 'int') : '0');
-		$sql1 .= ' WHERE l.rowid IN ('.$db->sanitize(implode(',', $changeaccount)).')';
+		$sql1 = "UPDATE ".MAIN_DB_PREFIX."facture_fourn_det";
+		$sql1 .= " SET fk_code_ventilation=".(GETPOST('account_parent', 'int') > 0 ? GETPOST('account_parent', 'int') : '0');
+		$sql1 .= ' WHERE rowid IN ('.$db->sanitize(implode(',', $changeaccount)).')';
 
 		dol_syslog('accountancy/supplier/lines.php::changeaccount sql= '.$sql1);
 		$resql1 = $db->query($sql1);
@@ -202,7 +202,14 @@ if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
 	$sql .= " p.accountancy_code_buy, p.accountancy_code_buy_intra, p.accountancy_code_buy_export,";
 }
 $sql .= " co.code as country_code, co.label as country,";
-$sql .= " s.rowid as socid, s.nom as name, s.tva_intra, s.email, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta as code_compta_client, s.code_compta_fournisseur";
+$sql .= " s.rowid as socid, s.nom as name, s.tva_intra, s.email, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.code_fournisseur";
+if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
+	$sql .= ", spe.accountancy_code_customer as code_compta_client";
+	$sql .= ", spe.accountancy_code_supplier as code_compta_fournisseur";
+} else {
+	$sql .= ", s.code_compta as code_compta_client";
+	$sql .= ", s.code_compta_fournisseur";
+}
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
@@ -214,6 +221,9 @@ if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
 $sql .= " INNER JOIN ".MAIN_DB_PREFIX."accounting_account as aa ON aa.rowid = l.fk_code_ventilation";
 $sql .= " INNER JOIN ".MAIN_DB_PREFIX."facture_fourn as f ON f.rowid = l.fk_facture_fourn";
 $sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = f.fk_soc";
+if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
+	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe_perentity as spe ON spe.fk_soc = s.rowid AND spe.entity = " . ((int) $conf->entity);
+}
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co ON co.rowid = s.fk_pays ";
 $sql .= " WHERE f.rowid = l.fk_facture_fourn and f.fk_statut >= 1 AND l.fk_code_ventilation <> 0 ";
 // Add search filter like
@@ -369,9 +379,9 @@ if ($result) {
 	print_barre_liste($langs->trans("InvoiceLinesDone"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num_lines, $nbtotalofrecords, 'title_accountancy', 0, '', '', $limit);
 	print '<span class="opacitymedium">'.$langs->trans("DescVentilDoneSupplier").'</span><br>';
 
-	print '<br><div class="inline-block divButAction">'.$langs->trans("ChangeAccount").'<br>';
+	print '<br><div class="inline-block divButAction paddingbottom">'.$langs->trans("ChangeAccount").' ';
 	print $formaccounting->select_account($account_parent, 'account_parent', 2, array(), 0, 0, 'maxwidth300 maxwidthonsmartphone valignmiddle');
-	print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("ChangeBinding").'"/></div>';
+	print '<input type="submit" class="button small valignmiddle" value="'.$langs->trans("ChangeBinding").'"/></div>';
 
 	$moreforfilter = '';
 
@@ -492,7 +502,7 @@ if ($result) {
 		print '</td>';
 
 		print '<td class="tdoverflowonsmartphone">';
-		$text = dolGetFirstLineOfText(dol_string_nohtmltag($objp->description));
+		$text = dolGetFirstLineOfText(dol_string_nohtmltag($objp->description, 1));
 		$trunclength = empty($conf->global->ACCOUNTING_LENGTH_DESCRIPTION) ? 32 : $conf->global->ACCOUNTING_LENGTH_DESCRIPTION;
 		print $form->textwithtooltip(dol_trunc($text, $trunclength), $objp->description);
 		print '</td>';
@@ -511,7 +521,7 @@ if ($result) {
 		}
 		print '</td>';
 
-		print '<td>'.$objp->tva_intra.'</td>';
+		print '<td class="tdoverflowmax80" title="'.dol_escape_htmltag($objp->tva_intra).'">'.dol_escape_htmltag($objp->tva_intra).'</td>';
 
 		print '<td>';
 		print $accountingaccountstatic->getNomUrl(0, 1, 1, '', 1);

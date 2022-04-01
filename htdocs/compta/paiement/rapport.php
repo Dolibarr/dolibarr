@@ -39,7 +39,7 @@ if ($user->socid > 0) {
 }
 
 $dir = $conf->facture->dir_output.'/payments';
-if (!$user->rights->societe->client->voir || $socid) {
+if (empty($user->rights->societe->client->voir) || $socid) {
 	$dir .= '/private/'.$user->id; // If user has no permission to see all, output dir is specific to user
 }
 

@@ -173,11 +173,11 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				}
 			}
 
-			if (! empty($conf->expedition->enabled) && ! empty($conf->workflow->enabled) && ! empty($conf->global->WORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE)) {
+			if (!empty($conf->expedition->enabled) && !empty($conf->workflow->enabled) && !empty($conf->global->WORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE)) {
 				/** @var Facture $object */
 				$object->fetchObjectLinked('', 'shipping', $object->id, $object->element);
 
-				if (! empty($object->linkedObjects)) {
+				if (!empty($object->linkedObjects)) {
 					/** @var Expedition $shipment */
 					$shipment = array_shift($object->linkedObjects['shipping']);
 
@@ -188,7 +188,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 			return $ret;
 		}
 
-		// classify billed order & billed propososal
+		// classify billed order & billed proposal
 		if ($action == 'BILL_SUPPLIER_VALIDATE') {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
@@ -286,6 +286,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 			}
 		}
 
+		// If we validate or close a shipment
 		if (($action == 'SHIPPING_VALIDATE') || ($action == 'SHIPPING_CLOSED')) {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
@@ -345,6 +346,75 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				if (count($diff_array) == 0) {
 					//No diff => mean everythings is shipped
 					$ret = $order->setStatut(Commande::STATUS_CLOSED, $object->origin_id, $object->origin, 'ORDER_CLOSE');
+					if ($ret < 0) {
+						$this->error = $order->error;
+						$this->errors = $order->errors;
+						return $ret;
+					}
+				}
+			}
+		}
+
+		// If we validate or close a shipment
+		if (($action == 'RECEPTION_VALIDATE') || ($action == 'RECEPTION_CLOSED')) {
+			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+
+			if ((!empty($conf->fournisseur->enabled) || !empty($conf->supplier_order->enabled)) && !empty($conf->reception->enabled) && !empty($conf->workflow->enabled) &&
+				(
+					(!empty($conf->global->WORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION) && ($action == 'RECEPTION_VALIDATE')) ||
+					(!empty($conf->global->WORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED) && ($action == 'RECEPTION_CLOSED'))
+				)
+			) {
+				$qtyshipped = array();
+				$qtyordred = array();
+				require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
+
+				// Find all reception on purchase order origin
+				$order = new CommandeFournisseur($this->db);
+				$ret = $order->fetch($object->origin_id);
+				if ($ret < 0) {
+					$this->error = $order->error;
+					$this->errors = $order->errors;
+					return $ret;
+				}
+				$ret = $order->fetchObjectLinked($order->id, 'supplier_order', null, 'reception');
+				if ($ret < 0) {
+					$this->error = $order->error;
+					$this->errors = $order->errors;
+					return $ret;
+				}
+				//Build array of quantity received by product for a purchase order
+				if (is_array($order->linkedObjects) && count($order->linkedObjects) > 0) {
+					foreach ($order->linkedObjects as $type => $shipping_array) {
+						if ($type == 'reception' && is_array($shipping_array) && count($shipping_array) > 0) {
+							foreach ($shipping_array as $shipping) {
+								if (is_array($shipping->lines) && count($shipping->lines) > 0) {
+									foreach ($shipping->lines as $shippingline) {
+										$qtyshipped[$shippingline->fk_product] += $shippingline->qty;
+									}
+								}
+							}
+						}
+					}
+				}
+
+				//Build array of quantity ordered to be received
+				if (is_array($order->lines) && count($order->lines) > 0) {
+					foreach ($order->lines as $orderline) {
+						// Exclude lines not qualified for shipment, similar code is found into calcAndSetStatusDispatch() for vendors
+						if (empty($conf->global->STOCK_SUPPORTS_SERVICES) && $orderline->product_type > 0) {
+							continue;
+						}
+						$qtyordred[$orderline->fk_product] += $orderline->qty;
+					}
+				}
+				//dol_syslog(var_export($qtyordred,true),LOG_DEBUG);
+				//dol_syslog(var_export($qtyshipped,true),LOG_DEBUG);
+				//Compare array
+				$diff_array = array_diff_assoc($qtyordred, $qtyshipped);
+				if (count($diff_array) == 0) {
+					//No diff => mean everythings is received
+					$ret = $order->setStatut(CommandeFournisseur::STATUS_RECEIVED_COMPLETELY, $object->origin_id, $object->origin, 'SUPPLIER_ORDER_CLOSE');
 					if ($ret < 0) {
 						$this->error = $order->error;
 						$this->errors = $order->errors;

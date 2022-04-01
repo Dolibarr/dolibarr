@@ -240,6 +240,7 @@ function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handle
 				if (empty($nocommentremoval)) {
 					$buf = preg_replace('/([,;ERLT\)])\s*--.*$/i', '\1', $buf); //remove comment from a line that not start with -- before add it to the buffer
 				}
+				if ($buffer) $buffer .= ' ';
 				$buffer .= trim($buf);
 			}
 
@@ -319,6 +320,7 @@ function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handle
 	// Loop on each request to execute request
 	$cursorinsert = 0;
 	$listofinsertedrowid = array();
+	$keyforsql = md5($sqlfile);
 	foreach ($arraysql as $i => $sql) {
 		if ($sql) {
 			// Replace the prefix tables
@@ -334,7 +336,7 @@ function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handle
 
 			// Add log of request
 			if (!$silent) {
-				print '<tr class="trforrunsql"><td class="tdtop opacitymedium"'.($colspan ? ' colspan="'.$colspan.'"' : '').'>'.$langs->trans("Request").' '.($i + 1)." sql='".dol_htmlentities($newsql, ENT_NOQUOTES)."'</td></tr>\n";
+				print '<tr class="trforrunsql'.$keyforsql.'"><td class="tdtop opacitymedium"'.($colspan ? ' colspan="'.$colspan.'"' : '').'>'.$langs->trans("Request").' '.($i + 1)." sql='".dol_htmlentities($newsql, ENT_NOQUOTES)."'</td></tr>\n";
 			}
 			dol_syslog('Admin.lib::run_sql Request '.($i + 1), LOG_DEBUG);
 			$sqlmodified = 0;
@@ -451,20 +453,20 @@ function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handle
 		}
 
 		//if (!empty($conf->use_javascript_ajax)) {		// use_javascript_ajax is not defined
-		print '<script type="text/javascript" language="javascript">
+		print '<script type="text/javascript">
 		jQuery(document).ready(function() {
-			function init_trrunsql()
+			function init_trrunsql'.$keyforsql.'()
 			{
-				console.log("toggle .trforrunsql");
-				jQuery(".trforrunsql").toggle();
+				console.log("toggle .trforrunsql'.$keyforsql.'");
+				jQuery(".trforrunsql'.$keyforsql.'").toggle();
 			}
-			init_trrunsql();
-			jQuery(".trforrunsqlshowhide").click(function() {
-				init_trrunsql();
+			init_trrunsql'.$keyforsql.'();
+			jQuery(".trforrunsqlshowhide'.$keyforsql.'").click(function() {
+				init_trrunsql'.$keyforsql.'();
 			});
 		});
 		</script>';
-		print ' - <a class="trforrunsqlshowhide" href="#">'.$langs->trans("ShowHideDetails").'</a>';
+		print ' - <a class="trforrunsqlshowhide'.$keyforsql.'" href="#">'.$langs->trans("ShowHideDetails").'</a>';
 		//}
 
 		print '</td></tr>'."\n";
@@ -637,8 +639,9 @@ function modules_prepare_head($nbofactivatedmodules, $nboftotalmodules)
 	$mode = empty($conf->global->MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT) ? 'commonkanban' : 'common';
 	$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=".$mode;
 	if ($nbofactivatedmodules <= (empty($conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING) ? 1 : $conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING)) {	// If only minimal initial modules enabled)
-		$head[$h][1] = $form->textwithpicto($langs->trans("AvailableModules"), $desc);
-		$head[$h][1] .= img_warning($langs->trans("YouMustEnableOneModule"));
+		//$head[$h][1] = $form->textwithpicto($langs->trans("AvailableModules"), $desc);
+		$head[$h][1] = $langs->trans("AvailableModules");
+		$head[$h][1] .= $form->textwithpicto('', $langs->trans("YouMustEnableOneModule").'.<br><br><span class="opacitymedium">'.$desc.'</span>', 1, 'warning');
 	} else {
 		//$head[$h][1] = $langs->trans("AvailableModules").$form->textwithpicto('<span class="badge marginleftonly">'.$nbofactivatedmodules.' / '.$nboftotalmodules.'</span>', $desc, 1, 'help', '', 1, 3);
 		$head[$h][1] = $langs->trans("AvailableModules").'<span class="badge marginleftonly">'.$nbofactivatedmodules.' / '.$nboftotalmodules.'</span>';
@@ -834,7 +837,7 @@ function translation_prepare_head()
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT."/admin/translation.php?mode=overwrite";
-	$head[$h][1] = $langs->trans("TranslationOverwriteKey").'<span class="fa fa-plus-circle valignmiddle paddingleft"></span>';
+	$head[$h][1] = '<span class="valignmiddle">'.$langs->trans("TranslationOverwriteKey").'</span><span class="fa fa-plus-circle valignmiddle paddingleft"></span>';
 	$head[$h][2] = 'overwrite';
 	$h++;
 
@@ -1127,7 +1130,7 @@ function activateModule($value, $withdeps = 1)
 
 	if (!count($ret['errors'])) {
 		$ret['nbmodules']++;
-		$ret['nbperms'] += count($objMod->rights);
+		$ret['nbperms'] += (is_array($objMod->rights)?count($objMod->rights):0);
 	}
 
 	return $ret;
@@ -1625,6 +1628,7 @@ function form_constantes($tableau, $strictw3c = 0, $helptext = '', $text = 'Valu
 			if (empty($strictw3c)) {
 				print "\n".'<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 				print '<input type="hidden" name="token" value="'.newToken().'">';
+				print '<input type="hidden" name="page_y" value="'.newToken().'">';
 			}
 
 			print '<tr class="oddeven">';
@@ -1731,7 +1735,7 @@ function form_constantes($tableau, $strictw3c = 0, $helptext = '', $text = 'Valu
 			// Submit
 			if (empty($strictw3c)) {
 				print '<td class="center">';
-				print '<input type="submit" class="button" value="'.$langs->trans("Update").'" name="Button">';
+				print '<input type="submit" class="button small reposition" value="'.$langs->trans("Update").'" name="update">';
 				print "</td>";
 			}
 
@@ -1746,7 +1750,7 @@ function form_constantes($tableau, $strictw3c = 0, $helptext = '', $text = 'Valu
 	print '</div>';
 
 	if (!empty($strictw3c) && $strictw3c == 1) {
-		print '<div align="center"><input type="submit" class="button" value="'.$langs->trans("Update").'" name="update"></div>';
+		print '<div align="center"><input type="submit" class="button small reposition" value="'.$langs->trans("Update").'" name="update"></div>';
 		print "</form>\n";
 	}
 }

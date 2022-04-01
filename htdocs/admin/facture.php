@@ -42,6 +42,8 @@ if (!$user->admin) {
 
 $action = GETPOST('action', 'aZ09');
 $value = GETPOST('value', 'alpha');
+$modulepart = GETPOST('modulepart', 'aZ09');	// Used by actions_setmoduleoptions.inc.php
+
 $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');
 $type = 'invoice';
@@ -222,6 +224,12 @@ if ($action == 'updateMask') {
 		} else {
 			setEventMessages($langs->trans("Error"), null, 'errors');
 		}
+	}
+} elseif ($action == 'set_INVOICE_CHECK_POSTERIOR_DATE') {
+	$check_posterior_date = GETPOST('INVOICE_CHECK_POSTERIOR_DATE', 'int');
+	$res = dolibarr_set_const($db, 'INVOICE_CHECK_POSTERIOR_DATE', $check_posterior_date, 'chaine', 0, '', $conf->entity);
+	if (!($res > 0)) {
+		$error++;
 	}
 }
 
@@ -501,13 +509,13 @@ foreach ($dirmodels as $reldir) {
 								// Active
 								if (in_array($name, $def)) {
 									print '<td class="center">'."\n";
-									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=del&amp;token='.newToken().'&amp;value='.$name.'">';
+									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=del&token='.newToken().'&value='.urlencode($name).'">';
 									print img_picto($langs->trans("Enabled"), 'switch_on');
 									print '</a>';
 									print '</td>';
 								} else {
 									print '<td class="center">'."\n";
-									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=set&amp;token='.newToken().'&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("SetAsDefault"), 'switch_off').'</a>';
+									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=set&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'">'.img_picto($langs->trans("SetAsDefault"), 'switch_off').'</a>';
 									print "</td>";
 								}
 
@@ -516,7 +524,7 @@ foreach ($dirmodels as $reldir) {
 								if ($conf->global->FACTURE_ADDON_PDF == "$name") {
 									print img_picto($langs->trans("Default"), 'on');
 								} else {
-									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;token='.newToken().'&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("SetAsDefault"), 'off').'</a>';
+									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("SetAsDefault"), 'off').'</a>';
 								}
 								print '</td>';
 
@@ -758,6 +766,25 @@ print '</td><td class="right">';
 print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'" />';
 print "</td></tr>\n";
 print '</form>';
+
+
+print '<tr class="oddeven"><td>'.$langs->trans("InvoiceCheckPosteriorDate"). '&nbsp;' ;
+print $form->textwithpicto('', $langs->trans("InvoiceCheckPosteriorDateHelp"), 1, 'help') . '</td>';
+print '<td class="left">';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('INVOICE_CHECK_POSTERIOR_DATE');
+} else {
+	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+	print '<input type="hidden" name="token" value="'.newToken().'" />';
+	print '<input type="hidden" name="action" value="set_INVOICE_CHECK_POSTERIOR_DATE" />';
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	print $form->selectarray("INVOICE_CHECK_POSTERIOR_DATE", $arrval, $conf->global->INVOICE_CHECK_POSTERIOR_DATE);
+	print '</td>';
+	print '<td class="center">';
+	print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'" />';
+	print '</form>';
+}
+print '</td></tr>';
 
 print '</table>';
 print '</div>';

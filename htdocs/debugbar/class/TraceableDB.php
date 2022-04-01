@@ -250,6 +250,17 @@ class TraceableDB extends DoliDB
 		return $this->db->escape($stringtoencode);
 	}
 
+	/**
+	 * Escape a string to insert data
+	 *
+	 * @param   string $stringtoencode String to escape
+	 * @return  string                        String escaped
+	 */
+	public function escapeunderscore($stringtoencode)
+	{
+		return $this->db->escapeunderscore($stringtoencode);
+	}
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Get last ID after an insert INSERT

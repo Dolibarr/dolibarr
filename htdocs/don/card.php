@@ -140,6 +140,7 @@ if (empty($reshook)) {
 			exit;
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
+			$action = 'create';
 		}
 	}
 
@@ -172,7 +173,7 @@ if (empty($reshook)) {
 			$object->lastname = (string) GETPOST("lastname", 'alpha');
 			$object->societe = (string) GETPOST("societe", 'alpha');
 			$object->address = (string) GETPOST("address", 'alpha');
-			$object->amount = price2num(GETPOST("amount", 'alpha'));
+			$object->amount = price2num(GETPOST("amount", 'alpha'), '', 2);
 			$object->town = (string) GETPOST("town", 'alpha');
 			$object->zip = (string) GETPOST("zipcode", 'alpha');
 			$object->country_id = (int) GETPOST('country_id', 'int');
@@ -185,7 +186,7 @@ if (empty($reshook)) {
 			$object->modepaymentid = (int) GETPOST('modepayment', 'int');
 
 			// Fill array 'array_options' with data from add form
-			$ret = $extrafields->setOptionalsFromPost(null, $object);
+			$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
 			if ($ret < 0) {
 				$error++;
 			}
@@ -193,6 +194,9 @@ if (empty($reshook)) {
 			if ($object->update($user) > 0) {
 				header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 				exit;
+			} else {
+				setEventMessages($object->error, $object->errors, 'errors');
+				$action = "create";
 			}
 		}
 	}
@@ -230,7 +234,7 @@ if (empty($reshook)) {
 			$object->lastname = (string) GETPOST("lastname", 'alpha');
 			$object->societe = (string) GETPOST("societe", 'alpha');
 			$object->address = (string) GETPOST("address", 'alpha');
-			$object->amount = price2num(GETPOST("amount", 'alpha'));
+			$object->amount = price2num(GETPOST("amount", 'alpha'), '', 2);
 			$object->zip = (string) GETPOST("zipcode", 'alpha');
 			$object->town = (string) GETPOST("town", 'alpha');
 			$object->country_id = (int) GETPOST('country_id', 'int');
@@ -254,6 +258,7 @@ if (empty($reshook)) {
 				exit;
 			} else {
 				setEventMessages($object->error, $object->errors, 'errors');
+				$action = "create";
 			}
 		}
 	}
@@ -517,7 +522,7 @@ if ($action == 'create') {
 	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	if (empty($reshook)) {
-		print $object->showOptionals($extrafields, 'edit', $parameters);
+		print $object->showOptionals($extrafields, 'create', $parameters);
 	}
 
 	print '</tbody>';
@@ -700,7 +705,7 @@ if (!empty($id) && $action != 'edit') {
 		$morehtmlref .= $langs->trans('Project').' ';
 		if ($user->rights->don->creer) {
 			if ($action != 'classify') {
-				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
+				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
 			}
 			if ($action == 'classify') {
 				//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
@@ -717,9 +722,10 @@ if (!empty($id) && $action != 'edit') {
 			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
 				$proj->fetch($object->fk_project);
-				$morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$object->fk_project.'" title="'.$langs->trans('ShowProject').'">';
-				$morehtmlref .= $proj->ref;
-				$morehtmlref .= '</a>';
+				$morehtmlref .= ' : '.$proj->getNomUrl(1);
+				if ($proj->title) {
+					$morehtmlref .= ' - '.$proj->title;
+				}
 			} else {
 				$morehtmlref .= '';
 			}
@@ -778,7 +784,6 @@ if (!empty($id) && $action != 'edit') {
 
 	print '</div>';
 	print '<div class="fichehalfright">';
-	print '<div class="ficheaddleft">';
 
 	/*
 	 * Payments
@@ -788,7 +793,7 @@ if (!empty($id) && $action != 'edit') {
 	$sql .= " FROM ".MAIN_DB_PREFIX."payment_donation as p";
 	$sql .= ", ".MAIN_DB_PREFIX."c_paiement as c ";
 	$sql .= ", ".MAIN_DB_PREFIX."don as d";
-	$sql .= " WHERE d.rowid = '".$id."'";
+	$sql .= " WHERE d.rowid = ".((int) $id);
 	$sql .= " AND p.fk_donation = d.rowid";
 	$sql .= " AND d.entity IN (".getEntity('donation').")";
 	$sql .= " AND p.fk_typepayment = c.id";
@@ -838,7 +843,6 @@ if (!empty($id) && $action != 'edit') {
 
 	print '</div>';
 	print '</div>';
-	print '</div>';
 
 	print '<div class="clearboth"></div>';
 
@@ -855,7 +859,7 @@ if (!empty($id) && $action != 'edit') {
 		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_reopen&confirm=yes&token='.newToken().'">'.$langs->trans("ReOpen").'</a>';
 	}
 
-	print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.$object->id.'">'.$langs->trans('Modify').'</a></div>';
+	print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&rowid='.$object->id.'">'.$langs->trans('Modify').'</a></div>';
 
 	if ($object->statut == $object::STATUS_DRAFT) {
 		print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&action=valid_promesse&token='.newToken().'">'.$langs->trans("ValidPromess").'</a></div>';
@@ -870,13 +874,13 @@ if (!empty($id) && $action != 'edit') {
 		if ($remaintopay == 0) {
 			print '<div class="inline-block divButAction"><span class="butActionRefused classfortooltip" title="'.$langs->trans("DisabledBecauseRemainderToPayIsZero").'">'.$langs->trans('DoPayment').'</span></div>';
 		} else {
-			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/don/payment/payment.php?rowid='.$object->id.'&amp;action=create">'.$langs->trans('DoPayment').'</a></div>';
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/don/payment/payment.php?rowid='.$object->id.'&action=create&token='.newToken().'">'.$langs->trans('DoPayment').'</a></div>';
 		}
 	}
 
 	// Classify 'paid'
 	if ($object->statut == $object::STATUS_VALIDATED && round($remaintopay) == 0 && $object->paid == 0 && $user->rights->don->creer) {
-		print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&action=set_paid">'.$langs->trans("ClassifyPaid")."</a></div>";
+		print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&action=set_paid&token='.newToken().'">'.$langs->trans("ClassifyPaid")."</a></div>";
 	}
 
 	// Delete
@@ -919,9 +923,9 @@ if (!empty($id) && $action != 'edit') {
 		print showOnlinePaymentUrl('donation', $object->ref).'<br>';
 	}
 
-	print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+	print '</div><div class="fichehalfright">';
 
-	print '</div></div></div>';
+	print '</div></div>';
 }
 
 llxFooter();

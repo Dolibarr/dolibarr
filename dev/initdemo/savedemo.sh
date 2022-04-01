@@ -116,7 +116,7 @@ then
 	fichtemp=`tempfile 2>/dev/null` || fichtemp=/tmp/test$$
 	trap "rm -f $fichtemp" 0 1 2 5 15
 	$DIALOG --title "Save Dolibarr with demo values" --clear \
-	        --inputbox "Password for Mysql root login :" 16 55 2> $fichtemp
+	        --passwordbox "Password for Mysql root login :" 16 55 2> $fichtemp
 	
 	valret=$?
 	
@@ -150,7 +150,7 @@ then
 	# ---------------------------- confirmation
 	DIALOG=${DIALOG=dialog}
 	$DIALOG --title "Save Dolibarr with demo values" --clear \
-	        --yesno "Do you confirm ? \n Dump file : '$dumpfile' \n Dump dir : '$mydir' \n Mysql database : '$base' \n Mysql port : '$port' \n Mysql login: '$admin' \n Mysql password : '$passwd'" 15 55
+	        --yesno "Do you confirm ? \n Dump file : '$dumpfile' \n Dump dir : '$mydir' \n Mysql database : '$base' \n Mysql port : '$port' \n Mysql login: '$admin' \n Mysql password : --hidden--" 15 55
 	
 	case $? in
 	        0)      echo "Ok, start process...";;

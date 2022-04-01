@@ -34,11 +34,6 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories', 'bills', 'companies', 'withdrawals'));
 
-// Securite acces client
-if ($user->socid > 0) {
-	accessforbidden();
-}
-
 // Get supervariables
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
@@ -70,11 +65,16 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be includ
 
 $hookmanager->initHooks(array('directdebitprevcard', 'globalcard', 'directdebitprevlist'));
 
-if (!$user->rights->prelevement->bons->lire && $object->type != 'bank-transfer') {
+// Security check
+if ($user->socid > 0) {
 	accessforbidden();
 }
-if (!$user->rights->paymentbybanktransfer->read && $object->type == 'bank-transfer') {
-	accessforbidden();
+
+$type = $object->type;
+if ($type == 'bank-transfer') {
+	$result = restrictedArea($user, 'paymentbybanktransfer', '', '', '');
+} else {
+	$result = restrictedArea($user, 'prelevement', '', '', 'bons');
 }
 
 
@@ -100,9 +100,9 @@ if ($id > 0 || $ref) {
 		print '<div class="underbanner clearboth"></div>';
 		print '<table class="border centpercent tableforfield">'."\n";
 
-		//print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td>'.$object->getNomUrl(1).'</td></tr>';
-		print '<tr><td class="titlefield">'.$langs->trans("Date").'</td><td>'.dol_print_date($object->datec, 'day').'</td></tr>';
-		print '<tr><td>'.$langs->trans("Amount").'</td><td>'.price($object->amount).'</td></tr>';
+		//print '<tr><td class="titlefieldcreate">'.$langs->trans("Ref").'</td><td>'.$object->getNomUrl(1).'</td></tr>';
+		print '<tr><td class="titlefieldcreate">'.$langs->trans("Date").'</td><td>'.dol_print_date($object->datec, 'day').'</td></tr>';
+		print '<tr><td>'.$langs->trans("Amount").'</td><td><span class="amount">'.price($object->amount).'</span></td></tr>';
 
 		if ($object->date_trans <> 0) {
 			$muser = new User($db);
@@ -110,7 +110,7 @@ if ($id > 0 || $ref) {
 
 			print '<tr><td>'.$langs->trans("TransData").'</td><td>';
 			print dol_print_date($object->date_trans, 'day');
-			print ' <span class="opacitymedium">'.$langs->trans("By").'</span> '.$muser->getFullName($langs).'</td></tr>';
+			print ' <span class="opacitymedium">'.$langs->trans("By").'</span> '.$muser->getNomUrl(-1).'</td></tr>';
 			print '<tr><td>'.$langs->trans("TransMetod").'</td><td>';
 			print $object->methodes_trans[$object->method_trans];
 			print '</td></tr>';
@@ -131,7 +131,7 @@ if ($id > 0 || $ref) {
 		$acc = new Account($db);
 		$result = $acc->fetch($conf->global->PRELEVEMENT_ID_BANKACCOUNT);
 
-		print '<tr><td class="titlefield">';
+		print '<tr><td class="titlefieldcreate">';
 		$labelofbankfield = "BankToReceiveWithdraw";
 		if ($object->type == 'bank-transfer') {
 			$labelofbankfield = 'BankToPayCreditTransfer';
@@ -145,7 +145,7 @@ if ($id > 0 || $ref) {
 		print '</td>';
 		print '</tr>';
 
-		print '<tr><td class="titlefield">';
+		print '<tr><td class="titlefieldcreate">';
 		$labelfororderfield = 'WithdrawalFile';
 		if ($object->type == 'bank-transfer') {
 			$labelfororderfield = 'CreditTransferFile';
@@ -156,7 +156,9 @@ if ($id > 0 || $ref) {
 		if ($object->type == 'bank-transfer') {
 			$modulepart = 'paymentbybanktransfer';
 		}
-		print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?type=text/plain&amp;modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).'">'.$relativepath.'</a>';
+		print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?type=text/plain&amp;modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).'">'.$relativepath;
+		print img_picto('', 'download', 'class="paddingleft"');
+		print '</a>';
 		print '</td></tr></table>';
 
 		print '</div>';

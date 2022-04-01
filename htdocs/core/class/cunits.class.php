@@ -112,7 +112,7 @@ class CUnits // extends CommonObject
 		// Put here code to add control on parameters values
 
 		// Insert request
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."c_units(";
+		$sql = "INSERT INTO ".$this->db->prefix()."c_units(";
 		$sql .= "rowid,";
 		$sql .= "code,";
 		$sql .= "label,";
@@ -138,7 +138,7 @@ class CUnits // extends CommonObject
 		}
 
 		if (!$error) {
-			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."c_units");
+			$this->id = $this->db->last_insert_id($this->db->prefix()."c_units");
 		}
 
 		// Commit or rollback
@@ -178,7 +178,7 @@ class CUnits // extends CommonObject
 		$sql .= " t.unit_type,";
 		$sql .= " t.scale,";
 		$sql .= " t.active";
-		$sql .= " FROM ".MAIN_DB_PREFIX."c_units as t";
+		$sql .= " FROM ".$this->db->prefix()."c_units as t";
 		$sql_where = array();
 		if ($id) {
 			$sql_where[] = " t.rowid = ".((int) $id);
@@ -237,15 +237,16 @@ class CUnits // extends CommonObject
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
-		$sql = 'SELECT';
+		$sql = "SELECT";
 		$sql .= " t.rowid,";
 		$sql .= " t.code,";
+		$sql .= " t.sortorder,";
 		$sql .= " t.label,";
 		$sql .= " t.short_label,";
 		$sql .= " t.unit_type,";
 		$sql .= " t.scale,";
 		$sql .= " t.active";
-		$sql .= ' FROM '.MAIN_DB_PREFIX.'c_units as t';
+		$sql .= " FROM ".$this->db->prefix()."c_units as t";
 		// Manage filter
 		$sqlwhere = array();
 		if (count($filter) > 0) {
@@ -280,8 +281,9 @@ class CUnits // extends CommonObject
 				while ($obj = $this->db->fetch_object($resql)) {
 					$record = new self($this->db);
 
-					$record->id    = $obj->rowid;
+					$record->id = $obj->rowid;
 					$record->code = $obj->code;
+					$record->sortorder = $obj->sortorder;
 					$record->label = $obj->label;
 					$record->short_label = $obj->short_label;
 					$record->unit_type = $obj->unit_type;
@@ -318,6 +320,9 @@ class CUnits // extends CommonObject
 		if (isset($this->code)) {
 			$this->code = trim($this->code);
 		}
+		if (isset($this->sortorder)) {
+			$this->sortorder = trim($this->sortorder);
+		}
 		if (isset($this->label)) {
 			$this->libelle = trim($this->label);
 		}
@@ -338,8 +343,9 @@ class CUnits // extends CommonObject
 		// Put here code to add control on parameters values
 
 		// Update request
-		$sql = "UPDATE ".MAIN_DB_PREFIX."c_units SET";
+		$sql = "UPDATE ".$this->db->prefix()."c_units SET";
 		$sql .= " code=".(isset($this->code) ? "'".$this->db->escape($this->code)."'" : "null").",";
+		$sql .= " sortorder=".(isset($this->sortorder) ? "'".$this->db->escape($this->sortorder)."'" : "null").",";
 		$sql .= " label=".(isset($this->label) ? "'".$this->db->escape($this->label)."'" : "null").",";
 		$sql .= " short_label=".(isset($this->short_label) ? "'".$this->db->escape($this->short_label)."'" : "null").",";
 		$sql .= " unit_type=".(isset($this->unit_type) ? "'".$this->db->escape($this->unit_type)."'" : "null").",";
@@ -383,7 +389,7 @@ class CUnits // extends CommonObject
 		global $conf, $langs;
 		$error = 0;
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."c_units";
+		$sql = "DELETE FROM ".$this->db->prefix()."c_units";
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
@@ -465,7 +471,7 @@ class CUnits // extends CommonObject
 	{
 		$base = 10;
 		// TODO : add base col into unit dictionary table
-		$unit = $this->db->getRow('SELECT scale, unit_type from '.MAIN_DB_PREFIX.'c_units WHERE rowid = '.intval($id));
+		$unit = $this->db->getRow("SELECT scale, unit_type from ".$this->db->prefix()."c_units WHERE rowid = ".intval($id));
 		if ($unit) {
 			// TODO : if base exist in unit dictionary table remove this convertion exception and update convertion infos in database exemple time hour currently scale 3600 will become scale 2 base 60
 			if ($unit->unit_type == 'time') {

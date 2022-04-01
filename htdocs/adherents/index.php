@@ -177,8 +177,8 @@ if ($conf->use_javascript_ajax) {
 	$i = 0;
 	foreach ($AdherentType as $key => $adhtype) {
 		$dataval['draft'][] = array($i, isset($MembersToValidate[$key]) ? $MembersToValidate[$key] : 0);
-		$dataval['notuptodate'][] = array($i, isset($MembersValidated[$key]) ? $MembersValidated[$key] - (isset($MembersUpToDate[$key]) ? $MembersUpToDate[$key] : 0) : 0);
 		$dataval['uptodate'][] = array($i, isset($MembersUpToDate[$key]) ? $MembersUpToDate[$key] : 0);
+		$dataval['notuptodate'][] = array($i, isset($MembersValidated[$key]) ? $MembersValidated[$key] - (isset($MembersUpToDate[$key]) ? $MembersUpToDate[$key] : 0) : 0);
 		$dataval['excluded'][] = array($i, isset($MembersExcluded[$key]) ? $MembersExcluded[$key] : 0);
 		$dataval['resiliated'][] = array($i, isset($MembersResiliated[$key]) ? $MembersResiliated[$key] : 0);
 
@@ -191,18 +191,18 @@ if ($conf->use_javascript_ajax) {
 	}
 	$total = $SumToValidate + $SumValidated + $SumUpToDate + $SumExcluded + $SumResiliated;
 	$dataseries = array();
-	$dataseries[] = array($langs->transnoentitiesnoconv("OutOfDate"), round($SumValidated));
+	$dataseries[] = array($langs->transnoentitiesnoconv("MembersStatusToValid"), round($SumToValidate));			// Draft, not yet validated
 	$dataseries[] = array($langs->transnoentitiesnoconv("UpToDate"), round($SumUpToDate));
+	$dataseries[] = array($langs->transnoentitiesnoconv("OutOfDate"), round($SumValidated));
 	$dataseries[] = array($langs->transnoentitiesnoconv("MembersStatusExcluded"), round($SumExcluded));
 	$dataseries[] = array($langs->transnoentitiesnoconv("MembersStatusResiliated"), round($SumResiliated));
-	$dataseries[] = array($langs->transnoentitiesnoconv("MembersStatusToValid"), round($SumToValidate));
 
 	include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
 
 	include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 	$dolgraph = new DolGraph();
 	$dolgraph->SetData($dataseries);
-	$dolgraph->SetDataColor(array($badgeStatus1, $badgeStatus4, '-'.$badgeStatus8, $badgeStatus6, '-'.$badgeStatus0));
+	$dolgraph->SetDataColor(array('-'.$badgeStatus0, $badgeStatus4, '-'.$badgeStatus1, '-'.$badgeStatus8, $badgeStatus6));
 	$dolgraph->setShowLegend(2);
 	$dolgraph->setShowPercent(1);
 	$dolgraph->SetType(array('pie'));

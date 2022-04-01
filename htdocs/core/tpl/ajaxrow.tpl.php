@@ -61,12 +61,13 @@ $(document).ready(function(){
 			console.log("tableDND onDrop");
 			console.log(decodeURI($("#<?php echo $tagidfortablednd; ?>").tableDnDSerialize()));
 			$('#<?php echo $tagidfortablednd; ?> tr[data-element=extrafield]').attr('id', '');	// Set extrafields id to empty value in order to ignore them in tableDnDSerialize function
+			$('#<?php echo $tagidfortablednd; ?> tr[data-ignoreidfordnd=1]').attr('id', '');	// Set id to empty value in order to ignore them in tableDnDSerialize function
 			var roworder = cleanSerialize(decodeURI($("#<?php echo $tagidfortablednd; ?>").tableDnDSerialize()));
 			var table_element_line = "<?php echo $table_element_line; ?>";
 			var fk_element = "<?php echo $fk_element; ?>";
 			var element_id = "<?php echo $id; ?>";
 			var filepath = "<?php echo urlencode($filepath); ?>";
-			var token = "<?php echo $_SESSION["token"]; ?>";	// We use old 'token' and not 'newtoken' for Ajax call because the ajax page has the NOTOKENRENEWAL constant set.
+			var token = "<?php echo currentToken(); ?>";	// We use old 'token' and not 'newtoken' for Ajax call because the ajax page has the NOTOKENRENEWAL constant set.
 			$.post("<?php echo DOL_URL_ROOT; ?>/core/ajax/row.php",
 					{
 						roworder: roworder,

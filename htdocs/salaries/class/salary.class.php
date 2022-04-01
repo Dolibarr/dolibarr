@@ -367,7 +367,7 @@ class Salary extends CommonObject
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Employee"));
 			return -4;
 		}
-		if ($this->amount < 0 || $this->amount == '') {
+		if ($this->amount == '') {
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Amount"));
 			return -5;
 		}
@@ -550,7 +550,7 @@ class Salary extends CommonObject
 
 		global $action, $hookmanager;
 		$hookmanager->initHooks(array('salarypayment'));
-		$parameters = array('id'=>$this->id, 'getnomurl'=>$result);
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) $result = $hookmanager->resPrint;
 		else $result .= $hookmanager->resPrint;
@@ -700,12 +700,12 @@ class Salary extends CommonObject
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			//$langs->load("mymodule");
-			$this->labelStatus[self::STATUS_UNPAID] = $langs->trans('BillStatusNotPaid');
-			$this->labelStatus[self::STATUS_PAID] = $langs->trans('BillStatusPaid');
-			if ($status == self::STATUS_UNPAID && $alreadypaid <> 0) $this->labelStatus[self::STATUS_UNPAID] = $langs->trans("BillStatusStarted");
-			$this->labelStatusShort[self::STATUS_UNPAID] = $langs->trans('BillStatusNotPaid');
-			$this->labelStatusShort[self::STATUS_PAID] = $langs->trans('BillStatusPaid');
-			if ($status == self::STATUS_UNPAID && $alreadypaid <> 0) $this->labelStatusShort[self::STATUS_UNPAID] = $langs->trans("BillStatusStarted");
+			$this->labelStatus[self::STATUS_UNPAID] = $langs->transnoentitiesnoconv('BillStatusNotPaid');
+			$this->labelStatus[self::STATUS_PAID] = $langs->transnoentitiesnoconv('BillStatusPaid');
+			if ($status == self::STATUS_UNPAID && $alreadypaid <> 0) $this->labelStatus[self::STATUS_UNPAID] = $langs->transnoentitiesnoconv("BillStatusStarted");
+			$this->labelStatusShort[self::STATUS_UNPAID] = $langs->transnoentitiesnoconv('BillStatusNotPaid');
+			$this->labelStatusShort[self::STATUS_PAID] = $langs->transnoentitiesnoconv('BillStatusPaid');
+			if ($status == self::STATUS_UNPAID && $alreadypaid <> 0) $this->labelStatusShort[self::STATUS_UNPAID] = $langs->transnoentitiesnoconv("BillStatusStarted");
 		}
 
 		$statusType = 'status1';

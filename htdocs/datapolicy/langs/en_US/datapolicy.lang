@@ -23,7 +23,7 @@ Module4100Desc = Module to manage Data Privacy (Conformity with the GDPR)
 #
 datapolicySetup = Module Data Privacy Policy Setup
 Deletion = Deletion of data
-datapolicySetupPage = Depending of laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding that necessary for the purposes for which they were collected, except for archival purposes.<br>The deletion will be done automatically after a certain duration without event (the duration which you will have indicated below).
+datapolicySetupPage = Depending of laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding that necessary for the purposes for which they were collected, except for archival purposes.<br>The deletion will be done automatically after a certain duration without event (the duration which you will have indicated below).
 NB_MONTHS = %s months
 ONE_YEAR = 1 year
 NB_YEARS = %s years

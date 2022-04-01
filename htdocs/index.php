@@ -26,7 +26,7 @@
  */
 
 
-define('CSRFCHECK_WITH_TOKEN', 1);	// We force need to use a token to login when making a POST
+define('CSRFCHECK_WITH_TOKEN', 1); // We force need to use a token to login when making a POST
 
 require 'main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
@@ -252,11 +252,24 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 		}
 	}
 
+
 	// Number of cheque to send
-	if (!empty($conf->banque->enabled) && empty($conf->global->MAIN_DISABLE_BLOCK_BANK) && $user->rights->banque->lire && !$user->socid && empty($conf->global->BANK_DISABLE_CHECK_DEPOSIT)) {
-		include_once DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/class/remisecheque.class.php';
-		$board = new RemiseCheque($db);
-		$dashboardlines[$board->element] = $board->load_board($user);
+	if (!empty($conf->banque->enabled) && empty($conf->global->MAIN_DISABLE_BLOCK_BANK) && $user->rights->banque->lire && !$user->socid) {
+		if (empty($conf->global->BANK_DISABLE_CHECK_DEPOSIT)) {
+			include_once DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/class/remisecheque.class.php';
+			$board = new RemiseCheque($db);
+			$dashboardlines[$board->element] = $board->load_board($user);
+		}
+		if (!empty($conf->prelevement->enabled)) {
+			include_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
+			$board = new BonPrelevement($db);
+			$dashboardlines[$board->element.'_direct_debit'] = $board->load_board($user, 'direct_debit');
+		}
+		if (!empty($conf->paymentbybanktransfer->enabled)) {
+			include_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
+			$board = new BonPrelevement($db);
+			$dashboardlines[$board->element.'_credit_transfer'] = $board->load_board($user, 'credit_transfer');
+		}
 	}
 
 	// Number of foundation members
@@ -337,6 +350,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 			),
 		'supplier_proposal' =>
 			array(
+				'lang' => 'supplier_proposal',
 				'groupName' => 'SupplierProposals',
 				'globalStatsKey' => 'askprice',
 				'stats' =>
@@ -374,7 +388,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 			array(
 				'groupName' => 'BankAccount',
 				'stats' =>
-					array('bank_account', 'chequereceipt'),
+					array('bank_account', 'chequereceipt', 'widthdraw_direct_debit', 'widthdraw_credit_transfer'),
 			),
 		'member' =>
 			array(
@@ -413,7 +427,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 	$totallate = $totaltodo = 0;
 
 	//Remove any invalid response
-	//load_board can return an integer if failed or WorkboardResponse if OK
+	//load_board can return an integer if failed, or WorkboardResponse if OK
 	$valid_dashboardlines = array();
 	foreach ($dashboardlines as $workboardid => $tmp) {
 		if ($tmp instanceof WorkboardResponse) {
@@ -476,6 +490,8 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 
 		foreach ($dashboardgroup as $groupKey => $groupElement) {
 			$boards = array();
+
+			// Scan $groupElement and save the one with 'stats' that lust be used for Open object dashboard
 			if (empty($conf->global->MAIN_DISABLE_NEW_OPENED_DASH_BOARD)) {
 				foreach ($groupElement['stats'] as $infoKey) {
 					if (!empty($valid_dashboardlines[$infoKey])) {
@@ -486,9 +502,11 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 			}
 
 			if (!empty($boards)) {
+				if (!empty($groupElement['lang'])) {
+					$langs->load($groupElement['lang']);
+				}
 				$groupName = $langs->trans($groupElement['groupName']);
 				$groupKeyLowerCase = strtolower($groupKey);
-				$nbTotalForGroup = 0;
 
 				// global stats
 				$globalStatsKey = false;
@@ -509,7 +527,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 							}
 							$groupElement['globalStats']['text'] = $langs->trans('Total').' : '.$langs->trans($titres[$keyIndex]).' ('.$groupElement['globalStats']['total'].')';
 							$groupElement['globalStats']['total'] = $nbTotal;
-							$groupElement['globalStats']['link'] = $links[$keyIndex];
+							//$groupElement['globalStats']['link'] = $links[$keyIndex];
 						}
 					}
 				}
@@ -535,9 +553,9 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 					$openedDashBoard .= '<div class="info-box-line">';
 
 					if (!empty($board->labelShort)) {
-						$infoName = '<span title="'.$board->label.'">'.$board->labelShort.'</span>';
+						$infoName = '<span class="marginrightonly" title="'.$board->label.'">'.$board->labelShort.'</span>';
 					} else {
-						$infoName = $board->label;
+						$infoName = '<span class="marginrightonly">'.$board->label.'</span>';
 					}
 
 					$textLateTitle = $langs->trans("NActionsLate", $board->nbtodolate);
@@ -557,9 +575,21 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 					$nbtodClass = '';
 					if ($board->nbtodo > 0) {
 						$nbtodClass = 'badge badge-info';
+					} else {
+						$nbtodClass = 'opacitymedium';
 					}
 
-					$openedDashBoard .= '			<a href="'.$board->url.'" class="info-box-text info-box-text-a">'.$infoName.' : <span class="'.$nbtodClass.' classfortooltip" title="'.$board->label.'" >'.$board->nbtodo.'</span>';
+					// Forge the line to show into the open object box
+					$labeltoshow = $board->label.' ('.$board->nbtodo.')';
+					if ($board->total > 0) {
+						$labeltoshow .= ' - '.price($board->total, 0, $langs, 1, -1, -1, $conf->currency);
+					}
+					$openedDashBoard .= '<a href="'.$board->url.'" class="info-box-text info-box-text-a">'.$infoName.'<span class="classfortooltip'.($nbtodClass ? ' '.$nbtodClass : '').'" title="'.$labeltoshow.'" >';
+					$openedDashBoard .= $board->nbtodo;
+					if ($board->total > 0 && !empty($conf->global->MAIN_WORKBOARD_SHOW_TOTAL_WO_TAX)) {
+						$openedDashBoard .= ' : '.price($board->total, 0, $langs, 1, -1, -1, $conf->currency);
+					}
+					$openedDashBoard .= '</span>';
 					if ($textLate) {
 						if ($board->url_late) {
 							$openedDashBoard .= '</a>';
@@ -570,10 +600,6 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 						$openedDashBoard .= $textLate;
 					}
 					$openedDashBoard .= '</a>'."\n";
-
-					if ($board->total > 0 && !empty($conf->global->MAIN_WORKBOARD_SHOW_TOTAL_WO_TAX)) {
-						$openedDashBoard .= '<a href="'.$board->url.'" class="info-box-text">'.$langs->trans('Total').' : '.price($board->total).'</a>';
-					}
 					$openedDashBoard .= '</div>'."\n";
 				}
 

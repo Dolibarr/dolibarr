@@ -740,7 +740,7 @@ class Mailing extends CommonObject
 
 		global $action;
 		$hookmanager->initHooks(array('emailingdao'));
-		$parameters = array('id'=>$this->id, 'getnomurl'=>$result);
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -754,7 +754,7 @@ class Mailing extends CommonObject
 	/**
 	 *  Return label of status of emailing (draft, validated, ...)
 	 *
-	 *  @param	int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long
+	 *  @param  int		$mode           0=Long label, 1=Short label, 2=Picto+Short label, 3=Picto, 4=Picto+Short label, 5=Short label+Picto, 6=Picto+Long label, 7=Very short label+Picto
 	 *  @return string        			Label
 	 */
 	public function getLibStatut($mode = 0)
@@ -764,10 +764,10 @@ class Mailing extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Renvoi le libelle d'un statut donne
+	 *  Return the label of a given status
 	 *
 	 *  @param	int		$status        	Id status
-	 *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *  @param  int		$mode           0=Long label, 1=Short label, 2=Picto+Short label, 3=Picto, 4=Picto+Short label, 5=Short label+Picto, 6=Picto+Long label, 7=Very short label+Picto
 	 *  @return string        			Label
 	 */
 	public function LibStatut($status, $mode = 0)
@@ -776,8 +776,8 @@ class Mailing extends CommonObject
 		global $langs;
 		$langs->load("mailing");
 
-		$labelStatus = $langs->trans($this->statuts[$status]);
-		$labelStatusShort = $langs->trans($this->statuts[$status]);
+		$labelStatus = $langs->transnoentitiesnoconv($this->statuts[$status]);
+		$labelStatusShort = $langs->transnoentitiesnoconv($this->statuts[$status]);
 
 		$statusType = 'status'.$status;
 		if ($status == 2) {
@@ -792,11 +792,11 @@ class Mailing extends CommonObject
 
 
 	/**
-	 *  Renvoi le libelle d'un statut donne
+	 *  Return the label of a given status  of a recipient
 	 *  TODO Add class mailin_target.class.php
 	 *
 	 *  @param	int		$status        	Id status
-	 *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *  @param  int		$mode           0=Long label, 1=Short label, 2=Picto+Short label, 3=Picto, 4=Picto+Short label, 5=Short label+Picto, 6=Picto+Long label, 7=Very short label+Picto
 	 *  @param	string	$desc			Desc error
 	 *  @return string        			Label
 	 */
@@ -808,16 +808,16 @@ class Mailing extends CommonObject
 		$labelStatus = array();
 		$labelStatusShort = array();
 
-		$labelStatus[-1] = $langs->trans('MailingStatusError');
-		$labelStatus[0] = $langs->trans('MailingStatusNotSent');
-		$labelStatus[1] = $langs->trans('MailingStatusSent');
-		$labelStatus[2] = $langs->trans('MailingStatusRead');
-		$labelStatus[3] = $langs->trans('MailingStatusNotContact');
-		$labelStatusShort[-1] = $langs->trans('MailingStatusError');
-		$labelStatusShort[0] = $langs->trans('MailingStatusNotSent');
-		$labelStatusShort[1] = $langs->trans('MailingStatusSent');
-		$labelStatusShort[2] = $langs->trans('MailingStatusRead');
-		$labelStatusShort[3] = $langs->trans('MailingStatusNotContact');
+		$labelStatus[-1] = $langs->transnoentitiesnoconv('MailingStatusError');
+		$labelStatus[0] = $langs->transnoentitiesnoconv('MailingStatusNotSent');
+		$labelStatus[1] = $langs->transnoentitiesnoconv('MailingStatusSent');
+		$labelStatus[2] = $langs->transnoentitiesnoconv('MailingStatusRead');
+		$labelStatus[3] = $langs->transnoentitiesnoconv('MailingStatusNotContact');
+		$labelStatusShort[-1] = $langs->transnoentitiesnoconv('MailingStatusError');
+		$labelStatusShort[0] = $langs->transnoentitiesnoconv('MailingStatusNotSent');
+		$labelStatusShort[1] = $langs->transnoentitiesnoconv('MailingStatusSent');
+		$labelStatusShort[2] = $langs->transnoentitiesnoconv('MailingStatusRead');
+		$labelStatusShort[3] = $langs->transnoentitiesnoconv('MailingStatusNotContact');
 
 		$statusType = 'status'.$status;
 		if ($status == -1) {

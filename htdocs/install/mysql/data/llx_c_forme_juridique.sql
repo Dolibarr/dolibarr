@@ -11,6 +11,7 @@
 -- Copyright (C) 2012	   Ricardo Schluter     <info@ripasch.nl>
 -- Copyright (C) 2013	   Cedric GROSS		    <c.gross@kreiz-it.fr>
 -- Copyright (C) 2020-2021 Udo Tamm       	    <dev@dolibit.de>
+-- Copyright (C) 2022      Miro Sertić       	<miro.sertic0606@gmail.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -302,12 +303,25 @@ INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (152, 
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (152, '15210', 'Mauritius Trusts', 1);
 
 -- Mexique
-INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (154, '15401', 'Sociedad en nombre colectivo', 1);
-INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (154, '15402', 'Sociedad en comandita simple', 1);
-INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (154, '15403', 'Sociedad de responsabilidad limitada', 1);
-INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (154, '15404', 'Sociedad anónima', 1);
-INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (154, '15405', 'Sociedad en comandita por acciones', 1);
-INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (154, '15406', 'Sociedad cooperativa', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (154, '15401', '601 - General de Ley Personas Morales', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (154, '15402', '603 - Personas Morales con Fines no Lucrativos', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (154, '15403', '605 - Sueldos y Salarios e Ingresos Asimilados a Salarios', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (154, '15404', '606 - Arrendamiento', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (154, '15405', '607 - Régimen de Enajenación o Adquisición de Bienes', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (154, '15406', '608 - Demás ingresos', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (154, '15407', '610 - Residentes en el Extranjero sin Establecimiento Permanente en México', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (154, '15408', '611 - Ingresos por Dividendos (socios y accionistas)', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (154, '15409', '612 - Personas Físicas con Actividades Empresariales y Profesionales', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (154, '15410', '614 - Ingresos por intereses', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (154, '15411', '615 - Régimen de los ingresos por obtención de premios', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (154, '15412', '616 - Sin obligaciones fiscales', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (154, '15413', '620 - Sociedades Cooperativas de Producción que optan por diferir sus ingresos', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (154, '15414', '621 - Incorporación Fiscal', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (154, '15415', '622 - Actividades Agrícolas, Ganaderas, Silvícolas y Pesqueras', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (154, '15416', '623 - Opcional para Grupos de Sociedades', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (154, '15417', '624 - Coordinados', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (154, '15418', '625 - Régimen de las Actividades Empresariales con ingresos a través de Plataformas Tecnológicas', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (154, '15419', '626 - Régimen Simplificado de Confianza', 1);
 
 -- Luxembourg
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (140, '14001', 'Entreprise individuelle', 1);
@@ -356,3 +370,29 @@ insert into llx_c_forme_juridique (fk_pays, code, libelle) values (13, '1306','S
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (13, '1307','Société en participation');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (13, '1308','Groupe de sociétés');
 
+-- Sweden (id country=20)
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (20, '2001', 'Aktiebolag');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (20, '2002', 'Publikt aktiebolag (AB publ)');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (20, '2003', 'Ekonomisk förening (ek. för.)');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (20, '2004', 'Bostadsrättsförening (BRF)');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (20, '2005', 'Hyresrättsförening (HRF)');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (20, '2006', 'Kooperativ');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (20, '2007', 'Enskild firma (EF)');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (20, '2008', 'Handelsbolag (HB)');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (20, '2009', 'Kommanditbolag (KB)');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (20, '2010', 'Enkelt bolag');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (20, '2011', 'Ideell förening');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (20, '2012', 'Stiftelse');
+
+-- Croatia (id country=76)
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (76, '7601', 'Društvo s ograničenom odgovornošću (d.o.o.)');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (76, '7602', 'Jednostavno društvo s ograničenom odgovornošću (j.d.o.o.)');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (76, '7603', 'Dioničko društvo (d.d.)');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (76, '7604', 'Obrt');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (76, '7605', 'Javno trgovačko društvo (j.t.d.)');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (76, '7606', 'Komanditno društvo (k.d.)');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (76, '7607', 'Gospodarsko interesno udruženje (GIU)');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (76, '7608', 'Predstavništvo');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (76, '7609', 'Državno tijelo');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (76, '7610', 'Kućna radinost');
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (76, '7611', 'Sporedno zanimanje');

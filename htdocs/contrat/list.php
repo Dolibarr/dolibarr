@@ -79,8 +79,8 @@ $search_date_end = dol_mktime(23, 59, 59, $search_date_endmonth, $search_date_en
 $optioncss = GETPOST('optioncss', 'alpha');
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -229,6 +229,7 @@ $formother = new FormOther($db);
 $socstatic = new Societe($db);
 $formcompany = new FormCompany($db);
 $contracttmp = new Contrat($db);
+$title = "";
 
 $sql = 'SELECT';
 $sql .= " c.rowid, c.ref, c.datec as date_creation, c.tms as date_update, c.date_contrat, c.statut, c.ref_customer, c.ref_supplier, c.note_private, c.note_public, c.entity,";
@@ -255,11 +256,11 @@ $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = s.fk_pays)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_typent as typent on (typent.id = s.fk_typent)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = s.fk_departement)";
-if ($search_sale > 0 || (!$user->rights->societe->client->voir && !$socid)) {
+if ($search_sale > 0 || (empty($user->rights->societe->client->voir) && !$socid)) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 $sql .= ", ".MAIN_DB_PREFIX."contrat as c";
-if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
+if (!empty($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (c.rowid = ef.fk_object)";
 }
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."contratdet as cd ON c.rowid = cd.fk_contrat";
@@ -281,7 +282,7 @@ if ($search_product_category > 0) {
 if ($socid) {
 	$sql .= " AND s.rowid = ".((int) $socid);
 }
-if (!$user->rights->societe->client->voir && !$socid) {
+if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 if ($search_date_start) {
@@ -349,25 +350,43 @@ if ($search_dfyear > 0 && $search_op2df) {
 		$sql .= " HAVING MIN(".$db->ifsql("cd.statut=4", "cd.date_fin_validite", "null").") <= '".$db->idate(dol_get_last_day($search_dfyear, $search_dfmonth, false))."' AND MIN(".$db->ifsql("cd.statut=4", "cd.date_fin_validite", "null").") >= '".$db->idate(dol_get_first_day($search_dfyear, $search_dfmonth, false))."'";
 	}
 }
-$sql .= $db->order($sortfield, $sortorder);
-
-$totalnboflines = 0;
-$result = $db->query($sql);
-if ($result) {
-	$totalnboflines = $db->num_rows($result);
-}
 
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
-	$result = $db->query($sql);
-	$nbtotalofrecords = $db->num_rows($result);
+	//$result = $db->query($sql);
+	//$nbtotalofrecords = $db->num_rows($result);
+
+	if ($search_dfyear > 0 && $search_op2df) {
+		$resql = $db->query($sql, 0, 'auto', 1);
+		while ($db->fetch_object($resql)) {
+			if (empty($nbtotalofrecords)) {
+				$nbtotalofrecords = 1;    // We can't make +1 because init value is ''
+			} else {
+				$nbtotalofrecords++;
+			}
+		}
+	} else {
+		$sqlforcount = preg_replace('/^SELECT[a-zA-Z0-9\._\s\(\),=<>\:\-\']+\sFROM/', 'SELECT COUNT(*) as nbtotalofrecords FROM', $sql);
+		$sqlforcount = preg_replace('/LEFT JOIN '.MAIN_DB_PREFIX.'contratdet as cd ON c.rowid = cd.fk_contrat/', '', $sqlforcount);
+		$sqlforcount = preg_replace('/LEFT JOIN '.MAIN_DB_PREFIX.'categorie_product as cp ON cp.fk_product=cd.fk_product/', '', $sqlforcount);
+		$sqlforcount = preg_replace('/AND cp.fk_categorie = '.((int) $search_product_category).'/', '', $sqlforcount);
+		$sqlforcount = preg_replace('/GROUP BY.*$/', '', $sqlforcount);
+
+		$resql = $db->query($sqlforcount);
+		$objforcount = $db->fetch_object($resql);
+		$nbtotalofrecords = $objforcount->nbtotalofrecords;
+	}
+
 	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
 }
 
-$sql .= $db->plimit($limit + 1, $offset);
+$sql .= $db->order($sortfield, $sortorder);
+if ($limit) {
+	$sql .= $db->plimit($limit + 1, $offset);
+}
 
 $resql = $db->query($sql);
 if (!$resql) {
@@ -431,40 +450,40 @@ if ($search_ref_supplier != '') {
 if ($search_op2df != '') {
 	$param .= '&search_op2df='.urlencode($search_op2df);
 }
-if ($search_date_startday) {
+if ($search_date_startday > 0) {
 	$param .= '&search_date_startday='.urlencode($search_date_startday);
 }
-if ($search_date_startmonth) {
+if ($search_date_startmonth > 0) {
 	$param .= '&search_date_startmonth='.urlencode($search_date_startmonth);
 }
-if ($search_date_startyear) {
+if ($search_date_startyear > 0) {
 	$param .= '&search_date_startyear='.urlencode($search_date_startyear);
 }
-if ($search_date_endday) {
+if ($search_date_endday > 0) {
 	$param .= '&search_date_endday='.urlencode($search_date_endday);
 }
-if ($search_date_endmonth) {
+if ($search_date_endmonth > 0) {
 	$param .= '&search_date_endmonth='.urlencode($search_date_endmonth);
 }
-if ($search_date_endyear) {
+if ($search_date_endyear > 0) {
 	$param .= '&search_date_endyear='.urlencode($search_date_endyear);
 }
-if ($search_dfyear != '') {
+if ($search_dfyear > 0) {
 	$param .= '&search_dfyear='.urlencode($search_dfyear);
 }
-if ($search_dfmonth != '') {
+if ($search_dfmonth > 0) {
 	$param .= '&search_dfmonth='.urlencode($search_dfmonth);
 }
-if ($search_sale != '') {
+if ($search_sale > 0) {
 	$param .= '&search_sale='.urlencode($search_sale);
 }
-if ($search_user != '') {
+if ($search_user > 0) {
 	$param .= '&search_user='.urlencode($search_user);
 }
-if ($search_type_thirdparty != '' && $search_type_thirdparty > 0) {
+if ($search_type_thirdparty > 0) {
 	$param .= '&search_type_thirdparty='.urlencode($search_type_thirdparty);
 }
-if ($search_product_category != '') {
+if ($search_product_category > 0) {
 	$param .= '&search_product_category='.urlencode($search_product_category);
 }
 if ($show_files) {
@@ -492,7 +511,7 @@ $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
 $url = DOL_URL_ROOT.'/contrat/card.php?action=create';
 if (!empty($socid)) {
-	$url .= '&socid='.$socid;
+	$url .= '&socid='.((int) $socid);
 }
 $newcardbutton = dolGetButtonTitle($langs->trans('NewContractSubscription'), '', 'fa fa-plus-circle', $url, '', $user->rights->contrat->creer);
 
@@ -507,7 +526,7 @@ print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-print_barre_liste($langs->trans("ListOfContracts"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $totalnboflines, 'contract', 0, $newcardbutton, '', $limit, 0, 0, 1);
+print_barre_liste($langs->trans("ListOfContracts"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'contract', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 $topicmail = "SendContractRef";
 $modelmail = "contract";
@@ -600,11 +619,11 @@ if (!empty($arrayfields['s.email']['checked'])) {
 }
 // Town
 if (!empty($arrayfields['s.town']['checked'])) {
-	print '<td class="liste_titre"><input class="flat" type="text" size="6" name="search_town" value="'.$search_town.'"></td>';
+	print '<td class="liste_titre"><input class="flat" type="text" size="6" name="search_town" value="'.dol_escape_htmltag($search_town).'"></td>';
 }
 // Zip
 if (!empty($arrayfields['s.zip']['checked'])) {
-	print '<td class="liste_titre"><input class="flat" type="text" size="6" name="search_zip" value="'.$search_zip.'"></td>';
+	print '<td class="liste_titre"><input class="flat" type="text" size="6" name="search_zip" value="'.dol_escape_htmltag($search_zip).'"></td>';
 }
 // State
 if (!empty($arrayfields['state.nom']['checked'])) {
@@ -795,11 +814,12 @@ while ($i < min($num, $limit)) {
 		print '</td>';
 	}
 
+	// Ref thirdparty
 	if (!empty($arrayfields['c.ref_customer']['checked'])) {
-		print '<td>'.$contracttmp->getFormatedCustomerRef($obj->ref_customer).'</td>';
+		print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag(dol_string_nohtmltag($contracttmp->getFormatedCustomerRef($obj->ref_customer))).'">'.$contracttmp->getFormatedCustomerRef($obj->ref_customer).'</td>';
 	}
 	if (!empty($arrayfields['c.ref_supplier']['checked'])) {
-		print '<td>'.$obj->ref_supplier.'</td>';
+		print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($obj->ref_supplier).'">'.dol_escape_htmltag($obj->ref_supplier).'</td>';
 	}
 	if (!empty($arrayfields['s.nom']['checked'])) {
 		print '<td class="tdoverflowmax150">';
@@ -809,8 +829,9 @@ while ($i < min($num, $limit)) {
 		}
 		print '</td>';
 	}
+	// Email
 	if (!empty($arrayfields['s.email']['checked'])) {
-		print '<td>'.$obj->email.'</td>';
+		print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($obj->email).'">'.dol_print_email($obj->email, 0, $obj->socid, 0, 0, 1, 1).'</td>';
 	}
 	// Town
 	if (!empty($arrayfields['s.town']['checked'])) {
