@@ -242,7 +242,7 @@ class FactureFournisseurRec extends CommonInvoice
 
 		// Clean parameters
 		$this->titre = empty($this->titre) ? '' : $this->titre;
-        $this->ref = $this->{$this->table_ref_field};
+		$this->ref = $this->{$this->table_ref_field};
 		$this->ref_supplier = empty($this->ref_supplier) ? '' : $this->ref_supplier;
 		$this->usenewprice = empty($this->usenewprice) ? 0 : $this->usenewprice;
 		$this->suspended = empty($this->suspended) ? 0 : $this->suspended;
@@ -584,7 +584,7 @@ class FactureFournisseurRec extends CommonInvoice
 
 				$this->id                       = $obj->rowid;
 				$this->titre                    = $obj->titre;
-                $this->ref                      = $this->{$this->table_ref_field};
+				$this->ref                      = $this->{$this->table_ref_field};
 				$this->ref_supplier             = $obj->ref_supplier;
 				$this->entity                   = $obj->entity;
 				$this->socid                    = $obj->fk_soc;
@@ -617,19 +617,19 @@ class FactureFournisseurRec extends CommonInvoice
 				$this->model_pdf                = $obj->modelpdf;
 
 				// Multicurrency
-				$this->fk_multicurrency 		= $obj->fk_multicurrency;
+				$this->fk_multicurrency         = $obj->fk_multicurrency;
 				$this->multicurrency_code       = $obj->multicurrency_code;
-				$this->multicurrency_tx 		= $obj->multicurrency_tx;
+				$this->multicurrency_tx         = $obj->multicurrency_tx;
 				$this->multicurrency_total_ht   = $obj->multicurrency_total_ht;
-				$this->multicurrency_total_tva 	= $obj->multicurrency_total_tva;
-				$this->multicurrency_total_ttc 	= $obj->multicurrency_total_ttc;
+				$this->multicurrency_total_tva  = $obj->multicurrency_total_tva;
+				$this->multicurrency_total_ttc  = $obj->multicurrency_total_ttc;
 
-				$this->usenewprice			    = $obj->usenewprice;
-				$this->frequency			    = $obj->frequency;
+				$this->usenewprice              = $obj->usenewprice;
+				$this->frequency                = $obj->frequency;
 				$this->unit_frequency           = $obj->unit_frequency;
-				$this->date_when			    = $this->db->jdate($obj->date_when);
+				$this->date_when                = $this->db->jdate($obj->date_when);
 				$this->date_last_gen            = $this->db->jdate($obj->date_last_gen);
-				$this->nb_gen_done			    = $obj->nb_gen_done;
+				$this->nb_gen_done              = $obj->nb_gen_done;
 				$this->nb_gen_max               = $obj->nb_gen_max;
 				$this->auto_validate            = $obj->auto_validate;
 				$this->generate_pdf             = $obj->generate_pdf;
@@ -674,8 +674,7 @@ class FactureFournisseurRec extends CommonInvoice
 		return $this->fetch_lines();
 	}
 
-
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Get lines of template invoices into this->lines
 	 *
@@ -683,7 +682,7 @@ class FactureFournisseurRec extends CommonInvoice
 	 */
 	public function fetch_lines()
 	{
-        // phpcs:enable
+		// phpcs:enable
 		$this->lines = array();
 
 		// Retrieve all extrafield for line
@@ -747,7 +746,7 @@ class FactureFournisseurRec extends CommonInvoice
 				$line->product_type             = $objp->product_type;
 				$line->date_start               = $objp->date_start;
 				$line->date_end                 = $objp->date_end;
-				$line->info_bits	            = $objp->info_bits	;
+				$line->info_bits                = $objp->info_bits	;
 				$line->special_code             = $objp->special_code;
 				$line->rang                     = $objp->rang;
 				$line->fk_unit                  = $objp->fk_unit;
@@ -1456,7 +1455,7 @@ class FactureFournisseurRec extends CommonInvoice
 		return $this->LibStatut($this->frequency ? 1 : 0, $this->suspended, $mode, $alreadypaid, empty($this->type) ? 0 : $this->type);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Return label of a status
 	 *
@@ -1469,7 +1468,7 @@ class FactureFournisseurRec extends CommonInvoice
 	 */
 	public function LibStatut($recur, $status, $mode = 0, $alreadypaid = -1, $type = 0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $langs;
 		$langs->load('bills');
 
@@ -2092,7 +2091,7 @@ class FactureFournisseurLigneRec extends CommonObjectLine
 			$this->product_type             = $objp->product_type;
 			$this->date_start               = $objp->date_start;
 			$this->date_end                 = $objp->date_end;
-			$this->info_bits	            = $objp->info_bits	;
+			$this->info_bits                = $objp->info_bits;
 			$this->special_code             = $objp->special_code;
 			$this->rang                     = $objp->rang;
 			$this->fk_unit                  = $objp->fk_unit;
