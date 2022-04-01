@@ -2280,7 +2280,7 @@ span.widthpictotitle.pictotitle {
 	vertical-align: middle;
 	margin-top: -3px
 }
-.pictowarning, .pictoerror, .pictopreview, .picto.error {
+.pictowarning, .pictoerror, .pictopreview, .pictonopreview, .picto.error {
 	padding-<?php echo $left; ?>: 3px;
 }
 .pictowarning {

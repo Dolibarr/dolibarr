@@ -672,7 +672,7 @@ if (!empty($date_start) && !empty($date_stop)) {
 				print '<tr class="oddeven '.$html_class.'">';
 
 				// Type
-				print '<td>'.$langs->trans($data['item']).'</td>';
+				print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($langs->trans($data['item'])).'">'.$langs->trans($data['item']).'</td>';
 
 				// Date
 				print '<td class="center">';
@@ -685,7 +685,7 @@ if (!empty($date_start) && !empty($date_stop)) {
 				print "</td>\n";
 
 				// Ref
-				print '<td class="nowraponall">';
+				print '<td class="nowraponall tdoverflowmax150">';
 
 				if ($data['item'] == 'Invoice') {
 					$invoice->id = $data['id'];
@@ -733,23 +733,33 @@ if (!empty($date_start) && !empty($date_stop)) {
 				print '</td>';
 
 				// File link
-				print '<td>';
+				print '<td class="tdoverflowmax150">';
 				if (!empty($data['files'])) {
 					foreach ($data['files'] as $id => $filecursor) {
-						print '<a href='.DOL_URL_ROOT.'/'.$filecursor['link'].' target="_blank" rel="noopener noreferrer">'.($filecursor['name'] ? $filecursor['name'] : $filecursor['ref']).'</a>&nbsp;'.$formfile->showPreview($filecursor, $filecursor['modulepart'], $filecursor['subdir'].'/'.$filecursor['name']).'<br>';
+						$tmppreview = $formfile->showPreview($filecursor, $filecursor['modulepart'], $filecursor['subdir'].'/'.$filecursor['name'], 0);
+						if ($tmppreview) {
+							print $tmppreview;
+						}
+						$filename = ($filecursor['name'] ? $filecursor['name'] : $filecursor['ref']);
+						print '<a href='.DOL_URL_ROOT.'/'.$filecursor['link'].' target="_blank" rel="noopener noreferrer" title="'.dol_escape_htmltag($filename).'">';
+						if (empty($tmppreview)) {
+							print img_picto('', 'generic', '', false, 0, 0, '', 'pictonopreview pictofixedwidth paddingright');
+						}
+						print $filename;
+						print '</a><br>';
 					}
 				}
 				print "</td>\n";
 
 				// Paid
-				print '<td aling="left">'.$data['paid'].'</td>';
+				print '<td class="center">'.($data['paid'] ? yn($data['paid']) : '').'</td>';
 
 				// Total ET
-				print '<td align="right">'.price(price2num($data['sens'] ? $data['amount_ht'] : -$data['amount_ht'], 'MT'))."</td>\n";
+				print '<td align="right"><span class="amount">'.price(price2num($data['sens'] ? $data['amount_ht'] : -$data['amount_ht'], 'MT'))."</span></td>\n";
 				// Total IT
-				print '<td align="right">'.price(price2num($data['sens'] ? $data['amount_ttc'] : -$data['amount_ttc'], 'MT'))."</td>\n";
+				print '<td align="right"><span class="amount">'.price(price2num($data['sens'] ? $data['amount_ttc'] : -$data['amount_ttc'], 'MT'))."</span></td>\n";
 				// Total VAT
-				print '<td align="right">'.price(price2num($data['sens'] ? $data['amount_vat'] : -$data['amount_vat'], 'MT'))."</td>\n";
+				print '<td align="right"><span class="amount">'.price(price2num($data['sens'] ? $data['amount_vat'] : -$data['amount_vat'], 'MT'))."</span></td>\n";
 
 				print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($data['thirdparty_name']).'">'.dol_escape_htmltag($data['thirdparty_name'])."</td>\n";
 
@@ -757,6 +767,7 @@ if (!empty($date_start) && !empty($date_stop)) {
 
 				print '<td class="center">'.$data['country_code']."</td>\n";
 
+				// VAT number
 				print '<td class="tdoverflowmax150 right" title="'.dol_escape_htmltag($data['vatnum']).'">'.dol_escape_htmltag($data['vatnum'])."</td>\n";
 
 				if ($data['sens']) {

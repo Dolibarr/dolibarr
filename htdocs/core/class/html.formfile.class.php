@@ -2144,7 +2144,7 @@ class FormFile
 	 * @param   array     $file           Array with data of file. Example: array('name'=>...)
 	 * @param   string    $modulepart     propal, facture, facture_fourn, ...
 	 * @param   string    $relativepath   Relative path of docs
-	 * @param   integer   $ruleforpicto   Rule for picto: 0=Use the generic preview picto, 1=Use the picto of mime type of file)
+	 * @param   integer   $ruleforpicto   Rule for picto: 0=Use the generic preview picto, 1=Use the picto of mime type of file). Use a negative value to show a generic picto even if preview not available.
 	 * @param	string	  $param		  More param on http links
 	 * @return  string    $out            Output string with HTML
 	 */
@@ -2160,11 +2160,15 @@ class FormFile
 				//$out.= '<a class="pictopreview">';
 				if (empty($ruleforpicto)) {
 					//$out.= img_picto($langs->trans('Preview').' '.$file['name'], 'detail');
-					$out .= '<span class="fa fa-search-plus" style="color: gray"></span>';
+					$out .= '<span class="fa fa-search-plus pictofixedwidth" style="color: gray"></span>';
 				} else {
-					$out .= img_mime($relativepath, $langs->trans('Preview').' '.$file['name']);
+					$out .= img_mime($relativepath, $langs->trans('Preview').' '.$file['name'], 'pictofixedwidth');
 				}
 				$out .= '</a>';
+			} else {
+				if ($ruleforpicto < 0) {
+					$out .= img_picto('', 'generic', '', false, 0, 0, '', 'paddingright pictofixedwidth');
+				}
 			}
 		}
 		return $out;

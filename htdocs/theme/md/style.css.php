@@ -2294,7 +2294,7 @@ td.nobordernopadding.widthpictotitle.col-picto {
 	vertical-align: middle;
 	margin-top: -3px
 }
-.pictowarning, .pictoerror, .pictopreview {
+.pictowarning, .pictoerror, .pictopreview, .pictonopreview {
 	padding-<?php echo $left; ?>: 3px;
 }
 .pictowarning {
