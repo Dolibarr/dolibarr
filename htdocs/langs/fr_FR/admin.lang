@@ -1421,6 +1421,8 @@ WatermarkOnDraftInvoices=Filigrane sur les brouillons de factures (aucun si vide
 PaymentsNumberingModule=Modèle de numérotation des paiements
 SuppliersPayment=Règlements fournisseurs
 SupplierPaymentSetup=Configuration des règlements fournisseurs
+InvoiceCheckPosteriorDate=Vérifier les dates de facturation à la validation
+InvoiceCheckPosteriorDateHelp=La validation des factures sera refusée si la date de facturation est antérieure à la date de la dernière facture du même type.
 ##### Proposals #####
 PropalSetup=Configuration du module Propositions Commerciales
 ProposalsNumberingModules=Modèles de numérotation des propositions commerciales

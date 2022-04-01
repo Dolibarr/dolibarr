@@ -106,6 +106,13 @@ class modFacture extends DolibarrModules
 		$this->const[$r][4] = 0;
 		$r++;*/
 
+		$this->const[$r][0] = "INVOICE_CHECK_POSTERIOR_DATE";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = 0;
+		$this->const[$r][3] = "When validating an invoice, check that its date is posterior to last invoice date for invoices of same type.";
+		$this->const[$r][4] = 0;
+		$r++;
+
 
 		// Boxes
 		//$this->boxes = array(0=>array(1=>'box_factures_imp.php'),1=>array(1=>'box_factures.php'));
