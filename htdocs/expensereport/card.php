@@ -2008,7 +2008,7 @@ if ($action == 'create') {
 				}
 				print '<td>'.$langs->trans('Description').'</td>';
 				print '<td class="right">'.$langs->trans('VAT').'</td>';
-				print '<td class="right">'.$langs->trans('PriceUHT').'</td>';
+				print '<td class="right" value="disabled">'.$langs->trans('PriceUHT').'</td>';
 				print '<td class="right">'.$langs->trans('PriceUTTC').'</td>';
 				print '<td class="right">'.$langs->trans('Qty').'</td>';
 				if ($action != 'editline') {
@@ -2084,7 +2084,7 @@ if ($action == 'create') {
 
 						if ($action != 'editline') {
 							print '<td class="right">'.price($line->total_ht).'</td>';
-							print '<td class="right">'.price($line->total_ttc).'</td>';
+							print '<td class="right"value="disabled">'.price($line->total_ttc).'</td>';
 						}
 
 						// Column with preview
@@ -2280,7 +2280,7 @@ if ($action == 'create') {
 
 						// Unit price
 						print '<td class="right">';
-						print '<input type="text" min="0" class="right maxwidth50" id="value_unit_ht" name="value_unit_ht" value="'.dol_escape_htmltag(price2num($line->value_unit_ht)).'" />';
+						print '<input type="hidden" min="0" class="right maxwidth50" id="value_unit_ht" name="value_unit_ht" value="'.dol_escape_htmltag(price2num($line->value_unit_ht)).'" />';
 						print '</td>';
 
 						// Unit price with tax
@@ -2408,7 +2408,7 @@ if ($action == 'create') {
 				}
 					print '<td>'.$langs->trans('Description').'</td>';
 					print '<td class="right">'.$langs->trans('VAT').'</td>';
-					print '<td class="right">'.$langs->trans('PriceUHT').'</td>';
+					print '<td class="right" type="hidden">'.$langs->trans('PriceUHT').'</td>';
 					print '<td class="right">'.$langs->trans('PriceUTTC').'</td>';
 					print '<td class="right">'.$langs->trans('Qty').'</td>';
 					print '<td></td>';
@@ -2462,7 +2462,7 @@ if ($action == 'create') {
 
 					// Unit price net
 					print '<td class="right">';
-					print '<input type="text" class="right maxwidth50" id="value_unit_ht" name="value_unit_ht" value="'.dol_escape_htmltag($value_unit_ht).'">';
+					print '<input type="hidden" class="right maxwidth50" id="value_unit_ht" name="value_unit_ht" value="'.dol_escape_htmltag($value_unit_ht).'">';
 					print '</td>';
 
 					// Unit price with tax
