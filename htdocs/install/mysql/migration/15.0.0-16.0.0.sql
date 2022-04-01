@@ -300,3 +300,5 @@ UPDATE llx_c_availability SET type_duration = 'w', qty = 3 WHERE code = 'AV_3W';
 UPDATE llx_c_availability SET type_duration = 'w', qty = 4 WHERE code = 'AV_4W';
 
 ALTER TABLE llx_boxes_def ADD COLUMN fk_user integer DEFAULT 0 NOT NULL;
+
+ALTER TABLE llx_contratdet ADD COLUMN rang integer DEFAULT 0 AFTER info_bits;
