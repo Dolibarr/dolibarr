@@ -42,6 +42,7 @@
  */
 abstract class CommonObject
 {
+	const TRIGGER_PREFIX = ''; // to be overriden in child class implementations, i.e. 'BILL', 'TASK', 'PROPAL', etc.
 	/**
 	 * @var DoliDb		Database handler (result of a new DoliDB)
 	 */
@@ -1987,6 +1988,10 @@ abstract class CommonObject
 					$result = $this->fetchCommon($id);
 				}
 				if ($result >= 0) {
+
+					if (!empty(self::TRIGGER_PREFIX) && strpos($trigkey, self::TRIGGER_PREFIX) !== 0) {
+						$trigkey = self::TRIGGER_PREFIX . '_' . $trigkey;
+					}
 					$result = $this->call_trigger($trigkey, (!empty($fuser) && is_object($fuser)) ? $fuser : $user); // This may set this->errors
 				}
 				if ($result < 0) {
@@ -4269,6 +4274,9 @@ abstract class CommonObject
 
 			if ($trigkey) {
 				// Call trigger
+				if (!empty(self::TRIGGER_PREFIX) && strpos($trigkey, self::TRIGGER_PREFIX) !== 0) {
+					$trigkey = self::TRIGGER_PREFIX . '_' . $trigkey;
+				}
 				$result = $this->call_trigger($trigkey, $user);
 				if ($result < 0) {
 					$error++;
@@ -5603,6 +5611,9 @@ abstract class CommonObject
 		// phpcs:enable
 		global $langs, $conf;
 
+		if (!empty(self::TRIGGER_PREFIX) && strpos($triggerName, self::TRIGGER_PREFIX) !== 0) {
+			$triggerName = self::TRIGGER_PREFIX . '_' . $triggerName;
+		}
 		if (!is_object($langs)) {	// If lang was not defined, we set it. It is required by run_triggers.
 			include_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
 			$langs = new Translate('', $conf);
@@ -6190,6 +6201,9 @@ abstract class CommonObject
 			if (!$error && $trigger) {
 				// Call trigger
 				$this->context = array('extrafieldaddupdate'=>1);
+				if (!empty(self::TRIGGER_PREFIX) && strpos($trigger, self::TRIGGER_PREFIX) !== 0) {
+					$trigger = self::TRIGGER_PREFIX . '_' . $trigger;
+				}
 				$result = $this->call_trigger($trigger, $userused);
 				if ($result < 0) {
 					$error++;
@@ -6308,6 +6322,9 @@ abstract class CommonObject
 			if (!$error && $trigger) {
 				// Call trigger
 				$this->context = array('extralanguagesaddupdate'=>1);
+				if (!empty(self::TRIGGER_PREFIX) && strpos($trigger, self::TRIGGER_PREFIX) !== 0) {
+					$trigger = self::TRIGGER_PREFIX . '_' . $trigger;
+				}
 				$result = $this->call_trigger($trigger, $userused);
 				if ($result < 0) {
 					$error++;
@@ -6506,6 +6523,10 @@ abstract class CommonObject
 			if (!$error && $trigger) {
 				// Call trigger
 				$this->context = array('extrafieldupdate'=>1);
+
+				if (!empty(self::TRIGGER_PREFIX) && strpos($trigger, self::TRIGGER_PREFIX) !== 0) {
+					$trigger = self::TRIGGER_PREFIX . '_' . $trigger;
+				}
 				$result = $this->call_trigger($trigger, $userused);
 				if ($result < 0) {
 					$error++;
@@ -9426,6 +9447,10 @@ abstract class CommonObject
 
 			if (!$error && !$notrigger) {
 				// Call trigger
+
+				if (!empty(self::TRIGGER_PREFIX) && strpos($triggercode, self::TRIGGER_PREFIX) !== 0) {
+					$triggercode = self::TRIGGER_PREFIX . '_' . $triggercode;
+				}
 				$result = $this->call_trigger($triggercode, $user);
 				if ($result < 0) {
 					$error++;
