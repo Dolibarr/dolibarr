@@ -597,7 +597,7 @@ class MouvementStock extends CommonObject
 				if ($product->status_batch == 2 && $qty > 0) {	// We check only if we increased qty
 					if ($this->getBatchCount($fk_product, $batch) > 1) {
 						$error++;
-						$this->errors[] = $langs->trans("TooManyQtyForSerialNumber", $batch, $product->ref);
+						$this->errors[] = $langs->trans("TooManyQtyForSerialNumber", $product->ref, $batch);
 					}
 				}
 			}
