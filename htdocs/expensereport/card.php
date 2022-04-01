@@ -1291,7 +1291,6 @@ if (empty($reshook)) {
 					unset($fk_c_type_fees);
 					unset($fk_project);
 					unset($date);
-
 				}
 
 				//header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
