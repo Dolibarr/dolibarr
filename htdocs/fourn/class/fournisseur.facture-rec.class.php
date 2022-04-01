@@ -39,6 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
  */
 class FactureFournisseurRec extends CommonInvoice
 {
+	const TRIGGER_PREFIX = 'SUPPLIERBILLREC';
 	/**
 	 * @var string ID to identify managed object
 	 */
@@ -524,7 +525,7 @@ class FactureFournisseurRec extends CommonInvoice
 
 			if (!$error && !$notrigger) {
 				// Call trigger
-				$result = $this->call_trigger('BILLREC_UPDATE', $user);
+				$result = $this->call_trigger('SUPPLIERBILLREC_MODIFY', $user);
 				if ($result < 0) {
 					$this->db->rollback();
 					return -2;
@@ -820,8 +821,15 @@ class FactureFournisseurRec extends CommonInvoice
 			$this->error = $this->db->lasterror();
 			$error = -2;
 		}
-
-		if (!$error) {
+		if (!$error && !$notrigger) {
+			// Call trigger
+			$result = $this->call_trigger('SUPPLIERBILLREC_DELETE', $user);
+			if ($result < 0) {
+				$error++;
+			}
+			// End call triggers
+		}
+		if (! $error) {
 			$this->db->commit();
 			return 1;
 		} else {
