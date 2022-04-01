@@ -1450,11 +1450,13 @@ class Societe extends CommonObject
 
 			$sql .= ",prefix_comm = ".(!empty($this->prefix_comm) ? "'".$this->db->escape($this->prefix_comm)."'" : "null");
 
-			$sql .= ",fk_effectif = ".(!empty($this->effectif_id) ? "'".$this->db->escape($this->effectif_id)."'" : "null");
+			$sql .= ",fk_effectif = ".($this->effectif_id > 0 ? ((int) $this->effectif_id) : "null");
 			if (isset($this->stcomm_id)) {
-				$sql .= ",fk_stcomm=".(!empty($this->stcomm_id) ? $this->stcomm_id : "0");
+				$sql .= ",fk_stcomm=".($this->stcomm_id > 0 ? ((int) $this->stcomm_id) : "0");
 			}
-			$sql .= ",fk_typent = ".(!empty($this->typent_id) ? "'".$this->db->escape($this->typent_id)."'" : "0");
+			if (isset($this->typent_id)) {
+				$sql .= ",fk_typent = ".($this->typent_id > 0 ? ((int) $this->typent_id) : "0");
+			}
 
 			$sql .= ",fk_forme_juridique = ".(!empty($this->forme_juridique_code) ? "'".$this->db->escape($this->forme_juridique_code)."'" : "null");
 
