@@ -43,6 +43,10 @@ function opensurvey_prepare_head(Opensurveysondage $object)
 
 	$head[1][0] = 'results.php?id='.$object->id_sondage;
 	$head[1][1] = $langs->trans("SurveyResults");
+	$nbVotes = $object->countVotes();
+	if ($nbVotes > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbVotes).'</span>';
+	}
 	$head[1][2] = 'preview';
 	$h++;
 
