@@ -79,9 +79,9 @@ class box_dolibarr_state_board extends ModeleBoxes
 		if (empty($user->socid) && empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS)) {
 			$hookmanager = new HookManager($this->db);
 			$hookmanager->initHooks(array('index'));
-            $object = new stdClass;
-            $action = '';
-            $hookmanager->executeHooks('addStatisticLine', array(), $object, $action);
+			$object = new stdClass;
+			$action = '';
+			$hookmanager->executeHooks('addStatisticLine', array(), $object, $action);
 			$boxstatItems = array();
 			$boxstatFromHook = '';
 			$boxstatFromHook = $hookmanager->resPrint;
