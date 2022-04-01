@@ -1282,6 +1282,16 @@ if (empty($reshook)) {
 
 						$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 					}
+
+					unset($qty);
+					unset($value_unit_ht);
+					unset($value_unit);
+					unset($vatrate);
+					unset($comments);
+					unset($fk_c_type_fees);
+					unset($fk_project);
+					unset($date);
+
 				}
 
 				//header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
