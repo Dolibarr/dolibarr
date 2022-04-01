@@ -361,7 +361,7 @@ if ($action == 'validate' && $permissiontovalidate) {
 					if ($tmpproposal->valid($user) > 0) {
 						setEventMessage($langs->trans('hasBeenValidated', $tmpproposal->ref), 'mesgs');
 					} else {
-						setEventMessage($langs->trans('CantBeValidated'), 'errors');
+						setEventMessage($tmpproposal->error, $tmpproposal->errors, 'errors');
 						$error++;
 					}
 				} else {
@@ -398,7 +398,7 @@ if ($action == "sign" && $permissiontoclose) {
 						$error++;
 					}
 				} else {
-					setEventMessage($tmpproposal->ref." ".$langs->trans('CantBeSign'), 'errors');
+					setEventMessage($langs->trans('MustBeValidatedToBeSigned', $tmpproposal->ref), 'errors');
 					$error++;
 				}
 			} else {

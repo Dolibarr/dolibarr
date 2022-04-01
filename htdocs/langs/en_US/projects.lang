@@ -190,6 +190,7 @@ PlannedWorkload=Planned workload
 PlannedWorkloadShort=Workload
 ProjectReferers=Related items
 ProjectMustBeValidatedFirst=Project must be validated first
+MustBeValidatedToBeSigned=%s must be validated first to be set to Signed.
 FirstAddRessourceToAllocateTime=Assign a user resource as contact of project to allocate time
 InputPerDay=Input per day
 InputPerWeek=Input per week

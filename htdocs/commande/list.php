@@ -318,7 +318,7 @@ if ($action == 'validate' && $permissiontoadd) {
 					if ($objecttmp->valid($user, $idwarehouse)) {
 						setEventMessage($langs->trans('hasBeenValidated', $objecttmp->ref), 'mesgs');
 					} else {
-						setEventMessage($langs->trans('CantBeValidated'), 'errors');
+						setEventMessage($objecttmp->error, $objecttmp->errors, 'errors');
 						$error++;
 					}
 				} else {
