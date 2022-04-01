@@ -2494,7 +2494,6 @@ if ($action == 'create') {
 				print '<td></td>';
 				print '<td></td>';
 				print '</tr>';
-
 				print '<tr class="oddeven nohover">';
 
 				// Line number
