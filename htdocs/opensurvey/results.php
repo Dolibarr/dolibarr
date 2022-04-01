@@ -1149,7 +1149,7 @@ $compteursujet = 0;
 $meilleursujet = '';
 for ($i = 0; $i < $nbcolonnes; $i++) {
 	if (isset($sumfor[$i]) === true && isset($meilleurecolonne) === true && $sumfor[$i] == $meilleurecolonne) {
-		$meilleursujet .= ", ";
+		$meilleursujet .= ($meilleursujet ? ", " : "");
 
 		if ($object->format == "D") {
 			$meilleursujetexport = $toutsujet[$i];
@@ -1158,7 +1158,7 @@ for ($i = 0; $i < $nbcolonnes; $i++) {
 				$toutsujetdate = explode("@", $toutsujet[$i]);
 				$meilleursujet .= dol_print_date($toutsujetdate[0], 'daytext').($toutsujetdate[0] ? ' ('.dol_print_date($toutsujetdate[0], '%A').')' : '').' - '.$toutsujetdate[1];
 			} else {
-				$meilleursujet .= dol_print_date($toutsujet[$i], 'daytext').($toutsujet[$i] ? ' ('.dol_print_date($toutsujet[$i], '%A').')' : '');
+				$meilleursujet .= dol_print_date((empty($toutsujet[$i]) ? 0 : $toutsujet[$i]), 'daytext').' ('.dol_print_date((empty($toutsujet[$i]) ? 0 : $toutsujet[$i]), '%A').')';
 			}
 		} else {
 			$tmps = explode('@', $toutsujet[$i]);
