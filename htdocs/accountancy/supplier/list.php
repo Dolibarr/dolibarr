@@ -1,10 +1,10 @@
 <?php
-/* Copyright (C) 2013-2014	Olivier Geffroy			<jeff@jeffinfo.com>
- * Copyright (C) 2013-2021	Alexandre Spangaro		<aspangaro@open-dsi.fr>
- * Copyright (C) 2014-2015	Ari Elbaz (elarifr)		<github@accedinfo.com>
- * Copyright (C) 2013-2021	Florian Henry			<florian.henry@open-concept.pro>
- * Copyright (C) 2014		Juanjo Menent			<jmenent@2byte.es>s
- * Copyright (C) 2016		Laurent Destailleur		<eldy@users.sourceforge.net>
+/* Copyright (C) 2013-2014  Olivier Geffroy         <jeff@jeffinfo.com>
+ * Copyright (C) 2013-2022  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2014-2015  Ari Elbaz (elarifr)     <github@accedinfo.com>
+ * Copyright (C) 2013-2014  Florian Henry           <florian.henry@open-concept.pro>
+ * Copyright (C) 2014       Juanjo Menent           <jmenent@2byte.es>s
+ * Copyright (C) 2016       Laurent Destailleur     <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,6 +55,7 @@ $mesCasesCochees = GETPOST('toselect', 'array');
 $search_societe = GETPOST('search_societe', 'alpha');
 $search_lineid = GETPOST('search_lineid', 'int');
 $search_ref = GETPOST('search_ref', 'alpha');
+$search_ref_supplier = GETPOST('search_ref_supplier', 'alpha');
 $search_invoice = GETPOST('search_invoice', 'alpha');
 $search_label = GETPOST('search_label', 'alpha');
 $search_desc = GETPOST('search_desc', 'alpha');
@@ -137,6 +138,7 @@ if (empty($reshook)) {
 		$search_societe = '';
 		$search_lineid = '';
 		$search_ref = '';
+		$search_ref_supplier = '';
 		$search_invoice = '';
 		$search_label = '';
 		$search_desc = '';
@@ -290,6 +292,9 @@ if (strlen(trim($search_invoice))) {
 if (strlen(trim($search_ref))) {
 	$sql .= natural_search("p.ref", $search_ref);
 }
+if (strlen(trim($search_ref_supplier))) {
+	$sql .= natural_search("f.ref_supplier", $search_ref_supplier);
+}
 if (strlen(trim($search_label))) {
 	$sql .= natural_search(array("p.label", "f.libelle"), $search_label);
 }
@@ -413,6 +418,9 @@ if ($result) {
 	if ($search_ref) {
 		$param .= '&search_ref='.urlencode($search_ref);
 	}
+	if ($search_ref_supplier) {
+		$param .= '&search_ref_supplier='.urlencode($search_ref_supplier);
+	}
 	if ($search_label) {
 		$param .= '&search_label='.urlencode($search_label);
 	}
@@ -469,7 +477,8 @@ if ($result) {
 	print '<tr class="liste_titre_filter">';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth25" name="search_lineid" value="'.dol_escape_htmltag($search_lineid).'"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_invoice" value="'.dol_escape_htmltag($search_invoice).'"></td>';
-	//print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_label" value="'.dol_escape_htmltag($search_label).'"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_ref_supplier" value="'.dol_escape_htmltag($search_ref_supplier).'"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_label" value="'.dol_escape_htmltag($search_label).'"></td>';
 	print '<td class="liste_titre center">';
 	print '<div class="nowrap">';
 	print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
@@ -499,7 +508,8 @@ if ($result) {
 	print '<tr class="liste_titre">';
 	print_liste_field_titre("LineId", $_SERVER["PHP_SELF"], "l.rowid", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("Invoice", $_SERVER["PHP_SELF"], "f.ref", "", $param, '', $sortfield, $sortorder);
-	//print_liste_field_titre("InvoiceLabel", $_SERVER["PHP_SELF"], "f.libelle", "", $param, '', $sortfield, $sortorder);
+	print_liste_field_titre("RefSupplier", $_SERVER["PHP_SELF"], "f.ref_supplier", "", $param, '', $sortfield, $sortorder);
+	print_liste_field_titre("InvoiceLabel", $_SERVER["PHP_SELF"], "f.libelle", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "f.datef, f.ref, l.rowid", "", $param, '', $sortfield, $sortorder, 'center ');
 	print_liste_field_titre("ProductRef", $_SERVER["PHP_SELF"], "p.ref", "", $param, '', $sortfield, $sortorder);
 	//print_liste_field_titre("ProductLabel", $_SERVER["PHP_SELF"], "p.label", "", $param, '', $sortfield, $sortorder);
@@ -566,6 +576,7 @@ if ($result) {
 		$facturefourn_static->ref = $objp->ref;
 		$facturefourn_static->id = $objp->facid;
 		$facturefourn_static->type = $objp->ftype;
+		$facturefourn_static->ref_supplier = $objp->ref_supplier;
 		$facturefourn_static->label = $objp->invoice_label;
 		$facturefourn_static->date = $db->jdate($objp->datef);
 
@@ -625,10 +636,15 @@ if ($result) {
 		// Ref Invoice
 		print '<td class="nowraponall">'.$facturefourn_static->getNomUrl(1).'</td>';
 
-		/*print '<td class="tdoverflowonsmartphone">';
+		// Ref supplier invoice
+		print '<td class="tdoverflowonsmartphone">';
+		print $objp->ref_supplier;
+		print '</td>';
+
+		// Supplier invoice label
+		print '<td class="tdoverflowonsmartphone">';
 		print $objp->invoice_label;
 		print '</td>';
-		*/
 
 		print '<td class="center">'.dol_print_date($facturefourn_static->date, 'day').'</td>';
 
