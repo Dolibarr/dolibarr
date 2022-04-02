@@ -243,7 +243,8 @@ class FactureFournisseurRec extends CommonInvoice
 
 		// Clean parameters
 		$this->titre = empty($this->titre) ? '' : $this->titre;
-		$this->ref = $this->{$this->table_ref_field};
+		$keyforref = $this->table_ref_field;
+		$this->ref = $this->$keyforref;
 		$this->ref_supplier = empty($this->ref_supplier) ? '' : $this->ref_supplier;
 		$this->usenewprice = empty($this->usenewprice) ? 0 : $this->usenewprice;
 		$this->suspended = empty($this->suspended) ? 0 : $this->suspended;
@@ -583,9 +584,11 @@ class FactureFournisseurRec extends CommonInvoice
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
 
+				$keyforref = $this->table_ref_field;
+
 				$this->id                       = $obj->rowid;
 				$this->titre                    = $obj->titre;
-				$this->ref                      = $this->{$this->table_ref_field};
+				$this->ref                      = $obj->$keyforref;
 				$this->ref_supplier             = $obj->ref_supplier;
 				$this->entity                   = $obj->entity;
 				$this->socid                    = $obj->fk_soc;
