@@ -255,28 +255,12 @@ if (empty($reshook)) {
 					$object->add_contact($user->id, "SUPPORTTEC", 'internal');
 				}
 
-				// Auto assign contrat
-				$contractid = 0;
-				if (!empty($conf->global->TICKET_AUTO_ASSIGN_CONTRACT_CREATE)) {
-					$contrat = new Contrat($db);
-					$contrat->socid = $object->fk_soc;
-					$list = $contrat->getListOfContracts();
-
-					if (is_array($list) && !empty($list)) {
-						if (count($list) == 1) {
-							$contractid = $list[0]->id;
-							$object->setContract($contractid);
-						} else {
-						}
-					}
-				}
-
 				// Auto create fiche intervention
 				if (!empty($conf->global->TICKET_AUTO_CREATE_FICHINTER_CREATE)) {
 					$fichinter = new Fichinter($db);
 					$fichinter->socid = $object->fk_soc;
 					$fichinter->fk_project = $projectid;
-					$fichinter->fk_contrat = $contractid;
+					$fichinter->fk_contrat = $object->fk_contract;
 					$fichinter->author = $user->id;
 					$fichinter->model_pdf = 'soleil';
 					$fichinter->origin = $object->element;

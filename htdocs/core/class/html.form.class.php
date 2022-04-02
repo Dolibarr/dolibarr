@@ -3708,7 +3708,6 @@ class Form
 		}
 	}
 
-
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *      Load into cache list of payment terms
