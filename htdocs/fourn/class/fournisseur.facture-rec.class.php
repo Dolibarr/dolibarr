@@ -2008,7 +2008,7 @@ class FactureFournisseurLigneRec extends CommonObjectLine
 		if (! $error) {
 			if (! $notrigger) {
 				// Call triggers
-				$result = $this->call_trigger('LINEBILLREC_DELETE', $user);
+				$result = $this->call_trigger('LINESUPPLIERBILLREC_DELETE', $user);
 				if ($result < 0) {
 					$error++;
 				} // Do also here what you must do to rollback action if trigger fail

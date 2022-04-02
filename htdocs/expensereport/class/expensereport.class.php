@@ -1093,7 +1093,7 @@ class ExpenseReport extends CommonObject
 
 		if (!$notrigger) {
 			// Call trigger
-			$result = $this->call_trigger('EXPENSEREPORT_DELETE', $user);
+			$result = $this->call_trigger('EXPENSE_REPORT_DELETE', $user);
 			if ($result < 0) {
 				$error++;
 			}
