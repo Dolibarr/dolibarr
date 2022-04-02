@@ -637,19 +637,20 @@ if ($result) {
 		print '<td class="nowraponall">'.$facturefourn_static->getNomUrl(1).'</td>';
 
 		// Ref supplier invoice
-		print '<td class="tdoverflowonsmartphone">';
+		print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($objp->ref_supplier).'">';
 		print $objp->ref_supplier;
 		print '</td>';
 
 		// Supplier invoice label
-		print '<td class="tdoverflowonsmartphone">';
+		print '<td class="tdoverflowmax125 small" title="'.dol_escape_htmltag($objp->invoice_label).'">';
 		print $objp->invoice_label;
 		print '</td>';
 
+		// Date
 		print '<td class="center">'.dol_print_date($facturefourn_static->date, 'day').'</td>';
 
 		// Ref Product
-		print '<td class="tdoverflowmax150">';
+		print '<td class="tdoverflowmax100">';
 		if ($product_static->id > 0) {
 			print $product_static->getNomUrl(1);
 		}

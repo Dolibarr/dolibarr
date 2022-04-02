@@ -495,12 +495,12 @@ if ($result) {
 		print '<td class="nowraponall">'.$facturefournisseur_static->getNomUrl(1).'</td>';
 
 		// Ref supplier invoice
-		print '<td class="tdoverflowonsmartphone">';
+		print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($objp->ref_supplier).'">';
 		print $objp->ref_supplier;
 		print '</td>';
 
 		// Supplier invoice label
-		print '<td class="tdoverflowonsmartphone">';
+		print '<td class="tdoverflowonsmartphone small" title="'.dol_escape_htmltag($objp->invoice_label).'">';
 		print $objp->invoice_label;
 		print '</td>';
 
@@ -520,7 +520,7 @@ if ($result) {
 		}
 		print '</td>';
 
-		print '<td class="tdoverflowonsmartphone">';
+		print '<td class="tdoverflowonsmartphone small">';
 		$text = dolGetFirstLineOfText(dol_string_nohtmltag($objp->description, 1));
 		$trunclength = empty($conf->global->ACCOUNTING_LENGTH_DESCRIPTION) ? 32 : $conf->global->ACCOUNTING_LENGTH_DESCRIPTION;
 		print $form->textwithtooltip(dol_trunc($text, $trunclength), $objp->description);
