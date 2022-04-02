@@ -1306,7 +1306,7 @@ class FactureFournisseur extends CommonInvoice
 		if (!$error) {
 			if (!$notrigger) {
 				// Call trigger
-				$result = $this->call_trigger('BILL_SUPPLIER_UPDATE', $user);
+				$result = $this->call_trigger('BILL_SUPPLIER_MODIFY', $user);
 				if ($result < 0) {
 					$error++;
 				}
@@ -3704,7 +3704,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 			global $langs, $user;
 
 			// Call trigger
-			if ($this->call_trigger('LINEBILL_SUPPLIER_UPDATE', $user) < 0) {
+			if ($this->call_trigger('LINEBILL_SUPPLIER_MODIFY', $user) < 0) {
 				$this->db->rollback();
 				return -1;
 			}

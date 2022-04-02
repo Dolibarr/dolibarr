@@ -514,7 +514,7 @@ class ExpenseReport extends CommonObject
 		if ($result) {
 			if (!$notrigger) {
 				// Call trigger
-				$result = $this->call_trigger('EXPENSE_REPORT_UPDATE', $user);
+				$result = $this->call_trigger('EXPENSE_REPORT_MODIFY', $user);
 
 				if ($result < 0) {
 					$error++;
@@ -2159,7 +2159,7 @@ class ExpenseReport extends CommonObject
 
 			if ($result > 0 && !$notrigger) {
 				// Call triggers
-				$result = $this->call_trigger('EXPENSE_REPORT_DET_UPDATE', $user);
+				$result = $this->call_trigger('EXPENSE_REPORT_DET_MODIFY', $user);
 				if ($result < 0) {
 					$error++;
 				}

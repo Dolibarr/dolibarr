@@ -2186,7 +2186,7 @@ class FactureFournisseurLigneRec extends CommonObjectLine
 
 			if (!$error && !$notrigger) {
 				// Call trigger
-				$result = $this->call_trigger('LINESUPPLIERBILLREC_UPDATE', $user);
+				$result = $this->call_trigger('LINESUPPLIERBILLREC_MODIFY', $user);
 				if ($result < 0) {
 					$error++;
 				}

@@ -4024,7 +4024,7 @@ abstract class CommonObject
 				$this->context['link_source_type'] = $sourcetype;
 				$this->context['link_target_id'] = $targetid;
 				$this->context['link_target_type'] = $targettype;
-				$result = $this->call_trigger('OBJECT_LINK_UPDATE', $f_user);
+				$result = $this->call_trigger('OBJECT_LINK_MODIFY', $f_user);
 				if ($result < 0) {
 					$error++;
 				}

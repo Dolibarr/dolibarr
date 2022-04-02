@@ -4637,7 +4637,7 @@ class OrderLine extends CommonOrderLine
 
 			if (!$error && !$notrigger) {
 				// Call trigger
-				$result = $this->call_trigger('LINEORDER_UPDATE', $user);
+				$result = $this->call_trigger('LINEORDER_MODIFY', $user);
 				if ($result < 0) {
 					$error++;
 				}

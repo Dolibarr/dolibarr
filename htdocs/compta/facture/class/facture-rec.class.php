@@ -2176,7 +2176,7 @@ class FactureLigneRec extends CommonInvoiceLine
 
 			if (!$error && !$notrigger) {
 				// Call trigger
-				$result = $this->call_trigger('LINEBILLREC_UPDATE', $user);
+				$result = $this->call_trigger('LINEBILLREC_MODIFY', $user);
 				if ($result < 0) {
 					$error++;
 				}
