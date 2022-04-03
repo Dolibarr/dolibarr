@@ -48,7 +48,7 @@ TCPDF                  6.3.2         LGPL-3+                     Yes            
 TCPDI                  1.0.0         LGPL-3+ / Apache 2.0        Yes             FPDI replacement
 
 JS libraries:
-Ace                    1.4.8         BSD                         Yes             JS library to get code syntaxique coloration in a textarea.
+Ace                    1.4.14        BSD                         Yes             JS library to get code syntaxique coloration in a textarea.
 ChartJS                3.7.1         MIT License                 Yes             JS library for graph
 jQuery                 3.5.1         MIT License                 Yes             JS library
 jQuery UI              1.12.1        GPL and MIT License         Yes             JS library plugin UI
