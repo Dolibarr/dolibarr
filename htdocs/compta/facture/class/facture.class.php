@@ -2902,7 +2902,7 @@ class Facture extends CommonInvoice
 			if (!$error && $this->type == self::TYPE_CREDIT_NOTE && $this->fk_facture_source > 0) {
 				$invoice_situation = new Facture($this->db);
 				$result = $invoice_situation->fetch($this->fk_facture_source);
-				if ($result > 0) {
+				if ($result > 0 && $invoice_situation->type == self::TYPE_SITUATION && $invoice_situation->situation_final == 1) {
 					$invoice_situation->situation_final = 0;
 					// Disable triggers because module can force situation_final to 1 by triggers (ex: SubTotal)
 					$result = $invoice_situation->setFinal($user, 1);
