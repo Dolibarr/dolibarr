@@ -296,18 +296,18 @@ class modCommande extends DolibarrModules
 		$this->import_entities_array[$r] = array();
 		$this->import_tables_array[$r] = array('c' => MAIN_DB_PREFIX.'commande', 'extra' => MAIN_DB_PREFIX.'commande_extrafields');
 		$this->import_tables_creator_array[$r] = array('c' => 'fk_user_author'); // Fields to store import user id
+		$import_sample = array();
 		$this->import_fields_array[$r] = array(
 			'c.ref'               => 'Ref*',
 			'c.ref_client'        => 'RefCustomer',
 			'c.fk_soc'            => 'ThirdPartyName*',
 			'c.fk_projet'         => 'ProjectId',
 			'c.date_creation'     => 'DateCreation',
-			'c.date_valid'        => 'DateValid',
-			'c.date_commande'     => 'DateOrder',
+			'c.date_valid'        => 'DateValidation',
+			'c.date_commande'     => 'OrderDate*',
 			'c.fk_user_modif'     => 'ModifiedById',
 			'c.fk_user_valid'     => 'ValidatedById',
-			'c.fk_statut'         => 'Status*',
-			'c.remise_percent'    => 'GlobalDiscount',
+			//'c.remise_percent'    => 'GlobalDiscount',
 			'c.total_tva'         => 'TotalTVA',
 			'c.total_ht'          => 'TotalHT',
 			'c.total_ttc'         => 'TotalTTC',
@@ -317,7 +317,8 @@ class modCommande extends DolibarrModules
 			'c.date_livraison'    => 'DeliveryDate',
 			'c.fk_cond_reglement' => 'Payment Condition',
 			'c.fk_mode_reglement' => 'Payment Mode',
-			'c.model_pdf'         => 'Model'
+			'c.model_pdf'         => 'Model',
+			'c.fk_statut'         => 'Status*'
 		);
 
 		if (!empty($conf->multicurrency->enabled)) {
@@ -327,29 +328,26 @@ class modCommande extends DolibarrModules
 			$this->import_fields_array[$r]['c.multicurrency_total_tva'] = 'MulticurrencyAmountVAT';
 			$this->import_fields_array[$r]['c.multicurrency_total_ttc'] = 'MulticurrencyAmountTTC';
 		}
-
-		// Add extra fields
 		$import_extrafield_sample = array();
-		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE type <> 'separate' AND elementtype = 'commande' AND entity IN (0, ".$conf->entity.")";
-		$resql = $this->db->query($sql);
-
-		if ($resql) {
-			while ($obj = $this->db->fetch_object($resql)) {
-				$fieldname = 'extra.'.$obj->name;
-				$fieldlabel = ucfirst($obj->label);
-				$this->import_fields_array[$r][$fieldname] = $fieldlabel.($obj->fieldrequired ? '*' : '');
-				$import_extrafield_sample[$fieldname] = $fieldlabel;
-			}
-		}
-		// End add extra fields
+		$keyforselect = 'commande';
+		$keyforelement = 'order';
+		$keyforaliasextra = 'extra';
+		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinimport.inc.php';
 
 		$this->import_fieldshidden_array[$r] = array('extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'commande');
 		$this->import_regex_array[$r] = array(
 			'c.multicurrency_code' => 'code@'.MAIN_DB_PREFIX.'multicurrency'
 		);
-
+		$this->import_examplevalues_array[$r] = array_merge($import_sample, $import_extrafield_sample);
 		$this->import_updatekeys_array[$r] = array('c.ref' => 'Ref');
 		$this->import_convertvalue_array[$r] = array(
+			'c.ref' => array(
+				'rule'=>'getrefifauto',
+				'class'=>(empty($conf->global->COMMANDE_ADDON) ? 'mod_commande_marbre' : $conf->global->COMMANDE_ADDON),
+				'path'=>"/core/modules/commande/".(empty($conf->global->COMMANDE_ADDON) ? 'mod_commande_marbre' : $conf->global->COMMANDE_ADDON).'.php',
+				'classobject'=>'Commande',
+				'pathobject'=>'/commande/class/commande.class.php',
+			),
 			'c.fk_soc' => array(
 				'rule'    => 'fetchidfromref',
 				'file'    => '/societe/class/societe.class.php',
@@ -410,17 +408,11 @@ class modCommande extends DolibarrModules
 			$this->import_fields_array[$r]['cd.multicurrency_total_ttc'] = 'MulticurrencyAmountTTC';
 		}
 
-		// Add extra fields
-		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE type <> 'separate' AND elementtype = 'commandedet' AND entity IN (0, ".$conf->entity.")";
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			while ($obj = $this->db->fetch_object($resql)) {
-				$fieldname = 'extra.'.$obj->name;
-				$fieldlabel = ucfirst($obj->label);
-				$this->import_fields_array[$r][$fieldname] = $fieldlabel.($obj->fieldrequired ? '*' : '');
-			}
-		}
-		// End add extra fields
+		$import_extrafield_sample = array();
+		$keyforselect = 'commandedet';
+		$keyforelement = 'orderline';
+		$keyforaliasextra = 'extra';
+		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinimport.inc.php';
 
 		$this->import_fieldshidden_array[$r] = ['extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'commandedet'];
 		$this->import_regex_array[$r] = [
