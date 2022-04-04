@@ -125,6 +125,7 @@ abstract class CommonObject
 
 	/**
 	 * @var boolean		is linkedObjects full loaded. Loaded by ->fetchObjectLinked
+	 * important for pdf generation time reduction
 	 */
 	public $linkedObjectsFullLoaded = false;
 
