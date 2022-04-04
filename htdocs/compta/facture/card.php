@@ -2939,7 +2939,6 @@ if ($action == 'create') {
 
 			$projectid = (!empty($projectid) ? $projectid : $objectsrc->fk_project);
 			$ref_client = (!empty($objectsrc->ref_client) ? $objectsrc->ref_client : (!empty($objectsrc->ref_customer) ? $objectsrc->ref_customer : ''));
-			$demand_reason_id = (!empty($objectsrc->demand_reason_id) ? $objectsrc->demand_reason_id : (!empty($soc->demand_reason_id) ? $soc->demand_reason_id : 0));
 
 			// only if socid not filled else it's allready done upper
 			if (empty($socid)) {
@@ -2968,6 +2967,8 @@ if ($action == 'create') {
 				//Replicate extrafields
 				$expesrc->fetch_optionals();
 				$object->array_options = $expesrc->array_options;
+
+				$demand_reason_id = (!empty($expesrc->demand_reason_id) ? $expesrc->demand_reason_id : (!empty($soc->demand_reason_id) ? $soc->demand_reason_id : 0));
 			} else {
 				$cond_reglement_id 	= (!empty($objectsrc->cond_reglement_id) ? $objectsrc->cond_reglement_id : (!empty($soc->cond_reglement_id) ? $soc->cond_reglement_id : 0));
 				$mode_reglement_id 	= (!empty($objectsrc->mode_reglement_id) ? $objectsrc->mode_reglement_id : (!empty($soc->mode_reglement_id) ? $soc->mode_reglement_id : 0));
@@ -2987,6 +2988,8 @@ if ($action == 'create') {
 				// Replicate extrafields
 				$objectsrc->fetch_optionals();
 				$object->array_options = $objectsrc->array_options;
+
+				$demand_reason_id = (!empty($objectsrc->demand_reason_id) ? $objectsrc->demand_reason_id : (!empty($soc->demand_reason_id) ? $soc->demand_reason_id : 0));
 			}
 		}
 	} else {
@@ -3628,7 +3631,7 @@ if ($action == 'create') {
 	}
 
 	// Source / Channel - What trigger creation
-	print '<tr><td>'.$langs->trans('Channel').'</td><td>';
+	print '<tr><td>'.$langs->trans('Source').'</td><td>';
 	print img_picto('', 'question', 'class="pictofixedwidth"');
 	$form->selectInputReason($demand_reason_id, 'demand_reason_id', '', 1, 'maxwidth200 widthcentpercentminusx');
 	print '</td></tr>';
