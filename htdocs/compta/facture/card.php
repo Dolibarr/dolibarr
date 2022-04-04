@@ -625,6 +625,12 @@ if (empty($reshook)) {
 	} elseif ($action == 'setref_client' && $usercancreate) {
 		$object->fetch($id);
 		$object->set_ref_client(GETPOST('ref_client'));
+	} elseif ($action == 'setdemandreason' && $usercancreate) {
+		$object->fetch($id);
+		$result = $object->setValueFrom('fk_input_reason', GETPOST('demand_reason_id', 'int'), '', null, 'int', '', $user, 'BILL_MODIFY');
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	} elseif ($action == 'confirm_valid' && $confirm == 'yes' && $usercanvalidate) {
 		// Classify to validated
 		$idwarehouse = GETPOST('idwarehouse', 'int');
@@ -989,6 +995,8 @@ if (empty($reshook)) {
 
 		$error = 0;
 		$originentity = GETPOST('originentity');
+
+		$object->demand_reason_id = GETPOST('demand_reason_id', 'int');
 		// Fill array 'array_options' with data from add form
 		$ret = $extrafields->setOptionalsFromPost(null, $object);
 		if ($ret < 0) {
@@ -2931,6 +2939,7 @@ if ($action == 'create') {
 
 			$projectid = (!empty($projectid) ? $projectid : $objectsrc->fk_project);
 			$ref_client = (!empty($objectsrc->ref_client) ? $objectsrc->ref_client : (!empty($objectsrc->ref_customer) ? $objectsrc->ref_customer : ''));
+			$demand_reason_id = (!empty($objectsrc->demand_reason_id) ? $objectsrc->demand_reason_id : (!empty($soc->demand_reason_id) ? $soc->demand_reason_id : 0));
 
 			// only if socid not filled else it's allready done upper
 			if (empty($socid)) {
@@ -2984,6 +2993,7 @@ if ($action == 'create') {
 		$cond_reglement_id 	= $soc->cond_reglement_id;
 		$mode_reglement_id 	= $soc->mode_reglement_id;
 		$fk_account        	= $soc->fk_account;
+		$demand_reason_id   = $soc->demand_reason_id;
 		$remise_percent 	= $soc->remise_percent;
 		$remise_absolue 	= 0;
 		$dateinvoice = (empty($dateinvoice) ? (empty($conf->global->MAIN_AUTOFILL_DATE) ?-1 : '') : $dateinvoice); // Do not set 0 here (0 for a date is 1970)
@@ -3616,6 +3626,12 @@ if ($action == 'create') {
 		print $form->select_comptes(($fk_account < 0 ? '' : $fk_account), 'fk_account', 0, '', 1, '', 0, 'maxwidth200 widthcentpercentminusx', 1);
 		print '</td></tr>';
 	}
+
+	// Source / Channel - What trigger creation
+	print '<tr><td>'.$langs->trans('Channel').'</td><td>';
+	print img_picto('', 'question', 'class="pictofixedwidth"');
+	$form->selectInputReason($demand_reason_id, 'demand_reason_id', '', 1, 'maxwidth200 widthcentpercentminusx');
+	print '</td></tr>';
 
 	// Project
 	if (!empty($conf->projet->enabled)) {
@@ -4397,6 +4413,18 @@ if ($action == 'create') {
 		}
 		print '</td></tr>';
 	}
+
+	// Source reason (why we have an order)
+	print '<tr><td>';
+	$editenable = $usercancreate;
+	print $form->editfieldkey("Source", 'demandreason', '', $object, $editenable);
+	print '</td><td class="valuefield">';
+	if ($action == 'editdemandreason') {
+		$form->formInputReason($_SERVER['PHP_SELF'].'?id='.$object->id, $object->demand_reason_id, 'demand_reason_id', 1);
+	} else {
+		$form->formInputReason($_SERVER['PHP_SELF'].'?id='.$object->id, $object->demand_reason_id, 'none');
+	}
+	print '</td></tr>';
 
 	// Payment term
 	print '<tr><td>';
