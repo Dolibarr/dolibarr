@@ -239,7 +239,7 @@ if ($action == 'edit') {
 	echo '</tr>';
 
 foreach ($rules as $rule) {
-	echo '<tr class="oddeven" id="'.$rule->id.'">';
+	echo '<tr class="oddeven linetrdata" id="'.$rule->id.'">';
 
 	echo '<td class="linecolusergroup">';
 	if ($action == 'edit' && $object->id == $rule->id) {
