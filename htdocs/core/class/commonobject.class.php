@@ -124,6 +124,11 @@ abstract class CommonObject
 	public $linkedObjects;
 
 	/**
+	 * @var boolean		is linkedObjects full loaded. Loaded by ->fetchObjectLinked
+	 */
+	public $linkedObjectsFullLoaded = false;
+
+	/**
 	 * @var Object      To store a cloned copy of object before to edit it and keep track of old properties
 	 */
 	public $oldcopy;
@@ -3834,6 +3839,9 @@ abstract class CommonObject
 		} else {
 			$sql .= "(fk_source = ".((int) $sourceid)." AND sourcetype = '".$this->db->escape($sourcetype)."')";
 			$sql .= " ".$clause." (fk_target = ".((int) $targetid)." AND targettype = '".$this->db->escape($targettype)."')";
+			if ($sourceid == $this->id && $sourcetype == $this->element && $targetid == $this->id && $targettype == $this->element && $clause == 'OR') {
+				$this->linkedObjectsFullLoaded = true;
+			}
 		}
 		$sql .= " ORDER BY ".$orderby;
 
