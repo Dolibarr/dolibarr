@@ -234,7 +234,14 @@ if (empty($modulepart)) {
 	accessforbidden('Bad value for parameter modulepart', 0, 0, 1);
 }
 
-$check_access = dol_check_secure_access_document($modulepart, $original_file, $entity, $refname);
+// When logged in a different entity, medias cannot be accessed because $conf->$module->multidir_output
+// is not set on the requested entity, but they are public documents, so reset entity
+if ($modulepart === 'medias' && $entity != $conf->entity) {
+	$conf->entity = $entity;
+	$conf->setValues($db);
+}
+
+$check_access = dol_check_secure_access_document($modulepart, $original_file, $entity, $user, $refname);
 $accessallowed              = $check_access['accessallowed'];
 $sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
 $fullpath_original_file     = $check_access['original_file']; // $fullpath_original_file is now a full path name
