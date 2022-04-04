@@ -399,7 +399,13 @@ class modMyModule extends DolibarrModules
 		$this->import_examplevalues_array[$r] = array_merge($import_sample, $import_extrafield_sample);
 		$this->import_updatekeys_array[$r] = array('t.ref' => 'Ref');
 		$this->import_convertvalue_array[$r] = array(
-			't.ref' => array('rule'=>'getrefifauto', 'class'=>(empty($conf->global->MYMODULE_MYOBJECT_ADDON) ? 'mod_myobject_standard' : $conf->global->MYMODULE_MYOBJECT_ADDON), 'path'=>"/core/modules/commande/".(empty($conf->global->MYMODULE_MYOBJECT_ADDON) ? 'mod_myobject_standard' : $conf->global->MYMODULE_MYOBJECT_ADDON).'.php'),
+			't.ref' => array(
+				'rule'=>'getrefifauto',
+				'class'=>(empty($conf->global->MYMODULE_MYOBJECT_ADDON) ? 'mod_myobject_standard' : $conf->global->MYMODULE_MYOBJECT_ADDON),
+				'path'=>"/core/modules/commande/".(empty($conf->global->MYMODULE_MYOBJECT_ADDON) ? 'mod_myobject_standard' : $conf->global->MYMODULE_MYOBJECT_ADDON).'.php'
+				'classobject'=>'MyObject',
+				'pathobject'=>'/mymodule/class/myobject.class.php',
+			),
 			't.fk_soc' => array('rule' => 'fetchidfromref', 'file' => '/societe/class/societe.class.php', 'class' => 'Societe', 'method' => 'fetch', 'element' => 'ThirdParty'),
 			't.fk_user_valid' => array('rule' => 'fetchidfromref', 'file' => '/user/class/user.class.php', 'class' => 'User', 'method' => 'fetch', 'element' => 'user'),
 			't.fk_mode_reglement' => array('rule' => 'fetchidfromcodeorlabel', 'file' => '/compta/paiement/class/cpaiement.class.php', 'class' => 'Cpaiement', 'method' => 'fetch', 'element' => 'cpayment'),

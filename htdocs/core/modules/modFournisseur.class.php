@@ -626,9 +626,8 @@ class modFournisseur extends DolibarrModules
 		$this->import_tables_array[$r] = array('fd' => MAIN_DB_PREFIX.'facture_fourn_det', 'extra' => MAIN_DB_PREFIX.'facture_fourn_det_extrafields');
 		$this->import_fields_array[$r] = array(
 			'fd.fk_facture_fourn' => 'InvoiceRef*',
-			'fd.fk_parent_line' => 'FacParentLine',
+			'fd.fk_parent_line' => 'ParentLine',
 			'fd.fk_product' => 'IdProduct',
-			'fd.label' => 'Label',
 			'fd.description' => 'LineDescription',
 			'fd.pu_ht' => 'PriceUHT',
 			'fd.pu_ttc' => 'PriceUTTC',
@@ -670,7 +669,6 @@ class modFournisseur extends DolibarrModules
 			'fd.fk_facture_fourn' => '(PROV001)',
 			'fd.fk_parent_line' => '',
 			'fd.fk_product' => '',
-			'fd.label' => '',
 			'fd.description' => 'Test Product',
 			'fd.pu_ht' => '50000',
 			'fd.pu_ttc' => '50000',
@@ -720,7 +718,6 @@ class modFournisseur extends DolibarrModules
 			'c.source'            => 'Source',
 			'c.fk_statut'         => 'Status*',
 			'c.billed'            => 'Billed(0/1)',
-			'c.remise_percent'    => 'GlobalDiscount',
 			'c.total_tva'         => 'TotalTVA',
 			'c.total_ht'          => 'TotalHT',
 			'c.total_ttc'         => 'TotalTTC',
@@ -788,14 +785,12 @@ class modFournisseur extends DolibarrModules
 		$this->import_tables_array[$r] = array('cd' => MAIN_DB_PREFIX.'commande_fournisseurdet', 'extra' => MAIN_DB_PREFIX.'commande_fournisseurdet_extrafields');
 		$this->import_fields_array[$r] = array(
 			'cd.fk_commande'    => 'PurchaseOrder*',
-			'cd.fk_parent_line' => 'PrParentLine',
+			'cd.fk_parent_line' => 'ParentLine',
 			'cd.fk_product'     => 'IdProduct',
-			'cd.label'          => 'Label',
 			'cd.description'    => 'LineDescription',
 			'cd.tva_tx'         => 'LineVATRate',
 			'cd.qty'            => 'LineQty',
 			'cd.remise_percent' => 'Reduc. Percent',
-			'cd.remise'         => 'Reduc.',
 			'cd.subprice'       => 'Sub Price',
 			'cd.total_ht'       => 'LineTotalHT',
 			'cd.total_tva'      => 'LineTotalVAT',

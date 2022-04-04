@@ -190,10 +190,10 @@ class modPropale extends DolibarrModules
 		$this->export_fields_array[$r] = array(
 			's.rowid'=>"IdCompany", 's.nom'=>'CompanyName', 'ps.nom'=>'ParentCompany', 's.address'=>'Address', 's.zip'=>'Zip', 's.town'=>'Town', 'co.code'=>'CountryCode', 's.phone'=>'Phone',
 			's.siren'=>'ProfId1', 's.siret'=>'ProfId2', 's.ape'=>'ProfId3', 's.idprof4'=>'ProfId4', 'c.rowid'=>"Id", 'c.ref'=>"Ref", 'c.ref_client'=>"RefCustomer",
-			'c.fk_soc'=>"IdCompany", 'c.datec'=>"DateCreation", 'c.datep'=>"DatePropal", 'c.fin_validite'=>"DateEndPropal", 'c.remise_percent'=>"GlobalDiscount",
+			'c.fk_soc'=>"IdCompany", 'c.datec'=>"DateCreation", 'c.datep'=>"DatePropal", 'c.fin_validite'=>"DateEndPropal",
 			'c.total_ht'=>"TotalHT", 'c.total_ttc'=>"TotalTTC", 'c.fk_statut'=>'Status', 'c.note_public'=>"Note", 'c.date_livraison'=>'DeliveryDate',
 			'c.fk_user_author'=>'CreatedById', 'uc.login'=>'CreatedByLogin', 'c.fk_user_valid'=>'ValidatedById', 'uv.login'=>'ValidatedByLogin',
-			'pj.ref'=>'ProjectRef', 'cd.rowid'=>'LineId', 'cd.label'=>"Label", 'cd.description'=>"LineDescription", 'cd.product_type'=>'TypeOfLineServiceOrProduct',
+			'pj.ref'=>'ProjectRef', 'cd.rowid'=>'LineId', 'cd.description'=>"LineDescription", 'cd.product_type'=>'TypeOfLineServiceOrProduct',
 			'cd.tva_tx'=>"LineVATRate", 'cd.qty'=>"LineQty", 'cd.total_ht'=>"LineTotalHT", 'cd.total_tva'=>"LineTotalVAT", 'cd.total_ttc'=>"LineTotalTTC",
 			'p.rowid'=>'ProductId', 'p.ref'=>'ProductRef', 'p.label'=>'ProductLabel'
 		);
@@ -214,14 +214,14 @@ class modPropale extends DolibarrModules
 		//$this->export_TypeFields_array[$r]=array(
 		//	's.rowid'=>"List:societe:nom",'s.nom'=>'Text','s.address'=>'Text','s.zip'=>'Text','s.town'=>'Text','co.code'=>'Text','s.phone'=>'Text',
 		//	's.siren'=>'Text','s.siret'=>'Text','s.ape'=>'Text','s.idprof4'=>'Text','c.ref'=>"Text",'c.ref_client'=>"Text",'c.datec'=>"Date",'c.datep'=>"Date",
-		//	'c.fin_validite'=>"Date",'c.remise_percent'=>"Numeric",'c.total_ht'=>"Numeric",'c.total_ttc'=>"Numeric",'c.fk_statut'=>'Status','c.note_public'=>"Text",
+		//	'c.fin_validite'=>"Date",'c.total_ht'=>"Numeric",'c.total_ttc'=>"Numeric",'c.fk_statut'=>'Status','c.note_public'=>"Text",
 		//	'c.date_livraison'=>'Date','cd.description'=>"Text",'cd.product_type'=>'Boolean','cd.tva_tx'=>"Numeric",'cd.qty'=>"Numeric",'cd.total_ht'=>"Numeric",
 		//	'cd.total_tva'=>"Numeric",'cd.total_ttc'=>"Numeric",'p.rowid'=>'List:product:label','p.ref'=>'Text','p.label'=>'Text'
 		//);
 		$this->export_TypeFields_array[$r] = array(
 			's.nom'=>'Text', 'ps.nom'=>'Text', 's.address'=>'Text', 's.zip'=>'Text', 's.town'=>'Text', 'co.code'=>'Text', 's.phone'=>'Text', 's.siren'=>'Text', 's.siret'=>'Text',
 			's.ape'=>'Text', 's.idprof4'=>'Text', 'c.ref'=>"Text", 'c.ref_client'=>"Text", 'c.datec'=>"Date", 'c.datep'=>"Date", 'c.fin_validite'=>"Date",
-			'c.remise_percent'=>"Numeric", 'c.total_ht'=>"Numeric", 'c.total_ttc'=>"Numeric", 'c.fk_statut'=>'Status', 'c.note_public'=>"Text", 'c.date_livraison'=>'Date',
+			'c.total_ht'=>"Numeric", 'c.total_ttc'=>"Numeric", 'c.fk_statut'=>'Status', 'c.note_public'=>"Text", 'c.date_livraison'=>'Date',
 			'pj.ref'=>'Text', 'cd.description'=>"Text", 'cd.product_type'=>'Boolean', 'cd.tva_tx'=>"Numeric", 'cd.qty'=>"Numeric", 'cd.total_ht'=>"Numeric",
 			'cd.total_tva'=>"Numeric", 'cd.total_ttc'=>"Numeric", 'p.ref'=>'Text', 'p.label'=>'Text',
 			'c.entity'=>'List:entity:label:rowid',
@@ -229,9 +229,9 @@ class modPropale extends DolibarrModules
 		$this->export_entities_array[$r] = array(
 			's.rowid'=>"company", 's.nom'=>'company', 'ps.nom'=>'company', 's.address'=>'company', 's.zip'=>'company', 's.town'=>'company', 'co.code'=>'company', 's.phone'=>'company',
 			's.siren'=>'company', 's.ape'=>'company', 's.idprof4'=>'company', 's.siret'=>'company', 'c.rowid'=>"propal", 'c.ref'=>"propal", 'c.ref_client'=>"propal",
-			'c.fk_soc'=>"propal", 'c.datec'=>"propal", 'c.datep'=>"propal", 'c.fin_validite'=>"propal", 'c.remise_percent'=>"propal", 'c.total_ht'=>"propal",
+			'c.fk_soc'=>"propal", 'c.datec'=>"propal", 'c.datep'=>"propal", 'c.fin_validite'=>"propal", 'c.total_ht'=>"propal",
 			'c.total_ttc'=>"propal", 'c.fk_statut'=>"propal", 'c.note_public'=>"propal", 'c.date_livraison'=>"propal", 'pj.ref'=>'project', 'cd.rowid'=>'propal_line',
-			'cd.label'=>"propal_line", 'cd.description'=>"propal_line", 'cd.product_type'=>'propal_line', 'cd.tva_tx'=>"propal_line", 'cd.qty'=>"propal_line",
+			'cd.description'=>"propal_line", 'cd.product_type'=>'propal_line', 'cd.tva_tx'=>"propal_line", 'cd.qty'=>"propal_line",
 			'cd.total_ht'=>"propal_line", 'cd.total_tva'=>"propal_line", 'cd.total_ttc'=>"propal_line", 'p.rowid'=>'product', 'p.ref'=>'product', 'p.label'=>'product'
 		);
 		$this->export_dependencies_array[$r] = array('propal_line'=>'cd.rowid', 'product'=>'cd.rowid'); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them
@@ -293,7 +293,6 @@ class modPropale extends DolibarrModules
 			'c.datec' => 'DateCreation',
 			'c.datep' => 'DatePropal',
 			'c.fin_validite' => 'DateEndPropal',
-			'c.remise_percent' => 'GlobalDiscount',
 			'c.total_ht' => 'TotalHT',
 			'c.total_ttc' => 'TotalTTC',
 			'c.fk_statut' => 'Status*',
@@ -330,7 +329,6 @@ class modPropale extends DolibarrModules
 			'c.datec' => '2020-01-01',
 			'c.datep' => '2020-01-01',
 			'c.fin_validite' => '2020-01-01',
-			'c.remise_percent' => '',
 			'c.total_ht' => '0',
 			'c.total_ttc' => '0',
 			'c.fk_statut' => '1',
@@ -367,15 +365,13 @@ class modPropale extends DolibarrModules
 		);
 		$this->import_fields_array[$r] = array(
 			'cd.fk_propal' => 'Proposal*',
-			'cd.fk_parent_line' => 'PrParentLine',
+			'cd.fk_parent_line' => 'ParentLine',
 			'cd.fk_product' => 'IdProduct',
-			'cd.label' => 'Label',
 			'cd.description' => 'LineDescription',
 			'cd.product_type' => 'TypeOfLineServiceOrProduct',
 			'cd.tva_tx' => 'LineVATRate',
 			'cd.qty' => 'LineQty',
 			'cd.remise_percent' => 'Reduc. Percent',
-			'cd.remise' => 'Reduc.',
 			'cd.price' => 'Price',
 			'cd.subprice' => 'Sub Price',
 			'cd.total_ht' => 'LineTotalHT',
@@ -411,13 +407,11 @@ class modPropale extends DolibarrModules
 			'cd.fk_propal' => 'PROV(0001)',
 			'cd.fk_parent_line' => '',
 			'cd.fk_product' => '',
-			'cd.label' => '',
 			'cd.description' => 'Line description',
 			'cd.product_type' => '1',
 			'cd.tva_tx' => '0',
 			'cd.qty' => '2',
 			'cd.remise_percent' => '0',
-			'cd.remise' => '0',
 			'cd.price' => '',
 			'cd.subprice' => '5000',
 			'cd.total_ht' => '10000',
