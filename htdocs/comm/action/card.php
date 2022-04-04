@@ -659,7 +659,7 @@ if (empty($reshook) && $action == 'update') {
 				$categories = GETPOST('categories', 'array');
 				$object->setCategories($categories);
 
-				$object->loadReminders();
+				$object->loadReminders($remindertype, 0, false);
 				if (!empty($object->reminders) && $object->datep > dol_now()) {
 					foreach ($object->reminders as $reminder) {
 						$reminder->delete($user);
