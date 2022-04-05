@@ -392,6 +392,18 @@ print '<td class="right">'."\n";
 $formactions->form_select_status_action('agenda', $conf->global->AGENDA_DEFAULT_FILTER_STATUS, 1, 'AGENDA_DEFAULT_FILTER_STATUS', 1, 2, 'minwidth100');
 print '</td></tr>'."\n";
 
+// AGENDA EVENT SENT BY MAIL USE SUBJECT
+print '<tr class="oddeven">'."\n";
+print '<td>'.$langs->trans("AGENDA_EVENT_SENT_MAIL_USE_SUBJECT").'</td>'."\n";
+print '<td class="center">&nbsp;</td>'."\n";
+print '<td class="right">'."\n";
+if (empty($conf->global->AGENDA_EVENT_SENT_MAIL_USE_SUBJECT)) {
+    print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_AGENDA_EVENT_SENT_BY_MAIL_USE_SUBJECT">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+} else {
+    print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_AGENDA_EVENT_SENT_BY_MAIL_USE_SUBJECT">'.img_picto($langs->trans("Enabled"), 'switch_on').'</a>';
+}
+print '</td></tr>'."\n";
+
 print '</table>';
 
 print dol_get_fiche_end();
