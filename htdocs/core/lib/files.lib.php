@@ -2094,6 +2094,9 @@ function dol_uncompress($inputfile, $outputdir)
 			include_once ODTPHP_PATHTOPCLZIP.'/pclzip.lib.php';
 			$archive = new PclZip($inputfile);
 
+			// We create output dir manually, so it uses the correct permission (When created by the archive->extract, dir is rwx for everybody).
+			dol_mkdir(dol_sanitizePathName($outputdir));
+
 			// Extract into outputdir, but only files that match the regex '/^((?!\.\.).)*$/' that means "does not include .."
 			$result = $archive->extract(PCLZIP_OPT_PATH, $outputdir, PCLZIP_OPT_BY_PREG, '/^((?!\.\.).)*$/');
 
@@ -2150,10 +2153,19 @@ function dol_uncompress($inputfile, $outputdir)
 		include_once DOL_DOCUMENT_ROOT."/core/class/utils.class.php";
 		$utils = new Utils($db);
 
+		dol_mkdir(dol_sanitizePathName($outputdir));
+		$outputfilename = escapeshellcmd(dol_sanitizePathName($outputdir).'/'.dol_sanitizeFileName($fileinfo["filename"]));
+		dol_delete_file($outputfilename.'.tmp');
+		dol_delete_file($outputfilename.'.err');
+
 		$extension = strtolower(pathinfo($fileinfo["filename"], PATHINFO_EXTENSION));
 		if ($extension == "tar") {
 			$cmd = 'tar -C '.escapeshellcmd(dol_sanitizePathName($outputdir)).' -xvf '.escapeshellcmd(dol_sanitizePathName($fileinfo["dirname"]).'/'.dol_sanitizeFileName($fileinfo["basename"]));
-			$resarray = $utils->executeCLI($cmd, $outputdir);
+
+			$resarray = $utils->executeCLI($cmd, $outputfilename.'.tmp', 0, $outputfilename.'.err', 0);
+			if ($resarray["result"] != 0) {
+				$resarray["error"] .= file_get_contents($outputfilename.'.err');
+			}
 		} else {
 			$program = "";
 			if ($fileinfo["extension"] == "gz") {
@@ -2163,22 +2175,23 @@ function dol_uncompress($inputfile, $outputdir)
 			} elseif ($fileinfo["extension"] == "zst") {
 				$program = 'zstd';
 			} else {
-				return array('error'=>'ErrFileExtension');
+				return array('error'=>'ErrorBadFileExtension');
 			}
 			$cmd = $program.' -dc '.escapeshellcmd(dol_sanitizePathName($fileinfo["dirname"]).'/'.dol_sanitizeFileName($fileinfo["basename"]));
-			$outputfilename = escapeshellcmd(dol_sanitizePathName($outputdir).'/'.dol_sanitizeFileName($fileinfo["filename"]));
-			$resarray = $utils->executeCLI($cmd, $outputfilename, 0, $outputfilename);
-			if ($resarray["output"] == 2) {
-				$resarray["error"] = "ErrFilePermOrFileNotFound";
-			}
-			if ($resarray["output"] == 1) {
-				$resarray["error"] = "Error";
+			$cmd .= ' > '.$outputfilename;
+
+			$resarray = $utils->executeCLI($cmd, $outputfilename.'.tmp', 0, null, 1, $outputfilename.'.err');
+			if ($resarray["result"] != 0) {
+				$errfilecontent = @file_get_contents($outputfilename.'.err');
+				if ($errfilecontent) {
+					$resarray["error"] .= " - ".$errfilecontent;
+				}
 			}
 		}
-		return $resarray["output"] != 0 ? $resarray["error"] : array();
+		return $resarray["result"] != 0 ? array('error' => $resarray["error"]) : array();
 	}
 
-	return array('error'=>'ErrFileExtension');
+	return array('error'=>'ErrorBadFileExtension');
 }
 
 
