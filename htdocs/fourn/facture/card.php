@@ -76,7 +76,7 @@ $lineid		= GETPOST('lineid', 'int');
 $projectid = GETPOST('projectid', 'int');
 $origin		= GETPOST('origin', 'alpha');
 $originid = GETPOST('originid', 'int');
-$fac_rec = GETPOST('fac_rec', 'int');
+$fac_recid = GETPOST('fac_rec', 'int');
 
 // PDF
 $hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
@@ -885,7 +885,7 @@ if (empty($reshook)) {
 		}
 
 		// Standard invoice or Deposit invoice, created from a Predefined template invoice
-		if ((GETPOST('type') == FactureFournisseur::TYPE_STANDARD || GETPOST('type') == FactureFournisseur::TYPE_DEPOSIT) && GETPOST('fac_rec', 'int') > 0) {
+		elseif ($fac_recid > 0 && (GETPOST('type') == FactureFournisseur::TYPE_STANDARD || GETPOST('type') == FactureFournisseur::TYPE_DEPOSIT)) {
 			if (empty($dateinvoice)) {
 				$error++;
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
@@ -918,7 +918,7 @@ if (empty($reshook)) {
 				$object->multicurrency_tx   = GETPOST('originmulticurrency_tx', 'int');
 
 				// Source facture
-				$object->fac_rec = GETPOST('fac_rec', 'int');
+				$object->fac_rec = $fac_recid;
 				$fac_rec = new FactureFournisseurRec($db);
 				$fac_rec->fetch($object->fac_rec);
 				$fac_rec->fetch_lines();
@@ -929,7 +929,7 @@ if (empty($reshook)) {
 		}
 
 		// Standard invoice or Deposit invoice, not from a Predefined template invoice
-		elseif (GETPOST('type') == FactureFournisseur::TYPE_STANDARD || GETPOST('type') == FactureFournisseur::TYPE_DEPOSIT && GETPOST('fac_rec') <= 0) {
+		elseif ($fac_recid <= 0 && (GETPOST('type') == FactureFournisseur::TYPE_STANDARD || GETPOST('type') == FactureFournisseur::TYPE_DEPOSIT)) {
 			if (GETPOST('socid', 'int') < 1) {
 				setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('Supplier')), null, 'errors');
 				$action = 'create';
@@ -2024,15 +2024,15 @@ if ($action == 'create') {
 
 	$exampletemplateinvoice = new FactureFournisseurRec($db);
 	$invoice_predefined = new FactureFournisseurRec($db);
-	if (empty($origin) && empty($originid) && GETPOST('fac_rec', 'int') > 0) {
-		$invoice_predefined->fetch(GETPOST('fac_rec', 'int'));
+	if (empty($origin) && empty($originid) && $fac_recid > 0) {
+		$invoice_predefined->fetch($fac_recid);
 	}
 
 	// Third party
 	print '<tr><td class="fieldrequired">'.$langs->trans('Supplier').'</td>';
 	print '<td>';
 
-	if ($societe->id > 0 && (!GETPOST('fac_rec', 'int') || !empty($invoice_predefined->frequency))) {
+	if ($societe->id > 0 && ($fac_recid <= 0 || !empty($invoice_predefined->frequency))) {
 		$absolute_discount = $societe->getAvailableDiscounts('', '', 0, 1);
 		print $societe->getNomUrl(1, 'supplier');
 		print '<input type="hidden" name="socid" value="'.$societe->id.'">';
@@ -2050,15 +2050,15 @@ if ($action == 'create') {
 			});
 			</script>';
 		}
-		if (!GETPOST('fac_rec', 'int')) {
+		if ($fac_recid <= 0) {
 			print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&client=0&fournisseur=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddThirdParty").'"></span></a>';
 		}
 	}
 	print '</td></tr>';
 
 	// Overwrite some values if creation of invoice is from a predefined invoice
-	if (empty($origin) && empty($originid) && GETPOST('fac_rec', 'int') > 0) {
-		$invoice_predefined->fetch(GETPOST('fac_rec', 'int'));
+	if (empty($origin) && empty($originid) && $fac_recid > 0) {
+		$invoice_predefined->fetch($fac_recid);
 
 		$dateinvoice = $invoice_predefined->date_when; // To use next gen date by default later
 		if (empty($projectid)) {
@@ -2088,15 +2088,15 @@ if ($action == 'create') {
 
 			if ($num > 0) {
 				print '<tr><td>'.$langs->trans('CreateFromRepeatableInvoice').'</td><td>';
-				//print '<input type="hidden" name="fac_rec" id="fac_rec" value="'.GETPOST('fac_rec', 'int').'">';
+				//print '<input type="hidden" name="fac_rec" id="fac_rec" value="'.$fac_recid.'">';
 				print '<select class="flat" id="fac_rec" name="fac_rec">'; // We may want to change the template to use
 				print '<option value="0" selected></option>';
 				while ($i < $num) {
 					$objp = $db->fetch_object($resql);
 					print '<option value="'.$objp->rowid.'"';
-					if (GETPOST('fac_rec', 'int') == $objp->rowid) {
+					if ($fac_recid == $objp->rowid) {
 						print ' selected';
-						$exampletemplateinvoice->fetch(GETPOST('fac_rec', 'int'));
+						$exampletemplateinvoice->fetch($fac_recid);
 					}
 					print '>'.$objp->title.' ('.price($objp->total_ttc).' '.$langs->trans("TTC").')</option>';
 					$i++;
@@ -2408,7 +2408,7 @@ if ($action == 'create') {
 		$langs->load('projects');
 		print '<tr><td>'.$langs->trans('Project').'</td><td>';
 		print img_picto('', 'project', 'class="pictofixedwidth"').$formproject->select_projects((empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) ? $societe->id : -1), $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500 widthcentpercentminusxx');
-		print ' <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$soc->id.'&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id.($fac_rec ? '&fac_rec='.$fac_rec : '')).'"><span class="fa fa-plus-circle valignmiddle" title="'.$langs->trans("AddProject").'"></span></a>';
+		print ' <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$soc->id.'&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id.($fac_recid > 0 ? '&fac_rec='.$fac_recid : '')).'"><span class="fa fa-plus-circle valignmiddle" title="'.$langs->trans("AddProject").'"></span></a>';
 		print '</td></tr>';
 	}
 
@@ -2432,7 +2432,7 @@ if ($action == 'create') {
 
 	// Help of substitution key
 	$htmltext = '';
-	if (GETPOST('fac_rec', 'int') > 0) {
+	if ($fac_recid > 0) {
 		$dateexample = $newdateinvoice ? $newdateinvoice : $dateinvoice;
 		if (empty($dateexample)) {
 			$dateexample = dol_now();
