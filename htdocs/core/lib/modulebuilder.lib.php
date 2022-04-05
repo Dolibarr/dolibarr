@@ -128,7 +128,7 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
 				if (!empty($val['noteditable'])) {
 					$texttoinsert .= " 'noteditable'=>'".$val['noteditable']."',";
 				}
-				if (!empty($val['default']) || (!empty($val['default']) && $val['default'] === '0')) {
+				if (!empty($val['default']) || (isset($val['default']) && $val['default'] === '0')) {
 					$texttoinsert .= " 'default'=>'".$val['default']."',";
 				}
 				if (!empty($val['index'])) {
