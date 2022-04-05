@@ -2085,9 +2085,6 @@ function dol_uncompress($inputfile, $outputdir)
 {
 	global $conf, $langs, $db;
 
-	include_once DOL_DOCUMENT_ROOT."/core/class/utils.class.php";
-	$utils = new Utils($db);
-	
 	$fileinfo = pathinfo($inputfile);
 	$fileinfo["extension"] = strtolower($fileinfo["extension"]);
 	
@@ -2150,6 +2147,9 @@ function dol_uncompress($inputfile, $outputdir)
 
 		return array('error'=>'ErrNoZipEngine');
 	} elseif (in_array($fileinfo["extension"], array('gz', 'bz2', 'zst'))) {
+		include_once DOL_DOCUMENT_ROOT."/core/class/utils.class.php";
+		$utils = new Utils($db);
+	
 		$extension = strtolower(pathinfo($fileinfo["filename"], PATHINFO_EXTENSION));
 		if ($extension == "tar") {
 			$cmd = 'tar -C '.escapeshellcmd(dol_sanitizePathName($outputdir)).' -xvf '.escapeshellcmd(dol_sanitizePathName($fileinfo["dirname"]).'/'.dol_sanitizeFileName($fileinfo["basename"]));
