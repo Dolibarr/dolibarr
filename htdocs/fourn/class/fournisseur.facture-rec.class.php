@@ -299,40 +299,34 @@ class FactureFournisseurRec extends CommonInvoice
 			$sql .= ') VALUES (';
 			$sql .= "'".$this->db->escape($this->titre)."'";
 			$sql .= ", '".$this->db->escape($this->ref_supplier)."'";
-			$sql .= ', ' . (int) $conf->entity;
-			$sql .= ', ' . (int) $facfourn_src->socid;
+			$sql .= ", ".((int) $conf->entity);
+			$sql .= ", ".((int) $facfourn_src->socid);
 			$sql .= ", '".$this->db->idate($now)."'";
-			$sql .= ', ' . (int) $this->suspended;
-			if (!empty(GETPOST('libelle'))) {
-				$sql .= ", '" . $this->db->escape(GETPOST('libelle')) . "'";
-			} elseif (! empty($this->libelle)) {
-				$sql .= ", '" . $this->db->escape($this->libelle) . "'";
-			} else {
-				$sql .= ", ''";
-			}
-			$sql .= ', ' .(!empty($facfourn_src->total_ttc) ? (float) $facfourn_src->total_ttc : '0');                              // amount
-			$sql .= ', ' .(!empty($facfourn_src->remise) ? (float) $facfourn_src->remise : '0');
-			$sql .= ', ' . (int) $user->id;
-			$sql .= ', ' .(!empty($this->fk_project) ? $this->fk_project : 'NULL');                                                 // Fields declarded on creation
-			$sql .= ', ' .(!empty($facfourn_src->fk_account) ? $facfourn_src->fk_account : 'NULL');
-			$sql .= ', ' .($this->cond_reglement_id > 0 ? (int) $this->cond_reglement_id : 'NULL');
-			$sql .= ', ' .($this->mode_reglement_id > 0 ? (int) $this->mode_reglement_id : 'NULL');
-			$sql .= ", '".($facfourn_src->date_echeance > 0 ? $this->db->idate($facfourn_src->date_echeance) : 'NULL')."'";         // date_lim_reglement
-			$sql .= ', ' .(!empty($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : 'NULL');                  // Fields declarded on creation
-			$sql .= ', ' .(!empty($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : 'NULL');                    // Fields declarded on creation
-			$sql .= ', ' .(!empty($this->model_pdf) ? "'".$this->db->escape($this->model_pdf)."'" : 'NULL');                        // Fields declarded on creation
-			$sql .= ', ' . (int) $facfourn_src->fk_multicurrency;
+			$sql .= ", ".((int) $this->suspended);
+			$sql .= ", '".$this->db->escape($this->libelle)."'";
+			$sql .= ", " .(!empty($facfourn_src->total_ttc) ? (float) $facfourn_src->total_ttc : '0');                              // amount
+			$sql .= ", " .(!empty($facfourn_src->remise) ? (float) $facfourn_src->remise : '0');
+			$sql .= ", " .((int) $user->id);
+			$sql .= ", " .(!empty($this->fk_project) ? ((int) $this->fk_project) : 'NULL');
+			$sql .= ", " .(!empty($facfourn_src->fk_account) ? ((int) $facfourn_src->fk_account) : 'NULL');
+			$sql .= ", " .($this->cond_reglement_id > 0 ? (int) $this->cond_reglement_id : 'NULL');
+			$sql .= ", " .($this->mode_reglement_id > 0 ? (int) $this->mode_reglement_id : 'NULL');
+			$sql .= ", ".($facfourn_src->date_echeance > 0 ? "'".$this->db->idate($facfourn_src->date_echeance)."'" : 'NULL');      // date_lim_reglement
+			$sql .= ", " .(!empty($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : 'NULL');
+			$sql .= ", " .(!empty($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : 'NULL');
+			$sql .= ", " .(!empty($this->model_pdf) ? "'".$this->db->escape($this->model_pdf)."'" : 'NULL');
+			$sql .= ", " . (int) $facfourn_src->fk_multicurrency;
 			$sql .= ", '".$this->db->escape($facfourn_src->multicurrency_code)."'";
-			$sql .= ', ' . (float) $facfourn_src->multicurrency_tx;
-			$sql .= ', ' . (int) $this->usenewprice;                                                                                      // Fields declarded on creation
-			$sql .= ', ' . (int) $this->frequency;                                                                                  // Fields declarded on creation
-			$sql .= ", '".$this->db->escape($this->unit_frequency)."'";                                                             // Fields declarded on creation
-			$sql .= ', ' .(!empty($this->date_when) ? "'".$this->db->idate($this->date_when)."'" : 'NULL');                         // Fields declarded on creation
-			$sql .= ', ' .(!empty($this->date_last_gen) ? "'".$this->db->idate($this->date_last_gen)."'" : 'NULL');                 // Fields declarded on creation
-			$sql .= ', ' . (int) $this->nb_gen_done;                                                                                      // Fields declarded on creation
-			$sql .= ', ' . (int) $this->nb_gen_max;                                                                                       // Fields declarded on creation
-			$sql .= ', ' . (int) $this->auto_validate;                                                                                    // Fields declarded on creation
-			$sql .= ', ' . (int) $this->generate_pdf;                                                                                     // Fields declarded on creation
+			$sql .= ", " . (float) $facfourn_src->multicurrency_tx;
+			$sql .= ", " . (int) $this->usenewprice;
+			$sql .= ", " . (int) $this->frequency;
+			$sql .= ", '".$this->db->escape($this->unit_frequency)."'";
+			$sql .= ", " .(!empty($this->date_when) ? "'".$this->db->idate($this->date_when)."'" : 'NULL');
+			$sql .= ", " .(!empty($this->date_last_gen) ? "'".$this->db->idate($this->date_last_gen)."'" : 'NULL');
+			$sql .= ", " . (int) $this->nb_gen_done;
+			$sql .= ", " . (int) $this->nb_gen_max;
+			$sql .= ", " . (int) $this->auto_validate;
+			$sql .= ", " . (int) $this->generate_pdf;
 			$sql .= ')';
 
 			if ($this->db->query($sql)) {
@@ -475,44 +469,43 @@ class FactureFournisseurRec extends CommonInvoice
 		$error = 0;
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn_rec SET";
-		$sql .= ' titre = "' . (!empty($this->titre) ? $this->titre .'",' : '"",') ;
-		$sql .= ' ref_supplier = "'. (!empty($this->ref_supplier) ? $this->ref_supplier .'",' : '" ",');
-		$sql .= " entity = ". (!empty($this->entity) ? $this->entity : 1) . ',';
+		$sql .= " titre = '" . (!empty($this->titre) ? $this->db->escape($this->titre) : "")."'," ;
+		$sql .= " ref_supplier = '". (!empty($this->ref_supplier) ? $this->db->escape($this->ref_supplier) : "")."',";
+		$sql .= " entity = ". (!empty($this->entity) ? ((int) $this->entity) : 1) . ',';
 		if ($this->fk_soc > 0) $sql .= " fk_soc = ". (int) $this->fk_soc. ',';
-		$sql .= ' tms = "'. date('Y-m-d H:i:s', dol_now()) . '",';
-		$sql .= " suspended = ". (!empty($this->suspended) ? $this->suspended : 0) . ',';
-		$sql .= ' libelle = "'. (!empty($this->libelle) ? $this->libelle : 'NULL') . '",';
-		$sql .= " amount = ". (!empty($this->amount) ? $this->amount : 0.00) . ',';
-		$sql .= " remise = ". (!empty($this->remise) ? $this->remise : 'NULL') . ',';
-		$sql .= " vat_src_code = ". (!empty($this->vat_src_code) ? $this->vat_src_code : 'NULL') . ',';
-		$sql .= " localtax1 = ". (!empty($this->localtax1) ? $this->localtax1 : 0.00) . ',';
-		$sql .= " localtax2 = ". (!empty($this->localtax2) ? $this->localtax2 : 0.00) . ',';
-		$sql .= " total_ht = ". (!empty($this->total_ht) ? $this->total_ht : 0.00) . ',';
-		$sql .= " total_tva = ". (!empty($this->total_tva) ? $this->total_tva : 0.00) . ',';
-		$sql .= " total_ttc = ". (!empty($this->total_ttc) ? $this->total_ttc : 0.00) . ',';
-		$sql .= " fk_user_modif = ". $user->id . ',';
-		$sql .= " fk_projet = ". (!empty($this->fk_project) ? $this->fk_project : 'NULL') . ',';
-		$sql .= " fk_account = ". (!empty($this->fk_account) ? $this->fk_account : 'NULL') . ',';
-		$sql .= " fk_mode_reglement = ". (!empty($this->mode_reglement_id) ? $this->mode_reglement_id : 'NULL') . ',';
-		$sql .= " fk_cond_reglement = ". (!empty($this->cond_reglement_id) ? $this->cond_reglement_id : 'NULL') . ',';
-		$sql .= " date_lim_reglement = ". (!empty($this->date_lim_reglement) ? '"'.date("Y-m-d H:i:s", $this->date_lim_reglement).'"' : 'NULL') . ',';
-		$sql .= ' note_private = "'. (!empty($this->note_private) ? $this->note_private : '') . '",';
-		$sql .= ' note_public = "'. (!empty($this->note_public) ? $this->note_public : '') . '",';
-		$sql .= ' modelpdf = "'. (!empty($this->model_pdf) ? $this->model_pdf : 'NULL') . '",';
-		$sql .= " fk_multicurrency = ". (!empty($this->fk_multicurrency) ? $this->fk_multicurrency : 'NULL') . ',';
-		$sql .= ' multicurrency_code = "'. (!empty($this->multicurrency_code) ? $this->multicurrency_code : 'NULL') . '",';
-		$sql .= " multicurrency_tx = ". (!empty($this->multicurrency_tx) ? $this->multicurrency_tx : 1) . ',';
-		$sql .= " multicurrency_total_ht = ". (!empty($this->multicurrency_total_ht) ? $this->multicurrency_total_ht : 0.00) . ',';
-		$sql .= " multicurrency_total_tva = ". (!empty($this->multicurrency_total_tva) ? $this->multicurrency_total_tva : 0.00) . ',';
-		$sql .= " multicurrency_total_ttc = ". (!empty($this->multicurrency_total_ttc) ? $this->multicurrency_total_ttc : 0.00) . ',';
-		$sql .= " usenewprice = ". (!empty($this->usenewprice) ? $this->usenewprice : 0) . ',';
-		$sql .= " frequency = ". (!empty($this->frequency) ? $this->frequency : 0). ',';
-		$sql .= ' unit_frequency = "'. (!empty($this->unit_frequency) ? $this->unit_frequency : 0). '",';
-		$sql .= " date_when = ". (!empty($this->date_when) ? '"'.date("Y-m-d H:i:s", $this->date_when).'"' : 0) . ',';
-		$sql .= " date_last_gen = ". (!empty($this->date_last_gen) ? '"'.date("Y-m-d H:i:s", $this->date_last_gen).'"' : 0) . ',';
-		$sql .= " nb_gen_done = ". (!empty($this->nb_gen_done) ? $this->nb_gen_done : 0) . ',';
-		$sql .= " nb_gen_max = ". (!empty($this->nb_gen_max) ? $this->nb_gen_max : 0) . ',';
-		$sql .= " auto_validate = ". (!empty($this->auto_validate) ? $this->auto_validate : 0);
+		$sql .= " suspended = ". (!empty($this->suspended) ? ((int) $this->suspended) : 0) . ',';
+		$sql .= " libelle = ". (!empty($this->libelle) ? "'".$this->db->escape($this->libelle)."'" : 'NULL') . ",";
+		$sql .= " amount = ". (!empty($this->amount) ? ((float) $this->amount) : 0.00) . ',';
+		$sql .= " remise = ". (!empty($this->remise) ? ((float) $this->remise) : 'NULL') . ',';
+		$sql .= " vat_src_code = ". (!empty($this->vat_src_code) ? "'".$this->vat_src_code."'" : 'NULL') . ',';
+		$sql .= " localtax1 = ". (!empty($this->localtax1) ? ((float) $this->localtax1) : 0.00) . ',';
+		$sql .= " localtax2 = ". (!empty($this->localtax2) ? ((float) $this->localtax2) : 0.00) . ',';
+		$sql .= " total_ht = ". (!empty($this->total_ht) ? ((float) $this->total_ht) : 0.00) . ',';
+		$sql .= " total_tva = ". (!empty($this->total_tva) ? ((float) $this->total_tva) : 0.00) . ',';
+		$sql .= " total_ttc = ". (!empty($this->total_ttc) ? ((float) $this->total_ttc) : 0.00) . ',';
+		$sql .= " fk_user_modif = ". ((int) $user->id) . ',';
+		$sql .= " fk_projet = ". (!empty($this->fk_project) ? ((int) $this->fk_project) : 'NULL') . ',';
+		$sql .= " fk_account = ". (!empty($this->fk_account) ? ((int) $this->fk_account) : 'NULL') . ',';
+		$sql .= " fk_mode_reglement = ". (!empty($this->mode_reglement_id) ? ((int) $this->mode_reglement_id) : 'NULL') . ',';
+		$sql .= " fk_cond_reglement = ". (!empty($this->cond_reglement_id) ? ((int) $this->cond_reglement_id) : 'NULL') . ',';
+		$sql .= " date_lim_reglement = ". (!empty($this->date_lim_reglement) ? "'".$this->db->idate($this->date_lim_reglement)."'" : 'NULL') . ',';
+		$sql .= " note_private = '". (!empty($this->note_private) ? $this->db->escape($this->note_private) : '') . "',";
+		$sql .= " note_public = '". (!empty($this->note_public) ? $this->db->escape($this->note_public) : '') . "',";
+		$sql .= " modelpdf = ". (!empty($this->model_pdf) ? "'".$this->db->escape($this->model_pdf)."'" : 'NULL') . ",";
+		$sql .= " fk_multicurrency = ". (!empty($this->fk_multicurrency) ? ((int) $this->fk_multicurrency) : 'NULL') . ',';
+		$sql .= " multicurrency_code = ". (!empty($this->multicurrency_code) ? "'".$this->db->escape($this->multicurrency_code)."'" : 'NULL') . ",";
+		$sql .= " multicurrency_tx = ". (!empty($this->multicurrency_tx) ? ((float) $this->multicurrency_tx) : 1) . ',';
+		$sql .= " multicurrency_total_ht = ". (!empty($this->multicurrency_total_ht) ? ((float) $this->multicurrency_total_ht) : 0.00) . ',';
+		$sql .= " multicurrency_total_tva = ". (!empty($this->multicurrency_total_tva) ? ((float) $this->multicurrency_total_tva) : 0.00) . ',';
+		$sql .= " multicurrency_total_ttc = ". (!empty($this->multicurrency_total_ttc) ? ((float) $this->multicurrency_total_ttc) : 0.00) . ',';
+		$sql .= " usenewprice = ". (!empty($this->usenewprice) ? ((int) $this->usenewprice) : 0) . ',';
+		$sql .= " frequency = ". (!empty($this->frequency) ? ((int) $this->frequency) : 0). ',';
+		$sql .= " unit_frequency = '". (!empty($this->unit_frequency) ? $this->db->escape($this->unit_frequency) : ''). "',";
+		$sql .= " date_when = ". (!empty($this->date_when) ? "'".$this->db->idate($this->date_when)."'" : 'NULL') . ',';
+		$sql .= " date_last_gen = ". (!empty($this->date_last_gen) ? "'".$this->db->idate($this->date_last_gen)."'" : 'NULL') . ',';
+		$sql .= " nb_gen_done = ". (!empty($this->nb_gen_done) ? ((int) $this->nb_gen_done) : 0) . ',';
+		$sql .= " nb_gen_max = ". (!empty($this->nb_gen_max) ? ((int) $this->nb_gen_max) : 0) . ',';
+		$sql .= " auto_validate = ". (!empty($this->auto_validate) ? ((int) $this->auto_validate) : 0);
 		$sql .= " WHERE rowid = ". (int) $this->id;
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
