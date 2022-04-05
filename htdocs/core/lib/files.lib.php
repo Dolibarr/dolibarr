@@ -2087,7 +2087,10 @@ function dol_uncompress($inputfile, $outputdir)
 
 	include_once DOL_DOCUMENT_ROOT."/core/class/utils.class.php";
 	$utils = new Utils($db);
+	
 	$fileinfo = pathinfo($inputfile);
+	$fileinfo["extension"] = strtolower($fileinfo["extension"]);
+	
 	if ($fileinfo["extension"] == "zip") {
 		if (defined('ODTPHP_PATHTOPCLZIP') && empty($conf->global->MAIN_USE_ZIPARCHIVE_FOR_ZIP_UNCOMPRESS)) {
 			dol_syslog("Constant ODTPHP_PATHTOPCLZIP for pclzip library is set to ".ODTPHP_PATHTOPCLZIP.", so we use Pclzip to unzip into ".$outputdir);
@@ -2146,8 +2149,8 @@ function dol_uncompress($inputfile, $outputdir)
 		}
 
 		return array('error'=>'ErrNoZipEngine');
-	} elseif (in_array($fileinfo["extension"], array('gz','bz2','zst'))) {
-		$extension = pathinfo($fileinfo["filename"], PATHINFO_EXTENSION);
+	} elseif (in_array($fileinfo["extension"], array('gz', 'bz2', 'zst'))) {
+		$extension = strtolower(pathinfo($fileinfo["filename"], PATHINFO_EXTENSION));
 		if ($extension == "tar") {
 			$cmd = 'tar -C '.escapeshellcmd(dol_sanitizePathName($outputdir)).' -xvf '.escapeshellcmd(dol_sanitizePathName($fileinfo["dirname"]).'/'.dol_sanitizeFileName($fileinfo["basename"]));
 			$resarray = $utils->executeCLI($cmd, $outputdir);
