@@ -3779,6 +3779,10 @@ abstract class CommonObject
 	{
 		global $conf, $hookmanager, $action;
 
+		// important for pdf generation time reduction
+		// this boolean is true if $this->linkedObjects has already been loaded with all objects linked without filter
+		if ($this->linkedObjectsFullLoaded) return 1;
+
 		$this->linkedObjectsIds = array();
 		$this->linkedObjects = array();
 

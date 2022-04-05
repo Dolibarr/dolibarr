@@ -2282,9 +2282,7 @@ function pdf_getLinkedObjects(&$object, $outputlangs)
 
 	$linkedobjects = array();
 
-	if (empty($object->linkedObjectsFullLoaded)) {
-		$object->fetchObjectLinked();
-	}
+	$object->fetchObjectLinked();
 
 	foreach ($object->linkedObjects as $objecttype => $objects) {
 		if ($objecttype == 'facture') {
