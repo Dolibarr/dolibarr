@@ -172,3 +172,4 @@ AddReminder=Create an automatic reminder notification for this event
 ErrorReminderActionCommCreation=Error creating the reminder notification for this event
 BrowserPush=Browser Popup Notification
 ActiveByDefault=Enabled by default
+AGENDA_EVENT_SENT_MAIL_USE_SUBJECT=Send mail events use the mail object as the event title
