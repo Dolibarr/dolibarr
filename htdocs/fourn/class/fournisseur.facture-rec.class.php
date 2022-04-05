@@ -1769,7 +1769,7 @@ class FactureFournisseurRec extends CommonInvoice
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
 		$sql .= ' SET frequency = '.($frequency ? $this->db->escape($frequency) : 'null');
 		if (!empty($unit)) {
-			$sql .= ', unit_frequency = '.$this->db->escape($unit);
+			$sql .= ', unit_frequency = \''.$this->db->escape($unit).'\'';
 		}
 		$sql .= ' WHERE rowid = ' . (int) $this->id;
 
