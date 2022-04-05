@@ -929,7 +929,7 @@ if (empty($reshook)) {
 		}
 
 		// Standard invoice or Deposit invoice, not from a Predefined template invoice
-		if (GETPOST('type') == FactureFournisseur::TYPE_STANDARD || GETPOST('type') == FactureFournisseur::TYPE_DEPOSIT && GETPOST('fac_rec') <= 0) {
+		elseif (GETPOST('type') == FactureFournisseur::TYPE_STANDARD || GETPOST('type') == FactureFournisseur::TYPE_DEPOSIT && GETPOST('fac_rec') <= 0) {
 			if (GETPOST('socid', 'int') < 1) {
 				setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('Supplier')), null, 'errors');
 				$action = 'create';
