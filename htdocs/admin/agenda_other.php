@@ -398,9 +398,9 @@ print '<td>'.$langs->trans("AGENDA_EVENT_SENT_MAIL_USE_SUBJECT").'</td>'."\n";
 print '<td class="center">&nbsp;</td>'."\n";
 print '<td class="right">'."\n";
 if (empty($conf->global->AGENDA_EVENT_SENT_MAIL_USE_SUBJECT)) {
-    print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_AGENDA_EVENT_SENT_BY_MAIL_USE_SUBJECT">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+	print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_AGENDA_EVENT_SENT_BY_MAIL_USE_SUBJECT">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 } else {
-    print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_AGENDA_EVENT_SENT_BY_MAIL_USE_SUBJECT">'.img_picto($langs->trans("Enabled"), 'switch_on').'</a>';
+	print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_AGENDA_EVENT_SENT_BY_MAIL_USE_SUBJECT">'.img_picto($langs->trans("Enabled"), 'switch_on').'</a>';
 }
 print '</td></tr>'."\n";
 

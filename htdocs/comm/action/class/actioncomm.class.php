@@ -867,7 +867,7 @@ class ActionComm extends CommonObject
 				$this->num_vote = $obj->num_vote;
 				$this->event_paid = $obj->event_paid;
 				$this->status = $obj->status;
-				
+
 				//email information
 				$this->email_msgid=$obj->email_msgid;
 				$this->email_from=$obj->email_from;
@@ -1559,7 +1559,7 @@ class ActionComm extends CommonObject
 		}
 
 		$label = $this->label;
-		if($conf->global->AGENDA_EVENT_SENT_BY_MAIL_USE_SUBJECT && !empty($this->email_subject)){
+		if ($conf->global->AGENDA_EVENT_SENT_BY_MAIL_USE_SUBJECT && !empty($this->email_subject)) {
 			$label = $this->email_subject;
 		}
 		if (empty($label)) {
