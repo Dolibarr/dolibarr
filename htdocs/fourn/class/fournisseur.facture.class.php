@@ -181,6 +181,10 @@ class FactureFournisseur extends CommonInvoice
 	 */
 	public $date_echeance;
 
+	/**
+	 * @deprecated
+	 * @var double $amount
+	 */
 	public $amount = 0;
 	public $remise = 0;
 

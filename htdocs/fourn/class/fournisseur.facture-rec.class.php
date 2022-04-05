@@ -79,6 +79,11 @@ class FactureFournisseurRec extends CommonInvoice
 
 	public $suspended;
 	public $libelle;
+
+	/**
+	 * @deprecated
+	 * @var double $amount
+	 */
 	public $amount;
 	public $remise;
 	public $vat_src_code;
