@@ -342,16 +342,23 @@ class modPropale extends DolibarrModules
 			'c.multicurrency_total_ttc' => '0'
 		];
 		$this->import_examplevalues_array[$r] = array_merge($import_sample, $import_extrafield_sample);
-		$this->import_updatekeys_array[$r] = ['c.ref'=>'Ref'];
-		$this->import_convertvalue_array[$r] = [
-			'c.fk_soc' => [
+		$this->import_updatekeys_array[$r] = array('c.ref'=>'Ref');
+		$this->import_convertvalue_array[$r] = array(
+			'c.ref' => array(
+				'rule'=>'getrefifauto',
+				'class'=>(empty($conf->global->PROPALE_ADDON) ? 'mod_propale_marbre' : $conf->global->PROPALE_ADDON),
+				'path'=>"/core/modules/propale/".(empty($conf->global->PROPALE_ADDON) ? 'mod_propale_marbre' : $conf->global->PROPALE_ADDON).'.php',
+				'classobject'=>'Propal',
+				'pathobject'=>'/comm/propal/class/propal.class.php',
+			),
+			'c.fk_soc' => array(
 				'rule' => 'fetchidfromref',
 				'file' => '/societe/class/societe.class.php',
 				'class' => 'Societe',
 				'method' => 'fetch',
 				'element' => 'ThirdParty'
-			]
-		];
+			)
+		);
 
 		//Import Proposal Lines
 		$r++;
