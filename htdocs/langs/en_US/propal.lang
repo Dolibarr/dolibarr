@@ -101,7 +101,6 @@ ConfirmMassValidationQuestion=Are you sure you want to validate the selected rec
 ConfirmMassSignatureQuestion=Are you sure you want to sign the selected records ?
 IdProposal=Proposal ID
 IdProduct=Product ID
-PrParentLine=Proposal Parent Line
 LineBuyPriceHT=Buy Price Amount net of tax for line
 SignPropal=Accept proposal
 RefusePropal=Refuse proposal

@@ -41,7 +41,9 @@
  */
 function societe_prepare_head(Societe $object)
 {
-	global $db, $langs, $conf, $user, $hookmanager;
+	global $db, $langs, $conf, $user;
+	global $hookmanager;
+
 	$h = 0;
 	$head = array();
 

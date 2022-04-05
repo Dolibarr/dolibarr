@@ -19,11 +19,11 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
- /**
-  *  \file       htdocs/compta/accounting-files.php
-  *  \ingroup    compta
-  *  \brief      Page to show portoflio and files of a thirdparty and download it
-  */
+/**
+ *  \file       htdocs/compta/accounting-files.php
+ *  \ingroup    compta
+ *  \brief      Page to show portoflio and files of a thirdparty and download it
+ */
 
 if ((array_key_exists('action', $_GET) && $_GET['action'] == 'dl') || (array_key_exists('action', $_POST) && $_POST['action'] == 'dl')) {	// To not replace token when downloading file
 	if (!defined('NOTOKENRENEWAL')) {

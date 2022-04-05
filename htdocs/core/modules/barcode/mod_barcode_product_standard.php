@@ -176,7 +176,7 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 	 * @param	string		$type       	Type of barcode (EAN, ISBN, ...)
 	 * @return 	string      				Value if OK, '' if module not configured, <0 if KO
 	 */
-	public function getNextValue($objproduct = null, $type = '')
+	public function getNextValue($objproduct, $type = '')
 	{
 		global $db, $conf;
 
