@@ -65,7 +65,8 @@ $hookmanager->initHooks(array('bankcard', 'globalcard'));
 
 // Security check
 $id = GETPOST("id", 'int') ? GETPOST("id", 'int') : GETPOST('ref', 'alpha');
-$fieldid = GETPOSTISSET("ref") ? 'ref' : 'rowid';
+$fieldid = GETPOST("id", 'int') ? 'rowid' : 'ref';
+
 $result = restrictedArea($user, 'banque', $id, 'bank_account&bank_account', '', '', $fieldid);
 
 
