@@ -119,7 +119,7 @@ $dol_no_mouse_hover = $conf->dol_no_mouse_hover;
 
 $useboldtitle = (isset($conf->global->THEME_ELDY_USEBOLDTITLE) ? $conf->global->THEME_ELDY_USEBOLDTITLE : 0);
 $borderwidth = 2;
-$userborderontable = getDolGlobalInt('THEME_ELDY_USEBORDERONTABLE');;
+$userborderontable = getDolGlobalInt('THEME_ELDY_USEBORDERONTABLE');
 
 // Case of option always editable
 if (!isset($conf->global->THEME_ELDY_BACKBODY)) {
@@ -3677,8 +3677,8 @@ div.colorback
 }
 .liste_titre_bydiv {
 	<?php if ($userborderontable) { ?>
-	border-right: 1px solid var(--colortopbordertitle1);
-	border-left: 1px solid var(--colortopbordertitle1);
+	border-right: 1px solid #ccc;
+	border-left: 1px solid #ccc;
 	<?php } ?>
 }
 table.liste, table.noborder, table.formdoc, div.noborder {
@@ -3692,13 +3692,13 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 	border-top-style: solid;
 
 	border-bottom-width: 1px;
-	border-bottom-color: var(--colortopbordertitle1);
+	border-bottom-color:  #BBB;
 	border-bottom-style: solid;
 
 	<?php
 	if ($userborderontable) { ?>
-	border-right: 1px solid var(--colortopbordertitle1);
-	border-left: 1px solid var(--colortopbordertitle1);
+	border-right: 1px solid #ccc;
+	border-left: 1px solid #ccc;
 	<?php } ?>
 	
 	margin: 0px 0px 20px 0px;
@@ -4094,15 +4094,15 @@ div.liste_titre {
 	padding-bottom: 2px;
 
 	/*border-right-width: 1px;
-	border-right-color: var(--colortopbordertitle1);
+	border-right-color: #BBB;
 	border-right-style: solid;
 
 	border-left-width: 1px;
-	border-left-color: var(--colortopbordertitle1);
+	border-left-color: #BBB;
 	border-left-style: solid;*/
 
 	border-top-width: 1px;
-	border-top-color: var(--colortopbordertitle1);
+	border-top-color: #BBB;
 	border-top-style: solid;
 }
 div.liste_titre_bydiv {
