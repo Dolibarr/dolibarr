@@ -1031,7 +1031,7 @@ class User extends CommonObject
 		$sql .= " WHERE r.id = gr.fk_id";
 		if (!empty($conf->global->MULTICOMPANY_BACKWARD_COMPATIBILITY)) {
 			if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
-				$sql .= " AND gu.entity IN (0,".(!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) ? "1," : "").$conf->entity.")";
+				$sql.= " AND gu.entity IN (0,".((int) $conf->entity).")";
 			} else {
 				$sql .= " AND r.entity = ".((int) $conf->entity);
 			}
