@@ -655,7 +655,15 @@ ALTER TABLE llx_c_socialnetworks ADD UNIQUE INDEX idx_c_socialnetworks_code_enti
 
 ALTER TABLE llx_propaldet ADD COLUMN import_key varchar(14);
 
--- Easya 2022.5 -> 2022.6
-ALTER TABLE llx_ticket ADD COLUMN date_last_msg_sent datetime AFTER date_read;
+-- Easya 2022.5
 
-ALTER TABLE llx_bank_account ADD COLUMN pti_in_ctti smallint DEFAULT 0 AFTER domiciliation;
+-- Dictionaries - add possibility to manage countries in EEC #20261
+UPDATE llx_c_country SET eec = 0 WHERE code IN ('GB', 'UK', 'IM');
+UPDATE llx_c_country SET eec = 0 WHERE eec IS NULL;
+ALTER TABLE llx_c_country MODIFY COLUMN eec tinyint DEFAULT 0 NOT NULL;
+
+-- Add option for SEPA formatting
+ALTER TABLE llx_bank_account ADD COLUMN pti_in_ctti integer DEFAULT 0 AFTER domiciliation;
+
+-- Keep the last msg sent to display warnings on ticket list
+ALTER TABLE llx_ticket ADD COLUMN date_last_msg_sent datetime AFTER date_read;
