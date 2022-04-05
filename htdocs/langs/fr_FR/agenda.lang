@@ -172,3 +172,4 @@ AddReminder=Créer une notification de rappel automatique pour cet événement
 ErrorReminderActionCommCreation=Erreur lors de la création de la notification de rappel pour cet événement
 BrowserPush=Notification par Popup navigateur
 ActiveByDefault=Activé par défaut
+AGENDA_EVENT_SENT_MAIL_USE_SUBJECT=Les évenements "envoi de mail" utilisent l'object du mail comme titre d'événement
