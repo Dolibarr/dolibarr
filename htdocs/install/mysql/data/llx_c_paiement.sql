@@ -5,6 +5,11 @@
 -- Copyright (C) 2004      Guillaume Delecourt  <guillaume.delecourt@opensides.be>
 -- Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
 -- Copyright (C) 2007 	   Patrick Raguin       <patrick.raguin@gmail.com>
+-- Copyright (C) 2022 	   Udo Tamm             <software@dolibit.de>
+--
+
+----------
+-- LICENSE
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -21,13 +26,20 @@
 --
 --
 
+-------
+-- INFO
+--
+-- Do not put a comment at the end of the line, this file is parsed during the
+-- install and all '--' symbols are removed.
 --
 -- Ne pas placer de commentaire en fin de ligne, ce fichier est parsé lors
 -- de l'install et tous les sigles '--' sont supprimés.
 --
 
+----------
+-- CONTENT
 --
--- Types paiement
+-- Payment types / Types paiement
 --
 
 insert into llx_c_paiement (id,code,libelle,type,active) values ( 1, 'TIP', 'TIP',               2, 0);
@@ -40,6 +52,7 @@ insert into llx_c_paiement (id,code,libelle,type,active) values (50, 'VAD', 'Onl
 insert into llx_c_paiement (id,code,libelle,type,active) values (51, 'TRA', 'Traite',            2, 0);
 insert into llx_c_paiement (id,code,libelle,type,active) values (52, 'LCR', 'LCR',               2, 0);
 insert into llx_c_paiement (id,code,libelle,type,active) values (53, 'FAC', 'Factor',            2, 0);
+INSERT INTO llx_c_paiement (id,code,libelle,type,active) values (99,  'PYL', 'PayPal',           1, 0);
 INSERT INTO llx_c_paiement (id,code,libelle,type,active) values (100, 'KLA', 'Klarna',           1, 0);
 INSERT INTO llx_c_paiement (id,code,libelle,type,active) values (101, 'SOF', 'Sofort',           1, 0);
 INSERT INTO llx_c_paiement (id,code,libelle,type,active) values (102, 'BAN', 'Bancontact',       1, 0);
