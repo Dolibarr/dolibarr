@@ -324,7 +324,8 @@ class ImportCsv extends ModeleImports
 		//dol_syslog("import_csv.modules maxfields=".$maxfields." importid=".$importid);
 
 		//var_dump($array_match_file_to_database);
-		//var_dump($arrayrecord);
+		//var_dump($arrayrecord); exit;
+
 		$array_match_database_to_file = array_flip($array_match_file_to_database);
 		$sort_array_match_file_to_database = $array_match_file_to_database;
 		ksort($sort_array_match_file_to_database);
@@ -367,11 +368,14 @@ class ImportCsv extends ModeleImports
 					//dol_syslog("Table ".$tablename." check for entity into cache is ".$tablewithentity_cache[$tablename]);
 				}
 
-				// array of fields to column index
+				// Define array to convert fields ('c.ref', ...) into column index (1, ...)
 				$arrayfield = array();
 				foreach ($sort_array_match_file_to_database as $key => $val) {
 					$arrayfield[$val] = ($key - 1);
 				}
+
+				// $arrayrecord start at key 0
+				// $sort_array_match_file_to_database start at key 1
 
 				// Loop on each fields in the match array: $key = 1..n, $val=alias of field (s.nom)
 				foreach ($sort_array_match_file_to_database as $key => $val) {
@@ -595,9 +599,24 @@ class ImportCsv extends ModeleImports
 										if (!empty($classModForNumber) && !empty($pathModForNumber) && is_readable(DOL_DOCUMENT_ROOT.$pathModForNumber)) {
 											require_once DOL_DOCUMENT_ROOT.$pathModForNumber;
 											$modForNumber = new $classModForNumber;
-											$defaultref = $modForNumber->getNextValue(null, null);
+
+											$tmpobject = null;
+											// Set the object when we can
+											if (!empty($objimport->array_import_convertvalue[0][$val]['classobject'])) {
+												$pathForObject = $objimport->array_import_convertvalue[0][$val]['pathobject'];
+												require_once DOL_DOCUMENT_ROOT.$pathForObject;
+												$tmpclassobject = $objimport->array_import_convertvalue[0][$val]['classobject'];
+												$tmpobject = new $tmpclassobject($this->db);
+												foreach ($arrayfield as $tmpkey => $tmpval) {	// $arrayfield is array('c.ref'=>0, ...)
+													if (in_array($tmpkey, array('t.date', 'c.date_commande'))) {
+														$tmpobject->date = dol_stringtotime($arrayrecord[$arrayfield[$tmpkey]]['val'], 1);
+													}
+												}
+											}
+
+											$defaultref = $modForNumber->getNextValue(null, $tmpobject);
 										}
-										if (is_numeric($defaultref) && $defaultref <= 0) {
+										if (is_numeric($defaultref) && $defaultref <= 0) {	// If error
 											$defaultref = '';
 										}
 										$newval = $defaultref;

@@ -194,12 +194,12 @@ $search_array_options = $extrafields->getOptionalsFromPost($object->table_elemen
 $fieldstosearchall = array(
 	'f.ref'=>'Ref',
 	'f.ref_client'=>'RefCustomer',
-	'pd.description'=>'Description',
+	'f.note_public'=>'NotePublic',
 	's.nom'=>"ThirdParty",
 	's.name_alias'=>"AliasNameShort",
 	's.zip'=>"Zip",
 	's.town'=>"Town",
-	'f.note_public'=>'NotePublic',
+	'pd.description'=>'Description',
 );
 if (empty($user->socid)) {
 	$fieldstosearchall["f.note_private"] = "NotePrivate";
@@ -568,11 +568,14 @@ $sql .= ' state.code_departement as state_code, state.nom as state_name,';
 $sql .= ' country.code as country_code,';
 $sql .= ' p.rowid as project_id, p.ref as project_ref, p.title as project_label,';
 $sql .= ' u.login, u.lastname, u.firstname, u.email as user_email, u.statut as user_statut, u.entity, u.photo, u.office_phone, u.office_fax, u.user_mobile, u.job, u.gender';
-// We need dynamount_payed to be able to sort on status (value is surely wrong because we can count several lines several times due to other left join or link with contacts. But what we need is just 0 or > 0)
-// TODO Better solution to be able to sort on already payed or remain to pay is to store amount_payed in a denormalized field.
+// We need dynamount_payed to be able to sort on status (value is surely wrong because we can count several lines several times due to other left join or link with contacts. But what we need is just 0 or > 0).
+// A Better solution to be able to sort on already payed or remain to pay is to store amount_payed in a denormalized field.
+// We disable this. It create a bug when searching with sall and sorting on status. Also it create performance troubles.
+/*
 if (!$sall) {
 	$sql .= ', SUM(pf.amount) as dynamount_payed, SUM(pf.multicurrency_amount) as multicurrency_dynamount_payed';
 }
+*/
 if ($search_categ_cus && $search_categ_cus != -1) {
 	$sql .= ", cc.fk_categorie, cc.fk_soc";
 }
@@ -598,9 +601,13 @@ $sql .= ', '.MAIN_DB_PREFIX.'facture as f';
 if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (f.rowid = ef.fk_object)";
 }
+
+// We disable this. It create a bug when searching with sall and sorting on status. Also it create performance troubles.
+/*
 if (!$sall) {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiement_facture as pf ON pf.fk_facture = f.rowid';
 }
+*/
 if ($sall || $search_product_category > 0) {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'facturedet as pd ON f.rowid=pd.fk_facture';
 }
@@ -798,6 +805,8 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 
+// We disable this. It create a bug when searching with sall and sorting on status. Also it create performance troubles.
+/*
 if (!$sall) {
 	$sql .= ' GROUP BY f.rowid, f.ref, ref_client, f.fk_soc, f.type, f.note_private, f.note_public, f.increment, f.fk_mode_reglement, f.fk_cond_reglement, f.total_ht, f.total_tva, f.total_ttc,';
 	$sql .= ' f.localtax1, f.localtax2,';
@@ -827,6 +836,8 @@ if (!$sall) {
 	$reshook = $hookmanager->executeHooks('printFieldListGroupBy', $parameters, $object); // Note that $action and $object may have been modified by hook
 	$sql .= $hookmanager->resPrint;
 } else {
+*/
+if ($sall) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $sall);
 }
 
@@ -1624,7 +1635,7 @@ if ($resql) {
 		print_liste_field_titre($arrayfields['f.note_private']['label'], $_SERVER["PHP_SELF"], "f.note_private", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
 	}
 	if (!empty($arrayfields['f.fk_statut']['checked'])) {
-		print_liste_field_titre($arrayfields['f.fk_statut']['label'], $_SERVER["PHP_SELF"], "f.fk_statut,f.paye,f.type,dynamount_payed", "", $param, 'class="right"', $sortfield, $sortorder);
+		print_liste_field_titre($arrayfields['f.fk_statut']['label'], $_SERVER["PHP_SELF"], "f.fk_statut,f.paye,f.type", "", $param, 'class="right"', $sortfield, $sortorder);
 	}
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
 	print "</tr>\n";
