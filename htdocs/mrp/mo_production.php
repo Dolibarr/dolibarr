@@ -970,12 +970,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 						// Action delete line
 						if ($permissiontodelete) {
-                            $href = $_SERVER["PHP_SELF"].'?id='.((int) $object->id).'&action=deleteline&token='.newToken().'&lineid='.((int) $line->id).'&fk_movement='.((int) $line2['fk_stock_movement']);
-                            print '<td class="center">';
-                            print '<a class="reposition" href="'.$href.'">';
-                            print img_picto('', 'delete');
-                            print '</a>';
-                            print '</td>';
+							$href = $_SERVER["PHP_SELF"].'?id='.((int) $object->id).'&action=deleteline&token='.newToken().'&lineid='.((int) $line->id).'&fk_movement='.((int) $line2['fk_stock_movement']);
+							print '<td class="center">';
+							print '<a class="reposition" href="'.$href.'">';
+							print img_picto('', 'delete');
+							print '</a>';
+							print '</td>';
 						}
 
 						print '</tr>';
