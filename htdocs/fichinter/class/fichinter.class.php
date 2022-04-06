@@ -255,7 +255,7 @@ class Fichinter extends CommonObject
 		}
 
 		if ($this->socid <= 0) {
-			$this->error = 'ErrorBadParameterForFunc';
+			$this->error = 'ErrorFicheinterCompanyDoesNotExist';
 			dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
 			return -1;
 		}
@@ -1586,7 +1586,7 @@ class FichinterLigne extends CommonObjectLine
 			if ($result > 0) {
 				if (!$notrigger) {
 					// Call trigger
-					$result = $this->call_trigger('LINEFICHINTER_UPDATE', $user);
+					$result = $this->call_trigger('LINEFICHINTER_MODIFY', $user);
 					if ($result < 0) {
 						$error++;
 					}

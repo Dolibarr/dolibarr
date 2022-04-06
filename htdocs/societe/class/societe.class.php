@@ -1450,11 +1450,13 @@ class Societe extends CommonObject
 
 			$sql .= ",prefix_comm = ".(!empty($this->prefix_comm) ? "'".$this->db->escape($this->prefix_comm)."'" : "null");
 
-			$sql .= ",fk_effectif = ".(!empty($this->effectif_id) ? "'".$this->db->escape($this->effectif_id)."'" : "null");
+			$sql .= ",fk_effectif = ".($this->effectif_id > 0 ? ((int) $this->effectif_id) : "null");
 			if (isset($this->stcomm_id)) {
-				$sql .= ",fk_stcomm=".(!empty($this->stcomm_id) ? $this->stcomm_id : "0");
+				$sql .= ",fk_stcomm=".($this->stcomm_id > 0 ? ((int) $this->stcomm_id) : "0");
 			}
-			$sql .= ",fk_typent = ".(!empty($this->typent_id) ? "'".$this->db->escape($this->typent_id)."'" : "0");
+			if (isset($this->typent_id)) {
+				$sql .= ",fk_typent = ".($this->typent_id > 0 ? ((int) $this->typent_id) : "0");
+			}
 
 			$sql .= ",fk_forme_juridique = ".(!empty($this->forme_juridique_code) ? "'".$this->db->escape($this->forme_juridique_code)."'" : "null");
 
@@ -3459,6 +3461,37 @@ class Societe extends CommonObject
 			return $sameparent;
 		} else {
 			return -1;
+		}
+	}
+
+	/**
+	 *	Get parents for company
+	 *
+	 * @param   int         $company_id     ID of company to search parent
+	 * @param   array       $parents        List of companies ID found
+	 * @return	array
+	 */
+	public function getParentsForCompany($company_id, $parents = [])
+	{
+		global $langs;
+
+		if ($company_id > 0) {
+			$sql = "SELECT parent FROM " . MAIN_DB_PREFIX . "societe WHERE rowid = $company_id";
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				if ($obj = $this->db->fetch_object($resql)) {
+					$parent = $obj->parent;
+					if ($parent > 0 && !in_array($parent, $parents)) {
+						$parents[] = $parent;
+						return $this->getParentsForCompany($parent, $parents);
+					} else {
+						return $parents;
+					}
+				}
+				$this->db->free($resql);
+			} else {
+				setEventMessage($langs->trans('GetCompanyParentsError', $this->db->lasterror()), 'errors');
+			}
 		}
 	}
 

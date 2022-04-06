@@ -65,7 +65,8 @@ $hookmanager->initHooks(array('bankcard', 'globalcard'));
 
 // Security check
 $id = GETPOST("id", 'int') ? GETPOST("id", 'int') : GETPOST('ref', 'alpha');
-$fieldid = GETPOSTISSET("ref") ? 'ref' : 'rowid';
+$fieldid = GETPOST("id") ? 'rowid' : 'ref';
+
 $result = restrictedArea($user, 'banque', $id, 'bank_account&bank_account', '', '', $fieldid);
 
 
@@ -724,7 +725,7 @@ if ($action == 'create') {
 		print '</table>';
 
 		if ($object->type == Account::TYPE_SAVINGS || $object->type == Account::TYPE_CURRENT) {
-			print '<div class="underbanner clearboth"></div>';
+			//print '<div class="underbanner clearboth"></div>';
 
 			print '<table class="border tableforfield centpercent">';
 

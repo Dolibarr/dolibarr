@@ -119,7 +119,7 @@ $dol_no_mouse_hover = $conf->dol_no_mouse_hover;
 
 $useboldtitle = (isset($conf->global->THEME_ELDY_USEBOLDTITLE) ? $conf->global->THEME_ELDY_USEBOLDTITLE : 0);
 $borderwidth = 2;
-$userborderontable = 1;
+$userborderontable = getDolGlobalInt('THEME_ELDY_USEBORDERONTABLE');
 
 // Case of option always editable
 if (!isset($conf->global->THEME_ELDY_BACKBODY)) {
@@ -2294,7 +2294,7 @@ td.nobordernopadding.widthpictotitle.col-picto {
 	vertical-align: middle;
 	margin-top: -3px
 }
-.pictowarning, .pictoerror, .pictopreview {
+.pictowarning, .pictoerror, .pictopreview, .pictonopreview {
 	padding-<?php echo $left; ?>: 3px;
 }
 .pictowarning {
@@ -3676,8 +3676,10 @@ div.colorback
 	margin-top: 5px;
 }
 .liste_titre_bydiv {
+	<?php if ($userborderontable) { ?>
 	border-right: 1px solid #ccc;
 	border-left: 1px solid #ccc;
+	<?php } ?>
 }
 table.liste, table.noborder, table.formdoc, div.noborder {
 	width: calc(100% - 2px);	/* -2 to fix a bug. Without, a scroll appears due to overflow-x: auto; of div-table-responsive */
@@ -3690,12 +3692,15 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 	border-top-style: solid;
 
 	border-bottom-width: 1px;
-	border-bottom-color: #BBB;
+	border-bottom-color:  #BBB;
 	border-bottom-style: solid;
 
+	<?php
+	if ($userborderontable) { ?>
 	border-right: 1px solid #ccc;
 	border-left: 1px solid #ccc;
-
+	<?php } ?>
+	
 	margin: 0px 0px 20px 0px;
 
 	-webkit-border-radius: 0.1em;
@@ -4074,7 +4079,9 @@ tr.pair td .nobordernopadding tr td, tr.impair td .nobordernopadding tr td {
 /*
 table.nobottomiftotal tr.liste_total td {
 	background-color: #fff;
+	<?php if (!$userborderontable) { ?>
 	border-bottom: 0px !important;
+	<?php } ?>
 }
 */
 div.liste_titre .tagtd {
@@ -4099,10 +4106,11 @@ div.liste_titre {
 	border-top-style: solid;
 }
 div.liste_titre_bydiv {
+	<?php if ($userborderontable) { ?>
 	border-top-width: <?php echo $borderwidth ?>px;
 	border-top-color: var(--colortopbordertitle1);
 	border-top-style: solid;
-
+	<?php } ?>
 	border-collapse: collapse;
 	display: table;
 	padding: 2px 0px 2px 0;
@@ -6341,6 +6349,18 @@ dl.dropdown {
 dd.dropdowndd ul li {
 	text-overflow: ellipsis;
 	overflow: hidden;
+	white-space: nowrap;
+}
+
+
+/* ============================================================================== */
+/* Kanban                                                                         */
+/* ============================================================================== */
+
+.info-box-label {
+	max-width: 180px;
+	overflow: hidden;
+	text-overflow: ellipsis;
 	white-space: nowrap;
 }
 

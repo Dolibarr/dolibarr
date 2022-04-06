@@ -3895,7 +3895,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
 			if (!$error && !$notrigger) {
 				global $user;
 				// Call trigger
-				$result = $this->call_trigger('LINEORDER_SUPPLIER_UPDATE', $user);
+				$result = $this->call_trigger('LINEORDER_SUPPLIER_MODIFY', $user);
 				if ($result < 0) {
 					$this->db->rollback();
 					return -1;

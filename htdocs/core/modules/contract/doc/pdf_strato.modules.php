@@ -355,7 +355,12 @@ class pdf_strato extends ModelePDFContract
 
 						$desc = dol_htmlentitiesbr($objectligne->desc, 1); // Desc (not empty for free lines)
 						$txt = '';
-						$txt .= $outputlangs->transnoentities("Quantity").' : <strong>'.$objectligne->qty.'</strong> - '.$outputlangs->transnoentities("UnitPrice").' : <strong>'.price($objectligne->subprice).'</strong>'; // Desc (not empty for free lines)
+						if (empty($conf->global->CONTRACT_HIDE_QTY_ON_PDF)) {
+							$txt .= $outputlangs->transnoentities("Quantity") . ' : <strong>' . $objectligne->qty . '</strong>';
+						}
+						if (empty($conf->global->CONTRACT_HIDE_PRICE_ON_PDF)) {
+							$txt .= ' - ' . $outputlangs->transnoentities("UnitPrice") . ' : <strong>' . price($objectligne->subprice) . '</strong>';
+						}
 						if (empty($conf->global->CONTRACT_HIDE_PLANNED_DATE_ON_PDF)) {
 							$txt .= '<br>';
 							$txt .= $outputlangs->transnoentities("DateStartPlannedShort")." : <strong>".$datei."</strong> - ".$outputlangs->transnoentities("DateEndPlanned")." : <strong>".$datee.'</strong>';

@@ -109,9 +109,9 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 			$userSearchFilter = str_replace('%1%', $usertotest, $dolibarr_main_auth_ldap_filter);
 		}
 
-		// If admin login provided
+		// If admin login or ldap auth filter provided
 		// Code to get user in LDAP from an admin connection (may differ from user connection, done later)
-		if ($ldapadminlogin) {
+		if ($ldapadminlogin || $dolibarr_main_auth_ldap_filter) {
 			$result = $ldap->connect_bind();
 			if ($result > 0) {
 				$resultFetchLdapUser = $ldap->fetch($usertotest, $userSearchFilter);

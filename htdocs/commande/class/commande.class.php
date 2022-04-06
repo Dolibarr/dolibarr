@@ -266,6 +266,11 @@ class Commande extends CommonOrder
 	 */
 	public $expeditions;
 
+	/**
+	 * @var string payment url
+	 */
+	public $online_payment_url;
+
 
 	/**
 	 *  'type' if the field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
@@ -4632,7 +4637,7 @@ class OrderLine extends CommonOrderLine
 
 			if (!$error && !$notrigger) {
 				// Call trigger
-				$result = $this->call_trigger('LINEORDER_UPDATE', $user);
+				$result = $this->call_trigger('LINEORDER_MODIFY', $user);
 				if ($result < 0) {
 					$error++;
 				}

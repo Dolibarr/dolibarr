@@ -769,7 +769,7 @@ if ($action == 'add') {
 			if (empty($conf->global->FCKEDITOR_ENABLE_MAIL)) {
 				$okforextended = false;
 			}
-			$doleditor = new DolEditor($tmpfieldlist, (!empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : ''), '', 180, 'dolibarr_mailings', 'In', 0, false, $okforextended, ROWS_4, '90%');
+			$doleditor = new DolEditor($tmpfieldlist, (!empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : ''), '', 180, 'dolibarr_mailings', 'In', 0, true, $okforextended, ROWS_4, '90%');
 			print $doleditor->Create(1);
 		}
 		print '</td>';
@@ -1000,7 +1000,7 @@ if ($resql) {
 							if (empty($conf->global->FCKEDITOR_ENABLE_MAIL)) {
 								$okforextended = false;
 							}
-							$doleditor = new DolEditor($tmpfieldlist.'-'.$rowid, (!empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : ''), '', 500, 'dolibarr_mailings', 'In', 0, false, $okforextended, ROWS_6, '90%');
+							$doleditor = new DolEditor($tmpfieldlist.'-'.$rowid, (!empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : ''), '', 500, 'dolibarr_mailings', 'In', 0, true, $okforextended, ROWS_6, '90%');
 							print $doleditor->Create(1);
 						}
 						if ($tmpfieldlist == 'content_lines') {
@@ -1152,6 +1152,7 @@ if ($resql) {
 					//else print '<a href="#">'.img_delete().'</a>';    // Some dictionary can be edited by other profile than admin
 				}
 				print '</td>';
+
 				print "</tr>\n";
 			}
 
