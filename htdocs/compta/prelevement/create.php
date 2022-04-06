@@ -43,7 +43,7 @@ $langs->loadLangs(array('banks', 'categories', 'withdrawals', 'companies', 'bill
 if ($user->socid) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'prelevement', '', '' );
+$result = restrictedArea($user, 'prelevement', '', '');
 
 $type = GETPOST('type', 'aZ09');
 
