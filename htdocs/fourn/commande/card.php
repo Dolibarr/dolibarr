@@ -2578,7 +2578,9 @@ if ($action == 'create') {
 
 			// Force mandatory order method
 			print '<tr><td class="fieldrequired">'.$langs->trans("OrderMode").'</td><td>';
-			$formorder->selectInputMethod(GETPOST('methodecommande'), "methodecommande", 1);
+			$methodecommande = '';
+			$methodecommande = GETPOSTISSET("methodecommande", "alpha") ? GETPOST('methodecommande', 'alpha') : getDolGlobalString('ORDER_SUPPLIER_METHOD_BY_DEFAULT');
+			$formorder->selectInputMethod($methodecommande, "methodecommande", 1);
 			print '</td></tr>';
 
 			print '<tr><td>'.$langs->trans("Comment").'</td><td><input size="40" type="text" name="comment" value="'.GETPOST('comment').'"></td></tr>';
