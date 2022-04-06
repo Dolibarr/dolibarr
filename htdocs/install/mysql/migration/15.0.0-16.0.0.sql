@@ -99,6 +99,9 @@ ALTER TABLE llx_partnership ADD UNIQUE INDEX uk_fk_type_fk_member (fk_type, fk_m
 
 -- v16
 
+UPDATE llx_cronjob set label = 'RecurringInvoicesJob' where label = 'RecurringInvoices';
+UPDATE llx_cronjob set label = 'RecurringSupplierInvoicesJob' where label = 'RecurringSupplierInvoices';
+
 ALTER TABLE llx_facture ADD INDEX idx_facture_datef (datef);
 
 ALTER TABLE llx_projet_task_time ADD COLUMN fk_product integer NULL;
