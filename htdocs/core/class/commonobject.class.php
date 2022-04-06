@@ -5843,7 +5843,14 @@ abstract class CommonObject
 				$attributeLabel    = $extrafields->attributes[$this->table_element]['label'][$attributeKey];
 				$attributeParam    = $extrafields->attributes[$this->table_element]['param'][$attributeKey];
 				$attributeRequired = $extrafields->attributes[$this->table_element]['required'][$attributeKey];
+				$attributeUnique   = $extrafields->attributes[$this->table_element]['unique'][$attributeKey];
 				$attrfieldcomputed = $extrafields->attributes[$this->table_element]['computed'][$attributeKey];
+
+				// If we clone, we have to clean unique extrafields to prevent duplicates.
+				// This behaviour can be prevented by external code by changing $this->context['createfromclone'] value in createFrom hook
+				if (! empty($this->context['createfromclone']) && $this->context['createfromclone'] == 'createfromclone' && ! empty($attributeUnique)) {
+					$new_array_options[$key] = null;
+				}
 
 				// Similar code than into insertExtraFields
 				if ($attributeRequired) {
