@@ -3031,7 +3031,7 @@ class ExpeditionLigne extends CommonObjectLine
 
 		if (!$error && !$notrigger) {
 			// Call trigger
-			$result = $this->call_trigger('LINESHIPPING_UPDATE', $user);
+			$result = $this->call_trigger('LINESHIPPING_MODIFY', $user);
 			if ($result < 0) {
 				$this->errors[] = $this->error;
 				$error++;

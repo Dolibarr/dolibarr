@@ -3708,7 +3708,6 @@ class Form
 		}
 	}
 
-
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *      Load into cache list of payment terms
@@ -7188,7 +7187,7 @@ class Form
 	 *  @param		int			$limit					Limit on number of returned lines
 	 *  @param		int			$status					Ticket status
 	 *  @param		string		$selected_input_value	Value of preselected input text (for use with ajax)
-	 *  @param		int			$hidelabel				Hide label (0=no, 1=yes, 2=show search icon (before) and placeholder, 3 search icon after)
+	 *  @param		int			$hidelabel				Hide label (0=no, 1=yes, 2=show search icon before and placeholder, 3 search icon after)
 	 *  @param		array		$ajaxoptions			Options for ajax_autocompleter
 	 *  @param      int			$socid					Thirdparty Id (to get also price dedicated to this customer)
 	 *  @param		string		$showempty				'' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
@@ -8859,7 +8858,7 @@ class Form
 
 		// Add where from hooks
 		if (is_object($hookmanager)) {
-			$parameters = array();
+			$parameters = array('showrefnav' => true);
 			$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object); // Note that $action and $object may have been modified by hook
 			$object->next_prev_filter .= $hookmanager->resPrint;
 		}

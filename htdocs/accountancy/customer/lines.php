@@ -68,7 +68,7 @@ $search_tvaintra = GETPOST('search_tvaintra', 'alpha');
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : (empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION) ? $conf->liste_limit : $conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION);
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusonPour le détail de la facture ref…e') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page < 0) {
 	$page = 0;
 }
@@ -137,9 +137,9 @@ if (is_array($changeaccount) && count($changeaccount) > 0 && $user->rights->acco
 	if (!$error) {
 		$db->begin();
 
-		$sql1 = "UPDATE ".MAIN_DB_PREFIX."facturedet as l";
-		$sql1 .= " SET l.fk_code_ventilation=".(GETPOST('account_parent', 'int') > 0 ? GETPOST('account_parent', 'int') : '0');
-		$sql1 .= ' WHERE l.rowid IN ('.$db->sanitize(implode(',', $changeaccount)).')';
+		$sql1 = "UPDATE ".MAIN_DB_PREFIX."facturedet";
+		$sql1 .= " SET fk_code_ventilation=".(GETPOST('account_parent', 'int') > 0 ? GETPOST('account_parent', 'int') : '0');
+		$sql1 .= ' WHERE rowid IN ('.$db->sanitize(implode(',', $changeaccount)).')';
 
 		dol_syslog('accountancy/customer/lines.php::changeaccount sql= '.$sql1);
 		$resql1 = $db->query($sql1);
@@ -496,7 +496,7 @@ if ($result) {
 		}
 		print '</td>';
 
-		print '<td class="tdoverflowonsmartphone">';
+		print '<td class="tdoverflowonsmartphone small">';
 		$text = dolGetFirstLineOfText(dol_string_nohtmltag($objp->description, 1));
 		$trunclength = empty($conf->global->ACCOUNTING_LENGTH_DESCRIPTION) ? 32 : $conf->global->ACCOUNTING_LENGTH_DESCRIPTION;
 		print $form->textwithtooltip(dol_trunc($text, $trunclength), $objp->description);

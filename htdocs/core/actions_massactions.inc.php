@@ -1218,6 +1218,26 @@ if (!$error && $massaction == 'validate' && $permissiontoadd) {
 		setEventMessages($langs->trans('ErrorMassValidationNotAllowedWhenStockIncreaseOnAction'), null, 'errors');
 		$error++;
 	}
+	if ($objecttmp->element == 'facture') {
+		if (!empty($toselect) && !empty($conf->global->INVOICE_CHECK_POSTERIOR_DATE)) {
+			// order $toselect by date
+			$sql  = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture";
+			$sql .= " WHERE rowid IN (".$db->sanitize(implode(",", $toselect)).")";
+			$sql .= " ORDER BY datef";
+
+			$resql = $db->query($sql);
+			if ($resql) {
+				$toselectnew = [];
+				while ( !empty($arr = $db->fetch_row($resql))) {
+					$toselectnew[] = $arr[0];
+				}
+				$toselect = (empty($toselectnew)) ? $toselect : $toselectnew;
+			} else {
+				dol_print_error($db);
+				$error++;
+			}
+		}
+	}
 	if (!$error) {
 		$db->begin();
 
@@ -1255,9 +1275,9 @@ if (!$error && $massaction == 'validate' && $permissiontoadd) {
 						$model = $objecttmp->model_pdf;
 						$ret = $objecttmp->fetch($objecttmp->id); // Reload to get new records
 						// To be sure vars is defined
-						$hidedetails = !empty($hidedetails) ? $hidedetails : 0;
-						$hidedesc = !empty($hidedesc) ? $hidedesc : 0;
-						$hideref = !empty($hideref) ? $hideref : 0;
+						$hidedetails = !empty($hidedetails) ? $hidedetails : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0);
+						$hidedesc = !empty($hidedesc) ? $hidedesc : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0);
+						$hideref = !empty($hideref) ? $hideref : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0);
 						$moreparams = !empty($moreparams) ? $moreparams : null;
 
 						$result = $objecttmp->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
@@ -1406,13 +1426,13 @@ if (!$error && $massaction == 'generate_doc' && $permissiontoread) {
 
 			// To be sure vars is defined
 			if (empty($hidedetails)) {
-				$hidedetails = 0;
+				$hidedetails = (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0);
 			}
 			if (empty($hidedesc)) {
-				$hidedesc = 0;
+				$hidedesc = (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0);
 			}
 			if (empty($hideref)) {
-				$hideref = 0;
+				$hideref = (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0);
 			}
 			if (empty($moreparams)) {
 				$moreparams = null;

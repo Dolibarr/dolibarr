@@ -69,6 +69,7 @@ ForAQuantityToConsumeOf=For a quantity to disassemble of %s
 ConfirmValidateMo=Are you sure you want to validate this Manufacturing Order?
 ConfirmProductionDesc=By clicking on '%s', you will validate the consumption and/or production for the quantities set. This will also update the stock and record stock movements.
 ProductionForRef=Production of %s
+CancelProductionForRef=Cancellation of product stock decrementation for product %s
 AutoCloseMO=Close automatically the Manufacturing Order if quantities to consume and to produce are reached
 NoStockChangeOnServices=No stock change on services
 ProductQtyToConsumeByMO=Product quantity still to consume by open MO

@@ -39,6 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
  */
 class FactureRec extends CommonInvoice
 {
+	const TRIGGER_PREFIX = 'BILLREC';
 	/**
 	 * @var string ID to identify managed object
 	 */
@@ -501,7 +502,7 @@ class FactureRec extends CommonInvoice
 
 			if (!$error && !$notrigger) {
 				// Call trigger
-				$result = $this->call_trigger('BILLREC_UPDATE', $user);
+				$result = $this->call_trigger('BILLREC_MODIFY', $user);
 				if ($result < 0) {
 					$this->db->rollback();
 					return -2;
@@ -527,6 +528,8 @@ class FactureRec extends CommonInvoice
 	 */
 	public function fetch($rowid, $ref = '', $ref_ext = '')
 	{
+		dol_syslog('FactureRec::fetch', LOG_DEBUG);
+
 		$sql = 'SELECT f.rowid, f.entity, f.titre as title, f.suspended, f.fk_soc, f.total_tva, f.localtax1, f.localtax2, f.total_ht, f.total_ttc';
 		$sql .= ', f.remise_percent, f.remise_absolue, f.remise';
 		$sql .= ', f.date_lim_reglement as dlr';
@@ -671,6 +674,8 @@ class FactureRec extends CommonInvoice
 		$extrafields->fetch_name_optionals_label($this->table_element_line, true);
 		*/
 
+		dol_syslog('FactureRec::fetch_lines', LOG_DEBUG);
+
 		$sql = 'SELECT l.rowid, l.fk_product, l.product_type, l.label as custom_label, l.description, l.product_type, l.price, l.qty, l.vat_src_code, l.tva_tx, ';
 		$sql .= ' l.localtax1_tx, l.localtax2_tx, l.localtax1_type, l.localtax2_type, l.remise, l.remise_percent, l.subprice,';
 		$sql .= ' l.info_bits, l.date_start_fill, l.date_end_fill, l.total_ht, l.total_tva, l.total_ttc, l.fk_product_fournisseur_price, l.buy_price_ht as pa_ht,';
@@ -683,7 +688,6 @@ class FactureRec extends CommonInvoice
 		$sql .= ' WHERE l.fk_facture = '.((int) $this->id);
 		$sql .= ' ORDER BY l.rang';
 
-		dol_syslog('FactureRec::fetch_lines', LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result) {
 			$num = $this->db->num_rows($result);
@@ -813,7 +817,14 @@ class FactureRec extends CommonInvoice
 			$this->error = $this->db->lasterror();
 			$error = -2;
 		}
-
+		if (!$error && !$notrigger) {
+			// Call trigger
+			$result = $this->call_trigger('BILLREC_DELETE', $user);
+			if ($result < 0) {
+				$error++;
+			}
+			// End call triggers
+		}
 		if (!$error) {
 			$this->db->commit();
 			return 1;
@@ -2119,7 +2130,7 @@ class FactureLigneRec extends CommonInvoiceLine
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet_rec SET";
-		$sql .= " fk_facture = ".$this->fk_facture;
+		$sql .= " fk_facture = ".((int) $this->fk_facture);
 		$sql .= ", label=".(!empty($this->label) ? "'".$this->db->escape($this->label)."'" : "null");
 		$sql .= ", description='".$this->db->escape($this->desc)."'";
 		$sql .= ", price=".price2num($this->price);
@@ -2131,10 +2142,10 @@ class FactureLigneRec extends CommonInvoiceLine
 		$sql .= ", localtax2_tx=".price2num($this->localtax2_tx);
 		$sql .= ", localtax2_type='".$this->db->escape($this->localtax2_type)."'";
 		$sql .= ", fk_product=".($this->fk_product > 0 ? $this->fk_product : "null");
-		$sql .= ", product_type=".$this->product_type;
-		$sql .= ", remise_percent='".price2num($this->remise_percent)."'";
-		$sql .= ", subprice='".price2num($this->subprice)."'";
-		$sql .= ", info_bits='".price2num($this->info_bits)."'";
+		$sql .= ", product_type=".((int) $this->product_type);
+		$sql .= ", remise_percent=".price2num($this->remise_percent);
+		$sql .= ", subprice=".price2num($this->subprice);
+		$sql .= ", info_bits=".price2num($this->info_bits);
 		$sql .= ", date_start_fill=".(int) $this->date_start_fill;
 		$sql .= ", date_end_fill=".(int) $this->date_end_fill;
 		if (empty($this->skip_update_total)) {
@@ -2165,7 +2176,7 @@ class FactureLigneRec extends CommonInvoiceLine
 
 			if (!$error && !$notrigger) {
 				// Call trigger
-				$result = $this->call_trigger('LINEBILLREC_UPDATE', $user);
+				$result = $this->call_trigger('LINEBILLREC_MODIFY', $user);
 				if ($result < 0) {
 					$error++;
 				}

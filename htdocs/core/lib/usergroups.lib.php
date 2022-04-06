@@ -507,7 +507,6 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 	}
 
 	// BorderTableActive
-	/* Disabled because not supported by md theme
 	if ($foruserprofile) {
 	} else {
 		$default = $langs->trans('No');
@@ -525,7 +524,6 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 		print '</td>';
 		print '</tr>';
 	}
-	*/
 
 	// Background color THEME_ELDY_BACKBODY
 	if ($foruserprofile) {

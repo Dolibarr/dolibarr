@@ -2280,7 +2280,7 @@ span.widthpictotitle.pictotitle {
 	vertical-align: middle;
 	margin-top: -3px
 }
-.pictowarning, .pictoerror, .pictopreview, .picto.error {
+.pictowarning, .pictoerror, .pictopreview, .pictonopreview, .picto.error {
 	padding-<?php echo $left; ?>: 3px;
 }
 .pictowarning {
@@ -3646,9 +3646,11 @@ table.liste tr:last-of-type td, table.noborder:not(#tablelines) tr:last-of-type 
 	border-bottom-color: var(--colortopbordertitle1);
 	border-bottom-style: solid;
 }
+/*
 div.tabBar div.fichehalfright table.noborder:not(.margintable):not(.paymenttable):not(.lastrecordtable):last-of-type {
 	border-bottom: 1px solid var(--colortopbordertitle1);
 }
+*/
 div.tabBar table.border>tbody>tr:last-of-type>td {
 	border-bottom-width: 1px;
 	border-bottom-color: var(--colortopbordertitle1);
@@ -6475,6 +6477,17 @@ dd.dropdowndd ul li {
 	white-space: nowrap;
 }
 
+/* ============================================================================== */
+/* Kanban                                                                         */
+/* ============================================================================== */
+
+.info-box-label {
+	max-width: 180px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
 
 /* ============================================================================== */
 /*  Markdown rendering                                                             */
@@ -7466,6 +7479,11 @@ div.clipboardCPValue.hidewithsize {
 
 	div.fichehalfright {
 		margin-top: 30px;
+	}
+
+
+	.underbanner.underbanner-before-box {
+		border-bottom: none;
 	}
 
 	.valuefield.fieldname_type span.badgeneutral {

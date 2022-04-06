@@ -866,7 +866,7 @@ class Account extends CommonObject
 
 			if (!$error && !$notrigger) {
 				// Call trigger
-				$result = $this->call_trigger('BANKACCOUNT_UPDATE', $user);
+				$result = $this->call_trigger('BANKACCOUNT_MODIFY', $user);
 				if ($result < 0) {
 					$error++;
 				}
