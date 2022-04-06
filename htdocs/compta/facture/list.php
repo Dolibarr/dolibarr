@@ -598,6 +598,9 @@ if (!empty($search_categ_cus) && $search_categ_cus != '-1') {
 }
 
 $sql .= ', '.MAIN_DB_PREFIX.'facture as f';
+if ($sortfield == "f.datef") {
+	$sql .= $db->hintindex('idx_facture_datef');
+}
 if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (f.rowid = ef.fk_object)";
 }
@@ -846,14 +849,6 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListHaving', $parameters, $object); // Note that $action and $object may have been modified by hook
 $sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPrint;
 
-$sql .= ' ORDER BY ';
-$listfield = explode(',', $sortfield);
-$listorder = explode(',', $sortorder);
-foreach ($listfield as $key => $value) {
-	$sql .= $listfield[$key].' '.($listorder[$key] ? $listorder[$key] : 'DESC').',';
-}
-$sql .= ' f.rowid DESC ';
-
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 	/* This old and fast method to get and count full list returns all record so use a high amount of memory.
@@ -870,8 +865,12 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 	$sqlforcount = preg_replace('/GROUP BY.*$/', '', $sqlforcount);
 
 	$resql = $db->query($sqlforcount);
-	$objforcount = $db->fetch_object($resql);
-	$nbtotalofrecords = $objforcount->nbtotalofrecords;
+	if ($resql) {
+		$objforcount = $db->fetch_object($resql);
+		$nbtotalofrecords = $objforcount->nbtotalofrecords;
+	} else {
+		dol_print_error($db);
+	}
 
 	if (($page * $limit) > $nbtotalofrecords) {	// if total of record found is smaller than page * limit, goto and load page 0
 		$page = 0;
@@ -880,7 +879,17 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 	$db->free($resql);
 }
 
-$sql .= $db->plimit($limit + 1, $offset);
+// Complete request and execute it with limit
+$sql .= ' ORDER BY ';
+$listfield = explode(',', $sortfield);
+$listorder = explode(',', $sortorder);
+foreach ($listfield as $key => $value) {
+	$sql .= $listfield[$key].' '.($listorder[$key] ? $listorder[$key] : 'DESC').',';
+}
+$sql .= ' f.rowid DESC ';
+if ($limit) {
+	$sql .= $db->plimit($limit + 1, $offset);
+}
 
 $resql = $db->query($sql);
 
