@@ -159,7 +159,7 @@ if ($resql) {
 			print '</td>';
 
 			print '<td class="right">';
-			print price($obj->amount);
+			print '<span class="amount">'.price($obj->amount).'</span>';
 			print '</td>';
 
 			print '<td class="right">';

@@ -148,6 +148,7 @@ if ($resql) {
 			$thirdpartystatic->id = $obj->socid;
 			$thirdpartystatic->name = $obj->name;
 			$thirdpartystatic->email = $obj->email;
+			$thirdpartystatic->tva_intra = $obj->tva_intra;
 
 			print '<tr class="oddeven"><td>';
 			print $invoicestatic->getNomUrl(1, 'withdraw');
@@ -158,7 +159,7 @@ if ($resql) {
 			print '</td>';
 
 			print '<td class="right">';
-			print price($obj->amount);
+			print '<span class="amount">'.price($obj->amount).'</span>';
 			print '</td>';
 
 			print '<td class="right">';
