@@ -185,14 +185,14 @@ if ($action != 'edit') {
 
 	echo '<table class="noborder centpercent">';
 
-	echo '<tr class="liste_titre headerforminput">';
-	echo '<th class="headerlinecolapplyto">' . $langs->trans('ExpenseReportApplyTo') . '</th>';
-	echo '<th class="headerlinecoltype">' . $langs->trans('Type') . '</th>';
-	echo '<th class="headerlinecollimiton">' . $langs->trans('ExpenseReportLimitOn') . '</th>';
-	echo '<th class="headerlinecoldatestart">' . $langs->trans('ExpenseReportDateStart') . '</th>';
-	echo '<th class="headerlinecoldateend">' . $langs->trans('ExpenseReportDateEnd') . '</th>';
-	echo '<th class="headerlinecollimitamount">' . $langs->trans('ExpenseReportLimitAmount') . '</th>';
-	echo '<th class="headerlinecolrestrictive">' . $langs->trans('ExpenseReportRestrictive') . '</th>';
+	echo '<tr class="liste_titre headerexpensereportrules">';
+	echo '<th class="linecolapplyto">' . $langs->trans('ExpenseReportApplyTo') . '</th>';
+	echo '<th class="linecoltype">' . $langs->trans('Type') . '</th>';
+	echo '<th class="linecollimiton">' . $langs->trans('ExpenseReportLimitOn') . '</th>';
+	echo '<th class="linecoldatestart">' . $langs->trans('ExpenseReportDateStart') . '</th>';
+	echo '<th class="linecoldateend">' . $langs->trans('ExpenseReportDateEnd') . '</th>';
+	echo '<th class="linecollimitamount">' . $langs->trans('ExpenseReportLimitAmount') . '</th>';
+	echo '<th class="linecolrestrictive">' . $langs->trans('ExpenseReportRestrictive') . '</th>';
 	echo '<th>&nbsp;</th>';
 	echo '</tr>';
 
@@ -227,14 +227,14 @@ if ($action == 'edit') {
 
 	echo '<table class="noborder centpercent">';
 
-	echo '<tr class="liste_titre headerlist">';
+	echo '<tr class="liste_titre expensereportrules">';
 	echo '<th class="linecolapplyto">' . $langs->trans('ExpenseReportApplyTo') . '</th>';
-	echo '<th class="headerlinecoltype">' . $langs->trans('Type') . '</th>';
-	echo '<th class="headerlinecollimiton">' . $langs->trans('ExpenseReportLimitOn') . '</th>';
-	echo '<th class="headerlinecoldatestart">' . $langs->trans('ExpenseReportDateStart') . '</th>';
-	echo '<th class="headerlinecoldateend">' . $langs->trans('ExpenseReportDateEnd') . '</th>';
-	echo '<th class="headerlinecollimitamount">' . $langs->trans('ExpenseReportLimitAmount') . '</th>';
-	echo '<th class="headerlinecolrestrictive">' . $langs->trans('ExpenseReportRestrictive') . '</th>';
+	echo '<th class="linecoltype">' . $langs->trans('Type') . '</th>';
+	echo '<th class="linecollimiton">' . $langs->trans('ExpenseReportLimitOn') . '</th>';
+	echo '<th class="linecoldatestart">' . $langs->trans('ExpenseReportDateStart') . '</th>';
+	echo '<th class="linecoldateend">' . $langs->trans('ExpenseReportDateEnd') . '</th>';
+	echo '<th class="linecollimitamount">' . $langs->trans('ExpenseReportLimitAmount') . '</th>';
+	echo '<th class="linecolrestrictive">' . $langs->trans('ExpenseReportRestrictive') . '</th>';
 	echo '<th>&nbsp;</th>';
 	echo '</tr>';
 
