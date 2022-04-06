@@ -783,9 +783,9 @@ class Mo extends CommonObject
                 $codemovementCancel = $langs->trans("StockIncrease");
 
                 if (($qtytoprocess >= 0))  {
-                    $idstockmove = $stockmove->reception($user, $movement->product_id, $movement->warehouse_id, $qtytoprocess, 0, $labelmovementCancel, '', '', '', dol_now(), $movement->batch, $codemovementCancel);
+                    $idstockmove = $stockmove->reception($user, $movement->product_id, $movement->warehouse_id, $qtytoprocess, 0, $labelmovementCancel, '', '', $movement->batch, dol_now(), 0, $codemovementCancel);
                 } else {
-                    $idstockmove = $stockmove->livraison($user, $movement->product_id, $movement->warehouse_id, $qtytoprocess, 0, $labelmovementCancel, dol_now(), '', '', '', $movement->batch, $codemovementCancel);
+                    $idstockmove = $stockmove->livraison($user, $movement->product_id, $movement->warehouse_id, $qtytoprocess, 0, $labelmovementCancel, dol_now(), '', '', $movement->batch, 0, $codemovementCancel);
                 }
                 if ($idstockmove < 0) {
                     $this->error++;
@@ -801,16 +801,15 @@ class Mo extends CommonObject
                     $lineDetails = $arrayoflines[$key];
                     $productstatic->fetch($lineDetails['fk_product']);
                     $qtytoprocess = $lineDetails['qty'];
-                    $id_product_batch = (! empty($lineDetails['batch']) ? $lineDetails['batch'] : 0);
 
                     // Reverse stock movement
                     $labelmovementCancel = $langs->trans("CancelProductionForRef", $productstatic->ref);
                     $codemovementCancel = $langs->trans("StockIncrease");
 
                     if ($qtytoprocess >= 0) {
-                        $idstockmove = $stockmove->reception($user, $lineDetails['fk_product'], $lineDetails['fk_warehouse'], $qtytoprocess, 0, $labelmovementCancel, '', '', '', dol_now(), $id_product_batch, $codemovementCancel);
+                        $idstockmove = $stockmove->reception($user, $lineDetails['fk_product'], $lineDetails['fk_warehouse'], $qtytoprocess, 0, $labelmovementCancel, '', '', $lineDetails['batch'], dol_now(), 0, $codemovementCancel);
                     } else {
-                        $idstockmove = $stockmove->livraison($user, $lineDetails['fk_product'], $lineDetails['fk_warehouse'], $qtytoprocess, 0, $labelmovementCancel, dol_now(), '', '', '', $id_product_batch, $codemovementCancel);
+                        $idstockmove = $stockmove->livraison($user, $lineDetails['fk_product'], $lineDetails['fk_warehouse'], $qtytoprocess, 0, $labelmovementCancel, dol_now(), '', '', $lineDetails['batch'], 0, $codemovementCancel);
                     }
                     if ($idstockmove < 0) {
                         $this->error++;
