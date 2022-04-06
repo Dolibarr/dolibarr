@@ -6,7 +6,7 @@
 
 if (empty($keyforselect) || empty($keyforelement) || empty($keyforaliasextra)) {
 	//print $keyforselet.' - '.$keyforelement.' - '.$keyforaliasextra;
-	dol_print_error('', 'include of file extrafieldsinexport.inc.php was done but var $keyforselect or $keyforelement or $keyforaliasextra was not set');
+	dol_print_error('', 'include of file extrafieldsinimport.inc.php was done but var $keyforselect or $keyforelement or $keyforaliasextra was not set');
 	exit;
 }
 
@@ -60,15 +60,14 @@ if ($resql) {    // This can fail when class is used on old database (during mig
 		if ($obj->type != 'separate') {
 			// If not a computed field
 			if (empty($obj->fieldcomputed)) {
-				$this->export_fields_array[$r][$fieldname] = $fieldlabel;
-				$this->export_TypeFields_array[$r][$fieldname] = $typeFilter;
-				$this->export_entities_array[$r][$fieldname] = $keyforelement;
+				$this->import_fields_array[$r][$fieldname] = $fieldlabel.($obj->fieldrequired ? '*' : '');
+				$this->import_TypeFields_array[$r][$fieldname] = $typeFilter;
+				$this->import_entities_array[$r][$fieldname] = $keyforelement;
 			} else {
 				// If this is a computed field
-				$this->export_fields_array[$r][$fieldname] = $fieldlabel;
-				$this->export_TypeFields_array[$r][$fieldname] = $typeFilter.'Compute';
-				$this->export_special_array[$r][$fieldname] = $obj->fieldcomputed;
-				$this->export_entities_array[$r][$fieldname] = $keyforelement;
+				$this->import_fields_array[$r][$fieldname] = $fieldlabel.($obj->fieldrequired ? '*' : '');
+				$this->import_TypeFields_array[$r][$fieldname] = $typeFilter.'Compute';
+				$this->import_entities_array[$r][$fieldname] = $keyforelement;
 			}
 		}
 	}

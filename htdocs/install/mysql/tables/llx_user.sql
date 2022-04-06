@@ -108,5 +108,7 @@ create table llx_user
   import_key        varchar(14),				-- import key
   default_range     integer,
   default_c_exp_tax_cat     integer,
+  employee_number   varchar(50),
+  national_registration_number  varchar(50),
   fk_warehouse      integer						-- default warehouse os user
 )ENGINE=innodb;
