@@ -99,6 +99,8 @@ ALTER TABLE llx_partnership ADD UNIQUE INDEX uk_fk_type_fk_member (fk_type, fk_m
 
 -- v16
 
+ALTER TABLE llx_facture ADD INDEX idx_facture_datef (datef);
+
 ALTER TABLE llx_projet_task_time ADD COLUMN fk_product integer NULL;
 
 INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) values ('PROPAL_MODIFY','Customer proposal modified','Executed when a customer proposal is modified','propal',2);
