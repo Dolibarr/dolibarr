@@ -178,7 +178,13 @@ class modCommande extends DolibarrModules
 		$this->rights[$r][4] = 'commande';
 		$this->rights[$r][5] = 'export';
 
-
+		$r++;
+		$this->rights[$r][0] = 1422;
+		$this->rights[$r][1] = 'Statistics sale orders';
+		$this->rights[$r][2] = 'd';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'order_advance';
+		$this->rights[$r][5] = 'statistics';
 		// Menus
 		//-------
 		$this->menu = 1; // This module add menu entries. They are coded into menu manager.

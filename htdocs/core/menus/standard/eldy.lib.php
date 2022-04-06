@@ -1317,7 +1317,7 @@ function get_left_menu_commercial($mainmenu, &$newmenu, $usemenuhider = 1, $left
 				//$newmenu->add("/commande/list.php?leftmenu=orders&search_status=4", $langs->trans("StatusOrderProcessed"), 2, $user->rights->commande->lire);
 				$newmenu->add("/commande/list.php?leftmenu=orders&search_status=-1", $langs->trans("StatusOrderCanceledShort"), 2, $user->rights->commande->lire);
 			}
-			$newmenu->add("/commande/stats/index.php?leftmenu=orders", $langs->trans("Statistics"), 1, $user->rights->commande->lire);
+			$newmenu->add("/commande/stats/index.php?leftmenu=orders", $langs->trans("Statistics"), 1, (empty($conf->global->MAIN_USE_ADVANCED_PERMS)?$user->rights->commande->lire:$user->rights->commande->order_advance->statistics));
 		}
 
 		// Supplier proposal
