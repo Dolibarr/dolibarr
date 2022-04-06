@@ -228,6 +228,9 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 		$features = 'produit';
 	}
 
+	if ($features == 'prelevement') {
+		$features = 'paymentbybanktransfer';
+	}
 
 	// Get more permissions checks from hooks
 	$parameters = array('features'=>$features, 'originalfeatures'=>$originalfeatures, 'objectid'=>$objectid, 'dbt_select'=>$dbt_select, 'idtype'=>$dbt_select, 'isdraft'=>$isdraft);

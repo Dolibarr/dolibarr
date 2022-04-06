@@ -38,7 +38,7 @@ $socid = GETPOST('socid', 'int');
 if ($user->socid) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'prelevement', '', '', 'bons');
+$result = restrictedArea($user, 'prelevement', '', '' );
 
 $type = GETPOST('type', 'aZ09');
 

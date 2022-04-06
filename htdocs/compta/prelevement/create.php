@@ -43,7 +43,7 @@ $langs->loadLangs(array('banks', 'categories', 'withdrawals', 'companies', 'bill
 if ($user->socid) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'prelevement', '', '', 'bons');
+$result = restrictedArea($user, 'prelevement', '', '' );
 
 $type = GETPOST('type', 'aZ09');
 
@@ -141,7 +141,7 @@ if (empty($reshook)) {
 		}
 	}
 	$objectclass = "BonPrelevement";
-	$uploaddir = $conf->prelevement->dir_output;
+	$uploaddir = $conf->paymentbybanktransfer->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
