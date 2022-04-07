@@ -57,7 +57,7 @@ $action = GETPOST('action', 'aZ09');
 $setterminal = GETPOST('setterminal', 'int');
 $setcurrency = GETPOST('setcurrency', 'aZ09');
 
-if ($_SESSION["takeposterminal"] == "") {
+if (empty($_SESSION["takeposterminal"])) {
 	if ($conf->global->TAKEPOS_NUM_TERMINALS == "1") {
 		$_SESSION["takeposterminal"] = 1; // Use terminal 1 if there is only 1 terminal
 	} elseif (!empty($_COOKIE["takeposterminal"])) {
@@ -114,6 +114,11 @@ $result = restrictedArea($user, 'takepos', 0, '');
 
 $form = new Form($db);
 
+$disablejs = 0;
+$disablehead = 0;
+$arrayofjs = array();
+$arrayofcss = array();
+
 // Title
 $title = 'TakePOS - Dolibarr '.DOL_VERSION;
 if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
@@ -129,22 +134,22 @@ top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 <link rel="stylesheet" href="css/pos.css.php">
 <link rel="stylesheet" href="css/colorbox.css" type="text/css" media="screen" />
 <?php
-if ($conf->global->TAKEPOS_COLOR_THEME == 1) {
+if (getDolGlobalInt('TAKEPOS_COLOR_THEME') == 1) {
 	print '<link rel="stylesheet" href="css/colorful.css">';
 }
 ?>
 <script type="text/javascript" src="js/jquery.colorbox-min.js"></script>	<!-- TODO It seems we don't need this -->
 <script type="text/javascript">
 <?php
-$categories = $categorie->get_full_arbo('product', (($conf->global->TAKEPOS_ROOT_CATEGORY_ID > 0) ? $conf->global->TAKEPOS_ROOT_CATEGORY_ID : 0), 1);
+$categories = $categorie->get_full_arbo('product', ((getDolGlobalInt('TAKEPOS_ROOT_CATEGORY_ID') > 0) ? getDolGlobalInt('TAKEPOS_ROOT_CATEGORY_ID') : 0), 1);
 
 
 // Search root category to know its level
 //$conf->global->TAKEPOS_ROOT_CATEGORY_ID=0;
 $levelofrootcategory = 0;
-if ($conf->global->TAKEPOS_ROOT_CATEGORY_ID > 0) {
+if (getDolGlobalInt('TAKEPOS_ROOT_CATEGORY_ID') > 0) {
 	foreach ($categories as $key => $categorycursor) {
-		if ($categorycursor['id'] == $conf->global->TAKEPOS_ROOT_CATEGORY_ID) {
+		if ($categorycursor['id'] == getDolGlobalInt('TAKEPOS_ROOT_CATEGORY_ID')) {
 			$levelofrootcategory = $categorycursor['level'];
 			break;
 		}
@@ -311,7 +316,7 @@ function LoadProducts(position, issubcat) {
 			//console.log("ishow"+ishow+" idata="+idata);
 			console.log(data[idata]);
 			if (typeof (data[idata]) == "undefined") {
-				<?php if (!$conf->global->TAKEPOS_HIDE_PRODUCT_IMAGES) {
+				<?php if (!getDolGlobalString('TAKEPOS_HIDE_PRODUCT_IMAGES')) {
 					echo '$("#prodivdesc"+ishow).hide();';
 					echo '$("#prodesc"+ishow).text("");';
 					echo '$("#proimg"+ishow).attr("title","");';
@@ -333,9 +338,9 @@ function LoadProducts(position, issubcat) {
 					$titlestring .= " + ' - ".dol_escape_js($langs->trans("Barcode").': ')."' + data[idata]['barcode']";
 				?>
 				var titlestring = <?php echo $titlestring; ?>;
-				<?php if (!$conf->global->TAKEPOS_HIDE_PRODUCT_IMAGES) {
+				<?php if (!getDolGlobalString('TAKEPOS_HIDE_PRODUCT_IMAGES')) {
 					echo '$("#prodivdesc"+ishow).show();';
-					if ($conf->global->TAKEPOS_SHOW_PRODUCT_REFERENCE == 1) {
+					if (getDolGlobalInt('TAKEPOS_SHOW_PRODUCT_REFERENCE') == 1) {
 						echo '$("#prodesc"+ishow).html(data[parseInt(idata)][\'ref\'].bold() + \' - \' + data[parseInt(idata)][\'label\']);';
 					} else {
 						echo '$("#prodesc"+ishow).text(data[parseInt(idata)][\'label\']);';
@@ -406,7 +411,7 @@ function MoreProducts(moreorless) {
 				//Only show products with status=1 (for sell)
 				$("#prodivdesc"+ishow).show();
 				<?php
-				if ($conf->global->TAKEPOS_SHOW_PRODUCT_REFERENCE == 1) { ?>
+				if (getDolGlobalInt('TAKEPOS_SHOW_PRODUCT_REFERENCE') == 1) { ?>
 					$("#prodesc"+ishow).html(data[parseInt(idata)]['ref'].bold() + ' - ' + data[parseInt(idata)]['label']);
 				<?php } else { ?>
 					$("#prodesc"+ishow).text(data[parseInt(idata)]['label']);
@@ -589,7 +594,7 @@ function Search2(keyCodeForEnter) {
 					?>
 					var titlestring = <?php echo $titlestring; ?>;
 					<?php
-					if ($conf->global->TAKEPOS_SHOW_PRODUCT_REFERENCE == 1) { ?>
+					if (getDolGlobalInt('TAKEPOS_SHOW_PRODUCT_REFERENCE') == 1) { ?>
 					$("#prodesc" + i).html(data[i]['ref'].bold() + ' - ' + data[i]['label']);
 					<?php } else { ?>
 						$("#prodesc" + i).text(data[i]['label']);
@@ -749,9 +754,9 @@ function OpenDrawer(){
 		data: { token: 'notrequired' },
 		<?php
 		if (getDolGlobalString('TAKEPOS_PRINT_SERVER') && filter_var($conf->global->TAKEPOS_PRINT_SERVER, FILTER_VALIDATE_URL) == true) {
-			echo "url: '".$conf->global->TAKEPOS_PRINT_SERVER."/printer/drawer.php',";
+			echo "url: '".getDolGlobalString('TAKEPOS_PRINT_SERVER', 'localhost')."/printer/drawer.php',";
 		} else {
-			echo "url: 'http://".$conf->global->TAKEPOS_PRINT_SERVER.":8111/print',";
+			echo "url: 'http://".getDolGlobalString('TAKEPOS_PRINT_SERVER', 'localhost').":8111/print',";
 		}
 		?>
 		data: "opendrawer"
@@ -940,7 +945,8 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 	<div class="modal-body">
 		<button type="button" class="block" onclick="location.href='index.php?setterminal=1'"><?php print $langs->trans("Terminal"); ?> 1</button>
 		<?php
-		for ($i = 2; $i <= $conf->global->TAKEPOS_NUM_TERMINALS; $i++) {
+		$nbloop = getDolGlobalInt('TAKEPOS_NUM_TERMINALS');
+		for ($i = 2; $i <= $nbloop; $i++) {
 			print '<button type="button" class="block" onclick="location.href=\'index.php?setterminal='.$i.'\'">'.$langs->trans("Terminal").' '.$i.'</button>';
 		}
 		?>
@@ -1098,7 +1104,7 @@ $menus[$r++] = array('title'=>'<span class="fas fa-cut paddingrightonly"></span>
 
 // BAR RESTAURANT specific menu
 if (getDolGlobalString('TAKEPOS_BAR_RESTAURANT')) {
-	if ($conf->global->TAKEPOS_ORDER_PRINTERS) {
+	if (getDolGlobalString('TAKEPOS_ORDER_PRINTERS')) {
 		$menus[$r++] = array('title'=>'<span class="fa fa-blender-phone paddingrightonly"></span><div class="trunc">'.$langs->trans("Order").'</span>', 'action'=>'TakeposPrintingOrder();');
 	}
 	//Button to print receipt before payment
@@ -1218,12 +1224,13 @@ if (!empty($conf->global->TAKEPOS_WEIGHING_SCALE)) {
 
 		<!--  Show categories -->
 		<?php
-		if ($conf->global->TAKEPOS_HIDE_CATEGORIES == 1) {
+		if (getDolGlobalInt('TAKEPOS_HIDE_CATEGORIES') == 1) {
 			print '<div class="div4" style= "display: none;">';
 		} else {
 			print '<div class="div4">';
 		}
-			$count = 0;
+
+		$count = 0;
 		while ($count < $MAXCATEG) {
 			?>
 			<div class="wrapper" <?php if ($count == ($MAXCATEG - 2)) {
@@ -1260,7 +1267,7 @@ if (!empty($conf->global->TAKEPOS_WEIGHING_SCALE)) {
 		</div>
 
 		<!--  Show product -->
-		<div class="div5"<?php if ($conf->global->TAKEPOS_HIDE_CATEGORIES == 1) {
+		<div class="div5"<?php if (getDolGlobalInt('TAKEPOS_HIDE_CATEGORIES') == 1) {
 			print ' style="width:100%;"';
 						 } ?>>
 	<?php
