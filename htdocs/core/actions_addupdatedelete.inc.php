@@ -366,7 +366,14 @@ if ($action == 'confirm_deleteline' && $confirm == 'yes' && !empty($permissionto
 
 // Action validate object
 if ($action == 'confirm_validate' && $confirm == 'yes' && $permissiontoadd) {
-	$result = $object->validate($user);
+	if($object->element == 'inventory'){
+		//Case of the conf INVENTORY_INCLUDE_SUB_WAREHOUSE
+		$include_sub_warehouse = !empty(GETPOST('include_sub_warehouse')) ? GETPOST('include_sub_warehouse') : 0;
+		$result = $object->validate($user, $include_sub_warehouse);
+	} else {
+		$result = $object->validate($user);
+	}
+
 	if ($result >= 0) {
 		// Define output language
 		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
