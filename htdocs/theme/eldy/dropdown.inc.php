@@ -21,8 +21,8 @@ button.dropdown-item.global-search-item {
 }
 
 #topmenu-bookmark-dropdown .dropdown-menu {
-	min-width: 300px;
-	max-width: 360px;
+	min-width: 360px;
+	max-width: 400px;
 }
 
 
@@ -498,5 +498,10 @@ div.quickaddblock:focus {
 	.tmenu .dropdown-menu, .login_block .dropdown-menu, .topnav .dropdown-menu {
 		margin-left: 5px;
 		right: 0;
+	}
+
+	#topmenu-bookmark-dropdown .dropdown-menu {
+		min-width: 280px;
+		max-width: 360px;
 	}
 }

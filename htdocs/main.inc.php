@@ -2410,7 +2410,7 @@ function printDropdownQuickadd()
 				"position" => 50,
 			),
 			array(
-				"url" => "/compta/facture/card.php?action=create",
+				"url" => "/contrat/card.php?action=create",
 				"title" => "NewContractSubscription@contracts",
 				"name" => "Contract@contracts",
 				"picto" => "object_contract",

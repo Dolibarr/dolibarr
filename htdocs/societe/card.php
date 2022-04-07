@@ -1320,16 +1320,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '<tr id="name_alias"><td><label for="name_alias_input">'.$langs->trans('AliasNames').'</label></td>';
 		print '<td colspan="3"><input type="text" class="minwidth300" name="name_alias" id="name_alias_input" value="'.dol_escape_htmltag($object->name_alias).'"></td></tr>';
 
-		// Parent company
-		if (empty($conf->global->SOCIETE_DISABLE_PARENTCOMPANY)) {
-			print '<tr>';
-			print '<td>'.$langs->trans('ParentCompany').'</td>';
-			print '<td colspan="3" class="maxwidthonsmartphone">';
-			print img_picto('', 'company', 'class="paddingrightonly"');
-			print $form->select_thirdparty_list('', 'parent_company_id', '', $langs->trans("ThirdParty"));
-			print '</td></tr>';
-		}
-
 		// Prospect/Customer
 		print '<tr><td class="titlefieldcreate">'.$form->editfieldkey('ProspectCustomer', 'customerprospect', '', $object, 0, 'string', '', 1).'</td>';
 		print '<td class="maxwidthonsmartphone">';
@@ -1674,6 +1664,16 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		// Other attributes
 		$parameters = array('socid'=>$socid, 'colspan' => ' colspan="3"', 'colspanvalue' => '3');
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
+
+		// Parent company
+		if (empty($conf->global->SOCIETE_DISABLE_PARENTCOMPANY)) {
+			print '<tr>';
+			print '<td>'.$langs->trans('ParentCompany').'</td>';
+			print '<td colspan="3" class="maxwidthonsmartphone">';
+			print img_picto('', 'company', 'class="paddingrightonly"');
+			print $form->select_company(GETPOST('parent_company_id'), 'parent_company_id');
+			print '</td></tr>';
+		}
 
 		// Assign a sale representative
 		print '<tr>';
