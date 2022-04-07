@@ -89,7 +89,7 @@ function testSqlAndScriptInject($val, $type)
 	// Decode string first because a lot of things are obfuscated by encoding or multiple encoding.
 	// So <svg o&#110;load='console.log(&quot;123&quot;)' become <svg onload='console.log(&quot;123&quot;)'
 	// So "&colon;&apos;" become ":'" (due to ENT_HTML5)
-	// Loop to decode until no more thing to decode.
+	// Loop to decode until no more things to decode.
 	//print "before decoding $val\n";
 	do {
 		$oldval = $val;
@@ -98,15 +98,28 @@ function testSqlAndScriptInject($val, $type)
 		$val = preg_replace_callback('/&#(x?[0-9][0-9a-f]+;?)/i', function ($m) {
 			return realCharForNumericEntities($m); }, $val);
 
-		// We clean string because some hacks try to obfuscate evil strings by inserting non printable chars. Example: 'java(ascci09)scr(ascii00)ipt' is processed like 'javascript' (whatever is place of evil ascii char)
-		// We should use dol_string_nounprintableascii but function is not yet loaded/available
-		$val = preg_replace('/[\x00-\x1F\x7F]/u', '', $val); // /u operator makes UTF8 valid characters being ignored so are not included into the replace
 		// We clean html comments because some hacks try to obfuscate evil strings by inserting HTML comments. Example: on<!-- -->error=alert(1)
 		$val = preg_replace('/<!--[^>]*-->/', '', $val);
+		$val = preg_replace('/[\r\n]/', '', $val);
 	} while ($oldval != $val);
-	//print "after  decoding $val\n";
+	//print "type = ".$type." after decoding: ".$val."\n";
 
 	$inj = 0;
+
+	// We check string because some hacks try to obfuscate evil strings by inserting non printable chars. Example: 'java(ascci09)scr(ascii00)ipt' is processed like 'javascript' (whatever is place of evil ascii char)
+	// We should use dol_string_nounprintableascii but function is not yet loaded/available
+	// Example of valid UTF8 chars:
+	// utf8=utf8mb3:    '\x0A', '\x0D', '\x7E'
+	// utf8=utf8mb3: 	'\xE0\xA0\x80'
+	// utf8mb4: 		'\xF0\x9D\x84\x9E'   (but this may be refused by the database insert if pagecode is utf8=utf8mb3)
+	$newval = preg_replace('/[\x00-\x09\x0B-\x0C\x0E-\x1F\x7F]/u', '', $val); // /u operator makes UTF8 valid characters being ignored so are not included into the replace
+	// Note that $newval may also be completely empty '' when non valid UTF8 are found.
+	if ($newval != $val) {
+		// If $val has changed after removing non valid UTF8 chars, it means we have an evil string.
+		$inj += 1;
+	}
+	//print 'type='.$type.'-val='.$val.'-newval='.$newval."-inj=".$inj."\n";
+
 	// For SQL Injection (only GET are used to scan for such injection strings)
 	if ($type == 1 || $type == 3) {
 		$inj += preg_match('/delete\s+from/i', $val);
@@ -166,7 +179,6 @@ function testSqlAndScriptInject($val, $type)
 
 	//$inj += preg_match('/on[A-Z][a-z]+\*=/', $val);   // To lock event handlers onAbort(), ...
 	$inj += preg_match('/&#58;|&#0000058|&#x3A/i', $val); // refused string ':' encoded (no reason to have it encoded) to lock 'javascript:...'
-
 	$inj += preg_match('/javascript\s*:/i', $val);
 	$inj += preg_match('/vbscript\s*:/i', $val);
 	// For XSS Injection done by adding javascript closing html tags like with onmousemove, etc... (closing a src or href tag with not cleaned param)
@@ -492,6 +504,7 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt(
 			$sensitiveget = true;
 		}
 	}
+
 	// Check a token is provided for all cases that need a mandatory token
 	// (all POST actions + all login, actions and mass actions on pages with CSRFCHECK_WITH_TOKEN set + all sensitive GET actions)
 	if (
@@ -736,6 +749,7 @@ if (!defined('NOLOGIN')) {
 		// Validation of login/pass/entity
 		// If ok, the variable login will be returned
 		// If error, we will put error message in session under the name dol_loginmesg
+		// Note authmode is an array for example: array('0'=>'dolibarr', '1'=>'google');
 		if ($test && $goontestloop && (GETPOST('actionlogin', 'aZ09') == 'login' || $dolibarr_main_authentication != 'dolibarr')) {
 			$login = checkLoginPassEntity($usertotest, $passwordtotest, $entitytotest, $authmode);
 			if ($login === '--bad-login-validity--') {
@@ -1432,11 +1446,8 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 
 	print '<!doctype html>'."\n";
 
-	if (!empty($conf->global->MAIN_USE_CACHE_MANIFEST)) {
-		print '<html lang="'.substr($langs->defaultlang, 0, 2).'" manifest="'.DOL_URL_ROOT.'/cache.manifest">'."\n";
-	} else {
-		print '<html lang="'.substr($langs->defaultlang, 0, 2).'">'."\n";
-	}
+	print '<html lang="'.substr($langs->defaultlang, 0, 2).'">'."\n";
+
 	//print '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr">'."\n";
 	if (empty($disablehead)) {
 		if (!is_object($hookmanager)) {
@@ -1670,7 +1681,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 			}
 			// Chart
 			if (empty($disableforlogin) && (empty($conf->global->MAIN_JS_GRAPH) || $conf->global->MAIN_JS_GRAPH == 'chart') && !defined('DISABLE_JS_GRAPH')) {
-				print '<script src="'.DOL_URL_ROOT.'/includes/nnnick/chartjs/dist/Chart.min.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
+				print '<script src="'.DOL_URL_ROOT.'/includes/nnnick/chartjs/dist/chart.min.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
 			}
 
 			// jQuery jeditable for Edit In Place features
@@ -2106,6 +2117,7 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId6", $mysoc->country_code).'</b>: <span>'.dol_print_profids(getDolGlobalString("MAIN_INFO_PROFID6"), 6).'</span>';
 	}
 	$dropdownBody .= '<br><b>'.$langs->trans("VATIntraShort").'</b>: <span>'.dol_print_profids(getDolGlobalString("MAIN_INFO_TVAINTRA"), 'VAT').'</span>';
+	$dropdownBody .= '<br><b>'.$langs->trans("Country").'</b>: <span>'.$langs->trans("Country".$mysoc->country_code).'</span>';
 
 	$dropdownBody .= '</div>';
 
@@ -2244,7 +2256,7 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 	    </div>';
 	} else {
 		$btnUser = '<!-- div for user link -->
-	    <div id="topmenu-login-dropdown" class="userimg atoplogin dropdown user user-menu  inline-block">
+	    <div id="topmenu-login-dropdown" class="userimg atoplogin dropdown user user-menu inline-block">
 	    	<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$user->id.'">
 	    	'.$userImage.'
 	    		<span class="hidden-xs maxwidth200 atoploginusername hideonsmartphone">'.dol_trunc($user->firstname ? $user->firstname : $user->login, 10).'</span>
@@ -2275,10 +2287,12 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 	            });
 
 	            $("#topmenulogincompanyinfo-btn").on("click", function() {
+					console.log("Clik on topmenulogincompanyinfo-btn");
 	                $("#topmenulogincompanyinfo").slideToggle();
 	            });
 
 	            $("#topmenuloginmoreinfo-btn").on("click", function() {
+					console.log("Clik on topmenuloginmoreinfo-btn");
 	                $("#topmenuloginmoreinfo").slideToggle();
 	            });';
 		}
@@ -3298,6 +3312,7 @@ if (!function_exists("llxFooter")) {
 						?>
 							<script>
 							jQuery(document).ready(function (tmp) {
+								console.log("Try Ping with hash_unique_id is md5('dolibarr'+instance_unique_id)");
 								$.ajax({
 									  method: "POST",
 									  url: "<?php echo $url_for_ping ?>",

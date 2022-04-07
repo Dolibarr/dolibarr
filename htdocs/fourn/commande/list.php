@@ -162,49 +162,45 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 // List of fields to search into when doing a "search in all"
-$fieldstosearchall = array(
-	'cf.ref'=>'Ref',
-	'cf.ref_supplier'=>'RefOrderSupplier',
-	'pd.description'=>'Description',
-	's.nom'=>"ThirdParty",
-	's.name_alias'=>"AliasNameShort",
-	's.zip'=>"Zip",
-	's.town'=>"Town",
-	'cf.note_public'=>'NotePublic',
-);
+$fieldstosearchall = array();
+foreach ($object->fields as $key => $val) {
+	if (!empty($val['searchall'])) {
+		$fieldstosearchall['cf.'.$key] = $val['label'];
+	}
+}
+$fieldstosearchall['pd.description'] = 'Description';
+$fieldstosearchall['s.nom'] = "ThirdParty";
+$fieldstosearchall['s.name_alias'] = "AliasNameShort";
+$fieldstosearchall['s.zip'] = "Zip";
+$fieldstosearchall['s.town'] = "Town";
 if (empty($user->socid)) {
 	$fieldstosearchall["cf.note_private"] = "NotePrivate";
 }
 
 $checkedtypetiers = 0;
+
+// Definition of array of fields for columns
 $arrayfields = array(
-	'cf.ref'=>array('label'=>"Ref", 'checked'=>1),
-	'cf.ref_supplier'=>array('label'=>"RefOrderSupplierShort", 'checked'=>1, 'enabled'=>1),
-	'p.project_ref'=>array('label'=>"ProjectRef", 'checked'=>0, 'enabled'=>1),
-	'u.login'=>array('label'=>"AuthorRequest", 'checked'=>1),
-	's.nom'=>array('label'=>"ThirdParty", 'checked'=>1),
-	's.town'=>array('label'=>"Town", 'checked'=>1),
-	's.zip'=>array('label'=>"Zip", 'checked'=>1),
-	'state.nom'=>array('label'=>"StateShort", 'checked'=>0),
-	'country.code_iso'=>array('label'=>"Country", 'checked'=>0),
-	'typent.code'=>array('label'=>"ThirdPartyType", 'checked'=>$checkedtypetiers),
-	'cf.date_commande'=>array('label'=>"OrderDateShort", 'checked'=>1),
-	'cf.date_livraison'=>array('label'=>"DateDeliveryPlanned", 'checked'=>1, 'enabled'=>empty($conf->global->ORDER_DISABLE_DELIVERY_DATE)),
-	'cf.total_ht'=>array('label'=>"AmountHT", 'checked'=>1),
-	'cf.total_tva'=>array('label'=>"AmountVAT", 'checked'=>0),
-	'cf.total_ttc'=>array('label'=>"AmountTTC", 'checked'=>0),
-	'cf.multicurrency_code'=>array('label'=>'Currency', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1)),
-	'cf.multicurrency_tx'=>array('label'=>'CurrencyRate', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1)),
-	'cf.multicurrency_total_ht'=>array('label'=>'MulticurrencyAmountHT', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1)),
-	'cf.multicurrency_total_tva'=>array('label'=>'MulticurrencyAmountVAT', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1)),
-	'cf.multicurrency_total_ttc'=>array('label'=>'MulticurrencyAmountTTC', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1)),
-	'cf.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
-	'cf.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>500),
-	'cf.fk_statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000),
-	'cf.billed'=>array('label'=>"Billed", 'checked'=>1, 'position'=>1000, 'enabled'=>1),
-	'cf.date_valid' =>array('label' => 'DateValidation', 'checked' => 0),
-	'cf.date_approve' =>array('label' => 'DateApprove', 'checked' => 0)
+	's.town'=>array('label'=>"Town", 'enabled'=>1, 'position'=>47, 'checked'=>1),
+	's.zip'=>array('label'=>"Zip", 'enabled'=>1, 'position'=>47, 'checked'=>1),
+	'state.nom'=>array('label'=>"StateShort", 'enabled'=>1, 'position'=>48),
+	'country.code_iso'=>array('label'=>"Country", 'enabled'=>1, 'position'=>49),
+	'typent.code'=>array('label'=>"ThirdPartyType", 'enabled'=>$checkedtypetiers, 'position'=>50),
+	'u.login'=>array('label'=>"AuthorRequest", 'enabled'=>1, 'position'=>51)
 );
+foreach ($object->fields as $key => $val) {
+	// If $val['visible']==0, then we never show the field
+	if (!empty($val['visible'])) {
+		$visible = (int) dol_eval($val['visible'], 1);
+		$arrayfields['cf.'.$key] = array(
+			'label'=>$val['label'],
+			'checked'=>(($visible < 0) ? 0 : 1),
+			'enabled'=>(abs($visible) != 3 && dol_eval($val['enabled'], 1)),
+			'position'=>$val['position'],
+			'help'=> isset($val['help']) ? $val['help'] : ''
+		);
+	}
+}
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
@@ -359,6 +355,8 @@ if (empty($reshook)) {
 
 		$db->begin();
 
+		$default_ref_supplier=dol_print_date(dol_now(), '%Y%m%d%H%M%S');
+
 		foreach ($orders as $id_order) {
 			$cmd = new CommandeFournisseur($db);
 			if ($cmd->fetch($id_order) <= 0) {
@@ -375,9 +373,8 @@ if (empty($reshook)) {
 				$objecttmp->mode_reglement_id	= $cmd->mode_reglement_id;
 				$objecttmp->fk_project = $cmd->fk_project;
 				$objecttmp->multicurrency_code = $cmd->multicurrency_code;
-				if (empty($createbills_onebythird)) {
-					$objecttmp->ref_client = $cmd->ref_client;
-				}
+				$objecttmp->ref_supplier = !empty($cmd->ref_supplier) ? $cmd->ref_supplier : $default_ref_supplier;
+				$default_ref_supplier+=1;
 
 				$datefacture = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 				if (empty($datefacture)) {
@@ -1262,7 +1259,7 @@ if ($resql) {
 		print '<td class="liste_titre"><input type="text" class="flat maxwidth75" name="search_refsupp" value="'.$search_refsupp.'"></td>';
 	}
 	// Project ref
-	if (!empty($arrayfields['p.project_ref']['checked'])) {
+	if (!empty($arrayfields['cf.fk_projet']['checked'])) {
 		print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="search_project_ref" value="'.$search_project_ref.'"></td>';
 	}
 	// Request author
@@ -1272,7 +1269,7 @@ if ($resql) {
 		print '</td>';
 	}
 	// Thirpdarty
-	if (!empty($arrayfields['s.nom']['checked'])) {
+	if (!empty($arrayfields['cf.fk_soc']['checked'])) {
 		print '<td class="liste_titre"><input type="text" size="6" class="flat" name="search_company" value="'.$search_company.'"></td>';
 	}
 	// Town
@@ -1379,7 +1376,7 @@ if ($resql) {
 	$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	// Date creation
-	if (!empty($arrayfields['cf.datec']['checked'])) {
+	if (!empty($arrayfields['cf.date_creation']['checked'])) {
 		print '<td class="liste_titre">';
 		print '</td>';
 	}
@@ -1438,14 +1435,14 @@ if ($resql) {
 	if (!empty($arrayfields['cf.ref_supplier']['checked'])) {
 		print_liste_field_titre($arrayfields['cf.ref_supplier']['label'], $_SERVER["PHP_SELF"], "cf.ref_supplier", "", $param, '', $sortfield, $sortorder, 'tdoverflowmax100imp ');
 	}
-	if (!empty($arrayfields['p.project_ref']['checked'])) {
-		print_liste_field_titre($arrayfields['p.project_ref']['label'], $_SERVER["PHP_SELF"], "p.ref", "", $param, '', $sortfield, $sortorder);
+	if (!empty($arrayfields['cf.fk_projet']['checked'])) {
+		print_liste_field_titre($arrayfields['cf.fk_projet']['label'], $_SERVER["PHP_SELF"], "p.ref", "", $param, '', $sortfield, $sortorder);
 	}
 	if (!empty($arrayfields['u.login']['checked'])) {
 		print_liste_field_titre($arrayfields['u.login']['label'], $_SERVER["PHP_SELF"], "u.login", "", $param, '', $sortfield, $sortorder);
 	}
-	if (!empty($arrayfields['s.nom']['checked'])) {
-		print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER["PHP_SELF"], "s.nom", "", $param, '', $sortfield, $sortorder);
+	if (!empty($arrayfields['cf.fk_soc']['checked'])) {
+		print_liste_field_titre($arrayfields['cf.fk_soc']['label'], $_SERVER["PHP_SELF"], "s.nom", "", $param, '', $sortfield, $sortorder);
 	}
 	if (!empty($arrayfields['s.town']['checked'])) {
 		print_liste_field_titre($arrayfields['s.town']['label'], $_SERVER["PHP_SELF"], 's.town', '', $param, '', $sortfield, $sortorder);
@@ -1501,8 +1498,8 @@ if ($resql) {
 	$parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
 	$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
-	if (!empty($arrayfields['cf.datec']['checked'])) {
-		print_liste_field_titre($arrayfields['cf.datec']['label'], $_SERVER["PHP_SELF"], "cf.date_creation", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+	if (!empty($arrayfields['cf.date_creation']['checked'])) {
+		print_liste_field_titre($arrayfields['cf.date_creation']['label'], $_SERVER["PHP_SELF"], "cf.date_creation", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
 	}
 	if (!empty($arrayfields['cf.tms']['checked'])) {
 		print_liste_field_titre($arrayfields['cf.tms']['label'], $_SERVER["PHP_SELF"], "cf.tms", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
@@ -1584,7 +1581,7 @@ if ($resql) {
 			}
 		}
 		// Project
-		if (!empty($arrayfields['p.project_ref']['checked'])) {
+		if (!empty($arrayfields['cf.fk_projet']['checked'])) {
 			$projectstatic->id = $obj->project_id;
 			$projectstatic->ref = $obj->project_ref;
 			$projectstatic->title = $obj->project_title;
@@ -1616,7 +1613,7 @@ if ($resql) {
 			}
 		}
 		// Thirdparty
-		if (!empty($arrayfields['s.nom']['checked'])) {
+		if (!empty($arrayfields['cf.fk_soc']['checked'])) {
 			print '<td class="tdoverflowmax150">';
 			$thirdpartytmp->id = $obj->socid;
 			$thirdpartytmp->name = $obj->name;
@@ -1783,7 +1780,7 @@ if ($resql) {
 		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 		// Date creation
-		if (!empty($arrayfields['cf.datec']['checked'])) {
+		if (!empty($arrayfields['cf.date_creation']['checked'])) {
 			print '<td class="center nowrap">';
 			print dol_print_date($db->jdate($obj->date_creation), 'dayhour', 'tzuser');
 			print '</td>';

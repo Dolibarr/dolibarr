@@ -412,10 +412,9 @@ if (empty($reshook)) {
 		// Set if we used free entry or predefined product
 		$predef = '';
 		$product_desc = (GETPOSTISSET('dp_desc') ? GETPOST('dp_desc', 'restricthtml') : '');
-		$price_ht = price2num(GETPOST('price_ht'), 'MU', 2);
-		$price_ht_devise = price2num(GETPOST('multicurrency_price_ht'), 'CU', 2);
 		$date_start = dol_mktime(GETPOST('date_start'.$predef.'hour'), GETPOST('date_start'.$predef.'min'), GETPOST('date_start'.$predef.'sec'), GETPOST('date_start'.$predef.'month'), GETPOST('date_start'.$predef.'day'), GETPOST('date_start'.$predef.'year'));
 		$date_end = dol_mktime(GETPOST('date_end'.$predef.'hour'), GETPOST('date_end'.$predef.'min'), GETPOST('date_end'.$predef.'sec'), GETPOST('date_end'.$predef.'month'), GETPOST('date_end'.$predef.'day'), GETPOST('date_end'.$predef.'year'));
+
 		$prod_entry_mode = GETPOST('prod_entry_mode');
 		if ($prod_entry_mode == 'free') {
 			$idprod = 0;
@@ -425,6 +424,8 @@ if (empty($reshook)) {
 
 		$tva_tx = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);		// Can be '1.2' or '1.2 (CODE)'
 
+		$price_ht = price2num(GETPOST('price_ht'), 'MU', 2);
+		$price_ht_devise = price2num(GETPOST('multicurrency_price_ht'), 'CU', 2);
 		$price_ttc = price2num(GETPOST('price_ttc'), 'MU', 2);
 		$price_ttc_devise = price2num(GETPOST('multicurrency_price_ttc'), 'CU', 2);
 		$qty = price2num(GETPOST('qty'.$predef, 'alpha'), 'MS');
@@ -461,7 +462,7 @@ if (empty($reshook)) {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Description')), null, 'errors');
 			$error++;
 		}
-		if (GETPOST('qty', 'int') == '') {
+		if (GETPOST('qty', 'alpha') == '') {	// 0 is allowed for order
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Qty')), null, 'errors');
 			$error++;
 		}
@@ -506,13 +507,14 @@ if (empty($reshook)) {
 				}
 			} elseif (GETPOST('idprodfournprice', 'alpha') > 0) {
 				$qtytosearch = $qty; // Just to see if a price exists for the quantity. Not used to found vat.
-				//$qtytosearch=-1;	       // We force qty to -1 to be sure to find if a supplier price exist
+				//$qtytosearch = -1;	 // We force qty to -1 to be sure to find if a supplier price exist
 				$idprod = $productsupplier->get_buyprice(GETPOST('idprodfournprice', 'alpha'), $qtytosearch);
 				$res = $productsupplier->fetch($idprod);
 			}
 
 			if ($idprod > 0) {
 				$label = $productsupplier->label;
+
 				// Define output language
 				if (!empty($conf->global->MAIN_MULTILANGS) && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
 					$outputlangs = $langs;
@@ -550,33 +552,36 @@ if (empty($reshook)) {
 
 				$ref_supplier = $productsupplier->ref_supplier;
 
-				$type = $productsupplier->type;
-				if (GETPOST('price_ht') != '' || GETPOST('price_ht_devise') != '') {
-					$price_base_type = 'HT';
-					$pu = price2num($price_ht, 'MU');
-					$pu_ht_devise = price2num($price_ht_devise, 'CU');
-				} elseif (GETPOST('price_ttc') != '' || GETPOST('price_ttc_devise') != '') {
-					$price_base_type = 'TTC';
-					$pu = price2num($price_ttc, 'MU');
-					$pu_ht_devise = price2num($price_ttc_devise, 'CU');
-				} else {
-					$price_base_type = ($productsupplier->fourn_price_base_type ? $productsupplier->fourn_price_base_type : 'HT');
-					if (empty($object->multicurrency_code) || ($productsupplier->fourn_multicurrency_code != $object->multicurrency_code)) {	// If object is in a different currency and price not in this currency
-						$pu = $productsupplier->fourn_pu;
-						$pu_ht_devise = 0;
-					} else {
-						$pu = $productsupplier->fourn_pu;
-						$pu_ht_devise = $productsupplier->fourn_multicurrency_unitprice;
-					}
+				// Get vat rate
+				if (!GETPOSTISSET('tva_tx')) {	// If vat rate not provided from the form (the form has the priority)
+					$tva_tx = get_default_tva($object->thirdparty, $mysoc, $productsupplier->id, GETPOST('idprodfournprice', 'alpha'));
+					$tva_npr = get_default_npr($object->thirdparty, $mysoc, $productsupplier->id, GETPOST('idprodfournprice', 'alpha'));
 				}
-
-				$tva_tx = get_default_tva($object->thirdparty, $mysoc, $productsupplier->id, GETPOST('idprodfournprice', 'alpha'));
-				$tva_npr = get_default_npr($object->thirdparty, $mysoc, $productsupplier->id, GETPOST('idprodfournprice', 'alpha'));
 				if (empty($tva_tx)) {
 					$tva_npr = 0;
 				}
 				$localtax1_tx = get_localtax($tva_tx, 1, $mysoc, $object->thirdparty, $tva_npr);
 				$localtax2_tx = get_localtax($tva_tx, 2, $mysoc, $object->thirdparty, $tva_npr);
+
+				$type = $productsupplier->type;
+				if (GETPOST('price_ht') != '' || GETPOST('price_ht_devise') != '') {
+					$price_base_type = 'HT';
+					$pu = price2num($price_ht, 'MU');
+					$pu_devise = price2num($price_ht_devise, 'CU');
+				} elseif (GETPOST('price_ttc') != '' || GETPOST('price_ttc_devise') != '') {
+					$price_base_type = 'TTC';
+					$pu = price2num($price_ttc, 'MU');
+					$pu_devise = price2num($price_ttc_devise, 'CU');
+				} else {
+					$price_base_type = ($productsupplier->fourn_price_base_type ? $productsupplier->fourn_price_base_type : 'HT');
+					if (empty($object->multicurrency_code) || ($productsupplier->fourn_multicurrency_code != $object->multicurrency_code)) {	// If object is in a different currency and price not in this currency
+						$pu = $productsupplier->fourn_pu;
+						$pu_devise = 0;
+					} else {
+						$pu = $productsupplier->fourn_pu;
+						$pu_devise = $productsupplier->fourn_multicurrency_unitprice;
+					}
+				}
 
 				if (empty($pu)) {
 					$pu = 0; // If pu is '' or null, we force to have a numeric value
@@ -584,7 +589,7 @@ if (empty($reshook)) {
 
 				$result = $object->addline(
 					$desc,
-					$pu,
+					($price_base_type == 'HT' ? $pu : 0),
 					$qty,
 					$tva_tx,
 					$localtax1_tx,
@@ -594,7 +599,7 @@ if (empty($reshook)) {
 					$ref_supplier,
 					$remise_percent,
 					$price_base_type,
-					$pu_ttc,
+					($price_base_type == 'TTC' ? $pu : 0),
 					$type,
 					$tva_npr,
 					'',
@@ -602,7 +607,7 @@ if (empty($reshook)) {
 					$date_end,
 					$array_options,
 					$productsupplier->fk_unit,
-					$pu_ht_devise,
+					$pu_devise,
 					'',
 					0
 				);
@@ -645,7 +650,7 @@ if (empty($reshook)) {
 			}
 			$price_base_type = 'HT';
 			$pu_ht_devise = price2num($price_ht_devise, 'CU');
-			//          var_dump($pu_ht.' '.$tva_tx.' '.$pu_ttc.' '.$price_base_type.' '.$pu_ht_devise); exit;
+
 			$result = $object->addline($desc, $pu_ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, 0, 0, $ref_supplier, $remise_percent, $price_base_type, $pu_ttc, $type, '', '', $date_start, $date_end, $array_options, $fk_unit, $pu_ht_devise);
 		}
 
@@ -759,6 +764,7 @@ if (empty($reshook)) {
 			$price_base_type = 'HT';
 			$ht = price2num(GETPOST('price_ht'), '', 2);
 		} else {
+			$reg = array();
 			$vatratecleaned = $vat_rate;
 			if (preg_match('/^(.*)\s*\((.*)\)$/', $vat_rate, $reg)) {      // If vat is "xx (yy)"
 				$vatratecleaned = trim($reg[1]);
@@ -770,7 +776,7 @@ if (empty($reshook)) {
 			$price_base_type = 'HT';
 		}
 
-		$pu_ht_devise = price2num(GETPOST('multicurrency_subprice'), '', 2);
+		$pu_ht_devise = price2num(GETPOST('multicurrency_subprice'), 'CU', 2);
 
 		// Extrafields Lines
 		$extralabelsline = $extrafields->fetch_name_optionals_label($object->table_element_line);
@@ -1834,11 +1840,13 @@ if ($action == 'create') {
 		$title = $langs->trans('ProductsAndServices');
 		print load_fiche_titre($title);
 
+		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 
 		$objectsrc->printOriginLinesList('', $selectedLines);
 
 		print '</table>';
+		print '</div>';
 	}
 	print "</form>\n";
 } elseif (!empty($object->id)) {

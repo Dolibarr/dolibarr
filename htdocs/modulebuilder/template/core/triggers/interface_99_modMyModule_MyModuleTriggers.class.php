@@ -28,8 +28,6 @@
  *      - interface_99_all_MyTrigger.class.php
  * - The file must stay in core/triggers
  * - The class name must be InterfaceMytrigger
- * - The constructor method must be named InterfaceMytrigger
- * - The name property name must be MyTrigger
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';

@@ -204,14 +204,10 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 					'commonobject.class.php',
 					'conf.class.php',
 					'html.form.class.php',
-					'html.formmail.class.php',
 					'translate.class.php',
 					'utils.class.php',
-					'modules_product.class.php',
-					'modules_societe.class.php',
 					'TraceableDB.php',
 					'multicurrency.class.php',
-					'reception.class.php',
 					'infobox.class.php'
 				))) {
 					// Must not find $db->
@@ -231,6 +227,7 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 				if (! in_array($file['name'], array(
 					'objectline_view.tpl.php',
 					'extrafieldsinexport.inc.php',
+					'extrafieldsinimport.inc.php',
 					'DolQueryCollector.php'
 				))) {
 					// Must not found $this->db->
@@ -365,7 +362,7 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 			$matches=array();
 			preg_match_all('/(sql|SET|WHERE|INSERT|VALUES|LIKE).+\s*\'"\s*\.\s*\$(.......)/', $filecontent, $matches, PREG_SET_ORDER);
 			foreach ($matches as $key => $val) {
-				if (! in_array($val[2], array('this->d', 'this->e', 'db->esc', 'dbs->es', 'mydb->e', 'dbsessi', 'db->ida', 'escaped', 'exclude', 'include'))) {
+				if (! in_array($val[2], array('this->d', 'this->e', 'db->esc', 'dbs->es', 'dbs->id', 'mydb->e', 'dbsessi', 'db->ida', 'escaped', 'exclude', 'include'))) {
 					$ok=false;	// This will generate error
 					break;
 				}

@@ -6,7 +6,7 @@
  * Copyright (C) 2005-2017  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2008       Patrick Raguin          <patrick.raguin@auguria.net>
  * Copyright (C) 2010-2020  Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2011-2021  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2011-2022  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
@@ -1004,23 +1004,28 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		$modCodeFournisseur = new $module;
 
 		// Define if customer/prospect or supplier status is set or not
-		if (GETPOST("type") != 'f') {
+		if (GETPOST("type", 'aZ') != 'f') {
 			$object->client = -1;
 			if (!empty($conf->global->THIRDPARTY_CUSTOMERPROSPECT_BY_DEFAULT)) {
 				$object->client = 3;
 			}
 		}
 		// Prospect / Customer
-		if (GETPOST("type") == 'c') {
+		if (GETPOST("type", 'aZ') == 'c') {
 			if (!empty($conf->global->THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT)) {
 				$object->client = $conf->global->THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT;
 			} else {
 				$object->client = 3;
 			}
 		}
-		if (GETPOST("type") == 'p') {
+		if (GETPOST("type", 'aZ') == 'p') {
 			$object->client = 2;
 		}
+
+		if (!empty($conf->global->SOCIETE_DISABLE_PROSPECTSCUSTOMERS) && $object->client == 3) {
+			$object->client = 1;
+		}
+
 		if (((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) && (GETPOST("type") == 'f' || (GETPOST("type") == '' && !empty($conf->global->THIRDPARTY_SUPPLIER_BY_DEFAULT)))) {
 			$object->fournisseur = 1;
 		}
@@ -1175,13 +1180,14 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
                         	document.formsoc.private.value=1;
                         });
 
+						var canHaveCategoryIfNotCustomerProspectSupplier = ' . (empty($conf->global->THIRDPARTY_CAN_HAVE_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT_SUPPLIER) ? '0' : '1') . ';
 						init_customer_categ();
 			  			$("#customerprospect").change(function() {
 								init_customer_categ();
 						});
 						function init_customer_categ() {
 								console.log("is customer or prospect = "+jQuery("#customerprospect").val());
-								if (jQuery("#customerprospect").val() == 0 && (jQuery("#fournisseur").val() == 0 || ' . (empty($conf->global->THIRDPARTY_CAN_HAVE_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT_SUPPLIER) ? '1' : '0').'))
+								if (jQuery("#customerprospect").val() == 0 && (jQuery("#fournisseur").val() != 0 || !canHaveCategoryIfNotCustomerProspectSupplier))
 								{
 									jQuery(".visibleifcustomer").hide();
 								}
@@ -1200,10 +1206,16 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 								if (jQuery("#fournisseur").val() == 0)
 								{
 									jQuery(".visibleifsupplier").hide();
+									if (jQuery("#customerprospect").val() == 0 && canHaveCategoryIfNotCustomerProspectSupplier && jQuery(".visibleifcustomer").is(":hidden")) {
+					                    jQuery(".visibleifcustomer").show();
+					                }
 								}
 								else
 								{
 									jQuery(".visibleifsupplier").show();
+									if (jQuery("#customerprospect").val() == 0 && jQuery(".visibleifcustomer").is(":visible")) {
+					                    jQuery(".visibleifcustomer").hide();
+					                }
 								}
 						}
 
@@ -1909,13 +1921,14 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
     				}
     			});
 
+				var canHaveCategoryIfNotCustomerProspectSupplier = ' . (empty($conf->global->THIRDPARTY_CAN_HAVE_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT_SUPPLIER) ? '0' : '1') . ';
 				init_customer_categ();
 	  			$("#customerprospect").change(function() {
 					init_customer_categ();
 				});
        			function init_customer_categ() {
 					console.log("is customer or prospect = "+jQuery("#customerprospect").val());
-					if (jQuery("#customerprospect").val() == 0 && (jQuery("#fournisseur").val() == 0 || '.(empty($conf->global->THIRDPARTY_CAN_HAVE_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT_SUPPLIER) ? '1' : '0').'))
+					if (jQuery("#customerprospect").val() == 0 && (jQuery("#fournisseur").val() != 0 || !canHaveCategoryIfNotCustomerProspectSupplier))
 					{
 						jQuery(".visibleifcustomer").hide();
 					}
@@ -1934,10 +1947,16 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					if (jQuery("#fournisseur").val() == 0)
 					{
 						jQuery(".visibleifsupplier").hide();
+						if (jQuery("#customerprospect").val() == 0 && canHaveCategoryIfNotCustomerProspectSupplier && jQuery(".visibleifcustomer").is(":hidden")) {
+							jQuery(".visibleifcustomer").show();
+					    }
 					}
 					else
 					{
 						jQuery(".visibleifsupplier").show();
+						if (jQuery("#customerprospect").val() == 0 && jQuery(".visibleifcustomer").is(":visible")) {
+					    	jQuery(".visibleifcustomer").hide();
+					    }
 					}
 				};
 

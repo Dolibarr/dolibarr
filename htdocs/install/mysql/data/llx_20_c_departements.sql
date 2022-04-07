@@ -1,16 +1,22 @@
--- Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
--- Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
--- Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
--- Copyright (C) 2004      Guillaume Delecourt  <guillaume.delecourt@opensides.be>
--- Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
--- Copyright (C) 2007 	   Patrick Raguin       <patrick.raguin@gmail.com>
--- Copyright (C) 2010-2016 Juanjo Menent        <jmenent@2byte.es>
--- Copyright (C) 2012 	   Sebastian Neuwert    <sebastian.neuwert@modula71.de>
--- Copyright (C) 2012	     Ricardo Schluter     <info@ripasch.nl>
--- Copyright (C) 2015	     Ferran Marcet	      <fmarcet@2byte.es>
--- Copyright (C) 2020-2021 Udo Tamm             <dev@dolibit.de>
+-- file: /htdocs/install/mysql/data/llx_20_c_departements.sql
+
+-- Authors -----------------------------------------------------------------------
+-- Copyright (C) 2001-2004  Rodolphe Quiedeville   <rodolphe@quiedeville.org>
+-- Copyright (C) 2003       Jean-Louis Bergamo     <jlb@j1b.org>
+-- Copyright (C) 2004-2010  Laurent Destailleur    <eldy@users.sourceforge.net>
+-- Copyright (C) 2004       Benoit Mortier         <benoit.mortier@opensides.be>
+-- Copyright (C) 2004       Guillaume Delecourt    <guillaume.delecourt@opensides.be>
+-- Copyright (C) 2005-2009  Regis Houssin          <regis.houssin@inodbox.com>
+-- Copyright (C) 2007 	    Patrick Raguin         <patrick.raguin@gmail.com>
+-- Copyright (C) 2010-2016  Juanjo Menent          <jmenent@2byte.es>
+-- Copyright (C) 2012 	    Sebastian Neuwert      <sebastian.neuwert@modula71.de>
+-- Copyright (C) 2012	    Ricardo Schluter       <info@ripasch.nl>
+-- Copyright (C) 2015	    Ferran Marcet          <fmarcet@2byte.es>
+-- Copyright (C) 2020-2021  Udo Tamm               <dev@dolibit.de>
+-- Copyright (C) 2022       Miro Sertić            <miro.sertic0606@gmail.com>
 --
+
+-- License ----------------------------------------------------------------------
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
 -- the Free Software Foundation; either version 3 of the License, or
@@ -47,6 +53,7 @@
 -- Canada
 -- Chile
 -- Colombia
+-- Croatia
 -- France
 -- Germany
 -- Honduras
@@ -59,15 +66,21 @@
 -- Peru
 -- Portugal
 -- Romania
+-- San Salvador -> El Salvador 
 -- Slovenia (need to check code SI-Id)
+-- Switzerland / Suisse
 -- Taiwan
 -- Tunisia
 -- United States of America 
+--
+-- others .. unsorted  
+
 
 
 
 -- TEMPLATE -------------------------------------------------------------------------------------------------------------
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values ( 0, '0',  '0',0,'-','-');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES ( 0, '0',  '0',0,'-','-');
+-- active is always set as on = 1
 
 
 -- Algeria Provinces  (id country=13)
@@ -144,7 +157,7 @@ INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc
 INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (35001, 'AO-HUI', NULL, NULL, 'HUÍLA', 'Huila');
 INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (35001, 'AO-LUA', NULL, NULL, 'LUANDA', 'Luanda');
 INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (35001, 'AO-LNO', NULL, NULL, 'LUNDA-NORTE', 'Lunda-Norte');
-INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (35001, 'AO-LSU',NULL, NULL,  'LUNDA-SUL', 'Lunda-Sul');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (35001, 'AO-LSU', NULL, NULL, 'LUNDA-SUL', 'Lunda-Sul');
 INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (35001, 'AO-MAL', NULL, NULL, 'MALANGE', 'Malange');
 INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (35001, 'AO-MOX', NULL, NULL, 'MOXICO', 'Moxico');
 INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (35001, 'AO-NAM', NULL, NULL, 'NAMÍBE', 'Namíbe');
@@ -182,26 +195,26 @@ INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc
 
 
 -- Australia States & Territories (id country=28)
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (2801, 'NSW','',1,'','New South Wales');
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (2801, 'VIC','',1,'','Victoria');
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (2801, 'QLD','',1,'','Queensland');
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (2801, 'SA' ,'',1,'','South Australia');
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (2801, 'ACT','',1,'','Australia Capital Territory');
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (2801, 'TAS','',1,'','Tasmania');
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (2801, 'WA' ,'',1,'','Western Australia');
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (2801, 'NT' ,'',1,'','Northern Territory');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (2801, 'NSW', '', 1, '', 'New South Wales');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (2801, 'VIC', '', 1, '', 'Victoria');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (2801, 'QLD', '', 1, '', 'Queensland');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (2801, 'SA' , '', 1, '', 'South Australia');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (2801, 'ACT', '', 1, '', 'Australia Capital Territory');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (2801, 'TAS', '', 1, '', 'Tasmania');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (2801, 'WA' , '', 1, '', 'Western Australia');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (2801, 'NT' , '', 1, '', 'Northern Territory');
 
 
 -- Austria States / Österreich Bundesländer (id country=41)
-INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom, active) VALUES (4101, 'B','BURGENLAND','Burgenland',1);
-INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom, active) VALUES (4101, 'K','KAERNTEN','Kärnten',1);
-INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom, active) VALUES (4101, 'N','NIEDEROESTERREICH','Niederösterreich',1);
-INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom, active) VALUES (4101, 'O','OBEROESTERREICH','Oberösterreich',1);
-INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom, active) VALUES (4101, 'S','SALZBURG','Salzburg',1);
-INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom, active) VALUES (4101, 'ST','STEIERMARK','Steiermark',1);
-INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom, active) VALUES (4101, 'T','TIROL','Tirol',1);
-INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom, active) VALUES (4101, 'V','VORARLBERG','Vorarlberg',1);
-INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom, active) VALUES (4101, 'W','WIEN','Wien',1);
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (4101, 'B',  'BURGENLAND', 'Burgenland');
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (4101, 'K',  'KAERNTEN', 'Kärnten');
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (4101, 'N',  'NIEDEROESTERREICH', 'Niederösterreich');
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (4101, 'O',  'OBEROESTERREICH', 'Oberösterreich');
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (4101, 'S',  'SALZBURG', 'Salzburg');
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (4101, 'ST', 'STEIERMARK', 'Steiermark');
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (4101, 'T',  'TIROL', 'Tirol');
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (4101, 'V',  'VORARLBERG', 'Vorarlberg');
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (4101, 'W',  'WIEN', 'Wien');
 
 
 -- Barbados Parish (id country=46)
@@ -219,17 +232,17 @@ INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc
 
 
 -- Belgium Provinces (id country=2)
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (201, '01','',1,'ANVERS','Anvers');
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (203, '02','',3,'BRUXELLES-CAPITALE','Bruxelles-Capitale');
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (202, '03','',2,'BRABANT-WALLON','Brabant-Wallon');
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (201, '04','',1,'BRABANT-FLAMAND','Brabant-Flamand');
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (201, '05','',1,'FLANDRE-OCCIDENTALE','Flandre-Occidentale');
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (201, '06','',1,'FLANDRE-ORIENTALE','Flandre-Orientale');
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (202, '07','',2,'HAINAUT','Hainaut');
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (202, '08','',2,'LIEGE','Liège');
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (202, '09','',1,'LIMBOURG','Limbourg');
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (202, '10','',2,'LUXEMBOURG','Luxembourg');
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (202, '11','',2,'NAMUR','Namur');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (201, '01', '', 1, 'ANVERS', 'Anvers');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (203, '02', '', 3, 'BRUXELLES-CAPITALE', 'Bruxelles-Capitale');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (202, '03', '', 2, 'BRABANT-WALLON', 'Brabant-Wallon');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (201, '04', '', 1, 'BRABANT-FLAMAND', 'Brabant-Flamand');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (201, '05', '', 1, 'FLANDRE-OCCIDENTALE', 'Flandre-Occidentale');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (201, '06', '', 1, 'FLANDRE-ORIENTALE', 'Flandre-Orientale');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (202, '07', '', 2, 'HAINAUT', 'Hainaut');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (202, '08', '', 2, 'LIEGE', 'Liège');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (202, '09', '', 1, 'LIMBOURG', 'Limbourg');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (202, '10', '', 2, 'LUXEMBOURG', 'Luxembourg');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (202, '11', '', 2, 'NAMUR', 'Namur');
 
 
 -- Brazil Provinces (id country=56)
@@ -263,16 +276,16 @@ INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc
 
 
 -- Canada Provinces & Territories (id country=14)
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (1401, 'ON','',1,'','Ontario');
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (1401, 'QC','',1,'','Quebec');
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (1401, 'NS','',1,'','Nova Scotia');
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (1401, 'NB','',1,'','New Brunswick');
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (1401, 'MB','',1,'','Manitoba');
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (1401, 'BC','',1,'','British Columbia');
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (1401, 'PE','',1,'','Prince Edward Island');
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (1401, 'SK','',1,'','Saskatchewan');
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (1401, 'AB','',1,'','Alberta');
-insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values (1401, 'NL','',1,'','Newfoundland and Labrador');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1401, 'ON', '', 1, '', 'Ontario');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1401, 'QC', '', 1, '', 'Quebec');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1401, 'NS', '', 1, '', 'Nova Scotia');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1401, 'NB', '', 1, '', 'New Brunswick');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1401, 'MB', '', 1, '', 'Manitoba');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1401, 'BC', '', 1, '', 'British Columbia');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1401, 'PE', '', 1, '', 'Prince Edward Island');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1401, 'SK', '', 1, '', 'Saskatchewan');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1401, 'AB', '', 1, '', 'Alberta');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1401, 'NL', '', 1, '', 'Newfoundland and Labrador');
 
 
 -- Chile Provinces (id country=67)
@@ -368,6 +381,30 @@ INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc
 INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (7001, 'MAG', '', 0, 'MAG', 'Magdalena');
 
 
+-- Croatia Departments (id country=76)
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (7601, 'HR-01', 'Bjelovar', 0, NULL, 'Bjelovarsko-bilogorska županija');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (7601, 'HR-02', 'Karlovac', 0, NULL, 'Karlovačka županija');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (7601, 'HR-03', 'Koprivnica', 0, NULL, 'Koprivničko-križevačka županija');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (7601, 'HR-04', 'Krapina', 0, NULL, 'Krapinsko-zagorska županija');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (7601, 'HR-05', 'Gospić', 0, NULL, 'Ličko-senjska županija');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (7601, 'HR-06', 'Čakovec', 0, NULL, 'Međimurska županija');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (7601, 'HR-07', 'Rijeka', 0, NULL, 'Primorsko-goranska županija');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (7601, 'HR-08', 'Sisak', 0, NULL, 'Sisačko-moslavačka županija');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (7601, 'HR-09', 'Varaždin', 0, NULL, 'Varaždinska županija');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (7601, 'HR-10', 'Zagreb', 0, NULL, 'Zagrebačka županija');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (7601, 'HR-11', 'Zagreb', 0, NULL, 'Grad Zagreb');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (7602, 'HR-12', 'Zadar', 0, NULL, 'Zadarska županija');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (7602, 'HR-13', 'Šibenik', 0, NULL, 'Šibensko-kninska županija');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (7602, 'HR-14', 'Split', 0, NULL, 'Splitsko-dalmatinska županija');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (7602, 'HR-15', 'Dubrovnik', 0, NULL, 'Dubrovačko-neretvanska županija');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (7603, 'HR-16', 'Slavonski Brod', 0, NULL, 'Brodsko-posavska županija');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (7603, 'HR-17', 'Osijek', 0, NULL, 'Osječko-baranjska županija');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (7603, 'HR-18', 'Požega', 0, NULL, 'Požeško-slavonska županija');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (7603, 'HR-19', 'Virovitica', 0, NULL, 'Virovitičko-podravska županija');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (7603, 'HR-20', 'Vukovar', 0, NULL, 'Vukovarsko-srijemska županija');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (7604, 'HR-21', 'Pazin', 0, NULL, 'Istarska županija');
+
+
 -- France Departements (id country=1)
 insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values ( 1, '971','97105',3,'GUADELOUPE','Guadeloupe');
 insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values ( 2, '972','97209',3,'MARTINIQUE','Martinique');
@@ -375,102 +412,102 @@ insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc
 insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values ( 4, '974','97411',3,'REUNION','Réunion');
 insert into llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) values ( 6, '976','97601',3,'MAYOTTE','Mayotte');
 
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (84,'01','01053',5,'AIN','Ain');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (32,'02','02408',5,'AISNE','Aisne');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (84,'03','03190',5,'ALLIER','Allier');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (93,'04','04070',4,'ALPES-DE-HAUTE-PROVENCE','Alpes-de-Haute-Provence');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (93,'05','05061',4,'HAUTES-ALPES','Hautes-Alpes');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (93,'06','06088',4,'ALPES-MARITIMES','Alpes-Maritimes');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (84,'07','07186',5,'ARDECHE','Ardèche');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (44,'08','08105',4,'ARDENNES','Ardennes');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (76,'09','09122',5,'ARIEGE','Ariège');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (44,'10','10387',5,'AUBE','Aube');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (76,'11','11069',5,'AUDE','Aude');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (76,'12','12202',5,'AVEYRON','Aveyron');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (93,'13','13055',4,'BOUCHES-DU-RHONE','Bouches-du-Rhône');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (28,'14','14118',2,'CALVADOS','Calvados');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (84,'15','15014',2,'CANTAL','Cantal');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (75,'16','16015',3,'CHARENTE','Charente');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (75,'17','17300',3,'CHARENTE-MARITIME','Charente-Maritime');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (24,'18','18033',2,'CHER','Cher');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (75,'19','19272',3,'CORREZE','Corrèze');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (94,'2A','2A004',3,'CORSE-DU-SUD','Corse-du-Sud');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (94,'2B','2B033',3,'HAUTE-CORSE','Haute-Corse');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (27,'21','21231',3,'COTE-D OR','Côte-d Or');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (53,'22','22278',4,'COTES-D ARMOR','Côtes-d Armor');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (75,'23','23096',3,'CREUSE','Creuse');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (75,'24','24322',3,'DORDOGNE','Dordogne');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (27,'25','25056',2,'DOUBS','Doubs');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (84,'26','26362',3,'DROME','Drôme');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (28,'27','27229',5,'EURE','Eure');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (24,'28','28085',1,'EURE-ET-LOIR','Eure-et-Loir');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (53,'29','29232',2,'FINISTERE','Finistère');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (76,'30','30189',2,'GARD','Gard');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (76,'31','31555',3,'HAUTE-GARONNE','Haute-Garonne');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (76,'32','32013',2,'GERS','Gers');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (75,'33','33063',3,'GIRONDE','Gironde');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (76,'34','34172',5,'HERAULT','Hérault');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (53,'35','35238',1,'ILLE-ET-VILAINE','Ille-et-Vilaine');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (24,'36','36044',5,'INDRE','Indre');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (24,'37','37261',1,'INDRE-ET-LOIRE','Indre-et-Loire');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (84,'38','38185',5,'ISERE','Isère');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (27,'39','39300',2,'JURA','Jura');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (75,'40','40192',4,'LANDES','Landes');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (24,'41','41018',0,'LOIR-ET-CHER','Loir-et-Cher');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (84,'42','42218',3,'LOIRE','Loire');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (84,'43','43157',3,'HAUTE-LOIRE','Haute-Loire');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (52,'44','44109',3,'LOIRE-ATLANTIQUE','Loire-Atlantique');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (24,'45','45234',2,'LOIRET','Loiret');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (76,'46','46042',2,'LOT','Lot');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (75,'47','47001',0,'LOT-ET-GARONNE','Lot-et-Garonne');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (76,'48','48095',3,'LOZERE','Lozère');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (52,'49','49007',0,'MAINE-ET-LOIRE','Maine-et-Loire');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (28,'50','50502',3,'MANCHE','Manche');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (44,'51','51108',3,'MARNE','Marne');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (44,'52','52121',3,'HAUTE-MARNE','Haute-Marne');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (52,'53','53130',3,'MAYENNE','Mayenne');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (44,'54','54395',0,'MEURTHE-ET-MOSELLE','Meurthe-et-Moselle');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (44,'55','55029',3,'MEUSE','Meuse');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (53,'56','56260',2,'MORBIHAN','Morbihan');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (44,'57','57463',3,'MOSELLE','Moselle');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (27,'58','58194',3,'NIEVRE','Nièvre');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (32,'59','59350',2,'NORD','Nord');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (32,'60','60057',5,'OISE','Oise');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (28,'61','61001',5,'ORNE','Orne');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (32,'62','62041',2,'PAS-DE-CALAIS','Pas-de-Calais');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (84,'63','63113',2,'PUY-DE-DOME','Puy-de-Dôme');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (75,'64','64445',4,'PYRENEES-ATLANTIQUES','Pyrénées-Atlantiques');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (76,'65','65440',4,'HAUTES-PYRENEES','Hautes-Pyrénées');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (76,'66','66136',4,'PYRENEES-ORIENTALES','Pyrénées-Orientales');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (44,'67','67482',2,'BAS-RHIN','Bas-Rhin');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (44,'68','68066',2,'HAUT-RHIN','Haut-Rhin');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (84,'69','69123',2,'RHONE','Rhône');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (27,'70','70550',3,'HAUTE-SAONE','Haute-Saône');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (27,'71','71270',0,'SAONE-ET-LOIRE','Saône-et-Loire');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (52,'72','72181',3,'SARTHE','Sarthe');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (84,'73','73065',3,'SAVOIE','Savoie');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (84,'74','74010',3,'HAUTE-SAVOIE','Haute-Savoie');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (11,'75','75056',0,'PARIS','Paris');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (28,'76','76540',3,'SEINE-MARITIME','Seine-Maritime');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (11,'77','77288',0,'SEINE-ET-MARNE','Seine-et-Marne');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (11,'78','78646',4,'YVELINES','Yvelines');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (75,'79','79191',4,'DEUX-SEVRES','Deux-Sèvres');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (32,'80','80021',3,'SOMME','Somme');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (76,'81','81004',2,'TARN','Tarn');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (76,'82','82121',0,'TARN-ET-GARONNE','Tarn-et-Garonne');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (93,'83','83137',2,'VAR','Var');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (93,'84','84007',0,'VAUCLUSE','Vaucluse');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (52,'85','85191',3,'VENDEE','Vendée');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (75,'86','86194',3,'VIENNE','Vienne');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (75,'87','87085',3,'HAUTE-VIENNE','Haute-Vienne');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (44,'88','88160',4,'VOSGES','Vosges');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (27,'89','89024',5,'YONNE','Yonne');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (27,'90','90010',0,'TERRITOIRE DE BELFORT','Territoire de Belfort');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (11,'91','91228',5,'ESSONNE','Essonne');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (11,'92','92050',4,'HAUTS-DE-SEINE','Hauts-de-Seine');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (11,'93','93008',3,'SEINE-SAINT-DENIS','Seine-Saint-Denis');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (11,'94','94028',2,'VAL-DE-MARNE','Val-de-Marne');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (11,'95','95500',2,'VAL-D OISE','Val-d Oise');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (84,'01','01053',5,'AIN','Ain');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (32,'02','02408',5,'AISNE','Aisne');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (84,'03','03190',5,'ALLIER','Allier');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (93,'04','04070',4,'ALPES-DE-HAUTE-PROVENCE','Alpes-de-Haute-Provence');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (93,'05','05061',4,'HAUTES-ALPES','Hautes-Alpes');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (93,'06','06088',4,'ALPES-MARITIMES','Alpes-Maritimes');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (84,'07','07186',5,'ARDECHE','Ardèche');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (44,'08','08105',4,'ARDENNES','Ardennes');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (76,'09','09122',5,'ARIEGE','Ariège');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (44,'10','10387',5,'AUBE','Aube');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (76,'11','11069',5,'AUDE','Aude');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (76,'12','12202',5,'AVEYRON','Aveyron');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (93,'13','13055',4,'BOUCHES-DU-RHONE','Bouches-du-Rhône');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (28,'14','14118',2,'CALVADOS','Calvados');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (84,'15','15014',2,'CANTAL','Cantal');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (75,'16','16015',3,'CHARENTE','Charente');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (75,'17','17300',3,'CHARENTE-MARITIME','Charente-Maritime');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (24,'18','18033',2,'CHER','Cher');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (75,'19','19272',3,'CORREZE','Corrèze');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (94,'2A','2A004',3,'CORSE-DU-SUD','Corse-du-Sud');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (94,'2B','2B033',3,'HAUTE-CORSE','Haute-Corse');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (27,'21','21231',3,'COTE-D OR','Côte-d Or');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (53,'22','22278',4,'COTES-D ARMOR','Côtes-d Armor');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (75,'23','23096',3,'CREUSE','Creuse');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (75,'24','24322',3,'DORDOGNE','Dordogne');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (27,'25','25056',2,'DOUBS','Doubs');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (84,'26','26362',3,'DROME','Drôme');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (28,'27','27229',5,'EURE','Eure');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (24,'28','28085',1,'EURE-ET-LOIR','Eure-et-Loir');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (53,'29','29232',2,'FINISTERE','Finistère');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (76,'30','30189',2,'GARD','Gard');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (76,'31','31555',3,'HAUTE-GARONNE','Haute-Garonne');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (76,'32','32013',2,'GERS','Gers');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (75,'33','33063',3,'GIRONDE','Gironde');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (76,'34','34172',5,'HERAULT','Hérault');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (53,'35','35238',1,'ILLE-ET-VILAINE','Ille-et-Vilaine');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (24,'36','36044',5,'INDRE','Indre');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (24,'37','37261',1,'INDRE-ET-LOIRE','Indre-et-Loire');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (84,'38','38185',5,'ISERE','Isère');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (27,'39','39300',2,'JURA','Jura');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (75,'40','40192',4,'LANDES','Landes');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (24,'41','41018',0,'LOIR-ET-CHER','Loir-et-Cher');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (84,'42','42218',3,'LOIRE','Loire');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (84,'43','43157',3,'HAUTE-LOIRE','Haute-Loire');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (52,'44','44109',3,'LOIRE-ATLANTIQUE','Loire-Atlantique');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (24,'45','45234',2,'LOIRET','Loiret');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (76,'46','46042',2,'LOT','Lot');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (75,'47','47001',0,'LOT-ET-GARONNE','Lot-et-Garonne');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (76,'48','48095',3,'LOZERE','Lozère');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (52,'49','49007',0,'MAINE-ET-LOIRE','Maine-et-Loire');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (28,'50','50502',3,'MANCHE','Manche');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (44,'51','51108',3,'MARNE','Marne');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (44,'52','52121',3,'HAUTE-MARNE','Haute-Marne');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (52,'53','53130',3,'MAYENNE','Mayenne');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (44,'54','54395',0,'MEURTHE-ET-MOSELLE','Meurthe-et-Moselle');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (44,'55','55029',3,'MEUSE','Meuse');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (53,'56','56260',2,'MORBIHAN','Morbihan');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (44,'57','57463',3,'MOSELLE','Moselle');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (27,'58','58194',3,'NIEVRE','Nièvre');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (32,'59','59350',2,'NORD','Nord');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (32,'60','60057',5,'OISE','Oise');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (28,'61','61001',5,'ORNE','Orne');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (32,'62','62041',2,'PAS-DE-CALAIS','Pas-de-Calais');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (84,'63','63113',2,'PUY-DE-DOME','Puy-de-Dôme');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (75,'64','64445',4,'PYRENEES-ATLANTIQUES','Pyrénées-Atlantiques');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (76,'65','65440',4,'HAUTES-PYRENEES','Hautes-Pyrénées');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (76,'66','66136',4,'PYRENEES-ORIENTALES','Pyrénées-Orientales');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (44,'67','67482',2,'BAS-RHIN','Bas-Rhin');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (44,'68','68066',2,'HAUT-RHIN','Haut-Rhin');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (84,'69','69123',2,'RHONE','Rhône');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (27,'70','70550',3,'HAUTE-SAONE','Haute-Saône');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (27,'71','71270',0,'SAONE-ET-LOIRE','Saône-et-Loire');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (52,'72','72181',3,'SARTHE','Sarthe');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (84,'73','73065',3,'SAVOIE','Savoie');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (84,'74','74010',3,'HAUTE-SAVOIE','Haute-Savoie');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (11,'75','75056',0,'PARIS','Paris');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (28,'76','76540',3,'SEINE-MARITIME','Seine-Maritime');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (11,'77','77288',0,'SEINE-ET-MARNE','Seine-et-Marne');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (11,'78','78646',4,'YVELINES','Yvelines');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (75,'79','79191',4,'DEUX-SEVRES','Deux-Sèvres');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (32,'80','80021',3,'SOMME','Somme');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (76,'81','81004',2,'TARN','Tarn');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (76,'82','82121',0,'TARN-ET-GARONNE','Tarn-et-Garonne');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (93,'83','83137',2,'VAR','Var');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (93,'84','84007',0,'VAUCLUSE','Vaucluse');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (52,'85','85191',3,'VENDEE','Vendée');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (75,'86','86194',3,'VIENNE','Vienne');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (75,'87','87085',3,'HAUTE-VIENNE','Haute-Vienne');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (44,'88','88160',4,'VOSGES','Vosges');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (27,'89','89024',5,'YONNE','Yonne');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (27,'90','90010',0,'TERRITOIRE DE BELFORT','Territoire de Belfort');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (11,'91','91228',5,'ESSONNE','Essonne');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (11,'92','92050',4,'HAUTS-DE-SEINE','Hauts-de-Seine');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (11,'93','93008',3,'SEINE-SAINT-DENIS','Seine-Saint-Denis');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (11,'94','94028',2,'VAL-DE-MARNE','Val-de-Marne');
+insert into llx_c_departements (fk_region, code_departement, cheflieu,tncc,ncc,nom) values (11,'95','95500',2,'VAL-D OISE','Val-d Oise');
 
 
 -- Germany States / Bundesländer (id country=5)
@@ -1045,6 +1082,23 @@ INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc
 INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (18801, 'VN', '', 0, '', 'Vrancea');
 
 
+-- San Salvador / El Salvador Departmentos (id country=86)
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (8601, 'SS', '', 0, '', 'San Salvador');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (8601, 'LL', '', 0, '', 'La Libertad');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (8601, 'CH', '', 0, '', 'Chalatenango');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (8601, 'CA', '', 0, '', 'Cabañas');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (8601, 'LP', '', 0, '', 'La Paz');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (8601, 'SV', '', 0, '', 'San Vicente');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (8601, 'CU', '', 0, '', 'Cuscatlan');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (8602, 'US', '', 0, '', 'Usulutan');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (8602, 'SM', '', 0, '', 'San Miguel');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (8602, 'MO', '', 0, '', 'Morazan');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (8602, 'LU', '', 0, '', 'La Union');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (8603, 'AH', '', 0, '', 'Ahuachapan');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (8603, 'SA', '', 0, '', 'Santa Ana');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (8603, 'SO', '', 0, '', 'Sonsonate');
+
+
 -- Slovenia Provinces (rowid country=202)
 INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (20203, 'SI031', NULL, NULL, 'MURA', 'Mura');
 INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (20203, 'SI032', NULL, NULL, 'DRAVA', 'Drava');
@@ -1058,6 +1112,35 @@ INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc
 INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (20204, 'SI038', NULL, NULL, 'UPPER CARNIOLA', 'Upper Carniola');
 INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (20204, 'SI043', NULL, NULL, 'GORIZIA', 'Gorizia');
 INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (20204, 'SI044', NULL, NULL, 'COASTAL–KARST', 'Coastal–Karst');
+
+
+-- Switzerland Cantons (id country=6)
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (601, 'AG','ARGOVIE','Argovie'); 
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (601, 'AI','APPENZELL RHODES INTERIEURES','Appenzell Rhodes intérieures'); 
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (601, 'AR','APPENZELL RHODES EXTERIEURES','Appenzell Rhodes extérieures'); 
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (601, 'BE','BERNE','Berne'); 
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (601, 'BL','BALE CAMPAGNE','Bâle Campagne'); 
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (601, 'BS','BALE VILLE','Bâle Ville'); 
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (601, 'FR','FRIBOURG','Fribourg'); 
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (601, 'GE','GENEVE','Genève'); 
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (601, 'GL','GLARIS','Glaris'); 
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (601, 'GR','GRISONS','Grisons'); 
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (601, 'JU','JURA','Jura'); 
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (601, 'LU','LUCERNE','Lucerne'); 
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (601, 'NE','NEUCHATEL','Neuchâtel'); 
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (601, 'NW','NIDWALD','Nidwald'); 
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (601, 'OW','OBWALD','Obwald'); 
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (601, 'SG','SAINT-GALL','Saint-Gall'); 
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (601, 'SH','SCHAFFHOUSE','Schaffhouse'); 
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (601, 'SO','SOLEURE','Soleure'); 
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (601, 'SZ','SCHWYZ','Schwyz'); 
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (601, 'TG','THURGOVIE','Thurgovie'); 
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (601, 'TI','TESSIN','Tessin'); 
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (601, 'UR','URI','Uri'); 
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (601, 'VD','VAUD','Vaud'); 
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (601, 'VS','VALAIS','Valais'); 
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (601, 'ZG','ZUG','Zug'); 
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (601, 'ZH','ZURICH','Zürich');
 
 
 -- Taiwan Divisions / Provinces / Counties (rowid country=886)
@@ -1417,34 +1500,6 @@ INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc
 INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('65', 10204, '', 0, '', 'Χανιά', 1);
 
 
--- Switzerland Cantons (id country=6)
-INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (601, 'AG','ARGOVIE','Argovie'); 
-INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (601, 'AI','APPENZELL RHODES INTERIEURES','Appenzell Rhodes intérieures'); 
-INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (601, 'AR','APPENZELL RHODES EXTERIEURES','Appenzell Rhodes extérieures'); 
-INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (601, 'BE','BERNE','Berne'); 
-INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (601, 'BL','BALE CAMPAGNE','Bâle Campagne'); 
-INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (601, 'BS','BALE VILLE','Bâle Ville'); 
-INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (601, 'FR','FRIBOURG','Fribourg'); 
-INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (601, 'GE','GENEVE','Genève'); 
-INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (601, 'GL','GLARIS','Glaris'); 
-INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (601, 'GR','GRISONS','Grisons'); 
-INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (601, 'JU','JURA','Jura'); 
-INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (601, 'LU','LUCERNE','Lucerne'); 
-INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (601, 'NE','NEUCHATEL','Neuchâtel'); 
-INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (601, 'NW','NIDWALD','Nidwald'); 
-INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (601, 'OW','OBWALD','Obwald'); 
-INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (601, 'SG','SAINT-GALL','Saint-Gall'); 
-INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (601, 'SH','SCHAFFHOUSE','Schaffhouse'); 
-INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (601, 'SO','SOLEURE','Soleure'); 
-INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (601, 'SZ','SCHWYZ','Schwyz'); 
-INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (601, 'TG','THURGOVIE','Thurgovie'); 
-INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (601, 'TI','TESSIN','Tessin'); 
-INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (601, 'UR','URI','Uri'); 
-INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (601, 'VD','VAUD','Vaud'); 
-INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (601, 'VS','VALAIS','Valais'); 
-INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (601, 'ZG','ZUG','Zug'); 
-INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom) VALUES (601, 'ZH','ZURICH','Zürich');
-
 
 -- Provinces GB (id country=7)
 INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('701', 701, NULL, 0,NULL, 'Bedfordshire', 1);
@@ -1565,24 +1620,6 @@ INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc
 INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('813', 704, NULL, 0,NULL, 'Co. Down', 1);
 INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('814', 704, NULL, 0,NULL, 'Co. Fermanagh', 1);
 INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('815', 704, NULL, 0,NULL, 'Co. Londonderry', 1);
-
-
-
--- San Salvador (id country=86)
-INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('SS', 8601, '', 0, '', 'San Salvador', 1);
-INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('SA', 8603, '', 0, '', 'Santa Ana', 1);
-INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('AH', 8603, '', 0, '', 'Ahuachapan', 1);
-INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('SO', 8603, '', 0, '', 'Sonsonate', 1);
-INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('US', 8602, '', 0, '', 'Usulutan', 1);
-INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('SM', 8602, '', 0, '', 'San Miguel', 1);
-INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('MO', 8602, '', 0, '', 'Morazan', 1);
-INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('LU', 8602, '', 0, '', 'La Union', 1);
-INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('LL', 8601, '', 0, '', 'La Libertad', 1);
-INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('CH', 8601, '', 0, '', 'Chalatenango', 1);
-INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('CA', 8601, '', 0, '', 'Cabañas', 1);
-INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('LP', 8601, '', 0, '', 'La Paz', 1);
-INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('SV', 8601, '', 0, '', 'San Vicente', 1);
-INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('CU', 8601, '', 0, '', 'Cuscatlan', 1);
 
 
 -- Provinces India (id country=117)

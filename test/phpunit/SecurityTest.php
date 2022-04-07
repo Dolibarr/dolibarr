@@ -325,6 +325,11 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$test="Text with ' encoded with the numeric html entity converted into text entity &#39; (like when submited by CKEditor)";
 		$result=testSqlAndScriptInject($test, 0);	// result must be 0
 		$this->assertEquals(0, $result, 'Error on testSqlAndScriptInject mmm');
+
+		$test="/dolibarr/htdocs/index.php/".chr('246')."abc";	// Add the char %F6 into the variable
+		$result=testSqlAndScriptInject($test, 2);
+		//print "test=".$test." result=".$result."\n";
+		$this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject with a non valid UTF8 char');
 	}
 
 	/**
@@ -604,7 +609,7 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 
 		$login=checkLoginPassEntity('admin', 'admin', 1, array('forceuser'));
 		print __METHOD__." login=".$login."\n";
-		$this->assertEquals($login, '');    // Expected '' because should failed because login 'auto' does not exists
+		$this->assertEquals('', $login, 'Error');    // Expected '' because should failed because login 'auto' does not exists
 	}
 
 	/**

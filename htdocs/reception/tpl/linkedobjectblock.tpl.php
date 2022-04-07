@@ -25,7 +25,7 @@ if (empty($conf) || !is_object($conf)) {
 
 ?>
 
-<!-- BEGIN PHP TEMPLATE reception/tpl/linkedopjectblock.tpl.php  -->
+<!-- BEGIN PHP TEMPLATE reception/tpl/linkedobjectblock.tpl.php  -->
 
 <?php
 
@@ -56,7 +56,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 		} ?>
 		</td>
 		<td class="linkedcol-name nowraponall" ><?php echo $objectlink->getNomUrl(1); ?></td>
-		<td class="linkedcol-ref"></td>
+		<td class="linkedcol-ref tdoverflowmax100" title="<?php echo dol_escape_htmltag($objectlink->ref_supplier); ?>"><?php echo dol_escape_htmltag($objectlink->ref_supplier); ?></td>
 		<td class="linkedcol-date"><?php echo dol_print_date($objectlink->date_delivery, 'day'); ?></td>
 		<td class="linkedcol-amount right"><?php
 		if ($user->rights->reception->lire) {

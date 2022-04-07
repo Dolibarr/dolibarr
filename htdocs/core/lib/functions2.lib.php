@@ -628,7 +628,7 @@ function dol_print_object_info($object, $usetable = 0)
 		if ($usetable) {
 			print '<tr><td class="titlefield">';
 		}
-		print $langs->trans("ConciliatedBy");
+		print $langs->trans("ReconciledBy");
 		if ($usetable) {
 			print '</td><td>';
 		} else {

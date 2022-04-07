@@ -3,6 +3,7 @@ English Dolibarr ChangeLog
 --------------------------------------------------------------
 
 
+
 ***** ChangeLog for 16.0.0 compared to 15.0.0 *****
 
 For users:
@@ -20,13 +21,46 @@ NEW: Experimental module Partnership Management
 For developers:
 ---------------
 
-NEW: 
+NEW: A lot of addition of hooks.
+
+
  
 Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
+* The default value for MAIN_SECURITY_CSRF_WITH_TOKEN has been set to 2. It means any POST and any GET request that contains the "action" or "massaction"
+  with a value of a sensitive action must also a valid token parameter (With previous value 1, only POST was concerned). Note: With value 3, any URL
+  with parameter "action" or "massaction" need the token, whatever is the value of the action.
 * verifCond('stringtoevaluate') now return false when string contains a bad syntax content instead of true. 
+* The deprecated method thirdparty_doc_create() has been removed. You can use the generateDocument() instead.
+* All triggers with a name XXX_UPDATE have been rename with name XXX_MODIFY for code consistency purpose.
+* Rename build_path_from_id_categ() into buildPathFromId() and set method to private
 
 
-
+***** ChangeLog for 15.0.1 compared to 15.0.0 *****
+FIX: #19777 #20281
+FIX: bad position of extrafields for interventions
+FIX: Blocking situation when a payment was deleted in bank.
+FIX: creation of the shipment if order contains services
+FIX: Drag and drop line of files on join files tab
+FIX: Error management on mass action "Approve holiday"
+FIX: error with php8
+FIX: in case of VAT refund, negative amount must be allowed
+FIX: invoice pdf: lines originating from deposits were not detailed anymore
+FIX: Invoice - When you create an invoice for a given thirdparty, fk_account is not retrieved from company card
+FIX: list of visible type of event was not correctly filtered
+FIX: Missing or bad permissions
+FIX: Missing the field date start/end in export supplier invoice/order
+FIX: On large proposal or invoice, fix n(n+1) sql into a n sql.
+FIX: options should not exists on invoices
+FIX: payment not completed when using Paypal.
+FIX: permission to download files of expense report with readall.
+FIX- Preview icon in documents list PDF in the admin page third-party
+FIX: shipping list, e.shipping_method_id should be e.fk_shipping_method.
+FIX: Show product photo on Supplier order Cornas model.
+FIX: User name in ManufacturingOrder
+FIX: viewimage.php blocks requests with multicompany from other enties
+FIX: #yogosha9048
+FIX: #yogosha9054
+FIX: #yogosha9095
 
 
 ***** ChangeLog for 15.0.0 compared to 14.0.0 *****
@@ -36,6 +70,7 @@ For users:
 
 NEW: Online proposal signature
 NEW: Can define some max limit on expense report (per period, per type or expense, ...)
+NEW: Provide a special pages for bookmarks and multicompany for a better use of some mobile applications (like DoliDroid) 
 NEW: Allow the use of __NEWREF__ to get for example the new reference a draft order will get after validation.
 NEW: Add option to disable globaly some notifications emails.
 NEW: #18401 Add __NEWREF__ subtitute to get new object reference.

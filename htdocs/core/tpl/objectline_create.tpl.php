@@ -371,7 +371,7 @@ if ($nolinesbefore) {
 		if ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier' || $object->element == 'invoice_supplier_rec') {	// We must have same test in printObjectLines
 			$coldisplay++;
 			?>
-	<td class="nobottom linecolresupplier"><input id="fourn_ref" name="fourn_ref" class="flat minwidth50 maxwidth125" value="<?php echo (GETPOSTISSET("fourn_ref") ? GETPOST("fourn_ref", 'alpha', 2) : ''); ?>"></td>
+	<td class="nobottom linecolrefsupplier"><input id="fourn_ref" name="fourn_ref" class="flat minwidth50 maxwidth125 maxwidth125onsmartphone" value="<?php echo (GETPOSTISSET("fourn_ref") ? GETPOST("fourn_ref", 'alpha', 2) : ''); ?>"></td>
 		<?php }
 		print '<td class="nobottom linecolvat right">';
 		$coldisplay++;
@@ -645,17 +645,20 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 	$("#select_type").change(function()
 	{
 		setforfree();
-		if (jQuery('#select_type').val() >= 0)
-		{
-			/* focus work on a standard textarea but not if field was replaced with CKEDITOR */
+
+		if (jQuery('#select_type').val() >= 0) {
+			console.log("Set focus on description field");
+			/* this focus code works on a standard textarea but not if field was replaced with CKEDITOR */
 			jQuery('#dp_desc').focus();
-			/* focus if CKEDITOR */
-			if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined")
-			{
+			/* this focus code works for CKEDITOR */
+			if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined") {
 				var editor = CKEDITOR.instances['dp_desc'];
-				if (editor) { editor.focus(); }
+				if (editor) {
+					editor.focus();
+				}
 			}
 		}
+
 		console.log("Hide/show date according to product type");
 		if (jQuery('#select_type').val() == '0')
 		{
@@ -1034,18 +1037,18 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 			jQuery("#multicurrency_price_ht").val('').show();
 			jQuery("#title_up_ht, #title_up_ht_currency").show();
 		<?php } else { ?>
-			jQuery("#price_ht").val('').hide();
+			//jQuery("#price_ht").val('').hide();
 			jQuery("#multicurrency_price_ht").val('').hide();
 			jQuery("#title_up_ht, #title_up_ht_currency").hide();
 		<?php } ?>
-		<?php if (empty($conf->global->MAIN_ENABLE_EDIT_PREDEF_PRICETTC)) { ?>
-			jQuery("#price_ttc").val('').hide();
-			jQuery("#multicurrency_price_ttc").val('').hide();
-			jQuery("#title_up_ttc, #title_up_ttc_currency").hide();
-		<?php } else { /* this option work great with supplier invoices */ ?>
+		<?php if (empty($conf->global->MAIN_DISABLE_EDIT_PREDEF_PRICETTC)) { ?>
 			jQuery("#price_ttc").val('').show();
 			jQuery("#multicurrency_price_ttc").val('').show();
 			jQuery("#title_up_ttc, #title_up_ttc_currency").show();
+		<?php } else { ?>
+			jQuery("#price_ttc").val('').hide();
+			jQuery("#multicurrency_price_ttc").val('').hide();
+			jQuery("#title_up_ttc, #title_up_ttc_currency").hide();
 		<?php } ?>
 		jQuery("#fourn_ref, #tva_tx, #title_vat").hide();
 		/* jQuery("#title_fourn_ref").hide(); */

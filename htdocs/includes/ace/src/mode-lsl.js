@@ -329,6 +329,7 @@ oop.inherits(Mode, TextMode);
     };
 
     this.$id = "ace/mode/lsl";
+    this.snippetFileId = "ace/snippets/lsl";
 }).call(Mode.prototype);
 
 exports.Mode = Mode;

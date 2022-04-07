@@ -410,7 +410,7 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 
 			if (!$notrigger) {
 				// Call triggers
-				$result = $this->call_trigger('LINERECEPTION_UPDATE', $user);
+				$result = $this->call_trigger('LINERECEPTION_MODIFY', $user);
 				if ($result < 0) {
 					$error++;
 				}
