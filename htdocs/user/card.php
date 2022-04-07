@@ -1255,7 +1255,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 	// Date birth
 	print '<tr><td>'.$langs->trans("DateOfBirth").'</td>';
 	print '<td>';
-	print $form->selectDate($dateofbirth, 'dateofbirth', 0, 0, 1, 'createuser', 1, 0);
+	print $form->selectDate($dateofbirth, 'dateofbirth', 0, 0, 1, 'createuser', 1, 0, 0, '', 0, '', '', 1, '', '', 'tzserver');
 	print '</td>';
 	print "</tr>\n";
 
@@ -1565,7 +1565,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			// Date of birth
 			print '<tr><td>'.$langs->trans("DateOfBirth").'</td>';
 			print '<td>';
-			print dol_print_date($object->birth, 'day');
+			print dol_print_date($object->birth, 'day', 'tzserver');
 			print '</td>';
 			print "</tr>\n";
 
@@ -2712,9 +2712,9 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '<tr><td>'.$langs->trans("DateOfBirth").'</td>';
 			print '<td>';
 			if ($caneditfield) {
-				echo $form->selectDate($dateofbirth ? $dateofbirth : $object->birth, 'dateofbirth', 0, 0, 1, 'updateuser', 1, 0);
+				echo $form->selectDate($dateofbirth ? $dateofbirth : $object->birth, 'dateofbirth', 0, 0, 1, 'updateuser', 1, 0, 0, '', '', '', '', 1, '', '', 'tzserver');
 			} else {
-				print dol_print_date($object->birth, 'day');
+				print dol_print_date($object->birth, 'day', 'tzserver');
 			}
 			print '</td>';
 			print "</tr>\n";
