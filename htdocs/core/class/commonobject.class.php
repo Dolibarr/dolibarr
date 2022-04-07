@@ -15,6 +15,7 @@
  * Copyright (C) 2018-2021 Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2018      Josep Lluís Amador   <joseplluis@lliuretic.cat>
  * Copyright (C) 2021      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2021      Grégory Blémand      <gregory.blemand@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -122,6 +123,12 @@ abstract class CommonObject
 	 * @var mixed		Array of linked objects. Loaded by ->fetchObjectLinked
 	 */
 	public $linkedObjects;
+
+	/**
+	 * @var boolean		is linkedObjects full loaded. Loaded by ->fetchObjectLinked
+	 * important for pdf generation time reduction
+	 */
+	public $linkedObjectsFullLoaded = false;
 
 	/**
 	 * @var Object      To store a cloned copy of object before to edit it and keep track of old properties
@@ -3773,6 +3780,10 @@ abstract class CommonObject
 	{
 		global $conf, $hookmanager, $action;
 
+		// important for pdf generation time reduction
+		// this boolean is true if $this->linkedObjects has already been loaded with all objects linked without filter
+		if ($this->linkedObjectsFullLoaded) return 1;
+
 		$this->linkedObjectsIds = array();
 		$this->linkedObjects = array();
 
@@ -3834,6 +3845,9 @@ abstract class CommonObject
 		} else {
 			$sql .= "(fk_source = ".((int) $sourceid)." AND sourcetype = '".$this->db->escape($sourcetype)."')";
 			$sql .= " ".$clause." (fk_target = ".((int) $targetid)." AND targettype = '".$this->db->escape($targettype)."')";
+			if ($sourceid == $this->id && $sourcetype == $this->element && $targetid == $this->id && $targettype == $this->element && $clause == 'OR') {
+				$this->linkedObjectsFullLoaded = true;
+			}
 		}
 		$sql .= " ORDER BY ".$orderby;
 
