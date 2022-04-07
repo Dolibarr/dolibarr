@@ -979,8 +979,8 @@ if ($resql) {
 		$event->type = 'holiday';
 		$event->type_picto = 'holiday';
 
-		$event->datep                   = $db->jdate($obj->date_start);
-		$event->datef                   = $db->jdate($obj->date_end);
+		$event->datep                   = $db->jdate($obj->date_start) + (empty($halfday) || $halfday == 1 ? 0 : 12 * 60 * 60 - 1);
+		$event->datef                   = $db->jdate($obj->date_end) + (empty($halfday) || $halfday == -1 ? 24 : 12) * 60 * 60 - 1;
 		$event->date_start_in_calendar  = $event->datep;
 		$event->date_end_in_calendar    = $event->datef;
 
