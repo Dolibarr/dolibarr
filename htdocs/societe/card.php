@@ -1180,13 +1180,15 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
                         	document.formsoc.private.value=1;
                         });
 
+						var canHaveCategoryIfNotCustomerProspectSupplier = ' . (empty($conf->global->THIRDPARTY_CAN_HAVE_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT) ? '0' : '1') . ';
+
 						init_customer_categ();
 			  			$("#customerprospect").change(function() {
 								init_customer_categ();
 						});
 						function init_customer_categ() {
 								console.log("is customer or prospect = "+jQuery("#customerprospect").val());
-								if (jQuery("#customerprospect").val() == 0 && (jQuery("#fournisseur").val() == 0 || ' . (empty($conf->global->THIRDPARTY_CAN_HAVE_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT_SUPPLIER) ? '1' : '0').'))
+								if (jQuery("#customerprospect").val() == 0 && !canHaveCategoryIfNotCustomerProspectSupplier)
 								{
 									jQuery(".visibleifcustomer").hide();
 								}
@@ -1317,16 +1319,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		// Alias names (commercial, trademark or alias names)
 		print '<tr id="name_alias"><td><label for="name_alias_input">'.$langs->trans('AliasNames').'</label></td>';
 		print '<td colspan="3"><input type="text" class="minwidth300" name="name_alias" id="name_alias_input" value="'.dol_escape_htmltag($object->name_alias).'"></td></tr>';
-
-		// Parent company
-		if (empty($conf->global->SOCIETE_DISABLE_PARENTCOMPANY)) {
-			print '<tr>';
-			print '<td>'.$langs->trans('ParentCompany').'</td>';
-			print '<td colspan="3" class="maxwidthonsmartphone">';
-			print img_picto('', 'company', 'class="paddingrightonly"');
-			print $form->select_thirdparty_list('', 'parent_company_id', '', $langs->trans("ThirdParty"));
-			print '</td></tr>';
-		}
 
 		// Prospect/Customer
 		print '<tr><td class="titlefieldcreate">'.$form->editfieldkey('ProspectCustomer', 'customerprospect', '', $object, 0, 'string', '', 1).'</td>';
@@ -1639,12 +1631,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			$langs->load('categories');
 
 			// Customer
-			//if ($object->prospect || $object->client || (! $object->fournisseur && ! empty($conf->global->THIRDPARTY_CAN_HAVE_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT_SUPPLIER))) {
 			print '<tr class="visibleifcustomer"><td class="toptd">'.$form->editfieldkey('CustomersProspectsCategoriesShort', 'custcats', '', $object, 0).'</td><td colspan="3">';
 			$cate_arbo = $form->select_all_categories(Categorie::TYPE_CUSTOMER, null, 'parent', null, null, 1);
 			print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('custcats', $cate_arbo, GETPOST('custcats', 'array'), null, null, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 			print "</td></tr>";
-			//}
 
 			if (!empty($conf->global->THIRDPARTY_SUGGEST_ALSO_ADDRESS_CREATION)) {
 				print '<tr class="individualline"><td class="toptd">'.$form->editfieldkey('ContactCategoriesShort', 'contcats', '', $object, 0).'</td><td colspan="3">';
@@ -1674,6 +1664,16 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		// Other attributes
 		$parameters = array('socid'=>$socid, 'colspan' => ' colspan="3"', 'colspanvalue' => '3');
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
+
+		// Parent company
+		if (empty($conf->global->SOCIETE_DISABLE_PARENTCOMPANY)) {
+			print '<tr>';
+			print '<td>'.$langs->trans('ParentCompany').'</td>';
+			print '<td colspan="3" class="maxwidthonsmartphone">';
+			print img_picto('', 'company', 'class="paddingrightonly"');
+			print $form->select_company(GETPOST('parent_company_id'), 'parent_company_id');
+			print '</td></tr>';
+		}
 
 		// Assign a sale representative
 		print '<tr>';
@@ -1914,13 +1914,15 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
     				}
     			});
 
+				var canHaveCategoryIfNotCustomerProspectSupplier = ' . (empty($conf->global->THIRDPARTY_CAN_HAVE_CUSTOMER_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT) ? '0' : '1') . ';
+
 				init_customer_categ();
 	  			$("#customerprospect").change(function() {
 					init_customer_categ();
 				});
        			function init_customer_categ() {
 					console.log("is customer or prospect = "+jQuery("#customerprospect").val());
-					if (jQuery("#customerprospect").val() == 0 && (jQuery("#fournisseur").val() == 0 || '.(empty($conf->global->THIRDPARTY_CAN_HAVE_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT_SUPPLIER) ? '1' : '0').'))
+					if (jQuery("#customerprospect").val() == 0 && !canHaveCategoryIfNotCustomerProspectSupplier)
 					{
 						jQuery(".visibleifcustomer").hide();
 					}
@@ -2734,7 +2736,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		// Tags / categories
 		if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire)) {
 			// Customer
-			if ($object->prospect || $object->client || (!$object->fournisseur && !empty($conf->global->THIRDPARTY_CAN_HAVE_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT_SUPPLIER))) {
+			if ($object->prospect || $object->client || !empty($conf->global->THIRDPARTY_CAN_HAVE_CUSTOMER_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT)) {
 				print '<tr><td>'.$langs->trans("CustomersCategoriesShort").'</td>';
 				print '<td>';
 				print $form->showCategories($object->id, Categorie::TYPE_CUSTOMER, 1);

@@ -133,7 +133,7 @@ class modFournisseur extends DolibarrModules
 		$datestart = dol_mktime(23, 0, 0, $arraydate['mon'], $arraydate['mday'], $arraydate['year']);
 		$this->cronjobs = array(
 			0 => array(
-				'label'=>'RecurringSupplierInvoices',
+				'label'=>'RecurringSupplierInvoicesJob',
 				'jobtype'=>'method',
 				'class'=>'fourn/class/fournisseur.facture-rec.class.php',
 				'objectname'=>'FactureFournisseurRec',
@@ -142,7 +142,7 @@ class modFournisseur extends DolibarrModules
 				'comment'=>'Generate recurring supplier invoices',
 				'frequency'=>1,
 				'unitfrequency'=>3600 * 24,
-				'priority'=>50,
+				'priority'=>51,
 				'status'=>1,
 				'datestart'=>$datestart
 			));
@@ -612,7 +612,13 @@ class modFournisseur extends DolibarrModules
 		$this->import_examplevalues_array[$r] = array_merge($import_sample, $import_extrafield_sample);
 		$this->import_updatekeys_array[$r] = array('f.ref' => 'Ref');
 		$this->import_convertvalue_array[$r] = array(
-			//'c.ref'=>array('rule'=>'getrefifauto'),
+			'f.ref' => array(
+				'rule'=>'getrefifauto',
+				'class'=>(empty($conf->global->INVOICE_SUPPLIER_ADDON_NUMBER) ? 'mod_facture_fournisseur_cactus' : $conf->global->INVOICE_SUPPLIER_ADDON_NUMBER),
+				'path'=>"/core/modules/supplier_invoice/".(empty($conf->global->INVOICE_SUPPLIER_ADDON_NUMBER) ? 'mod_facture_fournisseur_cactus' : $conf->global->INVOICE_SUPPLIER_ADDON_NUMBER).'.php',
+				'classobject'=>'FactureFournisseur',
+				'pathobject'=>'/fourn/class/fournisseur.facture.class.php',
+			),
 			'f.fk_soc' => array('rule' => 'fetchidfromref', 'file' => '/societe/class/societe.class.php', 'class' => 'Societe', 'method' => 'fetch', 'element' => 'ThirdParty'),
 			'f.fk_account' => array('rule' => 'fetchidfromref', 'file' => '/compta/bank/class/account.class.php', 'class' => 'Account', 'method' => 'fetch', 'element' => 'bank_account'),
 		);
@@ -759,6 +765,13 @@ class modFournisseur extends DolibarrModules
 
 		$this->import_updatekeys_array[$r] = array('c.ref' => 'Ref');
 		$this->import_convertvalue_array[$r] = array(
+			'c.ref' => array(
+				'rule'=>'getrefifauto',
+				'class'=>(empty($conf->global->COMMANDE_SUPPLIER_ADDON_NUMBER) ? 'mod_commande_fournisseur_muguet' : $conf->global->COMMANDE_SUPPLIER_ADDON_NUMBER),
+				'path'=>"/core/modules/supplier_order/".(empty($conf->global->COMMANDE_SUPPLIER_ADDON_NUMBER) ? 'mod_commande_fournisseur_muguet' : $conf->global->COMMANDE_SUPPLIER_ADDON_NUMBER).'.php',
+				'classobject'=>'CommandeFournisseur',
+				'pathobject'=>'/fourn/class/fournisseur.commande.class.php',
+			),
 			'c.fk_soc' => array(
 				'rule'    => 'fetchidfromref',
 				'file'    => '/societe/class/societe.class.php',

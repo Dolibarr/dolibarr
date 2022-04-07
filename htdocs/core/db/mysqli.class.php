@@ -169,6 +169,18 @@ class DoliDBMysqli extends DoliDB
 
 
 	/**
+	 * Return SQL string to force an index
+	 *
+	 * @param	string	$nameofindex	Name of index
+	 * @return	string					SQL string
+	 */
+	public function hintindex($nameofindex)
+	{
+		return " FORCE INDEX(".preg_replace('/[^a-z0-9_]/', '', $nameofindex).")";
+	}
+
+
+	/**
 	 *  Convert a SQL request in Mysql syntax to native syntax
 	 *
 	 *  @param     string	$line   SQL request line to convert
@@ -179,6 +191,7 @@ class DoliDBMysqli extends DoliDB
 	{
 		return $line;
 	}
+
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
