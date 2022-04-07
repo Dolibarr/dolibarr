@@ -766,13 +766,13 @@ function checkUserAccessToObject($user, array $featuresarray, $objectid = 0, $ta
 					if (empty($dbt_keyfield)) {
 						dol_print_error('', 'Param dbt_keyfield is required but not defined');
 					}
-					$sql = "SELECT COUNT(sc.fk_soc) as nb";
+					$sql = !empty($dbt_keyfield) ? "SELECT COUNT(sc.fk_soc) as nb" : "SELECT COUNT(dbt.".$dbt_select.") as nb";
 					$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
-					$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+					if(!empty($dbt_keyfield)) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 					$sql .= " WHERE dbt.".$dbt_select." IN (".$db->sanitize($objectid, 1).")";
 					$sql .= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
-					$sql .= " AND sc.fk_soc = dbt.".$dbt_keyfield;
-					$sql .= " AND sc.fk_user = ".((int) $user->id);
+					if(!empty($dbt_keyfield)) $sql .= " AND sc.fk_soc = dbt.".$dbt_keyfield;
+					if(!empty($dbt_keyfield)) $sql .= " AND sc.fk_user = ".((int) $user->id);
 				} else {
 					// On ticket, the thirdparty is not mandatory, so we need a special test to accept record with no thirdparties.
 					$sql = "SELECT COUNT(dbt.".$dbt_select.") as nb";
@@ -790,7 +790,7 @@ function checkUserAccessToObject($user, array $featuresarray, $objectid = 0, $ta
 				$sql .= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
 			}
 		}
-		//print $sql;
+		print $sql;
 
 		if ($sql) {
 			$resql = $db->query($sql);
