@@ -414,7 +414,7 @@ class ProductFournisseur extends Product
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				// Call trigger
-				$result = $this->call_trigger('SUPPLIER_PRODUCT_BUYPRICE_UPDATE', $user);
+				$result = $this->call_trigger('SUPPLIER_PRODUCT_BUYPRICE_MODIFY', $user);
 				if ($result < 0) {
 					$error++;
 				}

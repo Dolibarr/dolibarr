@@ -193,8 +193,8 @@ class Societe extends CommonObject
 		'tva_intra' =>array('type'=>'varchar(20)', 'label'=>'Tva intra', 'enabled'=>1, 'visible'=>-1, 'position'=>210),
 		'capital' =>array('type'=>'double(24,8)', 'label'=>'Capital', 'enabled'=>1, 'visible'=>-1, 'position'=>215),
 		'fk_stcomm' =>array('type'=>'integer', 'label'=>'CommercialStatus', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>220),
-		'note_private' =>array('type'=>'text', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>225),
-		'note_public' =>array('type'=>'text', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>0, 'position'=>230),
+		'note_public' =>array('type'=>'text', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>225),
+		'note_private' =>array('type'=>'text', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>0, 'position'=>230),
 		'prefix_comm' =>array('type'=>'varchar(5)', 'label'=>'Prefix comm', 'enabled'=>'$conf->global->SOCIETE_USEPREFIX', 'visible'=>-1, 'position'=>235),
 		'client' =>array('type'=>'tinyint(4)', 'label'=>'Client', 'enabled'=>1, 'visible'=>-1, 'position'=>240),
 		'fournisseur' =>array('type'=>'tinyint(4)', 'label'=>'Fournisseur', 'enabled'=>1, 'visible'=>-1, 'position'=>245),
@@ -3461,6 +3461,37 @@ class Societe extends CommonObject
 			return $sameparent;
 		} else {
 			return -1;
+		}
+	}
+
+	/**
+	 *	Get parents for company
+	 *
+	 * @param   int         $company_id     ID of company to search parent
+	 * @param   array       $parents        List of companies ID found
+	 * @return	array
+	 */
+	public function getParentsForCompany($company_id, $parents = [])
+	{
+		global $langs;
+
+		if ($company_id > 0) {
+			$sql = "SELECT parent FROM " . MAIN_DB_PREFIX . "societe WHERE rowid = $company_id";
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				if ($obj = $this->db->fetch_object($resql)) {
+					$parent = $obj->parent;
+					if ($parent > 0 && !in_array($parent, $parents)) {
+						$parents[] = $parent;
+						return $this->getParentsForCompany($parent, $parents);
+					} else {
+						return $parents;
+					}
+				}
+				$this->db->free($resql);
+			} else {
+				setEventMessage($langs->trans('GetCompanyParentsError', $this->db->lasterror()), 'errors');
+			}
 		}
 	}
 

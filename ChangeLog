@@ -21,14 +21,18 @@ NEW: Experimental module Partnership Management
 For developers:
 ---------------
 
-NEW: 
+NEW: A lot of addition of hooks.
 
 
  
 Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
+* The default value for MAIN_SECURITY_CSRF_WITH_TOKEN has been set to 2. It means any POST and any GET request that contains the "action" or "massaction"
+  with a value of a sensitive action must also a valid token parameter (With previous value 1, only POST was concerned). Note: With value 3, any URL
+  with parameter "action" or "massaction" need the token, whatever is the value of the action.
 * verifCond('stringtoevaluate') now return false when string contains a bad syntax content instead of true. 
-* The deprecated mdethod thirdparty_doc_create() has been removed. You can use the generateDocument() instead.
-
+* The deprecated method thirdparty_doc_create() has been removed. You can use the generateDocument() instead.
+* All triggers with a name XXX_UPDATE have been rename with name XXX_MODIFY for code consistency purpose.
+* Rename build_path_from_id_categ() into buildPathFromId() and set method to private
 
 
 ***** ChangeLog for 15.0.1 compared to 15.0.0 *****

@@ -4426,7 +4426,7 @@ class PropaleLigne extends CommonObjectLine
 
 			if (!$error && !$notrigger) {
 				// Call trigger
-				$result = $this->call_trigger('LINEPROPAL_UPDATE', $user);
+				$result = $this->call_trigger('LINEPROPAL_MODIFY', $user);
 				if ($result < 0) {
 					$this->db->rollback();
 					return -1;

@@ -99,6 +99,11 @@ ALTER TABLE llx_partnership ADD UNIQUE INDEX uk_fk_type_fk_member (fk_type, fk_m
 
 -- v16
 
+UPDATE llx_cronjob set label = 'RecurringInvoicesJob' where label = 'RecurringInvoices';
+UPDATE llx_cronjob set label = 'RecurringSupplierInvoicesJob' where label = 'RecurringSupplierInvoices';
+
+ALTER TABLE llx_facture ADD INDEX idx_facture_datef (datef);
+
 ALTER TABLE llx_projet_task_time ADD COLUMN fk_product integer NULL;
 
 INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) values ('PROPAL_MODIFY','Customer proposal modified','Executed when a customer proposal is modified','propal',2);
@@ -115,6 +120,9 @@ INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) value
 INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) values ('HOLIDAY_MODIFY','Expense report modified','Executed when an expense report is modified','expensereport',212);
 
 ALTER TABLE llx_ticket ADD COLUMN date_last_msg_sent datetime AFTER date_read;
+
+UPDATE llx_const SET name = 'WORKFLOW_TICKET_LINK_CONTRACT' WHERE name = 'TICKET_AUTO_ASSIGN_CONTRACT_CREATE';
+UPDATE llx_const SET name = 'WORKFLOW_TICKET_CREATE_INTERVENTION' WHERE name = 'TICKET_AUTO_CREATE_FICHINTER_CREATE';
 
 CREATE TABLE llx_stock_mouvement_extrafields (
     rowid integer AUTO_INCREMENT PRIMARY KEY,
@@ -280,6 +288,8 @@ ALTER TABLE llx_bank_account ADD COLUMN pti_in_ctti smallint DEFAULT 0 AFTER dom
 -- Set default ticket type to OTHER if no default exists
 UPDATE llx_c_ticket_type SET use_default=1 WHERE code='OTHER' AND NOT EXISTS(SELECT * FROM (SELECT * FROM llx_c_ticket_type) AS t WHERE use_default=1);
 
+ALTER TABLE llx_user ADD COLUMN ref_employee varchar(50) DEFAULT NULL;
+ALTER TABLE llx_user ADD COLUMN national_registration_number varchar(50) DEFAULT NULL;
 
 ALTER TABLE llx_propal ADD last_main_doc VARCHAR(255) NULL AFTER model_pdf;
 
@@ -302,3 +312,6 @@ UPDATE llx_c_availability SET type_duration = 'w', qty = 4 WHERE code = 'AV_4W';
 ALTER TABLE llx_boxes_def ADD COLUMN fk_user integer DEFAULT 0 NOT NULL;
 
 ALTER TABLE llx_contratdet ADD COLUMN rang integer DEFAULT 0 AFTER info_bits;
+
+ALTER TABLE llx_actioncomm MODIFY COLUMN note mediumtext;
+

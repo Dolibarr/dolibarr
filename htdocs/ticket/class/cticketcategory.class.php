@@ -551,7 +551,7 @@ class CTicketCategory extends CommonObject
 
 			if (!$error && !$notrigger) {
 				// Call trigger
-				$result = $this->call_trigger('MYOBJECT_VALIDATE', $user);
+				$result = $this->call_trigger('CTICKETCATEGORY_VALIDATE', $user);
 				if ($result < 0) {
 					$error++;
 				}

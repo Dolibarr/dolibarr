@@ -227,6 +227,7 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 				if (! in_array($file['name'], array(
 					'objectline_view.tpl.php',
 					'extrafieldsinexport.inc.php',
+					'extrafieldsinimport.inc.php',
 					'DolQueryCollector.php'
 				))) {
 					// Must not found $this->db->

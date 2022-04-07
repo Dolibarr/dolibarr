@@ -15,6 +15,7 @@
  * Copyright (C) 2018-2021 Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2018      Josep Lluís Amador   <joseplluis@lliuretic.cat>
  * Copyright (C) 2021      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2021      Grégory Blémand      <gregory.blemand@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -123,6 +124,12 @@ abstract class CommonObject
 	 * @var mixed		Array of linked objects. Loaded by ->fetchObjectLinked
 	 */
 	public $linkedObjects;
+
+	/**
+	 * @var boolean		is linkedObjects full loaded. Loaded by ->fetchObjectLinked
+	 * important for pdf generation time reduction
+	 */
+	public $linkedObjectsFullLoaded = false;
 
 	/**
 	 * @var Object      To store a cloned copy of object before to edit it and keep track of old properties
@@ -3774,6 +3781,10 @@ abstract class CommonObject
 	{
 		global $conf, $hookmanager, $action;
 
+		// important for pdf generation time reduction
+		// this boolean is true if $this->linkedObjects has already been loaded with all objects linked without filter
+		if ($this->linkedObjectsFullLoaded) return 1;
+
 		$this->linkedObjectsIds = array();
 		$this->linkedObjects = array();
 
@@ -3835,6 +3846,9 @@ abstract class CommonObject
 		} else {
 			$sql .= "(fk_source = ".((int) $sourceid)." AND sourcetype = '".$this->db->escape($sourcetype)."')";
 			$sql .= " ".$clause." (fk_target = ".((int) $targetid)." AND targettype = '".$this->db->escape($targettype)."')";
+			if ($sourceid == $this->id && $sourcetype == $this->element && $targetid == $this->id && $targettype == $this->element && $clause == 'OR') {
+				$this->linkedObjectsFullLoaded = true;
+			}
 		}
 		$sql .= " ORDER BY ".$orderby;
 
@@ -4025,7 +4039,7 @@ abstract class CommonObject
 				$this->context['link_source_type'] = $sourcetype;
 				$this->context['link_target_id'] = $targetid;
 				$this->context['link_target_type'] = $targettype;
-				$result = $this->call_trigger('OBJECT_LINK_UPDATE', $f_user);
+				$result = $this->call_trigger('OBJECT_LINK_MODIFY', $f_user);
 				if ($result < 0) {
 					$error++;
 				}
@@ -4949,6 +4963,7 @@ abstract class CommonObject
 			print '<td class="left">'.$langs->trans('Unit').'</td>';
 		}
 		print '<td class="right">'.$langs->trans('ReductionShort').'</td>';
+		print '<td class="linecolht right">'.$langs->trans('TotalHT').'</td>';
 		print '<td class="center">'.$form->showCheckAddButtons('checkforselect', 1).'</td>';
 		print '</tr>';
 		$i = 0;
@@ -5079,6 +5094,7 @@ abstract class CommonObject
 		}
 
 		$this->tpl['price'] = price($line->subprice);
+		$this->tpl['total_ht'] = price($line->total_ht);
 		$this->tpl['multicurrency_price'] = price($line->multicurrency_subprice);
 		$this->tpl['qty'] = (($line->info_bits & 2) != 2) ? $line->qty : '&nbsp;';
 		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
@@ -5997,7 +6013,14 @@ abstract class CommonObject
 				$attributeLabel    = $extrafields->attributes[$this->table_element]['label'][$attributeKey];
 				$attributeParam    = $extrafields->attributes[$this->table_element]['param'][$attributeKey];
 				$attributeRequired = $extrafields->attributes[$this->table_element]['required'][$attributeKey];
+				$attributeUnique   = $extrafields->attributes[$this->table_element]['unique'][$attributeKey];
 				$attrfieldcomputed = $extrafields->attributes[$this->table_element]['computed'][$attributeKey];
+
+				// If we clone, we have to clean unique extrafields to prevent duplicates.
+				// This behaviour can be prevented by external code by changing $this->context['createfromclone'] value in createFrom hook
+				if (! empty($this->context['createfromclone']) && $this->context['createfromclone'] == 'createfromclone' && ! empty($attributeUnique)) {
+					$new_array_options[$key] = null;
+				}
 
 				// Similar code than into insertExtraFields
 				if ($attributeRequired) {

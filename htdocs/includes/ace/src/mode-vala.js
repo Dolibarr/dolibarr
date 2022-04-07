@@ -663,6 +663,7 @@ oop.inherits(Mode, TextMode);
         this.$outdent.autoOutdent(doc, row);
     };
     this.$id = "ace/mode/vala";
+    this.snippetFileId = "ace/snippets/vala";
 }).call(Mode.prototype);
 
 exports.Mode = Mode;

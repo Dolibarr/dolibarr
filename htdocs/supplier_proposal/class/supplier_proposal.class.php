@@ -3282,7 +3282,7 @@ class SupplierProposalLine extends CommonObjectLine
 
 			if (!$error && !$notrigger) {
 				// Call trigger
-				$result = $this->call_trigger('LINESUPPLIER_PROPOSAL_UPDATE', $user);
+				$result = $this->call_trigger('LINESUPPLIER_PROPOSAL_MODIFY', $user);
 				if ($result < 0) {
 					$this->db->rollback();
 					return -1;
