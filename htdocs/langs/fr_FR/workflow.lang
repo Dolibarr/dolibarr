@@ -7,7 +7,7 @@ descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Créer automatiquement une commande client 
 descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Créer automatiquement une facture client à la signature d'une proposition commerciale (la facture sera du même montant que la proposition commerciale source)
 descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Créer une facture client automatiquement à la validation d'un contrat
 descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Créer automatiquement une facture client à la cloture d'un commande (la facture sera du même montant que la commande)
-descWORKFLOW_TICKET_CREATE_INTERVENTION=Créer une intervention lorsqu'un ticket est créé du backent, et la lier au ticket.
+descWORKFLOW_TICKET_CREATE_INTERVENTION=Créer une intervention lorsqu'un ticket est créé, et la lier au ticket.
 # Autoclassify customer proposal or order
 descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classer la/les proposition(s) commerciale(s) source(s) facturée(s) au classement facturé de la commande (et si le montant de la commande est le même que le total des propositions liées)
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Classer la/les proposition(s) commerciale(s) source facturée(s) à la validation d'une facture client (et si le montant de la facture est le même que la somme des propositions liées)
