@@ -763,9 +763,6 @@ function checkUserAccessToObject($user, array $featuresarray, $objectid = 0, $ta
 			} elseif (!empty($conf->societe->enabled) && !$user->rights->societe->client->voir) {
 				// If internal user: Check permission for internal users that are restricted on their objects
 				if ($feature != 'ticket') {
-					if (empty($dbt_keyfield)) {
-						dol_print_error('', 'Param dbt_keyfield is required but not defined');
-					}
 					$sql = !empty($dbt_keyfield) ? "SELECT COUNT(sc.fk_soc) as nb" : "SELECT COUNT(dbt.".$dbt_select.") as nb";
 					$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
 					if(!empty($dbt_keyfield)) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
