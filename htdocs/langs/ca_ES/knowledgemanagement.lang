@@ -18,38 +18,37 @@
 #
 
 # Module label 'ModuleKnowledgeManagementName'
-ModuleKnowledgeManagementName = Knowledge Management System
+ModuleKnowledgeManagementName = Sistema de gestió del coneixement
 # Module description 'ModuleKnowledgeManagementDesc'
-ModuleKnowledgeManagementDesc=Manage a Knowledge Management (KM) or Help-Desk base
+ModuleKnowledgeManagementDesc=Gestioneu una base de Gestió del Coneixement (KM) o Help-Desk
 
 #
 # Admin page
 #
-KnowledgeManagementSetup = Knowledge Management System setup
+KnowledgeManagementSetup = Configuració del sistema de gestió del coneixement
 Settings = Configuració
-KnowledgeManagementSetupPage = Knowledge Management System setup page
+KnowledgeManagementSetupPage = Pàgina de configuració del sistema de gestió del coneixement
 
 
 #
 # About page
 #
 About = Quant a
-KnowledgeManagementAbout = About Knowledge Management
-KnowledgeManagementAboutPage = Knowledge Management about page
+KnowledgeManagementAbout = Sobre la gestió del coneixement
+KnowledgeManagementAboutPage = Gestió del coneixement sobre la pàgina
 
-#
-# Sample page
-#
-KnowledgeManagementArea = Knowledge Management
-
-
-#
-# Menu
-#
-MenuKnowledgeRecord = Knowledge base
-ListOfArticles = List of articles
-NewKnowledgeRecord = New article
-ValidateReply = Validate solution
+KnowledgeManagementArea = Gestió del coneixement
+MenuKnowledgeRecord = Base de coneixements
+ListKnowledgeRecord = Llista d'articles
+NewKnowledgeRecord = Nou article
+ValidateReply = Validar la solució
 KnowledgeRecords = Articles
 KnowledgeRecord = Article
-KnowledgeRecordExtraFields = Extrafields for Article
+KnowledgeRecordExtraFields = Camps extra per a l'article
+GroupOfTicket=Grup de tiquets
+YouCanLinkArticleToATicketCategory=Podeu adjuntar un article a un grup de tiquets (per tant, l'article es suggerirà durant la qualificació dels nous tiquets)
+SuggestedForTicketsInGroup=Suggerit per a entrades quan el grup està
+
+SetObsolete=S'estableix com a obsolet
+ConfirmCloseKM=Confirmeu el tancament d'aquest article com a obsolet?
+ConfirmReopenKM=Voleu restaurar aquest article a l'estat "Validat"?

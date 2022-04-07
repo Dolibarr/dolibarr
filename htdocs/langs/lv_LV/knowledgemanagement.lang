@@ -18,38 +18,37 @@
 #
 
 # Module label 'ModuleKnowledgeManagementName'
-ModuleKnowledgeManagementName = Knowledge Management System
+ModuleKnowledgeManagementName = Zināšanu pārvaldības sistēma
 # Module description 'ModuleKnowledgeManagementDesc'
-ModuleKnowledgeManagementDesc=Manage a Knowledge Management (KM) or Help-Desk base
+ModuleKnowledgeManagementDesc=Pārvaldiet zināšanu pārvaldības (KM) vai palīdzības dienesta bāzi
 
 #
 # Admin page
 #
-KnowledgeManagementSetup = Knowledge Management System setup
+KnowledgeManagementSetup = Zināšanu pārvaldības sistēmas iestatīšana
 Settings = Iestatījumi
-KnowledgeManagementSetupPage = Knowledge Management System setup page
+KnowledgeManagementSetupPage = Zināšanu pārvaldības sistēmas iestatīšanas lapa
 
 
 #
 # About page
 #
 About = Par
-KnowledgeManagementAbout = About Knowledge Management
-KnowledgeManagementAboutPage = Knowledge Management about page
+KnowledgeManagementAbout = Par zināšanu pārvaldību
+KnowledgeManagementAboutPage = Zināšanu pārvaldība par lapu
 
-#
-# Sample page
-#
-KnowledgeManagementArea = Knowledge Management
-
-
-#
-# Menu
-#
-MenuKnowledgeRecord = Knowledge base
-ListOfArticles = List of articles
-NewKnowledgeRecord = New article
-ValidateReply = Validate solution
-KnowledgeRecords = Articles
+KnowledgeManagementArea = Zināšanu pārvaldība
+MenuKnowledgeRecord = Zināšanu bāze
+ListKnowledgeRecord = Rakstu saraksts
+NewKnowledgeRecord = Jauns raksts
+ValidateReply = Apstipriniet šķīdumu
+KnowledgeRecords = Raksti
 KnowledgeRecord = Raksts
-KnowledgeRecordExtraFields = Extrafields for Article
+KnowledgeRecordExtraFields = Raksta paplašinājumi
+GroupOfTicket=Biļešu grupa
+YouCanLinkArticleToATicketCategory=Rakstu var saistīt ar biļešu grupu (tāpēc raksts tiks ieteikts jauno biļešu kvalifikācijas iegūšanas laikā)
+SuggestedForTicketsInGroup=Ieteicams biļetēm, kad grupa ir
+
+SetObsolete=Iestatīt kā novecojušu
+ConfirmCloseKM=Vai apstiprināt, ka šī raksta slēgšana ir novecojusi?
+ConfirmReopenKM=Vai vēlaties atjaunot šī raksta statusu "Apstiprināts"?

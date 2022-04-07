@@ -18,38 +18,37 @@
 #
 
 # Module label 'ModuleKnowledgeManagementName'
-ModuleKnowledgeManagementName = Knowledge Management System
+ModuleKnowledgeManagementName = ລະບົບການຈັດການຄວາມຮູ້
 # Module description 'ModuleKnowledgeManagementDesc'
-ModuleKnowledgeManagementDesc=Manage a Knowledge Management (KM) or Help-Desk base
+ModuleKnowledgeManagementDesc=ຈັດການການຈັດການຄວາມຮູ້ (KM) ຫຼືພື້ນຖານ Help-Desk
 
 #
 # Admin page
 #
-KnowledgeManagementSetup = Knowledge Management System setup
-Settings = Settings
-KnowledgeManagementSetupPage = Knowledge Management System setup page
+KnowledgeManagementSetup = ການຕັ້ງຄ່າລະບົບການຈັດການຄວາມຮູ້
+Settings = ການຕັ້ງຄ່າ
+KnowledgeManagementSetupPage = ໜ້າ ຕິດຕັ້ງລະບົບການຈັດການຄວາມຮູ້
 
 
 #
 # About page
 #
-About = About
-KnowledgeManagementAbout = About Knowledge Management
-KnowledgeManagementAboutPage = Knowledge Management about page
+About = ກ່ຽວກັບ
+KnowledgeManagementAbout = ກ່ຽວກັບການຈັດການຄວາມຮູ້
+KnowledgeManagementAboutPage = ການຈັດການຄວາມຮູ້ກ່ຽວກັບ ໜ້າ
 
-#
-# Sample page
-#
-KnowledgeManagementArea = Knowledge Management
+KnowledgeManagementArea = ການຈັດການຄວາມຮູ້
+MenuKnowledgeRecord = ພື້ນຖານຄວາມຮູ້
+ListKnowledgeRecord = ລາຍການບົດຄວາມ
+NewKnowledgeRecord = ບົດຄວາມໃ່
+ValidateReply = ກວດສອບການແກ້ໄຂ
+KnowledgeRecords = ບົດຄວາມ
+KnowledgeRecord = ມາດຕາ
+KnowledgeRecordExtraFields = Extrafields ສໍາລັບບົດຄວາມ
+GroupOfTicket=ກຸ່ມຂອງປີ້
+YouCanLinkArticleToATicketCategory=ເຈົ້າສາມາດເຊື່ອມຕໍ່ບົດຄວາມ ໜຶ່ງ ກັບກຸ່ມປີ້ (ສະນັ້ນບົດຄວາມຈະຖືກແນະນໍາໃນລະຫວ່າງຄຸນສົມບັດຂອງປີ້ໃ)່)
+SuggestedForTicketsInGroup=Suggested for tickets when group is
 
-
-#
-# Menu
-#
-MenuKnowledgeRecord = Knowledge base
-ListOfArticles = List of articles
-NewKnowledgeRecord = New article
-ValidateReply = Validate solution
-KnowledgeRecords = Articles
-KnowledgeRecord = Article
-KnowledgeRecordExtraFields = Extrafields for Article
+SetObsolete=Set as obsolete
+ConfirmCloseKM=Do you confirm the closing of this article as obsolete ?
+ConfirmReopenKM=Do you want to restore this article to status "Validated" ?

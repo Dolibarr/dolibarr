@@ -75,7 +75,7 @@ $pagenext = $page + 1;
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $contextpage = 'receptionlist';
 
-$search_status = GETPOST('search_status');
+$search_status = GETPOST('search_status', 'intcomma');
 
 $object = new Reception($db);
 
@@ -85,7 +85,7 @@ $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
-$search_array_options = (array) $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
+$search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
@@ -171,87 +171,106 @@ if (empty($reshook)) {
 		$createbills_onebythird = GETPOST('createbills_onebythird', 'int');
 		$validate_invoices = GETPOST('validate_invoices', 'int');
 
+		$errors = array();
+
 		$TFact = array();
 		$TFactThird = array();
+		$TFactThirdNbLines = array();
 
 		$nb_bills_created = 0;
+		$lastid= 0;
+		$lastref = '';
 
 		$db->begin();
-		$errors = array();
+
+		//sort ids to keep order if one bill per third
+		sort($receptions);
 		foreach ($receptions as $id_reception) {
 			$rcp = new Reception($db);
-			 // On ne facture que les réceptions validées
-			if ($rcp->fetch($id_reception) <= 0 || $rcp->statut != 1) {
+			 // We only invoice reception that are validated
+			if ($rcp->fetch($id_reception) <= 0 || $rcp->statut != $rcp::STATUS_VALIDATED) {
 				$errors[] = $langs->trans('StatusOfRefMustBe', $rcp->ref, $langs->transnoentities("StatusSupplierOrderValidatedShort"));
 				$error++;
 				continue;
 			}
 
-			$object = new FactureFournisseur($db);
+			$objecttmp = new FactureFournisseur($db);
 			if (!empty($createbills_onebythird) && !empty($TFactThird[$rcp->socid])) {
-				$object = $TFactThird[$rcp->socid]; // If option "one bill per third" is set, we use already created reception.
-				if (empty($object->rowid) && $object->id != null) {
-					$object->rowid = $object->id;
-				}
-				if (!empty($object->rowid)) {
-					$object->fetchObjectLinked();
-				}
-				$rcp->fetchObjectLinked();
+				// If option "one bill per third" is set, and an invoice for this thirdparty was already created, we re-use it.
+				$objecttmp = $TFactThird[$rcp->socid];
 
-				if (count($rcp->linkedObjectsIds['reception']) > 0) {
-					foreach ($rcp->linkedObjectsIds['reception'] as $key => $value) {
-						if (empty($object->linkedObjectsIds['reception']) || !in_array($value, $object->linkedObjectsIds['reception'])) { //Dont try to link if already linked
-							$object->add_object_linked('reception', $value); // add supplier order linked object
+				// Add all links of this new reception to the existing invoice
+				$objecttmp->fetchObjectLinked();
+				$rcp->fetchObjectLinked();
+				if (count($rcp->linkedObjectsIds['order_supplier']) > 0) {
+					foreach ($rcp->linkedObjectsIds['order_supplier'] as $key => $value) {
+						if (empty($objecttmp->linkedObjectsIds['order_supplier']) || !in_array($value, $objecttmp->linkedObjectsIds['order_supplier'])) { //Dont try to link if already linked
+							$objecttmp->add_object_linked('order_supplier', $value); // add supplier order linked object
 						}
 					}
 				}
 			} else {
-				$object->socid = $rcp->socid;
-				$object->type = FactureFournisseur::TYPE_STANDARD;
-				$object->cond_reglement_id	= $rcp->thirdparty->cond_reglement_supplier_id;
-				$object->mode_reglement_id	= $rcp->thirdparty->mode_reglement_supplier_id;
-				$object->fk_account = !empty($rcp->thirdparty->fk_account) ? $rcp->thirdparty->fk_account : 0;
-				$object->remise_percent 	= !empty($rcp->thirdparty->remise_percent) ? $rcp->thirdparty->remise_percent : 0;
-				$object->remise_absolue 	= !empty($rcp->thirdparty->remise_absolue) ? $rcp->thirdparty->remise_absolue : 0;
+				// If we want one invoice per reception or if there is no first invoice yet for this thirdparty.
+				$objecttmp->socid = $rcp->socid;
+				$objecttmp->type = $objecttmp::TYPE_STANDARD;
+				$objecttmp->cond_reglement_id	= $rcp->cond_reglement_id || $rcp->thirdparty->cond_reglement_supplier_id;
+				$objecttmp->mode_reglement_id	= $rcp->mode_reglement_id || $rcp->thirdparty->mode_reglement_supplier_id;
 
-				$object->fk_project			= $rcp->fk_project;
-				$object->ref_supplier = $rcp->ref_supplier;
+				$objecttmp->fk_account = !empty($rcp->thirdparty->fk_account) ? $rcp->thirdparty->fk_account : 0;
+				$objecttmp->remise_percent 	= !empty($rcp->thirdparty->remise_percent) ? $rcp->thirdparty->remise_percent : 0;
+				$objecttmp->remise_absolue 	= !empty($rcp->thirdparty->remise_absolue) ? $rcp->thirdparty->remise_absolue : 0;
 
-				$datefacture = dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
-				if (empty($datefacture)) {
-					$datefacture = dol_mktime(date("h"), date("M"), 0, date("m"), date("d"), date("Y"));
+				$objecttmp->fk_project			= $rcp->fk_project;
+				//$objecttmp->multicurrency_code = $rcp->multicurrency_code;
+				if (empty($createbills_onebythird)) {
+					$objecttmp->ref_supplier = $rcp->ref;
+				} else {
+					// Set a unique value for the invoice for the n reception
+					$objecttmp->ref_supplier = $langs->trans("Reception").' '.dol_print_date(dol_now(), 'dayhourlog').'-'.$rcp->socid;
 				}
 
-				$object->date = $datefacture;
-				$object->origin    = 'reception';
-				$object->origin_id = $id_reception;
+				$datefacture = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
+				if (empty($datefacture)) {
+					$datefacture = dol_now();
+				}
 
+				$objecttmp->date = $datefacture;
+				$objecttmp->origin    = 'reception';
+				$objecttmp->origin_id = $id_reception;
+
+				$objecttmp->array_options = $rcp->array_options; // Copy extrafields
+
+				// Set $objecttmp->linked_objects with all links order_supplier existing on reception, so same links will be added to the generated supplier invoice
 				$rcp->fetchObjectLinked();
-				if (count($rcp->linkedObjectsIds['reception']) > 0) {
-					foreach ($rcp->linkedObjectsIds['reception'] as $key => $value) {
-						$object->linked_objects['reception'] = $value;
+				if (count($rcp->linkedObjectsIds['order_supplier']) > 0) {
+					foreach ($rcp->linkedObjectsIds['order_supplier'] as $key => $value) {
+						$objecttmp->linked_objects['order_supplier'] = $value;
 					}
 				}
 
-				$res = $object->create($user);
-				//var_dump($object->error);exit;
+				$res = $objecttmp->create($user);		// This should create the supplier invoice + links into $objecttmp->linked_objects + add a link to ->origin_id
+
+				//var_dump($objecttmp->error);exit;
 				if ($res > 0) {
 					$nb_bills_created++;
-					$object->id = $res;
+					$lastref = $objecttmp->ref;
+					$lastid = $objecttmp->id;
+
+					$TFactThird[$rcp->socid] = $objecttmp;
+					$TFactThirdNbLines[$rcp->socid] = 0; //init nblines to have lines ordered by expedition and rang
 				} else {
-					$errors[] = $rcp->ref.' : '.$langs->trans($object->error);
+					$langs->load("errors");
+					$errors[] = $rcp->ref.' : '.$langs->trans($objecttmp->error);
 					$error++;
 				}
 			}
 
-			if ($object->id > 0) {
-				if (!empty($createbills_onebythird) && !empty($TFactThird[$rcp->socid])) { //cause function create already add object linked for facturefournisseur
-					$res = $object->add_object_linked($object->origin, $id_reception);
+			if ($objecttmp->id > 0) {
+				$res = $objecttmp->add_object_linked($objecttmp->origin, $id_reception);
 
-					if ($res == 0) {
-						$errors[] = $object->error;
-						$error++;
-					}
+				if ($res == 0) {
+					$errors[] = $objecttmp->error;
+					$error++;
 				}
 
 				if (!$error) {
@@ -266,10 +285,15 @@ if (empty($reshook)) {
 
 					for ($i = 0; $i < $num; $i++) {
 						$desc = ($lines[$i]->desc ? $lines[$i]->desc : $lines[$i]->libelle);
+						// If we build one invoice for several reception, we must put the ref of reception on the invoice line
+						if (!empty($createbills_onebythird)) {
+							$desc = dol_concatdesc($desc, $langs->trans("Reception").' '.$rcp->ref.' - '.dol_print_date($rcp->date, 'day'));
+						}
+
 						if ($lines[$i]->subprice < 0) {
 							// Negative line, we create a discount line
 							$discount = new DiscountAbsolute($db);
-							$discount->fk_soc = $object->socid;
+							$discount->fk_soc = $objecttmp->socid;
 							$discount->amount_ht = abs($lines[$i]->total_ht);
 							$discount->amount_tva = abs($lines[$i]->total_tva);
 							$discount->amount_ttc = abs($lines[$i]->total_ttc);
@@ -278,7 +302,7 @@ if (empty($reshook)) {
 							$discount->description = $desc;
 							$discountid = $discount->create($user);
 							if ($discountid > 0) {
-								$result = $object->insert_discount($discountid);
+								$result = $objecttmp->insert_discount($discountid);
 								//$result=$discount->link_to_invoice($lineid,$id);
 							} else {
 								setEventMessages($discount->error, $discount->errors, 'errors');
@@ -314,7 +338,21 @@ if (empty($reshook)) {
 							if (($lines[$i]->product_type != 9 && empty($lines[$i]->fk_parent_line)) || $lines[$i]->product_type == 9) {
 								$fk_parent_line = 0;
 							}
-							$result = $object->addline(
+
+							// Extrafields
+							if (method_exists($lines[$i], 'fetch_optionals')) {
+								$lines[$i]->fetch_optionals();
+								$array_options = $lines[$i]->array_options;
+							}
+
+							$objecttmp->context['createfromclone'];
+
+							$rang = $i;
+							//there may already be rows from previous receptions
+							if (!empty($createbills_onebythird))
+								$rang = $TFactThirdNbLines[$rcp->socid];
+
+							$result = $objecttmp->addline(
 								$desc,
 								$lines[$i]->subprice,
 								$lines[$i]->tva_tx,
@@ -329,7 +367,7 @@ if (empty($reshook)) {
 								$lines[$i]->info_bits,
 								'HT',
 								$product_type,
-								$i,
+								$rang,
 								false,
 								0,
 								null,
@@ -342,6 +380,8 @@ if (empty($reshook)) {
 
 							if ($result > 0) {
 								$lineid = $result;
+								if (!empty($createbills_onebythird)) //increment rang to keep order
+									$TFactThirdNbLines[$rcp->socid]++;
 							} else {
 								$lineid = 0;
 								$error++;
@@ -359,9 +399,9 @@ if (empty($reshook)) {
 			//$rcp->classifyBilled($user);        // Disabled. This behavior must be set or not using the workflow module.
 
 			if (!empty($createbills_onebythird) && empty($TFactThird[$rcp->socid])) {
-				$TFactThird[$rcp->socid] = $object;
+				$TFactThird[$rcp->socid] = $objecttmp;
 			} else {
-				$TFact[$object->id] = $object;
+				$TFact[$objecttmp->id] = $objecttmp;
 			}
 		}
 
@@ -371,21 +411,27 @@ if (empty($reshook)) {
 
 		if (!$error && $validate_invoices) {
 			$massaction = $action = 'builddoc';
-			foreach ($TAllFact as &$object) {
-				$result = $object->validate($user);
+			foreach ($TAllFact as &$objecttmp) {
+				$result = $objecttmp->validate($user);
 				if ($result <= 0) {
 					$error++;
-					setEventMessages($object->error, $object->errors, 'errors');
+					setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
 					break;
 				}
 
-				$id = $object->id; // For builddoc action
+				$id = $objecttmp->id; // For builddoc action
+				$object  =$objecttmp;
 
 				// Fac builddoc
 				$donotredirect = 1;
 				$upload_dir = $conf->fournisseur->facture->dir_output;
 				$permissiontoadd = ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer);
+
+				// Call action to build doc
+				$savobject = $object;
+				$object = $objecttmp;
 				include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
+				$object = $savobject;
 			}
 
 			$massaction = $action = 'confirm_createbills';
@@ -393,9 +439,17 @@ if (empty($reshook)) {
 
 		if (!$error) {
 			$db->commit();
-			setEventMessage($langs->trans('BillCreated', $nb_bills_created));
+
+			if ($nb_bills_created == 1) {
+				$texttoshow = $langs->trans('BillXCreated', '{s1}');
+				$texttoshow = str_replace('{s1}', '<a href="'.DOL_URL_ROOT.'/fourn/facture/card.php?id='.urlencode($lastid).'">'.$lastref.'</a>', $texttoshow);
+				setEventMessages($texttoshow, null, 'mesgs');
+			} else {
+				setEventMessages($langs->trans('BillCreated', $nb_bills_created), null, 'mesgs');
+			}
 		} else {
 			$db->rollback();
+
 			$action = 'create';
 			$_GET["origin"] = $_POST["origin"];
 			$_GET["originid"] = $_POST["originid"];
@@ -428,7 +482,7 @@ $sql .= ' e.date_creation as date_creation, e.tms as date_update';
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
 	}
 }
 // Add fields from hooks
@@ -436,7 +490,7 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 $sql .= " FROM ".MAIN_DB_PREFIX."reception as e";
-if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
+if (!empty($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (e.rowid = ef.fk_object)";
 }
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = e.fk_soc";
@@ -445,13 +499,17 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_typent as typent on (typent.id = s.fk_ty
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = s.fk_departement)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as ee ON e.rowid = ee.fk_source AND ee.sourcetype = 'reception' AND ee.targettype = 'delivery'";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."delivery as l ON l.rowid = ee.fk_target";
-if (!$user->rights->societe->client->voir && !$socid) {	// Internal user with no permission to see all
+if (empty($user->rights->societe->client->voir) && !$socid) {	// Internal user with no permission to see all
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
+// Add joins from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
 $sql .= " WHERE e.entity IN (".getEntity('reception').")";
-if (!$user->rights->societe->client->voir && !$socid) {	// Internal user with no permission to see all
+if (empty($user->rights->societe->client->voir) && !$socid) {	// Internal user with no permission to see all
 	$sql .= " AND e.fk_soc = sc.fk_soc";
-	$sql .= " AND sc.fk_user = ".$user->id;
+	$sql .= " AND sc.fk_user = ".((int) $user->id);
 }
 if ($socid) {
 	$sql .= " AND e.fk_soc = ".((int) $socid);
@@ -494,21 +552,7 @@ if ($sall) {
 }
 
 // Add where from extra fields
-foreach ($search_array_options as $key => $val) {
-	$crit = $val;
-	$tmpkey = preg_replace('/search_options_/', '', $key);
-	$typ = $extrafields->attributes[$object->table_element]['type'][$tmpkey];
-	$mode = 0;
-	if (in_array($typ, array('int', 'double', 'real'))) {
-		$mode = 1; // Search on a numeric
-	}
-	if (in_array($typ, array('sellist')) && $crit != '0' && $crit != '-1') {
-		$mode = 2; // Search on a foreign key int
-	}
-	if ($crit != '' && (!in_array($typ, array('select', 'sellist')) || $crit != '0')) {
-		$sql .= natural_search('ef.'.$tmpkey, $crit, $mode);
-	}
-}
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 // Add where from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
@@ -544,50 +588,52 @@ if ($limit > 0 && $limit != $conf->liste_limit) {
 	$param .= '&limit='.urlencode($limit);
 }
 if ($sall) {
-	$param .= "&amp;sall=".urlencode($sall);
+	$param .= "&sall=".urlencode($sall);
 }
 if ($search_ref_rcp) {
-	$param .= "&amp;search_ref_rcp=".urlencode($search_ref_rcp);
+	$param .= "&search_ref_rcp=".urlencode($search_ref_rcp);
 }
 if ($search_ref_liv) {
-	$param .= "&amp;search_ref_liv=".urlencode($search_ref_liv);
+	$param .= "&search_ref_liv=".urlencode($search_ref_liv);
 }
 if ($search_company) {
-	$param .= "&amp;search_company=".urlencode($search_company);
+	$param .= "&search_company=".urlencode($search_company);
 }
 if ($optioncss != '') {
-	$param .= '&amp;optioncss='.urlencode($optioncss);
+	$param .= '&optioncss='.urlencode($optioncss);
 }
 if ($search_billed != '' && $search_billed >= 0) {
-	$param .= "&amp;search_billed=".urlencode($search_billed);
+	$param .= "&search_billed=".urlencode($search_billed);
 }
 if ($search_town) {
-	$param .= "&amp;search_town=".urlencode($search_town);
+	$param .= "&search_town=".urlencode($search_town);
 }
 if ($search_zip) {
-	$param .= "&amp;search_zip=".urlencode($search_zip);
+	$param .= "&search_zip=".urlencode($search_zip);
 }
 if ($search_state) {
-	$param .= "&amp;search_state=".urlencode($search_state);
+	$param .= "&search_state=".urlencode($search_state);
 }
 if ($search_status != '') {
-	$param .= "&amp;search_status=".urlencode($search_status);
+	$param .= "&search_status=".urlencode($search_status);
 }
 if ($search_country) {
-	$param .= "&amp;search_country=".urlencode($search_country);
+	$param .= "&search_country=".urlencode($search_country);
 }
 if ($search_type_thirdparty) {
-	$param .= "&amp;search_type_thirdparty=".urlencode($search_type_thirdparty);
+	$param .= "&search_type_thirdparty=".urlencode($search_type_thirdparty);
 }
 if ($search_ref_supplier) {
-	$param .= "&amp;search_ref_supplier=".urlencode($search_ref_supplier);
+	$param .= "&search_ref_supplier=".urlencode($search_ref_supplier);
 }
 // Add $param from extra fields
-foreach ($search_array_options as $key => $val) {
-	$crit = $val;
-	$tmpkey = preg_replace('/search_options_/', '', $key);
-	if ($val != '') {
-		$param .= '&search_options_'.$tmpkey.'='.urlencode($val);
+if ($search_array_options) {
+	foreach ($search_array_options as $key => $val) {
+		$crit = $val;
+		$tmpkey = preg_replace('/search_options_/', '', $key);
+		if ($val != '') {
+			$param .= '&search_options_'.$tmpkey.'='.urlencode($val);
+		}
 	}
 }
 
@@ -597,7 +643,7 @@ $arrayofmassactions = array(
 );
 
 if ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer) {
-	$arrayofmassactions['createbills'] = $langs->trans("CreateInvoiceForThisSupplier");
+	$arrayofmassactions['createbills'] = $langs->trans("CreateInvoiceForThisReceptions");
 }
 if ($massaction == 'createbills') {
 	$arrayofmassactions = array();
@@ -656,7 +702,7 @@ if ($massaction == 'createbills') {
 
 	print '<br>';
 	print '<div class="center">';
-	print '<input type="submit" class="button" id="createbills" name="createbills" value="'.$langs->trans('CreateInvoiceForThisSupplier').'">  ';
+	print '<input type="submit" class="button" id="createbills" name="createbills" value="'.$langs->trans('CreateInvoiceForThisReceptions').'">  ';
 	print '<input type="submit" class="button button-cancel" id="cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 	print '</div>';
 	print '<br>';
@@ -841,6 +887,7 @@ print "</tr>\n";
 
 $i = 0;
 $totalarray = array();
+$totalarray['nbfield'] = 0;
 while ($i < min($num, $limit)) {
 	$obj = $db->fetch_object($resql);
 
@@ -856,7 +903,7 @@ while ($i < min($num, $limit)) {
 
 	// Ref
 	if (!empty($arrayfields['e.ref']['checked'])) {
-		print "<td>";
+		print '<td class="nowraponall">';
 		print $reception->getNomUrl(1);
 		$filename = dol_sanitizeFileName($reception->ref);
 		$filedir = $conf->reception->dir_output.'/'.dol_sanitizeFileName($reception->ref);
@@ -869,10 +916,10 @@ while ($i < min($num, $limit)) {
 		}
 	}
 
-	// Ref customer
+	// Ref supplier
 	if (!empty($arrayfields['e.ref_supplier']['checked'])) {
-		print "<td>";
-		print $obj->ref_supplier;
+		print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($obj->ref_supplier).'">';
+		print dol_escape_htmltag($obj->ref_supplier);
 		print "</td>\n";
 		if (!$i) {
 			$totalarray['nbfield']++;
@@ -881,7 +928,7 @@ while ($i < min($num, $limit)) {
 
 	// Third party
 	if (!empty($arrayfields['s.nom']['checked'])) {
-		print '<td>';
+		print '<td class="tdoverflowmax150">';
 		print $companystatic->getNomUrl(1);
 		print '</td>';
 		if (!$i) {
@@ -890,8 +937,8 @@ while ($i < min($num, $limit)) {
 	}
 	// Town
 	if (!empty($arrayfields['s.town']['checked'])) {
-		print '<td class="nocellnopadd">';
-		print $obj->town;
+		print '<td class="nocellnopadd tdoverflowmax200" title="'.dol_escape_htmltag($obj->town).'">';
+		print dol_escape_htmltag($obj->town);
 		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
@@ -899,8 +946,8 @@ while ($i < min($num, $limit)) {
 	}
 	// Zip
 	if (!empty($arrayfields['s.zip']['checked'])) {
-		print '<td class="nocellnopadd">';
-		print $obj->zip;
+		print '<td class="nocellnopadd center"">';
+		print dol_escape_htmltag($obj->zip);
 		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
@@ -908,7 +955,7 @@ while ($i < min($num, $limit)) {
 	}
 	// State
 	if (!empty($arrayfields['state.nom']['checked'])) {
-		print "<td>".$obj->state_name."</td>\n";
+		print "<td>".dol_escape_htmltag($obj->state_name)."</td>\n";
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -917,7 +964,7 @@ while ($i < min($num, $limit)) {
 	if (!empty($arrayfields['country.code_iso']['checked'])) {
 		print '<td class="center">';
 		$tmparray = getCountry($obj->fk_pays, 'all');
-		print $tmparray['label'];
+		print dol_escape_htmltag($tmparray['label']);
 		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
@@ -945,6 +992,9 @@ while ($i < min($num, $limit)) {
 		{
 		}*/
 		print "</td>\n";
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 	}
 
 	if (!empty($arrayfields['l.ref']['checked']) || !empty($arrayfields['l.date_delivery']['checked'])) {
@@ -1039,6 +1089,13 @@ if ($num == 0) {
 	}
 	print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
 }
+
+// Show total line
+include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
+
+$parameters = array('arrayfields'=>$arrayfields, 'sql'=>$sql);
+$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters); // Note that $action and $object may have been modified by hook
+print $hookmanager->resPrint;
 
 print "</table>";
 print "</div>";

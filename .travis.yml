@@ -44,16 +44,20 @@ jobs:
   #allow_failures:
   #- php: nightly
   include:
-    - if: type = push
+    - stage: PHP 5.6-7.4
+      if: type = push
       php: '5.6'
       env: DB=postgresql
-    - if: type = pull_request OR type = push
-      php: '7.4'
+    - stage: PHP 5.6-7.4
+      if: type = pull_request OR type = push
+      php: '7.4.22'
       env: DB=mysql
-    - if: type = push AND branch = develop
+    - stage: PHP Dev
+      if: type = push AND branch = develop
       php: nightly 
       env: DB=mysql
-    - if: type = push AND branch = 14.0
+    - stage: PHP Dev
+      if: type = push AND branch = 15.0
       php: nightly 
       env: DB=mysql
 
@@ -102,7 +106,7 @@ install:
                         php-parallel-lint/php-console-highlighter ^0 \
                         squizlabs/php_codesniffer ^3
   fi
-  if [ "$TRAVIS_PHP_VERSION" = '7.3' ] || [ "$TRAVIS_PHP_VERSION" = '7.4' ]; then
+  if [ "$TRAVIS_PHP_VERSION" = '7.3' ] || [ "$TRAVIS_PHP_VERSION" = '7.4' ] || [ "$TRAVIS_PHP_VERSION" = '7.4.22' ]; then
     composer -n require phpunit/phpunit ^7 \
                         php-parallel-lint/php-parallel-lint ^1.2 \
                         php-parallel-lint/php-console-highlighter ^0 \
@@ -237,7 +241,7 @@ before_script:
   # enable php-fpm
   - sudo cp ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.conf.default ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.conf
   - |
-    if [ "$TRAVIS_PHP_VERSION" = '7.0' ] || [ "$TRAVIS_PHP_VERSION" = '7.1' ] || [ "$TRAVIS_PHP_VERSION" = '7.2' ] || [ "$TRAVIS_PHP_VERSION" = '7.3' ] || [ "$TRAVIS_PHP_VERSION" = '7.4' ] || [ "$TRAVIS_PHP_VERSION" = 'nightly' ]; then
+    if [ "$TRAVIS_PHP_VERSION" = '7.0' ] || [ "$TRAVIS_PHP_VERSION" = '7.1' ] || [ "$TRAVIS_PHP_VERSION" = '7.2' ] || [ "$TRAVIS_PHP_VERSION" = '7.3' ] || [ "$TRAVIS_PHP_VERSION" = '7.4' ] || [ "$TRAVIS_PHP_VERSION" = '7.4.22' ] || [ "$TRAVIS_PHP_VERSION" = 'nightly' ]; then
       # Copy the included pool
       sudo cp ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.d/www.conf.default ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.d/www.conf
     fi
@@ -272,7 +276,7 @@ script:
   set -e
   #parallel-lint --exclude htdocs/includes --blame .
   # Exclusions are defined in the ruleset.xml file
-  if [ "$TRAVIS_PHP_VERSION" = "7.4" ]; then
+  if [ "$TRAVIS_PHP_VERSION" = "7.4.22" ]; then
     parallel-lint -e php --exclude dev/tools/test/namespacemig --exclude htdocs/includes/composer --exclude htdocs/includes/myclabs --exclude htdocs/includes/phpspec --exclude dev/initdata/dbf/includes \
       --exclude htdocs/includes/sabre --exclude htdocs/includes/phpoffice/PhpSpreadsheet --exclude htdocs/includes/sebastian \
       --exclude htdocs/includes/squizlabs/php_codesniffer --exclude htdocs/includes/jakub-onderka --exclude htdocs/includes/php-parallel-lint --exclude htdocs/includes/symfony \
@@ -287,7 +291,7 @@ script:
   # Ensure we catch errors
   set -e
   # Exclusions are defined in the ruleset.xml file
-  if [ "$TRAVIS_PULL_REQUEST" = "false" ] && [ "$TRAVIS_PHP_VERSION" = "7.4" ]; then
+  if [ "$TRAVIS_PULL_REQUEST" = "false" ] && [ "$TRAVIS_PHP_VERSION" = "7.4.22" ]; then
     phpcs -s -p -d memory_limit=-1 --extensions=php --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 --runtime-set ignore_warnings_on_exit true .;
   fi
   set +e
@@ -407,15 +411,22 @@ script:
   php upgrade.php 13.0.0 14.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade13001400.log
   php upgrade2.php 13.0.0 14.0.0 > $TRAVIS_BUILD_DIR/upgrade13001400-2.log
   php step5.php 13.0.0 14.0.0 > $TRAVIS_BUILD_DIR/upgrade13001400-3.log
+  php upgrade.php 14.0.0 15.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade14001500.log
+  php upgrade2.php 14.0.0 15.0.0 > $TRAVIS_BUILD_DIR/upgrade14001500-2.log
+  php step5.php 14.0.0 15.0.0 > $TRAVIS_BUILD_DIR/upgrade14001500-3.log
+  php upgrade.php 15.0.0 16.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade15001600.log
+  php upgrade2.php 15.0.0 16.0.0 > $TRAVIS_BUILD_DIR/upgrade15001600-2.log
+  php step5.php 15.0.0 16.0.0 > $TRAVIS_BUILD_DIR/upgrade15001600-3.log
   ls -alrt $TRAVIS_BUILD_DIR/
 
 - |
   echo "Enabling new modules"
   # Enable modules not enabled into original dump
-  cd htdocs/install
-  php upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_API,MAIN_MODULE_PRODUCTBATCH,MAIN_MODULE_SUPPLIERPROPOSAL,MAIN_MODULE_STRIPE > $TRAVIS_BUILD_DIR/enablemodule.log
+  set -e
+  php upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_API,MAIN_MODULE_PRODUCTBATCH,MAIN_MODULE_SUPPLIERPROPOSAL,MAIN_MODULE_STRIPE,MAIN_MODULE_EXPENSEREPORT > $TRAVIS_BUILD_DIR/enablemodule.log
   php upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_WEBSITE,MAIN_MODULE_TICKET,MAIN_MODULE_ACCOUNTING,MAIN_MODULE_MRP >> $TRAVIS_BUILD_DIR/enablemodule.log
   php upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_RECEPTION,MAIN_MODULE_RECRUITMENT >> $TRAVIS_BUILD_DIR/enablemodule.log
+  php upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_KNOWLEDGEMANAGEMENT,MAIN_MODULE_EVENTORGANIZATION,MAIN_MODULE_PARTNERSHIP >> $TRAVIS_BUILD_DIR/enablemodule.log
   echo $?
   cd -
   set +e

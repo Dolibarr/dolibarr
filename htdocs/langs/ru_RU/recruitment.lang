@@ -18,59 +18,59 @@
 #
 
 # Module label 'ModuleRecruitmentName'
-ModuleRecruitmentName = Recruitment
+ModuleRecruitmentName = Рекрутинг
 # Module description 'ModuleRecruitmentDesc'
-ModuleRecruitmentDesc = Manage and follow recruitment campaigns for new job positions
+ModuleRecruitmentDesc = Управляйте кампаниями по найму на новые рабочие места и следите за ними
 
 #
 # Admin page
 #
-RecruitmentSetup = Recruitment setup
+RecruitmentSetup = Настройка набора
 Settings = Настройки
-RecruitmentSetupPage = Enter here the setup of main options for the recruitment module
-RecruitmentArea=Recruitement area
-PublicInterfaceRecruitmentDesc=Public pages of jobs are public URLs to show and answer to open jobs. There is one different link for each open job, found on each job record.
-EnablePublicRecruitmentPages=Enable public pages of open jobs
+RecruitmentSetupPage = Введите здесь настройки основных опций модуля найма
+RecruitmentArea=Рекрутинговая зона
+PublicInterfaceRecruitmentDesc=Публичные страницы вакансий - это общедоступные URL-адреса для отображения открытых вакансий и ответа на них. Для каждой открытой вакансии есть одна отдельная ссылка, которая находится в каждой записи о вакансии.
+EnablePublicRecruitmentPages=Включить публичные страницы открытых вакансий
 
 #
 # About page
 #
-About = О
-RecruitmentAbout = About Recruitment
-RecruitmentAboutPage = Recruitment about page
-NbOfEmployeesExpected=Expected nb of employees
-JobLabel=Label of job position
-WorkPlace=Work place
-DateExpected=Expected date
-FutureManager=Future manager
-ResponsibleOfRecruitement=Responsible of recruitment
-IfJobIsLocatedAtAPartner=If job is located at a partner place
+About = О модуле
+RecruitmentAbout = О найме
+RecruitmentAboutPage = Рекрутинг о странице
+NbOfEmployeesExpected=Ожидаемое количество сотрудников
+JobLabel=Ярлык должности
+WorkPlace=Рабочее место
+DateExpected=Ожидаемая дата
+FutureManager=Будущий менеджер
+ResponsibleOfRecruitement=Ответственный за набор
+IfJobIsLocatedAtAPartner=Если работа находится у партнера
 PositionToBeFilled=Должность
-PositionsToBeFilled=Job positions
-ListOfPositionsToBeFilled=List of job positions
-NewPositionToBeFilled=New job positions
+PositionsToBeFilled=Вакансии
+ListOfPositionsToBeFilled=Список вакансий
+NewPositionToBeFilled=Новые рабочие места
 
-JobOfferToBeFilled=Job position to be filled
-ThisIsInformationOnJobPosition=Information of the job position to be filled
-ContactForRecruitment=Contact for recruitment
-EmailRecruiter=Email recruiter
-ToUseAGenericEmail=To use a generic email. If not defined, the email of the responsible of recruitment will be used
-NewCandidature=New application
-ListOfCandidatures=List of applications
-RequestedRemuneration=Requested remuneration
-ProposedRemuneration=Proposed remuneration
-ContractProposed=Contract proposed
-ContractSigned=Contract signed
-ContractRefused=Contract refused
-RecruitmentCandidature=Application
-JobPositions=Job positions
-RecruitmentCandidatures=Applications
-InterviewToDo=Interview to do
-AnswerCandidature=Application answer
-YourCandidature=Your application
-YourCandidatureAnswerMessage=Thanks you for your application.<br>...
-JobClosedTextCandidateFound=The job position is closed. The position has been filled.
-JobClosedTextCanceled=The job position is closed.
-ExtrafieldsJobPosition=Complementary attributes (job positions)
-ExtrafieldsApplication=Complementary attributes (job applications)
-MakeOffer=Make an offer
+JobOfferToBeFilled=Должность быть заполнена
+ThisIsInformationOnJobPosition=Информация о вакансии, которую необходимо заполнить
+ContactForRecruitment=Контакт для набора
+EmailRecruiter=Написать рекрутеру
+ToUseAGenericEmail=Чтобы использовать общий адрес электронной почты. Если не определено, будет использоваться адрес электронной почты ответственного за набор персонала.
+NewCandidature=Новое приложение
+ListOfCandidatures=Список приложений
+RequestedRemuneration=Запрошенное вознаграждение
+ProposedRemuneration=Предлагаемое вознаграждение
+ContractProposed=Предлагаемый контракт
+ContractSigned=Контракт подписан
+ContractRefused=Контракт отклонен
+RecruitmentCandidature=Заявление
+JobPositions=Вакансии
+RecruitmentCandidatures=Приложения
+InterviewToDo=Интервью делать
+AnswerCandidature=Ответ приложения
+YourCandidature=Ваше приложение
+YourCandidatureAnswerMessage=Спасибо за заявку.<br> ...
+JobClosedTextCandidateFound=Вакансия закрыта. Вакансия заполнена.
+JobClosedTextCanceled=Вакансия закрыта.
+ExtrafieldsJobPosition=Дополнительные атрибуты (должности)
+ExtrafieldsApplication=Дополнительные атрибуты (заявления о приеме на работу)
+MakeOffer=Сделай предложение

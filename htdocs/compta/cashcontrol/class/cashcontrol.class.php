@@ -80,7 +80,7 @@ class CashControl extends CommonObject
 	 *  Note: To have value dynamic, you can set value to 0 in definition and edit the value on the fly into the constructor.
 	 */
 	public $fields = array(
-	'rowid' =>array('type'=>'integer', 'label'=>'ID', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>10),
+	'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>10),
 	'entity' =>array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'notnull'=>1, 'position'=>15),
 	'ref' =>array('type'=>'varchar(64)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>18),
 	'posmodule' =>array('type'=>'varchar(30)', 'label'=>'Module', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>19),
@@ -96,10 +96,10 @@ class CashControl extends CommonObject
 	'date_creation' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>500),
 	'date_valid' =>array('type'=>'datetime', 'label'=>'DateValidation', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>502),
 	'tms' =>array('type'=>'timestamp', 'label'=>'Tms', 'enabled'=>1, 'visible'=>0, 'notnull'=>1, 'position'=>505),
-	'fk_user_creat' =>array('type'=>'integer:User', 'label'=>'userCreation', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>600),
+	'fk_user_creat' =>array('type'=>'integer:User', 'label'=>'UserCreation', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>600),
 	'fk_user_valid' =>array('type'=>'integer:User', 'label'=>'UserValidation', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>602),
 	'import_key' =>array('type'=>'varchar(14)', 'label'=>'Import key', 'enabled'=>1, 'visible'=>0, 'position'=>700),
-	'status' => array('type'=>'integer', 'label'=>'Status', 'enabled'=>1, 'visible'=>1, 'position'=>1000, 'notnull'=>1, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Brouillon', '1'=>'Validated')),
+	'status' => array('type'=>'integer', 'label'=>'Status', 'enabled'=>1, 'visible'=>1, 'position'=>1000, 'notnull'=>1, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Validated')),
 	);
 
 	/**
@@ -192,18 +192,18 @@ class CashControl extends CommonObject
 		$sql .= ", card";
 		$sql .= ") VALUES (";
 		//$sql .= "'(PROV)', ";
-		$sql .= $conf->entity;
-		$sql .= ", ".(is_numeric($this->opening) ? $this->opening : 0);
+		$sql .= ((int) $conf->entity);
+		$sql .= ", ".(is_numeric($this->opening) ? price2num($this->opening, 'MT') : 0);
 		$sql .= ", 0"; // Draft by default
 		$sql .= ", '".$this->db->idate(dol_now())."'";
 		$sql .= ", '".$this->db->escape($this->posmodule)."'";
 		$sql .= ", '".$this->db->escape($this->posnumber)."'";
 		$sql .= ", ".($this->day_close > 0 ? $this->day_close : "null");
 		$sql .= ", ".($this->month_close > 0 ? $this->month_close : "null");
-		$sql .= ", ".$this->year_close;
-		$sql .= ", ".$this->cash;
-		$sql .= ", ".$this->cheque;
-		$sql .= ", ".$this->card;
+		$sql .= ", ".((int) $this->year_close);
+		$sql .= ", ".price2num($this->cash, 'MT');
+		$sql .= ", ".price2num($this->cheque, 'MT');
+		$sql .= ", ".price2num($this->card, 'MT');
 		$sql .= ")";
 
 		$this->db->begin();
@@ -378,10 +378,10 @@ class CashControl extends CommonObject
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			//$langs->load("mymodule");
-			$this->labelStatus[0] = $langs->trans('Draft');
-			$this->labelStatus[1] = $langs->trans('Closed');
-			$this->labelStatusShort[0] = $langs->trans('Draft');
-			$this->labelStatusShort[1] = $langs->trans('Closed');
+			$this->labelStatus[0] = $langs->transnoentitiesnoconv('Draft');
+			$this->labelStatus[1] = $langs->transnoentitiesnoconv('Closed');
+			$this->labelStatusShort[0] = $langs->transnoentitiesnoconv('Draft');
+			$this->labelStatusShort[1] = $langs->transnoentitiesnoconv('Closed');
 		}
 
 		$statusType = 'status0';
@@ -414,7 +414,7 @@ class CashControl extends CommonObject
 
 		$newref = ($this->ref ? $this->ref : $this->id);
 
-		$label = '<u>'.$langs->trans("CashFence").'</u>';
+		$label = '<u>'.$langs->trans("CashControl").'</u>';
 		$label .= '<br>';
 		$label .= '<b>'.$langs->trans('Ref').':</b> '.($this->ref ? $this->ref : $this->id);
 
@@ -466,7 +466,7 @@ class CashControl extends CommonObject
 
 		global $action;
 		$hookmanager->initHooks(array('cashfencedao'));
-		$parameters = array('id'=>$this->id, 'getnomurl'=>$result);
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;

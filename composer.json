@@ -28,14 +28,14 @@
 		"ext-curl" : "*",
 		"ckeditor/ckeditor" : "4.12.1",
 		"mike42/escpos-php" : "2.2",
-		"mobiledetect/mobiledetectlib" : "2.8.34",
+		"mobiledetect/mobiledetectlib" : "2.8.39",
 		"phpoffice/phpexcel" : "1.8.2",
 		"restler/framework" : "3.0.0-RC6",
 		"tecnickcom/tcpdf" : "6.3.2",
 		"nnnick/chartjs" : "^2.9",
 		"stripe/stripe-php" : "6.43.1",
 		"maximebf/debugbar" : "1.15.1",
-		"symfony/var-dumper" : "3"
+		"symfony/var-dumper" : "3.2"
 	},
 	"require-dev" : {
 		"php-parallel-lint/php-parallel-lint" : "^0",

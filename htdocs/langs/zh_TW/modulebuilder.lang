@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - loan
-ModuleBuilderDesc=此工具只能由有經驗的使用者或開發人員使用。它提供了用於建構或編輯您自己模組。另個<a href="%s" target="_blank">手動開發的文件在此處</a>。
+ModuleBuilderDesc=此工具只能由有經驗的用戶或開發人員使用。它提供了構建或編輯您自己的模組的實用程序。替代 <a href="%s" target="_blank" rel="noopener noreferrer"> 手動開發的文件在此處 </a> 。
 EnterNameOfModuleDesc=輸入要新建的 模組/程式 名稱不留空白。使用大寫字母分隔單詞（例如：example: MyModule, EcommerceForShop, SyncWithMySystem...）
 EnterNameOfObjectDesc=輸入要新建的物件名稱不留空白。使用大寫字母分隔單詞（例如：MyObject, Student, Teacher...）。將生成 CRUD class 檔案，以及 API 檔案，頁面用來 列出/新增/編輯/刪除 對象及SQL的檔案將自動生成。
 ModuleBuilderDesc2=已生成/已編輯 模組的路徑（外部模組的首個目錄定義為%s）: <strong> %s </strong>
@@ -20,14 +20,14 @@ ModuleBuilderDescpermissions=此標籤專用於定義您要隨模組提供的新
 ModuleBuilderDesctriggers=這是您模組提供的觸發器檢視。當觸發了業務事件時要包含代碼的執行，只需編輯此檔案。
 ModuleBuilderDeschooks=此標籤專用於掛載。
 ModuleBuilderDescwidgets=此頁籤是專門用於管理/建立小工具。
-ModuleBuilderDescbuildpackage=You can generate here a "ready to distribute" package file (a normalized .zip file) of your module and a "ready to distribute" documentation file. Just click on button to build the package or documentation file.
-EnterNameOfModuleToDeleteDesc=You can delete your module. WARNING: All coding files of module (generated or created manually) AND structured data and documentation will be deleted!
-EnterNameOfObjectToDeleteDesc=You can delete an object. WARNING: All coding files (generated or created manually) related to object will be deleted!
+ModuleBuilderDescbuildpackage=您可以在此處產生模組的“準備發布”封裝檔案（統一化的 .zip 文件）和“準備發布”文件檔案.只需點擊按鈕即可建構封裝或文件檔案。
+EnterNameOfModuleToDeleteDesc=您可以刪除您的模組。警告：模組的所有編碼檔案（手動產生或建立）以及結構化資料和文件都將被刪除！
+EnterNameOfObjectToDeleteDesc=您可以刪除一個項目。警告：所有與物件相關的編碼檔案（手動產生或建立）都將被刪除！
 DangerZone=危險區域
 BuildPackage=建立軟體包
-BuildPackageDesc=You can generate a zip package of your application so your are ready to distribute it on any Dolibarr. You can also distribute it or sell it on marketplace like <a href="https://www.dolistore.com">DoliStore.com</a>.
+BuildPackageDesc=您可以產生應用程式的 zip 包，以便準備好在任何 Dolibarr 上發布它。您也可以在 <a href="https://www.dolistore.com"> DoliStore.com </a> 等市場上發布或出售它。
 BuildDocumentation=建立文件
-ModuleIsNotActive=This module is not activated yet. Go to %s to make it live or click here
+ModuleIsNotActive=此模組尚未啟用。前往 %s 使其生效或點擊此處
 ModuleIsLive=此模組已被啟動。任何更改都可能會破壞目前的即時功能。
 DescriptionLong=詳細描述
 EditorName=編輯器名稱
@@ -40,7 +40,7 @@ PageForCreateEditView=建立/編輯/檢視記錄PHP頁面
 PageForAgendaTab=事件分頁的PHP頁面
 PageForDocumentTab=文件分頁的PHP頁面
 PageForNoteTab=註記分頁的PHP頁面
-PageForContactTab=PHP page for contact tab
+PageForContactTab=聯絡人分頁的 PHP 頁面
 PathToModulePackage=模組/應用程式包的zip路徑
 PathToModuleDocumentation=模組/應用程式檔案的文件路徑(%s)
 SpaceOrSpecialCharAreNotAllowed=不允許使用空格或特殊符號。
@@ -50,47 +50,47 @@ RegenerateMissingFiles=產生遺失的檔案
 SpecificationFile=文件檔案
 LanguageFile=語言檔案
 ObjectProperties=項目屬性
-ConfirmDeleteProperty=Are you sure you want to delete the property <strong>%s</strong>? This will change code in PHP class but also remove column from table definition of object.
+ConfirmDeleteProperty=您確定要刪除屬性 <strong> %s </strong> 嗎？這將更改 PHP 類別中的代碼，但也會從物件表格定義中刪除列。
 NotNull=非空白
-NotNullDesc=1=Set database to NOT NULL. -1=Allow null values and force value to NULL if empty ('' or 0).
+NotNullDesc=1 = 將資料庫設定為 NOT NULL。 -1=如果為空（'' 或 0），則允許為空並強制值為 NULL。
 SearchAll=用於“全部搜尋”
 DatabaseIndex=資料庫索引
 FileAlreadyExists=檔案%s已存在
 TriggersFile=觸發器代碼檔案
 HooksFile=掛鉤代碼檔案
-ArrayOfKeyValues=Array of key-val
-ArrayOfKeyValuesDesc=Array of keys and values if field is a combo list with fixed values
+ArrayOfKeyValues=鍵值陣列
+ArrayOfKeyValuesDesc=如果欄位是具有固定值的組合清單，則為鍵值陣列與數值
 WidgetFile=小工具檔案
 CSSFile=CSS檔案
 JSFile=Javascript檔案
 ReadmeFile=Readme檔案
 ChangeLog=ChangeLog檔案
-TestClassFile=File for PHP Unit Test class
+TestClassFile=PHP 單位測試類別檔案
 SqlFile=SQL檔案
 PageForLib=通用PHP庫的檔案
-PageForObjLib=File for the PHP library dedicated to object
-SqlFileExtraFields=Sql file for complementary attributes
+PageForObjLib=專用於物件的 PHP 庫檔案
+SqlFileExtraFields=補充屬性的 Sql 檔案
 SqlFileKey=密鑰的SQL檔案
-SqlFileKeyExtraFields=Sql file for keys of complementary attributes
-AnObjectAlreadyExistWithThisNameAndDiffCase=An object already exists with this name and a different case
-UseAsciiDocFormat=You can use Markdown format, but it is recommended to use Asciidoc format (omparison between .md and .asciidoc: http://asciidoctor.org/docs/user-manual/#compared-to-markdown)
-IsAMeasure=Is a measure
+SqlFileKeyExtraFields=補充屬性鍵的 Sql 檔案
+AnObjectAlreadyExistWithThisNameAndDiffCase=已存在具有此名稱和不同大小寫的物件
+UseAsciiDocFormat=可以使用 Markdown 格式，但建議使用 Asciidoc 格式（.md 和 .asciidoc 之間的比較：http://asciidoctor.org/docs/user-manual/#compared-to-markdown）
+IsAMeasure=是一個量測
 DirScanned=資料夾已掃描
 NoTrigger=沒有觸發器
 NoWidget=沒有小工具
-GoToApiExplorer=API explorer
+GoToApiExplorer=API 瀏覽器
 ListOfMenusEntries=選單條目清單
 ListOfDictionariesEntries=分類條目清單
 ListOfPermissionsDefined=已定義權限清單
 SeeExamples=在這裡查看範例
-EnabledDesc=Condition to have this field active (Examples: 1 or $conf->global->MYMODULE_MYOPTION)
-VisibleDesc=Is the field visible ? (Examples: 0=Never visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create), 5=Visible on list end view form only (not create, not update).<br><br>Using a negative value means field is not shown by default on list but can be selected for viewing).<br><br>It can be an expression, for example:<br>preg_match('/public/', $_SERVER['PHP_SELF'])?0:1<br>($user->rights->holiday->define_holiday ? 1 : 0)
+EnabledDesc=啟用此欄位的條件（範例：1 或 $conf->global->MYMODULE_MYOPTION）
+VisibleDesc=欄位是否顯示？ （範例：0=隱藏，1=在清單與建立/更新/查看表單上顯示，2=僅在清單上顯示，3=僅在建立/更新/查看表單上顯示（非清單），4=只在清單與更新/查看表單（非建立）顯示，5=僅在清單結尾視圖表單上顯示（非建立，非更新）。<br> <br> 使用負值表示預設情況下清單中不顯示欄位，但可以選擇查看）。 <br> <br> 可以是表達式，例如：<br> preg_match('/public/', $_SERVER['PHP_SELF'])?0:1 <br> ($user->rights->holiday->define_holiday ? 1 : 0)
 DisplayOnPdfDesc=Display this field on compatible PDF documents, you can manage position with "Position" field.<br>Currently, known compatibles PDF models are : eratosthene (order), espadon (ship), sponge (invoices), cyan (propal/quotation), cornas (supplier order)<br><br><strong>For document :</strong><br>0 = not displayed <br>1 = display<br>2 = display only if not empty<br><br><strong>For document lines :</strong><br>0 = not displayed <br>1 = displayed in a column<br>3 = display in line description column after the description<br>4 = display in description column after the description only if not empty
 DisplayOnPdf=以PDF顯示
-IsAMeasureDesc=Can the value of field be cumulated to get a total into list? (Examples: 1 or 0)
-SearchAllDesc=Is the field used to make a search from the quick search tool? (Examples: 1 or 0)
-SpecDefDesc=Enter here all documentation you want to provide with your module that is not already defined by other tabs. You can use .md or better, the rich .asciidoc syntax.
-LanguageDefDesc=Enter in this files, all the key and the translation for each language file.
+IsAMeasureDesc=可以將可累積欄位的值以總和放入清單中嗎？ （例如：1 或 0）
+SearchAllDesc=欄位是否用於快速搜尋工具進行搜尋？ （範例：1 或 0）
+SpecDefDesc=在此處輸入您想與模組一起提供的所有尚未由其他分頁卡定義的文件。您可以使用 .md 或更好的豐富的 .asciidoc 語法。
+LanguageDefDesc=在此檔案中輸入每個語言檔案的所有密鑰和翻譯。
 MenusDefDesc=在此定義模組提供的選單
 DictionariesDefDesc=在此定義您模組提供的字典
 PermissionsDefDesc=在此定義模組提供的新權限
@@ -98,15 +98,15 @@ MenusDefDescTooltip=The menus provided by your module/application are defined in
 DictionariesDefDescTooltip=The dictionaries provided by your module/application are defined into the array <strong>$this->dictionaries</strong> into the module descriptor file. You can edit manually this file or use the embedded editor.<br><br>Note: Once defined (and module re-activated), dictionaries are also visible into the setup area to administrator users on %s.
 PermissionsDefDescTooltip=The permissions provided by your module/application are defined into the array <strong>$this->rights</strong> into the module descriptor file. You can edit manually this file or use the embedded editor.<br><br>Note: Once defined (and module re-activated), permissions are visible into the default permissions setup %s.
 HooksDefDesc=Define in the <b>module_parts['hooks']</b> property, in the module descriptor, the context of hooks you want to manage (list of contexts can be found by a search on '<b>initHooks(</b>' in core code).<br>Edit the hook file to add code of your hooked functions (hookable functions can be found by a search on '<b>executeHooks</b>' in core code).
-TriggerDefDesc=Define in the trigger file the code you want to execute for each business event executed.
-SeeIDsInUse=See IDs in use in your installation
-SeeReservedIDsRangeHere=See range of reserved IDs
-ToolkitForDevelopers=Toolkit for Dolibarr developers
+TriggerDefDesc=在觸發器檔案中定義當執行模組外部的業務事件（由其他模組觸發的事件）時要執行的代碼。
+SeeIDsInUse=查看安裝中使用的 ID
+SeeReservedIDsRangeHere=查看保留 ID 的範圍
+ToolkitForDevelopers=Dolibarr 開發人員工具集
 TryToUseTheModuleBuilder=如果您具有SQL和PHP的知識，則可以使用本機模組建構器精靈。 <br>啟用模組<strong> %s </strong>並通過點擊右上方選單上的<span class="fa fa-bug"> </span>使用精靈。 <br>警告：這是高級開發人員功能，請<b>不要</b>在生產 網站上進行實驗！
 SeeTopRightMenu=請參閱右上方選單中的<span class="fa fa-bug"> </span>
 AddLanguageFile=增加語言檔案
 YouCanUseTranslationKey=您可以在此處使用一個key，此key是在語言檔案中找到的翻譯key（請參見“語言”分頁）
-DropTableIfEmpty=(Destroy table if empty)
+DropTableIfEmpty=（如果為空，則刪除表）
 TableDoesNotExists=表%s不存在
 TableDropped=表%s已刪除
 InitStructureFromExistingTable=建立現有表的結構數組字串
@@ -132,14 +132,16 @@ IncludeRefGenerationHelp=如果要包含代碼以自動管理參考的產生成�
 IncludeDocGeneration=我想從項目產生一些文件
 IncludeDocGenerationHelp=如果選中此選項，將產生一些代碼以在記錄上增加“產生文件”框。
 ShowOnCombobox=在組合框中顯示數值
-KeyForTooltip=Key for tooltip
-CSSClass=CSS for edit/create form
-CSSViewClass=CSS for read form
-CSSListClass=CSS for list
+KeyForTooltip=工具提示金鑰
+CSSClass=編輯/建立表單的 CSS
+CSSViewClass=讀取表單的 CSS
+CSSListClass=清單的 CSS
 NotEditable=無法編輯
 ForeignKey=外部金鑰
 TypeOfFieldsHelp=Type of fields:<br>varchar(99), double(24,8), real, text, html, datetime, timestamp, integer, integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]] ('1' means we add a + button after the combo to create the record, 'filter' can be 'status=1 AND fk_user = __USER_ID AND entity IN (__SHARED_ENTITIES__)' for example)
 AsciiToHtmlConverter=ASCII到HTML轉換器
 AsciiToPdfConverter=ASCII到PDF轉換器
 TableNotEmptyDropCanceled=表不為空。刪除已被取消。
-ModuleBuilderNotAllowed=The module builder is available but not allowed to your user.
+ModuleBuilderNotAllowed=模組建構器可使用，但不允許您的用戶使用。
+ImportExportProfiles=匯入和匯出設定檔
+ValidateModBuilderDesc=如果需要使用 $this->validateField() 驗證此欄位，則輸入 1；如果需要驗證，則輸入 0

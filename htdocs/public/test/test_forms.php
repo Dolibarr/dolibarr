@@ -1,16 +1,22 @@
 <?php
-//define("NOLOGIN",1);		// This means this output page does not require to be logged.
 define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
-if (!defined('NOSESSION')) {
+//define("NOLOGIN",1);		// This means this output page does not require to be logged.
+/*if (!defined('NOSESSION')) {
 	define('NOSESSION', '1');
-}
+}*/
 
 require '../../main.inc.php';
 include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
+// Security
 if ($dolibarr_main_prod) {
-	accessforbidden();
+	accessforbidden('Access forbidden when $dolibarr_main_prod is set to 1');
 }
+
+
+/*
+ * View
+ */
 
 llxHeader();
 

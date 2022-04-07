@@ -37,19 +37,18 @@ About = Acerca de
 KnowledgeManagementAbout = Acerca de la Gestión del Conocimiento
 KnowledgeManagementAboutPage = Gestión del Conocimiento sobre la página
 
-#
-# Sample page
-#
 KnowledgeManagementArea = Gestión del Conocimiento
-
-
-#
-# Menu
-#
 MenuKnowledgeRecord = Base de Conocimientos
-ListOfArticles = Lista de articulos
+ListKnowledgeRecord = Lista de articulos
 NewKnowledgeRecord = Articulo nuevo
 ValidateReply = Validar solución
 KnowledgeRecords = Artículos
 KnowledgeRecord = Artículo
 KnowledgeRecordExtraFields = Campos adicionales para el artículo
+GroupOfTicket=Grupo de tickets
+YouCanLinkArticleToATicketCategory=Puede vincular un artículo a un grupo de tickets (por lo que el artículo se sugerirá durante la calificación de nuevos tickets)
+SuggestedForTicketsInGroup=Sugerido para tickets cuando el grupo es
+
+SetObsolete=Marcar como obsoleto
+ConfirmCloseKM=¿Confirma el cierre de este artículo como obsoleto?
+ConfirmReopenKM=¿Quieres reabrir este artículo al estado "Validado"?

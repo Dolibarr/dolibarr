@@ -16,6 +16,8 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+// $formatexportset ùust be defined
+
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
@@ -36,10 +38,12 @@ header('Content-Type: text/csv');
 include_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancyexport.class.php';
 $accountancyexport = new AccountancyExport($db);
 
-if ($accountancyexport->getFormatCode($formatexportset) == $accountancyexport::$EXPORT_TYPE_FEC && $type_export == "general_ledger") { // Specific filename for FEC model export into the general ledger
+// Specific filename for FEC model export into the general ledger
+if (($accountancyexport->getFormatCode($formatexportset) == 'fec' || $accountancyexport->getFormatCode($formatexportset) == 'fec2')
+	&& $type_export == "general_ledger") {
 	// FEC format is defined here: https://www.legifrance.gouv.fr/affichCodeArticle.do?idArticle=LEGIARTI000027804775&cidTexte=LEGITEXT000006069583&dateTexte=20130802&oldAction=rechCodeArticle
 	if (empty($search_date_end)) {
-		// TODO Get the max date into bookeeping table
+		// TODO Get the max date into bookkeeping table
 		$search_date_end = dol_now();
 	}
 	$datetouseforfilename = $search_date_end;
@@ -56,6 +60,8 @@ if ($accountancyexport->getFormatCode($formatexportset) == $accountancyexport::$
 	$endaccountingperiod = dol_print_date(dol_get_last_day($tmparray['year'], $tmparray['mon']), 'dayxcard');
 
 	$completefilename = $siren."FEC".$endaccountingperiod.".txt";
+} elseif ($accountancyexport->getFormatCode($formatexportset) == 'ciel' && $type_export == "general_ledger" && !empty($conf->global->ACCOUNTING_EXPORT_XIMPORT_FORCE_FILENAME)) {
+	$completefilename = "XIMPORT.TXT";
 } else {
 	$completefilename = ($code ? $code."_" : "").($prefix ? $prefix."_" : "").$filename.($nodateexport ? "" : $date_export).".".$format;
 }

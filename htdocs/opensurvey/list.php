@@ -107,7 +107,8 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 
 $permissiontoread = $user->rights->opensurvey->read;
 $permissiontoadd = $user->rights->opensurvey->write;
-$permissiontodelete = $user->rights->opensurvey->delete;
+// permission delete doesn't exists
+$permissiontodelete = $user->rights->opensurvey->write;
 
 
 /*

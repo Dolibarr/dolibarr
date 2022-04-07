@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2015       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2016-2019  Philippe Grand          <philippe.grand@atoo-net.com>
+ * Copyright (C) 2016-2021  Philippe Grand          <philippe.grand@atoo-net.com>
  * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2018       Francis Appels          <francis.appels@z-application.com>
  * Copyright (C) 2019       Markus Welters          <markus@welters.de>
@@ -151,13 +151,13 @@ class pdf_standard extends ModeleExpenseReport
 		$this->marge_haute = isset($conf->global->MAIN_PDF_MARGIN_TOP) ? $conf->global->MAIN_PDF_MARGIN_TOP : 10;
 		$this->marge_basse = isset($conf->global->MAIN_PDF_MARGIN_BOTTOM) ? $conf->global->MAIN_PDF_MARGIN_BOTTOM : 10;
 
-		$this->option_logo = 1; // Affiche logo
-		$this->option_tva = 1; // Gere option tva FACTURE_TVAOPTION
-		$this->option_modereg = 1; // Affiche mode reglement
-		$this->option_condreg = 1; // Affiche conditions reglement
-		$this->option_codeproduitservice = 1; // Affiche code produit-service
-		$this->option_multilang = 1; // Dispo en plusieurs langues
-		$this->option_escompte = 0; // Affiche si il y a eu escompte
+		$this->option_logo = 1; // Display logo
+		$this->option_tva = 1; // Manage the vat option FACTURE_TVAOPTION
+		$this->option_modereg = 1; // Display payment mode
+		$this->option_condreg = 1; // Display payment terms
+		$this->option_codeproduitservice = 1; // Display product-service code
+		$this->option_multilang = 1; // Available in several languages
+		$this->option_escompte = 0; // Displays if there has been a discount
 		$this->option_credit_note = 0; // Support credit notes
 		$this->option_freetext = 1; // Support add of a personalised text
 		$this->option_draft_watermark = 1; // Support add of a watermark on drafts
@@ -175,10 +175,11 @@ class pdf_standard extends ModeleExpenseReport
 		//$this->posxdate=88;
 		//$this->posxtype=107;
 		//$this->posxprojet=120;
-		$this->posxtva = 130;
-		$this->posxup = 145;
-		$this->posxqty = 168;
-		$this->postotalttc = 178;
+		$this->posxtva = 112;
+		$this->posxup = 127;
+		$this->posxqty = 150;
+		$this->postotalht = 160;
+		$this->postotalttc = 180;
 		// if (empty($conf->projet->enabled)) {
 		//     $this->posxtva-=20;
 		//     $this->posxup-=20;
@@ -196,9 +197,11 @@ class pdf_standard extends ModeleExpenseReport
 		}
 
 		$this->tva = array();
+		$this->tva_array = array();
 		$this->localtax1 = array();
 		$this->localtax2 = array();
 		$this->atleastoneratenotnull = 0;
+		$this->atleastonediscount = 0;
 	}
 
 
@@ -312,8 +315,8 @@ class pdf_standard extends ModeleExpenseReport
 
 				$tab_top = 95;
 				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD) ? 65 : 10);
-				$tab_height = 130;
-				$tab_height_newpage = 150;
+
+				$tab_height = $this->page_hauteur - $tab_top - $heightforfooter - $heightforfreetext;
 
 				// Show notes
 				$notetoshow = empty($object->note_public) ? '' : $object->note_public;
@@ -642,11 +645,15 @@ class pdf_standard extends ModeleExpenseReport
 
 		// Quantity
 		$pdf->SetXY($this->posxqty, $curY);
-		$pdf->MultiCell($this->postotalttc - $this->posxqty - 0.8, 4, $object->lines[$linenumber]->qty, 0, 'R');
+		$pdf->MultiCell($this->postotalht - $this->posxqty - 0.8, 4, $object->lines[$linenumber]->qty, 0, 'R');
+
+		// Total without taxes
+		$pdf->SetXY($this->postotalht, $curY);
+		$pdf->MultiCell($this->postotalttc - $this->postotalht - 0.8, 4, price($object->lines[$linenumber]->total_ht), 0, 'R');
 
 		// Total with all taxes
 		$pdf->SetXY($this->postotalttc - 1, $curY);
-		$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->postotalttc, 4, price($object->lines[$linenumber]->total_ttc), 0, 'R');
+		$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->postotalttc + 1, 4, price($object->lines[$linenumber]->total_ttc), 0, 'R');
 
 		// Comments
 		$pdf->SetXY($this->posxcomment, $curY);
@@ -950,14 +957,14 @@ class pdf_standard extends ModeleExpenseReport
 		// Accountancy piece
 		if (empty($hidetop)) {
 			$pdf->SetXY($this->posxpiece - 1, $tab_top + 1);
-			$pdf->MultiCell($this->posxcomment - $this->posxpiece - 1, 1, '', '', 'R');
+			$pdf->MultiCell($this->posxcomment - $this->posxpiece - 0.8, 1, '', '', 'R');
 		}
 
 		// Comments
 		$pdf->line($this->posxcomment - 1, $tab_top, $this->posxcomment - 1, $tab_top + $tab_height);
 		if (empty($hidetop)) {
 			$pdf->SetXY($this->posxcomment - 1, $tab_top + 1);
-			$pdf->MultiCell($this->posxdate - $this->posxcomment - 1, 1, $outputlangs->transnoentities("Description"), '', 'L');
+			$pdf->MultiCell($this->posxdate - $this->posxcomment - 0.8, 1, $outputlangs->transnoentities("Description"), '', 'L');
 		}
 
 		// Date
@@ -990,7 +997,7 @@ class pdf_standard extends ModeleExpenseReport
 		if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT)) {
 			$pdf->line($this->posxtva - 1, $tab_top, $this->posxtva - 1, $tab_top + $tab_height);
 			if (empty($hidetop)) {
-				$pdf->SetXY($this->posxtva - 1, $tab_top + 1);
+				$pdf->SetXY($this->posxtva - 0.8, $tab_top + 1);
 				$pdf->MultiCell($this->posxup - $this->posxtva - 1, 2, $outputlangs->transnoentities("VAT"), '', 'C');
 			}
 		}
@@ -998,22 +1005,29 @@ class pdf_standard extends ModeleExpenseReport
 		// Unit price
 		$pdf->line($this->posxup - 1, $tab_top, $this->posxup - 1, $tab_top + $tab_height);
 		if (empty($hidetop)) {
-			$pdf->SetXY($this->posxup - 1, $tab_top + 1);
-			$pdf->MultiCell($this->posxqty - $this->posxup - 1, 2, $outputlangs->transnoentities("PriceU"), '', 'C');
+			$pdf->SetXY($this->posxup - 0.8, $tab_top + 1);
+			$pdf->MultiCell($this->posxqty - $this->posxup - 1, 2, $outputlangs->transnoentities("PriceUTTC"), '', 'C');
 		}
 
 		// Quantity
 		$pdf->line($this->posxqty - 1, $tab_top, $this->posxqty - 1, $tab_top + $tab_height);
 		if (empty($hidetop)) {
-			$pdf->SetXY($this->posxqty - 1, $tab_top + 1);
-			$pdf->MultiCell($this->postotalttc - $this->posxqty - 1, 2, $outputlangs->transnoentities("Qty"), '', 'C');
+			$pdf->SetXY($this->posxqty - 0.8, $tab_top + 1);
+			$pdf->MultiCell($this->postotalht - $this->posxqty - 1, 2, $outputlangs->transnoentities("Qty"), '', 'C');
+		}
+
+		// Total without taxes
+		$pdf->line($this->postotalht - 1, $tab_top, $this->postotalht - 1, $tab_top + $tab_height);
+		if (empty($hidetop)) {
+			$pdf->SetXY($this->postotalht - 0.8, $tab_top + 1);
+			$pdf->MultiCell($this->postotalttc - $this->postotalht + 1, 2, $outputlangs->transnoentities("TotalHT"), '', 'C');
 		}
 
 		// Total with all taxes
 		$pdf->line($this->postotalttc, $tab_top, $this->postotalttc, $tab_top + $tab_height);
 		if (empty($hidetop)) {
-			$pdf->SetXY($this->postotalttc - 1, $tab_top + 1);
-			$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->postotalttc, 2, $outputlangs->transnoentities("TotalTTC"), '', 'R');
+			$pdf->SetXY($this->postotalttc - 0.8, $tab_top + 1);
+			$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->postotalttc + 1, 2, $outputlangs->transnoentities("TotalTTC"), '', 'R');
 		}
 
 		$pdf->SetTextColor(0, 0, 0);

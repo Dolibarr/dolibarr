@@ -1,5 +1,6 @@
 # Dolibarr language file - Source file is en_US - receptions
-ReceptionsSetup=Nastavení recepce produktu
+ReceptionDescription=Vendor reception management (Create reception documents)
+ReceptionsSetup=Vendor Reception setup
 RefReception=Ref. recepce
 Reception=Recepce
 Receptions=Recepce
@@ -23,7 +24,9 @@ ReceptionsAndReceivingForSameOrder=Recepce a potvrzení objednávky
 ReceptionsToValidate=Recepce k ověření
 StatusReceptionCanceled=Zrušený
 StatusReceptionDraft=Návrh
-StatusReceptionValidated=Ověřené (výrobky pro dodávku nebo již dodány)
+StatusReceptionValidated=Validated (products to receive or already received)
+StatusReceptionValidatedToReceive=Validated (products to receive)
+StatusReceptionValidatedReceived=Validated (products received)
 StatusReceptionProcessed=Zpracované
 StatusReceptionDraftShort=Návrh
 StatusReceptionValidatedShort=Ověřeno
@@ -36,7 +39,7 @@ StatsOnReceptionsOnlyValidated=Statistiky prováděné na recepcích byly ověř
 SendReceptionByEMail=Poslat recepci e-mailem
 SendReceptionRef=Předložení příjmu %s
 ActionsOnReception=Události na recepci
-ReceptionCreationIsDoneFromOrder=Pro tuto chvíli je vytvoření nové recepce provedeno z objednávkové karty.
+ReceptionCreationIsDoneFromOrder=For the moment, creation of a new reception is done from the Purchase Order.
 ReceptionLine=Linka recepce
 ProductQtyInReceptionAlreadySent=Množství již odeslaných produktů z objednávek zákazníka
 ProductQtyInSuppliersReceptionAlreadyRecevied=Množství produktu již obdrženo od otevřené dodavatelské objednávky
@@ -44,4 +47,8 @@ ValidateOrderFirstBeforeReception=Nejprve musíte potvrdit objednávku, než bud
 ReceptionsNumberingModules=Modul číslování pro recepce
 ReceptionsReceiptModel=Šablony dokumentů pro recepce
 NoMorePredefinedProductToDispatch=Žádné další předdefinované produkty k odeslání
-
+ReceptionExist=A reception exists
+ByingPrice=Bying price
+ReceptionBackToDraftInDolibarr=Reception %s back to draft
+ReceptionClassifyClosedInDolibarr=Reception %s classified Closed
+ReceptionUnClassifyCloseddInDolibarr=Reception %s re-open

@@ -19,7 +19,7 @@
 #
 
 Module56000Name=Gestionnaire de tickets
-Module56000Desc=Système de ticket pour de l'assistance ou une demande d'accompagnement
+Module56000Desc=Gestionnaire de tickets d'assistance ou de gestion de demandes internes/clients/fournisseurs
 
 Permission56001=Voir tickets
 Permission56002=Modifier des tickets
@@ -34,7 +34,8 @@ TicketDictResolution=Ticket - Résolution
 
 TicketTypeShortCOM=Question commerciale
 TicketTypeShortHELP=Demande d'aide fonctionnelle
-TicketTypeShortISSUE=Problème ou bogue
+TicketTypeShortISSUE=Question ou bug
+TicketTypeShortPROBLEM=Problème
 TicketTypeShortREQUEST=Demande de changement ou d'amélioration
 TicketTypeShortPROJET=Projet
 TicketTypeShortOTHER=Autre
@@ -43,6 +44,8 @@ TicketSeverityShortLOW=Faible
 TicketSeverityShortNORMAL=Normal
 TicketSeverityShortHIGH=Élevé
 TicketSeverityShortBLOCKING=Critique, bloquant
+
+TicketCategoryShortOTHER=Autre
 
 ErrorBadEmailAddress=Champ '%s' incorrect
 MenuTicketMyAssign=Mes tickets
@@ -54,17 +57,18 @@ TypeContact_ticket_internal_SUPPORTTEC=Utilisateur assigné
 TypeContact_ticket_external_SUPPORTCLI=Contact client / suivi des tickets
 TypeContact_ticket_external_CONTRIBUTOR=Contributeur externe
 
-OriginEmail=E-mail source
+OriginEmail=Email demandeur
 Notify_TICKET_SENTBYMAIL=Envoi d'un message du ticket par e-mail
 
 # Status
 Read=Lu
 Assigned=Assigné
 InProgress=En cours
-NeedMoreInformation=Attente d'information
+NeedMoreInformation=Attente retour demandeur
+NeedMoreInformationShort=En attente de retour
 Answered=Répondu
 Waiting=En attente
-Closed=Fermé
+SolvedClosed=Résolu
 Deleted=Supprimé
 
 # Dict
@@ -132,6 +136,9 @@ TicketsPublicNotificationNewMessage=Envoyer un ou des emails lorsqu’un nouveau
 TicketsPublicNotificationNewMessageHelp=Envoyer un (des) courriel(s) lorsqu’un nouveau message est ajouté à partir de l’interface publique (à l’utilisateur désigné ou au courriel de notification  (mise à jour) et/ou au courriel de notification)
 TicketPublicNotificationNewMessageDefaultEmail=Emails de notifications à (mise à jour)
 TicketPublicNotificationNewMessageDefaultEmailHelp=Envoyez un email à cette adresse email pour chaque nouveau message de notifications si le ticket n'a pas d'utilisateur assigné ou si l'utilisateur n'a pas d'email connu.
+TicketsAutoReadTicket=Automatiquement marquer le ticket comme lu
+TicketsAutoReadTicketHelp=Automatiquement marquer le ticket comme lu s'il est créé depuis le backoffice.
+
 #
 # Index & list page
 #
@@ -160,7 +167,7 @@ CreatedBy=Créé par
 NewTicket=Nouveau ticket
 SubjectAnswerToTicket=Réponse ticket
 TicketTypeRequest=Type de demande
-TicketCategory=Groupe
+TicketCategory=Catégorisation du ticket
 SeeTicket=Voir le ticket
 TicketMarkedAsRead=Le ticket a été marqué comme lu
 TicketReadOn=Lu
@@ -178,15 +185,17 @@ MessageSuccessfullyAdded=Ticket créé
 TicketMessageSuccessfullyAdded=Message ajouté avec succès
 TicketMessagesList=Liste des messages
 NoMsgForThisTicket=Pas de message pour ce ticket
-Properties=Classification
+TicketProperties=Classification
 LatestNewTickets=Les %s derniers tickets (non lus)
 TicketSeverity=Sévérité
 ShowTicket=Voir le ticket
 RelatedTickets=Tickets liés
 TicketAddIntervention=Créer intervention
-CloseTicket=Fermer le ticket
-CloseATicket=Fermer un ticket
+CloseTicket=Fermer|Résoudre ticket
+AbandonTicket=Abandonner le ticket
+CloseATicket=Fermer|Résoudre un ticket
 ConfirmCloseAticket=Confirmer la fermeture du ticket
+ConfirmAbandonTicket=Confirmez-vous la fermeture du ticket au statut 'Abandonné'
 ConfirmDeleteTicket=Confirmez la suppression du ticket
 TicketDeletedSuccess=Ticket supprimé avec succès
 TicketMarkedAsClosed=Ticket indiqué fermé
@@ -211,6 +220,7 @@ TicketMessageHelp=Seul ce texte sera sauvegardé dans la liste des messages sur 
 TicketMessageSubstitutionReplacedByGenericValues=Les variables de substitution sont remplacées par des valeurs génériques.
 TimeElapsedSince=Temps écoulé depuis
 TicketTimeToRead=Temps écoulé avant la lecture
+TicketTimeElapsedBeforeSince=Temps écoulé avant / depuis
 TicketContacts=Contacts ticket
 TicketDocumentsLinked=Documents liés
 ConfirmReOpenTicket=Voulez-vous ré-ouvrir ce ticket ?
@@ -304,13 +314,14 @@ BoxLastModifiedTicket=Derniers tickets modifiés
 BoxLastModifiedTicketDescription=Les %s derniers tickets modifiés
 BoxLastModifiedTicketContent=
 BoxLastModifiedTicketNoRecordedTickets=Pas de tickets modifiés récemment
-BoxTicketType=Nombre de tickets ouverts par type
+BoxTicketType=Répartition des tickets ouverts par type
 BoxTicketSeverity=Nombre de tickets ouverts par sévérité
 BoxNoTicketSeverity=Aucun ticket ouvert
 BoxTicketLastXDays=Nombre de nouveaux tickets par jour ces %s derniers jours
 BoxTicketLastXDayswidget = Nombre de nouveaux tickets par jour ces X derniers jours
 BoxNoTicketLastXDays=Aucun nouveau ticket ces %s derniers jours
 BoxNumberOfTicketByDay=Nombre de nouveaux tickets par jour
-BoxNewTicketVSClose=Nombre de nouveaux tickets aujourd’hui par rapport aux tickets fermés aujourd’hui
+BoxNewTicketVSClose=Nombre de nouveaux tickets par rapport aux tickets fermés (aujourd'hui)
 TicketCreatedToday=Ticket créé aujourd'hui
 TicketClosedToday=Ticket fermé aujourd'hui
+KMFoundForTicketGroup=Nous avons trouvé des sujets et des FAQ pouvant répondre à votre question, merci de les consulter avant de soumettre le ticket

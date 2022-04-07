@@ -75,13 +75,10 @@ if (!$sortorder) {
 	$sortorder = "ASC";
 }
 
-// Security check
-$result = restrictedArea($user, 'stock');
-
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $object = new Entrepot($db);
 $extrafields = new ExtraFields($db);
-$diroutputmassaction = $conf->inventory->dir_output.'/temp/massgeneration/'.$user->id;
+$diroutputmassaction = $conf->stock->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('stocklist'));
 
 // Fetch optionals attributes and labels
@@ -120,13 +117,13 @@ $arrayfields = array(
 foreach ($object->fields as $key => $val) {
 	// If $val['visible']==0, then we never show the field
 	if (!empty($val['visible'])) {
-		$visible = (int) dol_eval($val['visible'], 1);
+		$visible = (int) dol_eval($val['visible'], 1, 1, '1');
 		$arrayfields['t.'.$key] = array(
 			'label'=>$val['label'],
 			'checked'=>(($visible < 0) ? 0 : 1),
-			'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1)),
+			'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1, 1, '1')),
 			'position'=>$val['position'],
-			'help'=>$val['help']
+			'help'=> isset($val['help']) ? $val['help'] : 'help'
 		);
 	}
 }
@@ -135,6 +132,9 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
+
+// Security check
+$result = restrictedArea($user, 'stock');
 
 
 /*
@@ -165,6 +165,7 @@ if (empty($reshook)) {
 		}
 		$toselect = array();
 		$search_array_options = array();
+		$search_category_list = array();
 	}
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')
 		|| GETPOST('button_search_x', 'alpha') || GETPOST('button_search.x', 'alpha') || GETPOST('button_search', 'alpha')) {
@@ -189,23 +190,24 @@ if (empty($reshook)) {
 $form = new Form($db);
 $warehouse = new Entrepot($db);
 
-$totalarray = array();
 $now = dol_now();
 
 $help_url = 'EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
 $title = $langs->trans("ListOfWarehouses");
 
+$totalarray = array();
+$totalarray['nbfield'] = 0;
 
 // Build and execute select
 // --------------------------------------------------------------------
 $sql = 'SELECT ';
 foreach ($object->fields as $key => $val) {
-	$sql .= 't.'.$key.', ';
+	$sql .= "t.".$key.", ";
 }
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? "ef.".$key.' as options_'.$key.', ' : '');
+		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? "ef.".$key." as options_".$key.', ' : '');
 	}
 }
 
@@ -227,7 +229,7 @@ $sql .= " FROM ".MAIN_DB_PREFIX.$object->table_element." as t";
 if (!empty($conf->categorie->enabled)) {
 	$sql .= Categorie::getFilterJoinQuery(Categorie::TYPE_WAREHOUSE, "t.rowid");
 }
-if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
+if (!empty($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (t.rowid = ef.fk_object)";
 }
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps ON t.rowid = ps.fk_entrepot";
@@ -246,7 +248,7 @@ if (!empty($conf->categorie->enabled)) {
 foreach ($search as $key => $val) {
 	$class_key = $key;
 	if ($class_key == 'status') {
-		$class_key = 'statut'; // remove this after refactor entrepot.class property statut to status
+		$class_key = 'statut'; // remove this after refactoring entrepot.class property statut to status
 	}
 	if (($key == 'status' && $search[$key] == -1) || $key == 'entity') {
 		continue;
@@ -259,7 +261,7 @@ foreach ($search as $key => $val) {
 		$mode_search = 2;
 	}
 	if ($search[$key] != '') {
-		$sql .= natural_search((($key == 'ref') ? 't.ref' : 't.'.$class_key), $search[$key], (($key == 'status') ? 2 : $mode_search));
+		$sql .= natural_search((($key == "ref") ? "t.ref" : "t.".$class_key), $search[$key], (($key == 'status') ? 2 : $mode_search));
 	}
 }
 if ($search_all) {
@@ -273,7 +275,7 @@ $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $objec
 $sql .= $hookmanager->resPrint;
 $sql .= " GROUP BY ";
 foreach ($object->fields as $key => $val) {
-	$sql .= 't.'.$key.', ';
+	$sql .= "t.".$key.", ";
 }
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
@@ -317,10 +319,12 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 	}
 }
 // if total of record found is smaller than limit, no need to do paging and to restart another select with limits set.
-if (is_numeric($nbtotalofrecords) && $limit > $nbtotalofrecords) {
+if (is_numeric($nbtotalofrecords) && ($limit > $nbtotalofrecords || empty($limit))) {
 	$num = $nbtotalofrecords;
 } else {
-	$sql .= $db->plimit($limit + 1, $offset);
+	if ($limit) {
+		$sql .= $db->plimit($limit + 1, $offset);
+	}
 
 	$resql = $db->query($sql);
 	if (!$resql) {
@@ -332,7 +336,7 @@ if (is_numeric($nbtotalofrecords) && $limit > $nbtotalofrecords) {
 }
 
 // Direct jump if only one record found
-if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $search_all) {
+if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $search_all && !$page) {
 	$obj = $db->fetch_object($resql);
 	$id = $obj->rowid;
 	header("Location: ".DOL_URL_ROOT.'/product/stock/card.php?id='.$id);
@@ -442,7 +446,7 @@ $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
-print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+print '<div class="div-table-responsive">';
 print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 // Fields title search
@@ -453,24 +457,24 @@ foreach ($object->fields as $key => $val) {
 	if ($key == 'statut') {
 		continue;
 	}
-	$cssforfield = (empty($val['css']) ? '' : $val['css']);
+	$cssforfield = (empty($val['csslist']) ? (empty($val['css']) ? '' : $val['css']) : $val['csslist']);
 	if ($key == 'status') {
 		$cssforfield .= ($cssforfield ? ' ' : '').'center';
 	} elseif (in_array($val['type'], array('date', 'datetime', 'timestamp'))) {
 		$cssforfield .= ($cssforfield ? ' ' : '').'center';
 	} elseif (in_array($val['type'], array('timestamp'))) {
 		$cssforfield .= ($cssforfield ? ' ' : '').'nowrap';
-	} elseif (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && $val['label'] != 'TechnicalID') {
+	} elseif (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && $val['label'] != 'TechnicalID' && empty($val['arrayofkeyval'])) {
 		$cssforfield .= ($cssforfield ? ' ' : '').'right';
 	}
 	if (!empty($arrayfields['t.'.$key]['checked'])) {
 		print '<td class="liste_titre'.($cssforfield ? ' '.$cssforfield : '').'">';
 		if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
 			print $form->selectarray('search_'.$key, $val['arrayofkeyval'], $search[$key], $val['notnull'], 0, 0, '', 1, 0, 0, '', 'maxwidth100', 1);
-		} elseif (strpos($val['type'], 'integer:') === 0 || strpos($val['type'], 'sellist:') === 0) {
-			print $object->showInputField($val, $key, $search[$key], '', '', 'search_', 'maxwidth150', 1);
+		} elseif ((strpos($val['type'], 'integer:') === 0) || (strpos($val['type'], 'sellist:') === 0)) {
+			print $object->showInputField($val, $key, $search[$key], '', '', 'search_', 'maxwidth125', 1);
 		} elseif (!preg_match('/^(date|timestamp)/', $val['type'])) {
-			print '<input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag($search[$key]).'">';
+			print '<input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag(!empty($search[$key])?$search[$key]:'').'">';
 		}
 		print '</td>';
 	}
@@ -518,14 +522,14 @@ foreach ($object->fields as $key => $val) {
 	if ($key == 'statut') {
 		continue;
 	}
-	$cssforfield = (empty($val['css']) ? '' : $val['css']);
+	$cssforfield = (empty($val['csslist']) ? (empty($val['css']) ? '' : $val['css']) : $val['csslist']);
 	if ($key == 'status') {
 		$cssforfield .= ($cssforfield ? ' ' : '').'center';
 	} elseif (in_array($val['type'], array('date', 'datetime', 'timestamp'))) {
 		$cssforfield .= ($cssforfield ? ' ' : '').'center';
 	} elseif (in_array($val['type'], array('timestamp'))) {
 		$cssforfield .= ($cssforfield ? ' ' : '').'nowrap';
-	} elseif (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && $val['label'] != 'TechnicalID') {
+	} elseif (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && $val['label'] != 'TechnicalID' && empty($val['arrayofkeyval'])) {
 		$cssforfield .= ($cssforfield ? ' ' : '').'right';
 	}
 	if (!empty($arrayfields['t.'.$key]['checked'])) {
@@ -564,168 +568,175 @@ print '</tr>'."\n";
 // Loop on record
 // --------------------------------------------------------------------
 $i = 0;
-if ($num) {
-	$warehouse = new Entrepot($db);
 
-	while ($i < min($num, $limit)) {
-		$obj = $db->fetch_object($resql);
-		if (empty($obj)) {
-			break; // Should not happen
+$warehouse = new Entrepot($db);
+
+while ($i < min($num, $limit)) {
+	$obj = $db->fetch_object($resql);
+	if (empty($obj)) {
+		break; // Should not happen
+	}
+
+	// Store properties in $object
+	$warehouse->setVarsFromFetchObj($obj);
+
+	$warehouse->label = $warehouse->ref;
+
+	// Show here line of result
+	print '<tr class="oddeven">';
+
+	foreach ($warehouse->fields as $key => $val) {
+		if ($key == 'statut') {
+			continue;
+		}
+		$cssforfield = (empty($val['csslist']) ? (empty($val['css']) ? '' : $val['css']) : $val['csslist']);
+		if (in_array($val['type'], array('date', 'datetime', 'timestamp'))) {
+			$cssforfield .= ($cssforfield ? ' ' : '').'center';
+		} elseif ($key == 'status') {
+			$cssforfield .= ($cssforfield ? ' ' : '').'center';
 		}
 
-		$warehouse->id = $obj->rowid;
-		$warehouse->ref = $obj->ref;
-		$warehouse->label = $obj->ref;
-		$warehouse->lieu = $obj->lieu;
-		$warehouse->fk_parent = $obj->fk_parent;
-		$warehouse->statut = $obj->statut;
-
-		foreach ($object->fields as $key => $val) {
-			$warehouse->{$key} = $obj->{$key};
+		if (in_array($val['type'], array('timestamp'))) {
+			$cssforfield .= ($cssforfield ? ' ' : '').'nowrap';
+		} elseif ($key == 'ref') {
+			$cssforfield .= ($cssforfield ? ' ' : '').'nowrap';
 		}
 
-		// Show here line of result
-		print '<tr class="oddeven">';
+		if (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && $key != 'status' && empty($val['arrayofkeyval'])) {
+			$cssforfield .= ($cssforfield ? ' ' : '').'right';
+		}
+		if (in_array($key, array('fk_soc', 'fk_user', 'fk_warehouse'))) {
+			$cssforfield = 'tdoverflowmax100';
+		}
 
-		foreach ($warehouse->fields as $key => $val) {
+		if (!empty($arrayfields['t.'.$key]['checked'])) {
+			print '<td'.($cssforfield ? ' class="'.$cssforfield.'"' : '').'>';
 			if ($key == 'statut') {
-				continue;
+				print $warehouse->getLibStatut(5);
 			}
-			$cssforfield = (empty($val['css']) ? '' : $val['css']);
-			if (in_array($val['type'], array('date', 'datetime', 'timestamp'))) {
-				$cssforfield .= ($cssforfield ? ' ' : '').'center';
-			} elseif ($key == 'status') {
-				$cssforfield .= ($cssforfield ? ' ' : '').'center';
+			if ($key == 'phone') {
+				print dol_print_phone($obj->phone, '', 0, $obj->rowid, 'AC_TEL');
+			} elseif ($key == 'fax') {
+				print dol_print_phone($obj->fax, '', 0, $obj->rowid, 'AC_FAX');
+			} else {
+				print $warehouse->showOutputField($val, $key, $warehouse->$key, '');
 			}
-
-			if (in_array($val['type'], array('timestamp'))) {
-				$cssforfield .= ($cssforfield ? ' ' : '').'nowrap';
-			} elseif ($key == 'ref') {
-				$cssforfield .= ($cssforfield ? ' ' : '').'nowrap';
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
 			}
-
-			if (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && $key != 'status') {
-				$cssforfield .= ($cssforfield ? ' ' : '').'right';
-			}
-
-			if (!empty($arrayfields['t.'.$key]['checked'])) {
-				print '<td'.($cssforfield ? ' class="'.$cssforfield.'"' : '').'>';
-				if ($key == 'statut') {
-					print $warehouse->getLibStatut(5);
-				}
-				if ($key == 'phone') {
-					print dol_print_phone($obj->phone, '', 0, $obj->rowid, 'AC_TEL');
-				} elseif ($key == 'fax') {
-					print dol_print_phone($obj->fax, '', 0, $obj->rowid, 'AC_FAX');
-				} else {
-					print $warehouse->showOutputField($val, $key, $warehouse->$key, '');
-				}
-				print '</td>';
+			if (!empty($val['isameasure']) && $val['isameasure'] == 1) {
 				if (!$i) {
-					$totalarray['nbfield']++;
+					$totalarray['pos'][$totalarray['nbfield']] = 't.'.$key;
 				}
-				if (!empty($val['isameasure'])) {
-					if (!$i) {
-						$totalarray['pos'][$totalarray['nbfield']] = 't.'.$key;
-					}
-					if (!isset($totalarray['val'])) {
-						$totalarray['val'] = array();
-					}
-					if (!isset($totalarray['val']['t.'.$key])) {
-						$totalarray['val']['t.'.$key] = 0;
-					}
-					$totalarray['val']['t.'.$key] += $warehouse->$key;
+				if (!isset($totalarray['val'])) {
+					$totalarray['val'] = array();
 				}
-			}
-		}
-
-		// Stock qty
-		if (!empty($arrayfields["stockqty"]['checked'])) {
-			print '<td class="right">'.price2num($obj->stockqty, 5).'</td>';
-			if (!$i) {
-				$totalarray['nbfield']++;
-			}
-			if (!$i) {
-				$totalarray['pos'][$totalarray['nbfield']] = 'stockqty';
-			}
-		}
-
-		// PMP value
-		if (!empty($arrayfields["estimatedvalue"]['checked'])) {
-			print '<td class="right">';
-			if (price2num($obj->estimatedvalue, 'MT')) {
-				print '<span class="amount">'.price(price2num($obj->estimatedvalue, 'MT'), 1).'</span>';
-			} else {
-				print '';
-			}
-			print '</td>';
-			if (!$i) {
-				$totalarray['nbfield']++;
-			}
-			if (!$i) {
-				$totalarray['pos'][$totalarray['nbfield']] = 'estimatedvalue';
-			}
-		}
-
-		// Selling value
-		if (!empty($arrayfields["estimatedstockvaluesell"]['checked'])) {
-			print '<td class="right">';
-			if (empty($conf->global->PRODUIT_MULTIPRICES)) {
-				if ($obj->sellvalue) {
-					print '<span class="amount">'.price(price2num($obj->sellvalue, 'MT'), 1).'</span>';
+				if (!isset($totalarray['val']['t.'.$key])) {
+					$totalarray['val']['t.'.$key] = 0;
 				}
-			} else {
-				$htmltext = $langs->trans("OptionMULTIPRICESIsOn");
-				print $form->textwithtooltip($langs->trans("Variable"), $htmltext);
-			}
-			print '</td>';
-			if (!$i) {
-				$totalarray['nbfield']++;
-			}
-			if (!$i) {
-				$totalarray['pos'][$totalarray['nbfield']] = 'estimatedstockvaluesell';
+				$totalarray['val']['t.'.$key] += $warehouse->$key;
 			}
 		}
+	}
 
-		// Extra fields
-		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
-		// Fields from hook
-		$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
-		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object); // Note that $action and $object may have been modified by hook
-		print $hookmanager->resPrint;
-
-		// Status
-		if (!empty($arrayfields['t.statut']['checked'])) {
-			print '<td class="center">'.$warehouse->LibStatut($obj->statut, 5).'</td>';
-			if (!$i) {
-				$totalarray['nbfield']++;
-			}
+	// Stock qty
+	if (!empty($arrayfields["stockqty"]['checked'])) {
+		print '<td class="right">'.price2num($obj->stockqty, 5).'</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
 		}
+		if (!$i) {
+			$totalarray['pos'][$totalarray['nbfield']] = 'stockqty';
+		}
+	}
 
-		// Action column
-		print '<td class="nowrap center">';
-		if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-			$selected = 0;
-			if (in_array($obj->rowid, $arrayofselected)) {
-				$selected = 1;
-			}
-			print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+	// PMP value
+	if (!empty($arrayfields["estimatedvalue"]['checked'])) {
+		print '<td class="right">';
+		if (price2num($obj->estimatedvalue, 'MT')) {
+			print '<span class="amount">'.price(price2num($obj->estimatedvalue, 'MT'), 1).'</span>';
+		} else {
+			print '';
 		}
 		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
-
-		print '</tr>'."\n";
-
-
-		$i++;
+		if (!$i) {
+			$totalarray['pos'][$totalarray['nbfield']] = 'estimatedvalue';
+		}
 	}
 
-	if ($totalnboflines - $offset <= $limit) {
-		// Show total line
-		include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
+	// Selling value
+	if (!empty($arrayfields["estimatedstockvaluesell"]['checked'])) {
+		print '<td class="right">';
+		if (empty($conf->global->PRODUIT_MULTIPRICES)) {
+			if ($obj->sellvalue) {
+				print '<span class="amount">'.price(price2num($obj->sellvalue, 'MT'), 1).'</span>';
+			}
+		} else {
+			$htmltext = $langs->trans("OptionMULTIPRICESIsOn");
+			print $form->textwithtooltip($langs->trans("Variable"), $htmltext);
+		}
+		print '</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+		if (!$i) {
+			$totalarray['pos'][$totalarray['nbfield']] = 'estimatedstockvaluesell';
+		}
 	}
+
+	// Extra fields
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
+	// Fields from hook
+	$parameters = array('arrayfields'=>$arrayfields, 'object'=>$object, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
+	$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object); // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
+
+	// Status
+	if (!empty($arrayfields['t.statut']['checked'])) {
+		print '<td class="center">'.$warehouse->LibStatut($obj->statut, 5).'</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
+
+	// Action column
+	print '<td class="nowrap center">';
+	if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+		$selected = 0;
+		if (in_array($obj->rowid, $arrayofselected)) {
+			$selected = 1;
+		}
+		print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+	}
+	print '</td>';
+	if (!$i) {
+		$totalarray['nbfield']++;
+	}
+
+	print '</tr>'."\n";
+
+
+	$i++;
+}
+
+if ($totalnboflines - $offset <= $limit) {
+	// Show total line
+	include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
+}
+
+// If no record found
+if ($num == 0) {
+	$colspan = 1;
+	foreach ($arrayfields as $key => $val) {
+		if (!empty($val['checked'])) {
+			$colspan++;
+		}
+	}
+	print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
 }
 
 $db->free($resql);

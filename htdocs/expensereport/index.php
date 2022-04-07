@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003		Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015	Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2021	Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004		Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2011	Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Alexandre Spangaro   <aspangaro@open-dsi.fr>
@@ -48,8 +48,8 @@ if ($user->socid) {
 $result = restrictedArea($user, 'expensereport', '', '');
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -132,6 +132,30 @@ foreach ($listoftype as $code => $label) {
 	$dataseries[] = array($label, (isset($somme[$code]) ? (int) $somme[$code] : 0));
 }
 
+// Sort array with most important first
+$dataseries = dol_sort_array($dataseries, 1, 'desc');
+
+// Merge all entrie after the $KEEPNFIRST one into one entry called "Other..." (to avoid to have too much entries in graphic).
+$KEEPNFIRST = 7;	// Keep first $KEEPNFIRST one + 1 with the remain
+$i = 0;
+if (count($dataseries) > ($KEEPNFIRST + 1)) {
+	foreach ($dataseries as $key => $val) {
+		if ($i < $KEEPNFIRST) {
+			$i++;
+			continue;
+		}
+		// Here $key = $KEEPNFIRST
+		$dataseries[$KEEPNFIRST][0] = $langs->trans("Others").'...';
+		if ($key == $KEEPNFIRST) {
+			$i++;
+			continue;
+		}
+		$dataseries[$KEEPNFIRST][1] += $dataseries[$key][1];
+		unset($dataseries[$key]);
+		$i++;
+	}
+}
+
 if ($conf->use_javascript_ajax) {
 	print '<tr><td class="center" colspan="4">';
 
@@ -161,7 +185,7 @@ print '</div>';
 
 
 // Right area
-print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+print '</div><div class="fichetwothirdright">';
 
 
 $max = 10;
@@ -221,10 +245,10 @@ if ($result) {
 			$userstatic->photo = $obj->photo;
 
 			print '<tr class="oddeven">';
-			print '<td>'.$expensereportstatic->getNomUrl(1).'</td>';
-			print '<td>'.$userstatic->getNomUrl(-1).'</td>';
-			print '<td class="right">'.price($obj->total_ht).'</td>';
-			print '<td class="right">'.price($obj->total_ttc).'</td>';
+			print '<td class="tdoverflowmax200">'.$expensereportstatic->getNomUrl(1).'</td>';
+			print '<td class="tdoverflowmax150">'.$userstatic->getNomUrl(-1).'</td>';
+			print '<td class="right amount">'.price($obj->total_ht).'</td>';
+			print '<td class="right amount">'.price($obj->total_ttc).'</td>';
 			print '<td class="right">'.dol_print_date($db->jdate($obj->dm), 'day').'</td>';
 			print '<td class="right">';
 			print $expensereportstatic->getLibStatut(3);
@@ -241,7 +265,7 @@ if ($result) {
 	dol_print_error($db);
 }
 
-print '</div></div></div>';
+print '</div></div>';
 
 $parameters = array('user' => $user);
 $reshook = $hookmanager->executeHooks('dashboardExpenseReport', $parameters, $object); // Note that $action and $object may have been modified by hook

@@ -34,7 +34,8 @@ TicketDictResolution=Biļete - izšķirtspēja
 
 TicketTypeShortCOM=Tirdzniecības jautājums
 TicketTypeShortHELP=Funkcionālās palīdzības pieprasījums
-TicketTypeShortISSUE=Izdošana, kļūda vai problēma
+TicketTypeShortISSUE=Izdevums vai kļūda
+TicketTypeShortPROBLEM=Problēma
 TicketTypeShortREQUEST=Mainīt vai uzlabot pieprasījumu
 TicketTypeShortPROJET=Projekts
 TicketTypeShortOTHER=Cits
@@ -43,6 +44,8 @@ TicketSeverityShortLOW=Zems
 TicketSeverityShortNORMAL=Normāls
 TicketSeverityShortHIGH=Augsts
 TicketSeverityShortBLOCKING=Kritisks, bloķējošs
+
+TicketCategoryShortOTHER=Cits
 
 ErrorBadEmailAddress=Lauks "%s" ir nepareizs
 MenuTicketMyAssign=Mani pieteikumi
@@ -54,24 +57,25 @@ TypeContact_ticket_internal_SUPPORTTEC=Piešķirtais lietotājs
 TypeContact_ticket_external_SUPPORTCLI=Klientu kontaktu / incidentu izsekošana
 TypeContact_ticket_external_CONTRIBUTOR=Ārējais ieguldītājs
 
-OriginEmail=E-pasta avots
+OriginEmail=Reportiera e-pasts
 Notify_TICKET_SENTBYMAIL=Sūtīt biļeti pa e-pastu
 
 # Status
 Read=Lasīt
 Assigned=Piešķirts
 InProgress=Procesā
-NeedMoreInformation=Gaida informāciju
+NeedMoreInformation=Gaida reportiera atsauksmes
+NeedMoreInformationShort=Gaida atsauksmes
 Answered=Atbildēts
 Waiting=Gaida
-Closed=Slēgts
+SolvedClosed=Atrisināts
 Deleted=Dzēsts
 
 # Dict
 Type=Veids
 Severity=Smagums
-TicketGroupIsPublic=Group is public
-TicketGroupIsPublicDesc=If a ticket group is public, it will be visible in the form when creating a ticket from the public interface
+TicketGroupIsPublic=Grupa ir publiska
+TicketGroupIsPublicDesc=Ja biļešu grupa ir publiska, tā būs redzama formā, veidojot biļeti no publiskās saskarnes
 
 # Email templates
 MailToSendTicketMessage=Lai nosūtītu e-pastu no pieteikuma
@@ -116,8 +120,8 @@ TicketsShowModuleLogo=Parādiet moduļa logotipi publiskajā saskarnē
 TicketsShowModuleLogoHelp=Iespējojiet šo opciju, lai slēptu logotipa moduli publiskās saskarnes lapās
 TicketsShowCompanyLogo=Parādīt uzņēmuma logotipi publiskā saskarnē
 TicketsShowCompanyLogoHelp=Iespējojiet šo opciju, lai slēptu galvenā uzņēmuma logotipi publiskās saskarnes lapās
-TicketsEmailAlsoSendToMainAddress=Also send a notification to the main email address
-TicketsEmailAlsoSendToMainAddressHelp=Enable this option to also send an email to the address defined into setup "%s" (see tab "%s")
+TicketsEmailAlsoSendToMainAddress=Nosūtiet arī paziņojumu uz galveno e-pasta adresi
+TicketsEmailAlsoSendToMainAddressHelp=Iespējojiet šo opciju, lai nosūtītu e-pastu arī uz adresi, kas definēta iestatījumā "%s" (skatiet cilni "%s").
 TicketsLimitViewAssignedOnly=Ierobežot displeju līdz pašreizējam lietotājam piešķirtajām biļetēm (nav efektīvs ārējiem lietotājiem, vienmēr ierobežojiet to ar trešo personu, kurai tie ir atkarīgi)
 TicketsLimitViewAssignedOnlyHelp=Tiks redzamas tikai pašreizējam lietotājam piešķirtās biļetes. Neattiecas uz lietotāju ar biļešu pārvaldīšanas tiesībām.
 TicketsActivatePublicInterface=Aktivizēt publisko saskarni
@@ -128,10 +132,10 @@ TicketNumberingModules=Čeku numerācijas modulis
 TicketsModelModule=Biļešu dokumentu veidnes
 TicketNotifyTiersAtCreation=Paziņot trešajai pusei radīšanas laikā
 TicketsDisableCustomerEmail=Vienmēr atspējojiet e-pasta ziņojumus, ja biļete tiek veidota no publiskās saskarnes
-TicketsPublicNotificationNewMessage=Send email(s) when a new message/comment is added to a ticket
+TicketsPublicNotificationNewMessage=Sūtīt e-pastu (-us), kad biļetei tiek pievienots jauns ziņojums / komentārs
 TicketsPublicNotificationNewMessageHelp=Sūtiet e-pastu (s), kad no publiskās saskarnes tiek pievienots jauns ziņojums (piešķirtajam lietotājam vai paziņojumu e-pastu uz (atjaunināt) un / vai paziņojumu e-pastu uz)
 TicketPublicNotificationNewMessageDefaultEmail=Paziņojumu e-pasts adresātam (atjaunināt)
-TicketPublicNotificationNewMessageDefaultEmailHelp=Send an email to this address for each new message notifications if the ticket doesn't have a user assigned to it or if the user doesn't have any known email.
+TicketPublicNotificationNewMessageDefaultEmailHelp=Nosūtiet e-pastu uz šo adresi par katru jaunu ziņojumu paziņojumu, ja biļetei nav piešķirts lietotājs vai ja lietotājam nav zināms e-pasts.
 #
 # Index & list page
 #
@@ -160,7 +164,7 @@ CreatedBy=Izveidojis
 NewTicket=Jauns notikums
 SubjectAnswerToTicket=Pieteikuma atbilde
 TicketTypeRequest=Pieprasījuma veids
-TicketCategory=Grupa
+TicketCategory=Biļešu kategorizēšana
 SeeTicket=Apskatīt pieteikumu
 TicketMarkedAsRead=Pieteikums ir atzīmēts kā lasīts
 TicketReadOn=Izlasīts
@@ -178,15 +182,17 @@ MessageSuccessfullyAdded=Pieteikums pievienots
 TicketMessageSuccessfullyAdded=Ziņojums ir veiksmīgi pievienots
 TicketMessagesList=Ziņu saraksts
 NoMsgForThisTicket=Nav ziņu par šo pieteikumu
-Properties=Klasifikācija
+TicketProperties=Klasifikācija
 LatestNewTickets=Jaunākie %s jaunākie pieteikumi (nav izlasīti)
 TicketSeverity=Svarīgums
 ShowTicket=Apskatīt pieteikumu
 RelatedTickets=Saistītie pieteikumi
 TicketAddIntervention=Izveidojiet iejaukšanos
-CloseTicket=Slēgts pieteikums
-CloseATicket=Aizvērt pieteikumu
+CloseTicket=Aizvērt | Atrisināt biļeti
+AbandonTicket=Atteikties no biļetes
+CloseATicket=Aizvērt | Atrisiniet biļeti
 ConfirmCloseAticket=Apstiprināt pieteikuma aizvēršanu
+ConfirmAbandonTicket=Vai jūs apstiprināt biļetes slēgšanu līdz statusam “Pamesta”
 ConfirmDeleteTicket=Lūdzu, apstipriniet pieteikuma dzēšanu
 TicketDeletedSuccess=Pieteikums ir dzēsts veiksmīgi
 TicketMarkedAsClosed=Pieteikums ir atzīmēta kā slēgts
@@ -211,6 +217,7 @@ TicketMessageHelp=Tikai šis teksts tiks saglabāts ziņojumu sarakstā uz biļe
 TicketMessageSubstitutionReplacedByGenericValues=Mainīšanas mainīgos aizstāj ar vispārējām vērtībām.
 TimeElapsedSince=Laiks pagājis kopš
 TicketTimeToRead=Laiks, kas pagājis pirms izlasīšanas
+TicketTimeElapsedBeforeSince=Laiks, kas pagājis pirms / kopš
 TicketContacts=Kontakti biļete
 TicketDocumentsLinked=Ar biļeti saistītie dokumenti
 ConfirmReOpenTicket=Vai apstiprināt atkārtotu pieteikuma atvēršanu ?
@@ -304,13 +311,14 @@ BoxLastModifiedTicket=Jaunākie labotie pieteikumi
 BoxLastModifiedTicketDescription=Jaunākās %s lanbotās biļetes
 BoxLastModifiedTicketContent=
 BoxLastModifiedTicketNoRecordedTickets=Nav nesen labotu pieteikumu
-BoxTicketType=Number of open tickets by type
-BoxTicketSeverity=Number of open tickets by severity
-BoxNoTicketSeverity=No tickets opened
-BoxTicketLastXDays=Number of new tickets by days the last %s days
-BoxTicketLastXDayswidget = Number of new tickets by days the last X days
-BoxNoTicketLastXDays=No new tickets the last %s days
-BoxNumberOfTicketByDay=Number of new tickets by day
-BoxNewTicketVSClose=Number of today's new tickets versus today's closed tickets
-TicketCreatedToday=Ticket created today
-TicketClosedToday=Ticket closed today
+BoxTicketType=Atvērto biļešu sadalījums pa veidiem
+BoxTicketSeverity=Atvērto biļešu skaits pēc smaguma pakāpes
+BoxNoTicketSeverity=Netika atvērta neviena biļete
+BoxTicketLastXDays=Jauno biļešu skaits pa dienām pēdējās %s dienās
+BoxTicketLastXDayswidget = Jauno biļešu skaits pa dienām pēdējās X dienās
+BoxNoTicketLastXDays=Pēdējās %s dienās nav jaunu biļešu
+BoxNumberOfTicketByDay=Jauno biļešu skaits dienā
+BoxNewTicketVSClose=Biļešu skaits salīdzinājumā ar slēgtajām biļetēm (šodien)
+TicketCreatedToday=Biļete izveidota šodien
+TicketClosedToday=Biļete šodien ir slēgta
+KMFoundForTicketGroup=Mēs atradām tēmas un bieži uzdotos jautājumus, kas var atbildēt uz jūsu jautājumu, tāpēc pārbaudām tās pirms biļetes iesniegšanas

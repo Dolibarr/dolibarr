@@ -16,8 +16,24 @@
  */
 
 
+.center {
+	text-align: center;	
+}
+
+.centpercent {
+	width: 100%;	
+}
+
 .paddingright {
 	padding-right: 4px;
+}
+
+.valignmiddle {
+    vertical-align: middle;
+}
+
+.right {
+	text-align: right;
 }
 
 .opacitymedium {
@@ -28,6 +44,14 @@
 	display: inline-block;	
 }
 
+.no-bottom {
+	padding-bottom: 0;	
+}
+
+.small {
+	font-size: 0.9em;	
+}
+
 body {
 	font-size:14px;
 	font-family: roboto,arial,tahoma,verdana,helvetica;
@@ -36,17 +60,19 @@ body {
 }
 
 table.main-inside {
-	padding-left: 10px;
-	padding-right: 10px;
+	/*padding-left: 10px;
+	padding-right: 10px;*/
 	padding-bottom: 10px;
 	margin-bottom: 10px;
 	margin-top: 10px;
 	color: #000000;
 	border-top: 1px solid #ccc;
-	border-bottom: 1px solid #ccc;
 	line-height: 22px;
 }
-
+table.main-inside-borderbottom {
+	border-bottom: 1px solid #ccc;
+}
+	
 table.main {
 	padding-left: 6px;
 	padding-right: 6px;
@@ -78,6 +104,10 @@ div.soustitre {
 	border-bottom: 1px solid #999;
 	border-right: 1px solid #999;
 	text-align: right;
+}
+
+.wordbreak {
+    word-break: break-word;
 }
 
 .minwidth100 { min-width: 100px; }
@@ -391,7 +421,7 @@ a.button:hover {
     /* background-color: rgba(70, 3, 62, 0.3); */
     padding: 2px 4px;
     border-radius: 4px;
-    white-space: nowrap;
+    /* white-space: nowrap; */
 }
 .choiceselected {
 	background-color: #f4f6f4;
@@ -411,3 +441,45 @@ a.button:hover {
 	vertical-align: text-bottom;
 }
 
+.text-security {
+	-webkit-text-security: disc;
+}
+
+
+
+/* For support section */
+
+.tablesupport {
+	padding: 6px;
+	width: 500px;
+}
+
+table.login.tablesupport .title {
+    background: #eee !important;
+}
+
+.blocksupport {
+	padding: 12px;
+	/* width: 90%; */
+}
+
+table.tablesupport {
+	min-height: 250px;
+	border: 1px solid #E0E0E0;
+    background: #FFF;
+}
+
+
+/* Force values for small screen 570 */
+@media only screen and (max-width: 570px)
+{
+	.blocksupport {
+		width: calc(100% - 4px);
+		padding: 4px;
+	}
+	
+	.tablesupport {
+		padding: 6px;
+		width: 100%;
+	}
+}

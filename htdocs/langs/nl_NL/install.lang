@@ -21,6 +21,7 @@ ErrorPHPDoesNotSupportCurl=Uw PHP versie ondersteunt geen Curl.
 ErrorPHPDoesNotSupportCalendar=Uw PHP-installatie ondersteunt geen php-agenda-extensies.
 ErrorPHPDoesNotSupportUTF8=Uw PHP-installatie ondersteunt geen UTF8-functies. Dolibarr kan niet correct werken. Los dit op voordat u Dolibarr installeert.
 ErrorPHPDoesNotSupportIntl=Uw PHP-installatie ondersteunt geen Intl-functies.
+ErrorPHPDoesNotSupportMbstring=Your PHP installation does not support mbstring functions.
 ErrorPHPDoesNotSupportxDebug=Uw PHP-installatie ondersteunt geen uitgebreide debug-functies.
 ErrorPHPDoesNotSupport=Uw PHP-installatie ondersteunt geen %s-functies.
 ErrorDirDoesNotExists=De map %s bestaat niet.
@@ -206,6 +207,7 @@ MigrationUserPhotoPath=Migratie van fotopaden voor gebruikers
 MigrationFieldsSocialNetworks=Migratie van gebruikersvelden sociale netwerken (%s)
 MigrationReloadModule=Herlaad module %s
 MigrationResetBlockedLog=Reset BlockedLog module voor v7 algoritme
+MigrationImportOrExportProfiles=Migratie van de import of export profielen (1%s)
 ShowNotAvailableOptions=Toon niet beschikbare opties
 HideNotAvailableOptions=Niet-beschikbare opties verbergen
 ErrorFoundDuringMigration=Er zijn fouten gemeld tijdens het migratieproces, dus de volgende stap is niet beschikbaar. Om fouten te negeren, kunt u <a href="%s">hier klikken</a> , maar de toepassing of sommige functies werken mogelijk niet correct totdat de fouten zijn opgelost.

@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - accountancy
-Accounting=Compte
-ACCOUNTING_EXPORT_SEPARATORCSV=Séparateur de colonne pour le fichier export
+ACCOUNTING_EXPORT_SEPARATORCSV=Séparateur de colonne pour le fichier d'exportation
 ACCOUNTING_EXPORT_DATE=Format de date pour le fichier export
 ACCOUNTING_EXPORT_PIECE=Exporter le nombre de pièces
 ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Exporter avec compte global
@@ -13,8 +12,11 @@ ACCOUNTING_EXPORT_ENDLINE=Sélectionner le type de retour de chariot
 ACCOUNTING_EXPORT_PREFIX_SPEC=Spécifiez le préfixe du nom de fichier
 DefaultForService=Par défaut pour le service
 DefaultForProduct=Défaut pour le produit
+ProductForThisThirdparty=Produit pour ce tier
+ServiceForThisThirdparty=Service pour ce tier
 CantSuggest=Ne peut pas suggérer
 AccountancySetupDoneFromAccountancyMenu=La plupart de la configuration de la comptabilité se fait à partir du menu %s
+ConfigAccountingExpert=Configuration du module comptabilité (Partie double)
 CurrentDedicatedAccountingAccount=Compte dédié actuel
 AssignDedicatedAccountingAccount=Nouveau compte à attribuer
 InvoiceLabel=Etiquette de facture
@@ -93,7 +95,6 @@ ACCOUNTING_LENGTH_DESCRIPTION=Tronquer la description des produits et services d
 ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Tronquer le formulaire de description de compte de produits et services dans les listes après x chars (Best = 50)
 ACCOUNTING_LENGTH_GACCOUNT=Longueur des comptes comptables généraux (Si vous définissez la valeur à 6 ici, le compte '706' apparaîtra comme '706000' à l'écran)
 BANK_DISABLE_DIRECT_INPUT=Désactiver l'enregistrement direct de la transaction dans le compte bancaire
-ACCOUNTANCY_COMBO_FOR_AUX=Enable combo list for subsidiary account (may be slow if you have a lot of third parties)
 ACCOUNTING_EXPENSEREPORT_JOURNAL=Note de frais
 DONATION_ACCOUNTINGACCOUNT=Compte comptable pour enregistrer des dons
 ACCOUNTING_SERVICE_BUY_ACCOUNT=Compte comptable par défaut pour les services achetés (utilisé si non défini dans la fiche de service)
@@ -118,7 +119,6 @@ DescVentilTodoExpenseReport=Les lignes de rapport de frais de liaison ne sont pa
 DescVentilExpenseReport=Consultez ici la liste des lignes de rapport de dépenses liées (ou non) à un compte comptable de frais
 DescVentilDoneExpenseReport=Consultez ici la liste des rapports des lignes de dépenses et de leurs comptes comptables
 ValidateMovements=Valider les écritures
-AutomaticBindingDone=Liaison automatique effectuée
 FicheVentilation=Carte de reliure
 GeneralLedgerIsWritten=Les transactions sont écrites dans le Ledger
 ChangeBinding=Changer la liaison

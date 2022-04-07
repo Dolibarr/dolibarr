@@ -18,38 +18,37 @@
 #
 
 # Module label 'ModuleKnowledgeManagementName'
-ModuleKnowledgeManagementName = Knowledge Management System
+ModuleKnowledgeManagementName = System Zarządzania wiedzą
 # Module description 'ModuleKnowledgeManagementDesc'
-ModuleKnowledgeManagementDesc=Manage a Knowledge Management (KM) or Help-Desk base
+ModuleKnowledgeManagementDesc=Zarządzaj Zarządzaniem wiedzą lub Obsługą klienta
 
 #
 # Admin page
 #
-KnowledgeManagementSetup = Knowledge Management System setup
+KnowledgeManagementSetup = Konfiguracja systemu Zarządzania wiedzą
 Settings = Ustawienia
-KnowledgeManagementSetupPage = Knowledge Management System setup page
+KnowledgeManagementSetupPage = Strona konfiguracji systemu Zarządzania wiedzą
 
 
 #
 # About page
 #
 About = O
-KnowledgeManagementAbout = About Knowledge Management
-KnowledgeManagementAboutPage = Knowledge Management about page
+KnowledgeManagementAbout = O Zarządzaniu wiedzą
+KnowledgeManagementAboutPage = Strona informacyjna Zarządzania wiedzą
 
-#
-# Sample page
-#
-KnowledgeManagementArea = Knowledge Management
-
-
-#
-# Menu
-#
-MenuKnowledgeRecord = Knowledge base
-ListOfArticles = List of articles
-NewKnowledgeRecord = New article
-ValidateReply = Validate solution
-KnowledgeRecords = Articles
+KnowledgeManagementArea = Zarządzanie wiedzą
+MenuKnowledgeRecord = Baza wiedzy
+ListKnowledgeRecord = Lista artykułów
+NewKnowledgeRecord = Nowy artykuł
+ValidateReply = Sprawdź poprawność rozwiązania
+KnowledgeRecords = Artykuły
 KnowledgeRecord = Artykuł
-KnowledgeRecordExtraFields = Extrafields for Article
+KnowledgeRecordExtraFields = Extrapola dla artykułu
+GroupOfTicket=Grupa biletów
+YouCanLinkArticleToATicketCategory=Możesz powiązać artykuł z grupą biletów (aby artykuł był sugerowany podczas kwalifikacji nowych biletów)
+SuggestedForTicketsInGroup=Suggested for tickets when group is
+
+SetObsolete=Set as obsolete
+ConfirmCloseKM=Do you confirm the closing of this article as obsolete ?
+ConfirmReopenKM=Do you want to restore this article to status "Validated" ?

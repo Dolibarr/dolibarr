@@ -34,7 +34,8 @@ TicketDictResolution=Tiquet - Resolució
 
 TicketTypeShortCOM=Qüestió comercial
 TicketTypeShortHELP=Sol·licitud d'ajuda funcional
-TicketTypeShortISSUE=Incidència, error o problema
+TicketTypeShortISSUE=Incidència o error
+TicketTypeShortPROBLEM=Problema
 TicketTypeShortREQUEST=Sol·licitud de canvi o millora
 TicketTypeShortPROJET=Projecte
 TicketTypeShortOTHER=Altres
@@ -43,6 +44,8 @@ TicketSeverityShortLOW=Baix
 TicketSeverityShortNORMAL=Normal
 TicketSeverityShortHIGH=Alt
 TicketSeverityShortBLOCKING=Crític, bloqueig
+
+TicketCategoryShortOTHER=Altres
 
 ErrorBadEmailAddress=Camp '%s' incorrecte
 MenuTicketMyAssign=Els meus tiquets
@@ -54,24 +57,25 @@ TypeContact_ticket_internal_SUPPORTTEC=Usuari assignat
 TypeContact_ticket_external_SUPPORTCLI=Contacte de clients / seguiment d'incidents
 TypeContact_ticket_external_CONTRIBUTOR=Col·laborador extern
 
-OriginEmail=Origen de correu electrònic
+OriginEmail=Correu electrònic del reporter
 Notify_TICKET_SENTBYMAIL=Envia el missatge del tiquet per correu electrònic
 
 # Status
 Read=Llegit
 Assigned=Assignat
 InProgress=En progrés
-NeedMoreInformation=Esperant informació
+NeedMoreInformation=Esperant els comentaris del informador
+NeedMoreInformationShort=Esperant comentaris
 Answered=Respost
 Waiting=En espera
-Closed=Tancat
+SolvedClosed=Resolt
 Deleted=Esborrat
 
 # Dict
 Type=Tipus
 Severity=Gravetat
 TicketGroupIsPublic=El grup és públic
-TicketGroupIsPublicDesc=If a ticket group is public, it will be visible in the form when creating a ticket from the public interface
+TicketGroupIsPublicDesc=Si un grup de tiquets és públic, serà visible al formulari en crear un tiquet des de la interfície pública
 
 # Email templates
 MailToSendTicketMessage=Per a enviar correus electrònics des del missatge de tiquet
@@ -116,8 +120,8 @@ TicketsShowModuleLogo=Mostra el logotip del mòdul a la interfície pública
 TicketsShowModuleLogoHelp=Activeu aquesta opció per a ocultar el mòdul de logotip a les pàgines de la interfície pública
 TicketsShowCompanyLogo=Mostra el logotip de l'empresa en la interfície pública
 TicketsShowCompanyLogoHelp=Activeu aquesta opció per a ocultar el logotip de l'empresa principal a les pàgines de la interfície pública
-TicketsEmailAlsoSendToMainAddress=Also send a notification to the main email address
-TicketsEmailAlsoSendToMainAddressHelp=Enable this option to also send an email to the address defined into setup "%s" (see tab "%s")
+TicketsEmailAlsoSendToMainAddress=També envieu una notificació a l’adreça de correu electrònic principal
+TicketsEmailAlsoSendToMainAddressHelp=Activeu aquesta opció per a enviar també un correu electrònic a l'adreça definida a la configuració "%s" (vegeu la pestanya "%s")
 TicketsLimitViewAssignedOnly=Restringir la visualització als tiquets assignats a l'usuari actual (no és efectiu per als usuaris externs, sempre estarà limitat al tercer de qui depengui)
 TicketsLimitViewAssignedOnlyHelp=Només es veuran les entrades assignades a l'usuari actual. No s'aplica a un usuari amb drets de gestió de tiquets.
 TicketsActivatePublicInterface=Activar la interfície pública
@@ -128,10 +132,10 @@ TicketNumberingModules=Mòdul de numeració de tiquets
 TicketsModelModule=Plantilles de document per a tiquets
 TicketNotifyTiersAtCreation=Notifica la creació de tercers
 TicketsDisableCustomerEmail=Desactiveu sempre els correus electrònics quan es crea un tiquet des de la interfície pública
-TicketsPublicNotificationNewMessage=Send email(s) when a new message/comment is added to a ticket
+TicketsPublicNotificationNewMessage=Envieu correu(s) electrònic(s) quan s'afegeixi un missatge / comentari nou a una entrada
 TicketsPublicNotificationNewMessageHelp=Envia correus electrònics quan s'afegeixi un missatge nou des de la interfície pública (a l'usuari assignat o al correu electrònic de notificacions a (actualitzar) i/o al correu electrònic de notificacions)
 TicketPublicNotificationNewMessageDefaultEmail=Notificar correu electrònic cap a (actualitzar)
-TicketPublicNotificationNewMessageDefaultEmailHelp=Send an email to this address for each new message notifications if the ticket doesn't have a user assigned to it or if the user doesn't have any known email.
+TicketPublicNotificationNewMessageDefaultEmailHelp=Envieu un correu electrònic a aquesta adreça per a cada nova notificació de missatges si el bitllet no té assignat cap usuari o si l’usuari no té cap correu electrònic conegut.
 #
 # Index & list page
 #
@@ -160,7 +164,7 @@ CreatedBy=Creat per
 NewTicket=Tiquet nou
 SubjectAnswerToTicket=Resposta de tiquet
 TicketTypeRequest=Tipus de sol·licitud
-TicketCategory=Grup
+TicketCategory=Categorització del tiquet
 SeeTicket=Consultar tiquet
 TicketMarkedAsRead=Tiquet ha estat marcat com llegit
 TicketReadOn=Segueix llegint
@@ -178,15 +182,17 @@ MessageSuccessfullyAdded=Tiquet afegit
 TicketMessageSuccessfullyAdded=El missatge s'ha afegit correctament
 TicketMessagesList=Llista de missatges
 NoMsgForThisTicket=No hi ha missatges per aquest tiquet
-Properties=Classificació
+TicketProperties=Classificació
 LatestNewTickets=Últimes entrades més noves %s (no llegides)
 TicketSeverity=Gravetat
 ShowTicket=Consultar tiquet
 RelatedTickets=Tiquets relacionats
 TicketAddIntervention=Crea intervenció
-CloseTicket=Tanca el tiquet
-CloseATicket=Tanca el tiquet
+CloseTicket=Tancar | Resoldre el bitllet
+AbandonTicket=Abandonar el bitllet
+CloseATicket=Tancar | Resoldre un bitllet
 ConfirmCloseAticket=Confirma el tancament del tiquet
+ConfirmAbandonTicket=Confirmeu el tancament del bitllet a l'estat "Abandonat"
 ConfirmDeleteTicket=Si us plau, confirmeu l'esborrat del tiquet
 TicketDeletedSuccess=Tiquet esborrat amb èxit
 TicketMarkedAsClosed=Tiquet marcat com tancat
@@ -211,6 +217,7 @@ TicketMessageHelp=Només aquest text es guardarà a la llista de missatges de la
 TicketMessageSubstitutionReplacedByGenericValues=Les variables de substitució es reemplacen per valors genèrics.
 TimeElapsedSince=Temps transcorregut des de 
 TicketTimeToRead=Temps transcorregut abans de llegir
+TicketTimeElapsedBeforeSince=Temps transcorregut abans / després 
 TicketContacts=Tiquet de contactes
 TicketDocumentsLinked=Documents vinculats al tiquet
 ConfirmReOpenTicket=Confirmeu la reobertura d'aquest tiquet?
@@ -304,13 +311,14 @@ BoxLastModifiedTicket=Últims tiquets modificats
 BoxLastModifiedTicketDescription=Últimes entrades modificades %s
 BoxLastModifiedTicketContent=
 BoxLastModifiedTicketNoRecordedTickets=No hi ha tiquets modificats recentment
-BoxTicketType=Number of open tickets by type
-BoxTicketSeverity=Number of open tickets by severity
-BoxNoTicketSeverity=No tickets opened
-BoxTicketLastXDays=Number of new tickets by days the last %s days
-BoxTicketLastXDayswidget = Number of new tickets by days the last X days
-BoxNoTicketLastXDays=No new tickets the last %s days
-BoxNumberOfTicketByDay=Number of new tickets by day
-BoxNewTicketVSClose=Number of today's new tickets versus today's closed tickets
-TicketCreatedToday=Ticket created today
-TicketClosedToday=Ticket closed today
+BoxTicketType=Distribució dels tiquets oberts per tipus
+BoxTicketSeverity=Nombre de bitllets oberts per gravetat
+BoxNoTicketSeverity=No s’ha obert cap entrada
+BoxTicketLastXDays=Nombre de bitllets nous per dies els darrers %s dies
+BoxTicketLastXDayswidget = Nombre de bitllets nous per dies els darrers X dies
+BoxNoTicketLastXDays=No hi ha entrades noves els darrers %s dies
+BoxNumberOfTicketByDay=Nombre de bitllets nous per dia
+BoxNewTicketVSClose=Nombre d'entrades versus entrades tancades (avui)
+TicketCreatedToday=Entrada creada avui
+TicketClosedToday=Entrada tancada avui
+KMFoundForTicketGroup=Hem trobat temes i preguntes més freqüents que poden respondre a la vostra pregunta, gràcies a comprovar-los abans d'enviar el bitllet

@@ -173,7 +173,7 @@ class Entrepot extends CommonObject
 
 		$this->statuts[self::STATUS_CLOSED] = 'Closed2';
 		if (!empty($conf->global->ENTREPOT_EXTRA_STATUS)) {
-			$this->statuts[self::STATUS_OPEN_ALL] = 'OpenAll';
+			$this->statuts[self::STATUS_OPEN_ALL] = 'OpenAnyMovement';
 			$this->statuts[self::STATUS_OPEN_INTERNAL] = 'OpenInternal';
 		} else {
 			$this->statuts[self::STATUS_OPEN_ALL] = 'Opened';
@@ -204,13 +204,13 @@ class Entrepot extends CommonObject
 
 		$this->db->begin();
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."entrepot (ref, entity, datec, fk_user_author, fk_parent, fk_project)";
-		$sql .= " VALUES ('".$this->db->escape($this->label)."', ".$conf->entity.", '".$this->db->idate($now)."', ".$user->id.", ".($this->fk_parent > 0 ? $this->fk_parent : "NULL").", ".($this->fk_project > 0 ? $this->fk_project : "NULL").")";
+		$sql = "INSERT INTO ".$this->db->prefix()."entrepot (ref, entity, datec, fk_user_author, fk_parent, fk_project)";
+		$sql .= " VALUES ('".$this->db->escape($this->label)."', ".((int) $conf->entity).", '".$this->db->idate($now)."', ".((int) $user->id).", ".($this->fk_parent > 0 ? ((int) $this->fk_parent) : "NULL").", ".($this->fk_project > 0 ? ((int) $this->fk_project) : "NULL").")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result) {
-			$id = $this->db->last_insert_id(MAIN_DB_PREFIX."entrepot");
+			$id = $this->db->last_insert_id($this->db->prefix()."entrepot");
 			if ($id > 0) {
 				$this->id = $id;
 
@@ -293,7 +293,7 @@ class Entrepot extends CommonObject
 		$this->town = trim($this->town);
 		$this->country_id = ($this->country_id > 0 ? $this->country_id : 0);
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."entrepot";
+		$sql = "UPDATE ".$this->db->prefix()."entrepot";
 		$sql .= " SET ref = '".$this->db->escape($this->label)."'";
 		$sql .= ", fk_parent = ".(($this->fk_parent > 0) ? $this->fk_parent : "NULL");
 		$sql .= ", fk_project = ".(($this->fk_project > 0) ? $this->fk_project : "NULL");
@@ -365,8 +365,8 @@ class Entrepot extends CommonObject
 		$elements = array('stock_mouvement', 'product_stock', 'product_warehouse_properties');
 		foreach ($elements as $table) {
 			if (!$error) {
-				$sql = "DELETE FROM ".MAIN_DB_PREFIX.$table;
-				$sql .= " WHERE fk_entrepot = ".$this->id;
+				$sql = "DELETE FROM ".$this->db->prefix().$table;
+				$sql .= " WHERE fk_entrepot = ".((int) $this->id);
 
 				$result = $this->db->query($sql);
 				if (!$result) {
@@ -388,8 +388,8 @@ class Entrepot extends CommonObject
 		}
 
 		if (!$error) {
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."entrepot";
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql = "DELETE FROM ".$this->db->prefix()."entrepot";
+			$sql .= " WHERE rowid = ".((int) $this->id);
 			$resql1 = $this->db->query($sql);
 			if (!$resql1) {
 				$error++;
@@ -400,7 +400,7 @@ class Entrepot extends CommonObject
 
 		if (!$error) {
 			// Update denormalized fields because we change content of produt_stock. Warning: Do not use "SET p.stock", does not works with pgsql
-			$sql = "UPDATE ".MAIN_DB_PREFIX."product as p SET stock = (SELECT SUM(ps.reel) FROM ".MAIN_DB_PREFIX."product_stock as ps WHERE ps.fk_product = p.rowid)";
+			$sql = "UPDATE ".$this->db->prefix()."product as p SET stock = (SELECT SUM(ps.reel) FROM ".$this->db->prefix()."product_stock as ps WHERE ps.fk_product = p.rowid)";
 			$resql2 = $this->db->query($sql);
 			if (!$resql2) {
 				$error++;
@@ -441,11 +441,11 @@ class Entrepot extends CommonObject
 
 		$sql  = "SELECT rowid, entity, fk_parent, fk_project, ref as label, description, statut, lieu, address, zip, town, fk_pays as country_id, phone, fax,";
 		$sql .= " model_pdf, import_key";
-		$sql .= " FROM ".MAIN_DB_PREFIX."entrepot";
+		$sql .= " FROM ".$this->db->prefix()."entrepot";
 		if ($id) {
 			$sql .= " WHERE rowid = ".((int) $id);
 		} else {
-			$sql .= " WHERE entity = ".$conf->entity;
+			$sql .= " WHERE entity IN (".getEntity('stock').")";
 			if ($ref) {
 				$sql .= " AND ref = '".$this->db->escape($ref)."'";
 			}
@@ -506,7 +506,7 @@ class Entrepot extends CommonObject
 	public function info($id)
 	{
 		$sql = "SELECT e.rowid, e.datec, e.tms as datem, e.fk_user_author";
-		$sql .= " FROM ".MAIN_DB_PREFIX."entrepot as e";
+		$sql .= " FROM ".$this->db->prefix()."entrepot as e";
 		$sql .= " WHERE e.rowid = ".((int) $id);
 
 		dol_syslog(get_class($this)."::info", LOG_DEBUG);
@@ -553,7 +553,7 @@ class Entrepot extends CommonObject
 		$liste = array();
 
 		$sql = "SELECT rowid, ref as label";
-		$sql .= " FROM ".MAIN_DB_PREFIX."entrepot";
+		$sql .= " FROM ".$this->db->prefix()."entrepot";
 		$sql .= " WHERE entity IN (".getEntity('stock').")";
 		$sql .= " AND statut = ".((int) $status);
 
@@ -583,9 +583,9 @@ class Entrepot extends CommonObject
 		$ret = array();
 
 		$sql = "SELECT count(distinct p.rowid) as nb";
-		$sql .= " FROM ".MAIN_DB_PREFIX."product_stock as ps";
-		$sql .= ", ".MAIN_DB_PREFIX."product as p";
-		$sql .= " WHERE ps.fk_entrepot = ".$this->id;
+		$sql .= " FROM ".$this->db->prefix()."product_stock as ps";
+		$sql .= ", ".$this->db->prefix()."product as p";
+		$sql .= " WHERE ps.fk_entrepot = ".((int) $this->id);
 		$sql .= " AND ps.fk_product = p.rowid";
 
 		//print $sql;
@@ -625,12 +625,12 @@ class Entrepot extends CommonObject
 		} else {
 			$sql = "SELECT sum(ps.reel) as nb, sum(ps.reel * p.pmp) as value";
 		}
-		$sql .= " FROM ".MAIN_DB_PREFIX."product_stock as ps";
-		$sql .= ", ".MAIN_DB_PREFIX."product as p";
+		$sql .= " FROM ".$this->db->prefix()."product_stock as ps";
+		$sql .= ", ".$this->db->prefix()."product as p";
 		if ($separatedPMP) {
-			$sql .= ", ".MAIN_DB_PREFIX."product_perentity as pa";
+			$sql .= ", ".$this->db->prefix()."product_perentity as pa";
 		}
-		$sql .= " WHERE ps.fk_entrepot = ".$this->id;
+		$sql .= " WHERE ps.fk_entrepot = ".((int) $this->id);
 		if ($separatedPMP) {
 			$sql .= " AND pa.fk_product = p.rowid AND pa.entity = ". (int) $conf->entity;
 		}
@@ -680,8 +680,8 @@ class Entrepot extends CommonObject
 		}
 
 		$langs->load('stocks');
-		$label = $langs->trans($this->statuts[$status]);
-		$labelshort = $langs->trans($this->statuts[$status]);
+		$label = $langs->transnoentitiesnoconv($this->statuts[$status]);
+		$labelshort = $langs->transnoentitiesnoconv($this->statuts[$status]);
 
 		return dolGetStatus($label, $labelshort, '', $statusType, $mode);
 	}
@@ -690,13 +690,15 @@ class Entrepot extends CommonObject
 	/**
 	 *	Return clickable name (possibility with the pictogram)
 	 *
-	 *	@param		int		$withpicto		with pictogram
-	 *	@param		string	$option			Where the link point to
-	 *  @param      int     $showfullpath   0=Show ref only. 1=Show full path instead of Ref (this->fk_parent must be defined)
-	 *  @param	    int   	$notooltip		1=Disable tooltip
-	 *	@return		string					String with URL
+	 *	@param		int		$withpicto				with pictogram
+	 *	@param		string	$option					Where the link point to
+	 *  @param      int     $showfullpath   		0=Show ref only. 1=Show full path instead of Ref (this->fk_parent must be defined)
+	 *  @param	    int   	$notooltip				1=Disable tooltip
+	 *  @param  	string  $morecss            	Add more css on link
+	 *  @param  	int     $save_lastsearch_value  -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *	@return		string							String with URL
 	 */
-	public function getNomUrl($withpicto = 0, $option = '', $showfullpath = 0, $notooltip = 0)
+	public function getNomUrl($withpicto = 0, $option = '', $showfullpath = 0, $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
 	{
 		global $conf, $langs, $hookmanager;
 		$langs->load("stocks");
@@ -721,6 +723,17 @@ class Entrepot extends CommonObject
 		}
 
 		$url = DOL_URL_ROOT.'/product/stock/card.php?id='.$this->id;
+
+		if ($option != 'nolink') {
+			// Add param to save lastsearch_values or not
+			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
+			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+				$add_save_lastsearch_values = 1;
+			}
+			if ($add_save_lastsearch_values) {
+				$url .= '&save_lastsearch_values=1';
+			}
+		}
 
 		$linkclose = '';
 		if (empty($notooltip)) {
@@ -747,7 +760,7 @@ class Entrepot extends CommonObject
 
 		global $action;
 		$hookmanager->initHooks(array('warehousedao'));
-		$parameters = array('id'=>$this->id, 'getnomurl'=>$result, 'withpicto' => $withpicto, 'option' => $option, 'showfullpath' => $showfullpath, 'notooltip'=> $notooltip);
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result, 'withpicto' => $withpicto, 'option' => $option, 'showfullpath' => $showfullpath, 'notooltip'=> $notooltip);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -806,7 +819,7 @@ class Entrepot extends CommonObject
 		$parentid = $this->fk_parent; // If parent_id not defined on current object, we do not start consecutive searches of parents
 		$i = 0;
 		while ($parentid > 0 && $i < $protection) {
-			$sql = 'SELECT fk_parent FROM '.MAIN_DB_PREFIX.'entrepot WHERE rowid = '.((int) $parentid);
+			$sql = "SELECT fk_parent FROM ".$this->db->prefix()."entrepot WHERE rowid = ".((int) $parentid);
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$objarbo = $this->db->fetch_object($resql);
@@ -839,9 +852,9 @@ class Entrepot extends CommonObject
 	{
 		// phpcs:enable
 
-		$sql = 'SELECT rowid
-				FROM '.MAIN_DB_PREFIX.'entrepot
-				WHERE fk_parent = '.((int) $id);
+		$sql = "SELECT rowid
+				FROM ".$this->db->prefix()."entrepot
+				WHERE fk_parent = ".((int) $id);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {

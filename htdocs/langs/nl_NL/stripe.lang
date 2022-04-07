@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - stripe
 StripeSetup=Stripe-module instellen
-StripeDesc=Bied klanten een Stripe online betaalpagina voor betalingen met credit / cebit-kaarten via <a href="http://www.stripe.com" target="_blank">Stripe</a> . Dit kan worden gebruikt om uw klanten toe te staan ad-hocbetalingen te doen of voor betalingen met betrekking tot een bepaald Dolibarr-object (factuur, bestelling, ...)
+StripeDesc=Offer your customers an online payment page for payments with credit/debit cards via <a href="https://www.stripe.com" target="_blank" rel="noopener noreferrer external">Stripe</a>. This can be used to allow your customers to make ad-hoc payments or for payments related to a particular Dolibarr object (invoice, order, ...)
 StripeOrCBDoPayment=Betaal met creditcard of Stripe
 FollowingUrlAreAvailableToMakePayments=De volgende URL's zijn beschikbaar om een pagina te bieden aan afnemers voor het doen van een betaling van Dolibarr objecten
 PaymentForm=Betalingsformulier
@@ -28,7 +28,6 @@ AccountParameter=Accountwaarden
 UsageParameter=Met gebruik van de waarden
 InformationToFindParameters=Hulp om uw %s accountinformatie te vinden
 STRIPE_CGI_URL_V2=URL van Stripe CGI-module voor betaling
-VendorName=Verkopersnaam
 CSSUrlForPaymentForm=URL van het CSS-stijlbestand voor het betalingsformulier
 NewStripePaymentReceived=Nieuwe Stripe-betaling ontvangen
 NewStripePaymentFailed=Nieuwe Stripe-betaling geprobeerd, maar mislukt

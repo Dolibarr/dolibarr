@@ -18,16 +18,16 @@
 #
 
 # Module label 'ModuleKnowledgeManagementName'
-ModuleKnowledgeManagementName = Knowledge Management System
+ModuleKnowledgeManagementName = Gestion d'une base de connaissance
 # Module description 'ModuleKnowledgeManagementDesc'
-ModuleKnowledgeManagementDesc=Manage a Knowledge Management (KM) or Help-Desk base
+ModuleKnowledgeManagementDesc=Gérer une base de connaissance ou d'assistance (KM)
 
 #
 # Admin page
 #
-KnowledgeManagementSetup = Knowledge Management System setup
+KnowledgeManagementSetup = Configuration du système de gestion des connaissances
 Settings = Paramètres
-KnowledgeManagementSetupPage = Knowledge Management System setup page
+KnowledgeManagementSetupPage = Paramétrages du module de base de connaissance
 
 
 #
@@ -37,19 +37,18 @@ About = À propos
 KnowledgeManagementAbout = A propos de la base de connaissances
 KnowledgeManagementAboutPage = A propos de la base de connaissances
 
-#
-# Sample page
-#
 KnowledgeManagementArea = Base de connaissances
-
-
-#
-# Menu
-#
-MenuKnowledgeRecord = Knowledge base
-ListOfArticles = List of articles
-NewKnowledgeRecord = New article
-ValidateReply = Validate solution
+MenuKnowledgeRecord = Base de connaissance
+ListKnowledgeRecord = Liste des articles
+NewKnowledgeRecord = Nouvel article
+ValidateReply = Valider la réponse
 KnowledgeRecords = Articles
 KnowledgeRecord = Article
-KnowledgeRecordExtraFields = Extrafields for Article
+KnowledgeRecordExtraFields = Atribut supplémentaires (articles)
+GroupOfTicket=Groupe de tickets
+YouCanLinkArticleToATicketCategory=Vous pouvez lier un article à un groupe de tickets (ainsi l'article sera proposé lors de la qualification de nouveaux tickets)
+SuggestedForTicketsInGroup=Suggéré pour les tickets lorsque le groupe est
+
+SetObsolete=Définir comme obsolète
+ConfirmCloseKM=Confirmez-vous la fermeture de cet article comme obsolète ?
+ConfirmReopenKM=Souhaitez-vous remettre cet article au statut "Validé" ?

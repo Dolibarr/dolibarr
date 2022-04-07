@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - loan
-ModuleBuilderDesc=Tento nástroj musí používat pouze zkušení uživatelé nebo vývojáři. Poskytuje nástroje pro sestavení nebo úpravu vlastního modulu. Dokumentace pro alternativní <a href="%s" target="_blank">manuální vývoj je zde</a> .
+ModuleBuilderDesc=This tool must be used only by experienced users or developers. It provides utilities to build or edit your own module. Documentation for alternative <a href="%s" target="_blank" rel="noopener noreferrer">manual development is here</a>.
 EnterNameOfModuleDesc=Zadejte název modulu/aplikace pro vytvoření bez mezer. Použijte velká slova k oddělení slov (například: MyModule, EcommerceForShop, SyncWithMySystem ...)
 EnterNameOfObjectDesc=Zadejte název objektu, který chcete vytvořit, bez mezer. Použijte velká písmena pro oddělení slov (například: MyObject, Student, Teacher ...). Bude vygenerován soubor třídy CRUD, ale také soubor API, stránky pro zápis / přidání / úpravy / odstranění objektů a souborů SQL.
 ModuleBuilderDesc2=Cesta, kde jsou moduly generovány/editovány (první adresář pro externí moduly definované v %s): <strong>%s</strong>
@@ -98,7 +98,7 @@ MenusDefDescTooltip=Nabídky poskytované modulem / aplikací jsou definovány v
 DictionariesDefDescTooltip=Slovníky poskytované vaším modulem / aplikací jsou definovány do pole <strong> $ this-> slovníky </strong> do souboru deskriptoru modulu. Tento soubor můžete upravit ručně nebo použít zabudovaný editor. <br> <br> Poznámka: Jakmile je definován (a modul je znovu aktivován), jsou v oblasti nastavení také viditelné slovníky pro administrátorské uživatele na %s.
 PermissionsDefDescTooltip=Oprávnění poskytnutá vaším modulem / aplikací jsou definována do pole <strong>$ this-> práva</strong> do souboru deskriptoru modulu. Tento soubor můžete upravit ručně nebo použít vložený editor. <br><br> Poznámka: Po definování (a opětovném aktivaci modulu) jsou oprávnění viditelná ve výchozím nastavení oprávnění %s.
 HooksDefDesc=Definujte v <b> module_parts ['hooks'] </b> vlastnost, v deskriptoru modulu, kontext háčků, které chcete spravovat (seznam kontextů lze nalézt při hledání na '<b> initHooks (</b>' v jádrovém kódu) <br> Editovat soubor háku přidáte kód vašich háknutých funkcí (hákovatelné funkce lze nalézt při hledání na '<b> executeHooks </b>' v jádrovém kódu).
-TriggerDefDesc=Definujte ve spouštěcím souboru kód, který chcete provést pro každou provedenou událost.
+TriggerDefDesc=Define in the trigger file the code that you want to execute when a business event external to your module is executed (events triggered by other modules).
 SeeIDsInUse=Viz ID používané ve vaší instalaci
 SeeReservedIDsRangeHere=Viz rozsah vyhrazených ID
 ToolkitForDevelopers=Toolkit pro vývojáře Dolibarr
@@ -143,3 +143,5 @@ AsciiToHtmlConverter=Převodník ASCII na HTML
 AsciiToPdfConverter=Převodník ASCII na PDF
 TableNotEmptyDropCanceled=Tabulka není prázdná. Odstranění tabulky bylo zrušeno.
 ModuleBuilderNotAllowed=The module builder is available but not allowed to your user.
+ImportExportProfiles=Import and export profiles
+ValidateModBuilderDesc=Put 1 if this field need to be validated with $this->validateField() or 0 if validation required

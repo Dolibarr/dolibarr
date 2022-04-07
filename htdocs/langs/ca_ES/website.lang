@@ -31,7 +31,7 @@ AddWebsite=Afegir lloc web
 Webpage=Pàgina/contenidor web
 AddPage=Afegeix pàgina/contenidor
 PageContainer=Pàgina
-PreviewOfSiteNotYetAvailable=Vista prèvia del seu lloc web <strong>%s</strong> encara no està disponible. Primer ha de '<strong>Importar plantilla web</strong>' o sols '<strong>Afegir pàgina/contenidor</strong>'.
+PreviewOfSiteNotYetAvailable=La previsualització del vostre lloc web <strong> %s </strong> encara no està disponible. Primer heu de "<strong> importar una plantilla de lloc web completa </strong>" o simplement "<strong> Afegir una pàgina / contenidor </strong>".
 RequestedPageHasNoContentYet=La pàgina sol·licitada amb l'identificador %s encara no té contingut, o el fitxer de memòria cau .tpl.php s'ha eliminat. Edita el contingut de la pàgina per solucionar-ho.
 SiteDeleted=Lloc web '%s' eliminat
 PageContent=Pàgina/Contenidor
@@ -45,7 +45,7 @@ ViewWebsiteInProduction=Mostra la pàgina web utilitzant les URLs d'inici
 SetHereVirtualHost=<u>Utilitzeu amb Apache/NGinx/...</u><br>Creeu al vostre servidor web (Apache, Nginx...) un Virtual Host dedicat amb PHP habilitat i un directori arrel a<br><strong>%s</strong>
 ExampleToUseInApacheVirtualHostConfig=Exemple a utilitzar en la configuració de d'un Virtual Host d'Apache:
 YouCanAlsoTestWithPHPS=<u> Utilitzeu-lo amb el servidor incrustat de PHP </u> <br> Al desenvolupar l'entorn, és possible que preferiu provar el lloc amb el servidor web incrustat de PHP (requereix PHP 5.5) executant<br> <strong> php -S 0.0. 0.0: 8080 -t %s </strong>
-YouCanAlsoDeployToAnotherWHP=<u>Executeu el vostre lloc web amb un altre proveïdor de hosting de Dolibarr</u> <br> Si no teniu disponible un servidor web com Apache o NGinx a Internet, podeu exportar i importar el vostre lloc web a una altra instància de Dolibarr proporcionada per un altre proveïdor d'allotjament de Dolibarr que ofereixi una integració completa amb el mòdul del lloc web. Podeu trobar una llista d'alguns proveïdors d'allotjament Dolibarr a <a href="https://saas.dolibarr.org" target="_blank">https://saas.dolibarr.org</a>
+YouCanAlsoDeployToAnotherWHP= <u> Executeu el vostre lloc web amb un altre proveïdor d'allotjament Dolibarr </u> <br> Si no teniu un servidor web com Apache o NGinx disponible a Internet, podeu exportar i importar el vostre lloc web a una altra instància d'allotjament Dolibarr proporcionada per una altra instància d'allotjament Dolibarr proporcionada per un altre servidor Dolibar complet. integració amb el mòdul del lloc web. Podeu trobar una llista d'alguns proveïdors d'allotjament de Dolibarr a <a href="https://saas.dolibarr.org" target="_blank" rel="noopener noreferrer external"> https://saas.dolibarr.org </a>
 CheckVirtualHostPerms=Comproveu també que l'usuari del VIRTUAL HOST (per exemple www-data) té permisos <strong>%s</strong> sobre els fitxers a <br><strong>%s</strong>
 ReadPerm=Llegit
 WritePerm=Escriu
@@ -60,7 +60,7 @@ YouCanEditHtmlSourceckeditor=Podeu editar el codi font HTML usant el botó "Codi
 YouCanEditHtmlSource= <br> <span class="fa fa-bug"> </span> Podeu incloure el codi PHP en aquesta font mitjançant les etiquetes <strong> &lt;? php? &gt; a0a65d071f6fc9z Estan disponibles les variables globals següents: $ conf, $ db, $ mysoc, $ user, $ lloc web, $ pàgina web, $ weblangs, $ pagelangs. <br> <br> <span class="fa fa-bug"> </span> També podeu incloure contingut d'una altra pàgina / contenidor amb la següent sintaxi: <br> <strong> a03900dfdf ? &gt; </strong> <br> <br> <span class="fa fa-bug"> </span> Vostè pot fer una redirecció a una altra pàgina / Contenidor amb la següent sintaxi (Nota: no emeten cap contingut abans d'una redirecció) :? <br> <strong> &lt; php redirectToContainer ( 'alias_of_container_to_redirect_to'); ? &gt; </strong> <br> <br> <span class="fa fa-link"> </span> Per afegir un vincle a una altra pàgina, utilitzeu la sintaxi: <br> <strong> &lt;a href = "alias_of_page_to_link_to.php" &gt;mylink&lt;a&gt; </strong> <br> <br> <span class="fa fa-download"> </span> Per incloure un enllaç per a descàrrega <strong> </strong> un arxiu emmagatzemat en els documents <strong> un directori </strong>, utilitzeu el document <strong> document.php </strong> embolcall: <br> Exemple, per a un fitxer a documents / ecm (cal registrar-se)? ] nom de fitxer.ext "&gt; </strong> <br> Per a un fitxer a documents / suports (directori obert per a accés públic), la sintaxi és: <br> <strong> a03900dfre31ecz "/document.php?modulepart=medias&file=[relative_dir/ Alanfilename.ext"&gt; </strong> <br> Per a un fitxer compartit amb un enllaç compartit (accés obert mitjançant la tecla hash compartida del fitxer), una sintaxis es0a0z0z0a009 /document.php?hashp=publicsharekeyoffile"&gt; </strong> <br> <br> <span class="fa fa-picture-o"> </span> per incloure un </strong> imatge <strong> emmagatzemat en els documents <strong> </strong> directori, utilitzeu el <strong> viewimage.php </strong> embolcall: <br> exemple, per a una imatge en documents / arxius multimèdia (obert directori d’accés públic), la sintaxi és: <br> <strong> &lt;img src = "/ viewimage.php? modulepart = medias&amp;file = [relative_dir /] filename.ext" a0129
 #YouCanEditHtmlSource2=<br><span class="fa fa-picture-o"></span> To include a <strong>image</strong> shared publicaly, use the <strong>viewimage.php</strong> wrapper:<br>Example with a shared key 123456789, syntax is:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
 YouCanEditHtmlSource2=Per a una imatge compartida amb un enllaç compartit (accés obert mitjançant la tecla hash compartida del fitxer), la sintaxi és: <br> <strong> &lt;img src = "/ viewimage.php? Hashp = 12345679012 ..." a0012c7dcbe087987
-YouCanEditHtmlSourceMore= <br> Més exemples de codi HTML o dinàmic disponibles a <a href="%s" target="_blank"> la documentació wiki </a> <br>.
+YouCanEditHtmlSourceMore= <br> Més exemples d'HTML o codi dinàmic disponibles a <a href="%s" target="_blank" rel="noopener noreferrer external"> la documentació wiki </a> <br> .
 ClonePage=Clona la pàgina/contenidor
 CloneSite=Clona el lloc
 SiteAdded=S'ha afegit el lloc web
@@ -140,8 +140,8 @@ DefineListOfAltLanguagesInWebsiteProperties=Definiu la llista de tots els idiome
 GenerateSitemaps=Genera un fitxer de mapa del lloc del lloc web
 ConfirmGenerateSitemaps=Si ho confirmeu, suprimireu el fitxer de mapa del lloc existent...
 ConfirmSitemapsCreation=Confirmeu la generació del mapa del lloc
-SitemapGenerated=Sitemap file <b>%s</b> generated
+SitemapGenerated=Fitxer del mapa del lloc <b> %s </b> generat
 ImportFavicon=Favicon
-ErrorFaviconType=Favicon must be png
-ErrorFaviconSize=Favicon must be sized 16x16, 32x32 or 64x64
-FaviconTooltip=Upload an image which needs to be a png (16x16, 32x32 or 64x64)
+ErrorFaviconType=Favicon ha de ser png
+ErrorFaviconSize=El favicon ha de tenir una mida de 16x16, 32x32 o 64x64
+FaviconTooltip=Pengeu una imatge que ha de ser PNG (16x16, 32x32 o 64x64)

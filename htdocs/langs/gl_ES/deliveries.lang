@@ -30,3 +30,4 @@ NonShippable=Non enviable
 ShowShippableStatus=Amosar estado de envío
 ShowReceiving=Mostrar nota de recepción
 NonExistentOrder=Pedimento inexistente
+StockQuantitiesAlreadyAllocatedOnPreviousLines = Cantidades de stock xa asignadas en liñas anteriores 

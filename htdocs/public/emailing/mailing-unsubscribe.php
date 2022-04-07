@@ -149,7 +149,7 @@ if (!empty($tag) && ($unsuscrib == '1')) {
 	*/
 
 	// Update status communication of email (new usage)
-	$sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing_unsubscribe (date_creat, entity, email, unsubscribegroup, ip) VALUES ('".$db->idate(dol_now())."', ".$db->escape($obj->entity).", '".$db->escape($obj->email)."', '', '".$db->escape(getUserRemoteIP())."')";
+	$sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing_unsubscribe (date_creat, entity, email, unsubscribegroup, ip) VALUES ('".$db->idate(dol_now())."', ".((int) $obj->entity).", '".$db->escape($obj->email)."', '', '".$db->escape(getUserRemoteIP())."')";
 
 	$resql = $db->query($sql);
 	//if (! $resql) dol_print_error($db);	No test on errors, may fail if already unsubscribed

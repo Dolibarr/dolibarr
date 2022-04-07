@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - loan
-ModuleBuilderDesc=Aquesta eina només l’han d’utilitzar usuaris o desenvolupadors experimentats. Proporciona utilitats per a construir o editar el vostre propi mòdul. La documentació per al desenvolupament manual alternatiu <a href="%s" target="_blank"> és aquí </a>.
+ModuleBuilderDesc=Aquesta eina només l'han d'utilitzar usuaris o desenvolupadors experimentats. Proporciona utilitats per construir o editar el vostre propi mòdul. La documentació per al desenvolupament manual alternatiu <a href="%s" target="_blank" rel="noopener noreferrer"> és aquí </a>.
 EnterNameOfModuleDesc=Introduïu el nom del mòdul/aplicació per a crear sense espais. Utilitzeu majúscules per separar paraules (per exemple: MyModule, EcommerceForShop, SyncWithMySystem ...)
 EnterNameOfObjectDesc=Introduïu el nom de l'objecte que voleu crear sense espais. Utilitzeu majúscules per separar paraules (Per exemple: MyObject, Estudiant, Professor...). El fitxer de classes CRUD, però també el fitxer API, pàgines per a llistar/afegir/editar/eliminar objectes i els fitxers SQL es generaran.
 ModuleBuilderDesc2=Camí on es generen / editen els mòduls (primer directori per als mòduls externs definits en %s): <strong> %s </strong>
@@ -85,7 +85,7 @@ ListOfPermissionsDefined=Llista de permisos definits
 SeeExamples=Mira exemples aquí
 EnabledDesc=Condició per a tenir aquest camp actiu (Exemples: 1 ó $conf->global->MYMODULE_MYOPTION)
 VisibleDesc=És visible el camp ? (Exemples: 0=Mai visible, 1=Visible als llistats i als formularis crear/modificar/veure, 2=Visible només als llistats, 3=Visible només als formularis crear/modificar/veure (no als llistats), 4=Visible als llistats i només als formularis modificar/veure (no al de crear), 5=Visible als llistats i només al formulari de veure (però no als formularis de crear i modificar).<br><br>Utilitzant un valor negatiu implicarà que el camp no es mostrarà per defecte als llistats però podrà ser escollit per veure's).<br><br>pot ser una expressió, per exemple:<br>preg_match('/public/', $_SERVER['PHP_SELF'])?0:1<br>($user->rights->holiday->define_holiday ? 1 : 0)
-DisplayOnPdfDesc=Display this field on compatible PDF documents, you can manage position with "Position" field.<br>Currently, known compatibles PDF models are : eratosthene (order), espadon (ship), sponge (invoices), cyan (propal/quotation), cornas (supplier order)<br><br><strong>For document :</strong><br>0 = not displayed <br>1 = display<br>2 = display only if not empty<br><br><strong>For document lines :</strong><br>0 = not displayed <br>1 = displayed in a column<br>3 = display in line description column after the description<br>4 = display in description column after the description only if not empty
+DisplayOnPdfDesc=Mostra aquest camp en documents PDF compatibles, podeu gestionar la posició amb el camp "Posició". <br> Actualment, els models PDF compatibles coneguts són: eratostene (comanda), espadon (enviament), esponja (factures), cian (propal / pressupost), cornas (comanda del proveïdor) <br> <br> <strong> = display <br> 2 = només si no està buit <br> <br> <strong> Per a les línies de documents: </strong> <br> 0 = no es veuen les <br> 1 = mostren en una columna <br> = 3 = display a la columna de descripció de línia després de la descripció <br> 4 = display a la columna de descripció després de la descripció només si no està buida
 DisplayOnPdf=Visualització en PDF
 IsAMeasureDesc=Es pot acumular el valor del camp per a obtenir un total a la llista? (Exemples: 1 o 0)
 SearchAllDesc=El camp utilitzat per realitzar una cerca des de l'eina de cerca ràpida? (Exemples: 1 o 0)
@@ -98,7 +98,7 @@ MenusDefDescTooltip=Els menús proporcionats pel vostre mòdul / aplicació es d
 DictionariesDefDescTooltip=Els diccionaris subministrats pel vostre mòdul/aplicació es defineixen a la matriu <strong>$this->dictionaries</strong> del fitxer descriptor del mòdul. Podeu editar manualment aquest fitxer o utilitzar l’editor incrustat. <br><br> Nota: un cop definit (i reactivat el mòdul), els diccionaris també són visibles a la zona de configuració per als usuaris administradors a %s.
 PermissionsDefDescTooltip=Els permisos proporcionats pel vostre mòdul / aplicació es defineixen a la matriu <strong>$ this-> rights</strong> al fitxer descriptor del mòdul. Podeu editar manualment aquest fitxer o utilitzar l’editor incrustat. <br><br> Nota: un cop definits (i el mòdul reactivat), els permisos es visualitzen a la configuració de permisos per defecte %s.
 HooksDefDesc=Definiu a la propietat <b>module_parts['hooks']</b>, en el descriptor del mòdul, el context dels "hooks" que voleu gestionar (una llista de contextos es pot trobar si cerqueu '<b>initHooks</b>' (en el codi del nucli de Dolibarr. <br> Editeu el fitxer del "hook" per afegir el codi de les vostres funcions "hookables" (les quals es poden trobar cercant "<b>executeHooks</b>" en el codi del nucli de Dolibarr).
-TriggerDefDesc=Definiu en el fitxer "trigger" el codi que voleu executar per a cada esdeveniment de negoci executat.
+TriggerDefDesc=Definiu al fitxer disparador el codi que voleu executar quan s'executi un esdeveniment empresarial extern al vostre mòdul (esdeveniments desencadenats per altres mòduls).
 SeeIDsInUse=Consulteu els identificadors que s’utilitzen a la instal·lació
 SeeReservedIDsRangeHere=Consultar l'interval d'identificadors reservats
 ToolkitForDevelopers=Kit d'eines per als desenvolupadors de Dolibarr
@@ -143,3 +143,5 @@ AsciiToHtmlConverter=Convertidor Ascii a HTML
 AsciiToPdfConverter=Convertidor Ascii a PDF
 TableNotEmptyDropCanceled=La taula no està buida. S'ha cancel·lat l'eliminació.
 ModuleBuilderNotAllowed=El creador de mòduls està disponible però no permès al vostre usuari.
+ImportExportProfiles=Importar i exportar perfils
+ValidateModBuilderDesc=Poseu 1 si aquest camp s'ha de validar amb $ this-> validateField () o 0 si cal una validació

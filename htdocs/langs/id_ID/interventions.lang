@@ -64,3 +64,5 @@ InterLineDuration=Intervensi durasi garis
 InterLineDesc=Intervensi deskripsi garis
 RepeatableIntervention=Template intervensi
 ToCreateAPredefinedIntervention=Untuk membuat intervensi yang telah ditetapkan atau berulang, buat intervensi umum dan ubah menjadi template intervensi
+ConfirmReopenIntervention=Apakah Anda yakin ingin membuka kembali intervensi <b> %s </b> ?
+GenerateInter=Menghasilkan intervensi

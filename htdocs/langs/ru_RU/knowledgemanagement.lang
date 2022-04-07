@@ -18,38 +18,37 @@
 #
 
 # Module label 'ModuleKnowledgeManagementName'
-ModuleKnowledgeManagementName = Knowledge Management System
+ModuleKnowledgeManagementName = Система управления знаниями
 # Module description 'ModuleKnowledgeManagementDesc'
-ModuleKnowledgeManagementDesc=Manage a Knowledge Management (KM) or Help-Desk base
+ModuleKnowledgeManagementDesc=Управление системой управления знаний или справочной службы
 
 #
 # Admin page
 #
-KnowledgeManagementSetup = Knowledge Management System setup
+KnowledgeManagementSetup = Настройка системы управления знаниями
 Settings = Настройки
-KnowledgeManagementSetupPage = Knowledge Management System setup page
+KnowledgeManagementSetupPage = Страница настройки системы управления знаниями
 
 
 #
 # About page
 #
-About = О
-KnowledgeManagementAbout = About Knowledge Management
-KnowledgeManagementAboutPage = Knowledge Management about page
+About = О системе
+KnowledgeManagementAbout = Об управлении знаниями
+KnowledgeManagementAboutPage = Страница управления знаниями
 
-#
-# Sample page
-#
-KnowledgeManagementArea = Knowledge Management
+KnowledgeManagementArea = Управление знаниями
+MenuKnowledgeRecord = База знаний
+ListKnowledgeRecord = Список записей
+NewKnowledgeRecord = Новая запись
+ValidateReply = Проверить решение
+KnowledgeRecords = Записи
+KnowledgeRecord = Запись
+KnowledgeRecordExtraFields = Дополнительные поля для записи
+GroupOfTicket=Группа тикетов
+YouCanLinkArticleToATicketCategory=Вы можете привязать запись к группе тикетов (чтобы запись предлагалась во время квалификации новых тикетов)
+SuggestedForTicketsInGroup=Предлагается для тикетов, когда группа
 
-
-#
-# Menu
-#
-MenuKnowledgeRecord = Knowledge base
-ListOfArticles = List of articles
-NewKnowledgeRecord = New article
-ValidateReply = Validate solution
-KnowledgeRecords = Articles
-KnowledgeRecord = Статья
-KnowledgeRecordExtraFields = Extrafields for Article
+SetObsolete=Set as obsolete
+ConfirmCloseKM=Do you confirm the closing of this article as obsolete ?
+ConfirmReopenKM=Do you want to restore this article to status "Validated" ?

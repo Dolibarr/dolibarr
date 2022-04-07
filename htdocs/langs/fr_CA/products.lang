@@ -120,7 +120,6 @@ ResetBarcodeForAllRecords=Définissez la valeur du code-barres pour tous les enr
 PriceByCustomer=Différents prix pour chaque client
 PriceCatalogue=Un prix de vente unique par produit / service
 AddCustomerPrice=Ajouter un prix par client
-ForceUpdateChildPriceSoc=Définir le même prix sur les filiales clientes
 PriceByCustomerLog=Enregistrement des prix clients précédents
 MinimumPriceLimit=Le prix minimum ne peut pas être inférieur à %s
 PriceExpressionSelected=Expression de prix choisie

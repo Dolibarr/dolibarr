@@ -16,41 +16,77 @@
 #
 # Generic
 #
-ModulePartnershipName = Partnership management
-PartnershipDescription = Module Partnership management
-PartnershipDescriptionLong= Module Partnership management
+ModulePartnershipName=Partnerības vadība
+PartnershipDescription=Partnerības vadības modulis
+PartnershipDescriptionLong= Partnerības vadības modulis
+Partnership=Partnerība
+AddPartnership=Pievienojiet partnerību
+CancelPartnershipForExpiredMembers=Partnerība: atceļ partnerību ar abonementiem, kuriem beidzies derīguma termiņš
+PartnershipCheckBacklink=Partnerība: pārbaudiet atsauces saiti
 
 #
 # Menu
 #
-NewPartnership = New Partnership
-ListOfPartnerships = List of partnership
+NewPartnership=Jauna partnerība
+ListOfPartnerships=Partnerības saraksts
 
 #
 # Admin page
 #
-PartnershipSetup = Partnership setup
-PartnershipAbout = About Partnership
-PartnershipAboutPage = Partnership about page
-
+PartnershipSetup=Partnerības iestatīšana
+PartnershipAbout=Par partnerību
+PartnershipAboutPage=Partnerība par lapu
+partnershipforthirdpartyormember=Partnera statusam jābūt iestatītam “trešajai pusei” vai “dalībniekam”
+PARTNERSHIP_IS_MANAGED_FOR=Partnerattiecības pārvaldītas
+PARTNERSHIP_BACKLINKS_TO_CHECK=Atpakaļsaites, lai pārbaudītu
+PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Nb dienas pirms partnerības statusa atcelšanas, kad abonements ir beidzies
+ReferingWebsiteCheck=Vietnes atsauces pārbaude
+ReferingWebsiteCheckDesc=Varat iespējot funkciju, lai pārbaudītu, vai jūsu partneri ir pievienojuši atpakaļsaišu jūsu vietnes domēniem savā vietnē.
 
 #
 # Object
 #
+DeletePartnership=Dzēst partnerību
+PartnershipDedicatedToThisThirdParty=Partnerība, kas veltīta šai trešajai pusei
+PartnershipDedicatedToThisMember=Šim dalībniekam veltīta partnerība
 DatePartnershipStart=Sākuma datums
 DatePartnershipEnd=Beigu datums
+ReasonDecline=Noraidīt iemeslu
+ReasonDeclineOrCancel=Noraidīt iemeslu
+PartnershipAlreadyExist=Partnerattiecības jau pastāv
+ManagePartnership=Pārvaldiet partnerību
+BacklinkNotFoundOnPartnerWebsite=Atpakaļsaite nav atrasta partnera vietnē
+ConfirmClosePartnershipAsk=Vai tiešām vēlaties atcelt šo partnerību?
+PartnershipType=Partnerības veids
+PartnershipRefApproved=Partnerība %s apstiprināta
 
 #
 # Template Mail
 #
+SendingEmailOnPartnershipWillSoonBeCanceled=Partnerība drīz tiks atcelta
+SendingEmailOnPartnershipRefused=Partnerība atteikta
+SendingEmailOnPartnershipAccepted=Partnerība pieņemta
+SendingEmailOnPartnershipCanceled=Partnerattiecības atceltas
 
+YourPartnershipWillSoonBeCanceledTopic=Partnerība drīz tiks atcelta
+YourPartnershipRefusedTopic=Partnerība atteikta
+YourPartnershipAcceptedTopic=Partnerība pieņemta
+YourPartnershipCanceledTopic=Partnerattiecības atceltas
+
+YourPartnershipWillSoonBeCanceledContent=Mēs jūs informējam, ka jūsu partnerība drīz tiks atcelta (atpakaļsaite nav atrasta)
+YourPartnershipRefusedContent=Mēs jūs informējam, ka jūsu partnerības pieprasījums ir noraidīts.
+YourPartnershipAcceptedContent=Mēs jūs informējam, ka jūsu partnerības pieprasījums ir pieņemts.
+YourPartnershipCanceledContent=Mēs jūs informējam, ka jūsu partnerattiecības ir atceltas.
+
+CountLastUrlCheckError=Kļūdu skaits pēdējā URL pārbaudē
+LastCheckBacklink=Pēdējās URL pārbaudes datums
+ReasonDeclineOrCancel=Noraidīt iemeslu
 
 #
 # Status
 #
-PartnershipDraft = Melnraksts
-PartnershipAccepted = Pieņemts
-PartnershipRefused = Atteikts
-PartnershipCanceled = Atcelts
-
-PartnershipManagedFor=Partners are
+PartnershipDraft=Melnraksts
+PartnershipAccepted=Pieņemts
+PartnershipRefused=Atteikts
+PartnershipCanceled=Atcelts
+PartnershipManagedFor=Partneri ir

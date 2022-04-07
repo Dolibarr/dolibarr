@@ -150,7 +150,7 @@ class box_graph_product_distribution extends ModeleBoxes
 		$userid = 0; // No filter on user creation
 
 		$WIDTH = ($nbofgraph >= 2 || !empty($conf->dol_optimize_smallscreen)) ? '300' : '320';
-		$HEIGHT = '120';
+		$HEIGHT = '150';	// Height require to have 5+1 entries into legend visible.
 
 		if (!empty($conf->propal->enabled) && !empty($user->rights->propale->lire)) {
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
@@ -192,6 +192,9 @@ class box_graph_product_distribution extends ModeleBoxes
 					}
 					$px2->SetLegend($legend);
 					$px2->setShowLegend(2);
+					if (!empty($conf->dol_optimize_smallscreen)) {
+						$px2->SetWidth(320);
+					}
 					$px2->setShowPointValue($showpointvalue);
 					$px2->setShowPercent(0);
 					$px2->SetMaxValue($px2->GetCeilMaxValue());
@@ -252,6 +255,9 @@ class box_graph_product_distribution extends ModeleBoxes
 					}
 					$px3->SetLegend($legend);
 					$px3->setShowLegend(2);
+					if (!empty($conf->dol_optimize_smallscreen)) {
+						$px3->SetWidth(320);
+					}
 					$px3->setShowPointValue($showpointvalue);
 					$px3->setShowPercent(0);
 					$px3->SetMaxValue($px3->GetCeilMaxValue());
@@ -313,6 +319,9 @@ class box_graph_product_distribution extends ModeleBoxes
 					}
 					$px1->SetLegend($legend);
 					$px1->setShowLegend(2);
+					if (!empty($conf->dol_optimize_smallscreen)) {
+						$px1->SetWidth(320);
+					}
 					$px1->setShowPointValue($showpointvalue);
 					$px1->setShowPercent(0);
 					$px1->SetMaxValue($px1->GetCeilMaxValue());
@@ -343,7 +352,7 @@ class box_graph_product_distribution extends ModeleBoxes
 
 		if (!$mesg) {
 			$stringtoshow = '';
-			$stringtoshow .= '<script type="text/javascript" language="javascript">
+			$stringtoshow .= '<script type="text/javascript">
 				jQuery(document).ready(function() {
 					jQuery("#idsubimg'.$this->boxcode.'").click(function() {
 						jQuery("#idfilter'.$this->boxcode.'").toggle();
@@ -408,7 +417,7 @@ class box_graph_product_distribution extends ModeleBoxes
 				$stringtoshow .= '</div></div>';
 			}
 			$this->info_box_contents[0][0] = array(
-				'tr'=>'class="oddeven nohover"',
+				'tr' => 'class="oddeven nohover"',
 				'td' => 'class="nohover center"',
 				'textnoformat'=>$stringtoshow,
 			);

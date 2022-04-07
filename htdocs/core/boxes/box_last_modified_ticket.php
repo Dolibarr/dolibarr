@@ -94,14 +94,14 @@ class box_last_modified_ticket extends ModeleBoxes
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_severity as severity ON severity.code=t.severity_code";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid=t.fk_soc";
 
-			$sql .= " WHERE t.entity = ".$conf->entity;
+			$sql .= " WHERE t.entity IN (".getEntity('ticket').')';
 			//  		$sql.= " AND e.rowid = er.fk_event";
-			//if (!$user->rights->societe->client->voir && !$user->socid) $sql.= " WHERE s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+			//if (empty($user->rights->societe->client->voir) && !$user->socid) $sql.= " WHERE s.rowid = sc.fk_soc AND sc.fk_user = " .((int) $user->id);
 			if ($user->socid) {
-				$sql .= " AND t.fk_soc= ".$user->socid;
+				$sql .= " AND t.fk_soc = ".((int) $user->socid);
 			}
 
-			$sql .= " ORDER BY t.tms DESC, t.rowid DESC ";
+			$sql .= " ORDER BY t.tms DESC, t.rowid DESC";
 			$sql .= $this->db->plimit($max, 0);
 
 			$resql = $this->db->query($sql);
@@ -145,7 +145,7 @@ class box_last_modified_ticket extends ModeleBoxes
 
 					// Subject
 					$this->info_box_contents[$i][$r] = array(
-						'td' => 'class="nowrap"',
+						'td' => 'class="nowrap tdoverflowmax150"',
 						'text' => $objp->subject, // Some event have no ref
 						'url' => DOL_URL_ROOT."/ticket/card.php?track_id=".$objp->track_id,
 					);
@@ -153,7 +153,7 @@ class box_last_modified_ticket extends ModeleBoxes
 
 					// Customer
 					$this->info_box_contents[$i][$r] = array(
-						'td' => 'class="tdoverflowmax150 maxwidth300onsmartphone"',
+						'td' => 'class="tdoverflowmax150"',
 						'text' => $link,
 						'asis' => 1,
 					);

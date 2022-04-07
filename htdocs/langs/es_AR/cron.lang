@@ -36,7 +36,6 @@ CronFieldMandatory=Los campos %s son obligatorios
 CronErrEndDateStartDt=La fecha de finalización no puede ser anterior a la fecha de inicio
 StatusAtInstall=Estado de la instalación del módulo
 CronStatusInactiveBtn=Deshabilitar
-CronTaskInactive=Esta tarea está deshabilitada
 CronClassFile=Nombre de archivo y clase
 CronModuleHelp=Nombre del directorio del módulo Dolibarr (también funciona con el módulo externo Dolibarr). <BR> Por ejemplo, para llamar al objeto fetch del objeto Producto Dolibarr /htdocs/<u>product</u>/class/product.class.php, el valor para el módulo es <br><i>product</i>
 CronClassFileHelp=La ruta relativa y el nombre del archivo a cargar (la ruta es relativa al directorio raíz del servidor web). <BR> Por ejemplo para llamar al método de fetch del objeto Producto Dolibarr /htdocs/product/class/ <u> product.class.php</u>, el valor de nombre de archivo de clase es <br><i>product/class/product.class.php</i>

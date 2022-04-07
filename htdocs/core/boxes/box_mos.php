@@ -86,12 +86,15 @@ class box_mos extends ModeleBoxes
 
 		if ($user->rights->mrp->read) {
 			$sql = "SELECT p.ref as product_ref";
+			$sql .= ", p.rowid as productid";
+			$sql .= ", p.tosell";
+			$sql .= ", p.tobuy";
+			$sql .= ", p.tobatch";
 			$sql .= ", c.rowid";
 			$sql .= ", c.date_creation";
 			$sql .= ", c.tms";
 			$sql .= ", c.ref";
 			$sql .= ", c.status";
-			//$sql.= ", c.fk_user_valid";
 			$sql .= " FROM ".MAIN_DB_PREFIX."product as p";
 			$sql .= ", ".MAIN_DB_PREFIX."mrp_mo as c";
 			$sql .= " WHERE c.fk_product = p.rowid";
@@ -110,9 +113,12 @@ class box_mos extends ModeleBoxes
 					$datem = $this->db->jdate($objp->tms);
 					$mostatic->id = $objp->rowid;
 					$mostatic->ref = $objp->ref;
-					$mostatic->id = $objp->socid;
 					$mostatic->status = $objp->status;
+					$productstatic->id = $objp->productid;
 					$productstatic->ref = $objp->product_ref;
+					$productstatic->status = $objp->tosell;
+					$productstatic->status_buy = $objp->tobuy;
+					$productstatic->status_batch = $objp->tobatch;
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="nowraponall"',

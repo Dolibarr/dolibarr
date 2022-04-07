@@ -1,4 +1,4 @@
-# ProductBATCH language file - en_US - ProductBATCH
+# ProductBATCH language file - Source file is en_US - ProductBATCH
 ManageLotSerial=Foloseşte lot / număr de serie
 ProductStatusOnBatch=Da (lot necesar)
 ProductStatusOnSerial=Da (este necesar un număr de serie unic)
@@ -26,10 +26,20 @@ ShowLogOfMovementIfLot=Afișați jurnalul mișcărilor pentru cuplu de produs/lo
 StockDetailPerBatch=Detaliu stoc pe lot
 SerialNumberAlreadyInUse=Seria %s este deja utilizată pentru produsul %s
 TooManyQtyForSerialNumber=Poți avea un singur produs %s pentru numărul de serie %s
-BatchLotNumberingModules=Opțiuni pentru generarea automată de produse lot gestionate pe loturi
-BatchSerialNumberingModules=Opțiuni pentru generarea automată de produse lot gestionate prin numere de serie
 ManageLotMask=Mască personalizată
-CustomMasks=Adaugă o opţiune pentru definire mască în fişa produsului
-LotProductTooltip=Adaugă o opțiune în fişa de produs pentru a defini o mască dedicată numărului de lot
-SNProductTooltip=Adaugă o opțiune în fişa de produs pentru a defini o mască dedicată numărului de serie
-QtyToAddAfterBarcodeScan=Cantitate de adăugat pentru fiecare cod de bare/lot/serie scanată
+CustomMasks=Opţiunea de definire a unei măşti de numerotare diferite pentru fiecare produs
+BatchLotNumberingModules=Regulă de numerotare pentru generarea automată a numărului de lot
+BatchSerialNumberingModules=Regula de numerotare pentru generarea automată a numărului de serie (pentru produsele cu proprietatea 1 lot/serie unică pentru fiecare produs)
+QtyToAddAfterBarcodeScan=Cantitate de %s pentru fiecare cod de bare/lot/serie scanat
+LifeTime=Durata de viață (în zile)
+EndOfLife=Sfârşitul duratei de viaţă
+ManufacturingDate=Data de producţie
+DestructionDate=Data distrugerii
+FirstUseDate=Data primei utilizări
+QCFrequency=Frecvenţa controlului de calitate (în zile)
+ShowAllLots=Arată toate loturile
+HideLots=Ascunde loturile
+#Traceability - qc status
+OutOfOrder=Indisponibil
+InWorkingOrder=În stare de funcționare
+ToReplace=De înlocuit

@@ -18,38 +18,37 @@
 #
 
 # Module label 'ModuleKnowledgeManagementName'
-ModuleKnowledgeManagementName = Knowledge Management System
+ModuleKnowledgeManagementName = Sistema de Gestão de Conhecimento
 # Module description 'ModuleKnowledgeManagementDesc'
-ModuleKnowledgeManagementDesc=Manage a Knowledge Management (KM) or Help-Desk base
+ModuleKnowledgeManagementDesc=Gerir uma «Gestão de Conhecimento» (KM) ou base do «Centro de Ajuda»
 
 #
 # Admin page
 #
-KnowledgeManagementSetup = Knowledge Management System setup
+KnowledgeManagementSetup = Configurar Sistema de Gestão de Conhecimento
 Settings = Definições
-KnowledgeManagementSetupPage = Knowledge Management System setup page
+KnowledgeManagementSetupPage = Página de configuração do Sistema de Gestão de Conhecimento
 
 
 #
 # About page
 #
 About = Sobre
-KnowledgeManagementAbout = About Knowledge Management
-KnowledgeManagementAboutPage = Knowledge Management about page
+KnowledgeManagementAbout = Sobre Gestão de Conhecimento
+KnowledgeManagementAboutPage = Página de sobre a Gestão de Conhecimento
 
-#
-# Sample page
-#
-KnowledgeManagementArea = Knowledge Management
-
-
-#
-# Menu
-#
-MenuKnowledgeRecord = Knowledge base
-ListOfArticles = List of articles
-NewKnowledgeRecord = New article
-ValidateReply = Validate solution
-KnowledgeRecords = Articles
+KnowledgeManagementArea = Gestão de Conhecimento
+MenuKnowledgeRecord = Base conhecimento
+ListKnowledgeRecord = Lista de artigos
+NewKnowledgeRecord = Novo artigo
+ValidateReply = Validar solução
+KnowledgeRecords = Artigos
 KnowledgeRecord = Artigo
-KnowledgeRecordExtraFields = Extrafields for Article
+KnowledgeRecordExtraFields = Campos extra para o Artigo
+GroupOfTicket=Group of tickets
+YouCanLinkArticleToATicketCategory=You can link an article to a ticket group (so the article will be suggested during qualification of new tickets)
+SuggestedForTicketsInGroup=Suggested for tickets when group is
+
+SetObsolete=Set as obsolete
+ConfirmCloseKM=Do you confirm the closing of this article as obsolete ?
+ConfirmReopenKM=Do you want to restore this article to status "Validated" ?

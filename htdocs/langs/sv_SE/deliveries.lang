@@ -2,7 +2,7 @@
 Delivery=Leverans
 DeliveryRef=Er referens
 DeliveryCard=Kvittokort
-DeliveryOrder=Delivery receipt
+DeliveryOrder=Leveranskvitto
 DeliveryDate=Leveransdatum
 CreateDeliveryOrder=Skapa orderbekräftelse
 DeliveryStateSaved=Leveransstatus sparad
@@ -27,5 +27,7 @@ Recipient=Mottagare
 ErrorStockIsNotEnough=Det finns inte tillräckligt i lager
 Shippable=Sändbara
 NonShippable=Inte sändbara
+ShowShippableStatus=Visa leveransstatus
 ShowReceiving=Visa orderbekräftelse
 NonExistentOrder=Icke-existerande ordning
+StockQuantitiesAlreadyAllocatedOnPreviousLines = Lagerkvantiteter som redan tilldelats på tidigare rader

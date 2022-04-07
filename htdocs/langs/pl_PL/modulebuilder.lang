@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - loan
-ModuleBuilderDesc=To narzędzie może być używane tylko przez doświadczonych użytkowników lub programistów. Udostępnia narzędzia do tworzenia lub edycji własnego modułu. Dokumentacja alternatywnego rozwoju ręcznego <a href="%s" target="_blank"> jest tutaj </a>.
+ModuleBuilderDesc=This tool must be used only by experienced users or developers. It provides utilities to build or edit your own module. Documentation for alternative <a href="%s" target="_blank" rel="noopener noreferrer">manual development is here</a>.
 EnterNameOfModuleDesc=Wpisz nazwę bez spacji modułu/aplikacji do utworzenia. Używaj wielkich liter do oddzielania słów (na przykład: MyModule, EcommerceForShop, SyncWithMySystem, ...)
 EnterNameOfObjectDesc=Wpisz nazwę (bez spacji) obiektu do utworzenia. Używaj wielkich liter do oddzielania słów (na przykład: MyObject, Student, Teacher, ...). Zostanie wygenerowany plik klasy CRUD, ale także plik API, strony do wyświetlenia/dodania/edycji/usunięcia obiektu oraz pliki SQL.
 ModuleBuilderDesc2=Ścieżka, w której moduły są generowane/edytowane (pierwszy katalog dla modułów zewnętrznych zdefiniowany w %s): <strong> %s </strong>
@@ -85,7 +85,7 @@ ListOfPermissionsDefined=Lista zdefiniowanych uprawnień
 SeeExamples=Zobacz przykłady tutaj
 EnabledDesc=Warunek, aby to pole było aktywne (Przykłady: 1 lub $conf->global->MYMODULE_MYOPTION)
 VisibleDesc=Czy pole jest widoczne? (Przykłady: 0 = niewidoczne, 1 = widoczne na liście i utwórz / zaktualizuj / wyświetl formularze, 2 = widoczne tylko na liście, 3 = widoczne tylko w formularzu tworzenia / aktualizacji / przeglądania (nie na liście), 4 = widoczne na liście i tylko aktualizuj / wyświetl formularz (nie twórz), 5 = widoczne tylko w formularzu widoku końca listy (nie tworzy, nie aktualizuje). <br> <br> Użycie wartości ujemnej oznacza, że pole nie jest domyślnie wyświetlane na liście, ale można je wybrać do przeglądania). <br> <br> Może to być wyrażenie, na przykład: <br> preg_match ('/ public /', $ _SERVER ['PHP_SELF'])? 0: 1 <br> ($ user- 1 holiday?
-DisplayOnPdfDesc=Display this field on compatible PDF documents, you can manage position with "Position" field.<br>Currently, known compatibles PDF models are : eratosthene (order), espadon (ship), sponge (invoices), cyan (propal/quotation), cornas (supplier order)<br><br><strong>For document :</strong><br>0 = not displayed <br>1 = display<br>2 = display only if not empty<br><br><strong>For document lines :</strong><br>0 = not displayed <br>1 = displayed in a column<br>3 = display in line description column after the description<br>4 = display in description column after the description only if not empty
+DisplayOnPdfDesc=Wyświetlając to pole w kompatybilnych dokumentach PDF możesz zarządzać jego pozycją za pomocą pola "Pozycja".<br>Obecnie znane kompatybilne modele PDF to: eratosthene (zamówienie), espadon (dostawa), sponge (faktury), cyan (propozycja/oferta), cornas (zamówienie dostawcy)<br><br><strong>Dla dokumentu:</strong><br>0 = nie wyświetlaj <br>1 = wyświetlaj<br>2 = wyświetlaj tylko, gdy nie puste<br><br><strong>Dla linii dokumentu:</strong><br>0 = nie wyświetlaj <br>1 = wyświetlaj w kolumnie<br>3 = wyświetlaj w linii kolumny opisowej po opisie<br>4 = wyświetlaj w kolumnie opisowej po opisie, tylko gdy nie pusty
 DisplayOnPdf=Wyświetl na dokumencie PDF
 IsAMeasureDesc=Czy wartość pola można skumulować, aby uzyskać sumę na liście? (Przykłady: 1 lub 0)
 SearchAllDesc=Czy to pole jest używane do wyszukiwania za pomocą narzędzia szybkiego wyszukiwania? (Przykłady: 1 lub 0)
@@ -98,7 +98,7 @@ MenusDefDescTooltip=Menu dostarczane przez moduł / aplikację są zdefiniowane 
 DictionariesDefDescTooltip=Słowniki dostarczane przez moduł / aplikację są zdefiniowane w tablicy <strong> $ this-> słowniki </strong> w pliku deskryptora modułu. Możesz edytować ten plik ręcznie lub użyć wbudowanego edytora. <br> <br> Uwaga: Po zdefiniowaniu (i ponownej aktywacji modułu) słowniki są również widoczne w obszarze ustawień dla administratorów na %s.
 PermissionsDefDescTooltip=Uprawnienia nadawane przez moduł / aplikację są zdefiniowane w tablicy <strong> $ this-> rights </strong> w pliku deskryptora modułu. Możesz edytować ten plik ręcznie lub użyć wbudowanego edytora. <br> <br> Uwaga: Po zdefiniowaniu (i ponownej aktywacji modułu) uprawnienia są widoczne w domyślnej konfiguracji uprawnień %s.
 HooksDefDesc=Zdefiniuj we właściwości <b> module_parts ['hooks'] </b>, w deskryptorze modułu, kontekst punktów zaczepienia, którymi chcesz zarządzać (listę kontekstów można znaleźć, wyszukując „<b> initHooksz0f17f17f17kod (a09a4b719f). plik przechwytujący służący do dodawania kodu funkcji przechwyconych (funkcje, które można znaleźć, wyszukując w kodzie podstawowym '<b> executeHooks </b>').
-TriggerDefDesc=Zdefiniuj w pliku wyzwalacza kod, który chcesz wykonać dla każdego wykonywanego zdarzenia biznesowego.
+TriggerDefDesc=Define in the trigger file the code that you want to execute when a business event external to your module is executed (events triggered by other modules).
 SeeIDsInUse=Zobacz identyfikatory używane w Twojej instalacji
 SeeReservedIDsRangeHere=Zobacz zakres zarezerwowanych identyfikatorów
 ToolkitForDevelopers=Zestaw narzędzi dla programistów Dolibarr
@@ -133,9 +133,9 @@ IncludeDocGeneration=Chcę wygenerować dokumenty z obiektu
 IncludeDocGenerationHelp=Jeśli to zaznaczysz, zostanie wygenerowany kod w celu dodania pola „Generuj dokument” do rekordu.
 ShowOnCombobox=Pokaż wartość w combobox
 KeyForTooltip=Klucz do podpowiedzi
-CSSClass=CSS for edit/create form
-CSSViewClass=CSS for read form
-CSSListClass=CSS for list
+CSSClass=CSS do formularza edycji/tworzenia
+CSSViewClass=CSS do formularza odczytu
+CSSListClass=CSS dla listy
 NotEditable=Nie można edytować
 ForeignKey=Klucz obcy
 TypeOfFieldsHelp=Typ pól: <br> varchar (99), double (24,8), real, text, html, datetime, timestamp, integer, integer: ClassName: względna ścieżka / do / classfile.class.php [: 1 [: filter]] („1” oznacza, że dodajemy przycisk + po kombinacji w celu utworzenia rekordu, „filter” może mieć wartość „status = 1 AND fk_user = __USER_ID AND entity IN (__SHARED_ENTITIES__)” na przykład)
@@ -143,3 +143,5 @@ AsciiToHtmlConverter=Konwerter Ascii na HTML
 AsciiToPdfConverter=Konwerter ASCII na PDF
 TableNotEmptyDropCanceled=Tabela nie jest pusta. Upuszczenie zostało anulowane.
 ModuleBuilderNotAllowed=Kreator modułów jest dostępny, ale nie jest dozwolony dla użytkownika.
+ImportExportProfiles=Importuj i eksportuj profile
+ValidateModBuilderDesc=Put 1 if this field need to be validated with $this->validateField() or 0 if validation required

@@ -48,7 +48,8 @@ CountriesNotInEEC=Pays hors CEE
 CountriesInEECExceptMe=Pays de la CEE sauf %s
 CountriesExceptMe=Tous les pays sauf %s
 AccountantFiles=Exporter les documents sources
-ExportAccountingSourceDocHelp=Avec cet outil, vous pouvez exporter les événements sources (liste et PDF) qui ont été utilisés pour générer votre comptabilité. Pour exporter vos journaux, utilisez l'entrée de menu %s - %s.
+ExportAccountingSourceDocHelp=Avec cet outil, vous pouvez exporter les événements sources (liste en CSV et PDF) qui servent à générer votre comptabilité.
+ExportAccountingSourceDocHelp2=Pour exporter vos journaux, utilisez l'entrée de menu %s - %s.
 VueByAccountAccounting=Vue par comptes comptables
 VueBySubAccountAccounting=Affichage par compte auxiliaire
 
@@ -158,7 +159,7 @@ ACCOUNTING_LENGTH_AACCOUNT=Longueur des comptes comptables de Tiers (Si vous dé
 ACCOUNTING_MANAGE_ZERO=Permettre de gérer un nombre différent de zéro à la fin d'un compte comptable. Nécessaire pour certains pays (comme la Suisse). Si conservé à Non (par défaut), vous pouvez définir les 2 paramètres suivants pour demander à l'application d'ajouter des zéros virtuels.
 BANK_DISABLE_DIRECT_INPUT=Désactiver la saisie directe de transactions en banque
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Activer l'export brouillon sur les journaux comptables
-ACCOUNTANCY_COMBO_FOR_AUX=Activer la liste déroulante pour le compte auxiliaire (peut être lent si vous avez beaucoup de tiers)
+ACCOUNTANCY_COMBO_FOR_AUX=Activer la liste déroulante pour les comptes auxiliaires (des lenteurs peuvent être rencontrées si vous avez de nombreux tiers)
 ACCOUNTING_DATE_START_BINDING=Définissez une date pour commencer la liaison et le transfert en comptabilité. En dessous de cette date, les transactions ne seront jamais transférées à la comptabilité.
 ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=Choix de la période des factures pour le transfert en comptabilité
 
@@ -202,14 +203,14 @@ Docref=Référence
 LabelAccount=Libellé du compte
 LabelOperation=Libellé opération
 Sens=Sens
-AccountingDirectionHelp=For an accounting account of a customer, use Credit to record a payment you have received<br>For an accounting account of a supplier, use Debit to record a payment you made
+AccountingDirectionHelp=Pour le compte comptable d'un client, utilisez Crédit pour enregistrer un règlement reçu.<br>Pour le compte comptable d'un fournisseur, utilisez Débit pour enregistrer un règlement reçu.
 LetteringCode=Code de lettrage
 Lettering=Lettrage
 Codejournal=Journal
 JournalLabel=Libellé journal
 NumPiece=Numéro de pièce
 TransactionNumShort=Num. transaction
-AccountingCategory=Groupe personnalisé
+AccountingCategory=Groupe comptable personnalisé
 GroupByAccountAccounting=Affichage par compte comptable
 GroupBySubAccountAccounting=Affichage par compte auxiliaire
 AccountingAccountGroupsDesc=Vous pouvez définir ici des groupes de comptes comptable. Il seront utilisés pour les reporting comptables personnalisés
@@ -245,9 +246,9 @@ DescThirdPartyReport=Consultez ici la liste des tiers clients et fournisseurs et
 ListAccounts=Liste des comptes comptables
 UnknownAccountForThirdparty=Compte de tiers inconnu. %s sera utilisé
 UnknownAccountForThirdpartyBlocking=Compte de tiers inconnu. Erreur bloquante.
-ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Code comptable du tiers non défini ou tiers inconnu. On utilisera %s.
+ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Compte auxiliaire non défini ou tiers ou utilisateur inconnu. Nous utiliserons %s
 ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored=Tiers inconnu et code comptable auxiliaire non défini sur le paiement. Nous conserverons la valeur du compte auxiliaire vide.
-ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Compte tiers non défini ou inconnu. Erreur bloquante.
+ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Compte auxiliaire non défini ou tiers ou utilisateur inconnu. Erreur blocante.
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Compte tiers inconnu et compte d'attente non défini. Erreur blocante.
 PaymentsNotLinkedToProduct=Paiement non lié à un produit / service
 OpeningBalance=Solde d'ouverture
@@ -285,7 +286,7 @@ ValidateMovements=Valider les mouvements
 DescValidateMovements=Toute modification ou suppression d'écriture, de lettrage et de suppression sera interdite. Toutes les entrées pour un exercice doivent être validées, sinon la fermeture ne sera pas possible
 
 ValidateHistory=Lier automatiquement
-AutomaticBindingDone=Liaison automatique faite
+AutomaticBindingDone=Liaisons automatiques effectuées (%s) - Liaison automatique impossible pour certains enregistrements (%s)
 
 ErrorAccountancyCodeIsAlreadyUse=Erreur, vous ne pouvez pas détruire de compte comptable car il est utilisé
 MvtNotCorrectlyBalanced=Mouvement non équilibré. Débit = %s| Crédit = %s
@@ -297,7 +298,7 @@ NoNewRecordSaved=Plus d'enregistrements à journaliser
 ListOfProductsWithoutAccountingAccount=Liste des produits non liés à un compte comptable
 ChangeBinding=Changer les liens
 Accounted=En comptabilité
-NotYetAccounted=Not yet accounted in the ledger
+NotYetAccounted=Pas encore transféré en comptabilité
 ShowTutorial=Afficher le tutoriel
 NotReconciled=Non rapproché
 WarningRecordWithoutSubledgerAreExcluded=Attention : toutes les opérations sans compte auxiliaire défini sont filtrées et exclues de cet écran
@@ -328,6 +329,9 @@ ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Désactiver la liaison et le transfert e
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Désactiver la liaison et le transfert en comptabilité des notes de frais (les notes de frais ne seront pas prises en compte en comptabilité).
 
 ## Export
+NotifiedExportDate=Marquer les lignes comme exportées (la modification des enregistrements ne sera pas possible)
+NotifiedValidationDate=Validation des enregistrements (la modification ou la suppression des enregistrements ne sera pas possible)
+ConfirmExportFile=Confirmation de la génération du fichier d'export comptable ?
 ExportDraftJournal=Exporter le journal brouillon
 Modelcsv=Modèle d'export
 Selectmodelcsv=Sélectionner un modèle d'export
@@ -335,11 +339,11 @@ Modelcsv_normal=Export standard
 Modelcsv_CEGID=Export vers CEGID Expert comptabilité
 Modelcsv_COALA=Export vers Sage Coala
 Modelcsv_bob50=Export vers Sage BOB 50
-Modelcsv_ciel=Export vers Sage Ciel Compta ou Compta Evolution
+Modelcsv_ciel=Export vers Sage50, Ciel Compta ou Compta Evo. (Format XIMPORT)
 Modelcsv_quadratus=Export vers Quadratus QuadraCompta
 Modelcsv_ebp=Export vers EBP
 Modelcsv_cogilog=Export vers Cogilog
-Modelcsv_agiris=Export vers Agiris
+Modelcsv_agiris=Export vers Agiris Isacompta
 Modelcsv_LDCompta=Export pour LD Compta (v9) (Test)
 Modelcsv_LDCompta10=Export pour LD Compta (v10 et supérieure)
 Modelcsv_openconcerto=Export pour OpenConcerto (Test)
@@ -349,7 +353,8 @@ Modelcsv_FEC2=Export FEC (avec dates enregistrement et document inversées)
 Modelcsv_Sage50_Swiss=Export pour Sage 50 Suisse
 Modelcsv_winfic=Export pour Winfic - eWinfic - WinSis Compta
 Modelcsv_Gestinumv3=Export vers Gestinum (v3)
-Modelcsv_Gestinumv5Export Pour Gestinum (V5)
+Modelcsv_Gestinumv5=Export vers Gestinum (v5)
+Modelcsv_charlemagne=Export pour Aplin Charlemagne
 ChartofaccountsId=Id plan comptable
 
 ## Tools - Init accounting account on product / service
@@ -382,7 +387,8 @@ SaleExport=Vente export
 SaleEEC=Vente dans la CEE
 SaleEECWithVAT=Vente dans la CEE avec un taux de TVA non nul, on considère qu'il s'agit d'une vente intracommunutaire à un assujetti à la TVA et le compte comptable suggéré est le compte comptable de vente classique.
 SaleEECWithoutVATNumber=Vente dans la CEE avec un taux de TVA nul mais sans numéro de TVA intracommunutaire renseigné dans la fiche du tiers. Nous forçons ainsi le compte comptable de vente classique. Il est nécessaire de renseigner le numéro de TVA intracommunautaire dans la fiche du tiers ou changer le compte comptable de vente si nécessaire.
-
+ForbiddenTransactionAlreadyExported=Interdit : La transaction a été validée et/ou exportée.
+ForbiddenTransactionAlreadyValidated=Interdit : La transaction a été validée.
 ## Dictionary
 Range=Plage de comptes
 Calculated=Calculé
@@ -399,6 +405,7 @@ NoJournalDefined=Pas de journal défini
 Binded=Lignes liées
 ToBind=Lignes à lier
 UseMenuToSetBindindManualy=Lignes non encore liées, utilisez le menu <a href="%s"> %s </a> pour effectuer la liaison manuellement.
+SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Désolé ce module n'est pas compatible avec la fonctionnalité expérimentale des factures de situation
 
 ## Import
 ImportAccountingEntries=Écritures comptables
@@ -409,15 +416,15 @@ FECFormatEntryNum=Numéro de la pièce (EcritureNum)
 FECFormatEntryDate=Date de la pièce (EcritureDate)
 FECFormatGeneralAccountNumber=Numéro du compte général (CompteNum)
 FECFormatGeneralAccountLabel=Libellé du compte général (CompteLib)
-FECFormatSubledgerAccountNumber=Numéro de compte du grand livre auxiliaire (CompAuxNum)
-FECFormatSubledgerAccountLabel=Libellé de compte du grand livre auxiliaire (CompAuxLib)
+FECFormatSubledgerAccountNumber=Numéro du compte auxiliaire (CompAuxNum)
+FECFormatSubledgerAccountLabel=Libellé du compte auxiliaire (CompAuxLib)
 FECFormatPieceRef=Référence de la pièce (PieceRef)
 FECFormatPieceDate=Date de création de la pièce (PieceDate)
 FECFormatLabelOperation=Libellé de l'opération (EcritureLib)
 FECFormatDebit=Débit (Debit)
 FECFormatCredit=Crédit (Credit)
-FECFormatReconcilableCode=Code de réconciliation (EcritureLet)
-FECFormatReconcilableDate=Date de réconciliation (DateLet)
+FECFormatReconcilableCode=Code lettrage (EcritureLet)
+FECFormatReconcilableDate=Date de lettrage (DateLet)
 FECFormatValidateDate=Date de validation de la pièce (ValidDate)
 FECFormatMulticurrencyAmount=Montant multidevise (Montantdevise)
 FECFormatMulticurrencyCode=Code multidevise (Idevise)

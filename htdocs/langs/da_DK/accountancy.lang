@@ -37,8 +37,8 @@ OtherInfo=Anden information
 DeleteCptCategory=Fjern regnskabskonto fra gruppe
 ConfirmDeleteCptCategory=Er du sikker på, du vil fjerne denne regnskabskonto fra gruppen?
 JournalizationInLedgerStatus=Status for bogføring
-AlreadyInGeneralLedger=Allerede overført i regnskabsjournaler og hovedbog
-NotYetInGeneralLedger=Endnu ikke overført i accouting tidsskrifter og hovedbog
+AlreadyInGeneralLedger=Allerede overført til regnskabstidsskrifter og regnskab
+NotYetInGeneralLedger=Endnu ikke overført til regnskabsblade og regnskaber
 GroupIsEmptyCheckSetup=Gruppen er tom, kontroller opsætningen af ​​den brugerdefinerede regnskabsgruppe
 DetailByAccount=Vis detaljer efter konto
 AccountWithNonZeroValues=Konti med ikke-nul-værdier
@@ -48,7 +48,8 @@ CountriesNotInEEC=Lande ikke i EU
 CountriesInEECExceptMe=Lande i EU undtagen %s
 CountriesExceptMe=Alle lande undtagen %s
 AccountantFiles=Eksporter kildedokumenter
-ExportAccountingSourceDocHelp=Med dette værktøj kan du eksportere de kildehændelser (liste og PDF-filer), der blev brugt til at generere din regnskab. For at eksportere dine tidsskrifter skal du bruge menuindgangen %s - %s.
+ExportAccountingSourceDocHelp=Med dette værktøj kan du eksportere de kildebegivenheder (liste i CSV og PDF'er), der bruges til at generere dit regnskab.
+ExportAccountingSourceDocHelp2=For at eksportere dine tidsskrifter skal du bruge menuindgangen %s - %s.
 VueByAccountAccounting=Vis efter regnskabskonto
 VueBySubAccountAccounting=Vis efter regnskabsmæssig underkonto
 
@@ -92,8 +93,8 @@ ChangeAndLoad=Ret og indlæs
 Addanaccount=Tilføj en regnskabskonto
 AccountAccounting=Regnskabskonto
 AccountAccountingShort=Konto
-SubledgerAccount=Underleverandør konto
-SubledgerAccountLabel=Underleverandør konto etiket
+SubledgerAccount=Underkonto
+SubledgerAccountLabel=Underkonto etiket
 ShowAccountingAccount=Vis regnskabs konto
 ShowAccountingJournal=Vis kontokladde
 ShowAccountingAccountInLedger=Vis regnskabskonto i hovedbog
@@ -121,7 +122,7 @@ UpdateMvts=Rediger en transaktion
 ValidTransaction=Bekræft transaktion
 WriteBookKeeping=Registrer transaktioner i regnskab
 Bookkeeping=Hovedbog
-BookkeepingSubAccount=Underleverandør
+BookkeepingSubAccount=Underkonti
 AccountBalance=Kontobalance
 ObjectsRef=Objektreference
 CAHTF=Samlet købeleverandør før skat
@@ -158,7 +159,7 @@ ACCOUNTING_LENGTH_AACCOUNT=Længde på tredjeparts regnskabskonti (Hvis du indst
 ACCOUNTING_MANAGE_ZERO=Tillad at administrere forskellige antal nuller i slutningen af en regnskabskonto. Nødvendigt af nogle lande (som Schweiz). Hvis den er slået til (standard), kan du indstille følgende to parametre til at bede applikationen om at tilføje virtuelle nuller.
 BANK_DISABLE_DIRECT_INPUT=Deaktiver direkte registrering af transaktionen på bankkonto
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Aktivér udkast til eksport på Journal
-ACCOUNTANCY_COMBO_FOR_AUX=Aktivér kombinationsliste for subsidiær konto (kan være langsom, hvis du har en masse tredjeparter)
+ACCOUNTANCY_COMBO_FOR_AUX=Aktivér kombinationsliste for datterselskabskonto (kan være langsom, hvis du har mange tredjeparter, bryder evnen til at søge på en del af værdien)
 ACCOUNTING_DATE_START_BINDING=Definer en dato for start af binding og overførsel i regnskab. Under denne dato overføres transaktionerne ikke til regnskab.
 ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=Ved regnskabsoverførsel skal du vælge periode som standard
 
@@ -211,7 +212,7 @@ NumPiece=Partsnummer
 TransactionNumShort=Transaktionsnr.
 AccountingCategory=Brugerdefineret gruppe
 GroupByAccountAccounting=Gruppér efter hovedkontokonto
-GroupBySubAccountAccounting=Gruppér efter underkonto konto
+GroupBySubAccountAccounting=Gruppér efter underkonti
 AccountingAccountGroupsDesc=Du kan definere her nogle grupper af regnskabskonto. De vil blive brugt til personlige regnskabsrapporter.
 ByAccounts=Konti
 ByPredefinedAccountGroups=Efter foruddefinerede grupper
@@ -245,9 +246,9 @@ DescThirdPartyReport=Se her listen over tredjepartskunder og leverandører og de
 ListAccounts=Liste over regnskabskonti
 UnknownAccountForThirdparty=Ukendt tredjepartskonto. Vi bruger %s
 UnknownAccountForThirdpartyBlocking=Ukendt tredjepartskonto. Blokeringsfejl
-ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Tredjepartskonto ikke defineret eller tredjepart ukendt. Vi bruger %s
-ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored=Tredjeparts ukendt og subletger, der ikke er defineret på betalingen. Vi vil holde subledgerkontoen værdi tom.
-ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Tredjepartskonto ikke defineret eller tredjepart ukendt. Blokeringsfejl.
+ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Underkonti ikke defineret eller tredjepart eller bruger ukendt. Vi vil bruge %s
+ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored=Tredjeparts ukendt og underkonto, der ikke er defineret på betalingen. Vi vil holde underkontoen værdi tom.
+ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Underkonti ikke defineret eller tredjepart eller bruger ukendt. Blokeringsfejl.
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Ukendt tredjepartskonto og ventekonto er ikke defineret. Blokeringsfejl
 PaymentsNotLinkedToProduct=Betaling er ikke knyttet til noget produkt / tjeneste
 OpeningBalance=Åbnings balance
@@ -285,7 +286,7 @@ ValidateMovements=Valider bevægelser
 DescValidateMovements=Enhver ændring eller sletning af skrivning, bogstaver og sletning er forbudt. Alle poster til en øvelse skal valideres, ellers er lukning ikke mulig
 
 ValidateHistory=Automatisk Bogføring
-AutomaticBindingDone=Automatisk Bogføring
+AutomaticBindingDone=Automatiske bindinger udført (%s) - Automatisk binding er ikke mulig for nogle poster (%s)
 
 ErrorAccountancyCodeIsAlreadyUse=Fejl. Du kan ikke slette denne regnskabskonto, fordi den er i brug
 MvtNotCorrectlyBalanced=Bevægelsen er ikke korrekt afbalanceret. Debet = %s | Kredit = %s
@@ -297,10 +298,10 @@ NoNewRecordSaved=Ikke flere post til bogføre
 ListOfProductsWithoutAccountingAccount=Liste over varer, der ikke er bundet til nogen regnskabskonto
 ChangeBinding=Ret Bogføring
 Accounted=Regnskab i hovedbog
-NotYetAccounted=Endnu ikke registreret i hovedbogen
+NotYetAccounted=Endnu ikke overført til regnskab
 ShowTutorial=Vis selvstudie
 NotReconciled=Ikke afstemt
-WarningRecordWithoutSubledgerAreExcluded=Advarsel, alle handlinger uden underskrevet konto defineret filtreres og udelukkes fra denne visning
+WarningRecordWithoutSubledgerAreExcluded=Advarsel, alle handlinger uden underskrevet underkonti defineret filtreres og udelukkes fra denne visning
 
 ## Admin
 BindingOptions=Bindende muligheder
@@ -328,6 +329,9 @@ ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Deaktiver binding og overførsel i regns
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Deaktiver binding og overførsel i regnskab på udgiftsrapporter (udgiftsrapporter tages ikke med i regnskabet)
 
 ## Export
+NotifiedExportDate=Markér eksporterede linjer som eksporteret (ændring af linjerne er ikke mulig)
+NotifiedValidationDate=Valider de eksporterede poster (ændring eller sletning af linjerne er ikke mulig)
+ConfirmExportFile=Bekræftelse af genereringen af den regnskabsmæssige eksportfil?
 ExportDraftJournal=Eksporter udkast til kladde
 Modelcsv=Eksportmodel
 Selectmodelcsv=Vælg en eksportmodel
@@ -335,11 +339,11 @@ Modelcsv_normal=Klassisk eksport
 Modelcsv_CEGID=Eksport til CEGID Expert Comptabilité
 Modelcsv_COALA=Eksport til Sage Coala
 Modelcsv_bob50=Eksport til Sage BOB 50
-Modelcsv_ciel=Eksport til Sage Ciel Compta eller Compta Evolution
+Modelcsv_ciel=Eksport til Sage50, Ciel Compta eller Compta Evo. (Format XIMPORT)
 Modelcsv_quadratus=Eksport til Quadratus QuadraCompta
 Modelcsv_ebp=Eksport til EBP
 Modelcsv_cogilog=Eksport til Cogilog
-Modelcsv_agiris=Eksport til Agiris
+Modelcsv_agiris=Eksport til Agiris Isacompta
 Modelcsv_LDCompta=Eksport til LD Compta (v9) (Test)
 Modelcsv_LDCompta10=Eksport til LD Compta (v10 og nyere)
 Modelcsv_openconcerto=Eksport til OpenConcerto (Test)
@@ -347,9 +351,10 @@ Modelcsv_configurable=Eksporter CSV Konfigurerbar
 Modelcsv_FEC=Eksport FEC
 Modelcsv_FEC2=Eksport FEC (med datagenereringsskrivning / omvendt dokument)
 Modelcsv_Sage50_Swiss=Eksport til Sage 50 Schweiz
-Modelcsv_winfic=Eksport Winfic - eWinfic - WinSis Compta
+Modelcsv_winfic=Eksport til Winfic - eWinfic - WinSis Compta
 Modelcsv_Gestinumv3=Eksport til Gestinum (v3)
-Modelcsv_Gestinumv5Export til Gestinum (v5)
+Modelcsv_Gestinumv5=Eksport til Gestinum (v5)
+Modelcsv_charlemagne=Eksport til Aplim Karl den Store
 ChartofaccountsId=ID for kontoplan
 
 ## Tools - Init accounting account on product / service
@@ -382,7 +387,8 @@ SaleExport=Eksport salg
 SaleEEC=Salg i EU
 SaleEECWithVAT=Salg i EU med en moms, der ikke er null, så vi antager, at dette IKKE er et intrakommunalt salg, og den foreslåede konto er standardproduktskontoen.
 SaleEECWithoutVATNumber=Du kan fastsætte moms nummer for tredjepart eller produktkonto om nødvendigt.
-
+ForbiddenTransactionAlreadyExported=Forbudt: Transaktionen er blevet valideret og/eller eksporteret.
+ForbiddenTransactionAlreadyValidated=Forbudt: Transaktionen er blevet valideret.
 ## Dictionary
 Range=Interval for regnskabskonto
 Calculated=Beregnet
@@ -399,6 +405,7 @@ NoJournalDefined=Ingen kladde defineret
 Binded=Bundne linjer
 ToBind=Ikke Bogført
 UseMenuToSetBindindManualy=Linjer endnu ikke bundet, brug menuen <a href="%s"> %s </a> for at gøre bindingen manuelt
+SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Beklager, at dette modul ikke er kompatibelt med den eksperimentelle funktion af situationsfakturaer
 
 ## Import
 ImportAccountingEntries=Regnskabsposter
@@ -409,8 +416,8 @@ FECFormatEntryNum=Stykke nummer (EcritureNum)
 FECFormatEntryDate=Stykkets dato (EcritureDate)
 FECFormatGeneralAccountNumber=Generelt kontonummer (CompteNum)
 FECFormatGeneralAccountLabel=Generel kontoetiket (CompteLib)
-FECFormatSubledgerAccountNumber=Undernummerets kontonummer (CompAuxNum)
-FECFormatSubledgerAccountLabel=Undernummerets kontonummer (CompAuxLib)
+FECFormatSubledgerAccountNumber=Underkonto nummer (CompAuxNum)
+FECFormatSubledgerAccountLabel=Underkonto nummer (CompAuxLib)
 FECFormatPieceRef=Stykke ref (PieceRef)
 FECFormatPieceDate=Oprettelse af stykke dato (PieceDate)
 FECFormatLabelOperation=Betjening af etiketter (EcritureLib)

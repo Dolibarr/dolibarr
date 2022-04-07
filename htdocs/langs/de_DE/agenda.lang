@@ -4,7 +4,7 @@ Actions=Ereignisse
 Agenda=Terminplan
 TMenuAgenda=Terminplanung
 Agendas=Terminpläne
-LocalAgenda=interne Kalender
+LocalAgenda=Standardkalender
 ActionsOwnedBy=Ereignis stammt von
 ActionsOwnedByShort=Eigentümer
 AffectedTo=Zugewiesen an
@@ -20,7 +20,7 @@ MenuToDoActions=Alle unvollst. Termine
 MenuDoneActions=Alle abgeschlossenen Termine
 MenuToDoMyActions=Meine unvollst. Termine
 MenuDoneMyActions=Meine abgeschlossenen Termine
-ListOfEvents=Liste Ereignisse (interner Kalender)
+ListOfEvents=Liste der Ereignisse (Standardkalender)
 ActionsAskedBy=Ereignisse eingetragen von
 ActionsToDoBy=Ereignisse zugewiesen an
 ActionsDoneBy=Termine erledigt von
@@ -37,7 +37,8 @@ AgendaExtSitesDesc=Diese Seite erlaubt es, externe Kalenderquellen zu definieren
 ActionsEvents=Veranstaltungen zur automatischen Übernahme in die Agenda
 EventRemindersByEmailNotEnabled=Aufgaben-/Terminerinnerungen via E-Mail sind in den Einstellungen des Moduls %s nicht aktiviert.
 ##### Agenda event labels #####
-NewCompanyToDolibarr=Partner %s erstellt
+NewCompanyToDolibarr=Geschäftspartner %s erstellt
+COMPANY_MODIFYInDolibarr=Geschäftspartner %s geändert
 COMPANY_DELETEInDolibarr=Geschäftspartner %s gelöscht
 ContractValidatedInDolibarr=Vertrag %s freigegeben
 CONTRACT_DELETEInDolibarr=Vertrag %s gelöscht
@@ -63,6 +64,7 @@ ShipmentClassifyClosedInDolibarr=Lieferung %s als verrechnet markiert
 ShipmentUnClassifyCloseddInDolibarr=Lieferung %s als wiedereröffnet markieren
 ShipmentBackToDraftInDolibarr=Sendung %s zurück zum Entwurfsstatus
 ShipmentDeletedInDolibarr=Lieferung %s gelöscht
+ShipmentCanceledInDolibarr=Sendung %s storniert
 ReceptionValidatedInDolibarr=Empfang %s validiert
 OrderCreatedInDolibarr= Auftrag %s erstellt
 OrderValidatedInDolibarr=Auftrag %s freigegeben
@@ -87,6 +89,7 @@ OrderDeleted=Auftrag gelöscht
 InvoiceDeleted=Rechnung gelöscht
 DraftInvoiceDeleted=Rechnungsentwurf gelöscht
 CONTACT_CREATEInDolibarr=Kontakt %s erstellt
+CONTACT_MODIFYInDolibarr=Kontakt %s geändert
 CONTACT_DELETEInDolibarr=Kontakt %s gelöscht
 PRODUCT_CREATEInDolibarr=Produkt %s erstellt
 PRODUCT_MODIFYInDolibarr=Produkt %s geändert
@@ -119,6 +122,7 @@ MRP_MO_UNVALIDATEInDolibarr=Fertigungsauftrag auf Status 'Entwurf' gesetzt
 MRP_MO_PRODUCEDInDolibarr=Fertigungsauftrag produziert
 MRP_MO_DELETEInDolibarr=Fertigungsauftrag gelöscht
 MRP_MO_CANCELInDolibarr=Fertigungsauftrag storniert
+PAIDInDolibarr=%s bezahlt
 ##### End agenda events #####
 AgendaModelModule=Dokumentvorlagen für Ereignisse
 DateActionStart=Beginnt
@@ -130,7 +134,7 @@ AgendaUrlOptions4=<b>logint=%s</b> begrenzt die Ausgabe auf den Benutzer <b>%s</
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> um nur Aktionen zum Projekt <b> __PROJECT_ID__</b> auszugeben.
 AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> um automatische Events auszuschliessen.
 AgendaUrlOptionsIncludeHolidays=<b> includeseholidays = 1 </b>, um Ereignisse von Feiertagen einzuschließen.
-AgendaShowBirthdayEvents=Geburtstage von Kontakten anzeigen
+AgendaShowBirthdayEvents=Geburtstage der Kontakte
 AgendaHideBirthdayEvents=Geburtstage von Kontakten nicht anzeigen
 Busy=Beschäftigt
 ExportDataset_event1=Liste Ereignisse des Kalender
@@ -167,3 +171,4 @@ ReminderType=Erinnerungstyp
 AddReminder=Erstellt eine automatische Erinnerungsbenachrichtigung für dieses Ereignis
 ErrorReminderActionCommCreation=Fehler beim Erstellen der Erinnerungsbenachrichtigung für dieses Ereignis
 BrowserPush=Browser-Popup-Benachrichtigung
+ActiveByDefault=Standardmäßig aktiviert

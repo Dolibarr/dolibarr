@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2021	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2004		Sebastien Di Cintio		<sdicintio@ressource-toi.org>
  * Copyright (C) 2004		Benoit Mortier			<benoit.mortier@opensides.be>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
@@ -21,10 +21,16 @@
 
 /**
  *	\file       htdocs/admin/system/database-tables.php
- *	\brief      Page with information on database tables
+ *	\brief      Page with information on database tables. Add also some maintenance action to convert tables.
  */
 
+if (! defined('CSRFCHECK_WITH_TOKEN')) {
+	define('CSRFCHECK_WITH_TOKEN', '1');		// Force use of CSRF protection with tokens even for GET
+}
+
 require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 $langs->load("admin");
 
@@ -34,6 +40,10 @@ if (!$user->admin) {
 
 $action = GETPOST('action', 'aZ09');
 
+
+/*
+ * Actions
+ */
 
 if ($action == 'convert') {
 	$sql = "ALTER TABLE ".$db->escape(GETPOST("table", "aZ09"))." ENGINE=INNODB";
@@ -82,6 +92,7 @@ if (!$base) {
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder">';
 		print '<tr class="liste_titre">';
+		print '<td>#</td>';
 		print '<td>'.$langs->trans("TableName").'</td>';
 		print '<td colspan="2">'.$langs->trans("Type").'</td>';
 		print '<td>'.$langs->trans("Format").'</td>';
@@ -105,17 +116,28 @@ if (!$base) {
 				$obj = $db->fetch_object($resql);
 				print '<tr class="oddeven">';
 
-				print '<td><a href="dbtable.php?table='.$obj->Name.'">'.$obj->Name.'</a></td>';
+				print '<td>'.($i+1).'</td>';
+				print '<td><a href="dbtable.php?table='.$obj->Name.'">'.$obj->Name.'</a>';
+				$tablename = preg_replace('/^'.MAIN_DB_PREFIX.'/', 'llx_', $obj->Name);
+				if (dol_is_file(DOL_DOCUMENT_ROOT.'/install/mysql/tables/'.$tablename.'.sql')) {
+					$img = "info";
+					//print img_picto($langs->trans("ExternalModule"), $img);
+				} else {
+					$img = "info_black";
+					//print DOL_DOCUMENT_ROOT.'/install/mysql/tables/'.$tablename.'.sql';
+					print img_picto($langs->trans("ExternalModule"), $img, 'class="small"');
+				}
+				print '</td>';
 				print '<td>'.$obj->Engine.'</td>';
 				if (isset($obj->Engine) && $obj->Engine == "MyISAM") {
-					print '<td><a class="reposition" href="database-tables.php?action=convert&amp;table='.$obj->Name.'">'.$langs->trans("Convert").' InnoDb</a></td>';
+					print '<td><a class="reposition" href="database-tables.php?action=convert&table='.urlencode($obj->Name).'&token='.newToken().'">'.$langs->trans("Convert").' InnoDb</a></td>';
 				} else {
 					print '<td>&nbsp;</td>';
 				}
 				print '<td>';
 				print $obj->Row_format;
 				if (isset($obj->Row_format) && (in_array($obj->Row_format, array("Compact")))) {
-					print '<br><a class="reposition" href="database-tables.php?action=convertdynamic&amp;table='.$obj->Name.'">'.$langs->trans("Convert").' Dynamic</a>';
+					print '<br><a class="reposition" href="database-tables.php?action=convertdynamic&table='.urlencode($obj->Name).'&token='.newToken().'">'.$langs->trans("Convert").' Dynamic</a>';
 				}
 				print '</td>';
 				print '<td align="right">'.$obj->Rows.'</td>';
@@ -127,7 +149,7 @@ if (!$base) {
 				print '<td align="right">'.$obj->Check_time.'</td>';
 				print '<td align="right">'.$obj->Collation;
 				if (isset($obj->Collation) && (in_array($obj->Collation, array("utf8mb4_general_ci", "utf8mb4_unicode_ci", "latin1_swedish_ci")))) {
-					print '<br><a class="reposition" href="database-tables.php?action=convertutf8&amp;table='.$obj->Name.'">'.$langs->trans("Convert").' UTF8</a>';
+					print '<br><a class="reposition" href="database-tables.php?action=convertutf8&table='.urlencode($obj->Name).'&token='.newToken().'">'.$langs->trans("Convert").' UTF8</a>';
 				}
 				print '</td>';
 				print '</tr>';
@@ -142,6 +164,8 @@ if (!$base) {
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder">';
 		print '<tr class="liste_titre">';
+
+		print '<td>#</td>';
 		print '<td>'.$langs->trans("TableName").'</td>';
 		print '<td>Nb of tuples</td>';
 		print '<td>Nb index fetcher.</td>';
@@ -160,6 +184,7 @@ if (!$base) {
 			while ($i < $num) {
 				$row = $db->fetch_row($resql);
 				print '<tr class="oddeven">';
+				print '<td>'.($i+1).'</td>';
 				print '<td>'.$row[0].'</td>';
 				print '<td class="right">'.$row[1].'</td>';
 				print '<td class="right">'.$row[2].'</td>';
@@ -179,6 +204,7 @@ if (!$base) {
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder">';
 		print '<tr class="liste_titre">';
+		print '<td>#</td>';
 		print '<td>'.$langs->trans("TableName").'</td>';
 		print '<td>'.$langs->trans("NbOfRecord").'</td>';
 		print "</tr>\n";
@@ -197,6 +223,7 @@ if (!$base) {
 				}
 
 				print '<tr class="oddeven">';
+				print '<td>'.($i+1).'</td>';
 				print '<td>'.$row[0].'</td>';
 				print '<td>'.$count.'</td>';
 				print '</tr>';

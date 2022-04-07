@@ -34,15 +34,18 @@ TicketDictResolution=Bilet - rozwiązanie
 
 TicketTypeShortCOM=Pytanie handlowe
 TicketTypeShortHELP=Prośba o pomoc funkcjonalną
-TicketTypeShortISSUE=Problem, błąd lub problem
+TicketTypeShortISSUE=Problem lub błąd
+TicketTypeShortPROBLEM=Problem
 TicketTypeShortREQUEST=Prośba o zmianę lub ulepszenie
 TicketTypeShortPROJET=Projekt
 TicketTypeShortOTHER=Inne
 
 TicketSeverityShortLOW=Niski
-TicketSeverityShortNORMAL=Normalna
+TicketSeverityShortNORMAL=Normalny
 TicketSeverityShortHIGH=Wysoki
-TicketSeverityShortBLOCKING=Krytyczne, blokujące
+TicketSeverityShortBLOCKING=Krytyczny, blokujący
+
+TicketCategoryShortOTHER=Inne
 
 ErrorBadEmailAddress=Pole „%s” jest nieprawidłowe
 MenuTicketMyAssign=Moje bilety
@@ -54,22 +57,23 @@ TypeContact_ticket_internal_SUPPORTTEC=Przypisany użytkownik
 TypeContact_ticket_external_SUPPORTCLI=Kontakt z klientem / śledzenie incydentów
 TypeContact_ticket_external_CONTRIBUTOR=Współpracownik zewnętrzny
 
-OriginEmail=Źródło wiadomości e-mail
+OriginEmail=E-mail reportera
 Notify_TICKET_SENTBYMAIL=Wyślij wiadomość e-mail z biletem
 
 # Status
 Read=Czytać
 Assigned=Przydzielony
 InProgress=W trakcie
-NeedMoreInformation=Czekam na informacje
+NeedMoreInformation=Czekam na opinię reportera
+NeedMoreInformationShort=Czekam na informację zwrotną
 Answered=Odpowiedział
 Waiting=Czekanie
-Closed=Zamknięte
+SolvedClosed=Solved
 Deleted=Usunięto
 
 # Dict
 Type=Typ
-Severity=Surowość
+Severity=Priorytet
 TicketGroupIsPublic=Grupa jest publiczna
 TicketGroupIsPublicDesc=Jeśli grupa biletów jest publiczna, będzie widoczna w formularzu podczas tworzenia biletu z poziomu interfejsu publicznego
 
@@ -160,7 +164,7 @@ CreatedBy=Stworzone przez
 NewTicket=Nowy bilet
 SubjectAnswerToTicket=Odpowiedź na bilet
 TicketTypeRequest=Rodzaj żądania
-TicketCategory=Grupa
+TicketCategory=Kategoryzacja biletów
 SeeTicket=Zobacz bilet
 TicketMarkedAsRead=Bilet został oznaczony jako przeczytany
 TicketReadOn=Czytaj
@@ -178,15 +182,17 @@ MessageSuccessfullyAdded=Dodano bilet
 TicketMessageSuccessfullyAdded=Wiadomość została pomyślnie dodana
 TicketMessagesList=Lista wiadomości
 NoMsgForThisTicket=Brak wiadomości dla tego biletu
-Properties=Klasyfikacja
+TicketProperties=Classification
 LatestNewTickets=Najnowsze %s Najnowsze bilety (nieprzeczytane)
-TicketSeverity=Surowość
+TicketSeverity=Priorytet
 ShowTicket=Zobacz bilet
 RelatedTickets=Powiązane bilety
 TicketAddIntervention=Tworzenie interwencji
-CloseTicket=Zamknij bilet
-CloseATicket=Zamknij bilet
+CloseTicket=Close|Solve ticket
+AbandonTicket=Abandon ticket
+CloseATicket=Close|Solve a ticket
 ConfirmCloseAticket=Potwierdź zamknięcie biletu
+ConfirmAbandonTicket=Do you confirm the closing of the ticket to status 'Abandonned'
 ConfirmDeleteTicket=Potwierdź usunięcie biletu
 TicketDeletedSuccess=Bilet został usunięty z powodzeniem
 TicketMarkedAsClosed=Bilet oznaczony jako zamknięty
@@ -211,6 +217,7 @@ TicketMessageHelp=Tylko ten tekst zostanie zapisany na liście wiadomości na ka
 TicketMessageSubstitutionReplacedByGenericValues=Zmienne podstawienia są zastępowane wartościami ogólnymi.
 TimeElapsedSince=Czas, który upłynął od
 TicketTimeToRead=Upłynął czas przed przeczytaniem
+TicketTimeElapsedBeforeSince=Czas, jaki upłynął przed / od
 TicketContacts=Bilet kontaktów
 TicketDocumentsLinked=Dokumenty powiązane z biletem
 ConfirmReOpenTicket=Potwierdzić ponowne otwarcie tego biletu?
@@ -304,13 +311,14 @@ BoxLastModifiedTicket=Najnowsze zmodyfikowane bilety
 BoxLastModifiedTicketDescription=Najnowsze zmodyfikowane bilety %s
 BoxLastModifiedTicketContent=
 BoxLastModifiedTicketNoRecordedTickets=Brak ostatnio zmodyfikowanych biletów
-BoxTicketType=Liczba otwartych biletów według rodzaju
+BoxTicketType=Dystrybucja biletów otwartych według rodzaju
 BoxTicketSeverity=Liczba otwartych zgłoszeń według ważności
 BoxNoTicketSeverity=Nie otwarto żadnych biletów
 BoxTicketLastXDays=Liczba nowych biletów według dni w ostatnich dniach %s
 BoxTicketLastXDayswidget = Liczba nowych biletów według dni ostatnich X dni
 BoxNoTicketLastXDays=Brak nowych biletów w ciągu ostatnich %s dni
 BoxNumberOfTicketByDay=Liczba nowych biletów w ciągu dnia
-BoxNewTicketVSClose=Liczba dzisiejszych nowych biletów w porównaniu z dzisiejszymi zamkniętymi biletami
+BoxNewTicketVSClose=Number of tickets versus closed tickets (today)
 TicketCreatedToday=Bilet utworzony dzisiaj
 TicketClosedToday=Bilet dzisiaj zamknięty
+KMFoundForTicketGroup=We found topics and FAQs that may answers your question, thanks to check them before submitting the ticket

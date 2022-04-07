@@ -18,8 +18,8 @@
 CREATE TABLE llx_oauth_token (
     rowid 			integer AUTO_INCREMENT PRIMARY KEY,
     service 		varchar(36),         	-- What king of key or token: 'Google', 'Stripe', 'auth-public-key', ...
-    token 			text,				 	-- token in serialize() format, of an object StdOAuth2Token of library phpoauth2
-    tokenstring 	text,				 	-- token in text or json format. Value depends on 'service'. For example for an OAUTH service: '{"access_token": "sk_test_cccc", "refresh_token": "rt_aaa", "token_type": "bearer", ..., "scope": "read_write"}
+    token 			text,				 	-- token in serialize format, of an object StdOAuth2Token of library phpoauth2. Deprecated, use tokenstring instead.
+    tokenstring 	text,				 	-- token in json or text format. Value depends on 'service'. For example for an OAUTH service: '{"access_token": "sk_test_cccc", "refresh_token": "rt_aaa", "token_type": "bearer", ..., "scope": "read_write"}
     fk_soc 			integer,				-- Id of thirdparty in llx_societe
     fk_user 		integer,             	-- Id of user in llx_user
     fk_adherent 	integer,				-- Id of member in llx_adherent

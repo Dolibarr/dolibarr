@@ -101,188 +101,197 @@ $head = product_lot_admin_prepare_head();
 
 print dol_get_fiche_head($head, 'settings', $langs->trans("Batch"), -1, 'lot');
 
-/*
- * Lot Numbering models
- */
 
-print load_fiche_titre($langs->trans("BatchLotNumberingModules"), '', '');
+if ($conf->global->MAIN_FEATURES_LEVEL < 2) {
+	// The feature to define the numbering module of lot or serial is no enabled bcause it is not used anywhere in Dolibarr code: You can set it
+	// but the numbering module is not used.
+	// TODO Use it on lot creation page, when you create a lot and when the lot number is kept empty to define the lot according
+	// to the selected product.
+	print $langs->trans("NothingToSetup");
+} else {
+	/*
+	 * Lot Numbering models
+	 */
 
-print '<table class="noborder centpercent">';
-print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Name").'</td>';
-print '<td>'.$langs->trans("Description").'</td>';
-print '<td class="nowrap">'.$langs->trans("Example").'</td>';
-print '<td class="center" width="60">'.$langs->trans("Status").'</td>';
-print '<td class="center" width="16">'.$langs->trans("ShortInfo").'</td>';
-print '</tr>'."\n";
+	print load_fiche_titre($langs->trans("BatchLotNumberingModules"), '', '');
 
-clearstatcache();
+	print '<table class="noborder centpercent">';
+	print '<tr class="liste_titre">';
+	print '<td>'.$langs->trans("Name").'</td>';
+	print '<td>'.$langs->trans("Description").'</td>';
+	print '<td class="nowrap">'.$langs->trans("Example").'</td>';
+	print '<td class="center" width="60">'.$langs->trans("Status").'</td>';
+	print '<td class="center" width="16">'.$langs->trans("ShortInfo").'</td>';
+	print '</tr>'."\n";
 
-foreach ($dirmodels as $reldir) {
-	$dir = dol_buildpath($reldir."core/modules/product_batch/");
+	clearstatcache();
 
-	if (is_dir($dir)) {
-		$handle = opendir($dir);
-		if (is_resource($handle)) {
-			while (($file = readdir($handle)) !== false) {
-				if (substr($file, 0, 8) == 'mod_lot_' && substr($file, dol_strlen($file) - 3, 3) == 'php') {
-					$file = substr($file, 0, dol_strlen($file) - 4);
+	foreach ($dirmodels as $reldir) {
+		$dir = dol_buildpath($reldir."core/modules/product_batch/");
 
-					require_once $dir.$file.'.php';
+		if (is_dir($dir)) {
+			$handle = opendir($dir);
+			if (is_resource($handle)) {
+				while (($file = readdir($handle)) !== false) {
+					if (substr($file, 0, 8) == 'mod_lot_' && substr($file, dol_strlen($file) - 3, 3) == 'php') {
+						$file = substr($file, 0, dol_strlen($file) - 4);
 
-					$module = new $file($db);
+						require_once $dir.$file.'.php';
 
-					// Show modules according to features level
-					if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
-					if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
+						$module = new $file($db);
 
-					if ($module->isEnabled()) {
-						print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
-						print $module->info();
-						print '</td>';
+						// Show modules according to features level
+						if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
+						if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
 
-						// Show example of numbering model
-						print '<td class="nowrap">';
-						$tmp = $module->getExample();
-						if (preg_match('/^Error/', $tmp)) print '<div class="error">'.$langs->trans($tmp).'</div>';
-						elseif ($tmp == 'NotConfigured') print $langs->trans($tmp);
-						else print $tmp;
-						print '</td>'."\n";
+						if ($module->isEnabled()) {
+							print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
+							print $module->info();
+							print '</td>';
 
-						print '<td class="center">';
-						if ($conf->global->PRODUCTBATCH_LOT_ADDON == $file) {
-							print img_picto($langs->trans("Activated"), 'switch_on');
-						} else {
-							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmodlot&amp;value='.$file.'">';
-							print img_picto($langs->trans("Disabled"), 'switch_off');
-							print '</a>';
-						}
-						print '</td>';
+							// Show example of numbering model
+							print '<td class="nowrap">';
+							$tmp = $module->getExample();
+							if (preg_match('/^Error/', $tmp)) print '<div class="error">'.$langs->trans($tmp).'</div>';
+							elseif ($tmp == 'NotConfigured') print $langs->trans($tmp);
+							else print $tmp;
+							print '</td>'."\n";
 
-						$batch = new Productlot($db);
-						$batch->initAsSpecimen();
-
-						// Info
-						$htmltooltip = '';
-						$htmltooltip .= ''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
-						$nextval = $module->getNextValue($mysoc, $batch);
-						if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
-							$htmltooltip .= ''.$langs->trans("NextValue").': ';
-							if ($nextval) {
-								if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured')
-									$nextval = $langs->trans($nextval);
-								$htmltooltip .= $nextval.'<br>';
+							print '<td class="center">';
+							if ($conf->global->PRODUCTBATCH_LOT_ADDON == $file) {
+								print img_picto($langs->trans("Activated"), 'switch_on');
 							} else {
-								$htmltooltip .= $langs->trans($module->error).'<br>';
+								print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmodlot&token='.newToken().'&value='.urlencode($file).'">';
+								print img_picto($langs->trans("Disabled"), 'switch_off');
+								print '</a>';
 							}
+							print '</td>';
+
+							$batch = new Productlot($db);
+							$batch->initAsSpecimen();
+
+							// Info
+							$htmltooltip = '';
+							$htmltooltip .= ''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
+							$nextval = $module->getNextValue($mysoc, $batch);
+							if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
+								$htmltooltip .= ''.$langs->trans("NextValue").': ';
+								if ($nextval) {
+									if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured')
+										$nextval = $langs->trans($nextval);
+									$htmltooltip .= $nextval.'<br>';
+								} else {
+									$htmltooltip .= $langs->trans($module->error).'<br>';
+								}
+							}
+
+							print '<td class="center">';
+							print $form->textwithpicto('', $htmltooltip, 1, 0);
+							print '</td>';
+
+							print "</tr>\n";
 						}
-
-						print '<td class="center">';
-						print $form->textwithpicto('', $htmltooltip, 1, 0);
-						print '</td>';
-
-						print "</tr>\n";
 					}
 				}
+				closedir($handle);
 			}
-			closedir($handle);
 		}
 	}
-}
 
-print "</table><br>\n";
+	print "</table><br>\n";
 
 
-/*
- * Serials Numbering models
- */
+	/*
+	 * Serials Numbering models
+	 */
 
-print load_fiche_titre($langs->trans("BatchSerialNumberingModules"), '', '');
+	print load_fiche_titre($langs->trans("BatchSerialNumberingModules"), '', '');
 
-print '<table class="noborder centpercent">';
-print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Name").'</td>';
-print '<td>'.$langs->trans("Description").'</td>';
-print '<td class="nowrap">'.$langs->trans("Example").'</td>';
-print '<td class="center" width="60">'.$langs->trans("Status").'</td>';
-print '<td class="center" width="16">'.$langs->trans("ShortInfo").'</td>';
-print '</tr>'."\n";
+	print '<table class="noborder centpercent">';
+	print '<tr class="liste_titre">';
+	print '<td>'.$langs->trans("Name").'</td>';
+	print '<td>'.$langs->trans("Description").'</td>';
+	print '<td class="nowrap">'.$langs->trans("Example").'</td>';
+	print '<td class="center" width="60">'.$langs->trans("Status").'</td>';
+	print '<td class="center" width="16">'.$langs->trans("ShortInfo").'</td>';
+	print '</tr>'."\n";
 
-clearstatcache();
+	clearstatcache();
 
-foreach ($dirmodels as $reldir) {
-	$dir = dol_buildpath($reldir."core/modules/product_batch/");
+	foreach ($dirmodels as $reldir) {
+		$dir = dol_buildpath($reldir."core/modules/product_batch/");
 
-	if (is_dir($dir)) {
-		$handle = opendir($dir);
-		if (is_resource($handle)) {
-			while (($file = readdir($handle)) !== false) {
-				if (substr($file, 0, 7) == 'mod_sn_' && substr($file, dol_strlen($file) - 3, 3) == 'php') {
-					$file = substr($file, 0, dol_strlen($file) - 4);
+		if (is_dir($dir)) {
+			$handle = opendir($dir);
+			if (is_resource($handle)) {
+				while (($file = readdir($handle)) !== false) {
+					if (substr($file, 0, 7) == 'mod_sn_' && substr($file, dol_strlen($file) - 3, 3) == 'php') {
+						$file = substr($file, 0, dol_strlen($file) - 4);
 
-					require_once $dir.$file.'.php';
+						require_once $dir.$file.'.php';
 
-					$module = new $file($db);
+						$module = new $file($db);
 
-					// Show modules according to features level
-					if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
-					if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
+						// Show modules according to features level
+						if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
+						if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
 
-					if ($module->isEnabled()) {
-						print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
-						print $module->info();
-						print '</td>';
+						if ($module->isEnabled()) {
+							print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
+							print $module->info();
+							print '</td>';
 
-						// Show example of numbering model
-						print '<td class="nowrap">';
-						$tmp = $module->getExample();
-						if (preg_match('/^Error/', $tmp)) print '<div class="error">'.$langs->trans($tmp).'</div>';
-						elseif ($tmp == 'NotConfigured') print $langs->trans($tmp);
-						else print $tmp;
-						print '</td>'."\n";
+							// Show example of numbering model
+							print '<td class="nowrap">';
+							$tmp = $module->getExample();
+							if (preg_match('/^Error/', $tmp)) print '<div class="error">'.$langs->trans($tmp).'</div>';
+							elseif ($tmp == 'NotConfigured') print $langs->trans($tmp);
+							else print $tmp;
+							print '</td>'."\n";
 
-						print '<td class="center">';
-						if ($conf->global->PRODUCTBATCH_SN_ADDON == $file) {
-							print img_picto($langs->trans("Activated"), 'switch_on');
-						} else {
-							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmodsn&amp;value='.$file.'">';
-							print img_picto($langs->trans("Disabled"), 'switch_off');
-							print '</a>';
-						}
-						print '</td>';
-
-						$batch = new Productlot($db);
-						$batch->initAsSpecimen();
-
-						// Info
-						$htmltooltip = '';
-						$htmltooltip .= ''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
-						$nextval = $module->getNextValue($mysoc, $batch);
-						if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
-							$htmltooltip .= ''.$langs->trans("NextValue").': ';
-							if ($nextval) {
-								if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured')
-									$nextval = $langs->trans($nextval);
-								$htmltooltip .= $nextval.'<br>';
+							print '<td class="center">';
+							if ($conf->global->PRODUCTBATCH_SN_ADDON == $file) {
+								print img_picto($langs->trans("Activated"), 'switch_on');
 							} else {
-								$htmltooltip .= $langs->trans($module->error).'<br>';
+								print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmodsn&token='.newToken().'&value='.urlencode($file).'">';
+								print img_picto($langs->trans("Disabled"), 'switch_off');
+								print '</a>';
 							}
+							print '</td>';
+
+							$batch = new Productlot($db);
+							$batch->initAsSpecimen();
+
+							// Info
+							$htmltooltip = '';
+							$htmltooltip .= ''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
+							$nextval = $module->getNextValue($mysoc, $batch);
+							if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
+								$htmltooltip .= ''.$langs->trans("NextValue").': ';
+								if ($nextval) {
+									if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured')
+										$nextval = $langs->trans($nextval);
+									$htmltooltip .= $nextval.'<br>';
+								} else {
+									$htmltooltip .= $langs->trans($module->error).'<br>';
+								}
+							}
+
+							print '<td class="center">';
+							print $form->textwithpicto('', $htmltooltip, 1, 0);
+							print '</td>';
+
+							print "</tr>\n";
 						}
-
-						print '<td class="center">';
-						print $form->textwithpicto('', $htmltooltip, 1, 0);
-						print '</td>';
-
-						print "</tr>\n";
 					}
 				}
+				closedir($handle);
 			}
-			closedir($handle);
 		}
 	}
-}
 
-print "</table><br>\n";
+	print "</table><br>\n";
+}
 
 // End of page
 llxFooter();

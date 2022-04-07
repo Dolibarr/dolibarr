@@ -18,16 +18,16 @@
 #
 
 # Module label 'ModuleKnowledgeManagementName'
-ModuleKnowledgeManagementName = Knowledge Management System
+ModuleKnowledgeManagementName = 知識管理システム
 # Module description 'ModuleKnowledgeManagementDesc'
-ModuleKnowledgeManagementDesc=Manage a Knowledge Management (KM) or Help-Desk base
+ModuleKnowledgeManagementDesc=ナレッジマネジメント（KM）またはヘルプデスクベースを管理する
 
 #
 # Admin page
 #
-KnowledgeManagementSetup = Knowledge Management System setup
+KnowledgeManagementSetup = ナレッジマネジメントシステムの設定
 Settings = 設定
-KnowledgeManagementSetupPage = Knowledge Management System setup page
+KnowledgeManagementSetupPage = ナレッジマネジメントシステムの設定ページ
 
 
 #
@@ -37,19 +37,18 @@ About = 約
 KnowledgeManagementAbout = 知識管理について
 KnowledgeManagementAboutPage = 知識管理に関するページ
 
-#
-# Sample page
-#
 KnowledgeManagementArea = 知識管理
-
-
-#
-# Menu
-#
-MenuKnowledgeRecord = Knowledge base
-ListOfArticles = List of articles
-NewKnowledgeRecord = New article
-ValidateReply = Validate solution
-KnowledgeRecords = Articles
+MenuKnowledgeRecord = 知識ベース
+ListKnowledgeRecord = 記事一覧
+NewKnowledgeRecord = 新しい記事
+ValidateReply = ソリューションを検証する
+KnowledgeRecords = 記事
 KnowledgeRecord = 記事
-KnowledgeRecordExtraFields = Extrafields for Article
+KnowledgeRecordExtraFields = 記事のエクストラフィールド
+GroupOfTicket=チケットのグループ
+YouCanLinkArticleToATicketCategory=記事をチケットグループにリンクできる(新規チケット認定時に記事が提案されるようになる)
+SuggestedForTicketsInGroup=チケットに対して提案されるのは、グループが
+
+SetObsolete=廃止として設定
+ConfirmCloseKM=この記事の締めくくりが廃止されたことを確定するか？
+ConfirmReopenKM=この記事をステータス「検証済み」に復元するか？

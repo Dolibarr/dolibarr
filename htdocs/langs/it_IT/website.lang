@@ -31,7 +31,7 @@ AddWebsite=Aggiungi sito web
 Webpage=Web page/container
 AddPage=Aggiungi pagina/contenitore
 PageContainer=Pagina
-PreviewOfSiteNotYetAvailable=Preview of your website <strong>%s</strong> not yet available. You must first '<strong>Import a full website template</strong>' or just '<strong>Add a page/container</strong>'.
+PreviewOfSiteNotYetAvailable=L'anteprima del tuo sito web <strong> %s </strong> non è ancora disponibile. Devi prima ' <strong> Importa un modello di sito web completo </strong> ' o semplicemente ' <strong> Aggiungi una pagina/contenitore </strong> '.
 RequestedPageHasNoContentYet=Requested page with id %s has no content yet, or cache file .tpl.php was removed. Edit content of the page to solve this.
 SiteDeleted=Web site '%s' deleted
 PageContent=Page/Contenair
@@ -45,7 +45,7 @@ ViewWebsiteInProduction=View web site using home URLs
 SetHereVirtualHost= <u> Usa con Apache / NGinx / ... </u> <br> Crea sul tuo server web (Apache, Nginx, ...) un host virtuale dedicato con PHP abilitato e una directory principale su <br><strong>%s</strong>
 ExampleToUseInApacheVirtualHostConfig=Esempio da utilizzare nella configurazione dell'host virtuale Apache:
 YouCanAlsoTestWithPHPS=<u>Use with PHP embedded server</u><br>On develop environment, you may prefer to test the site with the PHP embedded web server (PHP 5.5 required) by running<br><strong>php -S 0.0.0.0:8080 -t %s</strong>
-YouCanAlsoDeployToAnotherWHP=<u>Run your web site with another Dolibarr Hosting provider</u><br>If you don't have a web server like Apache or NGinx available on internet, you can export and import your web site onto another Dolibarr instance provided by another Dolibarr hosting provider that provide full integration with the Website module. You can find a list of some Dolibarr hosting providers on <a href="https://saas.dolibarr.org" target="_blank">https://saas.dolibarr.org</a>
+YouCanAlsoDeployToAnotherWHP= <u> Esegui il tuo sito web con un altro provider di hosting Dolibarr </u> <br> Se non hai un server web come Apache o NGinx disponibile su Internet, puoi esportare e importare il tuo sito web su un'altra istanza Dolibarr fornita da un altro provider di hosting Dolibarr che fornisce integrazione con il modulo Sito web. Puoi trovare un elenco di alcuni provider di hosting Dolibarr su <a href="https://saas.dolibarr.org" target="_blank" rel="noopener noreferrer external"> https://saas.dolibarr.org </a>
 CheckVirtualHostPerms=Controlla anche che l'utente dell'host virtuale (ad esempio www-data) abbia <strong> %s </strong> le autorizzazioni sui file in <br> <strong> %s
 ReadPerm=Da leggere
 WritePerm=Write
@@ -60,7 +60,7 @@ YouCanEditHtmlSourceckeditor=You can edit HTML source code using the "Source" bu
 YouCanEditHtmlSource= <br> <span class="fa fa-bug"> </span> Puoi includere codice PHP in questa sorgente utilizzando i tag <strong> &lt;?php ?&gt; </strong>. Sono disponibili le seguenti variabili globali: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs. <br> <br> <span class="fa fa-bug"> </span> Puoi anche includere il contenuto di un'altra Pagina / Contenitore con la seguente sintassi: <br> <strong> &lt;?php includeContainer('alias_of_container_to_include'); ?&gt; </strong> <br> <br> <span class="fa fa-bug"> </span> È possibile effettuare un redirect ad un'altra pagina / contenitore con la seguente sintassi (Nota: non emettono alcun contenuto prima di un reindirizzamento): <br> <strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt; </strong> <br> <br> <span class="fa fa-link"> </span> Per aggiungere un collegamento a un'altra pagina, utilizzare la sintassi: <br> <strong> &lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt; </strong> <br> <br> <span class="fa fa-download"> </span> Per inserire un <strong> link per il download  </strong> un file memorizzato nella cartella <strong>documenti </strong> , utilizzare il <strong> document.php </strong> wrapper: <br> esempio, per un file in documenti / ECM (necessità di effettuare il login), la sintassi è: <br> <strong> &lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt; </strong><br> Per un file in documents / medias (directory aperta per accesso pubblico), la sintassi è: <br> <strong> &lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt; </strong> <br> Per un file condiviso con un collegamento di condivisione (accesso aperto utilizzando la chiave hash di condivisione del file), la sintassi è:  <br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong> <br><br> <span class="fa fa-picture-o"> </span> per includere un<strong> immagine </strong> immagazzinata nella cartella  <strong>documenti </strong>, utilizzare la <strong> viewimage.php </strong> wrapper:  <br>Esempio, per un'immagine in documents/medias (cartella aperta per l'accesso pubblico), la sintassi è: <br><strong>&lt;img src="/viewimage.php?modulepart=medias&amp;file=[relative_dir/]filename.ext"&gt;</strong><br>
 #YouCanEditHtmlSource2=<br><span class="fa fa-picture-o"></span> To include a <strong>image</strong> shared publicaly, use the <strong>viewimage.php</strong> wrapper:<br>Example with a shared key 123456789, syntax is:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
 YouCanEditHtmlSource2=Per un'immagine condivisa con un link di condivisione (accesso aperto utilizzando la chiave hash di condivisione del file), la sintassi è: <br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
-YouCanEditHtmlSourceMore= <br> Altri esempi di codice HTML o dinamico disponibili su <a href="%s" target="_blank"> la documentazione wiki </a> <br>.
+YouCanEditHtmlSourceMore= <br> Altri esempi di codice HTML o dinamico disponibili su <a href="%s" target="_blank" rel="noopener noreferrer external"> la documentazione wiki </a> <br> .
 ClonePage=Clone page/container
 CloneSite=Clone site
 SiteAdded=Website added
@@ -137,11 +137,11 @@ PagesRegenerated=%s pagina(e)/contenitore(i) rigenerato
 RegenerateWebsiteContent=Rigenera i file della cache del sito web
 AllowedInFrames=Consentito nel frame
 DefineListOfAltLanguagesInWebsiteProperties=Definisce l'elenco di tutte le lingue disponibili nelle proprietà del sito web.
-GenerateSitemaps=Generate website sitemap file
-ConfirmGenerateSitemaps=If you confirm, you will erase the existing sitemap file...
-ConfirmSitemapsCreation=Confirm sitemap generation
-SitemapGenerated=Sitemap file <b>%s</b> generated
+GenerateSitemaps=Genera file sitemap del sito web
+ConfirmGenerateSitemaps=Se confermi, cancellerai il file sitemap esistente...
+ConfirmSitemapsCreation=Conferma la generazione del sitemap
+SitemapGenerated=File sitemap <b> %s </b> generato
 ImportFavicon=Favicon
-ErrorFaviconType=Favicon must be png
-ErrorFaviconSize=Favicon must be sized 16x16, 32x32 or 64x64
-FaviconTooltip=Upload an image which needs to be a png (16x16, 32x32 or 64x64)
+ErrorFaviconType=Favicon deve essere png
+ErrorFaviconSize=La favicon deve essere di dimensioni 16x16, 32x32 o 64x64
+FaviconTooltip=Carica un'immagine che deve essere un png (16x16, 32x32 o 64x64)

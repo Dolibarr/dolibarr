@@ -31,7 +31,7 @@ AddWebsite=Pievienot vietni
 Webpage=Web lapa / konteiners
 AddPage=Pievienot lapu / konteineru
 PageContainer=Lappuse
-PreviewOfSiteNotYetAvailable=Jūsu vietnes <strong> %s </strong>priekšskatījums vēl nav pieejams. Vispirms jums ir <strong> Jāimportē pilnu vietnes veidni</strong> vai vienkārši <strong>Pievienot lapu/konteineru</strong>".
+PreviewOfSiteNotYetAvailable=Jūsu vietnes priekšskatījums <strong> %s </strong> vēl nav pieejams. Vispirms jums ir jāimportē '<strong> pilna vietnes veidne </strong>' vai vienkārši '<strong>. Pievienojiet lapu / konteineru </strong>'.
 RequestedPageHasNoContentYet=Pieprasītā lapa ar id %s vēl nav ievietota, vai kešatmiņas fails .tpl.php tika noņemts. Rediģējiet lapas saturu, lai to atrisinātu.
 SiteDeleted=Tīmekļa vietne '%s' dzēsta
 PageContent=Lapa / Konteiners
@@ -45,13 +45,13 @@ ViewWebsiteInProduction=Apskatīt vietni, izmantojot mājas URL
 SetHereVirtualHost=<u>Use with Apache/NGinx/...</u><br>Create on your web server (Apache, Nginx, ...) a dedicated Virtual Host with PHP enabled and a Root directory on<br><strong>%s</strong>
 ExampleToUseInApacheVirtualHostConfig=Piemērs izmantošanai Apache virtuālā resursdatora iestatīšanā:
 YouCanAlsoTestWithPHPS=<u> Izmantojiet ar PHP serveri. </u> <br> Izstrādājot vidi, jūs varat izvēlēties testēt vietni ar PHP tīmekļa serveri (nepieciešams PHP 5.5), palaižot <br><strong> php -S 0.0. 0.0 8080-t %s</strong>
-YouCanAlsoDeployToAnotherWHP=<u>Izmantojiet savu vietni kopā ar citu Dolibarr mitināšanas pakalpojumu sniedzēju</u> <br> Ja jums nav pieejams tāds interneta serveris kā Apache vai NGinx, varat eksportēt un importēt savu vietni citā Dolibarr instancē, kuru nodrošina cits Dolibarr mitināšanas pakalpojumu sniedzējs un kas nodrošina pilnīgu integrāciju ar vietnes moduli. Dažu Dolibarr mitināšanas pakalpojumu sniedzēju sarakstu varat atrast vietnē <a href="https://saas.dolibarr.org" target="_blank">https://saas.dolibarr.org</a>
+YouCanAlsoDeployToAnotherWHP= <u> Palaidiet savu vietni ar citu Dolibarr mitināšanas pakalpojumu sniedzēju </u> <br> Ja jums nav pieejams tāds tīmekļa serveris kā Apache vai NGinx, varat eksportēt un importēt savu vietni citā Dolibarr mitināšanas pakalpojumu sniedzējā, kas nodrošina pilnu Dolibarr. integrācija ar tīmekļa vietnes moduli. Dažu Dolibarr mitināšanas pakalpojumu sniedzēju sarakstu varat atrast vietnē <a href="https://saas.dolibarr.org" target="_blank" rel="noopener noreferrer external"> https://saas.dolibarr.org </a>
 CheckVirtualHostPerms=Check also that the virtual host user (for example www-data) has <strong>%s</strong> permissions on files into<br><strong>%s</strong>
 ReadPerm=Lasīt
 WritePerm=Rakstīt
 TestDeployOnWeb=Pārbaudiet / izvietojiet tīmeklī
 PreviewSiteServedByWebServer=<u>Preview %s in a new tab.</u><br><br>The %s will be served by an external web server (like Apache, Nginx, IIS). You must install and setup this server before to point to directory:<br><strong>%s</strong><br>URL served by external server:<br><strong>%s</strong>
-PreviewSiteServedByDolibarr=<u>Preview %s in a new tab.</u><br><br>The %s will be served by Dolibarr server so it does not need any extra web server (like Apache, Nginx, IIS) to be installed.<br>The inconvenient is that the URLs of pages are not user friendly and start with the path of your Dolibarr.<br>URL served by Dolibarr:<br><strong>%s</strong><br><br>To use your own external web server to serve this web site, create a virtual host on your web server that points on directory<br><strong>%s</strong><br>then enter the name of this virtual server in the properties of this website and click on the link "Test/Deploy on the web".
+PreviewSiteServedByDolibarr= <u> Priekšskatīt %s jaunā cilnē. </u> <br> <br> %s apkalpos Dolibarr serveris, tāpēc tam nav nepieciešams instalēt papildu tīmekļa serveri (piemēram, Apache, Nginx, IIS). <br> Neērti ir tas, ka lapu vietrāži URL nav lietotājam draudzīgi un sākas ar jūsu Dolibarr ceļu. <br> URL apkalpo Dolibarr: <br> <strong> %s </strong> <br> <br> Lai izmantotu savu ārējo web serveri, lai kalpotu šo tīmekļa vietni, izveidot virtuālo uzņēmējas jūsu tīmekļa serverī, kas norāda uz direktoriju <br> <strong> %s </strong> <br> tad ievadiet nosaukumu šī virtuālā servera šīs vietnes rekvizītos un noklikšķiniet uz saites "Pārbaudīt / izvietot tīmeklī".
 VirtualHostUrlNotDefined=Virtuālā resursdatora adrese, kuru apkalpo ārējs tīmekļa serveris, nav definēts
 NoPageYet=Vēl nav nevienas lapas
 YouCanCreatePageOrImportTemplate=Jūs varat izveidot jaunu lapu vai importēt pilnu vietnes veidni
@@ -60,7 +60,7 @@ YouCanEditHtmlSourceckeditor=Jūs varat rediģēt HTML avota kodu, izmantojot re
 YouCanEditHtmlSource= <br> <span class="fa fa-bug"> </span> Varat šajā avotā iekļaut PHP kodu, izmantojot tagus <strong> &lt;? php? &gt; a0a65d06. Ir pieejami šādi globālie mainīgie: $ conf, $ db, $ mysoc, $ user, $ website, $ websitepage, $ weblangs, $ pagelangs. <br> <br> <span class="fa fa-bug"> </span> Varat arī iekļaut citas lappuses / konteinera saturu ar šādu sintakse: <br> a0e7843947c0er0e03_04_03 ? &gt; </strong> <br> <br> <span class="fa fa-bug"> </span> Jūs varat veikt novirzīšanu uz citu lapu / Container ar šādu sintaksi (piezīme: nav izejas kādu saturu pirms novirzīšanas):? <br> <strong> &lt; php redirectToContainer ( "alias_of_container_to_redirect_to '); ? &gt; </strong> <br> <br> <span class="fa fa-link"> </span> Lai pievienotu saiti uz citu lapu, izmantojiet sintaksi: <br> <strong> &lt;a href = "alias_of_page_to_link_to.php" &gt;mylink&lt;a&gt; </strong> <br> <br> <span class="fa fa-download"> </span> Lai iekļautu <strong> saiti uz lejupielādēt </strong> saglabātu failu vērā <strong> dokumentos </strong> katalogs, izmantojiet <strong> document.php </strong> iesaiņojuma: <br> Piemēram, failu stāšanās dokumentu / ECM (nepieciešams pieteicies), sintakse ir:? <br> <strong> &lt;a href = "/ document.php modulepart = ECM & file = [relative_dir / ] filename.ext "&gt; </strong> <br>. Failā dokumentos / plašsaziņas līdzekļos (atvērts direktorijs publiskai piekļuvei) sintakse ir: <br> <strong> a03900df70b030000 "/document.php?modulepart=medias&file=[relative_dir/ ]faila nosaukums.ext"&gt; </strong> <br> failam, kas koplietots ar koplietošanas saiti (atvērta piekļuve, izmantojot faila koplietošanas hash atslēgu04_04_04_04_04_04_04_04_04_04 /document.php?hashp=publicsharekeyoffile"&gt; </strong> <br> <br> <span class="fa fa-picture-o"> </span> Lai iekļautu <strong> attēla </strong> saglabāto vērā <strong> dokumentos </strong> direktorijā, izmantot <strong> viewimage.php </strong> iesaiņojuma: <br> Piemērs, par attēlu dokumentos / plašsaziņas (open publiskās piekļuves direktorijs), sintakse ir: <br> <strong> &lt;img src = "/ viewimage.php? modulepart = medias&amp;file = a [santykis_dir /] faila nosaukuma.ext"
 #YouCanEditHtmlSource2=<br><span class="fa fa-picture-o"></span> To include a <strong>image</strong> shared publicaly, use the <strong>viewimage.php</strong> wrapper:<br>Example with a shared key 123456789, syntax is:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
 YouCanEditHtmlSource2=Attēlam, kas tiek koplietots ar koplietošanas saiti (atvērta piekļuve, izmantojot faila koplietošanas hash atslēgu), sintakse ir: <br> <strong> &lt;img src = "/ viewimage.php? Hashp = 123456790120f0f0f0f0f0f0c0f0fcfcfcfcfcfcfcfcfcfcfcflcflcfcflcflcfl0f0flffcfcfcflflfcflflflflflflflflflflflflflflflflflflflflflflfcflflflflflflflflflflflflflrlxlrg" "
-YouCanEditHtmlSourceMore= <br>. Citi HTML vai dinamiskā koda piemēri, kas pieejami vietnē <a href="%s" target="_blank">, wiki dokumentācija </a> <br>.
+YouCanEditHtmlSourceMore= <br> Citi HTML vai dinamiskā koda piemēri ir pieejami vietnē <a href="%s" target="_blank" rel="noopener noreferrer external"> wiki dokumentācijā </a> <br> .
 ClonePage=Klonēt lapu / konteineru
 CloneSite=Klonēt vietni
 SiteAdded=Tīmekļa vietne ir pievienota
@@ -137,11 +137,11 @@ PagesRegenerated=reģenerēta %s lapa (s) / konteiners (-i)
 RegenerateWebsiteContent=Atjaunojiet tīmekļa vietnes kešatmiņas failus
 AllowedInFrames=Atļauts rāmjos
 DefineListOfAltLanguagesInWebsiteProperties=Vietņu rekvizītos definējiet visu pieejamo valodu sarakstu.
-GenerateSitemaps=Generate website sitemap file
-ConfirmGenerateSitemaps=If you confirm, you will erase the existing sitemap file...
-ConfirmSitemapsCreation=Confirm sitemap generation
-SitemapGenerated=Sitemap file <b>%s</b> generated
+GenerateSitemaps=Ģenerēt vietnes vietnes kartes failu
+ConfirmGenerateSitemaps=Ja apstiprināsit, jūs izdzēsīsit esošo vietnes kartes failu ...
+ConfirmSitemapsCreation=Apstipriniet vietnes kartes ģenerēšanu
+SitemapGenerated=Vietnes kartes fails <b> %s </b> ģenerēts
 ImportFavicon=Favicon
-ErrorFaviconType=Favicon must be png
-ErrorFaviconSize=Favicon must be sized 16x16, 32x32 or 64x64
-FaviconTooltip=Upload an image which needs to be a png (16x16, 32x32 or 64x64)
+ErrorFaviconType=Favicon jābūt png
+ErrorFaviconSize=Favicon izmēram jābūt 16x16, 32x32 vai 64x64
+FaviconTooltip=Augšupielādējiet attēlu, kuram jābūt png (16x16, 32x32 vai 64x64)

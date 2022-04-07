@@ -111,33 +111,6 @@ if (empty($conf->global->PROJECT_ENABLE_PUBLIC)) {
 print $enabledisablehtml;
 print '<input type="hidden" id="PROJECT_ENABLE_PUBLIC" name="PROJECT_ENABLE_PUBLIC" value="'.(empty($conf->global->PROJECT_ENABLE_PUBLIC) ? 0 : 1).'">';
 
-/*
-print '<br>';
-
-if (!empty($conf->global->PROJECT_ENABLE_PUBLIC)) {
-	print '<br>';
-
-	print '<table class="noborder centpercent">';
-
-	print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans("Parameter").'</td>';
-	print '<td class="right">'.$langs->trans("Value").'</td>';
-	print "</tr>\n";
-
-	// param
-	print '<tr class="oddeven" id="tredit"><td>';
-	print $langs->trans("CanEditAmount");
-	print '</td><td class="right">';
-	print $form->selectyesno("MEMBER_NEWFORM_EDITAMOUNT", (!empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT) ? $conf->global->MEMBER_NEWFORM_EDITAMOUNT : 0), 1);
-	print "</td></tr>\n";
-
-	print '</table>';
-
-	print '<div class="center">';
-	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-	print '</div>';
-}
-*/
 
 print dol_get_fiche_end();
 
@@ -159,7 +132,7 @@ if (!empty($conf->global->PROJECT_ENABLE_PUBLIC)) {
 	$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
 	//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
-	print '<a target="_blank" href="'.$urlwithroot.'/public/project/new.php'.$entity_qr.'">'.$urlwithroot.'/public/project/new.php'.$entity_qr.'</a>';
+	print '<a target="_blank" rel="noopener noreferrer" href="'.$urlwithroot.'/public/project/new.php'.$entity_qr.'">'.$urlwithroot.'/public/project/new.php'.$entity_qr.'</a>';
 }
 
 // End of page

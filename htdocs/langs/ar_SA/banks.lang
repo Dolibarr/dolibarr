@@ -32,7 +32,7 @@ RIB=رقم الحساب المصرفي
 IBAN=رقم الآيبان
 BIC=رمز BIC / SWIFT
 SwiftValid=بيك / سويفت صالحة
-SwiftVNotalid=بيك / سويفت غير صالح
+SwiftNotValid=بيك / سويفت غير صالح
 IbanValid=بان صالحة
 IbanNotValid=بان غير صالح
 StandingOrders=أوامر الخصم المباشر
@@ -49,7 +49,6 @@ BankAccountDomiciliation=عنوان البنك
 BankAccountCountry=بلد الحساب
 BankAccountOwner=اسم صاحب الحساب
 BankAccountOwnerAddress=عنوان صاحب الحساب
-RIBControlError=فشل التحقق من سلامة القيم. هذا يعني أن المعلومات الخاصة برقم الحساب هذا ليست كاملة أو غير صحيحة (تحقق من الدولة والأرقام و IBAN).
 CreateAccount=إنشاء حساب
 NewBankAccount=حساب جديد
 NewFinancialAccount=حساب مالي جديد
@@ -109,13 +108,13 @@ SocialContributionPayment=مدفوعات الضرائب الاجتماعية / �
 BankTransfer=تحويل الرصيد
 BankTransfers=تحويلات الرصيد
 MenuBankInternalTransfer=حوالة داخلية
-TransferDesc=Use internal transfer to transfer from one account to another, the application will write two records: a debit in the source account and a credit in the target account. The same amount, label and date will be used for this transaction.
+TransferDesc=إستخدم التحويل الداخلي للتحويل من حساب الى اخر، سيقوم البرنامج بكتابة قيدين: قيد دائن في حساب المحول وقيد مدين في حساب المستلم. يستخدم نفس المبلغ والعنوان والتاريخ في المعاملة.
 TransferFrom=من
 TransferTo=إلى
 TransferFromToDone=التحويل من <b>%s</b>إلى <b>%s</b>من <b>%s</b>%s قد تم تسجيلة.
 CheckTransmitter=مرسل
 ValidateCheckReceipt=تأكيد صحة الشيك المستلم؟
-ConfirmValidateCheckReceipt=Are you sure that you want to submit this check receipt for validation? No changes are possible it's done.
+ConfirmValidateCheckReceipt=Are you sure that you want to submit this check receipt for validation? No changes will be possible once validated.
 DeleteCheckReceipt=حذف هذا الشيك ؟
 ConfirmDeleteCheckReceipt=هل انت متأكد أنك تريد حذف هذا الشيك؟
 BankChecks=الشيكات المصرفية
@@ -128,7 +127,7 @@ ConfirmDeleteTransaction=هل تريد بالتأكيد حذف هذه المعا
 ThisWillAlsoDeleteBankRecord=سيؤدي هذا أيضا إلى حذف القيد البنكي الذي تم إنشاؤه
 BankMovements=حركات
 PlannedTransactions=المعاملات المخططة
-Graph=Graphs
+Graph=الرسوم البيانية
 ExportDataset_banque_1=القيود البنكية وكشف الحساب
 ExportDataset_banque_2=قسيمة الإيداع
 TransactionOnTheOtherAccount=معاملة على الحساب الآخر
@@ -142,7 +141,7 @@ AllAccounts=جميع الحسابات المصرفية والنقدية
 BackToAccount=عودة إلى الحساب
 ShowAllAccounts=عرض لجميع الحسابات
 FutureTransaction=الصفقة المستقبلية. غير قادر على التسوية.
-SelectChequeTransactionAndGenerate=Select/filter the checks which are to be included in the check deposit receipt. Then, click on "Create".
+SelectChequeTransactionAndGenerate=قم بتحديد / تصفية الشيكات لتضمينها في إيصال إيداع الشيك واضغط على "إنشاء".
 InputReceiptNumber=اختيار كشف الحساب البنكي ذات الصلة مع التسوية. استخدام قيمة رقمية للفرز: شهر سنة أو يوم شهر سنة
 EventualyAddCategory=في نهاية المطاف، حدد الفئة التي لتصنيف السجلات
 ToConciliate=للتسوية؟
@@ -174,7 +173,7 @@ YourSEPAMandate=تفويض سيبا الخاص بك
 FindYourSEPAMandate=This is your SEPA mandate to authorize our company to make direct debit order to your bank. Return it signed (scan of the signed document) or send it by mail to
 AutoReportLastAccountStatement=قم تلقائيًا بتعبئة الحقل "رقم كشف الحساب البنكي" برقم كشف الحساب الأخير عند إجراء التسوية
 CashControl=مراقبة مكتب النقدية في نقاط البيع
-NewCashFence=New cash desk opening or closing
+NewCashFence=إفتتاح او إغلاق جديد لصنوق النقدية
 BankColorizeMovement=تلوين الحركات
 BankColorizeMovementDesc=إذا تم تمكين هذه الوظيفة ، يمكنك اختيار لون خلفية محدد لحركات الخصم أو الائتمان
 BankColorizeMovementName1=لون الخلفية لحركة الخصم
@@ -182,3 +181,4 @@ BankColorizeMovementName2=لون الخلفية لحركة الائتمان
 IfYouDontReconcileDisableProperty=إذا لم تقم بإجراء التسويات البنكية على بعض الحسابات المصرفية ، فقم بتعطيل الخاصية "%s" عليها لإزالة هذا التحذير.
 NoBankAccountDefined=لم يتم تحديد حساب مصرفي
 NoRecordFoundIBankcAccount=لا يوجد سجل في الحساب المصرفي. عادةً ما يحدث هذا عندما يتم حذف سجل يدويًا من قائمة المعاملات في الحساب المصرفي (على سبيل المثال أثناء تسوية الحساب المصرفي). سبب آخر هو أنه تم تسجيل الدفعة عندما تم تعطيل الوحدة النمطية "%s".
+AlreadyOneBankAccount=Already one bank account defined

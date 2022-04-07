@@ -16,20 +16,20 @@ MarginDetails=تفاصيل الهامش
 ProductMargins=هوامش المنتج
 CustomerMargins=هوامش العملاء
 SalesRepresentativeMargins=هوامش ممثل المبيعات
-ContactOfInvoice=Contact of invoice
+ContactOfInvoice=جهة إتصال الفاتورة
 UserMargins=هوامش المستخدم
 ProductService=المنتج أو الخدمة
 AllProducts=جميع المنتجات والخدمات
 ChooseProduct/Service=اختيار المنتج أو الخدمة
 ForceBuyingPriceIfNull=فرض سعر  شراء / تكلفة إلى سعر البيع إذا لم يتم تحديدها
-ForceBuyingPriceIfNullDetails=If buying/cost price not provided when we add a new line, and this option is "ON", the margin will be 0 on the new line (buying/cost price = selling price). If this option is "OFF" (recommended), margin will be equal to the value suggested by default (and may be 100% if no default value can be found).
+ForceBuyingPriceIfNullDetails=If buying/cost price not provided when we add a new line, and this option is "ON", the margin will be 0%% on the new line (buying/cost price = selling price). If this option is "OFF" (recommended), margin will be equal to the value suggested by default (and may be 100%% if no default value can be found).
 MARGIN_METHODE_FOR_DISCOUNT=طريقة الهامش للخصومات العالمية
 UseDiscountAsProduct=كمنتج
 UseDiscountAsService=كخدمة
 UseDiscountOnTotal=على المجموع الفرعي
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=يحدد ما إذا كان يتم التعامل مع الخصم العالمي كمنتج أو خدمة أو فقط على المجموع الفرعي لحساب الهامش.
 MARGIN_TYPE=سعر الشراء / التكلفة المقترحة افتراضيا لحساب الهامش
-MargeType1=Margin on Best vendor price
+MargeType1=الهامش على سعر المورد الافضل
 MargeType2=الهامش على متوسط ​​السعر المرجح (واب)
 MargeType3=هامش على سعر التكلفة
 MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Price (WAP) = Selling price - Product Weighted Average Price (WAP) or best vendor price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAP if cost price not defined, or best vendor price if WAP not yet defined

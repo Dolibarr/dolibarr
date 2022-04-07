@@ -36,7 +36,14 @@ class CompanyBankAccount extends Account
 	public $socid;
 
 	public $default_rib;
+
+	/**
+	 * Value 'FRST' or 'RCUR' (For SEPA mandate). Warning, in database, we store 'RECUR'.
+	 *
+	 * @var string
+	 */
 	public $frstrecur;
+
 	public $rum;
 	public $date_rum;
 
@@ -72,7 +79,7 @@ class CompanyBankAccount extends Account
 
 
 	/**
-	 * Create bank information record
+	 * Create bank information record.
 	 *
 	 * @param   User   $user		User
 	 * @param   int    $notrigger   1=Disable triggers
@@ -80,10 +87,19 @@ class CompanyBankAccount extends Account
 	 */
 	public function create(User $user = null, $notrigger = 0)
 	{
-		$now	= dol_now();
+		$now = dol_now();
+
 		$error = 0;
-		// Correct default_rib to be sure to have always one default
-		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe_rib where fk_soc = ".$this->socid." AND default_rib = 1 AND type = 'ban'";
+
+		// Check paramaters
+		if (empty($this->socid)) {
+			$this->error = 'BadValueForParameter';
+			return -1;
+		}
+
+		// Correct ->default_rib to not set the new account as default, if there is already 1. We want to be sure to have always 1 default for type = 'ban'.
+		// If we really want the new bank account to be the default, we must set it by calling setDefault() after creation.
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe_rib where fk_soc = ".((int) $this->socid)." AND default_rib = 1 AND type = 'ban'";
 		$result = $this->db->query($sql);
 		if ($result) {
 			$numrows = $this->db->num_rows($result);
@@ -96,7 +112,7 @@ class CompanyBankAccount extends Account
 		}
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_rib (fk_soc, type, datec)";
-		$sql .= " VALUES (".$this->socid.", 'ban', '".$this->db->idate($now)."')";
+		$sql .= " VALUES (".((int) $this->socid).", 'ban', '".$this->db->idate($now)."')";
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			if ($this->db->affected_rows($resql)) {
@@ -135,6 +151,7 @@ class CompanyBankAccount extends Account
 	public function update(User $user = null, $notrigger = 0)
 	{
 		global $conf;
+
 		$error = 0;
 
 		if (!$this->id) {
@@ -160,7 +177,7 @@ class CompanyBankAccount extends Account
 		$sql .= ",proprio = '".$this->db->escape($this->proprio)."'";
 		$sql .= ",owner_address = '".$this->db->escape($this->owner_address)."'";
 		$sql .= ",default_rib = ".((int) $this->default_rib);
-		if ($conf->prelevement->enabled) {
+		if (!empty($conf->prelevement->enabled)) {
 			$sql .= ",frstrecur = '".$this->db->escape($this->frstrecur)."'";
 			$sql .= ",rum = '".$this->db->escape($this->rum)."'";
 			$sql .= ",date_rum = ".($this->date_rum ? "'".$this->db->idate($this->date_rum)."'" : "null");
@@ -170,7 +187,7 @@ class CompanyBankAccount extends Account
 		} else {
 			$sql .= ",label = NULL";
 		}
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$result = $this->db->query($sql);
 		if ($result) {
@@ -190,7 +207,7 @@ class CompanyBankAccount extends Account
 				return 1;
 			}
 		} else {
-			dol_print_error($this->db);
+			$this->error = $this->db->lasterror();
 			return -1;
 		}
 	}
@@ -272,8 +289,6 @@ class CompanyBankAccount extends Account
 	 */
 	public function delete(User $user = null, $notrigger = 0)
 	{
-		global $conf;
-
 		$error = 0;
 
 		dol_syslog(get_class($this)."::delete ".$this->id, LOG_DEBUG);
@@ -291,7 +306,7 @@ class CompanyBankAccount extends Account
 
 		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_rib";
-			$sql .= " WHERE rowid  = ".$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			if (!$this->db->query($sql)) {
 				$error++;
@@ -332,12 +347,13 @@ class CompanyBankAccount extends Account
 	/**
 	 * Set a BAN as Default
 	 *
-	 * @param   int     $rib    RIB id
-	 * @return  int             0 if KO, 1 if OK
+	 * @param   int     $rib    			RIB id
+	 * @param	string	$resetolddefaultfor	Reset if we have already a default value for type = 'ban'
+	 * @return  int             			0 if KO, 1 if OK
 	 */
-	public function setAsDefault($rib = 0)
+	public function setAsDefault($rib = 0, $resetolddefaultfor = 'ban')
 	{
-		$sql1 = "SELECT rowid as id, fk_soc  FROM ".MAIN_DB_PREFIX."societe_rib";
+		$sql1 = "SELECT rowid as id, fk_soc FROM ".MAIN_DB_PREFIX."societe_rib";
 		$sql1 .= " WHERE rowid = ".($rib ? $rib : $this->id);
 
 		dol_syslog(get_class($this).'::setAsDefault', LOG_DEBUG);
@@ -351,13 +367,14 @@ class CompanyBankAccount extends Account
 				$this->db->begin();
 
 				$sql2 = "UPDATE ".MAIN_DB_PREFIX."societe_rib SET default_rib = 0";
-				$sql2 .= " WHERE type = 'ban' AND fk_soc = ".((int) $obj->fk_soc);
-				dol_syslog(get_class($this).'::setAsDefault', LOG_DEBUG);
+				$sql2 .= " WHERE fk_soc = ".((int) $obj->fk_soc);
+				if ($resetolddefaultfor) {
+					$sql2 .= " AND type = '".$this->db->escape($resetolddefaultfor)."'";
+				}
 				$result2 = $this->db->query($sql2);
 
 				$sql3 = "UPDATE ".MAIN_DB_PREFIX."societe_rib SET default_rib = 1";
 				$sql3 .= " WHERE rowid = ".((int) $obj->id);
-				dol_syslog(get_class($this).'::setAsDefault', LOG_DEBUG);
 				$result3 = $this->db->query($sql3);
 
 				if (!$result2 || !$result3) {
@@ -405,6 +422,6 @@ class CompanyBankAccount extends Account
 		$this->date_rum        = dol_now() - 10000;
 		$this->frstrecur       = 'FRST';
 
-		$this->socid = 0;
+		$this->socid           = 1;
 	}
 }

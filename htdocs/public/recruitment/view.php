@@ -190,9 +190,7 @@ print '<input type="hidden" name="suffix" value="'.GETPOST("suffix", 'alpha').'"
 print '<input type="hidden" name="securekey" value="'.$SECUREKEY.'">'."\n";
 print '<input type="hidden" name="entity" value="'.$entity.'" />';
 print "\n";
-print '<!-- Form to sign -->'."\n";
-
-print '<table id="dolpaymenttable" summary="Payment form" class="center">'."\n";
+print '<!-- Form to view job -->'."\n";
 
 // Show logo (search order: logo defined by ONLINE_SIGN_LOGO_suffix, then ONLINE_SIGN_LOGO_, then small company logo, large company logo, theme logo, common logo)
 // Define logo and logosmall
@@ -227,6 +225,15 @@ if ($urllogo) {
 	}
 	print '</div>';
 }
+
+if (!empty($conf->global->RECRUITMENT_IMAGE_PUBLIC_INTERFACE)) {
+	print '<div class="backimagepublicrecruitment">';
+	print '<img id="idPROJECT_IMAGE_PUBLIC_SUGGEST_BOOTH" src="'.$conf->global->RECRUITMENT_IMAGE_PUBLIC_INTERFACE.'">';
+	print '</div>';
+}
+
+
+print '<table id="dolpaymenttable" summary="Payment form" class="center">'."\n";
 
 // Output introduction text
 $text = '';

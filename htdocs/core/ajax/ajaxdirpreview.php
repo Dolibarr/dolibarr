@@ -54,8 +54,8 @@ if (!isset($mode) || $mode != 'noajax') {    // For ajax call
 	$search_doc_ref = GETPOST('search_doc_ref', 'alpha');
 
 	$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-	$sortfield = GETPOST("sortfield", 'alpha');
-	$sortorder = GETPOST("sortorder", 'alpha');
+	$sortfield = GETPOST("sortfield", 'aZ09comma');
+	$sortorder = GETPOST("sortorder", 'aZ09comma');
 	$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 	if (empty($page) || $page == -1) {
 		$page = 0;
@@ -82,8 +82,8 @@ if (!isset($mode) || $mode != 'noajax') {    // For ajax call
 			//exit;
 		}
 	}
-} else // For no ajax call
-{
+} else {
+	// For no ajax call
 	$rootdirfordoc = $conf->ecm->dir_output;
 
 	$ecmdir = new EcmDirectory($db);
@@ -204,25 +204,30 @@ if ($type == 'directory') {
 		'contract',
 		'product',
 		'tax',
+		'tax-vat',
+		'salaries',
 		'project',
+		'project_task',
 		'fichinter',
 		'user',
 		'expensereport',
 		'holiday',
 		'recruitment-recruitmentcandidature',
 		'banque',
+		'chequereceipt',
 		'mrp-mo'
 	);
 
 	$parameters = array('modulepart'=>$module);
 	$reshook = $hookmanager->executeHooks('addSectionECMAuto', $parameters);
-	if ($reshook > 0 && is_array($hookmanager->resArray) && count($hookmanager->resArray)>0) {
-		$automodules[]=$hookmanager->resArray['module'];
+	if ($reshook > 0 && is_array($hookmanager->resArray) && count($hookmanager->resArray) > 0) {
+		$automodules[] = $hookmanager->resArray['module'];
 	}
 
 	// TODO change for multicompany sharing
 	if ($module == 'company') {
 		$upload_dir = $conf->societe->dir_output;
+		$excludefiles[] = '^contact$'; // The subdir 'contact' contains files of contacts.
 	} elseif ($module == 'invoice') {
 		$upload_dir = $conf->facture->dir_output;
 	} elseif ($module == 'invoice_supplier') {
@@ -241,7 +246,14 @@ if ($type == 'directory') {
 		$upload_dir = $conf->product->dir_output;
 	} elseif ($module == 'tax') {
 		$upload_dir = $conf->tax->dir_output;
+		$excludefiles[] = '^vat$'; // The subdir 'vat' contains files of vats.
+	} elseif ($module == 'tax-vat') {
+		$upload_dir = $conf->tax->dir_output.'/vat';
+	} elseif ($module == 'salaries') {
+		$upload_dir = $conf->salaries->dir_output;
 	} elseif ($module == 'project') {
+		$upload_dir = $conf->projet->dir_output;
+	} elseif ($module == 'project_task') {
 		$upload_dir = $conf->projet->dir_output;
 	} elseif ($module == 'fichinter') {
 		$upload_dir = $conf->ficheinter->dir_output;
@@ -255,8 +267,10 @@ if ($type == 'directory') {
 		$upload_dir = $conf->recruitment->dir_output.'/recruitmentcandidature';
 	} elseif ($module == 'banque') {
 		$upload_dir = $conf->bank->dir_output;
+	} elseif ($module == 'chequereceipt') {
+		$upload_dir = $conf->bank->dir_output.'/checkdeposits';
 	} elseif ($module == 'mrp-mo') {
-		$upload_dir = $conf->mrp->dir_output.'/mo';
+		$upload_dir = $conf->mrp->dir_output;
 	} else {
 		$parameters = array('modulepart'=>$module);
 		$reshook = $hookmanager->executeHooks('addSectionECMAuto', $parameters);
@@ -273,10 +287,6 @@ if ($type == 'directory') {
 		}
 
 		$textifempty = ($section ? $langs->trans("NoFileFound") : ($showonrightsize == 'featurenotyetavailable' ? $langs->trans("FeatureNotYetAvailable") : $langs->trans("NoFileFound")));
-
-		if ($module == 'company') {
-			$excludefiles[] = '^contact$'; // The subdir 'contact' contains files of contacts with no id of thirdparty.
-		}
 
 		$filter = preg_quote($search_doc_ref, '/');
 		$filearray = dol_dir_list($upload_dir, "files", 1, $filter, $excludefiles, $sortfield, $sorting, 1);
@@ -328,13 +338,13 @@ if ($type == 'directory') {
 		if ($section) {
 			$param .= '&section='.$section;
 			if (isset($search_doc_ref) && $search_doc_ref != '') {
-				$param .= '&search_doc_ref='.$search_doc_ref;
+				$param .= '&search_doc_ref='.urlencode($search_doc_ref);
 			}
 
 			$textifempty = $langs->trans('NoFileFound');
 		} elseif ($section === '0') {
 			if ($module == 'ecm') {
-				$textifempty = '<br><div class="center"><font class="warning">'.$langs->trans("DirNotSynchronizedSyncFirst").'</font></div><br>';
+				$textifempty = '<br><div class="center"><span class="warning">'.$langs->trans("DirNotSynchronizedSyncFirst").'</span></div><br>';
 			} else {
 				$textifempty = $langs->trans('NoFileFound');
 			}
@@ -376,7 +386,7 @@ if ($type == 'directory') {
 		// When we show list of files for ECM files, $filearray contains file list, and directory is defined with modulepart + section into $param
 		// When we show list of files for a directory, $filearray ciontains file list, and directory is defined with modulepart + $relativepath
 		//var_dump("section=".$section." title=".$title." modulepart=".$modulepart." useinecm=".$useinecm." perm=".$perm." relativepath=".$relativepath." param=".$param." url=".$url);
-		$formfile->list_of_documents($filearray, '', $modulepart, $param, 1, $relativepath, $perm, $useinecm, $textifempty, $maxlengthname, $title, $url, 0, $perm);
+		$formfile->list_of_documents($filearray, '', $modulepart, $param, 1, $relativepath, $perm, $useinecm, $textifempty, $maxlengthname, $title, $url, 0, $perm, '', $sortfield, $sortorder);
 	}
 }
 
@@ -396,9 +406,9 @@ if (!empty($conf->global->MAIN_ECM_DISABLE_JS)) {
 
 //$param.=($param?'?':'').(preg_replace('/^&/','',$param));
 
-if ($useajax || $action == 'delete') {
+if ($useajax || $action == 'deletefile') {
 	$urlfile = '';
-	if ($action == 'delete') {
+	if ($action == 'deletefile') {
 		$urlfile = GETPOST('urlfile', 'alpha');
 	}
 
@@ -430,6 +440,7 @@ if ($useajax || $action == 'delete') {
 }
 
 if ($useajax) {
+	print '<!-- ajaxdirpreview.php: js to manage preview of doc -->'."\n";
 	print '<script type="text/javascript">';
 
 	// Enable jquery handlers on new generated HTML objects (same code than into lib_footer.js.php)

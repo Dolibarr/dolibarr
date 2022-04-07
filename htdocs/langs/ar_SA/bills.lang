@@ -81,15 +81,14 @@ PaymentsReports=تقارير المدفوعات
 PaymentsAlreadyDone=المدفوعات قد فعلت
 PaymentsBackAlreadyDone=تم رد الأموال
 PaymentRule=قاعدة الدفع
-PaymentMode=طريفة الدفع
-DefaultPaymentMode=Default Payment Type
+PaymentMode=Payment method
+PaymentModes=Payment methods
+DefaultPaymentMode=Default Payment method
 DefaultBankAccount=Default Bank Account
-PaymentTypeDC=بطاقة الخصم / الائتمان
-PaymentTypePP=PayPal
-IdPaymentMode=معرف نوع السداد
-CodePaymentMode=كود نوع السداد
-LabelPaymentMode=اسم نوع السداد
-PaymentModeShort=طريفة السداد
+IdPaymentMode=Payment method (id)
+CodePaymentMode=Payment method (code)
+LabelPaymentMode=Payment method (label)
+PaymentModeShort=Payment method
 PaymentTerm=شروط السداد
 PaymentConditions=شروط السداد
 PaymentConditionsShort=شروط السداد
@@ -192,6 +191,7 @@ ConfirmClassifyPaidPartiallyReasonDiscount=المتبقي الغير مدفوع 
 ConfirmClassifyPaidPartiallyReasonDiscountNoVat=المتبقي الغير مدفوع <b> (%s %s) </b> هو خصم ممنوح لأن السداد تم قبل الأجل. أنا أقبل خسارة ضريبة القيمة المضافة على هذا الخصم.
 ConfirmClassifyPaidPartiallyReasonDiscountVat=المتبقي الغير مدفوع <b> (%s %s) </b> هو خصم ممنوح لأن السداد تم قبل الأجل. أسترد ضريبة القيمة المضافة على هذا الخصم بدون إشعار دائن.
 ConfirmClassifyPaidPartiallyReasonBadCustomer=عميل سيء
+ConfirmClassifyPaidPartiallyReasonBankCharge=Deduction by bank (intermediary bank fees)
 ConfirmClassifyPaidPartiallyReasonProductReturned=تم إرجاع بعض المنتجات
 ConfirmClassifyPaidPartiallyReasonOther=التخلي عن المبلغ لسبب آخر
 ConfirmClassifyPaidPartiallyReasonDiscountNoVatDesc=هذا الاختيار ممكن إذا تم تزويد فاتورتك بالتعليقات المناسبة. (مثال «فقط الضريبة المقابلة للسعر الذي تم دفعه هي التي تعطي الحق في الخصم»)
@@ -199,6 +199,7 @@ ConfirmClassifyPaidPartiallyReasonDiscountVatDesc=في بعض البلدان ، 
 ConfirmClassifyPaidPartiallyReasonAvoirDesc=استخدم هذا الاختيار إذا كانت جميع الاختيارات الاخرى لا تناسبك
 ConfirmClassifyPaidPartiallyReasonBadCustomerDesc=العميل السيئ <b> </b> هو العميل الذي يرفض سداد ديونه.
 ConfirmClassifyPaidPartiallyReasonProductReturnedDesc=يستخدم هذا الاختيار عندما لا يكتمل السداد بسبب إرجاع بعض المنتجات
+ConfirmClassifyPaidPartiallyReasonBankChargeDesc=The unpaid amount is <b>intermediary bank fees</b>, deducted directly from the <b>correct amount</b> paid by the Customer.
 ConfirmClassifyPaidPartiallyReasonOtherDesc=استخدم هذا الخيار إذا لم يكن هناك خيار مناسب ، على سبيل المثال في الحالة التالية: <br> - الدفع غير مكتمل لأن بعض المنتجات تم شحنها مرة أخرى <br> - المبلغ المطالب به مهم جدًا لأنه تم نسيان الخصم <br> في جميع الحالات ، يجب تصحيح المبلغ المطالب به في نظام المحاسبة عن طريق إنشاء إشعار دائن.
 ConfirmClassifyAbandonReasonOther=أخرى
 ConfirmClassifyAbandonReasonOtherDesc=سيتم استخدام هذا الاختيار في جميع الحالات الأخرى. على سبيل المثال ، لأنك تخطط لإنشاء فاتورة بديلة.
@@ -234,16 +235,24 @@ AlreadyPaidBack=سددت بالفعل
 AlreadyPaidNoCreditNotesNoDeposits=سددت (بدون اشعار دائن ودفعات مقدمة)
 Abandoned=المهجورة
 RemainderToPay=المتبقي غير مسدد
+RemainderToPayMulticurrency=Remaining unpaid, original currency
 RemainderToTake=الميلغ المتبقي لاتخاذ
+RemainderToTakeMulticurrency=Remaining amount to take, original currency
 RemainderToPayBack=المبلغ المتبقي للاسترجاع
+RemainderToPayBackMulticurrency=Remaining amount to refund, original currency
+NegativeIfExcessRefunded=negative if excess refunded
 Rest=بانتظار
 AmountExpected=المبلغ المطالب به
 ExcessReceived=المبالغ الزائدة المستلمة
+ExcessReceivedMulticurrency=Excess received, original currency
+NegativeIfExcessReceived=negative if excess received
 ExcessPaid=المبالغ الزائدة المسددة
+ExcessPaidMulticurrency=Excess paid, original currency
 EscompteOffered=عرض الخصم (الدفع قبل الأجل)
 EscompteOfferedShort=خصم
 SendBillRef=تسليم الفاتورة %s
 SendReminderBillRef=تسليم الفاتورة %s (تذكير)
+SendPaymentReceipt=Submission of payment receipt %s
 NoDraftBills=لا توجد مسودات فواتير
 NoOtherDraftBills=لا توجد مسودات فواتير أخرى
 NoDraftInvoices=لا توجد مسودات فواتير
@@ -259,6 +268,8 @@ DateMaxPayment=السداد المستحق في
 DateInvoice=تاريخ الفاتورة
 DatePointOfTax=Point of tax
 NoInvoice=لا فاتورة
+NoOpenInvoice=No open invoice
+NbOfOpenInvoices=Number of open invoices
 ClassifyBill=صنف كفاتورة
 SupplierBillsToPay=فواتير المورد الغير مسددة
 CustomerBillsUnpaid=فواتير العملاء غير المسددة
@@ -268,6 +279,7 @@ SetMode=حدد نوع السداد
 SetRevenuStamp=حدد ختم الإيرادات
 Billed=فواتير
 RecurringInvoices=الفواتير المتكررة
+RecurringInvoice=Recurring invoice
 RepeatableInvoice=قالب الفاتورة
 RepeatableInvoices=قالب الفواتير
 Repeatable=قالب
@@ -437,6 +449,8 @@ PaymentTypeTRA=حوالة مصرفية
 PaymentTypeShortTRA=حوالة مصرفية
 PaymentTypeFAC=عامل
 PaymentTypeShortFAC=عامل
+PaymentTypeDC=بطاقة الخصم / الائتمان
+PaymentTypePP=PayPal
 BankDetails=تفاصيل مصرفية
 BankCode=رمز البنك
 DeskCode=رمز الفرع
@@ -569,7 +583,7 @@ ToCreateARecurringInvoiceGene=لإنشاء فواتير مستقبلية بشك�
 ToCreateARecurringInvoiceGeneAuto=إذا كنت بحاجة إلى إنشاء مثل هذه الفواتير تلقائيًا ، فاطلب من المسؤول تمكين وحدة الإعداد <strong> %s </strong> وإعدادها. لاحظ أنه يمكن استخدام كلتا الطريقتين (يدويًا وآليًا) مع عدم وجود خطر التكرار.
 DeleteRepeatableInvoice=حذف قالب الفاتورة
 ConfirmDeleteRepeatableInvoice=هل أنت متأكد أنك تريد حذف قالب الفاتورة؟
-CreateOneBillByThird=إنشاء فاتورة واحدة لكل طرف ثالث (خلاف ذلك ، فاتورة واحدة لكل طلب)
+CreateOneBillByThird=Create one invoice per third party (otherwise, one invoice per selected object)
 BillCreated=%s إصدار فاتورة (فواتير) 
 BillXCreated=تم إنشاء %s الفاتورة 
 StatusOfGeneratedDocuments=حالة إنشاء الوثيقة
@@ -589,3 +603,7 @@ FacParentLine=أصل سطر الفاتورة
 SituationTotalRayToRest=ما تبقى للدفع بدون ضريبة
 PDFSituationTitle=Situation n° %d
 SituationTotalProgress=إجمالي التقدم %d %%
+SearchUnpaidInvoicesWithDueDate=Search unpaid invoices with a due date = %s
+NoPaymentAvailable=No payment available for %s
+PaymentRegisteredAndInvoiceSetToPaid=Payment registered and invoice %s set to paid
+SendEmailsRemindersOnInvoiceDueDate=Send reminder by email for unpaid invoices

@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - accountancy
+Accounting=Contabilizando
 ACCOUNTING_EXPORT_SEPARATORCSV=Separador de columna de archivo a exportar
 ACCOUNTING_EXPORT_DATE=Formato de fecha de archivo a exportar
 ACCOUNTING_EXPORT_PIECE=Exportar el número de pieza
@@ -6,6 +7,7 @@ ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Exportar con cuenta global
 ACCOUNTING_EXPORT_LABEL=Etiqueta de exportación
 ACCOUNTING_EXPORT_AMOUNT=Monto de exportación
 ACCOUNTING_EXPORT_DEVISE=Moneda de exportación
+ACCOUNTING_EXPORT_ENDLINE=Seleccionar el tipo de retorno de carro
 ACCOUNTING_EXPORT_PREFIX_SPEC=Especifique el prefijo del nombre del fichero
 DefaultForService=Servicio por defecto
 DefaultForProduct=Producto por defecto
@@ -20,7 +22,7 @@ CreateMvts=Crear nueva transacción
 UpdateMvts=Modificación de una transacción
 InvoiceLines=Líneas de facturas para enlazar
 InvoiceLinesDone=Líneas de facturas vinculadas
-IntoAccount=Vincular la línea con la cuenta de contabilidad
+IntoAccount=Vincular la línea con la cuenta contable
 Ventilate=Vincular
 Processing=Procesando
 EndProcessing=Proceso finalizado.
@@ -32,7 +34,6 @@ ACCOUNTING_LIST_SORT_VENTILATION_DONE=Comienza la clasificación de la página "
 ACCOUNTING_LENGTH_DESCRIPTION=Truncar la descripción de los productos y servicios en los listados después de los caracteres x (mejor = 50)
 ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Truncar el formulario de descripción de la cuenta de producto y servicios en los listados después de los caracteres x (mejor = 50)
 ACCOUNTING_LENGTH_GACCOUNT=Longitud de las cuentas de contabilidad general (si establece el valor a 6 aquí, la cuenta '706' aparecerá como '706000' en la pantalla)
-ACCOUNTANCY_COMBO_FOR_AUX=Enable combo list for subsidiary account (may be slow if you have a lot of third parties)
 ACCOUNTING_SELL_JOURNAL=Diario de Venta
 ACCOUNTING_PURCHASE_JOURNAL=Diario de Compra
 ACCOUNTING_MISCELLANEOUS_JOURNAL=Diario diverso

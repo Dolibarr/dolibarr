@@ -1,11 +1,11 @@
-# ProductBATCH language file - en_US - ProductBATCH
+# ProductBATCH language file - Source file is en_US - ProductBATCH
 ManageLotSerial=ロット/シリアル 番号を使用
 ProductStatusOnBatch=はい（ロットが必要）
 ProductStatusOnSerial=はい（一意のシリアル番号が必要）
-ProductStatusNotOnBatch=いえ (ロット/シリアル 不要)
+ProductStatusNotOnBatch=いいえ (ロット/シリアル 不要)
 ProductStatusOnBatchShort=ロット
 ProductStatusOnSerialShort=シリアル
-ProductStatusNotOnBatchShort=いえ
+ProductStatusNotOnBatchShort=いいえ
 Batch=ロット/シリアル
 atleast1batchfield=賞味期限、消費期限、ロット/シリアル 番号
 batch_number=ロット/シリアル 番号
@@ -26,10 +26,20 @@ ShowLogOfMovementIfLot=組合せ 製品/ロットの移動ログを表示
 StockDetailPerBatch=ロットごとの在庫詳細
 SerialNumberAlreadyInUse=シリアル番号%sはすでに製品%sに使用されている
 TooManyQtyForSerialNumber=シリアル番号%sに対して使用できる製品%sは1つだけ。
-BatchLotNumberingModules=ロット管理のバッチ製品の自動生成のオプション
-BatchSerialNumberingModules=シリアル番号で管理されるバッチ製品の自動生成のオプション
 ManageLotMask=カスタムマスク
-CustomMasks=製品カードにマスクを定義するオプションを追加する
-LotProductTooltip=製品カードにオプションを追加して、専用のバッチ番号マスクを定義する
-SNProductTooltip=製品カードに専用のシリアル番号マスクを定義するオプションを追加する
-QtyToAddAfterBarcodeScan=スキャンされたバーコード/ロット/シリアルごとに追加する数量
+CustomMasks=製品ごとに異なるナンバリングマスクを定義するオプション
+BatchLotNumberingModules=ロット番号の自動生成のための附番規則
+BatchSerialNumberingModules=シリアル番号の自動生成の附番規則（製品が製品毎に一意のロット/シリアルを1個だけ持つ性質の場合）
+QtyToAddAfterBarcodeScan=スキャンされた各バーコード/ロット/シリアルの数量から%s
+LifeTime=寿命（日数）
+EndOfLife=製品寿命
+ManufacturingDate=製造日付
+DestructionDate=破壊日
+FirstUseDate=初回使用日
+QCFrequency=品質管理頻度（日数）
+ShowAllLots=すべてのロットを表示
+HideLots=たくさん隠す
+#Traceability - qc status
+OutOfOrder=故障中
+InWorkingOrder=正常動作中
+ToReplace=交換

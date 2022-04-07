@@ -18,16 +18,16 @@
 #
 
 # Module label 'ModuleKnowledgeManagementName'
-ModuleKnowledgeManagementName = Knowledge Management System
+ModuleKnowledgeManagementName = Kennisbeheersysteem
 # Module description 'ModuleKnowledgeManagementDesc'
-ModuleKnowledgeManagementDesc=Manage a Knowledge Management (KM) or Help-Desk base
+ModuleKnowledgeManagementDesc=Beheer een Knowledge Management (KM) of helpdeskbasis
 
 #
 # Admin page
 #
-KnowledgeManagementSetup = Knowledge Management System setup
+KnowledgeManagementSetup = Kennisbeheersysteem instellen
 Settings = Instellingen
-KnowledgeManagementSetupPage = Knowledge Management System setup page
+KnowledgeManagementSetupPage = Kennisbeheersysteem opstartpagina
 
 
 #
@@ -37,19 +37,18 @@ About = Over
 KnowledgeManagementAbout = Over Kennis Management
 KnowledgeManagementAboutPage = Over Kennis Management pagina
 
-#
-# Sample page
-#
 KnowledgeManagementArea = Kennis Management
-
-
-#
-# Menu
-#
-MenuKnowledgeRecord = Knowledge base
-ListOfArticles = List of articles
-NewKnowledgeRecord = New article
-ValidateReply = Validate solution
-KnowledgeRecords = Articles
+MenuKnowledgeRecord = Kennis basis
+ListKnowledgeRecord = Lijst met artikelen
+NewKnowledgeRecord = Nieuw artikel
+ValidateReply = Valideer oplossing
+KnowledgeRecords = Lidwoord
 KnowledgeRecord = Artikel
-KnowledgeRecordExtraFields = Extrafields for Article
+KnowledgeRecordExtraFields = Extravelden voor Artikel
+GroupOfTicket=Groep van tickets
+YouCanLinkArticleToATicketCategory=Je kunt een artikel linken naar een ticket groep (dan wordt dit artikel als suggestie gegeven bij een nieuwe ticket)
+SuggestedForTicketsInGroup=Suggested for tickets when group is
+
+SetObsolete=Markeer als overbodig
+ConfirmCloseKM=Wilt u bevestigen dat het sluiten van dit artikel overbodig is?
+ConfirmReopenKM=Wilt u de status terugzetten naar "gevalideerd"?

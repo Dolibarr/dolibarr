@@ -45,24 +45,37 @@ $ref	= GETPOST('ref', 'alpha');
 $mode = (GETPOST('mode', 'alpha') ? GETPOST('mode', 'alpha') : 'byunit');
 $search_year   = GETPOST('search_year', 'int');
 $search_categ  = GETPOST('search_categ', 'int');
+$notab = GETPOST('notab', 'int');
 
 $error = 0;
 $mesg = '';
 $graphfiles = array();
 
-$socid = '';
+$socid = GETPOST('socid', 'int');
 if (!empty($user->socid)) {
 	$socid = $user->socid;
 }
+if ($socid < 0) {
+	$socid = 0;
+}
 
 // Security check
-$fieldvalue = (!empty($id) ? $id : $ref);
+$fieldvalue = ($id > 0 ? $id : $ref);
 $fieldtype = (!empty($ref) ? 'ref' : 'rowid');
+
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('productstatscard', 'globalcard'));
 
 $tmp = dol_getdate(dol_now());
 $currentyear = $tmp['year'];
 if (empty($search_year)) {
 	$search_year = $currentyear;
+}
+$moreforfilter = "";
+
+$object = new Product($db);
+if ($id > 0 || !empty($ref)) {
+	$result = $object->fetch($id, $ref);
 }
 
 $result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
@@ -81,9 +94,10 @@ $result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product
 
 $form = new Form($db);
 $htmlother = new FormOther($db);
-$object = new Product($db);
 
-if (!$id && empty($ref)) {
+if (!($id > 0) && empty($ref) || $notab) {
+	$notab = 1;
+
 	llxHeader("", $langs->trans("ProductStatistics"));
 
 	$type = GETPOST('type', 'int');
@@ -128,7 +142,7 @@ if (!$id && empty($ref)) {
 }
 
 
-if ($result && (!empty($id) || !empty($ref))) {
+if ($result && ($id > 0 || !empty($ref)) && empty($notab)) {
 	$head = product_prepare_head($object);
 	$titre = $langs->trans("CardProduct".$object->type);
 	$picto = ($object->type == Product::TYPE_SERVICE ? 'service' : 'product');
@@ -141,11 +155,11 @@ if ($result && (!empty($id) || !empty($ref))) {
 
 	print dol_get_fiche_end();
 }
-if (empty($id) && empty($ref)) {
+if ((!($id > 0) && empty($ref)) || $notab) {
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/product/stats/card.php'.($type != '' ? '?type='.$type : '');
+	$head[$h][0] = DOL_URL_ROOT.'/product/stats/card.php'.($type != '' ? '?type='.((int) $type) : '');
 	$head[$h][1] = $langs->trans("Chart");
 	$head[$h][2] = 'chart';
 	$h++;
@@ -158,38 +172,48 @@ if (empty($id) && empty($ref)) {
 		$title = $langs->trans("ListProductByPopularity");
 	}
 
-	$head[$h][0] = DOL_URL_ROOT.'/product/popuprop.php'.($type != '' ? '?type='.$type : '');
+	$head[$h][0] = DOL_URL_ROOT.'/product/popuprop.php'.($type != '' ? '?type='.((int) $type) : '');
 	$head[$h][1] = $langs->trans("ProductsPerPopularity");
 	$head[$h][2] = 'popularity';
 	$h++;
 
-	print dol_get_fiche_head($head, 'chart', $langs->trans("Statistics"), -1);
+	print dol_get_fiche_head($head, 'chart', '', -1);
 }
 
 
-if ($result || empty($id)) {
+if ($result || !($id > 0)) {
 	print '<form name="stats" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
-	print '<input type="hidden" name="id" value="'.$id.'">';
+	if (empty($id) || $notab) {
+		print '<input type="hidden" name="notab" value="1">';
+	}
 
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
 
-	if (empty($id)) {
+	if (!($id > 0) || $notab) {
 		// Type
-		print '<tr><td class="titlefield">'.$langs->trans("ProductsAndServices").'</td><td>';
+		print '<tr><td class="titlefield">'.$langs->trans("Type").'</td><td>';
 		$array = array('-1'=>'&nbsp;', '0'=>$langs->trans('Product'), '1'=>$langs->trans('Service'));
-		print $form->selectarray('type', $array, $type);
+		print $form->selectarray('type', $array, $type, 0, 0, 0, '', 0, 0, 0, '', 'minwidth100');
+		print '</td></tr>';
+
+		// Product
+		print '<tr><td class="titlefield">'.$langs->trans("ProductOrService").'</td><td>';
+		print img_picto('', 'product', 'class="pictofixedwidth"');
+		print $form->select_produits($id, 'id', '', 0, 0, 1, 2, '', ($conf->dol_optimize_smallscreen ? 1 : 0), array(), 0, '1', 0, 'widthcentpercentminusx maxwidth400');
 		print '</td></tr>';
 
 		// Tag
 		if ($conf->categorie->enabled) {
 			print '<tr><td class="titlefield">'.$langs->trans("Categories").'</td><td>';
 			$moreforfilter .= img_picto($langs->trans("Categories"), 'category', 'class="pictofixedwidth"');
-			$moreforfilter .= $htmlother->select_categories(Categorie::TYPE_PRODUCT, $search_categ, 'search_categ', 1, 1, 'widthcentpercentminusx maxwidth300');
+			$moreforfilter .= $htmlother->select_categories(Categorie::TYPE_PRODUCT, $search_categ, 'search_categ', 1, 1, 'widthcentpercentminusx maxwidth400');
 			print $moreforfilter;
 			print '</td></tr>';
 		}
+	} else {
+		print '<input type="hidden" name="id" value="'.$id.'">';
 	}
 
 	// Year
@@ -207,6 +231,13 @@ if ($result || empty($id)) {
 	arsort($arrayyears);
 	print $form->selectarray('search_year', $arrayyears, $search_year, 1, 0, 0, '', 0, 0, 0, '', 'width75');
 	print '</td></tr>';
+
+	// thirdparty
+	print '<tr><td class="titlefield">'.$langs->trans("ThirdParty").'</td><td>';
+	print img_picto('', 'company', 'class="pictofixedwidth"');
+	print $form->select_company($socid, 'socid', '', 1, 0, 0, array(), 0, 'widthcentpercentminusx maxwidth400');
+	print '</td></tr>';
+
 	print '</table>';
 	print '<div class="center"><input type="submit" name="submit" class="button small" value="'.$langs->trans("Refresh").'"></div>';
 	print '</form><br>';
@@ -214,15 +245,21 @@ if ($result || empty($id)) {
 	print '<br>';
 
 
+	$param = '';
+	$param .= (GETPOSTISSET('id') ? '&id='.GETPOST('id', 'int') : '&id='.$object->id).(($type != '' && $type != '-1') ? '&type='.((int) $type) : '').'&search_year='.((int) $search_year).($notab ? '&notab='.$notab : '');
+	if ($socid > 0) {
+		$param .= '&socid='.((int) $socid);
+	}
+
 	// Choice of stats mode (byunit or bynumber)
 	if (!empty($conf->dol_use_jmobile)) {
 		print "\n".'<div class="fichecenter"><div class="nowrap">'."\n";
 	}
 
 	if ($mode == 'bynumber') {
-		print '<a class="a-mesure-disabled" href="'.$_SERVER["PHP_SELF"].'?id='.(GETPOST('id') ?GETPOST('id') : $object->id).($type != '' ? '&type='.$type : '').'&mode=byunit&search_year='.$search_year.'">';
+		print '<a class="a-mesure-disabled marginleftonly marginrightonly reposition" href="'.$_SERVER["PHP_SELF"].'?mode=byunit'.$param.'">';
 	} else {
-		print '<span class="a-mesure">';
+		print '<span class="a-mesure marginleftonly marginrightonly">';
 	}
 	print $langs->trans("StatsByNumberOfUnits");
 	if ($mode == 'bynumber') {
@@ -233,14 +270,12 @@ if ($result || empty($id)) {
 
 	if (!empty($conf->dol_use_jmobile)) {
 		print '</div>'."\n".'<div class="nowrap">'."\n";
-	} else {
-		print ' &nbsp; ';
 	}
 
 	if ($mode == 'byunit') {
-		print '<a class="a-mesure-disabled" href="'.$_SERVER["PHP_SELF"].'?id='.(GETPOST('id') ?GETPOST('id') : $object->id).($type != '' ? '&type='.$type : '').'&mode=bynumber&search_year='.$search_year.'">';
+		print '<a class="a-mesure-disabled marginleftonly marginrightonly reposition" href="'.$_SERVER["PHP_SELF"].'?mode=bynumber'.$param.'">';
 	} else {
-		print '<span class="a-mesure">';
+		print '<span class="a-mesure marginleftonly marginrightonly">';
 	}
 	print $langs->trans("StatsByNumberOfEntities");
 	if ($mode == 'byunit') {
@@ -256,10 +291,8 @@ if ($result || empty($id)) {
 	}
 	print '<br>';
 
-	//print '<table width="100%">';
-
-	// Generation des graphs
-	$dir = (!empty($conf->product->multidir_temp[$object->entity]) ? $conf->product->multidir_temp[$object->entity] : $conf->service->multidir_temp[$object->entity]);
+	// Generation of graphs
+	$dir = (!empty($conf->product->multidir_temp[$conf->entity]) ? $conf->product->multidir_temp[$conf->entity] : $conf->service->multidir_temp[$conf->entity]);
 	if ($object->id > 0) {  // We are on statistics for a dedicated product
 		if (!file_exists($dir.'/'.$object->id)) {
 			if (dol_mkdir($dir.'/'.$object->id) < 0) {
@@ -383,7 +416,7 @@ if ($result || empty($id)) {
 					$px->SetShading(3);
 					//print 'x '.$key.' '.$graphfiles[$key]['file'];
 
-					$url = DOL_URL_ROOT.'/viewimage.php?modulepart='.$graphfiles[$key]['modulepart'].'&entity='.$object->entity.'&file='.urlencode($graphfiles[$key]['file']);
+					$url = DOL_URL_ROOT.'/viewimage.php?modulepart='.$graphfiles[$key]['modulepart'].'&entity='.((int) $object->entity).'&file='.urlencode($graphfiles[$key]['file']).($notab ? '&notab='.$notab : '');
 					$px->draw($dir."/".$graphfiles[$key]['file'], $url);
 
 					$graphfiles[$key]['total'] = $px->total();
@@ -417,10 +450,10 @@ if ($result || empty($id)) {
 			if ($graphfiles == 'proposals_suppliers' && !$user->rights->supplier_proposal->lire) {
 				continue;
 			}
-			if ($graphfiles == 'invoices_suppliers' && !$user->rights->fournisseur->facture->lire) {
+			if ($graphfiles == 'invoices_suppliers' && empty($user->rights->fournisseur->facture->lire)) {
 				continue;
 			}
-			if ($graphfiles == 'orders_suppliers' && !$user->rights->fournisseur->commande->lire) {
+			if ($graphfiles == 'orders_suppliers' && empty($user->rights->fournisseur->commande->lire)) {
 				continue;
 			}
 			if ($graphfiles == 'mrp' && empty($user->rights->mrp->mo->read)) {
@@ -431,7 +464,7 @@ if ($result || empty($id)) {
 			if ($i % 2 == 0) {
 				print "\n".'<div class="fichecenter"><div class="fichehalfleft">'."\n";
 			} else {
-				print "\n".'<div class="fichehalfright"><div class="ficheaddleft">'."\n";
+				print "\n".'<div class="fichehalfright">'."\n";
 			}
 
 			// Date generation
@@ -442,11 +475,15 @@ if ($result || empty($id)) {
 					$dategenerated = $langs->trans("GeneratedOn", dol_print_date(dol_now(), "dayhour"));
 				}
 			} else {
-				$dategenerated = ($mesg ? '<font class="error">'.$mesg.'</font>' : $langs->trans("ChartNotGenerated"));
+				$dategenerated = ($mesg ? '<span class="error">'.$mesg.'</span>' : $langs->trans("ChartNotGenerated"));
 			}
-			$linktoregenerate = '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.(GETPOST('id') ?GETPOST('id') : $object->id).((string) $type != '' ? '&type='.$type : '').'&action=recalcul&mode='.$mode.'&search_year='.$search_year.'&search_categ='.$search_categ.'">'.img_picto($langs->trans("ReCalculate").' ('.$dategenerated.')', 'refresh').'</a>';
+			$linktoregenerate = '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?'.(GETPOSTISSET('id') ? 'id='.GETPOST('id', 'int') : 'id='.$object->id).(((string) $type != '' && $type != '-1') ? '&type='.((int) $type) : '').'&action=recalcul&mode='.urlencode($mode).'&search_year='.((int) $search_year).($search_categ > 0 ? '&search_categ='.((int) $search_categ) : '').'">';
+			$linktoregenerate .= img_picto($langs->trans("ReCalculate").' ('.$dategenerated.')', 'refresh');
+			$linktoregenerate .= '</a>';
+
 
 			// Show graph
+			print '<div class="div-table-responsive-no-min">';
 			print '<table class="noborder centpercent">';
 			// Label
 			print '<tr class="liste_titre"><td>';
@@ -459,11 +496,12 @@ if ($result || empty($id)) {
 			print $graphfiles[$key]['output'];
 			print '</td></tr>';
 			print '</table>';
+			print '</div>';
 
 			if ($i % 2 == 0) {
 				print "\n".'</div>'."\n";
 			} else {
-				print "\n".'</div></div></div>';
+				print "\n".'</div></div>';
 				print '<div class="clear"><div class="fichecenter"><br></div></div>'."\n";
 			}
 
@@ -472,13 +510,13 @@ if ($result || empty($id)) {
 	}
 	// div not closed
 	if ($i % 2 == 1) {
-		print "\n".'<div class="fichehalfright"><div class="ficheaddleft">'."\n";
-		print "\n".'</div></div></div>';
+		print "\n".'<div class="fichehalfright">'."\n";
+		print "\n".'</div></div>';
 		print '<div class="clear"><div class="fichecenter"><br></div></div>'."\n";
 	}
 }
 
-if (!$id) {
+if (!($id > 0)) {
 	print dol_get_fiche_end();
 }
 
