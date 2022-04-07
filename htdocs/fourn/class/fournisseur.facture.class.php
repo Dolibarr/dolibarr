@@ -182,10 +182,14 @@ class FactureFournisseur extends CommonInvoice
 	public $date_echeance;
 
 	/**
-	 * @deprecated
 	 * @var double $amount
+	 * @deprecated
 	 */
 	public $amount = 0;
+	/**
+	 * @var double $remise
+	 * @deprecated
+	 */
 	public $remise = 0;
 
 	/**
@@ -404,11 +408,6 @@ class FactureFournisseur extends CommonInvoice
 			$this->date = $now;
 		}
 
-		$socid = $this->socid;
-		$ref_supplier = $this->ref_supplier;
-		$amount = $this->amount;
-		$remise = $this->remise;
-
 		// Multicurrency (test on $this->multicurrency_tx because we should take the default rate only if not using origin rate)
 		if (!empty($this->multicurrency_code) && empty($this->multicurrency_tx)) {
 			list($this->fk_multicurrency, $this->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code, $this->date);
@@ -456,7 +455,6 @@ class FactureFournisseur extends CommonInvoice
 			$this->total_ttc = $_facrec->total_ttc;
 
 			// Fields always coming from template
-			$this->remise = $_facrec->remise;
 			$this->fk_incoterms = $_facrec->fk_incoterms;
 			$this->location_incoterms = $_facrec->location_incoterms;
 
@@ -475,7 +473,6 @@ class FactureFournisseur extends CommonInvoice
 
 			$this->array_options = $_facrec->array_options;
 
-			//if (! $this->remise) $this->remise = 0;
 			if (! $this->mode_reglement_id) {
 				$this->mode_reglement_id = 0;
 			}
@@ -543,10 +540,6 @@ class FactureFournisseur extends CommonInvoice
 		// Define due date if not already defined
 		if (! empty($forceduedate)) {
 			$this->date_echeance = $forceduedate;
-		}
-
-		if (!$remise) {
-			$remise = 0;
 		}
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."facture_fourn (";
@@ -882,8 +875,6 @@ class FactureFournisseur extends CommonInvoice
 		$sql .= " t.tms,";
 		$sql .= " t.libelle as label,";
 		$sql .= " t.paye,";
-		$sql .= " t.amount,";
-		$sql .= " t.remise,";
 		$sql .= " t.close_code,";
 		$sql .= " t.close_note,";
 		$sql .= " t.tva,";
@@ -948,11 +939,8 @@ class FactureFournisseur extends CommonInvoice
 				$this->label				= $obj->label;
 				$this->paye					= $obj->paye;
 				$this->paid					= $obj->paye;
-				$this->amount				= $obj->amount;
-				$this->remise				= $obj->remise;
 				$this->close_code			= $obj->close_code;
 				$this->close_note			= $obj->close_note;
-				//$this->tva = $obj->tva;
 				$this->total_localtax1		= $obj->localtax1;
 				$this->total_localtax2		= $obj->localtax2;
 				$this->total_ht				= $obj->total_ht;
@@ -1177,22 +1165,12 @@ class FactureFournisseur extends CommonInvoice
 		if (isset($this->paye)) {
 			$this->paye = trim($this->paye);
 		}
-		if (isset($this->amount)) {
-			if (empty($this->amount)) $this->amount = 0;
-			else $this->amount = doubleval($this->amount);
-		}
-		if (isset($this->remise)) {
-			$this->remise = trim($this->remise);
-		}
 		if (isset($this->close_code)) {
 			$this->close_code = trim($this->close_code);
 		}
 		if (isset($this->close_note)) {
 			$this->close_note = trim($this->close_note);
 		}
-		/*if (isset($this->tva)) {
-			$this->tva = trim($this->tva);
-		}*/
 		if (isset($this->localtax1)) {
 			$this->localtax1 = trim($this->localtax1);
 		}
@@ -1264,8 +1242,6 @@ class FactureFournisseur extends CommonInvoice
 		}
 		$sql .= " libelle=".(isset($this->label) ? "'".$this->db->escape($this->label)."'" : "null").",";
 		$sql .= " paye=".(isset($this->paye) ? $this->paye : "null").",";
-		$sql .= " amount=".(isset($this->amount) ? $this->amount : "null").",";
-		$sql .= " remise=".(isset($this->remise) ? $this->remise : "null").",";
 		$sql .= " close_code=".(isset($this->close_code) ? "'".$this->db->escape($this->close_code)."'" : "null").",";
 		$sql .= " close_note=".(isset($this->close_note) ? "'".$this->db->escape($this->close_note)."'" : "null").",";
 		//$sql .= " tva=".(isset($this->tva) ? $this->tva : "null").",";
@@ -2452,7 +2428,7 @@ class FactureFournisseur extends CommonInvoice
 
 		$this->db->begin();
 
-		// Libere remise liee a ligne de facture
+		// Free the discount linked to a line of invoice
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe_remise_except';
 		$sql .= ' SET fk_invoice_supplier_line = NULL';
 		$sql .= ' WHERE fk_invoice_supplier_line = '.((int) $rowid);
