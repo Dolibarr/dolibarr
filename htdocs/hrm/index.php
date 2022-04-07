@@ -235,7 +235,7 @@ if (!empty($conf->holiday->enabled) && $user->rights->holiday->read) {
 
 				print '<tr class="oddeven">';
 				print '<td class="nowraponall">'.$holidaystatic->getNomUrl(1).'</td>';
-				print '<td class="tdoverflowmax125">'.$userstatic->getNomUrl(-1, 'leave').'</td>';
+				print '<td class="tdoverflowmax100">'.$userstatic->getNomUrl(-1, 'leave').'</td>';
 				print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($langs->trans($typeleaves[$obj->fk_type]['code'])).'">'.dol_escape_htmltag($langs->trans($typeleaves[$obj->fk_type]['code'])).'</td>';
 
 				$starthalfday = ($obj->halfday == -1 || $obj->halfday == 2) ? 'afternoon' : 'morning';
