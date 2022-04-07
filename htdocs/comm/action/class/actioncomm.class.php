@@ -868,6 +868,16 @@ class ActionComm extends CommonObject
 				$this->event_paid = $obj->event_paid;
 				$this->status = $obj->status;
 
+				//email information
+				$this->email_msgid=$obj->email_msgid;
+				$this->email_from=$obj->email_from;
+				$this->email_sender=$obj->email_sender;
+				$this->email_to=$obj->email_to;
+				$this->email_tocc=$obj->email_tocc;
+				$this->email_tobcc=$obj->email_tobcc;
+				$this->email_subject=$obj->email_subject;
+				$this->errors_to=$obj->errors_to;
+
 				$this->fetch_optionals();
 
 				if ($loadresources) {
@@ -1582,8 +1592,25 @@ class ActionComm extends CommonObject
 		if (isset($this->transparency)) {
 			$tooltip .= '<br><b>'.$langs->trans('Busy').':</b> '.yn($this->transparency);
 		}
+		if (!empty($this->email_msgid)) {
+			$langs->load("mails");
+			$tooltip .= '<br>';
+			//$tooltip .= '<br><b>'.img_picto('', 'email').' '.$langs->trans("Email").'</b>';
+			$tooltip .= '<br><b>'.$langs->trans('MailTopic').':</b> '.$this->email_subject;
+			$tooltip .= '<br><b>'.$langs->trans('MailFrom').':</b> '.str_replace(array('<', '>'), array('&amp;lt', '&amp;gt'), $this->email_from);
+			$tooltip .= '<br><b>'.$langs->trans('MailTo').':</b>, '.str_replace(array('<', '>'), array('&amp;lt', '&amp;gt'), $this->email_to);
+			if (!empty($this->email_tocc)) {
+				$tooltip .= '<br><b>'.$langs->trans('MailCC').':</b> '.str_replace(array('<', '>'), array('&amp;lt', '&amp;gt'), $this->email_tocc);
+			}
+			/* Disabled because bcc must remain by defintion not visible
+			if (!empty($this->email_tobcc)) {
+				$tooltip .= '<br><b>'.$langs->trans('MailCCC').':</b> '.$this->email_tobcc;
+			} */
+		}
 		if (!empty($this->note_private)) {
-			$tooltip .= '<br><b>'.$langs->trans('Note').':</b> '.(dol_textishtml($this->note_private) ? str_replace(array("\r", "\n"), "", $this->note_private) : str_replace(array("\r", "\n"), '<br>', $this->note_private));
+			$tooltip .= '<br><br><b>'.$langs->trans('Description').':</b><br>';
+			$texttoshow = dolGetFirstLineOfText($this->note_private, 10);
+			$tooltip .= (dol_textishtml($texttoshow) ? str_replace(array("\r", "\n"), "", $texttoshow) : str_replace(array("\r", "\n"), '<br>', $texttoshow));
 		}
 		$linkclose = '';
 		//if (!empty($conf->global->AGENDA_USE_EVENT_TYPE) && $this->type_color)
@@ -1594,9 +1621,8 @@ class ActionComm extends CommonObject
 				$label = $langs->trans("ShowAction");
 				$linkclose .= ' alt="'.dol_escape_htmltag($tooltip, 1).'"';
 			}
-			$linkclose .= ' title="'.dol_escape_htmltag($tooltip, 1).'"';
+			$linkclose .= ' title="'.dol_escape_htmltag($tooltip, 1, 0, 0, '', 1).'"';
 			$linkclose .= ' class="'.$classname.' classfortooltip"';
-
 			/*
 			$hookmanager->initHooks(array('actiondao'));
 			$parameters=array('id'=>$this->id);
