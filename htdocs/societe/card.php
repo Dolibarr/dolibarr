@@ -1671,7 +1671,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<td>'.$langs->trans('ParentCompany').'</td>';
 			print '<td colspan="3" class="maxwidthonsmartphone">';
 			print img_picto('', 'company', 'class="paddingrightonly"');
-			print $form->select_company(GETPOST('parent_company_id'), 'parent_company_id');
+			print $form->select_company(GETPOST('parent_company_id'), 'parent_company_id', '', 'SelectThirdParty', 0, 0, null, 0, 'minwidth300 maxwidth500 widthcentpercentminusxx');
 			print '</td></tr>';
 		}
 
