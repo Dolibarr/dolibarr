@@ -1303,11 +1303,13 @@ class DolGraph
 			$this->stringtoshow .= $xaxis;
 
 			/* For Chartjs v2.9 */
+			/*
 			if (empty($showlegend)) {
 				$this->stringtoshow .= 'legend: { display: false }, '."\n";
 			} else {
 				$this->stringtoshow .= 'legend: { maxWidth: '.round($this->width / 2).', labels: { boxWidth: 15 }, position: \'' . ($showlegend == 2 ? 'right' : 'top') . '\' }, '."\n";
 			}
+			*/
 
 			/* For Chartjs v3.5 */
 			$this->stringtoshow .= 'plugins: { '."\n";
@@ -1318,7 +1320,9 @@ class DolGraph
 			}
 			$this->stringtoshow .= "}, \n";
 
-			$this->stringtoshow .= 'scales: { xAxes: [{ ';
+			/* For Chartjs v2.9 */
+			/*
+			 $this->stringtoshow .= 'scales: { xAxis: [{ ';
 			if ($this->hideXValues) {
 				$this->stringtoshow .= ' ticks: { display: false }, display: true,';
 			}
@@ -1328,11 +1332,12 @@ class DolGraph
 				$this->stringtoshow .= ', stacked: true';
 			}
 			$this->stringtoshow .= ' }]';
-			$this->stringtoshow .= ', yAxes: [{ ticks: { beginAtZero: true }';
+			$this->stringtoshow .= ', yAxis: [{ ticks: { beginAtZero: true }';
 			if ($type == 'bar' && count($arrayofgroupslegend) > 0) {
 				$this->stringtoshow .= ', stacked: true';
 			}
 			$this->stringtoshow .= ' }] }';
+			*/
 
 			// Add a callback to change label to show only positive value
 			if (is_array($this->tooltipsLabels) || is_array($this->tooltipsTitles)) {
