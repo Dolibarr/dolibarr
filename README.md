@@ -220,15 +220,7 @@ These are features that Dolibarr does **not** yet fully support:
 - Payroll module
 - No native embedded Webmail, but you can send email to contacts in Dolibarr with e.g. offers, invoices, etc.
 - Dolibarr can't do coffee (yet)
-- The REST API currently cannot:
-  - Add new ledger entry [#14675](https://github.com/Dolibarr/dolibarr/issues/14675)
-  - Get virtual products (aka lots) [#14457](https://github.com/Dolibarr/dolibarr/issues/14457)
-  - Add special taxcodes to a line on a supplier invoice (vat_src_code) [#14404](https://github.com/Dolibarr/dolibarr/issues/14404)
-  - Get or post shipments on customer orders [#18074](https://github.com/Dolibarr/dolibarr/issues/18074)
-  - Get or post shipments on supplier orders [#14334](https://github.com/Dolibarr/dolibarr/issues/14334)
-  - Add an image to a product [#14262](https://github.com/Dolibarr/dolibarr/issues/14262)
-  - Add multiprices to products [#12812](https://github.com/Dolibarr/dolibarr/issues/12812)
-
+- 
 
 ## DOCUMENTATION
 
