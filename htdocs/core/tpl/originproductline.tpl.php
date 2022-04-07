@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010-2012	Regis Houssin	<regis.houssin@inodbox.com>
  * Copyright (C) 2017		Charlie Benke	<charlie@patas-monkey.com>
+ * Copyright (C) 2022		Gauthier VERDOL	<gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +27,7 @@ if (empty($conf) || !is_object($conf)) {
 
 <!-- BEGIN PHP TEMPLATE originproductline.tpl.php -->
 <?php
-print '<tr class="oddeven'.(empty($this->tpl['strike']) ? '' : ' strikefordisabled').'">';
+print '<tr data-id="'.$this->tpl['id'].'" class="oddeven'.(empty($this->tpl['strike']) ? '' : ' strikefordisabled').'">';
 print '<td>'.$this->tpl['label'].'</td>';
 print '<td>'.$this->tpl['description'].'</td>';
 print '<td class="right">'.$this->tpl['vat_rate'].'</td>';
