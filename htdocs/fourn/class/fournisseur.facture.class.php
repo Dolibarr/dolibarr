@@ -181,6 +181,10 @@ class FactureFournisseur extends CommonInvoice
 	 */
 	public $date_echeance;
 
+	/**
+	 * @deprecated
+	 * @var double $amount
+	 */
 	public $amount = 0;
 	public $remise = 0;
 
@@ -1174,7 +1178,8 @@ class FactureFournisseur extends CommonInvoice
 			$this->paye = trim($this->paye);
 		}
 		if (isset($this->amount)) {
-			$this->amount = trim($this->amount);
+			if (empty($this->amount)) $this->amount = 0;
+			else $this->amount = doubleval($this->amount);
 		}
 		if (isset($this->remise)) {
 			$this->remise = trim($this->remise);
@@ -1221,7 +1226,8 @@ class FactureFournisseur extends CommonInvoice
 			$this->fk_facture_source = trim($this->fk_facture_source);
 		}
 		if (isset($this->fk_project)) {
-			$this->fk_project = trim($this->fk_project);
+			if (empty($this->fk_project)) $this->fk_project = null;
+			else $this->fk_project = intval($this->fk_project);
 		}
 		if (isset($this->cond_reglement_id)) {
 			$this->cond_reglement_id = trim($this->cond_reglement_id);
