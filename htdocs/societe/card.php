@@ -1180,13 +1180,14 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
                         	document.formsoc.private.value=1;
                         });
 
+						var canHaveCategoryIfNotCustomerProspectSupplier = ' . (empty($conf->global->THIRDPARTY_CAN_HAVE_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT_SUPPLIER) ? '0' : '1') . ';
 						init_customer_categ();
 			  			$("#customerprospect").change(function() {
 								init_customer_categ();
 						});
 						function init_customer_categ() {
 								console.log("is customer or prospect = "+jQuery("#customerprospect").val());
-								if (jQuery("#customerprospect").val() == 0 && (jQuery("#fournisseur").val() == 0 || ' . (empty($conf->global->THIRDPARTY_CAN_HAVE_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT_SUPPLIER) ? '1' : '0').'))
+								if (jQuery("#customerprospect").val() == 0 && (jQuery("#fournisseur").val() != 0 || !canHaveCategoryIfNotCustomerProspectSupplier))
 								{
 									jQuery(".visibleifcustomer").hide();
 								}
@@ -1205,10 +1206,16 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 								if (jQuery("#fournisseur").val() == 0)
 								{
 									jQuery(".visibleifsupplier").hide();
+									if (jQuery("#customerprospect").val() == 0 && canHaveCategoryIfNotCustomerProspectSupplier && jQuery(".visibleifcustomer").is(":hidden")) {
+					                    jQuery(".visibleifcustomer").show();
+					                }
 								}
 								else
 								{
 									jQuery(".visibleifsupplier").show();
+									if (jQuery("#customerprospect").val() == 0 && jQuery(".visibleifcustomer").is(":visible")) {
+					                    jQuery(".visibleifcustomer").hide();
+					                }
 								}
 						}
 
@@ -1914,13 +1921,14 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
     				}
     			});
 
+				var canHaveCategoryIfNotCustomerProspectSupplier = ' . (empty($conf->global->THIRDPARTY_CAN_HAVE_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT_SUPPLIER) ? '0' : '1') . ';
 				init_customer_categ();
 	  			$("#customerprospect").change(function() {
 					init_customer_categ();
 				});
        			function init_customer_categ() {
 					console.log("is customer or prospect = "+jQuery("#customerprospect").val());
-					if (jQuery("#customerprospect").val() == 0 && (jQuery("#fournisseur").val() == 0 || '.(empty($conf->global->THIRDPARTY_CAN_HAVE_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT_SUPPLIER) ? '1' : '0').'))
+					if (jQuery("#customerprospect").val() == 0 && (jQuery("#fournisseur").val() != 0 || !canHaveCategoryIfNotCustomerProspectSupplier))
 					{
 						jQuery(".visibleifcustomer").hide();
 					}
@@ -1939,10 +1947,16 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					if (jQuery("#fournisseur").val() == 0)
 					{
 						jQuery(".visibleifsupplier").hide();
+						if (jQuery("#customerprospect").val() == 0 && canHaveCategoryIfNotCustomerProspectSupplier && jQuery(".visibleifcustomer").is(":hidden")) {
+							jQuery(".visibleifcustomer").show();
+					    }
 					}
 					else
 					{
 						jQuery(".visibleifsupplier").show();
+						if (jQuery("#customerprospect").val() == 0 && jQuery(".visibleifcustomer").is(":visible")) {
+					    	jQuery(".visibleifcustomer").hide();
+					    }
 					}
 				};
 
