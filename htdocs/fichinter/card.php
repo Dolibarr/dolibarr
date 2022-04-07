@@ -1003,11 +1003,13 @@ if ($action == 'create') {
 			$title = $langs->trans('Services');
 			print load_fiche_titre($title);
 
+			print '<div class="div-table-responsive-no-min">';
 			print '<table class="noborder centpercent">';
 
 			$objectsrc->printOriginLinesList(empty($conf->global->FICHINTER_PRINT_PRODUCTS) ? 'services' : ''); // Show only service, except if option FICHINTER_PRINT_PRODUCTS is on
 
 			print '</table>';
+			print '</div>';
 		}
 
 		print '</form>';
