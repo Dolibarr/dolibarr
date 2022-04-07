@@ -40,7 +40,7 @@ $out .= '<input type="checkbox" id="resbusy" name="busy" value="1"'.(GETPOSTISSE
 $out .= '</div>';
 $out .= '<div class="divsearchfield paddingtop paddingbottom valignmiddle inline-block marginleftonly"><label for="resmandatory">'.$langs->trans('Mandatory').'</label> ';
 //$out .= $form->selectyesno('mandatory', (GETPOSTISSET('mandatory') ? GETPOST('mandatory') : 0), 1);
-$out .= '<input type="checkbox" id="resmandatory" name="mandatory" value="1"'.(GETPOSTISSET('fk_resource') ? (GETPOST('mandatory') ? ' checked' : '') : '').'>';
+$out .= '<input type="checkbox" id="resmandatory" name="mandatory" value="1"'.(GETPOSTISSET('fk_resource') ? (GETPOST('mandatory') ? ' checked' : '') : ' checked').'>';
 $out .= '</div>';
 
 $out .= '<div class="divsearchfield paddingtop paddingbottom valignmiddle inline-block right">';
