@@ -667,3 +667,7 @@ ALTER TABLE llx_bank_account ADD COLUMN pti_in_ctti integer DEFAULT 0 AFTER domi
 
 -- Keep the last msg sent to display warnings on ticket list
 ALTER TABLE llx_ticket ADD COLUMN date_last_msg_sent datetime AFTER date_read;
+
+-- Rename value to create ficheinter automatically ont tickets
+UPDATE llx_const SET name = 'WORKFLOW_TICKET_CREATE_INTERVENTION' WHERE name = 'TICKET_AUTO_CREATE_FICHINTER_CREATE';
+
