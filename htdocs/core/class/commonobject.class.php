@@ -5338,19 +5338,20 @@ abstract class CommonObject
 					return 1;
 				} else {
 					$outputlangs->charset_output = $sav_charset_output;
+					$this->error = $obj->error;
+					$this->errors = $obj->errors;
 					dol_syslog("Error generating document for ".__CLASS__.". Error: ".$obj->error, LOG_ERR);
-					setEventMessages($obj->error, $obj->errors, 'errors');
 					return -1;
 				}
 			} else {
 				if (!$filefound) {
 					$this->error = $langs->trans("Error").' Failed to load doc generator with modelpaths='.$modelspath.' - modele='.$modele;
+					$this->errors[] = $this->error;
 					dol_syslog($this->error, LOG_ERR);
-					setEventMessage($this->error, 'errors');
 				} else {
 					$this->error = $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists", $filefound);
+					$this->errors[] = $this->error;
 					dol_syslog($this->error, LOG_ERR);
-					setEventMessage($this->error, 'errors');
 				}
 				return -1;
 			}
