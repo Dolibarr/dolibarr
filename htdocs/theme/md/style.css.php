@@ -3681,6 +3681,17 @@ div.colorback
 	border-left: 1px solid #ccc;
 	<?php } ?>
 }
+table.liste, table.noborder:not(.paymenttable):not(.margintable):not(.tableforcontact), table.formdoc, div.noborder:not(.paymenttable):not(.margintable):not(.tableforcontact) {
+	<?php
+	if ($userborderontable) { ?>
+	border-left: 1px solid #BBB;
+	border-right: 1px solid #BBB;
+	<?php } ?>
+}
+table.liste, table.noborder.paymenttable, table.noborder.margintable, table.noborder.tableforcontact, table.formdoc, div.noborder.paymenttable, div.noborder.margintable, div.noborder.tableforcontact {
+	border-left: 1px solid #f0f0f0;
+	border-right: 1px solid #f0f0f0;
+}
 table.liste, table.noborder, table.formdoc, div.noborder {
 	width: calc(100% - 2px);	/* -2 to fix a bug. Without, a scroll appears due to overflow-x: auto; of div-table-responsive */
 
@@ -3695,12 +3706,6 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 	border-bottom-color:  #BBB;
 	border-bottom-style: solid;
 
-	<?php
-	if ($userborderontable) { ?>
-	border-right: 1px solid #ccc;
-	border-left: 1px solid #ccc;
-	<?php } ?>
-	
 	margin: 0px 0px 20px 0px;
 
 	-webkit-border-radius: 0.1em;

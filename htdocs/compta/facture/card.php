@@ -3522,7 +3522,7 @@ if ($action == 'create') {
 
 	if ($socid > 0) {
 		// Discounts for third party
-		print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="2">';
+		print '<tr><td>'.$langs->trans('DiscountStillRemaining').'</td><td colspan="2">';
 
 		$thirdparty = $soc;
 		$discount_type = 0;
@@ -4355,8 +4355,8 @@ if ($action == 'create') {
 
 	// Relative and absolute discounts
 	print '<!-- Discounts -->'."\n";
-	print '<tr><td>'.$langs->trans('Discounts');
-	print '</td><td>';
+	print '<tr><td>'.$langs->trans('DiscountStillRemaining').'</td>';
+	print '<td>';
 	$thirdparty = $soc;
 	$discount_type = 0;
 	$backtopage = urlencode($_SERVER["PHP_SELF"].'?facid='.$object->id);
@@ -5222,7 +5222,7 @@ if ($action == 'create') {
 	print '</div>';
 	print '</div>';
 
-	print '<div class="clearboth"></div><br>';
+	print '<div class="clearboth"></div><br><br>';
 
 	if (!empty($conf->global->MAIN_DISABLE_CONTACTS_TAB)) {
 		$blocname = 'contacts';
