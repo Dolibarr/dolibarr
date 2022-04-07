@@ -1291,8 +1291,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<span id="TypeName" class="fieldrequired">'.$form->editfieldkey('ThirdPartyName', 'name', '', $object, 0).'</span>';
 		}
 		print '</td><td'.(empty($conf->global->SOCIETE_USEPREFIX) ? ' colspan="3"' : '').'>';
-		print '<input type="text" class="minwidth300" maxlength="128" name="name" id="name" value="'.dol_escape_htmltag($object->name).'" autofocus="autofocus">';
-		print $form->widgetForTranslation("name", $object, $permissiontoadd, 'string', 'alpahnohtml', 'minwidth300');
+		//print '<input type="text" class="minwidth300" maxlength="128" name="name" id="name" value="'.dol_escape_htmltag($object->name).'" autofocus="autofocus">';
+		//print $form->widgetForTranslation("name", $object, $permissiontoadd, 'string', 'alpahnohtml', 'minwidth300');
+		print $form->select_company(0, 'name', '(s.client = 1 OR s.client = 3) AND status=1', ' ');
+		print "<script>	$(document).ready(function () { $('#name').select2({ tags: true});	});</script>";
 		print '</td>';
 		if (!empty($conf->global->SOCIETE_USEPREFIX)) {  // Old not used prefix field
 			print '<td>'.$langs->trans('Prefix').'</td><td><input type="text" size="5" maxlength="5" name="prefix_comm" value="'.dol_escape_htmltag($object->prefix_comm).'"></td>';
