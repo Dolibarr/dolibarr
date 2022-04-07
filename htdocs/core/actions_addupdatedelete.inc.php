@@ -140,6 +140,7 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 			header("Location: ".$urltogo);
 			exit;
 		} else {
+			$error++;
 			// Creation KO
 			if (!empty($object->errors)) {
 				setEventMessages(null, $object->errors, 'errors');
@@ -254,7 +255,14 @@ if ($action == 'update' && !empty($permissiontoadd)) {
 		$result = $object->update($user);
 		if ($result > 0) {
 			$action = 'view';
+			$urltogo = $backtopage ? str_replace('__ID__', $result, $backtopage) : $backurlforlist;
+			$urltogo = preg_replace('/--IDFORBACKTOPAGE--/', $object->id, $urltogo); // New method to autoselect project after a New on another form object creation
+			if ($urltogo) {
+				header("Location: " . $urltogo);
+				exit;
+			}
 		} else {
+			$error++;
 			// Creation KO
 			setEventMessages($object->error, $object->errors, 'errors');
 			$action = 'edit';
@@ -284,6 +292,7 @@ if ($action == "update_extras" && !empty($permissiontoadd)) {
 		setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
 		$action = 'view';
 	} else {
+		$error++;
 		setEventMessages($object->error, $object->errors, 'errors');
 		$action = 'edit_extras';
 	}
@@ -301,9 +310,11 @@ if ($action == 'confirm_delete' && !empty($permissiontodelete)) {
 	if ($result > 0) {
 		// Delete OK
 		setEventMessages("RecordDeleted", null, 'mesgs');
+
 		header("Location: ".$backurlforlist);
 		exit;
 	} else {
+		$error++;
 		if (!empty($object->errors)) {
 			setEventMessages(null, $object->errors, 'errors');
 		} else {
@@ -347,6 +358,7 @@ if ($action == 'confirm_deleteline' && $confirm == 'yes' && !empty($permissionto
 		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 		exit;
 	} else {
+		$error++;
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
 	$action = '';
@@ -383,6 +395,7 @@ if ($action == 'confirm_validate' && $confirm == 'yes' && $permissiontoadd) {
 			}
 		}
 	} else {
+		$error++;
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
 	$action = '';
@@ -414,6 +427,7 @@ if ($action == 'confirm_close' && $confirm == 'yes' && $permissiontoadd) {
 			}
 		}
 	} else {
+		$error++;
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
 	$action = '';
@@ -425,6 +439,7 @@ if ($action == 'confirm_setdraft' && $confirm == 'yes' && $permissiontoadd) {
 	if ($result >= 0) {
 		// Nothing else done
 	} else {
+		$error++;
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
 	$action = '';
@@ -456,6 +471,7 @@ if ($action == 'confirm_reopen' && $confirm == 'yes' && $permissiontoadd) {
 			}
 		}
 	} else {
+		$error++;
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
 	$action = '';
@@ -481,6 +497,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && !empty($permissiontoadd))
 			header("Location: ".$_SERVER['PHP_SELF'].'?id='.$newid); // Open record of new object
 			exit;
 		} else {
+			$error++;
 			setEventMessages($objectutil->error, $objectutil->errors, 'errors');
 			$action = '';
 		}

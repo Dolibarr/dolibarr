@@ -174,7 +174,7 @@ class box_activity extends ModeleBoxes
 					$totalnb += $data[$j]->nb;
 
 					$this->info_box_contents[$line][3] = array(
-						'td' => 'class="nowraponall right"',
+						'td' => 'class="nowraponall right amount"',
 						'text' => price($data[$j]->Mnttot, 1, $langs, 0, 0, -1, $conf->currency),
 					);
 					$this->info_box_contents[$line][4] = array(
@@ -262,7 +262,7 @@ class box_activity extends ModeleBoxes
 					$totalnb += $data[$j]->nb;
 
 					$this->info_box_contents[$line][3] = array(
-						'td' => 'class="nowraponall right"',
+						'td' => 'class="nowraponall right amount"',
 						'text' => price($data[$j]->Mnttot, 1, $langs, 0, 0, -1, $conf->currency),
 					);
 					$this->info_box_contents[$line][4] = array(
@@ -350,7 +350,7 @@ class box_activity extends ModeleBoxes
 					);
 
 					$this->info_box_contents[$line][3] = array(
-						'td' => 'class="nowraponall right"',
+						'td' => 'class="nowraponall right amount"',
 						'text' => price($data[$j]->Mnttot, 1, $langs, 0, 0, -1, $conf->currency)
 					);
 
@@ -433,7 +433,7 @@ class box_activity extends ModeleBoxes
 					);
 					$totalnb += $data[$j]->nb;
 					$this->info_box_contents[$line][3] = array(
-						'td' => 'class="nowraponall right"',
+						'td' => 'class="nowraponall right amount"',
 						'text' => price($data[$j]->Mnttot, 1, $langs, 0, 0, -1, $conf->currency),
 					);
 					$this->info_box_contents[$line][4] = array(

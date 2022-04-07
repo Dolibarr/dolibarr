@@ -123,7 +123,7 @@ class mailing_advthirdparties extends MailingTargets
 			if (count($socid) > 0 || count($contactid) > 0) {
 				$sql = "SELECT socp.rowid as id, socp.email as email, socp.lastname as lastname, socp.firstname as firstname";
 				$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as socp";
-				$sql .= " WHERE socp.entity IN (".getEntity('socpeople').")";
+				$sql .= " WHERE socp.entity IN (".getEntity('contact').")";
 				if (count($contactid) > 0) {
 					$sql .= " AND socp.rowid IN (".$this->db->sanitize(implode(',', $contactid)).")";
 				}

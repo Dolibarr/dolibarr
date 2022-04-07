@@ -127,7 +127,7 @@ if (empty($reshook)) {
 		$reg = array();
 		$vatratecode = '';
 		if (preg_match('/\((.*)\)/', $tva_tx_txt, $reg)) {
-			$vat_src_code = $reg[1];
+			$vatratecode = $reg[1];
 			$tva_tx = preg_replace('/\s*\(.*\)/', '', $tva_tx_txt); // Remove code into vatrate.
 		}
 
@@ -143,15 +143,35 @@ if (empty($reshook)) {
 			$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
 			$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$db->escape($mysoc->country_code)."'";
 			$sql .= " AND t.taux = ".((float) $tva_tx)." AND t.active = 1";
-			$sql .= " AND t.code ='".$db->escape($vatratecode)."'";
+			$sql .= " AND t.code = '".$db->escape($vatratecode)."'";
 			$resql = $db->query($sql);
 			if ($resql) {
 				$obj = $db->fetch_object($resql);
-				$npr = $obj->recuperableonly;
-				$localtax1 = $obj->localtax1;
-				$localtax2 = $obj->localtax2;
-				$localtax1_type = $obj->localtax1_type;
-				$localtax2_type = $obj->localtax2_type;
+				if ($obj) {
+					$npr = $obj->recuperableonly;
+					$localtax1 = $obj->localtax1;
+					$localtax2 = $obj->localtax2;
+					$localtax1_type = $obj->localtax1_type;
+					$localtax2_type = $obj->localtax2_type;
+				}
+			}
+		} else {
+			// Get record with empty code
+			$sql = "SELECT t.rowid, t.code, t.recuperableonly, t.localtax1, t.localtax2, t.localtax1_type, t.localtax2_type";
+			$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
+			$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$db->escape($mysoc->country_code)."'";
+			$sql .= " AND t.taux = ".((float) $tva_tx)." AND t.active = 1";
+			$sql .= " AND t.code = ''";
+			$resql = $db->query($sql);
+			if ($resql) {
+				$obj = $db->fetch_object($resql);
+				if ($obj) {
+					$npr = $obj->recuperableonly;
+					$localtax1 = $obj->localtax1;
+					$localtax2 = $obj->localtax2;
+					$localtax1_type = $obj->localtax1_type;
+					$localtax2_type = $obj->localtax2_type;
+				}
 			}
 		}
 
@@ -171,10 +191,17 @@ if (empty($reshook)) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 
-		if ($error) {
+		if (!$error) {
+			// Force the update of the price of the product to 0 if error
+
 			//$localtaxarray=array('0'=>$localtax1_type,'1'=>$localtax1,'2'=>$localtax2_type,'3'=>$localtax2);
 			$localtaxarray = array(); // We do not store localtaxes into product, we will use instead the "vat code" to retrieve them.
-			$object->updatePrice(0, $object->price_base_type, $user, $tva_tx, '', 0, $npr, 0, 0, $localtaxarray, $vatratecode);
+			$ret = $object->updatePrice(0, $object->price_base_type, $user, $tva_tx, '', 0, $npr, 0, 0, $localtaxarray, $vatratecode);
+
+			if ($ret < 0) {
+				$error++;
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
 		}
 
 		if (!$error) {
@@ -256,11 +283,37 @@ if (empty($reshook)) {
 					$resql = $db->query($sql);
 					if ($resql) {
 						$obj = $db->fetch_object($resql);
-						$npr = $obj->recuperableonly;
-						$localtax1 = $obj->localtax1;
-						$localtax2 = $obj->localtax2;
-						$localtax1_type = $obj->localtax1_type;
-						$localtax2_type = $obj->localtax2_type;
+						if ($obj) {
+							$npr = $obj->recuperableonly;
+							$localtax1 = $obj->localtax1;
+							$localtax2 = $obj->localtax2;
+							$localtax1_type = $obj->localtax1_type;
+							$localtax2_type = $obj->localtax2_type;
+						}
+
+						// If spain, we don't use the localtax found into tax record in database with same code, but using the get_localtax rule.
+						if (in_array($mysoc->country_code, array('ES'))) {
+							$localtax1 = get_localtax($tva_tx, 1);
+							$localtax2 = get_localtax($tva_tx, 2);
+						}
+					}
+				} else {
+					// Get record with empty code
+					$sql = "SELECT t.rowid, t.code, t.recuperableonly, t.localtax1, t.localtax2, t.localtax1_type, t.localtax2_type";
+					$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
+					$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$db->escape($mysoc->country_code)."'";
+					$sql .= " AND t.taux = ".((float) $tva_tx)." AND t.active = 1";
+					$sql .= " AND t.code = ''";
+					$resql = $db->query($sql);
+					if ($resql) {
+						$obj = $db->fetch_object($resql);
+						if ($obj) {
+							$npr = $obj->recuperableonly;
+							$localtax1 = $obj->localtax1;
+							$localtax2 = $obj->localtax2;
+							$localtax1_type = $obj->localtax1_type;
+							$localtax2_type = $obj->localtax2_type;
+						}
 					}
 				}
 
@@ -309,19 +362,40 @@ if (empty($reshook)) {
 				$resql = $db->query($sql);
 				if ($resql) {
 					$obj = $db->fetch_object($resql);
-					$npr = $obj->recuperableonly;
-					$localtax1 = $obj->localtax1;
-					$localtax2 = $obj->localtax2;
-					$localtax1_type = $obj->localtax1_type;
-					$localtax2_type = $obj->localtax2_type;
+					if ($obj) {
+						$npr = $obj->recuperableonly;
+						$localtax1 = $obj->localtax1;
+						$localtax2 = $obj->localtax2;
+						$localtax1_type = $obj->localtax1_type;
+						$localtax2_type = $obj->localtax2_type;
+					}
 
-					// If spain, we don't use the localtax found into tax record in database with same code, but using the get_localtax rule
+					// If spain, we don't use the localtax found into tax record in database with same code, but using the get_localtax rule.
 					if (in_array($mysoc->country_code, array('ES'))) {
 						$localtax1 = get_localtax($tva_tx, 1);
 						$localtax2 = get_localtax($tva_tx, 2);
 					}
 				}
+			} else {
+				// Get record with empty code
+				$sql = "SELECT t.rowid, t.code, t.recuperableonly, t.localtax1, t.localtax2, t.localtax1_type, t.localtax2_type";
+				$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
+				$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$db->escape($mysoc->country_code)."'";
+				$sql .= " AND t.taux = ".((float) $tva_tx)." AND t.active = 1";
+				$sql .= " AND t.code = ''";
+				$resql = $db->query($sql);
+				if ($resql) {
+					$obj = $db->fetch_object($resql);
+					if ($obj) {
+						$npr = $obj->recuperableonly;
+						$localtax1 = $obj->localtax1;
+						$localtax2 = $obj->localtax2;
+						$localtax1_type = $obj->localtax1_type;
+						$localtax2_type = $obj->localtax2_type;
+					}
+				}
 			}
+
 			$pricestoupdate[0] = array(
 				'price' => $newprice,
 				'price_min' => $newprice_min,
@@ -394,13 +468,21 @@ if (empty($reshook)) {
 	if ($action == 'activate_price_by_qty') {
 		// Activating product price by quantity add a new price line with price_by_qty set to 1
 		$level = GETPOST('level', 'int');
-		$object->updatePrice(0, $object->price_base_type, $user, $object->tva_tx, 0, $level, $object->tva_npr, 1);
+		$ret = $object->updatePrice(0, $object->price_base_type, $user, $object->tva_tx, 0, $level, $object->tva_npr, 1);
+
+		if ($ret < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	}
 	// Unset Price by quantity
 	if ($action == 'disable_price_by_qty') {
 		// Disabling product price by quantity add a new price line with price_by_qty set to 0
 		$level = GETPOST('level', 'int');
-		$object->updatePrice(0, $object->price_base_type, $user, $object->tva_tx, 0, $level, $object->tva_npr, 0);
+		$ret = $object->updatePrice(0, $object->price_base_type, $user, $object->tva_tx, 0, $level, $object->tva_npr, 0);
+
+		if ($ret < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	}
 
 	if ($action == 'edit_price_by_qty') { // Edition d'un prix par quantité
@@ -532,11 +614,37 @@ if (empty($reshook)) {
 			$resql = $db->query($sql);
 			if ($resql) {
 				$obj = $db->fetch_object($resql);
-				$npr = $obj->recuperableonly;
-				$localtax1 = $obj->localtax1;
-				$localtax2 = $obj->localtax2;
-				$localtax1_type = $obj->localtax1_type;
-				$localtax2_type = $obj->localtax2_type;
+				if ($obj) {
+					$npr = $obj->recuperableonly;
+					$localtax1 = $obj->localtax1;
+					$localtax2 = $obj->localtax2;
+					$localtax1_type = $obj->localtax1_type;
+					$localtax2_type = $obj->localtax2_type;
+				}
+
+				// If spain, we don't use the localtax found into tax record in database with same code, but using the get_localtax rule.
+				if (in_array($mysoc->country_code, array('ES'))) {
+					$localtax1 = get_localtax($tva_tx, 1);
+					$localtax2 = get_localtax($tva_tx, 2);
+				}
+			}
+		} else {
+			// Get record with empty code
+			$sql = "SELECT t.rowid, t.code, t.recuperableonly, t.localtax1, t.localtax2, t.localtax1_type, t.localtax2_type";
+			$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
+			$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$db->escape($mysoc->country_code)."'";
+			$sql .= " AND t.taux = ".((float) $tva_tx)." AND t.active = 1";
+			$sql .= " AND t.code = ''";
+			$resql = $db->query($sql);
+			if ($resql) {
+				$obj = $db->fetch_object($resql);
+				if ($obj) {
+					$npr = $obj->recuperableonly;
+					$localtax1 = $obj->localtax1;
+					$localtax2 = $obj->localtax2;
+					$localtax1_type = $obj->localtax1_type;
+					$localtax2_type = $obj->localtax2_type;
+				}
 			}
 		}
 
@@ -625,11 +733,37 @@ if (empty($reshook)) {
 			$resql = $db->query($sql);
 			if ($resql) {
 				$obj = $db->fetch_object($resql);
-				$npr = $obj->recuperableonly;
-				$localtax1 = $obj->localtax1;
-				$localtax2 = $obj->localtax2;
-				$localtax1_type = $obj->localtax1_type;
-				$localtax2_type = $obj->localtax2_type;
+				if ($obj) {
+					$npr = $obj->recuperableonly;
+					$localtax1 = $obj->localtax1;
+					$localtax2 = $obj->localtax2;
+					$localtax1_type = $obj->localtax1_type;
+					$localtax2_type = $obj->localtax2_type;
+				}
+
+				// If spain, we don't use the localtax found into tax record in database with same code, but using the get_localtax rule.
+				if (in_array($mysoc->country_code, array('ES'))) {
+					$localtax1 = get_localtax($tva_tx, 1);
+					$localtax2 = get_localtax($tva_tx, 2);
+				}
+			}
+		} else {
+			// Get record with empty code
+			$sql = "SELECT t.rowid, t.code, t.recuperableonly, t.localtax1, t.localtax2, t.localtax1_type, t.localtax2_type";
+			$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
+			$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$db->escape($mysoc->country_code)."'";
+			$sql .= " AND t.taux = ".((float) $tva_tx)." AND t.active = 1";
+			$sql .= " AND t.code = ''";
+			$resql = $db->query($sql);
+			if ($resql) {
+				$obj = $db->fetch_object($resql);
+				if ($obj) {
+					$npr = $obj->recuperableonly;
+					$localtax1 = $obj->localtax1;
+					$localtax2 = $obj->localtax2;
+					$localtax1_type = $obj->localtax1_type;
+					$localtax2_type = $obj->localtax2_type;
+				}
 			}
 		}
 
@@ -733,9 +867,9 @@ if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_
 		print '</td>';
 		print '<td colspan="2">';
 		if ($object->multiprices_base_type[$soc->price_level] == 'TTC') {
-			print price($object->multiprices_ttc[$soc->price_level]);
+			print '<span class="amount">'.price($object->multiprices_ttc[$soc->price_level]).'</span>';
 		} else {
-			print price($object->multiprices[$soc->price_level]);
+			print '<span class="amount">'.price($object->multiprices[$soc->price_level]).'</span>';
 		}
 		if ($object->multiprices_base_type[$soc->price_level]) {
 			print ' '.$langs->trans($object->multiprices_base_type[$soc->price_level]);
@@ -827,22 +961,23 @@ if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_
 			}
 
 			// TVA
+			print '<!-- Default VAT Rate -->';
 			print '<tr><td class="titlefieldcreate">'.$langs->trans("DefaultTaxRate").'</td><td>';
 
 			$positiverates = '';
 			if (price2num($object->tva_tx)) {
-				$positiverates .= ($positiverates ? '/' : '').price2num($object->tva_tx);
+				$positiverates .= ($positiverates ? '<span class="opacitymedium">/</span>' : '').price2num($object->tva_tx);
 			}
 			if (price2num($object->localtax1_type)) {
-				$positiverates .= ($positiverates ? '/' : '').price2num($object->localtax1_tx);
+				$positiverates .= ($positiverates ? '<span class="opacitymedium">/</span>' : '').price2num($object->localtax1_tx);
 			}
 			if (price2num($object->localtax2_type)) {
-				$positiverates .= ($positiverates ? '/' : '').price2num($object->localtax2_tx);
+				$positiverates .= ($positiverates ? '<span class="opacitymedium">/</span>' : '').price2num($object->localtax2_tx);
 			}
 			if (empty($positiverates)) {
 				$positiverates = '0';
 			}
-			echo vatrate($positiverates.($object->default_vat_code ? ' ('.$object->default_vat_code.')' : ''), '%', $object->tva_npr);
+			print vatrate($positiverates.($object->default_vat_code ? ' ('.$object->default_vat_code.')' : ''), true, $object->tva_npr, 1);
 			/*
 			if ($object->default_vat_code)
 			{
@@ -890,15 +1025,15 @@ if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_
 			print '</td>';
 
 			if ($object->multiprices_base_type [$i] == 'TTC') {
-				print '<td style="text-align: right">'.price($object->multiprices_ttc[$i]);
+				print '<td class="right"><span class="amount">'.price($object->multiprices_ttc[$i]);
 			} else {
-				print '<td style="text-align: right">'.price($object->multiprices[$i]);
+				print '<td class="right"><span class="amount">'.price($object->multiprices[$i]);
 			}
 
 			if ($object->multiprices_base_type[$i]) {
-				print ' '.$langs->trans($object->multiprices_base_type [$i]).'</td>';
+				print ' '.$langs->trans($object->multiprices_base_type [$i]).'</span></td>';
 			} else {
-				print ' '.$langs->trans($object->price_base_type).'</td>';
+				print ' '.$langs->trans($object->price_base_type).'</span></td>';
 			}
 
 			// Prix min
@@ -1156,22 +1291,30 @@ if (!$action || $action == 'delete' || $action == 'showlog_customer_price' || $a
 			if (empty($conf->global->PRODUIT_MULTIPRICES) && empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) {
 				if ($user->rights->produit->creer || $user->rights->service->creer) {
 					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?action=edit_price&token='.newToken().'&id=' . $object->id . '">' . $langs->trans("UpdateDefaultPrice") . '</a></div>';
+				} else {
+					print '<div class="inline-block divButAction"><span class="butActionRefused" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">' . $langs->trans("UpdateDefaultPrice") . '</span></div>';
 				}
 			}
 
 			if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 				if ($user->rights->produit->creer || $user->rights->service->creer) {
 					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?action=add_customer_price&token='.newToken().'token='.newToken().'&id=' . $object->id . '">' . $langs->trans("AddCustomerPrice") . '</a></div>';
+				} else {
+					print '<div class="inline-block divButAction"><span class="butActionRefused" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">' . $langs->trans("AddCustomerPrice") . '</span></div>';
 				}
 			}
 
 			if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) {
 				if ($user->rights->produit->creer || $user->rights->service->creer) {
 					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?action=edit_vat&token='.newToken().'&id=' . $object->id . '">' . $langs->trans("UpdateVAT") . '</a></div>';
+				} else {
+					print '<div class="inline-block divButAction"><span class="butActionRefused" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">' . $langs->trans("UpdateVAT") . '</span></div>';
 				}
 
 				if ($user->rights->produit->creer || $user->rights->service->creer) {
 					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?action=edit_price&token='.newToken().'&id=' . $object->id . '">' . $langs->trans("UpdateLevelPrices") . '</a></div>';
+				} else {
+					print '<div class="inline-block divButAction"><span class="butActionRefused" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">' . $langs->trans("UpdateLevelPrices") . '</span></div>';
 				}
 			}
 		}
@@ -1473,13 +1616,17 @@ if ((empty($conf->global->PRODUIT_CUSTOMER_PRICES) || $action == 'showlog_defaul
 			// On l'ajoute donc pour remettre a niveau (pb vieilles versions)
 			// We emulate the change of the price from interface with the same value than the one into table llx_product
 			if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
-				$object->updatePrice(($object->multiprices_base_type[1] == 'TTC' ? $object->multiprices_ttc[1] : $object->multiprices[1]), $object->multiprices_base_type[1], $user, (empty($object->multiprices_tva_tx[1]) ? 0 : $object->multiprices_tva_tx[1]), ($object->multiprices_base_type[1] == 'TTC' ? $object->multiprices_min_ttc[1] : $object->multiprices_min[1]), 1);
+				$ret = $object->updatePrice(($object->multiprices_base_type[1] == 'TTC' ? $object->multiprices_ttc[1] : $object->multiprices[1]), $object->multiprices_base_type[1], $user, (empty($object->multiprices_tva_tx[1]) ? 0 : $object->multiprices_tva_tx[1]), ($object->multiprices_base_type[1] == 'TTC' ? $object->multiprices_min_ttc[1] : $object->multiprices_min[1]), 1);
 			} else {
-				$object->updatePrice(($object->price_base_type == 'TTC' ? $object->price_ttc : $object->price), $object->price_base_type, $user, $object->tva_tx, ($object->price_base_type == 'TTC' ? $object->price_min_ttc : $object->price_min));
+				$ret = $object->updatePrice(($object->price_base_type == 'TTC' ? $object->price_ttc : $object->price), $object->price_base_type, $user, $object->tva_tx, ($object->price_base_type == 'TTC' ? $object->price_min_ttc : $object->price_min));
 			}
 
-			$result = $db->query($sql);
-			$num = $db->num_rows($result);
+			if ($ret < 0) {
+				dol_print_error($db, $object->error, $object->errors);
+			} else {
+				$result = $db->query($sql);
+				$num = $db->num_rows($result);
+			}
 		}
 
 		if ($num > 0) {
@@ -1669,8 +1816,8 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 	$prodcustprice = new Productcustomerprice($db);
 
 	$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-	$sortfield = GETPOST("sortfield", 'alpha');
-	$sortorder = GETPOST("sortorder", 'alpha');
+	$sortfield = GETPOST('sortfield', 'aZ09comma');
+	$sortorder = GETPOST('sortorder', 'aZ09comma');
 	$page = (GETPOST("page", 'int') ?GETPOST("page", 'int') : 0);
 	if (empty($page) || $page == -1) {
 		$page = 0;

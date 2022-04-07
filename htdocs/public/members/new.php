@@ -30,6 +30,7 @@
  *  Note that you can add following constant to change behaviour of page
  *  MEMBER_NEWFORM_AMOUNT               Default amount for auto-subscribe form
  *  MEMBER_NEWFORM_EDITAMOUNT           0 or 1 = Amount can be edited
+ *  MEMBER_MIN_AMOUNT                   Minimum amount
  *  MEMBER_NEWFORM_PAYONLINE            Suggest payment with paypal, paybox or stripe
  *  MEMBER_NEWFORM_DOLIBARRTURNOVER     Show field turnover (specific for dolibarr foundation)
  *  MEMBER_URL_REDIRECT_SUBSCRIPTION    Url to redirect once subscribe submitted
@@ -174,6 +175,7 @@ function llxFooterVierge()
 /*
  * Actions
  */
+
 $parameters = array();
 // Note that $action and $object may have been modified by some hooks
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);
@@ -385,75 +387,25 @@ if (empty($reshook) && $action == 'add') {
 			}
 
 			if (!empty($conf->global->MEMBER_NEWFORM_PAYONLINE) && $conf->global->MEMBER_NEWFORM_PAYONLINE != '-1') {
-				if ($conf->global->MEMBER_NEWFORM_PAYONLINE == 'all') {
-					$urlback = DOL_MAIN_URL_ROOT.'/public/payment/newpayment.php?from=membernewform&source=membersubscription&ref='.urlencode($adh->ref);
-					if (price2num(GETPOST('amount', 'alpha'))) {
-						$urlback .= '&amount='.price2num(GETPOST('amount', 'alpha'));
-					}
-					if (GETPOST('email')) {
-						$urlback .= '&email='.urlencode(GETPOST('email'));
-					}
-					if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
-						if (!empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
-							$urlback .= '&securekey='.urlencode(dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.'membersubscription'.$adh->ref, 2));
-						} else {
-							$urlback .= '&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
-						}
-					}
-				} elseif ($conf->global->MEMBER_NEWFORM_PAYONLINE == 'paybox') {
-					$urlback = DOL_MAIN_URL_ROOT.'/public/paybox/newpayment.php?from=membernewform&source=membersubscription&ref='.urlencode($adh->ref);
-					if (price2num(GETPOST('amount', 'alpha'))) {
-						$urlback .= '&amount='.price2num(GETPOST('amount', 'alpha'));
-					}
-					if (GETPOST('email')) {
-						$urlback .= '&email='.urlencode(GETPOST('email'));
-					}
-					if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
-						if (!empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
-							$urlback .= '&securekey='.urlencode(dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.'membersubscription'.$adh->ref, 2));
-						} else {
-							$urlback .= '&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
-						}
-					}
-				} elseif ($conf->global->MEMBER_NEWFORM_PAYONLINE == 'paypal') {
-					$urlback = DOL_MAIN_URL_ROOT.'/public/paypal/newpayment.php?from=membernewform&source=membersubscription&ref='.urlencode($adh->ref);
-					if (price2num(GETPOST('amount', 'alpha'))) {
-						$urlback .= '&amount='.price2num(GETPOST('amount', 'alpha'));
-					}
-					if (GETPOST('email')) {
-						$urlback .= '&email='.urlencode(GETPOST('email'));
-					}
-					if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
-						if (!empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
-							$urlback .= '&securekey='.urlencode(dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.'membersubscription'.$adh->ref, 2));
-						} else {
-							$urlback .= '&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
-						}
-					}
-				} elseif ($conf->global->MEMBER_NEWFORM_PAYONLINE == 'stripe') {
-					$urlback = DOL_MAIN_URL_ROOT.'/public/stripe/newpayment.php?from=membernewform&source=membersubscription&ref='.$adh->ref;
-					if (price2num(GETPOST('amount', 'alpha'))) {
-						$urlback .= '&amount='.price2num(GETPOST('amount', 'alpha'));
-					}
-					if (GETPOST('email')) {
-						$urlback .= '&email='.urlencode(GETPOST('email'));
-					}
-					if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
-						if (!empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
-							$urlback .= '&securekey='.urlencode(dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.'membersubscription'.$adh->ref, 2));
-						} else {
-							$urlback .= '&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
-						}
-					}
-				} else {
-					dol_print_error('', "Autosubscribe form is setup to ask an online payment for a not managed online payment");
-					exit;
+				if (empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT)) {			// If edition of amount not allowed
+					// TODO Check amount is same than the amount required for the type of member or if not defined as the defeault amount into $conf->global->MEMBER_NEWFORM_AMOUNT
+					// It is not so important because a test is done on return of payment validation.
+				}
+
+				$urlback = getOnlinePaymentUrl(0, 'member', $adh->ref, price2num(GETPOST('amount', 'alpha'), 'MT'), '', 0);
+
+				if (GETPOST('email')) {
+					$urlback .= '&email='.urlencode(GETPOST('email'));
+				}
+				if ($conf->global->MEMBER_NEWFORM_PAYONLINE != '-1' && $conf->global->MEMBER_NEWFORM_PAYONLINE != 'all') {
+					$urlback .= '&paymentmethod='.urlencode($conf->global->MEMBER_NEWFORM_PAYONLINE);
+				}
+			} else {
+				if (!empty($entity)) {
+					$urlback .= '&entity='.((int) $entity);
 				}
 			}
 
-			if (!empty($entity)) {
-				$urlback .= '&entity='.$entity;
-			}
 			dol_syslog("member ".$adh->ref." was created, we redirect to ".$urlback);
 		} else {
 			$error++;
@@ -721,21 +673,24 @@ if (!empty($conf->global->MEMBER_NEWFORM_DOLIBARRTURNOVER)) {
 	print '</td></tr>'."\n";
 }
 
-if (!empty($conf->global->MEMBER_NEWFORM_AMOUNT) || !empty($conf->global->MEMBER_NEWFORM_PAYONLINE)) {
-	// $conf->global->MEMBER_NEWFORM_SHOWAMOUNT is an amount
+if (!empty($conf->global->MEMBER_NEWFORM_PAYONLINE)) {
+	$amount = 0;
+	$typeid = $conf->global->MEMBER_NEWFORM_FORCETYPE ? $conf->global->MEMBER_NEWFORM_FORCETYPE : GETPOST('typeid', 'int');
 
-	// Set amount for the subscription
-	$amountbytype = $adht->amountByType(1);
-	$amount = !empty($amountbytype[GETPOST('typeid', 'int')]) ? $amountbytype[GETPOST('typeid', 'int')] : (isset($amount) ? $amount : 0);
-
-	if (!empty($conf->global->MEMBER_NEWFORM_AMOUNT)) {
+	// Set amount for the subscription:
+	// - First check the amount of the member type.
+	$amountbytype = $adht->amountByType(1);		// Load the array of amount per type
+	$amount = empty($amountbytype[$typeid]) ? (isset($amount) ? $amount : 0) : $amountbytype[$typeid];
+	// - If not found, take the default amount
+	if (empty($amount) && !empty($conf->global->MEMBER_NEWFORM_AMOUNT)) {
 		$amount = $conf->global->MEMBER_NEWFORM_AMOUNT;
 	}
-
-	if (!empty($conf->global->MEMBER_NEWFORM_PAYONLINE)) {
-		$amount = $amount ? $amount : (GETPOST('amount') ? price2num(GETPOST('amount'), 'MT', 2) : $conf->global->MEMBER_NEWFORM_AMOUNT);
+	// - If not set, we accept ot have amount defined as parameter (for backward compatibility).
+	if (empty($amount)) {
+		$amount = (GETPOST('amount') ? price2num(GETPOST('amount', 'alpha'), 'MT', 2) : '');
 	}
 
+	// Clean the amount
 	$amount = price2num($amount);
 
 	// $conf->global->MEMBER_NEWFORM_PAYONLINE is 'paypal', 'paybox' or 'stripe'
@@ -749,6 +704,7 @@ if (!empty($conf->global->MEMBER_NEWFORM_AMOUNT) || !empty($conf->global->MEMBER
 	print ' '.$langs->trans("Currency".$conf->currency);
 	print '</td></tr>';
 }
+
 print "</table>\n";
 
 print dol_get_fiche_end();

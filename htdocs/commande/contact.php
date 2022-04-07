@@ -91,13 +91,6 @@ if ($action == 'addcontact' && $user->rights->commande->creer) {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
-/*
-elseif ($action == 'setaddress' && $user->rights->commande->creer)
-{
-	$object->fetch($id);
-	$result=$object->setDeliveryAddress($_POST['fk_address']);
-	if ($result < 0) dol_print_error($db,$object->error);
-}*/
 
 
 /*

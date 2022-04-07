@@ -1,11 +1,11 @@
 <?php
 /* Copyright (C) 2013-2014	Olivier Geffroy			<jeff@jeffinfo.com>
- * Copyright (C) 2013-2021	Alexandre Spangaro		<aspangaro@open-dsi.fr>
+ * Copyright (C) 2013-2022	Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2014-2015	Ari Elbaz (elarifr)		<github@accedinfo.com>
  * Copyright (C) 2013-2021	Florian Henry			<florian.henry@open-concept.pro>
- * Copyright (C) 2014		Juanjo Menent			<jmenent@2byte.es>s
- * Copyright (C) 2016		Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2021      	Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2014       Juanjo Menent           <jmenent@2byte.es>s
+ * Copyright (C) 2016       Laurent Destailleur     <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,6 +57,7 @@ $mesCasesCochees = GETPOST('toselect', 'array');
 $search_societe = GETPOST('search_societe', 'alpha');
 $search_lineid = GETPOST('search_lineid', 'int');
 $search_ref = GETPOST('search_ref', 'alpha');
+$search_ref_supplier = GETPOST('search_ref_supplier', 'alpha');
 $search_invoice = GETPOST('search_invoice', 'alpha');
 $search_label = GETPOST('search_label', 'alpha');
 $search_desc = GETPOST('search_desc', 'alpha');
@@ -139,6 +140,7 @@ if (empty($reshook)) {
 		$search_societe = '';
 		$search_lineid = '';
 		$search_ref = '';
+		$search_ref_supplier = '';
 		$search_invoice = '';
 		$search_label = '';
 		$search_desc = '';
@@ -292,6 +294,9 @@ if (strlen(trim($search_invoice))) {
 if (strlen(trim($search_ref))) {
 	$sql .= natural_search("p.ref", $search_ref);
 }
+if (strlen(trim($search_ref_supplier))) {
+	$sql .= natural_search("f.ref_supplier", $search_ref_supplier);
+}
 if (strlen(trim($search_label))) {
 	$sql .= natural_search(array("p.label", "f.libelle"), $search_label);
 }
@@ -415,6 +420,9 @@ if ($result) {
 	if ($search_ref) {
 		$param .= '&search_ref='.urlencode($search_ref);
 	}
+	if ($search_ref_supplier) {
+		$param .= '&search_ref_supplier='.urlencode($search_ref_supplier);
+	}
 	if ($search_label) {
 		$param .= '&search_label='.urlencode($search_label);
 	}
@@ -482,7 +490,8 @@ if ($result) {
 	print '<tr class="liste_titre_filter">';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth25" name="search_lineid" value="'.dol_escape_htmltag($search_lineid).'"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_invoice" value="'.dol_escape_htmltag($search_invoice).'"></td>';
-	//print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_label" value="'.dol_escape_htmltag($search_label).'"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_ref_supplier" value="'.dol_escape_htmltag($search_ref_supplier).'"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_label" value="'.dol_escape_htmltag($search_label).'"></td>';
 	print '<td class="liste_titre center">';
 	print '<div class="nowrap">';
 	print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
@@ -512,7 +521,8 @@ if ($result) {
 	print '<tr class="liste_titre">';
 	print_liste_field_titre("LineId", $_SERVER["PHP_SELF"], "l.rowid", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("Invoice", $_SERVER["PHP_SELF"], "f.ref", "", $param, '', $sortfield, $sortorder);
-	//print_liste_field_titre("InvoiceLabel", $_SERVER["PHP_SELF"], "f.libelle", "", $param, '', $sortfield, $sortorder);
+	print_liste_field_titre("RefSupplier", $_SERVER["PHP_SELF"], "f.ref_supplier", "", $param, '', $sortfield, $sortorder);
+	print_liste_field_titre("InvoiceLabel", $_SERVER["PHP_SELF"], "f.libelle", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "f.datef, f.ref, l.rowid", "", $param, '', $sortfield, $sortorder, 'center ');
 	print_liste_field_titre("ProductRef", $_SERVER["PHP_SELF"], "p.ref", "", $param, '', $sortfield, $sortorder);
 	//print_liste_field_titre("ProductLabel", $_SERVER["PHP_SELF"], "p.label", "", $param, '', $sortfield, $sortorder);
@@ -545,9 +555,9 @@ if ($result) {
 		// product_type: 0 = service, 1 = product
 		// if product does not exist we use the value of product_type provided in facturedet to define if this is a product or service
 		// issue : if we change product_type value in product DB it should differ from the value stored in facturedet DB !
-		$objp->code_buy_l = '';
-		$objp->code_buy_p = '';
-		$objp->aarowid_suggest = ''; // Will be set later
+		$code_buy_l = '';
+		$code_buy_p = '';
+		$code_buy_t = '';
 
 		$thirdpartystatic->id = $objp->socid;
 		$thirdpartystatic->name = $objp->name;
@@ -560,7 +570,7 @@ if ($result) {
 		$thirdpartystatic->email = $objp->email;
 		$thirdpartystatic->country_code = $objp->country_code;
 		$thirdpartystatic->tva_intra = $objp->tva_intra;
-		$thirdpartystatic->code_compta_company = $objp->company_code_buy;
+		$thirdpartystatic->code_compta_product = $objp->company_code_buy;		// The accounting account for product stored on thirdparty object (for level3 suggestion)
 
 		$product_static->ref = $objp->product_ref;
 		$product_static->id = $objp->product_id;
@@ -579,6 +589,7 @@ if ($result) {
 		$facturefourn_static->ref = $objp->ref;
 		$facturefourn_static->id = $objp->facid;
 		$facturefourn_static->type = $objp->ftype;
+		$facturefourn_static->ref_supplier = $objp->ref_supplier;
 		$facturefourn_static->label = $objp->invoice_label;
 		$facturefourn_static->date = $db->jdate($objp->datef);
 
@@ -598,6 +609,8 @@ if ($result) {
 		$code_buy_p_notset = '';
 		$code_buy_t_notset = '';
 
+		$suggestedid = 0;
+
 		$return=$accountingAccount->getAccountingCodeToBind($mysoc, $thirdpartystatic, $product_static, $facturefourn_static, $facturefourn_static_det, $accountingAccountArray, 'supplier');
 		if (!is_array($return) && $return<0) {
 			setEventMessage($accountingAccount->error, 'errors');
@@ -610,9 +623,6 @@ if ($result) {
 			$code_buy_t=$return['code_t'];
 		}
 		//var_dump($return);
-
-		// Level 3: Search suggested account for this thirdparty (similar code exists in page index.php to make automatic binding)
-		// Not supported for suppliers
 
 		if (!empty($code_buy_p)) {
 			// Value was defined previously
@@ -629,6 +639,7 @@ if ($result) {
 		// $code_buy_l is now default code of product/service
 		// $code_buy_p is now code of product/service
 		// $code_buy_t is now code of thirdparty
+		//var_dump($code_buy_l.' - '.$code_buy_p.' - '.$code_buy_t.' -> '.$suggestedid.' ('.$suggestedaccountingaccountbydefaultfor.' '.$suggestedaccountingaccountfor.')');
 
 		print '<tr class="oddeven">';
 
@@ -638,15 +649,21 @@ if ($result) {
 		// Ref Invoice
 		print '<td class="nowraponall">'.$facturefourn_static->getNomUrl(1).'</td>';
 
-		/*print '<td class="tdoverflowonsmartphone">';
+		// Ref supplier invoice
+		print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($objp->ref_supplier).'">';
+		print $objp->ref_supplier;
+		print '</td>';
+
+		// Supplier invoice label
+		print '<td class="tdoverflowmax125 small" title="'.dol_escape_htmltag($objp->invoice_label).'">';
 		print $objp->invoice_label;
 		print '</td>';
-		*/
 
+		// Date
 		print '<td class="center">'.dol_print_date($facturefourn_static->date, 'day').'</td>';
 
 		// Ref Product
-		print '<td class="tdoverflowmax150">';
+		print '<td class="tdoverflowmax100">';
 		if ($product_static->id > 0) {
 			print $product_static->getNomUrl(1);
 		}
@@ -657,7 +674,7 @@ if ($result) {
 
 		// Description
 		print '<td class="tdoverflowonsmartphone small">';
-		$text = dolGetFirstLineOfText(dol_string_nohtmltag($facturefourn_static_det->desc));
+		$text = dolGetFirstLineOfText(dol_string_nohtmltag($facturefourn_static_det->desc, 1));
 		$trunclength = empty($conf->global->ACCOUNTING_LENGTH_DESCRIPTION) ? 32 : $conf->global->ACCOUNTING_LENGTH_DESCRIPTION;
 		print $form->textwithtooltip(dol_trunc($text, $trunclength), $facturefourn_static_det->desc);
 		print '</td>';
@@ -685,7 +702,7 @@ if ($result) {
 		print '</td>';
 
 		// VAT Num
-		print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($objp->tva_intra).'">'.dol_escape_htmltag($objp->tva_intra).'</td>';
+		print '<td class="tdoverflowmax80" title="'.dol_escape_htmltag($objp->tva_intra).'">'.dol_escape_htmltag($objp->tva_intra).'</td>';
 
 		// Found accounts
 		print '<td class="small">';
@@ -768,7 +785,7 @@ if ($db->type == 'mysqli') {
 }
 
 // Add code to auto check the box when we select an account
-print '<script type="text/javascript" language="javascript">
+print '<script type="text/javascript">
 jQuery(document).ready(function() {
 	jQuery(".codeventil").change(function() {
 		var s=$(this).attr("id").replace("codeventil", "")

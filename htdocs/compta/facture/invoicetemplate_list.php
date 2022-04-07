@@ -96,8 +96,8 @@ $search_unit_frequency = GETPOST('search_unit_frequency', 'alpha');
 $search_status = GETPOST('search_status', 'int');
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -141,7 +141,7 @@ $arrayfields = array(
 	'f.total_ttc'=>array('label'=>"AmountTTC", 'checked'=>1),
 	'f.fk_mode_reglement'=>array('label'=>"PaymentMode", 'checked'=>0),
 	'f.fk_cond_reglement'=>array('label'=>"PaymentTerm", 'checked'=>0),
-	'recurring'=>array('label'=>"RecurringInvoiceTemplate", 'checked'=>1),
+	'recurring'=>array('label'=>"RecurringInvoice", 'checked'=>1),
 	'f.frequency'=>array('label'=>"Frequency", 'checked'=>1),
 	'f.unit_frequency'=>array('label'=>"FrequencyUnit", 'checked'=>1),
 	'f.nb_gen_done'=>array('label'=>"NbOfGenerationDoneShort", 'checked'=>1),
@@ -359,7 +359,11 @@ if ($search_date_when_end) {
 	$sql .= " AND f.date_when <= '".$db->idate($search_date_when_end)."'";
 }
 
-$sql .= $db->order($sortfield, $sortorder);
+$tmpsortfield = $sortfield;
+if ($tmpsortfield == 'recurring') {
+	$tmpsortfield = 'f.frequency';
+}
+$sql .= $db->order($tmpsortfield, $sortorder);
 
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
@@ -688,6 +692,10 @@ if ($resql) {
 	if ($num > 0) {
 		$i = 0;
 		$totalarray = array();
+		$totalarray['nbfield'] = 0;
+		$totalarray['val']['f.total_ht'] = 0;
+		$totalarray['val']['f.total_tva'] = 0;
+		$totalarray['val']['f.total_ttc'] = 0;
 		while ($i < min($num, $limit)) {
 			$objp = $db->fetch_object($resql);
 			if (empty($objp)) {
@@ -697,7 +705,7 @@ if ($resql) {
 			$companystatic->id = $objp->socid;
 			$companystatic->name = $objp->name;
 
-			$invoicerectmp->id = $objp->id ? $objp->id : $objp->facid;
+			$invoicerectmp->id = !empty($objp->id) ? $objp->id : $objp->facid;
 			$invoicerectmp->frequency = $objp->frequency;
 			$invoicerectmp->suspended = $objp->suspended;
 			$invoicerectmp->unit_frequency = $objp->unit_frequency;
@@ -713,7 +721,6 @@ if ($resql) {
 			if (!empty($arrayfields['f.titre']['checked'])) {
 				print '<td class="nowrap tdoverflowmax200">';
 				print $invoicerectmp->getNomUrl(1);
-				print "</a>";
 				print "</td>\n";
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -757,7 +764,7 @@ if ($resql) {
 			}
 			// Payment term
 			if (!empty($arrayfields['f.fk_cond_reglement']['checked'])) {
-				print '<td class="right">';
+				print '<td class="tdoverflowmax150">';
 				$form->form_conditions_reglement('', $objp->fk_cond_reglement, 'none');
 				print '</td>'."\n";
 				if (!$i) {
@@ -766,15 +773,16 @@ if ($resql) {
 			}
 			// Payment mode
 			if (!empty($arrayfields['f.fk_mode_reglement']['checked'])) {
-				print '<td class="right">';
+				print '<td class="tdoverflowmax150">';
 				$form->form_modes_reglement('', $objp->fk_mode_reglement, 'none');
 				print '</td>'."\n";
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
 			}
+			// Is it a recurring invoice
 			if (!empty($arrayfields['recurring']['checked'])) {
-				print '<td class="center">'.yn($objp->frequency ? 1 : 0).'</td>';
+				print '<td class="center">'.($objp->frequency ? img_picto($langs->trans("Frequency").': '.$objp->frequency.' '.$objp->unit_frequency, 'recurring', 'class="opacitymedium"').' ' : '').yn($objp->frequency ? 1 : 0).'</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}

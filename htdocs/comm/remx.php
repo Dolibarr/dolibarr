@@ -62,7 +62,7 @@ if (GETPOST('cancel', 'alpha') && !empty($backtopage)) {
 	 exit;
 }
 
-if ($action == 'confirm_split' && GETPOST("confirm", "alpha") == 'yes' && $user->rights->societe->creer) {
+if ($action == 'confirm_split' && GETPOST("confirm", "alpha") == 'yes' && ($user->rights->societe->creer || $user->rights->facture->creer)) {
 	//if ($user->rights->societe->creer)
 	//if ($user->rights->facture->creer)
 
@@ -153,14 +153,14 @@ if ($action == 'confirm_split' && GETPOST("confirm", "alpha") == 'yes' && $user-
 	}
 }
 
-if ($action == 'setremise' && $user->rights->societe->creer) {
+if ($action == 'setremise' && ($user->rights->societe->creer || $user->rights->facture->creer)) {
 	//if ($user->rights->societe->creer)
 	//if ($user->rights->facture->creer)
 
 	$amount_ht = price2num(GETPOST('amount_ht', 'alpha'));
 	$desc = GETPOST('desc', 'alpha');
 	$tva_tx = GETPOST('tva_tx', 'alpha');
-	$discount_type = !empty($_POST['discount_type']) ?GETPOST('discount_type', 'alpha') : 0;
+	$discount_type = GETPOSTISSET('discount_type') ? GETPOST('discount_type', 'alpha') : 0;
 
 	if ($amount_ht > 0) {
 		$error = 0;
@@ -192,7 +192,7 @@ if ($action == 'setremise' && $user->rights->societe->creer) {
 	}
 }
 
-if (GETPOST('action', 'aZ09') == 'confirm_remove' && GETPOST("confirm") == 'yes' && $user->rights->societe->creer) {
+if (GETPOST('action', 'aZ09') == 'confirm_remove' && GETPOST("confirm") == 'yes' && ($user->rights->societe->creer || $user->rights->facture->creer)) {
 	//if ($user->rights->societe->creer)
 	//if ($user->rights->facture->creer)
 

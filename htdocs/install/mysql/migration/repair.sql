@@ -534,6 +534,9 @@ UPDATE llx_facturedet SET situation_percent = 100 WHERE situation_percent IS NUL
 --update llx_facture set paye = 1, fk_statut = 2 where rowid in (select rowid from tmp_invoice_deposit_mark_as_available);
 
 
+-- TODO We should fix multicurrency_amount that are empty into llx_societe_remise_except, but we can't because we don't know what is the rate 
+-- We may retreive info fro minvoice line by using fk_facture_line or fk_facture_supplier_line
+-- select * from llx_societe_remise_except where multicurrency_amount_ht = 0 and amount_ht <> 0;
 
 
 -- Note to migrate from old counter aquarium to new one

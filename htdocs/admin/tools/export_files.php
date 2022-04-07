@@ -127,10 +127,35 @@ $result = dol_mkdir($outputdir);
 
 $utils = new Utils($db);
 
+if ($export_type == 'externalmodule' && ! empty($what)) {
+	$fulldirtocompress = DOL_DOCUMENT_ROOT.'/custom/'.dol_sanitizeFileName($what);
+} else {
+	$fulldirtocompress = DOL_DATA_ROOT;
+}
+$dirtoswitch = dirname($fulldirtocompress);
+$dirtocompress = basename($fulldirtocompress);
+
 if ($compression == 'zip') {
 	$file .= '.zip';
-	$excludefiles = '/(\.back|\.old|\.log|[\/\\\]temp[\/\\\]|documents[\/\\\]admin[\/\\\]documents[\/\\\])/i';
-	$ret = dol_compress_dir(DOL_DATA_ROOT, $outputdir."/".$file, $compression, $excludefiles);
+
+	$excludefiles = '/(\.back|\.old|\.log|\.pdf_preview-.*\.png|[\/\\\]temp[\/\\\]|[\/\\\]admin[\/\\\]documents[\/\\\])/i';
+
+	//var_dump($fulldirtocompress);
+	//var_dump($outputdir."/".$file);exit;
+
+	$rootdirinzip = '';
+	if ($export_type == 'externalmodule' && !empty($what)) {
+		$rootdirinzip = $what;
+
+		global $dolibarr_allow_download_external_modules;
+		if (empty($dolibarr_allow_download_external_modules)) {
+			print 'Download of external modules is not allowed by $dolibarr_allow_download_external_modules in conf.php file';
+			$db->close();
+			exit();
+		}
+	}
+
+	$ret = dol_compress_dir($fulldirtocompress, $outputdir."/".$file, $compression, $excludefiles, $rootdirinzip);
 	if ($ret < 0) {
 		if ($ret == -2) {
 			$langs->load("errors");
@@ -146,10 +171,12 @@ if ($compression == 'zip') {
 	$outputfile = $conf->admin->dir_temp.'/export_files.'.$userlogin.'.out'; // File used with popen method
 
 	$file .= '.tar';
-	// We also exclude '/temp/' dir and 'documents/admin/documents'
-	$cmd = "tar -cf ".$outputdir."/".$file." --exclude-vcs --exclude 'temp' --exclude 'dolibarr.log' --exclude 'dolibarr_*.log' --exclude 'documents/admin/documents' -C ".dirname(DOL_DATA_ROOT)." ".basename(DOL_DATA_ROOT);
 
-	$result = $utils->executeCLI($cmd, $outputfile);
+	// We also exclude '/temp/' dir and 'documents/admin/documents'
+	// We make escapement here and call executeCLI without escapement because we don't want to have the '*.log' escaped.
+	$cmd = "tar -cf '".escapeshellcmd($outputdir."/".$file)."' --exclude-vcs --exclude-caches-all --exclude='temp' --exclude='*.log' --exclude='*.pdf_preview-*.png' --exclude='documents/admin/documents' -C '".escapeshellcmd(dol_sanitizePathName($dirtoswitch))."' '".escapeshellcmd(dol_sanitizeFileName($dirtocompress))."'";
+
+	$result = $utils->executeCLI($cmd, $outputfile, 0, null, 1);
 
 	$retval = $result['error'];
 	if ($result['result'] || !empty($retval)) {
@@ -173,15 +200,37 @@ if ($compression == 'zip') {
 			unlink($outputdir."/".$file);
 		}
 	}
+} else {
+	$errormsg = 'Bad value for compression method';
+	print $errormsg;
 }
 
-if ($errormsg) {
-	setEventMessages($langs->trans("Error")." : ".$errormsg, null, 'errors');
+if ($export_type != 'externalmodule' || empty($what)) {
+	if ($errormsg) {
+		setEventMessages($langs->trans("Error")." : ".$errormsg, null, 'errors');
+	} else {
+		setEventMessages($langs->trans("BackupFileSuccessfullyCreated").'.<br>'.$langs->trans("YouCanDownloadBackupFile"), null, 'mesgs');
+	}
+
+	$db->close();
+
+	// Redirect to calling page
+	$returnto = 'dolibarr_export.php';
+
+	header("Location: ".$returnto);
+	exit();
+} else {
+	$zipname = $outputdir."/".$file;
+
+	// Then download the zipped file.
+	header('Content-Type: application/zip');
+	header('Content-disposition: attachment; filename='.basename($zipname));
+	header('Content-Length: '.filesize($zipname));
+	readfile($zipname);
+
+	dol_delete_file($zipname);
+
+	$db->close();
+
+	exit();
 }
-
-// Redirect t backup page
-header("Location: dolibarr_export.php");
-
-$time_end = time();
-
-$db->close();

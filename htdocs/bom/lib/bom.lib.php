@@ -56,7 +56,7 @@ function bomAdminPrepareHead()
 	//); // to remove a tab
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'bom@mrp');
 
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'bom@mrp', 'remove');
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'bom@mrp', 'remove');
 
 	return $head;
 }
@@ -82,6 +82,11 @@ function bomPrepareHead($object)
 	$head[$h][0] = DOL_URL_ROOT."/bom/bom_card.php?id=".$object->id;
 	$head[$h][1] = $langs->trans("BOM");
 	$head[$h][2] = 'card';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT."/bom/bom_net_needs.php?id=".$object->id;
+	$head[$h][1] = $langs->trans("BOMNetNeeds");
+	$head[$h][2] = 'net_needs';
 	$h++;
 
 	if (isset($object->fields['note_public']) || isset($object->fields['note_private'])) {

@@ -32,13 +32,19 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorbooth.class.php';
 require_once DOL_DOCUMENT_ROOT.'/eventorganization/lib/eventorganization_conferenceorbooth.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("eventorganization", "companies", "other", "mails"));
+$langs->loadLangs(array("eventorganization", "projects", "companies", "other", "mails"));
 
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm');
-$id = (GETPOST('socid', 'int') ? GETPOST('socid', 'int') : GETPOST('id', 'int'));
+$cancel = GETPOST('cancel', 'aZ09');
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'conferenceorboothcard'; // To manage different context of search
+$backtopage = GETPOST('backtopage', 'alpha');
+$backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
+
+$id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $withproject = GETPOST('withproject', 'int');
 $project_ref = GETPOST('project_ref', 'alpha');
@@ -46,8 +52,8 @@ $project_ref = GETPOST('project_ref', 'alpha');
 
 // Get parameters
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -69,17 +75,25 @@ $extrafields = new ExtraFields($db);
 $projectstatic = new Project($db);
 $diroutputmassaction = $conf->eventorganization->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('conferenceorboothdocument', 'globalcard')); // Note that conf->hooks_modules contains array
+
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
+$search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
+
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
 
 if ($id > 0 || !empty($ref)) {
 	$upload_dir = $conf->eventorganization->multidir_output[$object->entity ? $object->entity : $conf->entity]."/conferenceorbooth/".get_exdir(0, 0, 0, 1, $object);
 }
 
-$permissiontoadd = $user->rights->eventorganization->conferenceorbooth->write; // Used by the include of actions_addupdatedelete.inc.php
+$permissiontoread = $user->rights->eventorganization->read;
+$permissiontoadd = $user->rights->eventorganization->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+$permissiontodelete = $user->rights->eventorganization->delete || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
+$permissionnote = $user->rights->eventorganization->write; // Used by the include of actions_setnotes.inc.php
+$permissiondellink = $user->rights->eventorganization->write; // Used by the include of actions_dellink.inc.php
+$upload_dir = $conf->eventorganization->multidir_output[isset($object->entity) ? $object->entity : 1];
 
 // Security check
 if ($user->socid > 0) {
@@ -88,10 +102,20 @@ if ($user->socid > 0) {
 $isdraft = (($object->status== $object::STATUS_DRAFT) ? 1 : 0);
 $result = restrictedArea($user, 'eventorganization', $object->id, '', '', 'fk_soc', 'rowid', $isdraft);
 
+if (!$permissiontoread) {
+	accessforbidden();
+}
+
 
 /*
  * Actions
  */
+
+$parameters = array();
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
 include_once DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
@@ -104,7 +128,6 @@ $form = new Form($db);
 
 $title = $langs->trans("ConferenceOrBooth").' - '.$langs->trans("Files");
 $help_url = '';
-//$help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('', $title, $help_url);
 
 $result = $projectstatic->fetch($object->fk_project);
@@ -121,6 +144,7 @@ $object->project = clone $projectstatic;
 if (!empty($withproject)) {
 	// Tabs for project
 	$tab = 'eventorganisation';
+	$withProjectUrl = "&withproject=1";
 	$head = project_prepare_head($projectstatic);
 	print dol_get_fiche_head($head, $tab, $langs->trans("Project"), -1, ($projectstatic->public ? 'projectpub' : 'project'), 0, '', '');
 
@@ -132,13 +156,13 @@ if (!empty($withproject)) {
 	// Title
 	$morehtmlref .= $projectstatic->title;
 	// Thirdparty
-	if ($projectstatic->thirdparty->id > 0) {
+	if (isset($projectstatic->thirdparty->id) && $projectstatic->thirdparty->id > 0) {
 		$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$projectstatic->thirdparty->getNomUrl(1, 'project');
 	}
 	$morehtmlref .= '</div>';
 
 	// Define a complementary filter for search of next/prev ref.
-	if (empty($user->rights->projet->all->lire)) {
+	if (empty($user->rights->project->all->lire)) {
 		$objectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 0);
 		$projectstatic->next_prev_filter = " rowid IN (".$db->sanitize(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
 	}
@@ -213,7 +237,10 @@ if (!empty($withproject)) {
 
 	// Other attributes
 	$cols = 2;
-	//include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
+	$objectconf = $object;
+	$object = $projectstatic;
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
+	$object = $objectconf;
 
 	print '</table>';
 
@@ -222,17 +249,17 @@ if (!empty($withproject)) {
 	print '<div class="fichehalfright">';
 	print '<div class="underbanner clearboth"></div>';
 
-	print '<table class="border centpercent">';
+	print '<table class="border tableforfield centpercent">';
 
 	// Description
-	print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
+	print '<td class="tdtop">'.$langs->trans("Description").'</td><td>';
 	print nl2br($projectstatic->description);
 	print '</td></tr>';
 
 	// Categories
 	if ($conf->categorie->enabled) {
 		print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
-		print $form->showCategories($projectstatic->id, 'project', 1);
+		print $form->showCategories($projectstatic->id, Categorie::TYPE_PROJECT, 1);
 		print "</td></tr>";
 	}
 
@@ -253,15 +280,15 @@ if (!empty($withproject)) {
 	print "</td></tr>";
 
 	print '<tr><td>';
-	print $form->editfieldkey('PriceOfRegistration', 'price_registration', '', $projectstatic, 0, 'amount', '', 0, 0, 'projectid');
+	print $form->editfieldkey($form->textwithpicto($langs->trans('PriceOfBooth'), $langs->trans("PriceOfBoothHelp")), 'price_booth', '', $projectstatic, 0, 'amount', '', 0, 0, 'projectid');
 	print '</td><td>';
-	print $form->editfieldval('PriceOfRegistration', 'price_registration', $projectstatic->price_registration, $projectstatic, 0, 'amount', '', 0, 0, '', 0, '', 'projectid');
+	print $form->editfieldval($form->textwithpicto($langs->trans('PriceOfBooth'), $langs->trans("PriceOfBoothHelp")), 'price_booth', $projectstatic->price_booth, $projectstatic, 0, 'amount', '', 0, 0, '', 0, '', 'projectid');
 	print "</td></tr>";
 
 	print '<tr><td>';
-	print $form->editfieldkey('PriceOfBooth', 'price_booth', '', $projectstatic, 0, 'amount', '', 0, 0, 'projectid');
+	print $form->editfieldkey($form->textwithpicto($langs->trans('PriceOfRegistration'), $langs->trans("PriceOfRegistrationHelp")), 'price_registration', '', $projectstatic, 0, 'amount', '', 0, 0, 'projectid');
 	print '</td><td>';
-	print $form->editfieldval('PriceOfBooth', 'price_booth', $projectstatic->price_booth, $projectstatic, 0, 'amount', '', 0, 0, '', 0, '', 'projectid');
+	print $form->editfieldval($form->textwithpicto($langs->trans('PriceOfRegistration'), $langs->trans("PriceOfRegistrationHelp")), 'price_registration', $projectstatic->price_registration, $projectstatic, 0, 'amount', '', 0, 0, '', 0, '', 'projectid');
 	print "</td></tr>";
 
 	print '<tr><td valign="middle">'.$langs->trans("EventOrganizationICSLink").'</td><td>';
@@ -270,11 +297,45 @@ if (!empty($withproject)) {
 	$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT;
 
 	// Show message
-	$message = '<a href="'.$urlwithroot.'/public/agenda/agendaexport.php?format=ical'.($conf->entity > 1 ? "&entity=".$conf->entity : "");
-	$message .= '&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY ?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) : '...');
-	$message .= "&project=".$projectstatic->id.'&module='.urlencode('@eventorganization').'&status='.ConferenceOrBooth::STATUS_CONFIRMED.'">'.$langs->trans('DownloadICSLink').'</a>';
+	$message = '<a target="_blank" rel="noopener noreferrer" href="'.$urlwithroot.'/public/agenda/agendaexport.php?format=ical'.($conf->entity > 1 ? "&entity=".$conf->entity : "");
+	$message .= '&exportkey='.urlencode(getDolGlobalString('MAIN_AGENDA_XCAL_EXPORTKEY', '...'));
+	$message .= "&project=".$projectstatic->id.'&module='.urlencode('@eventorganization').'&status='.ConferenceOrBooth::STATUS_CONFIRMED.'">'.$langs->trans('DownloadICSLink').img_picto('', 'download', 'class="paddingleft"').'</a>';
 	print $message;
 	print "</td></tr>";
+
+	// Link to the submit vote/register page
+	print '<tr><td>';
+	//print '<span class="opacitymedium">';
+	print $form->textwithpicto($langs->trans("SuggestOrVoteForConfOrBooth"), $langs->trans("EvntOrgRegistrationHelpMessage"));
+	//print '</span>';
+	print '</td><td>';
+	$linksuggest = $dolibarr_main_url_root.'/public/project/index.php?id='.((int) $projectstatic->id);
+	$encodedsecurekey = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY').'conferenceorbooth'.((int) $projectstatic->id), 'md5');
+	$linksuggest .= '&securekey='.urlencode($encodedsecurekey);
+	//print '<div class="urllink">';
+	//print '<input type="text" value="'.$linksuggest.'" id="linkregister" class="quatrevingtpercent paddingrightonly">';
+	print '<div class="tdoverflowmax200 inline-block valignmiddle"><a target="_blank" href="'.$linksuggest.'" class="quatrevingtpercent">'.$linksuggest.'</a></div>';
+	print '<a target="_blank" rel="noopener noreferrer" href="'.$linksuggest.'">'.img_picto('', 'globe').'</a>';
+	//print '</div>';
+	//print ajax_autoselect("linkregister");
+	print '</td></tr>';
+
+	// Link to the subscribe
+	print '<tr><td>';
+	//print '<span class="opacitymedium">';
+	print $langs->trans("PublicAttendeeSubscriptionGlobalPage");
+	//print '</span>';
+	print '</td><td>';
+	$link_subscription = $dolibarr_main_url_root.'/public/eventorganization/attendee_new.php?id='.((int) $projectstatic->id).'&type=global';
+	$encodedsecurekey = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY').'conferenceorbooth'.((int) $projectstatic->id), 'md5');
+	$link_subscription .= '&securekey='.urlencode($encodedsecurekey);
+	//print '<div class="urllink">';
+	//print '<input type="text" value="'.$linkregister.'" id="linkregister" class="quatrevingtpercent paddingrightonly">';
+	print '<div class="tdoverflowmax200 inline-block valignmiddle"><a target="_blank" href="'.$link_subscription.'" class="quatrevingtpercent">'.$link_subscription.'</a></div>';
+	print '<a target="_blank" rel="noopener noreferrer" rel="noopener noreferrer" href="'.$link_subscription.'">'.img_picto('', 'globe').'</a>';
+	//print '</div>';
+	//print ajax_autoselect("linkregister");
+	print '</td></tr>';
 
 	print '</table>';
 
@@ -305,7 +366,6 @@ if ($object->id) {
 	}
 
 	// Object card
-	// -------------
 	//-----------------------------------------------
 	$linkback = '<a href="'.dol_buildpath('/eventorganization/conferenceorbooth_list.php', 1).'?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 

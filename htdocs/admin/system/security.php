@@ -88,9 +88,9 @@ if (function_exists('exec')) {
 }
 print '<br>';
 
-print "<strong>PHP session.use_strict_mode</strong> = ".(ini_get('session.use_strict_mode') ? ini_get('session.use_strict_mode') : yn(0)).' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", '1').")</span><br>\n";
-print "<strong>PHP session.use_only_cookies</strong> = ".(ini_get('session.use_only_cookies') ? ini_get('session.use_only_cookies') : yn(0)).' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", '1').")</span><br>\n";
-print "<strong>PHP session.cookie_httponly</strong> = ".(ini_get('session.cookie_httponly') ? ini_get('session.cookie_httponly') : '').' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", '1').")</span><br>\n";
+print "<strong>PHP session.use_strict_mode</strong> = ".(ini_get('session.use_strict_mode') ? '' : img_warning().' ').(ini_get('session.use_strict_mode') ? ini_get('session.use_strict_mode') : yn(0)).' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", '1').")</span><br>\n";
+print "<strong>PHP session.use_only_cookies</strong> = ".(ini_get('session.use_only_cookies') ? '' : img_warning().' ').(ini_get('session.use_only_cookies') ? ini_get('session.use_only_cookies') : yn(0)).' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", '1').")</span><br>\n";
+print "<strong>PHP session.cookie_httponly</strong> = ".(ini_get('session.cookie_httponly') ? '' : img_warning().' ').(ini_get('session.cookie_httponly') ? ini_get('session.cookie_httponly') : '').' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", '1').")</span><br>\n";
 print "<strong>PHP session.cookie_samesite</strong> = ".(ini_get('session.cookie_samesite') ? ini_get('session.cookie_samesite') : 'None');
 if (!ini_get('session.cookie_samesite') || ini_get('session.cookie_samesite') == 'Lax') {
 	print ' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", 'Lax').")</span>";
@@ -99,6 +99,7 @@ if (!ini_get('session.cookie_samesite') || ini_get('session.cookie_samesite') ==
 }
 print "<br>\n";
 print "<strong>PHP open_basedir</strong> = ".(ini_get('open_basedir') ? ini_get('open_basedir') : yn(0).' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", $langs->transnoentitiesnoconv("ARestrictedPath").', '.$langs->transnoentitiesnoconv("Example").': '.$_SERVER["DOCUMENT_ROOT"].','.DOL_DATA_ROOT).')</span>')."<br>\n";
+print "<strong>PHP short_open_tag</strong> = ".((empty(ini_get('short_open_tag')) || ini_get('short_open_tag') == 'Off') ? yn(0) : img_warning().' '.yn(0)).' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", $langs->transnoentitiesnoconv("No")).')</span>'."<br>\n";
 print "<strong>PHP allow_url_fopen</strong> = ".(ini_get('allow_url_fopen') ? img_picto($langs->trans("YouShouldSetThisToOff"), 'warning').' '.ini_get('allow_url_fopen') : yn(0)).' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", $langs->transnoentitiesnoconv("No")).")</span><br>\n";
 print "<strong>PHP allow_url_include</strong> = ".(ini_get('allow_url_include') ? img_picto($langs->trans("YouShouldSetThisToOff"), 'warning').' '.ini_get('allow_url_include') : yn(0)).' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", $langs->transnoentitiesnoconv("No")).")</span><br>\n";
 //print "<strong>PHP safe_mode</strong> = ".(ini_get('safe_mode') ? ini_get('safe_mode') : yn(0)).' &nbsp; <span class="opacitymedium">'.$langs->trans("Deprecated")." (removed in PHP 5.4)</span><br>\n";
@@ -265,10 +266,20 @@ print '<br>';
 
 print '<strong>$dolibarr_main_restrict_ip</strong>: ';
 if (empty($dolibarr_main_restrict_ip)) {
-	print '<span class="opacitymedium">'.$langs->trans("None").'</span>';
+	print $langs->trans("None");
 	//print ' <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", $langs->transnoentitiesnoconv("IPsOfUsers")).')</span>';
+} else {
+	print $dolibarr_main_restrict_ip;
 }
+print '<br>';
 
+print '<strong>$dolibarr_main_restrict_os_commands</strong>: ';
+if (empty($dolibarr_main_restrict_os_commands)) {
+	print $langs->trans("None");
+} else {
+	print $dolibarr_main_restrict_os_commands;
+}
+print ' <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", 'mysqldump, mysql, pg_dump, pgrestore').')</span>';
 print '<br>';
 
 if (empty($conf->global->SECURITY_DISABLE_TEST_ON_OBFUSCATED_CONF)) {
@@ -405,7 +416,7 @@ print '<br><br>';
 print '<br>';
 
 
-print load_fiche_titre($langs->trans("OtherSetup").' ('.$langs->trans("Experimental").')', '', 'folder');
+print load_fiche_titre($langs->trans("OtherSetup"), '', 'folder');
 
 
 //print '<strong>'.$langs->trans("PasswordEncryption").'</strong>: ';
@@ -438,18 +449,23 @@ print '<br>';
 print '<strong>MAIN_ALWAYS_CREATE_LOCK_AFTER_LAST_UPGRADE</strong> = '.(empty($conf->global->MAIN_ALWAYS_CREATE_LOCK_AFTER_LAST_UPGRADE) ? '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>' : $conf->global->MAIN_ALWAYS_CREATE_LOCK_AFTER_LAST_UPGRADE).' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': 1)</span><br>';
 print '<br>';
 
+print '<strong>MAIN_SECURITY_CSRF_WITH_TOKEN</strong> = '.(empty($conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN) ? '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>' : $conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN).' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': 2)</span>'."<br>";
+print '<br>';
+
+print '<br>';
+print '<br>';
+
+
+print load_fiche_titre($langs->trans("OtherSetup").' ('.$langs->trans("Experimental").')', '', 'folder');
+
 print '<strong>MAIN_RESTRICTHTML_ONLY_VALID_HTML</strong> = '.(empty($conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML) ? '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Recommended").': 1)</span>' : $conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML)."<br>";
 print '<br>';
 
 print '<strong>MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES</strong> = '.(empty($conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES) ? '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Recommended").': 1)</span>' : $conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES)."<br>";
 print '<br>';
 
-print '<strong>MAIN_SECURITY_CSRF_WITH_TOKEN</strong> = '.(empty($conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN) ? '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Recommended").': 2)</span>' : $conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN)."<br>";
-print '<br>';
-
 print '<strong>MAIN_SECURITY_CSRF_TOKEN_RENEWAL_ON_EACH_CALL</strong> = '.(empty($conf->global->MAIN_SECURITY_CSRF_TOKEN_RENEWAL_ON_EACH_CALL) ? '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Recommended").': '.$langs->trans("Undefined").' '.$langs->trans("or").' 0)</span>' : $conf->global->MAIN_SECURITY_CSRF_TOKEN_RENEWAL_ON_EACH_CALL)."<br>";
 print '<br>';
-
 
 print '<strong>MAIN_EXEC_USE_POPEN</strong> = ';
 if (empty($conf->global->MAIN_EXEC_USE_POPEN)) {

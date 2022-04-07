@@ -126,7 +126,7 @@ class Documents extends DolibarrApi
 	 * @param	string	$langcode		Language code like 'en_US', 'fr_FR', 'es_ES', ... (If not set, use the default language).
 	 * @return  array                   List of documents
 	 *
-	 * @throws RestException 500
+	 * @throws RestException 500 System error
 	 * @throws RestException 501
 	 * @throws RestException 400
 	 * @throws RestException 401
@@ -249,7 +249,7 @@ class Documents extends DolibarrApi
 	 * @throws RestException 400
 	 * @throws RestException 401
 	 * @throws RestException 404
-	 * @throws RestException 500
+	 * @throws RestException 500 System error
 	 *
 	 * @url GET /
 	 */
@@ -546,7 +546,7 @@ class Documents extends DolibarrApi
 	 * @throws RestException 400
 	 * @throws RestException 401
 	 * @throws RestException 404
-	 * @throws RestException 500
+	 * @throws RestException 500 System error
 	 *
 	 * @url POST /upload
 	 */
@@ -624,6 +624,9 @@ class Documents extends DolibarrApi
 			} elseif ($modulepart == 'expensereport') {
 				require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 				$object = new ExpenseReport($this->db);
+			} elseif ($modulepart == 'fichinter') {
+				require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
+				$object = new Fichinter($this->db);
 			} elseif ($modulepart == 'adherent' || $modulepart == 'member') {
 				$modulepart = 'adherent';
 				require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';

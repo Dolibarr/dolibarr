@@ -62,10 +62,25 @@ abstract class DoliDB implements Database
 	/** @var string Last error number. For example: 'DB_ERROR_RECORD_ALREADY_EXISTS', '12345', ... */
 	public $lasterrno;
 
+	/** @var string If we need to set a prefix specific to the database so it can be reused (when defined instead of MAIN_DB_PREFIX) to forge requests */
+	public $prefix_db;
+
 	/** @var bool Status */
 	public $ok;
 	/** @var string */
 	public $error;
+
+
+
+	/**
+	 *	Return the DB prefix
+	 *
+	 *	@return string		The DB prefix
+	 */
+	public function prefix()
+	{
+		return (empty($this->prefix_db) ? MAIN_DB_PREFIX : $this->prefix_db);
+	}
 
 	/**
 	 *	Format a SQL IF
@@ -77,7 +92,19 @@ abstract class DoliDB implements Database
 	 */
 	public function ifsql($test, $resok, $resko)
 	{
-		return 'IF('.$test.','.$resok.','.$resko.')';
+		//return 'IF('.$test.','.$resok.','.$resko.')';		// Not sql standard
+		return '(CASE WHEN '.$test.' THEN '.$resok.' ELSE '.$resko.' END)';
+	}
+
+	/**
+	 * Return SQL string to force an index
+	 *
+	 * @param	string	$nameofindex	Name of index
+	 * @return	string					SQL string
+	 */
+	public function hintindex($nameofindex)
+	{
+		return '';
 	}
 
 	/**
@@ -90,7 +117,7 @@ abstract class DoliDB implements Database
 	 */
 	public function idate($param, $gm = 'tzserver')
 	{
-		// TODO $param should be gmt, so we should add $gm to 'gmt' instead of default 'tzserver'
+		// TODO $param should be gmt, so we should have default $gm to 'gmt' instead of default 'tzserver'
 		return dol_print_date($param, "%Y-%m-%d %H:%M:%S", $gm);
 	}
 
@@ -286,8 +313,8 @@ abstract class DoliDB implements Database
 
 	/**
 	 *	Convert (by PHP) a PHP server TZ string date into a Timestamps date (GMT if gm=true)
-	 * 	19700101020000 -> 3600 with TZ+1 and gmt=0
-	 * 	19700101020000 -> 7200 whaterver is TZ if gmt=1
+	 * 	19700101020000 -> 3600 with server TZ = +1 and $gm='tzserver'
+	 * 	19700101020000 -> 7200 whaterver is server TZ if $gm='gmt'
 	 *
 	 * 	@param	string				$string		Date in a string (YYYYMMDDHHMMSS, YYYYMMDD, YYYY-MM-DD HH:MM:SS)
 	 *	@param	mixed				$gm			'gmt'=Input informations are GMT values, 'tzserver'=Local to server TZ

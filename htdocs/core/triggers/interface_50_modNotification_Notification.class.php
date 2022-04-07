@@ -2,6 +2,7 @@
 /* Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2011      Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013-2014 Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2022      Anthony Berton     	<anthony.berton@bb2a.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +24,7 @@
  *  \brief      File of class of triggers for notification module
  */
 require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
 
 
 /**
@@ -30,26 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
  */
 class InterfaceNotification extends DolibarrTriggers
 {
-	// @todo Defined also into notify.class.php
-	public $listofmanagedevents = array(
-		'BILL_VALIDATE',
-		'BILL_PAYED',
-		'ORDER_CREATE',
-		'ORDER_VALIDATE',
-		'PROPAL_VALIDATE',
-		'PROPAL_CLOSE_SIGNED',
-		'FICHINTER_VALIDATE',
-		'FICHINTER_ADD_CONTACT',
-		'ORDER_SUPPLIER_VALIDATE',
-		'ORDER_SUPPLIER_APPROVE',
-		'ORDER_SUPPLIER_REFUSE',
-		'SHIPPING_VALIDATE',
-		'EXPENSE_REPORT_VALIDATE',
-		'EXPENSE_REPORT_APPROVE',
-		'HOLIDAY_VALIDATE',
-		'HOLIDAY_APPROVE',
-		'ACTION_CREATE'
-	);
+	public $listofmanagedevents = array();
 
 	/**
 	 * Constructor
@@ -66,6 +49,8 @@ class InterfaceNotification extends DolibarrTriggers
 		// 'development', 'experimental', 'dolibarr' or version
 		$this->version = self::VERSION_DOLIBARR;
 		$this->picto = 'email';
+
+		$this->listofmanagedevents = Notify::$arrayofnotifsupported;
 	}
 
 	/**
@@ -85,15 +70,13 @@ class InterfaceNotification extends DolibarrTriggers
 			return 0; // Module not active, we do nothing
 		}
 
-		require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
-		$notify = new Notify($this->db);
-
-		if (!in_array($action, $notify->arrayofnotifsupported)) {
+		if (!in_array($action, $this->listofmanagedevents)) {
 			return 0;
 		}
 
 		dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
+		$notify = new Notify($this->db);
 		$notify->send($action, $object);
 
 		return 1;
@@ -108,12 +91,29 @@ class InterfaceNotification extends DolibarrTriggers
 	public function getListOfManagedEvents()
 	{
 		global $conf;
+		global $hookmanager;
+
+
+		if (!is_object($hookmanager)) {
+			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+			$hookmanager = new HookManager($this->db);
+		}
+		$hookmanager->initHooks(array('notification'));
+
+		$reshook = $hookmanager->executeHooks('notifsupported', $parameters, $object, $action);
+		if (empty($reshook)) {
+			if (!empty($hookmanager->resArray['arrayofnotifsupported'])) {
+				$this->listofmanagedevents = array_merge($this->listofmanagedevents, $hookmanager->resArray['arrayofnotifsupported']);
+			}
+		}
 
 		$ret = array();
+
 
 		$sql = "SELECT rowid, code, label, description, elementtype";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_action_trigger";
 		$sql .= $this->db->order("rang, elementtype, code");
+
 		dol_syslog("getListOfManagedEvents Get list of notifications", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {

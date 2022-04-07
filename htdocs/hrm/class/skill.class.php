@@ -241,28 +241,45 @@ class Skill extends CommonObject
 	}
 
 	/**
-	 * @param int $i rank from which we want to create skilldets
+	 * createSkills
+	 *
+	 * @param int 	$i 		Rank from which we want to create skilldets (level $i to HRM_MAXRANK wil be created)
 	 * @return null
 	 */
 	public function createSkills($i = 1)
 	{
-
 		global $conf, $user, $langs;
 
 		$MaxNumberSkill = isset($conf->global->HRM_MAXRANK) ? $conf->global->HRM_MAXRANK : self::DEFAULT_MAX_RANK_PER_SKILL;
 		$defaultSkillDesc = !empty($conf->global->HRM_DEFAULT_SKILL_DESCRIPTION) ? $conf->global->HRM_DEFAULT_SKILL_DESCRIPTION : 'no Description';
+
+		$error = 0;
+
 		require_once __DIR__ . '/skilldet.class.php';
+
+		$this->db->begin();
+
+		// Create level of skills
 		for ($i; $i <= $MaxNumberSkill ; $i++) {
 			$skilldet = new Skilldet($this->db);
-			$skilldet->description = $defaultSkillDesc . " " . $i ;
-			$skilldet->rank = $i;
+			$skilldet->description = $defaultSkillDesc . " " . $i;
+			$skilldet->rankorder = $i;
 			$skilldet->fk_skill = $this->id;
 
 			$result =  $skilldet->create($user);
-
-			if ($result > 0) {
-				setEventMessage($langs->trans('TraductionCreadted'), $i);
+			if ($result <= 0) {
+				$error++;
 			}
+		}
+
+		if (! $error) {
+			$this->db->commit();
+
+			setEventMessage($langs->trans('SkillCreated'), $i);
+			return 1;
+		} else {
+			$this->db->rollback();
+			return -1;
 		}
 	}
 
@@ -384,7 +401,7 @@ class Skill extends CommonObject
 	/**
 	 * Load object lines in memory from the database
 	 *
-	 * @return array|int         <0 if KO, 0 if not found, array if OK
+	 * @return array         <0 if KO, array of skill level found
 	 */
 	public function fetchLines()
 	{
@@ -393,7 +410,13 @@ class Skill extends CommonObject
 		$skilldet = new Skilldet($this->db);
 		$this->lines = $skilldet->fetchAll('ASC', '', '', '', array('fk_skill' => $this->id), '');
 
-		return (count($this->lines) > 0 ) ? $this->lines : 0;
+		if (is_array($this->lines)) {
+			return (count($this->lines) > 0) ? $this->lines : array();
+		} elseif ($this->lines < 0) {
+			$this->errors = array_merge($this->errors, $skilldet->errors);
+			$this->error = $skilldet->error;
+			return $this->lines;
+		}
 	}
 
 
@@ -830,8 +853,8 @@ class Skill extends CommonObject
 		//if ($withpicto != 2) $result.=(($addlabel && $this->label) ? $sep . dol_trunc($this->label, ($addlabel > 1 ? $addlabel : 0)) : '');
 
 		global $action, $hookmanager;
-		$hookmanager->initHooks(array('jobdao'));
-		$parameters = array('id'=>$this->id, 'getnomurl'=>$result);
+		$hookmanager->initHooks(array('skilldao'));
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -954,8 +977,8 @@ class Skill extends CommonObject
 	{
 		$this->lines = array();
 
-		$objectline = new SkillLine($this->db);
-		$result = $objectline->fetchAll('ASC', 'rank', 0, 0, array('customsql'=>'fk_skill = '.$this->id));
+		$objectline = new Skilldet($this->db);
+		$result = $objectline->fetchAll('ASC', 'rankorder', 0, 0, array('customsql'=>'fk_skill = '.$this->id));
 
 		if (is_numeric($result)) {
 			$this->error = $this->error;

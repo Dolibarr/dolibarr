@@ -52,7 +52,7 @@ $hookmanager = new HookManager($db);
 $hookmanager->initHooks('hrmindex');
 
 // Load translation files required by the page
-$langs->loadLangs(array('users', 'holidays', 'trips', 'boxes'));
+$langs->loadLangs(array('users', 'holiday', 'trips', 'boxes'));
 
 $socid = GETPOST("socid", "int");
 
@@ -153,7 +153,7 @@ if (!empty($conf->holiday->enabled)) {
 		print '<table class="noborder nohover centpercent">';
 		print '<tr class="liste_titre"><th colspan="3">'.$langs->trans("Holidays").'</th></tr>';
 		print '<tr class="oddeven">';
-		print '<td colspan="3">';
+		print '<td>';
 
 		$out = '';
 		$nb_holiday = 0;
@@ -163,8 +163,9 @@ if (!empty($conf->holiday->enabled)) {
 			$nb_holiday += $nb_type;
 			$out .= ' - '.($langs->trans($val['code']) != $val['code'] ? $langs->trans($val['code']) : $val['label']).': <strong>'.($nb_type ? price2num($nb_type) : 0).'</strong><br>';
 		}
-		print $langs->trans('SoldeCPUser', round($nb_holiday, 5)).'<br>';
-		print $out;
+		$balancetoshow = $langs->trans('SoldeCPUser', '{s1}');
+		print '<div class="valignmiddle div-balanceofleave">'.str_replace('{s1}', img_picto('', 'holiday', 'class="paddingleft pictofixedwidth"').'<span class="balanceofleave valignmiddle'.($nb_holiday > 0 ? ' amountpaymentcomplete' : ($nb_holiday < 0 ? ' amountremaintopay' : ' amountpaymentneutral')).'">'.round($nb_holiday, 5).'</span>', $balancetoshow).'</div>';
+		print '<span class="opacitymedium">'.$out.'</span>';
 
 		print '</td>';
 		print '</tr>';
@@ -222,6 +223,7 @@ if (!empty($conf->holiday->enabled) && $user->rights->holiday->read) {
 				$holidaystatic->id = $obj->rowid;
 				$holidaystatic->ref = $obj->ref;
 				$holidaystatic->statut = $obj->status;
+				$holidaystatic->date_debut = $db->jdate($obj->date_start);
 
 				$userstatic->id = $obj->uid;
 				$userstatic->lastname = $obj->lastname;
@@ -233,7 +235,7 @@ if (!empty($conf->holiday->enabled) && $user->rights->holiday->read) {
 
 				print '<tr class="oddeven">';
 				print '<td class="nowraponall">'.$holidaystatic->getNomUrl(1).'</td>';
-				print '<td class="tdoverflowmax125">'.$userstatic->getNomUrl(-1, 'leave').'</td>';
+				print '<td class="tdoverflowmax100">'.$userstatic->getNomUrl(-1, 'leave').'</td>';
 				print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($langs->trans($typeleaves[$obj->fk_type]['code'])).'">'.dol_escape_htmltag($langs->trans($typeleaves[$obj->fk_type]['code'])).'</td>';
 
 				$starthalfday = ($obj->halfday == -1 || $obj->halfday == 2) ? 'afternoon' : 'morning';
@@ -242,7 +244,7 @@ if (!empty($conf->holiday->enabled) && $user->rights->holiday->read) {
 				print '<td>'.dol_print_date($db->jdate($obj->date_start), 'day').' <span class="opacitymedium">'.$langs->trans($listhalfday[$starthalfday]).'</span>';
 				print '<td>'.dol_print_date($db->jdate($obj->date_end), 'day').' <span class="opacitymedium">'.$langs->trans($listhalfday[$endhalfday]).'</span>';
 				print '<td class="right">'.dol_print_date($db->jdate($obj->dm), 'day').'</td>';
-				print '<td class="right nowrap" width="16">'.$holidaystatic->LibStatut($obj->status, 3).'</td>';
+				print '<td class="right nowrap" width="16">'.$holidaystatic->LibStatut($obj->status, 3, $holidaystatic->date_debut).'</td>';
 				print '</tr>';
 
 				$i++;

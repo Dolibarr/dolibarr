@@ -64,6 +64,10 @@ class AccountancyExport
 	public static $EXPORT_TYPE_FEC = 1000;
 	public static $EXPORT_TYPE_FEC2 = 1010;
 
+	/**
+	 * @var DoliDB	Database handler
+	 */
+	public $db;
 
 	/**
 	 * @var string[] Error codes (or messages)
@@ -915,7 +919,7 @@ class AccountancyExport
 		print "Montantdevise".$separator;
 		print "Idevise".$separator;
 		print "DateLimitReglmt".$separator;
-		print "NumFacture".$separator;
+		print "NumFacture";
 		print $end_line;
 
 		foreach ($objectLines as $line) {
@@ -997,13 +1001,13 @@ class AccountancyExport
 				print $line->multicurrency_amount . $separator;
 
 				// FEC:Idevise
-				print $line->multicurrency_code.$separator;
+				print $line->multicurrency_code . $separator;
 
 				// FEC_suppl:DateLimitReglmt
-				print $date_limit_payment;
+				print $date_limit_payment . $separator;
 
 				// FEC_suppl:NumFacture
-				print dol_trunc(self::toAnsi($refInvoice), 17, 'right', 'UTF-8', 1) . $separator;
+				print dol_trunc(self::toAnsi($refInvoice), 17, 'right', 'UTF-8', 1);
 
 				print $end_line;
 			}
@@ -1042,7 +1046,7 @@ class AccountancyExport
 		print "Montantdevise".$separator;
 		print "Idevise".$separator;
 		print "DateLimitReglmt".$separator;
-		print "NumFacture".$separator;
+		print "NumFacture";
 		print $end_line;
 
 		foreach ($objectLines as $line) {
@@ -1127,10 +1131,10 @@ class AccountancyExport
 				print $line->multicurrency_code . $separator;
 
 				// FEC_suppl:DateLimitReglmt
-				print $date_limit_payment;
+				print $date_limit_payment . $separator;
 
 				// FEC_suppl:NumFacture
-				print dol_trunc(self::toAnsi($refInvoice), 17, 'right', 'UTF-8', 1) . $separator;
+				print dol_trunc(self::toAnsi($refInvoice), 17, 'right', 'UTF-8', 1);
 
 
 				print $end_line;

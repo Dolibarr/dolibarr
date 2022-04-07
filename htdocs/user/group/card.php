@@ -206,19 +206,19 @@ if (empty($reshook)) {
 
 			$object->oldcopy = clone $object;
 
-			$object->name	= GETPOST("nom", 'nohtml');
-			$object->note	= dol_htmlcleanlastbr(trim(GETPOST("note", 'restricthtml')));
+			$object->name = GETPOST("nom", 'nohtml');
+			$object->note = dol_htmlcleanlastbr(trim(GETPOST("note", 'restricthtml')));
 
 			// Fill array 'array_options' with data from add form
-			$ret = $extrafields->setOptionalsFromPost(null, $object);
+			$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
 			if ($ret < 0) {
 				$error++;
 			}
 
 			if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
 				$object->entity = 0;
-			} else {
-				$object->entity = GETPOST("entity");
+			} elseif (GETPOSTISSET("entity")) {
+				$object->entity = GETPOST("entity", "int");
 			}
 
 			$ret = $object->update();
@@ -237,7 +237,7 @@ if (empty($reshook)) {
 	}
 
 	// Actions to build doc
-	$upload_dir = $conf->usergroup->dir_output;
+	$upload_dir = $conf->user->dir_output.'/usergroups';
 	$permissiontoadd = $user->rights->user->user->creer;
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 }
@@ -478,7 +478,7 @@ if ($action == 'create') {
 			 */
 
 			$filename = dol_sanitizeFileName($object->ref);
-			$filedir = $conf->usergroup->dir_output."/".dol_sanitizeFileName($object->ref);
+			$filedir = $conf->user->dir_output."/usergroups/".dol_sanitizeFileName($object->ref);
 			$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 			$genallowed = $user->rights->user->user->creer;
 			$delallowed = $user->rights->user->user->supprimer;

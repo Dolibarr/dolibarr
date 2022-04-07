@@ -81,7 +81,7 @@ if (GETPOST('acction', 'aZ') == 'switchentity') {
 $title = $langs->trans("Multicompanies");
 
 // URL http://mydolibarr/core/multicompany_page?dol_use_jmobile=1 can be used for tests
-$head = '<!-- Multicompany access -->'."\n";
+$head = '<!-- Multicompany selection -->'."\n";	// This is used by DoliDroid to know page is a multicompany selection page
 $arrayofjs = array();
 $arrayofcss = array();
 top_htmlhead($head, $title, 0, 0, $arrayofjs, $arrayofcss);
@@ -109,13 +109,20 @@ if (empty($conf->multicompany->enabled)) {
 		$listofentities = $mc->getEntitiesList($user->login, false, true);
 	}
 
+	$multicompanyList .= '<ul class="ullistonly left" style="list-style: none;">';
 	foreach ($listofentities as $entityid => $entitycursor) {
 		$url = DOL_URL_ROOT.'/core/multicompany_page.php?action=switchentity&token='.newToken().'&entity='.((int) $entityid).($backtourl ? '&backtourl='.urlencode($backtourl) : '');
-		$multicompanyList .= '<a class="dropdown-item multicompany-item'.(strpos($url, 'http') === 0 ? ' multicompany-item-external' : '').'" id="multicompany-item-'.$id.'" data-id="'.$id.'" href="'.dol_escape_htmltag($url).'">';
+		$multicompanyList .= '<li class="lilistonly" style="height: 2.5em; font-size: 1.15em;">';
+		$multicompanyList .= '<a class="dropdown-item multicompany-item" id="multicompany-item-'.$entityid.'" data-id="'.$entityid.'" href="'.dol_escape_htmltag($url).'">';
+		$multicompanyList .= img_picto('', 'entity', 'class="pictofixedwidth"');
 		$multicompanyList .= dol_escape_htmltag($entitycursor);
+		if ($conf->entity == $entityid) {
+			$multicompanyList .= ' <span class="opacitymedium">('.$langs->trans("Currently").')</span>';
+		}
 		$multicompanyList .= '</a>';
+		$multicompanyList .= '</li>';
 	}
-	$multicompanyList .= '</div>';
+	$multicompanyList .= '</ul>';
 
 	$searchForm .= '<input name="bookmark" id="top-multicompany-search-input" class="dropdown-search-input" placeholder="'.$langs->trans('Entity').'" autocomplete="off" >';
 

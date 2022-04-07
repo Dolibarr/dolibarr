@@ -82,12 +82,12 @@ class Paiement extends CommonObject
 	public $paiementcode; // Code of payment.
 
 	/**
-	 * @var string type libelle
+	 * @var string Type of payment label
 	 */
 	public $type_label;
 
 	/**
-	 * @var string type code
+	 * @var string Type of payment code (seems duplicate with $paiementcode);
 	 */
 	public $type_code;
 
@@ -483,7 +483,7 @@ class Paiement extends CommonObject
 
 		// Verifier si paiement porte pas sur une facture classee
 		// Si c'est le cas, on refuse la suppression
-		$billsarray = $this->getBillsArray('fk_statut > 1');
+		$billsarray = $this->getBillsArray('f.fk_statut > 1');
 		if (is_array($billsarray)) {
 			if (count($billsarray)) {
 				$this->error = "ErrorDeletePaymentLinkedToAClosedInvoiceNotPossible";
@@ -585,16 +585,19 @@ class Paiement extends CommonObject
 				return -1;
 			}
 
-			$this->db->begin();
-
 			$this->fk_account = $accountid;
 
+			dol_syslog("addPaymentToBank ".$user->id.", ".$mode.", ".$label.", ".$this->fk_account.", ".$emetteur_nom.", ".$emetteur_banque);
+
 			include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-
-			dol_syslog("$user->id, $mode, $label, $this->fk_account, $emetteur_nom, $emetteur_banque");
-
 			$acc = new Account($this->db);
 			$result = $acc->fetch($this->fk_account);
+			if ($result < 0) {
+				$error++;
+				return -1;
+			}
+
+			$this->db->begin();
 
 			$totalamount = $this->amount;
 			if (empty($totalamount)) {
@@ -613,7 +616,7 @@ class Paiement extends CommonObject
 			// Insert payment into llx_bank
 			$bank_line_id = $acc->addline(
 				$this->datepaye,
-				$this->paiementid, // Payment mode id or code ("CHQ or VIR for example")
+				$this->paiementcode ? $this->paiementcode : $this->paiementid, // Payment mode code ('CB', 'CHQ' or 'VIR' for example). Use payment id if not defined for backward compatibility.
 				$label,
 				$totalamount, // Sign must be positive when we receive money (customer payment), negative when you give money (supplier invoice or credit note)
 				$this->num_payment,
@@ -951,6 +954,7 @@ class Paiement extends CommonObject
 	 *
 	 *  @param	string		$filter         Filter
 	 *  @return int|array					<0 if KO or array of invoice id
+	 *  @see getAmountsArray()
 	 */
 	public function getBillsArray($filter = '')
 	{
@@ -984,6 +988,7 @@ class Paiement extends CommonObject
 	 *  Return list of amounts of payments.
 	 *
 	 *  @return int|array					Array of amount of payments
+	 *  @see getBillsArray()
 	 */
 	public function getAmountsArray()
 	{
@@ -1151,7 +1156,7 @@ class Paiement extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $mode = 'withlistofinvoices', $notooltip = 0, $morecss = '')
 	{
-		global $conf, $langs;
+		global $conf, $langs, $hookmanager;
 
 		if (!empty($conf->dol_no_mouse_hover)) {
 			$notooltip = 1; // Force disable tooltips
@@ -1209,7 +1214,15 @@ class Paiement extends CommonObject
 			$result .= ($this->ref ? $this->ref : $this->id);
 		}
 		$result .= $linkend;
-
+		global $action;
+		$hookmanager->initHooks(array($this->element . 'dao'));
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
+		}
 		return $result;
 	}
 

@@ -255,7 +255,7 @@ class Fichinter extends CommonObject
 		}
 
 		if ($this->socid <= 0) {
-			$this->error = 'ErrorBadParameterForFunc';
+			$this->error = 'ErrorFicheinterCompanyDoesNotExist';
 			dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
 			return -1;
 		}
@@ -430,9 +430,9 @@ class Fichinter extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."fichinter as f";
 		if ($ref) {
 			$sql .= " WHERE f.entity IN (".getEntity('intervention').")";
-			$sql .= " AND f.ref='".$this->db->escape($ref)."'";
+			$sql .= " AND f.ref = '".$this->db->escape($ref)."'";
 		} else {
-			$sql .= " WHERE f.rowid=".((int) $rowid);
+			$sql .= " WHERE f.rowid = ".((int) $rowid);
 		}
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
@@ -816,7 +816,7 @@ class Fichinter extends CommonObject
 
 		global $action;
 		$hookmanager->initHooks(array('interventiondao'));
-		$parameters = array('id'=>$this->id, 'getnomurl'=>$result);
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -1320,11 +1320,13 @@ class Fichinter extends CommonObject
 		// phpcs:enable
 		$this->lines = array();
 
-		$sql = 'SELECT rowid, fk_fichinter, description, duree, date, rang';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.'fichinterdet';
-		$sql .= ' WHERE fk_fichinter = '.((int) $this->id).' ORDER BY rang ASC, date ASC';
+		$sql = "SELECT rowid, fk_fichinter, description, duree, date, rang";
+		$sql .= " FROM ".MAIN_DB_PREFIX."fichinterdet";
+		$sql .= " WHERE fk_fichinter = ".((int) $this->id);
+		$sql .= " ORDER BY rang ASC, date ASC";
 
 		dol_syslog(get_class($this)."::fetch_lines", LOG_DEBUG);
+
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -1584,7 +1586,7 @@ class FichinterLigne extends CommonObjectLine
 			if ($result > 0) {
 				if (!$notrigger) {
 					// Call trigger
-					$result = $this->call_trigger('LINEFICHINTER_UPDATE', $user);
+					$result = $this->call_trigger('LINEFICHINTER_MODIFY', $user);
 					if ($result < 0) {
 						$error++;
 					}

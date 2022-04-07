@@ -87,11 +87,11 @@ class box_graph_nb_ticket_last_x_days extends ModeleBoxes
 
 
 		$param_day = 'DOLUSERCOOKIE_ticket_last_days';
-		if (!empty($_POST[$param_day])) {
-			if ($_POST[$param_day] >= 15) {
+		if (GETPOST($param_day)) {
+			if (GETPOST($param_day) >= 15) {
 				$days = 14;
 			} else {
-				$days = $_POST[$param_day];
+				$days = GETPOST($param_day);
 			}
 		} else {
 			$days = 7;
@@ -140,7 +140,7 @@ class box_graph_nb_ticket_last_x_days extends ModeleBoxes
 				dol_print_error($this->db);
 			}
 			$stringtoshow = '<div class="div-table-responsive-no-min">';
-			$stringtoshow .= '<script type="text/javascript" language="javascript">
+			$stringtoshow .= '<script type="text/javascript">
 				jQuery(document).ready(function() {
 					jQuery("#idsubimgDOLUSERCOOKIE_ticket_last_days").click(function() {
 						jQuery("#idfilterDOLUSERCOOKIE_ticket_last_days").toggle();

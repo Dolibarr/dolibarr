@@ -6,9 +6,10 @@
  * Copyright (C) 2014		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2014       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2015-2016	Marcos García		<marcosgdf@gmail.com>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
  * Copyright (C) 2018		Ferran Marcet		<fmarcet@2byte.es>
  * Copyright (C) 2019		Nicolas ZABOURI		<info@inovea-conseil.com>
+ * Copyright (C) 2022		OpenDSI				<support@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,8 +66,11 @@ $colspan = 3; // Columns: total ht + col edit + col delete
 if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) {
 	$colspan++; //Add column for Total (currency) if required
 }
-if (in_array($object->element, array('propal', 'commande', 'order', 'facture', 'facturerec', 'invoice', 'supplier_proposal', 'order_supplier', 'invoice_supplier'))) {
+if (in_array($object->element, array('propal', 'commande', 'order', 'facture', 'facturerec', 'invoice', 'supplier_proposal', 'order_supplier', 'invoice_supplier', 'invoice_supplier_rec'))) {
 	$colspan++; // With this, there is a column move button
+}
+if (!empty($conf->asset->enabled) && $object->element == 'invoice_supplier') {
+	$colspan++;
 }
 
 //print $object->element;
@@ -89,6 +93,8 @@ if (!empty($extrafields)) {
 		$objectline = new SupplierInvoiceLine($this->db);
 	} elseif ($this->table_element_line == 'facturedet_rec') {
 		$objectline = new FactureLigneRec($this->db);
+	} elseif ($this->table_element_line == 'facture_fourn_det_rec') {
+		$objectline = new FactureFournisseurLigneRec($this->db);
 	}
 }
 print "<!-- BEGIN PHP TEMPLATE objectline_create.tpl.php -->\n";
@@ -103,7 +109,7 @@ if ($nolinesbefore) {
 			<div id="add"></div><span class="hideonsmartphone"><?php echo $langs->trans('AddNewLine'); ?></span>
 		</td>
 		<?php
-		if ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier') {	// We must have same test in printObjectLines
+		if ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier' || $object->element == 'invoice_supplier_rec') {	// We must have same test in printObjectLines
 			?>
 			<td class="linecolrefsupplier"><span id="title_fourn_ref"><?php echo $langs->trans('SupplierRef'); ?></span></td>
 			<?php
@@ -343,7 +349,7 @@ if ($nolinesbefore) {
 		$doleditor = new DolEditor('dp_desc', GETPOST('dp_desc', 'restricthtml'), '', (empty($conf->global->MAIN_DOLEDITOR_HEIGHT) ? 100 : $conf->global->MAIN_DOLEDITOR_HEIGHT), $toolbarname, '', false, true, $enabled, $nbrows, '98%');
 		$doleditor->Create();
 		// Show autofill date for recurring invoices
-		if (!empty($conf->service->enabled) && $object->element == 'facturerec') {
+		if (!empty($conf->service->enabled) && ($object->element == 'facturerec' || $object->element == 'invoice_supplier_rec')) {
 			echo '<div class="divlinefordates"><br>';
 			echo $langs->trans('AutoFillDateFrom').' ';
 			echo $form->selectyesno('date_start_fill', $line->date_start_fill, 1);
@@ -354,7 +360,7 @@ if ($nolinesbefore) {
 		}
 		if (is_object($objectline)) {
 			$temps = $objectline->showOptionals($extrafields, 'create', array(), '', '', 1, 'line');
-			;
+
 			if (!empty($temps)) {
 				print '<div style="padding-top: 10px" id="extrafield_lines_area_create" name="extrafield_lines_area_create">';
 				print $temps;
@@ -362,10 +368,10 @@ if ($nolinesbefore) {
 			}
 		}
 		echo '</td>';
-		if ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier') {	// We must have same test in printObjectLines
+		if ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier' || $object->element == 'invoice_supplier_rec') {	// We must have same test in printObjectLines
 			$coldisplay++;
 			?>
-	<td class="nobottom linecolresupplier"><input id="fourn_ref" name="fourn_ref" class="flat minwidth50 maxwidth125" value="<?php echo (GETPOSTISSET("fourn_ref") ? GETPOST("fourn_ref", 'alpha', 2) : ''); ?>"></td>
+	<td class="nobottom linecolrefsupplier"><input id="fourn_ref" name="fourn_ref" class="flat minwidth50 maxwidth125 maxwidth125onsmartphone" value="<?php echo (GETPOSTISSET("fourn_ref") ? GETPOST("fourn_ref", 'alpha', 2) : ''); ?>"></td>
 		<?php }
 		print '<td class="nobottom linecolvat right">';
 		$coldisplay++;
@@ -639,17 +645,20 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 	$("#select_type").change(function()
 	{
 		setforfree();
-		if (jQuery('#select_type').val() >= 0)
-		{
-			/* focus work on a standard textarea but not if field was replaced with CKEDITOR */
+
+		if (jQuery('#select_type').val() >= 0) {
+			console.log("Set focus on description field");
+			/* this focus code works on a standard textarea but not if field was replaced with CKEDITOR */
 			jQuery('#dp_desc').focus();
-			/* focus if CKEDITOR */
-			if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined")
-			{
+			/* this focus code works for CKEDITOR */
+			if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined") {
 				var editor = CKEDITOR.instances['dp_desc'];
-				if (editor) { editor.focus(); }
+				if (editor) {
+					editor.focus();
+				}
 			}
 		}
+
 		console.log("Hide/show date according to product type");
 		if (jQuery('#select_type').val() == '0')
 		{
@@ -1013,7 +1022,7 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 		jQuery("#prod_entry_mode_free").prop('checked',true).change();
 		jQuery("#prod_entry_mode_predef").prop('checked',false).change();
 		jQuery("#search_idprod, #idprod, #search_idprodfournprice, #buying_price").val('');
-		jQuery("#price_ht, #multicurrency_price_ht, #price_ttc, #price_ttc, #fourn_ref, #tva_tx, #buying_price, #title_fourn_ref, #title_vat, #title_up_ht, #title_up_ht_currency, #title_up_ttc, #title_up_ttc_currency").show();
+		jQuery("#price_ht, #multicurrency_price_ht, #price_ttc, #multicurrency_price_ttc, #fourn_ref, #tva_tx, #buying_price, #title_fourn_ref, #title_vat, #title_up_ht, #title_up_ht_currency, #title_up_ttc, #title_up_ttc_currency").show();
 		jQuery("#np_marginRate, #np_markRate, .np_marginRate, .np_markRate, #units, #title_units").show();
 		jQuery("#fournprice_predef").hide();
 	}
@@ -1028,11 +1037,21 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 			jQuery("#multicurrency_price_ht").val('').show();
 			jQuery("#title_up_ht, #title_up_ht_currency").show();
 		<?php } else { ?>
-			jQuery("#price_ht").val('').hide();
+			//jQuery("#price_ht").val('').hide();
 			jQuery("#multicurrency_price_ht").val('').hide();
 			jQuery("#title_up_ht, #title_up_ht_currency").hide();
 		<?php } ?>
-		jQuery("#price_ttc, #fourn_ref, #tva_tx, #title_fourn_ref, #title_vat, #title_up_ttc, #title_up_ttc_currency").hide();
+		<?php if (empty($conf->global->MAIN_DISABLE_EDIT_PREDEF_PRICETTC)) { ?>
+			jQuery("#price_ttc").val('').show();
+			jQuery("#multicurrency_price_ttc").val('').show();
+			jQuery("#title_up_ttc, #title_up_ttc_currency").show();
+		<?php } else { ?>
+			jQuery("#price_ttc").val('').hide();
+			jQuery("#multicurrency_price_ttc").val('').hide();
+			jQuery("#title_up_ttc, #title_up_ttc_currency").hide();
+		<?php } ?>
+		jQuery("#fourn_ref, #tva_tx, #title_vat").hide();
+		/* jQuery("#title_fourn_ref").hide(); */
 		jQuery("#np_marginRate, #np_markRate, .np_marginRate, .np_markRate, #units, #title_units").hide();
 		jQuery("#buying_price").show();
 		jQuery('#trlinefordates, .divlinefordates').show();

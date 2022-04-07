@@ -1,0 +1,14 @@
+# Dolibarr language file - Source file is en_US - ftp
+FTPClientSetup=FTP یا SFTP کلائنٹ ماڈیول سیٹ اپ
+NewFTPClient=نیا FTP/FTPS کنکشن سیٹ اپ
+FTPArea=FTP/FTPS ایریا
+FTPAreaDesc=یہ اسکرین FTP اور SFTP سرور کا منظر دکھاتی ہے۔
+SetupOfFTPClientModuleNotComplete=FTP یا SFTP کلائنٹ ماڈیول کا سیٹ اپ نامکمل لگتا ہے۔
+FTPFeatureNotSupportedByYourPHP=آپ کا پی ایچ پی FTP یا SFTP فنکشنز کو سپورٹ نہیں کرتا ہے۔
+FailedToConnectToFTPServer=سرور سے منسلک ہونے میں ناکام (سرور %s، پورٹ %s)
+FailedToConnectToFTPServerWithCredentials=متعین لاگ ان/پاس ورڈ کے ساتھ سرور میں لاگ ان کرنے میں ناکام
+FTPFailedToRemoveFile=فائل کو ہٹانے میں ناکام <b> %s </b> ۔
+FTPFailedToRemoveDir=ڈائرکٹری کو ہٹانے میں ناکام <b> %s </b> : اجازتیں چیک کریں اور یہ کہ ڈائرکٹری خالی ہے۔
+FTPPassiveMode=غیر فعال موڈ
+ChooseAFTPEntryIntoMenu=مینو سے ایک FTP/SFTP سائٹ منتخب کریں...
+FailedToGetFile=فائلیں %s حاصل کرنے میں ناکام

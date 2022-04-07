@@ -22,7 +22,7 @@ ProductService=Vare eller tjeneste
 AllProducts=Alle varer og tjenester
 ChooseProduct/Service=Velg vare eller tjenester
 ForceBuyingPriceIfNull=Tving innkjøps-/kostpris til utsalgspris hvis udefinert
-ForceBuyingPriceIfNullDetails=If buying/cost price not provided when we add a new line, and this option is "ON", the margin will be 0 on the new line (buying/cost price = selling price). If this option is "OFF" (recommended), margin will be equal to the value suggested by default (and may be 100% if no default value can be found).
+ForceBuyingPriceIfNullDetails=Hvis kjøps-/kostpris ikke er oppgitt når vi legger til en ny linje, og dette alternativet er "PÅ", vil marginen være 0%% på den nye linjen (kjøps-/kostpris = salgspris). Hvis dette alternativet er "AV" (anbefalt), vil marginen være lik verdien som er foreslått som standard (og kan være 100%% hvis ingen standardverdi kan bli funnet).
 MARGIN_METHODE_FOR_DISCOUNT=Margin-metode for globale rabatter
 UseDiscountAsProduct=Som vare
 UseDiscountAsService=Som tjeneste

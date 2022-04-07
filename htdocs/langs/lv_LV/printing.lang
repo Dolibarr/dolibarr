@@ -1,10 +1,10 @@
 # Dolibarr language file - Source file is en_US - printing
-Module64000Name=Tiešā drukāšana
-Module64000Desc=Iespējot tiešās drukāšanas sistēmu
-PrintingSetup=Tiešās drukāšanas sistēmas iestatīšana
-PrintingDesc=Šis modulis pievieno pogai Print (Drukāt) dažādiem moduļiem, lai ļautu dokumentus iespiest tieši uz printeri, neizmantojot dokumentu citā lietojumprogrammā.
-MenuDirectPrinting=Tiešās drukāšanas darbi
-DirectPrint=Tiešā druka
+Module64000Name=Drukāšana ar vienu klikšķi
+Module64000Desc=Iespējot drukāšanas sistēmu ar vienu klikšķi
+PrintingSetup=Drukāšanas sistēmas iestatīšana ar vienu klikšķi
+PrintingDesc=Šis modulis dažādiem moduļiem pievieno pogu Drukāt, lai dokumentus varētu drukāt tieši printerī, neatverot dokumentu citā lietojumprogrammā.
+MenuDirectPrinting=Drukāšanas darbi ar vienu klikšķi
+DirectPrint=Viens klikšķis Drukāt
 PrintingDriverDesc=Konfigurācijas mainīgie drukāšanas draiverim.
 ListDrivers=Draiveru saraksts
 PrintTestDesc=Printeru saraksts.

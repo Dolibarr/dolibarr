@@ -76,11 +76,14 @@ if ($complete == 'na' || $complete == -2) {
 }
 
 if ($fulldayevent) {
-	$datep = dol_mktime('00', '00', 0, GETPOST("apmonth", 'int'), GETPOST("apday", 'int'), GETPOST("apyear", 'int'));
-	$datef = dol_mktime('23', '59', '59', GETPOST("p2month", 'int'), GETPOST("p2day", 'int'), GETPOST("p2year", 'int'));
+	$tzforfullday = getDolGlobalString('MAIN_STORE_FULL_EVENT_IN_GMT');
+	// For "full day" events, we must store date in GMT (It must be viewed as same moment everywhere)
+	$datep = dol_mktime('00', '00', 0, GETPOST("apmonth", 'int'), GETPOST("apday", 'int'), GETPOST("apyear", 'int'), $tzforfullday ? $tzforfullday : 'tzuserrel');
+	$datef = dol_mktime('23', '59', '59', GETPOST("p2month", 'int'), GETPOST("p2day", 'int'), GETPOST("p2year", 'int'), $tzforfullday ? $tzforfullday : 'tzuserrel');
+	//print $db->idate($datep); exit;
 } else {
-	$datep = dol_mktime($aphour, $apmin, 0, GETPOST("apmonth", 'int'), GETPOST("apday", 'int'), GETPOST("apyear", 'int'));
-	$datef = dol_mktime($p2hour, $p2min, '59', GETPOST("p2month", 'int'), GETPOST("p2day", 'int'), GETPOST("p2year", 'int'));
+	$datep = dol_mktime($aphour, $apmin, 0, GETPOST("apmonth", 'int'), GETPOST("apday", 'int'), GETPOST("apyear", 'int'), 'tzuserrel');
+	$datef = dol_mktime($p2hour, $p2min, '59', GETPOST("p2month", 'int'), GETPOST("p2day", 'int'), GETPOST("p2year", 'int'), 'tzuserrel');
 }
 
 // Security check
@@ -252,8 +255,15 @@ if (empty($reshook) && $action == 'add') {
 	$percentage = in_array(GETPOST('status'), array(-1, 100)) ? GETPOST('status') : (in_array($complete, array(-1, 100)) ? $complete : GETPOST("percentage", 'int')); // If status is -1 or 100, percentage is not defined and we must use status
 
 	// Clean parameters
-	$datep = dol_mktime($fulldayevent ? '00' : GETPOST("aphour", 'int'), $fulldayevent ? '00' : GETPOST("apmin", 'int'), $fulldayevent ? '00' : GETPOST("apsec", 'int'), GETPOST("apmonth", 'int'), GETPOST("apday", 'int'), GETPOST("apyear", 'int'), 'tzuser');
-	$datef = dol_mktime($fulldayevent ? '23' : GETPOST("p2hour", 'int'), $fulldayevent ? '59' : GETPOST("p2min", 'int'), $fulldayevent ? '59' : GETPOST("apsec", 'int'), GETPOST("p2month", 'int'), GETPOST("p2day", 'int'), GETPOST("p2year", 'int'), 'tzuser');
+	if ($fulldayevent) {
+		$tzforfullday = getDolGlobalString('MAIN_STORE_FULL_EVENT_IN_GMT');
+		// For "full day" events, we must store date in GMT (It must be viewed as same moment everywhere)
+		$datep = dol_mktime($fulldayevent ? '00' : GETPOST("aphour", 'int'), $fulldayevent ? '00' : GETPOST("apmin", 'int'), $fulldayevent ? '00' : GETPOST("apsec", 'int'), GETPOST("apmonth", 'int'), GETPOST("apday", 'int'), GETPOST("apyear", 'int'), $tzforfullday ? $tzforfullday : 'tzuser');
+		$datef = dol_mktime($fulldayevent ? '23' : GETPOST("p2hour", 'int'), $fulldayevent ? '59' : GETPOST("p2min", 'int'), $fulldayevent ? '59' : GETPOST("apsec", 'int'), GETPOST("p2month", 'int'), GETPOST("p2day", 'int'), GETPOST("p2year", 'int'), $tzforfullday ? $tzforfullday : 'tzuser');
+	} else {
+		$datep = dol_mktime($fulldayevent ? '00' : GETPOST("aphour", 'int'), $fulldayevent ? '00' : GETPOST("apmin", 'int'), $fulldayevent ? '00' : GETPOST("apsec", 'int'), GETPOST("apmonth", 'int'), GETPOST("apday", 'int'), GETPOST("apyear", 'int'), 'tzuser');
+		$datef = dol_mktime($fulldayevent ? '23' : GETPOST("p2hour", 'int'), $fulldayevent ? '59' : GETPOST("p2min", 'int'), $fulldayevent ? '59' : GETPOST("apsec", 'int'), GETPOST("p2month", 'int'), GETPOST("p2day", 'int'), GETPOST("p2year", 'int'), 'tzuser');
+	}
 
 	// Check parameters
 	if (!$datef && $percentage == 100) {
@@ -280,7 +290,7 @@ if (empty($reshook) && $action == 'add') {
 	if (!$error) {
 		// Initialisation objet actioncomm
 		$object->priority = GETPOSTISSET("priority") ? GETPOST("priority", "int") : 0;
-		$object->fulldayevent = (!empty($fulldayevent) ? 1 : 0);
+		$object->fulldayevent = ($fulldayevent ? 1 : 0);
 		$object->location = GETPOST("location", 'alphanohtml');
 		$object->label = GETPOST('label', 'alphanohtml');
 
@@ -513,8 +523,16 @@ if (empty($reshook) && $action == 'update') {
 		$object->fetch_userassigned();
 		$object->oldcopy = clone $object;
 
-		$datep = dol_mktime($fulldayevent ? '00' : $aphour, $fulldayevent ? '00' : $apmin, 0, GETPOST("apmonth", 'int'), GETPOST("apday", 'int'), GETPOST("apyear", 'int'), 'tzuser');
-		$datef = dol_mktime($fulldayevent ? '23' : $p2hour, $fulldayevent ? '59' : $p2min, $fulldayevent ? '59' : '0', GETPOST("p2month", 'int'), GETPOST("p2day", 'int'), GETPOST("p2year", 'int'), 'tzuser');
+		// Clean parameters
+		if ($fulldayevent) {
+			$tzforfullday = getDolGlobalString('MAIN_STORE_FULL_EVENT_IN_GMT');
+			// For "full day" events, we must store date in GMT (It must be viewed as same moment everywhere)
+			$datep = dol_mktime($fulldayevent ? '00' : GETPOST("aphour", 'int'), $fulldayevent ? '00' : GETPOST("apmin", 'int'), $fulldayevent ? '00' : GETPOST("apsec", 'int'), GETPOST("apmonth", 'int'), GETPOST("apday", 'int'), GETPOST("apyear", 'int'), $tzforfullday ? $tzforfullday : 'tzuser');
+			$datef = dol_mktime($fulldayevent ? '23' : GETPOST("p2hour", 'int'), $fulldayevent ? '59' : GETPOST("p2min", 'int'), $fulldayevent ? '59' : GETPOST("apsec", 'int'), GETPOST("p2month", 'int'), GETPOST("p2day", 'int'), GETPOST("p2year", 'int'), $tzforfullday ? $tzforfullday : 'tzuser');
+		} else {
+			$datep = dol_mktime($fulldayevent ? '00' : GETPOST("aphour", 'int'), $fulldayevent ? '00' : GETPOST("apmin", 'int'), $fulldayevent ? '00' : GETPOST("apsec", 'int'), GETPOST("apmonth", 'int'), GETPOST("apday", 'int'), GETPOST("apyear", 'int'), 'tzuser');
+			$datef = dol_mktime($fulldayevent ? '23' : GETPOST("p2hour", 'int'), $fulldayevent ? '59' : GETPOST("p2min", 'int'), $fulldayevent ? '59' : GETPOST("apsec", 'int'), GETPOST("p2month", 'int'), GETPOST("p2day", 'int'), GETPOST("p2year", 'int'), 'tzuser');
+		}
 
 		$object->type_id     = dol_getIdFromCode($db, GETPOST("actioncode", 'aZ09'), 'c_actioncomm');
 		$object->label       = GETPOST("label", "alphanohtml");
@@ -609,7 +627,7 @@ if (empty($reshook) && $action == 'update') {
 		}
 
 		// Fill array 'array_options' with data from add form
-		$ret = $extrafields->setOptionalsFromPost(null, $object);
+		$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
 		if ($ret < 0) {
 			$error++;
 		}
@@ -683,7 +701,7 @@ if (empty($reshook) && $action == 'update') {
 				$categories = GETPOST('categories', 'array');
 				$object->setCategories($categories);
 
-				$object->loadReminders();
+				$object->loadReminders($remindertype, 0, false);
 				if (!empty($object->reminders) && $object->datep > dol_now()) {
 					foreach ($object->reminders as $reminder) {
 						$reminder->delete($user);
@@ -937,7 +955,7 @@ if ($action == 'create') {
                     $("#selectcomplete").change(function() {
                         if ($("#selectcomplete").val() == 100)
                         {
-                            if ($("#doneby").val() <= 0) $("#doneby").val(\''.$user->id.'\');
+                            if ($("#doneby").val() <= 0) $("#doneby").val(\''.((int) $user->id).'\');
                         }
                         if ($("#selectcomplete").val() == 0)
                         {
@@ -992,7 +1010,8 @@ if ($action == 'create') {
 	if (!empty($conf->global->AGENDA_USE_EVENT_TYPE)) {
 		print '<tr><td class="titlefieldcreate"><span class="fieldrequired">'.$langs->trans("Type").'</span></b></td><td>';
 		$default = (empty($conf->global->AGENDA_USE_EVENT_TYPE_DEFAULT) ? 'AC_RDV' : $conf->global->AGENDA_USE_EVENT_TYPE_DEFAULT);
-		$formactions->select_type_actions(GETPOSTISSET("actioncode") ? GETPOST("actioncode", 'aZ09') : ($object->type_code ? $object->type_code : $default), "actioncode", "systemauto", 0, -1);
+		print img_picto($langs->trans("ActionType"), 'square', 'class="fawidth30 inline-block" style="color: #ddd;"');
+		print $formactions->select_type_actions(GETPOSTISSET("actioncode") ? GETPOST("actioncode", 'aZ09') : ($object->type_code ? $object->type_code : $default), "actioncode", "systemauto", 0, -1, 0, 1);	// TODO Replace 0 with -2 in onlyautoornot
 		print '</td></tr>';
 	}
 
@@ -1000,15 +1019,15 @@ if ($action == 'create') {
 	print '<tr><td'.(empty($conf->global->AGENDA_USE_EVENT_TYPE) ? ' class="fieldrequired titlefieldcreate"' : '').'>'.$langs->trans("Label").'</td><td><input type="text" id="label" name="label" class="soixantepercent" value="'.GETPOST('label').'"></td></tr>';
 
 	// Full day
-	print '<tr><td>'.$langs->trans("EventOnFullDay").'</td><td><input type="checkbox" id="fullday" name="fullday" '.(GETPOST('fullday') ? ' checked' : '').'></td></tr>';
+	print '<tr><td><label for="fullday">'.$langs->trans("EventOnFullDay").'</label></td><td><input type="checkbox" id="fullday" name="fullday" '.(GETPOST('fullday') ? ' checked' : '').'></td></tr>';
 
 	$datep = ($datep ? $datep : (is_null($object->datep) ? '' : $object->datep));
 	if (GETPOST('datep', 'int', 1)) {
-		$datep = dol_stringtotime(GETPOST('datep', 'int', 1), 0);
+		$datep = dol_stringtotime(GETPOST('datep', 'int', 1), 'tzuser');
 	}
 	$datef = ($datef ? $datef : $object->datef);
 	if (GETPOST('datef', 'int', 1)) {
-		$datef = dol_stringtotime(GETPOST('datef', 'int', 1), 0);
+		$datef = dol_stringtotime(GETPOST('datef', 'int', 1), 'tzuser');
 	}
 	if (empty($datef) && !empty($datep)) {
 		if (GETPOST("actioncode", 'aZ09') == 'AC_RDV' || empty($conf->global->AGENDA_USE_EVENT_TYPE_DEFAULT)) {
@@ -1023,16 +1042,16 @@ if ($action == 'create') {
 	print '<span id="dateend"'.(GETPOST("actioncode", 'aZ09') == 'AC_RDV' ? ' class="fieldrequired"' : '').'>'.$langs->trans("DateActionEnd").'</span>';
 	print '</td><td>';
 	if (GETPOST("afaire") == 1) {
-		print $form->selectDate($datep, 'ap', 1, 1, 0, "action", 1, 2, 0, 'fulldaystart'); // Empty value not allowed for start date and hours if "todo"
+		print $form->selectDate($datep, 'ap', 1, 1, 0, "action", 1, 2, 0, 'fulldaystart', '', '', '', 1, '', '', 'tzuserrel'); // Empty value not allowed for start date and hours if "todo"
 	} else {
-		print $form->selectDate($datep, 'ap', 1, 1, 1, "action", 1, 2, 0, 'fulldaystart');
+		print $form->selectDate($datep, 'ap', 1, 1, 1, "action", 1, 2, 0, 'fulldaystart', '', '', '', 1, '', '', 'tzuserrel');
 	}
 	print ' <span class="hideonsmartphone">&nbsp; &nbsp; - &nbsp; &nbsp;</span> ';
 	//print ' - ';
 	if (GETPOST("afaire") == 1) {
-		print $form->selectDate($datef, 'p2', 1, 1, 1, "action", 1, 0, 0, 'fulldayend');
+		print $form->selectDate($datef, 'p2', 1, 1, 1, "action", 1, 0, 0, 'fulldayend', '', '', '', 1, '', '', 'tzuserrel');
 	} else {
-		print $form->selectDate($datef, 'p2', 1, 1, 1, "action", 1, 0, 0, 'fulldayend');
+		print $form->selectDate($datef, 'p2', 1, 1, 1, "action", 1, 0, 0, 'fulldayend', '', '', '', 1, '', '', 'tzuserrel');
 	}
 	print '</td></tr>';
 
@@ -1075,7 +1094,7 @@ if ($action == 'create') {
 		print '<div class="hidden marginrightonly inline-block repeateventBYDAY">';
 		print $langs->trans("DayOfWeek").': <input type="input" size="4" name="BYDAY" value="'.$selectedrecurrulebyday.'">';
 		print '</div>';
-		print '<script type="text/javascript" language="javascript">
+		print '<script type="text/javascript">
 				jQuery(document).ready(function() {
 					function init_repeat()
 					{
@@ -1247,7 +1266,9 @@ if ($action == 'create') {
 		if (!empty($projectid)) {
 			$projectsListId = $projectid;
 		}
+
 		$tid = GETPOSTISSET("projecttaskid") ? GETPOST("projecttaskid", 'int') : (GETPOSTISSET("taskid") ? GETPOST("taskid", 'int') : '');
+
 		$formproject->selectTasks((!empty($societe->id) ? $societe->id : -1), $tid, 'taskid', 24, 0, '1', 1, 0, 0, 'maxwidth500', $projectsListId);
 		print '</td></tr>';
 	}
@@ -1260,7 +1281,7 @@ if ($action == 'create') {
 		if ($user->hasRight($origin, 'read')) {
 			$hasPermissionOnLinkedObject = 1;
 		}
-		//var_dump('origin='.$origin.' originid='.$originid.' $hasPermissionOnLinkedObject='.$hasPermissionOnLinkedObject);
+		//var_dump('origin='.$origin.' originid='.$originid.' hasPermissionOnLinkedObject='.$hasPermissionOnLinkedObject);
 
 		if (! in_array($origin, array('societe', 'project', 'task', 'user'))) {
 			// We do not use link for object that already contains a hard coded field to make links with agenda events
@@ -1309,11 +1330,11 @@ if ($action == 'create') {
 	print '</table>';
 
 
-	if ($conf->global->AGENDA_REMINDER_EMAIL || $conf->global->AGENDA_REMINDER_BROWSER) {
+	if (getDolGlobalString('AGENDA_REMINDER_EMAIL') || getDolGlobalString('AGENDA_REMINDER_BROWSER')) {
 		//checkbox create reminder
 		print '<hr>';
 		print '<br>';
-		print '<label for="addreminder">'.$langs->trans("AddReminder").'</label> <input type="checkbox" id="addreminder" name="addreminder"><br><br>';
+		print '<label for="addreminder">'.img_picto('', 'bell', 'class="pictofixedwidth"').$langs->trans("AddReminder").'</label> <input type="checkbox" id="addreminder" name="addreminder"><br><br>';
 
 		print '<div class="reminderparameters" style="display: none;">';
 
@@ -1330,14 +1351,15 @@ if ($action == 'create') {
 
 		//Reminder Type
 		print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("ReminderType").'</td><td colspan="3">';
-		print $form->selectarray('selectremindertype', $TRemindTypes, '', 0, 0, 0, '', 0, 0, 0, '', 'mimnwidth200', 1);
+		print $form->selectarray('selectremindertype', $TRemindTypes, '', 0, 0, 0, '', 0, 0, 0, '', 'minwidth200 maxwidth500', 1);
 		print '</td></tr>';
 
 		//Mail Model
-		print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("EMailTemplates").'</td><td colspan="3">';
-		print $form->selectModelMail('actioncommsend', 'actioncomm_send', 1, 1);
-		print '</td></tr>';
-
+		if (getDolGlobalString('AGENDA_REMINDER_EMAIL')) {
+			print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("EMailTemplates").'</td><td colspan="3">';
+			print $form->selectModelMail('actioncommsend', 'actioncomm_send', 1, 1);
+			print '</td></tr>';
+		}
 
 		print '</table>';
 		print '</div>';
@@ -1345,14 +1367,20 @@ if ($action == 'create') {
 		print "\n".'<script type="text/javascript">';
 		print '$(document).ready(function () {
 	            		$("#addreminder").click(function(){
+							console.log("Click on addreminder");
 	            		    if (this.checked) {
-	            		      $(".reminderparameters").show();
+	            		    	$(".reminderparameters").show();
                             } else {
-                            $(".reminderparameters").hide();
+                            	$(".reminderparameters").hide();
                             }
+							$("#selectremindertype").select2("destroy");
+							$("#selectremindertype").select2();
+							$("#select_offsetunittype_duration").select2("destroy");
+							$("#select_offsetunittype_duration").select2();
 	            		 });
 
 	            		$("#selectremindertype").change(function(){
+							console.log("Change on selectremindertype");
 	            	        var selected_option = $("#selectremindertype option:selected").val();
 	            		    if(selected_option == "email") {
 	            		        $("#select_actioncommsendmodel_mail").closest("tr").show();
@@ -1463,6 +1491,10 @@ if ($id > 0) {
 	            		$("#fullday").change(function() {
 	            			setdatefields();
 	            		});
+	            		$("#actioncode").change(function() {
+                        	if ($("#actioncode").val() == \'AC_RDV\') $("#dateend").addClass("fieldrequired");
+                        	else $("#dateend").removeClass("fieldrequired");
+                    	});
                    })';
 			print '</script>'."\n";
 		}
@@ -1507,21 +1539,26 @@ if ($id > 0) {
 		print '<tr><td>'.$langs->trans("EventOnFullDay").'</td><td colspan="3"><input type="checkbox" id="fullday" name="fullday" '.($object->fulldayevent ? ' checked' : '').'></td></tr>';
 
 		// Date start - end
-		print '<tr><td class="nowrap"><span class="fieldrequired">'.$langs->trans("DateActionStart").' - '.$langs->trans("DateActionEnd").'</span></td><td colspan="3">';
+		print '<tr><td class="nowrap">';
+		print '<span class="fieldrequired">'.$langs->trans("DateActionStart").'</span>';
+		print ' - ';
+		print '<span id="dateend"'.($object->type_code == 'AC_RDV' ? ' class="fieldrequired"' : '').'>'.$langs->trans("DateActionEnd").'</span>';
+		print '</td><td td colspan="3">';
+		$tzforfullday = getDolGlobalString('MAIN_STORE_FULL_EVENT_IN_GMT');
 		if (GETPOST("afaire") == 1) {
-			print $form->selectDate($datep ? $datep : $object->datep, 'ap', 1, 1, 0, "action", 1, 1, 0, 'fulldaystart', '', '', '', 1, '', '', 'tzuser');
+			print $form->selectDate($datep ? $datep : $object->datep, 'ap', 1, 1, 0, "action", 1, 1, 0, 'fulldaystart', '', '', '', 1, '', '', $object->fulldayevent ? ($tzforfullday ? $tzforfullday : 'tzuserrel') : 'tzuserrel');
 		} elseif (GETPOST("afaire") == 2) {
-			print $form->selectDate($datep ? $datep : $object->datep, 'ap', 1, 1, 1, "action", 1, 1, 0, 'fulldaystart', '', '', '', 1, '', '', 'tzuser');
+			print $form->selectDate($datep ? $datep : $object->datep, 'ap', 1, 1, 1, "action", 1, 1, 0, 'fulldaystart', '', '', '', 1, '', '', $object->fulldayevent ? ($tzforfullday ? $tzforfullday : 'tzuserrel') : 'tzuserrel');
 		} else {
-			print $form->selectDate($datep ? $datep : $object->datep, 'ap', 1, 1, 1, "action", 1, 1, 0, 'fulldaystart', '', '', '', 1, '', '', 'tzuser');
+			print $form->selectDate($datep ? $datep : $object->datep, 'ap', 1, 1, 1, "action", 1, 1, 0, 'fulldaystart', '', '', '', 1, '', '', $object->fulldayevent ? ($tzforfullday ? $tzforfullday : 'tzuserrel') : 'tzuserrel');
 		}
 		print ' - ';
 		if (GETPOST("afaire") == 1) {
-			print $form->selectDate($datef ? $datef : $object->datef, 'p2', 1, 1, 1, "action", 1, 1, 0, 'fulldayend', '', '', '', 1, '', '', 'tzuser');
+			print $form->selectDate($datef ? $datef : $object->datef, 'p2', 1, 1, 1, "action", 1, 1, 0, 'fulldayend', '', '', '', 1, '', '', $object->fulldayevent ? ($tzforfullday ? $tzforfullday : 'tzuserrel') : 'tzuserrel');
 		} elseif (GETPOST("afaire") == 2) {
-			print $form->selectDate($datef ? $datef : $object->datef, 'p2', 1, 1, 1, "action", 1, 1, 0, 'fulldayend', '', '', '', 1, '', '', 'tzuser');
+			print $form->selectDate($datef ? $datef : $object->datef, 'p2', 1, 1, 1, "action", 1, 1, 0, 'fulldayend', '', '', '', 1, '', '', $object->fulldayevent ? ($tzforfullday ? $tzforfullday : 'tzuserrel') : 'tzuserrel');
 		} else {
-			print $form->selectDate($datef ? $datef : $object->datef, 'p2', 1, 1, 1, "action", 1, 1, 0, 'fulldayend', '', '', '', 1, '', '', 'tzuser');
+			print $form->selectDate($datef ? $datef : $object->datef, 'p2', 1, 1, 1, "action", 1, 1, 0, 'fulldayend', '', '', '', 1, '', '', $object->fulldayevent ? ($tzforfullday ? $tzforfullday : 'tzuserrel') : 'tzuserrel');
 		}
 		print '</td></tr>';
 
@@ -1552,7 +1589,7 @@ if ($id > 0) {
 			print '<div class="hidden marginrightonly inline-block repeateventBYDAY">';
 			print $langs->trans("DayOfWeek").': <input type="input" size="4" name="BYDAY" value="'.$selectedrecurrulebyday.'">';
 			print '</div>';
-			print '<script type="text/javascript" language="javascript">
+			print '<script type="text/javascript">
 				jQuery(document).ready(function() {
 					function init_repeat()
 					{
@@ -1860,24 +1897,34 @@ if ($id > 0) {
 
 		$linkback = '';
 		// Link to other agenda views
-		$linkback .= img_picto($langs->trans("BackToList"), 'object_list', 'class="hideonsmartphone pictoactionview"');
-		$linkback .= '<a href="'.DOL_URL_ROOT.'/comm/action/list.php?action=show_list&restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+		$linkback .= '<a href="'.DOL_URL_ROOT.'/comm/action/list.php?mode=show_list&restore_lastsearch_values=1">';
+		$linkback .= img_picto($langs->trans("BackToList"), 'object_list', 'class="pictoactionview pictofixedwidth"');
+		$linkback .= '<span class="hideonsmartphone">'.$langs->trans("BackToList").'</span>';
+		$linkback .= '</a>';
 		$linkback .= '</li>';
 		$linkback .= '<li class="noborder litext">';
-		$linkback .= img_picto($langs->trans("ViewCal"), 'object_calendar', 'class="hideonsmartphone pictoactionview"');
-		$linkback .= '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_month&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').'">'.$langs->trans("ViewCal").'</a>';
+		$linkback .= '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?mode=show_month&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').'">';
+		$linkback .= img_picto($langs->trans("ViewCal"), 'object_calendar', 'class="pictoactionview pictofixedwidth"');
+		$linkback .= '<span class="hideonsmartphone">'.$langs->trans("ViewCal").'</span>';
+		$linkback .= '</a>';
 		$linkback .= '</li>';
 		$linkback .= '<li class="noborder litext">';
-		$linkback .= img_picto($langs->trans("ViewWeek"), 'object_calendarweek', 'class="hideonsmartphone pictoactionview"');
-		$linkback .= '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_week&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').'">'.$langs->trans("ViewWeek").'</a>';
+		$linkback .= '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?mode=show_week&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').'">';
+		$linkback .= img_picto($langs->trans("ViewWeek"), 'object_calendarweek', 'class="pictoactionview pictofixedwidth"');
+		$linkback .= '<span class="hideonsmartphone">'.$langs->trans("ViewWeek").'</span>';
+		$linkback .= '</a>';
 		$linkback .= '</li>';
 		$linkback .= '<li class="noborder litext">';
-		$linkback .= img_picto($langs->trans("ViewDay"), 'object_calendarday', 'class="hideonsmartphone pictoactionview"');
-		$linkback .= '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_day&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').'">'.$langs->trans("ViewDay").'</a>';
+		$linkback .= '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?mode=show_day&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').'">';
+		$linkback .= img_picto($langs->trans("ViewDay"), 'object_calendarday', 'class="pictoactionview pictofixedwidth"');
+		$linkback .= '<span class="hideonsmartphone">'.$langs->trans("ViewDay").'</span>';
+		$linkback .= '</a>';
 		$linkback .= '</li>';
 		$linkback .= '<li class="noborder litext">';
-		$linkback .= img_picto($langs->trans("ViewPerUser"), 'object_calendarperuser', 'class="hideonsmartphone pictoactionview"');
-		$linkback .= '<a href="'.DOL_URL_ROOT.'/comm/action/peruser.php?action=show_peruser&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').'">'.$langs->trans("ViewPerUser").'</a>';
+		$linkback .= '<a href="'.DOL_URL_ROOT.'/comm/action/peruser.php?mode=show_peruser&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').'">';
+		$linkback .= img_picto($langs->trans("ViewPerUser"), 'object_calendarperuser', 'class="pictoactionview pictofixedwidth"');
+		$linkback .= '<span class="hideonsmartphone">'.$langs->trans("ViewPerUser").'</span>';
+		$linkback .= '</a>';
 
 		//$linkback.=$out;
 
@@ -1940,7 +1987,7 @@ if ($id > 0) {
 		}
 
 		// Full day event
-		print '<tr><td class="titlefield">'.$langs->trans("EventOnFullDay").'</td><td>'.yn($object->fulldayevent, 3).'</td></tr>';
+		print '<tr><td class="titlefield">'.$langs->trans("EventOnFullDay").'</td><td>'.yn($object->fulldayevent ? 1 : 0, 3).'</td></tr>';
 
 		$rowspan = 4;
 		if (empty($conf->global->AGENDA_DISABLE_LOCATION)) {
@@ -1949,10 +1996,15 @@ if ($id > 0) {
 
 		// Date start
 		print '<tr><td>'.$langs->trans("DateActionStart").'</td><td>';
-		if (!$object->fulldayevent) {
-			print dol_print_date($object->datep, 'dayhour', 'tzuser');
+		// Test a date before the 27 march and one after
+		//print dol_print_date($object->datep, 'dayhour', 'gmt');
+		//print dol_print_date($object->datep, 'dayhour', 'tzuser');
+		//print dol_print_date($object->datep, 'dayhour', 'tzuserrel');
+		if (empty($object->fulldayevent)) {
+			print dol_print_date($object->datep, 'dayhour', 'tzuserrel');
 		} else {
-			print dol_print_date($object->datep, 'day', 'tzuser');
+			$tzforfullday = getDolGlobalString('MAIN_STORE_FULL_EVENT_IN_GMT');
+			print dol_print_date($object->datep, 'day', ($tzforfullday ? $tzforfullday : 'tzuserrel'));
 		}
 		if ($object->percentage == 0 && $object->datep && $object->datep < ($now - $delay_warning)) {
 			print img_warning($langs->trans("Late"));
@@ -1962,10 +2014,11 @@ if ($id > 0) {
 
 		// Date end
 		print '<tr><td>'.$langs->trans("DateActionEnd").'</td><td>';
-		if (!$object->fulldayevent) {
-			print dol_print_date($object->datef, 'dayhour', 'tzuser');
+		if (empty($object->fulldayevent)) {
+			print dol_print_date($object->datef, 'dayhour', 'tzuserrel');
 		} else {
-			print dol_print_date($object->datef, 'day', 'tzuser');
+			$tzforfullday = getDolGlobalString('MAIN_STORE_FULL_EVENT_IN_GMT');
+			print dol_print_date($object->datef, 'day', ($tzforfullday ? $tzforfullday : 'tzuserrel'));
 		}
 		if ($object->percentage > 0 && $object->percentage < 100 && $object->datef && $object->datef < ($now - $delay_warning)) {
 			print img_warning($langs->trans("Late"));

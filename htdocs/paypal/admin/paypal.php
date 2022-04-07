@@ -350,7 +350,7 @@ $sandboxpaypalurl = 'developer.paypal.com';
 
 print '<div id="apidoc">';
 print 'Your API authentication information can be found with following steps. We recommend that you open a separate Web browser session when carrying out this procedure.<br>
-1. Log in to your PayPal account (on real paypal <a href="https://'.$realpaypalurl.'" target="_blank">'.$realpaypalurl.'</a> (or sandbox <a href="https://'.$sandboxpaypalurl.'" target="_blank">'.$sandboxpaypalurl.'</a>).<br>
+1. Log in to your PayPal account (on real paypal <a href="https://'.$realpaypalurl.'" target="_blank" rel="noopener noreferrer external">'.$realpaypalurl.'</a> (or sandbox <a href="https://'.$sandboxpaypalurl.'" target="_blank" rel="noopener noreferrer external">'.$sandboxpaypalurl.'</a>).<br>
 2. Click the "Profile" or "Preferencies" subtab located under the My Account heading.<br>
 3. Click the link "API Access".<br>
 4. Click the View API Certificate link in the right column.<br>

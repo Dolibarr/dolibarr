@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - externalsite
-ExternalSiteSetup=Setup link to external website
-ExternalSiteURL=External Site URL of HTML iframe content
-ExternalSiteModuleNotComplete=Module ExternalSite was not configured properly.
-ExampleMyMenuEntry=My menu entry
+ExternalSiteSetup=Пайвастшавӣ ба вебсайти беруна
+ExternalSiteURL=URL -и сайти берунии мундариҷаи HTML iframe
+ExternalSiteModuleNotComplete=Модули ExternalSite дуруст танзим нашудааст.
+ExampleMyMenuEntry=Вуруди менюи ман

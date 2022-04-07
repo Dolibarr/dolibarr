@@ -229,12 +229,24 @@ $original_file = str_replace('..\\', '/', $original_file);
 // Find the subdirectory name as the reference
 $refname = basename(dirname($original_file)."/");
 
+// Check that file is allowed for view with viewimage.php
+if (!empty($original_file) && !dolIsAllowedForPreview($original_file)) {
+	accessforbidden('This file is not qualified for preview', 0, 0, 1);
+}
+
 // Security check
 if (empty($modulepart)) {
 	accessforbidden('Bad value for parameter modulepart', 0, 0, 1);
 }
 
-$check_access = dol_check_secure_access_document($modulepart, $original_file, $entity, $refname);
+// When logged in a different entity, medias cannot be accessed because $conf->$module->multidir_output
+// is not set on the requested entity, but they are public documents, so reset entity
+if ($modulepart === 'medias' && $entity != $conf->entity) {
+	$conf->entity = $entity;
+	$conf->setValues($db);
+}
+
+$check_access = dol_check_secure_access_document($modulepart, $original_file, $entity, $user, $refname);
 $accessallowed              = $check_access['accessallowed'];
 $sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
 $fullpath_original_file     = $check_access['original_file']; // $fullpath_original_file is now a full path name
@@ -290,7 +302,7 @@ if ($modulepart == 'barcode') {
 	if (in_array($encoding, array('EAN8', 'EAN13'))) {
 		$code = GETPOST("code", 'alphanohtml');
 	} else {
-		$code = GETPOST("code", 'none'); // This can be rich content (qrcode, datamatrix, ...)
+		$code = GETPOST("code", 'restricthtml'); // This can be rich content (qrcode, datamatrix, ...)
 	}
 
 	if (empty($generator) || empty($encoding)) {

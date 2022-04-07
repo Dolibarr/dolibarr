@@ -92,6 +92,7 @@ class ProductFournisseur extends Product
 	public $fk_availability;
 
 	public $fourn_unitprice;
+	public $fourn_unitprice_with_discount;	// not saved into database
 	public $fourn_tva_tx;
 	public $fourn_tva_npr;
 
@@ -316,7 +317,9 @@ class ProductFournisseur extends Product
 		$qty = price2num($qty, 'MS');
 		$unitBuyPrice = price2num($buyprice / $qty, 'MU');
 
-		$packaging = price2num(((empty($this->packaging) || $this->packaging < $qty) ? $qty : $this->packaging), 'MS');
+		// We can have a puchase ref that need to buy 100 min for a given price and with a packaging of 50.
+		//$packaging = price2num(((empty($this->packaging) || $this->packaging < $qty) ? $qty : $this->packaging), 'MS');
+		$packaging = price2num((empty($this->packaging) ? $qty : $this->packaging), 'MS');
 
 		$error = 0;
 		$now = dol_now();
@@ -404,13 +407,14 @@ class ProductFournisseur extends Product
 				$sql .= ", packaging = ".(empty($packaging) ? 1 : $packaging);
 			}
 			$sql .= " WHERE rowid = ".((int) $this->product_fourn_price_id);
+			//print $sql;exit;
 			// TODO Add price_base_type and price_ttc
 
 			dol_syslog(get_class($this).'::update_buyprice update knowing id of line = product_fourn_price_id = '.$this->product_fourn_price_id, LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				// Call trigger
-				$result = $this->call_trigger('SUPPLIER_PRODUCT_BUYPRICE_UPDATE', $user);
+				$result = $this->call_trigger('SUPPLIER_PRODUCT_BUYPRICE_MODIFY', $user);
 				if ($result < 0) {
 					$error++;
 				}
@@ -592,13 +596,7 @@ class ProductFournisseur extends Product
 					$this->supplier_barcode = $obj->barcode;
 					$this->supplier_fk_barcode_type = $obj->fk_barcode_type;
 				}
-
-				if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) {
-					$this->packaging = $obj->packaging;
-					if ($this->packaging < $this->fourn_qty) {
-						$this->packaging = $this->fourn_qty;
-					}
-				}
+				$this->packaging = $obj->packaging;
 
 				if (empty($ignore_expression) && !empty($this->fk_supplier_price_expression)) {
 					$priceparser = new PriceParser($this->db);
@@ -635,7 +633,7 @@ class ProductFournisseur extends Product
 	 *    @param	int		$limit		Limit
 	 *    @param	int		$offset		Offset
 	 *    @param	int		$socid		Filter on a third party id
-	 *    @return	array				Array of Products with new properties to define supplier price
+	 *    @return	array				Array of ProductFournisseur with new properties to define supplier price
 	 */
 	public function list_product_fournisseur_price($prodid, $sortfield = '', $sortorder = '', $limit = 0, $offset = 0, $socid = 0)
 	{
@@ -646,10 +644,7 @@ class ProductFournisseur extends Product
 		$sql .= " pfp.rowid as product_fourn_pri_id, pfp.entity, pfp.ref_fourn, pfp.desc_fourn, pfp.fk_product as product_fourn_id, pfp.fk_supplier_price_expression,";
 		$sql .= " pfp.price, pfp.quantity, pfp.unitprice, pfp.remise_percent, pfp.remise, pfp.tva_tx, pfp.fk_availability, pfp.charges, pfp.info_bits, pfp.delivery_time_days, pfp.supplier_reputation,";
 		$sql .= " pfp.multicurrency_price, pfp.multicurrency_unitprice, pfp.multicurrency_tx, pfp.fk_multicurrency, pfp.multicurrency_code, pfp.datec, pfp.tms,";
-		$sql .= " pfp.barcode, pfp.fk_barcode_type";
-		if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) {
-			$sql .= ", pfp.packaging";
-		}
+		$sql .= " pfp.barcode, pfp.fk_barcode_type, pfp.packaging";
 		$sql .= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp, ".MAIN_DB_PREFIX."product as p, ".MAIN_DB_PREFIX."societe as s";
 		$sql .= " WHERE pfp.entity IN (".getEntity('productsupplierprice').")";
 		$sql .= " AND pfp.fk_soc = s.rowid AND pfp.fk_product = p.rowid";
@@ -703,12 +698,7 @@ class ProductFournisseur extends Product
 				$prodfourn->fourn_multicurrency_id          = $record["fk_multicurrency"];
 				$prodfourn->fourn_multicurrency_code        = $record["multicurrency_code"];
 
-				if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) {
-					$prodfourn->packaging = $record["packaging"];
-					if ($prodfourn->packaging < $prodfourn->fourn_qty) {
-						$prodfourn->packaging = $prodfourn->fourn_qty;
-					}
-				}
+				$prodfourn->packaging = $record["packaging"];
 
 				if (!empty($conf->barcode->enabled)) {
 					$prodfourn->supplier_barcode = $record["barcode"];
@@ -817,8 +807,10 @@ class ProductFournisseur extends Product
 				$min = -1;
 				foreach ($record_array as $record) {
 					$fourn_price = $record["price"];
-					// discount calculated buy price
-					$fourn_unitprice = $record["unitprice"] * (1 - $record["remise_percent"] / 100) - $record["remise"];
+					// calculate unit price for quantity 1
+					$fourn_unitprice = $record["unitprice"];
+					$fourn_unitprice_with_discount = $record["unitprice"] * (1 - $record["remise_percent"] / 100);
+
 					if (!empty($conf->dynamicprices->enabled) && !empty($record["fk_supplier_price_expression"])) {
 						$prod_supplier = new ProductFournisseur($this->db);
 						$prod_supplier->product_fourn_price_id = $record["product_fourn_price_id"];
@@ -835,6 +827,7 @@ class ProductFournisseur extends Product
 							} else {
 								$fourn_unitprice = $fourn_price;
 							}
+							$fourn_unitprice_with_discount = $fourn_unitprice * (1 - $record["remise_percent"] / 100);
 						}
 					}
 					if ($fourn_unitprice < $min || $min == -1) {
@@ -847,6 +840,7 @@ class ProductFournisseur extends Product
 						$this->fourn_remise_percent     = $record["remise_percent"];
 						$this->fourn_remise             = $record["remise"];
 						$this->fourn_unitprice          = $fourn_unitprice;
+						$this->fourn_unitprice_with_discount = $fourn_unitprice_with_discount;
 						$this->fourn_charges            = $record["charges"]; // deprecated
 						$this->fourn_tva_tx             = $record["tva_tx"];
 						$this->fourn_id                 = $record["fourn_id"];
@@ -979,6 +973,23 @@ class ProductFournisseur extends Product
 	}
 
 	/**
+	 * Function used to replace a product id with another one.
+	 *
+	 * @param DoliDB $db Database handler
+	 * @param int $origin_id Old product id
+	 * @param int $dest_id New product id
+	 * @return bool
+	 */
+	public static function replaceProduct(DoliDB $db, $origin_id, $dest_id)
+	{
+		$tables = array(
+			'product_fournisseur_price'
+		);
+
+		return CommonObject::commonReplaceProduct($db, $origin_id, $dest_id, $tables);
+	}
+
+	/**
 	 *    List supplier prices log of a supplier price
 	 *
 	 *    @param    int     $product_fourn_price_id Id of supplier price
@@ -1087,7 +1098,7 @@ class ProductFournisseur extends Product
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
 	{
-		global $db, $conf, $langs;
+		global $db, $conf, $langs, $hookmanager;
 
 		if (!empty($conf->dol_no_mouse_hover)) {
 			$notooltip = 1; // Force disable tooltips
@@ -1222,6 +1233,15 @@ class ProductFournisseur extends Product
 		$result .= $linkend;
 		//if ($withpicto != 2) $result.=(($addlabel && $this->label) ? $sep . dol_trunc($this->label, ($addlabel > 1 ? $addlabel : 0)) : '');
 
+		global $action;
+		$hookmanager->initHooks(array($this->element . 'dao'));
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
+		}
 		return $result;
 	}
 

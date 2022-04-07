@@ -179,7 +179,7 @@ if (empty($reshook)) {
 		$action = 'create';
 	}
 
-	if ($action == 'delete') {
+	if ($action == 'confirm_delete' && $confirm == 'yes') {
 		$result = $object->fetch($id);
 
 		if ($object->rappro == 0) {
@@ -334,15 +334,11 @@ foreach ($bankcateg->fetchAll() as $bankcategory) {
 	$options[$bankcategory->id] = $bankcategory->label;
 }
 
-/* ************************************************************************** */
-/*                                                                            */
-/* Create mode                                                                */
-/*                                                                            */
-/* ************************************************************************** */
+// Create mode
 if ($action == 'create') {
 	// Update fields properties in realtime
 	if (!empty($conf->use_javascript_ajax)) {
-		print "\n".'<script type="text/javascript" language="javascript">';
+		print "\n".'<script type="text/javascript">';
 		print '$(document).ready(function () {
             			setPaymentType();
             			$("#selectpaymenttype").change(function() {
@@ -350,6 +346,7 @@ if ($action == 'create') {
             			});
             			function setPaymentType()
             			{
+							console.log("setPaymentType");
             				var code = $("#selectpaymenttype option:selected").val();
                             if (code == \'CHQ\' || code == \'VIR\')
             				{
@@ -415,7 +412,8 @@ if ($action == 'create') {
 	if (!empty($conf->banque->enabled)) {
 		print '<tr><td>';
 		print $form->editfieldkey('BankAccount', 'selectaccountid', '', $object, 0, 'string', '', 1).'</td><td>';
-		$form->select_comptes($accountid, "accountid", 0, '', 2); // Affiche liste des comptes courant
+		print img_picto('', 'bank_account', 'class="pictofixedwidth"');
+		print $form->select_comptes($accountid, "accountid", 0, '', 2, '', 0, '', 1); // Show list of main accounts (comptes courants)
 		print '</td></tr>';
 	}
 
@@ -490,9 +488,8 @@ if ($action == 'create') {
 		$langs->load("projects");
 
 		print '<tr><td>'.$langs->trans("Project").'</td><td>';
-
-		$numproject = $formproject->select_projects(-1, $projectid, 'fk_project', 0, 0, 1, 1);
-
+		print img_picto('', 'bank_account', 'class="pictofixedwidth"');
+		print $formproject->select_projects(-1, $projectid, 'fk_project', 0, 0, 1, 1, 0, 0, 0, '', 1);
 		print '</td></tr>';
 	}
 
@@ -544,6 +541,12 @@ if ($id) {
 		);
 
 		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneVariousPayment', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 350);
+	}
+
+	// Confirmation of the removal of the Various Payment
+	if ($action == 'delete') {
+		$text = $langs->trans('ConfirmDeleteVariousPayment');
+		print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans('DeleteVariousPayment'), $text, 'confirm_delete', '', '', 2);
 	}
 
 	print dol_get_fiche_head($head, 'card', $langs->trans("VariousPayment"), -1, $object->picto);

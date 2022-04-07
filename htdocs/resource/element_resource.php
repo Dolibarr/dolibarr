@@ -46,10 +46,6 @@ $sortfield                      = GETPOST('sortfield','alpha');
 $page                           = GETPOST('page','int');
 */
 
-if (!$user->rights->resource->read) {
-		accessforbidden();
-}
-
 $object = new Dolresource($db);
 
 $hookmanager->initHooks(array('element_resource'));
@@ -71,9 +67,20 @@ $cancel                 = GETPOST('cancel', 'alpha');
 $confirm                = GETPOST('confirm', 'alpha');
 $socid                  = GETPOST('socid', 'int');
 
+if (empty($mandatory)) {
+	$mandatory = 0;
+}
+if (empty($busy)) {
+	$busy = 0;
+}
+
 if ($socid > 0) { // Special for thirdparty
 	$element_id = $socid;
 	$element = 'societe';
+}
+
+if (!$user->rights->resource->read) {
+	accessforbidden();
 }
 
 // Permission is not permission on resources. We just make link here on objects.
@@ -119,7 +126,7 @@ if (empty($reshook)) {
 			if (!empty($conf->global->RESOURCE_USED_IN_EVENT_CHECK) && $objstat->element == 'action' && $resource_type == 'dolresource' && intval($busy) == 1) {
 				$eventDateStart = $objstat->datep;
 				$eventDateEnd   = $objstat->datef;
-				$isFullDayEvent = intval($objstat->fulldayevent);
+				$isFullDayEvent = $objstat->fulldayevent;
 				if (empty($eventDateEnd)) {
 					if ($isFullDayEvent) {
 						$eventDateStartArr = dol_getdate($eventDateStart);
@@ -194,7 +201,7 @@ if (empty($reshook)) {
 			if (!empty($conf->global->RESOURCE_USED_IN_EVENT_CHECK) && $object->element_type == 'action' && $object->resource_type == 'dolresource' && intval($object->busy) == 1) {
 				$eventDateStart = $object->objelement->datep;
 				$eventDateEnd   = $object->objelement->datef;
-				$isFullDayEvent = intval($objstat->fulldayevent);
+				$isFullDayEvent = $objstat->fulldayevent;
 				if (empty($eventDateEnd)) {
 					if ($isFullDayEvent) {
 						$eventDateStartArr = dol_getdate($eventDateStart);
@@ -323,18 +330,18 @@ if (!$ret) {
 			print dol_get_fiche_head($head, 'resources', $langs->trans("Action"), -1, 'action');
 
 			$linkback = img_picto($langs->trans("BackToList"), 'object_list', 'class="hideonsmartphone pictoactionview"');
-			$linkback .= '<a href="'.DOL_URL_ROOT.'/comm/action/list.php?action=show_list">'.$langs->trans("BackToList").'</a>';
+			$linkback .= '<a href="'.DOL_URL_ROOT.'/comm/action/list.php?mode=show_list">'.$langs->trans("BackToList").'</a>';
 
 			// Link to other agenda views
 			$out = '';
 			$out .= '</li><li class="noborder litext">'.img_picto($langs->trans("ViewPerUser"), 'object_calendarperuser', 'class="hideonsmartphone pictoactionview"');
-			$out .= '<a href="'.DOL_URL_ROOT.'/comm/action/peruser.php?action=show_peruser&year='.dol_print_date($act->datep, '%Y').'&month='.dol_print_date($act->datep, '%m').'&day='.dol_print_date($act->datep, '%d').'">'.$langs->trans("ViewPerUser").'</a>';
+			$out .= '<a href="'.DOL_URL_ROOT.'/comm/action/peruser.php?mode=show_peruser&year='.dol_print_date($act->datep, '%Y').'&month='.dol_print_date($act->datep, '%m').'&day='.dol_print_date($act->datep, '%d').'">'.$langs->trans("ViewPerUser").'</a>';
 			$out .= '</li><li class="noborder litext">'.img_picto($langs->trans("ViewCal"), 'object_calendar', 'class="hideonsmartphone pictoactionview"');
-			$out .= '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_month&year='.dol_print_date($act->datep, '%Y').'&month='.dol_print_date($act->datep, '%m').'&day='.dol_print_date($act->datep, '%d').'">'.$langs->trans("ViewCal").'</a>';
+			$out .= '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?mode=show_month&year='.dol_print_date($act->datep, '%Y').'&month='.dol_print_date($act->datep, '%m').'&day='.dol_print_date($act->datep, '%d').'">'.$langs->trans("ViewCal").'</a>';
 			$out .= '</li><li class="noborder litext">'.img_picto($langs->trans("ViewWeek"), 'object_calendarweek', 'class="hideonsmartphone pictoactionview"');
-			$out .= '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_day&year='.dol_print_date($act->datep, '%Y').'&month='.dol_print_date($act->datep, '%m').'&day='.dol_print_date($act->datep, '%d').'">'.$langs->trans("ViewWeek").'</a>';
+			$out .= '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?mode=show_day&year='.dol_print_date($act->datep, '%Y').'&month='.dol_print_date($act->datep, '%m').'&day='.dol_print_date($act->datep, '%d').'">'.$langs->trans("ViewWeek").'</a>';
 			$out .= '</li><li class="noborder litext">'.img_picto($langs->trans("ViewDay"), 'object_calendarday', 'class="hideonsmartphone pictoactionview"');
-			$out .= '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_day&year='.dol_print_date($act->datep, '%Y').'&month='.dol_print_date($act->datep, '%m').'&day='.dol_print_date($act->datep, '%d').'">'.$langs->trans("ViewDay").'</a>';
+			$out .= '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?mode=show_day&year='.dol_print_date($act->datep, '%Y').'&month='.dol_print_date($act->datep, '%m').'&day='.dol_print_date($act->datep, '%d').'">'.$langs->trans("ViewDay").'</a>';
 
 			$linkback .= $out;
 
@@ -365,7 +372,7 @@ if (!$ret) {
 
 			print '<div class="underbanner clearboth"></div>';
 
-			print '<table class="border tableforfield" width="100%">';
+			print '<table class="border tableforfield centpercent">';
 
 			// Type
 			if (!empty($conf->global->AGENDA_USE_EVENT_TYPE)) {
@@ -376,14 +383,15 @@ if (!$ret) {
 			}
 
 			// Full day event
-			print '<tr><td class="titlefield">'.$langs->trans("EventOnFullDay").'</td><td colspan="3">'.yn($act->fulldayevent, 3).'</td></tr>';
+			print '<tr><td class="titlefield">'.$langs->trans("EventOnFullDay").'</td><td colspan="3">'.yn($act->fulldayevent ? 1 : 0, 3).'</td></tr>';
 
 			// Date start
 			print '<tr><td>'.$langs->trans("DateActionStart").'</td><td colspan="3">';
-			if (!$act->fulldayevent) {
+			if (empty($act->fulldayevent)) {
 				print dol_print_date($act->datep, 'dayhour', 'tzuser');
 			} else {
-				print dol_print_date($act->datep, 'day', 'tzuser');
+				$tzforfullday = getDolGlobalString('MAIN_STORE_FULL_EVENT_IN_GMT');
+				print dol_print_date($act->datep, 'day', ($tzforfullday ? $tzforfullday : 'tzuser'));
 			}
 			if ($act->percentage == 0 && $act->datep && $act->datep < ($now - $delay_warning)) {
 				print img_warning($langs->trans("Late"));
@@ -393,10 +401,11 @@ if (!$ret) {
 
 			// Date end
 			print '<tr><td>'.$langs->trans("DateActionEnd").'</td><td colspan="3">';
-			if (!$act->fulldayevent) {
+			if (empty($act->fulldayevent)) {
 				print dol_print_date($act->datef, 'dayhour', 'tzuser');
 			} else {
-				print dol_print_date($act->datef, 'day', 'tzuser');
+				$tzforfullday = getDolGlobalString('MAIN_STORE_FULL_EVENT_IN_GMT');
+				print dol_print_date($act->datef, 'day', ($tzforfullday ? $tzforfullday : 'tzuser'));
 			}
 			if ($act->percentage > 0 && $act->percentage < 100 && $act->datef && $act->datef < ($now - $delay_warning)) {
 				print img_warning($langs->trans("Late"));

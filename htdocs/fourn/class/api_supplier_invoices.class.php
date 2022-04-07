@@ -159,8 +159,9 @@ class SupplierInvoices extends DolibarrApi
 		}
 		// Add sql filters
 		if ($sqlfilters) {
-			if (!DolibarrApi::_checkFilters($sqlfilters)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+			$errormessage = '';
+			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
+				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
 			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
 			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
@@ -210,7 +211,7 @@ class SupplierInvoices extends DolibarrApi
 	 * @return int  ID of supplier invoice
 	 *
 	 * @throws RestException 401
-	 * @throws RestException 500
+	 * @throws RestException 500	System error
 	 */
 	public function post($request_data = null)
 	{
@@ -282,7 +283,7 @@ class SupplierInvoices extends DolibarrApi
 	 *
 	 * @throws RestException 401
 	 * @throws RestException 404
-	 * @throws RestException 500
+	 * @throws RestException 500	System error
 	 */
 	public function delete($id)
 	{
@@ -299,7 +300,7 @@ class SupplierInvoices extends DolibarrApi
 		}
 
 		if ($this->invoice->delete(DolibarrApiAccess::$user) < 0) {
-			throw new RestException(500);
+			throw new RestException(500, 'Error when deleting invoice');
 		}
 
 		return array(
@@ -325,7 +326,7 @@ class SupplierInvoices extends DolibarrApi
 	 * @throws RestException 401
 	 * @throws RestException 404
 	 * @throws RestException 405
-	 * @throws RestException 500
+	 * @throws RestException 500	System error
 	 */
 	public function validate($id, $idwarehouse = 0, $notrigger = 0)
 	{

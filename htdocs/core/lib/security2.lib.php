@@ -111,7 +111,7 @@ function checkLoginPassEntity($usertotest, $passwordtotest, $entitytotest, $auth
 					// Load translation files required by the page
 					$langs->loadLangs(array('other', 'main', 'errors'));
 
-					$_SESSION["dol_loginmesg"] = $langs->transnoentitiesnoconv("ErrorFailedToLoadLoginFileForMode", $mode);
+					$_SESSION["dol_loginmesg"] = (empty($_SESSION["dol_loginmesg"]) ? '' : $_SESSION["dol_loginmesg"].', ').$langs->transnoentitiesnoconv("ErrorFailedToLoadLoginFileForMode", $mode);
 				}
 			}
 		}
@@ -157,7 +157,7 @@ if (!function_exists('dol_loginfunction')) {
 
 		// Note: $conf->css looks like '/theme/eldy/style.css.php'
 		/*
-		$conf->css = "/theme/".(GETPOST('theme','alpha')?GETPOST('theme','alpha'):$conf->theme)."/style.css.php";
+		$conf->css = "/theme/".(GETPOST('theme','aZ09')?GETPOST('theme','aZ09'):$conf->theme)."/style.css.php";
 		$themepath=dol_buildpath($conf->css,1);
 		if (! empty($conf->modules_parts['theme']))		// Using this feature slow down application
 		{
@@ -187,7 +187,8 @@ if (!function_exists('dol_loginfunction')) {
 			$template_dir = DOL_DOCUMENT_ROOT."/core/tpl/";
 		}
 
-		// Set cookie for timeout management
+		// Set cookie for timeout management. We set it as a cookie so we will be able to use it to set timeout on next page before the session start
+		// and the conf file is loaded.
 		$prefix = dol_getprefix('');
 		$sessiontimeout = 'DOLSESSTIMEOUT_'.$prefix;
 		if (!empty($conf->global->MAIN_SESSION_TIMEOUT)) {
