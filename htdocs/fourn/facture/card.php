@@ -11,6 +11,7 @@
  * Copyright (C) 2016-2021	Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2019       Ferran Marcet	        <fmarcet@2byte.es>
+ * Copyright (C) 2022      Gauthier VERDOL     		<gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -77,6 +78,7 @@ $projectid = GETPOST('projectid', 'int');
 $origin		= GETPOST('origin', 'alpha');
 $originid = GETPOST('originid', 'int');
 $fac_recid = GETPOST('fac_rec', 'int');
+$rank = (GETPOST('rank', 'int') > 0) ? GETPOST('rank', 'int') : -1;
 
 // PDF
 $hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
@@ -1581,7 +1583,7 @@ if (empty($reshook)) {
 					$tva_npr,
 					$price_base_type,
 					$type,
-					-1,
+					min($rank, count($object->lines) + 1),
 					0,
 					$array_options,
 					$productsupplier->fk_unit,

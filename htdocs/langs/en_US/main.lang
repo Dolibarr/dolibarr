@@ -1168,3 +1168,4 @@ CanceledHidden=Canceled hidden
 CanceledShown=Canceled shown
 Terminate=Terminate
 Terminated=Terminated
+AddLineOnPosition=Add line on position (at the end if empty)
