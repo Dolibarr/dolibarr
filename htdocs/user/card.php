@@ -1834,14 +1834,16 @@ if ($action == 'create' || $action == 'adduserldap') {
 					}
 				}
 
-				if ($caneditfield && (empty($conf->multicompany->enabled) || !$user->entity || ($object->entity == $conf->entity) || ($conf->global->MULTICOMPANY_TRANSVERSE_MODE && $conf->entity == 1))) {
+				if ($caneditfield && (empty($conf->multicompany->enabled) || !$user->entity || ($object->entity == $conf->entity) || ($conf->global->MULTICOMPANY_TRANSVERSE_MODE && $object->entity == 1)))
+				{
 					if (!empty($conf->global->MAIN_ONLY_LOGIN_ALLOWED)) {
 						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("DisabledInMonoUserMode")).'">'.$langs->trans("Modify").'</a></div>';
 					} else {
 						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a></div>';
 					}
 				} elseif ($caneditpassword && !$object->ldap_sid &&
-				(empty($conf->multicompany->enabled) || !$user->entity || ($object->entity == $conf->entity) || ($conf->global->MULTICOMPANY_TRANSVERSE_MODE && $conf->entity == 1))) {
+				(empty($conf->multicompany->enabled) || !$user->entity || ($object->entity == $conf->entity) || ($conf->global->MULTICOMPANY_TRANSVERSE_MODE && $object->entity == 1)))
+				{
 					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=edit">'.$langs->trans("EditPassword").'</a></div>';
 				}
 
@@ -1850,14 +1852,16 @@ if ($action == 'create' || $action == 'adduserldap') {
 					if ($object->statut == 0) {
 						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("UserDisabled")).'">'.$langs->trans("ReinitPassword").'</a></div>';
 					} elseif (($user->id != $id && $caneditpassword) && $object->login && !$object->ldap_sid &&
-					((empty($conf->multicompany->enabled) && $object->entity == $user->entity) || !$user->entity || ($object->entity == $conf->entity) || ($conf->global->MULTICOMPANY_TRANSVERSE_MODE && $conf->entity == 1))) {
+					((empty($conf->multicompany->enabled) && $object->entity == $user->entity) || !$user->entity || ($object->entity == $conf->entity) || ($conf->global->MULTICOMPANY_TRANSVERSE_MODE && $object->entity == 1)))
+					{
 						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=password">'.$langs->trans("ReinitPassword").'</a></div>';
 					}
 
 					if ($object->statut == 0) {
 						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("UserDisabled")).'">'.$langs->trans("SendNewPassword").'</a></div>';
 					} elseif (($user->id != $id && $caneditpassword) && $object->login && !$object->ldap_sid &&
-					((empty($conf->multicompany->enabled) && $object->entity == $user->entity) || !$user->entity || ($object->entity == $conf->entity) || ($conf->global->MULTICOMPANY_TRANSVERSE_MODE && $conf->entity == 1))) {
+					((empty($conf->multicompany->enabled) && $object->entity == $user->entity) || !$user->entity || ($object->entity == $conf->entity) || ($conf->global->MULTICOMPANY_TRANSVERSE_MODE && $object->entity == 1)))
+					{
 						if ($object->email) {
 							print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=passwordsend">'.$langs->trans("SendNewPassword").'</a></div>';
 						} else {
@@ -1868,12 +1872,14 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 				// Enable user
 				if ($user->id <> $id && $candisableuser && $object->statut == 0 &&
-				((empty($conf->multicompany->enabled) && $object->entity == $user->entity) || !$user->entity || ($object->entity == $conf->entity) || ($conf->global->MULTICOMPANY_TRANSVERSE_MODE && $conf->entity == 1))) {
+				((empty($conf->multicompany->enabled) && $object->entity == $user->entity) || !$user->entity || ($object->entity == $conf->entity) || ($conf->global->MULTICOMPANY_TRANSVERSE_MODE && $object->entity == 1)))
+				{
 					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=enable&token='.newToken().'">'.$langs->trans("Reactivate").'</a></div>';
 				}
 				// Disable user
 				if ($user->id <> $id && $candisableuser && $object->statut == 1 &&
-				((empty($conf->multicompany->enabled) && $object->entity == $user->entity) || !$user->entity || ($object->entity == $conf->entity) || ($conf->global->MULTICOMPANY_TRANSVERSE_MODE && $conf->entity == 1))) {
+				((empty($conf->multicompany->enabled) && $object->entity == $user->entity) || !$user->entity || ($object->entity == $conf->entity) || ($conf->global->MULTICOMPANY_TRANSVERSE_MODE && $object->entity == 1)))
+				{
 					print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=disable&id='.$object->id.'&token='.newToken().'">'.$langs->trans("DisableUser").'</a></div>';
 				} else {
 					if ($user->id == $id) {
@@ -1882,7 +1888,8 @@ if ($action == 'create' || $action == 'adduserldap') {
 				}
 				// Delete
 				if ($user->id <> $id && $candisableuser &&
-				((empty($conf->multicompany->enabled) && $object->entity == $user->entity) || !$user->entity || ($object->entity == $conf->entity) || ($conf->global->MULTICOMPANY_TRANSVERSE_MODE && $conf->entity == 1))) {
+				((empty($conf->multicompany->enabled) && $object->entity == $user->entity) || !$user->entity || ($object->entity == $conf->entity) || ($conf->global->MULTICOMPANY_TRANSVERSE_MODE && $object->entity == 1)))
+				{
 					if ($user->admin || !$object->admin) { // If user edited is admin, delete is possible on for an admin
 						print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&id='.$object->id.'">'.$langs->trans("DeleteUser").'</a></div>';
 					} else {
