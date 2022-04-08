@@ -4946,7 +4946,7 @@ if ($action == 'create') {
 	$sql = 'SELECT p.datep as dp, p.ref, p.num_paiement as num_payment, p.rowid, p.fk_bank,';
 	$sql .= ' c.code as payment_code, c.libelle as payment_label,';
 	$sql .= ' pf.amount,';
-	$sql .= ' ba.rowid as baid, ba.ref as baref, ba.label, ba.number as banumber, ba.account_number, ba.fk_accountancy_journal';
+	$sql .= ' ba.rowid as baid, ba.ref as baref, ba.label, ba.number as banumber, ba.account_number, ba.fk_accountancy_journal, ba.currency_code as bacurrency_code';
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'paiement_facture as pf, '.MAIN_DB_PREFIX.'paiement as p';
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as c ON p.fk_paiement = c.id';
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid';
@@ -4989,6 +4989,7 @@ if ($action == 'create') {
 					$bankaccountstatic->ref = $objp->baref;
 					$bankaccountstatic->label = $objp->baref;
 					$bankaccountstatic->number = $objp->banumber;
+					$bankaccountstatic->currency_code = $objp->bacurrency_code;
 
 					if (!empty($conf->accounting->enabled)) {
 						$bankaccountstatic->account_number = $objp->account_number;
