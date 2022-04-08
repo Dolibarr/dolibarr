@@ -2560,9 +2560,10 @@ if (empty($reshook)) {
 					setEventMessages($mesg, null, 'warnings');
 					$result = -1;
 				} else {
-					$object->update_percent($line, GETPOST('all_progress'));
+					$object->update_percent($line, GETPOST('all_progress'), false);
 				}
 			}
+			$object->update_price(1);
 		}
 	} elseif ($action == 'updateline' && $usercancreate && !$cancel) {
 		header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$id); // To show again edited page
@@ -3522,7 +3523,7 @@ if ($action == 'create') {
 
 	if ($socid > 0) {
 		// Discounts for third party
-		print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="2">';
+		print '<tr><td>'.$langs->trans('DiscountStillRemaining').'</td><td colspan="2">';
 
 		$thirdparty = $soc;
 		$discount_type = 0;
@@ -3815,11 +3816,13 @@ if ($action == 'create') {
 		$title = $langs->trans('ProductsAndServices');
 		print load_fiche_titre($title);
 
+		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 
 		$objectsrc->printOriginLinesList('', $selectedLines);
 
 		print '</table>';
+		print '</div>';
 	}
 
 	print "</form>\n";
@@ -4353,8 +4356,8 @@ if ($action == 'create') {
 
 	// Relative and absolute discounts
 	print '<!-- Discounts -->'."\n";
-	print '<tr><td>'.$langs->trans('Discounts');
-	print '</td><td>';
+	print '<tr><td>'.$langs->trans('DiscountStillRemaining').'</td>';
+	print '<td>';
 	$thirdparty = $soc;
 	$discount_type = 0;
 	$backtopage = urlencode($_SERVER["PHP_SELF"].'?facid='.$object->id);
@@ -5220,7 +5223,7 @@ if ($action == 'create') {
 	print '</div>';
 	print '</div>';
 
-	print '<div class="clearboth"></div><br>';
+	print '<div class="clearboth"></div><br><br>';
 
 	if (!empty($conf->global->MAIN_DISABLE_CONTACTS_TAB)) {
 		$blocname = 'contacts';

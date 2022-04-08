@@ -99,6 +99,9 @@ ALTER TABLE llx_partnership ADD UNIQUE INDEX uk_fk_type_fk_member (fk_type, fk_m
 
 -- v16
 
+UPDATE llx_cronjob set label = 'RecurringInvoicesJob' where label = 'RecurringInvoices';
+UPDATE llx_cronjob set label = 'RecurringSupplierInvoicesJob' where label = 'RecurringSupplierInvoices';
+
 ALTER TABLE llx_facture ADD INDEX idx_facture_datef (datef);
 
 ALTER TABLE llx_projet_task_time ADD COLUMN fk_product integer NULL;
@@ -285,8 +288,15 @@ ALTER TABLE llx_bank_account ADD COLUMN pti_in_ctti smallint DEFAULT 0 AFTER dom
 -- Set default ticket type to OTHER if no default exists
 UPDATE llx_c_ticket_type SET use_default=1 WHERE code='OTHER' AND NOT EXISTS(SELECT * FROM (SELECT * FROM llx_c_ticket_type) AS t WHERE use_default=1);
 
-ALTER TABLE llx_user ADD COLUMN ref_employee varchar(50) DEFAULT NULL;
+
+ALTER TABLE llx_user DROP COLUMN webcal_login;
+ALTER TABLE llx_user DROP COLUMN module_comm;
+ALTER TABLE llx_user DROP COLUMN module_compta;
+ALTER TABLE llx_user DROP COLUMN ref_int;
+
+ALTER TABLE llx_user ADD COLUMN ref_employee varchar(50) DEFAULT NULL AFTER entity;
 ALTER TABLE llx_user ADD COLUMN national_registration_number varchar(50) DEFAULT NULL;
+
 
 ALTER TABLE llx_propal ADD last_main_doc VARCHAR(255) NULL AFTER model_pdf;
 
@@ -309,3 +319,8 @@ UPDATE llx_c_availability SET type_duration = 'w', qty = 4 WHERE code = 'AV_4W';
 ALTER TABLE llx_boxes_def ADD COLUMN fk_user integer DEFAULT 0 NOT NULL;
 
 ALTER TABLE llx_contratdet ADD COLUMN rang integer DEFAULT 0 AFTER info_bits;
+
+ALTER TABLE llx_actioncomm MODIFY COLUMN note mediumtext;
+
+DELETE FROM llx_boxes WHERE box_id IN (select rowid FROM llx_boxes_def WHERE file IN ('box_bom.php@bom', 'box_bom.php'));
+DELETE FROM llx_boxes_def WHERE file IN ('box_bom.php@bom', 'box_bom.php');

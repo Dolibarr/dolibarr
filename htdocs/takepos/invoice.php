@@ -59,6 +59,8 @@ $action = GETPOST('action', 'aZ09');
 $idproduct = GETPOST('idproduct', 'int');
 $place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is id of table for Bar or Restaurant
 $placeid = 0; // $placeid is ID of invoice
+$mobilepage = GETPOST('mobilepage', 'alpha');
+
 // Terminal is stored into $_SESSION["takeposterminal"];
 
 if (empty($user->rights->takepos->run) && !defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
@@ -80,7 +82,6 @@ if ((getDolGlobalString('TAKEPOS_PHONE_BASIC_LAYOUT') == 1 && $conf->browser->la
 			exit;
 		}
 	}
-	$mobilepage = GETPOST('mobilepage', 'alpha');
 	$title = 'TakePOS - Dolibarr '.DOL_VERSION;
 	if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
 		$title = 'TakePOS - '.$conf->global->MAIN_APPLICATION_TITLE;
@@ -1273,8 +1274,8 @@ if (getDolGlobalString('TAKEPOS_BAR_RESTAURANT')) {
 	if ($mobilepage == "invoice" || $mobilepage == "") {
 		// If not on smartphone version or if it is the invoice page
 		//print 'mobilepage='.$mobilepage;
-		print '<span class="opacitymedium">'.$langs->trans('Place')."</span> <b>".($label ? $label : '?')."</b><br>";
-		print '<span class="opacitymedium">'.$langs->trans('Floor')."</span> <b>".($floor ? $floor : '?')."</b>";
+		print '<span class="opacitymedium">'.$langs->trans('Place')."</span> <b>".(empty($label) ? '?' : $label)."</b><br>";
+		print '<span class="opacitymedium">'.$langs->trans('Floor')."</span> <b>".(empty($floor) ? '?' : $floor)."</b>";
 	} elseif (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
 		print $mysoc->name;
 	} elseif ($mobilepage == "cats") {
