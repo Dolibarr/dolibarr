@@ -3250,6 +3250,23 @@ class CommandeFournisseur extends CommonOrder
 	}
 
 	/**
+	 * Function used to replace a product id with another one.
+	 *
+	 * @param DoliDB $db Database handler
+	 * @param int $origin_id Old product id
+	 * @param int $dest_id New product id
+	 * @return bool
+	 */
+	public static function replaceProduct(DoliDB $db, $origin_id, $dest_id)
+	{
+		$tables = array(
+			'commande_fournisseurdet'
+		);
+
+		return CommonObject::commonReplaceProduct($db, $origin_id, $dest_id, $tables);
+	}
+
+	/**
 	 * Is the supplier order delayed?
 	 * We suppose a purchase ordered as late if a the purchase order has been sent and the delivery date is set and before the delay.
 	 * If order has not been sent, we use the order date.

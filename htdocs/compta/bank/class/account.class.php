@@ -1728,7 +1728,7 @@ class Account extends CommonObject
 		if ($dbs->query($sql)) {
 			return true;
 		} else {
-			//if ($ignoreerrors) return true; // TODO Not enough. If there is A-B on kept thirdarty and B-C on old one, we must get A-B-C after merge. Not A-B.
+			//if ($ignoreerrors) return true; // TODO Not enough. If there is A-B on kept thirdparty and B-C on old one, we must get A-B-C after merge. Not A-B.
 			//$this->errors = $dbs->lasterror();
 			return false;
 		}

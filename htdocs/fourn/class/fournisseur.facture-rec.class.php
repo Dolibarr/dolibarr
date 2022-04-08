@@ -79,8 +79,19 @@ class FactureFournisseurRec extends CommonInvoice
 
 	public $suspended;
 	public $libelle;
+	public $label;
+
+	/**
+	 * @var double $amount
+	 * @deprecated
+	 */
 	public $amount;
+	/**
+	 * @var double $remise
+	 * @deprecated
+	 */
 	public $remise;
+
 	public $vat_src_code;
 	public $localtax1;
 	public $localtax2;
@@ -168,8 +179,6 @@ class FactureFournisseurRec extends CommonInvoice
 		'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>40),
 		'suspended' =>array('type'=>'integer', 'label'=>'Suspended', 'enabled'=>1, 'visible'=>-1, 'position'=>225),
 		'libelle' =>array('type'=>'varchar(100)', 'label'=>'Libelle', 'enabled'=>1, 'showoncombobox' => 0, 'visible'=>-1, 'position'=>15),
-		'amount' =>array('type'=>'double(24,8)', 'label'=>'Amount', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>35),
-		'remise' =>array('type'=>'double', 'label'=>'Remise', 'enabled'=>1, 'visible'=>-1, 'position'=>40),
 
 		'localtax1' =>array('type'=>'double(24,8)', 'label'=>'Localtax1', 'enabled'=>1, 'visible'=>-1, 'position'=>60, 'isameasure'=>1),
 		'localtax2' =>array('type'=>'double(24,8)', 'label'=>'Localtax2', 'enabled'=>1, 'visible'=>-1, 'position'=>65, 'isameasure'=>1),
@@ -273,8 +282,7 @@ class FactureFournisseurRec extends CommonInvoice
 			$sql .= ', datec';
 			$sql .= ', suspended';
 			$sql .= ', libelle';
-			$sql .= ', amount';
-			$sql .= ', remise';
+			$sql .= ', total_ttc';
 			$sql .= ', fk_user_author';
 			$sql .= ', fk_projet';
 			$sql .= ', fk_account';
@@ -305,7 +313,6 @@ class FactureFournisseurRec extends CommonInvoice
 			$sql .= ", ".((int) $this->suspended);
 			$sql .= ", '".$this->db->escape($this->libelle)."'";
 			$sql .= ", " .(!empty($facfourn_src->total_ttc) ? (float) $facfourn_src->total_ttc : '0');                              // amount
-			$sql .= ", " .(!empty($facfourn_src->remise) ? (float) $facfourn_src->remise : '0');
 			$sql .= ", " .((int) $user->id);
 			$sql .= ", " .(!empty($this->fk_project) ? ((int) $this->fk_project) : 'NULL');
 			$sql .= ", " .(!empty($facfourn_src->fk_account) ? ((int) $facfourn_src->fk_account) : 'NULL');
@@ -475,8 +482,6 @@ class FactureFournisseurRec extends CommonInvoice
 		if ($this->fk_soc > 0) $sql .= " fk_soc = ". (int) $this->fk_soc. ',';
 		$sql .= " suspended = ". (!empty($this->suspended) ? ((int) $this->suspended) : 0) . ',';
 		$sql .= " libelle = ". (!empty($this->libelle) ? "'".$this->db->escape($this->libelle)."'" : 'NULL') . ",";
-		$sql .= " amount = ". (!empty($this->amount) ? ((float) $this->amount) : 0.00) . ',';
-		$sql .= " remise = ". (!empty($this->remise) ? ((float) $this->remise) : 'NULL') . ',';
 		$sql .= " vat_src_code = ". (!empty($this->vat_src_code) ? "'".$this->db->escape($this->vat_src_code)."'" : 'NULL') . ',';
 		$sql .= " localtax1 = ". (!empty($this->localtax1) ? ((float) $this->localtax1) : 0.00) . ',';
 		$sql .= " localtax2 = ". (!empty($this->localtax2) ? ((float) $this->localtax2) : 0.00) . ',';
@@ -548,7 +553,7 @@ class FactureFournisseurRec extends CommonInvoice
 	{
 		$sql = 'SELECT f.rowid, f.titre, f.ref_supplier, f.entity, f.fk_soc';
 		$sql .= ', f.datec, f.tms, f.suspended';
-		$sql .= ', f.libelle, f.amount, f.remise';
+		$sql .= ', f.libelle as label';
 		$sql .= ', f.vat_src_code, f.localtax1, f.localtax2';
 		$sql .= ', f.total_tva, f.total_ht, f.total_ttc';
 		$sql .= ', f.fk_user_author, f.fk_user_modif';
@@ -588,9 +593,8 @@ class FactureFournisseurRec extends CommonInvoice
 				$this->date_creation            = $obj->datec;
 				$this->date_modification        = $obj->tms;
 				$this->suspended                = $obj->suspended;
-				$this->libelle                  = $obj->libelle;
-				$this->amount                   = $obj->amount;
-				$this->remise                   = $obj->remise;
+				$this->libelle                  = $obj->label;
+				$this->label                    = $obj->label;
 				$this->vat_src_code             = $obj->vat_src_code;
 				$this->total_localtax1          = $obj->localtax1;
 				$this->total_localtax2          = $obj->localtax2;

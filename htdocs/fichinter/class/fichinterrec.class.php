@@ -40,7 +40,7 @@ class FichinterRec extends Fichinter
 {
 	public $element = 'fichinterrec';
 	public $table_element = 'fichinter_rec';
-	public $table_element_line = 'fichinter_rec';
+	public $table_element_line = 'fichinterdet_rec';
 
 	/**
 	 * @var string Fieldname with ID of parent key if this field has a parent
@@ -706,6 +706,22 @@ class FichinterRec extends Fichinter
 		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
 	}
 
+	/**
+	 * Function used to replace a product id with another one.
+	 *
+	 * @param DoliDB $db Database handler
+	 * @param int $origin_id Old product id
+	 * @param int $dest_id New product id
+	 * @return bool
+	 */
+	public static function replaceProduct(DoliDB $db, $origin_id, $dest_id)
+	{
+		$tables = array(
+			'fichinterdet_rec'
+		);
+
+		return CommonObject::commonReplaceProduct($db, $origin_id, $dest_id, $tables);
+	}
 
 	/**
 	 *	Update frequency and unit
