@@ -190,6 +190,7 @@ if (empty($reshook)) {
 
 		// Check if payments in both currency
 		if ($totalpayment > 0 && $multicurrency_totalpayment > 0) {
+			$langs->load("errors");
 			setEventMessages($langs->transnoentities('ErrorPaymentInBothCurrency'), null, 'errors');
 			$error++;
 		}
@@ -220,6 +221,8 @@ if (empty($reshook)) {
 			$thirdparty->fetch($socid);
 		}
 
+		$multicurrency_code = array();
+
 		// Clean parameters amount if payment is for a credit note
 		foreach ($amounts as $key => $value) {	// How payment is dispatched
 			$tmpinvoice = new Facture($db);
@@ -228,6 +231,7 @@ if (empty($reshook)) {
 				$newvalue = price2num($value, 'MT');
 				$amounts[$key] = - abs($newvalue);
 			}
+			$multicurrency_code[$key] = $tmpinvoice->multicurrency_code;
 		}
 
 		foreach ($multicurrency_amounts as $key => $value) {	// How payment is dispatched
@@ -237,6 +241,7 @@ if (empty($reshook)) {
 				$newvalue = price2num($value, 'MT');
 				$multicurrency_amounts[$key] = - abs($newvalue);
 			}
+			$multicurrency_code[$key] = $tmpinvoice->multicurrency_code;
 		}
 
 		if (!empty($conf->banque->enabled)) {
@@ -252,9 +257,11 @@ if (empty($reshook)) {
 		$paiement->datepaye     = $datepaye;
 		$paiement->amounts      = $amounts; // Array with all payments dispatching with invoice id
 		$paiement->multicurrency_amounts = $multicurrency_amounts; // Array with all payments dispatching
+		$paiement->multicurrency_code = $multicurrency_code; // Array with all currency of payments dispatching
 		$paiement->paiementid   = dol_getIdFromCode($db, GETPOST('paiementcode'), 'c_paiement', 'code', 'id', 1);
 		$paiement->num_payment  = GETPOST('num_paiement', 'alpha');
 		$paiement->note_private = GETPOST('comment', 'alpha');
+		$paiement->fk_account   = GETPOST('accountid', 'int');
 
 		if (!$error) {
 			// Create payment and update this->multicurrency_amounts if this->amounts filled or
@@ -271,7 +278,7 @@ if (empty($reshook)) {
 			if (GETPOST('type') == Facture::TYPE_CREDIT_NOTE) {
 				$label = '(CustomerInvoicePaymentBack)'; // Refund of a credit note
 			}
-			$result = $paiement->addPaymentToBank($user, 'payment', $label, GETPOST('accountid'), GETPOST('chqemetteur'), GETPOST('chqbank'));
+			$result = $paiement->addPaymentToBank($user, 'payment', $label, GETPOST('accountid', 'int'), GETPOST('chqemetteur'), GETPOST('chqbank'));
 			if ($result < 0) {
 				setEventMessages($paiement->error, $paiement->errors, 'errors');
 				$error++;

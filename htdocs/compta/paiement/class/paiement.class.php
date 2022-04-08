@@ -72,8 +72,9 @@ class Paiement extends CommonObject
 
 	public $amount; // Total amount of payment (in the main currency)
 	public $multicurrency_amount; // Total amount of payment (in the currency of the bank account)
-	public $amounts = array(); // array: invoice ID => amount for that invoice (in the main currency)>
-	public $multicurrency_amounts = array(); // array: invoice ID => amount for that invoice (in the invoice's currency)>
+	public $amounts = array(); // array: invoice ID => amount for that invoice (in the main currency)
+	public $multicurrency_amounts = array(); // array: invoice ID => amount for that invoice (in the invoice's currency)
+	public $multicurrency_code = array(); // array: invoice ID => currency code for that invoice
 
 	public $pos_change = 0; // Excess received in TakePOS cash payment
 
@@ -230,7 +231,7 @@ class Paiement extends CommonObject
 		global $conf, $langs;
 
 		$error = 0;
-		$way = $this->getWay();
+		$way = $this->getWay();	// 'dolibarr' to use amount, 'customer' to use foreign multicurrency amount
 
 		$now = dol_now();
 
@@ -239,16 +240,37 @@ class Paiement extends CommonObject
 		$totalamount_converted = 0;
 		$atleastonepaymentnotnull = 0;
 
-		if ($way == 'dolibarr') {
+		if ($way == 'dolibarr') {	// Payments were entered into the column of main currency
 			$amounts = &$this->amounts;
 			$amounts_to_update = &$this->multicurrency_amounts;
-		} else {
+		} else {					// Payments were entered into the column of foreign currency
 			$amounts = &$this->multicurrency_amounts;
 			$amounts_to_update = &$this->amounts;
 		}
 
+		$currencyofpayment = '';
+
 		foreach ($amounts as $key => $value) {	// How payment is dispatch
+			if (empty($value)) {
+				continue;
+			}
+			// $key is id of invoice, $value is amount, $way is a 'dolibarr' if amount is in main currency, 'customer' if in foreign currency
 			$value_converted = Multicurrency::getAmountConversionFromInvoiceRate($key, $value, $way);
+			// Add controls of input validity
+			if ($value_converted === false) {
+				// We failed to find the conversion for one invoice
+				$this->error = 'FailedToFoundTheConversionRateForInvoice';
+				return -1;
+			}
+			if (empty($currencyofpayment)) {
+				$currencyofpayment = $this->multicurrency_code[$key];
+			}
+			if ($currencyofpayment != $this->multicurrency_code[$key]) {
+				// If we have invoices with different currencies in the payment, we stop here
+				$this->error = 'ErrorYouTryToPayInvoicesWithDifferentCurrenciesInSamePayment';
+				return -1;
+			}
+
 			$totalamount_converted += $value_converted;
 			$amounts_to_update[$key] = price2num($value_converted, 'MT');
 
@@ -259,6 +281,19 @@ class Paiement extends CommonObject
 				$atleastonepaymentnotnull++;
 			}
 		}
+
+		if (!empty($currencyofpayment)) {
+			// We must check that the currency of invoices is the same than the currency of the bank
+			$bankaccount = new Account($this->db);
+			$bankaccount->fetch($this->fk_account);
+			$bankcurrencycode = empty($bankaccount->currency_code) ? $conf->currency : $bankaccount->currency_code;
+			if ($currencyofpayment != $bankcurrencycode && $currencyofpayment != $conf->currency && $bankcurrencycode != $conf->currency) {
+				$langs->load("errors");
+				$this->error = $langs->trans('ErrorYouTryToPayInvoicesInACurrencyFromBankWithAnotherCurrency', $currencyofpayment, $bankcurrencycode);
+				return -1;
+			}
+		}
+
 
 		$totalamount = price2num($totalamount);
 		$totalamount_converted = price2num($totalamount_converted);
@@ -305,6 +340,7 @@ class Paiement extends CommonObject
 				if (is_numeric($amount) && $amount <> 0) {
 					$amount = price2num($amount);
 					$sql = "INSERT INTO ".MAIN_DB_PREFIX."paiement_facture (fk_facture, fk_paiement, amount, multicurrency_amount)";
+					// TODO Add multicurrency_code and multicurrency_tx
 					$sql .= " VALUES (".((int) $facid).", ".((int) $this->id).", ".((float) $amount).", ".((float) $this->multicurrency_amounts[$key]).")";
 
 					dol_syslog(get_class($this).'::create Amount line '.$key.' insert paiement_facture', LOG_DEBUG);
