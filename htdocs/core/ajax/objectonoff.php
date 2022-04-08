@@ -88,7 +88,10 @@ if (($action == 'set') && !empty($id)) {
 	$triggerkey = strtoupper($element).'_UPDATE';
 	// Special case
 	if ($triggerkey == 'SOCIETE_UPDATE') {
-		$triggerkey = 'COMPANY_UPDATE';
+		$triggerkey = 'COMPANY_MODIFY';
+	}
+	if ($triggerkey == 'PRODUCT_UPDATE') {
+		$triggerkey = 'PRODUCT_MODIFY';
 	}
 
 	$object->setValueFrom($field, $value, $tablename, $id, $format, '', $user, $triggerkey);
