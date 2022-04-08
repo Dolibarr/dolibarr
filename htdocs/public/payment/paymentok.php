@@ -805,6 +805,8 @@ if ($ispaymentok) {
 				}
 			}
 
+			dol_syslog("FinalPaymentAmt = ".$FinalPaymentAmt." paymentTypeId = ".$paymentTypeId, LOG_DEBUG, 0, '_payment');
+
 			// Do action only if $FinalPaymentAmt is set (session variable is cleaned after this page to avoid duplicate actions when page is POST a second time)
 			if (!empty($FinalPaymentAmt) && $paymentTypeId > 0) {
 				$db->begin();

@@ -93,7 +93,7 @@ if (!GETPOST("currency", 'alpha')) {
 	$currency = GETPOST("currency", 'aZ09');
 }
 $source = GETPOST("s", 'aZ09') ?GETPOST("s", 'aZ09') : GETPOST("source", 'aZ09');
-$download = GETPOST('d', 'int') ?GETPOST('d', 'int') : GETPOST('download', 'int');
+//$download = GETPOST('d', 'int') ?GETPOST('d', 'int') : GETPOST('download', 'int');
 
 if (!$action) {
 	if (!GETPOST("amount", 'alpha') && !$source) {
@@ -490,7 +490,7 @@ if ($action == 'charge' && !empty($conf->stripe->enabled)) {
 		$amountstripe = $amountstripe * 100;
 	}
 
-	dol_syslog("--- newpayment.php Execute action = ".$action, LOG_DEBUG, 0, '_stripe');
+	dol_syslog("--- newpayment.php Execute action = ".$action." STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION=".getDolGlobalInt('STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION'), LOG_DEBUG, 0, '_stripe');
 	dol_syslog("GET=".var_export($_GET, true), LOG_DEBUG, 0, '_stripe');
 	dol_syslog("POST=".var_export($_POST, true), LOG_DEBUG, 0, '_stripe');
 
@@ -511,7 +511,7 @@ if ($action == 'charge' && !empty($conf->stripe->enabled)) {
 	$errormessage = '';
 
 	// When using the old Charge API architecture
-	if (empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION)) {
+	if (!getDolGlobalInt('STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION')) {
 		try {
 			$metadata = array(
 				'dol_version' => DOL_VERSION,
@@ -726,7 +726,7 @@ if ($action == 'charge' && !empty($conf->stripe->enabled)) {
 	}
 
 	// When using the PaymentIntent API architecture (mode set on by default into conf.class.php)
-	if (!empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION)) {
+	if (getDolGlobalInt('STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION')) {
 		$service = 'StripeTest';
 		$servicestatus = 0;
 		if (!empty($conf->global->STRIPE_LIVE) && !GETPOST('forcesandbox', 'int')) {
@@ -798,7 +798,7 @@ if ($action == 'charge' && !empty($conf->stripe->enabled)) {
 	$_SESSION['TRANSACTIONID'] = (is_object($charge) ? $charge->id : (is_object($paymentintent) ? $paymentintent->id : ''));
 	$_SESSION['errormessage'] = $errormessage;
 
-	dol_syslog("Action charge stripe ip=".$remoteip, LOG_DEBUG, 0, '_stripe');
+	dol_syslog("Action charge stripe STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION=".getDolGlobalInt('STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION')." ip=".$remoteip, LOG_DEBUG, 0, '_stripe');
 	dol_syslog("onlinetoken=".$_SESSION["onlinetoken"]." FinalPaymentAmt=".$_SESSION["FinalPaymentAmt"]." currencyCodeType=".$_SESSION["currencyCodeType"]." payerID=".$_SESSION['payerID']." TRANSACTIONID=".$_SESSION['TRANSACTIONID'], LOG_DEBUG, 0, '_stripe');
 	dol_syslog("FULLTAG=".$FULLTAG, LOG_DEBUG, 0, '_stripe');
 	dol_syslog("error=".$error." errormessage=".$errormessage, LOG_DEBUG, 0, '_stripe');
@@ -2163,13 +2163,14 @@ print '</table>'."\n";
 
 print '</form>'."\n";
 print '</div>'."\n";
+
 print '<br>';
 
 
 
 // Add more content on page for some services
 if (preg_match('/^dopayment/', $action)) {			// If we choosed/click on the payment mode
-	// Stripe
+	// For Stripe
 	if (GETPOST('dopayment_stripe', 'alpha')) {
 		// Personalized checkout
 		print '<style>
@@ -2200,7 +2201,7 @@ if (preg_match('/^dopayment/', $action)) {			// If we choosed/click on the payme
 	    }
 	    </style>';
 
-		print '<br>';
+		//print '<br>';
 
 		print '<!-- Form payment-form STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION = '.$conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION.' STRIPE_USE_NEW_CHECKOUT = '.$conf->global->STRIPE_USE_NEW_CHECKOUT.' -->'."\n";
 		print '<form action="'.$_SERVER['REQUEST_URI'].'" method="POST" id="payment-form">'."\n";
@@ -2249,25 +2250,39 @@ if (preg_match('/^dopayment/', $action)) {			// If we choosed/click on the payme
 			}
 		}
 
+		// Note:
+		// $conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION = 1 = use intent (default value)
+		// $conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION = 2 = use payment
+
 		//if (empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION) || ! empty($paymentintent))
 		//{
 		print '
-        <table id="dolpaymenttable" summary="Payment form" class="center" width="100%">
+        <table id="dolpaymenttable" summary="Payment form" class="center centpercent">
         <tbody><tr><td class="textpublicpayment">';
 
 		if (!empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION)) {
 			print '<div id="payment-request-button"><!-- A Stripe Element will be inserted here. --></div>';
 		}
 
-		print '<div class="form-row left">';
-		//print '<label for="payment-element">'.$langs->trans("CreditOrDebitCard").'</label>';
-
-		if (!empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION)) {
-			//print '<br><input id="cardholder-name" class="marginbottomonly" name="cardholder-name" value="" type="text" placeholder="'.$langs->trans("CardOwner").'" autocomplete="off" autofocus required>';
+		print '<div class="form-row '.(getDolGlobalInt('STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION') == 2 ? 'center' : 'left').'">';
+		if (getDolGlobalInt('STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION') == 1) {
+			print '<label for="card-element">'.$langs->trans("CreditOrDebitCard").'</label>';
+			print '<br><input id="cardholder-name" class="marginbottomonly" name="cardholder-name" value="" type="text" placeholder="'.$langs->trans("CardOwner").'" autocomplete="off" autofocus required>';
 		}
 
-		print '<div id="payment-element">
-        <!-- a Stripe Element will be inserted here. -->
+		if (getDolGlobalInt('STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION') == 1) {
+			print '<div id="card-element">
+	        <!-- a Stripe Element will be inserted here. -->
+    	    </div>';
+		}
+		if (getDolGlobalInt('STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION') == 2) {
+			print '<div id="payment-element">
+			<!-- a Stripe Element will be inserted here. -->
+			</div>';
+		}
+
+		print '<!-- Used to display form errors -->
+        <div id="card-errors" role="alert"></div>
         </div>';
 
 		print '<br>';
@@ -2410,16 +2425,28 @@ if (preg_match('/^dopayment/', $action)) {			// If we choosed/click on the payme
 				<?php
 			} elseif (!empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION)) {
 				?>
-			// Code for payment with option STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION set
+			// Code for payment with option STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION set to 1 or 2
 
 			// Create a Stripe client.
 			var stripe = Stripe('<?php echo $stripearrayofkeys['publishable_key']; // Defined into config.php ?>');
-	  var cardButton = document.getElementById('buttontopay');
+
+				<?php
+				if (getDolGlobalInt('STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION') == 2) {
+					?>
+			var cardButton = document.getElementById('buttontopay');
 			var clientSecret = cardButton.dataset.secret;
-	  var options = { clientSecret: clientSecret,};
-	  
+			var options = { clientSecret: clientSecret,};
+
 			// Create an instance of Elements
 			var elements = stripe.elements(options);
+					<?php
+				} else {
+					?>
+			// Create an instance of Elements
+			var elements = stripe.elements();
+					<?php
+				}
+				?>
 
 			// Custom styling can be passed to options when creating an Element.
 			// (Note that this demo uses a wider set of styles than the guide below.)
@@ -2440,6 +2467,9 @@ if (preg_match('/^dopayment/', $action)) {			// If we choosed/click on the payme
 			  }
 			};
 
+				<?php
+				if (getDolGlobalInt('STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION') == 2) {
+					?>
 			var paymentElement = elements.create("payment");
 
 			// Add an instance of the card Element into the `card-element` <div>
@@ -2457,8 +2487,8 @@ if (preg_match('/^dopayment/', $action)) {			// If we choosed/click on the payme
 					jQuery('#buttontopay').hide();
 
 					stripe.confirmPayment({
-		  elements,confirmParams: {
-		  return_url: '<?php echo $urlok; ?>',
+						elements,confirmParams: {
+						return_url: '<?php echo $urlok; ?>',
 						payment_method_data: {
 							billing_details: {
 								name: 'test'
@@ -2485,7 +2515,99 @@ if (preg_match('/^dopayment/', $action)) {			// If we choosed/click on the payme
 												} else {
 													print 'false';
 												} ?>	/* true when a customer was provided when creating payment intent. true ask to save the card */
-			},
+						},
+					}
+					).then(function(result) {
+						console.log(result);
+						if (result.error) {
+							console.log("Error on result of handleCardPayment");
+							jQuery('#buttontopay').show();
+							jQuery('#hourglasstopay').hide();
+							// Inform the user if there was an error
+							var errorElement = document.getElementById('card-errors');
+							console.log(result);
+							errorElement.textContent = result.error.message;
+						} else {
+							// The payment has succeeded. Display a success message.
+							console.log("No error on result of handleCardPayment, so we submit the form");
+							// Submit the form
+							jQuery('#buttontopay').hide();
+							jQuery('#hourglasstopay').show();
+							// Send form (action=charge that will do nothing)
+							jQuery('#payment-form').submit();
+						}
+					});
+
+			});
+					<?php
+				} else {
+					?>
+			var cardElement = elements.create('card', {style: style});
+
+			// Add an instance of the card Element into the `card-element` <div>
+			cardElement.mount('#card-element');
+
+			// Handle real-time validation errors from the card Element.
+			cardElement.addEventListener('change', function(event) {
+				var displayError = document.getElementById('card-errors');
+				  if (event.error) {
+					  console.log("Show event error (like 'Incorrect card number', ...)");
+					displayError.textContent = event.error.message;
+				  } else {
+					  console.log("Reset error message");
+					displayError.textContent = '';
+				  }
+			});
+
+			// Handle form submission
+			var cardholderName = document.getElementById('cardholder-name');
+			var cardButton = document.getElementById('buttontopay');
+			var clientSecret = cardButton.dataset.secret;
+
+			cardButton.addEventListener('click', function(event) {
+				console.log("We click on buttontopay");
+				event.preventDefault();
+
+				if (cardholderName.value == '')
+				{
+					console.log("Field Card holder is empty");
+					var displayError = document.getElementById('card-errors');
+					displayError.textContent = '<?php print dol_escape_js($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CardOwner"))); ?>';
+				}
+				else
+				{
+					/* Disable button to pay and show hourglass cursor */
+					jQuery('#hourglasstopay').show();
+					jQuery('#buttontopay').hide();
+
+					stripe.handleCardPayment(
+					clientSecret, cardElement, {
+						payment_method_data: {
+							billing_details: {
+								name: cardholderName.value
+								<?php if (GETPOST('email', 'alpha') || (is_object($object) && is_object($object->thirdparty) && !empty($object->thirdparty->email))) {
+									?>, email: '<?php echo dol_escape_js(GETPOST('email', 'alpha') ? GETPOST('email', 'alpha') : $object->thirdparty->email); ?>'<?php
+								} ?>
+								<?php if (is_object($object) && is_object($object->thirdparty) && !empty($object->thirdparty->phone)) {
+									?>, phone: '<?php echo dol_escape_js($object->thirdparty->phone); ?>'<?php
+								} ?>
+								<?php if (is_object($object) && is_object($object->thirdparty)) {
+									?>, address: {
+									city: '<?php echo dol_escape_js($object->thirdparty->town); ?>',
+									<?php if ($object->thirdparty->country_code) {
+										?>country: '<?php echo dol_escape_js($object->thirdparty->country_code); ?>',<?php
+									} ?>
+									line1: '<?php echo dol_escape_js(preg_replace('/\s\s+/', ' ', $object->thirdparty->address)); ?>',
+									postal_code: '<?php echo dol_escape_js($object->thirdparty->zip); ?>'
+									}
+								<?php } ?>
+							}
+							},
+							save_payment_method:<?php if ($stripecu) {
+													print 'true';
+												} else {
+													print 'false';
+												} ?>	/* true when a customer was provided when creating payment intent. true ask to save the card */
 					}
 					).then(function(result) {
 						console.log(result);
@@ -2506,8 +2628,11 @@ if (preg_match('/^dopayment/', $action)) {			// If we choosed/click on the payme
 							jQuery('#payment-form').submit();
 						}
 					});
-
+				}
 			});
+					<?php
+				}
+				?>
 
 				<?php
 			} else {
@@ -2650,10 +2775,13 @@ if (preg_match('/^dopayment/', $action)) {			// If we choosed/click on the payme
 			print '</script>';
 		}
 	}
-	// This hook is used to show the embedded form to make payments with external payment modules (ie Payzen, ...)
+
+	// For any other payment services
+	// This hook can be used to show the embedded form to make payments with external payment modules (ie Payzen, ...)
 	$parameters = [
 		'paymentmethod' => $paymentmethod,
 		'amount' => price2num(GETPOST("newamount"), 'MT'),
+		'currency' => $currency,
 		'tag' => GETPOST("tag", 'alpha'),
 		'dopayment' => GETPOST('dopayment', 'alpha')
 	];
