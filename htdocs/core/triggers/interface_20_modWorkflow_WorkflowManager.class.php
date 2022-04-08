@@ -381,7 +381,31 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 					if (empty(NOLOGIN)) setEventMessage($langs->trans('TicketNoContractFoundToLink'), 'mesgs');
 				}
 			}
+
+			// Automatically create intervention
+			if (!empty($conf->ficheinter->enabled) && !empty($conf->ticket->enabled) && !empty($conf->workflow->enabled) && !empty($conf->global->WORKFLOW_TICKET_CREATE_INTERVENTION) && !empty($object->fk_soc)) {
+				$fichinter = new Fichinter($this->db);
+				$fichinter->socid = $object->fk_soc;
+				$fichinter->fk_project = $projectid;
+				$fichinter->author = $user->id;
+				$fichinter->model_pdf = (!empty($conf->global->FICHEINTER_ADDON_PDF)) ? $conf->global->FICHEINTER_ADDON_PDF : 'soleil';
+				$fichinter->origin = $object->element;
+				$fichinter->origin_id = $object->id;
+				$fichinter->fk_contrat = $object->fk_contract;
+
+				// Extrafields
+				$extrafields = new ExtraFields($this->db);
+				$extrafields->fetch_name_optionals_label($fichinter->table_element);
+				$array_options = $extrafields->getOptionalsFromPost($fichinter->table_element);
+				$fichinter->array_options = $array_options;
+
+				$id = $fichinter->create($user);
+				if ($id <= 0) {
+					setEventMessages($fichinter->error, null, 'errors');
+				}
+			}
 		}
+
 		return 0;
 	}
 
