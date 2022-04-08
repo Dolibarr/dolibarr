@@ -235,15 +235,6 @@ class pdf_crabe extends ModelePDFFactures
 		// phpcs:enable
 		global $user, $langs, $conf, $mysoc, $hookmanager, $nblines;
 
-        if($conf->entity != $object->entity) {
-            // Récupération configuration de l'entité de la facture
-
-            $conf->entity = $object->entity;
-            $conf->setValues($db);
-            $mysoc->setMysoc($conf);
-            $this->emetteur=$mysoc;
-        }
-
 		dol_syslog("write_file outputlangs->defaultlang=".(is_object($outputlangs) ? $outputlangs->defaultlang : 'null'));
 
 		if (!is_object($outputlangs)) {
@@ -289,9 +280,6 @@ class pdf_crabe extends ModelePDFFactures
 		if (count($realpatharray) == 0) {
 			$this->posxpicture = $this->posxtva;
 		}
-
-        if($object->entity == 1)$upload_dir= str_replace('invoice','facture',$upload_dir);
-        else $upload_dir= str_replace('facture','invoice',$upload_dir);
 
 		if ($conf->facture->dir_output) {
 			$object->fetch_thirdparty();
