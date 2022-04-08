@@ -1469,7 +1469,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			if (!empty($conf->prelevement->enabled)) {
 				$colspan += 2;
 			}
-			print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoBANRecord").'</td></tr>';
+			print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoBANRecord").'</span></td></tr>';
 		}
 
 		print '</table>';
