@@ -2170,6 +2170,13 @@ print '<br>';
 
 // Add more content on page for some services
 if (preg_match('/^dopayment/', $action)) {			// If we choosed/click on the payment mode
+	// Save some data for the paymentok
+	$remoteip = getUserRemoteIP();
+	$_SESSION["currencyCodeType"] = $currency;
+	$_SESSION["FinalPaymentAmt"] = $amount;
+	$_SESSION['ipaddress'] = ($remoteip ? $remoteip : 'unknown'); // Payer ip
+	$_SESSION["paymentType"] = '';
+
 	// For Stripe
 	if (GETPOST('dopayment_stripe', 'alpha')) {
 		// Personalized checkout
@@ -2635,141 +2642,6 @@ if (preg_match('/^dopayment/', $action)) {			// If we choosed/click on the payme
 				?>
 
 				<?php
-			} else {
-				// Old method (not SCA ready)
-				?>
-			// Old code for payment with option STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION off and STRIPE_USE_NEW_CHECKOUT off
-
-			// Create a Stripe client.
-			var stripe = Stripe('<?php echo $stripearrayofkeys['publishable_key']; // Defined into config.php ?>');
-
-			// Create an instance of Elements
-			var elements = stripe.elements();
-
-			// Custom styling can be passed to options when creating an Element.
-			// (Note that this demo uses a wider set of styles than the guide below.)
-			var style = {
-			  base: {
-				color: '#32325d',
-				lineHeight: '24px',
-				fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
-				fontSmoothing: 'antialiased',
-				fontSize: '16px',
-				'::placeholder': {
-				  color: '#aab7c4'
-				}
-			  },
-			  invalid: {
-				color: '#fa755a',
-				iconColor: '#fa755a'
-			  }
-			};
-
-			// Create an instance of the card Element
-			var card = elements.create('card', {style: style});
-
-			// Add an instance of the card Element into the `card-element` <div>
-			card.mount('#card-element');
-
-			// Handle real-time validation errors from the card Element.
-			card.addEventListener('change', function(event) {
-			  var displayError = document.getElementById('card-errors');
-			  if (event.error) {
-				displayError.textContent = event.error.message;
-			  } else {
-				displayError.textContent = '';
-			  }
-			});
-
-			// Handle form submission
-			var form = document.getElementById('payment-form');
-			console.log(form);
-			form.addEventListener('submit', function(event) {
-			  event.preventDefault();
-				<?php
-				if (empty($conf->global->STRIPE_USE_3DSECURE)) {	// Ask credit card directly, no 3DS test
-					?>
-					/* Use token */
-					stripe.createToken(card).then(function(result) {
-						if (result.error) {
-						  // Inform the user if there was an error
-						  var errorElement = document.getElementById('card-errors');
-						  errorElement.textContent = result.error.message;
-						} else {
-						  // Send the token to your server
-						  stripeTokenHandler(result.token);
-						}
-					});
-					<?php
-				} else // Ask credit card with 3DS test
-				{
-					?>
-					/* Use 3DS source */
-					stripe.createSource(card).then(function(result) {
-						if (result.error) {
-						  // Inform the user if there was an error
-						  var errorElement = document.getElementById('card-errors');
-						  errorElement.textContent = result.error.message;
-						} else {
-						  // Send the source to your server
-						  stripeSourceHandler(result.source);
-						}
-					});
-					<?php
-				}
-				?>
-			});
-
-
-			/* Insert the Token into the form so it gets submitted to the server */
-			function stripeTokenHandler(token) {
-			  // Insert the token ID into the form so it gets submitted to the server
-			  var form = document.getElementById('payment-form');
-
-			  var hiddenInput = document.createElement('input');
-			  hiddenInput.setAttribute('type', 'hidden');
-			  hiddenInput.setAttribute('name', 'stripeToken');
-			  hiddenInput.setAttribute('value', token.id);
-			  form.appendChild(hiddenInput);
-
-			  var hiddenInput2 = document.createElement('input');
-			  hiddenInput2.setAttribute('type', 'hidden');
-			  hiddenInput2.setAttribute('name', 'token');
-			  hiddenInput2.setAttribute('value', '<?php echo newToken(); ?>');
-			  form.appendChild(hiddenInput2);
-
-			  // Submit the form
-			  jQuery('#buttontopay').hide();
-			  jQuery('#hourglasstopay').show();
-			  console.log("submit token");
-			  form.submit();
-			}
-
-			/* Insert the Source into the form so it gets submitted to the server */
-			function stripeSourceHandler(source) {
-			  // Insert the source ID into the form so it gets submitted to the server
-			  var form = document.getElementById('payment-form');
-
-			  var hiddenInput = document.createElement('input');
-			  hiddenInput.setAttribute('type', 'hidden');
-			  hiddenInput.setAttribute('name', 'stripeSource');
-			  hiddenInput.setAttribute('value', source.id);
-			  form.appendChild(hiddenInput);
-
-			  var hiddenInput2 = document.createElement('input');
-			  hiddenInput2.setAttribute('type', 'hidden');
-			  hiddenInput2.setAttribute('name', 'token');
-			  hiddenInput2.setAttribute('value', '<?php echo newToken(); ?>');
-			  form.appendChild(hiddenInput2);
-
-			  // Submit the form
-			  jQuery('#buttontopay').hide();
-			  jQuery('#hourglasstopay').show();
-			  console.log("submit source");
-			  form.submit();
-			}
-
-				<?php
 			}
 
 			print '</script>';
@@ -2780,7 +2652,7 @@ if (preg_match('/^dopayment/', $action)) {			// If we choosed/click on the payme
 	// This hook can be used to show the embedded form to make payments with external payment modules (ie Payzen, ...)
 	$parameters = [
 		'paymentmethod' => $paymentmethod,
-		'amount' => price2num(GETPOST("newamount"), 'MT'),
+		'amount' => $amount,
 		'currency' => $currency,
 		'tag' => GETPOST("tag", 'alpha'),
 		'dopayment' => GETPOST('dopayment', 'alpha')
