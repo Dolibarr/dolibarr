@@ -400,3 +400,5 @@ DeleteLinkedProduct=Delete the child product linked to the combination
 PMPValue=Weighted average price
 PMPValueShort=WAP
 PuttingPricesUpToDate=Update prices with current known prices
+SwitchOnSaleStatus=Switch on sale status
+SwitchOnPurchaseStatus=Switch on purchase status

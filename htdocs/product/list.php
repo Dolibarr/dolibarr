@@ -361,6 +361,25 @@ if (empty($reshook)) {
 	$permissiontoadd = $user->rights->{$rightskey}->creer;
 	$uploaddir = $conf->product->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
+
+	if (!$error && $massaction == 'switchonsalestatus' && $permissiontoadd) {
+		$product = new Product($db);
+		foreach ($toselect as $toselectid) {
+			$result = $product->fetch($toselectid);
+			if ($result > 0 && $product->id > 0) {
+				$product->setStatut($product->status ? 0 : 1, null, 'product', 'PRODUCT_MODIFY', 'tosell');
+			}
+		}
+	}
+	if (!$error && $massaction == 'switchonpurchasestatus' && $permissiontoadd) {
+		$product = new Product($db);
+		foreach ($toselect as $toselectid) {
+			$result = $product->fetch($toselectid);
+			if ($result > 0 && $product->id > 0) {
+				$product->setStatut($product->status_buy ? 0 : 1, null, 'product', 'PRODUCT_MODIFY', 'tobuy');
+			}
+		}
+	}
 }
 
 
