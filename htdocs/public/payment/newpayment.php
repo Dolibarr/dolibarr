@@ -3,7 +3,7 @@
  * Copyright (C) 2006-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2018	    Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2018-2019	Thibault FOUCART	    <support@ptibogxiv.net>
+ * Copyright (C) 2018-2021	Thibault FOUCART	    <support@ptibogxiv.net>
  * Copyright (C) 2021		Waël Almoman	    	<info@almoman.com>
  * Copyright (C) 2021		Dorian Vabre			<dorian.vabre@gmail.com>
  *
@@ -2252,7 +2252,7 @@ if (preg_match('/^dopayment/', $action)) {			// If we choosed/click on the payme
 		//if (empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION) || ! empty($paymentintent))
 		//{
 		print '
-        <table id="dolpaymenttable" summary="Payment form" class="center">
+        <table id="dolpaymenttable" summary="Payment form" class="center" width="100%">
         <tbody><tr><td class="textpublicpayment">';
 
 		if (!empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION)) {
@@ -2260,18 +2260,14 @@ if (preg_match('/^dopayment/', $action)) {			// If we choosed/click on the payme
 		}
 
 		print '<div class="form-row left">';
-		print '<label for="card-element">'.$langs->trans("CreditOrDebitCard").'</label>';
+		//print '<label for="payment-element">'.$langs->trans("CreditOrDebitCard").'</label>';
 
 		if (!empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION)) {
-			print '<br><input id="cardholder-name" class="marginbottomonly" name="cardholder-name" value="" type="text" placeholder="'.$langs->trans("CardOwner").'" autocomplete="off" autofocus required>';
+			//print '<br><input id="cardholder-name" class="marginbottomonly" name="cardholder-name" value="" type="text" placeholder="'.$langs->trans("CardOwner").'" autocomplete="off" autofocus required>';
 		}
 
-		print '<div id="card-element">
+		print '<div id="payment-element">
         <!-- a Stripe Element will be inserted here. -->
-        </div>';
-
-		print '<!-- Used to display form errors -->
-        <div id="card-errors" role="alert"></div>
         </div>';
 
 		print '<br>';
@@ -2418,9 +2414,12 @@ if (preg_match('/^dopayment/', $action)) {			// If we choosed/click on the payme
 
 			// Create a Stripe client.
 			var stripe = Stripe('<?php echo $stripearrayofkeys['publishable_key']; // Defined into config.php ?>');
-
+	  var cardButton = document.getElementById('buttontopay');
+			var clientSecret = cardButton.dataset.secret;
+	  var options = { clientSecret: clientSecret,};
+	  
 			// Create an instance of Elements
-			var elements = stripe.elements();
+			var elements = stripe.elements(options);
 
 			// Custom styling can be passed to options when creating an Element.
 			// (Note that this demo uses a wider set of styles than the guide below.)
@@ -2441,49 +2440,28 @@ if (preg_match('/^dopayment/', $action)) {			// If we choosed/click on the payme
 			  }
 			};
 
-			var cardElement = elements.create('card', {style: style});
+			var paymentElement = elements.create("payment");
 
 			// Add an instance of the card Element into the `card-element` <div>
-			cardElement.mount('#card-element');
-
-			// Handle real-time validation errors from the card Element.
-			cardElement.addEventListener('change', function(event) {
-				var displayError = document.getElementById('card-errors');
-				  if (event.error) {
-					  console.log("Show event error (like 'Incorrect card number', ...)");
-					displayError.textContent = event.error.message;
-				  } else {
-					  console.log("Reset error message");
-					displayError.textContent = '';
-				  }
-			});
+			paymentElement.mount("#payment-element");
 
 			// Handle form submission
-			var cardholderName = document.getElementById('cardholder-name');
 			var cardButton = document.getElementById('buttontopay');
-			var clientSecret = cardButton.dataset.secret;
 
 			cardButton.addEventListener('click', function(event) {
 				console.log("We click on buttontopay");
 				event.preventDefault();
 
-				if (cardholderName.value == '')
-				{
-					console.log("Field Card holder is empty");
-					var displayError = document.getElementById('card-errors');
-					displayError.textContent = '<?php print dol_escape_js($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CardOwner"))); ?>';
-				}
-				else
-				{
 					/* Disable button to pay and show hourglass cursor */
 					jQuery('#hourglasstopay').show();
 					jQuery('#buttontopay').hide();
 
-					stripe.handleCardPayment(
-					clientSecret, cardElement, {
+					stripe.confirmPayment({
+		  elements,confirmParams: {
+		  return_url: '<?php echo $urlok; ?>',
 						payment_method_data: {
 							billing_details: {
-								name: cardholderName.value
+								name: 'test'
 								<?php if (GETPOST('email', 'alpha') || (is_object($object) && is_object($object->thirdparty) && !empty($object->thirdparty->email))) {
 									?>, email: '<?php echo dol_escape_js(GETPOST('email', 'alpha') ? GETPOST('email', 'alpha') : $object->thirdparty->email); ?>'<?php
 								} ?>
@@ -2507,6 +2485,7 @@ if (preg_match('/^dopayment/', $action)) {			// If we choosed/click on the payme
 												} else {
 													print 'false';
 												} ?>	/* true when a customer was provided when creating payment intent. true ask to save the card */
+			},
 					}
 					).then(function(result) {
 						console.log(result);
@@ -2527,7 +2506,7 @@ if (preg_match('/^dopayment/', $action)) {			// If we choosed/click on the payme
 							jQuery('#payment-form').submit();
 						}
 					});
-				}
+
 			});
 
 				<?php
