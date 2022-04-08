@@ -128,7 +128,7 @@ class mod_lot_advanced extends ModeleNumRefBatch
 	/**
 	 * 	Return next free value
 	 *
-	 *  @param	Societe		$objsoc	    Object Societe
+	 *  @param	Societe		$objsoc	    Object thirdparty
 	 *  @param  Object		$object		Object we need next value for
 	 *  @return string      			Value if KO, <0 if KO
 	 */

@@ -77,7 +77,7 @@ $lineid		= GETPOST('lineid', 'int');
 $projectid = GETPOST('projectid', 'int');
 $origin		= GETPOST('origin', 'alpha');
 $originid = GETPOST('originid', 'int');
-$fac_rec = GETPOST('fac_rec', 'int');
+$fac_recid = GETPOST('fac_rec', 'int');
 $rank = (GETPOST('rank', 'int') > 0) ? GETPOST('rank', 'int') : -1;
 
 // PDF
@@ -884,10 +884,8 @@ if (empty($reshook)) {
 					}
 				}
 			}
-		}
-
-		// Standard invoice or Deposit invoice, created from a Predefined template invoice
-		if ((GETPOST('type') == FactureFournisseur::TYPE_STANDARD || GETPOST('type') == FactureFournisseur::TYPE_DEPOSIT) && GETPOST('fac_rec', 'int') > 0) {
+		} elseif ($fac_recid > 0 && (GETPOST('type') == FactureFournisseur::TYPE_STANDARD || GETPOST('type') == FactureFournisseur::TYPE_DEPOSIT)) {
+			// Standard invoice or Deposit invoice, created from a Predefined template invoice
 			if (empty($dateinvoice)) {
 				$error++;
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
@@ -905,7 +903,7 @@ if (empty($reshook)) {
 				$object->date            = $dateinvoice;
 				$object->note_public = trim(GETPOST('note_public', 'restricthtml'));
 				$object->note_private    = trim(GETPOST('note_private', 'restricthtml'));
-				$object->ref_client      = GETPOST('ref_client');
+				$object->ref_supplier    = GETPOST('ref_supplier', 'nohtml');
 				$object->model_pdf = GETPOST('model');
 				$object->fk_project = GETPOST('projectid', 'int');
 				$object->cond_reglement_id	= (GETPOST('type') == 3 ? 1 : GETPOST('cond_reglement_id'));
@@ -920,7 +918,7 @@ if (empty($reshook)) {
 				$object->multicurrency_tx   = GETPOST('originmulticurrency_tx', 'int');
 
 				// Source facture
-				$object->fac_rec = GETPOST('fac_rec', 'int');
+				$object->fac_rec = $fac_recid;
 				$fac_rec = new FactureFournisseurRec($db);
 				$fac_rec->fetch($object->fac_rec);
 				$fac_rec->fetch_lines();
@@ -928,10 +926,8 @@ if (empty($reshook)) {
 
 				$id = $object->create($user); // This include recopy of links from recurring invoice and recurring invoice lines
 			}
-		}
-
-		// Standard invoice or Deposit invoice, not from a Predefined template invoice
-		if (GETPOST('type') == FactureFournisseur::TYPE_STANDARD || GETPOST('type') == FactureFournisseur::TYPE_DEPOSIT && GETPOST('fac_rec') <= 0) {
+		} elseif ($fac_recid <= 0 && (GETPOST('type') == FactureFournisseur::TYPE_STANDARD || GETPOST('type') == FactureFournisseur::TYPE_DEPOSIT)) {
+			// Standard invoice or Deposit invoice, not from a Predefined template invoice
 			if (GETPOST('socid', 'int') < 1) {
 				setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('Supplier')), null, 'errors');
 				$action = 'create';
@@ -1449,7 +1445,7 @@ if (empty($reshook)) {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Description')), null, 'errors');
 			$error++;
 		}
-		if (!GETPOST('qty')) {
+		if (!GETPOST('qty', 'alpha')) {	// 0 is NOT allowed for invoices
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Qty')), null, 'errors');
 			$error++;
 		}
@@ -1501,12 +1497,27 @@ if (empty($reshook)) {
 
 			if ($idprod > 0) {
 				$label = $productsupplier->label;
-
+				// Define output language
+				if (!empty($conf->global->MAIN_MULTILANGS) && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
+					$outputlangs = $langs;
+					$newlang = '';
+					if (empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+						$newlang = GETPOST('lang_id', 'aZ09');
+					}
+					if (empty($newlang)) {
+						$newlang = $object->thirdparty->default_lang;
+					}
+					if (!empty($newlang)) {
+						$outputlangs = new Translate("", $conf);
+						$outputlangs->setDefaultLang($newlang);
+					}
+					$desc = (!empty($productsupplier->multilangs[$outputlangs->defaultlang]["description"])) ? $productsupplier->multilangs[$outputlangs->defaultlang]["description"] : $productsupplier->description;
+				} else {
+					$desc = $productsupplier->description;
+				}
 				// if we use supplier description of the products
 				if (!empty($productsupplier->desc_supplier) && !empty($conf->global->PRODUIT_FOURN_TEXTS)) {
 					$desc = $productsupplier->desc_supplier;
-				} else {
-					$desc = $productsupplier->description;
 				}
 
 				//If text set in desc is the same as product descpription (as now it's preloaded) whe add it only one time
@@ -2011,15 +2022,15 @@ if ($action == 'create') {
 
 	$exampletemplateinvoice = new FactureFournisseurRec($db);
 	$invoice_predefined = new FactureFournisseurRec($db);
-	if (empty($origin) && empty($originid) && GETPOST('fac_rec', 'int') > 0) {
-		$invoice_predefined->fetch(GETPOST('fac_rec', 'int'));
+	if (empty($origin) && empty($originid) && $fac_recid > 0) {
+		$invoice_predefined->fetch($fac_recid);
 	}
 
 	// Third party
 	print '<tr><td class="fieldrequired">'.$langs->trans('Supplier').'</td>';
 	print '<td>';
 
-	if ($societe->id > 0 && (!GETPOST('fac_rec', 'int') || !empty($invoice_predefined->frequency))) {
+	if ($societe->id > 0 && ($fac_recid <= 0 || !empty($invoice_predefined->frequency))) {
 		$absolute_discount = $societe->getAvailableDiscounts('', '', 0, 1);
 		print $societe->getNomUrl(1, 'supplier');
 		print '<input type="hidden" name="socid" value="'.$societe->id.'">';
@@ -2037,15 +2048,15 @@ if ($action == 'create') {
 			});
 			</script>';
 		}
-		if (!GETPOST('fac_rec', 'int')) {
+		if ($fac_recid <= 0) {
 			print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&client=0&fournisseur=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddThirdParty").'"></span></a>';
 		}
 	}
 	print '</td></tr>';
 
 	// Overwrite some values if creation of invoice is from a predefined invoice
-	if (empty($origin) && empty($originid) && GETPOST('fac_rec', 'int') > 0) {
-		$invoice_predefined->fetch(GETPOST('fac_rec', 'int'));
+	if (empty($origin) && empty($originid) && $fac_recid > 0) {
+		$invoice_predefined->fetch($fac_recid);
 
 		$dateinvoice = $invoice_predefined->date_when; // To use next gen date by default later
 		if (empty($projectid)) {
@@ -2075,15 +2086,15 @@ if ($action == 'create') {
 
 			if ($num > 0) {
 				print '<tr><td>'.$langs->trans('CreateFromRepeatableInvoice').'</td><td>';
-				//print '<input type="hidden" name="fac_rec" id="fac_rec" value="'.GETPOST('fac_rec', 'int').'">';
+				//print '<input type="hidden" name="fac_rec" id="fac_rec" value="'.$fac_recid.'">';
 				print '<select class="flat" id="fac_rec" name="fac_rec">'; // We may want to change the template to use
 				print '<option value="0" selected></option>';
 				while ($i < $num) {
 					$objp = $db->fetch_object($resql);
 					print '<option value="'.$objp->rowid.'"';
-					if (GETPOST('fac_rec', 'int') == $objp->rowid) {
+					if ($fac_recid == $objp->rowid) {
 						print ' selected';
-						$exampletemplateinvoice->fetch(GETPOST('fac_rec', 'int'));
+						$exampletemplateinvoice->fetch($fac_recid);
 					}
 					print '>'.$objp->title.' ('.price($objp->total_ttc).' '.$langs->trans("TTC").')</option>';
 					$i++;
@@ -2395,7 +2406,7 @@ if ($action == 'create') {
 		$langs->load('projects');
 		print '<tr><td>'.$langs->trans('Project').'</td><td>';
 		print img_picto('', 'project', 'class="pictofixedwidth"').$formproject->select_projects((empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) ? $societe->id : -1), $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500 widthcentpercentminusxx');
-		print ' <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$soc->id.'&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id.($fac_rec ? '&fac_rec='.$fac_rec : '')).'"><span class="fa fa-plus-circle valignmiddle" title="'.$langs->trans("AddProject").'"></span></a>';
+		print ' <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$soc->id.'&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id.($fac_recid > 0 ? '&fac_rec='.$fac_recid : '')).'"><span class="fa fa-plus-circle valignmiddle" title="'.$langs->trans("AddProject").'"></span></a>';
 		print '</td></tr>';
 	}
 
@@ -2419,7 +2430,7 @@ if ($action == 'create') {
 
 	// Help of substitution key
 	$htmltext = '';
-	if (GETPOST('fac_rec', 'int') > 0) {
+	if ($fac_recid > 0) {
 		$dateexample = $newdateinvoice ? $newdateinvoice : $dateinvoice;
 		if (empty($dateexample)) {
 			$dateexample = dol_now();
@@ -2544,11 +2555,13 @@ if ($action == 'create') {
 		$title = $langs->trans('ProductsAndServices');
 		print load_fiche_titre($title);
 
+		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 
 		$objectsrc->printOriginLinesList('', $selectedLines);
 
 		print '</table>';
+		print '</div>';
 	}
 
 	print "</form>\n";
@@ -3166,7 +3179,7 @@ if ($action == 'create') {
 
 		// Amount
 		print '<tr><td class="titlefield">'.$langs->trans('AmountHT').'</td><td>'.price($object->total_ht, 1, $langs, 0, -1, -1, $conf->currency).'</td></tr>';
-		print '<tr><td>'.$langs->trans('AmountVAT').'</td><td>'.price($object->total_tva, 1, $langs, 0, -1, -1, $conf->currency).'<div class="inline-block"> &nbsp; &nbsp; &nbsp; &nbsp; ';
+		print '<tr><td>'.$langs->trans('AmountVAT').'</td><td>'.price($object->total_tva, 1, $langs, 0, -1, -1, $conf->currency);
 		if (GETPOST('calculationrule')) {
 			$calculationrule = GETPOST('calculationrule', 'alpha');
 		} else {
@@ -3179,13 +3192,16 @@ if ($action == 'create') {
 		}
 		// Show link for "recalculate"
 		if ($object->getVentilExportCompta() == 0) {
-			$s = $langs->trans("ReCalculate").' ';
+			$s = '<span class="hideonsmartphone">'.$langs->trans("ReCalculate").' </span>';
 			$s .= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=calculate&calculationrule=totalofround">'.$langs->trans("Mode1").'</a>';
 			$s .= ' / ';
 			$s .= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=calculate&calculationrule=roundoftotal">'.$langs->trans("Mode2").'</a>';
-			print $form->textwithtooltip($s, $langs->trans("CalculationRuleDesc", $calculationrulenum).'<br>'.$langs->trans("CalculationRuleDescSupplier"), 2, 1, img_picto('', 'help'));
+			print '<div class="inline-block">';
+			print ' &nbsp; &nbsp; &nbsp; &nbsp; ';
+			print $form->textwithtooltip($s, $langs->trans("CalculationRuleDesc", $calculationrulenum).'<br>'.$langs->trans("CalculationRuleDescSupplier"), 2, 1, img_picto('', 'help'), '', 3, '', 0, 'recalculate');
+			print '</div>';
 		}
-		print '</div></td></tr>';
+		print '</td></tr>';
 
 		// Amount Local Taxes
 		//TODO: Place into a function to control showing by country or study better option
@@ -3554,7 +3570,7 @@ if ($action == 'create') {
 		}
 
 		print '<div class="div-table-responsive-no-min">';
-		print '<table id="tablelines" class="noborder noshadow" width="100%">';
+		print '<table id="tablelines" class="noborder noshadow centpercent">';
 
 		global $forceall, $senderissupplier, $dateSelector, $inputalsopricewithtax;
 		$forceall = 1; $dateSelector = 0; $inputalsopricewithtax = 1;

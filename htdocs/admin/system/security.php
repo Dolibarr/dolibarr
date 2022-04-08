@@ -266,10 +266,20 @@ print '<br>';
 
 print '<strong>$dolibarr_main_restrict_ip</strong>: ';
 if (empty($dolibarr_main_restrict_ip)) {
-	print '<span class="opacitymedium">'.$langs->trans("None").'</span>';
+	print $langs->trans("None");
 	//print ' <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", $langs->transnoentitiesnoconv("IPsOfUsers")).')</span>';
+} else {
+	print $dolibarr_main_restrict_ip;
 }
+print '<br>';
 
+print '<strong>$dolibarr_main_restrict_os_commands</strong>: ';
+if (empty($dolibarr_main_restrict_os_commands)) {
+	print $langs->trans("None");
+} else {
+	print $dolibarr_main_restrict_os_commands;
+}
+print ' <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", 'mysqldump, mysql, pg_dump, pgrestore').')</span>';
 print '<br>';
 
 if (empty($conf->global->SECURITY_DISABLE_TEST_ON_OBFUSCATED_CONF)) {

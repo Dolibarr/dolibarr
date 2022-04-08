@@ -2703,6 +2703,23 @@ class SupplierProposal extends CommonObject
 
 		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
 	}
+
+	/**
+	 * Function used to replace a product id with another one.
+	 *
+	 * @param DoliDB $db Database handler
+	 * @param int $origin_id Old product id
+	 * @param int $dest_id New product id
+	 * @return bool
+	 */
+	public static function replaceProduct(DoliDB $db, $origin_id, $dest_id)
+	{
+		$tables = array(
+			'supplier_proposaldet'
+		);
+
+		return CommonObject::commonReplaceProduct($db, $origin_id, $dest_id, $tables);
+	}
 }
 
 
@@ -3288,7 +3305,7 @@ class SupplierProposalLine extends CommonObjectLine
 
 			if (!$error && !$notrigger) {
 				// Call trigger
-				$result = $this->call_trigger('LINESUPPLIER_PROPOSAL_UPDATE', $user);
+				$result = $this->call_trigger('LINESUPPLIER_PROPOSAL_MODIFY', $user);
 				if ($result < 0) {
 					$this->db->rollback();
 					return -1;

@@ -16,7 +16,7 @@
  * Copyright (C) 2012       Cedric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2012-2015  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2014-2020  Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2018-2021  Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2018-2022  Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2018       Nicolas ZABOURI	        <info@inovea-conseil.com>
  * Copyright (C) 2018       Christophe Battarel     <christophe@altairis.fr>
@@ -1320,6 +1320,7 @@ class Form
 	{
 		// phpcs:enable
 		global $conf, $user, $langs;
+		global $hookmanager;
 
 		$out = '';
 		$num = 0;
@@ -1367,6 +1368,10 @@ class Form
 		if (!empty($excludeids)) {
 			$sql .= " AND s.rowid NOT IN (".$this->db->sanitize(join(',', $excludeids)).")";
 		}
+		// Add where from hooks
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('selectThirdpartyListWhere', $parameters); // Note that $action and $object may have been modified by hook
+		$sql .= $hookmanager->resPrint;
 		// Add criteria
 		if ($filterkey && $filterkey != '') {
 			$sql .= " AND (";
@@ -1672,13 +1677,17 @@ class Form
 		if ($showsoc > 0 || !empty($conf->global->CONTACT_SHOW_EMAIL_PHONE_TOWN_SELECTLIST)) {
 			$sql .= " LEFT OUTER JOIN  ".$this->db->prefix()."societe as s ON s.rowid=sp.fk_soc";
 		}
-		$sql .= " WHERE sp.entity IN (".getEntity('socpeople').")";
+		$sql .= " WHERE sp.entity IN (".getEntity('contact').")";
 		if ($socid > 0 || $socid == -1) {
 			$sql .= " AND sp.fk_soc = ".((int) $socid);
 		}
 		if (!empty($conf->global->CONTACT_HIDE_INACTIVE_IN_COMBOBOX)) {
 			$sql .= " AND sp.statut <> 0";
 		}
+		// Add where from hooks
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('selectContactListWhere', $parameters); // Note that $action and $object may have been modified by hook
+		$sql .= $hookmanager->resPrint;
 		$sql .= " ORDER BY sp.lastname ASC";
 
 		dol_syslog(get_class($this)."::selectcontacts", LOG_DEBUG);
@@ -2462,6 +2471,7 @@ class Form
 	{
 		// phpcs:enable
 		global $langs, $conf;
+		global $hookmanager;
 
 		$out = '';
 		$outarray = array();
@@ -2607,6 +2617,10 @@ class Form
 		} elseif (empty($conf->service->enabled)) { // when service module is disabled, show products only
 			$sql .= " AND p.fk_product_type = 0";
 		}
+		// Add where from hooks
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('selectProductsListWhere', $parameters); // Note that $action and $object may have been modified by hook
+		$sql .= $hookmanager->resPrint;
 		// Add criteria on ref/label
 		if ($filterkey != '') {
 			$sql .= ' AND (';
@@ -3180,6 +3194,7 @@ class Form
 	{
 		// phpcs:enable
 		global $langs, $conf, $user;
+		global $hookmanager;
 
 		$out = '';
 		$outarray = array();
@@ -3229,6 +3244,10 @@ class Form
 		if (!empty($filtre)) {
 			$sql .= " ".$filtre;
 		}
+		// Add where from hooks
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('selectSuppliersProductsListWhere', $parameters); // Note that $action and $object may have been modified by hook
+		$sql .= $hookmanager->resPrint;
 		// Add criteria on ref/label
 		if ($filterkey != '') {
 			$sql .= ' AND (';
@@ -3688,7 +3707,6 @@ class Form
 			dol_print_error($this->db);
 		}
 	}
-
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
@@ -6680,7 +6698,7 @@ class Form
 		// phpcs:enable
 		global $langs;
 
-		$retstring = '';
+		$retstring = '<span class="nowraponall">';
 
 		$hourSelected = 0;
 		$minSelected = 0;
@@ -6712,7 +6730,7 @@ class Form
 		if ($typehour != 'text') {
 			$retstring .= ' '.$langs->trans('HourShort');
 		} else {
-			$retstring .= '<span class="hideonsmartphone">:</span>';
+			$retstring .= '<span class="">:</span>';
 		}
 
 		// Minutes
@@ -6740,7 +6758,7 @@ class Form
 			$retstring .= ' '.$langs->trans('MinuteShort');
 		}
 
-		//$retstring.="&nbsp;";
+		$retstring.="</span>";
 
 		if (!empty($nooutput)) {
 			return $retstring;
@@ -7169,7 +7187,7 @@ class Form
 	 *  @param		int			$limit					Limit on number of returned lines
 	 *  @param		int			$status					Ticket status
 	 *  @param		string		$selected_input_value	Value of preselected input text (for use with ajax)
-	 *  @param		int			$hidelabel				Hide label (0=no, 1=yes, 2=show search icon (before) and placeholder, 3 search icon after)
+	 *  @param		int			$hidelabel				Hide label (0=no, 1=yes, 2=show search icon before and placeholder, 3 search icon after)
 	 *  @param		array		$ajaxoptions			Options for ajax_autocompleter
 	 *  @param      int			$socid					Thirdparty Id (to get also price dedicated to this customer)
 	 *  @param		string		$showempty				'' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
@@ -8587,6 +8605,7 @@ class Form
 					print '<br><form action="' . $_SERVER["PHP_SELF"] . '" method="POST" name="formlinkedbyref' . $key . '">';
 					print '<input type="hidden" name="id" value="' . $object->id . '">';
 					print '<input type="hidden" name="action" value="addlinkbyref">';
+					print '<input type="hidden" name="token" value="'.newToken().'">';
 					print '<input type="hidden" name="addlink" value="' . $key . '">';
 					print '<table class="noborder">';
 					print '<tr>';
@@ -8844,7 +8863,7 @@ class Form
 
 		// Add where from hooks
 		if (is_object($hookmanager)) {
-			$parameters = array();
+			$parameters = array('showrefnav' => true);
 			$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object); // Note that $action and $object may have been modified by hook
 			$object->next_prev_filter .= $hookmanager->resPrint;
 		}

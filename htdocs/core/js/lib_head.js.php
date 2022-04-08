@@ -1187,15 +1187,33 @@ $(document).ready(function() {
 });
 <?php } ?>
 
-// Force to hide menus when page is inside an iFrame
+// Force to hide menus when page is inside an iFrame so we can show any page into a dialog popup
 $(document).ready(function() {
-	if (window.location !== window.parent.location ) {
+	if (window.location && window.location.pathname.indexOf("externalsite/frametop.php") == -1 && window.location !== window.parent.location ) {
 		console.log("Page is detected to be into an iframe, we hide by CSS the menus");
 		// The page is in an iframe
 		jQuery(".side-nav-vert, .side-nav, .websitebar").hide();
 		jQuery(".id-container").css('width', '100%');
 
 	}
+});
+
+
+/*
+ * Hacky fix for a bug in select2 with jQuery 3.6.0's new nested-focus "protection"
+ * see: https://github.com/select2/select2/issues/5993
+ * see: https://github.com/jquery/jquery/issues/4382
+ *
+ * TODO: Recheck with the select2 GH issue and remove once this is fixed on their side
+ */
+$(document).on('select2:open', () => {
+	console.log("Execute the focus (click on combo or use space when on component");
+	let allFound = document.querySelectorAll('.select2-container--open .select2-search__field');
+	$(this).one('mouseup keyup',()=>{
+		setTimeout(()=>{
+			allFound[allFound.length - 1].focus();
+		},0);
+	});
 });
 
 // End of lib_head.js.php

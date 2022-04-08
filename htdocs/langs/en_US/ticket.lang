@@ -145,6 +145,8 @@ TicketsDelayBetweenAnswersHelp=If an unresolved ticket that has already received
 TicketsAutoNotifyClose=Automatically notify thirdparty when closing a ticket
 TicketsAutoNotifyCloseHelp=When closing a ticket, you will be proposed to send a message to one of thirdparty's contacts. On mass closing, a message will be sent to one contact of the thirdparty linked to the ticket.
 TicketWrongContact=Provided contact is not part of current ticket contacts. Email not sent.
+TicketChooseProductCategory=Product category for ticket support
+TicketChooseProductCategoryHelp=Select the product category of ticket support. This will be used to automatically link a contract to a ticket.
 
 #
 # Index & list page
@@ -258,6 +260,8 @@ TicketNotCreatedFromPublicInterface=Not available. Ticket was not created from p
 ErrorTicketRefRequired=Ticket reference name is required
 TicketsDelayForFirstResponseTooLong=Too much time elapsed since ticket opening without any answer.
 TicketsDelayFromLastResponseTooLong=Too much time elapsed since last answer on this ticket.
+TicketNoContractFoundToLink=No contract was found to be automatically linked to this ticket. Please link a contract manually.
+TicketManyContractsLinked=Many contracts have been automatically linked to this ticket. Make sure to verify which should be chosen.
 
 #
 # Logs

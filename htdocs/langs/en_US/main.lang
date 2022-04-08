@@ -244,6 +244,7 @@ Designation=Description
 DescriptionOfLine=Description of line
 DateOfLine=Date of line
 DurationOfLine=Duration of line
+ParentLine=Parent line ID
 Model=Doc template
 DefaultModel=Default doc template
 Action=Event

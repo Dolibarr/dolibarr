@@ -110,7 +110,8 @@ if (GETPOST('save', 'alpha')) {
 
 	$fckeditor_skin = GETPOST('fckeditor_skin', 'alpha');
 	if (!empty($fckeditor_skin)) {
-		if (!dolibarr_set_const($db, 'FCKEDITOR_SKIN', $fckeditor_skin, 'chaine', 0, '', $conf->entity)) {
+		$result = dolibarr_set_const($db, 'FCKEDITOR_SKIN', $fckeditor_skin, 'chaine', 0, '', $conf->entity);
+		if ($result <= 0) {
 			$error++;
 		}
 	} else {
@@ -119,7 +120,8 @@ if (GETPOST('save', 'alpha')) {
 
 	$fckeditor_test = GETPOST('formtestfield', 'restricthtml');
 	if (!empty($fckeditor_test)) {
-		if (!dolibarr_set_const($db, 'FCKEDITOR_TEST', $fckeditor_test, 'chaine', 0, '', $conf->entity)) {
+		$result = dolibarr_set_const($db, 'FCKEDITOR_TEST', $fckeditor_test, 'chaine', 0, '', $conf->entity);
+		if ($result <= 0) {
 			$error++;
 		}
 	} else {
@@ -129,7 +131,7 @@ if (GETPOST('save', 'alpha')) {
 	if (!$error) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
-		setEventMessages($langs->trans("Error"), null, 'errors');
+		setEventMessages($langs->trans("Error").' '.$db->lasterror(), null, 'errors');
 	}
 }
 

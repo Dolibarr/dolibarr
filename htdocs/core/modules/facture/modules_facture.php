@@ -132,10 +132,11 @@ abstract class ModeleNumRefFactures
 	 * Renvoi prochaine valeur attribuee
 	 *
 	 * @param	Societe		$objsoc		Objet societe
-	 * @param   Facture		$facture	Objet facture
+	 * @param   Facture		$invoice	Objet facture
+	 * @param   string		$mode       'next' for next value or 'last' for last value
 	 * @return  string      			Value
 	 */
-	public function getNextValue($objsoc, $facture)
+	public function getNextValue($objsoc, $invoice, $mode = 'next')
 	{
 		global $langs;
 		return $langs->trans("NotAvailable");

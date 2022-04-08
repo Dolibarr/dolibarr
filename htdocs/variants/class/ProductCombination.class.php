@@ -2,6 +2,7 @@
 
 /* Copyright (C) 2016	Marcos García	<marcosgdf@gmail.com>
  * Copyright (C) 2018	Juanjo Menent	<jmenent@2byte.es>
+ * Copyright (C) 2022   Open-Dsi		<support@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -542,7 +543,14 @@ class ProductCombination
 							$new_price += $variation_price;
 						}
 
-						$child->updatePrice($new_price, $new_type, $user, $new_vat, $new_min_price, $i, $new_npr, $new_psq, 0, array(), $parent->default_vat_code);
+						$ret = $child->updatePrice($new_price, $new_type, $user, $new_vat, $new_min_price, $i, $new_npr, $new_psq, 0, array(), $parent->default_vat_code);
+
+						if ($ret < 0) {
+							$this->db->rollback();
+							$this->error = $child->error;
+							$this->errors = $child->errors;
+							return $ret;
+						}
 					}
 				}
 			} else {
@@ -564,7 +572,14 @@ class ProductCombination
 					$new_price += $this->variation_price;
 				}
 
-				$child->updatePrice($new_price, $new_type, $user, $new_vat, $new_min_price, 1, $new_npr, $new_psq);
+				$ret = $child->updatePrice($new_price, $new_type, $user, $new_vat, $new_min_price, 1, $new_npr, $new_psq);
+
+				if ($ret < 0) {
+					$this->db->rollback();
+					$this->error = $child->error;
+					$this->errors = $child->errors;
+					return $ret;
+				}
 			}
 
 			$this->db->commit();
@@ -573,6 +588,8 @@ class ProductCombination
 		}
 
 		$this->db->rollback();
+		$this->error = $child->error;
+		$this->errors = $child->errors;
 		return -1;
 	}
 
@@ -628,12 +645,12 @@ class ProductCombination
 		$variants = array();
 
 		//Attributes
-		$sql = "SELECT DISTINCT fk_prod_attr, a.rang";
+		$sql = "SELECT DISTINCT fk_prod_attr, a.position";
 		$sql .= " FROM ".MAIN_DB_PREFIX."product_attribute_combination2val c2v LEFT JOIN ".MAIN_DB_PREFIX."product_attribute_combination c ON c2v.fk_prod_combination = c.rowid";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product p ON p.rowid = c.fk_product_child";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_attribute a ON a.rowid = fk_prod_attr";
 		$sql .= " WHERE c.fk_product_parent = ".((int) $productid)." AND p.tosell = 1";
-		$sql .= $this->db->order('a.rang', 'asc');
+		$sql .= $this->db->order('a.position', 'asc');
 
 		$query = $this->db->query($sql);
 

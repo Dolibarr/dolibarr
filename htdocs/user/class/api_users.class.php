@@ -466,7 +466,7 @@ class Users extends DolibarrApi
 	 *
 	 * @throws RestException 401 Not allowed
 	 * @throws RestException 404 User not found
-	 * @throws RestException 500 Error
+	 * @throws RestException 500 System error
 	 *
 	 * @url	GET {id}/setGroup/{group}
 	 */
