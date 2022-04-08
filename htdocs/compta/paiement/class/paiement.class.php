@@ -1212,6 +1212,9 @@ class Paiement extends CommonObject
 				$label .= dol_print_date($dateofpayment, 'dayhour', 'tzuser');
 			}
 		}
+		if ($this->amount) {
+			$label .= '<br><strong>'.$langs->trans("Amount").':</strong> '.price($this->amount, 0, $langs, 1, -1, -1, $conf->currency);
+		}
 		if ($mode == 'withlistofinvoices') {
 			$arraybill = $this->getBillsArray();
 			if (is_array($arraybill) && count($arraybill) > 0) {
