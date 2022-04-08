@@ -237,7 +237,7 @@ class pdf_crabe extends ModelePDFFactures
 
         if($conf->entity != $object->entity) {
             // Récupération configuration de l'entité de la facture
-
+            $oldEntity = $conf->entity;
             $conf->entity = $object->entity;
             $conf->setValues($db);
             $mysoc->setMysoc($conf);
@@ -809,12 +809,39 @@ class pdf_crabe extends ModelePDFFactures
 
 				$this->result = array('fullpath'=>$file);
 
+                if($oldEntity != $conf->entity) {
+                    // Récupération configuration de l'entité de la facture
+
+                    $conf->entity = $oldEntity;
+                    $conf->setValues($db);
+                    $mysoc->setMysoc($conf);
+                    $this->emetteur=$mysoc;
+                }
+
 				return 1; // No error
 			} else {
+                if($oldEntity != $conf->entity) {
+                    // Récupération configuration de l'entité de la facture
+
+                    $conf->entity = $oldEntity;
+                    $conf->setValues($db);
+                    $mysoc->setMysoc($conf);
+                    $this->emetteur=$mysoc;
+                }
+
 				$this->error = $langs->transnoentities("ErrorCanNotCreateDir", $dir);
 				return 0;
 			}
 		} else {
+            if($oldEntity != $conf->entity) {
+                // Récupération configuration de l'entité de la facture
+
+                $conf->entity = $oldEntity;
+                $conf->setValues($db);
+                $mysoc->setMysoc($conf);
+                $this->emetteur=$mysoc;
+            }
+
 			$this->error = $langs->transnoentities("ErrorConstantNotDefined", "FAC_OUTPUTDIR");
 			return 0;
 		}
