@@ -348,6 +348,40 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 			}
 		}
 
+		if ($action == 'TICKET_CREATE') {
+			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+			// Auto link contract
+			if (!empty($conf->contract->enabled) && !empty($conf->ticket->enabled) && !empty($conf->ficheinter->enabled) && !empty($conf->workflow->enabled) && !empty($conf->global->WORKFLOW_TICKET_LINK_CONTRACT) && !empty($conf->global->TICKET_PRODUCT_CATEGORY) && !empty($object->fk_soc)) {
+				$societe = new Societe($this->db);
+				$company_ids = (empty($conf->global->WORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS)) ? [$object->fk_soc] : $societe->getParentsForCompany($object->fk_soc, [$object->fk_soc]);
+
+				$contrat = new Contrat($this->db);
+				$number_contracts_found = 0;
+				foreach ($company_ids as $company_id) {
+					$contrat->socid = $company_id;
+
+					$list = $contrat->getListOfContracts($option = 'all', $status = [Contrat::STATUS_DRAFT, Contrat::STATUS_VALIDATED], $product_categories = [$conf->global->TICKET_PRODUCT_CATEGORY], $line_status = [ContratLigne::STATUS_INITIAL, ContratLigne::STATUS_OPEN]);
+					if (is_array($list) && !empty($list)) {
+						$number_contracts_found = count($list);
+						if ($number_contracts_found == 1) {
+							$contractid = $list[0]->id;
+							$object->setContract($contractid);
+							break;
+						} elseif ($number_contracts_found > 1) {
+							foreach ($list as $linked_contract) {
+								$object->setContract($linked_contract->id);
+								// don't set '$contractid' so it is not used when creating an intervention.
+							}
+							if (empty(NOLOGIN)) setEventMessage($langs->trans('TicketManyContractsLinked'), 'warnings');
+							break;
+						}
+					}
+				}
+				if ($number_contracts_found == 0) {
+					if (empty(NOLOGIN)) setEventMessage($langs->trans('TicketNoContractFoundToLink'), 'mesgs');
+				}
+			}
+		}
 		return 0;
 	}
 
