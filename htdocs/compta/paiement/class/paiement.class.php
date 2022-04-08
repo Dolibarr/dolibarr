@@ -72,8 +72,9 @@ class Paiement extends CommonObject
 
 	public $amount; // Total amount of payment (in the main currency)
 	public $multicurrency_amount; // Total amount of payment (in the currency of the bank account)
-	public $amounts = array(); // array: invoice ID => amount for that invoice (in the main currency)>
-	public $multicurrency_amounts = array(); // array: invoice ID => amount for that invoice (in the invoice's currency)>
+	public $amounts = array(); // array: invoice ID => amount for that invoice (in the main currency)
+	public $multicurrency_amounts = array(); // array: invoice ID => amount for that invoice (in the invoice's currency)
+	public $multicurrency_code = array(); // array: invoice ID => currency code for that invoice
 
 	public $pos_change = 0; // Excess received in TakePOS cash payment
 
@@ -82,12 +83,12 @@ class Paiement extends CommonObject
 	public $paiementcode; // Code of payment.
 
 	/**
-	 * @var string type libelle
+	 * @var string Type of payment label
 	 */
 	public $type_label;
 
 	/**
-	 * @var string type code
+	 * @var string Type of payment code (seems duplicate with $paiementcode);
 	 */
 	public $type_code;
 
@@ -230,7 +231,7 @@ class Paiement extends CommonObject
 		global $conf, $langs;
 
 		$error = 0;
-		$way = $this->getWay();
+		$way = $this->getWay();	// 'dolibarr' to use amount, 'customer' to use foreign multicurrency amount
 
 		$now = dol_now();
 
@@ -239,16 +240,37 @@ class Paiement extends CommonObject
 		$totalamount_converted = 0;
 		$atleastonepaymentnotnull = 0;
 
-		if ($way == 'dolibarr') {
+		if ($way == 'dolibarr') {	// Payments were entered into the column of main currency
 			$amounts = &$this->amounts;
 			$amounts_to_update = &$this->multicurrency_amounts;
-		} else {
+		} else {					// Payments were entered into the column of foreign currency
 			$amounts = &$this->multicurrency_amounts;
 			$amounts_to_update = &$this->amounts;
 		}
 
+		$currencyofpayment = '';
+
 		foreach ($amounts as $key => $value) {	// How payment is dispatch
+			if (empty($value)) {
+				continue;
+			}
+			// $key is id of invoice, $value is amount, $way is a 'dolibarr' if amount is in main currency, 'customer' if in foreign currency
 			$value_converted = Multicurrency::getAmountConversionFromInvoiceRate($key, $value, $way);
+			// Add controls of input validity
+			if ($value_converted === false) {
+				// We failed to find the conversion for one invoice
+				$this->error = 'FailedToFoundTheConversionRateForInvoice';
+				return -1;
+			}
+			if (empty($currencyofpayment)) {
+				$currencyofpayment = $this->multicurrency_code[$key];
+			}
+			if ($currencyofpayment != $this->multicurrency_code[$key]) {
+				// If we have invoices with different currencies in the payment, we stop here
+				$this->error = 'ErrorYouTryToPayInvoicesWithDifferentCurrenciesInSamePayment';
+				return -1;
+			}
+
 			$totalamount_converted += $value_converted;
 			$amounts_to_update[$key] = price2num($value_converted, 'MT');
 
@@ -259,6 +281,19 @@ class Paiement extends CommonObject
 				$atleastonepaymentnotnull++;
 			}
 		}
+
+		if (!empty($currencyofpayment)) {
+			// We must check that the currency of invoices is the same than the currency of the bank
+			$bankaccount = new Account($this->db);
+			$bankaccount->fetch($this->fk_account);
+			$bankcurrencycode = empty($bankaccount->currency_code) ? $conf->currency : $bankaccount->currency_code;
+			if ($currencyofpayment != $bankcurrencycode && $currencyofpayment != $conf->currency && $bankcurrencycode != $conf->currency) {
+				$langs->load("errors");
+				$this->error = $langs->trans('ErrorYouTryToPayInvoicesInACurrencyFromBankWithAnotherCurrency', $currencyofpayment, $bankcurrencycode);
+				return -1;
+			}
+		}
+
 
 		$totalamount = price2num($totalamount);
 		$totalamount_converted = price2num($totalamount_converted);
@@ -597,17 +632,22 @@ class Paiement extends CommonObject
 			$result = $acc->fetch($this->fk_account);
 
 			$totalamount = $this->amount;
+			$totalamount_main_currency = null;
 			if (empty($totalamount)) {
 				$totalamount = $this->total; // For backward compatibility
 			}
 
 			// if dolibarr currency != bank currency then we received an amount in customer currency (currently I don't manage the case : my currency is USD, the customer currency is EUR and he paid me in GBP. Seems no sense for me)
 			if (!empty($conf->multicurrency->enabled) && $conf->currency != $acc->currency_code) {
-				$totalamount = $this->multicurrency_amount;
+				$totalamount = $this->multicurrency_amount;		// We will insert into llx_bank.amount in foreign currency
+				$totalamount_main_currency = $this->amount;		// We will also save the amount in main currency into column llx_bank.amount_main_currency
 			}
 
 			if ($mode == 'payment_supplier') {
 				$totalamount = -$totalamount;
+				if (isset($totalamount_main_currency)) {
+					$totalamount_main_currency = -$totalamount_main_currency;
+				}
 			}
 
 			// Insert payment into llx_bank
@@ -621,8 +661,11 @@ class Paiement extends CommonObject
 				$user,
 				$emetteur_nom,
 				$emetteur_banque,
-				$accountancycode
-			);
+				$accountancycode,
+				null,
+				'',
+				$totalamount_main_currency
+				);
 
 			// Mise a jour fk_bank dans llx_paiement
 			// On connait ainsi le paiement qui a genere l'ecriture bancaire
@@ -667,7 +710,7 @@ class Paiement extends CommonObject
 									DOL_URL_ROOT.'/comm/card.php?socid=',
 									$fac->thirdparty->name,
 									'company'
-								);
+									);
 								if ($result <= 0) {
 									dol_syslog(get_class($this).'::addPaymentToBank '.$this->db->lasterror());
 								}
@@ -685,7 +728,7 @@ class Paiement extends CommonObject
 									DOL_URL_ROOT.'/fourn/card.php?socid=',
 									$fac->thirdparty->name,
 									'company'
-								);
+									);
 								if ($result <= 0) {
 									dol_syslog(get_class($this).'::addPaymentToBank '.$this->db->lasterror());
 								}
@@ -703,7 +746,7 @@ class Paiement extends CommonObject
 						DOL_URL_ROOT.'/compta/prelevement/card.php?id=',
 						$this->num_payment,
 						'withdraw'
-					);
+						);
 				}
 
 				// Add link 'InvoiceRefused' in bank_url
@@ -714,7 +757,7 @@ class Paiement extends CommonObject
 						DOL_URL_ROOT.'/compta/prelevement/card.php?id=',
 						$this->num_prelevement,
 						'withdraw'
-					);
+						);
 				}
 
 				if (!$error && !$notrigger) {
@@ -1241,40 +1284,40 @@ class Paiement extends CommonObject
 
 		$langs->load('compta');
 		/*if ($mode == 0)
-		{
-			if ($status == 0) return $langs->trans('ToValidate');
-			if ($status == 1) return $langs->trans('Validated');
-		}
-		if ($mode == 1)
-		{
-			if ($status == 0) return $langs->trans('ToValidate');
-			if ($status == 1) return $langs->trans('Validated');
-		}
-		if ($mode == 2)
-		{
-			if ($status == 0) return img_picto($langs->trans('ToValidate'),'statut1').' '.$langs->trans('ToValidate');
-			if ($status == 1) return img_picto($langs->trans('Validated'),'statut4').' '.$langs->trans('Validated');
-		}
-		if ($mode == 3)
-		{
-			if ($status == 0) return img_picto($langs->trans('ToValidate'),'statut1');
-			if ($status == 1) return img_picto($langs->trans('Validated'),'statut4');
-		}
-		if ($mode == 4)
-		{
-			if ($status == 0) return img_picto($langs->trans('ToValidate'),'statut1').' '.$langs->trans('ToValidate');
-			if ($status == 1) return img_picto($langs->trans('Validated'),'statut4').' '.$langs->trans('Validated');
-		}
-		if ($mode == 5)
-		{
-			if ($status == 0) return $langs->trans('ToValidate').' '.img_picto($langs->trans('ToValidate'),'statut1');
-			if ($status == 1) return $langs->trans('Validated').' '.img_picto($langs->trans('Validated'),'statut4');
-		}
-		if ($mode == 6)
-		{
-			if ($status == 0) return $langs->trans('ToValidate').' '.img_picto($langs->trans('ToValidate'),'statut1');
-			if ($status == 1) return $langs->trans('Validated').' '.img_picto($langs->trans('Validated'),'statut4');
-		}*/
+		 {
+		 if ($status == 0) return $langs->trans('ToValidate');
+		 if ($status == 1) return $langs->trans('Validated');
+		 }
+		 if ($mode == 1)
+		 {
+		 if ($status == 0) return $langs->trans('ToValidate');
+		 if ($status == 1) return $langs->trans('Validated');
+		 }
+		 if ($mode == 2)
+		 {
+		 if ($status == 0) return img_picto($langs->trans('ToValidate'),'statut1').' '.$langs->trans('ToValidate');
+		 if ($status == 1) return img_picto($langs->trans('Validated'),'statut4').' '.$langs->trans('Validated');
+		 }
+		 if ($mode == 3)
+		 {
+		 if ($status == 0) return img_picto($langs->trans('ToValidate'),'statut1');
+		 if ($status == 1) return img_picto($langs->trans('Validated'),'statut4');
+		 }
+		 if ($mode == 4)
+		 {
+		 if ($status == 0) return img_picto($langs->trans('ToValidate'),'statut1').' '.$langs->trans('ToValidate');
+		 if ($status == 1) return img_picto($langs->trans('Validated'),'statut4').' '.$langs->trans('Validated');
+		 }
+		 if ($mode == 5)
+		 {
+		 if ($status == 0) return $langs->trans('ToValidate').' '.img_picto($langs->trans('ToValidate'),'statut1');
+		 if ($status == 1) return $langs->trans('Validated').' '.img_picto($langs->trans('Validated'),'statut4');
+		 }
+		 if ($mode == 6)
+		 {
+		 if ($status == 0) return $langs->trans('ToValidate').' '.img_picto($langs->trans('ToValidate'),'statut1');
+		 if ($status == 1) return $langs->trans('Validated').' '.img_picto($langs->trans('Validated'),'statut4');
+		 }*/
 		return '';
 	}
 
