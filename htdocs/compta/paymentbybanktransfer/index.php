@@ -48,7 +48,7 @@ $result = restrictedArea($user, 'paymentbybanktransfer', '', '');
  * Actions
  */
 
-// None
+
 
 
 /*
