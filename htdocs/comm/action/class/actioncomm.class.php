@@ -458,7 +458,7 @@ class ActionComm extends CommonObject
 		}
 
 		if (isset($this->authorid) && $this->authorid == 0) {
-			$user->id = 'NUL';
+			$user->id = 'NULL';
 			$this->userownerid = 'NULL';
 		}
 
