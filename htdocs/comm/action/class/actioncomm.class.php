@@ -457,6 +457,11 @@ class ActionComm extends CommonObject
 			$this->elementtype = 'contract';
 		}
 
+		if(isset($this->authorid) && $this->authorid == 0) {
+			$user->id = 'NUL';
+			$this->userownerid = 'NULL';
+		}
+
 		if (!is_array($this->userassigned) && !empty($this->userassigned)) {	// For backward compatibility when userassigned was an int instead fo array
 			$tmpid = $this->userassigned;
 			$this->userassigned = array();

@@ -343,6 +343,9 @@ class Tickets extends DolibarrApi
 		if (empty($this->ticket->track_id)) {
 			$this->ticket->track_id = generate_random_id(16);
 		}
+		if(isset($request_data['authorid']) && $request_data['authorid'] == 0) {
+			$this->ticket->authorid = $request_data['authorid'];
+		}
 
 		if ($this->ticket->create(DolibarrApiAccess::$user) < 0) {
 			throw new RestException(500, "Error creating ticket", array_merge(array($this->ticket->error), $this->ticket->errors));
@@ -370,6 +373,11 @@ class Tickets extends DolibarrApi
 		foreach ($request_data as $field => $value) {
 			$this->ticket->$field = $value;
 		}
+
+		if(isset($request_data['authorid']) && $request_data['authorid'] == 0) {
+			$this->ticket->authorid = $request_data['authorid'];
+		}
+
 		$ticketMessageText = $this->ticket->message;
 		$result = $this->ticket->fetch('', '', $this->ticket->track_id);
 		if (!$result) {

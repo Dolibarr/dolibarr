@@ -92,6 +92,11 @@ class Ticket extends CommonObject
 	public $fk_user_create;
 
 	/**
+	* @var int Id user that create action
+	*/
+	public $authorid;
+
+	/**
 	 * @var int User id who have ticket assigned
 	 */
 	public $fk_user_assign;
@@ -414,6 +419,10 @@ class Ticket extends CommonObject
 		$this->datec = dol_now();
 		if (empty($this->track_id)) {
 			$this->track_id = generate_random_id(16);
+		}
+
+		if(isset($this->authorid) && $this->authorid == 0) {
+			$user->id = 'NULL';
 		}
 
 		// Check more parameters
@@ -1696,6 +1705,9 @@ class Ticket extends CommonObject
 		$actioncomm->percentage = -1; // percentage is not relevant for punctual events
 		$actioncomm->elementtype = 'ticket';
 		$actioncomm->fk_element = $this->id;
+		if($this->authorid == 0) {
+			$actioncomm->authorid = $this->authorid;
+		}
 
 		$attachedfiles = array();
 		$attachedfiles['paths'] = $filename_list;
