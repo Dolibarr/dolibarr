@@ -457,7 +457,7 @@ class ActionComm extends CommonObject
 			$this->elementtype = 'contract';
 		}
 
-		if(isset($this->authorid) && $this->authorid == 0) {
+		if (isset($this->authorid) && $this->authorid == 0) {
 			$user->id = 'NUL';
 			$this->userownerid = 'NULL';
 		}

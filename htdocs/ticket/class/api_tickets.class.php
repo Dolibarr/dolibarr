@@ -343,7 +343,7 @@ class Tickets extends DolibarrApi
 		if (empty($this->ticket->track_id)) {
 			$this->ticket->track_id = generate_random_id(16);
 		}
-		if(isset($request_data['authorid']) && $request_data['authorid'] == 0) {
+		if (isset($request_data['authorid']) && $request_data['authorid'] == 0) {
 			$this->ticket->authorid = $request_data['authorid'];
 		}
 
@@ -374,7 +374,7 @@ class Tickets extends DolibarrApi
 			$this->ticket->$field = $value;
 		}
 
-		if(isset($request_data['authorid']) && $request_data['authorid'] == 0) {
+		if (isset($request_data['authorid']) && $request_data['authorid'] == 0) {
 			$this->ticket->authorid = $request_data['authorid'];
 		}
 
