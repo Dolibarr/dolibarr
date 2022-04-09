@@ -843,7 +843,7 @@ class Facture extends CommonInvoice
 							$newinvoiceline->situation_percent,
 							$newinvoiceline->fk_prev_id,
 							$newinvoiceline->fk_unit,
-							$newinvoiceline->pu_ht_devise
+							$newinvoiceline->multicurrency_subprice
 						);
 
 						// Defined the new fk_parent_line
