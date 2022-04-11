@@ -45,6 +45,7 @@ $confirm = GETPOST('confirm', 'alpha');
 $withproject = GETPOST('withproject', 'int');
 $project_ref = GETPOST('project_ref', 'alpha');
 $planned_workload = ((GETPOST('planned_workloadhour', 'int') != '' || GETPOST('planned_workloadmin', 'int') != '') ? (GETPOST('planned_workloadhour', 'int') > 0 ?GETPOST('planned_workloadhour', 'int') * 3600 : 0) + (GETPOST('planned_workloadmin', 'int') > 0 ?GETPOST('planned_workloadmin', 'int') * 60 : 0) : '');
+$status = GETPOST('status', 'int');
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('projecttaskcard', 'globalcard'));
@@ -96,6 +97,12 @@ if ($action == 'update' && !GETPOST("cancel") && $user->rights->projet->creer) {
 		if (empty($task_parent)) {
 			$task_parent = 0; // If task_parent is ''
 		}
+		$Tstatus = array(
+			'Todo',
+			'In Progress',
+			'Done',
+			'Cancelled'
+		);
 
 		$object->ref = $taskref ? $taskref : GETPOST("ref", 'alpha', 2);
 		$object->label = GETPOST("label", "alphanohtml");
@@ -107,6 +114,7 @@ if ($action == 'update' && !GETPOST("cancel") && $user->rights->projet->creer) {
 		$object->date_end = dol_mktime(GETPOST('dateehour', 'int'), GETPOST('dateemin', 'int'), 0, GETPOST('dateemonth', 'int'), GETPOST('dateeday', 'int'), GETPOST('dateeyear', 'int'));
 		$object->progress = price2num(GETPOST('progress', 'alphanohtml'));
 		$object->budget_amount = price2num(GETPOST('budget_amount', 'alphanohtml'));
+		$object->status = $Tstatus;
 
 		// Fill array 'array_options' with data from add form
 		$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
@@ -508,6 +516,7 @@ if ($id > 0 || !empty($ref)) {
 			if (!empty($projectstatic->thirdparty)) {
 				$morehtmlref .= $projectstatic->thirdparty->getNomUrl(1);
 			}
+
 			$morehtmlref .= '</div>';
 		}
 
@@ -545,6 +554,11 @@ if ($id > 0 || !empty($ref)) {
 		if ($object->planned_workload != '') {
 			print convertSecondToTime($object->planned_workload, 'allhourmin');
 		}
+		print '</td></tr>';
+
+		// Task Status
+		print '<td class="tdtop">'.$langs->trans("Status").'</td><td colspan="3">';
+		print dol_htmlentitiesbr($object->getLibStatut());
 		print '</td></tr>';
 
 		// Description

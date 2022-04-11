@@ -137,6 +137,25 @@ class Task extends CommonObjectLine
 
 	public $oldcopy;
 
+	/**
+	 *  status
+	 */
+	const STATUS_TODO = 1;
+
+	/**
+	 * Open/Validated status
+	 */
+	const STATUS_IN_PROGRESS = 2;
+
+	/**
+	 * Closed status
+	 */
+	const STATUS_DONE = 3;
+
+	/**
+	 * Closed status
+	 */
+	const STATUS_CANCELLED = 4;
 
 	/**
 	 *  Constructor
@@ -146,6 +165,9 @@ class Task extends CommonObjectLine
 	public function __construct($db)
 	{
 		$this->db = $db;
+
+		$this->statuts_short = array(1 => 'ToDo', 2 => 'InProgress', 3 => 'Done', 4 => 'Cancelled'); //PropalStatusDraft
+		$this->statuts_long = array(1 => 'ToDo', 2 => 'InProgress', 3 => 'Done', 4 => 'Cancelled'); //PropalStatusDraftShort
 	}
 
 
@@ -2041,6 +2063,21 @@ class Task extends CommonObjectLine
 		// phpcs:enable
 		global $langs;
 
+		$statustrans = array(
+			self::STATUS_TODO => 'status1',
+			self::STATUS_IN_PROGRESS => 'status3',
+			self::STATUS_DONE => 'status6',
+			self::STATUS_CANCELLED => 'status9',
+		);
+
+		$statusClass = 'status1';
+		if (!empty($statustrans[$status])) {
+			$statusClass = $statustrans[$status];
+		}
+
+		return dolGetStatus($langs->transnoentitiesnoconv($this->statuts_long[$status]), $langs->transnoentitiesnoconv($this->statuts_short[$status]), '', $statusClass, $mode);
+
+
 		// list of Statut of the task
 		$this->statuts[0] = 'Draft';
 		$this->statuts[1] = 'ToDo';
@@ -2101,13 +2138,12 @@ class Task extends CommonObjectLine
 			}
 		} elseif ($mode == 5) {
 			/*if ($status==0) return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]),'statut0');
-			elseif ($status==1) return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]),'statut1');
+			elseif ($status==1) return dolGetStatus('test','t','','status0', $mode);//return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]),'statut1');
 			elseif ($status==2) return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]),'statut3');
 			elseif ($status==3) return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]),'statut6');
 			elseif ($status==4) return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]),'statut6');
 			elseif ($status==5) return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]),'statut5');
-			*/
-			//else return $this->progress.' %';
+			else return $this->progress.' %';*/
 			return '&nbsp;';
 		} elseif ($mode == 6) {
 			/*if ($status==0) return $langs->trans($this->statuts[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]),'statut0');
