@@ -1847,7 +1847,7 @@ class User extends CommonObject
 		$sql .= ", login = '".$this->db->escape($this->login)."'";
 		$sql .= ", api_key = ".($this->api_key ? "'".$this->db->escape($this->api_key)."'" : "null");
 		$sql .= ", gender = ".($this->gender != -1 ? "'".$this->db->escape($this->gender)."'" : "null"); // 'man' or 'woman'
-		$sql .= ", birth=".(strval($this->birth) != '' ? "'".$this->db->idate($this->birth)."'" : 'null');
+		$sql .= ", birth=".(strval($this->birth) != '' ? "'".$this->db->idate($this->birth, 'tzserver')."'" : 'null');
 		if (!empty($user->admin)) {
 			$sql .= ", admin = ".(int) $this->admin; // admin flag can be set/unset only by an admin user
 		}
