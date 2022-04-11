@@ -138,22 +138,22 @@ class Task extends CommonObjectLine
 	public $oldcopy;
 
 	/**
-	 *  status
+	 *  status to do
 	 */
 	const STATUS_TODO = 1;
 
 	/**
-	 * Open/Validated status
+	 * status in progress
 	 */
 	const STATUS_IN_PROGRESS = 2;
 
 	/**
-	 * Closed status
+	 * status done
 	 */
 	const STATUS_DONE = 3;
 
 	/**
-	 * Closed status
+	 * status cancelled
 	 */
 	const STATUS_CANCELLED = 4;
 
@@ -166,8 +166,8 @@ class Task extends CommonObjectLine
 	{
 		$this->db = $db;
 
-		$this->statuts_short = array(1 => 'ToDo', 2 => 'InProgress', 3 => 'Done', 4 => 'Cancelled'); //PropalStatusDraft
-		$this->statuts_long = array(1 => 'ToDo', 2 => 'InProgress', 3 => 'Done', 4 => 'Cancelled'); //PropalStatusDraftShort
+		$this->statuts_short = array(1 => 'ToDo', 2 => 'InProgress', 3 => 'Done', 4 => 'Cancelled'); //PropalStatusDraftShort
+		$this->statuts_long = array(1 => 'ToDo', 2 => 'InProgress', 3 => 'Done', 4 => 'Cancelled'); //PropalStatusDraft
 	}
 
 

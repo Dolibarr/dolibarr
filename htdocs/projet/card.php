@@ -1273,7 +1273,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 			}
 
 			// Close
-			if (empty($conf->global->PROJECT_CLOSE_WITHOUT_TASK_PROGRESS)) {
+			if (empty($conf->global->PROJECT_CLOSE_WITH_TASK_PROGRESS)) {
 				if ($object->statut == Project::STATUS_VALIDATED && $user->rights->projet->creer) {
 					if ($userWrite > 0) {
 						print '<a class="butAction" href="card.php?id=' . $object->id . '&amp;action=close">' . $langs->trans("Close") . '</a>';
@@ -1289,6 +1289,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 					foreach ($taskarray as $taskLine) {
 						if ($taskLine->progress != 100) {
 							$taskNotDone = true;
+							var_dump($taskLine->statuts_short);exit;
 							break;
 						}
 					}
