@@ -4951,18 +4951,18 @@ abstract class CommonObject
 		global $langs, $hookmanager, $conf, $form, $action;
 
 		print '<tr class="liste_titre">';
-		print '<td>'.$langs->trans('Ref').'</td>';
-		print '<td>'.$langs->trans('Description').'</td>';
-		print '<td class="right">'.$langs->trans('VATRate').'</td>';
-		print '<td class="right">'.$langs->trans('PriceUHT').'</td>';
+		print '<td class="linecolref">'.$langs->trans('Ref').'</td>';
+		print '<td class="linecoldescription">'.$langs->trans('Description').'</td>';
+		print '<td class="linecolvat right">'.$langs->trans('VATRate').'</td>';
+		print '<td class="linecoluht right">'.$langs->trans('PriceUHT').'</td>';
 		if (!empty($conf->multicurrency->enabled)) {
-			print '<td class="right">'.$langs->trans('PriceUHTCurrency').'</td>';
+			print '<td class="linecoluht_currency right">'.$langs->trans('PriceUHTCurrency').'</td>';
 		}
-		print '<td class="right">'.$langs->trans('Qty').'</td>';
+		print '<td class="linecolqty right">'.$langs->trans('Qty').'</td>';
 		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
-			print '<td class="left">'.$langs->trans('Unit').'</td>';
+			print '<td class="linecoluseunit left">'.$langs->trans('Unit').'</td>';
 		}
-		print '<td class="right">'.$langs->trans('ReductionShort').'</td>';
+		print '<td class="linecoldiscount right">'.$langs->trans('ReductionShort').'</td>';
 		print '<td class="linecolht right">'.$langs->trans('TotalHT').'</td>';
 		print '<td class="center">'.$form->showCheckAddButtons('checkforselect', 1).'</td>';
 		print '</tr>';

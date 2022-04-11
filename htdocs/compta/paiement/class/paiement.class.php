@@ -636,17 +636,22 @@ class Paiement extends CommonObject
 			$this->db->begin();
 
 			$totalamount = $this->amount;
+			$totalamount_main_currency = null;
 			if (empty($totalamount)) {
 				$totalamount = $this->total; // For backward compatibility
 			}
 
 			// if dolibarr currency != bank currency then we received an amount in customer currency (currently I don't manage the case : my currency is USD, the customer currency is EUR and he paid me in GBP. Seems no sense for me)
 			if (!empty($conf->multicurrency->enabled) && $conf->currency != $acc->currency_code) {
-				$totalamount = $this->multicurrency_amount;
+				$totalamount = $this->multicurrency_amount;		// We will insert into llx_bank.amount in foreign currency
+				$totalamount_main_currency = $this->amount;		// We will also save the amount in main currency into column llx_bank.amount_main_currency
 			}
 
 			if ($mode == 'payment_supplier') {
 				$totalamount = -$totalamount;
+				if (isset($totalamount_main_currency)) {
+					$totalamount_main_currency = -$totalamount_main_currency;
+				}
 			}
 
 			// Insert payment into llx_bank
@@ -660,8 +665,11 @@ class Paiement extends CommonObject
 				$user,
 				$emetteur_nom,
 				$emetteur_banque,
-				$accountancycode
-			);
+				$accountancycode,
+				null,
+				'',
+				$totalamount_main_currency
+				);
 
 			// Mise a jour fk_bank dans llx_paiement
 			// On connait ainsi le paiement qui a genere l'ecriture bancaire
@@ -706,7 +714,7 @@ class Paiement extends CommonObject
 									DOL_URL_ROOT.'/comm/card.php?socid=',
 									$fac->thirdparty->name,
 									'company'
-								);
+									);
 								if ($result <= 0) {
 									dol_syslog(get_class($this).'::addPaymentToBank '.$this->db->lasterror());
 								}
@@ -724,7 +732,7 @@ class Paiement extends CommonObject
 									DOL_URL_ROOT.'/fourn/card.php?socid=',
 									$fac->thirdparty->name,
 									'company'
-								);
+									);
 								if ($result <= 0) {
 									dol_syslog(get_class($this).'::addPaymentToBank '.$this->db->lasterror());
 								}
@@ -742,7 +750,7 @@ class Paiement extends CommonObject
 						DOL_URL_ROOT.'/compta/prelevement/card.php?id=',
 						$this->num_payment,
 						'withdraw'
-					);
+						);
 				}
 
 				// Add link 'InvoiceRefused' in bank_url
@@ -753,7 +761,7 @@ class Paiement extends CommonObject
 						DOL_URL_ROOT.'/compta/prelevement/card.php?id=',
 						$this->num_prelevement,
 						'withdraw'
-					);
+						);
 				}
 
 				if (!$error && !$notrigger) {
@@ -1291,40 +1299,40 @@ class Paiement extends CommonObject
 
 		$langs->load('compta');
 		/*if ($mode == 0)
-		{
-			if ($status == 0) return $langs->trans('ToValidate');
-			if ($status == 1) return $langs->trans('Validated');
-		}
-		if ($mode == 1)
-		{
-			if ($status == 0) return $langs->trans('ToValidate');
-			if ($status == 1) return $langs->trans('Validated');
-		}
-		if ($mode == 2)
-		{
-			if ($status == 0) return img_picto($langs->trans('ToValidate'),'statut1').' '.$langs->trans('ToValidate');
-			if ($status == 1) return img_picto($langs->trans('Validated'),'statut4').' '.$langs->trans('Validated');
-		}
-		if ($mode == 3)
-		{
-			if ($status == 0) return img_picto($langs->trans('ToValidate'),'statut1');
-			if ($status == 1) return img_picto($langs->trans('Validated'),'statut4');
-		}
-		if ($mode == 4)
-		{
-			if ($status == 0) return img_picto($langs->trans('ToValidate'),'statut1').' '.$langs->trans('ToValidate');
-			if ($status == 1) return img_picto($langs->trans('Validated'),'statut4').' '.$langs->trans('Validated');
-		}
-		if ($mode == 5)
-		{
-			if ($status == 0) return $langs->trans('ToValidate').' '.img_picto($langs->trans('ToValidate'),'statut1');
-			if ($status == 1) return $langs->trans('Validated').' '.img_picto($langs->trans('Validated'),'statut4');
-		}
-		if ($mode == 6)
-		{
-			if ($status == 0) return $langs->trans('ToValidate').' '.img_picto($langs->trans('ToValidate'),'statut1');
-			if ($status == 1) return $langs->trans('Validated').' '.img_picto($langs->trans('Validated'),'statut4');
-		}*/
+		 {
+		 if ($status == 0) return $langs->trans('ToValidate');
+		 if ($status == 1) return $langs->trans('Validated');
+		 }
+		 if ($mode == 1)
+		 {
+		 if ($status == 0) return $langs->trans('ToValidate');
+		 if ($status == 1) return $langs->trans('Validated');
+		 }
+		 if ($mode == 2)
+		 {
+		 if ($status == 0) return img_picto($langs->trans('ToValidate'),'statut1').' '.$langs->trans('ToValidate');
+		 if ($status == 1) return img_picto($langs->trans('Validated'),'statut4').' '.$langs->trans('Validated');
+		 }
+		 if ($mode == 3)
+		 {
+		 if ($status == 0) return img_picto($langs->trans('ToValidate'),'statut1');
+		 if ($status == 1) return img_picto($langs->trans('Validated'),'statut4');
+		 }
+		 if ($mode == 4)
+		 {
+		 if ($status == 0) return img_picto($langs->trans('ToValidate'),'statut1').' '.$langs->trans('ToValidate');
+		 if ($status == 1) return img_picto($langs->trans('Validated'),'statut4').' '.$langs->trans('Validated');
+		 }
+		 if ($mode == 5)
+		 {
+		 if ($status == 0) return $langs->trans('ToValidate').' '.img_picto($langs->trans('ToValidate'),'statut1');
+		 if ($status == 1) return $langs->trans('Validated').' '.img_picto($langs->trans('Validated'),'statut4');
+		 }
+		 if ($mode == 6)
+		 {
+		 if ($status == 0) return $langs->trans('ToValidate').' '.img_picto($langs->trans('ToValidate'),'statut1');
+		 if ($status == 1) return $langs->trans('Validated').' '.img_picto($langs->trans('Validated'),'statut4');
+		 }*/
 		return '';
 	}
 

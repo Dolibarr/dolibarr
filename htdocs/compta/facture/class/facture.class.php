@@ -811,6 +811,10 @@ class Facture extends CommonInvoice
 							$fk_parent_line = 0;
 						}
 
+						// Complete vat rate with code
+						$vatrate = $newinvoiceline->tva_tx;
+						if ($newinvoiceline->vat_src_code && ! preg_match('/\(.*\)/', $vatrate)) $vatrate.=' ('.$newinvoiceline->vat_src_code.')';
+
 						$newinvoiceline->fk_parent_line = $fk_parent_line;
 
 						if ($this->type === Facture::TYPE_REPLACEMENT && $newinvoiceline->fk_remise_except) {
@@ -821,7 +825,37 @@ class Facture extends CommonInvoice
 							$newinvoiceline->fk_remise_except = $discountId;
 						}
 
-						$result = $newinvoiceline->insert();
+						$result = $this->addline(
+							$newinvoiceline->desc,
+							$newinvoiceline->subprice,
+							$newinvoiceline->qty,
+							$vatrate,
+							$newinvoiceline->localtax1_tx,
+							$newinvoiceline->localtax2_tx,
+							$newinvoiceline->fk_product,
+							$newinvoiceline->remise_percent,
+							$newinvoiceline->date_start,
+							$newinvoiceline->date_end,
+							$newinvoiceline->fk_code_ventilation,
+							$newinvoiceline->info_bits,
+							$newinvoiceline->fk_remise_except,
+							'HT',
+							0,
+							$newinvoiceline->product_type,
+							$newinvoiceline->rang,
+							$newinvoiceline->special_code,
+							$newinvoiceline->element,
+							$newinvoiceline->id,
+							$fk_parent_line,
+							$newinvoiceline->fk_fournprice,
+							$newinvoiceline->pa_ht,
+							$newinvoiceline->label,
+							$newinvoiceline->array_options,
+							$newinvoiceline->situation_percent,
+							$newinvoiceline->fk_prev_id,
+							$newinvoiceline->fk_unit,
+							$newinvoiceline->multicurrency_subprice
+						);
 
 						// Defined the new fk_parent_line
 						if ($result > 0) {

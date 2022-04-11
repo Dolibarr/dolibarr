@@ -276,6 +276,9 @@ if ((GETPOST('confirm_savestatement', 'alpha') || GETPOST('confirm_reconcile', '
 		if ($offset) {
 			$param .= '&offset='.urlencode($offset);
 		}
+		if ($limit) {
+			$param .= '&limit='.urlencode($limit);
+		}
 		if ($search_conciliated != '' && $search_conciliated != '-1') {
 			$param .= '&search_conciliated='.urlencode($search_conciliated);
 		}
