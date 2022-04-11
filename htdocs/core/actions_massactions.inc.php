@@ -657,7 +657,8 @@ if ($massaction == 'confirm_createbills') {   // Create bills from orders.
 		} else {
 			// If we want one invoice per order or if there is no first invoice yet for this thirdparty.
 			$objecttmp->socid = $cmd->socid;
-			$objecttmp->fetch_thirdparty();
+			$objecttmp->thirdparty = $cmd->thirdparty;
+
 			$objecttmp->type = $objecttmp::TYPE_STANDARD;
 			$objecttmp->cond_reglement_id = !empty($cmd->cond_reglement_id) ? $cmd->cond_reglement_id : $cmd->thirdparty->cond_reglement_id;
 			$objecttmp->mode_reglement_id = !empty($cmd->mode_reglement_id) ? $cmd->mode_reglement_id : $cmd->thirdparty->mode_reglement_id;
