@@ -2179,8 +2179,8 @@ class Expedition extends CommonObject
 
 		$this->db->begin();
 
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.'expedition SET fk_statut='.self::STATUS_CLOSED;
-		$sql .= " WHERE rowid = ".((int) $this->id).' AND fk_statut > 0';
+		$sql = "UPDATE ".MAIN_DB_PREFIX."expedition SET fk_statut = ".self::STATUS_CLOSED;
+		$sql .= " WHERE rowid = ".((int) $this->id)." AND fk_statut > 0";
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -2208,7 +2208,8 @@ class Expedition extends CommonObject
 				}
 			}
 
-			$this->statut = self::STATUS_CLOSED;
+			$this->statut = self::STATUS_CLOSED;	// Will be revert to STATUS_VALIDATED at end if there is a rollback
+			$this->status = self::STATUS_CLOSED;	// Will be revert to STATUS_VALIDATED at end if there is a rollback
 
 			// If stock increment is done on closing
 			if (!$error && !empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE)) {
@@ -2294,6 +2295,8 @@ class Expedition extends CommonObject
 			return 1;
 		} else {
 			$this->statut = self::STATUS_VALIDATED;
+			$this->status = self::STATUS_VALIDATED;
+
 			$this->db->rollback();
 			return -1;
 		}
