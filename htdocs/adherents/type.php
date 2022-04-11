@@ -125,6 +125,7 @@ if ($action == 'add' && $user->rights->adherent->configurer) {
 	$object->duration_value = $duration_value;
 	$object->duration_unit = $duration_unit;
 	$object->note = trim($comment);
+	$object->note_public = trim($comment);
 	$object->mail_valid = trim($mail_valid);
 	$object->vote = (int) $vote;
 
@@ -176,6 +177,7 @@ if ($action == 'update' && $user->rights->adherent->configurer) {
 	$object->duration_value = $duration_value;
 	$object->duration_unit = $duration_unit;
 	$object->note = trim($comment);
+	$object->note_public = trim($comment);
 	$object->mail_valid = trim($mail_valid);
 	$object->vote = (boolean) trim($vote);
 
@@ -783,7 +785,7 @@ if ($rowid > 0) {
 		print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input type="text" class="minwidth300" name="label" value="'.dol_escape_htmltag($object->label).'"></td></tr>';
 
 		print '<tr><td>'.$langs->trans("Status").'</td><td>';
-		print $form->selectarray('status', array('0'=>$langs->trans('ActivityCeased'), '1'=>$langs->trans('InActivity')), $object->status);
+		print $form->selectarray('status', array('0'=>$langs->trans('ActivityCeased'), '1'=>$langs->trans('InActivity')), $object->status, 0, 0, 0, '', 0, 0, 0, '', 'minwidth100');
 		print '</td></tr>';
 
 		// Morphy
