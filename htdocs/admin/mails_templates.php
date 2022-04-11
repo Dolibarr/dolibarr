@@ -205,7 +205,7 @@ if (!empty($conf->expedition->enabled)) {
 	$elementList['shipping_send'] = img_picto('', 'dolly', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToSendShipment'));
 }
 if (!empty($conf->reception->enabled)) {
-	$elementList['reception_send'] = img_picto('', 'dolly', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToSendReception'));
+	$elementList['reception_send'] = img_picto('', 'dollyrevert', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToSendReception'));
 }
 if (!empty($conf->ficheinter->enabled)) {
 	$elementList['fichinter_send'] = img_picto('', 'intervention', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToSendIntervention'));
@@ -769,7 +769,7 @@ if ($action == 'add') {
 			if (empty($conf->global->FCKEDITOR_ENABLE_MAIL)) {
 				$okforextended = false;
 			}
-			$doleditor = new DolEditor($tmpfieldlist, (!empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : ''), '', 180, 'dolibarr_mailings', 'In', 0, false, $okforextended, ROWS_4, '90%');
+			$doleditor = new DolEditor($tmpfieldlist, (!empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : ''), '', 180, 'dolibarr_mailings', 'In', 0, true, $okforextended, ROWS_4, '90%');
 			print $doleditor->Create(1);
 		}
 		print '</td>';
@@ -1000,7 +1000,7 @@ if ($resql) {
 							if (empty($conf->global->FCKEDITOR_ENABLE_MAIL)) {
 								$okforextended = false;
 							}
-							$doleditor = new DolEditor($tmpfieldlist.'-'.$rowid, (!empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : ''), '', 500, 'dolibarr_mailings', 'In', 0, false, $okforextended, ROWS_6, '90%');
+							$doleditor = new DolEditor($tmpfieldlist.'-'.$rowid, (!empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : ''), '', 500, 'dolibarr_mailings', 'In', 0, true, $okforextended, ROWS_6, '90%');
 							print $doleditor->Create(1);
 						}
 						if ($tmpfieldlist == 'content_lines') {
@@ -1034,7 +1034,7 @@ if ($resql) {
 					continue; // It means this is a type of template not into elementList (may be because enabled condition of this type is false because module is not enabled)
 				}
 				// Test on 'enabled'
-				if (!dol_eval($obj->enabled, 1)) {
+				if (!dol_eval($obj->enabled, 1, 1, '1')) {
 					$i++;
 					continue; // Email template not qualified
 				}
@@ -1152,6 +1152,7 @@ if ($resql) {
 					//else print '<a href="#">'.img_delete().'</a>';    // Some dictionary can be edited by other profile than admin
 				}
 				print '</td>';
+
 				print "</tr>\n";
 			}
 

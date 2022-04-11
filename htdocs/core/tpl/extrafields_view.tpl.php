@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2014	Maxime Kohlhaas		<support@atm-consulting.fr>
  * Copyright (C) 2014	Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2021		Frédéric France		<frederic.france@netlogic.fr>
+ * Copyright (C) 2021	Frédéric France		<frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ if (!is_object($form)) {
 ?>
 <!-- BEGIN PHP TEMPLATE extrafields_view.tpl.php -->
 <?php
-if (!is_array($parameters)) {
+if (!isset($parameters) || !is_array($parameters)) {
 	$parameters = array();
 }
 if (!empty($cols)) {
@@ -107,19 +107,7 @@ if (empty($reshook) && isset($extrafields->attributes[$object->table_element]['l
 
 		// Print line tr of extra field
 		if ($extrafields->attributes[$object->table_element]['type'][$tmpkeyextra] == 'separate') {
-			$extrafields_collapse_num = '';
-			$extrafield_param = $extrafields->attributes[$object->table_element]['param'][$tmpkeyextra];
-			if (!empty($extrafield_param) && is_array($extrafield_param)) {
-				$extrafield_param_list = array_keys($extrafield_param['options']);
-
-				if (count($extrafield_param_list) > 0) {
-					$extrafield_collapse_display_value = intval($extrafield_param_list[0]);
-
-					if ($extrafield_collapse_display_value == 1 || $extrafield_collapse_display_value == 2) {
-						$extrafields_collapse_num = $extrafields->attributes[$object->table_element]['pos'][$tmpkeyextra];
-					}
-				}
-			}
+			$extrafields_collapse_num = $tmpkeyextra;
 
 			print $extrafields->showSeparator($tmpkeyextra, $object);
 
@@ -134,7 +122,7 @@ if (empty($reshook) && isset($extrafields->attributes[$object->table_element]['l
 				print ' trextrafields_collapse_last';
 			}
 			print '"';
-			if (empty($extrafields->expand_display[$collapse_group])) {
+			if (isset($extrafields->expand_display) && empty($extrafields->expand_display[$collapse_group])) {
 				print ' style="display: none;"';
 			}
 			print '>';
@@ -161,6 +149,7 @@ if (empty($reshook) && isset($extrafields->attributes[$object->table_element]['l
 			//var_dump($user->rights);
 			$permok = false;
 			$keyforperm = $object->element;
+
 			if ($object->element == 'fichinter') {
 				$keyforperm = 'ficheinter';
 			}

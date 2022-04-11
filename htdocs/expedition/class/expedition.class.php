@@ -9,7 +9,7 @@
  * Copyright (C) 2014-2015  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2014-2017  Francis Appels          <francis.appels@yahoo.com>
  * Copyright (C) 2015       Claudio Aschieri        <c.aschieri@19.coop>
- * Copyright (C) 2016-2021	Ferran Marcet			<fmarcet@2byte.es>
+ * Copyright (C) 2016-2022	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2018       Nicolas ZABOURI			<info@inovea-conseil.com>
  * Copyright (C) 2018-2022  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2020       Lenin Rivas         	<lenin@leninrivas.com>
@@ -367,13 +367,15 @@ class Expedition extends CommonObject
 				// Insert of lines
 				$num = count($this->lines);
 				for ($i = 0; $i < $num; $i++) {
-					if (!isset($this->lines[$i]->detail_batch)) {	// no batch management
-						if ($this->create_line($this->lines[$i]->entrepot_id, $this->lines[$i]->origin_line_id, $this->lines[$i]->qty, $this->lines[$i]->rang, $this->lines[$i]->array_options) <= 0) {
-							$error++;
-						}
-					} else {	// with batch management
-						if ($this->create_line_batch($this->lines[$i], $this->lines[$i]->array_options) <= 0) {
-							$error++;
+					if (empty($this->lines[$i]->product_type) || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+						if (!isset($this->lines[$i]->detail_batch)) {	// no batch management
+							if ($this->create_line($this->lines[$i]->entrepot_id, $this->lines[$i]->origin_line_id, $this->lines[$i]->qty, $this->lines[$i]->rang, $this->lines[$i]->array_options) <= 0) {
+								$error++;
+							}
+						} else {	// with batch management
+							if ($this->create_line_batch($this->lines[$i], $this->lines[$i]->array_options) <= 0) {
+								$error++;
+							}
 						}
 					}
 				}
@@ -751,6 +753,7 @@ class Expedition extends CommonObject
 					//var_dump($this->lines[$i]);
 					$mouvS = new MouvementStock($this->db);
 					$mouvS->origin = dol_clone($this, 1);
+					$mouvS->setOrigin($this->element, $this->id);
 
 					if (empty($obj->edbrowid)) {
 						// line without batch detail
@@ -913,6 +916,7 @@ class Expedition extends CommonObject
 
 		// Copy the rang of the order line to the expedition line
 		$line->rang = $orderline->rang;
+		$line->product_type = $orderline->product_type;
 
 		if (!empty($conf->stock->enabled) && !empty($orderline->fk_product)) {
 			$fk_product = $orderline->fk_product;
@@ -965,6 +969,8 @@ class Expedition extends CommonObject
 		}
 
 		$this->lines[$num] = $line;
+
+		return 1;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -1565,8 +1571,11 @@ class Expedition extends CommonObject
 	{
 		// phpcs:enable
 		global $conf, $mysoc;
-		// TODO: recuperer les champs du document associe a part
+
 		$this->lines = array();
+
+		// NOTE: This fetch_lines is special because it groups all lines with the same origin_line_id into one line.
+		// TODO: See if we can restore a common fetch_lines (one line = one record)
 
 		$sql = "SELECT cd.rowid, cd.fk_product, cd.label as custom_label, cd.description, cd.qty as qty_asked, cd.product_type, cd.fk_unit";
 		$sql .= ", cd.total_ht, cd.total_localtax1, cd.total_localtax2, cd.total_ttc, cd.total_tva";
@@ -1579,7 +1588,7 @@ class Expedition extends CommonObject
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = cd.fk_product";
 		$sql .= " WHERE ed.fk_expedition = ".((int) $this->id);
 		$sql .= " AND ed.fk_origin_line = cd.rowid";
-		$sql .= " ORDER BY cd.rang, ed.fk_origin_line";
+		$sql .= " ORDER BY cd.rang, ed.fk_origin_line";		// We need after a break on fk_origin_line but when there is no break on fk_origin_line, cd.rang is same so we can add it as first order criteria.
 
 		dol_syslog(get_class($this)."::fetch_lines", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -1597,22 +1606,21 @@ class Expedition extends CommonObject
 			$this->total_localtax1 = 0;
 			$this->total_localtax2 = 0;
 
-			$line = new ExpeditionLigne($this->db);
 			$shipmentlinebatch = new ExpeditionLineBatch($this->db);
 
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
 
-				if ($originline == $obj->fk_origin_line) {
+				if ($originline > 0 && $originline == $obj->fk_origin_line) {
 					$line->entrepot_id = 0; // entrepod_id in details_entrepot
 					$line->qty_shipped += $obj->qty_shipped;
 				} else {
 					$line = new ExpeditionLigne($this->db);
-					$line->entrepot_id    	= $obj->fk_entrepot;
-					$line->qty_shipped    	= $obj->qty_shipped;
+					$line->entrepot_id    	= $obj->fk_entrepot;	// this is a property of a shipment line
+					$line->qty_shipped    	= $obj->qty_shipped;	// this is a property of a shipment line
 				}
 
-				$detail_entrepot              = new stdClass;
+				$detail_entrepot              = new stdClass();
 				$detail_entrepot->entrepot_id = $obj->fk_entrepot;
 				$detail_entrepot->qty_shipped = $obj->qty_shipped;
 				$detail_entrepot->line_id     = $obj->line_id;
@@ -1708,6 +1716,8 @@ class Expedition extends CommonObject
 					}
 				}
 
+				$line->fetch_optionals();
+
 				if ($originline != $obj->fk_origin_line) {
 					$this->lines[$lineindex] = $line;
 					$lineindex++;
@@ -1718,7 +1728,7 @@ class Expedition extends CommonObject
 					$line->total_ttc	 	+= $tabprice[2];
 					$line->total_tva	 	+= $tabprice[1];
 				}
-				$line->fetch_optionals();
+
 				$i++;
 				$originline = $obj->fk_origin_line;
 			}
@@ -2236,6 +2246,7 @@ class Expedition extends CommonObject
 
 						$mouvS = new MouvementStock($this->db);
 						$mouvS->origin = &$this;
+						$mouvS->setOrigin($this->element, $this->id);
 
 						if (empty($obj->edbrowid)) {
 							// line without batch detail
@@ -2407,6 +2418,7 @@ class Expedition extends CommonObject
 						//var_dump($this->lines[$i]);
 						$mouvS = new MouvementStock($this->db);
 						$mouvS->origin = &$this;
+						$mouvS->setOrigin($this->element, $this->id);
 
 						if (empty($obj->edbrowid)) {
 							// line without batch detail
@@ -2610,6 +2622,12 @@ class ExpeditionLigne extends CommonObjectLine
 	 * @var string product description
 	 */
 	public $product_desc;
+
+	/**
+	 * Type of the product. 0 for product, 1 for service
+	 * @var int
+	 */
+	public $product_type = 0;
 
 	/**
 	 * @var int rang of line
@@ -3013,7 +3031,7 @@ class ExpeditionLigne extends CommonObjectLine
 
 		if (!$error && !$notrigger) {
 			// Call trigger
-			$result = $this->call_trigger('LINESHIPPING_UPDATE', $user);
+			$result = $this->call_trigger('LINESHIPPING_MODIFY', $user);
 			if ($result < 0) {
 				$this->errors[] = $this->error;
 				$error++;

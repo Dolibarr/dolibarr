@@ -64,6 +64,8 @@ if ($socid && $socid != $object->thirdparty->id) {
 	accessforbidden();
 }
 
+$error = 0;
+
 
 /*
  * Actions
@@ -191,6 +193,39 @@ if ($action == 'setdatep' && GETPOST('datepday')) {
 		setEventMessages($langs->trans('PaymentDateUpdateFailed'), null, 'errors');
 	}
 }
+if ($action == 'createbankpayment' && !empty($user->rights->facture->paiement)) {
+	$db->begin();
+
+	// Create the record into bank for the amount of payment $object
+	if (!$error) {
+		$label = '(CustomerInvoicePayment)';
+		if (GETPOST('type') == Facture::TYPE_CREDIT_NOTE) {
+			$label = '(CustomerInvoicePaymentBack)'; // Refund of a credit note
+		}
+
+		$bankaccountid = GETPOST('accountid', 'int');
+		if ($bankaccountid > 0) {
+			$object->paiementcode = $object->type_code;
+			$object->amounts = $object->getAmountsArray();
+
+			$result = $object->addPaymentToBank($user, 'payment', $label, $bankaccountid, '', '');
+			if ($result < 0) {
+				setEventMessages($object->error, $object->errors, 'errors');
+				$error++;
+			}
+		} else {
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BankAccount")), null, 'errors');
+			$error++;
+		}
+	}
+
+
+	if (!$error) {
+		$db->commit();
+	} else {
+		$db->rollback();
+	}
+}
 
 
 /*
@@ -236,7 +271,7 @@ print '<table class="border centpercent">'."\n";
 
 // Date payment
 print '<tr><td class="titlefield">'.$form->editfieldkey("Date", 'datep', $object->date, $object, $user->rights->facture->paiement).'</td><td>';
-print $form->editfieldval("Date", 'datep', $object->date, $object, $user->rights->facture->paiement, 'datehourpicker', '', null, $langs->trans('PaymentDateUpdateSucceeded'));
+print $form->editfieldval("Date", 'datep', $object->date, $object, $user->rights->facture->paiement, 'datehourpicker', '', null, $langs->trans('PaymentDateUpdateSucceeded'), '', 0, '', 'id', 'tzuser');
 print '</td></tr>';
 
 // Payment type (VIR, LIQ, ...)
@@ -315,7 +350,37 @@ if (!empty($conf->banque->enabled)) {
 		print $bankline->getNomUrl(1, 0, 'showconciliatedandaccounted');
 	} else {
 		$langs->load("admin");
-		print '<span class="opacitymedium">'.$langs->trans("NoRecordFoundIBankcAccount", $langs->transnoentitiesnoconv("Module85Name")).'</span>';
+		print '<span class="opacitymedium">';
+		print $langs->trans("NoRecordFoundIBankcAccount", $langs->transnoentitiesnoconv("Module85Name"));
+		print '</span>';
+		if (!empty($user->rights->facture->paiement)) {
+			// Try to guess $bankaccountidofinvoices that is ID of bank account defined on invoice.
+			// Return null if not found, return 0 if it has different value for at least 2 invoices, return the value if same on all invoices where a bank is defined.
+			$amountofpayments = $object->getAmountsArray();
+			$bankaccountidofinvoices = null;
+			foreach ($amountofpayments as $idinvoice => $amountofpayment) {
+				$tmpinvoice = new Facture($db);
+				$tmpinvoice->fetch($idinvoice);
+				if ($tmpinvoice->fk_account > 0 && $bankaccountidofinvoices !== 0) {
+					if (is_null($bankaccountidofinvoices)) {
+						$bankaccountidofinvoices = $tmpinvoice->fk_account;
+					} elseif ($bankaccountidofinvoices != $tmpinvoice->fk_account) {
+						$bankaccountidofinvoices = 0;
+					}
+				}
+			}
+
+			print '<form method="POST" name="createbankpayment">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
+			print '<input type="hidden" name="action" value="createbankpayment">';
+			print '<input type="hidden" name="id" value="'.$object->id.'">';
+			print ' '.$langs->trans("ToCreateRelatedRecordIntoBank").': ';
+			print $form->select_comptes($bankaccountidofinvoices, 'accountid', 0, '', 2, '', 0, '', 1);
+			//print '<span class="opacitymedium">';
+			print '<input type="submit" class="button small smallpaddingimp" name="createbankpayment" value="'.$langs->trans("ClickHere").'">';
+			//print '</span>';
+			print '</form>';
+		}
 	}
 	print '</td>';
 	print '</tr>';

@@ -46,7 +46,7 @@ class Mo extends CommonObject
 	/**
 	 * @var int  Does mo support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	 */
-	public $ismultientitymanaged = 0;
+	public $ismultientitymanaged = 1;
 
 	/**
 	 * @var int  Does mo support extrafields ? 0=No, 1=Yes
@@ -113,8 +113,8 @@ class Mo extends CommonObject
 		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-2, 'position'=>500, 'notnull'=>1,),
 		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-2, 'position'=>501, 'notnull'=>1,),
 		'date_valid' => array('type'=>'datetime', 'label'=>'DateValidation', 'enabled'=>1, 'visible'=>-2, 'position'=>502,),
-		'fk_user_creat' => array('type'=>'integer', 'label'=>'UserAuthor', 'enabled'=>1, 'visible'=>-2, 'position'=>510, 'notnull'=>1, 'foreignkey'=>'user.rowid', 'csslist'=>'tdoverflowmax100'),
-		'fk_user_modif' => array('type'=>'integer', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-2, 'position'=>511, 'notnull'=>-1, 'csslist'=>'tdoverflowmax100'),
+		'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>1, 'visible'=>-2, 'position'=>510, 'notnull'=>1, 'foreignkey'=>'user.rowid', 'csslist'=>'tdoverflowmax100'),
+		'fk_user_modif' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-2, 'position'=>511, 'notnull'=>-1, 'csslist'=>'tdoverflowmax100'),
 		'date_start_planned' => array('type'=>'datetime', 'label'=>'DateStartPlannedMo', 'enabled'=>1, 'visible'=>1, 'position'=>55, 'notnull'=>-1, 'index'=>1, 'help'=>'KeepEmptyForAsap'),
 		'date_end_planned' => array('type'=>'datetime', 'label'=>'DateEndPlannedMo', 'enabled'=>1, 'visible'=>1, 'position'=>56, 'notnull'=>-1, 'index'=>1,),
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>1000, 'notnull'=>-1,),
@@ -750,12 +750,79 @@ class Mo extends CommonObject
 	 */
 	public function deleteLine(User $user, $idline, $notrigger = false)
 	{
+		global $langs;
+		$langs->load('stocks');
+
 		if ($this->status < 0) {
 			$this->error = 'ErrorDeleteLineNotAllowedByObjectStatus';
 			return -2;
 		}
 
-		return $this->deleteLineCommon($user, $idline, $notrigger);
+		$productstatic = new Product($this->db);
+		$fk_movement = GETPOST('fk_movement', 'int');
+		$arrayoflines = $this->fetchLinesLinked('consumed', $idline);
+
+		if (! empty($arrayoflines)) {
+			$this->db->begin();
+
+			$stockmove = new MouvementStock($this->db);
+			$stockmove->setOrigin($this->element, $this->id);
+
+			if (! empty($fk_movement)) {
+				$moline = new MoLine($this->db);
+				$TArrayMoLine = $moline->fetchAll('', '', 1, 0, array('customsql' => 'fk_stock_movement ='.$fk_movement));
+				$moline = array_shift($TArrayMoLine);
+
+				$movement = new MouvementStock($this->db);
+				$movement->fetch($fk_movement);
+				$productstatic->fetch($movement->product_id);
+				$qtytoprocess = $movement->qty;
+
+				// Reverse stock movement
+				$labelmovementCancel = $langs->trans("CancelProductionForRef", $productstatic->ref);
+				$codemovementCancel = $langs->trans("StockIncrease");
+
+				if (($qtytoprocess >= 0)) {
+					$idstockmove = $stockmove->reception($user, $movement->product_id, $movement->warehouse_id, $qtytoprocess, 0, $labelmovementCancel, '', '', $movement->batch, dol_now(), 0, $codemovementCancel);
+				} else {
+					$idstockmove = $stockmove->livraison($user, $movement->product_id, $movement->warehouse_id, $qtytoprocess, 0, $labelmovementCancel, dol_now(), '', '', $movement->batch, 0, $codemovementCancel);
+				}
+				if ($idstockmove < 0) {
+					$this->error++;
+					$this->db->rollback();
+					setEventMessages($stockmove->error, $stockmove->errors, 'errors');
+				} else {
+					$this->db->commit();
+				}
+				return $moline->delete($user, $notrigger);
+			} else {
+				foreach ($arrayoflines as $key => $arrayofline) {
+					$lineDetails = $arrayoflines[$key];
+					$productstatic->fetch($lineDetails['fk_product']);
+					$qtytoprocess = $lineDetails['qty'];
+
+					// Reverse stock movement
+					$labelmovementCancel = $langs->trans("CancelProductionForRef", $productstatic->ref);
+					$codemovementCancel = $langs->trans("StockIncrease");
+
+					if ($qtytoprocess >= 0) {
+						$idstockmove = $stockmove->reception($user, $lineDetails['fk_product'], $lineDetails['fk_warehouse'], $qtytoprocess, 0, $labelmovementCancel, '', '', $lineDetails['batch'], dol_now(), 0, $codemovementCancel);
+					} else {
+						$idstockmove = $stockmove->livraison($user, $lineDetails['fk_product'], $lineDetails['fk_warehouse'], $qtytoprocess, 0, $labelmovementCancel, dol_now(), '', '', $lineDetails['batch'], 0, $codemovementCancel);
+					}
+					if ($idstockmove < 0) {
+						$this->error++;
+						$this->db->rollback();
+						setEventMessages($stockmove->error, $stockmove->errors, 'errors');
+					} else {
+						$this->db->commit();
+					}
+				}
+				return $this->deleteLineCommon($user, $idline, $notrigger);
+			}
+		} else {
+			return $this->deleteLineCommon($user, $idline, $notrigger);
+		}
 	}
 
 

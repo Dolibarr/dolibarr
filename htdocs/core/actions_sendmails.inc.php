@@ -109,7 +109,7 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 	}
 
 	$subject = '';
-	$actionmsg = '';
+	//$actionmsg = '';
 	$actionmsg2 = '';
 
 	$langs->load('mails');
@@ -317,7 +317,7 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 
 			if ($action == 'send' || $action == 'relance') {
 				$actionmsg2 = $langs->transnoentities('MailSentBy').' '.CMailFile::getValidAddress($from, 4, 0, 1).' '.$langs->transnoentities('To').' '.CMailFile::getValidAddress($sendto, 4, 0, 1);
-				if ($message) {
+				/*if ($message) {
 					$actionmsg = $langs->transnoentities('MailFrom').': '.dol_escape_htmltag($from);
 					$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('MailTo').': '.dol_escape_htmltag($sendto));
 					if ($sendtocc) {
@@ -326,7 +326,7 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 					$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('MailTopic').": ".$subject);
 					$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('TextUsedInTheMessageBody').":");
 					$actionmsg = dol_concatdesc($actionmsg, $message);
-				}
+				}*/
 			}
 
 			// Create form object
@@ -376,7 +376,7 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 						$object->socid = $sendtosocid; // To link to a company
 						$object->sendtoid = $sendtoid; // To link to contact-addresses. This is an array.
 						$object->actiontypecode = $actiontypecode; // Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
-						$object->actionmsg = $actionmsg; // Long text (@todo Replace this with $message, we already have details of email in dedicated properties)
+						$object->actionmsg = $message; // Long text
 						$object->actionmsg2 = $actionmsg2; // Short text ($langs->transnoentities('MailSentBy')...);
 
 						$object->trackid = $trackid;

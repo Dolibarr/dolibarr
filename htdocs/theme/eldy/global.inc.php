@@ -168,6 +168,10 @@ table.liste th.wrapcolumntitle.liste_titre:not(.maxwidthsearch), table.liste td.
 .liste_titre input[name=search_day_date_when], .liste_titre input[name=search_month_date_when], .liste_titre input[name=search_year_date_when],
 .liste_titre input[name=search_dtstartday], .liste_titre input[name=search_dtendday], .liste_titre input[name=search_dtstartmonth], .liste_titre input[name=search_dtendmonth],
 */
+.liste_titre input[name=search_month] {
+	margin-right: 4px;
+}
+
 select#date_startday, select#date_startmonth, select#date_endday, select#date_endmonth, select#reday, select#remonth,
 input, input.flat, form.flat select, select, select.flat, .dataTables_length label select {
 	border: none;
@@ -275,7 +279,8 @@ section.setupsection {
 div.tabBar textarea:focus {
 	border: 1px solid #aaa !important;
 }
-input:focus:not(.button):not(.select2-search__field):not(#top-bookmark-search-input):not(.search_component_input), select:focus, .select2-container--open .select2-selection--single {
+input:focus:not(.button):not(.select2-search__field):not(#top-bookmark-search-input):not(.search_component_input):not(.input-search-takepos),
+ select:focus, .select2-container--open .select2-selection--single {
 /* div.tabBar input:focus, div.tabBar select:focus { */
 	border-bottom: 1px solid #666 !important;
 	border-bottom-left-radius: 0 !important;
@@ -1551,6 +1556,11 @@ table[summary="list_of_modules"] .fa-cog {
 .maxwidth1000 { max-width: 1000px; }
 .maxwidth50imp  { max-width: 50px !important; }
 .maxwidth75imp  { max-width: 75px !important; }
+
+.minwidth100onall { min-width: 100px !important; }
+.minwidth200onall { min-width: 200px !important; }
+.minwidth250onall { min-width: 250px !important; }
+
 .minheight20 { min-height: 20px; }
 .minheight30 { min-height: 30px; }
 .minheight40 { min-height: 40px; }
@@ -1759,6 +1769,7 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 	.maxwidth50onsmartphone { max-width: 40px; }
 	.maxwidth75onsmartphone { max-width: 50px; }
 	.maxwidth100onsmartphone { max-width: 70px; }
+	.maxwidth125onsmartphone { max-width: 100px; }
 	.maxwidth150onsmartphone { max-width: 120px; }
 	.maxwidth150onsmartphoneimp { max-width: 120px !important; }
 	.maxwidth200onsmartphone { max-width: 200px; }
@@ -2269,7 +2280,7 @@ span.widthpictotitle.pictotitle {
 	vertical-align: middle;
 	margin-top: -3px
 }
-.pictowarning, .pictoerror, .pictopreview, .picto.error {
+.pictowarning, .pictoerror, .pictopreview, .pictonopreview, .picto.error {
 	padding-<?php echo $left; ?>: 3px;
 }
 .pictowarning {
@@ -2392,7 +2403,7 @@ img.photorefnoborder {
 }
 .trextrafieldseparator td, .trextrafields_collapse_last td {
 	/* border-bottom: 2px solid var(--colorbackhmenu1) !important; */
-	border-bottom: 2px solid var(--colortopbordertitle1) !important;
+	/* border-bottom: 2px solid var(--colortopbordertitle1) !important; */
 }
 
 .tdhrthin {
@@ -3539,6 +3550,25 @@ td.border, div.tagtable div div.border {
 	width:auto;
 }
 
+
+.thsticky, .tdsticky {
+	position: sticky;
+	left: 0px;
+}
+.thstickyright, .tdstickyright {
+	position: sticky;
+	right: 0px;
+}
+.thstickygray, .tdstickygray {
+	background-color: lightgray;
+}
+.thstickyghostwhite, .tdstickyghostwhite {
+	background-color: ghostwhite;
+}
+.thstickyinherit, .tdstickyinherit {
+	background-color: inherit;
+}
+
 /* To have left column sticky */
 /*.tagtable td[data-key="ref"], .tagtable th[data-key="ref"] {
 	position: sticky;
@@ -3582,6 +3612,13 @@ td.border, div.tagtable div div.border {
 .fichehalfright table.noborder {
 	margin: 0px 0px 0px 0px;
 }
+table.liste, table.noborder:not(.paymenttable):not(.margintable):not(.tableforcontact), table.formdoc, div.noborder:not(.paymenttable):not(.margintable):not(.tableforcontact) {
+	<?php
+	if ($userborderontable) { ?>
+	border-left: 1px solid var(--colortopbordertitle1);
+	border-right: 1px solid var(--colortopbordertitle1);
+	<?php } ?>
+}
 table.liste, table.noborder, table.formdoc, div.noborder {
 	width: 100%;
 	border-collapse: separate !important;
@@ -3591,11 +3628,6 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 	border-top-style: solid;
 	margin: 0px 0px 20px 0px;
 
-	<?php
-	if ($userborderontable) { ?>
-	border-left: 1px solid var(--colortopbordertitle1);
-	border-right: 1px solid var(--colortopbordertitle1);
-	<?php } ?>
 	/*width: calc(100% - 7px);
 	border-collapse: separate !important;
 	border-spacing: 0px;
@@ -3616,9 +3648,11 @@ table.liste tr:last-of-type td, table.noborder:not(#tablelines) tr:last-of-type 
 	border-bottom-color: var(--colortopbordertitle1);
 	border-bottom-style: solid;
 }
+/*
 div.tabBar div.fichehalfright table.noborder:not(.margintable):not(.paymenttable):not(.lastrecordtable):last-of-type {
 	border-bottom: 1px solid var(--colortopbordertitle1);
 }
+*/
 div.tabBar table.border>tbody>tr:last-of-type>td {
 	border-bottom-width: 1px;
 	border-bottom-color: var(--colortopbordertitle1);
@@ -4144,7 +4178,7 @@ table.noborder.paymenttable {
 }
 .paymenttable tr td:first-child, .margintable tr td:first-child
 {
-	//padding-left: 2px;
+	/*padding-left: 2px;*/
 }
 .paymenttable, .margintable tr td {
 	height: 22px;
@@ -4695,6 +4729,7 @@ div.backgreypublicpayment { background-color: #f0f0f0; padding: 20px; border-bot
 }
 #dolpaymenttable {
 	min-width: 320px; font-size: 16px;
+	max-width: 600px;
 }	/* Width must have min to make stripe input area visible. Lower than 320 makes input area crazy for credit card that need zip code */
 
 #tablepublicpayment {
@@ -5246,7 +5281,7 @@ td.cal_other_month {
 /* ============================================================================== */
 
 /* CSS for treeview */
-.treeview ul { background-color: transparent !important; margin-bottom: 4px !important; margin-top: 0 !important; padding-top: 8px !important; }
+.treeview ul { background-color: transparent !important; margin-bottom: 4px !important; margin-top: 0 !important; padding-top: 2px !important; }
 .treeview li { background-color: transparent !important; padding: 0 0 0 16px !important; min-height: 30px; }
 .treeview .hover { color: var(--colortextlink) !important; text-decoration: underline !important; }
 .treeview .hitarea { margin-top: 3px; }
@@ -6266,7 +6301,7 @@ span.noborderoncategories a, li.noborderoncategories a {
 	/* vertical-align: top; */
 }
 span.noborderoncategories {
-	padding: 4px 5px 0px 5px;
+	padding: 3px 5px 3px 5px;
 	display: inline-block;
 }
 .categtextwhite, .treeview .categtextwhite.hover {
@@ -6442,6 +6477,17 @@ dl.dropdown {
 dd.dropdowndd ul li {
 	text-overflow: ellipsis;
 	overflow: hidden;
+	white-space: nowrap;
+}
+
+/* ============================================================================== */
+/* Kanban                                                                         */
+/* ============================================================================== */
+
+.info-box-label {
+	max-width: 180px;
+	overflow: hidden;
+	text-overflow: ellipsis;
 	white-space: nowrap;
 }
 
@@ -7431,6 +7477,26 @@ div.clipboardCPValue.hidewithsize {
 
 	.a-mesure, .a-mesure-disabled {
 		text-align: center;
+	}
+
+
+	div.fichehalfright {
+		margin-top: 30px;
+	}
+
+
+	.underbanner.underbanner-before-box {
+		border-bottom: none;
+	}
+
+	.valuefield.fieldname_type span.badgeneutral {
+		margin-top: 5px;
+		display: inline-block;
+	}
+
+	tr.trextrafieldseparator td, tr.trextrafields_collapse_last td {
+		/* border-bottom: 2px solid var(--colorbackhmenu1) !important; */
+		border-bottom: 1px solid var(--colortopbordertitle1) !important;
 	}
 }
 

@@ -16,7 +16,7 @@
  * Copyright (C) 2012       Cedric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2012-2015  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2014-2020  Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2018-2021  Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2018-2022  Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2018       Nicolas ZABOURI	        <info@inovea-conseil.com>
  * Copyright (C) 2018       Christophe Battarel     <christophe@altairis.fr>
@@ -200,9 +200,10 @@ class Form
 	 * @param   int     $notabletag     Do no output table tags
 	 * @param	string	$formatfunc		Call a specific function to output field in view mode (For example: 'dol_print_email')
 	 * @param	string	$paramid		Key of parameter for id ('id', 'socid')
+	 * @param	string	$gm				'auto' or 'tzuser' or 'tzserver' (when $typeofdata is a date)
 	 * @return  string					HTML edit field
 	 */
-	public function editfieldval($text, $htmlname, $value, $object, $perm, $typeofdata = 'string', $editvalue = '', $extObject = null, $custommsg = null, $moreparam = '', $notabletag = 0, $formatfunc = '', $paramid = 'id')
+	public function editfieldval($text, $htmlname, $value, $object, $perm, $typeofdata = 'string', $editvalue = '', $extObject = null, $custommsg = null, $moreparam = '', $notabletag = 0, $formatfunc = '', $paramid = 'id', $gm = 'auto')
 	{
 		global $conf, $langs;
 
@@ -257,9 +258,9 @@ class Form
 					$ret .= dol_string_neverthesehtmltags($valuetoshow, array('textarea'));
 					$ret .= '</textarea>';
 				} elseif ($typeofdata == 'day' || $typeofdata == 'datepicker') {
-					$ret .= $this->selectDate($value, $htmlname, 0, 0, 1, 'form'.$htmlname, 1, 0);
+					$ret .= $this->selectDate($value, $htmlname, 0, 0, 1, 'form'.$htmlname, 1, 0, 0, '', '', '', '', 1, '', '', $gm);
 				} elseif ($typeofdata == 'dayhour' || $typeofdata == 'datehourpicker') {
-					$ret .= $this->selectDate($value, $htmlname, 1, 1, 1, 'form'.$htmlname, 1, 0);
+					$ret .= $this->selectDate($value, $htmlname, 1, 1, 1, 'form'.$htmlname, 1, 0, 0, '', '', '', '', 1, '', '', $gm);
 				} elseif (preg_match('/^select;/', $typeofdata)) {
 					$arraydata = explode(',', preg_replace('/^select;/', '', $typeofdata));
 					$arraylist = array();
@@ -311,9 +312,9 @@ class Form
 				} elseif (preg_match('/^restricthtml/', $typeofdata)) {
 					$ret .= dol_string_onlythesehtmltags($value);
 				} elseif ($typeofdata == 'day' || $typeofdata == 'datepicker') {
-					$ret .= '<span class="valuedate">'.dol_print_date($value, 'day').'</span>';
+					$ret .= '<span class="valuedate">'.dol_print_date($value, 'day', $gm).'</span>';
 				} elseif ($typeofdata == 'dayhour' || $typeofdata == 'datehourpicker') {
-					$ret .= '<span class="valuedate">'.dol_print_date($value, 'dayhour').'</span>';
+					$ret .= '<span class="valuedate">'.dol_print_date($value, 'dayhour', $gm).'</span>';
 				} elseif (preg_match('/^select;/', $typeofdata)) {
 					$arraydata = explode(',', preg_replace('/^select;/', '', $typeofdata));
 					$arraylist = array();
@@ -791,7 +792,7 @@ class Form
 
 		// Warning: if you set submit button to disabled, post using 'Enter' will no more work if there is no another input submit. So we add a hidden button
 		$ret .= '<input type="submit" name="confirmmassactioninvisible" style="display: none" tabindex="-1">'; // Hidden button BEFORE so it is the one used when we submit with ENTER.
-		$ret .= '<input type="submit" disabled name="confirmmassaction"'.(empty($conf->use_javascript_ajax) ? '' : ' style="display: none"').' class="button small'.(empty($conf->use_javascript_ajax) ? '' : ' hideobject').' '.$name.' '.$name.'confirmed" value="'.dol_escape_htmltag($langs->trans("Confirm")).'">';
+		$ret .= '<input type="submit" disabled name="confirmmassaction"'.(empty($conf->use_javascript_ajax) ? '' : ' style="display: none"').' class="button smallpaddingimp'.(empty($conf->use_javascript_ajax) ? '' : ' hideobject').' '.$name.' '.$name.'confirmed" value="'.dol_escape_htmltag($langs->trans("Confirm")).'">';
 		$ret .= '</div>';
 
 		if (!empty($conf->use_javascript_ajax)) {
@@ -1320,6 +1321,7 @@ class Form
 	{
 		// phpcs:enable
 		global $conf, $user, $langs;
+		global $hookmanager;
 
 		$out = '';
 		$num = 0;
@@ -1367,6 +1369,10 @@ class Form
 		if (!empty($excludeids)) {
 			$sql .= " AND s.rowid NOT IN (".$this->db->sanitize(join(',', $excludeids)).")";
 		}
+		// Add where from hooks
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('selectThirdpartyListWhere', $parameters); // Note that $action and $object may have been modified by hook
+		$sql .= $hookmanager->resPrint;
 		// Add criteria
 		if ($filterkey && $filterkey != '') {
 			$sql .= " AND (";
@@ -1599,7 +1605,7 @@ class Form
 	 *  @param  string	$exclude        List of contacts id to exclude
 	 *  @param	string	$limitto		Disable answers that are not id in this array list
 	 *  @param	integer	$showfunction   Add function into label
-	 *  @param	string	$moreclass		Add more class to class style
+	 *  @param	string	$morecss		Add more class to class style
 	 *  @param	integer	$showsoc	    Add company into label
 	 *  @param	int		$forcecombo		Force to use combo box
 	 *  @param	array	$events			Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
@@ -1609,10 +1615,10 @@ class Form
 	 *  @return	int						<0 if KO, Nb of contact in list if OK
 	 *  @deprecated						You can use selectcontacts directly (warning order of param was changed)
 	 */
-	public function select_contacts($socid, $selected = '', $htmlname = 'contactid', $showempty = 0, $exclude = '', $limitto = '', $showfunction = 0, $moreclass = '', $showsoc = 0, $forcecombo = 0, $events = array(), $options_only = false, $moreparam = '', $htmlid = '')
+	public function select_contacts($socid, $selected = '', $htmlname = 'contactid', $showempty = 0, $exclude = '', $limitto = '', $showfunction = 0, $morecss = '', $showsoc = 0, $forcecombo = 0, $events = array(), $options_only = false, $moreparam = '', $htmlid = '')
 	{
 		// phpcs:enable
-		print $this->selectcontacts($socid, $selected, $htmlname, $showempty, $exclude, $limitto, $showfunction, $moreclass, $options_only, $showsoc, $forcecombo, $events, $moreparam, $htmlid);
+		print $this->selectcontacts($socid, $selected, $htmlname, $showempty, $exclude, $limitto, $showfunction, $morecss, $options_only, $showsoc, $forcecombo, $events, $moreparam, $htmlid);
 		return $this->num;
 	}
 
@@ -1629,7 +1635,7 @@ class Form
 	 *	@param  string		$exclude        List of contacts id to exclude
 	 *	@param	string		$limitto		Disable answers that are not id in this array list
 	 *	@param	integer		$showfunction   Add function into label
-	 *	@param	string		$moreclass		Add more class to class style
+	 *	@param	string		$morecss		Add more class to class style
 	 *	@param	bool		$options_only	Return options only (for ajax treatment)
 	 *	@param	integer		$showsoc	    Add company into label
 	 * 	@param	int			$forcecombo		Force to use combo box (so no ajax beautify effect)
@@ -1640,7 +1646,7 @@ class Form
 	 *  @param	integer		$disableifempty Set tag 'disabled' on select if there is no choice
 	 *	@return	 int|string					<0 if KO, HTML with select string if OK.
 	 */
-	public function selectcontacts($socid, $selected = '', $htmlname = 'contactid', $showempty = 0, $exclude = '', $limitto = '', $showfunction = 0, $moreclass = '', $options_only = false, $showsoc = 0, $forcecombo = 0, $events = array(), $moreparam = '', $htmlid = '', $multiple = false, $disableifempty = 0)
+	public function selectcontacts($socid, $selected = '', $htmlname = 'contactid', $showempty = 0, $exclude = '', $limitto = '', $showfunction = 0, $morecss = '', $options_only = false, $showsoc = 0, $forcecombo = 0, $events = array(), $moreparam = '', $htmlid = '', $multiple = false, $disableifempty = 0)
 	{
 		global $conf, $langs, $hookmanager, $action;
 
@@ -1672,13 +1678,17 @@ class Form
 		if ($showsoc > 0 || !empty($conf->global->CONTACT_SHOW_EMAIL_PHONE_TOWN_SELECTLIST)) {
 			$sql .= " LEFT OUTER JOIN  ".$this->db->prefix()."societe as s ON s.rowid=sp.fk_soc";
 		}
-		$sql .= " WHERE sp.entity IN (".getEntity('socpeople').")";
+		$sql .= " WHERE sp.entity IN (".getEntity('contact').")";
 		if ($socid > 0 || $socid == -1) {
 			$sql .= " AND sp.fk_soc = ".((int) $socid);
 		}
 		if (!empty($conf->global->CONTACT_HIDE_INACTIVE_IN_COMBOBOX)) {
 			$sql .= " AND sp.statut <> 0";
 		}
+		// Add where from hooks
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('selectContactListWhere', $parameters); // Note that $action and $object may have been modified by hook
+		$sql .= $hookmanager->resPrint;
 		$sql .= " ORDER BY sp.lastname ASC";
 
 		dol_syslog(get_class($this)."::selectcontacts", LOG_DEBUG);
@@ -1687,7 +1697,7 @@ class Form
 			$num = $this->db->num_rows($resql);
 
 			if ($htmlname != 'none' && !$options_only) {
-				$out .= '<select class="flat'.($moreclass ? ' '.$moreclass : '').'" id="'.$htmlid.'" name="'.$htmlname.(($num || empty($disableifempty)) ? '' : ' disabled').($multiple ? '[]' : '').'" '.($multiple ? 'multiple' : '').' '.(!empty($moreparam) ? $moreparam : '').'>';
+				$out .= '<select class="flat'.($morecss ? ' '.$morecss : '').'" id="'.$htmlid.'" name="'.$htmlname.(($num || empty($disableifempty)) ? '' : ' disabled').($multiple ? '[]' : '').'" '.($multiple ? 'multiple' : '').' '.(!empty($moreparam) ? $moreparam : '').'>';
 			}
 
 			if ($showempty && ! is_numeric($showempty)) {
@@ -2085,7 +2095,7 @@ class Form
 			if ($num) {
 				// Enhance with select2
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
-				$out = ajax_combobox($htmlname).$out;
+				$out .= ajax_combobox($htmlname);
 			}
 		} else {
 			dol_print_error($this->db);
@@ -2094,6 +2104,7 @@ class Form
 		if ($outputmode) {
 			return $outarray;
 		}
+
 		return $out;
 	}
 
@@ -2461,6 +2472,7 @@ class Form
 	{
 		// phpcs:enable
 		global $langs, $conf;
+		global $hookmanager;
 
 		$out = '';
 		$outarray = array();
@@ -2606,6 +2618,10 @@ class Form
 		} elseif (empty($conf->service->enabled)) { // when service module is disabled, show products only
 			$sql .= " AND p.fk_product_type = 0";
 		}
+		// Add where from hooks
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('selectProductsListWhere', $parameters); // Note that $action and $object may have been modified by hook
+		$sql .= $hookmanager->resPrint;
 		// Add criteria on ref/label
 		if ($filterkey != '') {
 			$sql .= ' AND (';
@@ -3179,6 +3195,7 @@ class Form
 	{
 		// phpcs:enable
 		global $langs, $conf, $user;
+		global $hookmanager;
 
 		$out = '';
 		$outarray = array();
@@ -3228,6 +3245,10 @@ class Form
 		if (!empty($filtre)) {
 			$sql .= " ".$filtre;
 		}
+		// Add where from hooks
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('selectSuppliersProductsListWhere', $parameters); // Note that $action and $object may have been modified by hook
+		$sql .= $hookmanager->resPrint;
 		// Add criteria on ref/label
 		if ($filterkey != '') {
 			$sql .= ' AND (';
@@ -3687,7 +3708,6 @@ class Form
 			dol_print_error($this->db);
 		}
 	}
-
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
@@ -4900,7 +4920,7 @@ class Form
 						$more .= '<div class="tagtr">';
 						$more .= '<div class="tagtd'.(empty($input['tdclass']) ? '' : (' '.$input['tdclass'])).'">'.$input['label'].' </div><div class="tagtd">';
 						$more .= '<input type="checkbox" class="flat'.$morecss.'" id="'.dol_escape_htmltag($input['name']).'" name="'.dol_escape_htmltag($input['name']).'"'.$moreattr;
-						if (!is_bool($input['value']) && $input['value'] != 'false' && $input['value'] != '0') {
+						if (!is_bool($input['value']) && $input['value'] != 'false' && $input['value'] != '0' && $input['value'] != '') {
 							$more .= ' checked';
 						}
 						if (is_bool($input['value']) && $input['value']) {
@@ -4956,6 +4976,8 @@ class Form
 						$moreonecolumn .= '</div>'."\n";
 					} elseif ($input['type'] == 'hidden') {
 						// Do nothing more, already added by a previous loop
+					} elseif ($input['type'] == 'separator') {
+						$more .= '<br>';
 					} else {
 						$more .= 'Error type '.$input['type'].' for the confirm box is not a supported type';
 					}
@@ -5128,7 +5150,7 @@ class Form
 			$formconfirm .= '<td class="valid">'.$question.'</td>';
 			$formconfirm .= '<td class="valid center">';
 			$formconfirm .= $this->selectyesno("confirm", $newselectedchoice, 0, false, 0, 0, 'marginleftonly marginrightonly');
-			$formconfirm .= '<input class="button valignmiddle confirmvalidatebutton" type="submit" value="'.$langs->trans("Validate").'">';
+			$formconfirm .= '<input class="button valignmiddle confirmvalidatebutton small" type="submit" value="'.$langs->trans("Validate").'">';
 			$formconfirm .= '</td>';
 			$formconfirm .= '</tr>'."\n";
 
@@ -5199,6 +5221,7 @@ class Form
 			$out .= '<input type="submit" class="button smallpaddingimp" value="'.$langs->trans("Modify").'">';
 			$out .= '</form>';
 		} else {
+			$out .= '<span class="project_head_block">';
 			if ($selected) {
 				$projet = new Project($this->db);
 				$projet->fetch($selected);
@@ -5206,6 +5229,7 @@ class Form
 			} else {
 				$out .= "&nbsp;";
 			}
+			$out .= '</span>';
 		}
 
 		if (empty($nooutput)) {
@@ -6675,7 +6699,7 @@ class Form
 		// phpcs:enable
 		global $langs;
 
-		$retstring = '';
+		$retstring = '<span class="nowraponall">';
 
 		$hourSelected = 0;
 		$minSelected = 0;
@@ -6707,7 +6731,7 @@ class Form
 		if ($typehour != 'text') {
 			$retstring .= ' '.$langs->trans('HourShort');
 		} else {
-			$retstring .= '<span class="hideonsmartphone">:</span>';
+			$retstring .= '<span class="">:</span>';
 		}
 
 		// Minutes
@@ -6735,7 +6759,7 @@ class Form
 			$retstring .= ' '.$langs->trans('MinuteShort');
 		}
 
-		//$retstring.="&nbsp;";
+		$retstring.="</span>";
 
 		if (!empty($nooutput)) {
 			return $retstring;
@@ -7164,7 +7188,7 @@ class Form
 	 *  @param		int			$limit					Limit on number of returned lines
 	 *  @param		int			$status					Ticket status
 	 *  @param		string		$selected_input_value	Value of preselected input text (for use with ajax)
-	 *  @param		int			$hidelabel				Hide label (0=no, 1=yes, 2=show search icon (before) and placeholder, 3 search icon after)
+	 *  @param		int			$hidelabel				Hide label (0=no, 1=yes, 2=show search icon before and placeholder, 3 search icon after)
 	 *  @param		array		$ajaxoptions			Options for ajax_autocompleter
 	 *  @param      int			$socid					Thirdparty Id (to get also price dedicated to this customer)
 	 *  @param		string		$showempty				'' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
@@ -7522,7 +7546,7 @@ class Form
 		if (!empty($objecttmp->fields)) {	// For object that declare it, it is better to use declared fields (like societe, contact, ...)
 			$tmpfieldstoshow = '';
 			foreach ($objecttmp->fields as $key => $val) {
-				if (!dol_eval($val['enabled'], 1, 1)) {
+				if (!dol_eval($val['enabled'], 1, 1, 1, '1')) {
 					continue;
 				}
 				if (!empty($val['showoncombobox'])) {
@@ -8582,6 +8606,7 @@ class Form
 					print '<br><form action="' . $_SERVER["PHP_SELF"] . '" method="POST" name="formlinkedbyref' . $key . '">';
 					print '<input type="hidden" name="id" value="' . $object->id . '">';
 					print '<input type="hidden" name="action" value="addlinkbyref">';
+					print '<input type="hidden" name="token" value="'.newToken().'">';
 					print '<input type="hidden" name="addlink" value="' . $key . '">';
 					print '<table class="noborder">';
 					print '<tr>';
@@ -8839,7 +8864,7 @@ class Form
 
 		// Add where from hooks
 		if (is_object($hookmanager)) {
-			$parameters = array();
+			$parameters = array('showrefnav' => true);
 			$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object); // Note that $action and $object may have been modified by hook
 			$object->next_prev_filter .= $hookmanager->resPrint;
 		}

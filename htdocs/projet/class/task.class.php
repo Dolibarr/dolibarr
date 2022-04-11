@@ -27,6 +27,7 @@
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 
@@ -58,7 +59,9 @@ class Task extends CommonObjectLine
 	/**
 	 * @var array	List of child tables. To test if we can delete object.
 	 */
-	protected $childtables = array('projet_task_time');
+	protected $childtables = array(
+		'projet_task_time' => array('name' => 'Task', 'parent' => 'projet_task', 'parentkey' => 'fk_task')
+	);
 
 	/**
 	 * @var int ID parent task
@@ -1766,23 +1769,23 @@ class Task extends CommonObjectLine
 
 		$this->db->begin();
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."projet_task_time";
-		$sql .= " WHERE rowid = ".((int) $this->timespent_id);
-
-		dol_syslog(get_class($this)."::delTimeSpent", LOG_DEBUG);
-		$resql = $this->db->query($sql);
-		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+		if (!$notrigger) {
+			// Call trigger
+			$result = $this->call_trigger('TASK_TIMESPENT_DELETE', $user);
+			if ($result < 0) {
+				$error++;
+			}
+			// End call triggers
 		}
 
 		if (!$error) {
-			if (!$notrigger) {
-				// Call trigger
-				$result = $this->call_trigger('TASK_TIMESPENT_DELETE', $user);
-				if ($result < 0) {
-					$error++;
-				}
-				// End call triggers
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."projet_task_time";
+			$sql .= " WHERE rowid = ".((int) $this->timespent_id);
+
+			dol_syslog(get_class($this)."::delTimeSpent", LOG_DEBUG);
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$error++; $this->errors[] = "Error ".$this->db->lasterror();
 			}
 		}
 

@@ -147,7 +147,7 @@ if (empty($reshook)) {
 		$search_tvaintra = '';
 	}
 
-// Mass actions
+	// Mass actions
 	$objectclass = 'ExpenseReport';
 	$objectlabel = 'ExpenseReport';
 	$permissiontoread = $user->rights->expensereport->read;
@@ -481,7 +481,7 @@ if ($result) {
 
 		// Fees description -- Can be null
 		print '<td>';
-		$text = dolGetFirstLineOfText(dol_string_nohtmltag($objp->comments));
+		$text = dolGetFirstLineOfText(dol_string_nohtmltag($objp->comments, 1));
 		$trunclength = empty($conf->global->ACCOUNTING_LENGTH_DESCRIPTION) ? 32 : $conf->global->ACCOUNTING_LENGTH_DESCRIPTION;
 		print $form->textwithtooltip(dol_trunc($text, $trunclength), $objp->comments);
 		print '</td>';

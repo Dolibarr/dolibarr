@@ -22,8 +22,8 @@ create table llx_user
   rowid             integer AUTO_INCREMENT PRIMARY KEY,
   entity            integer DEFAULT 1 NOT NULL, -- multi company id
 
+  ref_employee      varchar(50),
   ref_ext			varchar(50),				-- reference into an external system (not used by dolibarr)
-  ref_int			varchar(50),				-- reference into an internal system (deprecated)
 
   admin             smallint DEFAULT 0,			-- user has admin profile
 
@@ -64,12 +64,12 @@ create table llx_user
   --module_comm       smallint DEFAULT 1,
   --module_compta     smallint DEFAULT 1,
   
-  fk_soc			integer,					-- id thirdparty if user linked to a company (external user)
-  fk_socpeople      integer,					-- id contact origin if user linked to a contact
-  fk_member         integer,					-- if member if suer linked to a member
-  fk_user           integer,					-- Supervisor, hierarchic parent
-  fk_user_expense_validator           integer,
-  fk_user_holiday_validator           integer,
+  fk_soc			integer NULL,					-- id thirdparty if user linked to a company (external user)
+  fk_socpeople      integer NULL,					-- id contact origin if user linked to a contact
+  fk_member         integer NULL,					-- if member if suer linked to a member
+  fk_user           integer NULL,					-- Supervisor, hierarchic parent
+  fk_user_expense_validator           integer NULL,
+  fk_user_holiday_validator           integer NULL,
   
   idpers1			varchar(128),
   idpers2			varchar(128),
@@ -108,5 +108,6 @@ create table llx_user
   import_key        varchar(14),				-- import key
   default_range     integer,
   default_c_exp_tax_cat     integer,
+  national_registration_number  varchar(50),
   fk_warehouse      integer						-- default warehouse os user
 )ENGINE=innodb;

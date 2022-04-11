@@ -136,11 +136,11 @@ $arrayfields = array();
 foreach ($object->fields as $key => $val) {
 	// If $val['visible']==0, then we never show the field
 	if (!empty($val['visible'])) {
-		$visible = (int) dol_eval($val['visible'], 1);
+		$visible = (int) dol_eval($val['visible'], 1, 1, '1');
 		$arrayfields['t.'.$key] = array(
 			'label'=>$val['label'],
 			'checked'=>(($visible < 0) ? 0 : 1),
-			'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1)),
+			'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1, 1, '1')),
 			'position'=>$val['position'],
 			'help'=> isset($val['help']) ? $val['help'] : ''
 		);
@@ -185,7 +185,7 @@ if (GETPOST('cancel', 'alpha')) {
 	$action = 'list';
 	$massaction = '';
 }
-if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
+if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend' && $massaction != 'presendonclose' && $massaction != 'close') {
 	$massaction = '';
 }
 
@@ -690,7 +690,7 @@ $arrayofmassactions = array(
 	//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 );
 if ($permissiontoadd) {
-	$arrayofmassactions['close'] = img_picto('', 'close_title', 'class="pictofixedwidth"').$langs->trans("Close");
+	$arrayofmassactions['presendonclose'] = img_picto('', 'close_title', 'class="pictofixedwidth"').$langs->trans("Close");
 	$arrayofmassactions['reopen'] = img_picto('', 'folder-open', 'class="pictofixedwidth"').$langs->trans("ReOpen");
 }
 if ($permissiontodelete) {
@@ -742,6 +742,17 @@ $modelmail = "ticket";
 $objecttmp = new Ticket($db);
 $trackid = 'tic'.$object->id;
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
+
+// confirm auto send on close
+if ($massaction == 'presendonclose') {
+	$hidden_form = array([
+		"type" => "hidden",
+		"name" => "massaction",
+		"value" => "close"
+	]);
+	$selectedchoice = (!empty($conf->global->TICKET_NOTIFY_AT_CLOSING)) ? "yes" : "no";
+	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassTicketClosingSendEmail"), $langs->trans("ConfirmMassTicketClosingSendEmailQuestion"), 'confirm_send_close', $hidden_form, $selectedchoice, 0, 200, 500, 1);
+}
 
 if ($search_all) {
 	foreach ($fieldstosearchall as $key => $val) {

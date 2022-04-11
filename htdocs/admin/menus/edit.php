@@ -464,7 +464,7 @@ if ($action == 'create') {
 	}
 	print '<td><input type="text" name="menuIdParent" value="'.$valtouse.'" class="minwidth300"></td>';
 	print '<td>'.$langs->trans('DetailMenuIdParent');
-	print ', '.$langs->trans("Example").': fk_mainmenu=abc&fk_leftmenu=def';
+	print ', <span class="opacitymedium">'.$langs->trans("Example").': fk_mainmenu=abc&fk_leftmenu=def</span>';
 	print '</td></tr>';
 
 	// Niveau
@@ -496,7 +496,7 @@ if ($action == 'create') {
 	print '<tr><td>'.$langs->trans('Enabled').'</td>';
 	print '<td><input type="text" class="minwidth500" name="enabled" value="'.dol_escape_htmltag($menu->enabled).'"></td><td>'.$langs->trans('DetailEnabled');
 	if (!empty($menu->enabled)) {
-		print ' ('.$langs->trans("ConditionIsCurrently").': '.yn(dol_eval($menu->enabled, 1)).')';
+		print ' <span class="opacitymedium">('.$langs->trans("ConditionIsCurrently").':</span> '.yn(dol_eval($menu->enabled, 1, 1, '1')).')';
 	}
 	print '</td></tr>';
 
@@ -504,7 +504,7 @@ if ($action == 'create') {
 	print '<tr><td>'.$langs->trans('Rights').'</td>';
 	print '<td><input type="text" class="minwidth500" name="perms" value="'.dol_escape_htmltag($menu->perms).'"></td><td>'.$langs->trans('DetailRight');
 	if (!empty($menu->perms)) {
-		print ' ('.$langs->trans("ConditionIsCurrently").': '.yn(dol_eval($menu->perms, 1)).')';
+		print ' <span class="opacitymedium">('.$langs->trans("ConditionIsCurrently").':</span> '.yn(dol_eval($menu->perms, 1, 1, '1')).')';
 	}
 	print '</td></tr>';
 

@@ -796,9 +796,9 @@ class Delivery extends CommonObject
 			$num = $this->db->num_rows($resql);
 			$i = 0;
 			while ($i < $num) {
-				$line = new DeliveryLine($this->db);
-
 				$obj = $this->db->fetch_object($resql);
+
+				$line = new DeliveryLine($this->db);
 
 				$line->id = $obj->rowid;
 				$line->label = $obj->custom_label;
@@ -1091,6 +1091,23 @@ class Delivery extends CommonObject
 		);
 
 		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+	}
+
+	/**
+	 * Function used to replace a product id with another one.
+	 *
+	 * @param DoliDB $db Database handler
+	 * @param int $origin_id Old product id
+	 * @param int $dest_id New product id
+	 * @return bool
+	 */
+	public static function replaceProduct(DoliDB $db, $origin_id, $dest_id)
+	{
+		$tables = array(
+			'deliverydet'
+		);
+
+		return CommonObject::commonReplaceProduct($db, $origin_id, $dest_id, $tables);
 	}
 }
 

@@ -175,6 +175,7 @@ if (empty($reshook)) {
 
 		$TFact = array();
 		$TFactThird = array();
+		$TFactThirdNbLines = array();
 
 		$nb_bills_created = 0;
 		$lastid= 0;
@@ -182,6 +183,8 @@ if (empty($reshook)) {
 
 		$db->begin();
 
+		//sort ids to keep order if one bill per third
+		sort($receptions);
 		foreach ($receptions as $id_reception) {
 			$rcp = new Reception($db);
 			 // We only invoice reception that are validated
@@ -254,6 +257,7 @@ if (empty($reshook)) {
 					$lastid = $objecttmp->id;
 
 					$TFactThird[$rcp->socid] = $objecttmp;
+					$TFactThirdNbLines[$rcp->socid] = 0; //init nblines to have lines ordered by expedition and rang
 				} else {
 					$langs->load("errors");
 					$errors[] = $rcp->ref.' : '.$langs->trans($objecttmp->error);
@@ -343,6 +347,11 @@ if (empty($reshook)) {
 
 							$objecttmp->context['createfromclone'];
 
+							$rang = $i;
+							//there may already be rows from previous receptions
+							if (!empty($createbills_onebythird))
+								$rang = $TFactThirdNbLines[$rcp->socid];
+
 							$result = $objecttmp->addline(
 								$desc,
 								$lines[$i]->subprice,
@@ -358,7 +367,7 @@ if (empty($reshook)) {
 								$lines[$i]->info_bits,
 								'HT',
 								$product_type,
-								$i,
+								$rang,
 								false,
 								0,
 								null,
@@ -371,6 +380,8 @@ if (empty($reshook)) {
 
 							if ($result > 0) {
 								$lineid = $result;
+								if (!empty($createbills_onebythird)) //increment rang to keep order
+									$TFactThirdNbLines[$rcp->socid]++;
 							} else {
 								$lineid = 0;
 								$error++;
@@ -491,12 +502,10 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."delivery as l ON l.rowid = ee.fk_target";
 if (empty($user->rights->societe->client->voir) && !$socid) {	// Internal user with no permission to see all
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
-
 // Add joins from hooks
 $parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
-
 $sql .= " WHERE e.entity IN (".getEntity('reception').")";
 if (empty($user->rights->societe->client->voir) && !$socid) {	// Internal user with no permission to see all
 	$sql .= " AND e.fk_soc = sc.fk_soc";
@@ -983,6 +992,9 @@ while ($i < min($num, $limit)) {
 		{
 		}*/
 		print "</td>\n";
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 	}
 
 	if (!empty($arrayfields['l.ref']['checked']) || !empty($arrayfields['l.date_delivery']['checked'])) {
@@ -1077,6 +1089,13 @@ if ($num == 0) {
 	}
 	print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
 }
+
+// Show total line
+include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
+
+$parameters = array('arrayfields'=>$arrayfields, 'sql'=>$sql);
+$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters); // Note that $action and $object may have been modified by hook
+print $hookmanager->resPrint;
 
 print "</table>";
 print "</div>";

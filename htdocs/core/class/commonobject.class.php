@@ -7,7 +7,7 @@
  * Copyright (C) 2012-2015 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2012-2015 Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
- * Copyright (C) 2015-2021 Alexandre Spangaro   <aspangaro@open-dsi.fr>
+ * Copyright (C) 2015-2022 Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2016      Bahfir abbes         <dolipar@dolipar.org>
  * Copyright (C) 2017      ATM Consulting       <support@atm-consulting.fr>
  * Copyright (C) 2017-2019 Nicolas ZABOURI      <info@inovea-conseil.com>
@@ -15,6 +15,7 @@
  * Copyright (C) 2018-2021 Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2018      Josep Lluís Amador   <joseplluis@lliuretic.cat>
  * Copyright (C) 2021      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2021      Grégory Blémand      <gregory.blemand@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,6 +43,7 @@
  */
 abstract class CommonObject
 {
+	const TRIGGER_PREFIX = ''; // to be overriden in child class implementations, i.e. 'BILL', 'TASK', 'PROPAL', etc.
 	/**
 	 * @var DoliDb		Database handler (result of a new DoliDB)
 	 */
@@ -122,6 +124,12 @@ abstract class CommonObject
 	 * @var mixed		Array of linked objects. Loaded by ->fetchObjectLinked
 	 */
 	public $linkedObjects;
+
+	/**
+	 * @var boolean		is linkedObjects full loaded. Loaded by ->fetchObjectLinked
+	 * important for pdf generation time reduction
+	 */
+	public $linkedObjectsFullLoaded = false;
 
 	/**
 	 * @var Object      To store a cloned copy of object before to edit it and keep track of old properties
@@ -2931,15 +2939,20 @@ abstract class CommonObject
 			return -1;
 		}
 
+		$fieldposition = 'rang'; // @todo Rename 'rang' into 'position'
+		if (in_array($this->table_element_line, array('bom_bomline', 'ecm_files', 'emailcollector_emailcollectoraction', 'product_attribute_value'))) {
+			$fieldposition = 'position';
+		}
+
 		// Count number of lines to reorder (according to choice $renum)
 		$nl = 0;
 		$sql = "SELECT count(rowid) FROM ".$this->db->prefix().$this->table_element_line;
 		$sql .= " WHERE ".$this->fk_element." = ".((int) $this->id);
 		if (!$renum) {
-			$sql .= ' AND rang = 0';
+			$sql .= " AND " . $fieldposition . " = 0";
 		}
 		if ($renum) {
-			$sql .= ' AND rang <> 0';
+			$sql .= " AND " . $fieldposition . " <> 0";
 		}
 
 		dol_syslog(get_class($this)."::line_order", LOG_DEBUG);
@@ -2960,7 +2973,7 @@ abstract class CommonObject
 			if ($fk_parent_line) {
 				$sql .= ' AND fk_parent_line IS NULL';
 			}
-			$sql .= " ORDER BY rang ASC, rowid ".$rowidorder;
+			$sql .= " ORDER BY " . $fieldposition . " ASC, rowid " . $rowidorder;
 
 			dol_syslog(get_class($this)."::line_order search all parent lines", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -3001,12 +3014,17 @@ abstract class CommonObject
 	 */
 	public function getChildrenOfLine($id, $includealltree = 0)
 	{
+		$fieldposition = 'rang'; // @todo Rename 'rang' into 'position'
+		if (in_array($this->table_element_line, array('bom_bomline', 'ecm_files', 'emailcollector_emailcollectoraction', 'product_attribute_value'))) {
+			$fieldposition = 'position';
+		}
+
 		$rows = array();
 
 		$sql = "SELECT rowid FROM ".$this->db->prefix().$this->table_element_line;
 		$sql .= " WHERE ".$this->fk_element." = ".((int) $this->id);
 		$sql .= ' AND fk_parent_line = '.((int) $id);
-		$sql .= ' ORDER BY rang ASC';
+		$sql .= " ORDER BY " . $fieldposition . " ASC";
 
 		dol_syslog(get_class($this)."::getChildrenOfLine search children lines for line ".$id, LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -3077,7 +3095,7 @@ abstract class CommonObject
 	{
 		global $hookmanager;
 		$fieldposition = 'rang'; // @todo Rename 'rang' into 'position'
-		if (in_array($this->table_element_line, array('bom_bomline', 'ecm_files', 'emailcollector_emailcollectoraction'))) {
+		if (in_array($this->table_element_line, array('bom_bomline', 'ecm_files', 'emailcollector_emailcollectoraction', 'product_attribute_value'))) {
 			$fieldposition = 'position';
 		}
 
@@ -3123,13 +3141,13 @@ abstract class CommonObject
 	{
 		if ($rang > 1) {
 			$fieldposition = 'rang';
-			if (in_array($this->table_element_line, array('ecm_files', 'emailcollector_emailcollectoraction'))) {
+			if (in_array($this->table_element_line, array('ecm_files', 'emailcollector_emailcollectoraction', 'product_attribute_value'))) {
 				$fieldposition = 'position';
 			}
 
 			$sql = "UPDATE ".$this->db->prefix().$this->table_element_line." SET ".$fieldposition." = ".((int) $rang);
 			$sql .= " WHERE ".$this->fk_element." = ".((int) $this->id);
-			$sql .= ' AND rang = '.((int) ($rang - 1));
+			$sql .= " AND " . $fieldposition . " = " . ((int) ($rang - 1));
 			if ($this->db->query($sql)) {
 				$sql = "UPDATE ".$this->db->prefix().$this->table_element_line." SET ".$fieldposition." = ".((int) ($rang - 1));
 				$sql .= ' WHERE rowid = '.((int) $rowid);
@@ -3154,13 +3172,13 @@ abstract class CommonObject
 	{
 		if ($rang < $max) {
 			$fieldposition = 'rang';
-			if (in_array($this->table_element_line, array('ecm_files', 'emailcollector_emailcollectoraction'))) {
+			if (in_array($this->table_element_line, array('ecm_files', 'emailcollector_emailcollectoraction', 'product_attribute_value'))) {
 				$fieldposition = 'position';
 			}
 
 			$sql = "UPDATE ".$this->db->prefix().$this->table_element_line." SET ".$fieldposition." = ".((int) $rang);
 			$sql .= " WHERE ".$this->fk_element." = ".((int) $this->id);
-			$sql .= ' AND rang = '.((int) ($rang + 1));
+			$sql .= " AND " . $fieldposition . " = " . ((int) ($rang + 1));
 			if ($this->db->query($sql)) {
 				$sql = "UPDATE ".$this->db->prefix().$this->table_element_line." SET ".$fieldposition." = ".((int) ($rang + 1));
 				$sql .= ' WHERE rowid = '.((int) $rowid);
@@ -3181,7 +3199,12 @@ abstract class CommonObject
 	 */
 	public function getRangOfLine($rowid)
 	{
-		$sql = "SELECT rang FROM ".$this->db->prefix().$this->table_element_line;
+		$fieldposition = 'rang';
+		if (in_array($this->table_element_line, array('ecm_files', 'emailcollector_emailcollectoraction', 'product_attribute_value'))) {
+			$fieldposition = 'position';
+		}
+
+		$sql = "SELECT " . $fieldposition . " FROM ".$this->db->prefix().$this->table_element_line;
 		$sql .= " WHERE rowid = ".((int) $rowid);
 
 		dol_syslog(get_class($this)."::getRangOfLine", LOG_DEBUG);
@@ -3200,9 +3223,14 @@ abstract class CommonObject
 	 */
 	public function getIdOfLine($rang)
 	{
+		$fieldposition = 'rang';
+		if (in_array($this->table_element_line, array('ecm_files', 'emailcollector_emailcollectoraction', 'product_attribute_value'))) {
+			$fieldposition = 'position';
+		}
+
 		$sql = "SELECT rowid FROM ".$this->db->prefix().$this->table_element_line;
 		$sql .= " WHERE ".$this->fk_element." = ".((int) $this->id);
-		$sql .= " AND rang = ".((int) $rang);
+		$sql .= " AND " . $fieldposition . " = ".((int) $rang);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$row = $this->db->fetch_row($resql);
@@ -3221,7 +3249,7 @@ abstract class CommonObject
 	{
 		// phpcs:enable
 		$positionfield = 'rang';
-		if ($this->table_element == 'bom_bom') {
+		if (in_array($this->table_element, array('bom_bom', 'product_attribute'))) {
 			$positionfield = 'position';
 		}
 
@@ -3675,7 +3703,7 @@ abstract class CommonObject
 
 		// Elements of the core modules which have `$module` property but may to which we don't want to prefix module part to the element name for finding the linked object in llx_element_element.
 		// It's because an entry for this element may be exist in llx_element_element before this modification (version <=14.2) and ave named only with their element name in fk_source or fk_target.
-		$coremodule = array('knowledgemanagement', 'partnership', 'workstation', 'ticket', 'recruitment', 'eventorganization');
+		$coremodule = array('knowledgemanagement', 'partnership', 'workstation', 'ticket', 'recruitment', 'eventorganization', 'asset');
 		// Add module part to target type if object has $module property and isn't in core modules.
 		$targettype = ((!empty($this->module) && ! in_array($this->module, $coremodule)) ? $this->module.'_' : '').$this->element;
 
@@ -3753,6 +3781,10 @@ abstract class CommonObject
 	{
 		global $conf, $hookmanager, $action;
 
+		// important for pdf generation time reduction
+		// this boolean is true if $this->linkedObjects has already been loaded with all objects linked without filter
+		if ($this->linkedObjectsFullLoaded) return 1;
+
 		$this->linkedObjectsIds = array();
 		$this->linkedObjects = array();
 
@@ -3814,6 +3846,9 @@ abstract class CommonObject
 		} else {
 			$sql .= "(fk_source = ".((int) $sourceid)." AND sourcetype = '".$this->db->escape($sourcetype)."')";
 			$sql .= " ".$clause." (fk_target = ".((int) $targetid)." AND targettype = '".$this->db->escape($targettype)."')";
+			if ($sourceid == $this->id && $sourcetype == $this->element && $targetid == $this->id && $targettype == $this->element && $clause == 'OR') {
+				$this->linkedObjectsFullLoaded = true;
+			}
 		}
 		$sql .= " ORDER BY ".$orderby;
 
@@ -4004,7 +4039,7 @@ abstract class CommonObject
 				$this->context['link_source_type'] = $sourcetype;
 				$this->context['link_target_id'] = $targetid;
 				$this->context['link_target_type'] = $targettype;
-				$result = $this->call_trigger('OBJECT_LINK_UPDATE', $f_user);
+				$result = $this->call_trigger('OBJECT_LINK_MODIFY', $f_user);
 				if ($result < 0) {
 					$error++;
 				}
@@ -4354,9 +4389,10 @@ abstract class CommonObject
 	 *  Check is done into this->childtables. There is no check into llx_element_element.
 	 *
 	 *  @param	int		$id			Force id of object
+	 *  @param	int		$entity		Force entity to check
 	 *  @return	int					<0 if KO, 0 if not used, >0 if already used
 	 */
-	public function isObjectUsed($id = 0)
+	public function isObjectUsed($id = 0, $entity = 0)
 	{
 		global $langs;
 
@@ -4379,11 +4415,25 @@ abstract class CommonObject
 
 		// Test if child exists
 		$haschild = 0;
-		foreach ($arraytoscan as $table => $elementname) {
+		foreach ($arraytoscan as $table => $element) {
 			//print $id.'-'.$table.'-'.$elementname.'<br>';
-			// Check if third party can be deleted
-			$sql = "SELECT COUNT(*) as nb from ".$this->db->prefix().$table;
-			$sql .= " WHERE ".$this->fk_element." = ".((int) $id);
+			// Check if element can be deleted
+			$sql = "SELECT COUNT(*) as nb";
+			$sql.= " FROM ".$this->db->prefix().$table." as c";
+			if (!empty($element['parent']) && !empty($element['parentkey'])) {
+				$sql.= ", ".$this->db->prefix().$element['parent']." as p";
+			}
+			$sql.= " WHERE c.".$this->fk_element." = ".((int) $id);
+			if (!empty($element['parent']) && !empty($element['parentkey'])) {
+				$sql.= " AND c.".$element['parentkey']." = p.rowid";
+			}
+			if (!empty($entity)) {
+				if (!empty($element['parent']) && !empty($element['parentkey'])) {
+					$sql.= " AND p.entity = ".((int) $entity);
+				} else {
+					$sql.= " AND c.entity = ".((int) $entity);
+				}
+			}
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$obj = $this->db->fetch_object($resql);
@@ -4391,11 +4441,12 @@ abstract class CommonObject
 					$langs->load("errors");
 					//print 'Found into table '.$table.', type '.$langs->transnoentitiesnoconv($elementname).', haschild='.$haschild;
 					$haschild += $obj->nb;
-					if (is_numeric($elementname)) {	// old usage
-						$this->errors[] = $langs->transnoentities("ErrorRecordHasAtLeastOneChildOfType", method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref, $table);
-					} else // new usage: $elementname=Translation key
-					{
-						$this->errors[] = $langs->transnoentities("ErrorRecordHasAtLeastOneChildOfType", method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref, $langs->transnoentitiesnoconv($elementname));
+					if (is_numeric($element)) {	// very old usage array('table1', 'table2', ...)
+						$this->errors[] = $langs->transnoentitiesnoconv("ErrorRecordHasAtLeastOneChildOfType", method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref, $table);
+					} elseif (is_string($element)) { // old usage array('table1' => 'TranslateKey1', 'table2' => 'TranslateKey2', ...)
+						$this->errors[] = $langs->transnoentitiesnoconv("ErrorRecordHasAtLeastOneChildOfType",  method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref, $langs->transnoentitiesnoconv($element));
+					} else { // new usage: $element['name']=Translation key
+						$this->errors[] = $langs->transnoentitiesnoconv("ErrorRecordHasAtLeastOneChildOfType",  method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref, $langs->transnoentitiesnoconv($element['name']));
 					}
 					break; // We found at least one, we stop here
 				}
@@ -4912,6 +4963,7 @@ abstract class CommonObject
 			print '<td class="left">'.$langs->trans('Unit').'</td>';
 		}
 		print '<td class="right">'.$langs->trans('ReductionShort').'</td>';
+		print '<td class="linecolht right">'.$langs->trans('TotalHT').'</td>';
 		print '<td class="center">'.$form->showCheckAddButtons('checkforselect', 1).'</td>';
 		print '</tr>';
 		$i = 0;
@@ -5042,6 +5094,7 @@ abstract class CommonObject
 		}
 
 		$this->tpl['price'] = price($line->subprice);
+		$this->tpl['total_ht'] = price($line->total_ht);
 		$this->tpl['multicurrency_price'] = price($line->multicurrency_subprice);
 		$this->tpl['qty'] = (($line->info_bits & 2) != 2) ? $line->qty : '&nbsp;';
 		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
@@ -5566,7 +5619,10 @@ abstract class CommonObject
 	{
 		// phpcs:enable
 		global $langs, $conf;
-
+		if (!empty(self::TRIGGER_PREFIX) && strpos($triggerName, self::TRIGGER_PREFIX . '_') !== 0) {
+			dol_print_error('', 'The trigger "' . $triggerName . '" does not start with "' . self::TRIGGER_PREFIX . '_" as required.');
+			exit;
+		}
 		if (!is_object($langs)) {	// If lang was not defined, we set it. It is required by run_triggers.
 			include_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
 			$langs = new Translate('', $conf);
@@ -5693,12 +5749,12 @@ abstract class CommonObject
 
 			$enabled = 1;
 			if (isset($this->fields[$key]['enabled'])) {
-				$enabled = dol_eval($this->fields[$key]['enabled'], 1);
+				$enabled = dol_eval($this->fields[$key]['enabled'], 1, 1, '1');
 			}
 			/*$perms = 1;
 			if (isset($this->fields[$key]['perms']))
 			{
-				$perms = dol_eval($this->fields[$key]['perms'], 1);
+				$perms = dol_eval($this->fields[$key]['perms'], 1, 1, '1');
 			}*/
 			if (empty($enabled)) {
 				continue;
@@ -5854,7 +5910,7 @@ abstract class CommonObject
 						if (!empty($extrafields) && !empty($extrafields->attributes[$this->table_element]['computed'][$key])) {
 							//var_dump($conf->disable_compute);
 							if (empty($conf->disable_compute)) {
-								$this->array_options["options_".$key] = dol_eval($extrafields->attributes[$this->table_element]['computed'][$key], 1, 0);
+								$this->array_options["options_".$key] = dol_eval($extrafields->attributes[$this->table_element]['computed'][$key], 1, 0, '');
 							}
 						}
 					}
@@ -5958,7 +6014,14 @@ abstract class CommonObject
 				$attributeLabel    = $extrafields->attributes[$this->table_element]['label'][$attributeKey];
 				$attributeParam    = $extrafields->attributes[$this->table_element]['param'][$attributeKey];
 				$attributeRequired = $extrafields->attributes[$this->table_element]['required'][$attributeKey];
+				$attributeUnique   = $extrafields->attributes[$this->table_element]['unique'][$attributeKey];
 				$attrfieldcomputed = $extrafields->attributes[$this->table_element]['computed'][$attributeKey];
+
+				// If we clone, we have to clean unique extrafields to prevent duplicates.
+				// This behaviour can be prevented by external code by changing $this->context['createfromclone'] value in createFrom hook
+				if (! empty($this->context['createfromclone']) && $this->context['createfromclone'] == 'createfromclone' && ! empty($attributeUnique)) {
+					$new_array_options[$key] = null;
+				}
 
 				// Similar code than into insertExtraFields
 				if ($attributeRequired) {
@@ -5985,7 +6048,7 @@ abstract class CommonObject
 
 				if (!empty($attrfieldcomputed)) {
 					if (!empty($conf->global->MAIN_STORE_COMPUTED_EXTRAFIELDS)) {
-						$value = dol_eval($attrfieldcomputed, 1, 0);
+						$value = dol_eval($attrfieldcomputed, 1, 0, '');
 						dol_syslog($langs->trans("Extrafieldcomputed")." sur ".$attributeLabel."(".$value.")", LOG_DEBUG);
 						$new_array_options[$key] = $value;
 					} else {
@@ -6352,7 +6415,7 @@ abstract class CommonObject
 
 			if (!empty($attrfieldcomputed)) {
 				if (!empty($conf->global->MAIN_STORE_COMPUTED_EXTRAFIELDS)) {
-					$value = dol_eval($attrfieldcomputed, 1, 0);
+					$value = dol_eval($attrfieldcomputed, 1, 0, '');
 					dol_syslog($langs->trans("Extrafieldcomputed")." sur ".$attributeLabel."(".$value.")", LOG_DEBUG);
 					$this->array_options["options_".$key] = $value;
 				} else {
@@ -6648,7 +6711,7 @@ abstract class CommonObject
 
 		// Add validation state class
 		if (!empty($validationClass)) {
-			$morecss.= ' '.$validationClass;
+			$morecss.= $validationClass;
 		}
 
 		if (in_array($type, array('date'))) {
@@ -6697,7 +6760,7 @@ abstract class CommonObject
 			if (!preg_match('/search_/', $keyprefix)) {		// If keyprefix is search_ or search_options_, we must just use a simple text field
 				require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 				$doleditor = new DolEditor($keyprefix.$key.$keysuffix, $value, '', 200, 'dolibarr_notes', 'In', false, false, !empty($conf->fckeditor->enabled) && $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_5, '90%');
-				$out = $doleditor->Create(1);
+				$out = $doleditor->Create(1, '', true, '', '', $moreparam, $morecss);
 			} else {
 				$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam ? $moreparam : '').'>';
 			}
@@ -7067,6 +7130,8 @@ abstract class CommonObject
 					$paramforthenewlink = '';
 					$paramforthenewlink .= (GETPOSTISSET('action') ? '&action='.GETPOST('action', 'aZ09') : '');
 					$paramforthenewlink .= (GETPOSTISSET('id') ? '&id='.GETPOST('id', 'int') : '');
+					$paramforthenewlink .= (GETPOSTISSET('origin') ? '&origin='.GETPOST('origin', 'aZ09') : '');
+					$paramforthenewlink .= (GETPOSTISSET('originid') ? '&originid='.GETPOST('originid', 'int') : '');
 					$paramforthenewlink .= '&fk_'.strtolower($class).'=--IDFORBACKTOPAGE--';
 					// TODO Add Javascript code to add input fields already filled into $paramforthenewlink so we won't loose them when going back to main page
 					$out .= '<a class="butActionNew" title="'.$langs->trans("New").'" href="'.$url_path.'?action=create&backtopage='.urlencode($_SERVER['PHP_SELF'].($paramforthenewlink ? '?'.$paramforthenewlink : '')).'"><span class="fa fa-plus-circle valignmiddle"></span></a>';
@@ -7206,7 +7271,7 @@ abstract class CommonObject
 		if ($computed) {
 			// Make the eval of compute string
 			//var_dump($computed);
-			$value = dol_eval($computed, 1, 0);
+			$value = dol_eval($computed, 1, 0, '');
 		}
 
 		if (empty($morecss)) {
@@ -7717,7 +7782,7 @@ abstract class CommonObject
 		if (empty($reshook)) {
 			if (key_exists('label', $extrafields->attributes[$this->table_element]) && is_array($extrafields->attributes[$this->table_element]['label']) && count($extrafields->attributes[$this->table_element]['label']) > 0) {
 				$out .= "\n";
-				$out .= '<!-- showOptionals --> ';
+				$out .= '<!-- commonobject:showOptionals --> ';
 				$out .= "\n";
 
 				$extrafields_collapse_num = '';
@@ -7731,7 +7796,7 @@ abstract class CommonObject
 					// Test on 'enabled' ('enabled' is different than 'list' = 'visibility')
 					$enabled = 1;
 					if ($enabled && isset($extrafields->attributes[$this->table_element]['enabled'][$key])) {
-						$enabled = dol_eval($extrafields->attributes[$this->table_element]['enabled'][$key], 1);
+						$enabled = dol_eval($extrafields->attributes[$this->table_element]['enabled'][$key], 1, 1, '1');
 					}
 					if (empty($enabled)) {
 						continue;
@@ -7739,12 +7804,12 @@ abstract class CommonObject
 
 					$visibility = 1;
 					if ($visibility && isset($extrafields->attributes[$this->table_element]['list'][$key])) {
-						$visibility = dol_eval($extrafields->attributes[$this->table_element]['list'][$key], 1);
+						$visibility = dol_eval($extrafields->attributes[$this->table_element]['list'][$key], 1, 1, '1');
 					}
 
 					$perms = 1;
 					if ($perms && isset($extrafields->attributes[$this->table_element]['perms'][$key])) {
-						$perms = dol_eval($extrafields->attributes[$this->table_element]['perms'][$key], 1);
+						$perms = dol_eval($extrafields->attributes[$this->table_element]['perms'][$key], 1, 1, '1');
 					}
 
 					if (($mode == 'create') && abs($visibility) != 1 && abs($visibility) != 3) {
@@ -7822,7 +7887,7 @@ abstract class CommonObject
 						}
 
 						// if colspan=0 or 1, the second column is not extended, so the separator must be on 2 columns
-						$out .= $extrafields->showSeparator($key, $this, ($colspan ? $colspan + 1 : 2), $display_type);
+						$out .= $extrafields->showSeparator($key, $this, ($colspan ? $colspan + 1 : 2), $display_type, $mode);
 					} else {
 						$class = (!empty($extrafields->attributes[$this->table_element]['hidden'][$key]) ? 'hideobject ' : '');
 						$csstyle = '';
@@ -7955,7 +8020,7 @@ abstract class CommonObject
 					$out .= $this->getJSListDependancies();
 				}
 
-				$out .= '<!-- /showOptionals --> '."\n";
+				$out .= '<!-- commonobject:showOptionals end --> '."\n";
 			}
 		}
 
@@ -8059,7 +8124,7 @@ abstract class CommonObject
 
 	/**
 	 * Function used to replace a thirdparty id with another one.
-	 * This function is meant to be called from replaceThirdparty with the appropiate tables
+	 * This function is meant to be called from replaceThirdparty with the appropriate tables
 	 * Column name fk_soc MUST be used to identify thirdparties
 	 *
 	 * @param  DoliDB 	   $db 			  Database handler
@@ -8076,7 +8141,36 @@ abstract class CommonObject
 
 			if (!$db->query($sql)) {
 				if ($ignoreerrors) {
-					return true; // TODO Not enough. If there is A-B on kept thirdarty and B-C on old one, we must get A-B-C after merge. Not A-B.
+					return true; // TODO Not enough. If there is A-B on kept thirdparty and B-C on old one, we must get A-B-C after merge. Not A-B.
+				}
+				//$this->errors = $db->lasterror();
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	/**
+	 * Function used to replace a product id with another one.
+	 * This function is meant to be called from replaceProduct with the appropriate tables
+	 * Column name fk_product MUST be used to identify products
+	 *
+	 * @param  DoliDB 	   $db 			  Database handler
+	 * @param  int 		   $origin_id     Old product id (the product to delete)
+	 * @param  int 		   $dest_id       New product id (the product that will received element of the other)
+	 * @param  string[]    $tables        Tables that need to be changed
+	 * @param  int         $ignoreerrors  Ignore errors. Return true even if errors. We need this when replacement can fails like for categories (categorie of old product may already exists on new one)
+	 * @return bool						  True if success, False if error
+	 */
+	public static function commonReplaceProduct(DoliDB $db, $origin_id, $dest_id, array $tables, $ignoreerrors = 0)
+	{
+		foreach ($tables as $table) {
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.$table.' SET fk_product = '.((int) $dest_id).' WHERE fk_product = '.((int) $origin_id);
+
+			if (!$db->query($sql)) {
+				if ($ignoreerrors) {
+					return true; // TODO Not enough. If there is A-B on kept product and B-C on old one, we must get A-B-C after merge. Not A-B.
 				}
 				//$this->errors = $db->lasterror();
 				return false;

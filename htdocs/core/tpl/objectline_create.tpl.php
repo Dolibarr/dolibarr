@@ -6,9 +6,11 @@
  * Copyright (C) 2014		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2014       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2015-2016	Marcos García		<marcosgdf@gmail.com>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
  * Copyright (C) 2018		Ferran Marcet		<fmarcet@2byte.es>
  * Copyright (C) 2019		Nicolas ZABOURI		<info@inovea-conseil.com>
+ * Copyright (C) 2022		OpenDSI				<support@open-dsi.fr>
+ * Copyright (C) 2022      	Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,6 +69,9 @@ if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf-
 }
 if (in_array($object->element, array('propal', 'commande', 'order', 'facture', 'facturerec', 'invoice', 'supplier_proposal', 'order_supplier', 'invoice_supplier', 'invoice_supplier_rec'))) {
 	$colspan++; // With this, there is a column move button
+}
+if (!empty($conf->asset->enabled) && $object->element == 'invoice_supplier') {
+	$colspan++;
 }
 
 //print $object->element;
@@ -311,6 +316,11 @@ if ($nolinesbefore) {
 			echo '<input type="hidden" name="pbq" id="pbq" value="">';
 			echo '</span>';
 		}
+
+		if (!empty($conf->global->MAIN_ADD_LINE_AT_POSITION)) {
+			echo '<br>'.$langs->trans('AddLineOnPosition').' : <input type="number" name="rank" step="1" min="0" style="width: 5em;">';
+		}
+
 		if (is_object($hookmanager) && empty($senderissupplier)) {
 			$parameters = array('fk_parent_line'=>GETPOST('fk_parent_line', 'int'));
 			$reshook = $hookmanager->executeHooks('formCreateProductOptions', $parameters, $object, $action);
@@ -356,7 +366,7 @@ if ($nolinesbefore) {
 		}
 		if (is_object($objectline)) {
 			$temps = $objectline->showOptionals($extrafields, 'create', array(), '', '', 1, 'line');
-			;
+
 			if (!empty($temps)) {
 				print '<div style="padding-top: 10px" id="extrafield_lines_area_create" name="extrafield_lines_area_create">';
 				print $temps;
@@ -367,7 +377,7 @@ if ($nolinesbefore) {
 		if ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier' || $object->element == 'invoice_supplier_rec') {	// We must have same test in printObjectLines
 			$coldisplay++;
 			?>
-	<td class="nobottom linecolresupplier"><input id="fourn_ref" name="fourn_ref" class="flat minwidth50 maxwidth125" value="<?php echo (GETPOSTISSET("fourn_ref") ? GETPOST("fourn_ref", 'alpha', 2) : ''); ?>"></td>
+	<td class="nobottom linecolrefsupplier"><input id="fourn_ref" name="fourn_ref" class="flat minwidth50 maxwidth125 maxwidth125onsmartphone" value="<?php echo (GETPOSTISSET("fourn_ref") ? GETPOST("fourn_ref", 'alpha', 2) : ''); ?>"></td>
 		<?php }
 		print '<td class="nobottom linecolvat right">';
 		$coldisplay++;
@@ -641,17 +651,20 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 	$("#select_type").change(function()
 	{
 		setforfree();
-		if (jQuery('#select_type').val() >= 0)
-		{
-			/* focus work on a standard textarea but not if field was replaced with CKEDITOR */
+
+		if (jQuery('#select_type').val() >= 0) {
+			console.log("Set focus on description field");
+			/* this focus code works on a standard textarea but not if field was replaced with CKEDITOR */
 			jQuery('#dp_desc').focus();
-			/* focus if CKEDITOR */
-			if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined")
-			{
+			/* this focus code works for CKEDITOR */
+			if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined") {
 				var editor = CKEDITOR.instances['dp_desc'];
-				if (editor) { editor.focus(); }
+				if (editor) {
+					editor.focus();
+				}
 			}
 		}
+
 		console.log("Hide/show date according to product type");
 		if (jQuery('#select_type').val() == '0')
 		{
@@ -1030,18 +1043,18 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 			jQuery("#multicurrency_price_ht").val('').show();
 			jQuery("#title_up_ht, #title_up_ht_currency").show();
 		<?php } else { ?>
-			jQuery("#price_ht").val('').hide();
+			//jQuery("#price_ht").val('').hide();
 			jQuery("#multicurrency_price_ht").val('').hide();
 			jQuery("#title_up_ht, #title_up_ht_currency").hide();
 		<?php } ?>
-		<?php if (empty($conf->global->MAIN_ENABLE_EDIT_PREDEF_PRICETTC)) { ?>
-			jQuery("#price_ttc").val('').hide();
-			jQuery("#multicurrency_price_ttc").val('').hide();
-			jQuery("#title_up_ttc, #title_up_ttc_currency").hide();
-		<?php } else { /* this option work great with supplier invoices */ ?>
+		<?php if (empty($conf->global->MAIN_DISABLE_EDIT_PREDEF_PRICETTC)) { ?>
 			jQuery("#price_ttc").val('').show();
 			jQuery("#multicurrency_price_ttc").val('').show();
 			jQuery("#title_up_ttc, #title_up_ttc_currency").show();
+		<?php } else { ?>
+			jQuery("#price_ttc").val('').hide();
+			jQuery("#multicurrency_price_ttc").val('').hide();
+			jQuery("#title_up_ttc, #title_up_ttc_currency").hide();
 		<?php } ?>
 		jQuery("#fourn_ref, #tva_tx, #title_vat").hide();
 		/* jQuery("#title_fourn_ref").hide(); */

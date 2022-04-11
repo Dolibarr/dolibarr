@@ -75,6 +75,12 @@ $hookmanager->initHooks(array('paiementcard', 'globalcard'));
 
 $formquestion = array();
 
+$usercanissuepayment = !empty($user->rights->facture->paiement);
+
+$fieldid = 'rowid';
+$isdraft = (($object->statut == Facture::STATUS_DRAFT) ? 1 : 0);
+$result = restrictedArea($user, 'facture', $object->id, '', '', 'fk_soc', $fieldid, $isdraft);
+
 
 /*
  * Actions
@@ -87,7 +93,7 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
-	if ($action == 'add_paiement' || ($action == 'confirm_paiement' && $confirm == 'yes')) {
+	if (($action == 'add_paiement' || ($action == 'confirm_paiement' && $confirm == 'yes')) && $usercanissuepayment) {
 		$error = 0;
 
 		$datepaye = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
@@ -184,6 +190,7 @@ if (empty($reshook)) {
 
 		// Check if payments in both currency
 		if ($totalpayment > 0 && $multicurrency_totalpayment > 0) {
+			$langs->load("errors");
 			setEventMessages($langs->transnoentities('ErrorPaymentInBothCurrency'), null, 'errors');
 			$error++;
 		}
@@ -202,10 +209,10 @@ if (empty($reshook)) {
 	/*
 	 * Action confirm_paiement
 	 */
-	if ($action == 'confirm_paiement' && $confirm == 'yes') {
+	if ($action == 'confirm_paiement' && $confirm == 'yes' && $usercanissuepayment) {
 		$error = 0;
 
-		$datepaye = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
+		$datepaye = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'), 'tzuser');
 
 		$db->begin();
 
@@ -213,6 +220,8 @@ if (empty($reshook)) {
 		if ($socid > 0) {
 			$thirdparty->fetch($socid);
 		}
+
+		$multicurrency_code = array();
 
 		// Clean parameters amount if payment is for a credit note
 		foreach ($amounts as $key => $value) {	// How payment is dispatched
@@ -222,6 +231,7 @@ if (empty($reshook)) {
 				$newvalue = price2num($value, 'MT');
 				$amounts[$key] = - abs($newvalue);
 			}
+			$multicurrency_code[$key] = $tmpinvoice->multicurrency_code;
 		}
 
 		foreach ($multicurrency_amounts as $key => $value) {	// How payment is dispatched
@@ -231,6 +241,7 @@ if (empty($reshook)) {
 				$newvalue = price2num($value, 'MT');
 				$multicurrency_amounts[$key] = - abs($newvalue);
 			}
+			$multicurrency_code[$key] = $tmpinvoice->multicurrency_code;
 		}
 
 		if (!empty($conf->banque->enabled)) {
@@ -246,9 +257,11 @@ if (empty($reshook)) {
 		$paiement->datepaye     = $datepaye;
 		$paiement->amounts      = $amounts; // Array with all payments dispatching with invoice id
 		$paiement->multicurrency_amounts = $multicurrency_amounts; // Array with all payments dispatching
+		$paiement->multicurrency_code = $multicurrency_code; // Array with all currency of payments dispatching
 		$paiement->paiementid   = dol_getIdFromCode($db, GETPOST('paiementcode'), 'c_paiement', 'code', 'id', 1);
 		$paiement->num_payment  = GETPOST('num_paiement', 'alpha');
 		$paiement->note_private = GETPOST('comment', 'alpha');
+		$paiement->fk_account   = GETPOST('accountid', 'int');
 
 		if (!$error) {
 			// Create payment and update this->multicurrency_amounts if this->amounts filled or
@@ -265,7 +278,7 @@ if (empty($reshook)) {
 			if (GETPOST('type') == Facture::TYPE_CREDIT_NOTE) {
 				$label = '(CustomerInvoicePaymentBack)'; // Refund of a credit note
 			}
-			$result = $paiement->addPaymentToBank($user, 'payment', $label, GETPOST('accountid'), GETPOST('chqemetteur'), GETPOST('chqbank'));
+			$result = $paiement->addPaymentToBank($user, 'payment', $label, GETPOST('accountid', 'int'), GETPOST('chqemetteur'), GETPOST('chqbank'));
 			if ($result < 0) {
 				setEventMessages($paiement->error, $paiement->errors, 'errors');
 				$error++;
@@ -485,8 +498,10 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 			if ($facture->type == 2) {
 				print '<td><span class="fieldrequired">'.$langs->trans('AccountToDebit').'</span></td>';
 			}
+
 			print '<td>';
-			$form->select_comptes($accountid, 'accountid', 0, '', 2);
+			print img_picto('', 'bank_account');
+			print $form->select_comptes($accountid, 'accountid', 0, '', 2, '', 0, 'widthcentpercentminusx maxwidth500', 1);
 			print '</td>';
 		} else {
 			print '<td>&nbsp;</td>';
@@ -495,26 +510,27 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
 		// Bank check number
 		print '<tr><td>'.$langs->trans('Numero');
-		print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
+		print ' <em class="opacitymedium">('.$langs->trans("ChequeOrTransferNumber").')</em>';
 		print '</td>';
 		print '<td><input name="num_paiement" type="text" class="maxwidth200" value="'.$paymentnum.'"></td></tr>';
 
 		// Check transmitter
 		print '<tr><td class="'.(GETPOST('paiementcode') == 'CHQ' ? 'fieldrequired ' : '').'fieldrequireddyn">'.$langs->trans('CheckTransmitter');
-		print ' <em>('.$langs->trans("ChequeMaker").')</em>';
+		print ' <em class="opacitymedium">('.$langs->trans("ChequeMaker").')</em>';
 		print '</td>';
 		print '<td><input id="fieldchqemetteur" class="maxwidth300" name="chqemetteur" type="text" value="'.GETPOST('chqemetteur', 'alphanohtml').'"></td></tr>';
 
 		// Bank name
 		print '<tr><td>'.$langs->trans('Bank');
-		print ' <em>('.$langs->trans("ChequeBank").')</em>';
+		print ' <em class="opacitymedium">('.$langs->trans("ChequeBank").')</em>';
 		print '</td>';
 		print '<td><input name="chqbank" class="maxwidth300" type="text" value="'.GETPOST('chqbank', 'alphanohtml').'"></td></tr>';
 
 		// Comments
 		print '<tr><td>'.$langs->trans('Comments').'</td>';
 		print '<td class="tdtop">';
-		print '<textarea name="comment" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.GETPOST('comment', 'restricthtml').'</textarea></td></tr>';
+		print '<textarea name="comment" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.GETPOST('comment', 'restricthtml').'</textarea>';
+		print '</td></tr>';
 
 		print '</table>';
 

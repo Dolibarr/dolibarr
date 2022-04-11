@@ -635,6 +635,7 @@ if ($massaction == 'confirm_createbills') {   // Create bills from orders.
 
 	$TFact = array();
 	$TFactThird = array();
+	$TFactThirdNbLines = array();
 
 	$nb_bills_created = 0;
 	$lastid= 0;
@@ -685,6 +686,7 @@ if ($massaction == 'confirm_createbills') {   // Create bills from orders.
 				$lastid = $objecttmp->id;
 
 				$TFactThird[$cmd->socid] = $objecttmp;
+				$TFactThirdNbLines[$cmd->socid] = 0; //init nblines to have lines ordered by expedition and rang
 			} else {
 				$langs->load("errors");
 				$errors[] = $cmd->ref.' : '.$langs->trans($objecttmp->error);
@@ -774,6 +776,11 @@ if ($massaction == 'confirm_createbills') {   // Create bills from orders.
 
 						$objecttmp->context['createfromclone'];
 
+						$rang = $lines[$i]->rang;
+						//there may already be rows from previous orders
+						if (!empty($createbills_onebythird))
+							$rang = $TFactThirdNbLines[$cmd->socid];
+
 						$result = $objecttmp->addline(
 							$desc,
 							$lines[$i]->subprice,
@@ -791,7 +798,7 @@ if ($massaction == 'confirm_createbills') {   // Create bills from orders.
 							'HT',
 							0,
 							$product_type,
-							$lines[$i]->rang,
+							$rang,
 							$lines[$i]->special_code,
 							$objecttmp->origin,
 							$lines[$i]->rowid,
@@ -806,6 +813,8 @@ if ($massaction == 'confirm_createbills') {   // Create bills from orders.
 						);
 						if ($result > 0) {
 							$lineid = $result;
+							if (!empty($createbills_onebythird)) //increment rang to keep order
+								$TFactThirdNbLines[$rcp->socid]++;
 						} else {
 							$lineid = 0;
 							$error++;
@@ -1209,6 +1218,26 @@ if (!$error && $massaction == 'validate' && $permissiontoadd) {
 		setEventMessages($langs->trans('ErrorMassValidationNotAllowedWhenStockIncreaseOnAction'), null, 'errors');
 		$error++;
 	}
+	if ($objecttmp->element == 'facture') {
+		if (!empty($toselect) && !empty($conf->global->INVOICE_CHECK_POSTERIOR_DATE)) {
+			// order $toselect by date
+			$sql  = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture";
+			$sql .= " WHERE rowid IN (".$db->sanitize(implode(",", $toselect)).")";
+			$sql .= " ORDER BY datef";
+
+			$resql = $db->query($sql);
+			if ($resql) {
+				$toselectnew = [];
+				while ( !empty($arr = $db->fetch_row($resql))) {
+					$toselectnew[] = $arr[0];
+				}
+				$toselect = (empty($toselectnew)) ? $toselect : $toselectnew;
+			} else {
+				dol_print_error($db);
+				$error++;
+			}
+		}
+	}
 	if (!$error) {
 		$db->begin();
 
@@ -1246,9 +1275,9 @@ if (!$error && $massaction == 'validate' && $permissiontoadd) {
 						$model = $objecttmp->model_pdf;
 						$ret = $objecttmp->fetch($objecttmp->id); // Reload to get new records
 						// To be sure vars is defined
-						$hidedetails = !empty($hidedetails) ? $hidedetails : 0;
-						$hidedesc = !empty($hidedesc) ? $hidedesc : 0;
-						$hideref = !empty($hideref) ? $hideref : 0;
+						$hidedetails = !empty($hidedetails) ? $hidedetails : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0);
+						$hidedesc = !empty($hidedesc) ? $hidedesc : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0);
+						$hideref = !empty($hideref) ? $hideref : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0);
 						$moreparams = !empty($moreparams) ? $moreparams : null;
 
 						$result = $objecttmp->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
@@ -1397,13 +1426,13 @@ if (!$error && $massaction == 'generate_doc' && $permissiontoread) {
 
 			// To be sure vars is defined
 			if (empty($hidedetails)) {
-				$hidedetails = 0;
+				$hidedetails = (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0);
 			}
 			if (empty($hidedesc)) {
-				$hidedesc = 0;
+				$hidedesc = (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0);
 			}
 			if (empty($hideref)) {
-				$hideref = 0;
+				$hideref = (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0);
 			}
 			if (empty($moreparams)) {
 				$moreparams = null;
@@ -1579,17 +1608,20 @@ if (!$error && ($massaction == 'approveleave' || ($action == 'approveleave' && $
 	$nbok = 0;
 	foreach ($toselect as $toselectid) {
 		$result = $objecttmp->fetch($toselectid);
-		if ($result>0) {
-			if ($objecttmp->statut == Holiday::STATUS_VALIDATED && $user->id == $objecttmp->fk_validator) {
+		if ($result > 0) {
+			if ($objecttmp->statut != Holiday::STATUS_VALIDATED) {
+				setEventMessages($langs->trans('StatusOfRefMustBe', $objecttmp->ref, $langs->transnoentitiesnoconv('Validated')), null, 'warnings');
+				continue;
+			}
+			if ($user->id == $objecttmp->fk_validator) {
 				$objecttmp->oldcopy = dol_clone($objecttmp);
 
 				$objecttmp->date_valid = dol_now();
 				$objecttmp->fk_user_valid = $user->id;
 				$objecttmp->statut = Holiday::STATUS_APPROVED;
 
-				$db->begin();
-
 				$verif = $objecttmp->approve($user);
+
 				if ($verif <= 0) {
 					setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
 					$error++;
@@ -1664,14 +1696,9 @@ if (!$error && ($massaction == 'approveleave' || ($action == 'approveleave' && $
 						}
 					}
 				}
-
-				if (!$error) {
-					$db->commit();
-					$nbok++;
-				} else {
-					$db->rollback();
-					$action = '';
-				}
+			} else {
+				$langs->load("errors");
+				setEventMessages($langs->trans('ErrorNotApproverForHoliday', $objecttmp->ref), null, 'errors');
 			}
 		} else {
 			setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
@@ -1683,7 +1710,7 @@ if (!$error && ($massaction == 'approveleave' || ($action == 'approveleave' && $
 	if (!$error) {
 		if ($nbok > 1) {
 			setEventMessages($langs->trans("RecordsApproved", $nbok), null, 'mesgs');
-		} else {
+		} elseif ($nbok == 1) {
 			setEventMessages($langs->trans("RecordAproved"), null, 'mesgs');
 		}
 		$db->commit();

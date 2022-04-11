@@ -256,12 +256,12 @@ class Website extends CommonObject
 				}
 			}
 
-			// Uncomment this and change MYOBJECT to your own tag if you
+			// Uncomment this and change WEBSITE to your own tag if you
 			// want this action to call a trigger.
 			// if (!$notrigger) {
 
 			//     // Call triggers
-			//     $result = $this->call_trigger('MYOBJECT_CREATE',$user);
+			//     $result = $this->call_trigger('WEBSITE_CREATE',$user);
 			//     if ($result < 0) $error++;
 			//     // End call triggers
 			// }
@@ -560,7 +560,7 @@ class Website extends CommonObject
 			}
 
 			//// Call triggers
-			//$result=$this->call_trigger('MYOBJECT_MODIFY',$user);
+			//$result=$this->call_trigger('WEBSITE_MODIFY',$user);
 			//if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
 			//// End call triggers
 		}
@@ -595,11 +595,11 @@ class Website extends CommonObject
 
 		if (!$error) {
 			if (!$notrigger) {
-				// Uncomment this and change MYOBJECT to your own tag if you
+				// Uncomment this and change WEBSITE to your own tag if you
 				// want this action calls a trigger.
 
 				//// Call triggers
-				//$result=$this->call_trigger('MYOBJECT_DELETE',$user);
+				//$result=$this->call_trigger('WEBSITE_DELETE',$user);
 				//if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
 				//// End call triggers
 			}

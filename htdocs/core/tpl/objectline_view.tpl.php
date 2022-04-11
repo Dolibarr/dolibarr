@@ -6,6 +6,7 @@
  * Copyright (C) 2012-2014  Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2017		Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2022		OpenDSI				<support@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -171,13 +172,13 @@ if (($line->info_bits & 2) == 2) {
 			print '<div class="clearboth nowraponall daterangeofline-facturedetrec">';
 		}
 		if ($line->date_start_fill) {
-			print '<span class="opacitymedium">'.$langs->trans('AutoFillDateFromShort').':</span> '.yn($line->date_start_fill);
+			print '<span class="opacitymedium" title="'.dol_escape_htmltag($langs->trans("AutoFillDateFrom")).'">'.$langs->trans('AutoFillDateFromShort').':</span> '.yn($line->date_start_fill);
 		}
 		if ($line->date_start_fill && $line->date_end_fill) {
 			print ' - ';
 		}
 		if ($line->date_end_fill) {
-			print '<span class="opacitymedium">'.$langs->trans('AutoFillDateToShort').':</span> '.yn($line->date_end_fill);
+			print '<span class="opacitymedium" title="'.dol_escape_htmltag($langs->trans("AutoFillDateTo")).'">'.$langs->trans('AutoFillDateToShort').':</span> '.yn($line->date_end_fill);
 		}
 		if ($line->date_start_fill || $line->date_end_fill) {
 			print '</div>';
@@ -199,7 +200,16 @@ if (($line->info_bits & 2) == 2) {
 			}
 		}
 
-		//print get_date_range($line->date_start, $line->date_end, $format);
+		// If we show the lines in a context to create a recurring sale invoice
+		if (basename($_SERVER["PHP_SELF"]) == 'card-rec.php') {
+			$default_start_fill = getDolGlobalInt('INVOICEREC_SET_AUTOFILL_DATE_START');
+			$default_end_fill = getDolGlobalInt('INVOICEREC_SET_AUTOFILL_DATE_END');
+			print '<div class="clearboth nowraponall daterangeofline-facturedetrec">';
+			print '<span class="opacitymedium" title="'.dol_escape_htmltag($langs->trans("AutoFillDateFrom")).'">'.$langs->trans('AutoFillDateFromShort').':</span> '.yn($default_start_fill);
+			print ' - ';
+			print '<span class="opacitymedium" title="'.dol_escape_htmltag($langs->trans("AutoFillDateTo")).'">'.$langs->trans('AutoFillDateToShort').':</span> '.yn($default_end_fill);
+			print '</div>';
+		}
 	}
 
 	// Add description in form
@@ -385,6 +395,35 @@ if ($this->statut == 0 && !empty($object_rights->creer) && $action != 'selectlin
 			// Set constant to disallow editing during a situation cycle
 			$situationinvoicelinewithparent = 1;
 		}
+	}
+
+	if (!empty($conf->asset->enabled) && $object->element == 'invoice_supplier') {
+		print '<td class="linecolasset center">';
+		$coldisplay++;
+		if (!empty($product_static->accountancy_code_buy) ||
+			!empty($product_static->accountancy_code_buy_intra) ||
+			!empty($product_static->accountancy_code_buy_export)
+		) {
+			$accountancy_category_asset = $conf->global->ASSET_ACCOUNTANCY_CATEGORY;
+			$filters = array();
+			if (!empty($product_static->accountancy_code_buy)) $filters[] = "account_number = '" . $this->db->escape($product_static->accountancy_code_buy) . "'";
+			if (!empty($product_static->accountancy_code_buy_intra)) $filters[] = "account_number = '" . $this->db->escape($product_static->accountancy_code_buy_intra) . "'";
+			if (!empty($product_static->accountancy_code_buy_export)) $filters[] = "account_number = '" . $this->db->escape($product_static->accountancy_code_buy_export) . "'";
+			$sql = "SELECT COUNT(*) AS found";
+			$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account";
+			$sql .= " WHERE pcg_type = '" . $this->db->escape($conf->global->ASSET_ACCOUNTANCY_CATEGORY) . "'";
+			$sql .= " AND (" . implode(' OR ', $filters). ")";
+			$resql_asset = $this->db->query($sql);
+			if (!$resql_asset) {
+				print 'Error SQL: ' . $this->db->lasterror();
+			} elseif ($obj = $this->db->fetch_object($resql_asset)) {
+				if (!empty($obj->found)) {
+					print '<a class="reposition" href="' . DOL_URL_ROOT . '/asset/card.php?action=create&supplier_invoice_id=' . $object->id . '&token=' . newToken() . '">';
+					print img_edit_add() . '</a>';
+				}
+			}
+		}
+		print '</td>';
 	}
 
 	print '<td class="linecoledit center">';

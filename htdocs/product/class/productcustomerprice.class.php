@@ -766,7 +766,7 @@ class Productcustomerprice extends CommonObject
 
 		if (!$error && !$notrigger) {
 			// Call trigger
-			$result = $this->call_trigger('PRODUCT_CUSTOMER_PRICE_UPDATE', $user);
+			$result = $this->call_trigger('PRODUCT_CUSTOMER_PRICE_MODIFY', $user);
 			if ($result < 0) {
 				$error++;
 			}

@@ -763,7 +763,20 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	// Description
 	print '<tr><td class="tdtop">'.$langs->trans("Description").'</td>';
 	print '<td>';
-	print '<textarea name="description" class="quatrevingtpercent" rows="'.ROWS_4.'">'.$description.'</textarea>';
+
+	if (empty($conf->global->FCKEDITOR_ENABLE_SOCIETE)) {
+		print '<textarea name="description" class="quatrevingtpercent" rows="'.ROWS_4.'">'.$description.'</textarea>';
+	} else {
+		// WYSIWYG editor
+		include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+		$cked_enabled = (!empty($conf->global->FCKEDITOR_ENABLE_DETAILS) ? $conf->global->FCKEDITOR_ENABLE_DETAILS : 0);
+		if (!empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) {
+			$nbrows = $conf->global->MAIN_INPUT_DESC_HEIGHT;
+		}
+		$doleditor = new DolEditor('description', $object->description, '', 80, 'dolibarr_details', '', false, true, $cked_enabled, $nbrows);
+		print $doleditor->Create();
+	}
+
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("Budget").'</td>';

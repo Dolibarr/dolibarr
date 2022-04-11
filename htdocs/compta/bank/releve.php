@@ -60,10 +60,11 @@ $newbankreceipt = GETPOST('newbankreceipt', 'alpha');
 
 // Security check
 $fieldid = (!empty($ref) ? $ref : $id);
-$fieldname = isset($ref) ? 'ref' : 'rowid';
+$fieldname = (!empty($ref) ? 'ref' : 'rowid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
+
 $result = restrictedArea($user, 'banque', $fieldid, 'bank_account', '', '', $fieldname);
 
 if ($user->rights->banque->consolidate && $action == 'dvnext' && !empty($dvid)) {

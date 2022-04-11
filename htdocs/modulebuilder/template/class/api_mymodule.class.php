@@ -49,7 +49,7 @@ class MyModuleApi extends DolibarrApi
 	 */
 	public function __construct()
 	{
-		global $db, $conf;
+		global $db;
 		$this->db = $db;
 		$this->myobject = new MyObject($this->db);
 	}

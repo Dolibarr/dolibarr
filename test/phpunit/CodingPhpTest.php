@@ -204,17 +204,11 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 					'commonobject.class.php',
 					'conf.class.php',
 					'html.form.class.php',
-					'html.formmail.class.php',
 					'translate.class.php',
 					'utils.class.php',
-					'modules_product.class.php',
-					'modules_societe.class.php',
 					'TraceableDB.php',
 					'multicurrency.class.php',
-					'productbatch.class.php',
-					'reception.class.php',
-					'infobox.class.php',
-					'link.class.php',
+					'infobox.class.php'
 				))) {
 					// Must not find $db->
 					$ok=true;
@@ -231,10 +225,12 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 				}
 			} else {
 				if (! in_array($file['name'], array(
+					'objectline_view.tpl.php',
 					'extrafieldsinexport.inc.php',
+					'extrafieldsinimport.inc.php',
 					'DolQueryCollector.php'
 				))) {
-					// Must must not found $this->db->
+					// Must not found $this->db->
 					$ok=true;
 					$matches=array();
 					// Check string $this->db-> into a non class.php file (it shoud be $db-> into such classes)
@@ -244,7 +240,7 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 						break;
 					}
 					//print __METHOD__." Result for checking we don't have non escaped string in sql requests for file ".$file."\n";
-					$this->assertTrue($ok, 'Found string $this->db-> in '.$file['relativename']);
+					$this->assertTrue($ok, 'Found string "$this->db->" in '.$file['relativename']);
 					//exit;
 				}
 			}
@@ -324,7 +320,7 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 				$ok=false;
 				break;
 			}
-			$this->assertTrue($ok, 'Found a forged SQL string that mix on same line the use of \' for PHP string and PHP variables into file '.$file['relativename'].' Use " to forge PHP string like this: $sql = "SELET ".$myvar...');
+			$this->assertTrue($ok, 'Found a forged SQL string that mix on same line the use of \' for PHP string and PHP variables into file '.$file['relativename'].' Use " to forge PHP string like this: $sql = "SELECT ".$myvar...');
 
 			// Check sql string VALUES ... , ".$xxx
 			//  with xxx that is not 'db-' (for $db->escape). It means we forget a ' if string, or an (int) if int, when forging sql request.
@@ -366,7 +362,7 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 			$matches=array();
 			preg_match_all('/(sql|SET|WHERE|INSERT|VALUES|LIKE).+\s*\'"\s*\.\s*\$(.......)/', $filecontent, $matches, PREG_SET_ORDER);
 			foreach ($matches as $key => $val) {
-				if (! in_array($val[2], array('this->d', 'this->e', 'db->esc', 'dbs->es', 'mydb->e', 'dbsessi', 'db->ida', 'escaped', 'exclude', 'include'))) {
+				if (! in_array($val[2], array('this->d', 'this->e', 'db->esc', 'dbs->es', 'dbs->id', 'mydb->e', 'dbsessi', 'db->ida', 'escaped', 'exclude', 'include'))) {
 					$ok=false;	// This will generate error
 					break;
 				}

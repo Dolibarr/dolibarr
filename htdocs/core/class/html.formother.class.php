@@ -88,7 +88,7 @@ class FormOther
 		$stringaddbarcode = str_replace("tmphtml", $htmltoreplaceby, $stringaddbarcode);
 		$out .= $stringaddbarcode.' <input type="text" name="barcodeproductqty" class="width50 right" value="1"><br>';
 		$out .= '<br>';
-		$out .= '<textarea type="text" name="barcodelist" class="centpercent" autofocus rows="'.ROWS_3.'" placeholder="'.dol_escape_htmltag($langs->trans("ScanOrTypeOrCopyPasteYouBarCode")).'"></textarea>';
+		$out .= '<textarea type="text" name="barcodelist" class="centpercent" autofocus rows="'.ROWS_3.'" placeholder="'.dol_escape_htmltag($langs->trans("ScanOrTypeOrCopyPasteYourBarCodes")).'"></textarea>';
 
 		/*print '<br>'.$langs->trans("or").'<br>';
 
@@ -110,7 +110,7 @@ class FormOther
 		$out .= 'jQuery("#scantoolmessage").text("");';
 		$out .= '});'."\n";
 		$out .= '$("#exec'.dol_escape_js($jstoexecuteonadd).'").click(function(){
-			console.log("We call js to execute '.dol_escape_js($jstoexecuteonadd).'");
+			console.log("We call js to execute \''.dol_escape_js($jstoexecuteonadd).'\'");
 			'.dol_escape_js($jstoexecuteonadd).'();
 			return false;	/* We want to stay on the scan tool */
 		})';
@@ -473,15 +473,6 @@ class FormOther
 		$langs->load('users');
 
 		$out = '';
-		// Enhance with select2
-		if ($conf->use_javascript_ajax) {
-			include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
-
-			$comboenhancement = ajax_combobox($htmlname);
-			if ($comboenhancement) {
-				$out .= $comboenhancement;
-			}
-		}
 
 		$reshook = $hookmanager->executeHooks('addSQLWhereFilterOnSelectSalesRep', array(), $this, $action);
 
@@ -621,6 +612,16 @@ class FormOther
 		}
 
 		$out .= '</select>';
+
+		// Enhance with select2
+		if ($conf->use_javascript_ajax) {
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
+
+			$comboenhancement = ajax_combobox($htmlname);
+			if ($comboenhancement) {
+				$out .= $comboenhancement;
+			}
+		}
 
 		return $out;
 	}

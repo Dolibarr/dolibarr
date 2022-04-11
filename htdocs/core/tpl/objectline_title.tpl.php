@@ -6,6 +6,7 @@
  * Copyright (C) 2012-2014  Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2017		Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2022		OpenDSI				<support@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -70,7 +71,9 @@ if (!empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) || !empty($conf->global->FA
 if (in_array($object->element, array('propal', 'commande', 'facture')) && $object->status == $object::STATUS_DRAFT) {
 	global $mysoc;
 
-	print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?mode=vatforalllines&id='.$object->id.'">'.img_edit($langs->trans("UpdateForAllLines"), 0, 'class="clickvatforalllines opacitymedium paddingleft cursorpointer"').'</a>';
+	if (empty($disableedit)) {
+		print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?mode=vatforalllines&id='.$object->id.'">'.img_edit($langs->trans("UpdateForAllLines"), 0, 'class="clickvatforalllines opacitymedium paddingleft cursorpointer"').'</a>';
+	}
 	//print '<script>$(document).ready(function() { $(".clickvatforalllines").click(function() { jQuery(".classvatforalllines").toggle(); }); });</script>';
 	if (GETPOST('mode', 'aZ09') == 'vatforalllines') {
 		print '<div class="classvatforalllines inline-block nowraponall">';
@@ -138,6 +141,10 @@ if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf-
 
 if ($outputalsopricetotalwithtax) {
 	print '<td class="right" style="width: 80px">'.$langs->trans('TotalTTCShort').'</td>';
+}
+
+if (!empty($conf->asset->enabled) && $object->element == 'invoice_supplier') {
+	print '<td class="linecolasset"></td>';
 }
 
 print '<td class="linecoledit"></td>'; // No width to allow autodim
