@@ -619,7 +619,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 			$db->free($resql);
 
 			if ($num <= 0) {
-				print '<td colspan="5" class="opacitymedium">'.$langs->trans("None").'</a>';
+				print '<td colspan="5"><span class="opacitymedium">'.$langs->trans("None").'</span></a>';
 			}
 			print "</table>";
 		} else {
@@ -671,7 +671,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 			$db->free($resql);
 
 			if ($num <= 0) {
-				print '<td colspan="4" class="opacitymedium">'.$langs->trans("None").'</a>';
+				print '<td colspan="4"><span class="opacitymedium">'.$langs->trans("None").'</span></a>';
 			}
 			print "</table>";
 		} else {
@@ -721,7 +721,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 			$db->free($resql);
 
 			if ($num <= 0) {
-				print '<td colspan="4" class="opacitymedium">'.$langs->trans("None").'</a>';
+				print '<td colspan="4"><span class="opacitymedium">'.$langs->trans("None").'</span></a>';
 			}
 			print "</table>";
 		} else {
