@@ -125,6 +125,7 @@ class Tva extends CommonObject
 
 		// Insert request
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."tva(";
+        $sql .= "entity,";
 		$sql .= "datec,";
 		$sql .= "datep,";
 		$sql .= "datev,";
@@ -136,6 +137,7 @@ class Tva extends CommonObject
 		$sql .= "fk_user_creat,";
 		$sql .= "fk_user_modif";
 		$sql .= ") VALUES (";
+        $sql .= " '".$conf->entity."',";
 		$sql .= " '".$this->db->idate($now)."',";
 		$sql .= " '".$this->db->idate($this->datep)."',";
 		$sql .= " '".$this->db->idate($this->datev)."',";
