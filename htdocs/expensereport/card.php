@@ -115,7 +115,7 @@ $permissionnote = $user->rights->expensereport->creer; // Used by the include of
 $permissiondellink = $user->rights->expensereport->creer; // Used by the include of actions_dellink.inc.php
 $permissiontoadd = $user->rights->expensereport->creer; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 
-$upload_dir = $conf->expensereport->dir_output.'/'.dol_sanitizeFileName($object->ref);
+$upload_dir = $conf->expensereport->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
 
 $projectRequired = $conf->projet->enabled && ! empty($conf->global->EXPENSEREPORT_PROJECT_IS_REQUIRED);
 $fileRequired = !empty($conf->global->EXPENSEREPORT_FILE_IS_REQUIRED);
@@ -1365,7 +1365,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
 	// Actions to build doc
-	$upload_dir = $conf->expensereport->dir_output;
+	$upload_dir = $conf->expensereport->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 }
 
@@ -2422,7 +2422,7 @@ if ($action == 'create') {
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 					require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
-					$upload_dir = $conf->expensereport->dir_output."/".dol_sanitizeFileName($object->ref);
+					$upload_dir = $conf->expensereport->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
 					$arrayoffiles = dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png|'.preg_quote(dol_sanitizeFileName($object->ref.'.pdf'), '/').')$');
 					$nbFiles = count($arrayoffiles);
 					$nbLinks = Link::count($db, $object->element, $object->id);
@@ -2781,7 +2781,7 @@ if ($action != 'presend') {
 
 	if ($user->rights->expensereport->creer && $action != 'create' && $action != 'edit') {
 		$filename = dol_sanitizeFileName($object->ref);
-		$filedir = $conf->expensereport->dir_output."/".dol_sanitizeFileName($object->ref);
+		$filedir = $conf->expensereport->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
 		$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 		$genallowed	= $user->rights->expensereport->creer;
 		$delallowed	= $user->rights->expensereport->creer;

@@ -68,7 +68,7 @@ if (!$object->fetch($id, $ref) > 0) {
 	dol_print_error($db);
 }
 
-$upload_dir = $conf->expensereport->dir_output.'/'.dol_sanitizeFileName($object->ref);
+$upload_dir = $conf->expensereport->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
 $modulepart = 'trip';
 
 // Load object
