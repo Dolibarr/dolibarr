@@ -570,11 +570,6 @@ if ($id > 0 || !empty($ref)) {
 		}
 		print '</td></tr>';
 
-		// Task Status
-		print '<td class="tdtop">'.$langs->trans("Status").'</td><td colspan="3">';
-		print dol_htmlentitiesbr($object->getLibStatut());
-		print '</td></tr>';
-
 		// Description
 		print '<td class="tdtop">'.$langs->trans("Description").'</td><td colspan="3">';
 		print dol_htmlentitiesbr($object->description);
