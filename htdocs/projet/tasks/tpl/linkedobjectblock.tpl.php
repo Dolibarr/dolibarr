@@ -22,7 +22,6 @@
  *  \ingroup	task
  *  \brief		Template to show objects linked to tasks
  */
-//var_dump("edfvdvfvbxfbfdxcb");exit;
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
@@ -46,7 +45,6 @@ $total = 0;
 $ilink = 0;
 
 foreach ($linkedObjectBlock as $key => $objectlink) {
-	if ($ilink < 5) {
 		$ilink++;
 
 		$trclass = 'oddeven';
@@ -59,31 +57,14 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 		}
 		print '</td>';
 		print '<td class="linkedcol-name nowraponall" >' . $objectlink->getNomUrl(1) . '</td>';
-		print '<td class="linkedcol-ref" >' . $objectlink->ref_client . '</td>';
-		print '<td class="linkedcol-date center">' . dol_print_date($objectlink->date, 'day') . '</td>';
+		print '<td class="linkedcol-ref" >' . $objectlink->ref_client .' '. $objectlink->label . '</td>';
+		print '<td class="linkedcol-date center">' . dol_print_date($objectlink->date_c, 'day') . '</td>';
 		print '<td class="linkedcol-amount right">';
-		if ($user->rights->projet->lire) {
-			$total = $total + $objectlink->total_ht;
-			echo price($objectlink->total_ht);
-		}
 		print '</td>';
 		print '<td class="linkedcol-statut right">' . $objectlink->getLibStatut(3) . '</td>';
-		print '<td class="linkedcol-action right"><a class="reposition" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=dellink&dellinkid=' . $key . '">' . img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink') . '</a></td>';
+		//print '<td class="linkedcol-action right"><a class="reposition" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=dellink&dellinkid=' . $key . '">' . img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink') . '</a></td>';
 		print "</tr>\n";
-	}
 }
 
-if (count($linkedObjectBlock) > 1)
-{
-	print '<tr class="liste_total '.(empty($noMoreLinkedObjectBlockAfter) ? 'liste_sub_total' : '').'">';
-	print '<td>'.$langs->trans("Total").'</td>';
-	print '<td></td>';
-	print '<td class="center"></td>';
-	print '<td class="center"></td>';
-	print '<td class="right">'.price($total).'</td>';
-	print '<td class="right"></td>';
-	print '<td class="right"></td>';
-	print "</tr>\n";
-}
 
 print "<!-- END PHP TEMPLATE -->\n";
