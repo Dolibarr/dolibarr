@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - loan
-ModuleBuilderDesc=Esta ferramenta só debe ser usada por usuarios ou desenvolvedores experimentados. Ofrece utilidades para construír ou editar o seu propio módulo. Aquí está a documentación para o <a href="%s" target="_blank"> desenvolvemento manual alternativo </a>.
+ModuleBuilderDesc=Esta ferramenta só debe ser utilizada por usuarios ou desenvolvedores experimentados. Ofrece utilidades para construír ou editar o seu propio módulo. A documentación para o desenvolvemento <a href="%s" target="_blank" rel="noopener noreferrer">manual alternativo está aquí</a>
 EnterNameOfModuleDesc=Introduza o nome do módulo/aplicación a crear sen espazos. Use maiúsculas para separar palabras (por exemplo: MyModule, EcommerceForShop, SyncWithMySystem ...)
 EnterNameOfObjectDesc=Introduza o nome do obxecto a crear sen espazos. Use maiúsculas para separar palabras (por exemplo: MyObject, Student, Teacher ...). Xerarase o ficheiro de clase CRUD, pero tamén o ficheiro API, páxinas para listar/engadir/editar/eliminar obxectos e ficheiros SQL.
 ModuleBuilderDesc2=Ruta onde se xeran/editan os módulos (primeiro directorio para módulos externos definidos en %s): <strong>%s </strong>
@@ -98,7 +98,7 @@ MenusDefDescTooltip=Os menús proporcionados polo seu módulo/aplicación están
 DictionariesDefDescTooltip=Os dicionarios proporcionados polo seu módulo/aplicación están definidos no array <strong> $this->dicionarios </strong> no ficheiro descriptor do módulo. Pode editar este ficheiro manualmente ou usar o editor incrustado. <br> <br> Nota: Unha vez definido (e reactivado o módulo), os dicionarios tamén son visibles na área de configuración para os usuarios administradores en %s.
 PermissionsDefDescTooltip=Os permisos proporcionados polo seu módulo/aplicación defínense no array <strong> $this->rights </strong> no ficheiro descriptor do módulo. Pode editar este ficheiro manualmente ou usar o editor incrustado. <br> <br> Nota: Unha vez definido (e reactivado o módulo), os permisos son visibles na configuración de permisos predeterminada %s.
 HooksDefDesc=Define na propiedade <b> module_parts ['hooks'] </b>, no descriptor do módulo, o contexto dos hooks que desexa xestionar (a listaxe de contextos pódese atopar mediante unha busca en '<b> initHooks (</b> 'no código principal). <br> Edite o ficheiro de hooks para engadir o código das funcións (as funcións pódense atopar mediante unha busca en' <b> executeHooks </b> 'no código principal).
-TriggerDefDesc=Defina no ficheiro trigger o código que quere executar cando un evento empresarial externo ao seu módulo é executado (eventos rexistrados por outros módulos)
+TriggerDefDesc=Defina no ficheiro de activación o código que quere executar cando se executa un evento empresarial externo ao seu módulo (eventos desencadeados por outros módulos). 
 SeeIDsInUse=Ver identificacións en uso na súa instalación
 SeeReservedIDsRangeHere=Ver o rango de identificacións reservadas
 ToolkitForDevelopers=Kit de ferramentas para desenvolvedores Dolibarr

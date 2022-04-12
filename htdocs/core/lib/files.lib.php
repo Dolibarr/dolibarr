@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2008-2012  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2012-2015  Regis Houssin       <regis.houssin@inodbox.com>
+ * Copyright (C) 2012-2021  Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2012-2016  Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2015       Marcos García       <marcosgdf@gmail.com>
  * Copyright (C) 2016       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
@@ -107,7 +107,7 @@ function dol_dir_list($path, $types = "all", $recursive = 0, $filter = "", $excl
 		if ($dir = opendir($newpath)) {
 			$filedate = '';
 			$filesize = '';
-
+			$fileperm = '';
 			while (false !== ($file = readdir($dir))) {        // $file is always a basename (into directory $newpath)
 				if (!utf8_check($file)) {
 					$file = utf8_encode($file); // To be sure data is stored in utf8 in memory
@@ -987,7 +987,7 @@ function dol_unescapefile($filename)
  */
 function dolCheckVirus($src_file)
 {
-	global $conf;
+	global $conf, $db;
 
 	if (!empty($conf->global->MAIN_ANTIVIRUS_COMMAND)) {
 		if (!class_exists('AntiVir')) {
@@ -1778,7 +1778,7 @@ function dol_remove_file_process($filenb, $donotupdatesession = 0, $donotdeletef
  */
 function addFileIntoDatabaseIndex($dir, $file, $fullpathorig = '', $mode = 'uploaded', $setsharekey = 0, $object = null)
 {
-	global $db, $user;
+	global $db, $user, $conf;
 
 	$result = 0;
 
@@ -1801,7 +1801,18 @@ function addFileIntoDatabaseIndex($dir, $file, $fullpathorig = '', $mode = 'uplo
 
 		if (is_object($object) && $object->id > 0) {
 			$ecmfile->src_object_id = $object->id;
-			$ecmfile->src_object_type = $object->table_element;
+			if (isset($object->table_element)) {
+				$ecmfile->src_object_type = $object->table_element;
+			} else {
+				dol_syslog('Error: object ' . get_class($object) . ' has no table_element attribute.');
+				return -1;
+			}
+			if (isset($object->src_object_description)) $ecmfile->description = $object->src_object_description;
+			if (isset($object->src_object_keywords)) $ecmfile->keywords = $object->src_object_keywords;
+		}
+
+		if (!empty($conf->global->MAIN_FORCE_SHARING_ON_ANY_UPLOADED_FILE)) {
+			$setsharekey = 1;
 		}
 
 		if ($setsharekey) {
@@ -1960,6 +1971,9 @@ function dol_compress_file($inputfile, $outputfile, $mode = "gz", &$errorstring 
 		} elseif ($mode == 'bz') {
 			$foundhandler = 1;
 			$compressdata = bzcompress($data, 9);
+		} elseif ($mode == 'zstd') {
+			$foundhandler = 1;
+			$compressdata = zstd_compress($data, 9);
 		} elseif ($mode == 'zip') {
 			if (class_exists('ZipArchive') && !empty($conf->global->MAIN_USE_ZIPARCHIVE_FOR_ZIP_COMPRESS)) {
 				$foundhandler = 1;
@@ -1990,11 +2004,15 @@ function dol_compress_file($inputfile, $outputfile, $mode = "gz", &$errorstring 
 					// Skip directories (they would be added automatically)
 					if (!$file->isDir()) {
 						// Get real and relative path for current file
-						$filePath = $file->getRealPath();
-						$relativePath = substr($filePath, strlen($rootPath) + 1);
+						$filePath = $file->getPath();				// the full path with filename using the $inputdir root.
+						$fileName = $file->getFilename();
+						$fileFullRealPath = $file->getRealPath();	// the full path with name and transformed to use real path directory.
+
+						//$relativePath = substr($fileFullRealPath, strlen($rootPath) + 1);
+						$relativePath = substr(($filePath ? $filePath.'/' : '').$fileName, strlen($rootPath) + 1);
 
 						// Add current file to archive
-						$zip->addFile($filePath, $relativePath);
+						$zip->addFile($fileFullRealPath, $relativePath);
 					}
 				}
 
@@ -2065,65 +2083,115 @@ function dol_compress_file($inputfile, $outputfile, $mode = "gz", &$errorstring 
  */
 function dol_uncompress($inputfile, $outputdir)
 {
-	global $conf, $langs;
+	global $conf, $langs, $db;
 
-	if (defined('ODTPHP_PATHTOPCLZIP') && empty($conf->global->MAIN_USE_ZIPARCHIVE_FOR_ZIP_UNCOMPRESS)) {
-		dol_syslog("Constant ODTPHP_PATHTOPCLZIP for pclzip library is set to ".ODTPHP_PATHTOPCLZIP.", so we use Pclzip to unzip into ".$outputdir);
-		include_once ODTPHP_PATHTOPCLZIP.'/pclzip.lib.php';
-		$archive = new PclZip($inputfile);
+	$fileinfo = pathinfo($inputfile);
+	$fileinfo["extension"] = strtolower($fileinfo["extension"]);
 
-		// Extract into outputdir, but only files that match the regex '/^((?!\.\.).)*$/' that means "does not include .."
-		$result = $archive->extract(PCLZIP_OPT_PATH, $outputdir, PCLZIP_OPT_BY_PREG, '/^((?!\.\.).)*$/');
+	if ($fileinfo["extension"] == "zip") {
+		if (defined('ODTPHP_PATHTOPCLZIP') && empty($conf->global->MAIN_USE_ZIPARCHIVE_FOR_ZIP_UNCOMPRESS)) {
+			dol_syslog("Constant ODTPHP_PATHTOPCLZIP for pclzip library is set to ".ODTPHP_PATHTOPCLZIP.", so we use Pclzip to unzip into ".$outputdir);
+			include_once ODTPHP_PATHTOPCLZIP.'/pclzip.lib.php';
+			$archive = new PclZip($inputfile);
 
-		if (!is_array($result) && $result <= 0) {
-			return array('error'=>$archive->errorInfo(true));
-		} else {
-			$ok = 1;
-			$errmsg = '';
-			// Loop on each file to check result for unzipping file
-			foreach ($result as $key => $val) {
-				if ($val['status'] == 'path_creation_fail') {
-					$langs->load("errors");
-					$ok = 0;
-					$errmsg = $langs->trans("ErrorFailToCreateDir", $val['filename']);
-					break;
+			// We create output dir manually, so it uses the correct permission (When created by the archive->extract, dir is rwx for everybody).
+			dol_mkdir(dol_sanitizePathName($outputdir));
+
+			// Extract into outputdir, but only files that match the regex '/^((?!\.\.).)*$/' that means "does not include .."
+			$result = $archive->extract(PCLZIP_OPT_PATH, $outputdir, PCLZIP_OPT_BY_PREG, '/^((?!\.\.).)*$/');
+
+			if (!is_array($result) && $result <= 0) {
+				return array('error'=>$archive->errorInfo(true));
+			} else {
+				$ok = 1;
+				$errmsg = '';
+				// Loop on each file to check result for unzipping file
+				foreach ($result as $key => $val) {
+					if ($val['status'] == 'path_creation_fail') {
+						$langs->load("errors");
+						$ok = 0;
+						$errmsg = $langs->trans("ErrorFailToCreateDir", $val['filename']);
+						break;
+					}
+				}
+
+				if ($ok) {
+					return array();
+				} else {
+					return array('error'=>$errmsg);
 				}
 			}
+		}
 
-			if ($ok) {
+		if (class_exists('ZipArchive')) {	// Must install php-zip to have it
+			dol_syslog("Class ZipArchive is set so we unzip using ZipArchive to unzip into ".$outputdir);
+			$zip = new ZipArchive;
+			$res = $zip->open($inputfile);
+			if ($res === true) {
+				//$zip->extractTo($outputdir.'/');
+				// We must extract one file at time so we can check that file name does not contains '..' to avoid transversal path of zip built for example using
+				// python3 path_traversal_archiver.py <Created_file_name> test.zip -l 10 -p tmp/
+				// with -l is the range of dot to go back in path.
+				// and path_traversal_archiver.py found at https://github.com/Alamot/code-snippets/blob/master/path_traversal/path_traversal_archiver.py
+				for ($i = 0; $i < $zip->numFiles; $i++) {
+					if (preg_match('/\.\./', $zip->getNameIndex($i))) {
+						dol_syslog("Warning: Try to unzip a file with a transversal path ".$zip->getNameIndex($i), LOG_WARNING);
+						continue; // Discard the file
+					}
+					$zip->extractTo($outputdir.'/', array($zip->getNameIndex($i)));
+				}
+
+				$zip->close();
 				return array();
 			} else {
-				return array('error'=>$errmsg);
+				return array('error'=>'ErrUnzipFails');
 			}
 		}
-	}
 
-	if (class_exists('ZipArchive')) {	// Must install php-zip to have it
-		dol_syslog("Class ZipArchive is set so we unzip using ZipArchive to unzip into ".$outputdir);
-		$zip = new ZipArchive;
-		$res = $zip->open($inputfile);
-		if ($res === true) {
-			//$zip->extractTo($outputdir.'/');
-			// We must extract one file at time so we can check that file name does not contains '..' to avoid transversal path of zip built for example using
-			// python3 path_traversal_archiver.py <Created_file_name> test.zip -l 10 -p tmp/
-			// with -l is the range of dot to go back in path.
-			// and path_traversal_archiver.py found at https://github.com/Alamot/code-snippets/blob/master/path_traversal/path_traversal_archiver.py
-			for ($i = 0; $i < $zip->numFiles; $i++) {
-				if (preg_match('/\.\./', $zip->getNameIndex($i))) {
-					dol_syslog("Warning: Try to unzip a file with a transversal path ".$zip->getNameIndex($i), LOG_WARNING);
-					continue; // Discard the file
-				}
-				$zip->extractTo($outputdir.'/', array($zip->getNameIndex($i)));
+		return array('error'=>'ErrNoZipEngine');
+	} elseif (in_array($fileinfo["extension"], array('gz', 'bz2', 'zst'))) {
+		include_once DOL_DOCUMENT_ROOT."/core/class/utils.class.php";
+		$utils = new Utils($db);
+
+		dol_mkdir(dol_sanitizePathName($outputdir));
+		$outputfilename = escapeshellcmd(dol_sanitizePathName($outputdir).'/'.dol_sanitizeFileName($fileinfo["filename"]));
+		dol_delete_file($outputfilename.'.tmp');
+		dol_delete_file($outputfilename.'.err');
+
+		$extension = strtolower(pathinfo($fileinfo["filename"], PATHINFO_EXTENSION));
+		if ($extension == "tar") {
+			$cmd = 'tar -C '.escapeshellcmd(dol_sanitizePathName($outputdir)).' -xvf '.escapeshellcmd(dol_sanitizePathName($fileinfo["dirname"]).'/'.dol_sanitizeFileName($fileinfo["basename"]));
+
+			$resarray = $utils->executeCLI($cmd, $outputfilename.'.tmp', 0, $outputfilename.'.err', 0);
+			if ($resarray["result"] != 0) {
+				$resarray["error"] .= file_get_contents($outputfilename.'.err');
 			}
-
-			$zip->close();
-			return array();
 		} else {
-			return array('error'=>'ErrUnzipFails');
+			$program = "";
+			if ($fileinfo["extension"] == "gz") {
+				$program = 'gzip';
+			} elseif ($fileinfo["extension"] == "bz2") {
+				$program = 'bzip2';
+			} elseif ($fileinfo["extension"] == "zst") {
+				$program = 'zstd';
+			} else {
+				return array('error'=>'ErrorBadFileExtension');
+			}
+			$cmd = $program.' -dc '.escapeshellcmd(dol_sanitizePathName($fileinfo["dirname"]).'/'.dol_sanitizeFileName($fileinfo["basename"]));
+			$cmd .= ' > '.$outputfilename;
+
+			$resarray = $utils->executeCLI($cmd, $outputfilename.'.tmp', 0, null, 1, $outputfilename.'.err');
+			if ($resarray["result"] != 0) {
+				$errfilecontent = @file_get_contents($outputfilename.'.err');
+				if ($errfilecontent) {
+					$resarray["error"] .= " - ".$errfilecontent;
+				}
+			}
 		}
+		return $resarray["result"] != 0 ? array('error' => $resarray["error"]) : array();
 	}
 
-	return array('error'=>'ErrNoZipEngine');
+	return array('error'=>'ErrorBadFileExtension');
 }
 
 
@@ -2182,22 +2250,29 @@ function dol_compress_dir($inputdir, $outputfile, $mode = "zip", $excludefiles =
 				}
 
 				// Create recursive directory iterator
+				// This does not return symbolic links
 				/** @var SplFileInfo[] $files */
 				$files = new RecursiveIteratorIterator(
 					new RecursiveDirectoryIterator($inputdir),
 					RecursiveIteratorIterator::LEAVES_ONLY
 				);
 
+				//var_dump($inputdir);
 				foreach ($files as $name => $file) {
 					// Skip directories (they would be added automatically)
 					if (!$file->isDir()) {
 						// Get real and relative path for current file
-						$filePath = $file->getRealPath();
-						$relativePath = ($rootdirinzip ? $rootdirinzip.'/' : '').substr($filePath, strlen($inputdir) + 1);
+						$filePath = $file->getPath();				// the full path with filename using the $inputdir root.
+						$fileName = $file->getFilename();
+						$fileFullRealPath = $file->getRealPath();	// the full path with name and transformed to use real path directory.
 
-						if (empty($excludefiles) || !preg_match($excludefiles, $filePath)) {
+						//$relativePath = ($rootdirinzip ? $rootdirinzip.'/' : '').substr($fileFullRealPath, strlen($inputdir) + 1);
+						$relativePath = ($rootdirinzip ? $rootdirinzip.'/' : '').substr(($filePath ? $filePath.'/' : '').$fileName, strlen($inputdir) + 1);
+
+						//var_dump($filePath);var_dump($fileFullRealPath);var_dump($relativePath);
+						if (empty($excludefiles) || !preg_match($excludefiles, $fileFullRealPath)) {
 							// Add current file to archive
-							$zip->addFile($filePath, $relativePath);
+							$zip->addFile($fileFullRealPath, $relativePath);
 						}
 					}
 				}
@@ -2245,21 +2320,22 @@ function dol_most_recent_file($dir, $regexfilter = '', $excludefilter = array('(
 
 /**
  * Security check when accessing to a document (used by document.php, viewimage.php and webservices to get documents).
- * TODO Replace code that set $accesallowed by a call to restrictedArea()
+ * TODO Replace code that set $accessallowed by a call to restrictedArea()
  *
  * @param	string	$modulepart			Module of document ('module', 'module_user_temp', 'module_user' or 'module_temp'). Exemple: 'medias', 'invoice', 'logs', 'tax-vat', ...
  * @param	string	$original_file		Relative path with filename, relative to modulepart.
  * @param	string	$entity				Restrict onto entity (0=no restriction)
  * @param  	User	$fuser				User object (forced)
- * @param	string	$refname			Ref of object to check permission for external users (autodetect if not provided)
+ * @param	string	$refname			Ref of object to check permission for external users (autodetect if not provided) or for hierarchy
  * @param   string  $mode               Check permission for 'read' or 'write'
  * @return	mixed						Array with access information : 'accessallowed' & 'sqlprotectagainstexternals' & 'original_file' (as a full path name)
  * @see restrictedArea()
  */
 function dol_check_secure_access_document($modulepart, $original_file, $entity, $fuser = '', $refname = '', $mode = 'read')
 {
-	global $conf, $db, $user;
+	global $conf, $db, $user, $hookmanager;
 	global $dolibarr_main_data_root, $dolibarr_main_document_root_alt;
+	global $object;
 
 	if (!is_object($fuser)) {
 		$fuser = $user;
@@ -2322,15 +2398,15 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$accessallowed = ($user->admin && basename($original_file) == $original_file && preg_match('/^dolibarr.*\.log$/', basename($original_file)));
 		$original_file = $dolibarr_main_data_root.'/'.$original_file;
 	} elseif ($modulepart == 'doctemplates' && !empty($dolibarr_main_data_root)) {
-		// Wrapping for *.log files, like when used with url http://.../document.php?modulepart=logs&file=dolibarr.log
+		// Wrapping for doctemplates
 		$accessallowed = $user->admin;
 		$original_file = $dolibarr_main_data_root.'/doctemplates/'.$original_file;
 	} elseif ($modulepart == 'doctemplateswebsite' && !empty($dolibarr_main_data_root)) {
-		// Wrapping for *.zip files, like when used with url http://.../document.php?modulepart=packages&file=module_myfile.zip
+		// Wrapping for doctemplates of websites
 		$accessallowed = ($fuser->rights->website->write && preg_match('/\.jpg$/i', basename($original_file)));
 		$original_file = $dolibarr_main_data_root.'/doctemplates/websites/'.$original_file;
 	} elseif ($modulepart == 'packages' && !empty($dolibarr_main_data_root)) {
-		// Wrapping for *.zip files, like when used with url http://.../document.php?modulepart=packages&file=module_myfile.zip
+		// Wrapping for *.zip package files, like when used with url http://.../document.php?modulepart=packages&file=module_myfile.zip
 		// Dir for custom dirs
 		$tmp = explode(',', $dolibarr_main_document_root_alt);
 		$dirins = $tmp[0];
@@ -2343,11 +2419,21 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$original_file = $conf->mycompany->dir_output.'/'.$original_file;
 	} elseif ($modulepart == 'userphoto' && !empty($conf->user->dir_output)) {
 		// Wrapping for users photos
-		$accessallowed = 1;
+		$accessallowed = 0;
+		if (preg_match('/^\d+\/photos\//', $original_file)) {
+			$accessallowed = 1;
+		}
 		$original_file = $conf->user->dir_output.'/'.$original_file;
+	} elseif (($modulepart == 'companylogo') && !empty($conf->mycompany->dir_output)) {
+		// Wrapping for users logos
+		$accessallowed = 1;
+		$original_file = $conf->mycompany->dir_output.'/logos/'.$original_file;
 	} elseif ($modulepart == 'memberphoto' && !empty($conf->adherent->dir_output)) {
 		// Wrapping for members photos
-		$accessallowed = 1;
+		$accessallowed = 0;
+		if (preg_match('/^\d+\/photos\//', $original_file)) {
+			$accessallowed = 1;
+		}
 		$original_file = $conf->adherent->dir_output.'/'.$original_file;
 	} elseif ($modulepart == 'apercufacture' && !empty($conf->facture->multidir_output[$entity])) {
 		// Wrapping pour les apercu factures
@@ -2397,8 +2483,32 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$accessallowed = 1;
 		}
 		$original_file = $conf->fournisseur->facture->dir_output.'/'.$original_file;
+	} elseif (($modulepart == 'holiday') && !empty($conf->holiday->dir_output)) {
+		if ($fuser->rights->holiday->{$read} || !empty($fuser->rights->holiday->readall) || preg_match('/^specimen/i', $original_file)) {
+			$accessallowed = 1;
+			// If we known $id of holiday, call checkUserAccessToObject to check permission on properties and hierarchy of leave request
+			if ($refname && empty($fuser->rights->holiday->readall) && !preg_match('/^specimen/i', $original_file)) {
+				include_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
+				$tmpholiday = new Holiday($db);
+				$tmpholiday->fetch('', $refname);
+				$accessallowed = checkUserAccessToObject($user, array('holiday'), $tmpholiday, 'holiday', '', '', 'rowid', '');
+			}
+		}
+		$original_file = $conf->holiday->dir_output.'/'.$original_file;
+	} elseif (($modulepart == 'expensereport') && !empty($conf->expensereport->dir_output)) {
+		if ($fuser->rights->expensereport->{$lire} || !empty($fuser->rights->expensereport->readall) || preg_match('/^specimen/i', $original_file)) {
+			$accessallowed = 1;
+			// If we known $id of expensereport, call checkUserAccessToObject to check permission on properties and hierarchy of expense report
+			if ($refname && empty($fuser->rights->expensereport->readall) && !preg_match('/^specimen/i', $original_file)) {
+				include_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
+				$tmpexpensereport = new ExpenseReport($db);
+				$tmpexpensereport->fetch('', $refname);
+				$accessallowed = checkUserAccessToObject($user, array('expensereport'), $tmpexpensereport, 'expensereport', '', '', 'rowid', '');
+			}
+		}
+		$original_file = $conf->expensereport->dir_output.'/'.$original_file;
 	} elseif (($modulepart == 'apercuexpensereport') && !empty($conf->expensereport->dir_output)) {
-		// Wrapping pour les apercu supplier invoice
+		// Wrapping pour les apercu expense report
 		if ($fuser->rights->expensereport->{$lire}) {
 			$accessallowed = 1;
 		}
@@ -2852,6 +2962,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		if ($fuser->admin) {
 			$accessallowed = 1; // If user is admin
 		}
+
 		$tmpmodulepart = explode('-', $modulepart);
 		if (!empty($tmpmodulepart[1])) {
 				$modulepart = $tmpmodulepart[0];
@@ -2921,27 +3032,32 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			}
 		}
 
-		// For modules who wants to manage different levels of permissions for documents
-		$subPermCategoryConstName = strtoupper($modulepart).'_SUBPERMCATEGORY_FOR_DOCUMENTS';
-		if (!empty($conf->global->$subPermCategoryConstName)) {
-			$subPermCategory = $conf->global->$subPermCategoryConstName;
-			if (!empty($subPermCategory) && (($fuser->rights->$modulepart->$subPermCategory->{$lire}) || ($fuser->rights->$modulepart->$subPermCategory->{$read}) || ($fuser->rights->$modulepart->$subPermCategory->{$download}))) {
-				$accessallowed = 1;
+		$parameters = array(
+			'modulepart' => $modulepart,
+			'original_file' => $original_file,
+			'entity' => $entity,
+			'fuser' => $fuser,
+			'refname' => '',
+			'mode' => $mode
+		);
+		$reshook = $hookmanager->executeHooks('checkSecureAccess', $parameters, $object);
+		if ($reshook > 0) {
+			if (!empty($hookmanager->resArray['original_file'])) {
+				$original_file = $hookmanager->resArray['original_file'];
 			}
-		}
-
-		// Define $sqlprotectagainstexternals for modules who want to protect access using a SQL query.
-		$sqlProtectConstName = strtoupper($modulepart).'_SQLPROTECTAGAINSTEXTERNALS_FOR_DOCUMENTS';
-		if (!empty($conf->global->$sqlProtectConstName)) {	// If module want to define its own $sqlprotectagainstexternals
-			// Example: mymodule__SQLPROTECTAGAINSTEXTERNALS_FOR_DOCUMENTS = "SELECT fk_soc FROM ".MAIN_DB_PREFIX.$modulepart." WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
-			eval('$sqlprotectagainstexternals = "'.$conf->global->$sqlProtectConstName.'";');
+			if (!empty($hookmanager->resArray['accessallowed'])) {
+				$accessallowed = $hookmanager->resArray['accessallowed'];
+			}
+			if (!empty($hookmanager->resArray['sqlprotectagainstexternals'])) {
+				$sqlprotectagainstexternals = $hookmanager->resArray['sqlprotectagainstexternals'];
+			}
 		}
 	}
 
 	$ret = array(
-		'accessallowed' => $accessallowed,
-		'sqlprotectagainstexternals'=>$sqlprotectagainstexternals,
-		'original_file'=>$original_file
+		'accessallowed' => ($accessallowed ? 1 : 0),
+		'sqlprotectagainstexternals' => $sqlprotectagainstexternals,
+		'original_file' => $original_file
 	);
 
 	return $ret;

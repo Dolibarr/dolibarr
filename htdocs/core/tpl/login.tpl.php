@@ -30,8 +30,17 @@ if (empty($conf) || !is_object($conf)) {
 	exit;
 }
 
+// DDOS protection
+$size = (empty($_SERVER['CONTENT_LENGTH']) ? 0 : (int) $_SERVER['CONTENT_LENGTH']);
+if ($size > 10000) {
+	http_response_code(413);
+	$langs->loadLangs(array("errors", "install"));
+	accessforbidden('<center>'.$langs->trans("ErrorRequestTooLarge").'.<br><a href="'.DOL_URL_ROOT.'">'.$langs->trans("ClickHereToGoToApp").'</a></center>', 0, 0, 1);
+	exit;
+}
 
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+
 
 header('Cache-Control: Public, must-revalidate');
 header("Content-type: text/html; charset=".$conf->file->character_set_client);
@@ -57,7 +66,7 @@ if (!empty($conf->dol_use_jmobile)) {
 	$conf->use_javascript_ajax = 1;
 }
 
-$php_self = dol_escape_htmltag($_SERVER['PHP_SELF']);
+$php_self = empty($php_self) ? dol_escape_htmltag($_SERVER['PHP_SELF']) : $php_self;
 $php_self .= dol_escape_htmltag($_SERVER["QUERY_STRING"]) ? '?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]) : '';
 if (!preg_match('/mainmenu=/', $php_self)) {
 	$php_self .= (preg_match('/\?/', $php_self) ? '&' : '?').'mainmenu=home';
@@ -85,7 +94,7 @@ if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 	$disablenofollow = 0;
 }
 
-print top_htmlhead('', $titleofloginpage, 0, 0, $arrayofjs, array(), 0, $disablenofollow);
+print top_htmlhead('', $titleofloginpage, 0, 0, $arrayofjs, array(), 1, $disablenofollow);
 
 
 $colorbackhmenu1 = '60,70,100'; // topmenu
@@ -127,7 +136,7 @@ $(document).ready(function () {
 <input type="hidden" name="token" value="<?php echo newToken(); ?>" />
 <input type="hidden" name="actionlogin" value="login">
 <input type="hidden" name="loginfunction" value="loginfunction" />
-<!-- Add fields to send local user information -->
+<!-- Add fields to store and send local user information. This fields are filled by the core/js/dst.js -->
 <input type="hidden" name="tz" id="tz" value="" />
 <input type="hidden" name="tz_string" id="tz_string" value="" />
 <input type="hidden" name="dst_observed" id="dst_observed" value="" />
@@ -147,7 +156,7 @@ $(document).ready(function () {
 <div class="login_table_title center" title="<?php echo dol_escape_htmltag($title); ?>">
 <?php
 if ($disablenofollow) {
-	echo '<a class="login_table_title" href="https://www.dolibarr.org" target="_blank">';
+	echo '<a class="login_table_title" href="https://www.dolibarr.org" target="_blank" rel="noopener noreferrer external">';
 }
 echo dol_escape_htmltag($title);
 if ($disablenofollow) {
@@ -291,7 +300,7 @@ if ($forgetpasslink || $helpcenterlink) {
 		if (!empty($conf->global->MAIN_HELPCENTER_LINKTOUSE)) {
 			$url = $conf->global->MAIN_HELPCENTER_LINKTOUSE;
 		}
-		echo '<a class="alogin" href="'.dol_escape_htmltag($url).'" target="_blank">';
+		echo '<a class="alogin" href="'.dol_escape_htmltag($url).'" target="_blank" rel="noopener noreferrer">';
 		echo $langs->trans('NeedHelpCenter');
 		echo '</a>';
 	}
@@ -310,12 +319,38 @@ if (isset($conf->file->main_authentication) && preg_match('/openid/', $conf->fil
 		print '<a class="alogin" href="'.$url.'">'.$langs->trans("LoginUsingOpenID").'</a>';
 	} else {
 		$langs->load("errors");
-		print '<font class="warning">'.$langs->trans("ErrorOpenIDSetupNotComplete", 'MAIN_AUTHENTICATION_OPENID_URL').'</font>';
+		print '<span class="warning">'.$langs->trans("ErrorOpenIDSetupNotComplete", 'MAIN_AUTHENTICATION_OPENID_URL').'</span>';
 	}
 
 	echo '</div>';
 }
 
+if (isset($conf->file->main_authentication) && preg_match('/google/', $conf->file->main_authentication)) {
+	$langs->load("users");
+
+	global $dolibarr_main_url_root;
+
+	// Define $urlwithroot
+	$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+	$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
+	//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
+
+	echo '<br>';
+	echo '<div class="center" style="margin-top: 4px;">';
+
+	//$shortscope = 'userinfo_email,userinfo_profile';
+	$shortscope = 'openid,email,profile';	// For openid connect
+
+	$oauthstateanticsrf = bin2hex(random_bytes(128/8));
+	$_SESSION['oauthstateanticsrf'] = $shortscope.'-'.$oauthstateanticsrf;
+	$urltorenew = $urlwithroot.'/core/modules/oauth/google_oauthcallback.php?shortscope='.$shortscope.'&state=forlogin-'.$shortscope.'-'.$oauthstateanticsrf;
+
+	$url = $urltorenew;
+
+	print img_picto('', 'google', 'class="pictofixedwidth"').'<a class="alogin" href="'.$url.'">'.$langs->trans("LoginWith", "Google").'</a>';
+
+	echo '</div>';
+}
 
 ?>
 

@@ -74,10 +74,14 @@ class box_contacts extends ModeleBoxes
 	 */
 	public function loadBox($max = 5)
 	{
-		global $user, $langs, $conf;
+		global $user, $langs, $conf, $hookmanager;
+
 		$langs->load("boxes");
 
 		$this->max = $max;
+
+		$contactstatic = new Contact($this->db);
+		$societestatic = new Societe($this->db);
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedContacts", $max));
 
@@ -86,32 +90,45 @@ class box_contacts extends ModeleBoxes
 
 			$sql .= ", sp.address, sp.zip, sp.town, sp.phone, sp.phone_perso, sp.phone_mobile, sp.email as spemail";
 			$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
-			$sql .= ", s.code_client, s.code_compta, s.client";
+			$sql .= ", s.code_client, s.client";
 			$sql .= ", s.code_fournisseur, s.code_compta_fournisseur, s.fournisseur";
+			if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
+				$sql .= ", spe.accountancy_code_customer as code_compta";
+				$sql .= ", spe.accountancy_code_supplier as code_compta_fournisseur";
+			} else {
+				$sql .= ", s.code_compta";
+				$sql .= ", s.code_compta_fournisseur";
+			}
 			$sql .= ", s.logo, s.email, s.entity";
 			$sql .= ", co.label as country, co.code as country_code";
 			$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as sp";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co ON sp.fk_pays = co.rowid";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON sp.fk_soc = s.rowid";
-			if (!$user->rights->societe->client->voir && !$user->socid) {
+			if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
+				$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe_perentity as spe ON spe.fk_soc = s.rowid AND spe.entity = " . ((int) $conf->entity);
+			}
+			if (empty($user->rights->societe->client->voir) && !$user->socid) {
 				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			}
-			$sql .= " WHERE sp.entity IN (".getEntity('socpeople').")";
-			if (!$user->rights->societe->client->voir && !$user->socid) {
+			$sql .= " WHERE sp.entity IN (".getEntity('contact').")";
+			if (empty($user->rights->societe->client->voir) && !$user->socid) {
 				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
-			if ($user->socid) {
-				$sql .= " AND sp.fk_soc = ".((int) $user->socid);
+			// Add where from hooks
+			$parameters = array('socid' => $user->socid, 'boxcode' => $this->boxcode);
+			$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $contactstatic); // Note that $action and $object may have been modified by hook
+			if (empty($reshook)) {
+				if ($user->socid > 0) {
+					$sql .= " AND sp.fk_soc = ".((int) $user->socid);
+				}
 			}
+			$sql .= $hookmanager->resPrint;
 			$sql .= " ORDER BY sp.tms DESC";
 			$sql .= $this->db->plimit($max, 0);
 
 			$result = $this->db->query($sql);
 			if ($result) {
 				$num = $this->db->num_rows($result);
-
-				$contactstatic = new Contact($this->db);
-				$societestatic = new Societe($this->db);
 
 				$line = 0;
 				while ($line < $num) {

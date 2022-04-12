@@ -157,6 +157,18 @@ ProfId3CL=-
 ProfId4CL=-
 ProfId5CL=-
 ProfId6CL=-
+ProfId1CM=Id. prof. 1 (Trade Register)
+ProfId2CM=Id. prof. 2 (Taxpayer No.)
+ProfId3CM=Id. prof. 3 (Decree of creation)
+ProfId4CM=-
+ProfId5CM=-
+ProfId6CM=-
+ProfId1ShortCM=Trade Register
+ProfId2ShortCM=Taxpayer No.
+ProfId3ShortCM=Decree of creation
+ProfId4ShortCM=-
+ProfId5ShortCM=-
+ProfId6ShortCM=-
 ProfId1CO=Prof Id 1 (R.U.T.)
 ProfId2CO=-
 ProfId3CO=-
@@ -369,7 +381,7 @@ VATIntraCheck=Kiểm tra
 VATIntraCheckDesc=ID VAT phải bao gồm tiền tố quốc gia. Liên kết <b>%s</b> sử dụng dịch vụ kiểm tra VAT Châu Âu (VIES) yêu cầu truy cập internet từ máy chủ Dolibarr.
 VATIntraCheckURL=http://ec.europa.eu/taxation_customs/vies/vieshome.do
 VATIntraCheckableOnEUSite=Kiểm tra ID VAT nội bộ cộng đồng trên trang web của Ủy ban Châu Âu
-VATIntraManualCheck=Bạn cũng có thể kiểm tra thủ công trên trang web của Ủy ban Châu Âu <a href="%s" target="_blank">%s</a>
+VATIntraManualCheck=You can also check manually on the European Commission website <a href="%s" target="_blank" rel="noopener noreferrer">%s</a>
 ErrorVATCheckMS_UNAVAILABLE=Check not possible. Check service is not provided by the member state (%s).
 NorProspectNorCustomer=Không phải triển vọng, cũng không phải khách hàng
 JuridicalStatus=Business entity type

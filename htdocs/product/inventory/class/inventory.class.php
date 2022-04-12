@@ -26,6 +26,7 @@
 
 // Put here all includes required by your class file
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
@@ -59,10 +60,10 @@ class Inventory extends CommonObject
 	 */
 	public $picto = 'inventory';
 
-	const STATUS_DRAFT = 0;
-	const STATUS_VALIDATED = 1;
-	const STATUS_RECORDED = 2;
-	const STATUS_CANCELED = 9;
+	const STATUS_DRAFT = 0;			// Draft
+	const STATUS_VALIDATED = 1;		// Inventory is in process
+	const STATUS_RECORDED = 2;		// Inventory is finisged. Stock movement has been recorded.
+	const STATUS_CANCELED = 9;		// Canceled
 
 	/**
 	 *  'type' field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter]]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'text:none', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
@@ -101,8 +102,7 @@ class Inventory extends CommonObject
 		'title'          => array('type'=>'varchar(255)', 'label'=>'Label', 'visible'=>1, 'enabled'=>1, 'position'=>25, 'css'=>'minwidth300', 'csslist'=>'tdoverflowmax200'),
 		'fk_warehouse'   => array('type'=>'integer:Entrepot:product/stock/class/entrepot.class.php', 'label'=>'Warehouse', 'visible'=>1, 'enabled'=>1, 'position'=>30, 'index'=>1, 'help'=>'InventoryForASpecificWarehouse', 'picto'=>'stock', 'css'=>'minwidth300 maxwidth500 widthcentpercentminusx', 'csslist'=>'tdoverflowmax200'),
 		'fk_product'     => array('type'=>'integer:Product:product/class/product.class.php', 'label'=>'Product', 'visible'=>1, 'enabled'=>1, 'position'=>32, 'index'=>1, 'help'=>'InventoryForASpecificProduct', 'picto'=>'product', 'css'=>'minwidth300 maxwidth500 widthcentpercentminusx', 'csslist'=>'tdoverflowmax200'),
-		'date_inventory' => array('type'=>'date', 'label'=>'DateValue', 'visible'=>1, 'enabled'=>1, 'position'=>35),
-
+		'date_inventory' => array('type'=>'date', 'label'=>'DateValue', 'visible'=>1, 'enabled'=>'$conf->global->STOCK_INVENTORY_ADD_A_VALUE_DATE', 'position'=>35),	// This date is not used so disabled by default.
 		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>500),
 		'tms'           => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>501),
 		'date_validation' => array('type'=>'datetime', 'label'=>'DateValidation', 'visible'=>-2, 'enabled'=>1, 'position'=>502),
@@ -266,7 +266,7 @@ class Inventory extends CommonObject
 
 		if ($this->status == self::STATUS_DRAFT) {
 			// Delete inventory
-			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'inventorydet WHERE fk_inventory = '.$this->id;
+			$sql = 'DELETE FROM '.$this->db->prefix().'inventorydet WHERE fk_inventory = '.((int) $this->id);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
 				$this->error = $this->db->lasterror();
@@ -275,21 +275,21 @@ class Inventory extends CommonObject
 			}
 
 			// Scan existing stock to prefill the inventory
-			$sql = 'SELECT ps.rowid, ps.fk_entrepot as fk_warehouse, ps.fk_product, ps.reel,';
-			$sql .= ' pb.batch, pb.qty';
-			$sql .= ' FROM '.MAIN_DB_PREFIX.'product_stock as ps';
-			$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_batch as pb ON pb.fk_product_stock = ps.rowid,';
-			$sql .= ' '.MAIN_DB_PREFIX.'product as p, '.MAIN_DB_PREFIX.'entrepot as e';
-			$sql .= ' WHERE p.entity IN ('.getEntity('product').')';
-			$sql .= ' AND ps.fk_product = p.rowid AND ps.fk_entrepot = e.rowid';
+			$sql = "SELECT ps.rowid, ps.fk_entrepot as fk_warehouse, ps.fk_product, ps.reel,";
+			$sql .= " pb.batch, pb.qty";
+			$sql .= " FROM ".$this->db->prefix()."product_stock as ps";
+			$sql .= " LEFT JOIN ".$this->db->prefix()."product_batch as pb ON pb.fk_product_stock = ps.rowid,";
+			$sql .= " ".$this->db->prefix()."product as p, ".$this->db->prefix()."entrepot as e";
+			$sql .= " WHERE p.entity IN (".getEntity('product').")";
+			$sql .= " AND ps.fk_product = p.rowid AND ps.fk_entrepot = e.rowid";
 			if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
 				$sql .= " AND p.fk_product_type = 0";
 			}
 			if ($this->fk_product > 0) {
-				$sql .= ' AND ps.fk_product = '.$this->fk_product;
+				$sql .= " AND ps.fk_product = ".((int) $this->fk_product);
 			}
 			if ($this->fk_warehouse > 0) {
-				$sql .= ' AND ps.fk_entrepot = '.$this->fk_warehouse;
+				$sql .= " AND ps.fk_entrepot = ".((int) $this->fk_warehouse);
 			}
 
 			$inventoryline = new InventoryLine($this->db);
@@ -349,7 +349,7 @@ class Inventory extends CommonObject
 		$this->db->begin();
 
 		// Delete inventory
-		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'inventorydet WHERE fk_inventory = '.$this->id;
+		$sql = 'DELETE FROM '.$this->db->prefix().'inventorydet WHERE fk_inventory = '.((int) $this->id);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
 			$this->error = $this->db->lasterror();
@@ -368,7 +368,7 @@ class Inventory extends CommonObject
 	}
 
 	/**
-	 * Set to Recorded
+	 * Set to inventory to status "Closed". It means all stock movements were recorded.
 	 *
 	 * @param  User $user      User that creates
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
@@ -615,18 +615,18 @@ class Inventory extends CommonObject
 		global $langs;
 
 		$labelStatus = array();
-		$labelStatus[self::STATUS_DRAFT] = $langs->trans('Draft');
-		$labelStatus[self::STATUS_VALIDATED] = $langs->trans('Validated').' ('.$langs->trans('Started').')';
-		$labelStatus[self::STATUS_CANCELED] = $langs->trans('Canceled');
-		$labelStatus[self::STATUS_RECORDED] = $langs->trans('Closed');
-		$labelStatusShort[self::STATUS_DRAFT] = $langs->trans('Draft');
-		$labelStatusShort[self::STATUS_VALIDATED] = $langs->trans('Started');
-		$labelStatusShort[self::STATUS_CANCELED] = $langs->trans('Canceled');
-		$labelStatusShort[self::STATUS_RECORDED] = $langs->trans('Closed');
+		$labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
+		$labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Validated').' ('.$langs->transnoentitiesnoconv('InventoryStartedShort').')';
+		$labelStatus[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Canceled');
+		$labelStatus[self::STATUS_RECORDED] = $langs->transnoentitiesnoconv('Closed');
+		$labelStatusShort[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
+		$labelStatusShort[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('InventoryStartedShort');
+		$labelStatusShort[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Canceled');
+		$labelStatusShort[self::STATUS_RECORDED] = $langs->transnoentitiesnoconv('Closed');
 
 		$statusType = 'status'.$status;
 		if ($status == self::STATUS_RECORDED) {
-			$statusType = 'status5';
+			$statusType = 'status6';
 		}
 
 		return dolGetStatus($labelStatus[$status], $labelStatusShort[$status], '', $statusType, $mode);
@@ -640,10 +640,10 @@ class Inventory extends CommonObject
 	 */
 	public function info($id)
 	{
-		$sql = 'SELECT rowid, date_creation as datec, tms as datem, date_validation as datev,';
-		$sql .= ' fk_user_creat, fk_user_modif, fk_user_valid';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
-		$sql .= ' WHERE t.rowid = '.((int) $id);
+		$sql = "SELECT rowid, date_creation as datec, tms as datem, date_validation as datev,";
+		$sql .= " fk_user_creat, fk_user_modif, fk_user_valid";
+		$sql .= " FROM ".$this->db->prefix().$this->table_element." as t";
+		$sql .= " WHERE t.rowid = ".((int) $id);
 		$result = $this->db->query($sql);
 		if ($result) {
 			if ($this->db->num_rows($result)) {

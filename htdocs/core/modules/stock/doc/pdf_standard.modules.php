@@ -174,10 +174,13 @@ class pdf_standard extends ModelePDFStock
 			$this->postotalht -= 20;
 		}
 		$this->tva = array();
+		$this->tva_array = array();
 		$this->localtax1 = array();
 		$this->localtax2 = array();
 		$this->atleastoneratenotnull = 0;
 		$this->atleastonediscount = 0;
+
+		$this->tabTitleHeight = 11;
 	}
 
 
@@ -208,8 +211,6 @@ class pdf_standard extends ModelePDFStock
 
 		// Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "stocks", "orders", "deliveries"));
-
-		$nblines = count($object->lines);
 
 		if ($conf->stock->dir_output) {
 			// Definition of $dir and $file
@@ -296,14 +297,10 @@ class pdf_standard extends ModelePDFStock
 				$tab_top = 65 + $top_shift;
 				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD) ? 42 + $top_shift : 10);
 
-				$tab_height = 130;
+				$tab_height = $this->page_hauteur - $tab_top - $heightforfooter - $heightforfreetext;
 
 
-				/* ************************************************************************** */
-				/*                                                                            */
-				/* Show list of product in warehouse                                          */
-				/*                                                                            */
-				/* ************************************************************************** */
+				// Show list of product in warehouse                                          */
 
 				$totalunit = 0;
 				$totalvalue = $totalvaluesell = 0;
@@ -326,7 +323,6 @@ class pdf_standard extends ModelePDFStock
 					$i = 0;
 					$nblines = $num;
 
-					$this->tabTitleHeight = 10;
 					$nexY = $tab_top + $this->tabTitleHeight;
 
 					for ($i = 0; $i < $nblines; $i++) {
@@ -338,8 +334,8 @@ class pdf_standard extends ModelePDFStock
 						if (!empty($conf->global->MAIN_MULTILANGS)) { // si l'option est active
 							$sql = "SELECT label";
 							$sql .= " FROM ".MAIN_DB_PREFIX."product_lang";
-							$sql .= " WHERE fk_product=".$objp->rowid;
-							$sql .= " AND lang='".$this->db->escape($langs->getDefaultLang())."'";
+							$sql .= " WHERE fk_product = ".((int) $objp->rowid);
+							$sql .= " AND lang = '".$this->db->escape($langs->getDefaultLang())."'";
 							$sql .= " LIMIT 1";
 
 							$result = $this->db->query($sql);
@@ -738,7 +734,7 @@ class pdf_standard extends ModelePDFStock
 		if (empty($hidetop)) {
 			$pdf->SetDrawColor(200, 200, 200);
 			$pdf->SetLineStyle(array('dash' => '0', 'color' => array(200, 200, 200)));
-			$pdf->line($this->marge_gauche, $tab_top + 10, $this->page_largeur - $this->marge_droite, $tab_top + 10);
+			$pdf->line($this->marge_gauche, $tab_top + $this->tabTitleHeight, $this->page_largeur - $this->marge_droite, $tab_top + $this->tabTitleHeight);
 			$pdf->SetLineStyle(array('dash' => 0));
 		}
 	}
@@ -772,8 +768,8 @@ class pdf_standard extends ModelePDFStock
 		pdf_pagehead($pdf, $outputlangs, $this->page_hauteur);
 
 		// Show Draft Watermark
-		if ($object->statut == 0 && (!empty($conf->global->COMMANDE_DRAFT_WATERMARK))) {
-			pdf_watermark($pdf, $outputlangs, $this->page_hauteur, $this->page_largeur, 'mm', $conf->global->COMMANDE_DRAFT_WATERMARK);
+		if ($object->statut == 0 && (!empty($conf->global->STOCK_DRAFT_WATERMARK))) {
+			pdf_watermark($pdf, $outputlangs, $this->page_hauteur, $this->page_largeur, 'mm', $conf->global->STOCK_DRAFT_WATERMARK);
 		}
 
 		$pdf->SetTextColor(0, 0, 60);
@@ -785,6 +781,7 @@ class pdf_standard extends ModelePDFStock
 		$pdf->SetXY($this->marge_gauche, $posy);
 
 		// Logo
+		$height = 0;
 		$logo = $conf->mycompany->dir_output.'/logos/'.$this->emetteur->logo;
 		if ($this->emetteur->logo) {
 			if (is_readable($logo)) {
@@ -801,29 +798,19 @@ class pdf_standard extends ModelePDFStock
 			$pdf->MultiCell(100, 4, $outputlangs->convToOutputCharset($text), 0, 'L');
 		}
 
+		$yafterleft = $pdf->GetY() + $height;
+
 		$pdf->SetFont('', 'B', $default_font_size + 3);
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
-		$title = $outputlangs->transnoentities("Warehouse");
-		$pdf->MultiCell(100, 3, $title, '', 'R');
 
-		$pdf->SetFont('', 'B', $default_font_size);
+		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Warehouse").' '.$outputlangs->convToOutputCharset($object->label), '', 'R');
 
-		$posy += 5;
-		$pdf->SetXY($posx, $posy);
-		$pdf->SetTextColor(0, 0, 60);
-
-		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Ref")." : ".$outputlangs->convToOutputCharset($object->label), '', 'R');
-
-		$posy += 5;
+		$posy += 6;
 		$pdf->SetFont('', '', $default_font_size - 1);
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
-		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("LocationSummary").' :', '', 'R');
-
-		$posy += 4;
-		$pdf->SetXY($posx - 50, $posy);
-		$pdf->MultiCell(150, 3, $object->lieu, '', 'R');
+		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("Label").' : '.$object->lieu, '', 'R');
 
 		$posy += 4;
 		$pdf->SetXY($posx, $posy);
@@ -841,8 +828,10 @@ class pdf_standard extends ModelePDFStock
 			$pdf->MultiCell(150, 3, $e->label, '', 'R');
 		}
 
+		$yafterright = $pdf->GetY();
+
 		// Description
-		$nexY = $pdf->GetY();
+		$nexY = max($yafterleft, $yafterright);
 		$nexY += 5;
 		$pdf->SetXY($posx, $posy);
 		$pdf->writeHTMLCell(190, 2, $this->marge_gauche, $nexY, '<b>'.$outputlangs->transnoentities("Description").' : </b>'.nl2br($object->description), 0, 1);
@@ -864,6 +853,9 @@ class pdf_standard extends ModelePDFStock
 		$pdf->writeHTMLCell(190, 2, $this->marge_gauche, $nexY, '<b>'.$outputlangs->transnoentities("EstimatedStockValueShort").' : </b>'.price((empty($calcproducts['value']) ? '0' : price2num($calcproducts['value'], 'MT')), 0, $langs, 0, -1, -1, $conf->currency), 0, 1);
 		$nexY = $pdf->GetY();
 
+		// Value
+		$pdf->writeHTMLCell(190, 2, $this->marge_gauche, $nexY, '<b>'.$outputlangs->transnoentities("Date").' : </b>'.dol_print_date(dol_now(), 'dayhour'), 0, 1);
+		$nexY = $pdf->GetY();
 
 		// Last movement
 		$sql = "SELECT max(m.datem) as datem";

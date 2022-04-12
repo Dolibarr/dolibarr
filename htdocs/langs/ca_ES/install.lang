@@ -21,6 +21,7 @@ ErrorPHPDoesNotSupportCurl=La vostra instal·lació de PHP no admet Curl.
 ErrorPHPDoesNotSupportCalendar=La vostra instal·lació de PHP no admet extensions de calendari php.
 ErrorPHPDoesNotSupportUTF8=La vostra instal·lació de PHP no admet funcions UTF8. Dolibarr no pot funcionar correctament. Resoleu-ho abans d’instal·lar Dolibarr.
 ErrorPHPDoesNotSupportIntl=La vostra instal·lació de PHP no admet funcions Intl.
+ErrorPHPDoesNotSupportMbstring=La vostra instal·lació de PHP no admet les funcions mbstring.
 ErrorPHPDoesNotSupportxDebug=La vostra instal·lació de PHP no admet funcions de depuració extres.
 ErrorPHPDoesNotSupport=La teva instal·lació PHP no admet funcions %s.
 ErrorDirDoesNotExists=La carpeta <b>%s</b> no existeix o no és accessible.

@@ -50,6 +50,7 @@ $socid = 0;
 if ($user->socid) {
 	$socid = $user->socid;
 }
+$userid = $user->id;
 
 // Security check
 $result = restrictedArea($user, 'ticket', 0, '', '', '', '');
@@ -96,7 +97,7 @@ if (in_array('DOLUSERCOOKIE_ticket_by_status', $autosetarray)) {
 	$endyear = GETPOST($param_year, 'int');
 	$shownb = GETPOST($param_shownb, 'alpha');
 	$showtot = GETPOST($param_showtot, 'alpha');
-} else {
+} elseif (!empty($_COOKIE['DOLUSERCOOKIE_ticket_by_status'])) {
 	$tmparray = json_decode($_COOKIE['DOLUSERCOOKIE_ticket_by_status'], true);
 	$endyear = $tmparray['year'];
 	$shownb = $tmparray['shownb'];
@@ -104,6 +105,7 @@ if (in_array('DOLUSERCOOKIE_ticket_by_status', $autosetarray)) {
 }
 if (empty($shownb) && empty($showtot)) {
 	$showtot = 1;
+	$shownb = 0;
 }
 
 $nowarray = dol_getdate(dol_now(), true);
@@ -146,13 +148,13 @@ $tick = array(
 
 $sql = "SELECT t.fk_statut, COUNT(t.fk_statut) as nb";
 $sql .= " FROM ".MAIN_DB_PREFIX."ticket as t";
-if (!$user->rights->societe->client->voir && !$socid) {
+if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 $sql .= ' WHERE t.entity IN ('.getEntity('ticket').')';
 $sql .= dolSqlDateFilter('datec', 0, 0, $endyear);
 
-if (!$user->rights->societe->client->voir && !$socid) {
+if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= " AND t.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 
@@ -222,7 +224,7 @@ if ($result) {
 	dol_print_error($db);
 }
 
-$stringtoshow = '<script type="text/javascript" language="javascript">
+$stringtoshow = '<script type="text/javascript">
     jQuery(document).ready(function() {
         jQuery("#idsubimgDOLUSERCOOKIE_ticket_by_status").click(function() {
             jQuery("#idfilterDOLUSERCOOKIE_ticket_by_status").toggle();
@@ -317,13 +319,13 @@ $sql .= " FROM ".MAIN_DB_PREFIX."ticket as t";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_type as type ON type.code=t.type_code";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_category as category ON category.code=t.category_code";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_severity as severity ON severity.code=t.severity_code";
-if (!$user->rights->societe->client->voir && !$socid) {
+if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 
 $sql .= ' WHERE t.entity IN ('.getEntity('ticket').')';
 $sql .= " AND t.fk_statut=0";
-if (!$user->rights->societe->client->voir && !$socid) {
+if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= " AND t.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 
@@ -388,8 +390,10 @@ if ($result) {
 
 			// Category
 			print '<td class="nowrap">';
-			$s = $langs->getLabelFromKey($db, 'TicketCategoryShort'.$objp->category_code, 'c_ticket_category', 'code', 'label', $objp->category_code);
-			print '<span title="'.dol_escape_htmltag($s).'">'.$s.'</span>';
+			if (!empty($obp->category_code)) {
+				$s = $langs->getLabelFromKey($db, 'TicketCategoryShort'.$objp->category_code, 'c_ticket_category', 'code', 'label', $objp->category_code);
+				print '<span title="'.dol_escape_htmltag($s).'">'.$s.'</span>';
+			}
 			//print $objp->category_label;
 			print "</td>";
 

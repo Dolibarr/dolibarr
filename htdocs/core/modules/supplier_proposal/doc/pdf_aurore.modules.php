@@ -132,7 +132,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 		$this->db = $db;
 		$this->name = "aurore";
 		$this->description = $langs->trans('DocModelAuroreDescription');
-		$this->update_main_doc_field = 1;		// Save the name of generated file as the main doc when generating a doc with this template
+		$this->update_main_doc_field = 1; // Save the name of generated file as the main doc when generating a doc with this template
 
 		// Page size for A4 format
 		$this->type = 'pdf';
@@ -194,6 +194,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 		}
 
 		$this->tva = array();
+		$this->tva_array = array();
 		$this->localtax1 = array();
 		$this->localtax2 = array();
 		$this->atleastoneratenotnull = 0;
@@ -611,10 +612,17 @@ class pdf_aurore extends ModelePDFSupplierProposal
 					if (($object->lines[$i]->info_bits & 0x01) == 0x01) {
 						$vatrate .= '*';
 					}
+
+					// Fill $this->tva and $this->tva_array
 					if (!isset($this->tva[$vatrate])) {
 						$this->tva[$vatrate] = 0;
 					}
 					$this->tva[$vatrate] += $tvaligne;
+					$vatcode = $object->lines[$i]->vat_src_code;
+					if (empty($this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['amount'])) {
+						$this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['amount'] = 0;
+					}
+					$this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')] = array('vatrate'=>$vatrate, 'vatcode'=>$vatcode, 'amount'=> $this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['amount'] + $tvaligne);
 
 					if ($posYAfterImage > $posYAfterDescription) {
 						$nexY = $posYAfterImage;

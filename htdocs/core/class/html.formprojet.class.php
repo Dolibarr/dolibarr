@@ -39,6 +39,8 @@ class FormProjets
 	 */
 	public $error = '';
 
+	public $nboftasks;
+
 
 	/**
 	 *	Constructor
@@ -162,8 +164,8 @@ class FormProjets
 		}
 
 		// Search all projects
-		$sql = 'SELECT p.rowid, p.ref, p.title, p.fk_soc, p.fk_statut, p.public, s.nom as name, s.name_alias';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.'projet as p LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON s.rowid = p.fk_soc';
+		$sql = "SELECT p.rowid, p.ref, p.title, p.fk_soc, p.fk_statut, p.public, s.nom as name, s.name_alias";
+		$sql .= " FROM ".$this->db->prefix()."projet as p LEFT JOIN ".$this->db->prefix()."societe as s ON s.rowid = p.fk_soc";
 		$sql .= " WHERE p.entity IN (".getEntity('project').")";
 		if ($projectsListId !== false) {
 			$sql .= " AND p.rowid IN (".$this->db->sanitize($projectsListId).")";
@@ -205,7 +207,7 @@ class FormProjets
 				while ($i < $num) {
 					$obj = $this->db->fetch_object($resql);
 					// If we ask to filter on a company and user has no permission to see all companies and project is linked to another company, we hide project.
-					if ($socid > 0 && (empty($obj->fk_soc) || $obj->fk_soc == $socid) && !$user->rights->societe->lire) {
+					if ($socid > 0 && (empty($obj->fk_soc) || $obj->fk_soc == $socid) && empty($user->rights->societe->lire)) {
 						// Do nothing
 					} else {
 						if ($discard_closed == 1 && $obj->fk_statut == 2 && $obj->rowid != $selected) { // We discard closed except if selected
@@ -307,11 +309,11 @@ class FormProjets
 	 *  @param	int		$disabled		Disabled
 	 *  @param	string	$morecss        More css added to the select component
 	 *  @param	string	$projectsListId ''=Automatic filter on project allowed. List of id=Filter on project ids.
-	 *  @param	string	$showproject	'all' = Show project info, ''=Hide project info
+	 *  @param	string	$showmore		'all' = Show project info, 'progress' = Show task progression, ''=Show nothing more
 	 *  @param	User	$usertofilter	User object to use for filtering
 	 *	@return int         			Nbr of tasks if OK, <0 if KO
 	 */
-	public function selectTasks($socid = -1, $selected = '', $htmlname = 'taskid', $maxlength = 24, $option_only = 0, $show_empty = '1', $discard_closed = 0, $forcefocus = 0, $disabled = 0, $morecss = 'maxwidth500', $projectsListId = '', $showproject = 'all', $usertofilter = null)
+	public function selectTasks($socid = -1, $selected = '', $htmlname = 'taskid', $maxlength = 24, $option_only = 0, $show_empty = '1', $discard_closed = 0, $forcefocus = 0, $disabled = 0, $morecss = 'maxwidth500', $projectsListId = '', $showmore = 'all', $usertofilter = null)
 	{
 		global $user, $conf, $langs;
 
@@ -336,11 +338,12 @@ class FormProjets
 		}
 
 		// Search all projects
-		$sql = 'SELECT t.rowid, t.ref as tref, t.label as tlabel, p.rowid as pid, p.ref, p.title, p.fk_soc, p.fk_statut, p.public,';
-		$sql .= ' s.nom as name';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.'projet as p';
-		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON s.rowid = p.fk_soc,';
-		$sql .= ' '.MAIN_DB_PREFIX.'projet_task as t';
+		$sql = "SELECT t.rowid, t.ref as tref, t.label as tlabel, t.progress,";
+		$sql .= " p.rowid as pid, p.ref, p.title, p.fk_soc, p.fk_statut, p.public, p.usage_task,";
+		$sql .= " s.nom as name";
+		$sql .= " FROM ".$this->db->prefix()."projet as p";
+		$sql .= " LEFT JOIN ".$this->db->prefix()."societe as s ON s.rowid = p.fk_soc,";
+		$sql .= " ".$this->db->prefix()."projet_task as t";
 		$sql .= " WHERE p.entity IN (".getEntity('project').")";
 		$sql .= " AND t.fk_projet = p.rowid";
 		if ($projectsListId) {
@@ -407,7 +410,7 @@ class FormProjets
 							$disabled = 1;
 						}
 
-						if ($showproject == 'all') {
+						if (preg_match('/all/', $showmore)) {
 							$labeltoshow .= dol_trunc($obj->ref, 18); // Project ref
 							//if ($obj->public) $labeltoshow.=' ('.$langs->trans("SharedProject").')';
 							//else $labeltoshow.=' ('.$langs->trans("Private").')';
@@ -442,6 +445,10 @@ class FormProjets
 						// Label for task
 						$labeltoshow .= $obj->tref.' '.dol_trunc($obj->tlabel, $maxlength);
 						$titletoshow .= $obj->tref.' '.dol_trunc($obj->tlabel, $maxlength);
+						if ($obj->usage_task && preg_match('/progress/', $showmore)) {
+							$labeltoshow .= ' <span class="opacitymedium">('.$obj->progress.'%)</span>';
+							$titletoshow .= ' <span class="opacitymedium">('.$obj->progress.'%)</span>';
+						}
 
 						if (!empty($selected) && $selected == $obj->rowid) {
 							$out .= '<option value="'.$obj->rowid.'" selected';
@@ -473,6 +480,8 @@ class FormProjets
 				$out .= '</select>';
 			}
 
+			$this->nboftasks = $num;
+
 			print $out;
 
 			$this->db->free($resql);
@@ -493,9 +502,10 @@ class FormProjets
 	 *    @param	string		$morecss			More CSS
 	 *    @param    int         $limitonstatus      Add filters to limit length of list to opened status (for example to avoid ERR_RESPONSE_HEADERS_TOO_BIG on project/element.php page). TODO To implement
 	 *    @param	string		$projectkey			Equivalent key  to fk_projet for actual table_element
+	 *    @param	string		$placeholder		Placeholder
 	 *    @return	int|string						The HTML select list of element or '' if nothing or -1 if KO
 	 */
-	public function select_element($table_element, $socid = 0, $morecss = '', $limitonstatus = -2, $projectkey = "fk_projet")
+	public function select_element($table_element, $socid = 0, $morecss = '', $limitonstatus = -2, $projectkey = "fk_projet", $placeholder = '')
 	{
 		// phpcs:enable
 		global $conf, $langs;
@@ -556,7 +566,7 @@ class FormProjets
 				$sql = "SELECT t.rowid, t.ref";
 				break;
 			case 'stock_mouvement':
-				$sql = 'SELECT t.rowid, t.label as ref';
+				$sql = "SELECT t.rowid, t.label as ref";
 				$projectkey = 'fk_origin';
 				break;
 			case "payment_salary":
@@ -573,9 +583,9 @@ class FormProjets
 		if ($linkedtothirdparty) {
 			$sql .= ", s.nom as name";
 		}
-		$sql .= " FROM ".MAIN_DB_PREFIX.$table_element." as t";
+		$sql .= " FROM ".$this->db->prefix().$table_element." as t";
 		if ($linkedtothirdparty) {
-			$sql .= ", ".MAIN_DB_PREFIX."societe as s";
+			$sql .= ", ".$this->db->prefix()."societe as s";
 		}
 		$sql .= " WHERE ".$projectkey." is null";
 		if (!empty($socid) && $linkedtothirdparty) {
@@ -603,7 +613,7 @@ class FormProjets
 			$i = 0;
 			if ($num > 0) {
 				$sellist = '<select class="flat elementselect css'.$table_element.($morecss ? ' '.$morecss : '').'" name="elementselect">';
-				$sellist .= '<option value="-1"></option>';
+				$sellist .= '<option value="-1"'.($placeholder ? ' class="optiongrey"' : '').'>'.$placeholder.'</option>';
 				while ($i < $num) {
 					$obj = $this->db->fetch_object($resql);
 					$ref = $obj->ref ? $obj->ref : $obj->rowid;
@@ -656,7 +666,7 @@ class FormProjets
 		global $conf, $langs, $user;
 
 		$sql = "SELECT rowid, code, label, percent";
-		$sql .= " FROM ".MAIN_DB_PREFIX.'c_lead_status';
+		$sql .= " FROM ".$this->db->prefix().'c_lead_status';
 		$sql .= " WHERE active = 1";
 		$sql .= " ORDER BY position";
 

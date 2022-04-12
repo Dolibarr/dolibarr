@@ -158,22 +158,22 @@ class ProjectStats extends Stats
 		// Get list of project id allowed to user (in a string list separated by coma)
 		$object = new Project($this->db);
 		$projectsListId = '';
-		if (!$user->rights->projet->all->lire) {
+		if (empty($user->rights->projet->all->lire)) {
 			$projectsListId = $object->getProjectsAuthorizedForUser($user, 0, 1, $user->socid);
 		}
 
 		$sqlwhere[] = ' t.entity IN ('.getEntity('project').')';
 
 		if (!empty($this->userid)) {
-			$sqlwhere[] = ' t.fk_user_resp='.$this->userid;
+			$sqlwhere[] = ' t.fk_user_resp = '.((int) $this->userid);
 		}
 
 		// Forced filter on socid is similar to forced filter on project. TODO Use project assignement to allow to not use filter on project
 		if (!empty($this->socid)) {
-			$sqlwhere[] = ' t.fk_soc='.$this->socid;
+			$sqlwhere[] = ' t.fk_soc = '.((int) $this->socid);
 		}
 		if (!empty($this->year) && empty($this->yearmonth)) {
-			$sqlwhere[] = " date_format(t.datec,'%Y')='".$this->db->escape($this->year)."'";
+			$sqlwhere[] = " date_format(t.datec,'%Y') = '".$this->db->escape($this->year)."'";
 		}
 		if (!empty($this->yearmonth)) {
 			$sqlwhere[] = " t.datec BETWEEN '".$this->db->idate(dol_get_first_day($this->yearmonth))."' AND '".$this->db->idate(dol_get_last_day($this->yearmonth))."'";
@@ -183,7 +183,7 @@ class ProjectStats extends Stats
 			$sqlwhere[] = " t.fk_opp_status IN (".$this->db->sanitize($this->status).")";
 		}
 
-		if (!$user->rights->projet->all->lire) {
+		if (empty($user->rights->projet->all->lire)) {
 			$sqlwhere[] = " t.rowid IN (".$this->db->sanitize($projectsListId).")"; // public and assigned to, or restricted to company for external users
 		}
 

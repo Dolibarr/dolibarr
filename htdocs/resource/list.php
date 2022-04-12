@@ -38,7 +38,7 @@ $element        = GETPOST('element', 'alpha');
 $element_id     = GETPOST('element_id', 'int');
 $resource_id    = GETPOST('resource_id', 'int');
 
-$sortorder      = GETPOST('sortorder', 'alpha');
+$sortorder      = GETPOST('sortorder', 'aZ09comma');
 $sortfield      = GETPOST('sortfield', 'aZ09comma');
 $optioncss = GETPOST('optioncss', 'alpha');
 
@@ -60,7 +60,6 @@ $search_type = GETPOST("search_type", 'alpha');
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-
 
 $filter = array();
 
@@ -85,9 +84,6 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-if (!$user->rights->resource->read) {
-		accessforbidden();
-}
 $arrayfields = array(
 		't.ref' => array(
 				'label' => $langs->trans("Ref"),
@@ -113,6 +109,10 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_type = "";
 	$search_array_options = array();
 	$filter = array();
+}
+
+if (empty($user->rights->resource->read)) {
+	accessforbidden();
 }
 
 

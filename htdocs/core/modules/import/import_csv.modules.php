@@ -324,7 +324,8 @@ class ImportCsv extends ModeleImports
 		//dol_syslog("import_csv.modules maxfields=".$maxfields." importid=".$importid);
 
 		//var_dump($array_match_file_to_database);
-		//var_dump($arrayrecord);
+		//var_dump($arrayrecord); exit;
+
 		$array_match_database_to_file = array_flip($array_match_file_to_database);
 		$sort_array_match_file_to_database = $array_match_file_to_database;
 		ksort($sort_array_match_file_to_database);
@@ -367,11 +368,14 @@ class ImportCsv extends ModeleImports
 					//dol_syslog("Table ".$tablename." check for entity into cache is ".$tablewithentity_cache[$tablename]);
 				}
 
-				// array of fields to column index
+				// Define array to convert fields ('c.ref', ...) into column index (1, ...)
 				$arrayfield = array();
 				foreach ($sort_array_match_file_to_database as $key => $val) {
 					$arrayfield[$val] = ($key - 1);
 				}
+
+				// $arrayrecord start at key 0
+				// $sort_array_match_file_to_database start at key 1
 
 				// Loop on each fields in the match array: $key = 1..n, $val=alias of field (s.nom)
 				foreach ($sort_array_match_file_to_database as $key => $val) {
@@ -595,9 +599,24 @@ class ImportCsv extends ModeleImports
 										if (!empty($classModForNumber) && !empty($pathModForNumber) && is_readable(DOL_DOCUMENT_ROOT.$pathModForNumber)) {
 											require_once DOL_DOCUMENT_ROOT.$pathModForNumber;
 											$modForNumber = new $classModForNumber;
-											$defaultref = $modForNumber->getNextValue(null, null);
+
+											$tmpobject = null;
+											// Set the object when we can
+											if (!empty($objimport->array_import_convertvalue[0][$val]['classobject'])) {
+												$pathForObject = $objimport->array_import_convertvalue[0][$val]['pathobject'];
+												require_once DOL_DOCUMENT_ROOT.$pathForObject;
+												$tmpclassobject = $objimport->array_import_convertvalue[0][$val]['classobject'];
+												$tmpobject = new $tmpclassobject($this->db);
+												foreach ($arrayfield as $tmpkey => $tmpval) {	// $arrayfield is array('c.ref'=>0, ...)
+													if (in_array($tmpkey, array('t.date', 'c.date_commande'))) {
+														$tmpobject->date = dol_stringtotime($arrayrecord[$arrayfield[$tmpkey]]['val'], 1);
+													}
+												}
+											}
+
+											$defaultref = $modForNumber->getNextValue(null, $tmpobject);
 										}
-										if (is_numeric($defaultref) && $defaultref <= 0) {
+										if (is_numeric($defaultref) && $defaultref <= 0) {	// If error
 											$defaultref = '';
 										}
 										$newval = $defaultref;
@@ -612,19 +631,8 @@ class ImportCsv extends ModeleImports
 										break;
 									}
 									$classinstance = new $class($this->db);
-									$res = call_user_func_array(array($classinstance, $method), array(&$arrayrecord));
-									if ($res < 0) {
-										if (!empty($objimport->array_import_convertvalue[0][$val]['dict'])) {
-											$this->errors[$error]['lib'] = $langs->trans('ErrorFieldValueNotIn', $key, $newval, 'code', $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['dict']));
-										} else {
-											$this->errors[$error]['lib'] = 'ErrorFieldValueNotIn';
-										}
-										$this->errors[$error]['type'] = 'FOREIGNKEY';
-										$errorforthistable++;
-										$error++;
-									} else {
-										$newval = $arrayrecord[($key - 1)]['val']; //We get new value computed.
-									}
+									$res = call_user_func_array(array($classinstance, $method), array(&$arrayrecord, $listfields, ($key - 1)));
+									$newval = $res; 	// We get new value computed.
 								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'numeric') {
 									$newval = price2num($newval);
 								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'accountingaccount') {
@@ -716,6 +724,8 @@ class ImportCsv extends ModeleImports
 				}
 
 				// We add hidden fields (but only if there is at least one field to add into table)
+				// We process here all the fields that were declared into the array ->import_fieldshidden_array of the descriptor file.
+				// Previously we processed the ->import_fields_array.
 				if (!empty($listfields) && is_array($objimport->array_import_fieldshidden[0])) {
 					// Loop on each hidden fields to add them into listfields/listvalues
 					foreach ($objimport->array_import_fieldshidden[0] as $key => $val) {
@@ -724,7 +734,7 @@ class ImportCsv extends ModeleImports
 						}
 						if ($val == 'user->id') {
 							$listfields[] = preg_replace('/^'.preg_quote($alias, '/').'\./', '', $key);
-							$listvalues[] = $user->id;
+							$listvalues[] = ((int) $user->id);
 						} elseif (preg_match('/^lastrowid-/', $val)) {
 							$tmp = explode('-', $val);
 							$lastinsertid = (isset($last_insert_id_array[$tmp[1]])) ? $last_insert_id_array[$tmp[1]] : 0;
@@ -735,7 +745,7 @@ class ImportCsv extends ModeleImports
 						} elseif (preg_match('/^const-/', $val)) {
 							$tmp = explode('-', $val, 2);
 							$listfields[] = preg_replace('/^'.preg_quote($alias, '/').'\./', '', $key);
-							$listvalues[] = "'".$tmp[1]."'";
+							$listvalues[] = "'".$this->db->escape($tmp[1])."'";
 						} elseif (preg_match('/^rule-/', $val)) {
 							$fieldname = $key;
 							if (!empty($objimport->array_import_convertvalue[0][$fieldname])) {
@@ -749,14 +759,13 @@ class ImportCsv extends ModeleImports
 										break;
 									}
 									$classinstance = new $class($this->db);
-									$res = call_user_func_array(array($classinstance, $method), array(&$arrayrecord, $fieldname, &$listfields, &$listvalues));
-									if ($res < 0) {
-										if (!empty($objimport->array_import_convertvalue[0][$fieldname]['dict'])) $this->errors[$error]['lib'] = $langs->trans('ErrorFieldValueNotIn', $key, end($listvalues), 'code', $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$fieldname]['dict']));
-										else $this->errors[$error]['lib'] = 'ErrorFieldValueNotIn';
-										$this->errors[$error]['type'] = 'FOREIGNKEY';
-										$errorforthistable++;
-										$error++;
+									$res = call_user_func_array(array($classinstance, $method), array(&$arrayrecord, $listfields, ($key - 1)));
+									$fieldArr = explode('.', $fieldname);
+									if (count($fieldArr) > 0) {
+										$fieldname = $fieldArr[1];
 									}
+									$listfields[] = $fieldname;
+									$listvalues[] = $res;
 								}
 							}
 						} else {
@@ -780,7 +789,7 @@ class ImportCsv extends ModeleImports
 							// We do SELECT to get the rowid, if we already have the rowid, it's to be used below for related tables (extrafields)
 
 							if (empty($lastinsertid)) {	// No insert done yet for a parent table
-								$sqlSelect = 'SELECT rowid FROM '.$tablename;
+								$sqlSelect = "SELECT rowid FROM ".$tablename;
 
 								$data = array_combine($listfields, $listvalues);
 								$where = array();
@@ -791,7 +800,7 @@ class ImportCsv extends ModeleImports
 									$where[] = $key.' = '.$data[$key];
 									$filters[] = $col.' = '.$data[$key];
 								}
-								$sqlSelect .= ' WHERE '.implode(' AND ', $where);
+								$sqlSelect .= " WHERE ".implode(' AND ', $where);
 
 								$resql = $this->db->query($sqlSelect);
 								if ($resql) {
@@ -818,12 +827,12 @@ class ImportCsv extends ModeleImports
 								// a direct insert into subtable extrafields, but when me wake an update, the insertid is defined and the child record
 								// may already exists. So we rescan the extrafield table to know if record exists or not for the rowid.
 								// Note: For extrafield tablename, we have in importfieldshidden_array an enty 'extra.fk_object'=>'lastrowid-tableparent' so $keyfield is 'fk_object'
-								$sqlSelect = 'SELECT rowid FROM '.$tablename;
+								$sqlSelect = "SELECT rowid FROM ".$tablename;
 
 								if (empty($keyfield)) {
 									$keyfield = 'rowid';
 								}
-								$sqlSelect .= ' WHERE '.$keyfield.' = '.((int) $lastinsertid);
+								$sqlSelect .= " WHERE ".$keyfield.' = '.((int) $lastinsertid);
 
 								$resql = $this->db->query($sqlSelect);
 								if ($resql) {
@@ -845,19 +854,19 @@ class ImportCsv extends ModeleImports
 
 							if (!empty($lastinsertid)) {
 								// Build SQL UPDATE request
-								$sqlstart = 'UPDATE '.$tablename;
+								$sqlstart = "UPDATE ".$tablename;
 
 								$data = array_combine($listfields, $listvalues);
 								$set = array();
 								foreach ($data as $key => $val) {
-									$set[] = $key.' = '.$val;
+									$set[] = $key." = ".$val;
 								}
-								$sqlstart .= ' SET '.implode(', ', $set);
+								$sqlstart .= " SET ".implode(', ', $set);
 
 								if (empty($keyfield)) {
 									$keyfield = 'rowid';
 								}
-								$sqlend = ' WHERE '.$keyfield.' = '.((int) $lastinsertid);
+								$sqlend = " WHERE ".$keyfield." = ".((int) $lastinsertid);
 
 								$sql = $sqlstart.$sqlend;
 
@@ -878,17 +887,17 @@ class ImportCsv extends ModeleImports
 						// Update not done, we do insert
 						if (!$error && !$updatedone) {
 							// Build SQL INSERT request
-							$sqlstart = 'INSERT INTO '.$tablename.'('.implode(', ', $listfields).', import_key';
-							$sqlend = ') VALUES('.implode(', ', $listvalues).", '".$this->db->escape($importid)."'";
+							$sqlstart = "INSERT INTO ".$tablename."(".implode(", ", $listfields).", import_key";
+							$sqlend = ") VALUES(".implode(', ', $listvalues).", '".$this->db->escape($importid)."'";
 							if (!empty($tablewithentity_cache[$tablename])) {
-								$sqlstart .= ', entity';
-								$sqlend .= ', '.$conf->entity;
+								$sqlstart .= ", entity";
+								$sqlend .= ", ".$conf->entity;
 							}
 							if (!empty($objimport->array_import_tables_creator[0][$alias])) {
-								$sqlstart .= ', '.$objimport->array_import_tables_creator[0][$alias];
-								$sqlend .= ', '.$user->id;
+								$sqlstart .= ", ".$objimport->array_import_tables_creator[0][$alias];
+								$sqlend .= ", ".$user->id;
 							}
-							$sql = $sqlstart.$sqlend.')';
+							$sql = $sqlstart.$sqlend.")";
 							//dol_syslog("import_csv.modules", LOG_DEBUG);
 
 							// Run insert request

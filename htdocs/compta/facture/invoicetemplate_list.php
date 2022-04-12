@@ -74,20 +74,30 @@ $search_montant_vat = GETPOST('search_montant_vat');
 $search_montant_ttc = GETPOST('search_montant_ttc');
 $search_payment_mode = GETPOST('search_payment_mode');
 $search_payment_term = GETPOST('search_payment_term');
-$search_day = GETPOST('search_day', 'int');
-$search_year = GETPOST('search_year', 'int');
-$search_month = GETPOST('search_month', 'int');
-$search_day_date_when = GETPOST('search_day_date_when', 'int');
-$search_year_date_when = GETPOST('search_year_date_when', 'int');
-$search_month_date_when = GETPOST('search_month_date_when', 'int');
+$search_date_startday = GETPOST('search_date_startday', 'int');
+$search_date_startmonth = GETPOST('search_date_startmonth', 'int');
+$search_date_startyear = GETPOST('search_date_startyear', 'int');
+$search_date_endday = GETPOST('search_date_endday', 'int');
+$search_date_endmonth = GETPOST('search_date_endmonth', 'int');
+$search_date_endyear = GETPOST('search_date_endyear', 'int');
+$search_date_start = dol_mktime(0, 0, 0, $search_date_startmonth, $search_date_startday, $search_date_startyear);	// Use tzserver
+$search_date_end = dol_mktime(23, 59, 59, $search_date_endmonth, $search_date_endday, $search_date_endyear);
+$search_date_when_startday = GETPOST('search_date_when_startday', 'int');
+$search_date_when_startmonth = GETPOST('search_date_when_startmonth', 'int');
+$search_date_when_startyear = GETPOST('search_date_when_startyear', 'int');
+$search_date_when_endday = GETPOST('search_date_when_endday', 'int');
+$search_date_when_endmonth = GETPOST('search_date_when_endmonth', 'int');
+$search_date_when_endyear = GETPOST('search_date_when_endyear', 'int');
+$search_date_when_start = dol_mktime(0, 0, 0, $search_date_when_startmonth, $search_date_when_startday, $search_date_when_startyear);	// Use tzserver
+$search_date_when_end = dol_mktime(23, 59, 59, $search_date_when_endmonth, $search_date_when_endday, $search_date_when_endyear);
 $search_recurring = GETPOST('search_recurring', 'int');
 $search_frequency = GETPOST('search_frequency', 'alpha');
 $search_unit_frequency = GETPOST('search_unit_frequency', 'alpha');
 $search_status = GETPOST('search_status', 'int');
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -206,12 +216,22 @@ if (empty($reshook)) {
 		$search_montant_ttc = '';
 		$search_payment_mode = '';
 		$search_payment_term = '';
-		$search_day = '';
-		$search_year = '';
-		$search_month = '';
-		$search_day_date_when = '';
-		$search_year_date_when = '';
-		$search_month_date_when = '';
+		$search_date_startday = '';
+		$search_date_startmonth = '';
+		$search_date_startyear = '';
+		$search_date_endday = '';
+		$search_date_endmonth = '';
+		$search_date_endyear = '';
+		$search_date_start = '';
+		$search_date_end = '';
+		$search_date_when_startday = '';
+		$search_date_when_startmonth = '';
+		$search_date_when_startyear = '';
+		$search_date_when_endday = '';
+		$search_date_when_endmonth = '';
+		$search_date_when_endyear = '';
+		$search_date_when_start = '';
+		$search_date_when_end = '';
 		$search_recurring = '';
 		$search_frequency = '';
 		$search_unit_frequency = '';
@@ -260,7 +280,7 @@ $sql .= " f.fk_cond_reglement, f.fk_mode_reglement";
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
 	}
 }
 // Add fields from hooks
@@ -271,12 +291,12 @@ $sql = preg_replace('/,\s*$/', '', $sql);
 
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture_rec as f";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture_rec_extrafields as ef ON ef.fk_object = f.rowid";
-if (!$user->rights->societe->client->voir && !$socid) {
+if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 $sql .= " WHERE f.fk_soc = s.rowid";
 $sql .= ' AND f.entity IN ('.getEntity('invoice').')';
-if (!$user->rights->societe->client->voir && !$socid) {
+if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 if ($search_ref) {
@@ -326,8 +346,18 @@ if ($search_status != '' && $search_status >= -1) {
 		$sql .= ' AND suspended = 1';
 	}
 }
-$sql .= dolSqlDateFilter('f.date_last_gen', $search_day, $search_month, $search_year);
-$sql .= dolSqlDateFilter('f.date_when', $search_day_date_when, $search_month_date_when, $search_year_date_when);
+if ($search_date_start) {
+	$sql .= " AND f.date_last_gen >= '".$db->idate($search_date_start)."'";
+}
+if ($search_date_end) {
+	$sql .= " AND f.date_last_gen <= '".$db->idate($search_date_end)."'";
+}
+if ($search_date_when_start) {
+	$sql .= " AND f.date_when >= '".$db->idate($search_date_when_start)."'";
+}
+if ($search_date_when_end) {
+	$sql .= " AND f.date_when <= '".$db->idate($search_date_when_end)."'";
+}
 
 $tmpsortfield = $sortfield;
 if ($tmpsortfield == 'recurring') {
@@ -361,23 +391,41 @@ if ($resql) {
 	if ($socid > 0) {
 		$param .= '&socid='.urlencode($socid);
 	}
-	if ($search_day) {
-		$param .= '&search_day='.urlencode($search_day);
+	if ($search_date_startday) {
+		$param .= '&search_date_startday='.urlencode($search_date_startday);
 	}
-	if ($search_month) {
-		$param .= '&search_month='.urlencode($search_month);
+	if ($search_date_startmonth) {
+		$param .= '&search_date_startmonth='.urlencode($search_date_startmonth);
 	}
-	if ($search_year) {
-		$param .= '&search_year='.urlencode($search_year);
+	if ($search_date_startyear) {
+		$param .= '&search_date_startyear='.urlencode($search_date_startyear);
 	}
-	if ($search_day_date_when) {
-		$param .= '&search_day_date_when='.urlencode($search_day_date_when);
+	if ($search_date_endday) {
+		$param .= '&search_date_endday='.urlencode($search_date_endday);
 	}
-	if ($search_month_date_when) {
-		$param .= '&search_month_date_when='.urlencode($search_month_date_when);
+	if ($search_date_endmonth) {
+		$param .= '&search_date_endmonth='.urlencode($search_date_endmonth);
 	}
-	if ($search_year_date_when) {
-		$param .= '&search_year_date_when='.urlencode($search_year_date_when);
+	if ($search_date_endyear) {
+		$param .= '&search_date_endyear='.urlencode($search_date_endyear);
+	}
+	if ($search_date_when_startday) {
+		$param .= '&search_date_when_startday='.urlencode($search_date_when_startday);
+	}
+	if ($search_date_when_startmonth) {
+		$param .= '&search_date_when_startmonth='.urlencode($search_date_when_startmonth);
+	}
+	if ($search_date_when_startyear) {
+		$param .= '&search_date_when_startyear='.urlencode($search_date_when_startyear);
+	}
+	if ($search_date_when_endday) {
+		$param .= '&search_date_when_endday='.urlencode($search_date_when_endday);
+	}
+	if ($search_date_when_endmonth) {
+		$param .= '&search_date_when_endmonth='.urlencode($search_date_when_endmonth);
+	}
+	if ($search_date_when_endyear) {
+		$param .= '&search_date_when_endyear='.urlencode($search_date_when_endyear);
 	}
 	if ($search_ref) {
 		$param .= '&search_ref='.urlencode($search_ref);
@@ -457,7 +505,7 @@ if ($resql) {
 		print '<input class="flat maxwidth100" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
 		print '</td>';
 	}
-	// Thirpdarty
+	// Thirdparty
 	if (!empty($arrayfields['s.nom']['checked'])) {
 		print '<td class="liste_titre left"><input class="flat" type="text" size="8" name="search_societe" value="'.dol_escape_htmltag($search_societe).'"></td>';
 	}
@@ -493,19 +541,19 @@ if ($resql) {
 	}
 	if (!empty($arrayfields['recurring']['checked'])) {
 		// Recurring or not
-		print '<td class="liste_titre" align="center">';
+		print '<td class="liste_titre center">';
 		print $form->selectyesno('search_recurring', $search_recurring, 1, false, 1);
 		print '</td>';
 	}
 	if (!empty($arrayfields['f.frequency']['checked'])) {
 		// Recurring or not
-		print '<td class="liste_titre" align="center">';
+		print '<td class="liste_titre center">';
 		print '<input class="flat" type="text" size="1" name="search_frequency" value="'.dol_escape_htmltag($search_frequency).'">';
 		print '</td>';
 	}
 	if (!empty($arrayfields['f.unit_frequency']['checked'])) {
 		// Frequency unit
-		print '<td class="liste_titre" align="center">';
+		print '<td class="liste_titre center">';
 		print '<input class="flat" type="text" size="1" name="search_unit_frequency" value="'.dol_escape_htmltag($search_unit_frequency).'">';
 		print '</td>';
 	}
@@ -516,22 +564,24 @@ if ($resql) {
 	}
 	// Date invoice
 	if (!empty($arrayfields['f.date_last_gen']['checked'])) {
-		print '<td class="liste_titre nowraponall" align="center">';
-		if (!empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) {
-			print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_day" value="'.$search_day.'">';
-		}
-		print '<input class="flat valignmiddle width25" type="text" size="1" maxlength="2" name="search_month" value="'.$search_month.'">';
-		$formother->select_year($search_year ? $search_year : -1, 'search_year', 1, 20, 5, 0, 0, '', 'widthauto valignmiddle');
+		print '<td class="liste_titre center">';
+		print '<div class="nowrap">';
+		print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+		print '</div>';
+		print '<div class="nowrap">';
+		print $form->selectDate($search_date_end ? $search_date_end : -1, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+		print '</div>';
 		print '</td>';
 	}
 	// Date next generation
 	if (!empty($arrayfields['f.date_when']['checked'])) {
-		print '<td class="liste_titre nowraponall" align="center">';
-		if (!empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) {
-			print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_day_date_when" value="'.$search_day_date_when.'">';
-		}
-		print '<input class="flat valignmiddle width25" type="text" size="1" maxlength="2" name="search_month_date_when" value="'.$search_month_date_when.'">';
-		$formother->select_year($search_year_date_when ? $search_year_date_when : -1, 'search_year_date_when', 1, 20, 5, 0, 0, '', 'widthauto valignmiddle');
+		print '<td class="liste_titre center">';
+		print '<div class="nowrap">';
+		print $form->selectDate($search_date_when_start ? $search_date_when_start : -1, 'search_date_when_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+		print '</div>';
+		print '<div class="nowrap">';
+		print $form->selectDate($search_date_when_end ? $search_date_when_end : -1, 'search_date_when_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+		print '</div>';
 		print '</td>';
 	}
 	// Extra fields
@@ -563,7 +613,7 @@ if ($resql) {
 	}
 	// Status
 	if (!empty($arrayfields['status']['checked'])) {
-		print '<td class="liste_titre" align="center">';
+		print '<td class="liste_titre center">';
 		$liststatus = array(
 			0=>$langs->trans("Draft"),
 			1=>$langs->trans("Active"),
@@ -642,6 +692,10 @@ if ($resql) {
 	if ($num > 0) {
 		$i = 0;
 		$totalarray = array();
+		$totalarray['nbfield'] = 0;
+		$totalarray['val']['f.total_ht'] = 0;
+		$totalarray['val']['f.total_tva'] = 0;
+		$totalarray['val']['f.total_ttc'] = 0;
 		while ($i < min($num, $limit)) {
 			$objp = $db->fetch_object($resql);
 			if (empty($objp)) {
@@ -651,7 +705,7 @@ if ($resql) {
 			$companystatic->id = $objp->socid;
 			$companystatic->name = $objp->name;
 
-			$invoicerectmp->id = $objp->id ? $objp->id : $objp->facid;
+			$invoicerectmp->id = !empty($objp->id) ? $objp->id : $objp->facid;
 			$invoicerectmp->frequency = $objp->frequency;
 			$invoicerectmp->suspended = $objp->suspended;
 			$invoicerectmp->unit_frequency = $objp->unit_frequency;
@@ -667,7 +721,6 @@ if ($resql) {
 			if (!empty($arrayfields['f.titre']['checked'])) {
 				print '<td class="nowrap tdoverflowmax200">';
 				print $invoicerectmp->getNomUrl(1);
-				print "</a>";
 				print "</td>\n";
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -711,7 +764,7 @@ if ($resql) {
 			}
 			// Payment term
 			if (!empty($arrayfields['f.fk_cond_reglement']['checked'])) {
-				print '<td class="right">';
+				print '<td class="tdoverflowmax150">';
 				$form->form_conditions_reglement('', $objp->fk_cond_reglement, 'none');
 				print '</td>'."\n";
 				if (!$i) {
@@ -720,7 +773,7 @@ if ($resql) {
 			}
 			// Payment mode
 			if (!empty($arrayfields['f.fk_mode_reglement']['checked'])) {
-				print '<td class="right">';
+				print '<td class="tdoverflowmax150">';
 				$form->form_modes_reglement('', $objp->fk_mode_reglement, 'none');
 				print '</td>'."\n";
 				if (!$i) {

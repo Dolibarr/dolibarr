@@ -32,11 +32,6 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("banks", "categories", 'withdrawals', 'bills'));
 
-// Security check
-if ($user->socid > 0) {
-	accessforbidden();
-}
-
 // Get supervariables
 $prev_id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
@@ -61,11 +56,16 @@ $object = new BonPrelevement($db);
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
 
-if (!$user->rights->prelevement->bons->lire && $object->type != 'bank-transfer') {
+// Security check
+if ($user->socid > 0) {
 	accessforbidden();
 }
-if (!$user->rights->paymentbybanktransfer->read && $object->type == 'bank-transfer') {
-	accessforbidden();
+
+$type = $object->type;
+if ($type == 'bank-transfer') {
+	$result = restrictedArea($user, 'paymentbybanktransfer', '', '', '');
+} else {
+	$result = restrictedArea($user, 'prelevement', '', '', 'bons');
 }
 
 
@@ -89,9 +89,9 @@ if ($prev_id > 0 || $ref) {
 		print '<div class="underbanner clearboth"></div>';
 		print '<table class="border centpercent tableforfield">'."\n";
 
-		//print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td>'.$object->getNomUrl(1).'</td></tr>';
-		print '<tr><td class="titlefield">'.$langs->trans("Date").'</td><td>'.dol_print_date($object->datec, 'day').'</td></tr>';
-		print '<tr><td>'.$langs->trans("Amount").'</td><td>'.price($object->amount).'</td></tr>';
+		//print '<tr><td class="titlefieldcreate">'.$langs->trans("Ref").'</td><td>'.$object->getNomUrl(1).'</td></tr>';
+		print '<tr><td class="titlefieldcreate">'.$langs->trans("Date").'</td><td>'.dol_print_date($object->datec, 'day').'</td></tr>';
+		print '<tr><td>'.$langs->trans("Amount").'</td><td><span class="amount">'.price($object->amount).'</span></td></tr>';
 
 		if ($object->date_trans <> 0) {
 			$muser = new User($db);
@@ -99,7 +99,7 @@ if ($prev_id > 0 || $ref) {
 
 			print '<tr><td>'.$langs->trans("TransData").'</td><td>';
 			print dol_print_date($object->date_trans, 'day');
-			print ' <span class="opacitymedium">'.$langs->trans("By").'</span> '.$muser->getFullName($langs).'</td></tr>';
+			print ' <span class="opacitymedium">'.$langs->trans("By").'</span> '.$muser->getNomUrl(-1).'</td></tr>';
 			print '<tr><td>'.$langs->trans("TransMetod").'</td><td>';
 			print $object->methodes_trans[$object->method_trans];
 			print '</td></tr>';
@@ -120,7 +120,7 @@ if ($prev_id > 0 || $ref) {
 		$acc = new Account($db);
 		$result = $acc->fetch($conf->global->PRELEVEMENT_ID_BANKACCOUNT);
 
-		print '<tr><td class="titlefield">';
+		print '<tr><td class="titlefieldcreate">';
 		$labelofbankfield = "BankToReceiveWithdraw";
 		if ($object->type == 'bank-transfer') {
 			$labelofbankfield = 'BankToPayCreditTransfer';
@@ -145,7 +145,9 @@ if ($prev_id > 0 || $ref) {
 		if ($object->type == 'bank-transfer') {
 			$modulepart = 'paymentbybanktransfer';
 		}
-		print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?type=text/plain&amp;modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).'">'.$relativepath.'</a>';
+		print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?type=text/plain&amp;modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).'">'.$relativepath;
+		print img_picto('', 'download', 'class="paddingleft"');
+		print '</a>';
 		print '</td></tr></table>';
 
 		print '</div>';
@@ -173,7 +175,8 @@ if ($prev_id > 0 || $ref) {
 		print load_fiche_titre($langs->trans("StatisticsByLineStatus"), '', '');
 
 		print"\n<!-- debut table -->\n";
-		print '<table class="noborder" width="100%" cellpadding="4">';
+		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("Status").'</td><td class="right">'.$langs->trans("Amount").'</td><td class="right">%</td></tr>';
 
@@ -184,10 +187,13 @@ if ($prev_id > 0 || $ref) {
 
 			print $line->LibStatut($row[1], 1);
 
-			print '</td><td class="right">';
-			print price($row[0]);
+			print '</td>';
 
-			print '</td><td class="right">';
+			print '<td class="right"><span class="amount">';
+			print price($row[0]);
+			print '</span></td>';
+
+			print '<td class="right">';
 			if ($object->amount) {
 				print round($row[0] / $object->amount * 100, 2)." %";
 			}
@@ -200,6 +206,8 @@ if ($prev_id > 0 || $ref) {
 		}
 
 		print "</table>";
+		print "</div>";
+
 		$db->free($resql);
 	} else {
 		print $db->error().' '.$sql;

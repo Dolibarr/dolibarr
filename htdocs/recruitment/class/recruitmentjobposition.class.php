@@ -384,27 +384,27 @@ class RecruitmentJobPosition extends CommonObject
 		if (count($filter) > 0) {
 			foreach ($filter as $key => $value) {
 				if ($key == 't.rowid') {
-					$sqlwhere[] = $key.'='.$value;
+					$sqlwhere[] = $key." = ".((int) $value);
 				} elseif (in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
-					$sqlwhere[] = $key.' = \''.$this->db->idate($value).'\'';
+					$sqlwhere[] = $key." = '".$this->db->idate($value)."'";
 				} elseif ($key == 'customsql') {
 					$sqlwhere[] = $value;
 				} elseif (strpos($value, '%') === false) {
-					$sqlwhere[] = $key.' IN ('.$this->db->sanitize($this->db->escape($value)).')';
+					$sqlwhere[] = $key." IN (".$this->db->sanitize($this->db->escape($value)).")";
 				} else {
-					$sqlwhere[] = $key.' LIKE \'%'.$this->db->escape($value).'%\'';
+					$sqlwhere[] = $key." LIKE '%".$this->db->escape($value)."%'";
 				}
 			}
 		}
 		if (count($sqlwhere) > 0) {
-			$sql .= ' AND ('.implode(' '.$filtermode.' ', $sqlwhere).')';
+			$sql .= ' AND ('.implode(' '.$this->db->escape($filtermode).' ', $sqlwhere).')';
 		}
 
 		if (!empty($sortfield)) {
 			$sql .= $this->db->order($sortfield, $sortorder);
 		}
 		if (!empty($limit)) {
-			$sql .= ' '.$this->db->plimit($limit, $offset);
+			$sql .= $this->db->plimit($limit, $offset);
 		}
 
 		$resql = $this->db->query($sql);
@@ -528,7 +528,7 @@ class RecruitmentJobPosition extends CommonObject
 			if (!empty($this->fields['fk_user_valid'])) {
 				$sql .= ", fk_user_valid = ".$user->id;
 			}
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(get_class($this)."::validate()", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -672,7 +672,7 @@ class RecruitmentJobPosition extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
 		$sql .= " SET status = ".((int) $status).", note_private = '".$this->db->escape($newprivatenote)."'";
 		//$sql .= ", date_cloture='".$this->db->idate($now)."', fk_user_cloture=".$user->id;
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -863,7 +863,7 @@ class RecruitmentJobPosition extends CommonObject
 
 		global $action, $hookmanager;
 		$hookmanager->initHooks(array('recruitmentjobpositiondao'));
-		$parameters = array('id'=>$this->id, 'getnomurl'=>$result);
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -899,14 +899,14 @@ class RecruitmentJobPosition extends CommonObject
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			//$langs->load("recruitment");
-			$this->labelStatus[self::STATUS_DRAFT] = $langs->trans('Draft');
-			$this->labelStatus[self::STATUS_VALIDATED] = $langs->trans('Validated');
-			$this->labelStatus[self::STATUS_RECRUITED] = $langs->trans('Recruited');
-			$this->labelStatus[self::STATUS_CANCELED] = $langs->trans('Canceled');
-			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->trans('Draft');
-			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->trans('Validated');
-			$this->labelStatusShort[self::STATUS_RECRUITED] = $langs->trans('Recruited');
-			$this->labelStatusShort[self::STATUS_CANCELED] = $langs->trans('Canceled');
+			$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
+			$this->labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Validated');
+			$this->labelStatus[self::STATUS_RECRUITED] = $langs->transnoentitiesnoconv('Recruited');
+			$this->labelStatus[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Canceled');
+			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
+			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Validated');
+			$this->labelStatusShort[self::STATUS_RECRUITED] = $langs->transnoentitiesnoconv('Recruited');
+			$this->labelStatusShort[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Canceled');
 		}
 
 		$statusType = 'status'.$status;

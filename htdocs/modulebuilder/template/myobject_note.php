@@ -98,26 +98,44 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
 if ($id > 0 || !empty($ref)) {
-	$upload_dir = $conf->mymodule->multidir_output[$object->entity]."/".$object->id;
+	$upload_dir = $conf->mymodule->multidir_output[!empty($object->entity) ? $object->entity : $conf->entity]."/".$object->id;
 }
 
-$permissionnote = $user->rights->mymodule->myobject->write; // Used by the include of actions_setnotes.inc.php
-$permissiontoadd = $user->rights->mymodule->myobject->write; // Used by the include of actions_addupdatedelete.inc.php
+
+// There is several ways to check permission.
+// Set $enablepermissioncheck to 1 to enable a minimum low level of checks
+$enablepermissioncheck = 0;
+if ($enablepermissioncheck) {
+	$permissiontoread = $user->rights->mymodule->myobject->read;
+	$permissiontoadd = $user->rights->mymodule->myobject->write;
+	$permissionnote = $user->rights->mymodule->myobject->write; // Used by the include of actions_setnotes.inc.php
+} else {
+	$permissiontoread = 1;
+	$permissiontoadd = 1;
+	$permissionnote = 1;
+}
 
 // Security check (enable the most restrictive one)
 //if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
 //$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 //restrictedArea($user, $object->element, $object->id, $object->table_element, '', 'fk_soc', 'rowid', $isdraft);
-//if (empty($conf->mymodule->enabled)) accessforbidden();
-//if (!$permissiontoread) accessforbidden();
+if (empty($conf->mymodule->enabled)) accessforbidden();
+if (!$permissiontoread) accessforbidden();
 
 
 /*
  * Actions
  */
 
-include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not include_once
+$parameters = array();
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
+if (empty($reshook)) {
+	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not include_once
+}
 
 
 /*
@@ -128,14 +146,15 @@ $form = new Form($db);
 
 //$help_url='EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes';
 $help_url = '';
-llxHeader('', $langs->trans('MyObject'), $help_url);
+$title = $langs->trans('MyObject').' - '.$langs->trans("Notes");
+llxHeader('', $title, $help_url);
 
 if ($id > 0 || !empty($ref)) {
 	$object->fetch_thirdparty();
 
 	$head = myobjectPrepareHead($object);
 
-	print dol_get_fiche_head($head, 'note', '', -1, $object->picto);
+	print dol_get_fiche_head($head, 'note', $langs->trans("MyObject"), -1, $object->picto);
 
 	// Object card
 	// ------------------------------------------------------------
@@ -156,7 +175,7 @@ if ($id > 0 || !empty($ref)) {
 	 if ($permissiontoadd)
 	 {
 	 if ($action != 'classify')
-	 //$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+	 //$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 	 $morehtmlref.=' : ';
 	 if ($action == 'classify') {
 	 //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);

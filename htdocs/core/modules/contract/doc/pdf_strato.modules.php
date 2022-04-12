@@ -321,28 +321,28 @@ class pdf_strato extends ModelePDFContract
 
 						// Description of product line
 
-						if ($objectligne->date_ouverture_prevue) {
-							$datei = dol_print_date($objectligne->date_ouverture_prevue, 'day', false, $outputlangs, true);
+						if (!empty($objectligne->date_start)) {
+							$datei = dol_print_date((int) $objectligne->date_start, 'day', false, $outputlangs, true);
 						} else {
 							$datei = $langs->trans("Unknown");
 						}
 
-						if ($objectligne->date_fin_validite) {
-							$durationi = convertSecondToTime($objectligne->date_fin_validite - $objectligne->date_ouverture_prevue, 'allwithouthour');
-							$datee = dol_print_date($objectligne->date_fin_validite, 'day', false, $outputlangs, true);
+						if (!empty($objectligne->date_end)) {
+							$durationi = convertSecondToTime((int) $objectligne->date_end - (int) $objectligne->date_start, 'allwithouthour');
+							$datee = dol_print_date($objectligne->date_end, 'day', false, $outputlangs, true);
 						} else {
 							$durationi = $langs->trans("Unknown");
 							$datee = $langs->trans("Unknown");
 						}
 
-						if ($objectligne->date_ouverture) {
-							$daters = dol_print_date($objectligne->date_ouverture, 'day', false, $outputlangs, true);
+						if (!empty($objectligne->date_start_real)) {
+							$daters = dol_print_date((int) $objectligne->date_start_real, 'day', false, $outputlangs, true);
 						} else {
 							$daters = $langs->trans("Unknown");
 						}
 
-						if ($objectligne->date_cloture) {
-							$datere = dol_print_date($objectligne->date_cloture, 'day', false, $outputlangs, true);
+						if (!empty($objectligne->date_end_real)) {
+							$datere = dol_print_date((int) $objectligne->date_end_real, 'day', false, $outputlangs, true);
 						} else {
 							$datere = $langs->trans("Unknown");
 						}
@@ -355,7 +355,12 @@ class pdf_strato extends ModelePDFContract
 
 						$desc = dol_htmlentitiesbr($objectligne->desc, 1); // Desc (not empty for free lines)
 						$txt = '';
-						$txt .= $outputlangs->transnoentities("Quantity").' : <strong>'.$objectligne->qty.'</strong> - '.$outputlangs->transnoentities("UnitPrice").' : <strong>'.price($objectligne->subprice).'</strong>'; // Desc (not empty for free lines)
+						if (empty($conf->global->CONTRACT_HIDE_QTY_ON_PDF)) {
+							$txt .= $outputlangs->transnoentities("Quantity") . ' : <strong>' . $objectligne->qty . '</strong>';
+						}
+						if (empty($conf->global->CONTRACT_HIDE_PRICE_ON_PDF)) {
+							$txt .= ' - ' . $outputlangs->transnoentities("UnitPrice") . ' : <strong>' . price($objectligne->subprice) . '</strong>';
+						}
 						if (empty($conf->global->CONTRACT_HIDE_PLANNED_DATE_ON_PDF)) {
 							$txt .= '<br>';
 							$txt .= $outputlangs->transnoentities("DateStartPlannedShort")." : <strong>".$datei."</strong> - ".$outputlangs->transnoentities("DateEndPlanned")." : <strong>".$datee.'</strong>';
@@ -363,7 +368,7 @@ class pdf_strato extends ModelePDFContract
 						if (empty($conf->global->CONTRACT_HIDE_REAL_DATE_ON_PDF)) {
 							$txt .= '<br>';
 							$txt .= $outputlangs->transnoentities("DateStartRealShort")." : <strong>".$daters.'</strong>';
-							if ($objectligne->date_cloture) {
+							if (!empty($objectligne->date_end_real)) {
 								$txt .= " - ".$outputlangs->transnoentities("DateEndRealShort")." : '<strong>'".$datere.'</strong>';
 							}
 						}
@@ -657,7 +662,7 @@ class pdf_strato extends ModelePDFContract
 		$pdf->SetTextColor(0, 0, 60);
 		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("Date")." : ".dol_print_date($object->date_contrat, "day", false, $outputlangs, true), '', 'R');
 
-		if ($object->thirdparty->code_client) {
+		if (empty($conf->global->MAIN_PDF_HIDE_CUSTOMER_CODE) && $object->thirdparty->code_client) {
 			$posy += 4;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
@@ -685,19 +690,23 @@ class pdf_strato extends ModelePDFContract
 			$hautcadre = 40;
 
 			// Show sender frame
-			$pdf->SetTextColor(0, 0, 0);
-			$pdf->SetFont('', '', $default_font_size - 2);
-			$pdf->SetXY($posx, $posy - 5);
-			$pdf->SetXY($posx, $posy);
-			$pdf->SetFillColor(230, 230, 230);
-			$pdf->MultiCell(82, $hautcadre, "", 0, 'R', 1);
+			if (empty($conf->global->MAIN_PDF_NO_SENDER_FRAME)) {
+				$pdf->SetTextColor(0, 0, 0);
+				$pdf->SetFont('', '', $default_font_size - 2);
+				$pdf->SetXY($posx, $posy - 5);
+				$pdf->SetXY($posx, $posy);
+				$pdf->SetFillColor(230, 230, 230);
+				$pdf->MultiCell(82, $hautcadre, "", 0, 'R', 1);
+			}
 
 			// Show sender name
-			$pdf->SetXY($posx + 2, $posy + 3);
-			$pdf->SetTextColor(0, 0, 60);
-			$pdf->SetFont('', 'B', $default_font_size);
-			$pdf->MultiCell(80, 3, $outputlangs->convToOutputCharset($this->emetteur->name), 0, 'L');
-			$posy = $pdf->getY();
+			if (empty($conf->global->MAIN_PDF_HIDE_SENDER_NAME)) {
+				$pdf->SetXY($posx + 2, $posy + 3);
+				$pdf->SetTextColor(0, 0, 60);
+				$pdf->SetFont('', 'B', $default_font_size);
+				$pdf->MultiCell(80, 3, $outputlangs->convToOutputCharset($this->emetteur->name), 0, 'L');
+				$posy = $pdf->getY();
+			}
 
 			// Show sender information
 			$pdf->SetFont('', '', $default_font_size - 1);
@@ -738,11 +747,13 @@ class pdf_strato extends ModelePDFContract
 			}
 
 			// Show recipient frame
-			$pdf->SetTextColor(0, 0, 0);
-			$pdf->SetFont('', '', $default_font_size - 2);
-			$pdf->SetXY($posx + 2, $posy - 5);
-			$pdf->Rect($posx, $posy, $widthrecbox, $hautcadre);
-			$pdf->SetTextColor(0, 0, 0);
+			if (empty($conf->global->MAIN_PDF_NO_RECIPENT_FRAME)) {
+				$pdf->SetTextColor(0, 0, 0);
+				$pdf->SetFont('', '', $default_font_size - 2);
+				$pdf->SetXY($posx + 2, $posy - 5);
+				$pdf->Rect($posx, $posy, $widthrecbox, $hautcadre);
+				$pdf->SetTextColor(0, 0, 0);
+			}
 
 			// Show recipient name
 			$pdf->SetXY($posx + 2, $posy + 3);

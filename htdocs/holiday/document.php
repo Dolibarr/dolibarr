@@ -103,6 +103,7 @@ if ($user->socid) {
 }
 $result = restrictedArea($user, 'holiday', $object->id, 'holiday');
 
+$permissiontoadd = $user->rights->holiday->write; // Used by the include of actions_setnotes.inc.php
 
 
 /*
@@ -119,8 +120,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 $form = new Form($db);
 
 $listhalfday = array('morning'=>$langs->trans("Morning"), "afternoon"=>$langs->trans("Afternoon"));
-
-$title = $langs->trans('InterventionCard');
+$title = $langs->trans("Leave").' - '.$langs->trans("Files");
 
 llxHeader('', $title);
 
@@ -266,7 +266,6 @@ if ($object->id) {
 	/*
 	print '</div>';
 	print '<div class="fichehalfright">';
-	print '<div class="ficheaddleft">';
 
 	print '<div class="underbanner clearboth"></div>';
 
@@ -323,7 +322,6 @@ if ($object->id) {
 	print '</tbody>';
 	print '</table>';
 
-	print '</div>';
 	print '</div>'; */
 	print '</div>';
 
@@ -331,12 +329,12 @@ if ($object->id) {
 
 	print dol_get_fiche_end();
 
-
-
-	$modulepart = 'holiday';
 	$permissiontoadd = $user->rights->holiday->write;
 	$permtoedit = $user->rights->holiday->write;
 	$param = '&id='.$object->id;
+	$relativepathwithnofile = dol_sanitizeFileName($object->ref).'/';
+	$savingdocmask = dol_sanitizeFileName($object->ref).'-__file__';
+
 	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 } else {
 	print $langs->trans("ErrorUnknown");

@@ -19,7 +19,7 @@
 #
 
 Module56000Name=Gestionnaire de tickets
-Module56000Desc=Système de ticket pour de l'assistance ou une demande d'accompagnement
+Module56000Desc=Gestionnaire de tickets d'assistance ou de gestion de demandes internes/clients/fournisseurs
 
 Permission56001=Voir tickets
 Permission56002=Modifier des tickets
@@ -136,6 +136,9 @@ TicketsPublicNotificationNewMessage=Envoyer un ou des emails lorsqu’un nouveau
 TicketsPublicNotificationNewMessageHelp=Envoyer un (des) courriel(s) lorsqu’un nouveau message est ajouté à partir de l’interface publique (à l’utilisateur désigné ou au courriel de notification  (mise à jour) et/ou au courriel de notification)
 TicketPublicNotificationNewMessageDefaultEmail=Emails de notifications à (mise à jour)
 TicketPublicNotificationNewMessageDefaultEmailHelp=Envoyez un email à cette adresse email pour chaque nouveau message de notifications si le ticket n'a pas d'utilisateur assigné ou si l'utilisateur n'a pas d'email connu.
+TicketsAutoReadTicket=Automatiquement marquer le ticket comme lu
+TicketsAutoReadTicketHelp=Automatiquement marquer le ticket comme lu s'il est créé depuis le backoffice.
+
 #
 # Index & list page
 #
@@ -318,7 +321,7 @@ BoxTicketLastXDays=Nombre de nouveaux tickets par jour ces %s derniers jours
 BoxTicketLastXDayswidget = Nombre de nouveaux tickets par jour ces X derniers jours
 BoxNoTicketLastXDays=Aucun nouveau ticket ces %s derniers jours
 BoxNumberOfTicketByDay=Nombre de nouveaux tickets par jour
-BoxNewTicketVSClose=Number of tickets versus closed tickets (today)
+BoxNewTicketVSClose=Nombre de nouveaux tickets par rapport aux tickets fermés (aujourd'hui)
 TicketCreatedToday=Ticket créé aujourd'hui
 TicketClosedToday=Ticket fermé aujourd'hui
-KMFoundForTicketGroup=We found topics and FAQs that may answers your question, thanks to check them before submitting the ticket
+KMFoundForTicketGroup=Nous avons trouvé des sujets et des FAQ pouvant répondre à votre question, merci de les consulter avant de soumettre le ticket

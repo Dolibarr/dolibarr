@@ -178,7 +178,9 @@ print '</td></tr>';
 
 // Parent category
 print '<tr><td>'.$langs->trans("In").'</td><td>';
+print img_picto('', 'category', 'class="pictofixedwidth"');
 print $form->select_all_categories($type, $object->fk_parent, 'parent', 64, $object->id);
+print ajax_combobox('parent');
 print '</td></tr>';
 
 $parameters = array();

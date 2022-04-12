@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2014      Charles-Fr Benke	<charles.fr@benke.fr>
+ * Copyright (C) 2014-2021 Charlene Benke		<charlene.r@benke.fr>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2016      Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2019	   Nicolas ZABOURI	<info@inovea-conseil.com>
@@ -94,19 +94,25 @@ $total = 0;
 
 $sql = "SELECT s.rowid, s.client, s.fournisseur";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-if (!$user->rights->societe->client->voir && !$socid) {
+if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 $sql .= ' WHERE s.entity IN ('.getEntity('societe').')';
-if (!$user->rights->societe->client->voir && !$socid) {
+if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
-if ($socid > 0) {
-	$sql .= " AND s.rowid = ".((int) $socid);
-}
-if (!$user->rights->fournisseur->lire) {
+if (empty($user->rights->fournisseur->lire)) {
 	$sql .= " AND (s.fournisseur <> 1 OR s.client <> 0)"; // client=0, fournisseur=0 must be visible
 }
+// Add where from hooks
+$parameters = array('socid' => $socid);
+$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $thirdparty_static); // Note that $action and $object may have been modified by hook
+if (empty($reshook)) {
+	if ($socid > 0) {
+		$sql .= " AND s.rowid = ".((int) $socid);
+	}
+}
+$sql .= $hookmanager->resPrint;
 //print $sql;
 $result = $db->query($sql);
 if ($result) {
@@ -185,6 +191,7 @@ $thirdpartygraph .= '</td></tr>';
 $thirdpartygraph .= '</table>';
 $thirdpartygraph .= '</div>';
 
+$thirdpartycateggraph = '';
 if (!empty($conf->categorie->enabled) && !empty($conf->global->CATEGORY_GRAPHSTATS_ON_THIRDPARTIES)) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$elementtype = 'societe';
@@ -262,29 +269,44 @@ $max = 15;
 $sql = "SELECT s.rowid, s.nom as name, s.email, s.client, s.fournisseur";
 $sql .= ", s.code_client";
 $sql .= ", s.code_fournisseur";
-$sql .= ", s.code_compta_fournisseur";
-$sql .= ", s.code_compta";
+if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
+	$sql .= ", spe.accountancy_code_supplier as code_compta_fournisseur";
+	$sql .= ", spe.accountancy_code_customer as code_compta";
+} else {
+	$sql .= ", s.code_compta_fournisseur";
+	$sql .= ", s.code_compta";
+}
 $sql .= ", s.logo";
 $sql .= ", s.entity";
 $sql .= ", s.canvas, s.tms as date_modification, s.status as status";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-if (!$user->rights->societe->client->voir && !$socid) {
+if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
+	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe_perentity as spe ON spe.fk_soc = s.rowid AND spe.entity = " . ((int) $conf->entity);
+}
+if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 $sql .= ' WHERE s.entity IN ('.getEntity('societe').')';
-if (!$user->rights->societe->client->voir && !$socid) {
+if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
-if ($socid) {
-	$sql .= " AND s.rowid = ".((int) $socid);
-}
-if (!$user->rights->fournisseur->lire) {
+if (empty($user->rights->fournisseur->lire)) {
 	$sql .= " AND (s.fournisseur != 1 OR s.client != 0)";
 }
+// Add where from hooks
+$parameters = array('socid' => $socid);
+$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $thirdparty_static); // Note that $action and $object may have been modified by hook
+if (empty($reshook)) {
+	if ($socid > 0) {
+		$sql .= " AND s.rowid = ".((int) $socid);
+	}
+}
+$sql .= $hookmanager->resPrint;
 $sql .= $db->order("s.tms", "DESC");
 $sql .= $db->plimit($max, 0);
 
 //print $sql;
+$lastmodified="";
 $result = $db->query($sql);
 if ($result) {
 	$num = $db->num_rows($result);
@@ -380,7 +402,7 @@ print $boxlist;
 print '</div>';
 
 $parameters = array('user' => $user);
-$reshook = $hookmanager->executeHooks('dashboardThirdparties', $parameters, $object); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('dashboardThirdparties', $parameters, $thirdparty_static); // Note that $action and $object may have been modified by hook
 
 // End of page
 llxFooter();

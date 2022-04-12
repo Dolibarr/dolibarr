@@ -129,7 +129,7 @@ class Loan extends CommonObject
 	public function fetch($id)
 	{
 		$sql = "SELECT l.rowid, l.label, l.capital, l.datestart, l.dateend, l.nbterm, l.rate, l.note_private, l.note_public, l.insurance_amount,";
-		$sql .= " l.paid, l.accountancy_account_capital, l.accountancy_account_insurance, l.accountancy_account_interest, l.fk_projet as fk_project";
+		$sql .= " l.paid, l.fk_bank, l.accountancy_account_capital, l.accountancy_account_insurance, l.accountancy_account_interest, l.fk_projet as fk_project";
 		$sql .= " FROM ".MAIN_DB_PREFIX."loan as l";
 		$sql .= " WHERE l.rowid = ".((int) $id);
 
@@ -151,6 +151,7 @@ class Loan extends CommonObject
 				$this->note_public = $obj->note_public;
 				$this->insurance_amount = $obj->insurance_amount;
 				$this->paid = $obj->paid;
+				$this->fk_bank = $obj->fk_bank;
 
 				$this->account_capital = $obj->accountancy_account_capital;
 				$this->account_insurance	= $obj->accountancy_account_insurance;
@@ -404,7 +405,7 @@ class Loan extends CommonObject
 	{
 		$sql = "UPDATE ".MAIN_DB_PREFIX."loan SET";
 		$sql .= " paid = ".$this::STATUS_PAID;
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 		$return = $this->db->query($sql);
 		if ($return) {
 			return 1;
@@ -440,7 +441,7 @@ class Loan extends CommonObject
 	{
 		$sql = "UPDATE ".MAIN_DB_PREFIX."loan SET";
 		$sql .= " paid = ".$this::STATUS_STARTED;
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 		$return = $this->db->query($sql);
 		if ($return) {
 			return 1;
@@ -475,7 +476,7 @@ class Loan extends CommonObject
 	{
 		$sql = "UPDATE ".MAIN_DB_PREFIX."loan SET";
 		$sql .= " paid = ".$this::STATUS_UNPAID;
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 		$return = $this->db->query($sql);
 		if ($return) {
 			return 1;
@@ -517,17 +518,17 @@ class Loan extends CommonObject
 		unset($this->labelStatus); // Force to reset the array of status label, because label can change depending on parameters
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
-			$this->labelStatus[self::STATUS_UNPAID] = $langs->trans('Unpaid');
-			$this->labelStatus[self::STATUS_PAID] = $langs->trans('Paid');
-			$this->labelStatus[self::STATUS_STARTED] = $langs->trans("BillStatusStarted");
+			$this->labelStatus[self::STATUS_UNPAID] = $langs->transnoentitiesnoconv('Unpaid');
+			$this->labelStatus[self::STATUS_PAID] = $langs->transnoentitiesnoconv('Paid');
+			$this->labelStatus[self::STATUS_STARTED] = $langs->transnoentitiesnoconv("BillStatusStarted");
 			if ($status == 0 && $alreadypaid > 0) {
-				$this->labelStatus[self::STATUS_UNPAID] = $langs->trans("BillStatusStarted");
+				$this->labelStatus[self::STATUS_UNPAID] = $langs->transnoentitiesnoconv("BillStatusStarted");
 			}
-			$this->labelStatusShort[self::STATUS_UNPAID] = $langs->trans('Unpaid');
-			$this->labelStatusShort[self::STATUS_PAID] = $langs->trans('Enabled');
-			$this->labelStatusShort[self::STATUS_STARTED] = $langs->trans("BillStatusStarted");
+			$this->labelStatusShort[self::STATUS_UNPAID] = $langs->transnoentitiesnoconv('Unpaid');
+			$this->labelStatusShort[self::STATUS_PAID] = $langs->transnoentitiesnoconv('Enabled');
+			$this->labelStatusShort[self::STATUS_STARTED] = $langs->transnoentitiesnoconv("BillStatusStarted");
 			if ($status == 0 && $alreadypaid > 0) {
-				$this->labelStatusShort[self::STATUS_UNPAID] = $langs->trans("BillStatusStarted");
+				$this->labelStatusShort[self::STATUS_UNPAID] = $langs->transnoentitiesnoconv("BillStatusStarted");
 			}
 		}
 
@@ -556,7 +557,7 @@ class Loan extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $maxlen = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
 	{
-		global $conf, $langs;
+		global $conf, $langs, $hookmanager;
 
 		$result = '';
 
@@ -606,6 +607,15 @@ class Loan extends CommonObject
 		}
 		$result .= $linkend;
 
+		global $action;
+		$hookmanager->initHooks(array($this->element . 'dao'));
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
+		}
 		return $result;
 	}
 
@@ -651,7 +661,7 @@ class Loan extends CommonObject
 
 		$sql = 'SELECT sum(amount_capital) as amount';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$table;
-		$sql .= ' WHERE '.$field.' = '.$this->id;
+		$sql .= " WHERE ".$field." = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::getSumPayment", LOG_DEBUG);
 		$resql = $this->db->query($sql);

@@ -1,20 +1,23 @@
 <?php
-/* Copyright (C) 2002-2004 Rodolphe Quiedeville		<rodolphe@quiedeville.org>
- * Copyright (C) 2004      Eric Seigne				<eric.seigne@ryxeo.com>
- * Copyright (C) 2004-2011 Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005      Marc Barilley			<marc@ocebo.com>
- * Copyright (C) 2005-2013 Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2006      Andre Cianfarani			<acianfa@free.fr>
- * Copyright (C) 2008      Raphael Bertrand			<raphael.bertrand@resultic.fr>
- * Copyright (C) 2010-2020 Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2010-2017 Philippe Grand			<philippe.grand@atoo-net.com>
- * Copyright (C) 2012-2014 Christophe Battarel  	<christophe.battarel@altairis.fr>
- * Copyright (C) 2012      Cedric Salvador          <csalvador@gpcsolutions.fr>
- * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
- * Copyright (C) 2014-2015 Marcos García            <marcosgdf@gmail.com>
- * Copyright (C) 2018      Nicolas ZABOURI			<info@inovea-conseil.com>
- * Copyright (C) 2018-2021 Frédéric France          <frederic.france@netlogic.fr>
- * Copyright (C) 2018      Ferran Marcet         	<fmarcet@2byte.es>
+/* Copyright (C) 2002-2004  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004       Eric Seigne             <eric.seigne@ryxeo.com>
+ * Copyright (C) 2004-2011  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005       Marc Barilley           <marc@ocebo.com>
+ * Copyright (C) 2005-2013  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2006       Andre Cianfarani        <acianfa@free.fr>
+ * Copyright (C) 2008       Raphael Bertrand        <raphael.bertrand@resultic.fr>
+ * Copyright (C) 2010-2020  Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2010-2017  Philippe Grand          <philippe.grand@atoo-net.com>
+ * Copyright (C) 2012-2014  Christophe Battarel     <christophe.battarel@altairis.fr>
+ * Copyright (C) 2012       Cedric Salvador         <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
+ * Copyright (C) 2014-2015  Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
+ * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2022       ATM Consulting          <contact@atm-consulting.fr>
+ * Copyright (C) 2022       OpenDSI                 <support@open-dsi.fr>
+ * Copyright (C) 2022      	Gauthier VERDOL     	<gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -204,9 +207,16 @@ class Propal extends CommonObject
 
 	public $cond_reglement_code;
 	public $mode_reglement_code;
-	public $remise = 0;
-	public $remise_percent = 0;
-	public $remise_absolue = 0;
+	public $remise_percent;
+
+	/**
+	 * @deprecated
+	 */
+	public $remise;
+	/**
+	 * @deprecated
+	 */
+	public $remise_absolue;
 
 	/**
 	 * @var int ID
@@ -299,7 +309,7 @@ class Propal extends CommonObject
 		'fk_user_cloture' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Fk user cloture', 'enabled'=>1, 'visible'=>-1, 'position'=>95),
 		'price' =>array('type'=>'double', 'label'=>'Price', 'enabled'=>1, 'visible'=>-1, 'position'=>105),
 		'remise_percent' =>array('type'=>'double', 'label'=>'RelativeDiscount', 'enabled'=>1, 'visible'=>-1, 'position'=>110),
-		'remise_absolue' =>array('type'=>'double', 'label'=>'CustomerRelativeDiscount', 'enabled'=>1, 'visible'=>-1, 'position'=>115),
+		//'remise_absolue' =>array('type'=>'double', 'label'=>'CustomerRelativeDiscount', 'enabled'=>1, 'visible'=>-1, 'position'=>115),
 		//'remise' =>array('type'=>'double', 'label'=>'Remise', 'enabled'=>1, 'visible'=>-1, 'position'=>120),
 		'total_ht' =>array('type'=>'double(24,8)', 'label'=>'TotalHT', 'enabled'=>1, 'visible'=>-1, 'position'=>125, 'isameasure'=>1),
 		'total_tva' =>array('type'=>'double(24,8)', 'label'=>'VAT', 'enabled'=>1, 'visible'=>-1, 'position'=>130, 'isameasure'=>1),
@@ -545,10 +555,11 @@ class Propal extends CommonObject
 	 *      @param		int			$origin_id			Depend on global conf MAIN_CREATEFROM_KEEP_LINE_ORIGIN_INFORMATION can be Id of origin object (aka line id), else object id
 	 * 		@param		double		$pu_ht_devise		Unit price in currency
 	 * 		@param		int    		$fk_remise_except	Id discount if line is from a discount
+	 *  	@param		int			$noupdateafterinsertline	No update after insert of line
 	 *    	@return    	int         	    			>0 if OK, <0 if KO
 	 *    	@see       	add_product()
 	 */
-	public function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0.0, $txlocaltax2 = 0.0, $fk_product = 0, $remise_percent = 0.0, $price_base_type = 'HT', $pu_ttc = 0.0, $info_bits = 0, $type = 0, $rang = -1, $special_code = 0, $fk_parent_line = 0, $fk_fournprice = 0, $pa_ht = 0, $label = '', $date_start = '', $date_end = '', $array_options = 0, $fk_unit = null, $origin = '', $origin_id = 0, $pu_ht_devise = 0, $fk_remise_except = 0)
+	public function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0.0, $txlocaltax2 = 0.0, $fk_product = 0, $remise_percent = 0.0, $price_base_type = 'HT', $pu_ttc = 0.0, $info_bits = 0, $type = 0, $rang = -1, $special_code = 0, $fk_parent_line = 0, $fk_fournprice = 0, $pa_ht = 0, $label = '', $date_start = '', $date_end = '', $array_options = 0, $fk_unit = null, $origin = '', $origin_id = 0, $pu_ht_devise = 0, $fk_remise_except = 0, $noupdateafterinsertline = 0)
 	{
 		global $mysoc, $conf, $langs;
 
@@ -734,10 +745,17 @@ class Propal extends CommonObject
 				// Reorder if child line
 				if (!empty($fk_parent_line)) {
 					$this->line_order(true, 'DESC');
+				} elseif ($ranktouse > 0 && $ranktouse <= count($this->lines)) { // Update all rank of all other lines
+					$linecount = count($this->lines);
+					for ($ii = $ranktouse; $ii <= $linecount; $ii++) {
+						$this->updateRangOfLine($this->lines[$ii - 1]->id, $ii + 1);
+					}
 				}
 
 				// Mise a jour informations denormalisees au niveau de la propale meme
-				$result = $this->update_price(1, 'auto', 0, $mysoc); // This method is designed to add line from user input so total calculation must be done using 'auto' mode.
+				if (empty($noupdateafterinsertline)) {
+					$result = $this->update_price(1, 'auto', 0, $mysoc); // This method is designed to add line from user input so total calculation must be done using 'auto' mode.
+				}
 
 				if ($result > 0) {
 					$this->db->commit();
@@ -1002,7 +1020,7 @@ class Propal extends CommonObject
 	 */
 	public function create($user, $notrigger = 0)
 	{
-		global $conf, $hookmanager;
+		global $conf, $hookmanager, $mysoc;
 		$error = 0;
 
 		$now = dol_now();
@@ -1101,22 +1119,22 @@ class Propal extends CommonObject
 		$sql .= " VALUES (";
 		$sql .= $this->socid;
 		$sql .= ", 0";
-		$sql .= ", ".$this->remise;
-		$sql .= ", ".($this->remise_percent ? $this->db->escape($this->remise_percent) : 'NULL');
-		$sql .= ", ".($this->remise_absolue ? $this->db->escape($this->remise_absolue) : 'NULL');
+		$sql .= ", ".((float) $this->remise);												// deprecated
+		$sql .= ", ".($this->remise_percent ? ((float) $this->remise_percent) : 'NULL');
+		$sql .= ", ".($this->remise_absolue ? ((float) $this->remise_absolue) : 'NULL');	// deprecated
 		$sql .= ", 0";
 		$sql .= ", 0";
 		$sql .= ", '".$this->db->idate($this->date)."'";
 		$sql .= ", '".$this->db->idate($now)."'";
 		$sql .= ", '(PROV)'";
-		$sql .= ", ".($user->id > 0 ? "'".$this->db->escape($user->id)."'" : "NULL");
+		$sql .= ", ".($user->id > 0 ? ((int) $user->id) : "NULL");
 		$sql .= ", '".$this->db->escape($this->note_private)."'";
 		$sql .= ", '".$this->db->escape($this->note_public)."'";
 		$sql .= ", '".$this->db->escape($this->model_pdf)."'";
 		$sql .= ", ".($this->fin_validite != '' ? "'".$this->db->idate($this->fin_validite)."'" : "NULL");
-		$sql .= ", ".($this->cond_reglement_id > 0 ? $this->cond_reglement_id : 'NULL');
-		$sql .= ", ".($this->mode_reglement_id > 0 ? $this->mode_reglement_id : 'NULL');
-		$sql .= ", ".($this->fk_account > 0 ? $this->fk_account : 'NULL');
+		$sql .= ", ".($this->cond_reglement_id > 0 ? ((int) $this->cond_reglement_id) : 'NULL');
+		$sql .= ", ".($this->mode_reglement_id > 0 ? ((int) $this->mode_reglement_id) : 'NULL');
+		$sql .= ", ".($this->fk_account > 0 ? ((int) $this->fk_account) : 'NULL');
 		$sql .= ", '".$this->db->escape($this->ref_client)."'";
 		$sql .= ", ".(empty($delivery_date) ? "NULL" : "'".$this->db->idate($delivery_date)."'");
 		$sql .= ", ".($this->shipping_method_id > 0 ? $this->shipping_method_id : 'NULL');
@@ -1231,7 +1249,10 @@ class Propal extends CommonObject
 							$line->array_options,
 							$line->fk_unit,
 							$origintype,
-							$originid
+							$originid,
+							0,
+							0,
+							1
 						);
 
 						if ($result < 0) {
@@ -1241,7 +1262,7 @@ class Propal extends CommonObject
 							break;
 						}
 						// Defined the new fk_parent_line
-						if ($result > 0 && $line->product_type == 9) {
+						if ($result > 0) {
 							$fk_parent_line = $result;
 						}
 					}
@@ -1260,7 +1281,7 @@ class Propal extends CommonObject
 
 				if (!$error) {
 					// Mise a jour infos denormalisees
-					$resql = $this->update_price(1);
+					$resql = $this->update_price(1, 'auto', 0, $mysoc);
 					if ($resql) {
 						$action = 'update';
 
@@ -1311,11 +1332,12 @@ class Propal extends CommonObject
 	 *      @param	    User	$user		    User making the clone
 	 *		@param		int		$socid			Id of thirdparty
 	 *		@param		int		$forceentity	Entity id to force
+	 *		@param		bool	$update_prices	[=false] Update prices if true
 	 * 	 	@return		int						New id of clone
 	 */
-	public function createFromClone(User $user, $socid = 0, $forceentity = null)
+	public function createFromClone(User $user, $socid = 0, $forceentity = null, $update_prices = false)
 	{
-		global $conf, $hookmanager;
+		global $conf, $hookmanager, $mysoc;
 
 		dol_include_once('/projet/class/project.class.php');
 
@@ -1360,6 +1382,55 @@ class Propal extends CommonObject
 			// TODO Change product price if multi-prices
 		} else {
 			$objsoc->fetch($object->socid);
+		}
+
+		// update prices
+		if ($update_prices === true) {
+			if ($objsoc->id > 0 && !empty($object->lines)) {
+				if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
+					// If price per customer
+					require_once DOL_DOCUMENT_ROOT . '/product/class/productcustomerprice.class.php';
+				}
+
+				foreach ($object->lines as $line) {
+					if ($line->fk_product > 0) {
+						$prod = new Product($this->db);
+						$res = $prod->fetch($line->fk_product);
+						if ($res > 0) {
+							$pu_ht = $prod->price;
+							$tva_tx = get_default_tva($mysoc, $objsoc, $prod->id);
+							$remise_percent = $objsoc->remise_percent;
+
+							if (!empty($conf->global->PRODUIT_MULTIPRICES) && $objsoc->price_level > 0) {
+								$pu_ht = $prod->multiprices[$objsoc->price_level];
+								if (!empty($conf->global->PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL)) {  // using this option is a bug. kept for backward compatibility
+									if (isset($prod->multiprices_tva_tx[$objsoc->price_level])) {
+										$tva_tx = $prod->multiprices_tva_tx[$objsoc->price_level];
+									}
+								}
+							} elseif (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
+								$prodcustprice = new Productcustomerprice($this->db);
+								$filter = array('t.fk_product' => $prod->id, 't.fk_soc' => $objsoc->id);
+								$result = $prodcustprice->fetch_all('', '', 0, 0, $filter);
+								if ($result) {
+									// If there is some prices specific to the customer
+									if (count($prodcustprice->lines) > 0) {
+										$pu_ht = price($prodcustprice->lines[0]->price);
+										$tva_tx = ($prodcustprice->lines[0]->default_vat_code ? $prodcustprice->lines[0]->tva_tx.' ('.$prodcustprice->lines[0]->default_vat_code.' )' : $prodcustprice->lines[0]->tva_tx);
+										if ($prodcustprice->lines[0]->default_vat_code && !preg_match('/\(.*\)/', $tva_tx)) {
+											$tva_tx .= ' ('.$prodcustprice->lines[0]->default_vat_code.')';
+										}
+									}
+								}
+							}
+
+							$line->subprice = $pu_ht;
+							$line->tva_tx = $tva_tx;
+							$line->remise_percent = $remise_percent;
+						}
+					}
+				}
+			}
 		}
 
 		$object->id = 0;
@@ -1709,15 +1780,17 @@ class Propal extends CommonObject
 	/**
 	 * Load array lines
 	 *
-	 *	@param		int		$only_product	Return only physical products
-	 *	@param		int		$loadalsotranslation	Return translation for products
+	 *	@param		int			$only_product			Return only physical products
+	 *	@param		int			$loadalsotranslation	Return translation for products
+	 *	@param		string		$filters				Filter on other fields
 	 *
-	 * @return		int						<0 if KO, >0 if OK
+	 *	@return		int									<0 if KO, >0 if OK
 	 */
-	public function fetch_lines($only_product = 0, $loadalsotranslation = 0)
+	public function fetch_lines($only_product = 0, $loadalsotranslation = 0, $filters = '')
 	{
-		global $langs, $conf;
 		// phpcs:enable
+		global $langs, $conf;
+
 		$this->lines = array();
 
 		$sql = 'SELECT d.rowid, d.fk_propal, d.fk_parent_line, d.label as custom_label, d.description, d.price, d.vat_src_code, d.tva_tx, d.localtax1_tx, d.localtax2_tx, d.localtax1_type, d.localtax2_type, d.qty, d.fk_remise_except, d.remise_percent, d.subprice, d.fk_product,';
@@ -1729,9 +1802,12 @@ class Propal extends CommonObject
 		$sql .= ' d.fk_multicurrency, d.multicurrency_code, d.multicurrency_subprice, d.multicurrency_total_ht, d.multicurrency_total_tva, d.multicurrency_total_ttc';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'propaldet as d';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON (d.fk_product = p.rowid)';
-		$sql .= ' WHERE d.fk_propal = '.$this->id;
+		$sql .= ' WHERE d.fk_propal = '.((int) $this->id);
 		if ($only_product) {
 			$sql .= ' AND p.fk_product_type = 0';
+		}
+		if ($filters) {
+			$sql .= $filters;
 		}
 		$sql .= ' ORDER by d.rang';
 
@@ -2286,8 +2362,8 @@ class Propal extends CommonObject
 
 			$this->db->begin();
 
-			$sql = 'UPDATE '.MAIN_DB_PREFIX.'propal SET ref_client = '.(empty($ref_client) ? 'NULL' : '\''.$this->db->escape($ref_client).'\'');
-			$sql .= ' WHERE rowid = '.$this->id;
+			$sql = "UPDATE ".MAIN_DB_PREFIX."propal SET ref_client = ".(empty($ref_client) ? 'NULL' : "'".$this->db->escape($ref_client)."'");
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(__METHOD__.' $this->id='.$this->id.', ref_client='.$ref_client, LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -2422,7 +2498,6 @@ class Propal extends CommonObject
 
 			if (!$error) {
 				$this->oldcopy = clone $this;
-				$this->remise_absolue = $remise;
 				$this->update_price(1);
 			}
 
@@ -2634,8 +2709,8 @@ class Propal extends CommonObject
 		$newprivatenote = dol_concatdesc($this->note_private, $note);
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'propal SET fk_statut = '.self::STATUS_BILLED.", ";
-		$sql .= " note_private = '".$this->db->escape($newprivatenote)."', date_cloture='".$this->db->idate($now)."', fk_user_cloture=".$user->id;
-		$sql .= ' WHERE rowid = '.$this->id.' AND fk_statut = '.self::STATUS_SIGNED;
+		$sql .= " note_private = '".$this->db->escape($newprivatenote)."', date_cloture='".$this->db->idate($now)."', fk_user_cloture=".((int) $user->id);
+		$sql .= ' WHERE rowid = '.((int) $this->id).' AND fk_statut = '.((int) self::STATUS_SIGNED);
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -2781,17 +2856,17 @@ class Propal extends CommonObject
 		$sql = "SELECT s.rowid, s.nom as name, s.client,";
 		$sql .= " p.rowid as propalid, p.fk_statut, p.total_ht, p.ref, p.remise, ";
 		$sql .= " p.datep as dp, p.fin_validite as datelimite";
-		if (!$user->rights->societe->client->voir && !$socid) {
+		if (empty($user->rights->societe->client->voir) && !$socid) {
 			$sql .= ", sc.fk_soc, sc.fk_user";
 		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."c_propalst as c";
-		if (!$user->rights->societe->client->voir && !$socid) {
+		if (empty($user->rights->societe->client->voir) && !$socid) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
 		$sql .= " WHERE p.entity IN (".getEntity('propal').")";
 		$sql .= " AND p.fk_soc = s.rowid";
 		$sql .= " AND p.fk_statut = c.id";
-		if (!$user->rights->societe->client->voir && !$socid) { //restriction
+		if (empty($user->rights->societe->client->voir) && !$socid) { //restriction
 			$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		if ($socid) {
@@ -3295,7 +3370,7 @@ class Propal extends CommonObject
 
 		$sql = "SELECT p.rowid, p.ref, p.datec as datec, p.fin_validite as datefin, p.total_ht";
 		$sql .= " FROM ".MAIN_DB_PREFIX."propal as p";
-		if (!$user->rights->societe->client->voir && !$user->socid) {
+		if (empty($user->rights->societe->client->voir) && !$user->socid) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON p.fk_soc = sc.fk_soc";
 			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
 			$clause = " AND";
@@ -3472,7 +3547,7 @@ class Propal extends CommonObject
 		$sql = "SELECT count(p.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."propal as p";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON p.fk_soc = s.rowid";
-		if (!$user->rights->societe->client->voir && !$user->socid) {
+		if (empty($user->rights->societe->client->voir) && !$user->socid) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
 			$clause = "AND";
@@ -3559,7 +3634,7 @@ class Propal extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $get_params = '', $notooltip = 0, $save_lastsearch_value = -1, $addlinktonotes = -1)
 	{
-		global $langs, $conf, $user;
+		global $langs, $conf, $user, $hookmanager;
 
 		if (!empty($conf->dol_no_mouse_hover)) {
 			$notooltip = 1; // Force disable tooltips
@@ -3680,17 +3755,27 @@ class Propal extends CommonObject
 			}
 		}
 
+		global $action;
+		$hookmanager->initHooks(array($this->element . 'dao'));
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
+		}
 		return $result;
 	}
 
 	/**
 	 * 	Retrieve an array of proposal lines
+	 *	@param  string              $filters        Filter on other fields
 	 *
 	 * 	@return int		>0 if OK, <0 if KO
 	 */
-	public function getLinesArray()
+	public function getLinesArray($filters = '')
 	{
-		return $this->fetch_lines();
+		return $this->fetch_lines(0, 0, $filters);
 	}
 
 	/**
@@ -3742,8 +3827,24 @@ class Propal extends CommonObject
 
 		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
 	}
-}
 
+	/**
+	 * Function used to replace a product id with another one.
+	 *
+	 * @param DoliDB $db Database handler
+	 * @param int $origin_id Old product id
+	 * @param int $dest_id New product id
+	 * @return bool
+	 */
+	public static function replaceProduct(DoliDB $db, $origin_id, $dest_id)
+	{
+		$tables = array(
+			'propaldet'
+		);
+
+		return CommonObject::commonReplaceProduct($db, $origin_id, $dest_id, $tables);
+	}
+}
 
 /**
  *	Class to manage commercial proposal lines
@@ -4092,34 +4193,34 @@ class PropaleLigne extends CommonObjectLine
 		$sql .= " ".($this->fk_product ? "'".$this->db->escape($this->fk_product)."'" : "null").",";
 		$sql .= " '".$this->db->escape($this->product_type)."',";
 		$sql .= " ".($this->fk_remise_except ? "'".$this->db->escape($this->fk_remise_except)."'" : "null").",";
-		$sql .= " ".price2num($this->qty).",";
+		$sql .= " ".price2num($this->qty, 'MS').",";
 		$sql .= " ".(empty($this->vat_src_code) ? "''" : "'".$this->db->escape($this->vat_src_code)."'").",";
 		$sql .= " ".price2num($this->tva_tx).",";
 		$sql .= " ".price2num($this->localtax1_tx).",";
 		$sql .= " ".price2num($this->localtax2_tx).",";
 		$sql .= " '".$this->db->escape($this->localtax1_type)."',";
 		$sql .= " '".$this->db->escape($this->localtax2_type)."',";
-		$sql .= " ".(price2num($this->subprice) !== '' ?price2num($this->subprice) : "null").",";
-		$sql .= " ".price2num($this->remise_percent).",";
-		$sql .= " ".(isset($this->info_bits) ? "'".$this->db->escape($this->info_bits)."'" : "null").",";
-		$sql .= " ".price2num($this->total_ht).",";
-		$sql .= " ".price2num($this->total_tva).",";
-		$sql .= " ".price2num($this->total_localtax1).",";
-		$sql .= " ".price2num($this->total_localtax2).",";
-		$sql .= " ".price2num($this->total_ttc).",";
+		$sql .= " ".(price2num($this->subprice) !== '' ? price2num($this->subprice, 'MU') : "null").",";
+		$sql .= " ".price2num($this->remise_percent, 3).",";
+		$sql .= " ".(isset($this->info_bits) ? ((int) $this->info_bits) : "null").",";
+		$sql .= " ".price2num($this->total_ht, 'MT').",";
+		$sql .= " ".price2num($this->total_tva, 'MT').",";
+		$sql .= " ".price2num($this->total_localtax1, 'MT').",";
+		$sql .= " ".price2num($this->total_localtax2, 'MT').",";
+		$sql .= " ".price2num($this->total_ttc, 'MT').",";
 		$sql .= " ".(!empty($this->fk_fournprice) ? "'".$this->db->escape($this->fk_fournprice)."'" : "null").",";
 		$sql .= " ".(isset($this->pa_ht) ? "'".price2num($this->pa_ht)."'" : "null").",";
-		$sql .= ' '.$this->special_code.',';
-		$sql .= ' '.$this->rang.',';
-		$sql .= ' '.(!$this->fk_unit ? 'NULL' : $this->fk_unit).',';
+		$sql .= ' '.((int) $this->special_code).',';
+		$sql .= ' '.((int) $this->rang).',';
+		$sql .= ' '.(empty($this->fk_unit) ? 'NULL' : ((int) $this->fk_unit)).',';
 		$sql .= " ".(!empty($this->date_start) ? "'".$this->db->idate($this->date_start)."'" : "null").',';
 		$sql .= " ".(!empty($this->date_end) ? "'".$this->db->idate($this->date_end)."'" : "null");
-		$sql .= ", ".($this->fk_multicurrency > 0 ? $this->fk_multicurrency : 'null');
+		$sql .= ", ".($this->fk_multicurrency > 0 ? ((int) $this->fk_multicurrency) : 'null');
 		$sql .= ", '".$this->db->escape($this->multicurrency_code)."'";
-		$sql .= ", ".$this->multicurrency_subprice;
-		$sql .= ", ".$this->multicurrency_total_ht;
-		$sql .= ", ".$this->multicurrency_total_tva;
-		$sql .= ", ".$this->multicurrency_total_ttc;
+		$sql .= ", ".price2num($this->multicurrency_subprice, 'CU');
+		$sql .= ", ".price2num($this->multicurrency_total_ht, 'CT');
+		$sql .= ", ".price2num($this->multicurrency_total_tva, 'CT');
+		$sql .= ", ".price2num($this->multicurrency_total_ttc, 'CT');
 		$sql .= ')';
 
 		dol_syslog(get_class($this).'::insert', LOG_DEBUG);
@@ -4347,7 +4448,7 @@ class PropaleLigne extends CommonObjectLine
 
 			if (!$error && !$notrigger) {
 				// Call trigger
-				$result = $this->call_trigger('LINEPROPAL_UPDATE', $user);
+				$result = $this->call_trigger('LINEPROPAL_MODIFY', $user);
 				if ($result < 0) {
 					$this->db->rollback();
 					return -1;

@@ -4,7 +4,7 @@
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -47,6 +47,12 @@ if (!defined('NOBROWSERNOTIF')) {
 	define('NOBROWSERNOTIF', '1');
 }
 
+// For MultiCompany module.
+// Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
+$entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
+if (is_numeric($entity)) {
+	define("DOLENTITY", $entity);
+}
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/ticket/class/actions_ticket.class.php';
@@ -75,6 +81,10 @@ $extrafields = new ExtraFields($db);
 
 $extrafields->fetch_name_optionals_label($object->table_element);
 
+if (empty($conf->ticket->enabled)) {
+	accessforbidden('', 0, 0, 1);
+}
+
 
 /*
  * Actions
@@ -89,7 +99,7 @@ if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 // Add file in email form
-if (empty($reshook) && GETPOST('addfile', 'alpha') && !GETPOST('add', 'alpha')) {
+if (empty($reshook) && GETPOST('addfile', 'alpha') && !GETPOST('save', 'alpha')) {
 	////$res = $object->fetch('','',GETPOST('track_id'));
 	////if($res > 0)
 	////{
@@ -108,7 +118,7 @@ if (empty($reshook) && GETPOST('addfile', 'alpha') && !GETPOST('add', 'alpha')) 
 }
 
 // Remove file
-if (empty($reshook) && GETPOST('removedfile', 'alpha') && !GETPOST('add', 'alpha')) {
+if (empty($reshook) && GETPOST('removedfile', 'alpha') && !GETPOST('save', 'alpha')) {
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 	// Set tmp directory
@@ -116,11 +126,11 @@ if (empty($reshook) && GETPOST('removedfile', 'alpha') && !GETPOST('add', 'alpha
 	$upload_dir_tmp = $vardir.'/temp/'.session_id();
 
 	// TODO Delete only files that was uploaded from email form
-	dol_remove_file_process($_POST['removedfile'], 0, 0);
+	dol_remove_file_process(GETPOST('removedfile'), 0, 0);
 	$action = 'create_ticket';
 }
 
-if (empty($reshook) && $action == 'create_ticket' && GETPOST('add', 'alpha')) {
+if (empty($reshook) && $action == 'create_ticket' && GETPOST('save', 'alpha')) {
 	$error = 0;
 	$origin_email = GETPOST('email', 'alpha');
 	if (empty($origin_email)) {
@@ -163,7 +173,7 @@ if (empty($reshook) && $action == 'create_ticket' && GETPOST('add', 'alpha')) {
 	// Check Captcha code if is enabled
 	if (!empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA)) {
 		$sessionkey = 'dol_antispam_value';
-		$ok = (array_key_exists($sessionkey, $_SESSION) === true && (strtolower($_SESSION[$sessionkey]) === strtolower(GETPOST('code', 'none'))));
+		$ok = (array_key_exists($sessionkey, $_SESSION) === true && (strtolower($_SESSION[$sessionkey]) === strtolower(GETPOST('code', 'restricthtml'))));
 		if (!$ok) {
 			$error++;
 			array_push($object->errors, $langs->trans("ErrorBadValueForCode"));
@@ -293,7 +303,7 @@ if (empty($reshook) && $action == 'create_ticket' && GETPOST('add', 'alpha')) {
 					if (is_array($object->array_options) && count($object->array_options) > 0) {
 						foreach ($object->array_options as $key => $value) {
 							$key = substr($key, 8); // remove "options_"
-							$message_admin .= '<li>'.$langs->trans($extrafields->attributes[$object->element]['label'][$key]).' : '.$extrafields->showOutputField($key, $value).'</li>';
+							$message_admin .= '<li>'.$langs->trans($extrafields->attributes[$object->table_element]['label'][$key]).' : '.$extrafields->showOutputField($key, $value, '', $object->table_element).'</li>';
 						}
 					}
 					$message_admin .= '</ul>';
@@ -338,7 +348,7 @@ if (empty($reshook) && $action == 'create_ticket' && GETPOST('add', 'alpha')) {
 			$messagetoshow = str_replace(array('{s1}', '{s2}'), array('<strong>'.$object->track_id.'</strong>', '<strong>'.$object->ref.'</strong>'), $messagetoshow);
 			setEventMessages($messagetoshow, null, 'warnings');
 			setEventMessages($langs->trans('PleaseRememberThisId'), null, 'warnings');
-			header("Location: index.php");
+			header("Location: index.php".(!empty($entity) && !empty($conf->multicompany->enabled)?'?entity='.$entity:''));
 			exit;
 		}
 	} else {

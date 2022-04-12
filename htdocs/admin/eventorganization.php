@@ -16,7 +16,7 @@
  */
 
 /**
- * \file    htdocs/admin/setup.php
+ * \file    htdocs/admin/eventorganization.php
  * \ingroup eventorganization
  * \brief   EventOrganization setup page.
  */
@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/eventorganization.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 // Translations
-$langs->loadLangs(array("admin", "eventorganization"));
+$langs->loadLangs(array("admin", "eventorganization", "categories"));
 
 // Parameters
 $action = GETPOST('action', 'aZ09');
@@ -41,6 +41,8 @@ $backtopage = GETPOST('backtopage', 'alpha');
 
 $value = GETPOST('value', 'alpha');
 $label = GETPOST('label', 'alpha');
+$modulepart = GETPOST('modulepart', 'aZ09');	// Used by actions_setmoduleoptions.inc.php
+
 $scandir = GETPOST('scan_dir', 'alpha');
 $type = 'myobject';
 
@@ -54,11 +56,11 @@ $arrayofparameters = array(
 	'EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH'=>array('type'=>'emailtemplate:conferenceorbooth', 'enabled'=>1),
 	'EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH'=>array('type'=>'emailtemplate:conferenceorbooth', 'enabled'=>1),
 	'EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT'=>array('type'=>'emailtemplate:conferenceorbooth', 'enabled'=>1),
-	'EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER'=>array('type'=>'emailtemplate:conferenceorbooth', 'enabled'=>1),
-	'EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES'=>array('type'=>'emailtemplate:conferenceorbooth', 'enabled'=>1),
-	'EVENTORGANIZATION_SECUREKEY'=>array('type'=>'securekey', 'enabled'=>1),
+	//'EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER'=>array('type'=>'emailtemplate:conferenceorbooth', 'enabled'=>1),
+	//'EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES'=>array('type'=>'emailtemplate:conferenceorbooth', 'enabled'=>1),
 	'SERVICE_BOOTH_LOCATION'=>array('type'=>'product', 'enabled'=>1),
 	'SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION'=>array('type'=>'product', 'enabled'=>1),
+	'EVENTORGANIZATION_SECUREKEY'=>array('type'=>'securekey', 'enabled'=>1),
 );
 
 $error = 0;
@@ -218,8 +220,9 @@ if ($action == 'edit') {
 	foreach ($arrayofparameters as $constname => $val) {
 		if ($val['enabled']==1) {
 			$setupnotempty++;
-			print '<tr class="oddeven"><td>';
+			print '<tr class="oddeven"><td>aa';
 			$tooltiphelp = (($langs->trans($constname . 'Tooltip') != $constname . 'Tooltip') ? $langs->trans($constname . 'Tooltip') : '');
+			$tooltiphelp .= (($langs->trans($constname . 'Tooltip2') && $langs->trans($constname . 'Tooltip2') != $constname . 'Tooltip2') ? '<br><br>'."\n".$langs->trans($constname . 'Tooltip2') : '');
 			print '<span id="helplink'.$constname.'" class="spanforparamtooltip">'.$form->textwithpicto($langs->trans($constname), $tooltiphelp, 1, 'info', '', 0, 3, 'tootips'.$constname).'</span>';
 			print '</td><td>';
 
@@ -298,11 +301,7 @@ if ($action == 'edit') {
 	}
 	print '</table>';
 
-	print '<br><div class="center">';
-	print '<input class="button button-save" type="submit" name="save" value="'.$langs->trans("Save").'">';
-	print ' &nbsp; ';
-	print '<input class="button button-cancel" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
-	print '</div>';
+	print $form->buttonsSaveCancel();
 
 	print '</form>';
 	print '<br>';
@@ -316,6 +315,7 @@ if ($action == 'edit') {
 				$setupnotempty++;
 				print '<tr class="oddeven"><td>';
 				$tooltiphelp = (($langs->trans($constname . 'Tooltip') != $constname . 'Tooltip') ? $langs->trans($constname . 'Tooltip') : '');
+				$tooltiphelp .= (($langs->trans($constname . 'Tooltip2') && $langs->trans($constname . 'Tooltip2') != $constname . 'Tooltip2') ? '<br><br>'."\n".$langs->trans($constname . 'Tooltip2') : '');
 				print $form->textwithpicto($langs->trans($constname), $tooltiphelp);
 				print '</td><td>';
 
@@ -380,7 +380,7 @@ if ($action == 'edit') {
 		print '</table>';
 
 		print '<div class="tabsAction">';
-		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a>';
+		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a>';
 		print '</div>';
 	} else {
 		print '<br>'.$langs->trans("NothingToSetup");
@@ -449,7 +449,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 									$langs->load("errors");
 									print '<div class="error">'.$langs->trans($tmp).'</div>';
 								} elseif ($tmp == 'NotConfigured') {
-									print $langs->trans($tmp);
+									print '<span class="opacitymedium">'.$langs->trans($tmp).'</span>';
 								} else {
 									print $tmp;
 								}
@@ -584,13 +584,13 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 										// Active
 										if (in_array($name, $def)) {
 											print '<td class="center">'."\n";
-											print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;token='.newToken().'&amp;value='.$name.'">';
+											print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&token='.newToken().'&value='.$name.'">';
 											print img_picto($langs->trans("Enabled"), 'switch_on');
 											print '</a>';
 											print '</td>';
 										} else {
 											print '<td class="center">'."\n";
-											print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;token='.newToken().'&amp;value='.$name.'&amp;scan_dir='.urlencode($module->scandir).'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+											print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&token='.newToken().'&value='.$name.'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 											print "</td>";
 										}
 

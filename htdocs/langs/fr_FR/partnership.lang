@@ -19,7 +19,7 @@
 ModulePartnershipName=Gestion des partenariats
 PartnershipDescription=Module de gestion des partenariats
 PartnershipDescriptionLong= Module de gestion des partenariats
-
+Partnership=Partenariat
 AddPartnership=Ajouter un partenariat
 CancelPartnershipForExpiredMembers=Partenariat : annuler le partenariat des adhérents dont les cotisations ont expirés
 PartnershipCheckBacklink=Partenariat : Vérifiez le backlink référent
@@ -58,7 +58,7 @@ ManagePartnership=Gestion de partenariat
 BacklinkNotFoundOnPartnerWebsite=Lien de retour non trouvé sur le site web partenaire
 ConfirmClosePartnershipAsk=Êtes-vous sûr de vouloir annuler ce partenariat ?
 PartnershipType=Type de partenariat
-PartnershipRefApproved=Partnership %s approved
+PartnershipRefApproved=Partenariat %s approuvé
 
 #
 # Template Mail

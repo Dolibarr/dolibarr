@@ -157,6 +157,18 @@ ProfId3CL=-
 ProfId4CL=-
 ProfId5CL=-
 ProfId6CL=-
+ProfId1CM=Id. prof. 1 (Trade Register)
+ProfId2CM=Id. prof. 2 (Taxpayer No.)
+ProfId3CM=Id. prof. 3 (Decree of creation)
+ProfId4CM=-
+ProfId5CM=-
+ProfId6CM=-
+ProfId1ShortCM=Trade Register
+ProfId2ShortCM=Taxpayer No.
+ProfId3ShortCM=Decree of creation
+ProfId4ShortCM=-
+ProfId5ShortCM=-
+ProfId6ShortCM=-
 ProfId1CO=Szakma ID 1 (RUT)
 ProfId2CO=-
 ProfId3CO=-
@@ -369,7 +381,7 @@ VATIntraCheck=Csekk
 VATIntraCheckDesc=Az ÁFA-azonosítónak tartalmaznia kell az ország előtagot. Az <b> %s </b> link az Európai ÁFA-ellenőrző szolgáltatást (VIES) használja, amely internet-hozzáférést igényel a Dolibarr szerverről.
 VATIntraCheckURL=http://ec.europa.eu/taxation_customs/vies/vieshome.do
 VATIntraCheckableOnEUSite=Ellenőrizze a Közösségen belüli ÁFA-azonosítót az Európai Bizottság weboldalán
-VATIntraManualCheck=Manuálisan ellenőrizheti az Európai Bizottság webhelyén <a href="%s" target="_blank"> %s </a>
+VATIntraManualCheck=You can also check manually on the European Commission website <a href="%s" target="_blank" rel="noopener noreferrer">%s</a>
 ErrorVATCheckMS_UNAVAILABLE=Ellenőrzés nem lehetséges. A szolgáltatást a tagállam nem teszi lehetővé (%s).
 NorProspectNorCustomer=Nem leendő partner, nem ügyfél
 JuridicalStatus=Business entity type

@@ -276,11 +276,7 @@ if ($action == 'create') {
 
 	print dol_get_fiche_end();
 
-	print '<div class="center">';
-	print '<input type="submit" class="button" name="add" value="'.dol_escape_htmltag($langs->trans("Create")).'">';
-	print '&nbsp; ';
-	print '<input type="'.($backtopage ? "submit" : "button").'" class="button button-cancel" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'"'.($backtopage ? '' : ' onclick="javascript:history.go(-1)"').'>'; // Cancel for create does not post form if we don't know the backtopage
-	print '</div>';
+	print $form->buttonsSaveCancel("Create");
 
 	print '</form>';
 }
@@ -309,9 +305,7 @@ if (($id || $ref) && $action == 'edit') {
 
 	print dol_get_fiche_end();
 
-	print '<div class="center"><input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'">';
-	print ' &nbsp; <input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
-	print '</div>';
+	print $form->buttonsSaveCancel();
 
 	print '</form>';
 }
@@ -362,7 +356,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	// Object card
 	// ------------------------------------------------------------
-	$linkback = '<a href="'.dol_buildpath('/admin/emailcollector_list.php', 1).'?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/admin/emailcollector_list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
 	$morehtmlref = '<div class="refidno">';
 	/*
@@ -380,7 +374,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			{
 				if ($action != 'classify')
 				{
-					$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+					$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 					if ($action == 'classify') {
 						//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
 						$morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
@@ -496,7 +490,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<div class="div-table-responsive-no-min">';
 	print '<table id="tablelineoffilters" class="noborder margintable noshadow">';
 	print '<tr class="liste_titre nodrag nodrop">';
-	print '<td>'.$form->textwithpicto($langs->trans("Filters"), $langs->trans("EmailCollectorFilterDesc")).'</td><td></td><td></td>';
+	print '<td>'.img_picto('', 'filter', 'class="pictofixedwidth"').$form->textwithpicto($langs->trans("Filters"), $langs->trans("EmailCollectorFilterDesc")).'</td><td></td><td></td>';
 	print '</tr>';
 	// Add filter
 	print '<tr class="oddeven nodrag nodrop">';
@@ -581,7 +575,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<div class="div-table-responsive">';
 	print '<table id="tablelines" class="noborder margintable noshadow">';
 	print '<tr class="liste_titre nodrag nodrop">';
-	print '<td>'.$form->textwithpicto($langs->trans("EmailcollectorOperations"), $langs->trans("EmailcollectorOperationsDesc")).'</td><td></td><td></td><td></td>';
+	print '<td>'.img_picto('', 'technic', 'class="pictofixedwidth"').$form->textwithpicto($langs->trans("EmailcollectorOperations"), $langs->trans("EmailcollectorOperationsDesc")).'</td><td></td><td></td><td></td>';
 	print '</tr>';
 	// Add operation
 	print '<tr class="oddeven nodrag nodrop">';
@@ -589,16 +583,21 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$arrayoftypes = array(
 		'loadthirdparty'=>$langs->trans('LoadThirdPartyFromName', $langs->transnoentities("ThirdPartyName")),
 		'loadandcreatethirdparty'=>$langs->trans('LoadThirdPartyFromNameOrCreate', $langs->transnoentities("ThirdPartyName")),
+		'recordjoinpiece'=>'AttachJoinedDocumentsToObject',
 		'recordevent'=>'RecordEvent');
+	$arrayoftypesnocondition = $arrayoftypes;
 	if ($conf->projet->enabled) {
 		$arrayoftypes['project'] = 'CreateLeadAndThirdParty';
 	}
+	$arrayoftypesnocondition['project'] = 'CreateLeadAndThirdParty';
 	if ($conf->ticket->enabled) {
 		$arrayoftypes['ticket'] = 'CreateTicketAndThirdParty';
 	}
+	$arrayoftypesnocondition['ticket'] = 'CreateTicketAndThirdParty';
 	if ($conf->recruitment->enabled) {
 		$arrayoftypes['candidature'] = 'CreateCandidature';
 	}
+	$arrayoftypesnocondition['candidature'] = 'CreateCandidature';
 
 	// support hook for add action
 	$parameters = array('arrayoftypes' => $arrayoftypes);
@@ -634,7 +633,14 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<tr class="drag drop oddeven" id="row-'.$ruleaction['id'].'">';
 		print '<td>';
 		print '<!-- type of action: '.$ruleaction['type'].' -->';
-		print $langs->trans($arrayoftypes[$ruleaction['type']]);
+		if (array_key_exists($ruleaction['type'], $arrayoftypes)) {
+			print $langs->trans($arrayoftypes[$ruleaction['type']]);
+		} else {
+			if (array_key_exists($ruleaction['type'], $arrayoftypesnocondition)) {
+				print '<span class="opacitymedium">'.$langs->trans($arrayoftypesnocondition[$ruleaction['type']]).' - '.$langs->trans("Disabled").'</span>';
+			}
+		}
+
 		if (in_array($ruleaction['type'], array('recordevent'))) {
 			print $form->textwithpicto('', $langs->transnoentitiesnoconv('IfTrackingIDFoundEventWillBeLinked'));
 		} elseif (in_array($ruleaction['type'], array('loadthirdparty', 'loadandcreatethirdparty'))) {
@@ -662,7 +668,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '</td>';
 		// Delete
 		print '<td class="right nowraponall">';
-		print '<a class="editfielda marginrightonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=editoperation&operationid='.$ruleaction['id'].'">'.img_edit().'</a>';
+		print '<a class="editfielda marginrightonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=editoperation&token='.newToken().'&operationid='.$ruleaction['id'].'">'.img_edit().'</a>';
 		print ' <a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=deleteoperation&token='.newToken().'&operationid='.$ruleaction['id'].'">'.img_delete().'</a>';
 		print '</td>';
 		print '</tr>';
@@ -699,14 +705,14 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		if (empty($reshook)) {
 			// Edit
-			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit">'.$langs->trans("Edit").'</a></div>';
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&token='.newToken().'">'.$langs->trans("Edit").'</a></div>';
 
 			// Clone
-			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;socid='.$object->socid.'&amp;action=clone&amp;object=order">'.$langs->trans("ToClone").'</a></div>';
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&socid='.$object->socid.'&action=clone&token='.newToken().'&object=order">'.$langs->trans("ToClone").'</a></div>';
 
 			// Collect now
 			if (count($object->actions) > 0) {
-				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=collect">'.$langs->trans("CollectNow").'</a></div>';
+				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=collect&token='.newToken().'">'.$langs->trans("CollectNow").'</a></div>';
 			} else {
 				print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NoOperations")).'">'.$langs->trans("CollectNow").'</a></div>';
 			}

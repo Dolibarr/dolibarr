@@ -1,4 +1,6 @@
 # Dolibarr language file - Source file is en_US - admin
+BoldRefAndPeriodOnPDF=Print reference and period of product item in PDF
+BoldLabelOnPDF=Print label of product item in Bold in PDF
 Publisher=Hausgeber
 VersionProgram=Versionsnummer
 VersionLastInstall=Erstinstallationsversion
@@ -63,8 +65,6 @@ AutoDetectLang=automatische Erkennung (Browsersprache)
 FeatureDisabledInDemo=Funktion in der Demo deaktiviert
 FeatureAvailableOnlyOnStable=Funktion nur für offiziell stabile Versionen verfügbar
 URL=URL oder Link
-DisableLinkToHelpCenter=Hide the link "<b>Need help or support</b>" on the login page
-DisableLinkToHelp=Hide the link to the online help "<b>%s</b>"
 Module50Name=Produkte und Services
 Module53Name=Dienstleistung
 Module70Name=Eingriffe
@@ -114,7 +114,6 @@ Permission2411=Maßnahmen (Termine oder Aufgaben) Anderer einsehen
 Permission2412=Maßnahmen (Termine oder Aufgaben) Anderer erstellen/bearbeiten
 Permission2413=Maßnahmen (Termine oder Aufgaben) Anderer löschen
 Permission2501=Dokumente hochladen oder löschen
-DictionaryOrderMethods=Order methods
 VirtualServerName=Virtual Server Name
 PhpWebLink=Php Web-Link
 Server=Host
@@ -128,13 +127,9 @@ SummaryConst=Liste aller Systemeinstellungen
 Skin=Oberfläche
 DefaultSkin=Standardoberfläche
 CompanyCurrency=Firmenwährung
-ShowBugTrackLink=Show the link "<strong>%s</strong>"
-DisplayDesc=Parameters affecting the look and presentation of the application can be modified here.
-MAIN_DISABLE_METEO=Disable weather thumb
 WatermarkOnDraftInvoices=Wasserzeichen auf Rechnungsentwürfen (alle, falls leer)
 WatermarkOnDraftProposal=Wasserzeichen für Angebotsentwürfe (alle, falls leer)
 BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_ORDER=Fragen Sie nach dem Bestimmungsort des Bankkontos der Bestellung
-SuggestedPaymentModesIfNotDefinedInOrder=Suggested payments mode on sales order by default if not defined on the order
 WatermarkOnDraftOrders=Wasserzeichen zu den Auftragsentwürfen (keines wenn leer)
 InterventionsSetup=Eingriffsmoduleinstellungen
 FreeLegalTextOnInterventions=Freier Rechtstext für Eingriffe
@@ -151,15 +146,13 @@ LDAPMembersTypesSynchro=Mitgliedertypen
 LDAPSynchronization=LDAP Synchronisierung
 LDAPFunctionsNotAvailableOnPHP=LDAP Funktionen nicht verfügbar in Deinem PHP
 LDAPFieldFullname=vollständiger Name
-ViewProductDescInFormAbility=Display product descriptions in lines of items (otherwise show description in a tooltip popup)
 ClickToDialSetup=Click-to-Dial-Moduleinstellungen
 MailToSendShipment=Sendungen
 MailToSendIntervention=Eingriffe
-MAIN_GENERATE_PROPOSALS_WITH_PICTURE=Add column for picture on proposal lines
-OperationParamDesc=Define the values to use for the object of the action, or how to extract values. For example:<br>objproperty1=SET:the value to set<br>objproperty2=SET:a value with replacement of __objproperty1__<br>objproperty3=SETIFEMPTY:value used if objproperty3 is not already defined<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey:\\s*([^\\s]*)<br>options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*)<br>object.objproperty5=EXTRACT:BODY:My company name is\\s([^\\s]*)<br><br>Use a ; char as separator to extract or set several properties.
+OperationParamDesc=Define the rules to use to extract or set values.<br>Example for operations that need to extract a name from email subject:<br>name=EXTRACT:SUBJECT:Message from company ([^\n]*)<br>Example for operations that create objects:<br>objproperty1=SET:the value to set<br>objproperty2=SET:a value including value of __objproperty1__<br>objproperty3=SETIFEMPTY:value used if objproperty3 is not already defined<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey:\\s*([^\\s]*)<br>options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*)<br>object.objproperty5=EXTRACT:BODY:My company name is\\s([^\\s]*)<br><br>Use a ; char as separator to extract or set several properties.
 MAIN_OPTIMIZEFORCOLORBLINDDesc=Aktiviere diese Option wenn Sie Farbenblind sind, in machen Fällen wird die Farbeinstellung geändert um den Kontrast zu erhöhen.
 WithGMailYouCanCreateADedicatedPassword=Wenn Sie bei einem GMail-Konto die Überprüfung in zwei Schritten aktiviert haben, wird empfohlen, ein dediziertes zweites Kennwort für die Anwendung zu erstellen, anstatt Ihr eigenes Kontokennwort von https://myaccount.google.com/ zu verwenden.
-EmailCollectorLoadThirdPartyHelp=You can use this action to use the email content to find and load an existing thirdparty in your database. The found (or created) thirdparty will be used for following actions that need it.<br>For example, if you want to create a thirdparty with a name extracted a string 'Name: name to find' found into the body, use sender email as email, you can set the parameter field like this:<br>'email=HEADER:^From:(.*);name=EXTRACT:BODY:Name:\\s([^\\s]*);client=SET:2;'<br>
+EmailCollectorLoadThirdPartyHelp=You can use this action to use the email content to find and load an existing thirdparty in your database. The found (or created) thirdparty will be used for following actions that need it.<br>For example, if you want to create a thirdparty with a name extracted from a string 'Name: name to find' present into the body, use the sender email as email, you can set the parameter field like this:<br>'email=HEADER:^From:(.*);name=EXTRACT:BODY:Name:\\s([^\\s]*);client=SET:2;'<br>
 EndPointFor=Endpunkt für %s: %s
 DeleteEmailCollector=E-Mail-Sammler löschen
 ConfirmDeleteEmailCollector=Möchten Sie diesen E-Mail-Sammler wirklich löschen?
@@ -168,6 +161,5 @@ RESTRICT_ON_IP=Erlauben Sie nur den Zugriff auf eine Host-IP (Platzhalter nicht 
 FeatureNotAvailableWithReceptionModule=Funktion nicht verfügbar, wenn das Modul Empfang aktiviert ist
 EmailTemplate=Vorlage für E-Mail
 YouShouldDisablePHPFunctions=PHP Funktionen sollten deaktiviert werden
-ARestrictedPath=Some restricted path
 IfYouUseASecondTaxYouMustSetYouUseTheMainTax=If you want to use a second tax, you must enable also the first sale tax
 IfYouUseAThirdTaxYouMustSetYouUseTheMainTax=If you want to use a third tax, you must enable also the first sale tax

@@ -204,7 +204,7 @@ class Fichinter extends CommonObject
 		$sql = "SELECT count(fi.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."fichinter as fi";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON fi.fk_soc = s.rowid";
-		if (!$user->rights->societe->client->voir && !$user->socid) {
+		if (empty($user->rights->societe->client->voir) && !$user->socid) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
 			$clause = "AND";
@@ -255,7 +255,7 @@ class Fichinter extends CommonObject
 		}
 
 		if ($this->socid <= 0) {
-			$this->error = 'ErrorBadParameterForFunc';
+			$this->error = 'ErrorFicheinterCompanyDoesNotExist';
 			dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
 			return -1;
 		}
@@ -286,14 +286,14 @@ class Fichinter extends CommonObject
 		$sql .= $this->socid;
 		$sql .= ", '".$this->db->idate($now)."'";
 		$sql .= ", '".$this->db->escape($this->ref)."'";
-		$sql .= ", ".$conf->entity;
-		$sql .= ", ".$user->id;
-		$sql .= ", ".$user->id;
+		$sql .= ", ".((int) $conf->entity);
+		$sql .= ", ".((int) $user->id);
+		$sql .= ", ".((int) $user->id);
 		$sql .= ", ".($this->description ? "'".$this->db->escape($this->description)."'" : "null");
 		$sql .= ", '".$this->db->escape($this->model_pdf)."'";
-		$sql .= ", ".($this->fk_project ? $this->fk_project : 0);
-		$sql .= ", ".($this->fk_contrat ? $this->fk_contrat : 0);
-		$sql .= ", ".$this->statut;
+		$sql .= ", ".($this->fk_project ? ((int) $this->fk_project) : 0);
+		$sql .= ", ".($this->fk_contrat ? ((int) $this->fk_contrat) : 0);
+		$sql .= ", ".((int) $this->statut);
 		$sql .= ", ".($this->note_private ? "'".$this->db->escape($this->note_private)."'" : "null");
 		$sql .= ", ".($this->note_public ? "'".$this->db->escape($this->note_public)."'" : "null");
 		$sql .= ")";
@@ -430,9 +430,9 @@ class Fichinter extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."fichinter as f";
 		if ($ref) {
 			$sql .= " WHERE f.entity IN (".getEntity('intervention').")";
-			$sql .= " AND f.ref='".$this->db->escape($ref)."'";
+			$sql .= " AND f.ref = '".$this->db->escape($ref)."'";
 		} else {
-			$sql .= " WHERE f.rowid=".((int) $rowid);
+			$sql .= " WHERE f.rowid = ".((int) $rowid);
 		}
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
@@ -816,7 +816,7 @@ class Fichinter extends CommonObject
 
 		global $action;
 		$hookmanager->initHooks(array('interventiondao'));
-		$parameters = array('id'=>$this->id, 'getnomurl'=>$result);
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -1004,7 +1004,7 @@ class Fichinter extends CommonObject
 		if (!$error) {
 			// Delete object
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."fichinter";
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog("Fichinter::delete", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -1066,7 +1066,7 @@ class Fichinter extends CommonObject
 		if ($user->rights->ficheinter->creer) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter ";
 			$sql .= " SET datei = '".$this->db->idate($date_delivery)."'";
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 			$sql .= " AND fk_statut = 0";
 
 			if ($this->db->query($sql)) {
@@ -1097,7 +1097,7 @@ class Fichinter extends CommonObject
 			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter ";
 			$sql .= " SET description = '".$this->db->escape($description)."',";
 			$sql .= " fk_user_modif = ".$user->id;
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			if ($this->db->query($sql)) {
 				$this->description = $description;
@@ -1127,7 +1127,7 @@ class Fichinter extends CommonObject
 		if ($user->rights->ficheinter->creer) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter ";
 			$sql .= " SET fk_contrat = ".((int) $contractid);
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			if ($this->db->query($sql)) {
 				$this->fk_contrat = $contractid;
@@ -1320,11 +1320,13 @@ class Fichinter extends CommonObject
 		// phpcs:enable
 		$this->lines = array();
 
-		$sql = 'SELECT rowid, fk_fichinter, description, duree, date, rang';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.'fichinterdet';
-		$sql .= ' WHERE fk_fichinter = '.((int) $this->id).' ORDER BY rang ASC, date ASC';
+		$sql = "SELECT rowid, fk_fichinter, description, duree, date, rang";
+		$sql .= " FROM ".MAIN_DB_PREFIX."fichinterdet";
+		$sql .= " WHERE fk_fichinter = ".((int) $this->id);
+		$sql .= " ORDER BY rang ASC, date ASC";
 
 		dol_syslog(get_class($this)."::fetch_lines", LOG_DEBUG);
+
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -1481,7 +1483,7 @@ class FichinterLigne extends CommonObjectLine
 		if ($rangToUse == -1) {
 			// Recupere rang max de la ligne d'intervention dans $rangmax
 			$sql = 'SELECT max(rang) as max FROM '.MAIN_DB_PREFIX.'fichinterdet';
-			$sql .= ' WHERE fk_fichinter ='.$this->fk_fichinter;
+			$sql .= ' WHERE fk_fichinter = '.((int) $this->fk_fichinter);
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$obj = $this->db->fetch_object($resql);
@@ -1496,7 +1498,7 @@ class FichinterLigne extends CommonObjectLine
 		// Insertion dans base de la ligne
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'fichinterdet';
 		$sql .= ' (fk_fichinter, description, date, duree, rang)';
-		$sql .= " VALUES (".$this->fk_fichinter.",";
+		$sql .= " VALUES (".((int) $this->fk_fichinter).",";
 		$sql .= " '".$this->db->escape($this->desc)."',";
 		$sql .= " '".$this->db->idate($this->datei)."',";
 		$sql .= " ".((int) $this->duration).",";
@@ -1584,7 +1586,7 @@ class FichinterLigne extends CommonObjectLine
 			if ($result > 0) {
 				if (!$notrigger) {
 					// Call trigger
-					$result = $this->call_trigger('LINEFICHINTER_UPDATE', $user);
+					$result = $this->call_trigger('LINEFICHINTER_MODIFY', $user);
 					if ($result < 0) {
 						$error++;
 					}

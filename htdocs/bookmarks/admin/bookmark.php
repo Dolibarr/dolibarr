@@ -78,7 +78,7 @@ print '<tr class="oddeven"><td>';
 print $langs->trans("NbOfBoomarkToShow").'</td><td>';
 print '<input size="3" type="text" name="BOOKMARKS_SHOW_IN_MENU" value="'.$conf->global->BOOKMARKS_SHOW_IN_MENU.'">';
 print '</td></tr>';
-print '</table><br><div class="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></div></form>';
+print '</table><br><div class="center"><input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'"></div></form>';
 
 // End of page
 llxFooter();

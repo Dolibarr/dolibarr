@@ -24,6 +24,7 @@
  * \ingroup		Accountancy (Double entries)
  * \brief 		List operation of book keeping
  */
+
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancyexport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
@@ -189,7 +190,7 @@ $arrayfields = array(
 	't.date_creation'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0),
 	't.tms'=>array('label'=>$langs->trans("DateModification"), 'checked'=>0),
 	't.date_export'=>array('label'=>$langs->trans("DateExport"), 'checked'=>1),
-	't.date_validated'=>array('label'=>$langs->trans("DateValidation"), 'checked'=>1),
+	't.date_validated'=>array('label'=>$langs->trans("DateValidationAndLock"), 'checked'=>1),
 );
 
 if (empty($conf->global->ACCOUNTING_ENABLE_LETTERING)) {
@@ -526,23 +527,25 @@ $sqlwhere = array();
 if (count($filter) > 0) {
 	foreach ($filter as $key => $value) {
 		if ($key == 't.doc_date') {
-			$sqlwhere[] = $key.'=\''.$db->idate($value).'\'';
+			$sqlwhere[] = $key."='".$db->idate($value)."'";
 		} elseif ($key == 't.doc_date>=' || $key == 't.doc_date<=') {
-			$sqlwhere[] = $key.'\''.$db->idate($value).'\'';
+			$sqlwhere[] = $key."'".$db->idate($value)."'";
 		} elseif ($key == 't.numero_compte>=' || $key == 't.numero_compte<=' || $key == 't.subledger_account>=' || $key == 't.subledger_account<=') {
-			$sqlwhere[] = $key.'\''.$db->escape($value).'\'';
+			$sqlwhere[] = $key."'".$db->escape($value)."'";
 		} elseif ($key == 't.fk_doc' || $key == 't.fk_docdet' || $key == 't.piece_num') {
-			$sqlwhere[] = $key.'='.$value;
+			$sqlwhere[] = $key.'='.((int) $value);
 		} elseif ($key == 't.subledger_account' || $key == 't.numero_compte') {
-			$sqlwhere[] = $key.' LIKE \''.$db->escape($value).'%\'';
+			$sqlwhere[] = $key." LIKE '".$db->escape($value)."%'";
+		} elseif ($key == 't.subledger_account') {
+			$sqlwhere[] = natural_search($key, $value, 0, 1);
 		} elseif ($key == 't.date_creation>=' || $key == 't.date_creation<=') {
-			$sqlwhere[] = $key.'\''.$db->idate($value).'\'';
+			$sqlwhere[] = $key."'".$db->idate($value)."'";
 		} elseif ($key == 't.tms>=' || $key == 't.tms<=') {
-			$sqlwhere[] = $key.'\''.$db->idate($value).'\'';
+			$sqlwhere[] = $key."'".$db->idate($value)."'";
 		} elseif ($key == 't.date_export>=' || $key == 't.date_export<=') {
-			$sqlwhere[] = $key.'\''.$db->idate($value).'\'';
+			$sqlwhere[] = $key."'".$db->idate($value)."'";
 		} elseif ($key == 't.date_validated>=' || $key == 't.date_validated<=') {
-			$sqlwhere[] = $key.'\''.$db->idate($value).'\'';
+			$sqlwhere[] = $key."'".$db->idate($value)."'";
 		} elseif ($key == 't.credit' || $key == 't.debit') {
 			$sqlwhere[] = natural_search($key, $value, 1, 1);
 		} elseif ($key == 't.reconciled_option') {
@@ -606,7 +609,8 @@ if ($action == 'export_fileconfirm' && $user->rights->accounting->mouvements->ex
 					}
 					$sql .= " WHERE rowid = ".((int) $movement->id);
 
-					dol_syslog("/accountancy/bookkeeping/list.php Function export_file Specify movements as exported sql=".$sql, LOG_DEBUG);
+					dol_syslog("/accountancy/bookkeeping/list.php Function export_file Specify movements as exported", LOG_DEBUG);
+
 					$result = $db->query($sql);
 					if (!$result) {
 						$error++;
@@ -674,24 +678,35 @@ $formconfirm = '';
 if ($action == 'export_file') {
 	$form_question = array();
 
+	// If 1 or not set, we check by default.
+	$checked = (!isset($conf->global->ACCOUNTING_DEFAULT_NOT_NOTIFIED_EXPORT_DATE) || !empty($conf->global->ACCOUNTING_DEFAULT_NOT_NOTIFIED_EXPORT_DATE));
 	$form_question['notifiedexportdate'] = array(
 		'name' => 'notifiedexportdate',
 		'type' => 'checkbox',
 		'label' => $langs->trans('NotifiedExportDate'),
-		'value' => (!empty($conf->global->ACCOUNTING_DEFAULT_NOT_NOTIFIED_EXPORT_DATE) ? 'false' : 'true'),
+		'value' => $checked,
 	);
+
+	$form_question['separator'] = array('name'=>'separator', 'type'=>'separator');
+
+	// If 0 or not set, we NOT check by default.
+	$checked = (isset($conf->global->ACCOUNTING_DEFAULT_NOT_NOTIFIED_VALIDATION_DATE) || !empty($conf->global->ACCOUNTING_DEFAULT_NOT_NOTIFIED_VALIDATION_DATE));
 	$form_question['notifiedvalidationdate'] = array(
 		'name' => 'notifiedvalidationdate',
 		'type' => 'checkbox',
 		'label' => $langs->trans('NotifiedValidationDate'),
-		'value' => (!empty($conf->global->ACCOUNTING_DEFAULT_NOT_NOTIFIED_VALIDATION_DATE) ? 'false' : 'true'),
+		'value' => $checked,
 	);
+
+	$form_question['separator2'] = array('name'=>'separator2', 'type'=>'separator');
 
 	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?'.$param, $langs->trans("ExportFilteredList").' ('.$listofformat[$formatexportset].')', $langs->trans('ConfirmExportFile'), 'export_fileconfirm', $form_question, '', 1, 300, 600);
 }
+
 if ($action == 'delmouv') {
-	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?mvt_num='.GETPOST('mvt_num').$param, $langs->trans('DeleteMvt'), $langs->trans('ConfirmDeleteMvtPartial'), 'delmouvconfirm', '', 0, 1);
+	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?mvt_num='.urlencode(GETPOST('mvt_num')).$param, $langs->trans('DeleteMvt'), $langs->trans('ConfirmDeleteMvtPartial'), 'delmouvconfirm', '', 0, 1);
 }
+
 if ($action == 'delbookkeepingyear') {
 	$form_question = array();
 	$delyear = GETPOST('delyear', 'int');
@@ -712,6 +727,7 @@ if ($action == 'delbookkeepingyear') {
 		'type' => 'select',
 		'label' => $langs->trans('DelMonth'),
 		'values' => $month_array,
+		'morecss' => 'minwidth150',
 		'default' => ''
 	);
 	$form_question['delyear'] = array(
@@ -729,7 +745,7 @@ if ($action == 'delbookkeepingyear') {
 			'default' => $deljournal
 	);
 
-	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?'.$param, $langs->trans('DeleteMvt'), $langs->trans('ConfirmDeleteMvt', $langs->transnoentitiesnoconv("RegistrationInAccounting")), 'delbookkeepingyearconfirm', $form_question, '', 1, 300);
+	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?'.$param, $langs->trans('DeleteMvt'), $langs->trans('ConfirmDeleteMvt', $langs->transnoentitiesnoconv("RegistrationInAccounting")), 'delbookkeepingyearconfirm', $form_question, '', 1, 320);
 }
 
 // Print form confirm
@@ -762,7 +778,7 @@ if (count($filter)) {
 }
 
 $parameters = array();
-$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('addMoreActionsButtonsList', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 if (empty($reshook)) {
 	// Button re-export
 	if (!empty($conf->global->ACCOUNTING_REEXPORT)) {
@@ -816,7 +832,7 @@ if (!empty($arrayfields['t.piece_num']['checked'])) {
 // Code journal
 if (!empty($arrayfields['t.code_journal']['checked'])) {
 	print '<td class="liste_titre center">';
-	print $formaccounting->multi_select_journal($search_ledger_code, 'search_ledger_code', 0, 1, 1, 1, 'maxwidth150');
+	print $formaccounting->multi_select_journal($search_ledger_code, 'search_ledger_code', 0, 1, 1, 1, 'small maxwidth150');
 	print '</td>';
 }
 // Date document
@@ -838,10 +854,10 @@ if (!empty($arrayfields['t.doc_ref']['checked'])) {
 if (!empty($arrayfields['t.numero_compte']['checked'])) {
 	print '<td class="liste_titre">';
 	print '<div class="nowrap">';
-	print $formaccounting->select_account($search_accountancy_code_start, 'search_accountancy_code_start', $langs->trans('From'), array(), 1, 1, 'maxwidth200', 'account');
+	print $formaccounting->select_account($search_accountancy_code_start, 'search_accountancy_code_start', $langs->trans('From'), array(), 1, 1, 'maxwidth150', 'account');
 	print '</div>';
 	print '<div class="nowrap">';
-	print $formaccounting->select_account($search_accountancy_code_end, 'search_accountancy_code_end', $langs->trans('to'), array(), 1, 1, 'maxwidth200', 'account');
+	print $formaccounting->select_account($search_accountancy_code_end, 'search_accountancy_code_end', $langs->trans('to'), array(), 1, 1, 'maxwidth150', 'account');
 	print '</div>';
 	print '</td>';
 }
@@ -1118,24 +1134,25 @@ while ($i < min($num, $limit)) {
 			// Other type
 		}
 
-		print '<td class="nowrap">';
-
-		print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-		// Picto + Ref
-		print '<td class="nobordernopadding nowrap">';
-
+		$labeltoshow = '';
+		$labeltoshowalt = '';
 		if ($line->doc_type == 'customer_invoice' || $line->doc_type == 'supplier_invoice' || $line->doc_type == 'expense_report') {
-			print $objectstatic->getNomUrl(1, '', 0, 0, '', 0, -1, 1);
-			print $documentlink;
+			$labeltoshow .= $objectstatic->getNomUrl(1, '', 0, 0, '', 0, -1, 1);
+			$labeltoshow .= $documentlink;
+			$labeltoshowalt .= $objectstatic->ref;
 		} elseif ($line->doc_type == 'bank') {
-			print $objectstatic->getNomUrl(1);
+			$labeltoshow .= $objectstatic->getNomUrl(1);
+			$labeltoshowalt .= $objectstatic->ref;
 			$bank_ref = strstr($line->doc_ref, '-');
-			print " " . $bank_ref;
+			$labeltoshow .= " " . $bank_ref;
+			$labeltoshowalt .= " " . $bank_ref;
 		} else {
-			print $line->doc_ref;
+			$labeltoshow .= $line->doc_ref;
+			$labeltoshowalt .= $line->doc_ref;
 		}
-		print '</td></tr></table>';
 
+		print '<td class="nowraponall tdoverflowmax200" title="'.dol_escape_htmltag($labeltoshowalt).'">';
+		print $labeltoshow;
 		print "</td>\n";
 		if (!$i) {
 			$totalarray['nbfield']++;
@@ -1160,7 +1177,7 @@ while ($i < min($num, $limit)) {
 
 	// Label operation
 	if (!empty($arrayfields['t.label_operation']['checked'])) {
-		print '<td>'.$line->label_operation.'</td>';
+		print '<td class="small tdoverflowmax200" title="'.dol_escape_htmltag($line->label_operation).'">'.dol_escape_htmltag($line->label_operation).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -1221,7 +1238,7 @@ while ($i < min($num, $limit)) {
 
 	// Exported operation date
 	if (!empty($arrayfields['t.date_export']['checked'])) {
-		print '<td class="center">'.dol_print_date($line->date_export, 'dayhour').'</td>';
+		print '<td class="center nowraponall">'.dol_print_date($line->date_export, 'dayhour').'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -1229,7 +1246,7 @@ while ($i < min($num, $limit)) {
 
 	// Validated operation date
 	if (!empty($arrayfields['t.date_validated']['checked'])) {
-		print '<td class="center">'.dol_print_date($line->date_validation, 'dayhour').'</td>';
+		print '<td class="center nowraponall">'.dol_print_date($line->date_validation, 'dayhour').'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -1244,7 +1261,7 @@ while ($i < min($num, $limit)) {
 	}
 	if (empty($line->date_validation)) {
 		if ($user->rights->accounting->mouvements->supprimer) {
-			print '<a class="reposition paddingleft marginrightonly" href="'.$_SERVER['PHP_SELF'].'?action=delmouv&mvt_num='.$line->piece_num.$param.'&page='.$page.($sortfield ? '&sortfield='.$sortfield : '').($sortorder ? '&sortorder='.$sortorder : '').'">'.img_delete().'</a>';
+			print '<a class="reposition paddingleft marginrightonly" href="'.$_SERVER['PHP_SELF'].'?action=delmouv&token='.newToken().'&mvt_num='.$line->piece_num.$param.'&page='.$page.($sortfield ? '&sortfield='.$sortfield : '').($sortorder ? '&sortorder='.$sortorder : '').'">'.img_delete().'</a>';
 		}
 	}
 	print '</td>';
@@ -1268,7 +1285,7 @@ print '</div>';
 // TODO Replace this with mass delete action
 if ($user->rights->accounting->mouvements->supprimer_tous) {
 	print '<div class="tabsAction tabsActionNoBottom">'."\n";
-	print '<a class="butActionDelete" name="button_delmvt" href="'.$_SERVER["PHP_SELF"].'?action=delbookkeepingyear'.($param ? '&'.$param : '').'">'.$langs->trans("DeleteMvt").'</a>';
+	print '<a class="butActionDelete" name="button_delmvt" href="'.$_SERVER["PHP_SELF"].'?action=delbookkeepingyear&token='.newToken().($param ? '&'.$param : '').'">'.$langs->trans("DeleteMvt").'</a>';
 	print '</div>';
 }
 

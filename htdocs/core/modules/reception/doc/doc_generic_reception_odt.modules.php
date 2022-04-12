@@ -116,9 +116,10 @@ class doc_generic_reception_odt extends ModelePdfReception
 		$texte = $this->description.".<br>\n";
 		$texte .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 		$texte .= '<input type="hidden" name="token" value="'.newToken().'">';
+		$texte .= '<input type="hidden" name="page_y" value="">';
 		$texte .= '<input type="hidden" name="action" value="setModuleOptions">';
 		$texte .= '<input type="hidden" name="param1" value="RECEPTION_ADDON_PDF_ODT_PATH">';
-		$texte .= '<table class="nobordernopadding" width="100%">';
+		$texte .= '<table class="nobordernopadding centpercent">';
 
 		// List of directories area
 		$texte .= '<tr><td>';
@@ -152,7 +153,7 @@ class doc_generic_reception_odt extends ModelePdfReception
 		$texte .= $conf->global->RECEPTION_ADDON_PDF_ODT_PATH;
 		$texte .= '</textarea>';
 		$texte .= '</div><div style="display: inline-block; vertical-align: middle;">';
-		$texte .= '<input type="submit" class="button small" value="'.$langs->trans("Modify").'" name="Button">';
+		$texte .= '<input type="submit" class="button button-edit small reposition" name="modify" value="'.$langs->trans("Modify").'">';
 		$texte .= '<br></div></div>';
 
 		// Scan directories
@@ -175,13 +176,15 @@ class doc_generic_reception_odt extends ModelePdfReception
 		// Add input to upload a new template file.
 		$texte .= '<div>'.$langs->trans("UploadNewTemplate").' <input type="file" name="uploadfile">';
 		$texte .= '<input type="hidden" value="RECEPTION_ADDON_PDF_ODT_PATH" name="keyforuploaddir">';
-		$texte .= '<input type="submit" class="button small" value="'.dol_escape_htmltag($langs->trans("Upload")).'" name="upload">';
+		$texte .= '<input type="submit" class="button small reposition" value="'.dol_escape_htmltag($langs->trans("Upload")).'" name="upload">';
 		$texte .= '</div>';
 
 		$texte .= '</td>';
 
 		$texte .= '<td rowspan="2" class="tdtop hideonsmartphone">';
+		$texte .= '<span class="opacitymedium">';
 		$texte .= $langs->trans("ExampleOfDirectoriesForModelGen");
+		$texte .= '</span>';
 		$texte .= '</td>';
 		$texte .= '</tr>';
 

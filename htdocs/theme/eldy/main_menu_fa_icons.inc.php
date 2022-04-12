@@ -15,7 +15,7 @@
 	-webkit-font-smoothing: antialiased;
 	text-align:center;
 	text-decoration:none;
-	color: #<?php echo $colortextbackhmenu; ?>;
+	color: var(--colortextbackhmenu);
 }
 
 .fa-15x {
@@ -53,7 +53,7 @@ div.mainmenu.bank::before {
 	content: "\f19c";
 }
 
-<?php if ($conf->global->MAIN_FEATURES_LEVEL == 2) { ?>
+<?php if (getDolGlobalInt('MAIN_FEATURES_LEVEL') == 2) { ?>
 /* TESTING USAGE OF SVG WITHOUT FONT */
 div.mainmenu.cashdesk {
 	line-height: 26px;

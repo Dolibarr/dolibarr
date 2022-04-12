@@ -158,6 +158,25 @@ if (!empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/swagger.json' || $
 $api = new DolibarrApi($db, '', $refreshcache);
 //var_dump($api->r->apiVersionMap);
 
+// If MAIN_API_DEBUG is set to 1, we save logs into file "dolibarr_api.log"
+if (!empty($conf->global->MAIN_API_DEBUG)) {
+	$r = $api->r;
+	$r->onCall(function () use ($r) {
+		// Don't log Luracast Restler Explorer recources calls
+		//if (!preg_match('/^explorer/', $r->url)) {
+		//	'method'  => $api->r->requestMethod,
+		//	'url'     => $api->r->url,
+		//	'route'   => $api->r->apiMethodInfo->className.'::'.$api->r->apiMethodInfo->methodName,
+		//	'version' => $api->r->getRequestedApiVersion(),
+		//	'data'    => $api->r->getRequestData(),
+		//dol_syslog("Debug API input ".var_export($r, true), LOG_DEBUG, 0, '_api');
+		dol_syslog("Debug API url ".var_export($r->url, true), LOG_DEBUG, 0, '_api');
+		dol_syslog("Debug API input ".var_export($r->getRequestData(), true), LOG_DEBUG, 0, '_api');
+		//}
+	});
+}
+
+
 // Enable the Restler API Explorer.
 // See https://github.com/Luracast/Restler-API-Explorer for more info.
 $api->r->addAPIClass('Luracast\\Restler\\Explorer');
@@ -358,14 +377,34 @@ if (!empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/swagger.json' && 
 //exit;
 
 // We do not want that restler outputs data if we use native compression (default behaviour) but we want to have it returned into a string.
-Luracast\Restler\Defaults::$returnResponse = (empty($conf->global->API_DISABLE_COMPRESSION) && !empty($_SERVER['HTTP_ACCEPT_ENCODING']));
+// If API_DISABLE_COMPRESSION is set, returnResponse is false => It use default handling so output result directly.
+$usecompression = (empty($conf->global->API_DISABLE_COMPRESSION) && !empty($_SERVER['HTTP_ACCEPT_ENCODING']));
+$foundonealgorithm = 0;
+if ($usecompression) {
+	if (strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'br') !== false && is_callable('brotli_compress')) {
+		$foundonealgorithm++;
+	}
+	if (strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'bz') !== false && is_callable('bzcompress')) {
+		$foundonealgorithm++;
+	}
+	if (strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') !== false && is_callable('gzencode')) {
+		$foundonealgorithm++;
+	}
+	if (!$foundonealgorithm) {
+		$usecompression = false;
+	}
+}
+
+//dol_syslog('We found some compression algoithm: '.$foundonealgorithm.' -> usecompression='.$usecompression, LOG_DEBUG);
+
+Luracast\Restler\Defaults::$returnResponse = $usecompression;
 
 // Call API (we suppose we found it).
 // The handle will use the file api/temp/routes.php to get data to run the API. If the file exists and the entry for API is not found, it will return 404.
 $result = $api->r->handle();
 
 if (Luracast\Restler\Defaults::$returnResponse) {
-	// We try to compress data
+	// We try to compress the data received data
 	if (strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'br') !== false && is_callable('brotli_compress')) {
 		header('Content-Encoding: br');
 		$result = brotli_compress($result, 11, BROTLI_TEXT);
@@ -375,6 +414,10 @@ if (Luracast\Restler\Defaults::$returnResponse) {
 	} elseif (strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') !== false && is_callable('gzencode')) {
 		header('Content-Encoding: gzip');
 		$result = gzencode($result, 9);
+	} else {
+		header('Content-Encoding: text/html');
+		print "No compression method found. Try to disable compression by adding API_DISABLE_COMPRESSION=1";
+		exit(0);
 	}
 
 	// Restler did not output data yet, we return it now

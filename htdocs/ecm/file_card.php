@@ -46,8 +46,8 @@ if ($user->socid > 0) {
 }
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -376,7 +376,7 @@ if (!empty($object->share)) {
 
 		print img_picto('', 'globe').' ';
 		if ($action != 'edit') {
-			print '<input type="text" class="quatrevingtpercent" id="downloadlink" name="downloadexternallink" value="'.dol_escape_htmltag($fulllink).'">';
+			print '<input type="text" class="quatrevingtpercent nopadding small" id="downloadlink" name="downloadexternallink" value="'.dol_escape_htmltag($fulllink).'">';
 		} else {
 			print $fulllink;
 		}
@@ -405,18 +405,14 @@ print ajax_autoselect('downloadlink');
 print dol_get_fiche_end();
 
 if ($action == 'edit') {
-	print '<div class="center">';
-	print '<input type="submit" class="button button-save" name="submit" value="'.$langs->trans("Save").'">';
-	print ' &nbsp; &nbsp; ';
-	print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
-	print '</div>';
+	print $form->buttonsSaveCancel();
 
 	print '</form>';
 }
 
 
-// Confirmation de la suppression d'une ligne categorie
-if ($action == 'delete_file') {
+// Confirm deletion of a file
+if ($action == 'deletefile') {
 	print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.urlencode($section), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile', $urlfile), 'confirm_deletefile', '', 1, 1);
 }
 
@@ -430,7 +426,7 @@ if ($action != 'edit') {
 	/*
 	if ($user->rights->ecm->setup)
 	{
-		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=delete_file&token='.newToken().'&section='.$section.'&urlfile='.urlencode($urlfile).'">'.$langs->trans('Delete').'</a>';
+		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=deletefile&token='.newToken().'&section='.$section.'&urlfile='.urlencode($urlfile).'">'.$langs->trans('Delete').'</a>';
 	}
 	else
 	{

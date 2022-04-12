@@ -45,6 +45,8 @@ TicketSeverityShortNORMAL=Normal
 TicketSeverityShortHIGH=High
 TicketSeverityShortBLOCKING=Critical, Blocking
 
+TicketCategoryShortOTHER=Other
+
 ErrorBadEmailAddress=Field '%s' incorrect
 MenuTicketMyAssign=My tickets
 MenuTicketMyAssignNonClosed=My open tickets
@@ -134,6 +136,18 @@ TicketsPublicNotificationNewMessage=Send email(s) when a new message/comment is 
 TicketsPublicNotificationNewMessageHelp=Send email(s) when a new message is added from public interface (to assigned user or the notifications email to (update) and/or the notifications email to)
 TicketPublicNotificationNewMessageDefaultEmail=Notifications email to (update)
 TicketPublicNotificationNewMessageDefaultEmailHelp=Send an email to this address for each new message notifications if the ticket doesn't have a user assigned to it or if the user doesn't have any known email.
+TicketsAutoReadTicket=Automatically mark the ticket as read (when created from backoffice)
+TicketsAutoReadTicketHelp=Automatically mark the ticket as read when created from backoffice. When ticket is create from the public interface, ticket remains with the status "Not Read".
+TicketsDelayBeforeFirstAnswer=A new ticket should receive a first answer before (hours):
+TicketsDelayBeforeFirstAnswerHelp=If a new ticket has not received an answer after this time period (in hours), an important warning icon will be displayed in the list view.
+TicketsDelayBetweenAnswers=An unresolved ticket should not be unactive during (hours):
+TicketsDelayBetweenAnswersHelp=If an unresolved ticket that has already received an answer has not had further interaction after this time period (in hours), a warning icon will be displayed in the list view.
+TicketsAutoNotifyClose=Automatically notify thirdparty when closing a ticket
+TicketsAutoNotifyCloseHelp=When closing a ticket, you will be proposed to send a message to one of thirdparty's contacts. On mass closing, a message will be sent to one contact of the thirdparty linked to the ticket.
+TicketWrongContact=Provided contact is not part of current ticket contacts. Email not sent.
+TicketChooseProductCategory=Product category for ticket support
+TicketChooseProductCategoryHelp=Select the product category of ticket support. This will be used to automatically link a contract to a ticket.
+
 #
 # Index & list page
 #
@@ -149,6 +163,8 @@ OrderByDateAsc=Sort by ascending date
 OrderByDateDesc=Sort by descending date
 ShowAsConversation=Show as conversation list
 MessageListViewType=Show as table list
+ConfirmMassTicketClosingSendEmail=Automatically send emails when closing tickets
+ConfirmMassTicketClosingSendEmailQuestion=Do you want to notify thirdparties when closing these tickets ?
 
 #
 # Ticket card
@@ -180,7 +196,7 @@ MessageSuccessfullyAdded=Ticket added
 TicketMessageSuccessfullyAdded=Message successfully added
 TicketMessagesList=Message list
 NoMsgForThisTicket=No message for this ticket
-Properties=Classification
+TicketProperties=Classification
 LatestNewTickets=Latest %s newest tickets (not read)
 TicketSeverity=Severity
 ShowTicket=See ticket
@@ -236,9 +252,16 @@ TicketChangeStatus=Change status
 TicketConfirmChangeStatus=Confirm the status change: %s ?
 TicketLogStatusChanged=Status changed: %s to %s
 TicketNotNotifyTiersAtCreate=Not notify company at create
+NotifyThirdpartyOnTicketClosing=Contacts to notify while closing the ticket
+TicketNotifyAllTiersAtClose=All related contacts
+TicketNotNotifyTiersAtClose=No related contact
 Unread=Unread
 TicketNotCreatedFromPublicInterface=Not available. Ticket was not created from public interface.
 ErrorTicketRefRequired=Ticket reference name is required
+TicketsDelayForFirstResponseTooLong=Too much time elapsed since ticket opening without any answer.
+TicketsDelayFromLastResponseTooLong=Too much time elapsed since last answer on this ticket.
+TicketNoContractFoundToLink=No contract was found to be automatically linked to this ticket. Please link a contract manually.
+TicketManyContractsLinked=Many contracts have been automatically linked to this ticket. Make sure to verify which should be chosen.
 
 #
 # Logs
@@ -268,6 +291,7 @@ TicketNewEmailBodyInfosTicket=Information for monitoring the ticket
 TicketNewEmailBodyInfosTrackId=Ticket tracking number: %s
 TicketNewEmailBodyInfosTrackUrl=You can view the progress of the ticket by clicking the link above.
 TicketNewEmailBodyInfosTrackUrlCustomer=You can view the progress of the ticket in the specific interface by clicking the following link
+TicketCloseEmailBodyInfosTrackUrlCustomer=You can consult the history of this ticket by clicking the following link
 TicketEmailPleaseDoNotReplyToThisEmail=Please do not reply directly to this email! Use the link to reply into the interface.
 TicketPublicInfoCreateTicket=This form allows you to record a support ticket in our management system.
 TicketPublicPleaseBeAccuratelyDescribe=Please accurately describe the problem. Provide the most information possible to allow us to correctly identify your request.
@@ -289,6 +313,10 @@ NewUser=New user
 NumberOfTicketsByMonth=Number of tickets per month
 NbOfTickets=Number of tickets
 # notifications
+TicketCloseEmailSubjectCustomer=Ticket closed
+TicketCloseEmailBodyCustomer=This is an automatic message to notify you that ticket %s has just been closed.
+TicketCloseEmailSubjectAdmin=Ticket closed - Réf %s (public ticket ID %s)
+TicketCloseEmailBodyAdmin=A ticket with ID #%s has just been closed, see information:
 TicketNotificationEmailSubject=Ticket %s updated
 TicketNotificationEmailBody=This is an automatic message to notify you that ticket %s has just been updated
 TicketNotificationRecipient=Notification recipient
@@ -316,6 +344,7 @@ BoxTicketLastXDays=Number of new tickets by days the last %s days
 BoxTicketLastXDayswidget = Number of new tickets by days the last X days
 BoxNoTicketLastXDays=No new tickets the last %s days
 BoxNumberOfTicketByDay=Number of new tickets by day
-BoxNewTicketVSClose=Number of today's new tickets versus today's closed tickets
+BoxNewTicketVSClose=Number of tickets versus closed tickets (today)
 TicketCreatedToday=Ticket created today
 TicketClosedToday=Ticket closed today
+KMFoundForTicketGroup=We found topics and FAQs that may answers your question, thanks to check them before submitting the ticket

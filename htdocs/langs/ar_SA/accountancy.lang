@@ -48,7 +48,7 @@ CountriesNotInEEC=ليس ضمن دول الاتحاد الأوروبي
 CountriesInEECExceptMe=البلدان في المجموعة الاقتصادية الأوروبية باستثناء %s
 CountriesExceptMe=جميع الدول باستثناء %s
 AccountantFiles=تصدير مستندات المصدر
-ExportAccountingSourceDocHelp=باستخدام هذه الأداة ، يمكنك تصدير الأحداث  (في شكل قائمة او بصيغة ملفات متنقلة ) التي تم استخدامها لإنشاء قيودك المحاسبية .
+ExportAccountingSourceDocHelp=With this tool, you can export the source events (list in CSV and PDFs) that are used to generate your accountancy.
 ExportAccountingSourceDocHelp2=لتصدير دفاترك المحاسبية ، إستخدم القائمة %s - %s .
 VueByAccountAccounting=عرض حسب الحساب المحاسبي
 VueBySubAccountAccounting=عرض حسب الحساب المحاسبة الفرعي
@@ -286,7 +286,7 @@ ValidateMovements=اعتماد الحركات
 DescValidateMovements=سيتم حظر أي تعديل أو حذف للكتابة والحروف. يجب اعتماد جميع الإدخالات الخاصة بالتمرين وإلا فلن يكون الإغلاق ممكنًا
 
 ValidateHistory=ربط تلقائي
-AutomaticBindingDone=تم الربط التلقائي
+AutomaticBindingDone=Automatic bindings done (%s) - Automatic binding not possible for some record (%s)
 
 ErrorAccountancyCodeIsAlreadyUse=خطأ، لا يمكنك حذف هذا الحساب المحاسبي لأنه مستخدم
 MvtNotCorrectlyBalanced=الحركة غير متوازنة بشكل صحيح. الخصم = %s | الائتمان = %s
@@ -387,7 +387,8 @@ SaleExport=بيع تصدير
 SaleEEC=بيع في الاتحاد الاوروبي
 SaleEECWithVAT=البيع في EEC مع ضريبة القيمة المضافة ليست فارغة ، لذلك نفترض أن هذا ليس بيعًا داخل الاتحاد والحساب المقترح هو حساب المنتج القياسي.
 SaleEECWithoutVATNumber=Sale in EEC with no VAT but the VAT ID of thirdparty is not defined. We fallback on the product account for standard sales. You can fix the VAT ID of thirdparty or the product account if needed.
-
+ForbiddenTransactionAlreadyExported=Forbidden: The transaction has been validated and/or exported.
+ForbiddenTransactionAlreadyValidated=Forbidden: The transaction has been validated.
 ## Dictionary
 Range=نطاق الحساب
 Calculated=تم حسابه
@@ -404,6 +405,7 @@ NoJournalDefined=لم يتم تحديد دفتر
 Binded=البنود مرتبطة
 ToBind=بنود للربط
 UseMenuToSetBindindManualy=البنود غير مرتبطة بعد ، استخدم القائمة <a href="%s"> %s </a> لإجراء الربط يدويًا
+SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Sorry this module is not compatible with the experimental feature of situation invoices
 
 ## Import
 ImportAccountingEntries=مداخيل حسابية

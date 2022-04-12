@@ -83,9 +83,9 @@ print '<td width="100%" align="left" valign="middle">';
 
 print '<table summary="who"><tr><td>'.img_picto('', 'who.png', 'class="valignmiddle"', 1).'</td><td>';
 
-print '<font style="'.$style1.'">'.$langs->trans("CommunitySupport").'</font>';
+print '<span style="'.$style1.'">'.$langs->trans("CommunitySupport").'</span>';
 print '<span class="small">';
-print '<br><span class="opacitymedium">'.$langs->trans("TypeOfSupport").':</span> <font style="'.$style2.'">'.$langs->trans("TypeSupportCommunauty").'</font>';
+print '<br><span class="opacitymedium">'.$langs->trans("TypeOfSupport").':</span> <span style="'.$style2.'">'.$langs->trans("TypeSupportCommunauty").'</span>';
 print '<br><span class="opacitymedium">'.$langs->trans("TypeOfHelp").'/'.$langs->trans("Efficiency").'/'.$langs->trans("Price").':</span> ';
 print $langs->trans("TypeHelpDev").'/'.img_picto_common('', 'redstar', 'class="valignmiddle"', 1).img_picto_common('', 'redstar', 'class="valignmiddle"', 1).'/'.img_picto_common('', 'star', 'class="valignmiddle"', 1).img_picto_common('', 'star', 'class="valignmiddle"', 1).img_picto_common('', 'star', 'class="valignmiddle"', 1).img_picto_common('', 'star', 'class="valignmiddle"', 1);
 print '</span>';
@@ -147,9 +147,9 @@ print '<td width="100%" align="left" valign="middle">';
 
 print '<table summary="mail"><tr><td>'.img_picto('', 'mail.png', 'class="valignmiddle"', 1).'</td><td>';
 
-print '<font style="'.$style1.'">'.$langs->trans("EMailSupport").'</font>';
+print '<span style="'.$style1.'">'.$langs->trans("EMailSupport").'</span>';
 print '<span class="small">';
-print '<br><span class="opacitymedium">'.$langs->trans("TypeOfSupport").':</span> <font style="'.$style2.'">'.$langs->trans("TypeSupportCommercial").'</font>';
+print '<br><span class="opacitymedium">'.$langs->trans("TypeOfSupport").':</span> <span style="'.$style2.'">'.$langs->trans("TypeSupportCommercial").'</span>';
 print '<br><span class="opacitymedium">'.$langs->trans("TypeOfHelp").'/'.$langs->trans("Efficiency").'/'.$langs->trans("Price").':</span> ';
 print $langs->trans("TypeHelpOnly").'/'.img_picto_common('', 'redstar', 'class="valignmiddle"', 1).img_picto_common('', 'redstar', 'class="valignmiddle"', 1).img_picto_common('', 'redstar', 'class="valignmiddle"', 1).'/'.img_picto_common('', 'star', 'class="valignmiddle"', 1).img_picto_common('', 'star', 'class="valignmiddle"', 1);
 print '</span>';
@@ -182,9 +182,9 @@ print '<td width="100%" align="left" valign="middle">';
 
 print '<table summary="special"><tr><td>'.img_picto('', 'pagemaster.png', 'class="valignmiddle"', 1).'</td><td>';
 
-print '<font style="'.$style1.'">'.$langs->trans("OtherSupport").'</font>';
+print '<span style="'.$style1.'">'.$langs->trans("OtherSupport").'</span>';
 print '<span class="small">';
-print '<br><span class="opacitymedium">'.$langs->trans("TypeOfSupport").':</span> <font style="'.$style2.'">'.$langs->trans("TypeSupportCommercial").'</font>';
+print '<br><span class="opacitymedium">'.$langs->trans("TypeOfSupport").':</span> <span style="'.$style2.'">'.$langs->trans("TypeSupportCommercial").'</span>';
 //print '<br>'.$langs->trans("Efficiency").'/'.$langs->trans("Price").': '.img_picto_common('','redstar').img_picto_common('','redstar').img_picto_common('','redstar').' / '.img_picto_common('','star');
 print '<br><span class="opacitymedium">'.$langs->trans("TypeOfHelp").'/'.$langs->trans("Efficiency").'/'.$langs->trans("Price").':</span> ';
 print $langs->trans("TypeHelpDevForm").'/?/?';

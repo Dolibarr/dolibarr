@@ -1,14 +1,15 @@
 <?php
-/* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
- * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2014      Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2016      Ferran Marcet        <fmarcet@2byte.es>
- * Copyright (C) 2018-2021 Frédéric France      <frederic.france@netlogic.fr>
- * Copyright (C) 2018-2020 Charlene Benke       <charlie@patas-monkey.com>
- * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
+/* Copyright (C) 2001-2006 Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2016 Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012 Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2013      Cédric Salvador		<csalvador@gpcsolutions.fr>
+ * Copyright (C) 2014      Marcos García		<marcosgdf@gmail.com>
+ * Copyright (C) 2014      Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2016      Ferran Marcet		<fmarcet@2byte.es>
+ * Copyright (C) 2018-2021 Frédéric France		<frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2020 Charlene Benke		<charlie@patas-monkey.com>
+ * Copyright (C) 2019      Nicolas Zabouri		<info@inovea-conseil.com>
+ * Copyright (C) 2021      Alexandre Spangaro   <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,12 +53,39 @@ $confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'supplierorderlist';
 
-$search_orderyear = GETPOST("search_orderyear", "int");
-$search_ordermonth = GETPOST("search_ordermonth", "int");
-$search_orderday = GETPOST("search_orderday", "int");
-$search_deliveryyear = GETPOST("search_deliveryyear", "int");
-$search_deliverymonth = GETPOST("search_deliverymonth", "int");
-$search_deliveryday = GETPOST("search_deliveryday", "int");
+$search_date_order_startday = GETPOST('search_date_order_startday', 'int');
+$search_date_order_startmonth = GETPOST('search_date_order_startmonth', 'int');
+$search_date_order_startyear = GETPOST('search_date_order_startyear', 'int');
+$search_date_order_endday = GETPOST('search_date_order_endday', 'int');
+$search_date_order_endmonth = GETPOST('search_date_order_endmonth', 'int');
+$search_date_order_endyear = GETPOST('search_date_order_endyear', 'int');
+$search_date_order_start = dol_mktime(0, 0, 0, $search_date_order_startmonth, $search_date_order_startday, $search_date_order_startyear);	// Use tzserver
+$search_date_order_end = dol_mktime(23, 59, 59, $search_date_order_endmonth, $search_date_order_endday, $search_date_order_endyear);
+$search_date_delivery_startday = GETPOST('search_date_delivery_startday', 'int');
+$search_date_delivery_startmonth = GETPOST('search_date_delivery_startmonth', 'int');
+$search_date_delivery_startyear = GETPOST('search_date_delivery_startyear', 'int');
+$search_date_delivery_endday = GETPOST('search_date_delivery_endday', 'int');
+$search_date_delivery_endmonth = GETPOST('search_date_delivery_endmonth', 'int');
+$search_date_delivery_endyear = GETPOST('search_date_delivery_endyear', 'int');
+$search_date_delivery_start = dol_mktime(0, 0, 0, $search_date_delivery_startmonth, $search_date_delivery_startday, $search_date_delivery_startyear);	// Use tzserver
+$search_date_delivery_end = dol_mktime(23, 59, 59, $search_date_delivery_endmonth, $search_date_delivery_endday, $search_date_delivery_endyear);
+
+$search_date_valid_startday = GETPOST('search_date_valid_startday', 'int');
+$search_date_valid_startmonth = GETPOST('search_date_valid_startmonth', 'int');
+$search_date_valid_startyear = GETPOST('search_date_valid_startyear', 'int');
+$search_date_valid_endday = GETPOST('search_date_valid_endday', 'int');
+$search_date_valid_endmonth = GETPOST('search_date_valid_endmonth', 'int');
+$search_date_valid_endyear = GETPOST('search_date_valid_endyear', 'int');
+$search_date_valid_start = dol_mktime(0, 0, 0, $search_date_valid_startmonth, $search_date_valid_startday, $search_date_valid_startyear);	// Use tzserver
+$search_date_valid_end = dol_mktime(23, 59, 59, $search_date_valid_endmonth, $search_date_valid_endday, $search_date_valid_endyear);
+$search_date_approve_startday = GETPOST('search_date_approve_startday', 'int');
+$search_date_approve_startmonth = GETPOST('search_date_approve_startmonth', 'int');
+$search_date_approve_startyear = GETPOST('search_date_approve_startyear', 'int');
+$search_date_approve_endday = GETPOST('search_date_approve_endday', 'int');
+$search_date_approve_endmonth = GETPOST('search_date_approve_endmonth', 'int');
+$search_date_approve_endyear = GETPOST('search_date_approve_endyear', 'int');
+$search_date_approve_start = dol_mktime(0, 0, 0, $search_date_approve_startmonth, $search_date_approve_startday, $search_date_approve_startyear);	// Use tzserver
+$search_date_approve_end = dol_mktime(23, 59, 59, $search_date_approve_endmonth, $search_date_approve_endday, $search_date_approve_endyear);
 
 $sall = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 
@@ -107,8 +135,8 @@ $result = restrictedArea($user, 'fournisseur', $orderid, '', 'commande');
 $diroutputmassaction = $conf->fournisseur->commande->dir_output.'/temp/massgeneration/'.$user->id;
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1 || !empty($search_btn) || !empty($search_remove_btn) || (empty($toselect) && $massaction === '0')) {
 	$page = 0;
@@ -123,10 +151,6 @@ if (!$sortorder) {
 	$sortorder = 'DESC';
 }
 
-if ($search_status == '') {
-	$search_status = -1;
-}
-
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $object = new CommandeFournisseur($db);
 $hookmanager->initHooks(array('supplierorderlist'));
@@ -138,47 +162,45 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 // List of fields to search into when doing a "search in all"
-$fieldstosearchall = array(
-	'cf.ref'=>'Ref',
-	'cf.ref_supplier'=>'RefOrderSupplier',
-	'pd.description'=>'Description',
-	's.nom'=>"ThirdParty",
-	's.name_alias'=>"AliasNameShort",
-	's.zip'=>"Zip",
-	's.town'=>"Town",
-	'cf.note_public'=>'NotePublic',
-);
+$fieldstosearchall = array();
+foreach ($object->fields as $key => $val) {
+	if (!empty($val['searchall'])) {
+		$fieldstosearchall['cf.'.$key] = $val['label'];
+	}
+}
+$fieldstosearchall['pd.description'] = 'Description';
+$fieldstosearchall['s.nom'] = "ThirdParty";
+$fieldstosearchall['s.name_alias'] = "AliasNameShort";
+$fieldstosearchall['s.zip'] = "Zip";
+$fieldstosearchall['s.town'] = "Town";
 if (empty($user->socid)) {
 	$fieldstosearchall["cf.note_private"] = "NotePrivate";
 }
 
 $checkedtypetiers = 0;
+
+// Definition of array of fields for columns
 $arrayfields = array(
-	'cf.ref'=>array('label'=>"Ref", 'checked'=>1),
-	'cf.ref_supplier'=>array('label'=>"RefOrderSupplierShort", 'checked'=>1, 'enabled'=>1),
-	'p.project_ref'=>array('label'=>"ProjectRef", 'checked'=>0, 'enabled'=>1),
-	'u.login'=>array('label'=>"AuthorRequest", 'checked'=>1),
-	's.nom'=>array('label'=>"ThirdParty", 'checked'=>1),
-	's.town'=>array('label'=>"Town", 'checked'=>1),
-	's.zip'=>array('label'=>"Zip", 'checked'=>1),
-	'state.nom'=>array('label'=>"StateShort", 'checked'=>0),
-	'country.code_iso'=>array('label'=>"Country", 'checked'=>0),
-	'typent.code'=>array('label'=>"ThirdPartyType", 'checked'=>$checkedtypetiers),
-	'cf.date_commande'=>array('label'=>"OrderDateShort", 'checked'=>1),
-	'cf.date_livraison'=>array('label'=>"DateDeliveryPlanned", 'checked'=>1, 'enabled'=>empty($conf->global->ORDER_DISABLE_DELIVERY_DATE)),
-	'cf.total_ht'=>array('label'=>"AmountHT", 'checked'=>1),
-	'cf.total_tva'=>array('label'=>"AmountVAT", 'checked'=>0),
-	'cf.total_ttc'=>array('label'=>"AmountTTC", 'checked'=>0),
-	'cf.multicurrency_code'=>array('label'=>'Currency', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1)),
-	'cf.multicurrency_tx'=>array('label'=>'CurrencyRate', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1)),
-	'cf.multicurrency_total_ht'=>array('label'=>'MulticurrencyAmountHT', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1)),
-	'cf.multicurrency_total_tva'=>array('label'=>'MulticurrencyAmountVAT', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1)),
-	'cf.multicurrency_total_ttc'=>array('label'=>'MulticurrencyAmountTTC', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1)),
-	'cf.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
-	'cf.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>500),
-	'cf.fk_statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000),
-	'cf.billed'=>array('label'=>"Billed", 'checked'=>1, 'position'=>1000, 'enabled'=>1)
+	's.town'=>array('label'=>"Town", 'enabled'=>1, 'position'=>47, 'checked'=>1),
+	's.zip'=>array('label'=>"Zip", 'enabled'=>1, 'position'=>47, 'checked'=>1),
+	'state.nom'=>array('label'=>"StateShort", 'enabled'=>1, 'position'=>48),
+	'country.code_iso'=>array('label'=>"Country", 'enabled'=>1, 'position'=>49),
+	'typent.code'=>array('label'=>"ThirdPartyType", 'enabled'=>$checkedtypetiers, 'position'=>50),
+	'u.login'=>array('label'=>"AuthorRequest", 'enabled'=>1, 'position'=>51)
 );
+foreach ($object->fields as $key => $val) {
+	// If $val['visible']==0, then we never show the field
+	if (!empty($val['visible'])) {
+		$visible = (int) dol_eval($val['visible'], 1);
+		$arrayfields['cf.'.$key] = array(
+			'label'=>$val['label'],
+			'checked'=>(($visible < 0) ? 0 : 1),
+			'enabled'=>(abs($visible) != 3 && dol_eval($val['enabled'], 1)),
+			'position'=>$val['position'],
+			'help'=> isset($val['help']) ? $val['help'] : ''
+		);
+	}
+}
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
@@ -234,13 +256,39 @@ if (empty($reshook)) {
 		$search_multicurrency_montant_tva = '';
 		$search_multicurrency_montant_ttc = '';
 		$search_project_ref = '';
-		$search_status = -1;
-		$search_orderyear = '';
-		$search_ordermonth = '';
-		$search_orderday = '';
-		$search_deliveryday = '';
-		$search_deliverymonth = '';
-		$search_deliveryyear = '';
+		$search_status = '';
+		$search_date_order_startday = '';
+		$search_date_order_startmonth = '';
+		$search_date_order_startyear = '';
+		$search_date_order_endday = '';
+		$search_date_order_endmonth = '';
+		$search_date_order_endyear = '';
+		$search_date_order_start = '';
+		$search_date_order_end = '';
+		$search_date_delivery_startday = '';
+		$search_date_delivery_startmonth = '';
+		$search_date_delivery_startyear = '';
+		$search_date_delivery_endday = '';
+		$search_date_delivery_endmonth = '';
+		$search_date_delivery_endyear = '';
+		$search_date_delivery_start = '';
+		$search_date_delivery_end = '';
+		$search_date_valid_startday = '';
+		$search_date_valid_startmonth = '';
+		$search_date_valid_startyear = '';
+		$search_date_valid_endday = '';
+		$search_date_valid_endmonth = '';
+		$search_date_valid_endyear = '';
+		$search_date_valid_start = '';
+		$search_date_valid_end = '';
+		$search_date_approve_startday = '';
+		$search_date_approve_startmonth = '';
+		$search_date_approve_startyear = '';
+		$search_date_approve_endday = '';
+		$search_date_approve_endmonth = '';
+		$search_date_approve_endyear = '';
+		$search_date_approve_start = '';
+		$search_date_approve_end = '';
 		$billed = '';
 		$search_billed = '';
 		$toselect = '';
@@ -256,8 +304,41 @@ if (empty($reshook)) {
 	$objectlabel = 'SupplierOrders';
 	$permissiontoread = $user->rights->fournisseur->commande->lire;
 	$permissiontodelete = $user->rights->fournisseur->commande->supprimer;
+	$permissiontovalidate = $user->rights->fournisseur->commande->creer;
 	$uploaddir = $conf->fournisseur->commande->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
+
+	if ($action == 'validate' && $permissiontovalidate) {
+		if (GETPOST('confirm') == 'yes') {
+			$objecttmp = new CommandeFournisseur($db);
+			$db->begin();
+			$error = 0;
+
+			foreach ($toselect as $checked) {
+				if ($objecttmp->fetch($checked)) {
+					if ($objecttmp->statut == 0) {
+						$objecttmp->date_commande = dol_now();
+						$result = $objecttmp->valid($user);
+						if ($result >= 0) {
+							// If we have permission, and if we don't need to provide the idwarehouse, we go directly on approved step
+							if (empty($conf->global->SUPPLIER_ORDER_NO_DIRECT_APPROVE) && $user->rights->fournisseur->commande->approuver && !(!empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER) && $objecttmp->hasProductsOrServices(1))) {
+								$result = $objecttmp->approve($user);
+								setEventMessages($langs->trans("SupplierOrderValidatedAndApproved"), array($objecttmp->ref));
+							} else {
+								setEventMessages($langs->trans("SupplierOrderValidated"), array($objecttmp->ref));
+							}
+						} else {
+							setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+							$error++;
+						}
+					}
+				}
+			}
+
+			if (!$error) $db->commit();
+			else $db->rollback();
+		}
+	}
 
 	// Mass action to generate vendor bills
 	if ($massaction == 'confirm_createsupplierbills') {
@@ -322,7 +403,7 @@ if (empty($reshook)) {
 				$sql .= ") VALUES (";
 				$sql .= $id_order;
 				$sql .= ", '".$db->escape($objecttmp->origin)."'";
-				$sql .= ", ".$objecttmp->id;
+				$sql .= ", ".((int) $objecttmp->id);
 				$sql .= ", '".$db->escape($objecttmp->element)."'";
 				$sql .= ")";
 
@@ -495,23 +576,77 @@ if (empty($reshook)) {
 			if ($search_status != '') {
 				$param .= '&search_status='.urlencode($search_status);
 			}
-			if ($search_orderday) {
-				$param .= '&search_orderday='.urlencode($search_orderday);
+			if ($search_date_order_startday) {
+				$param .= '&search_date_order_startday='.urlencode($search_date_order_startday);
 			}
-			if ($search_ordermonth) {
-				$param .= '&search_ordermonth='.urlencode($search_ordermonth);
+			if ($search_date_order_startmonth) {
+				$param .= '&search_date_order_startmonth='.urlencode($search_date_order_startmonth);
 			}
-			if ($search_orderyear) {
-				$param .= '&search_orderyear='.urlencode($search_orderyear);
+			if ($search_date_order_startyear) {
+				$param .= '&search_date_order_startyear='.urlencode($search_date_order_startyear);
 			}
-			if ($search_deliveryday) {
-				$param .= '&search_deliveryday='.urlencode($search_deliveryday);
+			if ($search_date_order_endday) {
+				$param .= '&search_date_order_endday='.urlencode($search_date_order_endday);
 			}
-			if ($search_deliverymonth) {
-				$param .= '&search_deliverymonth='.urlencode($search_deliverymonth);
+			if ($search_date_order_endmonth) {
+				$param .= '&search_date_order_endmonth='.urlencode($search_date_order_endmonth);
 			}
-			if ($search_deliveryyear) {
-				$param .= '&search_deliveryyear='.urlencode($search_deliveryyear);
+			if ($search_date_order_endyear) {
+				$param .= '&search_date_order_endyear='.urlencode($search_date_order_endyear);
+			}
+			if ($search_date_delivery_startday) {
+				$param .= '&search_date_delivery_startday='.urlencode($search_date_delivery_startday);
+			}
+			if ($search_date_delivery_startmonth) {
+				$param .= '&search_date_delivery_startmonth='.urlencode($search_date_delivery_startmonth);
+			}
+			if ($search_date_delivery_startyear) {
+				$param .= '&search_date_delivery_startyear='.urlencode($search_date_delivery_startyear);
+			}
+			if ($search_date_delivery_endday) {
+				$param .= '&search_date_delivery_endday='.urlencode($search_date_delivery_endday);
+			}
+			if ($search_date_delivery_endmonth) {
+				$param .= '&search_date_delivery_endmonth='.urlencode($search_date_delivery_endmonth);
+			}
+			if ($search_date_delivery_endyear) {
+				$param .= '&search_date_delivery_endyear='.urlencode($search_date_delivery_endyear);
+			}
+			if ($search_date_valid_startday) {
+				$param .= '&search_date_valid_startday='.urlencode($search_date_valid_startday);
+			}
+			if ($search_date_valid_startmonth) {
+				$param .= '&search_date_valid_startmonth='.urlencode($search_date_valid_startmonth);
+			}
+			if ($search_date_valid_startyear) {
+				$param .= '&search_date_valid_startyear='.urlencode($search_date_valid_startyear);
+			}
+			if ($search_date_valid_endday) {
+				$param .= '&search_date_valid_endday='.urlencode($search_date_valid_endday);
+			}
+			if ($search_date_valid_endmonth) {
+				$param .= '&search_date_valid_endmonth='.urlencode($search_date_valid_endmonth);
+			}
+			if ($search_date_valid_endyear) {
+				$param .= '&search_date_valid_endyear='.urlencode($search_date_valid_endyear);
+			}
+			if ($search_date_approve_startday) {
+				$param .= '&search_date_approve_startday='.urlencode($search_date_approve_startday);
+			}
+			if ($search_date_approve_startmonth) {
+				$param .= '&search_date_approve_startmonth='.urlencode($search_date_approve_startmonth);
+			}
+			if ($search_date_approve_startyear) {
+				$param .= '&search_date_approve_startyear='.urlencode($search_date_approve_startyear);
+			}
+			if ($search_date_approve_endday) {
+				$param .= '&search_date_approve_endday='.urlencode($search_date_approve_endday);
+			}
+			if ($search_date_approve_endmonth) {
+				$param .= '&search_date_approve_endmonth='.urlencode($search_date_approve_endmonth);
+			}
+			if ($search_date_approve_endyear) {
+				$param .= '&search_date_approve_endyear='.urlencode($search_date_approve_endyear);
 			}
 			if ($search_ref) {
 				$param .= '&search_ref='.urlencode($search_ref);
@@ -606,7 +741,7 @@ if ($sall || $search_product_category > 0) {
 $sql .= ' s.rowid as socid, s.nom as name, s.town, s.zip, s.fk_pays, s.client, s.code_client, s.email,';
 $sql .= " typent.code as typent_code,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
-$sql .= " cf.rowid, cf.ref, cf.ref_supplier, cf.fk_statut, cf.billed, cf.total_ht, cf.total_tva, cf.total_ttc, cf.fk_user_author, cf.date_commande as date_commande, cf.date_livraison as date_livraison,";
+$sql .= " cf.rowid, cf.ref, cf.ref_supplier, cf.fk_statut, cf.billed, cf.total_ht, cf.total_tva, cf.total_ttc, cf.fk_user_author, cf.date_commande as date_commande, cf.date_livraison as date_livraison,cf.date_valid, cf.date_approve,";
 $sql .= ' cf.fk_multicurrency, cf.multicurrency_code, cf.multicurrency_tx, cf.multicurrency_total_ht, cf.multicurrency_total_tva, cf.multicurrency_total_ttc,';
 $sql .= ' cf.date_creation as date_creation, cf.tms as date_update,';
 $sql .= ' cf.note_public, cf.note_private,';
@@ -615,7 +750,7 @@ $sql .= " u.firstname, u.lastname, u.photo, u.login, u.email as user_email, u.st
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
 	}
 }
 // Add fields from hooks
@@ -627,7 +762,7 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = s
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_typent as typent on (typent.id = s.fk_typent)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = s.fk_departement)";
 $sql .= ", ".MAIN_DB_PREFIX."commande_fournisseur as cf";
-if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
+if (!empty($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (cf.rowid = ef.fk_object)";
 }
 if ($sall || $search_product_category > 0) {
@@ -639,7 +774,7 @@ if ($search_product_category > 0) {
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON cf.fk_user_author = u.rowid";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = cf.fk_projet";
 // We'll need this table joined to the select in order to filter by sale
-if ($search_sale > 0 || (!$user->rights->societe->client->voir && !$socid)) {
+if ($search_sale > 0 || (empty($user->rights->societe->client->voir) && !$socid)) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 $parameters = array();
@@ -650,7 +785,7 @@ $sql .= ' AND cf.entity IN ('.getEntity('supplier_order').')';
 if ($socid > 0) {
 	$sql .= " AND s.rowid = ".((int) $socid);
 }
-if (!$user->rights->societe->client->voir && !$socid) {
+if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 if ($search_ref) {
@@ -681,8 +816,30 @@ if (GETPOST('statut', 'intcomma') !== '') {
 if ($search_status != '' && $search_status != '-1') {
 	$sql .= " AND cf.fk_statut IN (".$db->sanitize($db->escape($search_status)).")";
 }
-$sql .= dolSqlDateFilter("cf.date_commande", $search_orderday, $search_ordermonth, $search_orderyear);
-$sql .= dolSqlDateFilter("cf.date_livraison", $search_deliveryday, $search_deliverymonth, $search_deliveryyear);
+if ($search_date_order_start) {
+	$sql .= " AND cf.date_commande >= '".$db->idate($search_date_order_start)."'";
+}
+if ($search_date_order_end) {
+	$sql .= " AND cf.date_commande <= '".$db->idate($search_date_order_end)."'";
+}
+if ($search_date_delivery_start) {
+	$sql .= " AND cf.date_livraison >= '".$db->idate($search_date_delivery_start)."'";
+}
+if ($search_date_delivery_end) {
+	$sql .= " AND cf.date_livraison <= '".$db->idate($search_date_delivery_end)."'";
+}
+if ($search_date_valid_start) {
+	$sql .= " AND cf.date_commande >= '".$db->idate($search_date_valid_start)."'";
+}
+if ($search_date_valid_end) {
+	$sql .= " AND cf.date_commande <= '".$db->idate($search_date_valid_end)."'";
+}
+if ($search_date_approve_start) {
+	$sql .= " AND cf.date_livraison >= '".$db->idate($search_date_approve_start)."'";
+}
+if ($search_date_approve_end) {
+	$sql .= " AND cf.date_livraison <= '".$db->idate($search_date_approve_end)."'";
+}
 if ($search_town) {
 	$sql .= natural_search('s.town', $search_town);
 }
@@ -723,7 +880,7 @@ if ($search_total_ttc != '') {
 	$sql .= natural_search('cf.total_ttc', $search_total_ttc, 1);
 }
 if ($search_multicurrency_code != '') {
-	$sql .= ' AND cf.multicurrency_code = "'.$db->escape($search_multicurrency_code).'"';
+	$sql .= " AND cf.multicurrency_code = '".$db->escape($search_multicurrency_code)."'";
 }
 if ($search_multicurrency_tx != '') {
 	$sql .= natural_search('cf.multicurrency_tx', $search_multicurrency_tx, 1);
@@ -794,23 +951,77 @@ if ($resql) {
 	if ($sall) {
 		$param .= "&search_all=".urlencode($sall);
 	}
-	if ($search_orderday) {
-		$param .= '&search_orderday='.urlencode($search_orderday);
+	if ($search_date_order_startday) {
+		$param .= '&search_date_order_startday='.urlencode($search_date_order_startday);
 	}
-	if ($search_ordermonth) {
-		$param .= '&search_ordermonth='.urlencode($search_ordermonth);
+	if ($search_date_order_startmonth) {
+		$param .= '&search_date_order_startmonth='.urlencode($search_date_order_startmonth);
 	}
-	if ($search_orderyear) {
-		$param .= '&search_orderyear='.urlencode($search_orderyear);
+	if ($search_date_order_startyear) {
+		$param .= '&search_date_order_startyear='.urlencode($search_date_order_startyear);
 	}
-	if ($search_deliveryday) {
-		$param .= '&search_deliveryday='.urlencode($search_deliveryday);
+	if ($search_date_order_endday) {
+		$param .= '&search_date_order_endday='.urlencode($search_date_order_endday);
 	}
-	if ($search_deliverymonth) {
-		$param .= '&search_deliverymonth='.urlencode($search_deliverymonth);
+	if ($search_date_order_endmonth) {
+		$param .= '&search_date_order_endmonth='.urlencode($search_date_order_endmonth);
 	}
-	if ($search_deliveryyear) {
-		$param .= '&search_deliveryyear='.urlencode($search_deliveryyear);
+	if ($search_date_order_endyear) {
+		$param .= '&search_date_order_endyear='.urlencode($search_date_order_endyear);
+	}
+	if ($search_date_delivery_startday) {
+		$param .= '&search_date_delivery_startday='.urlencode($search_date_delivery_startday);
+	}
+	if ($search_date_delivery_startmonth) {
+		$param .= '&search_date_delivery_startmonth='.urlencode($search_date_delivery_startmonth);
+	}
+	if ($search_date_delivery_startyear) {
+		$param .= '&search_date_delivery_startyear='.urlencode($search_date_delivery_startyear);
+	}
+	if ($search_date_delivery_endday) {
+		$param .= '&search_date_delivery_endday='.urlencode($search_date_delivery_endday);
+	}
+	if ($search_date_delivery_endmonth) {
+		$param .= '&search_date_delivery_endmonth='.urlencode($search_date_delivery_endmonth);
+	}
+	if ($search_date_delivery_endyear) {
+		$param .= '&search_date_delivery_endyear='.urlencode($search_date_delivery_endyear);
+	}
+	if ($search_date_valid_startday) {
+		$param .= '&search_date_valid_startday='.urlencode($search_date_valid_startday);
+	}
+	if ($search_date_valid_startmonth) {
+		$param .= '&search_date_valid_startmonth='.urlencode($search_date_valid_startmonth);
+	}
+	if ($search_date_valid_startyear) {
+		$param .= '&search_date_valid_startyear='.urlencode($search_date_valid_startyear);
+	}
+	if ($search_date_valid_endday) {
+		$param .= '&search_date_valid_endday='.urlencode($search_date_valid_endday);
+	}
+	if ($search_date_valid_endmonth) {
+		$param .= '&search_date_valid_endmonth='.urlencode($search_date_valid_endmonth);
+	}
+	if ($search_date_valid_endyear) {
+		$param .= '&search_date_valid_endyear='.urlencode($search_date_valid_endyear);
+	}
+	if ($search_date_approve_startday) {
+		$param .= '&search_date_approve_startday='.urlencode($search_date_approve_startday);
+	}
+	if ($search_date_approve_startmonth) {
+		$param .= '&search_date_approve_startmonth='.urlencode($search_date_approve_startmonth);
+	}
+	if ($search_date_approve_startyear) {
+		$param .= '&search_date_approve_startyear='.urlencode($search_date_approve_startyear);
+	}
+	if ($search_date_approve_endday) {
+		$param .= '&search_date_approve_endday='.urlencode($search_date_approve_endday);
+	}
+	if ($search_date_approve_endmonth) {
+		$param .= '&search_date_approve_endmonth='.urlencode($search_date_approve_endmonth);
+	}
+	if ($search_date_approve_endyear) {
+		$param .= '&search_date_approve_endyear='.urlencode($search_date_approve_endyear);
 	}
 	if ($search_ref) {
 		$param .= '&search_ref='.urlencode($search_ref);
@@ -883,6 +1094,15 @@ if ($resql) {
 		'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 		'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 	);
+
+	if ($permissiontovalidate) {
+		if ($user->rights->fournisseur->commande->approuver && empty($conf->global->SUPPLIER_ORDER_NO_DIRECT_APPROVE)) {
+			$arrayofmassactions['prevalidate'] = img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("ValidateAndApprove");
+		} else {
+			$arrayofmassactions['prevalidate'] = img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Validate");
+		}
+	}
+
 	if ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer) {
 		$arrayofmassactions['createbills'] = img_picto('', 'bill', 'class="pictofixedwidth"').$langs->trans("CreateInvoiceForThisSupplier");
 	}
@@ -921,6 +1141,10 @@ if ($resql) {
 	$objecttmp = new CommandeFournisseur($db);
 	$trackid = 'sord'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
+
+	if ($massaction == 'prevalidate') {
+		print $form->formconfirm($_SERVER["PHP_SELF"].$fieldstosearchall, $langs->trans("ConfirmMassValidation"), $langs->trans("ConfirmMassValidationQuestion"), "validate", null, '', 0, 200, 500, 1);
+	}
 
 	if ($massaction == 'createbills') {
 		//var_dump($_REQUEST);
@@ -975,14 +1199,14 @@ if ($resql) {
 		$langs->load("commercial");
 		$moreforfilter .= '<div class="divsearchfield">';
 		$tmptitle = $langs->trans('ThirdPartiesOfSaleRepresentative');
-		$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$formother->select_salesrepresentatives($search_sale, 'search_sale', $user, 0, $tmptitle, 'maxwidth250');
+		$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$formother->select_salesrepresentatives($search_sale, 'search_sale', $user, 0, $tmptitle, 'maxwidth250 widthcentpercentminusx');
 		$moreforfilter .= '</div>';
 	}
 	// If the user can view other users
 	if ($user->rights->user->user->lire) {
 		$moreforfilter .= '<div class="divsearchfield">';
 		$tmptitle = $langs->trans('LinkedToSpecificUsers');
-		$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$form->select_dolusers($search_user, 'search_user', $tmptitle, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth250');
+		$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$form->select_dolusers($search_user, 'search_user', $tmptitle, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth250 widthcentpercentminusx');
 		$moreforfilter .= '</div>';
 	}
 	// If the user can view prospects other than his'
@@ -991,7 +1215,7 @@ if ($resql) {
 		$moreforfilter .= '<div class="divsearchfield">';
 		$tmptitle = $langs->trans('IncludingProductWithTag');
 		$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, null, 'parent', null, null, 1);
-		$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$form->selectarray('search_product_category', $cate_arbo, $search_product_category, $tmptitle, 0, 0, '', 0, 0, 0, 0, 'maxwidth300', 1);
+		$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$form->selectarray('search_product_category', $cate_arbo, $search_product_category, $tmptitle, 0, 0, '', 0, 0, 0, 0, 'maxwidth300 widthcentpercentminusx', 1);
 		$moreforfilter .= '</div>';
 	}
 	$parameters = array();
@@ -1035,7 +1259,7 @@ if ($resql) {
 		print '<td class="liste_titre"><input type="text" class="flat maxwidth75" name="search_refsupp" value="'.$search_refsupp.'"></td>';
 	}
 	// Project ref
-	if (!empty($arrayfields['p.project_ref']['checked'])) {
+	if (!empty($arrayfields['cf.fk_projet']['checked'])) {
 		print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="search_project_ref" value="'.$search_project_ref.'"></td>';
 	}
 	// Request author
@@ -1045,7 +1269,7 @@ if ($resql) {
 		print '</td>';
 	}
 	// Thirpdarty
-	if (!empty($arrayfields['s.nom']['checked'])) {
+	if (!empty($arrayfields['cf.fk_soc']['checked'])) {
 		print '<td class="liste_titre"><input type="text" size="6" class="flat" name="search_company" value="'.$search_company.'"></td>';
 	}
 	// Town
@@ -1076,22 +1300,24 @@ if ($resql) {
 	}
 	// Date order
 	if (!empty($arrayfields['cf.date_commande']['checked'])) {
-		print '<td class="liste_titre nowraponall center">';
-		if (!empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) {
-			print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="search_orderday" value="'.$search_orderday.'">';
-		}
-		print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="search_ordermonth" value="'.$search_ordermonth.'">';
-		$formother->select_year($search_orderyear ? $search_orderyear : -1, 'search_orderyear', 1, 20, 5);
+		print '<td class="liste_titre center">';
+		print '<div class="nowrap">';
+		print $form->selectDate($search_date_order_start ? $search_date_order_start : -1, 'search_date_order_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+		print '</div>';
+		print '<div class="nowrap">';
+		print $form->selectDate($search_date_order_end ? $search_date_order_end : -1, 'search_date_order_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+		print '</div>';
 		print '</td>';
 	}
 	// Date delivery
 	if (!empty($arrayfields['cf.date_livraison']['checked'])) {
-		print '<td class="liste_titre nowraponall center">';
-		if (!empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) {
-			print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="search_deliveryday" value="'.$search_deliveryday.'">';
-		}
-		print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="search_deliverymonth" value="'.$search_deliverymonth.'">';
-		$formother->select_year($search_deliveryyear ? $search_deliveryyear : -1, 'search_deliveryyear', 1, 20, 5);
+		print '<td class="liste_titre center">';
+		print '<div class="nowrap">';
+		print $form->selectDate($search_date_delivery_start ? $search_date_delivery_start : -1, 'search_date_delivery_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+		print '</div>';
+		print '<div class="nowrap">';
+		print $form->selectDate($search_date_delivery_end ? $search_date_delivery_end : -1, 'search_date_delivery_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+		print '</div>';
 		print '</td>';
 	}
 	if (!empty($arrayfields['cf.total_ht']['checked'])) {
@@ -1150,7 +1376,7 @@ if ($resql) {
 	$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	// Date creation
-	if (!empty($arrayfields['cf.datec']['checked'])) {
+	if (!empty($arrayfields['cf.date_creation']['checked'])) {
 		print '<td class="liste_titre">';
 		print '</td>';
 	}
@@ -1171,6 +1397,28 @@ if ($resql) {
 		print $form->selectyesno('search_billed', $search_billed, 1, 0, 1, 1);
 		print '</td>';
 	}
+	// Date valid
+	if (!empty($arrayfields['cf.date_valid']['checked'])) {
+		print '<td class="liste_titre center">';
+		print '<div class="nowrap">';
+		print $form->selectDate($search_date_valid_start ? $search_date_valid_start : -1, 'search_date_valid_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+		print '</div>';
+		print '<div class="nowrap">';
+		print $form->selectDate($search_date_valid_end ? $search_date_valid_end : -1, 'search_date_valid_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+		print '</div>';
+		print '</td>';
+	}
+	// Date approve
+	if (!empty($arrayfields['cf.date_approve']['checked'])) {
+		print '<td class="liste_titre center">';
+		print '<div class="nowrap">';
+		print $form->selectDate($search_date_approve_start ? $search_date_approve_start : -1, 'search_date_approve_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+		print '</div>';
+		print '<div class="nowrap">';
+		print $form->selectDate($search_date_approve_end ? $search_date_approve_end : -1, 'search_date_approve_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+		print '</div>';
+		print '</td>';
+	}
 	// Action column
 	print '<td class="liste_titre middle">';
 	$searchpicto = $form->showFilterButtons();
@@ -1187,14 +1435,14 @@ if ($resql) {
 	if (!empty($arrayfields['cf.ref_supplier']['checked'])) {
 		print_liste_field_titre($arrayfields['cf.ref_supplier']['label'], $_SERVER["PHP_SELF"], "cf.ref_supplier", "", $param, '', $sortfield, $sortorder, 'tdoverflowmax100imp ');
 	}
-	if (!empty($arrayfields['p.project_ref']['checked'])) {
-		print_liste_field_titre($arrayfields['p.project_ref']['label'], $_SERVER["PHP_SELF"], "p.ref", "", $param, '', $sortfield, $sortorder);
+	if (!empty($arrayfields['cf.fk_projet']['checked'])) {
+		print_liste_field_titre($arrayfields['cf.fk_projet']['label'], $_SERVER["PHP_SELF"], "p.ref", "", $param, '', $sortfield, $sortorder);
 	}
 	if (!empty($arrayfields['u.login']['checked'])) {
 		print_liste_field_titre($arrayfields['u.login']['label'], $_SERVER["PHP_SELF"], "u.login", "", $param, '', $sortfield, $sortorder);
 	}
-	if (!empty($arrayfields['s.nom']['checked'])) {
-		print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER["PHP_SELF"], "s.nom", "", $param, '', $sortfield, $sortorder);
+	if (!empty($arrayfields['cf.fk_soc']['checked'])) {
+		print_liste_field_titre($arrayfields['cf.fk_soc']['label'], $_SERVER["PHP_SELF"], "s.nom", "", $param, '', $sortfield, $sortorder);
 	}
 	if (!empty($arrayfields['s.town']['checked'])) {
 		print_liste_field_titre($arrayfields['s.town']['label'], $_SERVER["PHP_SELF"], 's.town', '', $param, '', $sortfield, $sortorder);
@@ -1250,8 +1498,8 @@ if ($resql) {
 	$parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
 	$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
-	if (!empty($arrayfields['cf.datec']['checked'])) {
-		print_liste_field_titre($arrayfields['cf.datec']['label'], $_SERVER["PHP_SELF"], "cf.date_creation", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+	if (!empty($arrayfields['cf.date_creation']['checked'])) {
+		print_liste_field_titre($arrayfields['cf.date_creation']['label'], $_SERVER["PHP_SELF"], "cf.date_creation", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
 	}
 	if (!empty($arrayfields['cf.tms']['checked'])) {
 		print_liste_field_titre($arrayfields['cf.tms']['label'], $_SERVER["PHP_SELF"], "cf.tms", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
@@ -1261,6 +1509,12 @@ if ($resql) {
 	}
 	if (!empty($arrayfields['cf.billed']['checked'])) {
 		print_liste_field_titre($arrayfields['cf.billed']['label'], $_SERVER["PHP_SELF"], 'cf.billed', '', $param, '', $sortfield, $sortorder, 'center ');
+	}
+	if (!empty($arrayfields['cf.date_valid']['checked'])) {
+		print_liste_field_titre($arrayfields['cf.date_valid']['label'], $_SERVER["PHP_SELF"], "cf.date_valid", "", $param, '', $sortfield, $sortorder, 'center ');
+	}
+	if (!empty($arrayfields['cf.date_approve']['checked'])) {
+		print_liste_field_titre($arrayfields['cf.date_approve']['label'], $_SERVER["PHP_SELF"], 'cf.date_approve', '', $param, '', $sortfield, $sortorder, 'center ');
 	}
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 	print "</tr>\n";
@@ -1327,7 +1581,7 @@ if ($resql) {
 			}
 		}
 		// Project
-		if (!empty($arrayfields['p.project_ref']['checked'])) {
+		if (!empty($arrayfields['cf.fk_projet']['checked'])) {
 			$projectstatic->id = $obj->project_id;
 			$projectstatic->ref = $obj->project_ref;
 			$projectstatic->title = $obj->project_title;
@@ -1359,7 +1613,7 @@ if ($resql) {
 			}
 		}
 		// Thirdparty
-		if (!empty($arrayfields['s.nom']['checked'])) {
+		if (!empty($arrayfields['cf.fk_soc']['checked'])) {
 			print '<td class="tdoverflowmax150">';
 			$thirdpartytmp->id = $obj->socid;
 			$thirdpartytmp->name = $obj->name;
@@ -1526,7 +1780,7 @@ if ($resql) {
 		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 		// Date creation
-		if (!empty($arrayfields['cf.datec']['checked'])) {
+		if (!empty($arrayfields['cf.date_creation']['checked'])) {
 			print '<td class="center nowrap">';
 			print dol_print_date($db->jdate($obj->date_creation), 'dayhour', 'tzuser');
 			print '</td>';
@@ -1553,6 +1807,25 @@ if ($resql) {
 		// Billed
 		if (!empty($arrayfields['cf.billed']['checked'])) {
 			print '<td class="center">'.yn($obj->billed).'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+
+		// valid date
+		if (!empty($arrayfields['cf.date_valid']['checked'])) {
+			print '<td class="center">';
+			print dol_print_date($db->jdate($obj->date_valid), 'day');
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// approve date
+		if (!empty($arrayfields['cf.date_approve']['checked'])) {
+			print '<td class="center">';
+			print dol_print_date($db->jdate($obj->date_approve), 'day');
+			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
