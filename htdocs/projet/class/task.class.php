@@ -2391,4 +2391,42 @@ class Task extends CommonObjectLine
 			return 1;
 		}
 	}
+
+	public function setStatusToReOpen() {
+		$error = 0;
+
+		if ($this->progress <= 0 || $this->progress == null) {
+			$this->fk_statut = 1;
+		} else if ($this->progress == 100) {
+			$this->fk_statut = 3;
+		} else if ($this->progress > 0) {
+			$this->fk_statut = 2;
+		}
+
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'projet_task SET';
+		$sql .= ' fk_statut=0';
+		$sql .= ' WHERE rowid='.((int) $this->id);
+
+		$this->db->begin();
+
+		dol_syslog(get_class($this)."::update", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+		}
+
+		// Commit or rollback
+		if ($error) {
+			foreach ($this->errors as $errmsg) {
+				dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
+				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
+			}
+			$this->db->rollback();
+			return -1 * $error;
+		} else {
+			$this->db->commit();
+			$this->update();
+			return 1;
+		}
+	}
 }

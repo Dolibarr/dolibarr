@@ -1287,7 +1287,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 					$task = new Task($db);
 					$taskarray = $task->getTasksArray(0, 0, $object->id, 0, 0);
 					foreach ($taskarray as $taskLine) {
-						if ($taskLine->progress != 100) {
+						if ($taskLine->progress != 100 && $taskLine->fk_statut != 4) {
 							$taskNotDone = true;
 							break;
 						}
