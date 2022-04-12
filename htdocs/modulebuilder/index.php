@@ -2726,7 +2726,7 @@ if ($module == 'initmodule') {
 							print '<div class="div-table-responsive">';
 							print '<table class="noborder small">';
 							print '<tr class="liste_titre">';
-							print '<th class="thsticky thstickygray">'.$langs->trans("Property");
+							print '<th class="none">'.$langs->trans("Property");
 							print ' (<a class="" href="https://wiki.dolibarr.org/index.php/Language_and_development_rules#Table_and_fields_structures" target="_blank" rel="noopener noreferrer external">'.$langs->trans("SeeExamples").'</a>)';
 							print '</th>';
 							print '<th>';
@@ -2752,7 +2752,7 @@ if ($module == 'initmodule') {
 							//print '<th class="center">'.$langs->trans("Disabled").'</th>';
 							print '<th>'.$form->textwithpicto($langs->trans("Validate"), $langs->trans("ValidateModBuilderDesc")).'</th>';
 							print '<th>'.$langs->trans("Comment").'</th>';
-							print '<th class="thstickyright tdstickyghostwhite"></th>';
+							print '<th class="none"></th>';
 							print '</tr>';
 
 							// We must use $reflectorpropdefault['fields'] to get list of fields because $tmpobjet->fields may have been
@@ -2763,7 +2763,7 @@ if ($module == 'initmodule') {
 							if (!empty($properties)) {
 								// Line to add a property
 								print '<tr>';
-								print '<td class="tdsticky tdstickygray"><input type="text" class="maxwidth75" name="propname" value="'.dol_escape_htmltag(GETPOST('propname', 'alpha')).'"></td>';
+								print '<td class="none"><input type="text" class="maxwidth75" name="propname" value="'.dol_escape_htmltag(GETPOST('propname', 'alpha')).'"></td>';
 								print '<td><input type="text" class="maxwidth75" name="proplabel" value="'.dol_escape_htmltag(GETPOST('proplabel', 'alpha')).'"></td>';
 								print '<td><input type="text" class="maxwidth75" name="proptype" value="'.dol_escape_htmltag(GETPOST('proptype', 'alpha')).'"></td>';
 								print '<td><input type="text" class="maxwidth75" name="proparrayofkeyval" value="'.dol_escape_htmltag(GETPOST('proparrayofkeyval', 'restricthtml')).'"></td>';
