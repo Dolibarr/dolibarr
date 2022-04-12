@@ -104,8 +104,8 @@ $permissionnote = $user->rights->expensereport->creer; // Used by the include of
 $permissiondellink = $user->rights->expensereport->creer; // Used by the include of actions_dellink.inc.php
 $permissiontoadd = $user->rights->expensereport->creer; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 
-$upload_dir = $conf->expensereport->dir_output.'/'.dol_sanitizeFileName($object->ref);
 
+$upload_dir = $conf->expensereport->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
 if ($object->id > 0) {
 	// Check current user can read this expense report
 	$canread = 0;
