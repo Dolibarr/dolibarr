@@ -64,13 +64,13 @@ class Product extends CommonObject
 	 * @var array	List of child tables. To test if we can delete object.
 	 */
 	protected $childtables = array(
-		'supplier_proposaldet',
-		'propaldet',
-		'commandedet',
-		'facturedet',
-		'contratdet',
-		'facture_fourn_det',
-		'commande_fournisseurdet'
+		'supplier_proposaldet' => array('name' => 'SupplierProposal', 'parent' => 'supplier_proposal', 'parentkey' => 'fk_supplier_proposal'),
+		'propaldet' => array('name' => 'Proposal', 'parent' => 'propal', 'parentkey' => 'fk_propal'),
+		'commandedet' => array('name' => 'Order', 'parent' => 'commande', 'parentkey' => 'fk_commande'),
+		'facturedet' => array('name' => 'Invoice', 'parent' => 'facture', 'parentkey' => 'fk_facture'),
+		'contratdet' => array('name' => 'Contract', 'parent' => 'contrat', 'parentkey' => 'fk_contrat'),
+		'facture_fourn_det' => array('name' => 'SupplierInvoice', 'parent' => 'facture_fourn', 'parentkey' => 'fk_facture_fourn'),
+		'commande_fournisseurdet' => array('name' => 'SupplierOrder', 'parent' => 'commande_fournisseur', 'parentkey' => 'fk_commande')
 	);
 
 	/**
@@ -491,8 +491,7 @@ class Product extends CommonObject
 		'import_key'    =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'index'=>0, 'position'=>1000),
 		//'tosell'       =>array('type'=>'integer',      'label'=>'Status',           'enabled'=>1, 'visible'=>1,  'notnull'=>1, 'default'=>0, 'index'=>1,  'position'=>1000, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Active', -1=>'Cancel')),
 		//'tobuy'        =>array('type'=>'integer',      'label'=>'Status',           'enabled'=>1, 'visible'=>1,  'notnull'=>1, 'default'=>0, 'index'=>1,  'position'=>1000, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Active', -1=>'Cancel')),
-		'mandatory_period'        =>array('type'=>'integer', 'label'=>'mandatory_period', 'enabled'=>1, 'visible'=>1,  'notnull'=>1, 'default'=>0, 'index'=>1,  'position'=>1000),
-
+		'mandatory_period' => array('type'=>'integer', 'label'=>'mandatory_period', 'enabled'=>1, 'visible'=>1,  'notnull'=>1, 'default'=>0, 'index'=>1,  'position'=>1000),
 	);
 
 	/**
@@ -2224,7 +2223,8 @@ class Product extends CommonObject
 				$this->db->commit();
 			} else {
 				$this->db->rollback();
-				dol_print_error($this->db);
+				$this->error = $this->db->lasterror();
+				return -1;
 			}
 		}
 
@@ -5682,7 +5682,7 @@ class Product extends CommonObject
 	public function load_state_board()
 	{
 		// phpcs:enable
-		global $conf, $user, $hookmanager;
+		global $hookmanager;
 
 		$this->nb = array();
 
@@ -5692,7 +5692,7 @@ class Product extends CommonObject
 		// Add where from hooks
 		if (is_object($hookmanager)) {
 			$parameters = array();
-			$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
+			$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $this); // Note that $action and $object may have been modified by hook
 			$sql .= $hookmanager->resPrint;
 		}
 		$sql .= ' GROUP BY fk_product_type';

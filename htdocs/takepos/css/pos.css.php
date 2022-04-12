@@ -794,7 +794,8 @@ div#moreinfo, div#infowarehouse {
 .headersplit {
 	height: 10%;
 	width: 100%;
-	padding: 10px;
+	padding-top: 20px;
+	padding-bottom: 2px;
 }
 
 .headercontent {
@@ -805,6 +806,19 @@ div#moreinfo, div#infowarehouse {
 	font-size: 150%;
 	background-color: rgb(233,234,237);
 }
+
+
+@media only screen and (max-width: 767px)
+{
+	.headercontent {
+		width: 80%;
+	}
+
+	.headersplit .headercontent {
+		font-size: 1em;
+	}
+}
+
 
 .row:after {
   content: "";

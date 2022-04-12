@@ -358,7 +358,7 @@ class Members extends DolibarrApi
 		if ($member->update(DolibarrApiAccess::$user) >= 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, $member->error);
+			throw new RestException(500, 'Error when updating member: '.$member->error);
 		}
 	}
 

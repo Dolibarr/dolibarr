@@ -35,8 +35,8 @@
 -- VMYSQL4.3 ALTER TABLE llx_partnership MODIFY COLUMN date_partnership_end date NULL;
 -- VPGSQL8.2 ALTER TABLE llx_partnership ALTER COLUMN date_partnership_end DROP NOT NULL;
 
-ALTER TABLE llx_product_fournisseur_price ADD COLUMN packaging varchar(64) DEFAULT NULL;
-ALTER TABLE llx_product_fournisseur_price MODIFY COLUMN packaging varchar(64) DEFAULT NULL;
+ALTER TABLE llx_product_fournisseur_price ADD COLUMN packaging real DEFAULT NULL;
+ALTER TABLE llx_product_fournisseur_price MODIFY COLUMN packaging real DEFAULT NULL;
 
 ALTER TABLE llx_accounting_bookkeeping ADD COLUMN date_export datetime DEFAULT NULL;
 
@@ -537,3 +537,7 @@ INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (154, 
 -- VMYSQL4.3 ALTER TABLE llx_user MODIFY COLUMN fk_soc integer NULL;
 -- VPGSQL8.2 ALTER TABLE llx_user ALTER COLUMN fk_soc DROP NOT NULL;
 
+-- Add column to help to fix a very critical bug when transferring into accounting bank record of a bank account into another currency.
+-- Idea is to update this column manually in v15 with value in currency of company for bank that are not into the main currency and the transfer
+-- into accounting will use it in priority if value is not null.
+ALTER TABLE llx_bank ADD COLUMN amount_main_currency double(24,8) NULL;

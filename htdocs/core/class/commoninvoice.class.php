@@ -93,6 +93,14 @@ abstract class CommonInvoice extends CommonObject
 	const STATUS_ABANDONED = 3;
 
 
+	public $sumpayed;
+	public $sumpayed_multicurrency;
+	public $sumdeposit;
+	public $sumdeposit_multicurrency;
+	public $sumcreditnote;
+	public $sumcreditnote_multicurrency;
+
+
 	/**
 	 * 	Return remain amount to pay. Property ->id and ->total_ttc must be set.
 	 *  This does not include open direct debit requests.
@@ -118,8 +126,8 @@ abstract class CommonInvoice extends CommonObject
 	 * 	Return amount of payments already done. This must include ONLY the record into the payment table.
 	 *  Payments dones using discounts, credit notes, etc are not included.
 	 *
-	 *  @param 		int 	$multicurrency 	Return multicurrency_amount instead of amount
-	 *	@return		float						Amount of payment already done, <0 if KO
+	 *  @param 		int 	$multicurrency 		Return multicurrency_amount instead of amount
+	 *	@return		float						Amount of payment already done, <0 and set ->error if KO
 	 */
 	public function getSommePaiement($multicurrency = 0)
 	{
@@ -138,10 +146,13 @@ abstract class CommonInvoice extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
+
 			$this->db->free($resql);
 			if ($multicurrency) {
+				$this->sumpayed_multicurrency = $obj->multicurrency_amount;
 				return $obj->multicurrency_amount;
 			} else {
+				$this->sumpayed = $obj->amount;
 				return $obj->amount;
 			}
 		} else {
@@ -154,13 +165,13 @@ abstract class CommonInvoice extends CommonObject
 	 *    	Return amount (with tax) of all deposits invoices used by invoice.
 	 *      Should always be empty, except if option FACTURE_DEPOSITS_ARE_JUST_PAYMENTS is on (not recommended).
 	 *
-	 * 		@param 		int 	$multicurrency 	Return multicurrency_amount instead of amount
-	 *		@return		float						<0 if KO, Sum of deposits amount otherwise
+	 * 		@param 		int 	$multicurrency 		Return multicurrency_amount instead of amount
+	 *		@return		float						<0 and set ->error if KO, Sum of deposits amount otherwise
 	 */
 	public function getSumDepositsUsed($multicurrency = 0)
 	{
 		if ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier') {
-			// TODO
+			// FACTURE_DEPOSITS_ARE_JUST_PAYMENTS was never supported for purchase invoice, so we can return 0 with no need of SQL for this case.
 			return 0.0;
 		}
 
@@ -170,6 +181,12 @@ abstract class CommonInvoice extends CommonObject
 		$result = $discountstatic->getSumDepositsUsed($this, $multicurrency);
 
 		if ($result >= 0) {
+			if ($multicurrency) {
+				$this->sumdeposit_multicurrency = $result;
+			} else {
+				$this->sumdeposit = $result;
+			}
+
 			return $result;
 		} else {
 			$this->error = $discountstatic->error;
@@ -180,8 +197,8 @@ abstract class CommonInvoice extends CommonObject
 	/**
 	 *    	Return amount (with tax) of all credit notes invoices + excess received used by invoice
 	 *
-	 * 		@param 		int 	$multicurrency 	Return multicurrency_amount instead of amount
-	 *		@return		float						<0 if KO, Sum of credit notes and deposits amount otherwise
+	 * 		@param 		int 	$multicurrency 		Return multicurrency_amount instead of amount
+	 *		@return		float						<0 and set ->error if KO, Sum of credit notes and deposits amount otherwise
 	 */
 	public function getSumCreditNotesUsed($multicurrency = 0)
 	{
@@ -190,6 +207,12 @@ abstract class CommonInvoice extends CommonObject
 		$discountstatic = new DiscountAbsolute($this->db);
 		$result = $discountstatic->getSumCreditNotesUsed($this, $multicurrency);
 		if ($result >= 0) {
+			if ($multicurrency) {
+				$this->sumcreditnote_multicurrency = $result;
+			} else {
+				$this->sumcreditnote = $result;
+			}
+
 			return $result;
 		} else {
 			$this->error = $discountstatic->error;
@@ -827,8 +850,10 @@ abstract class CommonInvoice extends CommonObject
 		$tmplang->load("main");
 
 		$datestring = dol_print_date($this->date, 'dayhourrfc');
-		$pricewithtaxstring = price($this->total_ttc, 0, $tmplang, 0, -1, 2);
-		$pricetaxstring = price($this->total_tva, 0, $tmplang, 0, -1, 2);
+		//$pricewithtaxstring = price($this->total_ttc, 0, $tmplang, 0, -1, 2);
+		//$pricetaxstring = price($this->total_tva, 0, $tmplang, 0, -1, 2);
+		$pricewithtaxstring = price2num($this->total_ttc, 2, 1);
+		$pricetaxstring = price2num($this->total_tva, 2, 1);
 
 		/*
 		$name = implode(unpack("H*", $this->thirdparty->name));
@@ -857,7 +882,7 @@ abstract class CommonInvoice extends CommonObject
 		// Using TLV format
 		$s = pack('C1', 1).pack('C1', strlen($this->thirdparty->name)).$this->thirdparty->name;
 		$s .= pack('C1', 2).pack('C1', strlen($this->thirdparty->tva_intra)).$this->thirdparty->tva_intra;
-		$s .= pack('C1', 3).pack('C1', strlen($datestring)).$this->date;
+		$s .= pack('C1', 3).pack('C1', strlen($datestring)).$datestring;
 		$s .= pack('C1', 4).pack('C1', strlen($pricewithtaxstring)).$pricewithtaxstring;
 		$s .= pack('C1', 5).pack('C1', strlen($pricetaxstring)).$pricetaxstring;
 		$s .= '';					// Hash of xml invoice

@@ -173,7 +173,7 @@ class Salary extends CommonObject
 
 		if (!$notrigger) {
 			// Call trigger
-			$result = $this->call_trigger('salary_MODIFY', $user);
+			$result = $this->call_trigger('SALARY_MODIFY', $user);
 			if ($result < 0) $error++;
 			// End call triggers
 		}
@@ -278,7 +278,7 @@ class Salary extends CommonObject
 		$error = 0;
 
 		// Call trigger
-		$result = $this->call_trigger('salary_DELETE', $user);
+		$result = $this->call_trigger('SALARY_DELETE', $user);
 		if ($result < 0) return -1;
 		// End call triggers
 
@@ -438,7 +438,7 @@ class Salary extends CommonObject
 				}
 
 				// Call trigger
-				$result = $this->call_trigger('salary_CREATE', $user);
+				$result = $this->call_trigger('SALARY_CREATE', $user);
 				if ($result < 0) $error++;
 				// End call triggers
 			} else $error++;

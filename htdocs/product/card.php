@@ -226,6 +226,174 @@ if (empty($reshook)) {
 		}
 		$action = '';
 	}
+	// merge products
+	if ($action == 'confirm_merge' && $confirm == 'yes' && $user->rights->societe->creer) {
+		$error = 0;
+		$productOriginId = GETPOST('product_origin', 'int');
+		$productOrigin = new Product($db);
+
+		if ($productOriginId <= 0) {
+			$langs->load('errors');
+			setEventMessages($langs->trans('ErrorProductIdIsMandatory', $langs->transnoentitiesnoconv('MergeOriginProduct')), null, 'errors');
+		} else {
+			if (!$error && $productOrigin->fetch($productOriginId) < 1) {
+				setEventMessages($langs->trans('ErrorRecordNotFound'), null, 'errors');
+				$error++;
+			}
+
+			if (!$error) {
+				// TODO Move the merge function into class of object.
+				$db->begin();
+
+				// Recopy some data
+				$listofproperties = array(
+					'ref',
+					'ref_ext',
+					'label',
+					'description',
+					'url',
+					'barcode',
+					'fk_barcode_type',
+					'import_key',
+					'mandatory_period',
+					'accountancy_code_buy',
+					'accountancy_code_buy_intra',
+					'accountancy_code_buy_export',
+					'accountancy_code_sell',
+					'accountancy_code_sell_intra',
+					'accountancy_code_sell_export'
+				);
+				foreach ($listofproperties as $property) {
+					if (empty($object->$property)) {
+						$object->$property = $productOrigin->$property;
+					}
+				}
+				// Concat some data
+				$listofproperties = array(
+					'note_public', 'note_private'
+				);
+				foreach ($listofproperties as $property) {
+					$object->$property = dol_concatdesc($object->$property, $productOrigin->$property);
+				}
+
+				// Merge extrafields
+				if (is_array($productOrigin->array_options)) {
+					foreach ($productOrigin->array_options as $key => $val) {
+						if (empty($object->array_options[$key])) {
+							$object->array_options[$key] = $val;
+						}
+					}
+				}
+
+				// Merge categories
+				$static_cat = new Categorie($db);
+				$custcats_ori = $static_cat->containing($productOrigin->id, 'product', 'id');
+				$custcats = $static_cat->containing($object->id, 'product', 'id');
+				$custcats = array_merge($custcats, $custcats_ori);
+				$object->setCategories($custcats);
+
+				// If product has a new code that is same than origin, we clean origin code to avoid duplicate key from database unique keys.
+				if ($productOrigin->barcode == $object->barcode) {
+					dol_syslog("We clean customer and supplier code so we will be able to make the update of target");
+					$productOrigin->barcode = '';
+					//$productOrigin->update($productOrigin->id, $user, 0, 'merge');
+				}
+
+				// Update
+				$result = $object->update($object->id, $user, 0, 'merge');
+				if ($result <= 0) {
+					setEventMessages($object->error, $object->errors, 'errors');
+					$error++;
+				}
+
+				// Move links
+				if (!$error) {
+					// TODO add this functionality into the api_products.class.php
+					// TODO Mutualise the list into object product.class.php
+					$objects = array(
+						'ActionComm' => '/comm/action/class/actioncomm.class.php',
+						'Bom' => '/bom/class/bom.class.php',
+						// do not use Categorie, it cause foreign key error, merge is done before
+						//'Categorie' => '/categories/class/categorie.class.php',
+						'Commande' => '/commande/class/commande.class.php',
+						'CommandeFournisseur' => '/fourn/class/fournisseur.commande.class.php',
+						'Contrat' => '/contrat/class/contrat.class.php',
+						'Delivery' => '/delivery/class/delivery.class.php',
+						'Facture' => '/compta/facture/class/facture.class.php',
+						'FactureFournisseur' => '/fourn/class/fournisseur.facture.class.php',
+						'FactureRec' => '/compta/facture/class/facture-rec.class.php',
+						'FichinterRec' => '/fichinter/class/fichinterrec.class.php',
+						'ProductFournisseur' => '/fourn/class/fournisseur.product.class.php',
+						'Propal' => '/comm/propal/class/propal.class.php',
+						'Reception' => '/reception/class/reception.class.php',
+						'SupplierProposal' => '/supplier_proposal/class/supplier_proposal.class.php',
+					);
+
+					//First, all core objects must update their tables
+					foreach ($objects as $object_name => $object_file) {
+						require_once DOL_DOCUMENT_ROOT.$object_file;
+
+						if (!$error && !$object_name::replaceProduct($db, $productOrigin->id, $object->id)) {
+							$error++;
+							setEventMessages($db->lasterror(), null, 'errors');
+							break;
+						}
+					}
+				}
+
+				// External modules should update their ones too
+				if (!$error) {
+					$reshook = $hookmanager->executeHooks(
+						'replaceProduct',
+						array(
+							'soc_origin' => $productOrigin->id,
+							'soc_dest' => $object->id,
+						),
+						$object,
+						$action
+					);
+
+					if ($reshook < 0) {
+						setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+						$error++;
+					}
+				}
+
+
+				if (!$error) {
+					$object->context = array(
+						'merge' => 1,
+						'mergefromid' => $productOrigin->id,
+					);
+
+					// Call trigger
+					$result = $object->call_trigger('PRODUCT_MODIFY', $user);
+					if ($result < 0) {
+						setEventMessages($object->error, $object->errors, 'errors');
+						$error++;
+					}
+					// End call triggers
+				}
+
+				if (!$error) {
+					// We finally remove the old product
+					// TODO merge attached files from old product into new one before delete
+					if ($productOrigin->delete($user) < 1) {
+						$error++;
+					}
+				}
+
+				if (!$error) {
+					setEventMessages($langs->trans('ProductsMergeSuccess'), null, 'mesgs');
+					$db->commit();
+				} else {
+					$langs->load("errors");
+					setEventMessages($langs->trans('ErrorsProductsMerge'), null, 'errors');
+					$db->rollback();
+				}
+			}
+		}
+	}
 
 	// Type
 	if ($action == 'setfk_product_type' && $usercancreate) {
@@ -2502,6 +2670,17 @@ if (($action == 'delete' && (empty($conf->use_javascript_ajax) || !empty($conf->
 	|| (!empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile))) {							// Always output when not jmobile nor js
 	$formconfirm = $form->formconfirm("card.php?id=".$object->id, $langs->trans("DeleteProduct"), $langs->trans("ConfirmDeleteProduct"), "confirm_delete", '', 0, "action-delete");
 }
+if ($action == 'merge') {
+	$formquestion = array(
+		array(
+			'name' => 'product_origin',
+			'label' => $langs->trans('MergeOriginProduct'),
+			'type' => 'other',
+			'value' => $form->select_produits('', 'product_origin', '', 0, 0, 1, 2, '', 1, array(), 0, 1, 0, 'minwidth200', 0, '', null, 1),
+		)
+	);
+	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("MergeProducts"), $langs->trans("ConfirmMergeProducts"), "confirm_merge", $formquestion, 'no', 1, 250);
+}
 
 // Clone confirmation
 if (($action == 'clone' && (empty($conf->use_javascript_ajax) || !empty($conf->dol_use_jmobile)))		// Output when action = clone if jmobile or no js
@@ -2539,6 +2718,9 @@ print $formconfirm;
  * Action bar
  */
 if ($action != 'create' && $action != 'edit') {
+	$cloneProductUrl = $_SERVER["PHP_SELF"].'?action=clone&token='.newToken();
+	$cloneButtonId = 'action-clone-no-ajax';
+
 	print "\n".'<div class="tabsAction">'."\n";
 
 	$parameters = array();
@@ -2546,15 +2728,15 @@ if ($action != 'create' && $action != 'edit') {
 	if (empty($reshook)) {
 		if ($usercancreate) {
 			if (!isset($object->no_button_edit) || $object->no_button_edit <> 1) {
-				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Modify").'</a>';
+				print dolGetButtonAction('', $langs->trans('Modify'), 'default', $_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$object->id, '', $usercancreate);
 			}
 
 			if (!isset($object->no_button_copy) || $object->no_button_copy <> 1) {
 				if (!empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile)) {
-					print '<span id="action-clone" class="butAction">'.$langs->trans('ToClone').'</span>'."\n";
-				} else {
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=clone&token='.newToken().'&id='.$object->id.'">'.$langs->trans("ToClone").'</a>';
+					$cloneProductUrl = '';
+					$cloneButtonId = 'action-clone';
 				}
+				print dolGetButtonAction($langs->trans('ToClone'), '', 'default', $cloneProductUrl, $cloneButtonId, $usercancreate);
 			}
 		}
 		$object_is_used = $object->isObjectUsed($object->id);
@@ -2562,15 +2744,18 @@ if ($action != 'create' && $action != 'edit') {
 		if ($usercandelete) {
 			if (empty($object_is_used) && (!isset($object->no_button_delete) || $object->no_button_delete <> 1)) {
 				if (!empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile)) {
-					print '<span id="action-delete" class="butActionDelete">'.$langs->trans('Delete').'</span>'."\n";
+					print dolGetButtonAction($langs->trans('Delete'), '', 'delete', '#', 'action-delete', true);
 				} else {
-					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Delete").'</a>';
+					print dolGetButtonAction('', $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$object->id, '');
 				}
 			} else {
-				print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("ProductIsUsed").'">'.$langs->trans("Delete").'</a>';
+				print dolGetButtonAction($langs->trans("ProductIsUsed"), $langs->trans('Delete'), 'delete', '#', '', false);
+			}
+			if (getDolGlobalInt('MAIN_FEATURES_LEVEL') > 1) {
+				print '<a class="butActionDelete" href="card.php?action=merge&id='.$object->id.'" title="'.dol_escape_htmltag($langs->trans("MergeProducts")).'">'.$langs->trans('Merge').'</a>'."\n";
 			}
 		} else {
-			print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("Delete").'</a>';
+			print dolGetButtonAction($langs->trans("NotEnoughPermissions"), $langs->trans('Delete'), 'delete', '#', '', false);
 		}
 	}
 

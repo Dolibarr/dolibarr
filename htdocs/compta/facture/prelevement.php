@@ -912,7 +912,7 @@ if ($object->id > 0) {
 		}
 
 		if (!$numopen && !$numclosed) {
-			print '<tr class="oddeven"><td colspan="7" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+			print '<tr class="oddeven"><td colspan="7"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 		}
 
 		$db->free($result);

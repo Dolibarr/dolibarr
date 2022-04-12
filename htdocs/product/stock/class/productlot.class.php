@@ -468,11 +468,11 @@ class Productlot extends CommonObject
 
 		//if (!$error) {
 			//if (!$notrigger) {
-				// Uncomment this and change MYOBJECT to your own tag if you
+				// Uncomment this and change PRODUCTLOT to your own tag if you
 				// want this action calls a trigger.
 
 				//// Call triggers
-				//$result=$this->call_trigger('MYOBJECT_DELETE',$user);
+				//$result=$this->call_trigger('PRODUCTLOT_DELETE',$user);
 				//if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
 				//// End call triggers
 			//}

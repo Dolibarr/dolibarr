@@ -82,7 +82,7 @@ $title = $langs->trans("Statistics");
 
 llxHeader('', $title, $helpurl);
 
-print load_fiche_titre($title, $mesg, 'product');
+print load_fiche_titre($title, '', 'product');
 
 
 $param = '';
@@ -101,6 +101,7 @@ if ($mode != '') {
 	$param .= '&mode='.urlencode($mode);
 }
 
+
 $h = 0;
 $head = array();
 
@@ -115,7 +116,7 @@ $head[$h][2] = 'popularity';
 $h++;
 
 
-print dol_get_fiche_head($head, 'popularity', $langs->trans("Statistics"), -1);
+print dol_get_fiche_head($head, 'popularity', '', -1);
 
 
 // Array of liens to show

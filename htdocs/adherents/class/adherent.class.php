@@ -1534,9 +1534,9 @@ class Adherent extends CommonObject
 	 *
 	 *	@param	int	        $date        		Date of effect of subscription
 	 *	@param	double		$amount     		Amount of subscription (0 accepted for some members)
-	 *	@param	int			$accountid			Id bank account
-	 *	@param	string		$operation			Type of payment (if Id bank account provided). Example: 'CB', ...
-	 *	@param	string		$label				Label operation (if Id bank account provided)
+	 *	@param	int			$accountid			Id bank account. NOT USED.
+	 *	@param	string		$operation			Code of payment mode (if Id bank account provided). Example: 'CB', ... NOT USED.
+	 *	@param	string		$label				Label operation (if Id bank account provided).
 	 *	@param	string		$num_chq			Numero cheque (if Id bank account provided)
 	 *	@param	string		$emetteur_nom		Name of cheque writer
 	 *	@param	string		$emetteur_banque	Name of bank of cheque

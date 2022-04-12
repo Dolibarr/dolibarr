@@ -14,10 +14,11 @@
  * Copyright (C) 2012-2014  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2013       Cedric Gross            <c.gross@kreiz-it.fr>
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2016       Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2016-2022  Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2018       Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2022       Sylvain Legrand         <contact@infras.fr>
+ * Copyright (C) 2022      	Gauthier VERDOL       	<gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -810,6 +811,10 @@ class Facture extends CommonInvoice
 							$fk_parent_line = 0;
 						}
 
+						// Complete vat rate with code
+						$vatrate = $newinvoiceline->tva_tx;
+						if ($newinvoiceline->vat_src_code && ! preg_match('/\(.*\)/', $vatrate)) $vatrate.=' ('.$newinvoiceline->vat_src_code.')';
+
 						$newinvoiceline->fk_parent_line = $fk_parent_line;
 
 						if ($this->type === Facture::TYPE_REPLACEMENT && $newinvoiceline->fk_remise_except) {
@@ -820,7 +825,37 @@ class Facture extends CommonInvoice
 							$newinvoiceline->fk_remise_except = $discountId;
 						}
 
-						$result = $newinvoiceline->insert();
+						$result = $this->addline(
+							$newinvoiceline->desc,
+							$newinvoiceline->subprice,
+							$newinvoiceline->qty,
+							$vatrate,
+							$newinvoiceline->localtax1_tx,
+							$newinvoiceline->localtax2_tx,
+							$newinvoiceline->fk_product,
+							$newinvoiceline->remise_percent,
+							$newinvoiceline->date_start,
+							$newinvoiceline->date_end,
+							$newinvoiceline->fk_code_ventilation,
+							$newinvoiceline->info_bits,
+							$newinvoiceline->fk_remise_except,
+							'HT',
+							0,
+							$newinvoiceline->product_type,
+							$newinvoiceline->rang,
+							$newinvoiceline->special_code,
+							$newinvoiceline->element,
+							$newinvoiceline->id,
+							$fk_parent_line,
+							$newinvoiceline->fk_fournprice,
+							$newinvoiceline->pa_ht,
+							$newinvoiceline->label,
+							$newinvoiceline->array_options,
+							$newinvoiceline->situation_percent,
+							$newinvoiceline->fk_prev_id,
+							$newinvoiceline->fk_unit,
+							$newinvoiceline->multicurrency_subprice
+						);
 
 						// Defined the new fk_parent_line
 						if ($result > 0) {
@@ -1775,8 +1810,9 @@ class Facture extends CommonInvoice
 	 */
 	public function fetch_lines($only_product = 0, $loadalsotranslation = 0)
 	{
-		global $langs, $conf;
 		// phpcs:enable
+		global $langs, $conf;
+
 		$this->lines = array();
 
 		$sql = 'SELECT l.rowid, l.fk_facture, l.fk_product, l.fk_parent_line, l.label as custom_label, l.description, l.product_type, l.price, l.qty, l.vat_src_code, l.tva_tx,';
@@ -2071,7 +2107,7 @@ class Facture extends CommonInvoice
 	public function insert_discount($idremise)
 	{
 		// phpcs:enable
-		global $langs;
+		global $conf, $langs;
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 		include_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
@@ -2100,6 +2136,14 @@ class Facture extends CommonInvoice
 			$facligne->remise_percent = 0;
 			$facligne->rang = -1;
 			$facligne->info_bits = 2;
+
+			if (!empty($conf->global->MAIN_ADD_LINE_AT_POSITION)) {
+				$facligne->rang = 1;
+				$linecount = count($this->lines);
+				for ($ii = 1; $ii <= $linecount; $ii++) {
+					$this->updateRangOfLine($this->lines[$ii - 1]->id, $ii+1);
+				}
+			}
 
 			// Get buy/cost price of invoice that is source of discount
 			if ($remise->fk_facture_source > 0) {
@@ -2326,6 +2370,7 @@ class Facture extends CommonInvoice
 					if ($this->lines[$i]->fk_product > 0) {
 						$mouvP = new MouvementStock($this->db);
 						$mouvP->origin = &$this;
+						$mouvP->setOrigin($this->element, $this->id);
 						// We decrease stock for product
 						if ($this->type == self::TYPE_CREDIT_NOTE) {
 							$result = $mouvP->livraison($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("InvoiceDeleteDolibarr", $this->ref));
@@ -2632,7 +2677,7 @@ class Facture extends CommonInvoice
 	 */
 	public function validate($user, $force_number = '', $idwarehouse = 0, $notrigger = 0, $batch_rule = 0)
 	{
-		global $conf, $langs;
+		global $conf, $langs, $mysoc;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		$productStatic = null;
@@ -2670,6 +2715,66 @@ class Facture extends CommonInvoice
 			$this->error = 'Permission denied';
 			dol_syslog(get_class($this)."::validate ".$this->error.' MAIN_USE_ADVANCED_PERMS='.$conf->global->MAIN_USE_ADVANCED_PERMS, LOG_ERR);
 			return -1;
+		}
+		if (!empty($conf->global-> INVOICE_CHECK_POSTERIOR_DATE)) {
+			$last_of_type = $this->willBeLastOfSameType();
+			if (!$last_of_type[0]) {
+				$this->error = $langs->transnoentities("ErrorInvoiceIsNotLastOfSameType", $this->ref, dol_print_date($this->date, 'day'), dol_print_date($last_of_type[1], 'day'));
+				return -1;
+			}
+		}
+
+		// Check for mandatory fields in thirdparty (defined into setup)
+		if (!empty($this->thirdparty) && is_object($this->thirdparty)) {
+			$array_to_check = array('IDPROF1', 'IDPROF2', 'IDPROF3', 'IDPROF4', 'IDPROF5', 'IDPROF6', 'EMAIL');
+			foreach ($array_to_check as $key) {
+				$keymin = strtolower($key);
+				if (!property_exists($this->thirdparty, $keymin)) {
+					continue;
+				}
+				$vallabel = $this->thirdparty->$keymin;
+
+				$i = (int) preg_replace('/[^0-9]/', '', $key);
+				if ($i > 0) {
+					if ($this->thirdparty->isACompany()) {
+						// Check for mandatory prof id (but only if country is other than ours)
+						if ($mysoc->country_id > 0 && $this->thirdparty->country_id == $mysoc->country_id) {
+							$idprof_mandatory = 'SOCIETE_'.$key.'_INVOICE_MANDATORY';
+							if (!$vallabel && !empty($conf->global->$idprof_mandatory)) {
+								$langs->load("errors");
+								$this->error = $langs->trans('ErrorProdIdIsMandatory', $langs->transcountry('ProfId'.$i, $this->thirdparty->country_code)).' ('.$langs->trans("ForbiddenBySetupRules").') ['.$langs->trans('Company').' : '.$this->thirdparty->name.']';
+								dol_syslog(__METHOD__.' '.$this->error, LOG_ERR);
+								return -1;
+							}
+						}
+					}
+				} else {
+					if ($key == 'EMAIL') {
+						// Check for mandatory
+						if (!empty($conf->global->SOCIETE_EMAIL_INVOICE_MANDATORY) && !isValidEMail($this->thirdparty->email)) {
+							$langs->load("errors");
+							$this->error = $langs->trans("ErrorBadEMail", $this->thirdparty->email).' ('.$langs->trans("ForbiddenBySetupRules").') ['.$langs->trans('Company').' : '.$this->thirdparty->name.']';
+							dol_syslog(__METHOD__.' '.$this->error, LOG_ERR);
+							return -1;
+						}
+					}
+				}
+			}
+		}
+
+		// Check for mandatory fields in $this
+		$array_to_check = array('REF_CLIENT'=>'RefCustomer');
+		foreach ($array_to_check as $key => $val) {
+			$keymin = strtolower($key);
+			$vallabel = $this->$keymin;
+
+			// Check for mandatory
+			$keymandatory = 'INVOICE_'.$key.'_MANDATORY_FOR_VALIDATION';
+			if (!$vallabel && !empty($conf->global->$keymandatory)) {
+				$langs->load("errors");
+				$error++;
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv($val)), null, 'errors');
+			}
 		}
 
 		$this->db->begin();
@@ -2763,6 +2868,7 @@ class Facture extends CommonInvoice
 						if ($this->lines[$i]->fk_product > 0) {
 							$mouvP = new MouvementStock($this->db);
 							$mouvP->origin = &$this;
+							$mouvP->setOrigin($this->element, $this->id);
 							// We decrease stock for product
 							if ($this->type == self::TYPE_CREDIT_NOTE) {
 								$result = $mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, 0, $langs->trans("InvoiceValidatedInDolibarr", $num));
@@ -3055,6 +3161,7 @@ class Facture extends CommonInvoice
 					if ($this->lines[$i]->fk_product > 0) {
 						$mouvP = new MouvementStock($this->db);
 						$mouvP->origin = &$this;
+						$mouvP->setOrigin($this->element, $this->id);
 						// We decrease stock for product
 						if ($this->type == self::TYPE_CREDIT_NOTE) {
 							$result = $mouvP->livraison($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("InvoiceBackToDraftInDolibarr", $this->ref));
@@ -3370,6 +3477,11 @@ class Facture extends CommonInvoice
 				// Reorder if child line
 				if (!empty($fk_parent_line)) {
 					$this->line_order(true, 'DESC');
+				} elseif ($ranktouse > 0 && $ranktouse <= count($this->lines)) { // Update all rank of all other lines
+					$linecount = count($this->lines);
+					for ($ii = $ranktouse; $ii <= $linecount; $ii++) {
+						$this->updateRangOfLine($this->lines[$ii - 1]->id, $ii + 1);
+					}
 				}
 
 				// Mise a jour informations denormalisees au niveau de la facture meme
@@ -3661,11 +3773,12 @@ class Facture extends CommonInvoice
 	/**
 	 * Update invoice line with percentage
 	 *
-	 * @param  FactureLigne $line       Invoice line
-	 * @param  int          $percent    Percentage
+	 * @param  FactureLigne $line       	Invoice line
+	 * @param  int          $percent    	Percentage
+	 * @param  boolean      $update_price   Update object price
 	 * @return void
 	 */
-	public function update_percent($line, $percent)
+	public function update_percent($line, $percent, $update_price = true)
 	{
 		// phpcs:enable
 		global $mysoc, $user;
@@ -3692,7 +3805,11 @@ class Facture extends CommonInvoice
 		$line->multicurrency_total_tva = $tabprice[17];
 		$line->multicurrency_total_ttc = $tabprice[18];
 		$line->update($user);
-		$this->update_price(1);
+
+		// sometimes it is better to not update price for each line, ie when updating situation on all lines
+		if ($update_price) {
+			$this->update_price(1);
+		}
 	}
 
 	/**
@@ -3943,7 +4060,7 @@ class Facture extends CommonInvoice
 		}
 
 		if (!empty($addon)) {
-			dol_syslog("Call getNextNumRef with ".$addonConstName." = ".$conf->global->FACTURE_ADDON.", thirdparty=".$soc->name.", type=".$soc->typent_code, LOG_DEBUG);
+			dol_syslog("Call getNextNumRef with ".$addonConstName." = ".$conf->global->FACTURE_ADDON.", thirdparty=".$soc->name.", type=".$soc->typent_code.", mode=".$mode, LOG_DEBUG);
 
 			$mybool = false;
 
@@ -4755,6 +4872,23 @@ class Facture extends CommonInvoice
 	}
 
 	/**
+	 * Function used to replace a product id with another one.
+	 *
+	 * @param DoliDB $db Database handler
+	 * @param int $origin_id Old product id
+	 * @param int $dest_id New product id
+	 * @return bool
+	 */
+	public static function replaceProduct(DoliDB $db, $origin_id, $dest_id)
+	{
+		$tables = array(
+			'facturedet'
+		);
+
+		return CommonObject::commonReplaceProduct($db, $origin_id, $dest_id, $tables);
+	}
+
+	/**
 	 * Is the customer invoice delayed?
 	 *
 	 * @return bool
@@ -5121,6 +5255,37 @@ class Facture extends CommonInvoice
 			$this->db->commit(); // We commit also on error, to have the error message recorded.
 			$this->error = 'Nb of emails sent : '.$nbMailSend.', '.(!empty($errorsMsg)) ? join(', ', $errorsMsg) : $error;
 			return $error;
+		}
+	}
+
+	/**
+	 * See if current invoice date is posterior to the last invoice date among validated invoices of same type.
+	 * @return boolean
+	 */
+	public function willBeLastOfSameType()
+	{
+		// get date of last validated invoices of same type
+		$sql  = "SELECT datef";
+		$sql .= " FROM ".MAIN_DB_PREFIX."facture";
+		$sql .= " WHERE type = " . (int) $this->type ;
+		$sql .= " AND date_valid IS NOT NULL";
+		$sql .= " ORDER BY datef DESC LIMIT 1";
+
+		$result = $this->db->query($sql);
+		if ($result) {
+			// compare with current validation date
+			if ($this->db->num_rows($result)) {
+				$obj = $this->db->fetch_object($result);
+				$last_date = $this->db->jdate($obj->datef);
+				$invoice_date = $this->date;
+
+				return [$invoice_date >= $last_date, $last_date];
+			} else {
+				// element is first of type to be validated
+				return [true];
+			}
+		} else {
+			dol_print_error($this->db);
 		}
 	}
 }
@@ -5680,7 +5845,7 @@ class FactureLigne extends CommonInvoiceLine
 
 			if (!$error && !$notrigger) {
 				// Call trigger
-				$result = $this->call_trigger('LINEBILL_UPDATE', $user);
+				$result = $this->call_trigger('LINEBILL_MODIFY', $user);
 				if ($result < 0) {
 					$this->db->rollback();
 					return -2;
