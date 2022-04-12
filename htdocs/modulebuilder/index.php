@@ -3957,7 +3957,7 @@ if ($module == 'initmodule') {
 						$condition = isset($parts[4]) ? $parts[4] : '';
 						$path = isset($parts[5]) ? $parts[5] : '';
 
-						// If we want to remove the tab, then the format is 'tabname:optionalcondition'
+						// If we want to remove the tab, then the format is 'objecttype:tabname:optionalcondition'
 						// See: https://wiki.dolibarr.org/index.php?title=Tabs_system#To_remove_an_existing_tab
 						if ($tabName[0] === '-') {
 							$tabTitle = '';
