@@ -1931,6 +1931,11 @@ if ($module == 'initmodule') {
 		$head2[$h][2] = 'permissions';
 		$h++;
 
+		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=tabs&module='.$module.($forceddirread ? '@'.$dirread : '');
+		$head2[$h][1] = $langs->trans("Tabs");
+		$head2[$h][2] = 'tabs';
+		$h++;
+
 		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=menus&module='.$module.($forceddirread ? '@'.$dirread : '');
 		$head2[$h][1] = $langs->trans("Menus");
 		$head2[$h][2] = 'menus';
@@ -3900,6 +3905,128 @@ if ($module == 'initmodule') {
 			print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module).'">';
 			print '<input type="submit" class="button" name="generatepackage" value="'.$langs->trans("BuildPackage").'">';
 			print '</form>';
+		}
+
+		if ($tab == 'tabs') {
+			$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
+
+			$tabs = $moduleobj->tabs;
+
+			if ($action != 'editfile' || empty($file)) {
+				print '<span class="opacitymedium">';
+				$htmlhelp = $langs->trans("TabsDefDescTooltip", '{s1}');
+				$htmlhelp = str_replace('{s1}', '<a target="adminbis" class="nofocusvisible" href="'.DOL_URL_ROOT.'/admin/menus/index.php">'.$langs->trans('Setup').' - '.$langs->trans('Tabs').'</a>', $htmlhelp);
+				print $form->textwithpicto($langs->trans("TabsDefDesc"), $htmlhelp, 1, 'help', '', 0, 2, 'helpondesc').'<br>';
+				print '</span>';
+				print '<br>';
+
+				print '<span class="fa fa-file-o"></span> '.$langs->trans("DescriptorFile").' : <strong>'.$pathtofile.'</strong>';
+				print ' <a class="editfielda paddingleft paddingright" href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=editfile&format=php&file='.urlencode($pathtofile).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+				print '<br>';
+
+				print '<br>';
+				print load_fiche_titre($langs->trans("ListOfTabsEntries"), '', '');
+
+				print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+				print '<input type="hidden" name="token" value="'.newToken().'">';
+				print '<input type="hidden" name="action" value="addproperty">';
+				print '<input type="hidden" name="tab" value="objects">';
+				print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module).'">';
+				print '<input type="hidden" name="tabobj" value="'.dol_escape_htmltag($tabobj).'">';
+
+				print '<div class="div-table-responsive">';
+				print '<table class="noborder small">';
+
+				print '<tr class="liste_titre">';
+				print_liste_field_titre("ObjectType", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
+				print_liste_field_titre("Tab", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
+				print_liste_field_titre("Title", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
+				print_liste_field_titre("LangFile", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
+				print_liste_field_titre("Condition", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
+				print_liste_field_titre("Path", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
+				print "</tr>\n";
+
+				if (count($tabs)) {
+					foreach ($tabs as $tab) {
+						$parts = explode(':', $tab['data']);
+
+						$objectType = $parts[0];
+						$tabName = $parts[1];
+						$tabTitle = isset($parts[2]) ? $parts[2] : '';
+						$langFile = isset($parts[3]) ? $parts[3] : '';
+						$condition = isset($parts[4]) ? $parts[4] : '';
+						$path = isset($parts[5]) ? $parts[5] : '';
+
+						// If we want to remove the tab, then the format is 'tabname:optionalcondition'
+						// See: https://wiki.dolibarr.org/index.php?title=Tabs_system#To_remove_an_existing_tab
+						if ($tabName[0] === '-') {
+							$tabTitle = '';
+							$condition = isset($parts[2]) ? $parts[2] : '';
+						}
+
+						print '<tr class="oddeven">';
+
+						print '<td>';
+						print dol_escape_htmltag($parts[0]);
+						print '</td>';
+
+						print '<td>';
+						if ($tabName[0] === "+")
+							print '<span class="badge badge-status4 badge-status">' . dol_escape_htmltag($tabName) . '</span>';
+						else
+							print '<span class="badge badge-status8 badge-status">' . dol_escape_htmltag($tabName) . '</span>';
+						print '</td>';
+
+						print '<td>';
+						print dol_escape_htmltag($tabTitle);
+						print '</td>';
+
+						print '<td>';
+						print dol_escape_htmltag($langFile);
+						print '</td>';
+
+						print '<td>';
+						print dol_escape_htmltag($condition);
+						print '</td>';
+
+						print '<td>';
+						print dol_escape_htmltag($path);
+						print '</td>';
+
+						print '</tr>';
+					}
+				} else {
+					print '<tr><td class="opacitymedium" colspan="5">'.$langs->trans("None").'</td></tr>';
+				}
+
+				print '</table>';
+				print '</div>';
+
+				print '</form>';
+			} else {
+				$fullpathoffile = dol_buildpath($file, 0);
+
+				$content = file_get_contents($fullpathoffile);
+
+				// New module
+				print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+				print '<input type="hidden" name="token" value="'.newToken().'">';
+				print '<input type="hidden" name="action" value="savefile">';
+				print '<input type="hidden" name="file" value="'.dol_escape_htmltag($file).'">';
+				print '<input type="hidden" name="tab" value="'.$tab.'">';
+				print '<input type="hidden" name="module" value="'.$module.'">';
+
+				$doleditor = new DolEditor('editfilecontent', $content, '', '300', 'Full', 'In', true, false, 'ace', 0, '99%');
+				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ?GETPOST('format', 'aZ09') : 'html'));
+				print '<br>';
+				print '<center>';
+				print '<input type="submit" class="button buttonforacesave button-save" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
+				print ' &nbsp; ';
+				print '<input type="submit" class="button button-cancel" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
+				print '</center>';
+
+				print '</form>';
+			}
 		}
 
 		if ($tab != 'description') {
