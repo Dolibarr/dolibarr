@@ -126,10 +126,9 @@ abstract class CommonObject
 	public $linkedObjects;
 
 	/**
-	 * @var boolean		is linkedObjects full loaded. Loaded by ->fetchObjectLinked
-	 * important for pdf generation time reduction
+	 * @var boolean		Array of boolean with object id as key and value as true if linkedObjects full loaded. Loaded by ->fetchObjectLinked. Important for pdf generation time reduction.
 	 */
-	public $linkedObjectsFullLoaded = false;
+	public $linkedObjectsFullLoaded = array();
 
 	/**
 	 * @var Object      To store a cloned copy of object before to edit it and keep track of old properties
@@ -3781,9 +3780,11 @@ abstract class CommonObject
 	{
 		global $conf, $hookmanager, $action;
 
-		// important for pdf generation time reduction
-		// this boolean is true if $this->linkedObjects has already been loaded with all objects linked without filter
-		if ($this->linkedObjectsFullLoaded) return 1;
+		// Important for pdf generation time reduction
+		// This boolean is true if $this->linkedObjects has already been loaded with all objects linked without filter
+		if ($this->id > 0 && !empty($this->linkedObjectsFullLoaded[$this->id])) {
+			return 1;
+		}
 
 		$this->linkedObjectsIds = array();
 		$this->linkedObjects = array();
@@ -3846,8 +3847,8 @@ abstract class CommonObject
 		} else {
 			$sql .= "(fk_source = ".((int) $sourceid)." AND sourcetype = '".$this->db->escape($sourcetype)."')";
 			$sql .= " ".$clause." (fk_target = ".((int) $targetid)." AND targettype = '".$this->db->escape($targettype)."')";
-			if ($sourceid == $this->id && $sourcetype == $this->element && $targetid == $this->id && $targettype == $this->element && $clause == 'OR') {
-				$this->linkedObjectsFullLoaded = true;
+			if ($this->id > 0 && $sourceid == $this->id && $sourcetype == $this->element && $targetid == $this->id && $targettype == $this->element && $clause == 'OR') {
+				$this->linkedObjectsFullLoaded[$this->id] = true;
 			}
 		}
 		$sql .= " ORDER BY ".$orderby;
