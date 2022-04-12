@@ -290,7 +290,7 @@ if ($searchCategoryProductOperator == 1) {
 		$sqlCategoryProductExists .= " SELECT cp.fk_product";
 		$sqlCategoryProductExists .= " FROM ".$db->prefix()."categorie_product AS cp";
 		$sqlCategoryProductExists .= " WHERE cp.fk_product = t.fk_product";
-		$sqlCategoryProductExists .= " AND cp.fk_categorie IN (".implode(",", $existsCategoryProductList).")";
+		$sqlCategoryProductExists .= " AND cp.fk_categorie IN (".$db->sanitize(implode(',', $existsCategoryProductList)).")";
 		$sqlCategoryProductExists .= " )";
 		$searchCategoryProductSqlList[] = $sqlCategoryProductExists;
 	}
