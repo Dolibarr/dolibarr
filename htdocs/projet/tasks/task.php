@@ -150,10 +150,10 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->projet->s
 if ($action == 'confirm_cancel') {
 	$statusCancel = $object->setStatusToCancel();
 	if ($statusCancel == -1) {
-		setEventMessage("CancelError", 'errors');
+		setEventMessage("TaskCancelError", 'errors');
 		dol_print_error($db);
 	} else {
-		setEventMessage("CancelDone");
+		setEventMessage("TaskCancelDone");
 		header('Location: '.DOL_URL_ROOT.'/projet/tasks/task.php?id='.$object->id.($withproject ? '&withproject=1' : ''));
 		exit;
 	}
@@ -165,7 +165,7 @@ if ($action == 'confirm_reopen') {
 		setEventMessage("ReOpenError", 'errors');
 		dol_print_error($db);
 	} else {
-		setEventMessage("ReOpen");
+		setEventMessage("TaskReOpen");
 	}
 }
 
@@ -522,7 +522,7 @@ if ($id > 0 || !empty($ref)) {
 		}
 
 		if ($action == 'reopen') {
-			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".GETPOST("id", 'int').'&withproject='.$withproject, $langs->trans("ReOpen"), $langs->trans("ConfirmReOpen"), "confirm_reopen");
+			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".GETPOST("id", 'int').'&withproject='.$withproject, $langs->trans("ReOpen"), $langs->trans("TaskConfirmReOpen"), "confirm_reopen");
 		}
 
 		if (!GETPOST('withproject') || empty($projectstatic->id)) {
