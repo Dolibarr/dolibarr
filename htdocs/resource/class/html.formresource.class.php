@@ -225,7 +225,8 @@ class FormResource
 					$value = ($maxlength ?dol_trunc($arraytypes['label'], $maxlength) : $arraytypes['label']);
 				} elseif ($format == 3) {
 					$value = $arraytypes['code'];
-				} else {
+				}
+				if (empty($value)) {
 					$value = '&nbsp;';
 				}
 				print $value;
