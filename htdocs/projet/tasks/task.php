@@ -147,6 +147,16 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->projet->s
 	}
 }
 
+if ($action == 'confirm_cancel') {
+	$statusCancel = $object->setStatusToCancel();
+	if ($statusCancel == -1) {
+		setEventMessage("CancelError", 'errors');
+		dol_print_error($db);
+	} else {
+		setEventMessage("CancelDone");
+	}
+}
+
 // Retrieve First Task ID of Project if withprojet is on to allow project prev next to work
 if (!empty($project_ref) && !empty($withproject)) {
 	if ($projectstatic->fetch('', $project_ref) > 0) {
@@ -495,6 +505,10 @@ if ($id > 0 || !empty($ref)) {
 			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".GETPOST("id", 'int').'&withproject='.$withproject, $langs->trans("DeleteATask"), $langs->trans("ConfirmDeleteATask"), "confirm_delete");
 		}
 
+		if ($action == 'cancel') {
+			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".GETPOST("id", 'int').'&withproject='.$withproject, $langs->trans("Cancelled"), $langs->trans("ConfirmCancel"), "confirm_cancel");
+		}
+
 		if (!GETPOST('withproject') || empty($projectstatic->id)) {
 			$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1);
 			$object->next_prev_filter = " fk_projet IN (".$db->sanitize($projectsListId).")";
@@ -634,6 +648,11 @@ if ($id > 0 || !empty($ref)) {
 				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit&token='.newToken().'&withproject='.((int) $withproject).'">'.$langs->trans('Modify').'</a>';
 			} else {
 				print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('Modify').'</a>';
+			}
+
+			// Cancel
+			if ($user->rights->projet->creer) {
+				print dolGetButtonAction($langs->trans('Cancelled'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=cancel&token='.newToken().'&withproject='.((int) $withproject), '', right);
 			}
 
 			// Delete

@@ -1289,7 +1289,6 @@ if ($action == 'create' && $user->rights->projet->creer) {
 					foreach ($taskarray as $taskLine) {
 						if ($taskLine->progress != 100) {
 							$taskNotDone = true;
-							var_dump($taskLine->statuts_short);exit;
 							break;
 						}
 					}

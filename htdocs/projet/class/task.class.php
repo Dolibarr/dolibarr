@@ -196,6 +196,8 @@ class Task extends CommonObjectLine
 			return -1;
 		}
 
+		$this->setStatusFromProgress();
+
 		// Check parameters
 		// Put here code to add control on parameters values
 
@@ -213,6 +215,7 @@ class Task extends CommonObjectLine
 		$sql .= ", datee";
 		$sql .= ", planned_workload";
 		$sql .= ", progress";
+		$sql .= ", fk_statut";
 		$sql .= ", budget_amount";
 		$sql .= ") VALUES (";
 		$sql .= ((int) $conf->entity);
@@ -227,6 +230,7 @@ class Task extends CommonObjectLine
 		$sql .= ", ".($this->date_end ? "'".$this->db->idate($this->date_end)."'" : 'null');
 		$sql .= ", ".(($this->planned_workload != '' && $this->planned_workload >= 0) ? ((int) $this->planned_workload) : 'null');
 		$sql .= ", ".(($this->progress != '' && $this->progress >= 0) ? ((int) $this->progress) : 'null');
+		$sql .= ", ".(!empty($this->fk_statut) ? "'".$this->db->escape($this->fk_statut)."'" : 0);
 		$sql .= ", ".(($this->budget_amount != '' && $this->budget_amount >= 0) ? ((int) $this->budget_amount) : 'null');
 		$sql .= ")";
 
@@ -420,6 +424,8 @@ class Task extends CommonObjectLine
 			return -1;
 		}
 
+		$this->setStatusFromProgress();
+
 		// Check parameters
 		// Put here code to add control on parameters values
 
@@ -435,6 +441,7 @@ class Task extends CommonObjectLine
 		$sql .= " dateo=".($this->date_start != '' ? "'".$this->db->idate($this->date_start)."'" : 'null').",";
 		$sql .= " datee=".($this->date_end != '' ? "'".$this->db->idate($this->date_end)."'" : 'null').",";
 		$sql .= " progress=".(($this->progress != '' && $this->progress >= 0) ? $this->progress : 'null').",";
+		$sql .= " fk_statut=".(isset($this->fk_statut) ? $this->fk_statut : "null").",";
 		$sql .= " budget_amount=".(($this->budget_amount != '' && $this->budget_amount >= 0) ? $this->budget_amount : 'null').",";
 		$sql .= " rang=".((!empty($this->rang)) ? $this->rang : "0");
 		$sql .= " WHERE rowid=".((int) $this->id);
@@ -2339,5 +2346,49 @@ class Task extends CommonObjectLine
 		$datetouse = ($this->date_end > 0) ? $this->date_end : ((isset($this->datee) && $this->datee > 0) ? $this->datee : 0);
 
 		return ($datetouse > 0 && ($datetouse < ($now - $conf->projet->task->warning_delay)));
+	}
+
+	/**
+	 * @return void
+	 */
+	public function setStatusFromProgress() {
+		if ($this->fk_statut != 4) {
+			if ($this->progress <= 0 || $this->progress == null) {
+				$this->fk_statut = 1;
+			} else if ($this->progress == 100) {
+				$this->fk_statut = 3;
+			} else if ($this->progress > 0) {
+				$this->fk_statut = 2;
+			}
+		}
+	}
+
+	public function setStatusToCancel() {
+		$error = 0;
+
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'projet_task SET';
+		$sql .= ' fk_statut=4';
+		$sql .= ' WHERE rowid='.((int) $this->id);
+
+		$this->db->begin();
+
+		dol_syslog(get_class($this)."::update", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+		}
+
+		// Commit or rollback
+		if ($error) {
+			foreach ($this->errors as $errmsg) {
+				dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
+				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
+			}
+			$this->db->rollback();
+			return -1 * $error;
+		} else {
+			$this->db->commit();
+			return 1;
+		}
 	}
 }
