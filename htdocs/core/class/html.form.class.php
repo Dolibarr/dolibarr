@@ -6977,6 +6977,7 @@ class Form
 		global $conf, $langs, $hookmanager;
 		global $bc, $action;
 
+		$conf->project = (object)array("enabled"=>true);
 		$object->fetchObjectLinked();
 
 		// Bypass the default method
@@ -7059,6 +7060,8 @@ class Form
 					$tplpath = 'expensereport';
 				} elseif ($objecttype == 'subscription') {
 					$tplpath = 'adherents';
+				} elseif ($objecttype == 'project_task'){
+					$tplpath = 'projet/tasks';
 				}
 
 				global $linkedObjectBlock;
