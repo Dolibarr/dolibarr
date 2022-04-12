@@ -137,7 +137,7 @@ class Tva extends CommonObject
 		$sql .= "fk_user_creat,";
 		$sql .= "fk_user_modif";
 		$sql .= ") VALUES (";
-		$sql .= " ".((int) $conf->entity.", ";
+		$sql .= " ".((int) $conf->entity).", ";
 		$sql .= " '".$this->db->idate($now)."',";
 		$sql .= " '".$this->db->idate($this->datep)."',";
 		$sql .= " '".$this->db->idate($this->datev)."',";
