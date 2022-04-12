@@ -1641,6 +1641,7 @@ if ($action == 'savefile' && empty($cancel)) {
 
 		$content = GETPOST('editfilecontent', $check);
 
+
 		// Save file on disk
 		if ($content) {
 			dol_delete_file($pathoffile);
@@ -2128,7 +2129,9 @@ if ($module == 'initmodule') {
 					print '<tr><td>';
 					print $langs->trans("EditorUrl");
 					print '</td><td>';
-					print $moduleobj->editor_url;
+					if (!empty($moduleobj->editor_url)) {
+						print '<a href="'.$moduleobj->editor_url.'" class="_blank" rel="noopener">'.$moduleobj->editor_url.' '.img_picto('', 'globe').'</a>';
+					}
 					print '</td></tr>';
 
 					print '<tr><td>';
