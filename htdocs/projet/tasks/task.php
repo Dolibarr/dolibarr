@@ -518,7 +518,7 @@ if ($id > 0 || !empty($ref)) {
 		}
 
 		if ($action == 'cancel') {
-			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".GETPOST("id", 'int').'&withproject='.$withproject, $langs->trans("Cancel"), $langs->trans("ConfirmCancel"), "confirm_cancel");
+			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".GETPOST("id", 'int').'&withproject='.$withproject, $langs->trans("Cancel"), $langs->trans("TaskConfirmCancel"), "confirm_cancel");
 		}
 
 		if ($action == 'reopen') {

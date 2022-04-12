@@ -1273,7 +1273,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 			}
 
 			// Close
-			if (empty($conf->global->PROJECT_CLOSE_WITH_TASK_PROGRESS)) {
+			if (empty($conf->global->PROJECT_PREVENT_CLOSING_WITH_UNFINISHED_TASKS)) {
 				if ($object->statut == Project::STATUS_VALIDATED && $user->rights->projet->creer) {
 					if ($userWrite > 0) {
 						print '<a class="butAction" href="card.php?id=' . $object->id . '&amp;action=close">' . $langs->trans("Close") . '</a>';
