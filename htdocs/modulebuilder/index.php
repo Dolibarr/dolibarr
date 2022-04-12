@@ -3971,10 +3971,11 @@ if ($module == 'initmodule') {
 						print '</td>';
 
 						print '<td>';
-						if ($tabName[0] === "+")
+						if ($tabName[0] === "+") {
 							print '<span class="badge badge-status4 badge-status">' . dol_escape_htmltag($tabName) . '</span>';
-						else
+						} else {
 							print '<span class="badge badge-status8 badge-status">' . dol_escape_htmltag($tabName) . '</span>';
+						}
 						print '</td>';
 
 						print '<td>';
