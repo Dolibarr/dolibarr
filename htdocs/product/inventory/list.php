@@ -277,7 +277,7 @@ if ($searchCategoryProductOperator == 1) {
 		if (intval($searchCategoryProduct) == -2) {
 			$sqlCategoryProductNotExists  = " NOT EXISTS (";
 			$sqlCategoryProductNotExists .= " SELECT cp.fk_product";
-			$sqlCategoryProductNotExists .= " FROM ".$db->prefix()."categorie_product AS cp";
+			$sqlCategoryProductNotExists .= " FROM ".MAIN_DB_PREFIX."categorie_product AS cp";
 			$sqlCategoryProductNotExists .= " WHERE cp.fk_product = t.fk_product";
 			$sqlCategoryProductNotExists .= " )";
 			$searchCategoryProductSqlList[] = $sqlCategoryProductNotExists;
@@ -288,7 +288,7 @@ if ($searchCategoryProductOperator == 1) {
 	if (!empty($existsCategoryProductList)) {
 		$sqlCategoryProductExists = " EXISTS (";
 		$sqlCategoryProductExists .= " SELECT cp.fk_product";
-		$sqlCategoryProductExists .= " FROM ".$db->prefix()."categorie_product AS cp";
+		$sqlCategoryProductExists .= " FROM ".MAIN_DB_PREFIX."categorie_product AS cp";
 		$sqlCategoryProductExists .= " WHERE cp.fk_product = t.fk_product";
 		$sqlCategoryProductExists .= " AND cp.fk_categorie IN (".$db->sanitize(implode(',', $existsCategoryProductList)).")";
 		$sqlCategoryProductExists .= " )";
@@ -302,12 +302,12 @@ if ($searchCategoryProductOperator == 1) {
 		if (intval($searchCategoryProduct) == -2) {
 			$sqlCategoryProductNotExists = " NOT EXISTS (";
 			$sqlCategoryProductNotExists .= " SELECT cp.fk_product";
-			$sqlCategoryProductNotExists .= " FROM ".$db->prefix()."categorie_product AS cp";
+			$sqlCategoryProductNotExists .= " FROM ".MAIN_DB_PREFIX."categorie_product AS cp";
 			$sqlCategoryProductNotExists .= " WHERE cp.fk_product = t.fk_product";
 			$sqlCategoryProductNotExists .= " )";
 			$searchCategoryProductSqlList[] = $sqlCategoryProductNotExists;
 		} elseif (intval($searchCategoryProduct) > 0) {
-			$searchCategoryProductSqlList[] = "t.fk_product IN (SELECT fk_product FROM ".$db->prefix()."categorie_product WHERE fk_categorie = ".((int) $searchCategoryProduct).")";
+			$searchCategoryProductSqlList[] = "t.fk_product IN (SELECT fk_product FROM ".MAIN_DB_PREFIX."categorie_product WHERE fk_categorie = ".((int) $searchCategoryProduct).")";
 		}
 	}
 	if (!empty($searchCategoryProductSqlList)) {
