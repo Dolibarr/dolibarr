@@ -27,6 +27,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/inventory/class/inventory.class.php';
+if (!empty($conf->categorie->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array("stocks", "other"));
@@ -88,6 +91,13 @@ foreach ($object->fields as $key => $val) {
 		$search[$key.'_dtend'] = dol_mktime(23, 59, 59, GETPOST('search_'.$key.'_dtendmonth', 'int'), GETPOST('search_'.$key.'_dtendday', 'int'), GETPOST('search_'.$key.'_dtendyear', 'int'));
 	}
 }
+$searchCategoryProductOperator = 0;
+if (GETPOSTISSET('formfilteraction')) {
+	$searchCategoryProductOperator = GETPOST('search_category_product_operator', 'int');
+} elseif (!empty($conf->global->MAIN_SEARCH_CAT_OR_BY_DEFAULT)) {
+	$searchCategoryProductOperator = $conf->global->MAIN_SEARCH_CAT_OR_BY_DEFAULT;
+}
+$searchCategoryProductList = GETPOST('search_category_product_list', 'array');
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array();
@@ -166,6 +176,7 @@ if (empty($reshook)) {
 				$search[$key.'_dtend'] = '';
 			}
 		}
+		$searchCategoryProductList = array();
 		$toselect = array();
 		$search_array_options = array();
 	}
@@ -259,6 +270,50 @@ foreach ($search as $key => $val) {
 if ($search_all) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 }
+$searchCategoryProductSqlList = array();
+if ($searchCategoryProductOperator == 1) {
+	$existsCategoryProductList = array();
+	foreach ($searchCategoryProductList as $searchCategoryProduct) {
+		if (intval($searchCategoryProduct) == -2) {
+			$sqlCategoryProductNotExists  = " NOT EXISTS (";
+			$sqlCategoryProductNotExists .= " SELECT cp.fk_product";
+			$sqlCategoryProductNotExists .= " FROM ".$db->prefix()."categorie_product AS cp";
+			$sqlCategoryProductNotExists .= " WHERE cp.fk_product = t.fk_product";
+			$sqlCategoryProductNotExists .= " )";
+			$searchCategoryProductSqlList[] = $sqlCategoryProductNotExists;
+		} elseif (intval($searchCategoryProduct) > 0) {
+			$existsCategoryProductList[] = $db->escape($searchCategoryProduct);
+		}
+	}
+	if (!empty($existsCategoryProductList)) {
+		$sqlCategoryProductExists = " EXISTS (";
+		$sqlCategoryProductExists .= " SELECT cp.fk_product";
+		$sqlCategoryProductExists .= " FROM ".$db->prefix()."categorie_product AS cp";
+		$sqlCategoryProductExists .= " WHERE cp.fk_product = t.fk_product";
+		$sqlCategoryProductExists .= " AND cp.fk_categorie IN (".implode(",", $existsCategoryProductList).")";
+		$sqlCategoryProductExists .= " )";
+		$searchCategoryProductSqlList[] = $sqlCategoryProductExists;
+	}
+	if (!empty($searchCategoryProductSqlList)) {
+		$sql .= " AND (".implode(' OR ', $searchCategoryProductSqlList).")";
+	}
+} else {
+	foreach ($searchCategoryProductList as $searchCategoryProduct) {
+		if (intval($searchCategoryProduct) == -2) {
+			$sqlCategoryProductNotExists = " NOT EXISTS (";
+			$sqlCategoryProductNotExists .= " SELECT cp.fk_product";
+			$sqlCategoryProductNotExists .= " FROM ".$db->prefix()."categorie_product AS cp";
+			$sqlCategoryProductNotExists .= " WHERE cp.fk_product = t.fk_product";
+			$sqlCategoryProductNotExists .= " )";
+			$searchCategoryProductSqlList[] = $sqlCategoryProductNotExists;
+		} elseif (intval($searchCategoryProduct) > 0) {
+			$searchCategoryProductSqlList[] = "t.fk_product IN (SELECT fk_product FROM ".$db->prefix()."categorie_product WHERE fk_categorie = ".((int) $searchCategoryProduct).")";
+		}
+	}
+	if (!empty($searchCategoryProductSqlList)) {
+		$sql .= " AND (".implode(' AND ', $searchCategoryProductSqlList).")";
+	}
+}
 //$sql.= dolSqlDateFilter("t.field", $search_xxxday, $search_xxxmonth, $search_xxxyear);
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
@@ -348,6 +403,9 @@ foreach ($search as $key => $val) {
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
 }
+foreach ($searchCategoryProductList as $searchCategoryProduct) {
+	$param .= "&search_category_product_list[]=".urlencode($searchCategoryProduct);
+}
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 // Add $param from hooks
@@ -404,6 +462,17 @@ $moreforfilter = '';
 /*$moreforfilter.='<div class="divsearchfield">';
 $moreforfilter.= $langs->trans('MyFilter') . ': <input type="text" name="search_myfield" value="'.dol_escape_htmltag($search_myfield).'">';
 $moreforfilter.= '</div>';*/
+
+// Filter on categories
+if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire) {
+	$moreforfilter .= '<div class="divsearchfield">';
+	$moreforfilter .= img_picto($langs->trans('Categories'), 'category', 'class="pictofixedwidth"');
+	$categoriesProductArr = $form->select_all_categories(Categorie::TYPE_PRODUCT, '', '', 64, 0, 1);
+	$categoriesProductArr[-2] = '- '.$langs->trans('NotCategorized').' -';
+	$moreforfilter .= Form::multiselectarray('search_category_product_list', $categoriesProductArr, $searchCategoryProductList, 0, 0, 'minwidth300');
+	$moreforfilter .= ' <input type="checkbox" class="valignmiddle" id="search_category_product_operator" name="search_category_product_operator" value="1"'.($searchCategoryProductOperator == 1 ? ' checked="checked"' : '').'/><label class="none valignmiddle" for="search_category_product_operator">'.$langs->trans('UseOrOperatorForCategories').'</label>';
+	$moreforfilter .= '</div>';
+}
 
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object); // Note that $action and $object may have been modified by hook
