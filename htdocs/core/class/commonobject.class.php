@@ -6463,6 +6463,9 @@ abstract class CommonObject
 		} elseif (preg_match('/^(sellist):(.*):(.*)/i', $val['type'], $reg)) {
 			$param['options'] = array($reg[2].':'.$reg[3] => 'N');
 			$type = 'sellist';
+		} elseif (preg_match('/^chkbxlst:(.*)/i', $val['type'], $reg)) {
+			$param['options'] = array($reg[1] => 'N');
+			$type = 'chkbxlst';
 		} elseif (preg_match('/varchar\((\d+)\)/', $val['type'], $reg)) {
 			$param['options'] = array();
 			$type = 'varchar';
@@ -6907,7 +6910,7 @@ abstract class CommonObject
 					}
 					$this->db->free($resql);
 
-					$out = $form->multiselectarray($keyprefix.$key.$keysuffix, $data, $value_arr, '', 0, '', 0, '100%');
+					$out = $form->multiselectarray($keyprefix.$key.$keysuffix, $data, $value_arr, '', 0, $morecss, 0, '100%');
 				} else {
 					print 'Error in request '.$sql.' '.$this->db->lasterror().'. Check setup of extra parameters.<br>';
 				}
@@ -7062,6 +7065,9 @@ abstract class CommonObject
 		} elseif (preg_match('/^sellist:(.*):(.*)/i', $val['type'], $reg)) {
 			$param['options'] = array($reg[1].':'.$reg[2] => 'N');
 			$type = 'sellist';
+		} elseif (preg_match('/^chkbxlst:(.*)/i', $val['type'], $reg)) {
+			$param['options'] = array($reg[1] => 'N');
+			$type = 'chkbxlst';
 		}
 
 		$langfile = empty($val['langfile']) ? '' : $val['langfile'];
