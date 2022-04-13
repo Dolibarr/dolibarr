@@ -1301,7 +1301,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 	$(document).ready(function () { 
 		$('#name').select2({
 			ajax: {
-			  url: '/htdocs/core/ajax/ajaxcompanies.php',
+			  url: '<?php print DOL_URL_ROOT; ?>/core/ajax/ajaxcompanies.php',
 			  dataType: 'json',
 			  delay: 250,
 			  data: function (params) {
@@ -1330,13 +1330,22 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		function formatCustomer (Customer) {
 			
-			if (Customer.loading) {
+			if(Customer.label === undefined) {
 				return Customer.text;
 			}
 
+			var logo = '';
+			if(Customer.logo !== undefined) {
+				logo = "<img src='";
+				logo += "<?php print DOL_URL_ROOT; ?>/viewimage.php?modulepart=societe&amp;entity=1&amp;file=" + Customer.key + "%2Flogos%2Fthumbs%2F" + Customer.logo.replace('.', '_mini.') + "&amp;cache=0";
+				logo += "' /></div>";
+			} else {
+				logo = '<div class="photosociete photowithmargin photoref" alt="No photo" "=""><span class="fas fa-building" style=" color: #6c6aa8;"></span></div>';
+			}
+
 			var $container = $("<div class='select2-result-repository clearfix'>" +
-				 "<div class='select2-result-repository__avatar'><img src='" + Customer.label + "' /></div>" +
-				  "<div class='select2-result-repository__meta'>" +
+				 "<div class='select2-result-repository__avatar floatleft inline-block valigntop'>" + logo +
+				  "<div class='select2-result-repository__meta floatleft inline-block valigntop'>" +
 					"<div class='select2-result-repository__title'></div>" +
 					"<div class='select2-result-repository__name_alias'></div>" +
 					"<div class='select2-result-repository__code_client'></div>" +
