@@ -931,7 +931,7 @@ if ($showbirthday) {
 	$sql = 'SELECT sp.rowid, sp.lastname, sp.firstname, sp.birthday';
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'socpeople as sp';
 	$sql .= ' WHERE (priv=0 OR (priv=1 AND fk_user_creat='.((int) $user->id).'))';
-	$sql .= " AND sp.entity IN (".getEntity('socpeople').")";
+	$sql .= " AND sp.entity IN (".getEntity('contact').")";
 	if ($mode == 'show_day') {
 		$sql .= ' AND MONTH(birthday) = '.((int) $month);
 		$sql .= ' AND DAY(birthday) = '.((int) $day);
@@ -1033,8 +1033,8 @@ if ($resql) {
 		$event->type = 'holiday';
 		$event->type_picto = 'holiday';
 
-		$event->datep                   = $db->jdate($obj->date_start);
-		$event->datef                   = $db->jdate($obj->date_end);
+		$event->datep                   = $db->jdate($obj->date_start) + (empty($halfday) || $halfday == 1 ? 0 : 12 * 60 * 60 - 1);
+		$event->datef                   = $db->jdate($obj->date_end) + (empty($halfday) || $halfday == -1 ? 24 : 12) * 60 * 60 - 1;
 		$event->date_start_in_calendar  = $event->datep;
 		$event->date_end_in_calendar    = $event->datef;
 

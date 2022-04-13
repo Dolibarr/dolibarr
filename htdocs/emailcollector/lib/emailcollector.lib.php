@@ -87,9 +87,10 @@ function emailcollectorPrepareHead($object)
 }
 
 /**
- * Récupère les parties d'un message
- * @param object $structure structure du message
- * @return object|boolean parties du message|false en cas d'erreur
+ * Get parts of a message
+ *
+ * @param 	object 			$structure 		Structure of message
+ * @return 	object|boolean 					Parties du message|false en cas d'erreur
  */
 function getParts($structure)
 {
@@ -97,9 +98,10 @@ function getParts($structure)
 }
 
 /**
- * Tableau définissant la pièce jointe
- * @param object $part partie du message
- * @return object|boolean définition du message|false en cas d'erreur
+ * Array with joined files
+ *
+ * @param 	object 			$part 		Part of message
+ * @return 	object|boolean 				Definition of message|false en cas d'erreur
  */
 function getDParameters($part)
 {
@@ -107,10 +109,11 @@ function getDParameters($part)
 }
 
 /**
- * Récupère les pièces d'un mail donné
- * @param integer $jk numéro du mail
- * @param object $mbox object connection imaap
- * @return array type, filename, pos
+ * Get attachments of a given mail
+ *
+ * @param 	integer $jk 	Number of email
+ * @param 	object 	$mbox 	object connection imaap
+ * @return 	array 			type, filename, pos
  */
 function getAttachments($jk, $mbox)
 {
@@ -140,7 +143,8 @@ function getAttachments($jk, $mbox)
 }
 
 /**
- * Récupère la contenu de la pièce jointe par rapport a sa position dans un mail donné
+ * Get content of a joined file from its position into a given email
+ *
  * @param integer $jk numéro du mail
  * @param integer $fpos position de la pièce jointe
  * @param integer $type type de la pièce jointe
@@ -156,11 +160,12 @@ function getFileData($jk, $fpos, $type, $mbox)
 }
 
 /**
- * Sauvegarde de la pièce jointe dans le dossier défini avec un nom unique
- * @param string $path chemin de sauvegarde dui fichier
- * @param string $filename nom du fichier
- * @param mixed $data contenu à sauvegarder
- * @return string emplacement du fichier
+ * Save joined file into a directory with a given name
+ *
+ * @param 	string 		$path 		Path to file
+ * @param 	string 		$filename 	Name of file
+ * @param 	mixed 		$data 		contenu à sauvegarder
+ * @return 	string 					emplacement du fichier
  **/
 function saveAttachment($path, $filename, $data)
 {
@@ -186,10 +191,11 @@ function saveAttachment($path, $filename, $data)
 }
 
 /**
- * Décode le contenu du message
- * @param string $message message
- * @param integer $coding type de contenu
- * @return message décodé
+ * Decode content of a message
+ *
+ * @param 	string 		$message 	Message
+ * @param 	integer 	$coding 	Type of content
+ * @return 	string					Decoded message
  **/
 function getDecodeValue($message, $coding)
 {

@@ -95,6 +95,8 @@ if (GETPOST('roworder', 'alpha', 3) && GETPOST('table_element_line', 'aZ09', 3)
 		$perm = 1;
 	} elseif ($table_element_line == 'facture_fourn_det_rec' && $user->rights->fournisseur->facture->creer) {
 		$perm = 1;
+	} elseif ($table_element_line == 'product_attribute_value' && $fk_element == 'fk_product_attribute' && ($user->rights->produit->lire || $user->rights->service->lire)) {
+		$perm = 1;
 	} elseif ($table_element_line == 'ecm_files') {		// Used when of page "documents.php"
 		if (!empty($user->rights->ecm->creer)) {
 			$perm = 1;

@@ -73,18 +73,18 @@ class Societe extends CommonObject
 	 * @var array	List of child tables. To test if we can delete object.
 	 */
 	protected $childtables = array(
-		"supplier_proposal" => 'SupplierProposal',
-		"propal" => 'Proposal',
-		"commande" => 'Order',
-		"facture" => 'Invoice',
-		"facture_rec" => 'RecurringInvoiceTemplate',
-		"contrat" => 'Contract',
-		"fichinter" => 'Fichinter',
-		"facture_fourn" => 'SupplierInvoice',
-		"commande_fournisseur" => 'SupplierOrder',
-		"projet" => 'Project',
-		"expedition" => 'Shipment',
-		"prelevement_lignes" => 'DirectDebitRecord',
+		'supplier_proposal' => array('name' => 'SupplierProposal'),
+		'propal' => array('name' => 'Proposal'),
+		'commande' => array('name' => 'Order'),
+		'facture' => array('name' => 'Invoice'),
+		'facture_rec' => array('name' => 'RecurringInvoiceTemplate'),
+		'contrat' => array('name' => 'Contract'),
+		'fichinter' => array('name' => 'Fichinter'),
+		'facture_fourn' => array('name' => 'SupplierInvoice'),
+		'commande_fournisseur' => array('name' => 'SupplierOrder'),
+		'projet' => array('name' => 'Project'),
+		'expedition' => array('name' => 'Shipment'),
+		'prelevement_lignes' => array('name' => 'DirectDebitRecord'),
 	);
 
 	/**
@@ -92,22 +92,22 @@ class Societe extends CommonObject
 	 *               if name like with @ClassName:FilePathClass:ParentFkFieldName' it will call method deleteByParentField (with parentId as parameters) and FieldName to fetch and delete child object
 	 */
 	protected $childtablesoncascade = array(
-		"societe_prices",
-		"societe_address",
-		"product_fournisseur_price",
-		"product_customer_price_log",
-		"product_customer_price",
-		"@Contact:/contact/class/contact.class.php:fk_soc",
-		"adherent",
-		"societe_account",
-		"societe_rib",
-		"societe_remise",
-		"societe_remise_except",
-		"societe_commerciaux",
-		"categorie",
-		"notify",
-		"notify_def",
-		"actioncomm",
+		'societe_prices',
+		'societe_address',
+		'product_fournisseur_price',
+		'product_customer_price_log',
+		'product_customer_price',
+		'@Contact:/contact/class/contact.class.php:fk_soc',
+		'adherent',
+		'societe_account',
+		'societe_rib',
+		'societe_remise',
+		'societe_remise_except',
+		'societe_commerciaux',
+		'categorie',
+		'notify',
+		'notify_def',
+		'actioncomm',
 	);
 
 	/**
@@ -193,8 +193,8 @@ class Societe extends CommonObject
 		'tva_intra' =>array('type'=>'varchar(20)', 'label'=>'Tva intra', 'enabled'=>1, 'visible'=>-1, 'position'=>210),
 		'capital' =>array('type'=>'double(24,8)', 'label'=>'Capital', 'enabled'=>1, 'visible'=>-1, 'position'=>215),
 		'fk_stcomm' =>array('type'=>'integer', 'label'=>'CommercialStatus', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>220),
-		'note_private' =>array('type'=>'text', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>225),
-		'note_public' =>array('type'=>'text', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>0, 'position'=>230),
+		'note_public' =>array('type'=>'text', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>225),
+		'note_private' =>array('type'=>'text', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>0, 'position'=>230),
 		'prefix_comm' =>array('type'=>'varchar(5)', 'label'=>'Prefix comm', 'enabled'=>'$conf->global->SOCIETE_USEPREFIX', 'visible'=>-1, 'position'=>235),
 		'client' =>array('type'=>'tinyint(4)', 'label'=>'Client', 'enabled'=>1, 'visible'=>-1, 'position'=>240),
 		'fournisseur' =>array('type'=>'tinyint(4)', 'label'=>'Fournisseur', 'enabled'=>1, 'visible'=>-1, 'position'=>245),
@@ -1450,11 +1450,13 @@ class Societe extends CommonObject
 
 			$sql .= ",prefix_comm = ".(!empty($this->prefix_comm) ? "'".$this->db->escape($this->prefix_comm)."'" : "null");
 
-			$sql .= ",fk_effectif = ".(!empty($this->effectif_id) ? "'".$this->db->escape($this->effectif_id)."'" : "null");
+			$sql .= ",fk_effectif = ".($this->effectif_id > 0 ? ((int) $this->effectif_id) : "null");
 			if (isset($this->stcomm_id)) {
-				$sql .= ",fk_stcomm=".(!empty($this->stcomm_id) ? $this->stcomm_id : "0");
+				$sql .= ",fk_stcomm=".($this->stcomm_id > 0 ? ((int) $this->stcomm_id) : "0");
 			}
-			$sql .= ",fk_typent = ".(!empty($this->typent_id) ? "'".$this->db->escape($this->typent_id)."'" : "0");
+			if (isset($this->typent_id)) {
+				$sql .= ",fk_typent = ".($this->typent_id > 0 ? ((int) $this->typent_id) : "0");
+			}
 
 			$sql .= ",fk_forme_juridique = ".(!empty($this->forme_juridique_code) ? "'".$this->db->escape($this->forme_juridique_code)."'" : "null");
 
@@ -3459,6 +3461,37 @@ class Societe extends CommonObject
 			return $sameparent;
 		} else {
 			return -1;
+		}
+	}
+
+	/**
+	 *	Get parents for company
+	 *
+	 * @param   int         $company_id     ID of company to search parent
+	 * @param   array       $parents        List of companies ID found
+	 * @return	array
+	 */
+	public function getParentsForCompany($company_id, $parents = [])
+	{
+		global $langs;
+
+		if ($company_id > 0) {
+			$sql = "SELECT parent FROM " . MAIN_DB_PREFIX . "societe WHERE rowid = $company_id";
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				if ($obj = $this->db->fetch_object($resql)) {
+					$parent = $obj->parent;
+					if ($parent > 0 && !in_array($parent, $parents)) {
+						$parents[] = $parent;
+						return $this->getParentsForCompany($parent, $parents);
+					} else {
+						return $parents;
+					}
+				}
+				$this->db->free($resql);
+			} else {
+				setEventMessage($langs->trans('GetCompanyParentsError', $this->db->lasterror()), 'errors');
+			}
 		}
 	}
 

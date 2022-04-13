@@ -216,7 +216,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	// Save quantity found during inventory
+	// Save quantity found during inventory (when we click on Save button on inventory page)
 	if ($action =='updateinventorylines' && $permissiontoadd) {
 		$sql = 'SELECT id.rowid, id.datec as date_creation, id.tms as date_modification, id.fk_inventory, id.fk_warehouse,';
 		$sql .= ' id.fk_product, id.batch, id.qty_stock, id.qty_view, id.qty_regulated';
@@ -235,6 +235,9 @@ if (empty($reshook)) {
 			while ($i < $num) {
 				$line = $db->fetch_object($resql);
 				$lineid = $line->rowid;
+
+				$result = 0;
+				$resultupdate = 0;
 
 				if (GETPOST("id_".$lineid, 'alpha') != '') {		// If a value was set ('0' or something else)
 					$qtytoupdate = price2num(GETPOST("id_".$lineid, 'alpha'), 'MS');
@@ -265,7 +268,7 @@ if (empty($reshook)) {
 			}
 		}
 
-		// Update line with id of stock movement (and the start quantity if it has changed this last recording)
+		// Update user that update quantities
 		if (! $error) {
 			$sqlupdate = "UPDATE ".MAIN_DB_PREFIX."inventory";
 			$sqlupdate .= " SET fk_user_modif = ".((int) $user->id);
@@ -304,6 +307,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';*/
 
 	if (GETPOST('addline', 'alpha')) {
+		$qty= (GETPOST('qtytoadd') != '' ? price2num(GETPOST('qtytoadd', 'MS')) : null);
 		if ($fk_warehouse <= 0) {
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Warehouse")), null, 'errors');
@@ -320,12 +324,17 @@ if (empty($reshook)) {
 			$tmpproduct = new Product($db);
 			$result = $tmpproduct->fetch($fk_product);
 
-			if (!$error && $tmpproduct->status_batch && !$batch) {
+			if (empty($error) && $tmpproduct->status_batch>0 && empty($batch)) {
 				$error++;
 				$langs->load("errors");
 				setEventMessages($langs->trans("ErrorProductNeedBatchNumber", $tmpproduct->ref), null, 'errors');
 			}
-			if (!$error && !$tmpproduct->status_batch && $batch) {
+			if (empty($error) && $tmpproduct->status_batch==2 && !empty($batch) && $qty>1) {
+				$error++;
+				$langs->load("errors");
+				setEventMessages($langs->trans("TooManyQtyForSerialNumber", $tmpproduct->ref, $batch), null, 'errors');
+			}
+			if (empty($error) && empty($tmpproduct->status_batch) && !empty($batch)) {
 				$error++;
 				$langs->load("errors");
 				setEventMessages($langs->trans("ErrorProductDoesNotNeedBatchNumber", $tmpproduct->ref), null, 'errors');
@@ -338,7 +347,7 @@ if (empty($reshook)) {
 			$tmp->fk_product = $fk_product;
 			$tmp->batch = $batch;
 			$tmp->datec = $now;
-			$tmp->qty_view = (GETPOST('qtytoadd') != '' ? price2num(GETPOST('qtytoadd', 'MS')) : null);
+			$tmp->qty_view = $qty;
 
 			$result = $tmp->create($user);
 			if ($result < 0) {

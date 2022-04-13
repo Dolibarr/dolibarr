@@ -156,8 +156,8 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'name' => 'Products',
 		'link' => '/product/index.php?mainmenu=products&amp;leftmenu=',
 		'title' => (!empty($conf->product->enabled) && !empty($conf->service->enabled))
-					? (array("TMenuProducts", " | ", "TMenuServices"))
-					: (!empty($conf->product->enabled) ? "TMenuProducts" : "TMenuServices"),
+		? (array("TMenuProducts", " | ", "TMenuServices"))
+		: (!empty($conf->product->enabled) ? "TMenuProducts" : "TMenuServices"),
 		'level' => 0,
 		'enabled' => $showmode = isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal),
 		'target' => $atarget,
@@ -232,7 +232,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 			|| !empty($conf->supplier_order->enabled)
 			|| !empty($conf->contrat->enabled)
 			|| !empty($conf->ficheinter->enabled)
-		) ? 1 : 0,
+			) ? 1 : 0,
 		'perms'=>(!empty($user->rights->propal->lire)
 			|| !empty($user->rights->commande->lire)
 			|| !empty($user->rights->supplier_proposal->lire)
@@ -241,17 +241,17 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 			|| !empty($user->rights->supplier_order->lire)
 			|| !empty($user->rights->contrat->lire)
 			|| !empty($user->rights->ficheinter->lire)
-		),
+			),
 		'module'=>'propal|commande|supplier_proposal|supplier_order|contrat|ficheinter'
 	);
 
 	$onlysupplierorder = !empty($user->rights->fournisseur->commande->lire) &&
-		empty($user->rights->propal->lire) &&
-		empty($user->rights->commande->lire) &&
-		empty($user->rights->supplier_order->lire) &&
-		empty($user->rights->supplier_proposal->lire) &&
-		empty($user->rights->contrat->lire) &&
-		empty($user->rights->ficheinter->lire);
+	empty($user->rights->propal->lire) &&
+	empty($user->rights->commande->lire) &&
+	empty($user->rights->supplier_order->lire) &&
+	empty($user->rights->supplier_proposal->lire) &&
+	empty($user->rights->contrat->lire) &&
+	empty($user->rights->ficheinter->lire);
 
 	$menu_arr[] = array(
 		'name' => 'Commercial',
@@ -524,7 +524,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 			$idsel,
 			$classname,
 			$newTabMenu[$i]['prefix']
-		);
+			);
 	}
 
 	// Sort on position
@@ -544,9 +544,9 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		if (!empty($mysoc->logo_squarred_mini) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_squarred_mini)) {
 			$urllogo = DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_squarred_mini);
 			/*} elseif (! empty($mysoc->logo_mini) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_mini))
-			{
-				$urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_mini);
-			}*/
+			 {
+			 $urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_mini);
+			 }*/
 		} else {
 			$urllogo = DOL_URL_ROOT.'/theme/dolibarr_512x512_white.png';
 			$logoContainerAdditionalClass = '';
@@ -798,7 +798,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 
 		/*
 		 * Menu HRM
-		*/
+		 */
 		if ($mainmenu == 'hrm') {
 			get_left_menu_hrm($mainmenu, $newmenu, $usemenuhider, $leftmenu, $type_user);
 		}
@@ -881,13 +881,13 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 	// TODO Use the position property in menu_array to reorder the $menu_array
 	//var_dump($menu_array);
 	/*$new_menu_array = array();
-	$level=0; $cusor=0; $position=0;
-	$nbentry = count($menu_array);
-	while (findNextEntryForLevel($menu_array, $cursor, $position, $level))
-	{
+	 $level=0; $cusor=0; $position=0;
+	 $nbentry = count($menu_array);
+	 while (findNextEntryForLevel($menu_array, $cursor, $position, $level))
+	 {
 
-		$cursor++;
-	}*/
+	 $cursor++;
+	 }*/
 
 	// Show menu
 	$invert = empty($conf->global->MAIN_MENU_INVERT) ? "" : "invert";
@@ -1046,11 +1046,11 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 /**
  * Get left Menu HOME
  *
- * @param	string		$mainmenu
- * @param	Menu 		&$newmenu	Object Menu to return back list of menu entries
- * @param	string 		$usemenuhider
- * @param	string 		$leftmenu
- * @param	int 		$type_user
+ * @param	string		$mainmenu		Main menu
+ * @param	Menu 		$newmenu		Object Menu to return back list of menu entries
+ * @param	string 		$usemenuhider	Use menu hider
+ * @param	string 		$leftmenu		Left menu
+ * @param	int 		$type_user		Type of user
  * @return	void
  */
 function get_left_menu_home($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu = 'none', $type_user = 0)
@@ -1165,11 +1165,11 @@ function get_left_menu_home($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu =
 /**
  * Get left Menu THIRDPARTIES
  *
- * @param	string		$mainmenu
- * @param	Menu 		&$newmenu	Object Menu to return back list of menu entries
- * @param	string 		$usemenuhider
- * @param	string 		$leftmenu
- * @param	int 		$type_user
+ * @param	string		$mainmenu		Main menu
+ * @param	Menu 		$newmenu		Object Menu to return back list of menu entries
+ * @param	string 		$usemenuhider	Use menu hider
+ * @param	string 		$leftmenu		Left menu
+ * @param	int 		$type_user		Type of targeted user for menu
  * @return	void
  */
 function get_left_menu_thridparties($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu = 'none', $type_user = 0)
@@ -1197,12 +1197,12 @@ function get_left_menu_thridparties($mainmenu, &$newmenu, $usemenuhider = 1, $le
 			$langs->load("commercial");
 			$newmenu->add("/societe/list.php?type=p&amp;leftmenu=prospects", $langs->trans("ListProspectsShort"), 2, $user->rights->societe->lire, '', $mainmenu, 'prospects');
 			/* no more required, there is a filter that can do more
-			if ($usemenuhider || empty($leftmenu) || $leftmenu=="prospects") $newmenu->add("/societe/list.php?type=p&amp;sortfield=s.datec&amp;sortorder=desc&amp;begin=&amp;search_stcomm=-1", $langs->trans("LastProspectDoNotContact"), 2, $user->rights->societe->lire);
-			if ($usemenuhider || empty($leftmenu) || $leftmenu=="prospects") $newmenu->add("/societe/list.php?type=p&amp;sortfield=s.datec&amp;sortorder=desc&amp;begin=&amp;search_stcomm=0", $langs->trans("LastProspectNeverContacted"), 2, $user->rights->societe->lire);
-			if ($usemenuhider || empty($leftmenu) || $leftmenu=="prospects") $newmenu->add("/societe/list.php?type=p&amp;sortfield=s.datec&amp;sortorder=desc&amp;begin=&amp;search_stcomm=1", $langs->trans("LastProspectToContact"), 2, $user->rights->societe->lire);
-			if ($usemenuhider || empty($leftmenu) || $leftmenu=="prospects") $newmenu->add("/societe/list.php?type=p&amp;sortfield=s.datec&amp;sortorder=desc&amp;begin=&amp;search_stcomm=2", $langs->trans("LastProspectContactInProcess"), 2, $user->rights->societe->lire);
-			if ($usemenuhider || empty($leftmenu) || $leftmenu=="prospects") $newmenu->add("/societe/list.php?type=p&amp;sortfield=s.datec&amp;sortorder=desc&amp;begin=&amp;search_stcomm=3", $langs->trans("LastProspectContactDone"), 2, $user->rights->societe->lire);
-			*/
+			 if ($usemenuhider || empty($leftmenu) || $leftmenu=="prospects") $newmenu->add("/societe/list.php?type=p&amp;sortfield=s.datec&amp;sortorder=desc&amp;begin=&amp;search_stcomm=-1", $langs->trans("LastProspectDoNotContact"), 2, $user->rights->societe->lire);
+			 if ($usemenuhider || empty($leftmenu) || $leftmenu=="prospects") $newmenu->add("/societe/list.php?type=p&amp;sortfield=s.datec&amp;sortorder=desc&amp;begin=&amp;search_stcomm=0", $langs->trans("LastProspectNeverContacted"), 2, $user->rights->societe->lire);
+			 if ($usemenuhider || empty($leftmenu) || $leftmenu=="prospects") $newmenu->add("/societe/list.php?type=p&amp;sortfield=s.datec&amp;sortorder=desc&amp;begin=&amp;search_stcomm=1", $langs->trans("LastProspectToContact"), 2, $user->rights->societe->lire);
+			 if ($usemenuhider || empty($leftmenu) || $leftmenu=="prospects") $newmenu->add("/societe/list.php?type=p&amp;sortfield=s.datec&amp;sortorder=desc&amp;begin=&amp;search_stcomm=2", $langs->trans("LastProspectContactInProcess"), 2, $user->rights->societe->lire);
+			 if ($usemenuhider || empty($leftmenu) || $leftmenu=="prospects") $newmenu->add("/societe/list.php?type=p&amp;sortfield=s.datec&amp;sortorder=desc&amp;begin=&amp;search_stcomm=3", $langs->trans("LastProspectContactDone"), 2, $user->rights->societe->lire);
+			 */
 			$newmenu->add("/societe/card.php?leftmenu=prospects&amp;action=create&amp;type=p", $langs->trans("MenuNewProspect"), 3, $user->rights->societe->creer);
 		}
 
@@ -1270,11 +1270,11 @@ function get_left_menu_thridparties($mainmenu, &$newmenu, $usemenuhider = 1, $le
 /**
  * Get left Menu COMMERCIAL (propal, commande, supplier_proposal, supplier_order, contrat, ficheinter)
  *
- * @param	string		$mainmenu
- * @param	Menu 		&$newmenu	Object Menu to return back list of menu entries
- * @param	string 		$usemenuhider
- * @param	string 		$leftmenu
- * @param	int 		$type_user
+ * @param	string		$mainmenu		Main menu
+ * @param	Menu 		$newmenu		Object Menu to return back list of menu entries
+ * @param	string 		$usemenuhider	Use menu hider
+ * @param	string 		$leftmenu		Left menu
+ * @param	int 		$type_user		Type of targeted user for menu
  * @return	void
  */
 function get_left_menu_commercial($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu = 'none', $type_user = 0)
@@ -1386,11 +1386,11 @@ function get_left_menu_commercial($mainmenu, &$newmenu, $usemenuhider = 1, $left
 /**
  * Get left COMPTA-FINANCIAL
  *
- * @param	string		$mainmenu
- * @param	Menu 		&$newmenu	Object Menu to return back list of menu entries
- * @param	string 		$usemenuhider
- * @param	string 		$leftmenu
- * @param	int 		$type_user
+ * @param	string		$mainmenu		Main menu
+ * @param	Menu 		$newmenu		Object Menu to return back list of menu entries
+ * @param	string 		$usemenuhider	Use menu hider
+ * @param	string 		$leftmenu		Left menu
+ * @param	int 		$type_user		Type of targeted user for menu
  * @return	void
  */
 function get_left_menu_billing($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu = 'none', $type_user = 0)
@@ -1567,17 +1567,17 @@ function get_left_menu_billing($mainmenu, &$newmenu, $usemenuhider = 1, $leftmen
 /**
  * Get left COMPTA-FINANCIAL (accountancy)
  *
- * @param	string		$mainmenu
- * @param	Menu 		&$newmenu	Object Menu to return back list of menu entries
- * @param	string 		$usemenuhider
- * @param	string 		$leftmenu
- * @param	int 		$type_user
- * @param	DB 			$db
+ * @param	string		$mainmenu		Main menu
+ * @param	Menu 		$newmenu		Object Menu to return back list of menu entries
+ * @param	string 		$usemenuhider	Use menu hider
+ * @param	string 		$leftmenu		Left menu
+ * @param	int 		$type_user		Type of targeted user for menu
  * @return	void
  */
-function get_left_menu_accountancy($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu = 'none', $type_user = 0, $db)
+function get_left_menu_accountancy($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu = 'none', $type_user = 0)
 {
 	global $user, $conf, $langs;
+	global $db;
 
 	if ($mainmenu == 'accountancy') {
 		$langs->load("companies");
@@ -1679,7 +1679,7 @@ function get_left_menu_accountancy($mainmenu, &$newmenu, $usemenuhider = 1, $lef
 							if ($objp->nature == 3
 								&& ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_invoice->enabled))
 								&& empty($conf->global->ACCOUNTING_DISABLE_BINDING_ON_PURCHASES)) {
-								$nature = "purchases";
+									$nature = "purchases";
 							}
 							if ($objp->nature == 4 && !empty($conf->banque->enabled)) {
 								$nature = "bank";
@@ -1687,8 +1687,8 @@ function get_left_menu_accountancy($mainmenu, &$newmenu, $usemenuhider = 1, $lef
 							if ($objp->nature == 5 && !empty($conf->expensereport->enabled) && empty($conf->global->ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS)) {
 								$nature = "expensereports";
 							}
-							if ($objp->nature == 1) {
-								$nature = "various";
+							if ($objp->nature == 1 && !empty($conf->asset->enabled)) {
+								$nature = "various";	// Warning: The page /accountancy/journal/variousjournal.php is bugged. It read tables that does not exists.
 							}
 							if ($objp->nature == 8) {
 								$nature = "inventory";
@@ -1697,7 +1697,7 @@ function get_left_menu_accountancy($mainmenu, &$newmenu, $usemenuhider = 1, $lef
 								$nature = "hasnew";
 							}
 
-							// To enable when page exists
+								// To enable when page exists
 							if (empty($conf->global->ACCOUNTANCY_SHOW_DEVELOP_JOURNAL)) {
 								if ($nature == 'hasnew' || $nature == 'inventory') {
 									$nature = '';
@@ -1709,7 +1709,7 @@ function get_left_menu_accountancy($mainmenu, &$newmenu, $usemenuhider = 1, $lef
 								$journallabel = $langs->transnoentities($objp->label); // Labels in this table are set by loading llx_accounting_abc.sql. Label can be 'ACCOUNTING_SELL_JOURNAL', 'InventoryJournal', ...
 								$newmenu->add('/accountancy/journal/'.$nature.'journal.php?mainmenu=accountancy&leftmenu=accountancy_journal&id_journal='.$objp->rowid, $journallabel, 2, $user->rights->accounting->comptarapport->lire);
 							}
-							$i++;
+								$i++;
 						}
 					} else {
 						// Should not happend. Entries are added
@@ -1815,17 +1815,17 @@ function get_left_menu_accountancy($mainmenu, &$newmenu, $usemenuhider = 1, $lef
 				$newmenu->add("/compta/resultat/index.php?leftmenu=report", $langs->trans("MenuReportInOut"), 1, $user->rights->compta->resultat->lire);
 				$newmenu->add("/compta/resultat/clientfourn.php?leftmenu=report", $langs->trans("ByCompanies"), 2, $user->rights->compta->resultat->lire);
 				/* On verra ca avec module compabilite expert
-				$newmenu->add("/compta/resultat/compteres.php?leftmenu=report","Compte de resultat",2,$user->rights->compta->resultat->lire);
-				$newmenu->add("/compta/resultat/bilan.php?leftmenu=report","Bilan",2,$user->rights->compta->resultat->lire);
-				*/
+				 $newmenu->add("/compta/resultat/compteres.php?leftmenu=report","Compte de resultat",2,$user->rights->compta->resultat->lire);
+				 $newmenu->add("/compta/resultat/bilan.php?leftmenu=report","Bilan",2,$user->rights->compta->resultat->lire);
+				 */
 
 				/*
-				$newmenu->add("/compta/stats/cumul.php?leftmenu=report","Cumule",2,$user->rights->compta->resultat->lire);
-				if (! empty($conf->propal->enabled)) {
-					$newmenu->add("/compta/stats/prev.php?leftmenu=report","Previsionnel",2,$user->rights->compta->resultat->lire);
-					$newmenu->add("/compta/stats/comp.php?leftmenu=report","Transforme",2,$user->rights->compta->resultat->lire);
-				}
-				*/
+				 $newmenu->add("/compta/stats/cumul.php?leftmenu=report","Cumule",2,$user->rights->compta->resultat->lire);
+				 if (! empty($conf->propal->enabled)) {
+				 $newmenu->add("/compta/stats/prev.php?leftmenu=report","Previsionnel",2,$user->rights->compta->resultat->lire);
+				 $newmenu->add("/compta/stats/comp.php?leftmenu=report","Transforme",2,$user->rights->compta->resultat->lire);
+				 }
+				 */
 
 				$modecompta = 'CREANCES-DETTES';
 				$newmenu->add("/compta/stats/index.php?leftmenu=report&modecompta=".$modecompta, $langs->trans("ReportTurnover"), 1, $user->rights->compta->resultat->lire);
@@ -1846,11 +1846,11 @@ function get_left_menu_accountancy($mainmenu, &$newmenu, $usemenuhider = 1, $lef
 				$newmenu->add("/compta/stats/supplier_turnover_by_prodserv.php?leftmenu=accountancy_report&modecompta=".$modecompta, $langs->trans("ByProductsAndServices"), 2, $user->rights->compta->resultat->lire);
 
 				/*
-				$modecompta = 'RECETTES-DEPENSES';
-				$newmenu->add("/compta/stats/index.php?leftmenu=accountancy_report&modecompta=".$modecompta, $langs->trans("ReportPurchaseTurnoverCollected"), 1, $user->rights->compta->resultat->lire);
-				$newmenu->add("/compta/stats/casoc.php?leftmenu=accountancy_report&modecompta=".$modecompta, $langs->trans("ByCompanies"), 2, $user->rights->compta->resultat->lire);
-				$newmenu->add("/compta/stats/cabyuser.php?leftmenu=accountancy_report&modecompta=".$modecompta, $langs->trans("ByUsers"), 2, $user->rights->compta->resultat->lire);
-				*/
+				 $modecompta = 'RECETTES-DEPENSES';
+				 $newmenu->add("/compta/stats/index.php?leftmenu=accountancy_report&modecompta=".$modecompta, $langs->trans("ReportPurchaseTurnoverCollected"), 1, $user->rights->compta->resultat->lire);
+				 $newmenu->add("/compta/stats/casoc.php?leftmenu=accountancy_report&modecompta=".$modecompta, $langs->trans("ByCompanies"), 2, $user->rights->compta->resultat->lire);
+				 $newmenu->add("/compta/stats/cabyuser.php?leftmenu=accountancy_report&modecompta=".$modecompta, $langs->trans("ByUsers"), 2, $user->rights->compta->resultat->lire);
+				 */
 
 				// Journals
 				$newmenu->add("/compta/journal/sellsjournal.php?leftmenu=report", $langs->trans("SellsJournal"), 1, $user->rights->compta->resultat->lire, '', '', '', 50);
@@ -1886,11 +1886,11 @@ function get_left_menu_accountancy($mainmenu, &$newmenu, $usemenuhider = 1, $lef
 /**
  * Get left Menu BANK
  *
- * @param	string		$mainmenu
- * @param	Menu 		&$newmenu	Object Menu to return back list of menu entries
- * @param	string 		$usemenuhider
- * @param	string 		$leftmenu
- * @param	int 		$type_user
+ * @param	string		$mainmenu		Main menu
+ * @param	Menu 		$newmenu		Object Menu to return back list of menu entries
+ * @param	string 		$usemenuhider	Use menu hider
+ * @param	string 		$leftmenu		Left menu
+ * @param	int 		$type_user		Type of targeted user for menu
  * @return	void
  */
 function get_left_menu_bank($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu = 'none', $type_user = 0)
@@ -1969,11 +1969,11 @@ function get_left_menu_bank($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu =
 /**
  * Get left Menu PRODUCTS-SERVICES
  *
- * @param	string		$mainmenu
- * @param	Menu 		&$newmenu	Object Menu to return back list of menu entries
- * @param	string 		$usemenuhider
- * @param	string 		$leftmenu
- * @param	int 		$type_user
+ * @param	string		$mainmenu		Main menu
+ * @param	Menu 		$newmenu		Object Menu to return back list of menu entries
+ * @param	string 		$usemenuhider	Use menu hider
+ * @param	string 		$leftmenu		Left menu
+ * @param	int 		$type_user		Type of targeted user for menu
  * @return	void
  */
 function get_left_menu_products($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu = 'none', $type_user = 0)
@@ -2100,17 +2100,17 @@ function get_left_menu_products($mainmenu, &$newmenu, $usemenuhider = 1, $leftme
 /**
  * Get left Menu PRODUCTS-SERVICES MRP - GPAO
  *
- * @param	string		$mainmenu
- * @param	Menu 		&$newmenu	Object Menu to return back list of menu entries
- * @param	string 		$usemenuhider
- * @param	string 		$leftmenu
- * @param	int 		$type_user
+ * @param	string		$mainmenu		Main menu
+ * @param	Menu 		$newmenu		Object Menu to return back list of menu entries
+ * @param	string 		$usemenuhider	Use menu hider
+ * @param	string 		$leftmenu		Left menu
+ * @param	int 		$type_user		Type of targeted user for menu
  * @return	void
  */
 function get_left_menu_mrp($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu = 'none', $type_user = 0)
 {
 	global $user, $conf, $langs;
-	
+
 	if ($mainmenu == 'mrp') {
 		// BOM
 		if (!empty($conf->bom->enabled) || !empty($conf->mrp->enabled)) {
@@ -2134,17 +2134,17 @@ function get_left_menu_mrp($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu = 
 /**
  * Get left Menu PROJECTS
  *
- * @param	string		$mainmenu
- * @param	Menu 		&$newmenu	Object Menu to return back list of menu entries
- * @param	string 		$usemenuhider
- * @param	string 		$leftmenu
- * @param	int 		$type_user
+ * @param	string		$mainmenu		Main menu
+ * @param	Menu 		$newmenu		Object Menu to return back list of menu entries
+ * @param	string 		$usemenuhider	Use menu hider
+ * @param	string 		$leftmenu		Left menu
+ * @param	int 		$type_user		Type of targeted user for menu
  * @return	void
  */
 function get_left_menu_projects($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu = 'none', $type_user = 0)
 {
 	global $user, $conf, $langs;
-	
+
 	if ($mainmenu == 'project') {
 		if (!empty($conf->projet->enabled)) {
 			$langs->load("projects");
@@ -2208,11 +2208,11 @@ function get_left_menu_projects($mainmenu, &$newmenu, $usemenuhider = 1, $leftme
 /**
  * Get left Menu HRM
  *
- * @param	string		$mainmenu
- * @param	Menu 		&$newmenu	Object Menu to return back list of menu entries
- * @param	string 		$usemenuhider
- * @param	string 		$leftmenu
- * @param	int 		$type_user
+ * @param	string		$mainmenu		Main menu
+ * @param	Menu 		$newmenu		Object Menu to return back list of menu entries
+ * @param	string 		$usemenuhider	Use menu hider
+ * @param	string 		$leftmenu		Left menu
+ * @param	int 		$type_user		Type of targeted user for menu
  * @return	void
  */
 function get_left_menu_hrm($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu = 'none', $type_user = 0)
@@ -2228,30 +2228,28 @@ function get_left_menu_hrm($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu = 
 			$newmenu->add("/user/card.php?mainmenu=hrm&leftmenu=hrm&action=create&employee=1", $langs->trans("NewEmployee"), 1, $user->rights->user->user->creer);
 			$newmenu->add("/user/list.php?mainmenu=hrm&leftmenu=hrm&mode=employee&contextpage=employeelist", $langs->trans("List"), 1, $user->rights->user->user->lire);
 
-			$newmenu->add("/hrm/index.php?mainmenu=hrm&leftmenu=hrm_sm", $langs->trans("SkillsManagement"), 0, $user->rights->hrm->all->read, '', $mainmenu, 'hrm_sm', 0, '', '', '', img_picto('', 'user', 'class="pictofixedwidth"'));
+			$newmenu->add("/hrm/skill_list.php?mainmenu=hrm&leftmenu=hrm_sm", $langs->trans("SkillsManagement"), 0, $user->rights->hrm->all->read, '', $mainmenu, 'hrm_sm', 0, '', '', '', img_picto('', 'user', 'class="pictofixedwidth"'));
 
-			if ($usemenuhider || empty($leftmenu) || $leftmenu == "hrm_sm") {
-				// Skills
-				$newmenu->add("/hrm/skill_list.php?mainmenu=hrm&leftmenu=hrm_sm", $langs->trans("Skills"), 1, $user->rights->hrm->all->read, '', $mainmenu, 'hrm_sm', 0, '', '', '', img_picto('', 'shapes', 'class="pictofixedwidth"'));
-				//$newmenu->add("/hrm/skill_card.php?mainmenu=hrm&leftmenu=hrm_sm&action=create", $langs->trans("NewSkill"), 1, $user->rights->hrm->all->write);
-				//$newmenu->add("/hrm/skill_list.php?mainmenu=hrm&leftmenu=hrm_sm", $langs->trans("List"), 1, $user->rights->hrm->all->read);
+			// Skills
+			$newmenu->add("/hrm/skill_list.php?mainmenu=hrm&leftmenu=hrm_sm", $langs->trans("Skills"), 1, $user->rights->hrm->all->read, '', $mainmenu, 'hrm_sm', 0, '', '', '', img_picto('', 'shapes', 'class="pictofixedwidth"'));
+			//$newmenu->add("/hrm/skill_card.php?mainmenu=hrm&leftmenu=hrm_sm&action=create", $langs->trans("NewSkill"), 1, $user->rights->hrm->all->write);
+			//$newmenu->add("/hrm/skill_list.php?mainmenu=hrm&leftmenu=hrm_sm", $langs->trans("List"), 1, $user->rights->hrm->all->read);
 
-				// Job (Description of work to do and skills required)
-				$newmenu->add("/hrm/job_list.php?mainmenu=hrm&leftmenu=hrm_sm", $langs->trans("JobsPosition"), 1, $user->rights->hrm->all->read, '', $mainmenu, 'hrm_sm', 0, '', '', '', img_picto('', 'technic', 'class="pictofixedwidth"'));
-				//$newmenu->add("/hrm/job_card.php?mainmenu=hrm&leftmenu=hrm_sm&action=create", $langs->transnoentities("NewObject", $langs->trans("Job")), 1, $user->rights->hrm->all->write);
-				//$newmenu->add("/hrm/job_list.php?mainmenu=hrm&leftmenu=hrm_sm", $langs->trans("List"), 1, $user->rights->hrm->all->read);
+			// Job (Description of work to do and skills required)
+			$newmenu->add("/hrm/job_list.php?mainmenu=hrm&leftmenu=hrm_sm", $langs->trans("JobsPosition"), 1, $user->rights->hrm->all->read, '', $mainmenu, 'hrm_sm', 0, '', '', '', img_picto('', 'technic', 'class="pictofixedwidth"'));
+			//$newmenu->add("/hrm/job_card.php?mainmenu=hrm&leftmenu=hrm_sm&action=create", $langs->transnoentities("NewObject", $langs->trans("Job")), 1, $user->rights->hrm->all->write);
+			//$newmenu->add("/hrm/job_list.php?mainmenu=hrm&leftmenu=hrm_sm", $langs->trans("List"), 1, $user->rights->hrm->all->read);
 
-				// Position = Link job - user
-				$newmenu->add("/hrm/position_list.php?mainmenu=hrm&leftmenu=hrm_sm", $langs->trans("EmployeePositions"), 1, $user->rights->hrm->all->read, '', $mainmenu, 'hrm_sm', 0, '', '', '', img_picto('', 'user-cog', 'class="pictofixedwidth"'));
-				//$newmenu->add("/hrm/position.php?mainmenu=hrm&leftmenu=hrm_sm&action=create", $langs->transnoentities("NewObject", $langs->trans("Position")), 1, $user->rights->hrm->all->write);
-				//$newmenu->add("/hrm/position_list.php?mainmenu=hrm&leftmenu=hrm_sm", $langs->trans("List"), 1, $user->rights->hrm->all->read);
+			// Position = Link job - user
+			$newmenu->add("/hrm/position_list.php?mainmenu=hrm&leftmenu=hrm_sm", $langs->trans("EmployeePositions"), 1, $user->rights->hrm->all->read, '', $mainmenu, 'hrm_sm', 0, '', '', '', img_picto('', 'user-cog', 'class="pictofixedwidth"'));
+			//$newmenu->add("/hrm/position.php?mainmenu=hrm&leftmenu=hrm_sm&action=create", $langs->transnoentities("NewObject", $langs->trans("Position")), 1, $user->rights->hrm->all->write);
+			//$newmenu->add("/hrm/position_list.php?mainmenu=hrm&leftmenu=hrm_sm", $langs->trans("List"), 1, $user->rights->hrm->all->read);
 
-				// Evaluation
-				$newmenu->add("/hrm/evaluation_list.php?mainmenu=hrm&leftmenu=hrm_sm", $langs->trans("Evalutions"), 1, $user->rights->hrm->evaluation->read, '', $mainmenu, 'hrm_sm', 0, '', '', '', img_picto('', 'user', 'class="pictofixedwidth"'));
-				//$newmenu->add("/hrm/evaluation_card.php?mainmenu=hrm&leftmenu=hrm_sm&action=create", $langs->trans("NewEval"), 1, $user->rights->hrm->evaluation->write);
-				//$newmenu->add("/hrm/evaluation_list.php?mainmenu=hrm&leftmenu=hrm_sm", $langs->trans("List"), 1, $user->rights->hrm->evaluation->read);
-				$newmenu->add("/hrm/compare.php?mainmenu=hrm&leftmenu=hrm_sm", $langs->trans("SkillComparison"), 1, $user->rights->hrm->evaluation->read || $user->rights->hrm->compare_advance->read);
-			}
+			// Evaluation
+			$newmenu->add("/hrm/evaluation_list.php?mainmenu=hrm&leftmenu=hrm_sm", $langs->trans("Evals"), 1, $user->rights->hrm->evaluation->read, '', $mainmenu, 'hrm_sm', 0, '', '', '', img_picto('', 'user', 'class="pictofixedwidth"'));
+			//$newmenu->add("/hrm/evaluation_card.php?mainmenu=hrm&leftmenu=hrm_sm&action=create", $langs->trans("NewEval"), 1, $user->rights->hrm->evaluation->write);
+			//$newmenu->add("/hrm/evaluation_list.php?mainmenu=hrm&leftmenu=hrm_sm", $langs->trans("List"), 1, $user->rights->hrm->evaluation->read);
+			$newmenu->add("/hrm/compare.php?mainmenu=hrm&leftmenu=hrm_sm", $langs->trans("SkillComparison"), 1, $user->rights->hrm->evaluation->read || $user->rights->hrm->compare_advance->read);
 		}
 
 		// Leave/Holiday/Vacation module
@@ -2315,17 +2313,17 @@ function get_left_menu_hrm($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu = 
 /**
  * Get left Menu TOOLS
  *
- * @param	string		$mainmenu
- * @param	Menu 		&$newmenu	Object Menu to return back list of menu entries
- * @param	string 		$usemenuhider
- * @param	string 		$leftmenu
- * @param	int 		$type_user
+ * @param	string		$mainmenu		Main menu
+ * @param	Menu 		$newmenu		Object Menu to return back list of menu entries
+ * @param	string 		$usemenuhider	Use menu hider
+ * @param	string 		$leftmenu		Left menu
+ * @param	int 		$type_user		Type of targeted user for menu
  * @return	void
  */
 function get_left_menu_tools($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu = 'none', $type_user = 0)
 {
 	global $user, $conf, $langs;
-	
+
 	if ($mainmenu == 'tools') {
 		if (empty($user->socid)) { // limit to internal users
 			$langs->load("mails");
@@ -2356,11 +2354,11 @@ function get_left_menu_tools($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu 
 /**
  * Get left Menu MEMBERS
  *
- * @param	string		$mainmenu
- * @param	Menu 		&$newmenu	Object Menu to return back list of menu entries
- * @param	string 		$usemenuhider
- * @param	string 		$leftmenu
- * @param	int 		$type_user
+ * @param	string		$mainmenu		Main menu
+ * @param	Menu 		$newmenu		Object Menu to return back list of menu entries
+ * @param	string 		$usemenuhider	Use menu hider
+ * @param	string 		$leftmenu		Left menu
+ * @param	int 		$type_user		Type of targeted user for menu
  * @return	void
  */
 function get_left_menu_members($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu = 'none', $type_user = 0)

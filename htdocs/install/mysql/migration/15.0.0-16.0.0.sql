@@ -30,6 +30,8 @@
 -- -- VPGSQL8.2 SELECT dol_util_rebuild_sequences();
 
 
+ALTER TABLE llx_holiday ADD COLUMN nb_open_day double(24,8) DEFAULT NULL;
+
 -- Missing in v15 or lower
 
 ALTER TABLE llx_c_actioncomm MODIFY COLUMN libelle varchar(128);
@@ -91,7 +93,16 @@ INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (154, 
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (154, '15419', '626 - Régimen Simplificado de Confianza', 1);
 
 
+ALTER TABLE llx_partnership ADD UNIQUE INDEX uk_fk_type_fk_soc (fk_type, fk_soc, date_partnership_start);
+ALTER TABLE llx_partnership ADD UNIQUE INDEX uk_fk_type_fk_member (fk_type, fk_member, date_partnership_start);
+
+
 -- v16
+
+UPDATE llx_cronjob set label = 'RecurringInvoicesJob' where label = 'RecurringInvoices';
+UPDATE llx_cronjob set label = 'RecurringSupplierInvoicesJob' where label = 'RecurringSupplierInvoices';
+
+ALTER TABLE llx_facture ADD INDEX idx_facture_datef (datef);
 
 ALTER TABLE llx_projet_task_time ADD COLUMN fk_product integer NULL;
 
@@ -109,6 +120,9 @@ INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) value
 INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) values ('HOLIDAY_MODIFY','Expense report modified','Executed when an expense report is modified','expensereport',212);
 
 ALTER TABLE llx_ticket ADD COLUMN date_last_msg_sent datetime AFTER date_read;
+
+UPDATE llx_const SET name = 'WORKFLOW_TICKET_LINK_CONTRACT' WHERE name = 'TICKET_AUTO_ASSIGN_CONTRACT_CREATE';
+UPDATE llx_const SET name = 'WORKFLOW_TICKET_CREATE_INTERVENTION' WHERE name = 'TICKET_AUTO_CREATE_FICHINTER_CREATE';
 
 CREATE TABLE llx_stock_mouvement_extrafields (
     rowid integer AUTO_INCREMENT PRIMARY KEY,
@@ -255,7 +269,7 @@ ALTER TABLE llx_product_attribute CHANGE rang position INTEGER DEFAULT 0 NOT NUL
 
 ALTER TABLE llx_advtargetemailing RENAME TO llx_mailing_advtarget;
 
-ALTER TABLE llx_mailing ADD UNIQUE uk_mailing(titre, entity);
+ALTER TABLE llx_mailing ADD UNIQUE INDEX uk_mailing(titre, entity);
 
 create table llx_inventory_extrafields
 (
@@ -275,6 +289,15 @@ ALTER TABLE llx_bank_account ADD COLUMN pti_in_ctti smallint DEFAULT 0 AFTER dom
 UPDATE llx_c_ticket_type SET use_default=1 WHERE code='OTHER' AND NOT EXISTS(SELECT * FROM (SELECT * FROM llx_c_ticket_type) AS t WHERE use_default=1);
 
 
+ALTER TABLE llx_user DROP COLUMN webcal_login;
+ALTER TABLE llx_user DROP COLUMN module_comm;
+ALTER TABLE llx_user DROP COLUMN module_compta;
+ALTER TABLE llx_user DROP COLUMN ref_int;
+
+ALTER TABLE llx_user ADD COLUMN ref_employee varchar(50) DEFAULT NULL AFTER entity;
+ALTER TABLE llx_user ADD COLUMN national_registration_number varchar(50) DEFAULT NULL;
+
+
 ALTER TABLE llx_propal ADD last_main_doc VARCHAR(255) NULL AFTER model_pdf;
 
 UPDATE llx_c_country SET eec=0 WHERE eec IS NULL;
@@ -284,3 +307,20 @@ ALTER TABLE llx_c_country MODIFY COLUMN eec tinyint DEFAULT 0 NOT NULL;
 ALTER TABLE llx_chargesociales ADD COLUMN note_private text;
 ALTER TABLE llx_chargesociales ADD COLUMN note_public text;
 
+ALTER TABLE llx_c_availability ADD COLUMN type_duration varchar(1);
+ALTER TABLE llx_c_availability ADD COLUMN qty real DEFAULT 0;
+
+UPDATE llx_c_availability SET type_duration = null, qty = 0 WHERE code = 'AV_NOW';
+UPDATE llx_c_availability SET type_duration = 'w', qty = 1 WHERE code = 'AV_1W';
+UPDATE llx_c_availability SET type_duration = 'w', qty = 2 WHERE code = 'AV_2W';
+UPDATE llx_c_availability SET type_duration = 'w', qty = 3 WHERE code = 'AV_3W';
+UPDATE llx_c_availability SET type_duration = 'w', qty = 4 WHERE code = 'AV_4W';
+
+ALTER TABLE llx_boxes_def ADD COLUMN fk_user integer DEFAULT 0 NOT NULL;
+
+ALTER TABLE llx_contratdet ADD COLUMN rang integer DEFAULT 0 AFTER info_bits;
+
+ALTER TABLE llx_actioncomm MODIFY COLUMN note mediumtext;
+
+DELETE FROM llx_boxes WHERE box_id IN (select rowid FROM llx_boxes_def WHERE file IN ('box_bom.php@bom', 'box_bom.php'));
+DELETE FROM llx_boxes_def WHERE file IN ('box_bom.php@bom', 'box_bom.php');
