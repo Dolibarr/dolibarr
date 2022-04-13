@@ -1340,7 +1340,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				logo += "<?php print DOL_URL_ROOT; ?>/viewimage.php?modulepart=societe&amp;entity=1&amp;file=" + Customer.key + "%2Flogos%2Fthumbs%2F" + Customer.logo.replace('.', '_mini.') + "&amp;cache=0";
 				logo += "' /></div>";
 			} else {
-				logo = '<div class="photosociete photowithmargin photoref" alt="No photo" "=""><span class="fas fa-building" style=" color: #6c6aa8;"></span></div>';
+				logo = '<div class="floatleft inline-block valigntop photowithmargin" style="padding:0 10px"><div class="photosociete photoref" alt="No photo" "=""><span class="fas fa-building" style=" color: #6c6aa8;"></span></div></div>';
 			}
 
 			var $container = $("<div class='select2-result-repository clearfix'>" +
@@ -1365,17 +1365,17 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			  );
 
 			$container.find('.select2-result-repository__title').text(Customer.label);
-			$container.find('.select2-result-repository__name_alias').text(Customer.name_alias);
-			$container.find('.select2-result-repository__code_client').text(Customer.code_client);
-			$container.find('.select2-result-repository__code_fournisseur').text(Customer.code_fournisseur);
-			$container.find('.select2-result-repository__email').append('Mail: ' + Customer.email);
-			$container.find('.select2-result-repository__address').append('Address: ' + Customer.address);
-			$container.find('.select2-result-repository__country').append('Country: ' + Customer.country);
-			$container.find('.select2-result-repository__departement').append('Departement: ' + Customer.departement);
-			$container.find('.select2-result-repository__zip').append('Zip: ' + Customer.zip);
-			$container.find('.select2-result-repository__town').append('Town: ' + Customer.town);
-			$container.find('.select2-result-repository__siren').append('Siren: ' + Customer.siren);
-			$container.find('.select2-result-repository__datec').append('Created: ' + Customer.datec);
+			$container.find('.select2-result-repository__name_alias').text(Customer.name_alias ? Customer.name_alias : '');
+			$container.find('.select2-result-repository__code_client').text(Customer.code_client ? Customer.code_client  : '');
+			$container.find('.select2-result-repository__code_fournisseur').text((Customer.code_fournisseur!==null) ? Customer.code_fournisseur : '');
+			$container.find('.select2-result-repository__email').append('Mail: ' + (Customer.email !== null ? Customer.email : ''));
+			$container.find('.select2-result-repository__address').append('Address: ' + (Customer.address !== null ? Customer.address : ''));
+			$container.find('.select2-result-repository__country').append('Country: ' + (Customer.country !== null ? Customer.country : ''));
+			$container.find('.select2-result-repository__departement').append('Departement: ' + (Customer.departement !== null ? Customer.departement : ''));
+			$container.find('.select2-result-repository__zip').append('Zip: ' + (Customer.zip !== null ? Customer.zip : ''));
+			$container.find('.select2-result-repository__town').append('Town: ' + (Customer.town !== null ? Customer.town : ''));
+			$container.find('.select2-result-repository__siren').append('Siren: ' + (Customer.siren !== null ? Customer.siren : ''));
+			$container.find('.select2-result-repository__datec').append('Created: ' + (Customer.datec !== null ? Customer.datec : ''));
 
 			return $container;
 		}
