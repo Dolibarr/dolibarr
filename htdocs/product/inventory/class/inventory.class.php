@@ -141,7 +141,7 @@ class Inventory extends CommonObject
 	public $fk_product;
 
 	/**
-	 * @var int Categories id
+	 * @var string Categories id separated by comma
 	 */
 	public $fk_categories_product;
 
