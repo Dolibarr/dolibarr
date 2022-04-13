@@ -392,35 +392,20 @@ if ($action == 'confirm_generateinvoice') {
 		$generateinvoicemode = GETPOST('generateinvoicemode', 'string');
 		$invoiceToUse = GETPOST('invoiceid', 'int');
 
-		$prodDurationHours = 1.0;
+		$prodDurationHoursBase = 1.0;
 		if ($idprod > 0) {
 			$tmpproduct->fetch($idprod);
+			if ($result<0) {
+				$error++;
+				setEventMessages($tmpproduct->error, $tmpproduct->errors, 'errors');
+			}
 
-			if (empty($tmpproduct->duration_value)) {
+			$prodDurationHoursBase=$tmpproduct->getProductDurationHours();
+			if ($prodDurationHoursBase<0) {
 				$error++;
 				$langs->load("errors");
-				setEventMessages($langs->trans("ErrorDurationForServiceNotDefinedCantCalculateHourlyPrice"), null, 'errors');
+				setEventMessages(null, $tmpproduct->errors, 'errors');
 			}
-
-			if ($tmpproduct->duration_unit == 'i') {
-				$prodDurationHours = 1. / 60;
-			}
-			if ($tmpproduct->duration_unit == 'h') {
-				$prodDurationHours = 1.;
-			}
-			if ($tmpproduct->duration_unit == 'd') {
-				$prodDurationHours = 24.;
-			}
-			if ($tmpproduct->duration_unit == 'w') {
-				$prodDurationHours = 24. * 7;
-			}
-			if ($tmpproduct->duration_unit == 'm') {
-				$prodDurationHours = 24. * 30;
-			}
-			if ($tmpproduct->duration_unit == 'y') {
-				$prodDurationHours = 24. * 365;
-			}
-			$prodDurationHours *= $tmpproduct->duration_value;
 
 			$dataforprice = $tmpproduct->getSellPrice($mysoc, $projectstatic->thirdparty, 0);
 
@@ -429,7 +414,7 @@ if ($action == 'confirm_generateinvoice') {
 			$localtax1 = $dataforprice['localtax1'];
 			$localtax2 = $dataforprice['localtax2'];
 		} else {
-			$prodDurationHours = 1;
+			$prodDurationHoursBase = 1;
 
 			$pu_ht = 0;
 			$txtva = get_default_tva($mysoc, $projectstatic->thirdparty);
@@ -476,7 +461,7 @@ if ($action == 'confirm_generateinvoice') {
 					}
 
 					// Add lines
-					$lineid = $tmpinvoice->addline($langs->trans("TimeSpentForInvoice", $username).' : '.$qtyhourtext, $pu_ht, round($qtyhour / $prodDurationHours, 2), $txtva, $localtax1, $localtax2, ($idprod > 0 ? $idprod : 0));
+					$lineid = $tmpinvoice->addline($langs->trans("TimeSpentForInvoice", $username).' : '.$qtyhourtext, $pu_ht, round($qtyhour / $prodDurationHoursBase, 2), $txtva, $localtax1, $localtax2, ($idprod > 0 ? $idprod : 0));
 
 					// Update lineid into line of timespent
 					$sql = 'UPDATE '.MAIN_DB_PREFIX.'projet_task_time SET invoice_line_id = '.((int) $lineid).', invoice_id = '.((int) $tmpinvoice->id);
@@ -488,8 +473,9 @@ if ($action == 'confirm_generateinvoice') {
 						break;
 					}
 				}
-			} elseif ($generateinvoicemode == 'onelineperperiod') {	// One line for each time spent line
+			} elseif ($generateinvoicemode == 'onelineperperiod' || $generateinvoicemode == 'onelineperperiodproduct') {	// One line for each time spent line
 				$arrayoftasks = array();
+				$product_data_cache = array();
 				$withdetail=GETPOST('detail_time_duration', 'alpha');
 				foreach ($toselect as $key => $value) {
 					// Get userid, timepent
@@ -519,6 +505,7 @@ if ($action == 'confirm_generateinvoice') {
 						$arrayoftasks[$object->timespent_id]['note'] .= ' - '.$langs->trans("Duration").': '.convertSecondToTime($object->timespent_duration, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY);
 					}
 					$arrayoftasks[$object->timespent_id]['user'] = $object->timespent_fk_user;
+					$arrayoftasks[$object->timespent_id]['fk_product'] = $object->timespent_fk_product;
 				}
 
 				foreach ($arrayoftasks as $timespent_id => $value) {
@@ -534,7 +521,50 @@ if ($action == 'confirm_generateinvoice') {
 					}
 
 					// Add lines
-					$lineid = $tmpinvoice->addline($value['note'], $pu_ht, round($qtyhour / $prodDurationHours, 2), $txtva, $localtax1, $localtax2, ($idprod > 0 ? $idprod : 0));
+					$prodDurationHours = $prodDurationHoursBase;
+					$idprodline=$idprod;
+					$pu_htline = $pu_ht;
+					$txtvaline = $txtva;
+					$localtax1line = $localtax1;
+					$localtax2line = $localtax2;
+
+
+					if ($generateinvoicemode == 'onelineperperiodproduct' && !empty($value['fk_product']) && $value['fk_product']!==$idprod) {
+						if (!array_key_exists($value['fk_product'], $product_data_cache)) {
+							$result = $tmpproduct->fetch($value['fk_product']);
+							if ($result < 0) {
+								$error++;
+								setEventMessages($tmpproduct->error, $tmpproduct->errors, 'errors');
+							}
+							$prodDurationHours = $tmpproduct->getProductDurationHours();
+							if ($prodDurationHours < 0) {
+								$error++;
+								$langs->load("errors");
+								setEventMessages(null, $tmpproduct->errors, 'errors');
+							}
+
+							$dataforprice = $tmpproduct->getSellPrice($mysoc, $projectstatic->thirdparty, 0);
+
+							$pu_htline = empty($dataforprice['pu_ht']) ? 0 : $dataforprice['pu_ht'];
+							$txtvaline = $dataforprice['tva_tx'];
+							$localtax1line = $dataforprice['localtax1'];
+							$localtax2line = $dataforprice['localtax2'];
+
+							$product_data_cache[$value['fk_product']] = array('duration'=>$prodDurationHours,'dataforprice'=>$dataforprice);
+						} else {
+							$prodDurationHours = $product_data_cache[$value['fk_product']]['duration'];
+							$pu_htline = empty($product_data_cache[$value['fk_product']]['dataforprice']['pu_ht']) ? 0 : $product_data_cache[$value['fk_product']]['dataforprice']['pu_ht'];
+							$txtvaline = $product_data_cache[$value['fk_product']]['dataforprice']['tva_tx'];
+							$localtax1line = $product_data_cache[$value['fk_product']]['dataforprice']['localtax1'];
+							$localtax2line = $product_data_cache[$value['fk_product']]['dataforprice']['localtax2'];
+						}
+						$idprodline=$value['fk_product'];
+					}
+					$lineid = $tmpinvoice->addline($value['note'], $pu_htline, round($qtyhour / $prodDurationHours, 2), $txtvaline, $localtax1line, $localtax2line, ($idprodline > 0 ? $idprodline : 0));
+					if ($lineid<0) {
+						$error++;
+						setEventMessages(null, $tmpinvoice->errors, 'errors');
+					}
 					//var_dump($lineid);exit;
 
 					// Update lineid into line of timespent
@@ -1178,6 +1208,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 					'onelineperuser'=>'OneLinePerUser',
 					'onelinepertask'=>'OneLinePerTask',
 					'onelineperperiod'=>'OneLinePerTimeSpentLine',
+					'onelineperperiodproduct'=>'OneLinePerTimeSpentLineProduct',
 				);
 				print $form->selectarray('generateinvoicemode', $tmparray, 'onelineperuser', 0, 0, 0, '', 1);
 				print "\n".'<script type="text/javascript">';
@@ -1834,7 +1865,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 
 			//Product
 			if (!empty($arrayfields['t.fk_product']['checked'])) {
-				print '<td class="nowraponall right">';
+				print '<td class="nowraponall">';
 				if ($action == 'editline' && $_GET['lineid'] == $task_time->rowid) {
 					$form->select_produits($task_time->fk_product, 'fk_product', '1', 0, $projectstatic->thirdparty->price_level, 1, 2, '', 0, array(), $projectstatic->thirdparty->id, 'None', 0, 'maxwidth500');
 				} elseif (!empty($task_time->fk_product)) {

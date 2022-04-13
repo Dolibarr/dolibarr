@@ -6058,6 +6058,43 @@ class Product extends CommonObject
 			dol_print_error($this->db);
 		}
 	}
+
+
+	/**
+	 * Return the duration in Hours of a service base on duration fields
+	 * @return int -1 KO, >= 0 is the duration in hours
+	 */
+	public function getProductDurationHours()
+	{
+		global $langs;
+
+		if (empty($this->duration_value)) {
+			$this->errors[]='ErrorDurationForServiceNotDefinedCantCalculateHourlyPrice';
+			return -1;
+		}
+
+		if ($this->duration_unit == 'i') {
+			$prodDurationHours = 1. / 60;
+		}
+		if ($this->duration_unit == 'h') {
+			$prodDurationHours = 1.;
+		}
+		if ($this->duration_unit == 'd') {
+			$prodDurationHours = 24.;
+		}
+		if ($this->duration_unit == 'w') {
+			$prodDurationHours = 24. * 7;
+		}
+		if ($this->duration_unit == 'm') {
+			$prodDurationHours = 24. * 30;
+		}
+		if ($this->duration_unit == 'y') {
+			$prodDurationHours = 24. * 365;
+		}
+		$prodDurationHours *= $this->duration_value;
+
+		return $prodDurationHours;
+	}
 }
 
 
