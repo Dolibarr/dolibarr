@@ -512,5 +512,5 @@ INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) value
 
 -- Add column to help to fix a very critical bug when transferring into accounting bank record of a bank account into another currency.
 -- Idea is to update this column manually in v15 with value in currency of company for bank that are not into the main currency and the transfer
--- into accounting will use it in priority if value is not null.
+-- into accounting will use it in priority if value is not null. The script repair.sql contains the sequence to fix datas in llx_bank.
 ALTER TABLE llx_bank ADD COLUMN amount_main_currency double(24,8) NULL;
