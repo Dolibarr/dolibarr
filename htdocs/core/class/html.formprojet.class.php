@@ -732,4 +732,16 @@ class FormProjets
 			return -1;
 		}
 	}
+
+	public function selectTaskStatus() {
+		$task = new Task($this->db);
+		$html = '<select id="search_task_fk_statut" name="search_task_fk_statut">';
+		$html .= '<option value="-1" >&nbsp;</option>';
+		foreach ($task->allTaskStatus as $status=>$statusKey) {
+			$html .= '<option value="'.$status.'">'.$statusKey.'</option>';
+		}
+		$html .= '</select>';
+
+		return $html;
+	}
 }

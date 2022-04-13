@@ -31,6 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('projects', 'users', 'companies'));
@@ -256,6 +257,7 @@ if (empty($search_projectstatus) && $search_projectstatus == '') {
  */
 
 $form = new Form($db);
+$formProject = new FormProjets($db);
 
 $now = dol_now();
 
@@ -444,7 +446,7 @@ if ($search_project_user > 0) {
 if ($search_task_user > 0) {
 	$sql .= " AND ect.fk_c_type_contact IN (".$db->sanitize(join(',', array_keys($listoftaskcontacttype))).") AND ect.element_id = t.rowid AND ect.fk_socpeople = ".((int) $search_task_user);
 }
-if ($search_task_fk_statut) {
+if ($search_task_fk_statut > 0) {
 	$sql .= natural_search('t.fk_statut', $search_task_fk_statut);
 }
 // Add where from extra fields
@@ -819,8 +821,8 @@ if (!empty($arrayfields['t.billed']['checked'])) {
 	print '<td class="liste_titre"></td>';
 }
 if (!empty($arrayfields['t.fk_statut']['checked'])) {
-	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" name="search_task_fk_statut" value="'.dol_escape_htmltag($search_task_fk_statut).'" size="4">';
+	print '<td class="liste_titre maxwidthonsmartphone right">';
+	print $formProject->selectTaskStatus();
 	print '</td>';
 }
 // Extra fields

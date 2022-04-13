@@ -29,6 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 if (!empty($conf->categorie->enabled)) {
@@ -298,7 +299,7 @@ if ($search_task_budget_amount) {
 	$morewherefilterarray[]= natural_search('t.budget_amount', $search_task_budget_amount, 1, 1);
 }
 
-if ($search_task_fk_statut) {
+if ($search_task_fk_statut > 0) {
 	$morewherefilterarray[]= natural_search('t.fk_statut',$search_task_fk_statut, 1, 1);
 }
 
@@ -406,6 +407,7 @@ if ($action == 'createtask' && $user->rights->projet->creer) {
 $now = dol_now();
 $form = new Form($db);
 $formother = new FormOther($db);
+$formProject = new FormProjets($db);
 $socstatic = new Societe($db);
 $projectstatic = new Project($db);
 $taskstatic = new Task($db);
@@ -959,12 +961,6 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 		print '</td>';
 	}
 
-	if (!empty($arrayfields['t.fk_statut']['checked'])) {
-		print '<td class="liste_titre right">';
-		print '<input class="flat searchstring maxwidth50" type="text" name="search_task_fk_statut" value="'.dol_escape_htmltag($search_task_fk_statut).'">';
-		print '</td>';
-	}
-
 	// progress resume not searchable
 	print '<td class="liste_titre right"></td>';
 
@@ -994,6 +990,12 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 
 	if (!empty($arrayfields['c.assigned']['checked'])) {
 		print '<td class="liste_titre right">';
+		print '</td>';
+	}
+
+	if (!empty($arrayfields['t.fk_statut']['checked'])) {
+		print '<td class="liste_titre maxwidthonsmartphone right">';
+		print $formProject->selectTaskStatus();
 		print '</td>';
 	}
 

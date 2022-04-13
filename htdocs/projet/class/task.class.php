@@ -157,6 +157,8 @@ class Task extends CommonObjectLine
 	 */
 	const STATUS_CANCELLED = 4;
 
+	var $allTaskStatus = array(1 => 'ToDo', 2 => 'InProgress', 3 => 'Done', 4 => 'Cancelled');
+
 	/**
 	 *  Constructor
 	 *
