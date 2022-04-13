@@ -49,10 +49,13 @@ if (!isset($id) || empty($id)) {
 	accessforbidden();
 }
 
+$object = new User($db);
+$object->fetch($id, '', '', 1);
+
 // Define if user can read permissions
 $canreaduser = ($user->admin || $user->rights->user->user->lire);
 // Define if user can modify other users and permissions
-$caneditperms = ($user->admin || $user->rights->user->user->creer);
+$caneditperms = ($user->admin || ($user->rights->user->user->creer && empty($object->admin)));
 // Advanced permissions
 if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
 	$canreaduser = ($user->admin || ($user->rights->user->user->lire && $user->rights->user->user_advance->readperms));
@@ -76,8 +79,6 @@ if ($user->id <> $id && !$canreaduser) {
 	accessforbidden();
 }
 
-$object = new User($db);
-$object->fetch($id, '', '', 1);
 $object->getrights();
 
 $entity = $conf->entity;
@@ -285,6 +286,8 @@ if (($caneditperms && empty($objMod->rights_admin_allowed)) || empty($object->ad
 		print '</td>';
 	}
 	print '<td class="center" width="24">&nbsp;</td>';
+} else {
+	print '<td class="center nowrap">&nbsp;</td>';
 }
 print '<td>'.$langs->trans("Permissions").'</td>';
 if ($user->admin) {
