@@ -50,8 +50,7 @@ dol_syslog(join(',', $_GET));
 
 
 // Generation liste des societes
-if (GETPOST('newcompany') || GETPOST('socid', 'int') || GETPOST('id_fourn'))
-{
+if (GETPOST('newcompany') || GETPOST('socid', 'int') || GETPOST('id_fourn')) {
 	$return_arr = array();
 
 	// Define filter on text typed
@@ -65,12 +64,10 @@ if (GETPOST('newcompany') || GETPOST('socid', 'int') || GETPOST('id_fourn'))
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON c.rowid = s.fk_pays";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as d ON d.rowid = s.fk_departement";
 	$sql .= " WHERE s.entity IN (".getEntity('societe').")";
-	if ($socid)
-	{
+	if ($socid) {
 		$sql .= " AND (";
 		// Add criteria on name/code
-		if (!empty($conf->global->COMPANY_DONOTSEARCH_ANYWHERE))   // Can use index
-		{
+		if (!empty($conf->global->COMPANY_DONOTSEARCH_ANYWHERE)) {   // Can use index
 			$sql .= "s.nom LIKE '".$db->escape($socid)."%'";
 			$sql .= " OR s.code_client LIKE '".$db->escape($socid)."%'";
 			$sql .= " OR s.code_fournisseur LIKE '".$db->escape($socid)."%'";
@@ -87,11 +84,9 @@ if (GETPOST('newcompany') || GETPOST('socid', 'int') || GETPOST('id_fourn'))
 
 	//dol_syslog("ajaxcompanies", LOG_DEBUG);
 	$resql = $db->query($sql);
-	
-	if ($resql)
-	{
-		while ($row = $db->fetch_array($resql))
-		{
+
+	if ($resql) {
+		while ($row = $db->fetch_array($resql)) {
 			$label = $row['nom'];
 			if ($socid) $label = $label;
 			$row_array['label'] = $label;
