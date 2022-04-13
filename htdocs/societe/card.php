@@ -1293,8 +1293,90 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '</td><td'.(empty($conf->global->SOCIETE_USEPREFIX) ? ' colspan="3"' : '').'>';
 		//print '<input type="text" class="minwidth300" maxlength="128" name="name" id="name" value="'.dol_escape_htmltag($object->name).'" autofocus="autofocus">';
 		//print $form->widgetForTranslation("name", $object, $permissiontoadd, 'string', 'alpahnohtml', 'minwidth300');
-		print $form->select_company(0, 'name', '(s.client = 1 OR s.client = 3) AND status=1', ' ');
-		print "<script>	$(document).ready(function () { $('#name').select2({ tags: true});	});</script>";
+		//print $form->select_company(0, 'name', '(s.client = 1 OR s.client = 3) AND status=1', ' ');
+		//print "<script>	$(document).ready(function () { $('#name').select2({ tags: true});	});</script>";
+		print '<select class="name" name="name" id="name" style="min-width:400px"></select>';
+?>
+	<script>	
+	$(document).ready(function () { 
+		$('#name').select2({
+			ajax: {
+			  url: '/htdocs/core/ajax/ajaxcompanies.php',
+			  dataType: 'json',
+			  delay: 250,
+			  data: function (params) {
+					return {
+						newcompany: params.term // search term
+					};
+			  },
+			  processResults: function (data, params) {
+				  return {
+					results: data
+				  };
+			  },
+			  cache: true
+			},
+			
+			placeholder: 'In the meantime we check if this 3rd already exists...',
+			minimumInputLength: 3,
+			width: 'resolve',		/* off or resolve */
+			language: select2arrayoflanguage,
+			containerCssClass: ':all:',	
+			selectionCssClass: ':all:',
+			tags: true,
+			templateResult: formatCustomer,
+			templateSelection: formatCustomerSelection
+		});
+
+		function formatCustomer (Customer) {
+			
+			if (Customer.loading) {
+				return Customer.text;
+			}
+
+			var $container = $("<div class='select2-result-repository clearfix'>" +
+				 "<div class='select2-result-repository__avatar'><img src='" + Customer.label + "' /></div>" +
+				  "<div class='select2-result-repository__meta'>" +
+					"<div class='select2-result-repository__title'></div>" +
+					"<div class='select2-result-repository__name_alias'></div>" +
+					"<div class='select2-result-repository__code_client'></div>" +
+					"<div class='select2-result-repository__code_fournisseur'></div>" +
+					"<div class='select2-result-repository__companies_info'>" +
+					  "<div class='select2-result-repository__email'><i class='fa fa-at'></i> </div>" +
+					  "<div class='select2-result-repository__address'><i class='fa fa-home'></i> </div>" +
+					  "<div class='select2-result-repository__country'><i class='fa fa-flag'></i> </div>" +
+					  "<div class='select2-result-repository__departement'><i class='fa fa-circle-o'></i> </div>" +
+					  "<div class='select2-result-repository__zip'><i class='fa fa-circle-o'></i> </div>" +
+					  "<div class='select2-result-repository__town'><i class='fa fa-circle-o'></i> </div>" +
+					  "<div class='select2-result-repository__siren'><i class='fa fa-circle-o'></i> </div>" +
+					  "<div class='select2-result-repository__datec'><i class='fa fa-calendar'></i> </div>" +
+					"</div>" +
+				  "</div>" +
+				"</div>"
+			  );
+
+			$container.find('.select2-result-repository__title').text(Customer.label);
+			$container.find('.select2-result-repository__name_alias').text(Customer.name_alias);
+			$container.find('.select2-result-repository__code_client').text(Customer.code_client);
+			$container.find('.select2-result-repository__code_fournisseur').text(Customer.code_fournisseur);
+			$container.find('.select2-result-repository__email').append('Mail: ' + Customer.email);
+			$container.find('.select2-result-repository__address').append('Address: ' + Customer.address);
+			$container.find('.select2-result-repository__country').append('Country: ' + Customer.country);
+			$container.find('.select2-result-repository__departement').append('Departement: ' + Customer.departement);
+			$container.find('.select2-result-repository__zip').append('Zip: ' + Customer.zip);
+			$container.find('.select2-result-repository__town').append('Town: ' + Customer.town);
+			$container.find('.select2-result-repository__siren').append('Siren: ' + Customer.siren);
+			$container.find('.select2-result-repository__datec').append('Created: ' + Customer.datec);
+
+			return $container;
+		}
+
+		function formatCustomerSelection (selection) {
+			return selection.label || selection.text;
+		}
+	});
+	</script>
+<?php
 		print '</td>';
 		if (!empty($conf->global->SOCIETE_USEPREFIX)) {  // Old not used prefix field
 			print '<td>'.$langs->trans('Prefix').'</td><td><input type="text" size="5" maxlength="5" name="prefix_comm" value="'.dol_escape_htmltag($object->prefix_comm).'"></td>';
