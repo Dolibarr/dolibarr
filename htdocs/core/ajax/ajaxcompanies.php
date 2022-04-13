@@ -58,7 +58,7 @@ if (GETPOST('newcompany') || GETPOST('socid', 'int') || GETPOST('id_fourn')) {
 	if (!$socid) $socid = $_GET['socid'] ? $_GET['socid'] : '';
 	if (!$socid) $socid = $_GET['id_fourn'] ? $_GET['id_fourn'] : '';
 
-	$sql = "SELECT s.rowid, s.nom, s.name_alias, s.code_client, s.code_fournisseur, s.address, s.zip, s.town, s.email, s.siren, s.siret, s.ape, s.idprof4, s.client, s.fournisseur, s.datec";
+	$sql = "SELECT s.rowid, s.nom, s.name_alias, s.code_client, s.code_fournisseur, s.address, s.zip, s.town, s.email, s.siren, s.siret, s.ape, s.idprof4, s.client, s.fournisseur, s.datec, s.logo";
 	$sql .= " , c.label as country, d.nom as departement";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON c.rowid = s.fk_pays";
@@ -106,6 +106,7 @@ if (GETPOST('newcompany') || GETPOST('socid', 'int') || GETPOST('id_fourn')) {
 			$row_array['client'] = $row['client'];
 			$row_array['fournisseur'] = $row['fournisseur'];
 			$row_array['datec'] = $row['datec'];
+			$row_array['logo'] = $row['logo'];
 			$row_array['country'] = $row['country'];
 			$row_array['departement'] = $row['departement'];
 
