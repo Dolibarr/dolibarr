@@ -1296,7 +1296,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		//print $form->select_company(0, 'name', '(s.client = 1 OR s.client = 3) AND status=1', ' ');
 		//print "<script>	$(document).ready(function () { $('#name').select2({ tags: true});	});</script>";
 		print '<select class="name" name="name" id="name" style="min-width:400px"></select>';
-?>
+		?>
 	<script>	
 	$(document).ready(function () { 
 		$('#name').select2({
@@ -1376,7 +1376,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		}
 	});
 	</script>
-<?php
+		<?php
 		print '</td>';
 		if (!empty($conf->global->SOCIETE_USEPREFIX)) {  // Old not used prefix field
 			print '<td>'.$langs->trans('Prefix').'</td><td><input type="text" size="5" maxlength="5" name="prefix_comm" value="'.dol_escape_htmltag($object->prefix_comm).'"></td>';
