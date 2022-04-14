@@ -604,9 +604,12 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 
 				$holiday->id = $objp->rowid;
 				$holiday->ref = $objp->rowid;
+
 				$holiday->fk_type = $objp->fk_type;
 				$holiday->statut = $objp->status;
-				$nbopenedday = num_open_day($db->jdate($objp->date_debut), $db->jdate($objp->date_fin), 0, 1, $objp->halfday);
+				$holiday->status = $objp->status;
+
+				$nbopenedday = num_open_day($db->jdate($objp->date_debut, 'gmt'), $db->jdate($objp->date_fin, 'gmt'), 0, 1, $objp->halfday);
 
 				print '<tr class="oddeven">';
 				print '<td class="nowrap">';
