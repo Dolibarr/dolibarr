@@ -327,7 +327,11 @@ class EcmFiles extends CommonObject
 		$resql = $this->db->query($sql);
 		if (!$resql) {
 			$error++;
-			$this->errors[] = 'Error '.$this->db->lasterror();
+			if ($this->db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+				$this->errors[] = 'Error DB_ERROR_RECORD_ALREADY_EXISTS : '.$this->db->lasterror();
+			} else {
+				$this->errors[] = 'Error '.$this->db->lasterror();
+			}
 			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 		}
 
