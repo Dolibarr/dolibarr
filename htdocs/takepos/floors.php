@@ -104,7 +104,7 @@ if ($action == "updatename") {
 	if (strlen($newname) > 3) {
 		$newname = substr($newname, 0, 3); // Only 3 chars
 	}
-	$db->query("UPDATE ".MAIN_DB_PREFIX."takepos_floor_tables set label='".$db->escape($newname)."' WHERE rowid = ".((int) $place));
+	$resql = $db->query("UPDATE ".MAIN_DB_PREFIX."takepos_floor_tables set label='".$db->escape($newname)."' WHERE rowid = ".((int) $place));
 }
 
 if ($action == "add") {
