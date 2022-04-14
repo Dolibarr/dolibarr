@@ -869,7 +869,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 
 				if (count($arrayfields) > 0 && !empty($arrayfields['t.fk_statut']['checked'])) {
 					print '<td class="right">';
-					print $lines[$i]->getLibStatut(3);
+					print $lines[$i]->getLibStatut(2);
 					print '</td>';
 				}
 

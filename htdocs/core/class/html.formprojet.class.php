@@ -734,11 +734,13 @@ class FormProjets
 	}
 
 	public function selectTaskStatus() {
+		global $langs;
+
 		$task = new Task($this->db);
 		$html = '<select id="search_task_fk_statut" name="search_task_fk_statut">';
 		$html .= '<option value="-1" >&nbsp;</option>';
 		foreach ($task->allTaskStatus as $status=>$statusKey) {
-			$html .= '<option value="'.$status.'">'.$statusKey.'</option>';
+			$html .= '<option value="'.$status.'">'.$langs->trans($statusKey).'</option>';
 		}
 		$html .= '</select>';
 

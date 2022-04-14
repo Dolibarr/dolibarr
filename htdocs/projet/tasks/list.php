@@ -1311,7 +1311,7 @@ while ($i < $imaxinloop) {
 			// Status
 			if (!empty($arrayfields['t.fk_statut']['checked'])) {
 				print '<td class="nowraponall">';
-				print $object->getLibStatut(3);
+				print $object->getLibStatut(2);
 				print '</td>';
 			}
 			// Extra fields
