@@ -1630,8 +1630,6 @@ class Facture extends CommonInvoice
 	 */
 	public function fetch($rowid, $ref = '', $ref_ext = '', $notused = '', $fetch_situation = false)
 	{
-		global $conf;
-
 		if (empty($rowid) && empty($ref) && empty($ref_ext)) {
 			return -1;
 		}

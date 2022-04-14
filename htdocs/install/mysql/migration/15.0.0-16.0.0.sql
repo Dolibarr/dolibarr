@@ -302,6 +302,9 @@ ALTER TABLE llx_propal ADD last_main_doc VARCHAR(255) NULL AFTER model_pdf;
 
 UPDATE llx_c_country SET eec=0 WHERE eec IS NULL;
 ALTER TABLE llx_c_country MODIFY COLUMN eec tinyint DEFAULT 0 NOT NULL;
+ALTER TABLE llx_inventorydet ADD COLUMN pmp_real double DEFAULT NULL;
+ALTER TABLE llx_inventorydet ADD COLUMN pmp_expected double DEFAULT NULL;
+
 
 
 ALTER TABLE llx_chargesociales ADD COLUMN note_private text;
@@ -324,6 +327,10 @@ ALTER TABLE llx_actioncomm MODIFY COLUMN note mediumtext;
 
 DELETE FROM llx_boxes WHERE box_id IN (select rowid FROM llx_boxes_def WHERE file IN ('box_bom.php@bom', 'box_bom.php'));
 DELETE FROM llx_boxes_def WHERE file IN ('box_bom.php@bom', 'box_bom.php');
+
+
+ALTER TABLE llx_takepos_floor_tables ADD UNIQUE(entity,label); 
+
 
 -- Stock transfers module
 
@@ -406,3 +413,5 @@ ALTER TABLE llx_stocktransfer_stocktransferline_extrafields ADD INDEX idx_fk_obj
 ALTER TABLE llx_stock_mouvement CHANGE origintype origintype VARCHAR(64)
 
 -- End Stock transfers module
+
+
