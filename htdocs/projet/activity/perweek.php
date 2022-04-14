@@ -521,6 +521,11 @@ $startday = dol_mktime(12, 0, 0, $startdayarray['first_month'], $startdayarray['
 
 // Get if user is available or not for each day
 $isavailable = array();
+
+// Assume from Monday to Friday if conf empty or badly formed
+$numstartworkingday = 1;
+$numendworkingday = 5;
+
 if (!empty($conf->global->MAIN_DEFAULT_WORKING_DAYS))
 {
 	$tmparray = explode('-', $conf->global->MAIN_DEFAULT_WORKING_DAYS);
@@ -530,7 +535,6 @@ if (!empty($conf->global->MAIN_DEFAULT_WORKING_DAYS))
 		$numendworkingday = $tmparray[1];
 	}
 }
-
 for ($idw = 0; $idw < 7; $idw++)
 {
 	$dayinloopfromfirstdaytoshow = dol_time_plus_duree($firstdaytoshow, $idw, 'd'); // $firstdaytoshow is a date with hours = 0
