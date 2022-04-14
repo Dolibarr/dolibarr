@@ -1234,7 +1234,9 @@ if ($mode == 'deploy') {
 			print '<br>';
 			print '<br>';
 
-			print '<div class="center"><div class="logo_setup"></div></div>';
+			print '<div class="center">';
+			print img_picto('', 'setup_logo', 'class="fa-8x"');
+			print '</div>';
 		} else {
 			print $langs->trans("UnpackPackageInModulesRoot", $dirins).'<br>';
 			print '<b>'.$langs->trans("StepNb", 4).'</b>: ';
@@ -1270,7 +1272,9 @@ if ($mode == 'develop') {
 
 	print '<tr class="oddeven" height="80">'."\n";
 	print '<td class="left">';
-	print '<div class="imgmaxheight50 logo_setup"></div>';
+	print '<div class="center">';
+	print img_picto('', 'setup_logo', 'class="fa-2x"');
+	print '</div>';
 	print '</td>';
 	print '<td>'.$langs->trans("TryToUseTheModuleBuilder", $langs->transnoentitiesnoconv("ModuleBuilder")).'</td>';
 	print '<td class="maxwidth300">';

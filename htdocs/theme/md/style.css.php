@@ -4640,11 +4640,6 @@ div.divphotoref > img.photowithmargin, div.divphotoref > a > .photowithmargin {	
 	margin-top: 6px !important;
 }
 
-.logo_setup
-{
-	content:url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/logo_setup.svg', 1) ?>);	/* content is used to best fit the container */
-	display: inline-block;
-}
 .nographyet
 {
 	content:url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/nographyet.svg', 1) ?>);
@@ -7308,12 +7303,12 @@ div.clipboardCPValue.hidewithsize {
 	.a-mesure, .a-mesure-disabled {
 		text-align: center;
 	}
-	
-		
+
+
 	.underbanner.underbanner-before-box {
 		border-bottom: none;
 	}
-	
+
 	div.divButAction {
 		margin-bottom: 0.5em;
 	}

@@ -3742,7 +3742,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'off', 'on', 'order',
 				'paiment', 'paragraph', 'play', 'pdf', 'phone', 'phoning', 'phoning_mobile', 'phoning_fax', 'playdisabled', 'previous', 'poll', 'pos', 'printer', 'product', 'propal', 'puce',
 				'stock', 'resize', 'service', 'stats', 'trip',
-				'security', 'setup', 'share-alt', 'sign-out', 'split', 'stripe', 'stripe-s', 'switch_off', 'switch_on', 'switch_on_red', 'tools', 'unlink', 'uparrow', 'user', 'vcard', 'wrench',
+				'security', 'setup', 'setup_logo', 'share-alt', 'sign-out', 'split', 'stripe', 'stripe-s', 'switch_off', 'switch_on', 'switch_on_red', 'tools', 'unlink', 'uparrow', 'user', 'vcard', 'wrench',
 				'github', 'google', 'jabber', 'skype', 'twitter', 'facebook', 'linkedin', 'instagram', 'snapchat', 'youtube', 'google-plus-g', 'whatsapp',
 				'chevron-left', 'chevron-right', 'chevron-down', 'chevron-top', 'commercial', 'companies',
 				'generic', 'home', 'hrm', 'members', 'products', 'invoicing',
@@ -3775,7 +3775,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'bom'=>'shapes',
 				'card'=>'address-card', 'chart'=>'chart-line', 'company'=>'building', 'contact'=>'address-book', 'contract'=>'suitcase', 'collab'=>'people-arrows', 'conversation'=>'comments', 'country'=>'globe-americas', 'cron'=>'business-time',
 				'donation'=>'file-alt', 'dynamicprice'=>'hand-holding-usd',
-				'setup'=>'cog', 'companies'=>'building', 'products'=>'cube', 'commercial'=>'suitcase', 'invoicing'=>'coins',
+				'setup'=>'cog', 'setup_logo'=>'gears', 'companies'=>'building', 'products'=>'cube', 'commercial'=>'suitcase', 'invoicing'=>'coins',
 				'accounting'=>'search-dollar', 'category'=>'tag', 'dollyrevert'=>'dolly',
 				'generate'=>'plus-square', 'hrm'=>'user-tie', 'incoterm'=>'truck-loading',
 				'margin'=>'calculator', 'members'=>'user-friends', 'ticket'=>'ticket-alt', 'globe'=>'external-link-alt', 'lot'=>'barcode',
@@ -3890,7 +3890,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			// Define $color
 			$arrayconvpictotocolor = array(
 				'address'=>'#6c6aa8', 'building'=>'#6c6aa8', 'bom'=>'#a69944',
-				'cog'=>'#999', 'companies'=>'#6c6aa8', 'company'=>'#6c6aa8', 'contact'=>'#6c6aa8', 'cron'=>'#555',
+				'cog'=>'#999', 'setup_logo'=>'#999', 'companies'=>'#6c6aa8', 'company'=>'#6c6aa8', 'contact'=>'#6c6aa8', 'cron'=>'#555',
 				'dynamicprice'=>'#a69944',
 				'edit'=>'#444', 'note'=>'#999', 'error'=>'', 'help'=>'#bbb', 'listlight'=>'#999', 'language'=>'#555',
 				//'dolly'=>'#a69944', 'dollyrevert'=>'#a69944',
