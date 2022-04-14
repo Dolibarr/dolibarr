@@ -4731,7 +4731,6 @@ if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpa
 			print '<div class="center">';
 			print img_picto('', 'setup_logo', 'class="fa-8x"');
 			print '</div>';
-
 		} else {
 			print '<br><br><div class="center previewnotyetavailable"><span class="">'.$langs->trans("PreviewOfSiteNotYetAvailable", $object->ref).'</span></div><br><br><br>';
 			print '<div class="center">';
