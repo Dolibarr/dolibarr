@@ -297,7 +297,7 @@ if (!empty($php_session_save_handler) && $php_session_save_handler == 'db') {
 // Must be done after the include of filefunc.inc.php so global variables of conf file are defined (like $dolibarr_main_instance_unique_id or $dolibarr_main_force_https).
 // Note: the function dol_getprefix() is defined into functions.lib.php but may have been defined to return a different key to manage another area to protect.
 $prefix = dol_getprefix('');
-$sessionname = ((empty($dolibarr_main_force_https) && isHTTPS() === false) ? 'DOLSESSID_'.$prefix : '__Secure-DOLSESSID_'.$prefix); // __Secure- || __Host-
+$sessionname = 'DOLSESSID_'.$prefix;
 $sessiontimeout = 'DOLSESSTIMEOUT_'.$prefix;
 if (!empty($_COOKIE[$sessiontimeout])) {
 	ini_set('session.gc_maxlifetime', $_COOKIE[$sessiontimeout]);
