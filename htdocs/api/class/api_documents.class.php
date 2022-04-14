@@ -468,7 +468,7 @@ class Documents extends DolibarrApi
 			$object = new KnowledgeRecord($this->db);
 			$result = $object->fetch($id, $ref);
 			if (!$result) {
-				throw new RestException(404, 'Expense report not found');
+				throw new RestException(404, 'KM article not found');
 			}
 
 			$upload_dir = $conf->knowledgemanagement->dir_output.'/knowledgerecord/'.dol_sanitizeFileName($object->ref);
