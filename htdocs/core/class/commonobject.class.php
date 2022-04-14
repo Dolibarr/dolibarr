@@ -6888,7 +6888,7 @@ abstract class CommonObject
 					}
 					// Some tables may have field, some other not. For the moment we disable it.
 					if (in_array($InfoFieldList[0], array('tablewithentity'))) {
-						$sqlwhere .= " AND entity = " . ((int)$conf->entity);
+						$sqlwhere .= " AND entity = " . ((int) $conf->entity);
 					}
 					$sql .= $sqlwhere;
 					//print $sql;
@@ -7060,7 +7060,7 @@ abstract class CommonObject
 					}
 					// Some tables may have field, some other not. For the moment we disable it.
 					if (in_array($InfoFieldList[0], array('tablewithentity'))) {
-						$sqlwhere .= " AND entity = " . ((int)$conf->entity);
+						$sqlwhere .= " AND entity = " . ((int) $conf->entity);
 					}
 					// $sql.=preg_replace('/^ AND /','',$sqlwhere);
 					// print $sql;
