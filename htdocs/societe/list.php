@@ -875,6 +875,9 @@ if ($user->rights->societe->creer) {
 if ($user->rights->societe->creer) {
 	$arrayofmassactions['predisable'] = img_picto('', 'stop-circle', 'class="pictofixedwidth"').$langs->trans("SetToDisabled");
 }
+if ($user->rights->societe->creer) {
+	$arrayofmassactions['presetcommercial'] = img_picto('', '', 'class="pictofixedwidth"').$langs->trans("AllocateCommercial");
+}
 if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete', 'preaffecttag', 'preenable', 'preclose'))) {
 	$arrayofmassactions = array();
 }

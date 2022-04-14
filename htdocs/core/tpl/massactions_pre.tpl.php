@@ -217,7 +217,15 @@ if ($massaction == 'preenable') {
 if ($massaction == 'predisable') {
 	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassDisabling"), $langs->trans("ConfirmMassDisablingQuestion", count($toselect)), "disable", null, '', 0, 200, 500, 1);
 }
-
+if ($massaction == 'presetcommercial') {
+	$formquestion = array();
+	$userlist = $form->select_dolusers('', '', 0, null, 0, '', '', 0, 0, 0, 'AND u.statut = 1', 0, '', '', 0, 1);
+	$formquestion[] = array('type' => 'other',
+			'name' => 'affectedcommercial',
+			'label' => $form->editfieldkey('AllocateCommercial', 'commercial_id', '', $object, 0),
+			'value' => $form->multiselectarray('commercial', $userlist, null, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0, '', '', '', 1));
+	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmAllocateCommercial"), $langs->trans("ConfirmAllocateCommercialQuestion", count($toselect)), "affectcommercial", $formquestion, 1, 0, 200, 500, 1);
+}
 if ($massaction == 'preapproveleave') {
 	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassLeaveApproval"), $langs->trans("ConfirmMassLeaveApprovalQuestion", count($toselect)), "approveleave", null, 'yes', 0, 200, 500, 1);
 }
