@@ -265,7 +265,7 @@ if (!empty($_POST["DOL_AUTOSET_COOKIE"])) {
 			$cookiearrayvalue[$tmpkey] = $_POST[$postkey];
 		}
 	}
-	$cookiename = ((empty($dolibarr_main_force_https) && isHTTPS() === false) ? $tmpautoset[0] : '__Secure-'.$tmpautoset[0]); // __Secure- || __Host-
+	$cookiename = $tmpautoset[0];
 	$cookievalue = json_encode($cookiearrayvalue);
 	//var_dump('setcookie cookiename='.$cookiename.' cookievalue='.$cookievalue);
 	if (PHP_VERSION_ID < 70300) {
