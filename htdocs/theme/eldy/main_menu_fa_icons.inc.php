@@ -5,7 +5,7 @@
 
 .mainmenu::before{
 	/* font part */
-	font-family: "Font Awesome 5 Free";
+	font-family: "Font Awesome 6 Free";
 	font-weight: 900;
 	font-style: normal;
 	font-variant: normal;
@@ -66,8 +66,8 @@ div.mainmenu.cashdesk .tmenuimage {
 	height: <?php echo $topMenuFontSize; ?>;
 	background-color: #<?php echo $colortextbackhmenu; ?>;
 	width: 100%;
-	-webkit-mask: url(<?php echo DOL_URL_ROOT.'/theme/common/fontawesome-5/svgs/solid/cash-register.svg' ?>) no-repeat 50% 50%; /* for old webkit browser */
-	mask: url(<?php echo DOL_URL_ROOT.'/theme/common/fontawesome-5/svgs/solid/cash-register.svg' ?>) no-repeat 50% 50%;
+	-webkit-mask: url(<?php echo DOL_URL_ROOT.'/theme/common/fontawesome-6/svgs/solid/cash-register.svg' ?>) no-repeat 50% 50%; /* for old webkit browser */
+	mask: url(<?php echo DOL_URL_ROOT.'/theme/common/fontawesome-6/svgs/solid/cash-register.svg' ?>) no-repeat 50% 50%;
 }
 
 <?php } else { ?>

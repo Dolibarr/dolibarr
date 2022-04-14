@@ -5,7 +5,7 @@
 
 .mainmenu::before{
 	/* font part */
-	font-family: "Font Awesome 5 Free";
+	font-family: "Font Awesome 6 Free";
 	font-weight: 900;
 	font-style: normal;
 	font-variant: normal;
