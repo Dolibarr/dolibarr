@@ -87,6 +87,10 @@ $daytoparse = $now;
 if ($yearofday && $monthofday && $dayofday) $daytoparse = dol_mktime(0, 0, 0, $monthofday, $dayofday, $yearofday); // xxxofday is value of day after submit action 'addtime'
 elseif ($year && $month && $day) $daytoparse = dol_mktime(0, 0, 0, $month, $day, $year); // this are value submited after submit of action 'submitdateselect'
 
+$daytoparsegmt = dol_now('gmt');
+if ($yearofday && $monthofday && $dayofday) $daytoparsegmt = dol_mktime(0, 0, 0, $monthofday, $dayofday, $yearofday, 'gmt'); // xxxofday is value of day after submit action 'addtime'
+elseif ($year && $month && $day) $daytoparsegmt = dol_mktime(0, 0, 0, $month, $day, $year, 'gmt'); // this are value submited after submit of action 'submitdateselect'
+
 
 if (empty($search_usertoprocessid) || $search_usertoprocessid == $user->id)
 {
@@ -616,7 +620,7 @@ $statusofholidaytocheck = Holiday::STATUS_APPROVED;
 $isavailablefordayanduser = $holiday->verifDateHolidayForTimestamp($usertoprocess->id, $daytoparse, $statusofholidaytocheck); // $daytoparse is a date with hours = 0
 $isavailable[$daytoparse] = $isavailablefordayanduser; // in projectLinesPerWeek later, we are using $firstdaytoshow and dol_time_plus_duree to loop on each day
 
-$test = num_public_holiday($daytoparse, $daytoparse + 86400, $mysoc->country_code);
+$test = num_public_holiday($daytoparsegmt, $daytoparsegmt + 86400, $mysoc->country_code);
 if ($test) $isavailable[$daytoparse] = array('morning'=>false, 'afternoon'=>false, 'morning_reason'=>'public_holiday', 'afternoon_reason'=>'public_holiday');
 
 $tmparray = dol_getdate($daytoparse, true); // detail of current day
