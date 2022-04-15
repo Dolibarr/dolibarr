@@ -8213,10 +8213,11 @@ class Form
 	 *	@param	string	$htmlname		Name of HTML field
 	 *	@param	array	$array			Array with array of fields we could show. This array may be modified according to setup of user.
 	 *  @param  string  $varpage        Id of context for page. Can be set by caller with $varpage=(empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage);
+	 * 	@param	string	$pos       		position colon on liste value left or right
 	 *	@return	string					HTML multiselect string
 	 *  @see selectarray()
 	 */
-	public static function multiSelectArrayWithCheckbox($htmlname, &$array, $varpage)
+	public static function multiSelectArrayWithCheckbox($htmlname, &$array, $varpage, $pos = '')
 	{
 		global $conf, $langs, $user, $extrafields;
 
@@ -8283,7 +8284,7 @@ class Form
             </dt>
             <dd class="dropdowndd">
                 <div class="multiselectcheckbox'.$htmlname.'">
-                    <ul class="ul'.$htmlname.'">
+                    <ul class="ul'.$htmlname.' '.$htmlname.$pos.'">
                     '.$listoffieldsforselection.'
                     </ul>
                 </div>
@@ -9375,13 +9376,19 @@ class Form
 	/**
 	 *	Return HTML to show the search and clear seach button
 	 *
+	 *  @param	string	$pos       position colon on liste value left or right
 	 *  @return	string
 	 */
-	public function showFilterButtons()
+	public function showFilterButtons($pos = '')
 	{
 		$out = '<div class="nowraponall">';
-		$out .= '<button type="submit" class="liste_titre button_search reposition" name="button_search_x" value="x"><span class="fa fa-search"></span></button>';
-		$out .= '<button type="submit" class="liste_titre button_removefilter reposition" name="button_removefilter_x" value="x"><span class="fa fa-remove"></span></button>';
+		if ($pos == 'left') {
+			$out .= '<button type="submit" class="liste_titre button_removefilter reposition" name="button_removefilter_x" value="x"><span class="fa fa-remove"></span></button>';
+			$out .= '<button type="submit" class="liste_titre button_search reposition" name="button_search_x" value="x"><span class="fa fa-search"></span></button>';
+		} else {
+			$out .= '<button type="submit" class="liste_titre button_search reposition" name="button_search_x" value="x"><span class="fa fa-search"></span></button>';
+			$out .= '<button type="submit" class="liste_titre button_removefilter reposition" name="button_removefilter_x" value="x"><span class="fa fa-remove"></span></button>';
+		}
 		$out .= '</div>';
 
 		return $out;
