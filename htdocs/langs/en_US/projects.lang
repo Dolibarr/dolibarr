@@ -276,7 +276,6 @@ NewInter=New intervention
 OneLinePerTask=One line per task
 OneLinePerPeriod=One line per period
 OneLinePerTimeSpentLine=One line for each time spent declaration
-OneLinePerTimeSpentLineProduct=One line for each time spent declaration with product defined
 AddDetailDateAndDuration=With date and duration into line description
 RefTaskParent=Ref. Parent Task
 ProfitIsCalculatedWith=Profit is calculated using

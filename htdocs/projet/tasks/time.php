@@ -475,7 +475,7 @@ if ($action == 'confirm_generateinvoice') {
 						}
 					}
 				}
-			} elseif ($generateinvoicemode == 'onelineperperiod' || $generateinvoicemode == 'onelineperperiodproduct') {	// One line for each time spent line
+			} elseif ($generateinvoicemode == 'onelineperperiod') {	// One line for each time spent line
 				$arrayoftasks = array();
 
 				$withdetail=GETPOST('detail_time_duration', 'alpha');
@@ -531,7 +531,7 @@ if ($action == 'confirm_generateinvoice') {
 					$localtax2line = $localtax2;
 
 
-					if ($generateinvoicemode == 'onelineperperiodproduct' && !empty($value['fk_product']) && $value['fk_product']!==$idprod) {
+					if (!empty($value['fk_product']) && $value['fk_product']!==$idprod) {
 						if (!array_key_exists($value['fk_product'], $product_data_cache)) {
 							$result = $tmpproduct->fetch($value['fk_product']);
 							if ($result < 0) {
@@ -1210,7 +1210,6 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 					'onelineperuser'=>'OneLinePerUser',
 					'onelinepertask'=>'OneLinePerTask',
 					'onelineperperiod'=>'OneLinePerTimeSpentLine',
-					'onelineperperiodproduct'=>'OneLinePerTimeSpentLineProduct',
 				);
 				print $form->selectarray('generateinvoicemode', $tmparray, 'onelineperuser', 0, 0, 0, '', 1);
 				print "\n".'<script type="text/javascript">';
