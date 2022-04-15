@@ -2889,15 +2889,20 @@ abstract class CommonObject
 			return -1;
 		}
 
+		$fieldposition = 'rang'; // @todo Rename 'rang' into 'position'
+		if (in_array($this->table_element_line, array('bom_bomline', 'ecm_files', 'emailcollector_emailcollectoraction', 'product_attribute_value'))) {
+			$fieldposition = 'position';
+		}
+
 		// Count number of lines to reorder (according to choice $renum)
 		$nl = 0;
-		$sql = 'SELECT count(rowid) FROM '.MAIN_DB_PREFIX.$this->table_element_line;
-		$sql .= ' WHERE '.$this->fk_element.'='.$this->id;
+		$sql = "SELECT count(rowid) FROM ".MAIN_DB_PREFIX.$this->table_element_line;
+		$sql .= " WHERE ".$this->fk_element." = ".((int) $this->id);
 		if (!$renum) {
-			$sql .= ' AND rang = 0';
+			$sql .= " AND " . $fieldposition . " = 0";
 		}
 		if ($renum) {
-			$sql .= ' AND rang <> 0';
+			$sql .= " AND " . $fieldposition . " <> 0";
 		}
 
 		dol_syslog(get_class($this)."::line_order", LOG_DEBUG);
@@ -2913,12 +2918,12 @@ abstract class CommonObject
 			$rows = array();
 
 			// We first search all lines that are parent lines (for multilevel details lines)
-			$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.$this->table_element_line;
-			$sql .= ' WHERE '.$this->fk_element.' = '.$this->id;
+			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX.$this->table_element_line;
+			$sql .= " WHERE ".$this->fk_element." = ".((int) $this->id);
 			if ($fk_parent_line) {
 				$sql .= ' AND fk_parent_line IS NULL';
 			}
-			$sql .= ' ORDER BY rang ASC, rowid '.$rowidorder;
+			$sql .= " ORDER BY " . $fieldposition . " ASC, rowid " . $rowidorder;
 
 			dol_syslog(get_class($this)."::line_order search all parent lines", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -2959,14 +2964,19 @@ abstract class CommonObject
 	 */
 	public function getChildrenOfLine($id, $includealltree = 0)
 	{
+		$fieldposition = 'rang'; // @todo Rename 'rang' into 'position'
+		if (in_array($this->table_element_line, array('bom_bomline', 'ecm_files', 'emailcollector_emailcollectoraction', 'product_attribute_value'))) {
+			$fieldposition = 'position';
+		}
+
 		$rows = array();
 
-		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.$this->table_element_line;
-		$sql .= ' WHERE '.$this->fk_element.' = '.$this->id;
-		$sql .= ' AND fk_parent_line = '.$id;
-		$sql .= ' ORDER BY rang ASC';
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX.$this->table_element_line;
+		$sql .= " WHERE ".$this->fk_element." = ".((int) $this->id);
+		$sql .= ' AND fk_parent_line = '.((int) $id);
+		$sql .= " ORDER BY " . $fieldposition . " ASC";
 
-		dol_syslog(get_class($this)."::getChildrenOfLine search children lines for line ".$id."", LOG_DEBUG);
+		dol_syslog(get_class($this)."::getChildrenOfLine search children lines for line ".$id, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			if ($this->db->num_rows($resql) > 0) {
@@ -3029,21 +3039,28 @@ abstract class CommonObject
 	 *
 	 * 	@param	int		$rowid		Id of line
 	 * 	@param	int		$rang		Position
-	 * 	@return	void
+	 * 	@return	int					<0 if KO, >0 if OK
 	 */
 	public function updateRangOfLine($rowid, $rang)
 	{
+		global $hookmanager;
 		$fieldposition = 'rang'; // @todo Rename 'rang' into 'position'
-		if (in_array($this->table_element_line, array('bom_bomline', 'ecm_files', 'emailcollector_emailcollectoraction'))) {
+		if (in_array($this->table_element_line, array('bom_bomline', 'ecm_files', 'emailcollector_emailcollectoraction', 'product_attribute_value'))) {
 			$fieldposition = 'position';
 		}
 
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET '.$fieldposition.' = '.((int) $rang);
+		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element_line." SET ".$fieldposition." = ".((int) $rang);
 		$sql .= ' WHERE rowid = '.((int) $rowid);
 
 		dol_syslog(get_class($this)."::updateRangOfLine", LOG_DEBUG);
 		if (!$this->db->query($sql)) {
 			dol_print_error($this->db);
+			return -1;
+		} else {
+			$parameters=array('rowid'=>$rowid, 'rang'=>$rang, 'fieldposition' => $fieldposition);
+			$action='';
+			$reshook = $hookmanager->executeHooks('afterRankOfLineUpdate', $parameters, $this, $action);
+			return 1;
 		}
 	}
 
@@ -3074,15 +3091,15 @@ abstract class CommonObject
 	{
 		if ($rang > 1) {
 			$fieldposition = 'rang';
-			if (in_array($this->table_element_line, array('ecm_files', 'emailcollector_emailcollectoraction'))) {
+			if (in_array($this->table_element_line, array('ecm_files', 'emailcollector_emailcollectoraction', 'product_attribute_value'))) {
 				$fieldposition = 'position';
 			}
 
-			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET '.$fieldposition.' = '.((int) $rang);
-			$sql .= ' WHERE '.$this->fk_element.' = '.$this->id;
-			$sql .= ' AND rang = '.($rang - 1);
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element_line." SET ".$fieldposition." = ".((int) $rang);
+			$sql .= " WHERE ".$this->fk_element." = ".((int) $this->id);
+			$sql .= " AND " . $fieldposition . " = " . ((int) ($rang - 1));
 			if ($this->db->query($sql)) {
-				$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET '.$fieldposition.' = '.((int) ($rang - 1));
+				$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element_line." SET ".$fieldposition." = ".((int) ($rang - 1));
 				$sql .= ' WHERE rowid = '.((int) $rowid);
 				if (!$this->db->query($sql)) {
 					dol_print_error($this->db);
@@ -3105,15 +3122,15 @@ abstract class CommonObject
 	{
 		if ($rang < $max) {
 			$fieldposition = 'rang';
-			if (in_array($this->table_element_line, array('ecm_files', 'emailcollector_emailcollectoraction'))) {
+			if (in_array($this->table_element_line, array('ecm_files', 'emailcollector_emailcollectoraction', 'product_attribute_value'))) {
 				$fieldposition = 'position';
 			}
 
-			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET '.$fieldposition.' = '.((int) $rang);
-			$sql .= ' WHERE '.$this->fk_element.' = '.$this->id;
-			$sql .= ' AND rang = '.((int) ($rang + 1));
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element_line." SET ".$fieldposition." = ".((int) $rang);
+			$sql .= " WHERE ".$this->fk_element." = ".((int) $this->id);
+			$sql .= " AND " . $fieldposition . " = " . ((int) ($rang + 1));
 			if ($this->db->query($sql)) {
-				$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET '.$fieldposition.' = '.((int) ($rang + 1));
+				$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element_line." SET ".$fieldposition." = ".((int) ($rang + 1));
 				$sql .= ' WHERE rowid = '.((int) $rowid);
 				if (!$this->db->query($sql)) {
 					dol_print_error($this->db);
@@ -3132,8 +3149,13 @@ abstract class CommonObject
 	 */
 	public function getRangOfLine($rowid)
 	{
-		$sql = 'SELECT rang FROM '.MAIN_DB_PREFIX.$this->table_element_line;
-		$sql .= ' WHERE rowid ='.((int) $rowid);
+		$fieldposition = 'rang';
+		if (in_array($this->table_element_line, array('ecm_files', 'emailcollector_emailcollectoraction', 'product_attribute_value'))) {
+			$fieldposition = 'position';
+		}
+
+		$sql = "SELECT " . $fieldposition . " FROM ".MAIN_DB_PREFIX.$this->table_element_line;
+		$sql .= " WHERE rowid = ".((int) $rowid);
 
 		dol_syslog(get_class($this)."::getRangOfLine", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -3151,9 +3173,14 @@ abstract class CommonObject
 	 */
 	public function getIdOfLine($rang)
 	{
-		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.$this->table_element_line;
-		$sql .= ' WHERE '.$this->fk_element.' = '.$this->id;
-		$sql .= ' AND rang = '.((int) $rang);
+		$fieldposition = 'rang';
+		if (in_array($this->table_element_line, array('ecm_files', 'emailcollector_emailcollectoraction', 'product_attribute_value'))) {
+			$fieldposition = 'position';
+		}
+
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX.$this->table_element_line;
+		$sql .= " WHERE ".$this->fk_element." = ".((int) $this->id);
+		$sql .= " AND " . $fieldposition . " = ".((int) $rang);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$row = $this->db->fetch_row($resql);
@@ -3172,15 +3199,15 @@ abstract class CommonObject
 	{
 		// phpcs:enable
 		$positionfield = 'rang';
-		if ($this->table_element == 'bom_bom') {
+		if (in_array($this->table_element, array('bom_bom', 'product_attribute'))) {
 			$positionfield = 'position';
 		}
 
 		// Search the last rang with fk_parent_line
 		if ($fk_parent_line) {
-			$sql = 'SELECT max('.$positionfield.') FROM '.MAIN_DB_PREFIX.$this->table_element_line;
-			$sql .= ' WHERE '.$this->fk_element.' = '.$this->id;
-			$sql .= ' AND fk_parent_line = '.$fk_parent_line;
+			$sql = "SELECT max(".$positionfield.") FROM ".MAIN_DB_PREFIX.$this->table_element_line;
+			$sql .= " WHERE ".$this->fk_element." = ".((int) $this->id);
+			$sql .= " AND fk_parent_line = ".((int) $fk_parent_line);
 
 			dol_syslog(get_class($this)."::line_max", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -3194,8 +3221,8 @@ abstract class CommonObject
 			}
 		} else {
 			// If not, search the last rang of element
-			$sql = 'SELECT max('.$positionfield.') FROM '.MAIN_DB_PREFIX.$this->table_element_line;
-			$sql .= ' WHERE '.$this->fk_element.' = '.$this->id;
+			$sql = "SELECT max(".$positionfield.") FROM ".MAIN_DB_PREFIX.$this->table_element_line;
+			$sql .= " WHERE ".$this->fk_element." = ".((int) $this->id);
 
 			dol_syslog(get_class($this)."::line_max", LOG_DEBUG);
 			$resql = $this->db->query($sql);

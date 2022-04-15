@@ -271,6 +271,8 @@ CheckVersionFail=Échec de la vérification de version
 ErrorWrongFileName=Le nom du fichier ne peut pas contenir __SOMETHING__
 ErrorNotInDictionaryPaymentConditions=Pas dans le dictionnaire des conditions de paiement, veuillez modifier.
 ErrorIsNotADraft=%s n'est pas au statut brouillon
+ErrorAttributeIsUsedIntoProduct=Cet attribut est utilisé dans une ou plusieurs variantes de produits
+ErrorAttributeValueIsUsedIntoProduct=Cette valeur d'attribut est utilisée dans une ou plusieurs variantes de produits
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Votre paramètre PHP upload_max_filesize (%s) est supérieur au paramètre PHP post_max_size (%s). Ceci n'est pas une configuration cohérente.
