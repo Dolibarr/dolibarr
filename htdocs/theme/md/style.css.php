@@ -6330,6 +6330,9 @@ dl.dropdown {
 	max-height: 264px;
 	overflow: auto;
 }
+.dropdown dd ul.selectedfieldsleft {
+	right: auto;
+}
 .dropdown dd ul li {
 	white-space: nowrap;
 	font-weight: normal;
