@@ -406,7 +406,7 @@ class FormCompany extends Form
 							// Show break
 							$key = $langs->trans("Country".strtoupper($obj->country_code));
 							$valuetoshow = ($key != "Country".strtoupper($obj->country_code)) ? $obj->country_code." - ".$key : $obj->country;
-							print '<option value="-1" disabled>----- '.$valuetoshow." -----</option>\n";
+							print '<option value="-2" disabled>----- '.$valuetoshow." -----</option>\n";
 							$country = $obj->country;
 						}
 

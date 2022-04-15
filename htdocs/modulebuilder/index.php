@@ -46,6 +46,9 @@ $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
 
+$sortfield = '';
+$sortorder = '';
+
 $module = GETPOST('module', 'alpha');
 $tab = GETPOST('tab', 'aZ09');
 $tabobj = GETPOST('tabobj', 'alpha');
@@ -3250,7 +3253,7 @@ if ($module == 'initmodule') {
 						print '</td>';
 
 						print '<td>';
-						print $perm[1];
+						print $langs->trans($perm[1]);
 						print '</td>';
 
 						print '<td>';

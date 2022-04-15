@@ -870,10 +870,10 @@ if ($user->rights->societe->creer) {
 	$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
 }
 if ($user->rights->societe->creer) {
-	$arrayofmassactions['preenable'] = img_picto('', '', 'class="pictofixedwidth"').$langs->trans("SetToEnabled");
+	$arrayofmassactions['preenable'] = img_picto('', 'stop-circle', 'class="pictofixedwidth"').$langs->trans("SetToEnabled");
 }
 if ($user->rights->societe->creer) {
-	$arrayofmassactions['predisable'] = img_picto('', '', 'class="pictofixedwidth"').$langs->trans("SetToDisabled");
+	$arrayofmassactions['predisable'] = img_picto('', 'stop-circle', 'class="pictofixedwidth"').$langs->trans("SetToDisabled");
 }
 if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete', 'preaffecttag', 'preenable', 'preclose'))) {
 	$arrayofmassactions = array();

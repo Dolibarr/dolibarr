@@ -3014,7 +3014,7 @@ if ($action == 'create') {
 		}
 		// Show link for "recalculate"
 		if ($object->getVentilExportCompta() == 0) {
-			$s = $langs->trans("ReCalculate").' ';
+			$s = '<span class="opacitymedium">'.$langs->trans("ReCalculate").'</span> ';
 			$s .= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=calculate&calculationrule=totalofround">'.$langs->trans("Mode1").'</a>';
 			$s .= ' / ';
 			$s .= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=calculate&calculationrule=roundoftotal">'.$langs->trans("Mode2").'</a>';

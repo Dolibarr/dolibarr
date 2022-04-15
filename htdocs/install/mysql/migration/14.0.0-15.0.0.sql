@@ -510,7 +510,8 @@ INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) value
 -- VMYSQL4.3 ALTER TABLE llx_user MODIFY COLUMN fk_soc integer NULL;
 -- VPGSQL8.2 ALTER TABLE llx_user ALTER COLUMN fk_soc DROP NOT NULL;
 
-DROP TABLE IF EXISTS llx_element_tag; -- in migration 3.2.0 to 3.3.0 there is a element_tag table creation that is notin create table
+-- In migration 3.2.0 to 3.3.0 there is a element_tag table creation that is not in create table file
+DROP TABLE IF EXISTS llx_element_tag;
 CREATE TABLE llx_element_tag
 (
     rowid integer AUTO_INCREMENT PRIMARY KEY,
@@ -522,3 +523,8 @@ CREATE TABLE llx_element_tag
 ALTER TABLE llx_element_tag ADD UNIQUE INDEX idx_element_tag_uk (fk_categorie, fk_element);
 
 ALTER TABLE llx_element_tag ADD CONSTRAINT fk_element_tag_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
+
+-- Add column to help to fix a very critical bug when transferring into accounting bank record of a bank account into another currency.
+-- Idea is to update this column manually in v15 with value in currency of company for bank that are not into the main currency and the transfer
+-- into accounting will use it in priority if value is not null. The script repair.sql contains the sequence to fix datas in llx_bank.
+ALTER TABLE llx_bank ADD COLUMN amount_main_currency double(24,8) NULL;

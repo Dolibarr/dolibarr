@@ -678,7 +678,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 		$checkonentitydone = 0;
 
 		// Array to define rules of checks to do
-		$check = array('adherent', 'banque', 'bom', 'don', 'mrp', 'user', 'usergroup', 'payment', 'payment_supplier', 'product', 'produit', 'service', 'produit|service', 'categorie', 'resource', 'expensereport', 'holiday', 'salaries', 'website'); // Test on entity only (Objects with no link to company)
+		$check = array('adherent', 'banque', 'bom', 'don', 'mrp', 'user', 'usergroup', 'payment', 'payment_supplier', 'product', 'produit', 'service', 'produit|service', 'categorie', 'resource', 'expensereport', 'holiday', 'salaries', 'website', 'recruitment'); // Test on entity only (Objects with no link to company)
 		$checksoc = array('societe'); // Test for societe object
 		$checkother = array('contact', 'agenda'); // Test on entity + link to third party on field $dbt_keyfield. Allowed if link is empty (Ex: contacts...).
 		$checkproject = array('projet', 'project'); // Test for project object

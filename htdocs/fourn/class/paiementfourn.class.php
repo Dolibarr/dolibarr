@@ -160,11 +160,12 @@ class PaiementFourn extends Paiement
 		$error = 0;
 		$way = $this->getWay();
 
+		$now = dol_now();
+
 		// Clean parameters
 		$totalamount = 0;
 		$totalamount_converted = 0;
-
-		dol_syslog(get_class($this)."::create", LOG_DEBUG);
+		$atleastonepaymentnotnull = 0;
 
 		if ($way == 'dolibarr') {
 			$amounts = &$this->amounts;
@@ -174,23 +175,62 @@ class PaiementFourn extends Paiement
 			$amounts_to_update = &$this->amounts;
 		}
 
+		$currencyofpayment = '';
+
 		foreach ($amounts as $key => $value) {
+			if (empty($value)) {
+				continue;
+			}
+			// $key is id of invoice, $value is amount, $way is a 'dolibarr' if amount is in main currency, 'customer' if in foreign currency
 			$value_converted = Multicurrency::getAmountConversionFromInvoiceRate($key, $value ? $value : 0, $way, 'facture_fourn');
+			// Add controls of input validity
+			if ($value_converted === false) {
+				// We failed to find the conversion for one invoice
+				$this->error = 'FailedToFoundTheConversionRateForInvoice';
+				return -1;
+			}
+			if (empty($currencyofpayment)) {
+				$currencyofpayment = $this->multicurrency_code[$key];
+			}
+			if ($currencyofpayment != $this->multicurrency_code[$key]) {
+				// If we have invoices with different currencies in the payment, we stop here
+				$this->error = 'ErrorYouTryToPayInvoicesWithDifferentCurrenciesInSamePayment';
+				return -1;
+			}
+
 			$totalamount_converted += $value_converted;
 			$amounts_to_update[$key] = price2num($value_converted, 'MT');
 
 			$newvalue = price2num($value, 'MT');
 			$amounts[$key] = $newvalue;
 			$totalamount += $newvalue;
+			if (!empty($newvalue)) {
+				$atleastonepaymentnotnull++;
+			}
 		}
+
+		if (!empty($currencyofpayment)) {
+			// We must check that the currency of invoices is the same than the currency of the bank
+			$bankaccount = new Account($this->db);
+			$bankaccount->fetch($this->fk_account);
+			$bankcurrencycode = empty($bankaccount->currency_code) ? $conf->currency : $bankaccount->currency_code;
+			if ($currencyofpayment != $bankcurrencycode && $currencyofpayment != $conf->currency && $bankcurrencycode != $conf->currency) {
+				$langs->load("errors");
+				$this->error = $langs->trans('ErrorYouTryToPayInvoicesInACurrencyFromBankWithAnotherCurrency', $currencyofpayment, $bankcurrencycode);
+				return -1;
+			}
+		}
+
+
 		$totalamount = price2num($totalamount);
 		$totalamount_converted = price2num($totalamount_converted);
+
+		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 
 		$this->db->begin();
 
 		if ($totalamount <> 0) { // On accepte les montants negatifs
 			$ref = $this->getNextNumRef(is_object($thirdparty) ? $thirdparty : '');
-			$now = dol_now();
 
 			if ($way == 'dolibarr') {
 				$total = $totalamount;
@@ -346,7 +386,7 @@ class PaiementFourn extends Paiement
 			$this->total = $total;
 			$this->multicurrency_amount = $mtotal;
 			$this->db->commit();
-			dol_syslog('PaiementFourn::Create Ok Total = '.$this->total);
+			dol_syslog('PaiementFourn::Create Ok Total = '.$this->amount.', Total currency = '.$this->multicurrency_amount);
 			return $this->id;
 		} else {
 			$this->db->rollback();
