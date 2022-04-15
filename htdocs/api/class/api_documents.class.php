@@ -472,6 +472,20 @@ class Documents extends DolibarrApi
 			}
 
 			$upload_dir = $conf->knowledgemanagement->dir_output.'/knowledgerecord/'.dol_sanitizeFileName($object->ref);
+		} elseif ($modulepart == 'ticket') {
+			require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
+
+			if (!DolibarrApiAccess::$user->rights->societe->client->voir && !DolibarrApiAccess::$user->rights->societe->client->voir) {
+				throw new RestException(401);
+			}
+
+			$object = new Ticket($this->db);
+			$result = $object->fetch($id, $ref);
+			if (!$result) {
+				throw new RestException(404, 'Expense report not found');
+			}
+
+			$upload_dir = $conf->ticket->dir_output.'/'.dol_sanitizeFileName($object->ref);
 		} elseif ($modulepart == 'categorie' || $modulepart == 'category') {
 			require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
