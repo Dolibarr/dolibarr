@@ -482,7 +482,7 @@ class Documents extends DolibarrApi
 			$object = new Ticket($this->db);
 			$result = $object->fetch($id, $ref);
 			if (!$result) {
-				throw new RestException(404, 'Expense report not found');
+				throw new RestException(404, 'Ticket not found');
 			}
 
 			$upload_dir = $conf->ticket->dir_output.'/'.dol_sanitizeFileName($object->ref);
