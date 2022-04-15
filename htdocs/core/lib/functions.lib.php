@@ -6521,7 +6521,8 @@ function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, 
 {
 	$allowed_tags = array(
 		"html", "head", "meta", "body", "article", "a", "abbr", "b", "blockquote", "br", "cite", "div", "dl", "dd", "dt", "em", "font", "img", "ins", "hr", "i", "li", "link",
-		"ol", "p", "q", "s", "section", "span", "strike", "strong", "title", "table", "tr", "th", "td", "u", "ul", "sup", "sub", "blockquote", "pre", "h1", "h2", "h3", "h4", "h5", "h6"
+		"ol", "p", "q", "s", "section", "span", "strike", "strong", "title", "table", "tr", "th", "td", "u", "ul", "sup", "sub", "blockquote", "pre", "h1", "h2", "h3", "h4", "h5", "h6",
+		"comment"	// this tags is added to manage comment <!--...--> that are replaced into <comment>...</comment>
 	);
 	if ($allowiframe) {
 		$allowed_tags[] = "iframe";
@@ -6534,7 +6535,8 @@ function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, 
 
 	$stringtoclean = dol_string_nounprintableascii($stringtoclean, 0);
 
-	$stringtoclean = preg_replace('/<!--[^>]*-->/', '', $stringtoclean);
+	//$stringtoclean = preg_replace('/<!--[^>]*-->/', '', $stringtoclean);
+	$stringtoclean = preg_replace('/<!--([^>]*)-->/', '<comment>\1</comment>', $stringtoclean);
 
 	$stringtoclean = preg_replace('/&colon;/i', ':', $stringtoclean);
 	$stringtoclean = preg_replace('/&#58;|&#0+58|&#x3A/i', '', $stringtoclean); // refused string ':' encoded (no reason to have a : encoded like this) to disable 'javascript:...'
@@ -6556,6 +6558,9 @@ function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, 
 	}
 
 	$temp = str_replace('__!DOCTYPE_HTML__', '<!DOCTYPE html>', $temp);	// Restore the DOCTYPE
+
+	$temp = preg_replace('/<comment>([^>]*)<\/comment>/', '<!--\1-->', $temp);	// Restore html comments
+
 
 	return $temp;
 }
@@ -7470,13 +7475,23 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 		$substitutionarray['__DATE_YMD__']        = is_object($object) ? (isset($object->date) ? dol_print_date($object->date, 'day', 0, $outputlangs) : null) : '';
 		$substitutionarray['__DATE_DUE_YMD__']    = is_object($object) ? (isset($object->date_lim_reglement) ? dol_print_date($object->date_lim_reglement, 'day', 0, $outputlangs) : null) : '';
 
+		$already_payed_all = 0;
+		if (is_object($object) && ($object instanceof Facture)) {
+			$already_payed_all = $object->sumpayed + $object->sumdeposit + $object->sumcreditnote;
+		}
+
+		$substitutionarray['__AMOUNT_EXCL_TAX__'] = is_object($object) ? $object->total_ht : '';
+
 		$substitutionarray['__AMOUNT__']          = is_object($object) ? $object->total_ttc : '';
 		$substitutionarray['__AMOUNT_TEXT__']     = is_object($object) ? dol_convertToWord($object->total_ttc, $outputlangs, '', true) : '';
 		$substitutionarray['__AMOUNT_TEXTCURRENCY__'] = is_object($object) ? dol_convertToWord($object->total_ttc, $outputlangs, $conf->currency, true) : '';
-		$substitutionarray['__AMOUNT_EXCL_TAX__'] = is_object($object) ? $object->total_ht : '';
+
+		$substitutionarray['__AMOUNT_REMAIN__'] = is_object($object) ? $object->total_ttc - $already_payed_all : '';
+
 		$substitutionarray['__AMOUNT_VAT__']      = is_object($object) ? (isset($object->total_vat) ? $object->total_vat : $object->total_tva) : '';
 		$substitutionarray['__AMOUNT_VAT_TEXT__']      = is_object($object) ? (isset($object->total_vat) ? dol_convertToWord($object->total_vat, $outputlangs, '', true) : dol_convertToWord($object->total_tva, $outputlangs, '', true)) : '';
 		$substitutionarray['__AMOUNT_VAT_TEXTCURRENCY__']      = is_object($object) ? (isset($object->total_vat) ? dol_convertToWord($object->total_vat, $outputlangs, $conf->currency, true) : dol_convertToWord($object->total_tva, $outputlangs, $conf->currency, true)) : '';
+
 		if ($onlykey != 2 || $mysoc->useLocalTax(1)) {
 			$substitutionarray['__AMOUNT_TAX2__']     = is_object($object) ? $object->total_localtax1 : '';
 		}
@@ -7484,8 +7499,10 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			$substitutionarray['__AMOUNT_TAX3__']     = is_object($object) ? $object->total_localtax2 : '';
 		}
 
-		$substitutionarray['__AMOUNT_FORMATED__']          = is_object($object) ? ($object->total_ttc ? price($object->total_ttc, 0, $outputlangs, 0, -1, -1, $conf->currency) : null) : '';
+		// Amount keys formated in a currency
 		$substitutionarray['__AMOUNT_EXCL_TAX_FORMATED__'] = is_object($object) ? ($object->total_ht ? price($object->total_ht, 0, $outputlangs, 0, -1, -1, $conf->currency) : null) : '';
+		$substitutionarray['__AMOUNT_FORMATED__']          = is_object($object) ? ($object->total_ttc ? price($object->total_ttc, 0, $outputlangs, 0, -1, -1, $conf->currency) : null) : '';
+		$substitutionarray['__AMOUNT_REMAIN_FORMATED__'] = is_object($object) ? ($object->total_ttc ? price($object->total_ttc - $already_payed_all, 0, $outputlangs, 0, -1, -1, $conf->currency) : null) : '';
 		$substitutionarray['__AMOUNT_VAT_FORMATED__']      = is_object($object) ? (isset($object->total_vat) ? price($object->total_vat, 0, $outputlangs, 0, -1, -1, $conf->currency) : ($object->total_tva ? price($object->total_tva, 0, $outputlangs, 0, -1, -1, $conf->currency) : null)) : '';
 		if ($onlykey != 2 || $mysoc->useLocalTax(1)) {
 			$substitutionarray['__AMOUNT_TAX2_FORMATED__']     = is_object($object) ? ($object->total_localtax1 ? price($object->total_localtax1, 0, $outputlangs, 0, -1, -1, $conf->currency) : null) : '';
@@ -7909,7 +7926,6 @@ function dol_htmloutput_events($disabledoutputofmessages = 0)
 		}
 		unset($_SESSION['dol_events']['mesgs']);
 	}
-
 	// Show errors
 	if (isset($_SESSION['dol_events']['errors'])) {
 		if (empty($disabledoutputofmessages)) {

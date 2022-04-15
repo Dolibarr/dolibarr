@@ -93,7 +93,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		print $form->select_dolgroups($usergroupid, 'usergroup', 1, '', !$canedit, '', '', '0', false, 'minwidth100 maxwidth500 widthcentpercentminusxx');
 		print '</div>';
 
-		if ($conf->resource->enabled) {
+		if (!empty($conf->resource->enabled)) {
 			include_once DOL_DOCUMENT_ROOT.'/resource/class/html.formresource.class.php';
 			$formresource = new FormResource($db);
 
@@ -105,14 +105,14 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		}
 	}
 
-	if (!empty($conf->societe->enabled) && $user->rights->societe->lire) {
+	if (!empty($conf->societe->enabled) && !empty($user->rights->societe->lire)) {
 		print '<div class="divsearchfield">';
 		print img_picto($langs->trans("ThirdParty"), 'company', 'class="fawidth30 inline-block"');
 		print $form->select_company($socid, 'search_socid', '', '&nbsp;', 0, 0, null, 0, 'minwidth100 maxwidth500');
 		print '</div>';
 	}
 
-	if (!empty($conf->projet->enabled) && $user->rights->projet->lire) {
+	if (!empty($conf->projet->enabled) && !empty($user->rights->projet->lire)) {
 		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 		$formproject = new FormProjets($db);
 

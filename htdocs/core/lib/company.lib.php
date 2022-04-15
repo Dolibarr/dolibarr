@@ -42,6 +42,8 @@
 function societe_prepare_head(Societe $object)
 {
 	global $db, $langs, $conf, $user;
+	global $hookmanager;
+
 	$h = 0;
 	$head = array();
 
@@ -64,7 +66,15 @@ function societe_prepare_head(Societe $object)
 			} else {
 				$sql = "SELECT COUNT(p.rowid) as nb";
 				$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as p";
+				// Add table from hooks
+				$parameters = array('contacttab' => true);
+				$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
+				$sql .= $hookmanager->resPrint;
 				$sql .= " WHERE p.fk_soc = ".((int) $object->id);
+				// Add where from hooks
+				$parameters = array('contacttab' => true);
+				$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object); // Note that $action and $object may have been modified by hook
+				$sql .= $hookmanager->resPrint;
 				$resql = $db->query($sql);
 				if ($resql) {
 					$obj = $db->fetch_object($resql);
@@ -170,7 +180,7 @@ function societe_prepare_head(Societe $object)
 
 	// Related items
 	if ((!empty($conf->commande->enabled) || !empty($conf->propal->enabled) || !empty($conf->facture->enabled) || !empty($conf->ficheinter->enabled) || (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled))
-		&& empty($conf->global->THIRPARTIES_DISABLE_RELATED_OBJECT_TAB)) {
+		&& empty($conf->global->THIRDPARTIES_DISABLE_RELATED_OBJECT_TAB)) {
 		$head[$h][0] = DOL_URL_ROOT.'/societe/consumption.php?socid='.$object->id;
 		$head[$h][1] = $langs->trans("Referers");
 		$head[$h][2] = 'consumption';

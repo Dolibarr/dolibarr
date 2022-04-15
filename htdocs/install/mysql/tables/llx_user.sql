@@ -22,8 +22,8 @@ create table llx_user
   rowid             integer AUTO_INCREMENT PRIMARY KEY,
   entity            integer DEFAULT 1 NOT NULL, -- multi company id
 
+  ref_employee      varchar(50),
   ref_ext			varchar(50),				-- reference into an external system (not used by dolibarr)
-  ref_int			varchar(50),				-- reference into an internal system (deprecated)
 
   admin             smallint DEFAULT 0,			-- user has admin profile
 
@@ -108,5 +108,6 @@ create table llx_user
   import_key        varchar(14),				-- import key
   default_range     integer,
   default_c_exp_tax_cat     integer,
+  national_registration_number  varchar(50),
   fk_warehouse      integer						-- default warehouse os user
 )ENGINE=innodb;

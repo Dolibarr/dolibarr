@@ -15,6 +15,7 @@
  * Copyright (C) 2018-2021 Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2018      Josep Lluís Amador   <joseplluis@lliuretic.cat>
  * Copyright (C) 2021      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2021      Grégory Blémand      <gregory.blemand@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,6 +43,7 @@
  */
 abstract class CommonObject
 {
+	const TRIGGER_PREFIX = ''; // to be overriden in child class implementations, i.e. 'BILL', 'TASK', 'PROPAL', etc.
 	/**
 	 * @var DoliDb		Database handler (result of a new DoliDB)
 	 */
@@ -122,6 +124,11 @@ abstract class CommonObject
 	 * @var mixed		Array of linked objects. Loaded by ->fetchObjectLinked
 	 */
 	public $linkedObjects;
+
+	/**
+	 * @var boolean		Array of boolean with object id as key and value as true if linkedObjects full loaded. Loaded by ->fetchObjectLinked. Important for pdf generation time reduction.
+	 */
+	public $linkedObjectsFullLoaded = array();
 
 	/**
 	 * @var Object      To store a cloned copy of object before to edit it and keep track of old properties
@@ -3773,6 +3780,12 @@ abstract class CommonObject
 	{
 		global $conf, $hookmanager, $action;
 
+		// Important for pdf generation time reduction
+		// This boolean is true if $this->linkedObjects has already been loaded with all objects linked without filter
+		if ($this->id > 0 && !empty($this->linkedObjectsFullLoaded[$this->id])) {
+			return 1;
+		}
+
 		$this->linkedObjectsIds = array();
 		$this->linkedObjects = array();
 
@@ -3834,6 +3847,9 @@ abstract class CommonObject
 		} else {
 			$sql .= "(fk_source = ".((int) $sourceid)." AND sourcetype = '".$this->db->escape($sourcetype)."')";
 			$sql .= " ".$clause." (fk_target = ".((int) $targetid)." AND targettype = '".$this->db->escape($targettype)."')";
+			if ($loadalsoobjects && $this->id > 0 && $sourceid == $this->id && $sourcetype == $this->element && $targetid == $this->id && $targettype == $this->element && $clause == 'OR') {
+				$this->linkedObjectsFullLoaded[$this->id] = true;
+			}
 		}
 		$sql .= " ORDER BY ".$orderby;
 
@@ -4024,7 +4040,7 @@ abstract class CommonObject
 				$this->context['link_source_type'] = $sourcetype;
 				$this->context['link_target_id'] = $targetid;
 				$this->context['link_target_type'] = $targettype;
-				$result = $this->call_trigger('OBJECT_LINK_UPDATE', $f_user);
+				$result = $this->call_trigger('OBJECT_LINK_MODIFY', $f_user);
 				if ($result < 0) {
 					$error++;
 				}
@@ -4936,18 +4952,19 @@ abstract class CommonObject
 		global $langs, $hookmanager, $conf, $form, $action;
 
 		print '<tr class="liste_titre">';
-		print '<td>'.$langs->trans('Ref').'</td>';
-		print '<td>'.$langs->trans('Description').'</td>';
-		print '<td class="right">'.$langs->trans('VATRate').'</td>';
-		print '<td class="right">'.$langs->trans('PriceUHT').'</td>';
+		print '<td class="linecolref">'.$langs->trans('Ref').'</td>';
+		print '<td class="linecoldescription">'.$langs->trans('Description').'</td>';
+		print '<td class="linecolvat right">'.$langs->trans('VATRate').'</td>';
+		print '<td class="linecoluht right">'.$langs->trans('PriceUHT').'</td>';
 		if (!empty($conf->multicurrency->enabled)) {
-			print '<td class="right">'.$langs->trans('PriceUHTCurrency').'</td>';
+			print '<td class="linecoluht_currency right">'.$langs->trans('PriceUHTCurrency').'</td>';
 		}
-		print '<td class="right">'.$langs->trans('Qty').'</td>';
+		print '<td class="linecolqty right">'.$langs->trans('Qty').'</td>';
 		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
-			print '<td class="left">'.$langs->trans('Unit').'</td>';
+			print '<td class="linecoluseunit left">'.$langs->trans('Unit').'</td>';
 		}
-		print '<td class="right">'.$langs->trans('ReductionShort').'</td>';
+		print '<td class="linecoldiscount right">'.$langs->trans('ReductionShort').'</td>';
+		print '<td class="linecolht right">'.$langs->trans('TotalHT').'</td>';
 		print '<td class="center">'.$form->showCheckAddButtons('checkforselect', 1).'</td>';
 		print '</tr>';
 		$i = 0;
@@ -5078,6 +5095,7 @@ abstract class CommonObject
 		}
 
 		$this->tpl['price'] = price($line->subprice);
+		$this->tpl['total_ht'] = price($line->total_ht);
 		$this->tpl['multicurrency_price'] = price($line->multicurrency_subprice);
 		$this->tpl['qty'] = (($line->info_bits & 2) != 2) ? $line->qty : '&nbsp;';
 		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
@@ -5380,16 +5398,20 @@ abstract class CommonObject
 					return 1;
 				} else {
 					$outputlangs->charset_output = $sav_charset_output;
-					dol_print_error($this->db, "Error generating document for ".__CLASS__.". Error: ".$obj->error, $obj->errors);
+					$this->error = $obj->error;
+					$this->errors = $obj->errors;
+					dol_syslog("Error generating document for ".__CLASS__.". Error: ".$obj->error, LOG_ERR);
 					return -1;
 				}
 			} else {
 				if (!$filefound) {
 					$this->error = $langs->trans("Error").' Failed to load doc generator with modelpaths='.$modelspath.' - modele='.$modele;
-					dol_print_error('', $this->error);
+					$this->errors[] = $this->error;
+					dol_syslog($this->error, LOG_ERR);
 				} else {
 					$this->error = $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists", $filefound);
-					dol_print_error('', $this->error);
+					$this->errors[] = $this->error;
+					dol_syslog($this->error, LOG_ERR);
 				}
 				return -1;
 			}
@@ -5602,7 +5624,10 @@ abstract class CommonObject
 	{
 		// phpcs:enable
 		global $langs, $conf;
-
+		if (!empty(self::TRIGGER_PREFIX) && strpos($triggerName, self::TRIGGER_PREFIX . '_') !== 0) {
+			dol_print_error('', 'The trigger "' . $triggerName . '" does not start with "' . self::TRIGGER_PREFIX . '_" as required.');
+			exit;
+		}
 		if (!is_object($langs)) {	// If lang was not defined, we set it. It is required by run_triggers.
 			include_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
 			$langs = new Translate('', $conf);
@@ -5994,7 +6019,14 @@ abstract class CommonObject
 				$attributeLabel    = $extrafields->attributes[$this->table_element]['label'][$attributeKey];
 				$attributeParam    = $extrafields->attributes[$this->table_element]['param'][$attributeKey];
 				$attributeRequired = $extrafields->attributes[$this->table_element]['required'][$attributeKey];
+				$attributeUnique   = $extrafields->attributes[$this->table_element]['unique'][$attributeKey];
 				$attrfieldcomputed = $extrafields->attributes[$this->table_element]['computed'][$attributeKey];
+
+				// If we clone, we have to clean unique extrafields to prevent duplicates.
+				// This behaviour can be prevented by external code by changing $this->context['createfromclone'] value in createFrom hook
+				if (! empty($this->context['createfromclone']) && $this->context['createfromclone'] == 'createfromclone' && ! empty($attributeUnique)) {
+					$new_array_options[$key] = null;
+				}
 
 				// Similar code than into insertExtraFields
 				if ($attributeRequired) {
@@ -8097,7 +8129,7 @@ abstract class CommonObject
 
 	/**
 	 * Function used to replace a thirdparty id with another one.
-	 * This function is meant to be called from replaceThirdparty with the appropiate tables
+	 * This function is meant to be called from replaceThirdparty with the appropriate tables
 	 * Column name fk_soc MUST be used to identify thirdparties
 	 *
 	 * @param  DoliDB 	   $db 			  Database handler
@@ -8114,7 +8146,36 @@ abstract class CommonObject
 
 			if (!$db->query($sql)) {
 				if ($ignoreerrors) {
-					return true; // TODO Not enough. If there is A-B on kept thirdarty and B-C on old one, we must get A-B-C after merge. Not A-B.
+					return true; // TODO Not enough. If there is A-B on kept thirdparty and B-C on old one, we must get A-B-C after merge. Not A-B.
+				}
+				//$this->errors = $db->lasterror();
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	/**
+	 * Function used to replace a product id with another one.
+	 * This function is meant to be called from replaceProduct with the appropriate tables
+	 * Column name fk_product MUST be used to identify products
+	 *
+	 * @param  DoliDB 	   $db 			  Database handler
+	 * @param  int 		   $origin_id     Old product id (the product to delete)
+	 * @param  int 		   $dest_id       New product id (the product that will received element of the other)
+	 * @param  string[]    $tables        Tables that need to be changed
+	 * @param  int         $ignoreerrors  Ignore errors. Return true even if errors. We need this when replacement can fails like for categories (categorie of old product may already exists on new one)
+	 * @return bool						  True if success, False if error
+	 */
+	public static function commonReplaceProduct(DoliDB $db, $origin_id, $dest_id, array $tables, $ignoreerrors = 0)
+	{
+		foreach ($tables as $table) {
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.$table.' SET fk_product = '.((int) $dest_id).' WHERE fk_product = '.((int) $origin_id);
+
+			if (!$db->query($sql)) {
+				if ($ignoreerrors) {
+					return true; // TODO Not enough. If there is A-B on kept product and B-C on old one, we must get A-B-C after merge. Not A-B.
 				}
 				//$this->errors = $db->lasterror();
 				return false;

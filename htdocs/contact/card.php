@@ -628,7 +628,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			 */
 			$object->canvas = $canvas;
 
-			$object->state_id = GETPOST("state_id");
+			$object->state_id = GETPOST("state_id", "int");
 
 			// We set country_id, country_code and label for the selected country
 			$object->country_id = GETPOST("country_id") ? GETPOST("country_id", "int") : (empty($objsoc->country_id) ? $mysoc->country_id : $objsoc->country_id);
@@ -701,7 +701,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					print '</td></tr>';
 				} else {
 					print '<tr><td><label for="socid">'.$langs->trans("ThirdParty").'</label></td><td colspan="3" class="maxwidthonsmartphone">';
-					print img_picto('', 'company').$form->select_company($socid, 'socid', '', 'SelectThirdParty');
+					print img_picto('', 'company').$form->select_company($socid, 'socid', '', 'SelectThirdParty', 0, 0, null, 0, 'minwidth300 maxwidth500 widthcentpercentminusxx');
 					print '</td></tr>';
 				}
 			}

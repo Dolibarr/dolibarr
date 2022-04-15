@@ -49,6 +49,7 @@ $cancel     = GETPOST('cancel', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'mocard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $lineid   = GETPOST('lineid', 'int');
+$fk_movement   = GETPOST('fk_movement', 'int');
 
 $collapse = GETPOST('collapse', 'aZ09comma');
 
@@ -445,7 +446,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	}
 	// Confirmation to delete line
 	if ($action == 'deleteline') {
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$lineid, $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_deleteline', '', 0, 1);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$lineid.'&fk_movement='.$fk_movement, $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_deleteline', '', 0, 1);
 	}
 	// Clone confirmation
 	if ($action == 'clone') {
@@ -914,7 +915,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						$href = $_SERVER["PHP_SELF"].'?id='.((int) $object->id).'&action=deleteline&token='.newToken().'&lineid='.((int) $line->id);
 						print '<td class="center">';
 						print '<a class="reposition" href="'.$href.'">';
-						print img_picto('', 'delete');
+						print img_picto($langs->trans('TooltipDeleteAndRevertStockMovement'), 'delete');
 						print '</a>';
 						print '</td>';
 					}
@@ -969,7 +970,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 						// Action delete line
 						if ($permissiontodelete) {
-							print '<td></td>';
+							$href = $_SERVER["PHP_SELF"].'?id='.((int) $object->id).'&action=deleteline&token='.newToken().'&lineid='.((int) $line->id).'&fk_movement='.((int) $line2['fk_stock_movement']);
+							print '<td class="center">';
+							print '<a class="reposition" href="'.$href.'">';
+							print img_picto($langs->trans('TooltipDeleteAndRevertStockMovement'), 'delete');
+							print '</a>';
+							print '</td>';
 						}
 
 						print '</tr>';
@@ -1220,7 +1226,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						$href .= '&lineid='.$line->id;
 						print '<td class="center">';
 						print '<a class="reposition" href="'.$href.'">';
-						print img_picto('', "delete");
+						print img_picto($langs->trans('TooltipDeleteAndRevertStockMovement'), "delete");
 						print '</a>';
 						print '</td>';
 					}

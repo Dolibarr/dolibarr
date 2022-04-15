@@ -200,9 +200,10 @@ class Form
 	 * @param   int     $notabletag     Do no output table tags
 	 * @param	string	$formatfunc		Call a specific function to output field in view mode (For example: 'dol_print_email')
 	 * @param	string	$paramid		Key of parameter for id ('id', 'socid')
+	 * @param	string	$gm				'auto' or 'tzuser' or 'tzserver' (when $typeofdata is a date)
 	 * @return  string					HTML edit field
 	 */
-	public function editfieldval($text, $htmlname, $value, $object, $perm, $typeofdata = 'string', $editvalue = '', $extObject = null, $custommsg = null, $moreparam = '', $notabletag = 0, $formatfunc = '', $paramid = 'id')
+	public function editfieldval($text, $htmlname, $value, $object, $perm, $typeofdata = 'string', $editvalue = '', $extObject = null, $custommsg = null, $moreparam = '', $notabletag = 0, $formatfunc = '', $paramid = 'id', $gm = 'auto')
 	{
 		global $conf, $langs;
 
@@ -257,9 +258,9 @@ class Form
 					$ret .= dol_string_neverthesehtmltags($valuetoshow, array('textarea'));
 					$ret .= '</textarea>';
 				} elseif ($typeofdata == 'day' || $typeofdata == 'datepicker') {
-					$ret .= $this->selectDate($value, $htmlname, 0, 0, 1, 'form'.$htmlname, 1, 0);
+					$ret .= $this->selectDate($value, $htmlname, 0, 0, 1, 'form'.$htmlname, 1, 0, 0, '', '', '', '', 1, '', '', $gm);
 				} elseif ($typeofdata == 'dayhour' || $typeofdata == 'datehourpicker') {
-					$ret .= $this->selectDate($value, $htmlname, 1, 1, 1, 'form'.$htmlname, 1, 0);
+					$ret .= $this->selectDate($value, $htmlname, 1, 1, 1, 'form'.$htmlname, 1, 0, 0, '', '', '', '', 1, '', '', $gm);
 				} elseif (preg_match('/^select;/', $typeofdata)) {
 					$arraydata = explode(',', preg_replace('/^select;/', '', $typeofdata));
 					$arraylist = array();
@@ -311,9 +312,9 @@ class Form
 				} elseif (preg_match('/^restricthtml/', $typeofdata)) {
 					$ret .= dol_string_onlythesehtmltags($value);
 				} elseif ($typeofdata == 'day' || $typeofdata == 'datepicker') {
-					$ret .= '<span class="valuedate">'.dol_print_date($value, 'day').'</span>';
+					$ret .= '<span class="valuedate">'.dol_print_date($value, 'day', $gm).'</span>';
 				} elseif ($typeofdata == 'dayhour' || $typeofdata == 'datehourpicker') {
-					$ret .= '<span class="valuedate">'.dol_print_date($value, 'dayhour').'</span>';
+					$ret .= '<span class="valuedate">'.dol_print_date($value, 'dayhour', $gm).'</span>';
 				} elseif (preg_match('/^select;/', $typeofdata)) {
 					$arraydata = explode(',', preg_replace('/^select;/', '', $typeofdata));
 					$arraylist = array();
@@ -3715,7 +3716,6 @@ class Form
 		}
 	}
 
-
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *      Load into cache list of payment terms
@@ -6181,19 +6181,22 @@ class Form
 	 *              - local date in user area, if set_time is '' (so if set_time is '', output may differs when done from two different location)
 	 *              - Empty (fields empty), if set_time is -1 (in this case, parameter empty must also have value 1)
 	 *
-	 *  @param  integer     $set_time       Pre-selected date (must be a local PHP server timestamp), -1 to keep date not preselected, '' to use current date with 00:00 hour (Parameter 'empty' must be 0 or 2).
+	 *  @param  integer     $set_time       	Pre-selected date (must be a local PHP server timestamp), -1 to keep date not preselected, '' to use current date with 00:00 hour (Parameter 'empty' must be 0 or 2).
 	 *  @param  integer     $set_time_end       Pre-selected date (must be a local PHP server timestamp), -1 to keep date not preselected, '' to use current date with 00:00 hour (Parameter 'empty' must be 0 or 2).
-	 *  @param	string		$prefix			Prefix for fields name
-	 *  @param	string		$empty			0=Fields required, 1=Empty inputs are allowed, 2=Empty inputs are allowed for hours only
-	 * 	@return string                      Html for selectDate
+	 *  @param	string		$prefix				Prefix for fields name
+	 *  @param	string		$empty				0=Fields required, 1=Empty inputs are allowed, 2=Empty inputs are allowed for hours only
+	 *  @param	string		$forcenewline		Force new line between the 2 dates.
+	 * 	@return string                   	    Html for selectDate
 	 *  @see    form_date(), select_month(), select_year(), select_dayofweek()
 	 */
-	public function selectDateToDate($set_time = '', $set_time_end = '', $prefix = 're', $empty = 0)
+	public function selectDateToDate($set_time = '', $set_time_end = '', $prefix = 're', $empty = 0, $forcenewline = 0)
 	{
 		global $langs;
 
 		$ret = $this->selectDate($set_time, $prefix.'_start', 0, 0, $empty, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("from"), 'tzuserrel');
-		$ret .= '<br>';
+		if ($forcenewline) {
+			$ret .= '<br>';
+		}
 		$ret .= $this->selectDate($set_time_end, $prefix.'_end', 0, 0, $empty, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("to"), 'tzuserrel');
 		return $ret;
 	}
@@ -7195,7 +7198,7 @@ class Form
 	 *  @param		int			$limit					Limit on number of returned lines
 	 *  @param		int			$status					Ticket status
 	 *  @param		string		$selected_input_value	Value of preselected input text (for use with ajax)
-	 *  @param		int			$hidelabel				Hide label (0=no, 1=yes, 2=show search icon (before) and placeholder, 3 search icon after)
+	 *  @param		int			$hidelabel				Hide label (0=no, 1=yes, 2=show search icon before and placeholder, 3 search icon after)
 	 *  @param		array		$ajaxoptions			Options for ajax_autocompleter
 	 *  @param      int			$socid					Thirdparty Id (to get also price dedicated to this customer)
 	 *  @param		string		$showempty				'' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
@@ -8871,7 +8874,7 @@ class Form
 
 		// Add where from hooks
 		if (is_object($hookmanager)) {
-			$parameters = array();
+			$parameters = array('showrefnav' => true);
 			$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object); // Note that $action and $object may have been modified by hook
 			$object->next_prev_filter .= $hookmanager->resPrint;
 		}

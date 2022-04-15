@@ -31,6 +31,7 @@ SupplierInvoiceWaitingWithdraw=Facture fournisseur en attente de paiement par vi
 InvoiceWaitingWithdraw=Factures en attente de prélèvement
 InvoiceWaitingPaymentByBankTransfer=Facture en attente de virement
 AmountToWithdraw=Somme à prélever
+AmountToTransfer=Somme à transferrer
 NoInvoiceToWithdraw=Aucune facture ouverte pour '%s' n'est en attente. Allez sur l'onglet '%s' sur la facture pour faire une demande.
 NoSupplierInvoiceToWithdraw=Aucune facture fournisseur avec des demandes de virement ouvertes n'est en attente. Allez sur l'onglet '%s' sur la fiche facture pour faire une demande.
 ResponsibleUser=Utilisateur responsable

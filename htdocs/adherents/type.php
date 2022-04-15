@@ -125,6 +125,7 @@ if ($action == 'add' && $user->rights->adherent->configurer) {
 	$object->duration_value = $duration_value;
 	$object->duration_unit = $duration_unit;
 	$object->note = trim($comment);
+	$object->note_public = trim($comment);
 	$object->mail_valid = trim($mail_valid);
 	$object->vote = (int) $vote;
 
@@ -176,6 +177,7 @@ if ($action == 'update' && $user->rights->adherent->configurer) {
 	$object->duration_value = $duration_value;
 	$object->duration_unit = $duration_unit;
 	$object->note = trim($comment);
+	$object->note_public = trim($comment);
 	$object->mail_valid = trim($mail_valid);
 	$object->vote = (boolean) trim($vote);
 
@@ -358,7 +360,7 @@ if ($action == 'create') {
 	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td><td><input type="text" class="minwidth200" name="label" autofocus="autofocus"></td></tr>';
 
 	print '<tr><td>'.$langs->trans("Status").'</td><td>';
-	print $form->selectarray('status', array('0'=>$langs->trans('ActivityCeased'), '1'=>$langs->trans('InActivity')), 1);
+	print $form->selectarray('status', array('0'=>$langs->trans('ActivityCeased'), '1'=>$langs->trans('InActivity')), 1, 0, 0, 0, '', 0, 0, 0, '', 'minwidth100');
 	print '</td></tr>';
 
 	// Morphy
@@ -375,7 +377,7 @@ if ($action == 'create') {
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("Amount").'</td><td>';
-	print '<input name="amount" size="5" value="'.price($amount).'">';
+	print '<input name="amount" size="5" value="'.(GETPOSTISSET('amount') ? GETPOST('amount') : price($amount)).'">';
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("VoteAllowed").'</td><td>';
@@ -389,12 +391,12 @@ if ($action == 'create') {
 
 	print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor = new DolEditor('comment', $object->note, '', 200, 'dolibarr_notes', '', false, true, empty($conf->fckeditor->enabled) ? false : $conf->fckeditor->enabled, 15, '90%');
+	$doleditor = new DolEditor('comment', (GETPOSTISSET('comment') ? GETPOST('comment', 'restricthtml') : $object->note_public), '', 200, 'dolibarr_notes', '', false, true, empty($conf->fckeditor->enabled) ? false : $conf->fckeditor->enabled, 15, '90%');
 	$doleditor->Create();
 
 	print '<tr><td class="tdtop">'.$langs->trans("WelcomeEMail").'</td><td>';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor = new DolEditor('mail_valid', $object->mail_valid, '', 250, 'dolibarr_notes', '', false, true, empty($conf->fckeditor->enabled) ? false : $conf->fckeditor->enabled, 15, '90%');
+	$doleditor = new DolEditor('mail_valid', GETPOSTISSET('mail_valid') ? GETPOST('mail_valid') : $object->mail_valid, '', 250, 'dolibarr_notes', '', false, true, empty($conf->fckeditor->enabled) ? false : $conf->fckeditor->enabled, 15, '90%');
 	$doleditor->Create();
 	print '</td></tr>';
 
@@ -783,7 +785,7 @@ if ($rowid > 0) {
 		print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input type="text" class="minwidth300" name="label" value="'.dol_escape_htmltag($object->label).'"></td></tr>';
 
 		print '<tr><td>'.$langs->trans("Status").'</td><td>';
-		print $form->selectarray('status', array('0'=>$langs->trans('ActivityCeased'), '1'=>$langs->trans('InActivity')), $object->status);
+		print $form->selectarray('status', array('0'=>$langs->trans('ActivityCeased'), '1'=>$langs->trans('InActivity')), $object->status, 0, 0, 0, '', 0, 0, 0, '', 'minwidth100');
 		print '</td></tr>';
 
 		// Morphy

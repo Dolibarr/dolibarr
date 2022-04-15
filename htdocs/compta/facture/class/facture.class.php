@@ -18,6 +18,7 @@
  * Copyright (C) 2018       Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2022       Sylvain Legrand         <contact@infras.fr>
+ * Copyright (C) 2022      	Gauthier VERDOL       	<gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -810,6 +811,10 @@ class Facture extends CommonInvoice
 							$fk_parent_line = 0;
 						}
 
+						// Complete vat rate with code
+						$vatrate = $newinvoiceline->tva_tx;
+						if ($newinvoiceline->vat_src_code && ! preg_match('/\(.*\)/', $vatrate)) $vatrate.=' ('.$newinvoiceline->vat_src_code.')';
+
 						$newinvoiceline->fk_parent_line = $fk_parent_line;
 
 						if ($this->type === Facture::TYPE_REPLACEMENT && $newinvoiceline->fk_remise_except) {
@@ -820,7 +825,37 @@ class Facture extends CommonInvoice
 							$newinvoiceline->fk_remise_except = $discountId;
 						}
 
-						$result = $newinvoiceline->insert();
+						$result = $this->addline(
+							$newinvoiceline->desc,
+							$newinvoiceline->subprice,
+							$newinvoiceline->qty,
+							$vatrate,
+							$newinvoiceline->localtax1_tx,
+							$newinvoiceline->localtax2_tx,
+							$newinvoiceline->fk_product,
+							$newinvoiceline->remise_percent,
+							$newinvoiceline->date_start,
+							$newinvoiceline->date_end,
+							$newinvoiceline->fk_code_ventilation,
+							$newinvoiceline->info_bits,
+							$newinvoiceline->fk_remise_except,
+							'HT',
+							0,
+							$newinvoiceline->product_type,
+							$newinvoiceline->rang,
+							$newinvoiceline->special_code,
+							$newinvoiceline->element,
+							$newinvoiceline->id,
+							$fk_parent_line,
+							$newinvoiceline->fk_fournprice,
+							$newinvoiceline->pa_ht,
+							$newinvoiceline->label,
+							$newinvoiceline->array_options,
+							$newinvoiceline->situation_percent,
+							$newinvoiceline->fk_prev_id,
+							$newinvoiceline->fk_unit,
+							$newinvoiceline->multicurrency_subprice
+						);
 
 						// Defined the new fk_parent_line
 						if ($result > 0) {
@@ -1595,8 +1630,6 @@ class Facture extends CommonInvoice
 	 */
 	public function fetch($rowid, $ref = '', $ref_ext = '', $notused = '', $fetch_situation = false)
 	{
-		global $conf;
-
 		if (empty($rowid) && empty($ref) && empty($ref_ext)) {
 			return -1;
 		}
@@ -2072,7 +2105,7 @@ class Facture extends CommonInvoice
 	public function insert_discount($idremise)
 	{
 		// phpcs:enable
-		global $langs;
+		global $conf, $langs;
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 		include_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
@@ -2101,6 +2134,14 @@ class Facture extends CommonInvoice
 			$facligne->remise_percent = 0;
 			$facligne->rang = -1;
 			$facligne->info_bits = 2;
+
+			if (!empty($conf->global->MAIN_ADD_LINE_AT_POSITION)) {
+				$facligne->rang = 1;
+				$linecount = count($this->lines);
+				for ($ii = 1; $ii <= $linecount; $ii++) {
+					$this->updateRangOfLine($this->lines[$ii - 1]->id, $ii+1);
+				}
+			}
 
 			// Get buy/cost price of invoice that is source of discount
 			if ($remise->fk_facture_source > 0) {
@@ -3434,6 +3475,11 @@ class Facture extends CommonInvoice
 				// Reorder if child line
 				if (!empty($fk_parent_line)) {
 					$this->line_order(true, 'DESC');
+				} elseif ($ranktouse > 0 && $ranktouse <= count($this->lines)) { // Update all rank of all other lines
+					$linecount = count($this->lines);
+					for ($ii = $ranktouse; $ii <= $linecount; $ii++) {
+						$this->updateRangOfLine($this->lines[$ii - 1]->id, $ii + 1);
+					}
 				}
 
 				// Mise a jour informations denormalisees au niveau de la facture meme
@@ -3725,11 +3771,12 @@ class Facture extends CommonInvoice
 	/**
 	 * Update invoice line with percentage
 	 *
-	 * @param  FactureLigne $line       Invoice line
-	 * @param  int          $percent    Percentage
+	 * @param  FactureLigne $line       	Invoice line
+	 * @param  int          $percent    	Percentage
+	 * @param  boolean      $update_price   Update object price
 	 * @return void
 	 */
-	public function update_percent($line, $percent)
+	public function update_percent($line, $percent, $update_price = true)
 	{
 		// phpcs:enable
 		global $mysoc, $user;
@@ -3756,7 +3803,11 @@ class Facture extends CommonInvoice
 		$line->multicurrency_total_tva = $tabprice[17];
 		$line->multicurrency_total_ttc = $tabprice[18];
 		$line->update($user);
-		$this->update_price(1);
+
+		// sometimes it is better to not update price for each line, ie when updating situation on all lines
+		if ($update_price) {
+			$this->update_price(1);
+		}
 	}
 
 	/**
@@ -4007,7 +4058,7 @@ class Facture extends CommonInvoice
 		}
 
 		if (!empty($addon)) {
-			dol_syslog("Call getNextNumRef with ".$addonConstName." = ".$conf->global->FACTURE_ADDON.", thirdparty=".$soc->name.", type=".$soc->typent_code, LOG_DEBUG);
+			dol_syslog("Call getNextNumRef with ".$addonConstName." = ".$conf->global->FACTURE_ADDON.", thirdparty=".$soc->name.", type=".$soc->typent_code.", mode=".$mode, LOG_DEBUG);
 
 			$mybool = false;
 
@@ -4816,6 +4867,23 @@ class Facture extends CommonInvoice
 		);
 
 		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+	}
+
+	/**
+	 * Function used to replace a product id with another one.
+	 *
+	 * @param DoliDB $db Database handler
+	 * @param int $origin_id Old product id
+	 * @param int $dest_id New product id
+	 * @return bool
+	 */
+	public static function replaceProduct(DoliDB $db, $origin_id, $dest_id)
+	{
+		$tables = array(
+			'facturedet'
+		);
+
+		return CommonObject::commonReplaceProduct($db, $origin_id, $dest_id, $tables);
 	}
 
 	/**
@@ -5775,7 +5843,7 @@ class FactureLigne extends CommonInvoiceLine
 
 			if (!$error && !$notrigger) {
 				// Call trigger
-				$result = $this->call_trigger('LINEBILL_UPDATE', $user);
+				$result = $this->call_trigger('LINEBILL_MODIFY', $user);
 				if ($result < 0) {
 					$this->db->rollback();
 					return -2;

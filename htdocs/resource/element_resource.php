@@ -46,10 +46,6 @@ $sortfield                      = GETPOST('sortfield','alpha');
 $page                           = GETPOST('page','int');
 */
 
-if (!$user->rights->resource->read) {
-		accessforbidden();
-}
-
 $object = new Dolresource($db);
 
 $hookmanager->initHooks(array('element_resource'));
@@ -71,9 +67,20 @@ $cancel                 = GETPOST('cancel', 'alpha');
 $confirm                = GETPOST('confirm', 'alpha');
 $socid                  = GETPOST('socid', 'int');
 
+if (empty($mandatory)) {
+	$mandatory = 0;
+}
+if (empty($busy)) {
+	$busy = 0;
+}
+
 if ($socid > 0) { // Special for thirdparty
 	$element_id = $socid;
 	$element = 'societe';
+}
+
+if (!$user->rights->resource->read) {
+	accessforbidden();
 }
 
 // Permission is not permission on resources. We just make link here on objects.
@@ -365,7 +372,7 @@ if (!$ret) {
 
 			print '<div class="underbanner clearboth"></div>';
 
-			print '<table class="border tableforfield" width="100%">';
+			print '<table class="border tableforfield centpercent">';
 
 			// Type
 			if (!empty($conf->global->AGENDA_USE_EVENT_TYPE)) {

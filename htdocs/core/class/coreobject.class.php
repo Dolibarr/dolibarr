@@ -245,7 +245,7 @@ class CoreObject extends CommonObject
 
 		$res = $this->updateCommon($user);
 		if ($res) {
-			$result = $this->call_trigger(strtoupper($this->element).'_UPDATE', $user);
+			$result = $this->call_trigger(strtoupper($this->element).'_MODIFY', $user);
 			if ($result < 0) {
 				$error++;
 			} else {
