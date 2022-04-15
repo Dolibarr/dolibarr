@@ -299,7 +299,7 @@ if ($search_amount) {
 	$param .= '&search_amount='.urlencode($search_amount);
 }
 
-if($search_bank_account) {
+if ($search_bank_account) {
 	$param .= '&search_bank_account='.urlencode($search_bank_account);
 }
 
