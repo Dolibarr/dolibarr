@@ -993,6 +993,7 @@ if (empty($reshook)) {
 
 		$db->begin();
 
+
 		$error = 0;
 		$originentity = GETPOST('originentity');
 		// Fill array 'array_options' with data from add form
@@ -1706,7 +1707,6 @@ if (empty($reshook)) {
 										}
 
 										$tva_tx = $lines[$i]->tva_tx;
-                                        if(! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $tva_tx = 0;
                                         if (!empty($lines[$i]->vat_src_code) && !preg_match('/\(/', $tva_tx)) {
 											$tva_tx .= ' ('.$lines[$i]->vat_src_code.')';
 										}
