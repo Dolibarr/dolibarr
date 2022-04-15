@@ -119,7 +119,7 @@ $dol_no_mouse_hover = $conf->dol_no_mouse_hover;
 
 $useboldtitle = (isset($conf->global->THEME_ELDY_USEBOLDTITLE) ? $conf->global->THEME_ELDY_USEBOLDTITLE : 0);
 $borderwidth = 2;
-$userborderontable = 1;
+$userborderontable = getDolGlobalInt('THEME_ELDY_USEBORDERONTABLE');
 
 // Case of option always editable
 if (!isset($conf->global->THEME_ELDY_BACKBODY)) {
@@ -465,6 +465,9 @@ input, select {
 #mainbody input.button:not(.buttongen):not(.bordertransp):hover, #mainbody a.button:not(.buttongen):not(.bordertransp):hover {
 	-webkit-box-shadow: 0px 0px 6px 1px rgb(50 50 50 / 40%), 0px 0px 0px rgb(60 60 60 / 10%);
 	box-shadow: 0px 0px 6px 1px rgb(50 50 50 / 40%), 0px 0px 0px rgb(60 60 60 / 10%);
+}
+#mainbody input.buttongen, #mainbody button.buttongen {
+	padding: 3px 4px;
 }
 
 input.button.massactionconfirmed {
@@ -2294,7 +2297,7 @@ td.nobordernopadding.widthpictotitle.col-picto {
 	vertical-align: middle;
 	margin-top: -3px
 }
-.pictowarning, .pictoerror, .pictopreview {
+.pictowarning, .pictoerror, .pictopreview, .pictonopreview {
 	padding-<?php echo $left; ?>: 3px;
 }
 .pictowarning {
@@ -3676,8 +3679,21 @@ div.colorback
 	margin-top: 5px;
 }
 .liste_titre_bydiv {
+	<?php if ($userborderontable) { ?>
 	border-right: 1px solid #ccc;
 	border-left: 1px solid #ccc;
+	<?php } ?>
+}
+table.liste, table.noborder:not(.paymenttable):not(.margintable):not(.tableforcontact), table.formdoc, div.noborder:not(.paymenttable):not(.margintable):not(.tableforcontact) {
+	<?php
+	if ($userborderontable) { ?>
+	border-left: 1px solid #BBB;
+	border-right: 1px solid #BBB;
+	<?php } ?>
+}
+table.liste, table.noborder.paymenttable, table.noborder.margintable, table.noborder.tableforcontact, table.formdoc, div.noborder.paymenttable, div.noborder.margintable, div.noborder.tableforcontact {
+	border-left: 1px solid #f0f0f0;
+	border-right: 1px solid #f0f0f0;
 }
 table.liste, table.noborder, table.formdoc, div.noborder {
 	width: calc(100% - 2px);	/* -2 to fix a bug. Without, a scroll appears due to overflow-x: auto; of div-table-responsive */
@@ -3690,11 +3706,8 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 	border-top-style: solid;
 
 	border-bottom-width: 1px;
-	border-bottom-color: #BBB;
+	border-bottom-color:  #BBB;
 	border-bottom-style: solid;
-
-	border-right: 1px solid #ccc;
-	border-left: 1px solid #ccc;
 
 	margin: 0px 0px 20px 0px;
 
@@ -4074,7 +4087,9 @@ tr.pair td .nobordernopadding tr td, tr.impair td .nobordernopadding tr td {
 /*
 table.nobottomiftotal tr.liste_total td {
 	background-color: #fff;
+	<?php if (!$userborderontable) { ?>
 	border-bottom: 0px !important;
+	<?php } ?>
 }
 */
 div.liste_titre .tagtd {
@@ -4099,10 +4114,11 @@ div.liste_titre {
 	border-top-style: solid;
 }
 div.liste_titre_bydiv {
+	<?php if ($userborderontable) { ?>
 	border-top-width: <?php echo $borderwidth ?>px;
 	border-top-color: var(--colortopbordertitle1);
 	border-top-style: solid;
-
+	<?php } ?>
 	border-collapse: collapse;
 	display: table;
 	padding: 2px 0px 2px 0;
@@ -4136,7 +4152,7 @@ tr.liste_titre th, th.liste_titre, tr.liste_titre td, td.liste_titre, form.liste
 	font-family: <?php print $fontlist ?>;
 	font-weight: <?php echo $useboldtitle ? 'bold' : 'normal'; ?>;
 	vertical-align: middle;
-	height: 24px;
+	height: 28px;
 }
 tr.liste_titre th a, th.liste_titre a, tr.liste_titre td a, td.liste_titre a, form.liste_titre div a, div.liste_titre a {
 	text-shadow: none !important;
@@ -4262,8 +4278,8 @@ div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) .oddeven.tagtr:nt
 	background: -moz-linear-gradient(bottom, var(--colorbacklineimpair1) 0%, var(--colorbacklineimpair2) 100%);
 	background: -webkit-linear-gradient(bottom, var(--colorbacklineimpair1) 0%, var(--colorbacklineimpair2) 100%);
 }
-.noborder > tbody > tr:nth-child(even):not(:last-child) td:not(.liste_titre), .liste > tbody > tr:nth-child(even):not(:last-child) td:not(.liste_titre),
-.noborder .tagtr:nth-child(even):not(:last-child) .oddeven.tagtd:not(.liste_titre)
+.noborder > tbody > tr:nth-child(even):not(:last-of-type) td:not(.liste_titre), .liste > tbody > tr:nth-child(even):not(:last-of-type) td:not(.liste_titre),
+.noborder .tagtr:nth-child(even):not(:last-of-type) .oddeven.tagtd:not(.liste_titre)
 {
 	border-bottom: 1px solid #ddd;
 }

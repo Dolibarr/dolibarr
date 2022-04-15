@@ -106,7 +106,6 @@ GenerateBill=Generate invoice
 ClassifyShipped=Classify delivered
 PassedInShippedStatus=classified delivered
 YouCantShipThis=I can't classify this. Please check user permissions
-MustBeValidatedBefore=must be Validated or In process in order to be classified as shipped
 DraftOrders=Draft orders
 DraftSuppliersOrders=Draft purchase orders
 OnProcessOrders=In process orders

@@ -340,6 +340,17 @@ class User extends CommonObject
 	public $dateemploymentend; // Define date of employment end by company
 
 	public $default_c_exp_tax_cat;
+
+	/**
+	 * @var string ref for employee
+	 */
+	public $ref_employee;
+
+	/**
+	 * @var string national registration number
+	 */
+	public $national_registration_number;
+
 	public $default_range;
 
 	/**
@@ -353,6 +364,8 @@ class User extends CommonObject
 		'rowid'=>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'index'=>1, 'position'=>1, 'comment'=>'Id'),
 		'lastname'=>array('type'=>'varchar(50)', 'label'=>'LastName', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>20, 'searchall'=>1),
 		'firstname'=>array('type'=>'varchar(50)', 'label'=>'FirstName', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1),
+		'ref_employee'=>array('type'=>'varchar(50)', 'label'=>'ref_employee', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>30, 'searchall'=>1),
+		'national_registration_number'=>array('type'=>'varchar(50)', 'label'=>'national_registration_number', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>40, 'searchall'=>1)
 	);
 
 
@@ -441,6 +454,8 @@ class User extends CommonObject
 		$sql .= " u.ref_ext,";
 		$sql .= " u.mail_autocopy,";
 		$sql .= " u.default_range, u.default_c_exp_tax_cat,"; // Expense report default mode
+		$sql .= " u.national_registration_number,";
+		$sql .= " u.ref_employee,";
 		$sql .= " c.code as country_code, c.label as country,";
 		$sql .= " d.code_departement as state_code, d.nom as state";
 		$sql .= " FROM ".$this->db->prefix()."user as u";
@@ -492,6 +507,8 @@ class User extends CommonObject
 				$this->civility_code = $obj->civility_code;
 				$this->lastname = $obj->lastname;
 				$this->firstname = $obj->firstname;
+				$this->ref_employee = $obj->ref_employee;
+				$this->national_registration_number = $obj->national_registration_number;
 
 				$this->employee = $obj->employee;
 
@@ -1760,6 +1777,8 @@ class User extends CommonObject
 		$this->civility_code = trim($this->civility_code);
 		$this->lastname     = trim($this->lastname);
 		$this->firstname    = trim($this->firstname);
+		$this->ref_employee    = trim($this->ref_employee);
+		$this->national_registration_number    = trim($this->national_registration_number);
 		$this->employee    	= $this->employee ? $this->employee : 0;
 		$this->login        = trim($this->login);
 		$this->gender       = trim($this->gender);
@@ -1853,11 +1872,13 @@ class User extends CommonObject
 		$sql .= " civility = '".$this->db->escape($this->civility_code)."'";
 		$sql .= ", lastname = '".$this->db->escape($this->lastname)."'";
 		$sql .= ", firstname = '".$this->db->escape($this->firstname)."'";
+		$sql .= ", ref_employee = '".$this->db->escape($this->ref_employee)."'";
+		$sql .= ", national_registration_number = '".$this->db->escape($this->national_registration_number)."'";
 		$sql .= ", employee = ".(int) $this->employee;
 		$sql .= ", login = '".$this->db->escape($this->login)."'";
 		$sql .= ", api_key = ".($this->api_key ? "'".$this->db->escape($this->api_key)."'" : "null");
 		$sql .= ", gender = ".($this->gender != -1 ? "'".$this->db->escape($this->gender)."'" : "null"); // 'man' or 'woman'
-		$sql .= ", birth=".(strval($this->birth) != '' ? "'".$this->db->idate($this->birth)."'" : 'null');
+		$sql .= ", birth=".(strval($this->birth) != '' ? "'".$this->db->idate($this->birth, 'tzserver')."'" : 'null');
 		if (!empty($user->admin)) {
 			$sql .= ", admin = ".(int) $this->admin; // admin flag can be set/unset only by an admin user
 		}

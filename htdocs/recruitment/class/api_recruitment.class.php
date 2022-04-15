@@ -37,10 +37,14 @@ dol_include_once('/recruitment/class/recruitmentcandidature.class.php');
 class Recruitment extends DolibarrApi
 {
 	/**
-	 * @var jobposition $jobposition {@type jobposition}
+	 * @var RecruitmentJobPosition $jobposition {@type RecruitmentJobPosition}
 	 */
 	public $jobposition;
+	/**
+	 * @var RecruitmentCandidature $candidature {@type RecruitmentCandidature}
+	 */
 	public $candidature;
+
 
 	/**
 	 * Constructor
@@ -50,11 +54,12 @@ class Recruitment extends DolibarrApi
 	 */
 	public function __construct()
 	{
-		global $db, $conf;
+		global $db;
 		$this->db = $db;
 		$this->jobposition = new RecruitmentJobPosition($this->db);
 		$this->candidature = new RecruitmentCandidature($this->db);
 	}
+
 
 	/**
 	 * Get properties of a jobposition object

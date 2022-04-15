@@ -528,7 +528,7 @@ while ($i < min($num, $limit)) {
 	// Date
 	if (!empty($arrayfields['p.datep']['checked'])) {
 		$dateformatforpayment = 'dayhour';
-		print '<td class="center">'.dol_print_date($db->jdate($objp->datep), $dateformatforpayment).'</td>';
+		print '<td class="center">'.dol_print_date($db->jdate($objp->datep), $dateformatforpayment, 'tzuser').'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}

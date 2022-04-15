@@ -364,7 +364,7 @@ class ChargeSociales extends CommonObject
 		if (!$error) {
 			if (!$notrigger) {
 				// Call trigger
-				$result = $this->call_trigger('SOCIALCHARGES_MODIFY', $user);
+				$result = $this->call_trigger('SOCIALCONTRIBUTION_MODIFY', $user);
 				if ($result < 0) {
 					$error++;
 				}

@@ -920,7 +920,7 @@ class BonPrelevement extends CommonObject
 			if (!$error) {
 				$ref = substr($year, -2).$month;
 
-				$sql = "SELECT substring(ref from char_length(ref) - 1)";
+				$sql = "SELECT substring(ref from char_length(ref) - 1)";	// To extract "YYMMXX" from "TYYMMXX"
 				$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons";
 				$sql .= " WHERE ref LIKE '%".$this->db->escape($ref)."%'";
 				$sql .= " AND entity = ".((int) $conf->entity);
@@ -931,8 +931,14 @@ class BonPrelevement extends CommonObject
 
 				if ($resql) {
 					$row = $this->db->fetch_row($resql);
-					$ref = "T".$ref.str_pad(dol_substr("00".intval($row[0]) + 1, 0, 2), 2, "0", STR_PAD_LEFT);
 
+					// Build the new ref
+					$ref = "T".$ref.str_pad(dol_substr("00".(intval($row[0]) + 1), 0, 2), 2, "0", STR_PAD_LEFT);
+
+					// $conf->abc->dir_output may be:
+					// /home/ldestailleur/git/dolibarr_15.0/documents/abc/
+					// or
+					// /home/ldestailleur/git/dolibarr_15.0/documents/X/abc with X >= 2 with multicompany.
 					if ($type != 'bank-transfer') {
 						$dir = $conf->prelevement->dir_output.'/receipts';
 					} else {
@@ -949,7 +955,7 @@ class BonPrelevement extends CommonObject
 					$sql .= "ref, entity, datec, type";
 					$sql .= ") VALUES (";
 					$sql .= "'".$this->db->escape($ref)."'";
-					$sql .= ", ".$conf->entity;
+					$sql .= ", ".((int) $conf->entity);
 					$sql .= ", '".$this->db->idate($now)."'";
 					$sql .= ", '".($type == 'bank-transfer' ? 'bank-transfer' : 'debit-order')."'";
 					$sql .= ")";

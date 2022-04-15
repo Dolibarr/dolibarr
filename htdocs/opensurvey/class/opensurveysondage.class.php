@@ -674,4 +674,31 @@ class Opensurveysondage extends CommonObject
 
 		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
 	}
+
+
+	/**
+	 *	Return number of votes done for this survey.
+	 *
+	 *	@return     int			Number of votes
+	 */
+	public function countVotes()
+	{
+		$result = 0;
+
+		$sql .= " SELECT COUNT(id_users) as nb FROM ".MAIN_DB_PREFIX."opensurvey_user_studs";
+		$sql .= " WHERE id_sondage = '".$this->db->escape($this->ref)."'";
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$obj = $this->db->fetch_object($resql);
+			if ($obj) {
+				$result = $obj->nb;
+			}
+		} else {
+			$this->error = $this->db->lasterror();
+			$this->errors[] = $this->error;
+		}
+
+		return $result;
+	}
 }

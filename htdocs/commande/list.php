@@ -201,6 +201,7 @@ $arrayfields = array(
 	'c.note_private'=>array('label'=>'NotePrivate', 'checked'=>0, 'enabled'=>(empty($conf->global->MAIN_LIST_ALLOW_PRIVATE_NOTES)), 'position'=>140),
 	'shippable'=>array('label'=>"Shippable", 'checked'=>1,'enabled'=>(!empty($conf->expedition->enabled)), 'position'=>990),
 	'c.facture'=>array('label'=>"Billed", 'checked'=>1, 'enabled'=>(empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT)), 'position'=>995),
+	'c.import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>999),
 	'c.fk_statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000)
 );
 // Extra fields
@@ -318,7 +319,7 @@ if ($action == 'validate' && $permissiontoadd) {
 					if ($objecttmp->valid($user, $idwarehouse)) {
 						setEventMessage($langs->trans('hasBeenValidated', $objecttmp->ref), 'mesgs');
 					} else {
-						setEventMessage($langs->trans('CantBeValidated'), 'errors');
+						setEventMessage($objecttmp->error, $objecttmp->errors, 'errors');
 						$error++;
 					}
 				} else {
@@ -441,7 +442,7 @@ $sql .= ' c.date_creation as date_creation, c.tms as date_update, c.date_cloture
 $sql .= ' p.rowid as project_id, p.ref as project_ref, p.title as project_label,';
 $sql .= ' u.login, u.lastname, u.firstname, u.email as user_email, u.statut as user_statut, u.entity, u.photo, u.office_phone, u.office_fax, u.user_mobile, u.job, u.gender,';
 $sql .= ' c.fk_cond_reglement,c.fk_mode_reglement,c.fk_shipping_method,';
-$sql .= ' c.fk_input_reason';
+$sql .= ' c.fk_input_reason, c.import_key';
 if (($search_categ_cus > 0) || ($search_categ_cus == -2)) {
 	$sql .= ", cc.fk_categorie, cc.fk_soc";
 }
@@ -1275,6 +1276,11 @@ if ($resql) {
 		print $form->selectyesno('search_billed', $search_billed, 1, 0, 1, 1);
 		print '</td>';
 	}
+	// Import key
+	if (!empty($arrayfields['c.import_key']['checked'])) {
+		print '<td class="liste_titre maxwidthonsmartphone" align="center">';
+		print '</td>';
+	}
 	// Status
 	if (!empty($arrayfields['c.fk_statut']['checked'])) {
 		print '<td class="liste_titre maxwidthonsmartphone center">';
@@ -1435,6 +1441,9 @@ if ($resql) {
 	}
 	if (!empty($arrayfields['c.facture']['checked'])) {
 		print_liste_field_titre($arrayfields['c.facture']['label'], $_SERVER["PHP_SELF"], 'c.facture', '', $param, '', $sortfield, $sortorder, 'center ');
+	}
+	if (!empty($arrayfields['c.import_key']['checked'])) {
+		print_liste_field_titre($arrayfields['c.import_key']['label'], $_SERVER["PHP_SELF"], "c.import_key", "", $param, '', $sortfield, $sortorder, 'center ');
 	}
 	if (!empty($arrayfields['c.fk_statut']['checked'])) {
 		print_liste_field_titre($arrayfields['c.fk_statut']['label'], $_SERVER["PHP_SELF"], "c.fk_statut", "", $param, '', $sortfield, $sortorder, 'center ');
@@ -2059,6 +2068,13 @@ if ($resql) {
 		// Billed
 		if (!empty($arrayfields['c.facture']['checked'])) {
 			print '<td class="center">'.yn($obj->billed).'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Import key
+		if (!empty($arrayfields['c.import_key']['checked'])) {
+			print '<td class="nowrap center">'.$obj->import_key.'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

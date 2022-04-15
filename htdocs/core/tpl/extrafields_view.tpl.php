@@ -40,7 +40,7 @@ if (!is_object($form)) {
 ?>
 <!-- BEGIN PHP TEMPLATE extrafields_view.tpl.php -->
 <?php
-if (!is_array($parameters)) {
+if (!isset($parameters) || !is_array($parameters)) {
 	$parameters = array();
 }
 if (!empty($cols)) {
