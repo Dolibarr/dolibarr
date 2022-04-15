@@ -1159,3 +1159,7 @@ hasBeenValidated=%s a été validé
 ClientTZ=Fuseau horaire client (utilisateur)
 NotClosedYet=Pas encore fermé
 ClearSignature=Signature supprimée
+ConfirmAllocateCommercial=Affectation d'un représentant commercial
+ConfirmAllocateCommercialQuestion=Êtes-vous sûr de vouloir d'affecter le(s) %s enregistrement(s) sélectionné(s) ?
+CommercialsAffected=Représentant commercial affecté
+CommercialAffected=Représentants commerciaux affectés
