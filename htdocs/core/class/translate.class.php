@@ -656,7 +656,7 @@ class Translate
 
 			return $str;
 		} else { // Translation is not available
-			//if ($key[0] == '$') { return dol_eval($key,1); }
+			//if ($key[0] == '$') { return dol_eval($key, 1, 1, '1'); }
 			return $this->getTradFromKey($key);
 		}
 	}
@@ -722,7 +722,7 @@ class Translate
 			return $str;
 		} else {
 			if ($key[0] == '$') {
-				return dol_eval($key, 1);
+				return dol_eval($key, 1, 1, '1');
 			}
 			return $this->getTradFromKey($key);
 		}

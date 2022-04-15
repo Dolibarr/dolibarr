@@ -912,6 +912,7 @@ $form = new Form($db);
 <script type="text/javascript">
 var selectedline=0;
 var selectedtext="";
+<?php if ($action=="valid") echo "var place=0;";?> // Set to default place after close sale
 var placeid=<?php echo ($placeid > 0 ? $placeid : 0); ?>;
 $(document).ready(function() {
 	var idoflineadded = <?php echo (empty($idoflineadded) ? 0 : $idoflineadded); ?>;

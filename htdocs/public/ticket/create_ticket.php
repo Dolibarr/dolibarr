@@ -126,7 +126,7 @@ if (empty($reshook) && GETPOST('removedfile', 'alpha') && !GETPOST('save', 'alph
 	$upload_dir_tmp = $vardir.'/temp/'.session_id();
 
 	// TODO Delete only files that was uploaded from email form
-	dol_remove_file_process($_POST['removedfile'], 0, 0);
+	dol_remove_file_process(GETPOST('removedfile'), 0, 0);
 	$action = 'create_ticket';
 }
 

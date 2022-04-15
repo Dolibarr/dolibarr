@@ -187,7 +187,8 @@ if (!function_exists('dol_loginfunction')) {
 			$template_dir = DOL_DOCUMENT_ROOT."/core/tpl/";
 		}
 
-		// Set cookie for timeout management
+		// Set cookie for timeout management. We set it as a cookie so we will be able to use it to set timeout on next page before the session start
+		// and the conf file is loaded.
 		$prefix = dol_getprefix('');
 		$sessiontimeout = 'DOLSESSTIMEOUT_'.$prefix;
 		if (!empty($conf->global->MAIN_SESSION_TIMEOUT)) {

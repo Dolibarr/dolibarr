@@ -49,13 +49,13 @@ class FormCategory extends Form
 		$categoryArray = $this->select_all_categories($type, "", "", 64, 0, 1);
 		$categoryArray[-2] = "- ".$langs->trans('NotCategorized')." -";
 
-		$tmptitle = $langs->trans("Category");
+		$tmptitle = $langs->transnoentitiesnoconv("Category");
 
 		$filter = '';
 		$filter .= '<div class="divsearchfield">';
 		$filter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"');
 		//$filter .= $langs->trans('Categories').": ";
-		$filter .= Form::multiselectarray($htmlName, $categoryArray, $preSelected, 0, 0, "minwidth300", 0, 0, '', '', $tmptitle);
+		$filter .= Form::multiselectarray($htmlName, $categoryArray, $preSelected, 0, 0, "minwidth300 widthcentpercentminusx", 0, 0, '', '', $tmptitle);
 		$filter .= "</div>";
 
 		return $filter;
