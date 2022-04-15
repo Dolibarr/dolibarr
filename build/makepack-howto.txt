@@ -24,7 +24,6 @@ To generate a changelog of a maintenance version x.y.z, you can do "cd ~/git/dol
   (/home/dolibarr/wwwroot/files/lastbuild).
 
 - Post a news on dolibarr.org/dolibarr.fr + social networks
-- Send mail on mailings-list
 
 
 ***** Actions to do a RELEASE *****
@@ -52,4 +51,3 @@ To generate a changelog of a maintenance version x.y.z, you can do "cd ~/git/dol
   on server to point to new files (used by some web sites).
 
 - Post a news on dolibarr.org/dolibarr.fr + social networks
-- Send mail on mailings-list
