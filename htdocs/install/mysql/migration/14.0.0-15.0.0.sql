@@ -509,3 +509,16 @@ INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) value
 
 -- VMYSQL4.3 ALTER TABLE llx_user MODIFY COLUMN fk_soc integer NULL;
 -- VPGSQL8.2 ALTER TABLE llx_user ALTER COLUMN fk_soc DROP NOT NULL;
+
+DROP TABLE IF EXISTS llx_element_tag; -- in migration 3.2.0 to 3.3.0 there is a element_tag table creation that is notin create table
+CREATE TABLE llx_element_tag
+(
+    rowid integer AUTO_INCREMENT PRIMARY KEY,
+    fk_categorie  integer NOT NULL,
+    fk_element  integer NOT NULL,
+    import_key    varchar(14)
+)ENGINE=innodb;
+
+ALTER TABLE llx_element_tag ADD UNIQUE INDEX idx_element_tag_uk (fk_categorie, fk_element);
+
+ALTER TABLE llx_element_tag ADD CONSTRAINT fk_element_tag_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
