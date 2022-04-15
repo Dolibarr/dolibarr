@@ -598,6 +598,10 @@ if ($limit > 0 && $limit != $conf->liste_limit) {
 
 print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $result, $nbtotalofrecords, 'title_accountancy', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
+if ($type == 'sub') {
+	print info_admin($langs->trans("WarningRecordWithoutSubledgerAreExcluded"));
+}
+
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
 if ($massactionbutton && $contextpage != 'poslist') {
