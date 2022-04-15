@@ -119,7 +119,7 @@ class box_birthdays extends ModeleBoxes
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="center nowraponall"',
-						'text' => dol_print_date($dateb, "day", 'gmt').' - '.$age.' '.$langs->trans('DurationYears')
+						'text' => dol_print_date($dateb, "day", 'tzserver').' - '.$age.' '.$langs->trans('DurationYears')
 					);
 
 					/*$this->info_box_contents[$line][] = array(

@@ -19,6 +19,7 @@ ProspectionArea=Prospection area
 IdThirdParty=Id third party
 IdCompany=Company Id
 IdContact=Contact Id
+ThirdPartyAddress=Third-party address
 ThirdPartyContacts=Third-party contacts
 ThirdPartyContact=Third-party contact/address
 Company=Company

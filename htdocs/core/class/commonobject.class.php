@@ -126,10 +126,9 @@ abstract class CommonObject
 	public $linkedObjects;
 
 	/**
-	 * @var boolean		is linkedObjects full loaded. Loaded by ->fetchObjectLinked
-	 * important for pdf generation time reduction
+	 * @var boolean		Array of boolean with object id as key and value as true if linkedObjects full loaded. Loaded by ->fetchObjectLinked. Important for pdf generation time reduction.
 	 */
-	public $linkedObjectsFullLoaded = false;
+	public $linkedObjectsFullLoaded = array();
 
 	/**
 	 * @var Object      To store a cloned copy of object before to edit it and keep track of old properties
@@ -3781,9 +3780,11 @@ abstract class CommonObject
 	{
 		global $conf, $hookmanager, $action;
 
-		// important for pdf generation time reduction
-		// this boolean is true if $this->linkedObjects has already been loaded with all objects linked without filter
-		if ($this->linkedObjectsFullLoaded) return 1;
+		// Important for pdf generation time reduction
+		// This boolean is true if $this->linkedObjects has already been loaded with all objects linked without filter
+		if ($this->id > 0 && !empty($this->linkedObjectsFullLoaded[$this->id])) {
+			return 1;
+		}
 
 		$this->linkedObjectsIds = array();
 		$this->linkedObjects = array();
@@ -3846,8 +3847,8 @@ abstract class CommonObject
 		} else {
 			$sql .= "(fk_source = ".((int) $sourceid)." AND sourcetype = '".$this->db->escape($sourcetype)."')";
 			$sql .= " ".$clause." (fk_target = ".((int) $targetid)." AND targettype = '".$this->db->escape($targettype)."')";
-			if ($sourceid == $this->id && $sourcetype == $this->element && $targetid == $this->id && $targettype == $this->element && $clause == 'OR') {
-				$this->linkedObjectsFullLoaded = true;
+			if ($loadalsoobjects && $this->id > 0 && $sourceid == $this->id && $sourcetype == $this->element && $targetid == $this->id && $targettype == $this->element && $clause == 'OR') {
+				$this->linkedObjectsFullLoaded[$this->id] = true;
 			}
 		}
 		$sql .= " ORDER BY ".$orderby;
@@ -4951,18 +4952,18 @@ abstract class CommonObject
 		global $langs, $hookmanager, $conf, $form, $action;
 
 		print '<tr class="liste_titre">';
-		print '<td>'.$langs->trans('Ref').'</td>';
-		print '<td>'.$langs->trans('Description').'</td>';
-		print '<td class="right">'.$langs->trans('VATRate').'</td>';
-		print '<td class="right">'.$langs->trans('PriceUHT').'</td>';
+		print '<td class="linecolref">'.$langs->trans('Ref').'</td>';
+		print '<td class="linecoldescription">'.$langs->trans('Description').'</td>';
+		print '<td class="linecolvat right">'.$langs->trans('VATRate').'</td>';
+		print '<td class="linecoluht right">'.$langs->trans('PriceUHT').'</td>';
 		if (!empty($conf->multicurrency->enabled)) {
-			print '<td class="right">'.$langs->trans('PriceUHTCurrency').'</td>';
+			print '<td class="linecoluht_currency right">'.$langs->trans('PriceUHTCurrency').'</td>';
 		}
-		print '<td class="right">'.$langs->trans('Qty').'</td>';
+		print '<td class="linecolqty right">'.$langs->trans('Qty').'</td>';
 		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
-			print '<td class="left">'.$langs->trans('Unit').'</td>';
+			print '<td class="linecoluseunit left">'.$langs->trans('Unit').'</td>';
 		}
-		print '<td class="right">'.$langs->trans('ReductionShort').'</td>';
+		print '<td class="linecoldiscount right">'.$langs->trans('ReductionShort').'</td>';
 		print '<td class="linecolht right">'.$langs->trans('TotalHT').'</td>';
 		print '<td class="center">'.$form->showCheckAddButtons('checkforselect', 1).'</td>';
 		print '</tr>';
@@ -5397,16 +5398,20 @@ abstract class CommonObject
 					return 1;
 				} else {
 					$outputlangs->charset_output = $sav_charset_output;
-					dol_print_error($this->db, "Error generating document for ".__CLASS__.". Error: ".$obj->error, $obj->errors);
+					$this->error = $obj->error;
+					$this->errors = $obj->errors;
+					dol_syslog("Error generating document for ".__CLASS__.". Error: ".$obj->error, LOG_ERR);
 					return -1;
 				}
 			} else {
 				if (!$filefound) {
 					$this->error = $langs->trans("Error").' Failed to load doc generator with modelpaths='.$modelspath.' - modele='.$modele;
-					dol_print_error('', $this->error);
+					$this->errors[] = $this->error;
+					dol_syslog($this->error, LOG_ERR);
 				} else {
 					$this->error = $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists", $filefound);
-					dol_print_error('', $this->error);
+					$this->errors[] = $this->error;
+					dol_syslog($this->error, LOG_ERR);
 				}
 				return -1;
 			}
