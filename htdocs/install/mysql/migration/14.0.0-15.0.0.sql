@@ -510,8 +510,6 @@ INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) value
 -- VMYSQL4.3 ALTER TABLE llx_user MODIFY COLUMN fk_soc integer NULL;
 -- VPGSQL8.2 ALTER TABLE llx_user ALTER COLUMN fk_soc DROP NOT NULL;
 
--- In migration 3.2.0 to 3.3.0 there is a element_tag table creation that is not in create table file
-DROP TABLE IF EXISTS llx_element_tag;
 CREATE TABLE llx_element_tag
 (
     rowid integer AUTO_INCREMENT PRIMARY KEY,
