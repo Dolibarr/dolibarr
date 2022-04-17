@@ -648,7 +648,7 @@ print '</td>';
 print '</tr>';
 
 // Email for notification of TICKET_CREATE
-print '<tr class="oddeven"><td>'.$langs->trans("TicketEmailNotificationTo").' ('.$langs->trans("Creation").')</td>';
+print '<tr class="oddeven"><td>'.$langs->trans("TicketEmailNotificationTo").'</td>';
 print '<td class="left">';
 print '<input type="text" name="TICKET_NOTIFICATION_EMAIL_TO" value="'.(!empty($conf->global->TICKET_NOTIFICATION_EMAIL_TO) ? $conf->global->TICKET_NOTIFICATION_EMAIL_TO : '').'"></td>';
 print '<td class="center">';
@@ -675,7 +675,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
 
 // Texte d'introduction
 $mail_intro = $conf->global->TICKET_MESSAGE_MAIL_INTRO ? $conf->global->TICKET_MESSAGE_MAIL_INTRO : $langs->trans('TicketMessageMailIntroText');
-print '<tr class="oddeven"><td>'.$langs->trans("TicketMessageMailIntroLabelAdmin").' ('.$langs->trans("Responses").')';
+print '<tr class="oddeven"><td>'.$langs->trans("TicketMessageMailIntroLabelAdmin");
 print '</td><td>';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 $doleditor = new DolEditor('TICKET_MESSAGE_MAIL_INTRO', $mail_intro, '100%', 120, 'dolibarr_mailings', '', false, true, $conf->global->FCKEDITOR_ENABLE_MAIL, ROWS_2, 70);
