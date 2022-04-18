@@ -2396,7 +2396,7 @@ function printDropdownQuickadd()
 	$items = array(
 		'items' => array(
 			array(
-				"url" => "/societe/card.php?action=create",
+				"url" => "/societe/card.php?action=create&amp;mainmenu=companies",
 				"title" => "MenuNewThirdParty@companies",
 				"name" => "ThirdParty@companies",
 				"picto" => "object_company",
@@ -2404,7 +2404,7 @@ function printDropdownQuickadd()
 				"position" => 10,
 			),
 			array(
-				"url" => "/contact/card.php?action=create",
+				"url" => "/contact/card.php?action=create&amp;mainmenu=companies",
 				"title" => "NewContactAddress@companies",
 				"name" => "Contact@companies",
 				"picto" => "object_contact",
@@ -2412,7 +2412,7 @@ function printDropdownQuickadd()
 				"position" => 20,
 			),
 			array(
-				"url" => "/comm/propal/card.php?action=create",
+				"url" => "/comm/propal/card.php?action=create&amp;mainmenu=commercial",
 				"title" => "NewPropal@propal",
 				"name" => "Proposal@propal",
 				"picto" => "object_propal",
@@ -2421,7 +2421,7 @@ function printDropdownQuickadd()
 			),
 
 			array(
-				"url" => "/commande/card.php?action=create",
+				"url" => "/commande/card.php?action=create&amp;mainmenu=commercial",
 				"title" => "NewOrder@orders",
 				"name" => "Order@orders",
 				"picto" => "object_order",
@@ -2429,7 +2429,7 @@ function printDropdownQuickadd()
 				"position" => 40,
 			),
 			array(
-				"url" => "/compta/facture/card.php?action=create",
+				"url" => "/compta/facture/card.php?action=create&amp;mainmenu=billing",
 				"title" => "NewBill@bills",
 				"name" => "Bill@bills",
 				"picto" => "object_bill",
@@ -2437,7 +2437,7 @@ function printDropdownQuickadd()
 				"position" => 50,
 			),
 			array(
-				"url" => "/contrat/card.php?action=create",
+				"url" => "/contrat/card.php?action=create&amp;mainmenu=commercial",
 				"title" => "NewContractSubscription@contracts",
 				"name" => "Contract@contracts",
 				"picto" => "object_contract",
@@ -2445,7 +2445,7 @@ function printDropdownQuickadd()
 				"position" => 60,
 			),
 			array(
-				"url" => "/supplier_proposal/card.php?action=create",
+				"url" => "/supplier_proposal/card.php?action=create&amp;mainmenu=commercial",
 				"title" => "SupplierProposalNew@supplier_proposal",
 				"name" => "SupplierProposal@supplier_proposal",
 				"picto" => "object_propal",
@@ -2453,7 +2453,7 @@ function printDropdownQuickadd()
 				"position" => 70,
 			),
 			array(
-				"url" => "/fourn/commande/card.php?action=create",
+				"url" => "/fourn/commande/card.php?action=create&amp;mainmenu=commercial",
 				"title" => "NewSupplierOrderShort@orders",
 				"name" => "SupplierOrder@orders",
 				"picto" => "object_order",
@@ -2461,7 +2461,7 @@ function printDropdownQuickadd()
 				"position" => 80,
 			),
 			array(
-				"url" => "/fourn/facture/card.php?action=create",
+				"url" => "/fourn/facture/card.php?action=create&amp;mainmenu=billing",
 				"title" => "NewBill@bills",
 				"name" => "SupplierBill@bills",
 				"picto" => "object_bill",
@@ -2469,7 +2469,7 @@ function printDropdownQuickadd()
 				"position" => 90,
 			),
 			array(
-				"url" => "/product/card.php?action=create&amp;type=0",
+				"url" => "/product/card.php?action=create&amp;type=0&amp;mainmenu=products",
 				"title" => "NewProduct@products",
 				"name" => "Product@products",
 				"picto" => "object_product",
@@ -2477,7 +2477,7 @@ function printDropdownQuickadd()
 				"position" => 100,
 			),
 			array(
-				"url" => "/product/card.php?action=create&amp;type=1",
+				"url" => "/product/card.php?action=create&amp;type=1&amp;mainmenu=products",
 				"title" => "NewService@products",
 				"name" => "Service@products",
 				"picto" => "object_service",
