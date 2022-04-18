@@ -1297,8 +1297,12 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		if (!defined('DISABLE_FONT_AWSOME'))
 		{
 			print '<!-- Includes CSS for font awesome -->'."\n";
-            print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/common/fontawesome-5/css/all.min.css'.($ext ? '?'.$ext : '').'">'."\n";
-            print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/common/fontawesome-5/css/v4-shims.min.css'.($ext ? '?'.$ext : '').'">'."\n";
+			if (!empty($conf->global->USE_FONTAWESOME6)) {
+				print '<link rel="stylesheet" type="text/css" href="' . DOL_URL_ROOT . '/theme/common/fontawesome-6/css/all.min.css' . ($ext ? '?' . $ext : '') . '">' . "\n";
+			} else {
+				print '<link rel="stylesheet" type="text/css" href="' . DOL_URL_ROOT . '/theme/common/fontawesome-5/css/all.min.css' . ($ext ? '?' . $ext : '') . '">' . "\n";
+				print '<link rel="stylesheet" type="text/css" href="' . DOL_URL_ROOT . '/theme/common/fontawesome-5/css/v4-shims.min.css' . ($ext ? '?' . $ext : '') . '">' . "\n";
+			}
 		}
 
 		print '<!-- Includes CSS for Dolibarr theme -->'."\n";

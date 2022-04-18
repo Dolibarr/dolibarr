@@ -3,7 +3,11 @@
 
 .mainmenu::before{
     /* font part */
-    font-family: "Font Awesome 5 Free";
+	<?php if (!empty($conf->global->USE_FONTAWESOME6)) { ?>
+		font-family: "Font Awesome 6 Free";
+	<?php } else { ?>
+		font-family: "Font Awesome 5 Free";
+	<?php } ?>
     font-weight: 900;
     font-style: normal;
     font-variant: normal;
