@@ -31,7 +31,9 @@ require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
 $langs->load("opensurvey");
 
 // Security check
-if (!$user->rights->opensurvey->read) accessforbidden();
+if (empty($user->rights->opensurvey->read)) {
+	accessforbidden();
+}
 
 $hookmanager = new HookManager($db);
 
@@ -43,23 +45,23 @@ $hookmanager->initHooks(array('opensurveyindex'));
  * View
  */
 
-$nbsondages=0;
+$nbsondages = 0;
 $sql = 'SELECT COUNT(*) as nb';
-$sql.= ' FROM '.MAIN_DB_PREFIX.'opensurvey_sondage';
-$sql.= ' WHERE entity IN ('.getEntity('survey').')';
-$resql=$db->query($sql);
-if ($resql)
-{
-	$obj=$db->fetch_object($resql);
-	$nbsondages=$obj->nb;
+$sql .= ' FROM '.MAIN_DB_PREFIX.'opensurvey_sondage';
+$sql .= ' WHERE entity IN ('.getEntity('survey').')';
+$resql = $db->query($sql);
+if ($resql) {
+	$obj = $db->fetch_object($resql);
+	$nbsondages = $obj->nb;
+} else {
+	dol_print_error($db, '');
 }
-else dol_print_error($db, '');
 
 
 $title = $langs->trans("OpenSurveyArea");
 llxHeader('', $title);
 
-print load_fiche_titre($title, '', 'generic');
+print load_fiche_titre($title, '', 'poll');
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';

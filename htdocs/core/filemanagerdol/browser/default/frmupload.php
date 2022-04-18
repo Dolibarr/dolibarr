@@ -3,7 +3,7 @@
  * Copyright (C) 2003-2010 Frederico Caldeira Knabben
  *
  * Source modified from part of fckeditor (http://www.fckeditor.net)
- * retreived as GPL v2 or later
+ * retrieved as GPL v2 or later
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
 define('NOTOKENRENEWAL', 1); // Disables token renewal
 
 require '../../../../main.inc.php';
+
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <!--
@@ -50,6 +51,24 @@ require '../../../../main.inc.php';
 	<head>
 		<title>File Upload</title>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<?php
+print '<!-- Includes CSS for Dolibarr theme -->'."\n";
+// Output style sheets (optioncss='print' or ''). Note: $conf->css looks like '/theme/eldy/style.css.php'
+$themepath = dol_buildpath($conf->css, 1);
+$themesubdir = '';
+if (!empty($conf->modules_parts['theme'])) {	// This slow down
+	foreach ($conf->modules_parts['theme'] as $reldir) {
+		if (file_exists(dol_buildpath($reldir.$conf->css, 0))) {
+			$themepath = dol_buildpath($reldir.$conf->css, 1);
+			$themesubdir = $reldir;
+			break;
+		}
+	}
+}
+
+//print 'themepath='.$themepath.' themeparam='.$themeparam;exit;
+print '<link rel="stylesheet" type="text/css" href="'.$themepath.'">'."\n";
+?>
 		<link href="browser.css" type="text/css" rel="stylesheet" >
 		<script type="text/javascript" src="js/common.js"></script>
 		<script type="text/javascript">
@@ -65,6 +84,7 @@ function SetCurrentFolder( resourceType, folderPath )
 
 function OnSubmit()
 {
+	console.log("Click on OnSubmit");
 	if ( document.getElementById('NewFile').value.length == 0 )
 	{
 		alert( 'Please select a file from your computer' );
@@ -80,6 +100,8 @@ function OnSubmit()
 
 function OnUploadCompleted( errorNumber, data )
 {
+	console.log("errorNumber = "+errorNumber);
+
 	// Reset the Upload Worker Frame.
 	window.parent.frames['frmUploadWorker'].location = 'javascript:void(0)' ;
 
@@ -106,7 +128,7 @@ function OnUploadCompleted( errorNumber, data )
 			alert( 'A file with the same name is already available. The uploaded file has been renamed to "' + data + '"' );
 			break;
 		case 202:
-			alert( 'Invalid file' );
+			alert( 'Invalid file (Bad extension)' );
 			break;
 		default:
 			alert( 'Error on file upload. Error number: ' + errorNumber );
@@ -122,16 +144,18 @@ window.onload = function()
 	</head>
 	<body>
 		<form id="frmUpload" action="" target="frmUploadWorker" method="post" enctype="multipart/form-data" onsubmit="return OnSubmit();">
+			<input type="hidden" name="token" value="<?php echo newToken(); ?>" />
 			<table class="fullHeight" cellspacing="0" cellpadding="0" width="100%" border="0">
 				<tr>
-					<td class="nowrap">
-						<span id="eUploadMessage">Upload a new file in this folder</span><br>
-						<table cellspacing="0" cellpadding="0" width="100%" border="0">
+					<td class="nowrap valignmiddle">
+						<table width="100%" class="inline-block valignmiddle">
 							<tr>
-								<td width="100%"><input id="NewFile" name="NewFile" style="WIDTH: 100%" type="file"></td>
-								<td class="nowrap">&nbsp;<input id="btnUpload" type="submit" value="Upload"></td>
+								<td><input id="NewFile" name="NewFile" type="file"></td>
+								<td class="nowrap">&nbsp;<input id="btnUpload" type="submit" value="Upload" class="flat button"></td>
 							</tr>
 						</table>
+						<!-- Section for upload result message -->
+						<span id="eUploadMessage"></span><br>
 					</td>
 				</tr>
 			</table>

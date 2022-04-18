@@ -6,6 +6,7 @@ Closing=Schliessen
 CloseAContract=Schliessen eines Vertrages
 RefContract=Vertragsnummer
 ListOfClosedServices=Liste der geschlossenen Services
+LastContracts=%s neueste Verträge
 LastModifiedServices=%s zuletzt bearbeitete Leistungen
 DateEndPlannedShort=Ende
 DateStartRealShort=Beginn eff.

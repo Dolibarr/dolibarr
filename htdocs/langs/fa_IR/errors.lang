@@ -4,11 +4,14 @@
 NoErrorCommitIsDone=خطائی نیست، حرکت می‌کنیم
 # Errors
 ErrorButCommitIsDone=علیرغم وجود خطا، تائید می‌شود
-ErrorBadEMail=رایانامۀ %s غلط است
-ErrorBadUrl=نشانی‌اینترنتی %s اشتباه است
+ErrorBadEMail=Email %s is incorrect
+ErrorBadMXDomain=Email %s seems incorrect (domain has no valid MX record)
+ErrorBadUrl=Url %s is incorrect
 ErrorBadValueForParamNotAString=برای مؤلفۀ موردنظر مقدار خطائی وارد شده است. عموما در هنگام فقدان ترجمه، الحاق می‌شود.
+ErrorRefAlreadyExists=Reference <b>%s</b> already exists.
 ErrorLoginAlreadyExists=نام‌کاربری %s قبلا وجود داشته است.
 ErrorGroupAlreadyExists=گروه %s قبلا وجود داشته است.
+ErrorEmailAlreadyExists=Email %s already exists.
 ErrorRecordNotFound=ردیف موجود نیست.
 ErrorFailToCopyFile=نسخه‌برداری از فایل '<b>%s</b>' به '<b>%s</b>' موفق نبود.
 ErrorFailToCopyDir=نسخه‌برداری از پوشۀ '<b>%s</b>' به '<b>%s</b>' موفق نبود.
@@ -24,7 +27,9 @@ ErrorThisContactIsAlreadyDefinedAsThisType=این طرف‌تماس قبلا ب�
 ErrorCashAccountAcceptsOnlyCashMoney=این حساب‌بانکی نقدی است و تنها پرداخت‌های نقدی را می‌پذیرد.
 ErrorFromToAccountsMustDiffers=مبدأ و مقصد حساب‌های بانکی باید متفاوت باشد.
 ErrorBadThirdPartyName=مقدار غیرقابل‌قبول برای نام شخص‌سوم
+ForbiddenBySetupRules=Forbidden by setup rules
 ErrorProdIdIsMandatory=بخش %s الزامی است
+ErrorAccountancyCodeCustomerIsMandatory=The accountancy code of customer %s is mandatory
 ErrorBadCustomerCodeSyntax=روش‌درج برای کدمشتری اشتباه است
 ErrorBadBarCodeSyntax=روش درج بارکد اشتباه است. ممکناست یک نوع بارکد اشتباه تنظیم کرده باشید یا یک پوشش-ماسک بارکد برای عددهی انتخاب کرده‌اید که با مقدار اسکن شده همخوان نیست.
 ErrorCustomerCodeRequired=کدمشتری الزامی است
@@ -36,6 +41,7 @@ ErrorBadSupplierCodeSyntax=کد فروشنده اشتباه درج شده است
 ErrorSupplierCodeRequired=کدفروشنده الزامی است
 ErrorSupplierCodeAlreadyUsed=کدفروشنده قبلا استفاده شده است
 ErrorBadParameters=مقادیر اشتباه
+ErrorWrongParameters=Wrong or missing parameters
 ErrorBadValueForParameter=مقدار غلط '%s' برای مؤلفۀ '%s'
 ErrorBadImageFormat=حالت فایل تصویری قابل قبول نیست (PHP نصب شدۀ شما از توابعی که فایل را از این حالت تبدیل کنند، در خود ندارد)
 ErrorBadDateFormat=روش درج تاریخ مقدار '%s' اشتباه است
@@ -43,10 +49,11 @@ ErrorWrongDate=تاریخ، صحیح نمی‌باشد!
 ErrorFailedToWriteInDir=امکان نوشتن در پوشۀ %s وجود ندارد
 ErrorFoundBadEmailInFile=برای %s سطر در فایل روش‌اشتباه درج رایانامه پیدا شد (مثلا سطر %s با email=%s)
 ErrorUserCannotBeDelete=امکان حذف کاربر وجود ندارد. ممکن است با سایر اجزای Dolibarr در ارتباط باشد.
-ErrorFieldsRequired=برخی از بخش‌های الزامی، پر نشده‌اند.
-ErrorSubjectIsRequired=موضوع رایانامه الزامی است.
+ErrorFieldsRequired=Some required fields have been left blank.
+ErrorSubjectIsRequired=The email subject is required
 ErrorFailedToCreateDir=ایجاد یک پوشه با شکست مواجه شد. بررسی کنید، کاربر سرور وب، دارای مجوزهای نوشتاری بر روی پوشۀ documents مربوط به Dolibarr باشد در صورتی که مؤلفۀ <b>safe_mode</b> روی این نسخه از PHP فعال باشد، بررسی کنید فایل‌های PHP مربوط به Dolibarr متعلق به کاربر سرور وب (یا گروه مربوطه) باشد.
 ErrorNoMailDefinedForThisUser=نشانی رایانامه برای این کاربر تعریف نشده است
+ErrorSetupOfEmailsNotComplete=Setup of emails is not complete
 ErrorFeatureNeedJavascript=این قابلیت برای کار کردن نیاز به فعال بودن جاوااسکریپت دارد. این گزینه را در بخش برپاسازی-نمایش فعال کنید.
 ErrorTopMenuMustHaveAParentWithId0=فهرست‌هائی از نوع "بالا" می‌توانند دارای فهرست مادر باشند. برای این‌که فهرست "کنار" داشته باشید، عدد 0 را وارد کنید.
 ErrorLeftMenuMustHaveAParentId=فهرست‌های "کنار" باید یک شناسۀ مادر داشته باشند
@@ -55,10 +62,12 @@ ErrorDirNotFound=پوشۀ <b>%s</b> یافت نشد. (مسیر نادرست، م
 ErrorFunctionNotAvailableInPHP=برای این قابلیت، تابع <b>%s</b> نیاز است اما در این برپاسازی/نسخۀ PHP موجود نیست.
 ErrorDirAlreadyExists=قبلا یک پوشه با همین نام وجود داشته است.
 ErrorFileAlreadyExists=قبلا یک فایل به همین نام وجود داشته است.
+ErrorDestinationAlreadyExists=Another file with the name <b>%s</b> already exists.
 ErrorPartialFile=فایل به طور کامل توسط سرور دریافت نشده است.
 ErrorNoTmpDir=پوشۀ موقت %s وجود ندارد.
 ErrorUploadBlockedByAddon=امکان ارسال توسط یک افزونۀ PHP/Apache مسدود شده است
 ErrorFileSizeTooLarge=حجم فایل بسیار بزرگ است.
+ErrorFieldTooLong=Field %s is too long.
 ErrorSizeTooLongForIntType=برای این نوع عددصحیح اندازه بسیار بلند است (حداکثر %s رقم)
 ErrorSizeTooLongForVarcharType=برای این نوع رشتۀ حروقی اندازه بسیار بزرگ است (حداکثر %s نویسه)
 ErrorNoValueForSelectType=لطفا مقدار مربوط به فهرست انتخاب را وارد کنید
@@ -73,10 +82,10 @@ ErrorExportDuplicateProfil=این نام نمایه برای این مجموعۀ
 ErrorLDAPSetupNotComplete=تطبیق Dolibarr-LDAP کامل نیست.
 ErrorLDAPMakeManualTest=یک فایل .ldif در پوشۀ  %s تولید شد. تلاش کنید آن را از خط فرمان به شکل دستی اجرا کنید تا اطلاعات بیشتری در مورد خطاها داشته باشید.
 ErrorCantSaveADoneUserWithZeroPercentage=در صورتی که بخش "انجام شده توسط" هم پر شده باشد، امکان ذخیرۀ یک کنش با "وضعیت شروع نشده" نیست.
-ErrorRefAlreadyExists=ارجاعی که برای مورد ساخته شده استفاده شده قبلا وجود داشته است.
+ErrorRefAlreadyExists=Reference <b>%s</b> already exists.
 ErrorPleaseTypeBankTransactionReportName=لطفا نام اطلاعیۀ بانک را در خصوص چگونگی گزارش ورودی وارد کنید (حالت YYYYMM  یا YYYYMMDD)
 ErrorRecordHasChildren=هنگامی که یک ردیف دارای زیرمجموعه است، امکان حذف آن وجود ندارد.
-ErrorRecordHasAtLeastOneChildOfType=این شیء حداقل یک فرزند از نوع %s دارد
+ErrorRecordHasAtLeastOneChildOfType=Object %s has at least one child of type %s
 ErrorRecordIsUsedCantDelete=امکان حذف این ردیف نیست، زیرا در یک شیء دیگر شامل شده یا مورد استفاده اسن.
 ErrorModuleRequireJavascript=برای کار کردن این قابلیت، جاواسکریپت نباید غیر فعال بشد. برای فعال کردن/غیرفعال کردن جاوااسکریپت، به فهرست خانه->برپاسازی->نمایش مراجعه کنید.
 ErrorPasswordsMustMatch=هر دو گذرواژۀ وارد شده باید مطابق با هم باشند
@@ -96,7 +105,7 @@ ErrorBadMaskFailedToLocatePosOfSequence=خطا، ماسک بدون عدد متو
 ErrorBadMaskBadRazMonth=خطا، مقدار نادرست بازنشانی
 ErrorMaxNumberReachForThisMask=حداکثر رقم انتخائی برای این ماسک
 ErrorCounterMustHaveMoreThan3Digits=شمارنده حداقل باید 3 رقمه باشد
-ErrorSelectAtLeastOne=خطا. حداقل یک ورودی انتخاب کنید.
+ErrorSelectAtLeastOne=Error, select at least one entry.
 ErrorDeleteNotPossibleLineIsConsolidated=حذف مقدور نیست زیرا ردیف به یک تراکنش بانکی متصل است که مسکوت است
 ErrorProdIdAlreadyExist=%s به یک‌سوم دیگر اختصاص داده شده
 ErrorFailedToSendPassword=ارسال گذرواژه موفقیت‌آمیز نبو
@@ -104,6 +113,7 @@ ErrorFailedToLoadRSSFile=دریافت خوراک RSS ممکن نبود. در ص�
 ErrorForbidden=دسترسی بسته است. <br> شما در تلاشید به صفحه، بخش یا قابلیتی از یک واحد غیرفعال مراجعه نموده یا این‌که این تلاش برای دسترسی توسط یک نشست بدون مجوز که برای نام کاربری شما مجاز نیست انجام می‌شود.
 ErrorForbidden2=مجوزهای این کاربر از فهرست %s->%s از صفحۀ مدیر Dolibarr قابل تعیین کردن است.
 ErrorForbidden3=به نظر می‌رسد Dolibarr از طریق یک نشست تصدیق شده مورد استفاده قرار نگرفته است. نگاهی به مستندات راهنمای برپاسازی Dolibarr نموده تا چگونگی مدیریت تصدیق‌ها را بدانید (htaccess، mod_auth یا غیره...).
+ErrorForbidden4=Note: clear your browser cookies to destroy existing sessions for this login.
 ErrorNoImagickReadimage=کلاس Imagick در این نسخۀ PHP یافت نشد. امکان ارائۀ پیش‌نمایش وجود ندارد. مدیران می‌توانند این زبانه را از فهرست برپاسازی - نمایش غیرفعال کنند.
 ErrorRecordAlreadyExists=این ردیف قبلا وجود داشته است
 ErrorLabelAlreadyExists=این برچسب قبلا وجود داشته است
@@ -111,13 +121,14 @@ ErrorCantReadFile=امکان خواندن فایل '%s' نبود
 ErrorCantReadDir=امکان خواندن پوشۀ '%s' نبود
 ErrorBadLoginPassword=مقدار نادرست نام‌ورود و گذرواژه
 ErrorLoginDisabled=حساب شما غیر فعال شده است
-ErrorFailedToRunExternalCommand=اجرای دستور خارجی موفقیت‌آمیز نبود. مطمئن شوید در سرور PHP فعال و قابل اجراست. در صورتی که حالت <b>Safe Mode</b> در PHP فعال باشد، بررسی کنید دستور در پوشه‌ای است که توسط مؤلفۀ <b>safe_mode_exec_dir</b> قرار گرفته باشد.
+ErrorFailedToRunExternalCommand=Failed to run external command. Check it is available and runnable by your PHP server user. Check also the command is not protected on shell level by a security layer like apparmor.
 ErrorFailedToChangePassword=تغییر گذرواژه موفقیت‌آمیز نبود
 ErrorLoginDoesNotExists=کاربری که از نام‌ورود <b>%s</b> استفاده کند، پیدا نشد
 ErrorLoginHasNoEmail=کاربر هیچ نشانی رایانامه‌‌ای ندارد. پردازش متوقف شد.
 ErrorBadValueForCode=مقدار نادرست برای کد امنیتی. با یک مقدار جدید امتحان کنید...
 ErrorBothFieldCantBeNegative=بخش‌های %s و %s نمی‌توانند هر دو منفی باشند
-ErrorFieldCantBeNegativeOnInvoice=Field <strong>%s</strong> cannot be negative on this type of invoice. If you need to add a discount line, just create the discount first (from field '%s' in thirdparty card) and apply it to the invoice. You can also ask your admin to set option FACTURE_ENABLE_NEGATIVE_LINES to 1 to allow the old behaviour.
+ErrorFieldCantBeNegativeOnInvoice=Field <strong>%s</strong> cannot be negative on this type of invoice. If you need to add a discount line, just create the discount first (from field '%s' in thirdparty card) and apply it to the invoice.
+ErrorLinesCantBeNegativeForOneVATRate=Total of lines (net of tax) can't be negative for a given not null VAT rate (Found a negative total for VAT rate <b>%s</b>%%).
 ErrorLinesCantBeNegativeOnDeposits=Lines can't be negative in a deposit. You will face problems when you will need to consume the deposit in final invoice if you do so.
 ErrorQtyForCustomerInvoiceCantBeNegative=در صورت‌حساب مشتری تعداد برای یک سطر نمی‌‌تواند رقمی منفی باشد
 ErrorWebServerUserHasNotPermission=حساب کاربری <b>%s</b> برای اجرای یک سرور وب انتخاب شده اما مجوز آن را ندارد
@@ -133,7 +144,8 @@ ErrorNewValueCantMatchOldValue=مقدار جدید نمی‌تواند براب�
 ErrorFailedToValidatePasswordReset=بازسازی گذرواژه مقدور نبود. ممکن است این بازسازی قبلا انجام شده باشد (این پیوند فقط یک بار قابل استفاده است). در صورتی که چنین نیست، روند بازسازی را از سر بگیرید.
 ErrorToConnectToMysqlCheckInstance=اتصال به پایگاه‌داده مقدور نیست. مطمئن شوید سرور پایگاه داده فعال است. (برای مثال، Mysql/Mariadb شما می‌توانید از خط فرمان لینوکس دستور 'sudo service mysql start' را اجرا کنید).
 ErrorFailedToAddContact=اضافه کردن طرف‌تماس مقدور نبود
-ErrorDateMustBeBeforeToday=تاریخ نمی‌تواند بیشتر از امروز باشد
+ErrorDateMustBeBeforeToday=The date must be lower than today
+ErrorDateMustBeInFuture=The date must be greater than today
 ErrorPaymentModeDefinedToWithoutSetup=حالت پرداخت به %s تنظیم شده اما برپاسازی واحد صورت‌حساب کامل نیست تا اطلاعات مربوط به این حالت پرداخت را تعریف کرده و نمایش دهد.
 ErrorPHPNeedModule=خطا، برای استفاده از این قابلیت روی PHP شما باید واحد <b>%s</b> نصب شده باشد.
 ErrorOpenIDSetupNotComplete=شما تنظیمات Dolibarr را پیکربندی کرده‌اید تا تصدیق ورود OpenID  را مجاز کنید، اما نشانی خدمات openID در مقدارثابت %s تعریف نشده است
@@ -181,6 +193,7 @@ ErrorBadDefinitionOfMenuArrayInModuleDescriptor=تعریف بد آرایۀ فه�
 ErrorSavingChanges=در هنگام ذخیرۀ تغییرات یک اشکال رخ داد
 ErrorWarehouseRequiredIntoShipmentLine=در این سطر برای ارسال یک انبار مورد نیاز است
 ErrorFileMustHaveFormat=فایل باید به شکل %s باشد
+ErrorFilenameCantStartWithDot=Filename can't start with a '.'
 ErrorSupplierCountryIsNotDefined=برای این فروشنده کشور تعریف نشده است. ابتدا این را تصحیح کنید.
 ErrorsThirdpartyMerge=امکان ادغام دو ردیف وجود نداشت. درخواست لغو شد.
 ErrorStockIsNotEnoughToAddProductOnOrder=موجودی برای محصول %s برای افزودن در سفارش جدید کافی نیست.
@@ -211,13 +224,15 @@ ErrorChooseBetweenFreeEntryOrPredefinedProduct=شما باید تعیین کنی
 ErrorDiscountLargerThanRemainToPaySplitItBefore=تخفیفی که می‌دهید بزرگتر از مقدار قابل پرداخت است. قبل از این کار تخفیف را به 2 تخفیف کوچکتر تقسیم کنید.
 ErrorFileNotFoundWithSharedLink=فایل پیدا نشد. ممکن است کلید به‌اشتراک‌گذاری ویرایش شده یا فایل حذف شده باشد
 ErrorProductBarCodeAlreadyExists=بارکد محصول %s در یک ارجاع محصول دیگر قبلا وجود داشته است
-ErrorNoteAlsoThatSubProductCantBeFollowedByLot=همچنین توجه داشته باشید در هنگامی که حداقل یک زیرمحصول (یا زیرمحصولی از زیرمحصول) به یک شمارۀ سری‌ساخت/شماره سریال احتیاج داشته باشد، استفاده از محصول مجازی برای افزایش/کاهش خودکار زیرمحصولات ممکن نیست.
+ErrorNoteAlsoThatSubProductCantBeFollowedByLot=Note also that using kits to have auto increase/decrease of subproducts is not possible when at least one subproduct (or subproduct of subproducts) needs a serial/lot number.
 ErrorDescRequiredForFreeProductLines=برای سطوری که محصول مجانی دارند، توضیحات الزامی است
 ErrorAPageWithThisNameOrAliasAlreadyExists=صفحه/دربردارندۀ <strong>%s</strong> نام مشابه یا نام‌مستعار جایگزین مشابه ورودی مورد استفادۀ شما دارد
 ErrorDuringChartLoad=خطا در هنگام بارگذاری نمودار حساب‌ها. در صورتی برخی حساب‌ها بارگذاری نشوند، همچنان می‌توانید به طور دستی آن‌ها را وارد کنید
 ErrorBadSyntaxForParamKeyForContent=برای مؤلفۀ keyforcontent نگارش بدی وارد شده است. باید مقداری داشته باشد که با %s یا %s آغاز شود.
 ErrorVariableKeyForContentMustBeSet=خطا، مقدارثابت با نام %s (با محتوای متنی قابل نمایش) یا %s (با نشانی بیرونی قابل نمایش) باید تنظیم شده باشد.
+ErrorURLMustEndWith=URL %s must end %s
 ErrorURLMustStartWithHttp=نشانی اینترنتی %s باید با http://  یا  https:// آغاز گرد
+ErrorHostMustNotStartWithHttp=Host name %s must NOT start with http:// or https://
 ErrorNewRefIsAlreadyUsed=خطا، ارجاع جدید قبلا استفاده شده است
 ErrorDeletePaymentLinkedToAClosedInvoiceNotPossible=Error, delete payment linked to a closed invoice is not possible.
 ErrorSearchCriteriaTooSmall=Search criteria too small.
@@ -227,6 +242,42 @@ ErrorNoFieldWithAttributeShowoncombobox=No fields has property 'showoncombobox' 
 ErrorFieldRequiredForProduct=Field '%s' is required for product %s
 ProblemIsInSetupOfTerminal=Problem is in setup of terminal %s.
 ErrorAddAtLeastOneLineFirst=Add at least one line first
+ErrorRecordAlreadyInAccountingDeletionNotPossible=Error, record is already transferred in accounting, deletion is not possible.
+ErrorLanguageMandatoryIfPageSetAsTranslationOfAnother=Error, language is mandatory if you set the page as a translation of another one.
+ErrorLanguageOfTranslatedPageIsSameThanThisPage=Error, language of translated page is same than this one.
+ErrorBatchNoFoundForProductInWarehouse=No lot/serial found for product "%s" in warehouse "%s".
+ErrorBatchNoFoundEnoughQuantityForProductInWarehouse=No enough quantity for this lot/serial for product "%s" in warehouse "%s".
+ErrorOnlyOneFieldForGroupByIsPossible=Only 1 field for the 'Group by' is possible (others are discarded)
+ErrorTooManyDifferentValueForSelectedGroupBy=Found too many different value (more than <b>%s</b>) for the field '<b>%s</b>', so we can't use it as a 'Group by' for graphics. The field 'Group By' has been removed. May be you wanted to use it as an X-Axis ?
+ErrorReplaceStringEmpty=Error, the string to replace into is empty
+ErrorProductNeedBatchNumber=Error, product '<b>%s</b>' need a lot/serial number
+ErrorProductDoesNotNeedBatchNumber=Error, product '<b>%s</b>' does not accept a lot/serial number
+ErrorFailedToReadObject=Error, failed to read object of type <b>%s</b>
+ErrorParameterMustBeEnabledToAllwoThisFeature=Error, parameter <b>%s</b> must be enabled into <b>conf/conf.php<b> to allow use of Command Line Interface by the internal job scheduler
+ErrorLoginDateValidity=Error, this login is outside the validity date range
+ErrorValueLength=Length of field '<b>%s</b>' must be higher than '<b>%s</b>'
+ErrorReservedKeyword=The word '<b>%s</b>' is a reserved keyword
+ErrorNotAvailableWithThisDistribution=Not available with this distribution
+ErrorPublicInterfaceNotEnabled=Public interface was not enabled
+ErrorLanguageRequiredIfPageIsTranslationOfAnother=The language of new page must be defined if it is set as a translation of another page
+ErrorLanguageMustNotBeSourceLanguageIfPageIsTranslationOfAnother=The language of new page must not be the source language if it is set as a translation of another page
+ErrorAParameterIsRequiredForThisOperation=A parameter is mandatory for this operation
+ErrorDateIsInFuture=Error, the date can't be in the future
+ErrorAnAmountWithoutTaxIsRequired=Error, amount is mandatory
+ErrorAPercentIsRequired=Error, please fill in the percentage correctly
+ErrorYouMustFirstSetupYourChartOfAccount=You must first setup your chart of account
+ErrorFailedToFindEmailTemplate=Failed to find template with code name %s
+ErrorDurationForServiceNotDefinedCantCalculateHourlyPrice=Duration not defined on service. No way to calculate the hourly price.
+ErrorActionCommPropertyUserowneridNotDefined=User's owner is required
+ErrorActionCommBadType=Selected event type (id: %n, code: %s) do not exist in Event Type dictionary
+CheckVersionFail=Version check fail
+ErrorWrongFileName=Name of the file cannot have __SOMETHING__ in it
+ErrorNotInDictionaryPaymentConditions=Not in Payment Terms Dictionary, please modify.
+ErrorIsNotADraft=%s is not a draft
+ErrorExecIdFailed=Can't execute command "id"
+ErrorBadCharIntoLoginName=Unauthorized character in the login name
+ErrorRequestTooLarge=Error, request too large
+
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Your PHP parameter upload_max_filesize (%s) is higher than PHP parameter post_max_size (%s). This is not a consistent setup.
 WarningPasswordSetWithNoAccount=یک گذرواژه برای این عضو تنظیم شده است. با این‌حال هیچ حساب کاربری‌ای ساخته نشده است. بنابراین این گذرواژه برای ورود به Dolibarr قابل استفاده نیست. ممکن است برای یک رابط/واحد بیرونی قابل استفاده باشد، اما اگر شما نخواهید هیچ نام کاربری ورود و گذرواژه‌ای برای یک عضو استفاده کنید، شما می‌توانید گزینۀ "ایجاد یک نام‌ورد برای هر عضو" را از برپاسازی واحد اعضاء غیرفعال کنید. در صورتی که نیاز دارید که نام‌ورود داشته باشید اما گذرواژه نداشته باشید، می‌توانید این بخش را خالی گذاشته تا از این هشدار بر حذر باشید. نکته: همچنین نشانی رایانامه می‌تواند در صورتی که عضو به یک‌کاربر متصل باشد، می‌‌تواند مورد استفاده قرار گیرد
@@ -251,5 +302,33 @@ WarningYourLoginWasModifiedPleaseLogin=نام‌ورود شما تغییر پی�
 WarningAnEntryAlreadyExistForTransKey=یک ورودی برای این کلید ترجمه برای این زبان قبلا وجود داشته است
 WarningNumberOfRecipientIsRestrictedInMassAction=هشدار، در هنگام انجام عملیات انبوده روی فهرست‌ها، تعداد دریافت‌کنندگان مختلف به <b>%s</b> محدود است.
 WarningDateOfLineMustBeInExpenseReportRange=هشدار، تاریخ مربوط به سطر در بازۀ گزارش هزینه‌ها نیست
+WarningProjectDraft=Project is still in draft mode. Don't forget to validate it if you plan to use tasks.
 WarningProjectClosed=طرح بسته است. ابتدا باید آن را باز کنید
 WarningSomeBankTransactionByChequeWereRemovedAfter=Some bank transaction were removed after that the receipt including them were generated. So nb of cheques and total of receipt may differ from number and total in list.
+WarningFailedToAddFileIntoDatabaseIndex=Warning, failed to add file entry into ECM database index table
+WarningTheHiddenOptionIsOn=Warning, the hidden option <b>%s</b> is on.
+WarningCreateSubAccounts=Warning, you can't create directly a sub account, you must create a third party or an user and assign them an accounting code to find them in this list
+WarningAvailableOnlyForHTTPSServers=Available only if using HTTPS secured connection.
+WarningModuleXDisabledSoYouMayMissEventHere=Module %s has not been enabled. So you may miss a lot of event here.
+WarningPaypalPaymentNotCompatibleWithStrict=The value 'Strict' makes the online payment features not working correctly. Use 'Lax' instead.
+
+# Validate
+RequireValidValue = Value not valid
+RequireAtLeastXString = Requires at least %s character(s)
+RequireXStringMax = Requires %s character(s) max
+RequireAtLeastXDigits = Requires at least %s digit(s)
+RequireXDigitsMax = Requires %s digit(s) max
+RequireValidNumeric = Requires a numeric value
+RequireValidEmail = Email address is not valid
+RequireMaxLength = Length must be less than %s chars
+RequireMinLength = Length must be more than %s char(s)
+RequireValidUrl = Require valid URL
+RequireValidDate = Require a valid date
+RequireANotEmptyValue = Is required
+RequireValidDuration = Require a valid duration
+RequireValidExistingElement = Require an existing value
+RequireValidBool = Require a valid boolean
+BadSetupOfField = Error bad setup of field
+BadSetupOfFieldClassNotFoundForValidation = Error bad setup of field : Class not found for validation
+BadSetupOfFieldFileNotFound = Error bad setup of field : File not found for inclusion
+BadSetupOfFieldFetchNotCallable = Error bad setup of field : Fetch not callable on class

@@ -22,10 +22,10 @@
  *	\brief      Module pour gerer la tenue de contrat de services
  *	\file       htdocs/core/modules/modContrat.class.php
  *	\ingroup    contrat
- *	\brief      Fichier de description et activation du module Contrat
+ *	\brief      Description and activation file for the module contract
  */
 
-include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
 
 /**
@@ -33,7 +33,6 @@ include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
  */
 class modContrat extends DolibarrModules
 {
-
 	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
@@ -47,7 +46,7 @@ class modContrat extends DolibarrModules
 		$this->numero = 54;
 
 		$this->family = "crm";
-		$this->module_position = '35';
+		$this->module_position = '41';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		$this->description = "Gestion des contrats de services";
@@ -56,7 +55,7 @@ class modContrat extends DolibarrModules
 		$this->version = 'dolibarr';
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->picto='contract';
+		$this->picto = 'contract';
 
 		// Data directories to create when module is enabled
 		$this->dirs = array("/contract/temp");
@@ -70,7 +69,7 @@ class modContrat extends DolibarrModules
 
 		// Constants
 		$this->const = array();
-		$r=0;
+		$r = 0;
 
 		$this->const[$r][0] = "CONTRACT_ADDON";
 		$this->const[$r][1] = "chaine";
@@ -95,14 +94,14 @@ class modContrat extends DolibarrModules
 
 		// Boxes
 		$this->boxes = array(
-			0=>array('file'=>'box_contracts.php','enabledbydefaulton'=>'Home'),
-			1=>array('file'=>'box_services_expired.php','enabledbydefaulton'=>'Home')
+			0=>array('file'=>'box_contracts.php', 'enabledbydefaulton'=>'Home'),
+			1=>array('file'=>'box_services_expired.php', 'enabledbydefaulton'=>'Home')
 		);
 
 		// Permissions
 		$this->rights = array();
 		$this->rights_class = 'contrat';
-		$r=0;
+		$r = 0;
 
 		$r++;
 		$this->rights[$r][0] = 161;
@@ -149,58 +148,68 @@ class modContrat extends DolibarrModules
 
 		// Menus
 		//-------
-		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
+		$this->menu = 1; // This module add menu entries. They are coded into menu manager.
 
 
 		// Exports
 		//--------
 		$langs->load("contracts");
 
-		$r=1;
+		$r = 1;
 
-		$this->export_code[$r]=$this->rights_class.'_'.$r;
-		$this->export_label[$r]='ContractsAndLine';	// Translation key (used only if key ExportDataset_xxx_z not found)
-		$this->export_icon[$r]='contract';
-		$this->export_permission[$r]=array(array("contrat","export"));
-		$this->export_fields_array[$r]=array('s.rowid'=>"IdCompany",'s.nom'=>'CompanyName','s.address'=>'Address','s.zip'=>'Zip','s.town'=>'Town','c.code'=>'CountryCode',
-		's.phone'=>'Phone','s.siren'=>'ProfId1','s.siret'=>'ProfId2','s.ape'=>'ProfId3','s.idprof4'=>'ProfId4','s.code_compta'=>'CustomerAccountancyCode',
-		's.code_compta_fournisseur'=>'SupplierAccountancyCode','s.tva_intra'=>'VATIntra',
-		'co.rowid'=>"Id",'co.ref'=>"Ref",'co.datec'=>"DateCreation",'co.date_contrat'=>"DateContract",
-		'co.fin_validite'=>"ContractEndDate",'co.date_cloture'=>"Closing",'co.note_private'=>"NotePrivate",'co.note_public'=>"NotePublic",
-		'cod.rowid'=>'LineId','cod.label'=>"LineLabel",'cod.description'=>"LineDescription",'cod.price_ht'=>"LineUnitPrice",'cod.tva_tx'=>"LineVATRate",
-		'cod.qty'=>"LineQty",'cod.total_ht'=>"LineTotalHT",'cod.total_tva'=>"LineTotalVAT",'cod.total_ttc'=>"LineTotalTTC",
-		'cod.date_ouverture'=>"DateStart",'cod.date_ouverture_prevue'=>"DateStartPlanned",'cod.date_fin_validite'=>"DateEndPlanned",'cod.date_cloture'=>"DateEnd",
-		'p.rowid'=>'ProductId','p.ref'=>'ProductRef','p.label'=>'ProductLabel');
+		$this->export_code[$r] = $this->rights_class.'_'.$r;
+		$this->export_label[$r] = 'ContractsAndLine'; // Translation key (used only if key ExportDataset_xxx_z not found)
+		$this->export_icon[$r] = 'contract';
+		$this->export_permission[$r] = array(array("contrat", "export"));
+		$this->export_fields_array[$r] = array('s.rowid'=>"IdCompany", 's.nom'=>'CompanyName', 's.address'=>'Address', 's.zip'=>'Zip', 's.town'=>'Town', 'c.code'=>'CountryCode',
+		's.phone'=>'Phone', 's.siren'=>'ProfId1', 's.siret'=>'ProfId2', 's.ape'=>'ProfId3', 's.idprof4'=>'ProfId4', 's.code_compta'=>'CustomerAccountancyCode',
+		's.code_compta_fournisseur'=>'SupplierAccountancyCode', 's.tva_intra'=>'VATIntra',
+		'co.rowid'=>"Id", 'co.ref'=>"Ref", 'co.datec'=>"DateCreation", 'co.date_contrat'=>"DateContract",
+		'co.fin_validite'=>"ContractEndDate", 'co.date_cloture'=>"Closing", 'co.note_private'=>"NotePrivate", 'co.note_public'=>"NotePublic",
+		'cod.rowid'=>'LineId', 'cod.label'=>"LineLabel", 'cod.description'=>"LineDescription", 'cod.price_ht'=>"LineUnitPrice", 'cod.tva_tx'=>"LineVATRate",
+		'cod.qty'=>"LineQty", 'cod.total_ht'=>"LineTotalHT", 'cod.total_tva'=>"LineTotalVAT", 'cod.total_ttc'=>"LineTotalTTC",
+		'cod.date_ouverture'=>"DateStart", 'cod.date_ouverture_prevue'=>"DateStartPlanned", 'cod.date_fin_validite'=>"DateEndPlanned", 'cod.date_cloture'=>"DateEnd",
+		'p.rowid'=>'ProductId', 'p.ref'=>'ProductRef', 'p.label'=>'ProductLabel');
 
-		$this->export_entities_array[$r]=array('s.rowid'=>"company",'s.nom'=>'company','s.address'=>'company','s.zip'=>'company',
-		's.town'=>'company','c.code'=>'company','s.phone'=>'company','s.siren'=>'company','s.siret'=>'company','s.ape'=>'company',
-		's.idprof4'=>'company','s.code_compta'=>'company','s.code_compta_fournisseur'=>'company','s.tva_intra'=>'company',
-		'co.rowid'=>"contract",'co.ref'=>"contract",'co.datec'=>"contract",'co.date_contrat'=>"contract",
-		'co.fin_validite'=>"contract",'co.date_cloture'=>"contract",'co.note_private'=>"contract",'co.note_public'=>"contract",
-		'cod.rowid'=>'contract_line','cod.label'=>"contract_line",'cod.description'=>"contract_line",'cod.price_ht'=>"contract_line",'cod.tva_tx'=>"contract_line",
-		'cod.qty'=>"contract_line",'cod.total_ht'=>"contract_line",'cod.total_tva'=>"contract_line",'cod.total_ttc'=>"contract_line",
-		'cod.date_ouverture'=>"contract_line",'cod.date_ouverture_prevue'=>"contract_line",'cod.date_fin_validite'=>"contract_line",'cod.date_cloture'=>"contract_line",
-		'p.rowid'=>'product','p.ref'=>'product','p.label'=>'product');
+		$this->export_entities_array[$r] = array('s.rowid'=>"company", 's.nom'=>'company', 's.address'=>'company', 's.zip'=>'company',
+		's.town'=>'company', 'c.code'=>'company', 's.phone'=>'company', 's.siren'=>'company', 's.siret'=>'company', 's.ape'=>'company',
+		's.idprof4'=>'company', 's.code_compta'=>'company', 's.code_compta_fournisseur'=>'company', 's.tva_intra'=>'company',
+		'co.rowid'=>"contract", 'co.ref'=>"contract", 'co.datec'=>"contract", 'co.date_contrat'=>"contract",
+		'co.fin_validite'=>"contract", 'co.date_cloture'=>"contract", 'co.note_private'=>"contract", 'co.note_public'=>"contract",
+		'cod.rowid'=>'contract_line', 'cod.label'=>"contract_line", 'cod.description'=>"contract_line", 'cod.price_ht'=>"contract_line", 'cod.tva_tx'=>"contract_line",
+		'cod.qty'=>"contract_line", 'cod.total_ht'=>"contract_line", 'cod.total_tva'=>"contract_line", 'cod.total_ttc'=>"contract_line",
+		'cod.date_ouverture'=>"contract_line", 'cod.date_ouverture_prevue'=>"contract_line", 'cod.date_fin_validite'=>"contract_line", 'cod.date_cloture'=>"contract_line",
+		'p.rowid'=>'product', 'p.ref'=>'product', 'p.label'=>'product');
 
-		$this->export_TypeFields_array[$r]=array('s.rowid'=>"List:societe:nom",'s.nom'=>'Text','s.address'=>'Text','s.zip'=>'Text','s.town'=>'Text','c.code'=>'Text',
-		's.phone'=>'Text','s.siren'=>'Text','s.siret'=>'Text','s.ape'=>'Text','s.idprof4'=>'Text','s.code_compta'=>'Text',
-		's.code_compta_fournisseur'=>'Text','s.tva_intra'=>'Text',
-		'co.ref'=>"Text",'co.datec'=>"Date",'co.date_contrat'=>"Date",
-		'co.fin_validite'=>"Date",'co.date_cloture'=>"Date",'co.note_private'=>"Text",'co.note_public'=>"Text",
-		'cod.label'=>"Text",'cod.description'=>"Text",'cod.price_ht'=>"Numeric",'cod.tva_tx'=>"Numeric",
-		'cod.qty'=>"Numeric",'cod.total_ht'=>"Numeric",'cod.total_tva'=>"Numeric",'cod.total_ttc'=>"Numeric",
-		'cod.date_ouverture'=>"Date",'cod.date_ouverture_prevue'=>"Date",'cod.date_fin_validite'=>"Date",'cod.date_cloture'=>"Date",
-		'p.rowid'=>'List:product:label','p.ref'=>'Text','p.label'=>'Text');
+		$this->export_TypeFields_array[$r] = array('s.rowid'=>"List:societe:nom", 's.nom'=>'Text', 's.address'=>'Text', 's.zip'=>'Text', 's.town'=>'Text', 'c.code'=>'Text',
+		's.phone'=>'Text', 's.siren'=>'Text', 's.siret'=>'Text', 's.ape'=>'Text', 's.idprof4'=>'Text', 's.code_compta'=>'Text',
+		's.code_compta_fournisseur'=>'Text', 's.tva_intra'=>'Text',
+		'co.ref'=>"Text", 'co.datec'=>"Date", 'co.date_contrat'=>"Date",
+		'co.fin_validite'=>"Date", 'co.date_cloture'=>"Date", 'co.note_private'=>"Text", 'co.note_public'=>"Text",
+		'cod.label'=>"Text", 'cod.description'=>"Text", 'cod.price_ht'=>"Numeric", 'cod.tva_tx'=>"Numeric",
+		'cod.qty'=>"Numeric", 'cod.total_ht'=>"Numeric", 'cod.total_tva'=>"Numeric", 'cod.total_ttc'=>"Numeric",
+		'cod.date_ouverture'=>"Date", 'cod.date_ouverture_prevue'=>"Date", 'cod.date_fin_validite'=>"Date", 'cod.date_cloture'=>"Date",
+		'p.rowid'=>'List:product:label', 'p.ref'=>'Text', 'p.label'=>'Text');
 
 
-		$this->export_sql_start[$r]='SELECT DISTINCT ';
-		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'societe as s';
-		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c on s.fk_pays = c.rowid,';
-		$this->export_sql_end[$r] .=' '.MAIN_DB_PREFIX.'contrat as co,';
-		$this->export_sql_end[$r] .=' '.MAIN_DB_PREFIX.'contratdet as cod';
-		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'product as p on (cod.fk_product = p.rowid)';
-		$this->export_sql_end[$r] .=' WHERE co.fk_soc = s.rowid and co.rowid = cod.fk_contrat';
-		$this->export_sql_end[$r] .=' AND co.entity IN ('.getEntity('contract').')';
+		$keyforselect = 'contrat';
+		$keyforelement = 'contract';
+		$keyforaliasextra = 'coextra';
+		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
+		$keyforselect = 'contratdet';
+		$keyforelement = 'contract_line';
+		$keyforaliasextra = 'codextra';
+		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
+
+		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
+		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'societe as s';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c on s.fk_pays = c.rowid';
+		$this->export_sql_end[$r] .= ' INNER JOIN '.MAIN_DB_PREFIX.'contrat as co ON co.fk_soc = s.rowid';
+		$this->export_sql_end[$r] .= ' INNER JOIN '.MAIN_DB_PREFIX.'contratdet as cod ON co.rowid = cod.fk_contrat';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON (cod.fk_product = p.rowid)';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'contrat_extrafields as coextra on (co.rowid = coextra.fk_object)';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'contratdet_extrafields as codextra on (cod.rowid = codextra.fk_object)';
+		$this->export_sql_end[$r] .= ' WHERE co.entity IN ('.getEntity('contract').')';
 	}
 
 
@@ -209,37 +218,35 @@ class modContrat extends DolibarrModules
 	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
 	 *		It also creates data directories
 	 *
-     *      @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *      @param      string	$options    Options when enabling module ('', 'noboxes')
 	 *      @return     int             	1 if OK, 0 if KO
 	 */
 	public function init($options = '')
 	{
-		global $conf;
+		global $conf, $langs;
 
 		// Nettoyage avant activation
 		$this->remove($options);
 
 		//ODT template
-		$src=DOL_DOCUMENT_ROOT.'/install/doctemplates/contracts/template_contract.odt';
-		$dirodt=DOL_DATA_ROOT.'/doctemplates/contracts';
-		$dest=$dirodt.'/template_contract.odt';
+		$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/contracts/template_contract.odt';
+		$dirodt = DOL_DATA_ROOT.'/doctemplates/contracts';
+		$dest = $dirodt.'/template_contract.odt';
 
-		if (file_exists($src) && ! file_exists($dest))
-		{
-		    require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-		    dol_mkdir($dirodt);
-		    $result=dol_copy($src, $dest, 0, 0);
-		    if ($result < 0)
-		    {
-		        $langs->load("errors");
-		        $this->error=$langs->trans('ErrorFailToCopyFile', $src, $dest);
-		        return 0;
-		    }
+		if (file_exists($src) && !file_exists($dest)) {
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+			dol_mkdir($dirodt);
+			$result = dol_copy($src, $dest, 0, 0);
+			if ($result < 0) {
+				$langs->load("errors");
+				$this->error = $langs->trans('ErrorFailToCopyFile', $src, $dest);
+				return 0;
+			}
 		}
 
 		$sql = array(
-		    "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[1][2])."' AND type = 'contract' AND entity = ".$conf->entity,
-		    "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[1][2])."','contract',".$conf->entity.")"
+			"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[1][2])."' AND type = 'contract' AND entity = ".((int) $conf->entity),
+			"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[1][2])."', 'contract', ".((int) $conf->entity).")"
 		);
 
 		return $this->_init($sql, $options);

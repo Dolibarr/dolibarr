@@ -13,8 +13,18 @@ descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Clasificar los presupuesto origen co
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Clasificar pedido de cliente origen como facturado cuando la factura a cliente se valide (y si el importe de la factura es igual al importe del pedido relacionado)
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Clasificar pedido de cliente origen como facturado cuando la factura a cliente sea marcada como pagada (y si el importe de la factura es la misma que el importe del pedido relacionado)
 descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Clasificar automáticamente el pedido origen como enviado cuando el envío se valide (y si la cantidad enviada por todos los envíos sea la misma que el pedido)
-# Autoclassify purchase order
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=Clasificar el pedido de venta de origen vinculado como enviado cuando se cierra un envío (y si la cantidad enviada por todos los envíos es la misma que en el pedido para actualizar)
+# Autoclassify purchase proposal
 descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Clasificar automáticamente el presupuestos de proveedor como facturado cuando la factura se valide (y si el importe de la factura sea la misma que el total del presupuesto)
+# Autoclassify purchase order
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Clasificar automáticamente el pedido a proveedor como facturado cuando la factura se valide (y si el importe de la factura sea la misma que el total del pedido enlazado)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=Clasifique la orden de compra de fuente vinculada como recibida cuando se valida una recepción (y si la cantidad recibida por todas las recepciones es la misma que en la orden de compra para actualizar)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=Clasifique la orden de compra de fuente vinculada como recibida cuando una recepción está cerrada (y si la cantidad recibida por todas las recepciones es la misma que en la orden de compra para actualizar)
+# Autoclassify purchase invoice
+descWORKFLOW_BILL_ON_RECEPTION=Clasificar las recepciones como "facturadas" cuando se valida un pedido de proveedor vinculado
+# Autoclose intervention
+descWORKFLOW_TICKET_CLOSE_INTERVENTION=Cerrar todas las intervenciones vinculadas al ticket cuando se cierra un ticket
 AutomaticCreation=Creación automática
 AutomaticClassification=Clasificación automática
+# Autoclassify shipment
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Clasificar el envío vinculado como cerrado cuando se valida la factura del cliente

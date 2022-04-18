@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - stripe
 StripeSetup=Stripe模块设置
-StripeDesc=Offer customers a Stripe online payment page for payments with credit/cebit cards via <a href="http://www.stripe.com" target="_blank">Stripe</a>. This can be used to allow your customers to make ad-hoc payments or for payments related to a particular Dolibarr object (invoice, order, ...)
+StripeDesc=Offer your customers an online payment page for payments with credit/debit cards via <a href="https://www.stripe.com" target="_blank" rel="noopener noreferrer external">Stripe</a>. This can be used to allow your customers to make ad-hoc payments or for payments related to a particular Dolibarr object (invoice, order, ...)
 StripeOrCBDoPayment=使用信用卡或Stripe付款
 FollowingUrlAreAvailableToMakePayments=以下网址可提供给客户的网页上，能够作出Dolibarr支付对象
 PaymentForm=付款方式
@@ -28,10 +28,10 @@ AccountParameter=帐户参数
 UsageParameter=使用参数
 InformationToFindParameters=帮助，找到你的%s帐户信息
 STRIPE_CGI_URL_V2=Stripe CGI模块的URL用于付款
-VendorName=供应商名称
 CSSUrlForPaymentForm=付款方式的CSS样式表的URL
 NewStripePaymentReceived=收到新Stripe付款
 NewStripePaymentFailed=新Stripe付款尝试但失败了
+FailedToChargeCard=Failed to charge card
 STRIPE_TEST_SECRET_KEY=秘密测试密钥
 STRIPE_TEST_PUBLISHABLE_KEY=可发布的测试密钥
 STRIPE_TEST_WEBHOOK_KEY=Webhook测试密钥
@@ -68,3 +68,4 @@ ToOfferALinkForTestWebhook=Link to setup Stripe WebHook to call the IPN (test mo
 ToOfferALinkForLiveWebhook=Link to setup Stripe WebHook to call the IPN (live mode)
 PaymentWillBeRecordedForNextPeriod=Payment will be recorded for the next period.
 ClickHereToTryAgain=<a href="%s">Click here to try again...</a>
+CreationOfPaymentModeMustBeDoneFromStripeInterface=Due to Strong Customer Authentication rules, creation of a card must be done from Stripe backoffice. You can click here to switch on Stripe customer record: %s

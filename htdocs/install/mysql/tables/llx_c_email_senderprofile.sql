@@ -23,7 +23,7 @@ create table llx_c_email_senderprofile
   entity		  integer DEFAULT 1 NOT NULL,	  -- multi company id
   private         smallint DEFAULT 0 NOT NULL,    -- Template public (0) or private (id of user)
   date_creation   datetime,
-  tms             timestamp,
+  tms             timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   label           varchar(255),					  -- Label of predefined email
   email           varchar(255) NOT NULL,		  -- Email
   signature		  text,                           -- Predefined signature

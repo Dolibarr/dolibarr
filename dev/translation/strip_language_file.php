@@ -5,7 +5,7 @@
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -63,8 +63,7 @@ $lSecondary = isset($argv[2])?$argv[2]:'';
 $lEnglish = 'en_US';
 $filesToProcess = isset($argv[3])?$argv[3]:'';
 
-if (empty($lPrimary) || empty($lSecondary) || empty($filesToProcess))
-{
+if (empty($lPrimary) || empty($lSecondary) || empty($filesToProcess)) {
 	$rc = 1;
 	$msg = '***** Script to clean language files *****'."\n";
 	$msg.= 'Usage: ./dev/translation/strip_language_file.php xx_XX xx_YY [file.lang|all]'."\n";
@@ -77,25 +76,24 @@ $aSecondary = array();
 $aEnglish = array();
 
 // Define array $filesToProcess
-if ($filesToProcess == 'all')
-{
+if ($filesToProcess == 'all') {
 	$dir = new DirectoryIterator('htdocs/langs/'.$lPrimary);
-	while($dir->valid()) {
-		if(!$dir->isDot() && $dir->isFile() && ! preg_match('/^\./', $dir->getFilename())) {
+	while ($dir->valid()) {
+		if (!$dir->isDot() && $dir->isFile() && ! preg_match('/^\./', $dir->getFilename())) {
 			$files[] =  $dir->getFilename();
 		}
 		$dir->next();
 	}
 	$filesToProcess=$files;
+} else {
+	$filesToProcess=explode(',', $filesToProcess);
 }
-else $filesToProcess=explode(',', $filesToProcess);
 
 // Arguments should be OK here.
 
 
 // Loop on each file
-foreach($filesToProcess as $fileToProcess)
-{
+foreach ($filesToProcess as $fileToProcess) {
 	$lPrimaryFile = 'htdocs/langs/'.$lPrimary.'/'.$fileToProcess;
 	$lSecondaryFile = 'htdocs/langs/'.$lSecondary.'/'.$fileToProcess;
 	$lEnglishFile = 'htdocs/langs/'.$lEnglish.'/'.$fileToProcess;
@@ -103,21 +101,21 @@ foreach($filesToProcess as $fileToProcess)
 
 	print "---- Process language file ".$lSecondaryFile."\n";
 
-	if ( ! is_readable($lPrimaryFile) ) {
+	if (! is_readable($lPrimaryFile)) {
 		$rc = 2;
 		$msg = "Cannot read primary language file $lPrimaryFile.";
 		print $msg . " (rc=$rc).\n";
 		exit($rc);
 	}
 
-	if ( ! is_readable($lSecondaryFile) ) {
+	if (! is_readable($lSecondaryFile)) {
 		$rc = 3;
 		$msg = "Cannot read secondary language file $lSecondaryFile. We discard this file.";
 		print $msg . "\n";
 		continue;
 	}
 
-	if ( ! is_readable($lEnglishFile) ) {
+	if (! is_readable($lEnglishFile)) {
 		$rc = 3;
 		$msg = "Cannot read english language file $lEnglishFile. We discard this file.";
 		print $msg . "\n";
@@ -126,25 +124,23 @@ foreach($filesToProcess as $fileToProcess)
 
 	// Start reading and parsing Secondary
 
-	if ( $handle = fopen($lSecondaryFile, 'r') )
-	{
+	if ($handle = fopen($lSecondaryFile, 'r')) {
 		print "Read Secondary File $lSecondaryFile:\n";
 		$cnt = 0;
-		while (($line = fgets($handle)) !== false)
-		{
+		while (($line = fgets($handle)) !== false) {
 			$cnt++;
 
 			// strip comments
-			if ( preg_match("/^\w*#/", $line) ) {
+			if (preg_match("/^\w*#/", $line)) {
 				continue;
 			}
 			// strip empty lines
-			if ( preg_match("/^\w*$/", $line) ) {
+			if (preg_match("/^\w*$/", $line)) {
 				continue;
 			}
 
 			$a = mb_split('=', trim($line), 2);
-			if ( count($a) != 2 ) {
+			if (count($a) != 2) {
 				print "ERROR in file $lSecondaryFile, line $cnt: " . trim($line) . "\n";
 				continue;
 			}
@@ -152,29 +148,27 @@ foreach($filesToProcess as $fileToProcess)
 			list($key, $value) = $a;
 
 			// key is redundant
-			if ( array_key_exists($key, $aSecondary) ) {
+			if (array_key_exists($key, $aSecondary)) {
 				print "Key $key is redundant in file $lSecondaryFile (line: $cnt).\n";
 				continue;
 			}
 
 			// String has no value
-			if ( $value == '' ) {
+			if ($value == '') {
 				print "Key $key has no value in file $lSecondaryFile (line: $cnt).\n";
 				continue;
 			}
 
 			$aSecondary[$key] = trim($value);
 		}
-		if ( ! feof($handle) )
-		{
+		if (! feof($handle)) {
 			$rc = 5;
 			$msg = "Unexpected fgets() fail";
 			print $msg . " (rc=$rc).\n";
 			exit($rc);
 		}
 		fclose($handle);
-	}
-	else {
+	} else {
 		$rc = 6;
 		$msg = "Cannot open file $lSecondaryFile";
 		print $msg . " (rc=$rc).\n";
@@ -183,26 +177,24 @@ foreach($filesToProcess as $fileToProcess)
 
 
 	// Start reading and parsing English
-
-	if ( $handle = fopen($lEnglishFile, 'r') )
-	{
+	$aEnglish = array();
+	if ($handle = fopen($lEnglishFile, 'r')) {
 		print "Read English File $lEnglishFile:\n";
 		$cnt = 0;
-		while (($line = fgets($handle)) !== false)
-		{
+		while (($line = fgets($handle)) !== false) {
 			$cnt++;
 
 			// strip comments
-			if ( preg_match("/^\w*#/", $line) ) {
+			if (preg_match("/^\w*#/", $line)) {
 				continue;
 			}
 			// strip empty lines
-			if ( preg_match("/^\w*$/", $line) ) {
+			if (preg_match("/^\w*$/", $line)) {
 				continue;
 			}
 
 			$a = mb_split('=', trim($line), 2);
-			if ( count($a) != 2 ) {
+			if (count($a) != 2) {
 				print "ERROR in file $lEnglishFile, line $cnt: " . trim($line) . "\n";
 				continue;
 			}
@@ -210,29 +202,27 @@ foreach($filesToProcess as $fileToProcess)
 			list($key, $value) = $a;
 
 			// key is redundant
-			if ( array_key_exists($key, $aEnglish) ) {
+			if (array_key_exists($key, $aEnglish)) {
 				print "Key $key is redundant in file $lEnglishFile (line: $cnt).\n";
 				continue;
 			}
 
 			// String has no value
-			if ( $value == '' ) {
+			if ($value == '') {
 				print "Key $key has no value in file $lEnglishFile (line: $cnt).\n";
 				continue;
 			}
 
 			$aEnglish[$key] = trim($value);
 		}
-		if ( ! feof($handle) )
-		{
+		if (! feof($handle)) {
 			$rc = 5;
 			$msg = "Unexpected fgets() fail";
 			print $msg . " (rc=$rc).\n";
 			exit($rc);
 		}
 		fclose($handle);
-	}
-	else {
+	} else {
 		$rc = 6;
 		$msg = "Cannot open file $lEnglishFile";
 		print $msg . " (rc=$rc).\n";
@@ -246,34 +236,34 @@ foreach($filesToProcess as $fileToProcess)
 	$arrayofkeytoalwayskeep=array('DIRECTION','FONTFORPDF','FONTSIZEFORPDF','SeparatorDecimal','SeparatorThousand');
 
 
-	if ( $handle = fopen($lPrimaryFile, 'r') )
-	{
-		if ( ! $oh = fopen($output, 'w') )
-		{
-			print "ERROR in writing to file $output\n";
+	if ($handle = fopen($lPrimaryFile, 'r')) {
+		if (! $oh = fopen($output, 'w')) {
+			print "ERROR in writing to file ".$output."\n";
 			exit;
 		}
 
-		print "Read Primary File $lPrimaryFile and write ".$output.":\n";
+		print "Read Primary File ".$lPrimaryFile." and write ".$output.":\n";
 
 		fwrite($oh, "# Dolibarr language file - Source file is en_US - ".(preg_replace('/\.lang$/', '', $fileToProcess))."\n");
 
+		$fileFirstFound = array();
+		$lineFirstFound = array();
+
 		$cnt = 0;
-		while (($line = fgets($handle)) !== false)
-		{
+		while (($line = fgets($handle)) !== false) {
 			$cnt++;
 
 			// strip comments
-			if ( preg_match("/^\w*#/", $line) ) {
+			if (preg_match("/^\w*#/", $line)) {
 				continue;
 			}
 			// strip empty lines
-			if ( preg_match("/^\w*$/", $line) ) {
+			if (preg_match("/^\w*$/", $line)) {
 				continue;
 			}
 
 			$a = mb_split('=', trim($line), 2);
-			if ( count($a) != 2 ) {
+			if (count($a) != 2) {
 				print "ERROR in file $lPrimaryFile, line $cnt: " . trim($line) . "\n";
 				continue;
 			}
@@ -281,18 +271,16 @@ foreach($filesToProcess as $fileToProcess)
 			list($key, $value) = $a;
 
 			// key is redundant
-			if ( array_key_exists($key, $aPrimary) ) {
+			if (array_key_exists($key, $aPrimary)) {
 				print "Key $key is redundant in file $lPrimaryFile (line: $cnt) - Already found into ".$fileFirstFound[$key]." (line: ".$lineFirstFound[$key].").\n";
 				continue;
-			}
-			else
-			{
+			} else {
 				$fileFirstFound[$key] = $fileToProcess;
 				$lineFirstFound[$key] = $cnt;
 			}
 
 			// String has no value
-			if ( $value == '' ) {
+			if ($value == '') {
 				print "Key $key has no value in file $lPrimaryFile (line: $cnt).\n";
 				continue;
 			}
@@ -306,28 +294,24 @@ foreach($filesToProcess as $fileToProcess)
 			//print "Found primary key = ".$key."\n";
 
 			// Key not in other file
-			if (in_array($key, $arrayofkeytoalwayskeep) || preg_match('/^FormatDate/', $key) || preg_match('/^FormatHour/', $key))
-			{
+			if (in_array($key, $arrayofkeytoalwayskeep) || preg_match('/^FormatDate/', $key) || preg_match('/^FormatHour/', $key)) {
 				//print "Key $key is a key we always want to see into secondary file (line: $cnt).\n";
-			}
-			elseif ( ! array_key_exists($key, $aSecondary))
-			{
+			} elseif (! array_key_exists($key, $aSecondary)) {
 				//print "Key $key does NOT exist in secondary language (line: $cnt).\n";
 				continue;
 			}
 
 			// String exists in both files and value into alternative language differs from main language but also from english files
-			if (
-				(! empty($aSecondary[$key]) && $aSecondary[$key] != $aPrimary[$key]
-			    && ! empty($aEnglish[$key]) && $aSecondary[$key] != $aEnglish[$key])
+			// so we keep it.
+			if ((! empty($aSecondary[$key]) && $aSecondary[$key] != $aPrimary[$key]
+				&& ! empty($aEnglish[$key]) && $aSecondary[$key] != $aEnglish[$key])
 				|| in_array($key, $arrayofkeytoalwayskeep) || preg_match('/^FormatDate/', $key) || preg_match('/^FormatHour/', $key)
-				)
-			{
+				) {
 				//print "Key $key differs (aSecondary=".$aSecondary[$key].", aPrimary=".$aPrimary[$key].", aEnglish=".$aEnglish[$key].") so we add it into new secondary language (line: $cnt).\n";
 				fwrite($oh, $key."=".(empty($aSecondary[$key])?$aPrimary[$key]:$aSecondary[$key])."\n");
 			}
 		}
-		if ( ! feof($handle) ) {
+		if (! feof($handle)) {
 			$rc = 7;
 			$msg = "Unexpected fgets() fail";
 			print $msg . " (rc=$rc).\n";
@@ -335,8 +319,7 @@ foreach($filesToProcess as $fileToProcess)
 		}
 		fclose($oh);
 		fclose($handle);
-	}
-	else {
+	} else {
 		$rc = 8;
 		$msg = "Cannot open file $lPrimaryFile";
 		print $msg . " (rc=$rc).\n";

@@ -1,0 +1,54 @@
+# Copyright (C) 2021 SuperAdmin
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see .
+
+#
+# Generic
+#
+
+# Module label 'ModuleKnowledgeManagementName'
+ModuleKnowledgeManagementName = 知識管理システム
+# Module description 'ModuleKnowledgeManagementDesc'
+ModuleKnowledgeManagementDesc=ナレッジマネジメント（KM）またはヘルプデスクベースを管理する
+
+#
+# Admin page
+#
+KnowledgeManagementSetup = ナレッジマネジメントシステムの設定
+Settings = 設定
+KnowledgeManagementSetupPage = ナレッジマネジメントシステムの設定ページ
+
+
+#
+# About page
+#
+About = 約
+KnowledgeManagementAbout = 知識管理について
+KnowledgeManagementAboutPage = 知識管理に関するページ
+
+KnowledgeManagementArea = 知識管理
+MenuKnowledgeRecord = 知識ベース
+ListKnowledgeRecord = 記事一覧
+NewKnowledgeRecord = 新しい記事
+ValidateReply = ソリューションを検証する
+KnowledgeRecords = 記事
+KnowledgeRecord = 記事
+KnowledgeRecordExtraFields = 記事のエクストラフィールド
+GroupOfTicket=チケットのグループ
+YouCanLinkArticleToATicketCategory=記事をチケットグループにリンクできる(新規チケット認定時に記事が提案されるようになる)
+SuggestedForTicketsInGroup=チケットに対して提案されるのは、グループが
+
+SetObsolete=廃止として設定
+ConfirmCloseKM=この記事の締めくくりが廃止されたことを確定するか？
+ConfirmReopenKM=この記事をステータス「検証済み」に復元するか？

@@ -35,9 +35,9 @@ dol_include_once('/mymodule/core/modules/mymodule/modules_myobject.php');
 class mod_myobject_advanced extends ModeleNumRefMyObject
 {
 	/**
-     * Dolibarr version of the loaded document
-     * @var string
-     */
+	 * Dolibarr version of the loaded document
+	 * @var string
+	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
 	/**
@@ -51,14 +51,14 @@ class mod_myobject_advanced extends ModeleNumRefMyObject
 	public $name = 'advanced';
 
 
-    /**
-     *  Returns the description of the numbering model
-     *
-     *  @return     string      Texte descripif
-     */
-    public function info()
-    {
-    	global $conf, $langs, $db;
+	/**
+	 *  Returns the description of the numbering model
+	 *
+	 *  @return     string      Texte descripif
+	 */
+	public function info()
+	{
+		global $conf, $langs, $db;
 
 		$langs->load("bills");
 
@@ -68,8 +68,8 @@ class mod_myobject_advanced extends ModeleNumRefMyObject
 		$texte .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 		$texte .= '<input type="hidden" name="token" value="'.newToken().'">';
 		$texte .= '<input type="hidden" name="action" value="updateMask">';
-		$texte .= '<input type="hidden" name="maskconstBom" value="MYMODULE_MYOBJECT_ADVANCED_MASK">';
-		$texte .= '<table class="nobordernopadding" width="100%">';
+		$texte .= '<input type="hidden" name="maskconst" value="MYMODULE_MYOBJECT_ADVANCED_MASK">';
+		$texte .= '<table class="nobordernopadding centpercent">';
 
 		$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("MyObject"), $langs->transnoentities("MyObject"));
 		$tooltip .= $langs->trans("GenericMaskCodes2");
@@ -79,41 +79,43 @@ class mod_myobject_advanced extends ModeleNumRefMyObject
 
 		// Parametrage du prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskMyObject" value="'.$conf->global->MYMODULE_MYOBJECT_ADVANCED_MASK.'">', $tooltip, 1, 1).'</td>';
-
-		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
-
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskvalue" value="'.$conf->global->MYMODULE_MYOBJECT_ADVANCED_MASK.'">', $tooltip, 1, 1).'</td>';
+		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'" name="Button"></td>';
 		$texte .= '</tr>';
 
 		$texte .= '</table>';
 		$texte .= '</form>';
 
 		return $texte;
-    }
+	}
 
-    /**
-     *  Return an example of numbering
-     *
-     *  @return     string      Example
-     */
-    public function getExample()
-    {
-     	global $conf, $langs, $mysoc;
+	/**
+	 *  Return an example of numbering
+	 *
+	 *  @return     string      Example
+	 */
+	public function getExample()
+	{
+		global $conf, $db, $langs, $mysoc;
 
-    	$old_code_client = $mysoc->code_client;
-    	$old_code_type = $mysoc->typent_code;
-    	$mysoc->code_client = 'CCCCCCCCCC';
-    	$mysoc->typent_code = 'TTTTTTTTTT';
-     	$numExample = $this->getNextValue($mysoc);
-		$mysoc->code_client = $old_code_client;
-		$mysoc->typent_code = $old_code_type;
+		$object = new MyObject($db);
+		$object->initAsSpecimen();
 
-		if (!$numExample)
-		{
+		/*$old_code_client = $mysoc->code_client;
+		$old_code_type = $mysoc->typent_code;
+		$mysoc->code_client = 'CCCCCCCCCC';
+		$mysoc->typent_code = 'TTTTTTTTTT';*/
+
+		$numExample = $this->getNextValue($object);
+
+		/*$mysoc->code_client = $old_code_client;
+		$mysoc->typent_code = $old_code_type;*/
+
+		if (!$numExample) {
 			$numExample = $langs->trans('NotConfigured');
 		}
 		return $numExample;
-    }
+	}
 
 	/**
 	 * 	Return next free value
@@ -121,8 +123,8 @@ class mod_myobject_advanced extends ModeleNumRefMyObject
 	 *  @param  Object		$object		Object we need next value for
 	 *  @return string      			Value if KO, <0 if KO
 	 */
-    public function getNextValue($object)
-    {
+	public function getNextValue($object)
+	{
 		global $db, $conf;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -130,8 +132,7 @@ class mod_myobject_advanced extends ModeleNumRefMyObject
 		// We get cursor rule
 		$mask = $conf->global->MYMODULE_MYOBJECT_ADVANCED_MASK;
 
-		if (!$mask)
-		{
+		if (!$mask) {
 			$this->error = 'NotConfigured';
 			return 0;
 		}

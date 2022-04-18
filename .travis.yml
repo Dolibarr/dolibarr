@@ -1,12 +1,16 @@
 # This script is used by Travis CI to run automatically Continuous test integration
 # from Dolibarr GitHub repository.
-# For syntax, see http://about.travis-ci.org/docs/user/languages/php/
+# For syntax, see https://docs.travis-ci.com/user/languages/php/
 
 # We use dist: xenial to have php 5.6+ available
+os: linux
 dist: xenial
-sudo: required
+#dist: bionic
 
 language: php
+
+git:
+  depth: 1
 
 # Start on every boot
 services:
@@ -30,53 +34,32 @@ addons:
     # We need pgloader for import mysql database into pgsql
     - pgloader
 
-php:
-- '5.6'
-- '7.0'
-- '7.1'
-- '7.2'
-- '7.3'
-- '7.4'
-- nightly
-
 env:
   global:
   # Set to true for very verbose output
   - DEBUG=false
-  matrix:
-  # MariaDB overrides MySQL installation so it's not possible to test both yet
-  #- DB=mariadb
-  - DB=mysql
-  - DB=postgresql
-  # See https://docs.travis-ci.com/user/languages/php/#Apache-%2B-PHP
-  #- WS=apache
-  # See https://github.com/DracoBlue/travis-ci-nginx-php-fpm-test
-  #- WS=nginx
 
-matrix:
+jobs:
   fast_finish: true
-  allow_failures:
-  - php: nightly
-  # We exclude some combinations not usefull to save Travis CPU
-  exclude:
-  - php: '7.0'
-    env: DB=mysql
-  - php: '7.1'
-    env: DB=mysql
-  - php: '7.2'
-    env: DB=mysql
-  - php: '7.3'
-    env: DB=mysql
-  - php: '7.0'
-    env: DB=postgresql
-  - php: '7.1'
-    env: DB=postgresql
-  - php: '7.2'
-    env: DB=postgresql
-  - php: '7.3'
-    env: DB=postgresql
-  - php: nightly
-    env: DB=postgresql
+  #allow_failures:
+  #- php: nightly
+  include:
+    - stage: PHP 5.6-7.4
+      if: type = push
+      php: '5.6'
+      env: DB=postgresql
+    - stage: PHP 5.6-7.4
+      if: type = pull_request OR type = push
+      php: '7.4.22'
+      env: DB=mysql
+    - stage: PHP Dev
+      if: type = push AND branch = develop
+      php: nightly 
+      env: DB=mysql
+    - stage: PHP Dev
+      if: type = push AND branch = 15.0
+      php: nightly 
+      env: DB=mysql
 
 notifications:
   email:
@@ -97,51 +80,53 @@ before_install:
   phpenv config-rm xdebug.ini
   echo
 
-- |
-  if [ "$DB" = 'postgresql' ]; then
-    echo "Check pgloader version"
-    pgloader --version
-    echo
-  fi
-
 install:
 - |
   echo "Updating Composer"
   rm $TRAVIS_BUILD_DIR/composer.json
   rm $TRAVIS_BUILD_DIR/composer.lock
+  composer -V
   composer self-update
-  # To have composer making parallel downloads
-  composer global require hirak/prestissimo
   composer -n init
   composer -n config vendor-dir htdocs/includes
+  composer -n config -g vendor-dir htdocs/includes
   echo
 
 - |
-  echo "Installing Composer dependencies (PHP Unit, Parallel Lint & PHP CodeSniffer"
-  if [ "$TRAVIS_PHP_VERSION" = '5.4' ] || [ "$TRAVIS_PHP_VERSION" = '5.5' ]; then
-    composer -n require phpunit/phpunit ^4 \
-                        jakub-onderka/php-parallel-lint ^0 \
-                        jakub-onderka/php-console-highlighter ^0 \
-                        squizlabs/php_codesniffer ^3
-  fi
-  if [ "$TRAVIS_PHP_VERSION" = '5.6' ] || [ "$TRAVIS_PHP_VERSION" = '7.0' ] || [ "$TRAVIS_PHP_VERSION" = '7.1' ] \
-     [ "$TRAVIS_PHP_VERSION" = '7.2' ] || [ "$TRAVIS_PHP_VERSION" = '7.3' ] || [ "$TRAVIS_PHP_VERSION" = '7.4' ]; then
+  echo "Installing Composer dependencies - PHP Unit, Parallel Lint, PHP CodeSniffer - for $TRAVIS_PHP_VERSION"
+  if [ "$TRAVIS_PHP_VERSION" = '5.6' ]; then
     composer -n require phpunit/phpunit ^5 \
-                        jakub-onderka/php-parallel-lint ^0 \
-                        jakub-onderka/php-console-highlighter ^0 \
+                        php-parallel-lint/php-parallel-lint ^1 \
+                        php-parallel-lint/php-console-highlighter ^0 \
                         squizlabs/php_codesniffer ^3
   fi
+  if [ "$TRAVIS_PHP_VERSION" = '7.0' ] || [ "$TRAVIS_PHP_VERSION" = '7.1' ] || [ "$TRAVIS_PHP_VERSION" = '7.2' ]; then
+    composer -n require phpunit/phpunit ^6 \
+                        php-parallel-lint/php-parallel-lint ^1 \
+                        php-parallel-lint/php-console-highlighter ^0 \
+                        squizlabs/php_codesniffer ^3
+  fi
+  if [ "$TRAVIS_PHP_VERSION" = '7.3' ] || [ "$TRAVIS_PHP_VERSION" = '7.4' ] || [ "$TRAVIS_PHP_VERSION" = '7.4.22' ]; then
+    composer -n require phpunit/phpunit ^7 \
+                        php-parallel-lint/php-parallel-lint ^1.2 \
+                        php-parallel-lint/php-console-highlighter ^0 \
+                        squizlabs/php_codesniffer ^3
+  fi
+  # phpunit 9 is required for php 8
   if [ "$TRAVIS_PHP_VERSION" = 'nightly' ]; then
-      composer -n require --ignore-platform-reqs phpunit/phpunit ^5 \
-                                                 jakub-onderka/php-parallel-lint ^0 \
-                                                 jakub-onderka/php-console-highlighter ^0 \
+      composer -n require --ignore-platform-reqs phpunit/phpunit ^7 \
+                                                 php-parallel-lint/php-parallel-lint ^1.2 \
+                                                 php-parallel-lint/php-console-highlighter ^0 \
                                                  squizlabs/php_codesniffer ^3
-    fi
+  fi
   echo
 
 - |
   echo "Adding path of binaries tools installed by composer to the PATH"
   export PATH="$TRAVIS_BUILD_DIR/htdocs/includes/bin:$PATH"
+  echo $PATH
+  ls $TRAVIS_BUILD_DIR/vendor
+  ls $TRAVIS_BUILD_DIR/htdocs/includes/bin
   echo
 
 
@@ -168,15 +153,20 @@ before_script:
 
   - |
     echo "Versions information"
+    echo
     # Check PHP
     echo "PHP version"
     php -i | head -
-    # Check PHP CodeSniffer installation
+    # Check Parallel-lint version
+    echo "Parallel-lint version"
+    which parallel-lint
+    parallel-lint -V
+    # Check PHP CodeSniffer version
     echo "PHPCS version"
     which phpcs
     phpcs --version | head -
     phpcs -i | head -
-    # Check PHPUnit installation
+    # Check PHPUnit version
     echo "PHPUnit version"
     which phpunit
     phpunit --version | head -
@@ -188,6 +178,10 @@ before_script:
     mysql --version | head -
     mysql -e "SELECT VERSION();"  | head -
     psql --version
+    if [ "$DB" = 'postgresql' ]; then
+      echo "Check pgloader version"
+      pgloader --version
+    fi
     echo
 
   - |
@@ -247,7 +241,7 @@ before_script:
   # enable php-fpm
   - sudo cp ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.conf.default ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.conf
   - |
-    if [ "$TRAVIS_PHP_VERSION" = '7.0' ] || [ "$TRAVIS_PHP_VERSION" = '7.1' ] || [ "$TRAVIS_PHP_VERSION" = '7.2' ] || [ "$TRAVIS_PHP_VERSION" = '7.3' ] || [ "$TRAVIS_PHP_VERSION" = '7.4' ] || [ "$TRAVIS_PHP_VERSION" = 'nightly' ]; then
+    if [ "$TRAVIS_PHP_VERSION" = '7.0' ] || [ "$TRAVIS_PHP_VERSION" = '7.1' ] || [ "$TRAVIS_PHP_VERSION" = '7.2' ] || [ "$TRAVIS_PHP_VERSION" = '7.3' ] || [ "$TRAVIS_PHP_VERSION" = '7.4' ] || [ "$TRAVIS_PHP_VERSION" = '7.4.22' ] || [ "$TRAVIS_PHP_VERSION" = 'nightly' ]; then
       # Copy the included pool
       sudo cp ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.d/www.conf.default ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.d/www.conf
     fi
@@ -277,21 +271,29 @@ script:
   echo
 
 - |
-  echo "Checking PHP syntax errors"
+  echo "Checking PHP syntax errors (only 1 version to not overload travis and avoid duplicate tests)"
   # Ensure we catch errors
   set -e
   #parallel-lint --exclude htdocs/includes --blame .
-  parallel-lint --exclude dev/namespacemig --exclude dev/initdata/dbf/includes --exclude htdocs/includes/sabre --exclude htdocs/includes/phpoffice/phpexcel/Classes/PHPExcel/Shared --exclude htdocs/includes/phpoffice/PhpSpreadsheet --exclude htdocs/includes/sebastian --exclude htdocs/includes/squizlabs/php_codesniffer --exclude htdocs/includes/jakub-onderka --exclude htdocs/includes/mike42/escpos-php/example --exclude htdocs/includes/phpunit/ --exclude htdocs/includes/composer/autoload_static.php --blame .
+  # Exclusions are defined in the ruleset.xml file
+  if [ "$TRAVIS_PHP_VERSION" = "7.4.22" ]; then
+    parallel-lint -e php --exclude dev/tools/test/namespacemig --exclude htdocs/includes/composer --exclude htdocs/includes/myclabs --exclude htdocs/includes/phpspec --exclude dev/initdata/dbf/includes \
+      --exclude htdocs/includes/sabre --exclude htdocs/includes/phpoffice/PhpSpreadsheet --exclude htdocs/includes/sebastian \
+      --exclude htdocs/includes/squizlabs/php_codesniffer --exclude htdocs/includes/jakub-onderka --exclude htdocs/includes/php-parallel-lint --exclude htdocs/includes/symfony \
+      --exclude htdocs/includes/mike42/escpos-php/example --exclude htdocs/includes/maximebf \
+      --exclude htdocs/includes/phpunit/ --exclude htdocs/includes/tecnickcom/tcpdf/include/barcodes --exclude htdocs/includes/webmozart --blame .
+  fi
   set +e
   echo
 
 - |
-  echo "Checking coding style (excluding Pull Requests builds)"
+  echo "Checking coding style (only for Pull Requests builds and 1 version to not overload travis and avoid duplicate tests)"
   # Ensure we catch errors
   set -e
   # Exclusions are defined in the ruleset.xml file
-  #phpcs -s -n -p -d memory_limit=-1 --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 .
-  if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then phpcs -s -p -d memory_limit=-1 --extensions=php --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 --runtime-set ignore_warnings_on_exit true .; fi
+  if [ "$TRAVIS_PULL_REQUEST" = "false" ] && [ "$TRAVIS_PHP_VERSION" = "7.4.22" ]; then
+    phpcs -s -p -d memory_limit=-1 --extensions=php --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 --runtime-set ignore_warnings_on_exit true .;
+  fi
   set +e
   echo
 
@@ -403,8 +405,28 @@ script:
   php upgrade.php 11.0.0 12.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade11001200.log
   php upgrade2.php 11.0.0 12.0.0 > $TRAVIS_BUILD_DIR/upgrade11001200-2.log
   php step5.php 11.0.0 12.0.0 > $TRAVIS_BUILD_DIR/upgrade11001200-3.log
+  php upgrade.php 12.0.0 13.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade12001300.log
+  php upgrade2.php 12.0.0 13.0.0 > $TRAVIS_BUILD_DIR/upgrade12001300-2.log
+  php step5.php 12.0.0 13.0.0 > $TRAVIS_BUILD_DIR/upgrade12001300-3.log
+  php upgrade.php 13.0.0 14.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade13001400.log
+  php upgrade2.php 13.0.0 14.0.0 > $TRAVIS_BUILD_DIR/upgrade13001400-2.log
+  php step5.php 13.0.0 14.0.0 > $TRAVIS_BUILD_DIR/upgrade13001400-3.log
+  php upgrade.php 14.0.0 15.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade14001500.log
+  php upgrade2.php 14.0.0 15.0.0 > $TRAVIS_BUILD_DIR/upgrade14001500-2.log
+  php step5.php 14.0.0 15.0.0 > $TRAVIS_BUILD_DIR/upgrade14001500-3.log
+  php upgrade.php 15.0.0 16.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade15001600.log
+  php upgrade2.php 15.0.0 16.0.0 > $TRAVIS_BUILD_DIR/upgrade15001600-2.log
+  php step5.php 15.0.0 16.0.0 > $TRAVIS_BUILD_DIR/upgrade15001600-3.log
+  ls -alrt $TRAVIS_BUILD_DIR/
+
+- |
+  echo "Enabling new modules"
   # Enable modules not enabled into original dump
-  php upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_API,MAIN_MODULE_SUPPLIERPROPOSAL,MAIN_MODULE_WEBSITE,MAIN_MODULE_TICKETSUP,MAIN_MODULE_ACCOUNTING > $TRAVIS_BUILD_DIR/enablemodule.log
+  set -e
+  php upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_API,MAIN_MODULE_PRODUCTBATCH,MAIN_MODULE_SUPPLIERPROPOSAL,MAIN_MODULE_STRIPE,MAIN_MODULE_EXPENSEREPORT > $TRAVIS_BUILD_DIR/enablemodule.log
+  php upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_WEBSITE,MAIN_MODULE_TICKET,MAIN_MODULE_ACCOUNTING,MAIN_MODULE_MRP >> $TRAVIS_BUILD_DIR/enablemodule.log
+  php upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_RECEPTION,MAIN_MODULE_RECRUITMENT >> $TRAVIS_BUILD_DIR/enablemodule.log
+  php upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_KNOWLEDGEMANAGEMENT,MAIN_MODULE_EVENTORGANIZATION,MAIN_MODULE_PARTNERSHIP >> $TRAVIS_BUILD_DIR/enablemodule.log
   echo $?
   cd -
   set +e
@@ -423,7 +445,7 @@ script:
 
 after_script:
 - |
-  echo "After script - Output lines of dolibarr.log"
+  echo "After script - Output last lines of dolibarr.log"
   ls $TRAVIS_BUILD_DIR/documents
   #cat $TRAVIS_BUILD_DIR/documents/dolibarr.log
   sudo tail -n 50 $TRAVIS_BUILD_DIR/documents/dolibarr.log

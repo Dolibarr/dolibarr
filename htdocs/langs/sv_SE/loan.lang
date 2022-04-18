@@ -16,13 +16,16 @@ LoanAccountancyInsuranceCode=Redovisningskontoförsäkring
 LoanAccountancyInterestCode=Räkningskonto ränta
 ConfirmDeleteLoan=Bekräfta borttagning av lån
 LoanDeleted=Lånet borttaget
-ConfirmPayLoan=Bekräfta klassificeringen av detta lån 
+ConfirmPayLoan=Bekräfta uppmärkningen av detta lån 
 LoanPaid=Lånet betalt
 ListLoanAssociatedProject=Förteckning över lån i samband med projektet
 AddLoan=Skapa lån
 FinancialCommitment=Finansiellt engagemang
 InterestAmount=Ränta
 CapitalRemain=Kapital kvarstår
+TermPaidAllreadyPaid = Denna period är redan betald
+CantUseScheduleWithLoanStartedToPaid = Kan inte använda schemaläggaren för ett lån när betalningen har startat
+CantModifyInterestIfScheduleIsUsed = Du kan inte ändra intresse om du använder schema
 # Admin
 ConfigLoan=Modullånets konfiguration
 LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Redovisningskontokapital som standard

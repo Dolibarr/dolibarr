@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - stripe
 StripeSetup=Stripe module setup
-StripeDesc=Offer customers a Stripe online payment page for payments with credit/cebit cards via <a href="http://www.stripe.com" target="_blank">Stripe</a>. This can be used to allow your customers to make ad-hoc payments or for payments related to a particular Dolibarr object (invoice, order, ...)
+StripeDesc=Offer your customers an online payment page for payments with credit/debit cards via <a href="https://www.stripe.com" target="_blank" rel="noopener noreferrer external">Stripe</a>. This can be used to allow your customers to make ad-hoc payments or for payments related to a particular Dolibarr object (invoice, order, ...)
 StripeOrCBDoPayment=Pay with credit card or Stripe
 FollowingUrlAreAvailableToMakePayments=URL ต่อไปนี้จะพร้อมที่จะให้หน้าให้กับลูกค้าที่จะทำให้การชำระเงินบนวัตถุ Dolibarr
 PaymentForm=รูปแบบการชำระเงิน
@@ -28,10 +28,10 @@ AccountParameter=พารามิเตอร์บัญชี
 UsageParameter=พารามิเตอร์การใช้งาน
 InformationToFindParameters=ช่วยในการหาข้อมูลเกี่ยวกับบัญชีของคุณ s%
 STRIPE_CGI_URL_V2=Url of Stripe CGI module for payment
-VendorName=ชื่อของผู้ขาย
 CSSUrlForPaymentForm=รูปแบบ CSS url ของแผ่นสำหรับรูปแบบการชำระเงิน
 NewStripePaymentReceived=New Stripe payment received
 NewStripePaymentFailed=New Stripe payment tried but failed
+FailedToChargeCard=Failed to charge card
 STRIPE_TEST_SECRET_KEY=Secret test key
 STRIPE_TEST_PUBLISHABLE_KEY=Publishable test key
 STRIPE_TEST_WEBHOOK_KEY=Webhook test key
@@ -68,3 +68,4 @@ ToOfferALinkForTestWebhook=Link to setup Stripe WebHook to call the IPN (test mo
 ToOfferALinkForLiveWebhook=Link to setup Stripe WebHook to call the IPN (live mode)
 PaymentWillBeRecordedForNextPeriod=Payment will be recorded for the next period.
 ClickHereToTryAgain=<a href="%s">Click here to try again...</a>
+CreationOfPaymentModeMustBeDoneFromStripeInterface=Due to Strong Customer Authentication rules, creation of a card must be done from Stripe backoffice. You can click here to switch on Stripe customer record: %s

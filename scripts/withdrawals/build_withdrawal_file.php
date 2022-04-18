@@ -1,7 +1,6 @@
 #!/usr/bin/env php
 <?php
-/*
- * Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2010 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -23,24 +22,29 @@
  * \ingroup prelevement
  * \brief Script de prelevement
  */
+
+if (!defined('NOSESSION')) {
+	define('NOSESSION', '1');
+}
+
 $sapi_type = php_sapi_name();
 $script_file = basename(__FILE__);
-$path = __DIR__ . '/';
+$path = __DIR__.'/';
 
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
-	echo "Error: You are using PHP for CGI. To execute " . $script_file . " from command line, you must use PHP for CLI mode.\n";
-	exit(- 1);
+	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
+	exit(-1);
 }
 
-require_once $path . "../../htdocs/master.inc.php";
-require_once DOL_DOCUMENT_ROOT . "/compta/prelevement/class/bonprelevement.class.php";
-require_once DOL_DOCUMENT_ROOT . "/compta/facture/class/facture.class.php";
-require_once DOL_DOCUMENT_ROOT . "/societe/class/societe.class.php";
-require_once DOL_DOCUMENT_ROOT . "/compta/paiement/class/paiement.class.php";
+require_once $path."../../htdocs/master.inc.php";
+require_once DOL_DOCUMENT_ROOT."/compta/prelevement/class/bonprelevement.class.php";
+require_once DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php";
+require_once DOL_DOCUMENT_ROOT."/societe/class/societe.class.php";
+require_once DOL_DOCUMENT_ROOT."/compta/paiement/class/paiement.class.php";
 
 // Global variables
-$version = DOL_VERSION;
+$version = constant('DOL_VERSION');
 $error = 0;
 
 /*
@@ -48,8 +52,8 @@ $error = 0;
  */
 
 @set_time_limit(0);
-print "***** " . $script_file . " (" . $version . ") pid=" . dol_getmypid() . " *****\n";
-dol_syslog($script_file . " launched with arg " . join(',', $argv));
+print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
+dol_syslog($script_file." launched with arg ".join(',', $argv));
 
 $datetimeprev = dol_now();
 
@@ -59,11 +63,11 @@ $year = strftime("%Y", $datetimeprev);
 $user = new user($db);
 $user->fetch($conf->global->PRELEVEMENT_USER);
 
-if (! isset($argv[1])) { // Check parameters
+if (!isset($argv[1])) { // Check parameters
 	print "This script check invoices with a withdrawal request and\n";
 	print "then create payment and build a withdraw file.\n";
-	print "Usage: " . $script_file . " simu|real\n";
-	exit(- 1);
+	print "Usage: ".$script_file." simu|real\n";
+	exit(-1);
 }
 
 $withdrawreceipt = new BonPrelevement($db);

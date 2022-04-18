@@ -128,6 +128,12 @@ source_file = htdocs/langs/en_US/errors.lang
 source_lang = en_US
 type = MOZILLAPROPERTIES
 
+[dolibarr.eventorganization]
+file_filter = htdocs/langs/<lang>/eventorganization.lang
+source_file = htdocs/langs/en_US/eventorganization.lang
+source_lang = en_US
+type = MOZILLAPROPERTIES
+
 [dolibarr.exports]
 file_filter = htdocs/langs/<lang>/exports.lang
 source_file = htdocs/langs/en_US/exports.lang
@@ -173,6 +179,18 @@ type = MOZILLAPROPERTIES
 [dolibarr.interventions]
 file_filter = htdocs/langs/<lang>/interventions.lang
 source_file = htdocs/langs/en_US/interventions.lang
+source_lang = en_US
+type = MOZILLAPROPERTIES
+
+[dolibarr.intracommreport]
+file_filter = htdocs/langs/<lang>/intracommreport.lang
+source_file = htdocs/langs/en_US/intracommreport.lang
+source_lang = en_US
+type = MOZILLAPROPERTIES
+
+[dolibarr.knowledgemanagement]
+file_filter = htdocs/langs/<lang>/knowledgemanagement.lang
+source_file = htdocs/langs/en_US/knowledgemanagement.lang
 source_lang = en_US
 type = MOZILLAPROPERTIES
 
@@ -272,6 +290,12 @@ source_file = htdocs/langs/en_US/other.lang
 source_lang = en_US
 type = MOZILLAPROPERTIES
 
+[dolibarr.partnership]
+file_filter = htdocs/langs/<lang>/partnership.lang
+source_file = htdocs/langs/en_US/partnership.lang
+source_lang = en_US
+type = MOZILLAPROPERTIES
+
 [dolibarr.paybox]
 file_filter = htdocs/langs/<lang>/paybox.lang
 source_file = htdocs/langs/en_US/paybox.lang
@@ -326,6 +350,12 @@ source_file = htdocs/langs/en_US/receptions.lang
 source_lang = en_US
 type = MOZILLAPROPERTIES
 
+[dolibarr.recruitment]
+file_filter = htdocs/langs/<lang>/recruitment.lang
+source_file = htdocs/langs/en_US/recruitment.lang
+source_lang = en_US
+type = MOZILLAPROPERTIES
+
 [dolibarr.resource]
 file_filter = htdocs/langs/<lang>/resource.lang
 source_file = htdocs/langs/en_US/resource.lang
@@ -362,15 +392,15 @@ source_file = htdocs/langs/en_US/stripe.lang
 source_lang = en_US
 type = MOZILLAPROPERTIES
 
-[dolibarr.suppliers]
-file_filter = htdocs/langs/<lang>/suppliers.lang
-source_file = htdocs/langs/en_US/suppliers.lang
-source_lang = en_US
-type = MOZILLAPROPERTIES
-
 [dolibarr.supplier_proposal]
 file_filter = htdocs/langs/<lang>/supplier_proposal.lang
 source_file = htdocs/langs/en_US/supplier_proposal.lang
+source_lang = en_US
+type = MOZILLAPROPERTIES
+
+[dolibarr.suppliers]
+file_filter = htdocs/langs/<lang>/suppliers.lang
+source_file = htdocs/langs/en_US/suppliers.lang
 source_lang = en_US
 type = MOZILLAPROPERTIES
 

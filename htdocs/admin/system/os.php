@@ -26,8 +26,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 $langs->load("admin");
 
-if (!$user->admin)
-  accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
 
 /*
  * View
@@ -45,7 +46,7 @@ print "\n";
 print '<tr class="oddeven"><td>'.$langs->trans("PHP_OS")."</td><td>".PHP_OS."</td></tr>\n";
 
 // Recupere la version de l'OS
-$osversion=version_os();
+$osversion = version_os();
 print '<tr class="oddeven"><td>'.$langs->trans("Version")."</td><td>".$osversion."</td></tr>\n";
 print '</table>';
 

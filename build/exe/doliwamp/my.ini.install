@@ -69,13 +69,13 @@ port=WAMPMYSQLPORT
 
 
 #Path to installation directory. All paths are usually resolved relative to this.
-basedir=WAMPROOT/bin/mysql/mysqlWAMPMYSQLVERSION
+basedir=WAMPROOT/bin/mariadb/mariadbWAMPMYSQLVERSION
 
 #log file
 log-error=WAMPROOT/logs/mysql.log
 
 #Path to the database root
-datadir=WAMPROOT/bin/mysql/data
+datadir=WAMPROOT/bin/mariadb/data
 
 # The default storage engine that will be used when create new tables when
 default-storage-engine=INNODB
@@ -196,13 +196,13 @@ port=WAMPMYSQLPORT
 
 
 #Path to installation directory. All paths are usually resolved relative to this.
-basedir=WAMPROOT/bin/mysql/mysqlWAMPMYSQLVERSION
+basedir=WAMPROOT/bin/mariadb/mariadbWAMPMYSQLVERSION
 
 #log file
 log-error=WAMPROOT/logs/mysql.log
 
 #Path to the database root
-datadir=WAMPROOT/bin/mysql/data
+datadir=WAMPROOT/bin/mariadb/data
 
 # The default storage engine that will be used when create new tables when
 default-storage-engine=INNODB

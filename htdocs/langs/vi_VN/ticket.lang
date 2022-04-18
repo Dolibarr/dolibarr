@@ -30,12 +30,12 @@ Permission56005=Xem vé của tất cả các bên thứ ba (không hiệu quả
 TicketDictType=Vé - Các loại
 TicketDictCategory=Vé - Nhóm
 TicketDictSeverity=Vé - Mức độ nghiêm trọng
-TicketTypeShortBUGSOFT=Sự cố phần mềm
-TicketTypeShortBUGHARD=Sự cố phần cứng
-TicketTypeShortCOM=Câu hỏi thương mại
+TicketDictResolution=Ticket - Resolution
 
+TicketTypeShortCOM=Câu hỏi thương mại
 TicketTypeShortHELP=Yêu cầu trợ giúp chức năng
-TicketTypeShortISSUE=Sự cố, lỗi hoặc vấn đề
+TicketTypeShortISSUE=Issue or bug
+TicketTypeShortPROBLEM=Problem
 TicketTypeShortREQUEST=Yêu cầu thay đổi hoặc nâng cao
 TicketTypeShortPROJET=Dự án
 TicketTypeShortOTHER=Khác
@@ -43,7 +43,9 @@ TicketTypeShortOTHER=Khác
 TicketSeverityShortLOW=Thấp
 TicketSeverityShortNORMAL=Bình thường
 TicketSeverityShortHIGH=Cao
-TicketSeverityShortBLOCKING=Quan trọng / Chặn
+TicketSeverityShortBLOCKING=Critical, Blocking
+
+TicketCategoryShortOTHER=Khác
 
 ErrorBadEmailAddress=Trường '%s' không chính xác
 MenuTicketMyAssign=Vé của tôi
@@ -55,24 +57,25 @@ TypeContact_ticket_internal_SUPPORTTEC=Người dùng được chỉ định
 TypeContact_ticket_external_SUPPORTCLI=Theo dõi liên lạc / sự cố khách hàng 
 TypeContact_ticket_external_CONTRIBUTOR=Người cộng tác bên ngoài
 
-OriginEmail=Nguồn email
+OriginEmail=Reporter Email
 Notify_TICKET_SENTBYMAIL=Gửi tin nhắn vé qua email
 
 # Status
-NotRead=Chưa đọc
 Read=Đọc
 Assigned=Phân công
 InProgress=Trong tiến trình xử lý
-NeedMoreInformation=Đang chờ thông tin
+NeedMoreInformation=Waiting for reporter feedback
+NeedMoreInformationShort=Waiting for feedback
 Answered=Đã trả lời
 Waiting=Đang chờ
-Closed=Đã đóng
+SolvedClosed=Solved
 Deleted=Đã xóa
 
 # Dict
 Type=Loại
-Category=Mã phân tích
 Severity=Mức độ nghiêm trọng
+TicketGroupIsPublic=Group is public
+TicketGroupIsPublicDesc=If a ticket group is public, it will be visible in the form when creating a ticket from the public interface
 
 # Email templates
 MailToSendTicketMessage=Để gửi email từ tin nhắn vé
@@ -117,8 +120,8 @@ TicketsShowModuleLogo=Hiển thị logo của mô-đun trong giao diện công c
 TicketsShowModuleLogoHelp=Cho phép tùy chọn này để ẩn mô-đun logo trong các trang của giao diện công cộng
 TicketsShowCompanyLogo=Hiển thị logo của công ty trong giao diện công cộng
 TicketsShowCompanyLogoHelp=Cho phép tùy chọn này để ẩn logo của công ty chính trong các trang của giao diện công cộng
-TicketsEmailAlsoSendToMainAddress=Đồng thời gửi thông báo đến địa chỉ email chính
-TicketsEmailAlsoSendToMainAddressHelp=Cho phép tùy chọn này để gửi email đến địa chỉ "Thông báo email từ" (xem thiết lập bên dưới)
+TicketsEmailAlsoSendToMainAddress=Also send a notification to the main email address
+TicketsEmailAlsoSendToMainAddressHelp=Enable this option to also send an email to the address defined into setup "%s" (see tab "%s")
 TicketsLimitViewAssignedOnly=Hạn chế hiển thị đối với vé được chỉ định cho người dùng hiện tại (không hiệu quả đối với người dùng bên ngoài, luôn bị giới hạn ở bên thứ ba mà họ phụ thuộc)
 TicketsLimitViewAssignedOnlyHelp=Chỉ có vé được chỉ định cho người dùng hiện tại sẽ hiển thị. Không áp dụng cho người dùng có quyền quản lý vé.
 TicketsActivatePublicInterface=Kích hoạt giao diện công cộng
@@ -126,13 +129,17 @@ TicketsActivatePublicInterfaceHelp=Giao diện công cộng cho phép bất kỳ
 TicketsAutoAssignTicket=Tự động chỉ định người dùng đã tạo vé
 TicketsAutoAssignTicketHelp=Khi tạo vé, người dùng có thể được tự động chỉ định cho vé.
 TicketNumberingModules=Mô-đun đánh số vé
+TicketsModelModule=Document templates for tickets
 TicketNotifyTiersAtCreation=Thông báo cho bên thứ ba khi tạo
-TicketGroup=Nhóm
 TicketsDisableCustomerEmail=Luôn vô hiệu hóa email khi vé được tạo từ giao diện công cộng
+TicketsPublicNotificationNewMessage=Send email(s) when a new message/comment is added to a ticket
+TicketsPublicNotificationNewMessageHelp=Send email(s) when a new message is added from public interface (to assigned user or the notifications email to (update) and/or the notifications email to)
+TicketPublicNotificationNewMessageDefaultEmail=Notifications email to (update)
+TicketPublicNotificationNewMessageDefaultEmailHelp=Send an email to this address for each new message notifications if the ticket doesn't have a user assigned to it or if the user doesn't have any known email.
 #
 # Index & list page
 #
-TicketsIndex=Vé - nhà
+TicketsIndex=Tickets area
 TicketList=Danh sách vé
 TicketAssignedToMeInfos=Trang này hiển thị danh sách vé được tạo bởi hoặc gán cho người dùng hiện tại
 NoTicketsFound=Không tìm thấy vé
@@ -157,7 +164,7 @@ CreatedBy=Được tạo bởi
 NewTicket=Vé mới
 SubjectAnswerToTicket=Trả lời vé
 TicketTypeRequest=Loại yêu cầu
-TicketCategory=Mã phân tích
+TicketCategory=Ticket categorization
 SeeTicket=Xem vé
 TicketMarkedAsRead=Vé đã được đánh dấu là đã đọc
 TicketReadOn=Đọc tiếp
@@ -175,15 +182,17 @@ MessageSuccessfullyAdded=Đã thêm vé
 TicketMessageSuccessfullyAdded=Thông điệp đã được thêm thành công
 TicketMessagesList=Danh sách tin nhắn
 NoMsgForThisTicket=Không có tin nhắn cho vé này
-Properties=Phân loại
+TicketProperties=Phân loại
 LatestNewTickets=Vé mới nhất %s (không đọc)
 TicketSeverity=Mức độ nghiêm trọng
 ShowTicket=Xem vé
 RelatedTickets=Vé liên quan
 TicketAddIntervention=Tạo sự can thiệp
-CloseTicket=Đóng vé
-CloseATicket=Đóng vé
+CloseTicket=Close|Solve ticket
+AbandonTicket=Abandon ticket
+CloseATicket=Close|Solve a ticket
 ConfirmCloseAticket=Xác nhận đóng vé
+ConfirmAbandonTicket=Do you confirm the closing of the ticket to status 'Abandonned'
 ConfirmDeleteTicket=Vui lòng xác nhận xóa vé
 TicketDeletedSuccess=Vé đã xóa thành công
 TicketMarkedAsClosed=Vé được đánh dấu là đã đóng
@@ -208,6 +217,7 @@ TicketMessageHelp=Chỉ văn bản này sẽ được lưu trong danh sách tin 
 TicketMessageSubstitutionReplacedByGenericValues=Các biến thay thế được thay thế bằng các giá trị chung.
 TimeElapsedSince=Thời gian trôi qua kể từ khi
 TicketTimeToRead=Thời gian trôi qua trước khi đọc
+TicketTimeElapsedBeforeSince=Time elapsed before / since
 TicketContacts=Liên hệ vé
 TicketDocumentsLinked=Tài liệu liên kết với vé
 ConfirmReOpenTicket=Xác nhận mở lại vé này?
@@ -230,7 +240,6 @@ TicketLogStatusChanged=Trạng thái đã thay đổi: %s thành %s
 TicketNotNotifyTiersAtCreate=Không thông báo cho công ty khi tạo
 Unread=Chưa đọc
 TicketNotCreatedFromPublicInterface=Không có sẵn. Vé không được tạo từ giao diện công cộng.
-PublicInterfaceNotEnabled=Giao diện công cộng không được kích hoạt
 ErrorTicketRefRequired=Tên tham chiếu vé là bắt buộc
 
 #
@@ -241,7 +250,7 @@ NoLogForThisTicket=Chưa có log cho vé này
 TicketLogAssignedTo=Vé %s được giao cho %s
 TicketLogPropertyChanged=Vé %s được sửa đổi: phân loại từ %s đến %s
 TicketLogClosedBy=Vé %s được đóng bởi %s
-TicketLogReopen=Vé %s được mở lại
+TicketLogReopen=Ticket %s re-open
 
 #
 # Public pages
@@ -253,7 +262,7 @@ TicketPublicDesc=Bạn có thể tạo một vé hỗ trợ hoặc kiểm tra t�
 YourTicketSuccessfullySaved=Vé đã được lưu thành công!
 MesgInfosPublicTicketCreatedWithTrackId=A new ticket has been created with ID %s and Ref %s.
 PleaseRememberThisId=Vui lòng giữ số theo dõi mà chúng tôi có thể hỏi bạn sau này.
-TicketNewEmailSubject=Ticket creation confirmation - Ref %s
+TicketNewEmailSubject=Ticket creation confirmation - Ref %s (public ticket ID %s)
 TicketNewEmailSubjectCustomer=Vé hỗ trợ mới
 TicketNewEmailBody=Đây là một email tự động để xác nhận bạn đã đăng ký một vé mới.
 TicketNewEmailBodyCustomer=Đây là một email tự động để xác nhận một vé mới vừa được tạo vào tài khoản của bạn.
@@ -272,7 +281,7 @@ Subject=Chủ đề
 ViewTicket=Xem vé
 ViewMyTicketList=Xem danh sách vé của tôi
 ErrorEmailMustExistToCreateTicket=Lỗi: không tìm thấy địa chỉ email trong cơ sở dữ liệu của chúng tôi
-TicketNewEmailSubjectAdmin=New ticket created - Ref %s
+TicketNewEmailSubjectAdmin=New ticket created - Ref %s (public ticket ID %s)
 TicketNewEmailBodyAdmin=<p> Vé vừa được tạo với ID # %s, xem thông tin: </p>
 SeeThisTicketIntomanagementInterface=Xem vé trong giao diện quản lý
 TicketPublicInterfaceForbidden=Giao diện công cộng cho các vé không được kích hoạt
@@ -302,3 +311,14 @@ BoxLastModifiedTicket=Vé sửa đổi mới nhất
 BoxLastModifiedTicketDescription=Vé sửa đổi mới nhất %s
 BoxLastModifiedTicketContent=
 BoxLastModifiedTicketNoRecordedTickets=Không có vé sửa đổi gần đây
+BoxTicketType=Distribution of open tickets by type
+BoxTicketSeverity=Number of open tickets by severity
+BoxNoTicketSeverity=No tickets opened
+BoxTicketLastXDays=Number of new tickets by days the last %s days
+BoxTicketLastXDayswidget = Number of new tickets by days the last X days
+BoxNoTicketLastXDays=No new tickets the last %s days
+BoxNumberOfTicketByDay=Number of new tickets by day
+BoxNewTicketVSClose=Number of tickets versus closed tickets (today)
+TicketCreatedToday=Ticket created today
+TicketClosedToday=Ticket closed today
+KMFoundForTicketGroup=We found topics and FAQs that may answers your question, thanks to check them before submitting the ticket

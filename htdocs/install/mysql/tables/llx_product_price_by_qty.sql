@@ -35,11 +35,11 @@ create table llx_product_price_by_qty
   fk_user_modif 	integer,
 
   fk_multicurrency		integer,
-  multicurrency_code	varchar(255),
+  multicurrency_code	varchar(3),
   multicurrency_tx			double(24,8) DEFAULT 1,
   multicurrency_price	double(24,8) DEFAULT NULL,
   multicurrency_price_ttc	double(24,8) DEFAULT NULL,
   
-  tms				timestamp,
+  tms				timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   import_key    	varchar(14)
 )ENGINE=innodb;

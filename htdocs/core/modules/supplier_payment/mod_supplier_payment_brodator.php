@@ -22,7 +22,7 @@
  * \brief      File containing class for numbering module Brodator
  */
 
-require_once DOL_DOCUMENT_ROOT .'/core/modules/supplier_payment/modules_supplier_payment.php';
+require_once DOL_DOCUMENT_ROOT.'/core/modules/supplier_payment/modules_supplier_payment.php';
 
 
 /**
@@ -31,89 +31,88 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/supplier_payment/modules_supplier
 class mod_supplier_payment_brodator extends ModeleNumRefSupplierPayments
 {
 	/**
-     * Dolibarr version of the loaded document
-     * @var string
-     */
-	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
+	 * Dolibarr version of the loaded document
+	 * @var string
+	 */
+	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
 	/**
-     * @var string Error code (or message)
-     */
-    public $error = '';
+	 * @var string Error code (or message)
+	 */
+	public $error = '';
 
 	/**
 	 * @var string Nom du modele
 	 * @deprecated
-	 * @see name
+	 * @see $name
 	 */
-	public $nom='Brodator';
+	public $nom = 'Brodator';
 
 	/**
 	 * @var string model name
 	 */
-	public $name='Brodator';
+	public $name = 'Brodator';
 
 
-    /**
-     *  Returns the description of the numbering model
-     *
-     *  @return     string      Texte descripif
-     */
+	/**
+	 *  Returns the description of the numbering model
+	 *
+	 *  @return     string      Texte descripif
+	 */
 	public function info()
-    {
-    	global $conf, $langs;
+	{
+		global $conf, $langs;
 
 		$langs->load("bills");
 
 		$form = new Form($this->db);
 
 		$texte = $langs->trans('GenericNumRefModelDesc')."<br>\n";
-		$texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-		$texte.= '<input type="hidden" name="token" value="'.newToken().'">';
-		$texte.= '<input type="hidden" name="action" value="updateMask">';
-		$texte.= '<input type="hidden" name="maskconstsupplierpayment" value="SUPPLIER_PAYMENT_BRODATOR_MASK">';
-		$texte.= '<table class="nobordernopadding" width="100%">';
+		$texte .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+		$texte .= '<input type="hidden" name="token" value="'.newToken().'">';
+		$texte .= '<input type="hidden" name="action" value="updateMask">';
+		$texte .= '<input type="hidden" name="maskconstsupplierpayment" value="SUPPLIER_PAYMENT_BRODATOR_MASK">';
+		$texte .= '<table class="nobordernopadding" width="100%">';
 
-		$tooltip=$langs->trans("GenericMaskCodes", $langs->transnoentities("Order"), $langs->transnoentities("Order"));
-		$tooltip.=$langs->trans("GenericMaskCodes2");
-		$tooltip.=$langs->trans("GenericMaskCodes3");
-		$tooltip.=$langs->trans("GenericMaskCodes4a", $langs->transnoentities("Order"), $langs->transnoentities("Order"));
-		$tooltip.=$langs->trans("GenericMaskCodes5");
+		$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("Order"), $langs->transnoentities("Order"));
+		$tooltip .= $langs->trans("GenericMaskCodes2");
+		$tooltip .= $langs->trans("GenericMaskCodes3");
+		$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("Order"), $langs->transnoentities("Order"));
+		$tooltip .= $langs->trans("GenericMaskCodes5");
 
 		// Parametrage du prefix
-		$texte.= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte.= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="masksupplierpayment" value="'.$conf->global->SUPPLIER_PAYMENT_BRODATOR_MASK.'">', $tooltip, 1, 1).'</td>';
+		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="masksupplierpayment" value="'.$conf->global->SUPPLIER_PAYMENT_BRODATOR_MASK.'">', $tooltip, 1, 1).'</td>';
 
-		$texte.= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
+		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit" name="Button"value="'.$langs->trans("Modify").'"></td>';
 
-		$texte.= '</tr>';
+		$texte .= '</tr>';
 
-		$texte.= '</table>';
-		$texte.= '</form>';
+		$texte .= '</table>';
+		$texte .= '</form>';
 
 		return $texte;
-    }
+	}
 
-    /**
-     *  Return an example of numbering
-     *
-     *  @return     string      Example
-     */
-    public function getExample()
-    {
-     	global $conf,$langs,$mysoc;
+	/**
+	 *  Return an example of numbering
+	 *
+	 *  @return     string      Example
+	 */
+	public function getExample()
+	{
+		global $conf, $langs, $mysoc;
 
-    	$old_code_client=$mysoc->code_client;
-    	$mysoc->code_client='CCCCCCCCCC';
-     	$numExample = $this->getNextValue($mysoc, '');
-		$mysoc->code_client=$old_code_client;
+		$old_code_client = $mysoc->code_client;
+		$mysoc->code_client = 'CCCCCCCCCC';
+		$numExample = $this->getNextValue($mysoc, '');
+		$mysoc->code_client = $old_code_client;
 
-		if (! $numExample)
-		{
+		if (!$numExample) {
 			$numExample = $langs->trans('NotConfigured');
 		}
 		return $numExample;
-    }
+	}
 
 	/**
 	 * 	Return next free value
@@ -122,38 +121,37 @@ class mod_supplier_payment_brodator extends ModeleNumRefSupplierPayments
 	 *  @param  Object		$object		Object we need next value for
 	 *  @return string      			Value if KO, <0 if KO
 	 */
-    public function getNextValue($objsoc, $object)
-    {
-		global $db,$conf;
+	public function getNextValue($objsoc, $object)
+	{
+		global $db, $conf;
 
-		require_once DOL_DOCUMENT_ROOT .'/core/lib/functions2.lib.php';
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 		// We get cursor rule
-		$mask=$conf->global->SUPPLIER_PAYMENT_BRODATOR_MASK;
+		$mask = $conf->global->SUPPLIER_PAYMENT_BRODATOR_MASK;
 
-		if (! $mask)
-		{
-			$this->error='NotConfigured';
+		if (!$mask) {
+			$this->error = 'NotConfigured';
 			return 0;
 		}
 
-		$numFinal=get_next_value($db, $mask, 'paiementfourn', 'ref', '', $objsoc, $object->datepaye);
+		$numFinal = get_next_value($db, $mask, 'paiementfourn', 'ref', '', $objsoc, $object->datepaye);
 
 		return  $numFinal;
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return next free value
 	 *
 	 *  @param	Societe		$objsoc     Object third party
 	 * 	@param	string		$objforref	Object for number to search
 	 *  @return string      			Next free value
-     */
-    public function commande_get_num($objsoc, $objforref)
-    {
-        // phpcs:enable
-        return $this->getNextValue($objsoc, $objforref);
-    }
+	 */
+	public function commande_get_num($objsoc, $objforref)
+	{
+		// phpcs:enable
+		return $this->getNextValue($objsoc, $objforref);
+	}
 }

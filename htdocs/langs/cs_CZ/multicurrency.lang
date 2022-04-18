@@ -18,3 +18,5 @@ MulticurrencyReceived=Přijatá, původní měna
 MulticurrencyRemainderToTake=Zbývající částka, původní měna
 MulticurrencyPaymentAmount=Výše platby, původní měna
 AmountToOthercurrency=Částka (v měně přijatého účtu)
+CurrencyRateSyncSucceed=Synchronizace měnového kurzu proběhla úspěšně
+MULTICURRENCY_USE_CURRENCY_ON_DOCUMENT=Pro online platby použijte měnu dokumentu

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2014  Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2013-2014  Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2019  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2013-2020  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2014-2015  Ari Elbaz (elarifr)     <github@accedinfo.com>
  * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2014       Juanjo Menent           <jmenent@2byte.es>
@@ -38,40 +38,49 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 $langs->loadLangs(array("compta", "bills", "admin", "accountancy", "salaries", "loan"));
 
 // Security check
-if (empty($user->rights->accounting->chartofaccount))
-{
+if (empty($user->rights->accounting->chartofaccount)) {
 	accessforbidden();
 }
 
 $action = GETPOST('action', 'aZ09');
 
 
-$list_account_main = array (
-    'ACCOUNTING_ACCOUNT_CUSTOMER',
-    'ACCOUNTING_ACCOUNT_SUPPLIER',
-    'SALARIES_ACCOUNTING_ACCOUNT_PAYMENT',
+$list_account_main = array(
+	'ACCOUNTING_ACCOUNT_CUSTOMER',
+	'ACCOUNTING_ACCOUNT_SUPPLIER',
+	'SALARIES_ACCOUNTING_ACCOUNT_PAYMENT',
 );
 
-$list_account = array ();
+$list_account = array();
+
 $list_account[] = '---Product---';
-$list_account[] = 'ACCOUNTING_PRODUCT_BUY_ACCOUNT';
 $list_account[] = 'ACCOUNTING_PRODUCT_SOLD_ACCOUNT';
 if ($mysoc->isInEEC()) {
 	$list_account[] = 'ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT';
 }
 $list_account[] = 'ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT';
+$list_account[] = 'ACCOUNTING_PRODUCT_BUY_ACCOUNT';
+if ($mysoc->isInEEC()) {
+	$list_account[] = 'ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT';
+}
+$list_account[] = 'ACCOUNTING_PRODUCT_BUY_EXPORT_ACCOUNT';
+
 $list_account[] = '---Service---';
-$list_account[] = 'ACCOUNTING_SERVICE_BUY_ACCOUNT';
 $list_account[] = 'ACCOUNTING_SERVICE_SOLD_ACCOUNT';
 if ($mysoc->isInEEC()) {
 	$list_account[] = 'ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT';
 }
 $list_account[] = 'ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT';
-$list_account[] = '---Other---';
+$list_account[] = 'ACCOUNTING_SERVICE_BUY_ACCOUNT';
+if ($mysoc->isInEEC()) {
+	$list_account[] = 'ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT';
+}
+$list_account[] = 'ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT';
+
+$list_account[] = '---Others---';
 $list_account[] = 'ACCOUNTING_VAT_BUY_ACCOUNT';
 $list_account[] = 'ACCOUNTING_VAT_SOLD_ACCOUNT';
 $list_account[] = 'ACCOUNTING_VAT_PAY_ACCOUNT';
-$list_account[] = 'ACCOUNTING_ACCOUNT_SUSPENSE';
 if ($conf->banque->enabled) {
 	$list_account[] = 'ACCOUNTING_ACCOUNT_TRANSFER_CASH';
 }
@@ -86,51 +95,39 @@ if ($conf->loan->enabled) {
 	$list_account[] = 'LOAN_ACCOUNTING_ACCOUNT_INTEREST';
 	$list_account[] = 'LOAN_ACCOUNTING_ACCOUNT_INSURANCE';
 }
+if ($conf->societe->enabled) {
+	$list_account[] = 'ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT';
+}
+$list_account[] = 'ACCOUNTING_ACCOUNT_SUSPENSE';
 
 /*
  * Actions
  */
-
-$accounting_mode = empty($conf->global->ACCOUNTING_MODE) ? 'RECETTES-DEPENSES' : $conf->global->ACCOUNTING_MODE;
-
-if (GETPOST('change_chart', 'alpha'))
-{
-    $chartofaccounts = GETPOST('chartofaccounts', 'int');
-
-    if (!empty($chartofaccounts)) {
-        if (!dolibarr_set_const($db, 'CHARTOFACCOUNTS', $chartofaccounts, 'chaine', 0, '', $conf->entity)) {
-            $error++;
-        }
-    } else {
-        $error++;
-    }
-}
-
 if ($action == 'update') {
 	$error = 0;
 
 	foreach ($list_account_main as $constname) {
 		$constvalue = GETPOST($constname, 'alpha');
 
-		if (! dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
-			$error ++;
+		if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
+			$error++;
 		}
 	}
 
 	foreach ($list_account as $constname) {
-		$reg=array();
+		$reg = array();
 		if (preg_match('/---(.*)---/', $constname, $reg)) {	// This is a separator
 			continue;
 		}
 
 		$constvalue = GETPOST($constname, 'alpha');
 
-	    if (! dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
-	        $error ++;
-	    }
+		if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
+			$error++;
+		}
 	}
 
-	if (! $error) {
+	if (!$error) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
@@ -160,48 +157,75 @@ print '<input type="hidden" name="action" value="update">';
 
 // Define main accounts for thirdparty
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
+print '<tr class="liste_titre"><td>'.$langs->trans("ThirdParties").' | '.$langs->trans("Users").'</td><td></td></tr>';
 
 foreach ($list_account_main as $key) {
-    print '<tr class="oddeven value">';
-    // Param
-    $label = $langs->trans($key);
-    $keydesc = $key.'_Desc';
+	print '<tr class="oddeven value">';
+	// Param
+	$label = $langs->trans($key);
+	$keydesc = $key.'_Desc';
 
-    $htmltext = $langs->trans($keydesc);
-    print '<td class="fieldrequired" width="50%">';
-    print $form->textwithpicto($label, $htmltext);
-    print '</td>';
-    // Value
-    print '<td>'; // Do not force class=right, or it align also the content of the select box
-    print $formaccounting->select_account($conf->global->$key, $key, 1, '', 1, 1);
-    print '</td>';
-    print '</tr>';
+	$htmltext = $langs->trans($keydesc);
+	print '<td class="fieldrequired">';
+	if ($key == 'ACCOUNTING_ACCOUNT_CUSTOMER') {
+		print img_picto('', 'company', 'class="pictofixedwidth"');
+	} elseif ($key == 'ACCOUNTING_ACCOUNT_SUPPLIER') {
+		print img_picto('', 'company', 'class="pictofixedwidth"');
+	} else {
+		print img_picto('', 'user', 'class="pictofixedwidth"');
+	}
+	print $form->textwithpicto($label, $htmltext);
+	print '</td>';
+	// Value
+	print '<td class="right">'; // Do not force class=right, or it align also the content of the select box
+	print $formaccounting->select_account($conf->global->$key, $key, 1, '', 1, 1, 'minwidth100 maxwidth300 maxwidthonsmartphone', 'accountsmain');
+	print '</td>';
+	print '</tr>';
 }
-
-
 print "</table>\n";
+print "</div>\n";
 
 
-print '<br>';
-
-// Define default accounts
-
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 
 foreach ($list_account as $key) {
-	$reg=array();
+	$reg = array();
 	if (preg_match('/---(.*)---/', $key, $reg)) {
 		print '<tr class="liste_titre"><td>'.$langs->trans($reg[1]).'</td><td></td></tr>';
-	}
-	else {
+	} else {
 		print '<tr class="oddeven value">';
 		// Param
 		$label = $langs->trans($key);
-		print '<td width="50%">' . $label . '</td>';
+		print '<td>';
+		if (preg_match('/^ACCOUNTING_PRODUCT/', $key)) {
+			print img_picto('', 'product', 'class="pictofixedwidth"');
+		} elseif (preg_match('/^ACCOUNTING_SERVICE/', $key)) {
+			print img_picto('', 'service', 'class="pictofixedwidth"');
+		} elseif (preg_match('/^ACCOUNTING_VAT_PAY_ACCOUNT/', $key)) {
+			print img_picto('', 'payment_vat', 'class="pictofixedwidth"');
+		} elseif (preg_match('/^ACCOUNTING_VAT/', $key)) {
+			print img_picto('', 'vat', 'class="pictofixedwidth"');
+		} elseif (preg_match('/^ACCOUNTING_ACCOUNT_CUSTOMER/', $key)) {
+			print img_picto('', 'bill', 'class="pictofixedwidth"');
+		} elseif (preg_match('/^LOAN_ACCOUNTING_ACCOUNT/', $key)) {
+			print img_picto('', 'loan', 'class="pictofixedwidth"');
+		} elseif (preg_match('/^DONATION_ACCOUNTING/', $key)) {
+			print img_picto('', 'donation', 'class="pictofixedwidth"');
+		} elseif (preg_match('/^ADHERENT_SUBSCRIPTION/', $key)) {
+			print img_picto('', 'member', 'class="pictofixedwidth"');
+		} elseif (preg_match('/^ACCOUNTING_ACCOUNT_TRANSFER/', $key)) {
+			print img_picto('', 'bank_account', 'class="pictofixedwidth"');
+		} elseif (preg_match('/^ACCOUNTING_ACCOUNT_SUSPENSE/', $key)) {
+			print img_picto('', 'question', 'class="pictofixedwidth"');
+		}
+		print $label;
+		print '</td>';
 		// Value
-		print '<td>';  // Do not force class=right, or it align also the content of the select box
-		print $formaccounting->select_account($conf->global->$key, $key, 1, '', 1, 1);
+		print '<td class="right">'; // Do not force class=right, or it align also the content of the select box
+		print $formaccounting->select_account(getDolGlobalString($key), $key, 1, '', 1, 1, 'minwidth100 maxwidth300 maxwidthonsmartphone', 'accounts');
 		print '</td>';
 		print '</tr>';
 	}
@@ -209,9 +233,9 @@ foreach ($list_account as $key) {
 
 
 print "</table>\n";
+print "</div>\n";
 
-
-print '<div class="center"><input type="submit" class="button" value="'.$langs->trans('Modify').'" name="button"></div>';
+print '<div class="center"><input type="submit" class="button button-edit" name="button" value="'.$langs->trans('Modify').'"></div>';
 
 print '</form>';
 

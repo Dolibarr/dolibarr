@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2018      Alexandre Spangaro  <aspangaro@open-dsi.fr>
+/* Copyright (C) 2018-2022  OpenDSI     <support@open-dsi.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@
  *
  * @return array head array with tabs
  */
-function asset_admin_prepare_head()
+function assetAdminPrepareHead()
 {
 	global $langs, $conf;
 
@@ -35,7 +35,7 @@ function asset_admin_prepare_head()
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT . '/asset/admin/setup.php';
+	$head[$h][0] = DOL_URL_ROOT.'/asset/admin/setup.php';
 	$head[$h][1] = $langs->trans("Settings");
 	$head[$h][2] = 'settings';
 	$h++;
@@ -43,82 +43,118 @@ function asset_admin_prepare_head()
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
 	//$this->tabs = array(
-	//	'entity:+tabname:Title:@assets:/asset/mypage.php?id=__ID__'
+	//	'entity:+tabname:Title:@asset:/asset/mypage.php?id=__ID__'
 	//); // to add new tab
 	//$this->tabs = array(
-	//	'entity:-tabname:Title:@assets:/asset/mypage.php?id=__ID__'
+	//	'entity:-tabname:Title:@asset:/asset/mypage.php?id=__ID__'
 	//); // to remove a tab
-	complete_head_from_modules($conf, $langs, null, $head, $h, 'assets_admin');
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'asset_admin');
 
-	$head[$h][0] = DOL_URL_ROOT . '/asset/admin/assets_extrafields.php';
+	$head[$h][0] = DOL_URL_ROOT.'/asset/admin/asset_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFields");
-	$head[$h][2] = 'attributes';
+	$head[$h][2] = 'asset_extrafields';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT . '/asset/admin/assets_type_extrafields.php';
-	$head[$h][1] = $langs->trans("ExtraFieldsAssetsType");
-	$head[$h][2] = 'attributes_type';
+	$head[$h][0] = DOL_URL_ROOT.'/asset/admin/assetmodel_extrafields.php';
+	$head[$h][1] = $langs->trans("ExtraFieldsAssetModel");
+	$head[$h][2] = 'assetmodel_extrafields';
 	$h++;
 
-	complete_head_from_modules($conf, $langs, null, $head, $h, 'assets_admin', 'remove');
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'asset_admin', 'remove');
 
 	return $head;
 }
 
 /**
- * Prepare admin pages header
+ * Prepare array of tabs for Asset
  *
- * @param   Contrat	$object		Object related to tabs
- * @return array head array with tabs
+ * @param	Asset	$object		Asset
+ * @return 	array				Array of tabs
  */
-function asset_prepare_head(Asset $object)
+function assetPrepareHead(Asset $object)
 {
 	global $db, $langs, $conf;
 
-	$langs->load("assets");
+	$langs->load("assets", "admin");
 
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT . '/asset/card.php';
+	$head[$h][0] = DOL_URL_ROOT . '/asset/card.php?id=' . $object->id;
 	$head[$h][1] = $langs->trans("Card");
 	$head[$h][2] = 'card';
+	$h++;
+
+	if (empty($object->not_depreciated)) {
+		$head[$h][0] = DOL_URL_ROOT . '/asset/depreciation_options.php?id=' . $object->id;
+		$head[$h][1] = $langs->trans("AssetDepreciationOptions");
+		$head[$h][2] = 'depreciation_options';
+		$h++;
+	}
+
+	$head[$h][0] = DOL_URL_ROOT . '/asset/accountancy_codes.php?id=' . $object->id;
+	$head[$h][1] = $langs->trans("AssetAccountancyCodes");
+	$head[$h][2] = 'accountancy_codes';
+	$h++;
+
+	if (empty($object->not_depreciated)) {
+		$head[$h][0] = DOL_URL_ROOT . '/asset/depreciation.php?id=' . $object->id;
+		$head[$h][1] = $langs->trans("AssetDepreciation");
+		$head[$h][2] = 'depreciation';
+		$h++;
+	}
+
+	if (isset($object->disposal_date) && $object->disposal_date !== "") {
+		$head[$h][0] = DOL_URL_ROOT . '/asset/disposal.php?id=' . $object->id;
+		$head[$h][1] = $langs->trans("AssetDisposal");
+		$head[$h][2] = 'disposal';
+		$h++;
+	}
+
+	if (isset($object->fields['note_public']) || isset($object->fields['note_private'])) {
+		$nbNote = 0;
+		if (!empty($object->note_private)) {
+			$nbNote++;
+		}
+		if (!empty($object->note_public)) {
+			$nbNote++;
+		}
+		$head[$h][0] = DOL_URL_ROOT . '/asset/note.php?id=' . $object->id;
+		$head[$h][1] = $langs->trans('Notes');
+		if ($nbNote > 0) {
+			$head[$h][1] .= (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) ? '<span class="badge marginleftonlyshort">' . $nbNote . '</span>' : '');
+		}
+		$head[$h][2] = 'note';
+		$h++;
+	}
+
+	require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
+	require_once DOL_DOCUMENT_ROOT . '/core/class/link.class.php';
+	$upload_dir = $conf->asset->dir_output . "/asset/" . dol_sanitizeFileName($object->ref);
+	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
+	$nbLinks = Link::count($db, $object->element, $object->id);
+	$head[$h][0] = DOL_URL_ROOT . '/asset/document.php?id=' . $object->id;
+	$head[$h][1] = $langs->trans('Documents');
+	if (($nbFiles + $nbLinks) > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">' . ($nbFiles + $nbLinks) . '</span>';
+	}
+	$head[$h][2] = 'document';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT . '/asset/agenda.php?id=' . $object->id;
+	$head[$h][1] = $langs->trans("Events");
+	$head[$h][2] = 'agenda';
 	$h++;
 
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
 	//$this->tabs = array(
-	//	'entity:+tabname:Title:@assets:/assets/mypage.php?id=__ID__'
+	//	'entity:+tabname:Title:@asset:/asset/mypage.php?id=__ID__'
 	//); // to add new tab
 	//$this->tabs = array(
-	//	'entity:-tabname:Title:@assets:/assets/mypage.php?id=__ID__'
+	//	'entity:-tabname:Title:@asset:/asset/mypage.php?id=__ID__'
 	//); // to remove a tab
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'assets');
-
-	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
-	$upload_dir = $conf->assets->dir_output . '/' . dol_sanitizeFileName($object->ref);
-	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
-	$nbLinks=Link::count($db, $object->element, $object->id);
-	$head[$h][0] = DOL_URL_ROOT.'/asset/document.php?id='.$object->id;
-	$head[$h][1] = $langs->trans('Documents');
-	if (($nbFiles+$nbLinks) > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.($nbFiles+$nbLinks).'</span>';
-	$head[$h][2] = 'documents';
-	$h++;
-
-	$nbNote = 0;
-	if(!empty($object->note_private)) $nbNote++;
-	if(!empty($object->note_public)) $nbNote++;
-	$head[$h][0] = DOL_URL_ROOT.'/asset/note.php?id='.$object->id;
-	$head[$h][1] = $langs->trans("Notes");
-	if ($nbNote > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
-	$head[$h][2] = 'note';
-	$h++;
-
-	$head[$h][0] = DOL_URL_ROOT . '/asset/info.php?id=' . $object->id;
-	$head[$h][1] = $langs->trans("Info");
-	$head[$h][2] = 'info';
-	$h++;
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'asset');
 
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'asset', 'remove');
 
@@ -126,30 +162,69 @@ function asset_prepare_head(Asset $object)
 }
 
 /**
- *  Return array head with list of tabs to view object informations
+ * Prepare array of tabs for AssetModel
  *
- *  @param	AssetType	$object		Asset
- *  @return array					head
+ * @param	AssetModel	$object		AssetModel
+ * @return 	array					Array of tabs
  */
-function asset_type_prepare_head(AssetType $object)
+function assetModelPrepareHead($object)
 {
-	global $langs, $conf, $user;
+	global $langs, $conf;
 
-	$h=0;
+	$langs->load("assets", "admin");
+
+	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/asset/type.php?rowid='.$object->id;
+	$head[$h][0] = DOL_URL_ROOT . '/asset/model/card.php?id=' . $object->id;
 	$head[$h][1] = $langs->trans("Card");
 	$head[$h][2] = 'card';
 	$h++;
 
+	$head[$h][0] = DOL_URL_ROOT . '/asset/model/depreciation_options.php?id=' . $object->id;
+	$head[$h][1] = $langs->trans("AssetDepreciationOptions");
+	$head[$h][2] = 'depreciation_options';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT . '/asset/model/accountancy_codes.php?id=' . $object->id;
+	$head[$h][1] = $langs->trans("AssetAccountancyCodes");
+	$head[$h][2] = 'accountancy_codes';
+	$h++;
+
+	if (isset($object->fields['note_public']) || isset($object->fields['note_private'])) {
+		$nbNote = 0;
+		if (!empty($object->note_private)) {
+			$nbNote++;
+		}
+		if (!empty($object->note_public)) {
+			$nbNote++;
+		}
+		$head[$h][0] = DOL_URL_ROOT . '/asset/model/note.php?id=' . $object->id;
+		$head[$h][1] = $langs->trans('Notes');
+		if ($nbNote > 0) {
+			$head[$h][1] .= (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) ? '<span class="badge marginleftonlyshort">' . $nbNote . '</span>' : '');
+		}
+		$head[$h][2] = 'note';
+		$h++;
+	}
+
+	$head[$h][0] = DOL_URL_ROOT . '/asset/model/agenda.php?id=' . $object->id;
+	$head[$h][1] = $langs->trans("Events");
+	$head[$h][2] = 'agenda';
+	$h++;
+
+
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
-	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
-	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'assettype');
+	//$this->tabs = array(
+	//	'entity:+tabname:Title:@asset:/asset/mypage.php?id=__ID__'
+	//); // to add new tab
+	//$this->tabs = array(
+	//	'entity:-tabname:Title:@asset:/asset/mypage.php?id=__ID__'
+	//); // to remove a tab
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'assetmodel');
 
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'assettype', 'remove');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'assetmodel', 'remove');
 
 	return $head;
 }

@@ -30,12 +30,12 @@ Permission56005=See tickets of all third parties (not effective for external use
 TicketDictType=Ticket - Types
 TicketDictCategory=Ticket - Groupes
 TicketDictSeverity=Ticket - Severities
-TicketTypeShortBUGSOFT=软件故障
-TicketTypeShortBUGHARD=硬件故障
-TicketTypeShortCOM=商业问题
+TicketDictResolution=Ticket - Resolution
 
+TicketTypeShortCOM=商业问题
 TicketTypeShortHELP=Request for functionnal help
-TicketTypeShortISSUE=Issue, bug or problem
+TicketTypeShortISSUE=Issue or bug
+TicketTypeShortPROBLEM=Problem
 TicketTypeShortREQUEST=Change or enhancement request
 TicketTypeShortPROJET=项目
 TicketTypeShortOTHER=其他
@@ -43,7 +43,9 @@ TicketTypeShortOTHER=其他
 TicketSeverityShortLOW=低
 TicketSeverityShortNORMAL=正常
 TicketSeverityShortHIGH=高
-TicketSeverityShortBLOCKING=临界/阻塞
+TicketSeverityShortBLOCKING=Critical, Blocking
+
+TicketCategoryShortOTHER=其他
 
 ErrorBadEmailAddress=字段'%s'不正确
 MenuTicketMyAssign=我的票据
@@ -55,24 +57,25 @@ TypeContact_ticket_internal_SUPPORTTEC=指定用户
 TypeContact_ticket_external_SUPPORTCLI=客户联系/事件跟踪
 TypeContact_ticket_external_CONTRIBUTOR=外部贡献者
 
-OriginEmail=电邮来源
+OriginEmail=Reporter Email
 Notify_TICKET_SENTBYMAIL=Send ticket message by email
 
 # Status
-NotRead=没看过
 Read=阅读
 Assigned=分配
 InProgress=进行中
-NeedMoreInformation=Waiting for information
+NeedMoreInformation=Waiting for reporter feedback
+NeedMoreInformationShort=Waiting for feedback
 Answered=回答
 Waiting=等候
-Closed=关闭
+SolvedClosed=Solved
 Deleted=删除
 
 # Dict
 Type=类型
-Category=Analytic code
 Severity=严重
+TicketGroupIsPublic=Group is public
+TicketGroupIsPublicDesc=If a ticket group is public, it will be visible in the form when creating a ticket from the public interface
 
 # Email templates
 MailToSendTicketMessage=从票证消息发送电子邮件
@@ -117,8 +120,8 @@ TicketsShowModuleLogo=在公共界面中显示模块的徽标
 TicketsShowModuleLogoHelp=启用此选项可在公共界面的页面中隐藏徽标模块
 TicketsShowCompanyLogo=在公共界面中显示公司的徽标
 TicketsShowCompanyLogoHelp=启用此选项可在公共界面的页面中隐藏主公司的徽标
-TicketsEmailAlsoSendToMainAddress=同时向主电子邮件地址发送通知
-TicketsEmailAlsoSendToMainAddressHelp=启用此选项可向“通知电子邮件地址”发送电子邮件（请参阅下面的设置）
+TicketsEmailAlsoSendToMainAddress=Also send a notification to the main email address
+TicketsEmailAlsoSendToMainAddressHelp=Enable this option to also send an email to the address defined into setup "%s" (see tab "%s")
 TicketsLimitViewAssignedOnly=Restrict the display to tickets assigned to the current user (not effective for external users, always be limited to the third party they depend on)
 TicketsLimitViewAssignedOnlyHelp=仅显示分配给当前用户的票证。不适用于具有票证管理权限的用户。
 TicketsActivatePublicInterface=激活公共接口
@@ -126,13 +129,17 @@ TicketsActivatePublicInterfaceHelp=公共接口允许任何访问者创建票证
 TicketsAutoAssignTicket=自动分配创建故障单的用户
 TicketsAutoAssignTicketHelp=创建故障单时，可以自动将用户分配给故障单。
 TicketNumberingModules=票据编号模块
+TicketsModelModule=Document templates for tickets
 TicketNotifyTiersAtCreation=Notify third party at creation
-TicketGroup=组
 TicketsDisableCustomerEmail=Always disable emails when a ticket is created from public interface
+TicketsPublicNotificationNewMessage=Send email(s) when a new message/comment is added to a ticket
+TicketsPublicNotificationNewMessageHelp=Send email(s) when a new message is added from public interface (to assigned user or the notifications email to (update) and/or the notifications email to)
+TicketPublicNotificationNewMessageDefaultEmail=Notifications email to (update)
+TicketPublicNotificationNewMessageDefaultEmailHelp=Send an email to this address for each new message notifications if the ticket doesn't have a user assigned to it or if the user doesn't have any known email.
 #
 # Index & list page
 #
-TicketsIndex=票据 - 首页
+TicketsIndex=Tickets area
 TicketList=票据清单
 TicketAssignedToMeInfos=This page display ticket list created by or assigned to current user
 NoTicketsFound=没有找到票据
@@ -157,7 +164,7 @@ CreatedBy=制作：
 NewTicket=新票据
 SubjectAnswerToTicket=票据应答
 TicketTypeRequest=请求类型
-TicketCategory=Analytic code
+TicketCategory=Ticket categorization
 SeeTicket=查看票据
 TicketMarkedAsRead=票据已标记为已读
 TicketReadOn=请继续阅读
@@ -175,15 +182,17 @@ MessageSuccessfullyAdded=新增票据
 TicketMessageSuccessfullyAdded=消息已成功添加
 TicketMessagesList=消息列表
 NoMsgForThisTicket=此票证没有消息
-Properties=分类
+TicketProperties=Classification
 LatestNewTickets=最新%s最新票据（未读）
 TicketSeverity=严重
 ShowTicket=看票
 RelatedTickets=相关票据
 TicketAddIntervention=创建干预
-CloseTicket=关票据
-CloseATicket=关票据
+CloseTicket=Close|Solve ticket
+AbandonTicket=Abandon ticket
+CloseATicket=Close|Solve a ticket
 ConfirmCloseAticket=确认票据关闭
+ConfirmAbandonTicket=Do you confirm the closing of the ticket to status 'Abandonned'
 ConfirmDeleteTicket=请确认删除票据
 TicketDeletedSuccess=票证已成功删除
 TicketMarkedAsClosed=票据标记为已关闭
@@ -208,6 +217,7 @@ TicketMessageHelp=只有此文本将保存在故障单卡的消息列表中。
 TicketMessageSubstitutionReplacedByGenericValues=替换变量由通用值替换。
 TimeElapsedSince=Time elapsed since
 TicketTimeToRead=Time elapsed before read
+TicketTimeElapsedBeforeSince=Time elapsed before / since
 TicketContacts=联系票
 TicketDocumentsLinked=与票证相关的文件
 ConfirmReOpenTicket=确认重新打开此票？
@@ -230,7 +240,6 @@ TicketLogStatusChanged=Status changed: %s to %s
 TicketNotNotifyTiersAtCreate=不在创建时通知公司
 Unread=Unread
 TicketNotCreatedFromPublicInterface=Not available. Ticket was not created from public interface.
-PublicInterfaceNotEnabled=Public interface was not enabled
 ErrorTicketRefRequired=Ticket reference name is required
 
 #
@@ -241,7 +250,7 @@ NoLogForThisTicket=暂无此日志
 TicketLogAssignedTo=Ticket %s assigned to %s
 TicketLogPropertyChanged=Ticket %s modified: classification from %s to %s
 TicketLogClosedBy=Ticket %s closed by %s
-TicketLogReopen=Ticket %s re-opened
+TicketLogReopen=Ticket %s re-open
 
 #
 # Public pages
@@ -253,7 +262,7 @@ TicketPublicDesc=您可以创建支持服务单或从现有ID进行检查。
 YourTicketSuccessfullySaved=票据已成功保存！
 MesgInfosPublicTicketCreatedWithTrackId=A new ticket has been created with ID %s and Ref %s.
 PleaseRememberThisId=请保留我们稍后可能会问你的跟踪号码。
-TicketNewEmailSubject=Ticket creation confirmation - Ref %s
+TicketNewEmailSubject=Ticket creation confirmation - Ref %s (public ticket ID %s)
 TicketNewEmailSubjectCustomer=新支持票
 TicketNewEmailBody=这是一封自动电子邮件，用于确认您已注册新票证。
 TicketNewEmailBodyCustomer=这是一封自动发送的电子邮件，用于确认刚刚在您的帐户中创建了新的故障单。
@@ -272,7 +281,7 @@ Subject=主题
 ViewTicket=查看票证
 ViewMyTicketList=查看我的票证清单
 ErrorEmailMustExistToCreateTicket=Error: email address not found in our database
-TicketNewEmailSubjectAdmin=New ticket created - Ref %s
+TicketNewEmailSubjectAdmin=New ticket created - Ref %s (public ticket ID %s)
 TicketNewEmailBodyAdmin=<p>Ticket has just been created with ID #%s, see information:</p>
 SeeThisTicketIntomanagementInterface=请参阅管理界面中的票证
 TicketPublicInterfaceForbidden=The public interface for the tickets was not enabled
@@ -302,3 +311,14 @@ BoxLastModifiedTicket=最新修改的票据
 BoxLastModifiedTicketDescription=最新%s改装票据
 BoxLastModifiedTicketContent=
 BoxLastModifiedTicketNoRecordedTickets=没有最近修改的票据
+BoxTicketType=Distribution of open tickets by type
+BoxTicketSeverity=Number of open tickets by severity
+BoxNoTicketSeverity=No tickets opened
+BoxTicketLastXDays=Number of new tickets by days the last %s days
+BoxTicketLastXDayswidget = Number of new tickets by days the last X days
+BoxNoTicketLastXDays=No new tickets the last %s days
+BoxNumberOfTicketByDay=Number of new tickets by day
+BoxNewTicketVSClose=Number of tickets versus closed tickets (today)
+TicketCreatedToday=Ticket created today
+TicketClosedToday=Ticket closed today
+KMFoundForTicketGroup=We found topics and FAQs that may answers your question, thanks to check them before submitting the ticket

@@ -1,6 +1,7 @@
 -- ========================================================================
 -- Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2022 	   Juanjo Menent        <jmenent@2byte.es>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -17,11 +18,13 @@
 --
 -- ========================================================================
 
+--  This is the dictionary of sales orders origin
+
 create table llx_c_input_reason
 (
   rowid		integer AUTO_INCREMENT PRIMARY KEY,
   code		varchar(30),
-  label		varchar(60),
+  label		varchar(128),
   active	tinyint default 1  NOT NULL,
   module    varchar(32) NULL
 )ENGINE=innodb;

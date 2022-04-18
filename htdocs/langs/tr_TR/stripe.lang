@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - stripe
 StripeSetup=Stripe modülü kurulumu
-StripeDesc=Offer customers a Stripe online payment page for payments with credit/cebit cards via <a href="http://www.stripe.com" target="_blank">Stripe</a>. This can be used to allow your customers to make ad-hoc payments or for payments related to a particular Dolibarr object (invoice, order, ...)
+StripeDesc=Offer your customers an online payment page for payments with credit/debit cards via <a href="https://www.stripe.com" target="_blank" rel="noopener noreferrer external">Stripe</a>. This can be used to allow your customers to make ad-hoc payments or for payments related to a particular Dolibarr object (invoice, order, ...)
 StripeOrCBDoPayment=Kredi kartı veya Stripe ile ödeme yapın
 FollowingUrlAreAvailableToMakePayments=Aşağıdaki URL'ler bir müşteriye Dolibarr nesnelerine bir ödeme yapmak için bir sayfa sunmak için kullanılabilir
 PaymentForm=Ödeme Formu
@@ -28,10 +28,10 @@ AccountParameter=Hesap parametreleri
 UsageParameter=Kullanım parametreleri
 InformationToFindParameters=%s Hesap bilgilerinizi bulmanız için yardım
 STRIPE_CGI_URL_V2=Ödeme için Stripe CGI modülü URL'si
-VendorName=Satıcının Adı
 CSSUrlForPaymentForm=Ödeme formu için CSS stil sayfası url'si
 NewStripePaymentReceived=Yeni Stripe ödemesi alındı
 NewStripePaymentFailed=Yeni Stripe ödemesi denendi ancak başarısız oldu
+FailedToChargeCard=Failed to charge card
 STRIPE_TEST_SECRET_KEY=Gizli test anahtarı
 STRIPE_TEST_PUBLISHABLE_KEY=Yayımlanabilir test anahtarı
 STRIPE_TEST_WEBHOOK_KEY=Webhook test key
@@ -68,3 +68,4 @@ ToOfferALinkForTestWebhook=Link to setup Stripe WebHook to call the IPN (test mo
 ToOfferALinkForLiveWebhook=Link to setup Stripe WebHook to call the IPN (live mode)
 PaymentWillBeRecordedForNextPeriod=Ödeme gelecek dönem için kaydedilecektir.
 ClickHereToTryAgain=<a href="%s">Tekrar denemek için burayı tıklayın...</a>
+CreationOfPaymentModeMustBeDoneFromStripeInterface=Due to Strong Customer Authentication rules, creation of a card must be done from Stripe backoffice. You can click here to switch on Stripe customer record: %s

@@ -22,6 +22,8 @@ ProductVatMassChangeDesc=این ابزار نرخ مالیات بر ارزش ا�
 MassBarcodeInit=تعریف دستجمعی بارکد
 MassBarcodeInitDesc=این صفحه می‌تواند برای تعریف بارکد اشیائی که برای آن‌ها بارکد تعریف نشده استفاده شود. قبل از استفاده، مطمئن شوید واحد بارکد به خوبی نصب و برپاسازی شده است.
 ProductAccountancyBuyCode=کد حساب‌داری (خرید)
+ProductAccountancyBuyIntraCode=Accounting code (purchase intra-community)
+ProductAccountancyBuyExportCode=Accounting code (purchase import)
 ProductAccountancySellCode=کد  حساب‌داری (فروش)
 ProductAccountancySellIntraCode=کد حساب‌داری (فروش داخل جامعه‌ای-اروپا)
 ProductAccountancySellExportCode=کد حساب‌داری (فروش صادرات)
@@ -41,7 +43,7 @@ ServicesOnSaleOnly=خدمات فقط برای فروش
 ServicesOnPurchaseOnly=خدمات فقط برای خرید
 ServicesNotOnSell=خدمات نه برای خرید و نه برای فروش
 ServicesOnSellAndOnBuy=خدمات هم برای خرید و هم برای فروش
-LastModifiedProductsAndServices=آخرین %s محصولات/خدمات تغییریافته
+LastModifiedProductsAndServices=Latest %s products/services which were modified
 LastRecordedProducts=آخرین %s محصول ثبت شده
 LastRecordedServices=آخرین %s خدمات ثبت شده
 CardProduct0=محصول
@@ -71,12 +73,13 @@ SellingPrice=قیمت فروش
 SellingPriceHT=قیمت فروش (منهای مالیات)
 SellingPriceTTC=قیمت فروش (با مالیات)
 SellingMinPriceTTC=حداقل قیمت فروش (با مالیات)
-CostPriceDescription=این بخش قیمت(بدون مالیات) است که می‌تواند برای ذخیرۀ مبلغ متوسطی که این محصول برای شرکت شما هزینه وارد می‌کند استفاده شود. این می‌تواند هر قیمتی که شما محاسبه‌کنید باشد، برای مثال از جمع متوسط قیمت خرید و هزینه تولید و توزیع.
+CostPriceDescription=This price field (excl. tax) can be used to capture the average amount this product costs to your company. It may be any price you calculate yourself, for example, from the average buying price plus average production and distribution cost.
 CostPriceUsage=این مقدار برای محاسبۀ حاشیه قابل استفاده است.
+ManufacturingPrice=Manufacturing price
 SoldAmount=مبلغ فروخته‌شده
 PurchasedAmount=مبلغ خریده شده
 NewPrice=قیمت جدید
-MinPrice=حداقل قیمت فروش
+MinPrice=Min. selling price
 EditSellingPriceLabel=ویرایش برچسب قیمت فروش
 CantBeLessThanMinPrice=قیمت فروش نمی تواند کمتر از حداقل مجاز برای این محصول (%s بدون مالیات) باشد. این پیام همچنین در موقعی ظاهر می‌شود که شما یک تخفیف بسیار جدی داده باشید.
 ContractStatusClosed=بسته
@@ -102,22 +105,25 @@ SetDefaultBarcodeType=تنظیم نوع بارکد
 BarcodeValue=مقدار بارکد
 NoteNotVisibleOnBill=یادداشت (در صورت‌حساب‌ها، پیشنهادها و غیره نمایش داده نمی‌شود)
 ServiceLimitedDuration=در صورتی که محصول، خدماتی با مدت‌زمان محدود است:
+FillWithLastServiceDates=Fill with last service line dates
 MultiPricesAbility=چند قسمت قیمتی در هر محصول/خدمات (هر مشتری در یک قسمت قیمتی است)
 MultiPricesNumPrices=تعداد قیمت‌ها
-AssociatedProductsAbility=فعال‌کردن محصولات مجازی (بسته‌ها)
-AssociatedProducts=محصولات مجازی
-AssociatedProductsNumber=تعداد محصولاتی که این محصول مجازی را درست می‌کنند
+DefaultPriceType=Base of prices per default (with versus without tax) when adding new sale prices
+AssociatedProductsAbility=Enable Kits (set of several products)
+VariantsAbility=Enable Variants (variations of products, for example color, size)
+AssociatedProducts=Kits
+AssociatedProductsNumber=Number of products composing this kit
 ParentProductsNumber=تعداد محصولات بسته‌بندی مادر
 ParentProducts=محصولات مادر
-IfZeroItIsNotAVirtualProduct=در صورتی که برابر با 0 باشد، این محصول یک محصول مجازی نیست
-IfZeroItIsNotUsedByVirtualProduct=در صورتی که برابر با 0 باشد، این محصول توسط هیچ محصول مجازی مورد استفاده قرار نگرفته است
+IfZeroItIsNotAVirtualProduct=If 0, this product is not a kit
+IfZeroItIsNotUsedByVirtualProduct=If 0, this product is not used by any kit
 KeywordFilter=صافی کلیدواژه
 CategoryFilter=صافی دسته‌بندی
 ProductToAddSearch=جستجوی محصول برای اضافه‌کردن
 NoMatchFound=هیچ نتیجه‌ای نداشت
 ListOfProductsServices=فهرست محصولات/خدمات
-ProductAssociationList=فهرست محصولات/خدماتی که بخش‌های تشکیل دهندۀ این محصول‌مجازی(بسته) هستند
-ProductParentList=فهرست محصولات/خدمات مجازی که از این محصول به‌عنوان یک جزء تشکیل شده‌اند
+ProductAssociationList=List of products/services that are component(s) of this kit
+ProductParentList=List of kits with this product as a component
 ErrorAssociationIsFatherOfThis=یکی از محصولات انتخاب شده مادر همین محصول است
 DeleteProduct=حذف یک محصول/خدما
 ConfirmDeleteProduct=آیا مطمئن‌هستید می‌خواهید این محصول/خدمات را حذف کنید؟
@@ -136,6 +142,7 @@ VATRateForSupplierProduct=نرخ م.ب.ا.ا. (برای این فروشنده/م
 DiscountQtyMin=تخفیف برای این مقدار
 NoPriceDefinedForThisSupplier=قیمت/مقدار برای این فروشنده/محصول تعریف نشده است
 NoSupplierPriceDefinedForThisProduct=قیمت/مقدار برای این محصول تعریف نشده است
+PredefinedItem=Predefined item
 PredefinedProductsToSell=محصول ازپیش‌تعریف‌شده
 PredefinedServicesToSell=خدمات از پیش‌تعریف‌شده
 PredefinedProductsAndServicesToSell=محصول/خدمات از پیش‌تعریف‌شده برای فروش
@@ -151,11 +158,11 @@ ListServiceByPopularity=فهرست خدمات بر حسب محبوبیت
 Finished=محصول تولیدشده
 RowMaterial=مواد اولیه
 ConfirmCloneProduct=آیا مطمئنید می‌خواهید از خدمات یا محصولات <b>%s</b> نسخه‌برداری کنید؟
-CloneContentProduct=نسخه‌برداری از از همۀ اطلاعات اصلی محصول/خدما
+CloneContentProduct=Clone all main information of the product/service
 ClonePricesProduct=نسخه‌برداری از قیمت‌ها
-CloneCategoriesProduct=Clone tags/categories linked
-CloneCompositionProduct=نسخه‌برداری از محصول/خدمات مجازی
-CloneCombinationsProduct=نسخه‌برداری از انواع مختلف محصول
+CloneCategoriesProduct=Clone linked tags/categories
+CloneCompositionProduct=Clone virtual products/services
+CloneCombinationsProduct=Clone the product variants
 ProductIsUsed=این محصول، دست‌دوم است
 NewRefForClone=ارجاع محصول/خدمات جدید
 SellingPrices=قیمت‌های فروش
@@ -163,9 +170,13 @@ BuyingPrices=قیمت‌های خرید
 CustomerPrices=قیمت‌های مشتری
 SuppliersPrices=قیمت‌های فروشنده
 SuppliersPricesOfProductsOrServices=قیمت‌های فروشنده (مربوط به محصولات و خدمات)
-CustomCode=گمرک / کالا / کدبندی هماهنگ کالا
-CountryOrigin=کشور مبدا
-Nature=Nature of produt (material/finished)
+CustomCode=Customs|Commodity|HS code
+CountryOrigin=Country of origin
+RegionStateOrigin=Region of origin
+StateOrigin=State|Province of origin
+Nature=Nature of product (raw/manufactured)
+NatureOfProductShort=Nature of product
+NatureOfProductDesc=Raw material or manufactured product
 ShortLabel=برچسب کوتاه
 Unit=واحد
 p=واحد
@@ -233,7 +244,7 @@ AlwaysUseFixedPrice=استفاده از قیمت ثابت
 PriceByQuantity=استفاده از قیمت‌ بر حسب تعداد
 DisablePriceByQty=غیرفعال کردن استفاده از قیمت برحسب تعداد
 PriceByQuantityRange=بازۀ تعدا
-MultipriceRules=مقررات قسمت‌بندی قیمت
+MultipriceRules=Automatic prices for segment
 UseMultipriceRules=استفاده از مقررات قسمت‌بندی قیمت (که در برپاسازی واحد محصولات آمده است) برای محاسبۀ خودکار قیمت سایر قسمت‌ها بر حسب اولین قسمت
 PercentVariationOver=%% انواع بر حسب%s
 PercentDiscountOver=%% تخفیف بر حسب%s
@@ -267,7 +278,7 @@ PriceByCustomer=قیمت متفاوت برای هر مشتری
 PriceCatalogue=یک قیمت واحد برای هر محصول/خدمات
 PricingRule=مقررات قیمت‌های فروش
 AddCustomerPrice=افزودن قیمت برحسب مشتری
-ForceUpdateChildPriceSoc=تنظیم قیمت تعیین شده برای مشتری برای زیرمجموعه‌های آن
+ForceUpdateChildPriceSoc=Set same price on customer's subsidiaries
 PriceByCustomerLog=ثبت‌گزارش همۀ قیمت‌های قبلی مربوط به مشتری
 MinimumPriceLimit=حداقل قیمت نمی‌تواند کمتر از %s باشد
 MinimumRecommendedPrice=حداقل قیمت پیشنهادی برابر است با: %s
@@ -281,10 +292,12 @@ PriceExpressionEditorHelp5=مقادیر فعال سراسری:
 PriceMode=حالت قیمت
 PriceNumeric=عدد
 DefaultPrice=قیمت‌پیش‌فرض
+DefaultPriceLog=Log of previous default prices
 ComposedProductIncDecStock=کم/زیاد کردن موجودی در هنگام تغییر مادر
 ComposedProduct=محصولات فرزند
 MinSupplierPrice=حداقل قیمت خرید
 MinCustomerPrice=حداقل قیمت فروش
+NoDynamicPrice=No dynamic price
 DynamicPriceConfiguration=پیکربندی قیمت پویا
 DynamicPriceDesc=شما می‌توانید فرمول ریاضی برای محاسبۀ قیمت‌های مشتری یا فروشنده تعریف کنید. چنین فرمول‌هائی امکان استفاده از عمل‌گرهای ریاضی را بعلاوۀ تعداد مقدارثابت و متغیر دارند. شما می‌توانید در اینجا متغیرهائی که برای استفاده نیاز دارید تعریف کنید. در صورتی که متغیر نیازمند به‌روز‌رسانی خودکار باشد، شما باید نشانی خارجی متعلق به آن را برای به‌روز‌رسانی خودکار مقدار آن به Dolibarr بدهید
 AddVariable=افزودن متغیر
@@ -303,7 +316,7 @@ LastUpdated=آخرین به‌روزرسانی
 CorrectlyUpdated=به‌درستی به‌روز‌شد
 PropalMergePdfProductActualFile=فایل‌های قابل استفاده برای اضافه کردن به PDF Azur
 PropalMergePdfProductChooseFile=انتخاب فایل‌های PDF
-IncludingProductWithTag=شامل‌کردن محصولات/خدمات به‌واسطۀ کلیدواژه
+IncludingProductWithTag=Including products/services with the tag
 DefaultPriceRealPriceMayDependOnCustomer=قیمت پیش‌فرض، قیمت واقعی ممکن است به مشتری وابسته باشد.
 WarningSelectOneDocument=لطفا حداقل یک سند انتخاب کنید
 DefaultUnitToShow=واحد
@@ -329,8 +342,13 @@ ProductSheet=ورقۀ محصول
 ServiceSheet=ورقۀ خدما
 PossibleValues=مقادیر ممکن
 GoOnMenuToCreateVairants=برای آماده‌کردن ویژگی‌های چندگانه (مثل رنگ، اندازه و غیره) به فهرست %s - %s بروید 
-UseProductFournDesc=ایجاد یک قابلیت برای تعریف توضیحات مربوط به محصولاتی که توسط فروشندگان در ادامۀ توضیحات ارائه شده به مشتریان
+UseProductFournDesc=Add a feature to define the product description defined by the vendors (for each vendor reference) in addition to the description for customers
 ProductSupplierDescription=توضیحات فروشنده برای محصول
+UseProductSupplierPackaging=Use packaging on supplier prices (recalculate quantities according to packaging set on supplier price when adding/updating line in supplier documents)
+PackagingForThisProduct=Packaging
+PackagingForThisProductDesc=On supplier order, you will automaticly order this quantity (or a multiple of this quantity). Cannot be less than minimum buying quantity
+QtyRecalculatedWithPackaging=The quantity of the line were recalculated according to supplier packaging
+
 #Attributes
 VariantAttributes=انواع ویژگی
 ProductAttributes=انواع ویژگی‌های محصولات
@@ -352,6 +370,9 @@ SelectCombination=انتخاب یک ترکیب
 ProductCombinationGenerator=تولیدکننده انواع
 Features=قابلیت‌ها
 PriceImpact=تاثیر قیم
+ImpactOnPriceLevel=Impact on price level %s
+ApplyToAllPriceImpactLevel= Apply to all levels
+ApplyToAllPriceImpactLevelHelp=By clicking here you set the same price impact on all levels
 WeightImpact=تاثیر وزن
 NewProductAttribute=ویژگی های جدید
 NewProductAttributeValue=نوع جدید ویژگی
@@ -363,7 +384,7 @@ UsePercentageVariations=استفاده از انواع درصدی
 PercentageVariation=انواع درصدی
 ErrorDeletingGeneratedProducts=خطائی در هنگام حذف انواع موجود محصول رخ داد
 NbOfDifferentValues=تعداد مقادیر مختلف
-NbProducts=تعداد محصولات
+NbProducts=Number of products
 ParentProduct=محصول مادر
 HideChildProducts=پنهان کردن انواع مختلف محصولات 
 ShowChildProducts=نمایش انواع مختلف محصولات
@@ -376,3 +397,17 @@ ErrorProductCombinationNotFound=نوع محصول پیدا نشد
 ActionAvailableOnVariantProductOnly=این کنش تنها بر روی یک نوع از انواع محصول قابل اجراست
 ProductsPricePerCustomer=قیمت محصول وابسته به مشتریان
 ProductSupplierExtraFields=Additional Attributes (Supplier Prices)
+DeleteLinkedProduct=Delete the child product linked to the combination
+AmountUsedToUpdateWAP=Amount to use to update the Weighted Average Price
+PMPValue=قیمت میانگین متوازن
+PMPValueShort=قیمت میانگین وزنی
+mandatoryperiod=Mandatory periods
+mandatoryPeriodNeedTobeSet=Note: Period (start and end date) must be defined
+mandatoryPeriodNeedTobeSetMsgValidate=A service requires a start and end period
+mandatoryHelper=Check this if you want a message to the user when creating / validating an invoice, commercial proposal, sales order without entering a start and end date on lines with this service.<br>Note that the message is a warning and not a blocking error.
+DefaultBOM=Default BOM
+DefaultBOMDesc=The default BOM recommended to use to manufacture this product. This field can be set only if nature of product is '%s'.
+Rank=Rank
+SwitchOnSaleStatus=Switch on sale status
+SwitchOnPurchaseStatus=Switch on purchase status
+StockMouvementExtraFields= Extra Fields (stock mouvement)

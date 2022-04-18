@@ -22,15 +22,15 @@
 create table llx_reception
 (
   rowid                 integer AUTO_INCREMENT PRIMARY KEY,
-  tms                   timestamp,
+  tms                   timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   ref                   varchar(30)        NOT NULL,
   entity                integer  DEFAULT 1 NOT NULL,	-- multi company id
   fk_soc                integer            NOT NULL,
-  fk_projet  		integer  DEFAULT NULL,
+  fk_projet             integer  DEFAULT NULL,
   
   ref_ext               varchar(30),					-- reference into an external system (not used by dolibarr)
-  ref_int				varchar(30),					-- reference into an internal system (used by dolibarr to store extern id like paypal info)
-  ref_supplier          varchar(30),					-- customer number
+  ref_int				varchar(30),					-- reference into an internal system (deprecated)
+  ref_supplier          varchar(128),					-- supplier number
   
   date_creation         datetime,						-- date de creation
   fk_user_author        integer,						-- author of creation
@@ -38,7 +38,7 @@ create table llx_reception
   date_valid            datetime,						-- date de validation
   fk_user_valid         integer,						-- valideur
   date_delivery			datetime	DEFAULT NULL,		-- date planned of delivery
-  date_reception       datetime,						
+  date_reception        datetime,
   fk_shipping_method    integer,
   tracking_number       varchar(50),
   fk_statut             smallint	DEFAULT 0,			-- 0 = draft, 1 = validated, 2 = billed or closed depending on WORKFLOW_BILL_ON_SHIPMENT option

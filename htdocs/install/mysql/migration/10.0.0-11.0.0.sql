@@ -59,11 +59,14 @@ ALTER TABLE llx_emailcollector_emailcollectoraction ADD COLUMN position integer 
 
 -- For v11
 
+
 ALTER TABLE llx_product_price MODIFY COLUMN tva_tx double(6,3) DEFAULT 0 NOT NULL;
 
 ALTER TABLE llx_facturedet MODIFY COLUMN situation_percent real DEFAULT 100;
 UPDATE llx_facturedet SET situation_percent = 100 WHERE situation_percent IS NULL AND fk_prev_id IS NULL;
 
+-- Set country to null for deprecated accounting system (there is now one per country)
+UPDATE llx_accounting_system SET fk_country = NULL, active = 0 WHERE pcg_version = 'SYSCOHADA';
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 20, 'BAS-K1-MINI', 'The Swedish mini chart of accounts', 1);
 
 ALTER TABLE llx_c_action_trigger MODIFY COLUMN elementtype varchar(64) NOT NULL;
@@ -95,7 +98,8 @@ ALTER TABLE llx_bom_bomline ADD COLUMN position integer NOT NULL DEFAULT 0;
 ALTER TABLE llx_bom_bomline ADD COLUMN qty_frozen smallint DEFAULT 0;
 ALTER TABLE llx_bom_bomline ADD COLUMN disable_stock_change smallint DEFAULT 0;
 
-ALTER TABLE llx_bom_bomline DROP COLUMN rank;
+-- VMYSQL4.1 ALTER TABLE llx_bom_bomline DROP COLUMN `rank`;
+-- VPGSQL8.2 ALTER TABLE llx_bom_bomline DROP COLUMN rank;
 
 create table llx_categorie_warehouse
 (
@@ -115,7 +119,7 @@ ALTER TABLE llx_categorie_warehouse ADD CONSTRAINT fk_categorie_warehouse_fk_war
 create table llx_holiday_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-  tms                       timestamp,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_object                 integer NOT NULL,
   import_key                varchar(14)                          		-- import key
 ) ENGINE=innodb;
@@ -131,7 +135,7 @@ insert into llx_c_action_trigger (code,label,description,elementtype,rang) value
 create table llx_entrepot_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-  tms                       timestamp,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_object                 integer NOT NULL,
   import_key                varchar(14)                          		-- import key
 ) ENGINE=innodb;
@@ -161,7 +165,7 @@ ALTER TABLE llx_events ADD COLUMN prefix_session varchar(255) NULL;
 create table llx_payment_salary_extrafields
 (
   rowid            integer AUTO_INCREMENT PRIMARY KEY,
-  tms              timestamp,
+  tms              timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_object        integer NOT NULL,    -- salary payment id
   import_key       varchar(14)      	-- import key
 )ENGINE=innodb;
@@ -179,8 +183,8 @@ ALTER TABLE llx_oauth_token ADD COLUMN fk_soc integer DEFAULT NULL after token;
 
 ALTER TABLE llx_adherent_type ADD COLUMN duration varchar(6) DEFAULT NULL after morphy;
 
-ALTER TABLE llx_mailing ADD COLUMN tms timestamp;
-ALTER TABLE llx_mailing_cibles ADD COLUMN tms timestamp;
+ALTER TABLE llx_mailing ADD COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+ALTER TABLE llx_mailing_cibles ADD COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 
 ALTER TABLE llx_projet ADD COLUMN usage_opportunity integer DEFAULT 0;
 ALTER TABLE llx_projet ADD COLUMN usage_task integer DEFAULT 1;
@@ -454,7 +458,7 @@ create table llx_c_shipment_package_type
 
 CREATE TABLE llx_product_fournisseur_price_extrafields (
 	rowid               integer AUTO_INCREMENT PRIMARY KEY,
-	tms                 timestamp,
+	tms                 timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	fk_object           integer NOT NULL,
 	import_key          varchar(14) -- import key
 ) ENGINE=innodb;
@@ -474,7 +478,7 @@ CREATE TABLE llx_mrp_mo(
     note_private text,
     date_creation datetime NOT NULL,
     date_valid datetime NULL,
-    tms timestamp,
+    tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     fk_user_creat integer NOT NULL,
     fk_user_modif integer,
     fk_user_valid integer,
@@ -510,7 +514,7 @@ ALTER TABLE llx_mrp_mo ADD INDEX idx_mrp_mo_fk_project (fk_project);
 create table llx_mrp_mo_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-  tms                       timestamp,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_object                 integer NOT NULL,
   import_key                varchar(14)                                 -- import key
 ) ENGINE=innodb;
@@ -547,7 +551,7 @@ CREATE TABLE llx_mrp_production(
 	fk_mrp_production integer,		-- if role = 'consumed', id of line with role 'toconsume', if role = 'produced' id of line with role 'toproduce'
 	fk_stock_movement integer,		-- id of stock movement when movements are validated
 	date_creation datetime NOT NULL,
-	tms timestamp,
+	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	fk_user_creat integer NOT NULL,
 	fk_user_modif integer,
 	import_key varchar(14)
@@ -572,10 +576,21 @@ ALTER TABLE llx_facture_rec MODIFY COLUMN fk_cond_reglement integer NOT NULL DEF
 create table llx_commande_fournisseur_dispatch_extrafields
 (
   rowid            integer AUTO_INCREMENT PRIMARY KEY,
-  tms              timestamp,
+  tms              timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_object        integer NOT NULL,    -- object id
   import_key       varchar(14)      	-- import key
 )ENGINE=innodb;
 
 ALTER TABLE llx_commande_fournisseur_dispatch_extrafields ADD INDEX idx_commande_fournisseur_dispatch_extrafields (fk_object);
+
+
+create table llx_facturedet_rec_extrafields
+(
+  rowid            integer AUTO_INCREMENT PRIMARY KEY,
+  tms              timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  fk_object        integer NOT NULL,    -- object id
+  import_key       varchar(14)      	-- import key
+)ENGINE=innodb;
+
+ALTER TABLE llx_facturedet_rec_extrafields ADD INDEX idx_facturedet_rec_extrafields (fk_object);
 

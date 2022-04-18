@@ -28,46 +28,57 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/loan.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-if (! empty($conf->projet->enabled)) {
-	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+if (!empty($conf->projet->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array("other","companies","compta","bills","loan"));
+$langs->loadLangs(array("other", "companies", "compta", "bills", "loan"));
 
 $id = GETPOST('id', 'int');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 
 // Security check
-if ($user->socid) $socid=$user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 $result = restrictedArea($user, 'loan', $id, '', '');
 
 // Get parameters
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
-    $page = 0;
+	$page = 0;
 }
-$offset = $conf->liste_limit * $page;
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (!$sortorder) $sortorder = "ASC";
-if (!$sortfield) $sortfield = "name";
+if (!$sortorder) {
+	$sortorder = "ASC";
+}
+if (!$sortfield) {
+	$sortfield = "name";
+}
 
 $object = new Loan($db);
-if ($id > 0) $object->fetch($id);
+if ($id > 0) {
+	$object->fetch($id);
+}
 
 $upload_dir = $conf->loan->dir_output.'/'.dol_sanitizeFileName($object->ref);
 $modulepart = 'loan';
+
+$permissiontoadd = $user->rights->loan->write; // Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles.inc.php
 
 
 /*
  * Actions
  */
 
-include_once DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
+include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
 
 /*
@@ -80,13 +91,12 @@ $title = $langs->trans("Loan").' - '.$langs->trans("Documents");
 $help_url = 'EN:Module_Loan|FR:Module_Emprunt';
 llxHeader("", $title, $help_url);
 
-if ($object->id)
-{
+if ($object->id) {
 	$totalpaid = $object->getSumPayment();
 
-    $head = loan_prepare_head($object);
+	$head = loan_prepare_head($object);
 
-    dol_fiche_head($head, 'documents', $langs->trans("Loan"), -1, 'bill');
+	print dol_get_fiche_head($head, 'documents', $langs->trans("Loan"), -1, 'bill');
 
 	$morehtmlref = '<div class="refidno">';
 	// Ref loan
@@ -98,7 +108,7 @@ if ($object->id)
 		$morehtmlref .= '<br>'.$langs->trans('Project').' : ';
 		if ($user->rights->loan->write) {
 			//if ($action != 'classify')
-			//	$morehtmlref .= '<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+			//	$morehtmlref .= '<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 			if ($action == 'classify') {
 				// $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
 				$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
@@ -114,9 +124,10 @@ if ($object->id)
 			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
 				$proj->fetch($object->fk_project);
-				$morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$object->fk_project.'" title="'.$langs->trans('ShowProject').'">';
-				$morehtmlref .= $proj->ref;
-				$morehtmlref .= '</a>';
+				$morehtmlref .= ' : '.$proj->getNomUrl(1);
+				if ($proj->title) {
+					$morehtmlref .= ' - '.$proj->title;
+				}
 			} else {
 				$morehtmlref .= '';
 			}
@@ -134,33 +145,30 @@ if ($object->id)
 	print '<div class="underbanner clearboth"></div>';
 
 
-    // Build file list
-    $filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
-    $totalsize = 0;
-    foreach ($filearray as $key => $file)
-    {
-        $totalsize += $file['size'];
-    }
+	// Build file list
+	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
+	$totalsize = 0;
+	foreach ($filearray as $key => $file) {
+		$totalsize += $file['size'];
+	}
 
 
-    print '<table class="border tableforfield centpercent">';
-    print '<tr><td class="titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td>'.count($filearray).'</td></tr>';
-    print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td>'.dol_print_size($totalsize, 1, 1).'</td></tr>';
-    print "</table>\n";
+	print '<table class="border tableforfield centpercent">';
+	print '<tr><td class="titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td>'.count($filearray).'</td></tr>';
+	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td>'.dol_print_size($totalsize, 1, 1).'</td></tr>';
+	print "</table>\n";
 
-    print "</div>\n";
+	print "</div>\n";
 
-    dol_fiche_end();
+	print dol_get_fiche_end();
 
-    $modulepart = 'loan';
-    $permission = $user->rights->loan->write;
-    $permtoedit = $user->rights->loan->write;
-    $param = '&id='.$object->id;
-    include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
-}
-else
-{
-    print $langs->trans("ErrorUnknown");
+	$modulepart = 'loan';
+	$permissiontoadd = $user->rights->loan->write;
+	$permtoedit = $user->rights->loan->write;
+	$param = '&id='.$object->id;
+	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
+} else {
+	print $langs->trans("ErrorUnknown");
 }
 
 // End of page

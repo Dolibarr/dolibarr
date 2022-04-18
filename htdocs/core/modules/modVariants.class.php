@@ -24,8 +24,9 @@
  *  \brief      Module to manage product combinations based on product attributes
  *  \file       htdocs/core/modules/modVariants.class.php
  *  \ingroup    produit
+ *  \brief      Description and activation file for the module product variants
  */
-include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
 
 /**
@@ -40,7 +41,7 @@ class modVariants extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-		global $langs,$conf;
+		global $langs, $conf;
 
 		$this->db = $db;
 
@@ -66,25 +67,25 @@ class modVariants extends DolibarrModules
 		// Name of image file used for this module.
 		// If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
 		// If file is in module/img directory under name object_pictovalue.png, use this->picto='pictovalue@module'
-		$this->picto='product';
+		$this->picto = 'product';
 
 		// Defined all module parts (triggers, login, substitutions, menus, css, etc...)
 		$this->module_parts = array();
 
 		// Data directories to create when module is enabled.
-		// Example: this->dirs = array("/mymodule/temp");
+		// Example: this->dirs = array("/variants/temp");
 		$this->dirs = array();
 
-		// Config pages. Put here list of php page, stored into mymodule/admin directory, to use to setup module.
+		// Config pages. Put here list of php page, stored into variants/admin directory, to use to setup module.
 		$this->config_page_url = array('admin.php@variants');
 
 		// Dependencies
-		$this->hidden = false;			// A condition to hide module
-		$this->depends = array('modProduct');	// List of module class names as string that must be enabled if this module is enabled
-		$this->requiredby = array();	// List of module ids to disable if this one is disabled
-		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
-		$this->phpmin = array(5,4);		// Minimum version of PHP required by module
-		$this->need_dolibarr_version = array(3,0);	// Minimum version of Dolibarr required by module
+		$this->hidden = false; // A condition to hide module
+		$this->depends = array('modProduct'); // List of module class names as string that must be enabled if this module is enabled
+		$this->requiredby = array(); // List of module ids to disable if this one is disabled
+		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
+		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
+		$this->need_dolibarr_version = array(3, 0); // Minimum version of Dolibarr required by module
 		$this->langfiles = array("products");
 
 		// Constants
@@ -92,22 +93,35 @@ class modVariants extends DolibarrModules
 
 		// Array to add new pages in new tabs
 		$this->tabs = array(
-        //	'product:+combinations:Combinaciones:products:1:/variants/combinations.php?id=__ID__'
+		//	'product:+combinations:Combinaciones:products:1:/variants/combinations.php?id=__ID__'
 		);
 
 		// Dictionaries
-		if (! isset($conf->mymodule->enabled))
-		{
-			$conf->mymodule=new stdClass();
-			$conf->mymodule->enabled=0;
+		if (!isset($conf->variants->enabled)) {
+			$conf->variants = new stdClass();
+			$conf->variants->enabled = 0;
 		}
-		$this->dictionaries=array();
+		$this->dictionaries = array();
 
 		// Boxes
 		// Add here list of php file(s) stored in core/boxes that contains class to show a box.
-		$this->boxes = array();			// List of boxes
+		$this->boxes = array(); // List of boxes
 
 		// Permissions
-		$this->rights = array();		// Permission array used by this module
+		$this->rights = array(); // Permission array used by this module
+		$r = 0;
+
+		$this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
+		$this->rights[$r][1] = 'Read attributes of variants'; // Permission label
+		$this->rights[$r][4] = 'read'; // In php code, permission will be checked by test if ($user->rights->eventorganization->level1)
+		$r++;
+		$this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
+		$this->rights[$r][1] = 'Create/Update attributes of variants'; // Permission label
+		$this->rights[$r][4] = 'write'; // In php code, permission will be checked by test if ($user->rights->eventorganization->level1)
+		$r++;
+		$this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
+		$this->rights[$r][1] = 'Delete attributes of variants'; // Permission label
+		$this->rights[$r][4] = 'delete'; // In php code, permission will be checked by test if ($user->rights->eventorganization->level1)
+		$r++;
 	}
 }

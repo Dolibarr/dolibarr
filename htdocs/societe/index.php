@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2014      Charles-Fr Benke	<charles.fr@benke.fr>
+ * Copyright (C) 2014-2021 Charlene Benke		<charlene.r@benke.fr>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2016      Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2019	   Nicolas ZABOURI	<info@inovea-conseil.com>
@@ -29,6 +29,7 @@
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 $hookmanager = new HookManager($db);
 
@@ -38,12 +39,33 @@ $hookmanager->initHooks(array('thirdpartiesindex'));
 $langs->load("companies");
 
 $socid = GETPOST('socid', 'int');
-if ($user->socid) $socid=$user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 
 // Security check
 $result = restrictedArea($user, 'societe', 0, '', '', '', '');
 
 $thirdparty_static = new Societe($db);
+
+if (!isset($form) || !is_object($form)) {
+	$form = new Form($db);
+}
+// Load $resultboxes
+$resultboxes = FormOther::getBoxesArea($user, "3");
+
+if (GETPOST('addbox')) {
+	// Add box (when submit is done from a form when ajax disabled)
+	require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
+	$zone = GETPOST('areacode', 'int');
+	$userid = GETPOST('userid', 'int');
+	$boxorder = GETPOST('boxorder', 'aZ09');
+	$boxorder .= GETPOST('boxcombo', 'aZ09');
+	$result = InfoBox::saveboxorder($db, $zone, $boxorder, $userid);
+	if ($result > 0) {
+		setEventMessages($langs->trans("BoxAdded"), null);
+	}
+}
 
 
 /*
@@ -54,13 +76,8 @@ $transAreaType = $langs->trans("ThirdPartiesArea");
 $helpurl = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:M&oacute;dulo_Terceros';
 
 llxHeader("", $langs->trans("ThirdParties"), $helpurl);
-$linkback = '';
-print load_fiche_titre($transAreaType, $linkback, 'companies');
 
-
-//print '<table border="0" width="100%" class="notopnoleftnoright">';
-//print '<tr><td valign="top" width="30%" class="notopnoleft">';
-print '<div class="fichecenter"><div class="fichethirdleft">';
+print load_fiche_titre($transAreaType, $resultboxes['selectboxlist'], 'companies');
 
 
 /*
@@ -77,158 +94,172 @@ $total = 0;
 
 $sql = "SELECT s.rowid, s.client, s.fournisseur";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+if (empty($user->rights->societe->client->voir) && !$socid) {
+	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+}
 $sql .= ' WHERE s.entity IN ('.getEntity('societe').')';
-if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
-if ($socid)	$sql .= " AND s.rowid = ".$socid;
-if (!$user->rights->fournisseur->lire) $sql .= " AND (s.fournisseur <> 1 OR s.client <> 0)"; // client=0, fournisseur=0 must be visible
+if (empty($user->rights->societe->client->voir) && !$socid) {
+	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
+}
+if (empty($user->rights->fournisseur->lire)) {
+	$sql .= " AND (s.fournisseur <> 1 OR s.client <> 0)"; // client=0, fournisseur=0 must be visible
+}
+// Add where from hooks
+$parameters = array('socid' => $socid);
+$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $thirdparty_static); // Note that $action and $object may have been modified by hook
+if (empty($reshook)) {
+	if ($socid > 0) {
+		$sql .= " AND s.rowid = ".((int) $socid);
+	}
+}
+$sql .= $hookmanager->resPrint;
 //print $sql;
 $result = $db->query($sql);
-if ($result)
-{
-    while ($objp = $db->fetch_object($result))
-    {
-        $found = 0;
-        if (!empty($conf->societe->enabled) && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS_STATS) && ($objp->client == 2 || $objp->client == 3)) { $found = 1; $third['prospect']++; }
-        if (!empty($conf->societe->enabled) && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS_STATS) && ($objp->client == 1 || $objp->client == 3)) { $found = 1; $third['customer']++; }
-        if (!empty($conf->fournisseur->enabled) && $user->rights->fournisseur->lire && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_STATS) && $objp->fournisseur) { $found = 1; $third['supplier']++; }
-        if (!empty($conf->societe->enabled) && $objp->client == 0 && $objp->fournisseur == 0) { $found = 1; $third['other']++; }
-        if ($found) $total++;
-    }
+if ($result) {
+	while ($objp = $db->fetch_object($result)) {
+		$found = 0;
+		if (!empty($conf->societe->enabled) && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS_STATS) && ($objp->client == 2 || $objp->client == 3)) {
+			$found = 1; $third['prospect']++;
+		}
+		if (!empty($conf->societe->enabled) && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS_STATS) && ($objp->client == 1 || $objp->client == 3)) {
+			$found = 1; $third['customer']++;
+		}
+		if ((($conf->fournisseur->enabled && $user->rights->fournisseur->facture->lire && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (!empty($conf->supplier_order->enabled) && $user->rights->supplier_order->lire) || (!empty($conf->supplier_invoice->enabled) && $user->rights->supplier_invoice->lire)) && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_STATS) && $objp->fournisseur) {
+			$found = 1; $third['supplier']++;
+		}
+		if (!empty($conf->societe->enabled) && $objp->client == 0 && $objp->fournisseur == 0) {
+			$found = 1; $third['other']++;
+		}
+		if ($found) {
+			$total++;
+		}
+	}
+} else {
+	dol_print_error($db);
 }
-else dol_print_error($db);
 
-print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder nohover centpercent">'."\n";
-print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").'</th></tr>';
-if (!empty($conf->use_javascript_ajax) && ((round($third['prospect']) ? 1 : 0) + (round($third['customer']) ? 1 : 0) + (round($third['supplier']) ? 1 : 0) + (round($third['other']) ? 1 : 0) >= 2))
-{
-    print '<tr><td class="center" colspan="2">';
-    $dataseries = array();
-    if (!empty($conf->societe->enabled) && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS_STATS))     $dataseries[] = array($langs->trans("Prospects"), round($third['prospect']));
-    if (!empty($conf->societe->enabled) && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS_STATS))     $dataseries[] = array($langs->trans("Customers"), round($third['customer']));
-    if (!empty($conf->fournisseur->enabled) && $user->rights->fournisseur->lire && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_STATS)) $dataseries[] = array($langs->trans("Suppliers"), round($third['supplier']));
-    if (!empty($conf->societe->enabled)) $dataseries[] = array($langs->trans("Others"), round($third['other']));
-    include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
-    $dolgraph = new DolGraph();
+$thirdpartygraph = '<div class="div-table-responsive-no-min">';
+$thirdpartygraph .= '<table class="noborder nohover centpercent">'."\n";
+$thirdpartygraph .= '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").'</th></tr>';
+if (!empty($conf->use_javascript_ajax) && ((round($third['prospect']) ? 1 : 0) + (round($third['customer']) ? 1 : 0) + (round($third['supplier']) ? 1 : 0) + (round($third['other']) ? 1 : 0) >= 2)) {
+	$thirdpartygraph .= '<tr><td class="center" colspan="2">';
+	$dataseries = array();
+	if (!empty($conf->societe->enabled) && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS_STATS)) {
+		$dataseries[] = array($langs->trans("Prospects"), round($third['prospect']));
+	}
+	if (!empty($conf->societe->enabled) && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS_STATS)) {
+		$dataseries[] = array($langs->trans("Customers"), round($third['customer']));
+	}
+	if ((($conf->fournisseur->enabled && $user->rights->fournisseur->facture->lire && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (!empty($conf->supplier_order->enabled) && $user->rights->supplier_order->lire) || (!empty($conf->supplier_invoice->enabled) && $user->rights->supplier_invoice->lire)) && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_STATS)) {
+		$dataseries[] = array($langs->trans("Suppliers"), round($third['supplier']));
+	}
+	if (!empty($conf->societe->enabled)) {
+		$dataseries[] = array($langs->trans("Others"), round($third['other']));
+	}
+	include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
+	$dolgraph = new DolGraph();
 	$dolgraph->SetData($dataseries);
-	$dolgraph->setShowLegend(1);
+	$dolgraph->setShowLegend(2);
 	$dolgraph->setShowPercent(1);
 	$dolgraph->SetType(array('pie'));
-	$dolgraph->setWidth('100%');
+	$dolgraph->setHeight('200');
 	$dolgraph->draw('idgraphthirdparties');
-	print $dolgraph->show();
-    print '</td></tr>'."\n";
+	$thirdpartygraph .= $dolgraph->show();
+	$thirdpartygraph .= '</td></tr>'."\n";
+} else {
+	if (!empty($conf->societe->enabled) && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS_STATS)) {
+		$statstring = "<tr>";
+		$statstring .= '<td><a href="'.DOL_URL_ROOT.'/societe/list.php?type=p">'.$langs->trans("Prospects").'</a></td><td class="right">'.round($third['prospect']).'</td>';
+		$statstring .= "</tr>";
+	}
+	if (!empty($conf->societe->enabled) && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS_STATS)) {
+		$statstring .= "<tr>";
+		$statstring .= '<td><a href="'.DOL_URL_ROOT.'/societe/list.php?type=c">'.$langs->trans("Customers").'</a></td><td class="right">'.round($third['customer']).'</td>';
+		$statstring .= "</tr>";
+	}
+	if ((($conf->fournisseur->enabled && $user->rights->fournisseur->facture->lire && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (!empty($conf->supplier_order->enabled) && $user->rights->supplier_order->lire) || (!empty($conf->supplier_invoice->enabled) && $user->rights->supplier_invoice->lire)) && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_STATS)) {
+		$statstring2 = "<tr>";
+		$statstring2 .= '<td><a href="'.DOL_URL_ROOT.'/societe/list.php?type=f">'.$langs->trans("Suppliers").'</a></td><td class="right">'.round($third['supplier']).'</td>';
+		$statstring2 .= "</tr>";
+	}
+	$thirdpartygraph .= $statstring;
+	$thirdpartygraph .= $statstring2;
 }
-else
-{
-    if (!empty($conf->societe->enabled) && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS_STATS))
-    {
-        $statstring = "<tr>";
-        $statstring .= '<td><a href="'.DOL_URL_ROOT.'/societe/list.php?type=p">'.$langs->trans("Prospects").'</a></td><td class="right">'.round($third['prospect']).'</td>';
-        $statstring .= "</tr>";
-    }
-    if (!empty($conf->societe->enabled) && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS_STATS))
-    {
-        $statstring .= "<tr>";
-        $statstring .= '<td><a href="'.DOL_URL_ROOT.'/societe/list.php?type=c">'.$langs->trans("Customers").'</a></td><td class="right">'.round($third['customer']).'</td>';
-        $statstring .= "</tr>";
-    }
-    if (!empty($conf->fournisseur->enabled) && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_STATS) && $user->rights->fournisseur->lire)
-    {
-        $statstring2 = "<tr>";
-        $statstring2 .= '<td><a href="'.DOL_URL_ROOT.'/societe/list.php?type=f">'.$langs->trans("Suppliers").'</a></td><td class="right">'.round($third['supplier']).'</td>';
-        $statstring2 .= "</tr>";
-    }
-    print $statstring;
-    print $statstring2;
-}
-print '<tr class="liste_total"><td>'.$langs->trans("UniqueThirdParties").'</td><td class="right">';
-print $total;
-print '</td></tr>';
-print '</table>';
-print '</div>';
+$thirdpartygraph .= '<tr class="liste_total"><td>'.$langs->trans("UniqueThirdParties").'</td><td class="right">';
+$thirdpartygraph .= $total;
+$thirdpartygraph .= '</td></tr>';
+$thirdpartygraph .= '</table>';
+$thirdpartygraph .= '</div>';
 
-if (!empty($conf->categorie->enabled) && !empty($conf->global->CATEGORY_GRAPHSTATS_ON_THIRDPARTIES))
-{
+$thirdpartycateggraph = '';
+if (!empty($conf->categorie->enabled) && !empty($conf->global->CATEGORY_GRAPHSTATS_ON_THIRDPARTIES)) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$elementtype = 'societe';
 
-	print '<br>';
-
-	print '<div class="div-table-responsive-no-min">';
-	print '<table class="noborder nohover centpercent">';
-	print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Categories").'</th></tr>';
-	print '<tr><td class="center" colspan="2">';
+	$thirdpartycateggraph = '<div class="div-table-responsive-no-min">';
+	$thirdpartycateggraph .= '<table class="noborder nohover centpercent">';
+	$thirdpartycateggraph .= '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Categories").'</th></tr>';
+	$thirdpartycateggraph .= '<tr><td class="center" colspan="2">';
 	$sql = "SELECT c.label, count(*) as nb";
 	$sql .= " FROM ".MAIN_DB_PREFIX."categorie_societe as cs";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cs.fk_categorie = c.rowid";
 	$sql .= " WHERE c.type = 2";
-	if (!is_numeric($conf->global->CATEGORY_GRAPHSTATS_ON_THIRDPARTIES)) $sql .= " AND c.label like '".$db->escape($conf->global->CATEGORY_GRAPHSTATS_ON_THIRDPARTIES)."'";
+	if (!is_numeric($conf->global->CATEGORY_GRAPHSTATS_ON_THIRDPARTIES)) {
+		$sql .= " AND c.label like '".$db->escape($conf->global->CATEGORY_GRAPHSTATS_ON_THIRDPARTIES)."'";
+	}
 	$sql .= " AND c.entity IN (".getEntity('category').")";
 	$sql .= " GROUP BY c.label";
 	$total = 0;
 	$result = $db->query($sql);
-	if ($result)
-	{
+	if ($result) {
 		$num = $db->num_rows($result);
 		$i = 0;
-		if (!empty($conf->use_javascript_ajax))
-		{
+		if (!empty($conf->use_javascript_ajax)) {
 			$dataseries = array();
 			$rest = 0;
 			$nbmax = 10;
 
-			while ($i < $num)
-			{
+			while ($i < $num) {
 				$obj = $db->fetch_object($result);
-				if ($i < $nbmax)
-				{
+				if ($i < $nbmax) {
 					$dataseries[] = array($obj->label, round($obj->nb));
-				}
-				else
-				{
+				} else {
 					$rest += $obj->nb;
 				}
 				$total += $obj->nb;
 				$i++;
 			}
-			if ($i > $nbmax)
-			{
+			if ($i > $nbmax) {
 				$dataseries[] = array($langs->trans("Other"), round($rest));
 			}
 			include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 			$dolgraph = new DolGraph();
 			$dolgraph->SetData($dataseries);
-			$dolgraph->setShowLegend(1);
+			$dolgraph->setShowLegend(2);
 			$dolgraph->setShowPercent(1);
 			$dolgraph->SetType(array('pie'));
-			$dolgraph->setWidth('100%');
+			$dolgraph->setHeight('200');
 			$dolgraph->draw('idgraphcateg');
-			print $dolgraph->show();
-		}
-		else
-		{
-			while ($i < $num)
-			{
+			$thirdpartycateggraph .= $dolgraph->show();
+		} else {
+			while ($i < $num) {
 				$obj = $db->fetch_object($result);
 
-				print '<tr class="oddeven"><td>'.$obj->label.'</td><td>'.$obj->nb.'</td></tr>';
+				$thirdpartycateggraph .= '<tr class="oddeven"><td>'.$obj->label.'</td><td>'.$obj->nb.'</td></tr>';
 				$total += $obj->nb;
 				$i++;
 			}
 		}
 	}
-	print '</td></tr>';
-	print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td class="right">';
-	print $total;
-	print '</td></tr>';
-	print '</table>';
-	print '</div>';
+	$thirdpartycateggraph .= '</td></tr>';
+	$thirdpartycateggraph .= '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td class="right">';
+	$thirdpartycateggraph .= $total;
+	$thirdpartycateggraph .= '</td></tr>';
+	$thirdpartycateggraph .= '</table>';
+	$thirdpartycateggraph .= '</div>';
+} else {
+	$thirdpartycateggraph = '';
 }
-
-//print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
-print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
 /*
@@ -238,107 +269,140 @@ $max = 15;
 $sql = "SELECT s.rowid, s.nom as name, s.email, s.client, s.fournisseur";
 $sql .= ", s.code_client";
 $sql .= ", s.code_fournisseur";
+if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
+	$sql .= ", spe.accountancy_code_supplier as code_compta_fournisseur";
+	$sql .= ", spe.accountancy_code_customer as code_compta";
+} else {
+	$sql .= ", s.code_compta_fournisseur";
+	$sql .= ", s.code_compta";
+}
 $sql .= ", s.logo";
+$sql .= ", s.entity";
 $sql .= ", s.canvas, s.tms as date_modification, s.status as status";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
+	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe_perentity as spe ON spe.fk_soc = s.rowid AND spe.entity = " . ((int) $conf->entity);
+}
+if (empty($user->rights->societe->client->voir) && !$socid) {
+	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+}
 $sql .= ' WHERE s.entity IN ('.getEntity('societe').')';
-if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
-if ($socid)	$sql .= " AND s.rowid = ".$socid;
-if (!$user->rights->fournisseur->lire) $sql .= " AND (s.fournisseur != 1 OR s.client != 0)";
+if (empty($user->rights->societe->client->voir) && !$socid) {
+	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
+}
+if (empty($user->rights->fournisseur->lire)) {
+	$sql .= " AND (s.fournisseur != 1 OR s.client != 0)";
+}
+// Add where from hooks
+$parameters = array('socid' => $socid);
+$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $thirdparty_static); // Note that $action and $object may have been modified by hook
+if (empty($reshook)) {
+	if ($socid > 0) {
+		$sql .= " AND s.rowid = ".((int) $socid);
+	}
+}
+$sql .= $hookmanager->resPrint;
 $sql .= $db->order("s.tms", "DESC");
 $sql .= $db->plimit($max, 0);
 
 //print $sql;
+$lastmodified="";
 $result = $db->query($sql);
-if ($result)
-{
-    $num = $db->num_rows($result);
+if ($result) {
+	$num = $db->num_rows($result);
 
-    $i = 0;
+	$i = 0;
 
-    if ($num > 0)
-    {
-        $transRecordedType = $langs->trans("LastModifiedThirdParties", $max);
+	if ($num > 0) {
+		$transRecordedType = $langs->trans("LastModifiedThirdParties", $max);
 
-        print "\n<!-- last thirdparties modified -->\n";
-        print '<div class="div-table-responsive-no-min">';
-        print '<table class="noborder centpercent">';
+		$lastmodified = "\n<!-- last thirdparties modified -->\n";
+		$lastmodified .= '<div class="div-table-responsive-no-min">';
+		$lastmodified .= '<table class="noborder centpercent">';
 
-        print '<tr class="liste_titre"><th colspan="2">'.$transRecordedType.'</th>';
-        print '<th>&nbsp;</th>';
-        print '<th class="right"><a href="'.DOL_URL_ROOT.'/societe/list.php?sortfield=s.tms&sortorder=DESC">'.$langs->trans("FullList").'</th>';
-        print '</tr>'."\n";
+		$lastmodified .= '<tr class="liste_titre"><th colspan="2">'.$transRecordedType.'</th>';
+		$lastmodified .= '<th>&nbsp;</th>';
+		$lastmodified .= '<th class="right"><a href="'.DOL_URL_ROOT.'/societe/list.php?sortfield=s.tms&sortorder=DESC">'.$langs->trans("FullList").'</th>';
+		$lastmodified .= '</tr>'."\n";
 
-        while ($i < $num)
-        {
-            $objp = $db->fetch_object($result);
+		while ($i < $num) {
+			$objp = $db->fetch_object($result);
 
-            $thirdparty_static->id = $objp->rowid;
-            $thirdparty_static->name = $objp->name;
-            $thirdparty_static->client = $objp->client;
-            $thirdparty_static->fournisseur = $objp->fournisseur;
-            $thirdparty_static->logo = $objp->logo;
-            $thirdparty_static->date_modification = $db->jdate($objp->date_modification);
-            $thirdparty_static->status = $objp->status;
-            $thirdparty_static->code_client = $objp->code_client;
-            $thirdparty_static->code_fournisseur = $objp->code_fournisseur;
-            $thirdparty_static->canvas = $objp->canvas;
-            $thirdparty_static->email = $objp->email;
+			$thirdparty_static->id = $objp->rowid;
+			$thirdparty_static->name = $objp->name;
+			$thirdparty_static->client = $objp->client;
+			$thirdparty_static->fournisseur = $objp->fournisseur;
+			$thirdparty_static->logo = $objp->logo;
+			$thirdparty_static->date_modification = $db->jdate($objp->date_modification);
+			$thirdparty_static->status = $objp->status;
+			$thirdparty_static->code_client = $objp->code_client;
+			$thirdparty_static->code_fournisseur = $objp->code_fournisseur;
+			$thirdparty_static->canvas = $objp->canvas;
+			$thirdparty_static->email = $objp->email;
+			$thirdparty_static->entity = $objp->entity;
+			$thirdparty_static->code_compta_fournisseur = $objp->code_compta_fournisseur;
+			$thirdparty_static->code_compta = $objp->code_compta;
 
-            print '<tr class="oddeven">';
-            // Name
-            print '<td class="nowrap tdoverflowmax200">';
-            print $thirdparty_static->getNomUrl(1);
-            print "</td>\n";
-            // Type
-            print '<td class="center">';
-            if ($thirdparty_static->client == 1 || $thirdparty_static->client == 3)
-            {
-            	$thirdparty_static->name = $langs->trans("Customer");
-            	print $thirdparty_static->getNomUrl(0, 'customer', 0, 1);
-            }
-            if ($thirdparty_static->client == 3 && empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) print " / ";
-            if (($thirdparty_static->client == 2 || $thirdparty_static->client == 3) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS))
-            {
-            	$thirdparty_static->name = $langs->trans("Prospect");
-            	print $thirdparty_static->getNomUrl(0, 'prospect', 0, 1);
-            }
-            if (!empty($conf->fournisseur->enabled) && $thirdparty_static->fournisseur)
-            {
-                if ($thirdparty_static->client) print " / ";
-            	$thirdparty_static->name = $langs->trans("Supplier");
-            	print $thirdparty_static->getNomUrl(0, 'supplier', 0, 1);
-            }
-            print '</td>';
-            // Last modified date
-            print '<td class="right">';
-            print dol_print_date($thirdparty_static->date_modification, 'day');
-            print "</td>";
-            print '<td class="right nowrap">';
-            print $thirdparty_static->getLibStatut(3);
-            print "</td>";
-            print "</tr>\n";
-            $i++;
-        }
+			$lastmodified .= '<tr class="oddeven">';
+			// Name
+			$lastmodified .= '<td class="nowrap tdoverflowmax200">';
+			$lastmodified .= $thirdparty_static->getNomUrl(1);
+			$lastmodified .= "</td>\n";
+			// Type
+			$lastmodified .= '<td class="center">';
+			$lastmodified .= $thirdparty_static->getTypeUrl();
+			$lastmodified .= '</td>';
+			// Last modified date
+			$lastmodified .= '<td class="right tddate">';
+			$lastmodified .= dol_print_date($thirdparty_static->date_modification, 'day');
+			$lastmodified .= "</td>";
+			$lastmodified .= '<td class="right nowrap">';
+			$lastmodified .= $thirdparty_static->getLibStatut(3);
+			$lastmodified .= "</td>";
+			$lastmodified .= "</tr>\n";
+			$i++;
+		}
 
-        $db->free($result);
+		$db->free($result);
 
-        print "</table>\n";
-        print '</div>';
-        print "<!-- End last thirdparties modified -->\n";
-    }
-}
-else
-{
-    dol_print_error($db);
+		$lastmodified .= "</table>\n";
+		$lastmodified .= '</div>';
+		$lastmodified .= "<!-- End last thirdparties modified -->\n";
+	}
+} else {
+	dol_print_error($db);
 }
 
-//print '</td></tr></table>';
-print '</div></div></div>';
+//print '</div></div></div>';
+
+// boxes
+print '<div class="clearboth"></div>';
+print '<div class="fichecenter fichecenterbis">';
+
+$boxlist = '<div class="twocolumns">';
+
+$boxlist .= '<div class="firstcolumn fichehalfleft boxhalfleft" id="boxhalfleft">';
+$boxlist .= $thirdpartygraph;
+$boxlist .= '<br>';
+$boxlist .= $thirdpartycateggraph;
+$boxlist .= '<br>';
+$boxlist .= $resultboxes['boxlista'];
+$boxlist .= '</div>'."\n";
+
+$boxlist .= '<div class="secondcolumn fichehalfright boxhalfright" id="boxhalfright">';
+$boxlist .= $lastmodified;
+$boxlist .= '<br>';
+$boxlist .= $resultboxes['boxlistb'];
+$boxlist .= '</div>'."\n";
+
+$boxlist .= '</div>';
+
+print $boxlist;
+
+print '</div>';
 
 $parameters = array('user' => $user);
-$reshook = $hookmanager->executeHooks('dashboardThirdparties', $parameters, $object); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('dashboardThirdparties', $parameters, $thirdparty_static); // Note that $action and $object may have been modified by hook
 
 // End of page
 llxFooter();

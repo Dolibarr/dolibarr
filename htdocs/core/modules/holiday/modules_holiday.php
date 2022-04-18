@@ -41,20 +41,20 @@ abstract class ModelePDFHoliday extends CommonDocGenerator
 	/**
 	 * @var string Error code (or message)
 	 */
-	public $error='';
+	public $error = '';
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-    /**
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
 	 *	Return list of active generation modules
 	 *
-     *  @param  DoliDB  $db     			Database handler
-     *  @param  integer	$maxfilenamelength  Max length of value to show
-     *  @return	array						List of templates
-     */
+	 *  @param  DoliDB  $db     			Database handler
+	 *  @param  integer	$maxfilenamelength  Max length of value to show
+	 *  @return	array						List of templates
+	 */
 	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf;
 
 		$type = 'holiday';
@@ -76,7 +76,7 @@ class ModelNumRefHolidays
 	/**
 	 * @var string Error code (or message)
 	 */
-	public $error='';
+	public $error = '';
 
 	/**
 	 *	Return if a module can be used or not
@@ -126,10 +126,10 @@ class ModelNumRefHolidays
 	 *	Return next value
 	 *
 	 *	@param	Societe		$objsoc     third party object
-	 *	@param	Object		$contract	contract object
-	 *	@return	string					Value
+	 *	@param	Object		$holiday	Holiday object
+	 *	@return	string					Value if OK, 0 if KO
 	 */
-	public function getNextValue($objsoc, $contract)
+	public function getNextValue($objsoc, $holiday)
 	{
 		global $langs;
 		return $langs->trans("NotAvailable");
@@ -145,10 +145,16 @@ class ModelNumRefHolidays
 		global $langs;
 		$langs->load("admin");
 
-		if ($this->version == 'development') return $langs->trans("VersionDevelopment");
-		elseif ($this->version == 'experimental') return $langs->trans("VersionExperimental");
-		elseif ($this->version == 'dolibarr') return DOL_VERSION;
-		elseif ($this->version) return $this->version;
-		else return $langs->trans("NotAvailable");
+		if ($this->version == 'development') {
+			return $langs->trans("VersionDevelopment");
+		} elseif ($this->version == 'experimental') {
+			return $langs->trans("VersionExperimental");
+		} elseif ($this->version == 'dolibarr') {
+			return DOL_VERSION;
+		} elseif ($this->version) {
+			return $this->version;
+		} else {
+			return $langs->trans("NotAvailable");
+		}
 	}
 }

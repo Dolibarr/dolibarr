@@ -1,13 +1,13 @@
 # Dolibarr language file - Source file is en_US - help
 CommunitySupport=Fórum/Wiki támogagtás
 EMailSupport=Email támogagtás
-RemoteControlSupport=Online Valós idejü / távoli támogatás
+RemoteControlSupport=Online valós idejű / távoli támogatás
 OtherSupport=Más jellegü támogatás
 ToSeeListOfAvailableRessources=Kapcsolatba lépni / látni az elérhető erőforrásokat:
-HelpCenter=Segítség központ
-DolibarrHelpCenter=Dolibarr Help and Support Center
-ToGoBackToDolibarr=Otherwise, <a href="%s">click here to continue to use Dolibarr</a>.
-TypeOfSupport=Type of support
+HelpCenter=Segítség Központ
+DolibarrHelpCenter=Dolibarr Súgó és támogatás központ
+ToGoBackToDolibarr=Ellenkező esetben kattintson ide, <a href="%s"> hogy továbbra is használja a Dolibarr </a>.
+TypeOfSupport=A támogatás típusa
 TypeSupportCommunauty=Közösség (ingyenes)
 TypeSupportCommercial=Üzleti
 TypeOfHelp=Típus
@@ -15,9 +15,9 @@ NeedHelpCenter=Segítségre vagy támogatásra van szüksége?
 Efficiency=Hatékonyság
 TypeHelpOnly=Csak segítség
 TypeHelpDev=Segítség és fejlesztés
-TypeHelpDevForm=Help+Development+Training
-BackToHelpCenter=Otherwise, <a href="%s">go back to Help center home page</a>.
-LinkToGoldMember=You can call one of the trainers preselected by Dolibarr for your language (%s) by clicking their Widget (status and maximum price are automatically updated):
+TypeHelpDevForm=Segítség + Fejlesztés + Tréning
+BackToHelpCenter=Egyébként  <a href="%s"> visszatérés a Súgó központba </a>.
+LinkToGoldMember=Felhívhatja a Dolibarr által az Ön nyelvére előre kiválasztott oktatók egyikét (%s), ha rákattint a widgetre (az állapot és a maximális ár automatikusan frissül):
 PossibleLanguages=Támogatott nyelvek
-SubscribeToFoundation=Help the Dolibarr project, subscribe to the foundation
+SubscribeToFoundation=Segítsen a Dolibarr projektnek, iratkozzon fel az alapítványra
 SeeOfficalSupport=Hivatalos Dolibarr támogatás a saját nyelvén: <br><b><a href="%s" target="_blank">%s</a></b>

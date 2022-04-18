@@ -11,11 +11,11 @@ LaunchProgram=Exécuter %1
 AssocFileExtension=&Associer %1 avec l'extension de fichier %2
 AssocingFileExtension=Associe %1 avec l'extension de fichier %2...
 
-YouWillInstallDoliWamp=Vous allez installer ou mettre à jour DoliWamp sur votre ordinateur (donc Dolibarr + tous ses composants prérequis comme Apache, Mysql et PHP).
+YouWillInstallDoliWamp=Vous allez installer DoliWamp sur votre ordinateur (donc Dolibarr + tous ses composants prérequis comme Apache, Mysql et PHP).
 ThisAssistantInstallOrUpgrade=AVERTISSEMENT: L'utilisation d'un ERP CRM installé sur un ordinateur local peut être dangereuse: si votre ordinateur tombe en panne, vous pouvez perdre toutes vos données. Faites-le si vous êtes prêt à gérer les sauvegardes vous-même sérieusement. Sinon, utilisez plutôt une installation en Saas (voir https://saas.dolibarr.org).
 IfYouHaveTechnicalKnowledge=De plus, si vous avez des compétences techniques et envisagez de partager votre Apache, Mysql et PHP avec d''autres applications que Dolibarr, vous ne devriez pas utiliser cet assistant mais faire plutôt une installation manuelle de Dolibarr sur un serveur existant équipé de Apache, Mysql et PHP.
 ButIfYouLook=Mais si vous recherchez une installation clé en main automatisée sur une poste local, vous êtes sur la bonne voie...
-DoYouWantToStart=Voulez-vous démarrer le processus d'installation/mise à jour ?
+DoYouWantToStart=Voulez-vous démarrer le processus d'installation ?
 
 TechnicalParameters=Paramètres techniques
 IfFirstInstall=S'il s'agit de la première installation, merci de spécifier ces quelques paramètres techniques. Si vous ne les comprennez pas, êtes non sûr, ou procédez à une mise à jour, laissez les champs avec les valeurs proposées par défaut.

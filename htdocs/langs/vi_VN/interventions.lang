@@ -41,9 +41,7 @@ InterventionsArea=Khu vực can thiệp
 DraftFichinter=Dự thảo can thiệp
 LastModifiedInterventions=Can thiệp sửa đổi mới nhất %s
 FichinterToProcess=Can thiệp để xử lý
-##### Types de contacts #####
 TypeContact_fichinter_external_CUSTOMER=Theo dõi liên lạc của khách hàng
-# Modele numérotation
 PrintProductsOnFichinter=Đồng thời in các dòng loại "sản phẩm" (không chỉ dịch vụ) trên thẻ can thiệp
 PrintProductsOnFichinterDetails=can thiệp được tạo ra từ các đơn đặt hàng
 UseServicesDurationOnFichinter=Sử dụng thời hạn dịch vụ cho các can thiệp được tạo ra từ các đơn đặt hàng
@@ -53,7 +51,6 @@ InterventionStatistics=Thống kê các can thiệp
 NbOfinterventions=Số lượng thẻ can thiệp
 NumberOfInterventionsByMonth=Số thẻ can thiệp theo tháng (ngày xác nhận)
 AmountOfInteventionNotIncludedByDefault=Số tiền can thiệp không được tính theo mặc định vào lợi nhuận (trong hầu hết các trường hợp, bảng chấm công được sử dụng để tính thời gian tiêu thụ). Thêm tùy chọn gồm PROJECT_INCLUDE_INTERVENTION_AMOUNT_IN_PROFIT thành 1 vào Nhà - Thiết lập - Khác
-##### Exports #####
 InterId=Id Can thiệp
 InterRef=Tham chiếu Can thiệp.
 InterDateCreation=Ngày tạo Can thiệp
@@ -65,3 +62,7 @@ InterLineId=ID dòng Can thiệp
 InterLineDate=Ngày của dòng Can thiệp
 InterLineDuration=Thời hạn dòng Can thiệp
 InterLineDesc=Mô tả dòng Can thiệp
+RepeatableIntervention=Mẫu can thiệp
+ToCreateAPredefinedIntervention=To create a predefined or recurring intervention, create a common intervention and convert it into intervention template
+ConfirmReopenIntervention=Are you sure you want to open back the intervention <b>%s</b>?
+GenerateInter=Generate intervention

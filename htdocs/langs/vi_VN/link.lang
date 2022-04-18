@@ -8,3 +8,4 @@ LinkRemoved=Liên kết %s đã bị xóa
 ErrorFailedToDeleteLink= Không thể xóa liên kết ' <b>%s</b> '
 ErrorFailedToUpdateLink= Không thể cập nhật liên kết ' <b>%s</b> '
 URLToLink=URL để liên kết
+OverwriteIfExists=Overwrite file if exists

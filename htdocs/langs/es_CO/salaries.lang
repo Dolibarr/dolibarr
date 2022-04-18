@@ -1,0 +1,13 @@
+# Dolibarr language file - Source file is en_US - salaries
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Cuenta contable utilizada para usuarios de terceros
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=La cuenta de contabilidad dedicada definida en la tarjeta de usuario se usará solo para la contabilidad del libro auxiliar. Este se usará para el Libro mayor y como valor predeterminado de la contabilidad del libro auxiliar si la cuenta de contabilidad del usuario dedicada no está definida.
+CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=Por defecto, deje vacía la opción "Crear automáticamente un pago total" al crear un salario.
+AddSalaryPayment=Agregar pago de salario
+THM=Tarifa por hora promedio
+TJM=Tarifa diaria promedio
+THMDescription=Este valor puede usarse para calcular el costo de tiempo consumido en un proyecto ingresado por los usuarios si se usa el módulo proyecto
+TJMDescription=Este valor es actualmente solo para información y no se usa para ningún cálculo.
+LastSalaries=Últimos sueldos de %s
+AllSalaries=Todos los sueldos
+ConfirmDeleteSalaryPayment=¿Quieres eliminar este pago de salario?
+FillFieldFirst=Primero llene el campo de empleado

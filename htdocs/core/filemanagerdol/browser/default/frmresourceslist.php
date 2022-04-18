@@ -3,7 +3,7 @@
  * Copyright (C) 2003-2010 Frederico Caldeira Knabben
  *
  * Source modified from part of fckeditor (http://www.fckeditor.net)
- * retreived as GPL v2 or later
+ * retrieved as GPL v2 or later
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
 define('NOTOKENRENEWAL', 1); // Disables token renewal
 
 require '../../../../main.inc.php';
+
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <!--
@@ -50,6 +51,24 @@ require '../../../../main.inc.php';
 <head>
 	<title>Resources</title>
 	<link href="browser.css" type="text/css" rel="stylesheet">
+<?php
+print '<!-- Includes CSS for Dolibarr theme -->'."\n";
+// Output style sheets (optioncss='print' or ''). Note: $conf->css looks like '/theme/eldy/style.css.php'
+$themepath = dol_buildpath($conf->css, 1);
+$themesubdir = '';
+if (!empty($conf->modules_parts['theme'])) {	// This slow down
+	foreach ($conf->modules_parts['theme'] as $reldir) {
+		if (file_exists(dol_buildpath($reldir.$conf->css, 0))) {
+			$themepath = dol_buildpath($reldir.$conf->css, 1);
+			$themesubdir = $reldir;
+			break;
+		}
+	}
+}
+
+//print 'themepath='.$themepath.' themeparam='.$themeparam;exit;
+print '<link rel="stylesheet" type="text/css" href="'.$themepath.'">'."\n";
+?>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<script type="text/javascript" src="js/common.js"></script>
 	<script type="text/javascript">
@@ -115,25 +134,25 @@ function OpenFolder( folderPath )
 
 function GetUrlParam( paramName )
 {
-    var oRegex = new RegExp( '[\?&]' + paramName + '=([^&]+)', 'i' );
-    var oMatch = oRegex.exec( window.top.location.search );
+	var oRegex = new RegExp( '[\?&]' + paramName + '=([^&]+)', 'i' );
+	var oMatch = oRegex.exec( window.top.location.search );
 
-    if ( oMatch && oMatch.length > 1 )
-        return decodeURIComponent( oMatch[1] );
-    else
-        return '' ;
+	if ( oMatch && oMatch.length > 1 )
+		return decodeURIComponent( oMatch[1] );
+	else
+		return '' ;
 }
 
 // Note fileUrl must be already "URL encoded"
 function OpenFile( fileUrl )
 {
-    funcNum = GetUrlParam('CKEditorFuncNum');
-    //window.top.opener.CKEDITOR.tools.callFunction(funcNum, encodeURI( fileUrl ).replace( '#', '%23' ));
+	funcNum = GetUrlParam('CKEditorFuncNum');
+	//window.top.opener.CKEDITOR.tools.callFunction(funcNum, encodeURI( fileUrl ).replace( '#', '%23' ));
 	window.top.opener.CKEDITOR.tools.callFunction(funcNum, fileUrl.replace( '#', '%23' ));
-    
-    ///////////////////////////////////
-    window.top.close();
-    window.top.opener.focus();
+
+	///////////////////////////////////
+	window.top.close();
+	window.top.opener.focus();
 }
 
 function LoadResources( resourceType, folderPath )

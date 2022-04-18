@@ -103,8 +103,6 @@ override_dh_install:
 
 	# clean from useless files
 	rm -fr htdocs/includes/jquery/plugins/multiselect
-	rm -fr htdocs/includes/phpexcel/PHPExcel/Shared/PDF
-	rm -fr htdocs/includes/phpexcel/PHPExcel/Shared/PCLZip
 	rm -fr htdocs/includes/tcpdf/fonts/dejavu-fonts-ttf-2.33
 	rm -fr htdocs/includes/tcpdf/fonts/freefont-20100919
 	rm -fr htdocs/includes/tcpdf/fonts/utils
@@ -113,7 +111,6 @@ override_dh_install:
 
 	# Licence files are already included into copyright file.
 	rm -f  htdocs/includes/jquery/plugins/flot/LICENSE.txt
-	rm -f  htdocs/includes/phpexcel/license.txt
 	rm -f  htdocs/includes/tcpdf/LICENSE.TXT
 
 	# Drop unwanted executable permissions

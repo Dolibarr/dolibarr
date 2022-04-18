@@ -5,7 +5,7 @@ ProposalShort=اقتراح
 ProposalsDraft=مقترحات مشاريع تجارية
 ProposalsOpened=مقترحات التجارية المفتوحة
 CommercialProposal=اقتراح التجارية
-PdfCommercialProposalTitle=اقتراح التجارية
+PdfCommercialProposalTitle=عرض
 ProposalCard=اقتراح بطاقة
 NewProp=التجاري الجديد المقترح
 NewPropal=اقتراح جديد
@@ -16,7 +16,7 @@ AddProp=إنشاء اقتراح
 ConfirmDeleteProp=Are you sure you want to delete this commercial proposal?
 ConfirmValidateProp=Are you sure you want to validate this commercial proposal under name <b>%s</b>?
 LastPropals=Latest %s proposals
-LastModifiedProposals=Latest %s modified proposals
+LastModifiedProposals=أحدث %s العروض المعدلة 
 AllPropals=جميع المقترحات
 SearchAProposal=بحث اقتراح
 NoProposal=No proposal
@@ -47,7 +47,6 @@ SendPropalByMail=اقتراح ارسال التجارية عن طريق البر
 DatePropal=تاريخ الاقتراح
 DateEndPropal=تاريخ انتهاء الصلاحية
 ValidityDuration=ومدة صلاحيتها
-CloseAs=Set status to
 SetAcceptedRefused=Set accepted/refused
 ErrorPropalNotFound=Propal ق لم يتم العثور على ٪
 AddToDraftProposals=إضافة إلى صياغة اقتراح
@@ -60,6 +59,7 @@ ConfirmClonePropal=Are you sure you want to clone the commercial proposal <b>%s<
 ConfirmReOpenProp=Are you sure you want to open back the commercial proposal <b>%s</b>?
 ProposalsAndProposalsLines=واقتراح الخطوط التجارية
 ProposalLine=اقتراح خط
+ProposalLines=Proposal lines
 AvailabilityPeriod=توفر تأخير
 SetAvailability=ضبط تأخير توافر
 AfterOrder=بعد ذلك
@@ -76,7 +76,7 @@ TypeContact_propal_external_BILLING=الزبون فاتورة الاتصال
 TypeContact_propal_external_CUSTOMER=اتصل العملاء اقتراح متابعة
 TypeContact_propal_external_SHIPPING=Customer contact for delivery
 # Document models
-DocModelAzurDescription=A complete proposal model 
+DocModelAzurDescription=A complete proposal model (old implementation of Cyan template)
 DocModelCyanDescription=A complete proposal model
 DefaultModelPropalCreate=إنشاء نموذج افتراضي
 DefaultModelPropalToBill=القالب الافتراضي عند إغلاق الأعمال المقترح (أن الفاتورة)
@@ -84,3 +84,16 @@ DefaultModelPropalClosed=القالب الافتراضي عند إغلاق ال�
 ProposalCustomerSignature=قبول كتابي، ختم الشركة والتاريخ والتوقيع
 ProposalsStatisticsSuppliers=Vendor proposals statistics
 CaseFollowedBy=Case followed by
+SignedOnly=Signed only
+IdProposal=Proposal ID
+IdProduct=Product ID
+PrParentLine=Proposal Parent Line
+LineBuyPriceHT=Buy Price Amount net of tax for line
+SignPropal=Accept proposal
+RefusePropal=Refuse proposal
+Sign=Sign
+PropalAlreadySigned=Proposal already accepted
+PropalAlreadyRefused=Proposal already refused
+PropalSigned=Proposal accepted
+PropalRefused=Proposal refused
+ConfirmRefusePropal=Are you sure you want to refuse this commercial proposal?

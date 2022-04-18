@@ -39,6 +39,14 @@ function mymoduleAdminPrepareHead()
 	$head[$h][1] = $langs->trans("Settings");
 	$head[$h][2] = 'settings';
 	$h++;
+
+	/*
+	$head[$h][0] = dol_buildpath("/mymodule/admin/myobject_extrafields.php", 1);
+	$head[$h][1] = $langs->trans("ExtraFields");
+	$head[$h][2] = 'myobject_extrafields';
+	$h++;
+	*/
+
 	$head[$h][0] = dol_buildpath("/mymodule/admin/about.php", 1);
 	$head[$h][1] = $langs->trans("About");
 	$head[$h][2] = 'about';
@@ -52,7 +60,9 @@ function mymoduleAdminPrepareHead()
 	//$this->tabs = array(
 	//	'entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__'
 	//); // to remove a tab
-	complete_head_from_modules($conf, $langs, null, $head, $h, 'mymodule');
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'mymodule@mymodule');
+
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'mymodule@mymodule', 'remove');
 
 	return $head;
 }

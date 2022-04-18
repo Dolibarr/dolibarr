@@ -50,9 +50,9 @@ class Ctyperesource
 	public $code;
 
 	/**
-     * @var string Type resource label
-     */
-    public $label;
+	 * @var string Type resource label
+	 */
+	public $label;
 
 	public $active;
 
@@ -99,18 +99,18 @@ class Ctyperesource
 		// Put here code to add control on parameters values
 
 		// Insert request
-		$sql = 'INSERT INTO ' . MAIN_DB_PREFIX . $this->table_element . '(';
+		$sql = 'INSERT INTO '.$this->db->prefix().$this->table_element.'(';
 
-		$sql.= 'code,';
-		$sql.= 'label';
-		$sql.= 'active';
+		$sql .= 'code,';
+		$sql .= 'label';
+		$sql .= 'active';
 
 
 		$sql .= ') VALUES (';
 
-		$sql .= ' '.(! isset($this->code)?'NULL':"'".$this->db->escape($this->code)."'").',';
-		$sql .= ' '.(! isset($this->label)?'NULL':"'".$this->db->escape($this->label)."'").',';
-		$sql .= ' '.(! isset($this->active)?'NULL':$this->active);
+		$sql .= ' '.(!isset($this->code) ? 'NULL' : "'".$this->db->escape($this->code)."'").',';
+		$sql .= ' '.(!isset($this->label) ? 'NULL' : "'".$this->db->escape($this->label)."'").',';
+		$sql .= ' '.(!isset($this->active) ? 'NULL' : $this->active);
 
 
 		$sql .= ')';
@@ -119,20 +119,20 @@ class Ctyperesource
 
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error ++;
-			$this->errors[] = 'Error ' . $this->db->lasterror();
-			dol_syslog(__METHOD__ . ' ' . implode(',', $this->errors), LOG_ERR);
+			$error++;
+			$this->errors[] = 'Error '.$this->db->lasterror();
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 		}
 
 		if (!$error) {
-			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX . $this->table_element);
+			$this->id = $this->db->last_insert_id($this->db->prefix().$this->table_element);
 
-			// Uncomment this and change MYOBJECT to your own tag if you
+			// Uncomment this and change CTYPERESOURCE to your own tag if you
 			// want this action to call a trigger.
 			//if (!$notrigger) {
 
 			//  // Call triggers
-			//  $result=$this->call_trigger('MYOBJECT_CREATE',$user);
+			//  $result=$this->call_trigger('CTYPERESOURCE_CREATE',$user);
 			//  if ($result < 0) $error++;
 			//  // End call triggers
 			//}
@@ -142,7 +142,7 @@ class Ctyperesource
 		if ($error) {
 			$this->db->rollback();
 
-			return - 1 * $error;
+			return -1 * $error;
 		} else {
 			$this->db->commit();
 
@@ -163,18 +163,19 @@ class Ctyperesource
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
-		$sql = 'SELECT';
-		$sql .= ' t.rowid,';
-
+		$sql = "SELECT";
+		$sql .= " t.rowid,";
 		$sql .= " t.code,";
 		$sql .= " t.label,";
 		$sql .= " t.active";
-
-
-		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' as t';
-		if ($id)   $sql.= " WHERE t.id = ".$id;
-		elseif ($code) $sql.= " WHERE t.code = '".$this->db->escape($code)."'";
-		elseif ($label) $sql.= " WHERE t.label = '".$this->db->escape($label)."'";
+		$sql .= " FROM ".$this->db->prefix().$this->table_element." as t";
+		if ($id) {
+			$sql .= " WHERE t.id = ".((int) $id);
+		} elseif ($code) {
+			$sql .= " WHERE t.code = '".$this->db->escape($code)."'";
+		} elseif ($label) {
+			$sql .= " WHERE t.label = '".$this->db->escape($label)."'";
+		}
 
 
 		$resql = $this->db->query($sql);
@@ -204,10 +205,10 @@ class Ctyperesource
 				return 0;
 			}
 		} else {
-			$this->errors[] = 'Error ' . $this->db->lasterror();
-			dol_syslog(__METHOD__ . ' ' . implode(',', $this->errors), LOG_ERR);
+			$this->errors[] = 'Error '.$this->db->lasterror();
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 
-			return - 1;
+			return -1;
 		}
 	}
 
@@ -227,32 +228,29 @@ class Ctyperesource
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
-		$sql = 'SELECT';
-		$sql .= ' t.rowid,';
-
+		$sql = "SELECT";
+		$sql .= " t.rowid,";
 		$sql .= " t.code,";
 		$sql .= " t.label,";
 		$sql .= " t.active";
-
-
-		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element. ' as t';
+		$sql .= " FROM ".$this->db->prefix().$this->table_element." as t";
 
 		// Manage filter
 		$sqlwhere = array();
 		if (count($filter) > 0) {
 			foreach ($filter as $key => $value) {
-				$sqlwhere [] = $key . ' LIKE \'%' . $this->db->escape($value) . '%\'';
+				$sqlwhere[] = $key." LIKE '%".$this->db->escape($value)."%'";
 			}
 		}
 
 		if (count($sqlwhere) > 0) {
-			$sql .= ' WHERE ' . implode(' '.$filtermode.' ', $sqlwhere);
+			$sql .= ' WHERE '.implode(' '.$this->db->escape($filtermode).' ', $sqlwhere);
 		}
 		if (!empty($sortfield)) {
 			$sql .= $this->db->order($sortfield, $sortorder);
 		}
 		if (!empty($limit)) {
-		    $sql .=  ' ' . $this->db->plimit($limit, $offset);
+			$sql .= $this->db->plimit($limit, $offset);
 		}
 
 		$resql = $this->db->query($sql);
@@ -272,10 +270,10 @@ class Ctyperesource
 
 			return $num;
 		} else {
-			$this->errors[] = 'Error ' . $this->db->lasterror();
-			dol_syslog(__METHOD__ . ' ' . implode(',', $this->errors), LOG_ERR);
+			$this->errors[] = 'Error '.$this->db->lasterror();
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 
-			return - 1;
+			return -1;
 		}
 	}
 
@@ -309,30 +307,30 @@ class Ctyperesource
 		// Put here code to add a control on parameters values
 
 		// Update request
-		$sql = 'UPDATE ' . MAIN_DB_PREFIX . $this->table_element . ' SET';
+		$sql = 'UPDATE '.$this->db->prefix().$this->table_element.' SET';
 
-		$sql .= ' code = '.(isset($this->code)?"'".$this->db->escape($this->code)."'":"null").',';
-		$sql .= ' label = '.(isset($this->label)?"'".$this->db->escape($this->label)."'":"null").',';
-		$sql .= ' active = '.(isset($this->active)?$this->active:"null");
+		$sql .= ' code = '.(isset($this->code) ? "'".$this->db->escape($this->code)."'" : "null").',';
+		$sql .= ' label = '.(isset($this->label) ? "'".$this->db->escape($this->label)."'" : "null").',';
+		$sql .= ' active = '.(isset($this->active) ? $this->active : "null");
 
 
-		$sql .= ' WHERE rowid=' . $this->id;
+		$sql .= ' WHERE rowid='.((int) $this->id);
 
 		$this->db->begin();
 
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error ++;
-			$this->errors[] = 'Error ' . $this->db->lasterror();
-			dol_syslog(__METHOD__ . ' ' . implode(',', $this->errors), LOG_ERR);
+			$error++;
+			$this->errors[] = 'Error '.$this->db->lasterror();
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 		}
 
-		// Uncomment this and change MYOBJECT to your own tag if you
+		// Uncomment this and change CTYPERESOURCE to your own tag if you
 		// want this action calls a trigger.
 		//if (!$error && !$notrigger) {
 
 		//  // Call triggers
-		//  $result=$this->call_trigger('MYOBJECT_MODIFY',$user);
+		//  $result=$this->call_trigger('CTYPERESOURCE_MODIFY',$user);
 		//  if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
 		//  // End call triggers
 		//}
@@ -341,7 +339,7 @@ class Ctyperesource
 		if ($error) {
 			$this->db->rollback();
 
-			return - 1 * $error;
+			return -1 * $error;
 		} else {
 			$this->db->commit();
 
@@ -365,12 +363,12 @@ class Ctyperesource
 
 		$this->db->begin();
 
-		// Uncomment this and change MYOBJECT to your own tag if you
+		// Uncomment this and change CTYPERESOURCE to your own tag if you
 		// want this action calls a trigger.
 		//if (!$error && !$notrigger) {
 
 		//  // Call triggers
-		//  $result=$this->call_trigger('MYOBJECT_DELETE',$user);
+		//  $result=$this->call_trigger('CTYPERESOURCE_DELETE',$user);
 		//  if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
 		//  // End call triggers
 		//}
@@ -378,14 +376,14 @@ class Ctyperesource
 		// If you need to delete child tables to, you can insert them here
 
 		if (!$error) {
-			$sql = 'DELETE FROM ' . MAIN_DB_PREFIX . $this->table_element;
-			$sql .= ' WHERE rowid=' . $this->id;
+			$sql = 'DELETE FROM '.$this->db->prefix().$this->table_element;
+			$sql .= ' WHERE rowid='.((int) $this->id);
 
 			$resql = $this->db->query($sql);
 			if (!$resql) {
-				$error ++;
-				$this->errors[] = 'Error ' . $this->db->lasterror();
-				dol_syslog(__METHOD__ . ' ' . implode(',', $this->errors), LOG_ERR);
+				$error++;
+				$this->errors[] = 'Error '.$this->db->lasterror();
+				dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 			}
 		}
 
@@ -393,7 +391,7 @@ class Ctyperesource
 		if ($error) {
 			$this->db->rollback();
 
-			return - 1 * $error;
+			return -1 * $error;
 		} else {
 			$this->db->commit();
 
@@ -431,9 +429,9 @@ class Ctyperesource
 
 		// Other options
 		if ($result < 0) {
-			$error ++;
+			$error++;
 			$this->errors = $object->errors;
-			dol_syslog(__METHOD__ . ' ' . implode(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 		}
 
 		unset($object->context['createfromclone']);
@@ -482,9 +480,9 @@ class CtyperesourceLine
 	public $code;
 
 	/**
-     * @var string Type resource line label
-     */
-    public $label;
+	 * @var string Type resource line label
+	 */
+	public $label;
 
 	public $active;
 

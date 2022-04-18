@@ -8,7 +8,6 @@ NoPredefinedProductToDispatch=No predefined products for this object. So no disp
 IdWarehouse=Warehouse ID
 LieuWareHouse=Locality of warehouse
 EstimatedStockValueSellShort=Value of stock at selling price
-VirtualDiffersFromPhysical=According to stock movement options, physical stock (physical + current orders) and virtual stock may differ
 RuleForStockReplenishment=Rule for stock replenishment
 IsInPackage=Packaged
 ThisSerialAlreadyExistWithDifferentDate=This lot/serial number (<strong>%s</strong>) already exists but with different useby or sellby dates (found <strong>%s</strong> but you entered <strong>%s</strong>).

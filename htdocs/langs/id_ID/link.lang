@@ -7,4 +7,5 @@ ErrorFileNotLinked=Berkas tidak dapat ditautkan
 LinkRemoved=Tautan %s telah dihapus
 ErrorFailedToDeleteLink= gagal untuk menghapus tautan '<b>%s</b>'
 ErrorFailedToUpdateLink= Gagal untuk memperbaharui tautan '<b>%s</b>'
-URLToLink=URL to link
+URLToLink=URL untuk ditautkan
+OverwriteIfExists=Timpa file jika ada

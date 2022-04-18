@@ -19,7 +19,7 @@
 #
 
 Module56000Name=Gestionnaire de tickets
-Module56000Desc=Système de ticket pour de l'assistance ou une demande d'accompagnement
+Module56000Desc=Gestionnaire de tickets d'assistance ou de gestion de demandes internes/clients/fournisseurs
 
 Permission56001=Voir tickets
 Permission56002=Modifier des tickets
@@ -30,12 +30,12 @@ Permission56005=Voir les tickets de tous les tiers (non effectif pour les utilis
 TicketDictType=Ticket - Types
 TicketDictCategory=Ticket - Groupes
 TicketDictSeverity=Ticket - Sévérités
-TicketTypeShortBUGSOFT=Dysfonctionnement logiciel
-TicketTypeShortBUGHARD=Dysfonctionnement matériel
-TicketTypeShortCOM=Question commerciale
+TicketDictResolution=Ticket - Résolution
 
+TicketTypeShortCOM=Question commerciale
 TicketTypeShortHELP=Demande d'aide fonctionnelle
-TicketTypeShortISSUE=Problème ou bogue
+TicketTypeShortISSUE=Question ou bug
+TicketTypeShortPROBLEM=Problème
 TicketTypeShortREQUEST=Demande de changement ou d'amélioration
 TicketTypeShortPROJET=Projet
 TicketTypeShortOTHER=Autre
@@ -43,7 +43,9 @@ TicketTypeShortOTHER=Autre
 TicketSeverityShortLOW=Faible
 TicketSeverityShortNORMAL=Normal
 TicketSeverityShortHIGH=Élevé
-TicketSeverityShortBLOCKING=Critique/Bloquant
+TicketSeverityShortBLOCKING=Critique, bloquant
+
+TicketCategoryShortOTHER=Autre
 
 ErrorBadEmailAddress=Champ '%s' incorrect
 MenuTicketMyAssign=Mes tickets
@@ -55,24 +57,25 @@ TypeContact_ticket_internal_SUPPORTTEC=Utilisateur assigné
 TypeContact_ticket_external_SUPPORTCLI=Contact client / suivi des tickets
 TypeContact_ticket_external_CONTRIBUTOR=Contributeur externe
 
-OriginEmail=E-mail source
+OriginEmail=Email demandeur
 Notify_TICKET_SENTBYMAIL=Envoi d'un message du ticket par e-mail
 
 # Status
-NotRead=Non lu
 Read=Lu
 Assigned=Assigné
 InProgress=En cours
-NeedMoreInformation=Attente d'information
+NeedMoreInformation=Attente retour demandeur
+NeedMoreInformationShort=En attente de retour
 Answered=Répondu
 Waiting=En attente
-Closed=Fermé
+SolvedClosed=Résolu
 Deleted=Supprimé
 
 # Dict
 Type=Type
-Category=Code analytique
 Severity=Sévérité
+TicketGroupIsPublic=Le groupe est public
+TicketGroupIsPublicDesc=Si un groupe de tickets est public, il sera visible dans le formulaire lors de la création d’un ticket à partir de l’interface publique
 
 # Email templates
 MailToSendTicketMessage=Pour envoyer un e-mail depuis un ticket
@@ -118,7 +121,7 @@ TicketsShowModuleLogoHelp=Activer cette option pour cacher le logo du module dan
 TicketsShowCompanyLogo=Afficher le logo de la société dans l'interface publique
 TicketsShowCompanyLogoHelp=Activez cette option pour masquer le logo de la société dans les pages de l'interface publique
 TicketsEmailAlsoSendToMainAddress=Envoyer également une notification à l'adresse e-mail principale
-TicketsEmailAlsoSendToMainAddressHelp=Activer cette option pour envoyer un email à "Email de notification de" adresse (voir configuration ci-dessous)
+TicketsEmailAlsoSendToMainAddressHelp=Activer cette option pour envoyer aussi un email à l'adresse définie dans la configuration "%s" (Voir onglet "%s")
 TicketsLimitViewAssignedOnly=Limiter l'afficher des tickets assignés à l'utilisateur courant (non valable pour les utilisateurs externes, toujours limité par le tiers dont ils dépendent)
 TicketsLimitViewAssignedOnlyHelp=Seuls les tickets affectés à l'utilisateur actuel seront visibles. Ne s'applique pas à un utilisateur disposant de droits de gestion des tickets.
 TicketsActivatePublicInterface=Activer l'interface publique
@@ -126,9 +129,16 @@ TicketsActivatePublicInterfaceHelp=L'interface publique permet à tous les visit
 TicketsAutoAssignTicket=Affecter automatiquement l'utilisateur qui a créé le ticket
 TicketsAutoAssignTicketHelp=Lors de la création d'un ticket, l'utilisateur peut être automatiquement affecté au ticket.
 TicketNumberingModules=Module de numérotation des tickets
+TicketsModelModule=Modèles de documents pour les tickets
 TicketNotifyTiersAtCreation=Notifier le tiers à la création
-TicketGroup=Groupe
 TicketsDisableCustomerEmail=Toujours désactiver les courriels lorsqu'un ticket est créé depuis l'interface publique
+TicketsPublicNotificationNewMessage=Envoyer un ou des emails lorsqu’un nouveau message/commentaire est ajouté à un ticket
+TicketsPublicNotificationNewMessageHelp=Envoyer un (des) courriel(s) lorsqu’un nouveau message est ajouté à partir de l’interface publique (à l’utilisateur désigné ou au courriel de notification  (mise à jour) et/ou au courriel de notification)
+TicketPublicNotificationNewMessageDefaultEmail=Emails de notifications à (mise à jour)
+TicketPublicNotificationNewMessageDefaultEmailHelp=Envoyez un email à cette adresse email pour chaque nouveau message de notifications si le ticket n'a pas d'utilisateur assigné ou si l'utilisateur n'a pas d'email connu.
+TicketsAutoReadTicket=Automatiquement marquer le ticket comme lu
+TicketsAutoReadTicketHelp=Automatiquement marquer le ticket comme lu s'il est créé depuis le backoffice.
+
 #
 # Index & list page
 #
@@ -157,7 +167,7 @@ CreatedBy=Créé par
 NewTicket=Nouveau ticket
 SubjectAnswerToTicket=Réponse ticket
 TicketTypeRequest=Type de demande
-TicketCategory=Code analytique
+TicketCategory=Catégorisation du ticket
 SeeTicket=Voir le ticket
 TicketMarkedAsRead=Le ticket a été marqué comme lu
 TicketReadOn=Lu
@@ -175,15 +185,17 @@ MessageSuccessfullyAdded=Ticket créé
 TicketMessageSuccessfullyAdded=Message ajouté avec succès
 TicketMessagesList=Liste des messages
 NoMsgForThisTicket=Pas de message pour ce ticket
-Properties=Classification
+TicketProperties=Classification
 LatestNewTickets=Les %s derniers tickets (non lus)
 TicketSeverity=Sévérité
 ShowTicket=Voir le ticket
 RelatedTickets=Tickets liés
 TicketAddIntervention=Créer intervention
-CloseTicket=Fermer le ticket
-CloseATicket=Fermer un ticket
+CloseTicket=Fermer|Résoudre ticket
+AbandonTicket=Abandonner le ticket
+CloseATicket=Fermer|Résoudre un ticket
 ConfirmCloseAticket=Confirmer la fermeture du ticket
+ConfirmAbandonTicket=Confirmez-vous la fermeture du ticket au statut 'Abandonné'
 ConfirmDeleteTicket=Confirmez la suppression du ticket
 TicketDeletedSuccess=Ticket supprimé avec succès
 TicketMarkedAsClosed=Ticket indiqué fermé
@@ -208,6 +220,7 @@ TicketMessageHelp=Seul ce texte sera sauvegardé dans la liste des messages sur 
 TicketMessageSubstitutionReplacedByGenericValues=Les variables de substitution sont remplacées par des valeurs génériques.
 TimeElapsedSince=Temps écoulé depuis
 TicketTimeToRead=Temps écoulé avant la lecture
+TicketTimeElapsedBeforeSince=Temps écoulé avant / depuis
 TicketContacts=Contacts ticket
 TicketDocumentsLinked=Documents liés
 ConfirmReOpenTicket=Voulez-vous ré-ouvrir ce ticket ?
@@ -230,7 +243,6 @@ TicketLogStatusChanged=Statut modifié: %s à %s
 TicketNotNotifyTiersAtCreate=Ne pas notifier l'entreprise à la création
 Unread=Non lu
 TicketNotCreatedFromPublicInterface=Non disponible. Le ticket n’a pas été créé à partir de l'interface publique.
-PublicInterfaceNotEnabled=L’interface publique n’a pas été activée
 ErrorTicketRefRequired=La référence du ticket est requise
 
 #
@@ -253,7 +265,7 @@ TicketPublicDesc=Vous pouvez créer un ticket ou consulter à partir d'un ID de 
 YourTicketSuccessfullySaved=Le ticket a été enregistré avec succès
 MesgInfosPublicTicketCreatedWithTrackId=Un nouveau ticket a été créé avec l'ID %s et la référence %s.
 PleaseRememberThisId=Merci de conserver le code de suivi du ticket, il vous sera peut-être nécessaire ultérieurement
-TicketNewEmailSubject=Confirmation de création de ticket - Réf %s
+TicketNewEmailSubject=Confirmation de création de ticket - Réf %s(ID publique tu ticket %s)
 TicketNewEmailSubjectCustomer=Nouveau ticket
 TicketNewEmailBody=Ceci est un message automatique pour confirmer l'enregistrement de votre ticket.
 TicketNewEmailBodyCustomer=Ceci est un email automatique pour confirmer qu'un nouveau ticket vient d'être créé dans votre compte.
@@ -272,7 +284,7 @@ Subject=Sujet
 ViewTicket=Voir le ticket
 ViewMyTicketList=Voir la liste de mes tickets
 ErrorEmailMustExistToCreateTicket=Erreur: adresse email introuvable dans notre base de données
-TicketNewEmailSubjectAdmin=Nouveau ticket créé - Réf %s
+TicketNewEmailSubjectAdmin=Nouveau ticket créé - Réf %s(ID publique du ticket %s)
 TicketNewEmailBodyAdmin=<p> Le ticket vient d'être créé avec l'ID # %s, voir les informations: </p>
 SeeThisTicketIntomanagementInterface=Voir ticket dans l'interface de gestion
 TicketPublicInterfaceForbidden=L'interface publique pour les tickets n'a pas été activée
@@ -302,3 +314,14 @@ BoxLastModifiedTicket=Derniers tickets modifiés
 BoxLastModifiedTicketDescription=Les %s derniers tickets modifiés
 BoxLastModifiedTicketContent=
 BoxLastModifiedTicketNoRecordedTickets=Pas de tickets modifiés récemment
+BoxTicketType=Répartition des tickets ouverts par type
+BoxTicketSeverity=Nombre de tickets ouverts par sévérité
+BoxNoTicketSeverity=Aucun ticket ouvert
+BoxTicketLastXDays=Nombre de nouveaux tickets par jour ces %s derniers jours
+BoxTicketLastXDayswidget = Nombre de nouveaux tickets par jour ces X derniers jours
+BoxNoTicketLastXDays=Aucun nouveau ticket ces %s derniers jours
+BoxNumberOfTicketByDay=Nombre de nouveaux tickets par jour
+BoxNewTicketVSClose=Nombre de nouveaux tickets par rapport aux tickets fermés (aujourd'hui)
+TicketCreatedToday=Ticket créé aujourd'hui
+TicketClosedToday=Ticket fermé aujourd'hui
+KMFoundForTicketGroup=Nous avons trouvé des sujets et des FAQ pouvant répondre à votre question, merci de les consulter avant de soumettre le ticket

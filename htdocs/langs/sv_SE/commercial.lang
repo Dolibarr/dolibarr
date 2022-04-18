@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - commercial
-Commercial=Commerce
-CommercialArea=Commerce area
+Commercial=Handel
+CommercialArea=Handelsområde
 Customer=Kunden
 Customers=Kunder
 Prospect=Prospect
@@ -64,10 +64,11 @@ ActionAC_SHIP=Skicka Leverans med e-post
 ActionAC_SUP_ORD=Skicka inköpsorder via post
 ActionAC_SUP_INV=Skicka försäljningsfaktura via post
 ActionAC_OTH=Andra
-ActionAC_OTH_AUTO=Automatiskt införda händelser
+ActionAC_OTH_AUTO=Annan automatik
 ActionAC_MANUAL=Manuellt införda händelser
 ActionAC_AUTO=Automatiskt införda händelser
-ActionAC_OTH_AUTOShort=Automatiskt
+ActionAC_OTH_AUTOShort=Andra
+ActionAC_EVENTORGANIZATION=Event organisation evenemang
 Stats=Försäljningsstatistik
 StatusProsp=Prospect status
 DraftPropals=Utforma kommersiella förslag

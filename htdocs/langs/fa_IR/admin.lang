@@ -1,4 +1,6 @@
 # Dolibarr language file - Source file is en_US - admin
+BoldRefAndPeriodOnPDF=Print reference and period of product item in PDF
+BoldLabelOnPDF=Print label of product item in Bold in PDF
 Foundation=موسسه
 Version=نسخه
 Publisher=ناشر
@@ -37,9 +39,13 @@ UnlockNewSessions=حذف قفل اتصال
 YourSession=نشست شما
 Sessions=نشست‌های کاربران
 WebUserGroup=کاربرِ/گروهِ سرویس‌دهندۀ‌وب 
+PermissionsOnFiles=Permissions on files
+PermissionsOnFilesInWebRoot=Permissions on files in web root directory
+PermissionsOnFile=Permissions on file %s
 NoSessionFound=به نظر می‌رسد پیکربندی PHP شما امکان فهرست‌کردن نشست‌های فعال را نداشته باشد. ممکن است پوشه‌ای که برای ذخیرۀ نشست‌ها مورد استفاده است (<b>%s</b>)  حفاظت شده باشد (مثلا بواسطۀ مجوزهای سیستم‌عامل یا با تمهیدات   open_basedir در PHP).
 DBStoringCharset=تنظیمات کدبندی Charset بانک داده برای ذخیره داده‌ها
 DBSortingCharset=تنظیمات کدبندی Charset بانک داده برای مرتب‌سازی داده‌ها
+HostCharset=Host charset
 ClientCharset=تنظیمات Charset مشتری
 ClientSortingCharset=تنظیمات collation مشتری
 WarningModuleNotActive=واحد <b>%s</b> باید فعال باشد
@@ -49,14 +55,19 @@ InternalUser=کاربر داخلی
 ExternalUser=کاربر خارجی
 InternalUsers=کاربران داخلی
 ExternalUsers=کاربران خارجی
+UserInterface=User interface
 GUISetup=نمایش
 SetupArea=برپاسازی
 UploadNewTemplate=بارگذاری قالب‌(های) جدید
 FormToTestFileUploadForm=برگه آزمایش بارگذاری فایل (با توجه به برپاسازی)
+ModuleMustBeEnabled=The module/application <b>%s</b> must be enabled
+ModuleIsEnabled=The module/application <b>%s</b> has been enabled
 IfModuleEnabled=توجه: «بله» تنها در صورتی مؤثر است که واحد <b>%s</b> فعال باشد
 RemoveLock=فایل <b>%s</b> را در صورت موجود بودن تغییر دهید تا امکان استفاده از ابزار نصب/روزآمدسازی وجود داشته باشد.
 RestoreLock=فایل <b>%s</b> را با مجوز فقط خواندنی بازیابی کنید تا امکان استفاده از ابزار نصب/روزآمدسازی را غیرفعال کنید.
 SecuritySetup=برپاسازی امنیتی
+PHPSetup=PHP setup
+OSSetup=OS setup
 SecurityFilesDesc=در این قسمت گزینه‌های مربوط به امنیت بارگذاری فایل را تعریف کنید
 ErrorModuleRequirePHPVersion=خطا! این واحد نیازمند PHP نسخۀ %s یا بالاتر دارد
 ErrorModuleRequireDolibarrVersion=خطا! این واحد نیاز به Dolibarr  نسخۀ %s یا بالاتر را دارد
@@ -66,22 +77,23 @@ Dictionary=واژه‌نامه‌ها
 ErrorReservedTypeSystemSystemAuto=مقدار 'system' و 'systemauto'  برای نوع محفوظ است. شما می توانید از 'user' به عنوان مقدار برای اضافه کردن ردیف دل‌خواه استفاده نمایید.
 ErrorCodeCantContainZero=کد وارد شده نمی‌تواند مقدار 0 داشته باشد
 DisableJavascript=غیر فعال کردن توابع جاوا اسکریپت و آژاکس
-DisableJavascriptNote=نکته: برای اهداف آزمایشی یا اشکال‌یابی. برای بهینه‌سازی برای اشخاص نابینا یا مرورگرهای مبتنی بر نوشته، شما می‌توانید ترجیح دهید که از برپاسازی موجود در نمایۀ کاربر استفاده نمائید
+DisableJavascriptNote=Note: For test or debug purpose only. For optimization for blind person or text browsers, you may prefer to use the setup on the profile of user
 UseSearchToSelectCompanyTooltip=در صورتی که تعداد اشخاص‌سوم شما بسیار زیاد باشد (مثلا بیشتر از 100000)، شما می‌توانید از واحد برپاسازی->سایر با استفاده از تغییر مقدارثابت COMPANY_DONOTSEARCH_ANYWHERE به عدد 1، سرعت را زیاد کنید. جستجو در این حالت تنها به شروع عبارت محدود خواهد شد.
 UseSearchToSelectContactTooltip=در صورتی که تعداد اشخاص‌سوم شما بسیار زیاد باشد (مثلا بیشتر از 100000)، شما می‌توانید از واحد برپاسازی->سایر با استفاده از تغییر مقدارثابت CONTACT_DONOTSEARCH_ANYWHERE به عدد 1، سرعت را زیاد کنید. جستجو در این حالت تنها به شروع عبارت محدود خواهد شد.
 DelaiedFullListToSelectCompany=انتظار تا هنگام فشرده شدن یک کلید قبل از بارگذاری فهرست ترکیبی اشخاص‌سوم. <br> در صورتی که تعداد زیادی شخص‌سوم داشته باشید این باعث افزایش کارآمدی خواهد شد اما راحتی آن کم‌تر است.
-DelaiedFullListToSelectContact=انتظار تا هنگام فشرده شدن یک کلید قبل از بارگذاری فهرست ترکیبی تماس‌ها در صورتی که تعداد زیادی ورودی تماس داشته باشید <br> این باعث افزایش کارآمدی خواهد شد اما راحتی آن کم‌تر است)
+DelaiedFullListToSelectContact=Wait until a key is pressed before loading content of Contact combo list.<br>This may increase performance if you have a large number of contacts, but it is less convenient.
 NumberOfKeyToSearch=تعداد حروفی که عامل جستجو می‌شود: %s
 NumberOfBytes=مقدار بایت‌ها
 SearchString=عبارت جستجو
 NotAvailableWhenAjaxDisabled=در هنگام غیر فعال بودن AJAX در دسترس نیست
 AllowToSelectProjectFromOtherCompany=بر روی اسناد مربوط به یک شخص‌سوم، امکان انتخاب یک طرح‌کاری متصل به یک شخص سوم دیگر وجود دارد
+TimesheetPreventAfterFollowingMonths=Prevent recording time spent after the following number of months
 JavascriptDisabled=جاوا اسکریپت غیر فعال شده
 UsePreviewTabs=استفاده‌از زبانه‌های پیش‌نمایش
 ShowPreview=نمایش پیش‌نمایش
+ShowHideDetails=Show-Hide details
 PreviewNotAvailable=پیش‌نمایش در دسترس نیست
 ThemeCurrentlyActive=محیطی که اکنون فعال است
-CurrentTimeZone=منطقه زمانی PHP (سرور)
 MySQLTimeZone=منطقه زمانی MySql (پایگاه داده)
 TZHasNoEffect=در صورتی که تاریخ‌ها به‌عنوان رشتۀ ارسال شده حفظ شوند، توسط سرویس‌دهندۀ بانک‌داده ذخیره شده و ارائه می‌شود. ناحیه‌های زمانی تنها در صورتی مؤثرند که از تابع UNIX_TIMESTAMP استفاده شده باشد ( در Dolibarr نباید استفاده شود، بنابراین ناحیۀ زمانی بانک داده نباید تاثیر داشته باشد، حتی اگر بعد از درج داده تغییر داده شود).
 Space=فضا
@@ -94,20 +106,21 @@ NextValueForInvoices=مقدار بعدی (صورت‌حساب)
 NextValueForCreditNotes=مقدار بعدی (یادداشت‌های اعتبار)
 NextValueForDeposit=مقدار بعدی (پیش پرداخت)
 NextValueForReplacements=ارزش بعدی (جایگزینی)
-MustBeLowerThanPHPLimit=نکته: پیکربندی PHP <b>شما</b> حداکثر اندازۀ فایل برای بارگذاری را به مقدار <b>%s</b>%s محدود کرده است. محدودیت بدون توجه به مؤلفه مقابل رعایت خواهد شد.
+MustBeLowerThanPHPLimit=Note: your PHP configuration currently limits the maximum filesize for upload to <b>%s</b> %s, irrespective of the value of this parameter
 NoMaxSizeByPHPLimit=توجه: هیچ محدودیتی در پیکربندی PHP شما وجود ندارد
 MaxSizeForUploadedFiles=حداکثر اندازۀ فایل بارگذاری شده ( برای عدم اجازۀ ارسال فایل عدد 0 را وارد نمائید)
 UseCaptchaCode=استفاده از کدهای گرافیکی (CAPTCHA) در صفحۀ ورود
-AntiVirusCommand= مسیر کامل خط‌فرمان ویروس‌کش
-AntiVirusCommandExample= مثال برای ClamWin این نشانی: c:\\Progra~1\\ClamWin\\bin\\clamscan.exe <br> برای ClamAv این نشانی: /usr/bin/clamscan
+AntiVirusCommand=مسیر کامل خط‌فرمان ویروس‌کش
+AntiVirusCommandExample=Example for ClamAv Daemon (require clamav-daemon): /usr/bin/clamdscan<br>Example for ClamWin (very very slow): c:\\Progra~1\\ClamWin\\bin\\clamscan.exe
 AntiVirusParam= پارامترهای بیشتر در خط فرمان
-AntiVirusParamExample= مثال برای ClamWin  به این شکل : --database="C:\\Program Files (x86)\\ClamWin\\lib"
+AntiVirusParamExample=Example for ClamAv Daemon: --fdpass<br>Example for ClamWin: --database="C:\\Program Files (x86)\\ClamWin\\lib"
 ComptaSetup=برپاسازی واحد حساب‌داری
 UserSetup=برپاسازی مدیریت کاربر
 MultiCurrencySetup=برپاسازی چندگانگی-واحدپولی
 MenuLimits=محدودیت‌ها و دقت
 MenuIdParent=شناسۀ فهرست والد
 DetailMenuIdParent=شناسۀ فهرست والد (اگر فهرست اصلی است، خالی بگذارید)
+ParentID=Parent ID
 DetailPosition=عدد ترتیب برای تعیین مکان فهرست
 AllMenus=همه
 NotConfigured=واحد/برنامه پیکربندی نشده است
@@ -122,7 +135,6 @@ IdModule=شناسۀ واحد
 IdPermissions=شناسۀ مجوزها
 LanguageBrowserParameter=پارامتر %s
 LocalisationDolibarrParameters=پارامترهای بومی‌سازی
-ClientTZ=منطقۀ زمانی مشتری (کاربر)
 ClientHour=زمان مشتری (کاربر)
 OSTZ=منطقۀ زمانی سیستم‌عامل سرویس‌دهنده
 PHPTZ=منطقۀ زمانی سرویس‌دهندۀ PHP
@@ -149,8 +161,8 @@ SystemToolsAreaDesc=این واحد دربردارندۀ عوامل مربوط �
 Purge=پاک‌کردن
 PurgeAreaDesc=این صفحه به شما امکان حذف همۀ فایل‌های تولید شده و ذخیره شده با Dolibarr  را می‌دهد (فایل‌های موقت یا همۀ فایلهای داخل پوشۀ <b>%s</b>). استفاده از این قابلیت در شرایط عادی ضرورتی ندارد. این قابلیت برای کاربرانی ایجاد شده است که میزبانی وبگاه آن‌ها امکان حذف فایل‌هائی که توسط سرویس‌دهندۀ وب ایجاد شده‌اند را نداده است. 
 PurgeDeleteLogFile=حذف فایل‌های گزارش‌کار، شامل تعریف <b>%s</b> برای واحد گزارش‌کار سامانه Syslog (خطری برای از دست دادن داده‌ها نیست)
-PurgeDeleteTemporaryFiles=حذف همۀ فایل‌های موقت (خطری برای از دست دادن داده نیست). توجه: حذف تها در صورتی انجام خواهد شد که پوشۀ موقتی حداقل 24 ساعت قبل ساخته شده باشد.
-PurgeDeleteTemporaryFilesShort=حذف فایل‌های موقتی
+PurgeDeleteTemporaryFiles=Delete all log and temporary files (no risk of losing data). Parameter can be 'tempfilesold', 'logfiles' or both 'tempfilesold+logfiles'. Note: Deletion of temporary files is done only if the temp directory was created more than 24 hours ago.
+PurgeDeleteTemporaryFilesShort=Delete log and temporary files (no risk of losing data)
 PurgeDeleteAllFilesInDocumentsDir=حذف همۀ فایل‌های موجود در پوشۀ: <b>%s</b>. <br> این باعث حذف همۀ مستنداتی که به عناصر مربوطند ( اشخاص سوم، صورت‌حساب و غیره ...)، فایل‌هائی که به واحد ECM ارسال شده‌اند، نسخه‌برداری‌های پشتیبان بانک‌داده و فایل‌های موقت خواهد شد.
 PurgeRunNow=شروع پاک‌سازی
 PurgeNothingToDelete=هیچ فایل یا پوشه‌ای برای حذف وجود ندارد.
@@ -199,32 +211,36 @@ FeatureDisabledInDemo=ویژگی غیرفعال در نسخۀ نمایشی
 FeatureAvailableOnlyOnStable=این ویژگی فقط در نسخه‌های رسمی پایدار در دسترس است
 BoxesDesc=وسایل یا widgets اجزائی هستند که به شما اطلاعاتی برای شخصی‌سازی برخی صفحات نمایش می‌دهند.شما می‌توانید برای نمایش یا عدم نمایش این وسیله در صفحۀ مورد نظر صفحۀ هدف را انتخاب کرده و کلید "فعال‌سازی" را فشار دهید، یا این‌که بر روی سطل‌آشغال کلیک کرده یا آن را فعال نمائید.
 OnlyActiveElementsAreShown=تنها عناصیر مربوط به <a href="%s">واحد‌های فعال</a> نمایش داده می‌شوند.
-ModulesDesc=این واحد‌ها/برنامه‌ها تعیین می‌کنند کدام قابلیت‌ها در نرم‌افزار فعال شوند. برخی واحد‌ها نیازمند مجوزدادن به کاربرن هستند تا امکان دسترسی به آن‌ها فراهم باشد. (در انتهای سطر مربوط به واحد) روی کلید روش/خاموش کلیک کنید تا واحد/برنامۀ مورد نظر را فعال/غیرفعال نمائید.
+ModulesDesc=The modules/applications determine which features are available in the software. Some modules require permissions to be granted to users after activating the module. Click the on/off button <span class="small valignmiddle">%s</span> of each module to enable or disable a module/application.
+ModulesDesc2=Click the wheel button <span class="small valignmiddle">%s</span> to configure the module/application.
 ModulesMarketPlaceDesc=می‌توانید واحد‌های بیشتری برای دریافت در سایت‌های موجود روی اینترنت پیدا کنید...
 ModulesDeployDesc=اگر مجوزهای موجود روی سرویس‌دهندۀ شما اجازه دهد، شما می‌توانید این ابزار را برای به کار گرفتن یک واحد بیرونی استفاده نمائید. این واحد در زبانۀ <strong>%s</strong> قابل نمایش خواهد بود. 
 ModulesMarketPlaces=پیدا کردن واحد‌ها/برنامه‌های بیرونی
 ModulesDevelopYourModule=ساختن برنامه/واحد دل‌خواه
 ModulesDevelopDesc=همچنین می‌توانید واحد‌های کاربردی دل‌خواه خودتان را ایجاد کنید یا شخصی برای توسعۀ نیازمندی‌های خود پیدا کنید تا این کار را انجام دهد.
 DOLISTOREdescriptionLong=به جای مراجعه به وبگاه <a href="https://www.dolistore.com">www.dolistore.com</a> برای پید کردن یک واحد مورد نیاز از بیرون، می‌توانید این ابزار داخلی را که بر روی بازارچۀ بیرونی جستجو می‌کند استفاده نمائید (ممکن است کند باشد، نیاز به دسترسی اینترنت دارد)...
-NewModule=جدید
+NewModule=New module
 FreeModule=رایگان
 CompatibleUpTo=سازگار با نسخۀ %s
 NotCompatible=به نظر نمی‌رسد این واحد با نسخۀ %s Dolibarr  نصب شده سازگار باشد (سازگاری حداقل با %s و حداکثر با %s ).
 CompatibleAfterUpdate=این واحد نیازمند روزآمدسازی Dolibarr نسخۀ %s است (حداقل %s - حداکثر %s)
 SeeInMarkerPlace=نمایش در بازارچه
+SeeSetupOfModule=See setup of module %s
+SetOptionTo=Set option <b>%s</b> to %s
 Updated=روزآمد شده
-Nouveauté=تازگی
 AchatTelechargement=خرید / بارگیری
 GoModuleSetupArea=برای به کاربردن یا نصب یک واحد، به محل برپاسازی واحد‌ها بروید: <a href="%s">%s</a>.
 DoliStoreDesc=DoliStore، بازارچۀ رسمی برای واحد‌های بیرونی Dolibarr ERP / CRM
-DoliPartnersDesc=فهرست شرکت‌هائی که واحد‌ها یا قابلیت‌های اختصاصی توسعه می‌دهند. <br> نکته: از آن‌جا که Dolibarr یک برنامۀ متن‌باز است، <i>هر</i> کسی که بتواند با PHP برنامه‌نویسی کند امکان توسعه دادن واحد‌های جدید را داراست.
+DoliPartnersDesc=List of companies providing custom-developed modules or features.<br>Note: since Dolibarr is an open source application, <i>anyone</i> experienced in PHP programming should be able to develop a module.
 WebSiteDesc=سایت‌های دیگر برای واحد‌های افزودنی (غیر هسته‌) دیگر...
 DevelopYourModuleDesc=چند راه برای توسعه دادن و ایجاد واحد دل‌خواه....
 URL=نشانی‌اینترنتی
+RelativeURL=Relative URL
 BoxesAvailable=وسایل در دسترس
 BoxesActivated=وسایل فعال شده
 ActivateOn=فعال کردن در
 ActiveOn=فعال شده در
+ActivatableOn=Activatable on
 SourceFile=فایل منبع
 AvailableOnlyIfJavascriptAndAjaxNotDisabled=فقط در صورتی که JavaScript غیرفعال نباشد در دسترس است
 Required=ضروری
@@ -250,8 +266,9 @@ ReferencedPreferredPartners=هم‌کاران پیش‌نهادی
 OtherResources=سایر منابع
 ExternalResources=منابع بیرونی
 SocialNetworks=شبکه‌های اجتماعی
-ForDocumentationSeeWiki=مستندات مربوط به کاربر یا برنامه‌نویس (مستندات، سوال و جواب و غیره)، <br> نگاهی به ویکی Dolibarr داشته باشید: <br><b><a href="%s" target="_blank">%s</a></b>
-ForAnswersSeeForum=در صورتی که سوال دارید یا به کمک نیاز دارید می‌توانید از تالارهای گفتمان Dolibarr  استفاده نمائید: <br><b><a href="%s" target="_blank">%s</a></b>
+SocialNetworkId=Social Network ID
+ForDocumentationSeeWiki=For user or developer documentation (Doc, FAQs...),<br>take a look at the Dolibarr Wiki:<br><b><a href="%s" target="_blank" rel="noopener noreferrer">%s</a></b>
+ForAnswersSeeForum=For any other questions/help, you can use the Dolibarr forum:<br><b><a href="%s" target="_blank" rel="noopener noreferrer">%s</a></b>
 HelpCenterDesc1=در این‌جا منابعی برای دریافت کمک و پشتیبانی در خصوص Dolibarr می‌یابید:
 HelpCenterDesc2=برخی از این منابع صرفا به زبان <b>انگلیسی</b> هستند.
 CurrentMenuHandler=دستیار فهرست کنونی
@@ -264,11 +281,12 @@ SpaceX=فضای X
 SpaceY=فضای Y
 FontSize=اندازۀ نوشته
 Content=محتوا
+ContentForLines=Content to display for each product or service (from variable __LINES__ of Content)
 NoticePeriod=بازۀ یادآوری
 NewByMonth=جدید بر حسب ماه
 Emails=رایانامه‌ها
 EMailsSetup=برپاسازی رایانامه‌ها
-EMailsDesc=این صفحه به شما امکان نادیده‌انگاری مؤلفه‌های پیش‌فرض PHP برای ارسال رایانامه را می‌دهد. در بیشتر موارد روی سیستم عامل لینوکس/یونیکس، برپاسازی PHP صحیح است و تنظیم این مؤلفه‌ها ضروری نیست.
+EMailsDesc=This page allows you to set parameters or options for email sending.
 EmailSenderProfiles=نمایه‌های ارسال‌کنندۀ رایانامه
 EMailsSenderProfileDesc=You can keep this section empty. If you enter some emails here, they will be added to the list of possible senders into the combobox when your write a new email.
 MAIN_MAIL_SMTP_PORT=درگاه SMTP/SMTPS (مقدار پیش‌فرض در php.ini : <b>%s</b>)
@@ -286,6 +304,7 @@ MAIN_MAIL_SMTPS_ID=شناسۀ SMTP (شناسه‌ای که سرویس دهنده
 MAIN_MAIL_SMTPS_PW=گذرواژۀ SMTP ( در صورتی که سرویس‌دهندۀ ارسال کننده نیازمند اعتبار ورود باشد)
 MAIN_MAIL_EMAIL_TLS=استفاده از رمزبندی TLS از (SSL)
 MAIN_MAIL_EMAIL_STARTTLS=استفاده از رمزبندی TLS از (STARTTLS)
+MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED=Authorise les certificats auto-signés
 MAIN_MAIL_EMAIL_DKIM_ENABLED=استفاده از DKIM برای تولید امضای رایانامه
 MAIN_MAIL_EMAIL_DKIM_DOMAIN=دامنۀ رایانامه برای استفاده به همراه DKIM
 MAIN_MAIL_EMAIL_DKIM_SELECTOR=نام انتخاب کنندۀ DKIM
@@ -297,8 +316,9 @@ MAIN_MAIL_DEFAULT_FROMTYPE=نشانی پیش‌فرض برای فرستندۀ ر
 UserEmail=رایانامۀ کاربر
 CompanyEmail=رایانامۀ شرکت
 FeatureNotAvailableOnLinux=این قابلیت در سامانه‌های ردۀ یونیکس وجود ندارد. برنامۀ ارسال رایانامۀ محلی خود را آزمایش کنید.
+FixOnTransifex=Fix the translation on the online translation platform of project
 SubmitTranslation=در صورتی که ترجمۀ این زبان کامل نیست یا شما خطائی سراغ دارید، شما می‌توانید فایل‌های موجود در پوشۀ <b>langs/%s</b>  را ویرایش کرده و تغییرات مورد نظر خود را به www.transifex.com/dolibarr-association/dolibarr/ بفرستید.
-SubmitTranslationENUS=در صورتی که ترجمۀ این زبان کامل نیست یا شما خطائی سراغ دارید، شما می‌توانید فایل‌های موجود در پوشۀ <b>langs/%s</b> را ویرایش کرده و فایل‌های تغییر کرده را به  dolibarr.org/forum یا توسعه دهندگان در github.com/Dolibarr/dolibarr ارسال فرمائید.
+SubmitTranslationENUS=If translation for this language is not complete or you find errors, you can correct this by editing files into directory <b>langs/%s</b> and submit modified files on dolibarr.org/forum or, if you are a developer, with a PR on github.com/Dolibarr/dolibarr
 ModuleSetup=برپاسازی واحد‌ها
 ModulesSetup=برپاسازی واحد‌ها و برنامه‌ها
 ModuleFamilyBase=سامانه
@@ -323,23 +343,25 @@ StepNb=گام %s
 FindPackageFromWebSite=بسته‌ای که متناسب با قابلیت‌های مورد نظر شماست بیابید (برای مثال روی وبگاه رسمی %s).
 DownloadPackageFromWebSite=دریافت بسته ( برای مثال از وبگاه رسمی %s ).
 UnpackPackageInDolibarrRoot=فایل‌های بسته‌بندی شده را در فهرست موجود در سرویس دهندۀ Dolibarr در نشانی: <b>%s</b> استخراج و بازگشائی unpack/unzip کنید.
-UnpackPackageInModulesRoot=برای استفاده/نصب یک واحد خارجی، فایل‌های فشرده/بسته‌بندی شده را در پوشۀ مربوط به واحد‌های خارجی در سرویس‌دهنده باز کنید: <br><b>%s</b>
+UnpackPackageInModulesRoot=To deploy/install an external module, you must unpack/unzip the archive file into the server directory dedicated to external modules:<br><b>%s</b>
 SetupIsReadyForUse=واحد مورد نظر مورد استفاده قرار گرفت. با این حال نیاز به تنظیم و برپاسازی در واحد مربوطه هنوز باقی است: <a href="%s">%s</a>.
 NotExistsDirect=پوشۀ جایگزین ریشه در پوشۀ موجود فعلی تعریف نشده است. <br>
 InfDirAlt=از نسخۀ 3، امکان تعریف یک پوشۀ جایگزین ریشه وجود دارد. این به شما امکان ذخیرۀ افزونه‌ها و قالب‌های دل‌خواه  را در یک پوشۀ اختصاصی می‌دهد. <br>فقط یک پوشه در ریشۀ Dolibarr بسازید (مثلا: custom).<br>
 InfDirExample=<br>سپس در فایل <strong>conf.php</strong><br> تعاریف را اینگونه تعیین کنید: $dolibarr_main_url_root_alt='/custom' <br>  $dolibarr_main_document_root_alt='/path/of/dolibarr/htdocs/custom' <br> در صورتی که این سطور با علامت "#" به توضیح تبدیل شده‌اند، برای فعال کردن، آن‌ها را با حذف علامت "#" از حالت توضیحی خارج کنید.
-YouCanSubmitFile=به‌جای‌این‌کار همچنین می‌توانید فایل module.zip را بارگذاری نمائید:
+YouCanSubmitFile=You can upload the .zip file of module package from here:
 CurrentVersion=نسخه کنونی Dolibarr
 CallUpdatePage=رفتن به صفحۀ روزآمدسازی ساختار بانک داده و داده‌های آن: %s
 LastStableVersion=آخرین نسخۀ پایدار
 LastActivationDate=آخرین تاریخ فعال‌سازی
 LastActivationAuthor=آخرین سازندۀ فعال‌کننده
 LastActivationIP=آخرین درگاه‌اینترنتی فعال‌کننده
+LastActivationVersion=Latest activation version
 UpdateServerOffline=به‌روز‌رسانی برون‌خطی-Offline سرویس‌دهنده
 WithCounter=مدیریت شمارنده
-GenericMaskCodes=شما می‌توانید هر نوع قالب شماره‌دهی مورد نظر خود را تعیین کنید. در این قالب، برچسب‌های زیر قابل استفاده هستند: <br><b>{000000}</b> که مربوط به عددی است که در هر %s به آن افزوده می‌شود. بسته به تعداد شماره‌هائی که لازم دارید، صفر قرار دهید.  شمارنده، به تعداد صفرهای موجود از سمت چپ تکمیل خواهد شد تا به تعداد صفرهای قالب، داشته باشد. <br><b>{000000+000}</b> مثل مورد قبل، با این تفاوت که شمارنده با عدد جایگزین پس از علامت + به عنوان اولین شمارۀ %s استفاده خواهد شد. <br><b>{000000@x}</b> همانند مورد قبل با این تفاوت که شمارنده پس از رسیدن به ماه x صفر خواهد شد (x عددی بین 1 و 12 است، یا 0 برای استفاده از ماه‌های ابتدائی سال مالی تعریف شده در پیکربندی،  یا 99 برای صفر شدن در هر ماه). در صورتی که این گزینه استفاده شود و x برابر با 2 یابیشتر باشد، توالی  {yy}{mm} یا {yyyy}{mm}  مورد نیاز خواهد بود. <br><b>{dd}</b> روز (01 تا 31). <br><b>{mm}</b> ماه (01 تا 12). <br><b>{yy}</b>، <b>{yyyy}</b> یا <b>{y}</b> سال 2، 4 رقمی یا 1 رقمی. <br>
-GenericMaskCodes2=<b>{cccc}</b> شمارۀ مشتری با تعیین تعداد اعداد <br><b> {cccc000}</b> شمارۀ مشتری با تعیین تعداد عدد به همراه یک شمارنده مخصوص مشتری. این شمارنده مخصوص در هنگام ازنوشدن شمارندۀ سراسری صفر خواهد شد. <br><b>{tttt}</b> شمارۀ نوع شخص سوم با تعیین تعداد حروف (به فهرست خانه-برپاسازی-واژه‌نامه-انواع شخص سوم) نگاه کنید. در صورتی که این برچسب را اضافه کنید، شمارنده برای هر یک از انواع شخص سوم، متفاوت خواهد بود.<br>
+GenericMaskCodes=You may enter any numbering mask. In this mask, the following tags can be used:<br><b>{000000}</b> corresponds to a number which will be incremented on each %s. Enter as many zeros as the desired length of the counter. The counter will be completed by zeros from the left in order to have as many zeros as the mask. <br><b>{000000+000}</b> same as the previous one but an offset corresponding to the number to the right of the + sign is applied starting on the first %s. <br><b>{000000@x}</b> same as the previous one but the counter is reset to zero when month x is reached (x between 1 and 12, or 0 to use the early months of fiscal year defined in your configuration, or 99 to reset to zero every month). If this option is used and x is 2 or higher, then the sequence {yy}{mm} or {yyyy}{mm} is also required. <br><b>{dd}</b> day (01 to 31).<br><b>{mm}</b> month (01 to 12).<br><b>{yy}</b>, <b>{yyyy}</b> or <b>{y}</b> year over 2, 4 or 1 numbers. <br>
+GenericMaskCodes2=<b>{cccc}</b> the client code on n characters<br><b>{cccc000}</b> the client code on n characters is followed by a counter dedicated to the customer. This counter dedicated to customer is reset at same time as the global counter.<br><b>{tttt}</b> The code of third party type on n characters (see menu Home - Setup - Dictionary - Types of third parties). If you add this tag, the counter will be different for each type of third party.<br>
 GenericMaskCodes3=تمام حروف موجود در قالب دست‌نخورده باقی خواهد ماند. <br> امکان درج فاصل وجود نداد.<br>
+GenericMaskCodes3EAN=All other characters in the mask will remain intact (except * or ? in 13th position in EAN13).<br>Spaces are not allowed.<br>In EAN13, the last character after the last } in 13th position should be * or ? . It will be replaced by the calculated key.<br>
 GenericMaskCodes4a=<u>مثال برای 99م %s مربوط به شخص سومی با نام TheCompany، با تاریخ 2007-01-31: </u><br>
 GenericMaskCodes4b=<u>به عنوان مثال در شخص‌سوم ایجاد شده در 2007-03-01:</u> <br>
 GenericMaskCodes4c=<u>به عنوان مثال در محصول ایجاد شده در 2007/03/01:</u> <br>
@@ -356,8 +378,8 @@ UMask=مقدار UMask برای فایل‌های جدید در سامانه‌�
 UMaskExplanation=این مقدار به شما امکان تعیین مجوزهای پیش‌فرض فایل‌ها که توسط Dolibarr روی سرور (مثلا در هنگام بالاگذاری فایل) ساخته شده می‌دهد. <br>این باید یک مقدار هشت‌هشتی باشد (برای مثال، 0666 به معنای امکان خواندن و نوشتن برای همه است). <br> این مقدار در یک سرور ویندوزی بی‌معنی است.
 SeeWikiForAllTeam=برای مطالعۀ فهرست مشارکت کنندگان و موسسات آن‌ها به صفحات ویکی مراجعه فرمائید.
 UseACacheDelay= تاخیر برای میان‌گیری-Caching واکنش به صادرات در واحد ثانیه (0 یا خالی برای عدم ایجاد میان‌گیری)
-DisableLinkToHelpCenter=پنهان کردن پیوند "<b>آیا نیاز به کمک دارید</b>" در صفحه ورود
-DisableLinkToHelp=پنهان‌کردن پیوند کمک برخط "<b>%s</b>"
+DisableLinkToHelpCenter=Hide the link "<b>Need help or support</b>" on the login page
+DisableLinkToHelp=Hide the link to the online help "<b>%s</b>"
 AddCRIfTooLong=نوشته به طور خودکار دربرگرفته نمی‌شود، نوشته‌های طولانی در مستندات نمایش داده نخواهد شد. لطفا در کادر نوشته در صورت نیاز کدهای مربوط به بازگشت به اول سطر را وارد نمائید.
 ConfirmPurge=آیا مطمئن هستید که می‌خواهید این روند حذف انجام شود؟ <br> این باعث حذف دائمی فایل‌های داده بدون امکان بازیافت آن خواهد شد (فایل‌های مدیریت محتوای الکترونیکی - ECM ، فایل‌های ضمیمه و غیره)
 MinLength=حداقل طول
@@ -367,7 +389,7 @@ ExamplesWithCurrentSetup=مثال‌هائی با پیکربندی کنونی
 ListOfDirectories=فهرست پوشه‌های قالب‌های OpenDocument
 ListOfDirectoriesForModelGenODT=فهرست پوشه‌هائی که دربردارندۀ قالب‌های به شکل OpenDocument هستند. <br><br>مسیر کامل پوشه‌ها را قرار دهید.<br>بین هر پوشه یک ارجاع به اول سطر قرار دهید.<br>برای افزودن پوشۀ واحد GED، اینجا قرار دهید <b>DOL_DATA_ROOT/ecm/yourdirectoryname</b>.<br><br>فایل‌های موجود در آن پوشه باشید با <b>.odt</b> یا <b>.ods</b> خاتمه یابند.
 NumberOfModelFilesFound=تعداد فایل‌های قالب ODT/ODS پیدا شده در این پوشه‌ها
-ExampleOfDirectoriesForModelGen=نمونه‌های روش نوشتاری:<br>c:\\mydir<br>/home/mydir<br>DOL_DATA_ROOT/ecm/ecmdir
+ExampleOfDirectoriesForModelGen=Examples of syntax:<br>c:\\myapp\\mydocumentdir\\mysubdir<br>/home/myapp/mydocumentdir/mysubdir<br>DOL_DATA_ROOT/ecm/ecmdir
 FollowingSubstitutionKeysCanBeUsed=<br> برای اطلاع از طرز ساخت مستندات قالب ODT دلخواه، قبل از این‌که آن‌ها را در این پوشه‌ها ذخیره کنید، مستندات راهنمای ویکی را بخوانید:
 FullListOnOnlineDocumentation=http://wiki.dolibarr.org/index.php/Create_an_ODT_document_template
 FirstnameNamePosition=مکان نام/نام‌خانوادگی
@@ -383,12 +405,13 @@ ModuleMustBeEnabledFirst=برای استفاده از این امکان، واح
 SecurityToken=کلیدواژۀ ایمن‌سازی نشانی‌ها
 NoSmsEngine=هیچ مدیر ارسال پیامکی وجود ندارد. مدیر ارسال پیامک به همراه توزیع پیش‌فرض نصب نشده است چون به تامین کنندۀ بیرونی وابسته است، اما شما می‌توانید در %s این نیاز را تامین کنید.
 PDF=PDF
-PDFDesc=گزینه‌های عمومی برای تولید PDF
-PDFAddressForging=قوانین کادرهای نشانی
+PDFDesc=Global options for PDF generation
+PDFOtherDesc=PDF Option specific to some modules
+PDFAddressForging=Rules for address section
 HideAnyVATInformationOnPDF=پنهان کردن همۀ اطلاعات مربوط به مالیات بر فروش و مالیات بر ارزش افزوده
 PDFRulesForSalesTax=قواعد مالیات‌برارزش‌افزوده و مالیات‌برفروش
 PDFLocaltax=قواعد %s
-HideLocalTaxOnPDF=پنهان کردن نرخ %s در ستون مالیات بر فروش
+HideLocalTaxOnPDF=Hide %s rate in column Sale Tax / VAT
 HideDescOnPDF=پنهان کردن توضیح محصولات
 HideRefOnPDF=پنهان کردن شمارۀ مرجع
 HideDetailsOnPDF=پنهان کردن جزئیات سطور محصولات
@@ -398,14 +421,16 @@ UrlGenerationParameters=مقادیر امن‌سازی نشانی‌های ای�
 SecurityTokenIsUnique=استفاده از یک مقدار securekey منحصربه‌فرد برای هر نشانی اینترنتی
 EnterRefToBuildUrl=مرجع را برای شیء %s وارد کنید
 GetSecuredUrl=نشانی اینترنتی محاسبه شده را دریافت کنید
-ButtonHideUnauthorized=پنهان کردن کلیدهای مربوط به فعالیت‌های غیرمجاز برای کاربران غیرمدیر به جای نمایش کلیدهای خاکستری غیرفعال
+ButtonHideUnauthorized=Hide unauthorized action buttons also for internal users (just greyed otherwise)
 OldVATRates=نرخ قدیمی مالیات‌بر‌ارزش‌افزوده
 NewVATRates=نرخ جدید قدیمی مالیات‌بر‌ارزش‌افزوده
 PriceBaseTypeToChange=تغییر قیمت‌ها بر پایۀ مقدار مرجع تعریف شده در
 MassConvert=اجرای تبدیل دسته‌ای
 PriceFormatInCurrentLanguage=Price Format In Current Language
 String=رشته
+String1Line=String (1 line)
 TextLong=متن طولانی
+TextLongNLines=Long text (n lines)
 HtmlText=نوشتۀ HTML
 Int=عدد صحیح
 Float=شناور
@@ -425,16 +450,16 @@ ExtrafieldCheckBox=کادرهای تائید
 ExtrafieldCheckBoxFromList=کادرهای تائید از جدول
 ExtrafieldLink=پیوند به یک شیء
 ComputedFormula=بخش محاسبه شده
-ComputedFormulaDesc=شما در این‌جا می‌توانید فرمولی را با استفاده از مشخصات دیگر یک شیء یا یک کدنوشتۀ PHP وارد نمائید تا یک مقدار پویای محاسبه شده دریافت کنید. شما همچنین می‌توانید هر فرمول سازگار با PHP را به همراه عمل‌گر شرطی  "?" وارد نمائید که با یک شیء سراسری دنبال می‌شود: <strong>$db, $conf, $langs, $mysoc, $user, $object</strong>. <br><strong>هشدار</strong>: تنها برخی از مشخصه‌های $object در دسترس هستند. در صورتی که نیاز به مشخصه‌ای دارید که بارگذاری نشده، همانند مثال دوم خودتان باید آن شیء را واکشی نمائید.<br> استفاده از یک بخش محاسبه‌شده به آن معناست که شما قادر نخواهید باد که از رابط خود مقداری وارد نمائید. همچنین، در صورتی که یک خطای نوشتاری وجود داشته باشد، فرمول هیچ چیز ارائه نخواهد داد.<br><br>مثال فرمول:<br>$object->id < 10 ? round($object->id / 2, 2): ($object->id + 2 * $user->id) * (int) substr($mysoc->zip, 1, 2)<br><br> مثال بارگذاری مجدد شیئ<br>(($reloadedobj = new Societe($db)) && ($reloadedobj->fetch($obj->id ? $obj->id: ($obj->rowid ? $obj->rowid: $object->id)) > 0)) ? $reloadedobj->array_options['options_extrafieldkey'] * $reloadedobj->capital / 5: '-1' <br><br> مثال دیگر فرمول برای اازام به بارگذاری شیء و والد آن:<br> (($reloadedobj = new Task($db)) && ($reloadedobj->fetch($object->id) > 0) && ($secondloadedobj = new Project($db)) && ($secondloadedobj->fetch($reloadedobj->fk_project) > 0)) ? $secondloadedobj->ref: 'Parent project not found'
+ComputedFormulaDesc=You can enter here a formula using other properties of object or any PHP coding to get a dynamic computed value. You can use any PHP compatible formulas including the "?" condition operator, and following global object: <strong>$db, $conf, $langs, $mysoc, $user, $object</strong>.<br><strong>WARNING</strong>: Only some properties of $object may be available. If you need a properties not loaded, just fetch yourself the object into your formula like in the second example.<br>Using a computed field means you can't enter yourself any value from interface. Also, if there is a syntax error, the formula may return nothing.<br><br>Example of formula:<br>$object->id < 10 ? round($object->id / 2, 2): ($object->id + 2 * $user->id) * (int) substr($mysoc->zip, 1, 2)<br><br>Example to reload object<br>(($reloadedobj = new Societe($db)) && ($reloadedobj->fetchNoCompute($obj->id ? $obj->id: ($obj->rowid ? $obj->rowid: $object->id)) > 0)) ? $reloadedobj->array_options['options_extrafieldkey'] * $reloadedobj->capital / 5: '-1'<br><br>Other example of formula to force load of object and its parent object:<br>(($reloadedobj = new Task($db)) && ($reloadedobj->fetchNoCompute($object->id) > 0) && ($secondloadedobj = new Project($db)) && ($secondloadedobj->fetchNoCompute($reloadedobj->fk_project) > 0)) ? $secondloadedobj->ref: 'Parent project not found'
 Computedpersistent=بخش محاسبه‌شدۀ فروشگاه
 ComputedpersistentDesc=بخش‌های محاسبه‌شدۀ اضافی در پایگاه داده ذخیره خواهند شد، به‌هرحال مقدار تنها در زمانی دوباره محاسبه خواهد شد که شیء این بخش تغییر کند. در صورتی که بخش محاسبه‌شده به سایر اشیاء یا داده‌های سراسری وابسته باشد، این مقدار ممکن است خطا باشد!!
 ExtrafieldParamHelpPassword=خالی رها کردن این بخش به معنای این است که مقدار بدون حفاظت ذخیره خواهد شد (بخش مربوطه باید با یک ستاره روی صفحه پنهان باشد).<br> 'auto' را برای استفاده از قواعد حفاظت برای ذخیرۀ گذرواژه در بانک‌داده ذخیره کنید (مقدار خوانده شده کدبندی شده است و امکان خواندن مقدار اصلی دیگر وجود نخواهد داشت)
 ExtrafieldParamHelpselect=فهرست مقادیر باید به صورت سطور به شکل  key,value باشد (که key نمی‌تواند برابر با 0 باشد.)<br><br> برای مثال: <br>1,value1<br>2,value2<br>code3,value3<br>...<br><br>برای برخورداری از فهرستی وابسته به فهرست دیگری از مشخصات تکمیلی:<br>1,value1|options_<i>parent_list_code</i>:parent_key<br>2,value2|options_<i>parent_list_code</i>:parent_key <br><br>برای برخورداری از یک فهرست وابسته به یک فهرست دیگر:<br>1,value1|<i>parent_list_code</i>:parent_key<br>2,value2|<i>parent_list_code</i>:parent_key
 ExtrafieldParamHelpcheckbox=فهرست مقادیر باید سطوری به شکل key,value باشد که (که key نمی‌تواند برابر با 0 باشد) <br><br> برای مثال: <br>1,value1<br>2,value2 <br>3,value3<br>...
 ExtrafieldParamHelpradio=فهرست مقادیر باید سطوری به شکل key,value باشد که (که key نمی‌تواند برابر با 0 باشد) <br><br> برای مثال: <br>1,value1<br>2,value2 <br>3,value3<br>...
-ExtrafieldParamHelpsellist=فهرست مقادیری که از یک جدول گرفته می‌شود<br>روش درج: table_name:label_field:id_field::filter<br>مثال: c_typent:libelle:id::filter<br><br>- idfilter برای  primary int key ضروری است<br>- فیلتر می‌تواند یک آزمایش ساده باشد (مثلا active=1) تا صرفا مقدار فعال را نمایش دهد. <br>شما همچنین در فیلتر می‌توانید از $ID$ استفاده کنید که برابر با شناسۀ کنونی شیء کنونی است <br>برای انجام یک جستار  SELECT در فیلتر از  $SEL$ استفاده نمائید.<br>در صورتی که بخواهید بخش‌های دیگر - extrafields را فیلتر کنید از این روش استفاده کنید   extra.fieldcode=... (که fieldcode درآن کد مربوط به آن extrafield است)<br><br>برای دریافت یک فهرست بسته به یک فهرست تکمیلی از مشخصه‌های دیگر:<br>c_typent:libelle:id:options_<i>parent_list_code</i>|parent_column:filter <br><br>برای دریافت فهرستی که مبتنی بر فهرستی دیگر است:<br>c_typent:libelle:id:<i>parent_list_code</i>|parent_column:filter
-ExtrafieldParamHelpchkbxlst=فهرست مقادیری که از یک جدول گرفته می‌شود <br>روش درج: table_name:label_field:id_field::filter<br>مثال: c_typent:libelle:id::filter<br><br>filter می‌تواند یک آزمایش ساده باشد (مثال active=1) برای نمایش مقدار فعال <br> شما همچنین می‌توانید از  $ID$ در فیلتر استفاده نمائید که شناسۀ کنونی شیء فعلی است <br>برای انجام جستار  SELECTدر فیلتر از  $SEL$<br>اگر بخواهید از extrafields در فیلتر استفاده نمائید، از روش‌درج extra.fieldcode=...  استفاده نمائید، (که کد فیلتر، همان کد extrafiled است)<br><br> باری دریافت ک فهرست وابسته به یک فهرست تکمیلی از مشخصه‌ها دیگر:<br>c_typent:libelle:id:options_<i>parent_list_code</i>|parent_column:filter <br><br>برای دریافت یک فهرست وابسته به یک فهرست دیگر:<br>c_typent:libelle:id:<i>parent_list_code</i>|parent_column:filter
-ExtrafieldParamHelplink=مؤلفه‌ها باید به شکل ObjectName:Classpath باشد، <br>روش درج: ObjectName:Classpath <br> مثال‌ها: <br> Societe:societe/class/societe.class.php <br> Contact:contact/class/contact.class.php
+ExtrafieldParamHelpsellist=List of values comes from a table<br>Syntax: table_name:label_field:id_field::filtersql<br>Example: c_typent:libelle:id::filtersql<br><br>- id_field is necessarly a primary int key<br>- filtersql is a SQL condition. It can be a simple test (eg active=1) to display only active value<br>You can also use $ID$ in filter which is the current id of current object<br>To use a SELECT into the filter use the keyword $SEL$ to bypass anti-injection protection.<br>if you want to filter on extrafields use syntax  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another complementary attribute list:<br>c_typent:libelle:id:options_<i>parent_list_code</i>|parent_column:filter <br><br>In order to have the list depending on another list:<br>c_typent:libelle:id:<i>parent_list_code</i>|parent_column:filter
+ExtrafieldParamHelpchkbxlst=List of values comes from a table<br>Syntax: table_name:label_field:id_field::filtersql<br>Example: c_typent:libelle:id::filtersql<br><br>filter can be a simple test (eg active=1) to display only active value<br>You can also use $ID$ in filter witch is the current id of current object<br>To do a SELECT in filter use $SEL$<br>if you want to filter on extrafields use syntax  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another complementary attribute list:<br>c_typent:libelle:id:options_<i>parent_list_code</i>|parent_column:filter <br><br>In order to have the list depending on another list:<br>c_typent:libelle:id:<i>parent_list_code</i>|parent_column:filter
+ExtrafieldParamHelplink=Parameters must be ObjectName:Classpath<br>Syntax: ObjectName:Classpath
 ExtrafieldParamHelpSeparator=Keep empty for a simple separator<br>Set this to 1 for a collapsing separator (open by default for new session, then status is kept for each user session)<br>Set this to 2 for a collapsing separator (collapsed by default for new session, then status is kept fore each user session)
 LibraryToBuildPDF=کتابخانۀ قابل استفاده برای تولید PDF
 LocalTaxDesc=برخی کشورها دو یا سه سطر مالیات در خصوص هر سطر از صورت‌حساب دارند. در این حالت، نوع مالیات دوم و سوم و نرخ آن را تعیین کنید. انواع قابل درج عبارتند از: <br>1: مالیات محلی به محصولات و خدمات بدون مالیات‌برارزش‌افزوده اختصاص داده می‌شود (مالیات محلی بر مبنای مبلغ بدون مالیات بر ارزش افزوده محاسبه می‌شود) <br>2: مالیات محلی بر محصولات و خدمات به‌همراه مالیات‌بر‌ارزش‌افزوده (مالیات‌محلی بر مبنای مبلغ + مالیات اصلی محاسبه می‌شود)  <br>3: مالیات محلی بر محصولات بدون مالیات بر ارزش افزوده (مالیات محلی بر اساس مبلع بدون مالیات حساب می‌شود) <br>4: مالیت محلی بر محصولات به همراه مالیات بر ارزش افزوده محاسبه می‌شود (مالیات محلی بر اساس مبلغ + مالیات بر ارزش افزوده اصلی محاسبه می‌شود)  <br>5: مالیات محلی بر بر خدمات بدون مالیات بر ارزش افزوده محاسبه می‌شود (مالیات محلی بر اساس مبلغ بدون مالیات بر ارزش افزوده) <br>6: مالیات محلی بر خدمات و شامل مالیات بر ارزش افزوده ( مالیات محلی بر اساس مبلغ + مالیات بر ارزش افزوده)
@@ -443,11 +468,13 @@ LinkToTestClickToDial=برای آزمایش نشانی ClickToDial برای کا
 RefreshPhoneLink=بازسازی پیوند
 LinkToTest=پیوند قابل کلیک تولید شده برای کاربر <strong>%s</strong> (شمارۀ تلفن را برای آزمایش وارد نمائید)
 KeepEmptyToUseDefault=برای استفاده از مقدار پیش‌فرض چیزی درج نکنید
+KeepThisEmptyInMostCases=In most cases, you can keep this field empy.
 DefaultLink=پیوند پیش‌فرض
 SetAsDefault=ثبت پیش‌فرض
 ValueOverwrittenByUserSetup=هشدار! این مقدار ممکناست با تغییر تنظیمات برپاسازی کاربر بازنویسی شود (هر کاربر می‌تواند نشانی مخصوص به خود را برای clicktodial تولید کند)
-ExternalModule=واحد خارجی - نصب شده در پوشه %s
-BarcodeInitForthird-parties=ایجاد دستجمعی بارکد برای اشخاص‌سوم
+ExternalModule=External module
+InstalledInto=Installed into directory %s
+BarcodeInitForThirdparties=ایجاد دستجمعی بارکد برای اشخاص‌سوم
 BarcodeInitForProductsOrServices=ایجاد یا بازسازی بارکد برای محصولات یا خدمات
 CurrentlyNWithoutBarCode=در حال حاضر شما  <strong>%s</strong> ردیف در  <strong>%s</strong> %s دارید که برای آن‌ها بارکد تعریف نشده.
 InitEmptyBarCode=مقدار ابتدائی برای %s ردیف خالی بعدی
@@ -470,8 +497,14 @@ ModuleCompanyCodeCustomerDigitaria=%s followed by the truncated customer name by
 ModuleCompanyCodeSupplierDigitaria=%s followed by the truncated supplier name by the number of characters: %s for the supplier accounting code.
 Use3StepsApproval=به طور پیش‌فرض، سفارشات خرید باید توسط دو کاربر متفاوت ثبت و تائید بشود (یک گام/کاربر برای ساخت سفارش و یک گام/کاربر برای تائید سفارش. توجه داشته باشید در صورتی که کاربر اجازۀ ثبت و تائید سفارش داشته باشد، یک گام/کاربر کافی است). شما می‌توانید این گزینه را طوری تنظیم کنید که یک گام/کاربر سوم نیز برای تائید وجود داشته باشد. این در شرایطی که مثلا مبلغ بالاتر از یک مقدار خاص باشد مقدور است (پس، 3 گام ضروری است: 1=ثبت و اعتباردهی 2=تائید اول 3=تائید سوم در صورتی که مبلغ به اندازۀ کافی بالاست). <br> این واحد را در صورتی که حالت پیش‌فرض کافی است خالی بگذارید (دو گام)، ثبت آن به یک مقدار بسیار پائین (0.1) برای تائید دوم (سه گام) مورد نیاز است.
 UseDoubleApproval=استفاده از 3 گام تائید در حالتی که مبلغ (بدون مالیات) بالاتر از ....
-WarningPHPMail=هشدار: همواره بهتر است که رایانامه‌های خروجی را برای استفاده از سرویس‌دهندۀ رایانامۀ سرور خود به جای گزینۀ پیش‌فرض استفاده کنید. برخی ارائه‌دهندگان رایانامه (مانند Yahoo) به شما اجازۀ ارسال رایانامه از سرور دیگری را نمی‌دهند. برپاسازی فعلی شما از سرور برنامه برای ارسال رایانامه استفاده می‌کند، نه از سرور ارائه‌دهندۀ رایانامۀ شما، بنابراین برخی دریافت‌کنندگان (آن‌هائی که با قرارداد محدودیت DMARC سازگارند)، در صورتی که امکان دریافت رایانامۀ شما را داشته باشند، از ارائه دهندۀ خدمات رایانامۀ شما یا برخی ارائه‌دهندگان رایانامه (مثل Yahoo) خواهند پرسید و پاسخ "no" خواهند فرستاد چون سرور، مربوط به آن‌ها نیست، بنابراین ممکن است تعدادی از رایانامه‌های شما پذیرفته نشود (همچنین به محدودیت تعداد ارسال رایانامه در ارائه‌دهندۀ خدمات خود دقت کنید). <br> در صورتی که ارائه دهندۀ خدمات رایانامۀ شما (مانند Yahoo) این محدودیت را داشته باشد، شما باید تنظیمات رایانامه را طوری تغییر دهید و گزینۀ دیگر یعنی "سرور SMTP" را برگزینید و مشخصات فنی و مجوزهای ورود به سرور SMTP مربوط به سرور ارائه دهندۀ خدمات رایانامه را وارد نمائید.
+WarningPHPMail=WARNING: The setup to send emails from the application is using the default generic setup. It is often better to setup outgoing emails to use the email server of your Email Service Provider instead of the default setup for several reasons:
+WarningPHPMailA=- Using the server of the Email Service Provider increases the trustability of your email, so it increases the deliverablity without being flagged as SPAM
+WarningPHPMailB=- Some Email Service Providers (like Yahoo) do not allow you to send an email from another server than their own server. Your current setup uses the server of the application to send email and not the server of your email provider, so some recipients (the one compatible with the restrictive DMARC protocol), will ask your email provider if they can accept your email and some email providers (like Yahoo) may respond "no" because the server is not theirs, so few of your sent Emails may not be accepted for delivery (be careful also of your email provider's sending quota).
+WarningPHPMailC=- Using the SMTP server of your own Email Service Provider to send emails is also interesting so all emails sent from application will also be saved into your "Sent" directory of your mailbox.
+WarningPHPMailD=Also, it is therefore recommended to change the sending method of e-mails to the value "SMTP". If you really want to keep the default "PHP" method to send emails, just ignore this warning, or remove it by setting the MAIN_HIDE_WARNING_TO_ENCOURAGE_SMTP_SETUP constant to 1 in Home - Setup - Other.
 WarningPHPMail2=در صورتی که ارائۀ خدمات رایانامۀ SMTP شما نیازمند محدود کردن مشتری خدمات رایانامه به درگاه‌های اینترنتی خاص است (در موارد معدود)، این نشانی درگاه اینترنتی کاربر رایانامه (MUA) برای برنامۀ ERP CRM شماست: <strong>%s</strong>.
+WarningPHPMailSPF=If the domain name in your sender email address is protected by a SPF record (ask your domain name registar), you must add the following IPs in the SPF record of the DNS of your domain: <strong>%s</strong>.
+ActualMailSPFRecordFound=Actual SPF record found : %s
 ClickToShowDescription=برای دریافت توضیحات کلیک کنید
 DependsOn=این واحد نیازمند فعالیت واحد‌(های) دیگر است
 RequiredBy=این واحد توسط واحد(های) دیگر مورد نیاز است
@@ -488,6 +521,9 @@ Field=بخش
 ProductDocumentTemplates=قالب‌های مستندات برای تولید سند محصول
 FreeLegalTextOnExpenseReports=متن مقررات درج شده در گزارش هزینه‌ها
 WatermarkOnDraftExpenseReports=نوشتۀ فراگیر کمرنگ درج شده روی گزارش‌هزینه‌ها
+ProjectIsRequiredOnExpenseReports=The project is mandatory for entering an expense report
+PrefillExpenseReportDatesWithCurrentMonth=Pre-fill start and end dates of new expense report with start and end dates of the current month
+ForceExpenseReportsLineAmountsIncludingTaxesOnly=Force the entry of expense report amounts always in amount with taxes
 AttachMainDocByDefault=در صورتی که بخواهید به شکل پیش‌فرض سند اصلی را به رایانامه پیوست کنید (در صورتی که وجود داشته باشد)، این گزینه را به 1 تغییر دهید
 FilesAttachedToEmail=پیوست فایل
 SendEmailsReminders=ارسال یادآوری‌های جلسات توسط رایانامه
@@ -522,6 +558,8 @@ Module40Name=فروشندگان
 Module40Desc=Vendors and purchase management (purchase orders and billing of supplier invoices)
 Module42Name=گزارش‌کار اشکال‌یابی
 Module42Desc=امکانات گزارش‌برداری (فایل، گزارش‌کار سامانه، ...). این گزارش کارها مربوط به مقاصد فنی/اشکال‌یابی هستند.
+Module43Name=نوار اشکال‌یابی
+Module43Desc=A tool for developper adding a debug bar in your browser.
 Module49Name=ویراستاران
 Module49Desc=مدیریت ویراستارها
 Module50Name=محصولات
@@ -535,15 +573,15 @@ Module53Desc=مدیریت خدمات
 Module54Name=قرارداد‌ها/اشتراک‌ها
 Module54Desc=مدیریت قراردادها (خدمات یا اشتراک‌های تکرارشونده)
 Module55Name=بارکدها
-Module55Desc=مدیریت بارکد
-Module56Name=تماس‌های تلفنی
-Module56Desc=ارتباط تلفنی
-Module57Name=برداشت‌های مستقیم بانکی
-Module57Desc=مدیریت سفارش برداشت‌های مستقیم بانکی. این شامل تولید فایل SEPA برای کشورهای اروپائی است.
+Module55Desc=Barcode or QR code management
+Module56Name=Payment by credit transfer
+Module56Desc=Management of payment of suppliers by Credit Transfer orders. It includes generation of SEPA file for European countries.
+Module57Name=Payments by Direct Debit
+Module57Desc=Management of Direct Debit orders. It includes generation of SEPA file for European countries.
 Module58Name=کلیک برای تماس
 Module58Desc=یکپارچه سازی سیستم ClickToDial (استریسک، ...)
-Module59Name=Bookmark4u
-Module59Desc=اضافه کردن تابع برای ایجاد حساب کاربری Bookmark4u از یک حساب Dolibarr
+Module60Name=Stickers
+Module60Desc=Management of stickers
 Module70Name=واسطه‌گری
 Module70Desc=مدیریت واسطه‌گری
 Module75Name=یادداشت‌های هزینه‌ها و سفرها-ی درون شهری-
@@ -575,7 +613,7 @@ Module400Desc=مدیریت طرح‌ها، سرنخ‌ها/فرصت‌ها و/ی
 Module410Name=تقویم وب
 Module410Desc=یکپارچه‌سازی با تقویم‌وب
 Module500Name=مالیات‌ها و هزینه‌های خاص 
-Module500Desc=مدیریت سایر هزینه‌ها (مالیات فروش، مالیات‌های اجتماعی و یا سیاست‌های مالی، سود سهام، ...)
+Module500Desc=Management of other expenses (sales taxes, social or fiscal taxes, dividends, ...)
 Module510Name=حقوق
 Module510Desc=ثبت و پیگیری پرداخت‌های کارمندان
 Module520Name=وام‌ها
@@ -620,12 +658,14 @@ Module2900Name=GeoIPMaxmind
 Module2900Desc=قابلیت‌های تبدیل GeoIP Maxmind 
 Module3200Name=بایگانی‌های تغییرناپذیر
 Module3200Desc=فعال کردن یک گزارش کاری غیرقابل تغییر. رخدادها به صورت بلادرنگ بایگانی خواهند شد. گزارش به صورت یک جدول فقط‌خواندنی از رخدادهای زنجیره‌ای در آمده که قابلیت صادرات دارند. برای بعضی از کشورها این واحد، اجباری است.
+Module3400Name=شبکه‌های اجتماعی
+Module3400Desc=Enable Social Networks fields into third parties and addresses (skype, twitter, facebook, ...).
 Module4000Name=مدیریت منابع انسانی
 Module4000Desc=مدیریت منابع انسانی (مدیریت شعبه، قراردادهای کارمندان و حس‌ها)
 Module5000Name=چند-شرکتی
 Module5000Desc=به شما امکان مدیریت شرکت‌های متعدد را می‌دهد
-Module6000Name=گردش‌کار
-Module6000Desc=مدیریت گردش‌کار (ساخت خودکار اشیاء و/یا تغییر خودکار وضعیت)
+Module6000Name=Inter-modules Workflow
+Module6000Desc=Workflow management between different modules (automatic creation of object and/or automatic status change)
 Module10000Name=وبگاه‌ها
 Module10000Desc=Create websites (public) with a WYSIWYG editor. This is a webmaster or developer oriented CMS (it is better to know HTML and CSS language). Just setup your web server (Apache, Nginx, ...) to point to the dedicated Dolibarr directory to have it online on the internet with your own domain name.
 Module20000Name=مدیریت درخواست مرخصی
@@ -639,19 +679,19 @@ Module50000Desc=به مشتریان امکان پرداخت برخط از طری
 Module50100Name=صندوق SimplePOS
 Module50100Desc=واحد ناحیۀ فروش SimplePOS (صندوق ساده)
 Module50150Name=صندوق TakePOS
-Module50150Desc=واحد ناحیۀ فروش TakePOS (صندوق لمسی)
+Module50150Desc=Point of Sale module TakePOS (touchscreen POS, for shops, bars or restaurants).
 Module50200Name=Paypal
 Module50200Desc=امکان پرداخت از طریق PayPal برای مشتریان (حساب PayPal یا کارتهای اعتباری/نقدی). این به کاربران امکان پرداخت‌های اختصاصی برای اشیاء Dolibarr را می‌دهد (صورت‌حساب، سفارش و غیره)
 Module50300Name=Stripe
 Module50300Desc=امکان پرداخت از طریق Stripe برای مشتریان (کارتهای اعتباری/نقدی). این به کاربران امکان پرداخت‌های اختصاصی برای اشیاء Dolibarr را می‌دهد (صورت‌حساب، سفارش و غیره)
 Module50400Name=حساب‌داری (دو طرفه)
-Module50400Desc=مدیریت حساب‌داری (ورودی‌های دوگانه-حسابداری دوبل، پشتیبانی از دفتر کل و معین). صادرات دفترکل به شکل سایر نرم‌افزارهای مختلف حساب‌داری.
+Module50400Desc=Accounting management (double entries, support General and Subsidiary Ledgers). Export the ledger in several other accounting software formats.
 Module54000Name=PrintIPP
 Module54000Desc=چاپ مستقیم (بدون باز کردن مستندات) با استفده از رابط Cups IPP (چاپ‌گر باید برای سرور قابل دیدن باشد و CUPS باید روی سرور نصب شده باشد).
 Module55000Name=رای‌گیری و نظرسنجی
 Module55000Desc=ساخت نظرسنجی و رای‌گیری برخط (همانند Doodle، Studs, RDVz و غیره).
 Module59000Name=حاشیه‌ها
-Module59000Desc=واحد مدیریت حاشیه‌ها
+Module59000Desc=Module to follow margins
 Module60000Name=کمیسیون
 Module60000Desc=واحد مدیریت کمیسیون‌ها
 Module62000Name=Incoterms
@@ -660,7 +700,7 @@ Module63000Name=منابع
 Module63000Desc=مدیریت منابع (چاپ‌گرها، خودروها، اتاق‌ها و غیره) برای انتساب به رخدادها
 Permission11=ملاحظۀ صورت‌حساب‌های مشتریان
 Permission12=ایجاد/ویرایش صورت‌حساب مشتریان
-Permission13=نقض‌اعتبار صورت‌حساب مشتریان
+Permission13=Invalidate customer invoices
 Permission14=اعتباردهی صورت‌حساب مشتریان
 Permission15=ارسال صورت‌حساب مشتریان به‌وسیلۀ رایانامه
 Permission16=پرداخت صورت‌حساب مشتریان
@@ -677,6 +717,7 @@ Permission32=ساخت/ویرایش محصولات
 Permission34=حذف محصول
 Permission36=مشاهده/مدیریت محصولات پنهان
 Permission38=صادرکردن محصولات
+Permission39=Ignore minimum price
 Permission41=ملاحظۀ طرح‌ها و وظایف‌کاری ( طرح‌های مشترک و طرح‌هائی که من در آن طرفم). همچنین امکان درج زمان صرف شده برای من و شبکۀ من در خصوص وظایف نسبت داده شده است (برگۀ زمان)
 Permission42=ساخت/ویرایش طرح‌ها (طرح‌های مشترک و طرح‌هائی که من در آن طرف هستم). همچنین امکان ساخت وظایف و نسبت دادن کاربران به طرح‌ها و وظایف است
 Permission44=حذف طرح‌ها (پروژۀ مشترک و پروژه‌هائی که من در آن طرف هستم)
@@ -685,6 +726,9 @@ Permission61=ملاحظۀ واسطه‌گری‌ها
 Permission62=ساخت/ویرایش واسطه‌گری‌ها
 Permission64=حذف واسطه‌گری‌ها
 Permission67=صادرکردن واسطه‌گری‌ها
+Permission68=Send interventions by email
+Permission69=Validate interventions
+Permission70=Invalidate interventions
 Permission71=ملاحظۀ اعضا
 Permission72=خواندن/ویرایش عضوها
 Permission74=حذف عضوها
@@ -707,11 +751,12 @@ Permission95=ملاحظۀ گزارش‌ها
 Permission101=ملاحظۀ ارسال‌ها
 Permission102=ساخت/ویرایش ارسال‌ها
 Permission104=اعتباردهی ارسال‌ها
+Permission105=Send sendings by email
 Permission106=صادرکردن ارسال‌ها
 Permission109=حذف ارسال‌ها
 Permission111=ملاحظۀ حساب‌های تجاری
 Permission112=ساخت/ویرایش/حذف و مقایسۀ تراکنش‌ها
-Permission113=برپاسازی حساب‌های تجاری (ساخت و ویرایش دسته‌ها)
+Permission113=Setup financial accounts (create, manage categories of bank transactions)
 Permission114=وفق‌دادن تراکنش
 Permission115=صادرکردن تراکنش‌ها و توضیحات حساب‌ها
 Permission116=انتقالات بین حساب‌ها
@@ -720,6 +765,7 @@ Permission121=ملاحظۀ اشخاص‌سوم مرتبط با یک کاربر
 Permission122=ایجاد/ویرایش اشخاص‌سوم مرتبط با یک کاربر
 Permission125=حذف اشخاص‌سوم مرتبط با یک کاربر
 Permission126=صادرات اشخاص‌سوم مرتبط با یک کاربر
+Permission130=Create/modify third parties payment information
 Permission141=ملاحظۀ همۀ طرح‌ها و وظایف (همچنین طرح‌های خصوصی که من در آن طرف نیستم)
 Permission142=ساخت/ویرایش همۀ طرح‌ها و وظایف‌کاری (همچنین طرح‌های خصوصی که من در آن طرف نیستم)
 Permission144=حذف همۀ طرح‌ها و وظایف‌کاری (همچنین طرح‌های خصوصی که من در آن طرف نیستم)
@@ -781,7 +827,8 @@ PermissionAdvanced253=ساخت/ویرایش کاربران داخلی/خارجی
 Permission254=ساخت/ویرایش کاربران خارجی
 Permission255=تغییر گذرواژۀ سایر کاربران
 Permission256=حذف یا غیرفعال‌کردن سایر کاربران
-Permission262=گسترش دسترسی به همۀ اشخاص سوم (نه فقط اشخاص‌سومی که کاربر مربوط به آن نمایندۀ فروش باشد). <br> برای کاربران خارجی مؤثر نیست (همواره برای پیشنهادها، سفارشات، صورت‌حساب‌ها و قراردادها و غیره محدود به خود هستند). <br> برای طرح‌ها مؤثر نیست ( فقط نقش‌ها-rules ، قابل نمایش بودند و انتساب‌ها در مجوزهای طرح مربوطه مهم است).
+Permission262=Extend access to all third parties AND their objects (not only third parties for which the user is a sale representative).<br>Not effective for external users (always limited to themselves for proposals, orders, invoices, contracts, etc.).<br>Not effective for projects (only rules on project permissions, visibility and assignment matters).
+Permission263=Extend access to all third parties WITHOUT their objects (not only third parties for which the user is a sale representative).<br>Not effective for external users (always limited to themselves for proposals, orders, invoices, contracts, etc.).<br>Not effective for projects (only rules on project permissions, visibility and assignment matters).
 Permission271=ملاحظۀ CA
 Permission272=ملاحظۀ صورت‌حساب‌ها
 Permission273=صادرکردن صورت‌حساب‌ها
@@ -814,10 +861,11 @@ Permission402=ساخت/ویرایش تخفیف‌ها
 Permission403=اعتباردهی تخفیف‌ها
 Permission404=حذف تخفیف‌ها
 Permission430=استفاده از نوار اشکال‌یابی
-Permission511=ملاحظۀ پرداخت حقوق‌ها
-Permission512=ساخت/ویرایش پرداخت حقوق
-Permission514=حذف پرداخت حقوق
-Permission517=صادرکردن حقوق
+Permission511=Read salaries and payments (yours and subordinates)
+Permission512=Create/modify salaries and payments
+Permission514=Delete salaries and payments
+Permission517=Read salaries and payments everybody
+Permission519=صادرکردن حقوق
 Permission520=ملاحظۀ وام‌ها
 Permission522=ساخت/ویرایش وام‌ها
 Permission524=حذف وام‌ها
@@ -828,24 +876,40 @@ Permission532=ایجاد/ویرایش خدمات
 Permission534=حذف خدمات
 Permission536=مشاهده/مدیریت خدمات پنهان
 Permission538=صادرکردن خدمات
+Permission561=Read payment orders by credit transfer
+Permission562=Create/modify payment order by credit transfer
+Permission563=Send/Transmit payment order by credit transfer
+Permission564=Record Debits/Rejections of credit transfer
+Permission601=Read stickers
+Permission602=Create/modify stickers
+Permission609=Delete stickers
 Permission650=خواندن صورت‌حساب‌های مواد
 Permission651=ایجاد/به‌هنگام سازی صورت‌حساب‌های موا
 Permission652=حذف صورت‌حساب‌های مواد
+Permission660=Read Manufacturing Order (MO)
+Permission661=Create/Update Manufacturing Order (MO)
+Permission662=Delete Manufacturing Order (MO)
 Permission701=ملاحظۀ کمک‌های‌مالی
 Permission702=ایجاد/ویرایش کمک‌های‌مالی
 Permission703=حذف کمک‌های‌مالی
 Permission771=ملاحظۀ گزارش‌های هزینه‌ها (مربوط به شما و افراد زیرنظرشما)
-Permission772=ساخت/ویرایش گزارش‌های هزینه
+Permission772=Create/modify expense reports (for you and your subordinates)
 Permission773=حذف گزارش‌های هزینه
-Permission774=ملاحظۀ همۀ گزارش‌های هزینه (حتی مربوط به کاربرانی که زیرنظر شما نیستند)
 Permission775=تائید گزارش‌های هزینه
 Permission776=پرداخت گزارش‌های هزینه
+Permission777=Read all expense reports (even those of user not subordinates)
+Permission778=Create/modify expense reports of everybody
 Permission779=صادرکردن گزارش‌های هزینه
 Permission1001=ملاحظۀ موجودی
 Permission1002=ساخت/ویرایش انبار
 Permission1003=حذف انبار
 Permission1004=ملاحظۀ جابجائی میان انبارها
 Permission1005=ساخت/ویرایش جابجائی میان انبارها
+Permission1011=نمایش فهرست‌موجودی
+Permission1012=ساخت یک فهرست‌موجودی
+Permission1014=تائیداعتبار فهرست‌موجودی
+Permission1015=اجازۀ تغییر مقدار PMP محصول
+Permission1016=Delete inventory
 Permission1101=Read delivery receipts
 Permission1102=Create/modify delivery receipts
 Permission1104=Validate delivery receipts
@@ -864,7 +928,9 @@ Permission1185=تائید سفارشات خرید
 Permission1186=سفارش/ترتیب‌دهی سفارشات خرید
 Permission1187=تصدیق اعلام وصول سفارش خرید
 Permission1188=حذف سفارش خرید
+Permission1189=Check/Uncheck a purchase order reception
 Permission1190=تائید (تائید دوم) سفارش خرید
+Permission1191=Export supplier orders and their attributes
 Permission1201=دریافت نتیجۀ صادرات
 Permission1202=ایجاد/ویرایش صادرات
 Permission1231=ملاحظۀ صورت‌حساب‌های فروشندگان
@@ -878,6 +944,8 @@ Permission1251=اجرای واردات گستردۀ داده‌های خارجی
 Permission1321=صادرکردن صورت‌حساب‌های مشتریان، صفت‌ها و پرداخت‌ها
 Permission1322=بازکردن دوبارۀ یک صورت‌حساب پرداخت‌شده
 Permission1421=صادرکردن سفارش‌های فروش و صفات
+Permission1521=Read documents
+Permission1522=Delete documents
 Permission2401=Read actions (events or tasks) linked to his user account (if owner of event or just assigned to)
 Permission2402=Create/modify actions (events or tasks) linked to his user account (if owner of event)
 Permission2403=Delete actions (events or tasks) linked to his user account (if owner of event)
@@ -892,10 +960,15 @@ Permission2515=تنظیم پوشه‌های مستندات
 Permission2801=استفاده از متقاضی FTP در حالت خواندنی (منحصر به مرور و دریافت)
 Permission2802=استفاده از متقاضی FTP در حالت نوشتنی (حذف یا ارسال فایل)
 Permission3200=خواندن روی‌دادهای بایگانی شده و اثرانگشت‌ها
-Permission4001=نمایش کارمندان
-Permission4002=ساخت کارمند
-Permission4003=حذف کارمند
-Permission4004=صادرکردن کارمندان
+Permission3301=Generate new modules
+Permission4001=Read skill/job/position
+Permission4002=Create/modify skill/job/position
+Permission4003=Delete skill/job/position
+Permission4020=Read evaluations
+Permission4021=Create/modify your evaluation
+Permission4022=Validate evaluation
+Permission4023=Delete evaluation
+Permission4030=See comparison menu
 Permission10001=خواندن محتوای وبگاه
 Permission10002=ساخت/ویرایش محتوای وبگاه (محتوای html و javascript ) 
 Permission10003=ساخت/ویرایش محتوای وبگاه (کد پویای PHP). خطرناک، تنها باید تحت نظر توسعه‌دهندگان مشخص و محدود باشد.
@@ -903,17 +976,23 @@ Permission10005=حذف محتوای وبگاه
 Permission20001=ملاحظۀ درخواست‌های مرخصی (درخواست‌های مرخصی افراد تحت مدیریت شما)
 Permission20002=ساخت/ویرایش درخواست‌های مرخصی شما (شما و افراد تحت نظر شما)
 Permission20003=حذف درخواست‌های مرخصی
-Permission20004=ملاحظۀ همۀ درخواست‌های مرخصی (حتی کاربری که تحت مدیریت شما نیست)
-Permission20005=ساخت/ویرایش درخواست مرخصی همگان (حتی کاربرانی که تحت مدیریت شما نیستند)
-Permission20006=درخواست‌های مرخصی مدیر (تنظیمات و به‌هنگام‌سازی تعادل)
+Permission20004=Read all leave requests (even those of user not subordinates)
+Permission20005=Create/modify leave requests for everybody (even those of user not subordinates)
+Permission20006=Administer leave requests (setup and update balance)
 Permission20007=Approve leave requests
 Permission23001=ملاحظۀ وظایف زمان‌بندی‌شده
 Permission23002=ساخت/ویرایش  وظایف زمان‌بندی‌شده
 Permission23003=حذف  وظایف زمان‌بندی‌شده
 Permission23004=اجرای  وظایف زمان‌بندی‌شده
-Permission50101=استفاده از صندوق POS
+Permission50101=Use Point of Sale (SimplePOS)
+Permission50151=Use Point of Sale (TakePOS)
+Permission50152=Edit sales lines
+Permission50153=Edit ordered sales lines
 Permission50201=ملاحظۀ تراکنش‌ها
 Permission50202=واردکردن تراکنش‌ها
+Permission50330=Read objects of Zapier
+Permission50331=Create/Update objects of Zapier
+Permission50332=Delete objects of Zapier
 Permission50401=بندکردن محصولات و صورت‌حساب‌های با حساب‌های حساب‌داری
 Permission50411=خواندن عملیات موجود در دفترکل
 Permission50412=نوشتن/ویرایش عملیات در دفترکل
@@ -937,14 +1016,26 @@ Permission63001=ملاحظۀ منابع
 Permission63002=ساخت/ویرایش منابع
 Permission63003=حذف منابع
 Permission63004=پیونددادن منابع به روی‌داد جلسه
+Permission64001=Allow direct printing
+Permission67000=Allow printing of receipts
+Permission68001=Read intracomm report
+Permission68002=Create/modify intracomm report
+Permission68004=Delete intracomm report
+Permission941601=Read receipts
+Permission941602=Create and modify receipts
+Permission941603=Validate receipts
+Permission941604=Send receipts by email
+Permission941605=Export receipts
+Permission941606=Delete receipts
 DictionaryCompanyType=انواع شخص‌سوم
 DictionaryCompanyJuridicalType=موجودیت حقوقی شخص‌سوم
-DictionaryProspectLevel=قابلیت‌بالقوۀ مشتری‌احتمالی
+DictionaryProspectLevel=Prospect potential level for companies
+DictionaryProspectContactLevel=Prospect potential level for contacts
 DictionaryCanton=ایالت‌ها/استان‌ها
 DictionaryRegion=مناطق
 DictionaryCountry=کشورها
 DictionaryCurrency=واحد پول
-DictionaryCivility=عنوان اجتماعی
+DictionaryCivility=Honorific titles
 DictionaryActions=انواع برگزاری جلسات
 DictionarySocialContributions=انواع مالیات‌های اجتماعی یا مالیات‌های مرتبط با سیاست‌های مالی
 DictionaryVAT=نرخ مالیات‌بر‌ارزش‌افزوده یا مالیات‌بر‌فروش
@@ -960,7 +1051,7 @@ DictionaryFees=گزارش هزینه - انواع سطور گزارش‌های �
 DictionarySendingMethods=روش‌های حمل‌ونقل
 DictionaryStaff=تعداد کارمندان
 DictionaryAvailability=تاخیر در تحویل
-DictionaryOrderMethods=روش‌های سفارش
+DictionaryOrderMethods=Order methods
 DictionarySource=اصل پیشنهادات/سفارشات
 DictionaryAccountancyCategory=گروه‌های شخصی‌سازی‌شده برای گزارش‌ها
 DictionaryAccountancysystem=اشکال مختلف نمودار حساب‌ها
@@ -969,11 +1060,15 @@ DictionaryEMailTemplates=قالب‌های رایانامه
 DictionaryUnits=واحدها
 DictionaryMeasuringUnits=واحدهای محاسبه
 DictionarySocialNetworks=شبکه‌های اجتماعی
-DictionaryProspectStatus=وضعیت مشتری‌احتمالی
-DictionaryHolidayTypes=انواع مرخصی
+DictionaryProspectStatus=Prospect status for companies
+DictionaryProspectContactStatus=Prospect status for contacts
+DictionaryHolidayTypes=Leave - Types of leave
 DictionaryOpportunityStatus=وضعیت سرنخ برای طرح/سرنخ
 DictionaryExpenseTaxCat=گزارش هزینه - دسته‌بندی‌های حمل‌ونقل
 DictionaryExpenseTaxRange=گزارش هزینه - محدودۀ دسته‌بندی‌های حمل‌ونقل
+DictionaryTransportMode=Intracomm report - Transport mode
+DictionaryBatchStatus=Product lot/serial Quality Control status
+TypeOfUnit=Type of unit
 SetupSaved=تنظیمات برپاسازی ذخیره شد
 SetupNotSaved=تنظیمات برپاسازی ذخیره نشد
 BackToModuleList=بازگشت به فهرست واحد‌ها
@@ -985,6 +1080,7 @@ VATIsNotUsedDesc=مالیات بر فروش مطروحه به طور پیش‌�
 VATIsUsedExampleFR=در فرانسه، به این معناست که شرکت‌ها و موسسات یک سامانۀ سیاست‌مالی حقیقی دارند (حقیقی ساده یا حقیقی عادی).  سامانه‌ای که در آن مالیات بر ارزش افزوده تعریف می‌شود.
 VATIsNotUsedExampleFR=در فرانسه، این بدان معناست که مؤسساتی که برای آن‌ها مالیات بر فروش تعریف نشده یا شرکت‌ها، سازمان‌ها یا مشاغل آزادی که سامانۀ سیاست مالی ریزسازمانی برگزیده‌اند (مالیات بر فروش طی فرانچایز-فرداد-حق‌امتیاز) و بدون تعریف مالیات برفروش مبلغ مالیات فروش فرانچایز را پرداخت کرده‌اند. این انتخاب به صورت مراجع "مالیات بر فروش اختصاص داده نمی‌شود - art-293B of CGI" در صورت‌حساب نمایش داده خواهد شد.
 ##### Local Taxes #####
+TypeOfSaleTaxes=Type of sales tax
 LTRate=نرخ
 LocalTax1IsNotUsed=آیا مالیات دوم استفاده نشود
 LocalTax1IsUsedDesc=استفاده از نوع دوم مالیات (غیر از نوع اول)
@@ -1008,6 +1104,9 @@ LocalTax2IsUsedDescES=نرخ پیش‌فرض IRPF در هنگام ساخت مش�
 LocalTax2IsNotUsedDescES=به طور پیش‌فرض IRPF  مطروحه برابر با 0 است. پایان قاعده.
 LocalTax2IsUsedExampleES=در اسپانیا، خوداشتغالان، و متخصصین مستقل که ارائه دهندۀ خدمات هستند و شرکت‌هائی که سامانۀ مالیاتی modules را برگزیده‌اند.
 LocalTax2IsNotUsedExampleES=در اسپانیا مشاغلی هستند که درسامانۀ مالیاتی modules موضوعیت ندارند.
+RevenueStampDesc=The "tax stamp" or "revenue stamp" is a fixed tax you per invoice (It does not depend on amount of invoice). It can also be a percent tax but using the second or third type of tax is better for percent taxes as tax stamps does not provide any reporting. Only few countries uses this type of tax.
+UseRevenueStamp=Use a tax stamp
+UseRevenueStampExample=The value of tax stamp is defined by default into the setup of dictionaries (%s - %s - %s)
 CalcLocaltax=گزارش مالیات‌های محلی
 CalcLocaltax1=فروش‌ها - خرید‌ها
 CalcLocaltax1Desc=گزارش مالیات‌های محلی با محاسبۀ تفاوت مالیات‌برفروش محلی و مالیات‌‌برخرید محلی به دست می‌آید
@@ -1015,10 +1114,12 @@ CalcLocaltax2=خریدها
 CalcLocaltax2Desc=گزارش مالیات‌های محلی جمع مالیات‌برفروش‌های محلی است
 CalcLocaltax3=فروش‌ها
 CalcLocaltax3Desc=گزارش مالیات محلی جمع مالیات‌برفروش محلی است
+NoLocalTaxXForThisCountry=According to the setup of taxes (See %s - %s - %s), your country does not need to use such type of tax
 LabelUsedByDefault=این برچسب در حالتی که هیچ ترجمه‌ای برای کد یافت نشود استفاده خواهد شد
 LabelOnDocuments=برچسب روی مستندات
 LabelOrTranslationKey=برچسب یا کلید ترجمه
-ValueOfConstantKey=محتوای مقدار ثابت
+ValueOfConstantKey=Value of a configuration constant
+ConstantIsOn=Option %s is on
 NbOfDays=تعداد روزها
 AtEndOfMonth=در پایان ماه
 CurrentNext=فعلی/بعدی
@@ -1063,7 +1164,7 @@ LoginPage=صفحۀ ورود
 BackgroundImageLogin=تصویر پس‌زمینه
 PermanentLeftSearchForm=واحد دائمی جستجو در فهرست سمت چپ
 DefaultLanguage=زبان پیش‌فرض
-EnableMultilangInterface=پشتیبانی از چندزبانگی
+EnableMultilangInterface=Enable multilanguage support for customer or vendor relationships
 EnableShowLogo=Show the company logo in the menu
 CompanyInfo=شرکت/سازمان
 CompanyIds=هویت‌های شرکت/سازمان
@@ -1083,7 +1184,8 @@ DoNotSuggestPaymentMode=عدم ارائۀ پیشنهاد
 NoActiveBankAccountDefined=حساب بانکی فعالی تائید نشده است
 OwnerOfBankAccount=صاحب حساب بانکی %s
 BankModuleNotActive=واحد حساب‌های بانکی فعال نشده است
-ShowBugTrackLink=نمایش پیوند "<strong>%s</strong>"
+ShowBugTrackLink=Show the link "<strong>%s</strong>"
+ShowBugTrackLinkDesc=Keep empty to not display this link, use value 'github' for the link to the Dolibarr project or define directly an url 'https://...'
 Alerts=هشدارها
 DelaysOfToleranceBeforeWarning=مکث قبل از نمایش یک پیام هشدار برای:
 DelaysOfToleranceDesc=تنظیم مکث قبل از پیام هشدار با نمادک %s برای آخرین عنصر بر روی صفحه نمایش داده می‌شود.
@@ -1105,11 +1207,15 @@ Delays_MAIN_DELAY_EXPENSEREPORTS=گزارش‌هزینه‌های منتظر ت�
 Delays_MAIN_DELAY_HOLIDAYS=Leave requests to approve
 SetupDescription1=پیش از شروع استفاده از Dolibarr ابتدا باید مقادیر مختلفی را تعریف کنید و واحد‌های مختلف فعال/پیکربندی شوند
 SetupDescription2=دو واحد بعدی الزامی هستند (دو ورودی اول در فهرست برپاسازی):
-SetupDescription3=<a href="%s">%s->%s</a><br> مؤلفه‌های بنیادین مورد استفاده برای تعیین‌ رفتار پیش‌فرض برنامۀ شما (مثلا برای قابلیت‌های مربوط به کشور).
-SetupDescription4=<a href="%s">%s->%s</a><br> این نرم‌افزار مجموعه‌ای از برنامه‌ها/واحدهای متنوع است که همگی کم و بیش از یکدیگر مستقل هستند. واحدهای مربوط به نیاز شما باید فعال و پیکربندی شوند. با فعال کردن این واحدها گزینه‌ها/عناوین مربوطه به فهرست‌ها اضافه خواهد شد.
+SetupDescription3=<a href="%s">%s -> %s</a><br><br>Basic parameters used to customize the default behavior of your application (e.g for country-related features).
+SetupDescription4=<a href="%s">%s -> %s</a><br><br>This software is a suite of many modules/applications. The modules related to your needs must be enabled and configured. Menu entries will appears with the activation of these modules.
 SetupDescription5=سایر عناوین فهرست برپاسازی برای مدیریت مقادیر اختیاری.
-LogEvents=رویدادهای بازرسی امنیتی
-Audit=بازرسی
+SetupDescriptionLink=<a href="%s">%s - %s</a>
+SetupDescription3b=Basic parameters used to customize the default behavior of your application (e.g for country-related features).
+SetupDescription4b=This software is a suite of many modules/applications. The modules related to your needs must be enabled and configured. Menu entries will appears with the activation of these modules.
+AuditedSecurityEvents=Security events that are audited
+NoSecurityEventsAreAduited=No security events are audited. You can enable them from menu %s
+Audit=Security events
 InfoDolibarr=دربارۀ Dolibarr
 InfoBrowser=دربارۀ مرورگر
 InfoOS=دربارۀ سیستم‌عامل
@@ -1117,6 +1223,7 @@ InfoWebServer=دربارۀ سرور وب
 InfoDatabase=دربارۀ پایگاه‌داده
 InfoPHP=دربارۀ PHP
 InfoPerf=دربارۀ کارائی
+InfoSecurity=About Security
 BrowserName=نام مرورگر
 BrowserOS=سیستم عامل مرورگر
 ListOfSecurityEvents=فهرست رویدادهای امنیتی Dolibarr
@@ -1125,14 +1232,15 @@ LogEventDesc=فعال کردن گزارش‌گیری برای روی‌داده�
 AreaForAdminOnly=مقادیر برپاسازی تنها توسط <b>کاربران مدیر</b> قابل تنظیم است.
 SystemInfoDesc=اطلاعات سامانه، اطلاعاتی فنی است که در حالت فقط خواندنی است و تنها برای مدیران قابل نمایش است.
 SystemAreaForAdminOnly=این ناحیه تنها برای کاربران مدیر در دسترس است. مجوزهای کاربران Dolibarr  این محدودیت‌ها را تغییر نمی‌دهد.
-CompanyFundationDesc=Edit the information of the company/entity. Click on "%s" button at the bottom of the page.
+CompanyFundationDesc=Edit the information of your company/organization. Click on "%s" button at the bottom of the page when done.
 AccountantDesc=در صورتی‌که شما یک حساب‌دار/دفتردار بیرونی دارید، می‌توانید اطلاعات وی را این‌جا ویرایش نمائید
 AccountantFileNumber=کد حساب‌دار
-DisplayDesc=مقادیری که بر شکل و رفتار Dolibarr اثرگذارند از این‌جا قابل تغییرند.
+DisplayDesc=Parameters affecting the look and presentation of the application can be modified here.
 AvailableModules=برنامه‌ها/واحد‌های دردسترس
 ToActivateModule=برای فعال‌کردن واحد‌ها، به صفحۀ برپاسازی مراجعه کنید (خانه->برپاسازی->واحد‌ها).
 SessionTimeOut=زمان پایان نشست
 SessionExplanation=این عدد تعیین می‌کند که نشست قبل از این بازۀ زمانی منقضی نشود، این فقط در صورتی صادق است که پاک‌ساز نشست‌ها توسط پاک‌ساز داخلی PHP انجام شود (و نه پاک‌کنندۀ دیگر). پاک‌کنندۀ داخلی PHP جلسات ضمانت نمی‌کند که نشست پس از پایان این مهلت انقضا یابد. بعد از این مهلت و در هنگامی که پاک‌ساز جلسات اجرا شود منقضی خواهد شد، پس برابر هر <b>%s/%s</b> دسترسی خواهد بود، مگر در صورت دسترسی توسط سایر نشست‌ها (در صورتی که مقدار برابر با 0 باشد، این بدان معناست که پاک کردن نشست تنها توسط یک پردازش بیرونی انجام خواهد شد). <br> نکته: در برخی سرویس‌دهنده‌ها که از یک سازوکار خارجی پاک‌سازی نشست‌ها استفده می‌کنند (کرون در دبیان، اوبونتو و غیره)، نشست می‌تواند پس از این‌که در روند تنظیمات خارجی تعریف شد از بین برود، این‌که چه مقداری در این قسمت وارد شود، اهمیت پیدا می‌کند.
+SessionsPurgedByExternalSystem=Sessions on this server seems to be cleaned by an external mechanism (cron under debian, ubuntu ...), probably every <b>%s</b> seconds (= value of parameter <b>session.gc_maxlifetime</b>), so changing the value here has no effect. You must ask the server administrator to change session delay.
 TriggersAvailable=محرک‌های موجود
 TriggersDesc=محرک‌ها، فایل‌هائی هستند که رفتار و روندکاری Dolibarr را به‌مجرد این‌که به پوشۀ <b>htdocs/core/triggers</b> کپی شدند، تغییر می‌دهند. این فایل‌ها باعث ایجاد کنش‌های جدید شده و در واحد رخدادهای Dolibarr فعال می‌شوند (ساخت شرکت جدید، اعتباردهی به صورت‌حساب و غیره).
 TriggerDisabledByName=محرک‌های موجود در این فایل با پس‌وند <b>-NORUN</b> در نام محرک، غیرفعال می‌شوند.
@@ -1165,7 +1273,8 @@ RestoreDesc=برای بازآوری یک نسخۀ پشتیبان Dolibarr، دو
 RestoreDesc2=بازآوری فایل پشتیبان (مثلا یک فایل zip) مربوط به پوشۀ documents به یک نسخۀ جدید نصب شدۀ Dolibarr یا نسخۀ فعلی (<b>%s</b>).
 RestoreDesc3=بازآوری ساختار و داده‌های پایگاه داده از یک فایل dump-رونوشت پشتیبان به یک نسخۀ نصب شدۀ جدید یا نسخۀ فعلی Dolibarr (<b>%s</b>). هشدار، به محض‌اینکه بازیابی کامل شد، شما باید نام‌کاربری/گذرواژه‌ای را استفاده کنید که در نصب و زمان قبلی وجود داشته است. <br> برای بازیابی یک پایگاه‌داده در نصب فعلی، شما می‌توانید از دستیار زیر استفاده نمائید.
 RestoreMySQL=وارد‌کردن MySQL
-ForcedToByAModule= این مقررات برای <b>%s</b> توسط یک واحد فعال، الزام شده است
+ForcedToByAModule=این مقررات برای <b>%s</b> توسط یک واحد فعال، الزام شده است
+ValueIsForcedBySystem=This value is forced by the system. You can't change it.
 PreviousDumpFiles=فایل‌های موجود پشتیبان
 PreviousArchiveFiles=Existing archive files
 WeekStartOnDay=اولین روز هفته
@@ -1173,11 +1282,12 @@ RunningUpdateProcessMayBeRequired=به نظر لازم است روند به‌ه
 YouMustRunCommandFromCommandLineAfterLoginToUser=شما باید این سطر دستور را پس از ورود به خط فرمان با کاربر <b>%s</b> اجرا کنید یا این‌که گزینۀ -W را در انتهای فرمان برای اعلام گذرواژۀ <b>%s</b> به‌کار گیرید.
 YourPHPDoesNotHaveSSLSupport=توابع SSL در PHP شما موجود نیست
 DownloadMoreSkins=پوسته‌های بیشتر برای دریافت
-SimpleNumRefModelDesc=شمارۀ مرجع را با حالت %syymm-nnnn باز می‌گرداند، که yy سال است، mm ماه و nnnn یک ترتیب بدون نوسازی.
-ShowProfIdInAddress=نمایش شناسۀ حرفه‌ای و نشانی 
-ShowVATIntaInAddress=پنهان کردن شمارۀ م‌ب‌اا داخل‌جامعه‌ای-اروپا به‌همراه نشانی‌ها
+SimpleNumRefModelDesc=Returns the reference number in the format %syymm-nnnn where yy is the year, mm is the month and nnnn is a sequential auto-incrementing number with no reset
+SimpleNumRefNoDateModelDesc=Returns the reference number in the format %s-nnnn where nnnn is a sequential auto-incrementing number with no reset
+ShowProfIdInAddress=Show professional ID with addresses
+ShowVATIntaInAddress=Hide intra-Community VAT number
 TranslationUncomplete=ترجمه جزئی
-MAIN_DISABLE_METEO=غیرفعال‌کردن نمای هواشناسانه
+MAIN_DISABLE_METEO=Disable weather thumb
 MeteoStdMod=حالت استاندارد
 MeteoStdModEnabled=حالت استاندارد فعال است
 MeteoPercentageMod=حالت درصدی
@@ -1191,7 +1301,7 @@ MAIN_PROXY_HOST=سرور واسط-proxy : نام/نشانی
 MAIN_PROXY_PORT=سرور واسط-proxy: درگاه
 MAIN_PROXY_USER=سرور واسط-proxy: نام‌کاربری/ورود
 MAIN_PROXY_PASS=سرور واسط-proxy: گذرواژه
-DefineHereComplementaryAttributes=سایر مشخصات مورد نظر را در صورت نیاز به شامل کردن برای %s وار نمائید
+DefineHereComplementaryAttributes=Define any additional / custom attributes that must be added to: %s
 ExtraFields=ویژگی‌های تکمیلی
 ExtraFieldsLines=ویژگی‌های تکمیلی (سطور)
 ExtraFieldsLinesRec=ویژگی‌های تکمیلی (سطور قالب‌های صورت‌حساب)
@@ -1226,7 +1336,8 @@ WarningAtLeastKeyOrTranslationRequired=حداقل یک شرایط جستجو ب�
 NewTranslationStringToShow=عبارت جدید ترجمه برای نمایش
 OriginalValueWas=ترجمۀ اصلی بازنویسی شد. مقدار اصلی <br><br>%s بود
 TransKeyWithoutOriginalValue=شما یک ترجمۀ جدید برای کلیدترجمۀ "<strong>%s</strong>" الزام کردید که در هیچ‌یک از فایل‌های ترجمه وجود ندارد
-TotalNumberOfActivatedModules=واحد‌ها/برنامه‌های فعال‌شده: <b>%s</b> / <b>%s</b>
+TitleNumberOfActivatedModules=Activated modules
+TotalNumberOfActivatedModules=Activated modules: <b>%s</b> / <b>%s</b>
 YouMustEnableOneModule=شما حداقل باید 1 واحد را فعال نمائید
 ClassNotFoundIntoPathWarning=کلاس %s در مسیر PHP پیدا نشد
 YesInSummer=بله در فصل تابستان
@@ -1236,22 +1347,28 @@ ConditionIsCurrently=در حال حاضر وضعیت %s است
 YouUseBestDriver=شما از راه‌انداز %s استفاده می‌کنید که بهترین راه‌انداز دردسترس نیست.
 YouDoNotUseBestDriver=شما از راه‌انداز %s استفاده می‌کنید اما پیشنهاد ما استفادهاز %s است.
 NbOfObjectIsLowerThanNoPb=شما در پایگاه داده فقط %s%s دارید. این الزاما نیازمند بهینه سازی نیست.
+ComboListOptim=Combo list loading optimization
 SearchOptim=بهینه‌سازی جستجو
-YouHaveXObjectUseSearchOptim=شما در پایگاه‌داده %s%s دارید. شما باید مقدار ثابت %s را به 1 در خانه-برپاسازی-سایر اضافه کنید. جستجو را محدود به ابتدا نمائید تا به پایگاه‌داده امکان دهید از شاخص‌ها استفاده کند تا بتوانید واکنش فوری داشته باشید.
-YouHaveXObjectAndSearchOptimOn=شما در پایگاه داده %s دارید و مقدار ثابت %s %sدر خانه-برپاسازی-سایر به 1 تنظیم شده است.
+YouHaveXObjectUseComboOptim=You have %s %s in the database. You can go into setup of module to enable loading of combo list on key pressed event.
+YouHaveXObjectUseSearchOptim=You have %s %s in the database. You can add the constant %s to 1 in Home-Setup-Other.
+YouHaveXObjectUseSearchOptimDesc=This limits the search to the beginning of strings which makes it possible for the database to use indexes and you should get an immediate response.
+YouHaveXObjectAndSearchOptimOn=You have %s %s in the database and constant %s is set to %s in Home-Setup-Other.
 BrowserIsOK=شما از مرورگر وب %s استفاده می‌نمائید. این مرورگر برای کارائی و امنیت مناسب است.
 BrowserIsKO=شما از مرورگر وب %s استفاده می‌نمائید. این مرورگر به‌عنوان یک انتخاب بد به نسبت امنیت، کارائی و اعتمادپذیری شناخته شده است. ما به شما پیشنهاد می‌کنیم از Firefox، Chrome، Opera و Safari استفاده نمائید.
 PHPModuleLoaded=بخش %s در PHP بارگذاری شده است
 PreloadOPCode=OPCode از پیش بارگذاری شده مورد استفاده است
-AddRefInList=نمایش فهرست اطلاعات مرجع -ref. فروشنده/مشتری (فهرست انتخابی یا ترکیبی) و اکثر ابَرپیوند. <br> نام طرف‌های سوم به شکل  " CC12345 - SC45678 - شرکت بزرگ سازمانی " به جای "شرکت بزرگ سازمانی" نمایش داده خواهد شد.
-AddAdressInList=نمایش فهرست اطلاعات نشانی‌های فروشنده/مشتری (فهرست انتخابی یا ترکیبی) <br>شخص سوم‌ها به شکل "شرکت بزرگ سازمانی - شمارۀ 21 خیابان 123456 شهر بزرگ ایران" به جای "شرکت بزرگ سازمانی" نمایش داده خواهند شد.
+AddRefInList=Display Customer/Vendor ref. into combo lists.<br>Third Parties will appear with a name format of "CC12345 - SC45678 - The Big Company corp." instead of "The Big Company corp".
+AddVatInList=Display Customer/Vendor VAT number into combo lists.
+AddAdressInList=Display Customer/Vendor adress into combo lists.<br>Third Parties will appear with a name format of "The Big Company corp. - 21 jump street 123456 Big town - USA" instead of "The Big Company corp".
+AddEmailPhoneTownInContactList=Display Contact email (or phones if not defined) and town info list (select list or combobox)<br>Contacts will appear with a name format of "Dupond Durand - dupond.durand@email.com - Paris" or "Dupond Durand - 06 07 59 65 66 - Paris" instead of "Dupond Durand".
 AskForPreferredShippingMethod=پرسش برای روش ارسال ترجیحی برای اشخاص سوم
 FieldEdition=ویرایش بخش %s
 FillThisOnlyIfRequired=مثال: +2 (تنها در صورتی که با مشکل ناحیۀ زمانی مواجه شوید)
 GetBarCode=دریافت بارکد
 NumberingModules=Numbering models
+DocumentModules=Document models
 ##### Module password generation
-PasswordGenerationStandard=بازگرداندن یک گذرواژه که با توجه به الگوریتم‌ Dolibarr تولید شده است: 8 نویسه، متشکل از اعداد و حروف کوچک.
+PasswordGenerationStandard=Return a password generated according to internal Dolibarr algorithm: %s characters containing shared numbers and characters in lowercase.
 PasswordGenerationNone=گذرواژۀ پیشنهادی ارائه نشود. گذرواژه‌ها باید به شکل دستی وارد شوند.
 PasswordGenerationPerso=بازگرداندن یک گذرواژه با توجه به پیکربندی که شما تعریف کرده‌اید.
 SetupPerso=بسته به پیکربندی تعیین شدۀ شما
@@ -1261,6 +1378,9 @@ RuleForGeneratedPasswords=قواعد تولید و اعتبارسنجی گذرو
 DisableForgetPasswordLinkOnLogonPage=در صفحۀ ورود پیوند "فراموشی گذرواژه" نمایش داده نشود
 UsersSetup=برپاسازی واحد کاربران
 UserMailRequired=برای ایجاد یک کاربر جدید یک رایانامه لازم است
+UserHideInactive=Hide inactive users from all combo lists of users (Not recommended: this may means you won't be able to filter or search on old users on some pages)
+UsersDocModules=Document templates for documents generated from user record
+GroupsDocModules=Document templates for documents generated from a group record
 ##### HRM setup #####
 HRMSetup=برپاسازی واحد مدیریت منابع انسانی
 ##### Company setup #####
@@ -1270,7 +1390,7 @@ AccountCodeManager=گزینه‌های مربوط به توبید کدهای ح�
 NotificationsDesc=آگاه‌سازی‌های رایانامه‌ می‌تواند برای برخی رخدادهای Dolibarr ارسال گردد. <br> گیرندگان آگاه‌سازی قابل تعریف هستند:
 NotificationsDescUser=* به‌حسب کاربر، یک کاربر در هر بار.
 NotificationsDescContact=برحسب طرف‌های تماس شخص سوم (مشتری یا تامین کننده)، یک طرف‌تماس در یک هر بار.
-NotificationsDescGlobal=* یا توسط تنظیم نشانی‌های رایانامۀ سراسری در همین صفحۀ برپاسازی.
+NotificationsDescGlobal=* or by setting global email addresses in the setup page of the module.
 ModelModules=قالب مستندات
 DocumentModelOdt=تولید مستندات از قالب‌های  OpenDocument از قبیل: (.ODT / .ODS files from LibreOffice, OpenOffice, KOffice, TextEdit,...)
 WatermarkOnDraft=نقش‌پس‌زمینه در مستند پیش‌نویس
@@ -1292,7 +1412,7 @@ BillsPDFModules=شکل مستندهای صورت‌حساب
 BillsPDFModulesAccordindToInvoiceType=شکل مستندهای صورت‌حساب با توجه به نوع صورت‌حساب
 PaymentsPDFModules=شکل مستندات پرداخت
 ForceInvoiceDate=الزام تاریخ صورت‌حساب به تاریخ تائیداعتبار
-SuggestedPaymentModesIfNotDefinedInInvoice=حالت‌های پیشنهادی و پیش‌فرض پرداخت در صورت‌حساب در صورتی که تعیین نشده باشد
+SuggestedPaymentModesIfNotDefinedInInvoice=Suggested payments mode on invoice by default if not defined on the invoice
 SuggestPaymentByRIBOnAccount=پیشنهاد پرداخت در صرف‌نظر کردن از حساب
 SuggestPaymentByChequeToAddress=پیشنهاد پرداخت با چک به
 FreeLegalTextOnInvoices=متن دل‌خواه بر روی صورت‌حساب‌ها
@@ -1304,7 +1424,7 @@ SupplierPaymentSetup=برپاسازی پرداخت‌های فروشندگان
 PropalSetup=راه اندازی ماژول طرح های تجاری
 ProposalsNumberingModules=مدل شماره طرح تجاری
 ProposalsPDFModules=شکل‌های مستندات پیشنهاد‌های تجاری
-SuggestedPaymentModesIfNotDefinedInProposal=روش پرداخت پشنهادی پیش‌فرض در پیشنهاد در صورتی که در صفحۀ ایجاد آن تعریف نشده باشد
+SuggestedPaymentModesIfNotDefinedInProposal=Suggested payments mode on proposal by default if not defined on the proposal
 FreeLegalTextOnProposal=متن دل‌خواه بر روی پیشنهادات تجاری
 WatermarkOnDraftProposal=نقش پس‌زمینه بر روی پیشنهادات تجاری پیش‌نویس (هیچ در صورت خالی بودن)
 BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL=درخواست مقصد حساب‌بانکی پیشنهاد
@@ -1319,6 +1439,7 @@ WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER=پرسش انبار منبع در خصوص 
 ##### Suppliers Orders #####
 BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_ORDER=پرسش حساب بانکی مقصد در مورد سفارش خرید
 ##### Orders #####
+SuggestedPaymentModesIfNotDefinedInOrder=Suggested payments mode on sales order by default if not defined on the order
 OrdersSetup=برپاسازی مدیریت سفارشات فروش
 OrdersNumberingModules=روش‌های شماره‌گذاری سفارشات
 OrdersModelModule=شکل‌های مستندات سفارش
@@ -1344,8 +1465,10 @@ MemberMainOptions=گزینه‌های اصلی
 AdherentLoginRequired= مدیریت ورود برای هر عضو
 AdherentMailRequired=برای ساخت یک عضو یک رایانامه لازم است
 MemberSendInformationByMailByDefault=کادرتائید برای ارسال تصدیق رایانامه برای اعضا (اعتباردهی یا عضویت جدید) به شکل پیش‌فرض فعال است
+MemberCreateAnExternalUserForSubscriptionValidated=Create an external user login for each new member subscription validated
 VisitorCanChooseItsPaymentMode=کاربر می‌تواند از انواع روش پرداخت موجود استفاده نماید
 MEMBER_REMINDER_EMAIL=فعال‌کردن یادآور خودکار <b>توسط رایانامه</b> برای عضویت‌های منقضی‌شده. توجه: واحد <strong>%s</strong> برای ارسال صحیح یادآورها نیازمند فعال‌سازی و پیکربندی صحیح است.
+MembersDocModules=Document templates for documents generated from member record
 ##### LDAP setup #####
 LDAPSetup=برپاسازی LDAP
 LDAPGlobalParameters=مقادیر سراسری
@@ -1367,10 +1490,10 @@ LDAPSynchronizeMembersTypes=سازمان‌دهی انواع اعضای مؤسس
 LDAPPrimaryServer=سرور اصلی
 LDAPSecondaryServer=سرور دوم
 LDAPServerPort=درگاه سرور
-LDAPServerPortExample=درگاه پیش‌فرض: 389
+LDAPServerPortExample=Standard or StartTLS: 389, LDAPs: 636
 LDAPServerProtocolVersion=نسخۀ پروتکل
 LDAPServerUseTLS=استفاده از TLS
-LDAPServerUseTLSExample=LDAP شما از سرور TLS استفاده می‌کند
+LDAPServerUseTLSExample=Your LDAP server use StartTLS
 LDAPServerDn=سرور DN
 LDAPAdminDn=مدير DN
 LDAPAdminDnExample=DN  کامل (ex: cn=admin,dc=example,dc=com یا cn=Administrator,cn=Users,dc=example,dc=com برای active directory)
@@ -1427,6 +1550,7 @@ LDAPFieldLoginUnix=ورود (unix)
 LDAPFieldLoginExample=مثال: uid
 LDAPFilterConnection=صافی جستجو
 LDAPFilterConnectionExample=مثال: &(objectClass=inetOrgPerson)
+LDAPGroupFilterExample=Example: &(objectClass=groupOfUsers)
 LDAPFieldLoginSamba=ورود (سامبا، Active Directory)
 LDAPFieldLoginSambaExample=مثال: samaccountname
 LDAPFieldFullname=نام‌کامل
@@ -1488,7 +1612,9 @@ LDAPDescValues=مقادیر مثالی طراحی شده برای <b>OpenLDAP</b
 ForANonAnonymousAccess=برای یک دسترسی تائید شده (مثلا برای دسترسی نوشتاری)
 PerfDolibarr=برپاسازی کارآمدی/گزارش بهینه‌سازی
 YouMayFindPerfAdviceHere=این صفحه برخی بررسی‌ها و توصیه‌های مربوط به کارآمدی را ارائه می‌دهد.
-NotInstalled=نصب نشده، بنابراین سرور شما به‌واسطۀ این بخش کند نخواهد شد.
+NotInstalled=Not installed.
+NotSlowedDownByThis=Not slowed down by this.
+NotRiskOfLeakWithThis=Not risk of leak with this.
 ApplicativeCache=میان‌گیر عملیاتی
 MemcachedNotAvailable=هیچ میان‌گیر عملیاتی پیدا نشده. شما می‌توانید با نصب سرور میان‌گیر از قبیل Memcached و یک واحد قابل نصب که قابلیت استفاده از این سرور را دارد کارائی را افزایش دهید. <br>اطلاعات بیشتر در این پیوند <a href="http://wiki.dolibarr.org/index.php/Module_MemCached_EN">http://wiki.dolibarr.org/index.php/Module_MemCached_EN</a>. <br>نکته این‌که بسیاری از ارائه‌دهندگان خدمات میزبانی از چنین سرویس‌دهندۀ میان‌گیری پشتیبانی نمی‌نمایند.
 MemcachedModuleAvailableButNotSetup=واحد memcached برای میان‌گیری عملیاتی یافت می‌شود اما پیکربندی آن کامل نیست.
@@ -1517,9 +1643,13 @@ ProductSetup=برپاسازی واحد محصولات
 ServiceSetup=برپاسازی واحد خدمات
 ProductServiceSetup=برپاسازی واحد محصولات و خدمات
 NumberOfProductShowInSelect=حداکثر تعداد قابل نمایش در فهرست ترکیبی انتخاب‌گر (0=بدون محدودیت)
-ViewProductDescInFormAbility=نمایش توضیحات محصول در برگه‌ها (در غیر این‌صورت طی یک‌نکتۀ در کادر کوچک توضیح نمایش داده خواهد شد)
+ViewProductDescInFormAbility=Display product descriptions in lines of items (otherwise show description in a tooltip popup)
+OnProductSelectAddProductDesc=How to use the description of the products when adding a product as a line of a document
+AutoFillFormFieldBeforeSubmit=Auto fill the description input field with the description of product
+DoNotAutofillButAutoConcat=Do not autofill the input field with description of product. Description of the product will be concatenated to the entered description automatically.
+DoNotUseDescriptionOfProdut=Description of the product will never be included into the description of lines of documents
 MergePropalProductCard=فعال‌سازی یک گزینه در محصول/خدمات زبانۀ فایل‌های پیوست برای ترکیب یک سند PDF به سند پیشنهاد در صورتی‌که محصول/خدمات در پیشنهاد وجود داشته باشد
-ViewProductDescInThirdpartyLanguageAbility=نمایش توضیحات محصولات با زبان شخص‌سوم
+ViewProductDescInThirdpartyLanguageAbility=Display products descriptions in forms in the language of the third party (otherwise in the language of the user)
 UseSearchToSelectProductTooltip=در صورتی که شما تعداد بسیار زیادی محصول داشته باشید (>100000)، شما می‌توانید با استنفاده از تنظیم مقدار ثابت PRODUCT_DONOTSEARCH_ANYWHERE  به مقدار 1 در برپاسازی->سایر سرعت را افزایش دهید. جستجو در این حالت از شروع عبارت انجام خواهد شد.
 UseSearchToSelectProduct=قبل از این‌که شما کلیدی بفشارید محتوای محصول در فهرست ترکیبی بارگذاری نخواهد شد (در صورتی که شما تعداد زیادی محصول داشته باشید، این باعث افزایش کارآمدی خواهد شد، اما از راحتی کم‌تری برخوردار است)
 SetDefaultBarcodeTypeProducts=نوع بارکد پیش‌فرض برای استفادۀ محصولات
@@ -1536,9 +1666,9 @@ SyslogLevel=سطح
 SyslogFilename=نام فایل و مسیر
 YouCanUseDOL_DATA_ROOT=می‌توانید از DOL_DATA_ROOT/dolibarr.log برای یک فایل گزارش در پوشۀ documents مربوط به Dolibarr استفاده نمائید. شما می‌توانید مسیر متفاوتی برای ذخیرۀ این فایل استفاده نمائید.
 ErrorUnknownSyslogConstant=مقدارثابت %s به‌عنوان یک مقدار ثابت برای گزارش‌سامانه شناخته نشده است
-OnlyWindowsLOG_USER=ویندوز تنها از LOG_USER پشتیبانی می‌نماید
+OnlyWindowsLOG_USER=On Windows, only the LOG_USER facility will be supported
 CompressSyslogs=فشرده‌سازی و پشتیبان‌گیری از فایل‌های اشکال‌گیری (تولید شده توسط واحد گزارش‌گیری برای مقاصد اشکال‌گیری)
-SyslogFileNumberOfSaves=پشتیبان‌های گزارش‌ها
+SyslogFileNumberOfSaves=Number of backup logs to keep
 ConfigureCleaningCronjobToSetFrequencyOfSaves=پیکربندی حذف وظایف زمان‌بندی شده برای اجرای متداول پشتیبان‌گیری از گزارش‌ها
 ##### Donations #####
 DonationsSetup=برپاسازی واحد کمک‌های‌مالی
@@ -1577,6 +1707,9 @@ MailingDelay=ثانیه‌های انتظار بعد از ارسال یک رای
 NotificationSetup=برپاسازی واحد آگاه‌سازی رایانامه
 NotificationEMailFrom=رایانامۀ ارسال‌کننده (از) برای رایانامه‌هائی که توسط واحد ارسال آگاه‌سازی‌ها فرستاده می‌شوند
 FixedEmailTarget=گیرنده
+NotificationDisableConfirmMessageContact=Hide the list of recipients (subscribed as contact) of notifications into the confirmation message
+NotificationDisableConfirmMessageUser=Hide the list of recipients (subscribed as user) of notifications into the confirmation message
+NotificationDisableConfirmMessageFix=Hide the list of recipients (subscribed as global email) of notifications into the confirmation message
 ##### Sendings #####
 SendingsSetup=برپاسازی واحد حمل‌ونقل
 SendingsReceiptModel=شکل فرستادن رسید
@@ -1592,9 +1725,11 @@ FreeLegalTextOnDeliveryReceipts=متن دلخواه در رسیدهای تحوی
 ##### FCKeditor #####
 AdvancedEditor=ویرایشگر پیشرفته
 ActivateFCKeditor=فعال کردن ویرایشگر پیشرفته برای:
-FCKeditorForCompany=ساخت/ویرایش عناصر توضیح و یادآوری به شکل WYSIWIG (باستثناء محصولات/خدمات)
-FCKeditorForProduct=ساخت/ویرایش عناصر توضیح و یادآوری به شکل WYSIWIG
-FCKeditorForProductDetails=ساخت/ویرایش سطور جزئیات برای همۀ موجودیت‌های محصولات (پیشنهادها، سفارش‌ها، صورت‌حساب‌ها و غیره) با WYSIWIG. <font class="warning">هشدار: استفده از این گزینه برای این مورد اساسا توصیه نمی‌شود زیرا ممکن است در هنگام ساخت فایل‌های PDF در خصوص نویسه‌های خاص در هنگام شکل‌دهی صفحه مشکل ایجاد نماید.</font>
+FCKeditorForNotePublic=WYSIWIG creation/edition of the field "public notes" of elements
+FCKeditorForNotePrivate=WYSIWIG creation/edition of the field "private notes" of elements
+FCKeditorForCompany=WYSIWIG creation/edition of the field description of elements (except products/services)
+FCKeditorForProduct=WYSIWIG creation/edition of the field description of products/services
+FCKeditorForProductDetails=WYSIWIG creation/edition of products details lines for all entities (proposals, orders, invoices, etc...). <span class="warning">Warning: Using this option for this case is seriously not recommended as it can create problems with special characters and page formatting when building PDF files.</span>
 FCKeditorForMailing= ساخت/ویرایش WYSIWIG برای ارسال رایانامۀ انبوه (ابزار->ارسال رایانامه)
 FCKeditorForUserSignature=ساخت/ویرایش امضای کاربر توسط WYSIWIG
 FCKeditorForMail=ساخت/ویرایش همۀ رایانامه‌ها با WYSIWIG (منهای ابزار->ارسال رایانامه)
@@ -1604,14 +1739,14 @@ StockSetup=برپاسازی واحد انبار
 IfYouUsePointOfSaleCheckModule=در صورتی که از صندوق (POS) پیش‌فرض ارائه شده یا از یک واحد خارجی استفاده می‌نمائید، این تنظیمات ممکن است توسط واحد صندوق شما نادیده گرفته شود. اکثر واحدهای POS به‌طور پیش‌فرض طوری طراحی شده‌اند که فورا یک صورت‌حساب ایجاد کرده و بدون‌توجه به گزینه‌های ذیل، از آمار انبار را کاهش بدهند. بنابراین در صورتی که لازم باشد/یا نباشد در هنگام ثبت فروش از طریق صندوق، آمار انبار دست‌کاری شود، باید تنظیمات مربوط به واحد صندوق نصب شدۀ خود را نیز بررسی کنید.
 ##### Menu #####
 MenuDeleted=فهرست حذف شد
+Menu=Menu
 Menus=فهرست‌ها
 TreeMenuPersonalized=فهرست‌های شخصی
 NotTopTreeMenuPersonalized=فهرست‌های شخصی که به یکی از قسمت‌های فهرست‌اصلی پیوند نشده‌اند
 NewMenu=فهرست جدید
-Menu=انتخاب فهرست
 MenuHandler=اداره‌کنندۀ فهرست
 MenuModule=واحد منبع
-HideUnauthorizedMenu= پنهان کردن فهرست‌های غیرمجاز (خاکستری)
+HideUnauthorizedMenu=Hide unauthorized menus also for internal users (just greyed otherwise)
 DetailId=فهرست شناسه
 DetailMenuHandler=اداره کنندۀ فهرست برای تعیین مکان نمایش فهرست جدید
 DetailMenuModule=نام واحد در صورتی که یک قسمت از فهرست از یک واحد می‌آید
@@ -1651,25 +1786,28 @@ YourCompanyDoesNotUseVAT=شرکت شما برای عدم استفاده از م�
 AccountancyCode=کد حساب‌داری
 AccountancyCodeSell=کد حساب فروش
 AccountancyCodeBuy=کد حساب خرید
+CREATE_NEW_VAT_WITHOUT_AUTO_PAYMENT=Keep the checkbox “Automatically create the payment” empty by default when creating a new tax
 ##### Agenda #####
 AgendaSetup=برپاسازی واحد رخدادها و جلسات
 PasswordTogetVCalExport=کلید برای اعتباردهی به پیوند صادرات
+SecurityKey = Security Key
 PastDelayVCalExport=عدم صادرکردن رخداد قدیمی‌تر از
 AGENDA_USE_EVENT_TYPE=استفاده از انواع رخداد (قابل‌مدیریت در برپاسازی-> واژه‌نامه‌ها -> انواع رخدادهای جلسات)
 AGENDA_USE_EVENT_TYPE_DEFAULT=ثبت خودکار این مقدار پیش‌فرض برای نوع رخداد در برگۀ ساخت رخداد
 AGENDA_DEFAULT_FILTER_TYPE=ثبت خودکار این نوع از رخداد در صافی جستجوی نمای جلسات
 AGENDA_DEFAULT_FILTER_STATUS=ثبت خودکار این وضعیت جلسه در صافی جستجوی نمای جلسات
-AGENDA_DEFAULT_VIEW=زبانه‌ای که به طور پیش‌فرض در هنگام باز کردن فهرست جلسات باید باز باشد
-AGENDA_REMINDER_EMAIL=فعال‌کردن یادآوری رخدادها <b>توسط رایانامه</b> (توجه داشته بشید در خصوص هر رخداد گزینه‌ها/تاخیر قابل تعریف هستند). نکته:  برای ارسال با بسامد صحیح رایانامه‌های یادآوری واحد <strong>%s</strong> باید فعال بوده و به‌‌درستی پیکربندی شده باشد.
-AGENDA_REMINDER_BROWSER=فعال‌کردن یادآوری رخداد <b>روی مرورگر کاربر</b> (در هنگامی که رخداد سررسید، هر کاربر می‌تواند این کار را از طریق سوال تائید مرورگر نفی کند)
+AGENDA_DEFAULT_VIEW=Which view do you want to open by default when selecting menu Agenda
+AGENDA_REMINDER_BROWSER=Enable event reminder <b>on user's browser</b> (When remind date is reached, a popup is shown by the browser. Each user can disable such notifications from its browser notification setup).
 AGENDA_REMINDER_BROWSER_SOUND=فعال‌کردن آگاهی‌رسانی صوتی
+AGENDA_REMINDER_EMAIL=Enable event reminder <b>by emails</b> (remind option/delay can be defined on each event).
+AGENDA_REMINDER_EMAIL_NOTE=Note: The frequency of the scheduled job %s must be enough to be sure that the remind are sent at the correct moment.
 AGENDA_SHOW_LINKED_OBJECT=نمایش شیء پیوند شده به نمای جلسه
 ##### Clicktodial #####
 ClickToDialSetup=برپاسازی واحد کلیک برای شماره‌گیری
 ClickToDialUrlDesc=یک نشانی‌اینترنتی در هنگام کلیک بر روی نماد تلفن فراخوان می‌شود. در نشانی‌اینترنتی شما می‌توانید از برچسب‌های <br><b>__PHONETO__</b> که با شمارۀ یک شخص برای تماس است تعویض خواهد شد، <br><b>__PHONEFROM__</b> که با شمارۀ شخص تماس گیرنده (شما) تعویض خواهد شد <br><b>__LOGIN__</b> که با شناسۀ ورود clicktodial (تعریف شده در کارت کاربر) تعویض خواهد شد، <br><b>__PASS__</b> که با گذرواژۀ clicktodial (تعریف شده در کارت کاربر) تعویض خواهد شد.
-ClickToDialDesc=این واحد شماره‌تلفن‌ها را تبدیل به پیوندهای قابل کلیک می‌کند. یک کلیک روی نمادک باعث می‌شود تلفن شما شماره‌گیری کند. این قابل استفاده برای تماس با یک سامانۀ مرکزتماس از طریق Dolibarr است که می‌تواند به‌عنوان مثال از یک سامانۀ SIP تماس حاصل نماید.
+ClickToDialDesc=This module change phone numbers, when using a desktop computer, into clickable links. A click will call the number. This can be used to start the phone call when using a soft phone on your desktop or when using a CTI system based on SIP protocol for example. Note: When using a smartphone, phone numbers are always clickable.
 ClickToDialUseTelLink=فقط یک عبارت "tel:" به پیوند شماره‌تلفن‌ها اضافه شود
-ClickToDialUseTelLinkDesc=این گزینه را برای حالتی اضافه کنید که کاربران شما یک تلفن‌مجازی یا یک رابط نرم‌افزاری روی رایانۀ خود و یا مرورگر خود نصب دارند، این نرم‌افزارها در هنگامی فراخوان خواهند شد که پیوندی با پیشوند "tel:" کلیک شود. در صورتی که شما به یک سرور تمام عیار احتیاج دارید (که نیازی به نصب نرم افزار محلی ندارد)، شما باید گزینۀ "خیر" را انتخاب کرده و بخش بعدی را پر کنید.
+ClickToDialUseTelLinkDesc=Use this method if your users have a softphone or a software interface, installed on the same computer as the browser, and called when you click on a link starting with "tel:" in your browser. If you need a link that start with "sip:" or a full server solution (no need of local software installation), you must set this to "No" and fill the next field.
 ##### Point Of Sale (CashDesk) #####
 CashDesk=صندوق
 CashDeskSetup=برپاسازی واحد صندوق
@@ -1683,6 +1821,9 @@ CashDeskIdWareHouse=مقیدکردن و اجبار یک انبار برای اس
 StockDecreaseForPointOfSaleDisabled=کاهش موجودی برای فروش از طریق صندوق غیرفعال است
 StockDecreaseForPointOfSaleDisabledbyBatch=کاهش موجودی در صندوق با واحد مدیریت شماره‌سری/ساخت سازگار نیست (فعلا فعال است)، بنابراین کاهش موجودی غیرفعال است.
 CashDeskYouDidNotDisableStockDecease=شما کاهش موجودی با فروش از طریق صندوق را غیرفعال نکرده‌اید، بنابراین تعریف یک انبار موردنیاز است.
+CashDeskForceDecreaseStockLabel=Stock decrease for batch products was forced.
+CashDeskForceDecreaseStockDesc=Decrease first by the oldest eatby and sellby dates.
+CashDeskReaderKeyCodeForEnter=Key code for "Enter" defined in barcode reader (Example: 13)
 ##### Bookmark #####
 BookmarkSetup=برپاسازی واحد نشانه‌ها
 BookmarkDesc=این واحد به شما امکان مدیریت نشانه‌ها را می‌دهد. شما همچنین می‌توانید از این طریق به صفحات مختلف Dolibarr یا سایر نشانی‌های خارجی در فهرست سمت چپ میان‌بر ایجاد کنید. 
@@ -1714,7 +1855,7 @@ MultiCompanySetup=برپاسازی واحد چندشرکتی
 ##### Suppliers #####
 SuppliersSetup=برپاسازی واحد فروشندگان
 SuppliersCommandModel=Complete template of Purchase Order
-SuppliersCommandModelMuscadet=Complete template of Purchase Order 
+SuppliersCommandModelMuscadet=Complete template of Purchase Order (old implementation of cornas template)
 SuppliersInvoiceModel=Complete template of Vendor Invoice
 SuppliersInvoiceNumberingModel=روش‌های شماره‌گذاری صورت‌حساب فروشندگان
 IfSetToYesDontForgetPermission=If set to a non null value, don't forget to provide permissions to groups or users allowed for the second approval
@@ -1756,11 +1897,11 @@ TypePaymentDesc=0:نوع پرداخت مشتری، 1:نوع پرداخت فرو�
 IncludePath=دربرگرفتن مسر (تعریف شده در متغیر %s)
 ExpenseReportsSetup=برپاسازی واحد گزارش‌هزینه‌ها
 TemplatePDFExpenseReports=قالب مستند برای تولید سند گزارش هزینه‌ها
-ExpenseReportsIkSetup=برپاسازی واحد گزارش هزینه‌ها - شاخص Milles
 ExpenseReportsRulesSetup=برپاسازی واحد گزارش هزینه‌ها - قواعد
 ExpenseReportNumberingModules=واحد شماره‌گذاری گزارش هزینه‌ها
 NoModueToManageStockIncrease=هیچ واحدی که قادر به افزایش خودکار موجودی انبار باشد فعال نشده است. افزایش موجودی انبار تنها به صورت دستی انجام خواهد شد.
 YouMayFindNotificationsFeaturesIntoModuleNotification=شما می‌توانید برخی گزینه‌های مربوط به اطلاع‌رسانی از رایانامه را با فعال کردن و تنظیم واحد "آگاهی‌رسانی" تنظیم نمائید.
+TemplatesForNotifications=Templates for notifications
 ListOfNotificationsPerUser=فهرست اطلاع‌رسانی‌های خودکار بر حسب کاربر*
 ListOfNotificationsPerUserOrContact=فهرست اطلاع‌رسانی‌های خودکار قابل استفاده (مربوط به روی‌دادی تجاری) فعال برای کاربر* یا بر حسب طرف‌تماس**
 ListOfFixedNotifications=فهرست اطلاع‌رسانی‌های خودکار ثابت
@@ -1776,6 +1917,8 @@ ConfFileMustContainCustom=نصب یا ساخت یک واحد خارجی در ب�
 HighlightLinesOnMouseHover=برجسته‌کردن سطور جدول در هنگام عبور نشان‌گر موش
 HighlightLinesColor=برجسته‌کردن رنگ سطر در هنگام عبور موشواره از آن (از 'ffffff' برای عدم رنگ‌دهی)
 HighlightLinesChecked=روشن‌کردن زرنگ سطر در هنگامی که کادرتائید فشرده شده است ( از 'ffffff' برای عدم روشن کردن استفاده کنید)
+BtnActionColor=Color of the action button
+TextBtnActionColor=Text color of the action button
 TextTitleColor=رنگ نوشتۀ عنوان صفحه
 LinkColor=رنگ پیوندها
 PressF5AfterChangingThis=کلیدهای CTRL+F5 را روی صفحه‌کلید برای پاک‌کردن میان‌گیری پس از تغییر بفشرید تا تاثیر مقداردهی دیده شود.
@@ -1786,19 +1929,22 @@ TopMenuDisableImages=پنهان کردن تصاویر فهرست بالا
 LeftMenuBackgroundColor=رنگ پس‌زمینۀ فهرست سمت چپ
 BackgroundTableTitleColor=رنگ پس‌زمیۀ سطر عنوان جدول
 BackgroundTableTitleTextColor=رنگ نوشتۀ سطر عنوان جدول
+BackgroundTableTitleTextlinkColor=Text color for Table title link line
 BackgroundTableLineOddColor=رنگ پس‌زمینۀ سطور فرد جدول
 BackgroundTableLineEvenColor=رنگ پس‌زمینۀ سطور زوج جدول
 MinimumNoticePeriod=حداقل بازۀ خبردهی (درخواست مرخصی شما باید حداقل با این فاصلۀ زمانی انجام شود)
 NbAddedAutomatically=تعداد روزهائی که باید به شمارنده‌های کاربران (به شکل خودکار) در هر ماه اضافه شود
-EnterAnyCode=این بخش حاوی ارجاعی به یک سطر شناسه است. مقدار دل‌خواه خود را وارد نمائید، اما بدون نویسه‌های خاص.
+EnterAnyCode=This field contains a reference to identify the line. Enter any value of your choice, but without special characters.
+Enter0or1=Enter 0 or 1
 UnicodeCurrency=در اینجا بین دو براکت فهرست اعداد بایت‌هائی را که نمایاندۀ نماد واحدپولی است وارد نمائید. برای مثال، برای $ مقدار [36] را وارد نمائید، برای ریال برزیل R$ مقدار [82,36] و برای €، مقدار [8364]
 ColorFormat=رنگ RGB در مبنای HEX، مثال: FF0000
+PictoHelp=Icon name in dolibarr format ('image.png' if into the current theme directory, 'image.png@nom_du_module' if into the directory /img/ of a module)
 PositionIntoComboList=مکان سطر در فهرست‌های ترکیبی
-SellTaxRate=نرخ مالیات‌برفروش
+SellTaxRate=Sales tax rate
 RecuperableOnly=بله برای م‌ب‌اا "در نظر گرفته نمی‌شود اما قابل بازیابی است" که مربوط به برخی استان‌های فرانسه است. مقدار "خیر" را برای همۀ سایر شرایط حفظ کنید.
 UrlTrackingDesc=در صورتی که ارائه دهندۀ خدمات حمل‌ونقل وبگاهی برای بررسی وضعیت مرسولات شما دارد، می‌توانید آن نشانی را اینجا وارد نمائید. شما می‌توانید کلید  {TRACKID} را در مؤلفه‌های نشانی بگنجانید تا سامانه آن را با شمارۀ رهگیری وارد شده در برگۀ ارسال مربوط به کاربر تعویض نماید.
 OpportunityPercent=هنگامی که یک "سرنخ" می‌سازید، از عدد تخمینی طرح/سرنخ یک عدد تعریف خواهید کرد. با توجه به وضعیت سرنخ، این عدد می‌تواند با این نرخ چندبرابر شود تا عدد-مبلغ؟- کلی که همۀ سرنخ‌ها می‌توانند تولید کنند، ارزیابی شود. مقدار بر حسب درصد است (بین 0 و 100)
-TemplateForElement=این ردیف قالب وابسته به کدام عنصر است
+TemplateForElement=This mail template is related to what type of object? An email template is available only when using the "Send Email" button from the related object.
 TypeOfTemplate=نوع قالب
 TemplateIsVisibleByOwnerOnly=قالب تنها برای صاحبش قابل نمایش است
 VisibleEverywhere=قابل نمایش در همه جا
@@ -1819,10 +1965,12 @@ MailToSendSupplierRequestForQuotation=درخواست مظنه
 MailToSendSupplierOrder=سفارشات خرید
 MailToSendSupplierInvoice=صورت‌حساب‌های فروشندگان
 MailToSendContract=قراردادها
+MailToSendReception=دریافت‌های کالا
 MailToThirdparty=طرف‌های سوم
 MailToMember=اعضا
 MailToUser=کاربران
-MailToProject=صفحۀ طرح‌ها
+MailToProject=طرح‌ها
+MailToTicket=برگه‌های پشتیبانی
 ByDefaultInList=نمایش پیش‌فرض نمای فهرستی
 YouUseLastStableVersion=استفاده از آخرین نسخۀ پایدار
 TitleExampleForMajorRelease=مثال پیامی که می‌توانید برای استفاده در اطلاع‌رسانی این انتشار اصلی داشته باشید (در استفاده از آن در وبگاه خود راحت باشید)
@@ -1831,6 +1979,7 @@ ExampleOfNewsMessageForMajorRelease=سامانۀ Dolibarr مدیریت ارتب�
 ExampleOfNewsMessageForMaintenanceRelease=سامانۀ Dolibarr مدیریت ارتباط با مشتری و مدیریت منابع سازمانی نسخۀ %s در دسترس است. نسخۀ %s یک نسخۀ بهبود دهنده است که این تنها به معنای رفع اشکالات است ما به همۀ کاربران توصیه می‌کنیم به این نسخه ارتقا دهند. یک نسخۀ بهبود دربردارندۀ قابلیت‌های جدید یا تغییرات در پایگاه داده نیست. شما می‌توانید از بخش download وبگاه https://www.dolibarr.org (زیرپوشۀ نسخه‌های پایدار) آن را دریافت نمائید. شما می‌توانید برای ملاحظۀ <a href="https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog">فهرست کامل تغییرات گزارش کار</a> تغییرات را ببینید.
 MultiPriceRuleDesc=هنگامی که گزینۀ "چند سطح قیمت برای هر محصول/خدمات" فعال باشد شما می‌توانید برای هر محصول، چند قیمت (یکی برای هر سطح) تعریف نمائید. برای صرفه‌جوئی در زمان، شما می‌توانید قاعده‌ای برای محاسبۀ خودکار یک هر یک از این سطوح قیمتی مبنی بر قیمت سطح اول تعریف کنید و بدین‌ترتیب شما تنها قیمت سطح اول را برای هر محصول وارد خواهید نمود. این صفحه برای صرفه‌جوئی در زمان ایجاد شده است اما تنها هنگامی مؤثر است که سایر قیمت‌ها در سطوح دیگر، با سطح اولیۀ قیمت یک رابطه داشته باشند. در اکثر موارد شما می‌توانید این صفحه را نادیده بگیرید.
 ModelModulesProduct=قالب‌های مربوط به مستندات محصول
+WarehouseModelModules=Templates for documents of warehouses
 ToGenerateCodeDefineAutomaticRuleFirst=برای امکان تولید خودکار کدها، شما می‌توانید ابتدا یک "مدیر" مخصوص برای تعریف خودکار شمارۀ بارکد تعریف کنید.
 SeeSubstitutionVars=یادداشت * را برای فهرست متغیرهای قابل استفادۀ جایگزین نگاه کنید
 SeeChangeLog=فایل گزارش‌کار تغییرات را نگاه کنید (فقط انگلیسی است)
@@ -1869,9 +2018,19 @@ MAIN_PDF_MARGIN_LEFT=فاصلۀحاشیۀ چپ PDF
 MAIN_PDF_MARGIN_RIGHT=فاصلۀحاشیۀ راست PDF
 MAIN_PDF_MARGIN_TOP=فاصلۀحاشیۀ بالای PDF
 MAIN_PDF_MARGIN_BOTTOM=فاصلۀحاشیۀ پائین PDF
+MAIN_DOCUMENTS_LOGO_HEIGHT=Height for logo on PDF
+MAIN_GENERATE_PROPOSALS_WITH_PICTURE=Add column for picture on proposal lines
+MAIN_DOCUMENTS_WITH_PICTURE_WIDTH=Width of the column if a picture is added on lines
+MAIN_PDF_NO_SENDER_FRAME=Hide borders on sender address frame
+MAIN_PDF_NO_RECIPENT_FRAME=Hide borders on recipent address frame
+MAIN_PDF_HIDE_CUSTOMER_CODE=Hide customer code
+MAIN_PDF_HIDE_SENDER_NAME=Hide sender/company name in address block
+PROPOSAL_PDF_HIDE_PAYMENTTERM=Hide payments conditions
+PROPOSAL_PDF_HIDE_PAYMENTMODE=Hide payment mode
+MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING=Add electronic sign in PDF
 NothingToSetup=تنظیمات خاصی برای این واحدموردنیاز نیست
 SetToYesIfGroupIsComputationOfOtherGroups=در صورتی که این گروه جهت محاسبۀ سایر گروه‌هاست این گزینه را انتخاب کنید
-EnterCalculationRuleIfPreviousFieldIsYes=در صورتی که بخش قبلی به "بله" تنظیم شده باشد، قاعدۀ محاسبه را وارد نمائید (برای مثال 'CODEGRP1+CODEGRP2')
+EnterCalculationRuleIfPreviousFieldIsYes=Enter calculation rule if previous field was set to Yes.<br>For example:<br>CODEGRP1+CODEGRP2
 SeveralLangugeVariatFound=چندین نوع زبان پیدا شد
 RemoveSpecialChars=حذف نویسه‌های خاص
 COMPANY_AQUARIUM_CLEAN_REGEX=گزینش Regex برای پاک کردن مقدار (COMPANY_AQUARIUM_CLEAN_REGEX)
@@ -1887,7 +2046,7 @@ SocialNetworkSetup=برپاسازی واحد شبکه‌های اجتماعی
 EnableFeatureFor=فعال کردن‌قابلیت‌ها برای <strong>%s</strong>
 VATIsUsedIsOff=نکته: این گزینه برای استفاده از مالیات‌برفروش یا مالیات‌برارزش‌افزوده در فهرست %s - %s به حالت <strong>خاموش</strong> درآمده است، بنابراین مالیات‌برفروش و مالیات بر ارزش افزوده در عملیات فروش همواره برابر با 0 خواهد بود.
 SwapSenderAndRecipientOnPDF=جابه‌جا کردن محل ارسال‌کننده و دریافت کننده در سندهای PDF
-FeatureSupportedOnTextFieldsOnly=هشدار! این قابلیت تنها در بخش‌های نشوتاری پشتیبانی می‌شود. به‌هرحال مؤلفۀ نشانی اینترتی action=create و action=edit باید تنظیم شده یا این‌که نام صفحه باید با 'new.php' تمام شود تا این قابلیت را به‌حرکت‌اندازد.
+FeatureSupportedOnTextFieldsOnly=Warning, feature supported on text fields and combo lists only. Also an URL parameter action=create or action=edit must be set OR page name must end with 'new.php' to trigger this feature.
 EmailCollector=جمع‌کنندۀ رایانامه
 EmailCollectorDescription=افزودن یک وظیفۀ زمان‌بندی شده و یک صفحۀ برپاسازی برای پویش منظم بخش‌های رایانامه (با استفاده از از پرتکل IMAP) و ثبت رایانامه‌هائی که در برنامۀ شما دریافت شده در محل درست و/یا ایجاد خودکار چند ردیف (مثل سرنخ‌ها).
 NewEmailCollector=یک جمع‌کنندۀ رایانامۀ جدید
@@ -1895,30 +2054,35 @@ EMailHost=میزبان سرور IMAP رایانامه
 MailboxSourceDirectory=پوشۀ منبع صندوق‌پستی
 MailboxTargetDirectory=پوشۀ مقصد صندوق‌پستی
 EmailcollectorOperations=عملیات قابل انجام جمع‌کننده
+EmailcollectorOperationsDesc=Operations are executed from top to bottom order
 MaxEmailCollectPerCollect=حداکثر تعداد رایانامه‌های جمع‌آوری شده در یک جمع‌آوری
 CollectNow=الآن جمع‌آوری شود
 ConfirmCloneEmailCollector=آیا مطمئن هستید می‌خواهد جمع‌آورندۀ رایانامۀ %s را نسخه‌برداری کنید؟
-DateLastCollectResult=آخرین تاریخ تلاش برای جمع‌‌آوری
-DateLastcollectResultOk=آخرین تلاش جمع‌آوری موفق
+DateLastCollectResult=Date of latest collect try
+DateLastcollectResultOk=Date of latest collect success
 LastResult=آخرین نتیجه
 EmailCollectorConfirmCollectTitle=تائید جمع‌آوری رایانامه
 EmailCollectorConfirmCollect=آیا می‌خواهید عملیات جمع‌آوری این جمع‌آورنده را حالا اجرا کنید؟
 NoNewEmailToProcess=رایانامۀ جدیدی (با توجه به گزینش‌ها و صافی‌ها) پیدا نشد که پردازش شود
 NothingProcessed=کاری انجام نشد
 XEmailsDoneYActionsDone=%s رایانامه دارای شرایط لازم بود، %s رایانامه با موفقیت پردازش شد ( برای %s مورد ثبت/کنش انجام شد)
-RecordEvent=ثبت رخداد رایانامه
-CreateLeadAndThirdParty=افزودن سرنخ (و شخص سوم در صورت ضرورت)
-CreateTicketAndThirdParty=ساخت برگۀ‌پشتیبانی (و شخص‌سوم در صورت ضرورت)
+RecordEvent=Record an event in agenda (with type Email sent or received)
+CreateLeadAndThirdParty=Create a lead (and a third party if necessary)
+CreateTicketAndThirdParty=Create a ticket (linked to a third party if the third party was loaded by a previous operation, with no third party otherwise)
 CodeLastResult=آخرین کد نتیجه
 NbOfEmailsInInbox=تعداد رایانامه‌های موجود در پوشۀ منبع
 LoadThirdPartyFromName=بارگذاری جستجوی شخص‌سوم روی %s (فقط بارگذاری)
 LoadThirdPartyFromNameOrCreate=بارگذاری جستجوی شخص سوم روی %s (ساختن در صورت عدم یافتن)
-WithDolTrackingID=Dolibarr Reference found in Message ID
-WithoutDolTrackingID=Dolibarr Reference not found in Message ID
+AttachJoinedDocumentsToObject=Save attached files into object documents if a ref of an object is found into email topic.
+WithDolTrackingID=Message from a conversation initiated by a first email sent from Dolibarr
+WithoutDolTrackingID=Message from a conversation initiated by a first email NOT sent from Dolibarr
+WithDolTrackingIDInMsgId=Message sent from Dolibarr
+WithoutDolTrackingIDInMsgId=Message NOT sent from Dolibarr
+CreateCandidature=Create job application
 FormatZip=کدپستی
 MainMenuCode=کد ورودی فهرست (فهرست اصلی)
 ECMAutoTree=نمایش ساختاردرختی خودکار ECM
-OperationParamDesc=مقادیر تعریف شده برای کنش-action یا چگونگی استخراج مقادیر را این‌جا تعریف کنید. برای مثال: <br>objproperty1=SET:abc<br> objproperty1=SET:a value with replacement of __objproperty1__ <br> objproperty3=SETIFEMPTY:abc <br> objproperty4=EXTRACT:HEADER:X-Myheaderkey.*[^\\s]+(.*) <br> options_myextrafield=EXTRACT:SUBJECT:([^\\s]*) <br> object.objproperty5=EXTRACT:BODY:My company name is\\s([^\\s]*) <br><br> از یک ویرگول‌نقطۀ انگلیسی ; به‌عنوان جداکنندۀ یا استخراجی یا تنظیم چند گروه مشخصات استفاده کنید.
+OperationParamDesc=Define the rules to use to extract or set values.<br>Example for operations that need to extract a name from email subject:<br>name=EXTRACT:SUBJECT:Message from company ([^\n]*)<br>Example for operations that create objects:<br>objproperty1=SET:the value to set<br>objproperty2=SET:a value including value of __objproperty1__<br>objproperty3=SETIFEMPTY:value used if objproperty3 is not already defined<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey:\\s*([^\\s]*)<br>options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*)<br>object.objproperty5=EXTRACT:BODY:My company name is\\s([^\\s]*)<br><br>Use a ; char as separator to extract or set several properties.
 OpeningHours=ساعات کار
 OpeningHoursDesc=ساعات کاری معمول شرکت خود را در این بخش وارد نمائید
 ResourceSetup=پیکربندی واحد منابع
@@ -1928,7 +2092,7 @@ DisabledResourceLinkContact=این قابلیت را برای پیونددادن
 EnableResourceUsedInEventCheck=Enable feature to check if a resource is in use in an event
 ConfirmUnactivation=تائید نوسازی واحد
 OnMobileOnly=تنها روی صفحات کوچک (تلفن‌هوشمند)
-DisableProspectCustomerType=غیرفعال کردن نوع طرف سوم "مشتری احتمالی + مشتری" (بنابراین شخص‌سوم باید یک مشتری احتمالی یا یک مشتری باشد و نمی‌تواند هر دو با هم باشد)
+DisableProspectCustomerType=Disable the "Prospect + Customer" third party type (so third party must be "Prospect" or "Customer", but can't be both)
 MAIN_OPTIMIZEFORTEXTBROWSER=ساده‌کردن رابط‌کاربری برای افراد نابینا
 MAIN_OPTIMIZEFORTEXTBROWSERDesc=این گزینه برای افراد نابینتا استفاده می‌شود یا این‌که از برنامه از یک مرورگر نوشتاری همانند Lynx یا Links استفاده می‌نمائید.
 MAIN_OPTIMIZEFORCOLORBLIND=تغییر رنگ‌های صفحه برای استفادۀ افرادی که عارضۀ کوررنگی دارند
@@ -1950,24 +2114,109 @@ UseDebugBar=استفاده از نوار اشکال‌یابی
 DEBUGBAR_LOGS_LINES_NUMBER=تعداد آخرین سطور گزارش‌کار برای حفظ در کنسول
 WarningValueHigherSlowsDramaticalyOutput=هشدار! مقادیر بزرگ خروجی را به‌شدت کند می‌کند
 ModuleActivated=واحد %s فعال شده و باعث کاهش سرعت رابط کاربری می‌شود
+ModuleActivatedWithTooHighLogLevel=Module %s is activated with a too high logging level (try to use a lower level for better performances and security)
+ModuleSyslogActivatedButLevelNotTooVerbose=Module %s is activated and log level (%s) is correct (not too verbose)
+IfYouAreOnAProductionSetThis=If you are on a production environment, you should set this property to %s.
+AntivirusEnabledOnUpload=Antivirus enabled on uploaded files
+SomeFilesOrDirInRootAreWritable=Some files or directories are not in a read-only mode
 EXPORTS_SHARE_MODELS=اشکال صادارات با همگان به اشتراک گذاشته شدند
 ExportSetup=برپاسازی واحد صادرات
+ImportSetup=Setup of module Import
 InstanceUniqueID=شناسۀ منحصر به‌فرد نمونه
 SmallerThan=کوچک‌تر از
 LargerThan=بزرگتر از
-IfTrackingIDFoundEventWillBeLinked=توجه کنید در صورتی که یک شناسۀ ره‌گیری در یک رایانامۀ دریافتی یافت شود، روی‌داد به طور خودکار به اشیاء مربوطه متصل خواهد شد
+IfTrackingIDFoundEventWillBeLinked=Note that If a tracking ID of an object is found into email, or if the email is an answer of an email aready collected and linked to an object, the created event will be automatically linked to the known related object.
 WithGMailYouCanCreateADedicatedPassword=با یک حساب GMail در صورتی که تائید 2 گامی را انتخاب کرده باشید، پیشنهاد می‌شود یک گذرواژۀ دوم برای استفادۀ برنامه به‌جای گذرواژۀ خودتان برای حساب بسازید. این کار از https://myaccount.google.com/ قابل انجام است.
-EmailCollectorTargetDir=It may be a desired behaviour to move the email into another tag/directory when it was processed successfully. Just set a value here to use this feature. Note that you must also use a read/write login account.
-EmailCollectorLoadThirdPartyHelp=You can use this action to use the email content to find and load an existing thirdparty in your database. The found (or created) thirdparty will be used for following actions that need it. In the parameter field you can use for example 'EXTRACT:BODY:Name:\\s([^\\s]*)' if you want to extract the name of the thirdparty from a string 'Name: name to find' found into the body.
+EmailCollectorTargetDir=It may be a desired behaviour to move the email into another tag/directory when it was processed successfully. Just set name of directory here to use this feature (Do NOT use special characters in name). Note that you must also use a read/write login account.
+EmailCollectorLoadThirdPartyHelp=You can use this action to use the email content to find and load an existing thirdparty in your database. The found (or created) thirdparty will be used for following actions that need it.<br>For example, if you want to create a thirdparty with a name extracted from a string 'Name: name to find' present into the body, use the sender email as email, you can set the parameter field like this:<br>'email=HEADER:^From:(.*);name=EXTRACT:BODY:Name:\\s([^\\s]*);client=SET:2;'<br>
 EndPointFor=نقطۀ آخر برای %s : %s
 DeleteEmailCollector=حذف جمع‌آورندۀ رایانامه
 ConfirmDeleteEmailCollector=آیا مطمئن هستید می‌خواهید این جمع‌آورندۀ رایانامه را حذف کنید؟
 RecipientEmailsWillBeReplacedWithThisValue=رایانامه‌های دریافت‌کننده همواره با این مقدار جایگزین می‌شود
 AtLeastOneDefaultBankAccountMandatory=حداقل 1 حساب بانکی باید تعریف شود
-RESTRICT_API_ON_IP=Allow available APIs to some host IP only (wildcard not allowed, use space between values). Empty means every hosts can use the available APIs.
 RESTRICT_ON_IP=Allow access to some host IP only (wildcard not allowed, use space between values). Empty means every hosts can access.
+IPListExample=127.0.0.1 192.168.0.2 [::1]
 BaseOnSabeDavVersion=Based on the library SabreDAV version
 NotAPublicIp=Not a public IP
 MakeAnonymousPing=Make an anonymous Ping '+1' to the Dolibarr foundation server (done 1 time only after installation) to allow the foundation to count the number of Dolibarr installation.
 FeatureNotAvailableWithReceptionModule=Feature not available when module Reception is enabled
 EmailTemplate=Template for email
+EMailsWillHaveMessageID=Emails will have a tag 'References' matching this syntax
+PDF_SHOW_PROJECT=Show project on document
+ShowProjectLabel=Project Label
+PDF_USE_ALSO_LANGUAGE_CODE=If you want to have some texts in your PDF duplicated in 2 different languages in the same generated PDF, you must set here this second language so generated PDF will contains 2 different languages in same page, the one chosen when generating PDF and this one (only few PDF templates support this). Keep empty for 1 language per PDF.
+PDF_USE_A=Gererate PDF documents with format PDF/A instead of defaut format PDF
+FafaIconSocialNetworksDesc=Enter here the code of a FontAwesome icon. If you don't know what is FontAwesome, you can use the generic value fa-address-book.
+RssNote=Note: Each RSS feed definition provides a widget that you must enable to have it available in dashboard
+JumpToBoxes=Jump to Setup -> Widgets
+MeasuringUnitTypeDesc=Use here a value like "size", "surface", "volume", "weight", "time"
+MeasuringScaleDesc=The scale is the number of places you have to move the decimal part to match the default reference unit. For "time" unit type, it is the number of seconds. Values between 80 and 99 are reserved values.
+TemplateAdded=Template added
+TemplateUpdated=Template updated
+TemplateDeleted=Template deleted
+MailToSendEventPush=Event reminder email
+SwitchThisForABetterSecurity=Switching this value to %s is recommended for more security
+DictionaryProductNature= Nature of product
+CountryIfSpecificToOneCountry=Country (if specific to a given country)
+YouMayFindSecurityAdviceHere=You may find security advisory here
+ModuleActivatedMayExposeInformation=This PHP extension may expose sensitive data. If you don't need it, disable it.
+ModuleActivatedDoNotUseInProduction=A module designed for the development has been enabled. Do not enable it on a production environment.
+CombinationsSeparator=Separator character for product combinations
+SeeLinkToOnlineDocumentation=See link to online documention on top menu for examples
+SHOW_SUBPRODUCT_REF_IN_PDF=If the feature "%s" of module <b>%s</b> is used, show details of subproducts of a kit on PDF.
+AskThisIDToYourBank=Contact your bank to get this ID
+AdvancedModeOnly=Permision available in Advanced permission mode only
+ConfFileIsReadableOrWritableByAnyUsers=The conf file is readable or writable by any users. Give permission to web server user and group only.
+MailToSendEventOrganization=Event Organization
+MailToPartnership=Partnership
+AGENDA_EVENT_DEFAULT_STATUS=Default event status when creating a event from the form
+YouShouldDisablePHPFunctions=You should disable PHP functions
+IfCLINotRequiredYouShouldDisablePHPFunctions=Except if you need to run system commands in custom code, you shoud disable PHP functions
+PHPFunctionsRequiredForCLI=For shell purpose (like scheduled job backup or running an anitivurs program), you must keep PHP functions
+NoWritableFilesFoundIntoRootDir=No writable files or directories of the common programs were found into your root directory (Good)
+RecommendedValueIs=Recommended: %s
+Recommended=توصیه شده
+NotRecommended=Not recommended
+ARestrictedPath=Some restricted path
+CheckForModuleUpdate=Check for external modules updates
+CheckForModuleUpdateHelp=This action will connect to editors of external modules to check if a new version is available.
+ModuleUpdateAvailable=An update is available
+NoExternalModuleWithUpdate=No updates found for external modules
+SwaggerDescriptionFile=Swagger API description file (for use with redoc for example)
+YouEnableDeprecatedWSAPIsUseRESTAPIsInstead=You enabled deprecated WS API. You should use REST API instead.
+RandomlySelectedIfSeveral=Randomly selected if several pictures are available
+DatabasePasswordObfuscated=Database password is obfuscated in conf file
+DatabasePasswordNotObfuscated=Database password is NOT obfuscated in conf file
+APIsAreNotEnabled=APIs modules are not enabled
+YouShouldSetThisToOff=You should set this to 0 or off
+InstallAndUpgradeLockedBy=Install and upgrades are locked by the file <b>%s</b>
+OldImplementation=Old implementation
+PDF_SHOW_LINK_TO_ONLINE_PAYMENT=If some online payment modules are enabled (Paypal, Stripe, ...), add a link on the PDF to make the online payment
+DashboardDisableGlobal=Disable globally all the thumbs of open objects
+BoxstatsDisableGlobal=Disable totally box statistics
+DashboardDisableBlocks=Thumbs of open objects (to process or late) on main dashboard
+DashboardDisableBlockAgenda=Disable the thumb for agenda
+DashboardDisableBlockProject=Disable the thumb for projects
+DashboardDisableBlockCustomer=Disable the thumb for customers
+DashboardDisableBlockSupplier=Disable the thumb for suppliers
+DashboardDisableBlockContract=Disable the thumb for contracts
+DashboardDisableBlockTicket=Disable the thumb for tickets
+DashboardDisableBlockBank=Disable the thumb for banks
+DashboardDisableBlockAdherent=Disable the thumb for memberships
+DashboardDisableBlockExpenseReport=Disable the thumb for expense reports
+DashboardDisableBlockHoliday=Disable the thumb for leaves
+EnabledCondition=Condition to have field enabled (if not enabled, visibility will always be off)
+IfYouUseASecondTaxYouMustSetYouUseTheMainTax=If you want to use a second tax, you must enable also the first sale tax
+IfYouUseAThirdTaxYouMustSetYouUseTheMainTax=If you want to use a third tax, you must enable also the first sale tax
+LanguageAndPresentation=Language and presentation
+SkinAndColors=Skin and colors
+IfYouUseASecondTaxYouMustSetYouUseTheMainTax=If you want to use a second tax, you must enable also the first sale tax
+IfYouUseAThirdTaxYouMustSetYouUseTheMainTax=If you want to use a third tax, you must enable also the first sale tax
+PDF_USE_1A=Generate PDF with PDF/A-1b format
+MissingTranslationForConfKey = Missing translation for %s
+NativeModules=Native modules
+NoDeployedModulesFoundWithThisSearchCriteria=No modules found for these search criteria
+API_DISABLE_COMPRESSION=Disable compression of API responses
+EachTerminalHasItsOwnCounter=Each terminal use its own counter.
+FillAndSaveAccountIdAndSecret=Fill and save account ID and secret first
+PreviousHash=Previous hash

@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - loan
-ModuleBuilderDesc=Esta herramienta debe ser usada por usuarios experimentados o desarrolladores. Te facilitará utilidades para construir o editar tu propio módulo (Documentación para un manual alternativo de desarrollo <a href="%s" target="_blank">aquí</a>).
+ModuleBuilderDesc=Esta herramienta solo debe ser utilizada por usuarios o desarrolladores experimentados. Proporciona utilidades para crear o editar su propio módulo. La documentación para el desarrollo manual alternativo <a href="%s" target="_blank" rel="noopener noreferrer"> está aquí </a>.
 EnterNameOfModuleDesc=Introduce el nombre del módulo/aplicación a crear sin espacios. Utilice mayúsculas para separar palabras (Por ejemplo: MiModulo, EcommerceParaTienda, SincronizarConMiSistema...)
 EnterNameOfObjectDesc=Introduce el nombre del objeto a crear sin espacios. Usa mayúsculas para separar palabras (Por ejemplo: MiObjeto, Estudiante, Profesor...). El archivo de clase CRUD, pero también archivo API, páginas para listar/añadir/editar/eliminar objetos y archivos SQL serán generados.
 ModuleBuilderDesc2=Ruta donde los módulos son generados/editados (primer directorio para módulos externos definido en %s): <strong>%s</strong>
@@ -27,7 +27,7 @@ DangerZone=Zona peligrosa
 BuildPackage=Crear paquete
 BuildPackageDesc=Puede generar un paquete zip de su módulo para que esté listo para distribuirlo en cualquier Dolibarr. También puede distribuirlo o venderlo en un una tienda como <a href="https://www.dolistore.com">DoliStore.com</a> .
 BuildDocumentation=Generar documentación
-ModuleIsNotActive=Este módulo no ha sido activado todavía. Vaya a %s para activarlo o pulse aquí:
+ModuleIsNotActive=Este módulo aún no está activado. Vaya a %s para activarlo o haga clic aquí
 ModuleIsLive=Este módulo ha sido activado. Cualquier cambio en él puede romper una característica activa actual.
 DescriptionLong=Descripción larga
 EditorName=Nombre del editor
@@ -40,6 +40,7 @@ PageForCreateEditView=Página PHP para crear/editar/ver un registro
 PageForAgendaTab=Página de PHP para la pestaña de eventos
 PageForDocumentTab=Página de PHP para la pestaña de documento
 PageForNoteTab=Página de PHP para la pestaña de notas
+PageForContactTab=Página PHP para la pestaña de contacto
 PathToModulePackage=Ruta al zip del módulo/aplicación
 PathToModuleDocumentation=Ruta a la documentación del módulo/aplicación (%s)
 SpaceOrSpecialCharAreNotAllowed=Espacios o caracteres especiales no son permitidos.
@@ -77,13 +78,15 @@ IsAMeasure=Es una medida
 DirScanned=Directorio analizado
 NoTrigger=No hay trigger
 NoWidget=No hay widget
-GoToApiExplorer=Ir al Explorador de API
+GoToApiExplorer=Explorador de API
 ListOfMenusEntries=Lista de entradas de menú
 ListOfDictionariesEntries=Listado de entradas de diccionarios
 ListOfPermissionsDefined=Listado de permisos definidos
 SeeExamples=Vea ejemplos aquí
 EnabledDesc=Condición para tener este campo activo (Ejemplos: 1 o $conf->global->MYMODULE_MYOPTION)
-VisibleDesc=¿El campo es visible? (Ejemplos: 0=Nunca visible, 1=Visible en la lista y en formularios de creación/actualización/visualización, 2=Visible únicamente en la lista, 3=Visible únicamente en formularios de creación/actualización/visualización (no en la lista),4=Visible en la lista y en formularios únicamente de actualización/visualización (no en creación),5=Visible en la lista y en formularios únicamente de visualización (ni en creación ni en actualización). Usar un valor negativo significa que por defecto no se muestra el campo en la lista pero puede ser seleccionado para su visualización) Puede ser una expresión, por ejemplo: <br>preg_match('/public/', $_SERVER['PHP_SELF'])?0:1<br>($user->rights->holiday->define_holiday ? 1 : 0)
+VisibleDesc=¿Es visible el campo? (Ejemplos: 0 = Nunca visible, 1 = Visible en la lista y crear/actualizar/ver formularios, 2 = Visible solo en la lista, 3 = Visible solo en el formulario crear/actualizar/ver (no en la lista), 4 = Visible en la lista y solo actualizar/ver formulario (no crear), 5 = Visible solo en el formulario de vista final de la lista (no crear, no actualizar)<br><br>El uso de un valor negativo significa que el campo no se muestra de forma predeterminada en la lista, pero se puede seleccionar para verlo).<br><br>Puede ser una expresión, por ejemplo:<br>preg_match('/public/', $_SERVER['PHP_SELF'])?0:1<br>($user->rights->holiday->define_holiday ? 1 : 0)
+DisplayOnPdfDesc=Muestre este campo en documentos PDF compatibles, puede administrar la posición con el campo "Posición". <br> Actualmente, los modelos PDF compatibles conocidos son: eratosthene (pedido), espadon (envíos), esponja (facturas), cyan (propal / presupuesto), cornas (pedido del proveedor) <br> <br> <strong>Para el documento :</strong><br> 0= no mostrar <br>1= mostrar<br>  2 = mostrar sólo si no está vacío<br><br><strong>  Para las líneas de documentos: </strong><br>0 = no mostrar <br>1 = mostrar en una columna<br>3 = mostrar en la columna de descripción de línea después de la descripción<br>4 = mostrar en la columna de descripción después de la descripción solo si no está vacía
+DisplayOnPdf=Mostrar en PDF
 IsAMeasureDesc=¿Se puede acumular el valor del campo para obtener un total en el listado? (Ejemplos: 1 o 0)
 SearchAllDesc=¿El campo se usa para realizar una búsqueda desde la herramienta de búsqueda rápida? (Ejemplos: 1 o 0)
 SpecDefDesc=Ingrese aquí toda la documentación que desea proporcionar con su módulo que aún no está definido por otras pestañas. Puede usar .md o mejor, la rica sintaxis .asciidoc.
@@ -95,7 +98,7 @@ MenusDefDescTooltip=Los menús proporcionados por su módulo/aplicación se defi
 DictionariesDefDescTooltip=Los diccionarios proporcionados por su módulo / aplicación se definen en la matriz <strong>$this->diccionarios</strong> en el archivo descriptor del módulo. Puede editar este archivo manualmente o usar el editor incorporado. <br><br> Nota: Una vez definidos (y el módulo reactivado), los diccionarios también son visibles en el área de configuración para los usuarios administradores en %s.
 PermissionsDefDescTooltip=Los permisos proporcionados por su módulo / aplicación se definen en la matriz <strong>$this->rights</strong> en el archivo descriptor del módulo. Puede editar manualmente este archivo o utilizar el editor incrustado. <br><br> Nota: Una vez definidos (y el módulo se haya reactivado), los permisos serán visibles en la configuración de permisos predeterminada %s.
 HooksDefDesc=Defina en la propiedad <b>module_parts ['hooks']</b>, en el descriptor del módulo, el contexto de los hooks que desea administrar (puede encontrar la lista de contextos mediante una búsqueda de '<b>initHooks(</b>'  en el código del core). <br>Edite el archivo hook para agregar el código de sus funciones (las funciones se pueden encontrar mediante una búsqueda de  '<b>executeHooks</b>' en el código del core).
-TriggerDefDesc=Defina en el archivo trigger el código que desea ejecutar para cada evento ejecutado.
+TriggerDefDesc=Defina en el archivo de activación el código que desea ejecutar cuando se ejecuta un evento comercial externo a su módulo (eventos activados por otros módulos).
 SeeIDsInUse=Ver IDs en uso en su instalación
 SeeReservedIDsRangeHere=Ver rango de IDs reservados
 ToolkitForDevelopers=Herramientas para desarrolladores de Dolibarr
@@ -103,7 +106,7 @@ TryToUseTheModuleBuilder=Si tiene conocimientos de SQL y PHP, puede usar el asis
 SeeTopRightMenu=Ver <span class="fa fa-bug"></span> en el menú superior derecho
 AddLanguageFile=Añadir archivo de idioma
 YouCanUseTranslationKey=Aquí puede usar una clave que es la clave de traducción encontrada en el archivo de idioma (ver pestaña "Idiomas")
-DropTableIfEmpty=(Eliminar tabla si está vacía)
+DropTableIfEmpty=(Destruya la tabla si está vacía)
 TableDoesNotExists=La tabla %s no existe
 TableDropped=Tabla %s eliminada
 InitStructureFromExistingTable=Construir la estructura de array de una tabla existente
@@ -124,16 +127,21 @@ UseSpecificEditorURL = Usar un editor específico URL
 UseSpecificFamily = Usar una familia específica
 UseSpecificAuthor = Usar un autor especifico
 UseSpecificVersion = Usar una versión inicial específica
-ModuleMustBeEnabled=El módulo debe ser activado primero
 IncludeRefGeneration=La referencia del objeto debe generarse automáticamente
 IncludeRefGenerationHelp=Marque esto si desea incluir código para gestionar la generación automática de la referencia
 IncludeDocGeneration=Quiero generar algunos documentos del objeto.
 IncludeDocGenerationHelp=Si marca esto, se generará código para agregar  un panel "Generar documento" en el registro.
 ShowOnCombobox=Mostrar valor en el combobox
 KeyForTooltip=Clave para tooltip
-CSSClass=Clase CSS
+CSSClass=CSS para editar / crear formulario
+CSSViewClass=CSS para formulario de lectura
+CSSListClass=CSS para lista
 NotEditable=No editable
 ForeignKey=Foreign key
 TypeOfFieldsHelp=Tipo de campos: <br> varchar(99), double(24,8), real, text, html, datetime, timestamp, integer, integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]] ('1' significa que agregamos un botón + después del combo para crear el registro, 'filtro' puede ser 'status=1 AND fk_user = __USER_ID AND entity IN (__SHARED_ENTITIES__)' por ejemplo)
 AsciiToHtmlConverter=Conversor de ASCII a HTML
 AsciiToPdfConverter=Conversor de ASCII a PDF
+TableNotEmptyDropCanceled=La tabla no está vacía. La eliminación ha sido cancelada.
+ModuleBuilderNotAllowed=El constructor de módulos está disponible pero no permitido para su usuario.
+ImportExportProfiles=Importar y exportar perfiles
+ValidateModBuilderDesc=Ponga 1 si este campo necesita ser validado con $this->validateField() o 0 si se requiere validación

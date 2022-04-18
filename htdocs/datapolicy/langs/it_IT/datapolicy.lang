@@ -10,7 +10,7 @@ Module4100Desc = Conformità con GDPR
 #
 datapolicySetup = Module Setup
 Settings_DATAPOLICY = Configurazione modulo GDPR 
-datapolicySetupPage = In accordo con <a href="http://www.privacy-regulation.eu/it/5.htm" target="_blank">l'art 5 del GDPR </a> i dati personali devono essere conservati per un periodo di tempo che .... ed eliminati se non sono più utili agli scopi per cui sono stati processati.
+datapolicySetupPage = In accordo con <a href="http://www.privacy-regulation.eu/it/5.htm" target="_blank" rel="noopener noreferrer">l'art 5 del GDPR </a> i dati personali devono essere conservati per un periodo di tempo che .... ed eliminati se non sono più utili agli scopi per cui sono stati processati.
 NB_MONTHS = %s mesi
 ONE_YEAR = 1 anno
 NB_YEARS = %s anni

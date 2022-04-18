@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - stripe
 StripeSetup=Stripe模組設定
-StripeDesc=通過<a href="http://www.stripe.com" target="_blank"> Stripe </a>為客戶提供一個Stripe線上支付頁面，以使用信用卡/簽帳卡付款。這可允許您的客戶進行臨時付款或用於與特定Dolibarr項目（發票，訂單等）有關的付款。
+StripeDesc=通過<a href="https://www.stripe.com" target="_blank" rel="noopener noreferrer external"> Stripe </a>為客戶提供一個Stripe線上支付頁面，以使用信用卡/簽帳卡付款。這可允許您的客戶進行臨時付款或用於與特定Dolibarr項目（發票，訂單等）有關的付款。
 StripeOrCBDoPayment=用信用卡或Stripe付款
 FollowingUrlAreAvailableToMakePayments=以下網址可用於向客戶提供頁面以對Dolibarr項目進行付款
 PaymentForm=付款表單
@@ -28,17 +28,17 @@ AccountParameter=帳戶參數
 UsageParameter=使用參數
 InformationToFindParameters=尋找您%s帳戶資訊的幫助
 STRIPE_CGI_URL_V2=Stripe CGI模組的付款網址
-VendorName=供應商名稱
 CSSUrlForPaymentForm=CSS樣式付款表單網址
 NewStripePaymentReceived=收到新的Stripe付款
 NewStripePaymentFailed=已嘗試新的Stripe付款但失敗
+FailedToChargeCard=儲值失敗
 STRIPE_TEST_SECRET_KEY=秘密測試金鑰
 STRIPE_TEST_PUBLISHABLE_KEY=可發布的測試金鑰
 STRIPE_TEST_WEBHOOK_KEY=Webhook測試金鑰
 STRIPE_LIVE_SECRET_KEY=秘密live金鑰
 STRIPE_LIVE_PUBLISHABLE_KEY=可發布的live金鑰
 STRIPE_LIVE_WEBHOOK_KEY=Webhook live金鑰
-ONLINE_PAYMENT_WAREHOUSE=完成線上支付時用於減少庫存的庫存<br>（待辦事項 如果針對發票操作完成了減少庫存的選項，在線支付也同時產生發票？）
+ONLINE_PAYMENT_WAREHOUSE=完成線上支付時用於減少庫存的庫存<br>（待辦事項 如果針對發票操作完成了減少庫存的選項，線上支付也同時產生發票？）
 StripeLiveEnabled=啟用Stripe live模式（否則為測試/沙盒模式）
 StripeImportPayment=匯入Stripe付款
 ExampleOfTestCreditCard=用於信用卡測試的範例：%s =>有效，%s =>錯誤CVC，%s =>已過期，%s =>加值失敗
@@ -68,3 +68,4 @@ ToOfferALinkForTestWebhook=連結到Stripe WebHook設定以呼叫IPN（測試模
 ToOfferALinkForLiveWebhook=連結到Stripe WebHook設定以呼叫IPN（live模式）
 PaymentWillBeRecordedForNextPeriod=付款將記錄在下一個期間。
 ClickHereToTryAgain=<a href="%s">點擊此處重試... </a>
+CreationOfPaymentModeMustBeDoneFromStripeInterface=由於嚴格的客戶身份驗證規則，必須在Stripe後台進行卡的建立。您可以點擊此處打開Stripe客戶記錄：%s

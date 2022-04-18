@@ -51,7 +51,7 @@ $staticmo = new Mo($db);
 
 llxHeader('', $langs->trans("MRP"), '');
 
-print load_fiche_titre($langs->trans("MRPArea"), '', 'cubes');
+print load_fiche_titre($langs->trans("MRPArea"), '', 'mrp');
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
@@ -61,104 +61,124 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
  * Statistics
  */
 
-if ($conf->use_javascript_ajax)
-{
-    $sql= "SELECT COUNT(t.rowid) as nb, status";
-    $sql.=" FROM ".MAIN_DB_PREFIX."mrp_mo as t";
-	$sql.=" GROUP BY t.status";
-    $resql = $db->query($sql);
+if ($conf->use_javascript_ajax) {
+	$sql = "SELECT COUNT(t.rowid) as nb, status";
+	$sql .= " FROM ".MAIN_DB_PREFIX."mrp_mo as t";
+	$sql .= " GROUP BY t.status";
+	$sql .= " ORDER BY t.status ASC";
+	$resql = $db->query($sql);
 
-    if ($resql)
-    {
-    	$num = $db->num_rows($resql);
-    	$i = 0;
+	if ($resql) {
+		$num = $db->num_rows($resql);
+		$i = 0;
 
-    	$totalnb=0;
-    	$dataseries=array();
-    	// -1=Canceled, 0=Draft, 1=Validated, (2=Accepted/On process not managed for customer orders), 3=Closed (Sent/Received, billed or not)
-    	while ($i < $num)
-    	{
-    		$obj = $db->fetch_object($resql);
-    		if ($obj)
-    		{
-    			//if ($row[1]!=-1 && ($row[1]!=3 || $row[2]!=1))
-    			{
-    				$dataseries[$obj->status]=array(0=>$staticmo->LibStatut($obj->status), $obj->nb);
-    				$totalnb+=$obj->nb;
-    			}
-    		}
-    		$i++;
-    	}
-    	$db->free($resql);
+		$totalnb = 0;
+		$dataseries = array();
+		$colorseries = array();
+		$vals = array();
 
-    	print '<div class="div-table-responsive-no-min">';
-    	print '<table class="noborder nohover centpercent">';
-    	print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("MO").'</th></tr>'."\n";
-        if ($conf->use_javascript_ajax)
-    	{
-    		print '<tr><td class="center" colspan="2">';
+		include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
 
-    		include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
-    		$dolgraph = new DolGraph();
-    		$dolgraph->SetData($dataseries);
-    		$dolgraph->setShowLegend(1);
-    		$dolgraph->setShowPercent(1);
-    		$dolgraph->SetType(array('pie'));
-    		$dolgraph->setWidth('100%');
-    		$dolgraph->SetHeight(180);
-    		$dolgraph->draw('idgraphstatus');
-    		print $dolgraph->show($totalnb?0:1);
+		while ($i < $num) {
+			$obj = $db->fetch_object($resql);
+			if ($obj) {
+				$vals[$obj->status] = $obj->nb;
 
-    		print '</td></tr>';
-    	}
-    	print "</table>";
-    	print "</div>";
+				$totalnb += $obj->nb;
+			}
+			$i++;
+		}
+		$db->free($resql);
 
-    	print "<br>";
-    }
-    else
-    {
-    	dol_print_error($db);
-    }
+		print '<div class="div-table-responsive-no-min">';
+		print '<table class="noborder nohover centpercent">';
+		print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("ManufacturingOrder").'</th></tr>'."\n";
+		$listofstatus = array(0, 1, 2, 3, 9);
+		foreach ($listofstatus as $status) {
+			$dataseries[] = array($staticmo->LibStatut($status, 1), (isset($vals[$status]) ? (int) $vals[$status] : 0));
+			if ($status == Mo::STATUS_DRAFT) {
+				$colorseries[$status] = '-'.$badgeStatus0;
+			}
+			if ($status == Mo::STATUS_VALIDATED) {
+				$colorseries[$status] = $badgeStatus1;
+			}
+			if ($status == Mo::STATUS_INPROGRESS) {
+				$colorseries[$status] = $badgeStatus4;
+			}
+			if ($status == Mo::STATUS_PRODUCED) {
+				$colorseries[$status] = $badgeStatus6;
+			}
+			if ($status == Mo::STATUS_CANCELED) {
+				$colorseries[$status] = $badgeStatus9;
+			}
+
+			if (empty($conf->use_javascript_ajax)) {
+				print '<tr class="oddeven">';
+				print '<td>'.$staticmo->LibStatut($status, 0).'</td>';
+				print '<td class="right"><a href="list.php?statut='.$status.'">'.(isset($vals[$status]) ? $vals[$status] : 0).'</a></td>';
+				print "</tr>\n";
+			}
+		}
+		if ($conf->use_javascript_ajax) {
+			print '<tr><td class="center" colspan="2">';
+
+			include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
+			$dolgraph = new DolGraph();
+			$dolgraph->SetData($dataseries);
+			$dolgraph->SetDataColor(array_values($colorseries));
+			$dolgraph->setShowLegend(2);
+			$dolgraph->setShowPercent(1);
+			$dolgraph->SetType(array('pie'));
+			$dolgraph->SetHeight('200');
+			$dolgraph->draw('idgraphstatus');
+			print $dolgraph->show($totalnb ? 0 : 1);
+
+			print '</td></tr>';
+		}
+		print "</table>";
+		print "</div>";
+
+		print "<br>";
+	} else {
+		dol_print_error($db);
+	}
 }
 
 print '<br>';
 
 
-print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+print '</div><div class="fichetwothirdright">';
 
 /*
  * Last modified BOM
  */
 
-$max=5;
+$max = 5;
 
-$sql = "SELECT a.rowid, a.status, a.ref, a.tms as datem, a.status";
-$sql.= " FROM ".MAIN_DB_PREFIX."bom_bom as a";
-$sql.= " WHERE a.entity IN (".getEntity('bom').")";
-$sql.= $db->order("a.tms", "DESC");
-$sql.= $db->plimit($max, 0);
+$sql = "SELECT a.rowid, a.status, a.ref, a.tms as datem, a.status, a.fk_product";
+$sql .= " FROM ".MAIN_DB_PREFIX."bom_bom as a";
+$sql .= " WHERE a.entity IN (".getEntity('bom').")";
+$sql .= $db->order("a.tms", "DESC");
+$sql .= $db->plimit($max, 0);
 
-$resql=$db->query($sql);
-if ($resql)
-{
+$resql = $db->query($sql);
+if ($resql) {
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<th colspan="4">'.$langs->trans("LatestBOMModified", $max).'</th></tr>';
 
 	$num = $db->num_rows($resql);
-	if ($num)
-	{
+	if ($num) {
 		$i = 0;
-		while ($i < $num)
-		{
+		while ($i < $num) {
 			$obj = $db->fetch_object($resql);
 
-			$staticbom->id=$obj->rowid;
-			$staticbom->ref=$obj->ref;
-			$staticbom->date_modification=$obj->datem;
-			$staticbom->status=$obj->status;
+			$staticbom->id = $obj->rowid;
+			$staticbom->ref = $obj->ref;
+			$staticbom->fk_product = $obj->fk_product;
+			$staticbom->date_modification = $obj->datem;
+			$staticbom->status = $obj->status;
 
 			print '<tr class="oddeven">';
 			print '<td>'.$staticbom->getNomUrl(1, 32).'</td>';
@@ -169,14 +189,12 @@ if ($resql)
 		}
 	} else {
 		print '<tr class="oddeven">';
-		print '<td><span class="opacitymedium">' . $langs->trans("None") . '</span></td>';
+		print '<td><span class="opacitymedium">'.$langs->trans("None").'</span></td>';
 		print '</tr>';
 	}
 	print "</table></div>";
 	print "<br>";
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 
@@ -184,60 +202,55 @@ else
  * Last modified MOs
  */
 
-$max=5;
+$max = 5;
 
 $sql = "SELECT a.rowid, a.status, a.ref, a.tms as datem, a.status";
-$sql.= " FROM ".MAIN_DB_PREFIX."mrp_mo as a";
-$sql.= " WHERE a.entity IN (".getEntity('mo').")";
-$sql.= $db->order("a.tms", "DESC");
-$sql.= $db->plimit($max, 0);
+$sql .= " FROM ".MAIN_DB_PREFIX."mrp_mo as a";
+$sql .= " WHERE a.entity IN (".getEntity('mo').")";
+$sql .= $db->order("a.tms", "DESC");
+$sql .= $db->plimit($max, 0);
 
-$resql=$db->query($sql);
-if ($resql)
-{
-    print '<div class="div-table-responsive-no-min">';
-    print '<table class="noborder centpercent">';
-    print '<tr class="liste_titre">';
-    print '<th colspan="4">'.$langs->trans("LatestMOModified", $max).'</th></tr>';
+$resql = $db->query($sql);
+if ($resql) {
+	print '<div class="div-table-responsive-no-min">';
+	print '<table class="noborder centpercent">';
+	print '<tr class="liste_titre">';
+	print '<th colspan="4">'.$langs->trans("LatestMOModified", $max).'</th></tr>';
 
-    $num = $db->num_rows($resql);
-    if ($num)
-    {
-        $i = 0;
-        while ($i < $num)
-        {
-            $obj = $db->fetch_object($resql);
+	$num = $db->num_rows($resql);
+	if ($num) {
+		$i = 0;
+		while ($i < $num) {
+			$obj = $db->fetch_object($resql);
 
-            $staticmo->id=$obj->rowid;
-            $staticmo->ref=$obj->ref;
-            $staticmo->date_modification=$obj->datem;
-            $staticmo->status=$obj->status;
+			$staticmo->id = $obj->rowid;
+			$staticmo->ref = $obj->ref;
+			$staticmo->date_modification = $obj->datem;
+			$staticmo->status = $obj->status;
 
-            print '<tr class="oddeven">';
-            print '<td>'.$staticmo->getNomUrl(1, 32).'</td>';
-            print '<td>'.dol_print_date($db->jdate($obj->datem), 'dayhour').'</td>';
-            print '<td class="right">'.$staticmo->getLibStatut(3).'</td>';
-            print '</tr>';
-            $i++;
-        }
-    } else {
-        print '<tr class="oddeven">';
-        print '<td><span class="opacitymedium">' . $langs->trans("None") . '</span></td>';
-        print '</tr>';
-    }
-    print "</table></div>";
-    print "<br>";
-}
-else
-{
-    dol_print_error($db);
+			print '<tr class="oddeven">';
+			print '<td>'.$staticmo->getNomUrl(1, 32).'</td>';
+			print '<td>'.dol_print_date($db->jdate($obj->datem), 'dayhour').'</td>';
+			print '<td class="right">'.$staticmo->getLibStatut(3).'</td>';
+			print '</tr>';
+			$i++;
+		}
+	} else {
+		print '<tr class="oddeven">';
+		print '<td><span class="opacitymedium">'.$langs->trans("None").'</span></td>';
+		print '</tr>';
+	}
+	print "</table></div>";
+	print "<br>";
+} else {
+	dol_print_error($db);
 }
 
-print '</div></div></div>';
+print '</div></div>';
 
 $parameters = array(
-    //'type' => $type,
-    'user' => $user,
+	//'type' => $type,
+	'user' => $user,
 );
 $reshook = $hookmanager->executeHooks('dashboardMRP', $parameters);
 

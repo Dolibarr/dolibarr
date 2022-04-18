@@ -22,10 +22,10 @@
  * \brief      Module to include an external web site/tools into Dolibarr menu and into a frame page.
  * \file       htdocs/core/modules/modExternalSite.class.php
  * \ingroup    externalsite
- * \brief      Description and activation file for module ExternalSite
+ * \brief      Description and activation file for the module ExternalSite
  */
 
-include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
 
 /**
@@ -34,11 +34,11 @@ include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 class modExternalSite extends DolibarrModules
 {
 
-    /**
+	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
 	 *   @param      DoliDB		$db      Database handler
-     */
+	 */
 	public function __construct($db)
 	{
 		$this->db = $db;
@@ -59,7 +59,7 @@ class modExternalSite extends DolibarrModules
 		// Key used in llx_const table to save module status enabled/disabled (XXX is id value)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		// Name of png file (without png) used for this module
-		$this->picto='bookmark';
+		$this->picto = 'website';
 		// Call to inside lang's file
 		$this->langfiles = array("externalsite");
 
@@ -67,42 +67,43 @@ class modExternalSite extends DolibarrModules
 		$this->dirs = array();
 
 		// Config pages. Put here list of php page names stored in admmin directory used to setup module
-		$this->config_page_url = array("externalsite.php@externalsite");
+		$this->config_page_url = array("index.php@externalsite");
 
 		// Dependencies
-		$this->depends = array();		// List of modules id that must be enabled if this module is enabled
-		$this->requiredby = array();	// List of modules id to disable if this one is disabled
+		$this->depends = array(); // List of modules id that must be enabled if this module is enabled
+		$this->requiredby = array(); // List of modules id to disable if this one is disabled
 
 		// Constants
 		// List of particular constants to add when module is enabled (key, 'chaine', value, desc, visible, 'current' or 'allentities', deleteonunactive)
 		// Example: $this->const=array(0=>array('MYMODULE_MYNEWCONST1','chaine','myvalue','This is a constant to add',1),
 		//                             1=>array('MYMODULE_MYNEWCONST2','chaine','myvalue','This is another constant to add',0)
 		// );
-		$this->const = array(0=>array('EXTERNALSITE_LABEL','chaine','ExternalSite','To declare label to use into external site menu entry', 0));
+		$this->const = array(0=>array('EXTERNALSITE_LABEL', 'chaine', 'ExternalSite', 'To declare label to use into external site menu entry', 0));
 
 		// Boxes
-		$this->boxes = array();			// List of boxes
-		$r=0;
+		$this->boxes = array(); // List of boxes
+		$r = 0;
 
 		// Add here list of php file(s) stored in core/boxes that contains class to show a box.
 		// Example:
-        //$this->boxes[$r][1] = "myboxa.php";
-    	//$r++;
-        //$this->boxes[$r][1] = "myboxb.php";
-    	//$r++;
+		//$this->boxes[$r][1] = "myboxa.php";
+		//$r++;
+		//$this->boxes[$r][1] = "myboxb.php";
+		//$r++;
 
 		// Permissions
-		$this->rights_class = 'externalsite';	// Permission key
-		$this->rights = array();		// Permission array used by this module
+		$this->rights_class = 'externalsite'; // Permission key
+		$this->rights = array(); // Permission array used by this module
 
-        // Menus
+		// Menus
 		//------
-		$r=0;
+		$r = 0;
 
-		$this->menu[$r]=array(
+		$this->menu[$r] = array(
 			'fk_menu'=>0,
 			'type'=>'top',
 			'titre'=>'__[EXTERNALSITE_LABEL]__',
+			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth em092"'),
 			'mainmenu'=>'externalsite',
 			'url'=>'/externalsite/frames.php',
 			'langs'=>'other',

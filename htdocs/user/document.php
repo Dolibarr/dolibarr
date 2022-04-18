@@ -47,44 +47,55 @@ $canedituser = (!empty($user->admin) || $user->rights->user->user->creer);
 $candisableuser = (!empty($user->admin) || $user->rights->user->user->supprimer);
 $canreadgroup = $canreaduser;
 $caneditgroup = $canedituser;
-if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS))
-{
-    $canreadgroup = (!empty($user->admin) || $user->rights->user->group_advance->read);
-    $caneditgroup = (!empty($user->admin) || $user->rights->user->group_advance->write);
+if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
+	$canreadgroup = (!empty($user->admin) || $user->rights->user->group_advance->read);
+	$caneditgroup = (!empty($user->admin) || $user->rights->user->group_advance->write);
 }
 // Define value to know what current user can do on properties of edited user
-if ($id)
-{
-    // $user est le user qui edite, $id est l'id de l'utilisateur edite
-    $caneditfield = ((($user->id == $id) && $user->rights->user->self->creer)
-    || (($user->id != $id) && $user->rights->user->user->creer));
-    $caneditpassword = ((($user->id == $id) && $user->rights->user->self->password)
-    || (($user->id != $id) && $user->rights->user->user->password));
+if ($id) {
+	// $user est le user qui edite, $id est l'id de l'utilisateur edite
+	$caneditfield = ((($user->id == $id) && $user->rights->user->self->creer)
+	|| (($user->id != $id) && $user->rights->user->user->creer));
+	$caneditpassword = ((($user->id == $id) && $user->rights->user->self->password)
+	|| (($user->id != $id) && $user->rights->user->user->password));
 }
+
+$permissiontoadd = $caneditfield;	// Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles
+$permtoedit = $caneditfield;
 
 // Security check
 $socid = 0;
-if ($user->socid > 0) $socid = $user->socid;
+if ($user->socid > 0) {
+	$socid = $user->socid;
+}
 $feature2 = 'user';
 
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 
-if ($user->id <> $id && !$canreaduser) accessforbidden();
+if ($user->id <> $id && !$canreaduser) {
+	accessforbidden();
+}
 
 // Get parameters
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
-if (empty($page) || $page == -1) { $page = 0; }
-$offset = $conf->liste_limit * $page;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+if (empty($page) || $page == -1) {
+	$page = 0;
+}
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (!$sortorder) $sortorder = "ASC";
-if (!$sortfield) $sortfield = "position_name";
+if (!$sortorder) {
+	$sortorder = "ASC";
+}
+if (!$sortfield) {
+	$sortfield = "position_name";
+}
 
 $object = new User($db);
-if ($id > 0 || !empty($ref))
-{
+if ($id > 0 || !empty($ref)) {
 	$result = $object->fetch($id, $ref, '', 1);
 	$object->getrights();
 	//$upload_dir = $conf->user->multidir_output[$object->entity] . "/" . $object->id ;
@@ -96,16 +107,19 @@ if ($id > 0 || !empty($ref))
 $hookmanager->initHooks(array('usercard', 'userdoc', 'globalcard'));
 
 
+
 /*
  * Actions
  */
 
 $parameters = array('id'=>$socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
 if (empty($reshook)) {
-	include_once DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
+	include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 }
 
 
@@ -117,62 +131,73 @@ $form = new Form($db);
 
 llxHeader('', $langs->trans("UserCard").' - '.$langs->trans("Files"));
 
-if ($object->id)
-{
+if ($object->id) {
 	/*
 	 * Affichage onglets
 	 */
-	if (!empty($conf->notification->enabled)) $langs->load("mails");
+	if (!empty($conf->notification->enabled)) {
+		$langs->load("mails");
+	}
 	$head = user_prepare_head($object);
 
-	$form = new Form($db);
-
-	dol_fiche_head($head, 'document', $langs->trans("User"), -1, 'user');
+	print dol_get_fiche_head($head, 'document', $langs->trans("User"), -1, 'user');
 
 	$linkback = '';
 	if ($user->rights->user->user->lire || $user->admin) {
 		$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 	}
 
-    dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
+	dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
 
-    print '<div class="fichecenter">';
-    print '<div class="underbanner clearboth"></div>';
+	print '<div class="fichecenter">';
+	print '<div class="underbanner clearboth"></div>';
 
 	// Build file list
 	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
 	$totalsize = 0;
-	foreach ($filearray as $key => $file)
-	{
+	foreach ($filearray as $key => $file) {
 		$totalsize += $file['size'];
 	}
 
 
 	print '<table class="border tableforfield centpercent">';
 
-    // Login
-    print '<tr><td class="titlefield">'.$langs->trans("Login").'</td><td class="valeur">'.$object->login.'&nbsp;</td></tr>';
+	// Login
+	print '<tr><td class="titlefield">'.$langs->trans("Login").'</td>';
+	if (!empty($object->ldap_sid) && $object->statut == 0) {
+		print '<td class="error">';
+		print $langs->trans("LoginAccountDisableInDolibarr");
+		print '</td>';
+	} else {
+		print '<td>';
+		$addadmin = '';
+		if (property_exists($object, 'admin')) {
+			if (!empty($conf->multicompany->enabled) && !empty($object->admin) && empty($object->entity)) {
+				$addadmin .= img_picto($langs->trans("SuperAdministratorDesc"), "redstar", 'class="paddingleft"');
+			} elseif (!empty($object->admin)) {
+				$addadmin .= img_picto($langs->trans("AdministratorDesc"), "star", 'class="paddingleft"');
+			}
+		}
+		print showValueWithClipboardCPButton($object->login).$addadmin;
+		print '</td>';
+	}
+	print '</tr>';
 
-	// Nbre files
+	// Nunber of files
 	print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td>'.count($filearray).'</td></tr>';
 
-	//Total taille
+	// Total size
 	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td>'.dol_print_size($totalsize, 1, 1).'</td></tr>';
 
 	print '</table>';
-    print '</div>';
+	print '</div>';
 
-	dol_fiche_end();
-
+	print dol_get_fiche_end();
 
 	$modulepart = 'user';
-	$permission = $user->rights->user->user->creer;
-	$permtoedit = $user->rights->user->user->creer;
 	$param = '&id='.$object->id;
-	include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
-}
-else
-{
+	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
+} else {
 	accessforbidden('', 0, 1);
 }
 

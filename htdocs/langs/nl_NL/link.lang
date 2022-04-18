@@ -8,3 +8,4 @@ LinkRemoved=De koppeling %s is verwijderd
 ErrorFailedToDeleteLink= Kon de verbinding '<b>%s</b>' niet verwijderen
 ErrorFailedToUpdateLink= Kon verbinding '<b>%s</b>' niet bijwerken
 URLToLink=URL naar link
+OverwriteIfExists=Overschrijf bestand indien aanwezig

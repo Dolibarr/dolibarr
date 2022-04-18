@@ -8,3 +8,4 @@ LinkRemoved=การเชื่อมโยง% s ได้ถูกลบอ�
 ErrorFailedToDeleteLink= ล้มเหลวในการลบการเชื่อมโยง <b>'% s'</b>
 ErrorFailedToUpdateLink= ล้มเหลวในการปรับปรุงการเชื่อมโยง <b>'% s'</b>
 URLToLink=URL to link
+OverwriteIfExists=Overwrite file if exists

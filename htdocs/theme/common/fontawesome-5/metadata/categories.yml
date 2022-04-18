@@ -91,9 +91,11 @@ arrows:
     - chevron-up
     - cloud-download-alt
     - cloud-upload-alt
+    - compress-alt
     - compress-arrows-alt
     - download
     - exchange-alt
+    - expand-alt
     - expand-arrows-alt
     - external-link-alt
     - external-link-square-alt
@@ -154,9 +156,11 @@ audio-video:
     - circle
     - closed-captioning
     - compress
+    - compress-alt
     - compress-arrows-alt
     - eject
     - expand
+    - expand-alt
     - expand-arrows-alt
     - fast-backward
     - fast-forward
@@ -188,6 +192,7 @@ audio-video:
     - stop-circle
     - sync
     - sync-alt
+    - tv
     - undo
     - undo-alt
     - video
@@ -208,6 +213,7 @@ automotive:
     - car-battery
     - car-crash
     - car-side
+    - caravan
     - charging-station
     - gas-pump
     - motorcycle
@@ -215,6 +221,7 @@ automotive:
     - shuttle-van
     - tachometer-alt
     - taxi
+    - trailer
     - truck
     - truck-monster
     - truck-pickup
@@ -262,6 +269,7 @@ buildings:
     - home
     - hospital
     - hospital-alt
+    - hospital-user
     - hotel
     - house-damage
     - igloo
@@ -328,6 +336,7 @@ business:
     - highlighter
     - industry
     - landmark
+    - laptop-house
     - marker
     - paperclip
     - paste
@@ -364,7 +373,9 @@ camping:
   icons:
     - binoculars
     - campground
+    - caravan
     - compass
+    - faucet
     - fire
     - fire-alt
     - first-aid
@@ -377,6 +388,7 @@ camping:
     - mountain
     - route
     - toilet-paper
+    - trailer
     - tree
   label: Camping
 charity:
@@ -388,6 +400,7 @@ charity:
     - globe
     - hand-holding-heart
     - hand-holding-usd
+    - hand-holding-water
     - hands-helping
     - handshake
     - heart
@@ -441,6 +454,7 @@ childhood:
     - birthday-cake
     - cookie
     - cookie-bite
+    - gamepad
     - ice-cream
     - mitten
     - robot
@@ -451,6 +465,8 @@ childhood:
 clothing:
   icons:
     - graduation-cap
+    - hat-cowboy
+    - hat-cowboy-side
     - hat-wizard
     - mitten
     - shoe-prints
@@ -541,10 +557,12 @@ computers:
     - headphones
     - keyboard
     - laptop
+    - laptop-house
     - memory
     - microchip
     - mobile
     - mobile-alt
+    - mouse
     - plug
     - power-off
     - print
@@ -818,6 +836,7 @@ energy:
     - broadcast-tower
     - burn
     - charging-station
+    - fan
     - fire
     - fire-alt
     - gas-pump
@@ -1027,7 +1046,9 @@ hands:
     - fist-raised
     - hand-holding
     - hand-holding-heart
+    - hand-holding-medical
     - hand-holding-usd
+    - hand-holding-water
     - hand-lizard
     - hand-middle-finger
     - hand-paper
@@ -1039,10 +1060,14 @@ hands:
     - hand-pointer
     - hand-rock
     - hand-scissors
+    - hand-sparkles
     - hand-spock
     - hands
     - hands-helping
+    - hands-wash
     - handshake
+    - handshake-alt-slash
+    - handshake-slash
     - praying-hands
     - thumbs-down
     - thumbs-up
@@ -1117,15 +1142,27 @@ household:
   icons:
     - bath
     - bed
+    - bell
     - blender
+    - box-tissue
     - chair
+    - coffee
     - couch
     - door-closed
     - door-open
     - dungeon
     - fan
+    - faucet
+    - house-user
+    - laptop-house
+    - lightbulb
+    - plug
+    - pump-soap
     - shower
+    - snowflake
+    - soap
     - toilet-paper
+    - toilet-paper-slash
     - tv
   label: Household
 images:
@@ -1529,19 +1566,28 @@ medical:
     - comment-medical
     - crutch
     - diagnoses
+    - disease
     - dna
     - file-medical
     - file-medical-alt
     - file-prescription
     - first-aid
+    - hand-holding-medical
+    - head-side-cough
+    - head-side-cough-slash
+    - head-side-mask
+    - head-side-virus
     - heart
     - heartbeat
     - hospital
     - hospital-alt
     - hospital-symbol
+    - hospital-user
     - id-card-alt
     - joint
     - laptop-medical
+    - lungs
+    - lungs-virus
     - microscope
     - mortar-pestle
     - notes-medical
@@ -1553,8 +1599,10 @@ medical:
     - prescription-bottle
     - prescription-bottle-alt
     - procedures
+    - pump-medical
     - radiation
     - radiation-alt
+    - shield-virus
     - smoking
     - smoking-ban
     - star-of-life
@@ -1569,6 +1617,9 @@ medical:
     - user-nurse
     - vial
     - vials
+    - virus
+    - virus-slash
+    - viruses
     - weight
     - x-ray
   label: Medical
@@ -1576,6 +1627,7 @@ moving:
   icons:
     - archive
     - box-open
+    - caravan
     - couch
     - dolly
     - people-carry
@@ -1583,6 +1635,7 @@ moving:
     - sign
     - suitcase
     - tape
+    - trailer
     - truck-loading
     - truck-moving
     - wine-glass
@@ -1595,9 +1648,14 @@ music:
     - guitar
     - headphones
     - headphones-alt
+    - microphone
+    - microphone-alt
+    - microphone-alt-slash
+    - microphone-slash
     - music
     - napster
     - play
+    - record-vinyl
     - sliders-h
     - soundcloud
     - spotify
@@ -1888,6 +1946,7 @@ pharmacy:
     - cannabis
     - capsules
     - clinic-medical
+    - disease
     - eye-dropper
     - file-medical
     - file-prescription
@@ -1933,6 +1992,7 @@ religion:
   icons:
     - ankh
     - atom
+    - bahai
     - bible
     - church
     - cross
@@ -1941,7 +2001,6 @@ religion:
     - gopuram
     - hamsa
     - hanukiah
-    - haykal
     - jedi
     - journal-whills
     - kaaba
@@ -1971,6 +2030,7 @@ science:
     - burn
     - capsules
     - clipboard-check
+    - disease
     - dna
     - eye-dropper
     - filter
@@ -1996,9 +2056,11 @@ science:
   label: Science
 science-fiction:
   icons:
+    - atom
     - galactic-republic
     - galactic-senate
     - globe
+    - hand-spock
     - jedi
     - jedi-order
     - journal-whills
@@ -2073,6 +2135,8 @@ shopping:
     - shopping-cart
     - store
     - store-alt
+    - store-alt-slash
+    - store-slash
     - truck
     - tshirt
   label: Shopping
@@ -2113,6 +2177,7 @@ spinners:
   icons:
     - asterisk
     - atom
+    - bahai
     - certificate
     - circle-notch
     - cog
@@ -2121,7 +2186,6 @@ spinners:
     - crosshairs
     - dharmachakra
     - fan
-    - haykal
     - life-ring
     - palette
     - ring
@@ -2282,11 +2346,14 @@ toggle:
     - check-circle
     - circle
     - dot-circle
+    - microphone
+    - microphone-slash
     - star
     - star-half
     - star-half-alt
     - toggle-off
     - toggle-on
+    - wifi
   label: Toggle
 travel:
   icons:
@@ -2295,6 +2362,7 @@ travel:
     - bed
     - bus
     - bus-alt
+    - caravan
     - cocktail
     - concierge-bell
     - dumbbell
@@ -2323,6 +2391,7 @@ travel:
     - swimming-pool
     - taxi
     - tram
+    - tv
     - umbrella-beach
     - wine-glass
     - wine-glass-alt
@@ -2346,6 +2415,7 @@ users-people:
     - id-card-alt
     - male
     - meh
+    - people-arrows
     - people-carry
     - person-booth
     - poo

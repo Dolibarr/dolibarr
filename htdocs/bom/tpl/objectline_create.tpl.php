@@ -31,14 +31,16 @@
 
 // Protection to avoid direct call of template
 if (empty($object) || !is_object($object)) {
-    print "Error: this template page cannot be called directly as an URL";
-    exit;
+	print "Error: this template page cannot be called directly as an URL";
+	exit;
 }
 
 
 global $forceall, $forcetoshowtitlelines;
 
-if (empty($forceall)) $forceall = 0;
+if (empty($forceall)) {
+	$forceall = 0;
+}
 
 
 // Define colspan for the button 'Add'
@@ -52,71 +54,73 @@ print "<!-- BEGIN PHP TEMPLATE objectline_create.tpl.php -->\n";
 
 $nolinesbefore = (count($this->lines) == 0 || $forcetoshowtitlelines);
 if ($nolinesbefore) {
-    print '<tr class="liste_titre nodrag nodrop">';
-    if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
-        print '<td class="linecolnum center"></td>';
-    }
-    print '<td class="linecoldescription minwidth500imp">';
+	print '<tr class="liste_titre nodrag nodrop">';
+	if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
+		print '<td class="linecolnum center"></td>';
+	}
+	print '<td class="linecoldescription minwidth500imp">';
 	print '<div id="add"></div><span class="hideonsmartphone">'.$langs->trans('AddNewLine').'</span>';
-	// echo $langs->trans("FreeZone");
 	print '</td>';
 	print '<td class="linecolqty right">'.$langs->trans('Qty').'</td>';
-	if ($conf->global->PRODUCT_USE_UNITS)
-	{
-	    print '<td class="linecoluseunit left">';
-	    print '<span id="title_units">';
-	    print $langs->trans('Unit');
-	    print '</span></td>';
+	if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+		print '<td class="linecoluseunit left">';
+		print '<span id="title_units">';
+		print $langs->trans('Unit');
+		print '</span></td>';
 	}
 	print '<td class="linecolqtyfrozen right">'.$form->textwithpicto($langs->trans('QtyFrozen'), $langs->trans("QuantityConsumedInvariable")).'</td>';
 	print '<td class="linecoldisablestockchange right">'.$form->textwithpicto($langs->trans('DisableStockChange'), $langs->trans('DisableStockChangeHelp')).'</td>';
 	print '<td class="linecollost right">'.$form->textwithpicto($langs->trans('ManufacturingEfficiency'), $langs->trans('ValueOfMeansLoss')).'</td>';
 	print '<td class="linecoledit" colspan="'.$colspan.'">&nbsp;</td>';
-    print '</tr>';
+	print '</tr>';
 }
-print '<tr class="pair nodrag nodrop nohoverpair'.($nolinesbefore || $object->element == 'contrat') ? '' : ' liste_titre_create'.'">';
+print '<tr class="pair nodrag nodrop nohoverpair'.(($nolinesbefore || $object->element == 'contrat') ? '' : ' liste_titre_create').'">';
 $coldisplay = 0;
 
 // Adds a line numbering column
 if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
-    $coldisplay++;
-    echo '<td class="bordertop nobottom linecolnum center"></td>';
+	$coldisplay++;
+	echo '<td class="bordertop nobottom linecolnum center"></td>';
 }
 
 $coldisplay++;
 print '<td class="bordertop nobottom linecoldescription minwidth500imp">';
 
 // Predefined product/service
-if (!empty($conf->product->enabled) || !empty($conf->service->enabled))
-{
-	if ($forceall >= 0 && $freelines) echo '<br>';
-	echo '<span class="prod_entry_mode_predef">';
-	$filtertype = '';
-	if (!empty($object->element) && $object->element == 'contrat' && empty($conf->global->CONTRACT_SUPPORT_PRODUCTS)) $filtertype = '1';
-
-	$statustoshow = -1;
-	if (!empty($conf->global->ENTREPOT_EXTRA_STATUS))
-	{
-		// hide products in closed warehouse, but show products for internal transfer
-		$form->select_produits(GETPOST('idprod'), 'idprod', $filtertype, $conf->product->limit_size, $buyer->price_level, $statustoshow, 2, '', 1, array(), $buyer->id, '1', 0, 'maxwidth500', 0, 'warehouseopen,warehouseinternal', GETPOST('combinations', 'array'));
+if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) {
+	if (!empty($conf->global->BOM_SUB_BOM)) {
+		print $langs->trans("Product");
 	}
-	else
-	{
-		$form->select_produits(GETPOST('idprod'), 'idprod', $filtertype, $conf->product->limit_size, $buyer->price_level, $statustoshow, 2, '', 1, array(), $buyer->id, '1', 0, 'maxwidth500', 0, '', GETPOST('combinations', 'array'));
+	echo '<span class="prod_entry_mode_predef">';
+	$filtertype = 0;
+	if (!empty($object->element) && $object->element == 'contrat' && empty($conf->global->STOCK_SUPPORT_SERVICES)) {
+		$filtertype = -1;
+	}
+	$statustoshow = -1;
+	if (!empty($conf->global->ENTREPOT_EXTRA_STATUS)) {
+		// hide products in closed warehouse, but show products for internal transfer
+		$form->select_produits(GETPOST('idprod', 'int'), 'idprod', $filtertype, $conf->product->limit_size, $buyer->price_level, $statustoshow, 2, '', 1, array(), $buyer->id, '1', 0, 'maxwidth500', 0, 'warehouseopen,warehouseinternal', GETPOST('combinations', 'array'));
+	} else {
+		$form->select_produits(GETPOST('idprod', 'int'), 'idprod', $filtertype, $conf->product->limit_size, $buyer->price_level, $statustoshow, 2, '', 1, array(), $buyer->id, '1', 0, 'maxwidth500', 0, '', GETPOST('combinations', 'array'));
 	}
 
 	echo '</span>';
 }
-
-$coldisplay++;
-print '<td class="bordertop nobottom linecolqty right"><input type="text" size="2" name="qty" id="qty" class="flat right" value="'.(isset($_POST["qty"]) ?GETPOST("qty", 'alpha', 2) : 1).'">';
+if (!empty($conf->global->BOM_SUB_BOM)) {
+	print '<br><span class="opacitymedium">'.$langs->trans("or").'</span><br>'.$langs->trans("BOM");
+	// TODO Add component to select a BOM
+	$form->select_bom();
+}
 print '</td>';
 
-if ($conf->global->PRODUCT_USE_UNITS)
-{
-    $coldisplay++;
+
+$coldisplay++;
+print '<td class="bordertop nobottom linecolqty right"><input type="text" size="2" name="qty" id="qty" class="flat right" value="'.(GETPOSTISSET("qty") ? GETPOST("qty", 'alpha', 2) : 1).'">';
+print '</td>';
+
+if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+	$coldisplay++;
 	print '<td class="nobottom linecoluseunit left">';
-	print $form->selectUnits($line->fk_unit, "units");
 	print '</td>';
 }
 
@@ -128,20 +132,24 @@ $coldisplay++;
 print '<td class="bordertop nobottom linecoldisablestockchange right"><input type="checkbox" name="disable_stock_change" id="disable_stock_change" class="flat right" value="1"'.(GETPOST("disable_stock_change", 'alpha') ? ' checked="checked"' : '').'">';
 print '</td>';
 
-//$coldisplay++;
-//print '<td class="bordertop nobottom nowrap linecollost right">';
-//print '<input type="text" size="1" name="efficiency" id="efficiency" class="flat right" value="'.(GETPOSTISSET("efficiency")?GETPOST("efficiency", 'alpha'):1).'">';
-//print '</td>';
+$coldisplay++;
+print '<td class="bordertop nobottom nowrap linecollost right">';
+print '<input type="text" size="2" name="efficiency" id="efficiency" class="flat right" value="'.((GETPOSTISSET("efficiency") && $action == 'addline') ?GETPOST("efficiency", 'alpha') : 1).'">';
+print '</td>';
 
+$coldisplay++;
+print '<td class="bordertop nobottom nowrap linecolcost right">';
+print '&nbsp;';
+print '</td>';
 
 $coldisplay += $colspan;
 print '<td class="bordertop nobottom linecoledit center valignmiddle" colspan="'.$colspan.'">';
-print '<input type="submit" class="button" value="'.$langs->trans('Add').'" name="addline" id="addline">';
+print '<input type="submit" class="button button-add" name="addline" id="addline" value="'.$langs->trans('Add').'">';
 print '</td>';
 print '</tr>';
 
 if (is_object($objectline)) {
-	print $objectline->showOptionals($extrafields, 'edit', array('style'=>$bcnd[$var], 'colspan'=>$coldisplay), '', '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD) ? 0 : 1);
+	print $objectline->showOptionals($extrafields, 'edit', array('style'=>$bcnd[$var], 'colspan'=>$coldisplay), '', '', 1, 'line');
 }
 ?>
 
@@ -154,18 +162,18 @@ jQuery(document).ready(function() {
 	{
 		console.log("#idprod change triggered");
 
-  		/* To set focus */
-  		if (jQuery('#idprod').val() > 0)
-  	  	{
+		  /* To set focus */
+		  if (jQuery('#idprod').val() > 0)
+			{
 			/* focus work on a standard textarea but not if field was replaced with CKEDITOR */
 			jQuery('#dp_desc').focus();
 			/* focus if CKEDITOR */
 			if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined")
 			{
 				var editor = CKEDITOR.instances['dp_desc'];
-   				if (editor) { editor.focus(); }
+				   if (editor) { editor.focus(); }
 			}
-  	  	}
+			}
 	});
 });
 

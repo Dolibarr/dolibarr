@@ -1,70 +1,83 @@
 <?php
 
 // Protection to avoid direct call of template
-if (empty($conf) || !is_object($conf))
-{
+if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
 	exit;
 }
 
-if (empty($extrafieldsobjectkey) && is_object($object)) $extrafieldsobjectkey = $object->table_element;
+if (empty($extrafieldsobjectkey) && is_object($object)) {
+	$extrafieldsobjectkey = $object->table_element;
+}
 
 // Loop to show all columns of extrafields from $obj, $extrafields and $db
-if (!empty($extrafieldsobjectkey))	// $extrafieldsobject is the $object->table_element like 'societe', 'socpeople', ...
-{
-	if (is_array($extrafields->attributes[$extrafieldsobjectkey]['label']) && count($extrafields->attributes[$extrafieldsobjectkey]['label']))
-	{
-        if (empty($extrafieldsobjectprefix)) $extrafieldsobjectprefix = 'ef.';
+if (!empty($extrafieldsobjectkey) && !empty($extrafields->attributes[$extrafieldsobjectkey])) {	// $extrafieldsobject is the $object->table_element like 'societe', 'socpeople', ...
+	if (key_exists('label', $extrafields->attributes[$extrafieldsobjectkey]) && is_array($extrafields->attributes[$extrafieldsobjectkey]['label']) && count($extrafields->attributes[$extrafieldsobjectkey]['label'])) {
+		if (empty($extrafieldsobjectprefix)) {
+			$extrafieldsobjectprefix = 'ef.';
+		}
 
-        foreach ($extrafields->attributes[$extrafieldsobjectkey]['label'] as $key => $val)
-		{
-			if (!empty($arrayfields[$extrafieldsobjectprefix.$key]['checked']))
-			{
-				$align = $extrafields->getAlignFlag($key, $extrafieldsobjectkey);
-				print '<td';
-                if ($align) print ' class="'.$align.'"';
-                print ' data-key="'.$key.'"';
-                print '>';
-                $tmpkey = 'options_'.$key;
+		foreach ($extrafields->attributes[$extrafieldsobjectkey]['label'] as $key => $val) {
+			if (!empty($arrayfields[$extrafieldsobjectprefix.$key]['checked'])) {
+				$cssclass = $extrafields->getAlignFlag($key, $extrafieldsobjectkey);
 
-				if (in_array($extrafields->attributes[$extrafieldsobjectkey]['type'][$key], array('date', 'datetime', 'timestamp')) && !is_numeric($obj->$tmpkey))
-				{
+				$tmpkey = 'options_'.$key;
+
+				if (in_array($extrafields->attributes[$extrafieldsobjectkey]['type'][$key], array('date', 'datetime', 'timestamp')) && !is_numeric($obj->$tmpkey)) {
 					$datenotinstring = $obj->$tmpkey;
-					if (!is_numeric($obj->$tmpkey))	// For backward compatibility
-					{
+					if (!is_numeric($obj->$tmpkey)) {	// For backward compatibility
 						$datenotinstring = $db->jdate($datenotinstring);
 					}
 					$value = $datenotinstring;
-				}
-				else
-				{
-					$value = $obj->$tmpkey;
+				} else {
+					$value = (!empty($obj->$tmpkey) ? $obj->$tmpkey : '');
 				}
 				// If field is a computed field, we make computation to get value
-				if ($extrafields->attributes[$extrafieldsobjectkey]['computed'][$key])
-				{
+				if ($extrafields->attributes[$extrafieldsobjectkey]['computed'][$key]) {
 					//global $obj, $object;
 					//var_dump($extrafields->attributes[$extrafieldsobjectkey]['computed'][$key]);
 					//var_dump($obj);
 					//var_dump($extrafields->attributes[$extrafieldsobjectkey]['computed'][$key]);
-					$value = dol_eval($extrafields->attributes[$extrafieldsobjectkey]['computed'][$key], 1);
+					$value = dol_eval($extrafields->attributes[$extrafieldsobjectkey]['computed'][$key], 1, 1, '0');
 					//var_dump($value);
 				}
 
-				print $extrafields->showOutputField($key, $value, '', $extrafieldsobjectkey);
-				print '</td>';
-				if (!$i) $totalarray['nbfield']++;
+				$valuetoshow = $extrafields->showOutputField($key, $value, '', $extrafieldsobjectkey);
+				$title = dol_string_nohtmltag($valuetoshow);
 
-                if ($extrafields->attributes[$extrafieldsobjectkey]['totalizable'][$key]) {
-                    if (!$i) {
-                        // we keep position for the first line
-                        $totalarray['totalizable'][$key]['pos'] = $totalarray['nbfield'];
-                    }
-                    $totalarray['totalizable'][$key]['total'] += $obj->$tmpkey;
-                }
-				if (!empty($val['isameasure']))
-				{
-					if (!$i) $totalarray['pos'][$totalarray['nbfield']] = $extrafieldsobjectprefix.$tmpkey;
+				print '<td'.($cssclass ? ' class="'.$cssclass.'"' : '');	// TODO Add 'css' and 'cssview' and 'csslist' for extrafields and use here 'csslist'
+				print ' data-key="'.$extrafieldsobjectkey.'.'.$key.'"';
+				print ($title ? ' title="'.dol_escape_htmltag($title).'"' : '');
+				print '>';
+				print $valuetoshow;
+				print '</td>';
+
+				if (!$i) {
+					if (empty($totalarray)) {
+						$totalarray['nbfield'] = 0;
+					}
+					$totalarray['nbfield']++;
+				}
+
+				if ($extrafields->attributes[$extrafieldsobjectkey]['totalizable'][$key]) {
+					if (!$i) {
+						// we keep position for the first line
+						$totalarray['totalizable'][$key]['pos'] = $totalarray['nbfield'];
+					}
+					if (is_numeric($obj->$tmpkey)) {
+						$totalarray['totalizable'][$key]['total'] += $obj->$tmpkey;
+					}
+				}
+				if (!empty($val['isameasure']) && $val['isameasure'] == 1) {
+					if (!$i) {
+						$totalarray['pos'][$totalarray['nbfield']] = $extrafieldsobjectprefix.$tmpkey;
+					}
+					if (!isset($totalarray['val'])) {
+						$totalarray['val'] = array();
+					}
+					if (!isset($totalarray['val'][$extrafieldsobjectprefix.$tmpkey])) {
+						$totalarray['val'][$extrafieldsobjectprefix.$tmpkey] = 0;
+					}
 					$totalarray['val'][$extrafieldsobjectprefix.$tmpkey] += $obj->$tmpkey;
 				}
 			}

@@ -1,0 +1,16 @@
+# Dolibarr language file - Source file is en_US - accountancy
+ACCOUNTING_EXPORT_SEPARATORCSV=Séparateur de colonne pour le fichier export
+ACCOUNTING_EXPORT_PIECE=Exporter le nombre de pièces
+Selectformat=Sélectionner le format pour le fichier
+ACCOUNTING_EXPORT_FORMAT=Sélectionner le format pour le fichier
+ACCOUNTING_EXPORT_ENDLINE=Sélectionner le type de retour à la ligne
+ACCOUNTING_EXPORT_PREFIX_SPEC=Spécifiez le préfixe du nom de fichier
+CantSuggest=Impossible de suggérer
+AccountancySetupDoneFromAccountancyMenu=La plupart des réglages de la comptabilité se font à partir du menu %s
+ConfigAccountingExpert=Paramétrage du module comptabilité (en partie double)
+Journalization=Journalisation
+CurrentDedicatedAccountingAccount=Compte dédié actuel
+InvoiceLabel=Libellé de facture
+OverviewOfAmountOfLinesNotBound=Aperçu du nombre de lignes non liées à un compte comptable
+OverviewOfAmountOfLinesBound=Aperçu du nombre de lignes déjà liées à un compte comptable
+TotalVente=Chiffre d'affaires total avant taxes

@@ -33,7 +33,7 @@ $langs->loadLangs(array('products', 'accountancy')); //"Back" translation is on 
 
 $id = GETPOST('id', 'int');
 $eid = GETPOST('eid', 'int');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $title = GETPOST('expression_title', 'alpha');
 $expression = GETPOST('expression');
 $tab = GETPOST('tab', 'alpha');
@@ -41,7 +41,7 @@ $tab = (!empty($tab)) ? $tab : 'card';
 $tab = strtolower($tab);
 
 // Security check
-$result=restrictedArea($user, 'produit|service&fournisseur', $id, 'product&product', '', '', 'rowid');
+$result = restrictedArea($user, 'produit|service&fournisseur', $id, 'product&product', '', '', 'rowid');
 
 //Initialize objects
 $product = new Product($db);
@@ -51,12 +51,9 @@ $price_expression = new PriceExpression($db);
 $price_globals = new PriceGlobalVariable($db);
 
 //Fetch expression data
-if (empty($eid)) //This also disables fetch when eid == 0
-{
+if (empty($eid)) { //This also disables fetch when eid == 0
 	$eid = 0;
-}
-elseif ($action != 'delete')
-{
+} elseif ($action != 'delete') {
 	$price_expression->fetch($eid);
 }
 
@@ -65,94 +62,67 @@ elseif ($action != 'delete')
  * Actions
  */
 
-if ($action == 'add')
-{
-	if ($eid == 0)
-	{
+if ($action == 'add') {
+	if ($eid == 0) {
 		$result = $price_expression->find_title($title);
-		if ($result == 0) //No existing entry found with title, ok
-		{
+		if ($result == 0) { //No existing entry found with title, ok
 			//Check the expression validity by parsing it
-            $priceparser = new PriceParser($db);
-            $price_result = $priceparser->testExpression($id, $expression);
-            if ($price_result < 0) { //Expression is not valid
+			$priceparser = new PriceParser($db);
+			$price_result = $priceparser->testExpression($id, $expression);
+			if ($price_result < 0) { //Expression is not valid
 				setEventMessages($priceparser->translatedError(), null, 'errors');
-			}
-			else
-			{
+			} else {
 				$price_expression->title = $title;
 				$price_expression->expression = $expression;
 				$result = $price_expression->create($user);
-				if ($result > 0) //created successfully, set the eid to newly created entry
-				{
+				if ($result > 0) { //created successfully, set the eid to newly created entry
 					$eid = $price_expression->id;
 					setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
-				}
-				else
-				{
+				} else {
 					setEventMessages("add: ".$price_expression->error, $price_expression->errors, 'errors');
 				}
 			}
-		}
-		elseif ($result < 0)
-		{
+		} elseif ($result < 0) {
 			setEventMessages("add find: ".$price_expression->error, $price_expression->errors, 'errors');
-		}
-		else
-		{
+		} else {
 			setEventMessages($langs->trans("ErrorRecordAlreadyExists"), null, 'errors');
 		}
 	}
 }
 
-if ($action == 'update')
-{
-	if ($eid != 0)
-	{
+if ($action == 'update') {
+	if ($eid != 0) {
 		$result = $price_expression->find_title($title);
-		if ($result == 0 || $result == $eid) //No existing entry found with title or existing one is the current one, ok
-		{
+		if ($result == 0 || $result == $eid) { //No existing entry found with title or existing one is the current one, ok
 			//Check the expression validity by parsing it
-            $priceparser = new PriceParser($db);
-            $price_result = $priceparser->testExpression($id, $expression);
-            if ($price_result < 0) { //Expression is not valid
+			$priceparser = new PriceParser($db);
+			$price_result = $priceparser->testExpression($id, $expression);
+			if ($price_result < 0) { //Expression is not valid
 				setEventMessages($priceparser->translatedError(), null, 'errors');
-			}
-			else
-			{
+			} else {
 				$price_expression->id = $eid;
 				$price_expression->title = $title;
 				$price_expression->expression = $expression;
 				$result = $price_expression->update($user);
-				if ($result < 0)
-				{
+				if ($result < 0) {
 					setEventMessages("update: ".$price_expression->error, $price_expression->errors, 'errors');
-				}
-				else
-				{
+				} else {
 					setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 				}
 			}
-		}
-		elseif ($result < 0)
-		{
+		} elseif ($result < 0) {
 			setEventMessages("update find: ".$price_expression->error, $price_expression->errors, 'errors');
-		}
-		else
-		{
+		} else {
 			setEventMessages($langs->trans("ErrorRecordAlreadyExists"), null, 'errors');
 		}
 	}
 }
 
-if ($action == 'delete')
-{
-	if ($eid != 0)
-	{
-	    $price_expression->fetch($eid);
+if ($action == 'delete') {
+	if ($eid != 0) {
+		$price_expression->fetch($eid);
 		$result = $price_expression->delete($user);
-		if ($result < 0)
-		{
+		if ($result < 0) {
 			setEventMessages("delete: ".$price_expression->error, $price_expression->errors, 'errors');
 		}
 		$eid = 0;
@@ -175,7 +145,7 @@ print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'&amp;tab='.$tab.'&amp;ei
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value='.($eid == 0 ? 'add' : 'update').'>';
 
-dol_fiche_head();
+print dol_get_fiche_head();
 
 print '<table class="border centpercent">';
 
@@ -190,40 +160,37 @@ print '</td></tr>';
 
 // Title input
 print '<tr><td class="fieldrequired">'.$langs->trans("Name").'</td><td>';
-print '<input class="flat" name="expression_title" size="15" value="'.($price_expression->title?$price_expression->title:'').'">';
+print '<input class="flat" name="expression_title" size="15" value="'.($price_expression->title ? $price_expression->title : '').'">';
 print '</td></tr>';
 
 //Help text
 $help_text = $langs->trans("PriceExpressionEditorHelp1");
-$help_text.= '<br><br>'.$langs->trans("PriceExpressionEditorHelp2");
-$help_text.= '<br><br>'.$langs->trans("PriceExpressionEditorHelp3");
-$help_text.= '<br><br>'.$langs->trans("PriceExpressionEditorHelp4");
-$help_text.= '<br><br>'.$langs->trans("PriceExpressionEditorHelp5");
+$help_text .= '<br><br>'.$langs->trans("PriceExpressionEditorHelp2");
+$help_text .= '<br><br>'.$langs->trans("PriceExpressionEditorHelp3");
+$help_text .= '<br><br>'.$langs->trans("PriceExpressionEditorHelp4");
+$help_text .= '<br><br>'.$langs->trans("PriceExpressionEditorHelp5");
 foreach ($price_globals->listGlobalVariables() as $entry) {
-    $help_text.= '<br><b>#globals_'.$entry->code.'#</b> '.$entry->description.' = '.$entry->value;
+	$help_text .= '<br><b>#globals_'.$entry->code.'#</b> '.$entry->description.' = '.$entry->value;
 }
 
 //Price expression editor
 print '<tr><td class="fieldrequired">'.$form->textwithpicto($langs->trans("PriceExpressionEditor"), $help_text, 1).'</td><td>';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-$doleditor=new DolEditor('expression', isset($price_expression->expression)?$price_expression->expression:'', '', 300, '', '', false, false, false, ROWS_4, '90%');
+$doleditor = new DolEditor('expression', isset($price_expression->expression) ? $price_expression->expression : '', '', 300, '', '', false, false, false, ROWS_4, '90%');
 $doleditor->Create();
 print '</td></tr>';
 print '</table>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 //Buttons
 print '<div class="center">';
-print '<input type="submit" class="butAction" value="'.$langs->trans("Save").'">';
+print '<input type="submit" class="butAction button-save" value="'.$langs->trans("Save").'">';
 print '<span id="back" class="butAction">'.$langs->trans("Back").'</span>';
-if ($eid == 0)
-{
+if ($eid == 0) {
 	print '<div class="inline-block divButAction"><span id="action-delete" class="butActionRefused classfortooltip">'.$langs->trans('Delete').'</span></div>'."\n";
-}
-else
-{
-	print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&amp;tab='.$tab.'&amp;eid='.$eid.'&amp;action=delete">'.$langs->trans("Delete").'</a></div>';
+} else {
+	print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&tab='.$tab.'&eid='.$eid.'&action=delete&token='.newToken().'">'.$langs->trans("Delete").'</a></div>';
 }
 print '</div>';
 
@@ -237,7 +204,7 @@ print '<script type="text/javascript">
 		jQuery("#expression_selection").change(on_change);
 	}
 	function on_click() {
-		window.location = "'.str_replace('dynamic_price/editor.php', $tab.'.php', $_SERVER["PHP_SELF"]).'?id='.$id.($tab == 'price' ? '&action=edit_price' : '').'";
+		window.location = "'.str_replace('dynamic_price/editor.php', $tab.'.php', $_SERVER["PHP_SELF"]).'?id='.$id.($tab == 'price' ? '&action=edit_price&token='.newToken() : '').'";
 	}
 	function on_change() {
 		window.location = "'.$_SERVER["PHP_SELF"].'?id='.$id.'&tab='.$tab.'&eid=" + $("#expression_selection").val();

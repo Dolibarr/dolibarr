@@ -22,7 +22,7 @@ create table llx_payment_various
   ref                   varchar(30) NULL,           -- payment reference number (currently NULL because there is no numbering manager yet)
   num_payment           varchar(50),				-- num cheque or other
   label                 varchar(255),
-  tms                   timestamp,
+  tms                   timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   datec                 datetime,                   -- Create date
   datep                 date,                       -- date de paiement
   datev                 date,                       -- date de valeur (this field should not be here, only into bank tables)

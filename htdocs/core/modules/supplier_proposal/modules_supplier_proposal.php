@@ -28,7 +28,7 @@
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';   // Requis car utilise dans les classes qui heritent
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php'; // Requis car utilise dans les classes qui heritent
 
 
 /**
@@ -39,29 +39,29 @@ abstract class ModelePDFSupplierProposal extends CommonDocGenerator
 	/**
 	 * @var string Error code (or message)
 	 */
-	public $error='';
+	public $error = '';
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-    /**
-     *  Return list of active generation modules
-     *
-     *  @param	DoliDB	$db     			Database handler
-     *  @param  integer	$maxfilenamelength  Max length of value to show
-     *  @return	array						List of templates
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Return list of active generation modules
+	 *
+	 *  @param	DoliDB	$db     			Database handler
+	 *  @param  integer	$maxfilenamelength  Max length of value to show
+	 *  @return	array						List of templates
 	 */
 	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf;
 
-		$type='supplier_proposal';
-		$liste=array();
+		$type = 'supplier_proposal';
+		$list = array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$liste=getListOfModels($db, $type, $maxfilenamelength);
+		$list = getListOfModels($db, $type, $maxfilenamelength);
 
-		return $liste;
+		return $list;
 	}
 }
 
@@ -74,7 +74,7 @@ abstract class ModeleNumRefSupplierProposal
 	/**
 	 * @var string Error code (or message)
 	 */
-	public $error='';
+	public $error = '';
 
 	/**
 	 * Return if a module can be used or not
@@ -111,8 +111,8 @@ abstract class ModeleNumRefSupplierProposal
 	}
 
 	/**
-	 *  Checks if the numbers already in force in the data base do not
-	 *  cause conflicts that would prevent this numbering from working.
+	 *  Checks if the numbers already in the database do not
+	 *  cause conflicts that would prevent this numbering working.
 	 *
 	 *  @return     boolean     false if conflict, true if ok
 	 */
@@ -124,11 +124,11 @@ abstract class ModeleNumRefSupplierProposal
 	/**
 	 * 	Renvoi prochaine valeur attribuee
 	 *
-	 *	@param		Societe		$objsoc     Object third party
-	 *	@param		Propal		$propal		Object commercial proposal
-	 *	@return     string      Valeur
+	 *	@param	Societe				$objsoc     			Object third party
+	 * 	@param	SupplierProposal	$supplier_proposal		Object commercial proposal
+	 *	@return string      								Valeur
 	 */
-	public function getNextValue($objsoc, $propal)
+	public function getNextValue($objsoc, $supplier_proposal)
 	{
 		global $langs;
 		return $langs->trans("NotAvailable");
@@ -144,10 +144,18 @@ abstract class ModeleNumRefSupplierProposal
 		global $langs;
 		$langs->load("admin");
 
-		if ($this->version == 'development') return $langs->trans("VersionDevelopment");
-		if ($this->version == 'experimental') return $langs->trans("VersionExperimental");
-		if ($this->version == 'dolibarr') return DOL_VERSION;
-		if ($this->version) return $this->version;
+		if ($this->version == 'development') {
+			return $langs->trans("VersionDevelopment");
+		}
+		if ($this->version == 'experimental') {
+			return $langs->trans("VersionExperimental");
+		}
+		if ($this->version == 'dolibarr') {
+			return DOL_VERSION;
+		}
+		if ($this->version) {
+			return $this->version;
+		}
 		return $langs->trans("NotAvailable");
 	}
 }

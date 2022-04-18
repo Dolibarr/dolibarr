@@ -31,9 +31,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/expensereport/modules_expenserepor
 class mod_expensereport_sand extends ModeleNumRefExpenseReport
 {
 	/**
-     * Dolibarr version of the loaded document
-     * @var string
-     */
+	 * Dolibarr version of the loaded document
+	 * @var string
+	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
 	/**
@@ -54,14 +54,14 @@ class mod_expensereport_sand extends ModeleNumRefExpenseReport
 	public $name = 'Sand';
 
 
-    /**
-     *  Returns the description of the numbering model
-     *
-     *  @return     string      Texte descripif
-     */
-    public function info()
-    {
-    	global $db, $conf, $langs;
+	/**
+	 *  Returns the description of the numbering model
+	 *
+	 *  @return     string      Texte descripif
+	 */
+	public function info()
+	{
+		global $db, $conf, $langs;
 
 		$langs->load("bills");
 
@@ -82,9 +82,9 @@ class mod_expensereport_sand extends ModeleNumRefExpenseReport
 
 		// Parametrage du prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskvalue" value="'.$conf->global->EXPENSEREPORT_SAND_MASK.'">', $tooltip, 1, 1).'</td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskvalue" value="'.$conf->global->EXPENSEREPORT_SAND_MASK.'">', $tooltip, 1, 1).'</td>';
 
-		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
+		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit" name="Button" value="'.$langs->trans("Modify").'"></td>';
 
 		$texte .= '</tr>';
 
@@ -92,61 +92,57 @@ class mod_expensereport_sand extends ModeleNumRefExpenseReport
 		$texte .= '</form>';
 
 		return $texte;
-    }
+	}
 
-    /**
-     *  Return an example of numbering
-     *
-     *  @return     string      Example
-     */
-    public function getExample()
-    {
-     	global $db, $conf, $langs, $user;
+	/**
+	 *  Return an example of numbering
+	 *
+	 *  @return     string      Example
+	 */
+	public function getExample()
+	{
+		global $db, $conf, $langs, $user;
 
-     	$exp = new ExpenseReport($db);
-     	$exp->initAsSpecimen();
-     	$exp->fk_user_author = $user->id;
+		$exp = new ExpenseReport($db);
+		$exp->initAsSpecimen();
+		$exp->fk_user_author = $user->id;
 
-     	$numExample = $this->getNextValue($exp);
+		$numExample = $this->getNextValue($exp);
 
-		if (!$numExample)
-		{
+		if (!$numExample) {
 			$numExample = $langs->trans('NotConfigured');
 		}
 		return $numExample;
-    }
+	}
 
-    /**
-     *  Return next free value
-     *
-     *  @param  Object      $object     Object we need next value for
-     *  @return string                  Value if KO, <0 if KO
-     */
-    public function getNextValue($object)
-    {
-        global $db, $conf;
+	/**
+	 *  Return next free value
+	 *
+	 *  @param  Object      $object     Object we need next value for
+	 *  @return string                  Value if KO, <0 if KO
+	 */
+	public function getNextValue($object)
+	{
+		global $db, $conf;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 		// We get cursor rule
 		$mask = $conf->global->EXPENSEREPORT_SAND_MASK;
 
-		if (!$mask)
-		{
+		if (!$mask) {
 			$this->error = 'NotConfigured';
 			return 0;
 		}
 
 		$date = $object->date_valid; // $object->date does not exists
-		if (empty($date))
-		{
+		if (empty($date)) {
 			$this->error = 'Date valid not defined';
 			return 0;
 		}
 
 		$fuser = null;
-		if ($object->fk_user_author > 0)
-		{
+		if ($object->fk_user_author > 0) {
 			$fuser = new User($db);
 			$fuser->fetch($object->fk_user_author);
 		}
@@ -154,5 +150,5 @@ class mod_expensereport_sand extends ModeleNumRefExpenseReport
 		$numFinal = get_next_value($db, $mask, 'expensereport', 'ref', '', null, $date, 'next', true, $fuser);
 
 		return $numFinal;
-    }
+	}
 }

@@ -20,10 +20,10 @@
 create table llx_stock_mouvement
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
-  tms             timestamp,
-  datem           datetime,							-- Date and hour of movement
+  tms             timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  datem           datetime,						-- Date and hour of movement
   fk_product      integer NOT NULL,				-- Id of product
-  batch           varchar(30) DEFAULT NULL,		-- Lot or serial number
+  batch           varchar(128) DEFAULT NULL,	-- Lot or serial number
   eatby           date DEFAULT NULL,			-- Eatby date (deprecated, we should get value from batch number in table llx_product_lot)
   sellby          date DEFAULT NULL,			-- Sellby date (deprecated, we should get value from batch number in table llx_product_lot) 
   fk_entrepot     integer NOT NULL,				-- Id warehouse
@@ -35,7 +35,7 @@ create table llx_stock_mouvement
   inventorycode   varchar(128),						-- Code used to group different movement line into one operation (may be an inventory, a mass picking)
   fk_project	  integer,
   fk_origin       integer,
-  origintype      varchar(32),
+  origintype      varchar(64),
   model_pdf       varchar(255),
   fk_projet       integer NOT NULL DEFAULT 0
 )ENGINE=innodb;

@@ -65,10 +65,12 @@ LT2SupplierIN=خریدهای SGST
 VATCollected=مالیات‌بر‌ارزش‌افزودۀ جمع‌آوری شده
 StatusToPay=قابل پرداخت
 SpecialExpensesArea=ناحیۀ انجام همۀ پرداخت‌های خاص
+VATExpensesArea=Area for all TVA payments
 SocialContribution=مالیات اجتماعی و ساختاری
 SocialContributions=مالیات‌های اجتماعی و ساختاری
 SocialContributionsDeductibles=مالیات‌های اجتماعی و ساختاری کسرپذیر
 SocialContributionsNondeductibles=مالیات‌های اجتماعی و ساختاری کسرناپذیر
+DateOfSocialContribution=Date of social or fiscal tax
 LabelContrib=تسهیم برچسب
 TypeContrib=تسهیم نوع
 MenuSpecialExpenses=هزینه‌های ویژه
@@ -84,6 +86,7 @@ PaymentCustomerInvoice=پرداخت صورت‌حساب مشتری
 PaymentSupplierInvoice=پرداخت صورت‌حساب فروشنده
 PaymentSocialContribution=پرداخت مالیات اجتماعی/ساختاری
 PaymentVat=پرداخت مالیات‌برارزش‌افزوده
+AutomaticCreationPayment=Automatically record the payment
 ListPayment=فهرست پرداخت‌ها
 ListOfCustomerPayments=فهرست پرداخت‌های مشتری
 ListOfSupplierPayments=فهرست‌پرداخت‌های مربوط به فروشنده
@@ -103,6 +106,8 @@ LT2PaymentES=پرداخت IRPF
 LT2PaymentsES=پرداخت‌های IRPF
 VATPayment=پرداخت مالیات بر فروش
 VATPayments=پرداخت‌های مالیات بر فروش
+VATDeclarations=VAT declarations
+VATDeclaration=VAT declaration
 VATRefund=بازپس‌گیری مالیات‌برفروش
 NewVATPayment=یک پرداخت جدید مالیات‌برفروش
 NewLocalTaxPayment=یک پرداخت جدید مالیات %s
@@ -110,7 +115,7 @@ Refund=بازپس‌گیری
 SocialContributionsPayments=پرداخت‌های مالیات اجتماعی/ساختاری
 ShowVatPayment=نمایش پرداخت م.ب.ا.ا
 TotalToPay=مجموع قابل پرداخت
-BalanceVisibilityDependsOnSortAndFilters=موجودی در این فهرست تنها در صورتی قابل مشاهده خواهد بود که جدول به صورت صعودی برای %s انجام شده باشد و صافی برای 1 حساب بانکی تنظیم شده باشد
+BalanceVisibilityDependsOnSortAndFilters=Balance is visible in this list only if table is sorted on %s and filtered on 1 bank account (with no other filters)
 CustomerAccountancyCode=کد حسابداری مشتری
 SupplierAccountancyCode=Vendor accounting code
 CustomerAccountancyCodeShort=کد حساب‌داری مشتری
@@ -130,16 +135,24 @@ NewCheckReceipt=تخفیف جدید
 NewCheckDeposit=به‌حساب‌گذاشتن جدید چک 
 NewCheckDepositOn=ساختن رسید برای به‌حساب‌گذاری چک در حساب: %s
 NoWaitingChecks=هیچ چکی در انتظار وصول شدن نیست
-DateChequeReceived=تاریخ دریافت چک
+DateChequeReceived=Check receiving date
 NbOfCheques=تعداد چک‌ها
 PaySocialContribution=پرداخت مالیات اجتماعی/ساختاری
-ConfirmPaySocialContribution=آیا مطمئنید می‌خواهید این مالیات ساختاری یا اجتماعی را به صورت پرداخت شده طبقه‌بندی کنید؟
+PayVAT=Pay a VAT declaration
+PaySalary=Pay a salary card
+ConfirmPaySocialContribution=Are you sure you want to classify this social or fiscal tax as paid ?
+ConfirmPayVAT=Are you sure you want to classify this VAT declaration as paid ?
+ConfirmPaySalary=Are you sure you want to classify this salary card as paid?
 DeleteSocialContribution=حذف یک پرداخت مالیات اجتماعی/ساختاری
-ConfirmDeleteSocialContribution=آیا مطمئن هستید می‌خواهید پرداخت این مالیات اجتماعی/ساختاری را حذف کنید؟
+DeleteVAT=Delete a VAT declaration
+DeleteSalary=Delete a salary card
+ConfirmDeleteSocialContribution=Are you sure you want to delete this social/fiscal tax payment ?
+ConfirmDeleteVAT=Are you sure you want to delete this VAT declaration ?
+ConfirmDeleteSalary=Are you sure you want to delete this salary?
 ExportDataset_tax_1=مالیات‌های اجتماعی و ساختاری و پرداخت‌ها
 CalcModeVATDebt=حالت <b>%sحساب‌داری مالیات‌بر‌ارزش افزوده تعهدی%s</b>.
 CalcModeVATEngagement=حالت <b>%sمالیات بر ارزش افزوده در ازای درآمد-هزینه%s</b>.
-CalcModeDebt=تحلیل صورت‌حساب‌های معلوم و ثبت شده حتی در صورتی که هنوز در دفترکل حساب نشده باشند.
+CalcModeDebt=Analysis of known recorded documents even if they are not yet accounted in ledger.
 CalcModeEngagement=تحلیل پرداخت‌های معلوم و ثبت شده حتی در صورتی که هنوز در دفترکل حساب نشده باشند.
 CalcModeBookkeeping=تحلیل داده‌های ثبت شده در دفتر روزنامه در جدول دفترداری دفترکل
 CalcModeLT1= حالت <b>%sRE بر حسب صورت‌حساب مشتری - صورت‌حساب تامین کننده%s</b>
@@ -153,42 +166,48 @@ AnnualSummaryInputOutputMode=ماندۀ درآمدها و هزینه‌ها، ج
 AnnualByCompanies=ماندۀ درآمدها و هزینه‌ها، بر حسب حساب‌های از گروه‌بندی شده
 AnnualByCompaniesDueDebtMode=ماندۀ درآمدها و هزینه‌ها، جزئیات بر حسب گروه‌های از قبل تعیین شده، حالت <b>%s طلب‌ها-بدهی‌ها%s</b> یا <b>حساب‌داری تعهدی</b>
 AnnualByCompaniesInputOutputMode=ماندۀ درآمدها و هزینه‌ها، جزئیات بر حسب گروه‌های از قبل تعیین شده، حالت <b>%sدرآمدها-هزینه‌ها%s</b> یا <b>حساب‌داری نقدی</b>.
-SeeReportInInputOutputMode=برای محاسبۀ پرداخت‌های حقیقی که حتی هنوز در دفترکل حساب نشده‌اند به %sتحلیل پرداخت‌ها%s نگاه کنید.
-SeeReportInDueDebtMode=برای محاسبۀ صورت‌حساب‌های ثبت شده که حتی هنوز در دفترکل حساب نشده‌اند به %sتحلیل صورت‌حساب‌ها %s نگاه کنید.
-SeeReportInBookkeepingMode=برای محاسبه‌ای بر روی <b>جدول حساب‌داری دفترکل</b> به <b>%sگزارش حساب‌داری%s</b> مراجعه کنید.
+SeeReportInInputOutputMode=See <b>%sanalysis of payments%s</b> for a calculation based on <b>recorded payments</b> made even if they are not yet accounted in Ledger
+SeeReportInDueDebtMode=See <b>%sanalysis of recorded documents%s</b> for a calculation based on known <b>recorded documents</b> even if they are not yet accounted in Ledger
+SeeReportInBookkeepingMode=See <b>%sanalysis of bookeeping ledger table%s</b> for a report based on <b>Bookkeeping Ledger table</b>
 RulesAmountWithTaxIncluded=- تمام مالیات‌ها در مقادیر نمایش داده شده، گنجانده شده‌اند
-RulesResultDue=- این شامل همۀ صورت‌حساب‌های پرداخت‌نشده، هزینه‌ها، مالیات بر ارزش افزوده، کمک‌های مالی پرداخت شده و نشده است. همچنین شامل حقوق‌های پرداخت شده می‌باشد. <br> - بسته به تاریخ تائید اعتبار در خصوص صورت‌حساب‌ها و مالیات بر ارزش افزوده و بر حسب تاریخ سررسید هزینه‌ها می‌باشد. برای حقوق‌هائی که در واحد حقوق‌ها تعریف شده است، از مقدار تاریخ پرداخت استفاده می‌شود.
-RulesResultInOut=- این شامل همۀ پرداخت‌های واقعی صورت‌حساب‌ها، هزینه‌ها، مالیات بر ارزش افزوده و حقوق‌ها است. <br>- بر حسب تاریخ پرداخت صورت‌حساب‌ها، هزینه‌ها، مالیات بر ارزش افزوده و حقوق‌ها می‌باشد. تاریخ کمک‌مالی برای کمک‌های مالی
-RulesCADue=- شامل صورت‌حساب‌های به موعد رسیدۀ مشتری، چه پرداخت شده باشند یا نه می‌باشد. <br> این بر حسب تاریخ تائید اعتبار این صورت‌حساب‌ها است. <br>
+RulesAmountWithTaxExcluded=- Amounts of invoices shown are with all taxes excluded
+RulesResultDue=- It includes all invoices, expenses, VAT, donations, salaries, whether they are paid or not.<br>- It is based on the billing date of invoices and on the due date for expenses or tax payments. For salaries, the date of end of period is used.
+RulesResultInOut=- It includes the real payments made on invoices, expenses, VAT and salaries. <br>- It is based on the payment dates of the invoices, expenses, VAT, donations and salaries.
+RulesCADue=- It includes the customer's due invoices whether they are paid or not. <br>- It is based on the billing date of these invoices.<br>
 RulesCAIn=- شامل همۀ پرداخت‌های دریافت‌شدۀ مؤثر صورت‌حساب‌های مشتریان است. <br> -این بسته به تاریخ پرداخت این صورت‌حساب‌هاست<br>
 RulesCATotalSaleJournal=شامل همۀ سطور بستانکار دفترفروش‌روزانه است
+RulesSalesTurnoverOfIncomeAccounts=It includes (credit - debit) of lines for product accounts in group INCOME
 RulesAmountOnInOutBookkeepingRecord=شامل همۀ ردیف‌های دفترکل دارای حساب‌حساب‌داری است که در گروه‌های "هزینه" یا "درآمد" باشند
 RulesResultBookkeepingPredefined=شامل همۀ ردیف‌های دفترکل دارای حساب‌حساب‌داری است که در گروه‌های "هزینه" یا "درآمد" باشند
 RulesResultBookkeepingPersonalized=نمایش دهندۀ ردیف دفترکل شما با حساب‌های حساب‌درای است <b> گروه‌بندی‌شده توسط گروه‌های شخصی‌سازی‌شده</b>
 SeePageForSetup=برای برپاسازی فهرست <a href="%s">%s</a> را ببینید
 DepositsAreNotIncluded=- صورت‌حساب‌های پیش‌پرداخت شامل نشده‌اند
 DepositsAreIncluded=- صورت‌حساب‌های پیش‌پرداخت شامل شده‌اند
+LT1ReportByMonth=Tax 2 report by month
+LT2ReportByMonth=Tax 3 report by month
 LT1ReportByCustomers=گزارش مالیات 2 توسط شخص سوم
 LT2ReportByCustomers=گزارش مالیات 3 توسط شخص سوم
 LT1ReportByCustomersES=گزارش توسط شخص سوم RE
 LT2ReportByCustomersES=گزارش توسط شخص سوم IRPF
-VATReport=گزارش مالیات‌برفروش
-VATReportByPeriods=گزارش مالیات‌برفروش بر حسب دورۀ زمانی
-VATReportByRates=گزارش مالیات‌برفروش بر حسب نرخ‌ها
-VATReportByThirdParties=گزارش مالیات‌برفروش بر حسب شخص‌سوم‌ها
-VATReportByCustomers=گزارش مالیات‌برفروش بر حسب مشتری
+VATReport=Sales tax report
+VATReportByPeriods=Sales tax report by period
+VATReportByMonth=Sales tax report by month
+VATReportByRates=Sales tax report by rate
+VATReportByThirdParties=Sales tax report by third party
+VATReportByCustomers=Sales tax report by customer
 VATReportByCustomersInInputOutputMode=گزارش بر حسب مالیات‌بر‌ارزش‌افزوده جمع‌آوری و پرداخت شده
-VATReportByQuartersInInputOutputMode=گزارش بر حسب مالیات‌برفروش جمع‌آوری و پرداخت شده
+VATReportByQuartersInInputOutputMode=Report by Sales tax rate of the tax collected and paid
+VATReportShowByRateDetails=Show details of this rate
 LT1ReportByQuarters=گزارش مالیات 2 بر اساس نرخ
 LT2ReportByQuarters=گزارش مالیات 3 بر اساس نرخ
 LT1ReportByQuartersES=گزارش بر اساس نرخ RE
 LT2ReportByQuartersES=گزارش بر اساس نرخ IRPF
-SeeVATReportInInputOutputMode=گزارش <b>%sبخش‌بندی مالیات‌بر‌ارزش افزوده%s</b> را برای یک محاسبۀ استاندارد ببینید.
-SeeVATReportInDueDebtMode=گزارش <b>%s مالیات‌بر‌ارزش‌افزودۀ درجریان%s</b> را برای محاسبه با یک گزینۀ «درجریان» ببینید.
-RulesVATInServices=- در خصوص خدمات، این گزارش آئین‌نامه‌های مالیات‌برارزش‌افزوده‌ای که واقعا دریافت‌شده‌اند یا بر اساس تارخ پرداخت صادرشده‌اند را شامل می‌شوند.
-RulesVATInProducts=- برای دارائی‌های مادی،  این گزارش همۀ مالیات بر ارزش افزوده‌های دریافت شده یا بر اساس تاریخ پرداخت صادر شده را شامل می‌شود.
-RulesVATDueServices=- برای خدمات، گزارش شامل صورت‌حساب‌های مالیات‌برارزش‌افزودۀ به موعد رسیده که پرداخت شده باشند یا نه و بر اساس تاریخ صورت‌حساب است.
-RulesVATDueProducts=- برای دارائی‌های مادی، گزارش شامل صورت‌حساب‌های مالیات‌برارزش‌افزوده، بر اساس تاریخ صورت‌حساب است.
+SeeVATReportInInputOutputMode=See report <b>%sVAT collection%s</b> for a standard calculation
+SeeVATReportInDueDebtMode=See report <b>%sVAT on debit%s</b> for a calculation with an option on the invoicing
+RulesVATInServices=- For services, the report includes the VAT of payments actually received or paid on the basis of the date of payment.
+RulesVATInProducts=- For material assets, the report includes the VAT on the basis of the date of payment.
+RulesVATDueServices=- For services, the report includes VAT of due invoices, paid or not, based on the invoice date.
+RulesVATDueProducts=- For material assets, the report includes the VAT of due invoices, based on the invoice date.
 OptionVatInfoModuleComptabilite=توجه: برای دارائی‌های مادی، باید برای انصاف بیشتر از تاریخ تحویل استفاده کنید.
 ThisIsAnEstimatedValue=این یک پیش‌نمایش است که بر اساس روی‌دادهای تجاری و نه از جدول دفترکل برگزیده شده است، لذا نتایج نهائی ممکن است با این مقادیر پیش‌نمایش متفاوت باشد.
 PercentOfInvoice=%%/صورت‌حساب
@@ -213,7 +232,7 @@ Pcg_subtype=زیر گروه PCG
 InvoiceLinesToDispatch=سطور قابل ارسال صورت‌حساب
 ByProductsAndServices=بر حسب محصول و خدمات
 RefExt=ارجاع خارجی
-ToCreateAPredefinedInvoice=برای ساخت یک صورت‌حساب قالبی، یک صورت‌حساب استاندارد ساخته و سپس بدون تائیداعتبار آن روی کلید «%s» کلیک کنید.
+ToCreateAPredefinedInvoice=To create a template invoice, create a standard invoice, then, without validating it, click on button "%s".
 LinkedOrder=پیوند به سفارش
 Mode1=روش 1
 Mode2=روش 2
@@ -231,6 +250,8 @@ ACCOUNTING_ACCOUNT_CUSTOMER_Desc=حساب‌حساب‌داری اختصاصی �
 ACCOUNTING_ACCOUNT_SUPPLIER=حساب حساب‌داری استفاده شده برای اشخاص سوم
 ACCOUNTING_ACCOUNT_SUPPLIER_Desc=حساب‌حساب‌داری اختصاصی تعریف شده در کارت شخص‌سوم تنها برای حساب‌داری دفترمعین استفاده می‌شود. اگر حساب‌حساب‌داری اختصاصی مشتری در کارت شخص‌سوم تعریف نشده باشد، این یکی فقط برای دفترکل‌مرکزی و به‌عنوان مقدار پیش‌فرض حسابداری دفترمعین استفاده می‌شود.
 ConfirmCloneTax=نسخه‌برداری از یک مالیات اجتماعی/ساختاری را تائید کنید
+ConfirmCloneVAT=Confirm the clone of a VAT declaration
+ConfirmCloneSalary=Confirm the clone of a salary
 CloneTaxForNextMonth=نسخه‌برداری برای ماه آینده
 SimpleReport=گزارش ساده
 AddExtraReport=گزارش‌های دیگر (افزودن گزارش‌های مشتری خارجی و داخلی)
@@ -249,9 +270,31 @@ AccountingAffectation=انتساب حساب‌داری
 LastDayTaxIsRelatedTo=آخرین روز دورۀ مالیاتی مربوط به
 VATDue=مالیات بر فروش مطالبه شده
 ClaimedForThisPeriod=مطالبه شده برای دورۀ
-PaidDuringThisPeriod=پرداخت شده برای این دوره
+PaidDuringThisPeriod=Paid for this period
+PaidDuringThisPeriodDesc=This is the sum of all payments linked to VAT declarations which have an end-of-period date in the selected date range
 ByVatRate=بر حسب نرخ مالیات‌برفروش
 TurnoverbyVatrate=گردش‌مالی صورت‌حساب‌شده بر حسب نرخ مالیات بر فروش
 TurnoverCollectedbyVatrate=گردش‌مالی دریافت‌شده بر حسب نرخ مالیات بر فروش
 PurchasebyVatrate=خریدها بر اساس نرخ مالیات بر فروش
 LabelToShow=برچسب کوتاه
+PurchaseTurnover=Purchase turnover
+PurchaseTurnoverCollected=Purchase turnover collected
+RulesPurchaseTurnoverDue=- It includes the supplier's due invoices whether they are paid or not. <br>- It is based on the invoice date of these invoices.<br>
+RulesPurchaseTurnoverIn=- It includes all the effective payments of invoices done to suppliers.<br>- It is based on the payment date of these invoices<br>
+RulesPurchaseTurnoverTotalPurchaseJournal=It includes all debit lines from the purchase journal.
+RulesPurchaseTurnoverOfExpenseAccounts=It includes (debit - credit) of lines for product accounts in group EXPENSE
+ReportPurchaseTurnover=Purchase turnover invoiced
+ReportPurchaseTurnoverCollected=Purchase turnover collected
+IncludeVarpaysInResults = Include various payments in reports
+IncludeLoansInResults = Include loans in reports
+InvoiceLate30Days = Invoices late (> 30 days)
+InvoiceLate15Days = Invoices late (15 to 30 days)
+InvoiceLateMinus15Days = Invoices late (< 15 days)
+InvoiceNotLate = To be collected (< 15 days)
+InvoiceNotLate15Days = To be collected (15 to 30 days)
+InvoiceNotLate30Days = To be collected (> 30 days)
+InvoiceToPay=To pay (< 15 days)
+InvoiceToPay15Days=To pay (15 to 30 days)
+InvoiceToPay30Days=To pay (> 30 days)
+ConfirmPreselectAccount=Preselect accountancy code
+ConfirmPreselectAccountQuestion=Are you sure you want to preselect the %s selected lines with this accountancy code ?

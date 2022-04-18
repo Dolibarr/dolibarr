@@ -364,7 +364,7 @@ dom.importCssString("\
     line-height: 1.4;\
     background: #25282c;\
     color: #c1c1c1;\
-}", "autocompletion.css");
+}", "autocompletion.css", false);
 
 exports.AcePopup = AcePopup;
 exports.$singleLineEditor = $singleLineEditor;
@@ -387,7 +387,7 @@ exports.parForEach = function(array, fn, callback) {
     }
 };
 
-var ID_REGEX = /[a-zA-Z_0-9\$\-\u00A2-\uFFFF]/;
+var ID_REGEX = /[a-zA-Z_0-9\$\-\u00A2-\u2000\u2070-\uFFFF]/;
 
 exports.retrievePrecedingIdentifier = function(text, pos, regex) {
     regex = regex || ID_REGEX;
@@ -430,8 +430,9 @@ exports.getCompletionPrefix = function (editor) {
 
 });
 
-define("ace/snippets",["require","exports","module","ace/lib/oop","ace/lib/event_emitter","ace/lib/lang","ace/range","ace/range_list","ace/keyboard/hash_handler","ace/tokenizer","ace/clipboard","ace/lib/dom","ace/editor"], function(require, exports, module) {
+define("ace/snippets",["require","exports","module","ace/lib/dom","ace/lib/oop","ace/lib/event_emitter","ace/lib/lang","ace/range","ace/range_list","ace/keyboard/hash_handler","ace/tokenizer","ace/clipboard","ace/editor"], function(require, exports, module) {
 "use strict";
+var dom = require("./lib/dom");
 var oop = require("./lib/oop");
 var EventEmitter = require("./lib/event_emitter").EventEmitter;
 var lang = require("./lib/lang");
@@ -576,7 +577,9 @@ var SnippetManager = function() {
                 {regex: "\\|" + escape("\\|") + "*\\|", onMatch: function(val, state, stack) {
                     var choices = val.slice(1, -1).replace(/\\[,|\\]|,/g, function(operator) {
                         return operator.length == 2 ? operator[1] : "\x00";
-                    }).split("\x00");
+                    }).split("\x00").map(function(value){
+                        return {value: value};
+                    });
                     stack[0].choices = choices;
                     return [choices[0]];
                 }, next: "start"},
@@ -1047,6 +1050,12 @@ var SnippetManager = function() {
             }
             snippetMap[scope].push(s);
 
+            if (s.prefix)
+                s.tabTrigger = s.prefix;
+
+            if (!s.content && s.body)
+                s.content = Array.isArray(s.body) ? s.body.join("\n") : s.body;
+
             if (s.tabTrigger && !s.trigger) {
                 if (!s.guard && /^\w/.test(s.tabTrigger))
                     s.guard = "\\b";
@@ -1063,10 +1072,13 @@ var SnippetManager = function() {
             s.endTriggerRe = new RegExp(s.endTrigger);
         }
 
-        if (snippets && snippets.content)
-            addSnippet(snippets);
-        else if (Array.isArray(snippets))
+        if (Array.isArray(snippets)) {
             snippets.forEach(addSnippet);
+        } else {
+            Object.keys(snippets).forEach(function(key) {
+                addSnippet(snippets[key]);
+            });
+        }
         
         this._signal("registerSnippets", {scope: scope});
     };
@@ -1116,7 +1128,7 @@ var SnippetManager = function() {
                     snippet.tabTrigger = val.match(/^\S*/)[0];
                     if (!snippet.name)
                         snippet.name = val;
-                } else {
+                } else if (key) {
                     snippet[key] = val;
                 }
             }
@@ -1179,15 +1191,16 @@ var TabstopManager = function(editor) {
 
     this.onChange = function(delta) {
         var isRemove = delta.action[0] == "r";
-        var parents = this.selectedTabstop && this.selectedTabstop.parents || {};
+        var selectedTabstop = this.selectedTabstop || {};
+        var parents = selectedTabstop.parents || {};
         var tabstops = (this.tabstops || []).slice();
         for (var i = 0; i < tabstops.length; i++) {
             var ts = tabstops[i];
-            var active = ts == this.selectedTabstop || parents[ts.index];
+            var active = ts == selectedTabstop || parents[ts.index];
             ts.rangeList.$bias = active ? 0 : 1;
             
-            if (delta.action == "remove" && ts !== this.selectedTabstop) {
-                var parentActive = ts.parents && ts.parents[this.selectedTabstop.index];
+            if (delta.action == "remove" && ts !== selectedTabstop) {
+                var parentActive = ts.parents && ts.parents[selectedTabstop.index];
                 var startIndex = ts.rangeList.pointIndex(delta.start, parentActive);
                 startIndex = startIndex < 0 ? -startIndex - 1 : startIndex + 1;
                 var endIndex = ts.rangeList.pointIndex(delta.end, parentActive);
@@ -1264,18 +1277,17 @@ var TabstopManager = function(editor) {
         
         this.selectedTabstop = ts;
         var range = ts.firstNonLinked || ts;
+        if (ts.choices) range.cursor = range.start;
         if (!this.editor.inVirtualSelectionMode) {
             var sel = this.editor.multiSelect;
-            sel.toSingleRange(range.clone());
+            sel.toSingleRange(range);
             for (var i = 0; i < ts.length; i++) {
                 if (ts.hasLinkedRanges && ts[i].linked)
                     continue;
                 sel.addRange(ts[i].clone(), true);
             }
-            if (sel.ranges[0])
-                sel.addRange(sel.ranges[0].clone());
         } else {
-            this.editor.selection.setRange(range);
+            this.editor.selection.fromOrientedRange(range);
         }
         
         this.editor.keyBinding.addKeyboardHandler(this.keyboardHandler);
@@ -1300,8 +1312,6 @@ var TabstopManager = function(editor) {
         var ranges = this.ranges;
         tabstops.forEach(function(ts, index) {
             var dest = this.$openTabstops[index] || ts;
-            ts.rangeList = new RangeList();
-            ts.rangeList.$bias = 0;
             
             for (var i = 0; i < ts.length; i++) {
                 var p = ts[i];
@@ -1311,7 +1321,6 @@ var TabstopManager = function(editor) {
                 range.original = p;
                 range.tabstop = dest;
                 ranges.push(range);
-                ts.rangeList.ranges.push(range);
                 if (dest != ts)
                     dest.unshift(range);
                 else
@@ -1329,6 +1338,9 @@ var TabstopManager = function(editor) {
                 this.$openTabstops[index] = dest;
             }
             this.addTabstopMarkers(dest);
+            dest.rangeList = dest.rangeList || new RangeList();
+            dest.rangeList.$bias = 0;
+            dest.rangeList.addList(dest);
         }, this);
         
         if (arg.length > 2) {
@@ -1371,21 +1383,18 @@ var TabstopManager = function(editor) {
 
     this.keyboardHandler = new HashHandler();
     this.keyboardHandler.bindKeys({
-        "Tab": function(ed) {
-            if (exports.snippetManager && exports.snippetManager.expandWithTab(ed)) {
+        "Tab": function(editor) {
+            if (exports.snippetManager && exports.snippetManager.expandWithTab(editor))
                 return;
-            }
-
-            ed.tabstopManager.tabNext(1);
+            editor.tabstopManager.tabNext(1);
+            editor.renderer.scrollCursorIntoView();
         },
-        "Shift-Tab": function(ed) {
-            ed.tabstopManager.tabNext(-1);
+        "Shift-Tab": function(editor) {
+            editor.tabstopManager.tabNext(-1);
+            editor.renderer.scrollCursorIntoView();
         },
-        "Esc": function(ed) {
-            ed.tabstopManager.detach();
-        },
-        "Return": function(ed) {
-            return false;
+        "Esc": function(editor) {
+            editor.tabstopManager.detach();
         }
     });
 }).call(TabstopManager.prototype);
@@ -1405,14 +1414,14 @@ var moveRelative = function(point, start) {
 };
 
 
-require("./lib/dom").importCssString("\
+dom.importCssString("\
 .ace_snippet-marker {\
     -moz-box-sizing: border-box;\
     box-sizing: border-box;\
     background: rgba(194, 193, 208, 0.09);\
     border: 1px dotted rgba(211, 208, 235, 0.62);\
     position: absolute;\
-}");
+}", "snippets.css", false);
 
 exports.snippetManager = new SnippetManager();
 
@@ -1509,6 +1518,7 @@ var Autocomplete = function() {
         } else if (keepPopupPosition && !prefix) {
             this.detach();
         }
+        this.changeTimer.cancel();
     };
 
     this.detach = function() {
@@ -1571,13 +1581,15 @@ var Autocomplete = function() {
         if (!data)
             return false;
 
+        var completions = this.completions;
+        this.editor.startOperation({command: {name: "insertMatch"}});
         if (data.completer && data.completer.insertMatch) {
             data.completer.insertMatch(this.editor, data);
         } else {
-            if (this.completions.filterText) {
+            if (completions.filterText) {
                 var ranges = this.editor.selection.getAllRanges();
                 for (var i = 0, range; range = ranges[i]; i++) {
-                    range.start.column -= this.completions.filterText.length;
+                    range.start.column -= completions.filterText.length;
                     this.editor.session.remove(range);
                 }
             }
@@ -1586,7 +1598,9 @@ var Autocomplete = function() {
             else
                 this.editor.execCommand("insertstring", data.value || data);
         }
-        this.detach();
+        if (this.completions == completions)
+            this.detach();
+        this.editor.endOperation();
     };
 
 
@@ -1682,19 +1696,14 @@ var Autocomplete = function() {
             return this.openPopup(this.editor, "", keepPopupPosition);
         }
         var _id = this.gatherCompletionsId;
-        this.gatherCompletions(this.editor, function(err, results) {
-            var detachIfFinished = function() {
-                if (!results.finished) return;
-                return this.detach();
-            }.bind(this);
+        var detachIfFinished = function(results) {
+            if (!results.finished) return;
+            return this.detach();
+        }.bind(this);
 
+        var processResults = function(results) {
             var prefix = results.prefix;
-            var matches = results && results.matches;
-
-            if (!matches || !matches.length)
-                return detachIfFinished();
-            if (prefix.indexOf(results.prefix) !== 0 || _id != this.gatherCompletionsId)
-                return;
+            var matches = results.matches;
 
             this.completions = new FilteredList(matches);
 
@@ -1704,14 +1713,39 @@ var Autocomplete = function() {
             this.completions.setFilter(prefix);
             var filtered = this.completions.filtered;
             if (!filtered.length)
-                return detachIfFinished();
+                return detachIfFinished(results);
             if (filtered.length == 1 && filtered[0].value == prefix && !filtered[0].snippet)
-                return detachIfFinished();
+                return detachIfFinished(results);
             if (this.autoInsert && filtered.length == 1 && results.finished)
                 return this.insertMatch(filtered[0]);
 
             this.openPopup(this.editor, prefix, keepPopupPosition);
+        }.bind(this);
+
+        var isImmediate = true;
+        var immediateResults = null;
+        this.gatherCompletions(this.editor, function(err, results) {
+            var prefix = results.prefix;
+            var matches = results && results.matches;
+
+            if (!matches || !matches.length)
+                return detachIfFinished(results);
+            if (prefix.indexOf(results.prefix) !== 0 || _id != this.gatherCompletionsId)
+                return;
+            if (isImmediate) {
+                immediateResults = results;
+                return;
+            }
+
+            processResults(results);
         }.bind(this));
+        
+        isImmediate = false;
+        if (immediateResults) {
+            var results = immediateResults;
+            immediateResults = null;
+            processResults(results);
+        }
     };
 
     this.cancelContextMenu = function() {
@@ -2000,10 +2034,11 @@ margin: 0px;\
 .ace_optionsMenuEntry button:hover{\
 background: #f0f0f0;\
 }";
-dom.importCssString(cssText);
+dom.importCssString(cssText, "settings_menu.css", false);
 
 module.exports.overlayPage = function overlayPage(editor, contentElement, callback) {
     var closer = document.createElement('div');
+    var ignoreFocusOut = false;
 
     function documentEscListener(e) {
         if (e.keyCode === 27) {
@@ -2015,17 +2050,28 @@ module.exports.overlayPage = function overlayPage(editor, contentElement, callba
         if (!closer) return;
         document.removeEventListener('keydown', documentEscListener);
         closer.parentNode.removeChild(closer);
-        editor.focus();
+        if (editor) {
+            editor.focus();
+        }
         closer = null;
         callback && callback();
+    }
+    function setIgnoreFocusOut(ignore) {
+        ignoreFocusOut = ignore;
+        if (ignore) {
+            closer.style.pointerEvents = "none";
+            contentElement.style.pointerEvents = "auto";
+        }
     }
 
     closer.style.cssText = 'margin: 0; padding: 0; ' +
         'position: fixed; top:0; bottom:0; left:0; right:0;' +
         'z-index: 9990; ' +
-        'background-color: rgba(0, 0, 0, 0.3);';
-    closer.addEventListener('click', function() {
-        close();
+        (editor ? 'background-color: rgba(0, 0, 0, 0.3);' : '');
+    closer.addEventListener('click', function(e) {
+        if (!ignoreFocusOut) {
+            close();
+        }
     });
     document.addEventListener('keydown', documentEscListener);
 
@@ -2035,9 +2081,12 @@ module.exports.overlayPage = function overlayPage(editor, contentElement, callba
 
     closer.appendChild(contentElement);
     document.body.appendChild(closer);
-    editor.blur();
+    if (editor) {
+        editor.blur();
+    }
     return {
-        close: close
+        close: close,
+        setIgnoreFocusOut: setIgnoreFocusOut
     };
 };
 
@@ -2084,22 +2133,23 @@ var supportedModes = {
     ABC:         ["abc"],
     ActionScript:["as"],
     ADA:         ["ada|adb"],
+    Alda:        ["alda"],
     Apache_Conf: ["^htaccess|^htgroups|^htpasswd|^conf|htaccess|htgroups|htpasswd"],
-    AsciiDoc:    ["asciidoc|adoc"],
-    ASL:         ["dsl|asl"],
-    Assembly_x86:["asm|a"],
-    AutoHotKey:  ["ahk"],
     Apex:        ["apex|cls|trigger|tgr"],
     AQL:         ["aql"],
+    AsciiDoc:    ["asciidoc|adoc"],
+    ASL:         ["dsl|asl|asl.json"],
+    Assembly_x86:["asm|a"],
+    AutoHotKey:  ["ahk"],
     BatchFile:   ["bat|cmd"],
     C_Cpp:       ["cpp|c|cc|cxx|h|hh|hpp|ino"],
     C9Search:    ["c9search_results"],
-    Crystal:     ["cr"],
     Cirru:       ["cirru|cr"],
     Clojure:     ["clj|cljs"],
     Cobol:       ["CBL|COB"],
     coffee:      ["coffee|cf|cson|^Cakefile"],
     ColdFusion:  ["cfm"],
+    Crystal:     ["cr"],
     CSharp:      ["cs"],
     Csound_Document: ["csd"],
     Csound_Orchestra: ["orc"],
@@ -2147,6 +2197,7 @@ var supportedModes = {
     Java:        ["java"],
     JavaScript:  ["js|jsm|jsx"],
     JSON:        ["json"],
+    JSON5:       ["json5"],
     JSONiq:      ["jq"],
     JSP:         ["jsp"],
     JSSM:        ["jssm|jssm_state"],
@@ -2154,6 +2205,7 @@ var supportedModes = {
     Julia:       ["jl"],
     Kotlin:      ["kt|kts"],
     LaTeX:       ["tex|latex|ltx|bib"],
+    Latte:       ["latte"],
     LESS:        ["less"],
     Liquid:      ["liquid"],
     Lisp:        ["lisp"],
@@ -2168,31 +2220,36 @@ var supportedModes = {
     Mask:        ["mask"],
     MATLAB:      ["matlab"],
     Maze:        ["mz"],
+    MediaWiki:   ["wiki|mediawiki"],
     MEL:         ["mel"],
+    MIPS:        ["s|asm"],
     MIXAL:       ["mixal"],
     MUSHCode:    ["mc|mush"],
     MySQL:       ["mysql"],
     Nginx:       ["nginx|conf"],
-    Nix:         ["nix"],
     Nim:         ["nim"],
+    Nix:         ["nix"],
     NSIS:        ["nsi|nsh"],
+    Nunjucks:    ["nunjucks|nunjs|nj|njk"],
     ObjectiveC:  ["m|mm"],
     OCaml:       ["ml|mli"],
     Pascal:      ["pas|p"],
     Perl:        ["pl|pm"],
-    Perl6:       ["p6|pl6|pm6"],
     pgSQL:       ["pgsql"],
-    PHP_Laravel_blade: ["blade.php"],
     PHP:         ["php|inc|phtml|shtml|php3|php4|php5|phps|phpt|aw|ctp|module"],
-    Puppet:      ["epp|pp"],
+    PHP_Laravel_blade: ["blade.php"],
     Pig:         ["pig"],
     Powershell:  ["ps1"],
     Praat:       ["praat|praatscript|psc|proc"],
+    Prisma:      ["prisma"],
     Prolog:      ["plg|prolog"],
     Properties:  ["properties"],
     Protobuf:    ["proto"],
+    Puppet:      ["epp|pp"],
     Python:      ["py"],
+    QML:         ["qml"],
     R:           ["r"],
+    Raku:        ["raku|rakumod|rakutest|p6|pl6|pm6"],
     Razor:       ["cshtml|asp"],
     RDoc:        ["Rd"],
     Red:         ["red|reds"],
@@ -2204,11 +2261,13 @@ var supportedModes = {
     SCAD:        ["scad"],
     Scala:       ["scala|sbt"],
     Scheme:      ["scm|sm|rkt|oak|scheme"],
+    Scrypt:      ["scrypt"],
     SCSS:        ["scss"],
     SH:          ["sh|bash|^.bashrc"],
     SJS:         ["sjs"],
     Slim:        ["slim|skim"],
     Smarty:      ["smarty|tpl"],
+    Smithy:      ["smithy"],
     snippets:    ["snippets"],
     Soy_Template:["soy"],
     Space:       ["space"],
@@ -2224,7 +2283,7 @@ var supportedModes = {
     Textile:     ["textile"],
     Toml:        ["toml"],
     TSX:         ["tsx"],
-    Twig:        ["latte|twig|swig"],
+    Twig:        ["twig|swig"],
     Typescript:  ["ts|typescript|str"],
     Vala:        ["vala"],
     VBScript:    ["vbs|vb"],
@@ -2256,6 +2315,7 @@ var nameOverrides = {
     Perl6: "Perl 6",
     AutoHotKey: "AutoHotkey / AutoIt"
 };
+
 var modesByName = {};
 for (var name in supportedModes) {
     var data = supportedModes[name];
@@ -2305,14 +2365,18 @@ function prompt(editor, message, options, callback) {
 
     var cmdLine = $singleLineEditor();
     cmdLine.session.setUndoManager(new UndoManager());
-    cmdLine.setOption("fontSize", editor.getOption("fontSize"));
 
-    var el = dom.buildDom(["div", {class: "ace_prompt_container"}]);
+    var el = dom.buildDom(["div", {class: "ace_prompt_container" + (options.hasDescription ? " input-box-with-description" : "")}]);
     var overlay = overlayPage(editor, el, done);
     el.appendChild(cmdLine.container);
 
-    editor.cmdLine = cmdLine;
-    cmdLine.setValue(message, 1);
+    if (editor) {
+        editor.cmdLine = cmdLine;
+        cmdLine.setOption("fontSize", editor.getOption("fontSize"));
+    }
+    if (message) {
+        cmdLine.setValue(message, 1);
+    }
     if (options.selection) {
         cmdLine.selection.setRange({
             start: cmdLine.session.doc.indexToPosition(options.selection[0]),
@@ -2348,14 +2412,26 @@ function prompt(editor, message, options, callback) {
         cmdLine.session.bgTokenizer.setTokenizer(tokenizer);
     }
 
+    if (options.placeholder) {
+        cmdLine.setOption("placeholder", options.placeholder);
+    }
+
+    if (options.hasDescription) {
+        var promptTextContainer = dom.buildDom(["div", {class: "ace_prompt_text_container"}]);
+        dom.buildDom(options.prompt || "Press 'Enter' to confirm or 'Escape' to cancel", promptTextContainer);
+        el.appendChild(promptTextContainer);
+    }
+
+    overlay.setIgnoreFocusOut(options.ignoreFocusOut);
+
     function accept() {
         var val;
-        if (popup.getCursorPosition().row > 0) {
+        if (popup && popup.getCursorPosition().row > 0) {
             val = valueFromRecentList();
         } else {
             val = cmdLine.getValue();
         }
-        var curData = popup.getData(popup.getRow());
+        var curData = popup ? popup.getData(popup.getRow()) : val;
         if (curData && !curData.error) {
             done();
             options.onAccept && options.onAccept({
@@ -2365,22 +2441,29 @@ function prompt(editor, message, options, callback) {
         }
     }
 
-    cmdLine.commands.bindKeys({
+    var keys = {
         "Enter": accept,
         "Esc|Shift-Esc": function() {
             options.onCancel && options.onCancel(cmdLine.getValue(), cmdLine);
             done();
-        },
-        "Up": function(editor) { popup.goTo("up"); valueFromRecentList();},
-        "Down": function(editor) { popup.goTo("down"); valueFromRecentList();},
-        "Ctrl-Up|Ctrl-Home": function(editor) { popup.goTo("start"); valueFromRecentList();},
-        "Ctrl-Down|Ctrl-End": function(editor) { popup.goTo("end"); valueFromRecentList();},
-        "Tab": function(editor) {
-            popup.goTo("down"); valueFromRecentList();
-        },
-        "PageUp": function(editor) { popup.gotoPageUp(); valueFromRecentList();},
-        "PageDown": function(editor) { popup.gotoPageDown(); valueFromRecentList();}
-    });
+        }
+    };
+
+    if (popup) {
+        Object.assign(keys, {
+            "Up": function(editor) { popup.goTo("up"); valueFromRecentList();},
+            "Down": function(editor) { popup.goTo("down"); valueFromRecentList();},
+            "Ctrl-Up|Ctrl-Home": function(editor) { popup.goTo("start"); valueFromRecentList();},
+            "Ctrl-Down|Ctrl-End": function(editor) { popup.goTo("end"); valueFromRecentList();},
+            "Tab": function(editor) {
+                popup.goTo("down"); valueFromRecentList();
+            },
+            "PageUp": function(editor) { popup.gotoPageUp(); valueFromRecentList();},
+            "PageDown": function(editor) { popup.gotoPageDown(); valueFromRecentList();}
+        });
+    }
+
+    cmdLine.commands.bindKeys(keys);
 
     function done() {
         overlay.close();
@@ -2413,7 +2496,9 @@ function prompt(editor, message, options, callback) {
     }
 
     cmdLine.resize(true);
-    popup.resize(true);
+    if (popup) {
+        popup.resize(true);
+    }
     cmdLine.focus();
 
     openPrompt = {
@@ -2546,13 +2631,10 @@ prompt.commands = function(editor, callback) {
             var platform = handler.platform;
             var cbn = handler.byName;
             for (var i in cbn) {
-                var key;
-                if (cbn[i].bindKey && cbn[i].bindKey[platform] !== null) {
-                    key = cbn[i].bindKey["win"];
-                } else {
-                    key = "";
+                var key = cbn[i].bindKey;
+                if (typeof key !== "string") {
+                    key = key && key[platform] || "";
                 }
-
                 var commands = cbn[i];
                 var description = commands.description || normalizeName(commands.name);
                 if (!Array.isArray(commands))
@@ -2709,7 +2791,7 @@ dom.importCssString(".ace_prompt_container {\
     background: white;\
     border-radius: 2px;\
     box-shadow: 0px 2px 3px 0px #555;\
-}");
+}", "promtp.css", false);
 
 
 exports.prompt = prompt;

@@ -22,9 +22,11 @@
  */
 
 require '../../main.inc.php';
-include_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-include_once DOL_DOCUMENT_ROOT.'/product/inventory/class/inventory.class.php';
-include_once DOL_DOCUMENT_ROOT.'/product/inventory/lib/inventory.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/inventory/class/inventory.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/inventory/lib/inventory.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("stocks", "other"));
@@ -35,23 +37,23 @@ $ref        = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm    = GETPOST('confirm', 'alpha');
 $cancel     = GETPOST('cancel', 'aZ09');
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'myobjectcard'; // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'inventorycard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 
-if (empty($conf->global->MAIN_USE_ADVANCED_PERMS))
-{
+if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
 	$result = restrictedArea($user, 'stock', $id);
-}
-else
-{
+} else {
 	$result = restrictedArea($user, 'stock', $id, '', 'inventory_advance');
 }
 
 // Initialize technical objects
 $object = new Inventory($db);
 $extrafields = new ExtraFields($db);
-$diroutputmassaction = $conf->stock->dir_output.'/temp/massgeneration/'.$user->id;
-$hookmanager->initHooks(array('inventorycard')); // Note that conf->hooks_modules contains array
+// no inventory docs yet
+$includedocgeneration = false;
+$diroutputmassaction = null;
+// $diroutputmassaction = $conf->stock->dir_output.'/temp/massgeneration/'.$user->id;
+$hookmanager->initHooks(array('inventorycard', 'globalcard')); // Note that conf->hooks_modules contains array
 
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -59,14 +61,17 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 // Initialize array of search criterias
-$search_all = trim(GETPOST("search_all", 'alpha'));
+$search_all = GETPOST("search_all", 'alpha');
 $search = array();
-foreach ($object->fields as $key => $val)
-{
-    if (GETPOST('search_'.$key, 'alpha')) $search[$key] = GETPOST('search_'.$key, 'alpha');
+foreach ($object->fields as $key => $val) {
+	if (GETPOST('search_'.$key, 'alpha')) {
+		$search[$key] = GETPOST('search_'.$key, 'alpha');
+	}
 }
 
-if (empty($action) && empty($id) && empty($ref)) $action = 'view';
+if (empty($action) && empty($id) && empty($ref)) {
+	$action = 'view';
+}
 
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
@@ -76,15 +81,20 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be includ
 //if ($user->socid > 0) $socid = $user->socid;
 //$result = restrictedArea($user, 'mymodule', $id);
 
-if (empty($conf->global->MAIN_USE_ADVANCED_PERMS))
-{
+if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
+	$permissiontoread = $user->rights->stock->lire;
 	$permissiontoadd = $user->rights->stock->creer;
 	$permissiontodelete = $user->rights->stock->supprimer;
-}
-else
-{
+	$permissionnote = $user->rights->stock->creer; // Used by the include of actions_setnotes.inc.php
+	$permissiondellink = $user->rights->stock->creer; // Used by the include of actions_dellink.inc.php
+	$upload_dir = $conf->stock->multidir_output[isset($object->entity) ? $object->entity : 1];
+} else {
+	$permissiontoread = $user->rights->stock->inventory_advance->read;
 	$permissiontoadd = $user->rights->stock->inventory_advance->write;
 	$permissiontodelete = $user->rights->stock->inventory_advance->write;
+	$permissionnote = $user->rights->stock->inventory_advance->write; // Used by the include of actions_setnotes.inc.php
+	$permissiondellink = $user->rights->stock->inventory_advance->write; // Used by the include of actions_dellink.inc.php
+	$upload_dir = $conf->stock->multidir_output[isset($object->entity) ? $object->entity : 1];
 }
 
 
@@ -94,15 +104,28 @@ else
 
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
-if (empty($reshook))
-{
+if (empty($reshook)) {
+	$savaction = $action;
 	$error = 0;
 
 	$backurlforlist = DOL_URL_ROOT.'/product/inventory/list.php';
 
-	// Actions cancel, add, update, delete or clone
+	if (empty($backtopage) || ($cancel && empty($id))) {
+		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
+			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
+				$backtopage = $backurlforlist;
+			} else {
+				$backtopage = dol_buildpath('/product/inventory/card.php', 1).'?id='.($id > 0 ? $id : '__ID__');
+			}
+		}
+	}
+	$triggermodname = 'STOCK_INVENTORY_MODIFY'; // Name of trigger action code to execute when we modify record
+
+	// Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen
 	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
 
 	// Actions when linking object each other
@@ -111,11 +134,31 @@ if (empty($reshook))
 	// Actions when printing a doc from card
 	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
+	// Action to move up and down lines of object
+	//include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php';
+
+	// Action to build doc
+	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
+
+	/*if ($action == 'set_thirdparty' && $permissiontoadd)
+	{
+		$object->setValueFrom('fk_soc', GETPOST('fk_soc', 'int'), '', '', 'date', '', $user, 'MYOBJECT_MODIFY');
+	}*/
+	if ($action == 'classin' && $permissiontoadd) {
+		$object->setProject(GETPOST('projectid', 'int'));
+	}
+
 	// Actions to send emails
-	/*$triggersendname = 'MYOBJECT_SENTBYMAIL';
-	$autocopy='MAIN_MAIL_AUTOCOPY_MYOBJECT_TO';
-	$trackid='myobject'.$object->id;
-	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';*/
+	$triggersendname = 'INVENTORY_SENTBYMAIL';
+	$autocopy = 'MAIN_MAIL_AUTOCOPY_INVENTORY_TO';
+	$trackid = 'stockinv'.$object->id;
+	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
+
+	if (!$error && $savaction == 'confirm_validate' && $action == '' && $object->id > 0) {
+		// Switch to the tab inventory
+		header("Location: ".DOL_URL_ROOT.'/product/inventory/inventory.php?id='.$object->id);
+		exit;
+	}
 }
 
 
@@ -126,36 +169,32 @@ if (empty($reshook))
  */
 
 $form = new Form($db);
+$formfile = new FormFile($db);
+$formproject = new FormProjets($db);
 
-llxHeader('', $langs->trans('Inventory'), '');
+$title = $langs->trans("Inventory");
 
-// Example : Adding jquery code
-print '<script type="text/javascript" language="javascript">
-jQuery(document).ready(function() {
-	function init_myfunc()
-	{
-		jQuery("#myid").removeAttr(\'disabled\');
-		jQuery("#myid").attr(\'disabled\',\'disabled\');
-	}
-	init_myfunc();
-	jQuery("#mybutton").click(function() {
-		init_myfunc();
-	});
-});
-</script>';
+$help_url = 'EN:Module_Stocks_En|FR:Module_Stock|ES:Módulo_Stocks|DE:Modul_Bestände';
+
+llxHeader('', $title, $help_url);
+
 
 
 // Part to create
-if ($action == 'create')
-{
-	print load_fiche_titre($langs->trans("NewInventory"), '', 'products');
+if ($action == 'create') {
+	print load_fiche_titre($langs->trans("NewInventory"), '', 'product');
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
-	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+	if ($backtopage) {
+		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+	}
+	if (!empty($backtopageforcancel)) {
+		print '<input type="hidden" name="backtopageforcancel" value="'.$backtopageforcancel.'">';
+	}
 
-	dol_fiche_head(array(), '');
+	print dol_get_fiche_head(array(), '');
 
 	print '<table class="border centpercent tableforfieldcreate">'."\n";
 
@@ -165,15 +204,13 @@ if ($action == 'create')
 	// Other attributes
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
 
+	//print '<tr><td class="titlefield fieldname_invcode">'.$langs->trans("InventoryCode").'</td><td>INV'.$object->id.'</td></tr>';
+
 	print '</table>'."\n";
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
-	print '<div class="center">';
-	print '<input type="submit" class="button" name="add" value="'.dol_escape_htmltag($langs->trans("Create")).'">';
-	print '&nbsp; ';
-	print '<input type="'.($backtopage ? "submit" : "button").'" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'"'.($backtopage ? '' : ' onclick="javascript:history.go(-1)"').'>'; // Cancel for create does not post form if we don't know the backtopage
-	print '</div>';
+	print $form->buttonsSaveCancel("Create");
 
 	print '</form>';
 
@@ -181,19 +218,23 @@ if ($action == 'create')
 }
 
 // Part to edit record
-if (($id || $ref) && $action == 'edit')
-{
-	print load_fiche_titre($langs->trans("Inventory"), '', 'products');
+if (($id || $ref) && $action == 'edit') {
+	print load_fiche_titre($langs->trans("Inventory"), '', 'product');
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
-	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
+	if ($backtopage) {
+		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+	}
+	if ($backtopageforcancel) {
+		print '<input type="hidden" name="backtopageforcancel" value="'.$backtopageforcancel.'">';
+	}
 
-	dol_fiche_head();
+	print dol_get_fiche_head();
 
-	print '<table class="border centpercent tableforfieldcreate">'."\n";
+	print '<table class="border centpercent tableforfieldedit">'."\n";
 
 	// Common attributes
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_edit.tpl.php';
@@ -203,47 +244,58 @@ if (($id || $ref) && $action == 'edit')
 
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
-	print '<div class="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
-	print ' &nbsp; <input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-	print '</div>';
+	print $form->buttonsSaveCancel();
 
 	print '</form>';
 }
 
 // Part to show record
-if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create')))
-{
-    $res = $object->fetch_optionals();
+if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'))) {
+	$res = $object->fetch_optionals();
 
-    $head = inventoryPrepareHead($object);
-	dol_fiche_head($head, 'card', $langs->trans("Inventory"), -1, 'stock');
+	$head = inventoryPrepareHead($object);
+	print dol_get_fiche_head($head, 'card', $langs->trans("Inventory"), -1, 'stock');
 
 	$formconfirm = '';
 
 	// Confirmation to delete
 	if ($action == 'delete') {
-	    $formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteInventory'), $langs->trans('ConfirmDeleteOrder'), 'confirm_delete', '', 0, 1);
-	}
-	// Confirmation to delete line
-	if ($action == 'deleteline')
-	{
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$lineid, $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_deleteline', '', 0, 1);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteInventory'), $langs->trans('ConfirmDeleteObject'), 'confirm_delete', '', 0, 1);
 	}
 
 	// Clone confirmation
 	if ($action == 'clone') {
 		// Create an array for form
 		$formquestion = array();
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneMyObject', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneAsk', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
+	}
+
+	// Confirmation of action xxxx
+	if ($action == 'xxx') {
+		$formquestion = array();
+		/*
+		 $forcecombo=0;
+		 if ($conf->browser->name == 'ie') $forcecombo = 1;	// There is a bug in IE10 that make combo inside popup crazy
+		 $formquestion = array(
+		 // 'text' => $langs->trans("ConfirmClone"),
+		 // array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' => 1),
+		 // array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value' => 1),
+		 // array('type' => 'other',    'name' => 'idwarehouse',   'label' => $langs->trans("SelectWarehouseForStockDecrease"), 'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse')?GETPOST('idwarehouse'):'ifone', 'idwarehouse', '', 1, 0, 0, '', 0, $forcecombo))
+		 );
+		 */
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('XXX'), $text, 'confirm_xxx', $formquestion, 0, 1, 220);
 	}
 
 	// Call Hook formConfirm
-	$parameters = array('formConfirm' => $formconfirm, 'lineid' => $lineid);
+	$parameters = array('formConfirm' => $formconfirm);
 	$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-	if (empty($reshook)) $formconfirm .= $hookmanager->resPrint;
-	elseif ($reshook > 0) $formconfirm = $hookmanager->resPrint;
+	if (empty($reshook)) {
+		$formconfirm .= $hookmanager->resPrint;
+	} elseif ($reshook > 0) {
+		$formconfirm = $hookmanager->resPrint;
+	}
 
 	// Print form confirm
 	print $formconfirm;
@@ -263,34 +315,34 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Project
 	if (! empty($conf->projet->enabled))
 	{
-	    $langs->load("projects");
-	    $morehtmlref.='<br>'.$langs->trans('Project') . ' ';
-	    if ($user->rights->inventory->creer)
-	    {
-	        if ($action != 'classify')
-	        {
-	            $morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
-	            if ($action == 'classify') {
-	                //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
-	                $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
-	                $morehtmlref.='<input type="hidden" name="action" value="classin">';
-	                $morehtmlref.='<input type="hidden" name="token" value="'.newToken().'">';
-	                $morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
-	                $morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
-	                $morehtmlref.='</form>';
-	            } else {
-	                $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
-	            }
-	        }
-	    } else {
-	        if (! empty($object->fk_project)) {
-	            $proj = new Project($db);
-	            $proj->fetch($object->fk_project);
-	            $morehtmlref.=$proj->getNomUrl();
-	        } else {
-	            $morehtmlref.='';
-	        }
-	    }
+		$langs->load("projects");
+		$morehtmlref.='<br>'.$langs->trans('Project') . ' ';
+		if ($permissiontoadd)
+		{
+			if ($action != 'classify')
+			{
+				$morehtmlref .= '<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+				if ($action == 'classify') {
+					//$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
+					$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+					$morehtmlref .= '<input type="hidden" name="action" value="classin">';
+					$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
+					$morehtmlref .= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+					$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+					$morehtmlref .= '</form>';
+				} else {
+					$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+				}
+			}
+		} else {
+			if (! empty($object->fk_project)) {
+				$proj = new Project($db);
+				$proj->fetch($object->fk_project);
+				$morehtmlref .= $proj->getNomUrl();
+			} else {
+				$morehtmlref.='';
+			}
+		}
 	}
 	*/
 	$morehtmlref .= '</div>';
@@ -316,106 +368,123 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	print '<div class="clearboth"></div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 
 	// Buttons for actions
 	if ($action != 'presend' && $action != 'editline') {
-    	print '<div class="tabsAction">'."\n";
-    	$parameters = array();
-    	$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-    	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+		print '<div class="tabsAction">'."\n";
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+		if ($reshook < 0) {
+			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+		}
 
-    	if (empty($reshook))
-    	{
-    	    // Send
-            print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a>'."\n";
+		if (empty($reshook)) {
+			// Send
+			if (empty($user->socid)) {
+				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init&token='.newToken().'#formmailbeforetitle">'.$langs->trans('SendMail').'</a>'."\n";
+			}
 
-        	if ($permissiontoadd)
-    		{
-    			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>'."\n";
-    		}
-    		else
-    		{
-    			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Modify').'</a>'."\n";
-    		}
+			// Back to draft
+			if ($object->status == $object::STATUS_VALIDATED) {
+				if ($permissiontoadd) {
+					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_setdraft&confirm=yes&token='.newToken().'">'.$langs->trans("SetToDraft").'</a>';
+				}
+			}
+			// Back to validate
+			if ($object->status == $object::STATUS_RECORDED) {
+				if ($permissiontoadd) {
+					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_validate&confirm=yes&token='.newToken().'">'.$langs->trans("ReOpen").'</a>';
+				}
+			}
 
-    		if ($permissiontoadd)
-    		{
-    			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit">'.$langs->trans("Validate").'</a>'."\n";
-    		}
-    		else
-    		{
-    			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Validate').'</a>'."\n";
-    		}
+			// Modify
+			if ($object->status == $object::STATUS_DRAFT) {
+				if ($permissiontoadd) {
+					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a>'."\n";
+				} else {
+					print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Modify').'</a>'."\n";
+				}
+			}
 
-    		if ($permissiontodelete)
-    		{
-    			print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>'."\n";
-    		}
-    		else
-    		{
-    			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Delete').'</a>'."\n";
-    		}
-    	}
-    	print '</div>'."\n";
+			// Validate
+			if ($object->status == $object::STATUS_DRAFT || $object->status == $object::STATUS_CANCELED) {
+				if ($permissiontoadd) {
+					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_validate&confirm=yes&token='.newToken().'">'.$langs->trans("Validate").' ('.$langs->trans("Start").')</a>';
+				}
+			}
+
+			// Clone
+			/*if ($permissiontoadd)
+			{
+				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&socid='.$object->socid.'&action=clone&object=myobject">'.$langs->trans("ToClone").'</a>'."\n";
+			}*/
+
+			// Delete (need delete permission, or if draft, just need create/modify permission)
+			if ($permissiontodelete || ($object->status == $object::STATUS_DRAFT && $permissiontoadd)) {
+				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().'">'.$langs->trans('Delete').'</a>'."\n";
+			} else {
+				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Delete').'</a>'."\n";
+			}
+		}
+		print '</div>'."\n";
 	}
 
 
 	// Select mail models is same action as presend
 	if (GETPOST('modelselected')) {
-	    $action = 'presend';
+		$action = 'presend';
 	}
 
-	if ($action != 'presend')
-	{
-	    print '<div class="fichecenter"><div class="fichehalfleft">';
-	    print '<a name="builddoc"></a>'; // ancre
+	if ($action != 'presend') {
+		print '<div class="fichecenter"><div class="fichehalfleft">';
+		print '<a name="builddoc"></a>'; // ancre
 
-	    // Documents
-	    /*$objref = dol_sanitizeFileName($object->ref);
-	     $relativepath = $comref . '/' . $comref . '.pdf';
-	     $filedir = $conf->mymodule->dir_output . '/' . $objref;
-	     $urlsource = $_SERVER["PHP_SELF"] . "?id=" . $object->id;
-	     $genallowed = $user->rights->mymodule->read;	// If you can read, you can build the PDF to read content
-	     $delallowed = $user->rights->mymodule->create;	// If you can create/edit, you can remove a file on card
-	     print $formfile->showdocuments('mymodule', $objref, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
-	     */
+		// Documents
+		if ($includedocgeneration) {
+			$objref = dol_sanitizeFileName($object->ref);
+			$relativepath = $objref.'/'.$objref.'.pdf';
+			$filedir = $conf->mymodule->dir_output.'/'.$object->element.'/'.$objref;
+			$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
+			$genallowed = $user->rights->mymodule->myobject->read; // If you can read, you can build the PDF to read content
+			$delallowed = $user->rights->mymodule->myobject->write; // If you can create/edit, you can remove a file on card
+			print $formfile->showdocuments('mymodule:MyObject', $object->element.'/'.$objref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $langs->defaultlang);
+		}
 
-	    // Show links to link elements
-	    $linktoelem = $form->showLinkToObjectBlock($object, null, array('inventory'));
-	    $somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
+		// Show links to link elements
+		$linktoelem = $form->showLinkToObjectBlock($object, null, array('inventory'));
+		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 
-	    print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+		print '</div><div class="fichehalfright">';
 
-	    $MAXEVENT = 10;
+		$MAXEVENT = 10;
 
-	    $morehtmlright = '<a href="'.dol_buildpath('/product/inventory/inventory_info.php', 1).'?id='.$object->id.'">';
-	    $morehtmlright.= $langs->trans("SeeAll");
-	    $morehtmlright.= '</a>';
+		//$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-list-alt imgforviewmode', DOL_URL_ROOT.'/product/inventory/inventory_info.php?id='.$object->id);
+		$morehtmlcenter = '';
 
-	    // List of actions on element
-	    include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
-	    $formactions = new FormActions($db);
-	    $somethingshown = $formactions->showactions($object, 'inventory', $socid, 1, '', $MAXEVENT, '', $morehtmlright);
+		// List of actions on element
+		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
+		$formactions = new FormActions($db);
+		$somethingshown = $formactions->showactions($object, $object->element, 0, 1, '', $MAXEVENT, '', $morehtmlcenter);
 
-	    print '</div></div></div>';
+		print '</div></div>';
 	}
 
 
 	//Select mail models is same action as presend
-	/*
-	if (GETPOST('modelselected')) $action = 'presend';
+	if (GETPOST('modelselected')) {
+		$action = 'presend';
+	}
 
 	// Presend form
-	$modelmail='inventory';
-	$defaulttopic='InformationMessage';
+	$modelmail = 'inventory';
+	$defaulttopic = 'InformationMessage';
 	$diroutput = $conf->product->dir_output.'/inventory';
 	$trackid = 'stockinv'.$object->id;
 
 	include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
-	*/
 }
 
 // End of page

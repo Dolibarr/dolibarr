@@ -23,10 +23,10 @@
  *	\brief      Module to manage the follow-up of the donations
  *	\file       htdocs/core/modules/modDon.class.php
  *	\ingroup    donations
- *	\brief      Description and activation file for module Donation
+ *	\brief      Description and activation file for the module Donation
  */
 
-include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
 
 /**
@@ -54,7 +54,7 @@ class modDon extends DolibarrModules
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		// Name of png file (without png) used for this module.
 		// Png file must be in theme/yourtheme/img directory under name object_pictovalue.png.
-		$this->picto='bill';
+		$this->picto = 'donation';
 
 		// Data directories to create when module is enabled
 		$this->dirs = array("/don/temp");
@@ -68,7 +68,7 @@ class modDon extends DolibarrModules
 
 		// Constants
 		$this->const = array();
-		$r=0;
+		$r = 0;
 
 		$this->const[$r][0] = "DON_ADDON_MODEL";
 		$this->const[$r][1] = "chaine";
@@ -91,10 +91,10 @@ class modDon extends DolibarrModules
 		$this->const[$r][4] = 0;
 
 		$r++;
-		$this->const[$r][0] = "DONATION_ART885";
+		$this->const[$r][0] = "DONATION_ART978";
 		$this->const[$r][1] = "yesno";
 		$this->const[$r][2] = "0";
-		$this->const[$r][3] = 'Option Française - Eligibilité Art885-0 V bis du CGI';
+		$this->const[$r][3] = 'Option Française - Eligibilité Art978 du CGI';
 		$this->const[$r][4] = 0;
 
 		$r++;
@@ -139,7 +139,7 @@ class modDon extends DolibarrModules
 
 		// Menus
 		//-------
-		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
+		$this->menu = 1; // This module add menu entries. They are coded into menu manager.
 	}
 
 
@@ -148,16 +148,21 @@ class modDon extends DolibarrModules
 	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
 	 *		It also creates data directories
 	 *
-     *      @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *      @param      string	$options    Options when enabling module ('', 'noboxes')
 	 *      @return     int             	1 if OK, 0 if KO
 	 */
 	public function init($options = '')
 	{
 		global $conf;
 
+		$result = $this->_load_tables('/install/mysql/tables/', 'deplacement');
+		if ($result < 0) {
+			return -1; // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
+		}
+
 		$sql = array(
-			 "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[0][2])."' AND type = 'donation' AND entity = ".$conf->entity,
-			 "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[0][2])."','donation',".$conf->entity.")",
+			 "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[0][2])."' AND type = 'donation' AND entity = ".((int) $conf->entity),
+			 "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[0][2])."','donation',".((int) $conf->entity).")",
 		);
 
 		return $this->_init($sql, $options);

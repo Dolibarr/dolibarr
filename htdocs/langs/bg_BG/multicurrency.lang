@@ -1,0 +1,22 @@
+# Dolibarr language file - Source file is en_US - multicurrency
+MultiCurrency=Валути
+ErrorAddRateFail=Грешка в добавения курс
+ErrorAddCurrencyFail=Грешка в добавената валута
+ErrorDeleteCurrencyFail=Грешка при изтриване
+multicurrency_syncronize_error=Грешка при синхронизиране: %s
+MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE=Използване на датата на документа за намиране на валутния курс, вместо да използване на най-новия известен курс
+multicurrency_useOriginTx=Когато даден обект е създаден от друг запазва първоначалния курс от изходния обект (в противен случай използва най-новия известен курс)
+CurrencyLayerAccount=API на CurrencyLayer
+CurrencyLayerAccount_help_to_synchronize=Трябва да създадете акаунт в сайта %s, за да използвате тази функция. <br> Вземете своя <b>API ключ</b>. <br> Ако използвате безплатен акаунт, не може да променяте <b>валутния източник</b> (USD по подразбиране). <br> Ако основната ви валута не е USD, приложението автоматично ще я калкулира. <br><br> Ограничени сте до 1000 синхронизации на месец.
+multicurrency_appId=API ключ
+multicurrency_appCurrencySource=Валутен източник
+multicurrency_alternateCurrencySource=Алтернативен валутен източник
+CurrenciesUsed=Използвани валути
+CurrenciesUsed_help_to_add=Добавете различните валути и курсове, които трябва да използвате във вашите <b>предложения</b>, <b> поръчки </b> и др.
+rate=курс
+MulticurrencyReceived=Получена сума, основна валута
+MulticurrencyRemainderToTake=Оставаща сума, основна валута
+MulticurrencyPaymentAmount=Сума за плащане, оригинална валута
+AmountToOthercurrency=Сума до (във валута на сметката за получаване)
+CurrencyRateSyncSucceed=Синхронизирането на валутни курсове е извършено успешно
+MULTICURRENCY_USE_CURRENCY_ON_DOCUMENT=Използване на валутата в документа при онлайн плащания

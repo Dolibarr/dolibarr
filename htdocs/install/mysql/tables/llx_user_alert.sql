@@ -21,6 +21,6 @@ create table llx_user_alert
 (
   rowid        integer AUTO_INCREMENT PRIMARY KEY,
   type         integer,
-  fk_contact   integer, -- pointe sur llx_socpeople
-  fk_user      integer
+  fk_contact   integer, 	-- id of llx_socpeople
+  fk_user      integer  	-- id of llx_user
 )ENGINE=innodb;

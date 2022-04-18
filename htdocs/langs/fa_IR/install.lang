@@ -8,14 +8,9 @@ ConfFileIsNotWritable=فایل پیکربندی <b>%s</b> قابل نوشتن ن
 ConfFileIsWritable=فایل پیکربندی <b>%s</b> قابل نوشتن است
 ConfFileMustBeAFileNotADir=فایل پیکربندی <b>%s</b>باید یک فایل باشد، نه یک پوشه. 
 ConfFileReload=بارگذاری مجدد مقادیر از فایل پیکربندی.
-PHPSupportSessions=این PHP از قابلیت نشست‌ پشتیبانی می‌کند.
 PHPSupportPOSTGETOk=این PHP از قابلیت GET و POST متغیرها پشتیبانی می‌کند.
 PHPSupportPOSTGETKo=ممکن است برپاسازی PHP شما از قابلیت POST و یا GET متغیرها پشتیبانی نمی‌کند. در php.ini مقدار <b>variables_order</b> را بررسی کنید. 
-PHPSupportGD=این PHP از کارکردهای گرافیکی GD پشتیبانی می‌کند.
-PHPSupportCurl=این PHP از Curl پشتیبان می‌کند.
-PHPSupportCalendar=This PHP supports calendars extensions.
-PHPSupportUTF8=این PHP از توابع UTF8 پشتیبانی می‌کند.
-PHPSupportIntl=این PHP از توابع Intl پشتیبانی می‌کند
+PHPSupportSessions=این PHP از قابلیت نشست‌ پشتیبانی می‌کند.
 PHPSupport=This PHP supports %s functions.
 PHPMemoryOK=حداکثر حافظۀ اختصاص داده شده به نشست به <b>%s</b> تنظیم شده است. این باید کافی باشد.
 PHPMemoryTooLow=حداکثر حافظۀ مورد استفاده در یک نشست در PHP شما در حد <b>%s</b> بایت تنظیم شده است. این میزان بسیار کمی است. فایل <b>php.ini</b> را ویرایش نموده و مقدار <b>memory_limit</b> را حداقل برابر <b>%s</b> بایت تنظیم کنید
@@ -26,6 +21,8 @@ ErrorPHPDoesNotSupportCurl=نسخۀ PHP نصب شدۀ شما از Curl پشتی�
 ErrorPHPDoesNotSupportCalendar=Your PHP installation does not support php calendar extensions.
 ErrorPHPDoesNotSupportUTF8=نسخۀ PHP نصب شدۀ شما از توابع UTF8 پشتیبانی نمی‌کند. Dolibarr نمی‌تواند به درستی کار کند. قبل از نصب Dolibarr این مشکل را حل کنید.
 ErrorPHPDoesNotSupportIntl=نسخۀ نصب شدۀ PHP شما از توابع Intl پشتیبانی نمی‌کند.
+ErrorPHPDoesNotSupportMbstring=Your PHP installation does not support mbstring functions.
+ErrorPHPDoesNotSupportxDebug=Your PHP installation does not support extend debug functions.
 ErrorPHPDoesNotSupport=Your PHP installation does not support %s functions.
 ErrorDirDoesNotExists=پوشۀ %s وجود ندارد.
 ErrorGoBackAndCorrectParameters=به عقب برگردید و مقادیر را بررسی/اصلاح کنید.
@@ -91,7 +88,7 @@ GoToSetupArea=برو به Dolibarr (بخش برپاسازی)
 MigrationNotFinished=نسخۀ پایگاه داده کاملا به‌روز نیست: روند ارتقا را دوباره اجرا کنید.
 GoToUpgradePage=رفتن دوباره به صفحۀ ارتقا
 WithNoSlashAtTheEnd=بدون ممیز "/" در انتها
-DirectoryRecommendation=پیشنهاد می‌شود یک پوشه در بیرون از محیط صفحات وب استفاده شود
+DirectoryRecommendation=<span class="warning">IMPORTANT</span>: You must use a directory that is outside of the web pages (so do not use a subdirectory of previous parameter).
 LoginAlreadyExists=قبلا وجود داشته است
 DolibarrAdminLogin=ورود کاربر مدیر به Dolibarr
 AdminLoginAlreadyExists=حساب مدیریت Dolibarr '<b>%s</b>' قبلا وجود داشته است. در صورتی که می‌خواهید یکی دیگر بسازید، به عقب برگردید.
@@ -210,10 +207,13 @@ MigrationUserPhotoPath=انتقال مسیرهای تصاویر مربوط به 
 MigrationFieldsSocialNetworks=Migration of users fields social networks (%s)
 MigrationReloadModule=بارگذاری دوبارۀ واحد %s
 MigrationResetBlockedLog=بازنشانی واحد BlockedLog  برای الگوریتم نسخۀ 7
+MigrationImportOrExportProfiles=Migration of import or export profiles (%s)
 ShowNotAvailableOptions=نمایش گزینه‌های خارج‌ازدسترس
 HideNotAvailableOptions=پنهان کردن گزینه‌های خارج از دسترس
 ErrorFoundDuringMigration=خطا(ها)ئی که در طول انجام انتقال گزارش می‌شوند و منجر به این می‌شوند گام بعدی فعال نباشد. برای نادیده گرفتن خطاها شما باید <a href="%s">اینجا کلیک کنید</a>، اما ممکن است برنامه یا برخی قابلیت‌ها تا زمانی که خطاها رفع نشود، کار نکند.
 YouTryInstallDisabledByDirLock=برنامه تلاش کرده است که خود را ارتقا دهد، اما صفحات نصب/ارتقا به دلایل امنیتی غیرفعال شده (پوشه با یک پسوند .lock پس‌وند گرفته است).<br>
 YouTryInstallDisabledByFileLock=برنامه تلاش کرده است خود را ارتقا دهد، اما صفحات نصب/ارتقا به دلایل امنیتی غیر فعال شده است ( چون فایل قفل <strong>install.lock</strong> در پوشۀ documents دلیبار وجود دارد).<br>
 ClickHereToGoToApp=برای مراجعه به برنامه این‌جا کلیک کنید
-ClickOnLinkOrRemoveManualy=روی پیوند مقابل کلیک کنید. اگر همیشه شما همین صفحه را می‌بینید شما باید فایل install.lock را از پوشۀ document حذف کرده یا تغییر نام دهید.
+ClickOnLinkOrRemoveManualy=If an upgrade is in progress, please wait. If not, click on the following link. If you always see this same page, you must remove/rename the file install.lock in the documents directory.
+Loaded=Loaded
+FunctionTest=Function test

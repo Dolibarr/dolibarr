@@ -22,13 +22,13 @@ AccountancyCodeAsset = Учетный код (актив)
 AccountancyCodeDepreciationAsset = Учетный код (счет актива амортизации)
 AccountancyCodeDepreciationExpense = Учетный код (счет амортизационных расходов)
 NewAssetType=Тип нового актива
-AssetsTypeSetup=Asset type setup
-AssetTypeModified=Asset type modified
+AssetsTypeSetup=Настройка типа актива
+AssetTypeModified=Тип актива изменен
 AssetType=Тип актива
 AssetsLines=Активы
 DeleteType=Удалить
-DeleteAnAssetType=Delete an asset type
-ConfirmDeleteAssetType=Are you sure you want to delete this asset type?
+DeleteAnAssetType=Удалить тип актива
+ConfirmDeleteAssetType=Вы действительно хотите удалить этот тип актива?
 ShowTypeCard=Показать типу ' %s'
 
 # Module label 'ModuleAssetsName'
@@ -42,7 +42,7 @@ ModuleAssetsDesc = Описание активов
 AssetsSetup = Настройка активов
 Settings = Настройки
 AssetsSetupPage = Страница настройки активов
-ExtraFieldsAssetsType = Complementary attributes (Asset type)
+ExtraFieldsAssetsType = Дополнительные атрибуты (тип актива)
 AssetsType=Тип актива
 AssetsTypeId=Идентификатор типа актива
 AssetsTypeLabel=Метка типа актива
@@ -61,5 +61,7 @@ MenuListTypeAssets = Список
 #
 # Module
 #
+Asset=Актив
 NewAssetType=Тип нового актива
 NewAsset=Новый актив
+ConfirmDeleteAsset=Вы уверены, что хотите удалить этот актив?

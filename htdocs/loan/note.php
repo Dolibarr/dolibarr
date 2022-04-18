@@ -41,10 +41,14 @@ $langs->loadLangs(array("loan"));
 
 // Security check
 $id = GETPOST('id', 'int');
+
+$hookmanager->initHooks(array('loannote'));
 $result = restrictedArea($user, 'loan', $id, '&loan');
 
 $object = new Loan($db);
-if ($id > 0) $object->fetch($id);
+if ($id > 0) {
+	$object->fetch($id);
+}
 
 $permissionnote = $user->rights->loan->write; // Used by the include of actions_setnotes.inc.php
 
@@ -53,7 +57,14 @@ $permissionnote = $user->rights->loan->write; // Used by the include of actions_
  *  Actions
  */
 
-include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not include_once
+
+$reshook = $hookmanager->executeHooks('doActions', array(), $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
+if (empty($reshook)) {
+	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not include_once
+}
 
 
 /*
@@ -66,16 +77,15 @@ $title = $langs->trans("Loan").' - '.$langs->trans("Notes");
 $help_url = 'EN:Module_Loan|FR:Module_Emprunt';
 llxHeader("", $title, $help_url);
 
-if ($id > 0)
-{
-    /*
-     * Affichage onglets
-     */
+if ($id > 0) {
+	/*
+	 * Affichage onglets
+	 */
 	$totalpaid = $object->getSumPayment();
 
-    $head = loan_prepare_head($object);
+	$head = loan_prepare_head($object);
 
-    dol_fiche_head($head, 'note', $langs->trans("Loan"), -1, 'bill');
+	print dol_get_fiche_head($head, 'note', $langs->trans("Loan"), -1, 'bill');
 
 	$morehtmlref = '<div class="refidno">';
 	// Ref loan
@@ -87,7 +97,7 @@ if ($id > 0)
 		$morehtmlref .= '<br>'.$langs->trans('Project').' : ';
 		if ($user->rights->loan->write) {
 			//if ($action != 'classify')
-			//	$morehtmlref .= '<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+			//	$morehtmlref .= '<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 			if ($action == 'classify') {
 				// $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
 				$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
@@ -103,9 +113,10 @@ if ($id > 0)
 			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
 				$proj->fetch($object->fk_project);
-				$morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$object->fk_project.'" title="'.$langs->trans('ShowProject').'">';
-				$morehtmlref .= $proj->ref;
-				$morehtmlref .= '</a>';
+				$morehtmlref .= ' : '.$proj->getNomUrl(1);
+				if ($proj->title) {
+					$morehtmlref .= ' - '.$proj->title;
+				}
 			} else {
 				$morehtmlref .= '';
 			}
@@ -122,11 +133,11 @@ if ($id > 0)
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
 
-    $cssclass = 'titlefield';
-    $permission = $user->rights->loan->write; // Used by the include of notes.tpl.php
-    include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
+	$cssclass = 'titlefield';
+	$permission = $user->rights->loan->write; // Used by the include of notes.tpl.php
+	include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
-    dol_fiche_end();
+	print dol_get_fiche_end();
 }
 
 // End of page

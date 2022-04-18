@@ -1,0 +1,67 @@
+# Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+Assets = Aktivlar
+NewAsset = Yangi aktiv
+AccountancyCodeAsset = Buxgalteriya kodi (aktiv)
+AccountancyCodeDepreciationAsset = Buxgalteriya kodi (amortizatsiya aktivlari hisobi)
+AccountancyCodeDepreciationExpense = Buxgalteriya kodi (amortizatsiya xarajatlari hisobi)
+NewAssetType=Yangi aktiv turi
+AssetsTypeSetup=Obyekt turini sozlash
+AssetTypeModified=Obyekt turi o'zgartirildi
+AssetType=Obyekt turi
+AssetsLines=Aktivlar
+DeleteType=O'chirish
+DeleteAnAssetType=Obyekt turini o'chirib tashlang
+ConfirmDeleteAssetType=Ushbu aktiv turini o'chirishni xohlaysizmi?
+ShowTypeCard="%s" turini ko'rsatish
+
+# Module label 'ModuleAssetsName'
+ModuleAssetsName = Aktivlar
+# Module description 'ModuleAssetsDesc'
+ModuleAssetsDesc = Aktivlarning tavsifi
+
+#
+# Admin page
+#
+AssetsSetup = Aktivlarni sozlash
+Settings = Sozlamalar
+AssetsSetupPage = Aktivlarni sozlash sahifasi
+ExtraFieldsAssetsType = Qo'shimcha atributlar (aktiv turi)
+AssetsType=Obyekt turi
+AssetsTypeId=Obyekt turi identifikatori
+AssetsTypeLabel=Obyekt turi yorlig'i
+AssetsTypes=Aktiv turlari
+
+#
+# Menu
+#
+MenuAssets = Aktivlar
+MenuNewAsset = Yangi aktiv
+MenuTypeAssets = Aktivlarni kiriting
+MenuListAssets = Ro'yxat
+MenuNewTypeAssets = Yangi
+MenuListTypeAssets = Ro'yxat
+
+#
+# Module
+#
+Asset=Aktiv
+NewAssetType=Yangi aktiv turi
+NewAsset=Yangi aktiv
+ConfirmDeleteAsset=Haqiqatan ham ushbu aktivni o'chirishni xohlaysizmi?

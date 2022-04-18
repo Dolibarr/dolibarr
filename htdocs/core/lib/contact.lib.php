@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2006-2010  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2010-2017  Regis Houssin       <regis.houssin@inodbox.com>
- * Copyright (C) 2015       Frederic France     <frederic.france@free.fr>
+ * Copyright (C) 2015-2021  Frederic France     <frederic.france@netlogic.fr>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -38,13 +38,12 @@ function contact_prepare_head(Contact $object)
 	$head = array();
 
 	$head[$tab][0] = DOL_URL_ROOT.'/contact/card.php?id='.$object->id;
-	$head[$tab][1] = $langs->trans("Card");
+	$head[$tab][1] = $langs->trans("Contact");
 	$head[$tab][2] = 'card';
 	$tab++;
 
-	if ((! empty($conf->ldap->enabled) && ! empty($conf->global->LDAP_CONTACT_ACTIVE))
-		&& (empty($conf->global->MAIN_DISABLE_LDAP_TAB) || ! empty($user->admin)))
-	{
+	if ((!empty($conf->ldap->enabled) && !empty($conf->global->LDAP_CONTACT_ACTIVE))
+		&& (empty($conf->global->MAIN_DISABLE_LDAP_TAB) || !empty($user->admin))) {
 		$langs->load("ldap");
 
 		$head[$tab][0] = DOL_URL_ROOT.'/contact/ldap.php?id='.$object->id;
@@ -58,56 +57,92 @@ function contact_prepare_head(Contact $object)
 	$head[$tab][2] = 'perso';
 	$tab++;
 
+	if (!empty($conf->projet->enabled) && (!empty($user->rights->projet->lire))) {
+		$nbProject = 0;
+		// Enable caching of thirdrparty count projects
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
+		$cachekey = 'count_projects_contact_'.$object->id;
+		$dataretrieved = dol_getcache($cachekey);
+
+		if (!is_null($dataretrieved)) {
+			$nbProject = $dataretrieved;
+		} else {
+			$sql = 'SELECT COUNT(n.rowid) as nb';
+			$sql .= ' FROM '.MAIN_DB_PREFIX.'projet as n';
+			$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'element_contact as cc ON (n.rowid = cc.element_id)';
+			$sql .= ' WHERE cc.fk_socpeople = '.((int) $object->id);
+			$sql .= ' AND cc.fk_c_type_contact IN (SELECT rowid FROM '.MAIN_DB_PREFIX.'c_type_contact WHERE element="project" AND source="external")';
+			$sql .= ' AND n.entity IN ('.getEntity('project').')';
+			$resql = $db->query($sql);
+			if ($resql) {
+				$obj = $db->fetch_object($resql);
+				$nbProject = $obj->nb;
+			} else {
+				dol_print_error($db);
+			}
+			dol_setcache($cachekey, $nbProject, 120);	// If setting cache fails, this is not a problem, so we do not test result.
+		}
+		$head[$tab][0] = DOL_URL_ROOT.'/contact/project.php?id='.$object->id;
+		$head[$tab][1] = $langs->trans("Projects");
+		if ($nbProject > 0) {
+			$head[$tab][1] .= '<span class="badge marginleftonlyshort">'.$nbProject.'</span>';
+		}
+		$head[$tab][2] = 'project';
+		$tab++;
+	}
+
 	// Related items
-    if (! empty($conf->commande->enabled) || ! empty($conf->propal->enabled) || ! empty($conf->facture->enabled) || ! empty($conf->ficheinter->enabled) || ! empty($conf->fournisseur->enabled))
-    {
-        $head[$tab][0] = DOL_URL_ROOT.'/contact/consumption.php?id='.$object->id;
-        $head[$tab][1] = $langs->trans("Referers");
-        $head[$tab][2] = 'consumption';
-        $tab++;
-    }
+	if (!empty($conf->commande->enabled) || !empty($conf->propal->enabled) || !empty($conf->facture->enabled) || !empty($conf->ficheinter->enabled) || (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) {
+		$head[$tab][0] = DOL_URL_ROOT.'/contact/consumption.php?id='.$object->id;
+		$head[$tab][1] = $langs->trans("Referers");
+		$head[$tab][2] = 'consumption';
+		$tab++;
+	}
 
-    // Show more tabs from modules
-    // Entries must be declared in modules descriptor with line
-    // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
-    // $this->tabs = array('entity:-tabname);   												to remove a tab
-    complete_head_from_modules($conf, $langs, $object, $head, $tab, 'contact');
+	// Show more tabs from modules
+	// Entries must be declared in modules descriptor with line
+	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+	// $this->tabs = array('entity:-tabname);   												to remove a tab
+	complete_head_from_modules($conf, $langs, $object, $head, $tab, 'contact');
 
-    // Notes
-    if (empty($conf->global->MAIN_DISABLE_NOTES_TAB)) {
-        $nbNote = (empty($object->note_private)?0:1)+(empty($object->note_public)?0:1);
-        $head[$tab][0] = DOL_URL_ROOT.'/contact/note.php?id='.$object->id;
-        $head[$tab][1] = $langs->trans("Note");
-        if($nbNote > 0) $head[$tab][1].= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
-        $head[$tab][2] = 'note';
-        $tab++;
-    }
+	// Notes
+	if (empty($conf->global->MAIN_DISABLE_NOTES_TAB)) {
+		$nbNote = (empty($object->note_private) ? 0 : 1) + (empty($object->note_public) ? 0 : 1);
+		$head[$tab][0] = DOL_URL_ROOT.'/contact/note.php?id='.$object->id;
+		$head[$tab][1] = $langs->trans("Note");
+		if ($nbNote > 0) {
+			$head[$tab][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
+		}
+		$head[$tab][2] = 'note';
+		$tab++;
+	}
 
-    require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-    require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
-    $upload_dir = $conf->societe->dir_output . "/contact/" . dol_sanitizeFileName($object->ref);
-    $nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
-    $nbLinks=Link::count($db, $object->element, $object->id);
-    $head[$tab][0] = DOL_URL_ROOT.'/contact/document.php?id='.$object->id;
-    $head[$tab][1] = $langs->trans("Documents");
-    if (($nbFiles+$nbLinks) > 0) $head[$tab][1].= '<span class="badge marginleftonlyshort">'.($nbFiles+$nbLinks).'</span>';
-    $head[$tab][2] = 'documents';
-    $tab++;
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
+	$upload_dir = $conf->societe->dir_output."/contact/".dol_sanitizeFileName($object->ref);
+	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
+	$nbLinks = Link::count($db, $object->element, $object->id);
+	$head[$tab][0] = DOL_URL_ROOT.'/contact/document.php?id='.$object->id;
+	$head[$tab][1] = $langs->trans("Documents");
+	if (($nbFiles + $nbLinks) > 0) {
+		$head[$tab][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
+	}
+	$head[$tab][2] = 'documents';
+	$tab++;
 
-    // Agenda / Events
-    $head[$tab][0] = DOL_URL_ROOT.'/contact/agenda.php?id='.$object->id;
-    $head[$tab][1].= $langs->trans("Events");
-    if (! empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read) ))
-    {
-        $head[$tab][1].= '/';
-        $head[$tab][1].= $langs->trans("Agenda");
-    }
-    $head[$tab][2] = 'agenda';
-    $tab++;
+	// Agenda / Events
+	$head[$tab][0] = DOL_URL_ROOT.'/contact/agenda.php?id='.$object->id;
+	$head[$tab][1] = $langs->trans("Events");
+	if (!empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
+		$head[$tab][1] .= '/';
+		$head[$tab][1] .= $langs->trans("Agenda");
+	}
+	$head[$tab][2] = 'agenda';
+	$tab++;
 
-    // Log
-    /*
-    $head[$tab][0] = DOL_URL_ROOT.'/contact/info.php?id='.$object->id;
+	// Log
+	/*
+	$head[$tab][0] = DOL_URL_ROOT.'/contact/info.php?id='.$object->id;
 	$head[$tab][1] = $langs->trans("Info");
 	$head[$tab][2] = 'info';
 	$tab++;*/
@@ -115,4 +150,132 @@ function contact_prepare_head(Contact $object)
 	complete_head_from_modules($conf, $langs, $object, $head, $tab, 'contact', 'remove');
 
 	return $head;
+}
+
+/**
+ * 		Show html area for list of projects
+ *
+ *		@param	Conf		$conf			Object conf
+ * 		@param	Translate	$langs			Object langs
+ * 		@param	DoliDB		$db				Database handler
+ * 		@param	Object		$object			Third party object
+ *      @param  string		$backtopage		Url to go once contact is created
+ *      @param  int         $nocreatelink   1=Hide create project link
+ *      @param	string		$morehtmlright	More html on right of title
+ *      @return	int
+ */
+function show_contacts_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatelink = 0, $morehtmlright = '')
+{
+	global $user;
+
+	$i = -1;
+
+	if (!empty($conf->projet->enabled) && $user->rights->projet->lire) {
+		$langs->load("projects");
+
+		$newcardbutton = '';
+		if (!empty($conf->projet->enabled) && $user->rights->projet->creer && empty($nocreatelink)) {
+			$newcardbutton .= dolGetButtonTitle($langs->trans('AddProject'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/projet/card.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage));
+		}
+
+		print "\n";
+		print load_fiche_titre($langs->trans("ProjectsHavingThisContact"), $newcardbutton.$morehtmlright, '');
+		print '<div class="div-table-responsive">';
+		print "\n".'<table class="noborder" width=100%>';
+
+		$sql  = 'SELECT p.rowid as id, p.entity, p.title, p.ref, p.public, p.dateo as do, p.datee as de, p.fk_statut as status, p.fk_opp_status, p.opp_amount, p.opp_percent, p.tms as date_update, p.budget_amount';
+		$sql .= ', cls.code as opp_status_code, ctc.libelle';
+		$sql .= ' FROM '.MAIN_DB_PREFIX.'projet as p';
+		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_lead_status as cls on p.fk_opp_status = cls.rowid';
+		$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'element_contact as cc ON (p.rowid = cc.element_id)';
+		$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON (ctc.rowid = cc.fk_c_type_contact)';
+		$sql .= ' WHERE cc.fk_socpeople = '.((int) $object->id);
+		$sql .= ' AND ctc.element="project" AND ctc.source="external"';
+		$sql .= ' AND p.entity IN ('.getEntity('project').')';
+		$sql .= ' ORDER BY p.dateo DESC';
+
+		$result = $db->query($sql);
+		if ($result) {
+			$num = $db->num_rows($result);
+
+			print '<tr class="liste_titre">';
+			print '<td>'.$langs->trans("Ref").'</td>';
+			print '<td>'.$langs->trans("Name").'</td>';
+			print '<td>'.$langs->trans("ContactType").'</td>';
+			print '<td class="center">'.$langs->trans("DateStart").'</td>';
+			print '<td class="center">'.$langs->trans("DateEnd").'</td>';
+			print '<td class="right">'.$langs->trans("OpportunityAmountShort").'</td>';
+			print '<td class="center">'.$langs->trans("OpportunityStatusShort").'</td>';
+			print '<td class="right">'.$langs->trans("OpportunityProbabilityShort").'</td>';
+			print '<td class="right">'.$langs->trans("Status").'</td>';
+			print '</tr>';
+
+			if ($num > 0) {
+				require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+
+				$projecttmp = new Project($db);
+
+				$i = 0;
+
+				while ($i < $num) {
+					$obj = $db->fetch_object($result);
+					$projecttmp->fetch($obj->id);
+
+					// To verify role of users
+					$userAccess = $projecttmp->restrictedProjectArea($user);
+
+					if ($user->rights->projet->lire && $userAccess > 0) {
+						print '<tr class="oddeven">';
+
+						// Ref
+						print '<td>';
+						print $projecttmp->getNomUrl(1);
+						print '</td>';
+
+						// Label
+						print '<td>'.$obj->title.'</td>';
+						print '<td>'.$obj->libelle.'</td>';
+						// Date start
+						print '<td class="center">'.dol_print_date($db->jdate($obj->do), "day").'</td>';
+						// Date end
+						print '<td class="center">'.dol_print_date($db->jdate($obj->de), "day").'</td>';
+						// Opp amount
+						print '<td class="right">';
+						if ($obj->opp_status_code) {
+							print price($obj->opp_amount, 1, '', 1, -1, -1, '');
+						}
+						print '</td>';
+						// Opp status
+						print '<td class="center">';
+						if ($obj->opp_status_code) {
+							print $langs->trans("OppStatus".$obj->opp_status_code);
+						}
+						print '</td>';
+						// Opp percent
+						print '<td class="right">';
+						if ($obj->opp_percent) {
+							print price($obj->opp_percent, 1, '', 1, 0).'%';
+						}
+						print '</td>';
+						// Status
+						print '<td class="right">'.$projecttmp->getLibStatut(5).'</td>';
+
+						print '</tr>';
+					}
+					$i++;
+				}
+			} else {
+				print '<tr class="oddeven"><td colspan="8"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
+			}
+			$db->free($result);
+		} else {
+			dol_print_error($db);
+		}
+		print "</table>";
+		print '</div>';
+
+		print "<br>\n";
+	}
+
+	return $i;
 }

@@ -27,14 +27,16 @@ require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/emailing.lib.php';
 
-$id = GETPOST('id');
+$id = GETPOST('id', 'int');
 
 // Load translation files required by the page
 $langs->load("mails");
 
 // Security check
-if (!$user->rights->mailing->lire || $user->socid > 0)
-accessforbidden();
+if (!$user->rights->mailing->lire || (empty($conf->global->EXTERNAL_USERS_ARE_AUTHORIZED) && $user->socid > 0)) {
+	accessforbidden();
+}
+//$result = restrictedArea($user, 'mailing');
 
 
 
@@ -48,23 +50,23 @@ $form = new Form($db);
 
 $object = new Mailing($db);
 
-if ($object->fetch($id) >= 0)
-{
+if ($object->fetch($id) >= 0) {
 	$head = emailing_prepare_head($object);
 
-	dol_fiche_head($head, 'info', $langs->trans("Mailing"), -1, 'email');
+	print dol_get_fiche_head($head, 'info', $langs->trans("Mailing"), -1, 'email');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/comm/mailing/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 	$morehtmlright = '';
 	$nbtry = $nbok = 0;
-	if ($object->statut == 2 || $object->statut == 3)
-	{
+	if ($object->statut == 2 || $object->statut == 3) {
 		$nbtry = $object->countNbOfTargets('alreadysent');
 		$nbko  = $object->countNbOfTargets('alreadysentko');
 
 		$morehtmlright .= ' ('.$nbtry.'/'.$object->nbemail;
-		if ($nbko) $morehtmlright .= ' - '.$nbko.' '.$langs->trans("Error");
+		if ($nbko) {
+			$morehtmlright .= ' - '.$nbko.' '.$langs->trans("Error");
+		}
 		$morehtmlright .= ') &nbsp; ';
 	}
 
@@ -73,15 +75,10 @@ if ($object->fetch($id) >= 0)
 	print '<div class="underbanner clearboth"></div><br>';
 
 	//print '<table width="100%"><tr><td>';
-	$object->user_creation = $object->user_creat;
-	$object->date_creation = $object->date_creat;
-	$object->user_validation = $object->user_valid;
-	$object->date_validation = $object->date_valid;
 	dol_print_object_info($object, 0);
 	//print '</td></tr></table>';
 
-
-	dol_fiche_end();
+	print dol_get_fiche_end();
 }
 
 // End of page

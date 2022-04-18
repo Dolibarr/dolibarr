@@ -35,30 +35,30 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	/**
 	 * @var string model name
 	 */
-	public $name='Monkey';
+	public $name = 'Monkey';
 
-	public $code_modifiable;				// Code modifiable
+	public $code_modifiable; // Code modifiable
 
-	public $code_modifiable_invalide;		// Code modifiable si il est invalide
+	public $code_modifiable_invalide; // Code modifiable si il est invalide
 
-	public $code_modifiable_null;			// Code modifiables si il est null
+	public $code_modifiable_null; // Code modifiables si il est null
 
-	public $code_null;						// Code facultatif
+	public $code_null; // Code facultatif
 
 	/**
-     * Dolibarr version of the loaded document
-     * @var string
-     */
-	public $version = 'dolibarr';	    	// 'development', 'experimental', 'dolibarr'
+	 * Dolibarr version of the loaded document
+	 * @var string
+	 */
+	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
 	/**
 	 * @var int Automatic numbering
 	 */
 	public $code_auto;
 
-	public $prefixcustomer='CU';
+	public $prefixcustomer = 'CU';
 
-	public $prefixsupplier='SU';
+	public $prefixsupplier = 'SU';
 
 	public $prefixIsRequired; // Le champ prefix du tiers doit etre renseigne quand on utilise {pre}
 
@@ -81,7 +81,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 
 
 	/**
-     *  Return description of module
+	 *  Return description of module
 	 *
 	 *  @param	Translate	$langs	Object langs
 	 *  @return string      		Description of module
@@ -117,44 +117,47 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	{
 		global $db, $conf, $mc;
 
-		$field='';
-        $prefix = '';
+		$field = '';
+		$prefix = '';
 		if ($type == 0) {
 			$field = 'code_client';
-            $prefix = $this->prefixcustomer;
+			$prefix = $this->prefixcustomer;
 		} elseif ($type == 1) {
 			$field = 'code_fournisseur';
-            $prefix = $this->prefixsupplier;
+			$prefix = $this->prefixsupplier;
 		} else {
-            return -1;
-        }
+			return -1;
+		}
 
-        // D'abord on recupere la valeur max (reponse immediate car champ indexe)
-		$posindice=8;
-        $sql = "SELECT MAX(CAST(SUBSTRING(".$field." FROM ".$posindice.") AS SIGNED)) as max";   // This is standard SQL
-		$sql.= " FROM ".MAIN_DB_PREFIX."societe";
-		$sql.= " WHERE ".$field." LIKE '".$prefix."____-%'";
-		$sql.= " AND entity IN (".getEntity('societe').")";
+		// First, we get the max value (reponse immediate car champ indexe)
+		$posindice = strlen($prefix) + 6;
+		$sql = "SELECT MAX(CAST(SUBSTRING(".$field." FROM ".$posindice.") AS SIGNED)) as max"; // This is standard SQL
+		$sql .= " FROM ".MAIN_DB_PREFIX."societe";
+		$sql .= " WHERE ".$field." LIKE '".$db->escape($prefix)."____-%'";
+		$sql .= " AND entity IN (".getEntity('societe').")";
 
 		dol_syslog(get_class($this)."::getNextValue", LOG_DEBUG);
 
-		$resql=$db->query($sql);
-		if ($resql)
-		{
+		$resql = $db->query($sql);
+		if ($resql) {
 			$obj = $db->fetch_object($resql);
-			if ($obj) $max = intval($obj->max);
-			else $max=0;
-		}
-		else
-		{
+			if ($obj) {
+				$max = intval($obj->max);
+			} else {
+				$max = 0;
+			}
+		} else {
 			return -1;
 		}
 
 		$date	= dol_now();
 		$yymm	= strftime("%y%m", $date);
 
-		if ($max >= (pow(10, 5) - 1)) $num=$max+1;	// If counter > 99999, we do not format on 5 chars, we take number as it is
-		else $num = sprintf("%05s", $max+1);
+		if ($max >= (pow(10, 5) - 1)) {
+			$num = $max + 1; // If counter > 99999, we do not format on 5 chars, we take number as it is
+		} else {
+			$num = sprintf("%05s", $max + 1);
+		}
 
 		dol_syslog(get_class($this)."::getNextValue return ".$prefix.$yymm."-".$num);
 		return $prefix.$yymm."-".$num;
@@ -178,40 +181,26 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	{
 		global $conf;
 
-		$result=0;
+		$result = 0;
 		$code = strtoupper(trim($code));
 
-		if (empty($code) && $this->code_null && empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED))
-		{
-			$result=0;
-		}
-		elseif (empty($code) && (! $this->code_null || ! empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED)) )
-		{
-			$result=-2;
-		}
-		else
-		{
-			if ($this->verif_syntax($code) >= 0)
-			{
+		if (empty($code) && $this->code_null && empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED)) {
+			$result = 0;
+		} elseif (empty($code) && (!$this->code_null || !empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED))) {
+			$result = -2;
+		} else {
+			if ($this->verif_syntax($code) >= 0) {
 				$is_dispo = $this->verif_dispo($db, $code, $soc, $type);
-				if ($is_dispo <> 0)
-				{
-					$result=-3;
+				if ($is_dispo <> 0) {
+					$result = -3;
+				} else {
+					$result = 0;
 				}
-				else
-				{
-					$result=0;
-				}
-			}
-			else
-			{
-				if (dol_strlen($code) == 0)
-				{
-					$result=-2;
-				}
-				else
-				{
-					$result=-1;
+			} else {
+				if (dol_strlen($code) == 0) {
+					$result = -2;
+				} else {
+					$result = -1;
 				}
 			}
 		}
@@ -221,7 +210,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *		Renvoi si un code est pris ou non (par autre tiers)
 	 *
@@ -233,36 +222,35 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	 */
 	public function verif_dispo($db, $code, $soc, $type = 0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $conf, $mc;
 
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe";
-		if ($type == 1) $sql.= " WHERE code_fournisseur = '".$code."'";
-		else $sql.= " WHERE code_client = '".$code."'";
-		$sql.= " AND entity IN (".getEntity('societe').")";
-		if ($soc->id > 0) $sql.= " AND rowid <> ".$soc->id;
+		if ($type == 1) {
+			$sql .= " WHERE code_fournisseur = '".$db->escape($code)."'";
+		} else {
+			$sql .= " WHERE code_client = '".$db->escape($code)."'";
+		}
+		$sql .= " AND entity IN (".getEntity('societe').")";
+		if ($soc->id > 0) {
+			$sql .= " AND rowid <> ".$soc->id;
+		}
 
 		dol_syslog(get_class($this)."::verif_dispo", LOG_DEBUG);
-		$resql=$db->query($sql);
-		if ($resql)
-		{
-			if ($db->num_rows($resql) == 0)
-			{
+		$resql = $db->query($sql);
+		if ($resql) {
+			if ($db->num_rows($resql) == 0) {
 				return 0;
-			}
-			else
-			{
+			} else {
 				return -1;
 			}
-		}
-		else
-		{
+		} else {
 			return -2;
 		}
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Renvoi si un code respecte la syntaxe
 	 *
@@ -271,15 +259,12 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	 */
 	public function verif_syntax($code)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		$res = 0;
 
-		if (dol_strlen($code) < 11)
-		{
+		if (dol_strlen($code) < 11) {
 			$res = -1;
-		}
-		else
-		{
+		} else {
 			$res = 0;
 		}
 		return $res;

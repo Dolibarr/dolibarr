@@ -1,0 +1,144 @@
+/* -- footer -- */
+html {
+  position: relative;
+  min-height: 100%;
+}
+body {
+  margin-bottom: 60px;
+  font-family: 'Khand', sans-serif;
+}
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 60px;
+  background-color: #f5f5f5;
+}
+.container .text-muted {
+  margin: 20px 0;
+}
+.footer > .container {
+  padding-right: 15px;
+  padding-left: 15px;
+}
+/* -- -- */
+h3 {
+  display:inline-block;
+  font-size: 32px;
+  line-height: 36px;
+  position: relative;
+  margin-top:28px;
+  margin-bottom:15px;
+}
+h3:before{
+  left: -40px;
+  height: 0;
+  height:1px;
+}
+h3:before, h3:after {
+  content: "";
+  position: absolute;
+  bottom: 10px;
+  height: 1px;
+  width: 40px;
+  margin: 0 -15px;
+  background-color: #533834;
+}
+h3:after{
+  right: -40px;
+}
+h5 {
+  font-size: 16px;
+  line-height: 22px;
+  margin: 0 0 15px;
+  font-weight: 400;
+}
+.item {
+  position: relative;
+  overflow: hidden;
+  margin-bottom:20px;
+}
+.item h4, .price {
+  z-index: 0;
+  position: relative;
+  background-color: #fff;
+  right: 0;
+  position: absolute;
+}
+.item .price {
+  padding-left: 8px;
+}
+.item h4, .item p {
+  display: block;
+  clear: both;
+  color: #533834;
+}
+.item p {
+  clear: both;
+  color: #938372;
+  margin-left:10px;
+}
+.dots {
+  background-image: linear-gradient(to right,rgba(56,47,47,.5) 33%,rgba(0,0,0,0) 0%);
+  background-position: bottom;
+  background-size: 3px 1px;
+  background-repeat: repeat-x;
+  height: 1px;
+  width: 100%;
+  position: absolute;
+  top: 22px;
+}
+/* Dots in IE */
+@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+  .dots {
+    background: transparent url('/img/dot.gif') repeat-x bottom left;
+  }
+}
+.badge {
+  display: inline-block;
+  padding: 0 10px;
+  background: #d2c82a;
+  font-size: 12px;
+  font-weight: 300;
+  line-height: 26px;
+  color: #fff;
+  text-align: center;
+  vertical-align: middle;
+  text-transform: uppercase;
+  border: 1px solid rgba(0,0,0,.05);
+  letter-spacing: 1px;
+  border-radius: 3px;
+  margin: -5px 5px 0 0;
+}
+.note {
+  padding: 0 6px;
+  min-width: 23px;
+  background: rgba(0,0,0,0);
+  border: 1px solid #382f2f;
+  color: #382f2f;
+  box-sizing: border-box;
+  border-radius: 500px;
+  line-height: 21px;
+}
+.veggie {
+  color:#82b440;
+  border-color:#82b440;
+}
+.spicy {
+  color:#ec4e00;
+  border-color:#ec4e00;
+}
+.price {
+  position: absolute;
+  font-size:22px;
+  font-weight:400;
+  right: 0;
+}
+.item h4 {
+  display: inline-block;
+  padding-right: 8px;
+  max-width: 80%;
+  text-transform: capitalize;
+  margin-bottom:4px;
+  position: relative;
+}

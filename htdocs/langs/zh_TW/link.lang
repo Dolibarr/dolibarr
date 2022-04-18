@@ -8,3 +8,4 @@ LinkRemoved=此連線%s已被刪除
 ErrorFailedToDeleteLink= 無法刪除連線“ <b>%s</b> ”
 ErrorFailedToUpdateLink= 無法更新連線' <b>%s</b>'
 URLToLink=連線網址
+OverwriteIfExists=Overwrite file if exists

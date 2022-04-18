@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2004		Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004		Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2017	Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2006-2015	Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2021	Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2006-2021	Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,10 @@
 /**
  *	\file 		htdocs/core/class/ldap.class.php
  *	\brief 		File of class to manage LDAP features
+ *
+ *  Note:
+ *  LDAP_ESCAPE_FILTER is to escape char  array('\\', '*', '(', ')', "\x00")
+ *  LDAP_ESCAPE_DN is to escape char  array('\\', ',', '=', '+', '<', '>', ';', '"', '#')
  */
 
 /**
@@ -32,7 +36,7 @@ class Ldap
 	/**
 	 * @var string Error code (or message)
 	 */
-	public $error='';
+	public $error = '';
 
 	/**
 	 * @var string[]	Array of error strings
@@ -42,114 +46,142 @@ class Ldap
 	/**
 	 * Tableau des serveurs (IP addresses ou nom d'hotes)
 	 */
-    public $server=array();
+	public $server = array();
+
+	/**
+	 * Current connected server
+	 */
+	public $connectedServer;
 
 	/**
 	 * Base DN (e.g. "dc=foo,dc=com")
 	 */
-    public $dn;
+	public $dn;
 	/**
 	 * type de serveur, actuellement OpenLdap et Active Directory
 	 */
-    public $serverType;
+	public $serverType;
 	/**
 	 * Version du protocole ldap
 	 */
-    public $domain;
+	public $ldapProtocolVersion;
+	/**
+	 * Server DN
+	 */
+	public $domain;
 	/**
 	 * User administrateur Ldap
 	 * Active Directory ne supporte pas les connexions anonymes
 	 */
-    public $searchUser;
+	public $searchUser;
 	/**
 	 * Mot de passe de l'administrateur
 	 * Active Directory ne supporte pas les connexions anonymes
 	 */
-    public $searchPassword;
+	public $searchPassword;
 	/**
 	 *  DN des utilisateurs
 	 */
-    public $people;
+	public $people;
 	/**
 	 * DN des groupes
 	 */
-    public $groups;
+	public $groups;
 	/**
 	 * Code erreur retourne par le serveur Ldap
 	 */
-    public $ldapErrorCode;
+	public $ldapErrorCode;
 	/**
 	 * Message texte de l'erreur
 	 */
-    public $ldapErrorText;
+	public $ldapErrorText;
 
 
 	//Fetch user
-    public $name;
-    public $firstname;
-    public $login;
-    public $phone;
-    public $skype;
-    public $fax;
-    public $mail;
-    public $mobile;
+	public $name;
+	public $firstname;
+	public $login;
+	public $phone;
+	public $skype;
+	public $fax;
+	public $mail;
+	public $mobile;
 
-    public $uacf;
-    public $pwdlastset;
+	public $uacf;
+	public $pwdlastset;
 
-    public $ldapcharset='UTF-8';	// LDAP should be UTF-8 encoded
+	public $ldapcharset = 'UTF-8'; // LDAP should be UTF-8 encoded
 
 
 	/**
 	 * The internal LDAP connection handle
 	 */
-    public $connection;
+	public $connection;
 	/**
 	 * Result of any connections etc.
 	 */
-    public $result;
+	public $result;
+
+	/**
+	 * No Ldap synchronization
+	 */
+	const SYNCHRO_NONE = 0;
+
+	/**
+	 * Dolibarr to Ldap synchronization
+	 */
+	const SYNCHRO_DOLIBARR_TO_LDAP = 1;
+
+	/**
+	 * Ldap to Dolibarr synchronization
+	 */
+	const SYNCHRO_LDAP_TO_DOLIBARR = 2;
 
 
 	/**
 	 *  Constructor
 	 */
-    public function __construct()
+	public function __construct()
 	{
 		global $conf;
 
 		// Server
-		if (! empty($conf->global->LDAP_SERVER_HOST))       $this->server[] = $conf->global->LDAP_SERVER_HOST;
-		if (! empty($conf->global->LDAP_SERVER_HOST_SLAVE)) $this->server[] = $conf->global->LDAP_SERVER_HOST_SLAVE;
-		$this->serverPort          = $conf->global->LDAP_SERVER_PORT;
-		$this->ldapProtocolVersion = $conf->global->LDAP_SERVER_PROTOCOLVERSION;
-		$this->dn                  = $conf->global->LDAP_SERVER_DN;
-		$this->serverType          = $conf->global->LDAP_SERVER_TYPE;
-		$this->domain              = $conf->global->LDAP_SERVER_DN;
-		$this->searchUser          = $conf->global->LDAP_ADMIN_DN;
-		$this->searchPassword      = $conf->global->LDAP_ADMIN_PASS;
-		$this->people              = $conf->global->LDAP_USER_DN;
-		$this->groups              = $conf->global->LDAP_GROUP_DN;
+		if (!empty($conf->global->LDAP_SERVER_HOST)) {
+			$this->server[] = $conf->global->LDAP_SERVER_HOST;
+		}
+		if (!empty($conf->global->LDAP_SERVER_HOST_SLAVE)) {
+			$this->server[] = $conf->global->LDAP_SERVER_HOST_SLAVE;
+		}
+		$this->serverPort          = getDolGlobalInt('LDAP_SERVER_PORT', 389);
+		$this->ldapProtocolVersion = getDolGlobalString('LDAP_SERVER_PROTOCOLVERSION');
+		$this->dn                  = getDolGlobalString('LDAP_SERVER_DN');
+		$this->serverType          = getDolGlobalString('LDAP_SERVER_TYPE');
 
-		$this->filter              = $conf->global->LDAP_FILTER_CONNECTION;	// Filter on user
-		$this->filtermember        = $conf->global->LDAP_MEMBER_FILTER;		// Filter on member
+		$this->domain              = getDolGlobalString('LDAP_SERVER_DN');
+		$this->searchUser          = getDolGlobalString('LDAP_ADMIN_DN');
+		$this->searchPassword      = getDolGlobalString('LDAP_ADMIN_PASS');
+		$this->people              = getDolGlobalString('LDAP_USER_DN');
+		$this->groups              = getDolGlobalString('LDAP_GROUP_DN');
+
+		$this->filter              = getDolGlobalString('LDAP_FILTER_CONNECTION'); // Filter on user
+		$this->filtergroup         = getDolGlobalString('LDAP_GROUP_FILTER'); // Filter on groups
+		$this->filtermember        = getDolGlobalString('LDAP_MEMBER_FILTER'); // Filter on member
 
 		// Users
-		$this->attr_login      = $conf->global->LDAP_FIELD_LOGIN; //unix
-		$this->attr_sambalogin = $conf->global->LDAP_FIELD_LOGIN_SAMBA; //samba, activedirectory
-		$this->attr_name       = $conf->global->LDAP_FIELD_NAME;
-		$this->attr_firstname  = $conf->global->LDAP_FIELD_FIRSTNAME;
-		$this->attr_mail       = $conf->global->LDAP_FIELD_MAIL;
-		$this->attr_phone      = $conf->global->LDAP_FIELD_PHONE;
-		$this->attr_skype      = $conf->global->LDAP_FIELD_SKYPE;
-		$this->attr_fax        = $conf->global->LDAP_FIELD_FAX;
-		$this->attr_mobile     = $conf->global->LDAP_FIELD_MOBILE;
+		$this->attr_login      = getDolGlobalString('LDAP_FIELD_LOGIN'); //unix
+		$this->attr_sambalogin = getDolGlobalString('LDAP_FIELD_LOGIN_SAMBA'); //samba, activedirectory
+		$this->attr_name       = getDolGlobalString('LDAP_FIELD_NAME');
+		$this->attr_firstname  = getDolGlobalString('LDAP_FIELD_FIRSTNAME');
+		$this->attr_mail       = getDolGlobalString('LDAP_FIELD_MAIL');
+		$this->attr_phone      = getDolGlobalString('LDAP_FIELD_PHONE');
+		$this->attr_skype      = getDolGlobalString('LDAP_FIELD_SKYPE');
+		$this->attr_fax        = getDolGlobalString('LDAP_FIELD_FAX');
+		$this->attr_mobile     = getDolGlobalString('LDAP_FIELD_MOBILE');
 	}
-
-
 
 	// Connection handling methods -------------------------------------------
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Connect and bind
 	 * 	Use this->server, this->serverPort, this->ldapProtocolVersion, this->serverType, this->searchUser, this->searchPassword
@@ -157,52 +189,65 @@ class Ldap
 	 *
 	 *	@return		int		<0 if KO, 1 if bind anonymous, 2 if bind auth
 	 */
-    public function connect_bind()
+	public function connect_bind()
 	{
-        // phpcs:enable
-		global $langs, $conf;
+		// phpcs:enable
+		global $conf;
 
-		$connected=0;
-		$this->bind=0;
+		$connected = 0;
+		$this->bind = 0;
+		$this->error = 0;
+		$this->connectedServer = '';
 
 		// Check parameters
-		if (count($this->server) == 0 || empty($this->server[0]))
-		{
-			$this->error='LDAP setup (file conf.php) is not complete';
+		if (count($this->server) == 0 || empty($this->server[0])) {
+			$this->error = 'LDAP setup (file conf.php) is not complete';
 			dol_syslog(get_class($this)."::connect_bind ".$this->error, LOG_WARNING);
 			return -1;
 		}
 
-		if (! function_exists("ldap_connect"))
-		{
-			$this->error='LDAPFunctionsNotAvailableOnPHP';
+		if (!function_exists("ldap_connect")) {
+			$this->error = 'LDAPFunctionsNotAvailableOnPHP';
 			dol_syslog(get_class($this)."::connect_bind ".$this->error, LOG_WARNING);
-			$return=-1;
+			$return = -1;
 		}
 
-		if (empty($this->error))
-		{
+		if (empty($this->error)) {
 			// Loop on each ldap server
-			foreach ($this->server as $key => $host)
-			{
-				if ($connected) break;
-				if (empty($host)) continue;
+			foreach ($this->server as $host) {
+				if ($connected) {
+					break;
+				}
+				if (empty($host)) {
+					continue;
+				}
 
 				if ($this->serverPing($host, $this->serverPort) === true) {
 					$this->connection = ldap_connect($host, $this->serverPort);
+				} else {
+					if (preg_match('/^ldaps/i', $host)) {
+						// With host = ldaps://server, the serverPing to ssl://server sometimes fails, even if the ldap_connect succeed, so
+						// we test this case and continue in suche a case even if serverPing fails.
+						$this->connection = ldap_connect($host, $this->serverPort);
+					} else {
+						continue;
+					}
 				}
-				else continue;
 
-				if (is_resource($this->connection))
-				{
-					// Begin TLS if requested by the configuration
-					if (! empty($conf->global->LDAP_SERVER_USE_TLS))
-					{
-						if (! ldap_start_tls($this->connection))
-						{
+				if (is_resource($this->connection)) {
+					// Upgrade connexion to TLS, if requested by the configuration
+					if (!empty($conf->global->LDAP_SERVER_USE_TLS)) {
+						// For test/debug
+						//ldap_set_option($this->connection, LDAP_OPT_DEBUG_LEVEL, 7);
+						//ldap_set_option($this->connection, LDAP_OPT_PROTOCOL_VERSION, 3);
+						//ldap_set_option($this->connection, LDAP_OPT_REFERRALS, 0);
+
+						$resulttls = ldap_start_tls($this->connection);
+						if (!$resulttls) {
 							dol_syslog(get_class($this)."::connect_bind failed to start tls", LOG_WARNING);
+							$this->error = 'ldap_start_tls Failed to start TLS '.ldap_errno($this->connection).' '.ldap_error($this->connection);
 							$connected = 0;
-							$this->close();
+							$this->unbind();
 						}
 					}
 
@@ -211,93 +256,79 @@ class Ldap
 					ldap_set_option($this->connection, LDAP_OPT_SIZELIMIT, 0); // no limit here. should return true.
 
 
-					if ($this->serverType == "activedirectory")
-					{
-						$result=$this->setReferrals();
+					if ($this->serverType == "activedirectory") {
+						$result = $this->setReferrals();
 						dol_syslog(get_class($this)."::connect_bind try bindauth for activedirectory on ".$host." user=".$this->searchUser." password=".preg_replace('/./', '*', $this->searchPassword), LOG_DEBUG);
-						$this->result=$this->bindauth($this->searchUser, $this->searchPassword);
-						if ($this->result)
-						{
-							$this->bind=$this->result;
-							$connected=2;
+						$this->result = $this->bindauth($this->searchUser, $this->searchPassword);
+						if ($this->result) {
+							$this->bind = $this->result;
+							$connected = 2;
 							break;
+						} else {
+							$this->error = ldap_errno($this->connection).' '.ldap_error($this->connection);
 						}
-						else
-						{
-							$this->error=ldap_errno($this->connection).' '.ldap_error($this->connection);
-						}
-					}
-					else
-					{
+					} else {
 						// Try in auth mode
-						if ($this->searchUser && $this->searchPassword)
-						{
+						if ($this->searchUser && $this->searchPassword) {
 							dol_syslog(get_class($this)."::connect_bind try bindauth on ".$host." user=".$this->searchUser." password=".preg_replace('/./', '*', $this->searchPassword), LOG_DEBUG);
-							$this->result=$this->bindauth($this->searchUser, $this->searchPassword);
-							if ($this->result)
-							{
-								$this->bind=$this->result;
-								$connected=2;
+							$this->result = $this->bindauth($this->searchUser, $this->searchPassword);
+							if ($this->result) {
+								$this->bind = $this->result;
+								$connected = 2;
 								break;
-							}
-							else
-							{
-								$this->error=ldap_errno($this->connection).' '.ldap_error($this->connection);
+							} else {
+								$this->error = ldap_errno($this->connection).' '.ldap_error($this->connection);
 							}
 						}
 						// Try in anonymous
-						if (! $this->bind)
-						{
-							dol_syslog(get_class($this)."::connect_bind try bind on ".$host, LOG_DEBUG);
-							$result=$this->bind();
-							if ($result)
-							{
-								$this->bind=$this->result;
-								$connected=1;
+						if (!$this->bind) {
+							dol_syslog(get_class($this)."::connect_bind try bind anonymously on ".$host, LOG_DEBUG);
+							$result = $this->bind();
+							if ($result) {
+								$this->bind = $this->result;
+								$connected = 1;
 								break;
-							}
-							else
-							{
-								$this->error=ldap_errno($this->connection).' '.ldap_error($this->connection);
+							} else {
+								$this->error = ldap_errno($this->connection).' '.ldap_error($this->connection);
 							}
 						}
 					}
 				}
 
-				if (! $connected) $this->close();
+				if (!$connected) {
+					$this->unbind();
+				} else {
+					$this->connectedServer = $host;
+				}
 			}
 		}
 
-		if ($connected)
-		{
-			$return=$connected;
+		if ($connected) {
+			$return = $connected;
 			dol_syslog(get_class($this)."::connect_bind return=".$return, LOG_DEBUG);
-		}
-		else
-		{
-			$this->error='Failed to connect to LDAP'.($this->error?': '.$this->error:'');
-			$return=-1;
+		} else {
+			$this->error = 'Failed to connect to LDAP'.($this->error ? ': '.$this->error : '');
+			$return = -1;
 			dol_syslog(get_class($this)."::connect_bind return=".$return.' - '.$this->error, LOG_WARNING);
 		}
+
 		return $return;
 	}
 
-
-
 	/**
-	 * Simply closes the connection set up earlier.
-	 * Returns true if OK, false if there was an error.
+	 * Simply closes the connection set up earlier. Returns true if OK, false if there was an error.
+	 * This method seems a duplicate/alias of unbind().
 	 *
 	 * @return	boolean			true or false
+	 * @deprecated ldap_close is an alias of ldap_unbind
+	 * @see unbind()
 	 */
-    public function close()
+	public function close()
 	{
-		if ($this->connection && ! @ldap_close($this->connection))
-		{
+		$r_type = get_resource_type($this->connection);
+		if ($this->connection && ($r_type === "Unknown" || !@ldap_close($this->connection))) {
 			return false;
-		}
-		else
-		{
+		} else {
 			return true;
 		}
 	}
@@ -308,17 +339,14 @@ class Ldap
 	 *
 	 * @return	boolean			true or false
 	 */
-    public function bind()
+	public function bind()
 	{
-		if (! $this->result=@ldap_bind($this->connection))
-		{
+		if (!$this->result = @ldap_bind($this->connection)) {
 			$this->ldapErrorCode = ldap_errno($this->connection);
 			$this->ldapErrorText = ldap_error($this->connection);
-			$this->error=$this->ldapErrorCode." ".$this->ldapErrorText;
+			$this->error = $this->ldapErrorCode." ".$this->ldapErrorText;
 			return false;
-		}
-		else
-		{
+		} else {
 			return true;
 		}
 	}
@@ -333,33 +361,34 @@ class Ldap
 	 * @param	string	$pass			Password
 	 * @return	boolean					true or false
 	 */
-    public function bindauth($bindDn, $pass)
+	public function bindauth($bindDn, $pass)
 	{
-		if (! $this->result = @ldap_bind($this->connection, $bindDn, $pass))
-		{
+		if (!$this->result = @ldap_bind($this->connection, $bindDn, $pass)) {
 			$this->ldapErrorCode = ldap_errno($this->connection);
 			$this->ldapErrorText = ldap_error($this->connection);
-			$this->error=$this->ldapErrorCode." ".$this->ldapErrorText;
+			$this->error = $this->ldapErrorCode." ".$this->ldapErrorText;
 			return false;
-		}
-		else
-		{
+		} else {
 			return true;
 		}
 	}
 
 	/**
-	 * Unbind du serveur ldap.
+	 * Unbind of LDAP server (close connection).
 	 *
 	 * @return	boolean					true or false
+	 * @see close()
 	 */
-    public function unbind()
+	public function unbind()
 	{
-		if (!$this->result=@ldap_unbind($this->connection))
-		{
-			return false;
-		} else {
+		$this->result = true;
+		if ($this->connection) {
+			$this->result = @ldap_unbind($this->connection);
+		}
+		if ($this->result) {
 			return true;
+		} else {
+			return false;
 		}
 	}
 
@@ -369,7 +398,7 @@ class Ldap
 	 *
 	 * @return	string					version
 	 */
-    public function getVersion()
+	public function getVersion()
 	{
 		$version = 0;
 		$version = @ldap_get_option($this->connection, LDAP_OPT_PROTOCOL_VERSION, $version);
@@ -381,8 +410,8 @@ class Ldap
 	 *
 	 * @return	boolean                 version
 	 */
-    public function setVersion()
-    {
+	public function setVersion()
+	{
 		// LDAP_OPT_PROTOCOL_VERSION est une constante qui vaut 17
 		$ldapsetversion = ldap_set_option($this->connection, LDAP_OPT_PROTOCOL_VERSION, $this->ldapProtocolVersion);
 		return $ldapsetversion;
@@ -393,8 +422,8 @@ class Ldap
 	 *
 	 * @return	boolean                 referrals
 	 */
-    public function setReferrals()
-    {
+	public function setReferrals()
+	{
 		// LDAP_OPT_REFERRALS est une constante qui vaut ?
 		$ldapreferrals = ldap_set_option($this->connection, LDAP_OPT_REFERRALS, 0);
 		return $ldapreferrals;
@@ -410,46 +439,40 @@ class Ldap
 	 *	@param	User		$user		Objet user that create
 	 *	@return	int					<0 if KO, >0 if OK
 	 */
-    public function add($dn, $info, $user)
+	public function add($dn, $info, $user)
 	{
-		global $conf;
-
-		dol_syslog(get_class($this)."::add dn=".$dn." info=".join(',', $info));
+		dol_syslog(get_class($this)."::add dn=".$dn." info=".json_encode($info));
 
 		// Check parameters
-		if (! $this->connection)
-		{
-			$this->error="NotConnected";
+		if (!$this->connection) {
+			$this->error = "NotConnected";
 			return -2;
 		}
-		if (! $this->bind)
-		{
-			$this->error="NotConnected";
+		if (!$this->bind) {
+			$this->error = "NotConnected";
 			return -3;
 		}
 
 		// Encode to LDAP page code
-		$dn=$this->convFromOutputCharset($dn, $this->ldapcharset);
-		foreach($info as $key => $val)
-		{
-			if (! is_array($val)) $info[$key]=$this->convFromOutputCharset($val, $this->ldapcharset);
+		$dn = $this->convFromOutputCharset($dn, $this->ldapcharset);
+		foreach ($info as $key => $val) {
+			if (!is_array($val)) {
+				$info[$key] = $this->convFromOutputCharset($val, $this->ldapcharset);
+			}
 		}
 
 		$this->dump($dn, $info);
 
 		//print_r($info);
-		$result=@ldap_add($this->connection, $dn, $info);
+		$result = @ldap_add($this->connection, $dn, $info);
 
-		if ($result)
-		{
+		if ($result) {
 			dol_syslog(get_class($this)."::add successfull", LOG_DEBUG);
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->ldapErrorCode = @ldap_errno($this->connection);
 			$this->ldapErrorText = @ldap_error($this->connection);
-			$this->error=$this->ldapErrorCode." ".$this->ldapErrorText;
+			$this->error = $this->ldapErrorCode." ".$this->ldapErrorText;
 			dol_syslog(get_class($this)."::add failed: ".$this->error, LOG_ERR);
 			return -1;
 		}
@@ -461,47 +484,51 @@ class Ldap
 	 *
 	 *	@param	string		$dn			DN entry key
 	 *	@param	array		$info		Attributes array
-	 *	@param	User			$user		Objet user that modify
+	 *	@param	User		$user		Objet user that modify
 	 *	@return	int						<0 if KO, >0 if OK
 	 */
-    public function modify($dn, $info, $user)
+	public function modify($dn, $info, $user)
 	{
-		global $conf;
-
 		dol_syslog(get_class($this)."::modify dn=".$dn." info=".join(',', $info));
 
 		// Check parameters
-		if (! $this->connection)
-		{
-			$this->error="NotConnected";
+		if (!$this->connection) {
+			$this->error = "NotConnected";
 			return -2;
 		}
-		if (! $this->bind)
-		{
-			$this->error="NotConnected";
+		if (!$this->bind) {
+			$this->error = "NotConnected";
 			return -3;
 		}
 
 		// Encode to LDAP page code
-		$dn=$this->convFromOutputCharset($dn, $this->ldapcharset);
-		foreach($info as $key => $val)
-		{
-			if (! is_array($val)) $info[$key]=$this->convFromOutputCharset($val, $this->ldapcharset);
+		$dn = $this->convFromOutputCharset($dn, $this->ldapcharset);
+		foreach ($info as $key => $val) {
+			if (!is_array($val)) {
+				$info[$key] = $this->convFromOutputCharset($val, $this->ldapcharset);
+			}
 		}
 
 		$this->dump($dn, $info);
 
 		//print_r($info);
-		$result=@ldap_modify($this->connection, $dn, $info);
 
-		if ($result)
-		{
+		// For better compatibility with Samba4 AD
+		if ($this->serverType == "activedirectory") {
+			unset($info['cn']); // To avoid error : Operation not allowed on RDN (Code 67)
+
+			// To avoid error : LDAP Error: 53 (Unwilling to perform)
+			if (isset($info['unicodePwd'])) {
+				$info['unicodePwd'] = mb_convert_encoding("\"".$info['unicodePwd']."\"", "UTF-16LE", "UTF-8");
+			}
+		}
+		$result = @ldap_modify($this->connection, $dn, $info);
+
+		if ($result) {
 			dol_syslog(get_class($this)."::modify successfull", LOG_DEBUG);
 			return 1;
-		}
-		else
-		{
-			$this->error=@ldap_error($this->connection);
+		} else {
+			$this->error = @ldap_error($this->connection);
 			dol_syslog(get_class($this)."::modify failed: ".$this->error, LOG_ERR);
 			return -1;
 		}
@@ -518,40 +545,33 @@ class Ldap
 	 *	@param	bool			$deleteoldrdn	If true the old RDN value(s) is removed, else the old RDN value(s) is retained as non-distinguished values of the entry.
 	 *	@return	int							<0 if KO, >0 if OK
 	 */
-    public function rename($dn, $newrdn, $newparent, $user, $deleteoldrdn = true)
+	public function rename($dn, $newrdn, $newparent, $user, $deleteoldrdn = true)
 	{
-		global $conf;
-
-		dol_syslog(get_class($this)."::modify dn=".$dn." newrdn=".$newrdn." newparent=".$newparent." deleteoldrdn=".($deleteoldrdn?1:0));
+		dol_syslog(get_class($this)."::modify dn=".$dn." newrdn=".$newrdn." newparent=".$newparent." deleteoldrdn=".($deleteoldrdn ? 1 : 0));
 
 		// Check parameters
-		if (! $this->connection)
-		{
-			$this->error="NotConnected";
+		if (!$this->connection) {
+			$this->error = "NotConnected";
 			return -2;
 		}
-		if (! $this->bind)
-		{
-			$this->error="NotConnected";
+		if (!$this->bind) {
+			$this->error = "NotConnected";
 			return -3;
 		}
 
 		// Encode to LDAP page code
-		$dn=$this->convFromOutputCharset($dn, $this->ldapcharset);
-		$newrdn=$this->convFromOutputCharset($newrdn, $this->ldapcharset);
-		$newparent=$this->convFromOutputCharset($newparent, $this->ldapcharset);
+		$dn = $this->convFromOutputCharset($dn, $this->ldapcharset);
+		$newrdn = $this->convFromOutputCharset($newrdn, $this->ldapcharset);
+		$newparent = $this->convFromOutputCharset($newparent, $this->ldapcharset);
 
 		//print_r($info);
-		$result=@ldap_rename($this->connection, $dn, $newrdn, $newparent, $deleteoldrdn);
+		$result = @ldap_rename($this->connection, $dn, $newrdn, $newparent, $deleteoldrdn);
 
-		if ($result)
-		{
+		if ($result) {
 			dol_syslog(get_class($this)."::rename successfull", LOG_DEBUG);
 			return 1;
-		}
-		else
-		{
-			$this->error=@ldap_error($this->connection);
+		} else {
+			$this->error = @ldap_error($this->connection);
 			dol_syslog(get_class($this)."::rename failed: ".$this->error, LOG_ERR);
 			return -1;
 		}
@@ -569,53 +589,43 @@ class Ldap
 	 *	@param	string	$newparent	New parent (ou=xxx,dc=aaa,dc=bbb) (for ldap_rename)
 	 *	@return	int					<0 if KO, >0 if OK
 	 */
-    public function update($dn, $info, $user, $olddn, $newrdn = false, $newparent = false)
+	public function update($dn, $info, $user, $olddn, $newrdn = false, $newparent = false)
 	{
-		global $conf;
-
 		dol_syslog(get_class($this)."::update dn=".$dn." olddn=".$olddn);
 
 		// Check parameters
-		if (! $this->connection)
-		{
-			$this->error="NotConnected";
+		if (!$this->connection) {
+			$this->error = "NotConnected";
 			return -2;
 		}
-		if (! $this->bind)
-		{
-			$this->error="NotConnected";
+		if (!$this->bind) {
+			$this->error = "NotConnected";
 			return -3;
 		}
 
-		if (! $olddn || $olddn != $dn)
-		{
-			if (! empty($olddn) && ! empty($newrdn) && ! empty($newparent) && $conf->global->LDAP_SERVER_PROTOCOLVERSION === '3')
-			{
+		if (!$olddn || $olddn != $dn) {
+			if (!empty($olddn) && !empty($newrdn) && !empty($newparent) && $this->ldapProtocolVersion === '3') {
 				// This function currently only works with LDAPv3
 				$result = $this->rename($olddn, $newrdn, $newparent, $user, true);
-			}
-			else
-			{
+				$result = $this->modify($dn, $info, $user); // We force "modify" for avoid some fields not modify
+			} else {
 				// If change we make is rename the key of LDAP record, we create new one and if ok, we delete old one.
 				$result = $this->add($dn, $info, $user);
-				if ($result > 0 && $olddn && $olddn != $dn) $result = $this->delete($olddn);	// If add fails, we do not try to delete old one
+				if ($result > 0 && $olddn && $olddn != $dn) {
+					$result = $this->delete($olddn); // If add fails, we do not try to delete old one
+				}
 			}
-		}
-		else
-		{
+		} else {
 			//$result = $this->delete($olddn);
-			$result = $this->add($dn, $info, $user);	// If record has been deleted from LDAP, we recreate it. We ignore error if it already exists.
-			$result = $this->modify($dn, $info, $user);	// We use add/modify instead of delete/add when olddn is received
+			$result = $this->add($dn, $info, $user); // If record has been deleted from LDAP, we recreate it. We ignore error if it already exists.
+			$result = $this->modify($dn, $info, $user); // We use add/modify instead of delete/add when olddn is received
 		}
-		if ($result <= 0)
-		{
+		if ($result <= 0) {
 			$this->error = ldap_error($this->connection).' (Code '.ldap_errno($this->connection).") ".$this->error;
 			dol_syslog(get_class($this)."::update ".$this->error, LOG_ERR);
 			//print_r($info);
 			return -1;
-		}
-		else
-		{
+		} else {
 			dol_syslog(get_class($this)."::update done successfully");
 			return 1;
 		}
@@ -629,34 +639,32 @@ class Ldap
 	 *	@param	string	$dn			DN entry key
 	 *	@return	int					<0 if KO, >0 if OK
 	 */
-    public function delete($dn)
+	public function delete($dn)
 	{
-		global $conf;
-
 		dol_syslog(get_class($this)."::delete Delete LDAP entry dn=".$dn);
 
 		// Check parameters
-		if (! $this->connection)
-		{
-			$this->error="NotConnected";
+		if (!$this->connection) {
+			$this->error = "NotConnected";
 			return -2;
 		}
-		if (! $this->bind)
-		{
-			$this->error="NotConnected";
+		if (!$this->bind) {
+			$this->error = "NotConnected";
 			return -3;
 		}
 
 		// Encode to LDAP page code
-		$dn=$this->convFromOutputCharset($dn, $this->ldapcharset);
+		$dn = $this->convFromOutputCharset($dn, $this->ldapcharset);
 
-		$result=@ldap_delete($this->connection, $dn);
+		$result = @ldap_delete($this->connection, $dn);
 
-		if ($result) return 1;
+		if ($result) {
+			return 1;
+		}
 		return -1;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * 	Build a LDAP message
 	 *
@@ -664,36 +672,30 @@ class Ldap
 	 *	@param	array		$info		Attributes array
 	 *	@return	string					Content of file
 	 */
-    public function dump_content($dn, $info)
+	public function dump_content($dn, $info)
 	{
-        // phpcs:enable
-		$content='';
+		// phpcs:enable
+		$content = '';
 
 		// Create file content
-		if (preg_match('/^ldap/', $this->server[0]))
-		{
-			$target="-H ".join(',', $this->server);
+		if (preg_match('/^ldap/', $this->server[0])) {
+			$target = "-H ".join(',', $this->server);
+		} else {
+			$target = "-h ".join(',', $this->server)." -p ".$this->serverPort;
 		}
-		else
-		{
-			$target="-h ".join(',', $this->server)." -p ".$this->serverPort;
+		$content .= "# ldapadd $target -c -v -D ".$this->searchUser." -W -f ldapinput.in\n";
+		$content .= "# ldapmodify $target -c -v -D ".$this->searchUser." -W -f ldapinput.in\n";
+		$content .= "# ldapdelete $target -c -v -D ".$this->searchUser." -W -f ldapinput.in\n";
+		if (in_array('localhost', $this->server)) {
+			$content .= "# If commands fails to connect, try without -h and -p\n";
 		}
-		$content.="# ldapadd $target -c -v -D ".$this->searchUser." -W -f ldapinput.in\n";
-		$content.="# ldapmodify $target -c -v -D ".$this->searchUser." -W -f ldapinput.in\n";
-		$content.="# ldapdelete $target -c -v -D ".$this->searchUser." -W -f ldapinput.in\n";
-		if (in_array('localhost', $this->server)) $content.="# If commands fails to connect, try without -h and -p\n";
-		$content.="dn: ".$dn."\n";
-		foreach($info as $key => $value)
-		{
-			if (! is_array($value))
-			{
-				$content.="$key: $value\n";
-			}
-			else
-			{
-				foreach($value as $valuekey => $valuevalue)
-				{
-					$content.="$key: $valuevalue\n";
+		$content .= "dn: ".$dn."\n";
+		foreach ($info as $key => $value) {
+			if (!is_array($value)) {
+				$content .= "$key: $value\n";
+			} else {
+				foreach ($value as $valuevalue) {
+					$content .= "$key: $valuevalue\n";
 				}
 			}
 		}
@@ -707,28 +709,26 @@ class Ldap
 	 *	@param	array		$info		Attributes array
 	 *	@return	int						<0 if KO, >0 if OK
 	 */
-    public function dump($dn, $info)
+	public function dump($dn, $info)
 	{
 		global $conf;
 
 		// Create content
-		$content=$this->dump_content($dn, $info);
+		$content = $this->dump_content($dn, $info);
 
 		//Create file
-		$result=dol_mkdir($conf->ldap->dir_temp);
+		$result = dol_mkdir($conf->ldap->dir_temp);
 
-		$outputfile=$conf->ldap->dir_temp.'/ldapinput.in';
-		$fp=fopen($outputfile, "w");
-		if ($fp)
-		{
+		$outputfile = $conf->ldap->dir_temp.'/ldapinput.in';
+		$fp = fopen($outputfile, "w");
+		if ($fp) {
 			fputs($fp, $content);
 			fclose($fp);
-			if (! empty($conf->global->MAIN_UMASK))
-			@chmod($outputfile, octdec($conf->global->MAIN_UMASK));
+			if (!empty($conf->global->MAIN_UMASK)) {
+				@chmod($outputfile, octdec($conf->global->MAIN_UMASK));
+			}
 			return 1;
-		}
-		else
-		{
+		} else {
 			return -1;
 		}
 	}
@@ -736,24 +736,41 @@ class Ldap
 	/**
 	 * Ping a server before ldap_connect for avoid waiting
 	 *
-	 * @param string		$host		Server host or address
+	 * @param string	$host		Server host or address
 	 * @param int		$port		Server port (default 389)
-	 * @param int		$timeout		Timeout in second (default 1s)
+	 * @param int		$timeout	Timeout in second (default 1s)
 	 * @return boolean				true or false
 	 */
-    public function serverPing($host, $port = 389, $timeout = 1)
+	public function serverPing($host, $port = 389, $timeout = 1)
 	{
-		// Replace ldaps:// by ssl://
+		$regs = array();
 		if (preg_match('/^ldaps:\/\/([^\/]+)\/?$/', $host, $regs)) {
+			// Replace ldaps:// by ssl://
 			$host = 'ssl://'.$regs[1];
-		}
-		// Remove ldap://
-		if (preg_match('/^ldap:\/\/([^\/]+)\/?$/', $host, $regs)) {
+		} elseif (preg_match('/^ldap:\/\/([^\/]+)\/?$/', $host, $regs)) {
+			// Remove ldap://
 			$host = $regs[1];
 		}
+
+		//var_dump($newhostforstream); var_dump($host); var_dump($port);
+		//$host = 'ssl://ldap.test.local:636';
+		//$port = 636;
+
+		$errno = $errstr = 0;
+		/*
+		if ($methodtochecktcpconnect == 'socket') {
+			Try to use socket_create() method.
+			Method that use stream_context_create() works only on registered listed in stream stream_get_wrappers(): http, https, ftp, ...
+		}
+		*/
+
+		// Use the method fsockopen to test tcp connect. No way to ignore ssl certificate errors with this method !
 		$op = @fsockopen($host, $port, $errno, $errstr, $timeout);
-		if (!$op) return false; //DC is N/A
-		else {
+
+		//var_dump($op);
+		if (!$op) {
+			return false; //DC is N/A
+		} else {
 			fclose($op); //explicitly close open socket connection
 			return true; //DC is up & running, we can safely connect with ldap_connect
 		}
@@ -771,44 +788,38 @@ class Ldap
 	 *	@param	User		$user		Objet user that create
 	 *	@return	int						<0 if KO, >0 if OK
 	 */
-    public function addAttribute($dn, $info, $user)
+	public function addAttribute($dn, $info, $user)
 	{
-		global $conf;
-
 		dol_syslog(get_class($this)."::addAttribute dn=".$dn." info=".join(',', $info));
 
 		// Check parameters
-		if (! $this->connection)
-		{
-			$this->error="NotConnected";
+		if (!$this->connection) {
+			$this->error = "NotConnected";
 			return -2;
 		}
-		if (! $this->bind)
-		{
-			$this->error="NotConnected";
+		if (!$this->bind) {
+			$this->error = "NotConnected";
 			return -3;
 		}
 
 		// Encode to LDAP page code
-		$dn=$this->convFromOutputCharset($dn, $this->ldapcharset);
-		foreach($info as $key => $val)
-		{
-			if (! is_array($val)) $info[$key]=$this->convFromOutputCharset($val, $this->ldapcharset);
+		$dn = $this->convFromOutputCharset($dn, $this->ldapcharset);
+		foreach ($info as $key => $val) {
+			if (!is_array($val)) {
+				$info[$key] = $this->convFromOutputCharset($val, $this->ldapcharset);
+			}
 		}
 
 		$this->dump($dn, $info);
 
 		//print_r($info);
-		$result=@ldap_mod_add($this->connection, $dn, $info);
+		$result = @ldap_mod_add($this->connection, $dn, $info);
 
-		if ($result)
-		{
+		if ($result) {
 			dol_syslog(get_class($this)."::add_attribute successfull", LOG_DEBUG);
 			return 1;
-		}
-		else
-		{
-			$this->error=@ldap_error($this->connection);
+		} else {
+			$this->error = @ldap_error($this->connection);
 			dol_syslog(get_class($this)."::add_attribute failed: ".$this->error, LOG_ERR);
 			return -1;
 		}
@@ -823,44 +834,38 @@ class Ldap
 	 *	@param	User		$user		Objet user that create
 	 *	@return	int						<0 if KO, >0 if OK
 	 */
-    public function updateAttribute($dn, $info, $user)
+	public function updateAttribute($dn, $info, $user)
 	{
-		global $conf;
-
 		dol_syslog(get_class($this)."::updateAttribute dn=".$dn." info=".join(',', $info));
 
 		// Check parameters
-		if (! $this->connection)
-		{
-			$this->error="NotConnected";
+		if (!$this->connection) {
+			$this->error = "NotConnected";
 			return -2;
 		}
-		if (! $this->bind)
-		{
-			$this->error="NotConnected";
+		if (!$this->bind) {
+			$this->error = "NotConnected";
 			return -3;
 		}
 
 		// Encode to LDAP page code
-		$dn=$this->convFromOutputCharset($dn, $this->ldapcharset);
-		foreach($info as $key => $val)
-		{
-			if (! is_array($val)) $info[$key]=$this->convFromOutputCharset($val, $this->ldapcharset);
+		$dn = $this->convFromOutputCharset($dn, $this->ldapcharset);
+		foreach ($info as $key => $val) {
+			if (!is_array($val)) {
+				$info[$key] = $this->convFromOutputCharset($val, $this->ldapcharset);
+			}
 		}
 
 		$this->dump($dn, $info);
 
 		//print_r($info);
-		$result=@ldap_mod_replace($this->connection, $dn, $info);
+		$result = @ldap_mod_replace($this->connection, $dn, $info);
 
-		if ($result)
-		{
+		if ($result) {
 			dol_syslog(get_class($this)."::updateAttribute successfull", LOG_DEBUG);
 			return 1;
-		}
-		else
-		{
-			$this->error=@ldap_error($this->connection);
+		} else {
+			$this->error = @ldap_error($this->connection);
 			dol_syslog(get_class($this)."::updateAttribute failed: ".$this->error, LOG_ERR);
 			return -1;
 		}
@@ -875,44 +880,38 @@ class Ldap
 	 *	@param	User		$user		Objet user that create
 	 *	@return	int						<0 if KO, >0 if OK
 	 */
-    public function deleteAttribute($dn, $info, $user)
+	public function deleteAttribute($dn, $info, $user)
 	{
-		global $conf;
-
 		dol_syslog(get_class($this)."::deleteAttribute dn=".$dn." info=".join(',', $info));
 
 		// Check parameters
-		if (! $this->connection)
-		{
-			$this->error="NotConnected";
+		if (!$this->connection) {
+			$this->error = "NotConnected";
 			return -2;
 		}
-		if (! $this->bind)
-		{
-			$this->error="NotConnected";
+		if (!$this->bind) {
+			$this->error = "NotConnected";
 			return -3;
 		}
 
 		// Encode to LDAP page code
-		$dn=$this->convFromOutputCharset($dn, $this->ldapcharset);
-		foreach($info as $key => $val)
-		{
-			if (! is_array($val)) $info[$key]=$this->convFromOutputCharset($val, $this->ldapcharset);
+		$dn = $this->convFromOutputCharset($dn, $this->ldapcharset);
+		foreach ($info as $key => $val) {
+			if (!is_array($val)) {
+				$info[$key] = $this->convFromOutputCharset($val, $this->ldapcharset);
+			}
 		}
 
 		$this->dump($dn, $info);
 
 		//print_r($info);
-		$result=@ldap_mod_del($this->connection, $dn, $info);
+		$result = @ldap_mod_del($this->connection, $dn, $info);
 
-		if ($result)
-		{
+		if ($result) {
 			dol_syslog(get_class($this)."::deleteAttribute successfull", LOG_DEBUG);
 			return 1;
-		}
-		else
-		{
-			$this->error=@ldap_error($this->connection);
+		} else {
+			$this->error = @ldap_error($this->connection);
 			dol_syslog(get_class($this)."::deleteAttribute failed: ".$this->error, LOG_ERR);
 			return -1;
 		}
@@ -925,35 +924,31 @@ class Ldap
 	 *	@param	string	$filter		Filter
 	 *	@return	int|array			<0 or false if KO, array if OK
 	 */
-    public function getAttribute($dn, $filter)
+	public function getAttribute($dn, $filter)
 	{
 		// Check parameters
-		if (! $this->connection)
-		{
-			$this->error="NotConnected";
+		if (!$this->connection) {
+			$this->error = "NotConnected";
 			return -2;
 		}
-		if (! $this->bind)
-		{
-			$this->error="NotConnected";
+		if (!$this->bind) {
+			$this->error = "NotConnected";
 			return -3;
 		}
 
-		$search = ldap_search($this->connection, $dn, $filter);
+		$search = @ldap_search($this->connection, $dn, $filter);
 
 		// Only one entry should ever be returned
-		$entry = ldap_first_entry($this->connection, $search);
+		$entry = @ldap_first_entry($this->connection, $search);
 
-		if (! $entry)
-		{
+		if (!$entry) {
 			$this->ldapErrorCode = -1;
 			$this->ldapErrorText = "Couldn't find entry";
-			return 0;  // Couldn't find entry...
+			return 0; // Couldn't find entry...
 		}
 
 		// Get values
-		if (! ($values = ldap_get_attributes($this->connection, $entry)))
-		{
+		if (!($values = ldap_get_attributes($this->connection, $entry))) {
 			$this->ldapErrorCode = ldap_errno($this->connection);
 			$this->ldapErrorText = ldap_error($this->connection);
 			return 0; // No matching attributes
@@ -970,9 +965,9 @@ class Ldap
 	 * 	@param	string	$attribute			Attributes
 	 * 	@return void
 	 */
-    public function getAttributeValues($filterrecord, $attribute)
+	public function getAttributeValues($filterrecord, $attribute)
 	{
-		$attributes=array();
+		$attributes = array();
 		$attributes[0] = $attribute;
 
 		// We need to search for this user in order to get their entry.
@@ -984,16 +979,14 @@ class Ldap
 		// Only one entry should ever be returned (no user will have the same uid)
 		$entry = ldap_first_entry($this->connection, $this->result);
 
-		if (!$entry)
-		{
+		if (!$entry) {
 			$this->ldapErrorCode = -1;
 			$this->ldapErrorText = "Couldn't find user";
-			return false;  // Couldn't find the user...
+			return false; // Couldn't find the user...
 		}
 
 		// Get values
-		if (! $values = @ldap_get_values($this->connection, $entry, $attribute))
-		{
+		if (!$values = @ldap_get_values($this->connection, $entry, $attribute)) {
 			$this->ldapErrorCode = ldap_errno($this->connection);
 			$this->ldapErrorText = ldap_error($this->connection);
 			return false; // No matching attributes
@@ -1007,64 +1000,54 @@ class Ldap
 	 * 	Returns an array containing a details or list of LDAP record(s)
 	 * 	ldapsearch -LLLx -hlocalhost -Dcn=admin,dc=parinux,dc=org -w password -b "ou=adherents,ou=people,dc=parinux,dc=org" userPassword
 	 *
-	 *	@param	string	$search			 	Value of fiel to search, '*' for all. Not used if $activefilter is set.
+	 *	@param	string	$search			 	Value of field to search, '*' for all. Not used if $activefilter is set.
 	 *	@param	string	$userDn			 	DN (Ex: ou=adherents,ou=people,dc=parinux,dc=org)
 	 *	@param	string	$useridentifier 	Name of key field (Ex: uid)
 	 *	@param	array	$attributeArray 	Array of fields required. Note this array must also contains field $useridentifier (Ex: sn,userPassword)
-	 *	@param	int		$activefilter		'1' or 'user'=use field this->filter as filter instead of parameter $search, 'member'=use field this->filtermember as filter
+	 *	@param	int		$activefilter		'1' or 'user'=use field this->filter as filter instead of parameter $search, 'group'=use field this->filtergroup as filter, 'member'=use field this->filtermember as filter
 	 *	@param	array	$attributeAsArray 	Array of fields wanted as an array not a string
 	 *	@return	array						Array of [id_record][ldap_field]=value
 	 */
-    public function getRecords($search, $userDn, $useridentifier, $attributeArray, $activefilter = 0, $attributeAsArray = array())
+	public function getRecords($search, $userDn, $useridentifier, $attributeArray, $activefilter = 0, $attributeAsArray = array())
 	{
-		$fulllist=array();
+		$fulllist = array();
 
 		dol_syslog(get_class($this)."::getRecords search=".$search." userDn=".$userDn." useridentifier=".$useridentifier." attributeArray=array(".join(',', $attributeArray).") activefilter=".$activefilter);
 
 		// if the directory is AD, then bind first with the search user first
-		if ($this->serverType == "activedirectory")
-		{
+		if ($this->serverType == "activedirectory") {
 			$this->bindauth($this->searchUser, $this->searchPassword);
 			dol_syslog(get_class($this)."::bindauth serverType=activedirectory searchUser=".$this->searchUser);
 		}
 
 		// Define filter
-		if (! empty($activefilter))
-		{
-			if (((string) $activefilter == '1' || (string) $activefilter == 'user') && $this->filter)
-			{
+		if (!empty($activefilter)) {	// Use a predefined trusted filter (defined into setup by admin).
+			if (((string) $activefilter == '1' || (string) $activefilter == 'user') && $this->filter) {
 				$filter = '('.$this->filter.')';
-			}
-			elseif (((string) $activefilter == 'member') && $this->filter)
-			{
+			} elseif (((string) $activefilter == 'group') && $this->filtergroup ) {
+				$filter = '('.$this->filtergroup.')';
+			} elseif (((string) $activefilter == 'member') && $this->filter) {
 				$filter = '('.$this->filtermember.')';
+			} else {
+				// If this->filter/this->filtergroup is empty, make fiter on * (all)
+				$filter = '('.ldap_escape($useridentifier, '', LDAP_ESCAPE_FILTER).'=*)';
 			}
-			else	// If this->filter is empty, make fiter on * (all)
-			{
-				$filter = '('.$useridentifier.'=*)';
-			}
-		}
-		else
-		{
-			$filter = '('.$useridentifier.'='.$search.')';
+		} else {						// Use a filter forged using the $search value
+			$filter = '('.ldap_escape($useridentifier, '', LDAP_ESCAPE_FILTER).'='.ldap_escape($search, '', LDAP_ESCAPE_FILTER).')';
 		}
 
-		if (is_array($attributeArray))
-		{
+		if (is_array($attributeArray)) {
 			// Return list with required fields
-			$attributeArray=array_values($attributeArray);	// This is to force to have index reordered from 0 (not make ldap_search fails)
-			dol_syslog(get_class($this)."::getRecords connection=".$this->connection." userDn=".$userDn." filter=".$filter. " attributeArray=(".join(',', $attributeArray).")");
+			$attributeArray = array_values($attributeArray); // This is to force to have index reordered from 0 (not make ldap_search fails)
+			dol_syslog(get_class($this)."::getRecords connection=".$this->connection." userDn=".$userDn." filter=".$filter." attributeArray=(".join(',', $attributeArray).")");
 			//var_dump($attributeArray);
 			$this->result = @ldap_search($this->connection, $userDn, $filter, $attributeArray);
-		}
-		else
-		{
+		} else {
 			// Return list with fields selected by default
 			dol_syslog(get_class($this)."::getRecords connection=".$this->connection." userDn=".$userDn." filter=".$filter);
 			$this->result = @ldap_search($this->connection, $userDn, $filter);
 		}
-		if (!$this->result)
-		{
+		if (!$this->result) {
 			$this->error = 'LDAP search failed: '.ldap_errno($this->connection)." ".ldap_error($this->connection);
 			return -1;
 		}
@@ -1075,32 +1058,26 @@ class Ldap
 		// a ldap_search en majuscule !!!
 		//print_r($info);
 
-		for ($i = 0; $i < $info["count"]; $i++)
-		{
-			$recordid=$this->convToOutputCharset($info[$i][$useridentifier][0], $this->ldapcharset);
-			if ($recordid)
-			{
+		for ($i = 0; $i < $info["count"]; $i++) {
+			$recordid = $this->convToOutputCharset($info[$i][$useridentifier][0], $this->ldapcharset);
+			if ($recordid) {
 				//print "Found record with key $useridentifier=".$recordid."<br>\n";
-				$fulllist[$recordid][$useridentifier]=$recordid;
+				$fulllist[$recordid][$useridentifier] = $recordid;
 
 				// Add to the array for each attribute in my list
 				$num = count($attributeArray);
-				for ($j = 0; $j < $num; $j++)
-				{
-					$keyattributelower=strtolower($attributeArray[$j]);
+				for ($j = 0; $j < $num; $j++) {
+					$keyattributelower = strtolower($attributeArray[$j]);
 					//print " Param ".$attributeArray[$j]."=".$info[$i][$keyattributelower][0]."<br>\n";
 
 					//permet de recuperer le SID avec Active Directory
-					if ($this->serverType == "activedirectory" && $keyattributelower == "objectsid")
-					{
+					if ($this->serverType == "activedirectory" && $keyattributelower == "objectsid") {
 						$objectsid = $this->getObjectSid($recordid);
-						$fulllist[$recordid][$attributeArray[$j]]    = $objectsid;
-					}
-					else
-					{
-						if(in_array($attributeArray[$j], $attributeAsArray) && is_array($info[$i][$keyattributelower])) {
+						$fulllist[$recordid][$attributeArray[$j]] = $objectsid;
+					} else {
+						if (in_array($attributeArray[$j], $attributeAsArray) && is_array($info[$i][$keyattributelower])) {
 							$valueTab = array();
-							foreach($info[$i][$keyattributelower] as $key => $value) {
+							foreach ($info[$i][$keyattributelower] as $key => $value) {
 								$valueTab[$key] = $this->convToOutputCharset($value, $this->ldapcharset);
 							}
 							$fulllist[$recordid][$attributeArray[$j]] = $valueTab;
@@ -1123,9 +1100,10 @@ class Ldap
 	 *	@param	string		$hex			Hex value
 	 *	@return	string						Little endian
 	 */
-    public function littleEndian($hex)
+	public function littleEndian($hex)
 	{
-		for ($x=dol_strlen($hex)-2; $x >= 0; $x=$x-2) {
+		$result = '';
+		for ($x = dol_strlen($hex) - 2; $x >= 0; $x = $x - 2) {
 			$result .= substr($hex, $x, 2);
 		}
 		return $result;
@@ -1139,53 +1117,44 @@ class Ldap
 	 * 	@param	string		$ldapUser		Login de l'utilisateur
 	 * 	@return	string						Sid
 	 */
-    public function getObjectSid($ldapUser)
+	public function getObjectSid($ldapUser)
 	{
-		$criteria =  '('.$this->getUserIdentifier().'='.$ldapUser.')';
+		$criteria = '('.$this->getUserIdentifier().'='.$ldapUser.')';
 		$justthese = array("objectsid");
 
 		// if the directory is AD, then bind first with the search user first
-		if ($this->serverType == "activedirectory")
-		{
+		if ($this->serverType == "activedirectory") {
 			$this->bindauth($this->searchUser, $this->searchPassword);
 		}
 
 		$i = 0;
 		$searchDN = $this->people;
 
-		while ($i <= 2)
-		{
+		while ($i <= 2) {
 			$ldapSearchResult = @ldap_search($this->connection, $searchDN, $criteria, $justthese);
 
-			if (!$ldapSearchResult)
-			{
+			if (!$ldapSearchResult) {
 				$this->error = ldap_errno($this->connection)." ".ldap_error($this->connection);
 				return -1;
 			}
 
 			$entry = ldap_first_entry($this->connection, $ldapSearchResult);
 
-			if (!$entry)
-			{
+			if (!$entry) {
 				// Si pas de resultat on cherche dans le domaine
 				$searchDN = $this->domain;
 				$i++;
-			}
-			else
-			{
+			} else {
 				$i++;
 				$i++;
 			}
 		}
 
-		if ($entry)
-		{
+		if ($entry) {
 			$ldapBinary = ldap_get_values_len($this->connection, $entry, "objectsid");
 			$SIDText = $this->binSIDtoText($ldapBinary[0]);
 			return $SIDText;
-		}
-		else
-		{
+		} else {
 			$this->error = ldap_errno($this->connection)." ".ldap_error($this->connection);
 			return '?';
 		}
@@ -1198,16 +1167,15 @@ class Ldap
 	 * @param	string	$binsid		Binary SID
 	 * @return	string				Textual SID
 	 */
-    public function binSIDtoText($binsid)
+	public function binSIDtoText($binsid)
 	{
-		$hex_sid=bin2hex($binsid);
-		$rev = hexdec(substr($hex_sid, 0, 2));          // Get revision-part of SID
-		$subcount = hexdec(substr($hex_sid, 2, 2));    // Get count of sub-auth entries
-		$auth = hexdec(substr($hex_sid, 4, 12));      // SECURITY_NT_AUTHORITY
+		$hex_sid = bin2hex($binsid);
+		$rev = hexdec(substr($hex_sid, 0, 2)); // Get revision-part of SID
+		$subcount = hexdec(substr($hex_sid, 2, 2)); // Get count of sub-auth entries
+		$auth = hexdec(substr($hex_sid, 4, 12)); // SECURITY_NT_AUTHORITY
 		$result = "$rev-$auth";
-		for ($x=0;$x < $subcount; $x++)
-		{
-			$result .= "-".hexdec($this->littleEndian(substr($hex_sid, 16+($x*8), 8)));  // get all SECURITY_NT_AUTHORITY
+		for ($x = 0; $x < $subcount; $x++) {
+			$result .= "-".hexdec($this->littleEndian(substr($hex_sid, 16 + ($x * 8), 8))); // get all SECURITY_NT_AUTHORITY
 		}
 		return $result;
 	}
@@ -1224,12 +1192,12 @@ class Ldap
 	 * 	@param 	string		$filter			Search filter (ex: (sn=nom_personne) )
 	 *	@return	array|int					Array with answers (key lowercased - value)
 	 */
-    public function search($checkDn, $filter)
+	public function search($checkDn, $filter)
 	{
 		dol_syslog(get_class($this)."::search checkDn=".$checkDn." filter=".$filter);
 
-		$checkDn=$this->convFromOutputCharset($checkDn, $this->ldapcharset);
-		$filter=$this->convFromOutputCharset($filter, $this->ldapcharset);
+		$checkDn = $this->convFromOutputCharset($checkDn, $this->ldapcharset);
+		$filter = $this->convFromOutputCharset($filter, $this->ldapcharset);
 
 		// if the directory is AD, then bind first with the search user first
 		if ($this->serverType == "activedirectory") {
@@ -1239,13 +1207,10 @@ class Ldap
 		$this->result = @ldap_search($this->connection, $checkDn, $filter);
 
 		$result = @ldap_get_entries($this->connection, $this->result);
-		if (! $result)
-		{
+		if (!$result) {
 			$this->error = ldap_errno($this->connection)." ".ldap_error($this->connection);
 			return -1;
-		}
-		else
-		{
+		} else {
 			ldap_free_result($this->result);
 			return $result;
 		}
@@ -1260,7 +1225,7 @@ class Ldap
 	 *                       	       	Examples: &(objectClass=inetOrgPerson) &(objectClass=user)(objectCategory=person) &(isMemberOf=cn=Sales,ou=Groups,dc=opencsi,dc=com)
 	 *		@return	int					>0 if OK, <0 if KO
 	 */
-    public function fetch($user, $filter)
+	public function fetch($user, $filter)
 	{
 		// Perform the search and get the entry handles
 
@@ -1269,47 +1234,40 @@ class Ldap
 			$this->bindauth($this->searchUser, $this->searchPassword);
 		}
 
-		$searchDN = $this->people;    // TODO Why searching in people then domain ?
+		$searchDN = $this->people; // TODO Why searching in people then domain ?
 
 		$result = '';
-		$i=0;
-		while ($i <= 2)
-		{
+		$i = 0;
+		while ($i <= 2) {
 			dol_syslog(get_class($this)."::fetch search with searchDN=".$searchDN." filter=".$filter);
 			$this->result = @ldap_search($this->connection, $searchDN, $filter);
-			if ($this->result)
-			{
+			if ($this->result) {
 				$result = @ldap_get_entries($this->connection, $this->result);
-				if ($result['count'] > 0) dol_syslog('Ldap::fetch search found '.$result['count'].' records');
-				else dol_syslog('Ldap::fetch search returns but found no records');
+				if ($result['count'] > 0) {
+					dol_syslog('Ldap::fetch search found '.$result['count'].' records');
+				} else {
+					dol_syslog('Ldap::fetch search returns but found no records');
+				}
 				//var_dump($result);exit;
-			}
-			else
-			{
+			} else {
 				$this->error = ldap_errno($this->connection)." ".ldap_error($this->connection);
 				dol_syslog(get_class($this)."::fetch search fails");
 				return -1;
 			}
 
-			if (! $result)
-			{
+			if (!$result) {
 				// Si pas de resultat on cherche dans le domaine
 				$searchDN = $this->domain;
 				$i++;
-			}
-			else
-			{
+			} else {
 				break;
 			}
 		}
 
-		if (! $result)
-		{
+		if (!$result) {
 			$this->error = ldap_errno($this->connection)." ".ldap_error($this->connection);
 			return -1;
-		}
-		else
-		{
+		} else {
 			$this->name       = $this->convToOutputCharset($result[0][$this->attr_name][0], $this->ldapcharset);
 			$this->firstname  = $this->convToOutputCharset($result[0][$this->attr_firstname][0], $this->ldapcharset);
 			$this->login      = $this->convToOutputCharset($result[0][$this->attr_login][0], $this->ldapcharset);
@@ -1320,15 +1278,14 @@ class Ldap
 			$this->mobile     = $this->convToOutputCharset($result[0][$this->attr_mobile][0], $this->ldapcharset);
 
 			$this->uacf       = $this->parseUACF($this->convToOutputCharset($result[0]["useraccountcontrol"][0], $this->ldapcharset));
-			if (isset($result[0]["pwdlastset"][0]))	// If expiration on password exists
-			{
-				$this->pwdlastset = ($result[0]["pwdlastset"][0] != 0)?$this->convert_time($this->convToOutputCharset($result[0]["pwdlastset"][0], $this->ldapcharset)):0;
-			}
-			else
-			{
+			if (isset($result[0]["pwdlastset"][0])) {	// If expiration on password exists
+				$this->pwdlastset = ($result[0]["pwdlastset"][0] != 0) ? $this->convert_time($this->convToOutputCharset($result[0]["pwdlastset"][0], $this->ldapcharset)) : 0;
+			} else {
 				$this->pwdlastset = -1;
 			}
-			if (!$this->name && !$this->login) $this->pwdlastset = -1;
+			if (!$this->name && !$this->login) {
+				$this->pwdlastset = -1;
+			}
 			$this->badpwdtime = $this->convert_time($this->convToOutputCharset($result[0]["badpasswordtime"][0], $this->ldapcharset));
 
 			// FQDN domain
@@ -1338,7 +1295,7 @@ class Ldap
 
 			// Set ldapUserDn (each user can have a different dn)
 			//var_dump($result[0]);exit;
-			$this->ldapUserDN=$result[0]['dn'];
+			$this->ldapUserDN = $result[0]['dn'];
 
 			ldap_free_result($this->result);
 			return 1;
@@ -1353,7 +1310,7 @@ class Ldap
 	 *
 	 *	@return	string 				Login
 	 */
-    public function getUserIdentifier()
+	public function getUserIdentifier()
 	{
 		if ($this->serverType == "activedirectory") {
 			return $this->attr_sambalogin;
@@ -1362,13 +1319,13 @@ class Ldap
 		}
 	}
 
-    /**
-     * 	UserAccountControl Flgs to more human understandable form...
-     *
-     *	@param	string		$uacf		UACF
-     *	@return	void
-     */
-    public function parseUACF($uacf)
+	/**
+	 * 	UserAccountControl Flgs to more human understandable form...
+	 *
+	 *	@param	string		$uacf		UACF
+	 *	@return	void
+	 */
+	public function parseUACF($uacf)
 	{
 		//All flags array
 		$flags = array(
@@ -1397,7 +1354,8 @@ class Ldap
 
 		//Parse flags to text
 		$retval = array();
-		while (list($flag, $val) = each($flags)) {
+		//while (list($flag, $val) = each($flags)) {
+		foreach ($flags as $flag => $val) {
 			if ($uacf >= $val) {
 				$uacf -= $val;
 				$retval[$val] = $flag;
@@ -1408,13 +1366,13 @@ class Ldap
 		return($retval);
 	}
 
-    /**
-     * 	SamAccountType value to text
-     *
-     *	@param	string	$samtype	SamType
-     *	@return	string				Sam string
-     */
-    public function parseSAT($samtype)
+	/**
+	 * 	SamAccountType value to text
+	 *
+	 *	@param	string	$samtype	SamType
+	 *	@return	string				Sam string
+	 */
+	public function parseSAT($samtype)
 	{
 		$stypes = array(
 			805306368    =>    "NORMAL_ACCOUNT",
@@ -1433,25 +1391,27 @@ class Ldap
 				break;
 			}
 		}
-		if (empty($retval)) $retval = "UNKNOWN_TYPE_" . $samtype;
+		if (empty($retval)) {
+			$retval = "UNKNOWN_TYPE_".$samtype;
+		}
 
 		return($retval);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Convertit le temps ActiveDirectory en Unix timestamp
 	 *
 	 *	@param	string	$value		AD time to convert
 	 *	@return	integer				Unix timestamp
 	 */
-    public function convert_time($value)
+	public function convert_time($value)
 	{
-        // phpcs:enable
-		$dateLargeInt=$value; // nano secondes depuis 1601 !!!!
+		// phpcs:enable
+		$dateLargeInt = $value; // nano secondes depuis 1601 !!!!
 		$secsAfterADEpoch = $dateLargeInt / (10000000); // secondes depuis le 1 jan 1601
-		$ADToUnixConvertor=((1970-1601) * 365.242190) * 86400; // UNIX start date - AD start date * jours * secondes
-		$unixTimeStamp=intval($secsAfterADEpoch-$ADToUnixConvertor); // Unix time stamp
+		$ADToUnixConvertor = ((1970 - 1601) * 365.242190) * 86400; // UNIX start date - AD start date * jours * secondes
+		$unixTimeStamp = intval($secsAfterADEpoch - $ADToUnixConvertor); // Unix time stamp
 		return $unixTimeStamp;
 	}
 
@@ -1466,8 +1426,12 @@ class Ldap
 	private function convToOutputCharset($str, $pagecodefrom = 'UTF-8')
 	{
 		global $conf;
-		if ($pagecodefrom == 'ISO-8859-1' && $conf->file->character_set_client == 'UTF-8')  $str=utf8_encode($str);
-		if ($pagecodefrom == 'UTF-8' && $conf->file->character_set_client == 'ISO-8859-1')  $str=utf8_decode($str);
+		if ($pagecodefrom == 'ISO-8859-1' && $conf->file->character_set_client == 'UTF-8') {
+			$str = utf8_encode($str);
+		}
+		if ($pagecodefrom == 'UTF-8' && $conf->file->character_set_client == 'ISO-8859-1') {
+			$str = utf8_decode($str);
+		}
 		return $str;
 	}
 
@@ -1478,11 +1442,15 @@ class Ldap
 	 *  @param	string	$pagecodeto		Page code for result string
 	 *  @return string         			Converted string
 	 */
-    public function convFromOutputCharset($str, $pagecodeto = 'UTF-8')
+	public function convFromOutputCharset($str, $pagecodeto = 'UTF-8')
 	{
 		global $conf;
-		if ($pagecodeto == 'ISO-8859-1' && $conf->file->character_set_client == 'UTF-8') $str=utf8_decode($str);
-		if ($pagecodeto == 'UTF-8' && $conf->file->character_set_client == 'ISO-8859-1') $str=utf8_encode($str);
+		if ($pagecodeto == 'ISO-8859-1' && $conf->file->character_set_client == 'UTF-8') {
+			$str = utf8_decode($str);
+		}
+		if ($pagecodeto == 'UTF-8' && $conf->file->character_set_client == 'ISO-8859-1') {
+			$str = utf8_encode($str);
+		}
 		return $str;
 	}
 
@@ -1493,25 +1461,25 @@ class Ldap
 	 *	@param	string	$keygroup	Key of group
 	 *	@return	int					gid number
 	 */
-    public function getNextGroupGid($keygroup = 'LDAP_KEY_GROUPS')
+	public function getNextGroupGid($keygroup = 'LDAP_KEY_GROUPS')
 	{
 		global $conf;
 
-		if (empty($keygroup)) $keygroup='LDAP_KEY_GROUPS';
+		if (empty($keygroup)) {
+			$keygroup = 'LDAP_KEY_GROUPS';
+		}
 
-		$search='('.$conf->global->$keygroup.'=*)';
+		$search = '('.$conf->global->$keygroup.'=*)';
 		$result = $this->search($this->groups, $search);
-		if ($result)
-		{
+		if ($result) {
 			$c = $result['count'];
 			$gids = array();
-			for($i=0;$i<$c;$i++)
-			{
+			for ($i = 0; $i < $c; $i++) {
 				$gids[] = $result[$i]['gidnumber'][0];
 			}
 			rsort($gids);
 
-			return $gids[0]+1;
+			return $gids[0] + 1;
 		}
 
 		return 0;

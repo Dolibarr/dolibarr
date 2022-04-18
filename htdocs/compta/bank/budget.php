@@ -31,20 +31,25 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 $langs->loadLangs(array('banks', 'categories'));
 
 // Security check
-if ($user->socid) $socid=$user->socid;
-$result=restrictedArea($user, 'banque');
+if ($user->socid) {
+	$socid = $user->socid;
+}
+$result = restrictedArea($user, 'banque');
 
 
 /*
  * View
  */
 
-$companystatic=new Societe($db);
+$companystatic = new Societe($db);
 
-llxHeader();
+$title = $langs->trans('ListTransactionsByCategory');
+$help_url = 'EN:Module_Banks_and_Cash|FR:Module_Banques_et_Caisses|ES:M&oacute;dulo_Bancos_y_Cajas';
+
+llxHeader('', $title, $help_url);
 
 // List movements bu category for bank transactions
-print load_fiche_titre($langs->trans("BankTransactionByCategories"), '', 'title_bank.png');
+print load_fiche_titre($langs->trans("BankTransactionByCategories"), '', 'bank_account');
 
 print '<table class="noborder centpercent">';
 print "<tr class=\"liste_titre\">";
@@ -55,30 +60,30 @@ print '<td class="right">'.$langs->trans("Average").'</td>';
 print "</tr>\n";
 
 $sql = "SELECT sum(d.amount) as somme, count(*) as nombre, c.label, c.rowid ";
-$sql.= " FROM ".MAIN_DB_PREFIX."bank_categ as c";
-$sql.= ", ".MAIN_DB_PREFIX."bank_class as l";
-$sql.= ", ".MAIN_DB_PREFIX."bank as d";
-$sql.= " WHERE c.entity = ".$conf->entity;
-$sql.= " AND c.rowid = l.fk_categ";
-$sql.= " AND d.rowid = l.lineid";
-$sql.= " GROUP BY c.label, c.rowid";
-$sql.= " ORDER BY c.label";
+$sql .= " FROM ".MAIN_DB_PREFIX."bank_categ as c";
+$sql .= ", ".MAIN_DB_PREFIX."bank_class as l";
+$sql .= ", ".MAIN_DB_PREFIX."bank as d";
+$sql .= " WHERE c.entity = ".$conf->entity;
+$sql .= " AND c.rowid = l.fk_categ";
+$sql .= " AND d.rowid = l.lineid";
+$sql .= " GROUP BY c.label, c.rowid";
+$sql .= " ORDER BY c.label";
 
 $result = $db->query($sql);
-if ($result)
-{
+if ($result) {
 	$num = $db->num_rows($result);
-	$i = 0; $total = 0; $totalnb = 0;
+	$i = 0;
+	$total = 0;
+	$totalnb = 0;
 
-	while ($i < $num)
-	{
+	while ($i < $num) {
 		$objp = $db->fetch_object($result);
 
 		print '<tr class="oddeven">';
 		print "<td><a href=\"".DOL_URL_ROOT."/compta/bank/bankentries_list.php?bid=$objp->rowid\">$objp->label</a></td>";
 		print '<td class="right">'.$objp->nombre.'</td>';
-		print '<td class="right">'.price(abs($objp->somme))."</td>";
-		print '<td class="right">'.price(abs(price2num($objp->somme / $objp->nombre, 'MT')))."</td>";
+		print '<td class="right"><span class="amount">'.price(abs($objp->somme))."</span></td>";
+		print '<td class="right"><span class="amount">'.price(abs(price2num($objp->somme / $objp->nombre, 'MT')))."</span></td>";
 		print "</tr>";
 		$i++;
 		$total += abs($objp->somme);
@@ -88,10 +93,8 @@ if ($result)
 
 	print '<tr class="liste_total"><td colspan="2">'.$langs->trans("Total").'</td>';
 	print '<td class="liste_total right">'.price($total).'</td>';
-	print '<td colspan="2" class="liste_total right">'.price($totalnb?price2num($total / $totalnb, 'MT'):0).'</td></tr>';
-}
-else
-{
+	print '<td colspan="2" class="liste_total right">'.price($totalnb ?price2num($total / $totalnb, 'MT') : 0).'</td></tr>';
+} else {
 	dol_print_error($db);
 }
 print "</table>";

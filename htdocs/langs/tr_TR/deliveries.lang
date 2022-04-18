@@ -2,7 +2,7 @@
 Delivery=Teslimat
 DeliveryRef=Teslimat Ref
 DeliveryCard=Makbuz kartı
-DeliveryOrder=Delivery receipt
+DeliveryOrder=Teslimat Makbuzu
 DeliveryDate=Teslim tarihi
 CreateDeliveryOrder=Teslimat makbuzu oluştur
 DeliveryStateSaved=Teslimat durumu kaydedildi
@@ -27,5 +27,7 @@ Recipient=Alıcı
 ErrorStockIsNotEnough=Yeterli stok yok
 Shippable=Sevkedilebilir
 NonShippable=Sevkedilemez
+ShowShippableStatus=Show shippable status
 ShowReceiving=Teslimat Fişini göster
 NonExistentOrder=Mevcut olmayan sipariş
+StockQuantitiesAlreadyAllocatedOnPreviousLines = Stock quantities already allocated on previous lines

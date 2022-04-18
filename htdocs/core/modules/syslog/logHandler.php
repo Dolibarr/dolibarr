@@ -22,7 +22,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/syslog/logHandlerInterface.php';
  */
 class LogHandler
 {
-	protected $ident=0;
+	protected $ident = 0;
 
 
 	/**
@@ -90,11 +90,11 @@ class LogHandler
 	/**
 	 * Set current ident.
 	 *
-     * @param	int		$ident		1=Increase ident of 1, -1=Decrease ident of 1
+	 * @param	int		$ident		1=Increase ident of 1, -1=Decrease ident of 1
 	 * @return 	void
 	 */
 	public function setIdent($ident)
 	{
-		$this->ident+=$ident;
+		$this->ident += $ident;
 	}
 }

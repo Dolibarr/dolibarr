@@ -7,4 +7,5 @@ ErrorFileNotLinked=Файлът не може да бъде свързан
 LinkRemoved=Връзката %s е премахната
 ErrorFailedToDeleteLink= Премахването на връзката '<b>%s</b>' не е успешно
 ErrorFailedToUpdateLink= Актуализацията на връзката '<b>%s</b>' не е успешна
-URLToLink=URL връзка
+URLToLink=URL адрес
+OverwriteIfExists=Презаписване на файл, ако съществува

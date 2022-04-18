@@ -16,8 +16,7 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($conf) || ! is_object($conf))
-{
+if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
 	exit;
 }
@@ -30,8 +29,12 @@ echo $this->control->tpl['showhead'];
 
 dol_htmloutput_errors($this->control->tpl['error'], $this->control->tpl['errors']);
 
-if (! empty($this->control->tpl['action_create_user'])) echo $this->control->tpl['action_create_user'];
-if (! empty($this->control->tpl['action_delete'])) echo $this->control->tpl['action_delete']; ?>
+if (!empty($this->control->tpl['action_create_user'])) {
+	echo $this->control->tpl['action_create_user'];
+}
+if (!empty($this->control->tpl['action_delete'])) {
+	echo $this->control->tpl['action_delete'];
+} ?>
 
 <table class="border allwidth">
 
@@ -136,15 +139,15 @@ if (! empty($this->control->tpl['action_delete'])) echo $this->control->tpl['act
 if (empty($user->socid)) {
 	print '<div class="tabsAction">';
 	if ($user->rights->societe->contact->creer) {
-		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$this->control->tpl['id'].'&amp;action=edit&amp;canvas='.$canvas.'">'.$langs->trans('Modify').'</a>';
+		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$this->control->tpl['id'].'&action=edit&token='.newToken().'&canvas='.$canvas.'">'.$langs->trans('Modify').'</a>';
 	}
 
-	if (! $this->control->tpl['user_id'] && $user->rights->user->user->creer) {
-		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$this->control->tpl['id'].'&amp;action=create_user&amp;canvas='.$canvas.'">'.$langs->trans("CreateDolibarrLogin").'</a>';
+	if (!$this->control->tpl['user_id'] && $user->rights->user->user->creer) {
+		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$this->control->tpl['id'].'&action=create_user&token='.newToken().'&canvas='.$canvas.'">'.$langs->trans("CreateDolibarrLogin").'</a>';
 	}
 
 	if ($user->rights->societe->contact->supprimer) {
-		print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$this->control->tpl['id'].'&amp;action=delete&amp;canvas='.$canvas.'">'.$langs->trans('Delete').'</a>';
+		print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$this->control->tpl['id'].'&action=delete&token='.newToken().'&canvas='.$canvas.'">'.$langs->trans('Delete').'</a>';
 	}
 
 	print '</div><br>';

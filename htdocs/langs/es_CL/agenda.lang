@@ -4,11 +4,9 @@ ActionsOwnedBy=Evento propiedad de
 Event=Evento
 EventsNb=Cantidad de eventos
 ListOfActions=Lista de eventos
-ToUserOfGroup=Para cualquier usuario en grupo
 EventOnFullDay=Evento todo el día (s)
 MenuToDoActions=Todos los eventos incompletos
 MenuDoneActions=Todos los eventos terminados
-ListOfEvents=Lista de eventos (calendario interno)
 ActionsAskedBy=Eventos reportados por
 ActionsDoneBy=Eventos hechos por
 ViewCal=Vista del mes
@@ -35,7 +33,6 @@ MemberSubscriptionModifiedInDolibarr=Suscripción %s para el miembro %s modifica
 MemberSubscriptionDeletedInDolibarr=Suscripción %s para el miembro %s eliminado
 ShipmentValidatedInDolibarr=Envío %s validado
 ShipmentClassifyClosedInDolibarr=Envío %s clasificado facturado
-ShipmentUnClassifyCloseddInDolibarr=Envío %s clasificado reabierto
 ShipmentBackToDraftInDolibarr=Envío %s volver al estado de borrador
 ShipmentDeletedInDolibarr=Envío %s eliminado
 OrderCreatedInDolibarr=Orden %s creado
@@ -61,7 +58,6 @@ InvoiceDeleted=Factura borrada
 HOLIDAY_CREATEInDolibarr=Solicitud de licencia %s creada
 HOLIDAY_MODIFYInDolibarr=Solicitud de licencia %s modificada
 HOLIDAY_APPROVEInDolibarr=Requerimiento de ausencia %s aprovada
-HOLIDAY_VALIDATEDInDolibarr=Solicitud de licencia %s validada
 HOLIDAY_DELETEInDolibarr=Solicitud de licencia %s eliminada
 TICKET_MODIFYInDolibarr=Boleto %s modificado
 TICKET_ASSIGNEDInDolibarr=Boleto %s asignado
@@ -81,7 +77,6 @@ AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> para restringir la salida a acciones 
 AgendaUrlOptions4=<b>logint =%s</b> para restringir la salida a acciones asignadas al usuario <b>%s</b> (propietario y otros).
 AgendaUrlOptionsProject=<b> project = __ PROJECT_ID __ </ b> para restringir el resultado a acciones vinculadas al proyecto <b> __ PROJECT_ID __ </ b>.
 AgendaUrlOptionsNotAutoEvent=<b>notactiontype = systemauto</b> para excluir eventos automáticos.
-AgendaShowBirthdayEvents=Mostrar cumpleaños de contactos
 AgendaHideBirthdayEvents=Ocultar cumpleaños de contactos
 ExportDataset_event1=Lista de eventos de la agenda
 DefaultWorkingDays=Rango predeterminado de días laborables en la semana (Ejemplo: 1-5, 1-6)

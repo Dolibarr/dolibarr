@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - stripe
 StripeSetup=Ρύθμιση μονάδας ταινιών
-StripeDesc=Προσφέρετε στους πελάτες μια σελίδα Stripe online πληρωμής για πληρωμές με πιστωτικές κάρτες μέσω του <a href="http://www.stripe.com" target="_blank">Stripe</a> . Αυτό μπορεί να χρησιμοποιηθεί για να επιτρέψει στους πελάτες σας να πραγματοποιούν ad hoc πληρωμές ή για πληρωμές που σχετίζονται με ένα συγκεκριμένο αντικείμενο Dolibarr (τιμολόγιο, παραγγελία, ...)
+StripeDesc=Offer your customers an online payment page for payments with credit/debit cards via <a href="https://www.stripe.com" target="_blank" rel="noopener noreferrer external">Stripe</a>. This can be used to allow your customers to make ad-hoc payments or for payments related to a particular Dolibarr object (invoice, order, ...)
 StripeOrCBDoPayment=Πληρώστε με πιστωτική κάρτα ή Stripe
 FollowingUrlAreAvailableToMakePayments=Μετά από τις διευθύνσεις URL είναι διαθέσιμοι να προσφέρουν μια σελίδα σε έναν πελάτη να προβεί σε πληρωμή σε Dolibarr αντικείμενα
 PaymentForm=Έντυπο πληρωμής
@@ -28,10 +28,10 @@ AccountParameter=Παράμετροι λογαριασμού
 UsageParameter=Παράμετροι χρήσης
 InformationToFindParameters=Βοήθεια για να βρείτε %s τα στοιχεία του λογαριασμού σας
 STRIPE_CGI_URL_V2=Διεύθυνση Url της ενότητας CGI Stripe για πληρωμή
-VendorName=Όνομα του πωλητή
 CSSUrlForPaymentForm=Url CSS φύλλο στυλ για το έντυπο πληρωμής
 NewStripePaymentReceived=Πληρωμή της νέας ταινίας Stripe
 NewStripePaymentFailed=Η πληρωμή του νέου Stripe προσπάθησε αλλά απέτυχε
+FailedToChargeCard=Αποτυχία χρέωσης κάρτας
 STRIPE_TEST_SECRET_KEY=Μυστικό κλειδί δοκιμής
 STRIPE_TEST_PUBLISHABLE_KEY=Κλειδί ελέγχου δοκιμαστικής έκδοσης
 STRIPE_TEST_WEBHOOK_KEY=Πλήκτρο δοκιμής Webhook
@@ -68,3 +68,4 @@ ToOfferALinkForTestWebhook=Σύνδεση με τη ρύθμιση Stripe WebHoo
 ToOfferALinkForLiveWebhook=Σύνδεση στη ρύθμιση Stripe WebHook για κλήση του IPN (ζωντανή λειτουργία)
 PaymentWillBeRecordedForNextPeriod=Η πληρωμή θα καταγραφεί για την επόμενη περίοδο.
 ClickHereToTryAgain=<a href="%s">Κάντε κλικ εδώ για να δοκιμάσετε ξανά ...</a>
+CreationOfPaymentModeMustBeDoneFromStripeInterface=Λόγω των ισχυρών κανόνων ελέγχου ταυτότητας πελατών, η δημιουργία μιας κάρτας πρέπει να γίνει από το Backe Office. Μπορείτε να κάνετε κλικ εδώ για να ενεργοποιήσετε την εγγραφή πελατών Stripe: %s

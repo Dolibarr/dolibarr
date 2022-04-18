@@ -8,3 +8,4 @@ LinkRemoved=链接 %s 已移除
 ErrorFailedToDeleteLink= 移除链接失败 '<b>%s</b>'
 ErrorFailedToUpdateLink= 更新链接失败 '<b>%s</b>'
 URLToLink=URL网址超链接
+OverwriteIfExists=Overwrite file if exists

@@ -29,7 +29,8 @@ create table llx_societe_remise_except
   amount_ht					double(24,8) NOT NULL,
   amount_tva				double(24,8) DEFAULT 0 NOT NULL,
   amount_ttc				double(24,8) DEFAULT 0 NOT NULL,
-  tva_tx					double(6,3)  DEFAULT 0 NOT NULL,
+  tva_tx					double(7,4)  DEFAULT 0 NOT NULL,
+  vat_src_code				varchar(10)  DEFAULT '',				-- Vat code used as source of vat fields. Not strict foreign key here.
   fk_user					integer NOT NULL,
   fk_facture_line			integer,
   fk_facture				integer,

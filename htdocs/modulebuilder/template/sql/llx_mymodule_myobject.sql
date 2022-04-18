@@ -20,9 +20,11 @@ CREATE TABLE llx_mymodule_myobject(
 	entity INTEGER DEFAULT 1 NOT NULL,
 	label VARCHAR(255),
 	qty INTEGER,
-	status INTEGER,
 	date_creation DATETIME NOT NULL,
 	tms TIMESTAMP,
+	fk_user_create INTEGER,
+	fk_user_modif INTEGER,
+	status INTEGER,
 	import_key VARCHAR(14)
 	-- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;

@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - opensurvey
 Survey=Hlasování
 Surveys=Ankety
-OrganizeYourMeetingEasily=Organize your meetings and polls easily. First select the type of poll...
+OrganizeYourMeetingEasily=Organizujte snadno své schůzky a hlasování. Nejprve vyberte typ hlasování ...
 NewSurvey=Nové hlasování
 OpenSurveyArea=Oblast anket
 AddACommentForPoll=Můžete přidat komentář do hlasování ...
@@ -48,6 +48,8 @@ AddEndHour=Přidat konečnou hodinu
 votes=hlas (y)
 NoCommentYet=Žádné komentáře nebyly pro tuto anketu ještě zveřejněny
 CanComment=Hlasující mohou vkládat komentáře v této anketě
+YourVoteIsPrivate=This poll is private, nobody can see your vote.
+YourVoteIsPublic=This poll is public, anybody with the link can see your vote.
 CanSeeOthersVote=Hlasující mohou vidět další osoby, které v této anketě hlasují
 SelectDayDesc=Pro každý vybraný den si můžete zvolit nebo nezvolit hodiny setkání v následujícím formátu: <br> - prázdný, <br> - "8h", "8h" nebo "8:00" pro počáteční hodinu schůzky, < br> - "8-11", "8h-11h", "8H-11H" nebo "8: 00-11: 00" 8H15-11H15 "nebo" 8: 15-11: 15 "pro stejnou věc, ale s minutami.
 BackToCurrentMonth=Zpět na aktuální měsíc

@@ -15,5 +15,5 @@
 
 
 -- BEGIN MODULEBUILDER INDEXES
-ALTER TABLE llx_mrp_myobject_extrafields ADD INDEX idx_fk_object(fk_object);
+ALTER TABLE llx_mrp_mo_extrafields ADD INDEX idx_mrp_mo_fk_object(fk_object);
 -- END MODULEBUILDER INDEXES

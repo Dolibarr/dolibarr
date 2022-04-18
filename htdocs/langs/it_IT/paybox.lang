@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - paybox
 PayBoxSetup=Impostazioni modulo Paybox
-PayBoxDesc=Questo modulo offre pagine per consentire il pagamento attraverso <a href="http://www.paybox.com" target="_blank">Paybox</a> da parte dei clienti. Può essere usato per un pagamento qualsiasi o per il pagamento di specifici oggetti Dolibarr (fattura, ordine, ...)
+PayBoxDesc=Questo modulo offre pagine per consentire il pagamento su <a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external"> Paybox </a> da parte dei clienti. Questo può essere utilizzato per un pagamento gratuito o per un pagamento su un particolare oggetto Dolibarr (fattura, ordine, ...)
 FollowingUrlAreAvailableToMakePayments=Puoi utilizzare i seguenti indirizzi per permettere ai clienti di effettuare pagamenti su Dolibarr
 PaymentForm=Forma di pagamento
 WelcomeOnPaymentPage=Welcome to our online payment service
@@ -20,7 +20,6 @@ AccountParameter=Dati account
 UsageParameter=Parametri d'uso
 InformationToFindParameters=Aiuto per trovare informazioni sul tuo account %s
 PAYBOX_CGI_URL_V2=URL del modulo CGI di Paybox per il pagamento
-VendorName=Nome del venditore
 CSSUrlForPaymentForm=URL del foglio di stile CSS per il modulo di pagamento
 NewPayboxPaymentReceived=Nuovo pagamento Paybox ricevuto
 NewPayboxPaymentFailed=Nuovo tentativo di pagamento Paybox ma fallito

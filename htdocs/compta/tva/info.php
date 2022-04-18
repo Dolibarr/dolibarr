@@ -29,28 +29,29 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'bills'));
 
-$id=GETPOST('id', 'int');
-$action=GETPOST('action', 'aZ09');
-
-// Security check
-$socid = GETPOST('socid', 'int');
-if ($user->socid) $socid=$user->socid;
-$result = restrictedArea($user, 'tax', '', '', 'charges');
+$id = GETPOST('id', 'int');
+$action = GETPOST('action', 'aZ09');
 
 $object = new Tva($db);
 
+// Security check
+$socid = GETPOST('socid', 'int');
+if ($user->socid) {
+	$socid = $user->socid;
+}
+$result = restrictedArea($user, 'tax', '', 'tva', 'charges');
 
 
 /*
  * Actions
  */
 
-if ($action == 'setlib' && $user->rights->tax->charges->creer)
-{
+if ($action == 'setlib' && $user->rights->tax->charges->creer) {
 	$object->fetch($id);
 	$result = $object->setValueFrom('label', GETPOST('lib', 'alpha'), '', '', 'text', '', $user, 'TAX_MODIFY');
-	if ($result < 0)
+	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
+	}
 }
 
 
@@ -58,8 +59,8 @@ if ($action == 'setlib' && $user->rights->tax->charges->creer)
  * View
  */
 
-$title=$langs->trans("VAT") . " - " . $langs->trans("Info");
-$help_url='';
+$title = $langs->trans("VAT")." - ".$langs->trans("Info");
+$help_url = '';
 llxHeader("", $title, $helpurl);
 
 $object = new Tva($db);
@@ -68,13 +69,13 @@ $object->info($id);
 
 $head = vat_prepare_head($object);
 
-dol_fiche_head($head, 'info', $langs->trans("VATPayment"), -1, 'payment');
+print dol_get_fiche_head($head, 'info', $langs->trans("VATPayment"), -1, 'payment');
 
-$morehtmlref='<div class="refidno">';
+$morehtmlref = '<div class="refidno">';
 // Label of social contribution
-$morehtmlref.=$form->editfieldkey("Label", 'lib', $object->label, $object, $user->rights->tax->charges->creer, 'string', '', 0, 1);
-$morehtmlref.=$form->editfieldval("Label", 'lib', $object->label, $object, $user->rights->tax->charges->creer, 'string', '', null, null, '', 1);
-$morehtmlref.='</div>';
+$morehtmlref .= $form->editfieldkey("Label", 'lib', $object->label, $object, $user->rights->tax->charges->creer, 'string', '', 0, 1);
+$morehtmlref .= $form->editfieldval("Label", 'lib', $object->label, $object, $user->rights->tax->charges->creer, 'string', '', null, null, '', 1);
+$morehtmlref .= '</div>';
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/compta/tva/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
@@ -83,13 +84,15 @@ dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0,
 print '<div class="fichecenter">';
 print '<div class="underbanner clearboth"></div>';
 
+print '<br>';
+
 print '<table width="100%"><tr><td>';
 dol_print_object_info($object);
 print '</td></tr></table>';
 
 print '</div>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 llxFooter();
 

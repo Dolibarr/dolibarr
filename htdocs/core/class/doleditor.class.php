@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2006-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2021 Gaëtan MAISON <gm@ilad.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,254 +29,247 @@
  */
 class DolEditor
 {
-    public $tool; // Store the selected tool
+	public $tool; // Store the selected tool
 
-    // If using fckeditor
-    public $editor;
+	// If using fckeditor
+	public $editor;
 
-    // If not using fckeditor
-    public $content;
-    public $htmlname;
-    public $toolbarname;
-    public $toolbarstartexpanded;
-    public $rows;
-    public $cols;
-    public $height;
-    public $width;
-    public $readonly;
+	// If not using fckeditor
+	public $content;
+	public $htmlname;
+	public $toolbarname;
+	public $toolbarstartexpanded;
+	public $rows;
+	public $cols;
+	public $height;
+	public $width;
+	public $readonly;
+	public $posx;
+	public $posy;
 
 
-    /**
-     *  Create an object to build an HTML area to edit a large string content
-     *
-     *  @param 	string	$htmlname		        		HTML name of WYSIWIG field
-     *  @param 	string	$content		        		Content of WYSIWIG field
-     *  @param	int		$width							Width in pixel of edit area (auto by default)
-     *  @param 	int		$height			       		 	Height in pixel of edit area (200px by default)
-     *  @param 	string	$toolbarname	       		 	Name of bar set to use ('Full', 'dolibarr_notes[_encoded]', 'dolibarr_details[_encoded]'=the less featured, 'dolibarr_mailings[_encoded]', 'dolibarr_readonly').
-     *  @param  string	$toolbarlocation       			Where bar is stored :
-     *                       		                    'In' each window has its own toolbar
-     *                              		            'Out:name' share toolbar into the div called 'name'
-     *  @param  boolean	$toolbarstartexpanded  			Bar is visible or not at start
+	/**
+	 *  Create an object to build an HTML area to edit a large string content
+	 *
+	 *  @param 	string	$htmlname		        		HTML name of WYSIWIG field
+	 *  @param 	string	$content		        		Content of WYSIWIG field
+	 *  @param	int		$width							Width in pixel of edit area (auto by default)
+	 *  @param 	int		$height			       		 	Height in pixel of edit area (200px by default)
+	 *  @param 	string	$toolbarname	       		 	Name of bar set to use ('Full', 'dolibarr_notes[_encoded]', 'dolibarr_details[_encoded]'=the less featured, 'dolibarr_mailings[_encoded]', 'dolibarr_readonly').
+	 *  @param  string	$toolbarlocation       			Where bar is stored :
+	 *                       		                    'In' = each window has its own toolbar
+	 *                              		            'Out:name' = share toolbar into the div called 'name'
+	 *  @param  boolean	$toolbarstartexpanded  			Bar is visible or not at start
 	 *  @param	int		$uselocalbrowser				Enabled to add links to local object with local browser. If false, only external images can be added in content.
 	 *  @param  boolean|string	$okforextendededitor    True=Allow usage of extended editor tool if qualified (like ckeditor). If 'textarea', force use of simple textarea. If 'ace', force use of Ace.
 	 *                                                  Warning: If you use 'ace', don't forget to also include ace.js in page header. Also, the button "save" must have class="buttonforacesave".
-     *  @param  int		$rows                   		Size of rows for textarea tool
+	 *  @param  int		$rows                   		Size of rows for textarea tool
 	 *  @param  string	$cols                   		Size of cols for textarea tool (textarea number of cols '70' or percent 'x%')
 	 *  @param	int		$readonly						0=Read/Edit, 1=Read only
+	 *  @param	array	$poscursor						Array for initial cursor position array('x'=>x, 'y'=>y)
 	 */
-    public function __construct($htmlname, $content, $width = '', $height = 200, $toolbarname = 'Basic', $toolbarlocation = 'In', $toolbarstartexpanded = false, $uselocalbrowser = true, $okforextendededitor = true, $rows = 0, $cols = 0, $readonly = 0)
-    {
-    	global $conf, $langs;
+	public function __construct($htmlname, $content, $width = '', $height = 200, $toolbarname = 'Basic', $toolbarlocation = 'In', $toolbarstartexpanded = false, $uselocalbrowser = true, $okforextendededitor = true, $rows = 0, $cols = 0, $readonly = 0, $poscursor = array())
+	{
+		global $conf, $langs;
 
-    	dol_syslog(get_class($this)."::DolEditor htmlname=".$htmlname." width=".$width." height=".$height." toolbarname=".$toolbarname);
+		dol_syslog(get_class($this)."::DolEditor htmlname=".$htmlname." width=".$width." height=".$height." toolbarname=".$toolbarname);
 
-    	if (!$rows) $rows = round($height / 20);
-    	if (!$cols) $cols = ($width ?round($width / 6) : 80);
+		if (!$rows) {
+			$rows = round($height / 20);
+		}
+		if (!$cols) {
+			$cols = ($width ?round($width / 6) : 80);
+		}
 		$shorttoolbarname = preg_replace('/_encoded$/', '', $toolbarname);
 
-        // Name of extended editor to use (FCKEDITOR_EDITORNAME can be 'ckeditor' or 'fckeditor')
-        $defaulteditor = 'ckeditor';
-        $this->tool = empty($conf->global->FCKEDITOR_EDITORNAME) ? $defaulteditor : $conf->global->FCKEDITOR_EDITORNAME;
-        $this->uselocalbrowser = $uselocalbrowser;
-        $this->readonly = $readonly;
+		// Name of extended editor to use (FCKEDITOR_EDITORNAME can be 'ckeditor' or 'fckeditor')
+		$defaulteditor = 'ckeditor';
+		$this->tool = empty($conf->global->FCKEDITOR_EDITORNAME) ? $defaulteditor : $conf->global->FCKEDITOR_EDITORNAME;
+		$this->uselocalbrowser = $uselocalbrowser;
+		$this->readonly = $readonly;
 
-        // Check if extended editor is ok. If not we force textarea
-        if ((empty($conf->fckeditor->enabled) && $okforextendededitor != 'ace') || empty($okforextendededitor)) $this->tool = 'textarea';
-		if ($okforextendededitor === 'ace') $this->tool = 'ace';
-        //if ($conf->dol_use_jmobile) $this->tool = 'textarea';       // ckeditor and ace seems ok with mobile
+		// Check if extended editor is ok. If not we force textarea
+		if ((empty($conf->fckeditor->enabled) && $okforextendededitor != 'ace') || empty($okforextendededitor)) {
+			$this->tool = 'textarea';
+		}
+		if ($okforextendededitor === 'ace') {
+			$this->tool = 'ace';
+		}
+		//if ($conf->dol_use_jmobile) $this->tool = 'textarea';       // ckeditor and ace seems ok with mobile
 
-        // Define content and some properties
-        if ($this->tool == 'ckeditor')
-        {
-            $content = dol_htmlentitiesbr($content); // If content is not HTML, we convert to HTML.
-        }
-        if ($this->tool == 'fckeditor')
-    	{
-        	require_once DOL_DOCUMENT_ROOT.'/includes/fckeditor/fckeditor.php';
+		// Define some properties
+		if (in_array($this->tool, array('textarea', 'ckeditor', 'ace'))) {
+			if ($this->tool == 'ckeditor' && !dol_textishtml($content)) {	// We force content to be into HTML if we are using an advanced editor if content is not HTML.
+				$this->content = dol_nl2br($content);
+			} else {
+				$this->content = $content;
+			}
+			$this->htmlname 			= $htmlname;
+			$this->toolbarname = $shorttoolbarname;
+			$this->toolbarstartexpanded = $toolbarstartexpanded;
+			$this->rows					= max(ROWS_3, $rows);
+			$this->cols					= (preg_match('/%/', $cols) ? $cols : max(40, $cols)); // If $cols is a percent, we keep it, otherwise, we take max
+			$this->height               = $height;
+			$this->width				= $width;
+			$this->posx                 = empty($poscursor['x']) ? 0 : $poscursor['x'];
+			$this->posy                 = empty($poscursor['y']) ? 0 : $poscursor['y'];
+		}
+	}
 
-    		$content = dol_htmlentitiesbr($content); // If content is not HTML, we convert to HTML.
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *	Output edit area inside the HTML stream.
+	 *	Output depends on this->tool (fckeditor, ckeditor, textarea, ...)
+	 *
+	 *  @param	int		$noprint             1=Return HTML string instead of printing it to output
+	 *  @param	string	$morejs		         Add more js. For example: ".on( \'saveSnapshot\', function(e) { alert(\'ee\'); });". Used by CKEditor only.
+	 *  @param  boolean $disallowAnyContent  Disallow to use any content. true=restrict to a predefined list of allowed elements. Used by CKEditor only.
+	 *  @param	string	$titlecontent		 Show title content before editor area. Used by ACE editor only.
+	 *  @param	string	$option				 For ACE editor, set the source language ('html', 'php', 'javascript', ...)
+	 *  @param	string	$moreparam			 Add extra tags to the textarea
+	 *  @param	string	$morecss			 Add extra css to the textarea
+	 *  @return	void|string
+	 */
+	public function Create($noprint = 0, $morejs = '', $disallowAnyContent = true, $titlecontent = '', $option = '', $moreparam = '', $morecss = '')
+	{
+		// phpcs:enable
+		global $conf, $langs;
 
-        	$this->editor = new FCKeditor($htmlname);
-        	$this->editor->BasePath = DOL_URL_ROOT.'/includes/fckeditor/';
-        	$this->editor->Value = $content;
-        	$this->editor->Height   = $height;
-        	if (!empty($width)) $this->editor->Width = $width;
-        	$this->editor->ToolbarSet = $shorttoolbarname; // Profile of this toolbar set is deinfed into theme/mytheme/ckeditor/config.js
-        	$this->editor->Config['AutoDetectLanguage'] = 'true'; // Language of user (browser)
-        	$this->editor->Config['ToolbarLocation'] = $toolbarlocation ? $toolbarlocation : 'In';
-        	$this->editor->Config['ToolbarStartExpanded'] = $toolbarstartexpanded;
+		$fullpage = false;
+		if (isset($conf->global->FCKEDITOR_ALLOW_ANY_CONTENT)) {
+			$disallowAnyContent = empty($conf->global->FCKEDITOR_ALLOW_ANY_CONTENT); // Only predefined list of html tags are allowed or all
+		}
 
-    		// Rem: Le forcage de ces 2 parametres ne semble pas fonctionner.
-    		// Dolibarr utilise toujours liens avec modulepart='fckeditor' quelque soit modulepart.
-    		// Ou se trouve donc cette valeur /viewimage.php?modulepart=fckeditor&file=' ?
-        	$modulepart = 'fckeditor';
-    		$this->editor->Config['UserFilesPath'] = '/viewimage.php?modulepart='.$modulepart.'&entity='.$conf->entity.'&file=';
-    		$this->editor->Config['UserFilesAbsolutePath'] = DOL_DATA_ROOT.'/'.$modulepart.'/';
-
-        	$this->editor->Config['LinkBrowser'] = ($uselocalbrowser ? 'true' : 'false');
-        	$this->editor->Config['ImageBrowser'] = ($uselocalbrowser ? 'true' : 'false');
-
-        	if (file_exists(DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/fckeditor/fckconfig.js'))
-        	{
-        		$this->editor->Config['CustomConfigurationsPath'] = DOL_URL_ROOT.'/theme/'.$conf->theme.'/fckeditor/fckconfig.js';
-        		$this->editor->Config['SkinPath'] = DOL_URL_ROOT.'/theme/'.$conf->theme.'/fckeditor/';
-    		}
-    	}
-
-    	// Define some properties
-        if (in_array($this->tool, array('textarea', 'ckeditor', 'ace')))
-        {
-    	    $this->content = $content;
-    	    $this->htmlname 			= $htmlname;
-    	    $this->toolbarname = $shorttoolbarname;
-    	    $this->toolbarstartexpanded = $toolbarstartexpanded;
-            $this->rows					= max(ROWS_3, $rows);
-            $this->cols					= (preg_match('/%/', $cols) ? $cols : max(40, $cols)); // If $cols is a percent, we keep it, otherwise, we take max
-            $this->height = $height;
-            $this->width				= $width;
-    	}
-    }
-
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-    /**
-     *	Output edit area inside the HTML stream.
-     *	Output depends on this->tool (fckeditor, ckeditor, textarea, ...)
-     *
-     *  @param	int		$noprint             1=Return HTML string instead of printing it to output
-     *  @param	string	$morejs		         Add more js. For example: ".on( \'saveSnapshot\', function(e) { alert(\'ee\'); });". Used by CKEditor only.
-     *  @param  boolean $disallowAnyContent  Disallow to use any content. true=restrict to a predefined list of allowed elements. Used by CKEditor only.
-     *  @param	string	$titlecontent		 Show title content before editor area. Used by ACE editor only.
-     *  @param	string	$option				 For ACE editor, set the source language ('html', 'php', 'javascript', ...)
-     *  @return	void|string
-     */
-    public function Create($noprint = 0, $morejs = '', $disallowAnyContent = true, $titlecontent = '', $option = '')
-    {
-        // phpcs:enable
-    	global $conf, $langs;
-
-    	$fullpage = false;
-    	if (isset($conf->global->FCKEDITOR_ALLOW_ANY_CONTENT))
-    	{
-            $disallowAnyContent = empty($conf->global->FCKEDITOR_ALLOW_ANY_CONTENT); // Only predefined list of html tags are allowed or all
-    	}
-
-    	$found = 0;
+		$found = 0;
 		$out = '';
 
-        if ($this->tool == 'fckeditor') // not used anymore
-        {
+		if (in_array($this->tool, array('textarea', 'ckeditor'))) {
 			$found = 1;
-            $this->editor->Create();
-        }
-        if (in_array($this->tool, array('textarea', 'ckeditor')))
-        {
-            $found = 1;
-            //$out.= '<textarea id="'.$this->htmlname.'" name="'.$this->htmlname.'" '.($this->readonly?' disabled':'').' rows="'.$this->rows.'"'.(preg_match('/%/',$this->cols)?' style="margin-top: 5px; width: '.$this->cols.'"':' cols="'.$this->cols.'"').' class="flat">';
-            // TODO We do not put the disabled tag because on a read form, it change style with grey.
-            $out .= '<textarea id="'.$this->htmlname.'" name="'.$this->htmlname.'" rows="'.$this->rows.'"'.(preg_match('/%/', $this->cols) ? ' style="margin-top: 5px; width: '.$this->cols.'"' : ' cols="'.$this->cols.'"').' class="flat">';
-            $out .= htmlspecialchars($this->content);
-            $out .= '</textarea>';
+			//$out.= '<textarea id="'.$this->htmlname.'" name="'.$this->htmlname.'" '.($this->readonly?' disabled':'').' rows="'.$this->rows.'"'.(preg_match('/%/',$this->cols)?' style="margin-top: 5px; width: '.$this->cols.'"':' cols="'.$this->cols.'"').' class="flat">';
+			// TODO We do not put the 'disabled' tag because on a read form, it change style with grey.
+			//print $this->content;
+			$out .= '<textarea id="'.$this->htmlname.'" name="'.$this->htmlname.'" rows="'.$this->rows.'"'.(preg_match('/%/', $this->cols) ? ' style="margin-top: 5px; width: '.$this->cols.'"' : ' cols="'.$this->cols.'"').' '.($moreparam ? $moreparam : '').' class="flat '.$morecss.'">';
+			$out .= htmlspecialchars($this->content);
+			$out .= '</textarea>';
 
-            if ($this->tool == 'ckeditor' && !empty($conf->use_javascript_ajax) && !empty($conf->fckeditor->enabled))
-            {
-            	if (!defined('REQUIRE_CKEDITOR')) define('REQUIRE_CKEDITOR', '1');
+			if ($this->tool == 'ckeditor' && !empty($conf->use_javascript_ajax) && !empty($conf->fckeditor->enabled)) {
+				if (!defined('REQUIRE_CKEDITOR')) {
+					define('REQUIRE_CKEDITOR', '1');
+				}
 
-            	if (!empty($conf->global->FCKEDITOR_SKIN)) {
+				if (!empty($conf->global->FCKEDITOR_SKIN)) {
 					$skin = $conf->global->FCKEDITOR_SKIN;
 				} else {
 					$skin = 'moono-lisa'; // default with ckeditor 4.6 : moono-lisa
 				}
 
-            	$htmlencode_force = preg_match('/_encoded$/', $this->toolbarname) ? 'true' : 'false';
+				$pluginstodisable = 'elementspath,save,flash';
+				if (!empty($conf->dol_optimize_smallscreen)) {
+					$pluginstodisable .= ',scayt,wsc,find,undo';
+				}
+				if (empty($conf->global->FCKEDITOR_ENABLE_WSC)) {	// spellchecker has end of life december 2021
+					$pluginstodisable .= ',wsc';
+				}
+				$scaytautostartup = '';
+				if (!empty($conf->global->FCKEDITOR_ENABLE_SCAYT_AUTOSTARTUP)) {
+					$scaytautostartup = 'scayt_autoStartup: true,';
+					$scaytautostartup .= 'scayt_sLang: \''.dol_escape_js($langs->getDefaultLang()).'\',';
+				} else {
+					$pluginstodisable .= ',scayt';
+				}
 
-            	$out .= '<!-- Output ckeditor $disallowAnyContent='.$disallowAnyContent.' toolbarname='.$this->toolbarname.' -->'."\n";
-            	$out .= '<script type="text/javascript">
+				$htmlencode_force = preg_match('/_encoded$/', $this->toolbarname) ? 'true' : 'false';
+
+				$out .= '<!-- Output ckeditor $disallowAnyContent='.$disallowAnyContent.' toolbarname='.$this->toolbarname.' -->'."\n";
+				$out .= '<script type="text/javascript">
             			$(document).ready(function () {
 							/* console.log("Run ckeditor"); */
                             /* if (CKEDITOR.loadFullCore) CKEDITOR.loadFullCore(); */
-                            /* should be editor=CKEDITOR.replace but what if serveral editors ? */
-                            CKEDITOR.replace(\''.$this->htmlname.'\',
+                            /* should be editor=CKEDITOR.replace but what if there is several editors ? */
+                            tmpeditor = CKEDITOR.replace(\''.$this->htmlname.'\',
             					{
             						/* property:xxx is same than CKEDITOR.config.property = xxx */
             						customConfig : ckeditorConfig,
+									removePlugins : \''.$pluginstodisable.'\',
             						readOnly : '.($this->readonly ? 'true' : 'false').',
                             		htmlEncodeOutput :'.$htmlencode_force.',
-            						allowedContent :'.($disallowAnyContent ? 'false' : 'true').',
-            						extraAllowedContent : \'\',
-            						fullPage : '.($fullpage ? 'true' : 'false').',
+            						allowedContent :'.($disallowAnyContent ? 'false' : 'true').',		/* Advanced Content Filter (ACF) is own when allowedContent is false */
+            						extraAllowedContent : \'a[target];div{float,display}\',				/* Add the style float and display into div to default other allowed tags */
+									disallowedContent : '.($disallowAnyContent ? '\'\'' : '\'\'').',	/* Tags that are not allowed */
+            						fullPage : '.($fullpage ? 'true' : 'false').',						/* if true, the html, header and body tags are kept */
                             		toolbar: \''.$this->toolbarname.'\',
             						toolbarStartupExpanded: '.($this->toolbarstartexpanded ? 'true' : 'false').',
             						width: '.($this->width ? '\''.$this->width.'\'' : '\'\'').',
             						height: '.$this->height.',
                                     skin: \''.$skin.'\',
+                                    '.$scaytautostartup.'
                                     language: \''.$langs->defaultlang.'\',
                                     textDirection: \''.$langs->trans("DIRECTION").'\',
-                                    on :
-                                            {
+                                    on : {
                                                 instanceReady : function( ev )
                                                 {
                                                     // Output paragraphs as <p>Text</p>.
-                                                    this.dataProcessor.writer.setRules( \'p\',
-                                                        {
-                                                            indent : false,
-                                                            breakBeforeOpen : true,
-                                                            breakAfterOpen : false,
-                                                            breakBeforeClose : false,
-                                                            breakAfterClose : true
-                                                        });
+                                                    this.dataProcessor.writer.setRules( \'p\', {
+                                                        indent : false,
+                                                        breakBeforeOpen : true,
+                                                        breakAfterOpen : false,
+                                                        breakBeforeClose : false,
+                                                        breakAfterClose : true
+                                                    });
                                                 }
-                                            },
-											disableNativeSpellChecker: '.(empty($conf->global->CKEDITOR_NATIVE_SPELLCHECKER) ? 'true' : 'false');
+                                          },
+									disableNativeSpellChecker: '.(empty($conf->global->CKEDITOR_NATIVE_SPELLCHECKER) ? 'true' : 'false');
 
-            	if ($this->uselocalbrowser)
-            	{
-                    $out .= ','."\n";
-                    // To use filemanager with old fckeditor (GPL)
-                    $out .= '    filebrowserBrowseUrl : ckeditorFilebrowserBrowseUrl,';
-                    $out .= '    filebrowserImageBrowseUrl : ckeditorFilebrowserImageBrowseUrl,';
-                    //$out.= '    filebrowserUploadUrl : \''.DOL_URL_ROOT.'/includes/fckeditor/editor/filemanagerdol/connectors/php/upload.php?Type=File\',';
-                    //$out.= '    filebrowserImageUploadUrl : \''.DOL_URL_ROOT.'/includes/fckeditor/editor/filemanagerdol/connectors/php/upload.php?Type=Image\',';
-                    $out .= "\n";
-                    // To use filemanager with ckfinder (Non free) and ckfinder directory is inside htdocs/includes
+				if ($this->uselocalbrowser) {
+					$out .= ','."\n";
+					// To use filemanager with old fckeditor (GPL)
+					$out .= '    filebrowserBrowseUrl : ckeditorFilebrowserBrowseUrl,';
+					$out .= '    filebrowserImageBrowseUrl : ckeditorFilebrowserImageBrowseUrl,';
+					//$out.= '    filebrowserUploadUrl : \''.DOL_URL_ROOT.'/includes/fckeditor/editor/filemanagerdol/connectors/php/upload.php?Type=File\',';
+					//$out.= '    filebrowserImageUploadUrl : \''.DOL_URL_ROOT.'/includes/fckeditor/editor/filemanagerdol/connectors/php/upload.php?Type=Image\',';
+					$out .= "\n";
+					// To use filemanager with ckfinder (Non free) and ckfinder directory is inside htdocs/includes
 					/* $out.= '    filebrowserBrowseUrl : \''.DOL_URL_ROOT.'/includes/ckfinder/ckfinder.html\',
-                               filebrowserImageBrowseUrl : \''.DOL_URL_ROOT.'/includes/ckfinder/ckfinder.html?Type=Images\',
-                               filebrowserFlashBrowseUrl : \''.DOL_URL_ROOT.'/includes/ckfinder/ckfinder.html?Type=Flash\',
-                               filebrowserUploadUrl : \''.DOL_URL_ROOT.'/includes/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Files\',
-                               filebrowserImageUploadUrl : \''.DOL_URL_ROOT.'/includes/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Images\',
-                               filebrowserFlashUploadUrl : \''.DOL_URL_ROOT.'/includes/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Flash\','."\n";
+							   filebrowserImageBrowseUrl : \''.DOL_URL_ROOT.'/includes/ckfinder/ckfinder.html?Type=Images\',
+							   filebrowserFlashBrowseUrl : \''.DOL_URL_ROOT.'/includes/ckfinder/ckfinder.html?Type=Flash\',
+							   filebrowserUploadUrl : \''.DOL_URL_ROOT.'/includes/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Files\',
+							   filebrowserImageUploadUrl : \''.DOL_URL_ROOT.'/includes/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Images\',
+							   filebrowserFlashUploadUrl : \''.DOL_URL_ROOT.'/includes/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Flash\','."\n";
 					*/
-                    $out .= '    filebrowserWindowWidth : \'900\',
+					$out .= '    filebrowserWindowWidth : \'900\',
                                filebrowserWindowHeight : \'500\',
                                filebrowserImageWindowWidth : \'900\',
                                filebrowserImageWindowHeight : \'500\'';
-            	}
-            	$out .= '	})'.$morejs;
-            	$out .= '});'."\n";
-            	$out .= '</script>'."\n";
-            }
-        }
+				}
+				$out .= '	})'.$morejs;	// end CKEditor.replace
+				// Show the CKEditor javascript object once loaded is ready 'For debug)
+				//$out .= '; CKEDITOR.on(\'instanceReady\', function(ck) { ck.editor.removeMenuItem(\'maximize\'); ck.editor.removeMenuItem(\'Undo\'); ck.editor.removeMenuItem(\'undo\'); console.log(ck.editor); console.log(ck.editor.toolbar[0]); }); ';
+				$out .= '});'."\n";	// end document.ready
+				$out .= '</script>'."\n";
+			}
+		}
 
-        // Output editor ACE
-        // Warning: ace.js and ext-statusbar.js must be loaded by the parent page.
-        if (preg_match('/^ace/', $this->tool))
-        {
-        	$found = 1;
+		// Output editor ACE
+		// Warning: ace.js and ext-statusbar.js must be loaded by the parent page.
+		if (preg_match('/^ace/', $this->tool)) {
+			$found = 1;
 			$format = $option;
 
-            $out .= "\n".'<!-- Output Ace editor -->'."\n";
+			$out .= "\n".'<!-- Output Ace editor -->'."\n";
 
-			if ($titlecontent)
-			{
-	            $out .= '<div class="aceeditorstatusbar" id="statusBar'.$this->htmlname.'">'.$titlecontent;
-	            $out .= ' &nbsp; - &nbsp; <a id="morelines" href="#" class="right morelines'.$this->htmlname.' reposition">'.dol_escape_htmltag($langs->trans("ShowMoreLines")).'</a> &nbsp; &nbsp; ';
-	            $out .= '</div>';
-	            $out .= '<script type="text/javascript" language="javascript">'."\n";
-	            $out .= 'jQuery(document).ready(function() {'."\n";
-	            $out .= '	var aceEditor = window.ace.edit("'.$this->htmlname.'aceeditorid");
+			if ($titlecontent) {
+				$out .= '<div class="aceeditorstatusbar" id="statusBar'.$this->htmlname.'">'.$titlecontent;
+				$out .= ' &nbsp; - &nbsp; <a id="morelines" href="#" class="right morelines'.$this->htmlname.' reposition">'.dol_escape_htmltag($langs->trans("ShowMoreLines")).'</a> &nbsp; &nbsp; ';
+				$out .= '</div>';
+				$out .= '<script type="text/javascript">'."\n";
+				$out .= 'jQuery(document).ready(function() {'."\n";
+				$out .= '	var aceEditor = window.ace.edit("'.$this->htmlname.'aceeditorid");
+							aceEditor.moveCursorTo('.($this->posy+1).','.$this->posx.');
+							aceEditor.gotoLine('.($this->posy+1).','.$this->posx.');
 	    	    		   	var StatusBar = window.ace.require("ace/ext/statusbar").StatusBar;									// Init status bar. Need lib ext-statusbar
 	        			   	var statusBar = new StatusBar(aceEditor, document.getElementById("statusBar'.$this->htmlname.'"));	// Init status bar. Need lib ext-statusbar
-	            			var oldNbOfLines = 0
+
+							var oldNbOfLines = 0;
 							jQuery(".morelines'.$this->htmlname.'").click(function() {
 	        	    				var aceEditorClicked = window.ace.edit("'.$this->htmlname.'aceeditorid");
 									currentline = aceEditorClicked.getOption("maxLines");
@@ -294,21 +288,23 @@ class DolEditor
 									}
 							});
 						})';
-	            $out .= '</script>'."\n";
+				$out .= '</script>'."\n";
 			}
 
-            $out .= '<pre id="'.$this->htmlname.'aceeditorid" style="'.($this->width ? 'width: '.$this->width.'px; ' : '');
-            $out .= ($this->height ? ' height: '.$this->height.'px; ' : '');
-            //$out.=" min-height: 100px;";
-            $out .= '">';
-        	$out .= htmlspecialchars($this->content);
-        	$out .= '</pre>';
-        	$out .= '<textarea id="'.$this->htmlname.'" name="'.$this->htmlname.'" style="width:0px; height: 0px; display: none;">';
-        	$out .= htmlspecialchars($this->content);
-        	$out .= '</textarea>';
+			$out .= '<pre id="'.$this->htmlname.'aceeditorid" style="'.($this->width ? 'width: '.$this->width.'px; ' : '');
+			$out .= ($this->height ? ' height: '.$this->height.'px; ' : '');
+			//$out.=" min-height: 100px;";
+			$out .= '">';
+			$out .= htmlspecialchars($this->content);
+			$out .= '</pre>';
+			$out .= '<input type="hidden" id="'.$this->htmlname.'_x" name="'.$this->htmlname.'_x">';
+			$out .= '<input type="hidden" id="'.$this->htmlname.'_y" name="'.$this->htmlname.'_y">';
+			$out .= '<textarea id="'.$this->htmlname.'" name="'.$this->htmlname.'" style="width:0px; height: 0px; display: none;">';
+			$out .= htmlspecialchars($this->content);
+			$out .= '</textarea>';
 
-        	$out .= '<script type="text/javascript" language="javascript">'."\n";
-        	$out .= 'var aceEditor = window.ace.edit("'.$this->htmlname.'aceeditorid");
+			$out .= '<script type="text/javascript">'."\n";
+			$out .= 'var aceEditor = window.ace.edit("'.$this->htmlname.'aceeditorid");
 
 				    aceEditor.session.setMode("ace/mode/'.$format.'");
 					aceEditor.setOptions({
@@ -328,25 +324,40 @@ class DolEditor
 					//aceEditor.getSession().setMode("ace/mode/javascript_expression");
 					'."\n";
 
-        	$out .= 'jQuery(document).ready(function() {
+			$out .= 'jQuery(document).ready(function() {
 						jQuery(".buttonforacesave").click(function() {
-        					console.log("We click on savefile button for component '.$this->htmlname.'");
-        					var aceEditor = window.ace.edit("'.$this->htmlname.'aceeditorid")
-        					console.log(aceEditor.getSession().getValue());
-							jQuery("#'.$this->htmlname.'").val(aceEditor.getSession().getValue());
-							/*if (jQuery("#'.$this->htmlname.'").html().length > 0) return true;
-							else return false;*/
+        					console.log("We click on savefile button for component '.dol_escape_js($this->htmlname).'");
+        					var aceEditor = window.ace.edit("'.dol_escape_js($this->htmlname).'aceeditorid");
+							if (aceEditor) {
+								var cursorPos = aceEditor.getCursorPosition();
+								//console.log(cursorPos);
+								if (cursorPos) {
+									jQuery("#'.dol_escape_js($this->htmlname).'_x").val(cursorPos.column);
+									jQuery("#'.dol_escape_js($this->htmlname).'_y").val(cursorPos.row);
+								}
+	        					//console.log(aceEditor.getSession().getValue());
+								// Inject content of editor into the original HTML field.
+								jQuery("#'.dol_escape_js($this->htmlname).'").val(aceEditor.getSession().getValue());
+								/*if (jQuery("#'.dol_escape_js($this->htmlname).'").html().length > 0) return true;
+								else return false;*/
+								return true;
+							} else {
+								console.log("Failed to retrieve js object ACE from its name");
+								return false;
+							}
 	        			});
 					})';
-        	$out .= '</script>'."\n";
-        }
+			$out .= '</script>'."\n";
+		}
 
-        if (empty($found))
-        {
-            $out .= 'Error, unknown value for tool '.$this->tool.' in DolEditor Create function.';
-        }
+		if (empty($found)) {
+			$out .= 'Error, unknown value for tool '.$this->tool.' in DolEditor Create function.';
+		}
 
-        if ($noprint) return $out;
-        else print $out;
-    }
+		if ($noprint) {
+			return $out;
+		} else {
+			print $out;
+		}
+	}
 }

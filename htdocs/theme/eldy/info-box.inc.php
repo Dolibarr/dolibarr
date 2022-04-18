@@ -1,24 +1,50 @@
 <?php
-if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
+if (!defined('ISLOADEDBYSTEELSHEET')) {
+	die('Must be call by steelsheet');
+} ?>
 /* <style type="text/css" > */
 
 /*
  * Component: Info Box
  * -------------------
  */
+
+.info-box-module.--external span.info-box-icon-version {
+	background: #bbb;
+}
+
+.info-box-module.--external.--need-update span.info-box-icon-version{
+	background: #bc9525;
+}
+
 .info-box {
 	display: block;
-    position: relative;
+	position: relative;
 	min-height: 90px;
-	background: #fff;
+	/* background: #fff; */
 	width: 100%;
-	box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2), 0px 0px 2px rgba(0, 0, 0, 0.1);
+	box-shadow: 1px 1px 15px rgba(192, 192, 192, 0.2);
 	border-radius: 2px;
+	border: 1px solid #e9e9e9;
 	margin-bottom: 15px;
 }
-.info-box.info-box-sm{
-    min-height: 80px;
-    margin-bottom: 10px;
+.info-box.info-box-sm {
+	min-height: 80px;
+	margin-bottom: 10px;
+	/* background: #fff; */
+}
+.opened-dash-board-wrap .info-box, .opened-dash-board-wrap .info-box .info-box-icon  {
+	border-radius: 0 0 0 15px;
+}
+/*.opened-dash-board-wrap .box-flex-item {
+	border-radius: 10px;
+}*/
+
+.info-box-more {
+	float: right;
+	top: 5px;
+	position: absolute;
+	right: 8px;
 }
 
 .info-box small {
@@ -55,65 +81,133 @@ if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 	border-bottom-right-radius: 0;
 	border-bottom-left-radius: 2px;
 	display: block;
-    overflow: hidden;
+	overflow: hidden;
 	float: left;
 	height: 90px;
-	width: 90px;
+	width: 88px;
 	text-align: center;
-	font-size: 45px;
+	font-size: 2.8em;
 	line-height: 90px;
-	background: rgba(0, 0, 0, 0.2);
+	background: rgba(0, 0, 0, 0.08) !important;
 }
-.info-box-sm .info-box-icon{
-    height: 80px;
-    width: 80px;
-    font-size: 25px;
-    line-height: 80px;
+
+.info-box-module .info-box-icon {
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
+.info-box-sm .info-box-icon {
+	height: 80px;
+	width: 78px;
+	font-size: 25px;
+	line-height: 92px;
+}
+.opened-dash-board-wrap .info-box .info-box-icon {
+	font-size: 2em;
+}
+.opened-dash-board-wrap .info-box-sm .info-box-icon {
+	border-radius: 0 0 0 20px;
+	line-height: 80px;
+}
+.info-box-module .info-box-icon {
+	height: 98px;
 }
 .info-box-icon > img {
 	max-width: 100%;
 }
-.info-box-icon-text{
-    box-sizing: border-box;
-    display: block;
-    position: absolute;
-    width: 90px;
-    bottom: 0px;
-    color: #ffffff;
-    background-color: rgba(0,0,0,0.1);
-    cursor: default;
+.info-box-module .info-box-icon > img {
+	max-width: 60%;
+}
 
-    font-size: 10px;
-    line-height: 15px;
-    padding: 0px 3px;
-    text-align: center;
-    opacity: 0;
-    -webkit-transition: opacity 0.5s, visibility 0s 0.5s;
-    transition: opacity 0.5s, visibility 0s 0.5s;
+a.info-box-text.info-box-text-a {
+	display: table-cell;
+}
+a.info-box-text-a i.fa.fa-exclamation-triangle {
+	font-size: 0.9em;
+}
+
+.info-box-icon-text{
+	box-sizing: border-box;
+	display: block;
+	position: absolute;
+	width: 90px;
+	bottom: 0px;
+	color: #ffffff;
+	background-color: rgba(0,0,0,0.1);
+	cursor: default;
+
+	font-size: 10px;
+	line-height: 15px;
+	padding: 0px 3px;
+	text-align: center;
+	opacity: 0;
+	-webkit-transition: opacity 0.5s, visibility 0s 0.5s;
+	transition: opacity 0.5s, visibility 0s 0.5s;
+}
+
+.info-box-icon-version {
+	box-sizing: border-box;
+	display: block;
+	position: absolute;
+	width: 90px;
+	bottom: 0px;
+	color: #ffffff;
+	background-color: rgba(0,0,0,0.1);
+	cursor: default;
+
+	font-size: 10px;
+	line-height: 1.5em;
+	padding: 4px 3px;
+	text-align: center;
+	opacity: 1;
+	-webkit-transition: opacity 0.5s, visibility 0s 0.5s;
+	transition: opacity 0.5s, visibility 0s 0.5s;
+}
+
+.box-flex-item.info-box-module.--disabled {
+	/* opacity: 0.6; */
+}
+
+.info-box-actions {
+	position: absolute;
+	right: 0;
+	bottom: 0;
 }
 
 <?php if (empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS) && !empty($conf->global->MAIN_INCLUDE_GLOBAL_STATS_IN_OPENED_DASHBOARD)) { ?>
 .info-box-icon-text{
-    opacity: 1;
+	opacity: 1;
 }
 <?php } ?>
 
-.info-box-sm .info-box-icon-text{
-    overflow: hidden;
-    width: 80px;
+.info-box-sm .info-box-icon-text, .info-box-sm .info-box-icon-version{
+	overflow: hidden;
+	width: 80px;
 }
 .info-box:hover .info-box-icon-text{
-    opacity: 1;
+	opacity: 1;
 }
 
 .info-box-content {
 	padding: 5px 10px;
-	margin-left: 90px;
+	margin-left: 84px;
 }
-
 .info-box-sm .info-box-content{
-    margin-left: 80px;
+	margin-left: 80px;
 }
+.info-box-sm .info-box-module-enabled {
+	/* background: linear-gradient(0.35turn, #fff, #fff, #f6faf8, #e4efe8) */
+	background: var(--infoboxmoduleenabledbgcolor);
+}
+.info-box-content-warning span.font-status4 {
+	color: #bc9526 !important;
+}
+/*.info-box-sm .info-box-content-warning {
+	background: #ffd7a3;
+}*/
+/*.info-box-icon.info-box-icon-module-enabled {
+	background: #e4f0e4 !important;
+}*/
+
 .info-box-number {
 	display: block;
 	font-weight: bold;
@@ -131,6 +225,9 @@ if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 .info-box-title{
 	text-transform: uppercase;
 	font-weight: bold;
+	margin-bottom: 3px;	/* not too much space so we can add another lines */
+	opacity: 0.6;
+	/* color: var(--colortexttitlenotab); */
 }
 .info-box-text{
 	font-size: 0.92em;
@@ -148,57 +245,122 @@ a.info-box-text{ text-decoration: none;}
 
 
 
+
+
 /* ICONS INFO BOX */
 <?php
 include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 $prefix = '';
-//$prefix = 'background-';
-if (!empty($conf->global->THEME_INFOBOX_COLOR_ON_BACKGROUND)) $prefix = 'background-';
+if (!empty($conf->global->THEME_INFOBOX_COLOR_ON_BACKGROUND)) {
+	$prefix = 'background-';
+}
 
-if (!isset($conf->global->THEME_AGRESSIVENESS_RATIO) && $prefix) $conf->global->THEME_AGRESSIVENESS_RATIO = -50;
-if (GETPOSTISSET('THEME_AGRESSIVENESS_RATIO')) $conf->global->THEME_AGRESSIVENESS_RATIO = GETPOST('THEME_AGRESSIVENESS_RATIO', 'int');
-//var_dump($conf->global->THEME_AGRESSIVENESS_RATIO);
+if (!isset($conf->global->THEME_SATURATE_RATIO)) {
+	$conf->global->THEME_SATURATE_RATIO = 0.7;
+}
+if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
+	$conf->global->THEME_SATURATE_RATIO = GETPOST('THEME_SATURATE_RATIO', 'int');
+}
+
 ?>
 .info-box-icon {
 	<?php if ($prefix) { ?>
 	color: #fff !important;
-	<?php } else { ?>
-	background-color: #eee !important;
 	<?php } ?>
-    opacity: 0.95;
+	opacity: 0.95;
+	<?php if (isset($conf->global->THEME_SATURATE_RATIO)) { ?>
+		filter: saturate(<?php echo $conf->global->THEME_SATURATE_RATIO; ?>);
+	<?php } ?>
 }
 
-.bg-infoxbox-project{
-	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#6c6a98', $conf->global->THEME_AGRESSIVENESS_RATIO); ?> !important;
+.customer-back {
+	background-color: #55955d !important;
+	color: #FFF !important;
+	padding: 2px;
+	margin: 2px;
+	border-radius: 3px;
 }
-.bg-infoxbox-action{
-	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#b46080', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
+.vendor-back {
+	background-color: #599caf !important;
+	color: #FFF !important;
+	padding: 2px;
+	margin: 2px;
+	border-radius: 3px;
 }
-.bg-infoxbox-propal,
-.bg-infoxbox-facture,
-.bg-infoxbox-commande{
-	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#99a17d', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
+.user-back {
+	background-color: #79633f !important;
+	color: #FFF !important;
+	padding: 2px;
+	margin: 2px;
+	border-radius: 3px;
 }
-.bg-infoxbox-supplier_proposal,
-.bg-infoxbox-invoice_supplier,
-.bg-infoxbox-order_supplier{
-	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#599caf', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
+
+
+
+.bg-infobox-project{
+	<?php echo $prefix; ?>color: #6c6aa8 !important;
 }
-.bg-infoxbox-contrat{
-	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#469686', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
+.bg-infobox-action{
+	<?php echo $prefix; ?>color: #b06080 !important;
 }
-.bg-infoxbox-bank_account{
-	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#c5903e', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
+.bg-infobox-propal, .bg-infobox-facture, .bg-infobox-commande {
+	<?php echo $prefix; ?>color: #65953d !important;
 }
-.bg-infoxbox-adherent{
-	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#79633f', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
+.bg-infobox-supplier_proposal, .bg-infobox-invoice_supplier, .bg-infobox-order_supplier {
+	<?php echo $prefix; ?>color: #599caf !important;
 }
-.bg-infoxbox-expensereport{
-	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#79633f', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
+.bg-infobox-contrat, .bg-infobox-ticket{
+	<?php echo $prefix; ?>color: #3bbfa8 !important;
 }
-.bg-infoxbox-holiday{
-	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#755114', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
+.bg-infobox-bank_account{
+	<?php echo $prefix; ?>color: #b0bb39 !important;
+}
+.bg-infobox-adherent, .bg-infobox-member {
+	<?php echo $prefix; ?>color: #79633f !important;
+}
+.bg-infobox-expensereport{
+	<?php echo $prefix; ?>color: #79633f !important;
+}
+.bg-infobox-holiday{
+	<?php echo $prefix; ?>color: #755114 !important;
+}
+
+.infobox-adherent, .infobox-member {
+	color: #79633f !important;
+}
+.infobox-project{
+	color: #6c6aa8 !important;
+}
+.infobox-action{
+	color: #b06080 !important;
+}
+/* Color for customer object */
+.infobox-propal:not(.pictotitle):not(.error),
+.infobox-facture:not(.pictotitle):not(.error),
+.infobox-commande:not(.pictotitle):not(.error) {
+	color: #65953d !important;
+}
+/* Color for vendor object */
+.infobox-supplier_proposal:not(.pictotitle):not(.error),
+.infobox-invoice_supplier:not(.pictotitle):not(.error),
+.infobox-order_supplier:not(.pictotitle):not(.error) {
+	color: #599caf !important;
+}
+.infobox-contrat, .infobox-ticket{
+	color: #3bbfa8 !important;
+}
+.infobox-bank_account{
+	color: #b0bb39 !important;
+}
+.infobox-adherent, .infobox-member {
+	color: #79633f !important;
+}
+.infobox-expensereport{
+	color: #79633f !important;
+}
+.infobox-holiday{
+	color: #755114 !important;
 }
 
 
@@ -207,27 +369,30 @@ if (GETPOSTISSET('THEME_AGRESSIVENESS_RATIO')) $conf->global->THEME_AGRESSIVENES
 }
 .fa-dol-propal:before,
 .fa-dol-supplier_proposal:before {
-	content: "\f2b5";
+	content: "\f573";
 }
 .fa-dol-facture:before,
 .fa-dol-invoice_supplier:before {
 	content: "\f571";
 }
 .fa-dol-project:before {
-	content: "\f0e8";
+	content: "\f542";
 }
 .fa-dol-commande:before,
 .fa-dol-order_supplier:before {
 	content: "\f570";
 }
 .fa-dol-contrat:before {
-	content: "\f1e6";
+	content: "\f0f2";
+}
+.fa-dol-ticket:before {
+	content: "\f3ff";
 }
 .fa-dol-bank_account:before {
 	content: "\f19c";
 }
-.fa-dol-adherent:before {
-	content: "\f0c0";
+.fa-dol-member:before {
+	content: "\f007";
 }
 .fa-dol-expensereport:before {
 	content: "\f555";
@@ -243,64 +408,37 @@ if (GETPOSTISSET('THEME_AGRESSIVENESS_RATIO')) $conf->global->THEME_AGRESSIVENES
 }
 .fa-weather-level0:before{
 	content: "\f185";
-	color : #cccccc;
+	color : #cfbf00;
 }
 .fa-weather-level1:before{
 	content: "\f6c4";
-	color : #cccccc;
+	color : #bc9526;
 }
 .fa-weather-level2:before{
-	content: "\f0c2";
-	color : #cccccc;
+	content: "\f743";
+	color : #b16000;
 }
 .fa-weather-level3:before{
 	content: "\f740";
-	color : #cccccc;
+	color : #b04000;
 }
 .fa-weather-level4:before{
 	content: "\f0e7";
-	color : #b91f1f;
+	color : #b01000;
 }
-
-/* USING IMAGES FOR WEATHER INTEAD OF FONT AWESOME */
-/* For other themes just uncomment this part */
-/*.info-box-weather-level0,
-.info-box-weather-level1,
-.info-box-weather-level2,
-.info-box-weather-level3,
-.info-box-weather-level4 {
-	background-position: 15px 50%;
-	background-repeat: no-repeat;
-}
-
-.info-box-weather .info-box-icon{
-	display: none !important;
-}
-.info-box-weather-level0 {
-	background-image: url("img/weather/weather-clear.png");
-}
-.info-box-weather-level1 {
-	background-image: url("img/weather/weather-few-clouds.png");
-}
-.info-box-weather-level2 {
-	background-image: url("img/weather/weather-clouds.png");
-}
-.info-box-weather-level3 {
-	background-image: url("img/weather/weather-many-clouds.png");
-}
-.info-box-weather-level4 {
-	background-image: url("img/weather/weather-storm.png");
-}*/
-
 
 
 .box-flex-container{
 	display: flex; /* or inline-flex */
 	flex-direction: row;
 	flex-wrap: wrap;
-	width: 100%;
-	margin: 0 0 0 -8px;
+	width: calc(100% + 14px);
+	margin: 0 -8px 0 -8px;
 	/*justify-content: space-between;*/
+}
+
+.box-flex-grow-zero{
+	flex-grow: 0 !important;
 }
 
 .box-flex-item{
@@ -316,6 +454,30 @@ if (GETPOSTISSET('THEME_AGRESSIVENESS_RATIO')) $conf->global->THEME_AGRESSIVENES
 	height: 0;
 }
 
+.info-box-title {
+	width: calc(100% - 20px);
+}
+.info-box-module {
+	min-width: 350px;
+	max-width: 350px;
+}
+
+@media only screen and (max-width: 1740px) {
+	.info-box-module {
+		min-width: 315px;
+		max-width: 315px;
+	}
+}
+
+@media only screen and (max-width: 767px) {
+	.info-box-module {
+		min-width: 260px;
+	}
+}
+
+.info-box-module .info-box-content {
+	height: 98px;
+}
 /* Disabled. This break the responsive on smartphone
 .box{
 	overflow: visible;
@@ -325,6 +487,25 @@ if (GETPOSTISSET('THEME_AGRESSIVENESS_RATIO')) $conf->global->THEME_AGRESSIVENES
 @media only screen and (max-width: 767px)
 {
 	.box-flex-container {
-	    margin: 0 0 0 0 !important;
+		margin: 0 0 0 0px !important;
+		width: 100% !important;
 	}
+	.info-box-module {
+		width: 100%;
+		max-width: unset;
+	}
+
+	.info-box-sm .info-box-icon-text, .info-box-sm .info-box-icon-version {
+		width: 60px;
+	}
+	.info-box-sm .info-box-icon {
+		width: 60px;
+	}
+	.info-box-sm .info-box-content {
+		margin-left: 60px;
+	}
+	.info-box {
+		border: 1px solid #e0e0e0;
+	}
+}
 }

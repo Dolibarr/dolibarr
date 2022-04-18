@@ -47,8 +47,13 @@ class PaymentSocialContribution extends CommonObject
 	public $picto = 'payment';
 
 	/**
-     * @var int ID
-     */
+	 * @var string	Label
+	 */
+	public $label;
+
+	/**
+	 * @var int ID
+	 */
 	public $fk_charge;
 
 	public $datec = '';
@@ -57,33 +62,42 @@ class PaymentSocialContribution extends CommonObject
 
 	/**
 	 * @deprecated
-	 * @see amount
+	 * @see $amount
 	 */
 	public $total;
 
-    public $amount; // Total amount of payment
-    public $amounts = array(); // Array of amounts
+	public $amount; // Total amount of payment
+	public $amounts = array(); // Array of amounts
 
-    /**
-     * @var int ID
-     */
+	/**
+	 * @var int ID
+	 */
 	public $fk_typepaiement;
 
+	/**
+	 * @var string
+	 * @deprecated
+	 */
 	public $num_paiement;
 
 	/**
-     * @var int ID
-     */
+	 * @var string
+	 */
+	public $num_payment;
+
+	/**
+	 * @var int ID
+	 */
 	public $fk_bank;
 
 	/**
-     * @var int ID
-     */
+	 * @var int ID
+	 */
 	public $fk_user_creat;
 
 	/**
-     * @var int ID
-     */
+	 * @var int ID
+	 */
 	public $fk_user_modif;
 
 	/**
@@ -98,10 +112,10 @@ class PaymentSocialContribution extends CommonObject
 
 	/**
 	 *  Create payment of social contribution into database.
-     *  Use this->amounts to have list of lines for the payment
-     *
+	 *  Use this->amounts to have list of lines for the payment
+	 *
 	 *  @param      User	$user   				User making payment
-	 *	@param		int		$closepaidcontrib   	1=Also close payed contributions to paid, 0=Do nothing more
+	 *	@param		int		$closepaidcontrib   	1=Also close paid contributions to paid, 0=Do nothing more
 	 *  @return     int     						<0 if KO, id of payment if OK
 	 */
 	public function create($user, $closepaidcontrib = 0)
@@ -110,68 +124,79 @@ class PaymentSocialContribution extends CommonObject
 
 		$error = 0;
 
-        $now = dol_now();
+		$now = dol_now();
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 
 		// Validate parametres
-		if (!$this->datepaye)
-		{
+		if (!$this->datepaye) {
 			$this->error = 'ErrorBadValueForParameterCreatePaymentSocialContrib';
 			return -1;
 		}
 
 		// Clean parameters
-		if (isset($this->fk_charge)) $this->fk_charge = (int) $this->fk_charge;
-		if (isset($this->amount)) $this->amount = trim($this->amount);
-		if (isset($this->fk_typepaiement)) $this->fk_typepaiement = (int) $this->fk_typepaiement;
-		if (isset($this->num_paiement)) $this->num_paiement = trim($this->num_paiement);
-		if (isset($this->note)) $this->note = trim($this->note);
-		if (isset($this->fk_bank)) $this->fk_bank = (int) $this->fk_bank;
-		if (isset($this->fk_user_creat)) $this->fk_user_creat = (int) $this->fk_user_creat;
-		if (isset($this->fk_user_modif)) $this->fk_user_modif = (int) $this->fk_user_modif;
+		if (isset($this->fk_charge)) {
+			$this->fk_charge = (int) $this->fk_charge;
+		}
+		if (isset($this->amount)) {
+			$this->amount = trim($this->amount);
+		}
+		if (isset($this->fk_typepaiement)) {
+			$this->fk_typepaiement = (int) $this->fk_typepaiement;
+		}
+		if (isset($this->num_payment)) {
+			$this->num_payment = trim($this->num_payment);
+		}
+		if (isset($this->note_private)) {
+			$this->note_private = trim($this->note_private);
+		}
+		if (isset($this->fk_bank)) {
+			$this->fk_bank = (int) $this->fk_bank;
+		}
+		if (isset($this->fk_user_creat)) {
+			$this->fk_user_creat = (int) $this->fk_user_creat;
+		}
+		if (isset($this->fk_user_modif)) {
+			$this->fk_user_modif = (int) $this->fk_user_modif;
+		}
 
-        $totalamount = 0;
-        foreach ($this->amounts as $key => $value)  // How payment is dispatch
-        {
-            $newvalue = price2num($value, 'MT');
-            $this->amounts[$key] = $newvalue;
-            $totalamount += $newvalue;
-        }
-        $totalamount = price2num($totalamount);
+		$totalamount = 0;
+		foreach ($this->amounts as $key => $value) {  // How payment is dispatch
+			$newvalue = price2num($value, 'MT');
+			$this->amounts[$key] = $newvalue;
+			$totalamount += $newvalue;
+		}
+		$totalamount = price2num($totalamount);
 
-        // Check parameters
-        if ($totalamount == 0) return -1; // On accepte les montants negatifs pour les rejets de prelevement mais pas null
+		// Check parameters
+		if ($totalamount == 0) {
+			return -1; // On accepte les montants negatifs pour les rejets de prelevement mais pas null
+		}
 
 
 		$this->db->begin();
 
-		if ($totalamount != 0)
-		{
+		if ($totalamount != 0) {
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."paiementcharge (fk_charge, datec, datep, amount,";
 			$sql .= " fk_typepaiement, num_paiement, note, fk_user_creat, fk_bank)";
 			$sql .= " VALUES ($this->chid, '".$this->db->idate($now)."',";
 			$sql .= " '".$this->db->idate($this->datepaye)."',";
-			$sql .= " ".$totalamount.",";
-			$sql .= " ".$this->paiementtype.", '".$this->db->escape($this->num_paiement)."', '".$this->db->escape($this->note)."', ".$user->id.",";
+			$sql .= " ".((float) $totalamount).",";
+			$sql .= " ".((int) $this->paiementtype).", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note)."', ".$user->id.",";
 			$sql .= " 0)";
 
 			$resql = $this->db->query($sql);
-			if ($resql)
-			{
+			if ($resql) {
 				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."paiementcharge");
 
 				// Insere tableau des montants / factures
-				foreach ($this->amounts as $key => $amount)
-				{
+				foreach ($this->amounts as $key => $amount) {
 					$contribid = $key;
-					if (is_numeric($amount) && $amount <> 0)
-					{
+					if (is_numeric($amount) && $amount <> 0) {
 						$amount = price2num($amount);
 
-						// If we want to closed payed invoices
-						if ($closepaidcontrib)
-						{
+						// If we want to closed paid invoices
+						if ($closepaidcontrib) {
 							$contrib = new ChargeSociales($this->db);
 							$contrib->fetch($contribid);
 							$paiement = $contrib->getSommePaiement();
@@ -181,33 +206,30 @@ class PaymentSocialContribution extends CommonObject
 							$deposits = 0;
 							$alreadypayed = price2num($paiement + $creditnotes + $deposits, 'MT');
 							$remaintopay = price2num($contrib->amount - $paiement - $creditnotes - $deposits, 'MT');
-							if ($remaintopay == 0)
-							{
-								$result = $contrib->set_paid($user);
+							if ($remaintopay == 0) {
+								$result = $contrib->setPaid($user);
+							} else {
+								dol_syslog("Remain to pay for conrib ".$contribid." not null. We do nothing.");
 							}
-							else dol_syslog("Remain to pay for conrib ".$contribid." not null. We do nothing.");
 						}
 					}
 				}
-			}
-			else
-			{
+			} else {
 				$error++;
 			}
 		}
 
 		$result = $this->call_trigger('PAYMENTSOCIALCONTRIBUTION_CREATE', $user);
-		if ($result < 0) $error++;
-
-		if ($totalamount != 0 && !$error)
-		{
-		    $this->amount = $totalamount;
-            $this->total = $totalamount; // deprecated
-		    $this->db->commit();
-			return $this->id;
+		if ($result < 0) {
+			$error++;
 		}
-		else
-		{
+
+		if ($totalamount != 0 && !$error) {
+			$this->amount = $totalamount;
+			$this->total = $totalamount; // deprecated
+			$this->db->commit();
+			return $this->id;
+		} else {
 			$this->error = $this->db->error();
 			$this->db->rollback();
 			return -1;
@@ -224,31 +246,29 @@ class PaymentSocialContribution extends CommonObject
 	{
 		global $langs;
 		$sql = "SELECT";
-		$sql.= " t.rowid,";
-		$sql.= " t.fk_charge,";
-		$sql.= " t.datec,";
-		$sql.= " t.tms,";
-		$sql.= " t.datep,";
-		$sql.= " t.amount,";
-		$sql.= " t.fk_typepaiement,";
-		$sql.= " t.num_paiement,";
-		$sql.= " t.note,";
-		$sql.= " t.fk_bank,";
-		$sql.= " t.fk_user_creat,";
-		$sql.= " t.fk_user_modif,";
-		$sql.= " pt.code as type_code, pt.libelle as type_label,";
-		$sql.= ' b.fk_account';
-		$sql.= " FROM ".MAIN_DB_PREFIX."paiementcharge as t LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pt ON t.fk_typepaiement = pt.id";
-		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON t.fk_bank = b.rowid';
-		$sql.= " WHERE t.rowid = ".$id;
+		$sql .= " t.rowid,";
+		$sql .= " t.fk_charge,";
+		$sql .= " t.datec,";
+		$sql .= " t.tms,";
+		$sql .= " t.datep,";
+		$sql .= " t.amount,";
+		$sql .= " t.fk_typepaiement,";
+		$sql .= " t.num_paiement as num_payment,";
+		$sql .= " t.note,";
+		$sql .= " t.fk_bank,";
+		$sql .= " t.fk_user_creat,";
+		$sql .= " t.fk_user_modif,";
+		$sql .= " pt.code as type_code, pt.libelle as type_label,";
+		$sql .= ' b.fk_account';
+		$sql .= " FROM ".MAIN_DB_PREFIX."paiementcharge as t LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pt ON t.fk_typepaiement = pt.id";
+		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON t.fk_bank = b.rowid';
+		$sql .= " WHERE t.rowid = ".((int) $id);
 		// TODO link on entity of tax;
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
-		$resql=$this->db->query($sql);
-		if ($resql)
-		{
-			if ($this->db->num_rows($resql))
-			{
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			if ($this->db->num_rows($resql)) {
 				$obj = $this->db->fetch_object($resql);
 
 				$this->id    = $obj->rowid;
@@ -260,8 +280,8 @@ class PaymentSocialContribution extends CommonObject
 				$this->datep = $this->db->jdate($obj->datep);
 				$this->amount = $obj->amount;
 				$this->fk_typepaiement = $obj->fk_typepaiement;
-				$this->num_paiement = $obj->num_paiement;
-				$this->note = $obj->note;
+				$this->num_payment = $obj->num_payment;
+				$this->note_private = $obj->note;
 				$this->fk_bank = $obj->fk_bank;
 				$this->fk_user_creat = $obj->fk_user_creat;
 				$this->fk_user_modif = $obj->fk_user_modif;
@@ -275,9 +295,7 @@ class PaymentSocialContribution extends CommonObject
 			$this->db->free($resql);
 
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->error = "Error ".$this->db->lasterror();
 			return -1;
 		}
@@ -298,14 +316,30 @@ class PaymentSocialContribution extends CommonObject
 
 		// Clean parameters
 
-		if (isset($this->fk_charge)) $this->fk_charge = (int) $this->fk_charge;
-		if (isset($this->amount)) $this->amount = trim($this->amount);
-		if (isset($this->fk_typepaiement)) $this->fk_typepaiement = (int) $this->fk_typepaiement;
-		if (isset($this->num_paiement)) $this->num_paiement = trim($this->num_paiement);
-		if (isset($this->note)) $this->note = trim($this->note);
-		if (isset($this->fk_bank)) $this->fk_bank = (int) $this->fk_bank;
-		if (isset($this->fk_user_creat)) $this->fk_user_creat = (int) $this->fk_user_creat;
-		if (isset($this->fk_user_modif)) $this->fk_user_modif = (int) $this->fk_user_modif;
+		if (isset($this->fk_charge)) {
+			$this->fk_charge = (int) $this->fk_charge;
+		}
+		if (isset($this->amount)) {
+			$this->amount = trim($this->amount);
+		}
+		if (isset($this->fk_typepaiement)) {
+			$this->fk_typepaiement = (int) $this->fk_typepaiement;
+		}
+		if (isset($this->num_payment)) {
+			$this->num_payment = trim($this->num_payment);
+		}
+		if (isset($this->note_private)) {
+			$this->note_private = trim($this->note_private);
+		}
+		if (isset($this->fk_bank)) {
+			$this->fk_bank = (int) $this->fk_bank;
+		}
+		if (isset($this->fk_user_creat)) {
+			$this->fk_user_creat = (int) $this->fk_user_creat;
+		}
+		if (isset($this->fk_user_modif)) {
+			$this->fk_user_modif = (int) $this->fk_user_modif;
+		}
 
 
 
@@ -321,50 +355,33 @@ class PaymentSocialContribution extends CommonObject
 		$sql .= " datep=".(dol_strlen($this->datep) != 0 ? "'".$this->db->idate($this->datep)."'" : 'null').",";
 		$sql .= " amount=".(isset($this->amount) ? $this->amount : "null").",";
 		$sql .= " fk_typepaiement=".(isset($this->fk_typepaiement) ? $this->fk_typepaiement : "null").",";
-		$sql .= " num_paiement=".(isset($this->num_paiement) ? "'".$this->db->escape($this->num_paiement)."'" : "null").",";
+		$sql .= " num_paiement=".(isset($this->num_payment) ? "'".$this->db->escape($this->num_payment)."'" : "null").",";
 		$sql .= " note=".(isset($this->note) ? "'".$this->db->escape($this->note)."'" : "null").",";
 		$sql .= " fk_bank=".(isset($this->fk_bank) ? $this->fk_bank : "null").",";
 		$sql .= " fk_user_creat=".(isset($this->fk_user_creat) ? $this->fk_user_creat : "null").",";
 		$sql .= " fk_user_modif=".(isset($this->fk_user_modif) ? $this->fk_user_modif : "null")."";
 
 
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
-
-		//if (! $error)
-		//{
-		//	if (! $notrigger)
-		//	{
-				// Uncomment this and change MYOBJECT to your own tag if you
-				// want this action call a trigger.
-
-				//// Call triggers
-				//include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-				//$interface=new Interfaces($this->db);
-				//$result=$interface->run_triggers('MYOBJECT_MODIFY',$this,$user,$langs,$conf);
-				//if ($result < 0) { $error++; $this->errors=$interface->errors; }
-				//// End call triggers
-		//	}
-		//}
+		if (!$resql) {
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
+		}
 
 		// Commit or rollback
-		if ($error)
-		{
-			foreach ($this->errors as $errmsg)
-			{
+		if ($error) {
+			foreach ($this->errors as $errmsg) {
 				dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
 				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else
-		{
+		} else {
 			$this->db->commit();
 			return 1;
 		}
@@ -387,56 +404,37 @@ class PaymentSocialContribution extends CommonObject
 
 		$this->db->begin();
 
-	    if ($this->bank_line > 0)
-        {
-        	$accline = new AccountLine($this->db);
+		if ($this->bank_line > 0) {
+			$accline = new AccountLine($this->db);
 			$accline->fetch($this->bank_line);
 			$result = $accline->delete();
 			if ($result < 0) {
 				$this->errors[] = $accline->error;
 				$error++;
 			}
-        }
+		}
 
-		if (!$error)
-		{
+		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."paiementcharge";
-			$sql .= " WHERE rowid=".$this->id;
+			$sql .= " WHERE rowid=".((int) $this->id);
 
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql = $this->db->query($sql);
-			if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
+			if (!$resql) {
+				$error++;
+				$this->errors[] = "Error ".$this->db->lasterror();
+			}
 		}
 
-		//if (! $error)
-		//{
-		//	if (! $notrigger)
-		//	{
-				// Uncomment this and change MYOBJECT to your own tag if you
-				// want this action call a trigger.
-
-				//// Call triggers
-				//include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-				//$interface=new Interfaces($this->db);
-				//$result=$interface->run_triggers('MYOBJECT_DELETE',$this,$user,$langs,$conf);
-				//if ($result < 0) { $error++; $this->errors=$interface->errors; }
-				//// End call triggers
-		//	}
-		//}
-
 		// Commit or rollback
-		if ($error)
-		{
-			foreach ($this->errors as $errmsg)
-			{
+		if ($error) {
+			foreach ($this->errors as $errmsg) {
 				dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
 				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else
-		{
+		} else {
 			$this->db->commit();
 			return 1;
 		}
@@ -472,8 +470,7 @@ class PaymentSocialContribution extends CommonObject
 		$result = $object->create($user);
 
 		// Other options
-		if ($result < 0)
-		{
+		if ($result < 0) {
 			$this->error = $object->error;
 			$error++;
 		}
@@ -481,13 +478,10 @@ class PaymentSocialContribution extends CommonObject
 		unset($object->context['createfromclone']);
 
 		// End
-		if (!$error)
-		{
+		if (!$error) {
 			$this->db->commit();
 			return $object->id;
-		}
-		else
-		{
+		} else {
 			$this->db->rollback();
 			return -1;
 		}
@@ -495,11 +489,11 @@ class PaymentSocialContribution extends CommonObject
 
 
 	/**
-     *  Initialise an instance with random values.
-     *  Used to build previews or test instances.
-     *	id must be 0 if object instance is a specimen.
-     *
-     *  @return	void
+	 *  Initialise an instance with random values.
+	 *  Used to build previews or test instances.
+	 *	id must be 0 if object instance is a specimen.
+	 *
+	 *  @return	void
 	 */
 	public function initAsSpecimen()
 	{
@@ -511,111 +505,128 @@ class PaymentSocialContribution extends CommonObject
 		$this->datep = '';
 		$this->amount = '';
 		$this->fk_typepaiement = '';
-		$this->num_paiement = '';
-		$this->note = '';
+		$this->num_payment = '';
+		$this->note_private = '';
+		$this->note_public = '';
 		$this->fk_bank = '';
 		$this->fk_user_creat = '';
 		$this->fk_user_modif = '';
 	}
 
 
-    /**
-     *      Add record into bank for payment with links between this bank record and invoices of payment.
-     *      All payment properties must have been set first like after a call to create().
-     *
-     *      @param	User	$user               Object of user making payment
-     *      @param  string	$mode               'payment_sc'
-     *      @param  string	$label              Label to use in bank record
-     *      @param  int		$accountid          Id of bank account to do link with
-     *      @param  string	$emetteur_nom       Name of transmitter
-     *      @param  string	$emetteur_banque    Name of bank
-     *      @return int                 		<0 if KO, >0 if OK
-     */
-    public function addPaymentToBank($user, $mode, $label, $accountid, $emetteur_nom, $emetteur_banque)
-    {
-        global $conf;
+	/**
+	 *      Add record into bank for payment with links between this bank record and invoices of payment.
+	 *      All payment properties must have been set first like after a call to create().
+	 *
+	 *      @param	User	$user               Object of user making payment
+	 *      @param  string	$mode               'payment_sc'
+	 *      @param  string	$label              Label to use in bank record
+	 *      @param  int		$accountid          Id of bank account to do link with
+	 *      @param  string	$emetteur_nom       Name of transmitter
+	 *      @param  string	$emetteur_banque    Name of bank
+	 *      @return int                 		<0 if KO, >0 if OK
+	 */
+	public function addPaymentToBank($user, $mode, $label, $accountid, $emetteur_nom, $emetteur_banque)
+	{
+		global $conf;
 
-        $error = 0;
+		// Clean data
+		$this->num_payment = trim($this->num_payment);
 
-        if (!empty($conf->banque->enabled))
-        {
-            include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+		$error = 0;
 
-            $acc = new Account($this->db);
-            $acc->fetch($accountid);
+		if (!empty($conf->banque->enabled)) {
+			include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-            $total = $this->total;
-            if ($mode == 'payment_sc') $total = -$total;
+			$acc = new Account($this->db);
+			$acc->fetch($accountid);
 
-            // Insert payment into llx_bank
-            $bank_line_id = $acc->addline(
-                $this->datepaye,
-                $this->paiementtype, // Payment mode id or code ("CHQ or VIR for example")
-                $label,
-                $total,
-                $this->num_paiement,
-                '',
-                $user,
-                $emetteur_nom,
-                $emetteur_banque
-            );
+			$total = $this->total;
+			if ($mode == 'payment_sc') {
+				$total = -$total;
+			}
 
-            // Mise a jour fk_bank dans llx_paiement.
-            // On connait ainsi le paiement qui a genere l'ecriture bancaire
-            if ($bank_line_id > 0)
-            {
-                $result = $this->update_fk_bank($bank_line_id);
-                if ($result <= 0)
-                {
-                    $error++;
-                    dol_print_error($this->db);
-                }
+			// Insert payment into llx_bank
+			$bank_line_id = $acc->addline(
+				$this->datepaye,
+				$this->paiementtype, // Payment mode id or code ("CHQ or VIR for example")
+				$label,
+				$total,
+				$this->num_payment,
+				'',
+				$user,
+				$emetteur_nom,
+				$emetteur_banque
+			);
 
-                // Add link 'payment', 'payment_supplier', 'payment_sc' in bank_url between payment and bank transaction
-                $url = '';
-                if ($mode == 'payment_sc') $url = DOL_URL_ROOT.'/compta/payment_sc/card.php?id=';
-                if ($url)
-                {
-                    $result = $acc->add_url_line($bank_line_id, $this->id, $url, '(paiement)', $mode);
-                    if ($result <= 0)
-                    {
-                        $error++;
-                        dol_print_error($this->db);
-                    }
-                }
+			// Mise a jour fk_bank dans llx_paiement.
+			// On connait ainsi le paiement qui a genere l'ecriture bancaire
+			if ($bank_line_id > 0) {
+				$result = $this->update_fk_bank($bank_line_id);
+				if ($result <= 0) {
+					$error++;
+					dol_print_error($this->db);
+				}
 
-                // Add link 'company' in bank_url between invoice and bank transaction (for each invoice concerned by payment)
-                $linkaddedforthirdparty=array();
-                foreach ($this->amounts as $key => $value)
-                {
-                    if ($mode == 'payment_sc')
-                    {
-                        $socialcontrib = new ChargeSociales($this->db);
-                        $socialcontrib->fetch($key);
-                        $result=$acc->add_url_line($bank_line_id, $socialcontrib->id, DOL_URL_ROOT.'/compta/charges.php?id=', $socialcontrib->type_label.(($socialcontrib->lib && $socialcontrib->lib!=$socialcontrib->type_label)?' ('.$socialcontrib->lib.')':''), 'sc');
-                        if ($result <= 0) dol_print_error($this->db);
-                    }
-                }
-            }
-            else
-            {
-                $this->error=$acc->error;
-                $error++;
-            }
-        }
+				// Add link 'payment', 'payment_supplier', 'payment_sc' in bank_url between payment and bank transaction
+				$url = '';
+				if ($mode == 'payment_sc') {
+					$url = DOL_URL_ROOT.'/compta/payment_sc/card.php?id=';
+				}
+				if ($url) {
+					$result = $acc->add_url_line($bank_line_id, $this->id, $url, '(paiement)', $mode);
+					if ($result <= 0) {
+						$error++;
+						dol_print_error($this->db);
+					}
+				}
 
-        if (! $error)
-        {
-            return 1;
-        }
-        else
-        {
-            return -1;
-        }
-    }
+				// Add link 'company' in bank_url between invoice and bank transaction (for each invoice concerned by payment)
+				$linkaddedforthirdparty = array();
+				foreach ($this->amounts as $key => $value) {
+					if ($mode == 'payment_sc') {
+						$socialcontrib = new ChargeSociales($this->db);
+						$socialcontrib->fetch($key);
+						$result = $acc->add_url_line($bank_line_id, $socialcontrib->id, DOL_URL_ROOT.'/compta/charges.php?id=', $socialcontrib->type_label.(($socialcontrib->lib && $socialcontrib->lib != $socialcontrib->type_label) ? ' ('.$socialcontrib->lib.')' : ''), 'sc');
+						if ($result <= 0) {
+							dol_print_error($this->db);
+						}
+
+						if ($socialcontrib->fk_user) {
+							$fuser = new User($this->db);
+							$fuser->fetch($socialcontrib->fk_user);
+
+							// Add link 'user' in bank_url between operation and bank transaction
+							$result = $acc->add_url_line(
+								$bank_line_id,
+								$socialcontrib->fk_user,
+								DOL_URL_ROOT.'/user/card.php?id=',
+								$fuser->getFullName($langs),
+								'user'
+							);
+
+							if ($result <= 0) {
+								$this->error = $acc->error;
+								$error++;
+							}
+						}
+					}
+				}
+			} else {
+				$this->error = $acc->error;
+				$error++;
+			}
+		}
+
+		if (!$error) {
+			return 1;
+		} else {
+			return -1;
+		}
+	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Mise a jour du lien entre le paiement de  charge et la ligne dans llx_bank generee
 	 *
@@ -624,17 +635,14 @@ class PaymentSocialContribution extends CommonObject
 	 */
 	public function update_fk_bank($id_bank)
 	{
-        // phpcs:enable
-		$sql = "UPDATE ".MAIN_DB_PREFIX."paiementcharge SET fk_bank = ".$id_bank." WHERE rowid = ".$this->id;
+		// phpcs:enable
+		$sql = "UPDATE ".MAIN_DB_PREFIX."paiementcharge SET fk_bank = ".((int) $id_bank)." WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update_fk_bank", LOG_DEBUG);
 		$result = $this->db->query($sql);
-		if ($result)
-		{
+		if ($result) {
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->error();
 			return 0;
 		}
@@ -652,7 +660,7 @@ class PaymentSocialContribution extends CommonObject
 		return $this->LibStatut($this->statut, $mode);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Renvoi le libelle d'un statut donne
 	 *
@@ -662,7 +670,7 @@ class PaymentSocialContribution extends CommonObject
 	 */
 	public function LibStatut($status, $mode = 0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $langs; // TODO Renvoyer le libelle anglais et faire traduction a affichage
 
 		$langs->load('compta');
@@ -717,18 +725,73 @@ class PaymentSocialContribution extends CommonObject
 
 		$result = '';
 
-		if (empty($this->ref)) $this->ref = $this->lib;
-        $label = $langs->trans("ShowPayment").': '.$this->ref;
+		if (empty($this->ref)) {
+			$this->ref = $this->label;
+		}
 
-        if (!empty($this->id)) {
-            $link = '<a href="'.DOL_URL_ROOT.'/compta/payment_sc/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
-            $linkend = '</a>';
+		$label = img_picto('', $this->picto).' <u>'.$langs->trans("SocialContributionPayment").'</u>';
+		$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		if (!empty($this->label)) {
+			$labeltoshow = $this->label;
+			$reg = array();
+			if (preg_match('/^\((.*)\)$/i', $this->label, $reg)) {
+				// Label generique car entre parentheses. On l'affiche en le traduisant
+				if ($reg[1] == 'paiement') {
+					$reg[1] = 'Payment';
+				}
+				$labeltoshow = $langs->trans($reg[1]);
+			}
+			$label .= '<br><b>'.$langs->trans('Label').':</b> '.$labeltoshow;
+		}
+		if ($this->datep) {
+			$label .= '<br><b>'.$langs->trans('Date').':</b> '.dol_print_date($this->datep, 'day');
+		}
 
-            if ($withpicto) $result .= ($link.img_object($label, 'payment', 'class="classfortooltip"').$linkend.' ');
-            if ($withpicto && $withpicto != 2) $result .= ' ';
-            if ($withpicto != 2) $result .= $link.($maxlen ?dol_trunc($this->ref, $maxlen) : $this->ref).$linkend;
-        }
+		if (!empty($this->id)) {
+			$link = '<a href="'.DOL_URL_ROOT.'/compta/payment_sc/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+			$linkend = '</a>';
 
-        return $result;
-    }
+			if ($withpicto) {
+				$result .= ($link.img_object($label, 'payment', 'class="classfortooltip"').$linkend.' ');
+			}
+			if ($withpicto && $withpicto != 2) {
+				$result .= ' ';
+			}
+			if ($withpicto != 2) {
+				$result .= $link.($maxlen ?dol_trunc($this->ref, $maxlen) : $this->ref).$linkend;
+			}
+		}
+
+		return $result;
+	}
+
+
+	/**
+	 *	Return if object was dispatched into bookkeeping
+	 *
+	 *	@return     int         <0 if KO, 0=no, 1=yes
+	 */
+	public function getVentilExportCompta()
+	{
+		$alreadydispatched = 0;
+
+		$type = 'bank';
+
+		$sql = " SELECT COUNT(ab.rowid) as nb FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as ab WHERE ab.doc_type='".$this->db->escape($type)."' AND ab.fk_doc = ".((int) $this->bank_line);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$obj = $this->db->fetch_object($resql);
+			if ($obj) {
+				$alreadydispatched = $obj->nb;
+			}
+		} else {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+
+		if ($alreadydispatched) {
+			return 1;
+		}
+		return 0;
+	}
 }
