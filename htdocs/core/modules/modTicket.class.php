@@ -104,7 +104,7 @@ class modTicket extends DolibarrModules
 		// List of particular constants to add when module is enabled
 		// (key, 'chaine', value, desc, visible, 'current' or 'allentities', deleteonunactive)
 		// Example:
-		$default_signature = $langs->trans('TicketMessageMailSignatureText', $conf->global->MAIN_INFO_SOCIETE_NOM); 
+		$default_signature = $langs->trans('TicketMessageMailSignatureText', $conf->global->MAIN_INFO_SOCIETE_NOM);
 		$this->const = array(
 			1 => array('TICKET_ENABLE_PUBLIC_INTERFACE', 'chaine', '0', 'Enable ticket public interface', 0),
 			2 => array('TICKET_ADDON', 'chaine', 'mod_ticket_simple', 'Ticket ref module', 0),
