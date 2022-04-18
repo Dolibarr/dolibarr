@@ -2234,3 +2234,4 @@ TemplateforBusinessCards=Template for a business card in different size
 InventorySetup= Inventory Setup
 ExportUseLowMemoryMode=Use a low memory mode
 ExportUseLowMemoryModeHelp=Use the low memory mode to execute the exec of the dump (compression is done through a pipe instead of into the PHP memory). This method does not allow to check that file is completed and error message can't be reported if it fails.
+ShowQuickAddLink=Show a link to quickly add an element in top right menu
