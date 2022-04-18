@@ -78,6 +78,7 @@ if (!empty($conf->global->THEME_DARKMODEENABLED)) {
 	            --colortexttitle: rgb(220,220,220);
 	            --colortext: rgb(220,220,220);
 	            --colortextlink: #4390dc;
+	            --colortexttitlelink: #4390dc;
 	            --colortextbackhmenu: rgb(220,220,220);
 	            --colortextbackvmenu: rgb(220,220,220);
 				--tooltipfontcolor : rgb(220,220,220);
@@ -5962,6 +5963,12 @@ span.select2.select2-container.select2-container--default {
 	border-right: none;
 	<?php } ?>
 }
+span.select2.select2-container.select2-container--default {
+	<?php if (empty($conf->global->THEME_SHOW_BORDER_ON_INPUT)) { ?>
+	//border-bottom: solid 1px var(--inputbordercolor);
+	<?php } ?>
+}
+
 input.select2-input {
 	border-bottom: none ! important;
 }
@@ -5980,7 +5987,7 @@ input.select2-input {
 	border: none;
 }
 .select2-container--focus span.select2-selection.select2-selection--single {
-	border-bottom: 1px solid #666 !important;
+	border-bottom: 1px solid var(--inputbordercolor) !important;
 	border-bottom-left-radius: 0;
 	border-bottom-right-radius: 0;
 }
@@ -5991,14 +5998,14 @@ input.select2-input {
 	background-color: var(--colorbackvmenu1);
 }
 .select2-container--default .select2-selection--single {
-	background-color: var(--colorbackbody);
+	background-color: var(--inputbackgroundcolor);
 }
 #blockvmenusearch .select2-container--default .select2-selection--single .select2-selection__placeholder {
 	color: var(--colortextbackvmenu);
 }
 .select2-container--default .select2-selection--single .select2-selection__rendered {
 	color: var(--colortext);
-	/* background-color: var(--colorbackvmenu1); */
+	/* background-color: var(--inputbackgroundcolor); */
 }
 .select2-default {
 	color: #999 !important;

@@ -2270,6 +2270,7 @@ div.nopadding {
 }
 
 td.nobordernopadding.widthpictotitle.col-picto {
+	color: #bbb;
 	opacity: 0.9;
 }
 .pictotitle {
@@ -2278,6 +2279,9 @@ td.nobordernopadding.widthpictotitle.col-picto {
 }
 .pictoobjectwidth {
 	width: 14px;
+}
+span.widthpictotitle {
+	font-size: 1.3em;
 }
 .table-list-of-attached-files .col-picto, .table-list-of-links .col-picto {
 	opacity: 0.7 !important;
@@ -7344,10 +7348,7 @@ if (is_object($db)) {
 	background: #ddd;
 }​
 
-div#topmenu-bookmark-dropdown {
-	position: fixed;
-	right: 20px;
-}
+
 
 /* Must be at end */
 div.flot-text .flot-tick-label .tickLabel, .fa-color-unset {
