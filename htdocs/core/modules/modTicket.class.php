@@ -116,8 +116,8 @@ class modTicket extends DolibarrModules
 			8 => array('TICKET_PRODUCT_CATEGORY', 'chaine', 0, 'The category of product that is being used for ticket accounting', 0),
 			9 => array('TICKET_NOTIFICATION_EMAIL_FROM', 'chaine', $conf->global->MAIN_MAIL_EMAIL_FROM, 'Sender of ticket replies sent from Dolibarr', 0),
 			10 => array('TICKET_MESSAGE_MAIL_INTRO', 'chaine', $langs->trans('TicketMessageMailIntroText'), 'Introduction text of ticket replies sent from Dolibarr', 0),
-			11 => array('TICKET_MESSAGE_MAIL_SIGNATURE', 'chaine', $default_signature, 'Signature of ticket replies sent from Dolibarr', 0)
-			
+			11 => array('TICKET_MESSAGE_MAIL_SIGNATURE', 'chaine', $default_signature, 'Signature of ticket replies sent from Dolibarr', 0),
+			12 => array('MAIN_EMAILCOLLECTOR_MAIL_WITHOUT_HEADER', 'chaine', "1", 'Disable the rendering of headers in tickets', 0)
 		);
 
 
