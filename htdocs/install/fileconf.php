@@ -613,12 +613,13 @@ jQuery(document).ready(function() {
 
 	function init_needroot()
 	{
+		console.log("init_needroot force_install_noedit=<?php echo $force_install_noedit?>");
 		/*alert(jQuery("#db_create_database").prop("checked")); */
 		if (jQuery("#db_create_database").is(":checked") || jQuery("#db_create_user").is(":checked"))
 		{
 			jQuery(".hideroot").show();
 			<?php
-			if ($force_install_noedit == 0) { ?>
+			if (empty($force_install_noedit)) { ?>
 				jQuery(".needroot").removeAttr('disabled');
 			<?php } ?>
 		}
