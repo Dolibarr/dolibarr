@@ -2552,7 +2552,31 @@ if ($action != 'create' && $action != 'edit' && $action != 'editline') {
 	* 	Afficher : "Enregistrer" / "Modifier" / "Supprimer"
 	*/
 	if ($user->rights->expensereport->creer && $object->status == ExpenseReport::STATUS_DRAFT) {
-		if (in_array($object->fk_user_author, $user->getAllChildIds(1)) || !empty($user->rights->expensereport->writeall_advance)) {
+
+
+		/** ************************************************* */
+		/** ******************* SPE ARCOOP ****************** */
+		/** ************************************************* */
+		// Ne PAS afficher le bouton de validation pour les utilisateurs du groupe entrepreneur ID 1
+		if(!empty($conf->global->ARCOOP_HIDE_VALIDATION_BTN_EXPENSEREPORT_FOR_GROUP)){
+			$fk_groupToExclude = intval($conf->global->ARCOOP_HIDE_VALIDATION_BTN_EXPENSEREPORT_FOR_GROUP);
+			$userIsEntrepreneur = false;
+			$userGroup = new UserGroup($db);
+			$TUserGroup = $userGroup->listGroupsForUser($user->id, false);
+			if(is_array($TUserGroup)){
+				foreach ($TUserGroup as $group){
+					if(intval($group->id) === $fk_groupToExclude){
+						$userIsEntrepreneur = true;
+						break;
+					}
+				}
+			}
+		}
+		/** ************************************************* */
+		/** ******************* SPE ARCOOP ****************** */
+		/** ************************************************* */
+
+		if (( /** SPE ARCOOP */ !$userIsEntrepreneur && /** FIN SPE ARCOOP */ in_array($object->fk_user_author, $user->getAllChildIds(1))) || !empty($user->rights->expensereport->writeall_advance)) {
 			// Modify
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&id='.$object->id.'">'.$langs->trans('Modify').'</a></div>';
 

@@ -69,11 +69,7 @@ if (!$sortfield) {
 $object = new Facture($db);
 if ($object->fetch($id, $ref)) {
 	$object->fetch_thirdparty();
-
-    $upload_dir = $conf->facture->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
-    if($object->entity == 1)$upload_dir= str_replace('invoice','facture',$upload_dir);
-    else $upload_dir= str_replace('facture','invoice',$upload_dir);
-    //$upload_dir = $conf->facture->dir_output . "/" . dol_sanitizeFileName($object->ref);
+	$upload_dir = $conf->facture->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
 }
 
 $permissiontoadd = $user->rights->facture->creer;
@@ -117,11 +113,10 @@ if ($id > 0 || !empty($ref)) {
 		$object->fetch_thirdparty();
 
         $upload_dir = $conf->facture->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
-        if($object->entity == 1)$upload_dir= str_replace('invoice','facture',$upload_dir);
-        else $upload_dir= str_replace('facture','invoice',$upload_dir);
+//        if($object->entity == 1)$upload_dir= str_replace('invoice','facture',$upload_dir);
+//        else $upload_dir= str_replace('facture','invoice',$upload_dir);
 
         #$upload_dir = $conf->facture->dir_output.'/'.dol_sanitizeFileName($object->ref);
-
 		$head = facture_prepare_head($object);
 		print dol_get_fiche_head($head, 'documents', $langs->trans('InvoiceCustomer'), -1, 'bill');
 
@@ -199,7 +194,7 @@ if ($id > 0 || !empty($ref)) {
 		$modulepart = 'facture';
 		$permissiontoadd = $user->rights->facture->creer;
 		$permtoedit = $user->rights->facture->creer;
-		$param = 'id='.$object->id;
+		$param = '&id='.$object->id;
 		include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 	} else {
 		dol_print_error($db);
