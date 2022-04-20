@@ -779,18 +779,20 @@ class ImportCsv extends ModeleImports
 						if (!empty($updatekeys)) {
 							// We do SELECT to get the rowid, if we already have the rowid, it's to be used below for related tables (extrafields)
 
-							if (empty($lastinsertid)) {	// No insert done yet for a parent table
-								$sqlSelect = 'SELECT rowid FROM '.$tablename;
-
-								$data = array_combine($listfields, $listvalues);
-								$where = array();
-								$filters = array();
-								foreach ($updatekeys as $key) {
+							$data = array_combine($listfields, $listvalues);
+							$where = array();
+							$filters = array();
+							foreach ($updatekeys as $key) {
+								if (preg_match('/^' . preg_quote($alias) . '\./i', $key)) {
 									$col = $objimport->array_import_updatekeys[0][$key];
 									$key = preg_replace('/^.*\./i', '', $key);
-									$where[] = $key.' = '.$data[$key];
-									$filters[] = $col.' = '.$data[$key];
+									$where[] = $key . ' = ' . $data[$key];
+									$filters[] = $col . ' = ' . $data[$key];
 								}
+							}
+
+							if (empty($lastinsertid)) {	// No insert done yet for a parent table
+								$sqlSelect = 'SELECT rowid FROM '.$tablename;
 								$sqlSelect .= ' WHERE '.implode(' AND ', $where);
 
 								$resql = $this->db->query($sqlSelect);
@@ -824,6 +826,7 @@ class ImportCsv extends ModeleImports
 									$keyfield = 'rowid';
 								}
 								$sqlSelect .= ' WHERE '.$keyfield.' = '.((int) $lastinsertid);
+								if (!empty($where)) $sqlSelect .= ' AND ' . implode(' AND ', $where);
 
 								$resql = $this->db->query($sqlSelect);
 								if ($resql) {
@@ -858,6 +861,7 @@ class ImportCsv extends ModeleImports
 									$keyfield = 'rowid';
 								}
 								$sqlend = ' WHERE '.$keyfield.' = '.((int) $lastinsertid);
+								if (!empty($where)) $sqlend .= ' AND ' . implode(' AND ', $where);
 
 								$sql = $sqlstart.$sqlend;
 
