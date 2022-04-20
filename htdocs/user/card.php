@@ -695,6 +695,25 @@ if (empty($reshook)) {
 		}
 	}
 
+	// Impersonate
+	if ($action == 'impersonate') {
+		if ($user->admin && (!empty($conf->multicompany->enabled) && empty($user->entity)) || empty($conf->multicompany->enabled)) {
+			$object->fetch($id);
+			//Check if user is active
+			if ($object->statut == 1) {
+				$_SESSION["dol_login"] = $object->login;
+				header("Location: ".$_SERVER['PHP_SELF'].'?id='.$object->id);
+				exit;
+			} else {
+				setEventMessage('ErrorUserNotActive', 'errors');
+				$action = '';
+			}
+		} else {
+			setEventMessage($langs->trans('NotSuperAdmin'));
+			$action = '';
+		}
+	}
+
 	// Actions to send emails
 	$triggersendname = 'USER_SENTBYMAIL';
 	$paramname = 'id'; // Name of param key to open the card
@@ -1835,6 +1854,31 @@ if ($action == 'create' || $action == 'adduserldap') {
 			$parameters = array();
 			$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 			if (empty($reshook)) {
+
+				// Impersonate button
+				if (!empty($user->admin)) {
+					$canImpersonate = false;
+					$params = array(
+						'attr' => array(
+							'title' => $langs->trans('ImpersonateButtonDescription'),
+							'class' => 'classfortooltip'
+						)
+					);
+
+					if (((!empty($conf->multicompany->enabled) && empty($user->entity)) || empty($conf->multicompany->enabled))
+						&& $object->statut == 1
+						&& $user->admin // not needed at this point but... in case of ...
+					) {
+						$canImpersonate = true;
+					} elseif (!empty($conf->multicompany->enabled) && !empty($user->entity)) {
+						$params['attr']['title'] = $langs->trans('NotSuperAdmin');
+					} elseif ($object->statut != 1) {
+						$params['attr']['title'] = $langs->trans('ErrorUserNotActive');
+					}
+
+					print dolGetButtonAction($langs->trans('Impersonate'), '', 'default', $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=impersonate&token='.newToken(), '', $canImpersonate, $params);
+				}
+
 				if (empty($user->socid)) {
 					$canSendMail = false;
 					$params = array(
