@@ -12,6 +12,7 @@
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016       Ferran Marcet		    <fmarcet@2byte.es>
  * Copyright (C) 2020-2021	Open-DSI				<support@open-dsi.fr>
+ * Copyright (C) 2022		Charlene Benke			<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -209,6 +210,7 @@ $arrayfields = array(
 	'p.fk_product_type'=>array('label'=>"Type", 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && !empty($conf->service->enabled)), 'position'=>11),
 	'p.barcode'=>array('label'=>"Gencod", 'checked'=>1, 'enabled'=>(!empty($conf->barcode->enabled)), 'position'=>12),
 	'p.duration'=>array('label'=>"Duration", 'checked'=>($contextpage != 'productlist'), 'enabled'=>(!empty($conf->service->enabled) && (string) $type == '1'), 'position'=>13),
+	'pac.fk_product_parent' => array('label'=>"ParentProduct", 'checked'=> 1, 'enabled'=>(!empty($conf->variants->enabled) && (!empty($conf->global->PRODUIT_ATTRIBUTES_HIDECHILD) && $show_childproducts)), 'position'=>14),
 	'p.finished'=>array('label'=>"Nature", 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && $type != '1'), 'position'=>19),
 	'p.weight'=>array('label'=>'Weight', 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && $type != '1'), 'position'=>20),
 	'p.weight_units'=>array('label'=>'WeightUnits', 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && $type != '1'), 'position'=>21),
@@ -413,8 +415,9 @@ if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 	$sql .= ' p.fk_unit, cu.label as cu_label,';
 }
 $sql .= ' MIN(pfp.unitprice) as minsellprice';
-if (!empty($conf->variants->enabled) && (!empty($conf->global->PRODUIT_ATTRIBUTES_HIDECHILD) && !$show_childproducts)) {
-	$sql .= ', pac.rowid prod_comb_id';
+if (!empty($conf->variants->enabled) && (!empty($conf->global->PRODUIT_ATTRIBUTES_HIDECHILD) )) {
+	$sql .= ', pac.rowid as prod_comb_id';
+	$sql .= ', pac.fk_product_parent';
 }
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
@@ -442,7 +445,7 @@ if (!empty($conf->global->MAIN_MULTILANGS)) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_lang as pl ON pl.fk_product = p.rowid AND pl.lang = '".$db->escape($langs->getDefaultLang())."'";
 }
 
-if (!empty($conf->variants->enabled) && (!empty($conf->global->PRODUIT_ATTRIBUTES_HIDECHILD) && !$show_childproducts)) {
+if (!empty($conf->variants->enabled) && (!empty($conf->global->PRODUIT_ATTRIBUTES_HIDECHILD))) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_attribute_combination pac ON pac.fk_product_child = p.rowid";
 }
 if (!empty($conf->global->PRODUCT_USE_UNITS)) {
@@ -574,8 +577,9 @@ if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 	$sql .= ', p.fk_unit, cu.label';
 }
 
-if (!empty($conf->variants->enabled) && (!empty($conf->global->PRODUIT_ATTRIBUTES_HIDECHILD) && !$show_childproducts)) {
+if (!empty($conf->variants->enabled) && (!empty($conf->global->PRODUIT_ATTRIBUTES_HIDECHILD))) {
 	$sql .= ', pac.rowid';
+	$sql .= ', pac.fk_product_parent';
 }
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
@@ -901,7 +905,11 @@ if ($resql) {
 		print '<td class="liste_titre">';
 		print '</td>';
 	}
-
+	// Parent
+	if (!empty($arrayfields['pac.fk_product_parent']['checked'])) {
+		print '<td class="liste_titre">';
+		print '</td>';
+	}
 	// Finished
 	if (!empty($arrayfields['p.finished']['checked'])) {
 		print '<td class="liste_titre">';
@@ -1142,6 +1150,9 @@ if ($resql) {
 	}
 	if (!empty($arrayfields['p.duration']['checked'])) {
 		print_liste_field_titre($arrayfields['p.duration']['label'], $_SERVER["PHP_SELF"], "p.duration", "", $param, '', $sortfield, $sortorder, 'center ');
+	}
+	if (!empty($arrayfields['pac.fk_product_parent']['checked'])) {
+		print_liste_field_titre($arrayfields['pac.fk_product_parent']['label'], $_SERVER["PHP_SELF"], "pac.fk_product_parent", "", $param, '', $sortfield, $sortorder, 'center ');
 	}
 	if (!empty($arrayfields['p.finished']['checked'])) {
 		print_liste_field_titre($arrayfields['p.finished']['label'], $_SERVER["PHP_SELF"], "p.finished", "", $param, '', $sortfield, $sortorder, 'center ');
@@ -1450,7 +1461,19 @@ if ($resql) {
 				$totalarray['nbfield']++;
 			}
 		}
-
+	
+		if (!empty($arrayfields['pac.fk_product_parent']['checked'])) {
+			print '<td class="center nowraponall">';
+			if ($obj->fk_product_parent > 0) {
+				$product_parent_static= new Product($db);
+				$product_parent_static->fetch($obj->fk_product_parent);
+				print $product_parent_static->getNomUrl(1);
+			}
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
 		// Finished
 		if (!empty($arrayfields['p.finished']['checked'])) {
 			print '<td class="center">';
