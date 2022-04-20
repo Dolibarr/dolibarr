@@ -267,6 +267,11 @@ if ($action == 'getProducts') {
 				'qty' => 1,
 				//'price_formated' => price(price2num($obj->price, 'MU'), 1, $langs, 1, -1, -1, $conf->currency)
 			);
+			// Add entries to row from hooks
+			$parameters=array();
+			$parameters['row'] = end($rows);
+			$parameters['obj'] = $obj;
+			$reshook=$hookmanager->executeHooks('completeAjaxReturnArray', $parameters);
 		}
 		echo json_encode($rows);
 	} else {
