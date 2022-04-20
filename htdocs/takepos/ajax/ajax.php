@@ -211,14 +211,14 @@ if ($action == 'getProducts') {
 	$sql = 'SELECT rowid, ref, label, tosell, tobuy, barcode, price' ;
 	// Add fields from hooks
 	$parameters=array();
-	$reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters);    // Note that $action and $object may have been modified by hook
+	$reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters);
 	$sql .= $hookmanager->resPrint;
 
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'product as p';
 
 	// Add tables from hooks
 	$parameters=array();
-	$reshook=$hookmanager->executeHooks('printFieldListTables', $parameters);    // Note that $action and $object may have been modified by hook
+	$reshook=$hookmanager->executeHooks('printFieldListTables', $parameters);    
 	$sql .= $hookmanager->resPrint;
 
 	$sql .= ' WHERE entity IN ('.getEntity('product').')';
@@ -229,7 +229,7 @@ if ($action == 'getProducts') {
 	$sql .= natural_search(array('ref', 'label', 'barcode'), $term);
 	// Add where from hooks
 	$parameters=array();
-	$reshook=$hookmanager->executeHooks('printFieldListWhere', $parameters);    // Note that $action and $object may have been modified by hook
+	$reshook=$hookmanager->executeHooks('printFieldListWhere', $parameters);   
 	$sql .= $hookmanager->resPrint;
 
 	$resql = $db->query($sql);
