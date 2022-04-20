@@ -84,6 +84,7 @@ if ($action=="split") {
 		$db->query($sql);
 	} elseif ($split==0) { // Unsplit line
 		$invoice = new Facture($db);
+		if ($place=="SPLIT") $place="0"; // Avoid move line to the same place (from SPLIT to SPLIT place)
 		$ret = $invoice->fetch('', '(PROV-POS'.$_SESSION["takeposterminal"].'-'.$place.')');
 		if ($ret > 0) {
 			$placeid = $invoice->id;
@@ -137,7 +138,7 @@ if ($invoiceid > 0) {
 	}
 }
 
-$arrayofcss = array('/takepos/css/pos.css.php', '/takepos/css/split.css.php');
+$arrayofcss = array('/takepos/css/pos.css.php');
 $arrayofjs = array();
 
 $head = '';
@@ -160,7 +161,7 @@ if ($conf->global->TAKEPOS_COLOR_THEME == 1) {
 }
 ?>
 </head>
-<body>
+<body class="takepossplitphp">
 
 <script>
 function Split(selectedline, split) {
@@ -200,7 +201,7 @@ $( document ).ready(function() {
 		});
 	});
 
-	
+
 
 	$("#headersplit1").html("<?php echo $langs->trans("Place");?> "+parent.place);
 	$("#headersplit2").html("<?php echo $langs->trans("SplitSale");?>");

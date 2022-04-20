@@ -551,7 +551,7 @@ class CTicketCategory extends CommonObject
 
 			if (!$error && !$notrigger) {
 				// Call trigger
-				$result = $this->call_trigger('MYOBJECT_VALIDATE', $user);
+				$result = $this->call_trigger('CTICKETCATEGORY_VALIDATE', $user);
 				if ($result < 0) {
 					$error++;
 				}
@@ -709,7 +709,7 @@ class CTicketCategory extends CommonObject
 
 		global $action, $hookmanager;
 		$hookmanager->initHooks(array('cticketcategorydao'));
-		$parameters = array('id'=>$this->id, 'getnomurl'=>$result);
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;

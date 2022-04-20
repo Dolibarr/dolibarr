@@ -82,7 +82,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be includ
 
 $permissiontoread = $user->rights->hrm->evaluation->read;
 $permissiontoadd = $user->rights->hrm->evaluation->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-$permissiontovalidate = $user->rights->hrm->evaluation->validate;
+$permissiontovalidate = $user->rights->hrm->evaluation_advance->validate;
 $permissiontoClose = $user->rights->hrm->evaluation->write;
 $permissiontodelete = $user->rights->hrm->evaluation->delete/* || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT)*/;
 $permissiondellink = $user->rights->hrm->evaluation->write; // Used by the include of actions_dellink.inc.php
@@ -156,9 +156,10 @@ if (empty($reshook)) {
 		$TNote = GETPOST('TNote', 'array');
 		if (!empty($TNote)) {
 			foreach ($object->lines as $line) {
-				$line->rank = $TNote[$line->fk_skill];
+				$line->rankorder = $TNote[$line->fk_skill];
 				$line->update($user);
 			}
+			setEventMessage($langs->trans("SaveLevelSkill"));
 		}
 	}
 
@@ -172,16 +173,12 @@ if (empty($reshook)) {
 		foreach ($object->lines as $key => $line) {
 			// no reference .. we add the line to use it
 			if (count($SkillrecordsForActiveUser) == 0) {
-				if ($res > 0) {
-					$newSkill = new SkillRank($db);
-					$resCreate = $newSkill->cloneFromCurrentSkill($line, $object->fk_user);
+				$newSkill = new SkillRank($db);
+				$resCreate = $newSkill->cloneFromCurrentSkill($line, $object->fk_user);
 
-					if ($resCreate <= 0) {
-						$errors++;
-						setEventMessage($langs->trans('ErrorCreateUserSkill'), $line->fk_skill);
-					}
-				} else {
-					setEventMessage($langs->trans('NoSkilRankLoaded'));
+				if ($resCreate <= 0) {
+					$errors++;
+					setEventMessage($langs->trans('ErrorCreateUserSkill'), $line->fk_skill);
 				}
 			} else {
 				//check if the skill is present to use it
@@ -198,7 +195,7 @@ if (empty($reshook)) {
 				if ($find) {
 					$updSkill = $SkillrecordsForActiveUser[$k];
 
-					$updSkill->rank = $line->rank;
+					$updSkill->rankorder = $line->rankorder;
 					$updSkill->update($user);
 				} else { // sinon on ajoute la skill
 					$newSkill = new SkillRank($db);
@@ -272,9 +269,6 @@ if ($action == 'create') {
 	}
 
 	print dol_get_fiche_head(array(), '');
-
-	// Set some default values
-	//if (! GETPOSTISSET('fieldname')) $_POST['fieldname'] = 'myvalue';
 
 	print '<table class="border centpercent tableforfieldcreate">'."\n";
 
@@ -519,9 +513,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$sql .= '  sk.label as "skilllabel",';
 		$sql .= '  sk.skill_type,';
 		$sql .= '  sk.description,';
-		$sql .= '  ed.rank,';
+		$sql .= '  ed.rankorder,';
 		$sql .= '  ed.required_rank,';
-		$sql .= '  ed.rank as "userRankForSkill",';
+		$sql .= '  ed.rankorder as "userRankForSkill",';
 		$sql .= '  skdet_user.description as "userRankForSkillDesc",';
 		$sql .= '  skdet_required.description as "required_rank_desc"';
 
@@ -529,9 +523,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$sql .= '  LEFT JOIN ' . MAIN_DB_PREFIX . 'hrm_evaluationdet as ed ON  e.rowid = ed.fk_evaluation';
 		$sql .= '  LEFT JOIN ' . MAIN_DB_PREFIX . 'hrm_job as j ON e.fk_job = j.rowid';
 		$sql .= '  LEFT JOIN ' . MAIN_DB_PREFIX . 'hrm_skill as sk ON ed.fk_skill = sk.rowid';
-		$sql .= '  INNER JOIN ' . MAIN_DB_PREFIX . 'hrm_skilldet as skdet_user ON (skdet_user.fk_skill = sk.rowid AND skdet_user.rank = ed.rank)';
+		$sql .= '  INNER JOIN ' . MAIN_DB_PREFIX . 'hrm_skilldet as skdet_user ON (skdet_user.fk_skill = sk.rowid AND skdet_user.rankorder = ed.rankorder)';
 		//$sql .= "  LEFT JOIN " . MAIN_DB_PREFIX . "hrm_skillrank as skr ON (j.rowid = skr.fk_object AND skr.fk_skill = ed.fk_skill AND skr.objecttype = 'job')";
-		$sql .= '  LEFT JOIN ' . MAIN_DB_PREFIX . 'hrm_skilldet as skdet_required ON (skdet_required.fk_skill = sk.rowid AND skdet_required.rank = ed.required_rank)';
+		$sql .= '  LEFT JOIN ' . MAIN_DB_PREFIX . 'hrm_skilldet as skdet_required ON (skdet_required.fk_skill = sk.rowid AND skdet_required.rankorder = ed.required_rank)';
 		$sql .= " WHERE e.rowid =" . ((int) $object->id);
 
 		//      echo $sql;
@@ -576,7 +570,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			print '<th style="width:auto;text-align:auto" class="liste_titre">' . $langs->trans("Description") . '</th>';
 			print '<th style="width:auto;text-align:center" class="liste_titre">' . $langs->trans("EmployeeRank") . '</th>';
 			print '<th style="width:auto;text-align:center" class="liste_titre">' . $langs->trans("RequiredRank") . '</th>';
-			print '<th style="width:auto;text-align:auto" class="liste_titre">' . $langs->trans("Result") . '</th>';
+			print '<th style="width:auto;text-align:auto" class="liste_titre">' . $langs->trans("Result") . ' ' .$form->textwithpicto('', GetLegendSkills(), 1) .'</th>';
 			print '</tr>';
 
 			$sk = new Skill($db);

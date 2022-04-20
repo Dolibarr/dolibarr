@@ -261,7 +261,7 @@ class CommActionRapport
 				if (!preg_match('/^'.preg_quote($obj->label, '/').'/', $obj->note)) {
 					$text = $obj->label."\n";
 				}
-				$text .= dolGetFirstLineOfText(dol_string_nohtmltag($obj->note), 2);
+				$text .= dolGetFirstLineOfText(dol_string_nohtmltag($obj->note), 1);
 				// Add status to text
 				$text .= "\n";
 				$status = $outputlangs->trans("Status").': '.dol_htmlentitiesbr_decode($eventstatic->getLibStatut(1, 1));

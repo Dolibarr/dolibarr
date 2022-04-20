@@ -112,9 +112,9 @@ BoxTitleLastCustomerShipments=Les %s dernières expéditions clients
 NoRecordedShipments=Aucune expédition client
 BoxCustomersOutstandingBillReached=Clients dont l'en-cours de facturation est dépassé
 # Pages
-UsersHome=Accueil utilisateurs et groupes
-MembersHome=Accueil adhésion
-ThirdpartiesHome=Accueil tiers
-TicketsHome=Accueil tickets
+UsersHome=Accueil des utilisateurs et groupes
+MembersHome=Accueil des adhérents
+ThirdpartiesHome=Accueil des tiers
+TicketsHome=Accueil des tickets
 AccountancyHome=Espace Comptabilité
 ValidatedProjects=Projets validés

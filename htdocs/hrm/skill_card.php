@@ -51,8 +51,15 @@ $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 
 // Initialize technical objects
 $object = new Skill($db);
+$extrafields = new ExtraFields($db);
 //$diroutputmassaction = $conf->hrm->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('skillcard', 'globalcard')); // Note that conf->hooks_modules contains array
+
+// Fetch optionals attributes and labels
+$extrafields->fetch_name_optionals_label($object->table_element);
+
+$search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
+
 
 // Initialize array of search criterias
 $search_all = GETPOST("search_all", 'alpha');
@@ -196,13 +203,13 @@ if ($action == 'create') {
 
 	print dol_get_fiche_head(array(), '');
 
-	// Set some default values
-	//if (! GETPOSTISSET('fieldname')) $_POST['fieldname'] = 'myvalue';
-
 	print '<table class="border centpercent tableforfieldcreate">' . "\n";
 
 	// Common attributes
 	include DOL_DOCUMENT_ROOT . '/core/tpl/commonfields_add.tpl.php';
+
+	// Other attributes
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
 
 
 	// SKILLDET ADD
@@ -250,6 +257,8 @@ if (($id || $ref) && $action == 'edit') {
 
 	print '</table>';
 
+	// Other attributes
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_edit.tpl.php';
 
 	// SKILLDET
 
@@ -264,7 +273,7 @@ if (($id || $ref) && $action == 'edit') {
 	if (is_array($SkilldetRecords) && count($SkilldetRecords) > 0) {
 		print '<table>';
 		foreach ($SkilldetRecords as $sk) {
-			if ($sk->rank > $MaxNumberSkill) {
+			if ($sk->rankorder > $MaxNumberSkill) {
 				continue;
 			}
 
@@ -291,7 +300,7 @@ if (($id || $ref) && $action == 'edit') {
 				//              if (!empty($val['help'])) {
 				//                  print $form->textwithpicto($langs->trans($val['label']), $langs->trans($val['help']));
 				//              } else {
-					print $langs->trans($val['label']).'&nbsp;'.$langs->trans('rank').'&nbsp;'.$sk->rank;
+					print $langs->trans($val['label']).'&nbsp;'.$langs->trans('rank').'&nbsp;'.$sk->rankorder;
 				//              }
 				print '</td>';
 				print '<td class="valuefieldcreate">';
@@ -419,6 +428,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$object->fields['label']['visible']=0; // Already in banner
 	include DOL_DOCUMENT_ROOT . '/core/tpl/commonfields_view.tpl.php';
 
+	// Other attributes. Fields from hook formObjectOptions and Extrafields.
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
+
 
 	print '</table>';
 	print '</div>';
@@ -538,11 +550,11 @@ if ($action != "create" && $action != "edit") {
 	foreach ($objectline->fields as $key => $val) {
 		// If $val['visible']==0, then we never show the field
 		if (!empty($val['visible'])) {
-			$visible = (int) dol_eval($val['visible'], 1);
+			$visible = (int) dol_eval($val['visible'], 1, 1, '1');
 			$arrayfields['t.' . $key] = array(
 				'label' => $val['label'],
 				'checked' => (($visible < 0) ? 0 : 1),
-				'enabled' => ($visible != 3 && dol_eval($val['enabled'], 1)),
+				'enabled' => ($visible != 3 && dol_eval($val['enabled'], 1, 1, '1')),
 				'position' => $val['position'],
 				'help' => isset($val['help']) ? $val['help'] : ''
 			);
@@ -696,7 +708,7 @@ if ($action != "create" && $action != "edit") {
 			break; // Should not happen
 		}
 
-		if ($obj->rank > $MaxNumberSkill) {
+		if ($obj->rankorder > $MaxNumberSkill) {
 			continue;
 		}
 

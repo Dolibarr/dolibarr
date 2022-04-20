@@ -45,8 +45,14 @@ if ($mode == 'customer' && !$user->rights->commande->lire) {
 if ($mode == 'supplier' && empty($user->rights->fournisseur->commande->lire)) {
 	accessforbidden();
 }
+if ($mode == 'supplier') {
+	$object_status = GETPOST('object_status', 'array:int');
+	$object_status = implode(',', $object_status);
+} else {
+	$object_status = GETPOST('object_status', 'intcomma');
+}
 
-$object_status = GETPOST('object_status', 'intcomma');
+
 $typent_id = GETPOST('typent_id', 'int');
 $categ_id = GETPOST('categ_id', 'categ_id');
 
@@ -347,7 +353,7 @@ if (!in_array($nowyear, $arrayyears)) {
 	$arrayyears[$nowyear] = $nowyear;
 }
 arsort($arrayyears);
-print $form->selectarray('year', $arrayyears, $year, 0);
+print $form->selectarray('year', $arrayyears, $year, 0, 0, 0, '', 0, 0, 0, '', 'width75');
 print '</td></tr>';
 print '<tr><td align="center" colspan="2"><input type="submit" class="button small" name="submit" value="'.$langs->trans("Refresh").'"></td></tr>';
 print '</table>';

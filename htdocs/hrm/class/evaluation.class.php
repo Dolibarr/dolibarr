@@ -236,7 +236,7 @@ class Evaluation extends CommonObject
 					$line = new Evaluationline($this->db);
 					$line->fk_evaluation = $resultcreate;
 					$line->fk_skill = $required->fk_skill;
-					$line->required_rank = $required->rank;
+					$line->required_rank = $required->rankorder;
 					$line->fk_rank = 0;
 
 					$res = $line->create($user, $notrigger);
@@ -808,7 +808,7 @@ class Evaluation extends CommonObject
 
 		global $action, $hookmanager;
 		$hookmanager->initHooks(array('evaluationdao'));
-		$parameters = array('id'=>$this->id, 'getnomurl'=>$result);
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -1067,79 +1067,4 @@ class Evaluation extends CommonObject
 
 		return $error;
 	}
-
-	/**
-	 * @param string $action
-	 * @param int $selected
-	 */
-	//  public function printObjectLines($action, $selected = 0)
-	//  {
-	//      global $conf, $hookmanager, $langs, $user, $extrafields, $object;
-	//      // TODO We should not use global var for this
-	//      global $inputalsopricewithtax, $usemargins, $disableedit, $disablemove, $disableremove, $outputalsopricetotalwithtax;
-	//
-	//      // Define usemargins
-	////        $usemargins = 0;
-	////        if (!empty($conf->margin->enabled) && !empty($this->element) && in_array($this->element, array('facture', 'facturerec', 'propal', 'commande'))) {
-	////            $usemargins = 1;
-	////        }
-	//
-	//      $num = count($this->lines);
-	//
-	//      // Line extrafield
-	//      if (!is_object($extrafields)) {
-	//          require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-	//          $extrafields = new ExtraFields($this->db);
-	//      }
-	//      $extrafields->fetch_name_optionals_label($this->table_element_line);
-	//
-	//      $parameters = array('num'=>$num, 'selected'=>$selected, 'table_element_line'=>$this->table_element_line);
-	//      $reshook = $hookmanager->executeHooks('printObjectLineTitle', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
-	//      if (empty($reshook)) {
-	//          // Output template part (modules that overwrite templates must declare this into descriptor)
-	//          // Note: This is deprecated. If you need to overwrite the tpl file, use instead the hook.
-	//          include dol_buildpath('hrm/core/tpl/objectline_title.tpl.php');
-	//      }
-	//
-	//      $i = 0;
-	//
-	//      print "<!-- begin printObjectLines() --><tbody>\n";
-	//      foreach ($this->lines as $line) {
-	//          //Line extrafield
-	//          $line->fetch_optionals();
-	//
-	//          //if (is_object($hookmanager) && (($line->product_type == 9 && ! empty($line->special_code)) || ! empty($line->fk_parent_line)))
-	//          if (is_object($hookmanager)) {   // Old code is commented on preceding line.
-	//              if (empty($line->fk_parent_line)) {
-	//                  $parameters = array('line'=>$line, 'num'=>$num, 'i'=>$i, 'selected'=>$selected, 'table_element_line'=>$line->table_element);
-	//                  $reshook = $hookmanager->executeHooks('printObjectLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
-	//              } else {
-	//                  $parameters = array('line'=>$line, 'num'=>$num, 'i'=>$i, 'selected'=>$selected, 'table_element_line'=>$line->table_element, 'fk_parent_line'=>$line->fk_parent_line);
-	//                  $reshook = $hookmanager->executeHooks('printObjectSubLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
-	//              }
-	//          }
-	//          if (empty($reshook)) {
-	//              $this->printObjectLine($action, $line);
-	//          }
-	//
-	//          $i++;
-	//      }
-	//      print "</tbody><!-- end printObjectLines() -->\n";
-	//  }
-
-	//  public function printObjectLine($action, $line)
-	//  {
-	//      global $conf, $langs, $user, $object, $hookmanager;
-	//      global $form;
-	//      global $object_rights, $disableedit, $disablemove, $disableremove; // TODO We should not use global var for this !
-	//
-	//      $object_rights = $this->getRights();
-	//
-	//      $element = $this->element;
-	//
-	//      $text = '';
-	//      $description = '';
-	//
-	//      include dol_buildpath('hrm/tpl/objectline_view.tpl.php');
-	//  }
 }

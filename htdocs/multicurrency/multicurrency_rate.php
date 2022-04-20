@@ -55,8 +55,8 @@ $dateinput 			= dol_mktime(0, 0, 0, GETPOST('dateinputmonth', 'int'), GETPOST('d
 $rateinput 			= price2num(GETPOST('rateinput', 'alpha'));
 $optioncss 			= GETPOST('optioncss', 'alpha');
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield 			= GETPOST("sortfield", 'alpha');
-$sortorder 			= GETPOST("sortorder", 'alpha');
+$sortfield 			= GETPOST('sortfield', 'aZ09comma');
+$sortorder 			= GETPOST('sortorder', 'aZ09comma');
 $page = (GETPOST("page", 'int') ?GETPOST("page", 'int') : 0);
 
 if (empty($page) || $page == -1) {
@@ -250,6 +250,7 @@ if (!in_array($action, array("updateRate", "deleteRate"))) {
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" name="formulaire">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 
+	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent"><tr>';
 
 	print ' <td>'.$langs->trans('Date').'</td>';
@@ -265,10 +266,12 @@ if (!in_array($action, array("updateRate", "deleteRate"))) {
 
 	print '<td>';
 	print '<input type="hidden" name="action" value="create">';
-	print '<input type="submit" class="butAction" name="btnCreateCurrencyRate" value="'.$langs->trans('CreateRate').'">';
+	print '<input type="submit" class="button button-add small" name="btnCreateCurrencyRate" value="'.$langs->trans('CreateRate').'">';
 	print '</td>';
 
 	print '</tr></table>';
+	print '</div>';
+
 	print '</form>';
 
 	print '<br>';
@@ -404,7 +407,7 @@ if ($resql) {
 		$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
 	}
 
-	print '<div class="div-table-responsive-no-min">';
+	print '<div class="div-table-responsive">';
 	print '<table class="tagtable centpercent nomarginbottom liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 	// Lines with input filters
@@ -426,7 +429,7 @@ if ($resql) {
 		// rate
 	if (!empty($arrayfields['cr.rate']['checked'])) {
 		print '<td class="liste_titre" align="left">';
-		print '<input class="flat" type="text" name="search_rate" size="8" value="'.dol_escape_htmltag($search_rate).'">';
+		print '<input class="flat maxwidth75" type="text" name="search_rate" value="'.dol_escape_htmltag($search_rate).'">';
 		print '</td>';
 	}
 

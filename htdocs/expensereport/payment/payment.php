@@ -87,8 +87,8 @@ if ($action == 'add_payment') {
 		// Read possible payments
 		foreach ($_POST as $key => $value) {
 			if (substr($key, 0, 7) == 'amount_') {
-				$amounts[$expensereport->fk_user_author] = price2num($_POST[$key]);
-				$total += price2num($_POST[$key]);
+				$amounts[$expensereport->fk_user_author] = price2num(GETPOST($key));
+				$total += price2num(GETPOST($key));
 			}
 		}
 
@@ -170,7 +170,7 @@ if ($action == 'create' || empty($action)) {
 
 	// autofill remainder amount
 	if (!empty($conf->use_javascript_ajax)) {
-		print "\n".'<script type="text/javascript" language="javascript">';
+		print "\n".'<script type="text/javascript">';
 		//Add js for AutoFill
 		print ' $(document).ready(function () {';
 		print ' 	$(".AutoFillAmount").on(\'click touchstart\', function(){

@@ -21,6 +21,7 @@ ErrorPHPDoesNotSupportCurl=Насби PHP -и шумо Curl -ро дастгир
 ErrorPHPDoesNotSupportCalendar=Насби PHP -и шумо васеъшавии тақвими php -ро пуштибонӣ намекунад.
 ErrorPHPDoesNotSupportUTF8=Насби PHP -и шумо вазифаҳои UTF8 -ро пуштибонӣ намекунад. Dolibarr дуруст кор карда наметавонад. Пеш аз насб кардани Dolibarr инро ҳал кунед.
 ErrorPHPDoesNotSupportIntl=Насби PHP -и шумо вазифаҳои Intl -ро дастгирӣ намекунад.
+ErrorPHPDoesNotSupportMbstring=Your PHP installation does not support mbstring functions.
 ErrorPHPDoesNotSupportxDebug=Насби PHP -и шумо функсияҳои тавсеаи ислоҳотро дастгирӣ намекунад.
 ErrorPHPDoesNotSupport=Насби PHP -и шумо вазифаҳои %s -ро дастгирӣ намекунад.
 ErrorDirDoesNotExists=Феҳристи %s вуҷуд надорад.

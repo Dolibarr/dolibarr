@@ -33,6 +33,32 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonstickergenerator.class.php';
  */
 class pdf_standard extends CommonStickerGenerator
 {
+	/**
+	 * Dolibarr version of the loaded document
+	 * @var string
+	 */
+	public $version = 'dolibarr';
+
+
+	/**
+	 *	Constructor
+	 *
+	 *  @param		DoliDB		$db      Database handler
+	 */
+	public function __construct($db)
+	{
+		global $conf, $langs, $mysoc;
+
+		// Translations
+		$langs->loadLangs(array("main", "admin"));
+
+		$this->db = $db;
+		$this->name = "standard";
+		$this->description = $langs->trans('TemplateforBusinessCards');
+		//$this->update_main_doc_field = 1; // Save the name of generated file as the main doc when generating a doc with this template
+
+		$this->type = 'pdf-various-sizes';
+	}
 
 	/**
 	 * Output a sticker on page at position _COUNTX, _COUNTY (_COUNTX and _COUNTY start from 0)

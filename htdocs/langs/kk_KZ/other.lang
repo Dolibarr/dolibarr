@@ -258,6 +258,10 @@ PassEncoding=Құпия сөзді кодтау
 PermissionsAdd=Рұқсаттар қосылды
 PermissionsDelete=Рұқсаттар жойылды
 YourPasswordMustHaveAtLeastXChars=Сіздің құпия сөзіңізде кемінде <strong> %s </strong> таңбалар болуы керек
+PasswordNeedAtLeastXUpperCaseChars=The password need at least <strong>%s</strong> upper case chars
+PasswordNeedAtLeastXDigitChars=The password need at least <strong>%s</strong> numeric chars
+PasswordNeedAtLeastXSpecialChars=The password need at least <strong>%s</strong> special chars
+PasswordNeedNoXConsecutiveChars=The password must not have <strong>%s</strong> consecutive similar chars
 YourPasswordHasBeenReset=Құпия сөзіңіз сәтті қалпына келтірілді
 ApplicantIpAddress=Өтініш берушінің IP мекенжайы
 SMSSentTo=%s нөміріне SMS жіберілді
@@ -268,6 +272,7 @@ ProjectCreatedByEmailCollector=MSGID %s электрондық поштасын�
 TicketCreatedByEmailCollector=Билетті MSGID %s электрондық поштасынан электрондық пошта жинаушы жасаған
 OpeningHoursFormatDesc=Ашылу және жабылу сағаттарын ажырату үшін - пайдаланыңыз. <br> Әр түрлі ауқымдарды енгізу үшін бос орынды пайдаланыңыз. <br> Мысал: 8-12 14-18
 SuffixSessionName=Сеанс атауының жұрнағы
+LoginWith=Login with %s
 
 ##### Export #####
 ExportsArea=Экспорттық аймақ

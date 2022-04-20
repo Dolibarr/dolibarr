@@ -173,7 +173,7 @@ class Salary extends CommonObject
 
 		if (!$notrigger) {
 			// Call trigger
-			$result = $this->call_trigger('salary_MODIFY', $user);
+			$result = $this->call_trigger('SALARY_MODIFY', $user);
 			if ($result < 0) $error++;
 			// End call triggers
 		}
@@ -278,7 +278,7 @@ class Salary extends CommonObject
 		$error = 0;
 
 		// Call trigger
-		$result = $this->call_trigger('salary_DELETE', $user);
+		$result = $this->call_trigger('SALARY_DELETE', $user);
 		if ($result < 0) return -1;
 		// End call triggers
 
@@ -367,7 +367,7 @@ class Salary extends CommonObject
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Employee"));
 			return -4;
 		}
-		if ($this->amount < 0 || $this->amount == '') {
+		if ($this->amount == '') {
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Amount"));
 			return -5;
 		}
@@ -438,7 +438,7 @@ class Salary extends CommonObject
 				}
 
 				// Call trigger
-				$result = $this->call_trigger('salary_CREATE', $user);
+				$result = $this->call_trigger('SALARY_CREATE', $user);
 				if ($result < 0) $error++;
 				// End call triggers
 			} else $error++;
@@ -550,7 +550,7 @@ class Salary extends CommonObject
 
 		global $action, $hookmanager;
 		$hookmanager->initHooks(array('salarypayment'));
-		$parameters = array('id'=>$this->id, 'getnomurl'=>$result);
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) $result = $hookmanager->resPrint;
 		else $result .= $hookmanager->resPrint;

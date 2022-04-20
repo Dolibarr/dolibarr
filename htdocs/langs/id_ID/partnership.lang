@@ -19,7 +19,7 @@
 ModulePartnershipName=Manajemen kemitraan
 PartnershipDescription=Modul Manajemen kemitraan
 PartnershipDescriptionLong= Modul Manajemen kemitraan
-
+Partnership=Kemitraan
 AddPartnership=Tambahkan kemitraan
 CancelPartnershipForExpiredMembers=Kemitraan: Batalkan kemitraan anggota dengan langganan yang kedaluwarsa
 PartnershipCheckBacklink=Kemitraan: Periksa tautan balik rujukan

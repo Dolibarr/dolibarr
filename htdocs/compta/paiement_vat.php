@@ -83,7 +83,7 @@ if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'y
 		}
 	}
 
-	if ($amounts[key($amounts)] <= 0) {
+	if (empty($amounts[key($amounts)])) {
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Amount")), null, 'errors');
 		$action = 'create';
@@ -154,7 +154,7 @@ if ($action == 'create') {
 
 	$total = $tva->amount;
 	if (!empty($conf->use_javascript_ajax)) {
-		print "\n".'<script type="text/javascript" language="javascript">';
+		print "\n".'<script type="text/javascript">';
 
 		//Add js for AutoFill
 		print ' $(document).ready(function () {';

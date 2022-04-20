@@ -32,12 +32,20 @@
     vertical-align: middle;
 }
 
+.right {
+	text-align: right;
+}
+
 .opacitymedium {
 	opacity: 0.5;
 }
 
 .inline-block {
 	display: inline-block;	
+}
+
+.no-bottom {
+	padding-bottom: 0;	
 }
 
 .small {
@@ -474,6 +482,4 @@ table.tablesupport {
 		padding: 6px;
 		width: 100%;
 	}
-}
-	
 }

@@ -26,6 +26,7 @@
  *       \brief      File to manage Expense Reports
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport_ik.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport_rule.class.php';
 
@@ -513,7 +514,7 @@ class ExpenseReport extends CommonObject
 		if ($result) {
 			if (!$notrigger) {
 				// Call trigger
-				$result = $this->call_trigger('EXPENSE_REPORT_UPDATE', $user);
+				$result = $this->call_trigger('EXPENSE_REPORT_MODIFY', $user);
 
 				if ($result < 0) {
 					$error++;
@@ -999,7 +1000,7 @@ class ExpenseReport extends CommonObject
 		$sql .= ' de.fk_ecm_files,';
 		$sql .= ' de.total_ht, de.total_tva, de.total_ttc,';
 		$sql .= ' de.total_localtax1, de.total_localtax2, de.rule_warning_message,';
-		$sql .= ' ctf.code as code_type_fees, ctf.label as libelle_type_fees,';
+		$sql .= ' ctf.code as code_type_fees, ctf.label as libelle_type_fees, ctf.accountancy_code as accountancy_code_type_fees,';
 		$sql .= ' p.ref as ref_projet, p.title as title_projet';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element_line.' as de';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_fees as ctf ON de.fk_c_type_fees = ctf.id';
@@ -1043,6 +1044,7 @@ class ExpenseReport extends CommonObject
 
 				$deplig->type_fees_code     = empty($objp->code_type_fees) ? 'TF_OTHER' : $objp->code_type_fees;
 				$deplig->type_fees_libelle  = $objp->libelle_type_fees;
+				$deplig->type_fees_accountancy_code = $objp->accountancy_code_type_fees;
 
 				$deplig->tva_tx             = $objp->tva_tx;
 				$deplig->vatrate            = $objp->tva_tx;
@@ -1091,7 +1093,7 @@ class ExpenseReport extends CommonObject
 
 		if (!$notrigger) {
 			// Call trigger
-			$result = $this->call_trigger('EXPENSEREPORT_DELETE', $user);
+			$result = $this->call_trigger('EXPENSE_REPORT_DELETE', $user);
 			if ($result < 0) {
 				$error++;
 			}
@@ -1639,7 +1641,7 @@ class ExpenseReport extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $max = 0, $short = 0, $moretitle = '', $notooltip = 0, $save_lastsearch_value = -1)
 	{
-		global $langs, $conf;
+		global $langs, $conf, $hookmanager;
 
 		$result = '';
 
@@ -1708,6 +1710,15 @@ class ExpenseReport extends CommonObject
 		}
 		$result .= $linkend;
 
+		global $action;
+		$hookmanager->initHooks(array($this->element . 'dao'));
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
+		}
 		return $result;
 	}
 
@@ -2037,7 +2048,7 @@ class ExpenseReport extends CommonObject
 	}
 
 	/**
-	 * Update an expense report line
+	 * Update an expense report line.
 	 *
 	 * @param   int         $rowid                  Line to edit
 	 * @param   int         $type_fees_id           Type payment
@@ -2050,9 +2061,10 @@ class ExpenseReport extends CommonObject
 	 * @param   int         $expensereport_id       Expense report id
 	 * @param   int         $fk_c_exp_tax_cat       Id of category of car
 	 * @param   int         $fk_ecm_files           Id of ECM file to link to this expensereport line
+	 * @param   int     	$notrigger      		1=No trigger
 	 * @return  int                                 <0 if KO, >0 if OK
 	 */
-	public function updateline($rowid, $type_fees_id, $projet_id, $vatrate, $comments, $qty, $value_unit, $date, $expensereport_id, $fk_c_exp_tax_cat = 0, $fk_ecm_files = 0)
+	public function updateline($rowid, $type_fees_id, $projet_id, $vatrate, $comments, $qty, $value_unit, $date, $expensereport_id, $fk_c_exp_tax_cat = 0, $fk_ecm_files = 0, $notrigger = 0)
 	{
 		global $user, $mysoc;
 
@@ -2142,9 +2154,19 @@ class ExpenseReport extends CommonObject
 
 			$this->applyOffset();
 			$this->checkRules();
-
+			$error = 0;
 			$result = $this->line->update($user);
-			if ($result > 0) {
+
+			if ($result > 0 && !$notrigger) {
+				// Call triggers
+				$result = $this->call_trigger('EXPENSE_REPORT_DET_MODIFY', $user);
+				if ($result < 0) {
+					$error++;
+				}
+				// End call triggers
+			}
+
+			if ($result > 0 && $error == 0) {
 				$this->db->commit();
 				return 1;
 			} else {
@@ -2159,20 +2181,33 @@ class ExpenseReport extends CommonObject
 	/**
 	 * deleteline
 	 *
-	 * @param   int     $rowid      Row id
-	 * @param   User    $fuser      User
-	 * @return  int                 <0 if KO, >0 if OK
+	 * @param   int     $rowid      	Row id
+	 * @param   User    $fuser      	User
+	 * @param   int     $notrigger      1=No trigger
+	 * @return  int                 	<0 if KO, >0 if OK
 	 */
-	public function deleteline($rowid, $fuser = '')
+	public function deleteline($rowid, $fuser = '', $notrigger = 0)
 	{
+		$error=0;
+
 		$this->db->begin();
 
-		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element_line;
+		if (!$notrigger) {
+			// Call triggers
+			$result = $this->call_trigger('EXPENSE_REPORT_DET_DELETE', $fuser);
+			if ($result < 0) {
+				$error++;
+			}
+			// End call triggers
+		}
+
+		$sql = ' DELETE FROM '.MAIN_DB_PREFIX.$this->table_element_line;
 		$sql .= ' WHERE rowid = '.((int) $rowid);
 
 		dol_syslog(get_class($this)."::deleteline sql=".$sql);
 		$result = $this->db->query($sql);
-		if (!$result) {
+
+		if (!$result || $error > 0 ) {
 			$this->error = $this->db->error();
 			dol_syslog(get_class($this)."::deleteline  Error ".$this->error, LOG_ERR);
 			$this->db->rollback();
@@ -2251,7 +2286,7 @@ class ExpenseReport extends CommonObject
 		$sql = "SELECT DISTINCT ur.fk_user";
 		$sql .= " FROM ".MAIN_DB_PREFIX."user_rights as ur, ".MAIN_DB_PREFIX."rights_def as rd";
 		$sql .= " WHERE ur.fk_id = rd.id and rd.module = 'expensereport' AND rd.perms = 'approve'"; // Permission 'Approve';
-		$sql .= "UNION";
+		$sql .= " UNION";
 		$sql .= " SELECT DISTINCT ugu.fk_user";
 		$sql .= " FROM ".MAIN_DB_PREFIX."usergroup_user as ugu, ".MAIN_DB_PREFIX."usergroup_rights as ur, ".MAIN_DB_PREFIX."rights_def as rd";
 		$sql .= " WHERE ugu.fk_usergroup = ur.fk_usergroup AND ur.fk_id = rd.id and rd.module = 'expensereport' AND rd.perms = 'approve'"; // Permission 'Approve';
@@ -2535,7 +2570,7 @@ class ExpenseReport extends CommonObject
 /**
  * Class of expense report details lines
  */
-class ExpenseReportLine
+class ExpenseReportLine extends CommonObjectLine
 {
 	/**
 	 * @var DoliDB Database handler.
@@ -2579,6 +2614,7 @@ class ExpenseReportLine
 
 	public $type_fees_code;
 	public $type_fees_libelle;
+	public $type_fees_accountancy_code;
 
 	public $projet_ref;
 	public $projet_title;
@@ -2740,6 +2776,17 @@ class ExpenseReportLine
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'expensereport_det');
+
+
+			if (!$error && !$notrigger) {
+				// Call triggers
+				$result = $this->call_trigger('EXPENSE_REPORT_DET_CREATE', $user);
+				if ($result < 0) {
+					$error++;
+				}
+				// End call triggers
+			}
+
 
 			if (!$fromaddline) {
 				$tmpparent = new ExpenseReport($this->db);

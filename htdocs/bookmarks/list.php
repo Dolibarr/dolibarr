@@ -86,7 +86,7 @@ if ($action == 'delete') {
  * View
  */
 
-$userstatic = new User($db);
+$form = new Form($db);
 
 $title = $langs->trans("ListOfBookmarks");
 
@@ -175,7 +175,7 @@ print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sort
 print '<div class="div-table-responsive">';
 print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
-print "<tr class=\"liste_titre\">";
+print '<tr class="liste_titre">';
 //print "<td>&nbsp;</td>";
 print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "b.rowid", "", $param, 'align="left"', $sortfield, $sortorder);
 print_liste_field_titre("Title", $_SERVER["PHP_SELF"], "b.title", "", $param, 'align="left"', $sortfield, $sortorder);
@@ -199,7 +199,7 @@ while ($i < min($num, $limit)) {
 	print '<tr class="oddeven">';
 
 	// Id
-	print '<td class="left">';
+	print '<td class="nowraponall">';
 	print $object->getNomUrl(1);
 	print '</td>';
 
@@ -268,14 +268,12 @@ while ($i < min($num, $limit)) {
 	print '<td class="right">'.$obj->position."</td>";
 
 	// Actions
-	print '<td class="nowrap right">';
+	print '<td class="nowraponall right">';
 	if ($canedit) {
-		print '<a class="editfielda" href="'.DOL_URL_ROOT.'/bookmarks/card.php?action=edit&token='.newToken().'&id='.$obj->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"]).'">'.img_edit()."</a>";
+		print '<a class="editfielda marginleftonly" href="'.DOL_URL_ROOT.'/bookmarks/card.php?action=edit&token='.newToken().'&id='.$obj->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"]).'">'.img_edit()."</a>";
 	}
 	if ($candelete) {
 		print '<a class="marginleftonly" href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$obj->rowid.'">'.img_delete().'</a>';
-	} else {
-		print "&nbsp;";
 	}
 	print "</td>";
 	print "</tr>\n";

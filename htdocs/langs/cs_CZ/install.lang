@@ -21,6 +21,7 @@ ErrorPHPDoesNotSupportCurl=Vaše instalace PHP nepodporuje Curl.
 ErrorPHPDoesNotSupportCalendar=Vaše instalace PHP nepodporuje rozšíření kalendáře php.
 ErrorPHPDoesNotSupportUTF8=Tato PHP instalace nepodporuje UTF8 funkce. Tato funkce je nutná, pro správnou funkčnost Dolibarr. Zkontrolujte Vaše PHP nastavení.
 ErrorPHPDoesNotSupportIntl=Instalace PHP nepodporuje funkce Intl.
+ErrorPHPDoesNotSupportMbstring=Your PHP installation does not support mbstring functions.
 ErrorPHPDoesNotSupportxDebug=Vaše instalace PHP nepodporuje funkce rozšířeného ladění.
 ErrorPHPDoesNotSupport=Vaše instalace PHP nepodporuje funkce %s.
 ErrorDirDoesNotExists=Adresář %s neexistuje.

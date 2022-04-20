@@ -30,7 +30,7 @@ ManageLotMask=Máscara personalizada
 CustomMasks=Opción para definir unha máscara de numeración diferente para cada produto 
 BatchLotNumberingModules=Regra de numeración para a xeración automática do número de lote 
 BatchSerialNumberingModules=Regra de numeración para a xeración automática do número de serie (para produtos con propiedade 1 lote/serie único para cada produto) 
-QtyToAddAfterBarcodeScan=Cant. a engadir por cada código de barras/lote/serie escaneado
+QtyToAddAfterBarcodeScan=Cant. a %s por cada código de barras/lote/serie escaneado
 LifeTime=Duración da vida útil (en días) 
 EndOfLife=Fin da vida útil
 ManufacturingDate=Data de fabricación
@@ -42,3 +42,4 @@ HideLots=Agochar lotes
 #Traceability - qc status
 OutOfOrder=Fora de servizo
 InWorkingOrder=En funcionamento
+ToReplace=Substituir

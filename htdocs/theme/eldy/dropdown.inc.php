@@ -7,6 +7,11 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
  * Dropdown of user popup
  */
 
+.bookmark-footer a.top-menu-dropdown-link {
+	white-space: normal;
+	word-break: break-word;
+}
+
 button.dropdown-item.global-search-item {
 	outline: none;
 }
@@ -14,6 +19,12 @@ button.dropdown-item.global-search-item {
 .open>.dropdown-search, .open>.dropdown-bookmark, .open>.dropdown-quickadd, .open>.dropdown-menu, .dropdown dd ul.open {
 	display: block;
 }
+
+#topmenu-bookmark-dropdown .dropdown-menu {
+	min-width: 360px;
+	max-width: 400px;
+}
+
 
 .dropdown-search {
 	border-color: #eee;
@@ -85,8 +96,6 @@ button.dropdown-item.global-search-item {
 	box-shadow: 0 6px 12px rgba(0,0,0,.175);
 }
 .dropdown-menu {
-	border-color: #eee;
-
 	position: absolute;
 	top: 100%;
 	left: 0;
@@ -101,7 +110,6 @@ button.dropdown-item.global-search-item {
 	background-color: #fff;
 	-webkit-background-clip: padding-box;
 	background-clip: padding-box;
-	border: 1px solid #ccc;
 	border: 1px solid rgba(0,0,0,.15);
 	border-radius: 4px;
 	-webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);
@@ -279,7 +287,7 @@ a.top-menu-dropdown-link {
 
 #topmenuloginmoreinfo-btn, #topmenulogincompanyinfo-btn {
 	display: block;
-	text-aling: right;
+	text-align: right;
 	color:#666;
 	cursor: pointer;
 }
@@ -359,7 +367,7 @@ a.top-menu-dropdown-link {
 	-webkit-font-smoothing: antialiased;
 	text-align:center;
 	text-decoration:none;
-	margin-right: 5px;
+	margin-<?php echo $right; ?>: 5px;
 	display: inline-block;
 	content: "\f0da";
 	/* color: rgba(0,0,0,0.3); */
@@ -401,11 +409,10 @@ a.top-menu-dropdown-link {
 	transition: all 250ms ease-in-out;
 	backface-visibility: hidden;
 	transform-style: preserve-3d;
-
 }
 
 .dropdown-search-input::placeholder {
-	color: color(#575756 a(0.8));
+	color: color(#575756);
 	letter-spacing: 1.5px;
 }
 
@@ -423,7 +430,15 @@ a.top-menu-dropdown-link {
 
 .quickadd-body.dropdown-body {
 	padding: unset;
-	padding-top: 15px;
+}
+
+.quickadd-item {
+	padding-top: 6px;
+	padding-bottom: 6px;
+}
+
+.quickadd-item:before {
+	content: none;
 }
 
 .quickadd-header {
@@ -481,4 +496,20 @@ div.quickaddblock:focus {
 		margin-left: 5px;
 		right: 0;
 	}
+
+	#topmenu-quickadd-dropdown .dropdown-menu {
+		min-width: 220px;
+		max-width: 235px;
+	}
+	#topmenu-bookmark-dropdown .dropdown-menu {
+		min-width: 220px;
+		max-width: 360px;
+	}
+
+	.dropdown-menu {
+		border: none;
+		-webkit-box-shadow: none;
+		box-shadow: none;
+	}
+
 }

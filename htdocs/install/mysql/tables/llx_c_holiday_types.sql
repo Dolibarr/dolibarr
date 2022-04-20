@@ -24,5 +24,6 @@ CREATE TABLE llx_c_holiday_types (
   delay integer NOT NULL,						-- Minimum delay to be allowed to make request
   newbymonth double(8,5) DEFAULT 0 NOT NULL, -- Amount of new days for each user each month
   fk_country integer DEFAULT NULL,			-- This type is dedicated to a country
+  block_if_negative integer NOT NULL DEFAULT 0,
   active integer DEFAULT 1
 ) ENGINE=innodb;

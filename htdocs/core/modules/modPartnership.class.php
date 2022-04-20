@@ -75,7 +75,7 @@ class modPartnership extends DolibarrModules
 		// $this->editor_url = 'https://www.example.com';
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'
-		$this->version = 'development';
+		$this->version = 'experimental';
 		// Url to the file with your last numberversion of this module
 		//$this->url_last_version = 'http://www.example.com/versionmodule.txt';
 
@@ -408,7 +408,7 @@ class modPartnership extends DolibarrModules
 	{
 		global $conf, $langs;
 
-		$result = $this->_load_tables('/partnership/sql/');
+		$result = $this->_load_tables('/install/mysql/tables/', 'partnership');
 		if ($result < 0) {
 			return -1; // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
 		}

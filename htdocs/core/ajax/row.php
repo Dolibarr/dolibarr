@@ -81,8 +81,6 @@ if (GETPOST('roworder', 'alpha', 3) && GETPOST('table_element_line', 'aZ09', 3)
 		$perm = 1;
 	} elseif ($table_element_line == 'facturedet_rec' && $user->rights->facture->creer) {
 		$perm = 1;
-	} elseif ($table_element_line == 'ecm_files' && $user->rights->ecm->creer) {
-		$perm = 1;
 	} elseif ($table_element_line == 'emailcollector_emailcollectoraction' && $user->admin) {
 		$perm = 1;
 	} elseif ($table_element_line == 'bom_bomline' && $user->rights->bom->write) {
@@ -95,10 +93,22 @@ if (GETPOST('roworder', 'alpha', 3) && GETPOST('table_element_line', 'aZ09', 3)
 		$perm = 1;
 	} elseif ($table_element_line == 'facture_fourn_det' && $user->rights->fournisseur->facture->creer) {
 		$perm = 1;
-	} elseif ($table_element_line == 'ecm_files' && $fk_element == 'fk_product' && (!empty($user->rights->produit->creer) || !empty($user->rights->service->creer))) {
+	} elseif ($table_element_line == 'facture_fourn_det_rec' && $user->rights->fournisseur->facture->creer) {
 		$perm = 1;
-	} elseif ($table_element_line == 'ecm_files' && $fk_element == 'fk_ticket' && !empty($user->rights->ticket->write)) {
+	} elseif ($table_element_line == 'product_attribute_value' && $fk_element == 'fk_product_attribute' && ($user->rights->produit->lire || $user->rights->service->lire)) {
 		$perm = 1;
+	} elseif ($table_element_line == 'ecm_files') {		// Used when of page "documents.php"
+		if (!empty($user->rights->ecm->creer)) {
+			$perm = 1;
+		} elseif ($fk_element == 'fk_product' && (!empty($user->rights->produit->creer) || !empty($user->rights->service->creer))) {
+			$perm = 1;
+		} elseif ($fk_element == 'fk_ticket' && !empty($user->rights->ticket->write)) {
+			$perm = 1;
+		} elseif ($fk_element == 'fk_holiday' && !empty($user->rights->holiday->write)) {
+			$perm = 1;
+		} elseif ($fk_element == 'fk_soc' && !empty($user->rights->societe->creer)) {
+			$perm = 1;
+		}
 	} elseif ($table_element_line == 'product_association' && $fk_element == 'fk_product' && (!empty($user->rights->produit->creer) || !empty($user->rights->service->creer))) {
 		$perm = 1;
 	} elseif ($table_element_line == 'projet_task' && $fk_element == 'fk_projet' && $user->rights->projet->creer) {

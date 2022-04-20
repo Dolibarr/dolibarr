@@ -34,7 +34,7 @@ create table llx_product_fournisseur_price
   quantity				double,
   remise_percent		double NOT NULL DEFAULT 0,
   remise				double NOT NULL DEFAULT 0,
-  unitprice				double(24,8) DEFAULT 0,		-- unit price without tax
+  unitprice				double(24,8) DEFAULT 0,		-- unit price without tax (discount not taken into account, so rounding of price/quantity)
   charges				double(24,8) DEFAULT 0,		-- to store transport cost. Constant PRODUCT_CHARGES must be set to see it.
   default_vat_code	    varchar(10),
   barcode                       varchar(180) DEFAULT NULL,          -- barcode
@@ -50,8 +50,7 @@ create table llx_product_fournisseur_price
   import_key			varchar(14),                -- Import key
   delivery_time_days    integer,
   supplier_reputation varchar(10),
-  packaging			    varchar(64),
-  
+  packaging			    real DEFAULT NULL,
   fk_multicurrency		integer,
   multicurrency_code	varchar(3),
   multicurrency_tx			double(24,8) DEFAULT 1,
