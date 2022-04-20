@@ -360,7 +360,13 @@ function LoadProducts(position, issubcat) {
 				$("#prodiv"+ishow).data("iscat", 0);
 				$("#prodiv"+ishow).attr("class","wrapper2");
 				$("#prowatermark"+ishow).hide();
-				ishow++; //Next product to show after print data product
+				<?php
+				// Add js from hooks
+				$parameters=array();
+				$parameters['caller'] = 'loadProducts';
+				$hookmanager->executeHooks('completeJSProductDisplay', $parameters);
+				print $hookmanager->resPrint;
+				?>
 			}
 			//console.log("Hide the prowatermark for ishow="+ishow);
 			idata++; //Next data everytime
@@ -615,6 +621,13 @@ function Search2(keyCodeForEnter) {
 					}
 					$("#prodiv" + i).data("rowid", data[i]['rowid']);
 					$("#prodiv" + i).data("iscat", 0);
+					<?php
+					// Add js from hooks
+					$parameters=array();
+					$parameters['caller'] = 'search2';
+					$hookmanager->executeHooks('completeJSProductDisplay', $parameters);
+					print $hookmanager->resPrint;
+					?>
 				}
 			}).always(function (data) {
 				// If there is only 1 answer
