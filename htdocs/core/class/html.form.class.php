@@ -8404,7 +8404,7 @@ class Form
 	public function showLinkToObjectBlock($object, $restrictlinksto = array(), $excludelinksto = array())
 	{
 		global $conf, $langs, $hookmanager;
-		global $bc, $action;
+		global $action;
 
 		$linktoelem = '';
 		$linktoelemlist = '';
@@ -8450,11 +8450,10 @@ class Form
 			);
 		}
 
-		// Can complete the possiblelink array
-		$hookmanager->initHooks(array('commonobject'));
-		$parameters = array('listofidcompanytoscan' => $listofidcompanytoscan);
-
 		if (!empty($listofidcompanytoscan)) {  // If empty, we don't have criteria to scan the object we can link to
+			// Can complete the possiblelink array
+			$hookmanager->initHooks(array('commonobject'));
+			$parameters = array('listofidcompanytoscan' => $listofidcompanytoscan, 'possiblelinks' => $possiblelinks);
 			$reshook = $hookmanager->executeHooks('showLinkToObjectBlock', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		}
 
