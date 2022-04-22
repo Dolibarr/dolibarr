@@ -1426,7 +1426,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 					$out .= $formadmin->select_language($defaultlang, 'lang_idrib'.$rib->id, 0, 0, 0, 0, 0, $morecss);
 				}
 				// Button
-				$genbutton = '<input class="button buttongen" id="'.$forname.'_generatebutton" name="'.$forname.'_generatebutton"';
+				$genbutton = '<input class="button buttongen reposition nomargintop nomarginbottom" id="'.$forname.'_generatebutton" name="'.$forname.'_generatebutton"';
 				$genbutton .= ' type="submit" value="'.$buttonlabel.'"';
 				if (!$allowgenifempty && !is_array($modellist) && empty($modellist)) {
 					$genbutton .= ' disabled';
@@ -1529,7 +1529,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 	$out.= ajax_combobox('model');
 	//print $out;
 	$buttonlabel=$langs->trans("Generate");
-	$genbutton = '<input class="button buttongen" id="'.$forname.'_generatebutton" name="'.$forname.'_generatebutton"';
+	$genbutton = '<input class="button buttongen reposition nomargintop nomarginbottom" id="'.$forname.'_generatebutton" name="'.$forname.'_generatebutton"';
 	$genbutton.= ' type="submit" value="'.$buttonlabel.'"';
 	$genbutton.= '>';
 	print $genbutton;

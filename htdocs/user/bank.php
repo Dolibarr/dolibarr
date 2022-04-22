@@ -619,7 +619,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 			$db->free($resql);
 
 			if ($num <= 0) {
-				print '<td colspan="5" class="opacitymedium">'.$langs->trans("None").'</a>';
+				print '<td colspan="5"><span class="opacitymedium">'.$langs->trans("None").'</span></a>';
 			}
 			print "</table>";
 		} else {
@@ -656,9 +656,12 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 
 				$holiday->id = $objp->rowid;
 				$holiday->ref = $objp->rowid;
+
 				$holiday->fk_type = $objp->fk_type;
 				$holiday->statut = $objp->status;
-				$nbopenedday = num_open_day($db->jdate($objp->date_debut), $db->jdate($objp->date_fin), 0, 1, $objp->halfday);
+				$holiday->status = $objp->status;
+
+				$nbopenedday = num_open_day($db->jdate($objp->date_debut, 'gmt'), $db->jdate($objp->date_fin, 'gmt'), 0, 1, $objp->halfday);
 
 				print '<tr class="oddeven">';
 				print '<td class="nowrap">';
@@ -671,7 +674,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 			$db->free($resql);
 
 			if ($num <= 0) {
-				print '<td colspan="4" class="opacitymedium">'.$langs->trans("None").'</a>';
+				print '<td colspan="4"><span class="opacitymedium">'.$langs->trans("None").'</span></a>';
 			}
 			print "</table>";
 		} else {
@@ -721,7 +724,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 			$db->free($resql);
 
 			if ($num <= 0) {
-				print '<td colspan="4" class="opacitymedium">'.$langs->trans("None").'</a>';
+				print '<td colspan="4"><span class="opacitymedium">'.$langs->trans("None").'</span></a>';
 			}
 			print "</table>";
 		} else {

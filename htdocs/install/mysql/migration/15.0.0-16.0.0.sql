@@ -97,6 +97,12 @@ ALTER TABLE llx_partnership ADD UNIQUE INDEX uk_fk_type_fk_soc (fk_type, fk_soc,
 ALTER TABLE llx_partnership ADD UNIQUE INDEX uk_fk_type_fk_member (fk_type, fk_member, date_partnership_start);
 
 
+-- Add column to help to fix a very critical bug when transferring into accounting bank record of a bank account into another currency.
+-- Idea is to update this column manually in v15 with value in currency of company for bank that are not into the main currency and the transfer
+-- into accounting will use it in priority if value is not null. The script repair.sql contains the sequence to fix datas in llx_bank.
+ALTER TABLE llx_bank ADD COLUMN amount_main_currency double(24,8) NULL;
+
+
 -- v16
 
 UPDATE llx_cronjob set label = 'RecurringInvoicesJob' where label = 'RecurringInvoices';
@@ -302,6 +308,9 @@ ALTER TABLE llx_propal ADD last_main_doc VARCHAR(255) NULL AFTER model_pdf;
 
 UPDATE llx_c_country SET eec=0 WHERE eec IS NULL;
 ALTER TABLE llx_c_country MODIFY COLUMN eec tinyint DEFAULT 0 NOT NULL;
+ALTER TABLE llx_inventorydet ADD COLUMN pmp_real double DEFAULT NULL;
+ALTER TABLE llx_inventorydet ADD COLUMN pmp_expected double DEFAULT NULL;
+
 
 
 ALTER TABLE llx_chargesociales ADD COLUMN note_private text;
@@ -324,3 +333,5 @@ ALTER TABLE llx_actioncomm MODIFY COLUMN note mediumtext;
 
 DELETE FROM llx_boxes WHERE box_id IN (select rowid FROM llx_boxes_def WHERE file IN ('box_bom.php@bom', 'box_bom.php'));
 DELETE FROM llx_boxes_def WHERE file IN ('box_bom.php@bom', 'box_bom.php');
+
+ALTER TABLE llx_takepos_floor_tables ADD UNIQUE(entity,label); 

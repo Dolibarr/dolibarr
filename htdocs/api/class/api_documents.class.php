@@ -458,6 +458,20 @@ class Documents extends DolibarrApi
 			}
 
 			$upload_dir = $conf->expensereport->dir_output.'/'.dol_sanitizeFileName($object->ref);
+		} elseif ($modulepart == 'knowledgemanagement') {
+			require_once DOL_DOCUMENT_ROOT.'/knowledgemanagement/class/knowledgerecord.class.php';
+
+			if (!DolibarrApiAccess::$user->rights->knowledgemanagement->knowledgerecord->read && !DolibarrApiAccess::$user->rights->knowledgemanagement->knowledgerecord->read) {
+				throw new RestException(401);
+			}
+
+			$object = new KnowledgeRecord($this->db);
+			$result = $object->fetch($id, $ref);
+			if (!$result) {
+				throw new RestException(404, 'KM article not found');
+			}
+
+			$upload_dir = $conf->knowledgemanagement->dir_output.'/knowledgerecord/'.dol_sanitizeFileName($object->ref);
 		} elseif ($modulepart == 'categorie' || $modulepart == 'category') {
 			require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 

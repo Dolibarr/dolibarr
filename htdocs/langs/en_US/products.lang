@@ -420,3 +420,7 @@ StockMouvementExtraFields= Extra Fields (stock mouvement)
 InventoryExtraFields= Extra Fields (inventory)
 ScanOrTypeOrCopyPasteYourBarCodes=Scan or type or copy/paste your barcodes
 PuttingPricesUpToDate=Update prices with current known prices
+PMPExpected=Expected PMP
+ExpectedValuation=Expected Valuation
+PMPReal=Real PMP
+RealValuation=Real Valuation

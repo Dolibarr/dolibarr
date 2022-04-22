@@ -78,6 +78,7 @@ if (!empty($conf->global->THEME_DARKMODEENABLED)) {
 	            --colortexttitle: rgb(220,220,220);
 	            --colortext: rgb(220,220,220);
 	            --colortextlink: #4390dc;
+	            --colortexttitlelink: #4390dc;
 	            --colortextbackhmenu: rgb(220,220,220);
 	            --colortextbackvmenu: rgb(220,220,220);
 				--tooltipfontcolor : rgb(220,220,220);
@@ -4096,7 +4097,7 @@ tr.liste_titre th, th.liste_titre, tr.liste_titre td, td.liste_titre, form.liste
 	font-family: <?php print $fontlist ?>;
 	font-weight: <?php echo $useboldtitle ? 'bold' : 'normal'; ?>;
 	vertical-align: middle;
-	height: 24px;
+	height: 28px;
 }
 tr.liste_titre th a, th.liste_titre a, tr.liste_titre td a, td.liste_titre a, form.liste_titre div a, div.liste_titre a {
 	text-shadow: none !important;
@@ -4222,8 +4223,8 @@ div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright) .oddeven.tagtr:nt
 	background: -moz-linear-gradient(bottom, var(--colorbacklineimpair2) 0%, var(--colorbacklineimpair2) 100%);
 	background: -webkit-linear-gradient(bottom, var(--colorbacklineimpair2) 0%, var(--colorbacklineimpair2) 100%);
 }
-.noborder > tbody > tr:nth-child(even):not(:last-child) td:not(.liste_titre), .liste > tbody > tr:nth-child(even):not(:last-child) td:not(.liste_titre),
-.noborder .oddeven.tagtr:nth-child(even):not(:last-child) .tagtd:not(.liste_titre)
+.noborder > tbody > tr:nth-child(even):not(:last-of-type) td:not(.liste_titre), .liste > tbody > tr:nth-child(even):not(:last-of-type) td:not(.liste_titre),
+.noborder .oddeven.tagtr:nth-child(even):not(:last-of-type) .tagtd:not(.liste_titre)
 {
 	border-bottom: 1px solid #e0e0e0;
 }
@@ -5967,6 +5968,12 @@ span.select2.select2-container.select2-container--default {
 	border-right: none;
 	<?php } ?>
 }
+span.select2.select2-container.select2-container--default {
+	<?php if (empty($conf->global->THEME_SHOW_BORDER_ON_INPUT)) { ?>
+	//border-bottom: solid 1px var(--inputbordercolor);
+	<?php } ?>
+}
+
 input.select2-input {
 	border-bottom: none ! important;
 }
@@ -5985,7 +5992,7 @@ input.select2-input {
 	border: none;
 }
 .select2-container--focus span.select2-selection.select2-selection--single {
-	border-bottom: 1px solid #666 !important;
+	border-bottom: 1px solid var(--inputbordercolor) !important;
 	border-bottom-left-radius: 0;
 	border-bottom-right-radius: 0;
 }
@@ -5996,14 +6003,14 @@ input.select2-input {
 	background-color: var(--colorbackvmenu1);
 }
 .select2-container--default .select2-selection--single {
-	background-color: var(--colorbackbody);
+	background-color: var(--inputbackgroundcolor);
 }
 #blockvmenusearch .select2-container--default .select2-selection--single .select2-selection__placeholder {
 	color: var(--colortextbackvmenu);
 }
 .select2-container--default .select2-selection--single .select2-selection__rendered {
 	color: var(--colortext);
-	/* background-color: var(--colorbackvmenu1); */
+	/* background-color: var(--inputbackgroundcolor); */
 }
 .select2-default {
 	color: #999 !important;

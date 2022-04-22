@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) - 2013-2015 Jean-François FERRY	<jfefe@aternatik.fr>
  * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2022       Ferran Marcet           <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -224,9 +225,11 @@ class FormResource
 					$value = ($maxlength ?dol_trunc($arraytypes['label'], $maxlength) : $arraytypes['label']);
 				} elseif ($format == 3) {
 					$value = $arraytypes['code'];
-				} elseif (empty($value)) {
-					print  '&nbsp;';
 				}
+				if (empty($value)) {
+					$value = '&nbsp;';
+				}
+				print $value;
 				print '</option>';
 			}
 		}
