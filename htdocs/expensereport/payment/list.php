@@ -523,7 +523,7 @@ while ($i < min($num, $limit)) {
 
 	// Cheque number (fund transfer)
 	if (!empty($arrayfields['pndf.num_payment']['checked'])) {
-		print '<td>'.$objp->num_paiement.'</td>';
+		print '<td>'.$objp->num_payment.'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
