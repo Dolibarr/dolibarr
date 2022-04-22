@@ -515,7 +515,7 @@ while ($i < min($num, $limit)) {
 	// Pyament type
 	if (!empty($arrayfields['c.libelle']['checked'])) {
 		$payment_type = $langs->trans("PaymentType".$objp->paiement_type) != ("PaymentType".$objp->paiement_type) ? $langs->trans("PaymentType".$objp->paiement_type) : $objp->paiement_libelle;
-		print '<td>'.$payment_type.' '.dol_trunc($objp->num_paiement, 32).'</td>';
+		print '<td>'.$payment_type.' '.dol_trunc($objp->num_payment, 32).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
