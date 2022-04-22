@@ -26,6 +26,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
 require_once DOL_DOCUMENT_ROOT."/ticket/class/ticket.class.php";
 require_once DOL_DOCUMENT_ROOT."/core/lib/ticket.lib.php";
+require_once DOL_DOCUMENT_ROOT."/core/class/html.formcategory.class.php";
 
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "ticket"));
@@ -157,6 +158,14 @@ if ($action == 'setvarworkflow') {
 	}
 }
 
+if ($action == 'setvarworkflowother' || $action == 'setvarworkflow') {
+	$param_ticket_product_category = GETPOST('product_category_id', 'int');
+	$res = dolibarr_set_const($db, 'TICKET_PRODUCT_CATEGORY', $param_ticket_product_category, 'chaine', 0, '', $conf->entity);
+	if (!($res > 0)) {
+		$error++;
+	}
+}
+
 if ($action == 'setvarother') {
 	$param_must_exists = GETPOST('TICKET_EMAIL_MUST_EXISTS', 'alpha');
 	$res = dolibarr_set_const($db, 'TICKET_EMAIL_MUST_EXISTS', $param_must_exists, 'chaine', 0, '', $conf->entity);
@@ -203,6 +212,12 @@ if ($action == 'setvarother') {
 	if (!($res > 0)) {
 		$error++;
 	}
+
+	$param_auto_notify_close = GETPOST('TICKET_NOTIFY_AT_CLOSING', 'alpha');
+	$res = dolibarr_set_const($db, 'TICKET_NOTIFY_AT_CLOSING', $param_auto_notify_close, 'chaine', 0, '', $conf->entity);
+	if (!($res > 0)) {
+		$error++;
+	}
 }
 
 
@@ -213,7 +228,7 @@ if ($action == 'setvarother') {
 
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
-$form = new Form($db);
+$formcategory = new FormCategory($db);
 
 $help_url = "FR:Module_Ticket";
 $page_name = "TicketSetup";
@@ -320,7 +335,7 @@ foreach ($dirmodels as $reldir) {
 						}
 
 						print '<td class="center">';
-						print $form->textwithpicto('', $htmltooltip, 1, 0);
+						print $formcategory->textwithpicto('', $htmltooltip, 1, 0);
 						print '</td>';
 
 						print '</tr>';
@@ -458,7 +473,7 @@ foreach ($dirmodels as $reldir) {
 
 
 								print '<td class="center">';
-								print $form->textwithpicto('', $htmltooltip, 1, 0);
+								print $formcategory->textwithpicto('', $htmltooltip, 1, 0);
 								print '</td>';
 
 								// Preview
@@ -483,8 +498,7 @@ foreach ($dirmodels as $reldir) {
 print '</table>';
 print '</div><br>';
 
-
-if (!$conf->use_javascript_ajax) {
+if (empty($conf->use_javascript_ajax)) {
 	print '<form method="post" action="'.$_SERVER['PHP_SELF'].'" enctype="multipart/form-data" >';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="setvarworkflow">';
@@ -506,11 +520,11 @@ if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('TICKET_AUTO_READ_WHEN_CREATED_FROM_BACKEND');
 } else {
 	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-	print $form->selectarray("TICKET_AUTO_READ_WHEN_CREATED_FROM_BACKEND", $arrval, $conf->global->TICKET_AUTO_READ_WHEN_CREATED_FROM_BACKEND);
+	print $formcategory->selectarray("TICKET_AUTO_READ_WHEN_CREATED_FROM_BACKEND", $arrval, $conf->global->TICKET_AUTO_READ_WHEN_CREATED_FROM_BACKEND);
 }
 print '</td>';
 print '<td class="center">';
-print $form->textwithpicto('', $langs->trans("TicketsAutoReadTicketHelp"), 1, 'help');
+print $formcategory->textwithpicto('', $langs->trans("TicketsAutoReadTicketHelp"), 1, 'help');
 print '</td>';
 print '</tr>';
 
@@ -522,17 +536,47 @@ if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('TICKET_AUTO_ASSIGN_USER_CREATE');
 } else {
 	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-	print $form->selectarray("TICKET_AUTO_ASSIGN_USER_CREATE", $arrval, $conf->global->TICKET_AUTO_ASSIGN_USER_CREATE);
+	print $formcategory->selectarray("TICKET_AUTO_ASSIGN_USER_CREATE", $arrval, $conf->global->TICKET_AUTO_ASSIGN_USER_CREATE);
 }
 print '</td>';
 print '<td class="center">';
-print $form->textwithpicto('', $langs->trans("TicketsAutoAssignTicketHelp"), 1, 'help');
+print $formcategory->textwithpicto('', $langs->trans("TicketsAutoAssignTicketHelp"), 1, 'help');
 print '</td>';
 print '</tr>';
 
-if (!$conf->use_javascript_ajax) {
-	print '</form>';
+// Auto notify contacts when closing the ticket
+print '<tr class="oddeven"><td>'.$langs->trans("TicketsAutoNotifyClose").'</td>';
+print '<td class="left">';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('TICKET_NOTIFY_AT_CLOSING');
+} else {
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	print $formcategory->selectarray("TICKET_NOTIFY_AT_CLOSING", $arrval, $conf->global->TICKET_NOTIFY_AT_CLOSING);
 }
+print '</td>';
+print '<td class="center">';
+print $formcategory->textwithpicto('', $langs->trans("TicketsAutoNotifyCloseHelp"), 1, 'help');
+print '</td>';
+print '</tr>';
+
+// Choose which product category is used for tickets
+if ($conf->use_javascript_ajax) {
+	print '<form method="post" action="'.$_SERVER['PHP_SELF'].'" enctype="multipart/form-data" >';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<input type="hidden" name="action" value="setvarworkflowother">';
+}
+
+print '<tr class="oddeven"><td>'.$langs->trans("TicketChooseProductCategory").'</td>';
+print '<td class="left">';
+$formcategory->selectProductCategory($conf->global->TICKET_PRODUCT_CATEGORY, 'product_category_id');
+if ($conf->use_javascript_ajax) {
+	print ajax_combobox('select_'.$htmlname);
+}
+print '</td>';
+print '<td class="center">';
+print $formcategory->textwithpicto('', $langs->trans("TicketChooseProductCategoryHelp"), 1, 'help');
+print '</td>';
+print '</tr>';
 
 // Define wanted maximum time elapsed before answers to tickets
 print '<form method="post" action="'.$_SERVER['PHP_SELF'].'" enctype="multipart/form-data" >';
@@ -545,7 +589,7 @@ print '<td class="left">
 	<input type="submit" class="button small" value="'.$langs->trans("Save").'">
 	</td>';
 print '<td class="center">';
-print $form->textwithpicto('', $langs->trans("TicketsDelayBeforeFirstAnswerHelp"), 1, 'help');
+print $formcategory->textwithpicto('', $langs->trans("TicketsDelayBeforeFirstAnswerHelp"), 1, 'help');
 print '</td>';
 print '</tr>';
 
@@ -556,13 +600,17 @@ print '<td class="left">
 	<input type="submit" class="button small" value="'.$langs->trans("Save").'">
 	</td>';
 print '<td class="center">';
-print $form->textwithpicto('', $langs->trans("TicketsDelayBetweenAnswersHelp"), 1, 'help');
+print $formcategory->textwithpicto('', $langs->trans("TicketsDelayBetweenAnswersHelp"), 1, 'help');
 print '</td>';
 print '</tr>';
 
-print '</form>';
-
 print '</table><br>';
+
+print '<div class="center">';
+print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
+print '</div>';
+
+print '</form>';
 
 
 // Admin var of module
@@ -591,7 +639,7 @@ print '<tr class="oddeven"><td>'.$langs->trans("TicketEmailNotificationFrom").'<
 print '<td class="left">';
 print '<input type="text" class="minwidth200" name="TICKET_NOTIFICATION_EMAIL_FROM" value="'.$conf->global->TICKET_NOTIFICATION_EMAIL_FROM.'"></td>';
 print '<td class="center">';
-print $form->textwithpicto('', $langs->trans("TicketEmailNotificationFromHelp"), 1, 'help');
+print $formcategory->textwithpicto('', $langs->trans("TicketEmailNotificationFromHelp"), 1, 'help');
 print '</td>';
 print '</tr>';
 
@@ -600,7 +648,7 @@ print '<tr class="oddeven"><td>'.$langs->trans("TicketEmailNotificationTo").' ('
 print '<td class="left">';
 print '<input type="text" name="TICKET_NOTIFICATION_EMAIL_TO" value="'.(!empty($conf->global->TICKET_NOTIFICATION_EMAIL_TO) ? $conf->global->TICKET_NOTIFICATION_EMAIL_TO : '').'"></td>';
 print '<td class="center">';
-print $form->textwithpicto('', $langs->trans("TicketEmailNotificationToHelp"), 1, 'help');
+print $formcategory->textwithpicto('', $langs->trans("TicketEmailNotificationToHelp"), 1, 'help');
 print '</td>';
 print '</tr>';
 
@@ -612,11 +660,11 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
 		print ajax_constantonoff('TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS');
 	} else {
 		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS", $arrval, $conf->global->TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS);
+		print $formcategory->selectarray("TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS", $arrval, $conf->global->TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS);
 	}
 	print '</td>';
 	print '<td class="center">';
-	print $form->textwithpicto('', $langs->trans("TicketsEmailAlsoSendToMainAddressHelp"), 1, 'help');
+	print $formcategory->textwithpicto('', $langs->trans("TicketsEmailAlsoSendToMainAddressHelp"), 1, 'help');
 	print '</td>';
 	print '</tr>';
 }
@@ -630,7 +678,7 @@ $doleditor = new DolEditor('TICKET_MESSAGE_MAIL_INTRO', $mail_intro, '100%', 120
 $doleditor->Create();
 print '</td>';
 print '<td class="center">';
-print $form->textwithpicto('', $langs->trans("TicketMessageMailIntroHelpAdmin"), 1, 'help');
+print $formcategory->textwithpicto('', $langs->trans("TicketMessageMailIntroHelpAdmin"), 1, 'help');
 print '</td></tr>';
 
 // Texte de signature
@@ -642,12 +690,12 @@ $doleditor = new DolEditor('TICKET_MESSAGE_MAIL_SIGNATURE', $mail_signature, '10
 $doleditor->Create();
 print '</td>';
 print '<td class="center">';
-print $form->textwithpicto('', $langs->trans("TicketMessageMailSignatureHelpAdmin"), 1, 'help');
+print $formcategory->textwithpicto('', $langs->trans("TicketMessageMailSignatureHelpAdmin"), 1, 'help');
 print '</td></tr>';
 
 print '</table>';
 
-print $form->buttonsSaveCancel("Save", '');
+print $formcategory->buttonsSaveCancel("Save", '');
 
 print '</form>';
 

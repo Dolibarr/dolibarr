@@ -21,8 +21,13 @@ button.dropdown-item.global-search-item {
 }
 
 
-#topmenu-bookmark-dropdown a.login-dropdown-a {
+#topmenu-quickadd-dropdown a.login-dropdown-a, #topmenu-bookmark-dropdown a.login-dropdown-a {
 	color: #fff;
+}
+div#topmenu-quickadd-dropdown {
+	position: fixed;
+	right: 65px;
+	top: 0px;
 }
 div#topmenu-bookmark-dropdown {
 	position: fixed;
@@ -30,11 +35,12 @@ div#topmenu-bookmark-dropdown {
 	top: 0px;
 }
 
+
 #topmenu-login-dropdown .dropdown-toggle:after {
 	display: none;
 }
 
-#topmenu-bookmark-dropdown .dropdown-menu {
+#topmenu-quickadd-dropdown .dropdown-menu, #topmenu-bookmark-dropdown .dropdown-menu {
 	min-width: 300px;
 	max-width: 360px;
 }
@@ -43,8 +49,8 @@ button.dropdown-item.global-search-item {
 	outline: none;
 }
 
-.open>.dropdown-search, .open>.dropdown-bookmark, .open>.dropdown-menu{
-	display: block;
+.open>.dropdown-search, .open>.dropdown-quickadd, .open>.dropdown-bookmark, .open>.dropdown-menu{
+	display: block !important;
 }
 
 .dropdown-search {
@@ -194,7 +200,7 @@ button.dropdown-item.global-search-item {
 	max-width: 100%;
 }
 
-div#topmenu-global-search-dropdown, div#topmenu-bookmark-dropdown {
+div#topmenu-global-search-dropdown, div#topmenu-quickadd-dropdown, div#topmenu-bookmark-dropdown {
 	line-height: 46px;
 }
 a.top-menu-dropdown-link {
@@ -255,7 +261,8 @@ a.top-menu-dropdown-link {
 	max-height: calc(90vh - 110px) ;
 	white-space: normal;
 }
-#topmenu-bookmark-dropdown .dropdown-menu > .bookmark-body, #topmenu-bookmark-dropdown .dropdown-body{
+#topmenu-quickadd-dropdown .dropdown-menu > .bookmark-body, #topmenu-quickadd-dropdown .dropdown-body,
+#topmenu-bookmark-dropdown .dropdown-menu > .bookmark-body, #topmenu-bookmark-dropdown .dropdown-body {
 	max-height: 60vh ; /* fallback for browsers without support for calc() */
 	max-height: calc(90vh - 200px) ;
 }
@@ -277,7 +284,7 @@ a.top-menu-dropdown-link {
 }
 
 
-#topmenu-login-dropdown, #topmenu-bookmark-dropdown, #topmenu-global-search-dropdown {
+#topmenu-login-dropdown, #topmenu-quickadd-dropdown, #topmenu-bookmark-dropdown, #topmenu-global-search-dropdown {
 	padding: 0 5px 0 5px;
 }
 #topmenu-login-dropdown a:hover{
@@ -286,7 +293,7 @@ a.top-menu-dropdown-link {
 
 #topmenuloginmoreinfo-btn, #topmenulogincompanyinfo-btn {
 	display: block;
-	text-aling: right;
+	text-align: right;
 	color:#666;
 	cursor: pointer;
 }
@@ -417,10 +424,18 @@ a.top-menu-dropdown-link {
 /* smartphone */
 @media only screen and (max-width: 767px)
 {
+	#topmenu-quickadd-dropdown .dropdown-menu {
+		min-width: 220px;
+		max-width: 235px;
+	}
+	#topmenu-bookmark-dropdown .dropdown-menu {
+		min-width: 220px;
+		max-width: 360px;
+	}
+
 	#topmenu-bookmark-dropdown a.login-dropdown-a {
 		color: #000;
 	}
-
 	#topmenu-bookmark-dropdown .dropdown-menu {
 		width: 230px;
 	}
@@ -459,7 +474,7 @@ a.top-menu-dropdown-link {
 
 
 .dropdown-search-input::placeholder {
-	color: color(#575756 a(0.8));
+	color: color(#575756);
 	letter-spacing: 1.5px;
 }
 

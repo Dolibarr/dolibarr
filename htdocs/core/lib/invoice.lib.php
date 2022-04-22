@@ -546,7 +546,7 @@ function getNumberInvoicesPieChart($mode)
 									,array($langs->trans('InvoiceNotLate15Days'), $obj->nbnotlate15 - $obj->nbnotlate30)
 									,array($langs->trans('InvoiceNotLate30Days'), $obj->nbnotlate30));
 				*/
-				$dataseries[$i]=array($langs->trans('NbOfOpenInvoices'), $obj->nblate30, $obj->nblate15 - $obj->nblate30, $obj->nblatenow - $obj->nblate15, $obj->nbnotlatenow - $obj->nbnotlate15, $obj->nbnotlate15 - $obj->nbnotlate30, $obj->nbnotlate30);
+				$dataseries[$i]=array($langs->transnoentitiesnoconv('NbOfOpenInvoices'), $obj->nblate30, $obj->nblate15 - $obj->nblate30, $obj->nblatenow - $obj->nblate15, $obj->nbnotlatenow - $obj->nbnotlate15, $obj->nbnotlate15 - $obj->nbnotlate30, $obj->nbnotlate30);
 				$i++;
 			}
 			if (!empty($dataseries[0])) {

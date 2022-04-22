@@ -117,7 +117,7 @@ if (!GETPOSTISSET('date_startmonth') && (empty($date_start) || empty($date_end))
 	$date_end = dol_get_last_day($pastmonthyear, $pastmonth, false);
 }
 
-$sql  = "SELECT b.rowid, b.dateo as do, b.datev as dv, b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type, b.fk_account,";
+$sql  = "SELECT b.rowid, b.dateo as do, b.datev as dv, b.amount, b.amount_main_currency, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type, b.fk_account,";
 $sql .= " ba.courant, ba.ref as baref, ba.account_number, ba.fk_accountancy_journal,";
 $sql .= " soc.rowid as socid, soc.nom as name, soc.email as email, bu1.type as typeop_company,";
 if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
@@ -142,7 +142,7 @@ if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
 }
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on bu2.url_id=u.rowid";
 $sql .= " WHERE ba.fk_accountancy_journal=".((int) $id_journal);
-$sql .= ' AND b.amount != 0 AND ba.entity IN ('.getEntity('bank_account', 0).')'; // We don't share object for accountancy
+$sql .= ' AND b.amount <> 0 AND ba.entity IN ('.getEntity('bank_account', 0).')'; // We don't share object for accountancy
 if ($date_start && $date_end) {
 	$sql .= " AND b.dateo >= '".$db->idate($date_start)."' AND b.dateo <= '".$db->idate($date_end)."'";
 }
@@ -282,6 +282,7 @@ if ($result) {
 		$tabpay[$obj->rowid]["fk_bank"] = $obj->rowid;
 		$tabpay[$obj->rowid]["bank_account_ref"] = $obj->baref;
 		$tabpay[$obj->rowid]["fk_bank_account"] = $obj->fk_account;
+		$reg = array();
 		if (preg_match('/^\((.*)\)$/i', $obj->label, $reg)) {
 			$tabpay[$obj->rowid]["lib"] = $langs->trans($reg[1]);
 		} else {
@@ -295,6 +296,12 @@ if ($result) {
 		$tabpay[$obj->rowid]['type'] = 'unknown'; // Can be SOLD, miscellaneous entry, payment of patient, or any old record with no links in bank_url.
 		$tabtype[$obj->rowid] = 'unknown';
 		$tabmoreinfo[$obj->rowid] = array();
+
+		$amounttouse = $obj->amount;
+		if (!empty($obj->amount_main_currency)) {
+			// If $obj->amount_main_currency is set, it means that $obj->amount is not in same currency, we must use $obj->amount_main_currency
+			$amounttouse = $obj->amount_main_currency;
+		}
 
 		// get_url may return -1 which is not traversable
 		if (is_array($links) && count($links) > 0) {
@@ -334,7 +341,7 @@ if ($result) {
 					$societestatic->email = $tabcompany[$obj->rowid]['email'];
 					$tabpay[$obj->rowid]["soclib"] = $societestatic->getNomUrl(1, '', 30);
 					if ($compta_soc) {
-						$tabtp[$obj->rowid][$compta_soc] += $obj->amount;
+						$tabtp[$obj->rowid][$compta_soc] += $amounttouse;
 					}
 				} elseif ($links[$key]['type'] == 'user') {
 					$userstatic->id = $links[$key]['url_id'];
@@ -350,7 +357,7 @@ if ($result) {
 						$tabpay[$obj->rowid]["soclib"] = '???'; // Should not happen, but happens with old data when id of user was not saved on expense report payment.
 					}
 					if ($compta_user) {
-						$tabtp[$obj->rowid][$compta_user] += $obj->amount;
+						$tabtp[$obj->rowid][$compta_user] += $amounttouse;
 					}
 				} elseif ($links[$key]['type'] == 'sc') {
 					$chargestatic->id = $links[$key]['url_id'];
@@ -383,7 +390,7 @@ if ($result) {
 					$resultmid = $db->query($sqlmid);
 					if ($resultmid) {
 						$objmid = $db->fetch_object($resultmid);
-						$tabtp[$obj->rowid][$objmid->accountancy_code] += $obj->amount;
+						$tabtp[$obj->rowid][$objmid->accountancy_code] += $amounttouse;
 					}
 				} elseif ($links[$key]['type'] == 'payment_donation') {
 					$paymentdonstatic->id = $links[$key]['url_id'];
@@ -391,7 +398,7 @@ if ($result) {
 					$paymentdonstatic->fk_donation = $links[$key]['url_id'];
 					$tabpay[$obj->rowid]["lib"] .= ' '.$paymentdonstatic->getNomUrl(2);
 					$tabpay[$obj->rowid]["paymentdonationid"] = $paymentdonstatic->id;
-					$tabtp[$obj->rowid][$account_pay_donation] += $obj->amount;
+					$tabtp[$obj->rowid][$account_pay_donation] += $amounttouse;
 				} elseif ($links[$key]['type'] == 'member') {
 					$paymentsubscriptionstatic->id = $links[$key]['url_id'];
 					$paymentsubscriptionstatic->ref = $links[$key]['url_id'];
@@ -399,14 +406,14 @@ if ($result) {
 					$tabpay[$obj->rowid]["lib"] .= ' '.$paymentsubscriptionstatic->getNomUrl(2);
 					$tabpay[$obj->rowid]["paymentsubscriptionid"] = $paymentsubscriptionstatic->id;
 					$paymentsubscriptionstatic->fetch($paymentsubscriptionstatic->id);
-					$tabtp[$obj->rowid][$account_pay_subscription] += $obj->amount;
+					$tabtp[$obj->rowid][$account_pay_subscription] += $amounttouse;
 				} elseif ($links[$key]['type'] == 'payment_vat') {				// Payment VAT
 					$paymentvatstatic->id = $links[$key]['url_id'];
 					$paymentvatstatic->ref = $links[$key]['url_id'];
 					$paymentvatstatic->label = $links[$key]['label'];
 					$tabpay[$obj->rowid]["lib"] .= ' '.$paymentvatstatic->getNomUrl(2);
 					$tabpay[$obj->rowid]["paymentvatid"] = $paymentvatstatic->id;
-					$tabtp[$obj->rowid][$account_pay_vat] += $obj->amount;
+					$tabtp[$obj->rowid][$account_pay_vat] += $amounttouse;
 				} elseif ($links[$key]['type'] == 'payment_salary') {
 					$paymentsalstatic->id = $links[$key]['url_id'];
 					$paymentsalstatic->ref = $links[$key]['url_id'];
@@ -438,7 +445,7 @@ if ($result) {
 						if (empty($obj->typeop_user)) {	// Add test to avoid to add amount twice if a link already exists also on user.
 							$compta_user = $userstatic->accountancy_code;
 							if ($compta_user) {
-								$tabtp[$obj->rowid][$compta_user] += $obj->amount;
+								$tabtp[$obj->rowid][$compta_user] += $amounttouse;
 								$tabuser[$obj->rowid] = array(
 								'id' => $userstatic->id,
 								'name' => dolGetFirstLastname($userstatic->firstname, $userstatic->lastname),
@@ -465,14 +472,14 @@ if ($result) {
 					$account_various = (!empty($paymentvariousstatic->accountancy_code) ? $paymentvariousstatic->accountancy_code : 'NotDefined'); // NotDefined is a reserved word
 					$account_subledger = (!empty($paymentvariousstatic->subledger_account) ? $paymentvariousstatic->subledger_account : ''); // NotDefined is a reserved word
 					$tabpay[$obj->rowid]["account_various"] = $account_various;
-					$tabtp[$obj->rowid][$account_subledger] += $obj->amount;
+					$tabtp[$obj->rowid][$account_subledger] += $amounttouse;
 				} elseif ($links[$key]['type'] == 'payment_loan') {
 					$paymentloanstatic->id = $links[$key]['url_id'];
 					$paymentloanstatic->ref = $links[$key]['url_id'];
 					$paymentloanstatic->fk_loan = $links[$key]['url_id'];
 					$tabpay[$obj->rowid]["lib"] .= ' '.$paymentloanstatic->getNomUrl(2);
 					$tabpay[$obj->rowid]["paymentloanid"] = $paymentloanstatic->id;
-					//$tabtp[$obj->rowid][$account_pay_loan] += $obj->amount;
+					//$tabtp[$obj->rowid][$account_pay_loan] += $amounttouse;
 					$sqlmid = 'SELECT pl.amount_capital, pl.amount_insurance, pl.amount_interest, l.accountancy_account_capital, l.accountancy_account_insurance, l.accountancy_account_interest';
 					$sqlmid .= ' FROM '.MAIN_DB_PREFIX.'payment_loan as pl, '.MAIN_DB_PREFIX.'loan as l';
 					$sqlmid .= ' WHERE l.rowid = pl.fk_loan AND pl.fk_bank = '.((int) $obj->rowid);
@@ -488,14 +495,14 @@ if ($result) {
 				} elseif ($links[$key]['type'] == 'banktransfert') {
 					$accountLinestatic->fetch($links[$key]['url_id']);
 					$tabpay[$obj->rowid]["lib"] .= ' '.$langs->trans("BankTransfer").'- '.$accountLinestatic ->getNomUrl(1);
-					$tabtp[$obj->rowid][$account_transfer] += $obj->amount;
+					$tabtp[$obj->rowid][$account_transfer] += $amounttouse;
 					$bankaccountstatic->fetch($tabpay[$obj->rowid]['fk_bank_account']);
 					$tabpay[$obj->rowid]["soclib"] = $bankaccountstatic->getNomUrl(2);
 				}
 			}
 		}
 
-		$tabbq[$obj->rowid][$compta_bank] += $obj->amount;
+		$tabbq[$obj->rowid][$compta_bank] += $amounttouse;
 
 		// If no links were found to know the amount on thirdparty, we try to guess it.
 		// This may happens on bank entries without the links lines to 'company'.
@@ -542,7 +549,7 @@ if ($result) {
 			}
 		}*/
 
-		// if($obj->socid)$tabtp[$obj->rowid][$compta_soc] += $obj->amount;
+		// if($obj->socid)$tabtp[$obj->rowid][$compta_soc] += $amounttouse;
 
 		$i++;
 	}

@@ -449,9 +449,17 @@ if ($resql) {
 
 			// RIB
 			print '<td>';
-			print $bac->iban.(($bac->iban && $bac->bic) ? ' / ' : '').$bac->bic;
-			if ($bac->verif() <= 0) {
-				print img_warning('Error on default bank number for IBAN : '.$bac->error_message);
+			if ($bac->id > 0) {
+				if (!empty($bac->iban) || !empty($bac->bic)) {
+					print $bac->iban.(($bac->iban && $bac->bic) ? ' / ' : '').$bac->bic;
+					if ($bac->verif() <= 0) {
+						print img_warning('Error on default bank number for IBAN : '.$langs->trans($bac->error_message));
+					}
+				} else {
+					print img_warning($langs->trans("IBANNotDefined"));
+				}
+			} else {
+				print img_warning($langs->trans("NoBankAccountDefined"));
 			}
 			print '</td>';
 

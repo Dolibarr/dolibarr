@@ -48,6 +48,21 @@ function hrmAdminPrepareHead()
 		$head[$h][2] = 'establishments';
 		$h++;
 
+		$head[$h][0] = DOL_URL_ROOT . '/hrm/admin/evaluation_extrafields.php';
+		$head[$h][1] = $langs->trans("EvaluationsExtraFields");
+		$head[$h][2] = 'evaluationsAttributes';
+		$h++;
+
+		$head[$h][0] = DOL_URL_ROOT . '/hrm/admin/job_extrafields.php';
+		$head[$h][1] = $langs->trans("JobsExtraFields");
+		$head[$h][2] = 'jobsAttributes';
+		$h++;
+
+		$head[$h][0] = DOL_URL_ROOT . '/hrm/admin/skill_extrafields.php';
+		$head[$h][1] = $langs->trans("SkillsExtraFields");
+		$head[$h][2] = 'skillsAttributes';
+		$h++;
+
 	/*
 	$head[$h][0] = dol_buildpath("/workstation/admin/myobject_extrafields.php", 1);
 	$head[$h][1] = $langs->trans("ExtraFields");

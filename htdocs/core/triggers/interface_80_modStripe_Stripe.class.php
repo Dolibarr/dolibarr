@@ -183,7 +183,7 @@ class InterfaceStripe extends DolibarrTriggers
 		if ($action == 'COMPANY_DELETE') {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
-			if (!empty($conf->global->STRIPE_DELETE_STRIPE_ACCOUNT_WHEN_DELETING_THIRPARTY)) {
+			if (!empty($conf->global->STRIPE_DELETE_STRIPE_ACCOUNT_WHEN_DELETING_THIRDPARTY)) {
 				// By default, we do not delete the stripe account. We may need to reuse it with its payment_intent, for example if delete is for a merge of thirdparties.
 				$stripeacc = $stripe->getStripeAccount($service); // No need of network access for this. May return '' if no Oauth defined.
 

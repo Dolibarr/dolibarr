@@ -378,7 +378,7 @@ function GETPOSTISSET($paramname)
  *  @param  string  $paramname   Name of parameter to found
  *  @param  string  $check	     Type of check
  *                               ''=no check (deprecated)
- *                               'none'=no check (only for param that should have very rich content)
+ *                               'none'=no check (only for param that should have very rich content like passwords)
  *                               'array', 'array:restricthtml' or 'array:aZ09' to check it's an array
  *                               'int'=check it's numeric (integer or float)
  *                               'intcomma'=check it's integer+comma ('1,2,3,4...')
@@ -3465,12 +3465,16 @@ function dol_print_address($address, $htmlid, $element, $id, $noprint = 0, $char
  *
  *	@param	    string		$address    			email (Ex: "toto@examle.com". Long form "John Do <johndo@example.com>" will be false)
  *  @param		int			$acceptsupervisorkey	If 1, the special string '__SUPERVISOREMAIL__' is also accepted as valid
+ *  @param		int			$acceptuserkey			If 1, the special string '__USER_EMAIL__' is also accepted as valid
  *	@return     boolean     						true if email syntax is OK, false if KO or empty string
  *  @see isValidMXRecord()
  */
-function isValidEmail($address, $acceptsupervisorkey = 0)
+function isValidEmail($address, $acceptsupervisorkey = 0, $acceptuserkey = 0)
 {
 	if ($acceptsupervisorkey && $address == '__SUPERVISOREMAIL__') {
+		return true;
+	}
+	if ($acceptuserkey && $address == '__USER_EMAIL__') {
 		return true;
 	}
 	if (filter_var($address, FILTER_VALIDATE_EMAIL)) {
@@ -5434,11 +5438,16 @@ function price2num($amount, $rounding = '', $option = 0)
 	// Decimal delimiter for PHP and database SQL requests must be '.'
 	$dec = ',';
 	$thousand = ' ';
-	if ($langs->transnoentitiesnoconv("SeparatorDecimal") != "SeparatorDecimal") {
-		$dec = $langs->transnoentitiesnoconv("SeparatorDecimal");
-	}
-	if ($langs->transnoentitiesnoconv("SeparatorThousand") != "SeparatorThousand") {
-		$thousand = $langs->transnoentitiesnoconv("SeparatorThousand");
+	if (is_null($langs)) {	// $langs is not defined, we use english values.
+		$dec = '.';
+		$thousand = ',';
+	} else {
+		if ($langs->transnoentitiesnoconv("SeparatorDecimal") != "SeparatorDecimal") {
+			$dec = $langs->transnoentitiesnoconv("SeparatorDecimal");
+		}
+		if ($langs->transnoentitiesnoconv("SeparatorThousand") != "SeparatorThousand") {
+			$thousand = $langs->transnoentitiesnoconv("SeparatorThousand");
+		}
 	}
 	if ($thousand == 'None') {
 		$thousand = '';
@@ -6512,7 +6521,8 @@ function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, 
 {
 	$allowed_tags = array(
 		"html", "head", "meta", "body", "article", "a", "abbr", "b", "blockquote", "br", "cite", "div", "dl", "dd", "dt", "em", "font", "img", "ins", "hr", "i", "li", "link",
-		"ol", "p", "q", "s", "section", "span", "strike", "strong", "title", "table", "tr", "th", "td", "u", "ul", "sup", "sub", "blockquote", "pre", "h1", "h2", "h3", "h4", "h5", "h6"
+		"ol", "p", "q", "s", "section", "span", "strike", "strong", "title", "table", "tr", "th", "td", "u", "ul", "sup", "sub", "blockquote", "pre", "h1", "h2", "h3", "h4", "h5", "h6",
+		"comment"	// this tags is added to manage comment <!--...--> that are replaced into <comment>...</comment>
 	);
 	if ($allowiframe) {
 		$allowed_tags[] = "iframe";
@@ -6525,7 +6535,8 @@ function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, 
 
 	$stringtoclean = dol_string_nounprintableascii($stringtoclean, 0);
 
-	$stringtoclean = preg_replace('/<!--[^>]*-->/', '', $stringtoclean);
+	//$stringtoclean = preg_replace('/<!--[^>]*-->/', '', $stringtoclean);
+	$stringtoclean = preg_replace('/<!--([^>]*)-->/', '<comment>\1</comment>', $stringtoclean);
 
 	$stringtoclean = preg_replace('/&colon;/i', ':', $stringtoclean);
 	$stringtoclean = preg_replace('/&#58;|&#0+58|&#x3A/i', '', $stringtoclean); // refused string ':' encoded (no reason to have a : encoded like this) to disable 'javascript:...'
@@ -6547,6 +6558,9 @@ function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, 
 	}
 
 	$temp = str_replace('__!DOCTYPE_HTML__', '<!DOCTYPE html>', $temp);	// Restore the DOCTYPE
+
+	$temp = preg_replace('/<comment>([^>]*)<\/comment>/', '<!--\1-->', $temp);	// Restore html comments
+
 
 	return $temp;
 }
@@ -7461,13 +7475,23 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 		$substitutionarray['__DATE_YMD__']        = is_object($object) ? (isset($object->date) ? dol_print_date($object->date, 'day', 0, $outputlangs) : null) : '';
 		$substitutionarray['__DATE_DUE_YMD__']    = is_object($object) ? (isset($object->date_lim_reglement) ? dol_print_date($object->date_lim_reglement, 'day', 0, $outputlangs) : null) : '';
 
+		$already_payed_all = 0;
+		if (is_object($object) && ($object instanceof Facture)) {
+			$already_payed_all = $object->sumpayed + $object->sumdeposit + $object->sumcreditnote;
+		}
+
+		$substitutionarray['__AMOUNT_EXCL_TAX__'] = is_object($object) ? $object->total_ht : '';
+
 		$substitutionarray['__AMOUNT__']          = is_object($object) ? $object->total_ttc : '';
 		$substitutionarray['__AMOUNT_TEXT__']     = is_object($object) ? dol_convertToWord($object->total_ttc, $outputlangs, '', true) : '';
 		$substitutionarray['__AMOUNT_TEXTCURRENCY__'] = is_object($object) ? dol_convertToWord($object->total_ttc, $outputlangs, $conf->currency, true) : '';
-		$substitutionarray['__AMOUNT_EXCL_TAX__'] = is_object($object) ? $object->total_ht : '';
+
+		$substitutionarray['__AMOUNT_REMAIN__'] = is_object($object) ? $object->total_ttc - $already_payed_all : '';
+
 		$substitutionarray['__AMOUNT_VAT__']      = is_object($object) ? (isset($object->total_vat) ? $object->total_vat : $object->total_tva) : '';
 		$substitutionarray['__AMOUNT_VAT_TEXT__']      = is_object($object) ? (isset($object->total_vat) ? dol_convertToWord($object->total_vat, $outputlangs, '', true) : dol_convertToWord($object->total_tva, $outputlangs, '', true)) : '';
 		$substitutionarray['__AMOUNT_VAT_TEXTCURRENCY__']      = is_object($object) ? (isset($object->total_vat) ? dol_convertToWord($object->total_vat, $outputlangs, $conf->currency, true) : dol_convertToWord($object->total_tva, $outputlangs, $conf->currency, true)) : '';
+
 		if ($onlykey != 2 || $mysoc->useLocalTax(1)) {
 			$substitutionarray['__AMOUNT_TAX2__']     = is_object($object) ? $object->total_localtax1 : '';
 		}
@@ -7475,8 +7499,10 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			$substitutionarray['__AMOUNT_TAX3__']     = is_object($object) ? $object->total_localtax2 : '';
 		}
 
-		$substitutionarray['__AMOUNT_FORMATED__']          = is_object($object) ? ($object->total_ttc ? price($object->total_ttc, 0, $outputlangs, 0, -1, -1, $conf->currency) : null) : '';
+		// Amount keys formated in a currency
 		$substitutionarray['__AMOUNT_EXCL_TAX_FORMATED__'] = is_object($object) ? ($object->total_ht ? price($object->total_ht, 0, $outputlangs, 0, -1, -1, $conf->currency) : null) : '';
+		$substitutionarray['__AMOUNT_FORMATED__']          = is_object($object) ? ($object->total_ttc ? price($object->total_ttc, 0, $outputlangs, 0, -1, -1, $conf->currency) : null) : '';
+		$substitutionarray['__AMOUNT_REMAIN_FORMATED__'] = is_object($object) ? ($object->total_ttc ? price($object->total_ttc - $already_payed_all, 0, $outputlangs, 0, -1, -1, $conf->currency) : null) : '';
 		$substitutionarray['__AMOUNT_VAT_FORMATED__']      = is_object($object) ? (isset($object->total_vat) ? price($object->total_vat, 0, $outputlangs, 0, -1, -1, $conf->currency) : ($object->total_tva ? price($object->total_tva, 0, $outputlangs, 0, -1, -1, $conf->currency) : null)) : '';
 		if ($onlykey != 2 || $mysoc->useLocalTax(1)) {
 			$substitutionarray['__AMOUNT_TAX2_FORMATED__']     = is_object($object) ? ($object->total_localtax1 ? price($object->total_localtax1, 0, $outputlangs, 0, -1, -1, $conf->currency) : null) : '';
@@ -7900,7 +7926,6 @@ function dol_htmloutput_events($disabledoutputofmessages = 0)
 		}
 		unset($_SESSION['dol_events']['mesgs']);
 	}
-
 	// Show errors
 	if (isset($_SESSION['dol_events']['errors'])) {
 		if (empty($disabledoutputofmessages)) {
@@ -8344,7 +8369,7 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1'
 	if ($onlysimplestring == '1') {
 		// We must accept: '1 && getDolGlobalInt("doesnotexist1") && $conf->global->MAIN_FEATURES_LEVEL'
 		// We must accept: '$conf->barcode->enabled && preg_match(\'/^(AAA|BBB)/\',$leftmenu)'
-		if (preg_match('/[^a-z0-9\s'.preg_quote('^$_->&|=!?():"\',/', '/').']/i', $s)) {
+		if (preg_match('/[^a-z0-9\s'.preg_quote('^$_+-*>&|=!?():"\',/', '/').']/i', $s)) {
 			if ($returnvalue) {
 				return 'Bad string syntax to evaluate (found chars that are not chars for simplestring): '.$s;
 			} else {
@@ -8356,7 +8381,7 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1'
 		}
 	} elseif ($onlysimplestring == '2') {
 		// We must accept: (($reloadedobj = new Task($db)) && ($reloadedobj->fetchNoCompute($object->id) > 0) && ($secondloadedobj = new Project($db)) && ($secondloadedobj->fetchNoCompute($reloadedobj->fk_project) > 0)) ? $secondloadedobj->ref : "Parent project not found"
-		if (preg_match('/[^a-z0-9\s'.preg_quote('^$_->&|=!?():"\',/;[]', '/').']/i', $s)) {
+		if (preg_match('/[^a-z0-9\s'.preg_quote('^$_+-*>&|=!?():"\',/;[]', '/').']/i', $s)) {
 			if ($returnvalue) {
 				return 'Bad string syntax to evaluate (found chars that are not chars for simplestring): '.$s;
 			} else {
@@ -8750,7 +8775,7 @@ function getLanguageCodeFromCountryCode($countrycode)
  */
 function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, $mode = 'add')
 {
-	global $hookmanager;
+	global $hookmanager, $db;
 
 	if (isset($conf->modules_parts['tabs'][$type]) && is_array($conf->modules_parts['tabs'][$type])) {
 		foreach ($conf->modules_parts['tabs'][$type] as $value) {
@@ -8771,7 +8796,20 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 							complete_substitutions_array($substitutionarray, $langs, $object, array('needforkey'=>$values[2]));
 							$label = make_substitutions($reg[1], $substitutionarray);
 						} else {
-							$label = $langs->trans($values[2]);
+							$labeltemp = explode(':', $values[2]);
+							$label = $langs->trans($labeltemp[0]);
+							if (!empty($labeltemp[1]) && is_object($object) && !empty($object->id)) {
+								dol_include_once($labeltemp[2]);
+								$classtoload = $labeltemp[1];
+								if (class_exists($classtoload)) {
+									$obj = new $classtoload($db);
+									$function = $labeltemp[3];
+									if ($obj && $function && method_exists($obj, $function)) {
+										$nbrec = $obj->$function($object->id, $obj);
+										$label .= '<span class="badge marginleftonlyshort">'.$nbrec.'</span>';
+									}
+								}
+							}
 						}
 
 						$head[$h][0] = dol_buildpath(preg_replace('/__ID__/i', ((is_object($object) && !empty($object->id)) ? $object->id : ''), $values[5]), 1);
@@ -9107,6 +9145,7 @@ function dol_getmypid()
  * 										3=value is list of string separated with comma (Example 'text 1,text 2'), 4=value is a list of ID separated with comma (Example '2,7') to be used to search into a multiselect string '1,2,3,4'
  * @param	integer			$nofirstand	1=Do not output the first 'AND'
  * @return 	string 			$res 		The statement to append to the SQL query
+ * @see dolSqlDateFilter()
  */
 function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 {
@@ -10118,19 +10157,19 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
  * @param int       $userRight  user action right
  * // phpcs:disable
  * @param array 	$params = [ // Various params for future : recommended rather than adding more function arguments
- *                          	'attr' => [ // to add or override button attributes
- *                          		'xxxxx' => '', // your xxxxx attribute you want
- *                          		'class' => '', // to add more css class to the button class attribute
- *                          		'classOverride' => '' // to replace class attribute of the button
- *                          	],
- *                          	'confirm' => [
- *                          		'url' => 'http://', // Overide Url to go when user click on action btn, if empty default url is $url.?confirm=yes, for no js compatibility use $url for fallback confirm.
- *                          		'title' => '', // Overide title of modal,  if empty default title use "ConfirmBtnCommonTitle" lang key
- *                          		'action-btn-label' => '', // Overide label of action button,  if empty default label use "Confirm" lang key
- *                          		'cancel-btn-label' => '', // Overide label of cancel button,  if empty default label use "CloseDialog" lang key
- *                          		'content' => '', // Overide text of content,  if empty default content use "ConfirmBtnCommonContent" lang key
- *                          		'modal' => true, // true|false to display dialog as a modal (with dark background)
- *                      		],
+ *                          'attr' => [ // to add or override button attributes
+ *                          'xxxxx' => '', // your xxxxx attribute you want
+ *                          'class' => '', // to add more css class to the button class attribute
+ *                          'classOverride' => '' // to replace class attribute of the button
+ *                          ],
+ *                          'confirm' => [
+ *                          'url' => 'http://', // Overide Url to go when user click on action btn, if empty default url is $url.?confirm=yes, for no js compatibility use $url for fallback confirm.
+ *                          'title' => '', // Overide title of modal,  if empty default title use "ConfirmBtnCommonTitle" lang key
+ *                          'action-btn-label' => '', // Overide label of action button,  if empty default label use "Confirm" lang key
+ *                          'cancel-btn-label' => '', // Overide label of cancel button,  if empty default label use "CloseDialog" lang key
+ *                          'content' => '', // Overide text of content,  if empty default content use "ConfirmBtnCommonContent" lang key
+ *                          'modal' => true, // true|false to display dialog as a modal (with dark background)
+ *                          ],
  *                          ]
  * // phpcs:enable
  * @return string               html button
@@ -10142,7 +10181,7 @@ function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = 
 	$class = 'butAction';
 	if ($actionType == 'danger' || $actionType == 'delete') {
 		$class = 'butActionDelete';
-		if (strpos($url, 'token=') === false) $url .= '&token='.newToken();
+		if (!empty($url) && strpos($url, 'token=') === false) $url .= '&token='.newToken();
 	}
 
 	$attr = array(
@@ -10153,6 +10192,7 @@ function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = 
 
 	if (empty($html)) {
 		$html = $label;
+		$attr['title'] = ''; // if html not set, leave label on title is redundant
 	} else {
 		$attr['aria-label'] = $label;
 	}
@@ -10166,6 +10206,7 @@ function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = 
 		$attr['id'] = $id;
 	}
 
+
 	// Override attr
 	if (!empty($params['attr']) && is_array($params['attr'])) {
 		foreach ($params['attr'] as $key => $value) {
@@ -10177,6 +10218,11 @@ function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = 
 				$attr[$key] = $value;
 			}
 		}
+	}
+
+	// automatic add tooltip when title is detected
+	if (!empty($attr['title']) && !empty($attr['class']) && strpos($attr['class'], 'classfortooltip') === false) {
+		$attr['class'].= ' classfortooltip';
 	}
 
 	// Js Confirm button
@@ -10556,7 +10602,7 @@ function isAFileWithExecutableContent($filename)
  */
 function newToken()
 {
-	return $_SESSION['newtoken'];
+	return empty($_SESSION['newtoken']) ? '' : $_SESSION['newtoken'];
 }
 
 /**
