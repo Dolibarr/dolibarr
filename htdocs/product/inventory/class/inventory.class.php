@@ -257,7 +257,7 @@ class Inventory extends CommonObject
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
 	 * @return int             <0 if KO, Id of created object if OK
 	 */
-	public function validate(User $user, $include_sub_warehouse, $notrigger = false)
+	public function validate(User $user, $notrigger = false, $include_sub_warehouse = 0)
 	{
 		global $conf;
 		$this->db->begin();

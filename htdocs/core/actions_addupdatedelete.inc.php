@@ -366,10 +366,9 @@ if ($action == 'confirm_deleteline' && $confirm == 'yes' && !empty($permissionto
 
 // Action validate object
 if ($action == 'confirm_validate' && $confirm == 'yes' && $permissiontoadd) {
-	if($object->element == 'inventory'){
+	if($object->element == 'inventory' && !empty($include_sub_warehouse)){
 		//Case of the conf INVENTORY_INCLUDE_SUB_WAREHOUSE
-		$include_sub_warehouse = !empty(GETPOST('include_sub_warehouse')) ? GETPOST('include_sub_warehouse') : 0;
-		$result = $object->validate($user, $include_sub_warehouse);
+		$result = $object->validate($user, false, $include_sub_warehouse);
 	} else {
 		$result = $object->validate($user);
 	}
