@@ -39,6 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
@@ -225,6 +226,9 @@ if (empty($reshook))
         // Note: Correct date should be completed with location to have exact GM time of birth.
         $object->birthday = dol_mktime(0, 0, 0, GETPOST("birthdaymonth", 'int'), GETPOST("birthdayday", 'int'), GETPOST("birthdayyear", 'int'));
         $object->birthday_alert = GETPOST("birthday_alert", 'alpha');
+
+		//Default language
+		$object->default_lang = GETPOST('default_lang');
 
         // Fill array 'array_options' with data from add form
 		$ret = $extrafields->setOptionalsFromPost(null, $object);
@@ -420,6 +424,10 @@ if (empty($reshook))
             $object->note_private = GETPOST("note_private", 'none');
             $object->roles = GETPOST("roles", 'array');
 
+			//Default language
+			$object->default_lang = GETPOST('default_lang');
+
+
             // Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
 			if ($ret < 0) $error++;
@@ -503,6 +511,7 @@ $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('', $title, $help_url);
 
 $form = new Form($db);
+$formadmin = new FormAdmin($db);
 $formcompany = new FormCompany($db);
 
 $countrynotdefined = $langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
@@ -824,11 +833,21 @@ else
             //     }
             // }
 
-            // Visibility
+			//Default language
+			if (!empty($conf->global->MAIN_MULTILANGS))
+			{
+				print '<tr><td>'.$form->editfieldkey('DefaultLang', 'default_lang', '', $object, 0).'</td><td colspan="3" class="maxwidthonsmartphone">'."\n";
+				print $formadmin->select_language(GETPOST('default_lang', 'alpha') ?GETPOST('default_lang', 'alpha') : ($object->default_lang ? $object->default_lang : ''), 'default_lang', 0, 0, 1, 0, 0, 'maxwidth200onsmartphone');
+				print '</td>';
+				print '</tr>';
+			}
+
+			// Visibility
             print '<tr><td><label for="priv">'.$langs->trans("ContactVisibility").'</label></td><td colspan="3">';
             $selectarray = array('0'=>$langs->trans("ContactPublic"), '1'=>$langs->trans("ContactPrivate"));
             print $form->selectarray('priv', $selectarray, (GETPOST("priv", 'alpha') ?GETPOST("priv", 'alpha') : $object->priv), 0);
             print '</td></tr>';
+
 
 			// Categories
 			if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire)) {
@@ -1151,6 +1170,15 @@ else
             //     }
             // }
 
+			//Default language
+			if (!empty($conf->global->MAIN_MULTILANGS))
+			{
+				print '<tr><td>'.$form->editfieldkey('DefaultLang', 'default_lang', '', $object, 0).'</td><td colspan="3" class="maxwidthonsmartphone">'."\n";
+                print $formadmin->select_language($object->default_lang, 'default_lang', 0, 0, 1);
+				print '</td>';
+				print '</tr>';
+			}
+
             // Visibility
             print '<tr><td><label for="priv">'.$langs->trans("ContactVisibility").'</label></td><td colspan="3">';
             $selectarray = array('0'=>$langs->trans("ContactPublic"), '1'=>$langs->trans("ContactPrivate"));
@@ -1378,6 +1406,19 @@ else
         		}
         	}
         	print '<tr><td>'.$langs->trans("No_Email").'</td><td>'.yn($noemail).'</td></tr>';
+        }
+
+		// Default language
+        if (!empty($conf->global->MAIN_MULTILANGS))
+        {
+            require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+            print '<tr><td>'.$langs->trans("DefaultLang").'</td><td>';
+            //$s=picto_from_langcode($object->default_lang);
+            //print ($s?$s.' ':'');
+            $langs->load("languages");
+            $labellang = ($object->default_lang ? $langs->trans('Language_'.$object->default_lang) : '');
+            print $labellang;
+            print '</td></tr>';
         }
 
         print '<tr><td>'.$langs->trans("ContactVisibility").'</td><td>';
