@@ -837,7 +837,7 @@ else
 			if (!empty($conf->global->MAIN_MULTILANGS))
 			{
 				print '<tr><td>'.$form->editfieldkey('DefaultLang', 'default_lang', '', $object, 0).'</td><td colspan="3" class="maxwidthonsmartphone">'."\n";
-				print $formadmin->select_language(GETPOST('default_lang', 'alpha') ?GETPOST('default_lang', 'alpha') : ($object->default_lang ? $object->default_lang : ''), 'default_lang', 0, 0, 1, 0, 0, 'maxwidth200onsmartphone',0,0,0,null,1);
+				print $formadmin->select_language(GETPOST('default_lang', 'alpha') ?GETPOST('default_lang', 'alpha') : ($object->default_lang ? $object->default_lang : ''), 'default_lang', 0, 0, 1, 0, 0, 'maxwidth200onsmartphone', 0, 0, 0, null, 1);
 
 				print '</td>';
 				print '</tr>';
@@ -1175,7 +1175,7 @@ else
 			if (!empty($conf->global->MAIN_MULTILANGS))
 			{
 				print '<tr><td>'.$form->editfieldkey('DefaultLang', 'default_lang', '', $object, 0).'</td><td colspan="3" class="maxwidthonsmartphone">'."\n";
-                print $formadmin->select_language($object->default_lang, 'default_lang', 0, 0, 1,0,0,'',0,0,0,null,1);
+                print $formadmin->select_language($object->default_lang, 'default_lang', 0, 0, 1, 0, 0, '', 0, 0, 0, null, 1);
 
 				print '</td>';
 				print '</tr>';
