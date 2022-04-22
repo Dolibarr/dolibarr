@@ -316,7 +316,7 @@ class mailing_contacts1 extends MailingTargets
 		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 		$formadmin = new FormAdmin($this->db);
 		$s .= $langs->trans("DefaultLang").': ';
-		$s .= $formadmin->select_language($langs->getDefaultLang(), 'filter_lang', 0, 0, 1, 0, 0, '', 0, 0, 0, null, 1);
+		$s .= $formadmin->select_language($langs->getDefaultLang(1), 'filter_lang', 0, 0, 1, 0, 0, '', 0, 0, 0, null, 1);
 
 		return $s;
     }
