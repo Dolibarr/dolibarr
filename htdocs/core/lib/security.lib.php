@@ -236,7 +236,11 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 	global $db, $conf;
 	global $hookmanager;
 
-	$objectid = ((int) $objectid);	// For the case value is coming from a non sanitized user input
+	if ($dbt_select !== 'ref') {
+		$objectid = ((int) $objectid);	// For the case value is coming from a non sanitized user input
+	} else {
+		$objectid = null; // For avoid access forbiden when ref is numeric only during create action
+	}
 
 	//dol_syslog("functions.lib:restrictedArea $feature, $objectid, $dbtablename, $feature2, $dbt_socfield, $dbt_select, $isdraft");
 	//print "user_id=".$user->id.", features=".$features.", feature2=".$feature2.", objectid=".$objectid;
