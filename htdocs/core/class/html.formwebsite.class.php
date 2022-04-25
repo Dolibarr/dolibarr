@@ -173,7 +173,7 @@ class FormWebsite
 
 		$langs->load("admin");
 
-		$listofsamples = dol_dir_list(DOL_DOCUMENT_ROOT.'/website/samples', 'files', 0, '^page-sample-.*\.html$');
+		$listofsamples = dol_dir_list(DOL_DOCUMENT_ROOT.($conf->entity > 1 ? '/'.$conf->entity : '').'/website/samples', 'files', 0, '^page-sample-.*\.html$');
 
 		$arrayofsamples = array();
 		$arrayofsamples['empty'] = 'EmptyPage'; // Always this one first
