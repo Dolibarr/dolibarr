@@ -1149,8 +1149,6 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 
 		// Form to convert time spent into invoice
 		if ($massaction == 'generateinvoice') {
-			print '<input type="hidden" name="massaction" value="confirm_createbills">';
-
 			if ($projectstatic->thirdparty->id > 0) {
 				print '<table class="noborder centerpercent">';
 				print '<tr>';
