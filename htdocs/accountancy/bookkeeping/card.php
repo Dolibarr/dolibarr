@@ -642,7 +642,7 @@ if ($action == 'create') {
 				}
 
 				print "</tr>\n";
-				
+
 				// Empty line is the first line of $object->linesmvt
 				// So we must get the first line (the empty one) and pu it at the end of the array
 				// in order to display it correctly to the user
@@ -703,7 +703,7 @@ if ($action == 'create') {
 							print '<td>';
 							print '<input type="submit" class="button" name="save" value="' . $langs->trans("Add") . '">';
 							print '</td>';
-						} 
+						}
 					} else {
 						print '<!-- td columns in display mode -->';
 						$accountingaccount->fetch(null, $line->numero_compte, true);
