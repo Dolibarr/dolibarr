@@ -368,7 +368,7 @@ if (empty($reshook)) {
 					$TFactThirdNbLines[$cmd->socid] = 0; //init nblines to have lines ordered by expedition and rang
 				} else {
 					$langs->load("errors");
-					$errors[] = $cmd->ref.' : '.$langs->trans($objecttmp->error);
+					$errors[] = $cmd->ref.' : '.$langs->trans($objecttmp->errors[0]);
 					$error++;
 				}
 			}
@@ -377,7 +377,7 @@ if (empty($reshook)) {
 				$res = $objecttmp->add_object_linked($objecttmp->origin, $id_order);
 
 				if ($res == 0) {
-					$errors[] = $objecttmp->error;
+					$errors[] = $cmd->ref.' : '.$langs->trans($objecttmp->errors[0]);
 					$error++;
 				}
 
@@ -640,7 +640,11 @@ if (empty($reshook)) {
 			$action = 'create';
 			$_GET["origin"] = $_POST["origin"];
 			$_GET["originid"] = $_POST["originid"];
-			setEventMessages("Error", null, 'errors');
+			if (!empty($errors)) {
+				setEventMessages(null, $errors, 'errors');
+			} else {
+				setEventMessages("Error", null, 'errors');
+			}
 			$error++;
 		}
 	}
