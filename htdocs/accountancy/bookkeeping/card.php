@@ -679,7 +679,7 @@ if ($action == 'create') {
 						print '<input type="hidden" name="id" value="'.$line->id.'">'."\n";
 						print '<input type="submit" class="button" name="update" value="'.$langs->trans("Update").'">';
 						print '</td>';
-					} elseif (empty($line->numero_compte) || (empty($line->debit) &&empty($line->creit))) {
+					} elseif (empty($line->numero_compte) || (empty($line->debit) && empty($line->credit))) {
 						if ($action == "" || $action == 'add') {
 							print '<!-- td columns in add mode -->';
 							print '<td>';
