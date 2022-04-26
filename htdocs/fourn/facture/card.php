@@ -1846,7 +1846,7 @@ if ($action == 'create') {
 	$currency_code = $conf->currency;
 
 	$societe = '';
-	if (GETPOST('socid') > 0) {
+	if (GETPOST('socid', 'int') > 0) {
 		$societe = new Societe($db);
 		$societe->fetch(GETPOST('socid', 'int'));
 		if (!empty($conf->multicurrency->enabled) && !empty($societe->multicurrency_code)) {
@@ -3285,10 +3285,9 @@ if ($action == 'create') {
 			// Remainder to pay
 			print '<tr><td colspan="'.$nbcols.'" class="right">';
 			print '<span class="opacitymedium">';
-			if ($resteapayeraffiche >= 0) {
-				print $langs->trans('RemainderToPay');
-			} else {
-				print $langs->trans('ExcessPaid');
+			print $langs->trans('RemainderToPay');
+			if ($resteapayeraffiche < 0) {
+				print ' ('.$langs->trans('NegativeIfExcessPaid').')';
 			}
 			print '</span>';
 			print '</td>';
@@ -3298,10 +3297,9 @@ if ($action == 'create') {
 			if ($object->multicurrency_code != $conf->currency || $object->multicurrency_tx != 1) {
 				print '<tr><td colspan="'.$nbcols.'" class="right">';
 				print '<span class="opacitymedium">';
-				if ($resteapayeraffiche <= 0) {
-					print $langs->trans('RemainderToPayBackMulticurrency');
-				} else {
-					print $langs->trans('ExcessPaidMulticurrency');
+				print $langs->trans('RemainderToPayMulticurrency');
+				if ($resteapayeraffiche < 0) {
+					print ' ('.$langs->trans('NegativeIfExcessPaid').')';
 				}
 				print '</span>';
 				print '</td>';
@@ -3322,10 +3320,9 @@ if ($action == 'create') {
 			// Remainder to pay back
 			print '<tr><td colspan="'.$nbcols.'" class="right">';
 			print '<span class="opacitymedium">';
-			if ($resteapayeraffiche <= 0) {
-				print $langs->trans('RemainderToPayBack');
-			} else {
-				print $langs->trans('ExcessPaid');
+			print $langs->trans('RemainderToPayBack');
+			if ($resteapayeraffiche > 0) {
+				print ' ('.$langs->trans('NegativeIfExcessRefunded').')';
 			}
 			print '</td>';
 			print '</span>';
@@ -3335,10 +3332,9 @@ if ($action == 'create') {
 			if ($object->multicurrency_code != $conf->currency || $object->multicurrency_tx != 1) {
 				print '<tr><td colspan="'.$nbcols.'" class="right">';
 				print '<span class="opacitymedium">';
-				if ($resteapayeraffiche <= 0) {
-					print $langs->trans('RemainderToPayBackMulticurrency');
-				} else {
-					print $langs->trans('ExcessPaidMulticurrency');
+				print $langs->trans('RemainderToPayBackMulticurrency');
+				if ($resteapayeraffiche> 0) {
+					print ' ('.$langs->trans('NegativeIfExcessRefunded').')';
 				}
 				print '</span>';
 				print '</td>';
