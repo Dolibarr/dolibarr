@@ -302,6 +302,7 @@ NotYetAccounted=Pas encore transféré en comptabilité
 ShowTutorial=Afficher le tutoriel
 NotReconciled=Non rapproché
 WarningRecordWithoutSubledgerAreExcluded=Attention : toutes les opérations sans compte auxiliaire défini sont filtrées et exclues de cet écran
+AccountRemovedFromCurrentChartOfAccount=Compte comptable qui n'existe pas dans le plan comptable actuel
 
 ## Admin
 BindingOptions=Options de liaisons avec les codes comptables
