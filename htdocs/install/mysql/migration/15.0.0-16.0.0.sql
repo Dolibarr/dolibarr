@@ -334,4 +334,6 @@ ALTER TABLE llx_actioncomm MODIFY COLUMN note mediumtext;
 DELETE FROM llx_boxes WHERE box_id IN (select rowid FROM llx_boxes_def WHERE file IN ('box_bom.php@bom', 'box_bom.php'));
 DELETE FROM llx_boxes_def WHERE file IN ('box_bom.php@bom', 'box_bom.php');
 
-ALTER TABLE llx_takepos_floor_tables ADD UNIQUE(entity,label); 
+ALTER TABLE llx_takepos_floor_tables ADD UNIQUE(entity,label);
+
+INSERT INTO llx_const (name, value, type, visible, entity) VALUES ('MAIN_AGENDA_ACTIONAUTO_PROPAL_MODIFY', '1', 'chaine', 0, 1);
