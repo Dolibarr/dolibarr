@@ -107,3 +107,4 @@ INSERT INTO llx_const (name, entity, value, type, visible) VALUES ('PRODUCT_PRIC
 -- Membership
 --
 INSERT INTO llx_const (name, entity, value, type, visible) VALUES ('ADHERENT_LOGIN_NOT_REQUIRED', 0, '1', 'string', 0);
+
