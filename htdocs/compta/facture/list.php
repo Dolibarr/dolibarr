@@ -136,7 +136,7 @@ $search_datelimit_endyear = GETPOST('search_datelimit_endyear', 'int');
 $search_datelimit_start = dol_mktime(0, 0, 0, $search_datelimit_startmonth, $search_datelimit_startday, $search_datelimit_startyear);
 $search_datelimit_end = dol_mktime(23, 59, 59, $search_datelimit_endmonth, $search_datelimit_endday, $search_datelimit_endyear);
 $search_categ_cus = GETPOST("search_categ_cus", 'int');
-$search_fac_rec_source = GETPOST("search_fac_rec_source", 'int');
+$search_fac_rec_source_title = GETPOST("search_fac_rec_source_title", 'alpha');
 $search_btn = GETPOST('button_search', 'alpha');
 $search_remove_btn = GETPOST('button_removefilter', 'alpha');
 $optioncss = GETPOST('optioncss', 'alpha');
@@ -363,7 +363,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 
 	$search_datelimit_endyear = '';
 	$search_datelimit_start = '';
 	$search_datelimit_end = '';
-	$search_fac_rec_source = '';
+	$search_fac_rec_source_title = '';
 	$option = '';
 	$filter = '';
 	$toselect = '';
@@ -622,6 +622,10 @@ if ($sall || $search_product_category > 0) {
 if ($search_product_category > 0) {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_product as cp ON cp.fk_product=pd.fk_product';
 }
+
+if (!empty($search_fac_rec_source_title)) {
+	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'facture_rec as facrec ON f.fk_fac_rec_source=facrec.rowid';
+}
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = f.fk_projet";
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user AS u ON f.fk_user_author = u.rowid';
 // We'll need this table joined to the select in order to filter by sale
@@ -806,9 +810,8 @@ if ($search_sale > 0) {
 if ($search_user > 0) {
 	$sql .= " AND ec.fk_c_type_contact = tc.rowid AND tc.element='facture' AND tc.source='internal' AND ec.element_id = f.rowid AND ec.fk_socpeople = ".((int) $search_user);
 }
-
-if ($search_fac_rec_source > 0) {
-	$sql .= " AND f.fk_fac_rec_source = ".((int) $search_fac_rec_source);
+if (!empty($search_fac_rec_source_title)) {
+	$sql .= natural_search('facrec.titre', $search_fac_rec_source_title);
 }
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
@@ -1088,8 +1091,8 @@ if ($resql) {
 	if ($search_categ_cus > 0) {
 		$param .= '&search_categ_cus='.urlencode($search_categ_cus);
 	}
-	if ($search_fac_rec_source > 0) {
-		$param .= '&search_fac_rec_source='.urlencode($search_fac_rec_source);
+	if (!empty($search_fac_rec_source_title)) {
+		$param .= '&$search_fac_rec_source_title='.urlencode($search_fac_rec_source_title);
 	}
 
 	// Add $param from extra fields
@@ -1515,7 +1518,7 @@ if ($resql) {
 	if (!empty($arrayfields['f.fk_fac_rec_source']['checked'])) {
 		// Template Invoice
 		print '<td class="liste_titre maxwidthonsmartphone right">';
-		$form->selectInvoiceRec($search_fac_rec_source, 'search_fac_rec_source');
+		print '<input class="flat maxwidth50imp" type="text" name="search_fac_rec_source_title" id="search_fac_rec_source_title" value="'.dol_escape_htmltag($search_fac_rec_source_title).'">';
 		print '</td>';
 	}
 	// Status
@@ -1678,7 +1681,7 @@ if ($resql) {
 		print_liste_field_titre($arrayfields['f.note_private']['label'], $_SERVER["PHP_SELF"], "f.note_private", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
 	}
 	if (!empty($arrayfields['f.fk_fac_rec_source']['checked'])) {
-		print_liste_field_titre($arrayfields['f.fk_fac_rec_source']['label'], $_SERVER["PHP_SELF"], "f.fk_fac_rec_source", "", $param, '', $sortfield, $sortorder);
+		print_liste_field_titre($arrayfields['f.fk_fac_rec_source']['label'], $_SERVER["PHP_SELF"], "facrec.titre", "", $param, '', $sortfield, $sortorder);
 	}
 	if (!empty($arrayfields['f.fk_statut']['checked'])) {
 		print_liste_field_titre($arrayfields['f.fk_statut']['label'], $_SERVER["PHP_SELF"], "f.fk_statut,f.paye,f.type", "", $param, 'class="right"', $sortfield, $sortorder);
