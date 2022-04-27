@@ -1804,6 +1804,16 @@ class Product extends CommonObject
 	{
 		global $conf, $db;
 
+		// call hook if any
+		$hookmanager->initHooks(array('productdao'));
+		$parameters = array('thirdparty_seller'=>$thirdparty_seller, 'thirdparty_buyer' => $thirdparty_buyer, 'pqp' => $pqp);
+		// Note that $action and $object may have been modified by some hooks
+		global $action;
+		$reshook = $hookmanager->executeHooks('getSellPrice', $parameters, $this, $action);
+		if ( ! empty($reshook)) {
+			return $hookmanager->resArray;
+		}
+
 		// Update if prices fields are defined
 		$tva_tx = get_default_tva($thirdparty_seller, $thirdparty_buyer, $this->id);
 		$tva_npr = get_default_npr($thirdparty_seller, $thirdparty_buyer, $this->id);
