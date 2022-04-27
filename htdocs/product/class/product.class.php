@@ -1802,7 +1802,7 @@ class Product extends CommonObject
 	 */
 	public function getSellPrice($thirdparty_seller, $thirdparty_buyer, $pqp = 0)
 	{
-		global $conf, $db;
+		global $conf, $db, $hookmanager;
 
 		// call hook if any
 		$hookmanager->initHooks(array('productdao'));
