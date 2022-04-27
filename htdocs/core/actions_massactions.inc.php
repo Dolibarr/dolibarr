@@ -128,6 +128,14 @@ if (!$error && $massaction == 'confirm_presend') {
 							$listofobjectcontacts[$toselectid][$data_email['id']] = $data_email['email'];
 						}
 					}
+				} elseif ($objectclass == 'CommandeFournisseur') {
+					$tmparraycontact = array();
+					$tmparraycontact = $objecttmp->liste_contact(-1, 'external', 0, 'CUSTOMER');
+					if (is_array($tmparraycontact) && count($tmparraycontact) > 0) {
+						foreach ($tmparraycontact as $data_email) {
+							$listofobjectcontacts[$toselectid][$data_email['id']] = $data_email['email'];
+						}
+					}
 				}
 
 				$listofobjectthirdparties[$thirdpartyid] = $thirdpartyid;
@@ -265,6 +273,19 @@ if (!$error && $massaction == 'confirm_presend') {
 						$fuser->fetch($objectobj->fk_user);
 						$sendto = $fuser->email;
 					} elseif ($objectobj->element == 'facture' && !empty($listofobjectcontacts[$objectid])) {
+						$emails_to_sends = array();
+						$objectobj->fetch_thirdparty();
+						$contactidtosend = array();
+						foreach ($listofobjectcontacts[$objectid] as $contactemailid => $contactemailemail) {
+							$emails_to_sends[] = $objectobj->thirdparty->contact_get_property($contactemailid, 'email');
+							if (!in_array($contactemailid, $contactidtosend)) {
+								$contactidtosend[] = $contactemailid;
+							}
+						}
+						if (count($emails_to_sends) > 0) {
+							$sendto = implode(',', $emails_to_sends);
+						}
+					} elseif ($objectobj->element == 'order_supplier' && !empty($listofobjectcontacts[$objectid])) {
 						$emails_to_sends = array();
 						$objectobj->fetch_thirdparty();
 						$contactidtosend = array();
