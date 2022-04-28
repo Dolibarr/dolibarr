@@ -310,7 +310,7 @@ class Inventory extends CommonObject
 
 					if ($conf->productbatch->enabled) {
 						$inventoryline->qty_stock = ($obj->batch ? $obj->qty : $obj->reel); // If there is batch detail, we take qty for batch, else global qty
-					}else{
+					} else {
 						$inventoryline->qty_stock = $obj->reel;
 					}
 
