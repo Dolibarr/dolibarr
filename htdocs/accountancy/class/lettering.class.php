@@ -440,7 +440,7 @@ class Lettering extends BookKeeping
 						$group_error++;
 						break;
 					}
-					if (!isset($lettering_code)) $lettering_code = (string)$line_infos['lettering_code'];
+					if (!isset($lettering_code)) $lettering_code = (string) $line_infos['lettering_code'];
 					if (!empty($line_infos['lettering_code'])) $do_it = true;
 				} elseif (!empty($line_infos['lettering_code'])) $do_it = false;
 			}
@@ -518,8 +518,8 @@ class Lettering extends BookKeeping
 			" FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping AS ab" .
 			" LEFT JOIN " . MAIN_DB_PREFIX . "bank_url AS bu ON bu.fk_bank = ab.fk_doc" .
 			" WHERE ab.doc_type = 'bank'" .
-	//		" AND ab.subledger_account != ''" .
-	//		" AND ab.numero_compte = '" . $this->db->escape($account_number) . "'" .
+		//		" AND ab.subledger_account != ''" .
+		//		" AND ab.numero_compte = '" . $this->db->escape($account_number) . "'" .
 			" AND bu.type = '" . $this->db->escape($bank_url_type) . "'";
 		if (!empty($bookkeeping_ids)) $sql .= " AND ab.rowid IN (" . $this->db->sanitize(implode(',', $bookkeeping_ids)) . ")";
 
@@ -540,8 +540,8 @@ class Lettering extends BookKeeping
 			" FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping AS ab" .
 			" LEFT JOIN " . MAIN_DB_PREFIX . "$payment_element AS pe ON pe.$fk_element = ab.fk_doc" .
 			" WHERE ab.doc_type = '" . $this->db->escape($doc_type) . "'" .
-	//		" AND ab.subledger_account != ''" .
-	//		" AND ab.numero_compte = '" . $this->db->escape($account_number) . "'" .
+		//		" AND ab.subledger_account != ''" .
+		//		" AND ab.numero_compte = '" . $this->db->escape($account_number) . "'" .
 			" AND pe.$fk_payment_element IS NOT NULL";
 		if (!empty($bookkeeping_ids)) $sql .= " AND ab.rowid IN (" . $this->db->sanitize(implode(',', $bookkeeping_ids)) . ")";
 
@@ -726,7 +726,7 @@ class Lettering extends BookKeeping
 				$grouped_payments[] = $current_group;
 				$current_group = array();
 			}
-		} while(!empty($payment_by_element) && $element_id == 0);
+		} while (!empty($payment_by_element) && $element_id == 0);
 
 		if ($element_id == 0) {
 			// Restore list when is the begin of recursive function
