@@ -1,0 +1,41 @@
+name: Deploy Now
+
+on:
+  - push
+  - workflow_dispatch
+
+jobs:
+  deploy-now:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch project data
+        uses: ionos-deploy-now/retrieve-project-info-action@v1
+        id: project
+        with:
+          api-key: ${{ secrets.IONOS_API_KEY }}
+          project: ${{ secrets.IONOS_PROJECT_ID }}
+          service-host: api-eu.ionos.space
+
+      - name: checkout
+        if: ${{ steps.project.outputs.deployment-enabled == 'true' }}
+        uses: actions/checkout@v2
+        with:
+          submodules: 'recursive'
+
+      - name: Render templates
+        if: ${{ steps.project.outputs.deployment-enabled == 'true' }}
+        uses: ionos-deploy-now/template-renderer-action@v1
+        id: template
+        with:
+          secrets: |
+
+      - name: Deploy to IONOS
+        if: ${{ steps.project.outputs.deployment-enabled == 'true' }}
+        uses: ionos-deploy-now/deploy-to-ionos-action@v1
+        with:
+          project: ${{ secrets.IONOS_PROJECT_ID }}
+          branch-id: ${{ steps.project.outputs.branch-id }}
+          service-host: api-eu.ionos.space
+          api-key: ${{ secrets.IONOS_API_KEY }}
+          dist-folder: ./projects
+          runtime-placeholder-files: ${{ steps.template.outputs.runtime-placeholder-files }}
