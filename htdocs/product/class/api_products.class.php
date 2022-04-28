@@ -173,9 +173,10 @@ class Products extends DolibarrApi
 	 * @param  int    $variant_filter   	Use this param to filter list (0 = all, 1=products without variants, 2=parent of variants, 3=variants only)
 	 * @param  bool   $pagination_data   	If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0
 	 * @param  int    $includestockdata		Load also information about stock (slower)
+	 * @param  bool   $allow_extrafields_sqlfilters Allow sqlfilters to contain extrafields filter (slower).
 	 * @return array                		Array of product objects
 	 */
-	public function index($sortfield = "t.ref", $sortorder = 'ASC', $limit = 100, $page = 0, $mode = 0, $category = 0, $sqlfilters = '', $ids_only = false, $variant_filter = 0, $pagination_data = false, $includestockdata = 0)
+	public function index($sortfield = "t.ref", $sortorder = 'ASC', $limit = 100, $page = 0, $mode = 0, $category = 0, $sqlfilters = '', $ids_only = false, $variant_filter = 0, $pagination_data = false, $includestockdata = 0, $allow_extrafields_sqlfilters = false)
 	{
 		global $db, $conf;
 
@@ -192,6 +193,11 @@ class Products extends DolibarrApi
 		if ($category > 0) {
 			$sql .= ", ".$this->db->prefix()."categorie_product as c";
 		}
+
+		if ($allow_extrafields_sqlfilters) {
+			$sql .= " LEFT JOIN llx_product_extrafields AS ef ON ef.fk_object = t.rowid";
+		}
+
 		$sql .= ' WHERE t.entity IN ('.getEntity('product').')';
 
 		if ($variant_filter == 1) {
