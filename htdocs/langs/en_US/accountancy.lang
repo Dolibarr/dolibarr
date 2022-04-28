@@ -393,6 +393,21 @@ Range=Range of accounting account
 Calculated=Calculated
 Formula=Formula
 
+## Lettering
+Unlettering=Unlettering
+AccountancyNoLetteringModified=No lettering modified
+AccountancyOneLetteringModifiedSuccessfully=One lettering successfully modified
+AccountancyLetteringModifiedSuccessfully=%s lettering successfully modified
+AccountancyNoUnletteringModified=No unlettering modified
+AccountancyOneUnletteringModifiedSuccessfully=One unlettering successfully modified
+AccountancyUnletteringModifiedSuccessfully=%s unlettering successfully modified
+
+## Confirm box
+ConfirmMassUnlettering=Bulk Unlettering confirmation
+ConfirmMassUnletteringQuestion=Are you sure you want to Unletter the %s selected record(s)?
+ConfirmMassDeleteBookkeepingWriting=Bulk Delete confirmation
+ConfirmMassDeleteBookkeepingWritingQuestion=This will delete the transaction from the accounting (all lines related to the same transaction will be deleted) Are you sure you want to delete the %s selected record(s)?
+
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Some mandatory steps of setup was not done, please complete them
 ErrorNoAccountingCategoryForThisCountry=No accounting account group available for country %s (See Home - Setup - Dictionaries)
@@ -404,6 +419,10 @@ NoJournalDefined=No journal defined
 Binded=Lines bound
 ToBind=Lines to bind
 UseMenuToSetBindindManualy=Lines not yet bound, use menu <a href="%s">%s</a> to make the binding manually
+SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Sorry this module is not compatible with the experimental feature of situation invoices
+AccountancyErrorMismatchLetterCode=Mismatch in letter code
+AccountancyErrorMismatchBalanceAmount=The balance (%s) is not equal to 0
+AccountancyErrorLetteringBookkeeping=Errors have occurred concerning the transactions: %s
 
 ## Import
 ImportAccountingEntries=Accounting entries
