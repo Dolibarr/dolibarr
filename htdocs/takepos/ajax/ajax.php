@@ -218,7 +218,7 @@ if ($action == 'getProducts') {
 
 	// Add tables from hooks
 	$parameters=array();
-	$reshook=$hookmanager->executeHooks('printFieldListTables', $parameters);    
+	$reshook=$hookmanager->executeHooks('printFieldListTables', $parameters);
 	$sql .= $hookmanager->resPrint;
 
 	$sql .= ' WHERE entity IN ('.getEntity('product').')';
@@ -229,7 +229,7 @@ if ($action == 'getProducts') {
 	$sql .= natural_search(array('ref', 'label', 'barcode'), $term);
 	// Add where from hooks
 	$parameters=array();
-	$reshook=$hookmanager->executeHooks('printFieldListWhere', $parameters);   
+	$reshook=$hookmanager->executeHooks('printFieldListWhere', $parameters);
 	$sql .= $hookmanager->resPrint;
 
 	$resql = $db->query($sql);
@@ -269,9 +269,11 @@ if ($action == 'getProducts') {
 			);
 			// Add entries to row from hooks
 			$parameters=array();
-			$parameters['row'] = end($rows);
+			$parameters['row'] = $row;
 			$parameters['obj'] = $obj;
-			$reshook=$hookmanager->executeHooks('completeAjaxReturnArray', $parameters);
+			$hookmanager->executeHooks('completeAjaxReturnArray', $parameters);
+			if (!empty($hookmanager->resArray)) $row = $hookmanager->resArray;
+			$rows[] = $row;
 		}
 		echo json_encode($rows);
 	} else {
