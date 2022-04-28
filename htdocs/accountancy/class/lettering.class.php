@@ -518,8 +518,8 @@ class Lettering extends BookKeeping
 		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping AS ab";
 		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "bank_url AS bu ON bu.fk_bank = ab.fk_doc";
 		$sql .= " WHERE ab.doc_type = 'bank'";
-	//	$sql .= " AND ab.subledger_account != ''";
-	//	$sql .= " AND ab.numero_compte = '" . $this->db->escape($account_number) . "'";
+		//	$sql .= " AND ab.subledger_account != ''";
+		//	$sql .= " AND ab.numero_compte = '" . $this->db->escape($account_number) . "'";
 		$sql .= " AND bu.type = '" . $this->db->escape($bank_url_type) . "'";
 		if (!empty($bookkeeping_ids)) $sql .= " AND ab.rowid IN (" . $this->db->sanitize(implode(',', $bookkeeping_ids)) . ")";
 
@@ -540,8 +540,8 @@ class Lettering extends BookKeeping
 		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping AS ab";
 		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "$payment_element AS pe ON pe.$fk_element = ab.fk_doc";
 		$sql .= " WHERE ab.doc_type = '" . $this->db->escape($doc_type) . "'";
-	//	$sql .= " AND ab.subledger_account != ''";
-	//	$sql .= " AND ab.numero_compte = '" . $this->db->escape($account_number) . "'";
+		//	$sql .= " AND ab.subledger_account != ''";
+		//	$sql .= " AND ab.numero_compte = '" . $this->db->escape($account_number) . "'";
 		$sql .= " AND pe.$fk_payment_element IS NOT NULL";
 		if (!empty($bookkeeping_ids)) $sql .= " AND ab.rowid IN (" . $this->db->sanitize(implode(',', $bookkeeping_ids)) . ")";
 
