@@ -208,7 +208,7 @@ if ($action == 'getProducts') {
 		}
 	}
 
-	$sql = 'SELECT rowid, ref, label, tosell, tobuy, barcode, price' ;
+	$sql = 'SELECT p.rowid, p.ref, p.label, p.tosell, p.tobuy, p.barcode, p.price' ;
 	// Add fields from hooks
 	$parameters=array();
 	$reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters);    // Note that $action and $object may have been modified by hook
