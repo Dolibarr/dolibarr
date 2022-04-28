@@ -177,10 +177,10 @@ if ($action == 'create') {
 	if (!empty($conf->banque->enabled)) {
 		// Type payment
 		print '<tr><td class="fieldrequired">'.$langs->trans("PaymentMode").'</td><td>';
-		$form->select_types_paiements(GETPOST("paiementtype"), "paiementtype", '', 0, 1, 0, 0, 1,'maxwidth500 widthcentpercentminusx');
+		$form->select_types_paiements(GETPOST("paiementtype"), "paiementtype", '', 0, 1, 0, 0, 1, 'maxwidth500 widthcentpercentminusx');
 		print "</td>\n";
 		print "</tr>";
-		
+
 		// Bank account
 		print '<tr><td class="fieldrequired" id="label_fk_account">'.$langs->trans("Account").'</td><td>';
 		print img_picto('', 'bank_account', 'pictofixedwidth');
