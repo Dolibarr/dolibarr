@@ -195,7 +195,7 @@ class Products extends DolibarrApi
 		}
 
 		if ($allow_extrafields_sqlfilters) {
-			$sql .= " LEFT JOIN llx_product_extrafields AS ef ON ef.fk_object = t.rowid";
+			$sql .= ", ".MAIN_DB_PREFIX."product_extrafields AS ef";
 		}
 
 		$sql .= ' WHERE t.entity IN ('.getEntity('product').')';
@@ -223,6 +223,11 @@ class Products extends DolibarrApi
 			// Show only services
 			$sql .= " AND t.fk_product_type = 1";
 		}
+
+		if ($allow_extrafields_sqlfilters) {
+			$sql .= " AND ef.fk_object = t.rowid";
+		}
+
 		// Add sql filters
 		if ($sqlfilters) {
 			$errormessage = '';
