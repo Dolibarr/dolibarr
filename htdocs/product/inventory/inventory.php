@@ -1120,6 +1120,7 @@ if ($object->id > 0) {
 					$totalExpectedValuation += $pmp_valuation;
 					$totalRealValuation += $pmp_valuation_real;
 				}
+				print '<td class="nowraponall right">';
 				if ($obj->fk_movement > 0) {
 					$stockmovment = new MouvementStock($db);
 					$stockmovment->fetch($obj->fk_movement);
