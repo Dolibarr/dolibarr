@@ -440,7 +440,7 @@ class Lettering extends BookKeeping
 						$group_error++;
 						break;
 					}
-					if (!isset($lettering_code)) $lettering_code = (string)$line_infos['lettering_code'];
+					if (!isset($lettering_code)) $lettering_code = (string) $line_infos['lettering_code'];
 					if (!empty($line_infos['lettering_code'])) $do_it = true;
 				} elseif (!empty($line_infos['lettering_code'])) $do_it = false;
 			}
@@ -726,7 +726,7 @@ class Lettering extends BookKeeping
 				$grouped_payments[] = $current_group;
 				$current_group = array();
 			}
-		} while(!empty($payment_by_element) && $element_id == 0);
+		} while (!empty($payment_by_element) && $element_id == 0);
 
 		if ($element_id == 0) {
 			// Restore list when is the begin of recursive function
