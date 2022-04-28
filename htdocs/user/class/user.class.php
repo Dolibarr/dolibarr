@@ -275,6 +275,8 @@ class User extends CommonObject
 
 	public $datelastlogin;
 	public $datepreviouslogin;
+	public $iplastlogin;
+	public $ippreviouslogin;
 	public $datestartvalidity;
 	public $dateendvalidity;
 
@@ -2111,9 +2113,13 @@ class User extends CommonObject
 		// phpcs:enable
 		$now = dol_now();
 
+		$userremoteip = getUserRemoteIP();
+
 		$sql = "UPDATE ".$this->db->prefix()."user SET";
 		$sql .= " datepreviouslogin = datelastlogin,";
+		$sql .= " ippreviouslogin = iplastlogin,";
 		$sql .= " datelastlogin = '".$this->db->idate($now)."',";
+		$sql .= " iplastlogin = '".$this->db->escape($userremoteip)."',";
 		$sql .= " tms = tms"; // La date de derniere modif doit changer sauf pour la mise a jour de date de derniere connexion
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
@@ -2122,6 +2128,8 @@ class User extends CommonObject
 		if ($resql) {
 			$this->datepreviouslogin = $this->datelastlogin;
 			$this->datelastlogin = $now;
+			$this->ippreviouslogin = $this->iplastlogin;
+			$this->iplastlogin = $userremoteip;
 			return 1;
 		} else {
 			$this->error = $this->db->lasterror().' sql='.$sql;
@@ -3116,7 +3124,9 @@ class User extends CommonObject
 		$this->datem = $now;
 
 		$this->datelastlogin = $now;
+		$this->iplastlogin = '127.0.0.1';
 		$this->datepreviouslogin = $now;
+		$this->ippreviouslogin = '127.0.0.1';
 		$this->statut = 1;
 
 		$this->entity = 1;
