@@ -685,10 +685,10 @@ class Lettering extends BookKeeping
 	/**
 	 * Get payment ids grouped by payment id and element id in common
 	 *
-	 * @param	array	&$payment_by_element	List of payment ids by element id
-	 * @param	array	&$element_by_payment	List of element ids by payment id
+	 * @param	array	$payment_by_element		List of payment ids by element id
+	 * @param	array	$element_by_payment		List of element ids by payment id
 	 * @param	int		$element_id				Element Id (used for recursive function)
-	 * @param	array	&$current_group			Current group (used for recursive function)
+	 * @param	array	$current_group			Current group (used for recursive function)
 	 * @return	array							List of payment ids grouped by payment id and element id in common
 	 */
 	public function getGroupElements(&$payment_by_element, &$element_by_payment, $element_id = 0, &$current_group = array())
