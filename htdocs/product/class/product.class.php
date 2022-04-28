@@ -1810,7 +1810,7 @@ class Product extends CommonObject
 		// Note that $action and $object may have been modified by some hooks
 		global $action;
 		$reshook = $hookmanager->executeHooks('getSellPrice', $parameters, $this, $action);
-		if ( ! empty($reshook)) {
+		if ( ! empty($hookmanager->resArray)) {
 			return $hookmanager->resArray;
 		}
 
