@@ -230,7 +230,7 @@ class RssParser
 
 				if (!empty($result['content'])) {
 					$str = $result['content'];
-				} elseif (!empty($result['curl_error_msg'])){
+				} elseif (!empty($result['curl_error_msg'])) {
 					$this->error = 'Error retrieving URL '.$this->_urlRSS.' - '.$result['curl_error_msg'];
 					return -1;
 				}
