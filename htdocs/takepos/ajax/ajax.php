@@ -254,7 +254,7 @@ if ($action == 'getProducts') {
 				}
 			}
 
-			$rows[] = array(
+			$row = array(
 				'rowid' => $obj->rowid,
 				'ref' => $obj->ref,
 				'label' => $obj->label,
