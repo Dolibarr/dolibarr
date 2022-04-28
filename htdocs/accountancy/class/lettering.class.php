@@ -619,6 +619,13 @@ class Lettering extends BookKeeping
 		return $groups;
 	}
 
+	/**
+	 * Linked payment by group
+	 *
+	 * @param	array			$payment_ids			list of payment id
+	 * @param	string			$type					Type of bookkeeping type to lettering ('customer_invoice' or 'supplier_invoice')
+	 * @return	array|int								<0 if error otherwise all linked lines by block
+	 */
 	public function getLinkedPaymentByGroup($payment_ids, $type)
 	{
 		global $langs;
