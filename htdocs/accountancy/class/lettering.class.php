@@ -249,22 +249,22 @@ class Lettering extends BookKeeping
 		$error = 0;
 		$lettre = 'AAA';
 
-		$sql = "SELECT DISTINCT ab2.lettering_code" .
-			" FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping As ab" .
-			" LEFT JOIN " . MAIN_DB_PREFIX . "bank_url AS bu ON bu.fk_bank = ab.fk_doc" .
-			" LEFT JOIN " . MAIN_DB_PREFIX . "bank_url AS bu2 ON bu2.url_id = bu.url_id" .
-			" LEFT JOIN " . MAIN_DB_PREFIX . "accounting_bookkeeping AS ab2 ON ab2.fk_doc = bu2.fk_bank" .
-			" WHERE ab.rowid IN (" . $this->db->sanitize(implode(',', $ids)) . ")" .
-			" AND ab.doc_type = 'bank'" .
-			" AND ab2.doc_type = 'bank'" .
-			" AND bu.type = 'company'" .
-			" AND bu2.type = 'company'" .
-			" AND ab.subledger_account != ''" .
-			" AND ab2.subledger_account != ''" .
-			" AND ab.lettering_code IS NULL" .
-			" AND ab2.lettering_code != ''" .
-			" ORDER BY ab2.lettering_code DESC" .
-			" LIMIT 1 ";
+		$sql = "SELECT DISTINCT ab2.lettering_code";
+		$sql .=	" FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping As ab";
+		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "bank_url AS bu ON bu.fk_bank = ab.fk_doc";
+		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "bank_url AS bu2 ON bu2.url_id = bu.url_id";
+		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_bookkeeping AS ab2 ON ab2.fk_doc = bu2.fk_bank";
+		$sql .= " WHERE ab.rowid IN (" . $this->db->sanitize(implode(',', $ids)) . ")";
+		$sql .= " AND ab.doc_type = 'bank'";
+		$sql .= " AND ab2.doc_type = 'bank'";
+		$sql .= " AND bu.type = 'company'";
+		$sql .= " AND bu2.type = 'company'";
+		$sql .= " AND ab.subledger_account != ''";
+		$sql .= " AND ab2.subledger_account != ''";
+		$sql .= " AND ab.lettering_code IS NULL";
+		$sql .= " AND ab2.lettering_code != ''";
+		$sql .= " ORDER BY ab2.lettering_code DESC";
+		$sql .= " LIMIT 1 ";
 
 		$result = $this->db->query($sql);
 		if ($result) {
@@ -514,13 +514,13 @@ class Lettering extends BookKeeping
 		$payment_ids = array();
 
 		// Get all payment id from bank lines
-		$sql = "SELECT DISTINCT bu.url_id AS payment_id" .
-			" FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping AS ab" .
-			" LEFT JOIN " . MAIN_DB_PREFIX . "bank_url AS bu ON bu.fk_bank = ab.fk_doc" .
-			" WHERE ab.doc_type = 'bank'" .
-	//		" AND ab.subledger_account != ''" .
-	//		" AND ab.numero_compte = '" . $this->db->escape($account_number) . "'" .
-			" AND bu.type = '" . $this->db->escape($bank_url_type) . "'";
+		$sql = "SELECT DISTINCT bu.url_id AS payment_id";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping AS ab";
+		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "bank_url AS bu ON bu.fk_bank = ab.fk_doc";
+		$sql .= " WHERE ab.doc_type = 'bank'";
+	//	$sql .= " AND ab.subledger_account != ''";
+	//	$sql .= " AND ab.numero_compte = '" . $this->db->escape($account_number) . "'";
+		$sql .= " AND bu.type = '" . $this->db->escape($bank_url_type) . "'";
 		if (!empty($bookkeeping_ids)) $sql .= " AND ab.rowid IN (" . $this->db->sanitize(implode(',', $bookkeeping_ids)) . ")";
 
 		dol_syslog(__METHOD__ . " - Get all payment id from bank lines", LOG_DEBUG);
@@ -536,13 +536,13 @@ class Lettering extends BookKeeping
 		$this->db->free($resql);
 
 		// Get all payment id from payment lines
-		$sql = "SELECT DISTINCT pe.$fk_payment_element AS payment_id" .
-			" FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping AS ab" .
-			" LEFT JOIN " . MAIN_DB_PREFIX . "$payment_element AS pe ON pe.$fk_element = ab.fk_doc" .
-			" WHERE ab.doc_type = '" . $this->db->escape($doc_type) . "'" .
-	//		" AND ab.subledger_account != ''" .
-	//		" AND ab.numero_compte = '" . $this->db->escape($account_number) . "'" .
-			" AND pe.$fk_payment_element IS NOT NULL";
+		$sql = "SELECT DISTINCT pe.$fk_payment_element AS payment_id";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping AS ab";
+		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "$payment_element AS pe ON pe.$fk_element = ab.fk_doc";
+		$sql .= " WHERE ab.doc_type = '" . $this->db->escape($doc_type) . "'";
+	//	$sql .= " AND ab.subledger_account != ''";
+	//	$sql .= " AND ab.numero_compte = '" . $this->db->escape($account_number) . "'";
+		$sql .= " AND pe.$fk_payment_element IS NOT NULL";
 		if (!empty($bookkeeping_ids)) $sql .= " AND ab.rowid IN (" . $this->db->sanitize(implode(',', $bookkeeping_ids)) . ")";
 
 		dol_syslog(__METHOD__ . " - Get all payment id from bank lines", LOG_DEBUG);
@@ -569,14 +569,14 @@ class Lettering extends BookKeeping
 			$lines = array();
 
 			// Get bank lines
-			$sql = "SELECT DISTINCT ab.rowid, ab.piece_num, ab.lettering_code, ab.debit, ab.credit" .
-				" FROM " . MAIN_DB_PREFIX . "bank_url AS bu" .
-				" LEFT JOIN " . MAIN_DB_PREFIX . "accounting_bookkeeping AS ab ON ab.fk_doc = bu.fk_bank" .
-				" WHERE bu.url_id IN (" . $this->db->sanitize(implode(',', $payment_list)) . ")" .
-				" AND bu.type = '" . $this->db->escape($bank_url_type) . "'" .
-				" AND ab.doc_type = 'bank'" .
-				" AND ab.subledger_account != ''" .
-				" AND ab.numero_compte = '" . $this->db->escape($account_number) . "'";
+			$sql = "SELECT DISTINCT ab.rowid, ab.piece_num, ab.lettering_code, ab.debit, ab.credit";
+			$sql .=	" FROM " . MAIN_DB_PREFIX . "bank_url AS bu";
+			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_bookkeeping AS ab ON ab.fk_doc = bu.fk_bank";
+			$sql .= " WHERE bu.url_id IN (" . $this->db->sanitize(implode(',', $payment_list)) . ")";
+			$sql .= " AND bu.type = '" . $this->db->escape($bank_url_type) . "'";
+			$sql .= " AND ab.doc_type = 'bank'";
+			$sql .= " AND ab.subledger_account != ''";
+			$sql .= " AND ab.numero_compte = '" . $this->db->escape($account_number) . "'";
 
 			dol_syslog(__METHOD__ . " - Get bank lines", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -591,13 +591,13 @@ class Lettering extends BookKeeping
 			$this->db->free($resql);
 
 			// Get payment lines
-			$sql = "SELECT DISTINCT ab.rowid, ab.piece_num, ab.lettering_code, ab.debit, ab.credit" .
-				" FROM " . MAIN_DB_PREFIX . "$payment_element AS pe" .
-				" LEFT JOIN " . MAIN_DB_PREFIX . "accounting_bookkeeping AS ab ON ab.fk_doc = pe.$fk_element" .
-				" WHERE pe.$fk_payment_element IN (" . $this->db->sanitize(implode(',', $payment_list)) . ")" .
-				" AND ab.doc_type = '" . $this->db->escape($doc_type) . "'" .
-				" AND ab.subledger_account != ''" .
-				" AND ab.numero_compte = '" . $this->db->escape($account_number) . "'";
+			$sql = "SELECT DISTINCT ab.rowid, ab.piece_num, ab.lettering_code, ab.debit, ab.credit";
+			$sql .=	" FROM " . MAIN_DB_PREFIX . "$payment_element AS pe";
+			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_bookkeeping AS ab ON ab.fk_doc = pe.$fk_element";
+			$sql .= " WHERE pe.$fk_payment_element IN (" . $this->db->sanitize(implode(',', $payment_list)) . ")";
+			$sql .= " AND ab.doc_type = '" . $this->db->escape($doc_type) . "'";
+			$sql .= " AND ab.subledger_account != ''";
+			$sql .= " AND ab.numero_compte = '" . $this->db->escape($account_number) . "'";
 
 			dol_syslog(__METHOD__ . " - Get payment lines", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -646,10 +646,10 @@ class Lettering extends BookKeeping
 		}
 
 		// Get payment lines
-		$sql = "SELECT DISTINCT pe2.$fk_payment_element, pe2.$fk_element" .
-			" FROM " . MAIN_DB_PREFIX . "$payment_element AS pe" .
-			" LEFT JOIN " . MAIN_DB_PREFIX . "$payment_element AS pe2 ON pe2.$fk_element = pe.$fk_element" .
-			" WHERE pe.$fk_payment_element IN (" . $this->db->sanitize(implode(',', $payment_ids)) . ")";
+		$sql = "SELECT DISTINCT pe2.$fk_payment_element, pe2.$fk_element";
+		$sql .=	" FROM " . MAIN_DB_PREFIX . "$payment_element AS pe";
+		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "$payment_element AS pe2 ON pe2.$fk_element = pe.$fk_element";
+		$sql .=	" WHERE pe.$fk_payment_element IN (" . $this->db->sanitize(implode(',', $payment_ids)) . ")";
 
 		dol_syslog(__METHOD__ . " - Get payment lines", LOG_DEBUG);
 		$resql = $this->db->query($sql);
