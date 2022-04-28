@@ -186,25 +186,6 @@ if (empty($reshook)) {
 							break;
 						}
 
-						if (!empty($line->pmp_real) && !empty($conf->global->INVENTORY_MANAGE_REAL_PMP)) {
-							$sqlpmp = 'UPDATE '.MAIN_DB_PREFIX.'product SET pmp = '.((float) $line->pmp_real).' WHERE rowid = '.((int) $line->fk_product);
-							$resqlpmp = $db->query($sqlpmp);
-							if (! $resqlpmp) {
-								$error++;
-								setEventMessages($db->lasterror(), null, 'errors');
-								break;
-							}
-							if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
-								$sqlpmp = 'UPDATE '.MAIN_DB_PREFIX.'product_perentity SET pmp = '.((float) $line->pmp_real).' WHERE fk_product = '.((int) $line->fk_product).' AND entity='.$conf->entity;
-								$resqlpmp = $db->query($sqlpmp);
-								if (! $resqlpmp) {
-									$error++;
-									setEventMessages($db->lasterror(), null, 'errors');
-									break;
-								}
-							}
-						}
-
 						// Update line with id of stock movement (and the start quantity if it has changed this last recording)
 						$sqlupdate = "UPDATE ".MAIN_DB_PREFIX."inventorydet";
 						$sqlupdate .= " SET fk_movement = ".((int) $idstockmove);
@@ -219,6 +200,26 @@ if (empty($reshook)) {
 							break;
 						}
 					}
+
+					if (!empty($line->pmp_real) && !empty($conf->global->INVENTORY_MANAGE_REAL_PMP)) {
+						$sqlpmp = 'UPDATE '.MAIN_DB_PREFIX.'product SET pmp = '.((float) $line->pmp_real).' WHERE rowid = '.((int) $line->fk_product);
+						$resqlpmp = $db->query($sqlpmp);
+						if (! $resqlpmp) {
+							$error++;
+							setEventMessages($db->lasterror(), null, 'errors');
+							break;
+						}
+						if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
+							$sqlpmp = 'UPDATE '.MAIN_DB_PREFIX.'product_perentity SET pmp = '.((float) $line->pmp_real).' WHERE fk_product = '.((int) $line->fk_product).' AND entity='.$conf->entity;
+							$resqlpmp = $db->query($sqlpmp);
+							if (! $resqlpmp) {
+								$error++;
+								setEventMessages($db->lasterror(), null, 'errors');
+								break;
+							}
+						}
+					}
+
 				}
 				$i++;
 			}
