@@ -1166,7 +1166,7 @@ if ($object->id > 0) {
 	}
 	print '</form>';
 
-print '<script type="text/javascript">
+	print '<script type="text/javascript">
 					$(document).ready(function() {
 
                         $(".paginationnext:last").click(function(e){
