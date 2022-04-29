@@ -224,10 +224,12 @@ if ($action == 'getProducts') {
 		$sql .= ', ps.reel';
 	}
 
-  // Add fields from hooks
-	$parameters=array();
-	$reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters);
-	$sql .= $hookmanager->resPrint;
+	// Add fields from hooks
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters);
+	if ($reshook >= 0) {
+		$sql .= $hookmanager->resPrint;
+	}
 
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'product as p';
 	if (getDolGlobalInt('TAKEPOS_PRODUCT_IN_STOCK') == 1) {
@@ -237,9 +239,11 @@ if ($action == 'getProducts') {
 	}
 
 	// Add tables from hooks
-	$parameters=array();
-	$reshook=$hookmanager->executeHooks('printFieldListTables', $parameters);
-	$sql .= $hookmanager->resPrint;
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('printFieldListTables', $parameters);
+	if ($reshook >= 0) {
+		$sql .= $hookmanager->resPrint;
+	}
 
 	$sql .= ' WHERE entity IN ('.getEntity('product').')';
 	if ($filteroncategids) {
@@ -251,9 +255,11 @@ if ($action == 'getProducts') {
 	}
 	$sql .= natural_search(array('ref', 'label', 'barcode'), $term);
 	// Add where from hooks
-	$parameters=array();
-	$reshook=$hookmanager->executeHooks('printFieldListWhere', $parameters);
-	$sql .= $hookmanager->resPrint;
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters);
+	if ($reshook >= 0) {
+		$sql .= $hookmanager->resPrint;
+	}
 
 	// load only one page of products
 	$sql.= $db->plimit($search_limit, $search_start);
