@@ -1646,7 +1646,7 @@ if ($action == 'create') {
 	print '</td></tr>';
 
 	// Validaty duration
-	print '<tr><td class="fieldrequired">'.$langs->trans("ValidityDuration").'</td><td>'.img_picto('', 'clock').'&ensp;<input name="duree_validite" class="width50" value="'.(GETPOSTISSET('duree_validite') ? GETPOST('duree_validite', 'alphanohtml') : $conf->global->PROPALE_VALIDITY_DURATION).'"> '.$langs->trans("days").'</td></tr>';
+	print '<tr><td class="fieldrequired">'.$langs->trans("ValidityDuration").'</td><td>'.img_picto('', 'clock', 'class="paddingright"').'<input name="duree_validite" class="width50" value="'.(GETPOSTISSET('duree_validite') ? GETPOST('duree_validite', 'alphanohtml') : $conf->global->PROPALE_VALIDITY_DURATION).'"> '.$langs->trans("days").'</td></tr>';
 
 	// Terms of payment
 	print '<tr><td class="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td>';
@@ -1656,7 +1656,7 @@ if ($action == 'create') {
 
 	// Mode of payment
 	print '<tr><td>'.$langs->trans('PaymentMode').'</td><td>';
-	print img_picto('', 'bank', 'class="pictofixedwidth').'&ensp;';
+	print img_picto('', 'bank', 'class="pictofixedwidth"');
 	$form->select_types_paiements((GETPOSTISSET('mode_reglement_id') ? GETPOST('mode_reglement_id', 'int') : $soc->mode_reglement_id), 'mode_reglement_id', 'CRDT', 0, 1, 0, 0, 1, 'maxwidth200 widthcentpercentminusx');
 	print '</td></tr>';
 
@@ -1679,7 +1679,7 @@ if ($action == 'create') {
 		print ' ('.$langs->trans('AfterOrder').')';
 	}
 	print '</td><td>';
-	print img_picto('', 'clock').'&ensp;';
+	print img_picto('', 'clock', 'class="pictofixedwidth"');
 	$form->selectAvailabilityDelay('', 'availability_id', '', 1, 'maxwidth200 widthcentpercentminusx');
 	print '</td></tr>';
 
@@ -1741,7 +1741,7 @@ if ($action == 'create') {
 	print '<tr>';
 	print '<td>'.$langs->trans("DefaultModel").'</td>';
 	print '<td>';
-	print img_picto('', 'pdf').'&ensp;';
+	print img_picto('', 'pdf', 'class="pictofixedwidth"');
 	$liste = ModelePDFPropales::liste_modeles($db);
 	$preselected = (!empty($conf->global->PROPALE_ADDON_PDF_ODT_DEFAULT) ? $conf->global->PROPALE_ADDON_PDF_ODT_DEFAULT : getDolGlobalString("PROPALE_ADDON_PDF"));
 	print $form->selectarray('model', $liste, $preselected, 0, 0, 0, '', 0, 0, 0, '', 'maxwidth200 widthcentpercentminusx', 1);
