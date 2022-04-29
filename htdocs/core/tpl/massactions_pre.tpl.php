@@ -213,10 +213,10 @@ if ($massaction == 'presend') {
 
 if ($massaction == 'edit_extrafields') {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-	$elementtype = 'product';
+	$elementtype = $objecttmp->element;
 	/** @var CommonObject $objecttmp */
 	$extrafields = new ExtraFields($db);
-
+	$keysuffix = '';
 	$extrafields->fetch_name_optionals_label($elementtype);
 	$extrafields_list = $extrafields->attributes[$elementtype]['label'];
 
@@ -226,12 +226,40 @@ if ($massaction == 'edit_extrafields') {
 
 		$formquestion[] = array(
 			'type' => 'other',
-			'value' => $form->selectarray('extrafield-key-to-update', $extrafields_list, GETPOST('extrafield-key-to-update'))
+			'value' => $form->selectarray('extrafield-key-to-update', $extrafields_list, GETPOST('extrafield-key-to-update'), 1)
 		);
+
+
+		$outputShowOutputFields = '<div class="extrafields-inputs">';
+		//
+		//      foreach ($extrafields_list as $extraKey => $extraLabel){
+		//          $outputShowOutputFields.= '<div class="mass-action-extrafield_'.$key.'">';
+		//
+		//          $outputShowOutputFields.= 'rrrrrrrr'.$extrafields->showInputField($key, '', '', $keysuffix, '', 0, $objecttmp->id, $objecttmp->table_element).'dddddddddd';
+		//          $outputShowOutputFields.= 'rrrrrrrr'.$extrafields->showInputField($key, '', '', $keysuffix, '', '', $objecttmp->id, $objecttmp->table_element).'dddddddddd';
+		//
+		//          $outputShowOutputFields.= '</div>';
+		//      }
+		$outputShowOutputFields.= '<table>'.$object->showOptionals($extrafields, 'create').'</table>';
+		$outputShowOutputFields.= '<script>
+		jQuery(function($) {
+			$(".extrafields-inputs .valuefieldcreate").hide();
+            $("#extrafield-key-to-update").on(\'change\',function(){
+            	let selectedExtrtafield = $(this).val();
+            	if($(".extrafields-inputs .product_extras_"+selectedExtrtafield) != undefined){
+					$(".extrafields-inputs .valuefieldcreate").hide();
+					$(".extrafields-inputs .product_extras_"+selectedExtrtafield).show();
+                }
+            });
+		});
+		</script>';
+		$outputShowOutputFields.= '</div>';
+
+
 
 		$formquestion[] = array(
 			'type' => 'other',
-			'value' => $object->showOptionals($extrafields, 'create')
+			'value' => $outputShowOutputFields
 			);
 
 		print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmEditExtrafield"), $langs->trans("ConfirmEditExtrafieldQuestion", count($toselect)), "confirm_edit_value_extrafields", $formquestion, 1, 0, 200, 500, 1);

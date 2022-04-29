@@ -1620,7 +1620,6 @@ if (!$error && $action == 'confirm_edit_value_extrafields' && $confirm == 'yes' 
 		if ($result>0) {
 			// Fill array 'array_options' with data from add form
 			$ret = $e->setOptionalsFromPost(null, $objecttmp, $extrafieldKeyToUpdate);
-
 			if ($ret > 0) {
 				$objecttmp->insertExtraFields(); // TODO gérer l'erreur
 			} else {
