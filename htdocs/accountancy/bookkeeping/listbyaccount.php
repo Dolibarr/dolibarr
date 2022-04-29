@@ -81,6 +81,8 @@ $search_direction = GETPOST('search_direction', 'alpha');
 $search_ledger_code = GETPOST('search_ledger_code', 'array');
 $search_debit = GETPOST('search_debit', 'alpha');
 $search_credit = GETPOST('search_credit', 'alpha');
+$search_amount_start = GETPOST('search_amount_start', 'alpha');
+$search_amount_end = GETPOST('search_amount_end', 'alpha');
 $search_lettering_code = GETPOST('search_lettering_code', 'alpha');
 $search_not_reconciled = GETPOST('search_not_reconciled', 'alpha');
 
@@ -240,6 +242,8 @@ if (empty($reshook)) {
 		$search_date_validation_endday = '';
 		$search_debit = '';
 		$search_credit = '';
+		$search_amount_start = '';
+		$search_amount_end = '';
 		$search_lettering_code = '';
 		$search_not_reconciled = '';
 	}
@@ -301,6 +305,14 @@ if (empty($reshook)) {
 	if (!empty($search_credit)) {
 		$filter['t.credit'] = $search_credit;
 		$param .= '&search_credit='.urlencode($search_credit);
+	}
+	if (!empty($search_amount_start)) {
+		$filter['t.montant>='] = $search_amount_start;
+		$param .= '&search_amount_start='.urlencode($search_amount_start);
+	}
+	if (!empty($search_amount_end)) {
+		$filter['t.montant<='] = $search_amount_end;
+		$param .= '&search_amount_end='.urlencode($search_amount_end);
 	}
 	if (!empty($search_lettering_code)) {
 		$filter['t.lettering_code'] = $search_lettering_code;
@@ -512,6 +524,15 @@ $moreforfilter .= '<div class="nowrap inline-block">';
 $moreforfilter .= $formaccounting->select_account($search_accountancy_code_start, 'search_accountancy_code_start', $langs->trans('From'), array(), 1, 1, 'maxwidth200');
 $moreforfilter .= ' ';
 $moreforfilter .= $formaccounting->select_account($search_accountancy_code_end, 'search_accountancy_code_end', $langs->trans('to'), array(), 1, 1, 'maxwidth200');
+$moreforfilter .= '</div>';
+
+// Amount interval
+$moreforfilter .= ' - ';
+$moreforfilter .= $langs->trans('AmountInterval').': ';
+$moreforfilter .= '<div class="nowrap inline-block">';
+$moreforfilter .= '<input type="text" class="flat" name="search_amount_start" size="4" value="'.dol_escape_htmltag($search_amount_start).'" placeholder="'.$langs->trans('From').'">';
+$moreforfilter .= ' ';
+$moreforfilter .= '<input type="text" class="flat" name="search_amount_end" size="4" value="'.dol_escape_htmltag($search_amount_end).'" placeholder="'.$langs->trans('to').'">';
 $moreforfilter .= '</div>';
 $moreforfilter .= '</div>';
 

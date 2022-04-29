@@ -877,6 +877,8 @@ class BookKeeping extends CommonObject
 					$sqlwhere[] = natural_search($key, $value, 1, 1);
 				} elseif ($key == 't.reconciled_option') {
 					$sqlwhere[] = 't.lettering_code IS NULL';
+				} elseif ($key == 't.montant>=' || $key == 't.montant<=') {
+					$sqlwhere[] = $key.'\''.$this->db->escape($value).'\'';
 				} elseif ($key == 't.code_journal' && !empty($value)) {
 					if (is_array($value)) {
 						$sqlwhere[] = natural_search("t.code_journal", join(',', $value), 3, 1);
