@@ -937,8 +937,8 @@ class MyObject extends CommonObject
 
 		if (is_numeric($result))
 		{
-			$this->error = $this->error;
-			$this->errors = $this->errors;
+			$this->error = $objectline->error;
+			$this->errors = $objectline->errors;
 			return $result;
 		} else {
 			$this->lines = $result;
