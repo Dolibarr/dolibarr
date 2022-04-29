@@ -29,12 +29,18 @@ require '../main.inc.php';
 // Load translation files required by the page
 $langs->load("companies");
 
-$sortfield = GETPOST('sortfield', 'alpha');
-$sortorder = GETPOST('sortorder', 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (!$sortorder) $sortorder = "ASC";
-if (!$sortfield) $sortfield = "p.name";
-if ($page < 0) { $page = 0; }
+if (!$sortorder) {
+	$sortorder = "ASC";
+}
+if (!$sortfield) {
+	$sortfield = "p.name";
+}
+if ($page < 0) {
+	$page = 0;
+}
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $offset = $limit * $page;
 
@@ -47,7 +53,10 @@ $begin = GETPOST('begin', 'alpha');
 
 // Security check
 $socid = GETPOST('socid', 'int');
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$action = '';
+	$socid = $user->socid;
+}
 $result = restrictedArea($user, 'societe', $socid, '');
 
 
@@ -57,15 +66,13 @@ $result = restrictedArea($user, 'societe', $socid, '');
 
 llxHeader('', $langs->trans("Contacts"));
 
-if ($type == "c" || $type == "p")
-{
-    $label = $langs->trans("Customers");
-    $urlfiche = "card.php";
+if ($type == "c" || $type == "p") {
+	$label = $langs->trans("Customers");
+	$urlfiche = "card.php";
 }
-if ($type == "f")
-{
-    $label = $langs->trans("Suppliers");
-    $urlfiche = "card.php";
+if ($type == "f") {
+	$label = $langs->trans("Suppliers");
+	$urlfiche = "card.php";
 }
 
 /*
@@ -75,50 +82,48 @@ if ($type == "f")
 $sql = "SELECT s.rowid, s.nom as name, st.libelle as stcomm";
 $sql .= ", p.rowid as cidp, p.name, p.firstname, p.email, p.phone";
 $sql .= " FROM ".MAIN_DB_PREFIX."c_stcomm as st,";
-if (!$user->rights->societe->client->voir && !$socid) $sql .= " ".MAIN_DB_PREFIX."societe_commerciaux as sc,";
+if (empty($user->rights->societe->client->voir) && !$socid) {
+	$sql .= " ".MAIN_DB_PREFIX."societe_commerciaux as sc,";
+}
 $sql .= " ".MAIN_DB_PREFIX."socpeople as p";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = p.fk_soc";
 $sql .= " WHERE s.fk_stcomm = st.id";
-$sql .= " AND p.entity IN (".getEntity('socpeople').")";
-if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
-if ($type == "c") $sql .= " AND s.client IN (1, 3)";
-if ($type == "p") $sql .= " AND s.client IN (2, 3)";
-if ($type == "f") $sql .= " AND s.fournisseur = 1";
-if ($socid) $sql .= " AND s.rowid = ".$socid;
-
-if (dol_strlen($stcomm))
-{
-    $sql .= " AND s.fk_stcomm=".$db->escape($stcomm);
+$sql .= " AND p.entity IN (".getEntity('contact').")";
+if (empty($user->rights->societe->client->voir) && !$socid) {
+	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
-
-if (!empty($search_lastname))
-{
-    $sql .= " AND p.name LIKE '%".$db->escape($search_lastname)."%'";
+if ($type == "c") {
+	$sql .= " AND s.client IN (1, 3)";
 }
-
-if (!empty($search_firstname))
-{
-    $sql .= " AND p.firstname LIKE '%".$db->escape($search_firstname)."%'";
+if ($type == "p") {
+	$sql .= " AND s.client IN (2, 3)";
 }
-
-if (!empty($search_company))
-{
-    $sql .= " AND s.nom LIKE '%".$db->escape($search_company)."%'";
+if ($type == "f") {
+	$sql .= " AND s.fournisseur = 1";
 }
-
-if (!empty($contactname)) // acces a partir du module de recherche
-{
-    $sql .= " AND (p.name LIKE '%".$db->escape($contactname)."%' OR lower(p.firstname) LIKE '%".$db->escape($contactname)."%') ";
-    $sortfield = "p.name";
-    $sortorder = "ASC";
+if ($socid) {
+	$sql .= " AND s.rowid = ".((int) $socid);
+}
+if (!empty($search_lastname)) {
+	$sql .= " AND p.name LIKE '%".$db->escape($search_lastname)."%'";
+}
+if (!empty($search_firstname)) {
+	$sql .= " AND p.firstname LIKE '%".$db->escape($search_firstname)."%'";
+}
+if (!empty($search_company)) {
+	$sql .= " AND s.nom LIKE '%".$db->escape($search_company)."%'";
+}
+if (!empty($contactname)) { // acces a partir du module de recherche
+	$sql .= " AND (p.name LIKE '%".$db->escape($contactname)."%' OR lower(p.firstname) LIKE '%".$db->escape($contactname)."%') ";
+	$sortfield = "p.name";
+	$sortorder = "ASC";
 }
 
 $sql .= $db->order($sortfield, $sortorder);
 $sql .= $db->plimit($limit + 1, $offset);
 
 $resql = $db->query($sql);
-if ($resql)
-{
+if ($resql) {
 	$num = $db->num_rows($resql);
 
 	$param = "&type=".$type;
@@ -146,17 +151,16 @@ if ($resql)
 	print "</tr>\n";
 
 	$i = 0;
-	while ($i < min($num, $limit))
-	{
+	while ($i < min($num, $limit)) {
 		$obj = $db->fetch_object($resql);
 
 		print '<tr class="oddeven">';
 		print '<td><a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$obj->cidp.'&socid='.$obj->rowid.'">'.img_object($langs->trans("ShowContact"), "contact");
 		print '</a>&nbsp;<a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$obj->cidp.'&socid='.$obj->rowid.'">'.$obj->name.'</a></td>';
-		print "<td>$obj->firstname</TD>";
+		print '<td>'.dol_escape_htmltag($obj->firstname).'</td>';
 
 		print '<td><a href="'.$_SERVER["PHP_SELF"].'?type='.$type.'&socid='.$obj->rowid.'">'.img_object($langs->trans("ShowCompany"), "company").'</a>&nbsp;';
-		print "<a href=\"".$urlfiche."?socid=".$obj->rowid."\">$obj->name</a></td>\n";
+		print '<a href="'.$urlfiche."?socid=".$obj->rowid.'">'.$obj->name."</a></td>\n";
 
 		print '<td>'.dol_print_phone($obj->email, $obj->cidp, $obj->rowid, 'AC_EMAIL').'</td>';
 
@@ -170,10 +174,8 @@ if ($resql)
 	print '</form>';
 
 	$db->free($resql);
-}
-else
-{
-    dol_print_error($db);
+} else {
+	dol_print_error($db);
 }
 
 // End of page

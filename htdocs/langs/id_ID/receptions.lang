@@ -1,5 +1,6 @@
 # Dolibarr language file - Source file is en_US - receptions
-ReceptionsSetup=Pengaturan Penerimaan Produk
+ReceptionDescription=Vendor reception management (Create reception documents)
+ReceptionsSetup=Vendor Reception setup
 RefReception=Ref. penerimaan
 Reception=Penerimaan
 Receptions=Penerimaan
@@ -23,7 +24,9 @@ ReceptionsAndReceivingForSameOrder=Penerimaan dan tanda terima untuk pesanan ini
 ReceptionsToValidate=Penerimaan untuk divalidasi
 StatusReceptionCanceled=Dibatalkan
 StatusReceptionDraft=Konsep
-StatusReceptionValidated=Divalidasi (produk untuk dikirim atau pun sudah dikirim)
+StatusReceptionValidated=Validated (products to receive or already received)
+StatusReceptionValidatedToReceive=Validated (products to receive)
+StatusReceptionValidatedReceived=Validated (products received)
 StatusReceptionProcessed=Diproses
 StatusReceptionDraftShort=Konsep
 StatusReceptionValidatedShort=Divalidasi
@@ -36,7 +39,7 @@ StatsOnReceptionsOnlyValidated=Statistik yang dilakukan pada penerimaan hanya ya
 SendReceptionByEMail=Kirim penerimaan melalui email
 SendReceptionRef=Pengajuan penerimaan %s
 ActionsOnReception=Agenda penerimaan
-ReceptionCreationIsDoneFromOrder=Untuk sementara waktu, pembuatan penerimaan baru dilakukan dari kartu pesanan.
+ReceptionCreationIsDoneFromOrder=For the moment, creation of a new reception is done from the Purchase Order.
 ReceptionLine=Jalur penerimaan
 ProductQtyInReceptionAlreadySent=Kuantitas produk dari pesanan penjualan terbuka sudah dikirim
 ProductQtyInSuppliersReceptionAlreadyRecevied=Kuantitas produk dari pesanan pemasok terbuka sudah diterima
@@ -44,4 +47,8 @@ ValidateOrderFirstBeforeReception=Anda harus terlebih dahulu memvalidasi pesanan
 ReceptionsNumberingModules=Modul penomoran untuk penerimaan
 ReceptionsReceiptModel=Templat dokumen untuk penerimaan
 NoMorePredefinedProductToDispatch=Tidak ada lagi produk yang telah ditentukan untuk dikirim
-
+ReceptionExist=Resepsi ada
+ByingPrice=Bying price
+ReceptionBackToDraftInDolibarr=Reception %s back to draft
+ReceptionClassifyClosedInDolibarr=Reception %s classified Closed
+ReceptionUnClassifyCloseddInDolibarr=Reception %s re-open

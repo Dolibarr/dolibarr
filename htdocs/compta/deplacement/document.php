@@ -39,25 +39,27 @@ $langs->loadLangs(array('other', 'trips', 'companies', 'interventions'));
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
-
-// Security check
-if ($user->socid) $socid = $user->socid;
-$result = restrictedArea($user, 'deplacement', $id, '');
 
 
 // Get parameters
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST('sortfield', 'alpha');
-$sortorder = GETPOST('sortorder', 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+if (empty($page) || $page == -1) {
+	$page = 0;
+}     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (!$sortorder) $sortorder = "ASC";
-if (!$sortfield) $sortfield = "name";
+if (!$sortorder) {
+	$sortorder = "ASC";
+}
+if (!$sortfield) {
+	$sortfield = "name";
+}
 
 
 $object = new Deplacement($db);
@@ -66,12 +68,20 @@ $object->fetch($id, $ref);
 $upload_dir = $conf->deplacement->dir_output.'/'.dol_sanitizeFileName($object->ref);
 $modulepart = 'trip';
 
+// Security check
+if ($user->socid) {
+	$socid = $user->socid;
+}
+$result = restrictedArea($user, 'deplacement', $id, '');
+
+$permissiontoadd = $user->rights->deplacement->creer;	// Used by the include of actions_dellink.inc.php
+
 
 /*
  * Actions
  */
 
-include_once DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
+include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
 
 /*
@@ -83,27 +93,25 @@ $form = new Form($db);
 llxHeader("", "", $langs->trans("TripCard"));
 
 
-if ($object->id)
-{
+if ($object->id) {
 	$object->fetch_thirdparty();
 
 	$head = trip_prepare_head($object);
 
-	dol_fiche_head($head, 'documents', $langs->trans("TripCard"), 0, 'trip');
+	print dol_get_fiche_head($head, 'documents', $langs->trans("TripCard"), 0, 'trip');
 
 
 	// Build file list
 	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
 	$totalsize = 0;
-	foreach ($filearray as $key => $file)
-	{
+	foreach ($filearray as $key => $file) {
 		$totalsize += $file['size'];
 	}
 
 
-    print '<table class="border tableforfield centpercent">';
+	print '<table class="border tableforfield centpercent">';
 
-    $linkback = '<a href="'.DOL_URL_ROOT.'/compta/deplacement/list.php'.(!empty($socid) ? '?socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/deplacement/list.php'.(!empty($socid) ? '?socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
 	// Ref
 	print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td>';
@@ -113,19 +121,17 @@ if ($object->id)
 	// Societe
 	//print "<tr><td>".$langs->trans("Company")."</td><td>".$object->client->getNomUrl(1)."</td></tr>";
 
-    print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
-    print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize, 1, 1).'</td></tr>';
-    print '</table>';
+	print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
+	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize, 1, 1).'</td></tr>';
+	print '</table>';
 
-    print '</div>';
+	print '</div>';
 
-    $modulepart = 'deplacement';
-    $permission = $user->rights->deplacement->creer;
-    $param = '&id='.$object->id;
-    include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
-}
-else
-{
+	$modulepart = 'deplacement';
+	$permissiontoadd = $user->rights->deplacement->creer;
+	$param = '&id='.$object->id;
+	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
+} else {
 	print $langs->trans("ErrorUnknown");
 }
 

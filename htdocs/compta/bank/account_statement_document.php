@@ -8,7 +8,7 @@
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -38,55 +38,101 @@ $langs->loadLangs(array('banks', 'companies', 'other'));
 
 $id = (GETPOST('id', 'int') ? GETPOST('id', 'int') : GETPOST('account', 'int'));
 $ref = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
-$num = (GETPOST('num', 'alpha') ? GETPOST('num', 'alpha') : GETPOST('sectionid', 'alpha'));
-
-$mesg = '';
-if (isset($_SESSION['DolMessage'])) {
-	$mesg = $_SESSION['DolMessage'];
-	unset($_SESSION['DolMessage']);
-}
+$numref = (GETPOST('num', 'alpha') ? GETPOST('num', 'alpha') : GETPOST('sectionid', 'alpha'));
 
 // Security check
 if ($user->socid) {
 	$action = '';
 	$socid = $user->socid;
 }
-if ($user->socid)
+if ($user->socid) {
 	$socid = $user->socid;
+}
 
 // Get parameters
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page == -1) { $page = 0; }
+if (empty($page) || $page == -1) {
+	$page = 0;
+}
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (!$sortorder)
+if (!$sortorder) {
 	$sortorder = "ASC";
-if (!$sortfield)
+}
+if (!$sortfield) {
 	$sortfield = "name";
+}
 
 $object = new Account($db);
-if ($id > 0 || !empty($ref)) $object->fetch($id, $ref);
+if ($id > 0 || !empty($ref)) {
+	$result = $object->fetch($id, $ref);
+	$account = $object->id; // Force the search field on id of account
+}
 
 $result = restrictedArea($user, 'banque', $object->id, 'bank_account', '', '');
+
+// Define number of receipt to show (current, previous or next one ?)
+$found = false;
+if (GETPOST("rel") == 'prev') {
+	// Recherche valeur pour num = numero releve precedent
+	$sql = "SELECT DISTINCT(b.num_releve) as num";
+	$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
+	$sql .= " WHERE b.num_releve < '".$db->escape($numref)."'";
+	$sql .= " AND b.fk_account = ".((int) $id);
+	$sql .= " ORDER BY b.num_releve DESC";
+
+	dol_syslog("htdocs/compta/bank/releve.php", LOG_DEBUG);
+	$resql = $db->query($sql);
+	if ($resql) {
+		$numrows = $db->num_rows($resql);
+		if ($numrows > 0) {
+			$obj = $db->fetch_object($resql);
+			$numref = $obj->num;
+			$found = true;
+		}
+	}
+} elseif (GETPOST("rel") == 'next') {
+	// Recherche valeur pour num = numero releve precedent
+	$sql = "SELECT DISTINCT(b.num_releve) as num";
+	$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
+	$sql .= " WHERE b.num_releve > '".$db->escape($numref)."'";
+	$sql .= " AND b.fk_account = ".((int) $id);
+	$sql .= " ORDER BY b.num_releve ASC";
+
+	dol_syslog("htdocs/compta/bank/releve.php", LOG_DEBUG);
+	$resql = $db->query($sql);
+	if ($resql) {
+		$numrows = $db->num_rows($resql);
+		if ($numrows > 0) {
+			$obj = $db->fetch_object($resql);
+			$numref = $obj->num;
+			$found = true;
+		}
+	}
+} else {
+	// On veut le releve num
+	$found = true;
+}
+
+$permissiontoadd = $user->rights->banque->modifier;	// Used by the include of actions_dellink.inc.php
 
 
 /*
  * Actions
  */
 
-if (!empty($num))
-{
+if (!empty($numref)) {
 	$object->fetch_thirdparty();
-	$upload_dir = $conf->bank->dir_output."/".$id."/statement/".dol_sanitizeFileName($num);
+	$upload_dir = $conf->bank->dir_output."/".$id."/statement/".dol_sanitizeFileName($numref);
 }
-$backtopage = $_SERVER['PHP_SELF']."?account=".$id."&num=".$num;
-include_once DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
+$backtopage = $_SERVER['PHP_SELF']."?account=".urlencode($id)."&num=".urlencode($numref);
+include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
 
 /*
@@ -101,11 +147,11 @@ llxHeader('', $title, $helpurl);
 
 if ($id > 0 || !empty($ref)) {
 	if ($object->fetch($id, $ref)) {
-		$upload_dir = $conf->bank->dir_output."/".$id."/statement/".dol_sanitizeFileName($num);
+		$upload_dir = $conf->bank->dir_output."/".$id."/statement/".dol_sanitizeFileName($numref);
 
 		// Onglets
-		$head = account_statement_prepare_head($object, $num);
-		dol_fiche_head($head, 'document', $langs->trans("AccountStatement"), -1, 'account');
+		$head = account_statement_prepare_head($object, $numref);
+		print dol_get_fiche_head($head, 'document', $langs->trans("AccountStatement"), -1, 'account');
 
 
 		// Build file list
@@ -115,8 +161,15 @@ if ($id > 0 || !empty($ref)) {
 			$totalsize += $file['size'];
 		}
 
-		$title = $langs->trans("AccountStatement").' '.$num.' - '.$langs->trans("BankAccount").' '.$object->getNomUrl(1, 'receipts');
-		print load_fiche_titre($title, '', '');
+		$morehtmlright = '';
+		$morehtmlright .= '<div class="pagination"><ul>';
+		$morehtmlright .= '<li class="pagination"><a class="paginationnext" href="'.$_SERVER["PHP_SELF"].'?rel=prev&amp;num='.$numref.'&amp;ve='.$ve.'&amp;account='.$object->id.'"><i class="fa fa-chevron-left" title="'.dol_escape_htmltag($langs->trans("Previous")).'"></i></a></li>';
+		$morehtmlright .= '<li class="pagination"><span class="active">'.$langs->trans("AccountStatement")." ".$numref.'</span></li>';
+		$morehtmlright .= '<li class="pagination"><a class="paginationnext" href="'.$_SERVER["PHP_SELF"].'?rel=next&amp;num='.$numref.'&amp;ve='.$ve.'&amp;account='.$object->id.'"><i class="fa fa-chevron-right" title="'.dol_escape_htmltag($langs->trans("Next")).'"></i></a></li>';
+		$morehtmlright .= '</ul></div>';
+
+		$title = $langs->trans("AccountStatement").' '.$numref.' - '.$langs->trans("BankAccount").' '.$object->getNomUrl(1, 'receipts');
+		print load_fiche_titre($title, $morehtmlright, '');
 
 		print '<div class="fichecenter">';
 		print '<div class="underbanner clearboth"></div>';
@@ -128,23 +181,21 @@ if ($id > 0 || !empty($ref)) {
 
 		print '</div>';
 
-		dol_fiche_end();
+		print dol_get_fiche_end();
 
 
 		$modulepart = 'bank';
-		$permission = $user->rights->banque->modifier;
+		$permissiontoadd = $user->rights->banque->modifier;
 		$permtoedit = $user->rights->banque->modifier;
-		$param = '&id='.$object->id.'&num='.urlencode($num);
-		$moreparam = '&num='.urlencode($num); ;
-		$relativepathwithnofile = $id."/statement/".dol_sanitizeFileName($num)."/";
-		include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
-	}
-	else {
+		$param = '&id='.$object->id.'&num='.urlencode($numref);
+		$moreparam = '&num='.urlencode($numref);
+		$relativepathwithnofile = $id."/statement/".dol_sanitizeFileName($numref)."/";
+		include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
+	} else {
 		dol_print_error($db);
 	}
-}
-else {
-	Header('Location: index.php');
+} else {
+	header('Location: index.php');
 	exit;
 }
 

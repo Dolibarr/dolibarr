@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2010-2012	Regis Houssin	<regis.houssin@inodbox.com>
-/* Copyright (C) 2017		Charlie Benke	<charlie@patas-monkey.com>
+ * Copyright (C) 2017		Charlie Benke	<charlie@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,13 +17,14 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($conf) || !is_object($conf))
-{
+if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
 	exit;
 }
 
-if (!is_object($form)) $form = new Form($db);
+if (!is_object($form)) {
+	$form = new Form($db);
+}
 
 $qtytoconsumeforline = $this->tpl['qty'] / ( ! empty($this->tpl['efficiency']) ? $this->tpl['efficiency'] : 1 );
 /*if ((empty($this->tpl['qty_frozen']) && $this->tpl['qty_bom'] > 1)) {
@@ -38,12 +39,24 @@ $qtytoconsumeforline = price2num($qtytoconsumeforline, 'MS');
 print '<tr class="oddeven'.(empty($this->tpl['strike']) ? '' : ' strikefordisabled').'">';
 print '<td>'.$this->tpl['label'].'</td>';
 print '<td class="right">'.$this->tpl['qty'].(($this->tpl['efficiency'] > 0 && $this->tpl['efficiency'] < 1) ? ' / '.$form->textwithpicto($this->tpl['efficiency'], $langs->trans("ValueOfMeansLoss")).' = '.$qtytoconsumeforline : '').'</td>';
+print '<td class="center">'.(empty($this->tpl['stock']) ? 0 : price2num($this->tpl['stock'], 'MS'));
+if ($this->tpl['seuil_stock_alerte'] != '' && ($this->tpl['stock'] < $this->tpl['seuil_stock_alerte'])) {
+	print ' '.img_warning($langs->trans("StockLowerThanLimit", $this->tpl['seuil_stock_alerte']));
+}
+print '</td>';
+print '<td class="center">'.((empty($this->tpl['virtual_stock']) ? 0 : price2num($this->tpl['virtual_stock'], 'MS')));
+if ($this->tpl['seuil_stock_alerte'] != '' && ($this->tpl['virtual_stock'] < $this->tpl['seuil_stock_alerte'])) {
+	print ' '.img_warning($langs->trans("StockLowerThanLimit", $this->tpl['seuil_stock_alerte']));
+}
+print '</td>';
 print '<td class="center">'.($this->tpl['qty_frozen'] ? yn($this->tpl['qty_frozen']) : '').'</td>';
 print '<td class="center">'.($this->tpl['disable_stock_change'] ? yn($this->tpl['disable_stock_change']) : '').'</td>';
 //print '<td class="right">'.$this->tpl['efficiency'].'</td>';
 
 $selected = 1;
-if (!empty($selectedLines) && !in_array($this->tpl['id'], $selectedLines)) $selected = 0;
+if (!empty($selectedLines) && !in_array($this->tpl['id'], $selectedLines)) {
+	$selected = 0;
+}
 print '<td class="center">';
 //print '<input id="cb'.$this->tpl['id'].'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$this->tpl['id'].'"'.($selected?' checked="checked"':'').'>';
 print '</td>';

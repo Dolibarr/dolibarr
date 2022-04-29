@@ -20,7 +20,7 @@
 
 CREATE TABLE llx_product_batch (
   rowid integer AUTO_INCREMENT PRIMARY KEY,
-  tms timestamp,
+  tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_product_stock integer NOT NULL,
   eatby datetime DEFAULT NULL,			-- deprecated. should not be used here but should be stored into a table llx_product_lot
   sellby datetime DEFAULT NULL,			-- deprecated. should not be used here but should be stored into a table llx_product_lot

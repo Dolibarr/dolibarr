@@ -1,20 +1,26 @@
 # Dolibarr language file - Source file is en_US - workflow
-WorkflowSetup=Workflow module setup
-WorkflowDesc=This module is designed to modify the behaviour of automatic actions into application. By default, workflow is open (you can do things in the order you want). You can activate the automatic actions you are interested in.
-ThereIsNoWorkflowToModify=There is no workflow modifications available with the activated modules.
+WorkflowSetup=ຕັ້ງຄ່າໂມດູນຂັ້ນຕອນການເຮັດວຽກ
+WorkflowDesc=ໂມດູນນີ້ໃຫ້ການກະ ທຳ ອັດຕະໂນມັດບາງອັນ. ໂດຍຄ່າເລີ່ມຕົ້ນ, ຂະບວນການເຮັດວຽກແມ່ນເປີດຢູ່ (ເຈົ້າສາມາດເຮັດສິ່ງຕ່າງ the ຕາມ ລຳ ດັບທີ່ເຈົ້າຕ້ອງການ) ແຕ່ຢູ່ທີ່ນີ້ເຈົ້າສາມາດເປີດໃຊ້ການກະ ທຳ ອັດຕະໂນມັດບາງອັນ.
+ThereIsNoWorkflowToModify=ບໍ່ມີການແກ້ໄຂຂັ້ນຕອນການເຮັດວຽກທີ່ສາມາດໃຊ້ໄດ້ກັບໂມດູນທີ່ເປີດໃຊ້ງານ.
 # Autocreate
-descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Automatically create a customer order after a commercial proposal is signed (new order will have same amount than proposal)
-descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Automatically create a customer invoice after a commercial proposal is signed (new invoice will have same amount than proposal)
-descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Automatically create a customer invoice after a contract is validated
-descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Automatically create a customer invoice after a customer order is closed (new invoice will have same amount than order)
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=ສ້າງຄໍາສັ່ງຂາຍອັດຕະໂນມັດຫຼັງຈາກມີການເຊັນບົດສະ ເໜີ ທາງການຄ້າ (ຄໍາສັ່ງໃwill່ຈະມີຈໍານວນເທົ່າກັນກັບຂໍ້ສະ ເໜີ)
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=ສ້າງໃບແຈ້ງ ໜີ້ ລູກຄ້າໂດຍອັດຕະໂນມັດຫຼັງຈາກມີການເຊັນບົດສະ ເໜີ ທາງການຄ້າ (ໃບຮຽກເກັບເງິນໃwill່ຈະມີຈໍານວນເທົ່າກັນກັບຂໍ້ສະ ເໜີ)
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=ສ້າງໃບແຈ້ງ ໜີ້ ລູກຄ້າໂດຍອັດຕະໂນມັດຫຼັງຈາກສັນຍາໄດ້ຮັບການກວດສອບ
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=ສ້າງໃບແຈ້ງ ໜີ້ ລູກຄ້າໂດຍອັດຕະໂນມັດຫຼັງຈາກປິດການສັ່ງຊື້ (ໃບຮຽກເກັບເງິນໃwill່ຈະມີຈໍານວນເທົ່າກັບຄໍາສັ່ງ)
 # Autoclassify customer proposal or order
-descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classify linked source proposal(s) to billed when customer order is set to billed (and if amount of the order is same than total amount of signed linked proposals)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Classify linked source proposal(s) to billed when customer invoice is validated (and if amount of the invoice is same than total amount of signed linked proposals)
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is validated (and if amount of the invoice is same than total amount of linked orders)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is set to paid (and if amount of the invoice is same than total amount of linked orders)
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classify linked source customer order to shipped when a shipment is validated (and if quantity shipped by all shipments is the same as in the order to update)
-# Autoclassify supplier order
-descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Classify linked source vendor proposal(s) to billed when vendor invoice is validated (and if amount of the invoice is same than total amount of linked proposals)
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Classify linked source purchase order(s) to billed when vendor invoice is validated (and if amount of the invoice is same than total amount of linked orders)
-AutomaticCreation=Automatic creation
-AutomaticClassification=Automatic classification
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=ຈັດປະເພດຂໍ້ສະ ເໜີ ແຫຼ່ງທີ່ເຊື່ອມໂຍງເປັນໃບບິນເມື່ອຄໍາສັ່ງການຂາຍຖືກຕັ້ງເປັນໃບບິນ (ແລະຖ້າຈໍານວນຄໍາສັ່ງແມ່ນຄືກັນກັບຈໍານວນທັງofົດຂອງການສະ ເໜີ ທີ່ເຊື່ອມໂຍງທີ່ເຊັນແລ້ວ)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=ຈັດປະເພດຂໍ້ສະ ເໜີ ແຫຼ່ງທີ່ເຊື່ອມຕໍ່ເປັນໃບບິນທີ່ໄດ້ຮັບການກວດສອບໃບແຈ້ງ ໜີ້ ຂອງລູກຄ້າ (ແລະຖ້າຈໍານວນໃບຮຽກເກັບເງິນຄືກັນກັບຈໍານວນທັງofົດຂອງຂໍ້ສະ ເໜີ ທີ່ເຊື່ອມໂຍງທີ່ເຊັນແລ້ວ)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=ຈັດປະເພດຄໍາສັ່ງຂາຍແຫຼ່ງທີ່ເຊື່ອມຕໍ່ເປັນໃບບິນທີ່ໄດ້ຮັບການກວດສອບໃບແຈ້ງເງິນຂອງລູກຄ້າ (ແລະຖ້າຈໍານວນໃບຮຽກເກັບເງິນຄືກັນກັບຈໍານວນທັງofົດຂອງຄໍາສັ່ງເຊື່ອມໂຍງ)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=ຈັດປະເພດຄໍາສັ່ງຂາຍແຫຼ່ງທີ່ເຊື່ອມຕໍ່ເປັນການເກັບເງິນເມື່ອໃບເກັບເງິນຂອງລູກຄ້າຖືກກໍານົດໃຫ້ຊໍາລະ (ແລະຖ້າຈໍານວນຂອງໃບຮຽກເກັບເງິນຄືກັນກັບຈໍານວນທັງofົດຂອງຄໍາສັ່ງເຊື່ອມໂຍງ)
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=ຈັດປະເພດລໍາດັບການຂາຍແຫຼ່ງທີ່ເຊື່ອມໂຍງເປັນການຈັດສົ່ງເມື່ອການກວດສອບການຂົນສົ່ງຖືກຕ້ອງ (ແລະຖ້າປະລິມານທີ່ການຂົນສົ່ງທັງshippedົດຖືກຈັດສົ່ງແມ່ນຄືກັນກັບໃນຄໍາສັ່ງອັບເດດ).
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=ຈັດປະເພດລໍາດັບການຂາຍແຫຼ່ງທີ່ເຊື່ອມຕໍ່ເປັນການຈັດສົ່ງເມື່ອປິດການຂົນສົ່ງ (ແລະຖ້າປະລິມານການຂົນສົ່ງທັງshippedົດທີ່ສົ່ງອອກແມ່ນຄືກັນກັບໃນຄໍາສັ່ງທີ່ຈະອັບເດດ).
+# Autoclassify purchase order
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=ຈັດປະເພດຂໍ້ສະ ເໜີ ຂອງຜູ້ຂາຍແຫຼ່ງເຊື່ອມໂຍງເປັນໃບບິນເມື່ອໃບແຈ້ງ ໜີ້ ຜູ້ຂາຍຖືກກວດສອບ (ແລະຖ້າຈໍານວນໃບຮຽກເກັບເງິນຄືກັນກັບຈໍານວນທັງofົດຂອງການສະ ເໜີ ທີ່ເຊື່ອມໂຍງ)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=ຈັດປະເພດຄໍາສັ່ງຊື້ແຫຼ່ງທີ່ເຊື່ອມຕໍ່ເປັນໃບບິນທີ່ໄດ້ຮັບການກວດສອບໃບແຈ້ງ ໜີ້ ຜູ້ຂາຍ (ແລະຖ້າຈໍານວນໃບຮຽກເກັບເງິນຄືກັນກັບຈໍານວນທັງofົດຂອງຄໍາສັ່ງເຊື່ອມໂຍງ)
+descWORKFLOW_BILL_ON_RECEPTION=ຈັດປະເພດການຮັບເພື່ອ "ຮຽກເກັບເງິນ" ເມື່ອຄໍາສັ່ງຂອງຜູ້ສະ ໜອງ ທີ່ເຊື່ອມໂຍງໄດ້ຖືກກວດສອບ
+# Autoclose intervention
+descWORKFLOW_TICKET_CLOSE_INTERVENTION=ປິດການແຊກແຊງທັງlinkedົດທີ່ເຊື່ອມໂຍງກັບປີ້ເມື່ອປີ້ປິດ
+AutomaticCreation=ການສ້າງອັດຕະໂນມັດ
+AutomaticClassification=ການຈັດປະເພດອັດຕະໂນມັດ
+# Autoclassify shipment
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=ຈັດປະເພດການຈັດສົ່ງແຫຼ່ງທີ່ເຊື່ອມຕໍ່ເປັນປິດເມື່ອໃບເກັບເງິນຂອງລູກຄ້າໄດ້ຮັບການກວດສອບ

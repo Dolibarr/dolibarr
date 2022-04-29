@@ -23,7 +23,7 @@ ALTER TABLE llx_menu MODIFY COLUMN leftmenu varchar(100);
 create table llx_adherent_type_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-  tms                       timestamp,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_object                 integer NOT NULL,
   import_key                varchar(14)                          		-- import key
 ) ENGINE=innodb;
@@ -115,7 +115,7 @@ ALTER TABLE llx_c_shipment_mode ADD COLUMN tracking VARCHAR(255) NOT NULL DEFAUL
 
 -- VMYSQL4.3 ALTER TABLE llx_c_shipment_mode CHANGE COLUMN rowid rowid INTEGER NOT NULL AUTO_INCREMENT;
 -- VPGSQL8.2 DROP table llx_c_shipment_mode;
--- VPGSQL8.2 CREATE TABLE llx_c_shipment_mode (rowid SERIAL PRIMARY KEY, tms timestamp, code varchar(30) NOT NULL, libelle varchar(50) NOT NULL, description text, tracking varchar(255) NOT NULL, active integer DEFAULT 0, module varchar(32) NULL);
+-- VPGSQL8.2 CREATE TABLE llx_c_shipment_mode (rowid SERIAL PRIMARY KEY, tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, code varchar(30) NOT NULL, libelle varchar(50) NOT NULL, description text, tracking varchar(255) NOT NULL, active integer DEFAULT 0, module varchar(32) NULL);
 -- VPGSQL8.2 INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,tracking,active) VALUES (1,'CATCH','Catch','Catch by client','',1);
 -- VPGSQL8.2 INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,tracking,active) VALUES (2,'TRANS','Transporter','Generic transporter','',1);
 -- VPGSQL8.2 INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,tracking,active) VALUES (3,'COLSUI','Colissimo Suivi','Colissimo Suivi','',0);
@@ -136,7 +136,7 @@ ALTER TABLE llx_stock_mouvement MODIFY COLUMN value real;
 create table llx_propal_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-  tms                       timestamp,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_object                 integer NOT NULL,
   import_key                varchar(14)                          		-- import key
 ) ENGINE=innodb;
@@ -145,7 +145,7 @@ ALTER TABLE llx_propal_extrafields ADD INDEX idx_propal_extrafields (fk_object);
 create table llx_facture_extrafields
 (
   rowid integer AUTO_INCREMENT PRIMARY KEY,
-  tms timestamp,
+  tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_object integer NOT NULL,
   import_key varchar(14) -- import key
 ) ENGINE=innodb;
@@ -205,7 +205,7 @@ ALTER TABLE llx_facturedet DROP COLUMN fk_export_compta;
 CREATE TABLE llx_cronjob 
 (
 	rowid 			integer AUTO_INCREMENT PRIMARY KEY,
-	tms 			timestamp,
+	tms 			timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	datec 			datetime,
 	jobtype			varchar(10) NOT NULL,
   	label 			text NOT NULL,
@@ -249,7 +249,7 @@ DROP TABLE llx_printer_ipp;
 CREATE TABLE llx_printer_ipp 
 (
 	rowid integer AUTO_INCREMENT PRIMARY KEY,
-	tms 	timestamp,
+	tms 	timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	datec 	datetime,
 	printer_name text NOT NULL, 
 	printer_location text NOT NULL,
@@ -265,7 +265,7 @@ ALTER TABLE llx_adherent MODIFY COLUMN ref_ext varchar(128);
 create table llx_commande_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-  tms                       timestamp,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_object                 integer NOT NULL,
   import_key                varchar(14)
 ) ENGINE=innodb;
@@ -299,7 +299,7 @@ ALTER TABLE llx_socpeople CHANGE COLUMN note note_private text;
 create table llx_projet_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-  tms                       timestamp,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_object                 integer NOT NULL,
   import_key                varchar(14)                          		-- import key
 ) ENGINE=innodb;
@@ -308,7 +308,7 @@ ALTER TABLE llx_projet_extrafields ADD INDEX idx_projet_extrafields (fk_object);
 create table llx_projet_task_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-  tms                       timestamp,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_object                 integer NOT NULL,
   import_key                varchar(14)                          		-- import key
 ) ENGINE=innodb;
@@ -319,7 +319,7 @@ CREATE TABLE llx_opensurvey_comments (
     id_comment INTEGER unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
     id_sondage CHAR(16) NOT NULL,
     comment text NOT NULL,
-    tms timestamp,
+    tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     usercomment text
 ) ENGINE=InnoDB;
 
@@ -336,7 +336,7 @@ CREATE TABLE llx_opensurvey_sondage (
        survey_link_visible integer DEFAULT 1,
 	   canedit integer DEFAULT 0,
        origin varchar(64),
-       tms timestamp,
+       tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	   sujet TEXT
 ) ENGINE=InnoDB;
 CREATE TABLE llx_opensurvey_user_studs (
@@ -344,7 +344,7 @@ CREATE TABLE llx_opensurvey_user_studs (
     nom VARCHAR(64) NOT NULL,
     id_sondage VARCHAR(16) NOT NULL,
     reponses VARCHAR(100) NOT NULL,
-    tms timestamp
+    tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 
 ALTER TABLE llx_opensurvey_sondage ADD COLUMN id_sondage_admin CHAR(24);
@@ -367,7 +367,7 @@ UPDATE llx_extrafields SET elementtype='societe' WHERE elementtype='company';
 create table llx_commande_fournisseur_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-  tms                       timestamp,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_object                 integer NOT NULL,
   import_key                varchar(14)
 ) ENGINE=innodb;
@@ -376,7 +376,7 @@ ALTER TABLE llx_commande_fournisseur_extrafields ADD INDEX idx_commande_fourniss
 create table llx_facture_fourn_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-  tms                       timestamp,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_object                 integer NOT NULL,
   import_key                varchar(14)                          		-- import key
 ) ENGINE=innodb;

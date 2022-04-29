@@ -27,8 +27,9 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/categories.lib.php';
 
 
-if (!$user->admin)
-accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array("categories", "admin"));
@@ -40,32 +41,24 @@ $action = GETPOST('action', 'aZ09');
  */
 
 $reg = array();
-if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg))
-{
-    $code = $reg[1];
-    if (dolibarr_set_const($db, $code, 1, 'chaine', 0, '', $conf->entity) > 0)
-    {
-        header("Location: ".$_SERVER["PHP_SELF"]);
-        exit;
-    }
-    else
-    {
-        setEventMessages($db->lasterror(), null, 'errors');
-    }
+if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg)) {
+	$code = $reg[1];
+	if (dolibarr_set_const($db, $code, 1, 'chaine', 0, '', $conf->entity) > 0) {
+		header("Location: ".$_SERVER["PHP_SELF"]);
+		exit;
+	} else {
+		setEventMessages($db->lasterror(), null, 'errors');
+	}
 }
 
-if (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg))
-{
-    $code = $reg[1];
-    if (dolibarr_del_const($db, $code, $conf->entity) > 0)
-    {
-        header("Location: ".$_SERVER["PHP_SELF"]);
-        exit;
-    }
-    else
-    {
-         setEventMessages($db->lasterror(), null, 'errors');
-    }
+if (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg)) {
+	$code = $reg[1];
+	if (dolibarr_del_const($db, $code, $conf->entity) > 0) {
+		header("Location: ".$_SERVER["PHP_SELF"]);
+		exit;
+	} else {
+		 setEventMessages($db->lasterror(), null, 'errors');
+	}
 }
 
 
@@ -85,7 +78,7 @@ print load_fiche_titre($langs->trans("CategoriesSetup"), $linkback, 'title_setup
 
 $head = categoriesadmin_prepare_head();
 
-dol_fiche_head($head, 'setup', $langs->trans("Categories"), -1, 'category');
+print dol_get_fiche_head($head, 'setup', $langs->trans("Categories"), -1, 'category');
 
 
 print '<table class="noborder centpercent">';
@@ -104,19 +97,13 @@ print '<td>'.$langs->trans("CategorieRecursiv").'</td>';
 print '<td align="center" width="20">'.$form->textwithpicto('', $langs->trans("CategorieRecursivHelp"), 1, 'help').'</td>';
 
 print '<td align="center" width="100">';
-if ($conf->use_javascript_ajax)
-{
+if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('CATEGORIE_RECURSIV_ADD');
-}
-else
-{
-	if (empty($conf->global->CATEGORIE_RECURSIV_ADD))
-	{
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_CATEGORIE_RECURSIV_ADD">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
-	}
-	else
-	{
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_CATEGORIE_RECURSIV_ADD">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+} else {
+	if (empty($conf->global->CATEGORIE_RECURSIV_ADD)) {
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_CATEGORIE_RECURSIV_ADD&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+	} else {
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_CATEGORIE_RECURSIV_ADD&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 	}
 }
 print '</td></tr>';

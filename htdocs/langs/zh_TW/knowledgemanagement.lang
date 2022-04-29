@@ -1,0 +1,54 @@
+# Copyright (C) 2021 SuperAdmin
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see .
+
+#
+# Generic
+#
+
+# Module label 'ModuleKnowledgeManagementName'
+ModuleKnowledgeManagementName = 知識管理系統
+# Module description 'ModuleKnowledgeManagementDesc'
+ModuleKnowledgeManagementDesc=管理知識管理 (KM) 或HelpDesk
+
+#
+# Admin page
+#
+KnowledgeManagementSetup = 知識管理系統設定
+Settings = 設定
+KnowledgeManagementSetupPage = 知識管理系統設定頁面
+
+
+#
+# About page
+#
+About = 關於
+KnowledgeManagementAbout = 關於知識管理
+KnowledgeManagementAboutPage = 知識管理的關於頁面
+
+KnowledgeManagementArea = 知識管理
+MenuKnowledgeRecord = 知識庫
+ListKnowledgeRecord = 文章清單
+NewKnowledgeRecord = 新文章
+ValidateReply = 驗證解決方案
+KnowledgeRecords = 文章
+KnowledgeRecord = 物品
+KnowledgeRecordExtraFields = 文章的補充屬性
+GroupOfTicket=服務單群組
+YouCanLinkArticleToATicketCategory=您可以將文章連結至服務單群組（因此在新服務單的有效期間將建議該文章）
+SuggestedForTicketsInGroup=為此群組服務單建議
+
+SetObsolete=Set as obsolete
+ConfirmCloseKM=Do you confirm the closing of this article as obsolete ?
+ConfirmReopenKM=Do you want to restore this article to status "Validated" ?

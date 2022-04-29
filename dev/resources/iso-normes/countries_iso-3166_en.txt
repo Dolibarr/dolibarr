@@ -3,11 +3,12 @@
 # The list is updated whenever a change to the official code list in ISO 3166-1 is effected by the ISO 3166/MA.
 # It lists 240 official short names and code elements. One line of text contains one entry.
 # A country name and its code element are separated by a semicolon (;).
-# http://www.iso.org/iso/fr/iso3166_en_code_lists.txt
+# https://www.iso.org/iso-3166-country-codes.html 
 
-# ISO-3166:         http://en.wikipedia.org/wiki/ISO_3166-1
-# ISO-3166 alpha 2: http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
-# ISO-3166 alpha 3: http://en.wikipedia.org/wiki/ISO_3166-1_alpha-3
+# https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes
+# ISO-3166:         https://en.wikipedia.org/wiki/ISO_3166-1
+# ISO-3166 alpha 2: https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
+# ISO-3166 alpha 3: https://en.wikipedia.org/wiki/ISO_3166-1_alpha-3
 
 AFGHANISTAN;AF
 ÅLAND ISLANDS;AX

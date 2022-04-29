@@ -27,5 +27,7 @@ Recipient=Destinatario
 ErrorStockIsNotEnough=Non ci sono sufficienti scorte
 Shippable=Disponibile per spedizione
 NonShippable=Non disponibile per spedizione
+ShowShippableStatus=Mostra lo stato di spedizione
 ShowReceiving=Mostra ricevuta di consegna
 NonExistentOrder=Ordine inesistente
+StockQuantitiesAlreadyAllocatedOnPreviousLines = Quantità di stock già allocate su righe precedenti

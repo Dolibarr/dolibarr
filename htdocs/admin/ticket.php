@@ -26,6 +26,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
 require_once DOL_DOCUMENT_ROOT."/ticket/class/ticket.class.php";
 require_once DOL_DOCUMENT_ROOT."/core/lib/ticket.lib.php";
+require_once DOL_DOCUMENT_ROOT."/core/class/html.formcategory.class.php";
 
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "ticket"));
@@ -37,16 +38,21 @@ if (!$user->admin) {
 
 // Parameters
 $value = GETPOST('value', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
+$modulepart = GETPOST('modulepart', 'aZ09');	// Used by actions_setmoduleoptions.inc.php
+
 $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scandir', 'alpha');
 $type = 'ticket';
 
 $error = 0;
 
+
 /*
  * Actions
  */
+
+include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 if ($action == 'updateMask') {
 	$maskconstticket = GETPOST('maskconstticket', 'alpha');
@@ -56,17 +62,37 @@ if ($action == 'updateMask') {
 		$res = dolibarr_set_const($db, $maskconstticket, $maskticket, 'chaine', 0, '', $conf->entity);
 	}
 
-	if (!$res > 0) {
+	if (!($res > 0)) {
 		$error++;
 	}
 
-	if (!$error)
-	{
+	if (!$error) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	}
-	else
-	{
+	} else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
+} elseif ($action == 'set') {
+	// Activate a model
+	$ret = addDocumentModel($value, $type, $label, $scandir);
+} elseif ($action == 'del') {
+	$ret = delDocumentModel($value, $type);
+	if ($ret > 0) {
+		if ($conf->global->TICKET_ADDON_PDF == "$value") {
+			dolibarr_del_const($db, 'TICKET_ADDON_PDF', $conf->entity);
+		}
+	}
+} elseif ($action == 'setdoc') {
+	// Set default model
+	if (dolibarr_set_const($db, "TICKET_ADDON_PDF", $value, 'chaine', 0, '', $conf->entity)) {
+		// The constant that was read before the new set
+		// We therefore requires a variable to have a coherent view
+		$conf->global->TICKET_ADDON_PDF = $value;
+	}
+
+	// On active le modele
+	$ret = delDocumentModel($value, $type);
+	if ($ret > 0) {
+		$ret = addDocumentModel($value, $type, $label, $scandir);
 	}
 } elseif ($action == 'setmod') {
 	// TODO Verifier si module numerotation choisi peut etre active
@@ -82,7 +108,7 @@ if ($action == 'updateMask') {
 	} else {
 		$res = dolibarr_set_const($db, 'TICKET_NOTIFICATION_EMAIL_FROM', '', 'chaine', 0, '', $conf->entity);
 	}
-	if (!$res > 0) {
+	if (!($res > 0)) {
 		$error++;
 	}
 
@@ -93,7 +119,7 @@ if ($action == 'updateMask') {
 	} else {
 		$res = dolibarr_set_const($db, 'TICKET_NOTIFICATION_EMAIL_TO', '', 'chaine', 0, '', $conf->entity);
 	}
-	if (!$res > 0) {
+	if (!($res > 0)) {
 		$error++;
 	}
 
@@ -103,7 +129,7 @@ if ($action == 'updateMask') {
 	} else {
 		$res = dolibarr_set_const($db, 'TICKET_MESSAGE_MAIL_INTRO', $langs->trans('TicketMessageMailIntroText'), 'chaine', 0, '', $conf->entity);
 	}
-	if (!$res > 0) {
+	if (!($res > 0)) {
 		$error++;
 	}
 
@@ -113,7 +139,29 @@ if ($action == 'updateMask') {
 	} else {
 		$res = dolibarr_set_const($db, 'TICKET_MESSAGE_MAIL_SIGNATURE', $langs->trans('TicketMessageMailSignatureText'), 'chaine', 0, '', $conf->entity);
 	}
-	if (!$res > 0) {
+	if (!($res > 0)) {
+		$error++;
+	}
+}
+
+if ($action == 'setvarworkflow') {
+	$param_auto_read = GETPOST('TICKET_AUTO_READ_WHEN_CREATED_FROM_BACKEND', 'alpha');
+	$res = dolibarr_set_const($db, 'TICKET_AUTO_READ_WHEN_CREATED_FROM_BACKEND', $param_auto_read, 'chaine', 0, '', $conf->entity);
+	if (!($res > 0)) {
+		$error++;
+	}
+
+	$param_auto_assign = GETPOST('TICKET_AUTO_ASSIGN_USER_CREATE', 'alpha');
+	$res = dolibarr_set_const($db, 'TICKET_AUTO_ASSIGN_USER_CREATE', $param_auto_assign, 'chaine', 0, '', $conf->entity);
+	if (!($res > 0)) {
+		$error++;
+	}
+}
+
+if ($action == 'setvarworkflowother' || $action == 'setvarworkflow') {
+	$param_ticket_product_category = GETPOST('product_category_id', 'int');
+	$res = dolibarr_set_const($db, 'TICKET_PRODUCT_CATEGORY', $param_ticket_product_category, 'chaine', 0, '', $conf->entity);
+	if (!($res > 0)) {
 		$error++;
 	}
 }
@@ -121,43 +169,53 @@ if ($action == 'updateMask') {
 if ($action == 'setvarother') {
 	$param_must_exists = GETPOST('TICKET_EMAIL_MUST_EXISTS', 'alpha');
 	$res = dolibarr_set_const($db, 'TICKET_EMAIL_MUST_EXISTS', $param_must_exists, 'chaine', 0, '', $conf->entity);
-	if (!$res > 0) {
+	if (!($res > 0)) {
 		$error++;
 	}
 
 	$param_disable_email = GETPOST('TICKET_DISABLE_NOTIFICATION_MAILS', 'alpha');
 	$res = dolibarr_set_const($db, 'TICKET_DISABLE_NOTIFICATION_MAILS', $param_disable_email, 'chaine', 0, '', $conf->entity);
-	if (!$res > 0) {
+	if (!($res > 0)) {
 		$error++;
 	}
 
-	if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
-	{
+	if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
 		$param_show_module_logo = GETPOST('TICKET_SHOW_MODULE_LOGO', 'alpha');
 		$res = dolibarr_set_const($db, 'TICKET_SHOW_MODULE_LOGO', $param_show_module_logo, 'chaine', 0, '', $conf->entity);
-		if (!$res > 0) {
+		if (!($res > 0)) {
 			$error++;
 		}
 	}
 
-	if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
-	{
+	if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
 		$param_notification_also_main_addressemail = GETPOST('TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS', 'alpha');
 		$res = dolibarr_set_const($db, 'TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS', $param_notification_also_main_addressemail, 'chaine', 0, '', $conf->entity);
-		if (!$res > 0) {
+		if (!($res > 0)) {
 			$error++;
 		}
 	}
 
 	$param_limit_view = GETPOST('TICKET_LIMIT_VIEW_ASSIGNED_ONLY', 'alpha');
 	$res = dolibarr_set_const($db, 'TICKET_LIMIT_VIEW_ASSIGNED_ONLY', $param_limit_view, 'chaine', 0, '', $conf->entity);
-	if (!$res > 0) {
+	if (!($res > 0)) {
 		$error++;
 	}
 
-	$param_auto_assign = GETPOST('TICKET_AUTO_ASSIGN_USER_CREATE', 'alpha');
-	$res = dolibarr_set_const($db, 'TICKET_AUTO_ASSIGN_USER_CREATE', $param_auto_assign, 'chaine', 0, '', $conf->entity);
-	if (!$res > 0) {
+	$param_delay_first_response = GETPOST('delay_first_response', 'int');
+	$res = dolibarr_set_const($db, 'TICKET_DELAY_BEFORE_FIRST_RESPONSE', $param_delay_first_response, 'chaine', 0, '', $conf->entity);
+	if (!($res > 0)) {
+		$error++;
+	}
+
+	$param_delay_between_responses = GETPOST('delay_between_responses', 'int');
+	$res = dolibarr_set_const($db, 'TICKET_DELAY_SINCE_LAST_RESPONSE', $param_delay_between_responses, 'chaine', 0, '', $conf->entity);
+	if (!($res > 0)) {
+		$error++;
+	}
+
+	$param_auto_notify_close = GETPOST('TICKET_NOTIFY_AT_CLOSING', 'alpha');
+	$res = dolibarr_set_const($db, 'TICKET_NOTIFY_AT_CLOSING', $param_auto_notify_close, 'chaine', 0, '', $conf->entity);
+	if (!($res > 0)) {
 		$error++;
 	}
 }
@@ -170,7 +228,7 @@ if ($action == 'setvarother') {
 
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
-$form = new Form($db);
+$formcategory = new FormCategory($db);
 
 $help_url = "FR:Module_Ticket";
 $page_name = "TicketSetup";
@@ -184,15 +242,15 @@ print load_fiche_titre($langs->trans($page_name), $linkback, 'title_setup');
 // Configuration header
 $head = ticketAdminPrepareHead();
 
-dol_fiche_head($head, 'settings', $langs->trans("Module56000Name"), -1, "ticket");
+print dol_get_fiche_head($head, 'settings', $langs->trans("Module56000Name"), -1, "ticket");
 
 print '<span class="opacitymedium">'.$langs->trans("TicketSetupDictionaries").'</span> : <a href="'.DOL_URL_ROOT.'/admin/dict.php">'.$langs->trans("ClickHereToGoTo", $langs->transnoentitiesnoconv("DictionarySetup")).'</a><br>';
 
-dol_fiche_end();
+print dol_get_fiche_end();
 
 
 /*
- * Projects Numbering model
+ * Tickets numbering model
  */
 
 print load_fiche_titre($langs->trans("TicketNumberingModules"), '', '');
@@ -242,9 +300,10 @@ foreach ($dirmodels as $reldir) {
 						print '<td class="nowrap">';
 						$tmp = $module->getExample();
 						if (preg_match('/^Error/', $tmp)) {
+							$langs->load("errors");
 							print '<div class="error">'.$langs->trans($tmp).'</div>';
 						} elseif ($tmp == 'NotConfigured') {
-							print $langs->trans($tmp);
+							print '<span class="opacitymedium">'.$langs->trans($tmp).'</span>';
 						} else {
 							print $tmp;
 						}
@@ -255,7 +314,7 @@ foreach ($dirmodels as $reldir) {
 						if ($conf->global->TICKET_ADDON == 'mod_'.$classname) {
 							print img_picto($langs->trans("Activated"), 'switch_on');
 						} else {
-							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value=mod_'.$classname.'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;token='.newToken().'&amp;value=mod_'.$classname.'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 						}
 						print '</td>';
 
@@ -276,7 +335,7 @@ foreach ($dirmodels as $reldir) {
 						}
 
 						print '<td class="center">';
-						print $form->textwithpicto('', $htmltooltip, 1, 0);
+						print $formcategory->textwithpicto('', $htmltooltip, 1, 0);
 						print '</td>';
 
 						print '</tr>';
@@ -292,10 +351,157 @@ print '</table>';
 print '</div>';
 print '<br>';
 
-if (!$conf->use_javascript_ajax) {
+
+
+/*
+ * Document templates generators
+ */
+
+print load_fiche_titre($langs->trans("TicketsModelModule"), '', '');
+
+// Load array def with activated templates
+$def = array();
+$sql = "SELECT nom";
+$sql .= " FROM ".MAIN_DB_PREFIX."document_model";
+$sql .= " WHERE type = '".$db->escape($type)."'";
+$sql .= " AND entity = ".$conf->entity;
+$resql = $db->query($sql);
+if ($resql) {
+	$i = 0;
+	$num_rows = $db->num_rows($resql);
+	while ($i < $num_rows) {
+		$array = $db->fetch_array($resql);
+		array_push($def, $array[0]);
+		$i++;
+	}
+} else {
+	dol_print_error($db);
+}
+
+
+print '<div class="div-table-responsive-no-min">';
+print "<table class=\"noborder\" width=\"100%\">\n";
+print "<tr class=\"liste_titre\">\n";
+print '<td>'.$langs->trans("Name").'</td>';
+print '<td>'.$langs->trans("Description").'</td>';
+print '<td class="center" width="60">'.$langs->trans("Status")."</td>\n";
+print '<td class="center" width="60">'.$langs->trans("Default")."</td>\n";
+print '<td class="center" width="38">'.$langs->trans("ShortInfo").'</td>';
+print '<td class="center" width="38">'.$langs->trans("Preview").'</td>';
+print "</tr>\n";
+
+clearstatcache();
+
+foreach ($dirmodels as $reldir) {
+	foreach (array('', '/doc') as $valdir) {
+		$realpath = $reldir."core/modules/ticket".$valdir;
+		$dir = dol_buildpath($realpath);
+
+		if (is_dir($dir)) {
+			$handle = opendir($dir);
+			if (is_resource($handle)) {
+				while (($file = readdir($handle)) !== false) {
+					$filelist[] = $file;
+				}
+				closedir($handle);
+				arsort($filelist);
+
+				foreach ($filelist as $file) {
+					if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file)) {
+						if (file_exists($dir.'/'.$file)) {
+							$name = substr($file, 4, dol_strlen($file) - 16);
+							$classname = substr($file, 0, dol_strlen($file) - 12);
+
+							require_once $dir.'/'.$file;
+							$module = new $classname($db);
+
+							$modulequalified = 1;
+							if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+								$modulequalified = 0;
+							}
+							if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+								$modulequalified = 0;
+							}
+
+							if ($modulequalified) {
+								print '<tr class="oddeven"><td width="100">';
+								print (empty($module->name) ? $name : $module->name);
+								print "</td><td>\n";
+								if (method_exists($module, 'info')) {
+									print $module->info($langs);
+								} else {
+									print $module->description;
+								}
+								print '</td>';
+
+								// Active
+								if (in_array($name, $def)) {
+									print '<td class="center">'."\n";
+									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=del&token='.newToken().'&value='.urlencode($name).'">';
+									print img_picto($langs->trans("Enabled"), 'switch_on');
+									print '</a>';
+									print '</td>';
+								} else {
+									print '<td class="center">'."\n";
+									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=set&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+									print "</td>";
+								}
+
+								// Default
+								print '<td class="center">';
+								if ($conf->global->TICKET_ADDON_PDF == $name) {
+									print img_picto($langs->trans("Default"), 'on');
+								} else {
+									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;token='.newToken().'&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+								}
+								print '</td>';
+
+								// Info
+								$htmltooltip = ''.$langs->trans("Name").': '.$module->name;
+								$htmltooltip .= '<br>'.$langs->trans("Type").': '.($module->type ? $module->type : $langs->trans("Unknown"));
+								if ($module->type == 'pdf') {
+									$htmltooltip .= '<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
+								}
+								$htmltooltip .= '<br>'.$langs->trans("Path").': '.preg_replace('/^\//', '', $realpath).'/'.$file;
+
+								$htmltooltip .= '<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
+								$htmltooltip .= '<br>'.$langs->trans("Logo").': '.yn($module->option_logo, 1, 1);
+								$htmltooltip .= '<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang, 1, 1);
+								//$htmltooltip .= '<br>'.$langs->trans("Discounts").': '.yn($module->option_escompte,1,1);
+								//$htmltooltip .= '<br>'.$langs->trans("CreditNote").': '.yn($module->option_credit_note,1,1);
+								//$htmltooltip .= '<br>'.$langs->trans("WatermarkOnDraftOrders").': '.yn($module->option_draft_watermark, 1, 1);
+
+
+								print '<td class="center">';
+								print $formcategory->textwithpicto('', $htmltooltip, 1, 0);
+								print '</td>';
+
+								// Preview
+								print '<td class="center">';
+								if ($module->type == 'pdf') {
+									print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
+								} else {
+									print img_object($langs->trans("PreviewNotAvailable"), 'generic');
+								}
+								print '</td>';
+
+								print "</tr>\n";
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+print '</table>';
+print '</div><br>';
+
+if (empty($conf->use_javascript_ajax)) {
 	print '<form method="post" action="'.$_SERVER['PHP_SELF'].'" enctype="multipart/form-data" >';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
-	print '<input type="hidden" name="action" value="setvarother">';
+	print '<input type="hidden" name="action" value="setvarworkflow">';
 }
 
 print load_fiche_titre($langs->trans("Other"), '', '');
@@ -307,26 +513,105 @@ print '<td></td>';
 print '<td></td>';
 print "</tr>\n";
 
+// Auto mark ticket read when created from backoffice
+print '<tr class="oddeven"><td>'.$langs->trans("TicketsAutoReadTicket").'</td>';
+print '<td class="left">';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('TICKET_AUTO_READ_WHEN_CREATED_FROM_BACKEND');
+} else {
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	print $formcategory->selectarray("TICKET_AUTO_READ_WHEN_CREATED_FROM_BACKEND", $arrval, $conf->global->TICKET_AUTO_READ_WHEN_CREATED_FROM_BACKEND);
+}
+print '</td>';
+print '<td class="center">';
+print $formcategory->textwithpicto('', $langs->trans("TicketsAutoReadTicketHelp"), 1, 'help');
+print '</td>';
+print '</tr>';
+
 // Auto assign ticket at user who created it
-print '<tr class="oddeven"><td>'.$langs->trans("TicketsAutoAssignTicket").'</td>';
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("TicketsAutoAssignTicket").'</td>';
 print '<td class="left">';
 if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('TICKET_AUTO_ASSIGN_USER_CREATE');
 } else {
 	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-	print $form->selectarray("TICKET_AUTO_ASSIGN_USER_CREATE", $arrval, $conf->global->TICKET_AUTO_ASSIGN_USER_CREATE);
+	print $formcategory->selectarray("TICKET_AUTO_ASSIGN_USER_CREATE", $arrval, $conf->global->TICKET_AUTO_ASSIGN_USER_CREATE);
 }
 print '</td>';
 print '<td class="center">';
-print $form->textwithpicto('', $langs->trans("TicketsAutoAssignTicketHelp"), 1, 'help');
+print $formcategory->textwithpicto('', $langs->trans("TicketsAutoAssignTicketHelp"), 1, 'help');
+print '</td>';
+print '</tr>';
+
+// Auto notify contacts when closing the ticket
+print '<tr class="oddeven"><td>'.$langs->trans("TicketsAutoNotifyClose").'</td>';
+print '<td class="left">';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('TICKET_NOTIFY_AT_CLOSING');
+} else {
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	print $formcategory->selectarray("TICKET_NOTIFY_AT_CLOSING", $arrval, $conf->global->TICKET_NOTIFY_AT_CLOSING);
+}
+print '</td>';
+print '<td class="center">';
+print $formcategory->textwithpicto('', $langs->trans("TicketsAutoNotifyCloseHelp"), 1, 'help');
+print '</td>';
+print '</tr>';
+
+// Choose which product category is used for tickets
+if ($conf->use_javascript_ajax) {
+	print '<form method="post" action="'.$_SERVER['PHP_SELF'].'" enctype="multipart/form-data" >';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<input type="hidden" name="action" value="setvarworkflowother">';
+}
+
+print '<tr class="oddeven"><td>'.$langs->trans("TicketChooseProductCategory").'</td>';
+print '<td class="left">';
+$formcategory->selectProductCategory($conf->global->TICKET_PRODUCT_CATEGORY, 'product_category_id');
+if ($conf->use_javascript_ajax) {
+	print ajax_combobox('select_'.$htmlname);
+}
+print '</td>';
+print '<td class="center">';
+print $formcategory->textwithpicto('', $langs->trans("TicketChooseProductCategoryHelp"), 1, 'help');
+print '</td>';
+print '</tr>';
+
+// Define wanted maximum time elapsed before answers to tickets
+print '<form method="post" action="'.$_SERVER['PHP_SELF'].'" enctype="multipart/form-data" >';
+print '<input type="hidden" name="action" value="setvarother">';
+
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("TicketsDelayBeforeFirstAnswer")."</td>";
+print '<td class="left">
+	<input type="number" value="'.$conf->global->TICKET_DELAY_BEFORE_FIRST_RESPONSE.'" name="delay_first_response">
+	<input type="submit" class="button small" value="'.$langs->trans("Save").'">
+	</td>';
+print '<td class="center">';
+print $formcategory->textwithpicto('', $langs->trans("TicketsDelayBeforeFirstAnswerHelp"), 1, 'help');
+print '</td>';
+print '</tr>';
+
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("TicketsDelayBetweenAnswers")."</td>";
+print '<td class="left">
+	<input type="number" value="'.$conf->global->TICKET_DELAY_SINCE_LAST_RESPONSE.'" name="delay_between_responses">
+	<input type="submit" class="button small" value="'.$langs->trans("Save").'">
+	</td>';
+print '<td class="center">';
+print $formcategory->textwithpicto('', $langs->trans("TicketsDelayBetweenAnswersHelp"), 1, 'help');
 print '</td>';
 print '</tr>';
 
 print '</table><br>';
 
-if (!$conf->use_javascript_ajax) {
-	print '</form>';
-}
+print '<div class="center">';
+print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
+print '</div>';
+
+print '</form>';
+
 
 // Admin var of module
 print load_fiche_titre($langs->trans("Notification"), '', '');
@@ -354,7 +639,7 @@ print '<tr class="oddeven"><td>'.$langs->trans("TicketEmailNotificationFrom").'<
 print '<td class="left">';
 print '<input type="text" class="minwidth200" name="TICKET_NOTIFICATION_EMAIL_FROM" value="'.$conf->global->TICKET_NOTIFICATION_EMAIL_FROM.'"></td>';
 print '<td class="center">';
-print $form->textwithpicto('', $langs->trans("TicketEmailNotificationFromHelp"), 1, 'help');
+print $formcategory->textwithpicto('', $langs->trans("TicketEmailNotificationFromHelp"), 1, 'help');
 print '</td>';
 print '</tr>';
 
@@ -363,24 +648,23 @@ print '<tr class="oddeven"><td>'.$langs->trans("TicketEmailNotificationTo").' ('
 print '<td class="left">';
 print '<input type="text" name="TICKET_NOTIFICATION_EMAIL_TO" value="'.(!empty($conf->global->TICKET_NOTIFICATION_EMAIL_TO) ? $conf->global->TICKET_NOTIFICATION_EMAIL_TO : '').'"></td>';
 print '<td class="center">';
-print $form->textwithpicto('', $langs->trans("TicketEmailNotificationToHelp"), 1, 'help');
+print $formcategory->textwithpicto('', $langs->trans("TicketEmailNotificationToHelp"), 1, 'help');
 print '</td>';
 print '</tr>';
 
 // Also send to TICKET_NOTIFICATION_EMAIL_TO for responses (not only creation)
-if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
-{
+if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
 	print '<tr class="oddeven"><td>'.$langs->trans("TicketsEmailAlsoSendToMainAddress").'</td>';
 	print '<td class="left">';
 	if ($conf->use_javascript_ajax) {
 		print ajax_constantonoff('TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS');
 	} else {
 		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS", $arrval, $conf->global->TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS);
+		print $formcategory->selectarray("TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS", $arrval, $conf->global->TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS);
 	}
 	print '</td>';
 	print '<td class="center">';
-	print $form->textwithpicto('', $langs->trans("TicketsEmailAlsoSendToMainAddressHelp"), 1, 'help');
+	print $formcategory->textwithpicto('', $langs->trans("TicketsEmailAlsoSendToMainAddressHelp"), 1, 'help');
 	print '</td>';
 	print '</tr>';
 }
@@ -394,7 +678,7 @@ $doleditor = new DolEditor('TICKET_MESSAGE_MAIL_INTRO', $mail_intro, '100%', 120
 $doleditor->Create();
 print '</td>';
 print '<td class="center">';
-print $form->textwithpicto('', $langs->trans("TicketMessageMailIntroHelpAdmin"), 1, 'help');
+print $formcategory->textwithpicto('', $langs->trans("TicketMessageMailIntroHelpAdmin"), 1, 'help');
 print '</td></tr>';
 
 // Texte de signature
@@ -406,14 +690,12 @@ $doleditor = new DolEditor('TICKET_MESSAGE_MAIL_SIGNATURE', $mail_signature, '10
 $doleditor->Create();
 print '</td>';
 print '<td class="center">';
-print $form->textwithpicto('', $langs->trans("TicketMessageMailSignatureHelpAdmin"), 1, 'help');
+print $formcategory->textwithpicto('', $langs->trans("TicketMessageMailSignatureHelpAdmin"), 1, 'help');
 print '</td></tr>';
 
 print '</table>';
 
-print '<div class="center">';
-print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
-print '</div>';
+print $formcategory->buttonsSaveCancel("Save", '');
 
 print '</form>';
 

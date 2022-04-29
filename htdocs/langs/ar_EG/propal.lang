@@ -44,7 +44,6 @@ RefProposal=مرجع العرض تجاري
 SendPropalByMail=إرسال عرض تجاري عن طريق البريد
 DatePropal=تاريخ العرض
 ValidityDuration=مدة الصلاحية
-CloseAs=اضبط الحالة على
 SetAcceptedRefused=مقبول / مرفوض
 ErrorPropalNotFound=العرض %s غير موجود
 AddToDraftProposals=أضف إلى مسودة العرض

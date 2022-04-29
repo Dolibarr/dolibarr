@@ -26,7 +26,7 @@ create table llx_fichinter
   ref				varchar(30) NOT NULL,       -- number
   ref_ext			varchar(255),
   entity			integer DEFAULT 1 NOT NULL, -- multi company id
-  tms				timestamp,
+  tms				timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   datec				datetime,                   -- date de creation 
   date_valid		datetime,                   -- date de validation
   datei				date,						-- date de livraison du bon d'intervention

@@ -21,20 +21,32 @@
  */
 
 /**
- *		\file       htdocs/theme/eldy/style.css.php
- *		\brief      File for CSS style sheet Eldy
+ *		\file       htdocs/takepos/css/pos.css.php
+ *		\brief      File for CSS style for TakePOS
  */
 
 //if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled because need to load personalized language
 //if (! defined('NOREQUIREDB'))   define('NOREQUIREDB','1');	// Not disabled to increase speed. Language code is found on url.
-if (!defined('NOREQUIRESOC'))    define('NOREQUIRESOC', '1');
+if (!defined('NOREQUIRESOC')) {
+	define('NOREQUIRESOC', '1');
+}
 //if (! defined('NOREQUIRETRAN')) define('NOREQUIRETRAN','1');	// Not disabled because need to do translations
-if (!defined('NOCSRFCHECK'))     define('NOCSRFCHECK', 1);
-if (!defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL', 1);
-if (!defined('NOLOGIN'))         define('NOLOGIN', 1); // File must be accessed by logon page so without login
+if (!defined('NOCSRFCHECK')) {
+	define('NOCSRFCHECK', 1);
+}
+if (!defined('NOTOKENRENEWAL')) {
+	define('NOTOKENRENEWAL', 1);
+}
+if (!defined('NOLOGIN')) {
+	define('NOLOGIN', 1); // File must be accessed by logon page so without login
+}
 //if (! defined('NOREQUIREMENU'))   define('NOREQUIREMENU',1);  // We need top menu content
-if (!defined('NOREQUIREHTML'))   define('NOREQUIREHTML', 1);
-if (!defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX', '1');
+if (!defined('NOREQUIREHTML')) {
+	define('NOREQUIREHTML', 1);
+}
+if (!defined('NOREQUIREAJAX')) {
+	define('NOREQUIREAJAX', '1');
+}
 
 
 define('ISLOADEDBYSTEELSHEET', '1');
@@ -48,25 +60,30 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 // Define css type
 top_httphead('text/css');
 // Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
-if (empty($dolibarr_nocache)) header('Cache-Control: max-age=10800, public, must-revalidate');
-else header('Cache-Control: no-cache');
+if (empty($dolibarr_nocache)) {
+	header('Cache-Control: max-age=10800, public, must-revalidate');
+} else {
+	header('Cache-Control: no-cache');
+}
 
 
-require DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
-if (defined('THEME_ONLY_CONSTANT')) return;
+include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
+if (defined('THEME_ONLY_CONSTANT')) {
+	return;
+}
 
 ?>
 
 html,body {
-    box-sizing: border-box;
+	box-sizing: border-box;
 	padding:0px;
-    margin:0;
-    height:100%;
+	margin:0;
+	height:100%;
 	width:100%;
 }
 
 .bodytakepos {
-    background-color: #EEE;
+	background-color: #EEE;
 }
 
 .center {
@@ -74,14 +91,14 @@ html,body {
 }
 
 button.calcbutton.poscolorblue {
-    background-color: #0066AA;
+	background-color: #0066AA;
 }
 
 button.calcbutton2.poscolordelete {
 	background: rgb(255, 188, 185);
-    color: #633;
-    /*background-color: #884444;
-    color: #fff;*/
+	color: #633;
+	/*background-color: #884444;
+	color: #fff;*/
 }
 
 button.calcbutton {
@@ -96,18 +113,19 @@ button.calcbutton {
 	width: calc(25% - 2px);
 	height: calc(25% - 2px);
 	font-weight: bold;
-    background-color: #8c907e;
-    color: #fff;
-    /* border-color: unset; */
-    border-width: 0;
-    margin: 1px;
+	background-color: #8c907e;
+	color: #fff;
+	/* border-color: unset; */
+	border-width: 0;
+	margin: 1px;
 	font-size: 14pt;
+	border-radius: 3px;
 }
 
 button.calcbutton2 {
-    color: #fff;
-    background-color: #5555AA;
-    border-width: 0px;
+	color: #fff;
+	background-color: #5555AA;
+	border-width: 0px;
 	display: inline-block;
 	position: relative;
 	padding: 0;
@@ -121,6 +139,11 @@ button.calcbutton2 {
 	font-weight: bold;
 	font-size: 10pt;
 	margin: 1px;
+	border-radius: 3px;
+}
+
+button.calcbutton2 .iconwithlabel {
+	padding-bottom: 10px;
 }
 
 button.calcbutton3 {
@@ -136,12 +159,35 @@ button.calcbutton3 {
 	height: calc(25% - 2px);
 	font-size: 14pt;
 	margin: 1px;
+	border-radius: 3px;
+}
+
+button.productbutton {
+	display: inline-block;
+	position: relative;
+	padding: 0;
+	line-height: normal;
+	cursor: pointer;
+	vertical-align: middle;
+	text-align: center;
+	overflow: visible; /* removes extra width in IE */
+	width: calc(100% - 2px);
+	height: calc(100% - 2px);
+	font-weight: bold;
+	background-color: #a3a6a3;
+	color: #fff;
+	/* border-color: unset; */
+	border-width: 0;
+	margin: 1px;
+	font-size: 14pt;
+	border-radius: 3px;
 }
 
 button.actionbutton {
-    background: #EABCA6;
-    border: 2px solid #EEE;
-    min-height: 40px;
+	background: #EABCA6;
+	border: 2px solid #EEE;
+	min-height: 40px;
+	border-radius: 3px;
 }
 
 button.actionbutton {
@@ -153,10 +199,10 @@ button.actionbutton {
 	vertical-align: middle;
 	text-align: center;
 	overflow: visible; /* removes extra width in IE */
-	width: calc(33% - 2px);
+	width: calc(33.33% - 2px);
 	height: calc(25% - 2px);
 	margin: 1px;
-   	border-width: 0;
+	   border-width: 0;
 }
 
 button.item_value {
@@ -173,10 +219,10 @@ button.item_value.selected {
 }
 
 div[aria-describedby="dialog-info"] button:before {
-    content: "\f788";
-    font-family: "Font Awesome 5 Free";
-    font-weight: 900;
-    padding-right: 5px;
+	content: "\f788";
+	font-family: "Font Awesome 5 Free";
+	font-weight: 900;
+	padding-right: 5px;
 }
 div[aria-describedby="dialog-info"].ui-dialog .ui-dialog-buttonpane {
 	border-width: 0;
@@ -187,7 +233,7 @@ div[aria-describedby="dialog-info"].ui-dialog .ui-dialog-buttonpane {
 }
 
 .fa.fa-trash:before {
-    font-size: 1.5em;
+	font-size: 1.5em;
 }
 
 
@@ -220,11 +266,11 @@ div.wrapper2{
 }
 
 img.imgwrapper {
-    max-width: 100%;
+	max-width: 100%;
 }
 
 button:active{
-    background:black;
+	background:black;
 	color: white;
 }
 
@@ -241,7 +287,7 @@ div.description{
 	text-align:center;
 
 	padding-top: 30px;
-    background: -webkit-linear-gradient(top, rgba(250,250,250,0), rgba(250,250,250,0.5), rgba(250,250,250,0.95), rgba(250,250,250,1));
+	background: -webkit-linear-gradient(top, rgba(250,250,250,0), rgba(250,250,250,0.5), rgba(250,250,250,0.95), rgba(250,250,250,1));
 }
 
 div.catwatermark{
@@ -259,21 +305,27 @@ div.catwatermark{
 
 table.postablelines tr td {
 	line-height: unset;
-    padding-top: 3px;
-    padding-bottom: 3px;
+	padding-top: 3px;
+	padding-bottom: 3px;
 }
 
 .posinvoiceline td {
-    height: 40px !important;
-    background-color: var(--colorbacklineimpair1);
+	height: 40px !important;
+	background-color: var(--colorbacklineimpair2);
+}
+
+.postablelines td.linecolht {
+	line-height: 1.3em !important;
 }
 
 div.paymentbordline
 {
-	width:50%;
-	background-color:#888;
+	width:calc(50% - 16px);
+	background-color:#aaa;
 	border-radius: 8px;
 	margin-bottom: 4px;
+	display: inline-block;
+	padding: 5px;
 }
 
 @media only screen and (max-aspect-ratio: 6/4) {
@@ -300,7 +352,7 @@ div.paymentbordline
 	margin: 0 auto;
 	width: 100%;
 	height: calc(45% - 50px);
-	padding-top: 5px;
+	padding-top: 9px;
 }
 
 .row2{
@@ -325,8 +377,6 @@ div.paymentbordline
 	/* background-color:white; */
 	padding-top: 1px;
 	padding-bottom: 0;
-	padding-right: 5px;
-	padding-left: 5px;
 	min-height: 180px;
 }
 
@@ -338,8 +388,6 @@ div.paymentbordline
 	box-sizing: border-box;
 	padding-top: 0;
 	padding-bottom: 0;
-	padding-right: 5px;
-	padding-left: 5px;
 	min-height: 180px;
 }
 
@@ -350,8 +398,6 @@ div.paymentbordline
 	box-sizing: border-box;
 	padding-top: 0;
 	padding-bottom: 0;
-	padding-right: 5px;
-	padding-left: 5px;
 }
 
 .div4{
@@ -362,8 +408,6 @@ div.paymentbordline
 	font-size: 6px;
 	padding-top: 10px;
 	padding-bottom: 10px;
-	padding-right: 5px;
-	padding-left: 5px;
 }
 
 .div5{
@@ -374,16 +418,26 @@ div.paymentbordline
 	font-size: 6px;
 	padding-top:10px;
 	padding-bottom:10px;
+}
+
+.div1, .div2, .div3, .div4, .div5 {
 	padding-right: 5px;
 	padding-left: 5px;
 }
+.div1, .div4 {
+	padding-left: 8px;
+}
+.div3, .div5 {
+	padding-right: 8px;
+}
+
 
 tr.selected, tr.selected td {
-    /* font-weight: bold; */
+	/* font-weight: bold; */
 	background-color: rgb(240,230,210) !important;
 }
 .order {
-    color: limegreen;
+	color: limegreen;
 }
 
 .colorwhite {
@@ -407,13 +461,13 @@ tr.selected, tr.selected td {
 
 .centerinmiddle {
 	transform: translate(0,-50%);
-    position: relative;
-    top: 50%;
+	position: relative;
+	top: 50%;
 }
 .trunc {
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow: hidden;
 }
 
 p.description_content{
@@ -422,17 +476,17 @@ p.description_content{
 }
 div.description_content {
 	display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-    overflow: hidden;
-    padding-left: 2px;
-    padding-right: 2px;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: <?php echo $conf->global->TAKEPOS_LINES_TO_SHOW; ?>;
+	overflow: hidden;
+	padding-left: 2px;
+	padding-right: 2px;
 }
 
 .header{
 	margin: 0 auto;
 	width: 100%;
-	height: 50px;
+	height: 52px;
 	background: rgb(60,70,100);
 }
 
@@ -448,13 +502,12 @@ div.description_content {
 	width: unset;
 }
 .topnav{
-	background: rgb(<?php echo $colorbackhmenu1 ?>);
-	background-image: linear-gradient(-45deg, <?php echo colorAdjustBrightness(colorArrayToHex(colorStringToArray($colorbackhmenu1)), '5'); ?>, rgb(<?php echo $colorbackhmenu1 ?>));
+	background: var(--colorbackhmenu1);
 	overflow: hidden;
 	height: 100%;
 }
 .topnav .tmenu {
-    display: block;
+	display: block;
 }
 
 .topnav a{
@@ -464,17 +517,43 @@ div.description_content {
 }
 .topnav .login_block_other a {
 	padding: 5px 10px;
-    margin-left: 4px;
-    font-size: 1.3em;
+	margin-left: 4px;
+	font-size: 1.3em;
 }
+.topnav div.login_block_user {
+	display: inline-block;
+	vertical-align: middle;
+	line-height: 50px;
+	height: 50px;
+}
+.userimg.atoplogin img.userphoto, .userimgatoplogin img.userphoto {
+	width: 30px;
+	height: 30px;
+	vertical-align: middle;
+}
+
+@media screen and (max-width: 767px) {
+	.topnav .login_block_other a {
+		padding: 5px 5px;
+		font-size: 1.2em;
+	}
+
+	.div1, .div4 {
+		padding-left: 5px;
+	}
+	.div3, .div5 {
+		padding-right: 5px;
+	}
+}
+
 .topnav-right > a {
 	font-size: 17px;
 }
 
 .topnav-left a {
 	padding: 7px 4px 7px 4px;
-    margin: 8px;
-    margin-left: 4px;
+	margin: 8px;
+	margin-left: 4px;
 }
 .topnav-left a:hover, .topnav .login_block_other a:hover {
 	background-color: #ddd;
@@ -492,27 +571,27 @@ div.description_content {
 	border-bottom: none !important;
 	margin-left: 6px;
 	font-size: 1.3em;
-    max-width: 250px;
-    border-radius: 5px;
+	max-width: 250px;
+	border-radius: 5px;
 }
 
 div#moreinfo, div#infowarehouse {
-    color: #aaa;
-    padding: 0 8px 0 8px;
+	color: #aaa;
+	padding: 0 8px 0 8px;
 }
 
 .productprice {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    background: var(--colorbackhmenu1);
-    color: var(--colortextbackhmenu);
-    font-size: 2em;
-    padding: 5px;
-    border-radius: 2px;
-    opacity: 0.9;
-    padding-left: 8px;
-    padding-right: 8px;
+	position: absolute;
+	top: 5px;
+	right: 5px;
+	background: var(--colorbackhmenu1);
+	color: var(--colortextbackhmenu);
+	font-size: 2em;
+	padding: 5px;
+	border-radius: 2px;
+	opacity: 0.9;
+	padding-left: 8px;
+	padding-right: 8px;
 }
 
 
@@ -562,13 +641,14 @@ div#moreinfo, div#infowarehouse {
 
 @media screen and (max-width: 767px) {
 	.header {
-	    position: sticky;
-	    top: 0;
-	    z-index: 10;
+		position: sticky;
+		top: 0;
+		z-index: 10;
 	}
 
 	.topnav input[type="text"] {
-		max-width: 100px;
+		max-width: 90px;
+		font-size: 1.15em;
 	}
 
 	.topnav-right {
@@ -588,11 +668,11 @@ div#moreinfo, div#infowarehouse {
 	}
 
 	.row1withhead{
-		height: calc(45% - 100px);
+		height: unset;
 	}
 
 	div#moreinfo, div#infowarehouse {
-	    padding: 0 5px 0 5px;
+		padding: 0 5px 0 5px;
 	}
 
 	div.div1 {
@@ -617,7 +697,7 @@ div#moreinfo, div#infowarehouse {
 	}
 
 	button.calcbutton, button.calcbutton2 {
-	    min-height: 30px;
+		min-height: 30px;
 	}
 
 	.takepospay {
@@ -629,4 +709,119 @@ div#moreinfo, div#infowarehouse {
 		padding-left: 4px;
 		padding-right: 4px;
 	}
+}
+
+/* Modal box */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed;
+  z-index: 20;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgb(0,0,0);
+  background-color: rgba(0,0,0,0.4);
+}
+
+/* The Close Button */
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.modal-header {
+  padding: 2px 16px;
+  background-color: #2b4161;
+  color: white;
+}
+
+.modal-body {padding: 2px 16px;}
+
+.modal-content {
+  position: relative;
+  background-color: #fefefe;
+  margin: 15% auto; /* 15% from the top and centered */
+  padding: 0;
+  border: 1px solid #888;
+  width: 40%;
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+  animation-name: animatetop;
+  animation-duration: 0.4s;
+  min-width: 200px;
+}
+
+@keyframes animatetop {
+  from {top: -300px; opacity: 0}
+  to {top: 0; opacity: 1}
+}
+
+.block {
+  display: block;
+  width: 100%;
+  border: none;
+  color: white;
+  background-color: #8c907e;
+  padding: 14px 0px;
+  font-size: 16px;
+  cursor: pointer;
+  text-align: center;
+  margin: 2px;
+}
+
+.splitsale {
+	float: left;
+	width: 100%;
+	height: 100%;
+	overflow: auto;
+}
+
+.rowsplit {
+	width: 100%;
+	height: 40%;
+}
+
+.headersplit {
+	height: 10%;
+	width: 100%;
+	padding-top: 20px;
+	padding-bottom: 2px;
+}
+
+.headercontent {
+	margin: auto;
+	width: 50%;
+	border: 3px solid black;
+	text-align: center;
+	font-size: 150%;
+	background-color: rgb(233,234,237);
+}
+
+
+@media only screen and (max-width: 767px)
+{
+	.headercontent {
+		width: 80%;
+	}
+
+	.headersplit .headercontent {
+		font-size: 1em;
+	}
+}
+
+
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
 }

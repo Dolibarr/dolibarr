@@ -1,0 +1,14 @@
+# Dolibarr language file - Source file is en_US - assets
+AccountancyCodeDepreciationAsset =Código contable (cuenta de activos de depreciación)
+AccountancyCodeDepreciationExpense =Código contable (cuenta de gastos de depreciación)
+AssetsTypeSetup=Configuración del tipo de activo
+ConfirmDeleteAssetType=¿Está seguro de que desea eliminar este tipo de activo?
+ShowTypeCard=Mostrar tipo '%s'
+ModuleAssetsDesc =Descripción de activos
+AssetsSetup =Configuración de activos
+Settings =Ajustes
+AssetsSetupPage =Página de configuración de activos
+ExtraFieldsAssetsType =Atributos complementarios (tipo de activo)
+AssetsTypeId=ID del tipo de activo
+AssetsTypeLabel=Etiqueta de tipo de activo
+MenuNewAsset =Nuevo activo

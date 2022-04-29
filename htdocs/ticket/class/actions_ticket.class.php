@@ -40,6 +40,9 @@ class ActionsTicket
 	 */
 	public $db;
 
+	/**
+	 * @var Ticket Ticket
+	 */
 	public $dao;
 
 	public $mesg;
@@ -184,7 +187,7 @@ class ActionsTicket
 			// MESSAGE
 
 			print '<form action="'.$_SERVER['PHP_SELF'].'" method="post">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="track_id" value="'.$object->track_id.'">';
 			print '<input type="hidden" name="action" value="set_message">';
 		}
@@ -192,12 +195,12 @@ class ActionsTicket
 		// Initial message
 		print '<div class="underbanner clearboth"></div>';
 		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
-		print '<table class="noborder centpercent margintable">';
-		print '<tr class="liste_titre"><td class="nowrap titlefield">';
+		print '<table class="noborder centpercent margintable margintablenotop">';
+		print '<tr class="liste_titre trforfield"><td class="nowrap titlefield">';
 		print $langs->trans("InitialMessage");
 		print '</td><td>';
 		if ($user->rights->ticket->manage) {
-			print '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=edit_message_init&amp;track_id='.$object->track_id.'">'.img_edit($langs->trans('Modify')).'</a>';
+			print '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=edit_message_init&token='.newToken().'&track_id='.$object->track_id.'">'.img_edit($langs->trans('Modify')).'</a>';
 		}
 		print '</td></tr>';
 
@@ -208,22 +211,33 @@ class ActionsTicket
 			$msg = GETPOST('message_initial', 'alpha') ? GETPOST('message_initial', 'alpha') : $object->message;
 			include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 			$uselocalbrowser = true;
-			$doleditor = new DolEditor('message_initial', $msg, '100%', 250, 'dolibarr_details', 'In', true, $uselocalbrowser, $conf->global->FCKEDITOR_ENABLE_TICKET, ROWS_4, '95%');
+			$ckeditorenabledforticket = $conf->global->FCKEDITOR_ENABLE_TICKET;
+			$doleditor = new DolEditor('message_initial', $msg, '100%', 250, 'dolibarr_details', 'In', true, $uselocalbrowser, $ckeditorenabledforticket, ROWS_9, '95%');
 			$doleditor->Create();
 		} else {
 			// Deal with format differences (text / HTML)
 			if (dol_textishtml($object->message)) {
+				print '<div class="longmessagecut">';
 				print $object->message;
+				print '</div>';
+				/*print '<div class="clear center">';
+				print $langs->trans("More").'...';
+				print '</div>';*/
 			} else {
+				print '<div class="longmessagecut">';
 				print dol_nl2br($object->message);
+				print '</div>';
+				/*print '<div class="clear center">';
+				print $langs->trans("More").'...';
+				print '</div>';*/
 			}
 
 			//print '<div>' . $object->message . '</div>';
 		}
 		if (!empty($user->rights->ticket->manage) && $action == 'edit_message_init') {
 			print '<div class="center">';
-			print ' <input type="submit" class="button" value="'.$langs->trans('Modify').'">';
-			print ' <input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'">';
+			print ' <input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
+			print ' <input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 			print '</div>';
 		}
 		print '</td>';
@@ -251,14 +265,15 @@ class ActionsTicket
 
 		// Load logs in cache
 		$ret = $this->dao->loadCacheMsgsTicket();
-		if ($ret < 0) dol_print_error($this->dao->db);
+		if ($ret < 0) {
+			dol_print_error($this->dao->db);
+		}
 
-		$action = GETPOST('action', 'alpha');
+		$action = GETPOST('action', 'aZ09');
 
 		$this->viewTicketOriginalMessage($user, $action, $object);
 
-		if (is_array($this->dao->cache_msgs_ticket) && count($this->dao->cache_msgs_ticket) > 0)
-		{
+		if (is_array($this->dao->cache_msgs_ticket) && count($this->dao->cache_msgs_ticket) > 0) {
 			print '<table class="border" style="width:100%;">';
 
 			print '<tr class="liste_titre">';
@@ -379,7 +394,7 @@ class ActionsTicket
 	{
 		global $langs;
 
-		print '<div class="div-table-responsive-no-min margintoponly">';
+		print '<div class="div-table-responsive-no-min margintoponly navBarForStatus">';
 		print '<div class="centpercent right">';
 		// Exclude status which requires specific method
 		$exclude_status = array(Ticket::STATUS_CLOSED, Ticket::STATUS_CANCELED);
@@ -393,22 +408,23 @@ class ActionsTicket
 			if (!in_array($status, $exclude_status)) {
 				print '<div class="inline-block center marginbottomonly">';
 
-				if ($status == 1)
-				{
+				if ($status == 1) {
 					$urlforbutton = $_SERVER['PHP_SELF'].'?track_id='.$object->track_id.'&action=mark_ticket_read'; // To set as read, we use a dedicated action
-				}
-				else
-				{
-					$urlforbutton = $_SERVER['PHP_SELF'].'?track_id='.$object->track_id.'&action=set_status&new_status='.$status;
+				} else {
+					$urlforbutton = $_SERVER['PHP_SELF'].'?track_id='.$object->track_id.'&action=confirm_set_status&token='.newToken().'&new_status='.$status;
 				}
 
-				print '<a class="butAction buttonticket marginbottomonly" href="'.$urlforbutton.'">';
-				print img_picto($langs->trans($object->statuts_short[$status]), 'statut'.$status.'.png@ticket').' '.$langs->trans($object->statuts_short[$status]);
+				print '<a class="butAction butStatus marginbottomonly" href="'.$urlforbutton.'">';
+				print $object->LibStatut($status, 3, 1).' ';
+				//print img_picto($langs->trans($object->statuts_short[$status]), 'statut'.$status.'.png@ticket', '', false, 0, 0, '', 'valignmiddle').' ';
+				print $langs->trans($object->statuts_short[$status]);
 				print '</a>';
 				print '</div>';
 			}
 		}
-		print '</div></div><br>';
+		print '</div>';
+		print '</div>';
+		print '<br>';
 	}
 
 	/**

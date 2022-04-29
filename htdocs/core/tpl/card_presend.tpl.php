@@ -33,27 +33,22 @@ if (empty($conf) || !is_object($conf)) {
 }
 
 
-if ($action == 'presend')
-{
+if ($action == 'presend') {
 	$langs->load("mails");
 
 	$titreform = 'SendMail';
 
 	$object->fetch_projet();
 
-	if (!in_array($object->element, array('societe', 'user', 'member')))
-	{
+	if (!in_array($object->element, array('societe', 'user', 'member'))) {
 		// TODO get also the main_lastdoc field of $object. If not found, try to guess with following code
 
 		$ref = dol_sanitizeFileName($object->ref);
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 		// Special case
-		if ($object->element == 'invoice_supplier')
-		{
+		if ($object->element == 'invoice_supplier') {
 			$fileparams = dol_most_recent_file($diroutput.'/'.get_exdir($object->id, 2, 0, 0, $object, $object->element).$ref, preg_quote($ref, '/').'([^\-])+');
-		}
-		else
-		{
+		} else {
 			$fileparams = dol_most_recent_file($diroutput.'/'.$ref, preg_quote($ref, '/').'[^\-]+');
 		}
 
@@ -63,49 +58,45 @@ if ($action == 'presend')
 	// Define output language
 	$outputlangs = $langs;
 	$newlang = '';
-	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && !empty($_REQUEST['lang_id']))
-	{
-		$newlang = $_REQUEST['lang_id'];
+	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+		$newlang = GETPOST('lang_id', 'aZ09');
 	}
-	if ($conf->global->MAIN_MULTILANGS && empty($newlang))
-	{
+	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
 		$newlang = $object->thirdparty->default_lang;
 	}
 
-	if (!empty($newlang))
-	{
+	if (!empty($newlang)) {
 		$outputlangs = new Translate('', $conf);
 		$outputlangs->setDefaultLang($newlang);
 		// Load traductions files required by page
-		$outputlangs->loadLangs(array('commercial', 'bills', 'orders', 'contracts', 'members', 'propal', 'products', 'supplier_proposal', 'interventions'));
+		$outputlangs->loadLangs(array('commercial', 'bills', 'orders', 'contracts', 'members', 'propal', 'products', 'supplier_proposal', 'interventions', 'receptions'));
 	}
 
 	$topicmail = '';
 	if (empty($object->ref_client)) {
 		$topicmail = $outputlangs->trans($defaulttopic, '__REF__');
 	} elseif (!empty($object->ref_client)) {
-		$topicmail = $outputlangs->trans($defaulttopic, '__REF__ (__REFCLIENT__)');
+		$topicmail = $outputlangs->trans($defaulttopic, '__REF__ (__REF_CLIENT__)');
 	}
 
 	// Build document if it not exists
 	$forcebuilddoc = true;
-	if (in_array($object->element, array('societe', 'user', 'member'))) $forcebuilddoc = false;
-	if ($object->element == 'invoice_supplier' && empty($conf->global->INVOICE_SUPPLIER_ADDON_PDF)) $forcebuilddoc = false;
-	if ($forcebuilddoc)    // If there is no default value for supplier invoice, we do not generate file, even if modelpdf was set by a manual generation
-	{
-		if ((!$file || !is_readable($file)) && method_exists($object, 'generateDocument'))
-		{
-			$result = $object->generateDocument(GETPOST('model') ? GETPOST('model') : $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+	if (in_array($object->element, array('societe', 'user', 'member'))) {
+		$forcebuilddoc = false;
+	}
+	if ($object->element == 'invoice_supplier' && empty($conf->global->INVOICE_SUPPLIER_ADDON_PDF)) {
+		$forcebuilddoc = false;
+	}
+	if ($forcebuilddoc) {    // If there is no default value for supplier invoice, we do not generate file, even if modelpdf was set by a manual generation
+		if ((!$file || !is_readable($file)) && method_exists($object, 'generateDocument')) {
+			$result = $object->generateDocument(GETPOST('model') ? GETPOST('model') : $object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			if ($result < 0) {
 				dol_print_error($db, $object->error, $object->errors);
 				exit();
 			}
-			if ($object->element == 'invoice_supplier')
-			{
+			if ($object->element == 'invoice_supplier') {
 				$fileparams = dol_most_recent_file($diroutput.'/'.get_exdir($object->id, 2, 0, 0, $object, $object->element).$ref, preg_quote($ref, '/').'([^\-])+');
-			}
-			else
-			{
+			} else {
 				$fileparams = dol_most_recent_file($diroutput.'/'.$ref, preg_quote($ref, '/').'[^\-]+');
 			}
 
@@ -118,7 +109,7 @@ if ($action == 'presend')
 	print '<br>';
 	print load_fiche_titre($langs->trans($titreform));
 
-	dol_fiche_head('');
+	print dol_get_fiche_head('');
 
 	// Create form for email
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
@@ -127,64 +118,57 @@ if ($action == 'presend')
 	$formmail->param['langsmodels'] = (empty($newlang) ? $langs->defaultlang : $newlang);
 	$formmail->fromtype = (GETPOST('fromtype') ?GETPOST('fromtype') : (!empty($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE) ? $conf->global->MAIN_MAIL_DEFAULT_FROMTYPE : 'user'));
 
-	if ($formmail->fromtype === 'user')
-	{
+	if ($formmail->fromtype === 'user') {
 		$formmail->fromid = $user->id;
 	}
 
 	if ($object->element === 'facture' && !empty($conf->global->INVOICE_EMAIL_SENDER)) {
 		$formmail->frommail = $conf->global->INVOICE_EMAIL_SENDER;
-		$formmail->fromname = '';
+		$formmail->fromname = (!empty($conf->global->INVOICE_EMAIL_SENDER_NAME) ? $conf->global->INVOICE_EMAIL_SENDER_NAME : '');
 		$formmail->fromtype = 'special';
 	}
 	if ($object->element === 'shipping' && !empty($conf->global->SHIPPING_EMAIL_SENDER)) {
 		$formmail->frommail = $conf->global->SHIPPING_EMAIL_SENDER;
-		$formmail->fromname = '';
+		$formmail->fromname = (!empty($conf->global->SHIPPING_EMAIL_SENDER_NAME) ? $conf->global->SHIPPING_EMAIL_SENDER_NAME : '');
 		$formmail->fromtype = 'special';
 	}
 	if ($object->element === 'commande' && !empty($conf->global->COMMANDE_EMAIL_SENDER)) {
 		$formmail->frommail = $conf->global->COMMANDE_EMAIL_SENDER;
-		$formmail->fromname = '';
+		$formmail->fromname = (!empty($conf->global->COMMANDE_EMAIL_SENDER_NAME) ? $conf->global->COMMANDE_EMAIL_SENDER_NAME : '');
+		$formmail->fromtype = 'special';
+	}
+	if ($object->element === 'order_supplier' && !empty($conf->global->ORDER_SUPPLIER_EMAIL_SENDER)) {
+		$formmail->frommail = $conf->global->ORDER_SUPPLIER_EMAIL_SENDER;
+		$formmail->fromname = (!empty($conf->global->ORDER_SUPPLIER_EMAIL_SENDER_NAME) ? $conf->global->ORDER_SUPPLIER_EMAIL_SENDER_NAME : '');
 		$formmail->fromtype = 'special';
 	}
 
-	$formmail->trackid=$trackid;
-	if (!empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 2))	// If bit 2 is set
-	{
-		include DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$formmail->frommail = dolAddEmailTrackId($formmail->frommail, $trackid);
-	}
+	$formmail->trackid = $trackid;
 	$formmail->withfrom = 1;
 
 	// Fill list of recipient with email inside <>.
 	$liste = array();
-	if ($object->element == 'expensereport')
-	{
+	if ($object->element == 'expensereport') {
 		$fuser = new User($db);
 		$fuser->fetch($object->fk_user_author);
 		$liste['thirdparty'] = $fuser->getFullName($outputlangs)." <".$fuser->email.">";
-	}
-	elseif ($object->element == 'societe')
-	{
+	} elseif ($object->element == 'partnership' && $conf->global->PARTNERSHIP_IS_MANAGED_FOR == 'member') {
+		$fadherent = new Adherent($db);
+		$fadherent->fetch($object->fk_member);
+		$liste['member'] = $fadherent->getFullName($outputlangs)." <".$fadherent->email.">";
+	} elseif ($object->element == 'societe') {
 		foreach ($object->thirdparty_and_contact_email_array(1) as $key => $value) {
 			$liste[$key] = $value;
 		}
-	}
-	elseif ($object->element == 'contact')
-	{
+	} elseif ($object->element == 'contact') {
 		$liste['contact'] = $object->getFullName($outputlangs)." <".$object->email.">";
-	}
-	elseif ($object->element == 'user' || $object->element == 'member')
-	{
+	} elseif ($object->element == 'user' || $object->element == 'member') {
 		$liste['thirdparty'] = $object->getFullName($outputlangs)." <".$object->email.">";
-	}
-	else
-	{
-		if (!empty($object->socid) && empty($object->thirdparty) && method_exists($object, 'fetch_thirdparty')) {
+	} else {
+		if (!empty($object->socid) && $object->socid > 0 && !is_object($object->thirdparty) && method_exists($object, 'fetch_thirdparty')) {
 			$object->fetch_thirdparty();
 		}
-		if (is_object($object->thirdparty))
-		{
+		if (is_object($object->thirdparty)) {
 			foreach ($object->thirdparty->thirdparty_and_contact_email_array(1) as $key => $value) {
 				$liste[$key] = $value;
 			}
@@ -194,7 +178,7 @@ if ($action == 'presend')
 		$listeuser = array();
 		$fuserdest = new User($db);
 
-		$result = $fuserdest->fetchAll('ASC', 't.lastname', 0, 0, array('customsql'=>'t.statut=1 AND t.employee=1 AND t.email IS NOT NULL AND t.email<>\'\''), 'AND', true);
+		$result = $fuserdest->fetchAll('ASC', 't.lastname', 0, 0, array('customsql'=>"t.statut=1 AND t.employee=1 AND t.email IS NOT NULL AND t.email <> ''"), 'AND', true);
 		if ($result > 0 && is_array($fuserdest->users) && count($fuserdest->users) > 0) {
 			foreach ($fuserdest->users as $uuserdest) {
 				$listeuser[$uuserdest->id] = $uuserdest->user_get_property($uuserdest->id, 'email');
@@ -209,9 +193,9 @@ if ($action == 'presend')
 	}
 
 	$formmail->withto = $liste;
-	$formmail->withtofree = (GETPOSTISSET('sendto') ? (GETPOST('sendto', 'alpha') ? GETPOST('sendto', 'alpha') : '1') : '1');
+	$formmail->withtofree = (GETPOSTISSET('sendto') ? (GETPOST('sendto', 'alphawithlgt') ? GETPOST('sendto', 'alphawithlgt') : '1') : '1');
 	$formmail->withtocc = $liste;
-	$formmail->withtoccc = $conf->global->MAIN_EMAIL_USECCC;
+	$formmail->withtoccc = getDolGlobalString('MAIN_EMAIL_USECCC');
 	$formmail->withtopic = $topicmail;
 	$formmail->withfile = 2;
 	$formmail->withbody = 1;
@@ -219,11 +203,16 @@ if ($action == 'presend')
 	$formmail->withcancel = 1;
 
 	//$arrayoffamiliestoexclude=array('system', 'mycompany', 'object', 'objectamount', 'date', 'user', ...);
-	if (!isset($arrayoffamiliestoexclude)) $arrayoffamiliestoexclude = null;
+	if (!isset($arrayoffamiliestoexclude)) {
+		$arrayoffamiliestoexclude = null;
+	}
 
 	// Make substitution in email content
+	if ($object) {
+		$formmail->setSubstitFromObject($object, $langs);
+	}
 	$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, $arrayoffamiliestoexclude, $object);
-	$substitutionarray['__CHECK_READ__'] = (is_object($object) && is_object($object->thirdparty)) ? '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.$object->thirdparty->tag.'&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" width="1" height="1" style="width:1px;height:1px" border="0"/>' : '';
+	$substitutionarray['__CHECK_READ__'] = (is_object($object) && is_object($object->thirdparty)) ? '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.urlencode($object->thirdparty->tag).'&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" width="1" height="1" style="width:1px;height:1px" border="0"/>' : '';
 	$substitutionarray['__PERSONALIZED__'] = ''; // deprecated
 	$substitutionarray['__CONTACTCIVNAME__'] = '';
 	$parameters = array(
@@ -288,13 +277,16 @@ if ($action == 'presend')
 		foreach ($contactarr as $contact) {
 			$contactstatic->fetch($contact['id']);
 			$substitutionarray['__CONTACT_NAME_'.$contact['code'].'__'] = $contactstatic->getFullName($outputlangs, 1);
+			$substitutionarray['__CONTACT_LASTNAME_'.$contact['code'].'__'] = $contactstatic->lastname;
+			$substitutionarray['__CONTACT_FIRSTNAME_'.$contact['code'].'__'] = $contactstatic->firstname;
+			$substitutionarray['__CONTACT_TITLE_'.$contact['code'].'__'] = $contactstatic->getCivilityLabel();
 		}
 	}
 
-	// Tableau des substitutions
+	// Array of substitutions
 	$formmail->substit = $substitutionarray;
 
-	// Tableau des parametres complementaires
+	// Array of other parameters
 	$formmail->param['action'] = 'send';
 	$formmail->param['models'] = $modelmail;
 	$formmail->param['models_id'] = GETPOST('modelmailselected', 'int');
@@ -305,5 +297,5 @@ if ($action == 'presend')
 	// Show form
 	print $formmail->get_form();
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 }

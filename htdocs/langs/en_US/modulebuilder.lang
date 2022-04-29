@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - loan
-ModuleBuilderDesc=This tool must be used only by experienced users or developers. It provides utilities to build or edit your own module. Documentation for alternative <a href="%s" target="_blank">manual development is here</a>.
+ModuleBuilderDesc=This tool must be used only by experienced users or developers. It provides utilities to build or edit your own module. Documentation for alternative <a href="%s" target="_blank" rel="noopener noreferrer">manual development is here</a>.
 EnterNameOfModuleDesc=Enter name of the module/application to create with no spaces. Use uppercase to separate words (For example: MyModule, EcommerceForShop, SyncWithMySystem...)
 EnterNameOfObjectDesc=Enter name of the object to create with no spaces. Use uppercase to separate words (For example: MyObject, Student, Teacher...). The CRUD class file, but also API file, pages to list/add/edit/delete object and SQL files will be generated.
 ModuleBuilderDesc2=Path where modules are generated/edited (first directory for external modules defined into %s): <strong>%s</strong>
@@ -40,6 +40,7 @@ PageForCreateEditView=PHP page to create/edit/view a record
 PageForAgendaTab=PHP page for event tab
 PageForDocumentTab=PHP page for document tab
 PageForNoteTab=PHP page for note tab
+PageForContactTab=PHP page for contact tab
 PathToModulePackage=Path to zip of module/application package
 PathToModuleDocumentation=Path to file of module/application documentation (%s)
 SpaceOrSpecialCharAreNotAllowed=Spaces or special characters are not allowed.
@@ -77,14 +78,14 @@ IsAMeasure=Is a measure
 DirScanned=Directory scanned
 NoTrigger=No trigger
 NoWidget=No widget
-GoToApiExplorer=Go to API explorer
+GoToApiExplorer=API explorer
 ListOfMenusEntries=List of menu entries
 ListOfDictionariesEntries=List of dictionaries entries
 ListOfPermissionsDefined=List of defined permissions
 SeeExamples=See examples here
 EnabledDesc=Condition to have this field active (Examples: 1 or $conf->global->MYMODULE_MYOPTION)
 VisibleDesc=Is the field visible ? (Examples: 0=Never visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create), 5=Visible on list end view form only (not create, not update).<br><br>Using a negative value means field is not shown by default on list but can be selected for viewing).<br><br>It can be an expression, for example:<br>preg_match('/public/', $_SERVER['PHP_SELF'])?0:1<br>($user->rights->holiday->define_holiday ? 1 : 0)
-DisplayOnPdfDesc=Display this field on compatible PDF documents, you can manage position with "Position" field.<br/>Currently, known compatibles PDF models are : eratosthene (order), espadon (ship), sponge (invoices), cyan (propal/quotation), cornas (supplier order)<br/><br/><strong>For document :</strong><br/>0 = not displayed <br/>1 = display<br/>2 = display only if not empty<br/><br/><strong>For document lines :</strong><br/>0 = not displayed <br/>1 = displayed in a column<br/>3 = display in line description column after the description<br/>4 = display in description column after the description only if not empty
+DisplayOnPdfDesc=Display this field on compatible PDF documents, you can manage position with "Position" field.<br>Currently, known compatibles PDF models are : eratosthene (order), espadon (ship), sponge (invoices), cyan (propal/quotation), cornas (supplier order)<br><br><strong>For document :</strong><br>0 = not displayed <br>1 = display<br>2 = display only if not empty<br><br><strong>For document lines :</strong><br>0 = not displayed <br>1 = displayed in a column<br>3 = display in line description column after the description<br>4 = display in description column after the description only if not empty
 DisplayOnPdf=Display on PDF
 IsAMeasureDesc=Can the value of field be cumulated to get a total into list? (Examples: 1 or 0)
 SearchAllDesc=Is the field used to make a search from the quick search tool? (Examples: 1 or 0)
@@ -93,11 +94,11 @@ LanguageDefDesc=Enter in this files, all the key and the translation for each la
 MenusDefDesc=Define here the menus provided by your module
 DictionariesDefDesc=Define here the dictionaries provided by your module
 PermissionsDefDesc=Define here the new permissions provided by your module
-MenusDefDescTooltip=The menus provided by your module/application are defined into the array <strong>$this->menus</strong> into the module descriptor file. You can edit manually this file or use the embedded editor.<br><br>Note: Once defined (and module re-activated), menus are also visible into the menu editor available to administrator users on %s.
+MenusDefDescTooltip=The menus provided by your module/application are defined into the array <strong>$this->menus</strong> into the module descriptor file. You can edit manually this file or use the embedded editor.<br><br>Note: Once defined (and the module re-activated), the menus are also visible into the menu editor available to administrator users on %s.
 DictionariesDefDescTooltip=The dictionaries provided by your module/application are defined into the array <strong>$this->dictionaries</strong> into the module descriptor file. You can edit manually this file or use the embedded editor.<br><br>Note: Once defined (and module re-activated), dictionaries are also visible into the setup area to administrator users on %s.
 PermissionsDefDescTooltip=The permissions provided by your module/application are defined into the array <strong>$this->rights</strong> into the module descriptor file. You can edit manually this file or use the embedded editor.<br><br>Note: Once defined (and module re-activated), permissions are visible into the default permissions setup %s.
 HooksDefDesc=Define in the <b>module_parts['hooks']</b> property, in the module descriptor, the context of hooks you want to manage (list of contexts can be found by a search on '<b>initHooks(</b>' in core code).<br>Edit the hook file to add code of your hooked functions (hookable functions can be found by a search on '<b>executeHooks</b>' in core code).
-TriggerDefDesc=Define in the trigger file the code you want to execute for each business event executed.
+TriggerDefDesc=Define in the trigger file the code that you want to execute when a business event external to your module is executed (events triggered by other modules).
 SeeIDsInUse=See IDs in use in your installation
 SeeReservedIDsRangeHere=See range of reserved IDs
 ToolkitForDevelopers=Toolkit for Dolibarr developers
@@ -105,11 +106,11 @@ TryToUseTheModuleBuilder=If you have knowledge of SQL and PHP, you may use the n
 SeeTopRightMenu=See <span class="fa fa-bug"></span> on the top right menu
 AddLanguageFile=Add language file
 YouCanUseTranslationKey=You can use here a key that is the translation key found into language file (see tab "Languages")
-DropTableIfEmpty=(Delete table if empty)
+DropTableIfEmpty=(Destroy table if empty)
 TableDoesNotExists=The table %s does not exists
 TableDropped=Table %s deleted
 InitStructureFromExistingTable=Build the structure array string of an existing table
-UseAboutPage=Disable the about page
+UseAboutPage=Do not generate the About page
 UseDocFolder=Disable the documentation folder
 UseSpecificReadme=Use a specific ReadMe
 ContentOfREADMECustomized=Note: The content of the README.md file has been replaced with the specific value defined into setup of ModuleBuilder.
@@ -126,17 +127,26 @@ UseSpecificEditorURL = Use a specific editor URL
 UseSpecificFamily = Use a specific family
 UseSpecificAuthor = Use a specific author
 UseSpecificVersion = Use a specific initial version
-ModuleMustBeEnabled=The module/application must be enabled first
 IncludeRefGeneration=The reference of object must be generated automatically
 IncludeRefGenerationHelp=Check this if you want to include code to manage the generation automatically of the reference
 IncludeDocGeneration=I want to generate some documents from the object
 IncludeDocGenerationHelp=If you check this, some code will be generated to add a "Generate document" box on the record.
 ShowOnCombobox=Show value into combobox
 KeyForTooltip=Key for tooltip
-CSSClass=CSS Class
+CSSClass=CSS for edit/create form
+CSSViewClass=CSS for read form
+CSSListClass=CSS for list
 NotEditable=Not editable
 ForeignKey=Foreign key
-TypeOfFieldsHelp=Type of fields:<br>varchar(99), double(24,8), real, text, html, datetime, timestamp, integer, integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]] ('1' means we add a + button after the combo to create the record, 'filter' can be 'status=1 AND fk_user = __USER_ID AND entity IN (__SHARED_ENTITIES__)' for example)
+TypeOfFieldsHelp=Type of fields:<br>varchar(99), double(24,8), real, text, html, datetime, timestamp, integer, integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]]<br>'1' means we add a + button after the combo to create the record<br>'filter' is a sql condition, example: 'status=1 AND fk_user=__USER_ID__ AND entity IN (__SHARED_ENTITIES__)'
 AsciiToHtmlConverter=Ascii to HTML converter
 AsciiToPdfConverter=Ascii to PDF converter
 TableNotEmptyDropCanceled=Table not empty. Drop has been canceled.
+ModuleBuilderNotAllowed=The module builder is available but not allowed to your user.
+ImportExportProfiles=Import and export profiles
+ValidateModBuilderDesc=Set this to 1 if you want to have the method $this->validateField() of object being called to validate the content of the field during insert or upadate. Set 0 if there is no validation required.
+WarningDatabaseIsNotUpdated=Warning: The database is not updated automatically, you must destroy tables and disable-enable the module to have tables recreated
+LinkToParentMenu=Parent menu (fk_xxxxmenu)
+ListOfTabsEntries=List of tab entries
+TabsDefDesc=Define here the tabs provided by your module
+TabsDefDescTooltip=The tabs provided by your module/application are defined into the array <strong>$this->tabs</strong> into the module descriptor file. You can edit manually this file or use the embedded editor.

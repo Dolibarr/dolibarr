@@ -21,7 +21,7 @@
  *  \brief      Module generique pour realiser des exports de donnees en base
  *	\file       htdocs/core/modules/modExport.class.php
  *	\ingroup    export
- *	\brief      Fichier de description et activation du module export
+ *	\brief      Description and activation file for the module export
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
@@ -78,14 +78,14 @@ class modExport extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 1201;
-		$this->rights[$r][1] = 'Lire les exports';
+		$this->rights[$r][1] = 'Read exports';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'lire';
 
 		$r++;
 		$this->rights[$r][0] = 1202;
-		$this->rights[$r][1] = 'Creer/modifier un export';
+		$this->rights[$r][1] = 'Creeate/modify export';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'creer';

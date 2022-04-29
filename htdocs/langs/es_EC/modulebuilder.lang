@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - modulebuilder
-ModuleBuilderDesc=Esta herramienta solo debe ser utilizada por usuarios o desarrolladores experimentados. Proporciona utilidades para construir o editar su propio módulo. La documentación para el desarrollo manual alternativo <a href="%s" target="_blank"> está aquí </a>.
 EnterNameOfModuleDesc=Introduzca el nombre del módulo/aplicación para crear sin espacios. Utilice mayúsculas para separar palabras (Por ejemplo: MyModule, EcommerceForShop, SyncWithMySystem...)
 EnterNameOfObjectDesc=Introduzca el nombre del objeto a crear sin espacios. Use mayúsculas para separar palabras (Por ejemplo: MyObject, Student, Teacher...). Se generará el archivo de clase CRUD, pero también archivos API, páginas para listar/agregar/editar/eliminar objetos y archivos SQL.
 ModuleBuilderDesc2=Ruta donde se generan / editan los módulos (primer directorio para módulos externos definidos en %s): <strong> %s </strong>
@@ -48,13 +47,11 @@ SqlFileKey=Archivo SQL para las claves
 SqlFileKeyExtraFields=Archivo SQL para claves de atributos complementarios
 UseAsciiDocFormat=Puede usar el formato Markdown, pero se recomienda usar el formato Asciidoc (omparison entre .md y .asciidoc: http://asciidoctor.org/docs/user-manual/#compared-to-markdown)
 NoTrigger=Sin disparador
-GoToApiExplorer=Ir a explorador de API
 ListOfDictionariesEntries=Lista de entradas de diccionarios
 ListOfPermissionsDefined=Lista de permisos definidos
 SeeExamples=Ver ejemplos aquí
 EnabledDesc=Condición para tener este campo activo (Ejemplos:1 o $conf->global->MYMODULE_MYOPTION)
 VisibleDesc=¿Es visible el campo? (Ejemplos: 0=Nunca visible, 1=Visible en la lista y crear / actualizar / ver formularios, 2=Visible solo en la lista, 3=Visible solo en el formulario crear / actualizar / ver (no en la lista), 4=Visible en la lista y actualizar / ver solo el formulario (no crear), 5=Visible solo en el formulario de vista final de la lista (no crear, no actualizar) <br><br>El uso de un valor negativo significa que el campo no se muestra de forma predeterminada en la lista, pero puede seleccionarse para verlo). <br><br>Puede ser una expresión, por ejemplo: <br>preg_match('/public/', $_SERVER['PHP_SELF'])?0:1<br>($user->rights->holiday->define_holiday ? 1 : 0)
-DisplayOnPdfDesc=Muestre este campo en documentos PDF compatibles, puede administrar la posición con el campo "Posición". <br/> Actualmente, conocidos modelos compatibles PDF son: Eratóstenes (orden), espadon (nave), esponja (facturas), cian (propal / cita), Cornas (orden de proveedor) <br/> <br/> <strong> Para documento: </strong> <br/> 0 = No se ven las <br/> 1 = display <br/> 2 = sólo si no está vacío <br/> <br/> <strong> Para las líneas de documentos: </strong> <br/> 0 = no se ven las <br/> 1 = muestran en una columna <br/> 3 = display en la columna de descripción de línea después de la descripción <br/> 4 = display en la columna de descripción después de la descripción solo si no está vacía
 IsAMeasureDesc=¿Se puede acumular el valor de campo para obtener un total en la lista? (Ejemplos: 1 o 0)
 SearchAllDesc=¿Se utiliza el campo para realizar una búsqueda desde la herramienta de búsqueda rápida? (Ejemplos: 1 o 0)
 SpecDefDesc=Ingrese aquí toda la documentación que desea proporcionar con su módulo que no está definido por otras pestañas. Puede usar .md o mejor, la rica sintaxis .asciidoc.
@@ -66,7 +63,6 @@ MenusDefDescTooltip=Los menús proporcionados por su módulo / aplicación se de
 DictionariesDefDescTooltip=Los diccionarios proporcionados por su módulo / aplicación se definen en la matriz <strong>$this->dictionaries</strong> en el archivo descriptor del módulo. Puede editar este archivo manualmente o usar el editor incorporado. <br><br> Nota: Una vez definidos (y el módulo reactivado), los diccionarios también son visibles en el área de configuración para los usuarios administradores en %s.
 PermissionsDefDescTooltip=Los permisos proporcionados por su módulo / aplicación se definen en la matriz <strong>$this->rights</strong> en el archivo descriptor del módulo. Puede editar este archivo manualmente o usar el editor incorporado. <br><br> Nota: Una vez definidos (y el módulo reactivado), los permisos son visibles en la configuración de permisos predeterminada %s.
 HooksDefDesc=Defina en la propiedad <b>module_parts ['hooks'] </b>, en el descriptor de módulo, el contexto de los ganchos que desea administrar (puede encontrar una lista de contextos mediante una búsqueda en '<b>initHooks(</b>' en el código central) .<br> Edite el archivo gancho para agregar el código de sus funciones enganchadas (las funciones que se conectan se pueden encontrar mediante una búsqueda en '<b>executeHooks</b>' en el código central).
-TriggerDefDesc=Defina en el archivo de activación el código que desea ejecutar para cada evento empresarial ejecutado.
 SeeIDsInUse=Consulte ID en uso en su instalación.
 SeeReservedIDsRangeHere=Ver el rango de ID reservados
 ToolkitForDevelopers=Kit de herramientas para desarrolladores de Dolibarr
@@ -83,7 +79,6 @@ UseSpecificEditorURL =Use una URL de editor específica
 UseSpecificFamily =Use una familia específica
 UseSpecificAuthor =Use un autor específico
 UseSpecificVersion =Use una versión inicial específica
-ModuleMustBeEnabled=El módulo / aplicación debe habilitarse primero
 IncludeDocGenerationHelp=Si marca esto, se generará algún código para agregar un cuadro "Generar documento" en el registro.
 ShowOnCombobox=Mostrar valor en el cuadro combinado
 KeyForTooltip=Clave para información sobre herramientas

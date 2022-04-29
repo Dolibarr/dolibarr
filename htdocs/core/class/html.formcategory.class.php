@@ -32,17 +32,15 @@ class FormCategory extends Form
 	/**
 	 * Return a HTML filter box for a list filter view
 	 *
-	 * @param string $type			The categorie type (e.g Categorie::TYPE_WAREHOUSE)
-	 * @param Array $preSelected	A list with the elements that should pre-selected
-	 * @return string				A HTML filter box (Note: selected results can get with GETPOST("search_category_".$type."_list"))
+	 * @param string	$type			The categorie type (e.g Categorie::TYPE_WAREHOUSE)
+	 * @param Array		$preSelected	A list with the elements that should pre-selected
+	 * @return string					A HTML filter box (Note: selected results can get with GETPOST("search_category_".$type."_list"))
 	 */
-	public function getFilterBox($type, $preSelected)
+	public function getFilterBox($type, array $preSelected)
 	{
-		// phpcs:enable
 		global $langs;
 
-		if (empty($preSelected) || !is_array($preSelected))
-		{
+		if (empty($preSelected) || !is_array($preSelected)) {
 			$preSelected = array();
 		}
 
@@ -51,12 +49,55 @@ class FormCategory extends Form
 		$categoryArray = $this->select_all_categories($type, "", "", 64, 0, 1);
 		$categoryArray[-2] = "- ".$langs->trans('NotCategorized')." -";
 
+		$tmptitle = $langs->transnoentitiesnoconv("Category");
+
 		$filter = '';
 		$filter .= '<div class="divsearchfield">';
-		$filter .= $langs->trans('Categories').": ";
-		$filter .= Form::multiselectarray($htmlName, $categoryArray, $preSelected, 0, 0, "minwidth300");
+		$filter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"');
+		//$filter .= $langs->trans('Categories').": ";
+		$filter .= Form::multiselectarray($htmlName, $categoryArray, $preSelected, 0, 0, "minwidth300 widthcentpercentminusx", 0, 0, '', '', $tmptitle);
 		$filter .= "</div>";
 
 		return $filter;
+	}
+
+	/**
+	 *    Prints a select form for products categories
+	 *    @param    string	$selected          	Id category pre-selection
+	 *    @param    string	$htmlname          	Name of HTML field
+	 *    @param    int		$showempty         	Add an empty field
+	 *    @return	integer|null
+	 */
+	public function selectProductCategory($selected = 0, $htmlname = 'product_category_id', $showempty = 0)
+	{
+		global $conf;
+
+		$sql = "SELECT cp.fk_categorie as cat_index, cat.label FROM `llx_categorie_product` as cp INNER JOIN llx_categorie as cat ON cat.rowid = cp.fk_categorie GROUP BY cp.fk_categorie;";
+
+		dol_syslog(get_class($this)."::selectProductCategory", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			print '<select class="flat" id="select_'.$htmlname.'" name="'.$htmlname.'">';
+			if ($showempty) {
+				print '<option value="0">&nbsp;</option>';
+			}
+
+			$i = 0;
+			$num_rows = $this->db->num_rows($resql);
+			while ($i < $num_rows) {
+				$category = $this->db->fetch_object($resql);
+				if ($selected && $selected == $category->cat_index) {
+					print '<option value="'.$category->cat_index.'" selected>'.$category->label.'</option>';
+				} else {
+					print '<option value="'.$category->cat_index.'">'.$category->label.'</option>';
+				}
+				$i++;
+			}
+			print ('</select>');
+
+			return $num_rows;
+		} else {
+			dol_print_error($this->db);
+		}
 	}
 }

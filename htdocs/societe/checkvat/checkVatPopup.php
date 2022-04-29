@@ -21,6 +21,8 @@
  *		\brief      Popup screen to validate VAT
  */
 
+if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1');		// Do not roll the Anti CSRF token (used if MAIN_SECURITY_CSRF_WITH_TOKEN is on)
+
 require "../../main.inc.php";
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once NUSOAP_PATH.'/nusoap.php';
@@ -39,19 +41,16 @@ $conf->dol_hide_leftmenu = 1;
 
 llxHeader('', $langs->trans("VATIntraCheckableOnEUSite"));
 
-print '<div class="vatcheckarea" style="margin-bottom: 10px">';
+print '<div class="vatcheckarea margintoponly marginbottomonly">';
 
 print load_fiche_titre($langs->trans("VATIntraCheckableOnEUSite"), '', 'title_setup');
 
 $vatNumber = GETPOST("vatNumber", 'alpha');
 
-if (!$vatNumber)
-{
+if (!$vatNumber) {
 	print '<br>';
-	print '<font class="error">'.$langs->transnoentities("ErrorFieldRequired", $langs->trans("VATIntraShort")).'</font><br>';
-}
-else
-{
+	print '<span class="error">'.$langs->transnoentities("ErrorFieldRequired", $langs->trans("VATIntraShort")).'</span><br>';
+} else {
 	$vatNumber = preg_replace('/\^\w/', '', $vatNumber);
 	$vatNumber = str_replace(array(' ', '.'), '', $vatNumber);
 	$countryCode = substr($vatNumber, 0, 2);
@@ -67,10 +66,10 @@ else
 
 	// Set the WebService URL
 	dol_syslog("Create nusoap_client for URL=".$WS_DOL_URL." WSDL=".$WS_DOL_URL_WSDL);
-    require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-    $params = getSoapParams();
-    //ini_set('default_socket_timeout', $params['response_timeout']);
-    //$soapclient = new SoapClient($WS_DOL_URL_WSDL,$params);
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+	$params = getSoapParams();
+	//ini_set('default_socket_timeout', $params['response_timeout']);
+	//$soapclient = new SoapClient($WS_DOL_URL_WSDL,$params);
 	$soapclient = new nusoap_client($WS_DOL_URL_WSDL, true, $params['proxy_host'], $params['proxy_port'], $params['proxy_login'], $params['proxy_password'], $params['connection_timeout'], $params['response_timeout']);
 	$soapclient->soap_defencoding = 'utf-8';
 	$soapclient->xml_encoding = 'utf-8';
@@ -78,8 +77,7 @@ else
 
 	// Check for an error
 	$err = $soapclient->getError();
-	if ($err)
-	{
+	if ($err) {
 		dol_syslog("Constructor error ".$WS_DOL_URL, LOG_ERR);
 	}
 
@@ -98,67 +96,54 @@ else
 	print '<b>'.$langs->trans("Response").'</b>:<br>';
 
 	// Service indisponible
-	if (!is_array($result) || preg_match('/SERVICE_UNAVAILABLE/i', $result['faultstring']))
-	{
-		print '<font class="error">'.$langs->trans("ErrorServiceUnavailableTryLater").'</font><br>';
+	if (!is_array($result) || preg_match('/SERVICE_UNAVAILABLE/i', $result['faultstring'])) {
+		print '<span class="error">'.$langs->trans("ErrorServiceUnavailableTryLater").'</span><br>';
 		$messagetoshow = $soapclient->response;
-	}
-	elseif (preg_match('/TIMEOUT/i', $result['faultstring']))
-	{
-		print '<font class="error">'.$langs->trans("ErrorServiceUnavailableTryLater").'</font><br>';
+	} elseif (preg_match('/TIMEOUT/i', $result['faultstring'])) {
+		print '<span class="error">'.$langs->trans("ErrorServiceUnavailableTryLater").'</span><br>';
 		$messagetoshow = $soapclient->response;
-	}
-	elseif (preg_match('/SERVER_BUSY/i', $result['faultstring']))
-	{
-		print '<font class="error">'.$langs->trans("ErrorServiceUnavailableTryLater").'</font><br>';
+	} elseif (preg_match('/SERVER_BUSY/i', $result['faultstring'])) {
+		print '<span class="error">'.$langs->trans("ErrorServiceUnavailableTryLater").'</span><br>';
 		$messagetoshow = $soapclient->response;
-	}
-	elseif ($result['faultstring'])
-	{
-		print '<font class="error">'.$langs->trans("Error").'</font><br>';
+	} elseif ($result['faultstring']) {
+		print '<span class="error">'.$langs->trans("Error").'</span><br>';
 		$messagetoshow = $result['faultstring'];
-	}
-	// Syntaxe ko
-	elseif (preg_match('/INVALID_INPUT/i', $result['faultstring'])
-	|| ($result['requestDate'] && !$result['valid']))
-	{
-		if ($result['requestDate']) print $langs->trans("Date").': '.$result['requestDate'].'<br>';
-		print $langs->trans("VATIntraSyntaxIsValid").': <font class="error">'.$langs->trans("No").'</font> (Might be a non europeen VAT)<br>';
-		print $langs->trans("ValueIsValid").': <font class="error">'.$langs->trans("No").'</font> (Might be a non europeen VAT)<br>';
-		//$messagetoshow=$soapclient->response;
-	}
-	else
-	{
-		// Syntaxe ok
-		if ($result['requestDate']) print $langs->trans("Date").': '.$result['requestDate'].'<br>';
-		print $langs->trans("VATIntraSyntaxIsValid").': <font class="ok">'.$langs->trans("Yes").'</font><br>';
-		print $langs->trans("ValueIsValid").': ';
-		if (preg_match('/MS_UNAVAILABLE/i', $result['faultstring']))
-		{
-			print '<font class="error">'.$langs->trans("ErrorVATCheckMS_UNAVAILABLE", $countryCode).'</font><br>';
+	} elseif (preg_match('/INVALID_INPUT/i', $result['faultstring'])
+	|| ($result['requestDate'] && !$result['valid'])) {
+		// Syntaxe ko
+		if ($result['requestDate']) {
+			print $langs->trans("Date").': '.$result['requestDate'].'<br>';
 		}
-		else
-		{
-			if (!empty($result['valid']) && ($result['valid'] == 1 || $result['valid'] == 'true'))
-			{
-				print '<font class="ok">'.$langs->trans("Yes").'</font>';
+		print $langs->trans("VATIntraSyntaxIsValid").': <span class="error">'.$langs->trans("No").'</span> (Might be a non europeen VAT)<br>';
+		print $langs->trans("ValueIsValid").': <span class="error">'.$langs->trans("No").'</span> (Might be a non europeen VAT)<br>';
+		//$messagetoshow=$soapclient->response;
+	} else {
+		// Syntaxe ok
+		if ($result['requestDate']) {
+			print $langs->trans("Date").': '.$result['requestDate'].'<br>';
+		}
+		print $langs->trans("VATIntraSyntaxIsValid").': <span class="ok">'.$langs->trans("Yes").'</span><br>';
+		print $langs->trans("ValueIsValid").': ';
+		if (preg_match('/MS_UNAVAILABLE/i', $result['faultstring'])) {
+			print '<span class="error">'.$langs->trans("ErrorVATCheckMS_UNAVAILABLE", $countryCode).'</span><br>';
+		} else {
+			if (!empty($result['valid']) && ($result['valid'] == 1 || $result['valid'] == 'true')) {
+				print '<span	 class="ok">'.$langs->trans("Yes").'</span>';
 				print '<br>';
 				print $langs->trans("Name").': '.$result['name'].'<br>';
 				print $langs->trans("Address").': '.$result['address'].'<br>';
-			}
-			else
-			{
-				print '<font class="error">'.$langs->trans("No").'</font>';
+			} else {
+				print '<span	 class="error">'.$langs->trans("No").'</span>';
 				print '<br>'."\n";
 			}
 		}
 	}
 
 	// Show log data into page
-	print "\n";
-	print '<!-- ';
-	var_dump($result);
-	print '-->';
+	// print "\n";
+	// print '<!-- ';
+	// var_dump($result);
+	// print '-->';
 }
 
 print '<br>';
@@ -166,8 +151,7 @@ print $langs->trans("VATIntraManualCheck", $langs->trans("VATIntraCheckURL"), $l
 print '<br>';
 print '<div class="center"><input type="button" class="button" value="'.$langs->trans("CloseWindow").'" onclick="javascript: window.close()"></div>';
 
-if ($messagetoshow)
-{
+if ($messagetoshow) {
 	print '<br><br>';
 	print "\n".'Error returned:<br>';
 	print nl2br($messagetoshow);

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2014 Olivier Geffroy		<jeff@jeffinfo.com>
  * Copyright (C) 2013-2014 Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2013-2017 Alexandre Spangaro	<aspangaro@open-dsi.fr>
+ * Copyright (C) 2013-2021 Alexandre Spangaro	<aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("bills", "accountancy"));
 
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 
@@ -38,36 +38,41 @@ $codeventil = GETPOST('codeventil', 'int');
 $id = GETPOST('id', 'int');
 
 // Security check
-if ($user->socid > 0)
+if (empty($conf->accounting->enabled)) {
 	accessforbidden();
+}
+if ($user->socid > 0) {
+	accessforbidden();
+}
+if (empty($user->rights->accounting->mouvements->lire)) {
+	accessforbidden();
+}
+
 
 
 /*
  * Actions
  */
 
-if ($action == 'ventil' && $user->rights->accounting->bind->write)
-{
-	if (!$cancel)
-	{
-	    if ($codeventil < 0) $codeventil = 0;
+if ($action == 'ventil' && $user->rights->accounting->bind->write) {
+	if (!$cancel) {
+		if ($codeventil < 0) {
+			$codeventil = 0;
+		}
 
 		$sql = " UPDATE ".MAIN_DB_PREFIX."facturedet";
-		$sql .= " SET fk_code_ventilation = ".$codeventil;
-		$sql .= " WHERE rowid = ".$id;
+		$sql .= " SET fk_code_ventilation = ".((int) $codeventil);
+		$sql .= " WHERE rowid = ".((int) $id);
 
 		$resql = $db->query($sql);
 		if (!$resql) {
 			setEventMessages($db->lasterror(), null, 'errors');
-		}
-		else
-		{
-		    setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
-		    if ($backtopage)
-		    {
-		    	header("Location: ".$backtopage);
-		    	exit();
-		    }
+		} else {
+			setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
+			if ($backtopage) {
+				header("Location: ".$backtopage);
+				exit();
+			}
 		}
 	} else {
 		header("Location: ./lines.php");
@@ -95,16 +100,24 @@ $formaccounting = new FormAccounting($db);
 
 if (!empty($id)) {
 	$sql = "SELECT f.ref, f.rowid as facid, l.fk_product, l.description, l.price,";
-	$sql .= " l.qty, l.rowid, l.tva_tx, l.remise_percent, l.subprice, p.accountancy_code_sell as code_sell,";
+	$sql .= " l.qty, l.rowid, l.tva_tx, l.remise_percent, l.subprice,";
+	if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
+		$sql .= " ppe.accountancy_code_sell as code_sell,";
+	} else {
+		$sql .= " p.accountancy_code_sell as code_sell,";
+	}
 	$sql .= " l.fk_code_ventilation, aa.account_number, aa.label";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facturedet as l";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = l.fk_product";
+	if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
+		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_perentity as ppe ON ppe.fk_product = p.rowid AND ppe.entity = " . ((int) $conf->entity);
+	}
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa ON l.fk_code_ventilation = aa.rowid";
 	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."facture as f ON f.rowid = l.fk_facture";
-	$sql .= " WHERE f.fk_statut > 0 AND l.rowid = ".$id;
+	$sql .= " WHERE f.fk_statut > 0 AND l.rowid = ".((int) $id);
 	$sql .= " AND f.entity IN (".getEntity('invoice', 0).")"; // We don't share object for accountancy
 
-	dol_syslog("/accounting/customer/card.php sql=".$sql, LOG_DEBUG);
+	dol_syslog("/accounting/customer/card.php", LOG_DEBUG);
 	$result = $db->query($sql);
 
 	if ($result) {
@@ -121,7 +134,7 @@ if (!empty($id)) {
 
 			print load_fiche_titre($langs->trans('CustomersVentilation'), '', 'title_accountancy');
 
-			dol_fiche_head();
+			print dol_get_fiche_head();
 
 			print '<table class="border centpercent">';
 
@@ -139,12 +152,12 @@ if (!empty($id)) {
 			print '</td></tr>';
 			print '</table>';
 
-			dol_fiche_end();
+			print dol_get_fiche_end();
 
 			print '<div class="center">';
-			print '<input class="button" type="submit" value="'.$langs->trans("Save").'">';
+			print '<input class="button button-save" type="submit" value="'.$langs->trans("Save").'">';
 			print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-			print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
+			print '<input class="button button-cancel" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
 			print '</div>';
 
 			print '</form>';

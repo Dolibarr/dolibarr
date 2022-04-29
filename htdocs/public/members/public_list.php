@@ -24,20 +24,33 @@
  *  \brief      File sample to list members
  */
 
-if (!defined('NOLOGIN'))		define("NOLOGIN", 1); // This means this output page does not require to be logged.
-if (!defined('NOCSRFCHECK'))	define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
-if (!defined('NOIPCHECK'))		define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
+if (!defined('NOLOGIN')) {
+	define("NOLOGIN", 1); // This means this output page does not require to be logged.
+}
+if (!defined('NOCSRFCHECK')) {
+	define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
+}
+if (!defined('NOIPCHECK')) {
+	define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
+}
+if (!defined('NOBROWSERNOTIF')) {
+	define('NOBROWSERNOTIF', '1');
+}
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
-// TODO This should be useless. Because entity must be retreive from object ref and not from url.
+// TODO This should be useless. Because entity must be retrieve from object ref and not from url.
 $entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
-if (is_numeric($entity)) define("DOLENTITY", $entity);
+if (is_numeric($entity)) {
+	define("DOLENTITY", $entity);
+}
 
 require '../../main.inc.php';
 
 // Security check
-if (empty($conf->adherent->enabled)) accessforbidden('', 0, 0, 1);
+if (empty($conf->adherent->enabled)) {
+	accessforbidden('', 0, 0, 1);
+}
 
 
 $langs->loadLangs(array("main", "members", "companies", "other"));
@@ -58,7 +71,9 @@ function llxHeaderVierge($title, $head = "")
 	print "<html>\n";
 	print "<head>\n";
 	print "<title>".$title."</title>\n";
-	if ($head) print $head."\n";
+	if ($head) {
+		print $head."\n";
+	}
 	print "</head>\n";
 	print '<body class="public_body">'."\n";
 }
@@ -77,11 +92,13 @@ function llxFooterVierge()
 }
 
 
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+if (empty($page) || $page == -1) {
+	$page = 0;
+}     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -89,8 +106,12 @@ $pagenext = $page + 1;
 $filter = GETPOST('filter');
 $statut = GETPOST('statut');
 
-if (!$sortorder) {  $sortorder = "ASC"; }
-if (!$sortfield) {  $sortfield = "lastname"; }
+if (!$sortorder) {
+	$sortorder = "ASC";
+}
+if (!$sortfield) {
+	$sortfield = "lastname";
+}
 
 
 /*
@@ -100,14 +121,17 @@ if (!$sortfield) {  $sortfield = "lastname"; }
 $form = new Form($db);
 
 $morehead = '';
-if (!empty($conf->global->MEMBER_PUBLIC_CSS)) $morehead = '<link rel="stylesheet" type="text/css" href="'.$conf->global->MEMBER_PUBLIC_CSS.'">';
-else $morehead = '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/eldy/style.css.php">';
+if (!empty($conf->global->MEMBER_PUBLIC_CSS)) {
+	$morehead = '<link rel="stylesheet" type="text/css" href="'.$conf->global->MEMBER_PUBLIC_CSS.'">';
+} else {
+	$morehead = '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/eldy/style.css.php">';
+}
 
 llxHeaderVierge($langs->trans("ListOfValidatedPublicMembers"), $morehead);
 
 $sql = "SELECT rowid, firstname, lastname, societe, zip, town, email, birth, photo";
 $sql .= " FROM ".MAIN_DB_PREFIX."adherent";
-$sql .= " WHERE entity = ".$entity;
+$sql .= " WHERE entity = ".((int) $entity);
 $sql .= " AND statut = 1";
 $sql .= " AND public = 1";
 $sql .= $db->order($sortfield, $sortorder);
@@ -118,8 +142,7 @@ $sql .= $db->plimit($conf->liste_limit + 1, $offset);
 //$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit, $offset);
 
 $result = $db->query($sql);
-if ($result)
-{
+if ($result) {
 	$num = $db->num_rows($result);
 	$i = 0;
 
@@ -130,15 +153,14 @@ if ($result)
 	print '<tr class="public_liste_titre">';
 	print '<td><a href="'.$_SERVER["PHP_SELF"].'?page='.$page.'&sortorder=ASC&sortfield=firstname">'.dolGetFirstLastname($langs->trans("Firstname"), $langs->trans("Lastname")).'</a></td>';
 	print '<td><a href="'.$_SERVER["PHP_SELF"].'?page='.$page.'&sortorder=ASC&sortfield=societe">'.$langs->trans("Company").'</a></td>'."\n";
-	//print_liste_field_titre("DateToBirth", $_SERVER["PHP_SELF"],"birth",'',$param,$sortfield,$sortorder); // est-ce nécessaire ??
+	//print_liste_field_titre("DateOfBirth", $_SERVER["PHP_SELF"],"birth",'',$param,$sortfield,$sortorder); // est-ce nécessaire ??
 	print_liste_field_titre("EMail", $_SERVER["PHP_SELF"], "email", '', $param, '', $sortfield, $sortorder, 'public_');
 	print_liste_field_titre("Zip", $_SERVER["PHP_SELF"], "zip", "", $param, '', $sortfield, $sortorder, 'public_');
 	print_liste_field_titre("Town", $_SERVER["PHP_SELF"], "town", "", $param, '', $sortfield, $sortorder, 'public_');
 	print_liste_field_titre("Photo", $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'public_');
 	print "</tr>\n";
 
-	while ($i < $num && $i < $conf->liste_limit)
-	{
+	while ($i < $num && $i < $conf->liste_limit) {
 		$objp = $db->fetch_object($result);
 
 		print '<tr class="oddeven">';
@@ -147,23 +169,18 @@ if ($result)
 		print '<td>'.$objp->email.'</td>'."\n";
 		print '<td>'.$objp->zip.'</td>'."\n";
 		print '<td>'.$objp->town.'</td>'."\n";
-		if (isset($objp->photo) && $objp->photo != '')
-		{
+		if (isset($objp->photo) && $objp->photo != '') {
 			print '<td>';
 			print $form->showphoto('memberphoto', $objp, 64);
 			print '</td>'."\n";
-		}
-		else
-		{
+		} else {
 			print "<td>&nbsp;</td>\n";
 		}
 		print "</tr>";
 		$i++;
 	}
 	print "</table>";
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 

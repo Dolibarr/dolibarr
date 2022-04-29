@@ -30,48 +30,54 @@
 // $savingdocmask = dol_sanitizeFileName($object->ref).'-__file__';
 
 // Protection to avoid direct call of template
-if (empty($langs) || !is_object($langs))
-{
+if (empty($langs) || !is_object($langs)) {
 	print "Error, template page can't be called as URL";
 	exit;
 }
 
 
 $langs->load("link");
-if (empty($relativepathwithnofile)) $relativepathwithnofile = '';
+if (empty($relativepathwithnofile)) {
+	$relativepathwithnofile = '';
+}
 
-if (!isset($permission)) $permission = $permissiontoadd;
-if (!isset($permtoedit)) $permtoedit = $permissiontoadd;
+if (!isset($permission)) {
+	$permission = $permissiontoadd;
+}
+if (!isset($permtoedit)) {
+	$permtoedit = $permissiontoadd;
+}
+if (!isset($param)) {
+	$param = '';
+}
 
 // Drag and drop for up and down allowed on product, thirdparty, ...
 // The drag and drop call the page core/ajax/row.php
 // If you enable the move up/down of files here, check that page that include template set its sortorder on 'position_name' instead of 'name'
 // Also the object->fk_element must be defined.
 $disablemove = 1;
-if (in_array($modulepart, array('product', 'produit', 'societe', 'user', 'ticket', 'holiday', 'expensereport'))) $disablemove = 0;
+if (in_array($modulepart, array('product', 'produit', 'societe', 'user', 'ticket', 'holiday', 'expensereport'))) {
+	$disablemove = 0;
+}
 
 
 
 /*
- * Confirm form to delete
+ * Confirm form to delete a file
  */
 
-if ($action == 'delete')
-{
+if ($action == 'deletefile' || $action == 'deletelink') {
 	$langs->load("companies"); // Need for string DeleteFile+ConfirmDeleteFiles
-    print $form->formconfirm(
-			$_SERVER["PHP_SELF"].'?id='.$object->id.'&urlfile='.urlencode(GETPOST("urlfile")).'&linkid='.GETPOST('linkid', 'int').(empty($param) ? '' : $param),
-			$langs->trans('DeleteFile'),
-			$langs->trans('ConfirmDeleteFile'),
-			'confirm_deletefile',
-			'',
-			0,
-			1
+	print $form->formconfirm(
+		$_SERVER["PHP_SELF"].'?id='.$object->id.'&urlfile='.urlencode(GETPOST("urlfile")).'&linkid='.GETPOST('linkid', 'int').(empty($param) ? '' : $param),
+		$langs->trans('DeleteFile'),
+		$langs->trans('ConfirmDeleteFile'),
+		'confirm_deletefile',
+		'',
+		'',
+		1
 	);
 }
-
-$formfile = new FormFile($db);
-
 
 // We define var to enable the feature to add prefix of uploaded files.
 // Caller of this include can make
@@ -99,8 +105,7 @@ if (!isset($savingdocmask) || !empty($conf->global->MAIN_DISABLE_SUGGEST_REF_AS_
 			'product_batch',
 			'bom',
 			'mrp'
-		)))
-		{
+		))) {
 			$savingdocmask = dol_sanitizeFileName($object->ref).'-__file__';
 		}
 		/*if (in_array($modulepart,array('member')))
@@ -110,15 +115,19 @@ if (!isset($savingdocmask) || !empty($conf->global->MAIN_DISABLE_SUGGEST_REF_AS_
 	}
 }
 
+if (empty($formfile) || !is_object($formfile)) {
+	$formfile = new FormFile($db);
+}
+
 // Show upload form (document and links)
 $formfile->form_attach_new_file(
-    $_SERVER["PHP_SELF"].'?id='.$object->id.(empty($withproject) ? '' : '&withproject=1').(empty($moreparam) ? '' : $moreparam),
-    '',
-    0,
-    0,
-    $permission,
-    $conf->browser->layout == 'phone' ? 40 : 60,
-    $object,
+	$_SERVER["PHP_SELF"].'?id='.$object->id.(empty($withproject) ? '' : '&withproject=1').(empty($moreparam) ? '' : $moreparam),
+	'',
+	0,
+	0,
+	$permission,
+	$conf->browser->layout == 'phone' ? 40 : 60,
+	$object,
 	'',
 	1,
 	$savingdocmask
@@ -126,24 +135,24 @@ $formfile->form_attach_new_file(
 
 // List of document
 $formfile->list_of_documents(
-    $filearray,
-    $object,
-    $modulepart,
-    $param,
-    0,
-    $relativepathwithnofile, // relative path with no file. For example "0/1"
-    $permission,
-    0,
-    '',
-    0,
-    '',
-    '',
-    0,
-    $permtoedit,
-    $upload_dir,
-    $sortfield,
-    $sortorder,
-    $disablemove
+	$filearray,
+	$object,
+	$modulepart,
+	$param,
+	0,
+	$relativepathwithnofile, // relative path with no file. For example "0/1"
+	$permission,
+	0,
+	'',
+	0,
+	'',
+	'',
+	0,
+	$permtoedit,
+	$upload_dir,
+	$sortfield,
+	$sortorder,
+	$disablemove
 );
 
 print "<br>";

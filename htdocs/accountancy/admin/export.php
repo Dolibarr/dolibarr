@@ -24,7 +24,7 @@
 /**
  * \file 		htdocs/accountancy/admin/export.php
  * \ingroup 	Accountancy (Double entries)
- * \brief 		Setup page to configure accounting expert module
+ * \brief 		Setup page to configure accounting export module
  */
 require '../../main.inc.php';
 
@@ -36,8 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancyexport.class.php';
 $langs->loadLangs(array("compta", "bills", "admin", "accountancy"));
 
 // Security access
-if (empty($user->rights->accounting->chartofaccount))
-{
+if (empty($user->rights->accounting->chartofaccount)) {
 	accessforbidden();
 }
 
@@ -45,7 +44,7 @@ $action = GETPOST('action', 'aZ09');
 
 // Parameters ACCOUNTING_EXPORT_*
 $main_option = array(
-    'ACCOUNTING_EXPORT_PREFIX_SPEC',
+	'ACCOUNTING_EXPORT_PREFIX_SPEC',
 );
 
 $configuration = AccountancyExport::getTypeConfig();
@@ -58,22 +57,22 @@ $listcr = $configuration['cr'];
 
 
 $model_option = array(
-    '1' => array(
-        'label' => 'ACCOUNTING_EXPORT_FORMAT',
-        'param' => $listformat,
-    ),
-    '2' => array(
-        'label' => 'ACCOUNTING_EXPORT_SEPARATORCSV',
-        'param' => '',
-    ),
-    '3' => array(
-        'label' => 'ACCOUNTING_EXPORT_ENDLINE',
-        'param' => $listcr,
-    ),
-    '4' => array(
-        'label' => 'ACCOUNTING_EXPORT_DATE',
-        'param' => '',
-    ),
+	'1' => array(
+		'label' => 'ACCOUNTING_EXPORT_FORMAT',
+		'param' => $listformat,
+	),
+	'2' => array(
+		'label' => 'ACCOUNTING_EXPORT_SEPARATORCSV',
+		'param' => '',
+	),
+	'3' => array(
+		'label' => 'ACCOUNTING_EXPORT_ENDLINE',
+		'param' => $listcr,
+	),
+	'4' => array(
+		'label' => 'ACCOUNTING_EXPORT_DATE',
+		'param' => '',
+	),
 );
 
 
@@ -105,22 +104,22 @@ if ($action == 'update') {
 		}
 	}
 
-    foreach ($listparam[$modelcsv] as $key => $value) {
-        $constante = $key;
+	foreach ($listparam[$modelcsv] as $key => $value) {
+		$constante = $key;
 
-        if (strpos($constante, 'ACCOUNTING') !== false) {
-            $constvalue = GETPOST($key, 'alpha');
-            if (!dolibarr_set_const($db, $constante, $constvalue, 'chaine', 0, '', $conf->entity)) {
-                $error++;
-            }
-        }
-    }
+		if (strpos($constante, 'ACCOUNTING') !== false) {
+			$constvalue = GETPOST($key, 'alpha');
+			if (!dolibarr_set_const($db, $constante, $constvalue, 'chaine', 0, '', $conf->entity)) {
+				$error++;
+			}
+		}
+	}
 
 	if (!$error) {
-        // reload
-        $configuration = AccountancyExport::getTypeConfig();
-        $listparam = $configuration['param'];
-        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+		// reload
+		$configuration = AccountancyExport::getTypeConfig();
+		$listparam = $configuration['param'];
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
@@ -143,41 +142,41 @@ $linkback = '';
 print load_fiche_titre($langs->trans('ExportOptions'), $linkback, 'accountancy');
 
 
-print "\n".'<script type="text/javascript" language="javascript">'."\n";
+print "\n".'<script type="text/javascript">'."\n";
 print 'jQuery(document).ready(function () {'."\n";
 print '    function initfields()'."\n";
 print '    {'."\n";
 foreach ($listparam as $key => $param) {
-    print '        if (jQuery("#ACCOUNTING_EXPORT_MODELCSV").val()=="'.$key.'")'."\n";
-    print '        {'."\n";
-    print '            //console.log("'.$param['label'].'");'."\n";
-    if (empty($param['ACCOUNTING_EXPORT_FORMAT'])) {
-        print '            jQuery("#ACCOUNTING_EXPORT_FORMAT").val("'.$conf->global->ACCOUNTING_EXPORT_FORMAT.'");'."\n";
-        print '            jQuery("#ACCOUNTING_EXPORT_FORMAT").prop("disabled", true);'."\n";
-    } else {
-        print '            jQuery("#ACCOUNTING_EXPORT_FORMAT").val("'.$param['ACCOUNTING_EXPORT_FORMAT'].'");'."\n";
-        print '            jQuery("#ACCOUNTING_EXPORT_FORMAT").removeAttr("disabled");'."\n";
-    }
-    if (empty($param['ACCOUNTING_EXPORT_SEPARATORCSV'])) {
-        print '            jQuery("#ACCOUNTING_EXPORT_SEPARATORCSV").val("");'."\n";
-        print '            jQuery("#ACCOUNTING_EXPORT_SEPARATORCSV").prop("disabled", true);'."\n";
-    } else {
-        print '            jQuery("#ACCOUNTING_EXPORT_SEPARATORCSV").val("'.$conf->global->ACCOUNTING_EXPORT_SEPARATORCSV.'");'."\n";
-        print '            jQuery("#ACCOUNTING_EXPORT_SEPARATORCSV").removeAttr("disabled");'."\n";
-    }
-    if (empty($param['ACCOUNTING_EXPORT_ENDLINE'])) {
-        print '            jQuery("#ACCOUNTING_EXPORT_ENDLINE").prop("disabled", true);'."\n";
-    } else {
-        print '            jQuery("#ACCOUNTING_EXPORT_ENDLINE").removeAttr("disabled");'."\n";
-    }
-    if (empty($param['ACCOUNTING_EXPORT_DATE'])) {
-        print '            jQuery("#ACCOUNTING_EXPORT_DATE").val("");'."\n";
-        print '            jQuery("#ACCOUNTING_EXPORT_DATE").prop("disabled", true);'."\n";
-    } else {
-        print '            jQuery("#ACCOUNTING_EXPORT_DATE").val("'.$conf->global->ACCOUNTING_EXPORT_DATE.'");'."\n";
-        print '            jQuery("#ACCOUNTING_EXPORT_DATE").removeAttr("disabled");'."\n";
-    }
-    print '        }'."\n";
+	print '        if (jQuery("#ACCOUNTING_EXPORT_MODELCSV").val()=="'.$key.'")'."\n";
+	print '        {'."\n";
+	print '            //console.log("'.$param['label'].'");'."\n";
+	if (empty($param['ACCOUNTING_EXPORT_FORMAT'])) {
+		print '            jQuery("#ACCOUNTING_EXPORT_FORMAT").val("'.$conf->global->ACCOUNTING_EXPORT_FORMAT.'");'."\n";
+		print '            jQuery("#ACCOUNTING_EXPORT_FORMAT").prop("disabled", true);'."\n";
+	} else {
+		print '            jQuery("#ACCOUNTING_EXPORT_FORMAT").val("'.$param['ACCOUNTING_EXPORT_FORMAT'].'");'."\n";
+		print '            jQuery("#ACCOUNTING_EXPORT_FORMAT").removeAttr("disabled");'."\n";
+	}
+	if (empty($param['ACCOUNTING_EXPORT_SEPARATORCSV'])) {
+		print '            jQuery("#ACCOUNTING_EXPORT_SEPARATORCSV").val("");'."\n";
+		print '            jQuery("#ACCOUNTING_EXPORT_SEPARATORCSV").prop("disabled", true);'."\n";
+	} else {
+		print '            jQuery("#ACCOUNTING_EXPORT_SEPARATORCSV").val("'.$conf->global->ACCOUNTING_EXPORT_SEPARATORCSV.'");'."\n";
+		print '            jQuery("#ACCOUNTING_EXPORT_SEPARATORCSV").removeAttr("disabled");'."\n";
+	}
+	if (empty($param['ACCOUNTING_EXPORT_ENDLINE'])) {
+		print '            jQuery("#ACCOUNTING_EXPORT_ENDLINE").prop("disabled", true);'."\n";
+	} else {
+		print '            jQuery("#ACCOUNTING_EXPORT_ENDLINE").removeAttr("disabled");'."\n";
+	}
+	if (empty($param['ACCOUNTING_EXPORT_DATE'])) {
+		print '            jQuery("#ACCOUNTING_EXPORT_DATE").val("");'."\n";
+		print '            jQuery("#ACCOUNTING_EXPORT_DATE").prop("disabled", true);'."\n";
+	} else {
+		print '            jQuery("#ACCOUNTING_EXPORT_DATE").val("'.$conf->global->ACCOUNTING_EXPORT_DATE.'");'."\n";
+		print '            jQuery("#ACCOUNTING_EXPORT_DATE").removeAttr("disabled");'."\n";
+	}
+	print '        }'."\n";
 }
 print '    }'."\n";
 print '    initfields();'."\n";
@@ -262,17 +261,17 @@ if ($num2) {
 	foreach ($model_option as $key) {
 		print '<tr class="oddeven value">';
 
-        // Param
-        $label = $key['label'];
+		// Param
+		$label = $key['label'];
 		print '<td width="50%">'.$langs->trans($label).'</td>';
 
 		// Value
-        print '<td>';
-        if (is_array($key['param'])) {
-            print $form->selectarray($label, $key['param'], $conf->global->$label, 0);
-        } else {
-            print '<input type="text" size="20" id="'.$label.'" name="'.$key['label'].'" value="'.$conf->global->$label.'">';
-        }
+		print '<td>';
+		if (is_array($key['param'])) {
+			print $form->selectarray($label, $key['param'], $conf->global->$label, 0);
+		} else {
+			print '<input type="text" size="20" id="'.$label.'" name="'.$key['label'].'" value="'.$conf->global->$label.'">';
+		}
 
 		print '</td></tr>';
 	}

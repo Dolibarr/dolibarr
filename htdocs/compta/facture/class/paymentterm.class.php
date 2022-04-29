@@ -28,9 +28,9 @@
 class PaymentTerm // extends CommonObject
 {
 	/**
-     * @var DoliDB Database handler.
-     */
-    public $db;
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
 
 	/**
 	 * @var string Error code (or message)
@@ -46,7 +46,7 @@ class PaymentTerm // extends CommonObject
 	//public  $table_element='c_payment_term';	//!< Name of table without prefix where object is stored
 	public $context = array();
 
-    /**
+	/**
 	 * @var int ID
 	 */
 	public $id;
@@ -63,45 +63,61 @@ class PaymentTerm // extends CommonObject
 
 
 
-    /**
-     * 	Constructor
-     *
+	/**
+	 * 	Constructor
+	 *
 	 * 	@param	DoliDB		$db			Database handler
-     */
-    public function __construct($db)
-    {
-        $this->db = $db;
-    }
+	 */
+	public function __construct($db)
+	{
+		$this->db = $db;
+	}
 
 
-    /**
-     *      Create in database
-     *
-     *      @param      User	$user        	User that create
-     *      @param      int		$notrigger	    0=launch triggers after, 1=disable triggers
-     *      @return     int       			  	<0 if KO, Id of created object if OK
-     */
-    public function create($user, $notrigger = 0)
-    {
-    	global $conf, $langs;
+	/**
+	 *      Create in database
+	 *
+	 *      @param      User	$user        	User that create
+	 *      @param      int		$notrigger	    0=launch triggers after, 1=disable triggers
+	 *      @return     int       			  	<0 if KO, Id of created object if OK
+	 */
+	public function create($user, $notrigger = 0)
+	{
+		global $conf, $langs;
 		$error = 0;
 
 		// Clean parameters
 
-		if (isset($this->code)) $this->code = trim($this->code);
-		if (isset($this->sortorder)) $this->sortorder = trim($this->sortorder);
-		if (isset($this->active)) $this->active = trim($this->active);
-		if (isset($this->libelle)) $this->libelle = trim($this->libelle);
-		if (isset($this->libelle_facture)) $this->libelle_facture = trim($this->libelle_facture);
-		if (isset($this->type_cdr)) $this->type_cdr = trim($this->type_cdr);
-		if (isset($this->nbjour)) $this->nbjour = trim($this->nbjour);
-		if (isset($this->decalage)) $this->decalage = trim($this->decalage);
+		if (isset($this->code)) {
+			$this->code = trim($this->code);
+		}
+		if (isset($this->sortorder)) {
+			$this->sortorder = trim($this->sortorder);
+		}
+		if (isset($this->active)) {
+			$this->active = trim($this->active);
+		}
+		if (isset($this->libelle)) {
+			$this->libelle = trim($this->libelle);
+		}
+		if (isset($this->libelle_facture)) {
+			$this->libelle_facture = trim($this->libelle_facture);
+		}
+		if (isset($this->type_cdr)) {
+			$this->type_cdr = trim($this->type_cdr);
+		}
+		if (isset($this->nbjour)) {
+			$this->nbjour = trim($this->nbjour);
+		}
+		if (isset($this->decalage)) {
+			$this->decalage = trim($this->decalage);
+		}
 
 
 		// Check parameters
 		// Put here code to add control on parameters values
 
-        // Insert request
+		// Insert request
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."c_payment_term(";
 		$sql .= "entity,";
 		$sql .= "code,";
@@ -112,7 +128,7 @@ class PaymentTerm // extends CommonObject
 		$sql .= "type_cdr,";
 		$sql .= "nbjour,";
 		$sql .= "decalage";
-        $sql .= ") VALUES (";
+		$sql .= ") VALUES (";
 		$sql .= " ".(!isset($this->entity) ?getEntity('c_payment_term') : "'".$this->db->escape($this->entity)."'").",";
 		$sql .= " ".(!isset($this->code) ? 'NULL' : "'".$this->db->escape($this->code)."'").",";
 		$sql .= " ".(!isset($this->sortorder) ? 'NULL' : "'".$this->db->escape($this->sortorder)."'").",";
@@ -126,44 +142,42 @@ class PaymentTerm // extends CommonObject
 
 		$this->db->begin();
 
-	   	dol_syslog(get_class($this)."::create", LOG_DEBUG);
-        $resql = $this->db->query($sql);
-    	if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
+		dol_syslog(get_class($this)."::create", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
+		}
 
-		if (!$error)
-        {
-            $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."c_payment_term");
-        }
+		if (!$error) {
+			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."c_payment_term");
+		}
 
-        // Commit or rollback
-        if ($error)
-		{
-			foreach ($this->errors as $errmsg)
-			{
-	            dol_syslog(get_class($this)."::create ".$errmsg, LOG_ERR);
-	            $this->error .= ($this->error ? ', '.$errmsg : $errmsg);
+		// Commit or rollback
+		if ($error) {
+			foreach ($this->errors as $errmsg) {
+				dol_syslog(get_class($this)."::create ".$errmsg, LOG_ERR);
+				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else
-		{
+		} else {
 			$this->db->commit();
-            return $this->id;
+			return $this->id;
 		}
-    }
+	}
 
 
-    /**
-     *    Load object in memory from database
-     *
-     *    @param      int		$id     Id object
-     *    @return     int         		<0 if KO, >0 if OK
-     */
-    public function fetch($id)
-    {
-    	global $langs;
-        $sql = "SELECT";
+	/**
+	 *    Load object in memory from database
+	 *
+	 *    @param      int		$id     Id object
+	 *    @return     int         		<0 if KO, >0 if OK
+	 */
+	public function fetch($id)
+	{
+		global $langs;
+		$sql = "SELECT";
 		$sql .= " t.rowid,";
 		$sql .= " t.entity,";
 
@@ -177,18 +191,16 @@ class PaymentTerm // extends CommonObject
 		$sql .= " t.decalage";
 
 
-        $sql .= " FROM ".MAIN_DB_PREFIX."c_payment_term as t";
-        $sql .= " WHERE t.rowid = ".$id;
+		$sql .= " FROM ".MAIN_DB_PREFIX."c_payment_term as t";
+		$sql .= " WHERE t.rowid = ".((int) $id);
 
-    	dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
-        $resql = $this->db->query($sql);
-        if ($resql)
-        {
-            if ($this->db->num_rows($resql))
-            {
-                $obj = $this->db->fetch_object($resql);
+		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			if ($this->db->num_rows($resql)) {
+				$obj = $this->db->fetch_object($resql);
 
-                $this->id = $obj->rowid;
+				$this->id = $obj->rowid;
 
 				$this->code = $obj->code;
 				$this->sortorder = $obj->sortorder;
@@ -198,24 +210,22 @@ class PaymentTerm // extends CommonObject
 				$this->type_cdr = $obj->type_cdr;
 				$this->nbjour = $obj->nbjour;
 				$this->decalage = $obj->decalage;
-            }
-            $this->db->free($resql);
+			}
+			$this->db->free($resql);
 
-            return 1;
-        }
-        else
-        {
-      	    $this->error = "Error ".$this->db->lasterror();
-            return -1;
-        }
-    }
+			return 1;
+		} else {
+			$this->error = "Error ".$this->db->lasterror();
+			return -1;
+		}
+	}
 
 
-    /**
-     *    Return id of default payment term
-     *
-     *    @return     int         <0 if KO, >0 if OK
-     */
+	/**
+	 *    Return id of default payment term
+	 *
+	 *    @return     int         <0 if KO, >0 if OK
+	 */
 	public function getDefaultId()
 	{
 		global $langs;
@@ -230,18 +240,16 @@ class PaymentTerm // extends CommonObject
 
 		dol_syslog(get_class($this)."::getDefaultId", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			if ($this->db->num_rows($resql))
-			{
+		if ($resql) {
+			if ($this->db->num_rows($resql)) {
 				$obj = $this->db->fetch_object($resql);
-				if ($obj) $ret = $obj->rowid;
+				if ($obj) {
+					$ret = $obj->rowid;
+				}
 			}
 			$this->db->free($resql);
 			return $ret;
-		}
-		else
-		{
+		} else {
 			$this->error = "Error ".$this->db->lasterror();
 			return -1;
 		}
@@ -249,12 +257,12 @@ class PaymentTerm // extends CommonObject
 
 
 	/**
-     *  Update database
-     *
-     *  @param      User	$user        	User that modify
-     *  @param      int		$notrigger	    0=launch triggers after, 1=disable triggers
-     *  @return     int       			  	<0 if KO, >0 if OK
-     */
+	 *  Update database
+	 *
+	 *  @param      User	$user        	User that modify
+	 *  @param      int		$notrigger	    0=launch triggers after, 1=disable triggers
+	 *  @return     int       			  	<0 if KO, >0 if OK
+	 */
 	public function update($user = null, $notrigger = 0)
 	{
 		global $conf, $langs;
@@ -263,14 +271,30 @@ class PaymentTerm // extends CommonObject
 
 		// Clean parameters
 
-		if (isset($this->code)) $this->code = trim($this->code);
-		if (isset($this->sortorder)) $this->sortorder = trim($this->sortorder);
-		if (isset($this->active)) $this->active = trim($this->active);
-		if (isset($this->libelle)) $this->libelle = trim($this->libelle);
-		if (isset($this->libelle_facture)) $this->libelle_facture = trim($this->libelle_facture);
-		if (isset($this->type_cdr)) $this->type_cdr = trim($this->type_cdr);
-		if (isset($this->nbjour)) $this->nbjour = trim($this->nbjour);
-		if (isset($this->decalage)) $this->decalage = trim($this->decalage);
+		if (isset($this->code)) {
+			$this->code = trim($this->code);
+		}
+		if (isset($this->sortorder)) {
+			$this->sortorder = trim($this->sortorder);
+		}
+		if (isset($this->active)) {
+			$this->active = trim($this->active);
+		}
+		if (isset($this->libelle)) {
+			$this->libelle = trim($this->libelle);
+		}
+		if (isset($this->libelle_facture)) {
+			$this->libelle_facture = trim($this->libelle_facture);
+		}
+		if (isset($this->type_cdr)) {
+			$this->type_cdr = trim($this->type_cdr);
+		}
+		if (isset($this->nbjour)) {
+			$this->nbjour = trim($this->nbjour);
+		}
+		if (isset($this->decalage)) {
+			$this->decalage = trim($this->decalage);
+		}
 
 
 
@@ -287,27 +311,26 @@ class PaymentTerm // extends CommonObject
 		$sql .= " type_cdr=".(isset($this->type_cdr) ? $this->type_cdr : "null").",";
 		$sql .= " nbjour=".(isset($this->nbjour) ? $this->nbjour : "null").",";
 		$sql .= " decalage=".(isset($this->decalage) ? $this->decalage : "null")."";
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$this->db->begin();
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
+		if (!$resql) {
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
+		}
 
 		// Commit or rollback
-		if ($error)
-		{
-			foreach ($this->errors as $errmsg)
-			{
+		if ($error) {
+			foreach ($this->errors as $errmsg) {
 				dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
 				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else
-		{
+		} else {
 			$this->db->commit();
 			return 1;
 		}
@@ -327,27 +350,26 @@ class PaymentTerm // extends CommonObject
 		$error = 0;
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."c_payment_term";
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$this->db->begin();
 
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-    	if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
+		if (!$resql) {
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
+		}
 
-        // Commit or rollback
-		if ($error)
-		{
-			foreach ($this->errors as $errmsg)
-			{
-	            dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
-	            $this->error .= ($this->error ? ', '.$errmsg : $errmsg);
+		// Commit or rollback
+		if ($error) {
+			foreach ($this->errors as $errmsg) {
+				dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
+				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else
-		{
+		} else {
 			$this->db->commit();
 			return 1;
 		}
@@ -383,8 +405,7 @@ class PaymentTerm // extends CommonObject
 		$result = $object->create($user);
 
 		// Other options
-		if ($result < 0)
-		{
+		if ($result < 0) {
 			$this->error = $object->error;
 			$error++;
 		}
@@ -392,28 +413,25 @@ class PaymentTerm // extends CommonObject
 		unset($object->context['createfromclone']);
 
 		// End
-		if (!$error)
-		{
+		if (!$error) {
 			$this->db->commit();
 			return $object->id;
-		}
-		else
-		{
+		} else {
 			$this->db->rollback();
 			return -1;
 		}
 	}
 
 
-    /**
-     *  Initialise an instance with random values.
-     *  Used to build previews or test instances.
-     *	id must be 0 if object instance is a specimen.
-     *
-     *  @return	void
-     */
-    public function initAsSpecimen()
-    {
+	/**
+	 *  Initialise an instance with random values.
+	 *  Used to build previews or test instances.
+	 *	id must be 0 if object instance is a specimen.
+	 *
+	 *  @return	void
+	 */
+	public function initAsSpecimen()
+	{
 		$this->id = 0;
 
 		$this->code = '';

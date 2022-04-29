@@ -21,7 +21,7 @@ create table llx_paiementcharge
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   fk_charge       integer,
   datec           datetime,           -- date de creation
-  tms             timestamp,
+  tms             timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   datep           datetime,           -- payment date
   amount          double(24,8) DEFAULT 0,
   fk_typepaiement integer NOT NULL,

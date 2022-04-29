@@ -19,15 +19,17 @@
  * $action
  * $conf
  * $langs
+ * $form
  */
 
 // Protection to avoid direct call of template
-if (empty($conf) || !is_object($conf))
-{
+if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
 	exit;
 }
-if (!is_object($form)) $form = new Form($db);
+if (!is_object($form)) {
+	$form = new Form($db);
+}
 
 ?>
 <!-- BEGIN PHP TEMPLATE commonfields_edit.tpl.php -->
@@ -35,28 +37,65 @@ if (!is_object($form)) $form = new Form($db);
 
 $object->fields = dol_sort_array($object->fields, 'position');
 
-foreach ($object->fields as $key => $val)
-{
+foreach ($object->fields as $key => $val) {
 	// Discard if extrafield is a hidden field on form
-	if (abs($val['visible']) != 1 && abs($val['visible']) != 3 && abs($val['visible']) != 4) continue;
+	if (abs($val['visible']) != 1 && abs($val['visible']) != 3 && abs($val['visible']) != 4) {
+		continue;
+	}
 
-	if (array_key_exists('enabled', $val) && isset($val['enabled']) && !verifCond($val['enabled'])) continue; // We don't want this field
+	if (array_key_exists('enabled', $val) && isset($val['enabled']) && !verifCond($val['enabled'])) {
+		continue; // We don't want this field
+	}
 
-	print '<tr><td';
+	print '<tr class="field_'.$key.'"><td';
 	print ' class="titlefieldcreate';
-	if ($val['notnull'] > 0) print ' fieldrequired';
-	if ($val['type'] == 'text' || $val['type'] == 'html') print ' tdtop';
+	if (isset($val['notnull']) && $val['notnull'] > 0) {
+		print ' fieldrequired';
+	}
+	if (preg_match('/^(text|html)/', $val['type'])) {
+		print ' tdtop';
+	}
 	print '">';
-	if (!empty($val['help'])) print $form->textwithpicto($langs->trans($val['label']), $langs->trans($val['help']));
-	else print $langs->trans($val['label']);
+	if (!empty($val['help'])) {
+		print $form->textwithpicto($langs->trans($val['label']), $langs->trans($val['help']));
+	} else {
+		print $langs->trans($val['label']);
+	}
 	print '</td>';
-	print '<td>';
-	if (in_array($val['type'], array('int', 'integer'))) $value = GETPOSTISSET($key) ?GETPOST($key, 'int') : $object->$key;
-	elseif ($val['type'] == 'text' || $val['type'] == 'html') $value = GETPOSTISSET($key) ?GETPOST($key, 'none') : $object->$key;
-	else $value = GETPOSTISSET($key) ?GETPOST($key, 'alpha') : $object->$key;
+	print '<td class="valuefieldcreate">';
+	if (!empty($val['picto'])) {
+		print img_picto('', $val['picto'], '', false, 0, 0, '', 'pictofixedwidth');
+	}
+	if (in_array($val['type'], array('int', 'integer'))) {
+		$value = GETPOSTISSET($key) ?GETPOST($key, 'int') : $object->$key;
+	} elseif ($val['type'] == 'double') {
+		$value = GETPOSTISSET($key) ? price2num(GETPOST($key, 'alphanohtml')) : $object->$key;
+	} elseif (preg_match('/^(text|html)/', $val['type'])) {
+		$tmparray = explode(':', $val['type']);
+		if (!empty($tmparray[1])) {
+			$check = $tmparray[1];
+		} else {
+			$check = 'restricthtml';
+		}
+		$value = GETPOSTISSET($key) ? GETPOST($key, $check) : $object->$key;
+	} elseif ($val['type'] == 'price') {
+		$value = GETPOSTISSET($key) ? price2num(GETPOST($key)) : price2num($object->$key);
+	} elseif ($key == 'lang') {
+		$value = GETPOSTISSET($key) ? GETPOST($key, 'aZ09') : $object->lang;
+	} else {
+		$value = GETPOSTISSET($key) ? GETPOST($key, 'alpha') : $object->$key;
+	}
 	//var_dump($val.' '.$key.' '.$value);
-	if ($val['noteditable']) print $object->showOutputField($val, $key, $value, '', '', '', 0);
-	else print $object->showInputField($val, $key, $value, '', '', '', 0);
+	if (!empty($val['noteditable'])) {
+		print $object->showOutputField($val, $key, $value, '', '', '', 0);
+	} else {
+		if ($key == 'lang') {
+			print img_picto('', 'language', 'class="pictofixedwidth"');
+			print $formadmin->select_language($value, $key, 0, null, 1, 0, 0, 'minwidth300', 2);
+		} else {
+			print $object->showInputField($val, $key, $value, '', '', '', 0);
+		}
+	}
 	print '</td>';
 	print '</tr>';
 }

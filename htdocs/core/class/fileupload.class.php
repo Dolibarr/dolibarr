@@ -52,8 +52,7 @@ class FileUpload
 		$this->element = $element;
 
 		$pathname = $filename = $element;
-		if (preg_match('/^([^_]+)_([^_]+)/i', $element, $regs))
-		{
+		if (preg_match('/^([^_]+)_([^_]+)/i', $element, $regs)) {
 			$pathname = $regs[1];
 			$filename = $regs[2];
 		}
@@ -64,47 +63,42 @@ class FileUpload
 		if ($element == 'propal') {
 			$pathname = 'comm/propal';
 			$dir_output = $conf->$element->dir_output;
-		}
-		elseif ($element == 'facture') {
+		} elseif ($element == 'facture') {
 			$pathname = 'compta/facture';
 			$dir_output = $conf->$element->dir_output;
-		}
-		elseif ($element == 'project') {
+		} elseif ($element == 'project') {
 			$element = $pathname = 'projet';
 			$dir_output = $conf->$element->dir_output;
-		}
-		elseif ($element == 'project_task') {
-			$pathname = 'projet'; $filename = 'task';
+		} elseif ($element == 'project_task') {
+			$pathname = 'projet';
+			$filename = 'task';
 			$dir_output = $conf->projet->dir_output;
 			$parentForeignKey = 'fk_project';
 			$parentClass = 'Project';
 			$parentElement = 'projet';
 			$parentObject = 'project';
-		}
-		elseif ($element == 'fichinter') {
+		} elseif ($element == 'fichinter') {
 			$element = 'ficheinter';
 			$dir_output = $conf->$element->dir_output;
-		}
-		elseif ($element == 'order_supplier') {
-			$pathname = 'fourn'; $filename = 'fournisseur.commande';
+		} elseif ($element == 'order_supplier') {
+			$pathname = 'fourn';
+			$filename = 'fournisseur.commande';
 			$dir_output = $conf->fournisseur->commande->dir_output;
-		}
-		elseif ($element == 'invoice_supplier') {
-			$pathname = 'fourn'; $filename = 'fournisseur.facture';
+		} elseif ($element == 'invoice_supplier') {
+			$pathname = 'fourn';
+			$filename = 'fournisseur.facture';
 			$dir_output = $conf->fournisseur->facture->dir_output;
-		}
-		elseif ($element == 'product') {
+		} elseif ($element == 'product') {
 			$dir_output = $conf->product->multidir_output[$conf->entity];
-		}
-		elseif ($element == 'productbatch') {
+		} elseif ($element == 'productbatch') {
 			$dir_output = $conf->productbatch->multidir_output[$conf->entity];
-		}
-		elseif ($element == 'action') {
-			$pathname = 'comm/action'; $filename = 'actioncomm';
+		} elseif ($element == 'action') {
+			$pathname = 'comm/action';
+			$filename = 'actioncomm';
 			$dir_output = $conf->agenda->dir_output;
-		}
-		elseif ($element == 'chargesociales') {
-			$pathname = 'compta/sociales'; $filename = 'chargesociales';
+		} elseif ($element == 'chargesociales') {
+			$pathname = 'compta/sociales';
+			$filename = 'chargesociales';
 			$dir_output = $conf->tax->dir_output;
 		} else {
 			$dir_output = $conf->$element->dir_output;
@@ -186,16 +180,16 @@ class FileUpload
 				)
 		);
 
-        $hookmanager->executeHooks(
-            'overrideUploadOptions',
-            array(
-                'options' => &$options,
-                'element' => $element
-            ),
-            $object,
-            $action,
-            $hookmanager
-        );
+		$hookmanager->executeHooks(
+			'overrideUploadOptions',
+			array(
+				'options' => &$options,
+				'element' => $element
+			),
+			$object,
+			$action,
+			$hookmanager
+		);
 
 		if ($options) {
 			$this->options = array_replace_recursive($this->options, $options);
@@ -228,7 +222,7 @@ class FileUpload
 	protected function setFileDeleteUrl($file)
 	{
 		$file->delete_url = $this->options['script_url']
-		.'?file='.rawurlencode($file->name).'&fk_element='.$this->fk_element.'&element='.$this->element;
+		.'?file='.urlencode($file->name).'&fk_element='.urlencode($this->fk_element).'&element='.urlencode($this->element);
 		$file->delete_type = $this->options['delete_type'];
 		if ($file->delete_type !== 'DELETE') {
 			$file->delete_url .= '&_method=DELETE';
@@ -244,8 +238,7 @@ class FileUpload
 	protected function getFileObject($file_name)
 	{
 		$file_path = $this->options['upload_dir'].$file_name;
-		if (is_file($file_path) && $file_name[0] !== '.')
-		{
+		if (is_file($file_path) && $file_name[0] !== '.') {
 			$file = new stdClass();
 			$file->name = $file_name;
 			$file->mime = dol_mimetype($file_name, '', 2);
@@ -287,8 +280,7 @@ class FileUpload
 		$file_path = $this->options['upload_dir'].$file_name;
 		$new_file_path = $options['upload_dir'].$file_name;
 
-		if (dol_mkdir($options['upload_dir']) >= 0)
-		{
+		if (dol_mkdir($options['upload_dir']) >= 0) {
 			list($img_width, $img_height) = @getimagesize($file_path);
 			if (!$img_width || !$img_height) {
 				return false;
@@ -296,11 +288,11 @@ class FileUpload
 
 			$res = vignette($file_path, $maxwidthmini, $maxheightmini, '_mini'); // We don't use ->addThumbs here because there is no object and we don't need all thumbs, only the "mini".
 
-			if (preg_match('/error/i', $res)) return false;
+			if (preg_match('/error/i', $res)) {
+				return false;
+			}
 			return true;
-		}
-		else
-		{
+		} else {
 			return false;
 		}
 	}
@@ -410,10 +402,8 @@ class FileUpload
 				preg_match('/^image\/(gif|jpe?g|png)/', $type, $matches)) {
 			$file_name .= '.'.$matches[1];
 		}
-		if ($this->options['discard_aborted_uploads'])
-		{
-			while (is_file($this->options['upload_dir'].$file_name))
-			{
+		if ($this->options['discard_aborted_uploads']) {
+			while (is_file($this->options['upload_dir'].$file_name)) {
 				$file_name = $this->upcountName($file_name);
 			}
 		}
@@ -438,40 +428,31 @@ class FileUpload
 		$file->mime = dol_mimetype($file->name, '', 2);
 		$file->size = intval($size);
 		$file->type = $type;
-		if ($this->validate($uploaded_file, $file, $error, $index) && dol_mkdir($this->options['upload_dir']) >= 0)
-		{
+		if ($this->validate($uploaded_file, $file, $error, $index) && dol_mkdir($this->options['upload_dir']) >= 0) {
 			$file_path = $this->options['upload_dir'].$file->name;
 			$append_file = !$this->options['discard_aborted_uploads'] && is_file($file_path) && $file->size > filesize($file_path);
 			clearstatcache();
 			if ($uploaded_file && is_uploaded_file($uploaded_file)) {
 				// multipart/formdata uploads (POST method uploads)
-				if ($append_file)
-				{
+				if ($append_file) {
 					file_put_contents($file_path, fopen($uploaded_file, 'r'), FILE_APPEND);
 				} else {
 					dol_move_uploaded_file($uploaded_file, $file_path, 1, 0, 0, 0, 'userfile');
 				}
-			}
-			else
-			{
+			} else {
 				// Non-multipart uploads (PUT method support)
 				file_put_contents($file_path, fopen('php://input', 'r'), $append_file ? FILE_APPEND : 0);
 			}
 			$file_size = filesize($file_path);
-			if ($file_size === $file->size)
-			{
+			if ($file_size === $file->size) {
 				$file->url = $this->options['upload_url'].rawurlencode($file->name);
-				foreach ($this->options['image_versions'] as $version => $options)
-				{
-					if ($this->createScaledImage($file->name, $options))
-					{
+				foreach ($this->options['image_versions'] as $version => $options) {
+					if ($this->createScaledImage($file->name, $options)) {
 						$tmp = explode('.', $file->name);
 						$file->{$version.'_url'} = $options['upload_url'].rawurlencode($tmp[0].'_mini.'.$tmp[1]);
 					}
 				}
-			}
-			elseif ($this->options['discard_aborted_uploads'])
-			{
+			} elseif ($this->options['discard_aborted_uploads']) {
 				unlink($file_path);
 				$file->error = 'abort';
 			}
@@ -490,12 +471,9 @@ class FileUpload
 	{
 		$file_name = isset($_REQUEST['file']) ?
 		basename(stripslashes($_REQUEST['file'])) : null;
-		if ($file_name)
-		{
+		if ($file_name) {
 			$info = $this->getFileObject($file_name);
-		}
-		else
-		{
+		} else {
 			$info = $this->getFileObjects();
 		}
 		header('Content-type: application/json');
@@ -509,38 +487,36 @@ class FileUpload
 	 */
 	public function post()
 	{
-		if (isset($_REQUEST['_method']) && $_REQUEST['_method'] === 'DELETE')
-		{
+		if (isset($_REQUEST['_method']) && $_REQUEST['_method'] === 'DELETE') {
 			return $this->delete();
 		}
 		$upload = isset($_FILES[$this->options['param_name']]) ?
 		$_FILES[$this->options['param_name']] : null;
 		$info = array();
-		if ($upload && is_array($upload['tmp_name']))
-		{
+		if ($upload && is_array($upload['tmp_name'])) {
 			// param_name is an array identifier like "files[]",
 			// $_FILES is a multi-dimensional array:
 			foreach ($upload['tmp_name'] as $index => $value) {
-                $info[] = $this->handleFileUpload(
-                    $upload['tmp_name'][$index],
-                    isset($_SERVER['HTTP_X_FILE_NAME']) ? $_SERVER['HTTP_X_FILE_NAME'] : $upload['name'][$index],
-                    isset($_SERVER['HTTP_X_FILE_SIZE']) ? $_SERVER['HTTP_X_FILE_SIZE'] : $upload['size'][$index],
-                    isset($_SERVER['HTTP_X_FILE_TYPE']) ? $_SERVER['HTTP_X_FILE_TYPE'] : $upload['type'][$index],
-                    $upload['error'][$index],
-                    $index
-                );
+				$info[] = $this->handleFileUpload(
+					$upload['tmp_name'][$index],
+					isset($_SERVER['HTTP_X_FILE_NAME']) ? $_SERVER['HTTP_X_FILE_NAME'] : $upload['name'][$index],
+					isset($_SERVER['HTTP_X_FILE_SIZE']) ? $_SERVER['HTTP_X_FILE_SIZE'] : $upload['size'][$index],
+					isset($_SERVER['HTTP_X_FILE_TYPE']) ? $_SERVER['HTTP_X_FILE_TYPE'] : $upload['type'][$index],
+					$upload['error'][$index],
+					$index
+				);
 			}
 		} elseif ($upload || isset($_SERVER['HTTP_X_FILE_NAME'])) {
 			// param_name is a single object identifier like "file",
 			// $_FILES is a one-dimensional array:
-            $info[] = $this->handleFileUpload(
-                isset($upload['tmp_name']) ? $upload['tmp_name'] : null,
-                isset($_SERVER['HTTP_X_FILE_NAME']) ? $_SERVER['HTTP_X_FILE_NAME'] : (isset($upload['name']) ? $upload['name'] : null),
-                isset($_SERVER['HTTP_X_FILE_SIZE']) ? $_SERVER['HTTP_X_FILE_SIZE'] : (isset($upload['size']) ? $upload['size'] : null),
-                isset($_SERVER['HTTP_X_FILE_TYPE']) ? $_SERVER['HTTP_X_FILE_TYPE'] : (isset($upload['type']) ? $upload['type'] : null),
-                isset($upload['error']) ? $upload['error'] : null,
-                0
-            );
+			$info[] = $this->handleFileUpload(
+				isset($upload['tmp_name']) ? $upload['tmp_name'] : null,
+				isset($_SERVER['HTTP_X_FILE_NAME']) ? $_SERVER['HTTP_X_FILE_NAME'] : (isset($upload['name']) ? $upload['name'] : null),
+				isset($_SERVER['HTTP_X_FILE_SIZE']) ? $_SERVER['HTTP_X_FILE_SIZE'] : (isset($upload['size']) ? $upload['size'] : null),
+				isset($_SERVER['HTTP_X_FILE_TYPE']) ? $_SERVER['HTTP_X_FILE_TYPE'] : (isset($upload['type']) ? $upload['type'] : null),
+				isset($upload['error']) ? $upload['error'] : null,
+				0
+			);
 		}
 		header('Vary: Accept');
 		$json = json_encode($info);
@@ -570,13 +546,10 @@ class FileUpload
 		basename(stripslashes($_REQUEST['file'])) : null;
 		$file_path = $this->options['upload_dir'].$file_name;
 		$success = is_file($file_path) && $file_name[0] !== '.' && unlink($file_path);
-		if ($success)
-		{
-			foreach ($this->options['image_versions'] as $version => $options)
-			{
+		if ($success) {
+			foreach ($this->options['image_versions'] as $version => $options) {
 				$file = $options['upload_dir'].$file_name;
-				if (is_file($file))
-				{
+				if (is_file($file)) {
 					unlink($file);
 				}
 			}

@@ -43,10 +43,10 @@ class Events // extends CommonObject
 	 */
 	public $id;
 
-    /**
-     * @var DoliDB Database handler.
-     */
-    public $db;
+	/**
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
 
 	/**
 	 * @var string Error code (or message)
@@ -58,7 +58,7 @@ class Events // extends CommonObject
 	 */
 	public $tms;
 
-    /**
+	/**
 	 * @var string Type
 	 */
 	public $type;
@@ -94,7 +94,7 @@ class Events // extends CommonObject
 	public $eventstolog = array(
 		array('id'=>'USER_LOGIN', 'test'=>1),
 		array('id'=>'USER_LOGIN_FAILED', 'test'=>1),
-	    array('id'=>'USER_LOGOUT', 'test'=>1),
+		array('id'=>'USER_LOGOUT', 'test'=>1),
 		array('id'=>'USER_CREATE', 'test'=>1),
 		array('id'=>'USER_MODIFY', 'test'=>1),
 		array('id'=>'USER_NEW_PASSWORD', 'test'=>1),
@@ -141,13 +141,18 @@ class Events // extends CommonObject
 
 		// Clean parameters
 		$this->description = trim($this->description);
-		if (empty($this->user_agent) && !empty($_SERVER['HTTP_USER_AGENT'])) $this->user_agent = $_SERVER['HTTP_USER_AGENT'];
+		if (empty($this->user_agent)) {
+			$this->user_agent = (empty($_SERVER['HTTP_USER_AGENT']) ? '' : $_SERVER['HTTP_USER_AGENT']);
+		}
 
 		// Check parameters
-		if (empty($this->description)) { $this->error = 'ErrorBadValueForParameterCreateEventDesc'; return -1; }
+		if (empty($this->description)) {
+			$this->error = 'ErrorBadValueForParameterCreateEventDesc';
+			return -1;
+		}
 
 		// Insert request
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."events(";
+		$sql = "INSERT INTO ".$this->db->prefix()."events(";
 		$sql .= "type,";
 		$sql .= "entity,";
 		$sql .= "ip,";
@@ -158,24 +163,21 @@ class Events // extends CommonObject
 		$sql .= "prefix_session";
 		$sql .= ") VALUES (";
 		$sql .= " '".$this->db->escape($this->type)."',";
-		$sql .= " ".$conf->entity.",";
+		$sql .= " ".((int) $conf->entity).",";
 		$sql .= " '".$this->db->escape(getUserRemoteIP())."',";
 		$sql .= " ".($this->user_agent ? "'".$this->db->escape(dol_trunc($this->user_agent, 250))."'" : 'NULL').",";
 		$sql .= " '".$this->db->idate($this->dateevent)."',";
-		$sql .= " ".($user->id ? "'".$this->db->escape($user->id)."'" : 'NULL').",";
+		$sql .= " ".($user->id > 0 ? ((int) $user->id) : 'NULL').",";
 		$sql .= " '".$this->db->escape(dol_trunc($this->description, 250))."',";
 		$sql .= " '".$this->db->escape(dol_getprefix())."'";
 		$sql .= ")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."events");
+		if ($resql) {
+			$this->id = $this->db->last_insert_id($this->db->prefix()."events");
 			return $this->id;
-		}
-		else
-		{
+		} else {
 			$this->error = "Error ".$this->db->lasterror();
 			return -1;
 		}
@@ -189,7 +191,7 @@ class Events // extends CommonObject
 	 * @param   int		$notrigger	    0=no, 1=yes (no update trigger)
 	 * @return  int         			<0 if KO, >0 if OK
 	 */
-    public function update($user = null, $notrigger = 0)
+	public function update($user = null, $notrigger = 0)
 	{
 		// Clean parameters
 		$this->id = (int) $this->id;
@@ -200,16 +202,15 @@ class Events // extends CommonObject
 		// Put here code to add control on parameters values
 
 		// Update request
-		$sql = "UPDATE ".MAIN_DB_PREFIX."events SET";
+		$sql = "UPDATE ".$this->db->prefix()."events SET";
 		$sql .= " type='".$this->db->escape($this->type)."',";
 		$sql .= " dateevent='".$this->db->idate($this->dateevent)."',";
 		$sql .= " description='".$this->db->escape($this->description)."'";
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if (!$resql)
-		{
+		if (!$resql) {
 			$this->error = "Error ".$this->db->lasterror();
 			return -1;
 		}
@@ -224,7 +225,7 @@ class Events // extends CommonObject
 	 *  @param  User	$user       User that load
 	 *  @return int         		<0 if KO, >0 if OK
 	 */
-    public function fetch($id, $user = null)
+	public function fetch($id, $user = null)
 	{
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
@@ -236,15 +237,13 @@ class Events // extends CommonObject
 		$sql .= " t.ip,";
 		$sql .= " t.user_agent,";
 		$sql .= " t.prefix_session";
-		$sql .= " FROM ".MAIN_DB_PREFIX."events as t";
-		$sql .= " WHERE t.rowid = ".$id;
+		$sql .= " FROM ".$this->db->prefix()."events as t";
+		$sql .= " WHERE t.rowid = ".((int) $id);
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			if ($this->db->num_rows($resql))
-			{
+		if ($resql) {
+			if ($this->db->num_rows($resql)) {
 				$obj = $this->db->fetch_object($resql);
 
 				$this->id = $obj->rowid;
@@ -260,9 +259,7 @@ class Events // extends CommonObject
 			$this->db->free($resql);
 
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->error = "Error ".$this->db->lasterror();
 			return -1;
 		}
@@ -275,15 +272,14 @@ class Events // extends CommonObject
 	 *	@param	User	$user       User that delete
 	 *	@return	int					<0 if KO, >0 if OK
 	 */
-    public function delete($user)
+	public function delete($user)
 	{
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."events";
-		$sql .= " WHERE rowid=".$this->id;
+		$sql = "DELETE FROM ".$this->db->prefix()."events";
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if (!$resql)
-		{
+		if (!$resql) {
 			$this->error = "Error ".$this->db->lasterror();
 			return -1;
 		}
@@ -293,13 +289,13 @@ class Events // extends CommonObject
 
 
 	/**
-     *  Initialise an instance with random values.
-     *  Used to build previews or test instances.
-     *	id must be 0 if object instance is a specimen.
-     *
-     *  @return	void
-     */
-    public function initAsSpecimen()
+	 *  Initialise an instance with random values.
+	 *  Used to build previews or test instances.
+	 *	id must be 0 if object instance is a specimen.
+	 *
+	 *  @return	void
+	 */
+	public function initAsSpecimen()
 	{
 		$this->id = 0;
 
@@ -310,5 +306,5 @@ class Events // extends CommonObject
 		$this->ip = '1.2.3.4';
 		$this->user_agent = 'Mozilla specimen User Agent X.Y';
 		$this->prefix_session = dol_getprefix();
-    }
+	}
 }

@@ -32,10 +32,13 @@ class Comment extends CommonObject
 	public $table_element = 'comment';
 
 	/**
-	 * @var int Field with ID of parent key if this field has a parent
+	 * @var int ID of parent key (it's not the name of a field)
 	 */
-	public $fk_element = '';
+	public $fk_element;
 
+	/**
+	 * @var string element type
+	 */
 	public $element_type;
 
 	/**
@@ -44,27 +47,27 @@ class Comment extends CommonObject
 	public $description;
 
 	/**
-     * Date modification record (tms)
-     *
-     * @var integer
-     */
+	 * Date modification record (tms)
+	 *
+	 * @var integer
+	 */
 	public $tms;
 
 	/**
-     * Date creation record (datec)
-     *
-     * @var integer
-     */
-    public $datec;
+	 * Date creation record (datec)
+	 *
+	 * @var integer
+	 */
+	public $datec;
 
 	/**
-     * @var int ID
-     */
+	 * @var int ID
+	 */
 	public $fk_user_author;
 
 	/**
-     * @var int ID
-     */
+	 * @var int ID
+	 */
 	public $fk_user_modif;
 
 	/**
@@ -72,10 +75,16 @@ class Comment extends CommonObject
 	 */
 	public $entity;
 
+	/**
+	 * @var string import key
+	 */
 	public $import_key;
 
 	public $comments = array();
 
+	/**
+	 * @var Comment Object oldcopy
+	 */
 	public $oldcopy;
 
 
@@ -104,7 +113,7 @@ class Comment extends CommonObject
 		$error = 0;
 
 		// Insert request
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element." (";
+		$sql = "INSERT INTO ".$this->db->prefix().$this->table_element." (";
 		$sql .= "description";
 		$sql .= ", datec";
 		$sql .= ", fk_element";
@@ -119,7 +128,7 @@ class Comment extends CommonObject
 		$sql .= ", '".(isset($this->fk_element) ? $this->fk_element : "null")."'";
 		$sql .= ", '".$this->db->escape($this->element_type)."'";
 		$sql .= ", '".(isset($this->fk_user_author) ? $this->fk_user_author : "null")."'";
-		$sql .= ", ".$user->id."";
+		$sql .= ", ".((int) $user->id);
 		$sql .= ", ".(!empty($this->entity) ? $this->entity : '1');
 		$sql .= ", ".(!empty($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null");
 		$sql .= ")";
@@ -131,34 +140,33 @@ class Comment extends CommonObject
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
+		if (!$resql) {
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
+		}
 
-		if (!$error)
-		{
-			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
+		if (!$error) {
+			$this->id = $this->db->last_insert_id($this->db->prefix().$this->table_element);
 
-			if (!$notrigger)
-			{
+			if (!$notrigger) {
 				// Call trigger
 				$result = $this->call_trigger('TASK_COMMENT_CREATE', $user);
-				if ($result < 0) { $error++; }
+				if ($result < 0) {
+					$error++;
+				}
 				// End call triggers
 			}
 		}
 
 		// Commit or rollback
-		if ($error)
-		{
-			foreach ($this->errors as $errmsg)
-			{
+		if ($error) {
+			foreach ($this->errors as $errmsg) {
 				dol_syslog(get_class($this)."::create ".$errmsg, LOG_ERR);
 				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else
-		{
+		} else {
 			$this->db->commit();
 			return $this->id;
 		}
@@ -187,17 +195,15 @@ class Comment extends CommonObject
 		$sql .= " c.fk_user_modif,";
 		$sql .= " c.entity,";
 		$sql .= " c.import_key";
-		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as c";
-		$sql .= " WHERE c.rowid = ".$id;
+		$sql .= " FROM ".$this->db->prefix().$this->table_element." as c";
+		$sql .= " WHERE c.rowid = ".((int) $id);
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$num_rows = $this->db->num_rows($resql);
 
-			if ($num_rows)
-			{
+			if ($num_rows) {
 				$obj = $this->db->fetch_object($resql);
 
 				$this->id = $obj->rowid;
@@ -214,11 +220,12 @@ class Comment extends CommonObject
 
 			$this->db->free($resql);
 
-			if ($num_rows) return 1;
-			else return 0;
-		}
-		else
-		{
+			if ($num_rows) {
+				return 1;
+			} else {
+				return 0;
+			}
+		} else {
 			$this->error = "Error ".$this->db->lasterror();
 			return -1;
 		}
@@ -238,12 +245,16 @@ class Comment extends CommonObject
 		$error = 0;
 
 		// Clean parameters
-		if (isset($this->fk_element)) $this->fk_project = (int) trim($this->fk_element);
-		if (isset($this->description)) $this->description = trim($this->description);
+		if (isset($this->fk_element)) {
+			$this->fk_project = (int) trim($this->fk_element);
+		}
+		if (isset($this->description)) {
+			$this->description = trim($this->description);
+		}
 
 
 		// Update request
-		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
+		$sql = "UPDATE ".$this->db->prefix().$this->table_element." SET";
 		$sql .= " description=".(isset($this->description) ? "'".$this->db->escape($this->description)."'" : "null").",";
 		$sql .= " datec=".($this->datec != '' ? "'".$this->db->idate($this->datec)."'" : 'null').",";
 		$sql .= " fk_element=".(isset($this->fk_element) ? $this->fk_element : "null").",";
@@ -251,38 +262,37 @@ class Comment extends CommonObject
 		$sql .= " fk_user_modif=".$user->id.",";
 		$sql .= " entity=".(!empty($this->entity) ? $this->entity : '1').",";
 		$sql .= " import_key=".(!empty($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null");
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
+		if (!$resql) {
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
+		}
 
-		if (!$error)
-		{
-			if (!$notrigger)
-			{
+		if (!$error) {
+			if (!$notrigger) {
 				// Call trigger
 				$result = $this->call_trigger('TASK_COMMENT_MODIFY', $user);
-				if ($result < 0) { $error++; }
+				if ($result < 0) {
+					$error++;
+				}
 				// End call triggers
 			}
 		}
 
 		// Commit or rollback
-		if ($error)
-		{
-			foreach ($this->errors as $errmsg)
-			{
+		if ($error) {
+			foreach ($this->errors as $errmsg) {
 				dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
 				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else
-		{
+		} else {
 			$this->db->commit();
 			return 1;
 		}
@@ -305,28 +315,29 @@ class Comment extends CommonObject
 
 		$this->db->begin();
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element;
-		$sql .= " WHERE rowid=".$this->id;
+		$sql = "DELETE FROM ".$this->db->prefix().$this->table_element;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$resql = $this->db->query($sql);
-		if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
+		if (!$resql) {
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
+		}
 
-		if (!$error)
-		{
-			if (!$notrigger)
-			{
+		if (!$error) {
+			if (!$notrigger) {
 				// Call trigger
 				$result = $this->call_trigger('TASK_COMMENT_DELETE', $user);
-				if ($result < 0) { $error++; }
+				if ($result < 0) {
+					$error++;
+				}
 				// End call triggers
 			}
 		}
 
 		// Commit or rollback
-		if ($error)
-		{
-			foreach ($this->errors as $errmsg)
-			{
+		if ($error) {
+			foreach ($this->errors as $errmsg) {
 				dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
 				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
@@ -353,27 +364,24 @@ class Comment extends CommonObject
 		if (!empty($element_type) && !empty($fk_element)) {
 			$sql = "SELECT";
 			$sql .= " c.rowid";
-			$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as c";
-			$sql .= " WHERE c.fk_element = ".$fk_element;
-			$sql .= " AND c.element_type = '".$db->escape($element_type)."'";
+			$sql .= " FROM ".$this->db->prefix().$this->table_element." as c";
+			$sql .= " WHERE c.fk_element = ".((int) $fk_element);
+			$sql .= " AND c.element_type = '".$this->db->escape($element_type)."'";
 			$sql .= " AND c.entity = ".$conf->entity;
 			$sql .= " ORDER BY c.tms DESC";
 
 			dol_syslog(get_class($this).'::'.__METHOD__, LOG_DEBUG);
-			$resql = $db->query($sql);
-			if ($resql)
-			{
-				$num_rows = $db->num_rows($resql);
-				if ($num_rows > 0)
-				{
-					while ($obj = $db->fetch_object($resql))
-					{
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				$num_rows = $this->db->num_rows($resql);
+				if ($num_rows > 0) {
+					while ($obj = $this->db->fetch_object($resql)) {
 						$comment = new self($db);
 						$comment->fetch($obj->rowid);
 						$this->comments[] = $comment;
 					}
 				}
-				$db->free($resql);
+				$this->db->free($resql);
 			} else {
 				$this->errors[] = "Error ".$this->db->lasterror();
 				return -1;

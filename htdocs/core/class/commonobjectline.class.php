@@ -19,13 +19,15 @@
 /**
  *	\file       htdocs/core/class/commonobjectline.class.php
  *  \ingroup    core
- *  \brief      File of the superclass of classes of lines of business objects (invoice, contract, PROPAL, commands, etc. ...)
+ *  \brief      File of the superclass of classes of lines of business objects (invoice, contract, proposal, orders, etc. ...)
  */
 
 
 /**
  *  Parent class for class inheritance lines of business objects
  *  This class is useless for the moment so no inherit are done on it
+ *
+ *  TODO For the moment we use the extends on CommonObject until PHP min is 5.4 so we can use Traits.
  */
 abstract class CommonObjectLine extends CommonObject
 {
@@ -44,24 +46,44 @@ abstract class CommonObjectLine extends CommonObject
 	public $rowid;
 
 	/**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
+	public $picto = 'line';
+
+	/**
 	 * Product/service unit code ('km', 'm', 'p', ...)
 	 * @var string
 	 */
 	public $fk_unit;
 
+	public $date_debut_prevue;
+	public $date_debut_reel;
+	public $date_fin_prevue;
+	public $date_fin_reel;
+
 
 	/**
-	 *	Returns the label, shot_label or code found in units dictionary from ->fk_unit.
+	 *	Constructor
+	 *
+	 *  @param		DoliDB		$db      Database handler
+	 */
+	public function __construct($db)
+	{
+		$this->db = $db;
+	}
+
+	/**
+	 *	Returns the label, short_label or code found in units dictionary from ->fk_unit.
 	 *  A langs->trans() must be called on result to get translated value.
 	 *
-	 * 	@param	string $type 	Label type (long, short or code). This can be a translation key.
-	 *	@return	string|int 		<0 if ko, label if ok
+	 * 	@param	string $type 	Label type ('long', 'short' or 'code'). This can be a translation key.
+	 *	@return	string|int 		<0 if KO, label if OK (Example: 'long', 'short' or 'unitCODE')
 	 */
 	public function getLabelOfUnit($type = 'long')
 	{
 		global $langs;
 
-		if (!$this->fk_unit) {
+		if (empty($this->fk_unit)) {
 			return '';
 		}
 
@@ -70,26 +92,44 @@ abstract class CommonObjectLine extends CommonObject
 		$label_type = 'label';
 
 		$label_type = 'label';
-		if ($type == 'short') $label_type = 'short_label';
-		elseif ($type == 'code') $label_type = 'code';
+		if ($type == 'short') {
+			$label_type = 'short_label';
+		} elseif ($type == 'code') {
+			$label_type = 'code';
+		}
 
-		$sql = 'select '.$label_type.', code from '.MAIN_DB_PREFIX.'c_units where rowid='.$this->fk_unit;
+		$sql = "SELECT ".$label_type.", code from ".$this->db->prefix()."c_units where rowid = ".((int) $this->fk_unit);
+
 		$resql = $this->db->query($sql);
 		if ($resql && $this->db->num_rows($resql) > 0) {
 			$res = $this->db->fetch_array($resql);
-			if ($label_type == 'code') $label = 'unit'.$res['code'];
-			else $label = $res[$label_type];
+			if ($label_type == 'code') {
+				$label = 'unit'.$res['code'];
+			} else {
+				$label = $res[$label_type];
+			}
 			$this->db->free($resql);
 			return $label;
-		}
-		else
-		{
-			$this->error = $this->db->error().' sql='.$sql;
+		} else {
+			$this->error = $this->db->lasterror();
 			dol_syslog(get_class($this)."::getLabelOfUnit Error ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
-	// Currently we need function at end of file CommonObject for all object lines. Should find a way to avoid duplicate code.
 
-	// For the moment we use the extends on CommonObject until PHP min is 5.4 so use Traits.
+	/**
+	 * Empty function to prevent errors on call of this function must be overload if usefull
+	 *
+	 * @param string $sortorder Sort Order
+	 * @param string $sortfield Sort field
+	 * @param int $limit offset limit
+	 * @param int $offset offset limit
+	 * @param array $filter filter array
+	 * @param string $filtermode filter mode (AND or OR)
+	 * @return int <0 if KO, >0 if OK
+	 */
+	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
+	{
+		return 0;
+	}
 }

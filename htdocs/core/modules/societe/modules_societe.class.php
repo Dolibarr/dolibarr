@@ -28,8 +28,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
 
 
 /**
- *	\class      ModeleThirdPartyDoc
- *	\brief      Parent class for third parties models of doc generators
+ *	Parent class for third parties models of doc generators
  */
 abstract class ModeleThirdPartyDoc extends CommonDocGenerator
 {
@@ -42,28 +41,26 @@ abstract class ModeleThirdPartyDoc extends CommonDocGenerator
 	/**
 	 *  Return list of active generation modules
 	 *
-	 * 	@param	DoliDB		$db					Database handler
+	 * 	@param	DoliDB		$dbs				Database handler
 	 *  @param	integer		$maxfilenamelength  Max length of value to show
 	 * 	@return	array							List of templates
 	 */
-	public static function liste_modeles($db, $maxfilenamelength = 0)
+	public static function liste_modeles($dbs, $maxfilenamelength = 0)
 	{
 		// phpcs:enable
-		global $conf;
 
 		$type = 'company';
-		$liste = array();
+		$list = array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$liste = getListOfModels($db, $type, $maxfilenamelength);
+		$list = getListOfModels($dbs, $type, $maxfilenamelength);
 
-		return $liste;
+		return $list;
 	}
 }
 
 /**
- *	    \class      ModeleThirdPartyCode
- *		\brief  	Parent class for third parties code generators
+ *		Parent class for third parties code generators
  */
 abstract class ModeleThirdPartyCode
 {
@@ -71,6 +68,12 @@ abstract class ModeleThirdPartyCode
 	 * @var string Error code (or message)
 	 */
 	public $error = '';
+
+	/**
+	 * @var array Error code (or message) array
+	 */
+	public $errors;
+
 
 	/**     Renvoi la description par defaut du modele de numerotation
 	 *
@@ -140,44 +143,46 @@ abstract class ModeleThirdPartyCode
 		global $langs;
 		$langs->load("admin");
 
-		if ($this->version == 'development') return $langs->trans("VersionDevelopment");
-		if ($this->version == 'experimental') return $langs->trans("VersionExperimental");
-		if ($this->version == 'dolibarr') return DOL_VERSION;
-		if ($this->version) return $this->version;
-		return $langs->trans("NotAvailable");
+		if ($this->version == 'development') {
+			return $langs->trans("VersionDevelopment");
+		} elseif ($this->version == 'experimental') {
+			return $langs->trans("VersionExperimental");
+		} elseif ($this->version == 'dolibarr') {
+			return DOL_VERSION;
+		} elseif ($this->version) {
+			return $this->version;
+		} else {
+			return $langs->trans("NotAvailable");
+		}
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Renvoie la liste des modeles de numérotation
 	 *
-	 *  @param	DoliDB	$db     			Database handler
+	 *  @param	DoliDB	$dbs     			Database handler
 	 *  @param  integer	$maxfilenamelength  Max length of value to show
-	 *  @return	array						List of numbers
+	 *  @return	array|int					List of numbers
 	 */
-	public static function liste_modeles($db, $maxfilenamelength = 0)
+	public static function liste_modeles($dbs, $maxfilenamelength = 0)
 	{
 		// phpcs:enable
-		$liste = array();
+		$list = array();
 		$sql = "";
 
-		$resql = $db->query($sql);
-		if ($resql)
-		{
-			$num = $db->num_rows($resql);
+		$resql = $dbs->query($sql);
+		if ($resql) {
+			$num = $dbs->num_rows($resql);
 			$i = 0;
-			while ($i < $num)
-			{
-				$row = $db->fetch_row($resql);
-				$liste[$row[0]] = $row[1];
+			while ($i < $num) {
+				$row = $dbs->fetch_row($resql);
+				$list[$row[0]] = $row[1];
 				$i++;
 			}
-		}
-		else
-		{
+		} else {
 			return -1;
 		}
-		return $liste;
+		return $list;
 	}
 
 	/**
@@ -192,38 +197,41 @@ abstract class ModeleThirdPartyCode
 	{
 		global $conf;
 
-		$langs->load("admin");
+		$langs->loadLangs(array("admin", "companies"));
+
+		$strikestart = '';
+		$strikeend = '';
+		if (!empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && !empty($this->code_null)) {
+			$strikestart = '<strike>';
+			$strikeend = '</strike> '.yn(1, 1, 2).' ('.$langs->trans("ForcedToByAModule", $langs->transnoentities("yes")).')';
+		}
 
 		$s = '';
-		if ($type == -1) $s .= $langs->trans("Name").': <b>'.$this->getNom($langs).'</b><br>';
-		if ($type == -1) $s .= $langs->trans("Version").': <b>'.$this->getVersion().'</b><br>';
-		if ($type == 0)  $s .= $langs->trans("CustomerCodeDesc").'<br>';
-		if ($type == 1)  $s .= $langs->trans("SupplierCodeDesc").'<br>';
-		if ($type != -1) $s .= $langs->trans("ValidityControledByModule").': <b>'.$this->getNom($langs).'</b><br>';
+		if ($type == -1) {
+			$s .= $langs->trans("Name").': <b>'.$this->getNom($langs).'</b><br>';
+		} elseif ($type == -1) {
+			$s .= $langs->trans("Version").': <b>'.$this->getVersion().'</b><br>';
+		} elseif ($type == 0) {
+			$s .= $langs->trans("CustomerCodeDesc").'<br>';
+		} elseif ($type == 1) {
+			$s .= $langs->trans("SupplierCodeDesc").'<br>';
+		}
+		if ($type != -1) {
+			$s .= $langs->trans("ValidityControledByModule").': <b>'.$this->getNom($langs).'</b><br>';
+		}
 		$s .= '<br>';
 		$s .= '<u>'.$langs->trans("ThisIsModuleRules").':</u><br>';
-		if ($type == 0)
-		{
-			$s .= $langs->trans("RequiredIfCustomer").': ';
-			if (!empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && !empty($this->code_null)) $s .= '<strike>';
-			$s .= yn(!$this->code_null, 1, 2);
-			if (!empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && !empty($this->code_null)) $s .= '</strike> '.yn(1, 1, 2).' ('.$langs->trans("ForcedToByAModule", $langs->transnoentities("yes")).')';
+		if ($type == 0) {
+			$s .= $langs->trans("RequiredIfCustomer").': '.$strikestart;
+			$s .= yn(!$this->code_null, 1, 2).$strikeend;
 			$s .= '<br>';
-		}
-		if ($type == 1)
-		{
-			$s .= $langs->trans("RequiredIfSupplier").': ';
-			if (!empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && !empty($this->code_null)) $s .= '<strike>';
-			$s .= yn(!$this->code_null, 1, 2);
-			if (!empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && !empty($this->code_null)) $s .= '</strike> '.yn(1, 1, 2).' ('.$langs->trans("ForcedToByAModule", $langs->transnoentities("yes")).')';
+		} elseif ($type == 1) {
+			$s .= $langs->trans("RequiredIfSupplier").': '.$strikestart;
+			$s .= yn(!$this->code_null, 1, 2).$strikeend;
 			$s .= '<br>';
-		}
-		if ($type == -1)
-		{
-			$s .= $langs->trans("Required").': ';
-			if (!empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && !empty($this->code_null)) $s .= '<strike>';
-			$s .= yn(!$this->code_null, 1, 2);
-			if (!empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && !empty($this->code_null)) $s .= '</strike> '.yn(1, 1, 2).' ('.$langs->trans("ForcedToByAModule", $langs->transnoentities("yes")).')';
+		} elseif ($type == -1) {
+			$s .= $langs->trans("Required").': '.$strikestart;
+			$s .= yn(!$this->code_null, 1, 2).$strikeend;
 			$s .= '<br>';
 		}
 		$s .= $langs->trans("CanBeModifiedIfOk").': ';
@@ -232,16 +240,18 @@ abstract class ModeleThirdPartyCode
 		$s .= $langs->trans("CanBeModifiedIfKo").': '.yn($this->code_modifiable_invalide, 1, 2).'<br>';
 		$s .= $langs->trans("AutomaticCode").': '.yn($this->code_auto, 1, 2).'<br>';
 		$s .= '<br>';
-		if ($type == 0 || $type == -1)
-		{
+		if ($type == 0 || $type == -1) {
 			$nextval = $this->getNextValue($soc, 0);
-			if (empty($nextval)) $nextval = $langs->trans("Undefined");
+			if (empty($nextval)) {
+				$nextval = $langs->trans("Undefined");
+			}
 			$s .= $langs->trans("NextValue").($type == -1 ? ' ('.$langs->trans("Customer").')' : '').': <b>'.$nextval.'</b><br>';
 		}
-		if ($type == 1 || $type == -1)
-		{
+		if ($type == 1 || $type == -1) {
 			$nextval = $this->getNextValue($soc, 1);
-			if (empty($nextval)) $nextval = $langs->trans("Undefined");
+			if (empty($nextval)) {
+				$nextval = $langs->trans("Undefined");
+			}
 			$s .= $langs->trans("NextValue").($type == -1 ? ' ('.$langs->trans("Supplier").')' : '').': <b>'.$nextval.'</b>';
 		}
 		return $s;
@@ -319,11 +329,17 @@ abstract class ModeleAccountancyCode
 		global $langs;
 		$langs->load("admin");
 
-		if ($this->version == 'development') return $langs->trans("VersionDevelopment");
-		if ($this->version == 'experimental') return $langs->trans("VersionExperimental");
-		if ($this->version == 'dolibarr') return DOL_VERSION;
-		if ($this->version) return $this->version;
-		return $langs->trans("NotAvailable");
+		if ($this->version == 'development') {
+			return $langs->trans("VersionDevelopment");
+		} elseif ($this->version == 'experimental') {
+			return $langs->trans("VersionExperimental");
+		} elseif ($this->version == 'dolibarr') {
+			return DOL_VERSION;
+		} elseif ($this->version) {
+			return $this->version;
+		} else {
+			return $langs->trans("NotAvailable");
+		}
 	}
 
 	/**
@@ -341,23 +357,27 @@ abstract class ModeleAccountancyCode
 		$langs->load("admin");
 
 		$s = '';
-		if ($type == -1) $s .= $langs->trans("Name").': <b>'.$this->name.'</b><br>';
-		if ($type == -1) $s .= $langs->trans("Version").': <b>'.$this->getVersion().'</b><br>';
+		if ($type == -1) {
+			$s .= $langs->trans("Name").': <b>'.$this->name.'</b><br>';
+			$s .= $langs->trans("Version").': <b>'.$this->getVersion().'</b><br>';
+		}
 		//$s.='<br>';
 		//$s.='<u>'.$langs->trans("ThisIsModuleRules").':</u><br>';
 		$s .= '<br>';
-		if ($type == 0 || $type == -1)
-		{
+		if ($type == 0 || $type == -1) {
 			$result = $this->get_code($db, $soc, 'customer');
 			$nextval = $this->code;
-			if (empty($nextval)) $nextval = $langs->trans("Undefined");
+			if (empty($nextval)) {
+				$nextval = $langs->trans("Undefined");
+			}
 			$s .= $langs->trans("NextValue").($type == -1 ? ' ('.$langs->trans("Customer").')' : '').': <b>'.$nextval.'</b><br>';
 		}
-		if ($type == 1 || $type == -1)
-		{
+		if ($type == 1 || $type == -1) {
 			$result = $this->get_code($db, $soc, 'supplier');
 			$nextval = $this->code;
-			if (empty($nextval)) $nextval = $langs->trans("Undefined");
+			if (empty($nextval)) {
+				$nextval = $langs->trans("Undefined");
+			}
 			$s .= $langs->trans("NextValue").($type == -1 ? ' ('.$langs->trans("Supplier").')' : '').': <b>'.$nextval.'</b>';
 		}
 		return $s;
@@ -379,27 +399,4 @@ abstract class ModeleAccountancyCode
 
 		return $langs->trans("NotAvailable");
 	}
-}
-
-
-/**
- *  Create a document onto disk according to template module.
- *
- *	@param	DoliDB		$db  			Database handler
- *	@param  Facture		$object			Object invoice
- *  @param  string      $message        Message (not used, deprecated)
- *	@param	string		$modele			Force template to use ('' to not force)
- *	@param	Translate	$outputlangs	objet lang a utiliser pour traduction
- *  @param  int			$hidedetails    Hide details of lines
- *  @param  int			$hidedesc       Hide description
- *  @param  int			$hideref        Hide ref
- *	@return int        					<0 if KO, >0 if OK
- *  @deprecated Use the new function generateDocument of Objects class
- *  @see Societe::generateDocument()
- */
-function thirdparty_doc_create(DoliDB $db, Societe $object, $message, $modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
-{
-	dol_syslog(__METHOD__." is deprecated", LOG_WARNING);
-
-	return $object->generateDocument($modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
 }

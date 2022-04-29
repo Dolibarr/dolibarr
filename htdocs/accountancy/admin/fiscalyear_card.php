@@ -31,10 +31,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/fiscalyear.class.php';
 $langs->loadLangs(array("admin", "compta"));
 
 // Security check
-if ($user->socid > 0)
+if ($user->socid > 0) {
 	accessforbidden();
-if (empty($user->rights->accounting->fiscalyear->write))
+}
+if (empty($user->rights->accounting->fiscalyear->write)) {
 	accessforbidden();
+}
 
 $error = 0;
 
@@ -50,8 +52,9 @@ static $tmpstatut2label = array(
 $statut2label = array(
 		''
 );
-foreach ($tmpstatut2label as $key => $val)
+foreach ($tmpstatut2label as $key => $val) {
 	$statut2label[$key] = $langs->trans($val);
+}
 
 $object = new Fiscalyear($db);
 
@@ -71,9 +74,7 @@ if ($action == 'confirm_delete' && $confirm == "yes") {
 	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
-}
-
-elseif ($action == 'add') {
+} elseif ($action == 'add') {
 	if (!GETPOST('cancel', 'alpha')) {
 		$error = 0;
 
@@ -115,15 +116,13 @@ elseif ($action == 'add') {
 		header("Location: ./fiscalyear.php");
 		exit();
 	}
-}
-
-// Update record
-elseif ($action == 'update') {
+} elseif ($action == 'update') {
+	// Update record
 	if (!GETPOST('cancel', 'alpha')) {
 		$result = $object->fetch($id);
 
-		$object->date_start = empty($_POST["fiscalyear"]) ? '' : $date_start;
-		$object->date_end = empty($_POST["fiscalyearend"]) ? '' : $date_end;
+		$object->date_start = GETPOST("fiscalyear") ? $date_start : '';
+		$object->date_end = GETPOST("fiscalyearend") ? $date_end : '';
 		$object->label = GETPOST('label', 'alpha');
 		$object->statut = GETPOST('statut', 'int');
 
@@ -150,18 +149,19 @@ elseif ($action == 'update') {
 $form = new Form($db);
 
 $title = $langs->trans("Fiscalyear")." - ".$langs->trans("Card");
-$helpurl = "";
-llxHeader("", $title, $helpurl);
 
-if ($action == 'create')
-{
+$help_url = "EN:Module_Double_Entry_Accounting";
+
+llxHeader('', $title, $help_url);
+
+if ($action == 'create') {
 	print load_fiche_titre($langs->trans("NewFiscalYear"));
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 
-	dol_fiche_head();
+	print dol_get_fiche_head();
 
 	print '<table class="border centpercent">';
 
@@ -189,12 +189,12 @@ if ($action == 'create')
 
 	print '</table>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	print '<div class="center">';
-	print '<input class="button" type="submit" value="'.$langs->trans("Save").'">';
+	print '<input class="button button-save" type="submit" value="'.$langs->trans("Save").'">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
+	print '<input class="button button-cancel" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
 	print '</div>';
 
 	print '</form>';
@@ -204,7 +204,7 @@ if ($action == 'create')
 		$head = fiscalyear_prepare_head($object);
 
 		if ($action == 'edit') {
-			dol_fiche_head($head, 'card', $langs->trans("Fiscalyear"), 0, 'cron');
+			print dol_get_fiche_head($head, 'card', $langs->trans("Fiscalyear"), 0, 'cron');
 
 			print '<form name="update" action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";
 			print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -242,15 +242,11 @@ if ($action == 'create')
 
 			print '</table>';
 
-			print '<br><div class="center">';
-			print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
-			print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-			print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';
-			print '</div>';
+			print $form->buttonsSaveCancel();
 
 			print '</form>';
 
-			dol_fiche_end();
+			print dol_get_fiche_end();
 		} else {
 			/*
 			 * Confirm delete
@@ -259,7 +255,7 @@ if ($action == 'create')
 				print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id, $langs->trans("DeleteFiscalYear"), $langs->trans("ConfirmDeleteFiscalYear"), "confirm_delete");
 			}
 
-			dol_fiche_head($head, 'card', $langs->trans("Fiscalyear"), 0, 'cron');
+			print dol_get_fiche_head($head, 'card', $langs->trans("Fiscalyear"), 0, 'cron');
 
 			print '<table class="border centpercent">';
 
@@ -298,20 +294,19 @@ if ($action == 'create')
 
 			print "</table>";
 
-			dol_fiche_end();
+			print dol_get_fiche_end();
 
-			if (!empty($user->rights->accounting->fiscalyear->write))
-			{
-    			/*
-    			 * Barre d'actions
-    			 */
-    			print '<div class="tabsAction">';
+			/*
+			 * Action bar
+			 */
+			if (!empty($user->rights->accounting->fiscalyear->write)) {
+				print '<div class="tabsAction">';
 
-    			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&id='.$id.'">'.$langs->trans('Modify').'</a>';
+				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$id.'">'.$langs->trans('Modify').'</a>';
 
-    			// print '<a class="butActionDelete" href="' . $_SERVER["PHP_SELF"] . '?action=delete&id=' . $id . '">' . $langs->trans('Delete') . '</a>';
+				// print '<a class="butActionDelete" href="' . $_SERVER["PHP_SELF"] . '?action=delete&token='.newToken().'&id=' . $id . '">' . $langs->trans('Delete') . '</a>';
 
-    			print '</div>';
+				print '</div>';
 			}
 		}
 	} else {

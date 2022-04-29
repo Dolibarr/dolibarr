@@ -7,4 +7,3 @@ EditMenu=Menu Edition
 ViewSiteInNewTab=Afficher le site dans un nouvel onglet
 ViewPageInNewTab=Afficher la page dans un nouvel onglet
 ViewWebsiteInProduction=Afficher le site Web à l'aide d'URL d'accueil
-YouTryToAccessToAFileThatIsNotAWebsitePage=You try to access to a page that is not available.<br>(ref=%s, type=%s, status=%s)

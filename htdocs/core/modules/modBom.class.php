@@ -2,6 +2,7 @@
 /* Copyright (C) 2004-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2018	   Nicolas ZABOURI 	<info@inovea-conseil.com>
  * Copyright (C) 2019 Maxime Kohlhaas <maxime@atm-consulting.fr>
+ * Copyright (C) 2021 Ferran Marcet <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +24,7 @@
  *
  *  \file       htdocs/core/modules/modBom.class.php
  *  \ingroup    bom
- *  \brief      Description and activation file for module Bom
+ *  \brief      Description and activation file for the module Bom
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
@@ -54,7 +55,7 @@ class modBom extends DolibarrModules
 		// It is used to group modules by family in module setup page
 		$this->family = "products";
 		// Module position in the family on 2 digits ('01', '10', '20', ...)
-		$this->module_position = '60';
+		$this->module_position = '65';
 		// Gives the possibility for the module, to provide his own family info and position of this family (Overwrite $this->family and $this->module_position. Avoid this)
 		//$this->familyinfo = array('myownfamily' => array('position' => '01', 'label' => $langs->trans("MyOwnFamily")));
 
@@ -80,19 +81,19 @@ class modBom extends DolibarrModules
 		// Define some features supported by module (triggers, login, substitutions, menus, css, etc...)
 		$this->module_parts = array(
 			/*
-		    'triggers' => 1,                                 	// Set this to 1 if module has its own trigger directory (core/triggers)
+			'triggers' => 1,                                 	// Set this to 1 if module has its own trigger directory (core/triggers)
 			'login' => 0,                                    	// Set this to 1 if module has its own login method file (core/login)
 			'substitutions' => 1,                            	// Set this to 1 if module has its own substitution function file (core/substitutions)
 			'menus' => 0,                                    	// Set this to 1 if module has its own menus handler directory (core/menus)
 			'theme' => 0,                                    	// Set this to 1 if module has its own theme directory (theme)
-		    'tpl' => 0,                                      	// Set this to 1 if module overwrite template dir (core/tpl)
+			'tpl' => 0,                                      	// Set this to 1 if module overwrite template dir (core/tpl)
 			'barcode' => 0,                                  	// Set this to 1 if module has its own barcode directory (core/modules/barcode)
 			'models' => 0,                                   	// Set this to 1 if module has its own models directory (core/modules/xxx)
 			'css' => array('/bom/css/bom.css.php'),	// Set this to relative path of css file if module has its own css file
-	 		'js' => array('/bom/js/bom.js.php'),          // Set this to relative path of js file if module must load a js on all pages
+			 'js' => array('/bom/js/bom.js.php'),          // Set this to relative path of js file if module must load a js on all pages
 			'hooks' => array('data'=>array('hookcontext1','hookcontext2'), 'entity'=>'0'), 	// Set here all hooks context managed by module. To find available hook context, make a "grep -r '>initHooks(' *" on source code. You can also set hook context 'all'
 			'moduleforexternal' => 0							// Set this to 1 if feature of module are opened to external users
-		    */
+			*/
 		);
 
 		// Data directories to create when module is enabled.
@@ -108,7 +109,7 @@ class modBom extends DolibarrModules
 		$this->requiredby = array('modMrp'); // List of module class names as string to disable if this one is disabled. Example: array('modModuleToDisable1', ...)
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with. Example: array('modModuleToDisable1', ...)
 		$this->langfiles = array("mrp");
-		//$this->phpmin = array(5,4);					// Minimum version of PHP required by module
+		//$this->phpmin = array(5, 6));					// Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(9, 0); // Minimum version of Dolibarr required by module
 		$this->warnings_activation = array(); // Warning to show when we activate module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
 		$this->warnings_activation_ext = array(); // Warning to show when we activate an external module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
@@ -132,8 +133,7 @@ class modBom extends DolibarrModules
 			'fr_FR:ParentCompany'=>'Maison mère ou revendeur'
 		)*/
 
-		if (!isset($conf->bom) || !isset($conf->bom->enabled))
-		{
+		if (!isset($conf->bom) || !isset($conf->bom->enabled)) {
 			$conf->bom = new stdClass();
 			$conf->bom->enabled = 0;
 		}
@@ -171,19 +171,19 @@ class modBom extends DolibarrModules
 		// Dictionaries
 		$this->dictionaries = array();
 		/* Example:
-        $this->dictionaries=array(
-            'langs'=>'mylangfile@bom',
-            'tabname'=>array(MAIN_DB_PREFIX."table1",MAIN_DB_PREFIX."table2",MAIN_DB_PREFIX."table3"),		// List of tables we want to see into dictonnary editor
-            'tablib'=>array("Table1","Table2","Table3"),													// Label of tables
-            'tabsql'=>array('SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table1 as f','SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table2 as f','SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table3 as f'),	// Request to select fields
-            'tabsqlsort'=>array("label ASC","label ASC","label ASC"),																					// Sort order
-            'tabfield'=>array("code,label","code,label","code,label"),																					// List of fields (result of select to show dictionary)
-            'tabfieldvalue'=>array("code,label","code,label","code,label"),																				// List of fields (list of fields to edit a record)
-            'tabfieldinsert'=>array("code,label","code,label","code,label"),																			// List of fields (list of fields for insert)
-            'tabrowid'=>array("rowid","rowid","rowid"),																									// Name of columns with primary key (try to always name it 'rowid')
-            'tabcond'=>array($conf->bom->enabled,$conf->bom->enabled,$conf->bom->enabled)												// Condition to show each dictionary
-        );
-        */
+		$this->dictionaries=array(
+			'langs'=>'mylangfile@bom',
+			'tabname'=>array(MAIN_DB_PREFIX."table1",MAIN_DB_PREFIX."table2",MAIN_DB_PREFIX."table3"),		// List of tables we want to see into dictonnary editor
+			'tablib'=>array("Table1","Table2","Table3"),													// Label of tables
+			'tabsql'=>array('SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table1 as f','SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table2 as f','SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table3 as f'),	// Request to select fields
+			'tabsqlsort'=>array("label ASC","label ASC","label ASC"),																					// Sort order
+			'tabfield'=>array("code,label","code,label","code,label"),																					// List of fields (result of select to show dictionary)
+			'tabfieldvalue'=>array("code,label","code,label","code,label"),																				// List of fields (list of fields to edit a record)
+			'tabfieldinsert'=>array("code,label","code,label","code,label"),																			// List of fields (list of fields for insert)
+			'tabrowid'=>array("rowid","rowid","rowid"),																									// Name of columns with primary key (try to always name it 'rowid')
+			'tabcond'=>array($conf->bom->enabled,$conf->bom->enabled,$conf->bom->enabled)												// Condition to show each dictionary
+		);
+		*/
 
 
 		// Boxes/Widgets
@@ -206,7 +206,7 @@ class modBom extends DolibarrModules
 		// Permissions provided by this module
 		$this->rights = array(); // Permission array used by this module
 
-		$r = 0;
+		$r = 1;
 		$this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Read bom of Bom'; // Permission label
 		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
@@ -247,7 +247,7 @@ class modBom extends DolibarrModules
 								'perms'=>'1',			                // Use 'perms'=>'$user->rights->bom->level1->level2' if you want your menu with a permission rules
 								'target'=>'',
 								'user'=>2);				                // 0=Menu for internal users, 1=external users, 2=both
-        */
+		*/
 		/* END MODULEBUILDER TOPMENU */
 
 		/* BEGIN MODULEBUILDER LEFTMENU BILLOFMATERIALS
@@ -287,15 +287,25 @@ class modBom extends DolibarrModules
 		$langs->load("mrp");
 		$this->export_code[$r] = $this->rights_class.'_'.$r;
 		$this->export_label[$r] = 'BomAndBomLines'; // Translation key (used only if key ExportDataset_xxx_z not found)
+		$this->export_permission[$r] = array(array("bom", "read"));
 		$this->export_icon[$r] = 'bom';
-		$keyforclass = 'BOM'; $keyforclassfile = '/bom/class/bom.class.php'; $keyforelement = 'bom';
+		$keyforclass = 'BOM';
+		$keyforclassfile = '/bom/class/bom.class.php';
+		$keyforelement = 'bom';
 		include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
-		$keyforclass = 'BOMLine'; $keyforclassfile = '/bom/class/bom.class.php'; $keyforelement = 'bomline'; $keyforalias = 'tl';
+		$keyforclass = 'BOMLine';
+		$keyforclassfile = '/bom/class/bom.class.php';
+		$keyforelement = 'bomline';
+		$keyforalias = 'tl';
 		include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
 		unset($this->export_fields_array[$r]['tl.fk_bom']);
-		$keyforselect = 'bom_bom'; $keyforaliasextra = 'extra'; $keyforelement = 'bom';
+		$keyforselect = 'bom_bom';
+		$keyforaliasextra = 'extra';
+		$keyforelement = 'bom';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
-		$keyforselect = 'bom_bomline'; $keyforaliasextra = 'extraline'; $keyforelement = 'bomline';
+		$keyforselect = 'bom_bomline';
+		$keyforaliasextra = 'extraline';
+		$keyforelement = 'bomline';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		$this->export_dependencies_array[$r] = array('bomline'=>'tl.rowid'); // To force to activate one or several fields if we select some fields that need same (like to select a unique key if we ask a field of a child to avoid the DISTINCT to discard them, or for computed field than need several other fields)
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
@@ -306,6 +316,143 @@ class modBom extends DolibarrModules
 		$this->export_sql_end[$r] .= ' AND t.entity IN ('.getEntity('bom').')';
 		$r++;
 		/* END MODULEBUILDER EXPORT BILLOFMATERIALS */
+
+		// Imports
+		//--------
+		$r = 0;
+		//Import BOM Header
+
+		$r++;
+		$this->import_code[$r] = 'bom_'.$r;
+		$this->import_label[$r] = 'BillOfMaterials';
+		$this->import_icon[$r] = $this->picto;
+		$this->import_entities_array[$r] = array();
+		$this->import_tables_array[$r] = array('b' => MAIN_DB_PREFIX.'bom_bom', 'extra' => MAIN_DB_PREFIX.'bom_bom_extrafields');
+		$this->import_tables_creator_array[$r] = array('b' => 'fk_user_creat'); // Fields to store import user id
+		$this->import_fields_array[$r] = array(
+			'b.ref'               => 'Ref*',
+			'b.label'             => 'Label*',
+			'b.fk_product'        => 'ProductRef*',
+			'b.description'       => 'Description',
+			'b.note_public'       => 'Note',
+			'b.note_private'      => 'NotePrivate',
+			'b.fk_warehouse'      => 'WarehouseRef',
+			'b.qty'               => 'Qty',
+			'b.efficiency'        => 'Efficiency',
+			'b.duration'          => 'Duration',
+			'b.date_creation'     => 'DateCreation',
+			'b.date_valid'        => 'DateValid',
+			'b.fk_user_modif'     => 'ModifiedById',
+			'b.fk_user_valid'     => 'ValidatedById',
+			'b.model_pdf'         => 'Model',
+			'b.status'         	  => 'Status*',
+			'b.bomtype'       	  => 'Type*'
+		);
+		$import_sample = array();
+
+		// Add extra fields
+		$import_extrafield_sample = array();
+		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'bom_bom' AND entity IN (0, ".$conf->entity.")";
+		$resql = $this->db->query($sql);
+
+		if ($resql) {
+			while ($obj = $this->db->fetch_object($resql)) {
+				$fieldname = 'extra.'.$obj->name;
+				$fieldlabel = ucfirst($obj->label);
+				$this->import_fields_array[$r][$fieldname] = $fieldlabel.($obj->fieldrequired ? '*' : '');
+				$import_extrafield_sample[$fieldname] = $fieldlabel;
+			}
+		}
+		// End add extra fields
+
+		$this->import_examplevalues_array[$r] = array_merge($import_sample, $import_extrafield_sample);
+		$this->import_fieldshidden_array[$r] = array('extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'bom_bom');
+		$this->import_regex_array[$r] = array(
+			'b.ref' => ''
+		);
+
+		$this->import_updatekeys_array[$r] = array('b.ref' => 'Ref');
+		$this->import_convertvalue_array[$r] = array(
+			'b.fk_product' => array(
+				'rule'    => 'fetchidfromref',
+				'file'    => '/product/class/product.class.php',
+				'class'   => 'Product',
+				'method'  => 'fetch',
+				'element' => 'Product'
+			),
+			'b.fk_warehouse' => array(
+				'rule'    => 'fetchidfromref',
+				'file'    => '/product/stock/class/entrepot.class.php',
+				'class'   => 'Entrepot',
+				'method'  => 'fetch',
+				'element' => 'Warehouse'
+			),
+			'b.fk_user_valid' => array(
+				'rule'    => 'fetchidfromref',
+				'file'    => '/user/class/user.class.php',
+				'class'   => 'User',
+				'method'  => 'fetch',
+				'element' => 'user'
+			),
+			'b.fk_user_modif' => array(
+				'rule'    => 'fetchidfromref',
+				'file'    => '/user/class/user.class.php',
+				'class'   => 'User',
+				'method'  => 'fetch',
+				'element' => 'user'
+			),
+		);
+
+		//Import BOM Lines
+		$r++;
+		$this->import_code[$r] = 'bom_lines_'.$r;
+		$this->import_label[$r] = 'BillOfMaterialsLines';
+		$this->import_icon[$r] = $this->picto;
+		$this->import_entities_array[$r] = array();
+		$this->import_tables_array[$r] = array('bd' => MAIN_DB_PREFIX.'bom_bomline', 'extra' => MAIN_DB_PREFIX.'bom_bomline_extrafields');
+		$this->import_fields_array[$r] = array(
+			'bd.fk_bom'         => 'BOM*',
+			'bd.fk_product'     => 'ProductRef',
+			'bd.fk_bom_child'   => 'BOMChild',
+			'bd.description'    => 'Description',
+			'bd.qty'            => 'LineQty',
+			'bd.qty_frozen'     => 'LineIsFrozen',
+			'bd.disable_stock_change' => 'Disable Stock Change',
+			'bd.efficiency'     => 'Efficiency',
+			'bd.position'       => 'LinePosition'
+		);
+
+		// Add extra fields
+		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'bom_bomline' AND entity IN (0, ".$conf->entity.")";
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			while ($obj = $this->db->fetch_object($resql)) {
+				$fieldname = 'extra.'.$obj->name;
+				$fieldlabel = ucfirst($obj->label);
+				$this->import_fields_array[$r][$fieldname] = $fieldlabel.($obj->fieldrequired ? '*' : '');
+			}
+		}
+		// End add extra fields
+
+		$this->import_fieldshidden_array[$r] = array('extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'bom_bomline');
+		$this->import_regex_array[$r] = array();
+		$this->import_updatekeys_array[$r] = array('bd.fk_bom' => 'BOM Id');
+		$this->import_convertvalue_array[$r] = array(
+			'bd.fk_bom' => array(
+				'rule'    => 'fetchidfromref',
+				'file'    => '/bom/class/bom.class.php',
+				'class'   => 'BOM',
+				'method'  => 'fetch',
+				'element' => 'bom'
+			),
+			'bd.fk_product' => array(
+				'rule'    => 'fetchidfromref',
+				'file'    => '/product/class/product.class.php',
+				'class'   => 'Product',
+				'method'  => 'fetch',
+				'element' => 'Product'
+			),
+		);
 	}
 
 	/**
@@ -319,9 +466,6 @@ class modBom extends DolibarrModules
 	public function init($options = '')
 	{
 		global $conf, $langs;
-
-		$result = $this->_load_tables('/bom/sql/');
-		if ($result < 0) return -1; // Do not activate module if not allowed errors found on module SQL queries (the _load_table run sql with run_sql with error allowed parameter to 'default')
 
 		// Create extrafields
 		//include_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
@@ -343,13 +487,11 @@ class modBom extends DolibarrModules
 		$dirodt = DOL_DATA_ROOT.'/doctemplates/boms';
 		$dest = $dirodt.'/template_bom.odt';
 
-		if (file_exists($src) && !file_exists($dest))
-		{
+		if (file_exists($src) && !file_exists($dest)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			dol_mkdir($dirodt);
 			$result = dol_copy($src, $dest, 0, 0);
-			if ($result < 0)
-			{
+			if ($result < 0) {
 				$langs->load("errors");
 				$this->error = $langs->trans('ErrorFailToCopyFile', $src, $dest);
 				return 0;
@@ -357,8 +499,8 @@ class modBom extends DolibarrModules
 		}
 
 		$sql = array(
-			//"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape('standard')."' AND type = 'bom' AND entity = ".$conf->entity,
-			//"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape('standard')."', 'bom', ".$conf->entity.")"
+			//"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape('standard')."' AND type = 'bom' AND entity = ".((int) $conf->entity),
+			//"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape('standard')."', 'bom', ".((int) $conf->entity).")"
 		);
 
 		return $this->_init($sql, $options);

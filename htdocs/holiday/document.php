@@ -41,38 +41,76 @@ $langs->loadLangs(array('other', 'holiday', 'companies'));
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
-
-// Security check
-if ($user->socid) $socid = $user->socid;
-$result = restrictedArea($user, 'holiday', $id, 'holiday');
 
 // Get parameters
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST('sortfield', 'alpha');
-$sortorder = GETPOST('sortorder', 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+if (empty($page) || $page == -1) {
+	$page = 0;
+}     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (!$sortorder) $sortorder = "ASC";
-if (!$sortfield) $sortfield = "position_name";
+if (!$sortorder) {
+	$sortorder = "ASC";
+}
+if (!$sortfield) {
+	$sortfield = "position_name";
+}
 
+
+$childids = $user->getAllChildIds(1);
+
+$morefilter = '';
+if (!empty($conf->global->HOLIDAY_HIDE_FOR_NON_SALARIES)) {
+	$morefilter = 'AND employee = 1';
+}
 
 $object = new Holiday($db);
-$object->fetch($id, $ref);
 
-$upload_dir = $conf->holiday->dir_output.'/'.get_exdir($object->id, 0, 0, 0, $object, 'holiday').dol_sanitizeFileName($object->ref);
+$extrafields = new ExtraFields($db);
+
+// fetch optionals attributes and labels
+$extrafields->fetch_name_optionals_label($object->table_element);
+
+if (($id > 0) || $ref) {
+	$object->fetch($id, $ref);
+
+	// Check current user can read this leave request
+	$canread = 0;
+	if (!empty($user->rights->holiday->readall)) {
+		$canread = 1;
+	}
+	if (!empty($user->rights->holiday->read) && in_array($object->fk_user, $childids)) {
+		$canread = 1;
+	}
+	if (!$canread) {
+		accessforbidden();
+	}
+}
+
+
+$upload_dir = $conf->holiday->dir_output.'/'.get_exdir(0, 0, 0, 1, $object, '');
 $modulepart = 'holiday';
+
+// Protection if external user
+if ($user->socid) {
+	$socid = $user->socid;
+}
+$result = restrictedArea($user, 'holiday', $object->id, 'holiday');
+
+$permissiontoadd = $user->rights->holiday->write; // Used by the include of actions_setnotes.inc.php
 
 
 /*
  * Actions
  */
 
-include_once DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
+include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
 
 /*
@@ -82,12 +120,12 @@ include_once DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 $form = new Form($db);
 
 $listhalfday = array('morning'=>$langs->trans("Morning"), "afternoon"=>$langs->trans("Afternoon"));
+$title = $langs->trans("Leave").' - '.$langs->trans("Files");
 
-llxHeader("", "", $langs->trans("InterventionCard"));
+llxHeader('', $title);
 
 
-if ($object->id)
-{
+if ($object->id) {
 	$valideur = new User($db);
 	$valideur->fetch($object->fk_validator);
 
@@ -96,14 +134,13 @@ if ($object->id)
 
 	$head = holiday_prepare_head($object);
 
-	dol_fiche_head($head, 'documents', $langs->trans("CPTitreMenu"), -1, 'holiday');
+	print dol_get_fiche_head($head, 'documents', $langs->trans("CPTitreMenu"), -1, 'holiday');
 
 
 	// Build file list
 	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
 	$totalsize = 0;
-	foreach ($filearray as $key => $file)
-	{
+	foreach ($filearray as $key => $file) {
 		$totalsize += $file['size'];
 	}
 
@@ -119,179 +156,187 @@ if ($object->id)
 
 	print '<table class="border tableforfield centpercent">';
 
-    print '<tr>';
-    print '<td class="titlefield">'.$langs->trans("User").'</td>';
+	print '<tr>';
+	print '<td class="titlefield">'.$langs->trans("User").'</td>';
 	print '<td>';
 	print $userRequest->getNomUrl(-1, 'leave');
 	print '</td></tr>';
 
-    // Type
-    print '<tr>';
-    print '<td>'.$langs->trans("Type").'</td>';
-    print '<td>';
-    $typeleaves = $object->getTypes(1, -1);
-    print empty($typeleaves[$object->fk_type]['label']) ? $langs->trans("TypeWasDisabledOrRemoved", $object->fk_type) : $typeleaves[$object->fk_type]['label'];
-    print '</td>';
-    print '</tr>';
+	// Type
+	print '<tr>';
+	print '<td>'.$langs->trans("Type").'</td>';
+	print '<td>';
+	$typeleaves = $object->getTypes(1, -1);
+	$labeltoshow = (($typeleaves[$object->fk_type]['code'] && $langs->trans($typeleaves[$object->fk_type]['code']) != $typeleaves[$object->fk_type]['code']) ? $langs->trans($typeleaves[$object->fk_type]['code']) : $typeleaves[$object->fk_type]['label']);
+	print empty($labeltoshow) ? $langs->trans("TypeWasDisabledOrRemoved", $object->fk_type) : $labeltoshow;
+	print '</td>';
+	print '</tr>';
 
-    $starthalfday = ($object->halfday == -1 || $object->halfday == 2) ? 'afternoon' : 'morning';
-    $endhalfday = ($object->halfday == 1 || $object->halfday == 2) ? 'morning' : 'afternoon';
+	$starthalfday = ($object->halfday == -1 || $object->halfday == 2) ? 'afternoon' : 'morning';
+	$endhalfday = ($object->halfday == 1 || $object->halfday == 2) ? 'morning' : 'afternoon';
 
-    if (!$edit)
-    {
-        print '<tr>';
-        print '<td>'.$langs->trans('DateDebCP').' ('.$langs->trans("FirstDayOfHoliday").')</td>';
-        print '<td>'.dol_print_date($object->date_debut, 'day');
-        print ' &nbsp; &nbsp; ';
-        print '<span class="opacitymedium">'.$langs->trans($listhalfday[$starthalfday]).'</span>';
-        print '</td>';
-        print '</tr>';
-    }
-    else
-    {
-        print '<tr>';
-        print '<td>'.$langs->trans('DateDebCP').' ('.$langs->trans("FirstDayOfHoliday").')</td>';
-        print '<td>';
-        print $form->selectDate($object->date_debut, 'date_debut_');
-        print ' &nbsp; &nbsp; ';
+	if (!$edit) {
+		print '<tr>';
+		print '<td>';
+		print $form->textwithpicto($langs->trans('DateDebCP'), $langs->trans("FirstDayOfHoliday"));
+		print '</td>';
+		print '<td>'.dol_print_date($object->date_debut, 'day');
+		print ' &nbsp; &nbsp; ';
+		print '<span class="opacitymedium">'.$langs->trans($listhalfday[$starthalfday]).'</span>';
+		print '</td>';
+		print '</tr>';
+	} else {
+		print '<tr>';
+		print '<td>';
+		print $form->textwithpicto($langs->trans('DateDebCP'), $langs->trans("FirstDayOfHoliday"));
+		print '</td>';
+		print '<td>';
+		print $form->selectDate($object->date_debut, 'date_debut_');
+		print ' &nbsp; &nbsp; ';
 		print $form->selectarray('starthalfday', $listhalfday, (GETPOST('starthalfday') ?GETPOST('starthalfday') : $starthalfday));
-        print '</td>';
-        print '</tr>';
-    }
+		print '</td>';
+		print '</tr>';
+	}
 
-    if (!$edit)
-    {
-        print '<tr>';
-        print '<td>'.$langs->trans('DateFinCP').' ('.$langs->trans("LastDayOfHoliday").')</td>';
-        print '<td>'.dol_print_date($object->date_fin, 'day');
-        print ' &nbsp; &nbsp; ';
-        print '<span class="opacitymedium">'.$langs->trans($listhalfday[$endhalfday]).'</span>';
-        print '</td>';
-        print '</tr>';
-    }
-    else
-    {
-        print '<tr>';
-        print '<td>'.$langs->trans('DateFinCP').' ('.$langs->trans("LastDayOfHoliday").')</td>';
-        print '<td>';
-        print $form->selectDate($object->date_fin, 'date_fin_');
-        print ' &nbsp; &nbsp; ';
-        print $form->selectarray('endhalfday', $listhalfday, (GETPOST('endhalfday') ?GETPOST('endhalfday') : $endhalfday));
-        print '</td>';
-        print '</tr>';
-    }
-    print '<tr>';
-    print '<td>'.$langs->trans('NbUseDaysCP').'</td>';
-    print '<td>'.num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday).'</td>';
-    print '</tr>';
+	if (!$edit) {
+		print '<tr>';
+		print '<td>';
+		print $form->textwithpicto($langs->trans('DateFinCP'), $langs->trans("LastDayOfHoliday"));
+		print '</td>';
+		print '<td>'.dol_print_date($object->date_fin, 'day');
+		print ' &nbsp; &nbsp; ';
+		print '<span class="opacitymedium">'.$langs->trans($listhalfday[$endhalfday]).'</span>';
+		print '</td>';
+		print '</tr>';
+	} else {
+		print '<tr>';
+		print '<td>';
+		print $form->textwithpicto($langs->trans('DateFinCP'), $langs->trans("LastDayOfHoliday"));
+		print '</td>';
+		print '<td>';
+		print $form->selectDate($object->date_fin, 'date_fin_');
+		print ' &nbsp; &nbsp; ';
+		print $form->selectarray('endhalfday', $listhalfday, (GETPOST('endhalfday') ?GETPOST('endhalfday') : $endhalfday));
+		print '</td>';
+		print '</tr>';
+	}
 
-    if ($object->statut == 5)
-    {
-    	print '<tr>';
-    	print '<td>'.$langs->trans('DetailRefusCP').'</td>';
-    	print '<td>'.$object->detail_refuse.'</td>';
-    	print '</tr>';
-    }
+	// Nb days consumed
+	print '<tr>';
+	print '<td>';
+	$htmlhelp = $langs->trans('NbUseDaysCPHelp');
+	$includesaturday = (isset($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY) ? $conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY : 1);
+	$includesunday   = (isset($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY) ? $conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY : 1);
+	if ($includesaturday) {
+		$htmlhelp .= '<br>'.$langs->trans("DayIsANonWorkingDay", $langs->trans("Saturday"));
+	}
+	if ($includesunday) {
+		$htmlhelp .= '<br>'.$langs->trans("DayIsANonWorkingDay", $langs->trans("Sunday"));
+	}
+	print $form->textwithpicto($langs->trans('NbUseDaysCP'), $htmlhelp);
+	print '</td>';
+	print '<td>'.num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday).'</td>';
+	print '</tr>';
 
-    // Description
-    if (!$edit)
-    {
-        print '<tr>';
-        print '<td>'.$langs->trans('DescCP').'</td>';
-        print '<td>'.nl2br($object->description).'</td>';
-        print '</tr>';
-    }
-    else
-    {
-        print '<tr>';
-        print '<td>'.$langs->trans('DescCP').'</td>';
-        print '<td><textarea name="description" class="flat" rows="'.ROWS_3.'" cols="70">'.$object->description.'</textarea></td>';
-        print '</tr>';
-    }
+	if ($object->statut == 5) {
+		print '<tr>';
+		print '<td>'.$langs->trans('DetailRefusCP').'</td>';
+		print '<td>'.$object->detail_refuse.'</td>';
+		print '</tr>';
+	}
 
-    print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
-    print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize, 1, 1).'</td></tr>';
+	// Description
+	if (!$edit) {
+		print '<tr>';
+		print '<td>'.$langs->trans('DescCP').'</td>';
+		print '<td>'.nl2br($object->description).'</td>';
+		print '</tr>';
+	} else {
+		print '<tr>';
+		print '<td>'.$langs->trans('DescCP').'</td>';
+		print '<td><textarea name="description" class="flat" rows="'.ROWS_3.'" cols="70">'.$object->description.'</textarea></td>';
+		print '</tr>';
+	}
 
-    print '</tbody>';
-    print '</table>'."\n";
-    /*
-    print '</div>';
-    print '<div class="fichehalfright">';
-    print '<div class="ficheaddleft">';
+	print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
+	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize, 1, 1).'</td></tr>';
 
-    print '<div class="underbanner clearboth"></div>';
+	print '</tbody>';
+	print '</table>'."\n";
+	/*
+	print '</div>';
+	print '<div class="fichehalfright">';
+
+	print '<div class="underbanner clearboth"></div>';
 
 	// Info workflow
-    print '<table class="border tableforfield centpercent">'."\n";
-    print '<tbody>';
+	print '<table class="border tableforfield centpercent">'."\n";
+	print '<tbody>';
 
-    if (! empty($object->fk_user_create))
-    {
-    	$userCreate=new User($db);
-    	$userCreate->fetch($object->fk_user_create);
-        print '<tr>';
-        print '<td class="titlefield">'.$langs->trans('RequestByCP').'</td>';
-        print '<td>'.$userCreate->getNomUrl(-1).'</td>';
-        print '</tr>';
-    }
+	if (! empty($object->fk_user_create))
+	{
+		$userCreate=new User($db);
+		$userCreate->fetch($object->fk_user_create);
+		print '<tr>';
+		print '<td class="titlefield">'.$langs->trans('RequestByCP').'</td>';
+		print '<td>'.$userCreate->getNomUrl(-1).'</td>';
+		print '</tr>';
+	}
 
-    if (!$edit) {
-        print '<tr>';
-        print '<td class="titlefield">'.$langs->trans('ReviewedByCP').'</td>';
-        print '<td>'.$valideur->getNomUrl(-1).'</td>';
-        print '</tr>';
-    } else {
-        print '<tr>';
-        print '<td class="titlefield">'.$langs->trans('ReviewedByCP').'</td>';
-        print '<td>';
+	if (!$edit) {
+		print '<tr>';
+		print '<td class="titlefield">'.$langs->trans('ReviewedByCP').'</td>';
+		print '<td>'.$valideur->getNomUrl(-1).'</td>';
+		print '</tr>';
+	} else {
+		print '<tr>';
+		print '<td class="titlefield">'.$langs->trans('ReviewedByCP').'</td>';
+		print '<td>';
 		print $form->select_dolusers($object->fk_user, "valideur", 1, ($user->admin ? '' : array($user->id)));	// By default, hierarchical parent
-        print '</td>';
-        print '</tr>';
-    }
+		print '</td>';
+		print '</tr>';
+	}
 
-    print '<tr>';
-    print '<td>'.$langs->trans('DateCreation').'</td>';
-    print '<td>'.dol_print_date($object->date_create,'dayhour').'</td>';
-    print '</tr>';
-    if ($object->statut == 3) {
-        print '<tr>';
-        print '<td>'.$langs->trans('DateValidCP').'</td>';
-        print '<td>'.dol_print_date($object->date_valid,'dayhour').'</td>';
-        print '</tr>';
-    }
-    if ($object->statut == 4) {
-        print '<tr>';
-        print '<td>'.$langs->trans('DateCancelCP').'</td>';
-        print '<td>'.dol_print_date($object->date_cancel,'dayhour').'</td>';
-        print '</tr>';
-    }
-    if ($object->statut == 5) {
-        print '<tr>';
-        print '<td>'.$langs->trans('DateRefusCP').'</td>';
-        print '<td>'.dol_print_date($object->date_refuse,'dayhour').'</td>';
-        print '</tr>';
-    }
-    print '</tbody>';
-    print '</table>';
+	print '<tr>';
+	print '<td>'.$langs->trans('DateCreation').'</td>';
+	print '<td>'.dol_print_date($object->date_create,'dayhour').'</td>';
+	print '</tr>';
+	if ($object->statut == 3) {
+		print '<tr>';
+		print '<td>'.$langs->trans('DateValidCP').'</td>';
+		print '<td>'.dol_print_date($object->date_valid,'dayhour').'</td>';
+		print '</tr>';
+	}
+	if ($object->statut == 4) {
+		print '<tr>';
+		print '<td>'.$langs->trans('DateCancelCP').'</td>';
+		print '<td>'.dol_print_date($object->date_cancel,'dayhour').'</td>';
+		print '</tr>';
+	}
+	if ($object->statut == 5) {
+		print '<tr>';
+		print '<td>'.$langs->trans('DateRefusCP').'</td>';
+		print '<td>'.dol_print_date($object->date_refuse,'dayhour').'</td>';
+		print '</tr>';
+	}
+	print '</tbody>';
+	print '</table>';
 
-    print '</div>';
-    print '</div>'; */
-    print '</div>';
+	print '</div>'; */
+	print '</div>';
 
-    print '<div class="clearboth"></div>';
+	print '<div class="clearboth"></div>';
 
-    dol_fiche_end();
+	print dol_get_fiche_end();
 
+	$permissiontoadd = $user->rights->holiday->write;
+	$permtoedit = $user->rights->holiday->write;
+	$param = '&id='.$object->id;
+	$relativepathwithnofile = dol_sanitizeFileName($object->ref).'/';
+	$savingdocmask = dol_sanitizeFileName($object->ref).'-__file__';
 
-
-    $modulepart = 'holiday';
-    $permission = $user->rights->holiday->write;
-    $permtoedit = $user->rights->holiday->write;
-    $param = '&id='.$object->id;
-    include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
-}
-else
-{
+	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
+} else {
 	print $langs->trans("ErrorUnknown");
 }
 

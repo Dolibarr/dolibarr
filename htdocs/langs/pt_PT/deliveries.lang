@@ -27,5 +27,7 @@ Recipient=Destinatário
 ErrorStockIsNotEnough=Não existe stock suficiente
 Shippable= Transportável
 NonShippable=Não Transportável
+ShowShippableStatus=Show shippable status
 ShowReceiving=Mostrar recibo da entrega
 NonExistentOrder=Nonexistent order
+StockQuantitiesAlreadyAllocatedOnPreviousLines = Stock quantities already allocated on previous lines

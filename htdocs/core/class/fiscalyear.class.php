@@ -36,17 +36,22 @@ class Fiscalyear extends CommonObject
 	public $element = 'fiscalyear';
 
 	/**
+	 * @var string picto
+	 */
+	public $picto = 'technic';
+
+	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'accounting_fiscalyear';
 
 	/**
-	 * @var int    Name of subtable line
+	 * @var string    Name of subtable line
 	 */
 	public $table_element_line = '';
 
 	/**
-	 * @var int Field with ID of parent key if this field has a parent
+	 * @var string Field with ID of parent key if this field has a parent
 	 */
 	public $fk_element = '';
 
@@ -67,25 +72,25 @@ class Fiscalyear extends CommonObject
 	public $label;
 
 	/**
-     * Date start (date_start)
-     *
-     * @var integer
-     */
+	 * Date start (date_start)
+	 *
+	 * @var integer
+	 */
 	public $date_start;
 
 	/**
-     * Date end (date_end)
-     *
-     * @var integer
-     */
+	 * Date end (date_end)
+	 *
+	 * @var integer
+	 */
 	public $date_end;
 
 	/**
-     * Date creation record (datec)
-     *
-     * @var integer
-     */
-    public $datec;
+	 * Date creation record (datec)
+	 *
+	 * @var integer
+	 */
+	public $datec;
 
 	public $statut; // 0=open, 1=closed
 
@@ -96,6 +101,7 @@ class Fiscalyear extends CommonObject
 
 	public $statuts = array();
 	public $statuts_short = array();
+
 
 	/**
 	 * Constructor
@@ -128,7 +134,7 @@ class Fiscalyear extends CommonObject
 
 		$this->db->begin();
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."accounting_fiscalyear (";
+		$sql = "INSERT INTO ".$this->db->prefix()."accounting_fiscalyear (";
 		$sql .= "label";
 		$sql .= ", date_start";
 		$sql .= ", date_end";
@@ -141,32 +147,26 @@ class Fiscalyear extends CommonObject
 		$sql .= ", '".$this->db->idate($this->date_start)."'";
 		$sql .= ", ".($this->date_end ? "'".$this->db->idate($this->date_end)."'" : "null");
 		$sql .= ", 0";
-		$sql .= ", ".$conf->entity;
+		$sql .= ", ".((int) $conf->entity);
 		$sql .= ", '".$this->db->idate($now)."'";
-		$sql .= ", ".$user->id;
+		$sql .= ", ".((int) $user->id);
 		$sql .= ")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$result = $this->db->query($sql);
-		if ($result)
-		{
-			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."accounting_fiscalyear");
+		if ($result) {
+			$this->id = $this->db->last_insert_id($this->db->prefix()."accounting_fiscalyear");
 
 			$result = $this->update($user);
-			if ($result > 0)
-			{
+			if ($result > 0) {
 				$this->db->commit();
 				return $this->id;
-			}
-			else
-			{
+			} else {
 				$this->error = $this->db->lasterror();
 				$this->db->rollback();
 				return $result;
 			}
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror()." sql=".$sql;
 			$this->db->rollback();
 			return -1;
@@ -184,31 +184,27 @@ class Fiscalyear extends CommonObject
 		global $langs;
 
 		// Check parameters
-		if (empty($this->date_start) && empty($this->date_end))
-		{
+		if (empty($this->date_start) && empty($this->date_end)) {
 			$this->error = 'ErrorBadParameter';
 			return -1;
 		}
 
 		$this->db->begin();
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."accounting_fiscalyear";
+		$sql = "UPDATE ".$this->db->prefix()."accounting_fiscalyear";
 		$sql .= " SET label = '".$this->db->escape($this->label)."'";
 		$sql .= ", date_start = '".$this->db->idate($this->date_start)."'";
 		$sql .= ", date_end = ".($this->date_end ? "'".$this->db->idate($this->date_end)."'" : "null");
 		$sql .= ", statut = '".$this->db->escape($this->statut ? $this->statut : 0)."'";
-		$sql .= ", fk_user_modif = ".$user->id;
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= ", fk_user_modif = ".((int) $user->id);
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$result = $this->db->query($sql);
-		if ($result)
-		{
+		if ($result) {
 			$this->db->commit();
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror();
 			dol_syslog($this->error, LOG_ERR);
 			$this->db->rollback();
@@ -217,21 +213,20 @@ class Fiscalyear extends CommonObject
 	}
 
 	/**
-	* Load an object from database
-	*
-	* @param	int		$id		Id of record to load
-	* @return	int				<0 if KO, >0 if OK
-	*/
+	 * Load an object from database
+	 *
+	 * @param	int		$id		Id of record to load
+	 * @return	int				<0 if KO, >0 if OK
+	 */
 	public function fetch($id)
 	{
 		$sql = "SELECT rowid, label, date_start, date_end, statut";
-		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_fiscalyear";
-		$sql .= " WHERE rowid = ".$id;
+		$sql .= " FROM ".$this->db->prefix()."accounting_fiscalyear";
+		$sql .= " WHERE rowid = ".((int) $id);
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$result = $this->db->query($sql);
-		if ($result)
-		{
+		if ($result) {
 			$obj = $this->db->fetch_object($result);
 
 			$this->id = $obj->rowid;
@@ -242,15 +237,13 @@ class Fiscalyear extends CommonObject
 			$this->statut	    = $obj->statut;
 
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
 	}
 
-    /**
+	/**
 	 *	Delete record
 	 *
 	 *	@param	int		$id		Id of record to delete
@@ -260,21 +253,102 @@ class Fiscalyear extends CommonObject
 	{
 		$this->db->begin();
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."accounting_fiscalyear WHERE rowid = ".$id;
+		$sql = "DELETE FROM ".$this->db->prefix()."accounting_fiscalyear WHERE rowid = ".((int) $id);
 
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$result = $this->db->query($sql);
-		if ($result)
-		{
+		if ($result) {
 			$this->db->commit();
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror();
 			$this->db->rollback();
 			return -1;
 		}
+	}
+
+	/**
+	 *	Return clicable link of object (with eventually picto)
+	 *
+	 *	@param      int			$withpicto                Add picto into link
+	 *  @param	    int   	    $notooltip		          1=Disable tooltip
+	 *  @param      int         $save_lastsearch_value    -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *	@return     string          			          String with URL
+	 */
+	public function getNomUrl($withpicto = 0, $notooltip = 0, $save_lastsearch_value = -1)
+	{
+		global $conf, $langs, $user;
+
+		if (empty($this->ref)) {
+			$this->ref = $this->id;
+		}
+
+		if (!empty($conf->dol_no_mouse_hover)) {
+			$notooltip = 1; // Force disable tooltips
+		}
+
+		$result = '';
+
+		$url = DOL_URL_ROOT.'/accountancy/admin/fiscalyear_card.php?id='.$this->id;
+
+		if (empty($user->rights->accounting->fiscalyear->write)) {
+			$option = 'nolink';
+		}
+
+		if ($option !== 'nolink') {
+			// Add param to save lastsearch_values or not
+			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
+			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+				$add_save_lastsearch_values = 1;
+			}
+			if ($add_save_lastsearch_values) {
+				$url .= '&save_lastsearch_values=1';
+			}
+		}
+
+		if ($short) {
+			return $url;
+		}
+
+		$label = '';
+
+		if ($user->rights->accounting->fiscalyear->write) {
+			$label = '<u>'.$langs->trans("FiscalPeriod").'</u>';
+			$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->id;
+			if (isset($this->statut)) {
+				$label .= '<br><b>'.$langs->trans("Status").":</b> ".$this->getLibStatut(5);
+			}
+		}
+
+		$linkclose = '';
+		if (empty($notooltip) && $user->rights->accounting->fiscalyear->write) {
+			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+				$label = $langs->trans("FiscalYear");
+				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+			}
+			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose .= ' class="classfortooltip"';
+		}
+
+		$linkstart = '<a href="'.$url.'"';
+		$linkstart .= $linkclose.'>';
+		$linkend = '</a>';
+
+		if ($option === 'nolink') {
+			$linkstart = '';
+			$linkend = '';
+		}
+
+		$result .= $linkstart;
+		if ($withpicto) {
+			$result .= img_object(($notooltip ? '' : $label), $this->picto, ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+		}
+		if ($withpicto != 2) {
+			$result .= $this->ref;
+		}
+		$result .= $linkend;
+
+		return $result;
 	}
 
 	/**
@@ -301,33 +375,34 @@ class Fiscalyear extends CommonObject
 		// phpcs:enable
 		global $langs;
 
-		if ($mode == 0)
-		{
+		if ($mode == 0) {
 			return $langs->trans($this->statuts[$status]);
-		}
-		elseif ($mode == 1)
-		{
+		} elseif ($mode == 1) {
 			return $langs->trans($this->statuts_short[$status]);
-		}
-		elseif ($mode == 2)
-		{
-			if ($status == 0) return img_picto($langs->trans($this->statuts_short[$status]), 'statut4').' '.$langs->trans($this->statuts_short[$status]);
-			elseif ($status == 1) return img_picto($langs->trans($this->statuts_short[$status]), 'statut8').' '.$langs->trans($this->statuts_short[$status]);
-		}
-		elseif ($mode == 3)
-		{
-			if ($status == 0 && !empty($this->statuts_short[$status])) return img_picto($langs->trans($this->statuts_short[$status]), 'statut4');
-			elseif ($status == 1 && !empty($this->statuts_short[$status])) return img_picto($langs->trans($this->statuts_short[$status]), 'statut8');
-		}
-		elseif ($mode == 4)
-		{
-			if ($status == 0 && !empty($this->statuts_short[$status])) return img_picto($langs->trans($this->statuts_short[$status]), 'statut4').' '.$langs->trans($this->statuts[$status]);
-			elseif ($status == 1 && !empty($this->statuts_short[$status])) return img_picto($langs->trans($this->statuts_short[$status]), 'statut8').' '.$langs->trans($this->statuts[$status]);
-		}
-		elseif ($mode == 5)
-		{
-			if ($status == 0 && !empty($this->statuts_short[$status])) return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]), 'statut4');
-			elseif ($status == 1 && !empty($this->statuts_short[$status])) return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]), 'statut6');
+		} elseif ($mode == 2) {
+			if ($status == 0) {
+				return img_picto($langs->trans($this->statuts_short[$status]), 'statut4').' '.$langs->trans($this->statuts_short[$status]);
+			} elseif ($status == 1) {
+				return img_picto($langs->trans($this->statuts_short[$status]), 'statut8').' '.$langs->trans($this->statuts_short[$status]);
+			}
+		} elseif ($mode == 3) {
+			if ($status == 0 && !empty($this->statuts_short[$status])) {
+				return img_picto($langs->trans($this->statuts_short[$status]), 'statut4');
+			} elseif ($status == 1 && !empty($this->statuts_short[$status])) {
+				return img_picto($langs->trans($this->statuts_short[$status]), 'statut8');
+			}
+		} elseif ($mode == 4) {
+			if ($status == 0 && !empty($this->statuts_short[$status])) {
+				return img_picto($langs->trans($this->statuts_short[$status]), 'statut4').' '.$langs->trans($this->statuts[$status]);
+			} elseif ($status == 1 && !empty($this->statuts_short[$status])) {
+				return img_picto($langs->trans($this->statuts_short[$status]), 'statut8').' '.$langs->trans($this->statuts[$status]);
+			}
+		} elseif ($mode == 5) {
+			if ($status == 0 && !empty($this->statuts_short[$status])) {
+				return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]), 'statut4');
+			} elseif ($status == 1 && !empty($this->statuts_short[$status])) {
+				return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]), 'statut6');
+			}
 		}
 	}
 
@@ -339,28 +414,24 @@ class Fiscalyear extends CommonObject
 	 */
 	public function info($id)
 	{
-		$sql = 'SELECT fy.rowid, fy.datec, fy.fk_user_author, fy.fk_user_modif,';
-		$sql .= ' fy.tms';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.'accounting_fiscalyear as fy';
-		$sql .= ' WHERE fy.rowid = '.$id;
+		$sql = "SELECT fy.rowid, fy.datec, fy.fk_user_author, fy.fk_user_modif,";
+		$sql .= " fy.tms";
+		$sql .= " FROM ".$this->db->prefix()."accounting_fiscalyear as fy";
+		$sql .= " WHERE fy.rowid = ".((int) $id);
 
 		dol_syslog(get_class($this)."::fetch info", LOG_DEBUG);
 		$result = $this->db->query($sql);
 
-		if ($result)
-		{
-			if ($this->db->num_rows($result))
-			{
+		if ($result) {
+			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
 				$this->id = $obj->rowid;
-				if ($obj->fk_user_author)
-				{
+				if ($obj->fk_user_author) {
 					$cuser = new User($this->db);
 					$cuser->fetch($obj->fk_user_author);
 					$this->user_creation = $cuser;
 				}
-				if ($obj->fk_user_modif)
-				{
+				if ($obj->fk_user_modif) {
 					$muser = new User($this->db);
 					$muser->fetch($obj->fk_user_modif);
 					$this->user_modification = $muser;
@@ -369,9 +440,7 @@ class Fiscalyear extends CommonObject
 				$this->date_modification = $this->db->jdate($obj->tms);
 			}
 			$this->db->free($result);
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 		}
 	}
@@ -387,23 +456,25 @@ class Fiscalyear extends CommonObject
 	{
 		global $conf;
 
-		if (empty($datestart))
+		if (empty($datestart)) {
 			$datestart = $this->date_start;
-		if (empty($dateend))
+		}
+		if (empty($dateend)) {
 			$dateend = $this->date_end;
+		}
 
 		$sql = "SELECT count(DISTINCT piece_num) as nb";
-		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping";
+		$sql .= " FROM ".$this->db->prefix()."accounting_bookkeeping";
 		$sql .= " WHERE entity IN (".getEntity('bookkeeping', 0).")";
 		$sql .= " AND doc_date >= '".$this->db->idate($datestart)."' and doc_date <= '".$this->db->idate($dateend)."'";
 
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
 			$nb = $obj->nb;
+		} else {
+			dol_print_error($this->db);
 		}
-		else dol_print_error($this->db);
 
 		return $nb;
 	}
@@ -419,23 +490,25 @@ class Fiscalyear extends CommonObject
 	{
 		global $conf;
 
-		if (empty($datestart))
+		if (empty($datestart)) {
 			$datestart = $this->date_start;
-		if (empty($dateend))
+		}
+		if (empty($dateend)) {
 			$dateend = $this->date_end;
+		}
 
 		$sql = "SELECT count(rowid) as nb";
-		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping ";
+		$sql .= " FROM ".$this->db->prefix()."accounting_bookkeeping ";
 		$sql .= " WHERE entity IN (".getEntity('bookkeeping', 0).")";
 		$sql .= " AND doc_date >= '".$this->db->idate($datestart)."' and doc_date <= '".$this->db->idate($dateend)."'";
 
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
 			$nb = $obj->nb;
+		} else {
+			dol_print_error($this->db);
 		}
-		else dol_print_error($this->db);
 
 		return $nb;
 	}

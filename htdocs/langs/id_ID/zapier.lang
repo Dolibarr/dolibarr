@@ -13,16 +13,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#
-# Generic
-#
-
-# Module label 'ModuleZapierForDolibarrName'
 ModuleZapierForDolibarrName = Zapier untuk Dolibarr
-# Module description 'ModuleZapierForDolibarrDesc'
 ModuleZapierForDolibarrDesc = Zapier untuk modul Dolibarr
-
-#
-# Admin page
-#
-ZapierForDolibarrSetup = Pengaturan Zapier untuk Dolibarr
+ZapierForDolibarrSetup=Pengaturan Zapier untuk Dolibarr
+ZapierDescription=Antarmuka dengan Zapier
+ZapierAbout=Tentang modul Zapier
+ZapierSetupPage=Tidak perlu pengaturan di sisi Dolibarr untuk menggunakan Zapier. Namun, Anda harus membuat dan memublikasikan paket di zapier agar dapat menggunakan Zapier dengan Dolibarr. Lihat dokumentasi di <a href="https://wiki.dolibarr.org/index.php/Module_Zapier"> halaman wiki ini </a> .

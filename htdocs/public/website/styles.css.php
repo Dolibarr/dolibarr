@@ -21,12 +21,30 @@
  *		\brief      Page to output style page. Called with <link rel="stylesheet" href="styles.css.php?websiteid=123" type="text/css" />
  */
 
-if (!defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', 1); // Disables token renewal
-if (!defined('NOLOGIN'))        define("NOLOGIN", 1);
-if (!defined('NOCSRFCHECK'))    define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
-if (!defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
-if (!defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');
-if (!defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
+if (!defined('NOTOKENRENEWAL')) {
+	define('NOTOKENRENEWAL', 1); // Disables token renewal
+}
+if (!defined('NOLOGIN')) {
+	define("NOLOGIN", 1);
+}
+if (!defined('NOCSRFCHECK')) {
+	define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
+}
+if (!defined('NOREQUIREMENU')) {
+	define('NOREQUIREMENU', '1');
+}
+if (!defined('NOREQUIREHTML')) {
+	define('NOREQUIREHTML', '1');
+}
+if (!defined('NOREQUIREAJAX')) {
+	define('NOREQUIREAJAX', '1');
+}
+if (!defined('NOIPCHECK')) {
+	define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
+}
+if (!defined('NOBROWSERNOTIF')) {
+	define('NOBROWSERNOTIF', '1');
+}
 
 /**
  * Header empty
@@ -63,43 +81,41 @@ $type = '';
  */
 
 $appli = constant('DOL_APPLICATION_TITLE');
-if (!empty($conf->global->MAIN_APPLICATION_TITLE)) $appli = $conf->global->MAIN_APPLICATION_TITLE;
+if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
+	$appli = $conf->global->MAIN_APPLICATION_TITLE;
+}
 
 //print 'Directory with '.$appli.' websites.<br>';
 
-if (empty($pageid))
-{
-    require_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
-    require_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
+if (empty($pageid)) {
+	require_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
 
-    $object = new Website($db);
-    if ($websiteid)
-    {
-        $object->fetch($websiteid);
-        $website = $object->ref;
-    }
-    else
-    {
-        $object->fetch(0, $website);
-    }
+	$object = new Website($db);
+	if ($websiteid) {
+		$object->fetch($websiteid);
+		$website = $object->ref;
+	} else {
+		$object->fetch(0, $website);
+	}
 
-    $objectpage = new WebsitePage($db);
-    /* Not required for CSS file
-    $array=$objectpage->fetchAll($object->id);
+	$objectpage = new WebsitePage($db);
+	/* Not required for CSS file
+	$array=$objectpage->fetchAll($object->id);
 
-    if (is_array($array) && count($array) > 0)
-    {
-        $firstrep=reset($array);
-        $pageid=$firstrep->id;
-    }
-    */
+	if (is_array($array) && count($array) > 0)
+	{
+		$firstrep=reset($array);
+		$pageid=$firstrep->id;
+	}
+	*/
 }
 /* Not required for CSS file
 if (empty($pageid))
 {
-    $langs->load("website");
-    print $langs->trans("PreviewOfSiteNotYetAvailable");
-    exit;
+	$langs->load("website");
+	print $langs->trans("PreviewOfSiteNotYetAvailable");
+	exit;
 }
 */
 
@@ -113,20 +129,18 @@ $refname = basename(dirname($original_file)."/");
 
 // Security:
 // Limite acces si droits non corrects
-if (!$accessallowed)
-{
-    accessforbidden();
+if (!$accessallowed) {
+	accessforbidden();
 }
 
 // Security:
 // On interdit les remontees de repertoire ainsi que les pipe dans
 // les noms de fichiers.
-if (preg_match('/\.\./', $original_file) || preg_match('/[<>|]/', $original_file))
-{
-    dol_syslog("Refused to deliver file ".$original_file);
-    $file = basename($original_file); // Do no show plain path of original_file in shown error message
-    dol_print_error(0, $langs->trans("ErrorFileNameInvalid", $file));
-    exit;
+if (preg_match('/\.\./', $original_file) || preg_match('/[<>|]/', $original_file)) {
+	dol_syslog("Refused to deliver file ".$original_file);
+	$file = basename($original_file); // Do no show plain path of original_file in shown error message
+	dol_print_error(0, $langs->trans("ErrorFileNameInvalid", $file));
+	exit;
 }
 
 clearstatcache();
@@ -138,12 +152,11 @@ dol_syslog("styles.css.php include $original_file $filename content-type=$type")
 $original_file_osencoded = dol_osencode($original_file); // New file name encoded in OS encoding charset
 
 // This test if file exists should be useless. We keep it to find bug more easily
-if (!file_exists($original_file_osencoded))
-{
-    $langs->load("website");
-    print $langs->trans("RequestedPageHasNoContentYet", $pageid);
-    //dol_print_error(0,$langs->trans("ErrorFileDoesNotExists",$original_file));
-    exit;
+if (!file_exists($original_file_osencoded)) {
+	$langs->load("website");
+	print $langs->trans("RequestedPageHasNoContentYet", $pageid);
+	//dol_print_error(0,$langs->trans("ErrorFileDoesNotExists",$original_file));
+	exit;
 }
 
 
@@ -153,4 +166,6 @@ print '/* Page content '.$original_file.' : CSS content that was saved into tpl 
 require_once $original_file_osencoded;
 
 
-if (is_object($db)) $db->close();
+if (is_object($db)) {
+	$db->close();
+}

@@ -43,29 +43,31 @@ $langs->loadLangs(array("bills", "orders", "sendings", "companies", "deliveries"
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
-
-// Security check
-if ($user->socid) $socid = $user->socid;
-$result = restrictedArea($user, 'fournisseur', $id, 'commande_fournisseur', 'commande');
 
 // Get parameters
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+if (empty($page) || $page == -1) {
+	$page = 0;
+}     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (!$sortorder) $sortorder = "ASC";
-if (!$sortfield) $sortfield = "name";
+if (!$sortorder) {
+	$sortorder = "ASC";
+}
+if (!$sortfield) {
+	$sortfield = "name";
+}
 
+$hookmanager->initHooks(array('ordersuppliercarddocument'));
 
 $object = new CommandeFournisseur($db);
-if ($object->fetch($id, $ref) < 0)
-{
+if ($object->fetch($id, $ref) < 0) {
 	dol_print_error($db);
 	exit;
 }
@@ -73,12 +75,21 @@ if ($object->fetch($id, $ref) < 0)
 $upload_dir = $conf->fournisseur->commande->dir_output.'/'.dol_sanitizeFileName($object->ref);
 $object->fetch_thirdparty();
 
+// Security check
+$socid = 0;
+if ($user->socid) {
+	$socid = $user->socid;
+}
+$result = restrictedArea($user, 'fournisseur', $id, 'commande_fournisseur', 'commande');
+
+$permissiontoadd = ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer); // Used by the include of actions_setnotes.inc.php
+
 
 /*
  * Actions
  */
 
-include_once DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
+include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
 
 /*
@@ -87,11 +98,11 @@ include_once DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
 $form = new	Form($db);
 
-if ($object->id > 0)
-{
-	$help_url = 'EN:Module_Suppliers_Orders|FR:CommandeFournisseur|ES:Módulo_Pedidos_a_proveedores';
-	llxHeader('', $langs->trans("Order"), $help_url);
+$title = $langs->trans('SupplierOrder')." - ".$langs->trans('Documents');
+$help_url = 'EN:Module_Suppliers_Orders|FR:CommandeFournisseur|ES:Módulo_Pedidos_a_proveedores';
+llxHeader('', $title, $help_url);
 
+if ($object->id > 0) {
 	$object->fetch_thirdparty();
 
 	$author = new User($db);
@@ -99,14 +110,13 @@ if ($object->id > 0)
 
 	$head = ordersupplier_prepare_head($object);
 
-	dol_fiche_head($head, 'documents', $langs->trans('SupplierOrder'), -1, 'order');
+	print dol_get_fiche_head($head, 'documents', $langs->trans('SupplierOrder'), -1, 'order');
 
 
 	// Build file list
 	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
 	$totalsize = 0;
-	foreach ($filearray as $key => $file)
-	{
+	foreach ($filearray as $key => $file) {
 		$totalsize += $file['size'];
 	}
 
@@ -121,38 +131,37 @@ if ($object->id > 0)
 	// Thirdparty
 	$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1);
 	// Project
-	if (!empty($conf->projet->enabled))
-	{
-	    $langs->load("projects");
-	    $morehtmlref .= '<br>'.$langs->trans('Project').' ';
-	    if ($user->rights->fournisseur->commande->creer)
-	    {
-	        if ($action != 'classify') {
-	        	//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+	if (!empty($conf->projet->enabled)) {
+		$langs->load("projects");
+		$morehtmlref .= '<br>'.$langs->trans('Project').' ';
+		if ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer) {
+			if ($action != 'classify') {
+				//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 				$morehtmlref .= ' : ';
-            }
-            if ($action == 'classify') {
-                //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
-                $morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
-                $morehtmlref .= '<input type="hidden" name="action" value="classin">';
-                $morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
-                $morehtmlref .= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
-                $morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
-                $morehtmlref .= '</form>';
-            } else {
-                $morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
-            }
-	    } else {
-	        if (!empty($object->fk_project)) {
-	            $proj = new Project($db);
-	            $proj->fetch($object->fk_project);
-	            $morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$object->fk_project.'" title="'.$langs->trans('ShowProject').'">';
-	            $morehtmlref .= $proj->ref;
-	            $morehtmlref .= '</a>';
-	        } else {
-	            $morehtmlref .= '';
-	        }
-	    }
+			}
+			if ($action == 'classify') {
+				//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
+				$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+				$morehtmlref .= '<input type="hidden" name="action" value="classin">';
+				$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
+				$morehtmlref .= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+				$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+				$morehtmlref .= '</form>';
+			} else {
+				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+			}
+		} else {
+			if (!empty($object->fk_project)) {
+				$proj = new Project($db);
+				$proj->fetch($object->fk_project);
+				$morehtmlref .= ' : '.$proj->getNomUrl(1);
+				if ($proj->title) {
+					$morehtmlref .= ' - '.$proj->title;
+				}
+			} else {
+				$morehtmlref .= '';
+			}
+		}
 	}
 	$morehtmlref .= '</div>';
 
@@ -169,17 +178,15 @@ if ($object->id > 0)
 
 	print "</div>\n";
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 
 	$modulepart = 'commande_fournisseur';
-	$permission = $user->rights->fournisseur->commande->creer;
-	$permtoedit = $user->rights->fournisseur->commande->creer;
+	$permissiontoadd = ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer);
+	$permtoedit = ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer);
 	$param = '&id='.$object->id;
-	include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
-}
-else
-{
+	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
+} else {
 	header('Location: index.php');
 	exit;
 }

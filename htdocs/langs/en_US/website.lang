@@ -30,9 +30,8 @@ EditInLine=Edit inline
 AddWebsite=Add website
 Webpage=Web page/container
 AddPage=Add page/container
-HomePage=Home Page
-PageContainer=Page/container
-PreviewOfSiteNotYetAvailable=Preview of your website <strong>%s</strong> not yet available. You must first '<strong>Import a full website template</strong>' or just '<strong>Add a page/container</strong>'.
+PageContainer=Page
+PreviewOfSiteNotYetAvailable=The preview of your website <strong>%s</strong> is not yet available. You must first '<strong>Import a full website template</strong>' or just '<strong>Add a page/container</strong>'.
 RequestedPageHasNoContentYet=Requested page with id %s has no content yet, or cache file .tpl.php was removed. Edit content of the page to solve this.
 SiteDeleted=Web site '%s' deleted
 PageContent=Page/Contenair
@@ -46,13 +45,13 @@ ViewWebsiteInProduction=View web site using home URLs
 SetHereVirtualHost=<u>Use with Apache/NGinx/...</u><br>Create on your web server (Apache, Nginx, ...) a dedicated Virtual Host with PHP enabled and a Root directory on<br><strong>%s</strong>
 ExampleToUseInApacheVirtualHostConfig=Example to use in Apache virtual host setup:
 YouCanAlsoTestWithPHPS=<u>Use with PHP embedded server</u><br>On develop environment, you may prefer to test the site with the PHP embedded web server (PHP 5.5 required) by running<br><strong>php -S 0.0.0.0:8080 -t %s</strong>
-YouCanAlsoDeployToAnotherWHP=<u>Run your web site with another Dolibarr Hosting provider</u><br>If you don't have a web server like Apache or NGinx available on internet, you can export and import your web site onto another Dolibarr instance provided by another Dolibarr hosting provider that provide full integration with the Website module. You can find a list of some Dolibarr hosting providers on <a href="https://saas.dolibarr.org" target="_blank">https://saas.dolibarr.org</a>
-CheckVirtualHostPerms=Check also that virtual host has permission <strong>%s</strong> on files into<br><strong>%s</strong>
+YouCanAlsoDeployToAnotherWHP=<u>Run your web site with another Dolibarr Hosting provider</u><br>If you don't have a web server like Apache or NGinx available on internet, you can export and import your web site onto another Dolibarr instance provided by another Dolibarr hosting provider that provide full integration with the Website module. You can find a list of some Dolibarr hosting providers on <a href="https://saas.dolibarr.org" target="_blank" rel="noopener noreferrer external">https://saas.dolibarr.org</a>
+CheckVirtualHostPerms=Check also that the virtual host user (for example www-data) has <strong>%s</strong> permissions on files into<br><strong>%s</strong>
 ReadPerm=Read
 WritePerm=Write
 TestDeployOnWeb=Test/deploy on web
 PreviewSiteServedByWebServer=<u>Preview %s in a new tab.</u><br><br>The %s will be served by an external web server (like Apache, Nginx, IIS). You must install and setup this server before to point to directory:<br><strong>%s</strong><br>URL served by external server:<br><strong>%s</strong>
-PreviewSiteServedByDolibarr=<u>Preview %s in a new tab.</u><br><br>The %s will be served by Dolibarr server so it does not need any extra web server (like Apache, Nginx, IIS) to be installed.<br>The inconvenient is that URL of pages are not user friendly and start with path of your Dolibarr.<br>URL served by Dolibarr:<br><strong>%s</strong><br><br>To use your own external web server to serve this web site, create a virtual host on your web server that point on directory<br><strong>%s</strong><br>then enter the name of this virtual server and click on the other preview button.
+PreviewSiteServedByDolibarr=<u>Preview %s in a new tab.</u><br><br>The %s will be served by Dolibarr server so it does not need any extra web server (like Apache, Nginx, IIS) to be installed.<br>The inconvenient is that the URLs of pages are not user friendly and start with the path of your Dolibarr.<br>URL served by Dolibarr:<br><strong>%s</strong><br><br>To use your own external web server to serve this web site, create a virtual host on your web server that points on directory<br><strong>%s</strong><br>then enter the name of this virtual server in the properties of this website and click on the link "Test/Deploy on the web".
 VirtualHostUrlNotDefined=URL of the virtual host served by external web server not defined
 NoPageYet=No pages yet
 YouCanCreatePageOrImportTemplate=You can create a new page or import a full website template
@@ -61,7 +60,7 @@ YouCanEditHtmlSourceckeditor=You can edit HTML source code using the "Source" bu
 YouCanEditHtmlSource=<br><span class="fa fa-bug"></span> You can include PHP code into this source using tags <strong>&lt;?php ?&gt;</strong>. The following global variables are available: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug"></span> You can also include content of another Page/Container with the following syntax:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug"></span> You can make a redirect to another Page/Container with the following syntax (Note: do not output any content before a redirect):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br><br><span class="fa fa-link"></span> To add a link to another page, use the syntax:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br><span class="fa fa-download"></span> To include a <strong>link to download</strong> a file stored into the <strong>documents</strong> directory, use the <strong>document.php</strong> wrapper:<br>Example, for a file into documents/ecm (need to be logged), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file into documents/medias (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file shared with a share link (open access using the sharing hash key of file), syntax is:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br><br><span class="fa fa-picture-o"></span> To include an <strong>image</strong> stored into the <strong>documents</strong> directory, use the <strong>viewimage.php</strong> wrapper:<br>Example, for an image into documents/medias (open directory for public access), syntax is:<br><strong>&lt;img src="/viewimage.php?modulepart=medias&amp;file=[relative_dir/]filename.ext"&gt;</strong><br>
 #YouCanEditHtmlSource2=<br><span class="fa fa-picture-o"></span> To include a <strong>image</strong> shared publicaly, use the <strong>viewimage.php</strong> wrapper:<br>Example with a shared key 123456789, syntax is:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
 YouCanEditHtmlSource2=For an image shared with a share link (open access using the sharing hash key of file), syntax is:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
-YouCanEditHtmlSourceMore=<br>More examples of HTML or dynamic code available on <a href="%s" target="_blank">the wiki documentation</a><br>.
+YouCanEditHtmlSourceMore=<br>More examples of HTML or dynamic code available on <a href="%s" target="_blank" rel="noopener noreferrer external">the wiki documentation</a><br>.
 ClonePage=Clone page/container
 CloneSite=Clone site
 SiteAdded=Website added
@@ -101,7 +100,7 @@ EmptyPage=Empty page
 ExternalURLMustStartWithHttp=External URL must start with http:// or https://
 ZipOfWebsitePackageToImport=Upload the Zip file of the website template package
 ZipOfWebsitePackageToLoad=or Choose an available embedded website template package
-ShowSubcontainers=Include dynamic content
+ShowSubcontainers=Show dynamic content
 InternalURLOfPage=Internal URL of page
 ThisPageIsTranslationOf=This page/container is a translation of
 ThisPageHasTranslationPages=This page/container has translation
@@ -124,7 +123,7 @@ ShowSubContainersOnOff=Mode to execute 'dynamic content' is %s
 GlobalCSSorJS=Global CSS/JS/Header file of web site
 BackToHomePage=Back to home page...
 TranslationLinks=Translation links
-YouTryToAccessToAFileThatIsNotAWebsitePage=You try to access to a page that is not a website page
+YouTryToAccessToAFileThatIsNotAWebsitePage=You try to access to a page that is not available.<br>(ref=%s, type=%s, status=%s)
 UseTextBetween5And70Chars=For good SEO practices, use a text between 5 and 70 characters
 MainLanguage=Main language
 OtherLanguages=Other languages
@@ -135,3 +134,14 @@ ReplacementDoneInXPages=Replacement done in %s pages or containers
 RSSFeed=RSS Feed
 RSSFeedDesc=You can get a RSS feed of latest articles with type 'blogpost' using this URL
 PagesRegenerated=%s page(s)/container(s) regenerated
+RegenerateWebsiteContent=Regenerate web site cache files
+AllowedInFrames=Allowed in Frames
+DefineListOfAltLanguagesInWebsiteProperties=Define list of all available languages into web site properties.
+GenerateSitemaps=Generate website sitemap file
+ConfirmGenerateSitemaps=If you confirm, you will erase the existing sitemap file...
+ConfirmSitemapsCreation=Confirm sitemap generation
+SitemapGenerated=Sitemap file <b>%s</b> generated
+ImportFavicon=Favicon
+ErrorFaviconType=Favicon must be png
+ErrorFaviconSize=Favicon must be sized 16x16, 32x32 or 64x64
+FaviconTooltip=Upload an image which needs to be a png (16x16, 32x32 or 64x64)

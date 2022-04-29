@@ -22,7 +22,7 @@
  *
  *  \file       htdocs/core/modules/modTakePos.class.php
  *  \ingroup    takepos
- *  \brief      Description and activation file for module TakePos
+ *  \brief      Description and activation file for the module TakePos
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
@@ -39,9 +39,9 @@ class modTakePos extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-        global $langs, $conf;
+		global $langs, $conf;
 
-        $this->db = $db;
+		$this->db = $db;
 
 		// Id for module (must be unique).
 		// Use here a free id (See in Home -> System information -> Dolibarr for list of used modules id).
@@ -78,16 +78,16 @@ class modTakePos extends DolibarrModules
 		// for specific path of parts (eg: /takepos/core/modules/barcode)
 		// for specific css file (eg: /takepos/css/takepos.css.php)
 		$this->module_parts = array(
-		                        	'triggers' => 0, // Set this to 1 if module has its own trigger directory (core/triggers)
+									'triggers' => 0, // Set this to 1 if module has its own trigger directory (core/triggers)
 									'login' => 0, // Set this to 1 if module has its own login method file (core/login)
 									'substitutions' => 1, // Set this to 1 if module has its own substitution function file (core/substitutions)
 									'menus' => 0, // Set this to 1 if module has its own menus handler directory (core/menus)
 									'theme' => 0, // Set this to 1 if module has its own theme directory (theme)
-		                        	'tpl' => 0, // Set this to 1 if module overwrite template dir (core/tpl)
+									'tpl' => 0, // Set this to 1 if module overwrite template dir (core/tpl)
 									'barcode' => 0, // Set this to 1 if module has its own barcode directory (core/modules/barcode)
 									'models' => 0, // Set this to 1 if module has its own models directory (core/modules/xxx)
 									'hooks' => array() 	                                // Set here all hooks context managed by module. To find available hook context, make a "grep -r '>initHooks(' *" on source code. You can also set hook context 'all'
-		                        );
+								);
 
 		// Data directories to create when module is enabled.
 		// Example: this->dirs = array("/takepos/temp","/takepos/subdir");
@@ -102,7 +102,7 @@ class modTakePos extends DolibarrModules
 		$this->requiredby = array(); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
 		$this->langfiles = array("cashdesk");
-		$this->phpmin = array(5, 4); // Minimum version of PHP required by module
+		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(4, 0); // Minimum version of Dolibarr required by module
 		$this->warnings_activation = array('FR'=>'WarningNoteModulePOSForFrenchLaw'); // Warning to show when we activate module. array('always'='text') or array('FR'='text')
 		$this->warnings_activation_ext = array(); // Warning to show when we activate an external module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
@@ -119,21 +119,20 @@ class modTakePos extends DolibarrModules
 		);
 
 
-		if (!isset($conf->takepos) || !isset($conf->takepos->enabled))
-		{
+		if (!isset($conf->takepos) || !isset($conf->takepos->enabled)) {
 			$conf->takepos = new stdClass();
 			$conf->takepos->enabled = 0;
 		}
 
 
 		// Array to add new pages in new tabs
-        $this->tabs = array();
+		$this->tabs = array();
 		// Example:
 		// $this->tabs[] = array('data'=>'objecttype:+tabname1:Title1:mylangfile@takepos:$user->rights->takepos->read:/takepos/mynewtab1.php?id=__ID__');  					// To add a new tab identified by code tabname1
-        // $this->tabs[] = array('data'=>'objecttype:+tabname2:SUBSTITUTION_Title2:mylangfile@takepos:$user->rights->othermodule->read:/takepos/mynewtab2.php?id=__ID__',  	// To add another new tab identified by code tabname2. Label will be result of calling all substitution functions on 'Title2' key.
-        // $this->tabs[] = array('data'=>'objecttype:-tabname:NU:conditiontoremove');                                                     										// To remove an existing tab identified by code tabname
-        //
-        // Where objecttype can be
+		// $this->tabs[] = array('data'=>'objecttype:+tabname2:SUBSTITUTION_Title2:mylangfile@takepos:$user->rights->othermodule->read:/takepos/mynewtab2.php?id=__ID__',  	// To add another new tab identified by code tabname2. Label will be result of calling all substitution functions on 'Title2' key.
+		// $this->tabs[] = array('data'=>'objecttype:-tabname:NU:conditiontoremove');                                                     										// To remove an existing tab identified by code tabname
+		//
+		// Where objecttype can be
 		// 'categories_x'	  to add a tab in category view (replace 'x' by type of category (0=product, 1=supplier, 2=customer, 3=member)
 		// 'contact'          to add a tab in contact view
 		// 'contract'         to add a tab in contract view
@@ -155,31 +154,31 @@ class modTakePos extends DolibarrModules
 		// 'user'             to add a tab in user view
 
 
-        // Dictionaries
+		// Dictionaries
 		$this->dictionaries = array();
-        /* Example:
-        $this->dictionaries=array(
-            'langs'=>'mylangfile@takepos',
-            'tabname'=>array(MAIN_DB_PREFIX."table1",MAIN_DB_PREFIX."table2",MAIN_DB_PREFIX."table3"),		// List of tables we want to see into dictonnary editor
-            'tablib'=>array("Table1","Table2","Table3"),													// Label of tables
-            'tabsql'=>array('SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table1 as f','SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table2 as f','SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table3 as f'),	// Request to select fields
-            'tabsqlsort'=>array("label ASC","label ASC","label ASC"),																					// Sort order
-            'tabfield'=>array("code,label","code,label","code,label"),																					// List of fields (result of select to show dictionary)
-            'tabfieldvalue'=>array("code,label","code,label","code,label"),																				// List of fields (list of fields to edit a record)
-            'tabfieldinsert'=>array("code,label","code,label","code,label"),																			// List of fields (list of fields for insert)
-            'tabrowid'=>array("rowid","rowid","rowid"),																									// Name of columns with primary key (try to always name it 'rowid')
-            'tabcond'=>array($conf->takepos->enabled,$conf->takepos->enabled,$conf->takepos->enabled)												// Condition to show each dictionary
-        );
-        */
+		/* Example:
+		$this->dictionaries=array(
+			'langs'=>'mylangfile@takepos',
+			'tabname'=>array(MAIN_DB_PREFIX."table1",MAIN_DB_PREFIX."table2",MAIN_DB_PREFIX."table3"),		// List of tables we want to see into dictonnary editor
+			'tablib'=>array("Table1","Table2","Table3"),													// Label of tables
+			'tabsql'=>array('SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table1 as f','SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table2 as f','SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table3 as f'),	// Request to select fields
+			'tabsqlsort'=>array("label ASC","label ASC","label ASC"),																					// Sort order
+			'tabfield'=>array("code,label","code,label","code,label"),																					// List of fields (result of select to show dictionary)
+			'tabfieldvalue'=>array("code,label","code,label","code,label"),																				// List of fields (list of fields to edit a record)
+			'tabfieldinsert'=>array("code,label","code,label","code,label"),																			// List of fields (list of fields for insert)
+			'tabrowid'=>array("rowid","rowid","rowid"),																									// Name of columns with primary key (try to always name it 'rowid')
+			'tabcond'=>array($conf->takepos->enabled,$conf->takepos->enabled,$conf->takepos->enabled)												// Condition to show each dictionary
+		);
+		*/
 
 
-        // Boxes/Widgets
+		// Boxes/Widgets
 		// Add here list of php file(s) stored in takepos/core/boxes that contains class to show a widget.
-        $this->boxes = array(
-        	//0=>array('file'=>'takeposwidget1.php@takepos','note'=>'Widget provided by TakePos','enabledbydefaulton'=>'Home'),
-        	//1=>array('file'=>'takeposwidget2.php@takepos','note'=>'Widget provided by TakePos'),
-        	//2=>array('file'=>'takeposwidget3.php@takepos','note'=>'Widget provided by TakePos')
-        );
+		$this->boxes = array(
+			//0=>array('file'=>'takeposwidget1.php@takepos','note'=>'Widget provided by TakePos','enabledbydefaulton'=>'Home'),
+			//1=>array('file'=>'takeposwidget2.php@takepos','note'=>'Widget provided by TakePos'),
+			//2=>array('file'=>'takeposwidget3.php@takepos','note'=>'Widget provided by TakePos')
+		);
 
 
 		// Cronjobs (List of cron jobs entries to add when module is enabled)
@@ -199,10 +198,24 @@ class modTakePos extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 50151;
-		$this->rights[$r][1] = 'Use Point Of Sale';
+		$this->rights[$r][1] = 'Use Point Of Sale (record a sale, add products, record payment)';
 		$this->rights[$r][2] = 'a';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'run';
+
+		$r++;
+		$this->rights[$r][0] = 50152;
+		$this->rights[$r][1] = 'Can modify added sales lines (prices, discount)';
+		$this->rights[$r][2] = 'a';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'editlines';
+
+		$r++;
+		$this->rights[$r][0] = 50153;
+		$this->rights[$r][1] = 'Edit ordered sales lines (useful only when option "Order printers" has been enabled). Allow to edit sales lines even after the order has been printed';
+		$this->rights[$r][2] = 'a';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'editorderedlines';
 
 
 		// Main menu entries
@@ -217,6 +230,7 @@ class modTakePos extends DolibarrModules
 								'titre'=>'PointOfSaleShort',
 								'mainmenu'=>'takepos',
 								'leftmenu'=>'',
+								'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth"'),
 								'url'=>'/takepos/index.php',
 								'langs'=>'cashdesk', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 								'position'=>1000 + $r,
@@ -260,7 +274,7 @@ class modTakePos extends DolibarrModules
 	 *	The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
 	 *	It also creates data directories
 	 *
-     *	@param      string	$options    Options when enabling module ('', 'noboxes')
+	 *	@param      string	$options    Options when enabling module ('', 'noboxes')
 	 *	@return     int             	1 if OK, 0 if KO
 	 */
 	public function init($options = '')
@@ -268,8 +282,6 @@ class modTakePos extends DolibarrModules
 		global $conf, $db;
 
 		dolibarr_set_const($db, "TAKEPOS_PRINT_METHOD", "browser", 'chaine', 0, '', $conf->entity);
-
-		$this->_load_tables('/takepos/sql/');
 
 		$sql = array();
 

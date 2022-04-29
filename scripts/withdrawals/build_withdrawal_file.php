@@ -1,7 +1,6 @@
 #!/usr/bin/env php
 <?php
-/*
- * Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2010 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -23,6 +22,11 @@
  * \ingroup prelevement
  * \brief Script de prelevement
  */
+
+if (!defined('NOSESSION')) {
+	define('NOSESSION', '1');
+}
+
 $sapi_type = php_sapi_name();
 $script_file = basename(__FILE__);
 $path = __DIR__.'/';
@@ -40,7 +44,7 @@ require_once DOL_DOCUMENT_ROOT."/societe/class/societe.class.php";
 require_once DOL_DOCUMENT_ROOT."/compta/paiement/class/paiement.class.php";
 
 // Global variables
-$version = DOL_VERSION;
+$version = constant('DOL_VERSION');
 $error = 0;
 
 /*

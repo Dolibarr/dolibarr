@@ -31,9 +31,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/holiday/modules_holiday.php';
 class mod_holiday_immaculate extends ModelNumRefHolidays
 {
 	/**
-     * Dolibarr version of the loaded document
-     * @var string
-     */
+	 * Dolibarr version of the loaded document
+	 * @var string
+	 */
 	public $version = 'dolibarr';
 
 	/**
@@ -63,9 +63,9 @@ class mod_holiday_immaculate extends ModelNumRefHolidays
 	 *
 	 *	@return     string      text description
 	 */
-    public function info()
-    {
-        global $db, $conf, $langs;
+	public function info()
+	{
+		global $db, $conf, $langs;
 
 		$langs->load("bills");
 
@@ -85,63 +85,61 @@ class mod_holiday_immaculate extends ModelNumRefHolidays
 		$tooltip .= $langs->trans("GenericMaskCodes5");
 
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskholiday" value="'.$conf->global->HOLIDAY_IMMACULATE_MASK.'">', $tooltip, 1, 1).'</td>';
-		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskholiday" value="'.$conf->global->HOLIDAY_IMMACULATE_MASK.'">', $tooltip, 1, 1).'</td>';
+		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit" name="Button"value="'.$langs->trans("Modify").'"></td>';
 		$texte .= '</tr>';
 		$texte .= '</table>';
 		$texte .= '</form>';
 
 		return $texte;
-    }
+	}
 
 	/**
 	 *	Return numbering example
 	 *
 	 *	@return     string      Example
 	 */
-    public function getExample()
-    {
-     	global $conf, $langs, $user;
+	public function getExample()
+	{
+		global $conf, $langs, $user;
 
-    	$old_login = $user->login;
-    	$user->login = 'UUUUUUU';
-     	$numExample = $this->getNextValue($user, '');
+		$old_login = $user->login;
+		$user->login = 'UUUUUUU';
+		$numExample = $this->getNextValue($user, '');
 		$user->login = $old_login;
 
-		if (!$numExample)
-		{
+		if (!$numExample) {
 			$numExample = $langs->trans('NotConfigured');
 		}
 		return $numExample;
-    }
+	}
 
 	/**
 	 *	Return next value
 	 *
-	 *	@param	Societe		$user     	user object
+	 *	@param	Societe		$objsoc     third party object
 	 *	@param	Object		$holiday	holiday object
 	 *	@return string      			Value if OK, 0 if KO
 	 */
-    public function getNextValue($user, $holiday)
-    {
+	public function getNextValue($objsoc, $holiday)
+	{
 		global $db, $conf;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 		$mask = $conf->global->HOLIDAY_IMMACULATE_MASK;
 
-		if (!$mask)
-		{
+		if (!$mask) {
 			$this->error = 'NotConfigured';
 			return 0;
 		}
 
-		$numFinal = get_next_value($db, $mask, 'holiday', 'ref', '', $user, $holiday->date_create);
+		$numFinal = get_next_value($db, $mask, 'holiday', 'ref', '', $objsoc, $holiday->date_create);
 
 		return  $numFinal;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return next value
 	 *
@@ -149,9 +147,9 @@ class mod_holiday_immaculate extends ModelNumRefHolidays
 	 *  @param  Object		$objforref	Holiday object
 	 *  @return string      			Value if OK, 0 if KO
 	 */
-    public function holiday_get_num($fuser, $objforref)
-    {
-        // phpcs:enable
-        return $this->getNextValue($fuser, $objforref);
-    }
+	public function holiday_get_num($fuser, $objforref)
+	{
+		// phpcs:enable
+		return $this->getNextValue($fuser, $objforref);
+	}
 }

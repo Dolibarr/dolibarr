@@ -31,10 +31,35 @@ require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 // Load translation files required by the page
 $langs->load("trips");
 
-// Security check
 $id = GETPOST('id', 'int');
-if ($user->socid) $socid = $user->socid;
+$ref = GETPOST('ref', 'alpha');
+
+$childids = $user->getAllChildIds(1);
+
+// Security check
+if ($user->socid) {
+	$socid = $user->socid;
+}
 $result = restrictedArea($user, 'expensereport', $id, 'expensereport');
+
+$object = new ExpenseReport($db);
+if (!$object->fetch($id, $ref) > 0) {
+	dol_print_error($db);
+}
+
+if ($object->id > 0) {
+	// Check current user can read this expense report
+	$canread = 0;
+	if (!empty($user->rights->expensereport->readall)) {
+		$canread = 1;
+	}
+	if (!empty($user->rights->expensereport->lire) && in_array($object->fk_user_author, $childids)) {
+		$canread = 1;
+	}
+	if (!$canread) {
+		accessforbidden();
+	}
+}
 
 
 /*
@@ -47,15 +72,14 @@ $title = $langs->trans("ExpenseReport")." - ".$langs->trans("Info");
 $helpurl = "EN:Module_Expense_Reports";
 llxHeader("", $title, $helpurl);
 
-if ($id > 0 || !empty($ref))
-{
+if ($id > 0 || !empty($ref)) {
 	$object = new ExpenseReport($db);
 	$object->fetch($id, $ref);
 	$object->info($object->id);
 
 	$head = expensereport_prepare_head($object);
 
-	dol_fiche_head($head, 'info', $langs->trans("ExpenseReport"), -1, 'trip');
+	print dol_get_fiche_head($head, 'info', $langs->trans("ExpenseReport"), -1, 'trip');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/expensereport/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
@@ -76,7 +100,7 @@ if ($id > 0 || !empty($ref))
 
 	print '</div>';
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 }
 
 // End of page

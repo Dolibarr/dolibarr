@@ -43,13 +43,13 @@ abstract class ModelePDFSuppliersOrders extends CommonDocGenerator
 	public $error = '';
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return list of active generation models
 	 *
-     *  @param	DoliDB	$db     			Database handler
-     *  @param  integer	$maxfilenamelength  Max length of value to show
-     *  @return	array						List of templates
+	 *  @param	DoliDB	$db     			Database handler
+	 *  @param  integer	$maxfilenamelength  Max length of value to show
+	 *  @return	array						List of templates
 	 */
 	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
@@ -57,12 +57,12 @@ abstract class ModelePDFSuppliersOrders extends CommonDocGenerator
 		global $conf;
 
 		$type = 'order_supplier';
-		$liste = array();
+		$list = array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$liste = getListOfModels($db, $type, $maxfilenamelength);
+		$list = getListOfModels($db, $type, $maxfilenamelength);
 
-		return $liste;
+		return $list;
 	}
 }
 
@@ -82,7 +82,7 @@ abstract class ModeleNumRefSuppliersOrders
 	 *
 	 *   @return	boolean     true if model can be used
 	 */
-    public function isEnabled()
+	public function isEnabled()
 	{
 		return true;
 	}
@@ -91,7 +91,7 @@ abstract class ModeleNumRefSuppliersOrders
 	 *
 	 *   @return    string      Description Text
 	 */
-    public function info()
+	public function info()
 	{
 		global $langs;
 		$langs->load("orders");
@@ -102,7 +102,7 @@ abstract class ModeleNumRefSuppliersOrders
 	 *
 	 *    @return   string      Example
 	 */
-    public function getExample()
+	public function getExample()
 	{
 		global $langs;
 		$langs->load("orders");
@@ -113,16 +113,18 @@ abstract class ModeleNumRefSuppliersOrders
 	 *
 	 *   @return	boolean     false if conflict, true if ok
 	 */
-    public function canBeActivated()
+	public function canBeActivated()
 	{
 		return true;
 	}
 
 	/**  Returns next value assigned
 	 *
-	 *   @return     string      Valeur
+	 *  @param	Societe		$objsoc     Object third party
+	 *  @param  Object	    $object		Object
+	 *  @return string      			Valeur
 	 */
-    public function getNextValue()
+	public function getNextValue($objsoc = 0, $object = '')
 	{
 		global $langs;
 		return $langs->trans("NotAvailable");
@@ -132,15 +134,23 @@ abstract class ModeleNumRefSuppliersOrders
 	 *
 	 *    @return     string      Value
 	 */
-    public function getVersion()
+	public function getVersion()
 	{
 		global $langs;
 		$langs->load("admin");
 
-		if ($this->version == 'development') return $langs->trans("VersionDevelopment");
-		if ($this->version == 'experimental') return $langs->trans("VersionExperimental");
-		if ($this->version == 'dolibarr') return DOL_VERSION;
-		if ($this->version) return $this->version;
+		if ($this->version == 'development') {
+			return $langs->trans("VersionDevelopment");
+		}
+		if ($this->version == 'experimental') {
+			return $langs->trans("VersionExperimental");
+		}
+		if ($this->version == 'dolibarr') {
+			return DOL_VERSION;
+		}
+		if ($this->version) {
+			return $this->version;
+		}
 		return $langs->trans("NotAvailable");
 	}
 }

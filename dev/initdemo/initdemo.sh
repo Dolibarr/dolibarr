@@ -69,6 +69,7 @@ then
 	  255)
 	exit;;
 	esac
+	rm $fichtemp
 	
 	# ----------------------------- database name
 	DIALOG=${DIALOG=dialog}
@@ -86,6 +87,7 @@ then
 	  255)
 	exit;;
 	esac
+	rm $fichtemp
 	
 	# ---------------------------- database port
 	DIALOG=${DIALOG=dialog}
@@ -104,6 +106,7 @@ then
 	  255)
 	exit;;
 	esac
+	rm $fichtemp
 	
 	# ---------------------------- compte admin mysql
 	DIALOG=${DIALOG=dialog}
@@ -122,13 +125,14 @@ then
 	  255)
 	exit;;
 	esac
+	rm $fichtemp
 	
 	# ---------------------------- mot de passe admin mysql
 	DIALOG=${DIALOG=dialog}
 	fichtemp=`tempfile 2>/dev/null` || fichtemp=/tmp/test$$
 	trap "rm -f $fichtemp" 0 1 2 5 15
 	$DIALOG --title "Init Dolibarr with demo values" --clear \
-	        --inputbox "Password for Mysql user login :" 16 55 2> $fichtemp
+	        --passwordbox "Password for Mysql user login :" 16 55 2> $fichtemp
 	
 	valret=$?
 	
@@ -140,6 +144,7 @@ then
 	  255)
 	exit;;
 	esac
+	rm $fichtemp
 	
 	
 	export documentdir=`cat $mydir/../../htdocs/conf/conf.php | grep '^\$dolibarr_main_data_root' | sed -e 's/$dolibarr_main_data_root=//' | sed -e 's/;//' | sed -e "s/'//g" | sed -e 's/"//g' `
@@ -148,7 +153,7 @@ then
 	# ---------------------------- confirmation
 	DIALOG=${DIALOG=dialog}
 	$DIALOG --title "Init Dolibarr with demo values" --clear \
-	        --yesno "Do you confirm ? \n Dump file : '$dumpfile' \n Dump dir : '$mydir' \n Document dir : '$documentdir' \n Mysql database : '$base' \n Mysql port : '$port' \n Mysql login: '$admin' \n Mysql password : '$passwd'" 15 55
+	        --yesno "Do you confirm ? \n Dump file : '$dumpfile' \n Dump dir : '$mydir' \n Document dir : '$documentdir' \n Mysql database : '$base' \n Mysql port : '$port' \n Mysql login: '$admin' \n Mysql password : --hidden--" 15 55
 	
 	case $? in
 	        0)      echo "Ok, start process...";;
@@ -184,8 +189,8 @@ export res=$?
 export documentdir=`cat $mydir/../../htdocs/conf/conf.php | grep '^\$dolibarr_main_data_root' | sed -e 's/$dolibarr_main_data_root=//' | sed -e 's/;//' | sed -e "s/'//g" | sed -e 's/"//g' `
 if [ "x$documentdir" != "x" ]
 then
-	$DIALOG --title "Reset document directory tpp" --clear \
-	        --inputbox "Delete and recreate document directory $documentdir/:" 16 55 n 2> $fichtemp
+	$DIALOG --title "Reset document directory" --clear \
+	        --inputbox "DELETE and recreate document directory $documentdir/:" 16 55 n 2> $fichtemp
 	
 	valret=$?
 	
@@ -226,6 +231,10 @@ else
 	echo Detection of documents directory from $mydir failed so demo files were not copied. 
 fi
 
+
+if [ -s "$mydir/initdemopostsql.sql" ]; then
+	mysql -P$port $base < "$mydir/initdemopostsql.sql"
+fi
 
 
 if [ "x$res" = "x0" ]

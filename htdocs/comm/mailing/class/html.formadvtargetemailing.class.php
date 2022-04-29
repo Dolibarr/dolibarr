@@ -28,9 +28,9 @@
 class FormAdvTargetEmailing extends Form
 {
 	/**
-     * @var DoliDB Database handler.
-     */
-    public $db;
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
 
 	/**
 	 * @var string Error code (or message)
@@ -42,12 +42,12 @@ class FormAdvTargetEmailing extends Form
 	 *
 	 * @param DoliDB $db handler
 	 */
-    public function __construct($db)
-    {
-        global $langs;
+	public function __construct($db)
+	{
+		global $langs;
 
-        $this->db = $db;
-    }
+		$this->db = $db;
+	}
 
 	/**
 	 * Affiche un champs select contenant une liste
@@ -56,8 +56,8 @@ class FormAdvTargetEmailing extends Form
 	 * @param string $htmlname select field
 	 * @return string select field
 	 */
-    public function multiselectProspectionStatus($selected_array = array(), $htmlname = 'cust_prospect_status')
-    {
+	public function multiselectProspectionStatus($selected_array = array(), $htmlname = 'cust_prospect_status')
+	{
 		global $conf, $langs;
 		$options_array = array();
 
@@ -74,8 +74,9 @@ class FormAdvTargetEmailing extends Form
 				$obj = $this->db->fetch_object($resql);
 
 				$level = $langs->trans($obj->code);
-				if ($level == $obj->code)
+				if ($level == $obj->code) {
 					$level = $langs->trans($obj->label);
+				}
 				$options_array[$obj->code] = $level;
 
 				$i++;
@@ -84,17 +85,17 @@ class FormAdvTargetEmailing extends Form
 			dol_print_error($this->db);
 		}
 		return $this->advMultiselectarray($htmlname, $options_array, $selected_array);
-    }
+	}
 
 	/**
 	 * Return combo list of activated countries, into language of user
 	 *
-	 * @param string $htmlname of html select object
-	 * @param array $selected_array or Code or Label of preselected country
-	 * @return string HTML string with select
+	 * @param string    $htmlname of html select object
+	 * @param array     $selected_array or Code or Label of preselected country
+	 * @return string   HTML string with select
 	 */
-    public function multiselectCountry($htmlname = 'country_id', $selected_array = array())
-    {
+	public function multiselectCountry($htmlname = 'country_id', $selected_array = array())
+	{
 		global $conf, $langs;
 
 		$langs->load("dict");
@@ -131,8 +132,9 @@ class FormAdvTargetEmailing extends Form
 
 				foreach ($countryArray as $row) {
 					$label = dol_trunc($row['label'], $maxlength, 'middle');
-					if ($row['code_iso'])
+					if ($row['code_iso']) {
 						$label .= ' ('.$row['code_iso'].')';
+					}
 
 					$options_array[$row['rowid']] = $label;
 				}
@@ -142,7 +144,7 @@ class FormAdvTargetEmailing extends Form
 		}
 
 		return $this->advMultiselectarray($htmlname, $options_array, $selected_array);
-    }
+	}
 
 	/**
 	 * Return select list for categories (to use in form search selectors)
@@ -152,21 +154,22 @@ class FormAdvTargetEmailing extends Form
 	 * @param User $user User action
 	 * @return string combo list code
 	 */
-    public function multiselectselectSalesRepresentatives($htmlname, $selected_array, $user)
-    {
+	public function multiselectselectSalesRepresentatives($htmlname, $selected_array, $user)
+	{
 
 		global $conf;
 
 		$options_array = array();
 
-        $sql_usr = '';
+		$sql_usr = '';
 		$sql_usr .= "SELECT DISTINCT u2.rowid, u2.lastname as name, u2.firstname, u2.login";
 		$sql_usr .= " FROM ".MAIN_DB_PREFIX."user as u2, ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql_usr .= " WHERE u2.entity IN (0,".$conf->entity.")";
 		$sql_usr .= " AND u2.rowid = sc.fk_user ";
 
-		if (!empty($conf->global->USER_HIDE_INACTIVE_IN_COMBOBOX))
+		if (!empty($conf->global->USER_HIDE_INACTIVE_IN_COMBOBOX)) {
 			$sql_usr .= " AND u2.statut<>0 ";
+		}
 		$sql_usr .= " ORDER BY name ASC";
 		// print $sql_usr;exit;
 
@@ -183,7 +186,7 @@ class FormAdvTargetEmailing extends Form
 		}
 
 		return $this->advMultiselectarray($htmlname, $options_array, $selected_array);
-    }
+	}
 
 	/**
 	 * Return select list for categories (to use in form search selectors)
@@ -192,8 +195,8 @@ class FormAdvTargetEmailing extends Form
 	 * @param array $selected_array selected array
 	 * @return string combo list code
 	 */
-    public function multiselectselectLanguage($htmlname = '', $selected_array = array())
-    {
+	public function multiselectselectLanguage($htmlname = '', $selected_array = array())
+	{
 
 		global $conf, $langs;
 
@@ -201,14 +204,13 @@ class FormAdvTargetEmailing extends Form
 
 		$langs_available = $langs->get_available_languages(DOL_DOCUMENT_ROOT, 12);
 
-		foreach ($langs_available as $key => $value)
-		{
+		foreach ($langs_available as $key => $value) {
 			$label = $value;
 			$options_array[$key] = $label;
 		}
 		asort($options_array);
 		return $this->advMultiselectarray($htmlname, $options_array, $selected_array);
-    }
+	}
 
 	/**
 	 * Return multiselect list of entities for extrafeild type sellist
@@ -223,35 +225,34 @@ class FormAdvTargetEmailing extends Form
 	{
 		$options_array = array();
 
-		if (is_array($sqlqueryparam))
-		{
+		if (is_array($sqlqueryparam)) {
 			$param_list = array_keys($sqlqueryparam);
 			$InfoFieldList = explode(":", $param_list [0]);
 
 			// 0 1 : tableName
-			// 1 2 : label field name Nom du champ contenant le libelle
+			// 1 2 : label field name 	Name of field that contains the label
 			// 2 3 : key fields name (if differ of rowid)
 			// 3 4 : where clause filter on column or table extrafield, syntax field='value' or extra.field=value
 
 			$keyList = 'rowid';
 
 			if (count($InfoFieldList) >= 3) {
-				if (strpos($InfoFieldList [3], 'extra.') !== false) {
-					$keyList = 'main.'.$InfoFieldList [2].' as rowid';
+				if (strpos($InfoFieldList[3], 'extra.') !== false) {
+					$keyList = 'main.'.$InfoFieldList[2].' as rowid';
 				} else {
-					$keyList = $InfoFieldList [2].' as rowid';
+					$keyList = $InfoFieldList[2].' as rowid';
 				}
 			}
 
-			$sql = 'SELECT '.$keyList.', '.$InfoFieldList [1];
-			$sql .= ' FROM '.MAIN_DB_PREFIX.$InfoFieldList [0];
-			if (!empty($InfoFieldList [3])) {
+			$sql = "SELECT ".$keyList.", ".$InfoFieldList[1];
+			$sql .= " FROM ".MAIN_DB_PREFIX.$InfoFieldList[0];
+			if (!empty($InfoFieldList[3])) {
 				// We have to join on extrafield table
-				if (strpos($InfoFieldList [3], 'extra') !== false) {
-					$sql .= ' as main, '.MAIN_DB_PREFIX.$InfoFieldList [0].'_extrafields as extra';
-					$sql .= ' WHERE  extra.fk_object=main.'.$InfoFieldList [2].' AND '.$InfoFieldList [3];
+				if (strpos($InfoFieldList[3], 'extra') !== false) {
+					$sql .= ' as main, '.MAIN_DB_PREFIX.$InfoFieldList[0].'_extrafields as extra';
+					$sql .= " WHERE extra.fk_object=main.".$InfoFieldList[2]." AND ".$InfoFieldList[3];
 				} else {
-					$sql .= ' WHERE '.$InfoFieldList [3];
+					$sql .= " WHERE ".$InfoFieldList[3];
 				}
 			}
 			if (!empty($InfoFieldList[1])) {
@@ -266,7 +267,7 @@ class FormAdvTargetEmailing extends Form
 				if ($num) {
 					while ($i < $num) {
 						$obj = $this->db->fetch_object($resql);
-						$labeltoshow = dol_trunc($obj->$InfoFieldList [1], 90);
+						$labeltoshow = dol_trunc($obj->$InfoFieldList[1], 90);
 						$options_array[$obj->rowid] = $labeltoshow;
 						$i++;
 					}
@@ -297,16 +298,13 @@ class FormAdvTargetEmailing extends Form
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$num = $this->db->num_rows($resql);
 			$i = 0;
-			if ($num)
-			{
-				while ($i < $num)
-				{
+			if ($num) {
+				while ($i < $num) {
 					$obj = $this->db->fetch_object($resql);
-					// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
+					// If a translation exists, we use it, else we use the default label
 					$label = ($langs->trans("Civility".$obj->code) != "Civility".$obj->code ? $langs->trans("Civility".$obj->code) : ($obj->civilite != '-' ? $obj->civilite : ''));
 
 					$options_array[$obj->code] = $label;
@@ -314,9 +312,7 @@ class FormAdvTargetEmailing extends Form
 					$i++;
 				}
 			}
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 		}
 
@@ -332,14 +328,14 @@ class FormAdvTargetEmailing extends Form
 	 * @param int $showempty show empty
 	 * @return string HTML combo
 	 */
-    public function advMultiselectarray($htmlname, $options_array = array(), $selected_array = array(), $showempty = 0)
-    {
+	public function advMultiselectarray($htmlname, $options_array = array(), $selected_array = array(), $showempty = 0)
+	{
 		global $conf, $langs;
 
 		$form = new Form($this->db);
 		$return = $form->multiselectarray($htmlname, $options_array, $selected_array, 0, 0, '', 0, 295);
 		return $return;
-    }
+	}
 
 	/**
 	 * Return a combo list to select emailing target selector
@@ -351,23 +347,24 @@ class FormAdvTargetEmailing extends Form
 	 * @param	string		$morecss		More CSS
 	 * @return	string 						HTML combo
 	 */
-    public function selectAdvtargetemailingTemplate($htmlname = 'template_id', $selected = 0, $showempty = 0, $type_element = 'mailing', $morecss = '')
-    {
+	public function selectAdvtargetemailingTemplate($htmlname = 'template_id', $selected = 0, $showempty = 0, $type_element = 'mailing', $morecss = '')
+	{
 		global $conf, $user, $langs;
 
 		$out = '';
 
 		$sql = "SELECT c.rowid, c.name, c.fk_element";
 		$sql .= " FROM ".MAIN_DB_PREFIX."advtargetemailing as c";
-		$sql .= " WHERE type_element='$type_element'";
+		$sql .= " WHERE type_element = '".$this->db->escape($type_element)."'";
 		$sql .= " ORDER BY c.name";
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$out .= '<select id="'.$htmlname.'" class="flat'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'">';
-			if ($showempty)
+			if ($showempty) {
 				$out .= '<option value=""></option>';
+			}
 			$num = $this->db->num_rows($resql);
 			$i = 0;
 			if ($num) {
@@ -392,5 +389,5 @@ class FormAdvTargetEmailing extends Form
 		}
 		$this->db->free($resql);
 		return $out;
-    }
+	}
 }

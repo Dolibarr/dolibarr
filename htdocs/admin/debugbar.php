@@ -29,7 +29,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
 global $conf;
 
-if (!$user->admin) accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "other"));
@@ -43,24 +45,19 @@ $action = GETPOST('action', 'aZ09');
  */
 
 // Set modes
-if ($action == 'set')
-{
+if ($action == 'set') {
 	$db->begin();
 
 	$result1 = dolibarr_set_const($db, "DEBUGBAR_LOGS_LINES_NUMBER", GETPOST('DEBUGBAR_LOGS_LINES_NUMBER', 'int'), 'chaine', 0, '', 0);
 	$result2 = dolibarr_set_const($db, "DEBUGBAR_USE_LOG_FILE", GETPOST('DEBUGBAR_USE_LOG_FILE', 'int'), 'chaine', 0, '', 0);
-	if ($result1 < 0 || $result2 < 0)
-    {
-        $error++;
-    }
+	if ($result1 < 0 || $result2 < 0) {
+		$error++;
+	}
 
-	if (!$error)
-	{
+	if (!$error) {
 		$db->commit();
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	}
-	else
-	{
+	} else {
 		$db->rollback();
 		setEventMessages($error, null, 'errors');
 	}
@@ -78,12 +75,9 @@ $form = new Form($db);
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("DebugBarSetup"), $linkback, 'title_setup');
 
-//print load_fiche_titre($langs->trans("DebugBar"));
-
-if (!function_exists('mb_check_encoding'))
-{
-    $langs->load("errors");
-    print info_admin($langs->trans("ErrorPHPNeedModule", 'mbstring'), 0, 0, 'error');
+if (!function_exists('mb_check_encoding')) {
+	$langs->load("errors");
+	print info_admin($langs->trans("ErrorPHPNeedModule", 'mbstring'), 0, 0, 'error');
 }
 
 print '<br>';
@@ -96,7 +90,7 @@ print '<input type="hidden" name="action" value="set">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td>';
-print '<td class="right"><input type="submit" class="button" '.$option.' value="'.$langs->trans("Modify").'"></td>';
+print '<td class="right"><input type="submit" class="button button-edit" '.$option.' value="'.$langs->trans("Modify").'"></td>';
 print "</tr>\n";
 
 print '<tr class="oddeven"><td>'.$langs->trans("DEBUGBAR_LOGS_LINES_NUMBER").'</td>';

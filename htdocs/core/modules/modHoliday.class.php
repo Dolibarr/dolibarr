@@ -26,7 +26,7 @@
  *    \brief      Module de gestion des congés
  *    \file       htdocs/core/modules/modHoliday.class.php
  *    \ingroup    holiday
- *    \brief      Description and activation file for module holiday
+ *    \brief      Description and activation file for the module holiday
  */
 include_once DOL_DOCUMENT_ROOT."/core/modules/DolibarrModules.class.php";
 
@@ -87,7 +87,7 @@ class modHoliday extends DolibarrModules
 		$this->depends = array(); // List of module class names as string that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
-		$this->phpmin = array(5, 4); // Minimum version of PHP required by module
+		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(3, 0); // Minimum version of Dolibarr required by module
 		$this->langfiles = array("holiday");
 
@@ -135,19 +135,41 @@ class modHoliday extends DolibarrModules
 		//$r++;
 
 
+		// Cronjobs
+		$arraydate = dol_getdate(dol_now());
+		$datestart = dol_mktime(4, 0, 0, $arraydate['mon'], $arraydate['mday'], $arraydate['year']);
+		$this->cronjobs = array(
+			0 => array(
+				'label' => 'HolidayBalanceMonthlyUpdate',
+				'jobtype' => 'method',
+				'class' => 'holiday/class/holiday.class.php',
+				'objectname' => 'Holiday',
+				'method' => 'updateBalance',
+				'parameters' => '',
+				'comment' => 'Update holiday balance every month',
+				'frequency' => 1,
+				'unitfrequency' => 3600 * 24,
+				'priority' => 50,
+				'status' => 1,
+				'test' => '$conf->holiday->enabled',
+				'datestart' => $datestart
+			)
+		);
+
+
 		// Permissions
 		$this->rights = array(); // Permission array used by this module
 		$r = 0;
 
 		$this->rights[$r][0] = 20001; // Permission id (must not be already used)
-		$this->rights[$r][1] = 'Read your own leave requests'; // Permission label
+		$this->rights[$r][1] = 'Read leave requests (yours and your subordinates)'; // Permission label
 		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'read'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$this->rights[$r][5] = ''; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$r++;
 
 		$this->rights[$r][0] = 20002; // Permission id (must not be already used)
-		$this->rights[$r][1] = 'Create/modify your own leave requests'; // Permission label
+		$this->rights[$r][1] = 'Create/modify leave requests'; // Permission label
 		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'write'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$this->rights[$r][5] = ''; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
@@ -170,14 +192,14 @@ class modHoliday extends DolibarrModules
 		$this->rights[$r][0] = 20004; // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Read leave requests for everybody'; // Permission label
 		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
-		$this->rights[$r][4] = 'read_all'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		$this->rights[$r][4] = 'readall'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$this->rights[$r][5] = ''; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$r++;
 
 		$this->rights[$r][0] = 20005; // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Create/modify leave requests for everybody'; // Permission label
 		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
-		$this->rights[$r][4] = 'write_all'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		$this->rights[$r][4] = 'writeall'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$this->rights[$r][5] = ''; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$r++;
 
@@ -201,17 +223,21 @@ class modHoliday extends DolibarrModules
 		$this->export_code[$r] = 'leaverequest_'.$r;
 		$this->export_label[$r] = 'ListeCP';
 		$this->export_icon[$r] = 'holiday';
-		$this->export_permission[$r] = array(array("holiday", "read_all"));
+		$this->export_permission[$r] = array(array("holiday", "readall"));
 		$this->export_fields_array[$r] = array(
 			'd.rowid'=>"LeaveId", 'd.fk_type'=>'TypeOfLeaveId', 't.code'=>'TypeOfLeaveCode', 't.label'=>'TypeOfLeaveLabel', 'd.fk_user'=>'UserID',
-			'u.lastname'=>'Lastname', 'u.firstname'=>'Firstname', 'u.login'=>"Login", 'd.date_debut'=>'DateStart', 'd.date_fin'=>'DateEnd', 'd.halfday'=>'HalfDay', 'none.num_open_days'=>'NbUseDaysCP',
-			'd.date_valid'=>'DateApprove', 'd.fk_validator'=>"UserForApprovalID", 'ua.lastname'=>"UserForApprovalLastname", 'ua.firstname'=>"UserForApprovalFirstname",
+			'd.date_debut'=>'DateStart', 'd.date_fin'=>'DateEnd', 'd.halfday'=>'HalfDay', 'none.num_open_days'=>'NbUseDaysCP',
+			'd.date_valid'=>'DateApprove', 'd.fk_validator'=>"UserForApprovalID",
+			'u.lastname'=>'Lastname', 'u.firstname'=>'Firstname', 'u.login'=>"Login",
+			'ua.lastname'=>"UserForApprovalLastname", 'ua.firstname'=>"UserForApprovalFirstname",
 			'ua.login'=>"UserForApprovalLogin", 'd.description'=>'Description', 'd.statut'=>'Status'
 		);
 		$this->export_TypeFields_array[$r] = array(
 			'd.rowid'=>"Numeric", 't.code'=>'Text', 't.label'=>'Text', 'd.fk_user'=>'Numeric',
-			'u.lastname'=>'Text', 'u.firstname'=>'Text', 'u.login'=>"Text", 'd.date_debut'=>'Date', 'd.date_fin'=>'Date', 'none.num_open_days'=>'NumericCompute',
-			'd.date_valid'=>'Date', 'd.fk_validator'=>"Numeric", 'ua.lastname'=>"Text", 'ua.firstname'=>"Text",
+			'd.date_debut'=>'Date', 'd.date_fin'=>'Date', 'none.num_open_days'=>'NumericCompute',
+			'd.date_valid'=>'Date', 'd.fk_validator'=>"Numeric",
+			'u.lastname'=>'Text', 'u.firstname'=>'Text', 'u.login'=>"Text",
+			'ua.lastname'=>"Text", 'ua.firstname'=>"Text",
 			'ua.login'=>"Text", 'd.description'=>'Text', 'd.statut'=>'Numeric'
 		);
 		$this->export_entities_array[$r] = array(
@@ -221,7 +247,11 @@ class modHoliday extends DolibarrModules
 		$this->export_special_array[$r] = array('none.num_open_days'=>'getNumOpenDays');
 		$this->export_dependencies_array[$r] = array(); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them
 
-		$keyforselect = 'holiday'; $keyforelement = 'holiday'; $keyforaliasextra = 'extra';
+		$keyforselect = 'holiday';
+		$keyforelement = 'holiday';
+		$keyforaliasextra = 'extra';
+		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
+		$keyforselect = 'user'; $keyforelement = 'user'; $keyforaliasextra = 'extrau';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
@@ -230,6 +260,7 @@ class modHoliday extends DolibarrModules
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_holiday_types as t ON t.rowid = d.fk_type';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as ua ON ua.rowid = d.fk_validator,';
 		$this->export_sql_end[$r] .= ' '.MAIN_DB_PREFIX.'user as u';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user_extrafields as extrau ON u.rowid = extrau.fk_object';
 		$this->export_sql_end[$r] .= ' WHERE d.fk_user = u.rowid';
 		$this->export_sql_end[$r] .= ' AND d.entity IN ('.getEntity('holiday').')';
 
@@ -241,7 +272,7 @@ class modHoliday extends DolibarrModules
 		//	's.rowid'=>"IdCompany",'s.nom'=>'CompanyName','s.address'=>'Address','s.zip'=>'Zip','s.town'=>'Town','s.fk_pays'=>'Country','s.phone'=>'Phone',
 		//	's.siren'=>'ProfId1','s.siret'=>'ProfId2','s.ape'=>'ProfId3','s.idprof4'=>'ProfId4','s.code_compta'=>'CustomerAccountancyCode',
 		//	's.code_compta_fournisseur'=>'SupplierAccountancyCode','f.rowid'=>"InvoiceId",'f.ref'=>"InvoiceRef",'f.datec'=>"InvoiceDateCreation",
-		//	'f.datef'=>"DateInvoice",'f.total'=>"TotalHT",'f.total_ttc'=>"TotalTTC",'f.tva'=>"TotalVAT",'f.paye'=>"InvoicePaid",'f.fk_statut'=>'InvoiceStatus',
+		//	'f.datef'=>"DateInvoice",'f.total_ht'=>"TotalHT",'f.total_ttc'=>"TotalTTC",'f.total_tva'=>"TotalVAT",'f.paye'=>"InvoicePaid",'f.fk_statut'=>'InvoiceStatus',
 		//	'f.note'=>"InvoiceNote",'fd.rowid'=>'LineId','fd.description'=>"LineDescription",'fd.price'=>"LineUnitPrice",'fd.tva_tx'=>"LineVATRate",
 		//	'fd.qty'=>"LineQty",'fd.total_ht'=>"LineTotalHT",'fd.total_tva'=>"LineTotalTVA",'fd.total_ttc'=>"LineTotalTTC",'fd.date_start'=>"DateStart",
 		//	'fd.date_end'=>"DateEnd",'fd.fk_product'=>'ProductId','p.ref'=>'ProductRef'
@@ -249,7 +280,7 @@ class modHoliday extends DolibarrModules
 		// $this->export_entities_array[$r]=array(
 		//	's.rowid'=>"company",'s.nom'=>'company','s.address'=>'company','s.zip'=>'company','s.town'=>'company','s.fk_pays'=>'company','s.phone'=>'company',
 		//	's.siren'=>'company','s.siret'=>'company','s.ape'=>'company','s.idprof4'=>'company','s.code_compta'=>'company','s.code_compta_fournisseur'=>'company',
-		//	'f.rowid'=>"invoice",'f.ref'=>"invoice",'f.datec'=>"invoice",'f.datef'=>"invoice",'f.total'=>"invoice",'f.total_ttc'=>"invoice",'f.tva'=>"invoice",
+		//	'f.rowid'=>"invoice",'f.ref'=>"invoice",'f.datec'=>"invoice",'f.datef'=>"invoice",'f.total_ht'=>"invoice",'f.total_ttc'=>"invoice",'f.total_tva'=>"invoice",
 		//	'f.paye'=>"invoice",'f.fk_statut'=>'invoice','f.note'=>"invoice",'fd.rowid'=>'invoice_line','fd.description'=>"invoice_line",'fd.price'=>"invoice_line",
 		//	'fd.total_ht'=>"invoice_line",'fd.total_tva'=>"invoice_line",'fd.total_ttc'=>"invoice_line",'fd.tva_tx'=>"invoice_line",'fd.qty'=>"invoice_line",
 		//	'fd.date_start'=>"invoice_line",'fd.date_end'=>"invoice_line",'fd.fk_product'=>'product','p.ref'=>'product'
@@ -258,7 +289,7 @@ class modHoliday extends DolibarrModules
 		//	's.rowid'=>"socid",'s.nom'=>'soc_name','s.address'=>'soc_adres','s.zip'=>'soc_zip','s.town'=>'soc_town','s.fk_pays'=>'soc_pays','s.phone'=>'soc_tel',
 		//	's.siren'=>'soc_siren','s.siret'=>'soc_siret','s.ape'=>'soc_ape','s.idprof4'=>'soc_idprof4','s.code_compta'=>'soc_customer_accountancy',
 		//	's.code_compta_fournisseur'=>'soc_supplier_accountancy','f.rowid'=>"invoiceid",'f.ref'=>"ref",'f.datec'=>"datecreation",'f.datef'=>"dateinvoice",
-		//	'f.total'=>"totalht",'f.total_ttc'=>"totalttc",'f.tva'=>"totalvat",'f.paye'=>"paid",'f.fk_statut'=>'status','f.note'=>"note",'fd.rowid'=>'lineid',
+		//	'f.total_ht'=>"totalht",'f.total_ttc'=>"totalttc",'f.total_tva'=>"totalvat",'f.paye'=>"paid",'f.fk_statut'=>'status','f.note'=>"note",'fd.rowid'=>'lineid',
 		//	'fd.description'=>"linedescription",'fd.price'=>"lineprice",'fd.total_ht'=>"linetotalht",'fd.total_tva'=>"linetotaltva",'fd.total_ttc'=>"linetotalttc",
 		//	'fd.tva_tx'=>"linevatrate",'fd.qty'=>"lineqty",'fd.date_start'=>"linedatestart",'fd.date_end'=>"linedateend",'fd.fk_product'=>'productid',
 		//	'p.ref'=>'productref'
@@ -302,11 +333,11 @@ class modHoliday extends DolibarrModules
 				return 0;
 			}
 		}
-        */
+		*/
 
 		$sql = array(
-		//	"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[0][2])."' AND type = 'holiday' AND entity = ".$conf->entity,
-		//	"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[0][2])."','holiday',".$conf->entity.")"
+			//	"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[0][2])."' AND type = 'holiday' AND entity = ".((int) $conf->entity),
+			//	"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[0][2])."','holiday',".((int) $conf->entity).")"
 		);
 
 		return $this->_init($sql, $options);

@@ -35,68 +35,68 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 // Load translation files required by the page
 $langs->loadlangs(array('banks', 'categories', 'bills', 'withdrawals'));
 
-// Security check
-if ($user->socid > 0) accessforbidden();
-
 // Get supervariables
-$action = GETPOST('action', 'alpha');
+$action = GETPOST('action', 'aZ09');
 $id = GETPOST('id', 'int');
 $socid = GETPOST('socid', 'int');
 
 $type = GETPOST('type', 'aZ09');
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$sortorder = GETPOST('sortorder', 'alpha');
-$sortfield = GETPOST('sortfield', 'alpha');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if ($page == -1 || $page == null) { $page = 0; }
+if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
+	// If $page is not defined, or '' or -1 or if we click on clear filters
+	$page = 0;
+}
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-if ($sortorder == "") $sortorder = "DESC";
-if ($sortfield == "") $sortfield = "pl.fk_soc";
+if ($sortorder == "") {
+	$sortorder = "DESC";
+}
+if ($sortfield == "") {
+	$sortfield = "pl.fk_soc";
+}
+
+$type = $object->type;
+if ($type == 'bank-transfer') {
+	$result = restrictedArea($user, 'paymentbybanktransfer', '', '', '');
+} else {
+	$result = restrictedArea($user, 'prelevement', '', '', 'bons');
+}
 
 
 /*
  * Actions
  */
 
-if ($action == 'confirm_rejet')
-{
-	if (GETPOST("confirm") == 'yes')
-	{
-		if (GETPOST('remonth', 'int'))
-		{
+if ($action == 'confirm_rejet') {
+	if (GETPOST("confirm") == 'yes') {
+		if (GETPOST('remonth', 'int')) {
 			$daterej = mktime(2, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 		}
 
-		if (empty($daterej))
-		{
+		if (empty($daterej)) {
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
-		}
-
-		elseif ($daterej > dol_now())
-		{
+		} elseif ($daterej > dol_now()) {
 			$error++;
 			$langs->load("error");
 			setEventMessages($langs->transnoentities("ErrorDateMustBeBeforeToday"), null, 'errors');
 		}
 
-		if (GETPOST('motif', 'alpha') == 0)
-		{
+		if (GETPOST('motif', 'alpha') == 0) {
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("RefusedReason")), null, 'errors');
 		}
 
-		if (!$error)
-		{
+		if (!$error) {
 			$lipre = new LignePrelevement($db);
 
-			if ($lipre->fetch($id) == 0)
-
-			{
+			if ($lipre->fetch($id) == 0) {
 				$rej = new RejetPrelevement($db, $user, $type);
 
 				$rej->create($user, $id, GETPOST('motif', 'alpha'), $daterej, $lipre->bon_rowid, GETPOST('facturer', 'int'));
@@ -104,14 +104,10 @@ if ($action == 'confirm_rejet')
 				header("Location: line.php?id=".urlencode($id).'&type='.urlencode($type));
 				exit;
 			}
-		}
-		else
-		{
+		} else {
 			$action = "rejet";
 		}
-	}
-	else
-	{
+	} else {
 		header("Location: line.php?id=".urlencode($id).'&type='.urlencode($type));
 		exit;
 	}
@@ -139,16 +135,14 @@ $head[$h][1] = $title;
 $hselected = $h;
 $h++;
 
-if ($id)
-{
+if ($id) {
 	$lipre = new LignePrelevement($db);
 
-	if ($lipre->fetch($id) >= 0)
-	{
+	if ($lipre->fetch($id) >= 0) {
 		$bon = new BonPrelevement($db);
 		$bon->fetch($lipre->bon_rowid);
 
-		dol_fiche_head($head, $hselected, $title);
+		print dol_get_fiche_head($head, $hselected, $title);
 
 		print '<table class="border centpercent tableforfield">';
 
@@ -159,45 +153,39 @@ if ($id)
 		print $bon->getNomUrl(1).'</td></tr>';
 
 		print '<tr><td>'.$langs->trans("Date").'</td><td>'.dol_print_date($bon->datec, 'day').'</td></tr>';
-		print '<tr><td>'.$langs->trans("Amount").'</td><td>'.price($lipre->amount).'</td></tr>';
+
+		print '<tr><td>'.$langs->trans("Amount").'</td><td><span class="amount">'.price($lipre->amount).'</span></td></tr>';
+
 		print '<tr><td>'.$langs->trans("Status").'</td><td>'.$lipre->LibStatut($lipre->statut, 1).'</td></tr>';
 
-		if ($lipre->statut == 3)
-		{
-			$rej = new RejetPrelevement($db, $user);
+		if ($lipre->statut == 3) {
+			$rej = new RejetPrelevement($db, $user, $type);
 			$resf = $rej->fetch($lipre->id);
-			if ($resf == 0)
-			{
+			if ($resf == 0) {
 				print '<tr><td>'.$langs->trans("RefusedReason").'</td><td>'.$rej->motif.'</td></tr>';
+
 				print '<tr><td>'.$langs->trans("RefusedData").'</td><td>';
-				if ($rej->date_rejet == 0)
-				{
+				if ($rej->date_rejet == 0) {
 					/* Historique pour certaines install */
 					print $langs->trans("Unknown");
-				}
-				else
-				{
+				} else {
 					print dol_print_date($rej->date_rejet, 'day');
 				}
 				print '</td></tr>';
+
 				print '<tr><td>'.$langs->trans("RefusedInvoicing").'</td><td>'.$rej->invoicing.'</td></tr>';
-			}
-			else
-			{
+			} else {
 				print '<tr><td>'.$resf.'</td></tr>';
 			}
 		}
 
 		print '</table>';
-		dol_fiche_end();
-	}
-	else
-	{
+		print dol_get_fiche_end();
+	} else {
 		dol_print_error($db);
 	}
 
-	if ($action == 'rejet' && $user->rights->prelevement->bons->credit)
-	{
+	if ($action == 'rejet' && $user->rights->prelevement->bons->credit) {
 		$form = new Form($db);
 
 		$soc = new Societe($db);
@@ -240,40 +228,30 @@ if ($id)
 		print '</table><br>';
 
 		//Confirm Button
-		print '<div class="center"><input type="submit" class="button" value='.$langs->trans("Confirm").'></div>';
+		print '<div class="center"><input type="submit" class="button button-save" value='.$langs->trans("Confirm").'></div>';
 		print '</form>';
 	}
 
-	/* ************************************************************************** */
-	/*                                                                            */
-	/* Barre d'action                                                             */
-	/*                                                                            */
-	/* ************************************************************************** */
+	/*
+	 * Action bar
+	 */
+	print '<div class="tabsAction">';
 
-	print "<div class=\"tabsAction\">";
-
-	if ($action == '')
-	{
-		if ($bon->statut == BonPrelevement::STATUS_CREDITED)
-		{
+	if ($action == '') {
+		if ($bon->statut == BonPrelevement::STATUS_CREDITED) {
 			if ($lipre->statut == 2) {
-				if ($user->rights->prelevement->bons->credit)
-				{
+				if ($user->rights->prelevement->bons->credit) {
 					print '<a class="butActionDelete" href="line.php?action=rejet&type='.$type.'&id='.$lipre->id.'">'.$langs->trans("StandingOrderReject").'</a>';
-				}
-				else
-				{
+				} else {
 					print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("StandingOrderReject").'</a>';
 				}
 			}
-		}
-		else
-		{
+		} else {
 			print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotPossibleForThisStatusOfWithdrawReceiptORLine").'">'.$langs->trans("StandingOrderReject").'</a>';
 		}
 	}
 
-	print "</div>";
+	print '</div>';
 
 	/*
 	 * List of invoices
@@ -284,39 +262,47 @@ if ($id)
 	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
 	$sql .= " , ".MAIN_DB_PREFIX."prelevement_lignes as pl";
 	$sql .= " , ".MAIN_DB_PREFIX."prelevement_facture as pf";
-	$sql .= " , ".MAIN_DB_PREFIX."facture as f";
+	if ($type == 'bank-transfer') {
+		$sql .= " , ".MAIN_DB_PREFIX."facture_fourn as f";
+	} else {
+		$sql .= " , ".MAIN_DB_PREFIX."facture as f";
+	}
 	$sql .= " , ".MAIN_DB_PREFIX."societe as s";
 	$sql .= " WHERE pf.fk_prelevement_lignes = pl.rowid";
 	$sql .= " AND pl.fk_prelevement_bons = p.rowid";
 	$sql .= " AND f.fk_soc = s.rowid";
-	$sql .= " AND pf.fk_facture = f.rowid";
+	if ($type == 'bank-transfer') {
+		$sql .= " AND pf.fk_facture_fourn = f.rowid";
+	} else {
+		$sql .= " AND pf.fk_facture = f.rowid";
+	}
 	$sql .= " AND f.entity IN (".getEntity('invoice').")";
-	$sql .= " AND pl.rowid=".$id;
-	if ($socid)	$sql .= " AND s.rowid = ".$socid;
-	$sql .= " ORDER BY $sortfield $sortorder ";
+	$sql .= " AND pl.rowid = ".((int) $id);
+	if ($socid) {
+		$sql .= " AND s.rowid = ".((int) $socid);
+	}
+	$sql .= $db->order($sortfield, $sortorder);
 	$sql .= $db->plimit($conf->liste_limit + 1, $offset);
 
 	$result = $db->query($sql);
 
-	if ($result)
-	{
+	if ($result) {
 		$num = $db->num_rows($result);
 		$i = 0;
 
-		$urladd = "&amp;id=".$id;
+		$urladd = "&id=".urlencode($id);
 
 		print_barre_liste($langs->trans("Bills"), $page, "factures.php", $urladd, $sortfield, $sortorder, '', $num, 0, '');
 
 		print"\n<!-- debut table -->\n";
-		print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+		print '<table class="noborder" width="100%" cellpadding="4">';
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("Invoice").'</td><td>'.$langs->trans("ThirdParty").'</td><td class="right">'.$langs->trans("Amount").'</td><td class="right">'.$langs->trans("Status").'</td>';
 		print '</tr>';
 
 		$total = 0;
 
-		while ($i < min($num, $conf->liste_limit))
-		{
+		while ($i < min($num, $conf->liste_limit)) {
 			$obj = $db->fetch_object($result);
 
 			print '<tr class="oddeven"><td>';
@@ -330,7 +316,7 @@ if ($id)
 			print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">';
 			print img_object($langs->trans("ShowCompany"), "company").' '.$obj->name."</a></td>\n";
 
-			print '<td class="right">'.price($obj->total_ttc)."</td>\n";
+			print '<td class="right"><span class="amount">'.price($obj->total_ttc)."</span></td>\n";
 
 			print '<td class="right">';
 			$invoicestatic->fetch($obj->facid);
@@ -345,9 +331,7 @@ if ($id)
 		print "</table>";
 
 		$db->free($result);
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }

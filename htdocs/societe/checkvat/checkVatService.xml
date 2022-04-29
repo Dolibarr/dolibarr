@@ -167,7 +167,7 @@
   </wsdl:binding>
   <wsdl:service name="checkVatService">
     <wsdl:port name="checkVatPort" binding="impl:checkVatBinding">
-      <wsdlsoap:address location="http://ec.europa.eu/taxation_customs/vies/services/checkVatService"/>
+      <wsdlsoap:address location="https://ec.europa.eu/taxation_customs/vies/services/checkVatService"/>
     </wsdl:port>
   </wsdl:service>
 </wsdl:definitions>

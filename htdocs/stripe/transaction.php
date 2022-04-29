@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2018-2019  Thibault FOUCART        <support@ptibogxiv.net>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,26 +26,34 @@ require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-if (!empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
+if (!empty($conf->accounting->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'salaries', 'bills', 'hrm', 'stripe'));
 
 // Security check
 $socid = GETPOST("socid", "int");
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 //$result = restrictedArea($user, 'salaries', '', '', '');
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $rowid = GETPOST("rowid", 'alpha');
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+if (empty($page) || $page == -1) {
+	$page = 0;
+}     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
+$optioncss = GETPOST('optioncss', 'alpha');
 
+$result = restrictedArea($user, 'banque');
 
 
 /*
@@ -60,14 +68,11 @@ $stripe = new Stripe($db);
 
 llxHeader('', $langs->trans("StripeTransactionList"));
 
-if (!empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha')))
-{
+if (!empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha'))) {
 	$service = 'StripeTest';
 	$servicestatus = '0';
 	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), '', 'warning');
-}
-else
-{
+} else {
 	$service = 'StripeLive';
 	$servicestatus = '1';
 }
@@ -79,8 +84,9 @@ $stripeacc = $stripe->getStripeAccount($service);
 
 if (!$rowid) {
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-	if ($optioncss != '')
+	if ($optioncss != '') {
 		print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	}
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="action" value="list">';
@@ -108,121 +114,119 @@ if (!$rowid) {
 	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "", "", "", '', '', '', 'right ');
 	print "</tr>\n";
 
-	print "</tr>\n";
-
-	if ($stripeacc)
-	{
-		$txn = \Stripe\BalanceTransaction::all(array("limit" => $limit), array("stripe_account" => $stripeacc));
-	}
-	else
-	{
-		$txn = \Stripe\BalanceTransaction::all(array("limit" => $limit));
-	}
-
-	foreach ($txn->data as $txn)
-	{
-		//$charge = $txn;
-		//var_dump($txn);
-
-		// The metadata FULLTAG is defined by the online payment page
-		/*$FULLTAG=$charge->metadata->FULLTAG;
-
-		// Save into $tmparray all metadata
-		$tmparray = dolExplodeIntoArray($FULLTAG,'.','=');
-		// Load origin object according to metadata
-		if (! empty($tmparray['CUS']))
-		{
-			$societestatic->fetch($tmparray['CUS']);
+	try {
+		if ($stripeacc) {
+			$txn = \Stripe\BalanceTransaction::all(array("limit" => $limit), array("stripe_account" => $stripeacc));
+		} else {
+			$txn = \Stripe\BalanceTransaction::all(array("limit" => $limit));
 		}
-		else
-		{
-			$societestatic->id = 0;
+
+		foreach ($txn->data as $txn) {
+			//$charge = $txn;
+			//var_dump($txn);
+
+			// The metadata FULLTAG is defined by the online payment page
+			/*$FULLTAG=$charge->metadata->FULLTAG;
+
+			// Save into $tmparray all metadata
+			$tmparray = dolExplodeIntoArray($FULLTAG,'.','=');
+			// Load origin object according to metadata
+			if (! empty($tmparray['CUS']))
+			{
+				$societestatic->fetch($tmparray['CUS']);
+			}
+			else
+			{
+				$societestatic->id = 0;
+			}
+			if (! empty($tmparray['MEM']))
+			{
+				$memberstatic->fetch($tmparray['MEM']);
+			}
+			else
+			{
+				$memberstatic->id = 0;
+			}*/
+
+			$societestatic->fetch($charge->metadata->idcustomer);
+			$societestatic->id = $charge->metadata->idcustomer;
+			$societestatic->lastname = $obj->lastname;
+			$societestatic->firstname = $obj->firstname;
+			$societestatic->admin = $obj->admin;
+			$societestatic->login = $obj->login;
+			$societestatic->email = $obj->email;
+			$societestatic->societe_id = $obj->fk_soc;
+
+			print '<tr class="oddeven">';
+
+			// Ref
+			if (!empty($stripeacc)) {
+				$connect = $stripeacc.'/';
+			}
+
+			// Ref
+			if (preg_match('/po_/i', $txn->source)) {
+				$origin = "payouts";
+			} elseif (preg_match('/fee_/i', $txn->source)) {
+				$origin = "connect/application_fees";
+			} else {
+				$origin = "payments";
+			}
+
+			$url = 'https://dashboard.stripe.com/'.$connect.'test/'.$origin.'/'.$txn->source;
+			if ($servicestatus) {
+				$url = 'https://dashboard.stripe.com/'.$connect.$origin.'/'.$txn->source;
+			}
+			if ($txn->type == 'stripe_fee' || $txn->type == 'reserve_transaction') {
+				print "<td>".$txn->type."</td>";
+			} else {
+				print "<td><a href='".$url."' target='_stripe'>".img_picto($langs->trans('ShowInStripe'), 'globe')." ".$txn->source."</a></td>\n";
+			}
+
+			// Stripe customer
+			//print "<td>".$charge->customer."</td>\n";
+			// Link
+			/*print "<td>";
+			if ($societestatic->id > 0) {
+				print $societestatic->getNomUrl(1);
+			}
+			if ($memberstatic->id > 0) {
+				print $memberstatic->getNomUrl(1);
+			}
+			print "</td>\n";*/
+			// Origine
+			//print "<td>";
+			////if ($charge->metadata->dol_type=="order"){
+			//	$object = new Commande($db);
+			//	$object->fetch($charge->metadata->dol_id);
+			//	print "<a href='".DOL_URL_ROOT."/commande/card.php?id=".$charge->metadata->dol_id."'>".img_picto('', 'object_order')." ".$object->ref."</a>";
+			//} elseif ($charge->metadata->dol_type=="invoice"){
+			//	$object = new Facture($db);
+			//	$object->fetch($charge->metadata->dol_id);
+			//	print "<a href='".DOL_URL_ROOT."/compta/facture/card.php?facid=".$charge->metadata->dol_id."'>".img_picto('', 'object_invoice')." ".$object->ref."</a>";
+			//}
+			//print "</td>\n";
+			// Date payment
+			print '<td class="center">'.dol_print_date($txn->created, '%d/%m/%Y %H:%M')."</td>\n";
+			// Type
+			print '<td>'.$txn->type.'</td>';
+			// Amount
+			print '<td class="right">'.price(($txn->amount) / 100, 0, '', 1, - 1, - 1, strtoupper($txn->currency))."</td>";
+			print '<td class="right">'.price(($txn->fee) / 100, 0, '', 1, - 1, - 1, strtoupper($txn->currency))."</td>";
+			// Status
+			print "<td class='right'>";
+			if ($txn->status == 'available') {
+				print img_picto($langs->trans("".$txn->status.""), 'statut4');
+			} elseif ($txn->status == 'pending') {
+				print img_picto($langs->trans("".$txn->status.""), 'statut7');
+			} elseif ($txn->status == 'failed') {
+				print img_picto($langs->trans("".$txn->status.""), 'statut8');
+			}
+			print '</td>';
+			print "</tr>\n";
 		}
-		if (! empty($tmparray['MEM']))
-		{
-			$memberstatic->fetch($tmparray['MEM']);
-		}
-		else
-		{
-			$memberstatic->id = 0;
-		}*/
-
-		$societestatic->fetch($charge->metadata->idcustomer);
-		$societestatic->id = $charge->metadata->idcustomer;
-		$societestatic->lastname = $obj->lastname;
-		$societestatic->firstname = $obj->firstname;
-		$societestatic->admin = $obj->admin;
-		$societestatic->login = $obj->login;
-		$societestatic->email = $obj->email;
-		$societestatic->societe_id = $obj->fk_soc;
-
-		print '<tr class="oddeven">';
-
-		// Ref
-        if (!empty($stripeacc)) $connect = $stripeacc.'/';
-
-		// Ref
-        if (preg_match('/po_/i', $txn->source)) {
-            $origin = "payouts";
-        } elseif (preg_match('/fee_/i', $txn->source)) {
-            $origin = "connect/application_fees";
-        } else {
-            $origin = "payments";
-        }
-
-		$url = 'https://dashboard.stripe.com/'.$connect.'test/'.$origin.'/'.$txn->source;
-		if ($servicestatus) {
-			$url = 'https://dashboard.stripe.com/'.$connect.$origin.'/'.$txn->source;
-		}
-        if ($txn->type == 'stripe_fee' || $txn->type == 'reserve_transaction') {
-            print "<td>".$txn->type."</td>";
-        } else {
-            print "<td><a href='".$url."' target='_stripe'>".img_picto($langs->trans('ShowInStripe'), 'globe')." ".$txn->source."</a></td>\n";
-        }
-
-		// Stripe customer
-		//print "<td>".$charge->customer."</td>\n";
-		// Link
-		/*print "<td>";
-		if ($societestatic->id > 0)
-		{
-			print $societestatic->getNomUrl(1);
-		}
-		if ($memberstatic->id > 0)
-		{
-			print $memberstatic->getNomUrl(1);
-		}
-		print "</td>\n";*/
-		// Origine
-		//print "<td>";
-		////if ($charge->metadata->dol_type=="order"){
-		//	$object = new Commande($db);
-		//	$object->fetch($charge->metadata->dol_id);
-		//	print "<a href='".DOL_URL_ROOT."/commande/card.php?id=".$charge->metadata->dol_id."'>".img_picto('', 'object_order')." ".$object->ref."</a>";
-		//} elseif ($charge->metadata->dol_type=="invoice"){
-		//	$object = new Facture($db);
-		//	$object->fetch($charge->metadata->dol_id);
-		//	print "<a href='".DOL_URL_ROOT."/compta/facture/card.php?facid=".$charge->metadata->dol_id."'>".img_picto('', 'object_invoice')." ".$object->ref."</a>";
-		//}
-		//print "</td>\n";
-		// Date payment
-		print '<td class="center">'.dol_print_date($txn->created, '%d/%m/%Y %H:%M')."</td>\n";
-		// Type
-		print '<td>'.$txn->type.'</td>';
-		// Amount
-		print '<td class="right">'.price(($txn->amount) / 100, 0, '', 1, - 1, - 1, strtoupper($txn->currency))."</td>";
-		print '<td class="right">'.price(($txn->fee) / 100, 0, '', 1, - 1, - 1, strtoupper($txn->currency))."</td>";
-		// Status
-		print "<td class='right'>";
-        if ($txn->status == 'available') {
-            print img_picto($langs->trans("".$txn->status.""), 'statut4');
-        } elseif ($txn->status == 'pending') {
-            print img_picto($langs->trans("".$txn->status.""), 'statut7');
-        } elseif ($txn->status == 'failed') {
-            print img_picto($langs->trans("".$txn->status.""), 'statut8');
-        }
-		print '</td>';
-		print "</tr>\n";
+	} catch (Exception $e) {
+		print '<tr><td colspan="6">'.$e->getMessage().'</td></td>';
 	}
 	print "</table>";
 	print '</div>';

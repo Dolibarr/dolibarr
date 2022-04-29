@@ -1,0 +1,14 @@
+# Dolibarr language file - Source file is en_US - ftp
+FTPClientSetup=FTP அல்லது SFTP கிளையண்ட் தொகுதி அமைவு
+NewFTPClient=புதிய FTP/FTPS இணைப்பு அமைப்பு
+FTPArea=FTP/FTPS பகுதி
+FTPAreaDesc=இந்தத் திரையானது FTP மற்றும் SFTP சேவையகத்தின் காட்சியைக் காட்டுகிறது.
+SetupOfFTPClientModuleNotComplete=FTP அல்லது SFTP கிளையன்ட் தொகுதியின் அமைவு முழுமையடையவில்லை
+FTPFeatureNotSupportedByYourPHP=உங்கள் PHP FTP அல்லது SFTP செயல்பாடுகளை ஆதரிக்காது
+FailedToConnectToFTPServer=சேவையகத்துடன் இணைக்க முடியவில்லை (சர்வர் %s, port %s)
+FailedToConnectToFTPServerWithCredentials=வரையறுக்கப்பட்ட உள்நுழைவு/கடவுச்சொல் மூலம் சர்வரில் உள்நுழைவதில் தோல்வி
+FTPFailedToRemoveFile=<b> %s </b> கோப்பை அகற்ற முடியவில்லை.
+FTPFailedToRemoveDir=கோப்பகத்தை அகற்றுவதில் தோல்வி
+FTPPassiveMode=செயலற்ற பயன்முறை
+ChooseAFTPEntryIntoMenu=மெனுவிலிருந்து FTP/SFTP தளத்தைத் தேர்வு செய்யவும்...
+FailedToGetFile=%s கோப்புகளைப் பெறுவதில் தோல்வி

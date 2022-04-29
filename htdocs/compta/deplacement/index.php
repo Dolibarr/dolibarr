@@ -32,19 +32,27 @@ $langs->loadLangs(array('companies', 'users', 'trips'));
 
 // Security check
 $socid = GETPOST('socid', 'int');
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 $result = restrictedArea($user, 'deplacement', '', '');
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+if (empty($page) || $page == -1) {
+	$page = 0;
+}     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (!$sortorder) $sortorder = "DESC";
-if (!$sortfield) $sortfield = "d.dated";
+if (!$sortorder) {
+	$sortorder = "DESC";
+}
+if (!$sortfield) {
+	$sortfield = "d.dated";
+}
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 
 
@@ -67,27 +75,27 @@ $totalnb = 0;
 $sql = "SELECT count(d.rowid) as nb, sum(d.km) as km, d.type";
 $sql .= " FROM ".MAIN_DB_PREFIX."deplacement as d";
 $sql .= " WHERE d.entity = ".$conf->entity;
-if (empty($user->rights->deplacement->readall) && empty($user->rights->deplacement->lire_tous)) $sql .= ' AND d.fk_user IN ('.join(',', $childids).')';
+if (empty($user->rights->deplacement->readall) && empty($user->rights->deplacement->lire_tous)) {
+	$sql .= ' AND d.fk_user IN ('.$db->sanitize(join(',', $childids)).')';
+}
 $sql .= " GROUP BY d.type";
 $sql .= " ORDER BY d.type";
 
 $result = $db->query($sql);
-if ($result)
-{
-    $num = $db->num_rows($result);
-    $i = 0;
-    while ($i < $num)
-    {
-        $objp = $db->fetch_object($result);
+if ($result) {
+	$num = $db->num_rows($result);
+	$i = 0;
+	while ($i < $num) {
+		$objp = $db->fetch_object($result);
 
-        $somme[$objp->type] = $objp->km;
-        $nb[$objp->type] = $objp->nb;
-        $totalnb += $objp->nb;
-        $i++;
-    }
-    $db->free($result);
+		$somme[$objp->type] = $objp->km;
+		$nb[$objp->type] = $objp->nb;
+		$totalnb += $objp->nb;
+		$i++;
+	}
+	$db->free($result);
 } else {
-    dol_print_error($db);
+	dol_print_error($db);
 }
 
 
@@ -104,26 +112,24 @@ print '<td colspan="4">'.$langs->trans("Statistics").'</td>';
 print "</tr>\n";
 
 $listoftype = $tripandexpense_static->listOfTypes();
-foreach ($listoftype as $code => $label)
-{
-    $dataseries[] = array($label, (isset($nb[$code]) ? (int) $nb[$code] : 0));
+foreach ($listoftype as $code => $label) {
+	$dataseries[] = array($label, (isset($nb[$code]) ? (int) $nb[$code] : 0));
 }
 
-if ($conf->use_javascript_ajax)
-{
-    print '<tr><td align="center" colspan="4">';
+if ($conf->use_javascript_ajax) {
+	print '<tr><td align="center" colspan="4">';
 
-    include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
-    $dolgraph = new DolGraph();
-    $dolgraph->SetData($dataseries);
-    $dolgraph->setShowLegend(2);
-    $dolgraph->setShowPercent(1);
-    $dolgraph->SetType(array('pie'));
-    $dolgraph->setHeight('200');
-    $dolgraph->draw('idgraphstatus');
-    print $dolgraph->show($totalnb ? 0 : 1);
+	include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
+	$dolgraph = new DolGraph();
+	$dolgraph->SetData($dataseries);
+	$dolgraph->setShowLegend(2);
+	$dolgraph->setShowPercent(1);
+	$dolgraph->SetType(array('pie'));
+	$dolgraph->setHeight('200');
+	$dolgraph->draw('idgraphstatus');
+	print $dolgraph->show($totalnb ? 0 : 1);
 
-    print '</td></tr>';
+	print '</td></tr>';
 }
 
 print '<tr class="liste_total">';
@@ -135,7 +141,7 @@ print '</table>';
 
 
 
-print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+print '</div><div class="fichetwothirdright">';
 
 
 $max = 10;
@@ -144,65 +150,69 @@ $langs->load("boxes");
 
 $sql = "SELECT u.rowid as uid, u.lastname, u.firstname, d.rowid, d.dated as date, d.tms as dm, d.km, d.fk_statut";
 $sql .= " FROM ".MAIN_DB_PREFIX."deplacement as d, ".MAIN_DB_PREFIX."user as u";
-if (!$user->rights->societe->client->voir && !$user->socid) $sql .= ", ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+if (empty($user->rights->societe->client->voir) && !$user->socid) {
+	$sql .= ", ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+}
 $sql .= " WHERE u.rowid = d.fk_user";
 $sql .= " AND d.entity = ".$conf->entity;
-if (empty($user->rights->deplacement->readall) && empty($user->rights->deplacement->lire_tous)) $sql .= ' AND d.fk_user IN ('.join(',', $childids).')';
-if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " AND d.fk_soc = s. rowid AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
-if ($socid) $sql .= " AND d.fk_soc = ".$socid;
+if (empty($user->rights->deplacement->readall) && empty($user->rights->deplacement->lire_tous)) {
+	$sql .= ' AND d.fk_user IN ('.$db->sanitize(join(',', $childids)).')';
+}
+if (empty($user->rights->societe->client->voir) && !$user->socid) {
+	$sql .= " AND d.fk_soc = s. rowid AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
+}
+if ($socid) {
+	$sql .= " AND d.fk_soc = ".((int) $socid);
+}
 $sql .= $db->order("d.tms", "DESC");
 $sql .= $db->plimit($max, 0);
 
 $result = $db->query($sql);
-if ($result)
-{
-    $var = false;
-    $num = $db->num_rows($result);
+if ($result) {
+	$var = false;
+	$num = $db->num_rows($result);
 
-    $i = 0;
+	$i = 0;
 
-    print '<table class="noborder centpercent">';
-    print '<tr class="liste_titre">';
-    print '<td colspan="2">'.$langs->trans("BoxTitleLastModifiedExpenses", min($max, $num)).'</td>';
-    print '<td class="right">'.$langs->trans("FeesKilometersOrAmout").'</td>';
-    print '<td class="right">'.$langs->trans("DateModificationShort").'</td>';
-    print '<td width="16">&nbsp;</td>';
-    print '</tr>';
-    if ($num)
-    {
-        $total_ttc = $totalam = $total = 0;
+	print '<table class="noborder centpercent">';
+	print '<tr class="liste_titre">';
+	print '<td colspan="2">'.$langs->trans("BoxTitleLastModifiedExpenses", min($max, $num)).'</td>';
+	print '<td class="right">'.$langs->trans("FeesKilometersOrAmout").'</td>';
+	print '<td class="right">'.$langs->trans("DateModificationShort").'</td>';
+	print '<td width="16">&nbsp;</td>';
+	print '</tr>';
+	if ($num) {
+		$total_ttc = $totalam = $total = 0;
 
-        $deplacementstatic = new Deplacement($db);
-        $userstatic = new User($db);
-        while ($i < $num && $i < $max)
-        {
-            $obj = $db->fetch_object($result);
-            $deplacementstatic->ref = $obj->rowid;
-            $deplacementstatic->id = $obj->rowid;
-            $userstatic->id = $obj->uid;
-            $userstatic->lastname = $obj->lastname;
-            $userstatic->firstname = $obj->firstname;
-            print '<tr class="oddeven">';
-            print '<td>'.$deplacementstatic->getNomUrl(1).'</td>';
-            print '<td>'.$userstatic->getNomUrl(1).'</td>';
-            print '<td class="right">'.$obj->km.'</td>';
-            print '<td class="right">'.dol_print_date($db->jdate($obj->dm), 'day').'</td>';
-            print '<td>'.$deplacementstatic->LibStatut($obj->fk_statut, 3).'</td>';
-            print '</tr>';
+		$deplacementstatic = new Deplacement($db);
+		$userstatic = new User($db);
+		while ($i < $num && $i < $max) {
+			$obj = $db->fetch_object($result);
+			$deplacementstatic->ref = $obj->rowid;
+			$deplacementstatic->id = $obj->rowid;
+			$userstatic->id = $obj->uid;
+			$userstatic->lastname = $obj->lastname;
+			$userstatic->firstname = $obj->firstname;
+			print '<tr class="oddeven">';
+			print '<td>'.$deplacementstatic->getNomUrl(1).'</td>';
+			print '<td>'.$userstatic->getNomUrl(1).'</td>';
+			print '<td class="right">'.$obj->km.'</td>';
+			print '<td class="right">'.dol_print_date($db->jdate($obj->dm), 'day').'</td>';
+			print '<td>'.$deplacementstatic->LibStatut($obj->fk_statut, 3).'</td>';
+			print '</tr>';
 
-            $i++;
-        }
-    }
-    else
-    {
-        print '<tr class="oddeven"><td colspan="2" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
-    }
-    print '</table><br>';
+			$i++;
+		}
+	} else {
+		print '<tr class="oddeven"><td colspan="2" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+	}
+	print '</table><br>';
+} else {
+	dol_print_error($db);
 }
-else dol_print_error($db);
 
 
-print '</div></div></div>';
+print '</div></div>';
 
 // End of page
 llxFooter();

@@ -21,7 +21,7 @@
  *	\brief      Module pour gerer les deplacements et notes de frais
  *	\file       htdocs/core/modules/modDeplacement.class.php
  *	\ingroup    deplacement
- *	\brief      Fichier de description et activation du module Deplacement et notes de frais
+ *	\brief      Description and activation file for the module trips (deprecated)
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
@@ -45,7 +45,7 @@ class modDeplacement extends DolibarrModules
 		$this->numero = 75;
 
 		$this->family = "hr";
-		$this->module_position = '41';
+		$this->module_position = '43';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		$this->description = "Gestion des notes de frais et deplacements"; // Si traduction Module75Desc non trouvee
@@ -89,13 +89,13 @@ class modDeplacement extends DolibarrModules
 		$this->rights[2][3] = 0;
 		$this->rights[2][4] = 'creer';
 
-    	$this->rights[3][0] = 173;
+		$this->rights[3][0] = 173;
 		$this->rights[3][1] = 'Supprimer les notes de frais et deplacements';
 		$this->rights[3][2] = 'd';
 		$this->rights[3][3] = 0;
 		$this->rights[3][4] = 'supprimer';
 
-    	$this->rights[4][0] = 174;
+		$this->rights[4][0] = 174;
 		$this->rights[4][1] = 'Lire toutes les notes de frais';
 		$this->rights[4][2] = 'd';
 		$this->rights[4][3] = 0;
@@ -120,26 +120,31 @@ class modDeplacement extends DolibarrModules
 		$this->export_code[$r] = 'trips_'.$r;
 		$this->export_label[$r] = 'ListTripsAndExpenses';
 		$this->export_permission[$r] = array(array("deplacement", "export"));
-        $this->export_fields_array[$r] = array('u.login'=>'Login', 'u.lastname'=>'Lastname', 'u.firstname'=>'Firstname', 'd.rowid'=>"TripId", 'd.type'=>"Type", 'd.km'=>"FeesKilometersOrAmout", 'd.dated'=>"Date", 'd.note_private'=>'NotePrivate', 'd.note_public'=>'NotePublic', 's.nom'=>'ThirdParty');
-        $this->export_TypeFields_array[$r] = array('u.rowid'=>'List:user:name', 'u.login'=>'Text', 'u.lastname'=>'Text', 'u.firstname'=>'Text', 'd.type'=>"Text", 'd.km'=>"Numeric", 'd.dated'=>"Date", 'd.note_private'=>'Text', 'd.note_public'=>'Text', 's.rowid'=>"List:societe:CompanyName", 's.nom'=>'Text');
-        $this->export_entities_array[$r] = array('u.login'=>'user', 'u.lastname'=>'user', 'u.firstname'=>'user', 'd.rowid'=>"trip", 'd.type'=>"trip", 'd.km'=>"trip", 'd.dated'=>"trip", 'd.note_private'=>'trip', 'd.note_public'=>'trip', 's.nom'=>'company');
-        $this->export_dependencies_array[$r] = array('trip'=>'d.rowid'); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them
+		$this->export_fields_array[$r] = array('u.login'=>'Login', 'u.lastname'=>'Lastname', 'u.firstname'=>'Firstname', 'd.rowid'=>"TripId", 'd.type'=>"Type", 'd.km'=>"FeesKilometersOrAmout", 'd.dated'=>"Date", 'd.note_private'=>'NotePrivate', 'd.note_public'=>'NotePublic', 's.nom'=>'ThirdParty');
+		$this->export_TypeFields_array[$r] = array('u.rowid'=>'List:user:name', 'u.login'=>'Text', 'u.lastname'=>'Text', 'u.firstname'=>'Text', 'd.type'=>"Text", 'd.km'=>"Numeric", 'd.dated'=>"Date", 'd.note_private'=>'Text', 'd.note_public'=>'Text', 's.rowid'=>"List:societe:CompanyName", 's.nom'=>'Text');
+		$this->export_entities_array[$r] = array('u.login'=>'user', 'u.lastname'=>'user', 'u.firstname'=>'user', 'd.rowid'=>"trip", 'd.type'=>"trip", 'd.km'=>"trip", 'd.dated'=>"trip", 'd.note_private'=>'trip', 'd.note_public'=>'trip', 's.nom'=>'company');
+		$this->export_dependencies_array[$r] = array('trip'=>'d.rowid'); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them
 
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'user as u';
 		$this->export_sql_end[$r] .= ', '.MAIN_DB_PREFIX.'deplacement as d';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON d.fk_soc = s.rowid';
-		if (empty($user->rights->societe->client->voir)) $this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_commerciaux as sc ON sc.fk_soc = s.rowid';
+		if (empty($user->rights->societe->client->voir)) {
+			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_commerciaux as sc ON sc.fk_soc = s.rowid';
+		}
 		$this->export_sql_end[$r] .= ' WHERE d.fk_user = u.rowid';
 		$this->export_sql_end[$r] .= ' AND d.entity IN ('.getEntity('deplacement').')';
-		if (empty($user->rights->societe->client->voir)) $this->export_sql_end[$r] .= ' AND (sc.fk_user = '.(empty($user) ? 0 : $user->id).' OR d.fk_soc IS NULL)';
+		if (empty($user->rights->societe->client->voir)) {
+			$this->export_sql_end[$r] .= ' AND (sc.fk_user = '.(empty($user) ? 0 : $user->id).' OR d.fk_soc IS NULL)';
+		}
 
-		if (!empty($user))   // Not defined during migration process
-		{
-    		$childids = $user->getAllChildIds();
-    		$childids[] = $user->id;
+		if (!empty($user)) {   // Not defined during migration process
+			$childids = $user->getAllChildIds();
+			$childids[] = $user->id;
 
-    		if (empty($user->rights->deplacement->readall) && empty($user->rights->deplacement->lire_tous)) $this->export_sql_end[$r] .= ' AND d.fk_user IN ('.join(',', $childids).')';
+			if (empty($user->rights->deplacement->readall) && empty($user->rights->deplacement->lire_tous)) {
+				$this->export_sql_end[$r] .= ' AND d.fk_user IN ('.$this->db->sanitize(join(',', $childids)).')';
+			}
 		}
 	}
 
@@ -149,11 +154,16 @@ class modDeplacement extends DolibarrModules
 	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
 	 *		It also creates data directories
 	 *
-     *      @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *      @param      string	$options    Options when enabling module ('', 'noboxes')
 	 *      @return     int             	1 if OK, 0 if KO
 	 */
 	public function init($options = '')
 	{
+		$result = $this->_load_tables('/install/mysql/tables/', 'deplacement');
+		if ($result < 0) {
+			return -1; // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
+		}
+
 		// Permissions
 		$this->remove($options);
 

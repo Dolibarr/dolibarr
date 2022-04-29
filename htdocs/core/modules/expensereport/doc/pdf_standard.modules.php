@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2015       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2016-2019  Philippe Grand          <philippe.grand@atoo-net.com>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2016-2021  Philippe Grand          <philippe.grand@atoo-net.com>
+ * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2018       Francis Appels          <francis.appels@z-application.com>
  * Copyright (C) 2019       Markus Welters          <markus@welters.de>
  * Copyright (C) 2019       Rafael Ingenleuf        <ingenleuf@welters.de>
@@ -44,71 +44,76 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/userbankaccount.class.php';
  */
 class pdf_standard extends ModeleExpenseReport
 {
-     /**
-     * @var DoliDb Database handler
-     */
-    public $db;
+	 /**
+	  * @var DoliDb Database handler
+	  */
+	public $db;
 
 	/**
-     * @var string model name
-     */
-    public $name;
+	 * @var string model name
+	 */
+	public $name;
 
 	/**
-     * @var string model description (short text)
-     */
-    public $description;
+	 * @var string model description (short text)
+	 */
+	public $description;
 
 	/**
-     * @var string document type
-     */
-    public $type;
-
-    /**
-     * @var array Minimum version of PHP required by module.
-     * e.g.: PHP ≥ 5.5 = array(5, 5)
-     */
-	public $phpmin = array(5, 5);
+	 * @var int     Save the name of generated file as the main doc when generating a doc with this template
+	 */
+	public $update_main_doc_field;
 
 	/**
-     * Dolibarr version of the loaded document
-     * @var string
-     */
+	 * @var string document type
+	 */
+	public $type;
+
+	/**
+	 * @var array Minimum version of PHP required by module.
+	 * e.g.: PHP ≥ 5.6 = array(5, 6)
+	 */
+	public $phpmin = array(5, 6);
+
+	/**
+	 * Dolibarr version of the loaded document
+	 * @var string
+	 */
 	public $version = 'dolibarr';
 
 	/**
-     * @var int page_largeur
-     */
-    public $page_largeur;
+	 * @var int page_largeur
+	 */
+	public $page_largeur;
 
 	/**
-     * @var int page_hauteur
-     */
-    public $page_hauteur;
+	 * @var int page_hauteur
+	 */
+	public $page_hauteur;
 
 	/**
-     * @var array format
-     */
-    public $format;
+	 * @var array format
+	 */
+	public $format;
 
 	/**
-     * @var int marge_gauche
-     */
+	 * @var int marge_gauche
+	 */
 	public $marge_gauche;
 
 	/**
-     * @var int marge_droite
-     */
+	 * @var int marge_droite
+	 */
 	public $marge_droite;
 
 	/**
-     * @var int marge_haute
-     */
+	 * @var int marge_haute
+	 */
 	public $marge_haute;
 
 	/**
-     * @var int marge_basse
-     */
+	 * @var int marge_basse
+	 */
 	public $marge_basse;
 
 	/**
@@ -133,6 +138,7 @@ class pdf_standard extends ModeleExpenseReport
 		$this->db = $db;
 		$this->name = "";
 		$this->description = $langs->trans('PDFStandardExpenseReports');
+		$this->update_main_doc_field = 1; // Save the name of generated file as the main doc when generating a doc with this template
 
 		// Page size for A4 format
 		$this->type = 'pdf';
@@ -145,13 +151,13 @@ class pdf_standard extends ModeleExpenseReport
 		$this->marge_haute = isset($conf->global->MAIN_PDF_MARGIN_TOP) ? $conf->global->MAIN_PDF_MARGIN_TOP : 10;
 		$this->marge_basse = isset($conf->global->MAIN_PDF_MARGIN_BOTTOM) ? $conf->global->MAIN_PDF_MARGIN_BOTTOM : 10;
 
-		$this->option_logo = 1; // Affiche logo
-		$this->option_tva = 1; // Gere option tva FACTURE_TVAOPTION
-		$this->option_modereg = 1; // Affiche mode reglement
-		$this->option_condreg = 1; // Affiche conditions reglement
-		$this->option_codeproduitservice = 1; // Affiche code produit-service
-		$this->option_multilang = 1; // Dispo en plusieurs langues
-		$this->option_escompte = 0; // Affiche si il y a eu escompte
+		$this->option_logo = 1; // Display logo
+		$this->option_tva = 1; // Manage the vat option FACTURE_TVAOPTION
+		$this->option_modereg = 1; // Display payment mode
+		$this->option_condreg = 1; // Display payment terms
+		$this->option_codeproduitservice = 1; // Display product-service code
+		$this->option_multilang = 1; // Available in several languages
+		$this->option_escompte = 0; // Displays if there has been a discount
 		$this->option_credit_note = 0; // Support credit notes
 		$this->option_freetext = 1; // Support add of a personalised text
 		$this->option_draft_watermark = 1; // Support add of a watermark on drafts
@@ -159,7 +165,9 @@ class pdf_standard extends ModeleExpenseReport
 		// Get source company
 		$this->emetteur = $mysoc;
 
-		if (empty($this->emetteur->country_code)) $this->emetteur->country_code = substr($langs->defaultlang, -2); // By default, if was not defined
+		if (empty($this->emetteur->country_code)) {
+			$this->emetteur->country_code = substr($langs->defaultlang, -2); // By default, if was not defined
+		}
 
 		// Define position of columns
 		$this->posxpiece = $this->marge_gauche + 1;
@@ -167,18 +175,18 @@ class pdf_standard extends ModeleExpenseReport
 		//$this->posxdate=88;
 		//$this->posxtype=107;
 		//$this->posxprojet=120;
-		$this->posxtva = 130;
-		$this->posxup = 145;
-		$this->posxqty = 168;
-		$this->postotalttc = 178;
+		$this->posxtva = 112;
+		$this->posxup = 127;
+		$this->posxqty = 150;
+		$this->postotalht = 160;
+		$this->postotalttc = 180;
 		// if (empty($conf->projet->enabled)) {
 		//     $this->posxtva-=20;
 		//     $this->posxup-=20;
 		//     $this->posxqty-=20;
 		//     $this->postotalttc-=20;
 		// }
-		if ($this->page_largeur < 210) // To work with US executive format
-		{
+		if ($this->page_largeur < 210) { // To work with US executive format
 			$this->posxdate -= 20;
 			$this->posxtype -= 20;
 			$this->posxprojet -= 20;
@@ -189,9 +197,11 @@ class pdf_standard extends ModeleExpenseReport
 		}
 
 		$this->tva = array();
+		$this->tva_array = array();
 		$this->localtax1 = array();
 		$this->localtax2 = array();
 		$this->atleastoneratenotnull = 0;
+		$this->atleastonediscount = 0;
 	}
 
 
@@ -199,22 +209,26 @@ class pdf_standard extends ModeleExpenseReport
 	/**
 	 *  Function to build pdf onto disk
 	 *
-	 *  @param		Object		$object				Object to generate
-	 *  @param		Translate	$outputlangs		Lang output object
-	 *  @param		string		$srctemplatepath	Full path of source filename for generator using a template file
-	 *  @param		int			$hidedetails		Do not show line details
-	 *  @param		int			$hidedesc			Do not show desc
-	 *  @param		int			$hideref			Do not show ref
-	 *  @return     int             				1=OK, 0=KO
+	 *  @param	ExpenseReport	$object				Object to generate
+	 *  @param	Translate		$outputlangs		Lang output object
+	 *  @param	string			$srctemplatepath	Full path of source filename for generator using a template file
+	 *  @param	int				$hidedetails		Do not show line details
+	 *  @param	int				$hidedesc			Do not show desc
+	 *  @param	int				$hideref			Do not show ref
+	 *  @return int             					1=OK, 0=KO
 	 */
 	public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $user, $langs, $conf, $mysoc, $db, $hookmanager;
 
-		if (!is_object($outputlangs)) $outputlangs = $langs;
+		if (!is_object($outputlangs)) {
+			$outputlangs = $langs;
+		}
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
-		if (!empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output = 'ISO-8859-1';
+		if (!empty($conf->global->MAIN_USE_FPDF)) {
+			$outputlangs->charset_output = 'ISO-8859-1';
+		}
 
 		// Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "trips", "projects", "dict", "bills", "banks"));
@@ -226,28 +240,22 @@ class pdf_standard extends ModeleExpenseReport
 			if ($object->specimen) {
 				$dir = $conf->expensereport->dir_output;
 				$file = $dir."/SPECIMEN.pdf";
-			}
-			else
-			{
+			} else {
 				$objectref = dol_sanitizeFileName($object->ref);
 				$dir = $conf->expensereport->dir_output."/".$objectref;
 				$file = $dir."/".$objectref.".pdf";
 			}
 
-			if (!file_exists($dir))
-			{
-				if (dol_mkdir($dir) < 0)
-				{
+			if (!file_exists($dir)) {
+				if (dol_mkdir($dir) < 0) {
 					$this->error = $langs->transnoentities("ErrorCanNotCreateDir", $dir);
 					return 0;
 				}
 			}
 
-			if (file_exists($dir))
-			{
+			if (file_exists($dir)) {
 				// Add pdfgeneration hook
-				if (!is_object($hookmanager))
-				{
+				if (!is_object($hookmanager)) {
 					include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 					$hookmanager = new HookManager($this->db);
 				}
@@ -260,24 +268,24 @@ class pdf_standard extends ModeleExpenseReport
 				$pdf = pdf_getInstance($this->format);
 				$default_font_size = pdf_getPDFFontSize($outputlangs); // Must be after pdf_getInstance
 				$heightforinfotot = 40; // Height reserved to output the info and total part
-		        $heightforfreetext = (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT) ? $conf->global->MAIN_PDF_FREETEXT_HEIGHT : 5); // Height reserved to output the free text on last page
-		        $heightforfooter = $this->marge_basse + 12; // Height reserved to output the footer (value include bottom margin)
-	            if ($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS > 0) $heightforfooter += 6;
+				$heightforfreetext = (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT) ? $conf->global->MAIN_PDF_FREETEXT_HEIGHT : 5); // Height reserved to output the free text on last page
+				$heightforfooter = $this->marge_basse + 12; // Height reserved to output the footer (value include bottom margin)
+				if (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS)) {
+					$heightforfooter += 6;
+				}
 
-	            $pdf->SetAutoPageBreak(1, 0);
+				$pdf->SetAutoPageBreak(1, 0);
 
-                if (class_exists('TCPDF'))
-                {
-                    $pdf->setPrintHeader(false);
-                    $pdf->setPrintFooter(false);
-                }
-                $pdf->SetFont(pdf_getPDFFont($outputlangs));
-			    // Set path to the background PDF File
-                if (!empty($conf->global->MAIN_ADD_PDF_BACKGROUND))
-                {
-                    $pagecount = $pdf->setSourceFile($conf->mycompany->dir_output.'/'.$conf->global->MAIN_ADD_PDF_BACKGROUND);
-                    $tplidx = $pdf->importPage(1);
-                }
+				if (class_exists('TCPDF')) {
+					$pdf->setPrintHeader(false);
+					$pdf->setPrintFooter(false);
+				}
+				$pdf->SetFont(pdf_getPDFFont($outputlangs));
+				// Set path to the background PDF File
+				if (!empty($conf->global->MAIN_ADD_PDF_BACKGROUND)) {
+					$pagecount = $pdf->setSourceFile($conf->mycompany->dir_output.'/'.$conf->global->MAIN_ADD_PDF_BACKGROUND);
+					$tplidx = $pdf->importPage(1);
+				}
 
 				$pdf->Open();
 				$pagenb = 0;
@@ -288,13 +296,17 @@ class pdf_standard extends ModeleExpenseReport
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
 				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("Trips"));
-				if (!empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) $pdf->SetCompression(false);
+				if (!empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) {
+					$pdf->SetCompression(false);
+				}
 
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite); // Left, Top, Right
 
 				// New page
 				$pdf->AddPage();
-				if (!empty($tplidx)) $pdf->useTemplate($tplidx);
+				if (!empty($tplidx)) {
+					$pdf->useTemplate($tplidx);
+				}
 				$pagenb++;
 				$this->_pagehead($pdf, $object, 1, $outputlangs);
 				$pdf->SetFont('', '', $default_font_size - 1);
@@ -303,24 +315,23 @@ class pdf_standard extends ModeleExpenseReport
 
 				$tab_top = 95;
 				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD) ? 65 : 10);
-				$tab_height = 130;
-				$tab_height_newpage = 150;
+
+				$tab_height = $this->page_hauteur - $tab_top - $heightforfooter - $heightforfreetext;
 
 				// Show notes
 				$notetoshow = empty($object->note_public) ? '' : $object->note_public;
-				if (!empty($conf->global->MAIN_ADD_SALE_REP_SIGNATURE_IN_NOTE))
-				{
+				if (!empty($conf->global->MAIN_ADD_SALE_REP_SIGNATURE_IN_NOTE)) {
 					// Get first sale rep
-					if (is_object($object->thirdparty))
-					{
+					if (is_object($object->thirdparty)) {
 						$salereparray = $object->thirdparty->getSalesRepresentatives($user);
 						$salerepobj = new User($this->db);
 						$salerepobj->fetch($salereparray[0]['id']);
-						if (!empty($salerepobj->signature)) $notetoshow = dol_concatdesc($notetoshow, $salerepobj->signature);
+						if (!empty($salerepobj->signature)) {
+							$notetoshow = dol_concatdesc($notetoshow, $salerepobj->signature);
+						}
 					}
 				}
-				if ($notetoshow)
-				{
+				if ($notetoshow) {
 					$substitutionarray = pdf_getSubstitutionArray($outputlangs, null, $object);
 					complete_substitutions_array($substitutionarray, $outputlangs, $object);
 					$notetoshow = make_substitutions($notetoshow, $substitutionarray, $outputlangs);
@@ -339,9 +350,7 @@ class pdf_standard extends ModeleExpenseReport
 
 					$tab_height = $tab_height - $height_note;
 					$tab_top = $nexY + 6;
-				}
-				else
-				{
+				} else {
 					$height_note = 0;
 				}
 
@@ -353,88 +362,90 @@ class pdf_standard extends ModeleExpenseReport
 				$pdf->setTopMargin($tab_top_newpage);
 				// Loop on each lines
 				$i = 0;
-                while ($i < $nblines) {
+				while ($i < $nblines) {
 					$pdf->SetFont('', '', $default_font_size - 2); // Into loop to work with multipage
 					$pdf->SetTextColor(0, 0, 0);
 
 					$pdf->setTopMargin($tab_top_newpage);
-                    if (empty($showpricebeforepagebreak) && ($i !== ($nblines - 1))) {
-                        $pdf->setPageOrientation('', 1, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
-                    } else {
-                        $pdf->setPageOrientation('', 1, $heightforfooter + $heightforfreetext + $heightforinfotot); // The only function to edit the bottom margin of current page to set it.
-                    }
+					if (empty($showpricebeforepagebreak) && ($i !== ($nblines - 1))) {
+						$pdf->setPageOrientation('', 1, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
+					} else {
+						$pdf->setPageOrientation('', 1, $heightforfooter + $heightforfreetext + $heightforinfotot); // The only function to edit the bottom margin of current page to set it.
+					}
 
 					$pageposbefore = $pdf->getPage();
-                    $curY = $nexY;
-                    $pdf->startTransaction();
-                    $this->printLine($pdf, $object, $i, $curY, $default_font_size, $outputlangs, $hidedetails);
-                    $pageposafter = $pdf->getPage();
+					$curY = $nexY;
+					$pdf->startTransaction();
+					$this->printLine($pdf, $object, $i, $curY, $default_font_size, $outputlangs, $hidedetails);
+					$pageposafter = $pdf->getPage();
 					if ($pageposafter > $pageposbefore) {
-                        // There is a pagebreak
+						// There is a pagebreak
 						$pdf->rollbackTransaction(true);
 
 						$pageposafter = $pageposbefore;
 						//print $pageposafter.'-'.$pageposbefore;exit;
 						if (empty($showpricebeforepagebreak)) {
-                            $pdf->AddPage('', '', true);
-                            if (!empty($tplidx)) {
-                                $pdf->useTemplate($tplidx);
-                            }
-                            if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
-                                 $this->_pagehead($pdf, $object, 0, $outputlangs);
-                            }
-                            $pdf->setPage($pageposafter + 1);
-                            $showpricebeforepagebreak = 1;
-                            $nexY = $tab_top_newpage;
-                            $nexY += ($pdf->getFontSize() * 1.3); // Passe espace entre les lignes
-                            $pdf->SetFont('', '', $default_font_size - 2); // Into loop to work with multipage
-                            $pdf->SetTextColor(0, 0, 0);
+							$pdf->AddPage('', '', true);
+							if (!empty($tplidx)) {
+								$pdf->useTemplate($tplidx);
+							}
+							if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
+								 $this->_pagehead($pdf, $object, 0, $outputlangs);
+							}
+							$pdf->setPage($pageposafter + 1);
+							$showpricebeforepagebreak = 1;
+							$nexY = $tab_top_newpage;
+							$nexY += ($pdf->getFontSize() * 1.3); // Add space between lines
+							$pdf->SetFont('', '', $default_font_size - 2); // Into loop to work with multipage
+							$pdf->SetTextColor(0, 0, 0);
 
-                            $pdf->setTopMargin($tab_top_newpage);
-                            continue;
-                        } else {
-                            $pdf->setPageOrientation('', 1, $heightforfooter);
-                            $showpricebeforepagebreak = 0;
-                        }
+							$pdf->setTopMargin($tab_top_newpage);
+							continue;
+						} else {
+							$pdf->setPageOrientation('', 1, $heightforfooter);
+							$showpricebeforepagebreak = 0;
+						}
 
 						$this->printLine($pdf, $object, $i, $curY, $default_font_size, $outputlangs, $hidedetails);
 						$pageposafter = $pdf->getPage();
 						$posyafter = $pdf->GetY();
 						//var_dump($posyafter); var_dump(($this->page_hauteur - ($heightforfooter+$heightforfreetext+$heightforinfotot))); exit;
 						if ($posyafter > ($this->page_hauteur - ($heightforfooter + $heightforfreetext + $heightforinfotot))) {
-                            // There is no space left for total+free text
+							// There is no space left for total+free text
 							if ($i == ($nblines - 1)) {
-                                // No more lines, and no space left to show total, so we create a new page
+								// No more lines, and no space left to show total, so we create a new page
 								$pdf->AddPage('', '', true);
-								if (!empty($tplidx)) $pdf->useTemplate($tplidx);
-								if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
+								if (!empty($tplidx)) {
+									$pdf->useTemplate($tplidx);
+								}
+								if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
+									$this->_pagehead($pdf, $object, 0, $outputlangs);
+								}
 								$pdf->setPage($pageposafter + 1);
 							}
-						}
-						else
-						{
+						} else {
 							// We found a page break
 							// Allows data in the first page if description is long enough to break in multiples pages
-							if (!empty($conf->global->MAIN_PDF_DATA_ON_FIRST_PAGE))
+							if (!empty($conf->global->MAIN_PDF_DATA_ON_FIRST_PAGE)) {
 								$showpricebeforepagebreak = 1;
-							else
+							} else {
 								$showpricebeforepagebreak = 0;
+							}
 						}
-					}
-					else	// No pagebreak
+					} else // No pagebreak
 					{
 						$pdf->commitTransaction();
 					}
 					$i++;
-                    //nexY
-                    $nexY = $pdf->GetY();
-                    $pageposafter = $pdf->getPage();
-                    $pdf->setPage($pageposbefore);
-                    $pdf->setTopMargin($this->marge_haute);
-                    $pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
+					//nexY
+					$nexY = $pdf->GetY();
+					$pageposafter = $pdf->getPage();
+					$pdf->setPage($pageposbefore);
+					$pdf->setTopMargin($this->marge_haute);
+					$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
 
-                    //$nblineFollowComment = 1;
-                    // Search number of lines coming to know if there is enough room
+					//$nblineFollowComment = 1;
+					// Search number of lines coming to know if there is enough room
 					// if ($i < ($nblines - 1))	// If it's not last line
 					// {
 					//     //Fetch current description to know on which line the next one should be placed
@@ -445,47 +456,45 @@ class pdf_standard extends ModeleExpenseReport
 					// 	$nbLineCommentNeed = dol_nboflines_bis($follow_comment,52,$outputlangs->charset_output);
 					// 	$nbLineTypeNeed = dol_nboflines_bis($follow_type,4,$outputlangs->charset_output);
 
-                    //     $nblineFollowComment = max($nbLineCommentNeed, $nbLineTypeNeed);
+					//     $nblineFollowComment = max($nbLineCommentNeed, $nbLineTypeNeed);
 					// }
 
-                    //$nexY+=$nblineFollowComment*($pdf->getFontSize()*1.3);    // Add space between lines
-                    $nexY += ($pdf->getFontSize() * 1.3); // Add space between lines
+					//$nexY+=$nblineFollowComment*($pdf->getFontSize()*1.3);    // Add space between lines
+					$nexY += ($pdf->getFontSize() * 1.3); // Add space between lines
 
 					// Detect if some page were added automatically and output _tableau for past pages
-					while ($pagenb < $pageposafter)
-					{
+					while ($pagenb < $pageposafter) {
 						$pdf->setPage($pagenb);
 						$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
-						if ($pagenb == 1)
-						{
+						if ($pagenb == 1) {
 							$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1);
-						}
-						else
-						{
+						} else {
 							$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1);
 						}
 						$this->_pagefoot($pdf, $object, $outputlangs, 1);
 						$pagenb++;
 						$pdf->setPage($pagenb);
 						$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
-						if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
-					}
-					if (isset($object->lines[$i + 1]->pagebreak) && $object->lines[$i + 1]->pagebreak)
-					{
-						if ($pagenb == 1)
-						{
-							$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1);
+						if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
+							$this->_pagehead($pdf, $object, 0, $outputlangs);
 						}
-						else
-						{
+					}
+					if (isset($object->lines[$i + 1]->pagebreak) && $object->lines[$i + 1]->pagebreak) {
+						if ($pagenb == 1) {
+							$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1);
+						} else {
 							$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1);
 						}
 						$this->_pagefoot($pdf, $object, $outputlangs, 1);
 						// New page
 						$pdf->AddPage();
-						if (!empty($tplidx)) $pdf->useTemplate($tplidx);
+						if (!empty($tplidx)) {
+							$pdf->useTemplate($tplidx);
+						}
 						$pagenb++;
-						if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
+						if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
+							$this->_pagehead($pdf, $object, 0, $outputlangs);
+						}
 					}
 				}
 
@@ -493,16 +502,14 @@ class pdf_standard extends ModeleExpenseReport
 				if ($pagenb == 1) {
 					$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 0, 0);
 					$bottomlasttab = $this->page_hauteur - $heightforinfotot - $heightforfreetext - $heightforfooter + 1;
-				}
-				else
-				{
+				} else {
 					$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 1, 0);
 					$bottomlasttab = $this->page_hauteur - $heightforinfotot - $heightforfreetext - $heightforfooter + 1;
 				}
 
 				$pdf->SetFont('', '', 10);
 
-            	// Show total area box
+				// Show total area box
 				$posy = $bottomlasttab + 5;
 				$posy_start_of_totals = $posy;
 				$pdf->SetXY(130, $posy);
@@ -511,9 +518,8 @@ class pdf_standard extends ModeleExpenseReport
 				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - 180, 5, price($object->total_ht), 1, 'R');
 				$pdf->SetFillColor(248, 248, 248);
 
-				if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))
-				{
-				    // TODO Show vat amout per tax level
+				if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT)) {
+					// TODO Show vat amout per tax level
 					$posy += 5;
 					$pdf->SetXY(130, $posy);
 					$pdf->SetTextColor(0, 0, 60);
@@ -538,7 +544,9 @@ class pdf_standard extends ModeleExpenseReport
 
 				// Page footer
 				$this->_pagefoot($pdf, $object, $outputlangs);
-				if (method_exists($pdf, 'AliasNbPages')) $pdf->AliasNbPages();
+				if (method_exists($pdf, 'AliasNbPages')) {
+					$pdf->AliasNbPages();
+				}
 
 				$pdf->Close();
 
@@ -549,122 +557,123 @@ class pdf_standard extends ModeleExpenseReport
 				$parameters = array('file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs);
 				global $action;
 				$reshook = $hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
-				if ($reshook < 0)
-				{
-				    $this->error = $hookmanager->error;
-				    $this->errors = $hookmanager->errors;
+				if ($reshook < 0) {
+					$this->error = $hookmanager->error;
+					$this->errors = $hookmanager->errors;
 				}
 
-				if (!empty($conf->global->MAIN_UMASK))
-				@chmod($file, octdec($conf->global->MAIN_UMASK));
+				if (!empty($conf->global->MAIN_UMASK)) {
+					@chmod($file, octdec($conf->global->MAIN_UMASK));
+				}
 
 				$this->result = array('fullpath'=>$file);
 
 				return 1; // No error
-			}
-			else
-			{
+			} else {
 				$this->error = $langs->trans("ErrorCanNotCreateDir", $dir);
 				return 0;
 			}
-		}
-		else
-		{
+		} else {
 			$this->error = $langs->trans("ErrorConstantNotDefined", "EXPENSEREPORT_OUTPUTDIR");
 			return 0;
 		}
 	}
 
 	/**
-	 * @param   TCPDF       $pdf                Object PDF
-	 * @param   Object      $object             Object to show
-	 * @param   int         $linenumber         line number
-	 * @param   int         $curY               current y position
-	 * @param   int         $default_font_size  default siez of font
-	 * @param   Translate   $outputlangs        Object lang for output
-	 * @param	int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
+	 * @param   TCPDF       	$pdf                Object PDF
+	 * @param   ExpenseReport	$object             Object to show
+	 * @param   int         	$linenumber         line number
+	 * @param   int         	$curY               current y position
+	 * @param   int         	$default_font_size  default siez of font
+	 * @param   Translate   	$outputlangs        Object lang for output
+	 * @param	int				$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
 	 * @return  void
 	 */
 	protected function printLine(&$pdf, $object, $linenumber, $curY, $default_font_size, $outputlangs, $hidedetails = 0)
 	{
-        global $conf;
-        $pdf->SetFont('', '', $default_font_size - 1);
+		global $conf;
+		$pdf->SetFont('', '', $default_font_size - 1);
 		$pdf->SetTextColor(0, 0, 0);
-        // Accountancy piece
-        $pdf->SetXY($this->posxpiece, $curY);
-        $pdf->writeHTMLCell($this->posxcomment - $this->posxpiece - 0.8, 4, $this->posxpiece - 1, $curY, $linenumber + 1, 0, 1);
 
-        // Date
-        //$pdf->SetXY($this->posxdate -1, $curY);
-        //$pdf->MultiCell($this->posxtype-$this->posxdate-0.8, 4, dol_print_date($object->lines[$linenumber]->date,"day",false,$outputlangs), 0, 'C');
+		// Accountancy piece
+		$pdf->SetXY($this->posxpiece, $curY);
+		$pdf->writeHTMLCell($this->posxcomment - $this->posxpiece - 0.8, 4, $this->posxpiece - 1, $curY, $linenumber + 1, 0, 1);
 
-        // Type
-        $pdf->SetXY($this->posxtype - 1, $curY);
-        $nextColumnPosX = $this->posxup;
-        if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT)) {
-            $nextColumnPosX = $this->posxtva;
-        }
-        if (!empty($conf->projet->enabled)) {
-            $nextColumnPosX = $this->posxprojet;
-        }
+		// Date
+		//$pdf->SetXY($this->posxdate -1, $curY);
+		//$pdf->MultiCell($this->posxtype-$this->posxdate-0.8, 4, dol_print_date($object->lines[$linenumber]->date,"day",false,$outputlangs), 0, 'C');
 
-        $expensereporttypecode = $object->lines[$linenumber]->type_fees_code;
+		// Type
+		$pdf->SetXY($this->posxtype - 1, $curY);
+		$nextColumnPosX = $this->posxup;
+		if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT)) {
+			$nextColumnPosX = $this->posxtva;
+		}
+		if (!empty($conf->projet->enabled)) {
+			$nextColumnPosX = $this->posxprojet;
+		}
+
+		$expensereporttypecode = $object->lines[$linenumber]->type_fees_code;
 		$expensereporttypecodetoshow = ($outputlangs->trans(($expensereporttypecode)) == $expensereporttypecode ? $object->lines[$linenumber]->type_fees_libelle : $outputlangs->trans($expensereporttypecode));
 
 
 		if ($expensereporttypecodetoshow == $expensereporttypecode) {
-            $expensereporttypecodetoshow = preg_replace('/^(EX_|TF_)/', '', $expensereporttypecodetoshow);
-        }
-        //$expensereporttypecodetoshow = dol_trunc($expensereporttypecodetoshow, 9);
+			$expensereporttypecodetoshow = preg_replace('/^(EX_|TF_)/', '', $expensereporttypecodetoshow);
+		}
+		//$expensereporttypecodetoshow = dol_trunc($expensereporttypecodetoshow, 9);
 
-        //$pdf->MultiCell($nextColumnPosX-$this->posxtype-0.8, 4, $expensereporttypecodetoshow, 0, 'C');
+		//$pdf->MultiCell($nextColumnPosX-$this->posxtype-0.8, 4, $expensereporttypecodetoshow, 0, 'C');
 
-        // Project
-        //if (! empty($conf->projet->enabled))
-        //{
-        //    $pdf->SetFont('','', $default_font_size - 1);
-        //    $pdf->SetXY($this->posxprojet, $curY);
-        //    $pdf->MultiCell($this->posxtva-$this->posxprojet-0.8, 4, $object->lines[$linenumber]->projet_ref, 0, 'C');
-        //}
+		// Project
+		//if (! empty($conf->projet->enabled))
+		//{
+		//    $pdf->SetFont('','', $default_font_size - 1);
+		//    $pdf->SetXY($this->posxprojet, $curY);
+		//    $pdf->MultiCell($this->posxtva-$this->posxprojet-0.8, 4, $object->lines[$linenumber]->projet_ref, 0, 'C');
+		//}
 
-        // VAT Rate
-        if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT)) {
-            $vat_rate = pdf_getlinevatrate($object, $linenumber, $outputlangs, $hidedetails);
-            $pdf->SetXY($this->posxtva, $curY);
-            $pdf->MultiCell($this->posxup - $this->posxtva - 0.8, 4, $vat_rate, 0, 'R');
-        }
+		// VAT Rate
+		if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT)) {
+			$vat_rate = pdf_getlinevatrate($object, $linenumber, $outputlangs, $hidedetails);
+			$pdf->SetXY($this->posxtva, $curY);
+			$pdf->MultiCell($this->posxup - $this->posxtva - 0.8, 4, $vat_rate, 0, 'R');
+		}
 
-        // Unit price
-        $pdf->SetXY($this->posxup, $curY);
-        $pdf->MultiCell($this->posxqty - $this->posxup - 0.8, 4, price($object->lines[$linenumber]->value_unit), 0, 'R');
+		// Unit price
+		$pdf->SetXY($this->posxup, $curY);
+		$pdf->MultiCell($this->posxqty - $this->posxup - 0.8, 4, price($object->lines[$linenumber]->value_unit), 0, 'R');
 
-        // Quantity
-        $pdf->SetXY($this->posxqty, $curY);
-        $pdf->MultiCell($this->postotalttc - $this->posxqty - 0.8, 4, $object->lines[$linenumber]->qty, 0, 'R');
+		// Quantity
+		$pdf->SetXY($this->posxqty, $curY);
+		$pdf->MultiCell($this->postotalht - $this->posxqty - 0.8, 4, $object->lines[$linenumber]->qty, 0, 'R');
 
-        // Total with all taxes
-        $pdf->SetXY($this->postotalttc - 1, $curY);
-        $pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->postotalttc, 4, price($object->lines[$linenumber]->total_ttc), 0, 'R');
+		// Total without taxes
+		$pdf->SetXY($this->postotalht, $curY);
+		$pdf->MultiCell($this->postotalttc - $this->postotalht - 0.8, 4, price($object->lines[$linenumber]->total_ht), 0, 'R');
 
-        // Comments
-        $pdf->SetXY($this->posxcomment, $curY);
-        $comment = $outputlangs->trans("Date").':'.dol_print_date($object->lines[$linenumber]->date, "day", false, $outputlangs).' ';
-        $comment .= $outputlangs->trans("Type").':'.$expensereporttypecodetoshow.'<br>';
-        if (!empty($object->lines[$linenumber]->projet_ref)) {
-            $comment .= $outputlangs->trans("Project").':'.$object->lines[$linenumber]->projet_ref.'<br>';
-        }
-        $comment .= $object->lines[$linenumber]->comments;
-        $pdf->writeHTMLCell($this->posxtva - $this->posxcomment - 0.8, 4, $this->posxcomment - 1, $curY, $comment, 0, 1);
+		// Total with all taxes
+		$pdf->SetXY($this->postotalttc - 1, $curY);
+		$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->postotalttc + 1, 4, price($object->lines[$linenumber]->total_ttc), 0, 'R');
+
+		// Comments
+		$pdf->SetXY($this->posxcomment, $curY);
+		$comment = $outputlangs->trans("Date").':'.dol_print_date($object->lines[$linenumber]->date, "day", false, $outputlangs).' ';
+		$comment .= $outputlangs->trans("Type").':'.$expensereporttypecodetoshow.'<br>';
+		if (!empty($object->lines[$linenumber]->projet_ref)) {
+			$comment .= $outputlangs->trans("Project").':'.$object->lines[$linenumber]->projet_ref.'<br>';
+		}
+		$comment .= $object->lines[$linenumber]->comments;
+		$pdf->writeHTMLCell($this->posxtva - $this->posxcomment - 0.8, 4, $this->posxcomment - 1, $curY, $comment, 0, 1);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
-    /**
+	/**
 	 *  Show top header of page.
 	 *
-	 *  @param	PDF			$pdf     		Object PDF
-	 *  @param  Object		$object     	Object to show
-	 *  @param  int	    	$showaddress    0=no, 1=yes
-	 *  @param  Translate	$outputlangs	Object lang for output
+	 *  @param	TCPDF			$pdf     		Object PDF
+	 *  @param  ExpenseReport	$object     	Object to show
+	 *  @param  int	    		$showaddress    0=no, 1=yes
+	 *  @param  Translate		$outputlangs	Object lang for output
 	 *  @return	void
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
@@ -685,9 +694,9 @@ class pdf_standard extends ModeleExpenseReport
 		pdf_pagehead($pdf,$outputlangs,$this->page_hauteur);
 		*/
 
-	    // Draft watermark
+		// Draft watermark
 		if ($object->fk_statut == 0 && !empty($conf->global->EXPENSEREPORT_DRAFT_WATERMARK)) {
- 			pdf_watermark($pdf, $outputlangs, $this->page_hauteur, $this->page_largeur, 'mm', $conf->global->EXPENSEREPORT_DRAFT_WATERMARK);
+			pdf_watermark($pdf, $outputlangs, $this->page_hauteur, $this->page_largeur, 'mm', $conf->global->EXPENSEREPORT_DRAFT_WATERMARK);
 		}
 
 		$pdf->SetTextColor(0, 0, 60);
@@ -702,52 +711,50 @@ class pdf_standard extends ModeleExpenseReport
 		$logo = $conf->mycompany->dir_output.'/logos/'.$this->emetteur->logo;
 		if ($this->emetteur->logo) {
 			if (is_readable($logo)) {
-			    $height = pdf_getHeightForLogo($logo);
-			    $pdf->Image($logo, $this->marge_gauche, $posy, 0, $height); // width=0 (auto)
+				$height = pdf_getHeightForLogo($logo);
+				$pdf->Image($logo, $this->marge_gauche, $posy, 0, $height); // width=0 (auto)
 			} else {
 				$pdf->SetTextColor(200, 0, 0);
 				$pdf->SetFont('', 'B', $default_font_size - 2);
 				$pdf->MultiCell(100, 3, $outputlangs->transnoentities("ErrorLogoFileNotFound", $logo), 0, 'L');
 				$pdf->MultiCell(100, 3, $outputlangs->transnoentities("ErrorGoToGlobalSetup"), 0, 'L');
 			}
-		}
-		else
-		{
+		} else {
 			$text = $this->emetteur->name;
 			$pdf->MultiCell(100, 4, $outputlangs->convToOutputCharset($text), 0, 'L');
 		}
 
 		$pdf->SetFont('', 'B', $default_font_size + 4);
 		$pdf->SetXY($posx, $posy);
-   		$pdf->SetTextColor(0, 0, 60);
+		$pdf->SetTextColor(0, 0, 60);
 		$pdf->MultiCell($this->page_largeur - $this->marge_droite - $posx, 6, $langs->trans("ExpenseReport"), 0, 'R');
 
 		$pdf->SetFont('', '', $default_font_size - 1);
 
-   		// Ref complete
-   		$posy += 8;
-   		$pdf->SetXY($posx, $posy);
-   		$pdf->SetTextColor(0, 0, 60);
-   		$pdf->MultiCell($this->page_largeur - $this->marge_droite - $posx, 3, $outputlangs->transnoentities("Ref")." : ".$object->ref, '', 'R');
+		// Ref complete
+		$posy += 8;
+		$pdf->SetXY($posx, $posy);
+		$pdf->SetTextColor(0, 0, 60);
+		$pdf->MultiCell($this->page_largeur - $this->marge_droite - $posx, 3, $outputlangs->transnoentities("Ref")." : ".$object->ref, '', 'R');
 
-   		// Date start period
-   		$posy += 5;
-   		$pdf->SetXY($posx, $posy);
-   		$pdf->SetTextColor(0, 0, 60);
-   		$pdf->MultiCell($this->page_largeur - $this->marge_droite - $posx, 3, $outputlangs->transnoentities("DateStart")." : ".($object->date_debut > 0 ?dol_print_date($object->date_debut, "day", false, $outputlangs) : ''), '', 'R');
+		// Date start period
+		$posy += 5;
+		$pdf->SetXY($posx, $posy);
+		$pdf->SetTextColor(0, 0, 60);
+		$pdf->MultiCell($this->page_largeur - $this->marge_droite - $posx, 3, $outputlangs->transnoentities("DateStart")." : ".($object->date_debut > 0 ?dol_print_date($object->date_debut, "day", false, $outputlangs) : ''), '', 'R');
 
-   		// Date end period
-   		$posy += 5;
-   		$pdf->SetXY($posx, $posy);
-   		$pdf->SetTextColor(0, 0, 60);
-   		$pdf->MultiCell($this->page_largeur - $this->marge_droite - $posx, 3, $outputlangs->transnoentities("DateEnd")." : ".($object->date_fin > 0 ?dol_print_date($object->date_fin, "day", false, $outputlangs) : ''), '', 'R');
+		// Date end period
+		$posy += 5;
+		$pdf->SetXY($posx, $posy);
+		$pdf->SetTextColor(0, 0, 60);
+		$pdf->MultiCell($this->page_largeur - $this->marge_droite - $posx, 3, $outputlangs->transnoentities("DateEnd")." : ".($object->date_fin > 0 ?dol_print_date($object->date_fin, "day", false, $outputlangs) : ''), '', 'R');
 
-   		// Status Expense Report
-   		$posy += 6;
-   		$pdf->SetXY($posx, $posy);
-   		$pdf->SetFont('', 'B', $default_font_size + 2);
-   		$pdf->SetTextColor(111, 81, 124);
-   		$pdf->MultiCell($this->page_largeur - $this->marge_droite - $posx, 3, $outputlangs->transnoentities($object->statuts_short[$object->status]), '', 'R');
+		// Status Expense Report
+		$posy += 6;
+		$pdf->SetXY($posx, $posy);
+		$pdf->SetFont('', 'B', $default_font_size + 2);
+		$pdf->SetTextColor(111, 81, 124);
+		$pdf->MultiCell($this->page_largeur - $this->marge_droite - $posx, 3, $outputlangs->transnoentities($object->statuts_short[$object->status]), '', 'R');
 
 		if ($showaddress) {
 			// Sender properties
@@ -755,10 +762,18 @@ class pdf_standard extends ModeleExpenseReport
 			$carac_emetteur .= ($carac_emetteur ? "\n" : '').$outputlangs->convToOutputCharset($this->emetteur->address);
 			$carac_emetteur .= ($carac_emetteur ? "\n" : '').$outputlangs->convToOutputCharset($this->emetteur->zip).' '.$outputlangs->convToOutputCharset($this->emetteur->town);
 			$carac_emetteur .= "\n";
-			if ($this->emetteur->phone) $carac_emetteur .= ($carac_emetteur ? "\n" : '').$outputlangs->transnoentities("Phone")." : ".$outputlangs->convToOutputCharset($this->emetteur->phone);
-			if ($this->emetteur->fax) $carac_emetteur .= ($carac_emetteur ? ($this->emetteur->tel ? " - " : "\n") : '').$outputlangs->transnoentities("Fax")." : ".$outputlangs->convToOutputCharset($this->emetteur->fax);
-			if ($this->emetteur->email) $carac_emetteur .= ($carac_emetteur ? "\n" : '').$outputlangs->transnoentities("Email")." : ".$outputlangs->convToOutputCharset($this->emetteur->email);
-			if ($this->emetteur->url) $carac_emetteur .= ($carac_emetteur ? "\n" : '').$outputlangs->transnoentities("Web")." : ".$outputlangs->convToOutputCharset($this->emetteur->url);
+			if ($this->emetteur->phone) {
+				$carac_emetteur .= ($carac_emetteur ? "\n" : '').$outputlangs->transnoentities("Phone")." : ".$outputlangs->convToOutputCharset($this->emetteur->phone);
+			}
+			if ($this->emetteur->fax) {
+				$carac_emetteur .= ($carac_emetteur ? ($this->emetteur->tel ? " - " : "\n") : '').$outputlangs->transnoentities("Fax")." : ".$outputlangs->convToOutputCharset($this->emetteur->fax);
+			}
+			if ($this->emetteur->email) {
+				$carac_emetteur .= ($carac_emetteur ? "\n" : '').$outputlangs->transnoentities("Email")." : ".$outputlangs->convToOutputCharset($this->emetteur->email);
+			}
+			if ($this->emetteur->url) {
+				$carac_emetteur .= ($carac_emetteur ? "\n" : '').$outputlangs->transnoentities("Web")." : ".$outputlangs->convToOutputCharset($this->emetteur->url);
+			}
 
 			// Receiver Properties
 			$receiver = new User($this->db);
@@ -769,20 +784,26 @@ class pdf_standard extends ModeleExpenseReport
 			$expense_receiver .= ($expense_receiver ? "\n" : '').$outputlangs->convToOutputCharset($receiver->address);
 			$expense_receiver .= ($expense_receiver ? "\n" : '').$outputlangs->convToOutputCharset($receiver->zip).' '.$outputlangs->convToOutputCharset($receiver->town);
 			$expense_receiver .= "\n";
-			if ($receiver->email) $expense_receiver .= ($expense_receiver ? "\n" : '').$outputlangs->transnoentities("Email")." : ".$outputlangs->convToOutputCharset($receiver->email);
-			if ($receiver_account->iban) $expense_receiver .= ($expense_receiver ? "\n" : '').$outputlangs->transnoentities("IBAN")." : ".$outputlangs->convToOutputCharset($receiver_account->iban);
+			if ($receiver->email) {
+				$expense_receiver .= ($expense_receiver ? "\n" : '').$outputlangs->transnoentities("Email")." : ".$outputlangs->convToOutputCharset($receiver->email);
+			}
+			if ($receiver_account->iban) {
+				$expense_receiver .= ($expense_receiver ? "\n" : '').$outputlangs->transnoentities("IBAN")." : ".$outputlangs->convToOutputCharset($receiver_account->iban);
+			}
 
 			// Show sender
 			$posy = 50;
 			$posx = $this->marge_gauche;
 			$hautcadre = 40;
-			if (!empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $posx = 118;
+			if (!empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) {
+				$posx = 118;
+			}
 
 			// Show sender frame
 			$pdf->SetTextColor(0, 0, 0);
 			$pdf->SetFont('', 'B', $default_font_size - 2);
 			$pdf->SetXY($posx, $posy - 5);
-			$pdf->MultiCell(66, 5, $outputlangs->transnoentities("TripSociete")." :", '', 'L');
+			$pdf->MultiCell(80, 5, $outputlangs->transnoentities("TripSociete"), '', 'L');
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetFillColor(224, 224, 224);
 			$pdf->MultiCell(82, $hautcadre, "", 0, 'R', 1);
@@ -808,7 +829,9 @@ class pdf_standard extends ModeleExpenseReport
 			// Show recipient
 			$posy = 50;
 			$posx = 100;
-			if (!empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $posx = $this->marge_gauche;
+			if (!empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) {
+				$posx = $this->marge_gauche;
+			}
 
 			// Show recipient frame
 			$pdf->SetTextColor(0, 0, 0);
@@ -817,7 +840,7 @@ class pdf_standard extends ModeleExpenseReport
 			$pdf->MultiCell(80, 5, $outputlangs->transnoentities("TripNDF")." :", 0, 'L');
 			$pdf->rect($posx, $posy, $this->page_largeur - $this->marge_gauche - $posx, $hautcadre);
 
-			// Informations for trip (dates and users workflow)
+			// Informations for expense report (dates and users workflow)
 			if ($object->fk_user_author > 0) {
 				$userfee = new User($this->db);
 				$userfee->fetch($object->fk_user_author);
@@ -825,7 +848,7 @@ class pdf_standard extends ModeleExpenseReport
 				$pdf->SetXY($posx + 2, $posy);
 				$pdf->SetFont('', '', 10);
 				$pdf->MultiCell(96, 4, $outputlangs->transnoentities("AUTHOR")." : ".dolGetFirstLastname($userfee->firstname, $userfee->lastname), 0, 'L');
-				$posy += 5;
+				$posy = $pdf->GetY() + 1;
 				$pdf->SetXY($posx + 2, $posy);
 				$pdf->MultiCell(96, 4, $outputlangs->transnoentities("DateCreation")." : ".dol_print_date($object->date_create, "day", false, $outputlangs), 0, 'L');
 			}
@@ -833,7 +856,8 @@ class pdf_standard extends ModeleExpenseReport
 			if ($object->fk_statut == 99) {
 				if ($object->fk_user_refuse > 0) {
 					$userfee = new User($this->db);
-					$userfee->fetch($object->fk_user_refuse); $posy += 6;
+					$userfee->fetch($object->fk_user_refuse);
+					$posy += 6;
 					$pdf->SetXY($posx + 2, $posy);
 					$pdf->MultiCell(96, 4, $outputlangs->transnoentities("REFUSEUR")." : ".dolGetFirstLastname($userfee->firstname, $userfee->lastname), 0, 'L');
 					$posy += 5;
@@ -843,12 +867,11 @@ class pdf_standard extends ModeleExpenseReport
 					$pdf->SetXY($posx + 2, $posy);
 					$pdf->MultiCell(96, 4, $outputlangs->transnoentities("DATE_REFUS")." : ".dol_print_date($object->date_refuse, "day", false, $outputlangs), 0, 'L');
 				}
-			}
-			elseif ($object->fk_statut == 4)
-			{
+			} elseif ($object->fk_statut == 4) {
 				if ($object->fk_user_cancel > 0) {
 					$userfee = new User($this->db);
-					$userfee->fetch($object->fk_user_cancel); $posy += 6;
+					$userfee->fetch($object->fk_user_cancel);
+					$posy += 6;
 					$pdf->SetXY($posx + 2, $posy);
 					$pdf->MultiCell(96, 4, $outputlangs->transnoentities("CANCEL_USER")." : ".dolGetFirstLastname($userfee->firstname, $userfee->lastname), 0, 'L');
 					$posy += 5;
@@ -858,12 +881,11 @@ class pdf_standard extends ModeleExpenseReport
 					$pdf->SetXY($posx + 2, $posy);
 					$pdf->MultiCell(96, 4, $outputlangs->transnoentities("DATE_CANCEL")." : ".dol_print_date($object->date_cancel, "day", false, $outputlangs), 0, 'L');
 				}
-			}
-			else
-			{
+			} else {
 				if ($object->fk_user_approve > 0) {
 					$userfee = new User($this->db);
-					$userfee->fetch($object->fk_user_approve); $posy += 6;
+					$userfee->fetch($object->fk_user_approve);
+					$posy += 6;
 					$pdf->SetXY($posx + 2, $posy);
 					$pdf->MultiCell(96, 4, $outputlangs->transnoentities("VALIDOR")." : ".dolGetFirstLastname($userfee->firstname, $userfee->lastname), 0, 'L');
 					$posy += 5;
@@ -875,7 +897,8 @@ class pdf_standard extends ModeleExpenseReport
 			if ($object->fk_statut == 6) {
 				if ($object->fk_user_paid > 0) {
 					$userfee = new User($this->db);
-					$userfee->fetch($object->fk_user_paid); $posy += 6;
+					$userfee->fetch($object->fk_user_paid);
+					$posy += 6;
 					$pdf->SetXY($posx + 2, $posy);
 					$pdf->MultiCell(96, 4, $outputlangs->transnoentities("AUTHORPAIEMENT")." : ".dolGetFirstLastname($userfee->firstname, $userfee->lastname), 0, 'L');
 					$posy += 5;
@@ -890,7 +913,7 @@ class pdf_standard extends ModeleExpenseReport
 	/**
 	 *   Show table for lines
 	 *
-	 *   @param     PDF			$pdf     		Object PDF
+	 *   @param     TCPDF		$pdf     		Object PDF
 	 *   @param		int			$tab_top		Tab top
 	 *   @param		int			$tab_height		Tab height
 	 *   @param		int			$nexY			next y
@@ -906,7 +929,9 @@ class pdf_standard extends ModeleExpenseReport
 
 		// Force to disable hidetop and hidebottom
 		$hidebottom = 0;
-		if ($hidetop) $hidetop = -1;
+		if ($hidetop) {
+			$hidetop = -1;
+		}
 
 		$currency = !empty($currency) ? $currency : $conf->currency;
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
@@ -932,14 +957,14 @@ class pdf_standard extends ModeleExpenseReport
 		// Accountancy piece
 		if (empty($hidetop)) {
 			$pdf->SetXY($this->posxpiece - 1, $tab_top + 1);
-			$pdf->MultiCell($this->posxcomment - $this->posxpiece - 1, 1, '', '', 'R');
+			$pdf->MultiCell($this->posxcomment - $this->posxpiece - 0.8, 1, '', '', 'R');
 		}
 
 		// Comments
 		$pdf->line($this->posxcomment - 1, $tab_top, $this->posxcomment - 1, $tab_top + $tab_height);
 		if (empty($hidetop)) {
 			$pdf->SetXY($this->posxcomment - 1, $tab_top + 1);
-			$pdf->MultiCell($this->posxdate - $this->posxcomment - 1, 1, $outputlangs->transnoentities("Description"), '', 'L');
+			$pdf->MultiCell($this->posxdate - $this->posxcomment - 0.8, 1, $outputlangs->transnoentities("Description"), '', 'L');
 		}
 
 		// Date
@@ -958,44 +983,51 @@ class pdf_standard extends ModeleExpenseReport
 		//	$pdf->MultiCell($this->posxprojet-$this->posxtype - 1, 2, $outputlangs->transnoentities("Type"), '', 'C');
 		//}
 
-        //if (!empty($conf->projet->enabled))
-        //{
-        //    // Project
-        //    $pdf->line($this->posxprojet - 1, $tab_top, $this->posxprojet - 1, $tab_top + $tab_height);
-    	//	if (empty($hidetop)) {
-        //        $pdf->SetXY($this->posxprojet - 1, $tab_top + 1);
-        //        $pdf->MultiCell($this->posxtva - $this->posxprojet - 1, 2, $outputlangs->transnoentities("Project"), '', 'C');
-    	//	}
-        //}
+		//if (!empty($conf->projet->enabled))
+		//{
+		//    // Project
+		//    $pdf->line($this->posxprojet - 1, $tab_top, $this->posxprojet - 1, $tab_top + $tab_height);
+		//	if (empty($hidetop)) {
+		//        $pdf->SetXY($this->posxprojet - 1, $tab_top + 1);
+		//        $pdf->MultiCell($this->posxtva - $this->posxprojet - 1, 2, $outputlangs->transnoentities("Project"), '', 'C');
+		//	}
+		//}
 
 		// VAT
 		if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT)) {
 			$pdf->line($this->posxtva - 1, $tab_top, $this->posxtva - 1, $tab_top + $tab_height);
 			if (empty($hidetop)) {
-				$pdf->SetXY($this->posxtva - 1, $tab_top + 1);
+				$pdf->SetXY($this->posxtva - 0.8, $tab_top + 1);
 				$pdf->MultiCell($this->posxup - $this->posxtva - 1, 2, $outputlangs->transnoentities("VAT"), '', 'C');
 			}
 		}
 
-        // Unit price
+		// Unit price
 		$pdf->line($this->posxup - 1, $tab_top, $this->posxup - 1, $tab_top + $tab_height);
 		if (empty($hidetop)) {
-			$pdf->SetXY($this->posxup - 1, $tab_top + 1);
-			$pdf->MultiCell($this->posxqty - $this->posxup - 1, 2, $outputlangs->transnoentities("PriceU"), '', 'C');
+			$pdf->SetXY($this->posxup - 0.8, $tab_top + 1);
+			$pdf->MultiCell($this->posxqty - $this->posxup - 1, 2, $outputlangs->transnoentities("PriceUTTC"), '', 'C');
 		}
 
 		// Quantity
 		$pdf->line($this->posxqty - 1, $tab_top, $this->posxqty - 1, $tab_top + $tab_height);
 		if (empty($hidetop)) {
-			$pdf->SetXY($this->posxqty - 1, $tab_top + 1);
-			$pdf->MultiCell($this->postotalttc - $this->posxqty - 1, 2, $outputlangs->transnoentities("Qty"), '', 'C');
+			$pdf->SetXY($this->posxqty - 0.8, $tab_top + 1);
+			$pdf->MultiCell($this->postotalht - $this->posxqty - 1, 2, $outputlangs->transnoentities("Qty"), '', 'C');
+		}
+
+		// Total without taxes
+		$pdf->line($this->postotalht - 1, $tab_top, $this->postotalht - 1, $tab_top + $tab_height);
+		if (empty($hidetop)) {
+			$pdf->SetXY($this->postotalht - 0.8, $tab_top + 1);
+			$pdf->MultiCell($this->postotalttc - $this->postotalht + 1, 2, $outputlangs->transnoentities("TotalHT"), '', 'C');
 		}
 
 		// Total with all taxes
 		$pdf->line($this->postotalttc, $tab_top, $this->postotalttc, $tab_top + $tab_height);
 		if (empty($hidetop)) {
-			$pdf->SetXY($this->postotalttc - 1, $tab_top + 1);
-			$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->postotalttc, 2, $outputlangs->transnoentities("TotalTTC"), '', 'R');
+			$pdf->SetXY($this->postotalttc - 0.8, $tab_top + 1);
+			$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->postotalttc + 1, 2, $outputlangs->transnoentities("TotalTTC"), '', 'R');
 		}
 
 		$pdf->SetTextColor(0, 0, 0);
@@ -1004,11 +1036,11 @@ class pdf_standard extends ModeleExpenseReport
 	/**
 	 *  Show payments table
 	 *
-	 *  @param	PDF			$pdf           Object PDF
-	 *  @param  Object		$object         Object invoice
-	 *  @param  int			$posy           Position y in PDF
-	 *  @param  Translate	$outputlangs    Object langs for output
-	 *  @return int             			<0 if KO, >0 if OK
+	 *  @param	TCPDF			$pdf            Object PDF
+	 *  @param  ExpenseReport	$object         Object expensereport
+	 *  @param  int				$posy           Position y in PDF
+	 *  @param  Translate		$outputlangs    Object langs for output
+	 *  @return int             				<0 if KO, >0 if OK
 	 */
 	protected function tablePayments(&$pdf, $object, $posy, $outputlangs)
 	{
@@ -1054,14 +1086,13 @@ class pdf_standard extends ModeleExpenseReport
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_typepayment = c.id";
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as ba ON b.fk_account = ba.rowid';
-		$sql .= " WHERE e.rowid = '".$object->id."'";
+		$sql .= " WHERE e.rowid = ".((int) $object->id);
 		$sql .= " AND p.fk_expensereport = e.rowid";
 		$sql .= ' AND e.entity IN ('.getEntity('expensereport').')';
 		$sql .= " ORDER BY dp";
 
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$num = $this->db->num_rows($resql);
 			$totalpaid = 0;
 			$i = 0;
@@ -1086,8 +1117,7 @@ class pdf_standard extends ModeleExpenseReport
 				$totalpaid += $row->amount;
 				$i++;
 			}
-			if ($num > 0 && $object->paid == 0)
-			{
+			if ($num > 0 && $object->paid == 0) {
 				$y += $tab3_height;
 
 				$pdf->SetXY($tab3_posx + 17, $tab3_top + $y);
@@ -1106,9 +1136,7 @@ class pdf_standard extends ModeleExpenseReport
 				$pdf->SetXY($tab3_posx + 35, $tab3_top + $y);
 				$pdf->MultiCell(30, 4, $outputlangs->transnoentitiesnoconv("RemainderToPay"), 0, 'L', 0);
 			}
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
@@ -1117,17 +1145,17 @@ class pdf_standard extends ModeleExpenseReport
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *  Show footer of page. Need this->emetteur object
-     *
-	 *  @param  PDF			$pdf     			PDF
-	 *  @param  Object		$object				Object to show
-	 *  @param  Translate	$outputlangs		Object lang for output
-	 *  @param  int			$hidefreetext		1=Hide free text
-	 *  @return int								Return height of bottom margin including footer text
+	 *
+	 *  @param  TCPDF			$pdf     			PDF
+	 *  @param  ExpenseReport	$object				Object to show
+	 *  @param  Translate		$outputlangs		Object lang for output
+	 *  @param  int				$hidefreetext		1=Hide free text
+	 *  @return int									Return height of bottom margin including footer text
 	 */
 	protected function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{
 		global $conf;
-		$showdetails = $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
+		$showdetails = empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS) ? 0 : $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
 		return pdf_pagefoot($pdf, $outputlangs, 'EXPENSEREPORT_FREE_TEXT', $this->emetteur, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext);
 	}
 }

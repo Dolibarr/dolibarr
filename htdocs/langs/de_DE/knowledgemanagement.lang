@@ -1,0 +1,54 @@
+# Copyright (C) 2021 SuperAdmin
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see .
+
+#
+# Generic
+#
+
+# Module label 'ModuleKnowledgeManagementName'
+ModuleKnowledgeManagementName = Wissensmanagement-System
+# Module description 'ModuleKnowledgeManagementDesc'
+ModuleKnowledgeManagementDesc=Verwalten einer Wissensmanagement- (KM) oder Helpdesk-Basis
+
+#
+# Admin page
+#
+KnowledgeManagementSetup = Einstellungen des Wissensmanagement-Systems
+Settings = Einstellungen
+KnowledgeManagementSetupPage = Einstellungsseite für das Wissensmanagement-System
+
+
+#
+# About page
+#
+About = Über
+KnowledgeManagementAbout = Über Wissensmanagement
+KnowledgeManagementAboutPage = Über Wissensmanagement Seite
+
+KnowledgeManagementArea = Wissensmanagement
+MenuKnowledgeRecord = Wissensbasis
+ListKnowledgeRecord = Liste der Artikel
+NewKnowledgeRecord = Neuer Artikel
+ValidateReply = Lösung bestätigen
+KnowledgeRecords = Artikel
+KnowledgeRecord = Artikel
+KnowledgeRecordExtraFields = Extrafelder für Artikel
+GroupOfTicket=Ticket-Gruppe
+YouCanLinkArticleToATicketCategory=Sie können einen Artikel mit einer Ticket-Gruppe verknüpfen (so wird der Artikel bei der Qualifizierung neuer Tickets vorgeschlagen)
+SuggestedForTicketsInGroup=Empfohlen für Tickets der Gruppe
+
+SetObsolete=Als veraltet festlegen
+ConfirmCloseKM=Bestätigen Sie das Schließen dieses Artikels als veraltet?
+ConfirmReopenKM=Möchten Sie diesen Artikel auf den Status "Validiert" zurücksetzen?

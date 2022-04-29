@@ -22,7 +22,7 @@ create table llx_user_rib
   fk_user        integer      NOT NULL,
   entity         integer DEFAULT 1 NOT NULL,	-- multi company id
   datec          datetime,
-  tms            timestamp,
+  tms            timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   label          varchar(30),
   bank           varchar(255),  -- bank name
   code_banque    varchar(128),  -- bank code

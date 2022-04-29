@@ -1,4 +1,5 @@
 -- Copyright (C) 2011 Philippe GRAND      <philippe.grand@atoo-net.com>
+-- Copyright (C) 2020 Alexandre SPANGARO  <aspangaro@open-dsi.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -24,8 +25,9 @@
 -- Availability type
 --
 
-delete from llx_c_availability;
-INSERT INTO llx_c_availability (rowid,code,label,active) VALUES (1, 'AV_NOW', 'Immediate', 1);
-INSERT INTO llx_c_availability (rowid,code,label,active) VALUES (2, 'AV_1W',  '1 week', 1);
-INSERT INTO llx_c_availability (rowid,code,label,active) VALUES (3, 'AV_2W',  '2 weeks', 1);
-INSERT INTO llx_c_availability (rowid,code,label,active) VALUES (4, 'AV_3W',  '3 weeks', 1);
+INSERT INTO llx_c_availability (code,label,type_duration,qty,active,position) VALUES ('AV_NOW', 'Immediate', null, 0, 1, 10);
+INSERT INTO llx_c_availability (code,label,type_duration,qty,active,position) VALUES ('AV_1W',  '1 week', 'w', 1, 1, 20);
+INSERT INTO llx_c_availability (code,label,type_duration,qty,active,position) VALUES ('AV_2W',  '2 weeks', 'w', 2, 1, 30);
+INSERT INTO llx_c_availability (code,label,type_duration,qty,active,position) VALUES ('AV_3W',  '3 weeks', 'w', 3, 1, 40);
+INSERT INTO llx_c_availability (code,label,type_duration,qty,active,position) VALUES ('AV_4W',  '4 weeks', 'w', 4, 1, 50);
+

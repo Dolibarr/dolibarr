@@ -15,7 +15,7 @@
 
 
 -- BEGIN MODULEBUILDER INDEXES
-ALTER TABLE llx_mymodule_myobject ADD INDEX idx_fieldobject (fieldobject);
+ALTER TABLE llx_mymodule_myobject ADD INDEX idx_mymodule_myobject_fieldobject (fieldobject);
 -- END MODULEBUILDER INDEXES
 
 --ALTER TABLE llx_mymodule_myobject ADD UNIQUE INDEX uk_mymodule_myobject_fieldxy(fieldx, fieldy);

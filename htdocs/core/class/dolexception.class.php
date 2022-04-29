@@ -27,10 +27,10 @@
  */
 class DolException extends Exception
 {
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-    }
+	/**
+	 * Constructor
+	 */
+	public function __construct()
+	{
+	}
 }

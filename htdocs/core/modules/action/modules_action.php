@@ -28,32 +28,32 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
  */
 abstract class ModeleAction extends CommonDocGenerator
 {
-    /**
+	/**
 	 * @var string Error code (or message)
 	 */
 	public $error = '';
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-    /**
-     *  Return list of active generation modules
-     *
-     * 	@param	DoliDB		$db					Database handler
-     *  @param	integer		$maxfilenamelength  Max length of value to show
-     * 	@return	array							List of templates
-     */
-    public static function liste_modeles($db, $maxfilenamelength = 0)
-    {
-        // phpcs:enable
-        global $conf;
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Return list of active generation modules
+	 *
+	 * 	@param	DoliDB		$db					Database handler
+	 *  @param	integer		$maxfilenamelength  Max length of value to show
+	 * 	@return	array							List of templates
+	 */
+	public static function liste_modeles($db, $maxfilenamelength = 0)
+	{
+		// phpcs:enable
+		global $conf;
 
-        $type = 'action';
-        $list = array();
+		$type = 'action';
+		$list = array();
 
-        include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-        $list = getListOfModels($db, $type, $maxfilenamelength);
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+		$list = getListOfModels($db, $type, $maxfilenamelength);
 
-        return $list;
-    }
+		return $list;
+	}
 }
 
 // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
@@ -71,7 +71,7 @@ abstract class ModeleAction extends CommonDocGenerator
  */
 function action_create($db, $object, $modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 {
-    // phpcs:enable
+	// phpcs:enable
 	global $conf, $langs, $user;
 	$langs->load("action");
 
@@ -80,51 +80,48 @@ function action_create($db, $object, $modele, $outputlangs, $hidedetails = 0, $h
 	$srctemplatepath = '';
 
 	// Position modele on the name of fichinter model to use
-	if (!dol_strlen($modele))
-	{
-		if (!empty($conf->global->ACTION_EVENT_ADDON_PDF))
-		{
+	if (!dol_strlen($modele)) {
+		if (!empty($conf->global->ACTION_EVENT_ADDON_PDF)) {
 			$modele = $conf->global->ACTION_EVENT_ADDON_PDF;
-		}
-		else
-		{
+		} else {
 			$modele = 'soleil';
 		}
 	}
 
 	// If selected modele is a filename template (then $modele="modelname:filename")
 	$tmp = explode(':', $modele, 2);
-    if (!empty($tmp[1]))
-    {
-        $modele = $tmp[0];
-        $srctemplatepath = $tmp[1];
-    }
+	if (!empty($tmp[1])) {
+		$modele = $tmp[0];
+		$srctemplatepath = $tmp[1];
+	}
 
 	// Search template files
-	$file = ''; $classname = ''; $filefound = 0;
+	$file = '';
+	$classname = '';
+	$filefound = 0;
 	$dirmodels = array('/');
-	if (is_array($conf->modules_parts['models'])) $dirmodels = array_merge($dirmodels, $conf->modules_parts['models']);
-	foreach ($dirmodels as $reldir)
-	{
-    	foreach (array('doc', 'pdf') as $prefix)
-    	{
-    	    $file = $prefix."_".$modele.".modules.php";
+	if (is_array($conf->modules_parts['models'])) {
+		$dirmodels = array_merge($dirmodels, $conf->modules_parts['models']);
+	}
+	foreach ($dirmodels as $reldir) {
+		foreach (array('doc', 'pdf') as $prefix) {
+			$file = $prefix."_".$modele.".modules.php";
 
-    		// On verifie l'emplacement du modele
-	        $file = dol_buildpath($reldir."core/modules/action/doc/".$file, 0);
-    		if (file_exists($file))
-    		{
-    			$filefound = 1;
-    			$classname = $prefix.'_'.$modele;
-    			break;
-    		}
-    	}
-    	if ($filefound) break;
-    }
+			// On verifie l'emplacement du modele
+			$file = dol_buildpath($reldir."core/modules/action/doc/".$file, 0);
+			if (file_exists($file)) {
+				$filefound = 1;
+				$classname = $prefix.'_'.$modele;
+				break;
+			}
+		}
+		if ($filefound) {
+			break;
+		}
+	}
 
 	// Charge le modele
-	if ($filefound)
-	{
+	if ($filefound) {
 		require_once $file;
 
 		$obj = new $classname($db);
@@ -132,8 +129,7 @@ function action_create($db, $object, $modele, $outputlangs, $hidedetails = 0, $h
 		// We save charset_output to restore it because write_file can change it if needed for
 		// output format that does not support UTF8.
 		$sav_charset_output = $outputlangs->charset_output;
-		if ($obj->write_file($object, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref) > 0)
-		{
+		if ($obj->write_file($object, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref) > 0) {
 			$outputlangs->charset_output = $sav_charset_output;
 
 			// We delete old preview
@@ -141,16 +137,12 @@ function action_create($db, $object, $modele, $outputlangs, $hidedetails = 0, $h
 			dol_delete_preview($object);
 
 			return 1;
-		}
-		else
-		{
+		} else {
 			$outputlangs->charset_output = $sav_charset_output;
 			dol_print_error($db, "action_pdf_create Error: ".$obj->error);
 			return 0;
 		}
-	}
-	else
-	{
+	} else {
 		print $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists", $file);
 		return 0;
 	}
