@@ -212,7 +212,6 @@ if ($massaction == 'presend') {
 }
 
 if ($massaction == 'edit_extrafields') {
-
 	require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 	$elementtype = 'product';
 	/** @var CommonObject $objecttmp */
@@ -224,6 +223,11 @@ if ($massaction == 'edit_extrafields') {
 	$formquestion = array();
 	if (!empty($extrafields_list)) {
 		$myParamExtra = $object->showOptionals($extrafields, 'create');
+
+		$formquestion[] = array(
+			'type' => 'other',
+			'value' => $form->selectarray('extrafield-key-to-update', $extrafields_list, GETPOST('extrafield-key-to-update'))
+		);
 
 		$formquestion[] = array(
 			'type' => 'other',
