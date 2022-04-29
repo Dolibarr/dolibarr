@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - loan
-ModuleBuilderDesc=このツールは、経験豊富なユーザーまたは開発者のみが使用する必要がある。独自のモジュールを構築または編集するためのユーティリティを提供する。代替の<a href="%s" target="_blank">手動開発のドキュメントは、</a>にある。
+ModuleBuilderDesc=このツールは、経験豊富なユーザまたは開発者のみが使用する必要がある。独自のモジュールを構築または編集するためのユーティリティを提供する。代替の<a href="%s" target="_blank" rel="noopener noreferrer">手動開発のドキュメントは、ここ</a>にある。
 EnterNameOfModuleDesc=作成するモジュール/アプリケーションの名前をスペースなしで入力する。大文字を使用して単語を区切る(例：MyModule、EcommerceForShop、SyncWithMySystem ...)
 EnterNameOfObjectDesc=作成するオブジェクトの名前をスペースなしで入力する。大文字を使用して単語を区切る(例：MyObject、Student、Teacher ...)。 CRUDクラスファイルだけでなく、APIファイル、オブジェクトを一覧表示/追加/編集/削除するページ、およびSQLファイルが生成される。
 ModuleBuilderDesc2=モジュールが生成/編集されるパス(%sに定義された外部モジュールの最初のディレクトリ)：<strong> %s </strong>
@@ -98,7 +98,7 @@ MenusDefDescTooltip=モジュール/アプリケーションによって提供�
 DictionariesDefDescTooltip=モジュール/アプリケーションによって提供されるディクショナリは、モジュール記述子ファイルの配列<strong> $ this-> dictionaries</strong>に定義されている。このファイルを手動で編集するか、埋め込みエディターを使用できる。 <br> <br>注：定義(およびモジュールの再アクティブ化)が完了すると、%sの管理者ユーザーには辞書も設定領域に表示される。
 PermissionsDefDescTooltip=モジュール/アプリケーションによって提供されるアクセス許可は、配列<strong> $ this-> rights</strong>にモジュール記述子ファイルに定義される。このファイルを手動で編集するか、埋め込みエディターを使用できる。 <br> <br>注：定義されると(およびモジュールが再アクティブ化されると)、アクセス許可はデフォルトのアクセス許可設定%sに表示される。
 HooksDefDesc=定義する：管理したいフックのコンテキストを <b>module_parts['hooks']</b> プロパティのモジュール記述子の中に。 (コンテキストのリストは、コアコードで '<b>initHooks(</b>' を検索すると見つかる).<br>編集する：フックされた関数のコードを追加するためのフックファイルを。 (フック可能な関数は、コアコードで '<b>executeHooks</b>' を検索すると見つかる).
-TriggerDefDesc=Define in the trigger file the code that you want to execute when a business event external to your module is executed (events recorded by other modules).
+TriggerDefDesc=モジュールの外部のビジネスイベント（他のモジュールによってトリガーされるイベント）が実行されるときに実行するコードをトリガーファイルで定義する。
 SeeIDsInUse=インストールで使用されているIDを確認する
 SeeReservedIDsRangeHere=予約済IDの範囲を参照すること
 ToolkitForDevelopers=Dolibarr開発者向けのツールキット

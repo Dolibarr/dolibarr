@@ -52,8 +52,10 @@ if ($user->socid) {
 	$socid = $user->socid;
 }
 
+$moreparam = '';
 if ($type == 'bank-transfer') {
 	$object = new FactureFournisseur($db);
+	$moreparam = '&type='.$type;
 } else {
 	$object = new Facture($db);
 }
@@ -221,7 +223,7 @@ $form = new Form($db);
 $now = dol_now();
 
 if ($type == 'bank-transfer') {
-	$title = $langs->trans('InvoiceSupplier')." - ".$langs->trans('CreditTransfer');
+	$title = $langs->trans('SupplierInvoice')." - ".$langs->trans('CreditTransfer');
 	$helpurl = "";
 } else {
 	$title = $langs->trans('InvoiceCustomer')." - ".$langs->trans('StandingOrders');
@@ -384,7 +386,7 @@ if ($object->id > 0) {
 
 	$object->totalpaye = $totalpaye; // To give a chance to dol_banner_tab to use already paid amount to show correct status
 
-	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '', 0, '', '');
+	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, $moreparam, 0, '', '');
 
 	print '<div class="fichecenter">';
 	print '<div class="fichehalfleft">';
@@ -910,7 +912,7 @@ if ($object->id > 0) {
 		}
 
 		if (!$numopen && !$numclosed) {
-			print '<tr class="oddeven"><td colspan="7" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+			print '<tr class="oddeven"><td colspan="7"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 		}
 
 		$db->free($result);

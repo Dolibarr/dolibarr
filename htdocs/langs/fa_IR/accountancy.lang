@@ -48,7 +48,7 @@ CountriesNotInEEC=کشورهائی که در اتحادیۀ اروپا نیست�
 CountriesInEECExceptMe=کشورهائی که در اتحادیۀ اروپا هستند به استثناء %s
 CountriesExceptMe=همۀ کشورها باستثناء %s
 AccountantFiles=Export source documents
-ExportAccountingSourceDocHelp=With this tool, you can export the source events (list in CSV and PDFs) that were used to generate your accountancy.
+ExportAccountingSourceDocHelp=With this tool, you can export the source events (list in CSV and PDFs) that are used to generate your accountancy.
 ExportAccountingSourceDocHelp2=To export your journals, use the menu entry %s - %s.
 VueByAccountAccounting=View by accounting account
 VueBySubAccountAccounting=View by accounting subaccount
@@ -286,7 +286,7 @@ ValidateMovements=Validate movements
 DescValidateMovements=Any modification or deletion of writing, lettering and deletes will be prohibited. All entries for an exercise must be validated otherwise closing will not be possible
 
 ValidateHistory=بندکردن خودکار
-AutomaticBindingDone=بندکردن خودکار انجام شد
+AutomaticBindingDone=Automatic bindings done (%s) - Automatic binding not possible for some record (%s)
 
 ErrorAccountancyCodeIsAlreadyUse=خطا! شما نمی‌توانید این حساب حساب‌داری را حذف کنید، زیرا در حال استفاده است.
 MvtNotCorrectlyBalanced=جابجائی به درستی انجام نشد. بدهی = %s | اعتبار= %s
@@ -387,7 +387,8 @@ SaleExport=Export sale
 SaleEEC=Sale in EEC
 SaleEECWithVAT=Sale in EEC with a VAT not null, so we suppose this is NOT an intracommunautary sale and the suggested account is the standard product account.
 SaleEECWithoutVATNumber=Sale in EEC with no VAT but the VAT ID of thirdparty is not defined. We fallback on the product account for standard sales. You can fix the VAT ID of thirdparty or the product account if needed.
-
+ForbiddenTransactionAlreadyExported=Forbidden: The transaction has been validated and/or exported.
+ForbiddenTransactionAlreadyValidated=Forbidden: The transaction has been validated.
 ## Dictionary
 Range=بازۀ حساب حساب‌داری
 Calculated=محاسبه‌شده
@@ -404,6 +405,7 @@ NoJournalDefined=دفتری تعریف نشده است
 Binded=سطور بندشده
 ToBind=سطوری که باید بند شوند
 UseMenuToSetBindindManualy=سطوری که هنوز بند نشده‌اند، گزینۀ <a href="%s">%s</a> را برای ایجاد دستی بندهای مورد استفاده قرار دهید.
+SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Sorry this module is not compatible with the experimental feature of situation invoices
 
 ## Import
 ImportAccountingEntries=ورودی‌های حساب‌داری

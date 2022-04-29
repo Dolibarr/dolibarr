@@ -165,17 +165,18 @@ class Conf
 
 	/**
 	 * Load setup values into conf object (read llx_const) for a specified entity
-	 * Note that this->db->xxx, this->file->xxx and this->multicompany have been already loaded when setValues is called.
+	 * Note that this->db->xxx, this->file->xxx and this->multicompany have been already loaded when setEntityValues is called.
 	 *
+	 * @param	DoliDB	$db			Database handler
 	 * @param	int		$entity		Entity to get
 	 * @return	int					< 0 if KO, >= 0 if OK
 	 */
-	public function setEntityValues($entity)
+	public function setEntityValues($db, $entity)
 	{
 		if ($this->entity != $entity) {
 			// If we ask to reload setup for a new entity
 			$this->entity = $entity;
-			return $this->setValues($this->db);
+			return $this->setValues($db);
 		}
 
 		return 0;
@@ -257,7 +258,7 @@ class Conf
 			// Define all global constants into $this->global->key=value
 			$sql = "SELECT ".$db->decrypt('name')." as name,";
 			$sql .= " ".$db->decrypt('value')." as value, entity";
-			$sql .= " FROM ".MAIN_DB_PREFIX."const";
+			$sql .= " FROM ".$db->prefix()."const";
 			$sql .= " WHERE entity IN (0,".$this->entity.")";
 			$sql .= " ORDER BY entity"; // This is to have entity 0 first, then entity 1 that overwrite.
 
@@ -615,15 +616,15 @@ class Conf
 			if (!empty($this->productbatch->enabled)) {
 				$this->global->STOCK_CALCULATE_ON_BILL = 0;
 				$this->global->STOCK_CALCULATE_ON_VALIDATE_ORDER = 0;
-				$this->global->STOCK_CALCULATE_ON_SHIPMENT = 1;
-				$this->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE = 0;
+				if (empty($this->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE)) $this->global->STOCK_CALCULATE_ON_SHIPMENT = 1;
+				if (empty($this->global->STOCK_CALCULATE_ON_SHIPMENT)) $this->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE = 1;
 				$this->global->STOCK_CALCULATE_ON_SUPPLIER_BILL = 0;
 				$this->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER = 0;
 				if (empty($this->reception->enabled)) {
 					$this->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER = 1;
 				} else {
-					$this->global->STOCK_CALCULATE_ON_RECEPTION = 1;
-					$this->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE = 0;
+					if (empty($this->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE)) $this->global->STOCK_CALCULATE_ON_RECEPTION = 1;
+					if (empty($this->global->STOCK_CALCULATE_ON_RECEPTION)) $this->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE = 1;
 				}
 			}
 
@@ -888,10 +889,6 @@ class Conf
 				$this->global->MAIN_SIZE_SHORTLIST_LIMIT = 3;
 			}
 
-			if (!isset($this->global->THEME_HIDE_BORDER_ON_INPUT)) {
-				$this->global->THEME_HIDE_BORDER_ON_INPUT = 0;
-			}
-
 			// Save inconsistent option
 			if (empty($this->global->AGENDA_USE_EVENT_TYPE) && (!isset($this->global->AGENDA_DEFAULT_FILTER_TYPE) || $this->global->AGENDA_DEFAULT_FILTER_TYPE == 'AC_NON_AUTO')) {
 				$this->global->AGENDA_DEFAULT_FILTER_TYPE = '0'; // 'AC_NON_AUTO' does not exists when AGENDA_DEFAULT_FILTER_TYPE is not on.
@@ -913,7 +910,7 @@ class Conf
 				// Value 1 makes CSRF check for all POST parameters only
 				// Value 2 makes also CSRF check for GET requests with action = a sensitive requests like action=del, action=remove...
 				// Value 3 makes also CSRF check for all GET requests with a param action or massaction
-				$this->global->MAIN_SECURITY_CSRF_WITH_TOKEN = 1;
+				$this->global->MAIN_SECURITY_CSRF_WITH_TOKEN = 2;
 				// Note: Set MAIN_SECURITY_CSRF_TOKEN_RENEWAL_ON_EACH_CALL=1 to have a renewal of token at each page call instead of each session (not recommended)
 			}
 

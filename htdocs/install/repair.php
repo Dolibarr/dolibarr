@@ -94,8 +94,8 @@ print 'Option repair_link_dispatch_lines_supplier_order_lines, (\'test\' or \'co
 // Init data
 print 'Option set_empty_time_spent_amount (\'test\' or \'confirmed\') is '.(GETPOST('set_empty_time_spent_amount', 'alpha') ?GETPOST('set_empty_time_spent_amount', 'alpha') : 'undefined').'<br>'."\n";
 // Structure
-print 'Option force_utf8_on_tables, for mysql/mariadb only (\'test\' or \'confirmed\') is '.(GETPOST('force_utf8_on_tables', 'alpha') ?GETPOST('force_utf8_on_tables', 'alpha') : 'undefined').'<br>'."\n";
-print "Option force_utf8mb4_on_tables (EXPERIMENTAL!), for mysql/mariadb only ('test' or 'confirmed') is ".(GETPOST('force_utf8mb4_on_tables', 'alpha') ? GETPOST('force_utf8mb4_on_tables', 'alpha') : 'undefined')."<br>\n";
+print 'Option force_utf8_on_tables (force utf8 + row=dynamic), for mysql/mariadb only (\'test\' or \'confirmed\') is '.(GETPOST('force_utf8_on_tables', 'alpha') ?GETPOST('force_utf8_on_tables', 'alpha') : 'undefined').'<br>'."\n";
+print "Option force_utf8mb4_on_tables (force utf8mb4 + row=dynamic, EXPERIMENTAL!), for mysql/mariadb only ('test' or 'confirmed') is ".(GETPOST('force_utf8mb4_on_tables', 'alpha') ? GETPOST('force_utf8mb4_on_tables', 'alpha') : 'undefined')."<br>\n";
 // Rebuild sequence
 print 'Option rebuild_sequences, for postgresql only (\'test\' or \'confirmed\') is '.(GETPOST('rebuild_sequences', 'alpha') ?GETPOST('rebuild_sequences', 'alpha') : 'undefined').'<br>'."\n";
 print '<br>';
@@ -176,7 +176,8 @@ $oneoptionset = 0;
 $oneoptionset = (GETPOST('standard', 'alpha') || GETPOST('restore_thirdparties_logos', 'alpha') || GETPOST('clean_linked_elements', 'alpha') || GETPOST('clean_menus', 'alpha')
 	|| GETPOST('clean_orphelin_dir', 'alpha') || GETPOST('clean_product_stock_batch', 'alpha') || GETPOST('set_empty_time_spent_amount', 'alpha') || GETPOST('rebuild_product_thumbs', 'alpha')
 	|| GETPOST('clean_perm_table', 'alpha')
-	|| GETPOST('force_disable_of_modules_not_found', 'alpha') || GETPOST('force_utf8_on_tables', 'alpha')
+	|| GETPOST('force_disable_of_modules_not_found', 'alpha')
+	|| GETPOST('force_utf8_on_tables', 'alpha') || GETPOST('force_utf8mb4_on_tables', 'alpha')
 	|| GETPOST('rebuild_sequences', 'alpha'));
 
 if ($ok && $oneoptionset) {
@@ -1082,7 +1083,7 @@ if ($ok && GETPOST('force_disable_of_modules_not_found', 'alpha')) {
 					$constantname = $obj->name; // Name of constant for hook or js or css declaration
 
 					print '<tr><td>';
-					print $constantname;
+					print dol_escape_htmltag($constantname);
 
 					$db->begin();
 
@@ -1106,7 +1107,8 @@ if ($ok && GETPOST('force_disable_of_modules_not_found', 'alpha')) {
 							if ($key == 'css') {
 								$value = $obj->value;
 								$valuearray = json_decode($value);
-								if ($value && count($valuearray) == 0) {
+								if ($value && (!is_array($valuearray) || count($valuearray) == 0)) {
+									$valuearray = array();
 									$valuearray[0] = $value; // If value was not a json array but a string
 								}
 								$reloffile = preg_replace('/^\//', '', $valuearray[0]);
@@ -1117,9 +1119,10 @@ if ($ok && GETPOST('force_disable_of_modules_not_found', 'alpha')) {
 								try {
 									$result = dol_buildpath($reloffile, 0, 2);
 								} catch (Exception $e) {
-									// No catch yet
-									$result = 'found'; // If error, we force lke if we found to avoid any deletion
+									$result = 'found'; // If error, we force like if we found to avoid any deletion
 								}
+							} else {
+								$result = 'found';	//
 							}
 
 							if (!$result) {
@@ -1178,9 +1181,11 @@ if ($ok && GETPOST('clean_perm_table', 'alpha')) {
 
 	$listofmods = '';
 	foreach ($conf->modules as $key => $val) {
-		$listofmods .= ($listofmods ? ',' : '')."'".$val."'";
+		$listofmods .= ($listofmods ? ',' : '')."'".$db->escape($val)."'";
 	}
-	$sql = "SELECT id, libelle as label, module from ".MAIN_DB_PREFIX."rights_def WHERE module NOT IN (".$db->sanitize($listofmods).") AND id > 100000";
+
+	$sql = "SELECT id, libelle as label, module from ".MAIN_DB_PREFIX."rights_def WHERE module NOT IN (".$db->sanitize($listofmods, 1).") AND id > 100000";
+
 	$resql = $db->query($sql);
 	if ($resql) {
 		$num = $db->num_rows($resql);
@@ -1214,7 +1219,7 @@ if ($ok && GETPOST('clean_perm_table', 'alpha')) {
 
 // force utf8 on tables
 if ($ok && GETPOST('force_utf8_on_tables', 'alpha')) {
-	print '<tr><td colspan="2"><br>*** Force page code and collation of tables into utf8/utf8_unicode_ci (for mysql/mariadb only)</td></tr>';
+	print '<tr><td colspan="2"><br>*** Force page code and collation of tables into utf8/utf8_unicode_ci and row_format=dynamic (for mysql/mariadb only)</td></tr>';
 
 	if ($db->type == "mysql" || $db->type == "mysqli") {
 		$force_utf8_on_tables = GETPOST('force_utf8_on_tables', 'alpha');
@@ -1236,11 +1241,18 @@ if ($ok && GETPOST('force_utf8_on_tables', 'alpha')) {
 
 			print '<tr><td colspan="2">';
 			print $table;
-			$sql = "ALTER TABLE ".$table." CONVERT TO CHARACTER SET utf8 COLLATE utf8_unicode_ci";
-			print '<!-- '.$sql.' -->';
+			$sql1 = "ALTER TABLE ".$table." ROW_FORMAT=dynamic";
+			$sql2 = "ALTER TABLE ".$table." CONVERT TO CHARACTER SET utf8 COLLATE utf8_unicode_ci";
+			print '<!-- '.$sql1.' -->';
+			print '<!-- '.$sql2.' -->';
 			if ($force_utf8_on_tables == 'confirmed') {
-				$resql = $db->query($sql);
-				print ' - Done ('.($resql ? 'OK' : 'KO').')';
+				$resql1 = $db->query($sql1);
+				if ($resql1) {
+					$resql2 = $db->query($sql2);
+				} else {
+					$resql2 = false;
+				}
+				print ' - Done ('.(($resql1 && $resql2) ? 'OK' : 'KO').')';
 			} else {
 				print ' - Disabled';
 			}

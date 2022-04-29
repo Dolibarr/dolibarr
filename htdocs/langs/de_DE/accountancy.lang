@@ -26,7 +26,7 @@ Journals=Journale
 JournalFinancial=Finanzjournale
 BackToChartofaccounts=Zurück zum  Kontenplan
 Chartofaccounts=Kontenplan
-ChartOfSubaccounts=Plan der einzelnen Konten
+ChartOfSubaccounts=Plan der einzelnen Nebenkonten
 ChartOfIndividualAccountsOfSubsidiaryLedger=Plan der Einzelkonten des Nebenbuchs
 CurrentDedicatedAccountingAccount=Aktuelles dediziertes Konto
 AssignDedicatedAccountingAccount=Neues Konto zuweisen
@@ -48,7 +48,7 @@ CountriesNotInEEC=Nicht-EU Länder
 CountriesInEECExceptMe=EU-Länder außer %s
 CountriesExceptMe=Alle Länder außer %s
 AccountantFiles=Belegdokumente exportieren
-ExportAccountingSourceDocHelp=Mit diesem Tool können Sie die Quellereignisse (Liste in CSV und PDFs) exportieren, die zur Erstellung Ihrer Buchhaltung verwendet wurden.
+ExportAccountingSourceDocHelp=Mit diesem Tool können Sie die Quellereignisse (Liste in CSV und PDFs) exportieren, die zur Erstellung Ihrer Buchhaltung verwendet werden.
 ExportAccountingSourceDocHelp2=Um Ihre Journale zu exportieren, verwenden Sie den Menüeintrag %s - %s.
 VueByAccountAccounting=Ansicht nach Buchhaltungskonto
 VueBySubAccountAccounting=Ansicht nach Buchhaltungsunterkonto
@@ -56,7 +56,7 @@ VueBySubAccountAccounting=Ansicht nach Buchhaltungsunterkonto
 MainAccountForCustomersNotDefined=Standardkonto für Kunden im Setup nicht definiert
 MainAccountForSuppliersNotDefined=Standardkonto für Lieferanten die nicht im Setup definiert sind
 MainAccountForUsersNotDefined=Standardkonto für Benutzer ist im Setup nicht definiert
-MainAccountForVatPaymentNotDefined=Standardkonto für MWSt Zahlungen ist im Setup nicht definiert
+MainAccountForVatPaymentNotDefined=Standardkonto für MwSt.-Zahlungen ist im Setup nicht definiert
 MainAccountForSubscriptionPaymentNotDefined=Standardkonto für wiederkehrende Zahlungen ist im Setup nicht definiert
 
 AccountancyArea=Bereich Buchhaltung
@@ -286,7 +286,7 @@ ValidateMovements=Bewegungen validieren
 DescValidateMovements=Jegliche Änderung oder Löschung des Schreibens, Beschriftens und Löschens ist untersagt. Alle Eingaben für eine Übung müssen validiert werden, da sonst ein Abschluss nicht möglich ist
 
 ValidateHistory=automatisch zuordnen
-AutomaticBindingDone=automatische Zuordnung erledigt
+AutomaticBindingDone=Automatische Zuordnungen durchgeführt (%s) - Automatische Zuordnung für einige Datensätze nicht möglich (%s)
 
 ErrorAccountancyCodeIsAlreadyUse=Fehler, Sie können dieses Buchhaltungskonto nicht löschen, da es benutzt wird.
 MvtNotCorrectlyBalanced=Der Saldo der Buchung ist nicht ausgeglichen. Haben = %s. Soll = %s
@@ -387,7 +387,8 @@ SaleExport=Verkauf Export (ausserhalb EWG)
 SaleEEC=Verkauf in EU/EWG
 SaleEECWithVAT=Verkauf in der EU mit Mehrwertsteuer (nicht null), und daher anzunehmen ist, dass es sich NICHT um einen innergemeinschaftlichen Verkauf handelt und das vorgeschlagene Konto daher das Standardproduktkonto ist.
 SaleEECWithoutVATNumber=Verkauf in der EU ohne USt., aber ohne dass die erforderliche USt.-ID des Geschäftspartners hinterlegt ist. Es wird stattdessen auf das Produktkonto für Standardverkäufe zurückgegriffen. Bei Bedarf kann die USt.-ID des Geschäftspartners festgelegt oder die Einstellung für das Produktkonto geändert werden.
-
+ForbiddenTransactionAlreadyExported=Unzulässig: Die Transaktion wurde bereits validiert und/oder exportiert.
+ForbiddenTransactionAlreadyValidated=Unzulässig: Die Transaktion wurde bereits validiert.
 ## Dictionary
 Range=Bereich von Sachkonten
 Calculated=berechnet
@@ -404,6 +405,7 @@ NoJournalDefined=Kein Journal definiert
 Binded=kontierte Positionen
 ToBind=unkontierte Positionen
 UseMenuToSetBindindManualy=Zeilen noch nicht zugeordnet, verwende das Menu <a href="%s">%s </a>um die Zuordnung manuell durchzuführen
+SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Dieses Modul ist leider nicht mit der experimentellen Funktion von Situationsrechnungen kompatibel
 
 ## Import
 ImportAccountingEntries=Buchaltungseinträge

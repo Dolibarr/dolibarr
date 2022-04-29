@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2007-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2020 Gauthier VERDOL <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2020      Gauthier VERDOL <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -108,11 +108,11 @@ $arrayfields = array();
 foreach ($object->fields as $key => $val) {
 	// If $val['visible']==0, then we never show the field
 	if (!empty($val['visible'])) {
-		$visible = (int) dol_eval($val['visible'], 1);
+		$visible = (int) dol_eval($val['visible'], 1, 1, '1');
 		$arrayfields['t.'.$key] = array(
 			'label'=>$val['label'],
 			'checked'=>(($visible < 0) ? 0 : 1),
-			'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1)),
+			'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1, 1, '1')),
 			'position'=>$val['position'],
 			'help' => empty($val['help']) ? '' : $val['help']
 		);
@@ -120,7 +120,7 @@ foreach ($object->fields as $key => $val) {
 }
 
 $arrayfields['wug.fk_usergroup'] = array(
-	'label'=>$langs->trans('Groups'),
+	'label'=>$langs->trans('UserGroups'),
 	'checked'=>(($visible < 0) ? 0 : 1),
 	'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1)),
 	'position'=>1000,
@@ -130,7 +130,7 @@ $arrayfields['wug.fk_usergroup'] = array(
 $arrayfields['wr.fk_resource'] = array(
 	'label'=>$langs->trans('Resources'),
 	'checked'=>(($visible < 0) ? 0 : 1),
-	'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1)),
+	'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1, 1, '1')),
 	'position'=>1001,
 	'help' => empty($val['help']) ? '' : $val['help']
 );
@@ -633,25 +633,39 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 
 	if (!empty($arrayfields['wug.fk_usergroup']['checked'])) {
 		$toprint = array();
+		$cssforli = '';
+		if (count($object->usergroups) >= 4) {
+			$cssforli = 'tdoverflowmax60';
+		} elseif (count($object->usergroups) >= 2) {
+			$cssforli = 'tdoverflowmax80';
+		}
 		foreach ($object->usergroups as $id_group) {
 			$g = new UserGroup($db);
 			$g->fetch($id_group);
-			$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #bbb">' . $g->getNomUrl(1) . '</li>';
+			$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories'.($cssforli ? ' '.$cssforli : '').'" style="background: #bbb">' . $g->getNomUrl(1, '', 0, 'categtextwhite') . '</li>';
 		}
+
 		print '<td>';
-		print '<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">' . implode(' ', $toprint) . '</ul></div>';
+		print '<div class="select2-container-multi-dolibarr"><ul class="select2-choices-dolibarr">' . implode(' ', $toprint) . '</ul></div>';
 		print '</td>';
 	}
 
 	if (!empty($arrayfields['wr.fk_resource']['checked'])) {
 		$toprint = array();
+		$cssforli = '';
+		if (count($object->resources) >= 4) {
+			$cssforli = 'tdoverflowmax60';
+		} elseif (count($object->resources) >= 2) {
+			$cssforli = 'tdoverflowmax80';
+		}
 		foreach ($object->resources as $id_resource) {
 			$r = new Dolresource($db);
 			$r->fetch($id_resource);
-			$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #bbb">' . $r->getNomUrl(1) . '</li>';
+			$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories'.($cssforli ? ' '.$cssforli : '').'" style="background: #bbb">' . $r->getNomUrl(1, '', '', 0, 'categtextwhite') . '</li>';
 		}
+
 		print '<td>';
-		print '<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">' . implode(' ', $toprint) . '</ul></div>';
+		print '<div class="select2-container-multi-dolibarr"><ul class="select2-choices-dolibarr">' . implode(' ', $toprint) . '</ul></div>';
 		print '</td>';
 	}
 

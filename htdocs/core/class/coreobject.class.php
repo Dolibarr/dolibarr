@@ -183,7 +183,7 @@ class CoreObject extends CommonObject
 
 				$this->{$className} = array();
 
-				$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX.$childTable." WHERE ".$this->fk_element." = ".((int) $this->id);
+				$sql = "SELECT rowid FROM ".$this->db->prefix().$childTable." WHERE ".$this->fk_element." = ".((int) $this->id);
 				$res = $this->db->query($sql);
 
 				if ($res) {
@@ -245,7 +245,7 @@ class CoreObject extends CommonObject
 
 		$res = $this->updateCommon($user);
 		if ($res) {
-			$result = $this->call_trigger(strtoupper($this->element).'_UPDATE', $user);
+			$result = $this->call_trigger(strtoupper($this->element).'_MODIFY', $user);
 			if ($result < 0) {
 				$error++;
 			} else {

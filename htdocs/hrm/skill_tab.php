@@ -123,6 +123,7 @@ if (empty($reshook)) {
 				if ($ret < 0) setEventMessage($skillAdded->error, 'errors');
 				//else unset($TSkillsToAdd);
 			}
+			if ($ret > 0) setEventMessage($langs->trans("SaveAddSkill"));
 		}
 	} elseif ($action == 'saveSkill') {
 		if (!empty($TNote)) {
@@ -130,15 +131,19 @@ if (empty($reshook)) {
 				$TSkills = $skill->fetchAll('ASC', 't.rowid', 0, 0, array('customsql' => 'fk_object=' . ((int) $id) . " AND objecttype='" . $db->escape($objecttype) . "' AND fk_skill = " . ((int) $skillId)));
 				if (is_array($TSkills) && !empty($TSkills)) {
 					foreach ($TSkills as $tmpObj) {
-						$tmpObj->rank = $rank;
+						$tmpObj->rankorder = $rank;
 						$tmpObj->update($user);
 					}
 				}
 			}
+			setEventMessage($langs->trans("SaveLevelSkill"));
+			header("Location: " . dol_buildpath('/hrm/skill_tab.php', 1) . '?id=' . $id. '&objecttype=job');
+			exit;
 		}
 	} elseif ($action == 'confirm_deleteskill' && $confirm == 'yes') {
 		$skillToDelete = new SkillRank($db);
 		$ret = $skillToDelete->fetch($lineid);
+		setEventMessage($langs->trans("DeleteSkill"));
 		if ($ret > 0) {
 			$skillToDelete->delete($user);
 		}
@@ -305,7 +310,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			print '<td>';
 			print $sk->description;
 			print '</td><td class="linecolrank">';
-			print displayRankInfos($skillElement->rank, $skillElement->fk_skill, 'TNote', $objecttype == 'job' && $permissiontoadd ? 'edit' : 'view');
+			print displayRankInfos($skillElement->rankorder, $skillElement->fk_skill, 'TNote', $objecttype == 'job' && $permissiontoadd ? 'edit' : 'view');
 			print '</td>';
 			if ($objecttype != 'user' && $permissiontoadd) {
 				print '<td class="linecoledit"></td>';

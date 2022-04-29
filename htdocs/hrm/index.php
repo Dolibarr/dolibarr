@@ -34,17 +34,17 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
-if ($conf->deplacement->enabled) {
+if (!empty($conf->deplacement->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacement.class.php';
 }
-if ($conf->expensereport->enabled) {
+if (!empty($conf->expensereport->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 }
-if ($conf->recruitment->enabled) {
+if (!empty($conf->recruitment->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/recruitment/class/recruitmentcandidature.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/recruitment/class/recruitmentjobposition.class.php';
 }
-if ($conf->holiday->enabled) {
+if (!empty($conf->holiday->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 }
 
@@ -52,7 +52,7 @@ $hookmanager = new HookManager($db);
 $hookmanager->initHooks('hrmindex');
 
 // Load translation files required by the page
-$langs->loadLangs(array('users', 'holidays', 'trips', 'boxes'));
+$langs->loadLangs(array('users', 'holiday', 'trips', 'boxes'));
 
 $socid = GETPOST("socid", "int");
 
@@ -223,6 +223,7 @@ if (!empty($conf->holiday->enabled) && $user->rights->holiday->read) {
 				$holidaystatic->id = $obj->rowid;
 				$holidaystatic->ref = $obj->ref;
 				$holidaystatic->statut = $obj->status;
+				$holidaystatic->date_debut = $db->jdate($obj->date_start);
 
 				$userstatic->id = $obj->uid;
 				$userstatic->lastname = $obj->lastname;
@@ -234,8 +235,10 @@ if (!empty($conf->holiday->enabled) && $user->rights->holiday->read) {
 
 				print '<tr class="oddeven">';
 				print '<td class="nowraponall">'.$holidaystatic->getNomUrl(1).'</td>';
-				print '<td class="tdoverflowmax125">'.$userstatic->getNomUrl(-1, 'leave').'</td>';
-				print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($langs->trans($typeleaves[$obj->fk_type]['code'])).'">'.dol_escape_htmltag($langs->trans($typeleaves[$obj->fk_type]['code'])).'</td>';
+				print '<td class="tdoverflowmax100">'.$userstatic->getNomUrl(-1, 'leave').'</td>';
+
+				$leavecode = empty($typeleaves[$obj->fk_type]) ? 'Undefined' : $typeleaves[$obj->fk_type]['code'];
+				print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($langs->trans($leavecode)).'">'.dol_escape_htmltag($langs->trans($leavecode)).'</td>';
 
 				$starthalfday = ($obj->halfday == -1 || $obj->halfday == 2) ? 'afternoon' : 'morning';
 				$endhalfday = ($obj->halfday == 1 || $obj->halfday == 2) ? 'morning' : 'afternoon';
@@ -243,7 +246,7 @@ if (!empty($conf->holiday->enabled) && $user->rights->holiday->read) {
 				print '<td>'.dol_print_date($db->jdate($obj->date_start), 'day').' <span class="opacitymedium">'.$langs->trans($listhalfday[$starthalfday]).'</span>';
 				print '<td>'.dol_print_date($db->jdate($obj->date_end), 'day').' <span class="opacitymedium">'.$langs->trans($listhalfday[$endhalfday]).'</span>';
 				print '<td class="right">'.dol_print_date($db->jdate($obj->dm), 'day').'</td>';
-				print '<td class="right nowrap" width="16">'.$holidaystatic->LibStatut($obj->status, 3).'</td>';
+				print '<td class="right nowrap" width="16">'.$holidaystatic->LibStatut($obj->status, 3, $holidaystatic->date_debut).'</td>';
 				print '</tr>';
 
 				$i++;

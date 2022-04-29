@@ -2,6 +2,7 @@
 /* Copyright (C) 2010-2011      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2010-2014 		Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2015           Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2022           Ferran Marcet        <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -132,7 +133,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 		$this->db = $db;
 		$this->name = "standard";
 		$this->description = $langs->trans('DocumentModelStandardPDF');
-		$this->update_main_doc_field = 1; // Save the name of generated file as the main doc when generating a doc with this template
+		$this->update_main_doc_field = 0;	// Save the name of generated file as the main doc when generating a doc with this template
 
 		// Page size for A4 format
 		$this->type = 'pdf';
@@ -168,6 +169,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 		}
 
 		$this->tva = array();
+		$this->tva_array = array();
 		$this->localtax1 = array();
 		$this->localtax2 = array();
 		$this->atleastoneratenotnull = 0;
@@ -317,8 +319,8 @@ class pdf_standard extends ModelePDFSuppliersPayments
 
 				$tab_top = 90;
 				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD) ? 42 : 10);
-				$tab_height = 130;
-				$tab_height_newpage = 150;
+
+				$tab_height = $this->page_hauteur - $tab_top - $heightforfooter - $heightforfreetext;
 
 				// Incoterm
 				$height_incoterms = 0;
@@ -814,7 +816,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 			$pdf->MultiCell($widthrecbox, 4, $carac_client, 0, 'L');
 
 			// Show default IBAN account
-			$sql = "SELECT iban_prefix";
+			$sql = "SELECT iban_prefix as iban";
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe_rib as rib";
 			$sql .= " WHERE fk_soc = ".($object->thirdparty->id);
 			$sql .= " AND rib.default_rib = 1";
@@ -823,7 +825,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$obj = $this->db->fetch_object($resql);
-				$iban = $obj->iban_prefix;
+				$iban = $obj->iban;
 			}
 
 			if (!empty($iban)) {

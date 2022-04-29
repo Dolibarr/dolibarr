@@ -479,6 +479,8 @@ class Project extends CommonObject
 			return -3;
 		}
 
+		$this->entity = ((isset($this->entity) && is_numeric($this->entity)) ? $this->entity : $conf->entity);
+
 		if (dol_strlen(trim($this->ref)) > 0) {
 			$this->db->begin();
 
@@ -507,6 +509,7 @@ class Project extends CommonObject
 			$sql .= ", accept_booth_suggestions = ".($this->accept_booth_suggestions ? 1 : 0);
 			$sql .= ", price_registration = ".(strcmp($this->price_registration, '') ? price2num($this->price_registration) : "null");
 			$sql .= ", price_booth = ".(strcmp($this->price_booth, '') ? price2num($this->price_booth) : "null");
+			$sql .= ", entity = ".((int) $this->entity);
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(get_class($this)."::update", LOG_DEBUG);
@@ -747,7 +750,7 @@ class Project extends CommonObject
 			'fk_projet' => $projectkey,
 			'ids' => $ids,
 		);
-		$reshook = $hookmanager->executeHooks('getElementList', $parameters, $object, $action);
+		$reshook = $hookmanager->executeHooks('getElementList', $parameters);
 		if ($reshook > 0) {
 			$sql = $hookmanager->resPrint;
 		} else {
@@ -1264,7 +1267,7 @@ class Project extends CommonObject
 
 		global $action;
 		$hookmanager->initHooks(array('projectdao'));
-		$parameters = array('id'=>$this->id, 'getnomurl'=>$result);
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;

@@ -258,6 +258,10 @@ PassEncoding=ການເຂົ້າລະຫັດລັບ
 PermissionsAdd=ເພີ່ມສິດອະນຸຍາດແລ້ວ
 PermissionsDelete=ລຶບການອະນຸຍາດອອກແລ້ວ
 YourPasswordMustHaveAtLeastXChars=ລະຫັດຜ່ານຂອງທ່ານຕ້ອງມີຕົວອັກສອນຢ່າງ ໜ້ອຍ <strong> %s </strong>
+PasswordNeedAtLeastXUpperCaseChars=The password need at least <strong>%s</strong> upper case chars
+PasswordNeedAtLeastXDigitChars=The password need at least <strong>%s</strong> numeric chars
+PasswordNeedAtLeastXSpecialChars=The password need at least <strong>%s</strong> special chars
+PasswordNeedNoXConsecutiveChars=The password must not have <strong>%s</strong> consecutive similar chars
 YourPasswordHasBeenReset=ຣີເຊັດລະຫັດຜ່ານຂອງທ່ານ ສຳ ເລັດແລ້ວ
 ApplicantIpAddress=ທີ່ຢູ່ IP ຂອງຜູ້ສະັກ
 SMSSentTo=ສົ່ງ SMS ຫາ %s
@@ -268,6 +272,7 @@ ProjectCreatedByEmailCollector=ໂຄງການສ້າງຂຶ້ນໂດ�
 TicketCreatedByEmailCollector=ປີ້ສ້າງໂດຍຜູ້ເກັບອີເມລ from ຈາກອີເມລ MS MSGID %s
 OpeningHoursFormatDesc=ໃຊ້ a - ເພື່ອແຍກຊົ່ວໂມງເປີດແລະປິດ. <br> ໃຊ້ຍະຫວ່າງເພື່ອປ້ອນໄລຍະຕ່າງ different. <br> ຕົວຢ່າງ: 8-12 14-18
 SuffixSessionName=ຄຳ ຕໍ່ທ້າຍ ສຳ ລັບຊື່ເຊດຊັນ
+LoginWith=Login with %s
 
 ##### Export #####
 ExportsArea=ເຂດສົ່ງອອກ

@@ -125,4 +125,26 @@ class modIntracommreport extends DolibarrModules
 		// Exports
 		$r = 1;
 	}
+
+	/**
+	 *		Function called when module is enabled.
+	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+	 *		It also creates data directories
+	 *
+	 *      @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *      @return     int             	1 if OK, 0 if KO
+	 */
+	public function init($options = '')
+	{
+		global $conf;
+
+		$result = $this->_load_tables('/install/mysql/tables/', 'intracommreport');
+		if ($result < 0) {
+			return -1; // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
+		}
+
+		$sql = array();
+
+		return $this->_init($sql, $options);
+	}
 }

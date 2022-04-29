@@ -81,7 +81,7 @@ if (!$error && $massaction == 'confirm_presend') {
 	$listofobjectref = array();
 	$contactidtosend = array();
 	$attachedfilesThirdpartyObj = array();
-	$oneemailperrecipient = (GETPOST('oneemailperrecipient') == 'on' ? 1 : 0);
+	$oneemailperrecipient = (GETPOST('oneemailperrecipient', 'int') ? 1 : 0);
 
 	if (!$error) {
 		$thirdparty = new Societe($db);
@@ -143,7 +143,7 @@ if (!$error && $massaction == 'confirm_presend') {
 		$massaction = 'presend';
 	}
 
-	$receiver = $_POST['receiver'];
+	$receiver = GETPOST('receiver', 'alphawithlgt');
 	if (!is_array($receiver)) {
 		if (empty($receiver) || $receiver == '-1') {
 			$receiver = array();
@@ -181,7 +181,7 @@ if (!$error && $massaction == 'confirm_presend') {
 			$tmparray = array();
 			if (trim($_POST['sendto'])) {
 				// Recipients are provided into free text
-				$tmparray[] = trim($_POST['sendto']);
+				$tmparray[] = trim(GETPOST('sendto', 'alphawithlgt'));
 			}
 			if (count($receiver) > 0) {
 				foreach ($receiver as $key => $val) {
@@ -197,7 +197,7 @@ if (!$error && $massaction == 'confirm_presend') {
 			$sendto = implode(',', $tmparray);
 
 			// Define $sendtocc
-			$receivercc = $_POST['receivercc'];
+			$receivercc = GETPOST('receivercc', 'alphawithlgt');
 			if (!is_array($receivercc)) {
 				if ($receivercc == '-1') {
 					$receivercc = array();
@@ -207,7 +207,7 @@ if (!$error && $massaction == 'confirm_presend') {
 			}
 			$tmparray = array();
 			if (trim($_POST['sendtocc'])) {
-				$tmparray[] = trim($_POST['sendtocc']);
+				$tmparray[] = trim(GETPOST('sendtocc', 'alphawithlgt'));
 			}
 			if (count($receivercc) > 0) {
 				foreach ($receivercc as $key => $val) {
@@ -298,7 +298,7 @@ if (!$error && $massaction == 'confirm_presend') {
 					continue;
 				}
 
-				if ($_POST['addmaindocfile']) {
+				if (GETPOST('addmaindocfile')) {
 					// TODO Use future field $objectobj->fullpathdoc to know where is stored default file
 					// TODO If not defined, use $objectobj->model_pdf (or defaut invoice config) to know what is template to use to regenerate doc.
 					$filename = dol_sanitizeFileName($objectobj->ref).'.pdf';
@@ -347,7 +347,7 @@ if (!$error && $massaction == 'confirm_presend') {
 				$reg = array();
 				$fromtype = GETPOST('fromtype');
 				if ($fromtype === 'user') {
-					$from = $user->getFullName($langs).' <'.$user->email.'>';
+					$from = dol_string_nospecial($user->getFullName($langs), ' ', array(",")).' <'.$user->email.'>';
 				} elseif ($fromtype === 'company') {
 					$from = $conf->global->MAIN_INFO_SOCIETE_NOM.' <'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'>';
 				} elseif (preg_match('/user_aliases_(\d+)/', $fromtype, $reg)) {
@@ -361,10 +361,10 @@ if (!$error && $massaction == 'confirm_presend') {
 					$resql = $db->query($sql);
 					$obj = $db->fetch_object($resql);
 					if ($obj) {
-						$from = $obj->label.' <'.$obj->email.'>';
+						$from = dol_string_nospecial($obj->label, ' ', array(",")).' <'.$obj->email.'>';
 					}
 				} else {
-					$from = $_POST['fromname'].' <'.$_POST['frommail'].'>';
+					$from = GETPOST('fromname').' <'.GETPOST('frommail').'>';
 				}
 
 				$replyto = $from;
@@ -635,6 +635,7 @@ if ($massaction == 'confirm_createbills') {   // Create bills from orders.
 
 	$TFact = array();
 	$TFactThird = array();
+	$TFactThirdNbLines = array();
 
 	$nb_bills_created = 0;
 	$lastid= 0;
@@ -656,9 +657,11 @@ if ($massaction == 'confirm_createbills') {   // Create bills from orders.
 		} else {
 			// If we want one invoice per order or if there is no first invoice yet for this thirdparty.
 			$objecttmp->socid = $cmd->socid;
+			$objecttmp->thirdparty = $cmd->thirdparty;
+
 			$objecttmp->type = $objecttmp::TYPE_STANDARD;
-			$objecttmp->cond_reglement_id	= ($cmd->cond_reglement_id || $cmd->thirdparty->cond_reglement_id);
-			$objecttmp->mode_reglement_id	= ($cmd->mode_reglement_id || $cmd->thirdparty->mode_reglement_id);
+			$objecttmp->cond_reglement_id = !empty($cmd->cond_reglement_id) ? $cmd->cond_reglement_id : $cmd->thirdparty->cond_reglement_id;
+			$objecttmp->mode_reglement_id = !empty($cmd->mode_reglement_id) ? $cmd->mode_reglement_id : $cmd->thirdparty->mode_reglement_id;
 
 			$objecttmp->fk_project = $cmd->fk_project;
 			$objecttmp->multicurrency_code = $cmd->multicurrency_code;
@@ -685,6 +688,7 @@ if ($massaction == 'confirm_createbills') {   // Create bills from orders.
 				$lastid = $objecttmp->id;
 
 				$TFactThird[$cmd->socid] = $objecttmp;
+				$TFactThirdNbLines[$cmd->socid] = 0; //init nblines to have lines ordered by expedition and rang
 			} else {
 				$langs->load("errors");
 				$errors[] = $cmd->ref.' : '.$langs->trans($objecttmp->error);
@@ -774,6 +778,11 @@ if ($massaction == 'confirm_createbills') {   // Create bills from orders.
 
 						$objecttmp->context['createfromclone'];
 
+						$rang = $lines[$i]->rang;
+						//there may already be rows from previous orders
+						if (!empty($createbills_onebythird))
+							$rang = $TFactThirdNbLines[$cmd->socid];
+
 						$result = $objecttmp->addline(
 							$desc,
 							$lines[$i]->subprice,
@@ -791,7 +800,7 @@ if ($massaction == 'confirm_createbills') {   // Create bills from orders.
 							'HT',
 							0,
 							$product_type,
-							$lines[$i]->rang,
+							$rang,
 							$lines[$i]->special_code,
 							$objecttmp->origin,
 							$lines[$i]->rowid,
@@ -806,6 +815,8 @@ if ($massaction == 'confirm_createbills') {   // Create bills from orders.
 						);
 						if ($result > 0) {
 							$lineid = $result;
+							if (!empty($createbills_onebythird)) //increment rang to keep order
+								$TFactThirdNbLines[$rcp->socid]++;
 						} else {
 							$lineid = 0;
 							$error++;
@@ -1209,6 +1220,26 @@ if (!$error && $massaction == 'validate' && $permissiontoadd) {
 		setEventMessages($langs->trans('ErrorMassValidationNotAllowedWhenStockIncreaseOnAction'), null, 'errors');
 		$error++;
 	}
+	if ($objecttmp->element == 'facture') {
+		if (!empty($toselect) && !empty($conf->global->INVOICE_CHECK_POSTERIOR_DATE)) {
+			// order $toselect by date
+			$sql  = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture";
+			$sql .= " WHERE rowid IN (".$db->sanitize(implode(",", $toselect)).")";
+			$sql .= " ORDER BY datef";
+
+			$resql = $db->query($sql);
+			if ($resql) {
+				$toselectnew = [];
+				while ( !empty($arr = $db->fetch_row($resql))) {
+					$toselectnew[] = $arr[0];
+				}
+				$toselect = (empty($toselectnew)) ? $toselect : $toselectnew;
+			} else {
+				dol_print_error($db);
+				$error++;
+			}
+		}
+	}
 	if (!$error) {
 		$db->begin();
 
@@ -1246,9 +1277,9 @@ if (!$error && $massaction == 'validate' && $permissiontoadd) {
 						$model = $objecttmp->model_pdf;
 						$ret = $objecttmp->fetch($objecttmp->id); // Reload to get new records
 						// To be sure vars is defined
-						$hidedetails = !empty($hidedetails) ? $hidedetails : 0;
-						$hidedesc = !empty($hidedesc) ? $hidedesc : 0;
-						$hideref = !empty($hideref) ? $hideref : 0;
+						$hidedetails = !empty($hidedetails) ? $hidedetails : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0);
+						$hidedesc = !empty($hidedesc) ? $hidedesc : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0);
+						$hideref = !empty($hideref) ? $hideref : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0);
 						$moreparams = !empty($moreparams) ? $moreparams : null;
 
 						$result = $objecttmp->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
@@ -1306,6 +1337,12 @@ if (!$error && ($massaction == 'delete' || ($action == 'delete' && $confirm == '
 				continue;
 			}
 
+			if ($objectclass == 'Holiday' && ! in_array($objecttmp->statut, array(Holiday::STATUS_DRAFT, Holiday::STATUS_CANCELED, Holiday::STATUS_REFUSED))) {
+				$nbignored++;
+				$resaction .= '<div class="error">'.$langs->trans('ErrorLeaveRequestMustBeDraftCanceledOrRefusedToBeDeleted', $objecttmp->ref).'</div><br>';
+				continue;
+			}
+
 			if ($objectclass == "Task" && $objecttmp->hasChildren() > 0) {
 				$sql = "UPDATE ".MAIN_DB_PREFIX."projet_task SET fk_task_parent = 0 WHERE fk_task_parent = ".((int) $objecttmp->id);
 				$res = $db->query($sql);
@@ -1342,8 +1379,10 @@ if (!$error && ($massaction == 'delete' || ($action == 'delete' && $confirm == '
 		// Message for elements well deleted
 		if ($nbok > 1) {
 			setEventMessages($langs->trans("RecordsDeleted", $nbok), null, 'mesgs');
-		} elseif ($nbok == 1) {
-			setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
+		} elseif ($nbok > 0) {
+			setEventMessages($langs->trans("RecordDeleted", $nbok), null, 'mesgs');
+		} else {
+			setEventMessages($langs->trans("NoRecordDeleted"), null, 'mesgs');
 		}
 
 		// Message for elements which can't be deleted
@@ -1389,13 +1428,13 @@ if (!$error && $massaction == 'generate_doc' && $permissiontoread) {
 
 			// To be sure vars is defined
 			if (empty($hidedetails)) {
-				$hidedetails = 0;
+				$hidedetails = (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0);
 			}
 			if (empty($hidedesc)) {
-				$hidedesc = 0;
+				$hidedesc = (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0);
 			}
 			if (empty($hideref)) {
-				$hideref = 0;
+				$hideref = (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0);
 			}
 			if (empty($moreparams)) {
 				$moreparams = null;
@@ -1563,6 +1602,44 @@ if (!$error && ($massaction == 'disable' || ($action == 'disable' && $confirm ==
 	}
 }
 
+if (!$error && ($massaction == 'affectcommercial' || ($action == 'affectcommercial' && $confirm == 'yes')) && $permissiontoadd) {
+	$db->begin();
+
+	$objecttmp = new $objectclass($db);
+	$nbok = 0;
+
+	foreach ($toselect as $toselectid) {
+		$result = $objecttmp->fetch($toselectid);
+		if ($result>0) {
+			if (in_array($objecttmp->element, array('societe'))) {
+				$result = $objecttmp->setSalesRep(GETPOST("commercial", "alpha"));
+			}
+			if ($result <= 0) {
+				setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+				$error++;
+				break;
+			} else {
+				$nbok++;
+			}
+		} else {
+			setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+			$error++;
+			break;
+		}
+	}
+
+	if (!$error) {
+		if ($nbok > 1) {
+			setEventMessages($langs->trans("CommercialsAffected", $nbok), null, 'mesgs');
+		} else {
+			setEventMessages($langs->trans("CommercialAffected"), null, 'mesgs');
+		}
+		$db->commit();
+	} else {
+		$db->rollback();
+	}
+}
+
 // Approve for leave only
 if (!$error && ($massaction == 'approveleave' || ($action == 'approveleave' && $confirm == 'yes')) && $permissiontoapprove) {
 	$db->begin();
@@ -1571,17 +1648,20 @@ if (!$error && ($massaction == 'approveleave' || ($action == 'approveleave' && $
 	$nbok = 0;
 	foreach ($toselect as $toselectid) {
 		$result = $objecttmp->fetch($toselectid);
-		if ($result>0) {
-			if ($objecttmp->statut == Holiday::STATUS_VALIDATED && $user->id == $objecttmp->fk_validator) {
+		if ($result > 0) {
+			if ($objecttmp->statut != Holiday::STATUS_VALIDATED) {
+				setEventMessages($langs->trans('StatusOfRefMustBe', $objecttmp->ref, $langs->transnoentitiesnoconv('Validated')), null, 'warnings');
+				continue;
+			}
+			if ($user->id == $objecttmp->fk_validator) {
 				$objecttmp->oldcopy = dol_clone($objecttmp);
 
 				$objecttmp->date_valid = dol_now();
 				$objecttmp->fk_user_valid = $user->id;
 				$objecttmp->statut = Holiday::STATUS_APPROVED;
 
-				$db->begin();
-
 				$verif = $objecttmp->approve($user);
+
 				if ($verif <= 0) {
 					setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
 					$error++;
@@ -1656,14 +1736,9 @@ if (!$error && ($massaction == 'approveleave' || ($action == 'approveleave' && $
 						}
 					}
 				}
-
-				if (!$error) {
-					$db->commit();
-					$nbok++;
-				} else {
-					$db->rollback();
-					$action = '';
-				}
+			} else {
+				$langs->load("errors");
+				setEventMessages($langs->trans('ErrorNotApproverForHoliday', $objecttmp->ref), null, 'errors');
 			}
 		} else {
 			setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
@@ -1675,7 +1750,7 @@ if (!$error && ($massaction == 'approveleave' || ($action == 'approveleave' && $
 	if (!$error) {
 		if ($nbok > 1) {
 			setEventMessages($langs->trans("RecordsApproved", $nbok), null, 'mesgs');
-		} else {
+		} elseif ($nbok == 1) {
 			setEventMessages($langs->trans("RecordAproved"), null, 'mesgs');
 		}
 		$db->commit();

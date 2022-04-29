@@ -350,8 +350,8 @@ function getSupplierInvoicesForThirdParty($authentication, $idthirdparty)
 	if (!$error) {
 		$linesinvoice = array();
 
-		$sql .= "SELECT f.rowid as facid";
-		$sql .= " FROM '.MAIN_DB_PREFIX.'facture_fourn as f";
+		$sql = "SELECT f.rowid as facid";
+		$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
 		$sql .= " WHERE f.entity = ".((int) $conf->entity);
 		if ($idthirdparty != 'all') {
 			$sql .= " AND f.fk_soc = ".((int) $idthirdparty);

@@ -68,8 +68,8 @@ class mod_myobject_advanced extends ModeleNumRefMyObject
 		$texte .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 		$texte .= '<input type="hidden" name="token" value="'.newToken().'">';
 		$texte .= '<input type="hidden" name="action" value="updateMask">';
-		$texte .= '<input type="hidden" name="maskconstBom" value="MYMODULE_MYOBJECT_ADVANCED_MASK">';
-		$texte .= '<table class="nobordernopadding" width="100%">';
+		$texte .= '<input type="hidden" name="maskconst" value="MYMODULE_MYOBJECT_ADVANCED_MASK">';
+		$texte .= '<table class="nobordernopadding centpercent">';
 
 		$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("MyObject"), $langs->transnoentities("MyObject"));
 		$tooltip .= $langs->trans("GenericMaskCodes2");
@@ -79,10 +79,8 @@ class mod_myobject_advanced extends ModeleNumRefMyObject
 
 		// Parametrage du prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskMyObject" value="'.$conf->global->MYMODULE_MYOBJECT_ADVANCED_MASK.'">', $tooltip, 1, 1).'</td>';
-
-		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit" name="Button"value="'.$langs->trans("Modify").'"></td>';
-
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskvalue" value="'.$conf->global->MYMODULE_MYOBJECT_ADVANCED_MASK.'">', $tooltip, 1, 1).'</td>';
+		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'" name="Button"></td>';
 		$texte .= '</tr>';
 
 		$texte .= '</table>';

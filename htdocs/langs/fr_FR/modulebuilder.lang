@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - loan
-ModuleBuilderDesc=Cet outil ne doit être utilisé que par des utilisateurs expérimentés ou des développeurs. Il vous fournit des utilitaires pour construire ou éditer votre propre module. La documentation relative au <a href="%s" target="_blank"> développement manuel est ici </a>.
+ModuleBuilderDesc=Cet outil ne doit être utilisé que par des utilisateurs ou des développeurs expérimentés. Il fournit des utilitaires pour construire ou éditer votre propre module. La documentation pour le développement manuel alternatif <a href="%s" target="_blank" rel="noopener noreferrer">est ici</a> .
 EnterNameOfModuleDesc=Saisissez le nom du module/application à créer, sans espaces. Utilisez les majuscules pour identifier les mots (par exemple : MonModule, BoutiqueECommerce,...)
 EnterNameOfObjectDesc=Entrez le nom de l'objet à créer sans espaces. Utilisez les majuscules pour séparer des mots (par exemple: MyObject, Student, Teacher ...). Le fichier de classe CRUD, mais aussi le fichier API, les pages à afficher / ajouter / éditer / supprimer des objets et des fichiers SQL seront générés.
 ModuleBuilderDesc2=Chemin ou les modules sont générés/modifiés (premier répertoire pour les modules externes défini dans %s):<strong>%s</strong>
@@ -98,7 +98,7 @@ MenusDefDescTooltip=Les menus fournis par votre module / application sont défin
 DictionariesDefDescTooltip=Les dictionnaires fournis par votre module/application sont définis dans le tableau <strong>$this->dictionaries</strong> dans le fichier descripteur de module. Vous pouvez modifier manuellement ce fichier ou utiliser l'éditeur intégré. <br><br> Remarque: une fois définis (et module réactivé), les dictionnaires sont également visibles dans la zone de configuration par les utilisateurs administrateurs sur %s.
 PermissionsDefDescTooltip=Les autorisations fournies par votre module / application sont définies dans le tableau <strong>$this->rights</strong> dans le fichier descripteur de module. Vous pouvez modifier manuellement ce fichier ou utiliser l'éditeur intégré. <br><br> Remarque: une fois définies (et le module réactivé), les autorisations sont visibles dans la configuration par défaut des autorisations %s.
 HooksDefDesc=Définissez dans la propriété <b> module_parts ['hooks'] </b>, dans le descripteur de module, le contexte des hooks à gérer (la liste des contextes peut être trouvée par une recherche sur '<b> initHooks (</b>' dans le code du noyau). <br> Editez le fichier hook pour ajouter le code de vos fonctions hookées (les fonctions hookables peuvent être trouvées par une recherche sur '<b> executeHooks </b>' dans le code core).
-TriggerDefDesc=Define in the trigger file the code that you want to execute when a business event external to your module is executed (events recorded by other modules).
+TriggerDefDesc=Définissez dans le fichier trigger le code que vous souhaitez exécuter lors de l'exécution d'un événement métier externe à votre module (événements déclenchés par d'autres modules).
 SeeIDsInUse=Voir les IDs utilisés dans votre installation
 SeeReservedIDsRangeHere=Voir la plage des ID réservés
 ToolkitForDevelopers=Boîte à outils pour développeurs Dolibarr
@@ -143,5 +143,5 @@ AsciiToHtmlConverter=Convertisseur Ascii en HTML
 AsciiToPdfConverter=Convertisseur Ascii en PDF
 TableNotEmptyDropCanceled=La table n’est pas vide. La suppression a été annulée.
 ModuleBuilderNotAllowed=Le module builder est activé mais son accès n'est pas autorisé pour votre utilisateur
-ImportExportProfiles=Importer et exporter des profils
+ImportExportProfiles=Profils d'import et d'export
 ValidateModBuilderDesc=Mettez 1 si ce champ doit être validé avec $this->validateField() ou 0 si la validation est requise

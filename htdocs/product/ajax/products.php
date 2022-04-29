@@ -47,11 +47,12 @@ if (empty($_GET['keysearch']) && !defined('NOREQUIREHTML')) {
 
 require '../../main.inc.php';
 
-$htmlname = GETPOST('htmlname', 'alpha');
+$htmlname = GETPOST('htmlname', 'aZ09');
 $socid = GETPOST('socid', 'int');
 $type = GETPOST('type', 'int');
 $mode = GETPOST('mode', 'int');
-$status = ((GETPOST('status', 'int') >= 0) ? GETPOST('status', 'int') : - 1);
+$status = ((GETPOST('status', 'int') >= 0) ? GETPOST('status', 'int') : - 1);	// status buy when mode = customer , status purchase when mode = supplier
+$status_purchase = ((GETPOST('status_purchase', 'int') >= 0) ? GETPOST('status_purchase', 'int') : - 1);	// status purchase when mode = customer
 $outjson = (GETPOST('outjson', 'int') ? GETPOST('outjson', 'int') : 0);
 $price_level = GETPOST('price_level', 'int');
 $action = GETPOST('action', 'aZ09');
@@ -73,7 +74,7 @@ restrictedArea($user, 'produit|service', 0, 'product&product');
 // print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 // print_r($_GET);
 
-if (!empty($action) && $action == 'fetch' && !empty($id)) {
+if ($action == 'fetch' && !empty($id)) {
 	// action='fetch' is used to get product information on a product. So when action='fetch', id must be the product id.
 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
@@ -242,7 +243,7 @@ if (!empty($action) && $action == 'fetch' && !empty($id)) {
 	// Filter on the product to search can be:
 	// Into an array with key $htmlname123 (we take first one found). Which page use this ?
 	// Into a var with name $htmlname can be 'prodid', 'productid', ...
-	$match = preg_grep('/('.$htmlname.'[0-9]+)/', array_keys($_GET));
+	$match = preg_grep('/('.preg_quote($htmlname, '/').'[0-9]+)/', array_keys($_GET));
 	sort($match);
 
 	$idprod = (empty($match[0]) ? '' : $match[0]);		// Take first key found into GET array with matching $htmlname123
@@ -260,7 +261,7 @@ if (!empty($action) && $action == 'fetch' && !empty($id)) {
 	}
 
 	if (empty($mode) || $mode == 1) {  // mode=1: customer
-		$arrayresult = $form->select_produits_list("", $htmlname, $type, 0, $price_level, $searchkey, $status, $finished, $outjson, $socid, '1', 0, '', $hidepriceinlabel, $warehouseStatus);
+		$arrayresult = $form->select_produits_list("", $htmlname, $type, 0, $price_level, $searchkey, $status, $finished, $outjson, $socid, '1', 0, '', $hidepriceinlabel, $warehouseStatus, $status_purchase);
 	} elseif ($mode == 2) {            // mode=2: supplier
 		$arrayresult = $form->select_produits_fournisseurs_list($socid, "", $htmlname, $type, "", $searchkey, $status, $outjson, 0, $alsoproductwithnosupplierprice);
 	}
