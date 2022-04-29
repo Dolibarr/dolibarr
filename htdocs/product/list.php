@@ -727,6 +727,7 @@ if ($resql) {
 	// List of mass actions available
 	$arrayofmassactions = array(
 		'generate_doc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("ReGeneratePDF"),
+		'edit_extrafields'=>img_picto('', 'edit', 'class="pictofixedwidth"').$langs->trans("Extrafields"),
 		//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 		//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 	);

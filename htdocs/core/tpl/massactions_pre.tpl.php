@@ -211,6 +211,31 @@ if ($massaction == 'presend') {
 	print dol_get_fiche_end();
 }
 
+if ($massaction == 'edit_extrafields') {
+
+	require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+	$elementtype = 'product';
+	/** @var CommonObject $objecttmp */
+	$extrafields = new ExtraFields($db);
+
+	$extrafields->fetch_name_optionals_label($elementtype);
+	$extrafields_list = $extrafields->attributes[$elementtype]['label'];
+
+	$formquestion = array();
+	if (!empty($extrafields_list)) {
+		$myParamExtra = $object->showOptionals($extrafields, 'create');
+
+		$formquestion[] = array(
+			'type' => 'other',
+			'value' => $object->showOptionals($extrafields, 'create')
+			);
+
+		print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmEditExtrafield"), $langs->trans("ConfirmEditExtrafieldQuestion", count($toselect)), "confirm_edit_value_extrafields", $formquestion, 1, 0, 200, 500, 1);
+	} else {
+		setEventMessage($langs->trans("noExtrafields"));
+	}
+}
+
 if ($massaction == 'preenable') {
 	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassEnabling"), $langs->trans("ConfirmMassEnablingQuestion", count($toselect)), "enable", null, 'yes', 0, 200, 500, 1);
 }
