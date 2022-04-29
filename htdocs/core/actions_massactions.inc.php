@@ -1602,56 +1602,29 @@ if (!$error && ($massaction == 'disable' || ($action == 'disable' && $confirm ==
 	}
 }
 
-if (!$error && $action == 'confirm_edit_value_extrafields' && $confirm == 'yes' && $permissiontoadd){
+if (!$error && $action == 'confirm_edit_value_extrafields' && $confirm == 'yes' && $permissiontoadd) {
 	$db->begin();
 
-	/** @var CommonObject $objecttmp */
-	$objecttmp = new $objectclass($db);
-
 	$nbok = 0;
-	$e = new ExtraFields($db);
-	$e->fetch_name_optionals_label($objecttmp->table_element);
 
+	$extrafieldKeyToUpdate = GETPOST('extrafield-key-yo-update'); // TODO A FAIRE coté formulaire : ajouter le select de l'extrafield a utiliser
+	$extrafieldKeyToUpdate = 'code_tva_achat'; // TODO A FAIRE coté formulaire : ajouter le select de l'extrafield a utiliser
+
+	// TODO vérifier que $extrafieldKeyToUpdate correspond bien a un extrafield
 	foreach ($toselect as $toselectid) {
+		/** @var CommonObject $objecttmp */
+		$objecttmp = new $objectclass($db);
 		$result = $objecttmp->fetch($toselectid);
-
 		if ($result>0) {
-
-			if (isset($e->attributes[$objecttmp->table_element]['type']) && is_array($e->attributes[$objecttmp->table_element]['type'])) {
-				foreach ($e->attributes[$objecttmp->table_element]['type'] as $key => $type){
-
-					//Permet de gérer les types d'extrafields
-					if (in_array($type, array('price', 'double'))) {
-						$value_arr = GETPOST("options_".$key, 'alpha');
-						if(empty($value_arr)){
-							continue;
-						}
-						$value_key = price2num($value_arr);
-						//var_dump($value_key);exit;
-					}else if (in_array($type, array('date'))) {
-						// Clean parameters
-						$value_key = dol_mktime(12, 0, 0, GETPOST("options_" . $key . "month", 'int'), GETPOST("options_" . $key . "day", 'int'), GETPOST("options_" . $key . "year", 'int'));
-						//var_dump($value_key);exit;
-						if(empty($value_key)){
-							continue;
-						}
-					}else if (in_array($type, array('datetime'))) {
-						// Clean parameters
-						$value_key = dol_mktime(GETPOST("options_".$key."hour", 'int'), GETPOST("options_".$key."min", 'int'), GETPOST("options_".$key."sec", 'int'), GETPOST("options_".$key."month", 'int'), GETPOST("options_".$key."day", 'int'), GETPOST("options_".$key."year", 'int'), 'tzuserrel');
-						if(empty($value_key)){
-							continue;
-						}
-					} else {
-						$value_key = GETPOST("options_".$key);
-						if ((in_array($type, array('link')) && $key == '-1') || empty($value_key)) {
-							continue;
-						}
-					}
-					$objecttmp->array_options["options_".$key] = $value_key;
-				}
+			// Fill array 'array_options' with data from add form
+			$e = new ExtraFields($db);
+			$ret = $e->setOptionalsFromPost(null, $objecttmp, $extrafieldKeyToUpdate);
+			if ($ret > 0) {
+				$objecttmp->insertExtraFields(); // TODO gérer l'erreur
+			} else {
+				$error++;
+				setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
 			}
-			$objecttmp->insertExtraFields();
-
 		} else {
 			setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
 			$error++;
@@ -1669,7 +1642,6 @@ if (!$error && $action == 'confirm_edit_value_extrafields' && $confirm == 'yes' 
 	} else {
 		$db->rollback();
 	}
-
 }
 
 // Approve for leave only
