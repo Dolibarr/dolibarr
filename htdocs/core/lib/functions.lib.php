@@ -3866,7 +3866,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'ecm'=>'infobox-action', 'eventorganization'=>'infobox-project',
 				'hrm'=>'infobox-adherent', 'group'=>'infobox-adherent', 'intervention'=>'infobox-contrat',
 				'incoterm'=>'infobox-supplier_proposal',
-				'multicurrency'=>'infobox-bank_account',
+				'currency'=>'infobox-bank_account', 'multicurrency'=>'infobox-bank_account',
 				'members'=>'infobox-adherent', 'member'=>'infobox-adherent', 'money-bill-alt'=>'infobox-bank_account',
 				'order'=>'infobox-commande',
 				'user'=>'infobox-adherent', 'users'=>'infobox-adherent',
