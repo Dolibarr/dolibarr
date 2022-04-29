@@ -271,8 +271,15 @@ if ($action == 'getProducts') {
 			$parameters=array();
 			$parameters['row'] = $row;
 			$parameters['obj'] = $obj;
-			$hookmanager->executeHooks('completeAjaxReturnArray', $parameters);
-			if (!empty($hookmanager->resArray)) $row = $hookmanager->resArray;
+
+			$reshook = $hookmanager->executeHooks('completeAjaxReturnArray', $parameters);
+			if ($reshook > 0) {
+				// replace
+				$row = $hookmanager->resArray;
+			} else {
+				// add
+				$rows[] = $hookmanager->resArray;
+			}
 			$rows[] = $row;
 		}
 		echo json_encode($rows);
