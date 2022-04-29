@@ -390,7 +390,7 @@ class mailing_contacts1 extends MailingTargets
 		// Exclude unsubscribed email adresses
 		$sql .= " AND sp.statut = 1";
 		$sql .= " AND sp.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".((int) $mailing_id).")";
-    
+
 		// Filter on category
 		if ($filter_category != 'all' && $filter_category != '-1') {
 			$sql .= " AND cs.fk_categorie = c.rowid AND cs.fk_socpeople = sp.rowid";
@@ -404,12 +404,12 @@ class mailing_contacts1 extends MailingTargets
 			$sql .= " AND c3s.fk_categorie = c3.rowid AND c3s.fk_soc = sp.fk_soc";
 			$sql .= " AND c3.label = '".$this->db->escape($filter_category_supplier)."'";
 		}
-    
+
 		// Filter on language
 		if ($filter_lang != '') {
 			$sql .= " AND sp.default_lang = '".$this->db->escape($filter_lang)."'";
 		}
-    
+
 		// Filter on nature
 		$key = $filter;
 
