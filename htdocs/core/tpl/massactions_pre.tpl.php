@@ -231,24 +231,19 @@ if ($massaction == 'edit_extrafields') {
 
 
 		$outputShowOutputFields = '<div class="extrafields-inputs">';
-		//
-		//      foreach ($extrafields_list as $extraKey => $extraLabel){
-		//          $outputShowOutputFields.= '<div class="mass-action-extrafield_'.$key.'">';
-		//
-		//          $outputShowOutputFields.= 'rrrrrrrr'.$extrafields->showInputField($key, '', '', $keysuffix, '', 0, $objecttmp->id, $objecttmp->table_element).'dddddddddd';
-		//          $outputShowOutputFields.= 'rrrrrrrr'.$extrafields->showInputField($key, '', '', $keysuffix, '', '', $objecttmp->id, $objecttmp->table_element).'dddddddddd';
-		//
-		//          $outputShowOutputFields.= '</div>';
-		//      }
-		$outputShowOutputFields.= '<table>'.$object->showOptionals($extrafields, 'create').'</table>';
+
+		foreach ($extrafields_list as $extraKey => $extraLabel) {
+			$outputShowOutputFields.= '<div class="mass-action-extrafield" data-extrafield="'.$extraKey.'" style="display:none;" >';
+			$outputShowOutputFields.= $extrafields->showInputField($extraKey, '', '', $keysuffix, '', 0, $objecttmp->id, $objecttmp->table_element);
+			$outputShowOutputFields.= '</div>';
+		}
 		$outputShowOutputFields.= '<script>
 		jQuery(function($) {
-			$(".extrafields-inputs .valuefieldcreate").hide();
             $("#extrafield-key-to-update").on(\'change\',function(){
             	let selectedExtrtafield = $(this).val();
             	if($(".extrafields-inputs .product_extras_"+selectedExtrtafield) != undefined){
-					$(".extrafields-inputs .valuefieldcreate").hide();
-					$(".extrafields-inputs .product_extras_"+selectedExtrtafield).show();
+					$(".mass-action-extrafield").hide();
+					$(".mass-action-extrafield[data-extrafield=" + selectedExtrtafield + "]").show();
                 }
             });
 		});
