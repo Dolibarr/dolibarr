@@ -405,12 +405,12 @@ class mailing_contacts1 extends MailingTargets
 			$sql .= " AND c3.label = '".$this->db->escape($filter_category_supplier)."'";
 		}
     
-    // Filter on language
-		if ($filter_lang <> '') {
-      $sql .= " AND sp.default_lang = '".$this->db->escape($filter_lang)."'";
-    }
+		// Filter on language
+		if ($filter_lang != '') {
+			$sql .= " AND sp.default_lang = '".$this->db->escape($filter_lang)."'";
+		}
     
-    // Filter on nature
+		// Filter on nature
 		$key = $filter;
 
 		//print "xx".$key;
