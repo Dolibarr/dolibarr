@@ -213,14 +213,14 @@ if ($action == 'getProducts') {
 	$sql = 'SELECT p.rowid, p.ref, p.label, p.tosell, p.tobuy, p.barcode, p.price' ;
 	// Add fields from hooks
 	$parameters=array();
-	$reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters);    // Note that $action and $object may have been modified by hook
+	$reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters);
 	$sql .= $hookmanager->resPrint;
 
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'product as p';
 
 	// Add tables from hooks
 	$parameters=array();
-	$reshook=$hookmanager->executeHooks('printFieldListTables', $parameters);    // Note that $action and $object may have been modified by hook
+	$reshook=$hookmanager->executeHooks('printFieldListTables', $parameters);
 	$sql .= $hookmanager->resPrint;
 
 	$sql .= ' WHERE entity IN ('.getEntity('product').')';
@@ -231,7 +231,7 @@ if ($action == 'getProducts') {
 	$sql .= natural_search(array('ref', 'label', 'barcode'), $term);
 	// Add where from hooks
 	$parameters=array();
-	$reshook=$hookmanager->executeHooks('printFieldListWhere', $parameters);    // Note that $action and $object may have been modified by hook
+	$reshook=$hookmanager->executeHooks('printFieldListWhere', $parameters);
 	$sql .= $hookmanager->resPrint;
 
 	// load only one page of products
@@ -259,7 +259,7 @@ if ($action == 'getProducts') {
 				}
 			}
 
-			$rows[] = array(
+			$row = array(
 				'rowid' => $obj->rowid,
 				'ref' => $obj->ref,
 				'label' => $obj->label,
@@ -272,6 +272,20 @@ if ($action == 'getProducts') {
 				'qty' => 1,
 				//'price_formated' => price(price2num($obj->price, 'MU'), 1, $langs, 1, -1, -1, $conf->currency)
 			);
+			// Add entries to row from hooks
+			$parameters=array();
+			$parameters['row'] = $row;
+			$parameters['obj'] = $obj;
+
+			$reshook = $hookmanager->executeHooks('completeAjaxReturnArray', $parameters);
+			if ($reshook > 0) {
+				// replace
+				$row = $hookmanager->resArray;
+			} else {
+				// add
+				$rows[] = $hookmanager->resArray;
+			}
+			$rows[] = $row;
 		}
 		echo json_encode($rows);
 	} else {
