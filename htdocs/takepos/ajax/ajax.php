@@ -48,6 +48,8 @@ $category = GETPOST('category', 'alphanohtml');	// Can be id of category or 'sup
 $action = GETPOST('action', 'aZ09');
 $term = GETPOST('term', 'alpha');
 $id = GETPOST('id', 'int');
+$search_start = GETPOST('search_start', 'int');
+$search_limit = GETPOST('search_limit', 'int');
 
 if (empty($user->rights->takepos->run)) {
 	accessforbidden();
@@ -231,6 +233,9 @@ if ($action == 'getProducts') {
 	$parameters=array();
 	$reshook=$hookmanager->executeHooks('printFieldListWhere', $parameters);    // Note that $action and $object may have been modified by hook
 	$sql .= $hookmanager->resPrint;
+
+	// load only one page of products
+	$sql.= $db->plimit($search_limit, $search_start);
 
 	$resql = $db->query($sql);
 	if ($resql) {
