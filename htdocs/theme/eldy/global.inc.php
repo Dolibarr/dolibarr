@@ -13,7 +13,7 @@
 	--colorbacktitle1: rgb(<?php print $colorbacktitle1; ?>);
 	--colorbacktabcard1: rgb(<?php print $colorbacktabcard1; ?>);
 	--colorbacktabactive: rgb(<?php print $colorbacktabactive; ?>);
-	--colorbacklinepair1: rgb(<?php print $colorbacklineimpair1; ?>);
+	--colorbacklineimpair1: rgb(<?php print $colorbacklineimpair1; ?>);
 	--colorbacklineimpair2: rgb(<?php print $colorbacklineimpair2; ?>);
 	--colorbacklinepair1: rgb(<?php print $colorbacklinepair1; ?>);
 	--colorbacklinepair2: rgb(<?php print $colorbacklinepair2; ?>);
