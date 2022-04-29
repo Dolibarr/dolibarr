@@ -173,7 +173,7 @@ if ($object->id > 0) {
 		restrictedArea($user, 'service', $object->id, 'product&product', '', '');
 	}
 } else {
-	restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
+	restrictedArea($user, 'produit|service', 0, 'product&product', '', '', $fieldtype);
 }
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
