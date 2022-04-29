@@ -235,7 +235,7 @@ if ($action == 'getProducts') {
 	$sql .= $hookmanager->resPrint;
 
 	// load only one page of products
-	$sql.= ' LIMIT '. $db->escape($search_start) . ',' . $db->escape($search_limit);
+	$sql .= ' LIMIT '. $db->escape($search_start) . ',' . $db->escape($search_limit);
 
 	$resql = $db->query($sql);
 	if ($resql) {
