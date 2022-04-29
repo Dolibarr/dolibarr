@@ -426,30 +426,6 @@ $help_url = '';
 
 llxHeader('', $langs->trans('Inventory'), $help_url);
 
-
-// Disable button Generate movement if data were modified and not saved
-print '<script type="text/javascript">
-function disablebuttonmakemovementandclose() {
-	console.log("Disable button idbuttonmakemovementandclose until we save");
-	jQuery("#idbuttonmakemovementandclose").attr(\'disabled\',\'disabled\');
-	jQuery("#idbuttonmakemovementandclose").attr(\'onclick\', \'return false;\');
-	jQuery("#idbuttonmakemovementandclose").attr(\'title\',\''.dol_escape_js($langs->trans("SaveQtyFirst")).'\');
-	jQuery("#idbuttonmakemovementandclose").attr(\'class\',\'butActionRefused classfortooltip\');
-};
-
-jQuery(document).ready(function() {
-	jQuery(".realqty").keyup(function() {
-		console.log("keyup on realqty");
-		disablebuttonmakemovementandclose();
-	});
-	jQuery(".realqty").change(function() {
-		console.log("change on realqty");
-		disablebuttonmakemovementandclose();
-	});
-});
-</script>';
-
-
 // Part to show record
 if ($object->id > 0) {
 	$res = $object->fetch_optionals();
@@ -1207,7 +1183,6 @@ print '<script type="text/javascript">
 
 
                          $(".paginationprevious:last").click(function(e){
-                         console.log(1);
                             var form = $("#formrecord");
    							var actionURL = "'.$_SERVER['PHP_SELF']."?page=".($page).$paramwithsearch.'";
    							$.ajax({
@@ -1216,6 +1191,18 @@ print '<script type="text/javascript">
         					cache: false,
         					success: function(result){
            				 	window.location.href = "'.$_SERVER['PHP_SELF']."?page=".($page - 1).$paramwithsearch.'";
+       					 	}});
+						 });
+
+                          $("#idbuttonmakemovementandclose").click(function(e){
+                            var form = $("#formrecord");
+   							var actionURL = "'.$_SERVER['PHP_SELF']."?page=".($page).$paramwithsearch.'";
+   							$.ajax({
+      					 	url: actionURL,
+        					data: form.serialize(),
+        					cache: false,
+        					success: function(result){
+           				 	window.location.href = "'.$_SERVER['PHP_SELF']."?page=".($page - 1).$paramwithsearch.'&action=record";
        					 	}});
 						 });
 					});
