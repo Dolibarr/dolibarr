@@ -4,6 +4,7 @@
  * Copyright (C) 2013-2021  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2017       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2022       Waël Almoman            <info@almoman.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,7 +44,7 @@ $cancel = GETPOST('cancel', 'aZ09');
 $optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 
 $id = GETPOST('id', 'int'); // id of record
-$mode = GETPOST('mode', 'aZ09'); // '' or '_tmp'
+$mode = $action == 'create' ? "_tmp" : GETPOST('mode', 'aZ09'); // '' or '_tmp'
 $piece_num = GETPOST("piece_num", 'int'); // id of transaction (several lines share the same transaction id)
 
 $accountingaccount = new AccountingAccount($db);
@@ -53,9 +54,13 @@ $accountingaccount_number = GETPOST('accountingaccount_number', 'alphanohtml');
 $accountingaccount->fetch(null, $accountingaccount_number, true);
 $accountingaccount_label = $accountingaccount->label;
 
-$journal_code = GETPOST('code_journal', 'alpha');
+$journal_code = GETPOST('code_journal', 'alpha') ? GETPOST('code_journal', 'alpha') : "OD";
 $accountingjournal->fetch(null, $journal_code);
 $journal_label = $accountingjournal->label;
+
+$next_num_mvt = (int) GETPOST('next_num_mvt', 'alpha');	
+$doc_ref = (string) GETPOST('doc_ref', 'alpha');
+$doc_date = (string) GETPOST('doc_date', 'alpha');
 
 $subledger_account = GETPOST('subledger_account', 'alphanohtml');
 if ($subledger_account == -1) {
@@ -179,10 +184,10 @@ if ($action == "confirm_update") {
 		$object->label_operation = $label_operation;
 		$object->debit = $debit;
 		$object->credit = $credit;
-		$object->doc_date = (string) GETPOST('doc_date', 'alpha');
+		$object->doc_date = $doc_date;
 		$object->doc_type = (string) GETPOST('doc_type', 'alpha');
 		$object->piece_num = $piece_num;
-		$object->doc_ref = (string) GETPOST('doc_ref', 'alpha');
+		$object->doc_ref = $doc_ref;
 		$object->code_journal = $journal_code;
 		$object->journal_label = $journal_label;
 		$object->fk_doc = GETPOSTINT('fk_doc');
@@ -229,17 +234,29 @@ if ($action == "confirm_update") {
 		}
 	}
 	$action = '';
-} elseif ($action == "confirm_create") {
+} elseif ($action == "create") {
 	$error = 0;
 
 	$object = new BookKeeping($db);
+
+	$next_num_mvt =  !empty($next_num_mvt) ? $next_num_mvt : $object->getNextNumMvt('_tmp');
+	$doc_ref = !empty($doc_ref) ? $doc_ref : $next_num_mvt;
+
+	if (empty($doc_date)) {
+		$tmp_date = dol_getdate(dol_now());
+		$_POST['doc_dateday'] =  $tmp_date['mday'];
+		$_POST['doc_datemonth'] = $tmp_date['mon'];
+		$_POST['doc_dateyear'] = $tmp_date['year'];
+		unset($tmp_date);
+	}
 
 	if (!$journal_code || $journal_code == '-1') {
 		setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Journal")), null, 'errors');
 		$action = 'create';
 		$error++;
 	}
-	if (!GETPOST('doc_ref', 'alpha')) {
+	// TODO check if there's only create whith empty $doc_ref
+	if (empty($doc_ref) && $action != 'create') {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Piece")), null, 'errors');
 		$action = 'create';
 		$error++;
@@ -251,8 +268,8 @@ if ($action == "confirm_update") {
 		$object->credit = 0;
 		$object->doc_date = $date_start = dol_mktime(0, 0, 0, GETPOST('doc_datemonth', 'int'), GETPOST('doc_dateday', 'int'), GETPOST('doc_dateyear', 'int'));
 		$object->doc_type = GETPOST('doc_type', 'alpha');
-		$object->piece_num = GETPOST('next_num_mvt', 'alpha');
-		$object->doc_ref = GETPOST('doc_ref', 'alpha');
+		$object->piece_num = $next_num_mvt;
+		$object->doc_ref = $doc_ref;
 		$object->code_journal = $journal_code;
 		$object->journal_label = $journal_label;
 		$object->fk_doc = 0;
@@ -301,7 +318,7 @@ if ($action == 'setjournal') {
 }
 
 if ($action == 'setdocref') {
-	$refdoc = GETPOST('doc_ref', 'alpha');
+	$refdoc = $doc_ref;
 	$result = $object->updateByMvt($piece_num, 'doc_ref', $refdoc, $mode);
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
@@ -332,7 +349,7 @@ if ($action == 'valid') {
 $html = new Form($db);
 $formaccounting = new FormAccounting($db);
 
-llxHeader('', $langs->trans("CreateMvts"));
+llxHeader('', $langs->trans($mode =="_tmp" ? "CreateMvts": "UpdateMvts"));
 
 // Confirmation to delete the command
 if ($action == 'delete') {
@@ -340,28 +357,33 @@ if ($action == 'delete') {
 	print $formconfirm;
 }
 
-if ($action == 'create') {
-	print load_fiche_titre($langs->trans("CreateMvts"));
+$object = new BookKeeping($db);
+$result = $object->fetchPerMvt($piece_num, $mode);
+if ($result < 0) {
+	setEventMessages($object->error, $object->errors, 'errors');
+}
 
-	$object = new BookKeeping($db);
-	$next_num_mvt = $object->getNextNumMvt('_tmp');
+if (!empty($object->piece_num)) {
+	$backlink = '<a href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/list.php?restore_lastsearch_values=1">'.$langs->trans('BackToList').'</a>';
 
-	if (empty($next_num_mvt)) {
-		dol_print_error('', 'Failed to get next piece number');
-	}
+	print load_fiche_titre($langs->trans($mode =="_tmp" ? "CreateMvts": "UpdateMvts"), $backlink);
 
-	print '<form action="'.$_SERVER["PHP_SELF"].'" name="create_mvt" method="POST">';
-	if ($optioncss != '') {
-		print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-	}
-	print '<input type="hidden" name="token" value="'.newToken().'">';
-	print '<input type="hidden" name="action" value="confirm_create">'."\n";
-	print '<input type="hidden" name="next_num_mvt" value="'.$next_num_mvt.'">'."\n";
-	print '<input type="hidden" name="mode" value="_tmp">'."\n";
+	$head = array();
+	$h = 0;
+	$head[$h][0] = $_SERVER['PHP_SELF'].'?piece_num='.$object->piece_num.($mode ? '&mode='.$mode : '');
+	$head[$h][1] = $langs->trans("Transaction");
+	$head[$h][2] = 'transaction';
+	$h++;
 
-	print dol_get_fiche_head();
+	print dol_get_fiche_head($head, 'transaction', '', -1);
 
-	print '<table class="border centpercent">';
+	//dol_banner_tab($object, '', $backlink);
+
+	print '<div class="fichecenter">';
+	print '<div class="fichehalfleft">';
+
+	print '<div class="underbanner clearboth"></div>';
+	print '<table class="border tableforfield" width="100%">';
 
 	/*print '<tr>';
 	print '<td class="titlefieldcreate fieldrequired">' . $langs->trans("NumPiece") . '</td>';
@@ -382,7 +404,7 @@ if ($action == 'create') {
 
 	print '<tr>';
 	print '<td class="fieldrequired">'.$langs->trans("Piece").'</td>';
-	print '<td><input type="text" class="minwidth200" name="doc_ref" value="'.GETPOST('doc_ref', 'alpha').'"></td>';
+	print '<td><input type="text" class="minwidth200" name="doc_ref" value="'.$doc_ref.'"></td>';
 	print '</tr>';
 
 	/*
@@ -391,277 +413,270 @@ if ($action == 'create') {
 	print '<td><input type="text" class="minwidth200 name="doc_type" value=""/></td>';
 	print '</tr>';
 	*/
+/*
+	// Account movement
+	print '<tr>';
+	print '<td class="titlefield">'.$langs->trans("NumMvts").'</td>';
+	print '<td>'.$object->piece_num.'</td>';
+	print '</tr>';
 
+	// Date
+	print '<tr><td>';
+	print '<table class="nobordernopadding" width="100%"><tr><td>';
+	print $langs->trans('Docdate');
+	print '</td>';
+	if ($action != 'editdate') {
+		print '<td class="right"><a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?action=editdate&token='.newToken().'&piece_num='.urlencode($object->piece_num).'&mode='.urlencode($mode).'&id='.urlencode($id).'">'.img_edit($langs->transnoentitiesnoconv('SetDate'), 1).'</a></td>';
+	}
+	print '</tr></table>';
+	print '</td><td colspan="3">';
+	if ($action == 'editdate') {
+		print '<form name="setdate" action="'.$_SERVER["PHP_SELF"].'?piece_num='.$object->piece_num.'" method="post">';
+		if ($optioncss != '') {
+			print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+		}
+		print '<input type="hidden" name="token" value="'.newToken().'">';
+		print '<input type="hidden" name="action" value="setdate">';
+		print '<input type="hidden" name="mode" value="'.$mode.'">';
+		print '<input type="hidden" name="id" value="'.$id.'">';
+		print $form->selectDate($object->doc_date ? $object->doc_date : - 1, 'doc_date', '', '', '', "setdate");
+		print '<input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
+		print '</form>';
+	} else {
+		print $object->doc_date ? dol_print_date($object->doc_date, 'day') : '&nbsp;';
+	}
+	print '</td>';
+	print '</tr>';
+
+	// Journal
+	print '<tr><td>';
+	print '<table class="nobordernopadding" width="100%"><tr><td>';
+	print $langs->trans('Codejournal');
+	print '</td>';
+	if ($action != 'editjournal') {
+		print '<td class="right"><a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?action=editjournal&token='.newToken().'&piece_num='.urlencode($object->piece_num).'&mode='.urlencode($mode).'&id='.urlencode($id).'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a></td>';
+	}
+	print '</tr></table>';
+	print '</td><td>';
+	if ($action == 'editjournal') {
+		print '<form name="setjournal" action="'.$_SERVER["PHP_SELF"].'?piece_num='.$object->piece_num.'" method="post">';
+		if ($optioncss != '') {
+			print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+		}
+		print '<input type="hidden" name="token" value="'.newToken().'">';
+		print '<input type="hidden" name="action" value="setjournal">';
+		print '<input type="hidden" name="mode" value="'.$mode.'">';
+		print '<input type="hidden" name="id" value="'.$id.'">';
+		print $formaccounting->select_journal($object->code_journal, 'code_journal', 0, 0, array(), 1, 1);
+		print '<input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
+		print '</form>';
+	} else {
+		print $object->code_journal;
+	}
+	print '</td>';
+	print '</tr>';
+
+	// Ref document
+	print '<tr><td>';
+	print '<table class="nobordernopadding" width="100%"><tr><td>';
+	print $langs->trans('Piece');
+	print '</td>';
+	if ($action != 'editdocref') {
+		print '<td class="right"><a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?action=editdocref&token='.newToken().'&piece_num='.urlencode($object->piece_num).'&mode='.urlencode($mode).'&id='.urlencode($id).'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a></td>';
+	}
+	print '</tr></table>';
+	print '</td><td>';
+	if ($action == 'editdocref') {
+		print '<form name="setdocref" action="'.$_SERVER["PHP_SELF"].'?piece_num='.$object->piece_num.'" method="post">';
+		if ($optioncss != '') {
+			print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+		}
+		print '<input type="hidden" name="token" value="'.newToken().'">';
+		print '<input type="hidden" name="action" value="setdocref">';
+		print '<input type="hidden" name="mode" value="'.$mode.'">';
+		print '<input type="hidden" name="id" value="'.$id.'">';
+		print '<input type="text" size="20" name="doc_ref" value="'.dol_escape_htmltag($object->doc_ref).'">';
+		print '<input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
+		print '</form>';
+	} else {
+		print $object->doc_ref;
+	}
+	print '</td>';
+	print '</tr>';
+*/
 	print '</table>';
+
+	print '</div>';
+
+	print '<div class="fichehalfright">';
+
+	print '<div class="underbanner clearboth"></div>';
+	print '<table class="border tableforfield centpercent">';
+
+	// Doc type
+	if (!empty($object->doc_type)) {
+		print '<tr>';
+		print '<td class="titlefield">'.$langs->trans("Doctype").'</td>';
+		print '<td>'.$object->doc_type.'</td>';
+		print '</tr>';
+	}
+
+	// Date document creation
+	print '<tr>';
+	print '<td class="titlefield">'.$langs->trans("DateCreation").'</td>';
+	print '<td>';
+	print $object->date_creation ? dol_print_date($object->date_creation, 'day') : '&nbsp;';
+	print '</td>';
+	print '</tr>';
+
+	// Date document creation
+	print '<tr>';
+	print '<td class="titlefield">'.$langs->trans("DateExport").'</td>';
+	print '<td>';
+	print $object->date_export ? dol_print_date($object->date_export, 'dayhour') : '&nbsp;';
+	print '</td>';
+	print '</tr>';
+
+	// Date document creation
+	print '<tr>';
+	print '<td class="titlefield">'.$langs->trans("DateValidation").'</td>';
+	print '<td>';
+	print $object->date_validation ? dol_print_date($object->date_validation, 'dayhour') : '&nbsp;';
+	print '</td>';
+	print '</tr>';
+
+	// Validate
+	/*
+	print '<tr>';
+	print '<td class="titlefield">' . $langs->trans("Status") . '</td>';
+	print '<td>';
+		if (empty($object->validated)) {
+			print '<a class="reposition" href="' . $_SERVER["PHP_SELF"] . '?piece_num=' . $line->id . '&action=enable&token='.newToken().'">';
+			print img_picto($langs->trans("Disabled"), 'switch_off');
+			print '</a>';
+		} else {
+			print '<a class="reposition" href="' . $_SERVER["PHP_SELF"] . '?piece_num=' . $line->id . '&action=disable&token='.newToken().'">';
+			print img_picto($langs->trans("Activated"), 'switch_on');
+			print '</a>';
+		}
+		print '</td>';
+	print '</tr>';
+	*/
+
+	// check data
+	/*
+	print '<tr>';
+	print '<td class="titlefield">' . $langs->trans("Control") . '</td>';
+	if ($object->doc_type == 'customer_invoice') {
+		$sqlmid = 'SELECT rowid as ref';
+		$sqlmid .= " FROM ".MAIN_DB_PREFIX."facture as fac";
+		$sqlmid .= " WHERE fac.rowid=" . ((int) $object->fk_doc);
+		dol_syslog("accountancy/bookkeeping/card.php::sqlmid=" . $sqlmid, LOG_DEBUG);
+		$resultmid = $db->query($sqlmid);
+		if ($resultmid) {
+			$objmid = $db->fetch_object($resultmid);
+			$invoicestatic = new Facture($db);
+			$invoicestatic->fetch($objmid->ref);
+			$ref=$langs->trans("Invoice").' '.$invoicestatic->getNomUrl(1);
+		} else {
+			dol_print_error($db);
+		}
+	}
+	print '<td>' . $ref .'</td>';
+	print '</tr>';
+	*/
+	print "</table>\n";
+
+	print '</div>';
 
 	print dol_get_fiche_end();
 
-	print $form->buttonsSaveCancel("Create");
+	print '<div style="clear:both"></div>';
 
-	print '</form>';
-} else {
-	$object = new BookKeeping($db);
-	$result = $object->fetchPerMvt($piece_num, $mode);
+	print '<br>';
+
+	$result = $object->fetchAllPerMvt($piece_num, $mode);	// This load $object->linesmvt
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
-	}
+	} else {
+		print load_fiche_titre($langs->trans("ListeMvts"), '', '');
 
-	if (!empty($object->piece_num)) {
-		$backlink = '<a href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/list.php?restore_lastsearch_values=1">'.$langs->trans('BackToList').'</a>';
-
-		print load_fiche_titre($langs->trans("UpdateMvts"), $backlink);
-
-		$head = array();
-		$h = 0;
-		$head[$h][0] = $_SERVER['PHP_SELF'].'?piece_num='.$object->piece_num.($mode ? '&mode='.$mode : '');
-		$head[$h][1] = $langs->trans("Transaction");
-		$head[$h][2] = 'transaction';
-		$h++;
-
-		print dol_get_fiche_head($head, 'transaction', '', -1);
-
-		//dol_banner_tab($object, '', $backlink);
-
-		print '<div class="fichecenter">';
-		print '<div class="fichehalfleft">';
-
-		print '<div class="underbanner clearboth"></div>';
-		print '<table class="border tableforfield" width="100%">';
-
-		// Account movement
-		print '<tr>';
-		print '<td class="titlefield">'.$langs->trans("NumMvts").'</td>';
-		print '<td>'.$object->piece_num.'</td>';
-		print '</tr>';
-
-		// Date
-		print '<tr><td>';
-		print '<table class="nobordernopadding" width="100%"><tr><td>';
-		print $langs->trans('Docdate');
-		print '</td>';
-		if ($action != 'editdate') {
-			print '<td class="right"><a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?action=editdate&token='.newToken().'&piece_num='.urlencode($object->piece_num).'&mode='.urlencode($mode).'">'.img_edit($langs->transnoentitiesnoconv('SetDate'), 1).'</a></td>';
+		print '<form action="'.$_SERVER["PHP_SELF"].'?piece_num='.$object->piece_num.'" method="post">';
+		if ($optioncss != '') {
+			print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 		}
-		print '</tr></table>';
-		print '</td><td colspan="3">';
-		if ($action == 'editdate') {
-			print '<form name="setdate" action="'.$_SERVER["PHP_SELF"].'?piece_num='.$object->piece_num.'" method="post">';
-			if ($optioncss != '') {
-				print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-			}
-			print '<input type="hidden" name="token" value="'.newToken().'">';
-			print '<input type="hidden" name="action" value="setdate">';
-			print '<input type="hidden" name="mode" value="'.$mode.'">';
-			print $form->selectDate($object->doc_date ? $object->doc_date : - 1, 'doc_date', '', '', '', "setdate");
-			print '<input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
-			print '</form>';
-		} else {
-			print $object->doc_date ? dol_print_date($object->doc_date, 'day') : '&nbsp;';
-		}
-		print '</td>';
-		print '</tr>';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
+		print '<input type="hidden" name="doc_date" value="'.$object->doc_date.'">'."\n";
+		print '<input type="hidden" name="doc_type" value="'.$object->doc_type.'">'."\n";
+		print '<input type="hidden" name="doc_ref" value="'.$object->doc_ref.'">'."\n";
+		print '<input type="hidden" name="code_journal" value="'.$object->code_journal.'">'."\n";
+		print '<input type="hidden" name="fk_doc" value="'.$object->fk_doc.'">'."\n";
+		print '<input type="hidden" name="fk_docdet" value="'.$object->fk_docdet.'">'."\n";
+		print '<input type="hidden" name="mode" value="'.$mode.'">'."\n";
 
-		// Journal
-		print '<tr><td>';
-		print '<table class="nobordernopadding" width="100%"><tr><td>';
-		print $langs->trans('Codejournal');
-		print '</td>';
-		if ($action != 'editjournal') {
-			print '<td class="right"><a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?action=editjournal&token='.newToken().'&piece_num='.urlencode($object->piece_num).'&mode='.urlencode($mode).'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a></td>';
-		}
-		print '</tr></table>';
-		print '</td><td>';
-		if ($action == 'editjournal') {
-			print '<form name="setjournal" action="'.$_SERVER["PHP_SELF"].'?piece_num='.$object->piece_num.'" method="post">';
-			if ($optioncss != '') {
-				print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-			}
-			print '<input type="hidden" name="token" value="'.newToken().'">';
-			print '<input type="hidden" name="action" value="setjournal">';
-			print '<input type="hidden" name="mode" value="'.$mode.'">';
-			print $formaccounting->select_journal($object->code_journal, 'code_journal', 0, 0, array(), 1, 1);
-			print '<input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
-			print '</form>';
-		} else {
-			print $object->code_journal;
-		}
-		print '</td>';
-		print '</tr>';
+		if (count($object->linesmvt) > 0) {
+			print '<div class="div-table-responsive-no-min">';
+			print '<table class="noborder centpercent">';
 
-		// Ref document
-		print '<tr><td>';
-		print '<table class="nobordernopadding" width="100%"><tr><td>';
-		print $langs->trans('Piece');
-		print '</td>';
-		if ($action != 'editdocref') {
-			print '<td class="right"><a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?action=editdocref&token='.newToken().'&piece_num='.urlencode($object->piece_num).'&mode='.urlencode($mode).'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a></td>';
-		}
-		print '</tr></table>';
-		print '</td><td>';
-		if ($action == 'editdocref') {
-			print '<form name="setdocref" action="'.$_SERVER["PHP_SELF"].'?piece_num='.$object->piece_num.'" method="post">';
-			if ($optioncss != '') {
-				print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-			}
-			print '<input type="hidden" name="token" value="'.newToken().'">';
-			print '<input type="hidden" name="action" value="setdocref">';
-			print '<input type="hidden" name="mode" value="'.$mode.'">';
-			print '<input type="text" size="20" name="doc_ref" value="'.dol_escape_htmltag($object->doc_ref).'">';
-			print '<input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
-			print '</form>';
-		} else {
-			print $object->doc_ref;
-		}
-		print '</td>';
-		print '</tr>';
+			$total_debit = 0;
+			$total_credit = 0;
 
-		print '</table>';
+			print '<tr class="liste_titre">';
 
-		print '</div>';
-
-		print '<div class="fichehalfright">';
-
-		print '<div class="underbanner clearboth"></div>';
-		print '<table class="border tableforfield centpercent">';
-
-		// Doc type
-		if (!empty($object->doc_type)) {
-			print '<tr>';
-			print '<td class="titlefield">'.$langs->trans("Doctype").'</td>';
-			print '<td>'.$object->doc_type.'</td>';
-			print '</tr>';
-		}
-
-		// Date document creation
-		print '<tr>';
-		print '<td class="titlefield">'.$langs->trans("DateCreation").'</td>';
-		print '<td>';
-		print $object->date_creation ? dol_print_date($object->date_creation, 'day') : '&nbsp;';
-		print '</td>';
-		print '</tr>';
-
-		// Date document creation
-		print '<tr>';
-		print '<td class="titlefield">'.$langs->trans("DateExport").'</td>';
-		print '<td>';
-		print $object->date_export ? dol_print_date($object->date_export, 'dayhour') : '&nbsp;';
-		print '</td>';
-		print '</tr>';
-
-		// Date document creation
-		print '<tr>';
-		print '<td class="titlefield">'.$langs->trans("DateValidation").'</td>';
-		print '<td>';
-		print $object->date_validation ? dol_print_date($object->date_validation, 'dayhour') : '&nbsp;';
-		print '</td>';
-		print '</tr>';
-
-		// Validate
-		/*
-		print '<tr>';
-		print '<td class="titlefield">' . $langs->trans("Status") . '</td>';
-		print '<td>';
-			if (empty($object->validated)) {
-				print '<a class="reposition" href="' . $_SERVER["PHP_SELF"] . '?piece_num=' . $line->id . '&action=enable&token='.newToken().'">';
-				print img_picto($langs->trans("Disabled"), 'switch_off');
-				print '</a>';
+			print_liste_field_titre("AccountAccountingShort");
+			print_liste_field_titre("SubledgerAccount");
+			print_liste_field_titre("LabelOperation");
+			print_liste_field_titre("Debit", "", "", "", "", 'class="right"');
+			print_liste_field_titre("Credit", "", "", "", "", 'class="right"');
+			if (empty($object->date_validation)) {
+				print_liste_field_titre("Action", "", "", "", "", 'width="60" class="center"');
 			} else {
-				print '<a class="reposition" href="' . $_SERVER["PHP_SELF"] . '?piece_num=' . $line->id . '&action=disable&token='.newToken().'">';
-				print img_picto($langs->trans("Activated"), 'switch_on');
-				print '</a>';
+				print_liste_field_titre("");
 			}
-			print '</td>';
-		print '</tr>';
-		*/
 
-		// check data
-		/*
-		print '<tr>';
-		print '<td class="titlefield">' . $langs->trans("Control") . '</td>';
-		if ($object->doc_type == 'customer_invoice')
-		{
-		 $sqlmid = 'SELECT rowid as ref';
-			$sqlmid .= " FROM ".MAIN_DB_PREFIX."facture as fac";
-			$sqlmid .= " WHERE fac.rowid=" . ((int) $object->fk_doc);
-			dol_syslog("accountancy/bookkeeping/card.php::sqlmid=" . $sqlmid, LOG_DEBUG);
-			$resultmid = $db->query($sqlmid);
-			if ($resultmid) {
-				$objmid = $db->fetch_object($resultmid);
-				$invoicestatic = new Facture($db);
-				$invoicestatic->fetch($objmid->ref);
-				$ref=$langs->trans("Invoice").' '.$invoicestatic->getNomUrl(1);
-			}
-			else dol_print_error($db);
-		}
-		print '<td>' . $ref .'</td>';
-		print '</tr>';
-		*/
-		print "</table>\n";
+			print "</tr>\n";
 
-		print '</div>';
+			// Empty line is the first line of $object->linesmvt
+			// So we must get the first line (the empty one) and put it at the end of the array
+			// in order to display it correctly to the user
+			$empty_line = array_shift($object->linesmvt);
+			$object->linesmvt[]= $empty_line;
 
-		print dol_get_fiche_end();
+			foreach ($object->linesmvt as $line) {
+				print '<tr class="oddeven">';
+				$total_debit += $line->debit;
+				$total_credit += $line->credit;
 
-		print '<div style="clear:both"></div>';
-
-		print '<br>';
-
-		$result = $object->fetchAllPerMvt($piece_num, $mode);	// This load $object->linesmvt
-		if ($result < 0) {
-			setEventMessages($object->error, $object->errors, 'errors');
-		} else {
-			print load_fiche_titre($langs->trans("ListeMvts"), '', '');
-
-			print '<form action="'.$_SERVER["PHP_SELF"].'?piece_num='.$object->piece_num.'" method="post">';
-			if ($optioncss != '') {
-				print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-			}
-			print '<input type="hidden" name="token" value="'.newToken().'">';
-			print '<input type="hidden" name="doc_date" value="'.$object->doc_date.'">'."\n";
-			print '<input type="hidden" name="doc_type" value="'.$object->doc_type.'">'."\n";
-			print '<input type="hidden" name="doc_ref" value="'.$object->doc_ref.'">'."\n";
-			print '<input type="hidden" name="code_journal" value="'.$object->code_journal.'">'."\n";
-			print '<input type="hidden" name="fk_doc" value="'.$object->fk_doc.'">'."\n";
-			print '<input type="hidden" name="fk_docdet" value="'.$object->fk_docdet.'">'."\n";
-			print '<input type="hidden" name="mode" value="'.$mode.'">'."\n";
-
-			if (count($object->linesmvt) > 0) {
-				print '<div class="div-table-responsive-no-min">';
-				print '<table class="noborder centpercent">';
-
-				$total_debit = 0;
-				$total_credit = 0;
-
-				print '<tr class="liste_titre">';
-
-				print_liste_field_titre("AccountAccountingShort");
-				print_liste_field_titre("SubledgerAccount");
-				print_liste_field_titre("LabelOperation");
-				print_liste_field_titre("Debit", "", "", "", "", 'class="right"');
-				print_liste_field_titre("Credit", "", "", "", "", 'class="right"');
-				if (empty($object->date_validation)) {
-					print_liste_field_titre("Action", "", "", "", "", 'width="60" class="center"');
-				} else {
-					print_liste_field_titre("");
-				}
-
-				print "</tr>\n";
-
-				// Empty line is the first line of $object->linesmvt
-				// So we must get the first line (the empty one) and put it at the end of the array
-				// in order to display it correctly to the user
-				$empty_line = array_shift($object->linesmvt);
-				$object->linesmvt[]= $empty_line;
-
-				foreach ($object->linesmvt as $line) {
-					print '<tr class="oddeven">';
-					$total_debit += $line->debit;
-					$total_credit += $line->credit;
-
-					if ($action == 'update' && $line->id == $id) {
-						print '<!-- td columns in edit mode -->';
+				if ($action == 'update' && $line->id == $id) {
+					print '<!-- td columns in edit mode -->';
+					print '<td>';
+					print $formaccounting->select_account((GETPOSTISSET("accountingaccount_number") ? GETPOST("accountingaccount_number", "alpha") : $line->numero_compte), 'accountingaccount_number', 1, array(), 1, 1, '');
+					print '</td>';
+					print '<td>';
+					// TODO For the moment we keep a free input text instead of a combo. The select_auxaccount has problem because:
+					// It does not use the setup of "key pressed" to select a thirdparty and this hang browser on large databases.
+					// Also, it is not possible to use a value that is not in the list.
+					// Also, the label is not automatically filled when a value is selected.
+					if (!empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX)) {
+						print $formaccounting->select_auxaccount((GETPOSTISSET("subledger_account") ? GETPOST("subledger_account", "alpha") : $line->subledger_account), 'subledger_account', 1, 'maxwidth250', '', 'subledger_label');
+					} else {
+						print '<input type="text" class="maxwidth150" name="subledger_account" value="'.(GETPOSTISSET("subledger_account") ? GETPOST("subledger_account", "alpha") : $line->subledger_account).'" placeholder="'.dol_escape_htmltag($langs->trans("SubledgerAccount")).'">';
+					}
+					// Add also input for subledger label
+					print '<br><input type="text" class="maxwidth150" name="subledger_label" value="'.(GETPOSTISSET("subledger_label") ? GETPOST("subledger_label", "alpha") : $line->subledger_label).'" placeholder="'.dol_escape_htmltag($langs->trans("SubledgerAccountLabel")).'">';
+					print '</td>';
+					print '<td><input type="text" class="minwidth200" name="label_operation" value="'.(GETPOSTISSET("label_operation") ? GETPOST("label_operation", "alpha") : $line->label_operation).'"></td>';
+					print '<td class="right"><input type="text" size="6" class="right" name="debit" value="'.(GETPOSTISSET("debit") ? GETPOST("debit", "alpha") : price($line->debit)).'"></td>';
+					print '<td class="right"><input type="text" size="6" class="right" name="credit" value="'.(GETPOSTISSET("credit") ? GETPOST("credit", "alpha") : price($line->credit)).'"></td>';
+					print '<td>';
+					print '<input type="hidden" name="id" value="'.$line->id.'">'."\n";
+					print '<input type="submit" class="button" name="update" value="'.$langs->trans("Update").'">';
+					print '</td>';
+				} elseif (empty($line->numero_compte) || (empty($line->debit) && empty($line->credit))) {
+					if ($action == "" || $action == 'add') {
+						print '<!-- td columns in add mode -->';
 						print '<td>';
-						print $formaccounting->select_account((GETPOSTISSET("accountingaccount_number") ? GETPOST("accountingaccount_number", "alpha") : $line->numero_compte), 'accountingaccount_number', 1, array(), 1, 1, '');
+						print $formaccounting->select_account('', 'accountingaccount_number', 1, array(), 1, 1, '');
 						print '</td>';
 						print '<td>';
 						// TODO For the moment we keep a free input text instead of a combo. The select_auxaccount has problem because:
@@ -669,126 +684,99 @@ if ($action == 'create') {
 						// Also, it is not possible to use a value that is not in the list.
 						// Also, the label is not automatically filled when a value is selected.
 						if (!empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX)) {
-							print $formaccounting->select_auxaccount((GETPOSTISSET("subledger_account") ? GETPOST("subledger_account", "alpha") : $line->subledger_account), 'subledger_account', 1, 'maxwidth250', '', 'subledger_label');
+							print $formaccounting->select_auxaccount('', 'subledger_account', 1, 'maxwidth250', '', 'subledger_label');
 						} else {
-							print '<input type="text" class="maxwidth150" name="subledger_account" value="'.(GETPOSTISSET("subledger_account") ? GETPOST("subledger_account", "alpha") : $line->subledger_account).'" placeholder="'.dol_escape_htmltag($langs->trans("SubledgerAccount")).'">';
+							print '<input type="text" class="maxwidth150" name="subledger_account" value="" placeholder="' . dol_escape_htmltag($langs->trans("SubledgerAccount")) . '">';
 						}
-						// Add also input for subledger label
-						print '<br><input type="text" class="maxwidth150" name="subledger_label" value="'.(GETPOSTISSET("subledger_label") ? GETPOST("subledger_label", "alpha") : $line->subledger_label).'" placeholder="'.dol_escape_htmltag($langs->trans("SubledgerAccountLabel")).'">';
+						print '<br><input type="text" class="maxwidth150" name="subledger_label" value="" placeholder="' . dol_escape_htmltag($langs->trans("SubledgerAccountLabel")) . '">';
 						print '</td>';
-						print '<td><input type="text" class="minwidth200" name="label_operation" value="'.(GETPOSTISSET("label_operation") ? GETPOST("label_operation", "alpha") : $line->label_operation).'"></td>';
-						print '<td class="right"><input type="text" size="6" class="right" name="debit" value="'.(GETPOSTISSET("debit") ? GETPOST("debit", "alpha") : price($line->debit)).'"></td>';
-						print '<td class="right"><input type="text" size="6" class="right" name="credit" value="'.(GETPOSTISSET("credit") ? GETPOST("credit", "alpha") : price($line->credit)).'"></td>';
+						print '<td><input type="text" class="minwidth200" name="label_operation" value="' . $label_operation . '"/></td>';
+						print '<td class="right"><input type="text" size="6" class="right" name="debit" value=""/></td>';
+						print '<td class="right"><input type="text" size="6" class="right" name="credit" value=""/></td>';
 						print '<td>';
-						print '<input type="hidden" name="id" value="'.$line->id.'">'."\n";
-						print '<input type="submit" class="button" name="update" value="'.$langs->trans("Update").'">';
-						print '</td>';
-					} elseif (empty($line->numero_compte) || (empty($line->debit) && empty($line->credit))) {
-						if ($action == "" || $action == 'add') {
-							print '<!-- td columns in add mode -->';
-							print '<td>';
-							print $formaccounting->select_account('', 'accountingaccount_number', 1, array(), 1, 1, '');
-							print '</td>';
-							print '<td>';
-							// TODO For the moment we keep a free input text instead of a combo. The select_auxaccount has problem because:
-							// It does not use the setup of "key pressed" to select a thirdparty and this hang browser on large databases.
-							// Also, it is not possible to use a value that is not in the list.
-							// Also, the label is not automatically filled when a value is selected.
-							if (!empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX)) {
-								print $formaccounting->select_auxaccount('', 'subledger_account', 1, 'maxwidth250', '', 'subledger_label');
-							} else {
-								print '<input type="text" class="maxwidth150" name="subledger_account" value="" placeholder="' . dol_escape_htmltag($langs->trans("SubledgerAccount")) . '">';
-							}
-							print '<br><input type="text" class="maxwidth150" name="subledger_label" value="" placeholder="' . dol_escape_htmltag($langs->trans("SubledgerAccountLabel")) . '">';
-							print '</td>';
-							print '<td><input type="text" class="minwidth200" name="label_operation" value="' . $label_operation . '"/></td>';
-							print '<td class="right"><input type="text" size="6" class="right" name="debit" value=""/></td>';
-							print '<td class="right"><input type="text" size="6" class="right" name="credit" value=""/></td>';
-							print '<td>';
-							print '<input type="submit" class="button" name="save" value="' . $langs->trans("Add") . '">';
-							print '</td>';
-						}
-					} else {
-						print '<!-- td columns in display mode -->';
-						$resultfetch = $accountingaccount->fetch(null, $line->numero_compte, true);
-						print '<td>';
-						if ($resultfetch > 0) {
-							print $accountingaccount->getNomUrl(0, 1, 1, '', 0);
-						} else {
-							print $line->numero_compte.' <span class="warning">('.$langs->trans("AccountRemovedFromCurrentChartOfAccount").')</span>';
-						}
-						print '</td>';
-						print '<td>'.length_accounta($line->subledger_account);
-						if ($line->subledger_label) {
-							print ' - <span class="opacitymedium">'.$line->subledger_label.'</span>';
-						}
-						print '</td>';
-						print '<td>'.$line->label_operation.'</td>';
-						print '<td class="right nowraponall amount">'.price($line->debit).'</td>';
-						print '<td class="right nowraponall amount">'.price($line->credit).'</td>';
-
-						print '<td class="center nowraponall">';
-						if (empty($line->date_export) && empty($line->date_validation)) {
-							print '<a class="editfielda reposition" href="' . $_SERVER["PHP_SELF"] . '?action=update&id=' . $line->id . '&piece_num=' . urlencode($line->piece_num) . '&mode=' . urlencode($mode) . '&token=' . urlencode(newToken()) . '">';
-							print img_edit('', 0, 'class="marginrightonly"');
-							print '</a> &nbsp;';
-						} else {
-							print '<a class="editfielda nohover cursornotallowed reposition disabled" href="#" title="'.dol_escape_htmltag($langs->trans("ForbiddenTransactionAlreadyExported")).'">';
-							print img_edit($langs->trans("ForbiddenTransactionAlreadyExported"), 0, 'class="marginrightonly"');
-							print '</a> &nbsp;';
-						}
-
-						if (empty($line->date_validation)) {
-							$actiontodelete = 'delete';
-							if ($mode == '_tmp' || $action != 'delmouv') {
-								$actiontodelete = 'confirm_delete';
-							}
-
-							print '<a href="' . $_SERVER["PHP_SELF"] . '?action=' . $actiontodelete . '&id=' . $line->id . '&piece_num=' . urlencode($line->piece_num) . '&mode=' . urlencode($mode) . '&token=' . urlencode(newToken()) . '">';
-							print img_delete();
-							print '</a>';
-						} else {
-							print '<a class="editfielda nohover cursornotallowed disabled" href="#" title="'.dol_escape_htmltag($langs->trans("ForbiddenTransactionAlreadyExported")).'">';
-							print img_delete($langs->trans("ForbiddenTransactionAlreadyValidated"));
-							print '</a>';
-						}
-
+						print '<input type="submit" class="button" name="save" value="' . $langs->trans("Add") . '">';
 						print '</td>';
 					}
-					print "</tr>\n";
-				}
-
-				$total_debit = price2num($total_debit, 'MT');
-				$total_credit = price2num($total_credit, 'MT');
-
-				if ($total_debit != $total_credit) {
-					setEventMessages(null, array($langs->trans('MvtNotCorrectlyBalanced', $total_debit, $total_credit)), 'warnings');
-				}
-
-				print '</table>';
-				print '</div>';
-
-				if ($mode == '_tmp' && $action == '') {
-					print '<br>';
-					print '<div class="center">';
-					if ($total_debit == $total_credit) {
-						print '<a class="button" href="'.$_SERVER["PHP_SELF"].'?piece_num='.$object->piece_num.'&action=valid">'.$langs->trans("ValidTransaction").'</a>';
+				} else {
+					print '<!-- td columns in display mode -->';
+					$resultfetch = $accountingaccount->fetch(null, $line->numero_compte, true);
+					print '<td>';
+					if ($resultfetch > 0) {
+						print $accountingaccount->getNomUrl(0, 1, 1, '', 0);
 					} else {
-						print '<input type="submit" class="button" disabled="disabled" href="#" title="'.dol_escape_htmltag($langs->trans("MvtNotCorrectlyBalanced", $debit, $credit)).'" value="'.dol_escape_htmltag($langs->trans("ValidTransaction")).'">';
+						print $line->numero_compte.' <span class="warning">('.$langs->trans("AccountRemovedFromCurrentChartOfAccount").')</span>';
+					}
+					print '</td>';
+					print '<td>'.length_accounta($line->subledger_account);
+					if ($line->subledger_label) {
+						print ' - <span class="opacitymedium">'.$line->subledger_label.'</span>';
+					}
+					print '</td>';
+					print '<td>'.$line->label_operation.'</td>';
+					print '<td class="right nowraponall amount">'.price($line->debit).'</td>';
+					print '<td class="right nowraponall amount">'.price($line->credit).'</td>';
+
+					print '<td class="center nowraponall">';
+					if (empty($line->date_export) && empty($line->date_validation)) {
+						print '<a class="editfielda reposition" href="' . $_SERVER["PHP_SELF"] . '?action=update&id=' . $line->id . '&piece_num=' . urlencode($line->piece_num) . '&mode=' . urlencode($mode) . '&token=' . urlencode(newToken()) . '">';
+						print img_edit('', 0, 'class="marginrightonly"');
+						print '</a> &nbsp;';
+					} else {
+						print '<a class="editfielda nohover cursornotallowed reposition disabled" href="#" title="'.dol_escape_htmltag($langs->trans("ForbiddenTransactionAlreadyExported")).'">';
+						print img_edit($langs->trans("ForbiddenTransactionAlreadyExported"), 0, 'class="marginrightonly"');
+						print '</a> &nbsp;';
 					}
 
-					print ' &nbsp; ';
-					print '<a class="button button-cancel" href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/list.php">'.$langs->trans("Cancel").'</a>';
+					if (empty($line->date_validation)) {
+						$actiontodelete = 'delete';
+						if ($mode == '_tmp' || $action != 'delmouv') {
+							$actiontodelete = 'confirm_delete';
+						}
 
-					print "</div>";
+						print '<a href="' . $_SERVER["PHP_SELF"] . '?action=' . $actiontodelete . '&id=' . $line->id . '&piece_num=' . urlencode($line->piece_num) . '&mode=' . urlencode($mode) . '&token=' . urlencode(newToken()) . '">';
+						print img_delete();
+						print '</a>';
+					} else {
+						print '<a class="editfielda nohover cursornotallowed disabled" href="#" title="'.dol_escape_htmltag($langs->trans("ForbiddenTransactionAlreadyExported")).'">';
+						print img_delete($langs->trans("ForbiddenTransactionAlreadyValidated"));
+						print '</a>';
+					}
+
+					print '</td>';
 				}
+				print "</tr>\n";
 			}
 
-			print '</form>';
+			$total_debit = price2num($total_debit, 'MT');
+			$total_credit = price2num($total_credit, 'MT');
+
+			if ($total_debit != $total_credit) {
+				setEventMessages(null, array($langs->trans('MvtNotCorrectlyBalanced', $total_debit, $total_credit)), 'warnings');
+			}
+
+			print '</table>';
+			print '</div>';
+
+			if ($mode == '_tmp' && $action == '') {
+				print '<br>';
+				print '<div class="center">';
+				if ($total_debit == $total_credit) {
+					print '<a class="button" href="'.$_SERVER["PHP_SELF"].'?piece_num='.$object->piece_num.'&action=valid">'.$langs->trans("ValidTransaction").'</a>';
+				} else {
+					print '<input type="submit" class="button" disabled="disabled" href="#" title="'.dol_escape_htmltag($langs->trans("MvtNotCorrectlyBalanced", $debit, $credit)).'" value="'.dol_escape_htmltag($langs->trans("ValidTransaction")).'">';
+				}
+
+				print ' &nbsp; ';
+				print '<a class="button button-cancel" href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/list.php">'.$langs->trans("Cancel").'</a>';
+
+				print "</div>";
+			}
 		}
-	} else {
-		print load_fiche_titre($langs->trans("NoRecords"));
+
+		print '</form>';
 	}
+} else {
+	print load_fiche_titre($langs->trans("NoRecords"));
 }
 
 print dol_get_fiche_end();
