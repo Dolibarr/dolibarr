@@ -29,7 +29,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/events.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-require_once DOL_DOCUMENT_ROOT."/core/class/html.formcategory.class.php";
 
 dol_include_once('/emailcollector/class/emailcollector.class.php');
 
@@ -596,8 +595,6 @@ print $hookmanager->resPrint;
 print '</table>'."\n";
 print '</div>'."\n";
 
-$formcategory = new FormCategory($db);
-
 print load_fiche_titre($langs->trans("Other"), '', '');
 print '<table class="noborder centpercent">';
 
@@ -614,11 +611,11 @@ if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('MAIN_EMAILCOLLECTOR_MAIL_WITHOUT_HEADER');
 } else {
 	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-	print $formcategory->selectarray("MAIN_EMAILCOLLECTOR_MAIL_WITHOUT_HEADER", $arrval, $conf->global->TICKET_AUTO_READ_WHEN_CREATED_FROM_BACKEND);
+	print $form->selectarray("MAIN_EMAILCOLLECTOR_MAIL_WITHOUT_HEADER", $arrval, $conf->global->TICKET_AUTO_READ_WHEN_CREATED_FROM_BACKEND);
 }
 print '</td>';
 print '<td class="center">';
-print $formcategory->textwithpicto('', $langs->trans("EmailCollectorHideMailHeadersHelp"), 1, 'help');
+print $form->textwithpicto('', $langs->trans("EmailCollectorHideMailHeadersHelp"), 1, 'help');
 print '</td>';
 print '</tr>';
 
