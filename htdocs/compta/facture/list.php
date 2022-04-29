@@ -2188,11 +2188,13 @@ if ($resql) {
 
 			// Currency
 			if (!empty($arrayfields['f.multicurrency_code']['checked'])) {
+				print '<td class="nowraponall tdoverflowmax125" title="'.dol_escape_htmltag($obj->multicurrency_code.' - '.$langs->transnoentitiesnoconv('Currency'.$obj->multicurrency_code)).'">';
 				if (empty($conf->global->MAIN_SHOW_ONLY_CODE_MULTICURRENCY)) {
-					print '<td class="nowraponall">'.dol_escape_htmltag($obj->multicurrency_code).' - '.$langs->trans('Currency'.$obj->multicurrency_code)."</td>\n";
+					print $langs->transnoentitiesnoconv('Currency'.$obj->multicurrency_code);
 				} else {
-					print '<td class="nowraponall">'.dol_escape_htmltag($obj->multicurrency_code)."</td>\n";
+					print dol_escape_htmltag($obj->multicurrency_code);
 				}
+				print "</td>\n";
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
