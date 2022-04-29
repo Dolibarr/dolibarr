@@ -302,6 +302,7 @@ NotYetAccounted=Not yet transferred to accounting
 ShowTutorial=Show Tutorial
 NotReconciled=Not reconciled
 WarningRecordWithoutSubledgerAreExcluded=Warning, all lines without subledger account defined are filtered and excluded from this view
+AccountRemovedFromCurrentChartOfAccount=Accounting account that does not exist in the current chart of accounts
 
 ## Admin
 BindingOptions=Binding options

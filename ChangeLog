@@ -34,7 +34,7 @@ Following changes may create regressions for some external modules, but were nec
 * The deprecated method thirdparty_doc_create() has been removed. You can use the generateDocument() instead.
 * All triggers with a name XXX_UPDATE have been rename with name XXX_MODIFY for code consistency purpose.
 * Rename build_path_from_id_categ() into buildPathFromId() and set method to private
-
+* Move massaction 'confirm_createbills' from actions_massactions.inc.php to commande/list.php
 
 ***** ChangeLog for 15.0.1 compared to 15.0.0 *****
 FIX: #19777 #20281

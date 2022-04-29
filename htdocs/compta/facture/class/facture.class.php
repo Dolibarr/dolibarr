@@ -2724,7 +2724,7 @@ class Facture extends CommonInvoice
 
 		// Check for mandatory fields in thirdparty (defined into setup)
 		if (!empty($this->thirdparty) && is_object($this->thirdparty)) {
-			$array_to_check = array('IDPROF1', 'IDPROF2', 'IDPROF3', 'IDPROF4', 'IDPROF5', 'IDPROF6', 'EMAIL');
+			$array_to_check = array('IDPROF1', 'IDPROF2', 'IDPROF3', 'IDPROF4', 'IDPROF5', 'IDPROF6', 'EMAIL', 'ACCOUNTANCY_CODE_CUSTOMER');
 			foreach ($array_to_check as $key) {
 				$keymin = strtolower($key);
 				if (!property_exists($this->thirdparty, $keymin)) {
@@ -2752,6 +2752,15 @@ class Facture extends CommonInvoice
 						if (!empty($conf->global->SOCIETE_EMAIL_INVOICE_MANDATORY) && !isValidEMail($this->thirdparty->email)) {
 							$langs->load("errors");
 							$this->error = $langs->trans("ErrorBadEMail", $this->thirdparty->email).' ('.$langs->trans("ForbiddenBySetupRules").') ['.$langs->trans('Company').' : '.$this->thirdparty->name.']';
+							dol_syslog(__METHOD__.' '.$this->error, LOG_ERR);
+							return -1;
+						}
+					}
+					if ($key == 'ACCOUNTANCY_CODE_CUSTOMER') {
+						// Check for mandatory
+						if (!empty($conf->global->SOCIETE_ACCOUNTANCY_CODE_CUSTOMER_INVOICE_MANDATORY) && empty($this->thirdparty->code_compta)) {
+							$langs->load("errors");
+							$this->error = $langs->trans("ErrorAccountancyCodeCustomerIsMandatory", $this->thirdparty->name).' ('.$langs->trans("ForbiddenBySetupRules").')';
 							dol_syslog(__METHOD__.' '.$this->error, LOG_ERR);
 							return -1;
 						}
