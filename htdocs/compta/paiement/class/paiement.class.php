@@ -419,7 +419,8 @@ class Paiement extends CommonObject
 									}
 
 									if ($error) {
-										setEventMessages($discount->error, $discount->errors, 'errors');
+										$this->error = $discount->error;
+										$this->errors = $discount->errors;
 										$error++;
 									}
 								}
@@ -460,7 +461,8 @@ class Paiement extends CommonObject
 							$result = $invoice->generateDocument($invoice->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 
 							if ($result < 0) {
-								setEventMessages($invoice->error, $invoice->errors, 'errors');
+								$this->error = $invoice->error;
+								$this->errors = $invoice->errors;
 								$error++;
 							}
 						}

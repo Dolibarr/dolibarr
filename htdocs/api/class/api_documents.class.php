@@ -611,6 +611,16 @@ class Documents extends DolibarrApi
 
 				require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 				$object = new FactureFournisseur($this->db);
+			} elseif ($modulepart == 'commande' || $modulepart == 'order') {
+					$modulepart = 'commande';
+
+					require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+					$object = new Commande($this->db);
+			} elseif ($modulepart == 'commande_fournisseur' || $modulepart == 'supplier_order') {
+					$modulepart = 'supplier_order';
+
+					require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
+					$object = new CommandeFournisseur($this->db);
 			} elseif ($modulepart == 'project') {
 				require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 				$object = new Project($this->db);
@@ -669,7 +679,7 @@ class Documents extends DolibarrApi
 			}
 
 			// Special cases that need to use get_exdir to get real dir of object
-			// If future, all object should use this to define path of documents.
+			// In future, all object should use this to define path of documents.
 			if ($modulepart == 'supplier_invoice') {
 				$tmpreldir = get_exdir($object->id, 2, 0, 0, $object, 'invoice_supplier');
 			}
