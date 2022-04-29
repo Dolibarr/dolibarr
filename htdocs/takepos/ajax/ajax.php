@@ -56,7 +56,7 @@ if (empty($user->rights->takepos->run)) {
 }
 
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
-$hookmanager->initHooks(array('takeposproductsearch'));
+$hookmanager->initHooks(array('takeposproductsearch')); // new context for product search hooks
 
 /*
  * View
@@ -71,13 +71,22 @@ if ($action == 'getProducts') {
 	if ($result > 0) {
 		$prods = $object->getObjectsInCateg("product", 0, 0, 0, getDolGlobalString('TAKEPOS_SORTPRODUCTFIELD'), 'ASC');
 		// Removed properties we don't need
+		$res = array();
 		if (is_array($prods) && count($prods) > 0) {
 			foreach ($prods as $prod) {
+				if (getDolGlobalInt('TAKEPOS_PRODUCT_IN_STOCK') == 1) {
+					// remove products without stock
+					$prod->load_stock('nobatch,novirtual');
+					if ($prod->stock_warehouse[getDolGlobalString('CASHDESK_ID_WAREHOUSE'.$_SESSION['takeposterminal'])]->real <= 0) {
+						continue;
+					}
+				}
 				unset($prod->fields);
 				unset($prod->db);
+				$res[] = $prod;
 			}
 		}
-		echo json_encode($prods);
+		echo json_encode($res);
 	} else {
 		echo 'Failed to load category with id='.$category;
 	}
@@ -211,12 +220,21 @@ if ($action == 'getProducts') {
 	}
 
 	$sql = 'SELECT p.rowid, p.ref, p.label, p.tosell, p.tobuy, p.barcode, p.price' ;
-	// Add fields from hooks
+	if (getDolGlobalInt('TAKEPOS_PRODUCT_IN_STOCK') == 1) {
+		$sql .= ', ps.reel';
+	}
+
+  // Add fields from hooks
 	$parameters=array();
 	$reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters);
 	$sql .= $hookmanager->resPrint;
 
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'product as p';
+	if (getDolGlobalInt('TAKEPOS_PRODUCT_IN_STOCK') == 1) {
+		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_stock as ps';
+		$sql .= ' ON (p.rowid = ps.fk_product';
+		$sql .= " AND ps.fk_entrepot = ".((int) getDolGlobalInt("CASHDESK_ID_WAREHOUSE".$_SESSION['takeposterminal']));
+	}
 
 	// Add tables from hooks
 	$parameters=array();
@@ -228,6 +246,9 @@ if ($action == 'getProducts') {
 		$sql .= ' AND EXISTS (SELECT cp.fk_product FROM '.MAIN_DB_PREFIX.'categorie_product as cp WHERE cp.fk_product = p.rowid AND cp.fk_categorie IN ('.$db->sanitize($filteroncategids).'))';
 	}
 	$sql .= ' AND tosell = 1';
+	if (getDolGlobalInt('TAKEPOS_PRODUCT_IN_STOCK') == 1) {
+		$sql .= ' AND ps.reel > 0';
+	}
 	$sql .= natural_search(array('ref', 'label', 'barcode'), $term);
 	// Add where from hooks
 	$parameters=array();
