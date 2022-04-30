@@ -685,7 +685,7 @@ class pdf_standard extends ModelePDFStock
 		$pdf->SetFont('', 'B', $default_font_size - 3);
 
 		// Output Rect
-		$this->printRect($pdf,$this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $tab_height, $hidetop, $hidebottom);	// Rect takes a length in 3rd parameter and 4th parameter
+		$this->printRect($pdf, $this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $tab_height, $hidetop, $hidebottom);	// Rect takes a length in 3rd parameter and 4th parameter
 
 		$pdf->SetLineStyle(array('dash'=>'0', 'color'=>array(200, 200, 200)));
 		$pdf->SetDrawColor(200, 200, 200);
@@ -816,10 +816,10 @@ class pdf_standard extends ModelePDFStock
 		$pdf->SetFont('', '', $default_font_size - 1);
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
-		if (!empty($object->lieu)){
+		if (!empty($object->lieu)) {
 			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("Label").' : '.$object->lieu, '', 'R');
 		}
-		
+
 
 		$posy += 4;
 		$pdf->SetXY($posx, $posy);
@@ -841,7 +841,7 @@ class pdf_standard extends ModelePDFStock
 
 		// Description
 		$nbpage = $pdf->getPage();
-		if ($nbpage == 1){
+		if ($nbpage == 1) {
 			$nexY = max($yafterleft, $yafterright);
 			$nexY += 5;
 			$pdf->SetXY($posx, $posy);
@@ -887,7 +887,6 @@ class pdf_standard extends ModelePDFStock
 			}
 
 			$pdf->writeHTMLCell(190, 2, $this->marge_gauche, $nexY, '<b>'.$outputlangs->transnoentities("LastMovement").' : </b>'.$toWrite, 0, 1);
-		
 		}
 		$nexY = $pdf->GetY();
 
