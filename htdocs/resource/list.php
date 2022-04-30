@@ -199,7 +199,7 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
-	$ret = $object->fetch_all('', '', 0, 0, $filter);
+	$ret = $object->fetchAll('', '', 0, 0, $filter);
 	if ($ret == -1) {
 		dol_print_error($db, $object->error);
 		exit;
@@ -209,7 +209,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 }
 
 // Load object list
-$ret = $object->fetch_all($sortorder, $sortfield, $limit, $offset, $filter);
+$ret = $object->fetchAll($sortorder, $sortfield, $limit, $offset, $filter);
 if ($ret == -1) {
 	dol_print_error($db, $object->error);
 	exit;

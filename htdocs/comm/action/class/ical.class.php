@@ -396,19 +396,19 @@ class ICal
 	public function get_event_list()
 	{
 		// phpcs:enable
-		return (!empty($this->cal['VEVENT']) ? $this->cal['VEVENT'] : '');
+		return (empty($this->cal['VEVENT']) ? '' : $this->cal['VEVENT']);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Return eventlist array (not sort eventlist array)
+	 * Return freebusy array (not sort eventlist array)
 	 *
 	 * @return array
 	 */
 	public function get_freebusy_list()
 	{
 		// phpcs:enable
-		return $this->cal['VFREEBUSY'];
+		return (empty($this->cal['VFREEBUSY']) ? '' : $this->cal['VFREEBUSY']);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

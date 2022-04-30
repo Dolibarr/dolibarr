@@ -277,12 +277,12 @@ if (empty($conf->global->AGENDA_DISABLE_EXT)) {
 		if (!empty($conf->global->$source) && !empty($conf->global->$name)) {
 			// Note: $conf->global->buggedfile can be empty or 'uselocalandtznodaylight' or 'uselocalandtzdaylight'
 			$listofextcals[] = array(
-				'src'=>$conf->global->$source,
-				'name'=>$conf->global->$name,
+				'src' => getDolGlobalString($source),
+				'name' => getDolGlobalString($name),
 				'offsettz' => (!empty($conf->global->$offsettz) ? $conf->global->$offsettz : 0),
-				'color'=>$conf->global->$color,
-				'default'=>$conf->global->$default,
-				'buggedfile'=>(isset($conf->global->buggedfile) ? $conf->global->buggedfile : 0)
+				'color' => getDolGlobalString($color),
+				'default' => getDolGlobalString($default),
+				'buggedfile' => (isset($conf->global->buggedfile) ? $conf->global->buggedfile : 0)
 			);
 		}
 	}
@@ -302,12 +302,12 @@ if (empty($user->conf->AGENDA_DISABLE_EXT)) {
 		if (!empty($user->conf->$source) && !empty($user->conf->$name)) {
 			// Note: $conf->global->buggedfile can be empty or 'uselocalandtznodaylight' or 'uselocalandtzdaylight'
 			$listofextcals[] = array(
-				'src'=>$user->conf->$source,
-				'name'=>$user->conf->$name,
+				'src' => $user->conf->$source,
+				'name' => $user->conf->$name,
 				'offsettz' => (!empty($user->conf->$offsettz) ? $user->conf->$offsettz : 0),
-				'color'=>$user->conf->$color,
-				'default'=>$user->conf->$default,
-				'buggedfile'=>(isset($user->conf->buggedfile) ? $user->conf->buggedfile : 0)
+				'color' => $user->conf->$color,
+				'default' => $user->conf->$default,
+				'buggedfile' => (isset($user->conf->buggedfile) ? $user->conf->buggedfile : 0)
 			);
 		}
 	}
