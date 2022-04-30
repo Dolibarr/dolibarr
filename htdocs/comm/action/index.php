@@ -397,7 +397,7 @@ if ($actioncode || GETPOSTISSET('search_actioncode')) {
 if ($resourceid > 0) {
 	$param .= "&search_resourceid=".urlencode($resourceid);
 }
-if ($status || GETPOSTISSET('status')) {
+if ($status || GETPOSTISSET('status') || GETPOSTISSET('search_status')) {
 	$param .= "&search_status=".urlencode($status);
 }
 if ($filter) {
@@ -622,7 +622,7 @@ if (!empty($conf->use_javascript_ajax)) {	// If javascript on
 	$s .= '<div class="nowrap inline-block minheight30"><input type="checkbox" id="check_birthday" name="check_birthday" class="check_birthday"><label for="check_birthday"> <span class="check_birthday_text">'.$langs->trans("AgendaShowBirthdayEvents").'</span></label> &nbsp; </div>';
 
 	// Calendars from hooks
-	$parameters = array(); $object = null;
+	$parameters = array();
 	$reshook = $hookmanager->executeHooks('addCalendarChoice', $parameters, $object, $action);
 	if (empty($reshook)) {
 		$s .= $hookmanager->resPrint;
@@ -1213,7 +1213,7 @@ if (count($listofextcals)) {
 					$addevent = true;
 				} elseif (!is_array($icalevent['DTSTART'])) { // not fullday event (DTSTART is not array. It is a value like '19700101T000000Z' for 00:00 in greenwitch)
 					$datestart = $icalevent['DTSTART'];
-					$dateend = $icalevent['DTEND'];
+					$dateend = empty($icalevent['DTEND']) ? $datestart : $icalevent['DTEND'];
 
 					$datestart += +($offsettz * 3600);
 					$dateend += +($offsettz * 3600);

@@ -3748,7 +3748,7 @@ class User extends CommonObject
 	 */
 	public function findUserIdByEmail($email)
 	{
-		if ($this->findUserIdByEmailCache[$email]) {
+		if (isset($this->findUserIdByEmailCache[$email])) {
 			return $this->findUserIdByEmailCache[$email];
 		}
 
