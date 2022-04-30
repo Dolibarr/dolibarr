@@ -25,6 +25,7 @@
  *       \brief      File of class to parse ical calendars
  */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/xcal.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 
 
 /**
@@ -39,6 +40,7 @@ class ICal
 	public $todo_count; // Number of Todos
 	public $freebusy_count; // Number of Freebusy
 	public $last_key; //Help variable save last key (multiline string)
+	public $error;
 
 
 	/**
@@ -61,11 +63,15 @@ class ICal
 		$this->file = $file;
 		$file_text = '';
 
-		$tmparray = file($file);
-		if (is_array($tmparray)) {
-			$file_text = join("", $tmparray); //load file
-			$file_text = preg_replace("/[\r\n]{1,} /", "", $file_text);
+		$tmpresult = getURLContent($file, 'GET');
+		if ($tmpresult['http_code'] != 200) {
+			$file_text = '';
+			$this->error = 'Error: '.$tmpresult['http_code'].' '.$tmpresult['content'];
+		} else {
+			$file_text = preg_replace("/[\r\n]{1,} /", "", $tmpresult['content']);
 		}
+		//var_dump($tmpresult);
+
 		return $file_text; // return all text
 	}
 
