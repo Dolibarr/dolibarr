@@ -584,6 +584,7 @@ input.buttonpaymentstripe {
 }
 .logopublicpayment #dolpaymentlogo {
 	max-height: 100px;
+	image-rendering: -webkit-optimize-contrast;		/* better rendering on public page header */
 }
 a.butStatus {
 	padding-left: 5px;

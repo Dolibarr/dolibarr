@@ -390,6 +390,7 @@ input.buttonpaymentstripe {
 .logopublicpayment #dolpaymentlogo {
 	max-height: 100px;
 	max-width: 320px;
+	image-rendering: -webkit-optimize-contrast;		/* better rendering on public page header */
 }
 
 a.butStatus {
