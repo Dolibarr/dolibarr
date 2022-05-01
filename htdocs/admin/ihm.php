@@ -558,7 +558,6 @@ if ($mode == 'other') {
 	print '<tr class="oddeven"><td>' . $langs->trans("ShowQuickAddLink") . '</td><td>';
 	print ajax_constantonoff("MAIN_USE_TOP_MENU_QUICKADD_DROPDOWN", array(), $conf->entity, 0, 0, 1, 0, 0, 0, '', 'other');
 	print '</td>';
-	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
 
 	// Show bugtrack link
