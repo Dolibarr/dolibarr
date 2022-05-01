@@ -153,7 +153,7 @@ if (empty($reshook)) {
 	if ($type == 'bank-transfer') {
 		$uploaddir = $conf->paymentbybanktransfer->dir_output;
 	} else {
-	$uploaddir = $conf->prelevement->dir_output;
+		$uploaddir = $conf->prelevement->dir_output;
 	}
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }

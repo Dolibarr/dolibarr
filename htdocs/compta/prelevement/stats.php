@@ -41,7 +41,7 @@ if ($user->socid) {
 if ($type == 'bank-transfer') {
 	$result = restrictedArea($user, 'paymentbybanktransfer', '', '', '');
 } else {
-$result = restrictedArea($user, 'prelevement', '', '', 'bons');
+	$result = restrictedArea($user, 'prelevement', '', '', 'bons');
 }
 
 
