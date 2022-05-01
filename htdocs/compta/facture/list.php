@@ -601,7 +601,7 @@ $sql .= ', '.MAIN_DB_PREFIX.'facture as f';
 if ($sortfield == "f.datef") {
 	$sql .= $db->hintindex('idx_facture_datef');
 }
-if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
+if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (f.rowid = ef.fk_object)";
 }
 
@@ -2188,7 +2188,13 @@ if ($resql) {
 
 			// Currency
 			if (!empty($arrayfields['f.multicurrency_code']['checked'])) {
-				print '<td class="nowraponall">'.dol_escape_htmltag($obj->multicurrency_code).' - '.$langs->trans('Currency'.$obj->multicurrency_code)."</td>\n";
+				print '<td class="nowraponall tdoverflowmax125" title="'.dol_escape_htmltag($obj->multicurrency_code.' - '.$langs->transnoentitiesnoconv('Currency'.$obj->multicurrency_code)).'">';
+				if (empty($conf->global->MAIN_SHOW_ONLY_CODE_MULTICURRENCY)) {
+					print $langs->transnoentitiesnoconv('Currency'.$obj->multicurrency_code);
+				} else {
+					print dol_escape_htmltag($obj->multicurrency_code);
+				}
+				print "</td>\n";
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}

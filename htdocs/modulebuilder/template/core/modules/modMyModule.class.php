@@ -222,6 +222,8 @@ class modMyModule extends DolibarrModules
 			'tabrowid'=>array("rowid", "rowid", "rowid"),
 			// Condition to show each dictionary
 			'tabcond'=>array($conf->mymodule->enabled, $conf->mymodule->enabled, $conf->mymodule->enabled)
+			// Help tooltip for each fields of the dictionary
+			'tabhelp'=>array(array('code'=>$langs->trans('CodeTooltipHelp')))
 		);
 		*/
 

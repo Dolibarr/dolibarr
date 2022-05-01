@@ -5872,6 +5872,7 @@ class Form
 		}
 
 		$out .= '</select>';
+
 		// Make select dynamic
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 		$out .= ajax_combobox($htmlname);
@@ -7753,13 +7754,6 @@ class Form
 			}
 		}
 
-		// Add code for jquery to use multiselect
-		if ($addjscombo && $jsbeautify) {
-			// Enhance with select2
-			include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
-			$out .= ajax_combobox($htmlname, array(), 0, 0, 'resolve', $show_empty < 0 ? (string) $show_empty : '-1');
-		}
-
 		$out .= '<select id="'.preg_replace('/^\./', '', $htmlname).'" '.($disabled ? 'disabled="disabled" ' : '').'class="flat '.(preg_replace('/^\./', '', $htmlname)).($morecss ? ' '.$morecss : '').'"';
 		$out .= ' name="'.preg_replace('/^\./', '', $htmlname).'" '.($moreparam ? $moreparam : '');
 		$out .= '>';
@@ -7798,7 +7792,7 @@ class Form
 				if (is_array($tmpvalue)) {
 					$value = $tmpvalue['label'];
 					$disabled = empty($tmpvalue['disabled']) ? '' : ' disabled';
-					$style = empty($tmpvalue['css']) ? ' class="'.$tmpvalue['css'].'"' : '';
+					$style = empty($tmpvalue['css']) ? '' : ' class="'.$tmpvalue['css'].'"';
 				} else {
 					$value = $tmpvalue;
 					$disabled = '';
@@ -7859,6 +7853,14 @@ class Form
 		}
 
 		$out .= "</select>";
+
+		// Add code for jquery to use multiselect
+		if ($addjscombo && $jsbeautify) {
+			// Enhance with select2
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
+			$out .= ajax_combobox($htmlname, array(), 0, 0, 'resolve', $show_empty < 0 ? (string) $show_empty : '-1');
+		}
+
 		return $out;
 	}
 
@@ -8530,7 +8532,7 @@ class Form
 	public function showLinkToObjectBlock($object, $restrictlinksto = array(), $excludelinksto = array())
 	{
 		global $conf, $langs, $hookmanager;
-		global $bc, $action;
+		global $action;
 
 		$linktoelem = '';
 		$linktoelemlist = '';
@@ -8577,11 +8579,10 @@ class Form
 			);
 		}
 
-		// Can complete the possiblelink array
-		$hookmanager->initHooks(array('commonobject'));
-		$parameters = array('listofidcompanytoscan' => $listofidcompanytoscan);
-
 		if (!empty($listofidcompanytoscan)) {  // If empty, we don't have criteria to scan the object we can link to
+			// Can complete the possiblelink array
+			$hookmanager->initHooks(array('commonobject'));
+			$parameters = array('listofidcompanytoscan' => $listofidcompanytoscan, 'possiblelinks' => $possiblelinks);
 			$reshook = $hookmanager->executeHooks('showLinkToObjectBlock', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		}
 
@@ -9228,12 +9229,12 @@ class Form
 				if (!empty($conf->gravatar->enabled) && $email && empty($noexternsourceoverwrite)) {
 					// see https://gravatar.com/site/implement/images/php/
 					$ret .= '<!-- Put link to gravatar -->';
-					$ret .= '<img class="photo'.$modulepart.($cssclass ? ' '.$cssclass : '').'" alt="Gravatar avatar" title="'.$email.' Gravatar avatar" '.($width ? ' width="'.$width.'"' : '').($height ? ' height="'.$height.'"' : '').' src="https://www.gravatar.com/avatar/'.md5(strtolower(trim($email))).'?s='.$width.'&d='.$defaultimg.'">'; // gravatar need md5 hash
+					$ret .= '<img class="photo'.$modulepart.($cssclass ? ' '.$cssclass : '').'" alt="" title="'.$email.' Gravatar avatar" '.($width ? ' width="'.$width.'"' : '').($height ? ' height="'.$height.'"' : '').' src="https://www.gravatar.com/avatar/'.md5(strtolower(trim($email))).'?s='.$width.'&d='.$defaultimg.'">'; // gravatar need md5 hash
 				} else {
 					if ($nophoto == 'company') {
-						$ret .= '<div class="photo'.$modulepart.($cssclass ? ' '.$cssclass : '').'" alt="No photo" '.($width ? ' width="'.$width.'"' : '').($height ? ' height="'.$height.'"' : '').'">'.img_picto('', 'company').'</div>';
+						$ret .= '<div class="photo'.$modulepart.($cssclass ? ' '.$cssclass : '').'" alt="" '.($width ? ' width="'.$width.'"' : '').($height ? ' height="'.$height.'"' : '').'">'.img_picto('', 'company').'</div>';
 					} else {
-						$ret .= '<img class="photo'.$modulepart.($cssclass ? ' '.$cssclass : '').'" alt="No photo" '.($width ? ' width="'.$width.'"' : '').($height ? ' height="'.$height.'"' : '').' src="'.DOL_URL_ROOT.$nophoto.'">';
+						$ret .= '<img class="photo'.$modulepart.($cssclass ? ' '.$cssclass : '').'" alt="" '.($width ? ' width="'.$width.'"' : '').($height ? ' height="'.$height.'"' : '').' src="'.DOL_URL_ROOT.$nophoto.'">';
 					}
 				}
 			}
@@ -9344,7 +9345,7 @@ class Form
 					if ($disableline) {
 						$out .= ' disabled';
 					}
-					if ((is_object($selected[0]) && $selected[0]->id == $obj->rowid) || (!is_object($selected[0]) && in_array($obj->rowid, $selected))) {
+					if ((isset($selected[0]) && is_object($selected[0]) && $selected[0]->id == $obj->rowid) || ((!isset($selected[0]) || !is_object($selected[0])) && !empty($selected) && in_array($obj->rowid, $selected))) {
 						$out .= ' selected';
 					}
 					$out .= '>';

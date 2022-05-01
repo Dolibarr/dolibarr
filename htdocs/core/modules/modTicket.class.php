@@ -40,6 +40,7 @@ class modTicket extends DolibarrModules
 	public function __construct($db)
 	{
 		global $langs, $conf;
+		$langs->load("ticket");
 
 		$this->db = $db;
 
@@ -103,6 +104,7 @@ class modTicket extends DolibarrModules
 		// List of particular constants to add when module is enabled
 		// (key, 'chaine', value, desc, visible, 'current' or 'allentities', deleteonunactive)
 		// Example:
+		$default_signature = $langs->trans('TicketMessageMailSignatureText', $conf->global->MAIN_INFO_SOCIETE_NOM);
 		$this->const = array(
 			1 => array('TICKET_ENABLE_PUBLIC_INTERFACE', 'chaine', '0', 'Enable ticket public interface', 0),
 			2 => array('TICKET_ADDON', 'chaine', 'mod_ticket_simple', 'Ticket ref module', 0),
@@ -111,7 +113,11 @@ class modTicket extends DolibarrModules
 			5 => array('TICKET_DELAY_BEFORE_FIRST_RESPONSE', 'chaine', '0', 'Maximum wanted elapsed time before a first answer to a ticket (in hours). Display a warning in tickets list if not respected.', 0),
 			6 => array('TICKET_DELAY_SINCE_LAST_RESPONSE', 'chaine', '0', 'Maximum wanted elapsed time between two answers on the same ticket (in hours). Display a warning in tickets list if not respected.', 0),
 			7 => array('TICKET_NOTIFY_AT_CLOSING', 'chaine', '0', 'Default notify contacts when closing a module', 0),
-			8 => array('TICKET_PRODUCT_CATEGORY', 'chaine', 0, 'The category of product that is being used for ticket accounting', 0)
+			8 => array('TICKET_PRODUCT_CATEGORY', 'chaine', 0, 'The category of product that is being used for ticket accounting', 0),
+			9 => array('TICKET_NOTIFICATION_EMAIL_FROM', 'chaine', $conf->global->MAIN_MAIL_EMAIL_FROM, 'Sender of ticket replies sent from Dolibarr', 0),
+			10 => array('TICKET_MESSAGE_MAIL_INTRO', 'chaine', $langs->trans('TicketMessageMailIntroText'), 'Introduction text of ticket replies sent from Dolibarr', 0),
+			11 => array('TICKET_MESSAGE_MAIL_SIGNATURE', 'chaine', $default_signature, 'Signature of ticket replies sent from Dolibarr', 0),
+			12 => array('MAIN_EMAILCOLLECTOR_MAIL_WITHOUT_HEADER', 'chaine', "1", 'Disable the rendering of headers in tickets', 0)
 		);
 
 

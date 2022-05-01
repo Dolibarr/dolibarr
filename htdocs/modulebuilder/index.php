@@ -261,7 +261,7 @@ if ($dirins && $action == 'initmodule' && $modulename) {
 
 		dol_delete_file($destdir.'/scripts/'.strtolower($modulename).'.php');
 
-		dol_delete_file($destdir.'/test/phpunit/MyModuleFunctionnalTest.php');
+		dol_delete_file($destdir.'/test/phpunit/'.$modulename.'FunctionnalTest.php');
 
 		// Delete some files related to Object (because the previous dolCopyDir has copied everything)
 		dol_delete_file($destdir.'/myobject_card.php');
