@@ -177,7 +177,7 @@ $arrayofjs = array();
 $arrayofcss = array();
 
 $replacemainarea = (empty($conf->dol_hide_leftmenu) ? '<div>' : '').'<div>';
-llxHeader($head, $langs->trans("PositionToBeFilled"), '', '', 0, 0, '', '', '', 'onlinepaymentbody', $replacemainarea, 1);
+llxHeader($head, $langs->trans("PositionToBeFilled"), '', '', 0, 0, '', '', '', 'onlinepaymentbody', $replacemainarea, 1, 1);
 
 
 print '<span id="dolpaymentspan"></span>'."\n";
@@ -217,8 +217,7 @@ if (!empty($logosmall) && is_readable($conf->mycompany->dir_output.'/logos/thumb
 if ($urllogo) {
 	print '<div class="backgreypublicpayment">';
 	print '<div class="logopublicpayment">';
-	print '<img id="dolpaymentlogo" src="'.$urllogo.'"';
-	print '>';
+	print '<img id="dolpaymentlogo" src="'.$urllogo.'">';
 	print '</div>';
 	if (empty($conf->global->MAIN_HIDE_POWERED_BY)) {
 		print '<div class="poweredbypublicpayment opacitymedium right"><a class="poweredbyhref" href="https://www.dolibarr.org?utm_medium=website&utm_source=poweredby" target="dolibarr" rel="noopener">'.$langs->trans("PoweredBy").'<br><img class="poweredbyimg" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
@@ -249,7 +248,7 @@ if (!empty($conf->global->RECRUITMENT_NEWFORM_TEXT)) {
 if (empty($text)) {
 	$text .= '<tr><td class="textpublicpayment"><br>'.$langs->trans("JobOfferToBeFilled", $mysoc->name);
 	$text .= ' &nbsp; - &nbsp; <strong>'.$mysoc->name.'</strong>';
-	$text .= ' &nbsp; - &nbsp; <span class="fa fa-calendar secondary"></span> '.dol_print_date($object->date_creation);
+	$text .= ' &nbsp; - &nbsp; <span class="nowraponall"><span class="fa fa-calendar secondary"></span> '.dol_print_date($object->date_creation).'</span>';
 	$text .= '</td></tr>'."\n";
 	$text .= '<tr><td class="textpublicpayment"><h1>'.$object->label.'</h1><br></td></tr>'."\n";
 }
@@ -300,7 +299,7 @@ if (empty($emailforcontact)) {
 }
 print '<b class="wordbreak">';
 print $tmpuser->getFullName(-1);
-print ' - '.dol_print_email($emailforcontact, 0, 0, 1, 0, 0, 1);
+print ' &nbsp; '.dol_print_email($emailforcontact, 0, 0, 1, 0, 0, 'envelope');
 print '</b>';
 print '</b><br>';
 

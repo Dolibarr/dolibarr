@@ -1668,21 +1668,6 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 		width: 175px;
 	}
 
-	.logopublicpayment #dolpaymentlogo {
-		max-width: 260px;
-	}
-	#tablepublicpayment {
-		width:	auto !important;
-	}
-	.poweredbypublicpayment {
-		float: unset !important;
-		top: unset !important;
-		bottom: 8px;
-		position: relative !important;
-	}
-	.poweredbyimg {
-		width: 48px;
-	}
 	input.buttonpayment, button.buttonpayment, div.buttonpayment {
 		min-width: 270px;
 	}
@@ -1834,9 +1819,9 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 	   }
 	*/
 
-	   input.buttonpayment {
+	input.buttonpayment {
 		min-width: 300px;
-	   }
+	}
 }
 .linkobject { cursor: pointer; }
 
@@ -7270,6 +7255,24 @@ div.clipboardCPValue.hidewithsize {
 	}
 
 	td.widthpictotitle { width: 30px; }
+
+	.logopublicpayment #dolpaymentlogo {
+		max-width: 260px;
+	}
+	#tablepublicpayment {
+		width:	auto !important;
+		border: none !important;
+	}
+	.poweredbypublicpayment {
+		float: unset !important;
+		top: unset !important;
+		/* bottom: 8px; */
+		right: -10px !important;
+		position: relative !important;
+	}
+	.poweredbyimg {
+		width: 48px;
+	}
 }
 
 @media only screen and (max-width: 1024px)
