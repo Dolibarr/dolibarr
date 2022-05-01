@@ -232,12 +232,12 @@ if (!empty($conf->global->RECRUITMENT_IMAGE_PUBLIC_INTERFACE)) {
 }
 
 
-print '<table id="dolpaymenttable" summary="Payment form" class="center">'."\n";
+print '<table id="dolpaymenttable" summary="Job position offer" class="center">'."\n";
 
 // Output introduction text
 $text = '';
 if (!empty($conf->global->RECRUITMENT_NEWFORM_TEXT)) {
-	$langs->load("recruitment");
+	$reg = array();
 	if (preg_match('/^\((.*)\)$/', $conf->global->RECRUITMENT_NEWFORM_TEXT, $reg)) {
 		$text .= $langs->trans($reg[1])."<br>\n";
 	} else {
@@ -334,6 +334,7 @@ if ($action != 'dosubmit') {
 print '</td></tr>'."\n";
 
 print '</table>'."\n";
+
 print '</form>'."\n";
 print '</div>'."\n";
 print '<br>';
