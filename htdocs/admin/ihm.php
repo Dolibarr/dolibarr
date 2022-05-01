@@ -475,6 +475,7 @@ if ($mode == 'other') {
 
 	print '<div class="center">';
 	print '<input class="button button-save reposition" type="submit" name="submit" value="' . $langs->trans("Save") . '">';
+	print '<input class="button button-cancel reposition" type="submit" name="cancel" value="' . $langs->trans("Cancel") . '">';
 	print '</div>';
 
 	print '<br>';
@@ -577,9 +578,8 @@ if ($mode == 'other') {
 	print '</tr>';
 
 	// Disable javascript and ajax
-	print '<tr class="oddeven"><td>' . $langs->trans("DisableJavascript") . '</td><td>';
+	print '<tr class="oddeven"><td>' . $form->textwithpicto($langs->trans("DisableJavascript"), $langs->trans("DisableJavascriptNote")) . '</td><td>';
 	print ajax_constantonoff("MAIN_DISABLE_JAVASCRIPT", array(), $conf->entity, 0, 0, 1, 0, 0, 0, '', 'other');
-	print ' <span class="opacitymedium paddingleft marginleft">' . $langs->trans("DisableJavascriptNote") . '</span>';
 	print '</td>';
 	print '</tr>';
 

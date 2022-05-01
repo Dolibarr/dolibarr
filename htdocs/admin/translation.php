@@ -271,7 +271,8 @@ $recordtoshow = array();
 // Search modules dirs
 $modulesdir = dolGetModulesDirs();
 
-$nbtotaloffiles = 0;
+$listoffiles = array();
+$listoffilesexternalmodules = array();
 
 // Search into dir of modules (the $modulesdir is already a list that loop on $conf->file->dol_document_root)
 $i = 0;
@@ -298,7 +299,10 @@ foreach ($modulesdir as $keydir => $tmpsearchdir) {
 		if ($result < 0) {
 			print 'Failed to load language file '.$tmpfile.'<br>'."\n";
 		} else {
-			$nbtotaloffiles++;
+			$listoffiles[$langkey] = $tmpfile;
+			if (strpos($langkey, '@') !== false) {
+				$listoffilesexternalmodules[$langkey] = $tmpfile;
+			}
 		}
 		//print 'After loading lang '.$langkey.', newlang has '.count($newlang->tab_translate).' records<br>'."\n";
 
@@ -307,6 +311,8 @@ foreach ($modulesdir as $keydir => $tmpsearchdir) {
 	$i++;
 }
 
+$nbtotaloffiles = count($listoffiles);
+$nbtotaloffilesexternal = count($listoffilesexternalmodules);
 
 if ($mode == 'overwrite') {
 	print '<input type="hidden" name="page" value="'.$page.'">';
@@ -477,7 +483,7 @@ if ($mode == 'searchkey') {
 	//print 'param='.$param.' $_SERVER["PHP_SELF"]='.$_SERVER["PHP_SELF"].' num='.$num.' page='.$page.' nbtotalofrecords='.$nbtotalofrecords." sortfield=".$sortfield." sortorder=".$sortorder;
 	$title = $langs->trans("Translation");
 	if ($nbtotalofrecords > 0) {
-		$title .= ' <span class="opacitymedium colorblack paddingleft">('.$nbtotalofrecords.' / '.$nbtotalofrecordswithoutfilters.' - '.$nbtotaloffiles.' '.$langs->trans("Files").')</span>';
+		$title .= ' <span class="opacitymedium colorblack paddingleft">('.$nbtotalofrecords.' / '.$nbtotalofrecordswithoutfilters.' - <span title="'.dol_escape_htmltag(($nbtotaloffiles - $nbtotaloffilesexternal).' core - '.($nbtotaloffilesexternal).' external').'">'.$nbtotaloffiles.' '.$langs->trans("Files").'</span>)</span>';
 	}
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, -1 * $nbtotalofrecords, '', 0, '', '', $limit, 0, 0, 1);
 
