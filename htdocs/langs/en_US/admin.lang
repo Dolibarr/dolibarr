@@ -1345,6 +1345,7 @@ TransKeyWithoutOriginalValue=You forced a new translation for the translation ke
 TitleNumberOfActivatedModules=Activated modules
 TotalNumberOfActivatedModules=Activated modules: <b>%s</b> / <b>%s</b>
 YouMustEnableOneModule=You must at least enable 1 module
+YouMustEnableTranslationOverwriteBefore=You must first enable translation overwriting to be allowed to replace a translation
 ClassNotFoundIntoPathWarning=Class %s not found in PHP path
 YesInSummer=Yes in summer
 OnlyFollowingModulesAreOpenedToExternalUsers=Note, only the following modules are available to external users (irrespective of the permissions of such users) and only if permissions are granted:<br>
