@@ -306,8 +306,13 @@ class Inventory extends CommonObject
 					$inventoryline->fk_warehouse = $obj->fk_warehouse;
 					$inventoryline->fk_product = $obj->fk_product;
 					$inventoryline->batch = $obj->batch;
-					$inventoryline->qty_stock = ($obj->batch ? $obj->qty : $obj->reel); // If there is batch detail, we take qty for batch, else global qty
 					$inventoryline->datec = dol_now();
+
+					if ($conf->productbatch->enabled) {
+						$inventoryline->qty_stock = ($obj->batch ? $obj->qty : $obj->reel); // If there is batch detail, we take qty for batch, else global qty
+					} else {
+						$inventoryline->qty_stock = $obj->reel;
+					}
 
 					$resultline = $inventoryline->create($user);
 					if ($resultline <= 0) {
