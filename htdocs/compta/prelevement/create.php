@@ -106,9 +106,11 @@ if (empty($reshook)) {
 		require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 		$bank = new Account($db);
 		$bank->fetch($conf->global->{$default_account});
-		if ((empty($bank->ics) && $type !== 'bank-transfer')
+		// ICS is not mandatory with payment by bank transfer
+		/*if ((empty($bank->ics) && $type !== 'bank-transfer')
 			|| (empty($bank->ics_transfer) && $type === 'bank-transfer')
-		) {
+		) {*/
+		if (empty($bank->ics) && $type !== 'bank-transfer') {
 			$errormessage = str_replace('{url}', $bank->getNomUrl(1, '', '', -1, 1), $langs->trans("ErrorICSmissing", '{url}'));
 			setEventMessages($errormessage, null, 'errors');
 			$action = '';
