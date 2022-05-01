@@ -130,9 +130,9 @@ if ($user->rights->banque->modifier && $action == "update") {
 
 	$actarget = new Account($db);
 	if (GETPOST('accountid', 'int') > 0 && !$acline->rappro && !$acline->getVentilExportCompta()) {	// We ask to change bank account
-		$actarget->fetch(GETPOST('accountid', 'int'));
+		$account_id = $actarget->fetch(GETPOST('accountid', 'int'));
 	} else {
-		$actarget->fetch($id);
+		$account_id = $acline->fk_account;
 	}
 
 	if ($actarget->courant == Account::TYPE_CASH && GETPOST('value', 'alpha') != 'LIQ') {
@@ -176,7 +176,7 @@ if ($user->rights->banque->modifier && $action == "update") {
 				$sql .= " datev = '".$db->idate($dateval)."',";
 			}
 		}
-		$sql .= " fk_account = ".((int) $actarget->id);
+		$sql .= " fk_account = ".((int) $account_id);
 		$sql .= " WHERE rowid = ".((int) $acline->id);
 
 		$result = $db->query($sql);
