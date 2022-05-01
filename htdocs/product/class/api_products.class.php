@@ -189,12 +189,10 @@ class Products extends DolibarrApi
 
 		$sql = "SELECT t.rowid, t.ref, t.ref_ext";
 		$sql .= " FROM ".$this->db->prefix()."product as t";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_extrafields AS ef ON ef.fk_object = t.rowid";	// So we will be able to filter on extrafields
 		if ($category > 0) {
 			$sql .= ", ".$this->db->prefix()."categorie_product as c";
 		}
-
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_extrafields AS ef ON (ef.fk_object = t.rowid)";
-
 		$sql .= ' WHERE t.entity IN ('.getEntity('product').')';
 
 		if ($variant_filter == 1) {
