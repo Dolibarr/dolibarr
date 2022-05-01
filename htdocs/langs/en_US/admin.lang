@@ -2249,3 +2249,4 @@ ExportUseLowMemoryMode=Use a low memory mode
 ExportUseLowMemoryModeHelp=Use the low memory mode to execute the exec of the dump (compression is done through a pipe instead of into the PHP memory). This method does not allow to check that file is completed and error message can't be reported if it fails.
 ShowQuickAddLink=Show a button to quickly add an element in top right menu
 HashForPing=Hash used for ping
+ReadOnlyMode=Is instance in "Read Only" mode
