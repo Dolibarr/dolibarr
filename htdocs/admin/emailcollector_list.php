@@ -29,6 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/events.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+
 dol_include_once('/emailcollector/class/emailcollector.class.php');
 
 // Load translation files required by page
@@ -594,6 +595,31 @@ print $hookmanager->resPrint;
 print '</table>'."\n";
 print '</div>'."\n";
 
+print load_fiche_titre($langs->trans("Other"), '', '');
+print '<table class="noborder centpercent">';
+
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("Parameter").'</td>';
+print '<td></td>';
+print '<td></td>';
+print "</tr>\n";
+
+// Hide e-mail headers from collected messages
+print '<tr class="oddeven"><td>'.$langs->trans("EmailCollectorHideMailHeaders").'</td>';
+print '<td class="left">';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('MAIN_EMAILCOLLECTOR_MAIL_WITHOUT_HEADER');
+} else {
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	print $form->selectarray("MAIN_EMAILCOLLECTOR_MAIL_WITHOUT_HEADER", $arrval, $conf->global->TICKET_AUTO_READ_WHEN_CREATED_FROM_BACKEND);
+}
+print '</td>';
+print '<td class="center">';
+print $form->textwithpicto('', $langs->trans("EmailCollectorHideMailHeadersHelp"), 1, 'help');
+print '</td>';
+print '</tr>';
+
+print '</table><br>';
 print '</form>'."\n";
 
 if (in_array('builddoc', $arrayofmassactions) && ($nbtotalofrecords === '' || $nbtotalofrecords)) {
