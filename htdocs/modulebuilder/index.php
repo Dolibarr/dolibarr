@@ -826,11 +826,12 @@ if ($dirins && $action == 'confirm_removefile' && !empty($module)) {
 
 			// Now we update the lib file to set $showtabofpagexxx to 0
 			$varnametoupdate = '';
+			$reg = array();
 			if (preg_match('/_([a-z]+)\.php$/', $relativefilename, $reg)) {
 				$varnametoupdate = 'showtabofpage'.$reg[1];
 			}
 			if ($varnametoupdate) {
-				$srcfile = $dirins.'/'.strtolower($module).'/class/'.strtolower($objectname).'.class.php';
+				$srcfile = $dirins.'/'.strtolower($module).'/lib/'.strtolower($module).'_'.strtolower($objectname).'.lib.php';
 				$arrayreplacement = array('/\$'.$varnametoupdate.' = 1;/' => '$'.$varnametoupdate.' = 0;');
 				dolReplaceInFile($srcfile, $arrayreplacement, '', 0, 0, 1);
 			}
