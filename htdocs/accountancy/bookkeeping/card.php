@@ -61,6 +61,7 @@ $journal_label = $accountingjournal->label;
 $next_num_mvt = (int) GETPOST('next_num_mvt', 'alpha');	
 $doc_ref = (string) GETPOST('doc_ref', 'alpha');
 $doc_date = (string) GETPOST('doc_date', 'alpha');
+$doc_date = $doc_date = dol_mktime(0, 0, 0, GETPOST('doc_datemonth', 'int'), GETPOST('doc_dateday', 'int'), GETPOST('doc_dateyear', 'int'));
 
 $subledger_account = GETPOST('subledger_account', 'alphanohtml');
 if ($subledger_account == -1) {
@@ -250,7 +251,7 @@ if ($action == "confirm_update") {
 		unset($tmp_date);
 	}
 
-	if (!$journal_code || $journal_code == '-1') {
+	if (empty($journal_code) || $journal_code == '-1') {
 		setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Journal")), null, 'errors');
 		$action = 'create';
 		$error++;
@@ -368,6 +369,8 @@ if (!empty($object->piece_num)) {
 
 	print load_fiche_titre($langs->trans($mode =="_tmp" ? "CreateMvts": "UpdateMvts"), $backlink);
 
+	print '<form action="'.$_SERVER["PHP_SELF"].'?piece_num='.$object->piece_num.'" method="post">';
+
 	$head = array();
 	$h = 0;
 	$head[$h][0] = $_SERVER['PHP_SELF'].'?piece_num='.$object->piece_num.($mode ? '&mode='.$mode : '');
@@ -393,7 +396,7 @@ if (!empty($object->piece_num)) {
 	print '<tr>';
 	print '<td class="titlefieldcreate fieldrequired">'.$langs->trans("Docdate").'</td>';
 	print '<td>';
-	print $html->selectDate('', 'doc_date', '', '', '', "create_mvt", 1, 1);
+	print $html->selectDate($doc_date, 'doc_date', '', '', '', "create_mvt", 1, 1);
 	print '</td>';
 	print '</tr>';
 
@@ -601,15 +604,15 @@ if (!empty($object->piece_num)) {
 	} else {
 		print load_fiche_titre($langs->trans("ListeMvts"), '', '');
 
-		print '<form action="'.$_SERVER["PHP_SELF"].'?piece_num='.$object->piece_num.'" method="post">';
+		//print '<form action="'.$_SERVER["PHP_SELF"].'?piece_num='.$object->piece_num.'" method="post">';
 		if ($optioncss != '') {
 			print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 		}
 		print '<input type="hidden" name="token" value="'.newToken().'">';
-		print '<input type="hidden" name="doc_date" value="'.$object->doc_date.'">'."\n";
+		//print '<input type="hidden" name="doc_date" value="'.$object->doc_date.'">'."\n";
 		print '<input type="hidden" name="doc_type" value="'.$object->doc_type.'">'."\n";
-		print '<input type="hidden" name="doc_ref" value="'.$object->doc_ref.'">'."\n";
-		print '<input type="hidden" name="code_journal" value="'.$object->code_journal.'">'."\n";
+		//print '<input type="hidden" name="doc_ref" value="'.$object->doc_ref.'">'."\n";
+		//print '<input type="hidden" name="code_journal" value="'.$object->code_journal.'">'."\n";
 		print '<input type="hidden" name="fk_doc" value="'.$object->fk_doc.'">'."\n";
 		print '<input type="hidden" name="fk_docdet" value="'.$object->fk_docdet.'">'."\n";
 		print '<input type="hidden" name="mode" value="'.$mode.'">'."\n";
