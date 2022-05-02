@@ -23,7 +23,8 @@
  */
 
 
-/** Terms
+/**
+ *  Terms
  *
  *	DEB = Declaration d'Exchanges de Biens (FR)   =  Declaration of Exchange of Goods (EN)
  *  DES = Déclaration Européenne de Services (FR) =  European Declaration of Services (EN)
@@ -32,7 +33,6 @@
  *
  */
 
-
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
@@ -40,6 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/intracommreport/class/intracommreport.class.php
 
 $langs->loadLangs(array("intracommreport"));
 
+$id = GETPOST('id', 'int');
 $action = GETPOST('action');
 $exporttype = GETPOSTISSET('exporttype') ? GETPOST('exporttype', 'alphanohtml') : 'deb'; // DEB or DES
 $year = GETPOSTINT('year');
@@ -65,9 +66,13 @@ $formother = new FormOther($db);
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('intracommcard', 'globalcard'));
 
+$error = 0;
+
+
 /*
  * 	Actions
  */
+
 $parameters = array('id' => $id);
 // Note that $action and $object may have been modified by some hooks
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);
@@ -131,6 +136,7 @@ if ($action == 'add' && $user->rights->intracommreport->write) {
 		$action = 'create';
 	}
 }
+
 
 /*
  * View
