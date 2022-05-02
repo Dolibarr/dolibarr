@@ -236,26 +236,28 @@ a.top-menu-dropdown-link {
 	clear: both;
 }
 
-.dropdown-menu > .bookmark-footer{
+.dropdown-menu > .bookmark-footer {
 	border-top: 1px solid #f0f0f0;
 	background-color: #f9f9f9;
 	padding: 10px;
+	text-align: start;
 }
 
 
-.dropdown-menu > .user-body, .dropdown-body{
+.dropdown-menu > .user-body, .dropdown-body {
 	padding: 15px;
 	border-bottom: 1px solid #f4f4f4;
 	border-top: 1px solid #dddddd;
 	white-space: normal;
 }
 
-.dropdown-menu > .bookmark-body, .dropdown-body{
+.dropdown-menu > .bookmark-body, .dropdown-body {
 	overflow-y: auto;
 	max-height: 60vh ; /* fallback for browsers without support for calc() */
 	max-height: calc(90vh - 110px) ;
 	white-space: normal;
 }
+#topmenu-quickadd-dropdown .dropdown-menu > .bookmark-body, #topmenu-quickadd-dropdown .dropdown-body,
 #topmenu-bookmark-dropdown .dropdown-menu > .bookmark-body, #topmenu-bookmark-dropdown .dropdown-body{
 	max-height: 60vh ; /* fallback for browsers without support for calc() */
 	max-height: calc(90vh - 200px) ;
@@ -287,7 +289,7 @@ a.top-menu-dropdown-link {
 
 #topmenuloginmoreinfo-btn, #topmenulogincompanyinfo-btn {
 	display: block;
-	text-align: right;
+	text-align: start;
 	color:#666;
 	cursor: pointer;
 }
@@ -296,6 +298,10 @@ a.top-menu-dropdown-link {
 	display: none;
 	clear: both;
 	font-size: 0.95em;
+}
+
+a.dropdown-item {
+	text-align: start;
 }
 
 .button-top-menu-dropdown {
