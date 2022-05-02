@@ -1202,6 +1202,9 @@ class FormMail extends Form
 			if (!empty($conf->global->MAIL_FORCE_DELIVERY_RECEIPT_INVOICE) && !empty($this->param['models']) && $this->param['models'] == 'facture_send') {
 				$defaultvaluefordeliveryreceipt = 1;
 			}
+			if (!empty($conf->global->MAIL_FORCE_DELIVERY_RECEIPT_SUPPLIER_ORDER) && !empty($this->param['models']) && $this->param['models'] == 'order_supplier_send') {
+				$defaultvaluefordeliveryreceipt = 1;
+			}
 			$out .= $form->selectyesno('deliveryreceipt', (GETPOSTISSET("deliveryreceipt") ? GETPOST("deliveryreceipt") : $defaultvaluefordeliveryreceipt), 1);
 		}
 		$out .= "</td></tr>\n";

@@ -93,15 +93,15 @@ if (empty($user->rights->agenda->allactions->read) || $filter == 'mine') {  // I
 }
 
 $mode = 'show_pertype';
-$resourceid = GETPOST("search_resourceid", "int") ?GETPOST("search_resourceid", "int") : GETPOST("resourceid", "int");
-$year = GETPOST("year", "int") ?GETPOST("year", "int") : date("Y");
-$month = GETPOST("month", "int") ?GETPOST("month", "int") : date("m");
-$week = GETPOST("week", "int") ?GETPOST("week", "int") : date("W");
-$day = GETPOST("day", "int") ?GETPOST("day", "int") : date("d");
-$pid = GETPOST("search_projectid", "int", 3) ?GETPOST("search_projectid", "int", 3) : GETPOST("projectid", "int", 3);
-$status = GETPOST("search_status", 'alpha') ?GETPOST("search_status", 'alpha') : GETPOST("status", 'alpha');
-$type = GETPOST("search_type", 'alpha') ?GETPOST("search_type", 'alpha') : GETPOST("type", 'alpha');
-$maxprint = ((GETPOST("maxprint", 'int') != '') ?GETPOST("maxprint", 'int') : $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW);
+$resourceid = GETPOST("search_resourceid", "int") ? GETPOST("search_resourceid", "int") : GETPOST("resourceid", "int");
+$year = GETPOST("year", "int") ? GETPOST("year", "int") : date("Y");
+$month = GETPOST("month", "int") ? GETPOST("month", "int") : date("m");
+$week = GETPOST("week", "int") ? GETPOST("week", "int") : date("W");
+$day = GETPOST("day", "int") ? GETPOST("day", "int") : date("d");
+$pid = GETPOSTISSET("search_projectid") ? GETPOST("search_projectid", "int", 3) : GETPOST("projectid", "int", 3);
+$status = GETPOSTISSET("search_status") ? GETPOST("search_status", 'alpha') : GETPOST("status", 'alpha');
+$type = GETPOSTISSET("search_type") ? GETPOST("search_type", 'alpha') : GETPOST("type", 'alpha');
+$maxprint = ((GETPOST("maxprint", 'int') != '') ? GETPOST("maxprint", 'int') : $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW);
 $optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 // Set actioncode (this code must be same for setting actioncode into peruser, listacton and index)
 if (GETPOST('search_actioncode', 'array')) {
@@ -144,7 +144,7 @@ $tmparray = explode('-', $tmp);
 $begin_d = 1;
 $end_d = 53;
 
-if ($status == '' && !GETPOSTISSET('status')) {
+if ($status == '' && !GETPOSTISSET('search_status')) {
 	$status = (empty($conf->global->AGENDA_DEFAULT_FILTER_STATUS) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_STATUS);
 }
 if (empty($mode) && !GETPOSTISSET('mode')) {
@@ -164,6 +164,8 @@ if (GETPOST('viewyear', 'alpha') || $mode == 'show_year') {
 	$mode = 'show_year';
 }                                  // View by year
 
+$object = new ActionComm($db);
+
 // Load translation files required by the page
 $langs->loadLangs(array('users', 'agenda', 'other', 'commercial'));
 
@@ -174,6 +176,8 @@ $result = restrictedArea($user, 'agenda', 0, '', 'myactions');
 if ($user->socid && $socid) {
 	$result = restrictedArea($user, 'societe', $socid);
 }
+
+$search_status = $status;
 
 
 /*
@@ -276,7 +280,7 @@ if ($actioncode || GETPOSTISSET('search_actioncode')) {
 if ($resourceid > 0) {
 	$param .= "&search_resourceid=".urlencode($resourceid);
 }
-if ($status || GETPOSTISSET('status')) {
+if ($status || GETPOSTISSET('status') || GETPOSTISSET('search_status')) {
 	$param .= "&search_status=".urlencode($status);
 }
 if ($filter) {
@@ -402,7 +406,7 @@ if ($conf->use_javascript_ajax) {
 		//$s.='<div class="nowrap float"><input type="checkbox" id="check_birthday" name="check_birthday"> '.$langs->trans("AgendaShowBirthdayEvents").' &nbsp; </div>';
 
 		// Calendars from hooks
-		$parameters = array(); $object = null;
+		$parameters = array();
 		$reshook = $hookmanager->executeHooks('addCalendarChoice', $parameters, $object, $action);
 		if (empty($reshook)) {
 			$s .= $hookmanager->resPrint;

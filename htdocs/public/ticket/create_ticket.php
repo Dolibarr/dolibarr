@@ -264,11 +264,11 @@ if (empty($reshook) && $action == 'create_ticket' && GETPOST('save', 'alpha')) {
 				$infos_new_ticket .= $langs->transnoentities('TicketNewEmailBodyInfosTrackUrl').'<br><br>';
 
 				$message .= $infos_new_ticket;
-				$message .= $conf->global->TICKET_MESSAGE_MAIL_SIGNATURE ? $conf->global->TICKET_MESSAGE_MAIL_SIGNATURE : $langs->transnoentities('TicketMessageMailSignatureText');
+				$message .= getDolGlobalString('TICKET_MESSAGE_MAIL_SIGNATURE') ? getDolGlobalString('TICKET_MESSAGE_MAIL_SIGNATURE') : $langs->transnoentities('TicketMessageMailSignatureText', $mysoc->name);
 
 				$sendto = GETPOST('email', 'alpha');
 
-				$from = $conf->global->MAIN_INFO_SOCIETE_NOM.' <'.$conf->global->TICKET_NOTIFICATION_EMAIL_FROM.'>';
+				$from = $conf->global->MAIN_INFO_SOCIETE_NOM.' <'.getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM').'>';
 				$replyto = $from;
 				$sendtocc = '';
 				$deliveryreceipt = 0;

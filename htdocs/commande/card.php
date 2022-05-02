@@ -1670,7 +1670,7 @@ if ($action == 'create' && $usercancreate) {
 
 	// Terms of the settlement
 	print '<tr><td class="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td>';
-	print img_picto('', 'paiment');
+	print img_picto('', 'payment', 'class="pictofixedwidth"');
 	$form->select_conditions_paiements($cond_reglement_id, 'cond_reglement_id', - 1, 1);
 	print '</td></tr>';
 
@@ -1759,10 +1759,10 @@ if ($action == 'create' && $usercancreate) {
 	// Template to use by default
 	print '<tr><td>'.$langs->trans('DefaultModel').'</td>';
 	print '<td>';
-	print img_picto('', 'pdf', 'class="pictofixedwidth"');
 	include_once DOL_DOCUMENT_ROOT.'/core/modules/commande/modules_commande.php';
 	$liste = ModelePDFCommandes::liste_modeles($db);
 	$preselected = $conf->global->COMMANDE_ADDON_PDF;
+	print img_picto('', 'pdf', 'class="pictofixedwidth"');
 	print $form->selectarray('model', $liste, $preselected, 0, 0, 0, '', 0, 0, 0, '', 'maxwidth200 widthcentpercentminusx', 1);
 	print "</td></tr>";
 
@@ -1771,7 +1771,7 @@ if ($action == 'create' && $usercancreate) {
 		print '<tr>';
 		print '<td>'.$form->editfieldkey("Currency", 'multicurrency_code', '', $object, 0).'</td>';
 		print '<td class="maxwidthonsmartphone">';
-		print $form->selectMultiCurrency($currency_code, 'multicurrency_code');
+		print img_picto('', 'currency', 'class="pictofixedwidth"').$form->selectMultiCurrency($currency_code, 'multicurrency_code');
 		print '</td></tr>';
 	}
 
