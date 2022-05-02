@@ -3520,7 +3520,6 @@ if ($action == 'create') {
 	}
 
 
-
 	print '</td></tr>';
 
 	if ($socid > 0) {
@@ -3682,6 +3681,7 @@ if ($action == 'create') {
 		print '<tr>';
 		print '<td>'.$form->editfieldkey('Currency', 'multicurrency_code', '', $object, 0).'</td>';
 		print '<td colspan="2" class="maxwidthonsmartphone">';
+		print img_picto('', 'currency', 'class="pictofixedwidth"');
 		print $form->selectMultiCurrency($currency_code, 'multicurrency_code');
 		print '</td></tr>';
 	}
