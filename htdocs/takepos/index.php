@@ -360,6 +360,7 @@ function LoadProducts(position, issubcat) {
 				$("#prodiv"+ishow).data("iscat", 0);
 				$("#prodiv"+ishow).attr("class","wrapper2");
 				$("#prowatermark"+ishow).hide();
+				ishow++; //Next product to show after print data product
 				<?php
 				// Add js from hooks
 				$parameters=array();
