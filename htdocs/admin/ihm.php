@@ -475,6 +475,7 @@ if ($mode == 'other') {
 
 	print '<div class="center">';
 	print '<input class="button button-save reposition" type="submit" name="submit" value="' . $langs->trans("Save") . '">';
+	print '<input class="button button-cancel reposition" type="submit" name="cancel" value="' . $langs->trans("Cancel") . '">';
 	print '</div>';
 
 	print '<br>';
@@ -485,18 +486,17 @@ if ($mode == 'other') {
 	print '<table summary="otherparameters" class="noborder centpercent editmode tableforfield">';
 
 	print '<tr class="liste_titre"><td class="titlefieldmiddle">';
-	print $langs->trans("Miscelaneous");
-	print '</td><td class="titlefieldmiddle">';
-	print '</td></tr>';
+	print $langs->trans("Miscellaneous");
+	print '</td>';
+	print '<td class="titlefieldmiddle"></td>';
+	print '</tr>';
 
 	// Max size of lists
 	print '<tr class="oddeven"><td>' . $langs->trans("DefaultMaxSizeList") . '</td><td><input class="flat" name="main_size_liste_limit" size="4" value="' . $conf->global->MAIN_SIZE_LISTE_LIMIT . '"></td>';
-	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
 
 	// Max size of short lists on customer card
 	print '<tr class="oddeven"><td>' . $langs->trans("DefaultMaxSizeShortList") . '</td><td><input class="flat" name="main_size_shortliste_limit" size="4" value="' . $conf->global->MAIN_SIZE_SHORTLIST_LIMIT . '"></td>';
-	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
 
 	// show input border
@@ -504,7 +504,6 @@ if ($mode == 'other') {
 	 print '<tr><td>'.$langs->trans("showInputBorder").'</td><td>';
 	 print $form->selectyesno('main_showInputBorder',isset($conf->global->THEME_ELDY_SHOW_BORDER_INPUT)?$conf->global->THEME_ELDY_SHOW_BORDER_INPUT:0,1);
 	 print '</td>';
-	 print '<td width="20">&nbsp;</td>';
 	 print '</tr>';
 	 */
 
@@ -512,21 +511,18 @@ if ($mode == 'other') {
 	print '<tr class="oddeven"><td>' . $langs->trans("WeekStartOnDay") . '</td><td>';
 	print $formother->select_dayofweek((isset($conf->global->MAIN_START_WEEK) ? $conf->global->MAIN_START_WEEK : '1'), 'MAIN_START_WEEK', 0);
 	print '</td>';
-	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
 
 	// DefaultWorkingDays
 	print '<tr class="oddeven"><td>' . $langs->trans("DefaultWorkingDays") . '</td><td>';
 	print '<input type="text" name="MAIN_DEFAULT_WORKING_DAYS" size="5" value="' . (isset($conf->global->MAIN_DEFAULT_WORKING_DAYS) ? $conf->global->MAIN_DEFAULT_WORKING_DAYS : '1-5') . '">';
 	print '</td>';
-	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
 
 	// DefaultWorkingHours
 	print '<tr class="oddeven"><td>' . $langs->trans("DefaultWorkingHours") . '</td><td>';
 	print '<input type="text" name="MAIN_DEFAULT_WORKING_HOURS" size="5" value="' . (isset($conf->global->MAIN_DEFAULT_WORKING_HOURS) ? $conf->global->MAIN_DEFAULT_WORKING_HOURS : '9-18') . '">';
 	print '</td>';
-	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
 
 	// Firstname/Name
@@ -534,7 +530,6 @@ if ($mode == 'other') {
 	$array = array(0 => $langs->trans("Firstname") . ' ' . $langs->trans("Lastname"), 1 => $langs->trans("Lastname") . ' ' . $langs->trans("Firstname"));
 	print $form->selectarray('MAIN_FIRSTNAME_NAME_POSITION', $array, (isset($conf->global->MAIN_FIRSTNAME_NAME_POSITION) ? $conf->global->MAIN_FIRSTNAME_NAME_POSITION : 0));
 	print '</td>';
-	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
 
 	// Hide unauthorized menus
@@ -542,7 +537,6 @@ if ($mode == 'other') {
 	//print $form->selectyesno('MAIN_MENU_HIDE_UNAUTHORIZED', isset($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED) ? $conf->global->MAIN_MENU_HIDE_UNAUTHORIZED : 0, 1);
 	print ajax_constantonoff("MAIN_MENU_HIDE_UNAUTHORIZED", array(), $conf->entity, 0, 0, 1, 0, 0, 0, '', 'other');
 	print '</td>';
-	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
 
 	// Hide unauthorized button
@@ -550,7 +544,6 @@ if ($mode == 'other') {
 	//print $form->selectyesno('MAIN_BUTTON_HIDE_UNAUTHORIZED', isset($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED) ? $conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED : 0, 1);
 	print ajax_constantonoff("MAIN_BUTTON_HIDE_UNAUTHORIZED", array(), $conf->entity, 0, 0, 1, 0, 0, 0, '', 'other');
 	print '</td>';
-	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
 
 	// Hide version link
@@ -559,9 +552,14 @@ if ($mode == 'other') {
 	print '<tr><td>'.$langs->trans("HideVersionLink").'</td><td>';
 	print $form->selectyesno('MAIN_HIDE_VERSION',$conf->global->MAIN_HIDE_VERSION,1);
 	print '</td>';
-	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
 	*/
+
+	// Show Quick Add link
+	print '<tr class="oddeven"><td>' . $langs->trans("ShowQuickAddLink") . '</td><td>';
+	print ajax_constantonoff("MAIN_USE_TOP_MENU_QUICKADD_DROPDOWN", array(), $conf->entity, 0, 0, 1, 0, 0, 0, '', 'other');
+	print '</td>';
+	print '</tr>';
 
 	// Show bugtrack link
 	print '<tr class="oddeven"><td>';
@@ -569,7 +567,6 @@ if ($mode == 'other') {
 	print '</td><td>';
 	print '<input type="text" name="MAIN_BUGTRACK_ENABLELINK" value="' . (empty($conf->global->MAIN_BUGTRACK_ENABLELINK) ? '' : $conf->global->MAIN_BUGTRACK_ENABLELINK) . '">';
 	print '</td>';
-	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
 
 	// Hide wiki link on login page
@@ -578,15 +575,11 @@ if ($mode == 'other') {
 	print ajax_constantonoff("MAIN_HELP_DISABLELINK", array(), $conf->entity, 0, 0, 1, 0, 0, 0, '', 'other');
 	//print $form->selectyesno('MAIN_HELP_DISABLELINK', isset($conf->global->MAIN_HELP_DISABLELINK) ? $conf->global->MAIN_HELP_DISABLELINK : 0, 1);
 	print '</td>';
-	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
 
 	// Disable javascript and ajax
-	print '<tr class="oddeven"><td>' . $langs->trans("DisableJavascript") . '</td><td>';
+	print '<tr class="oddeven"><td>' . $form->textwithpicto($langs->trans("DisableJavascript"), $langs->trans("DisableJavascriptNote")) . '</td><td>';
 	print ajax_constantonoff("MAIN_DISABLE_JAVASCRIPT", array(), $conf->entity, 0, 0, 1, 0, 0, 0, '', 'other');
-	print ' <span class="opacitymedium paddingleft marginleft">' . $langs->trans("DisableJavascriptNote") . '</span>';
-	print '</td>';
-	print '<td>';
 	print '</td>';
 	print '</tr>';
 

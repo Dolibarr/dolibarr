@@ -96,8 +96,6 @@ button.dropdown-item.global-search-item {
 	box-shadow: 0 6px 12px rgba(0,0,0,.175);
 }
 .dropdown-menu {
-	border-color: #eee;
-
 	position: absolute;
 	top: 100%;
 	left: 0;
@@ -112,7 +110,6 @@ button.dropdown-item.global-search-item {
 	background-color: #fff;
 	-webkit-background-clip: padding-box;
 	background-clip: padding-box;
-	border: 1px solid #ccc;
 	border: 1px solid rgba(0,0,0,.15);
 	border-radius: 4px;
 	-webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);
@@ -500,8 +497,19 @@ div.quickaddblock:focus {
 		right: 0;
 	}
 
+	#topmenu-quickadd-dropdown .dropdown-menu {
+		min-width: 220px;
+		max-width: 235px;
+	}
 	#topmenu-bookmark-dropdown .dropdown-menu {
-		min-width: 280px;
+		min-width: 220px;
 		max-width: 360px;
 	}
+
+	.dropdown-menu {
+		border: none;
+		-webkit-box-shadow: none;
+		box-shadow: none;
+	}
+
 }

@@ -1000,7 +1000,7 @@ class FormOther
 			6=>$langs->trans("Day6")
 		);
 
-		$select_week = '<select class="flat" name="'.$htmlname.'">';
+		$select_week = '<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
 		if ($useempty) {
 			$select_week .= '<option value="-1">&nbsp;</option>';
 		}
@@ -1014,6 +1014,9 @@ class FormOther
 			$select_week .= '</option>';
 		}
 		$select_week .= '</select>';
+
+		$select_week .= ajax_combobox($htmlname);
+
 		return $select_week;
 	}
 
