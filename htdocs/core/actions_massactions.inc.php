@@ -322,7 +322,7 @@ if (!$error && $massaction == 'confirm_presend') {
 						'name' => $filename,
 						'path' => $filepath,
 					);
-					if (!empty($objectobj->last_main_doc)) {
+					if (!empty($conf->global->MAIL_MASS_ACTION_ADD_LAST_IF_MAIN_DOC_NOT_FOUND) && !empty($objectobj->last_main_doc)) {
 						$file_check_list[] = array(
 							'name' => basename($objectobj->last_main_doc),
 							'path' => DOL_DATA_ROOT . '/' . $objectobj->last_main_doc,
