@@ -34,8 +34,9 @@ CREATE TABLE llx_partnership(
 	note_private text, 
 	note_public text, 
 	last_main_doc varchar(255), 
-	count_last_url_check_error integer DEFAULT '0',
-	last_check_backlink datetime NULL,
+	url_to_check varchar(255),							-- url to check to find a specific keyword (defined into llx_c_partnership) to keep status of partnership valid
+	count_last_url_check_error integer DEFAULT '0',		-- last result of check of keyword into url
+	last_check_backlink datetime NULL,					-- date of last check of keyword into url
 	import_key varchar(14),
 	model_pdf varchar(255)
 ) ENGINE=innodb;
