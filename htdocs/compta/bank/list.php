@@ -587,10 +587,14 @@ foreach ($accounts as $key => $type) {
 	// Accountancy journal
 	if (!empty($arrayfields['b.fk_accountancy_journal']['checked'])) {
 		print '<td>';
-		if (!empty($conf->accounting->enabled) && !empty($objecttmp->fk_accountancy_journal)) {
-			$accountingjournal = new AccountingJournal($db);
-			$accountingjournal->fetch($objecttmp->fk_accountancy_journal);
-			print $accountingjournal->getNomUrl(0, 1, 1, '', 1);
+		if (!empty($conf->accounting->enabled)) {
+			if (empty($objecttmp->fk_accountancy_journal)) {
+				print img_warning($langs->trans("Mandatory"));
+			} else {
+				$accountingjournal = new AccountingJournal($db);
+				$accountingjournal->fetch($objecttmp->fk_accountancy_journal);
+				print $accountingjournal->getNomUrl(0, 1, 1, '', 1);
+			}
 		} else {
 			print '';
 		}

@@ -119,9 +119,10 @@ class Partnership extends CommonObject
 		'date_partnership_start' => array('type'=>'date', 'label'=>'DatePartnershipStart', 'enabled'=>'1', 'position'=>52, 'notnull'=>1, 'visible'=>1,),
 		'date_partnership_end' => array('type'=>'date', 'label'=>'DatePartnershipEnd', 'enabled'=>'1', 'position'=>53, 'notnull'=>0, 'visible'=>1,),
 		'status' => array('type'=>'smallint', 'label'=>'Status', 'enabled'=>'1', 'position'=>54, 'notnull'=>0, 'visible'=>2, 'index'=>1, 'arrayofkeyval'=>array('-1'=>'','0'=>'Draft', '1'=>'Accepted', '2'=>'Refused', '9'=>'Terminated'),),
-		'count_last_url_check_error' => array('type'=>'integer', 'label'=>'CountLastUrlCheckError', 'enabled'=>'1', 'position'=>63, 'notnull'=>0, 'visible'=>-2, 'default'=>'0',),
-		'last_check_backlink' => array('type'=>'datetime', 'label'=>'LastCheckBacklink', 'enabled'=>'1', 'position'=>65, 'notnull'=>0, 'visible'=>-2,),
-		'reason_decline_or_cancel' => array('type'=>'text', 'label'=>'ReasonDeclineOrCancel', 'enabled'=>'1', 'position'=>64, 'notnull'=>0, 'visible'=>-2,),
+		'url_to_check' => array('type'=>'varchar(255)', 'label'=>'UrlToCheck', 'enabled'=>'1', 'position'=>70, 'notnull'=>0, 'visible'=>-1),
+		'count_last_url_check_error' => array('type'=>'integer', 'label'=>'CountLastUrlCheckError', 'enabled'=>'1', 'position'=>71, 'notnull'=>0, 'visible'=>-2, 'default'=>'0',),
+		'last_check_backlink' => array('type'=>'datetime', 'label'=>'LastCheckBacklink', 'enabled'=>'1', 'position'=>72, 'notnull'=>0, 'visible'=>-2,),
+		'reason_decline_or_cancel' => array('type'=>'text', 'label'=>'ReasonDeclineOrCancel', 'enabled'=>'1', 'position'=>73, 'notnull'=>0, 'visible'=>-2,),
 		// fk_member and fk_soc are added into constructor
 	);
 

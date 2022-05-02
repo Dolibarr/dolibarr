@@ -6078,7 +6078,7 @@ abstract class CommonObject
 							$this->errors[] = $langs->trans("ExtraFieldHasWrongValue", $attributeLabel);
 							return -1;
 						} elseif ($value == '') {
-							$new_array_options[$key] = null;
+							$value = null;
 						}
 						//dol_syslog("double value"." sur ".$attributeLabel."(".$value." is '".$attributeType."')", LOG_DEBUG);
 						$new_array_options[$key] = $value;
@@ -6444,7 +6444,7 @@ abstract class CommonObject
 						$this->errors[] = $langs->trans("ExtraFieldHasWrongValue", $attributeLabel);
 						return -1;
 					} elseif ($value === '') {
-						$this->array_options["options_".$key] = null;
+						$value = null;
 					}
 					//dol_syslog("double value"." sur ".$attributeLabel."(".$value." is '".$attributeType."')", LOG_DEBUG);
 					$this->array_options["options_".$key] = $value;

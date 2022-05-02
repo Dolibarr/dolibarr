@@ -61,6 +61,12 @@ abstract class CommonDocGenerator
 	public $update_main_doc_field;
 
 	/**
+	 * @var string	The name of constant to use to scan ODT files (Exemple: 'COMMANDE_ADDON_PDF_ODT_PATH')
+	 */
+	public $scandir;
+
+
+	/**
 	 *	Constructor
 	 *
 	 *  @param		DoliDB		$db      Database handler

@@ -145,7 +145,7 @@ $listofexamplesforlink = 'Societe:societe/class/societe.class.php<br>Contact:con
 
 <table summary="listofattributes" class="border centpercent">
 <!-- Label -->
-<tr><td class="titlefieldcreate fieldrequired"><?php echo $langs->trans("LabelOrTranslationKey"); ?></td><td class="valeur"><input type="text" name="label" size="40" value="<?php echo GETPOST('label', 'alpha'); ?>"></td></tr>
+<tr><td class="titlefieldcreate fieldrequired"><?php echo $langs->trans("LabelOrTranslationKey"); ?></td><td class="valeur"><input type="text" name="label" class="width200" value="<?php echo GETPOST('label', 'alpha'); ?>" autofocus></td></tr>
 <!-- Code -->
 <tr><td class="fieldrequired"><?php echo $langs->trans("AttributeCode"); ?></td><td class="valeur"><input type="text" name="attrname" id="attrname"  size="10" value="<?php echo GETPOST('attrname', 'alpha'); ?>"> <span class="opacitymedium">(<?php echo $langs->trans("AlphaNumOnlyLowerCharsAndNoSpace"); ?>)</span></td></tr>
 <!-- Type -->
