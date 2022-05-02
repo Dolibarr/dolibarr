@@ -264,7 +264,7 @@ if (empty($reshook) && $action == 'create_ticket' && GETPOST('save', 'alpha')) {
 				$infos_new_ticket .= $langs->transnoentities('TicketNewEmailBodyInfosTrackUrl').'<br><br>';
 
 				$message .= $infos_new_ticket;
-				$message .= getDolGlobalString('TICKET_MESSAGE_MAIL_SIGNATURE') ? getDolGlobalString('TICKET_MESSAGE_MAIL_SIGNATURE') : $langs->transnoentities('TicketMessageMailSignatureText', $mysoc->name);
+				$message .= getDolGlobalString('TICKET_MESSAGE_MAIL_SIGNATURE', $langs->transnoentities('TicketMessageMailSignatureText', $mysoc->name));
 
 				$sendto = GETPOST('email', 'alpha');
 
