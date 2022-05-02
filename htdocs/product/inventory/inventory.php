@@ -28,6 +28,7 @@ include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 include_once DOL_DOCUMENT_ROOT.'/product/inventory/class/inventory.class.php';
 include_once DOL_DOCUMENT_ROOT.'/product/inventory/lib/inventory.lib.php';
 include_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
+include_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("stocks", "other", "productbatch"));
@@ -1023,7 +1024,13 @@ if ($object->id > 0) {
 
 			if (!empty($conf->productbatch->enabled)) {
 				print '<td id="id_'.$obj->rowid.'_batch" data-batch="'.dol_escape_htmltag($obj->batch).'">';
-				print dol_escape_htmltag($obj->batch);
+				$batch_static = new Productlot($db);
+                $res = $batch_static->fetch(0, $product_static->id, $obj->batch);
+                if($res){
+					print $batch_static->getNomUrl(1);
+                } else {
+					print dol_escape_htmltag($obj->batch);
+                }
 				print '</td>';
 			}
 
