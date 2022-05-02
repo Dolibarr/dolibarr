@@ -17,7 +17,7 @@
 CREATE TABLE llx_webhook_target(
 	-- BEGIN MODULEBUILDER FIELDS
 	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
-	ref varchar(128) DEFAULT '(PROV)' NOT NULL, 
+	ref varchar(128) NOT NULL, 
 	label varchar(255), 
 	description text, 
 	note_public text, 
@@ -26,9 +26,7 @@ CREATE TABLE llx_webhook_target(
 	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
 	fk_user_creat integer NOT NULL, 
 	fk_user_modif integer, 
-	last_main_doc varchar(255), 
-	import_key varchar(14), 
-	model_pdf varchar(255), 
+	import_key varchar(14),
 	status integer NOT NULL, 
 	url varchar(255) NOT NULL, 
 	trigger_codes text NOT NULL
