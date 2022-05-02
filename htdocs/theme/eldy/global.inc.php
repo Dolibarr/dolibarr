@@ -2601,8 +2601,20 @@ a.tmenuimage:hover{
 	text-decoration: none;
 }
 
-
-
+/*
+.tmenulabel:not(.menuhider), .tmenulabel:not(.menuhider):before {
+	display: none;
+}
+.tmenuimage:not(.menuhider), .tmenuimage:not(.menuhider):before {
+	font-size: 1.5em;
+}
+.tmenudiv:hover .tmenulabel:not(.menuhider), .tmenudiv:hover .tmenulabel:not(.menuhider):before {
+	display: initial !important;
+}
+.tmenudiv:hover .tmenuimage:not(.menuhider), .tmenudiv:hover .tmenulabel:not(.menuhider):before {
+	font-size: 1.1em !important;
+}
+*/
 
 /* Do not load menu img for other if hidden to save bandwidth */
 
