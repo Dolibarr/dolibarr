@@ -276,7 +276,7 @@ $heightmenu = 50; /* height of top menu, part with image */
 $heightmenu2 = 49; /* height of top menu, part with login  */
 $disableimages = 0;
 $maxwidthloginblock = 180;
-if (!empty($conf->global->THEME_TOPMENU_DISABLE_IMAGE)) {
+if (getDolGlobalInt('THEME_TOPMENU_DISABLE_IMAGE') == 1) {
 	$disableimages = 1; $maxwidthloginblock = $maxwidthloginblock + 50; $minwidthtmenu = 0;
 }
 

@@ -7417,7 +7417,7 @@ class Form
 		// Bom:bom/class/bom.class.php:0:t.status=1:ref
 		// Bom:bom/class/bom.class.php:0:(t.status:=:1):ref
 		$InfoFieldList = explode(":", $objectdesc, 4);
-		$vartmp = $InfoFieldList[3];
+		$vartmp = (empty($InfoFieldList[3]) ? '' : $InfoFieldList[3]);
 		$reg = array();
 		if (preg_match('/^.*:(\w*)$/', $vartmp, $reg)) {
 			$InfoFieldList[4] = $reg[1];	// take the sort field

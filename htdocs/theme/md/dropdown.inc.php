@@ -201,7 +201,7 @@ button.dropdown-item.global-search-item {
 }
 
 div#topmenu-global-search-dropdown, div#topmenu-quickadd-dropdown, div#topmenu-bookmark-dropdown {
-	line-height: <?php echo (empty($conf->global->THEME_TOPMENU_DISABLE_IMAGE) ? '46' : '35' ); ?>px;
+	line-height: <?php echo (getDolGlobalInt('THEME_TOPMENU_DISABLE_IMAGE') == 1 ? '35' : '46' ); ?>px;
 }
 a.top-menu-dropdown-link {
 	padding: 8px;

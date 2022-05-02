@@ -1083,12 +1083,14 @@ class FormOther
 	 *  @param	int			$invert			Invert
 	 *  @param	string		$option			Option
 	 *  @param	string		$morecss		More CSS
+	 *  @param  bool		$addjscombo		Add js combo
 	 *  @return	string
+	 *  @deprecated
 	 */
-	public function select_year($selected = '', $htmlname = 'yearid', $useempty = 0, $min_year = 10, $max_year = 5, $offset = 0, $invert = 0, $option = '', $morecss = 'valignmiddle maxwidth75imp')
+	public function select_year($selected = '', $htmlname = 'yearid', $useempty = 0, $min_year = 10, $max_year = 5, $offset = 0, $invert = 0, $option = '', $morecss = 'valignmiddle maxwidth75imp', $addjscombo = false)
 	{
 		// phpcs:enable
-		print $this->selectyear($selected, $htmlname, $useempty, $min_year, $max_year, $offset, $invert, $option, $morecss);
+		print $this->selectyear($selected, $htmlname, $useempty, $min_year, $max_year, $offset, $invert, $option, $morecss, $addjscombo);
 	}
 
 	/**
