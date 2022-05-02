@@ -1051,7 +1051,6 @@ if ($object->id > 0) {
 
 			// Real quantity
 			if ($object->status == $object::STATUS_DRAFT || $object->status == $object::STATUS_VALIDATED) {
-				print '<td class="right">';
 				$qty_view = GETPOST("id_".$obj->rowid) && price2num(GETPOST("id_".$obj->rowid), 'MS') >= 0 ? GETPOST("id_".$obj->rowid) : $obj->qty_view;
 
 				//if (!$hasinput && $qty_view !== null && $obj->qty_stock != $qty_view) {
@@ -1059,11 +1058,6 @@ if ($object->id > 0) {
 					$hasinput = true;
 				}
 
-				print '<a id="undochangesqty_'.$obj->rowid.'" href="#" class="undochangesqty reposition marginrightonly" title="'.dol_escape_htmltag($langs->trans("Clear")).'">';
-				print img_picto('', 'eraser', 'class="opacitymedium"');
-				print '</a>';
-				print '<input type="text" class="maxwidth75 right realqty" name="id_'.$obj->rowid.'" id="id_'.$obj->rowid.'_input" value="'.$qty_view.'">';
-				print '</td>';
 				if (! empty($conf->global->INVENTORY_MANAGE_REAL_PMP)) {
 					//PMP Expected
 					if (! empty($obj->pmp_expected)) $pmp_expected = $obj->pmp_expected;
