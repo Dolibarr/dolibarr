@@ -27,7 +27,7 @@ CREATE TABLE llx_webhook_target(
 	fk_user_creat integer NOT NULL, 
 	fk_user_modif integer, 
 	import_key varchar(14),
-	status integer NOT NULL, 
+	status integer DEFAULT 0 NOT NULL, 
 	url varchar(255) NOT NULL, 
 	trigger_codes text NOT NULL
 	-- END MODULEBUILDER FIELDS
