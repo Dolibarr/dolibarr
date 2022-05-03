@@ -234,7 +234,7 @@ class Form
 				if (preg_match('/^(string|safehtmlstring|email)/', $typeofdata)) {
 					$tmp = explode(':', $typeofdata);
 					$ret .= '<input type="text" id="'.$htmlname.'" name="'.$htmlname.'" value="'.($editvalue ? $editvalue : $value).'"'.($tmp[1] ? ' size="'.$tmp[1].'"' : '').' autofocus>';
-				} elseif (preg_match('/^(numeric|amount)/', $typeofdata)) {
+				} elseif (preg_match('/^(numeric|amount|integer)/', $typeofdata)) {
 					$tmp = explode(':', $typeofdata);
 					$valuetoshow = price2num($editvalue ? $editvalue : $value);
 					$ret .= '<input type="text" id="'.$htmlname.'" name="'.$htmlname.'" value="'.($valuetoshow != '' ? price($valuetoshow) : '').'"'.($tmp[1] ? ' size="'.$tmp[1].'"' : '').' autofocus>';
