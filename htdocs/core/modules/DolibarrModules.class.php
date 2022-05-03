@@ -2249,6 +2249,8 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		$entity = $conf->entity;
 
 		if (is_array($this->module_parts) && !empty($this->module_parts)) {
+			dol_syslog(get_class($this)."::delete_module_parts", LOG_DEBUG);
+
 			foreach ($this->module_parts as $key => $value) {
 				// If entity is defined
 				if (is_array($value) && isset($value['entity'])) {
@@ -2259,7 +2261,6 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 				$sql .= " WHERE ".$this->db->decrypt('name')." LIKE '".$this->db->escape($this->const_name)."_".strtoupper($key)."'";
 				$sql .= " AND entity = ".((int) $entity);
 
-				dol_syslog(get_class($this)."::delete_const_".$key."", LOG_DEBUG);
 				if (!$this->db->query($sql)) {
 					$this->error = $this->db->lasterror();
 					$err++;
