@@ -1257,9 +1257,9 @@ class FormMail extends Form
 	 *  @param	string		$type_template	Get message for model/type=$type_template, type='all' also included.
 	 *  @param	User		$user			Get template public or limited to this user
 	 *  @param	Translate	$outputlangs	Output lang object
-	 *  @param	int			$id				Id of template to find, or -1 for first found with position 0, or 0 for first found whatever is position (priority order depends on lang provided or not) or -2 for exact match with label (no answer if not found)
+	 *  @param	int			$id				Id of template to get, or -1 for first found with position 0, or 0 for first found whatever is position (priority order depends on lang provided or not) or -2 for exact match with label (no answer if not found)
 	 *  @param  int         $active         1=Only active template, 0=Only disabled, -1=All
-	 *  @param	string		$label			Label of template
+	 *  @param	string		$label			Label of template to get
 	 *  @return ModelMail|integer			One instance of ModelMail or -1 if error
 	 */
 	public function getEMailTemplate($dbs, $type_template, $user, $outputlangs, $id = 0, $active = 1, $label = '')
