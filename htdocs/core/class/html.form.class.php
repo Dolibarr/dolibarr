@@ -7216,10 +7216,11 @@ class Form
 
 		if (!empty($conf->use_javascript_ajax) && !empty($conf->global->TICKET_USE_SEARCH_TO_SELECT)) {
 			$placeholder = '';
+			$urloption = '';
 
 			if ($selected && empty($selected_input_value)) {
 				require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
-				$adherenttmpselect = new Member($this->db);
+				$adherenttmpselect = new Adherent($this->db);
 				$adherenttmpselect->fetch($selected);
 				$selected_input_value = $adherenttmpselect->ref;
 				unset($adherenttmpselect);
