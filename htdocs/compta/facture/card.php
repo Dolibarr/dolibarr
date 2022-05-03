@@ -987,6 +987,10 @@ if (empty($reshook)) {
 		}
 		$selectedLines = GETPOST('toselect', 'array');
 
+		if (GETPOST('type', 'int') === '') {
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), null, 'errors');
+		}
+
 		$db->begin();
 
 		$error = 0;
@@ -3176,6 +3180,9 @@ if ($action == 'create') {
 					$i++;
 				}
 				print '</select>';
+
+				print ajax_combobox("fac_rec");
+
 				// Option to reload page to retrieve customer informations. Note, this clear other input
 				if (empty($conf->global->RELOAD_PAGE_ON_TEMPLATE_CHANGE_DISABLED)) {
 					print '<script type="text/javascript">
@@ -3203,7 +3210,7 @@ if ($action == 'create') {
 
 	// Standard invoice
 	print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
-	$tmp = '<input type="radio" id="radio_standard" name="type" value="0"'.(GETPOST('type') == 0 ? ' checked' : '').'> ';
+	$tmp = '<input type="radio" id="radio_standard" name="type" value="0"'.(GETPOST('type', 'int') ? '' : ' checked').'> ';
 	$tmp  = $tmp.'<label for="radio_standard" >'.$langs->trans("InvoiceStandardAsk").'</label>';
 	$desc = $form->textwithpicto($tmp, $langs->transnoentities("InvoiceStandardDesc"), 1, 'help', '', 0, 3);
 	print '<table class="nobordernopadding"><tr>';
@@ -3396,7 +3403,6 @@ if ($action == 'create') {
 		print $desc;
 		print '</div></div>';
 	}
-
 
 	if (empty($origin)) {
 		if ($socid > 0) {
