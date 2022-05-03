@@ -117,7 +117,7 @@ if (in_array($object->element, array('propal', 'commande', 'facture')) && $objec
 	//print '<script>$(document).ready(function() { $(".clickremiseforalllines").click(function() { jQuery(".classremiseforalllines").toggle(); }); });</script>';
 	if (GETPOST('mode', 'aZ09') == 'remiseforalllines') {
 		print '<div class="remiseforalllines inline-block nowraponall">';
-		print '<input class="inline-block smallpaddingimp" name="remiseforalllines" value="0"> %';
+		print '<input class="inline-block smallpaddingimp width50 right" name="remiseforalllines" value="" placeholder="%">';
 		print '<input class="inline-block button smallpaddingimp" type="submit" name="submitforalllines" value="'.$langs->trans("Update").'">';
 		print '</div>';
 	}
