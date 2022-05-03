@@ -641,7 +641,7 @@ if (empty($reshook)) {
 				setEventMessages($mesg, null, 'errors');
 			} else {
 				// Insert line
-				$result = $object->addline($desc, $pu_ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $price_base_type, $info_bits, '', $pu_ttc, $type, - 1, $special_code, $label, $fk_unit, 0, $date_start_fill, $date_end_fill, $fournprice, $buyingprice);
+				$result = $object->addline($desc, $pu_ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $price_base_type, $info_bits, '', $pu_ttc, $type, -1, $special_code, $label, $fk_unit, 0, $date_start_fill, $date_end_fill, $fournprice, $buyingprice);
 
 				if ($result > 0) {
 					// Define output language and generate document
@@ -1605,19 +1605,19 @@ if ($action == 'create') {
 
 
 		// Lines
-		print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '#add' : '#line_'.GETPOST('lineid', 'int')).'" method="POST">
-        	<input type="hidden" name="token" value="' . newToken().'">
-        	<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateline').'">
-        	<input type="hidden" name="mode" value="">
-        	<input type="hidden" name="id" value="' . $object->id.'">
-        	';
+		print '<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '#add' : '#line_'.GETPOST('lineid', 'int')).'" method="POST">';
+		print '<input type="hidden" name="token" value="' . newToken().'">';
+		print '<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateline').'">';
+		print '<input type="hidden" name="mode" value="">';
+		print '<input type="hidden" name="id" value="' . $object->id.'">';
+		print '<input type="hidden" name="page_y" value="">';
 
 		if (!empty($conf->use_javascript_ajax) && $object->statut == 0) {
 			include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
 		}
 
 		print '<div class="div-table-responsive-no-min">';
-		print '<table id="tablelines" class="noborder noshadow" width="100%">';
+		print '<table id="tablelines" class="noborder noshadow centpercent">';
 		// Show object lines
 		if (!empty($object->lines)) {
 			$canchangeproduct = 1;
