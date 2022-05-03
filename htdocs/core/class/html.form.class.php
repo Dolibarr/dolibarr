@@ -1587,6 +1587,8 @@ class Form
 				}
 			}
 			print '</select>';
+			print ajax_combobox('select_'.$htmlname);
+
 			return $qualifiedlines;
 		} else {
 			dol_print_error($this->db);
@@ -5633,6 +5635,7 @@ class Form
 				if ($filter) {
 					$newfilter .= ' AND ('.$filter.')';
 				}
+				// output the combo of discounts
 				$nbqualifiedlines = $this->select_remises($selected, $htmlname, $newfilter, $socid, $maxvalue);
 				if ($nbqualifiedlines > 0) {
 					print ' &nbsp; <input type="submit" class="button smallpaddingimp" value="'.dol_escape_htmltag($langs->trans("UseLine")).'"';
