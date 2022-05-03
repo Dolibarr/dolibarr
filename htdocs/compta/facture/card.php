@@ -1571,8 +1571,15 @@ if (empty($reshook)) {
 									0,
 									0,
 									0,
-									0
-									//,$langs->trans('Deposit') //Deprecated
+									0,
+									'',
+									0,
+									100,
+									0,
+									null,
+									0,
+									'',
+									1
 								);
 							}
 
@@ -1739,7 +1746,10 @@ if (empty($reshook)) {
 											$array_options,
 											$lines[$i]->situation_percent,
 											$lines[$i]->fk_prev_id,
-											$lines[$i]->fk_unit
+											$lines[$i]->fk_unit,
+											0,
+											'',
+											1
 										);
 
 										if ($result > 0) {
@@ -1761,6 +1771,8 @@ if (empty($reshook)) {
 								$error++;
 							}
 						}
+
+						$object->update_price(1, 'auto', 0, $mysoc);
 
 						// Now we create same links to contact than the ones found on origin object
 						/* Useless, already into the create
@@ -1809,9 +1821,11 @@ if (empty($reshook)) {
 							$product->fetch(GETPOST('idprod'.$i, 'int'));
 							$startday = dol_mktime(12, 0, 0, GETPOST('date_start'.$i.'month'), GETPOST('date_start'.$i.'day'), GETPOST('date_start'.$i.'year'));
 							$endday = dol_mktime(12, 0, 0, GETPOST('date_end'.$i.'month'), GETPOST('date_end'.$i.'day'), GETPOST('date_end'.$i.'year'));
-							$result = $object->addline($product->description, $product->price, price2num(GETPOST('qty'.$i), 'MS'), $product->tva_tx, $product->localtax1_tx, $product->localtax2_tx, GETPOST('idprod'.$i, 'int'), price2num(GETPOST('remise_percent'.$i), '', 2), $startday, $endday, 0, 0, '', $product->price_base_type, $product->price_ttc, $product->type, -1, 0, '', 0, 0, null, 0, '', 0, 100, '', $product->fk_unit);
+							$result = $object->addline($product->description, $product->price, price2num(GETPOST('qty'.$i), 'MS'), $product->tva_tx, $product->localtax1_tx, $product->localtax2_tx, GETPOST('idprod'.$i, 'int'), price2num(GETPOST('remise_percent'.$i), '', 2), $startday, $endday, 0, 0, '', $product->price_base_type, $product->price_ttc, $product->type, -1, 0, '', 0, 0, null, 0, '', 0, 100, '', $product->fk_unit, 0, '', 1);
 						}
 					}
+
+					$object->update_price(1, 'auto', 0, $mysoc);
 				}
 			}
 		}
