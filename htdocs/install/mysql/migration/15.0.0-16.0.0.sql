@@ -340,7 +340,7 @@ ALTER TABLE llx_partnership ADD COLUMN url_to_check varchar(255);
 ALTER TABLE llx_c_partnership_type ADD COLUMN keyword	varchar(128);
 
 
-ALTER TABLE llx_eventorganization_conferenceorboothattendee	firstname varchar(100);
-ALTER TABLE llx_eventorganization_conferenceorboothattendee	lastname varchar(100);
+ALTER TABLE llx_eventorganization_conferenceorboothattendee	ADD COLUMN firstname varchar(100);
+ALTER TABLE llx_eventorganization_conferenceorboothattendee	ADD COLUMN lastname varchar(100);
 
 
