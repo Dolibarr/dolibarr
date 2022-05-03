@@ -1141,3 +1141,7 @@ Forthcoming=Forthcoming
 Currently=Currently
 ClientTZ=Client Time Zone (user)
 NotClosedYet=Not yet closed
+ConfirmAllocateCommercial=Assign sales representative confirmation
+ConfirmAllocateCommercialQuestion=Are you sure you want to assign the %s selected record(s)?
+CommercialsAffected=Sales representatives affected
+CommercialAffected=Sales representative affected

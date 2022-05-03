@@ -64,6 +64,7 @@ class BonPrelevement extends CommonObject
 	public $emetteur_numero_compte;
 	public $emetteur_code_banque;
 	public $emetteur_number_key;
+	public $sepa_xml_pti_in_ctti;
 
 	public $emetteur_iban;
 	public $emetteur_bic;
@@ -107,6 +108,7 @@ class BonPrelevement extends CommonObject
 		$this->emetteur_numero_compte = "";
 		$this->emetteur_code_banque = "";
 		$this->emetteur_number_key = "";
+		$this->sepa_xml_pti_in_ctti = false;
 
 		$this->emetteur_iban = "";
 		$this->emetteur_bic = "";
@@ -328,74 +330,6 @@ class BonPrelevement extends CommonObject
 				return -1;
 			}
 		} else {
-			return -2;
-		}
-	}
-
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 * Set credite and set status of linked invoices. Still used ??
-	 *
-	 * @return		int		<0 if KO, >=0 if OK
-	 */
-	public function set_credite()
-	{
-		// phpcs:enable
-		global $user, $conf;
-
-		$error = 0;
-
-		if ($this->db->begin()) {
-			$sql = " UPDATE ".MAIN_DB_PREFIX."prelevement_bons";
-			$sql .= " SET statut = ".self::STATUS_TRANSFERED;
-			$sql .= " WHERE rowid = ".((int) $this->id);
-			$sql .= " AND entity = ".((int) $conf->entity);
-
-			$result = $this->db->query($sql);
-			if (!$result) {
-				dol_syslog(get_class($this)."::set_credite Erreur 1");
-				$error++;
-			}
-
-			if (!$error) {
-				$facs = array();
-				$facs = $this->getListInvoices();
-
-				$num = count($facs);
-				for ($i = 0; $i < $num; $i++) {
-					/* Tag invoice as paid */
-					dol_syslog(get_class($this)."::set_credite set_paid fac ".$facs[$i]);
-					$fac = new Facture($this->db);
-					$fac->fetch($facs[$i]);
-					$result = $fac->setPaid($user);
-				}
-			}
-
-			if (!$error) {
-				$sql = " UPDATE ".MAIN_DB_PREFIX."prelevement_lignes";
-				$sql .= " SET statut = 2";
-				$sql .= " WHERE fk_prelevement_bons = ".((int) $this->id);
-
-				if (!$this->db->query($sql)) {
-					dol_syslog(get_class($this)."::set_credite Erreur 1");
-					$error++;
-				}
-			}
-
-			/*
-			 * End of procedure
-			 */
-			if (!$error) {
-				$this->db->commit();
-				return 0;
-			} else {
-				$this->db->rollback();
-				dol_syslog(get_class($this)."::set_credite ROLLBACK ");
-
-				return -1;
-			}
-		} else {
-			dol_syslog(get_class($this)."::set_credite Ouverture transaction SQL impossible ");
 			return -2;
 		}
 	}
@@ -1106,10 +1040,11 @@ class BonPrelevement extends CommonObject
 					}
 					$account = new Account($this->db);
 					if ($account->fetch($id) > 0) {
-						$this->emetteur_code_banque = $account->code_banque;
+						$this->emetteur_code_banque        = $account->code_banque;
 						$this->emetteur_code_guichet       = $account->code_guichet;
 						$this->emetteur_numero_compte      = $account->number;
-						$this->emetteur_number_key = $account->cle_rib;
+						$this->emetteur_number_key         = $account->cle_rib;
+						$this->sepa_xml_pti_in_ctti        = (bool) $account->pti_in_ctti;
 						$this->emetteur_iban               = $account->iban;
 						$this->emetteur_bic                = $account->bic;
 
@@ -1945,6 +1880,24 @@ class BonPrelevement extends CommonObject
 			// Add EndToEndId. Must be a unique ID for each payment (for example by including bank, buyer or seller, date, checksum)
 			$XML_CREDITOR .= '					<EndToEndId>'.(($conf->global->PRELEVEMENT_END_TO_END != "") ? $conf->global->PRELEVEMENT_END_TO_END : ('CT-'.dol_trunc($row_idfac.'-'.$row_ref, 20, 'right', 'UTF-8', 1)).'-'.$Rowing).'</EndToEndId>'.$CrLf; // ISO20022 states that EndToEndId has a MaxLength of 35 characters
 			$XML_CREDITOR .= '				</PmtId>'.$CrLf;
+			if ($this->sepa_xml_pti_in_ctti) {
+				$XML_CREDITOR .= '				<PmtTpInf>' . $CrLf;
+
+				// Can be 'NORM' for normal or 'HIGH' for high priority level
+				if (!empty($conf->global->PAYMENTBYBANKTRANSFER_FORCE_HIGH_PRIORITY)) {
+					$instrprty = 'HIGH';
+				} else {
+					$instrprty = 'NORM';
+				}
+				$XML_CREDITOR .= '					<InstrPrty>'.$instrprty.'</InstrPrty>' . $CrLf;
+				$XML_CREDITOR .= '					<SvcLvl>' . $CrLf;
+				$XML_CREDITOR .= '						<Cd>SEPA</Cd>' . $CrLf;
+				$XML_CREDITOR .= '					</SvcLvl>' . $CrLf;
+				$XML_CREDITOR .= '					<CtgyPurp>' . $CrLf;
+				$XML_CREDITOR .= '						<Cd>CORE</Cd>' . $CrLf;
+				$XML_CREDITOR .= '					</CtgyPurp>' . $CrLf;
+				$XML_CREDITOR .= '				</PmtTpInf>' . $CrLf;
+			}
 			$XML_CREDITOR .= '				<Amt>'.$CrLf;
 			$XML_CREDITOR .= '					<InstdAmt Ccy="EUR">'.round($row_somme, 2).'</InstdAmt>'.$CrLf;
 			$XML_CREDITOR .= '				</Amt>'.$CrLf;
@@ -2095,6 +2048,7 @@ class BonPrelevement extends CommonObject
 			$this->emetteur_code_guichet = $account->code_guichet;
 			$this->emetteur_numero_compte = $account->number;
 			$this->emetteur_number_key = $account->cle_rib;
+			$this->sepa_xml_pti_in_ctti = (bool) $account->pti_in_ctti;
 			$this->emetteur_iban = $account->iban;
 			$this->emetteur_bic = $account->bic;
 
@@ -2189,17 +2143,17 @@ class BonPrelevement extends CommonObject
 				//$XML_SEPA_INFO .= '			<BtchBookg>False</BtchBookg>'.$CrLf;
 				$XML_SEPA_INFO .= '			<NbOfTxs>'.$nombre.'</NbOfTxs>'.$CrLf;
 				$XML_SEPA_INFO .= '			<CtrlSum>'.$total.'</CtrlSum>'.$CrLf;
-				/*
-				$XML_SEPA_INFO .= '			<PmtTpInf>'.$CrLf;
-				$XML_SEPA_INFO .= '				<SvcLvl>'.$CrLf;
-				$XML_SEPA_INFO .= '					<Cd>SEPA</Cd>'.$CrLf;
-				$XML_SEPA_INFO .= '				</SvcLvl>'.$CrLf;
-				$XML_SEPA_INFO .= '				<LclInstrm>'.$CrLf;
-				$XML_SEPA_INFO .= '					<Cd>TRF</Cd>'.$CrLf;
-				$XML_SEPA_INFO .= '				</LclInstrm>'.$CrLf;
-				$XML_SEPA_INFO .= '				<CtgyPurp><Cd>SECU</Cd></CtgyPurp>'.$CrLf;
-				$XML_SEPA_INFO .= '			</PmtTpInf>'.$CrLf;
-				*/
+				if (!$this->sepa_xml_pti_in_ctti) {
+					$XML_SEPA_INFO .= '			<PmtTpInf>' . $CrLf;
+					$XML_SEPA_INFO .= '				<SvcLvl>' . $CrLf;
+					$XML_SEPA_INFO .= '					<Cd>SEPA</Cd>' . $CrLf;
+					$XML_SEPA_INFO .= '				</SvcLvl>' . $CrLf;
+					$XML_SEPA_INFO .= '				<LclInstrm>' . $CrLf;
+					$XML_SEPA_INFO .= '					<Cd>CORE</Cd>' . $CrLf;
+					$XML_SEPA_INFO .= '				</LclInstrm>' . $CrLf;
+					$XML_SEPA_INFO .= '				<SeqTp>' . $format . '</SeqTp>' . $CrLf;
+					$XML_SEPA_INFO .= '			</PmtTpInf>' . $CrLf;
+				}
 				$XML_SEPA_INFO .= '			<ReqdExctnDt>'.dol_print_date($dateTime_ETAD, 'dayrfc').'</ReqdExctnDt>'.$CrLf;
 				$XML_SEPA_INFO .= '			<Dbtr>'.$CrLf;
 				$XML_SEPA_INFO .= '				<Nm>'.strtoupper(dol_string_unaccent($this->raison_sociale)).'</Nm>'.$CrLf;

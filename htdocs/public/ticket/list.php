@@ -70,8 +70,8 @@ if (isset($_SESSION['email_customer'])) {
 
 $object = new Ticket($db);
 
-
-
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('ticketpubliclist', 'globalcard'));
 
 /*
  * Actions
@@ -398,6 +398,11 @@ if ($action == "view_ticketlist") {
 				$varpage = empty($contextpage) ? $url_page_current : $contextpage;
 				$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
 
+				// allow to display information before list
+				$parameters=array('arrayfields'=>$arrayfields);
+				$reshook=$hookmanager->executeHooks('printFieldListHeader', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
+				print $hookmanager->resPrint;
+
 				print '<table class="liste '.($moreforfilter ? "listwithfilterbefore" : "").'">';
 
 				// Filter bar
@@ -648,7 +653,7 @@ if ($action == "view_ticketlist") {
 								}
 								print '>';
 								$tmpkey = 'options_'.$key;
-								print $extrafields->showOutputField($key, $obj->$tmpkey, '', 1);
+								print $extrafields->showOutputField($key, $obj->$tmpkey, '', $object->table_element);
 								print '</td>';
 							}
 						}

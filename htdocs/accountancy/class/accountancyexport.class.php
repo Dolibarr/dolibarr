@@ -903,7 +903,15 @@ class AccountancyExport
 		print "ValidDate".$separator;
 		print "Montantdevise".$separator;
 		print "Idevise".$separator;
-		print "DateLimitReglmt";
+		// Easya 2022 - PR18949 - Accountancy - Format FEC/FEC2 - Add column NumFacture
+		// Code annulé
+		/*
+			print "DateLimitReglmt";
+		*/
+		// Code remplacé
+		print "DateLimitReglmt".$separator;
+		print "NumFacture";
+		// Easya 2022 - PR18949 - Fin
 		print $end_line;
 
 		foreach ($objectLines as $line) {
@@ -915,6 +923,25 @@ class AccountancyExport
 				$date_lettering = dol_print_date($line->date_lettering, '%Y%m%d');
 				$date_validation = dol_print_date($line->date_validated, '%Y%m%d');
 				$date_limit_payment = dol_print_date($line->date_lim_reglement, '%Y%m%d');
+
+				// Easya 2022 - PR18949 - Accountancy - Format FEC/FEC2 - Add column NumFacture
+				// Code ajouté
+				if ($line->doc_type == 'customer_invoice') {
+					// Customer invoice
+					require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+					$invoice = new Facture($this->db);
+					$invoice->fetch($line->fk_doc);
+
+					$refInvoice = $invoice->ref;
+				} elseif ($line->doc_type == 'supplier_invoice') {
+					// Supplier invoice
+					require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+					$invoice = new FactureFournisseur($this->db);
+					$invoice->fetch($line->fk_doc);
+
+					$refInvoice = $invoice->ref_supplier;
+				}
+				// Easya 2022 - PR18949 - Fin
 
 				// FEC:JournalCode
 				print $line->code_journal . $separator;
@@ -971,7 +998,16 @@ class AccountancyExport
 				print $line->multicurrency_code.$separator;
 
 				// FEC_suppl:DateLimitReglmt
+				// Easya 2022 - PR18949 - Accountancy - Format FEC/FEC2 - Add column NumFacture
+				// Code annulé
+				/*
 				print $date_limit_payment;
+				*/
+				// Code remplacé
+				print $date_limit_payment . $separator;
+				// FEC_suppl:NumFacture
+				print dol_trunc(self::toAnsi($refInvoice), 17, 'right', 'UTF-8', 1);
+				// Easya 2022 - PR18949 - Fin
 
 				print $end_line;
 			}
@@ -1009,7 +1045,15 @@ class AccountancyExport
 		print "ValidDate".$separator;
 		print "Montantdevise".$separator;
 		print "Idevise".$separator;
-		print "DateLimitReglmt";
+		// Easya 2022 - PR18949 - Accountancy - Format FEC/FEC2 - Add column NumFacture
+		// Code annulé
+		/*
+			print "DateLimitReglmt";
+		*/
+		// Code remplacé
+		print "DateLimitReglmt".$separator;
+		print "NumFacture";
+		// Easya 2022 - PR18949 - Fin
 		print $end_line;
 
 		foreach ($objectLines as $line) {
@@ -1021,6 +1065,25 @@ class AccountancyExport
 				$date_lettering = dol_print_date($line->date_lettering, '%Y%m%d');
 				$date_validation = dol_print_date($line->date_validated, '%Y%m%d');
 				$date_limit_payment = dol_print_date($line->date_lim_reglement, '%Y%m%d');
+
+				// Easya 2022 - PR18949 - Accountancy - Format FEC/FEC2 - Add column NumFacture
+				// Code ajouté
+				if ($line->doc_type == 'customer_invoice') {
+					// Customer invoice
+					require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+					$invoice = new Facture($this->db);
+					$invoice->fetch($line->fk_doc);
+
+					$refInvoice = $invoice->ref;
+				} elseif ($line->doc_type == 'supplier_invoice') {
+					// Supplier invoice
+					require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+					$invoice = new FactureFournisseur($this->db);
+					$invoice->fetch($line->fk_doc);
+
+					$refInvoice = $invoice->ref_supplier;
+				}
+				// Easya 2022 - PR18949 - Fin
 
 				// FEC:JournalCode
 				print $line->code_journal . $separator;
@@ -1077,7 +1140,16 @@ class AccountancyExport
 				print $line->multicurrency_code . $separator;
 
 				// FEC_suppl:DateLimitReglmt
+				// Easya 2022 - PR18949 - Accountancy - Format FEC/FEC2 - Add column NumFacture
+				// Code annulé
+				/*
 				print $date_limit_payment;
+				*/
+				// Code remplacé
+				print $date_limit_payment . $separator;
+				// FEC_suppl:NumFacture
+				print dol_trunc(self::toAnsi($refInvoice), 17, 'right', 'UTF-8', 1);
+				// Easya 2022 - PR18949 - Fin
 
 				print $end_line;
 			}

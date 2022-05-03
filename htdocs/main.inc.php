@@ -1550,8 +1550,17 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 
 		if (!defined('DISABLE_FONT_AWSOME')) {
 			print '<!-- Includes CSS for font awesome -->'."\n";
+			// Easya 2022 - PR19649 - FontAwesome - Add constant to define your own directory and font family
+			// Code annulé
+			/*
 			print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/common/fontawesome-5/css/all.min.css'.($ext ? '?'.$ext : '').'">'."\n";
 			print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/common/fontawesome-5/css/v4-shims.min.css'.($ext ? '?'.$ext : '').'">'."\n";
+			*/
+			// Code remplacé
+			$fontawesome_directory = getDolGlobalString('MAIN_FONTAWESOME_DIRECTORY', '/theme/common/fontawesome-5');
+
+			print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.$fontawesome_directory.'/css/all.min.css'.($ext ? '?'.$ext : '').'">'."\n";
+			// Easya 2022 - PR19649 - Fin
 		}
 
 		print '<!-- Includes CSS for Dolibarr theme -->'."\n";
@@ -1584,12 +1593,17 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 						dol_syslog("Warning: module ".$modcss." declared a css path file into its descriptor that is empty.", LOG_WARNING);
 					}
 					// cssfile is a relative path
-					print '<!-- Includes CSS added by module '.$modcss.' -->'."\n".'<link rel="stylesheet" type="text/css" href="'.dol_buildpath($cssfile, 1);
-					// We add params only if page is not static, because some web server setup does not return content type text/css if url has parameters, so browser cache is not used.
-					if (!preg_match('/\.css$/i', $cssfile)) {
-						print $themeparam;
+					$urlforcss = dol_buildpath($cssfile, 1);
+					if ($urlforcss && $urlforcss != '/') {
+						print '<!-- Includes CSS added by module '.$modcss.' -->'."\n".'<link rel="stylesheet" type="text/css" href="'.$urlforcss;
+						// We add params only if page is not static, because some web server setup does not return content type text/css if url has parameters, so browser cache is not used.
+						if (!preg_match('/\.css$/i', $cssfile)) {
+							print $themeparam;
+						}
+						print '">'."\n";
+					} else {
+						dol_syslog("Warning: module ".$modcss." declared a css path file for a file we can't find.", LOG_WARNING);
 					}
-					print '">'."\n";
 				}
 			}
 		}
@@ -1728,7 +1742,12 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 					$filesjs = (array) $filesjs; // To be sure filejs is an array
 					foreach ($filesjs as $jsfile) {
 						// jsfile is a relative path
-						print '<!-- Include JS added by module '.$modjs.'-->'."\n".'<script src="'.dol_buildpath($jsfile, 1).((strpos($jsfile, '?') === false) ? '?' : '&amp;').'lang='.$langs->defaultlang.'"></script>'."\n";
+						$urlforjs = dol_buildpath($jsfile, 1);
+						if ($urlforjs && $urlforjs != '/') {
+							print '<!-- Include JS added by module '.$modjs.'-->'."\n".'<script src="'.$urlforjs.((strpos($jsfile, '?') === false) ? '?' : '&amp;').'lang='.$langs->defaultlang.'"></script>'."\n";
+						} else {
+							dol_syslog("Warning: module ".$modjs." declared a js path file for a file we can't find.", LOG_WARNING);
+						}
 					}
 				}
 			}
@@ -2044,24 +2063,24 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 	$dropdownBody .= '<div id="topmenulogincompanyinfo" >';
 
 	if ($langs->transcountry("ProfId1", $mysoc->country_code) != '-') {
-		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId1", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton(getDolGlobalString("MAIN_INFO_SIREN")).'</span>';
+		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId1", $mysoc->country_code).'</b>: <span>'.dol_print_profids(getDolGlobalString('MAIN_INFO_SIREN'), 'ProfId1', $mysoc->country_code, 1).'</span>';
 	}
 	if ($langs->transcountry("ProfId2", $mysoc->country_code) != '-') {
-		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId2", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton(getDolGlobalString("MAIN_INFO_SIRET")).'</span>';
+		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId2", $mysoc->country_code).'</b>: <span>'.dol_print_profids(getDolGlobalString('MAIN_INFO_SIRET'), 'ProfId2', $mysoc->country_code, 1).'</span>';
 	}
 	if ($langs->transcountry("ProfId3", $mysoc->country_code) != '-') {
-		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId3", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton(getDolGlobalString("MAIN_INFO_APE")).'</span>';
+		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId3", $mysoc->country_code).'</b>: <span>'.dol_print_profids(getDolGlobalString('MAIN_INFO_APE'), 'ProfId3', $mysoc->country_code, 1).'</span>';
 	}
 	if ($langs->transcountry("ProfId4", $mysoc->country_code) != '-') {
-		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId4", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton(getDolGlobalString("MAIN_INFO_RCS")).'</span>';
+		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId4", $mysoc->country_code).'</b>: <span>'.dol_print_profids(getDolGlobalString('MAIN_INFO_RCS'), 'ProfId4', $mysoc->country_code, 1).'</span>';
 	}
 	if ($langs->transcountry("ProfId5", $mysoc->country_code) != '-') {
-		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId5", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton(getDolGlobalString("MAIN_INFO_PROFID5")).'</span>';
+		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId5", $mysoc->country_code).'</b>: <span>'.dol_print_profids(getDolGlobalString('MAIN_INFO_PROFID5'), 'ProfId5', $mysoc->country_code, 1).'</span>';
 	}
 	if ($langs->transcountry("ProfId6", $mysoc->country_code) != '-') {
-		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId6", $mysoc->country_code).'</b>: <span>'.showValueWithClipboardCPButton(getDolGlobalString("MAIN_INFO_PROFID6")).'</span>';
+		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId6", $mysoc->country_code).'</b>: <span>'.dol_print_profids(getDolGlobalString('MAIN_INFO_PROFID6'), 'ProfId6', $mysoc->country_code, 1).'</span>';
 	}
-	$dropdownBody .= '<br><b>'.$langs->trans("VATIntraShort").'</b>: <span>'.showValueWithClipboardCPButton(getDolGlobalString("MAIN_INFO_TVAINTRA")).'</span>';
+	$dropdownBody .= '<br><b>'.$langs->trans("VATIntraShort").'</b>: <span>'.dol_print_profids(getDolGlobalString('MAIN_INFO_TVAINTRA'), 'VATIntra', $mysoc->country_code, 1).'</span>';
 
 	$dropdownBody .= '</div>';
 
@@ -2255,6 +2274,9 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
  */
 function top_menu_quickadd()
 {
+	// Easya 2022 - PR17966 - Review quickadd menu
+	// Code annulé
+	/*
 	global $langs, $conf, $db, $hookmanager, $user;
 	global $menumanager;
 
@@ -2424,6 +2446,10 @@ function top_menu_quickadd()
 
 	$dropDownQuickAddHtml .= '</div>';
 	$dropDownQuickAddHtml .= '</div>';
+	*/
+	// Code remplacé
+	global $langs;
+	// Easya 2022 - PR17966 - Fin
 
 	$html .= '<!-- div for quick add link -->
     <div id="topmenu-quickadd-dropdown" class="atoplogin dropdown inline-block">
@@ -2431,9 +2457,14 @@ function top_menu_quickadd()
             <i class="fa fa-plus-circle" ></i>
         </a>
 
-        <div class="dropdown-menu">
-            '.$dropDownQuickAddHtml.'
+		<!-- Easya 2022 - PR17966 - Review quickadd menu
+		// Code annulé
+		// <div class="dropdown-menu">
+        //    '.$dropDownQuickAddHtml.'
         </div>
+        // Code remplacé -->
+        <div class="dropdown-menu">'.printDropdownQuickadd().'</div>
+    	<!-- Easya 2022 - PR17966 - Fin -->
     </div>';
 	$html .= '
         <!-- Code to show/hide the user drop-down -->
@@ -2467,6 +2498,155 @@ function top_menu_quickadd()
         ';
 	return $html;
 }
+
+// Easya 2022 - PR17966 - Review quickadd menu
+// Code ajouté
+/**
+ * Generate list of quickadd items
+ *
+ * @return string HTML output
+ */
+function printDropdownQuickadd()
+{
+	global $conf, $user, $langs, $hookmanager;
+
+	$items = array(
+		'items' => array(
+			array(
+				"url" => "/societe/card.php?action=create&amp;mainmenu=companies",
+				"title" => "MenuNewThirdParty@companies",
+				"name" => "ThirdParty@companies",
+				"picto" => "object_company",
+				"activation" => !empty($conf->societe->enabled) && $user->rights->societe->creer, // vs hooking
+				"position" => 10,
+			),
+			array(
+				"url" => "/contact/card.php?action=create&amp;mainmenu=companies",
+				"title" => "NewContactAddress@companies",
+				"name" => "Contact@companies",
+				"picto" => "object_contact",
+				"activation" => !empty($conf->societe->enabled) && $user->rights->societe->contact->creer, // vs hooking
+				"position" => 20,
+			),
+			array(
+				"url" => "/comm/propal/card.php?action=create&amp;mainmenu=commercial",
+				"title" => "NewPropal@propal",
+				"name" => "Proposal@propal",
+				"picto" => "object_propal",
+				"activation" => !empty($conf->propal->enabled) && $user->rights->propale->creer, // vs hooking
+				"position" => 30,
+			),
+
+			array(
+				"url" => "/commande/card.php?action=create&amp;mainmenu=commercial",
+				"title" => "NewOrder@orders",
+				"name" => "Order@orders",
+				"picto" => "object_order",
+				"activation" => !empty($conf->commande->enabled) && $user->rights->commande->creer, // vs hooking
+				"position" => 40,
+			),
+			array(
+				"url" => "/compta/facture/card.php?action=create&amp;mainmenu=billing",
+				"title" => "NewBill@bills",
+				"name" => "Bill@bills",
+				"picto" => "object_bill",
+				"activation" => !empty($conf->facture->enabled) && $user->rights->facture->creer, // vs hooking
+				"position" => 50,
+			),
+			array(
+				"url" => "/contrat/card.php?action=create&amp;mainmenu=commercial",
+				"title" => "NewContractSubscription@contracts",
+				"name" => "Contract@contracts",
+				"picto" => "object_contract",
+				"activation" => !empty($conf->contrat->enabled) && $user->rights->contrat->creer, // vs hooking
+				"position" => 60,
+			),
+			array(
+				"url" => "/supplier_proposal/card.php?action=create&amp;mainmenu=billing",
+				"title" => "SupplierProposalNew@supplier_proposal",
+				"name" => "SupplierProposal@supplier_proposal",
+				"picto" => "object_propal",
+				"activation" => !empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposal->creer, // vs hooking
+				"position" => 70,
+			),
+			array(
+				"url" => "/fourn/commande/card.php?action=create&amp;mainmenu=commercial",
+				"title" => "NewSupplierOrderShort@orders",
+				"name" => "SupplierOrder@orders",
+				"picto" => "object_order",
+				"activation" => (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->rights->fournisseur->commande->creer) || (!empty($conf->supplier_order->enabled) && $user->rights->supplier_order->creer), // vs hooking
+				"position" => 80,
+			),
+			array(
+				"url" => "/fourn/facture/card.php?action=create&amp;mainmenu=commercial",
+				"title" => "NewBill@bills",
+				"name" => "SupplierBill@bills",
+				"picto" => "object_bill",
+				"activation" => (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->rights->fournisseur->facture->creer) || (!empty($conf->supplier_invoice->enabled) && $user->rights->supplier_invoice->creer), // vs hooking
+				"position" => 90,
+			),
+			array(
+				"url" => "/product/card.php?action=create&amp;type=0&amp;mainmenu=products",
+				"title" => "NewProduct@products",
+				"name" => "Product@products",
+				"picto" => "object_product",
+				"activation" => !empty($conf->product->enabled) && $user->rights->produit->creer, // vs hooking
+				"position" => 100,
+			),
+			array(
+				"url" => "/product/card.php?action=create&amp;type=1&amp;mainmenu=products",
+				"title" => "NewService@products",
+				"name" => "Service@products",
+				"picto" => "object_service",
+				"activation" => !empty($conf->service->enabled) && $user->rights->service->creer, // vs hooking
+				"position" => 110,
+			),
+		),
+	);
+
+	$dropDownQuickAddHtml = '';
+
+	// Define $dropDownQuickAddHtml
+	$dropDownQuickAddHtml .= '<div class="quickadd-body dropdown-body">';
+	$dropDownQuickAddHtml .= '<div class="dropdown-quickadd-list">';
+
+	// Allow the $items of the menu to be manipulated by modules
+	$parameters = array();
+	$hook_items = $items;
+	$reshook = $hookmanager->executeHooks('menuDropdownQuickaddItems', $parameters, $hook_items); // Note that $action and $object may have been modified by some hooks
+	if (is_numeric($reshook) && is_array($hookmanager->results)) {
+		if ($reshook == 0) {
+			$items['items'] = array_merge($items['items'], $hookmanager->results); // add
+		} else {
+			$items = $hookmanager->results; // replace
+		}
+
+		// Sort menu items by 'position' value
+		$position = array();
+		foreach ($items['items'] as $key => $row) {
+			$position[$key] = $row['position'];
+		}
+		array_multisort($position, SORT_ASC, $items['items']);
+	}
+
+	foreach ($items['items'] as $item) {
+		if (!$item['activation']) {
+			continue;
+		}
+		$langs->load(explode('@', $item['title'])[1]);
+		$langs->load(explode('@', $item['name'])[1]);
+		$dropDownQuickAddHtml .= '
+			<a class="dropdown-item quickadd-item" href="'.DOL_URL_ROOT.$item['url'].'" title="'.$langs->trans(explode('@', $item['title'])[0]).'">
+			'. img_picto('', $item['picto'], 'style="width:18px;"') . ' ' . $langs->trans(explode('@', $item['name'])[0]) . '</a>
+		';
+	}
+
+	$dropDownQuickAddHtml .= '</div>';
+	$dropDownQuickAddHtml .= '</div>';
+
+	return $dropDownQuickAddHtml;
+}
+// Easya 2022 - PR17966 - Fin
 
 /**
  * Build the tooltip on top menu bookmark

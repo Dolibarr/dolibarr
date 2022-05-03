@@ -83,7 +83,7 @@ if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'y
 		}
 	}
 
-	if ($amounts[key($amounts)] <= 0) {
+	if (empty($amounts[key($amounts)])) {
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Amount")), null, 'errors');
 		$action = 'create';

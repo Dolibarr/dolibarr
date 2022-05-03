@@ -982,7 +982,12 @@ div.divsearchfield {
 	content: "\f080";
 }
 .a-filter:before, .a-mesure:before {
-	font-family: "Font Awesome 5 Free";
+	/* Easya 2022 - PR19649 - FontAwesome - Add constant to define your own directory and font family */
+	/* Code annulé */
+	/* font-family: "Font Awesome 5 Free"; */
+	/* Code remplacé */
+	font-family: "<?php echo getDolGlobalString('MAIN_FONTAWESOME_FAMILY', 'Font Awesome 5 Free'); ?>";
+	/* Easya 2022 - PR19649 - Fin */
 	font-weight: 600;
 	padding-right: 5px;
 	padding-left: 5px;
@@ -6784,7 +6789,12 @@ a.phpdebugbar-tab.phpdebugbar-active {
 	font-weight: 600 !important;
 }
 .phpdebugbar-fa-tags, .phpdebugbar-fa-tasks, .phpdebugbar-indicator .fa {
-	font-family: "Font Awesome 5 Free";
+	/* Easya 2022 - PR19649 - FontAwesome - Add constant to define your own directory and font family */
+	/* Code annulé */
+	/* font-family: "Font Awesome 5 Free"; */
+	/* Code remplacé */
+	font-family: "<?php echo getDolGlobalString('MAIN_FONTAWESOME_FAMILY', 'Font Awesome 5 Free'); ?>";
+	/* Easya 2022 - PR19649 - Fin */
 	font-weight: 600;
 }
 div.phpdebugbar-widgets-messages li.phpdebugbar-widgets-list-item span.phpdebugbar-widgets-value.phpdebugbar-widgets-warning:before,
@@ -6802,7 +6812,12 @@ div.phpdebugbar-widgets-templates span.phpdebugbar-widgets-param-count:before,
 div.phpdebugbar-widgets-templates span.phpdebugbar-widgets-type:before,
 div.phpdebugbar-widgets-templates a.phpdebugbar-widgets-editor-link:before
 {
-	font-family: "Font Awesome 5 Free" !important;
+	/* Easya 2022 - PR19649 - FontAwesome - Add constant to define your own directory and font family */
+	/* Code annulé */
+	/* font-family: "Font Awesome 5 Free" !important; */
+	/* Code remplacé */
+	font-family: "<?php echo getDolGlobalString('MAIN_FONTAWESOME_FAMILY', 'Font Awesome 5 Free'); ?> !important";
+	/* Easya 2022 - PR19649 - Fin */
 }
 
 /* ============================================================================== */

@@ -3400,7 +3400,7 @@ class Form
 						'value'=>$outref,
 						'label'=>$outval,
 						'qty'=>$outqty,
-						'price_ht'=>price2num($objp->unitprice, 'MT'),
+						'price_ht'=>price2num($objp->unitprice, 'MU'),
 						'discount'=>$outdiscount,
 						'type'=>$outtype,
 						'duration_value'=>$outdurationvalue,
@@ -3584,7 +3584,6 @@ class Form
 			dol_print_error($this->db);
 		}
 	}
-
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**

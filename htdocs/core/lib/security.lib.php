@@ -228,6 +228,7 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 		$features = 'produit';
 	}
 
+
 	// Get more permissions checks from hooks
 	$parameters = array('features'=>$features, 'originalfeatures'=>$originalfeatures, 'objectid'=>$objectid, 'dbt_select'=>$dbt_select, 'idtype'=>$dbt_select, 'isdraft'=>$isdraft);
 	$reshook = $hookmanager->executeHooks('restrictedArea', $parameters);
@@ -602,7 +603,7 @@ function checkUserAccessToObject($user, array $featuresarray, $objectid = 0, $ta
 	foreach ($featuresarray as $feature) {
 		$sql = '';
 
-		//var_dump($feature);
+		//var_dump($feature);exit;
 
 		// For backward compatibility
 		if ($feature == 'member') {

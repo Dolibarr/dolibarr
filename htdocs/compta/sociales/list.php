@@ -50,9 +50,31 @@ $search_ref			= GETPOST('search_ref', 'int');
 $search_label = GETPOST('search_label', 'alpha');
 $search_amount		= GETPOST('search_amount', 'alpha');
 $search_status		= GETPOST('search_status', 'int');
+// Easya 2022 - PR18668 - Social Contributions - Add from/to on list
+// Code annulé
+/*
 $search_day_lim		= GETPOST('search_day_lim', 'int');
 $search_month_lim = GETPOST('search_month_lim', 'int');
 $search_year_lim	= GETPOST('search_year_lim', 'int');
+*/
+// Code remplacé
+$search_date_startday = GETPOST('search_date_startday', 'int');
+$search_date_startmonth = GETPOST('search_date_startmonth', 'int');
+$search_date_startyear = GETPOST('search_date_startyear', 'int');
+$search_date_endday = GETPOST('search_date_endday', 'int');
+$search_date_endmonth = GETPOST('search_date_endmonth', 'int');
+$search_date_endyear = GETPOST('search_date_endyear', 'int');
+$search_date_start = dol_mktime(0, 0, 0, $search_date_startmonth, $search_date_startday, $search_date_startyear);	// Use tzserver
+$search_date_end = dol_mktime(23, 59, 59, $search_date_endmonth, $search_date_endday, $search_date_endyear);
+$search_date_limit_startday = GETPOST('search_date_limit_startday', 'int');
+$search_date_limit_startmonth = GETPOST('search_date_limit_startmonth', 'int');
+$search_date_limit_startyear = GETPOST('search_date_limit_startyear', 'int');
+$search_date_limit_endday = GETPOST('search_date_limit_endday', 'int');
+$search_date_limit_endmonth = GETPOST('search_date_limit_endmonth', 'int');
+$search_date_limit_endyear = GETPOST('search_date_limit_endyear', 'int');
+$search_date_limit_start = dol_mktime(0, 0, 0, $search_date_limit_startmonth, $search_date_limit_startday, $search_date_limit_startyear);
+$search_date_limit_end = dol_mktime(23, 59, 59, $search_date_limit_endmonth, $search_date_limit_endday, $search_date_limit_endyear);
+// Easya 2022 - PR18668 - Fin
 $search_project_ref = GETPOST('search_project_ref', 'alpha');
 $search_project = GETPOST('search_project', 'alpha');
 $search_users = GETPOST('search_users');
@@ -61,7 +83,7 @@ $search_account				= GETPOST('search_account', 'int');
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield			= GETPOST("sortfield", 'alpha');
-$sortorder			= GETPOST("sortorder", 'alpha');
+$sortorder			= GETPOST("sortorder", 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 
 if (empty($page) || $page == -1) {
@@ -146,10 +168,32 @@ if (empty($reshook)) {
 		$search_amount = '';
 		$search_status = '';
 		$search_typeid = '';
+		// Easya 2022 - PR18668 - Social Contributions - Add from/to on list
+		// Code annulé
+		/*
 		$year = '';
 		$search_day_lim = '';
 		$search_year_lim = '';
 		$search_month_lim = '';
+		*/
+		// Code remplacé
+		$search_date_startday = '';
+		$search_date_startmonth = '';
+		$search_date_startyear = '';
+		$search_date_endday = '';
+		$search_date_endmonth = '';
+		$search_date_endyear = '';
+		$search_date_start = '';
+		$search_date_end = '';
+		$search_date_limit_startday = '';
+		$search_date_limit_startmonth = '';
+		$search_date_limit_startyear = '';
+		$search_date_limit_endday = '';
+		$search_date_limit_endmonth = '';
+		$search_date_limit_endyear = '';
+		$search_date_limit_start = '';
+		$search_date_limit_end = '';
+		// Easya 2022 - PR18668 - Fin
 		$search_project_ref = '';
 		$search_project = '';
 		$search_users = '';
@@ -206,7 +250,7 @@ if (!empty($conf->projet->enabled)) {
 	}
 }
 if (!empty($search_users)) {
-	$sql .= ' AND cs.fk_user IN('.implode(', ', $search_users).')';
+	$sql .= ' AND cs.fk_user IN ('.$db->sanitize(implode(', ', $search_users)).')';
 }
 if (!empty($search_type) && $search_type > 0) {
 	$sql .= ' AND cs.fk_mode_reglement='.$search_type;
@@ -220,16 +264,34 @@ if ($search_amount) {
 if ($search_status != '' && $search_status >= 0) {
 	$sql .= " AND cs.paye = ".((int) $search_status);
 }
+// Easya 2022 - PR18668 - Social Contributions - Add from/to on list
+// Code annulé
+/*
 $sql .= dolSqlDateFilter("cs.periode", $search_day_lim, $search_month_lim, $search_year_lim);
 //$sql.= dolSqlDateFilter("cs.periode", 0, 0, $year);
 if ($year > 0) {
-	$sql .= " AND (";
-	// Si period renseignee on l'utilise comme critere de date, sinon on prend date echeance,
-	// ceci afin d'etre compatible avec les cas ou la periode n'etait pas obligatoire
-	$sql .= "   (cs.periode IS NOT NULL AND date_format(cs.periode, '%Y') = '".$db->escape($year)."') ";
-	$sql .= "OR (cs.periode IS NULL AND date_format(cs.date_ech, '%Y') = '".$db->escape($year)."')";
-	$sql .= ")";
+$sql .= " AND (";
+// Si period renseignee on l'utilise comme critere de date, sinon on prend date echeance,
+// ceci afin d'etre compatible avec les cas ou la periode n'etait pas obligatoire
+$sql .= "   (cs.periode IS NOT NULL AND date_format(cs.periode, '%Y') = '".$db->escape($year)."') ";
+$sql .= "OR (cs.periode IS NULL AND date_format(cs.date_ech, '%Y') = '".$db->escape($year)."')";
+$sql .= ")";
 }
+*/
+// Code remplacé
+if ($search_date_start) {
+	$sql .= " AND cs.date_ech >= '".$db->idate($search_date_start)."'";
+}
+if ($search_date_end) {
+	$sql .= " AND cs.date_ech <= '".$db->idate($search_date_end)."'";
+}
+if ($search_date_limit_start) {
+	$sql .= " AND cs.periode >= '".$db->idate($search_date_limit_start)."'";
+}
+if ($search_date_limit_end) {
+	$sql .= " AND cs.periode <= '".$db->idate($search_date_limit_end)."'";
+}
+// Easya 2022 - PR18668 - Fin
 if ($search_typeid > 0) {
 	$sql .= " AND cs.fk_type = ".((int) $search_typeid);
 }
@@ -293,9 +355,51 @@ if ($search_account) {
 if ($search_status != '' && $search_status != '-1') {
 	$param .= '&search_status='.urlencode($search_status);
 }
+// Easya 2022 - PR18668 - Social Contributions - Add from/to on list
+// Code annulé
+/*
 if ($year) {
 	$param .= '&year='.urlencode($year);
 }
+*/
+// Code remplacé
+if ($search_date_startday) {
+	$param .= '&search_date_startday='.urlencode($search_date_startday);
+}
+if ($search_date_startmonth) {
+	$param .= '&search_date_startmonth='.urlencode($search_date_startmonth);
+}
+if ($search_date_startyear) {
+	$param .= '&search_date_startyear='.urlencode($search_date_startyear);
+}
+if ($search_date_endday) {
+	$param .= '&search_date_endday='.urlencode($search_date_endday);
+}
+if ($search_date_endmonth) {
+	$param .= '&search_date_endmonth='.urlencode($search_date_endmonth);
+}
+if ($search_date_endyear) {
+	$param .= '&search_date_endyear='.urlencode($search_date_endyear);
+}
+if ($search_date_limit_startday) {
+	$param .= '&search_date_limit_startday='.urlencode($search_date_limit_startday);
+}
+if ($search_date_limit_startmonth) {
+	$param .= '&search_date_limit_startmonth='.urlencode($search_date_limit_startmonth);
+}
+if ($search_date_limit_startyear) {
+	$param .= '&search_date_limit_startyear='.urlencode($search_date_limit_startyear);
+}
+if ($search_date_limit_endday) {
+	$param .= '&search_date_limit_endday='.urlencode($search_date_limit_endday);
+}
+if ($search_date_limit_endmonth) {
+	$param .= '&search_date_limit_endmonth='.urlencode($search_date_limit_endmonth);
+}
+if ($search_date_limit_endyear) {
+	$param .= '&search_date_limit_endyear='.urlencode($search_date_limit_endyear);
+}
+// Easya 2022 - PR18668 - Fin
 
 $newcardbutton = '';
 if ($user->rights->tax->charges->creer) {
@@ -315,11 +419,16 @@ print '<input type="hidden" name="search_status" value="'.$search_status.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 $center = '';
+// Easya 2022 - PR18668 - Social Contributions - Add from/to on list
+// Code annulé
+/*
 if ($year) {
 	$center = '<a href="list.php?year='.($year - 1).'">'.img_previous().'</a>';
 	$center .= ' '.$langs->trans("Year").' '.$year;
 	$center .= ' <a href="list.php?year='.($year + 1).'">'.img_next().'</a>';
 }
+*/
+// Easya 2022 - PR18668 - Fin
 
 print_barre_liste($langs->trans("SocialContributions"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $center, $num, $totalnboflines, 'bill', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
@@ -382,11 +491,23 @@ if (!empty($arrayfields['cs.date_ech']['checked'])) {
 // Filter: Period end date
 if (!empty($arrayfields['cs.periode']['checked'])) {
 	print '<td class="liste_titre center">';
+	// Easya 2022 - PR18668 - Social Contributions - Add from/to on list
+	// Code annulé
+	/*
 	if (!empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) {
 		print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_day_lim" value="'.dol_escape_htmltag($search_day_lim).'">';
 	}
 	print '<input class="flat valignmiddle width25" type="text" size="1" maxlength="2" name="search_month_lim" value="'.dol_escape_htmltag($search_month_lim).'">';
 	$formother->select_year($search_year_lim ? $search_year_lim : -1, 'search_year_lim', 1, 20, 5, 0, 0, '', 'widthauto valignmiddle');
+	*/
+	// Code remplacé
+	print '<div class="nowrap">';
+	print $form->selectDate($search_date_limit_start ? $search_date_limit_start : -1, 'search_date_limit_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+	print '</div>';
+	print '<div class="nowrap">';
+	print $form->selectDate($search_date_limit_end ? $search_date_limit_end : -1, 'search_date_limit_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+	print '</div>';
+	// Easya 2022 - PR18668 - Fin
 	print '</td>';
 }
 
@@ -491,7 +612,7 @@ print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], '', '', '', '', $
 print '</tr>';
 
 $i = 0;
-		$totalarray = $TLoadedUsers = array();
+$totalarray = $TLoadedUsers = array();
 while ($i < min($num, $limit)) {
 	$obj = $db->fetch_object($resql);
 
@@ -549,6 +670,9 @@ while ($i < min($num, $limit)) {
 
 	// Date end period
 	if (!empty($arrayfields['cs.periode']['checked'])) {
+		// Easya 2022 - PR18668 - Social Contributions - Add from/to on list
+		// Code annulé
+		/*
 		print '<td class="center">';
 		if ($obj->periode) {
 			print '<a href="list.php?search_year_lim='.dol_print_date($db->jdate($obj->periode), "%Y").'">';
@@ -556,6 +680,10 @@ while ($i < min($num, $limit)) {
 			print '</a>';
 		}
 		print '</td>';
+		*/
+		// Code remplacé
+		print '<td class="center">'.dol_print_date($db->jdate($obj->periode), 'day').'</td>';
+		// Easya 2022 - PR18668 - Fin
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}

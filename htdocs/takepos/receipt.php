@@ -48,12 +48,13 @@ if (!isset($action)) {
 }
 include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
-$langs->loadLangs(array("main", "cashdesk", "companies"));
+$langs->loadLangs(array("main", "bills", "cashdesk", "companies"));
 
 $place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is id of table for Bar or Restaurant
 
 $facid = GETPOST('facid', 'int');
 
+$action = GETPOST('action', 'aZ09');
 $gift = GETPOST('gift', 'int');
 
 if (empty($user->rights->takepos->run)) {
@@ -68,7 +69,7 @@ if (empty($user->rights->takepos->run)) {
 top_httphead('text/html');
 
 if ($place > 0) {
-	$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture where ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")'";
+	$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture where ref='(PROV-POS".$db->escape($_SESSION["takeposterminal"]."-".$place).")'";
 	$resql = $db->query($sql);
 	$obj = $db->fetch_object($resql);
 	if ($obj) {
@@ -79,6 +80,7 @@ $object = new Facture($db);
 $object->fetch($facid);
 
 // Call to external receipt modules if exist
+$parameters = array();
 $hookmanager->initHooks(array('takeposfrontend'), $facid);
 $reshook = $hookmanager->executeHooks('TakeposReceipt', $parameters, $object);
 if (!empty($hookmanager->resPrint)) {
@@ -169,33 +171,46 @@ if ($conf->global->TAKEPOS_SHOW_CUSTOMER) {
 	</thead>
 	<tbody>
 	<?php
-	foreach ($object->lines as $line) {
-		?>
-	<tr>
-		<td>
-		<?php if (!empty($line->product_label)) {
-			echo $line->product_label;
-		} else {
-			echo $line->description;
-		} ?>
-		</td>
-		<td class="right"><?php echo $line->qty; ?></td>
-		<td class="right"><?php if ($gift != 1) {
-			echo price(price2num($line->total_ttc / $line->qty, 'MT'), 1);
-						  } ?></td>
-		<?php
-		if (!empty($conf->global->TAKEPOS_SHOW_HT_RECEIPT)) { ?>
-					<td class="right"><?php if ($gift != 1) {
-						echo price($line->total_ht, 1);
-									  } ?></td>
+	if ($action == 'without_details') {
+		$qty = GETPOST('qty', 'int') > 0 ? GETPOST('qty', 'int') : 1;
+		print '<tr>';
+		print '<td>' . GETPOST('label', 'alphanohtml') . '</td>';
+		print '<td class="right">' . $qty . '</td>';
+		print '<td class="right">' . price(price2num($object->total_ttc / $qty, 'MU'), 1) . '</td>';
+		if (!empty($conf->global->TAKEPOS_SHOW_HT_RECEIPT)) {
+			print '<td class="right">' . price($object->total_ht, 1) . '</td>';
+		}
+		print '<td class="right">' . price($object->total_ttc, 1) . '</td>';
+		print '</tr>';
+	} else {
+		foreach ($object->lines as $line) {
+			?>
+		<tr>
+			<td>
+			<?php if (!empty($line->product_label)) {
+				echo $line->product_label;
+			} else {
+				echo $line->description;
+			} ?>
+			</td>
+			<td class="right"><?php echo $line->qty; ?></td>
+			<td class="right"><?php if ($gift != 1) {
+				echo price(price2num($line->total_ttc / $line->qty, 'MT'), 1);
+							  } ?></td>
+			<?php
+			if (!empty($conf->global->TAKEPOS_SHOW_HT_RECEIPT)) { ?>
+						<td class="right"><?php if ($gift != 1) {
+							echo price($line->total_ht, 1);
+										  } ?></td>
+				<?php
+			}
+			?>
+			<td class="right"><?php if ($gift != 1) {
+				echo price($line->total_ttc, 1);
+							  } ?></td>
+		</tr>
 			<?php
 		}
-		?>
-		<td class="right"><?php if ($gift != 1) {
-			echo price($line->total_ttc, 1);
-						  } ?></td>
-	</tr>
-		<?php
 	}
 	?>
 	</tbody>

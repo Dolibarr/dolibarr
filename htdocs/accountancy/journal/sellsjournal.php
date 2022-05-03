@@ -402,8 +402,13 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping->fk_docdet = 0; // Useless, can be several lines that are source of this record to add
 					$bookkeeping->thirdparty_code = $companystatic->code_client;
 
-					$bookkeeping->subledger_account = '';
-					$bookkeeping->subledger_label = '';
+					if ($k == getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT')) {
+						$bookkeeping->subledger_account = $tabcompany[$key]['code_compta'];
+						$bookkeeping->subledger_label = $tabcompany[$key]['name'];
+					} else {
+						$bookkeeping->subledger_account = '';
+						$bookkeeping->subledger_label = '';
+					}
 
 					$bookkeeping->numero_compte = $k;
 					$bookkeeping->label_compte = $label_account;
@@ -843,11 +848,12 @@ if (empty($action) || $action == 'view') {
 			print '</td>';
 			// Subledger account
 			print "<td>";
-			$accountoshow = length_accounta($k);
-			if (($accountoshow == "") || $accountoshow == 'NotDefined') {
-				print '<span class="error">'.$langs->trans("ThirdpartyAccountNotDefined").'</span>';
-			} else {
-				print $accountoshow;
+			if ($k == getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT')) {
+				if (($accountoshow == "") || $accountoshow == 'NotDefined') {
+					print '<span class="error">'.$langs->trans("ThirdpartyAccountNotDefined").'</span>';
+				} else {
+					print length_accounta($tabcompany[$key]['code_compta']);
+				}
 			}
 			print '</td>';
 			print "<td>".$companystatic->getNomUrl(0, 'customer', 16).' - '.$invoicestatic->ref.' - '.$langs->trans("SubledgerAccount")."</td>";

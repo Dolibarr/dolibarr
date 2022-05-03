@@ -879,8 +879,8 @@ class Societe extends CommonObject
 			$sql .= ", name_alias";
 			$sql .= ", entity";
 			$sql .= ", datec";
-			$sql .= ", fk_typent";
 			$sql .= ", fk_user_creat";
+			$sql .= ", fk_typent";
 			$sql .= ", canvas";
 			$sql .= ", status";
 			$sql .= ", ref_ext";
@@ -2487,9 +2487,10 @@ class Societe extends CommonObject
 	 *		@param	int		$maxlen			          Max length of name
 	 *      @param	int  	$notooltip		          1=Disable tooltip
 	 *      @param  int     $save_lastsearch_value    -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *      @param	int		$noaliasinname			  1=Do not add alias into the link ref
 	 *		@return	string					          String with URL
 	 */
-	public function getNomUrl($withpicto = 0, $option = '', $maxlen = 0, $notooltip = 0, $save_lastsearch_value = -1)
+	public function getNomUrl($withpicto = 0, $option = '', $maxlen = 0, $notooltip = 0, $save_lastsearch_value = -1, $noaliasinname = 0)
 	{
 		global $conf, $langs, $hookmanager;
 
@@ -2527,7 +2528,7 @@ class Societe extends CommonObject
 			}
 		}
 
-		if (!empty($this->name_alias)) {
+		if (!empty($this->name_alias) && empty($noaliasinname)) {
 			$name .= ' ('.$this->name_alias.')';
 		}
 
@@ -3409,6 +3410,37 @@ class Societe extends CommonObject
 			return $sameparent;
 		} else {
 			return -1;
+		}
+	}
+
+	/**
+	 *	Get parents for company
+	 *
+	 * @param   int         $company_id     ID of company to search parent
+	 * @param   array       $parents        List of companies ID found
+	 * @return	array
+	 */
+	public function getParentsForCompany($company_id, $parents = [])
+	{
+		global $langs;
+
+		if ($company_id > 0) {
+			$sql = "SELECT parent FROM " . MAIN_DB_PREFIX . "societe WHERE rowid = $company_id";
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				if ($obj = $this->db->fetch_object($resql)) {
+					$parent = $obj->parent;
+					if ($parent > 0 && !in_array($parent, $parents)) {
+						$parents[] = $parent;
+						return $this->getParentsForCompany($parent, $parents);
+					} else {
+						return $parents;
+					}
+				}
+				$this->db->free($resql);
+			} else {
+				setEventMessage($langs->trans('GetCompanyParentsError', $this->db->lasterror()), 'errors');
+			}
 		}
 	}
 

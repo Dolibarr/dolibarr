@@ -1060,11 +1060,11 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 	}
 	// Capital
 	if ($fromcompany->capital) {
-		$tmpamounttoshow = price2num($fromcompany->capital); // This field is a free string
+		$tmpamounttoshow = price2num($fromcompany->capital); // This field is a free string or a float
 		if (is_numeric($tmpamounttoshow) && $tmpamounttoshow > 0) {
 			$line3 .= ($line3 ? " - " : "").$outputlangs->transnoentities("CapitalOf", price($tmpamounttoshow, 0, $outputlangs, 0, 0, 0, $conf->currency));
-		} else {
-			$line3 .= ($line3 ? " - " : "").$outputlangs->transnoentities("CapitalOf", $tmpamounttoshow, $outputlangs);
+		} elseif (!empty($fromcompany->capital)) {
+			$line3 .= ($line3 ? " - " : "").$outputlangs->transnoentities("CapitalOf", $fromcompany->capital, $outputlangs);
 		}
 	}
 	// Prof Id 1
@@ -1355,7 +1355,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 				$note = $prodser->multilangs[$outputlangs->defaultlang]["other"];
 			}
 		}
-	} elseif ($object->element == 'facture' || $object->element == 'facturefourn') {
+	} elseif (($object->element == 'facture' || $object->element == 'facturefourn') && preg_match('/^\(DEPOSIT\).+/', $desc)) { // We must not replace '(DEPOSIT)' when it is alone, it will be translated and detailed later
 		$desc = str_replace('(DEPOSIT)', $outputlangs->trans('Deposit'), $desc);
 	}
 
@@ -2087,9 +2087,9 @@ function pdf_getlineprogress($object, $i, $outputlangs, $hidedetails = 0, $hookm
 			return '';
 		}
 		if (empty($hidedetails) || $hidedetails > 1) {
-			if ($conf->global->SITUATION_DISPLAY_DIFF_ON_PDF) {
+			if (!empty($conf->global->SITUATION_DISPLAY_DIFF_ON_PDF)) {
 				$prev_progress = 0;
-				if (method_exists($object, 'get_prev_progress')) {
+				if (method_exists($object->lines[$i], 'get_prev_progress')) {
 					$prev_progress = $object->lines[$i]->get_prev_progress($object->id);
 				}
 				$result = round($object->lines[$i]->situation_percent - $prev_progress, 1).'%';

@@ -420,7 +420,7 @@ function MoreProducts(moreorless) {
 	ClearSearch();
 }
 
-function ClickProduct(position) {
+function ClickProduct(position, qty = 1) {
 	console.log("ClickProduct");
 	$('#proimg'+position).animate({opacity: '0.5'}, 1);
 	$('#proimg'+position).animate({opacity: '1'}, 100);
@@ -430,10 +430,10 @@ function ClickProduct(position) {
 	}
 	else{
 		idproduct=$('#prodiv'+position).data('rowid');
-		console.log("Click on product at position "+position+" for idproduct "+idproduct);
+		console.log("Click on product at position "+position+" for idproduct "+idproduct+", qty="+qty);
 		if (idproduct=="") return;
 		// Call page invoice.php to generate the section with product lines
-		$("#poslines").load("invoice.php?action=addline&place="+place+"&idproduct="+idproduct+"&selectedline="+selectedline, function() {
+		$("#poslines").load("invoice.php?action=addline&token=<?php echo newToken() ?>&place="+place+"&idproduct="+idproduct+"&selectedline="+selectedline+"&qty="+qty, function() {
 			//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
 		});
 	}
@@ -585,9 +585,9 @@ function Search2(keyCodeForEnter) {
 					console.log("There is only 1 answer with barcode matching the search, so we change the thirdparty "+data[0]['rowid']);
 					ChangeThirdparty(data[0]['rowid']);
 				}
-				else if ($('#search').val() == data[0]['barcode'] && 'product' == data[0]['object']) {
-					console.log("There is only 1 answer with barcode matching the search, so we add the product in basket");
-					ClickProduct(0);
+				else if ('product' == data[0]['object']) {
+					console.log("There is only 1 answer matching the search, so we add the product in basket, qty="+data[0]['qty']);
+					ClickProduct(0, data[0]['qty']);
 				}
 			}
 			if (eventKeyCode == keyCodeForEnter){

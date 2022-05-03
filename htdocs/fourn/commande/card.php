@@ -85,13 +85,6 @@ $hideref = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (!empty($con
 
 $datelivraison = dol_mktime(GETPOST('liv_hour', 'int'), GETPOST('liv_min', 'int'), GETPOST('liv_sec', 'int'), GETPOST('liv_month', 'int'), GETPOST('liv_day', 'int'), GETPOST('liv_year', 'int'));
 
-
-// Security check
-if ($user->socid) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'fournisseur', $id, 'commande_fournisseur', 'commande');
-
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('ordersuppliercard', 'globalcard'));
 
@@ -100,6 +93,10 @@ $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
+
+if ($user->socid) {
+	$socid = $user->socid;
+}
 
 // Load object
 if ($id > 0 || !empty($ref)) {
@@ -124,10 +121,14 @@ if ($id > 0 || !empty($ref)) {
 	}
 }
 
+// Security check
+$isdraft = (isset($object->statut) && ($object->statut == $object::STATUS_DRAFT) ? 1 : 0);
+$result = restrictedArea($user, 'fournisseur', $id, 'commande_fournisseur', 'commande', 'fk_soc', 'rowid', $isdraft);
+
 // Common permissions
 $usercanread	= ($user->rights->fournisseur->commande->lire || $user->rights->supplier_order->lire);
 $usercancreate	= ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer);
-$usercandelete	= ($user->rights->fournisseur->commande->supprimer || $user->rights->supplier_order->supprimer);
+$usercandelete	= (($user->rights->fournisseur->commande->supprimer || $user->rights->supplier_order->supprimer) || ($usercancreate && isset($object->statut) && $object->statut == $object::STATUS_DRAFT));
 
 // Advanced permissions
 $usercanvalidate = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($usercancreate)) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->fournisseur->supplier_order_advance->validate)));
@@ -819,8 +820,7 @@ if (empty($reshook)) {
 		} else {
 			$db->rollback();
 
-			dol_print_error($db, $object->error);
-			exit;
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
 
@@ -830,6 +830,8 @@ if (empty($reshook)) {
 
 		$result = $object->deleteline($lineid);
 		if ($result > 0) {
+			// reorder lines
+			$object->line_order(true);
 			// Define output language
 			$outputlangs = $langs;
 			$newlang = '';
@@ -2536,14 +2538,14 @@ if ($action == 'create') {
 			}
 
 			// Cancel
-			if ($object->statut == 2) {
+			if ($object->statut == CommandeFournisseur::STATUS_ACCEPTED) {
 				if ($usercanorder) {
 					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=cancel">'.$langs->trans("CancelOrder").'</a>';
 				}
 			}
 
 			// Delete
-			if (!empty($usercandelete) || ($object->statut == CommandeFournisseur::STATUS_DRAFT && !empty($usercancreate))) {
+			if (!empty($usercandelete)) {
 				if ($hasreception) {
 					print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("ReceptionExist").'">'.$langs->trans("Delete").'</a>';
 				} else {
@@ -2576,7 +2578,9 @@ if ($action == 'create') {
 
 			// Force mandatory order method
 			print '<tr><td class="fieldrequired">'.$langs->trans("OrderMode").'</td><td>';
-			$formorder->selectInputMethod(GETPOST('methodecommande'), "methodecommande", 1);
+			$methodecommande = '';
+			$methodecommande = GETPOSTISSET("methodecommande", "alpha") ? GETPOST('methodecommande', 'alpha') : getDolGlobalString('ORDER_SUPPLIER_METHOD_BY_DEFAULT');
+			$formorder->selectInputMethod($methodecommande, "methodecommande", 1);
 			print '</td></tr>';
 
 			print '<tr><td>'.$langs->trans("Comment").'</td><td><input size="40" type="text" name="comment" value="'.GETPOST('comment').'"></td></tr>';
