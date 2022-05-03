@@ -2244,26 +2244,17 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		global $conf;
 
 		$err = 0;
-		$entity = $conf->entity;
 
-		if (is_array($this->module_parts) && !empty($this->module_parts)) {
-			foreach ($this->module_parts as $key => $value) {
-				// If entity is defined
-				if (is_array($value) && isset($value['entity'])) {
-					$entity = $value['entity'];
-				}
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
+		$sql .= " WHERE ".$this->db->decrypt('name')." LIKE '".$this->db->escape($this->const_name)."_%'"; // remove all MAIN_MODULE_MYMODULE_*
+		$sql .= " AND entity IN (0, ".((int) $conf->entity); // remove global and current entity
 
-				$sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
-				$sql .= " WHERE ".$this->db->decrypt('name')." LIKE '".$this->db->escape($this->const_name)."_".strtoupper($key)."'";
-				$sql .= " AND entity = ".((int) $entity);
-
-				dol_syslog(get_class($this)."::delete_const_".$key."", LOG_DEBUG);
-				if (!$this->db->query($sql)) {
-					$this->error = $this->db->lasterror();
-					$err++;
-				}
-			}
+		dol_syslog(get_class($this)."::delete_module_parts for ".$this->const_name."", LOG_DEBUG);
+		if (!$this->db->query($sql)) {
+			$this->error = $this->db->lasterror();
+			$err++;
 		}
+
 		return $err;
 	}
 
