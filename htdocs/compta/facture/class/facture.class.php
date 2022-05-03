@@ -854,7 +854,9 @@ class Facture extends CommonInvoice
 							$newinvoiceline->situation_percent,
 							$newinvoiceline->fk_prev_id,
 							$newinvoiceline->fk_unit,
-							$newinvoiceline->multicurrency_subprice
+							$newinvoiceline->multicurrency_subprice,
+							$newinvoiceline->ref_ext,
+							1
 						);
 
 						// Defined the new fk_parent_line
@@ -938,7 +940,8 @@ class Facture extends CommonInvoice
 							$line->fk_prev_id,
 							$line->fk_unit,
 							$line->multicurrency_subprice,
-							$line->ref_ext
+							$line->ref_ext,
+							1
 						);
 						if ($result < 0) {
 							$this->error = $this->db->lasterror();
@@ -1035,7 +1038,9 @@ class Facture extends CommonInvoice
 						$_facrec->lines[$i]->situation_percent,
 						'',
 						$_facrec->lines[$i]->fk_unit,
-						$_facrec->lines[$i]->multicurrency_subprice
+						$_facrec->lines[$i]->multicurrency_subprice,
+						$_facrec->lines[$i]->ref_ext,
+						1
 					);
 
 					if ($result_insert < 0) {
@@ -1047,7 +1052,7 @@ class Facture extends CommonInvoice
 			}
 
 			if (!$error) {
-				$result = $this->update_price(1);
+				$result = $this->update_price(1, 'auto', 0, $mysoc);
 				if ($result > 0) {
 					$action = 'create';
 
@@ -3237,7 +3242,7 @@ class Facture extends CommonInvoice
 	 *  @param		string		$price_base_type	'HT' or 'TTC'
 	 *  @param    	double		$pu_ttc             Unit price with tax (> 0 even for credit note)
 	 *  @param		int			$type				Type of line (0=product, 1=service). Not used if fk_product is defined, the type of product is used.
-	 *  @param      int			$rang               Position of line
+	 *  @param      int			$rang               Position of line (-1 means last value + 1)
 	 *  @param		int			$special_code		Special code (also used by externals modules!)
 	 *  @param		string		$origin				Depend on global conf MAIN_CREATEFROM_KEEP_LINE_ORIGIN_INFORMATION can be 'orderdet', 'propaldet'..., else 'order','propal,'....
 	 *  @param		int			$origin_id			Depend on global conf MAIN_CREATEFROM_KEEP_LINE_ORIGIN_INFORMATION can be Id of origin object (aka line id), else object id
@@ -3251,6 +3256,7 @@ class Facture extends CommonInvoice
 	 *  @param 		string		$fk_unit 			Code of the unit to use. Null to use the default one
 	 *  @param		double		$pu_ht_devise		Unit price in foreign currency
 	 *  @param		string		$ref_ext		    External reference of the line
+	 *  @param		int			$noupdateafterinsertline	No update after insert of line
 	 *  @return    	int             				<0 if KO, Id of line if OK
 	 */
 	public function addline(
@@ -3283,7 +3289,8 @@ class Facture extends CommonInvoice
 		$fk_prev_id = 0,
 		$fk_unit = null,
 		$pu_ht_devise = 0,
-		$ref_ext = ''
+		$ref_ext = '',
+		$noupdateafterinsertline = 0
 	) {
 		// Deprecation warning
 		if ($label) {
@@ -3492,7 +3499,9 @@ class Facture extends CommonInvoice
 				}
 
 				// Mise a jour informations denormalisees au niveau de la facture meme
-				$result = $this->update_price(1, 'auto', 0, $mysoc); // The addline method is designed to add line from user input so total calculation with update_price must be done using 'auto' mode.
+				if (empty($noupdateafterinsertline)) {
+					$result = $this->update_price(1, 'auto', 0, $mysoc); // The addline method is designed to add line from user input so total calculation with update_price must be done using 'auto' mode.
+				}
 
 				if ($result > 0) {
 					$this->db->commit();
