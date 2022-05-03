@@ -220,7 +220,7 @@ if ($action == 'edit') {
 	foreach ($arrayofparameters as $constname => $val) {
 		if ($val['enabled']==1) {
 			$setupnotempty++;
-			print '<tr class="oddeven"><td>aa';
+			print '<tr class="oddeven"><td>';
 			$tooltiphelp = (($langs->trans($constname . 'Tooltip') != $constname . 'Tooltip') ? $langs->trans($constname . 'Tooltip') : '');
 			$tooltiphelp .= (($langs->trans($constname . 'Tooltip2') && $langs->trans($constname . 'Tooltip2') != $constname . 'Tooltip2') ? '<br><br>'."\n".$langs->trans($constname . 'Tooltip2') : '');
 			print '<span id="helplink'.$constname.'" class="spanforparamtooltip">'.$form->textwithpicto($langs->trans($constname), $tooltiphelp, 1, 'info', '', 0, 3, 'tootips'.$constname).'</span>';

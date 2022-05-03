@@ -36,7 +36,8 @@
 -- VPGSQL8.2 ALTER TABLE llx_partnership ALTER COLUMN date_partnership_end DROP NOT NULL;
 
 ALTER TABLE llx_product_fournisseur_price ADD COLUMN packaging real DEFAULT NULL;
-ALTER TABLE llx_product_fournisseur_price MODIFY COLUMN packaging real DEFAULT NULL;
+-- VMYSQL4.3 ALTER TABLE llx_product_fournisseur_price MODIFY COLUMN packaging real DEFAULT NULL;
+-- VPGSQL8.2 ALTER TABLE llx_product_fournisseur_price MODIFY COLUMN packaging real DEFAULT NULL USING packaging::real;
 
 ALTER TABLE llx_accounting_bookkeeping ADD COLUMN date_export datetime DEFAULT NULL;
 
@@ -119,8 +120,8 @@ ALTER TABLE llx_product ADD COLUMN mandatory_period tinyint NULL DEFAULT 0;
 ALTER TABLE llx_holiday ADD COLUMN date_approve   DATETIME DEFAULT NULL;
 ALTER TABLE llx_holiday ADD COLUMN fk_user_approve integer DEFAULT NULL;
 
-ALTER TABLE llx_ticket MODIFY COLUMN progress integer;
-
+-- VMYSQL4.3 ALTER TABLE llx_ticket MODIFY COLUMN progress integer;
+-- VPGSQL8.2 ALTER TABLE llx_ticket MODIFY COLUMN progress integer USING progress::integer;
 
 ALTER TABLE llx_emailcollector_emailcollectoraction MODIFY COLUMN actionparam TEXT;
 

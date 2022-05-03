@@ -3391,9 +3391,9 @@ abstract class CommonObject
 	 *  Must be called at end of methods addline or updateline.
 	 *
 	 *	@param	int		$exclspec          	>0 = Exclude special product (product_type=9)
-	 *  @param  string	$roundingadjust    	'none'=Do nothing, 'auto'=Use default method (MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND if defined, or '0'), '0'=Force mode total of rounding, '1'=Force mode rounding of total
+	 *  @param  string	$roundingadjust    	'none'=Do nothing, 'auto'=Use default method (MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND if defined, or '0'), '0'=Force mode Total of rounding, '1'=Force mode Rounding of total
 	 *  @param	int		$nodatabaseupdate	1=Do not update database. Update only properties of object.
-	 *  @param	Societe	$seller				If roundingadjust is '0' or '1' or maybe 'auto', it means we recalculate total for lines before calculating total for object and for this, we need seller object.
+	 *  @param	Societe	$seller				If roundingadjust is '0' or '1' or maybe 'auto', it means we recalculate total for lines before calculating total for object and for this, we need seller object (used to analyze lines to check corrupted data).
 	 *	@return	int    			           	<0 if KO, >0 if OK
 	 */
 	public function update_price($exclspec = 0, $roundingadjust = 'none', $nodatabaseupdate = 0, $seller = null)
@@ -6078,7 +6078,7 @@ abstract class CommonObject
 							$this->errors[] = $langs->trans("ExtraFieldHasWrongValue", $attributeLabel);
 							return -1;
 						} elseif ($value == '') {
-							$new_array_options[$key] = null;
+							$value = null;
 						}
 						//dol_syslog("double value"." sur ".$attributeLabel."(".$value." is '".$attributeType."')", LOG_DEBUG);
 						$new_array_options[$key] = $value;
@@ -6444,7 +6444,7 @@ abstract class CommonObject
 						$this->errors[] = $langs->trans("ExtraFieldHasWrongValue", $attributeLabel);
 						return -1;
 					} elseif ($value === '') {
-						$this->array_options["options_".$key] = null;
+						$value = null;
 					}
 					//dol_syslog("double value"." sur ".$attributeLabel."(".$value." is '".$attributeType."')", LOG_DEBUG);
 					$this->array_options["options_".$key] = $value;
@@ -7923,16 +7923,22 @@ abstract class CommonObject
 
 						// Convert date into timestamp format (value in memory must be a timestamp)
 						if (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('date'))) {
-							$datenotinstring = $this->array_options['options_'.$key];
-							if (!is_numeric($this->array_options['options_'.$key])) {	// For backward compatibility
-								$datenotinstring = $this->db->jdate($datenotinstring);
+							$datenotinstring = null;
+							if (array_key_exists('options_'.$key, $this->array_options)) {
+								$datenotinstring = $this->array_options['options_'.$key];
+								if (!is_numeric($this->array_options['options_'.$key])) {	// For backward compatibility
+									$datenotinstring = $this->db->jdate($datenotinstring);
+								}
 							}
 							$value = (GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix)) ? dol_mktime(12, 0, 0, GETPOST($keyprefix.'options_'.$key.$keysuffix."month", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."day", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."year", 'int', 3)) : $datenotinstring;
 						}
 						if (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('datetime'))) {
-							$datenotinstring = $this->array_options['options_'.$key];
-							if (!is_numeric($this->array_options['options_'.$key])) {	// For backward compatibility
-								$datenotinstring = $this->db->jdate($datenotinstring);
+							$datenotinstring = null;
+							if (array_key_exists('options_'.$key, $this->array_options)) {
+								$datenotinstring = $this->array_options['options_'.$key];
+								if (!is_numeric($this->array_options['options_'.$key])) {	// For backward compatibility
+									$datenotinstring = $this->db->jdate($datenotinstring);
+								}
 							}
 							$value = (GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix)) ? dol_mktime(GETPOST($keyprefix.'options_'.$key.$keysuffix."hour", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."min", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."sec", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."month", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."day", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."year", 'int', 3), 'tzuserrel') : $datenotinstring;
 						}
