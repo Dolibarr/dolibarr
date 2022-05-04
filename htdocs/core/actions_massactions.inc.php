@@ -1302,6 +1302,49 @@ if (!$error && ($massaction == 'disable' || ($action == 'disable' && $confirm ==
 	}
 }
 
+if (!$error && $action == 'confirm_edit_value_extrafields' && $confirm == 'yes' && $permissiontoadd) {
+	$db->begin();
+
+	$objecttmp = new $objectclass($db);
+	$e = new ExtraFields($db);// fetch optionals attributes and labels
+	$e->fetch_name_optionals_label($objecttmp->table_element);
+
+	$nbok = 0;
+	$extrafieldKeyToUpdate = GETPOST('extrafield-key-to-update'); // TODO A FAIRE coté formulaire : ajouter le select de l'extrafield a utiliser
+
+	// TODO vérifier que $extrafieldKeyToUpdate correspond bien a un extrafield
+	foreach ($toselect as $toselectid) {
+		/** @var CommonObject $objecttmp */
+		$objecttmp = new $objectclass($db); // to avoid ghost data
+		$result = $objecttmp->fetch($toselectid);
+		if ($result>0) {
+			// Fill array 'array_options' with data from add form
+			$ret = $e->setOptionalsFromPost(null, $objecttmp, $extrafieldKeyToUpdate);
+			if ($ret > 0) {
+				$objecttmp->insertExtraFields(); // TODO gérer l'erreur
+			} else {
+				$error++;
+				setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+			}
+		} else {
+			setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+			$error++;
+			break;
+		}
+	}
+
+	if (!$error) {
+		if ($nbok > 1) {
+			setEventMessages($langs->trans("RecordsDisabled", $nbok), null, 'mesgs');
+		} else {
+			setEventMessages($langs->trans("save"), null, 'mesgs');
+		}
+		$db->commit();
+	} else {
+		$db->rollback();
+	}
+}
+
 if (!$error && ($massaction == 'affectcommercial' || ($action == 'affectcommercial' && $confirm == 'yes')) && $permissiontoadd) {
 	$db->begin();
 
