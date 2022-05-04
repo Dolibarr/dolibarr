@@ -1956,6 +1956,7 @@ div.blockvmenulogo
 	object-fit: contain;
 	width: inherit;
 	height: inherit;
+	image-rendering: -webkit-optimize-contrast;
 }
 #mainmenutd_companylogo::after, #mainmenutd_menu::after {
 	content: unset !important;
@@ -2587,8 +2588,7 @@ button.ui-button.ui-corner-all.ui-widget:focus {
 /* For mainmenu, we always load the img */
 
 div.mainmenu.menu {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/menu.png', 1) ?>);
-	<?php print $disableimages ? '' : 'top: 7px'; ?>
+	<?php print $disableimages ? '' : 'top: 10px'; ?>
 }
 #mainmenutd_menu a.tmenuimage {
 	display: unset;
@@ -2601,6 +2601,38 @@ a.tmenuimage:hover{
 	text-decoration: none;
 }
 
+
+/* To show text of top menu on hover only (THEME_TOPMENU_DISABLE_IMAGE == 2) */
+
+<?php if (in_array(getDolGlobalInt('THEME_TOPMENU_DISABLE_IMAGE'), array(2, 3, 4))) { ?>
+.tmenulabel:not(.menuhider), .tmenulabel:not(.menuhider):before {
+	display: none;
+}
+a.tmenuimage:not(.menuhider), a.tmenuimage:not(.menuhider):before,
+div.tmenuimage:not(.menuhider), div.tmenuimage:not(.menuhider):before,
+span.tmenuimage:not(.menuhider), span.tmenuimage:not(.menuhider):before {
+	font-size: 1.3em;
+	margin-top: 10px !important;
+}
+<?php } ?>
+<?php if (getDolGlobalInt('THEME_TOPMENU_DISABLE_IMAGE') == 2) { ?>
+.tmenudiv:hover .tmenulabel:not(.menuhider), .tmenudiv:hover .tmenulabel:not(.menuhider):before {
+	display: initial !important;
+}
+.tmenudiv:hover .tmenuimage:not(.menuhider), .tmenudiv:hover .tmenuimage:not(.menuhider):before {
+	font-size: 1.1em !important;
+	margin-top: 0px !important;
+}
+<?php } ?>
+<?php if (getDolGlobalInt('THEME_TOPMENU_DISABLE_IMAGE') == 3) { ?>
+li.tmenu:hover .tmenulabel:not(.menuhider), li.tmenu:hover .tmenulabel:not(.menuhider):before {
+	display: initial !important;
+}
+li.tmenu:hover .tmenuimage:not(.menuhider), li.tmenu:hover .tmenuimage:not(.menuhider):before {
+	font-size: 1.1em !important;
+	margin-top: 0px !important;
+}
+<?php } ?>
 
 
 

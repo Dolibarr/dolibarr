@@ -234,7 +234,7 @@ class Form
 				if (preg_match('/^(string|safehtmlstring|email)/', $typeofdata)) {
 					$tmp = explode(':', $typeofdata);
 					$ret .= '<input type="text" id="'.$htmlname.'" name="'.$htmlname.'" value="'.($editvalue ? $editvalue : $value).'"'.($tmp[1] ? ' size="'.$tmp[1].'"' : '').' autofocus>';
-				} elseif (preg_match('/^(numeric|amount)/', $typeofdata)) {
+				} elseif (preg_match('/^(numeric|amount|integer)/', $typeofdata)) {
 					$tmp = explode(':', $typeofdata);
 					$valuetoshow = price2num($editvalue ? $editvalue : $value);
 					$ret .= '<input type="text" id="'.$htmlname.'" name="'.$htmlname.'" value="'.($valuetoshow != '' ? price($valuetoshow) : '').'"'.($tmp[1] ? ' size="'.$tmp[1].'"' : '').' autofocus>';
@@ -1587,6 +1587,8 @@ class Form
 				}
 			}
 			print '</select>';
+			print ajax_combobox('select_'.$htmlname);
+
 			return $qualifiedlines;
 		} else {
 			dol_print_error($this->db);
@@ -5633,6 +5635,7 @@ class Form
 				if ($filter) {
 					$newfilter .= ' AND ('.$filter.')';
 				}
+				// output the combo of discounts
 				$nbqualifiedlines = $this->select_remises($selected, $htmlname, $newfilter, $socid, $maxvalue);
 				if ($nbqualifiedlines > 0) {
 					print ' &nbsp; <input type="submit" class="button smallpaddingimp" value="'.dol_escape_htmltag($langs->trans("UseLine")).'"';
@@ -7213,10 +7216,11 @@ class Form
 
 		if (!empty($conf->use_javascript_ajax) && !empty($conf->global->TICKET_USE_SEARCH_TO_SELECT)) {
 			$placeholder = '';
+			$urloption = '';
 
 			if ($selected && empty($selected_input_value)) {
 				require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
-				$adherenttmpselect = new Member($this->db);
+				$adherenttmpselect = new Adherent($this->db);
 				$adherenttmpselect->fetch($selected);
 				$selected_input_value = $adherenttmpselect->ref;
 				unset($adherenttmpselect);
@@ -7417,7 +7421,7 @@ class Form
 		// Bom:bom/class/bom.class.php:0:t.status=1:ref
 		// Bom:bom/class/bom.class.php:0:(t.status:=:1):ref
 		$InfoFieldList = explode(":", $objectdesc, 4);
-		$vartmp = $InfoFieldList[3];
+		$vartmp = (empty($InfoFieldList[3]) ? '' : $InfoFieldList[3]);
 		$reg = array();
 		if (preg_match('/^.*:(\w*)$/', $vartmp, $reg)) {
 			$InfoFieldList[4] = $reg[1];	// take the sort field

@@ -3391,9 +3391,9 @@ abstract class CommonObject
 	 *  Must be called at end of methods addline or updateline.
 	 *
 	 *	@param	int		$exclspec          	>0 = Exclude special product (product_type=9)
-	 *  @param  string	$roundingadjust    	'none'=Do nothing, 'auto'=Use default method (MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND if defined, or '0'), '0'=Force mode total of rounding, '1'=Force mode rounding of total
+	 *  @param  string	$roundingadjust    	'none'=Do nothing, 'auto'=Use default method (MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND if defined, or '0'), '0'=Force mode Total of rounding, '1'=Force mode Rounding of total
 	 *  @param	int		$nodatabaseupdate	1=Do not update database. Update only properties of object.
-	 *  @param	Societe	$seller				If roundingadjust is '0' or '1' or maybe 'auto', it means we recalculate total for lines before calculating total for object and for this, we need seller object.
+	 *  @param	Societe	$seller				If roundingadjust is '0' or '1' or maybe 'auto', it means we recalculate total for lines before calculating total for object and for this, we need seller object (used to analyze lines to check corrupted data).
 	 *	@return	int    			           	<0 if KO, >0 if OK
 	 */
 	public function update_price($exclspec = 0, $roundingadjust = 'none', $nodatabaseupdate = 0, $seller = null)
@@ -8008,16 +8008,22 @@ abstract class CommonObject
 
 						// Convert date into timestamp format (value in memory must be a timestamp)
 						if (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('date'))) {
-							$datenotinstring = $this->array_options['options_'.$key];
-							if (!is_numeric($this->array_options['options_'.$key])) {	// For backward compatibility
-								$datenotinstring = $this->db->jdate($datenotinstring);
+							$datenotinstring = null;
+							if (array_key_exists('options_'.$key, $this->array_options)) {
+								$datenotinstring = $this->array_options['options_'.$key];
+								if (!is_numeric($this->array_options['options_'.$key])) {	// For backward compatibility
+									$datenotinstring = $this->db->jdate($datenotinstring);
+								}
 							}
 							$value = (GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix)) ? dol_mktime(12, 0, 0, GETPOST($keyprefix.'options_'.$key.$keysuffix."month", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."day", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."year", 'int', 3)) : $datenotinstring;
 						}
 						if (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('datetime'))) {
-							$datenotinstring = $this->array_options['options_'.$key];
-							if (!is_numeric($this->array_options['options_'.$key])) {	// For backward compatibility
-								$datenotinstring = $this->db->jdate($datenotinstring);
+							$datenotinstring = null;
+							if (array_key_exists('options_'.$key, $this->array_options)) {
+								$datenotinstring = $this->array_options['options_'.$key];
+								if (!is_numeric($this->array_options['options_'.$key])) {	// For backward compatibility
+									$datenotinstring = $this->db->jdate($datenotinstring);
+								}
 							}
 							$value = (GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix)) ? dol_mktime(GETPOST($keyprefix.'options_'.$key.$keysuffix."hour", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."min", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."sec", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."month", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."day", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."year", 'int', 3), 'tzuserrel') : $datenotinstring;
 						}
@@ -8037,14 +8043,14 @@ abstract class CommonObject
 						$helptoshow = $langs->trans($extrafields->attributes[$this->table_element]['help'][$key]);
 
 						if ($display_type == 'card') {
-							$out .= '<tr '.($html_id ? 'id="'.$html_id.'" ' : '').$csstyle.' class="valuefieldcreate '.$class.$this->element.'_extras_'.$key.' trextrafields_collapse'.$extrafields_collapse_num.(!empty($this->id)?'_'.$this->id:'').'" '.$domData.' >';
+							$out .= '<tr '.($html_id ? 'id="'.$html_id.'" ' : '').$csstyle.' class="field_options_'.$key.' '.$class.$this->element.'_extras_'.$key.' trextrafields_collapse'.$extrafields_collapse_num.(!empty($this->id)?'_'.$this->id:'').'" '.$domData.' >';
 							if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER) && ($action == 'view' || $action == 'valid' || $action == 'editline')) {
 								$out .= '<td></td>';
 							}
-							$out .= '<td class="wordbreak';
+							$out .= '<td class="titlefieldcreate wordbreak';
 						} elseif ($display_type == 'line') {
-							$out .= '<div '.($html_id ? 'id="'.$html_id.'" ' : '').$csstyle.' class="valuefieldlinecreate '.$class.$this->element.'_extras_'.$key.' trextrafields_collapse'.$extrafields_collapse_num.(!empty($this->id)?'_'.$this->id:'').'" '.$domData.' >';
-							$out .= '<div style="display: inline-block; padding-right:4px" class="wordbreak';
+							$out .= '<div '.($html_id ? 'id="'.$html_id.'" ' : '').$csstyle.' class="fieldline_options_'.$key.' '.$class.$this->element.'_extras_'.$key.' trextrafields_collapse'.$extrafields_collapse_num.(!empty($this->id)?'_'.$this->id:'').'" '.$domData.' >';
+							$out .= '<div style="display: inline-block; padding-right:4px" class="titlefieldcreate wordbreak';
 						}
 						//$out .= "titlefield";
 						//if (GETPOST('action', 'restricthtml') == 'create') $out.='create';
@@ -8077,9 +8083,9 @@ abstract class CommonObject
 						$html_id = !empty($this->id) ? $this->element.'_extras_'.$key.'_'.$this->id : '';
 						if ($display_type == 'card') {
 							// a first td column was already output (and may be another on before if MAIN_VIEW_LINE_NUMBER set), so this td is the next one
-							$out .= '<td '.($html_id ? 'id="'.$html_id.'" ' : '').' class="'.$this->element.'_extras_'.$key.'" '.($colspan ? ' colspan="'.$colspan.'"' : '').'>';
+							$out .= '<td '.($html_id ? 'id="'.$html_id.'" ' : '').' class="valuefieldcreate '.$this->element.'_extras_'.$key.'" '.($colspan ? ' colspan="'.$colspan.'"' : '').'>';
 						} elseif ($display_type == 'line') {
-							$out .= '<div '.($html_id ? 'id="'.$html_id.'" ' : '').' style="display: inline-block" class="'.$this->element.'_extras_'.$key.'">';
+							$out .= '<div '.($html_id ? 'id="'.$html_id.'" ' : '').' style="display: inline-block" class="valuefieldcreate '.$this->element.'_extras_'.$key.'">';
 						}
 
 						switch ($mode) {

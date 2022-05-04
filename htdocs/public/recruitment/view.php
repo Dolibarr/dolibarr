@@ -250,7 +250,7 @@ if (empty($text)) {
 	$text .= ' &nbsp; - &nbsp; <strong>'.$mysoc->name.'</strong>';
 	$text .= ' &nbsp; - &nbsp; <span class="nowraponall"><span class="fa fa-calendar secondary"></span> '.dol_print_date($object->date_creation).'</span>';
 	$text .= '</td></tr>'."\n";
-	$text .= '<tr><td class="textpublicpayment"><h1>'.$object->label.'</h1><br></td></tr>'."\n";
+	$text .= '<tr><td class="textpublicpayment"><h1 class="paddingleft paddingright">'.$object->label.'</h1><br></td></tr>'."\n";
 }
 print $text;
 
