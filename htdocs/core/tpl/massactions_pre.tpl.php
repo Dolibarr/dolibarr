@@ -234,6 +234,7 @@ if ($massaction == 'edit_extrafields') {
 
 		foreach ($extrafields_list as $extraKey => $extraLabel) {
 			$outputShowOutputFields.= '<div class="mass-action-extrafield" data-extrafield="'.$extraKey.'" style="display:none;" >';
+			$outputShowOutputFields.= '<br><span>'. $langs->trans('NewValue').'</span>';
 			$outputShowOutputFields.= $extrafields->showInputField($extraKey, '', '', $keysuffix, '', 0, $objecttmp->id, $objecttmp->table_element);
 			$outputShowOutputFields.= '</div>';
 		}

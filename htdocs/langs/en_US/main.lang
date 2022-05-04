@@ -1169,7 +1169,3 @@ CanceledShown=Canceled shown
 Terminate=Terminate
 Terminated=Terminated
 AddLineOnPosition=Add line on position (at the end if empty)
-ConfirmEditExtrafield = Modifier les champs supplémentaires en masse
-ChangeValueExtrafield = Modifier la valeur du champ supplémentaire
-ConfirmEditExtrafieldQuestion = Etes vous sur de modifier cet extrafield ?
-ConfirmEditValueExtrafieldQuestion = Etes vous sur de modifier la valeur de cet extrafield ?
