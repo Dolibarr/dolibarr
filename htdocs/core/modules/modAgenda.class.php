@@ -482,4 +482,22 @@ class modAgenda extends DolibarrModules
 		}
 		$this->export_sql_order[$r] = ' ORDER BY ac.datep';
 	}
+
+	/**
+	 *      Function called when module is enabled.
+	 *      The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+	 *      It also creates data directories.
+	 *
+	 *      @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *      @return     int             	1 if OK, 0 if KO
+	 */
+	public function init($options = '')
+	{
+		// Permissions
+		$this->remove($options);
+
+		$sql = array();
+
+		return $this->_init($sql, $options);
+	}
 }
