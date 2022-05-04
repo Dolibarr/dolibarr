@@ -621,6 +621,7 @@ MonthVeryShort11=N
 MonthVeryShort12=D
 AttachedFiles=Attached files and documents
 JoinMainDoc=Join main document
+JoinMainDocOrLastGenerated=Send the main document or the last generated one if not found
 DateFormatYYYYMM=YYYY-MM
 DateFormatYYYYMMDD=YYYY-MM-DD
 DateFormatYYYYMMDDHHMM=YYYY-MM-DD HH:SS

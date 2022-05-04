@@ -628,6 +628,13 @@ if (empty($reshook)) {
 		foreach ($object->lines as $line) {
 			$result = $object->updateline($line->id, $line->desc, $line->subprice, $line->qty, $line->remise_percent, $vat_rate, $localtax1_rate, $localtax2_rate, 'HT', $line->info_bits, $line->date_start, $line->date_end, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->fk_unit, $line->multicurrency_subprice);
 		}
+	} elseif ($action == 'addline' && GETPOST('submitforalllines', 'alpha') && GETPOST('remiseforalllines', 'alpha') !== '' && $usercancreate) {
+		// Define remise_percent
+		$remise_percent = (GETPOST('remiseforalllines') ? GETPOST('remiseforalllines') : 0);
+		$remise_percent = str_replace('*', '', $remise_percent);
+		foreach ($object->lines as $line) {
+			$result = $object->updateline($line->id, $line->desc, $line->subprice, $line->qty, $remise_percent, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->date_start, $line->date_end, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->fk_unit, $line->multicurrency_subprice);
+		}
 	} elseif ($action == 'addline' && $usercancreate) {		// Add a new line
 		$langs->load('errors');
 		$error = 0;
