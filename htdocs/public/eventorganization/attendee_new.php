@@ -263,6 +263,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 			$confattendee->fk_project = $project->id;
 			$confattendee->fk_actioncomm = $id;
 			$confattendee->note_public = $note_public;
+
 			$resultconfattendee = $confattendee->create($user);
 			if ($resultconfattendee < 0) {
 				$error++;
@@ -278,7 +279,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 			$securekeyurl = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$id, 'master');
 			$redirection = $dolibarr_main_url_root.'/public/eventorganization/subscriptionok.php?id='.((int) $id).'&securekey='.urlencode($securekeyurl);
 
-			$mesg = $langs->trans("RegistrationAndPaymentWereAlreadyRecorder", $email);
+			$mesg = $langs->trans("RegistrationAndPaymentWereAlreadyRecorded", $email);
 			setEventMessages($mesg, null, 'mesgs');
 
 			$db->commit();
