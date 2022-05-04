@@ -653,6 +653,11 @@ if (preg_match('/^asc/i', $sortorder)) {
 	$sortorder = "desc";
 }
 
+// Warning to explain why list of record is not consistent with the other list view (missing a lot of lines)
+if ($type == 'sub') {
+	print info_admin($langs->trans("WarningRecordWithoutSubledgerAreExcluded"));
+}
+
 $moreforfilter = '';
 
 // Accountancy account

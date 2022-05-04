@@ -339,7 +339,7 @@ ALTER TABLE llx_takepos_floor_tables ADD UNIQUE(entity,label);
 ALTER TABLE llx_partnership ADD COLUMN url_to_check varchar(255);
 ALTER TABLE llx_c_partnership_type ADD COLUMN keyword	varchar(128);
 
+ALTER TABLE llx_eventorganization_conferenceorboothattendee	ADD COLUMN firstname varchar(100);
+ALTER TABLE llx_eventorganization_conferenceorboothattendee	ADD COLUMN lastname varchar(100);
 
-ALTER TABLE llx_takepos_floor_tables ADD UNIQUE(entity,label);
 ALTER TABLE llx_facture ADD COLUMN fk_input_reason integer NULL DEFAULT NULL AFTER last_main_doc;
-
