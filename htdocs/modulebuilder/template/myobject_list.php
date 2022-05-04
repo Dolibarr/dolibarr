@@ -536,7 +536,7 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
 	$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, 'left'); // This also change content of $arrayfields
 } else {
 	$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
