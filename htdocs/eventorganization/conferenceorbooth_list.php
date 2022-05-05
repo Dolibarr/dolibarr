@@ -375,46 +375,52 @@ if ($projectid > 0) {
 	print '<table class="border tableforfield centpercent">';
 
 	// Description
-	print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
+	print '<tr><td class="titlefield tdtop">'.$langs->trans("Description").'</td><td class="valuefield">';
 	print nl2br($project->description);
 	print '</td></tr>';
 
 	// Categories
 	if ($conf->categorie->enabled) {
-		print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
+		print '<tr><td class="titlefield valignmiddle">'.$langs->trans("Categories").'</td><td class="valuefield">';
 		print $form->showCategories($project->id, Categorie::TYPE_PROJECT, 1);
 		print "</td></tr>";
 	}
 
-	print '<tr><td>';
+	print '<tr><td class="titlefield">';
 	$typeofdata = 'checkbox:'.($project->accept_conference_suggestions ? ' checked="checked"' : '');
 	$htmltext = $langs->trans("AllowUnknownPeopleSuggestConfHelp");
 	print $form->editfieldkey('AllowUnknownPeopleSuggestConf', 'accept_conference_suggestions', '', $project, $permissiontoadd, $typeofdata, '', 0, 0, 'projectid', $htmltext);
-	print '</td><td>';
+	print '</td><td class="valuefield">';
 	print $form->editfieldval('AllowUnknownPeopleSuggestConf', 'accept_conference_suggestions', '1', $project, $permissiontoadd, $typeofdata, '', 0, 0, '', 0, '', 'projectid');
 	print "</td></tr>";
 
-	print '<tr><td>';
+	print '<tr><td class="titlefield">';
 	$typeofdata = 'checkbox:'.($project->accept_booth_suggestions ? ' checked="checked"' : '');
 	$htmltext = $langs->trans("AllowUnknownPeopleSuggestBoothHelp");
 	print $form->editfieldkey('AllowUnknownPeopleSuggestBooth', 'accept_booth_suggestions', '', $project, $permissiontoadd, $typeofdata, '', 0, 0, 'projectid', $htmltext);
-	print '</td><td>';
+	print '</td><td class="valuefield">';
 	print $form->editfieldval('AllowUnknownPeopleSuggestBooth', 'accept_booth_suggestions', '1', $project, $permissiontoadd, $typeofdata, '', 0, 0, '', 0, '', 'projectid');
 	print "</td></tr>";
 
-	print '<tr><td>';
+	print '<tr><td class="titlefield">';
 	print $form->editfieldkey($form->textwithpicto($langs->trans('PriceOfBooth'), $langs->trans("PriceOfBoothHelp")), 'price_booth', '', $project, $permissiontoadd, 'amount', '', 0, 0, 'projectid');
-	print '</td><td>';
+	print '</td><td class="valuefield">';
 	print $form->editfieldval($form->textwithpicto($langs->trans('PriceOfBooth'), $langs->trans("PriceOfBoothHelp")), 'price_booth', $project->price_booth, $project, $permissiontoadd, 'amount', '', 0, 0, '', 0, '', 'projectid');
 	print "</td></tr>";
 
-	print '<tr><td>';
+	print '<tr><td class="titlefield">';
 	print $form->editfieldkey($form->textwithpicto($langs->trans('PriceOfRegistration'), $langs->trans("PriceOfRegistrationHelp")), 'price_registration', '', $project, $permissiontoadd, 'amount', '', 0, 0, 'projectid');
-	print '</td><td>';
+	print '</td><td class="valuefield">';
 	print $form->editfieldval($form->textwithpicto($langs->trans('PriceOfRegistration'), $langs->trans("PriceOfRegistrationHelp")), 'price_registration', $project->price_registration, $project, $permissiontoadd, 'amount', '', 0, 0, '', 0, '', 'projectid');
 	print "</td></tr>";
 
-	print '<tr><td valign="middle">'.$langs->trans("EventOrganizationICSLink").'</td><td>';
+	print '<tr><td class="titlefield">';
+	print $form->editfieldkey($form->textwithpicto($langs->trans('MaxNbOfAttendees'), ''), 'max_attendees', '', $project, $permissiontoadd, 'integer:3', '', 0, 0, 'projectid');
+	print '</td><td class="valuefield">';
+	print $form->editfieldval($form->textwithpicto($langs->trans('MaxNbOfAttendees'), ''), 'max_attendees', $project->max_attendees, $project, $permissiontoadd, 'integer:3', '', 0, 0, '', 0, '', 'projectid');
+	print "</td></tr>";
+
+	print '<tr><td class="titlefield valignmiddle">'.$langs->trans("EventOrganizationICSLink").'</td><td class="valuefield">';
 	// Define $urlwithroot
 	$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
 	$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT;
@@ -427,11 +433,11 @@ if ($projectid > 0) {
 	print "</td></tr>";
 
 	// Link to the submit vote/register page
-	print '<tr><td>';
+	print '<tr><td class="titlefield">';
 	//print '<span class="opacitymedium">';
 	print $form->textwithpicto($langs->trans("SuggestOrVoteForConfOrBooth"), $langs->trans("EvntOrgRegistrationHelpMessage"));
 	//print '</span>';
-	print '</td><td>';
+	print '</td><td class="valuefield">';
 	$linksuggest = $dolibarr_main_url_root.'/public/project/index.php?id='.((int) $project->id);
 	$encodedsecurekey = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY').'conferenceorbooth'.((int) $project->id), 'md5');
 	$linksuggest .= '&securekey='.urlencode($encodedsecurekey);
@@ -444,11 +450,11 @@ if ($projectid > 0) {
 	print '</td></tr>';
 
 	// Link to the subscribe
-	print '<tr><td>';
+	print '<tr><td class="titlefield">';
 	//print '<span class="opacitymedium">';
 	print $langs->trans("PublicAttendeeSubscriptionGlobalPage");
 	//print '</span>';
-	print '</td><td>';
+	print '</td><td class="valuefield">';
 	$link_subscription = $dolibarr_main_url_root.'/public/eventorganization/attendee_new.php?id='.((int) $project->id).'&type=global';
 	$encodedsecurekey = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY').'conferenceorbooth'.((int) $project->id), 'md5');
 	$link_subscription .= '&securekey='.urlencode($encodedsecurekey);

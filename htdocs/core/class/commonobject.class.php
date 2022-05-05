@@ -126,10 +126,9 @@ abstract class CommonObject
 	public $linkedObjects;
 
 	/**
-	 * @var boolean		is linkedObjects full loaded. Loaded by ->fetchObjectLinked
-	 * important for pdf generation time reduction
+	 * @var boolean		Array of boolean with object id as key and value as true if linkedObjects full loaded. Loaded by ->fetchObjectLinked. Important for pdf generation time reduction.
 	 */
-	public $linkedObjectsFullLoaded = false;
+	public $linkedObjectsFullLoaded = array();
 
 	/**
 	 * @var Object      To store a cloned copy of object before to edit it and keep track of old properties
@@ -2239,8 +2238,10 @@ abstract class CommonObject
 	 *	@param     	int		$projectid		Project id to link element to
 	 *	@return		int						<0 if KO, >0 if OK
 	 */
-	public function setProject($projectid)
+	public function setProject($user, $projectid, $notrigger = 0)
 	{
+        $error = 0;
+
 		if (!$this->table_element) {
 			dol_syslog(get_class($this)."::setProject was called on objet with property table_element not defined", LOG_ERR);
 			return -1;
@@ -2271,14 +2272,34 @@ abstract class CommonObject
 			$sql .= " WHERE rowid = ".((int) $this->id);
 		}
 
+        $this->db->begin();
+
 		dol_syslog(get_class($this)."::setProject", LOG_DEBUG);
 		if ($this->db->query($sql)) {
 			$this->fk_project = ((int) $projectid);
-			return 1;
 		} else {
 			dol_print_error($this->db);
-			return -1;
+			$error++;
 		}
+
+        // Triggers
+        if (!$error && !$notrigger) {
+            // Call triggers
+            $result = $this->call_trigger(strtoupper($this->element) . '_MODIFY', $user);
+            if ($result < 0) {
+                $error++;
+            } //Do also here what you must do to rollback action if trigger fail
+            // End call triggers
+        }
+
+        // Commit or rollback
+        if ($error) {
+            $this->db->rollback();
+            return -1;
+        } else {
+            $this->db->commit();
+            return 1;
+        }
 	}
 
 	/**
@@ -3392,9 +3413,9 @@ abstract class CommonObject
 	 *  Must be called at end of methods addline or updateline.
 	 *
 	 *	@param	int		$exclspec          	>0 = Exclude special product (product_type=9)
-	 *  @param  string	$roundingadjust    	'none'=Do nothing, 'auto'=Use default method (MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND if defined, or '0'), '0'=Force mode total of rounding, '1'=Force mode rounding of total
+	 *  @param  string	$roundingadjust    	'none'=Do nothing, 'auto'=Use default method (MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND if defined, or '0'), '0'=Force mode Total of rounding, '1'=Force mode Rounding of total
 	 *  @param	int		$nodatabaseupdate	1=Do not update database. Update only properties of object.
-	 *  @param	Societe	$seller				If roundingadjust is '0' or '1' or maybe 'auto', it means we recalculate total for lines before calculating total for object and for this, we need seller object.
+	 *  @param	Societe	$seller				If roundingadjust is '0' or '1' or maybe 'auto', it means we recalculate total for lines before calculating total for object and for this, we need seller object (used to analyze lines to check corrupted data).
 	 *	@return	int    			           	<0 if KO, >0 if OK
 	 */
 	public function update_price($exclspec = 0, $roundingadjust = 'none', $nodatabaseupdate = 0, $seller = null)
@@ -3781,9 +3802,11 @@ abstract class CommonObject
 	{
 		global $conf, $hookmanager, $action;
 
-		// important for pdf generation time reduction
-		// this boolean is true if $this->linkedObjects has already been loaded with all objects linked without filter
-		if ($this->linkedObjectsFullLoaded) return 1;
+		// Important for pdf generation time reduction
+		// This boolean is true if $this->linkedObjects has already been loaded with all objects linked without filter
+		if ($this->id > 0 && !empty($this->linkedObjectsFullLoaded[$this->id])) {
+			return 1;
+		}
 
 		$this->linkedObjectsIds = array();
 		$this->linkedObjects = array();
@@ -3846,8 +3869,8 @@ abstract class CommonObject
 		} else {
 			$sql .= "(fk_source = ".((int) $sourceid)." AND sourcetype = '".$this->db->escape($sourcetype)."')";
 			$sql .= " ".$clause." (fk_target = ".((int) $targetid)." AND targettype = '".$this->db->escape($targettype)."')";
-			if ($sourceid == $this->id && $sourcetype == $this->element && $targetid == $this->id && $targettype == $this->element && $clause == 'OR') {
-				$this->linkedObjectsFullLoaded = true;
+			if ($loadalsoobjects && $this->id > 0 && $sourceid == $this->id && $sourcetype == $this->element && $targetid == $this->id && $targettype == $this->element && $clause == 'OR') {
+				$this->linkedObjectsFullLoaded[$this->id] = true;
 			}
 		}
 		$sql .= " ORDER BY ".$orderby;
@@ -4951,18 +4974,18 @@ abstract class CommonObject
 		global $langs, $hookmanager, $conf, $form, $action;
 
 		print '<tr class="liste_titre">';
-		print '<td>'.$langs->trans('Ref').'</td>';
-		print '<td>'.$langs->trans('Description').'</td>';
-		print '<td class="right">'.$langs->trans('VATRate').'</td>';
-		print '<td class="right">'.$langs->trans('PriceUHT').'</td>';
+		print '<td class="linecolref">'.$langs->trans('Ref').'</td>';
+		print '<td class="linecoldescription">'.$langs->trans('Description').'</td>';
+		print '<td class="linecolvat right">'.$langs->trans('VATRate').'</td>';
+		print '<td class="linecoluht right">'.$langs->trans('PriceUHT').'</td>';
 		if (!empty($conf->multicurrency->enabled)) {
-			print '<td class="right">'.$langs->trans('PriceUHTCurrency').'</td>';
+			print '<td class="linecoluht_currency right">'.$langs->trans('PriceUHTCurrency').'</td>';
 		}
-		print '<td class="right">'.$langs->trans('Qty').'</td>';
+		print '<td class="linecolqty right">'.$langs->trans('Qty').'</td>';
 		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
-			print '<td class="left">'.$langs->trans('Unit').'</td>';
+			print '<td class="linecoluseunit left">'.$langs->trans('Unit').'</td>';
 		}
-		print '<td class="right">'.$langs->trans('ReductionShort').'</td>';
+		print '<td class="linecoldiscount right">'.$langs->trans('ReductionShort').'</td>';
 		print '<td class="linecolht right">'.$langs->trans('TotalHT').'</td>';
 		print '<td class="center">'.$form->showCheckAddButtons('checkforselect', 1).'</td>';
 		print '</tr>';
@@ -5397,16 +5420,20 @@ abstract class CommonObject
 					return 1;
 				} else {
 					$outputlangs->charset_output = $sav_charset_output;
-					dol_print_error($this->db, "Error generating document for ".__CLASS__.". Error: ".$obj->error, $obj->errors);
+					$this->error = $obj->error;
+					$this->errors = $obj->errors;
+					dol_syslog("Error generating document for ".__CLASS__.". Error: ".$obj->error, LOG_ERR);
 					return -1;
 				}
 			} else {
 				if (!$filefound) {
 					$this->error = $langs->trans("Error").' Failed to load doc generator with modelpaths='.$modelspath.' - modele='.$modele;
-					dol_print_error('', $this->error);
+					$this->errors[] = $this->error;
+					dol_syslog($this->error, LOG_ERR);
 				} else {
 					$this->error = $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists", $filefound);
-					dol_print_error('', $this->error);
+					$this->errors[] = $this->error;
+					dol_syslog($this->error, LOG_ERR);
 				}
 				return -1;
 			}
@@ -6073,7 +6100,7 @@ abstract class CommonObject
 							$this->errors[] = $langs->trans("ExtraFieldHasWrongValue", $attributeLabel);
 							return -1;
 						} elseif ($value == '') {
-							$new_array_options[$key] = null;
+							$value = null;
 						}
 						//dol_syslog("double value"." sur ".$attributeLabel."(".$value." is '".$attributeType."')", LOG_DEBUG);
 						$new_array_options[$key] = $value;
@@ -6439,7 +6466,7 @@ abstract class CommonObject
 						$this->errors[] = $langs->trans("ExtraFieldHasWrongValue", $attributeLabel);
 						return -1;
 					} elseif ($value === '') {
-						$this->array_options["options_".$key] = null;
+						$value = null;
 					}
 					//dol_syslog("double value"." sur ".$attributeLabel."(".$value." is '".$attributeType."')", LOG_DEBUG);
 					$this->array_options["options_".$key] = $value;
@@ -7918,16 +7945,22 @@ abstract class CommonObject
 
 						// Convert date into timestamp format (value in memory must be a timestamp)
 						if (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('date'))) {
-							$datenotinstring = $this->array_options['options_'.$key];
-							if (!is_numeric($this->array_options['options_'.$key])) {	// For backward compatibility
-								$datenotinstring = $this->db->jdate($datenotinstring);
+							$datenotinstring = null;
+							if (array_key_exists('options_'.$key, $this->array_options)) {
+								$datenotinstring = $this->array_options['options_'.$key];
+								if (!is_numeric($this->array_options['options_'.$key])) {	// For backward compatibility
+									$datenotinstring = $this->db->jdate($datenotinstring);
+								}
 							}
 							$value = (GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix)) ? dol_mktime(12, 0, 0, GETPOST($keyprefix.'options_'.$key.$keysuffix."month", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."day", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."year", 'int', 3)) : $datenotinstring;
 						}
 						if (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('datetime'))) {
-							$datenotinstring = $this->array_options['options_'.$key];
-							if (!is_numeric($this->array_options['options_'.$key])) {	// For backward compatibility
-								$datenotinstring = $this->db->jdate($datenotinstring);
+							$datenotinstring = null;
+							if (array_key_exists('options_'.$key, $this->array_options)) {
+								$datenotinstring = $this->array_options['options_'.$key];
+								if (!is_numeric($this->array_options['options_'.$key])) {	// For backward compatibility
+									$datenotinstring = $this->db->jdate($datenotinstring);
+								}
 							}
 							$value = (GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix)) ? dol_mktime(GETPOST($keyprefix.'options_'.$key.$keysuffix."hour", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."min", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."sec", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."month", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."day", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."year", 'int', 3), 'tzuserrel') : $datenotinstring;
 						}
@@ -7947,14 +7980,14 @@ abstract class CommonObject
 						$helptoshow = $langs->trans($extrafields->attributes[$this->table_element]['help'][$key]);
 
 						if ($display_type == 'card') {
-							$out .= '<tr '.($html_id ? 'id="'.$html_id.'" ' : '').$csstyle.' class="valuefieldcreate '.$class.$this->element.'_extras_'.$key.' trextrafields_collapse'.$extrafields_collapse_num.(!empty($this->id)?'_'.$this->id:'').'" '.$domData.' >';
+							$out .= '<tr '.($html_id ? 'id="'.$html_id.'" ' : '').$csstyle.' class="field_options_'.$key.' '.$class.$this->element.'_extras_'.$key.' trextrafields_collapse'.$extrafields_collapse_num.(!empty($this->id)?'_'.$this->id:'').'" '.$domData.' >';
 							if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER) && ($action == 'view' || $action == 'valid' || $action == 'editline')) {
 								$out .= '<td></td>';
 							}
-							$out .= '<td class="wordbreak';
+							$out .= '<td class="titlefieldcreate wordbreak';
 						} elseif ($display_type == 'line') {
-							$out .= '<div '.($html_id ? 'id="'.$html_id.'" ' : '').$csstyle.' class="valuefieldlinecreate '.$class.$this->element.'_extras_'.$key.' trextrafields_collapse'.$extrafields_collapse_num.(!empty($this->id)?'_'.$this->id:'').'" '.$domData.' >';
-							$out .= '<div style="display: inline-block; padding-right:4px" class="wordbreak';
+							$out .= '<div '.($html_id ? 'id="'.$html_id.'" ' : '').$csstyle.' class="fieldline_options_'.$key.' '.$class.$this->element.'_extras_'.$key.' trextrafields_collapse'.$extrafields_collapse_num.(!empty($this->id)?'_'.$this->id:'').'" '.$domData.' >';
+							$out .= '<div style="display: inline-block; padding-right:4px" class="titlefieldcreate wordbreak';
 						}
 						//$out .= "titlefield";
 						//if (GETPOST('action', 'restricthtml') == 'create') $out.='create';
@@ -7987,9 +8020,9 @@ abstract class CommonObject
 						$html_id = !empty($this->id) ? $this->element.'_extras_'.$key.'_'.$this->id : '';
 						if ($display_type == 'card') {
 							// a first td column was already output (and may be another on before if MAIN_VIEW_LINE_NUMBER set), so this td is the next one
-							$out .= '<td '.($html_id ? 'id="'.$html_id.'" ' : '').' class="'.$this->element.'_extras_'.$key.'" '.($colspan ? ' colspan="'.$colspan.'"' : '').'>';
+							$out .= '<td '.($html_id ? 'id="'.$html_id.'" ' : '').' class="valuefieldcreate '.$this->element.'_extras_'.$key.'" '.($colspan ? ' colspan="'.$colspan.'"' : '').'>';
 						} elseif ($display_type == 'line') {
-							$out .= '<div '.($html_id ? 'id="'.$html_id.'" ' : '').' style="display: inline-block" class="'.$this->element.'_extras_'.$key.'">';
+							$out .= '<div '.($html_id ? 'id="'.$html_id.'" ' : '').' style="display: inline-block" class="valuefieldcreate '.$this->element.'_extras_'.$key.'">';
 						}
 
 						switch ($mode) {

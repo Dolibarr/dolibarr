@@ -11,6 +11,7 @@
  * Copyright (C) 2016-2021	Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2019       Ferran Marcet	        <fmarcet@2byte.es>
+ * Copyright (C) 2022      Gauthier VERDOL     		<gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -77,6 +78,7 @@ $projectid = GETPOST('projectid', 'int');
 $origin		= GETPOST('origin', 'alpha');
 $originid = GETPOST('originid', 'int');
 $fac_recid = GETPOST('fac_rec', 'int');
+$rank = (GETPOST('rank', 'int') > 0) ? GETPOST('rank', 'int') : -1;
 
 // PDF
 $hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
@@ -1581,7 +1583,7 @@ if (empty($reshook)) {
 					$tva_npr,
 					$price_base_type,
 					$type,
-					-1,
+					min($rank, count($object->lines) + 1),
 					0,
 					$array_options,
 					$productsupplier->fk_unit,
@@ -1700,7 +1702,7 @@ if (empty($reshook)) {
 		$action = '';
 	} elseif ($action == 'classin' && $usercancreate) {
 		$object->fetch($id);
-		$result = $object->setProject($projectid);
+		$result = $object->setProject($user, $projectid);
 	} elseif ($action == 'confirm_edit' && $confirm == 'yes' && $usercancreate) {
 		// Set invoice to draft status
 		$object->fetch($id);
@@ -1902,7 +1904,7 @@ if ($action == 'create') {
 	$currency_code = $conf->currency;
 
 	$societe = '';
-	if (GETPOST('socid') > 0) {
+	if (GETPOST('socid', 'int') > 0) {
 		$societe = new Societe($db);
 		$societe->fetch(GETPOST('socid', 'int'));
 		if (!empty($conf->multicurrency->enabled) && !empty($societe->multicurrency_code)) {
@@ -3190,7 +3192,7 @@ if ($action == 'create') {
 		}
 		// Show link for "recalculate"
 		if ($object->getVentilExportCompta() == 0) {
-			$s = '<span class="hideonsmartphone">'.$langs->trans("ReCalculate").' </span>';
+			$s = '<span class="hideonsmartphone opacitymedium">'.$langs->trans("ReCalculate").' </span>';
 			$s .= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=calculate&calculationrule=totalofround">'.$langs->trans("Mode1").'</a>';
 			$s .= ' / ';
 			$s .= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=calculate&calculationrule=roundoftotal">'.$langs->trans("Mode2").'</a>';
@@ -3464,10 +3466,9 @@ if ($action == 'create') {
 			// Remainder to pay
 			print '<tr><td colspan="'.$nbcols.'" class="right">';
 			print '<span class="opacitymedium">';
-			if ($resteapayeraffiche >= 0) {
-				print $langs->trans('RemainderToPay');
-			} else {
-				print $langs->trans('ExcessPaid');
+			print $langs->trans('RemainderToPay');
+			if ($resteapayeraffiche < 0) {
+				print ' ('.$langs->trans('NegativeIfExcessPaid').')';
 			}
 			print '</span>';
 			print '</td>';
@@ -3477,10 +3478,9 @@ if ($action == 'create') {
 			if ($object->multicurrency_code != $conf->currency || $object->multicurrency_tx != 1) {
 				print '<tr><td colspan="'.$nbcols.'" class="right">';
 				print '<span class="opacitymedium">';
-				if ($resteapayeraffiche <= 0) {
-					print $langs->trans('RemainderToPayBackMulticurrency');
-				} else {
-					print $langs->trans('ExcessPaidMulticurrency');
+				print $langs->trans('RemainderToPayMulticurrency');
+				if ($resteapayeraffiche < 0) {
+					print ' ('.$langs->trans('NegativeIfExcessPaid').')';
 				}
 				print '</span>';
 				print '</td>';
@@ -3501,10 +3501,9 @@ if ($action == 'create') {
 			// Remainder to pay back
 			print '<tr><td colspan="'.$nbcols.'" class="right">';
 			print '<span class="opacitymedium">';
-			if ($resteapayeraffiche <= 0) {
-				print $langs->trans('RemainderToPayBack');
-			} else {
-				print $langs->trans('ExcessPaid');
+			print $langs->trans('RemainderToPayBack');
+			if ($resteapayeraffiche > 0) {
+				print ' ('.$langs->trans('NegativeIfExcessRefunded').')';
 			}
 			print '</td>';
 			print '</span>';
@@ -3514,10 +3513,9 @@ if ($action == 'create') {
 			if ($object->multicurrency_code != $conf->currency || $object->multicurrency_tx != 1) {
 				print '<tr><td colspan="'.$nbcols.'" class="right">';
 				print '<span class="opacitymedium">';
-				if ($resteapayeraffiche <= 0) {
-					print $langs->trans('RemainderToPayBackMulticurrency');
-				} else {
-					print $langs->trans('ExcessPaidMulticurrency');
+				print $langs->trans('RemainderToPayBackMulticurrency');
+				if ($resteapayeraffiche> 0) {
+					print ' ('.$langs->trans('NegativeIfExcessRefunded').')';
 				}
 				print '</span>';
 				print '</td>';

@@ -1701,7 +1701,11 @@ class Product extends CommonObject
 		$testExit = array('multiprices','multiprices_ttc','multiprices_base_type','multiprices_min','multiprices_min_ttc','multiprices_tva_tx','multiprices_recuperableonly');
 
 		foreach ($testExit as $field) {
-			if (!isset($this->$field[$level])) {
+			if (!isset($this->$field)) {
+				return array();
+			}
+			$tmparray = $this->$field;
+			if (!isset($tmparray[$level])) {
 				return array();
 			}
 		}
@@ -1798,7 +1802,17 @@ class Product extends CommonObject
 	 */
 	public function getSellPrice($thirdparty_seller, $thirdparty_buyer, $pqp = 0)
 	{
-		global $conf, $db;
+		global $conf, $db, $hookmanager, $action;
+
+		// Call hook if any
+		if (is_object($hookmanager)) {
+			$parameters = array('thirdparty_seller'=>$thirdparty_seller, 'thirdparty_buyer' => $thirdparty_buyer, 'pqp' => $pqp);
+			// Note that $action and $object may have been modified by some hooks
+			$reshook = $hookmanager->executeHooks('getSellPrice', $parameters, $this, $action);
+			if ($reshook > 0) {
+				return $hookmanager->resArray;
+			}
+		}
 
 		// Update if prices fields are defined
 		$tva_tx = get_default_tva($thirdparty_seller, $thirdparty_buyer, $this->id);

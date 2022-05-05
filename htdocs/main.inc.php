@@ -109,10 +109,11 @@ function testSqlAndScriptInject($val, $type)
 	// We check string because some hacks try to obfuscate evil strings by inserting non printable chars. Example: 'java(ascci09)scr(ascii00)ipt' is processed like 'javascript' (whatever is place of evil ascii char)
 	// We should use dol_string_nounprintableascii but function is not yet loaded/available
 	// Example of valid UTF8 chars:
-	// utf8=utf8mb3:    '\x0A', '\x0D', '\x7E'
+	// utf8=utf8mb3:    '\x09', '\x0A', '\x0D', '\x7E'
 	// utf8=utf8mb3: 	'\xE0\xA0\x80'
 	// utf8mb4: 		'\xF0\x9D\x84\x9E'   (but this may be refused by the database insert if pagecode is utf8=utf8mb3)
-	$newval = preg_replace('/[\x00-\x09\x0B-\x0C\x0E-\x1F\x7F]/u', '', $val); // /u operator makes UTF8 valid characters being ignored so are not included into the replace
+	$newval = preg_replace('/[\x00-\x08\x0B-\x0C\x0E-\x1F\x7F]/u', '', $val); // /u operator makes UTF8 valid characters being ignored so are not included into the replace
+
 	// Note that $newval may also be completely empty '' when non valid UTF8 are found.
 	if ($newval != $val) {
 		// If $val has changed after removing non valid UTF8 chars, it means we have an evil string.
@@ -280,7 +281,20 @@ if (!empty($_POST["DOL_AUTOSET_COOKIE"])) {
 	$cookiename = $tmpautoset[0];
 	$cookievalue = json_encode($cookiearrayvalue);
 	//var_dump('setcookie cookiename='.$cookiename.' cookievalue='.$cookievalue);
-	setcookie($cookiename, empty($cookievalue) ? '' : $cookievalue, empty($cookievalue) ? 0 : (time() + (86400 * 354)), '/', null, (empty($dolibarr_main_force_https) ? false : true), true); // keep cookie 1 year and add tag httponly
+	if (PHP_VERSION_ID < 70300) {
+		setcookie($cookiename, empty($cookievalue) ? '' : $cookievalue, empty($cookievalue) ? 0 : (time() + (86400 * 354)), '/', null, ((empty($dolibarr_main_force_https) && isHTTPS() === false) ? false : true), true); // keep cookie 1 year and add tag httponly
+	} else {
+		// Only available for php >= 7.3
+		$cookieparams = array(
+			'expires' => empty($cookievalue) ? 0 : (time() + (86400 * 354)),
+			'path' => '/',
+			//'domain' => '.mywebsite.com', // the dot at the beginning allows compatibility with subdomains
+			'secure' => ((empty($dolibarr_main_force_https) && isHTTPS() === false) ? false : true),
+			'httponly' => true,
+			'samesite' => 'Lax'	// None || Lax  || Strict
+		);
+		setcookie($cookiename, empty($cookievalue) ? '' : $cookievalue, $cookieparams);
+	}
 	if (empty($cookievalue)) {
 		unset($_COOKIE[$cookiename]);
 	}
@@ -305,7 +319,20 @@ if (!empty($_COOKIE[$sessiontimeout])) {
 // This create lock, released by session_write_close() or end of page.
 // We need this lock as long as we read/write $_SESSION ['vars']. We can remove lock when finished.
 if (!defined('NOSESSION')) {
-	session_set_cookie_params(0, '/', null, (empty($dolibarr_main_force_https) ? false : true), true); // Add tag secure and httponly on session cookie (same as setting session.cookie_httponly into php.ini). Must be called before the session_start.
+	if (PHP_VERSION_ID < 70300) {
+		session_set_cookie_params(0, '/', null, ((empty($dolibarr_main_force_https) && isHTTPS() === false) ? false : true), true); // Add tag secure and httponly on session cookie (same as setting session.cookie_httponly into php.ini). Must be called before the session_start.
+	} else {
+		// Only available for php >= 7.3
+		$sessioncookieparams = array(
+			'lifetime' => 0,
+			'path' => '/',
+			//'domain' => '.mywebsite.com', // the dot at the beginning allows compatibility with subdomains
+			'secure' => ((empty($dolibarr_main_force_https) && isHTTPS() === false) ? false : true),
+			'httponly' => true,
+			'samesite' => 'Lax'	// None || Lax  || Strict
+		);
+		session_set_cookie_params($sessioncookieparams);
+	}
 	session_name($sessionname);
 	session_start();	// This call the open and read of session handler
 	//exit;	// this exist generates a call to write and close
@@ -541,10 +568,11 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt(
 	}
 
 	$sessiontokenforthisurl = (empty($_SESSION['token']) ? '' : $_SESSION['token']);
-	// TODO Get the sessiontokenforthisurl into the array of session token
+	// TODO Get the sessiontokenforthisurl into an array of session token (one array per base URL so we can use the CSRF per page and we keep ability for several tabs per url in a browser)
 	if (GETPOSTISSET('token') && GETPOST('token') != 'notrequired' && GETPOST('token', 'alpha') != $sessiontokenforthisurl) {
-		dol_syslog("--- Access to ".(empty($_SERVER["REQUEST_METHOD"]) ? '' : $_SERVER["REQUEST_METHOD"].' ').$_SERVER["PHP_SELF"]." refused by CSRF protection (invalid token), so we disable POST and some GET parameters - referer=".$_SERVER['HTTP_REFERER'].", action=".GETPOST('action', 'aZ09').", _GET|POST['token']=".GETPOST('token', 'alpha').", _SESSION['token']=".$_SESSION['token'], LOG_WARNING);
-		//print 'Unset POST by CSRF protection in main.inc.php.';	// Do not output anything because this create problems when using the BACK button on browsers.
+		dol_syslog("--- Access to ".(empty($_SERVER["REQUEST_METHOD"]) ? '' : $_SERVER["REQUEST_METHOD"].' ').$_SERVER["PHP_SELF"]." refused by CSRF protection (invalid token), so we disable POST and some GET parameters - referer=".$_SERVER['HTTP_REFERER'].", action=".GETPOST('action', 'aZ09').", _GET|POST['token']=".GETPOST('token', 'alpha'), LOG_WARNING);
+		//dol_syslog("_SESSION['token']=".$sessiontokenforthisurl, LOG_DEBUG);
+		// Do not output anything on standard output because this create problems when using the BACK button on browsers. So we just set a message into session.
 		setEventMessages('SecurityTokenHasExpiredSoActionHasBeenCanceledPleaseRetry', null, 'warnings');
 		$savid = null;
 		if (isset($_POST['id'])) {
@@ -1312,15 +1340,16 @@ if (!function_exists("llxHeader")) {
 	 * @param	string			$morequerystring	Query string to add to the link "print" to get same parameters (use only if autodetect fails)
 	 * @param   string  		$morecssonbody      More CSS on body tag. For example 'classforhorizontalscrolloftabs'.
 	 * @param	string			$replacemainareaby	Replace call to main_area() by a print of this string
-	 * @param	int				$disablenofollow	Disable the "nofollow" on page
+	 * @param	int				$disablenofollow	Disable the "nofollow" on meta robot header
+	 * @param	int				$disablenoindex		Disable the "noindex" on meta robot header
 	 * @return	void
 	 */
-	function llxHeader($head = '', $title = '', $help_url = '', $target = '', $disablejs = 0, $disablehead = 0, $arrayofjs = '', $arrayofcss = '', $morequerystring = '', $morecssonbody = '', $replacemainareaby = '', $disablenofollow = 0)
+	function llxHeader($head = '', $title = '', $help_url = '', $target = '', $disablejs = 0, $disablehead = 0, $arrayofjs = '', $arrayofcss = '', $morequerystring = '', $morecssonbody = '', $replacemainareaby = '', $disablenofollow = 0, $disablenoindex = 0)
 	{
 		global $conf;
 
 		// html header
-		top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss, 0, $disablenofollow);
+		top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss, 0, $disablenofollow, $disablenoindex);
 
 		$tmpcsstouse = 'sidebar-collapse'.($morecssonbody ? ' '.$morecssonbody : '');
 		// If theme MD and classic layer, we open the menulayer by default.
@@ -1433,10 +1462,11 @@ function top_httphead($contenttype = 'text/html', $forcenocache = 0)
  * @param 	array  	$arrayofjs		 Array of complementary js files
  * @param 	array  	$arrayofcss		 Array of complementary css files
  * @param 	int    	$disableforlogin Do not load heavy js and css for login pages
- * @param   int     $disablenofollow Disable no follow tag
+ * @param   int     $disablenofollow Disable nofollow tag for meta robots
+ * @param   int     $disablenoindex  Disable noindex tag for meta robots
  * @return	void
  */
-function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arrayofjs = '', $arrayofcss = '', $disableforlogin = 0, $disablenofollow = 0)
+function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arrayofjs = '', $arrayofcss = '', $disableforlogin = 0, $disablenofollow = 0, $disablenoindex = 0)
 {
 	global $db, $conf, $langs, $user, $mysoc, $hookmanager;
 
@@ -1467,7 +1497,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 
 		// Displays meta
 		print '<meta charset="utf-8">'."\n";
-		print '<meta name="robots" content="noindex'.($disablenofollow ? '' : ',nofollow').'">'."\n"; // Do not index
+		print '<meta name="robots" content="'.($disablenoindex ? 'index' : 'noindex').($disablenofollow ? ',follow' : ',nofollow').'">'."\n"; // Do not index
 		print '<meta name="viewport" content="width=device-width, initial-scale=1.0">'."\n"; // Scale for mobile device
 		print '<meta name="author" content="Dolibarr Development Team">'."\n";
 		if (getDolGlobalInt('MAIN_FEATURES_LEVEL')) {
@@ -2321,9 +2351,7 @@ function top_menu_quickadd()
 
 	$html .= '<!-- div for quick add link -->
     <div id="topmenu-quickadd-dropdown" class="atoplogin dropdown inline-block">
-        <a class="dropdown-toggle login-dropdown-a" data-toggle="dropdown" href="#" title="'.$langs->trans('QuickAdd').' ('.$langs->trans('QuickAddMenuShortCut').')">
-            <i class="fa fa-plus-circle" ></i>
-        </a>
+        <a class="dropdown-toggle login-dropdown-a" data-toggle="dropdown" href="#" title="'.$langs->trans('QuickAdd').' ('.$langs->trans('QuickAddMenuShortCut').')"><i class="fa fa-plus-circle"></i></a>
         <div class="dropdown-menu">'.printDropdownQuickadd().'</div>
     </div>';
 	$html .= '
@@ -2371,7 +2399,7 @@ function printDropdownQuickadd()
 	$items = array(
 		'items' => array(
 			array(
-				"url" => "/societe/card.php?action=create",
+				"url" => "/societe/card.php?action=create&amp;mainmenu=companies",
 				"title" => "MenuNewThirdParty@companies",
 				"name" => "ThirdParty@companies",
 				"picto" => "object_company",
@@ -2379,7 +2407,7 @@ function printDropdownQuickadd()
 				"position" => 10,
 			),
 			array(
-				"url" => "/contact/card.php?action=create",
+				"url" => "/contact/card.php?action=create&amp;mainmenu=companies",
 				"title" => "NewContactAddress@companies",
 				"name" => "Contact@companies",
 				"picto" => "object_contact",
@@ -2387,7 +2415,7 @@ function printDropdownQuickadd()
 				"position" => 20,
 			),
 			array(
-				"url" => "/comm/propal/card.php?action=create",
+				"url" => "/comm/propal/card.php?action=create&amp;mainmenu=commercial",
 				"title" => "NewPropal@propal",
 				"name" => "Proposal@propal",
 				"picto" => "object_propal",
@@ -2396,7 +2424,7 @@ function printDropdownQuickadd()
 			),
 
 			array(
-				"url" => "/commande/card.php?action=create",
+				"url" => "/commande/card.php?action=create&amp;mainmenu=commercial",
 				"title" => "NewOrder@orders",
 				"name" => "Order@orders",
 				"picto" => "object_order",
@@ -2404,7 +2432,7 @@ function printDropdownQuickadd()
 				"position" => 40,
 			),
 			array(
-				"url" => "/compta/facture/card.php?action=create",
+				"url" => "/compta/facture/card.php?action=create&amp;mainmenu=billing",
 				"title" => "NewBill@bills",
 				"name" => "Bill@bills",
 				"picto" => "object_bill",
@@ -2412,7 +2440,7 @@ function printDropdownQuickadd()
 				"position" => 50,
 			),
 			array(
-				"url" => "/contrat/card.php?action=create",
+				"url" => "/contrat/card.php?action=create&amp;mainmenu=commercial",
 				"title" => "NewContractSubscription@contracts",
 				"name" => "Contract@contracts",
 				"picto" => "object_contract",
@@ -2420,7 +2448,7 @@ function printDropdownQuickadd()
 				"position" => 60,
 			),
 			array(
-				"url" => "/supplier_proposal/card.php?action=create",
+				"url" => "/supplier_proposal/card.php?action=create&amp;mainmenu=commercial",
 				"title" => "SupplierProposalNew@supplier_proposal",
 				"name" => "SupplierProposal@supplier_proposal",
 				"picto" => "object_propal",
@@ -2428,7 +2456,7 @@ function printDropdownQuickadd()
 				"position" => 70,
 			),
 			array(
-				"url" => "/fourn/commande/card.php?action=create",
+				"url" => "/fourn/commande/card.php?action=create&amp;mainmenu=commercial",
 				"title" => "NewSupplierOrderShort@orders",
 				"name" => "SupplierOrder@orders",
 				"picto" => "object_order",
@@ -2436,7 +2464,7 @@ function printDropdownQuickadd()
 				"position" => 80,
 			),
 			array(
-				"url" => "/fourn/facture/card.php?action=create",
+				"url" => "/fourn/facture/card.php?action=create&amp;mainmenu=billing",
 				"title" => "NewBill@bills",
 				"name" => "SupplierBill@bills",
 				"picto" => "object_bill",
@@ -2444,7 +2472,7 @@ function printDropdownQuickadd()
 				"position" => 90,
 			),
 			array(
-				"url" => "/product/card.php?action=create&amp;type=0",
+				"url" => "/product/card.php?action=create&amp;type=0&amp;mainmenu=products",
 				"title" => "NewProduct@products",
 				"name" => "Product@products",
 				"picto" => "object_product",
@@ -2452,7 +2480,7 @@ function printDropdownQuickadd()
 				"position" => 100,
 			),
 			array(
-				"url" => "/product/card.php?action=create&amp;type=1",
+				"url" => "/product/card.php?action=create&amp;type=1&amp;mainmenu=products",
 				"title" => "NewService@products",
 				"name" => "Service@products",
 				"picto" => "object_service",
@@ -2472,7 +2500,7 @@ function printDropdownQuickadd()
 	$parameters = array();
 	$hook_items = $items;
 	$reshook = $hookmanager->executeHooks('menuDropdownQuickaddItems', $parameters, $hook_items); // Note that $action and $object may have been modified by some hooks
-	if (is_numeric($reshook) && is_array($hookmanager->results)) {
+	if (is_numeric($reshook) && !empty($hookmanager->results) && is_array($hookmanager->results)) {
 		if ($reshook == 0) {
 			$items['items'] = array_merge($items['items'], $hookmanager->results); // add
 		} else {
@@ -2532,9 +2560,7 @@ function top_menu_bookmark()
 		} else {
 			$html .= '<!-- div for bookmark link -->
 	        <div id="topmenu-bookmark-dropdown" class="dropdown inline-block">
-	            <a class="dropdown-toggle login-dropdown-a" data-toggle="dropdown" href="#" title="'.$langs->trans('Bookmarks').' ('.$langs->trans('BookmarksMenuShortCut').')">
-	                <i class="fa fa-star" ></i>
-	            </a>
+	            <a class="dropdown-toggle login-dropdown-a" data-toggle="dropdown" href="#" title="'.$langs->trans('Bookmarks').' ('.$langs->trans('BookmarksMenuShortCut').')"><i class="fa fa-star"></i></a>
 	            <div class="dropdown-menu">
 	                '.printDropdownBookmarksList().'
 	            </div>

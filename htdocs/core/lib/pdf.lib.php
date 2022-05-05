@@ -1167,7 +1167,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 			$posy = $marginwithfooter + 0;
 
 			// Option for footer background color (without freetext zone)
-			if (!empty($conf->global->PDF_FOOTER_BACKGROUND_COLOR)) {
+			if (getDolGlobalString('PDF_FOOTER_BACKGROUND_COLOR')) {
 				list($r, $g, $b) = sscanf($conf->global->PDF_FOOTER_BACKGROUND_COLOR, '%d, %d, %d');
 				$pdf->SetAutoPageBreak(0, 0); // Disable auto pagebreak
 				$pdf->Rect(0, $dims['hk'] - $posy + $freetextheight, $dims['wk'] + 1, $marginwithfooter + 1, 'F', '', $fill_color = array($r, $g, $b));
@@ -1176,7 +1176,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 
 			if ($line) {	// Free text
 				$pdf->SetXY($dims['lm'], -$posy);
-				if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT)) {   // by default
+				if (!getDolGlobalString('PDF_ALLOW_HTML_FOR_FREE_TEXT')) {   // by default
 					$pdf->MultiCell(0, 3, $line, 0, $align, 0);
 				} else {
 					$pdf->writeHTMLCell($pdf->page_largeur - $pdf->margin_left - $pdf->margin_right, $freetextheight, $dims['lm'], $dims['hk'] - $marginwithfooter, dol_htmlentitiesbr($line, 1, 'UTF-8', 0));
@@ -1187,18 +1187,21 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 			$pdf->SetY(-$posy);
 
 			// Hide footer line if footer background color is set
-			if (empty($conf->global->PDF_FOOTER_BACKGROUND_COLOR)) {
+			if (!getDolGlobalString('PDF_FOOTER_BACKGROUND_COLOR')) {
 				$pdf->line($dims['lm'], $dims['hk'] - $posy, $dims['wk'] - $dims['rm'], $dims['hk'] - $posy);
 			}
 
 			// Option for set top margin height of footer after freetext
-			if (!empty($conf->global->PDF_FOOTER_TOP_MARGIN) || ($conf->global->PDF_FOOTER_TOP_MARGIN === '0')) {
-				$posy -= $conf->global->PDF_FOOTER_TOP_MARGIN;
-			} else { $posy--; }
+			if (getDolGlobalString('PDF_FOOTER_TOP_MARGIN') || getDolGlobalString('PDF_FOOTER_TOP_MARGIN') === '0') {
+				// TODO Remove this case. Height should be good automatically, only $posy-- should be required.
+				$posy -= getDolGlobalInt('PDF_FOOTER_TOP_MARGIN');
+			} else {
+				$posy--;
+			}
 
-			if ($conf->global->PDF_FOOTER_DISABLE_PAGEBREAK === '1') { $pdf->SetAutoPageBreak(0, 0); } // Option for disable auto pagebreak
+			if (getDolGlobalString('PDF_FOOTER_DISABLE_PAGEBREAK') === '1') { $pdf->SetAutoPageBreak(0, 0); } // Option for disable auto pagebreak
 			$pdf->writeHTMLCell($pdf->page_largeur - $pdf->margin_left - $pdf->margin_right, $mycustomfooterheight, $dims['lm'], $dims['hk'] - $posy, dol_htmlentitiesbr($mycustomfooter, 1, 'UTF-8', 0));
-			if ($conf->global->PDF_FOOTER_DISABLE_PAGEBREAK === '1') { $pdf->SetAutoPageBreak(1, 0); } // Restore pagebreak
+			if (getDolGlobalString('PDF_FOOTER_DISABLE_PAGEBREAK') === '1') { $pdf->SetAutoPageBreak(1, 0); } // Restore pagebreak
 
 			$posy -= $mycustomfooterheight - 3;
 		} else {
@@ -1207,7 +1210,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 			$posy = $marginwithfooter + 0;
 
 			// Option for footer background color (without freetext zone)
-			if (!empty($conf->global->PDF_FOOTER_BACKGROUND_COLOR)) {
+			if (getDolGlobalString('PDF_FOOTER_BACKGROUND_COLOR')) {
 				list($r, $g, $b) = sscanf($conf->global->PDF_FOOTER_BACKGROUND_COLOR, '%d, %d, %d');
 				$pdf->SetAutoPageBreak(0, 0); // Disable auto pagebreak
 				$pdf->Rect(0, $dims['hk'] - $posy + $freetextheight, $dims['wk'] + 1, $marginwithfooter + 1, 'F', '', $fill_color = array($r, $g, $b));
@@ -1216,7 +1219,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 
 			if ($line) {	// Free text
 				$pdf->SetXY($dims['lm'], -$posy);
-				if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT)) {   // by default
+				if (!getDolGlobalString('PDF_ALLOW_HTML_FOR_FREE_TEXT')) {   // by default
 					$pdf->MultiCell(0, 3, $line, 0, $align, 0);
 				} else {
 					$pdf->writeHTMLCell($pdf->page_largeur - $pdf->margin_left - $pdf->margin_right, $freetextheight, $dims['lm'], $dims['hk'] - $marginwithfooter, dol_htmlentitiesbr($line, 1, 'UTF-8', 0));
@@ -1227,14 +1230,17 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 			$pdf->SetY(-$posy);
 
 			// Hide footer line if footer background color is set
-			if (empty($conf->global->PDF_FOOTER_BACKGROUND_COLOR)) {
+			if (!getDolGlobalString('PDF_FOOTER_BACKGROUND_COLOR')) {
 				$pdf->line($dims['lm'], $dims['hk'] - $posy, $dims['wk'] - $dims['rm'], $dims['hk'] - $posy);
 			}
 
 			// Option for set top margin height of footer after freetext
-			if (!empty($conf->global->PDF_FOOTER_TOP_MARGIN) || ($conf->global->PDF_FOOTER_TOP_MARGIN === '0')) {
-				$posy -= $conf->global->PDF_FOOTER_TOP_MARGIN;
-			} else { $posy--; }
+			if (getDolGlobalString('PDF_FOOTER_TOP_MARGIN') || getDolGlobalString('PDF_FOOTER_TOP_MARGIN') === '0') {
+				// TODO Remove this case. Height should be good automatically, only $posy-- should be required.
+				$posy -= getDolGlobalString('PDF_FOOTER_TOP_MARGIN');
+			} else {
+				$posy--;
+			}
 
 			if (!empty($line1)) {
 				$pdf->SetFont('', 'B', 7);

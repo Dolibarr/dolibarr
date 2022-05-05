@@ -187,6 +187,14 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			$object->actionmsg = $langs->transnoentities("PropalValidatedInDolibarr", ($object->newref ? $object->newref : $object->ref));
 
 			$object->sendtoid = 0;
+		} elseif ($action == 'PROPAL_MODIFY') {
+			// Load translation files required by the page
+			$langs->loadLangs(array("agenda", "other", "propal"));
+
+			if (empty($object->actionmsg2)) $object->actionmsg2 = $langs->transnoentities("PropalBackToDraftInDolibarr", ($object->newref ? $object->newref : $object->ref));
+			$object->actionmsg = $langs->transnoentities("PropalBackToDraftInDolibarr", ($object->newref ? $object->newref : $object->ref));
+
+			$object->sendtoid = 0;
 		} elseif ($action == 'PROPAL_SENTBYMAIL') {
 			// Load translation files required by the page
 			$langs->loadLangs(array("agenda", "other", "propal"));

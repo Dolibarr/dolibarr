@@ -194,6 +194,15 @@ if (empty($reshook)) {
 								setEventMessages($db->lasterror(), null, 'errors');
 								break;
 							}
+							if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
+								$sqlpmp = 'UPDATE '.MAIN_DB_PREFIX.'product_perentity SET pmp = '.((float) $line->pmp_real).' WHERE fk_product = '.((int) $line->fk_product).' AND entity='.$conf->entity;
+								$resqlpmp = $db->query($sqlpmp);
+								if (! $resqlpmp) {
+									$error++;
+									setEventMessages($db->lasterror(), null, 'errors');
+									break;
+								}
+							}
 						}
 
 						// Update line with id of stock movement (and the start quantity if it has changed this last recording)
@@ -1121,11 +1130,12 @@ if ($object->id > 0) {
 					print '<td class="right">';
 					print price($pmp_valuation_real);
 					print '</td>';
-					print '<td class="nowraponall right">';
 
 					$totalExpectedValuation += $pmp_valuation;
 					$totalRealValuation += $pmp_valuation_real;
 				}
+
+				print '<td class="nowraponall right">';
 				if ($obj->fk_movement > 0) {
 					$stockmovment = new MouvementStock($db);
 					$stockmovment->fetch($obj->fk_movement);

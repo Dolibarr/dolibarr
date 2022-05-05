@@ -1724,8 +1724,8 @@ class Invoices extends DolibarrApi
 	 *
 	 * Return an array with invoice informations
 	 *
-	 * @param 	int 	$id           ID of template invoice
-	 * @param   int     $contact_list 0:Return array contains all properties, 1:Return array contains just id, 1: Return array contains just id, -1: Do not return contacts/adddesses
+	 * @param 	int 	$id           	ID of template invoice
+	 * @param   int     $contact_list 	0:Return array contains all properties, 1:Return array contains just id, -1: Do not return contacts/adddesses
 	 * @return 	array|mixed data without useless information
 	 *
 	 * @url GET    templates/{id}
