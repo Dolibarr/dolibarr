@@ -2020,7 +2020,7 @@ class Ticket extends CommonObject
 	 *     @param  int 		$projectid 			Project id to link element to
 	 *     @return int                   	   <0 if KO, >0 if OK
 	 */
-	public function setProject($projectid)
+	public function setProject($user, $projectid, $notrigger = 0)
 	{
 		if (!$this->table_element) {
 			dol_syslog(get_class($this)."::setProject was called on objet with property table_element not defined", LOG_ERR);

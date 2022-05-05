@@ -262,7 +262,7 @@ if (empty($reshook)) {
 
 	// Set project
 	if ($action == 'classin' && $usercancreate && $caneditproject) {
-		$result = $object->setProject($projectid);
+		$result = $object->setProject($user, $projectid);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
