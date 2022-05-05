@@ -95,10 +95,11 @@ if ($conf->loan->enabled) {
 	$list_account[] = 'LOAN_ACCOUNTING_ACCOUNT_INTEREST';
 	$list_account[] = 'LOAN_ACCOUNTING_ACCOUNT_INSURANCE';
 }
+$list_account[] = 'ACCOUNTING_ACCOUNT_SUSPENSE';
 if ($conf->societe->enabled) {
+$list_account[] = '---Deposits---';
 	$list_account[] = 'ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT';
 }
-$list_account[] = 'ACCOUNTING_ACCOUNT_SUSPENSE';
 
 /*
  * Actions
@@ -131,6 +132,20 @@ if ($action == 'update') {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
+}
+
+if ($action == 'setdisableauxiliaryaccountoncustomerdeposit') {
+	$setDisableAuxiliaryAccountOnCustomerDeposit = GETPOST('value', 'int');
+	$res = dolibarr_set_const($db, "ACCOUNTING_ACCOUNT_CUSTOMER_USE_AUXILIARY_ON_DEPOSIT", $setDisableAuxiliaryAccountOnCustomerDeposit, 'yesno', 0, '', $conf->entity);
+	if (!($res > 0)) {
+		$error++;
+	}
+
+	if (!$error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'mesgs');
 	}
 }
 
@@ -231,6 +246,20 @@ foreach ($list_account as $key) {
 	}
 }
 
+if ($conf->societe->enabled) {
+	print '<tr class="oddeven">';
+	print '<td>' . img_picto('', 'bill', 'class="pictofixedwidth"') . $langs->trans("UseAuxiliaryAccountOnCustomerDeposit") . '</td>';
+	if (!empty($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER_USE_AUXILIARY_ON_DEPOSIT)) {
+		print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?token=' . newToken() . '&action=setdisableauxiliaryaccountoncustomerdeposit&value=0">';
+		print img_picto($langs->trans("Activated"), 'switch_on', '', false, 0, 0, '', 'warning');
+		print '</a></td>';
+	} else {
+		print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?token=' . newToken() . '&action=setdisableauxiliaryaccountoncustomerdeposit&value=1">';
+		print img_picto($langs->trans("Disabled"), 'switch_off');
+		print '</a></td>';
+	}
+	print '</tr>';
+}
 
 print "</table>\n";
 print "</div>\n";
