@@ -342,5 +342,5 @@ ALTER TABLE llx_c_partnership_type ADD COLUMN keyword	varchar(128);
 
 ALTER TABLE llx_eventorganization_conferenceorboothattendee	ADD COLUMN firstname varchar(100);
 ALTER TABLE llx_eventorganization_conferenceorboothattendee	ADD COLUMN lastname varchar(100);
-
+ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD COLUMN email_company varchar(128) after email;
 
