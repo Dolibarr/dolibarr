@@ -990,6 +990,7 @@ function document_preview(file, type, title)
 		img.src = file;
 
 	}
+
 	function show_preview(mode) {
 		/* console.log("mode="+mode+" file="+file+" type="+type+" width="+width+" height="+height); */
 		var newElem = '<object name="objectpreview" data="'+file+'" type="'+type+'" width="'+object_width+'" height="'+object_height+'" param="noparam"></object>';
@@ -1004,6 +1005,7 @@ function document_preview(file, type, title)
 		}
 
 		$("#dialogforpopup").html(newElem);
+
 		$("#dialogforpopup").dialog({
 			closeOnEscape: true,
 			resizable: true,
@@ -1196,6 +1198,24 @@ $(document).ready(function() {
 		jQuery(".id-container").css('width', '100%');
 
 	}
+});
+
+
+/*
+ * Hacky fix for a bug in select2 with jQuery 3.6.0's new nested-focus "protection"
+ * see: https://github.com/select2/select2/issues/5993
+ * see: https://github.com/jquery/jquery/issues/4382
+ *
+ * TODO: Recheck with the select2 GH issue and remove once this is fixed on their side
+ */
+$(document).on('select2:open', () => {
+	console.log("Execute the focus (click on combo or use space when on component");
+	let allFound = document.querySelectorAll('.select2-container--open .select2-search__field');
+	$(this).one('mouseup keyup',()=>{
+		setTimeout(()=>{
+			allFound[allFound.length - 1].focus();
+		},0);
+	});
 });
 
 // End of lib_head.js.php

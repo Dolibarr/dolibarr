@@ -9,6 +9,7 @@
  * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2014      Ion Agorria          <ion@agorria.com>
  * Copyright (C) 2018-2019 Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2022      Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2022      Charlene Benke        <charlene@patas-monkey.com>
  *
  * This	program	is free	software; you can redistribute it and/or modify
@@ -78,6 +79,7 @@ $cancel         = GETPOST('cancel', 'alpha');
 $lineid         = GETPOST('lineid', 'int');
 $origin = GETPOST('origin', 'alpha');
 $originid = (GETPOST('originid', 'int') ? GETPOST('originid', 'int') : GETPOST('origin_id', 'int')); // For backward compatibility
+$rank = (GETPOST('rank', 'int') > 0) ? GETPOST('rank', 'int') : -1;
 
 //PDF
 $hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
@@ -260,7 +262,7 @@ if (empty($reshook)) {
 
 	// Set project
 	if ($action == 'classin' && $usercancreate && $caneditproject) {
-		$result = $object->setProject($projectid);
+		$result = $object->setProject($user, $projectid);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
@@ -609,7 +611,8 @@ if (empty($reshook)) {
 					$productsupplier->fk_unit,
 					$pu_devise,
 					'',
-					0
+					0,
+					min($rank, count($object->lines) + 1)
 				);
 			}
 			if ($idprod == -99 || $idprod == 0) {
@@ -1840,11 +1843,13 @@ if ($action == 'create') {
 		$title = $langs->trans('ProductsAndServices');
 		print load_fiche_titre($title);
 
+		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 
 		$objectsrc->printOriginLinesList('', $selectedLines);
 
 		print '</table>';
+		print '</div>';
 	}
 	print "</form>\n";
 } elseif (!empty($object->id)) {

@@ -275,6 +275,8 @@ class User extends CommonObject
 
 	public $datelastlogin;
 	public $datepreviouslogin;
+	public $iplastlogin;
+	public $ippreviouslogin;
 	public $datestartvalidity;
 	public $dateendvalidity;
 
@@ -357,6 +359,7 @@ class User extends CommonObject
 	 */
 	public $fk_warehouse;
 
+
 	public $fields = array(
 		'rowid'=>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'index'=>1, 'position'=>1, 'comment'=>'Id'),
 		'lastname'=>array('type'=>'varchar(50)', 'label'=>'LastName', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>20, 'searchall'=>1),
@@ -434,6 +437,8 @@ class User extends CommonObject
 		$sql .= " u.tms as datem,";
 		$sql .= " u.datelastlogin as datel,";
 		$sql .= " u.datepreviouslogin as datep,";
+		$sql .= " u.iplastlogin,";
+		$sql .= " u.ippreviouslogin,";
 		$sql .= " u.datelastpassvalidation,";
 		$sql .= " u.datestartvalidity,";
 		$sql .= " u.dateendvalidity,";
@@ -561,6 +566,8 @@ class User extends CommonObject
 				$this->datem				= $this->db->jdate($obj->datem);
 				$this->datelastlogin = $this->db->jdate($obj->datel);
 				$this->datepreviouslogin = $this->db->jdate($obj->datep);
+				$this->iplastlogin = $obj->iplastlogin;
+				$this->ippreviouslogin = $obj->ippreviouslogin;
 				$this->datestartvalidity = $this->db->jdate($obj->datestartvalidity);
 				$this->dateendvalidity = $this->db->jdate($obj->dateendvalidity);
 
@@ -1872,7 +1879,7 @@ class User extends CommonObject
 		$sql .= ", login = '".$this->db->escape($this->login)."'";
 		$sql .= ", api_key = ".($this->api_key ? "'".$this->db->escape($this->api_key)."'" : "null");
 		$sql .= ", gender = ".($this->gender != -1 ? "'".$this->db->escape($this->gender)."'" : "null"); // 'man' or 'woman'
-		$sql .= ", birth=".(strval($this->birth) != '' ? "'".$this->db->idate($this->birth)."'" : 'null');
+		$sql .= ", birth=".(strval($this->birth) != '' ? "'".$this->db->idate($this->birth, 'tzserver')."'" : 'null');
 		if (!empty($user->admin)) {
 			$sql .= ", admin = ".(int) $this->admin; // admin flag can be set/unset only by an admin user
 		}
@@ -2110,9 +2117,13 @@ class User extends CommonObject
 		// phpcs:enable
 		$now = dol_now();
 
+		$userremoteip = getUserRemoteIP();
+
 		$sql = "UPDATE ".$this->db->prefix()."user SET";
 		$sql .= " datepreviouslogin = datelastlogin,";
+		$sql .= " ippreviouslogin = iplastlogin,";
 		$sql .= " datelastlogin = '".$this->db->idate($now)."',";
+		$sql .= " iplastlogin = '".$this->db->escape($userremoteip)."',";
 		$sql .= " tms = tms"; // La date de derniere modif doit changer sauf pour la mise a jour de date de derniere connexion
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
@@ -2121,6 +2132,8 @@ class User extends CommonObject
 		if ($resql) {
 			$this->datepreviouslogin = $this->datelastlogin;
 			$this->datelastlogin = $now;
+			$this->ippreviouslogin = $this->iplastlogin;
+			$this->iplastlogin = $userremoteip;
 			return 1;
 		} else {
 			$this->error = $this->db->lasterror().' sql='.$sql;
@@ -3115,7 +3128,9 @@ class User extends CommonObject
 		$this->datem = $now;
 
 		$this->datelastlogin = $now;
+		$this->iplastlogin = '127.0.0.1';
 		$this->datepreviouslogin = $now;
+		$this->ippreviouslogin = '127.0.0.1';
 		$this->statut = 1;
 
 		$this->entity = 1;
@@ -3733,7 +3748,7 @@ class User extends CommonObject
 	 */
 	public function findUserIdByEmail($email)
 	{
-		if ($this->findUserIdByEmailCache[$email]) {
+		if (isset($this->findUserIdByEmailCache[$email])) {
 			return $this->findUserIdByEmailCache[$email];
 		}
 

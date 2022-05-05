@@ -50,7 +50,7 @@ class modIntracommreport extends DolibarrModules
 		$this->description = "Intracomm report management (Support for French DEB/DES format)";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or 'dolibarr_deprecated' or version
-		$this->version = 'experimental';
+		$this->version = 'development';
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		$this->picto = 'intracommreport';

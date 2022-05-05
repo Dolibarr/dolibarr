@@ -227,11 +227,16 @@ class RssParser
 		} else {
 			try {
 				$result = getURLContent($this->_urlRSS, 'GET', '', 1, array(), array('http', 'https'), 0);
+
 				if (!empty($result['content'])) {
 					$str = $result['content'];
+				} elseif (!empty($result['curl_error_msg'])) {
+					$this->error = 'Error retrieving URL '.$this->_urlRSS.' - '.$result['curl_error_msg'];
+					return -1;
 				}
 			} catch (Exception $e) {
-				print 'Error retrieving URL '.$this->_urlRSS.' - '.$e->getMessage();
+				$this->error = 'Error retrieving URL '.$this->_urlRSS.' - '.$e->getMessage();
+				return -2;
 			}
 		}
 
@@ -248,7 +253,8 @@ class RssParser
 				}
 
 				$xmlparser = xml_parser_create('');
-				if (!is_resource($xmlparser)) {
+
+				if (!is_resource($xmlparser) && !is_object($xmlparser)) {
 					$this->error = "ErrorFailedToCreateParser";
 					return -1;
 				}
@@ -256,10 +262,11 @@ class RssParser
 				xml_set_object($xmlparser, $this);
 				xml_set_element_handler($xmlparser, 'feed_start_element', 'feed_end_element');
 				xml_set_character_data_handler($xmlparser, 'feed_cdata');
+
 				$status = xml_parse($xmlparser, $str);
 				xml_parser_free($xmlparser);
 				$rss = $this;
-				//var_dump($rss->_format);exit;
+				//var_dump($status.' '.$rss->_format);exit;
 			}
 		}
 

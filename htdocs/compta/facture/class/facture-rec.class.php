@@ -945,6 +945,13 @@ class FactureRec extends CommonInvoice
 				$product_type = $product->type;
 			}
 
+			// Rank to use
+			$ranktouse = $rang;
+			if ($ranktouse == -1) {
+				$rangmax = $this->line_max(0);
+				$ranktouse = $rangmax + 1;
+			}
+
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."facturedet_rec (";
 			$sql .= "fk_facture";
 			$sql .= ", label";
@@ -1003,7 +1010,7 @@ class FactureRec extends CommonInvoice
 			$sql .= ", ".($fk_fournprice > 0 ? $fk_fournprice : 'null');
 			$sql .= ", ".($pa_ht ? price2num($pa_ht) : 0);
 			$sql .= ", ".((int) $info_bits);
-			$sql .= ", ".((int) $rang);
+			$sql .= ", ".((int) $ranktouse);
 			$sql .= ", ".((int) $special_code);
 			$sql .= ", ".($fk_unit ? ((int) $fk_unit) : "null");
 			$sql .= ", ".(int) $this->fk_multicurrency;
@@ -1757,6 +1764,23 @@ class FactureRec extends CommonInvoice
 		);
 
 		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+	}
+
+	/**
+	 * Function used to replace a product id with another one.
+	 *
+	 * @param DoliDB $db Database handler
+	 * @param int $origin_id Old product id
+	 * @param int $dest_id New product id
+	 * @return bool
+	 */
+	public static function replaceProduct(DoliDB $db, $origin_id, $dest_id)
+	{
+		$tables = array(
+			'facturedet_rec'
+		);
+
+		return CommonObject::commonReplaceProduct($db, $origin_id, $dest_id, $tables);
 	}
 
 	/**
