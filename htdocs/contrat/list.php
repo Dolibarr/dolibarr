@@ -312,6 +312,9 @@ if ($search_zip) {
 if ($search_town) {
 	$sql .= natural_search(array('s.town'), $search_town);
 }
+if ($search_country && $search_country != '-1') {
+	$sql .= " AND s.fk_pays IN (".$db->sanitize($search_country).')';
+}
 if ($search_sale > 0) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $search_sale);
 }
@@ -488,6 +491,9 @@ if ($search_user > 0) {
 }
 if ($search_type_thirdparty > 0) {
 	$param .= '&search_type_thirdparty='.urlencode($search_type_thirdparty);
+}
+if ($search_country != '') {
+	$param .= "&search_country=".urlencode($search_country);
 }
 if ($search_product_category > 0) {
 	$param .= '&search_product_category='.urlencode($search_product_category);
