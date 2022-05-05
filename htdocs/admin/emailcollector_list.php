@@ -596,16 +596,18 @@ print '</table>'."\n";
 print '</div>'."\n";
 
 print load_fiche_titre($langs->trans("Other"), '', '');
+
+
+print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
 print '<td></td>';
-print '<td></td>';
 print "</tr>\n";
 
 // Hide e-mail headers from collected messages
-print '<tr class="oddeven"><td>'.$langs->trans("EmailCollectorHideMailHeaders").'</td>';
+print '<tr class="oddeven"><td>'.$form->textwithpicto($langs->trans("EmailCollectorHideMailHeaders"), $langs->transnoentitiesnoconv("EmailCollectorHideMailHeadersHelp")).'</td>';
 print '<td class="left">';
 if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('MAIN_EMAILCOLLECTOR_MAIL_WITHOUT_HEADER');
@@ -614,12 +616,13 @@ if ($conf->use_javascript_ajax) {
 	print $form->selectarray("MAIN_EMAILCOLLECTOR_MAIL_WITHOUT_HEADER", $arrval, $conf->global->TICKET_AUTO_READ_WHEN_CREATED_FROM_BACKEND);
 }
 print '</td>';
-print '<td class="center">';
-print $form->textwithpicto('', $langs->trans("EmailCollectorHideMailHeadersHelp"), 1, 'help');
-print '</td>';
 print '</tr>';
 
-print '</table><br>';
+print '</table>';
+print '</div>';
+
+print '<br>';
+
 print '</form>'."\n";
 
 if (in_array('builddoc', $arrayofmassactions) && ($nbtotalofrecords === '' || $nbtotalofrecords)) {
