@@ -97,7 +97,7 @@ if ($conf->loan->enabled) {
 }
 $list_account[] = 'ACCOUNTING_ACCOUNT_SUSPENSE';
 if ($conf->societe->enabled) {
-$list_account[] = '---Deposits---';
+	$list_account[] = '---Deposits---';
 	$list_account[] = 'ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT';
 }
 
