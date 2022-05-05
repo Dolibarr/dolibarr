@@ -490,7 +490,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<div class="div-table-responsive-no-min">';
 	print '<table id="tablelineoffilters" class="noborder margintable noshadow">';
 	print '<tr class="liste_titre nodrag nodrop">';
-	print '<td>'.img_picto('', 'filter', 'class="pictofixedwidth"').$form->textwithpicto($langs->trans("Filters"), $langs->trans("EmailCollectorFilterDesc")).'</td><td></td><td></td>';
+	print '<td>'.img_picto('', 'filter', 'class="pictofixedwidth opacitymedium"').$form->textwithpicto($langs->trans("Filters"), $langs->trans("EmailCollectorFilterDesc")).'</td><td></td><td></td>';
 	print '</tr>';
 	// Add filter
 	print '<tr class="oddeven nodrag nodrop">';
@@ -647,7 +647,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			print $form->textwithpicto('', $langs->transnoentitiesnoconv('EmailCollectorLoadThirdPartyHelp'));
 		}
 		print '</td>';
-		print '<td class="wordbreak minwidth300">';
+		print '<td class="wordbreak minwidth300 small">';
 		if ($action == 'editoperation' && $ruleaction['id'] == $operationid) {
 			print '<input type="text" class="quatrevingtquinzepercent" name="operationparam2" value="'.$ruleaction['actionparam'].'"><br>';
 			print '<input type="hidden" name="rowidoperation2" value="'.$ruleaction['id'].'">';
