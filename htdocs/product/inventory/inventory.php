@@ -220,7 +220,6 @@ if (empty($reshook)) {
 							}
 						}
 					}
-
 				}
 				$i++;
 			}
@@ -922,7 +921,7 @@ if ($object->id > 0) {
 		print '<td class="right">';
 		print $form->textwithpicto($langs->trans("RealQty"), $langs->trans("InventoryRealQtyHelp"));
 		print '</td>';
-    }
+	}
 	if ($object->status == $object::STATUS_DRAFT || $object->status == $object::STATUS_VALIDATED) {
 		// Actions or link to stock movement
 		print '<td class="center">';
@@ -1025,12 +1024,12 @@ if ($object->id > 0) {
 			if (!empty($conf->productbatch->enabled)) {
 				print '<td id="id_'.$obj->rowid.'_batch" data-batch="'.dol_escape_htmltag($obj->batch).'">';
 				$batch_static = new Productlot($db);
-                $res = $batch_static->fetch(0, $product_static->id, $obj->batch);
-                if($res){
+				$res = $batch_static->fetch(0, $product_static->id, $obj->batch);
+				if ($res) {
 					print $batch_static->getNomUrl(1);
-                } else {
+				} else {
 					print dol_escape_htmltag($obj->batch);
-                }
+				}
 				print '</td>';
 			}
 
@@ -1100,7 +1099,7 @@ if ($object->id > 0) {
 					print '</a>';
 					print '<input type="text" class="maxwidth50 right realqty" name="id_'.$obj->rowid.'" id="id_'.$obj->rowid.'_input" value="'.$qty_view.'">';
 					print '</td>';
-                }
+				}
 
 				// Picto delete line
 				print '<td class="right">';
@@ -1143,7 +1142,7 @@ if ($object->id > 0) {
 					print '<td class="right nowraponall">';
 					print $obj->qty_view;	// qty found
 					print '</td>';
-                }
+				}
 				if ($obj->fk_movement > 0) {
 					$stockmovment = new MouvementStock($db);
 					$stockmovment->fetch($obj->fk_movement);
