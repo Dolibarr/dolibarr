@@ -2223,7 +2223,7 @@ function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs
 
 	$ret = '';
 	$countriesusingstate = array('AU', 'CA', 'US', 'IN', 'GB', 'ES', 'UK', 'TR', 'CN'); // See also MAIN_FORCE_STATE_INTO_ADDRESS
-
+	$sep = "\n";
 	// See format of addresses on https://en.wikipedia.org/wiki/Address
 	// Address
 	if (empty($mode)) {
@@ -2233,12 +2233,13 @@ function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs
 	if (isset($object->country_code) && in_array($object->country_code, array('AU', 'CA', 'US', 'CN')) || !empty($conf->global->MAIN_FORCE_STATE_INTO_ADDRESS)) {
 		// US: title firstname name \n address lines \n town, state, zip \n country
 		$town = ($extralangcode ? $object->array_languages['town'][$extralangcode] : (empty($object->town) ? '' : $object->town));
-		$ret .= ($ret ? $sep : '').$town;
+		$ret .= (($ret && $town) ? $sep : '').$town;
+
 		if (!empty($object->state))	{
-			$ret .= ($ret ? ", " : '').$object->state;
+			$ret .= ($ret ? ($town ? ", " : $sep) : '').$object->state;
 		}
 		if (!empty($object->zip)) {
-			$ret .= ($ret ? ", " : '').$object->zip;
+			$ret .= ($ret ? (($town || $object->state) ? ", " : $sep) : '').$object->zip;
 		}
 	} elseif (isset($object->country_code) && in_array($object->country_code, array('GB', 'UK'))) {
 		// UK: title firstname name \n address lines \n town state \n zip \n country
@@ -7140,7 +7141,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__TICKET_USER_ASSIGN__'] = '__TICKET_USER_ASSIGN__';
 			}
 
-			if (!empty($conf->recruitment->enabled) && (!is_object($object) || $object->element == 'candidature')) {
+			if (!empty($conf->recruitment->enabled) && (!is_object($object) || $object->element == 'recruitmentcandidature')) {
 				$substitutionarray['__CANDIDATE_FULLNAME__'] = '__CANDIDATE_FULLNAME__';
 				$substitutionarray['__CANDIDATE_FIRSTNAME__'] = '__CANDIDATE_FIRSTNAME__';
 				$substitutionarray['__CANDIDATE_LASTNAME__'] = '__CANDIDATE_LASTNAME__';
@@ -7289,8 +7290,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 
 			if (is_object($object) && $object->element == 'recruitmentcandidature') {
 				$substitutionarray['__CANDIDATE_FULLNAME__'] = $object->getFullName($outputlangs);
-				$substitutionarray['__CANDIDATE_FIRSTNAME__'] = $object->firstname;
-				$substitutionarray['__CANDIDATE_LASTNAME__'] = $object->lastname;
+				$substitutionarray['__CANDIDATE_FIRSTNAME__'] = isset($object->firstname) ? $object->firstname : '';
+				$substitutionarray['__CANDIDATE_LASTNAME__'] = isset($object->lastname) ? $object->lastname : '';
 			}
 
 			if (is_object($object->project)) {
