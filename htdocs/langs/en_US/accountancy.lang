@@ -278,10 +278,10 @@ DescVentilExpenseReportMore=If you setup accounting account on type of expense r
 DescVentilDoneExpenseReport=Consult here the list of the lines of expenses reports and their fees accounting account
 
 Closure=Annual closure
-DescClosure=Consult here the number of movements by month who are not validated & fiscal years already open
-OverviewOfMovementsNotValidated=Step 1/ Overview of movements not validated. (Necessary to close a fiscal year)
-AllMovementsWereRecordedAsValidated=All movements were recorded as validated
-NotAllMovementsCouldBeRecordedAsValidated=Not all movements could be recorded as validated
+DescClosure=Consult here the number of movements by month who are not yet validated & locked
+OverviewOfMovementsNotValidated=Overview of movements not validated and locked
+AllMovementsWereRecordedAsValidated=All movements were recorded as validated and locked
+NotAllMovementsCouldBeRecordedAsValidated=Not all movements could be recorded as validated and locked
 ValidateMovements=Validate and lock record...
 DescValidateMovements=Any modification or deletion of writing, lettering and deletes will be prohibited. All entries for an exercise must be validated otherwise closing will not be possible
 
@@ -302,6 +302,7 @@ NotYetAccounted=Not yet transferred to accounting
 ShowTutorial=Show Tutorial
 NotReconciled=Not reconciled
 WarningRecordWithoutSubledgerAreExcluded=Warning, all lines without subledger account defined are filtered and excluded from this view
+AccountRemovedFromCurrentChartOfAccount=Accounting account that does not exist in the current chart of accounts
 
 ## Admin
 BindingOptions=Binding options
@@ -395,6 +396,21 @@ Range=Range of accounting account
 Calculated=Calculated
 Formula=Formula
 
+## Reconcile
+Unlettering=Unreconcile
+AccountancyNoLetteringModified=No reconcile modified
+AccountancyOneLetteringModifiedSuccessfully=One reconcile successfully modified
+AccountancyLetteringModifiedSuccessfully=%s reconcile successfully modified
+AccountancyNoUnletteringModified=No unreconcile modified
+AccountancyOneUnletteringModifiedSuccessfully=One unreconcile successfully modified
+AccountancyUnletteringModifiedSuccessfully=%s unreconcile successfully modified
+
+## Confirm box
+ConfirmMassUnlettering=Bulk Unreconcile confirmation
+ConfirmMassUnletteringQuestion=Are you sure you want to Unreconcile the %s selected record(s)?
+ConfirmMassDeleteBookkeepingWriting=Bulk Delete confirmation
+ConfirmMassDeleteBookkeepingWritingQuestion=This will delete the transaction from the accounting (all lines related to the same transaction will be deleted) Are you sure you want to delete the %s selected record(s)?
+
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Some mandatory steps of setup was not done, please complete them
 ErrorNoAccountingCategoryForThisCountry=No accounting account group available for country %s (See Home - Setup - Dictionaries)
@@ -407,6 +423,9 @@ Binded=Lines bound
 ToBind=Lines to bind
 UseMenuToSetBindindManualy=Lines not yet bound, use menu <a href="%s">%s</a> to make the binding manually
 SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Sorry this module is not compatible with the experimental feature of situation invoices
+AccountancyErrorMismatchLetterCode=Mismatch in reconcile code
+AccountancyErrorMismatchBalanceAmount=The balance (%s) is not equal to 0
+AccountancyErrorLetteringBookkeeping=Errors have occurred concerning the transactions: %s
 
 ## Import
 ImportAccountingEntries=Accounting entries

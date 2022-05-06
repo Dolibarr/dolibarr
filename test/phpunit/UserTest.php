@@ -204,7 +204,7 @@ class UserTest extends PHPUnit\Framework\TestCase
 		$newlocalobject=new User($this->savdb);
 		$newlocalobject->initAsSpecimen();
 		$this->changeProperties($newlocalobject);
-		$this->assertEquals($this->objCompare($localobject, $newlocalobject, true, array('id','socid','societe_id','specimen','note','ref','pass','pass_indatabase','pass_indatabase_crypted','pass_temp','datec','datem','datelastlogin','datepreviouslogin','trackid')), array());    // Actual, Expected
+		$this->assertEquals($this->objCompare($localobject, $newlocalobject, true, array('id','socid','societe_id','specimen','note','ref','pass','pass_indatabase','pass_indatabase_crypted','pass_temp','datec','datem','datelastlogin','datepreviouslogin','iplastlogin','ippreviouslogin','trackid')), array());    // Actual, Expected
 
 		return $localobject;
 	}

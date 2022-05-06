@@ -665,6 +665,8 @@ if (!$error && $action == 'writebookkeeping') {
 				// Line into thirdparty account
 				foreach ($tabtp[$key] as $k => $mt) {
 					if ($mt) {
+						$lettering = false;
+
 						$reflabel = '';
 						if (!empty($val['lib'])) {
 							$reflabel .= dol_string_nohtmltag($val['lib']).($val['soclib'] ? " - " : "");
@@ -693,11 +695,13 @@ if (!$error && $action == 'writebookkeeping') {
 						$bookkeeping->date_creation = $now;
 
 						if ($tabtype[$key] == 'payment') {	// If payment is payment of customer invoice, we get ref of invoice
+							$lettering = true;
 							$bookkeeping->subledger_account = $k; // For payment, the subledger account is stored as $key of $tabtp
 							$bookkeeping->subledger_label = $tabcompany[$key]['name']; // $tabcompany is defined only if we are sure there is 1 thirdparty for the bank transaction
 							$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER;
 							$bookkeeping->label_compte = $accountingaccountcustomer->label;
 						} elseif ($tabtype[$key] == 'payment_supplier') {	// If payment is payment of supplier invoice, we get ref of invoice
+							$lettering = true;
 							$bookkeeping->subledger_account = $k; // For payment, the subledger account is stored as $key of $tabtp
 							$bookkeeping->subledger_label = $tabcompany[$key]['name']; // $tabcompany is defined only if we are sure there is 1 thirdparty for the bank transaction
 							$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER;
@@ -779,6 +783,12 @@ if (!$error && $action == 'writebookkeeping') {
 								$error++;
 								$errorforline++;
 								setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
+							}
+						} else {
+							if ($lettering && getDolGlobalInt('ACCOUNTING_ENABLE_LETTERING')) {
+								require_once DOL_DOCUMENT_ROOT . '/accountancy/class/lettering.class.php';
+								$lettering_static = new Lettering($db);
+								$nb_lettering = $lettering_static->bookkeepingLetteringAll(array($bookkeeping->id));
 							}
 						}
 					}

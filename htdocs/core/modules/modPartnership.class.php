@@ -219,19 +219,21 @@ class modPartnership extends DolibarrModules
 			// Label of tables
 			'tablib'=>array("PartnershipType"),
 			// Request to select fields
-			'tabsql'=>array('SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'c_partnership_type as f WHERE f.entity = '.$conf->entity),
+			'tabsql'=>array('SELECT f.rowid as rowid, f.code, f.label, f.keyword, f.active FROM '.MAIN_DB_PREFIX.'c_partnership_type as f WHERE f.entity = '.((int) $conf->entity)),
 			// Sort order
 			'tabsqlsort'=>array("label ASC"),
 			// List of fields (result of select to show dictionary)
-			'tabfield'=>array("code,label"),
+			'tabfield'=>array("code,label,keyword"),
 			// List of fields (list of fields to edit a record)
-			'tabfieldvalue'=>array("code,label"),
+			'tabfieldvalue'=>array("code,label,keyword"),
 			// List of fields (list of fields for insert)
-			'tabfieldinsert'=>array("code,label"),
+			'tabfieldinsert'=>array("code,label,keyword"),
 			// Name of columns with primary key (try to always name it 'rowid')
 			'tabrowid'=>array("rowid"),
 			// Condition to show each dictionary
-			'tabcond'=>array($conf->partnership->enabled)
+			'tabcond'=>array($conf->partnership->enabled),
+			// Help tooltip for each fields of the dictionary
+			'tabhelp'=>array(array('keyword'=>$langs->trans('KeywordToCheckInWebsite')))
 		);
 
 		// Boxes/Widgets
@@ -428,7 +430,7 @@ class modPartnership extends DolibarrModules
 		$sql = array();
 
 		// Document templates
-		$moduledir = 'partnership';
+		$moduledir = dol_sanitizeFileName('partnership');
 		$myTmpObjects = array();
 		$myTmpObjects['Partnership'] = array('includerefgeneration'=>0, 'includedocgeneration'=>0);
 
@@ -437,8 +439,8 @@ class modPartnership extends DolibarrModules
 				continue;
 			}
 			if ($myTmpObjectArray['includerefgeneration']) {
-				$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/partnership/template_partnerships.odt';
-				$dirodt = DOL_DATA_ROOT.'/doctemplates/partnership';
+				$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/'.$moduledir.'/template_partnerships.odt';
+				$dirodt = DOL_DATA_ROOT.'/doctemplates/'.$moduledir;
 				$dest = $dirodt.'/template_partnerships.odt';
 
 				if (file_exists($src) && !file_exists($dest)) {

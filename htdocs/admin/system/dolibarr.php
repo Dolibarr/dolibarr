@@ -435,7 +435,8 @@ foreach ($configfileparameters as $key => $value) {
 				if (empty($valuetoshow)) {
 					print img_warning("EditConfigFileToAddEntry", 'dolibarr_main_instance_unique_id');
 				}
-				print ' &nbsp; <span class="opacitymedium">('.$langs->trans("HashForPing").'='.md5('dolibarr'.$valuetoshow).')</span>';
+				print '</td></tr>';
+				print '<tr class="oddeven"><td></td><td>&nbsp; => '.$langs->trans("HashForPing").'</td><td>'.md5('dolibarr'.$valuetoshow).'</td></tr>'."\n";
 			} elseif ($newkey == 'dolibarr_main_prod') {
 				print ${$newkey};
 

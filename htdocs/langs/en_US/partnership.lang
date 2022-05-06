@@ -59,6 +59,7 @@ BacklinkNotFoundOnPartnerWebsite=Backlink not found on partner website
 ConfirmClosePartnershipAsk=Are you sure you want to cancel this partnership?
 PartnershipType=Partnership type
 PartnershipRefApproved=Partnership %s approved
+KeywordToCheckInWebsite=If you want to check that a given keyword is present into the website of each partner, define this keyword here
 
 #
 # Template Mail
@@ -90,3 +91,4 @@ PartnershipAccepted=Accepted
 PartnershipRefused=Refused
 PartnershipCanceled=Canceled
 PartnershipManagedFor=Partners are
+
