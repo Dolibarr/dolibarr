@@ -29,6 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 if (!empty($conf->categorie->enabled)) {
@@ -83,6 +84,7 @@ $search_timespend = GETPOST('search_timespend');
 $search_progresscalc = GETPOST('search_progresscalc');
 $search_progressdeclare = GETPOST('search_progressdeclare');
 $search_task_budget_amount = GETPOST('search_task_budget_amount');
+$search_task_fk_statut = GETPOST('search_task_fk_statut');
 
 $search_date_start_startmonth = GETPOST('search_date_start_startmonth', 'int');
 $search_date_start_startyear = GETPOST('search_date_start_startyear', 'int');
@@ -145,6 +147,7 @@ $hookmanager->initHooks(array('projecttaskscard', 'globalcard'));
 $progress = GETPOST('progress', 'int');
 $budget_amount = GETPOST('budget_amount', 'int');
 $label = GETPOST('label', 'alpha');
+$fk_statut = GETPOST('fk_statut', 'alpha');
 $description = GETPOST('description', 'restricthtml');
 $planned_workloadhour = (GETPOST('planned_workloadhour', 'int') ?GETPOST('planned_workloadhour', 'int') : 0);
 $planned_workloadmin = (GETPOST('planned_workloadmin', 'int') ?GETPOST('planned_workloadmin', 'int') : 0);
@@ -164,6 +167,7 @@ $arrayfields = array(
 	't.progress_summary'=>array('label'=>$langs->trans("TaskProgressSummary"), 'checked'=>1, 'position'=>10),
 	't.budget_amount'=>array('label'=>"Budget", 'checked'=>1, 'position'=>11),
 	'c.assigned'=>array('label'=>$langs->trans("TaskRessourceLinks"), 'checked'=>1, 'position'=>12),
+	't.fk_statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>13),
 );
 if ($object->usage_bill_time) {
 	$arrayfields['t.tobill'] = array('label'=>$langs->trans("TimeToBill"), 'checked'=>0, 'position'=>11);
@@ -209,6 +213,7 @@ if (empty($reshook)) {
 		$search_progresscalc = '';
 		$search_progressdeclare = '';
 		$search_task_budget_amount = '';
+		$search_task_fk_statut = '';
 		$toselect = '';
 		$search_array_options = array();
 		$search_date_start_startmonth = "";
@@ -294,6 +299,10 @@ if ($search_task_budget_amount) {
 	$morewherefilterarray[]= natural_search('t.budget_amount', $search_task_budget_amount, 1, 1);
 }
 
+if ($search_task_fk_statut > 0) {
+	$morewherefilterarray[]= natural_search('t.fk_statut',$search_task_fk_statut, 1, 1);
+}
+
 $morewherefilter = '';
 if (count($morewherefilterarray) > 0) {
 	$morewherefilter = ' AND '.implode(' AND ', $morewherefilterarray);
@@ -346,6 +355,7 @@ if ($action == 'createtask' && $user->rights->projet->creer) {
 			$task->date_end = $date_end;
 			$task->progress = $progress;
 			$task->budget_amount = $budget_amount;
+			$task->fk_statut = $fk_status;
 
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost(null, $task);
@@ -397,6 +407,7 @@ if ($action == 'createtask' && $user->rights->projet->creer) {
 $now = dol_now();
 $form = new Form($db);
 $formother = new FormOther($db);
+$formProject = new FormProjets($db);
 $socstatic = new Societe($db);
 $projectstatic = new Project($db);
 $taskstatic = new Task($db);
@@ -534,6 +545,9 @@ if ($id > 0 || !empty($ref)) {
 	}
 	if ($search_task_budget_amount) {
 		$param .= '&search_task_budget_amount='.urlencode($search_task_budget_amount);
+	}
+	if ($search_task_fk_statut) {
+		$param .= '&search_task_fk_statut='.urlencode($search_task_fk_statut);
 	}
 	if ($optioncss != '') {
 		$param .= '&optioncss='.urlencode($optioncss);
@@ -979,6 +993,12 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 		print '</td>';
 	}
 
+	if (!empty($arrayfields['t.fk_statut']['checked'])) {
+		print '<td class="liste_titre maxwidthonsmartphone right">';
+		print $formProject->selectTaskStatus();
+		print '</td>';
+	}
+
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 
 	// Action column
@@ -1041,6 +1061,9 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 
 	if (!empty($arrayfields['c.assigned']['checked'])) {
 		print_liste_field_titre($arrayfields['c.assigned']['label'], $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'center ', '');
+	}
+	if (!empty($arrayfields['t.fk_statut']['checked'])) {
+		print_liste_field_titre($arrayfields['t.fk_statut']['label'], $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'right ', '', 1);
 	}
 	// Extra fields
 	$disablesortlink = 1;

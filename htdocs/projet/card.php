@@ -1273,11 +1273,30 @@ if ($action == 'create' && $user->rights->projet->creer) {
 			}
 
 			// Close
-			if ($object->statut == Project::STATUS_VALIDATED && $user->rights->projet->creer) {
-				if ($userWrite > 0) {
-					print '<a class="butAction" href="card.php?id='.$object->id.'&amp;action=close">'.$langs->trans("Close").'</a>';
-				} else {
-					print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('Close').'</a>';
+			if (empty($conf->global->PROJECT_PREVENT_CLOSING_WITH_UNFINISHED_TASKS)) {
+				if ($object->statut == Project::STATUS_VALIDATED && $user->rights->projet->creer) {
+					if ($userWrite > 0) {
+						print '<a class="butAction" href="card.php?id=' . $object->id . '&amp;action=close">' . $langs->trans("Close") . '</a>';
+					} else {
+						print '<a class="butActionRefused classfortooltip" href="#" title="' . $langs->trans("NotOwnerOfProject") . '">' . $langs->trans('Close') . '</a>';
+					}
+				}
+			} else {
+				if ($object->statut == Project::STATUS_VALIDATED && $user->rights->projet->creer) {
+					$taskNotDone = false;
+					$task = new Task($db);
+					$taskarray = $task->getTasksArray(0, 0, $object->id, 0, 0);
+					foreach ($taskarray as $taskLine) {
+						if ($taskLine->progress != 100 && $taskLine->fk_statut != 4) {
+							$taskNotDone = true;
+							break;
+						}
+					}
+					if ($taskNotDone) {
+						print '<a class="butActionRefused classfortooltip" href="#" title="' . $langs->trans("TaskNotDone") . '">' . $langs->trans('Close') . '</a>';
+					} else {
+						print '<a class="butAction" href="card.php?id=' . $object->id . '&amp;action=close">' . $langs->trans("Close") . '</a>';
+					}
 				}
 			}
 

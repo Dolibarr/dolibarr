@@ -2091,13 +2091,6 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 			$morehtmlstatus .= $object->getLibStatut(5);
 		}
 	} elseif ($object->element == 'project_task') {
-		$object->fk_statut = 1;
-		if ($object->progress > 0) {
-			$object->fk_statut = 2;
-		}
-		if ($object->progress >= 100) {
-			$object->fk_statut = 3;
-		}
 		$tmptxt = $object->getLibStatut(5);
 		$morehtmlstatus .= $tmptxt; // No status on task
 	} else { // Generic case

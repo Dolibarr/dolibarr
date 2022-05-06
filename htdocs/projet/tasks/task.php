@@ -45,6 +45,7 @@ $confirm = GETPOST('confirm', 'alpha');
 $withproject = GETPOST('withproject', 'int');
 $project_ref = GETPOST('project_ref', 'alpha');
 $planned_workload = ((GETPOST('planned_workloadhour', 'int') != '' || GETPOST('planned_workloadmin', 'int') != '') ? (GETPOST('planned_workloadhour', 'int') > 0 ?GETPOST('planned_workloadhour', 'int') * 3600 : 0) + (GETPOST('planned_workloadmin', 'int') > 0 ?GETPOST('planned_workloadmin', 'int') * 60 : 0) : '');
+$status = GETPOST('status', 'int');
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('projecttaskcard', 'globalcard'));
@@ -96,6 +97,12 @@ if ($action == 'update' && !GETPOST("cancel") && $user->rights->projet->creer) {
 		if (empty($task_parent)) {
 			$task_parent = 0; // If task_parent is ''
 		}
+		$Tstatus = array(
+			'Todo',
+			'In Progress',
+			'Done',
+			'Cancelled'
+		);
 
 		$object->ref = $taskref ? $taskref : GETPOST("ref", 'alpha', 2);
 		$object->label = GETPOST("label", "alphanohtml");
@@ -107,6 +114,7 @@ if ($action == 'update' && !GETPOST("cancel") && $user->rights->projet->creer) {
 		$object->date_end = dol_mktime(GETPOST('dateehour', 'int'), GETPOST('dateemin', 'int'), 0, GETPOST('dateemonth', 'int'), GETPOST('dateeday', 'int'), GETPOST('dateeyear', 'int'));
 		$object->progress = price2num(GETPOST('progress', 'alphanohtml'));
 		$object->budget_amount = price2num(GETPOST('budget_amount', 'alphanohtml'));
+		$object->status = $Tstatus;
 
 		// Fill array 'array_options' with data from add form
 		$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
@@ -136,6 +144,28 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->projet->s
 	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
 		$action = '';
+	}
+}
+
+if ($action == 'confirm_cancel') {
+	$statusCancel = $object->setStatusToCancel();
+	if ($statusCancel == -1) {
+		setEventMessage("TaskCancelError", 'errors');
+		dol_print_error($db);
+	} else {
+		setEventMessage("TaskCancelDone");
+		header('Location: '.DOL_URL_ROOT.'/projet/tasks/task.php?id='.$object->id.($withproject ? '&withproject=1' : ''));
+		exit;
+	}
+}
+
+if ($action == 'confirm_reopen') {
+	$statusReOpen = $object->setStatusToReOpen();
+	if ($statusReOpen == -1) {
+		setEventMessage("ReOpenError", 'errors');
+		dol_print_error($db);
+	} else {
+		setEventMessage("TaskReOpen");
 	}
 }
 
@@ -487,6 +517,14 @@ if ($id > 0 || !empty($ref)) {
 			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".GETPOST("id", 'int').'&withproject='.$withproject, $langs->trans("DeleteATask"), $langs->trans("ConfirmDeleteATask"), "confirm_delete");
 		}
 
+		if ($action == 'cancel') {
+			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".GETPOST("id", 'int').'&withproject='.$withproject, $langs->trans("Cancel"), $langs->trans("TaskConfirmCancel"), "confirm_cancel");
+		}
+
+		if ($action == 'reopen') {
+			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".GETPOST("id", 'int').'&withproject='.$withproject, $langs->trans("ReOpen"), $langs->trans("TaskConfirmReOpen"), "confirm_reopen");
+		}
+
 		if (!GETPOST('withproject') || empty($projectstatic->id)) {
 			$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1);
 			$object->next_prev_filter = " fk_projet IN (".$db->sanitize($projectsListId).")";
@@ -508,6 +546,7 @@ if ($id > 0 || !empty($ref)) {
 			if (!empty($projectstatic->thirdparty)) {
 				$morehtmlref .= $projectstatic->thirdparty->getNomUrl(1);
 			}
+
 			$morehtmlref .= '</div>';
 		}
 
@@ -620,6 +659,16 @@ if ($id > 0 || !empty($ref)) {
 				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit&token='.newToken().'&withproject='.((int) $withproject).'">'.$langs->trans('Modify').'</a>';
 			} else {
 				print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('Modify').'</a>';
+			}
+
+			// Cancel
+			if ($user->rights->projet->creer) {
+				if ($object->fk_statut == 4) {
+					print dolGetButtonAction($langs->trans('ReOpen'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=reopen&token='.newToken().'&withproject='.((int) $withproject), '', right);
+				} else {
+					print dolGetButtonAction($langs->trans('Cancel'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=cancel&token='.newToken().'&withproject='.((int) $withproject), '', right);
+				}
+
 			}
 
 			// Delete

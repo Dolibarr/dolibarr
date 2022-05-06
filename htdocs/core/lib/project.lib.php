@@ -645,6 +645,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				$taskstatic->planned_workload = $lines[$i]->planned_workload;
 				$taskstatic->duration_effective = $lines[$i]->duration;
 				$taskstatic->budget_amount = $lines[$i]->budget_amount;
+				$taskstatic->fk_statut = $lines[$i]->fk_statut;
 
 
 				if ($showproject) {
@@ -866,6 +867,12 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 					print '</td>';
 				}
 
+				if (count($arrayfields) > 0 && !empty($arrayfields['t.fk_statut']['checked'])) {
+					print '<td class="right">';
+					print $lines[$i]->getLibStatut(2);
+					print '</td>';
+				}
+
 				// Extra fields
 				$extrafieldsobjectkey = $taskstatic->table_element;
 				$obj = $lines[$i];
@@ -937,6 +944,9 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				print '</a>';
 			}
 			print '</td>';
+		}
+		if (count($arrayfields) > 0 && !empty($arrayfields['t.fk_statut']['checked'])) {
+			print '<td></td>';
 		}
 
 		if ($total_projectlinesa_planned) {

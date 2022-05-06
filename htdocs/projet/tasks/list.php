@@ -31,6 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('projects', 'users', 'companies'));
@@ -69,6 +70,7 @@ $search_task_progress = GETPOST('search_task_progress');
 $search_task_budget_amount = GETPOST('search_task_budget_amount');
 $search_societe = GETPOST('search_societe');
 $search_opp_status = GETPOST("search_opp_status", 'alpha');
+$search_task_fk_statut = GETPOST('search_task_fk_statut');
 
 $mine = GETPOST('mode', 'alpha') == 'mine' ? 1 : 0;
 if ($mine) {
@@ -139,6 +141,7 @@ $fieldstosearchall = array(
 	't.label'=>"Label",
 	't.description'=>"Description",
 	't.note_public'=>"NotePublic",
+	't.fk_statut' => "Status",
 );
 if (empty($user->socid)) {
 	$fieldstosearchall['t.note_private'] = "NotePrivate";
@@ -165,7 +168,7 @@ $arrayfields = array(
 	't.billed'=>array('label'=>"TimeBilled", 'checked'=>0, 'position'=>111),
 	't.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
 	't.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>500),
-	//'t.fk_statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000),
+	't.fk_statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000),
 );
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
@@ -232,6 +235,7 @@ if (empty($reshook)) {
 		$search_datelimit_end = '';
 		$toselect = array();
 		$search_array_options = array();
+		$search_task_fk_statut = '';
 	}
 
 	// Mass actions
@@ -253,6 +257,7 @@ if (empty($search_projectstatus) && $search_projectstatus == '') {
  */
 
 $form = new Form($db);
+$formProject = new FormProjets($db);
 
 $now = dol_now();
 
@@ -441,6 +446,9 @@ if ($search_project_user > 0) {
 if ($search_task_user > 0) {
 	$sql .= " AND ect.fk_c_type_contact IN (".$db->sanitize(join(',', array_keys($listoftaskcontacttype))).") AND ect.element_id = t.rowid AND ect.fk_socpeople = ".((int) $search_task_user);
 }
+if ($search_task_fk_statut > 0) {
+	$sql .= natural_search('t.fk_statut', $search_task_fk_statut);
+}
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 // Add where from hooks
@@ -593,6 +601,9 @@ if ($search_task_user > 0) {
 }
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
+}
+if ($search_task_fk_statut != '') {
+	$param .= '&search_task_fk_statut='.urlencode($search_task_fk_statut);
 }
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
@@ -809,6 +820,11 @@ if (!empty($arrayfields['t.tobill']['checked'])) {
 if (!empty($arrayfields['t.billed']['checked'])) {
 	print '<td class="liste_titre"></td>';
 }
+if (!empty($arrayfields['t.fk_statut']['checked'])) {
+	print '<td class="liste_titre maxwidthonsmartphone right">';
+	print $formProject->selectTaskStatus();
+	print '</td>';
+}
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 // Fields from hook
@@ -839,6 +855,7 @@ $totalarray = array(
 		't.duration_effective' => 0,
 		't.progress' => 0,
 		't.budget_amount' => 0,
+		't.fk_statut' => 0,
 	),
 	'totalplannedworkload' => 0,
 	'totaldurationeffective' => 0,
@@ -924,6 +941,10 @@ if (!empty($arrayfields['t.tobill']['checked'])) {
 }
 if (!empty($arrayfields['t.billed']['checked'])) {
 	print_liste_field_titre($arrayfields['t.billed']['label'], $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['t.fk_statut']['checked'])) {
+	print_liste_field_titre($arrayfields['t.fk_statut']['label'], $_SERVER["PHP_SELF"], "t.fk_statut", "", $param, "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 // Extra fields
@@ -1286,6 +1307,12 @@ while ($i < $imaxinloop) {
 				if (!$i) {
 					$totalarray['totalbilledfield'] = $totalarray['nbfield'];
 				}
+			}
+			// Status
+			if (!empty($arrayfields['t.fk_statut']['checked'])) {
+				print '<td class="nowraponall">';
+				print $object->getLibStatut(2);
+				print '</td>';
 			}
 			// Extra fields
 			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
