@@ -1262,7 +1262,7 @@ class ExtraFields
 				$out .= ' value="'.$keyopt.'"';
 				$out .= ' id="'.$keyprefix.$key.$keysuffix.'_'.$keyopt.'"';
 				$out .= ($value == $keyopt ? 'checked' : '');
-				$out .= '/><label for="'.$keyprefix.$key.$keysuffix.'_'.$keyopt.'">'.$val.'</label><br>';
+				$out .= '/><label for="'.$keyprefix.$key.$keysuffix.'_'.$keyopt.'">'.$langs->trans($val).'</label><br>';
 			}
 		} elseif ($type == 'chkbxlst') {
 			if (is_array($value)) {
@@ -1666,7 +1666,7 @@ class ExtraFields
 				dol_syslog(get_class($this).'::showOutputField error '.$this->db->lasterror(), LOG_WARNING);
 			}
 		} elseif ($type == 'radio') {
-			$value = $param['options'][$value];
+			$value = $langs->trans($param['options'][$value]);
 		} elseif ($type == 'checkbox') {
 			$value_arr = explode(',', $value);
 			$value = '';
