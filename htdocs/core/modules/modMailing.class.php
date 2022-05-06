@@ -79,7 +79,7 @@ class modMailing extends DolibarrModules
 		$this->const[$r][0] = "MAILING_CONTACT_DEFAULT_BULK_STATUS";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "0";
-		$this->const[$r][3] = 'Default black list mailing';
+		$this->const[$r][3] = 'Default value for field "Refuse bulk email" when creating a contact';
 		$this->const[$r][4] = 0;
 		$r++;
 
@@ -159,6 +159,11 @@ class modMailing extends DolibarrModules
 	 */
 	public function init($options = '')
 	{
+		$result = $this->_load_tables('/install/mysql/tables/', 'mailing');
+		if ($result < 0) {
+			return -1; // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
+		}
+
 		// Permissions
 		$this->remove($options);
 

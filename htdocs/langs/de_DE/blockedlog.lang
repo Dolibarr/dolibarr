@@ -52,3 +52,6 @@ BlockedLogDisableNotAllowedForCountry=Liste der Länder, in denen die Verwendung
 OnlyNonValid=Nicht-bestätigt
 TooManyRecordToScanRestrictFilters=Anzahl der zu scannenden-/analysierenden Einträge ist zu hoch. Bitte schränken Sie die Liste mit restriktiveren Filtern ein.
 RestrictYearToExport=Beschränke Zeitraum (Monat/Jahr) für den Export
+BlockedLogEnabled=Das System zum Protokollieren von Ereignissen in unveränderbaren Logs wurde aktiviert
+BlockedLogDisabled=Das System zum Protokollieren von Ereignissen in unveränderbaren Logs wurde deaktiviert, nachdem einige Aufzeichnungen durchgeführt wurden. Wir haben einen speziellen Fingerabdruck gespeichert, um die Kette als gebrochen zu markieren
+BlockedLogDisabledBis=Das System zum Protokollieren von Ereignissen in unveränderbaren Logs wurde deaktiviert. Dies ist möglich, da noch keine Aufzeichnungen vorgenommen wurden.

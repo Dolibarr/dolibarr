@@ -277,7 +277,7 @@ $sql .= " u.rowid as id_user, u.firstname, u.lastname, u.login, u.email, u.statu
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
 	}
 }
 // Add fields from hooks
@@ -285,7 +285,7 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 $sql .= " FROM ".MAIN_DB_PREFIX."expensereport as d";
-if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
+if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (d.rowid = ef.fk_object)";
 }
 $sql .= ", ".MAIN_DB_PREFIX."user as u";
@@ -487,9 +487,7 @@ if ($resql) {
 
 			print '</div>';
 		} else {
-			print '<div class="center">';
-			print '<input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'">';
-			print '</div><br>';
+			print $form->buttonsSaveCancel("Save", '');
 		}
 	} else {
 		$title = $langs->trans("ListTripsAndExpenses");

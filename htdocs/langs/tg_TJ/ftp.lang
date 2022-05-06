@@ -1,14 +1,14 @@
 # Dolibarr language file - Source file is en_US - ftp
-FTPClientSetup=FTP or SFTP Client module setup
-NewFTPClient=New FTP/FTPS connection setup
-FTPArea=FTP/FTPS Area
-FTPAreaDesc=This screen shows a view of an FTP et SFTP server.
-SetupOfFTPClientModuleNotComplete=The setup of the FTP or SFTP client module seems to be incomplete
-FTPFeatureNotSupportedByYourPHP=Your PHP does not support FTP or SFTP functions
-FailedToConnectToFTPServer=Failed to connect to server (server %s, port %s)
-FailedToConnectToFTPServerWithCredentials=Failed to login to server with defined login/password
-FTPFailedToRemoveFile=Failed to remove file <b>%s</b>.
-FTPFailedToRemoveDir=Failed to remove directory <b>%s</b>: check permissions and that the directory is empty.
-FTPPassiveMode=Passive mode
-ChooseAFTPEntryIntoMenu=Choose a FTP/SFTP site from the menu...
-FailedToGetFile=Failed to get files %s
+FTPClientSetup=Танзими модули мизоҷи FTP ё SFTP
+NewFTPClient=Танзимоти нави пайвастшавии FTP/FTPS
+FTPArea=Минтақаи FTP/FTPS
+FTPAreaDesc=Ин экран намуди сервери FTP ва SFTP -ро нишон медиҳад.
+SetupOfFTPClientModuleNotComplete=Танзимоти модули муштарии FTP ё SFTP ба назар мерасад
+FTPFeatureNotSupportedByYourPHP=PHP -и шумо вазифаҳои FTP ё SFTP -ро пуштибонӣ намекунад
+FailedToConnectToFTPServer=Ба сервер пайваст нашуд (сервер %s, порти %s)
+FailedToConnectToFTPServerWithCredentials=Воридшавӣ ба сервер бо логин/пароли муайяншуда ноком шуд
+FTPFailedToRemoveFile=Файли <b> %s </b> нест карда нашуд.
+FTPFailedToRemoveDir=Феҳристи <b> %s </b> нест карда нашуд: иҷозатҳоро тафтиш кунед ва феҳрист холӣ аст.
+FTPPassiveMode=Ҳолати ғайрифаъол
+ChooseAFTPEntryIntoMenu=Аз меню сайти FTP/SFTP -ро интихоб кунед ...
+FailedToGetFile=Файлҳои %s гирифта нашуданд

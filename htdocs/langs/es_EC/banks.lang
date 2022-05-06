@@ -26,7 +26,6 @@ IOMonthlyReporting=Reporte mensual
 BankAccountDomiciliation=Dirección del banco
 BankAccountOwner=Nombre del propietario de la cuenta
 BankAccountOwnerAddress=Dirección del propietario de la cuenta
-RIBControlError=La comprobación de integridad de los valores ha fallado. Esto significa que la información para este número de cuenta no está completa o es incorrecta (verifique el país, los números y el IBAN).
 NewFinancialAccount=Nueva cuenta bancaria
 MenuNewFinancialAccount=Nueva cuenta bancaria
 EditFinancialAccount=Editar cuenta

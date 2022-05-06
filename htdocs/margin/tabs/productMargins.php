@@ -43,8 +43,8 @@ if (!empty($user->socid)) {
 $object = new Product($db);
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -139,7 +139,7 @@ if ($id > 0 || !empty($ref)) {
 			$sql = "SELECT s.nom as name, s.rowid as socid, s.code_client,";
 			$sql .= " f.rowid as facid, f.ref, f.total_ht,";
 			$sql .= " f.datef, f.paye, f.fk_statut as statut, f.type,";
-			if (!$user->rights->societe->client->voir && !$socid) {
+			if (empty($user->rights->societe->client->voir) && !$socid) {
 				$sql .= " sc.fk_soc, sc.fk_user,";
 			}
 			$sql .= " sum(d.total_ht) as selling_price,"; // may be negative or positive
@@ -149,7 +149,7 @@ if ($id > 0 || !empty($ref)) {
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 			$sql .= ", ".MAIN_DB_PREFIX."facture as f";
 			$sql .= ", ".MAIN_DB_PREFIX."facturedet as d";
-			if (!$user->rights->societe->client->voir && !$socid) {
+			if (empty($user->rights->societe->client->voir) && !$socid) {
 				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			}
 			$sql .= " WHERE f.fk_soc = s.rowid";
@@ -157,8 +157,8 @@ if ($id > 0 || !empty($ref)) {
 			$sql .= " AND f.entity IN (".getEntity('invoice').")";
 			$sql .= " AND d.fk_facture = f.rowid";
 			$sql .= " AND d.fk_product = ".((int) $object->id);
-			if (!$user->rights->societe->client->voir && !$socid) {
-				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+			if (empty($user->rights->societe->client->voir) && !$socid) {
+				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			if (!empty($socid)) {
 				$sql .= " AND f.fk_soc = $socid";
@@ -170,7 +170,7 @@ if ($id > 0 || !empty($ref)) {
 				$sql .= " AND d.buy_price_ht <> 0";
 			}
 			$sql .= " GROUP BY s.nom, s.rowid, s.code_client, f.rowid, f.ref, f.total_ht, f.datef, f.paye, f.fk_statut, f.type";
-			if (!$user->rights->societe->client->voir && !$socid) {
+			if (empty($user->rights->societe->client->voir) && !$socid) {
 				$sql .= ", sc.fk_soc, sc.fk_user";
 			}
 			$sql .= $db->order($sortfield, $sortorder);

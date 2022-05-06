@@ -19,7 +19,7 @@
 ModulePartnershipName=Partnership management
 PartnershipDescription=Module Partnership management
 PartnershipDescriptionLong= Module Partnership management
-
+Partnership=Partnership
 AddPartnership=Add partnership
 CancelPartnershipForExpiredMembers=Partnership: Cancel partnership of members with expired subscriptions
 PartnershipCheckBacklink=Partnership: Check referring backlink
@@ -58,6 +58,8 @@ ManagePartnership=Manage partnership
 BacklinkNotFoundOnPartnerWebsite=Backlink not found on partner website
 ConfirmClosePartnershipAsk=Are you sure you want to cancel this partnership?
 PartnershipType=Partnership type
+PartnershipRefApproved=Partnership %s approved
+KeywordToCheckInWebsite=If you want to check that a given keyword is present into the website of each partner, define this keyword here
 
 #
 # Template Mail
@@ -89,3 +91,4 @@ PartnershipAccepted=Accepted
 PartnershipRefused=Refused
 PartnershipCanceled=Canceled
 PartnershipManagedFor=Partners are
+

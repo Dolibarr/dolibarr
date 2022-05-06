@@ -43,10 +43,12 @@ if ($user->socid) {
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('resourcenote'));
 
-$result = restrictedArea($user, 'resource', $id, 'resource');
-
 $object = new DolResource($db);
-$object->fetch($id, $ref);
+
+// Load object
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+
+$result = restrictedArea($user, 'resource', $object->id, 'resource');
 
 $permissionnote = $user->rights->resource->write; // Used by the include of actions_setnotes.inc.php
 

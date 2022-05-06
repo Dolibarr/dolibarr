@@ -122,9 +122,9 @@ $sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql .= ", ".MAIN_DB_PREFIX."projet_task as t";
 $sql .= ", ".MAIN_DB_PREFIX."projet_task_time as tt";
 $sql .= " WHERE t.fk_projet = p.rowid";
-$sql .= " AND p.entity = ".$conf->entity;
+$sql .= " AND p.entity = ".((int) $conf->entity);
 $sql .= " AND tt.fk_task = t.rowid";
-$sql .= " AND tt.fk_user = ".$user->id;
+$sql .= " AND tt.fk_user = ".((int) $user->id);
 $sql .= " AND task_date BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month, $day, $year))."' AND '".$db->idate(dol_mktime(23, 59, 59, $month, $day, $year))."'";
 $sql .= " AND p.rowid in (".$db->sanitize($projectsListId).")";
 $sql .= " GROUP BY p.rowid, p.ref, p.title, p.public";
@@ -159,7 +159,7 @@ print "</table>";
 print '</div>';
 
 
-print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+print '</div><div class="fichetwothirdright">';
 
 
 /* Affichage de la liste des projets d'hier */
@@ -175,9 +175,9 @@ $sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql .= ", ".MAIN_DB_PREFIX."projet_task as t";
 $sql .= ", ".MAIN_DB_PREFIX."projet_task_time as tt";
 $sql .= " WHERE t.fk_projet = p.rowid";
-$sql .= " AND p.entity = ".$conf->entity;
+$sql .= " AND p.entity = ".((int) $conf->entity);
 $sql .= " AND tt.fk_task = t.rowid";
-$sql .= " AND tt.fk_user = ".$user->id;
+$sql .= " AND tt.fk_user = ".((int) $user->id);
 $sql .= " AND task_date BETWEEN '".$db->idate(dol_time_plus_duree(dol_mktime(0, 0, 0, $month, $day, $year), -1, 'd'))."' AND '".$db->idate(dol_time_plus_duree(dol_mktime(23, 59, 59, $month, $day, $year), -1, 'd'))."'";
 $sql .= " AND p.rowid in (".$db->sanitize($projectsListId).")";
 $sql .= " GROUP BY p.rowid, p.ref, p.title, p.public";
@@ -231,9 +231,9 @@ if ($db->type != 'pgsql')
 	$sql.= " , ".MAIN_DB_PREFIX."projet_task as t";
 	$sql.= " , ".MAIN_DB_PREFIX."projet_task_time as tt";
 	$sql.= " WHERE t.fk_projet = p.rowid";
-	$sql.= " AND p.entity = ".$conf->entity;
+	$sql.= " AND p.entity = ".((int) $conf->entity);
 	$sql.= " AND tt.fk_task = t.rowid";
-	$sql.= " AND tt.fk_user = ".$user->id;
+	$sql.= " AND tt.fk_user = ".((int) $user->id);
 	$sql.= " AND task_date >= '".$db->idate(dol_get_first_day($year, $month)).'" AND ...";
 	$sql.= " AND p.rowid in (".$db->sanitize($projectsListId).")";
 	$sql.= " GROUP BY p.rowid, p.ref, p.title";
@@ -287,9 +287,9 @@ if (!empty($conf->global->PROJECT_TASK_TIME_MONTH)) {
 	$sql .= ", ".MAIN_DB_PREFIX."projet_task as t";
 	$sql .= ", ".MAIN_DB_PREFIX."projet_task_time as tt";
 	$sql .= " WHERE t.fk_projet = p.rowid";
-	$sql .= " AND p.entity = ".$conf->entity;
+	$sql .= " AND p.entity = ".((int) $conf->entity);
 	$sql .= " AND tt.fk_task = t.rowid";
-	$sql .= " AND tt.fk_user = ".$user->id;
+	$sql .= " AND tt.fk_user = ".((int) $user->id);
 	$sql .= " AND task_date BETWEEN '".$db->idate(dol_get_first_day($year, $month))."' AND '".$db->idate(dol_get_last_day($year, $month))."'";
 	$sql .= " AND p.rowid in (".$db->sanitize($projectsListId).")";
 	$sql .= " GROUP BY p.rowid, p.ref, p.title, p.public";
@@ -333,9 +333,9 @@ if (!empty($conf->global->PROJECT_TASK_TIME_YEAR)) {
 	$sql .= ", ".MAIN_DB_PREFIX."projet_task as t";
 	$sql .= ", ".MAIN_DB_PREFIX."projet_task_time as tt";
 	$sql .= " WHERE t.fk_projet = p.rowid";
-	$sql .= " AND p.entity = ".$conf->entity;
+	$sql .= " AND p.entity = ".((int) $conf->entity);
 	$sql .= " AND tt.fk_task = t.rowid";
-	$sql .= " AND tt.fk_user = ".$user->id;
+	$sql .= " AND tt.fk_user = ".((int) $user->id);
 	$sql .= " AND YEAR(task_date) = '".strftime("%Y", $now)."'";
 	$sql .= " AND p.rowid in (".$db->sanitize($projectsListId).")";
 	$sql .= " GROUP BY p.rowid, p.ref, p.title, p.public";
@@ -422,7 +422,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS) && !empty($conf->global->PROJECT_SH
 		$sql .= " AND p.rowid IN (".$db->sanitize($projectsListId).")"; // project i have permission on
 	}
 	if ($mine) {     // this may duplicate record if we are contact twice
-		$sql .= " AND ect.fk_c_type_contact IN (".$db->sanitize(join(',', array_keys($listoftaskcontacttype))).") AND ect.element_id = t.rowid AND ect.fk_socpeople = ".$user->id;
+		$sql .= " AND ect.fk_c_type_contact IN (".$db->sanitize(join(',', array_keys($listoftaskcontacttype))).") AND ect.element_id = t.rowid AND ect.fk_socpeople = ".((int) $user->id);
 	}
 	if ($socid) {
 		$sql .= " AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".((int) $socid).")";
@@ -557,7 +557,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS) && !empty($conf->global->PROJECT_SH
 }
 
 
-print '</div></div></div>';
+print '</div></div>';
 
 $parameters = array('user' => $user);
 $reshook = $hookmanager->executeHooks('dashboardActivities', $parameters, $object); // Note that $action and $object may have been modified by hook

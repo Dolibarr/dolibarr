@@ -29,8 +29,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
-
-// load partnership libraries
 require_once DOL_DOCUMENT_ROOT.'/partnership/class/partnership.class.php';
 
 // for other modules
@@ -76,7 +74,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
-$managedfor = $conf->global->PARTNERSHIP_IS_MANAGED_FOR;
+$managedfor	= empty($conf->global->PARTNERSHIP_IS_MANAGED_FOR) ? 'thirdparty' : $conf->global->PARTNERSHIP_IS_MANAGED_FOR;
 
 if ($managedfor != 'member' && $sortfield == 'd.datefin') $sortfield = '';
 
@@ -120,11 +118,11 @@ $arrayfields = array();
 foreach ($object->fields as $key => $val) {
 	// If $val['visible']==0, then we never show the field
 	if (!empty($val['visible'])) {
-		$visible = (int) dol_eval($val['visible'], 1);
+		$visible = (int) dol_eval($val['visible'], 1, 1, '1');
 		$arrayfields['t.'.$key] = array(
 			'label'=>$val['label'],
 			'checked'=>(($visible < 0) ? 0 : 1),
-			'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1)),
+			'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1, 1, '1')),
 			'position'=>$val['position'],
 			'help'=> isset($val['help']) ? $val['help'] : ''
 		);
@@ -157,6 +155,8 @@ if ($user->socid > 0) { // Protection if external user
 /*
  * Actions
  */
+
+$error = 0;
 
 if (GETPOST('cancel', 'alpha')) {
 	$action = 'list';
@@ -200,6 +200,43 @@ if (empty($reshook)) {
 	$uploaddir = $conf->partnership->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
+	// Validate and approve
+	if (!$error && $massaction == 'approve' && $permissiontoadd) {
+		$objecttmp = new Partnership($db);
+
+		$db->begin();
+		$error = 0;
+		$result = 0;
+
+		foreach ($toselect as $checked) {
+			if ($objecttmp->fetch($checked)) {
+				if ($objecttmp->status == $objecttmp::STATUS_DRAFT) {
+					//$objecttmp->date = dol_now();
+					$result = $objecttmp->validate($user);
+				}
+
+				if ($result >= 0 && $objecttmp->status == $objecttmp::STATUS_VALIDATED) {
+					$result = $objecttmp->approve($user);
+					if ($result > 0) {
+						setEventMessages($langs->trans("PartnershipRefApproved", $objecttmp->ref), null);
+					} else {
+						setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+						$error++;
+					}
+				} else {
+					setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+					$error++;
+				}
+			}
+		}
+
+		if (!$error) {
+			$db->commit();
+		} else {
+			$db->rollback();
+		}
+	}
+
 	// Cancel partnership
 	if ($massaction == 'cancel' && $permissiontoadd) {
 		$db->begin();
@@ -209,8 +246,11 @@ if (empty($reshook)) {
 		foreach ($toselect as $toselectid) {
 			$result = $objecttmp->fetch($toselectid);
 			if ($result > 0) {
-				$result = $objecttmp->cancel($user, 3);
-				if ($result <= 0) {
+				$result = $objecttmp->cancel($user, 0);
+				if ($result == 0) {
+					setEventMessages($langs->trans('StatusOfRefMustBe', $objecttmp->ref, $objecttmp->LibStatut($objecttmp::STATUS_APPROVED)), null, 'warnings');
+					$error++;
+				} elseif ($result <= 0) {
 					setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
 					$error++;
 					break;
@@ -260,7 +300,7 @@ if ($managedfor == 'member') {
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
 	}
 }
 // Add fields from hooks
@@ -269,7 +309,7 @@ $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $obje
 $sql .= preg_replace('/^,/', '', $hookmanager->resPrint);
 $sql = preg_replace('/,\s*$/', '', $sql);
 $sql .= " FROM ".MAIN_DB_PREFIX.$object->table_element." as t";
-if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
+if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (t.rowid = ef.fk_object)";
 }
 if ($managedfor == 'member') {
@@ -342,7 +382,7 @@ $sql .= $hookmanager->resPrint;
 /* If a group by is required
 $sql.= " GROUP BY ";
 foreach($object->fields as $key => $val) {
-	$sql.='t.'.$key.', ';
+	$sql .= "t.".$key.", ";
 }
 // Add fields from extrafields
 if (! empty($extrafields->attributes[$object->table_element]['label'])) {
@@ -432,7 +472,9 @@ $param .= $hookmanager->resPrint;
 
 // List of mass actions available
 $arrayofmassactions = array(
-'cancel'=>img_picto('', 'close_title', 'class="pictofixedwidth"').$langs->trans("Cancel"),
+	//'validate'=>img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Validate"),
+	'approve'=>img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("ValidateAndApprove"),
+	'cancel'=>img_picto('', 'close_title', 'class="pictofixedwidth"').$langs->trans("Cancel"),
 	//'generate_doc'=>img_picto('', 'pdf').$langs->trans("ReGeneratePDF"),
 	//'builddoc'=>img_picto('', 'pdf').$langs->trans("PDFMerge"),
 	'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendMail"),
@@ -440,7 +482,7 @@ $arrayofmassactions = array(
 if ($permissiontodelete) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
-if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete'))) {
+if (GETPOST('nomassaction', 'int') || in_array($massaction, array('prevalidate', 'presend', 'predelete'))) {
 	$arrayofmassactions = array();
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
@@ -464,7 +506,7 @@ print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sort
 $topicmail = "SendPartnershipRef";
 $modelmail = "partnership_send";
 $objecttmp = new Partnership($db);
-$trackid = 'partnership'.$object->id;
+$trackid = 'pship'.$object->id;
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 if ($search_all) {
@@ -598,7 +640,7 @@ print '</tr>'."\n";
 
 // Detect if we need a fetch on each output line
 $needToFetchEachLine = 0;
-if (is_array($extrafields->attributes[$object->table_element]['computed']) && count($extrafields->attributes[$object->table_element]['computed']) > 0) {
+if (isset($extrafields->attributes[$object->table_element]['computed']) && is_array($extrafields->attributes[$object->table_element]['computed']) && count($extrafields->attributes[$object->table_element]['computed']) > 0) {
 	foreach ($extrafields->attributes[$object->table_element]['computed'] as $key => $val) {
 		if (preg_match('/\$object/', $val)) {
 			$needToFetchEachLine++; // There is at least one compute field that use $object
@@ -652,7 +694,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
-			if (!empty($val['isameasure'])) {
+			if (!empty($val['isameasure']) && $val['isameasure'] == 1) {
 				if (!$i) {
 					$totalarray['pos'][$totalarray['nbfield']] = 't.'.$key;
 				}

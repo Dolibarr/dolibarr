@@ -201,6 +201,7 @@ class pdf_einstein extends ModelePDFCommandes
 		}
 
 		$this->tva = array();
+		$this->tva_array = array();
 		$this->localtax1 = array();
 		$this->localtax2 = array();
 		$this->atleastoneratenotnull = 0;
@@ -567,10 +568,17 @@ class pdf_einstein extends ModelePDFCommandes
 					if (($object->lines[$i]->info_bits & 0x01) == 0x01) {
 						$vatrate .= '*';
 					}
+
+					// Fill $this->tva and $this->tva_array
 					if (!isset($this->tva[$vatrate])) {
 						$this->tva[$vatrate] = 0;
 					}
 					$this->tva[$vatrate] += $tvaligne;
+					$vatcode = $object->lines[$i]->vat_src_code;
+					if (empty($this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['amount'])) {
+						$this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['amount'] = 0;
+					}
+					$this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')] = array('vatrate'=>$vatrate, 'vatcode'=>$vatcode, 'amount'=> $this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['amount'] + $tvaligne);
 
 					// Add line
 					if (!empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblines - 1)) {
@@ -882,16 +890,16 @@ class pdf_einstein extends ModelePDFCommandes
 	 *	@param  int			$deja_regle     Montant deja regle
 	 *	@param	int			$posy			Position depart
 	 *	@param	Translate	$outputlangs	Objet langs
+	 *  @param  Translate	$outputlangsbis	Object lang for output bis
 	 *	@return int							Position pour suite
 	 */
-	protected function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
+	protected function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs, $outputlangsbis = null)
 	{
 		// phpcs:enable
 		global $conf, $mysoc, $hookmanager;
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
-		$outputlangsbis = null;
 		if (!empty($conf->global->PDF_USE_ALSO_LANGUAGE_CODE) && $outputlangs->defaultlang != $conf->global->PDF_USE_ALSO_LANGUAGE_CODE) {
 			$outputlangsbis = new Translate('', $conf);
 			$outputlangsbis->setDefaultLang($conf->global->PDF_USE_ALSO_LANGUAGE_CODE);
@@ -994,8 +1002,9 @@ class pdf_einstein extends ModelePDFCommandes
 					}
 				}
 				//}
+
 				// VAT
-				foreach ($this->tva as $tvakey => $tvaval) {
+				foreach ($this->tva_array as $tvakey => $tvaval) {
 					if ($tvakey != 0) {    // On affiche pas taux 0
 						$this->atleastoneratenotnull++;
 
@@ -1009,11 +1018,17 @@ class pdf_einstein extends ModelePDFCommandes
 						}
 						$totalvat = $outputlangs->transcountrynoentities("TotalVAT", $mysoc->country_code).(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transcountrynoentities("TotalVAT", $mysoc->country_code) : '');
 						$totalvat .= ' ';
-						$totalvat .= vatrate($tvakey, 1).$tvacompl;
+						if (getDolGlobalString('PDF_VAT_LABEL_IS_CODE_OR_RATE') == 'rateonly') {
+							$totalvat .= vatrate($tvaval['vatrate'], 1).$tvacompl;
+						} elseif (getDolGlobalString('PDF_VAT_LABEL_IS_CODE_OR_RATE') == 'codeonly') {
+							$totalvat .= $tvaval['vatcode'].$tvacompl;
+						} else {
+							$totalvat .= vatrate($tvaval['vatrate'], 1).($tvaval['vatcode'] ? ' ('.$tvaval['vatcode'].')' : '').$tvacompl;
+						}
 						$pdf->MultiCell($col2x - $col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 
 						$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-						$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval, 0, $outputlangs), 0, 'R', 1);
+						$pdf->MultiCell($largcol2, $tab2_hl, price(price2num($tvaval['amount'], 'MT'), 0, $outputlangs), 0, 'R', 1);
 					}
 				}
 
@@ -1256,7 +1271,9 @@ class pdf_einstein extends ModelePDFCommandes
 		global $conf, $langs, $hookmanager;
 
 		$ltrdirection = 'L';
-		if ($outputlangs->trans("DIRECTION") == 'rtl') $ltrdirection = 'R';
+		if ($outputlangs->trans("DIRECTION") == 'rtl') {
+			$ltrdirection = 'R';
+		}
 
 		// Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "bills", "propal", "orders", "companies"));
@@ -1311,16 +1328,23 @@ class pdf_einstein extends ModelePDFCommandes
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
 		$title = $outputlangs->transnoentities($titlekey);
+		$title .= ' '.$outputlangs->convToOutputCharset($object->ref);
+		if ($object->statut == $object::STATUS_DRAFT) {
+			$pdf->SetTextColor(128, 0, 0);
+			$title .= ' - '.$outputlangs->transnoentities("NotValidated");
+		}
 		$pdf->MultiCell($w, 3, $title, '', 'R');
 
 		$pdf->SetFont('', 'B', $default_font_size);
 
+		/*
 		$posy += 5;
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
 		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Ref")." : ".$outputlangs->convToOutputCharset($object->ref), '', 'R');
+		*/
 
-		$posy += 1;
+		$posy += 3;
 		$pdf->SetFont('', '', $default_font_size - 1);
 
 		if ($object->ref_client) {
@@ -1442,7 +1466,7 @@ class pdf_einstein extends ModelePDFCommandes
 			}
 
 			// Recipient name
-			if ($usecontact && ($object->contact->fk_soc != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)))) {
+			if ($usecontact && ($object->contact->socid != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)))) {
 				$thirdparty = $object->contact;
 			} else {
 				$thirdparty = $object->thirdparty;

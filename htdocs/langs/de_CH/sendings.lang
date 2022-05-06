@@ -1,6 +1,7 @@
 # Dolibarr language file - Source file is en_US - sendings
 RefSending=Versand Nr.
 SendingCard=Auslieferungen
+NewSending=Neue Auslieferung
 QtyToShip=Versandmenge
 KeepToShip=Zum Versand behalten
 StatusSendingCanceledShort=widerrufen

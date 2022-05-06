@@ -5,6 +5,5 @@ OpenANewWindow=Neuen Tab öffnen
 BookmarkTitle=Name des Lesezeichens
 BehaviourOnClick=Was soll passieren, wenn ein Lesezeichen - Link angewählt wird?
 SetHereATitleForLink=Gib dem Lesezeichen einen Namen
-UseAnExternalHttpLinkOrRelativeDolibarrLink=Verwende einen externen Link (https://URL) oder zeige auf das lokale Verzeichnis (/DOLIBARR_ROOT/htdocs/...)
 ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Gib an, ob der Link im selben- oder einem neuen Fenster geladen werden soll.
 BookmarksManagement=Lesezeichen - Verwaltung

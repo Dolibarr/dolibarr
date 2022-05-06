@@ -173,7 +173,7 @@ class Salary extends CommonObject
 
 		if (!$notrigger) {
 			// Call trigger
-			$result = $this->call_trigger('salary_MODIFY', $user);
+			$result = $this->call_trigger('SALARY_MODIFY', $user);
 			if ($result < 0) $error++;
 			// End call triggers
 		}
@@ -278,7 +278,7 @@ class Salary extends CommonObject
 		$error = 0;
 
 		// Call trigger
-		$result = $this->call_trigger('salary_DELETE', $user);
+		$result = $this->call_trigger('SALARY_DELETE', $user);
 		if ($result < 0) return -1;
 		// End call triggers
 
@@ -286,7 +286,7 @@ class Salary extends CommonObject
 		/*if (!$error)
 		{
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."salary_extrafields";
-			$sql .= " WHERE fk_object=".$this->id;
+			$sql .= " WHERE fk_object = ".((int) $this->id);
 
 			$resql = $this->db->query($sql);
 			if (!$resql)
@@ -367,7 +367,7 @@ class Salary extends CommonObject
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Employee"));
 			return -4;
 		}
-		if ($this->amount < 0 || $this->amount == '') {
+		if ($this->amount == '') {
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Amount"));
 			return -5;
 		}
@@ -406,11 +406,11 @@ class Salary extends CommonObject
 		$sql .= "'".$this->db->escape($this->fk_user)."'";
 		//$sql .= ", '".$this->db->idate($this->datep)."'";
 		//$sql .= ", '".$this->db->idate($this->datev)."'";
-		$sql .= ", ".$this->amount;
-		$sql .= ", ".($this->fk_project > 0 ? $this->fk_project : 0);
-		$sql .= ", ".($this->salary > 0 ? $this->salary : "null");
-		$sql .= ", ".($this->type_payment > 0 ? $this->type_payment : 0);
-		$sql .= ", ".($this->accountid > 0 ? $this->accountid : "null");
+		$sql .= ", ".((double) $this->amount);
+		$sql .= ", ".($this->fk_project > 0 ? ((int) $this->fk_project) : 0);
+		$sql .= ", ".($this->salary > 0 ? ((double) $this->salary) : "null");
+		$sql .= ", ".($this->type_payment > 0 ? ((int) $this->type_payment) : 0);
+		$sql .= ", ".($this->accountid > 0 ? ((int) $this->accountid) : "null");
 		if ($this->note) $sql .= ", '".$this->db->escape($this->note)."'";
 		$sql .= ", '".$this->db->escape($this->label)."'";
 		$sql .= ", '".$this->db->idate($this->datesp)."'";
@@ -418,7 +418,7 @@ class Salary extends CommonObject
 		$sql .= ", '".$this->db->escape($user->id)."'";
 		$sql .= ", '".$this->db->idate($now)."'";
 		$sql .= ", NULL";
-		$sql .= ", ".$conf->entity;
+		$sql .= ", ".((int) $conf->entity);
 		$sql .= ")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -438,7 +438,7 @@ class Salary extends CommonObject
 				}
 
 				// Call trigger
-				$result = $this->call_trigger('salary_CREATE', $user);
+				$result = $this->call_trigger('SALARY_CREATE', $user);
 				if ($result < 0) $error++;
 				// End call triggers
 			} else $error++;
@@ -468,7 +468,7 @@ class Salary extends CommonObject
 	{
         // phpcs:enable
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'salary SET fk_bank = '.((int) $id_bank);
-		$sql .= ' WHERE rowid = '.$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 		$result = $this->db->query($sql);
 		if ($result) {
 			return 1;
@@ -550,7 +550,7 @@ class Salary extends CommonObject
 
 		global $action, $hookmanager;
 		$hookmanager->initHooks(array('salarypayment'));
-		$parameters = array('id'=>$this->id, 'getnomurl'=>$result);
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) $result = $hookmanager->resPrint;
 		else $result .= $hookmanager->resPrint;
@@ -570,7 +570,7 @@ class Salary extends CommonObject
 
 		$sql = 'SELECT sum(amount) as amount';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$table;
-		$sql .= ' WHERE '.$field.' = '.$this->id;
+		$sql .= " WHERE ".$field." = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::getSommePaiement", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -639,7 +639,7 @@ class Salary extends CommonObject
 		// phpcs:enable
 		$sql = "UPDATE ".MAIN_DB_PREFIX."salary SET";
 		$sql .= " paye = 1";
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 		$return = $this->db->query($sql);
 		if ($return) return 1;
 		else return -1;
@@ -657,7 +657,7 @@ class Salary extends CommonObject
 		// phpcs:enable
 		$sql = "UPDATE ".MAIN_DB_PREFIX."salary SET";
 		$sql .= " paye = 0";
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 		$return = $this->db->query($sql);
 		if ($return) return 1;
 		else return -1;
@@ -700,12 +700,12 @@ class Salary extends CommonObject
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			//$langs->load("mymodule");
-			$this->labelStatus[self::STATUS_UNPAID] = $langs->trans('BillStatusNotPaid');
-			$this->labelStatus[self::STATUS_PAID] = $langs->trans('BillStatusPaid');
-			if ($status == self::STATUS_UNPAID && $alreadypaid <> 0) $this->labelStatus[self::STATUS_UNPAID] = $langs->trans("BillStatusStarted");
-			$this->labelStatusShort[self::STATUS_UNPAID] = $langs->trans('BillStatusNotPaid');
-			$this->labelStatusShort[self::STATUS_PAID] = $langs->trans('BillStatusPaid');
-			if ($status == self::STATUS_UNPAID && $alreadypaid <> 0) $this->labelStatusShort[self::STATUS_UNPAID] = $langs->trans("BillStatusStarted");
+			$this->labelStatus[self::STATUS_UNPAID] = $langs->transnoentitiesnoconv('BillStatusNotPaid');
+			$this->labelStatus[self::STATUS_PAID] = $langs->transnoentitiesnoconv('BillStatusPaid');
+			if ($status == self::STATUS_UNPAID && $alreadypaid <> 0) $this->labelStatus[self::STATUS_UNPAID] = $langs->transnoentitiesnoconv("BillStatusStarted");
+			$this->labelStatusShort[self::STATUS_UNPAID] = $langs->transnoentitiesnoconv('BillStatusNotPaid');
+			$this->labelStatusShort[self::STATUS_PAID] = $langs->transnoentitiesnoconv('BillStatusPaid');
+			if ($status == self::STATUS_UNPAID && $alreadypaid <> 0) $this->labelStatusShort[self::STATUS_UNPAID] = $langs->transnoentitiesnoconv("BillStatusStarted");
 		}
 
 		$statusType = 'status1';

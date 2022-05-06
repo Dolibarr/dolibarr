@@ -115,9 +115,9 @@ elseif ($syear && $smonth && ! $sday) $sql.= " AND dateo BETWEEN '".$db->idate(d
 elseif ($syear && $smonth && $sday)   $sql.= " AND dateo BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $smonth, $sday, $syear))."' AND '".$db->idate(dol_mktime(23, 59, 59, $smonth, $sday, $syear))."'";
 else dol_print_error('', 'Year not defined');
 // Define filter on bank account
-$sql.=" AND (b.fk_account=".$conf->global->CASHDESK_ID_BANKACCOUNT_CASH;
-$sql.=" OR b.fk_account=".$conf->global->CASHDESK_ID_BANKACCOUNT_CB;
-$sql.=" OR b.fk_account=".$conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE;
+$sql.=" AND (b.fk_account = ".((int) $conf->global->CASHDESK_ID_BANKACCOUNT_CASH);
+$sql.=" OR b.fk_account = ".((int) $conf->global->CASHDESK_ID_BANKACCOUNT_CB);
+$sql.=" OR b.fk_account = ".((int) $conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE);
 $sql.=")";
 */
 $sql = "SELECT f.rowid as facid, f.ref, f.datef as do, pf.amount as amount, b.fk_account as bankid, cp.code";

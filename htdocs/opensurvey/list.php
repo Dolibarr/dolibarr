@@ -90,7 +90,7 @@ foreach ($arrayfields as $key => $val) {
 	}
 }
 // Extra fields
-if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0) {
+if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
 		if (!empty($extrafields->attributes[$object->table_element]['list'][$key])) {
 			$arrayfields["ef.".$key] = array(
@@ -107,7 +107,8 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 
 $permissiontoread = $user->rights->opensurvey->read;
 $permissiontoadd = $user->rights->opensurvey->write;
-$permissiontodelete = $user->rights->opensurvey->delete;
+// permission delete doesn't exists
+$permissiontodelete = $user->rights->opensurvey->write;
 
 
 /*

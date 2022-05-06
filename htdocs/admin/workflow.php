@@ -71,6 +71,12 @@ $workflowcodes = array(
 		'enabled'=>(!empty($conf->commande->enabled) && !empty($conf->facture->enabled)),
 		'picto'=>'bill'
 	),
+	'WORKFLOW_TICKET_CREATE_INTERVENTION' => array (
+		'family'=>'create',
+		'position'=>25,
+		'enabled'=>(!empty($conf->ticket->enabled) && !empty($conf->ficheinter->enabled)),
+		'picto'=>'ticket'
+	),
 
 	'separator1'=>array('family'=>'separator', 'position'=>25, 'title'=>''),
 
@@ -123,9 +129,25 @@ $workflowcodes = array(
 	),
 
 	// Automatic classification supplier order
+	'WORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION'=>array(
+		'family'=>'classify_supplier_order',
+		'position'=>63,
+		'enabled'=>(!empty($conf->global->MAIN_FEATURES_LEVEL) && (!empty($conf->reception->enabled)) && ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || empty($conf->supplier_order->enabled))),
+		'picto'=>'supplier_order',
+		'warning'=>''
+	),
+
+	'WORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED'=>array(
+		'family'=>'classify_supplier_order',
+		'position'=>64,
+		'enabled'=>(!empty($conf->global->MAIN_FEATURES_LEVEL) && (!empty($conf->reception->enabled)) && ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || empty($conf->supplier_order->enabled))),
+		'picto'=>'supplier_order',
+		'warning'=>''
+	),
+
 	'WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER'=>array(
 		'family'=>'classify_supplier_order',
-		'position'=>62,
+		'position'=>65,
 		'enabled'=>((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)),
 		'picto'=>'supplier_order',
 		'warning'=>''
@@ -134,7 +156,7 @@ $workflowcodes = array(
 	// Automatic classification reception
 	'WORKFLOW_BILL_ON_RECEPTION'=>array(
 		'family'=>'classify_reception',
-		'position'=>64,
+		'position'=>80,
 		'enabled'=>(!empty($conf->reception->enabled) && ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled))),
 		'picto'=>'reception'
 	),
@@ -142,10 +164,24 @@ $workflowcodes = array(
 	// Automatic classification shipping
 	'WORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE' => array(
 		'family' => 'classify_shipping',
-		'position' => 66,
+		'position' => 90,
 		'enabled' => ! empty($conf->expedition->enabled) && ! empty($conf->facture->enabled),
 		'picto' => 'shipment'
-	)
+	),
+
+	// Automatic link ticket -> contract
+	'WORKFLOW_TICKET_LINK_CONTRACT' => array(
+		'family' => 'link_ticket',
+		'position' => 75,
+		'enabled' => ! empty($conf->ticket->enabled) && ! empty($conf->contract->enabled),
+		'picto' => 'ticket'
+	),
+	'WORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS' => array(
+		'family' => 'link_ticket',
+		'position' => 76,
+		'enabled' => ! empty($conf->ticket->enabled) && ! empty($conf->contract->enabled),
+		'picto' => 'ticket'
+	),
 );
 
 if (!empty($conf->modules_parts['workflow']) && is_array($conf->modules_parts['workflow'])) {
@@ -221,6 +257,11 @@ foreach ($workflowcodes as $key => $params) {
 			if ($reg[1] == 'shipping') {
 				$header .= ' - '.$langs->trans('Shipment');
 			}
+		} elseif (preg_match('/link_(.*)/', $params['family'], $reg)) {
+			$header = $langs->trans("AutomaticLinking");
+			if ($reg[1] == 'ticket') {
+				$header .= ' - '.$langs->trans('Ticket');
+			}
 		} else {
 			$header = $langs->trans("Description");
 		}
@@ -250,11 +291,11 @@ foreach ($workflowcodes as $key => $params) {
 		print ajax_constantonoff($key);
 	} else {
 		if (!empty($conf->global->$key)) {
-			print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=del'.$key.'&amp;token='.newToken().'">';
+			print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=del'.$key.'&token='.newToken().'">';
 			print img_picto($langs->trans("Activated"), 'switch_on');
 			print '</a>';
 		} else {
-			print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=set'.$key.'&amp;token='.newToken().'">';
+			print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=set'.$key.'&token='.newToken().'">';
 			print img_picto($langs->trans("Disabled"), 'switch_off');
 			print '</a>';
 		}

@@ -562,7 +562,7 @@ function setConstant(url, code, input, entity, strict, forcereload, userid, toke
 		value: value
 	},
 	function() {	/* handler for success of post */
-		console.log("url request success forcereload="+forcereload+" value="+value);
+		console.log("Ajax url request to set constant is a success. Make complementary actions and then forcereload="+forcereload+" value="+value);
 		if (value == 0) {
 			$("#set_" + code).show();
 			$("#del_" + code).hide();
@@ -615,9 +615,19 @@ function setConstant(url, code, input, entity, strict, forcereload, userid, toke
 			}
 		});
 		if (forcereload) {
-			location.reload();
+			var url = window.location.href;
+			if (url.indexOf('dol_resetcache') < 0) {
+				if (url.indexOf('?') > -1) {
+					url = url + "&dol_resetcache=1";
+				} else {
+					url = url + "?dol_resetcache=1";
+				}
+			}
+			window.location.href = url;
+			//location.reload();
+			return false;
 		}
-	}).fail(function(error) { location.reload(); });	/* When it fails, we always force reload to have setEventErrorMessages in session visible */
+	}).fail(function(error) { console.log("Error, we force reload"); location.reload(); });	/* When it fails, we always force reload to have setEventErrorMessages in session visible */
 }
 
 /*
@@ -642,7 +652,7 @@ function delConstant(url, code, input, entity, strict, forcereload, userid, toke
 		token: token
 	},
 	function() {
-		console.log("url request success forcereload="+forcereload);
+		console.log("Ajax url request to delete constant is success. Make complementary actions and then forcereload="+forcereload);
 		$("#del_" + code).hide();
 		$("#set_" + code).show();
 		$.each(input, function(type, data) {
@@ -686,9 +696,19 @@ function delConstant(url, code, input, entity, strict, forcereload, userid, toke
 			}
 		});
 		if (forcereload) {
-			location.reload();
+			var url = window.location.href;
+			if (url.indexOf('dol_resetcache') < 0) {
+				if (url.indexOf('?') > -1) {
+					url = url + "&dol_resetcache=1";
+				} else {
+					url = url + "?dol_resetcache=1";
+				}
+			}
+			window.location.href = url;
+			//location.reload();
+			return false;
 		}
-	}).fail(function(error) { location.reload(); });	/* When it fails, we always force reload to have setEventErrorMessages in session visible */
+	}).fail(function(error) { console.log("Error, we force reload"); location.reload(); });	/* When it fails, we always force reload to have setEventErrorMessages in session visible */
 }
 
 /*
@@ -970,6 +990,7 @@ function document_preview(file, type, title)
 		img.src = file;
 
 	}
+
 	function show_preview(mode) {
 		/* console.log("mode="+mode+" file="+file+" type="+type+" width="+width+" height="+height); */
 		var newElem = '<object name="objectpreview" data="'+file+'" type="'+type+'" width="'+object_width+'" height="'+object_height+'" param="noparam"></object>';
@@ -984,6 +1005,7 @@ function document_preview(file, type, title)
 		}
 
 		$("#dialogforpopup").html(newElem);
+
 		$("#dialogforpopup").dialog({
 			closeOnEscape: true,
 			resizable: true,
@@ -1135,7 +1157,7 @@ function price2numjs(amount) {
 	var res = Math.round10(amount, - rounding);
 	// Other solution is
 	// var res = dolroundjs(amount, rounding)
-	console.log("res="+res)
+	console.log("price2numjs text="+amount+" return="+res);
 	return res;
 }
 
@@ -1167,15 +1189,33 @@ $(document).ready(function() {
 });
 <?php } ?>
 
-// Force to hide menus when page is inside an iFrame
+// Force to hide menus when page is inside an iFrame so we can show any page into a dialog popup
 $(document).ready(function() {
-	if (window.location !== window.parent.location ) {
+	if (window.location && window.location.pathname.indexOf("externalsite/frametop.php") == -1 && window.location !== window.parent.location ) {
 		console.log("Page is detected to be into an iframe, we hide by CSS the menus");
 		// The page is in an iframe
 		jQuery(".side-nav-vert, .side-nav, .websitebar").hide();
 		jQuery(".id-container").css('width', '100%');
 
 	}
+});
+
+
+/*
+ * Hacky fix for a bug in select2 with jQuery 3.6.0's new nested-focus "protection"
+ * see: https://github.com/select2/select2/issues/5993
+ * see: https://github.com/jquery/jquery/issues/4382
+ *
+ * TODO: Recheck with the select2 GH issue and remove once this is fixed on their side
+ */
+$(document).on('select2:open', () => {
+	console.log("Execute the focus (click on combo or use space when on component");
+	let allFound = document.querySelectorAll('.select2-container--open .select2-search__field');
+	$(this).one('mouseup keyup',()=>{
+		setTimeout(()=>{
+			allFound[allFound.length - 1].focus();
+		},0);
+	});
 });
 
 // End of lib_head.js.php

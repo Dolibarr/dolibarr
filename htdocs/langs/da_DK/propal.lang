@@ -89,4 +89,11 @@ IdProposal=Forslags-id
 IdProduct=Produkt-id
 PrParentLine=Forslagsforældrelinje
 LineBuyPriceHT=Købspris Beløb fratrukket skat for linje
-
+SignPropal=Accepter forslaget
+RefusePropal=Afvis tilbud
+Sign=Underskrift
+PropalAlreadySigned=Forslaget er allerede godkendt
+PropalAlreadyRefused=Tilbud blev allerede afvist
+PropalSigned=Forslaget accepteret
+PropalRefused=Tilbud blev afvist
+ConfirmRefusePropal=Er du sikker på, at du vil afvise dette kommercielle tilbud?

@@ -1,23 +1,23 @@
 # Dolibarr language file - Source file is en_US - help
-CommunitySupport=Forum/Wiki support
-EMailSupport=Emails support
-RemoteControlSupport=Online real-time / remote support
-OtherSupport=Other support
-ToSeeListOfAvailableRessources=To contact/see available resources:
-HelpCenter=Help Center
-DolibarrHelpCenter=Dolibarr Help and Support Center
-ToGoBackToDolibarr=Otherwise, <a href="%s">click here to continue to use Dolibarr</a>.
-TypeOfSupport=Type of support
-TypeSupportCommunauty=Community (free)
-TypeSupportCommercial=Commercial
-TypeOfHelp=Type
-NeedHelpCenter=Need help or support?
-Efficiency=Efficiency
-TypeHelpOnly=Help only
-TypeHelpDev=Help+Development
-TypeHelpDevForm=Help+Development+Training
-BackToHelpCenter=Otherwise, <a href="%s">go back to Help center home page</a>.
-LinkToGoldMember=You can call one of the trainers preselected by Dolibarr for your language (%s) by clicking their Widget (status and maximum price are automatically updated):
-PossibleLanguages=Supported languages
-SubscribeToFoundation=Help the Dolibarr project, subscribe to the foundation
-SeeOfficalSupport=For official Dolibarr support in your language: <br><b><a href="%s" target="_blank">%s</a></b>
+CommunitySupport=Форум/Викиге қолдау
+EMailSupport=Электрондық поштаны қолдау
+RemoteControlSupport=Нақты уақыттағы / қашықтағы онлайн қолдау
+OtherSupport=Басқа қолдау
+ToSeeListOfAvailableRessources=Байланыс/қол жетімді ресурстарды көру үшін:
+HelpCenter=Анықтама орталығы
+DolibarrHelpCenter=Dolibarr анықтама және қолдау орталығы
+ToGoBackToDolibarr=Әйтпесе, <a href="%s"> Dolibarr </a> пайдалануды жалғастыру үшін мына жерді басыңыз.
+TypeOfSupport=Қолдау түрі
+TypeSupportCommunauty=Қауымдастық (тегін)
+TypeSupportCommercial=Коммерциялық
+TypeOfHelp=Түрі
+NeedHelpCenter=Көмек немесе қолдау қажет пе?
+Efficiency=Тиімділік
+TypeHelpOnly=Тек көмек
+TypeHelpDev=Көмек+Даму
+TypeHelpDevForm=Көмек+Дамыту+Оқыту
+BackToHelpCenter=Әйтпесе, <a href="%s"> Анықтама орталығының </a> басты бетіне қайтыңыз.
+LinkToGoldMember=Сіз өз тіліңізге Dolibarr таңдаған жаттықтырушылардың біріне қоңырау шала аласыз (%s), олардың виджетін басу арқылы (күй мен максималды баға автоматты түрде жаңартылады):
+PossibleLanguages=Қолдау көрсетілетін тілдер
+SubscribeToFoundation=Dolibarr жобасына көмектесіңіз, қорға жазылыңыз
+SeeOfficalSupport=Dolibarr -ды ресми қолдау үшін: <br> <b> <a href="%s" target="_blank"> %s </a> </b>

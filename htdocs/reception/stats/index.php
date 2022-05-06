@@ -59,7 +59,7 @@ llxHeader();
 
 print load_fiche_titre($langs->trans("StatisticsOfReceptions"), '', 'dollyrevert');
 
-
+$dir = (!empty($conf->reception->multidir_temp[$conf->entity]) ? $conf->reception->multidir_temp[$conf->entity] : $conf->service->multidir_temp[$conf->entity]);
 dol_mkdir($dir);
 
 $stats = new ReceptionStats($db, $socid, '', ($userid > 0 ? $userid : 0));
@@ -70,7 +70,7 @@ $data = $stats->getNbByMonthWithPrevYear($endyear, $startyear);
 // $data = array(array('Lib',val1,val2,val3),...)
 
 
-if (!$user->rights->societe->client->voir || $user->socid) {
+if (empty($user->rights->societe->client->voir) || $user->socid) {
 	$filenamenb = $dir.'/receptionsnbinyear-'.$user->id.'-'.$year.'.png';
 } else {
 	$filenamenb = $dir.'/receptionsnbinyear-'.$year.'.png';
@@ -78,6 +78,7 @@ if (!$user->rights->societe->client->voir || $user->socid) {
 
 $px1 = new DolGraph();
 $mesg = $px1->isGraphKo();
+$fileurlnb = '';
 if (!$mesg) {
 	$px1->SetData($data);
 	$i = $startyear; $legend = array();
@@ -105,7 +106,7 @@ $data = $stats->getAmountByMonthWithPrevYear($endyear,$startyear);
 //var_dump($data);
 // $data = array(array('Lib',val1,val2,val3),...)
 
-if (!$user->rights->societe->client->voir || $user->socid)
+if (empty($user->rights->societe->client->voir) || $user->socid)
 {
 	$filenameamount = $dir.'/receptionsamountinyear-'.$user->id.'-'.$year.'.png';
 }
@@ -143,7 +144,7 @@ if (! $mesg)
 /*
 $data = $stats->getAverageByMonthWithPrevYear($endyear, $startyear);
 
-if (!$user->rights->societe->client->voir || $user->socid)
+if (empty($user->rights->societe->client->voir) || $user->socid)
 {
 	$filename_avg = $dir.'/receptionsaverage-'.$user->id.'-'.$year.'.png';
 }
@@ -233,7 +234,7 @@ if (!in_array($nowyear, $arrayyears)) {
 	$arrayyears[$nowyear] = $nowyear;
 }
 arsort($arrayyears);
-print $form->selectarray('year', $arrayyears, $year, 0);
+print $form->selectarray('year', $arrayyears, $year, 0, 0, 0, '', 0, 0, 0, '', 'width75');
 print '</td></tr>';
 print '<tr><td class="center" colspan="2"><input type="submit" name="submit" class="button small" value="'.$langs->trans("Refresh").'"></td></tr>';
 print '</table>';
@@ -282,7 +283,7 @@ foreach ($data as $val) {
 print '</table>';
 
 
-print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+print '</div><div class="fichetwothirdright">';
 
 
 // Show graphs
@@ -299,7 +300,7 @@ if ($mesg) {
 print '</td></tr></table>';
 
 
-print '</div></div></div>';
+print '</div></div>';
 print '<div style="clear:both"></div>';
 
 print dol_get_fiche_end();

@@ -17,8 +17,8 @@
  */
 
 /**
- *  \file		htdocs/core/lib/memory.lib.php
- *  \brief		Set of function for memory/cache management
+ *  \file		htdocs/core/lib/modulebuilder.lib.php
+ *  \brief		Set of function for modulebuilder management
  */
 
 
@@ -121,6 +121,9 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
 				$i++;
 				$texttoinsert .= "\t\t'".$key."' => array('type'=>'".$val['type']."',";
 				$texttoinsert .= " 'label'=>'".$val['label']."',";
+				if ($val['picto']) {
+					$texttoinsert .= " 'picto'=>'".$val['picto']."',";
+				}
 				$texttoinsert .= " 'enabled'=>'".($val['enabled'] !== '' ? $val['enabled'] : 1)."',";
 				$texttoinsert .= " 'position'=>".($val['position'] !== '' ? $val['position'] : 50).",";
 				$texttoinsert .= " 'notnull'=>".(empty($val['notnull']) ? 0 : $val['notnull']).",";
@@ -305,6 +308,8 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
 			$texttoinsert .= "\t".$key." ".$type;
 			if ($key == 'rowid') {
 				$texttoinsert .= ' AUTO_INCREMENT PRIMARY KEY';
+			} elseif ($type == 'timestamp') {
+				$texttoinsert .= ' DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP';
 			}
 			if ($key == 'entity') {
 				$texttoinsert .= ' DEFAULT 1';

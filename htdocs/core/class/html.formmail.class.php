@@ -157,6 +157,9 @@ class FormMail extends Form
 
 	public $lines_model;
 
+	// -1 suggest the checkbox 'one email per recipient' not checked, 0 = no suggestion, 1 = suggest and checked
+	public $withoptiononeemailperrecipient;
+
 
 	/**
 	 *	Constructor
@@ -355,7 +358,7 @@ class FormMail extends Form
 		// phpcs:enable
 		global $conf, $langs, $user, $hookmanager, $form;
 
-		// Required to show preview of mail attachments
+		// Required to show preview wof mail attachments
 		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 		$formfile = new Formfile($this->db);
 
@@ -364,7 +367,7 @@ class FormMail extends Form
 		}
 
 		// Load translation files required by the page
-		$langs->loadLangs(array('other', 'mails'));
+		$langs->loadLangs(array('other', 'mails', 'members'));
 
 		// Clear temp files. Must be done before call of triggers, at beginning (mode = init), or when we select a new template
 		if (GETPOST('mode', 'alpha') == 'init' || (GETPOST('modelselected') && GETPOST('modelmailselected', 'alpha') && GETPOST('modelmailselected', 'alpha') != '-1')) {
@@ -462,11 +465,10 @@ class FormMail extends Form
 			$modelmail_array = array();
 			if ($this->param['models'] != 'none') {
 				$result = $this->fetchAllEMailTemplate($this->param["models"], $user, $outputlangs);
-
 				if ($result < 0) {
 					setEventMessages($this->error, $this->errors, 'errors');
 				}
-				$langs->trans("members");
+
 				foreach ($this->lines_model as $line) {
 					$reg = array();
 					if (preg_match('/\((.*)\)/', $line->label, $reg)) {
@@ -501,7 +503,7 @@ class FormMail extends Form
 				}
 
 				$out .= ' &nbsp; ';
-				$out .= '<input class="button" type="submit" value="'.$langs->trans('Apply').'" name="modelselected" id="modelselected">';
+				$out .= '<input type="submit" class="button reposition" value="'.$langs->trans('Apply').'" name="modelselected" id="modelselected">';
 				$out .= ' &nbsp; ';
 				$out .= '</div>';
 			} elseif (!empty($this->param['models']) && in_array($this->param['models'], array(
@@ -516,7 +518,7 @@ class FormMail extends Form
 					$out .= info_admin($langs->trans("YouCanChangeValuesForThisListFrom", $langs->transnoentitiesnoconv('Setup').' - '.$langs->transnoentitiesnoconv('EMails')), 1);
 				}
 				$out .= ' &nbsp; ';
-				$out .= '<input class="button" type="submit" value="'.$langs->trans('Apply').'" name="modelselected" disabled="disabled" id="modelselected">';
+				$out .= '<input type="submit" class="button" value="'.$langs->trans('Apply').'" name="modelselected" disabled="disabled" id="modelselected">';
 				$out .= ' &nbsp; ';
 				$out .= '</div>';
 			} else {
@@ -524,7 +526,7 @@ class FormMail extends Form
 			}
 
 
-			$out .= '<table class="tableforemailform boxtablenotop" width="100%">'."\n";
+			$out .= '<table class="tableforemailform boxtablenotop centpercent">'."\n";
 
 			// Substitution array/string
 			$helpforsubstitution = '';
@@ -600,9 +602,9 @@ class FormMail extends Form
 						}
 
 						// Add also email aliases from the c_email_senderprofile table
-						$sql = 'SELECT rowid, label, email FROM '.MAIN_DB_PREFIX.'c_email_senderprofile';
-						$sql .= ' WHERE active = 1 AND (private = 0 OR private = '.$user->id.')';
-						$sql .= ' ORDER BY position';
+						$sql = "SELECT rowid, label, email FROM ".$this->db->prefix()."c_email_senderprofile";
+						$sql .= " WHERE active = 1 AND (private = 0 OR private = ".((int) $user->id).")";
+						$sql .= " ORDER BY position";
 						$resql = $this->db->query($sql);
 						if ($resql) {
 							$num = $this->db->num_rows($resql);
@@ -686,16 +688,20 @@ class FormMail extends Form
 
 			// With option one email per recipient
 			if (!empty($this->withoptiononeemailperrecipient)) {
-				$out .= '<tr><td class="minwidth200">';
-				$out .= $langs->trans("GroupEmails");
-				$out .= '</td><td>';
-				$out .= ' <input type="checkbox" name="oneemailperrecipient"'.($this->withoptiononeemailperrecipient > 0 ? ' checked="checked"' : '').'> ';
-				$out .= $langs->trans("OneEmailPerRecipient");
-				$out .= '<span class="hideonsmartphone">';
-				$out .= ' - ';
-				$out .= $langs->trans("WarningIfYouCheckOneRecipientPerEmail");
-				$out .= '</span>';
-				$out .= '</td></tr>';
+				if (abs($this->withoptiononeemailperrecipient) == 1) {
+					$out .= '<tr><td class="minwidth200">';
+					$out .= $langs->trans("GroupEmails");
+					$out .= '</td><td>';
+					$out .= ' <input type="checkbox" id="oneemailperrecipient" value="1" name="oneemailperrecipient"'.($this->withoptiononeemailperrecipient > 0 ? ' checked="checked"' : '').'> ';
+					$out .= '<label for="oneemailperrecipient">'.$langs->trans("OneEmailPerRecipient").'</label>';
+					$out .= '<span class="hideonsmartphone opacitymedium">';
+					$out .= ' - ';
+					$out .= $langs->trans("WarningIfYouCheckOneRecipientPerEmail");
+					$out .= '</span>';
+					$out .= '</td></tr>';
+				} else {
+					$out .= '<tr><td><input type="hidden" name="oneemailperrecipient" value="1"></td><td></td></tr>';
+				}
 			}
 
 			// CC
@@ -771,18 +777,21 @@ class FormMail extends Form
 
 				if (!empty($this->withmaindocfile)) {
 					if ($this->withmaindocfile == 1) {
-						$out .= '<input type="checkbox" name="addmaindocfile" value="1" />';
+						$out .= '<input type="checkbox" id="addmaindocfile" name="addmaindocfile" value="1" />';
+					} elseif ($this->withmaindocfile == -1) {
+						$out .= '<input type="checkbox" id="addmaindocfile" name="addmaindocfile" value="1" checked="checked" />';
 					}
-					if ($this->withmaindocfile == -1) {
-						$out .= '<input type="checkbox" name="addmaindocfile" value="1" checked="checked" />';
+					if (!empty($conf->global->MAIL_MASS_ACTION_ADD_LAST_IF_MAIN_DOC_NOT_FOUND)) {
+						$out .= ' <label for="addmaindocfile">'.$langs->trans("JoinMainDocOrLastGenerated").'.</label><br>';
+					} else {
+						$out .= ' <label for="addmaindocfile">'.$langs->trans("JoinMainDoc").'.</label><br>';
 					}
-					$out .= ' '.$langs->trans("JoinMainDoc").'.<br>';
 				}
 
 				if (is_numeric($this->withfile)) {
 					// TODO Trick to have param removedfile containing nb of file to delete. But this does not works without javascript
 					$out .= '<input type="hidden" class="removedfilehidden" name="removedfile" value="">'."\n";
-					$out .= '<script type="text/javascript" language="javascript">';
+					$out .= '<script type="text/javascript">';
 					$out .= 'jQuery(document).ready(function () {';
 					$out .= '    jQuery(".removedfile").click(function() {';
 					$out .= '        jQuery(".removedfilehidden").val(jQuery(this).val());';
@@ -792,6 +801,7 @@ class FormMail extends Form
 					if (count($listofpaths)) {
 						foreach ($listofpaths as $key => $val) {
 							$relativepathtofile = substr($val, (strlen(DOL_DATA_ROOT) - strlen($val)));
+
 							if ($conf->entity > 1) {
 								$relativepathtofile = str_replace($conf->entity.'/', '', $relativepathtofile);
 							}
@@ -802,6 +812,7 @@ class FormMail extends Form
 							$out .= '<div id="attachfile_'.$key.'">';
 							// Preview of attachment
 							$out .= img_mime($listofnames[$key]).' '.$listofnames[$key];
+
 							$out .= $formfile->showPreview(array(), $formfile_params[2], $formfile_params[4]);
 							if (!$this->withfilereadonly) {
 								$out .= ' <input type="image" style="border: 0px;" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/delete.png" value="'.($key + 1).'" class="removedfile" id="removedfile_'.$key.'" name="removedfile_'.$key.'" />';
@@ -810,8 +821,7 @@ class FormMail extends Form
 							$out .= '<br></div>';
 						}
 					} elseif (empty($this->withmaindocfile)) {
-						// Do not show message if we asked to show the checkbox
-						$out .= $langs->trans("NoAttachedFiles").'<br>';
+						$out .= '<span class="opacitymedium">'.$langs->trans("NoAttachedFiles").'</span><br>';
 					}
 					if ($this->withfile == 2) {
 						// Can add other files
@@ -821,7 +831,7 @@ class FormMail extends Form
 							$out .= '<input type="file" class="flat" id="addedfile" name="addedfile" value="'.$langs->trans("Upload").'" />';
 						}
 						$out .= ' ';
-						$out .= '<input class="button" type="submit" id="'.$addfileaction.'" name="'.$addfileaction.'" value="'.$langs->trans("MailingAddFile").'" />';
+						$out .= '<input type="submit" class="button" id="'.$addfileaction.'" name="'.$addfileaction.'" value="'.$langs->trans("MailingAddFile").'" />';
 					}
 				} else {
 					$out .= $this->withfile;
@@ -956,15 +966,14 @@ class FormMail extends Form
 			$out .= '</table>'."\n";
 
 			if ($this->withform == 1 || $this->withform == -1) {
-				$out .= '<br><div class="center">';
-				$out .= '<input class="button" type="submit" id="sendmail" name="sendmail" value="'.$langs->trans("SendMail").'"';
+				$out .= '<div class="center">';
+				$out .= '<input type="submit" class="button button-add" id="sendmail" name="sendmail" value="'.$langs->trans("SendMail").'"';
 				// Add a javascript test to avoid to forget to submit file before sending email
 				if ($this->withfile == 2 && $conf->use_javascript_ajax) {
 					$out .= ' onClick="if (document.mailform.addedfile.value != \'\') { alert(\''.dol_escape_js($langs->trans("FileWasNotUploaded")).'\'); return false; } else { return true; }"';
 				}
 				$out .= ' />';
 				if ($this->withcancel) {
-					$out .= ' &nbsp; &nbsp; ';
 					$out .= '<input class="button button-cancel" type="submit" id="cancel" name="cancel" value="'.$langs->trans("Cancel").'" />';
 				}
 				$out .= '</div>'."\n";
@@ -976,7 +985,7 @@ class FormMail extends Form
 
 			// Disable enter key if option MAIN_MAILFORM_DISABLE_ENTERKEY is set
 			if (!empty($conf->global->MAIN_MAILFORM_DISABLE_ENTERKEY)) {
-				$out .= '<script type="text/javascript" language="javascript">';
+				$out .= '<script type="text/javascript">';
 				$out .= 'jQuery(document).ready(function () {';
 				$out .= '	$(document).on("keypress", \'#mailform\', function (e) {		/* Note this is called at every key pressed ! */
 	    						var code = e.keyCode || e.which;
@@ -1197,6 +1206,9 @@ class FormMail extends Form
 			if (!empty($conf->global->MAIL_FORCE_DELIVERY_RECEIPT_INVOICE) && !empty($this->param['models']) && $this->param['models'] == 'facture_send') {
 				$defaultvaluefordeliveryreceipt = 1;
 			}
+			if (!empty($conf->global->MAIL_FORCE_DELIVERY_RECEIPT_SUPPLIER_ORDER) && !empty($this->param['models']) && $this->param['models'] == 'order_supplier_send') {
+				$defaultvaluefordeliveryreceipt = 1;
+			}
 			$out .= $form->selectyesno('deliveryreceipt', (GETPOSTISSET("deliveryreceipt") ? GETPOST("deliveryreceipt") : $defaultvaluefordeliveryreceipt), 1);
 		}
 		$out .= "</td></tr>\n";
@@ -1215,6 +1227,7 @@ class FormMail extends Form
 		global $conf, $langs, $form;
 
 		$defaulttopic = GETPOST('subject', 'restricthtml');
+
 		if (!GETPOST('modelselected', 'alpha') || GETPOST('modelmailselected') != '-1') {
 			if ($arraydefaultmessage && $arraydefaultmessage->topic) {
 				$defaulttopic = $arraydefaultmessage->topic;
@@ -1244,16 +1257,16 @@ class FormMail extends Form
 	 *  Return templates of email with type = $type_template or type = 'all'.
 	 *  This search into table c_email_templates. Used by the get_form function.
 	 *
-	 *  @param	DoliDB		$db				Database handler
+	 *  @param	DoliDB		$dbs			Database handler
 	 *  @param	string		$type_template	Get message for model/type=$type_template, type='all' also included.
 	 *  @param	User		$user			Get template public or limited to this user
 	 *  @param	Translate	$outputlangs	Output lang object
-	 *  @param	int			$id				Id of template to find, or -1 for first found with position 0, or 0 for first found whatever is position (priority order depends on lang provided or not) or -2 for exact match with label (no answer if not found)
+	 *  @param	int			$id				Id of template to get, or -1 for first found with position 0, or 0 for first found whatever is position (priority order depends on lang provided or not) or -2 for exact match with label (no answer if not found)
 	 *  @param  int         $active         1=Only active template, 0=Only disabled, -1=All
-	 *  @param	string		$label			Label of template
+	 *  @param	string		$label			Label of template to get
 	 *  @return ModelMail|integer			One instance of ModelMail or -1 if error
 	 */
-	public function getEMailTemplate($db, $type_template, $user, $outputlangs, $id = 0, $active = 1, $label = '')
+	public function getEMailTemplate($dbs, $type_template, $user, $outputlangs, $id = 0, $active = 1, $label = '')
 	{
 		global $conf, $langs;
 
@@ -1273,18 +1286,18 @@ class FormMail extends Form
 		}
 
 		$sql = "SELECT rowid, module, label, type_template, topic, joinfiles, content, content_lines, lang";
-		$sql .= " FROM ".MAIN_DB_PREFIX.'c_email_templates';
-		$sql .= " WHERE (type_template='".$db->escape($type_template)."' OR type_template='all')";
+		$sql .= " FROM ".$dbs->prefix().'c_email_templates';
+		$sql .= " WHERE (type_template='".$dbs->escape($type_template)."' OR type_template='all')";
 		$sql .= " AND entity IN (".getEntity('c_email_templates').")";
-		$sql .= " AND (private = 0 OR fk_user = ".$user->id.")"; // Get all public or private owned
+		$sql .= " AND (private = 0 OR fk_user = ".((int) $user->id).")"; // Get all public or private owned
 		if ($active >= 0) {
 			$sql .= " AND active = ".((int) $active);
 		}
 		if ($label) {
-			$sql .= " AND label = '".$db->escape($label)."'";
+			$sql .= " AND label = '".$dbs->escape($label)."'";
 		}
 		if (!($id > 0) && $languagetosearch) {
-			$sql .= " AND (lang = '".$db->escape($languagetosearch)."'".($languagetosearchmain ? " OR lang = '".$db->escape($languagetosearchmain)."'" : "")." OR lang IS NULL OR lang = '')";
+			$sql .= " AND (lang = '".$dbs->escape($languagetosearch)."'".($languagetosearchmain ? " OR lang = '".$dbs->escape($languagetosearchmain)."'" : "")." OR lang IS NULL OR lang = '')";
 		}
 		if ($id > 0) {
 			$sql .= " AND rowid=".(int) $id;
@@ -1293,22 +1306,22 @@ class FormMail extends Form
 			$sql .= " AND position=0";
 		}
 		if ($languagetosearch) {
-			$sql .= $db->order("position,lang,label", "ASC,DESC,ASC"); // We want line with lang set first, then with lang null or ''
+			$sql .= $dbs->order("position,lang,label", "ASC,DESC,ASC"); // We want line with lang set first, then with lang null or ''
 		} else {
-			$sql .= $db->order("position,lang,label", "ASC,ASC,ASC"); // If no language provided, we give priority to lang not defined
+			$sql .= $dbs->order("position,lang,label", "ASC,ASC,ASC"); // If no language provided, we give priority to lang not defined
 		}
-		//$sql .= $db->plimit(1);
+		//$sql .= $dbs->plimit(1);
 		//print $sql;
 
-		$resql = $db->query($sql);
+		$resql = $dbs->query($sql);
 		if (!$resql) {
-			dol_print_error($db);
+			dol_print_error($dbs);
 			return -1;
 		}
 
 		// Get first found
 		while (1) {
-			$obj = $db->fetch_object($resql);
+			$obj = $dbs->fetch_object($resql);
 
 			if ($obj) {
 				// If template is for a module, check module is enabled; if not, take next template
@@ -1380,7 +1393,8 @@ class FormMail extends Form
 			}
 		}
 
-		$db->free($resql);
+		$dbs->free($resql);
+
 		return $ret;
 	}
 
@@ -1396,10 +1410,10 @@ class FormMail extends Form
 	public function isEMailTemplate($type_template, $user, $outputlangs)
 	{
 		$sql = "SELECT label, topic, content, lang";
-		$sql .= " FROM ".MAIN_DB_PREFIX.'c_email_templates';
+		$sql .= " FROM ".$this->db->prefix().'c_email_templates';
 		$sql .= " WHERE type_template='".$this->db->escape($type_template)."'";
 		$sql .= " AND entity IN (".getEntity('c_email_templates').")";
-		$sql .= " AND (fk_user is NULL or fk_user = 0 or fk_user = ".$user->id.")";
+		$sql .= " AND (fk_user is NULL or fk_user = 0 or fk_user = ".((int) $user->id).")";
 		if (is_object($outputlangs)) {
 			$sql .= " AND (lang = '".$this->db->escape($outputlangs->defaultlang)."' OR lang IS NULL OR lang = '')";
 		}
@@ -1432,10 +1446,10 @@ class FormMail extends Form
 		global $conf;
 
 		$sql = "SELECT rowid, module, label, topic, content, content_lines, lang, fk_user, private, position";
-		$sql .= " FROM ".MAIN_DB_PREFIX.'c_email_templates';
+		$sql .= " FROM ".$this->db->prefix().'c_email_templates';
 		$sql .= " WHERE type_template IN ('".$this->db->escape($type_template)."', 'all')";
 		$sql .= " AND entity IN (".getEntity('c_email_templates').")";
-		$sql .= " AND (private = 0 OR fk_user = ".$user->id.")"; // See all public templates or templates I own.
+		$sql .= " AND (private = 0 OR fk_user = ".((int) $user->id).")"; // See all public templates or templates I own.
 		if ($active >= 0) {
 			$sql .= " AND active = ".((int) $active);
 		}
@@ -1523,7 +1537,7 @@ class FormMail extends Form
 					$product = new Product($this->db);
 					$product->fetch($line->fk_product, '', '', 1);
 					$product->fetch_optionals();
-					if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0) {
+					if (is_array($extrafields->attributes[$product->table_element]['label']) && count($extrafields->attributes[$product->table_element]['label']) > 0) {
 						foreach ($extrafields->attributes[$product->table_element]['label'] as $key => $label) {
 							$substit_line['__PRODUCT_EXTRAFIELD_'.strtoupper($key).'__'] = $product->array_options['options_'.$key];
 						}
@@ -1567,6 +1581,7 @@ class FormMail extends Form
 
 			// For mass emailing, we have different keys
 			$tmparray['__ID__'] = 'IdRecord';
+			$tmparray['__THIRDPARTY_CUSTOMER_CODE__'] = 'CustomerCode';
 			$tmparray['__EMAIL__'] = 'EMailRecipient';
 			$tmparray['__LASTNAME__'] = 'Lastname';
 			$tmparray['__FIRSTNAME__'] = 'Firstname';

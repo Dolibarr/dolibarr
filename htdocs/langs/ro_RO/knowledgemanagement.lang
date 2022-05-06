@@ -47,3 +47,8 @@ KnowledgeRecord = Articol
 KnowledgeRecordExtraFields = Extracâmpuri articole
 GroupOfTicket=Grup de tichete
 YouCanLinkArticleToATicketCategory=Poți conecta un articol la un grup de tichete (astfel încât articolul să fie sugerat în timpul clasificării tichetelor noi)
+SuggestedForTicketsInGroup=Sugerat pentru tichete atunci când grupul este
+
+SetObsolete=Setează ca învechit
+ConfirmCloseKM=Confirmi închiderea acestui articol ca învechit ?
+ConfirmReopenKM=Sigur vrei să readuci acest articol la starea "Validat" ?

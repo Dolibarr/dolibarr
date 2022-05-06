@@ -5,6 +5,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010	   Pierre Morin         <pierre.morin@auguria.net>
  * Copyright (C) 2010	   Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2022	   Ferran Marcet        <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -119,7 +120,7 @@ if ($user->socid > 0) {
 
 // For some module part, dir may be privates
 if (in_array($modulepart, array('facture_paiement', 'unpaid'))) {
-	if (!$user->rights->societe->client->voir || $socid) {
+	if (empty($user->rights->societe->client->voir) || $socid) {
 		$original_file = 'private/'.$user->id.'/'.$original_file; // If user has no permission to see all, output dir is specific to user
 	}
 }
@@ -138,6 +139,7 @@ if (in_array($modulepart, array('facture_paiement', 'unpaid'))) {
  */
 
 // If we have a hash public (hashp), we guess the original_file.
+$ecmfile='';
 if (!empty($hashp)) {
 	include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
 	$ecmfile = new EcmFiles($db);
@@ -161,6 +163,11 @@ if (!empty($hashp)) {
 		} else {
 			$modulepart = $moduleparttocheck;
 			$original_file = (($tmp[1] ? $tmp[1].'/' : '').$ecmfile->filename); // this is relative to module dir
+		}
+		$entity = $ecmfile->entity;
+		if ($entity != $conf->entity) {
+			$conf->entity = $entity;
+			$conf->setValues($db);
 		}
 	} else {
 		$langs->load("errors");
@@ -194,8 +201,11 @@ if (!in_array($type, array('text/x-javascript')) && !dolIsAllowedForPreview($ori
 	$type = 'application/octet-stream';
 }
 
-// Security: Delete string ../ into $original_file
-$original_file = str_replace("../", "/", $original_file);
+// Security: Delete string ../ or ..\ into $original_file
+$original_file = preg_replace('/\.\.+/', '..', $original_file);	// Replace '... or more' with '..'
+$original_file = str_replace('../', '/', $original_file);
+$original_file = str_replace('..\\', '/', $original_file);
+
 
 // Find the subdirectory name as the reference
 $refname = basename(dirname($original_file)."/");
@@ -210,7 +220,7 @@ $check_access = dol_check_secure_access_document($modulepart, $original_file, $e
 $accessallowed              = $check_access['accessallowed'];
 $sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
 $fullpath_original_file     = $check_access['original_file']; // $fullpath_original_file is now a full path name
-//var_dump($fullpath_original_file);exit;
+//var_dump($fullpath_original_file.' '.$original_file.' '.$refname.' '.$accessallowed);exit;
 
 if (!empty($hashp)) {
 	$accessallowed = 1; // When using hashp, link is public so we force $accessallowed

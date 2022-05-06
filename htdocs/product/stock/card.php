@@ -51,10 +51,11 @@ $confirm = GETPOST('confirm');
 $projectid = GETPOST('projectid', 'int');
 
 $id = GETPOST('id', 'int');
+$socid = GETPOST('socid', 'int');
 $ref = GETPOST('ref', 'alpha');
 
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 if (!$sortfield) {
 	$sortfield = "p.ref";
 }
@@ -86,6 +87,10 @@ if ($id > 0 || !empty($ref)) {
 	}
 }
 
+$usercanread = (($user->rights->stock->lire));
+$usercancreate = (($user->rights->stock->creer));
+$usercandelete = (($user->rights->stock->supprimer));
+
 
 /*
  * Actions
@@ -93,16 +98,35 @@ if ($id > 0 || !empty($ref)) {
 
 $error = 0;
 
-$usercanread = (($user->rights->stock->lire));
-$usercancreate = (($user->rights->stock->creer));
-$usercandelete = (($user->rights->stock->supprimer));
-
 $parameters = array('id'=>$id, 'ref'=>$ref);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 if (empty($reshook)) {
+	$backurlforlist = DOL_URL_ROOT.'/product/stock/list.php';
+
+	if (empty($backtopage) || ($cancel && empty($id))) {
+		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
+			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
+				$backtopage = $backurlforlist;
+			} else {
+				$backtopage = DOL_URL_ROOT.'/product/stock/card.php?id='.((!empty($id) && $id > 0) ? $id : '__ID__');
+			}
+		}
+	}
+
+	if ($cancel) {
+		if (!empty($backtopageforcancel)) {
+			header("Location: ".$backtopageforcancel);
+			exit;
+		} elseif (!empty($backtopage)) {
+			header("Location: ".$backtopage);
+			exit;
+		}
+		$action = '';
+	}
+
 	// Ajout entrepot
 	if ($action == 'add' && $user->rights->stock->creer) {
 		$object->ref = (string) GETPOST("ref", "alpha");
@@ -135,6 +159,7 @@ if (empty($reshook)) {
 					$categories = GETPOST('categories', 'array');
 					$object->setCategories($categories);
 					if (!empty($backtopage)) {
+						$backtopage = str_replace("__ID__", $id, $backtopage);
 						header("Location: ".$backtopage);
 						exit;
 					} else {
@@ -183,7 +208,7 @@ if (empty($reshook)) {
 			$object->fax = GETPOST("fax");
 
 			// Fill array 'array_options' with data from add form
-			$ret = $extrafields->setOptionalsFromPost(null, $object);
+			$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
 			if ($ret < 0) {
 				$error++;
 			}
@@ -288,7 +313,7 @@ if ($action == 'create') {
 		$langs->load('projects');
 		print '<tr><td>'.$langs->trans('Project').'</td><td colspan="2">';
 		print img_picto('', 'project').$formproject->select_projects(($socid > 0 ? $socid : -1), $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500');
-		print ' <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$soc->id.'&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id.($fac_rec ? '&fac_rec='.$fac_rec : '')).'"><span class="fa fa-plus-circle valignmiddle" title="'.$langs->trans("AddProject").'"></span></a>';
+		print ' <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$socid.'&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$socid.(!empty($fac_rec) ? '&fac_rec='.$fac_rec : '')).'"><span class="fa fa-plus-circle valignmiddle" title="'.$langs->trans("AddProject").'"></span></a>';
 		print '</td></tr>';
 	}
 
@@ -296,7 +321,7 @@ if ($action == 'create') {
 	print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 	// Editeur wysiwyg
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor = new DolEditor('desc', (!empty($object->description) ? $object->description : ''), '', 180, 'dolibarr_notes', 'In', false, true, $conf->fckeditor->enabled, ROWS_5, '90%');
+	$doleditor = new DolEditor('desc', (!empty($object->description) ? $object->description : ''), '', 180, 'dolibarr_notes', 'In', false, true, empty($conf->fckeditor->enabled) ? '' : $conf->fckeditor->enabled, ROWS_5, '90%');
 	$doleditor->Create();
 	print '</td></tr>';
 
@@ -347,7 +372,7 @@ if ($action == 'create') {
 	// Other attributes
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
 
-	if ($conf->categorie->enabled) {
+	if (!empty($conf->categorie->enabled)) {
 		// Categories
 		print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
 		$cate_arbo = $form->select_all_categories(Categorie::TYPE_WAREHOUSE, '', 'parent', 64, 0, 1);
@@ -358,11 +383,7 @@ if ($action == 'create') {
 
 	print dol_get_fiche_end();
 
-	print '<div class="center">';
-	print '<input type="submit" class="button" value="'.$langs->trans("Create").'">';
-	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input type="button" class="button button-cancel" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
-	print '</div>';
+	print $form->buttonsSaveCancel("Create");
 
 	print '</form>';
 } else {
@@ -414,7 +435,7 @@ if ($action == 'create') {
 				$morehtmlref .= '<br>'.img_picto('', 'project').' '.$langs->trans('Project').' ';
 				if ($usercancreate) {
 					if ($action != 'classify') {
-						$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
+						$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
 					}
 					if ($action == 'classify') {
 						$projectid = $object->fk_project;
@@ -431,9 +452,10 @@ if ($action == 'create') {
 					if (!empty($object->fk_project)) {
 						$proj = new Project($db);
 						$proj->fetch($object->fk_project);
-						$morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$object->fk_project.'" title="'.$langs->trans('ShowProject').'">';
-						$morehtmlref .= $proj->ref;
-						$morehtmlref .= '</a>';
+						$morehtmlref .= ' : '.$proj->getNomUrl(1);
+						if ($proj->title) {
+							$morehtmlref .= ' - '.$proj->title;
+						}
 					} else {
 						$morehtmlref .= '';
 					}
@@ -485,7 +507,6 @@ if ($action == 'create') {
 
 			print '</div>';
 			print '<div class="fichehalfright">';
-			print '<div class="ficheaddleft">';
 			print '<div class="underbanner clearboth"></div>';
 
 			print '<table class="border centpercent tableforfield">';
@@ -531,7 +552,6 @@ if ($action == 'create') {
 
 			print "</table>";
 
-			print '</div>';
 			print '</div>';
 			print '</div>';
 
@@ -666,8 +686,8 @@ if ($action == 'create') {
 					if (!empty($conf->global->MAIN_MULTILANGS)) { // si l'option est active
 						$sql = "SELECT label";
 						$sql .= " FROM ".MAIN_DB_PREFIX."product_lang";
-						$sql .= " WHERE fk_product=".$objp->rowid;
-						$sql .= " AND lang='".$db->escape($langs->getDefaultLang())."'";
+						$sql .= " WHERE fk_product = ".((int) $objp->rowid);
+						$sql .= " AND lang = '".$db->escape($langs->getDefaultLang())."'";
 						$sql .= " LIMIT 1";
 
 						$result = $db->query($sql);
@@ -913,11 +933,7 @@ if ($action == 'create') {
 
 			print dol_get_fiche_end();
 
-			print '<div class="center">';
-			print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
-			print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-			print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
-			print '</div>';
+			print $form->buttonsSaveCancel();
 
 			print '</form>';
 		}
@@ -944,23 +960,22 @@ if ($action != 'create' && $action != 'edit' && $action != 'delete') {
 	$delallowed = $usercancreate;
 	$modulepart = 'stock';
 
-	print $formfile->showdocuments($modulepart, $object->ref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 0, 0, 0, 28, 0, '', 0, '', $object->default_lang, '', $object);
+	print $formfile->showdocuments($modulepart, $objectref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 0, 0, 0, 28, 0, '', 0, '', $object->default_lang, '', $object);
 	$somethingshown = $formfile->numoffiles;
 
-	print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+	print '</div><div class="fichehalfright">';
 
 	$MAXEVENT = 10;
 
-	$morehtmlright = '<a href="'.DOL_URL_ROOT.'/product/agenda.php?id='.$object->id.'">';
-	$morehtmlright .= $langs->trans("SeeAll");
-	$morehtmlright .= '</a>';
+	$morehtmlcenter = '';
+	//$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-list-alt imgforviewmode', DOL_URL_ROOT.'/product/stock/agenda.php?id='.$object->id);
 
 	// List of actions on element
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 	$formactions = new FormActions($db);
-	$somethingshown = $formactions->showactions($object, 'stock', 0, 1, '', $MAXEVENT, '', $morehtmlright); // Show all action for product
+	$somethingshown = $formactions->showactions($object, 'stock', 0, 1, '', $MAXEVENT, '', $morehtmlcenter); // Show all action for product
 
-	print '</div></div></div>';
+	print '</div></div>';
 }
 
 // End of page

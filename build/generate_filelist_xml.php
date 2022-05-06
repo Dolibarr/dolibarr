@@ -239,10 +239,18 @@ fclose($fp);
 if (empty($buildzip)) {
 	print "File ".$outputfile." generated\n";
 } else {
-	$result = dol_compress_file($outputfile, $outputfile.'.zip');
-	if ($result > 0) {
-		dol_delete_file($outputfile);
-		print "File ".$outputfile.".zip generated\n";
+	if ($buildzip == '1' || $buildzip == 'zip') {
+		$result = dol_compress_file($outputfile, $outputfile.'.zip', 'zip');
+		if ($result > 0) {
+			dol_delete_file($outputfile);
+			print "File ".$outputfile.".zip generated\n";
+		}
+	} elseif ($buildzip == '2' || $buildzip == 'gz') {
+		$result = dol_compress_file($outputfile, $outputfile.'.gz', 'gz');
+		if ($result > 0) {
+			dol_delete_file($outputfile);
+			print "File ".$outputfile.".gz generated\n";
+		}
 	}
 }
 

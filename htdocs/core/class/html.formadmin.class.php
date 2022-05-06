@@ -73,6 +73,22 @@ class FormAdmin
 
 		$langs_available = $langs->get_available_languages(DOL_DOCUMENT_ROOT, 12, 0, $mainlangonly);
 
+		// If empty value is not allowed and the language to select is not inside the list of available language and we must find
+		// an alternative of the language code to pre-select (to avoid to have first element in list pre-selected).
+		if ($selected && empty($showempty)) {
+			if (!is_array($selected) && !array_key_exists($selected, $langs_available)) {
+				$tmparray = explode('_', $selected);
+				if (!empty($tmparray[1])) {
+					$selected = getLanguageCodeFromCountryCode($tmparray[1]);
+				}
+				if (empty($selected)) {
+					$selected = $langs->defaultlang;
+				}
+			} else {
+				// If the preselected value is an array, we do not try to find alternative to preselect
+			}
+		}
+
 		$out = '';
 
 		$out .= '<select '.($multiselect ? 'multiple="multiple" ' : '').'class="flat'.($morecss ? ' '.$morecss : '').'" id="'.$htmlname.'" name="'.$htmlname.($multiselect ? '[]' : '').'"'.($disabled ? ' disabled' : '').'>';
@@ -292,7 +308,7 @@ class FormAdmin
 								if (preg_match('/\.lib/i', $filelib)) {
 									continue;
 								}
-								if (empty($conf->global->MAIN_FEATURES_LEVEL) && in_array($file, $expdevmenu)) {
+								if (getDolGlobalInt('MAIN_FEATURES_LEVEL') == 0 && in_array($file, $expdevmenu)) {
 									continue;
 								}
 
@@ -404,7 +420,7 @@ class FormAdmin
 		$langs->load("dict");
 
 		$sql = "SELECT code, label, width, height, unit";
-		$sql .= " FROM ".MAIN_DB_PREFIX."c_paper_format";
+		$sql .= " FROM ".$this->db->prefix()."c_paper_format";
 		$sql .= " WHERE active=1";
 		if ($filter) {
 			$sql .= " AND code LIKE '%".$this->db->escape($filter)."%'";

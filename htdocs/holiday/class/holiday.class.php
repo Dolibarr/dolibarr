@@ -701,7 +701,19 @@ class Holiday extends CommonObject
 	public function validate($user = null, $notrigger = 0)
 	{
 		global $conf, $langs;
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 		$error = 0;
+
+		$checkBalance = getDictionaryValue(MAIN_DB_PREFIX.'c_holiday_types', 'block_if_negative', $this->fk_type);
+
+		if ($checkBalance > 0) {
+			$balance = $this->getCPforUser($this->fk_user, $this->fk_type);
+
+			if ($balance < 0) {
+				$this->error = 'LeaveRequestCreationBlockedBecauseBalanceIsNegative';
+				return -1;
+			}
+		}
 
 		// Define new ref
 		if (!$error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref) || $this->ref == $this->id)) {
@@ -719,7 +731,7 @@ class Holiday extends CommonObject
 			$error++;
 		}
 		$sql .= " ref = '".$this->db->escape($num)."'";
-		$sql .= " WHERE rowid= ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$this->db->begin();
 
@@ -739,6 +751,44 @@ class Holiday extends CommonObject
 				// End call triggers
 			}
 		}
+
+		if (!$error) {
+			$this->oldref = $this->ref;
+
+			// Rename directory if dir was a temporary ref
+			if (preg_match('/^[\(]?PROV/i', $this->ref)) {
+				// Now we rename also files into index
+				$sql = 'UPDATE ' . MAIN_DB_PREFIX . "ecm_files set filename = CONCAT('" . $this->db->escape($this->newref) . "', SUBSTR(filename, " . (strlen($this->ref) + 1) . ")), filepath = 'holiday/" . $this->db->escape($this->newref) . "'";
+				$sql .= " WHERE filename LIKE '" . $this->db->escape($this->ref) . "%' AND filepath = 'holiday/" . $this->db->escape($this->ref) . "' and entity = " . ((int) $conf->entity);
+				$resql = $this->db->query($sql);
+				if (!$resql) {
+					$error++;
+					$this->error = $this->db->lasterror();
+				}
+
+				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
+				$oldref = dol_sanitizeFileName($this->ref);
+				$newref = dol_sanitizeFileName($num);
+				$dirsource = $conf->holiday->multidir_output[$this->entity] . '/' . $oldref;
+				$dirdest = $conf->holiday->multidir_output[$this->entity] . '/' . $newref;
+				if (!$error && file_exists($dirsource)) {
+					dol_syslog(get_class($this) . "::validate rename dir " . $dirsource . " into " . $dirdest);
+					if (@rename($dirsource, $dirdest)) {
+						dol_syslog("Rename ok");
+						// Rename docs starting with $oldref with $newref
+						$listoffiles = dol_dir_list($dirdest, 'files', 1, '^' . preg_quote($oldref, '/'));
+						foreach ($listoffiles as $fileentry) {
+							$dirsource = $fileentry['name'];
+							$dirdest = preg_replace('/^' . preg_quote($oldref, '/') . '/', $newref, $dirsource);
+							$dirsource = $fileentry['path'] . '/' . $dirsource;
+							$dirdest = $fileentry['path'] . '/' . $dirdest;
+							@rename($dirsource, $dirdest);
+						}
+					}
+				}
+			}
+		}
+
 
 		// Commit or rollback
 		if ($error) {
@@ -766,6 +816,17 @@ class Holiday extends CommonObject
 	{
 		global $conf, $langs;
 		$error = 0;
+
+		$checkBalance = getDictionaryValue(MAIN_DB_PREFIX.'c_holiday_types', 'block_if_negative', $this->fk_type);
+
+		if ($checkBalance > 0) {
+			$balance = $this->getCPforUser($this->fk_user, $this->fk_type);
+
+			if ($balance < 0) {
+				$this->error = 'LeaveRequestCreationBlockedBecauseBalanceIsNegative';
+				return -1;
+			}
+		}
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."holiday SET";
@@ -828,7 +889,7 @@ class Holiday extends CommonObject
 		} else {
 			$sql .= " detail_refuse = NULL";
 		}
-		$sql .= " WHERE rowid= ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$this->db->begin();
 
@@ -874,6 +935,17 @@ class Holiday extends CommonObject
 	{
 		global $conf, $langs;
 		$error = 0;
+
+		$checkBalance = getDictionaryValue(MAIN_DB_PREFIX.'c_holiday_types', 'block_if_negative', $this->fk_type);
+
+		if ($checkBalance > 0 && $this->statut != self::STATUS_DRAFT) {
+			$balance = $this->getCPforUser($this->fk_user, $this->fk_type);
+
+			if ($balance < 0) {
+				$this->error = 'LeaveRequestCreationBlockedBecauseBalanceIsNegative';
+				return -1;
+			}
+		}
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."holiday SET";
@@ -937,7 +1009,7 @@ class Holiday extends CommonObject
 			$sql .= " detail_refuse = NULL";
 		}
 
-		$sql .= " WHERE rowid= ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$this->db->begin();
 
@@ -1198,7 +1270,7 @@ class Holiday extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $save_lastsearch_value = -1, $notooltip = 0)
 	{
-		global $langs;
+		global $langs, $hookmanager;
 
 		$result = '';
 
@@ -1233,7 +1305,15 @@ class Holiday extends CommonObject
 			$result .= $this->ref;
 		}
 		$result .= $linkend;
-
+		global $action;
+		$hookmanager->initHooks(array($this->element . 'dao'));
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
+		}
 		return $result;
 	}
 
@@ -1266,16 +1346,16 @@ class Holiday extends CommonObject
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			//$langs->load("mymodule");
-			$this->labelStatus[self::STATUS_DRAFT] = $langs->trans('DraftCP');
-			$this->labelStatus[self::STATUS_VALIDATED] = $langs->trans('ToReviewCP');
-			$this->labelStatus[self::STATUS_APPROVED] = $langs->trans('ApprovedCP');
-			$this->labelStatus[self::STATUS_CANCELED] = $langs->trans('CancelCP');
-			$this->labelStatus[self::STATUS_REFUSED] = $langs->trans('RefuseCP');
-			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->trans('DraftCP');
-			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->trans('ToReviewCP');
-			$this->labelStatusShort[self::STATUS_APPROVED] = $langs->trans('ApprovedCP');
-			$this->labelStatusShort[self::STATUS_CANCELED] = $langs->trans('CancelCP');
-			$this->labelStatusShort[self::STATUS_REFUSED] = $langs->trans('RefuseCP');
+			$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('DraftCP');
+			$this->labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('ToReviewCP');
+			$this->labelStatus[self::STATUS_APPROVED] = $langs->transnoentitiesnoconv('ApprovedCP');
+			$this->labelStatus[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('CancelCP');
+			$this->labelStatus[self::STATUS_REFUSED] = $langs->transnoentitiesnoconv('RefuseCP');
+			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('DraftCP');
+			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('ToReviewCP');
+			$this->labelStatusShort[self::STATUS_APPROVED] = $langs->transnoentitiesnoconv('ApprovedCP');
+			$this->labelStatusShort[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('CancelCP');
+			$this->labelStatusShort[self::STATUS_REFUSED] = $langs->transnoentitiesnoconv('RefuseCP');
 		}
 
 		$params = array();
@@ -1431,11 +1511,11 @@ class Holiday extends CommonObject
 			$monthLastUpdate = $lastUpdate[4].$lastUpdate[5];
 			//print 'month: '.$month.' lastUpdate:'.$lastUpdate.' monthLastUpdate:'.$monthLastUpdate;exit;
 
-			// Si la date du mois n'est pas la même que celle sauvegardée, on met à jour le timestamp
+			// If month date is not same than the one of last update (the one we saved in database), then we update the timestamp and balance of each open user.
 			if ($month != $monthLastUpdate) {
 				$this->db->begin();
 
-				$users = $this->fetchUsers(false, false);
+				$users = $this->fetchUsers(false, false, ' AND u.statut > 0');
 				$nbUser = count($users);
 
 				$sql = "UPDATE ".MAIN_DB_PREFIX."holiday_config SET";
@@ -1447,7 +1527,7 @@ class Holiday extends CommonObject
 
 				// Update each user counter
 				foreach ($users as $userCounter) {
-					$nbDaysToAdd = (isset($typeleaves[$userCounter['type']]['newByMonth']) ? $typeleaves[$userCounter['type']]['newByMonth'] : 0);
+					$nbDaysToAdd = (isset($typeleaves[$userCounter['type']]['newbymonth']) ? $typeleaves[$userCounter['type']]['newbymonth'] : 0);
 					if (empty($nbDaysToAdd)) {
 						continue;
 					}
@@ -1601,7 +1681,7 @@ class Holiday extends CommonObject
 
 
 	/**
-	 *  Retourne le solde de congés payés pour un utilisateur
+	 *  Return balance of holiday for one user
 	 *
 	 *  @param	int		$user_id    ID de l'utilisateur
 	 *  @param	int		$fk_type	Filter on type
@@ -1636,7 +1716,7 @@ class Holiday extends CommonObject
 	 *
 	 *    @param      boolean			$stringlist	    If true return a string list of id. If false, return an array with detail.
 	 *    @param      boolean   		$type			If true, read Dolibarr user list, if false, return vacation balance list.
-	 *    @param      string            $filters        Filters
+	 *    @param      string            $filters        Filters. Warning: This must not contains data from user input.
 	 *    @return     array|string|int      			Return an array
 	 */
 	public function fetchUsers($stringlist = true, $type = true, $filters = '')
@@ -1664,6 +1744,7 @@ class Holiday extends CommonObject
 					$sql .= " WHERE u.entity IN (".getEntity('user').")";
 				}
 				$sql .= " AND u.statut > 0";
+				$sql .= " AND u.employee = 1"; // We only want employee users for holidays
 				if ($filters) {
 					$sql .= $filters;
 				}
@@ -1736,7 +1817,7 @@ class Holiday extends CommonObject
 			// Si faux donc return array
 			// List for Dolibarr users
 			if ($type) {
-								// If user of Dolibarr
+				// If we need users of Dolibarr
 				$sql = "SELECT";
 				if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
 					$sql .= " DISTINCT";
@@ -1754,6 +1835,7 @@ class Holiday extends CommonObject
 				}
 
 				$sql .= " AND u.statut > 0";
+				$sql .= " AND u.employee = 1"; // We only want employee users for holidays
 				if ($filters) {
 					$sql .= $filters;
 				}
@@ -1934,7 +2016,7 @@ class Holiday extends CommonObject
 	 *
 	 * @param 	int		$fk_user_action		Id user creation
 	 * @param 	int		$fk_user_update		Id user update
-	 * @param 	string	$label				Label
+	 * @param 	string	$label				Label (Example: 'Leave', 'Manual update', 'Leave request cancelation'...)
 	 * @param 	int		$new_solde			New value
 	 * @param	int		$fk_type			Type of vacation
 	 * @return 	int							Id of record added, 0 if nothing done, < 0 if KO
@@ -2079,7 +2161,7 @@ class Holiday extends CommonObject
 	{
 		global $mysoc;
 
-		$sql = "SELECT rowid, code, label, affect, delay, newByMonth";
+		$sql = "SELECT rowid, code, label, affect, delay, newbymonth";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_holiday_types";
 		$sql .= " WHERE (fk_country IS NULL OR fk_country = ".((int) $mysoc->country_id).')';
 		if ($active >= 0) {
@@ -2094,7 +2176,7 @@ class Holiday extends CommonObject
 			$num = $this->db->num_rows($result);
 			if ($num) {
 				while ($obj = $this->db->fetch_object($result)) {
-					$types[$obj->rowid] = array('rowid'=> $obj->rowid, 'code'=> $obj->code, 'label'=>$obj->label, 'affect'=>$obj->affect, 'delay'=>$obj->delay, 'newByMonth'=>$obj->newByMonth);
+					$types[$obj->rowid] = array('rowid'=> $obj->rowid, 'code'=> $obj->code, 'label'=>$obj->label, 'affect'=>$obj->affect, 'delay'=>$obj->delay, 'newbymonth'=>$obj->newbymonth);
 				}
 
 				return $types;

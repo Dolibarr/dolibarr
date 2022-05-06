@@ -35,8 +35,7 @@ if (!empty($permissionedit) && empty($permissiontoadd)) {
 }
 
 if ($cancel) {
-	/*var_dump($cancel);
-	var_dump($backtopage);exit;*/
+	/*var_dump($cancel);var_dump($backtopage);var_dump($backtopageforcancel);exit;*/
 	if (!empty($backtopageforcancel)) {
 		header("Location: ".$backtopageforcancel);
 		exit;
@@ -74,7 +73,7 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 		if (in_array($object->fields[$key]['type'], array('text', 'html'))) {
 			$value = GETPOST($key, 'restricthtml');
 		} elseif ($object->fields[$key]['type'] == 'date') {
-			$value = dol_mktime(12, 0, 0, GETPOST($key.'month', 'int'), GETPOST($key.'day', 'int'), GETPOST($key.'year', 'int'));	// for date without hour, we use gmt
+			$value = dol_mktime(12, 0, 0, GETPOST($key.'month', 'int'), GETPOST($key.'day', 'int'), GETPOST($key.'year', 'int')); // for date without hour, we use gmt
 		} elseif ($object->fields[$key]['type'] == 'datetime') {
 			$value = dol_mktime(GETPOST($key.'hour', 'int'), GETPOST($key.'min', 'int'), GETPOST($key.'sec', 'int'), GETPOST($key.'month', 'int'), GETPOST($key.'day', 'int'), GETPOST($key.'year', 'int'), 'tzuserrel');
 		} elseif ($object->fields[$key]['type'] == 'duration') {
@@ -88,7 +87,7 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 			$value = $tmparraykey[GETPOST($key)].','.GETPOST($key.'2');
 		} else {
 			if ($key == 'lang') {
-				$value = GETPOST($key, 'aZ09');
+				$value = GETPOST($key, 'aZ09') ?GETPOST($key, 'aZ09') : "";
 			} else {
 				$value = GETPOST($key, 'alphanohtml');
 			}
@@ -111,7 +110,7 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 		}
 
 		// Validation of fields values
-		if ($conf->global->MAIN_FEATURE_LEVEL >= 2 || !empty($conf->global->MAIN_ACTIVATE_VALIDATION_RESULT)) {
+		if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2 || !empty($conf->global->MAIN_ACTIVATE_VALIDATION_RESULT)) {
 			if (!$error && !empty($val['validate']) && is_callable(array($object, 'validateField'))) {
 				if (!$object->validateField($object->fields, $key, $value)) {
 					$error++;
@@ -132,11 +131,16 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 		$result = $object->create($user);
 		if ($result > 0) {
 			// Creation OK
+			if ($conf->categorie->enabled && method_exists($object, 'setCategories')) {
+				$categories = GETPOST('categories', 'array:int');
+				$object->setCategories($categories);
+			}
 			$urltogo = $backtopage ? str_replace('__ID__', $result, $backtopage) : $backurlforlist;
 			$urltogo = preg_replace('/--IDFORBACKTOPAGE--/', $object->id, $urltogo); // New method to autoselect project after a New on another form object creation
 			header("Location: ".$urltogo);
 			exit;
 		} else {
+			$error++;
 			// Creation KO
 			if (!empty($object->errors)) {
 				setEventMessages(null, $object->errors, 'errors');
@@ -187,7 +191,7 @@ if ($action == 'update' && !empty($permissiontoadd)) {
 				$value = GETPOST($key, 'restricthtml');
 			}
 		} elseif ($object->fields[$key]['type'] == 'date') {
-			$value = dol_mktime(12, 0, 0, GETPOST($key.'month', 'int'), GETPOST($key.'day', 'int'), GETPOST($key.'year', 'int'));	// for date without hour, we use gmt
+			$value = dol_mktime(12, 0, 0, GETPOST($key.'month', 'int'), GETPOST($key.'day', 'int'), GETPOST($key.'year', 'int')); // for date without hour, we use gmt
 		} elseif ($object->fields[$key]['type'] == 'datetime') {
 			$value = dol_mktime(GETPOST($key.'hour', 'int'), GETPOST($key.'min', 'int'), GETPOST($key.'sec', 'int'), GETPOST($key.'month', 'int'), GETPOST($key.'day', 'int'), GETPOST($key.'year', 'int'), 'tzuserrel');
 		} elseif ($object->fields[$key]['type'] == 'duration') {
@@ -223,11 +227,18 @@ if ($action == 'update' && !empty($permissiontoadd)) {
 		}
 
 		// Validation of fields values
-		if ($conf->global->MAIN_FEATURE_LEVEL >= 2 || !empty($conf->global->MAIN_ACTIVATE_VALIDATION_RESULT)) {
+		if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2 || !empty($conf->global->MAIN_ACTIVATE_VALIDATION_RESULT)) {
 			if (!$error && !empty($val['validate']) && is_callable(array($object, 'validateField'))) {
 				if (!$object->validateField($object->fields, $key, $value)) {
 					$error++;
 				}
+			}
+		}
+
+		if ($conf->categorie->enabled) {
+			$categories = GETPOST('categories', 'array');
+			if (method_exists($object, 'setCategories')) {
+				$object->setCategories($categories);
 			}
 		}
 	}
@@ -244,7 +255,14 @@ if ($action == 'update' && !empty($permissiontoadd)) {
 		$result = $object->update($user);
 		if ($result > 0) {
 			$action = 'view';
+			$urltogo = $backtopage ? str_replace('__ID__', $result, $backtopage) : $backurlforlist;
+			$urltogo = preg_replace('/--IDFORBACKTOPAGE--/', $object->id, $urltogo); // New method to autoselect project after a New on another form object creation
+			if ($urltogo) {
+				header("Location: " . $urltogo);
+				exit;
+			}
 		} else {
+			$error++;
 			// Creation KO
 			setEventMessages($object->error, $object->errors, 'errors');
 			$action = 'edit';
@@ -274,6 +292,7 @@ if ($action == "update_extras" && !empty($permissiontoadd)) {
 		setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
 		$action = 'view';
 	} else {
+		$error++;
 		setEventMessages($object->error, $object->errors, 'errors');
 		$action = 'edit_extras';
 	}
@@ -287,12 +306,15 @@ if ($action == 'confirm_delete' && !empty($permissiontodelete)) {
 	}
 
 	$result = $object->delete($user);
+
 	if ($result > 0) {
 		// Delete OK
 		setEventMessages("RecordDeleted", null, 'mesgs');
+
 		header("Location: ".$backurlforlist);
 		exit;
 	} else {
+		$error++;
 		if (!empty($object->errors)) {
 			setEventMessages(null, $object->errors, 'errors');
 		} else {
@@ -336,6 +358,7 @@ if ($action == 'confirm_deleteline' && $confirm == 'yes' && !empty($permissionto
 		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 		exit;
 	} else {
+		$error++;
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
 	$action = '';
@@ -372,6 +395,7 @@ if ($action == 'confirm_validate' && $confirm == 'yes' && $permissiontoadd) {
 			}
 		}
 	} else {
+		$error++;
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
 	$action = '';
@@ -403,6 +427,7 @@ if ($action == 'confirm_close' && $confirm == 'yes' && $permissiontoadd) {
 			}
 		}
 	} else {
+		$error++;
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
 	$action = '';
@@ -414,6 +439,7 @@ if ($action == 'confirm_setdraft' && $confirm == 'yes' && $permissiontoadd) {
 	if ($result >= 0) {
 		// Nothing else done
 	} else {
+		$error++;
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
 	$action = '';
@@ -445,6 +471,7 @@ if ($action == 'confirm_reopen' && $confirm == 'yes' && $permissiontoadd) {
 			}
 		}
 	} else {
+		$error++;
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
 	$action = '';
@@ -470,6 +497,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && !empty($permissiontoadd))
 			header("Location: ".$_SERVER['PHP_SELF'].'?id='.$newid); // Open record of new object
 			exit;
 		} else {
+			$error++;
 			setEventMessages($objectutil->error, $objectutil->errors, 'errors');
 			$action = '';
 		}

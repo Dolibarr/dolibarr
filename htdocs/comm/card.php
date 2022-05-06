@@ -10,6 +10,7 @@
  * Copyright (C) 2015-2021 Frédéric France             <frederic.france@netlogic.fr>
  * Copyright (C) 2015      Marcos García               <marcosgdf@gmail.com>
  * Copyright (C) 2020      Open-Dsi         		   <support@open-dsi.fr>
+ * Copyright (C) 2022      Anthony Berton     			<anthony.berton@bb2a.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,6 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 if (!empty($conf->facture->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 }
@@ -93,8 +95,8 @@ $action = GETPOST('action', 'aZ09');
 $id = (GETPOST('socid', 'int') ? GETPOST('socid', 'int') : GETPOST('id', 'int'));
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -108,10 +110,11 @@ if (!$sortorder) {
 if (!$sortfield) {
 	$sortfield = "nom";
 }
-$cancelbutton = GETPOST('cancel', 'alpha');
+$cancel = GETPOST('cancel', 'alpha');
 
 $object = new Client($db);
 $extrafields = new ExtraFields($db);
+$formfile = new FormFile($db);
 
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -152,14 +155,15 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
-	if ($cancelbutton) {
+	if ($cancel) {
 		$action = "";
 	}
 
 	// set accountancy code
 	if ($action == 'setcustomeraccountancycode') {
 		$result = $object->fetch($id);
-		$object->code_compta = GETPOST("customeraccountancycode");
+		$object->code_compta_client = GETPOST("customeraccountancycode");
+		$object->code_compta = $object->code_compta_client; // For Backward compatibility
 		$result = $object->update($object->id, $user, 1, 1, 0);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -214,7 +218,7 @@ if (empty($reshook)) {
 	// assujetissement a la TVA
 	if ($action == 'setassujtva' && $user->rights->societe->creer) {
 		$object->fetch($id);
-		$object->tva_assuj = $_POST['assujtva_value'];
+		$object->tva_assuj = GETPOST('assujtva_value');
 		$result = $object->update($object->id);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -351,15 +355,15 @@ if ($object->id > 0) {
 		print showValueWithClipboardCPButton(dol_escape_htmltag($object->code_client));
 		$tmpcheck = $object->check_codeclient();
 		if ($tmpcheck != 0 && $tmpcheck != -5) {
-			print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
+			print ' <span class="error">('.$langs->trans("WrongCustomerCode").')</span>';
 		}
 		print '</td></tr>';
 
 		print '<tr>';
 		print '<td>';
-		print $form->editfieldkey("CustomerAccountancyCode", 'customeraccountancycode', $object->code_compta, $object, $user->rights->societe->creer);
+		print $form->editfieldkey("CustomerAccountancyCode", 'customeraccountancycode', $object->code_compta_client, $object, $user->rights->societe->creer);
 		print '</td><td>';
-		print $form->editfieldval("CustomerAccountancyCode", 'customeraccountancycode', $object->code_compta, $object, $user->rights->societe->creer);
+		print $form->editfieldval("CustomerAccountancyCode", 'customeraccountancycode', $object->code_compta_client, $object, $user->rights->societe->creer);
 		print '</td>';
 		print '</tr>';
 	}
@@ -406,7 +410,7 @@ if ($object->id > 0) {
 	print $langs->trans('PaymentConditions');
 	print '<td>';
 	if (($action != 'editconditions') && $user->rights->societe->creer) {
-		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;socid='.$object->id.'">'.img_edit($langs->trans('SetConditions'), 1).'</a></td>';
+		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editconditions&token='.newToken().'&socid='.$object->id.'">'.img_edit($langs->trans('SetConditions'), 1).'</a></td>';
 	}
 	print '</tr></table>';
 	print '</td><td>';
@@ -424,7 +428,7 @@ if ($object->id > 0) {
 	print $langs->trans('PaymentMode');
 	print '<td>';
 	if (($action != 'editmode') && $user->rights->societe->creer) {
-		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;socid='.$object->id.'">'.img_edit($langs->trans('SetMode'), 1).'</a></td>';
+		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmode&token='.newToken().'&socid='.$object->id.'">'.img_edit($langs->trans('SetMode'), 1).'</a></td>';
 	}
 	print '</tr></table>';
 	print '</td><td>';
@@ -443,7 +447,7 @@ if ($object->id > 0) {
 		print $langs->trans('PaymentBankAccount');
 		print '<td>';
 		if (($action != 'editbankaccount') && $user->rights->societe->creer) {
-			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&amp;socid='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'), 1).'</a></td>';
+			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&token='.newToken().'&socid='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'), 1).'</a></td>';
 		}
 		print '</tr></table>';
 		print '</td><td>';
@@ -465,7 +469,7 @@ if ($object->id > 0) {
 		print $langs->trans("CustomerRelativeDiscountShort");
 		print '<td><td class="right">';
 		if ($user->rights->societe->creer && !$user->socid > 0) {
-			print '<a class="editfielda" href="'.DOL_URL_ROOT.'/comm/remise.php?id='.$object->id.'">'.img_edit($langs->trans("Modify")).'</a>';
+			print '<a class="editfielda" href="'.DOL_URL_ROOT.'/comm/remise.php?id='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?socid='.$object->id).'&action=create&token='.newToken().'">'.img_edit($langs->trans("Modify")).'</a>';
 		}
 		print '</td></tr></table>';
 		print '</td><td>'.($object->remise_percent ? '<a href="'.DOL_URL_ROOT.'/comm/remise.php?id='.$object->id.'">'.$object->remise_percent.'%</a>' : '').'</td>';
@@ -478,7 +482,7 @@ if ($object->id > 0) {
 		print $langs->trans("CustomerAbsoluteDiscountShort");
 		print '<td><td class="right">';
 		if ($user->rights->societe->creer && !$user->socid > 0) {
-			print '<a class="editfielda" href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?socid='.$object->id).'">'.img_edit($langs->trans("Modify")).'</a>';
+			print '<a class="editfielda" href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?socid='.$object->id).'&action=create&token='.newToken().'">'.img_edit($langs->trans("Modify")).'</a>';
 		}
 		print '</td></tr></table>';
 		print '</td>';
@@ -488,7 +492,7 @@ if ($object->id > 0) {
 			dol_print_error($db, $object->error);
 		}
 		if ($amount_discount > 0) {
-			print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?socid='.$object->id).'">'.price($amount_discount, 1, $langs, 1, -1, -1, $conf->currency).'</a>';
+			print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?socid='.$object->id).'&action=create&token='.newToken().'">'.price($amount_discount, 1, $langs, 1, -1, -1, $conf->currency).'</a>';
 		}
 		//else print $langs->trans("DiscountNone");
 		print '</td>';
@@ -569,7 +573,7 @@ if ($object->id > 0) {
 		print $langs->trans('SendingMethod');
 		print '<td>';
 		if (($action != 'editshipping') && $user->rights->societe->creer) {
-			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editshipping&amp;socid='.$object->id.'">'.img_edit($langs->trans('SetMode'), 1).'</a></td>';
+			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editshipping&token='.newToken().'&socid='.$object->id.'">'.img_edit($langs->trans('SetMode'), 1).'</a></td>';
 		}
 		print '</tr></table>';
 		print '</td><td>';
@@ -589,7 +593,7 @@ if ($object->id > 0) {
 		print $langs->trans('IntracommReportTransportMode');
 		print '<td>';
 		if (($action != 'edittransportmode') && $user->rights->societe->creer) {
-			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edittransportmode&amp;socid='.$object->id.'">'.img_edit($langs->trans('SetMode'), 1).'</a></td>';
+			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edittransportmode&token='.newToken().'&socid='.$object->id.'">'.img_edit($langs->trans('SetMode'), 1).'</a></td>';
 		}
 		print '</tr></table>';
 		print '</td><td>';
@@ -652,7 +656,7 @@ if ($object->id > 0) {
 		print $langs->trans('ProspectLevel');
 		print '<td>';
 		if ($action != 'editlevel' && $user->rights->societe->creer) {
-			print '<td class="right"><a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?action=editlevel&amp;socid='.$object->id.'">'.img_edit($langs->trans('Modify'), 1).'</a></td>';
+			print '<td class="right"><a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?action=editlevel&token='.newToken().'&socid='.$object->id.'">'.img_edit($langs->trans('Modify'), 1).'</a></td>';
 		}
 		print '</tr></table>';
 		print '</td><td>';
@@ -682,8 +686,8 @@ if ($object->id > 0) {
 		print "</table>";
 	}
 
-	print '</div><div class="fichehalfright"><div class="ficheaddleft">';
-	print '<div class="underbanner clearboth"></div>';
+	print '</div><div class="fichehalfright">';
+	print '<div class="underbanner underbanner-before-box clearboth"></div>';
 
 	$boxstat = '';
 
@@ -691,7 +695,7 @@ if ($object->id > 0) {
 	$MAXLIST = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
 
 	// Lien recap
-	$boxstat .= '<div class="box">';
+	$boxstat .= '<div class="box box-halfright">';
 	$boxstat .= '<table summary="'.dol_escape_htmltag($langs->trans("DolibarrStateBoard")).'" class="border boxtable boxtablenobottom boxtablenotop" width="100%">';
 	$boxstat .= '<tr class="impair nohover"><td colspan="2" class="tdboxstats nohover">';
 
@@ -826,7 +830,7 @@ if ($object->id > 0) {
 		$sql .= ", p.datep as dp, p.fin_validite as date_limit";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."c_propalst as c";
 		$sql .= " WHERE p.fk_soc = s.rowid AND p.fk_statut = c.id";
-		$sql .= " AND s.rowid = ".$object->id;
+		$sql .= " AND s.rowid = ".((int) $object->id);
 		$sql .= " AND p.entity IN (".getEntity('propal').")";
 		$sql .= " ORDER BY p.datep DESC";
 
@@ -859,6 +863,36 @@ if ($object->id > 0) {
 				$propal_static->total_tva = $objp->total_tva;
 				$propal_static->total_ttc = $objp->total_ttc;
 				print $propal_static->getNomUrl(1);
+
+				// Preview
+				$filedir = $conf->propal->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
+				$file_list = null;
+				if (!empty($filedir)) {
+					$file_list = dol_dir_list($filedir, 'files', 0, '', '(\.meta|_preview.*.*\.png)$', 'date', SORT_DESC);
+				}
+				if (is_array($file_list)) {
+					// Defined relative dir to DOL_DATA_ROOT
+					$relativedir = '';
+					if ($filedir) {
+						$relativedir = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $filedir);
+						$relativedir = preg_replace('/^[\\/]/', '', $relativedir);
+					}
+					// Get list of files stored into database for same relative directory
+					if ($relativedir) {
+						completeFileArrayWithDatabaseInfo($file_list, $relativedir);
+
+						//var_dump($sortfield.' - '.$sortorder);
+						if (!empty($sortfield) && !empty($sortorder)) {	// If $sortfield is for example 'position_name', we will sort on the property 'position_name' (that is concat of position+name)
+							$file_list = dol_sort_array($file_list, $sortfield, $sortorder);
+						}
+					}
+					$relativepath = dol_sanitizeFileName($objp->ref).'/'.dol_sanitizeFileName($objp->ref).'.pdf';
+					print $formfile->showPreview($file_list, $propal_static->element, $relativepath, 0, $param);
+				}
+				// $filename = dol_sanitizeFileName($objp->ref);
+				// $filedir = $conf->propal->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
+				// $urlsource = '/comm/propal/card.php?id='.$objp->cid;
+				// print $formfile->getDocumentsLink($propal_static->element, $filename, $filedir);
 				if (($db->jdate($objp->date_limit) < ($now - $conf->propal->cloture->warning_delay)) && $objp->fk_statut == $propal_static::STATUS_VALIDATED) {
 					print " ".img_warning();
 				}
@@ -891,7 +925,7 @@ if ($object->id > 0) {
 		$sql .= ", c.facture as billed";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as c";
 		$sql .= " WHERE c.fk_soc = s.rowid ";
-		$sql .= " AND s.rowid = ".$object->id;
+		$sql .= " AND s.rowid = ".((int) $object->id);
 		$sql .= " AND c.entity IN (".getEntity('commande').')';
 		$sql .= " ORDER BY c.date_commande DESC";
 
@@ -907,7 +941,7 @@ if ($object->id > 0) {
 				$sql2 .= ' FROM '.MAIN_DB_PREFIX.'societe as s';
 				$sql2 .= ', '.MAIN_DB_PREFIX.'commande as c';
 				$sql2 .= ' WHERE c.fk_soc = s.rowid';
-				$sql2 .= ' AND s.rowid = '.$object->id;
+				$sql2 .= ' AND s.rowid = '.((int) $object->id);
 				// Show orders with status validated, shipping started and delivered (well any order we can bill)
 				$sql2 .= " AND ((c.fk_statut IN (1,2)) OR (c.fk_statut = 3 AND c.facture = 0))";
 
@@ -940,7 +974,38 @@ if ($object->id > 0) {
 				print '<tr class="oddeven">';
 				print '<td class="nowraponall">';
 				print $commande_static->getNomUrl(1);
-				print '</td><td class="right" width="80px">'.dol_print_date($db->jdate($objp->dc), 'day')."</td>\n";
+				// Preview
+				$filedir = $conf->commande->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
+				$file_list = null;
+				if (!empty($filedir)) {
+					$file_list = dol_dir_list($filedir, 'files', 0, '', '(\.meta|_preview.*.*\.png)$', 'date', SORT_DESC);
+				}
+				if (is_array($file_list)) {
+					// Defined relative dir to DOL_DATA_ROOT
+					$relativedir = '';
+					if ($filedir) {
+						$relativedir = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $filedir);
+						$relativedir = preg_replace('/^[\\/]/', '', $relativedir);
+					}
+					// Get list of files stored into database for same relative directory
+					if ($relativedir) {
+						completeFileArrayWithDatabaseInfo($file_list, $relativedir);
+
+						//var_dump($sortfield.' - '.$sortorder);
+						if (!empty($sortfield) && !empty($sortorder)) {	// If $sortfield is for example 'position_name', we will sort on the property 'position_name' (that is concat of position+name)
+							$file_list = dol_sort_array($file_list, $sortfield, $sortorder);
+						}
+					}
+					$relativepath = dol_sanitizeFileName($objp->ref).'/'.dol_sanitizeFileName($objp->ref).'.pdf';
+					print $formfile->showPreview($file_list, $commande_static->element, $relativepath, 0, $param);
+				}
+				// $filename = dol_sanitizeFileName($objp->ref);
+				// $filedir = $conf->order->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
+				// $urlsource = '/commande/card.php?id='.$objp->cid;
+				// print $formfile->getDocumentsLink($commande_static->element, $filename, $filedir);
+				print '</td>';
+
+				print '<td class="right" width="80px">'.dol_print_date($db->jdate($objp->dc), 'day')."</td>\n";
 				print '<td class="right" style="min-width: 60px">'.price($objp->total_ht).'</td>';
 				print '<td class="right" style="min-width: 60px" class="nowrap">'.$commande_static->LibStatut($objp->fk_statut, $objp->facture, 5).'</td></tr>';
 				$i++;
@@ -967,7 +1032,7 @@ if ($object->id > 0) {
 		$sql .= ', s.nom';
 		$sql .= ', s.rowid as socid';
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."expedition as e";
-		$sql .= " WHERE e.fk_soc = s.rowid AND s.rowid = ".$object->id;
+		$sql .= " WHERE e.fk_soc = s.rowid AND s.rowid = ".((int) $object->id);
 		$sql .= " AND e.entity IN (".getEntity('expedition').")";
 		$sql .= ' GROUP BY e.rowid';
 		$sql .= ', e.ref';
@@ -1003,6 +1068,35 @@ if ($object->id > 0) {
 				print '<tr class="oddeven">';
 				print '<td class="nowraponall">';
 				print $sendingstatic->getNomUrl(1);
+				// Preview
+				$filedir = $conf->expedition->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
+				$file_list = null;
+				if (!empty($filedir)) {
+					$file_list = dol_dir_list($filedir, 'files', 0, '', '(\.meta|_preview.*.*\.png)$', 'date', SORT_DESC);
+				}
+				if (is_array($file_list)) {
+					// Defined relative dir to DOL_DATA_ROOT
+					$relativedir = '';
+					if ($filedir) {
+						$relativedir = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $filedir);
+						$relativedir = preg_replace('/^[\\/]/', '', $relativedir);
+					}
+					// Get list of files stored into database for same relative directory
+					if ($relativedir) {
+						completeFileArrayWithDatabaseInfo($file_list, $relativedir);
+
+						//var_dump($sortfield.' - '.$sortorder);
+						if (!empty($sortfield) && !empty($sortorder)) {	// If $sortfield is for example 'position_name', we will sort on the property 'position_name' (that is concat of position+name)
+							$file_list = dol_sort_array($file_list, $sortfield, $sortorder);
+						}
+					}
+					$relativepath = dol_sanitizeFileName($objp->ref).'/'.dol_sanitizeFileName($objp->ref).'.pdf';
+					print $formfile->showPreview($file_list, $sendingstatic->element, $relativepath, 0, $param);
+				}
+				// $filename = dol_sanitizeFileName($objp->ref);
+				// $filedir = $conf->expedition->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
+				// $urlsource = '/expedition/card.php?id='.$objp->cid;
+				// print $formfile->getDocumentsLink($sendingstatic->element, $filename, $filedir);
 				print '</td>';
 				if ($objp->date_creation > 0) {
 					print '<td class="right" width="80px">'.dol_print_date($db->jdate($objp->date_creation), 'day').'</td>';
@@ -1032,7 +1126,7 @@ if ($object->id > 0) {
 		$sql = "SELECT s.nom, s.rowid, c.rowid as id, c.ref as ref, c.statut as contract_status, c.datec as dc, c.date_contrat as dcon, c.ref_customer as refcus, c.ref_supplier as refsup";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c";
 		$sql .= " WHERE c.fk_soc = s.rowid ";
-		$sql .= " AND s.rowid = ".$object->id;
+		$sql .= " AND s.rowid = ".((int) $object->id);
 		$sql .= " AND c.entity IN (".getEntity('contract').")";
 		$sql .= " ORDER BY c.datec DESC";
 
@@ -1076,6 +1170,35 @@ if ($object->id > 0) {
 				print '<tr class="oddeven">';
 				print '<td class="nowraponall">';
 				print $contrat->getNomUrl(1, 12);
+				// Preview
+				$filedir = $conf->contrat->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
+				$file_list = null;
+				if (!empty($filedir)) {
+					$file_list = dol_dir_list($filedir, 'files', 0, '', '(\.meta|_preview.*.*\.png)$', 'date', SORT_DESC);
+				}
+				if (is_array($file_list)) {
+					// Defined relative dir to DOL_DATA_ROOT
+					$relativedir = '';
+					if ($filedir) {
+						$relativedir = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $filedir);
+						$relativedir = preg_replace('/^[\\/]/', '', $relativedir);
+					}
+					// Get list of files stored into database for same relative directory
+					if ($relativedir) {
+						completeFileArrayWithDatabaseInfo($file_list, $relativedir);
+
+						//var_dump($sortfield.' - '.$sortorder);
+						if (!empty($sortfield) && !empty($sortorder)) {	// If $sortfield is for example 'position_name', we will sort on the property 'position_name' (that is concat of position+name)
+							$file_list = dol_sort_array($file_list, $sortfield, $sortorder);
+						}
+					}
+					$relativepath = dol_sanitizeFileName($objp->ref).'/'.dol_sanitizeFileName($objp->ref).'.pdf';
+					print $formfile->showPreview($file_list, $contrat->element, $relativepath, 0, $param);
+				}
+				// $filename = dol_sanitizeFileName($objp->ref);
+				// $filedir = $conf->contrat->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
+				// $urlsource = '/contrat/card.php?id='.$objp->cid;
+				// print $formfile->getDocumentsLink($contrat->element, $filename, $filedir);
 				print $late;
 				print "</td>\n";
 				print '<td class="nowrap">'.dol_trunc($objp->refsup, 12)."</td>\n";
@@ -1106,7 +1229,7 @@ if ($object->id > 0) {
 		$sql = "SELECT s.nom, s.rowid, f.rowid as id, f.ref, f.fk_statut, f.duree as duration, f.datei as startdate";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."fichinter as f";
 		$sql .= " WHERE f.fk_soc = s.rowid";
-		$sql .= " AND s.rowid = ".$object->id;
+		$sql .= " AND s.rowid = ".((int) $object->id);
 		$sql .= " AND f.entity IN (".getEntity('intervention').")";
 		$sql .= " ORDER BY f.tms DESC";
 
@@ -1137,6 +1260,35 @@ if ($object->id > 0) {
 				print '<tr class="oddeven">';
 				print '<td class="nowraponall">';
 				print $fichinter_static->getNomUrl(1);
+				// Preview
+				$filedir = $conf->fichinter->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
+				$file_list = null;
+				if (!empty($filedir)) {
+					$file_list = dol_dir_list($filedir, 'files', 0, '', '(\.meta|_preview.*.*\.png)$', 'date', SORT_DESC);
+				}
+				if (is_array($file_list)) {
+					// Defined relative dir to DOL_DATA_ROOT
+					$relativedir = '';
+					if ($filedir) {
+						$relativedir = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $filedir);
+						$relativedir = preg_replace('/^[\\/]/', '', $relativedir);
+					}
+					// Get list of files stored into database for same relative directory
+					if ($relativedir) {
+						completeFileArrayWithDatabaseInfo($file_list, $relativedir);
+
+						//var_dump($sortfield.' - '.$sortorder);
+						if (!empty($sortfield) && !empty($sortorder)) {	// If $sortfield is for example 'position_name', we will sort on the property 'position_name' (that is concat of position+name)
+							$file_list = dol_sort_array($file_list, $sortfield, $sortorder);
+						}
+					}
+					$relativepath = dol_sanitizeFileName($objp->ref).'/'.dol_sanitizeFileName($objp->ref).'.pdf';
+					print $formfile->showPreview($file_list, $fichinter_static->element, $relativepath, 0, $param);
+				}
+				// $filename = dol_sanitizeFileName($objp->ref);
+				// $filedir = $conf->fichinter->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
+				// $urlsource = '/fichinter/card.php?id='.$objp->cid;
+				// print $formfile->getDocumentsLink($fichinter_static->element, $filename, $filedir);
 				print '</td>'."\n";
 				//print '<td class="right" width="80px">'.dol_print_date($db->jdate($objp->startdate)).'</td>'."\n";
 				print '<td class="right" style="min-width: 60px">'.convertSecondToTime($objp->duration).'</td>'."\n";
@@ -1171,7 +1323,7 @@ if ($object->id > 0) {
 		$sql .= ', f.suspended as suspended';
 		$sql .= ', s.nom, s.rowid as socid';
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture_rec as f";
-		$sql .= " WHERE f.fk_soc = s.rowid AND s.rowid = ".$object->id;
+		$sql .= " WHERE f.fk_soc = s.rowid AND s.rowid = ".((int) $object->id);
 		$sql .= " AND f.entity IN (".getEntity('invoice').")";
 		$sql .= ' GROUP BY f.rowid, f.titre, f.total_ht, f.total_tva, f.total_ttc,';
 		$sql .= ' f.date_last_gen, f.datec, f.frequency, f.unit_frequency,';
@@ -1213,6 +1365,7 @@ if ($object->id > 0) {
 				print '<td class="nowrap">';
 				print $invoicetemplate->getNomUrl(1);
 				print '</td>';
+
 				if ($objp->frequency && $objp->date_last_gen > 0) {
 					print '<td class="right" width="80px">'.dol_print_date($db->jdate($objp->date_last_gen), 'day').'</td>';
 				} else {
@@ -1263,7 +1416,7 @@ if ($object->id > 0) {
 		$sql .= ', SUM(pf.amount) as am';
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiement_facture as pf ON f.rowid=pf.fk_facture';
-		$sql .= " WHERE f.fk_soc = s.rowid AND s.rowid = ".$object->id;
+		$sql .= " WHERE f.fk_soc = s.rowid AND s.rowid = ".((int) $object->id);
 		$sql .= " AND f.entity IN (".getEntity('invoice').")";
 		$sql .= ' GROUP BY f.rowid, f.ref, f.type, f.total_ht, f.total_tva, f.total_ttc,';
 		$sql .= ' f.datef, f.datec, f.paye, f.fk_statut,';
@@ -1301,6 +1454,35 @@ if ($object->id > 0) {
 				print '<tr class="oddeven">';
 				print '<td class="nowraponall">';
 				print $facturestatic->getNomUrl(1);
+				// Preview
+				$filedir = $conf->facture->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
+				$file_list = null;
+				if (!empty($filedir)) {
+					$file_list = dol_dir_list($filedir, 'files', 0, '', '(\.meta|_preview.*.*\.png)$', 'date', SORT_DESC);
+				}
+				if (is_array($file_list)) {
+					// Defined relative dir to DOL_DATA_ROOT
+					$relativedir = '';
+					if ($filedir) {
+						$relativedir = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $filedir);
+						$relativedir = preg_replace('/^[\\/]/', '', $relativedir);
+					}
+					// Get list of files stored into database for same relative directory
+					if ($relativedir) {
+						completeFileArrayWithDatabaseInfo($file_list, $relativedir);
+
+						//var_dump($sortfield.' - '.$sortorder);
+						if (!empty($sortfield) && !empty($sortorder)) {	// If $sortfield is for example 'position_name', we will sort on the property 'position_name' (that is concat of position+name)
+							$file_list = dol_sort_array($file_list, $sortfield, $sortorder);
+						}
+					}
+					$relativepath = dol_sanitizeFileName($objp->ref).'/'.dol_sanitizeFileName($objp->ref).'.pdf';
+					print $formfile->showPreview($file_list, $facturestatic->element, $relativepath, 0, $param);
+				}
+				// $filename = dol_sanitizeFileName($objp->ref);
+				// $filedir = $conf->facture->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
+				// $urlsource = '/compta/facture/card.php?id='.$objp->cid;
+				//print $formfile->getDocumentsLink($facturestatic->element, $filename, $filedir);
 				print '</td>';
 				if ($objp->df > 0) {
 					print '<td class="right" width="80px">'.dol_print_date($db->jdate($objp->df), 'day').'</td>';
@@ -1341,7 +1523,7 @@ if ($object->id > 0) {
 		print $hookmanager->resPrint;
 	}
 
-	print '</div></div></div>';
+	print '</div></div>';
 	print '<div style="clear:both"></div>';
 
 	print dol_get_fiche_end();
@@ -1370,7 +1552,7 @@ if ($object->id > 0) {
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/commande/card.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddOrder").'</a></div>';
 		}
 
-		if ($user->rights->contrat->creer && $object->status == 1) {
+		if (!empty($user->rights->contrat->creer) && $object->status == 1) {
 			$langs->load("contracts");
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/contrat/card.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddContract").'</a></div>';
 		}

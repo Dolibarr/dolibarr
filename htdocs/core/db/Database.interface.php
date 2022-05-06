@@ -178,6 +178,14 @@ interface Database
 	public function escape($stringtoencode);
 
 	/**
+	 * Escape a string to insert data
+	 *
+	 * @param   string $stringtoencode String to escape
+	 * @return  string                        String escaped
+	 */
+	public function escapeunderscore($stringtoencode);
+
+	/**
 	 * Sanitize a string for SQL forging
 	 *
 	 * @param   string $stringtosanitize 		String to escape
@@ -219,7 +227,7 @@ interface Database
 	 *                            		Note that with Mysql, this parameter is not used as Myssql can already commit a transaction even if one request is in error, without using savepoints.
 	 * @param   string 	$type 			Type of SQL order ('ddl' for insert, update, select, delete or 'dml' for create, alter...)
 	 * @param	int		$result_mode	Result mode
-	 * @return  resource                Resultset of answer
+	 * @return  bool|resource			Resultset of answer or false
 	 */
 	public function query($query, $usesavepoint = 0, $type = 'auto', $result_mode = 0);
 
@@ -432,13 +440,13 @@ interface Database
 
 	/**
 	 * Encrypt sensitive data in database
-	 * Warning: This function includes the escape, so it must use direct value
+	 * Warning: This function includes the escape and add the SQL simple quotes on strings.
 	 *
-	 * @param   string 			$fieldorvalue 	Field name or value to encrypt
-	 * @param  	int 			$withQuotes 	Return string with quotes
-	 * @return 	string                     		XXX(field) or XXX('value') or field or 'value'
+	 * @param	string	$fieldorvalue	Field name or value to encrypt
+	 * @param	int		$withQuotes		Return string including the SQL simple quotes. This param must always be 1 (Value 0 is bugged and deprecated).
+	 * @return	string					XXX(field) or XXX('value') or field or 'value'
 	 */
-	public function encrypt($fieldorvalue, $withQuotes = 0);
+	public function encrypt($fieldorvalue, $withQuotes = 1);
 
 	/**
 	 * Validate a database transaction

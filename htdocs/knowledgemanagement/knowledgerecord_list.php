@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2007-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) ---Put here your own copyright and developer email---
+ * Copyright (C) 2021       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +34,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/knowledgemanagement/class/knowledgerecord.class.php';
 
 // for other modules
+if (!empty($conf->categorie->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+}
 //dol_include_once('/othermodule/class/otherobject.class.php');
 
 // Load translation files required by the page
@@ -51,6 +54,13 @@ $optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always ''
 
 $id = GETPOST('id', 'int');
 
+$searchCategoryKnowledgemanagementList = GETPOST('search_category_knowledgemanagement_list', 'array');
+$searchCategoryKnowledgemanagementOperator = 0;
+if (GETPOSTISSET('formfilteraction')) {
+	$searchCategoryKnowledgemanagementOperator = GETPOST('search_category_knowledgemanagement_operator', 'int');
+} elseif (!empty($conf->global->MAIN_SEARCH_CAT_OR_BY_DEFAULT)) {
+	$searchCategoryKnowledgemanagementOperator = $conf->global->MAIN_SEARCH_CAT_OR_BY_DEFAULT;
+}
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -104,7 +114,7 @@ foreach ($object->fields as $key => $val) {
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array();
 foreach ($object->fields as $key => $val) {
-	if ($val['searchall']) {
+	if (!empty($val['searchall'])) {
 		$fieldstosearchall['t.'.$key] = $val['label'];
 	}
 }
@@ -114,11 +124,11 @@ $arrayfields = array();
 foreach ($object->fields as $key => $val) {
 	// If $val['visible']==0, then we never show the field
 	if (!empty($val['visible'])) {
-		$visible = (int) dol_eval($val['visible'], 1);
+		$visible = (int) dol_eval($val['visible'], 1, 1, '1');
 		$arrayfields['t.'.$key] = array(
 			'label'=>$val['label'],
 			'checked'=>(($visible < 0) ? 0 : 1),
-			'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1)),
+			'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1, 1, '1')),
 			'position'=>$val['position'],
 			'help'=> isset($val['help']) ? $val['help'] : ''
 		);
@@ -186,6 +196,10 @@ if (empty($reshook)) {
 		|| GETPOST('button_search_x', 'alpha') || GETPOST('button_search.x', 'alpha') || GETPOST('button_search', 'alpha')) {
 		$massaction = ''; // Protection to avoid mass action if we force a new search during a mass action confirmation
 	}
+	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
+		$searchCategoryKnowledgemanagementOperator = 0;
+		$searchCategoryKnowledgemanagementList = array();
+	}
 
 	// Mass actions
 	$objectclass = 'KnowledgeRecord';
@@ -220,17 +234,20 @@ $sql .= $object->getFieldList('t');
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ",ef.".$key.' as options_'.$key.', ' : '');
+		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ",ef.".$key." as options_".$key.', ' : '');
 	}
 }
 // Add fields from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object); // Note that $action and $object may have been modified by hook
-$sql .= preg_replace('/^,/', '', $hookmanager->resPrint);
+$sql .= preg_replace('/^,/', ',', $hookmanager->resPrint);
 $sql = preg_replace('/,\s*$/', '', $sql);
 $sql .= " FROM ".MAIN_DB_PREFIX.$object->table_element." as t";
-if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
+if (!empty($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (t.rowid = ef.fk_object)";
+}
+if (!empty($searchCategoryKnowledgemanagementList) || !empty($catid)) {
+	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_knowledgemanagement as ck ON t.rowid = ck.fk_knowledgemanagement"; // We'll need this table joined to the select in order to filter by categ
 }
 // Add table from hooks
 $parameters = array();
@@ -270,6 +287,32 @@ foreach ($search as $key => $val) {
 		}
 	}
 }
+//Search for tag/category
+$searchCategoryKnowledgemanagementSqlList = array();
+if ($searchCategoryKnowledgemanagementOperator == 1) {
+	foreach ($searchCategoryKnowledgemanagementList as $searchCategoryKnowledgemanagement) {
+		if (intval($searchCategoryKnowledgemanagement) == -2) {
+			$searchCategoryKnowledgemanagementSqlList[] = "ck.fk_categorie IS NULL";
+		} elseif (intval($searchCategoryKnowledgemanagement) > 0) {
+			$searchCategoryKnowledgemanagementSqlList[] = "ck.fk_categorie = ".$db->escape($searchCategoryKnowledgemanagement);
+		}
+	}
+	if (!empty($searchCategoryKnowledgemanagementSqlList)) {
+		$sql .= " AND (".implode(' OR ', $searchCategoryKnowledgemanagementSqlList).")";
+	}
+} else {
+	foreach ($searchCategoryKnowledgemanagementList as $searchCategoryKnowledgemanagement) {
+		if (intval($searchCategoryKnowledgemanagement) == -2) {
+			$searchCategoryKnowledgemanagementSqlList[] = "ck.fk_categorie IS NULL";
+		} elseif (intval($searchCategoryKnowledgemanagement) > 0) {
+			$searchCategoryKnowledgemanagementSqlList[] = "t.rowid IN (SELECT fk_knowledgemanagement FROM ".MAIN_DB_PREFIX."categorie_knowledgemanagement WHERE fk_categorie = ".((int) $searchCategoryKnowledgemanagement).")";
+		}
+	}
+	if (!empty($searchCategoryKnowledgemanagementSqlList)) {
+		$sql .= " AND (".implode(' AND ', $searchCategoryKnowledgemanagementSqlList).")";
+	}
+}
+
 if ($search_all) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 }
@@ -284,7 +327,7 @@ $sql .= $hookmanager->resPrint;
 /* If a group by is required
 $sql.= " GROUP BY ";
 foreach($object->fields as $key => $val) {
-	$sql.='t.'.$key.', ';
+	$sql .= "t.".$key.", ";
 }
 // Add fields from extrafields
 if (! empty($extrafields->attributes[$object->table_element]['label'])) {
@@ -371,14 +414,19 @@ $param .= $hookmanager->resPrint;
 
 // List of mass actions available
 $arrayofmassactions = array(
-	//'validate'=>$langs->trans("Validate"),
-	//'generate_doc'=>$langs->trans("ReGeneratePDF"),
-	//'builddoc'=>$langs->trans("PDFMerge"),
-	//'presend'=>$langs->trans("SendByMail"),
+	'validate'=>img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Validate"),
+	//'generate_doc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("ReGeneratePDF"),
+	//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
+	//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 );
 if ($permissiontodelete) {
-	$arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
+	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
+
+if ($user->rights->knowledgemanagement->knowledgerecord->write) {
+	$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
+}
+
 if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete'))) {
 	$arrayofmassactions = array();
 }
@@ -418,6 +466,18 @@ $moreforfilter = '';
 $moreforfilter.= $langs->trans('MyFilter') . ': <input type="text" name="search_myfield" value="'.dol_escape_htmltag($search_myfield).'">';
 $moreforfilter.= '</div>';*/
 
+// Filter on categories
+$moreforfilter = '';
+if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire) {
+	$moreforfilter .= '<div class="divsearchfield">';
+	$moreforfilter .= img_picto($langs->trans('Categories'), 'category', 'class="pictofixedwidth"');
+	$categoriesKnowledgeArr = $form->select_all_categories(Categorie::TYPE_KNOWLEDGEMANAGEMENT, '', '', 64, 0, 1);
+	$categoriesKnowledgeArr[-2] = '- '.$langs->trans('NotCategorized').' -';
+	$moreforfilter .= Form::multiselectarray('search_category_knowledgemanagement_list', $categoriesKnowledgeArr, $searchCategoryKnowledgemanagementList, 0, 0, 'minwidth300');
+	$moreforfilter .= ' <input type="checkbox" class="valignmiddle" id="search_category_knowledgemanagement_operator" name="search_category_knowledgemanagement_operator" value="1"'.($searchCategoryKnowledgemanagementOperator == 1 ? ' checked="checked"' : '').'/><label class="none valignmiddle" for="search_category_knowledgemanagement_operator">'.$langs->trans('UseOrOperatorForCategories').'</label>';
+	$moreforfilter .= '</div>';
+}
+
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object); // Note that $action and $object may have been modified by hook
 if (empty($reshook)) {
@@ -444,6 +504,7 @@ print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwit
 // --------------------------------------------------------------------
 print '<tr class="liste_titre">';
 foreach ($object->fields as $key => $val) {
+	$searchkey = empty($search[$key]) ? '' : $search[$key];
 	$cssforfield = (empty($val['css']) ? '' : $val['css']);
 	if ($key == 'status') {
 		$cssforfield .= ($cssforfield ? ' ' : '').'center';
@@ -456,16 +517,11 @@ foreach ($object->fields as $key => $val) {
 	}
 	if (!empty($arrayfields['t.'.$key]['checked'])) {
 		print '<td class="liste_titre'.($cssforfield ? ' '.$cssforfield : '').'">';
+
 		if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
-			print $form->selectarray('search_'.$key, $val['arrayofkeyval'], $search[$key], $val['notnull'], 0, 0, '', 1, 0, 0, '', 'maxwidth100', 1);
+			print $form->selectarray('search_'.$key, $val['arrayofkeyval'], $searchkey, $val['notnull'], 0, 0, '', 1, 0, 0, '', 'maxwidth100', 1);
 		} elseif ((strpos($val['type'], 'integer:') === 0) || (strpos($val['type'], 'sellist:')=== 0)) {
-			print $object->showInputField($val, $key, $search[$key], '', '', 'search_', 'maxwidth125', 1);
-		} elseif (!preg_match('/^(date|timestamp|datetime)/', $val['type'])) {
-			if ($key == 'lang') {
-				print $formadmin->select_language($search[$key], 'search_lang', 0, null, 1, 0, 0, 'minwidth150 maxwidth200', 2);
-			} else {
-				print '<input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag($search[$key]).'">';
-			}
+			print $object->showInputField($val, $key, $searchkey, '', '', 'search_', 'maxwidth125', 1);
 		} elseif (preg_match('/^(date|timestamp|datetime)/', $val['type'])) {
 			print '<div class="nowrap">';
 			print $form->selectDate($search[$key.'_dtstart'] ? $search[$key.'_dtstart'] : '', "search_".$key."_dtstart", 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
@@ -473,6 +529,10 @@ foreach ($object->fields as $key => $val) {
 			print '<div class="nowrap">';
 			print $form->selectDate($search[$key.'_dtend'] ? $search[$key.'_dtend'] : '', "search_".$key."_dtend", 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 			print '</div>';
+		} elseif ($key == 'lang') {
+			print $formadmin->select_language($searchkey, 'search_lang', 0, null, 1, 0, 0, 'minwidth150 maxwidth200', 2);
+		} else {
+			print '<input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag($searchkey).'">';
 		}
 		print '</td>';
 	}
@@ -523,7 +583,7 @@ print '</tr>'."\n";
 
 // Detect if we need a fetch on each output line
 $needToFetchEachLine = 0;
-if (is_array($extrafields->attributes[$object->table_element]['computed']) && count($extrafields->attributes[$object->table_element]['computed']) > 0) {
+if (!empty($extrafields->attributes[$object->table_element]['computed']) && is_array($extrafields->attributes[$object->table_element]['computed']) && count($extrafields->attributes[$object->table_element]['computed']) > 0) {
 	foreach ($extrafields->attributes[$object->table_element]['computed'] as $key => $val) {
 		if (preg_match('/\$object/', $val)) {
 			$needToFetchEachLine++; // There is at least one compute field that use $object
@@ -547,6 +607,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 
 	// Show here line of result
 	print '<tr class="oddeven">';
+	$totalarray['nbfield'] = 0;
 	foreach ($object->fields as $key => $val) {
 		$cssforfield = (empty($val['csslist']) ? (empty($val['css']) ? '' : $val['css']) : $val['csslist']);
 		if (in_array($val['type'], array('date', 'datetime', 'timestamp'))) {
@@ -613,7 +674,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
-			if (!empty($val['isameasure'])) {
+			if (!empty($val['isameasure']) && $val['isameasure'] == 1) {
 				if (!$i) {
 					$totalarray['pos'][$totalarray['nbfield']] = 't.'.$key;
 				}

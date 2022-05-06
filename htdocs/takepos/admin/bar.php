@@ -200,7 +200,7 @@ if ($conf->global->TAKEPOS_BAR_RESTAURANT) {
 
 	print '<br>';
 
-	print '<div class="center"><input type="submit" class="button button-save" value="'.$langs->trans("Save").'"></div>';
+	print $form->buttonsSaveCancel("Save", '');
 }
 
 if (!empty($conf->global->TAKEPOS_BAR_RESTAURANT)) {
@@ -213,10 +213,10 @@ if (!empty($conf->global->TAKEPOS_BAR_RESTAURANT)) {
 		print '<td>'.$langs->trans("URL").' - '.$langs->trans("CustomerMenu").'</td><td class="right">'.$langs->trans("QR").'</td>';
 		print "</tr>\n";
 		print '<tr class="oddeven value"><td>';
-		print '<a target="_blank" href="'.$urlwithroot.'/takepos/public/menu.php">'.$urlwithroot.'/takepos/public/menu.php</a>';
+		print '<a target="_blank" rel="noopener noreferrer" href="'.$urlwithroot.'/takepos/public/menu.php">'.$urlwithroot.'/takepos/public/menu.php</a>';
 		print '</td>';
 		print '<td class="right">';
-		print '<a target="_blank" href="printqr.php"><img src="'.DOL_URL_ROOT.'/takepos/genimg/qr.php" height="42" width="42"></a>';
+		print '<a target="_blank" rel="noopener noreferrer" href="printqr.php"><img src="'.DOL_URL_ROOT.'/takepos/genimg/qr.php" height="42" width="42"></a>';
 		print '</td></tr>';
 		print '</table>';
 	}
@@ -239,10 +239,10 @@ if (!empty($conf->global->TAKEPOS_BAR_RESTAURANT)) {
 			print $langs->trans("Table")." ".$row['label'];
 			print '</td>';
 			print '<td>';
-			print "<a target='_blank' href='".$urlwithroot."/takepos/public/auto_order.php?key=".dol_encode($row['rowid'])."'>".$urlwithroot."/takepos/public/auto_order.php?key=".dol_encode($row['rowid'])."</a>";
+			print '<a target="_blank" rel="noopener noreferrer" href="'.$urlwithroot."/takepos/public/auto_order.php?key=".dol_encode($row['rowid']).'">'.$urlwithroot."/takepos/public/auto_order.php?key=".dol_encode($row['rowid']).'</a>';
 			print '</td>';
 			print '<td class="right">';
-			print "<a target='_blank' href='printqr.php?id=".$row['rowid']."'><img src='".DOL_URL_ROOT."/takepos/genimg/qr.php?key=".dol_encode($row['rowid'])."' height='42' width='42'></a>";
+			print '<a target="_blank" rel="noopener noreferrer" href="printqr.php?id='.$row['rowid'].'"><img src="'.DOL_URL_ROOT.'/takepos/genimg/qr.php?key='.dol_encode($row['rowid']).'" height="42" width="42"></a>';
 			print '</td></tr>';
 		}
 

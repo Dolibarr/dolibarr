@@ -145,7 +145,8 @@ if (empty($reshook)) {
 			}
 
 			//If the user set a comment, we add it to the log comment
-			$comment = ((isset($_POST['note_holiday'][$userID]) && !empty($_POST['note_holiday'][$userID])) ? ' ('.$_POST['note_holiday'][$userID].')' : '');
+			$note_holiday = GETPOST('note_holiday');
+			$comment = ((isset($note_holiday[$userID]) && !empty($note_holiday[$userID])) ? ' ('.$note_holiday[$userID].')' : '');
 
 			//print 'holiday: '.$val['rowid'].'-'.$userValue;
 			if ($userValue != '') {
@@ -358,7 +359,7 @@ if (count($typeleaves) == 0) {
 				//var_dump($users['rowid'].' - '.$val['rowid']);
 				print '<td style="text-align:center">';
 				if ($canedit) {
-					print '<input type="text"'.($canedit ? '' : ' disabled="disabled"').' value="'.$nbtoshow.'" name="nb_holiday_'.$val['rowid'].'['.$users['rowid'].']" size="5" style="text-align: center;"/>';
+					print '<input type="text"'.($canedit ? '' : ' disabled="disabled"').' value="'.$nbtoshow.'" name="nb_holiday_'.$val['rowid'].'['.$users['rowid'].']" class="width75 center" />';
 				} else {
 					print $nbtoshow;
 				}

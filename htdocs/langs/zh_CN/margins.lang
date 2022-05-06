@@ -22,7 +22,7 @@ ProductService=产品或服务
 AllProducts=全部产品和服务
 ChooseProduct/Service=选择产品或服务
 ForceBuyingPriceIfNull=如期尚未定义则强制设定买入/成本价格为销售价格
-ForceBuyingPriceIfNullDetails=If buying/cost price not provided when we add a new line, and this option is "ON", the margin will be 0 on the new line (buying/cost price = selling price). If this option is "OFF" (recommended), margin will be equal to the value suggested by default (and may be 100% if no default value can be found).
+ForceBuyingPriceIfNullDetails=If buying/cost price not provided when we add a new line, and this option is "ON", the margin will be 0%% on the new line (buying/cost price = selling price). If this option is "OFF" (recommended), margin will be equal to the value suggested by default (and may be 100%% if no default value can be found).
 MARGIN_METHODE_FOR_DISCOUNT=全局纯利润计算方法
 UseDiscountAsProduct=作为产品
 UseDiscountAsService=作为服务

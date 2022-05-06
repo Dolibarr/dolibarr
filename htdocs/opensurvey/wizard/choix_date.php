@@ -25,7 +25,7 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
 require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
-require_once DOL_DOCUMENT_ROOT."/opensurvey/fonctions.php";
+require_once DOL_DOCUMENT_ROOT."/opensurvey/lib/opensurvey.lib.php";
 
 // Security check
 if (!$user->rights->opensurvey->write) {
@@ -51,7 +51,8 @@ if (GETPOST('confirmation')) {
 		for ($i = 0; $i < $nbofchoice; $i++) {
 			// Show hours choices
 			for ($j = 0; $j < $_SESSION["nbrecaseshoraires"]; $j++) {
-				$_SESSION["horaires$i"][$j] = $_POST["horaires$i"][$j];
+				$horairesi = GETPOST("horaires".$i);
+				$_SESSION["horaires$i"][$j] = $horairesi[$j];
 
 				$tmphorairesi = GETPOST('horaires'.$i, 'array');
 
@@ -248,7 +249,8 @@ if (issetAndNoEmpty('moisavant_x') || issetAndNoEmpty('moisavant')) {
 		for ($i = 0; $i < $nbofchoice; $i++) {
 			//affichage des 5 cases horaires
 			for ($j = 0; $j < $_SESSION["nbrecaseshoraires"]; $j++) {
-				$_SESSION["horaires$i"][$j] = $_POST["horaires$i"][$j];
+				$horairesi = GETPOST("horaires".$i);
+				$_SESSION["horaires$i"][$j] = $horairesi[$j];
 			}
 		}
 	}
@@ -269,7 +271,8 @@ if (issetAndNoEmpty('moisapres_x') || issetAndNoEmpty('moisapres')) {
 		for ($i = 0; $i < $nbofchoice; $i++) {
 			//affichage des 5 cases horaires
 			for ($j = 0; $j < $_SESSION["nbrecaseshoraires"]; $j++) {
-				$_SESSION["horaires$i"][$j] = $_POST["horaires$i"][$j];
+				$horairesi = GETPOST("horaires".$i);
+				$_SESSION["horaires$i"][$j] = $horairesi[$j];
 			}
 		}
 	}
@@ -285,7 +288,8 @@ if (issetAndNoEmpty('anneeavant_x') || issetAndNoEmpty('anneeavant')) {
 		for ($i = 0; $i < $nbofchoice; $i++) {
 			//affichage des 5 cases horaires
 			for ($j = 0; $j < $_SESSION["nbrecaseshoraires"]; $j++) {
-				$_SESSION["horaires$i"][$j] = $_POST["horaires$i"][$j];
+				$horairesi = GETPOST("horaires".$i);
+				$_SESSION["horaires$i"][$j] = $horairesi[$j];
 			}
 		}
 	}
@@ -301,7 +305,8 @@ if (issetAndNoEmpty('anneeapres_x') || issetAndNoEmpty('anneeapres')) {
 		for ($i = 0; $i < $nbofchoice; $i++) {
 			//affichage des 5 cases horaires
 			for ($j = 0; $j < $_SESSION["nbrecaseshoraires"]; $j++) {
-				$_SESSION["horaires$i"][$j] = $_POST["horaires$i"][$j];
+				$horairesi = GETPOST("horaires".$i);
+				$_SESSION["horaires$i"][$j] = $horairesi[$j];
 			}
 		}
 	}
@@ -365,7 +370,8 @@ if (issetAndNoEmpty('choixjourajout')) {
 	if (issetAndNoEmpty('totalchoixjour', $_SESSION) === true && issetAndNoEmpty('choixjourajout') === true) {
 		$nbofchoice = count($_SESSION["totalchoixjour"]);
 		for ($i = 0; $i < $nbofchoice; $i++) {
-			if ($_SESSION["totalchoixjour"][$i] == mktime(0, 0, 0, $_SESSION["mois"], $_POST["choixjourajout"][0], $_SESSION["annee"])) {
+			$choixjourajout = GETPOST("choixjourajout");
+			if ($_SESSION["totalchoixjour"][$i] == mktime(0, 0, 0, $_SESSION["mois"], $choixjourajout[0], $_SESSION["annee"])) {
 				$journeuf = false;
 			}
 		}
@@ -373,15 +379,17 @@ if (issetAndNoEmpty('choixjourajout')) {
 
 	// Si le test est passé, alors on insere la valeur dans la variable de session qui contient les dates
 	if ($journeuf && issetAndNoEmpty('choixjourajout') === true) {
-		array_push($_SESSION["totalchoixjour"], dol_mktime(0, 0, 0, $_SESSION["mois"], $_POST["choixjourajout"][0], $_SESSION["annee"]));
+		$choixjourajout = GETPOST("choixjourajout");
+		array_push($_SESSION["totalchoixjour"], dol_mktime(0, 0, 0, $_SESSION["mois"], $choixjourajout[0], $_SESSION["annee"]));
 		sort($_SESSION["totalchoixjour"]);
-		$cle = array_search(dol_mktime(0, 0, 0, $_SESSION["mois"], $_POST["choixjourajout"][0], $_SESSION["annee"]), $_SESSION["totalchoixjour"]);
+		$cle = array_search(dol_mktime(0, 0, 0, $_SESSION["mois"], $choixjourajout[0], $_SESSION["annee"]), $_SESSION["totalchoixjour"]);
 
 		//On sauvegarde les heures deja entrées
 		for ($i = 0; $i < $cle; $i++) {
+			$horairesi = GETPOST("horaires".$i);
 			for ($j = 0; $j < $_SESSION["nbrecaseshoraires"]; $j++) {
 				if (issetAndNoEmpty('horaires'.$i) === true && issetAndNoEmpty($i, $_POST['horaires'.$i]) === true) {
-					$_SESSION["horaires$i"][$j] = $_POST["horaires$i"][$j];
+					$_SESSION["horaires$i"][$j] = $horairesi[$j];
 				}
 			}
 		}
@@ -391,7 +399,8 @@ if (issetAndNoEmpty('choixjourajout')) {
 			$k = $i + 1;
 			if (issetAndNoEmpty('horaires'.$i) === true && issetAndNoEmpty($i, $_POST['horaires'.$i]) === true) {
 				for ($j = 0; $j < $_SESSION["nbrecaseshoraires"]; $j++) {
-					$_SESSION["horaires$k"][$j] = $_POST["horaires$i"][$j];
+					$horairesi = GETPOST("horaires".$i);
+					$_SESSION["horaires$i"][$j] = $horairesi[$j];
 				}
 			}
 		}
@@ -407,12 +416,14 @@ if (issetAndNoEmpty('choixjourretrait')) {
 	for ($i = 0; $i < $nbofchoice; $i++) {
 		//affichage des 5 cases horaires
 		for ($j = 0; $j < $_SESSION["nbrecaseshoraires"]; $j++) {
-			$_SESSION["horaires$i"][$j] = $_POST["horaires$i"][$j];
+			$horairesi = GETPOST("horaires".$i);
+			$_SESSION["horaires$i"][$j] = $horairesi[$j];
 		}
 	}
 
 	for ($i = 0; $i < $nbofchoice; $i++) {
-		if ($_SESSION["totalchoixjour"][$i] == mktime(0, 0, 0, $_SESSION["mois"], $_POST["choixjourretrait"][0], $_SESSION["annee"])) {
+		$choixjourretrait = GETPOST('choixjourretrait');
+		if ($_SESSION["totalchoixjour"][$i] == mktime(0, 0, 0, $_SESSION["mois"], $choixjourretrait[0], $_SESSION["annee"])) {
 			for ($j = $i; $j < $nbofchoice; $j++) {
 				$k = $j + 1;
 				$_SESSION["horaires$j"] = $_SESSION["horaires$k"];
@@ -425,7 +436,7 @@ if (issetAndNoEmpty('choixjourretrait')) {
 
 //report des horaires dans toutes les cases
 if (issetAndNoEmpty('reporterhoraires')) {
-	$_SESSION["horaires0"] = $_POST["horaires0"];
+	$_SESSION["horaires0"] = GETPOST("horaires0");
 	$nbofchoice = count($_SESSION["totalchoixjour"]);
 	for ($i = 0; $i < $nbofchoice; $i++) {
 		$j = $i + 1;

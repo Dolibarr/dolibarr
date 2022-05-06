@@ -217,9 +217,9 @@ $permsgroupbyentity = array();
 $sql = "SELECT DISTINCT gr.fk_id, gu.entity";
 $sql .= " FROM ".MAIN_DB_PREFIX."usergroup_rights as gr,";
 $sql .= " ".MAIN_DB_PREFIX."usergroup_user as gu";
-$sql .= " WHERE gr.entity = ".$entity;
+$sql .= " WHERE gr.entity = ".((int) $entity);
 $sql .= " AND gr.fk_usergroup = gu.fk_usergroup";
-$sql .= " AND gu.fk_user = ".$object->id;
+$sql .= " AND gu.fk_user = ".((int) $object->id);
 
 dol_syslog("get user perms", LOG_DEBUG);
 $result = $db->query($sql);
@@ -258,8 +258,8 @@ print '<div class="underbanner clearboth"></div>';
 if ($user->admin) {
 	print info_admin($langs->trans("WarningOnlyPermissionOfActivatedModules"));
 }
-// Show warning about external users
-if (empty($user->socid)) {
+// If edited user is an extern user, we show warning for external users
+if (! empty($object->socid)) {
 	print info_admin(showModulesExludedForExternal($modules))."\n";
 }
 
@@ -279,9 +279,9 @@ print '<td>'.$langs->trans("Module").'</td>';
 if (($caneditperms && empty($objMod->rights_admin_allowed)) || empty($object->admin)) {
 	if ($caneditperms) {
 		print '<td class="center nowrap">';
-		print '<a class="reposition commonlink" title="'.dol_escape_htmltag($langs->trans("All")).'" alt="'.dol_escape_htmltag($langs->trans("All")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=addrights&amp;entity='.$entity.'&amp;module=allmodules&amp;confirm=yes&amp;token='.newToken().'">'.$langs->trans("All")."</a>";
+		print '<a class="reposition commonlink" title="'.dol_escape_htmltag($langs->trans("All")).'" alt="'.dol_escape_htmltag($langs->trans("All")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=addrights&token='.newToken().'&entity='.$entity.'&module=allmodules&confirm=yes">'.$langs->trans("All")."</a>";
 		print ' / ';
-		print '<a class="reposition commonlink" title="'.dol_escape_htmltag($langs->trans("None")).'" alt="'.dol_escape_htmltag($langs->trans("None")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delrights&amp;entity='.$entity.'&amp;module=allmodules&amp;confirm=yes&amp;token='.newToken().'">'.$langs->trans("None")."</a>";
+		print '<a class="reposition commonlink" title="'.dol_escape_htmltag($langs->trans("None")).'" alt="'.dol_escape_htmltag($langs->trans("None")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delrights&token='.newToken().'&entity='.$entity.'&module=allmodules&confirm=yes">'.$langs->trans("None")."</a>";
 		print '</td>';
 	}
 	print '<td class="center" width="24">&nbsp;</td>';
@@ -292,14 +292,13 @@ if ($user->admin) {
 }
 print '</tr>'."\n";
 
-//print "xx".$conf->global->MAIN_USE_ADVANCED_PERMS;
+
+// Fix bad value for module_position in table
+// ------------------------------------------
 $sql = "SELECT r.id, r.libelle as label, r.module, r.perms, r.subperms, r.module_position, r.bydefault";
 $sql .= " FROM ".MAIN_DB_PREFIX."rights_def as r";
 $sql .= " WHERE r.libelle NOT LIKE 'tou%'"; // On ignore droits "tous"
 $sql .= " AND r.entity = ".((int) $entity);
-if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
-	$sql .= " AND r.perms NOT LIKE '%_advance'"; // Hide advanced perms if option is not enabled
-}
 $sql .= " ORDER BY r.family_position, r.module_position, r.module, r.id";
 
 $result = $db->query($sql);
@@ -315,6 +314,19 @@ if ($result) {
 		if (empty($modules[$obj->module])) {
 			$i++;
 			continue;
+		}
+
+		// Special cases
+		if (!empty($conf->reception->enabled)) {
+			// The 2 permissions in fournisseur modules are replaced by permissions into reception module
+			if ($obj->module == 'fournisseur' && $obj->perms == 'commande' && $obj->subperms == 'receptionner') {
+				$i++;
+				continue;
+			}
+			if ($obj->module == 'fournisseur' && $obj->perms == 'commande_advance' && $obj->subperms == 'check') {
+				$i++;
+				continue;
+			}
 		}
 
 		$objMod = $modules[$obj->module];
@@ -341,6 +353,75 @@ if ($result) {
 				$db->query($sqlupdate);
 			}
 		}
+	}
+}
+
+
+
+//print "xx".$conf->global->MAIN_USE_ADVANCED_PERMS;
+$sql = "SELECT r.id, r.libelle as label, r.module, r.perms, r.subperms, r.module_position, r.bydefault";
+$sql .= " FROM ".MAIN_DB_PREFIX."rights_def as r";
+$sql .= " WHERE r.libelle NOT LIKE 'tou%'"; // On ignore droits "tous"
+$sql .= " AND r.entity = ".((int) $entity);
+if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
+	$sql .= " AND r.perms NOT LIKE '%_advance'"; // Hide advanced perms if option is not enabled
+}
+$sql .= " ORDER BY r.family_position, r.module_position, r.module, r.id";
+
+$result = $db->query($sql);
+if ($result) {
+	$num = $db->num_rows($result);
+	$i = 0;
+	$oldmod = '';
+
+	while ($i < $num) {
+		$obj = $db->fetch_object($result);
+
+		// If line is for a module that does not exist anymore (absent of includes/module), we ignore it
+		if (empty($modules[$obj->module])) {
+			$i++;
+			continue;
+		}
+
+		// Special cases
+		if (!empty($conf->reception->enabled)) {
+			// The 2 permission in fournisseur modules has been replaced by permissions into reception module
+			if ($obj->module == 'fournisseur' && $obj->perms == 'commande' && $obj->subperms == 'receptionner') {
+				$i++;
+				continue;
+			}
+			if ($obj->module == 'fournisseur' && $obj->perms == 'commande_advance' && $obj->subperms == 'check') {
+				$i++;
+				continue;
+			}
+		}
+
+		$objMod = $modules[$obj->module];
+
+		// Save field module_position in database if value is wrong
+		/*
+		if (empty($obj->module_position) || (is_object($objMod) && $objMod->isCoreOrExternalModule() == 'external' && $obj->module_position < 100000)) {
+			if (is_object($modules[$obj->module]) && ($modules[$obj->module]->module_position > 0)) {
+				// TODO Define familyposition
+				//$familyposition = $modules[$obj->module]->family_position;
+				$familyposition = 0;
+
+				$newmoduleposition = $modules[$obj->module]->module_position;
+
+				// Correct $newmoduleposition position for external modules
+				$objMod = $modules[$obj->module];
+				if (is_object($objMod) && $objMod->isCoreOrExternalModule() == 'external' && $newmoduleposition < 100000) {
+					$newmoduleposition += 100000;
+				}
+
+				$sqlupdate = 'UPDATE '.MAIN_DB_PREFIX."rights_def SET module_position = ".((int) $newmoduleposition).",";
+				$sqlupdate .= " family_position = ".((int) $familyposition);
+				$sqlupdate .= " WHERE module_position = ".((int) $obj->module_position)." AND module = '".$db->escape($obj->module)."'";
+
+				$db->query($sqlupdate);
+			}
+		}
+		*/
 
 		// Break found, it's a new module to catch
 		if (isset($obj->module) && ($oldmod <> $obj->module)) {
@@ -359,9 +440,9 @@ if ($result) {
 			if (($caneditperms && empty($objMod->rights_admin_allowed)) || empty($object->admin)) {
 				if ($caneditperms) {
 					print '<td class="center nowrap">';
-					print '<a class="reposition" title="'.dol_escape_htmltag($langs->trans("All")).'" alt="'.dol_escape_htmltag($langs->trans("All")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=addrights&amp;entity='.$entity.'&amp;module='.$obj->module.'&amp;confirm=yes&amp;token='.newToken().'">'.$langs->trans("All")."</a>";
+					print '<a class="reposition" title="'.dol_escape_htmltag($langs->trans("All")).'" alt="'.dol_escape_htmltag($langs->trans("All")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=addrights&token='.newToken().'&entity='.$entity.'&module='.$obj->module.'&confirm=yes">'.$langs->trans("All")."</a>";
 					print ' / ';
-					print '<a class="reposition" title="'.dol_escape_htmltag($langs->trans("None")).'" alt="'.dol_escape_htmltag($langs->trans("None")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delrights&amp;entity='.$entity.'&amp;module='.$obj->module.'&amp;confirm=yes&amp;token='.newToken().'">'.$langs->trans("None")."</a>";
+					print '<a class="reposition" title="'.dol_escape_htmltag($langs->trans("None")).'" alt="'.dol_escape_htmltag($langs->trans("None")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delrights&token='.newToken().'&entity='.$entity.'&module='.$obj->module.'&confirm=yes">'.$langs->trans("None")."</a>";
 					print '</td>';
 				}
 				print '<td>&nbsp;</td>';
@@ -399,7 +480,7 @@ if ($result) {
 			print '</td>';
 		} elseif (in_array($obj->id, $permsuser)) {					// Permission granted by user
 			if ($caneditperms) {
-				print '<td class="center"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delrights&amp;entity='.$entity.'&amp;rights='.$obj->id.'&amp;confirm=yes&amp;token='.newToken().'">';
+				print '<td class="center"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delrights&token='.newToken().'&entity='.$entity.'&rights='.$obj->id.'&confirm=yes">';
 				//print img_edit_remove($langs->trans("Remove"));
 				print img_picto($langs->trans("Remove"), 'switch_on');
 				print '</a></td>';
@@ -420,7 +501,7 @@ if ($result) {
 			} else {
 				// Do not own permission
 				if ($caneditperms) {
-					print '<td class="center"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=addrights&amp;entity='.$entity.'&amp;rights='.$obj->id.'&amp;confirm=yes&amp;token='.newToken().'">';
+					print '<td class="center"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=addrights&entity='.$entity.'&rights='.$obj->id.'&confirm=yes&token='.newToken().'">';
 					//print img_edit_add($langs->trans("Add"));
 					print img_picto($langs->trans("Add"), 'switch_off');
 					print '</a></td>';
@@ -430,7 +511,7 @@ if ($result) {
 		} else {
 			// Do not own permission
 			if ($caneditperms) {
-				print '<td class="center"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=addrights&amp;entity='.$entity.'&amp;rights='.$obj->id.'&amp;confirm=yes&amp;token='.newToken().'">';
+				print '<td class="center"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=addrights&entity='.$entity.'&rights='.$obj->id.'&confirm=yes&token='.newToken().'">';
 				//print img_edit_add($langs->trans("Add"));
 				print img_picto($langs->trans("Add"), 'switch_off');
 				print '</a></td>';

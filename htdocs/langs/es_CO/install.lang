@@ -37,7 +37,7 @@ License=Usando licencia
 WebPagesDirectory=Directorio donde se almacenan las páginas web
 DocumentsDirectory=Directorio para almacenar documentos cargados y generados.
 URLRoot=URL de raíz
-CheckToForceHttps=Marque esta opción para forzar conexiones seguras (https). Esto requiere que el servidor web esté configurado con un certificado SSL.
+CheckToForceHttps=Marque esta opción para forzar conexiones seguras (https). <br>Esto requiere que el servidor web esté configurado con un certificado SSL.
 DolibarrDatabase=Base de datos de Dolibarr
 DatabaseType=Tipo de base de datos
 ServerAddressDescription=Nombre o dirección IP para el servidor de base de datos. Normalmente, 'localhost' cuando el servidor de la base de datos está alojado en el mismo servidor que el servidor web.
@@ -92,7 +92,7 @@ AlreadyDone=Ya migrado
 DatabaseVersion=Versión de base de datos
 ServerVersion=Versión del servidor de base de datos
 YouMustCreateItAndAllowServerToWrite=Debe crear este directorio y permitir que el servidor web escriba en él.
-DBSortingCollation=Orden de clasificacion de personajes
+DBSortingCollation=Orden de clasificacion de caracteres
 YouAskDatabaseCreationSoDolibarrNeedToConnect=Seleccionó crear la base de datos <b> %s </b>, pero para esto, Dolibarr necesita conectarse al servidor <b> %s </b> con el superusuario <b> %s </b>.
 YouAskLoginCreationSoDolibarrNeedToConnect=Seleccionó crear el usuario de la base de datos <b> %s </b>, pero para esto, Dolibarr necesita conectarse al servidor <b> %s </b> con el superusuario <b> %s </b>.
 BecauseConnectionFailedParametersMayBeWrong=Falló la conexión de la base de datos: los parámetros del host o superusuario deben ser incorrectos.
@@ -180,7 +180,7 @@ MigrationUserGroupRightsEntity=Actualizar el valor del campo de entidad de llx_u
 MigrationUserPhotoPath=Migración de rutas de fotos para usuarios
 MigrationFieldsSocialNetworks=Migración de campos de usuarios redes sociales (%s)
 MigrationResetBlockedLog=Restablecer módulo BlockedLog para algoritmo v7
-ErrorFoundDuringMigration=Se informaron errores durante el proceso de migración, por lo que el siguiente paso no está disponible. Para ignorar los errores, puede <a href="%s"> hacer clic aquí </a>, pero es posible que la aplicación o algunas funciones no funcionen correctamente hasta que se resuelvan los errores.
+ErrorFoundDuringMigration=Se informó de error(es) durante el proceso de migración, por lo que el siguiente paso no está disponible. Para ignorar los errores, puede <a href="%s"> hacer clic aquí </a>, pero es posible que la aplicación o algunas funciones no funcionen correctamente hasta que se resuelvan los errores.
 YouTryInstallDisabledByDirLock=La aplicación intentó actualizarse automáticamente, pero las páginas de instalación / actualización se han deshabilitado por seguridad (directorio renombrado con el sufijo .lock). <br>
 YouTryInstallDisabledByFileLock=La aplicación intentó auto actualizarse, pero las páginas de instalación / actualización se han deshabilitado por seguridad (debido a la existencia de un archivo de bloqueo <strong> install.lock </strong> en el directorio de documentos de dolibarr). <br>
 ClickOnLinkOrRemoveManualy=Si hay una actualización en curso, espere. Si no es así, haga clic en el siguiente enlace. Si siempre ve esta misma página, debe eliminar / cambiar el nombre del archivo install.lock en el directorio de documentos.

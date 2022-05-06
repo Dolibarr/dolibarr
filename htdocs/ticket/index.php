@@ -148,13 +148,13 @@ $tick = array(
 
 $sql = "SELECT t.fk_statut, COUNT(t.fk_statut) as nb";
 $sql .= " FROM ".MAIN_DB_PREFIX."ticket as t";
-if (!$user->rights->societe->client->voir && !$socid) {
+if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 $sql .= ' WHERE t.entity IN ('.getEntity('ticket').')';
 $sql .= dolSqlDateFilter('datec', 0, 0, $endyear);
 
-if (!$user->rights->societe->client->voir && !$socid) {
+if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= " AND t.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 
@@ -224,7 +224,7 @@ if ($result) {
 	dol_print_error($db);
 }
 
-$stringtoshow = '<script type="text/javascript" language="javascript">
+$stringtoshow = '<script type="text/javascript">
     jQuery(document).ready(function() {
         jQuery("#idsubimgDOLUSERCOOKIE_ticket_by_status").click(function() {
             jQuery("#idfilterDOLUSERCOOKIE_ticket_by_status").toggle();
@@ -319,14 +319,14 @@ $sql .= " FROM ".MAIN_DB_PREFIX."ticket as t";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_type as type ON type.code=t.type_code";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_category as category ON category.code=t.category_code";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_severity as severity ON severity.code=t.severity_code";
-if (!$user->rights->societe->client->voir && !$socid) {
+if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 
 $sql .= ' WHERE t.entity IN ('.getEntity('ticket').')';
 $sql .= " AND t.fk_statut=0";
-if (!$user->rights->societe->client->voir && !$socid) {
-	$sql .= " AND t.fk_soc = sc.fk_soc AND sc.fk_user = ".$user->id;
+if (empty($user->rights->societe->client->voir) && !$socid) {
+	$sql .= " AND t.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 
 if ($user->socid > 0) {
@@ -334,7 +334,7 @@ if ($user->socid > 0) {
 } else {
 	// Restricted to assigned user only
 	if (!empty($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY) && !$user->rights->ticket->manage) {
-		$sql .= " AND t.fk_user_assign=".$user->id;
+		$sql .= " AND t.fk_user_assign = ".((int) $user->id);
 	}
 }
 $sql .= $db->order("t.datec", "DESC");
@@ -390,8 +390,10 @@ if ($result) {
 
 			// Category
 			print '<td class="nowrap">';
-			$s = $langs->getLabelFromKey($db, 'TicketCategoryShort'.$objp->category_code, 'c_ticket_category', 'code', 'label', $objp->category_code);
-			print '<span title="'.dol_escape_htmltag($s).'">'.$s.'</span>';
+			if (!empty($obp->category_code)) {
+				$s = $langs->getLabelFromKey($db, 'TicketCategoryShort'.$objp->category_code, 'c_ticket_category', 'code', 'label', $objp->category_code);
+				print '<span title="'.dol_escape_htmltag($s).'">'.$s.'</span>';
+			}
 			//print $objp->category_label;
 			print "</td>";
 
