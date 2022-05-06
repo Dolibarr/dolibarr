@@ -302,7 +302,15 @@ class mailing_contacts1 extends MailingTargets
 			dol_print_error($this->db);
 		}
 		$s .= '</select>';
+
 		$s .= ajax_combobox("filter_category_supplier_contact");
+
+		// Choose language
+		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
+		$formadmin = new FormAdmin($this->db);
+		$s .= $langs->trans("DefaultLang").': ';
+		$s .= $formadmin->select_language($langs->getDefaultLang(1), 'filter_lang', 0, 0, 1, 0, 0, '', 0, 0, 0, null, 1);
+
 		return $s;
 	}
 
@@ -336,6 +344,7 @@ class mailing_contacts1 extends MailingTargets
 		$filter_category = GETPOST('filter_category', 'alpha');
 		$filter_category_customer = GETPOST('filter_category_customer', 'alpha');
 		$filter_category_supplier = GETPOST('filter_category_supplier', 'alpha');
+		$filter_lang = GETPOST('filter_lang', 'alpha');
 
 		$cibles = array();
 
@@ -381,6 +390,7 @@ class mailing_contacts1 extends MailingTargets
 		// Exclude unsubscribed email adresses
 		$sql .= " AND sp.statut = 1";
 		$sql .= " AND sp.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".((int) $mailing_id).")";
+
 		// Filter on category
 		if ($filter_category != 'all' && $filter_category != '-1') {
 			$sql .= " AND cs.fk_categorie = c.rowid AND cs.fk_socpeople = sp.rowid";
@@ -394,6 +404,12 @@ class mailing_contacts1 extends MailingTargets
 			$sql .= " AND c3s.fk_categorie = c3.rowid AND c3s.fk_soc = sp.fk_soc";
 			$sql .= " AND c3.label = '".$this->db->escape($filter_category_supplier)."'";
 		}
+
+		// Filter on language
+		if ($filter_lang != '') {
+			$sql .= " AND sp.default_lang = '".$this->db->escape($filter_lang)."'";
+		}
+
 		// Filter on nature
 		$key = $filter;
 
@@ -420,7 +436,7 @@ class mailing_contacts1 extends MailingTargets
 		}
 
 		$sql .= " ORDER BY sp.email";
-		//print "wwwwwwx".$sql;
+		// print "wwwwwwx".$sql;
 
 		// Stocke destinataires dans cibles
 		$result = $this->db->query($sql);

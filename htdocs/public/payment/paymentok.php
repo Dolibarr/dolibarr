@@ -1271,16 +1271,20 @@ if ($ispaymentok) {
 							// Get email content from template
 							$arraydefaultmessage = null;
 
-							$labeltouse = $conf->global->EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT;
+							$idoftemplatetouse = $conf->global->EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT;	// Email to send for Event organization registration
 
-							if (!empty($labeltouse)) {
-								$arraydefaultmessage = $formmail->getEMailTemplate($db, 'conferenceorbooth', $user, $outputlangs, $labeltouse, 1, '');
+							if (!empty($idoftemplatetouse)) {
+								$arraydefaultmessage = $formmail->getEMailTemplate($db, 'conferenceorbooth', $user, $outputlangs, $idoftemplatetouse, 1, '');
 							}
 
-							if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
+							if (!empty($idoftemplatetouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
 								$subject = $arraydefaultmessage->topic;
 								$msg     = $arraydefaultmessage->content;
+							} else {
+								$subject = '['.$object->ref.' - '.$outputlangs->trans("NewRegistration").']';
+								$msg = $outputlangs->trans("OrganizationEventPaymentOfRegistrationWasReceived");
 							}
+
 
 							$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $thirdparty);
 							complete_substitutions_array($substitutionarray, $outputlangs, $object);
@@ -1300,7 +1304,7 @@ if ($ispaymentok) {
 							if ($result) {
 								dol_syslog("EMail sent to ".$sendto, LOG_DEBUG, 0, '_payment');
 							} else {
-								dol_syslog("Failed to send EMail to ".$sendto, LOG_ERR, 0, '_payment');
+								dol_syslog("Failed to send EMail to ".$sendto.' - '.$mailfile->error, LOG_ERR, 0, '_payment');
 							}
 						}
 					}
@@ -1456,14 +1460,18 @@ if ($ispaymentok) {
 										// Get email content from template
 										$arraydefaultmessage = null;
 
-										$labeltouse = $conf->global->EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT;
-										if (!empty($labeltouse)) {
-											$arraydefaultmessage = $formmail->getEMailTemplate($db, 'conferenceorbooth', $user, $outputlangs, $labeltouse, 1, '');
+										$idoftemplatetouse = $conf->global->EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH;	// Email sent after registration for a Booth
+
+										if (!empty($idoftemplatetouse)) {
+											$arraydefaultmessage = $formmail->getEMailTemplate($db, 'conferenceorbooth', $user, $outputlangs, $idoftemplatetouse, 1, '');
 										}
 
-										if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
+										if (!empty($idoftemplatetouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
 											$subject = $arraydefaultmessage->topic;
 											$msg     = $arraydefaultmessage->content;
+										} else {
+											$subject = '['.$booth->ref.' - '.$outputlangs->trans("NewRegistration").']';
+											$msg = $outputlangs->trans("OrganizationEventPaymentOfBoothWasReceived");
 										}
 
 										$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $thirdparty);

@@ -550,7 +550,7 @@ if ($sall) {
 $moreforfilter = '';
 
 // If the user can view prospects other than his'
-if ($user->rights->societe->client->voir || $socid) {
+if ($user->rights->user->user->lire) {
 	$langs->load("commercial");
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('ThirdPartiesOfSaleRepresentative');

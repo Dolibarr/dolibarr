@@ -26,12 +26,12 @@ button.dropdown-item.global-search-item {
 }
 div#topmenu-quickadd-dropdown {
 	position: fixed;
-	right: 65px;
+	<?php echo $right; ?>: 65px;
 	top: 0px;
 }
 div#topmenu-bookmark-dropdown {
 	position: fixed;
-	right: 20px;
+	<?php echo $right; ?>: 20px;
 	top: 0px;
 }
 
@@ -201,7 +201,7 @@ button.dropdown-item.global-search-item {
 }
 
 div#topmenu-global-search-dropdown, div#topmenu-quickadd-dropdown, div#topmenu-bookmark-dropdown {
-	line-height: 46px;
+	line-height: <?php echo (getDolGlobalInt('THEME_TOPMENU_DISABLE_IMAGE') == 1 ? '35' : '46' ); ?>px;
 }
 a.top-menu-dropdown-link {
 	padding: 8px;
@@ -221,7 +221,7 @@ a.top-menu-dropdown-link {
 }
 
 .dropdown-menu > .user-header{
-	background: rgb(<?php echo $colorbackhmenu1 ?>);
+	background: rgb(--colorbackhmenu1);
 }
 
 
@@ -244,6 +244,7 @@ a.top-menu-dropdown-link {
 	border-top: 1px solid #f0f0f0;
 	background-color: #f9f9f9;
 	padding: 10px;
+	text-align: start;
 }
 
 
@@ -293,7 +294,7 @@ a.top-menu-dropdown-link {
 
 #topmenuloginmoreinfo-btn, #topmenulogincompanyinfo-btn {
 	display: block;
-	text-align: right;
+	text-align: start;
 	color:#666;
 	cursor: pointer;
 }
@@ -302,6 +303,10 @@ a.top-menu-dropdown-link {
 	display: none;
 	clear: both;
 	font-size: 0.95em;
+}
+
+a.dropdown-item {
+	text-align: start;
 }
 
 .button-top-menu-dropdown {
