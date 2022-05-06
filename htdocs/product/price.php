@@ -1611,7 +1611,7 @@ if ((empty($conf->global->PRODUIT_CUSTOMER_PRICES) || $action == 'showlog_defaul
 				}
 
 				// Line for default price
-				if ($object->price_base_type == 'HT') {
+				if ($objp->price_base_type == 'HT') {
 					$pu = $objp->price;
 				} else {
 					$pu = $objp->price_ttc;
