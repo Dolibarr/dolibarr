@@ -1082,21 +1082,20 @@ function dolroundjs(number, decimals) { return +(Math.round(number + "e+" + deci
  * Function similar to PHP price()
  *
  * Example use:
- *   pricejs(13312.448, 'MT+', 'EUR', 'fr_FR')
+ *   pricejs(13312.448, 'MT', 'EUR', 'fr_FR')
  *   // (depending on conf for 'MT'): '13 312.45 €'
  *
  *   pricejs(343000.121, 'MT')
  *   // assuming on conf for 'MT' is 2 and for $langs->defaultlang is 'en_US': '343,000.12'
  *
  * @param  {number|string} amount    The amount to show
- * @param  {string} mode             'MT' or 'MU'; an optional trailing '+' enables using the browser's internal
- *                                   number formatting features (Intl object) if available
+ * @param  {string} mode             'MT' or 'MU'
  * @param  {string} currency_code    ISO code of currency (empty by default)
  * @param  {string} force_locale     ISO code locale to use (if empty, will use Dolibarr's current locale code)
  * @return {string}                  The amount with digits
  *
  */
-function pricejs(amount, mode = 'MT+', currency_code = '', force_locale = '') {
+function pricejs(amount, mode = 'MT', currency_code = '', force_locale = '') {
 	var main_max_dec_shown = <?php echo (int) str_replace('.', '', $conf->global->MAIN_MAX_DECIMALS_SHOWN); ?>;
 	var main_rounding_unit = <?php echo (int) $conf->global->MAIN_MAX_DECIMALS_UNIT; ?>;
 	var main_rounding_tot = <?php echo (int) $conf->global->MAIN_MAX_DECIMALS_TOT; ?>;
@@ -1104,24 +1103,17 @@ function pricejs(amount, mode = 'MT+', currency_code = '', force_locale = '') {
 	var main_thousand_separator = <?php echo json_encode($thousand) ?>;
 	var locale_code = force_locale || <?php echo json_encode($langs->defaultlang) ?>;
 	var amountAsLocalizedString;
-	var useIntl = false; // true if mode ends with '+' and the browser provides Intl object
+	var useIntl = Boolean(Intl && Intl.NumberFormat);
 	var nDigits;
 	if (currency_code === 'auto') currency_code = <?php echo json_encode($conf->currency) ?>;
-
-	// min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOT)
-
-	if (mode.endsWith && mode.endsWith('+')) {
-		mode = mode.slice(0, mode.length - 1);
-		useIntl = Boolean(Intl && Intl.NumberFormat);
-	}
 
 	if (mode === 'MU') nDigits = main_rounding_unit;
 	else if (mode === 'MT') nDigits = main_rounding_tot;
 	else return 'Bad value for parameter mode';
 
-
 	if (useIntl) {
-		// let the browser format the number using Dolibarr-provided parameters
+		// simple version: let the browser decide how to format the number using the provided language / currency
+		// parameters
 		var formattingOptions = {
 			minimumFractionDigits: nDigits,
 			maximumFractionDigits: nDigits
