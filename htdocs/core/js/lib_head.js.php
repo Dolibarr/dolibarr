@@ -1086,7 +1086,7 @@ function dolroundjs(number, decimals) { return +(Math.round(number + "e+" + deci
  *   // (depending on conf for 'MT'): '13 312.45 €'
  *
  *   pricejs(343000.121, 'MT')
- *   // assuming on conf for 'MT' is 2 and for $langs->defaultlang is 'en_US': '343,000.12'
+ *   // assuming conf for 'MT' is 2 and $langs->defaultlang is 'en_US': '343,000.12'
  *
  * @param  {number|string} amount    The amount to show
  * @param  {string} mode             'MT' or 'MU'
