@@ -8,6 +8,7 @@ ConfFileIsNotWritable=Configuration file <b>%s</b> is not writable. Check permis
 ConfFileIsWritable=Configuration file <b>%s</b> is writable.
 ConfFileMustBeAFileNotADir=Configuration file <b>%s</b> must be a file, not a directory.
 ConfFileReload=Reloading parameters from configuration file.
+NoReadableConfFileSoStartInstall=The configuration file <b>conf/conf.php</b> does not exists or is not reabable. We will run the installation process to try to initialize it.
 PHPSupportPOSTGETOk=This PHP supports variables POST and GET.
 PHPSupportPOSTGETKo=It's possible your PHP setup does not support variables POST and/or GET. Check the parameter <b>variables_order</b> in php.ini.
 PHPSupportSessions=This PHP supports sessions.
