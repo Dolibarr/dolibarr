@@ -292,10 +292,10 @@ class pdf_paprika extends ModelePDFSuppliersInvoices
 				foreach (glob($dir."/".$objectref."-*.pdf") as $otherpdf) {
 					$otherpdfindir = $otherpdf;
 				}
-                if (null !== $otherpdfindir) {
-                    $pagecount = $pdf->setSourceFile($otherpdfindir);
-                    $tplidx = $pdf->importPage(1);
-                }
+				if (null !== $otherpdfindir) {
+					$pagecount = $pdf->setSourceFile($otherpdfindir);
+					$tplidx = $pdf->importPage(1);
+				}
 
 				$pdf->Open();
 				$pagenb = 0;
@@ -389,9 +389,9 @@ class pdf_paprika extends ModelePDFSuppliersInvoices
 		$pdf->SetFont('', 'B', $default_font_size + 3);
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetLineWidth(0.5);
-		$pdf->SetDrawColor(200,10,10);
-		$pdf->SetFillColor(255,255,255);
-        $pdf->RoundedRect($posx, $posy, $cellwidth, $cellheight*2, 1.5, '1111','FD');
+		$pdf->SetDrawColor(200, 10, 10);
+		$pdf->SetFillColor(255, 255, 255);
+		$pdf->RoundedRect($posx, $posy, $cellwidth, $cellheight*2, 1.5, '1111', 'FD');
 		$pdf->SetTextColor(200, 10, 10);
 		$pdf->MultiCell($cellwidth, $cellheight, $outputlangs->convToOutputCharset($object->ref), '', 'C');
 		$posy += 1;
