@@ -2083,6 +2083,7 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 		print "</div>\n"; // end div class="login_block"
 
 		print '</header>';
+		//print '<header class="header2">&nbsp;</header>';
 
 		print '<div style="clear: both;"></div>';
 		print "<!-- End top horizontal menu -->\n\n";

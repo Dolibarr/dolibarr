@@ -10,12 +10,12 @@
 	font-style: normal;
 	font-variant: normal;
 	text-rendering: auto;
-	line-height: 23px;
-	font-size: <?php echo $topMenuFontSize; ?>;
+	line-height: 28px;
 	-webkit-font-smoothing: antialiased;
 	text-align:center;
 	text-decoration:none;
 	color: var(--colortextbackhmenu);
+	/* font-size: <?php echo $topMenuFontSize; ?>; */
 }
 
 .fa-15x {
