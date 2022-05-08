@@ -105,6 +105,8 @@ ALTER TABLE llx_bank ADD COLUMN amount_main_currency double(24,8) NULL;
 
 -- v16
 
+ALTER TABLE llx_societe_account DROP FOREIGN KEY llx_societe_account_fk_website;
+
 UPDATE llx_cronjob set label = 'RecurringInvoicesJob' where label = 'RecurringInvoices';
 UPDATE llx_cronjob set label = 'RecurringSupplierInvoicesJob' where label = 'RecurringSupplierInvoices';
 

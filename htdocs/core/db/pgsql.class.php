@@ -116,7 +116,7 @@ class DoliDBPgsql extends DoliDB
 			$this->connected = false;
 			$this->ok = false;
 			$this->error = 'Host, login or password incorrect';
-			dol_syslog(get_class($this)."::DoliDBPgsql : Erreur Connect ".$this->error, LOG_ERR);
+			dol_syslog(get_class($this)."::DoliDBPgsql : Erreur Connect ".$this->error.'. Failed to connect to host='.$host.' port='.$port.' user='.$user, LOG_ERR);
 		}
 
 		// Si connexion serveur ok et si connexion base demandee, on essaie connexion base
@@ -423,7 +423,7 @@ class DoliDBPgsql extends DoliDB
 		}
 
 		// if local connection failed or not requested, use TCP/IP
-		if (!$this->db) {
+		if (empty($this->db)) {
 			if (!$host) {
 				$host = "localhost";
 			}
@@ -432,7 +432,11 @@ class DoliDBPgsql extends DoliDB
 			}
 
 			$con_string = "host='".$host."' port='".$port."' dbname='".$name."' user='".$login."' password='".$passwd."'";
-			$this->db = @pg_connect($con_string);
+			try {
+				$this->db = @pg_connect($con_string);
+			} catch (Exception $e) {
+				print $e->getMessage();
+			}
 		}
 
 		// now we test if at least one connect method was a success
@@ -916,7 +920,8 @@ class DoliDBPgsql extends DoliDB
 		// Test charset match LC_TYPE (pgsql error otherwise)
 		//print $charset.' '.setlocale(LC_CTYPE,'0'); exit;
 
-		$sql = "CREATE DATABASE '".$this->escape($database)."' OWNER '".$this->escape($owner)."' ENCODING '".$this->escape($charset)."'";
+		// NOTE: Do not use ' around the database name
+		$sql = "CREATE DATABASE ".$this->escape($database)." OWNER '".$this->escape($owner)."' ENCODING '".$this->escape($charset)."'";
 		dol_syslog($sql, LOG_DEBUG);
 		$ret = $this->query($sql);
 		return $ret;

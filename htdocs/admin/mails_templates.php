@@ -554,7 +554,7 @@ $help_url = '';
 if (!empty($user->admin) && (empty($_SESSION['leftmenu']) || $_SESSION['leftmenu'] != 'email_templates')) {
 	$title = $langs->trans("EMailsSetup");
 } else {
-	$title = $langs->trans("EMailsTemplates");
+	$title = $langs->trans("EMailTemplates");
 }
 
 llxHeader('', $title, $help_url);
@@ -949,213 +949,214 @@ if ($resql) {
 		while ($i < $num) {
 			$obj = $db->fetch_object($resql);
 
-			if ($action == 'edit' && ($rowid == (!empty($obj->rowid) ? $obj->rowid : $obj->code))) {
-				print '<tr class="oddeven" id="rowid-'.$obj->rowid.'">';
+			if ($obj) {
+				if ($action == 'edit' && ($rowid == (!empty($obj->rowid) ? $obj->rowid : $obj->code))) {
+					print '<tr class="oddeven" id="rowid-'.$obj->rowid.'">';
 
-				$tmpaction = 'edit';
-				$parameters = array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
-				$reshook = $hookmanager->executeHooks('editEmailTemplateFieldlist', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
-				$error = $hookmanager->error; $errors = $hookmanager->errors;
+					$tmpaction = 'edit';
+					$parameters = array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
+					$reshook = $hookmanager->executeHooks('editEmailTemplateFieldlist', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
+					$error = $hookmanager->error; $errors = $hookmanager->errors;
 
-				// Show fields
-				if (empty($reshook)) {
-					fieldList($fieldlist, $obj, $tabname[$id], 'edit');
-				}
-
-				print '<td></td><td></td><td></td>';
-				print '<td class="center">';
-				print '<input type="hidden" name="page" value="'.$page.'">';
-				print '<input type="hidden" name="rowid" value="'.$rowid.'">';
-				print '<input type="submit" class="button buttongen button-save" name="actionmodify" value="'.$langs->trans("Modify").'">';
-				print '<div name="'.(!empty($obj->rowid) ? $obj->rowid : $obj->code).'"></div>';
-				print '<input type="submit" class="button buttongen button-cancel" name="actioncancel" value="'.$langs->trans("Cancel").'">';
-				print '</td>';
-
-				$fieldsforcontent = array('topic', 'joinfiles', 'content');
-				if (!empty($conf->global->MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES)) {
-					$fieldsforcontent = array('topic', 'joinfiles', 'content', 'content_lines');
-				}
-				foreach ($fieldsforcontent as $tmpfieldlist) {
-					$showfield = 1;
-					$align = "left";
-					$valuetoshow = $obj->{$tmpfieldlist};
-
-					$class = 'tddict';
-					// Show value for field
-					if ($showfield) {
-						// Show line for topic, joinfiles and content
-						print '</tr><tr class="oddeven" nohover tr-'.$tmpfieldlist.'-'.$rowid.' ">';
-						print '<td colspan="8">';
-						if ($tmpfieldlist == 'topic') {
-							print '<strong>'.$form->textwithpicto($langs->trans("Topic"), $tabhelp[$id][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'</strong> ';
-							print '<input type="text" class="flat minwidth500" name="'.$tmpfieldlist.'-'.$rowid.'" value="'.(!empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : '').'">';
-						}
-						if ($tmpfieldlist == 'joinfiles') {
-							print '<strong>'.$form->textwithpicto($langs->trans("FilesAttachedToEmail"), $tabhelp[$id][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'</strong> ';
-							print '<input type="text" class="flat maxwidth50" name="'.$tmpfieldlist.'-'.$rowid.'" value="'.(!empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : '').'">';
-						}
-						if ($tmpfieldlist == 'content') {
-							print $form->textwithpicto($langs->trans("Content"), $tabhelp[$id][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'<br>';
-							$okforextended = true;
-							if (empty($conf->global->FCKEDITOR_ENABLE_MAIL)) {
-								$okforextended = false;
-							}
-							$doleditor = new DolEditor($tmpfieldlist.'-'.$rowid, (!empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : ''), '', 500, 'dolibarr_mailings', 'In', 0, true, $okforextended, ROWS_6, '90%');
-							print $doleditor->Create(1);
-						}
-						if ($tmpfieldlist == 'content_lines') {
-							print $form->textwithpicto($langs->trans("ContentForLines"), $tabhelp[$id][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'<br>';
-							$okforextended = true;
-							if (empty($conf->global->FCKEDITOR_ENABLE_MAIL))
-								$okforextended = false;
-							$doleditor = new DolEditor($tmpfieldlist.'-'.$rowid, (! empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : ''), '', 140, 'dolibarr_mailings', 'In', 0, false, $okforextended, ROWS_6, '90%');
-							print $doleditor->Create(1);
-						}
-						print '</td>';
-						print '<td></td>';
-						print '<td></td>';
+					// Show fields
+					if (empty($reshook)) {
+						fieldList($fieldlist, $obj, $tabname[$id], 'edit');
 					}
-				}
 
-				print "</tr>\n";
-			} else {
-				// If template is for a module, check module is enabled.
-				if ($obj->module) {
-					$tempmodulekey = $obj->module;
-					if (empty($conf->$tempmodulekey) || empty($conf->$tempmodulekey->enabled)) {
-						$i++;
-						continue;
+					print '<td></td><td></td><td></td>';
+					print '<td class="center">';
+					print '<input type="hidden" name="page" value="'.$page.'">';
+					print '<input type="hidden" name="rowid" value="'.$rowid.'">';
+					print '<input type="submit" class="button buttongen button-save" name="actionmodify" value="'.$langs->trans("Modify").'">';
+					print '<div name="'.(!empty($obj->rowid) ? $obj->rowid : $obj->code).'"></div>';
+					print '<input type="submit" class="button buttongen button-cancel" name="actioncancel" value="'.$langs->trans("Cancel").'">';
+					print '</td>';
+
+					$fieldsforcontent = array('topic', 'joinfiles', 'content');
+					if (!empty($conf->global->MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES)) {
+						$fieldsforcontent = array('topic', 'joinfiles', 'content', 'content_lines');
 					}
-				}
-
-				$keyforobj = 'type_template';
-				if (!in_array($obj->$keyforobj, array_keys($elementList))) {
-					$i++;
-					continue; // It means this is a type of template not into elementList (may be because enabled condition of this type is false because module is not enabled)
-				}
-				// Test on 'enabled'
-				if (!dol_eval($obj->enabled, 1, 1, '1')) {
-					$i++;
-					continue; // Email template not qualified
-				}
-
-				print '<tr class="oddeven" id="rowid-'.$obj->rowid.'">';
-
-				$tmpaction = 'view';
-				$parameters = array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
-				$reshook = $hookmanager->executeHooks('viewEmailTemplateFieldlist', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
-
-				$error = $hookmanager->error; $errors = $hookmanager->errors;
-
-				if (empty($reshook)) {
-					foreach ($fieldlist as $field => $value) {
-						if (in_array($fieldlist[$field], array('content', 'content_lines'))) {
-							continue;
-						}
+					foreach ($fieldsforcontent as $tmpfieldlist) {
 						$showfield = 1;
-						$align = "";
-						$class = "tddict";
-						$title = '';
-						$valuetoshow = $obj->{$fieldlist[$field]};
-						if ($value == 'label' || $value == 'topic') {
-							if ($langs->trans($valuetoshow) != $valuetoshow) {
-								$valuetoshow = $langs->trans($valuetoshow);
-							}
-							$valuetoshow = dol_escape_htmltag($valuetoshow);
-						}
-						if ($value == 'label') {
-							$class .= ' tdoverflowmax100';
-						}
-						if ($value == 'topic') {
-							$class .= 'tdoverflowmax200 small';
-						}
-						if ($value == 'type_template') {
-							$valuetoshow = isset($elementList[$valuetoshow]) ? $elementList[$valuetoshow] : $valuetoshow;
-							$align = "center";
-						}
-						if ($value == 'lang' && $valuetoshow) {
-							$valuetoshow = $valuetoshow.' - '.$langs->trans("Language_".$valuetoshow);
-						}
-						if ($value == 'fk_user') {
-							if ($valuetoshow > 0) {
-								$fuser = new User($db);
-								$fuser->fetch($valuetoshow);
-								$valuetoshow = $fuser->getNomUrl(1);
-							}
-						}
-						if ($value == 'private') {
-							$align = "center";
-							if ($valuetoshow) {
-								$valuetoshow = yn($valuetoshow);
-							} else {
-								$valuetoshow = '';
-							}
-						}
-						if ($value == 'position') {
-							$align = "center";
-						}
-						if ($value == 'joinfiles') {
-							$align = "center";
-							if ($valuetoshow) {
-								$valuetoshow = 1;
-							} else {
-								$valuetoshow = '';
-							}
-						}
-						if ($align) {
-							$class .= ' '.$align;
-						}
+						$align = "left";
+						$valuetoshow = $obj->{$tmpfieldlist};
 
+						$class = 'tddict';
 						// Show value for field
 						if ($showfield) {
-							print '<!-- '.$fieldlist[$field].' -->';
-							print '<td class="'.$class.'"';
-							if (in_array($value, array('code', 'label', 'topic'))) {
-								print ' title="'.dol_escape_htmltag($valuetoshow).'"';
+							// Show line for topic, joinfiles and content
+							print '</tr><tr class="oddeven" nohover tr-'.$tmpfieldlist.'-'.$rowid.' ">';
+							print '<td colspan="8">';
+							if ($tmpfieldlist == 'topic') {
+								print '<strong>'.$form->textwithpicto($langs->trans("Topic"), $tabhelp[$id][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'</strong> ';
+								print '<input type="text" class="flat minwidth500" name="'.$tmpfieldlist.'-'.$rowid.'" value="'.(!empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : '').'">';
 							}
-							print '>';
-							print $valuetoshow;
+							if ($tmpfieldlist == 'joinfiles') {
+								print '<strong>'.$form->textwithpicto($langs->trans("FilesAttachedToEmail"), $tabhelp[$id][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'</strong> ';
+								print '<input type="text" class="flat maxwidth50" name="'.$tmpfieldlist.'-'.$rowid.'" value="'.(!empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : '').'">';
+							}
+							if ($tmpfieldlist == 'content') {
+								print $form->textwithpicto($langs->trans("Content"), $tabhelp[$id][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'<br>';
+								$okforextended = true;
+								if (empty($conf->global->FCKEDITOR_ENABLE_MAIL)) {
+									$okforextended = false;
+								}
+								$doleditor = new DolEditor($tmpfieldlist.'-'.$rowid, (!empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : ''), '', 500, 'dolibarr_mailings', 'In', 0, true, $okforextended, ROWS_6, '90%');
+								print $doleditor->Create(1);
+							}
+							if ($tmpfieldlist == 'content_lines') {
+								print $form->textwithpicto($langs->trans("ContentForLines"), $tabhelp[$id][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'<br>';
+								$okforextended = true;
+								if (empty($conf->global->FCKEDITOR_ENABLE_MAIL))
+									$okforextended = false;
+								$doleditor = new DolEditor($tmpfieldlist.'-'.$rowid, (! empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : ''), '', 140, 'dolibarr_mailings', 'In', 0, false, $okforextended, ROWS_6, '90%');
+								print $doleditor->Create(1);
+							}
 							print '</td>';
+							print '<td></td>';
+							print '<td></td>';
 						}
 					}
-				}
 
-				// Can an entry be erased or disabled ?
-				$iserasable = 1; $canbedisabled = 1; $canbemodified = 1; // true by default
-				if (!$user->admin && $obj->fk_user != $user->id) {
-					$iserasable = 0;
-					$canbedisabled = 0;
-					$canbemodified = 0;
-				}
-
-				$url = $_SERVER["PHP_SELF"].'?'.($page ? 'page='.$page.'&' : '').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.(!empty($obj->rowid) ? $obj->rowid : (!empty($obj->code) ? $obj->code : '')).'&code='.(!empty($obj->code) ?urlencode($obj->code) : '');
-				if ($param) {
-					$url .= '&'.$param;
-				}
-
-				// Status / Active
-				print '<td class="center nowrap">';
-				if ($canbedisabled) {
-					print '<a href="'.$url.'&action='.$acts[$obj->active].'&token='.newToken().'">'.$actl[$obj->active].'</a>';
+					print "</tr>\n";
 				} else {
-					print '<span class="opacitymedium">'.$actl[$obj->active].'</span>';
-				}
-				print "</td>";
+					// If template is for a module, check module is enabled.
+					if ($obj->module) {
+						$tempmodulekey = $obj->module;
+						if (empty($conf->$tempmodulekey) || empty($conf->$tempmodulekey->enabled)) {
+							$i++;
+							continue;
+						}
+					}
 
-				// Modify link / Delete link
-				print '<td class="center nowraponall" width="64">';
-				if ($canbemodified) {
-					print '<a class="reposition editfielda" href="'.$url.'&action=edit&token='.newToken().'">'.img_edit().'</a>';
-				}
-				if ($iserasable) {
-					print '<a class="marginleftonly" href="'.$url.'&action=delete&token='.newToken().'">'.img_delete().'</a>';
-					//else print '<a href="#">'.img_delete().'</a>';    // Some dictionary can be edited by other profile than admin
-				}
-				print '</td>';
+					$keyforobj = 'type_template';
+					if (!in_array($obj->$keyforobj, array_keys($elementList))) {
+						$i++;
+						continue; // It means this is a type of template not into elementList (may be because enabled condition of this type is false because module is not enabled)
+					}
+					// Test on 'enabled'
+					if (!dol_eval($obj->enabled, 1, 1, '1')) {
+						$i++;
+						continue; // Email template not qualified
+					}
 
-				print "</tr>\n";
+					print '<tr class="oddeven" id="rowid-'.$obj->rowid.'">';
+
+					$tmpaction = 'view';
+					$parameters = array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
+					$reshook = $hookmanager->executeHooks('viewEmailTemplateFieldlist', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
+
+					$error = $hookmanager->error; $errors = $hookmanager->errors;
+
+					if (empty($reshook)) {
+						foreach ($fieldlist as $field => $value) {
+							if (in_array($fieldlist[$field], array('content', 'content_lines'))) {
+								continue;
+							}
+							$showfield = 1;
+							$align = "";
+							$class = "tddict";
+							$title = '';
+							$valuetoshow = $obj->{$fieldlist[$field]};
+							if ($value == 'label' || $value == 'topic') {
+								if ($langs->trans($valuetoshow) != $valuetoshow) {
+									$valuetoshow = $langs->trans($valuetoshow);
+								}
+								$valuetoshow = dol_escape_htmltag($valuetoshow);
+							}
+							if ($value == 'label') {
+								$class .= ' tdoverflowmax100';
+							}
+							if ($value == 'topic') {
+								$class .= 'tdoverflowmax200 small';
+							}
+							if ($value == 'type_template') {
+								$valuetoshow = isset($elementList[$valuetoshow]) ? $elementList[$valuetoshow] : $valuetoshow;
+								$align = "center";
+							}
+							if ($value == 'lang' && $valuetoshow) {
+								$valuetoshow = $valuetoshow.' - '.$langs->trans("Language_".$valuetoshow);
+							}
+							if ($value == 'fk_user') {
+								if ($valuetoshow > 0) {
+									$fuser = new User($db);
+									$fuser->fetch($valuetoshow);
+									$valuetoshow = $fuser->getNomUrl(1);
+								}
+							}
+							if ($value == 'private') {
+								$align = "center";
+								if ($valuetoshow) {
+									$valuetoshow = yn($valuetoshow);
+								} else {
+									$valuetoshow = '';
+								}
+							}
+							if ($value == 'position') {
+								$align = "center";
+							}
+							if ($value == 'joinfiles') {
+								$align = "center";
+								if ($valuetoshow) {
+									$valuetoshow = 1;
+								} else {
+									$valuetoshow = '';
+								}
+							}
+							if ($align) {
+								$class .= ' '.$align;
+							}
+
+							// Show value for field
+							if ($showfield) {
+								print '<!-- '.$fieldlist[$field].' -->';
+								print '<td class="'.$class.'"';
+								if (in_array($value, array('code', 'label', 'topic'))) {
+									print ' title="'.dol_escape_htmltag($valuetoshow).'"';
+								}
+								print '>';
+								print $valuetoshow;
+								print '</td>';
+							}
+						}
+					}
+
+					// Can an entry be erased or disabled ?
+					$iserasable = 1; $canbedisabled = 1; $canbemodified = 1; // true by default
+					if (!$user->admin && $obj->fk_user != $user->id) {
+						$iserasable = 0;
+						$canbedisabled = 0;
+						$canbemodified = 0;
+					}
+
+					$url = $_SERVER["PHP_SELF"].'?'.($page ? 'page='.$page.'&' : '').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.(!empty($obj->rowid) ? $obj->rowid : (!empty($obj->code) ? $obj->code : '')).'&code='.(!empty($obj->code) ?urlencode($obj->code) : '');
+					if ($param) {
+						$url .= '&'.$param;
+					}
+
+					// Status / Active
+					print '<td class="center nowrap">';
+					if ($canbedisabled) {
+						print '<a href="'.$url.'&action='.$acts[$obj->active].'&token='.newToken().'">'.$actl[$obj->active].'</a>';
+					} else {
+						print '<span class="opacitymedium">'.$actl[$obj->active].'</span>';
+					}
+					print "</td>";
+
+					// Modify link / Delete link
+					print '<td class="center nowraponall" width="64">';
+					if ($canbemodified) {
+						print '<a class="reposition editfielda" href="'.$url.'&action=edit&token='.newToken().'">'.img_edit().'</a>';
+					}
+					if ($iserasable) {
+						print '<a class="marginleftonly" href="'.$url.'&action=delete&token='.newToken().'">'.img_delete().'</a>';
+						//else print '<a href="#">'.img_delete().'</a>';    // Some dictionary can be edited by other profile than admin
+					}
+					print '</td>';
+
+					print "</tr>\n";
+				}
 			}
-
 
 			$i++;
 		}

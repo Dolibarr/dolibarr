@@ -29,10 +29,10 @@
 /**
  * Prepare array with list of tabs
  *
- * @param   Object	$object		Object related to tabs
+ * @param   User	$object		Object related to tabs
  * @return  array				Array of tabs to show
  */
-function user_prepare_head($object)
+function user_prepare_head(User $object)
 {
 	global $langs, $conf, $user, $db;
 

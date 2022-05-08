@@ -91,6 +91,8 @@ require DOL_DOCUMENT_ROOT.'/core/actions_extrafields.inc.php';
  * View
  */
 
+$textobject = $langs->transnoentitiesnoconv("Evaluation");
+
 $help_url = '';
 $page_name = "HrmSetup";
 
