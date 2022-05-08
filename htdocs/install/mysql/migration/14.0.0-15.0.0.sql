@@ -36,7 +36,8 @@
 -- VPGSQL8.2 ALTER TABLE llx_partnership ALTER COLUMN date_partnership_end DROP NOT NULL;
 
 ALTER TABLE llx_product_fournisseur_price ADD COLUMN packaging real DEFAULT NULL;
-ALTER TABLE llx_product_fournisseur_price MODIFY COLUMN packaging real DEFAULT NULL;
+-- VMYSQL4.3 ALTER TABLE llx_product_fournisseur_price MODIFY COLUMN packaging real DEFAULT NULL;
+-- VPGSQL8.2 ALTER TABLE llx_product_fournisseur_price MODIFY COLUMN packaging real DEFAULT NULL USING packaging::real;
 
 ALTER TABLE llx_accounting_bookkeeping ADD COLUMN date_export datetime DEFAULT NULL;
 
@@ -119,8 +120,8 @@ ALTER TABLE llx_product ADD COLUMN mandatory_period tinyint NULL DEFAULT 0;
 ALTER TABLE llx_holiday ADD COLUMN date_approve   DATETIME DEFAULT NULL;
 ALTER TABLE llx_holiday ADD COLUMN fk_user_approve integer DEFAULT NULL;
 
-ALTER TABLE llx_ticket MODIFY COLUMN progress integer;
-
+-- VMYSQL4.3 ALTER TABLE llx_ticket MODIFY COLUMN progress integer;
+-- VPGSQL8.2 ALTER TABLE llx_ticket MODIFY COLUMN progress integer USING progress::integer;
 
 ALTER TABLE llx_emailcollector_emailcollectoraction MODIFY COLUMN actionparam TEXT;
 
@@ -537,3 +538,19 @@ INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (154, 
 -- VMYSQL4.3 ALTER TABLE llx_user MODIFY COLUMN fk_soc integer NULL;
 -- VPGSQL8.2 ALTER TABLE llx_user ALTER COLUMN fk_soc DROP NOT NULL;
 
+CREATE TABLE llx_element_tag
+(
+    rowid integer AUTO_INCREMENT PRIMARY KEY,
+    fk_categorie  integer NOT NULL,
+    fk_element  integer NOT NULL,
+    import_key    varchar(14)
+)ENGINE=innodb;
+
+ALTER TABLE llx_element_tag ADD UNIQUE INDEX idx_element_tag_uk (fk_categorie, fk_element);
+
+ALTER TABLE llx_element_tag ADD CONSTRAINT fk_element_tag_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
+
+-- Add column to help to fix a very critical bug when transferring into accounting bank record of a bank account into another currency.
+-- Idea is to update this column manually in v15 with value in currency of company for bank that are not into the main currency and the transfer
+-- into accounting will use it in priority if value is not null. The script repair.sql contains the sequence to fix datas in llx_bank.
+ALTER TABLE llx_bank ADD COLUMN amount_main_currency double(24,8) NULL;

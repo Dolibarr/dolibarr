@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2014	Maxime Kohlhaas		<support@atm-consulting.fr>
  * Copyright (C) 2014	Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2021		Frédéric France		<frederic.france@netlogic.fr>
+ * Copyright (C) 2021	Frédéric France		<frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ if (!is_object($form)) {
 ?>
 <!-- BEGIN PHP TEMPLATE extrafields_view.tpl.php -->
 <?php
-if (!is_array($parameters)) {
+if (!isset($parameters) || !is_array($parameters)) {
 	$parameters = array();
 }
 if (!empty($cols)) {
@@ -149,6 +149,7 @@ if (empty($reshook) && isset($extrafields->attributes[$object->table_element]['l
 			//var_dump($user->rights);
 			$permok = false;
 			$keyforperm = $object->element;
+
 			if ($object->element == 'fichinter') {
 				$keyforperm = 'ficheinter';
 			}

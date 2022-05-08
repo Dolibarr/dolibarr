@@ -483,14 +483,15 @@ class ProductAttribute extends CommonObject
 	 * Load array lines
 	 *
 	 * @param	string		$filters	Filter on other fields
-	 *
 	 * @return	int						<0 if KO, >0 if OK
 	 */
 	public function fetch_lines($filters = '')
 	{
 		// phpcs:enable
 		global $langs;
+
 		$this->lines = array();
+
 		$error = 0;
 
 		// Clean parameters

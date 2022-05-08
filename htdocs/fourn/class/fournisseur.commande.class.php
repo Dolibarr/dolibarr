@@ -12,6 +12,7 @@
  * Copyright (C) 2018-2022  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2018-2022  Ferran Marcet         	<fmarcet@2byte.es>
  * Copyright (C) 2021       Josep Lluís Amador      <joseplluis@lliuretic.cat>
+ * Copyright (C) 2022       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -504,7 +505,8 @@ class CommandeFournisseur extends CommonOrder
 		$sql .= " ORDER BY l.rang, l.rowid";
 		//print $sql;
 
-		dol_syslog(get_class($this)."::fetch get lines", LOG_DEBUG);
+		dol_syslog(get_class($this)."::fetch_lines", LOG_DEBUG);
+
 		$result = $this->db->query($sql);
 		if ($result) {
 			$num = $this->db->num_rows($result);
@@ -1718,7 +1720,7 @@ class CommandeFournisseur extends CommonOrder
 	 *	Add order line
 	 *
 	 *	@param      string	$desc            		Description
-	 *	@param      float	$pu_ht              	Unit price
+	 *	@param      float	$pu_ht              	Unit price (used if $price_base_type is 'HT')
 	 *	@param      float	$qty             		Quantity
 	 *	@param      float	$txtva           		Taux tva
 	 *	@param      float	$txlocaltax1        	Localtax1 tax
@@ -1728,7 +1730,7 @@ class CommandeFournisseur extends CommonOrder
 	 *  @param      string	$ref_supplier			Supplier reference price
 	 *	@param      float	$remise_percent  		Remise
 	 *	@param      string	$price_base_type		HT or TTC
-	 *	@param		float	$pu_ttc					Unit price TTC
+	 *	@param		float	$pu_ttc					Unit price TTC (used if $price_base_type is 'TTC')
 	 *	@param		int		$type					Type of line (0=product, 1=service)
 	 *	@param		int		$info_bits				More information
 	 *  @param		bool	$notrigger				Disable triggers
@@ -1739,9 +1741,10 @@ class CommandeFournisseur extends CommonOrder
 	 *  @param 		string	$pu_ht_devise			Amount in currency
 	 *  @param		string	$origin					'order', ...
 	 *  @param		int		$origin_id				Id of origin object
+	 *  @param		int		$rang					Rank
 	 *	@return     int             				<=0 if KO, >0 if OK
 	 */
-	public function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0.0, $txlocaltax2 = 0.0, $fk_product = 0, $fk_prod_fourn_price = 0, $ref_supplier = '', $remise_percent = 0.0, $price_base_type = 'HT', $pu_ttc = 0.0, $type = 0, $info_bits = 0, $notrigger = false, $date_start = null, $date_end = null, $array_options = 0, $fk_unit = null, $pu_ht_devise = 0, $origin = '', $origin_id = 0)
+	public function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0.0, $txlocaltax2 = 0.0, $fk_product = 0, $fk_prod_fourn_price = 0, $ref_supplier = '', $remise_percent = 0.0, $price_base_type = 'HT', $pu_ttc = 0.0, $type = 0, $info_bits = 0, $notrigger = false, $date_start = null, $date_end = null, $array_options = 0, $fk_unit = null, $pu_ht_devise = 0, $origin = '', $origin_id = 0, $rang = -1)
 	{
 		global $langs, $mysoc, $conf;
 
@@ -1760,6 +1763,9 @@ class CommandeFournisseur extends CommonOrder
 			}
 			if (empty($txtva)) {
 				$txtva = 0;
+			}
+			if (empty($rang)) {
+				$rang = 0;
 			}
 			if (empty($txlocaltax1)) {
 				$txlocaltax1 = 0;
@@ -1913,8 +1919,10 @@ class CommandeFournisseur extends CommonOrder
 			$localtax1_type = empty($localtaxes_type[0]) ? '' : $localtaxes_type[0];
 			$localtax2_type = empty($localtaxes_type[2]) ? '' : $localtaxes_type[2];
 
-			$rangmax = $this->line_max();
-			$rang = $rangmax + 1;
+			if ($rang < 0) {
+				$rangmax = $this->line_max();
+				$rang = $rangmax + 1;
+			}
 
 			// Insert line
 			$this->line = new CommandeFournisseurLigne($this->db);
@@ -1976,6 +1984,11 @@ class CommandeFournisseur extends CommonOrder
 				// Reorder if child line
 				if (!empty($fk_parent_line)) {
 					$this->line_order(true, 'DESC');
+				} elseif ($rang > 0 && $rang <= count($this->lines)) { // Update all rank of all other lines
+					$linecount = count($this->lines);
+					for ($ii = $rang; $ii <= $linecount; $ii++) {
+						$this->updateRangOfLine($this->lines[$ii - 1]->id, $ii + 1);
+					}
 				}
 
 				// Mise a jour informations denormalisees au niveau de la commande meme
@@ -3249,6 +3262,23 @@ class CommandeFournisseur extends CommonOrder
 	}
 
 	/**
+	 * Function used to replace a product id with another one.
+	 *
+	 * @param DoliDB $db Database handler
+	 * @param int $origin_id Old product id
+	 * @param int $dest_id New product id
+	 * @return bool
+	 */
+	public static function replaceProduct(DoliDB $db, $origin_id, $dest_id)
+	{
+		$tables = array(
+			'commande_fournisseurdet'
+		);
+
+		return CommonObject::commonReplaceProduct($db, $origin_id, $dest_id, $tables);
+	}
+
+	/**
 	 * Is the supplier order delayed?
 	 * We suppose a purchase ordered as late if a the purchase order has been sent and the delivery date is set and before the delay.
 	 * If order has not been sent, we use the order date.
@@ -3894,7 +3924,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
 			if (!$error && !$notrigger) {
 				global $user;
 				// Call trigger
-				$result = $this->call_trigger('LINEORDER_SUPPLIER_UPDATE', $user);
+				$result = $this->call_trigger('LINEORDER_SUPPLIER_MODIFY', $user);
 				if ($result < 0) {
 					$this->db->rollback();
 					return -1;

@@ -651,12 +651,13 @@ class Utils
 	 * 										Warning: The command line is sanitize so can't contains any redirection char '>'. Use param $redirectionfile if you need it.
 	 * @param 	string	$outputfile			A path for an output file (used only when method is 2). For example: $conf->admin->dir_temp.'/out.tmp';
 	 * @param	int		$execmethod			0=Use default method (that is 1 by default), 1=Use the PHP 'exec', 2=Use the 'popen' method
-	 * @param	string	$redirectionfile	If defined, a redirection of output to this files is added.
+	 * @param	string	$redirectionfile	If defined, a redirection of output to this file is added.
 	 * @param	int		$noescapecommand	1=Do not escape command. Warning: Using this parameter need you alreay sanitized the command. if not, it will lead to security vulnerability.
 	 * 										This parameter is provided for backward compatibility with external modules. Always use 0 in core.
+	 * @param	string	$redirectionfileerr	If defined, a redirection of error is added to this file instead of to channel 1.
 	 * @return	array						array('result'=>...,'output'=>...,'error'=>...). result = 0 means OK.
 	 */
-	public function executeCLI($command, $outputfile, $execmethod = 0, $redirectionfile = null, $noescapecommand = 0)
+	public function executeCLI($command, $outputfile, $execmethod = 0, $redirectionfile = null, $noescapecommand = 0, $redirectionfileerr = null)
 	{
 		global $conf, $langs;
 
@@ -667,10 +668,17 @@ class Utils
 		if (empty($noescapecommand)) {
 			$command = escapeshellcmd($command);
 		}
+
 		if ($redirectionfile) {
 			$command .= " > ".dol_sanitizePathName($redirectionfile);
 		}
-		$command .= " 2>&1";
+
+		if ($redirectionfileerr && ($redirectionfileerr != $redirectionfile)) {
+			// If we ask a redirect of stderr on a given file not already used for stdout
+			$command .= " 2> ".dol_sanitizePathName($redirectionfileerr);
+		} else {
+			$command .= " 2>&1";
+		}
 
 		if (!empty($conf->global->MAIN_EXEC_USE_POPEN)) {
 			$execmethod = $conf->global->MAIN_EXEC_USE_POPEN;
@@ -679,7 +687,7 @@ class Utils
 			$execmethod = 1;
 		}
 		//$execmethod=1;
-		dol_syslog("Utils::executeCLI execmethod=".$execmethod." system:".$command, LOG_DEBUG);
+		dol_syslog("Utils::executeCLI execmethod=".$execmethod." command=".$command, LOG_DEBUG);
 		$output_arr = array();
 
 		if ($execmethod == 1) {

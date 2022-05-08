@@ -162,7 +162,8 @@ if (empty($reshook)) {
 	// set accountancy code
 	if ($action == 'setcustomeraccountancycode') {
 		$result = $object->fetch($id);
-		$object->code_compta = GETPOST("customeraccountancycode");
+		$object->code_compta_client = GETPOST("customeraccountancycode");
+		$object->code_compta = $object->code_compta_client; // For Backward compatibility
 		$result = $object->update($object->id, $user, 1, 1, 0);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -360,9 +361,9 @@ if ($object->id > 0) {
 
 		print '<tr>';
 		print '<td>';
-		print $form->editfieldkey("CustomerAccountancyCode", 'customeraccountancycode', $object->code_compta, $object, $user->rights->societe->creer);
+		print $form->editfieldkey("CustomerAccountancyCode", 'customeraccountancycode', $object->code_compta_client, $object, $user->rights->societe->creer);
 		print '</td><td>';
-		print $form->editfieldval("CustomerAccountancyCode", 'customeraccountancycode', $object->code_compta, $object, $user->rights->societe->creer);
+		print $form->editfieldval("CustomerAccountancyCode", 'customeraccountancycode', $object->code_compta_client, $object, $user->rights->societe->creer);
 		print '</td>';
 		print '</tr>';
 	}
@@ -686,7 +687,7 @@ if ($object->id > 0) {
 	}
 
 	print '</div><div class="fichehalfright">';
-	print '<div class="underbanner clearboth"></div>';
+	print '<div class="underbanner underbanner-before-box clearboth"></div>';
 
 	$boxstat = '';
 
@@ -694,7 +695,7 @@ if ($object->id > 0) {
 	$MAXLIST = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
 
 	// Lien recap
-	$boxstat .= '<div class="box">';
+	$boxstat .= '<div class="box box-halfright">';
 	$boxstat .= '<table summary="'.dol_escape_htmltag($langs->trans("DolibarrStateBoard")).'" class="border boxtable boxtablenobottom boxtablenotop" width="100%">';
 	$boxstat .= '<tr class="impair nohover"><td colspan="2" class="tdboxstats nohover">';
 

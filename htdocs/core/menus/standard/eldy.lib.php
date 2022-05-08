@@ -64,10 +64,10 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	// Show/Hide vertical menu. The hamburger icon for .menuhider action.
 	if ($mode != 'jmobile' && $mode != 'topnb' && $usemenuhider && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 		$showmode = 1;
-		$classname = 'class="tmenu menuhider"';
+		$classname = 'class="tmenu menuhider nohover"';
 		$idsel = 'menu';
 
-		$menu->add('#', (!empty($conf->global->THEME_TOPMENU_DISABLE_IMAGE) ? '<span class="fa fa-bars"></span>' : ''), 0, $showmode, $atarget, "xxx", '', 0, $id, $idsel, $classname);
+		$menu->add('#', (getDolGlobalInt('THEME_TOPMENU_DISABLE_IMAGE') == 1 ? '<span class="fa fa-bars"></span>' : ''), 0, $showmode, $atarget, "xxx", '', 0, $id, $idsel, $classname);
 	}
 
 	$menu_arr = array();
@@ -626,26 +626,31 @@ function print_text_menu_entry($text, $showmode, $url, $id, $idsel, $classname, 
 {
 	global $conf, $langs;
 
+	$classnameimg = str_replace('class="', 'class="tmenuimage ', $classname);
+	$classnametxt = str_replace('class="', 'class="tmenulabel ', $classname);
+
 	//$conf->global->THEME_TOPMENU_DISABLE_TEXT=1;
 	if ($showmode == 1) {
-		print '<a class="tmenuimage" tabindex="-1" href="'.$url.'"'.($atarget ? ' target="'.$atarget.'"' : '').' title="'.dol_escape_htmltag($text).'">';
-		print '<div class="'.$id.' '.$idsel.' topmenuimage"><span class="'.$id.' tmenuimage" id="mainmenuspan_'.$idsel.'"></span></div>';
+		print '<a '.$classnameimg.' tabindex="-1" href="'.$url.'"'.($atarget ? ' target="'.$atarget.'"' : '').' title="'.dol_escape_htmltag($text).'">';
+		print '<div class="'.$id.' '.$idsel.' topmenuimage"><span class="'.$id.' tmenuimageforpng" id="mainmenuspan_'.$idsel.'"></span></div>';
 		print '</a>';
 		if (empty($conf->global->THEME_TOPMENU_DISABLE_TEXT)) {
-			print '<a '.$classname.' id="mainmenua_'.$idsel.'" href="'.$url.'"'.($atarget ? ' target="'.$atarget.'"' : '').' title="'.dol_escape_htmltag($text).'">';
+			print '<a '.$classnametxt.' id="mainmenua_'.$idsel.'" href="'.$url.'"'.($atarget ? ' target="'.$atarget.'"' : '').' title="'.dol_escape_htmltag($text).'">';
 			print '<span class="mainmenuaspan">';
 			print $text;
 			print '</span>';
 			print '</a>';
 		}
 	} elseif ($showmode == 2) {
-		print '<div class="'.$id.' '.$idsel.' topmenuimage tmenudisabled"><span class="'.$id.'" id="mainmenuspan_'.$idsel.'"></span></div>';
+		print '<div '.$classnameimg.' title="'.dol_escape_htmltag($text.' - '.$langs->trans("NotAllowed")).'">';
+		print '<div class="'.$id.' '.$idsel.' topmenuimage tmenudisabled"><span class="'.$id.' tmenuimageforpng tmenudisabled" id="mainmenuspan_'.$idsel.'"></span></div>';
+		print '</div>';
 		if (empty($conf->global->THEME_TOPMENU_DISABLE_TEXT)) {
-			print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">';
-			print '<span class="mainmenuaspan">';
+			print '<span '.$classnametxt.' id="mainmenua_'.$idsel.'" href="#" title="'.dol_escape_htmltag($text.' - '.$langs->trans("NotAllowed")).'">';
+			print '<span class="mainmenuaspan tmenudisabled">';
 			print $text;
 			print '</span>';
-			print '</a>';
+			print '</span>';
 		}
 	}
 }
@@ -1687,8 +1692,8 @@ function get_left_menu_accountancy($mainmenu, &$newmenu, $usemenuhider = 1, $lef
 							if ($objp->nature == 5 && !empty($conf->expensereport->enabled) && empty($conf->global->ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS)) {
 								$nature = "expensereports";
 							}
-							if ($objp->nature == 1) {
-								$nature = "various";
+							if ($objp->nature == 1 && !empty($conf->asset->enabled)) {
+								$nature = "various";	// Warning: The page /accountancy/journal/variousjournal.php is bugged. It read tables that does not exists.
 							}
 							if ($objp->nature == 8) {
 								$nature = "inventory";
@@ -2228,30 +2233,28 @@ function get_left_menu_hrm($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu = 
 			$newmenu->add("/user/card.php?mainmenu=hrm&leftmenu=hrm&action=create&employee=1", $langs->trans("NewEmployee"), 1, $user->rights->user->user->creer);
 			$newmenu->add("/user/list.php?mainmenu=hrm&leftmenu=hrm&mode=employee&contextpage=employeelist", $langs->trans("List"), 1, $user->rights->user->user->lire);
 
-			$newmenu->add("/hrm/index.php?mainmenu=hrm&leftmenu=hrm_sm", $langs->trans("SkillsManagement"), 0, $user->rights->hrm->all->read, '', $mainmenu, 'hrm_sm', 0, '', '', '', img_picto('', 'user', 'class="pictofixedwidth"'));
+			$newmenu->add("/hrm/skill_list.php?mainmenu=hrm&leftmenu=hrm_sm", $langs->trans("SkillsManagement"), 0, $user->rights->hrm->all->read, '', $mainmenu, 'hrm_sm', 0, '', '', '', img_picto('', 'user', 'class="pictofixedwidth"'));
 
-			if ($usemenuhider || empty($leftmenu) || $leftmenu == "hrm_sm") {
-				// Skills
-				$newmenu->add("/hrm/skill_list.php?mainmenu=hrm&leftmenu=hrm_sm", $langs->trans("Skills"), 1, $user->rights->hrm->all->read, '', $mainmenu, 'hrm_sm', 0, '', '', '', img_picto('', 'shapes', 'class="pictofixedwidth"'));
-				//$newmenu->add("/hrm/skill_card.php?mainmenu=hrm&leftmenu=hrm_sm&action=create", $langs->trans("NewSkill"), 1, $user->rights->hrm->all->write);
-				//$newmenu->add("/hrm/skill_list.php?mainmenu=hrm&leftmenu=hrm_sm", $langs->trans("List"), 1, $user->rights->hrm->all->read);
+			// Skills
+			$newmenu->add("/hrm/skill_list.php?mainmenu=hrm&leftmenu=hrm_sm", $langs->trans("Skills"), 1, $user->rights->hrm->all->read, '', $mainmenu, 'hrm_sm', 0, '', '', '', img_picto('', 'shapes', 'class="pictofixedwidth"'));
+			//$newmenu->add("/hrm/skill_card.php?mainmenu=hrm&leftmenu=hrm_sm&action=create", $langs->trans("NewSkill"), 1, $user->rights->hrm->all->write);
+			//$newmenu->add("/hrm/skill_list.php?mainmenu=hrm&leftmenu=hrm_sm", $langs->trans("List"), 1, $user->rights->hrm->all->read);
 
-				// Job (Description of work to do and skills required)
-				$newmenu->add("/hrm/job_list.php?mainmenu=hrm&leftmenu=hrm_sm", $langs->trans("JobsPosition"), 1, $user->rights->hrm->all->read, '', $mainmenu, 'hrm_sm', 0, '', '', '', img_picto('', 'technic', 'class="pictofixedwidth"'));
-				//$newmenu->add("/hrm/job_card.php?mainmenu=hrm&leftmenu=hrm_sm&action=create", $langs->transnoentities("NewObject", $langs->trans("Job")), 1, $user->rights->hrm->all->write);
-				//$newmenu->add("/hrm/job_list.php?mainmenu=hrm&leftmenu=hrm_sm", $langs->trans("List"), 1, $user->rights->hrm->all->read);
+			// Job (Description of work to do and skills required)
+			$newmenu->add("/hrm/job_list.php?mainmenu=hrm&leftmenu=hrm_sm", $langs->trans("JobsPosition"), 1, $user->rights->hrm->all->read, '', $mainmenu, 'hrm_sm', 0, '', '', '', img_picto('', 'technic', 'class="pictofixedwidth"'));
+			//$newmenu->add("/hrm/job_card.php?mainmenu=hrm&leftmenu=hrm_sm&action=create", $langs->transnoentities("NewObject", $langs->trans("Job")), 1, $user->rights->hrm->all->write);
+			//$newmenu->add("/hrm/job_list.php?mainmenu=hrm&leftmenu=hrm_sm", $langs->trans("List"), 1, $user->rights->hrm->all->read);
 
-				// Position = Link job - user
-				$newmenu->add("/hrm/position_list.php?mainmenu=hrm&leftmenu=hrm_sm", $langs->trans("EmployeePositions"), 1, $user->rights->hrm->all->read, '', $mainmenu, 'hrm_sm', 0, '', '', '', img_picto('', 'user-cog', 'class="pictofixedwidth"'));
-				//$newmenu->add("/hrm/position.php?mainmenu=hrm&leftmenu=hrm_sm&action=create", $langs->transnoentities("NewObject", $langs->trans("Position")), 1, $user->rights->hrm->all->write);
-				//$newmenu->add("/hrm/position_list.php?mainmenu=hrm&leftmenu=hrm_sm", $langs->trans("List"), 1, $user->rights->hrm->all->read);
+			// Position = Link job - user
+			$newmenu->add("/hrm/position_list.php?mainmenu=hrm&leftmenu=hrm_sm", $langs->trans("EmployeePositions"), 1, $user->rights->hrm->all->read, '', $mainmenu, 'hrm_sm', 0, '', '', '', img_picto('', 'user-cog', 'class="pictofixedwidth"'));
+			//$newmenu->add("/hrm/position.php?mainmenu=hrm&leftmenu=hrm_sm&action=create", $langs->transnoentities("NewObject", $langs->trans("Position")), 1, $user->rights->hrm->all->write);
+			//$newmenu->add("/hrm/position_list.php?mainmenu=hrm&leftmenu=hrm_sm", $langs->trans("List"), 1, $user->rights->hrm->all->read);
 
-				// Evaluation
-				$newmenu->add("/hrm/evaluation_list.php?mainmenu=hrm&leftmenu=hrm_sm", $langs->trans("Evalutions"), 1, $user->rights->hrm->evaluation->read, '', $mainmenu, 'hrm_sm', 0, '', '', '', img_picto('', 'user', 'class="pictofixedwidth"'));
-				//$newmenu->add("/hrm/evaluation_card.php?mainmenu=hrm&leftmenu=hrm_sm&action=create", $langs->trans("NewEval"), 1, $user->rights->hrm->evaluation->write);
-				//$newmenu->add("/hrm/evaluation_list.php?mainmenu=hrm&leftmenu=hrm_sm", $langs->trans("List"), 1, $user->rights->hrm->evaluation->read);
-				$newmenu->add("/hrm/compare.php?mainmenu=hrm&leftmenu=hrm_sm", $langs->trans("SkillComparison"), 1, $user->rights->hrm->evaluation->read || $user->rights->hrm->compare_advance->read);
-			}
+			// Evaluation
+			$newmenu->add("/hrm/evaluation_list.php?mainmenu=hrm&leftmenu=hrm_sm", $langs->trans("Evals"), 1, $user->rights->hrm->evaluation->read, '', $mainmenu, 'hrm_sm', 0, '', '', '', img_picto('', 'user', 'class="pictofixedwidth"'));
+			//$newmenu->add("/hrm/evaluation_card.php?mainmenu=hrm&leftmenu=hrm_sm&action=create", $langs->trans("NewEval"), 1, $user->rights->hrm->evaluation->write);
+			//$newmenu->add("/hrm/evaluation_list.php?mainmenu=hrm&leftmenu=hrm_sm", $langs->trans("List"), 1, $user->rights->hrm->evaluation->read);
+			$newmenu->add("/hrm/compare.php?mainmenu=hrm&leftmenu=hrm_sm", $langs->trans("SkillComparison"), 1, $user->rights->hrm->evaluation->read || $user->rights->hrm->compare_advance->read);
 		}
 
 		// Leave/Holiday/Vacation module
@@ -2285,7 +2288,7 @@ function get_left_menu_hrm($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu = 
 
 		// Expense report
 		if (!empty($conf->expensereport->enabled)) {
-			$langs->load("trips");
+			$langs->loadLangs(array("trips", "bills"));
 			$newmenu->add("/expensereport/index.php?leftmenu=expensereport&amp;mainmenu=hrm", $langs->trans("TripsAndExpenses"), 0, $user->rights->expensereport->lire, '', $mainmenu, 'expensereport', 0, '', '', '', img_picto('', 'trip', 'class="pictofixedwidth"'));
 			$newmenu->add("/expensereport/card.php?action=create&amp;leftmenu=expensereport&amp;mainmenu=hrm", $langs->trans("New"), 1, $user->rights->expensereport->creer);
 			$newmenu->add("/expensereport/list.php?leftmenu=expensereport&amp;mainmenu=hrm", $langs->trans("List"), 1, $user->rights->expensereport->lire);
@@ -2297,6 +2300,7 @@ function get_left_menu_hrm($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu = 
 				$newmenu->add("/expensereport/list.php?search_status=4&amp;leftmenu=expensereport&amp;mainmenu=hrm", $langs->trans("Canceled"), 2, $user->rights->expensereport->lire);
 				$newmenu->add("/expensereport/list.php?search_status=99&amp;leftmenu=expensereport&amp;mainmenu=hrm", $langs->trans("Refused"), 2, $user->rights->expensereport->lire);
 			}
+			$newmenu->add("/expensereport/payment/list.php?leftmenu=expensereport_payments&amp;mainmenu=hrm", $langs->trans("Payments"), 1, $user->rights->expensereport->lire);
 			$newmenu->add("/expensereport/stats/index.php?leftmenu=expensereport&amp;mainmenu=hrm", $langs->trans("Statistics"), 1, $user->rights->expensereport->lire);
 		}
 
