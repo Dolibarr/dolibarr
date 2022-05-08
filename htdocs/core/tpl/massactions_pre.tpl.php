@@ -211,6 +211,59 @@ if ($massaction == 'presend') {
 	print dol_get_fiche_end();
 }
 
+if ($massaction == 'edit_extrafields') {
+	require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+	$elementtype = $objecttmp->element;
+	/** @var CommonObject $objecttmp */
+	$extrafields = new ExtraFields($db);
+	$keysuffix = '';
+	$extrafields->fetch_name_optionals_label($elementtype);
+	$extrafields_list = $extrafields->attributes[$elementtype]['label'];
+
+	$formquestion = array();
+	if (!empty($extrafields_list)) {
+		$myParamExtra = $object->showOptionals($extrafields, 'create');
+
+		$formquestion[] = array(
+			'type' => 'other',
+			'value' => $form->selectarray('extrafield-key-to-update', $extrafields_list, GETPOST('extrafield-key-to-update'), 1)
+		);
+
+
+		$outputShowOutputFields = '<div class="extrafields-inputs">';
+
+		foreach ($extrafields_list as $extraKey => $extraLabel) {
+			$outputShowOutputFields.= '<div class="mass-action-extrafield" data-extrafield="'.$extraKey.'" style="display:none;" >';
+			$outputShowOutputFields.= '<br><span>'. $langs->trans('NewValue').'</span>';
+			$outputShowOutputFields.= $extrafields->showInputField($extraKey, '', '', $keysuffix, '', 0, $objecttmp->id, $objecttmp->table_element);
+			$outputShowOutputFields.= '</div>';
+		}
+		$outputShowOutputFields.= '<script>
+		jQuery(function($) {
+            $("#extrafield-key-to-update").on(\'change\',function(){
+            	let selectedExtrtafield = $(this).val();
+            	if($(".extrafields-inputs .product_extras_"+selectedExtrtafield) != undefined){
+					$(".mass-action-extrafield").hide();
+					$(".mass-action-extrafield[data-extrafield=" + selectedExtrtafield + "]").show();
+                }
+            });
+		});
+		</script>';
+		$outputShowOutputFields.= '</div>';
+
+
+
+		$formquestion[] = array(
+			'type' => 'other',
+			'value' => $outputShowOutputFields
+			);
+
+		print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmEditExtrafield"), $langs->trans("ConfirmEditExtrafieldQuestion", count($toselect)), "confirm_edit_value_extrafields", $formquestion, 1, 0, 200, 500, 1);
+	} else {
+		setEventMessage($langs->trans("noExtrafields"));
+	}
+}
+
 if ($massaction == 'preenable') {
 	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassEnabling"), $langs->trans("ConfirmMassEnablingQuestion", count($toselect)), "enable", null, 'yes', 0, 200, 500, 1);
 }
