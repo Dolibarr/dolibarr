@@ -8369,7 +8369,7 @@ class Form
 		global $conf, $langs, $hookmanager;
 		global $bc, $action;
 
-		$conf->project = (object)array("enabled"=>true);
+		$conf->project = (object) array("enabled"=>true);
 		$object->fetchObjectLinked();
 
 		// Bypass the default method
@@ -8482,7 +8482,7 @@ class Form
 					if (empty($conf->mrp->enabled)) {
 						continue; // Do not show if module disabled
 					}
-				} elseif ($objecttype == 'project_task'){
+				} elseif ($objecttype == 'project_task') {
 					$tplpath = 'projet/tasks';
 				}
 
