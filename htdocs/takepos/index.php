@@ -233,7 +233,7 @@ function PrintCategories(first) {
 		}
 		$("#catdivdesc"+i).show();
 		<?php
-		if ($conf->global->TAKEPOS_SHOW_CATEGORY_DESCRIPTION == 1) { ?>
+		if (getDolGlobalString('TAKEPOS_SHOW_CATEGORY_DESCRIPTION') == 1) { ?>
 			$("#catdesc"+i).html(categories[parseInt(i)+parseInt(first)]['label'].bold() + ' - ' + categories[parseInt(i)+parseInt(first)]['description']);
 		<?php } else { ?>
 			$("#catdesc"+i).text(categories[parseInt(i)+parseInt(first)]['label']);
@@ -272,7 +272,7 @@ function MoreCategories(moreorless) {
 		}
 		$("#catdivdesc"+i).show();
 		<?php
-		if ($conf->global->TAKEPOS_SHOW_CATEGORY_DESCRIPTION == 1) { ?>
+		if (getDolGlobalString('TAKEPOS_SHOW_CATEGORY_DESCRIPTION') == 1) { ?>
 			$("#catdesc"+i).html(categories[i+(<?php echo ($MAXCATEG - 2); ?> * pagecategories)]['label'].bold() + ' - ' + categories[i+(<?php echo ($MAXCATEG - 2); ?> * pagecategories)]['description']);
 		<?php } else { ?>
 			$("#catdesc"+i).text(categories[i+(<?php echo ($MAXCATEG - 2); ?> * pagecategories)]['label']);
@@ -305,7 +305,7 @@ function LoadProducts(position, issubcat) {
 	jQuery.each(subcategories, function(i, val) {
 		if (currentcat==val.fk_parent) {
 			$("#prodivdesc"+ishow).show();
-			<?php if ($conf->global->TAKEPOS_SHOW_CATEGORY_DESCRIPTION == 1) { ?>
+			<?php if (getDolGlobalString('TAKEPOS_SHOW_CATEGORY_DESCRIPTION') == 1) { ?>
 				$("#prodesc"+ishow).html(val.label.bold() + ' - ' + val.description);
  			  $("#probutton"+ishow).html(val.label);
 			<?php } else { ?>
