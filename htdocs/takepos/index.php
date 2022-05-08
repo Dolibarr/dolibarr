@@ -307,10 +307,10 @@ function LoadProducts(position, issubcat) {
 			$("#prodivdesc"+ishow).show();
 			<?php if (getDolGlobalString('TAKEPOS_SHOW_CATEGORY_DESCRIPTION') == 1) { ?>
 				$("#prodesc"+ishow).html(val.label.bold() + ' - ' + val.description);
- 			  $("#probutton"+ishow).html(val.label);
+			   $("#probutton"+ishow).html(val.label);
 			<?php } else { ?>
 				$("#prodesc"+ishow).text(val.label);
-  			$("#probutton"+ishow).text(val.label);
+			  $("#probutton"+ishow).text(val.label);
 			<?php } ?>
 			$("#probutton"+ishow).show();
 			$("#proprice"+ishow).attr("class", "hidden");
