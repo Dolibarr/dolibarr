@@ -584,7 +584,7 @@ class DoliDBPgsql extends DoliDB
 	{
 		// phpcs:enable
 		// If resultset not provided, we take the last used by connexion
-		if (!is_resource($resultset)) {
+		if (!is_resource($resultset) && !is_object($resultset)) {
 			$resultset = $this->_results;
 		}
 		return pg_fetch_object($resultset);
@@ -601,7 +601,7 @@ class DoliDBPgsql extends DoliDB
 	{
 		// phpcs:enable
 		// If resultset not provided, we take the last used by connexion
-		if (!is_resource($resultset)) {
+		if (!is_resource($resultset) && !is_object($resultset)) {
 			$resultset = $this->_results;
 		}
 		return pg_fetch_array($resultset);
@@ -618,7 +618,7 @@ class DoliDBPgsql extends DoliDB
 	{
 		// phpcs:enable
 		// Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connexion
-		if (!is_resource($resultset)) {
+		if (!is_resource($resultset) && !is_object($resultset)) {
 			$resultset = $this->_results;
 		}
 		return pg_fetch_row($resultset);
@@ -636,7 +636,7 @@ class DoliDBPgsql extends DoliDB
 	{
 		// phpcs:enable
 		// If resultset not provided, we take the last used by connexion
-		if (!is_resource($resultset)) {
+		if (!is_resource($resultset) && !is_object($resultset)) {
 			$resultset = $this->_results;
 		}
 		return pg_num_rows($resultset);
@@ -654,7 +654,7 @@ class DoliDBPgsql extends DoliDB
 	{
 		// phpcs:enable
 		// If resultset not provided, we take the last used by connexion
-		if (!is_resource($resultset)) {
+		if (!is_resource($resultset) && !is_object($resultset)) {
 			$resultset = $this->_results;
 		}
 		// pgsql necessite un resultset pour cette fonction contrairement
@@ -672,11 +672,11 @@ class DoliDBPgsql extends DoliDB
 	public function free($resultset = null)
 	{
 		// If resultset not provided, we take the last used by connexion
-		if (!is_resource($resultset)) {
+		if (!is_resource($resultset) && !is_object($resultset)) {
 			$resultset = $this->_results;
 		}
 		// Si resultset en est un, on libere la memoire
-		if (is_resource($resultset)) {
+		if (is_resource($resultset) || is_object($resultset)) {
 			pg_free_result($resultset);
 		}
 	}

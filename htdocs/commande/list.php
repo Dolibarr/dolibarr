@@ -267,7 +267,7 @@ if (empty($reshook)) {
 		$search_project = '';
 		$search_status = '';
 		$search_billed = '';
-		$toselect = '';
+		$toselect = array();
 		$search_array_options = array();
 		$search_categ_cus = 0;
 		$search_datecloture_start = '';

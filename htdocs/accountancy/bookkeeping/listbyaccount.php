@@ -259,7 +259,7 @@ if (empty($reshook)) {
 		$search_lettering_code = '';
 		$search_not_reconciled = '';
 		$search_import_key = '';
-		$toselect = '';
+		$toselect = array();
 	}
 
 	// Must be after the remove filter action, before the export.

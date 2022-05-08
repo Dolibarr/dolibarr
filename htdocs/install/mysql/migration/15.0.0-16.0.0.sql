@@ -346,3 +346,9 @@ ALTER TABLE llx_eventorganization_conferenceorboothattendee	ADD COLUMN firstname
 ALTER TABLE llx_eventorganization_conferenceorboothattendee	ADD COLUMN lastname varchar(100);
 ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD COLUMN email_company varchar(128) after email;
 
+
+ALTER TABLE llx_c_email_template ADD COLUMN email_from varchar(255);
+ALTER TABLE llx_c_email_template ADD COLUMN email_to varchar(255);
+ALTER TABLE llx_c_email_template ADD COLUMN email_tocc varchar(255);
+ALTER TABLE llx_c_email_template ADD COLUMN email_tobcc varchar(255);
+

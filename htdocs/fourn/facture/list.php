@@ -290,7 +290,7 @@ if (empty($reshook)) {
 		$search_datelimit_endyear = '';
 		$search_datelimit_start = '';
 		$search_datelimit_end = '';
-		$toselect = '';
+		$toselect = array();
 		$search_array_options = array();
 		$filter = '';
 		$option = '';

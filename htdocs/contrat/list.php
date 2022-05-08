@@ -203,7 +203,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_date_end = '';
 	$sall = "";
 	$search_status = "";
-	$toselect = '';
+	$toselect = array();
 	$search_type_thirdparty = '';
 	$search_array_options = array();
 }

@@ -137,7 +137,7 @@ if (empty($reshook)) {
 		$search_status = '';
 		$search_title = '';
 		$search_ref = '';
-		$toselect = '';
+		$toselect = array();
 		$search_array_options = array();
 	}
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')
