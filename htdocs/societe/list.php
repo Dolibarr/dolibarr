@@ -111,8 +111,8 @@ $place = GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : '0'; // $place is
 $diroutputmassaction = $conf->societe->dir_output.'/temp/massgeneration/'.$user->id;
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (!$sortorder) {
 	$sortorder = "ASC";
@@ -249,7 +249,7 @@ $arrayfields = array(
 	's.idprof6'=>array('label'=>"ProfId6Short", 'position'=>45, 'checked'=>$checkedprofid6),
 	's.tva_intra'=>array('label'=>"VATIntraShort", 'position'=>50, 'checked'=>0),
 	'customerorsupplier'=>array('label'=>'NatureOfThirdParty', 'position'=>61, 'checked'=>1),
-	's.fk_prospectlevel'=>array('label'=>"ProspectLevelShort", 'position'=>62, 'checked'=>$checkprospectlevel),
+	's.fk_prospectlevel'=>array('label'=>"ProspectLevel", 'position'=>62, 'checked'=>$checkprospectlevel),
 	's.fk_stcomm'=>array('label'=>"StatusProsp", 'position'=>63, 'checked'=>$checkstcomm),
 	's2.nom'=>array('label'=>'ParentCompany', 'position'=>64, 'checked'=>0),
 	's.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
@@ -365,7 +365,7 @@ if (empty($reshook)) {
 		$search_level = '';
 		$search_parent_name = '';
 		$search_import_key = '';
-		$toselect = '';
+		$toselect = array();
 		$search_array_options = array();
 	}
 
@@ -482,7 +482,7 @@ if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 }
 // Add fields from hooks
 $parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s2 ON s.parent = s2.rowid";
@@ -511,7 +511,7 @@ if ($search_sale == -2) {
 }
 // Add table from hooks
 $parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 $sql .= " WHERE s.entity IN (".getEntity('societe').")";
 //if (empty($user->rights->societe->client->voir) && (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->societe->client->readallthirdparties_advance)) && !$socid)	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
@@ -665,7 +665,7 @@ if ($search_import_key) {
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 // Add where from hooks
 $parameters = array('socid' => $socid);
-$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 if (empty($reshook)) {
 	if ($socid) {
 		$sql .= " AND s.rowid = ".((int) $socid);
@@ -674,7 +674,7 @@ if (empty($reshook)) {
 $sql .= $hookmanager->resPrint;
 // Add GroupBy from hooks
 $parameters = array('fieldstosearchall' => $fieldstosearchall);
-$reshook = $hookmanager->executeHooks('printFieldListGroupBy', $parameters, $object); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldListGroupBy', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 
 $sql .= $db->order($sortfield, $sortorder);
@@ -870,10 +870,13 @@ if ($user->rights->societe->creer) {
 	$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
 }
 if ($user->rights->societe->creer) {
-	$arrayofmassactions['preenable'] = img_picto('', '', 'class="pictofixedwidth"').$langs->trans("SetToEnabled");
+	$arrayofmassactions['preenable'] = img_picto('', 'stop-circle', 'class="pictofixedwidth"').$langs->trans("SetToEnabled");
 }
 if ($user->rights->societe->creer) {
-	$arrayofmassactions['predisable'] = img_picto('', '', 'class="pictofixedwidth"').$langs->trans("SetToDisabled");
+	$arrayofmassactions['predisable'] = img_picto('', 'stop-circle', 'class="pictofixedwidth"').$langs->trans("SetToDisabled");
+}
+if ($user->rights->societe->creer) {
+	$arrayofmassactions['presetcommercial'] = img_picto('', 'user', 'class="pictofixedwidth"').$langs->trans("AllocateCommercial");
 }
 if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete', 'preaffecttag', 'preenable', 'preclose'))) {
 	$arrayofmassactions = array();
@@ -989,7 +992,7 @@ if ($moreforfilter) {
 	print '<div class="liste_titre liste_titre_bydiv centpercent">';
 	print $moreforfilter;
 	$parameters = array('type'=>$type);
-	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters); // Note that $action and $object may have been modified by hook
+	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	print '</div>';
 }
@@ -1215,7 +1218,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 
 // Fields from hook
 $parameters = array('arrayfields'=>$arrayfields);
-$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 // Date creation
 if (!empty($arrayfields['s.datec']['checked'])) {
@@ -1331,7 +1334,7 @@ if (!empty($arrayfields['s.tva_intra']['checked'])) {
 	print_liste_field_titre($arrayfields['s.tva_intra']['label'], $_SERVER["PHP_SELF"], "s.tva_intra", "", $param, '', $sortfield, $sortorder, 'nowrap ');
 }
 if (!empty($arrayfields['customerorsupplier']['checked'])) {
-	print_liste_field_titre(''); // type of customer
+	print_liste_field_titre($arrayfields['customerorsupplier']['label'], $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder, 'center '); // type of customer
 }
 if (!empty($arrayfields['s.fk_prospectlevel']['checked'])) {
 	print_liste_field_titre($arrayfields['s.fk_prospectlevel']['label'], $_SERVER["PHP_SELF"], "s.fk_prospectlevel", "", $param, '', $sortfield, $sortorder, 'center ');
@@ -1342,12 +1345,11 @@ if (!empty($arrayfields['s.fk_stcomm']['checked'])) {
 if (!empty($arrayfields['s2.nom']['checked'])) {
 	print_liste_field_titre($arrayfields['s2.nom']['label'], $_SERVER["PHP_SELF"], "s2.nom", "", $param, '', $sortfield, $sortorder, 'center ');
 }
-
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
 $parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
-$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 if (!empty($arrayfields['s.datec']['checked'])) {
 	print_liste_field_titre($arrayfields['s.datec']['label'], $_SERVER["PHP_SELF"], "s.datec", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
@@ -1605,11 +1607,11 @@ while ($i < min($num, $limit)) {
 	}
 	// VAT
 	if (!empty($arrayfields['s.tva_intra']['checked'])) {
-		print "<td>";
-		print $obj->tva_intra;
+		print '<td class="tdoverflowmax125" title="'.dol_escape_htmltag($obj->tva_intra).'">';
 		if ($obj->tva_intra && !isValidVATID($companystatic)) {
-			print img_warning("BadVATNumber", '', '');
+			print img_warning("BadVATNumber", '', 'pictofixedwidth');
 		}
+		print $obj->tva_intra;
 		print "</td>\n";
 		if (!$i) {
 			$totalarray['nbfield']++;
@@ -1646,7 +1648,7 @@ while ($i < min($num, $limit)) {
 				$titlealt = $val['label'];
 			}
 			if ($obj->stcomm_id != $val['id']) {
-				print '<a class="pictosubstatus" href="'.$_SERVER["PHP_SELF"].'?stcommsocid='.$obj->rowid.'&stcomm='.urlencode($val['code']).'&action=setstcomm&token='.newToken().$param.($page ? '&page='.urlencode($page) : '').'">'.img_action($titlealt, $val['code'], $val['picto']).'</a>';
+				print '<a class="pictosubstatus reposition" href="'.$_SERVER["PHP_SELF"].'?stcommsocid='.$obj->rowid.'&stcomm='.urlencode($val['code']).'&action=setstcomm&token='.newToken().$param.($page ? '&page='.urlencode($page) : '').'">'.img_action($titlealt, $val['code'], $val['picto']).'</a>';
 			}
 		}
 		print '</div></div></td>';
@@ -1670,7 +1672,7 @@ while ($i < min($num, $limit)) {
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 	// Fields from hook
 	$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
-	$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
+	$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	// Date creation
 	if (!empty($arrayfields['s.datec']['checked'])) {
@@ -1738,7 +1740,7 @@ if ($num == 0) {
 $db->free($resql);
 
 $parameters = array('arrayfields'=>$arrayfields, 'sql'=>$sql);
-$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 
 print "</table>";

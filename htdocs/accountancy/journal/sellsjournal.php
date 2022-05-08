@@ -390,6 +390,12 @@ if ($action == 'writebookkeeping') {
 						$errorforinvoice[$key] = 'other';
 						setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
 					}
+				} else {
+					if (getDolGlobalInt('ACCOUNTING_ENABLE_LETTERING')) {
+						require_once DOL_DOCUMENT_ROOT . '/accountancy/class/lettering.class.php';
+						$lettering_static = new Lettering($db);
+						$nb_lettering = $lettering_static->bookkeepingLettering(array($bookkeeping->id), 'customer_invoice');
+					}
 				}
 			}
 		}
@@ -412,8 +418,13 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping->fk_docdet = 0; // Useless, can be several lines that are source of this record to add
 					$bookkeeping->thirdparty_code = $companystatic->code_client;
 
-					$bookkeeping->subledger_account = '';
-					$bookkeeping->subledger_label = '';
+					if ($k == getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT')) {
+						$bookkeeping->subledger_account = $tabcompany[$key]['code_compta'];
+						$bookkeeping->subledger_label = $tabcompany[$key]['name'];
+					} else {
+						$bookkeeping->subledger_account = '';
+						$bookkeeping->subledger_label = '';
+					}
 
 					$bookkeeping->numero_compte = $k;
 					$bookkeeping->label_compte = $label_account;
@@ -716,7 +727,7 @@ if (empty($action) || $action == 'view') {
 		print $desc;
 		print '</div>';
 	}
-	print '<div class="tabsAction tabsActionNoBottom">';
+	print '<div class="tabsAction tabsActionNoBottom centerimp">';
 	if (!empty($conf->global->ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL) && $in_bookkeeping == 'notyet') {
 		print '<input type="button" class="butAction" name="exportcsv" value="'.$langs->trans("ExportDraftJournal").'" onclick="launch_export();" />';
 	}
@@ -886,6 +897,13 @@ if (empty($action) || $action == 'view') {
 			print "</td>";
 			// Subledger account
 			print "<td>";
+			if ($k == getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT')) {
+				if (($accountoshow == "") || $accountoshow == 'NotDefined') {
+					print '<span class="error">'.$langs->trans("ThirdpartyAccountNotDefined").'</span>';
+				} else {
+					print length_accounta($tabcompany[$key]['code_compta']);
+				}
+			}
 			print '</td>';
 			$companystatic->id = $tabcompany[$key]['id'];
 			$companystatic->name = $tabcompany[$key]['name'];

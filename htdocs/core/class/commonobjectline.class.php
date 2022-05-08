@@ -46,6 +46,11 @@ abstract class CommonObjectLine extends CommonObject
 	public $rowid;
 
 	/**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
+	public $picto = 'line';
+
+	/**
 	 * Product/service unit code ('km', 'm', 'p', ...)
 	 * @var string
 	 */
@@ -93,7 +98,7 @@ abstract class CommonObjectLine extends CommonObject
 			$label_type = 'code';
 		}
 
-		$sql = "SELECT ".$label_type.", code from ".MAIN_DB_PREFIX."c_units where rowid = ".((int) $this->fk_unit);
+		$sql = "SELECT ".$label_type.", code from ".$this->db->prefix()."c_units where rowid = ".((int) $this->fk_unit);
 
 		$resql = $this->db->query($sql);
 		if ($resql && $this->db->num_rows($resql) > 0) {

@@ -4,7 +4,7 @@
  * Copyright (C) 2013-2015 Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2015-2017 Ferran Marcet		<fmarcet@2byte.es>
- * Copyright (C) 2021		Frédéric France		<frederic.france@netlogic.fr>
+ * Copyright (C) 2021-2022 Frédéric France		<frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,8 +47,8 @@ if ($socid > 0) {
 
 // Sort & Order fields
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 $optioncss = GETPOST('optioncss', 'alpha');
 
@@ -79,14 +79,14 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$month = '';
 }
 // Customer or supplier selected in drop box
-$thirdTypeSelect = GETPOST("third_select_id");
-$type_element = GETPOST('type_element') ?GETPOST('type_element') : '';
+$thirdTypeSelect = GETPOST("third_select_id", 'az09');
+$type_element = GETPOST('type_element') ? GETPOST('type_element') : '';
 
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "bills", "orders", "suppliers", "propal", "interventions", "contracts", "products"));
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('consumptionthirdparty'));
+$hookmanager->initHooks(array('consumptionthirdparty', 'globalcard'));
 
 
 /*
@@ -441,9 +441,9 @@ if ($sql_select) {
 	print '<td class="liste_titre left">';
 	print '<input class="flat" type="text" name="sref" size="8" value="'.$sref.'">';
 	print '</td>';
-	print '<td class="liste_titre nowrap center">'; // date
+	print '<td class="liste_titre nowrap center valignmiddle">'; // date
 	print $formother->select_month($month ? $month : -1, 'month', 1, 0, 'valignmiddle');
-	$formother->select_year($year ? $year : -1, 'year', 1, 20, 1);
+	$formother->select_year($year ? $year : -1, 'year', 1, 20, 1, 0, 0, '', 'valignmiddle maxwidth75imp marginleftonly');
 	print '</td>';
 	print '<td class="liste_titre center">';
 	print '</td>';
@@ -463,7 +463,7 @@ if ($sql_select) {
 	// Titles with sort buttons
 	print '<tr class="liste_titre">';
 	print_liste_field_titre('Ref', $_SERVER['PHP_SELF'], 'doc_number', '', $param, '', $sortfield, $sortorder, 'left ');
-	print_liste_field_titre('Date', $_SERVER['PHP_SELF'], 'dateprint', '', $param, 'width="150"', $sortfield, $sortorder, 'center ');
+	print_liste_field_titre('Date', $_SERVER['PHP_SELF'], 'dateprint', '', $param, '', $sortfield, $sortorder, 'center ');
 	print_liste_field_titre('Status', $_SERVER['PHP_SELF'], 'fk_statut', '', $param, '', $sortfield, $sortorder, 'center ');
 	print_liste_field_titre('Product', $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder, 'left ');
 	print_liste_field_titre('Quantity', $_SERVER['PHP_SELF'], 'prod_qty', '', $param, '', $sortfield, $sortorder, 'right ');
@@ -499,6 +499,8 @@ if ($sql_select) {
 		if ($type_element == 'contract') {
 			print $documentstaticline->getLibStatut(5);
 		} elseif ($type_element == 'invoice') {
+			print $documentstatic->getLibStatut(5, $objp->paid);
+		} elseif ($type_element == 'supplier_invoice') {
 			print $documentstatic->getLibStatut(5, $objp->paid);
 		} else {
 			print $documentstatic->getLibStatut(5);
@@ -673,7 +675,7 @@ if ($sql_select) {
 	print '<td colspan="3"></td>';
 	print '<td class="right">'.$total_qty.'</td>';
 	print '<td class="right">'.price($total_ht).'</td>';
-	print '<td class="right">'.price($total_ht / (empty($total_qty) ? 1 : $total_qty)).'</td>';
+	print '<td class="right">'.price(price2num($total_ht / (empty($total_qty) ? 1 : $total_qty), 'MU')).'</td>';
 	print "</table>";
 	print '</div>';
 

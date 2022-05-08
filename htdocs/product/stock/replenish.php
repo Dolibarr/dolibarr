@@ -530,11 +530,6 @@ if ($includeproductswithoutdesiredqty == 'on') {
 	$includeproductswithoutdesiredqtychecked = 'checked';
 }
 
-// Add where from hooks
-$parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
-$sql .= $hookmanager->resPrint;
-
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 	$result = $db->query($sql);
@@ -628,7 +623,7 @@ if (empty($reshook)) {
 }
 
 print '<div class="inline-block valignmiddle">';
-print '<input type="submit" class="button" name="valid" value="'.$langs->trans('ToFilter').'">';
+print '<input type="submit" class="button small" name="valid" value="'.$langs->trans('ToFilter').'">';
 print '</div>';
 
 print '</form>';
@@ -914,10 +909,10 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		}
 
 		// Desired stock
-		print '<td class="right">'.($fk_entrepot > 0 ? $desiredstockwarehouse : $desiredstock).'</td>';
+		print '<td class="right">'.((!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE) && $fk_entrepot > 0) > 0 ? $desiredstockwarehouse : $desiredstock).'</td>';
 
 		// Limit stock for alert
-		print '<td class="right">'.($fk_entrepot > 0 ? $alertstockwarehouse : $alertstock).'</td>';
+		print '<td class="right">'.((!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE) && $fk_entrepot > 0) > 0 ? $alertstockwarehouse : $alertstock).'</td>';
 
 		// Current stock (all warehouses)
 		print '<td class="right">'.$warning.$stock;
@@ -933,7 +928,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		print '<td class="right"><a href="replenishorders.php?search_product='.$prod->id.'">'.$ordered.'</a> '.$picto.'</td>';
 
 		// To order
-		print '<td class="right"><input type="text" size="4" name="tobuy'.$i.'" value="'.($fk_entrepot > 0 ? $stocktobuywarehouse : $stocktobuy).'"></td>';
+		print '<td class="right"><input type="text" size="4" name="tobuy'.$i.'" value="'.((!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE) && $fk_entrepot > 0) > 0 ? $stocktobuywarehouse : $stocktobuy).'"></td>';
 
 		// Supplier
 		print '<td class="right">';

@@ -173,27 +173,34 @@ class box_members_by_type extends ModeleBoxes
 				$line = 0;
 				$this->info_box_contents[$line][] = array(
 					'td' => 'class=""',
-					'text' => $langs->trans("MembersTypes"),
+					'text' => '',
 				);
+				$labelstatus = $staticmember->LibStatut($staticmember::STATUS_DRAFT, 0, 0, 1);
 				$this->info_box_contents[$line][] = array(
-					'td' => 'class="right"',
-					'text' => $langs->trans("MembersStatusToValid"),
+					'td' => 'class="right tdoverflowmax100" width="15%" title="'.dol_escape_htmltag($labelstatus).'"',
+					'text' => $labelstatus
 				);
+				$labelstatus = $langs->trans("UpToDate");
+				$labelstatus = $staticmember->LibStatut($staticmember::STATUS_VALIDATED, 1, dol_now() + 86400, 1);
 				$this->info_box_contents[$line][] = array(
-					'td' => 'class="right"',
-					'text' => $langs->trans("OutOfDate"),
+					'td' => 'class="right tdoverflowmax100" width="15%" title="'.dol_escape_htmltag($labelstatus).'"',
+					'text' => $labelstatus,
 				);
+				$labelstatus = $langs->trans("OutOfDate");
+				$labelstatus = $staticmember->LibStatut($staticmember::STATUS_VALIDATED, 1, dol_now() - 86400, 1);
 				$this->info_box_contents[$line][] = array(
-					'td' => 'class="right"',
-					'text' => $langs->trans("UpToDate"),
+					'td' => 'class="right tdoverflowmax100" width="15%" title="'.dol_escape_htmltag($labelstatus).'"',
+					'text' => $labelstatus
 				);
+				$labelstatus = $staticmember->LibStatut($staticmember::STATUS_EXCLUDED, 0, 0, 1);
 				$this->info_box_contents[$line][] = array(
-					'td' => 'class="right"',
-					'text' => $langs->trans("MembersStatusExcluded"),
+					'td' => 'class="right tdoverflowmax100" width="15%" title="'.dol_escape_htmltag($labelstatus).'"',
+					'text' => $labelstatus
 				);
+				$labelstatus = $staticmember->LibStatut($staticmember::STATUS_RESILIATED, 0, 0, 1);
 				$this->info_box_contents[$line][] = array(
-					'td' => 'class="right"',
-					'text' => $langs->trans("MembersStatusResiliated"),
+					'td' => 'class="right tdoverflowmax100" width="15%" title="'.dol_escape_htmltag($labelstatus).'"',
+					'text' => $labelstatus
 				);
 				$line++;
 				foreach ($AdherentType as $key => $adhtype) {
@@ -215,12 +222,12 @@ class box_members_by_type extends ModeleBoxes
 					);
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right"',
-						'text' => (isset($MembersValidated[$key]) && ($MembersValidated[$key] - (isset($MembersUpToDate[$key]) ? $MembersUpToDate[$key] : 0) > 0) ? $MembersValidated[$key] - (isset($MembersUpToDate[$key]) ? $MembersUpToDate[$key] : 0) : '') . ' ' . $staticmember->LibStatut(Adherent::STATUS_VALIDATED, 1, 0, 3),
+						'text' => (isset($MembersUpToDate[$key]) && $MembersUpToDate[$key] > 0 ? $MembersUpToDate[$key] : '') . ' ' . $staticmember->LibStatut(Adherent::STATUS_VALIDATED, 1, $now, 3),
 						'asis' => 1,
 					);
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right"',
-						'text' => (isset($MembersUpToDate[$key]) && $MembersUpToDate[$key] > 0 ? $MembersUpToDate[$key] : '') . ' ' . $staticmember->LibStatut(Adherent::STATUS_VALIDATED, 1, $now, 3),
+						'text' => (isset($MembersValidated[$key]) && ($MembersValidated[$key] - (isset($MembersUpToDate[$key]) ? $MembersUpToDate[$key] : 0) > 0) ? $MembersValidated[$key] - (isset($MembersUpToDate[$key]) ? $MembersUpToDate[$key] : 0) : '') . ' ' . $staticmember->LibStatut(Adherent::STATUS_VALIDATED, 1, 1, 3),
 						'asis' => 1,
 					);
 					$this->info_box_contents[$line][] = array(
@@ -244,6 +251,7 @@ class box_members_by_type extends ModeleBoxes
 					);
 				} else {
 					$this->info_box_contents[$line][] = array(
+						'tr' => 'class="liste_total"',
 						'td' => 'class="liste_total"',
 						'text' => $langs->trans("Total")
 					);
@@ -254,12 +262,12 @@ class box_members_by_type extends ModeleBoxes
 					);
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="liste_total right"',
-						'text' => $SumValidated.' '.$staticmember->LibStatut(Adherent::STATUS_VALIDATED, 1, 0, 3),
+						'text' => $SumUpToDate.' '.$staticmember->LibStatut(Adherent::STATUS_VALIDATED, 1, $now, 3),
 						'asis' => 1
 					);
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="liste_total right"',
-						'text' => $SumUpToDate.' '.$staticmember->LibStatut(Adherent::STATUS_VALIDATED, 1, $now, 3),
+						'text' => $SumValidated.' '.$staticmember->LibStatut(Adherent::STATUS_VALIDATED, 1, 1, 3),
 						'asis' => 1
 					);
 					$this->info_box_contents[$line][] = array(

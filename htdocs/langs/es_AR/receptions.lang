@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - receptions
-ReceptionsSetup=Configuración de recepción de productos
 Reception=Recepción
 ReceptionsArea=Área de recepciones
 NbOfReceptions=Cantidad de recepciones
@@ -10,7 +9,6 @@ OtherReceptionsForSameOrder=Otras recepciones para esta orden
 ReceptionsAndReceivingForSameOrder=Recepciones y recibos de esta orden.
 ReceptionsToValidate=Recepciones para validar
 StatusReceptionCanceled=Cancelada
-StatusReceptionValidated=Validada (productos para enviar o ya enviados)
 StatusReceptionProcessed=Procesada
 StatusReceptionValidatedShort=Validada
 StatusReceptionProcessedShort=Procesada

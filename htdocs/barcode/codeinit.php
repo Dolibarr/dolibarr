@@ -224,7 +224,7 @@ if ($conf->societe->enabled) {
 // For products
 if ($conf->product->enabled || $conf->product->service) {
 	// Example 1 : Adding jquery code
-	print '<script type="text/javascript" language="javascript">
+	print '<script type="text/javascript">
 	function confirm_erase() {
 		return confirm("'.dol_escape_js($langs->trans("ConfirmEraseAllCurrentBarCode")).'");
 	}
@@ -286,7 +286,7 @@ if ($conf->product->enabled || $conf->product->service) {
 	print '<input type="submit" class="button" name="submitformbarcodeproductgen" id="submitformbarcodeproductgen" value="'.$langs->trans("InitEmptyBarCode", min($maxperinit, $nbno)).'"'.$moretags1.'>';
 	$moretags2 = (($nbno == $nbtotal) ? ' disabled' : '');
 	print ' &nbsp; ';
-	print '<input type="submit" class="button" name="eraseallbarcode" id="eraseallbarcode" value="'.$langs->trans("EraseAllCurrentBarCode").'"'.$moretags2.' onClick="return confirm_erase();">';
+	print '<input type="submit" class="button butActionDelete" name="eraseallbarcode" id="eraseallbarcode" value="'.$langs->trans("EraseAllCurrentBarCode").'"'.$moretags2.' onClick="return confirm_erase();">';
 	print '<br><br><br><br>';
 }
 

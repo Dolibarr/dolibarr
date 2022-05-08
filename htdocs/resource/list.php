@@ -38,7 +38,7 @@ $element        = GETPOST('element', 'alpha');
 $element_id     = GETPOST('element_id', 'int');
 $resource_id    = GETPOST('resource_id', 'int');
 
-$sortorder      = GETPOST('sortorder', 'alpha');
+$sortorder      = GETPOST('sortorder', 'aZ09comma');
 $sortfield      = GETPOST('sortfield', 'aZ09comma');
 $optioncss = GETPOST('optioncss', 'alpha');
 
@@ -199,7 +199,7 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
-	$ret = $object->fetch_all('', '', 0, 0, $filter);
+	$ret = $object->fetchAll('', '', 0, 0, $filter);
 	if ($ret == -1) {
 		dol_print_error($db, $object->error);
 		exit;
@@ -209,7 +209,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 }
 
 // Load object list
-$ret = $object->fetch_all($sortorder, $sortfield, $limit, $offset, $filter);
+$ret = $object->fetchAll($sortorder, $sortfield, $limit, $offset, $filter);
 if ($ret == -1) {
 	dol_print_error($db, $object->error);
 	exit;

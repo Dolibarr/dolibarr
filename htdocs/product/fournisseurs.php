@@ -63,10 +63,9 @@ $error = 0;
 $extrafields = new ExtraFields($db);
 
 // If socid provided by ajax company selector
-if (!empty($_REQUEST['search_fourn_id'])) {
+if (GETPOST('search_fourn_id', 'int')) {
 	$_GET['id_fourn'] = GETPOST('search_fourn_id', 'int');
 	$_POST['id_fourn'] = GETPOST('search_fourn_id', 'int');
-	$_REQUEST['id_fourn'] = GETPOST('search_fourn_id', 'int');
 }
 
 // Security check
@@ -81,8 +80,8 @@ if (empty($user->rights->fournisseur->lire)) {
 }
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = (GETPOST("page", 'int') ?GETPOST("page", 'int') : 0);
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -320,9 +319,10 @@ if (empty($reshook)) {
 				if (empty($packaging)) {
 					$packaging = 1;
 				}
+				/* We can have a puchase ref that need to buy 100 min for a given price and with a packaging of 50.
 				if ($packaging < $quantity) {
 					$packaging = $quantity;
-				}
+				}*/
 				$object->packaging = $packaging;
 
 				if (!empty($conf->multicurrency->enabled)) {
@@ -383,11 +383,11 @@ $helpurl = '';
 $shortlabel = dol_trunc($object->label, 16);
 if (GETPOST("type") == '0' || ($object->type == Product::TYPE_PRODUCT)) {
 	$title = $langs->trans('Product')." ".$shortlabel." - ".$langs->trans('BuyingPrices');
-	$helpurl = 'EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
+	$helpurl = 'EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos|DE:Modul_Produkte';
 }
 if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE)) {
 	$title = $langs->trans('Service')." ".$shortlabel." - ".$langs->trans('BuyingPrices');
-	$helpurl = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
+	$helpurl = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios|DE:Modul_Lesitungen';
 }
 
 llxHeader('', $title, $helpurl, '', 0, 0, '', '', '', 'classforhorizontalscrolloftabs');
@@ -518,13 +518,15 @@ if ($id > 0 || $ref) {
 				} else {
 					$events = array();
 					$events[] = array('method' => 'getVatRates', 'url' => dol_buildpath('/core/ajax/vatrates.php', 1), 'htmlname' => 'tva_tx', 'params' => array());
-					print $form->select_company(GETPOST("id_fourn", 'alpha'), 'id_fourn', 'fournisseur=1', 'SelectThirdParty', 0, 0, $events);
+					print img_picto('', 'company', 'class="pictofixedwidth"').$form->select_company(GETPOST("id_fourn", 'alpha'), 'id_fourn', 'fournisseur=1', 'SelectThirdParty', 0, 0, $events);
 
 					$parameters = array('filtre'=>"fournisseur=1", 'html_name'=>'id_fourn', 'selected'=>GETPOST("id_fourn"), 'showempty'=>1, 'prod_id'=>$object->id);
 					$reshook = $hookmanager->executeHooks('formCreateThirdpartyOptions', $parameters, $object, $action);
 					if (empty($reshook)) {
 						if (empty($form->result)) {
-							print ' - <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&type=f&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id.'&action='.$action).'">'.$langs->trans("CreateDolibarrThirdPartySupplier").'</a>';
+							print '<a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&type=f&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id.'&action='.$action).'">';
+							print img_picto($langs->trans("CreateDolibarrThirdPartySupplier"), 'add', 'class="marginleftonly"');
+							print '</a>';
 						}
 					}
 				}
@@ -613,7 +615,7 @@ if ($id > 0 || $ref) {
 						$default_vat = $object->tva_tx;
 					}
 				}
-				$vattosuggest = (GETPOST("tva_tx") ?vatrate(GETPOST("tva_tx")) : ($default_vat != '' ?vatrate($default_vat) : ''));
+				$vattosuggest = (GETPOSTISSET("tva_tx") ? vatrate(GETPOST("tva_tx")) : ($default_vat != '' ?vatrate($default_vat) : ''));
 				$vattosuggest = preg_replace('/\s*\(.*\)$/', '', $vattosuggest);
 				print '<input type="text" class="flat" size="5" name="tva_tx" value="'.$vattosuggest.'">';
 				print '</td></tr>';
@@ -666,7 +668,7 @@ if ($id > 0 || $ref) {
 					print '</tr>';
 
 					// Currency price qty min
-					print '<tr><td class="fieldrequired">'.$langs->trans("PriceQtyMinCurrency").'</td>';
+					print '<tr><td class="fieldrequired">'.$form->textwithpicto($langs->trans("PriceQtyMinCurrency"), $langs->transnoentitiesnoconv("WithoutDiscount")).'</td>';
 					$pricesupplierincurrencytouse = (GETPOST('multicurrency_price') ? GETPOST('multicurrency_price') : (isset($object->fourn_multicurrency_price) ? $object->fourn_multicurrency_price : ''));
 					print '<td><input class="flat" name="multicurrency_price" size="8" value="'.price($pricesupplierincurrencytouse).'">';
 					print '&nbsp;';
@@ -674,7 +676,7 @@ if ($id > 0 || $ref) {
 					print '</td></tr>';
 
 					// Price qty min
-					print '<tr><td class="fieldrequired">'.$langs->trans("PriceQtyMin").'</td>';
+					print '<tr><td class="fieldrequired">'.$form->textwithpicto($langs->trans("PriceQtyMin"), $langs->transnoentitiesnoconv("WithoutDiscount")).'</td>';
 					print '<td><input class="flat" name="disabled_price" size="8" value="">';
 					print '<input type="hidden" name="price" value="">';
 					print '<input type="hidden" name="price_base_type" value="">';

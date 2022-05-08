@@ -113,7 +113,7 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 print dol_get_fiche_head($head, 'website', $langs->trans("Members"), -1, 'user');
 
 if ($conf->use_javascript_ajax) {
-	print "\n".'<script type="text/javascript" language="javascript">';
+	print "\n".'<script type="text/javascript">';
 	print 'jQuery(document).ready(function () {
                 function initemail()
                 {

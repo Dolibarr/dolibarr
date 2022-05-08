@@ -139,7 +139,7 @@ if ((!empty($conf->product->enabled) || !empty($conf->service->enabled)) && ($us
 	$sql .= ' WHERE p.entity IN ('.getEntity($product_static->element, 1).')';
 	// Add where from hooks
 	$parameters = array();
-	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
+	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $product_static); // Note that $action and $object may have been modified by hook
 	$sql .= $hookmanager->resPrint;
 	$sql .= " GROUP BY p.fk_product_type, p.tosell, p.tobuy";
 	$result = $db->query($sql);
@@ -225,6 +225,7 @@ if (!empty($conf->categorie->enabled) && !empty($conf->global->CATEGORY_GRAPHSTA
 	$sql .= " WHERE c.type = 0";
 	$sql .= " AND c.entity IN (".getEntity('category').")";
 	$sql .= " GROUP BY c.label";
+	$sql .= " ORDER BY nb desc";
 	$total = 0;
 	$result = $db->query($sql);
 	if ($result) {
@@ -292,7 +293,7 @@ if ((!empty($conf->product->enabled) || !empty($conf->service->enabled)) && ($us
 	}
 	// Add where from hooks
 	$parameters = array();
-	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
+	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $product_static); // Note that $action and $object may have been modified by hook
 	$sql .= $hookmanager->resPrint;
 	$sql .= $db->order("p.tms", "DESC");
 	$sql .= $db->plimit($max, 0);
@@ -341,8 +342,8 @@ if ((!empty($conf->product->enabled) || !empty($conf->service->enabled)) && ($us
 				if (!empty($conf->global->MAIN_MULTILANGS)) {
 					$sql = "SELECT label";
 					$sql .= " FROM ".MAIN_DB_PREFIX."product_lang";
-					$sql .= " WHERE fk_product=".((int) $objp->rowid);
-					$sql .= " AND lang='".$db->escape($langs->getDefaultLang())."'";
+					$sql .= " WHERE fk_product = ".((int) $objp->rowid);
+					$sql .= " AND lang = '".$db->escape($langs->getDefaultLang())."'";
 
 					$resultd = $db->query($sql);
 					if ($resultd) {
@@ -419,7 +420,7 @@ if (!empty($conf->global->MAIN_SHOW_PRODUCT_ACTIVITY_TRIM)) {
 print '</div></div>';
 
 $parameters = array('type' => $type, 'user' => $user);
-$reshook = $hookmanager->executeHooks('dashboardProductsServices', $parameters, $object); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('dashboardProductsServices', $parameters, $product_static); // Note that $action and $object may have been modified by hook
 
 // End of page
 llxFooter();

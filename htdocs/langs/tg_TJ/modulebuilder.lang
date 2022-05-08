@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - loan
-ModuleBuilderDesc=Ин восита бояд танҳо аз ҷониби корбарони ботаҷриба ё таҳиягарон истифода шавад. Он хидматрасониҳоро барои сохтан ё таҳрир кардани модули худ таъмин мекунад. Ҳуҷҷатҳо барои таҳияи дастии алтернативии <a href="%s" target="_blank"> дар ин ҷо </a> ҳастанд.
+ModuleBuilderDesc=This tool must be used only by experienced users or developers. It provides utilities to build or edit your own module. Documentation for alternative <a href="%s" target="_blank" rel="noopener noreferrer">manual development is here</a>.
 EnterNameOfModuleDesc=Номи модул/барномаро ворид кунед, то бидуни фосила эҷод кунед. Калимаҳои калонро барои ҷудо кардани калимаҳо истифода баред (Масалан: MyModule, EcommerceForShop, SyncWithMySystem ...)
 EnterNameOfObjectDesc=Номи объектро ворид кунед, ки бидуни фосила эҷод карда шавад. Калимаҳои калонро барои ҷудо кардани калимаҳо истифода баред (Масалан: MyObject, Student, Teacher ...). Файли синфи CRUD, инчунин файли API, саҳифаҳо барои рӯйхат/илова/таҳрир/нест кардани объект ва файлҳои SQL тавлид карда мешаванд.
 ModuleBuilderDesc2=Роҳе, ки модулҳо тавлид/таҳрир карда мешаванд (феҳристи аввал барои модулҳои беруна ба %s муайян карда шудааст): <strong> %s </strong>
@@ -98,7 +98,7 @@ MenusDefDescTooltip=Менюҳое, ки модул/замимаи шумо пе
 DictionariesDefDescTooltip=Луғатҳо, ки модул/замимаи шумо пешкаш кардааст, дар массиви <strong> $ this-> луғатҳо </strong> ба файли тавсифкунандаи модул муайян карда шудаанд. Шумо метавонед ин файлро дастӣ таҳрир кунед ё муҳаррири дохилшударо истифода баред. <br> <br> Эзоҳ: Пас аз муайян кардан (ва модули дубора фаъол кардан), луғатҳо низ дар майдони танзим барои корбарони админ дар %s намоён мешаванд.
 PermissionsDefDescTooltip=Иҷозатҳое, ки модул/замимаи шумо пешкаш кардааст, дар массиви <strong> $ this-> ҳуқуқи </strong> ба файли тавсифкунандаи модул муайян карда шудаанд. Шумо метавонед ин файлро дастӣ таҳрир кунед ё муҳаррири дохилшударо истифода баред. <br> <br> Эзоҳ: Пас аз муайян кардан (ва модул дубора фаъол кардан), иҷозатҳо дар танзимоти пешфарзии %s намоён мешаванд.
 HooksDefDesc=Дар амволи <b> module_parts ['hooks'] </b>, дар тавсифи модул контексти қалмоқе, ки шумо мехоҳед идора кунед, муайян кунед (рӯйхати контекстҳоро тавассути ҷустуҷӯи '<b> initHooks (a09a4b2 a09a4b2) файли қалмоқӣ барои илова кардани коди вазифаҳои пайвастшудаи шумо (функсияҳои пайвастшавандаро тавассути ҷустуҷӯи '<b> executeHooks </b>' дар коди аслӣ ёфтан мумкин аст).
-TriggerDefDesc=Define in the trigger file the code that you want to execute when a business event external to your module is executed (events recorded by other modules).
+TriggerDefDesc=Define in the trigger file the code that you want to execute when a business event external to your module is executed (events triggered by other modules).
 SeeIDsInUse=Бингар, ки ID -ҳои дар насби шумо истифодашаванда
 SeeReservedIDsRangeHere=Ба доираи ID -ҳои ҳифзшуда нигаред
 ToolkitForDevelopers=Маҷмӯи асбобҳо барои таҳиягарони Dolibarr

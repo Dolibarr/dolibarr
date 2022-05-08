@@ -197,9 +197,14 @@ if (empty($reshook)) {
 			$result = $object->create($user);
 			if (!$error && $result > 0) {
 				// Add myself as project leader
-				$typeofcontact = 'PROJECTLEADER';	// TODO If use rename this code in dictionary, the add_contact will generate an error.
+				$typeofcontact = 'PROJECTLEADER';
 				$result = $object->add_contact($user->id, $typeofcontact, 'internal');
-				if ($result < 0) {
+
+				// -3 means type not found (PROJECTLEADER renamed, de-activated or deleted), so don't prevent creation if it has been the case
+				if ($result == -3) {
+					setEventMessage('ErrorPROJECTLEADERRoleMissingRestoreIt', 'errors');
+					$error++;
+				} elseif ($result < 0) {
 					$langs->load("errors");
 					setEventMessages($object->error, $object->errors, 'errors');
 					$error++;
@@ -287,7 +292,7 @@ if (empty($reshook)) {
 			$object->usage_organize_event = (GETPOST('usage_organize_event', 'alpha') == 'on' ? 1 : 0);
 
 			// Fill array 'array_options' with data from add form
-			$ret = $extrafields->setOptionalsFromPost(null, $object);
+			$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
 			if ($ret < 0) {
 				$error++;
 			}
@@ -632,11 +637,11 @@ if ($action == 'create' && $user->rights->projet->creer) {
 	}
 
 	if (count($array) > 0) {
-		print $form->selectarray('public', $array, GETPOSTISSET('public') ? GETPOST('public') : $object->public, 0, 0, 0, '', 0, 0, 0, '', '', 1);
+		print $form->selectarray('public', $array, GETPOST('public'), 0, 0, 0, '', 0, 0, 0, '', '', 1);
 	} else {
-		print '<input type="hidden" name="public" id="public" value="'.(GETPOSTISSET('public') ? GETPOST('public') : $object->public).'">';
+		print '<input type="hidden" name="public" id="public" value="'.GETPOST('public').'">';
 
-		if ( (GETPOSTISSET('public') ? GETPOST('public') : $object->public)==0) {
+		if (GETPOST('public') == 0) {
 			print $langs->trans("PrivateProject");
 		} else {
 			print $langs->trans("SharedProject");
@@ -658,7 +663,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 		// Opportunity status
 		print '<tr class="classuseopportunity"><td>'.$langs->trans("OpportunityStatus").'</td>';
 		print '<td class="maxwidthonsmartphone">';
-		print $formproject->selectOpportunityStatus('opp_status', GETPOST('opp_status') ?GETPOST('opp_status') : $object->opp_status, 1, 0, 0, 0, '', 0, 1);
+		print $formproject->selectOpportunityStatus('opp_status', GETPOSTISSET('opp_status') ? GETPOST('opp_status') : $object->opp_status, 1, 0, 0, 0, '', 0, 1);
 		print '</tr>';
 
 		// Opportunity probability
@@ -712,7 +717,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 	print '</form>';
 
 	// Change probability from status
-	print '<script type="text/javascript" language="javascript">
+	print '<script type="text/javascript">
         jQuery(document).ready(function() {
         	function change_percent()
         	{
@@ -1090,14 +1095,14 @@ if ($action == 'create' && $user->rights->projet->creer) {
 			   print price($obj->opp_amount, 1, $langs, 1, 0, -1, $conf->currency);
 			}*/
 			if (strcmp($object->opp_amount, '')) {
-				print price($object->opp_amount, 0, $langs, 1, 0, -1, $conf->currency);
+				print '<span class="amount">'.price($object->opp_amount, 0, $langs, 1, 0, -1, $conf->currency).'</span>';
 			}
 			print '</td></tr>';
 
 			// Opportunity Weighted Amount
 			print '<tr><td>'.$langs->trans('OpportunityWeightedAmount').'</td><td>';
 			if (strcmp($object->opp_amount, '') && strcmp($object->opp_percent, '')) {
-				print price($object->opp_amount * $object->opp_percent / 100, 0, $langs, 1, 0, -1, $conf->currency);
+				print '<span class="amount">'.price($object->opp_amount * $object->opp_percent / 100, 0, $langs, 1, 0, -1, $conf->currency).'</span>';
 			}
 			print '</td></tr>';
 		}
@@ -1117,7 +1122,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 		// Budget
 		print '<tr><td>'.$langs->trans("Budget").'</td><td>';
 		if (strcmp($object->budget_amount, '')) {
-			print price($object->budget_amount, 0, $langs, 1, 0, 0, $conf->currency);
+			print '<span class="amount">'.price($object->budget_amount, 0, $langs, 1, 0, 0, $conf->currency).'</span>';
 		}
 		print '</td></tr>';
 
@@ -1170,7 +1175,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 		}
 
 		print '<!-- Javascript to manage opportunity status change -->';
-		print '<script type="text/javascript" language="javascript">
+		print '<script type="text/javascript">
             jQuery(document).ready(function() {
             	function change_percent()
             	{

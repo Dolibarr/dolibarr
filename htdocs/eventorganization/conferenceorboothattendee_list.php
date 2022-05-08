@@ -122,11 +122,11 @@ $arrayfields = array();
 foreach ($object->fields as $key => $val) {
 	// If $val['visible']==0, then we never show the field
 	if (!empty($val['visible'])) {
-		$visible = (int) dol_eval($val['visible'], 1);
+		$visible = (int) dol_eval($val['visible'], 1, 1, '1');
 		$arrayfields['t.'.$key] = array(
 			'label'=>$val['label'],
 			'checked'=>(($visible < 0) ? 0 : 1),
-			'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1)),
+			'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1, 1, '1')),
 			'position'=>$val['position'],
 			'help'=> isset($val['help']) ? $val['help'] : ''
 		);
@@ -182,8 +182,8 @@ if (GETPOST('cancel', 'alpha')) {
 	$massaction = '';
 }
 if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend'
-&& $massaction != 'presend_attendees'
-&& $massaction != 'confirm_presend_attendees') {
+&& $massaction != 'presend'
+&& $massaction != 'confirm_presend') {
 	$massaction = '';
 }
 
@@ -206,7 +206,7 @@ if (empty($reshook)) {
 				$search[$key.'_dtend'] = '';
 			}
 		}
-		$toselect = '';
+		$toselect = array();
 		$search_array_options = array();
 	}
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')
@@ -278,7 +278,7 @@ $sql .= " FROM ".MAIN_DB_PREFIX.$object->table_element." as t";
 if (!empty($confOrBooth->id)) {
 	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."actioncomm as a on a.id=t.fk_actioncomm AND a.id=".((int) $confOrBooth->id);
 }
-if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
+if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (t.rowid = ef.fk_object)";
 }
 // Add table from hooks
@@ -676,8 +676,7 @@ $arrayofmassactions = array(
 	//'validate'=>img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Validate"),
 	//'generate_doc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("ReGeneratePDF"),
 	//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
-	//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
-	'presend_attendees'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail").' - '.$langs->trans("Attendees"),
+	'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 );
 if ($permissiontodelete) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
@@ -706,13 +705,15 @@ $newcardbutton = dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle'
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, $object->picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
 
+
 // Add code for pre mass action (confirmation or email presend form)
-$topicmail = "SendConferenceOrBoothAttendeeRef";
-$modelmail = "conferenceorboothattendee";
+$topicmail = $projectstatic->title;
+$modelmail = "conferenceorbooth";
 $objecttmp = new ConferenceOrBoothAttendee($db);
-$trackid = 'xxxx'.$object->id;
-include DOL_DOCUMENT_ROOT.'/eventorganization/tpl/massactions_mail_pre.tpl.php';
+$trackid = 'conferenceorbooth_'.$object->id;
+$withmaindocfilemail = 0;
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
+
 
 if ($search_all) {
 	foreach ($fieldstosearchall as $key => $val) {
@@ -827,7 +828,7 @@ print '</tr>'."\n";
 
 // Detect if we need a fetch on each output line
 $needToFetchEachLine = 0;
-if (is_array($extrafields->attributes[$object->table_element]['computed']) && count($extrafields->attributes[$object->table_element]['computed']) > 0) {
+if (isset($extrafields->attributes[$object->table_element]['computed']) && is_array($extrafields->attributes[$object->table_element]['computed']) && count($extrafields->attributes[$object->table_element]['computed']) > 0) {
 	foreach ($extrafields->attributes[$object->table_element]['computed'] as $key => $val) {
 		if (preg_match('/\$object/', $val)) {
 			$needToFetchEachLine++; // There is at least one compute field that use $object

@@ -46,8 +46,8 @@ $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'cro
 $id = GETPOST('id', 'int');
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -115,7 +115,7 @@ if (empty($reshook)) {
 		$search_label = '';
 		$search_status = -1;
 		$search_lastresult = '';
-		$toselect = '';
+		$toselect = array();
 		$search_array_options = array();
 	}
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')
@@ -478,8 +478,12 @@ if ($num > 0) {
 		if (empty($obj)) {
 			break;
 		}
-		if (!verifCond($obj->test)) {
-			continue; // Discard line with test = false
+
+		if (isset($obj->test)) {
+			$veriftest = verifCond($obj->test);
+			if (!$veriftest) {
+				continue; // Discard line with test = false
+			}
 		}
 
 		$object->id = $obj->rowid;
@@ -572,15 +576,17 @@ if ($num > 0) {
 		}
 		print '</td>';
 
+		$datefromto = (empty($datelastrun) ? '' : dol_print_date($datelastrun, 'dayhoursec', 'tzserver')).' - '.(empty($datelastresult) ? '' : dol_print_date($datelastresult, 'dayhoursec', 'tzserver'));
+
 		// Date start last run
-		print '<td class="center">';
+		print '<td class="center" title="'.dol_escape_htmltag($datefromto).'">';
 		if (!empty($datelastrun)) {
 			print dol_print_date($datelastrun, 'dayhoursec', 'tzserver');
 		}
 		print '</td>';
 
 		// Duration
-		print '<td class="center">';
+		print '<td class="center" title="'.dol_escape_htmltag($datefromto).'">';
 		if (!empty($datelastresult) && ($datelastresult >= $datelastrun)) {
 			print convertSecondToTime(max($datelastresult - $datelastrun, 1), 'allhourminsec');
 			//print '<br>'.($datelastresult - $datelastrun).' '.$langs->trans("seconds");
@@ -588,7 +594,7 @@ if ($num > 0) {
 		print '</td>';
 
 		// Return code of last run
-		print '<td class="center">';
+		print '<td class="center" title="'.dol_escape_htmltag($datefromto).'">';
 		if ($obj->lastresult != '') {
 			if (empty($obj->lastresult)) {
 				print $obj->lastresult;

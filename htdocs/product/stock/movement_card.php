@@ -75,8 +75,8 @@ $search_type_mouvement = GETPOST('search_type_mouvement', 'int');
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -161,7 +161,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_batch = "";
 	$search_qty = '';
 	$sall = "";
-	$toselect = '';
+	$toselect = array();
 	$search_array_options = array();
 }
 
@@ -449,7 +449,7 @@ $sql .= $hookmanager->resPrint;
 $sql .= " FROM ".MAIN_DB_PREFIX."entrepot as e,";
 $sql .= " ".MAIN_DB_PREFIX."product as p,";
 $sql .= " ".MAIN_DB_PREFIX."stock_mouvement as m";
-if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
+if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (m.rowid = ef.fk_object)";
 }
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON m.fk_user_author = u.rowid";
@@ -489,7 +489,7 @@ if ($search_warehouse != '' && $search_warehouse != '-1') {
 	$sql .= natural_search('e.rowid', $search_warehouse, 2);
 }
 if (!empty($search_user)) {
-	$sql .= natural_search('u.login', $search_user);
+	$sql .= natural_search(array('u.lastname', 'u.firstname', 'u.login'), $search_user);
 }
 if (!empty($search_batch)) {
 	$sql .= natural_search('m.batch', $search_batch);

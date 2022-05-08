@@ -209,7 +209,7 @@ if (empty($reshook)) {
 		$search_progresscalc = '';
 		$search_progressdeclare = '';
 		$search_task_budget_amount = '';
-		$toselect = '';
+		$toselect = array();
 		$search_array_options = array();
 		$search_date_start_startmonth = "";
 		$search_date_start_startyear = "";
@@ -303,8 +303,6 @@ if ($action == 'createtask' && $user->rights->projet->creer) {
 	$error = 0;
 
 	// If we use user timezone, we must change also view/list to use user timezone everywhere
-	//$date_start = dol_mktime($_POST['dateohour'],$_POST['dateomin'],0,$_POST['dateomonth'],$_POST['dateoday'],$_POST['dateoyear'],'user');
-	//$date_end = dol_mktime($_POST['dateehour'],$_POST['dateemin'],0,$_POST['dateemonth'],$_POST['dateeday'],$_POST['dateeyear'],'user');
 	$date_start = dol_mktime(GETPOST('dateohour', 'int'), GETPOST('dateomin', 'int'), 0, GETPOST('dateomonth', 'int'), GETPOST('dateoday', 'int'), GETPOST('dateoyear', 'int'));
 	$date_end = dol_mktime(GETPOST('dateehour', 'int'), GETPOST('dateemin', 'int'), 0, GETPOST('dateemonth', 'int'), GETPOST('dateeday', 'int'), GETPOST('dateeyear', 'int'));
 
@@ -318,7 +316,7 @@ if ($action == 'createtask' && $user->rights->projet->creer) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
 			$action = 'create';
 			$error++;
-		} elseif (empty($_POST['task_parent'])) {
+		} elseif (!GETPOST('task_parent')) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("ChildOfProjectTask")), null, 'errors');
 			$action = 'create';
 			$error++;
@@ -626,7 +624,7 @@ if ($id > 0 || !empty($ref)) {
 	// Budget
 	print '<tr><td>'.$langs->trans("Budget").'</td><td>';
 	if (strcmp($object->budget_amount, '')) {
-		print price($object->budget_amount, '', $langs, 1, 0, 0, $conf->currency);
+		print '<span class="amount">'.price($object->budget_amount, '', $langs, 1, 0, 0, $conf->currency).'</span>';
 	}
 	print '</td></tr>';
 
@@ -765,7 +763,20 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	// Description
 	print '<tr><td class="tdtop">'.$langs->trans("Description").'</td>';
 	print '<td>';
-	print '<textarea name="description" class="quatrevingtpercent" rows="'.ROWS_4.'">'.$description.'</textarea>';
+
+	if (empty($conf->global->FCKEDITOR_ENABLE_SOCIETE)) {
+		print '<textarea name="description" class="quatrevingtpercent" rows="'.ROWS_4.'">'.$description.'</textarea>';
+	} else {
+		// WYSIWYG editor
+		include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+		$cked_enabled = (!empty($conf->global->FCKEDITOR_ENABLE_DETAILS) ? $conf->global->FCKEDITOR_ENABLE_DETAILS : 0);
+		if (!empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) {
+			$nbrows = $conf->global->MAIN_INPUT_DESC_HEIGHT;
+		}
+		$doleditor = new DolEditor('description', $object->description, '', 80, 'dolibarr_details', '', false, true, $cked_enabled, $nbrows);
+		print $doleditor->Create();
+	}
+
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("Budget").'</td>';
@@ -811,9 +822,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	$linktocreatetask = dolGetButtonTitle($langs->trans('AddTask'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/projet/tasks.php?action=create'.$param.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id), '', $linktocreatetaskUserRight, $linktocreatetaskParam);
 
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
-	if ($optioncss != '') {
-		print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-	}
+	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="list">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
@@ -852,8 +861,8 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	$moreforfilter = '';
 	if (count($tasksarray) > 0) {
 		$moreforfilter .= '<div class="divsearchfield">';
-		$moreforfilter .= $langs->trans("TasksAssignedTo").': ';
-		$moreforfilter .= $form->select_dolusers($tmpuser->id > 0 ? $tmpuser->id : '', 'search_user_id', 1);
+		$moreforfilter .= img_picto('', 'user', 'class="pictofixedwidth"');
+		$moreforfilter .= $form->select_dolusers($tmpuser->id > 0 ? $tmpuser->id : '', 'search_user_id', $langs->trans("TasksAssignedTo"), null, 0, '', '');
 		$moreforfilter .= '</div>';
 	}
 	if ($moreforfilter) {

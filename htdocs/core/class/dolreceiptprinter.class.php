@@ -61,6 +61,7 @@
  * <dol_value_month>                                Replaced by month number
  * <dol_value_day>                                  Replaced by day number
  * <dol_value_day_letters>                          Replaced by day number
+ * <dol_value_currentdate>                          Replaced by current date
  * <dol_object_id>                                  Replaced by object id
  * <dol_object_ref>                                 Replaced by object ref
  * <dol_value_customer_firstname>                   Replaced by customer firstname
@@ -186,6 +187,7 @@ class dolReceiptPrinter extends Printer
 			'dol_value_month' => 'DOL_VALUE_MONTH',
 			'dol_value_day' => 'DOL_VALUE_DAY',
 			'dol_value_day_letters' => 'DOL_VALUE_DAY',
+			'dol_value_currentdate' => 'DOL_VALUE_CURRENTDATE',
 			'dol_print_payment' => 'DOL_PRINT_PAYMENT',
 			'dol_print_logo' => 'DOL_PRINT_LOGO',
 			'dol_print_logo_old' => 'DOL_PRINT_LOGO_OLD',
@@ -221,6 +223,7 @@ class dolReceiptPrinter extends Printer
 			'dol_value_mysoc_idprof6' => 'ProfId6',
 			'dol_value_mysoc_tva_intra' => 'VATIntra',
 			'dol_value_mysoc_capital' => 'Capital',
+			'dol_value_mysoc_url' => 'Web',
 			'dol_value_vendor_lastname' => 'VendorLastname',
 			'dol_value_vendor_firstname' => 'VendorFirstname',
 			'dol_value_vendor_mail' => 'VendorEmail',
@@ -239,9 +242,9 @@ class dolReceiptPrinter extends Printer
 		$error = 0;
 		$line = 0;
 		$obj = array();
-		$sql = 'SELECT rowid, name, fk_type, fk_profile, parameter';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.'printer_receipt';
-		$sql .= ' WHERE entity = '.$conf->entity;
+		$sql = "SELECT rowid, name, fk_type, fk_profile, parameter";
+		$sql .= " FROM ".$this->db->prefix()."printer_receipt";
+		$sql .= " WHERE entity = ".$conf->entity;
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -307,9 +310,9 @@ class dolReceiptPrinter extends Printer
 		$error = 0;
 		$line = 0;
 		$obj = array();
-		$sql = 'SELECT rowid, name, template';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.'printer_receipt_template';
-		$sql .= ' WHERE entity = '.$conf->entity;
+		$sql = "SELECT rowid, name, template";
+		$sql .= " FROM ".$this->db->prefix()."printer_receipt_template";
+		$sql .= " WHERE entity = ".$conf->entity;
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -388,7 +391,7 @@ class dolReceiptPrinter extends Printer
 	{
 		global $conf;
 		$error = 0;
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."printer_receipt";
+		$sql = "INSERT INTO ".$this->db->prefix()."printer_receipt";
 		$sql .= " (name, fk_type, fk_profile, parameter, entity)";
 		$sql .= " VALUES ('".$this->db->escape($name)."', ".((int) $type).", ".((int) $profile).", '".$this->db->escape($parameter)."', ".((int) $conf->entity).")";
 		$resql = $this->db->query($sql);
@@ -414,7 +417,7 @@ class dolReceiptPrinter extends Printer
 		global $conf;
 		$error = 0;
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."printer_receipt";
+		$sql = "UPDATE ".$this->db->prefix()."printer_receipt";
 		$sql .= " SET name='".$this->db->escape($name)."'";
 		$sql .= ", fk_type=".((int) $type);
 		$sql .= ", fk_profile=".((int) $profile);
@@ -439,7 +442,7 @@ class dolReceiptPrinter extends Printer
 	{
 		global $conf;
 		$error = 0;
-		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'printer_receipt';
+		$sql = 'DELETE FROM '.$this->db->prefix().'printer_receipt';
 		$sql .= ' WHERE rowid='.((int) $printerid);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
@@ -460,7 +463,7 @@ class dolReceiptPrinter extends Printer
 	{
 		global $conf;
 		$error = 0;
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."printer_receipt_template";
+		$sql = "INSERT INTO ".$this->db->prefix()."printer_receipt_template";
 		$sql .= " (name, template, entity) VALUES ('".$this->db->escape($name)."'";
 		$sql .= ", '".$this->db->escape($template)."', ".$conf->entity.")";
 		$resql = $this->db->query($sql);
@@ -481,7 +484,7 @@ class dolReceiptPrinter extends Printer
 	{
 		global $conf;
 		$error = 0;
-		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'printer_receipt_template';
+		$sql = 'DELETE FROM '.$this->db->prefix().'printer_receipt_template';
 		$sql .= " WHERE rowid = ".((int) $templateid);
 		$sql .= " AND entity = ".$conf->entity;
 		$resql = $this->db->query($sql);
@@ -505,7 +508,7 @@ class dolReceiptPrinter extends Printer
 		global $conf;
 		$error = 0;
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."printer_receipt_template";
+		$sql = "UPDATE ".$this->db->prefix()."printer_receipt_template";
 		$sql .= " SET name='".$this->db->escape($name)."'";
 		$sql .= ", template='".$this->db->escape($template)."'";
 		$sql .= " WHERE rowid=".((int) $templateid);
@@ -584,6 +587,7 @@ class dolReceiptPrinter extends Printer
 		$this->template = str_replace('{dol_value_month}', dol_print_date($object->date, '%m'), $this->template);
 		$this->template = str_replace('{dol_value_day}', dol_print_date($object->date, '%d'), $this->template);
 		$this->template = str_replace('{dol_value_day_letters}', $langs->trans("Day".dol_print_date($object->date, '%m')[1]), $this->template);
+		$this->template = str_replace('{dol_value_currentdate}', dol_print_date(dol_now(), 'dayhour'), $this->template);
 
 		$this->template = str_replace('{dol_value_customer_firstname}', $object->thirdparty->firstname, $this->template);
 		$this->template = str_replace('{dol_value_customer_lastname}', $object->thirdparty->lastname, $this->template);
@@ -607,6 +611,7 @@ class dolReceiptPrinter extends Printer
 		$this->template = str_replace('{dol_value_mysoc_idprof6}', $mysoc->idprof6, $this->template);
 		$this->template = str_replace('{dol_value_mysoc_tva_intra}', $mysoc->tva_intra, $this->template);
 		$this->template = str_replace('{dol_value_mysoc_capital}', $mysoc->capital, $this->template);
+		$this->template = str_replace('{dol_value_mysoc_url}', $mysoc->url, $this->template);
 
 		$this->template = str_replace('{dol_value_vendor_firstname}', $user->firstname, $this->template);
 		$this->template = str_replace('{dol_value_vendor_lastname}', $user->lastname, $this->template);
@@ -637,14 +642,14 @@ class dolReceiptPrinter extends Printer
 					case 'DOL_PRINT_OBJECT_LINES':
 						foreach ($object->lines as $line) {
 							if ($line->fk_product) {
-								$spacestoadd = $nbcharactbyline - strlen($line->ref) - strlen($line->qty) - 10 - 1;
+								$spacestoadd = $nbcharactbyline - strlen($line->ref) - strlen($line->qty) - strlen($line->subprice) - 10 - 1;
 								$spaces = str_repeat(' ', $spacestoadd > 0 ? $spacestoadd : 0);
-								$this->printer->text($line->ref.$spaces.$line->qty.' '.str_pad(price($line->total_ttc), 10, ' ', STR_PAD_LEFT)."\n");
-								$this->printer->text(strip_tags(htmlspecialchars_decode($line->product_label))."\n");
+								$this->printer->text($line->ref . $spaces . $line->qty . str_pad(price($line->subprice), 10, ' ', STR_PAD_LEFT) . ' ' . str_pad(price($line->total_ttc), 10, ' ', STR_PAD_LEFT) . "\n");
+								$this->printer->text(strip_tags(htmlspecialchars_decode($line->product_label))."\n \n");
 							} else {
-								$spacestoadd = $nbcharactbyline - strlen($line->description) - strlen($line->qty) - 10 - 1;
+								$spacestoadd = $nbcharactbyline - strlen($line->description) - strlen($line->qty) - strlen($line->subprice) - 10 - 1;
 								$spaces = str_repeat(' ', $spacestoadd > 0 ? $spacestoadd : 0);
-								$this->printer->text($line->description.$spaces.$line->qty.' '.str_pad(price($line->total_ttc), 10, ' ', STR_PAD_LEFT)."\n");
+								$this->printer->text($line->description.$spaces.$line->qty.' '.str_pad(price($line->subprice), 10, ' ', STR_PAD_LEFT).' '.str_pad(price($line->total_ttc), 10, ' ', STR_PAD_LEFT)."\n");
 							}
 						}
 						break;
@@ -672,9 +677,9 @@ class dolReceiptPrinter extends Printer
 							$vatarray[$line->tva_tx] += $line->total_tva;
 						}
 						foreach ($vatarray as $vatkey => $vatvalue) {
-							 $spacestoadd = $nbcharactbyline - strlen($vatkey) - 12;
-							 $spaces = str_repeat(' ', $spacestoadd > 0 ? $spacestoadd : 0);
-							 $this->printer->text($spaces.$vatkey.'% '.str_pad(price($vatvalue), 10, ' ', STR_PAD_LEFT)."\n");
+							$spacestoadd = $nbcharactbyline - strlen($vatkey) - 12;
+							$spaces = str_repeat(' ', $spacestoadd > 0 ? $spacestoadd : 0);
+							$this->printer->text($spaces.$vatkey.'% '.str_pad(price($vatvalue), 10, ' ', STR_PAD_LEFT)."\n");
 						}
 						break;
 					case 'DOL_PRINT_OBJECT_TAX1':
@@ -802,8 +807,8 @@ class dolReceiptPrinter extends Printer
 					case 'DOL_PRINT_PAYMENT':
 						$sql = "SELECT p.pos_change as pos_change, p.datep as date, p.fk_paiement, p.num_paiement as num, pf.amount as amount, pf.multicurrency_amount,";
 						$sql .= " cp.code";
-						$sql .= " FROM ".MAIN_DB_PREFIX."paiement_facture as pf, ".MAIN_DB_PREFIX."paiement as p";
-						$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as cp ON p.fk_paiement = cp.id";
+						$sql .= " FROM ".$this->db->prefix()."paiement_facture as pf, ".$this->db->prefix()."paiement as p";
+						$sql .= " LEFT JOIN ".$this->db->prefix()."c_paiement as cp ON p.fk_paiement = cp.id";
 						$sql .= " WHERE pf.fk_paiement = p.rowid AND pf.fk_facture = ".((int) $object->id);
 						$sql .= " ORDER BY p.datep";
 						$resql = $this->db->query($sql);
@@ -829,7 +834,7 @@ class dolReceiptPrinter extends Printer
 						}
 						break;
 					case 'DOL_VALUE_PLACE':
-							$sql = "SELECT floor, label FROM ".MAIN_DB_PREFIX."takepos_floor_tables where rowid=".((int) str_replace(")", "", str_replace("(PROV-POS".$_SESSION["takeposterminal"]."-", "", $object->ref)));
+							$sql = "SELECT floor, label FROM ".$this->db->prefix()."takepos_floor_tables where rowid=".((int) str_replace(")", "", str_replace("(PROV-POS".$_SESSION["takeposterminal"]."-", "", $object->ref)));
 							$resql = $this->db->query($sql);
 							$obj = $this->db->fetch_object($resql);
 						if ($obj) {
@@ -868,10 +873,10 @@ class dolReceiptPrinter extends Printer
 	{
 		global $conf;
 		$error = 0;
-		$sql = 'SELECT template';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.'printer_receipt_template';
-		$sql .= ' WHERE rowid = '.((int) $templateid);
-		$sql .= ' AND entity = '.$conf->entity;
+		$sql = "SELECT template";
+		$sql .= " FROM ".$this->db->prefix()."printer_receipt_template";
+		$sql .= " WHERE rowid = ".((int) $templateid);
+		$sql .= " AND entity = ".$conf->entity;
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_array($resql);
@@ -905,10 +910,10 @@ class dolReceiptPrinter extends Printer
 			return;
 		}
 		$error = 0;
-		$sql = 'SELECT rowid, name, fk_type, fk_profile, parameter';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.'printer_receipt';
-		$sql .= ' WHERE rowid = '.((int) $printerid);
-		$sql .= ' AND entity = '.((int) $conf->entity);
+		$sql = "SELECT rowid, name, fk_type, fk_profile, parameter";
+		$sql .= " FROM ".$this->db->prefix()."printer_receipt";
+		$sql .= " WHERE rowid = ".((int) $printerid);
+		$sql .= " AND entity = ".((int) $conf->entity);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_array($resql);

@@ -46,8 +46,8 @@ $optioncss = GETPOST('optionscss', 'alphanohtml');
 $mode = GETPOST('mode', 'aZ09') ? GETPOST('mode', 'aZ09') : 'createform'; // 'createform', 'filters', 'sortorder', 'focus'
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -64,7 +64,7 @@ if (!$sortorder) {
 
 $defaulturl = GETPOST('defaulturl', 'alphanohtml');
 $defaultkey = GETPOST('defaultkey', 'alphanohtml');
-$defaultvalue = GETPOST('defaultvalue', 'none');
+$defaultvalue = GETPOST('defaultvalue', 'restricthtml');
 
 $defaulturl = preg_replace('/^\//', '', $defaulturl);
 
@@ -101,7 +101,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$defaulturl = '';
 	$defaultkey = '';
 	$defaultvalue = '';
-	$toselect = '';
+	$toselect = array();
 	$search_array_options = array();
 }
 

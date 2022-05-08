@@ -69,7 +69,7 @@ if (empty($reshook)) {
 
 // Set label
 if ($action == 'setlabel' && ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer)) {
-	$object->label = $_POST['label'];
+	$object->label = GETPOST('label');
 	$result = $object->update($user);
 	if ($result < 0) {
 		dol_print_error($db);

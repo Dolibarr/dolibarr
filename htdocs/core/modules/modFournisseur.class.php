@@ -129,6 +129,25 @@ class modFournisseur extends DolibarrModules
 			6=>array('file'=>'box_supplier_orders_awaiting_reception.php', 'enabledbydefaulton'=>'Home'),
 		);
 
+		$arraydate = dol_getdate(dol_now());
+		$datestart = dol_mktime(23, 0, 0, $arraydate['mon'], $arraydate['mday'], $arraydate['year']);
+		$this->cronjobs = array(
+			0 => array(
+				'label'=>'RecurringSupplierInvoicesJob',
+				'jobtype'=>'method',
+				'class'=>'fourn/class/fournisseur.facture-rec.class.php',
+				'objectname'=>'FactureFournisseurRec',
+				'method'=>'createRecurringInvoices',
+				'parameters'=>'',
+				'comment'=>'Generate recurring supplier invoices',
+				'frequency'=>1,
+				'unitfrequency'=>3600 * 24,
+				'priority'=>51,
+				'status'=>1,
+				'datestart'=>$datestart
+			));
+
+
 		// Permissions
 		$this->rights = array();
 		$this->rights_class = 'fournisseur';
@@ -293,7 +312,8 @@ class modFournisseur extends DolibarrModules
 			'f.rowid'=>"InvoiceId", 'f.ref'=>"InvoiceRef", 'f.ref_supplier'=>"RefSupplier", 'f.datec'=>"InvoiceDateCreation", 'f.datef'=>"DateInvoice", 'f.date_lim_reglement'=>'DateMaxPayment',
 			'f.total_ht'=>"TotalHT", 'f.total_ttc'=>"TotalTTC", 'f.total_tva'=>"TotalVAT", 'f.paye'=>"InvoicePaid", 'f.fk_statut'=>'InvoiceStatus', 'f.note_public'=>"InvoiceNote",
 			'fd.rowid'=>'LineId', 'fd.description'=>"LineDescription", 'fd.tva_tx'=>"LineVATRate", 'fd.qty'=>"LineQty", 'fd.remise_percent'=>"Discount", 'fd.total_ht'=>"LineTotalHT",
-			'fd.total_ttc'=>"LineTotalTTC", 'fd.tva'=>"LineTotalVAT", 'fd.product_type'=>'TypeOfLineServiceOrProduct', 'fd.fk_product'=>'ProductId',
+			'fd.total_ttc'=>"LineTotalTTC", 'fd.tva'=>"LineTotalVAT", 'fd.date_start'=>"DateStart", 'fd.date_end'=>"DateEnd", 'fd.special_code'=>'SpecialCode',
+			'fd.product_type'=>'TypeOfLineServiceOrProduct', 'fd.fk_product'=>'ProductId',
 			'p.ref'=>'ProductRef', 'p.label'=>'ProductLabel', 'p.accountancy_code_buy'=>'ProductAccountancyBuyCode', 'project.rowid'=>'ProjectId',
 			'project.ref'=>'ProjectRef', 'project.title'=>'ProjectLabel'
 		);
@@ -314,7 +334,8 @@ class modFournisseur extends DolibarrModules
 			's.nom'=>'Text', 'ps.nom'=>'Text', 's.address'=>'Text', 's.zip'=>'Text', 's.town'=>'Text', 'c.code'=>'Text', 's.phone'=>'Text', 's.siren'=>'Text', 's.siret'=>'Text', 's.ape'=>'Text', 's.idprof4'=>'Text', 's.idprof5'=>'Text', 's.idprof6'=>'Text',
 			's.code_compta'=>'Text', 's.code_compta_fournisseur'=>'Text', 's.tva_intra'=>'Text', 'f.ref'=>"Text", 'f.ref_supplier'=>"Text", 'f.datec'=>"Date", 'f.datef'=>"Date", 'f.date_lim_reglement'=>'Date',
 			'f.total_ht'=>"Numeric", 'f.total_ttc'=>"Numeric", 'f.total_tva'=>"Numeric", 'f.paye'=>"Boolean", 'f.fk_statut'=>'Status', 'f.note_public'=>"Text", 'fd.description'=>"Text", 'fd.tva_tx'=>"Text",
-			'fd.qty'=>"Numeric", 'fd.total_ht'=>"Numeric", 'fd.total_ttc'=>"Numeric", 'fd.tva'=>"Numeric", 'fd.product_type'=>'Numeric', 'fd.fk_product'=>'List:product:label',
+			'fd.qty'=>"Numeric", 'fd.total_ht'=>"Numeric", 'fd.total_ttc'=>"Numeric", 'fd.tva'=>"Numeric", 'fd.date_start'=>"Date", 'fd.date_end'=>"Date", 'fd.special_code'=>"Numeric",
+			'fd.product_type'=>'Numeric', 'fd.fk_product'=>'List:product:label',
 			'p.ref'=>'Text', 'p.label'=>'Text', 'project.ref'=>'Text', 'project.title'=>'Text'
 		);
 		$this->export_entities_array[$r] = array(
@@ -322,7 +343,8 @@ class modFournisseur extends DolibarrModules
 			's.ape'=>'company', 's.idprof4'=>'company', 's.idprof5'=>'company', 's.idprof6'=>'company', 's.code_compta'=>'company', 's.code_compta_fournisseur'=>'company', 's.tva_intra'=>'company', 'f.rowid'=>"invoice",
 			'f.ref'=>"invoice", 'f.ref_supplier'=>"invoice", 'f.datec'=>"invoice", 'f.datef'=>"invoice", 'f.date_lim_reglement'=>'invoice', 'f.total_ht'=>"invoice", 'f.total_ttc'=>"invoice", 'f.total_tva'=>"invoice",
 			'f.paye'=>"invoice", 'f.fk_statut'=>'invoice', 'f.note_public'=>"invoice", 'fd.rowid'=>'invoice_line', 'fd.description'=>"invoice_line", 'fd.tva_tx'=>"invoice_line", 'fd.qty'=>"invoice_line",
-			'fd.remise_percent'=>"invoice_line", 'fd.total_ht'=>"invoice_line", 'fd.total_ttc'=>"invoice_line", 'fd.tva'=>"invoice_line", 'fd.product_type'=>'invoice_line', 'fd.fk_product'=>'product',
+			'fd.remise_percent'=>"invoice_line", 'fd.total_ht'=>"invoice_line", 'fd.total_ttc'=>"invoice_line", 'fd.tva'=>"invoice_line", 'fd.date_start'=>"invoice_line", 'fd.date_end'=>"invoice_line", 'fd.special_code'=>"invoice_line",
+			'fd.product_type'=>'invoice_line', 'fd.fk_product'=>'product',
 			'p.ref'=>'product', 'p.label'=>'product', 'p.accountancy_code_buy'=>'product', 'project.rowid'=>'project', 'project.ref'=>'project', 'project.title'=>'project'
 		);
 		$this->export_dependencies_array[$r] = array('invoice_line'=>'fd.rowid', 'product'=>'fd.rowid'); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them
@@ -432,7 +454,8 @@ class modFournisseur extends DolibarrModules
 			'f.total_ht'=>"TotalHT", 'f.total_ttc'=>"TotalTTC", 'f.total_tva'=>"TotalVAT", 'f.fk_statut'=>'Status', 'f.date_valid'=>'DateValidation', 'f.date_approve'=>'DateApprove', 'f.date_approve2'=>'DateApprove2',
 			'f.note_public'=>"NotePublic", 'f.note_private'=>"NotePrivate", 'uv.login'=>'UserValidation', 'ua1.login'=>'ApprovedBy', 'ua2.login'=>'ApprovedBy2', 'fd.rowid'=>'LineId', 'fd.description'=>"LineDescription",
 			'fd.tva_tx'=>"LineVATRate", 'fd.qty'=>"LineQty", 'fd.remise_percent'=>"Discount", 'fd.total_ht'=>"LineTotalHT", 'fd.total_ttc'=>"LineTotalTTC",
-			'fd.total_tva'=>"LineTotalVAT", 'fd.product_type'=>'TypeOfLineServiceOrProduct', 'fd.ref'=>'RefSupplier', 'fd.fk_product'=>'ProductId',
+			'fd.total_tva'=>"LineTotalVAT", 'fd.date_start'=>"DateStart", 'fd.date_end'=>"DateEnd", 'fd.special_code'=>'SpecialCode',
+			'fd.product_type'=>'TypeOfLineServiceOrProduct', 'fd.ref'=>'RefSupplier', 'fd.fk_product'=>'ProductId',
 			'p.ref'=>'ProductRef', 'p.label'=>'ProductLabel', 'project.rowid'=>'ProjectId', 'project.ref'=>'ProjectRef', 'project.title'=>'ProjectLabel'
 		);
 		if (!empty($conf->multicurrency->enabled)) {
@@ -452,13 +475,15 @@ class modFournisseur extends DolibarrModules
 			'f.date_creation'=>"Date", 'f.date_commande'=>"Date", 'f.date_livraison'=>"Date", 'f.total_ht'=>"Numeric", 'f.total_ttc'=>"Numeric", 'f.total_tva'=>"Numeric",
 			'f.fk_statut'=>'Status', 'f.date_valid'=>'Date', 'f.date_approve'=>'Date', 'f.date_approve2'=>'Date', 'f.note_public'=>"Text", 'f.note_private'=>"Text", 'fd.description'=>"Text",
 			'fd.tva_tx'=>"Numeric", 'fd.qty'=>"Numeric", 'fd.remise_percent'=>"Numeric", 'fd.total_ht'=>"Numeric", 'fd.total_ttc'=>"Numeric", 'fd.total_tva'=>"Numeric",
+			'fd.date_start'=>"Date", 'fd.date_end'=>"Date", 'fd.special_code'=>"Numeric",
 			'fd.product_type'=>'Numeric', 'fd.ref'=>'Text', 'fd.fk_product'=>'List:product:label', 'p.ref'=>'Text', 'p.label'=>'Text', 'project.ref'=>'Text', 'project.title'=>'Text'
 		);
 		$this->export_entities_array[$r] = array(
 			's.rowid'=>"company", 's.nom'=>'company', 'ps.nom'=>'company', 's.address'=>'company', 's.zip'=>'company', 's.town'=>'company', 'c.code'=>'company', 's.phone'=>'company', 's.siren'=>'company',
 			's.siret'=>'company', 's.ape'=>'company', 's.idprof4'=>'company', 's.idprof5'=>'company', 's.idprof6'=>'company', 's.tva_intra'=>'company', 'uv.login'=>'user', 'ua1.login'=>'user',
 			'ua2.login'=>'user', 'fd.rowid'=>'order_line', 'fd.description'=>"order_line", 'fd.tva_tx'=>"order_line", 'fd.qty'=>"order_line", 'fd.remise_percent'=>"order_line",
-			'fd.total_ht'=>"order_line", 'fd.total_ttc'=>"order_line", 'fd.total_tva'=>"order_line", 'fd.product_type'=>'order_line', 'fd.ref'=>'order_line', 'fd.fk_product'=>'product',
+			'fd.total_ht'=>"order_line", 'fd.total_ttc'=>"order_line", 'fd.total_tva'=>"order_line", 'fd.date_start'=>"order_line", 'fd.date_end'=>"order_line", 'fd.special_code'=>"order_line",
+			'fd.product_type'=>'order_line', 'fd.ref'=>'order_line', 'fd.fk_product'=>'product',
 			'p.ref'=>'product', 'p.label'=>'product', 'project.rowid'=>'project', 'project.ref'=>'project', 'project.title'=>'project'
 		);
 		$this->export_dependencies_array[$r] = array('order_line'=>'fd.rowid', 'product'=>'fd.rowid'); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them
@@ -541,7 +566,7 @@ class modFournisseur extends DolibarrModules
 		}
 		// Add extra fields
 		$import_extrafield_sample = array();
-		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'facture_fourn' AND entity IN (0, ".$conf->entity.")";
+		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE type <> 'separate' AND elementtype = 'facture_fourn' AND entity IN (0, ".$conf->entity.")";
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			while ($obj = $this->db->fetch_object($resql)) {
@@ -587,7 +612,13 @@ class modFournisseur extends DolibarrModules
 		$this->import_examplevalues_array[$r] = array_merge($import_sample, $import_extrafield_sample);
 		$this->import_updatekeys_array[$r] = array('f.ref' => 'Ref');
 		$this->import_convertvalue_array[$r] = array(
-			//'c.ref'=>array('rule'=>'getrefifauto'),
+			'f.ref' => array(
+				'rule'=>'getrefifauto',
+				'class'=>(empty($conf->global->INVOICE_SUPPLIER_ADDON_NUMBER) ? 'mod_facture_fournisseur_cactus' : $conf->global->INVOICE_SUPPLIER_ADDON_NUMBER),
+				'path'=>"/core/modules/supplier_invoice/".(empty($conf->global->INVOICE_SUPPLIER_ADDON_NUMBER) ? 'mod_facture_fournisseur_cactus' : $conf->global->INVOICE_SUPPLIER_ADDON_NUMBER).'.php',
+				'classobject'=>'FactureFournisseur',
+				'pathobject'=>'/fourn/class/fournisseur.facture.class.php',
+			),
 			'f.fk_soc' => array('rule' => 'fetchidfromref', 'file' => '/societe/class/societe.class.php', 'class' => 'Societe', 'method' => 'fetch', 'element' => 'ThirdParty'),
 			'f.fk_account' => array('rule' => 'fetchidfromref', 'file' => '/compta/bank/class/account.class.php', 'class' => 'Account', 'method' => 'fetch', 'element' => 'bank_account'),
 		);
@@ -601,9 +632,8 @@ class modFournisseur extends DolibarrModules
 		$this->import_tables_array[$r] = array('fd' => MAIN_DB_PREFIX.'facture_fourn_det', 'extra' => MAIN_DB_PREFIX.'facture_fourn_det_extrafields');
 		$this->import_fields_array[$r] = array(
 			'fd.fk_facture_fourn' => 'InvoiceRef*',
-			'fd.fk_parent_line' => 'FacParentLine',
+			'fd.fk_parent_line' => 'ParentLine',
 			'fd.fk_product' => 'IdProduct',
-			'fd.label' => 'Label',
 			'fd.description' => 'LineDescription',
 			'fd.pu_ht' => 'PriceUHT',
 			'fd.pu_ttc' => 'PriceUTTC',
@@ -628,7 +658,7 @@ class modFournisseur extends DolibarrModules
 		}
 		// Add extra fields
 		$import_extrafield_sample = array();
-		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'facture_fourn_det' AND entity IN (0, ".$conf->entity.")";
+		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE type <> 'separate' AND elementtype = 'facture_fourn_det' AND entity IN (0, ".$conf->entity.")";
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			while ($obj = $this->db->fetch_object($resql)) {
@@ -645,7 +675,6 @@ class modFournisseur extends DolibarrModules
 			'fd.fk_facture_fourn' => '(PROV001)',
 			'fd.fk_parent_line' => '',
 			'fd.fk_product' => '',
-			'fd.label' => '',
 			'fd.description' => 'Test Product',
 			'fd.pu_ht' => '50000',
 			'fd.pu_ttc' => '50000',
@@ -695,7 +724,6 @@ class modFournisseur extends DolibarrModules
 			'c.source'            => 'Source',
 			'c.fk_statut'         => 'Status*',
 			'c.billed'            => 'Billed(0/1)',
-			'c.remise_percent'    => 'GlobalDiscount',
 			'c.total_tva'         => 'TotalTVA',
 			'c.total_ht'          => 'TotalHT',
 			'c.total_ttc'         => 'TotalTTC',
@@ -717,7 +745,7 @@ class modFournisseur extends DolibarrModules
 
 		// Add extra fields
 		$import_extrafield_sample = array();
-		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'commande_fournisseur' AND entity IN (0, ".$conf->entity.")";
+		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE type <> 'separate' AND elementtype = 'commande_fournisseur' AND entity IN (0, ".$conf->entity.")";
 		$resql = $this->db->query($sql);
 
 		if ($resql) {
@@ -737,6 +765,13 @@ class modFournisseur extends DolibarrModules
 
 		$this->import_updatekeys_array[$r] = array('c.ref' => 'Ref');
 		$this->import_convertvalue_array[$r] = array(
+			'c.ref' => array(
+				'rule'=>'getrefifauto',
+				'class'=>(empty($conf->global->COMMANDE_SUPPLIER_ADDON_NUMBER) ? 'mod_commande_fournisseur_muguet' : $conf->global->COMMANDE_SUPPLIER_ADDON_NUMBER),
+				'path'=>"/core/modules/supplier_order/".(empty($conf->global->COMMANDE_SUPPLIER_ADDON_NUMBER) ? 'mod_commande_fournisseur_muguet' : $conf->global->COMMANDE_SUPPLIER_ADDON_NUMBER).'.php',
+				'classobject'=>'CommandeFournisseur',
+				'pathobject'=>'/fourn/class/fournisseur.commande.class.php',
+			),
 			'c.fk_soc' => array(
 				'rule'    => 'fetchidfromref',
 				'file'    => '/societe/class/societe.class.php',
@@ -763,14 +798,12 @@ class modFournisseur extends DolibarrModules
 		$this->import_tables_array[$r] = array('cd' => MAIN_DB_PREFIX.'commande_fournisseurdet', 'extra' => MAIN_DB_PREFIX.'commande_fournisseurdet_extrafields');
 		$this->import_fields_array[$r] = array(
 			'cd.fk_commande'    => 'PurchaseOrder*',
-			'cd.fk_parent_line' => 'PrParentLine',
+			'cd.fk_parent_line' => 'ParentLine',
 			'cd.fk_product'     => 'IdProduct',
-			'cd.label'          => 'Label',
 			'cd.description'    => 'LineDescription',
 			'cd.tva_tx'         => 'LineVATRate',
 			'cd.qty'            => 'LineQty',
 			'cd.remise_percent' => 'Reduc. Percent',
-			'cd.remise'         => 'Reduc.',
 			'cd.subprice'       => 'Sub Price',
 			'cd.total_ht'       => 'LineTotalHT',
 			'cd.total_tva'      => 'LineTotalVAT',
@@ -793,7 +826,7 @@ class modFournisseur extends DolibarrModules
 		}
 
 		// Add extra fields
-		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'commande_fournisseurdet' AND entity IN (0, ".$conf->entity.")";
+		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE type <> 'separate' AND elementtype = 'commande_fournisseurdet' AND entity IN (0, ".$conf->entity.")";
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			while ($obj = $this->db->fetch_object($resql)) {

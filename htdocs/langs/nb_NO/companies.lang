@@ -157,6 +157,18 @@ ProfId3CL=-
 ProfId4CL=-
 ProfId5CL=-
 ProfId6CL=-
+ProfId1CM=Id. prof. 1 (Trade Register)
+ProfId2CM=Id. prof. 2 (Taxpayer No.)
+ProfId3CM=Id. prof. 3 (Decree of creation)
+ProfId4CM=-
+ProfId5CM=-
+ProfId6CM=-
+ProfId1ShortCM=Trade Register
+ProfId2ShortCM=Taxpayer No.
+ProfId3ShortCM=Decree of creation
+ProfId4ShortCM=-
+ProfId5ShortCM=-
+ProfId6ShortCM=-
 ProfId1CO=Prof ID 1 (RUT)
 ProfId2CO=-
 ProfId3CO=-
@@ -369,7 +381,7 @@ VATIntraCheck=Sjekk
 VATIntraCheckDesc=MVA-ID-en må inneholde landets prefiks. Koblingen <b> %s </b> bruker den europeiske MVA-kontrolltjenesten (VIES) som krever internettilgang fra Dolibarr-serveren.
 VATIntraCheckURL=http://ec.europa.eu/taxation_customs/vies/vieshome.do
 VATIntraCheckableOnEUSite=Sjekk internasjonal MVA-ID på EU-kommisjonens nettsted
-VATIntraManualCheck=Du kan også sjekke manuelt på den Europeiske kommisjonens nettside <a href="%s" target="_blank"> %s </a>
+VATIntraManualCheck=You can also check manually on the European Commission website <a href="%s" target="_blank" rel="noopener noreferrer">%s</a>
 ErrorVATCheckMS_UNAVAILABLE=Sjekk er ikke tilgjengelig. Tjenesten er ikke tilgjengelig for landet (%s).
 NorProspectNorCustomer=Ikke prospekt, eller kunde
 JuridicalStatus=Forretningsenhetstype

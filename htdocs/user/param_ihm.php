@@ -207,6 +207,9 @@ if (!empty($conf->adherent->enabled)) {
 if (!empty($conf->agenda->enabled)) {
 	$tmparray['comm/action/index.php?mainmenu=agenda&leftmenu='] = 'Agenda';
 }
+if (!empty($conf->ticket->enabled)) {
+	$tmparray['ticket/list.php?mainmenu=ticket&leftmenu='] = 'Tickets';
+}
 
 $head = user_prepare_head($object);
 
@@ -235,7 +238,7 @@ if ($action == 'edit') {
 
 
 	if (!empty($conf->use_javascript_ajax)) {
-		print '<script type="text/javascript" language="javascript">
+		print '<script type="text/javascript">
         jQuery(document).ready(function() {
         	function init_myfunc()
         	{

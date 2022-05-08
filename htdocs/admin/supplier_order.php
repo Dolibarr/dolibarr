@@ -43,6 +43,8 @@ if (!$user->admin) {
 
 $type = GETPOST('type', 'alpha');
 $value = GETPOST('value', 'alpha');
+$modulepart = GETPOST('modulepart', 'aZ09');	// Used by actions_setmoduleoptions.inc.php
+
 $label = GETPOST('label', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $scandir = GETPOST('scan_dir', 'alpha');

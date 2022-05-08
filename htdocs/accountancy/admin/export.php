@@ -24,7 +24,7 @@
 /**
  * \file 		htdocs/accountancy/admin/export.php
  * \ingroup 	Accountancy (Double entries)
- * \brief 		Setup page to configure accounting expert module
+ * \brief 		Setup page to configure accounting export module
  */
 require '../../main.inc.php';
 
@@ -142,7 +142,7 @@ $linkback = '';
 print load_fiche_titre($langs->trans('ExportOptions'), $linkback, 'accountancy');
 
 
-print "\n".'<script type="text/javascript" language="javascript">'."\n";
+print "\n".'<script type="text/javascript">'."\n";
 print 'jQuery(document).ready(function () {'."\n";
 print '    function initfields()'."\n";
 print '    {'."\n";

@@ -799,7 +799,7 @@ class modProduct extends DolibarrModules
 
 			// Add extra fields
 			$import_extrafield_sample = array();
-			$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'product_fournisseur_price' AND entity IN (0, ".$conf->entity.")";
+			$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE type <> 'separate' AND  elementtype = 'product_fournisseur_price' AND entity IN (0, ".$conf->entity.")";
 			$resql = $this->db->query($sql);
 			if ($resql) {    // This can fail when class is used on old database (during migration for example)
 				while ($obj = $this->db->fetch_object($resql)) {
@@ -857,7 +857,7 @@ class modProduct extends DolibarrModules
 			}
 			if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) {
 				$this->import_examplevalues_array[$r] = array_merge($this->import_examplevalues_array[$r], array(
-					'sp.packagning'=>'1',
+					'sp.packaging'=>'10',
 				));
 			}
 

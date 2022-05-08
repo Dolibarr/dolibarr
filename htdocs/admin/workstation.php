@@ -36,6 +36,7 @@ $langs->loadLangs(array("admin", "workstation"));
 // Parameters
 $action = GETPOST('action', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
+$modulepart = GETPOST('modulepart', 'aZ09');	// Used by actions_setmoduleoptions.inc.php
 
 $value = GETPOST('value', 'alpha');
 
@@ -294,7 +295,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 
 								print '<td class="center">';
 								$constforvar = 'WORKSTATION_'.strtoupper($myTmpObjectKey).'_ADDON';
-								if ($conf->global->$constforvar == $file) {
+								if (getDolGlobalString($constforvar) == $file) {
 									print img_picto($langs->trans("Activated"), 'switch_on');
 								} else {
 									print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&object='.strtolower($myTmpObjectKey).'&value='.urlencode($file).'">';
@@ -436,7 +437,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 										// Default
 										print '<td class="center">';
 										$constforvar = 'WORKSTATION_'.strtoupper($myTmpObjectKey).'_ADDON';
-										if ($conf->global->$constforvar == $name) {
+										if (getDolGlobalString($constforvar) == $name) {
 											print img_picto($langs->trans("Default"), 'on');
 										} else {
 											print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;token='.newToken().'&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';

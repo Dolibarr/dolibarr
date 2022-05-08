@@ -234,7 +234,7 @@ class Ldap
 					}
 				}
 
-				if (is_resource($this->connection)) {
+				if (is_resource($this->connection) ||  is_object($this->connection)) {
 					// Upgrade connexion to TLS, if requested by the configuration
 					if (!empty($conf->global->LDAP_SERVER_USE_TLS)) {
 						// For test/debug
@@ -325,7 +325,8 @@ class Ldap
 	 */
 	public function close()
 	{
-		if ($this->connection && !@ldap_close($this->connection)) {
+		$r_type = get_resource_type($this->connection);
+		if ($this->connection && ($r_type === "Unknown" || !@ldap_close($this->connection))) {
 			return false;
 		} else {
 			return true;

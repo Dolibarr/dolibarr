@@ -324,8 +324,8 @@ class pdf_espadon extends ModelePdfExpedition
 
 				$tab_top = 90;
 				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD) ? 42 + $top_shift: 10);
-				$tab_height = 130;
-				$tab_height_newpage = 150;
+
+				$tab_height = $this->page_hauteur - $tab_top - $heightforfooter - $heightforfreetext;
 
 				$this->posxdesc = $this->marge_gauche + 1;
 
@@ -334,7 +334,7 @@ class pdf_espadon extends ModelePdfExpedition
 				if (!empty($conf->incoterm->enabled)) {
 					$desc_incoterms = $object->getIncotermsForPDF();
 					if ($desc_incoterms) {
-						$tab_top = 88;
+						$tab_top -= 2;
 
 						$pdf->SetFont('', '', $default_font_size - 1);
 						$pdf->writeHTMLCell(190, 3, $this->posxdesc - 1, $tab_top - 1, dol_htmlentitiesbr($desc_incoterms), 0, 1);
@@ -562,7 +562,7 @@ class pdf_espadon extends ModelePdfExpedition
 
 
 						if (!empty($this->cols['photo']) && isset($imglinesize['width']) && isset($imglinesize['height'])) {
-							$pdf->Image($realpatharray[$i], $this->getColumnContentXStart('photo'), $curY, $imglinesize['width'], $imglinesize['height'], '', '', '', 2, 300); // Use 300 dpi
+							$pdf->Image($realpatharray[$i], $this->getColumnContentXStart('photo'), $curY + 1, $imglinesize['width'], $imglinesize['height'], '', '', '', 2, 300); // Use 300 dpi
 							// $pdf->Image does not increase value return by getY, so we save it manually
 							$posYAfterImage = $curY + $imglinesize['height'];
 						}

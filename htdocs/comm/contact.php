@@ -88,7 +88,7 @@ if (empty($user->rights->societe->client->voir) && !$socid) {
 $sql .= " ".MAIN_DB_PREFIX."socpeople as p";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = p.fk_soc";
 $sql .= " WHERE s.fk_stcomm = st.id";
-$sql .= " AND p.entity IN (".getEntity('socpeople').")";
+$sql .= " AND p.entity IN (".getEntity('contact').")";
 if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
@@ -157,10 +157,10 @@ if ($resql) {
 		print '<tr class="oddeven">';
 		print '<td><a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$obj->cidp.'&socid='.$obj->rowid.'">'.img_object($langs->trans("ShowContact"), "contact");
 		print '</a>&nbsp;<a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$obj->cidp.'&socid='.$obj->rowid.'">'.$obj->name.'</a></td>';
-		print "<td>$obj->firstname</TD>";
+		print '<td>'.dol_escape_htmltag($obj->firstname).'</td>';
 
 		print '<td><a href="'.$_SERVER["PHP_SELF"].'?type='.$type.'&socid='.$obj->rowid.'">'.img_object($langs->trans("ShowCompany"), "company").'</a>&nbsp;';
-		print "<a href=\"".$urlfiche."?socid=".$obj->rowid."\">$obj->name</a></td>\n";
+		print '<a href="'.$urlfiche."?socid=".$obj->rowid.'">'.$obj->name."</a></td>\n";
 
 		print '<td>'.dol_print_phone($obj->email, $obj->cidp, $obj->rowid, 'AC_EMAIL').'</td>';
 

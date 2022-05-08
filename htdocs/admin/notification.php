@@ -1,9 +1,10 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2015 Laurent Destailleur  <eldy@users.sourceforge.org>
- * Copyright (C) 2013      Juanjo Menent		    <jmenent@2byte.es>
+ * Copyright (C) 2013      Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2015      Bahfir Abbes         <contact@dolibarrpar.org>
  * Copyright (C) 2020      Thibault FOUCART     <suport@ptibogxiv.net>
+ * Copyright (C) 2022      Anthony Berton     	<anthony.berton@bb2a.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -205,6 +206,18 @@ print '</td>';
 print '</tr>';
 
 print '<tr class="oddeven"><td>';
+print $langs->trans("NotificationDisableConfirmMessageContact").'</td>';
+print '<td>';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('NOTIFICATION_EMAIL_DISABLE_CONFIRM_MESSAGE_CONTACT');
+} else {
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	print $form->selectarray("NOTIFICATION_EMAIL_DISABLE_CONFIRM_MESSAGE_CONTACT", $arrval, $conf->global->NOTIFICATION_EMAIL_DISABLE_CONFIRM_MESSAGE_CONTACT);
+}
+print '</td>';
+print '</tr>';
+
+print '<tr class="oddeven"><td>';
 print $langs->trans("NotificationDisableConfirmMessageUser").'</td>';
 print '<td>';
 if ($conf->use_javascript_ajax) {
@@ -215,6 +228,7 @@ if ($conf->use_javascript_ajax) {
 }
 print '</td>';
 print '</tr>';
+
 print '<tr class="oddeven"><td>';
 print $langs->trans("NotificationDisableConfirmMessageFix").'</td>';
 print '<td>';
@@ -241,79 +255,70 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="settemplates">';
 
 // Notification per contacts
-$title = $langs->trans("ListOfNotificationsPerUser");
-if (!empty($conf->societe->enabled)) {
-	$title = $langs->trans("ListOfNotificationsPerUserOrContact");
-}
-print load_fiche_titre($title, '', '');
+$title = $langs->trans("TemplatesForNotifications");
+
+print load_fiche_titre($title, '', 'email');
 
 // Load array of available notifications
 $notificationtrigger = new InterfaceNotification($db);
 $listofnotifiedevents = $notificationtrigger->getListOfManagedEvents();
 
+// Editing global variables not related to a specific theme
+$constantes = array();
+foreach ($listofnotifiedevents as $notifiedevent) {
+	$label = $langs->trans("Notify_".$notifiedevent['code']); //!=$langs->trans("Notify_".$notifiedevent['code'])?$langs->trans("Notify_".$notifiedevent['code']):$notifiedevent['label'];
+	$elementLabel = $langs->trans(ucfirst($notifiedevent['elementtype']));
 
-if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
-	// Editing global variables not related to a specific theme
-	$constantes = array();
-	foreach ($listofnotifiedevents as $notifiedevent) {
-		$label = $langs->trans("Notify_".$notifiedevent['code']); //!=$langs->trans("Notify_".$notifiedevent['code'])?$langs->trans("Notify_".$notifiedevent['code']):$notifiedevent['label'];
-		$elementLabel = $langs->trans(ucfirst($notifiedevent['elementtype']));
+	$model = $notifiedevent['elementtype'];
 
-		if ($notifiedevent['elementtype'] == 'order_supplier') {
-			$elementLabel = $langs->trans('SupplierOrder');
-		} elseif ($notifiedevent['elementtype'] == 'propal') {
-			$elementLabel = $langs->trans('Proposal');
-		} elseif ($notifiedevent['elementtype'] == 'facture') {
-			$elementLabel = $langs->trans('Bill');
-		} elseif ($notifiedevent['elementtype'] == 'commande') {
-			$elementLabel = $langs->trans('Order');
-		} elseif ($notifiedevent['elementtype'] == 'ficheinter') {
-			$elementLabel = $langs->trans('Intervention');
-		} elseif ($notifiedevent['elementtype'] == 'shipping') {
-			$elementLabel = $langs->trans('Shipping');
-		} elseif ($notifiedevent['elementtype'] == 'expensereport' || $notifiedevent['elementtype'] == 'expense_report') {
-			$elementLabel = $langs->trans('ExpenseReport');
-		}
-
-		if ($notifiedevent['elementtype'] == 'propal') {
-			$model = 'propal_send';
-		} elseif ($notifiedevent['elementtype'] == 'commande') {
-			$model = 'order_send';
-		} elseif ($notifiedevent['elementtype'] == 'facture') {
-			$model = 'facture_send';
-		} elseif ($notifiedevent['elementtype'] == 'shipping') {
-			$model = 'shipping_send';
-		} elseif ($notifiedevent['elementtype'] == 'ficheinter') {
-			$model = 'fichinter_send';
-		} elseif ($notifiedevent['elementtype'] == 'expensereport') {
-			$model = 'expensereport_send';
-		} elseif ($notifiedevent['elementtype'] == 'order_supplier') {
-			$model = 'order_supplier_send';
-			// } elseif ($notifiedevent['elementtype'] == 'invoice_supplier') $model = 'invoice_supplier_send';
-		} elseif ($notifiedevent['elementtype'] == 'member') {
-			$model = 'member';
-		}
-
-		$constantes[$notifiedevent['code'].'_TEMPLATE'] = array('type'=>'emailtemplate:'.$model, 'label'=>$label);
+	if ($notifiedevent['elementtype'] == 'order_supplier') {
+		$elementLabel = $langs->trans('SupplierOrder');
+	} elseif ($notifiedevent['elementtype'] == 'propal') {
+		$elementLabel = $langs->trans('Proposal');
+	} elseif ($notifiedevent['elementtype'] == 'facture') {
+		$elementLabel = $langs->trans('Bill');
+	} elseif ($notifiedevent['elementtype'] == 'commande') {
+		$elementLabel = $langs->trans('Order');
+	} elseif ($notifiedevent['elementtype'] == 'ficheinter') {
+		$elementLabel = $langs->trans('Intervention');
+	} elseif ($notifiedevent['elementtype'] == 'shipping') {
+		$elementLabel = $langs->trans('Shipping');
+	} elseif ($notifiedevent['elementtype'] == 'expensereport' || $notifiedevent['elementtype'] == 'expense_report') {
+		$elementLabel = $langs->trans('ExpenseReport');
 	}
 
-	$helptext = '';
-	form_constantes($constantes, 3, $helptext, 'EmailTemplate');
-
-	print '<div class="opacitymedium">';
-	print '* '.$langs->trans("GoOntoUserCardToAddMore").'<br>';
-	if (!empty($conf->societe->enabled)) {
-		print '** '.$langs->trans("GoOntoContactCardToAddMore").'<br>';
+	if ($notifiedevent['elementtype'] == 'propal') {
+		$model = 'propal_send';
+	} elseif ($notifiedevent['elementtype'] == 'commande') {
+		$model = 'order_send';
+	} elseif ($notifiedevent['elementtype'] == 'facture') {
+		$model = 'facture_send';
+	} elseif ($notifiedevent['elementtype'] == 'shipping') {
+		$model = 'shipping_send';
+	} elseif ($notifiedevent['elementtype'] == 'ficheinter') {
+		$model = 'fichinter_send';
+	} elseif ($notifiedevent['elementtype'] == 'expensereport') {
+		$model = 'expensereport_send';
+	} elseif ($notifiedevent['elementtype'] == 'order_supplier') {
+		$model = 'order_supplier_send';
+		// } elseif ($notifiedevent['elementtype'] == 'invoice_supplier') $model = 'invoice_supplier_send';
+	} elseif ($notifiedevent['elementtype'] == 'member') {
+		$model = 'member';
 	}
-	print '</div>';
 
-	print $form->buttonsSaveCancel("Save", '');
+	$constantes[$notifiedevent['code'].'_TEMPLATE'] = array('type'=>'emailtemplate:'.$model, 'label'=>$label);
+}
+
+$helptext = '';
+form_constantes($constantes, 3, $helptext, 'EmailTemplate');
+
+print $form->buttonsSaveCancel("Save", '');
+
+/*
 } else {
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Label").'</td>';
-	/*print '<td>'.$langs->trans("Code").'</td>';
-	print '<td>'.$langs->trans("Label").'</td>';*/
 	//print '<td class="right">'.$langs->trans("NbOfTargetedContacts").'</td>';
 	print "</tr>\n";
 
@@ -359,6 +364,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
 	}
 	print '</div>';
 }
+*/
 
 print '</form>';
 
@@ -371,7 +377,15 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="setfixednotif">';
 print '<input type="hidden" name="page_y" value="">';
 
-print load_fiche_titre($langs->trans("ListOfFixedNotifications"), '', '');
+print load_fiche_titre($langs->trans("ListOfFixedNotifications"), '', 'email');
+
+print '<div class="info">';
+print $langs->trans("Note").':<br>';
+print '* '.$langs->trans("GoOntoUserCardToAddMore").'<br>';
+if (!empty($conf->societe->enabled)) {
+	print '** '.$langs->trans("GoOntoContactCardToAddMore").'<br>';
+}
+print '</div>';
 
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
@@ -487,8 +501,6 @@ foreach ($listofnotifiedevents as $notifiedevent) {
 	print '</tr>';
 }
 print '</table>';
-
-print '<br>';
 
 print $form->buttonsSaveCancel("Save", '');
 

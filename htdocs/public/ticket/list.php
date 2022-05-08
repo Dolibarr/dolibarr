@@ -40,6 +40,13 @@ if (!defined('NOBROWSERNOTIF')) {
 }
 // If this page is public (can be called outside logged session)
 
+// For MultiCompany module.
+// Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
+$entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
+if (is_numeric($entity)) {
+	define("DOLENTITY", $entity);
+}
+
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/ticket/class/actions_ticket.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formticket.class.php';
@@ -69,6 +76,9 @@ if (isset($_SESSION['email_customer'])) {
 }
 
 $object = new Ticket($db);
+
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('ticketpubliclist', 'globalcard'));
 
 if (empty($conf->ticket->enabled)) {
 	accessforbidden('', 0, 0, 1);
@@ -154,10 +164,6 @@ if ($action == "view_ticketlist") {
 	}
 }
 
-//$object->doActions($action);
-
-
-
 /*
  * View
  */
@@ -215,6 +221,9 @@ if ($action == "view_ticketlist") {
 
 		$filter = array();
 		$param = 'action=view_ticketlist';
+		if (!empty($entity) && !empty($conf->multicompany->enabled)) {
+			$param .= '&entity='.$entity;
+		}
 
 		// Definition of fields for list
 		$arrayfields = array(
@@ -240,7 +249,7 @@ if ($action == "view_ticketlist") {
 		);
 
 		// Extra fields
-		if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
+		if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 			foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
 				if ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate') {
 					$arrayfields["ef.".$key] = array('label' => $extrafields->attributes[$object->table_element]['label'][$key], 'checked' => ($extrafields->attributes[$object->table_element]['list'][$key] < 0) ? 0 : 1, 'position' => $extrafields->attributes[$object->table_element]['pos'][$key], 'enabled' =>(abs($extrafields->attributes[$object->table_element]['list'][$key]) != 3) && $extrafields->attributes[$object->table_element]['perms'][$key]);
@@ -288,8 +297,8 @@ if ($action == "view_ticketlist") {
 
 		require DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
-		$sortfield = GETPOST("sortfield", 'alpha');
-		$sortorder = GETPOST("sortorder", 'alpha');
+		$sortfield = GETPOST('sortfield', 'aZ09comma');
+		$sortorder = GETPOST('sortorder', 'aZ09comma');
 
 		if (!$sortfield) {
 			$sortfield = 't.datec';
@@ -333,7 +342,7 @@ if ($action == "view_ticketlist") {
 		$sql .= " t.tms,";
 		$sql .= " type.label as type_label, category.label as category_label, severity.label as severity_label";
 		// Add fields for extrafields
-		if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
+		if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 			foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
 				$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
 			}
@@ -392,7 +401,7 @@ if ($action == "view_ticketlist") {
 				print_barre_liste($langs->trans('TicketList'), $page, 'public/list.php', $param, $sortfield, $sortorder, '', $num, $num_total, 'ticket');
 
 				// Search bar
-				print '<form method="get" action="'.$url_form.'" id="searchFormList" >'."\n";
+				print '<form method="POST" action="'.$_SERVER['PHP_SELF'].(!empty($entity) && !empty($conf->multicompany->enabled)?'?entity='.$entity:'').'" id="searchFormList" >'."\n";
 				print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 				print '<input type="hidden" name="action" value="view_ticketlist">';
 				print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
@@ -400,6 +409,11 @@ if ($action == "view_ticketlist") {
 
 				$varpage = empty($contextpage) ? $url_page_current : $contextpage;
 				$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
+
+				// allow to display information before list
+				$parameters=array('arrayfields'=>$arrayfields);
+				$reshook=$hookmanager->executeHooks('printFieldListHeader', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
+				print $hookmanager->resPrint;
 
 				print '<table class="liste '.($moreforfilter ? "listwithfilterbefore" : "").'">';
 
@@ -641,7 +655,7 @@ if ($action == "view_ticketlist") {
 					}
 
 					// Extra fields
-					if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
+					if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 						foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
 							if (!empty($arrayfields["ef.".$key]['checked'])) {
 								print '<td';
@@ -674,7 +688,7 @@ if ($action == "view_ticketlist") {
 				print '</table>';
 				print '</form>';
 
-				print '<form method="post" id="form_view_ticket" name="form_view_ticket" enctype="multipart/form-data" action="'.dol_buildpath('/public/ticket/view.php', 1).'" style="display:none;">';
+				print '<form method="post" id="form_view_ticket" name="form_view_ticket" action="'.dol_buildpath('/public/ticket/view.php', 1).(!empty($entity) && !empty($conf->multicompany->enabled)?'?entity='.$entity:'').'" style="display:none;">';
 				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="action" value="view_ticket">';
 				print '<input type="hidden" name="btn_view_ticket_list" value="1">';
@@ -699,7 +713,7 @@ if ($action == "view_ticketlist") {
 	print '<br>';
 
 	print '<div id="form_view_ticket">';
-	print '<form method="post" name="form_view_ticketlist"  enctype="multipart/form-data" action="'.$_SERVER['PHP_SELF'].'">';
+	print '<form method="post" name="form_view_ticketlist" action="'.$_SERVER['PHP_SELF'].(!empty($entity) && !empty($conf->multicompany->enabled)?'?entity='.$entity:'').'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="view_ticketlist">';
 	//print '<input type="hidden" name="search_fk_status" value="non_closed">';

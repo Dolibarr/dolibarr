@@ -196,7 +196,8 @@ if ($action == 'add' && !$cancel) {
 	}
 	$object->amount = $amount;
 	$object->label = GETPOST("label", 'alpha');
-	$object->note = GETPOST("note", 'none');
+	$object->note = GETPOST("note", 'restricthtml');
+	$object->note_private = GETPOST("note", 'restricthtml');
 
 	if (empty($object->datep)) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DatePayment")), null, 'errors');
@@ -236,7 +237,7 @@ if ($action == 'add' && !$cancel) {
 			$paiement->amounts      = array($object->id=>$amount); // Tableau de montant
 			$paiement->paiementtype = GETPOST("type_payment", 'alphanohtml');
 			$paiement->num_payment  = GETPOST("num_payment", 'alphanohtml');
-			$paiement->note = GETPOST("note", 'none');
+			$paiement->note = GETPOST("note", 'restricthtml');
 
 			if (!$error) {
 				$paymentid = $paiement->create($user, (int) GETPOST('closepaidtva'));
@@ -306,7 +307,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes') {
 }
 
 if ($action == 'update' && !GETPOST("cancel") && $user->rights->tax->charges->creer) {
-	$amount = price2num(GETPOST('amount'));
+	$amount = price2num(GETPOST('amount', 'alpha'), 'MT');
 
 	if (empty($amount)) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Amount")), null, 'errors');
@@ -317,7 +318,7 @@ if ($action == 'update' && !GETPOST("cancel") && $user->rights->tax->charges->cr
 	} else {
 		$result = $object->fetch($id);
 
-		$object->amount		= price2num($amount);
+		$object->amount	= $amount;
 
 		$result = $object->update($user);
 		if ($result <= 0) {
@@ -339,8 +340,8 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->rights->tax->char
 	$object->fetch($id);
 
 	if ($object->id > 0) {
-		$object->paye = 0;
 		$object->id = $object->ref = null;
+		$object->paye = 0;
 
 		if (GETPOST('clone_label', 'alphanohtml')) {
 			$object->label = GETPOST('clone_label', 'alphanohtml');
@@ -401,7 +402,7 @@ if ($action == 'create') {
 	print load_fiche_titre($langs->trans("VAT").' - '.$langs->trans("New"));
 
 	if (!empty($conf->use_javascript_ajax)) {
-		print "\n".'<script type="text/javascript" language="javascript">';
+		print "\n".'<script type="text/javascript">';
 		print /** @lang JavaScript */'
 			$(document).ready(function () {
 				let onAutoCreatePaiementChange = function () {
@@ -459,7 +460,7 @@ if ($action == 'create') {
 	print '</div>';
 
 	print '</td>';
-	//print "<br>\n";
+	print "</tr>\n";
 
 	// Label
 	if ($refund == 1) {
@@ -467,7 +468,7 @@ if ($action == 'create') {
 	} else {
 		$label = $langs->trans("VATPayment");
 	}
-	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td><td><input class="minwidth300" name="label" id="label" value="'.($_POST["label"] ?GETPOST("label", '', 2) : $label).'" autofocus></td></tr>';
+	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td><td><input class="minwidth300" name="label" id="label" value="'.(GETPOSTISSET("label") ? GETPOST("label", '', 2) : $label).'" autofocus></td></tr>';
 
 	print '<tr><td class="titlefieldcreate fieldrequired">'.$form->textwithpicto($langs->trans("PeriodEndDate"), $langs->trans("LastDayTaxIsRelatedTo")).'</td><td>';
 	print $form->selectDate((GETPOST("datevmonth", 'int') ? $datev : -1), "datev", '', '', '', 'add', 1, 1);
@@ -489,14 +490,15 @@ if ($action == 'create') {
 
 	// Type payment
 	print '<tr><td class="fieldrequired" id="label_type_payment">'.$langs->trans("PaymentMode").'</td><td>';
-	$form->select_types_paiements(GETPOST("type_payment"), "type_payment");
+	$form->select_types_paiements(GETPOST("type_payment", 'int'), "type_payment", '', 0, 1, 0, 0, 1, 'maxwidth500 widthcentpercentminusx');
 	print "</td>\n";
 	print "</tr>";
 
 	if (!empty($conf->banque->enabled)) {
+		// Bank account
 		print '<tr><td class="fieldrequired" id="label_fk_account">'.$langs->trans("BankAccount").'</td><td>';
 		print img_picto('', 'bank_account', 'pictofixedwidth');
-		$form->select_comptes(GETPOST("accountid", 'int'), "accountid", 0, "courant=1", 1); // List of bank account available
+		$form->select_comptes(GETPOST("accountid", 'int'), "accountid", 0, "courant=1", 1, '', 0, 'maxwidth500 widthcentpercentminusx'); // List of bank account available
 		print '</td></tr>';
 	}
 
@@ -508,7 +510,7 @@ if ($action == 'create') {
 	// Comments
 	print '<tr class="hide_if_no_auto_create_payment">';
 	print '<td class="tdtop">'.$langs->trans("Comments").'</td>';
-	print '<td class="tdtop"><textarea name="note" wrap="soft" cols="60" rows="'.ROWS_3.'">'.GETPOST('note', 'restricthtml').'</textarea></td>';
+	print '<td class="tdtop"><textarea name="note" wrap="soft" rows="'.ROWS_3.'" class="quatrevingtpercent">'.GETPOST('note', 'restricthtml').'</textarea></td>';
 	print '</tr>';
 
 	// Other attributes
@@ -535,7 +537,7 @@ if ($action == 'create') {
 }
 
 // View mode
-if ($id) {
+if ($id > 0) {
 	$head = vat_prepare_head($object);
 
 	$totalpaye = $object->getSommePaiement();
@@ -705,7 +707,8 @@ if ($id) {
 				$objp = $db->fetch_object($resql);
 
 				print '<tr class="oddeven"><td>';
-				print '<a href="'.DOL_URL_ROOT.'/compta/payment_vat/card.php?id='.$objp->rowid.'">'.img_object($langs->trans("Payment"), "payment").' '.$objp->rowid.'</a></td>';
+				print '<a href="'.DOL_URL_ROOT.'/compta/payment_vat/card.php?id='.$objp->rowid.'">'.img_object($langs->trans("Payment"), "payment").' '.$objp->rowid.'</a>';
+				print '</td>';
 				print '<td>'.dol_print_date($db->jdate($objp->dp), 'day')."</td>\n";
 				$labeltype = $langs->trans("PaymentType".$objp->type_code) != ("PaymentType".$objp->type_code) ? $langs->trans("PaymentType".$objp->type_code) : $objp->paiement_type;
 				print "<td>".$labeltype.' '.$objp->num_payment."</td>\n";
@@ -768,7 +771,7 @@ if ($id) {
 	if ($action == 'edit') {
 		print $form->buttonsSaveCancel();
 
-		print "</form>";
+		print "</form>\n";
 	}
 
 

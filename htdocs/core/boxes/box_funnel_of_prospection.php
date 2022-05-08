@@ -219,7 +219,7 @@ class box_funnel_of_prospection extends ModeleBoxes
 						if (!$conf->use_javascript_ajax) {
 							$stringtoprint .= '<tr class="oddeven">';
 							$stringtoprint .= '<td>'.$labelStatus.'</td>';
-							$stringtoprint .= '<td class="right"><a href="list.php?statut='.$status.'">'.price((isset($valsamount[$status]) ? (float) $valsamount[$status] : 0), 0, '', 1, -1, -1, $conf->currency).'</a></td>';
+							$stringtoprint .= '<td class="nowraponall right amount"><a href="list.php?statut='.$status.'">'.price((isset($valsamount[$status]) ? (float) $valsamount[$status] : 0), 0, '', 1, -1, -1, $conf->currency).'</a></td>';
 							$stringtoprint .= "</tr>\n";
 						}
 					}
@@ -237,7 +237,7 @@ class box_funnel_of_prospection extends ModeleBoxes
 					$dolgraph->setBorderColor(array_values($bordercolorseries));
 					$dolgraph->setShowLegend(2);
 					if (!empty($conf->dol_optimize_smallscreen)) {
-						$px1->SetWidth(320);
+						$dolgraph->SetWidth(320);
 					}
 					$dolgraph->setShowPercent(1);
 					$dolgraph->setMirrorGraphValues(true);
@@ -277,7 +277,7 @@ class box_funnel_of_prospection extends ModeleBoxes
 				);
 				$this->info_box_contents[$line][] = array(
 					'tr' => 'class="oddeven"',
-					'td' => 'class="right "',
+					'td' => 'class="nowraponall right amount"',
 					'maxlength' => 500,
 					'text' => price($totalamount, 0, '', 1, -1, -1, $conf->currency)
 				);
@@ -290,7 +290,7 @@ class box_funnel_of_prospection extends ModeleBoxes
 
 				);
 				$this->info_box_contents[$line][] = array(
-					'td' => 'class="right "',
+					'td' => 'class="nowraponall right amount"',
 					'maxlength' => 500,
 					'text' => price(price2num($ponderated_opp_amount, 'MT'), 0, '', 1, -1, -1, $conf->currency)
 				);

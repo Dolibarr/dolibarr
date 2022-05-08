@@ -43,8 +43,6 @@ $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'web
 $backtopage = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
 $optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 
-$search_status = GETPOST('search_status');
-
 // Security check
 $id = GETPOST('id', 'int') ?GETPOST('id', 'int') : GETPOST('socid', 'int');
 if ($user->socid) {
@@ -53,8 +51,8 @@ if ($user->socid) {
 $result = restrictedArea($user, 'societe', $socid, '&societe');
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -146,7 +144,7 @@ if (empty($reshook)) {
 		foreach ($objectwebsiteaccount->fields as $key => $val) {
 			$search[$key] = '';
 		}
-		$toselect = '';
+		$toselect = array();
 		$search_array_options = array();
 	}
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')
@@ -159,7 +157,7 @@ if (empty($reshook)) {
 	$objectlabel = 'WebsiteAccount';
 	$permissiontoread = $user->rights->societe->lire;
 	$permissiontodelete = $user->rights->societe->supprimer;
-	$uploaddir = $conf->societe->dir_output;
+	$uploaddir = $conf->societe->multidir_output[$object->entity];
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
@@ -275,7 +273,7 @@ $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $obje
 $sql .= $hookmanager->resPrint;
 $sql = preg_replace('/, $/', '', $sql);
 $sql .= " FROM ".MAIN_DB_PREFIX."societe_account as t";
-if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
+if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (t.rowid = ef.fk_object)";
 }
 if ($objectwebsiteaccount->ismultientitymanaged == 1) {
@@ -470,7 +468,7 @@ print '</tr>'."\n";
 
 // Detect if we need a fetch on each output line
 $needToFetchEachLine = 0;
-if (is_array($extrafields->attributes[$object->table_element]['computed']) && count($extrafields->attributes[$object->table_element]['computed']) > 0) {
+if (isset($extrafields->attributes[$object->table_element]['computed']) && is_array($extrafields->attributes[$object->table_element]['computed']) && count($extrafields->attributes[$object->table_element]['computed']) > 0) {
 	foreach ($extrafields->attributes[$object->table_element]['computed'] as $key => $val) {
 		if (preg_match('/\$object/', $val)) {
 			$needToFetchEachLine++; // There is at least one compute field that use $object

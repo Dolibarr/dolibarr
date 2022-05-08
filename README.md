@@ -4,6 +4,7 @@
 ![Build status](https://img.shields.io/travis/Dolibarr/dolibarr/develop.svg)
 [![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%205.6-8892BF.svg?style=flat-square)](https://php.net/)
 [![GitHub release](https://img.shields.io/github/v/release/Dolibarr/dolibarr)](https://github.com/Dolibarr/dolibarr)
+[![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/5521/badge)](https://bestpractices.coreinfrastructure.org/projects/5521)
 
 Dolibarr ERP & CRM is a modern software package that helps manage your organization's activity (contacts, suppliers, invoices, orders, stocks, agenda…).
 
@@ -110,7 +111,7 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 
 - Customers/Prospects + Contacts management
 - Opportunities or Leads management
-- Commercial proposals management
+- Commercial proposals management (online signing)
 - Customer Orders management
 - Contracts/Subscription management
 - Interventions management
@@ -128,11 +129,11 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 - Supplier Invoices/credit notes and payment management
 - INCOTERMS
 
- Finance / Accounting
+ Finance/Accounting
 
-- Invoices / Payments
+- Invoices/Payments
 - Bank accounts management
-- Direct debit orders management (European SEPA)
+- Direct debit and Credit transfer management (European SEPA)
 - Accounting management
 - Donations management
 - Loan management
@@ -141,14 +142,14 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 
  Collaboration
 
-- Shared calendar/agenda (with ical and vcal export for third party tools integration)
+- Shared calendar/agenda (with ical and vcal import/export for third party tools integration)
 - Projects & Tasks management
 - Ticket System
 - Surveys
 
  HR
 
-- Employee's leave requests management
+- Employee's leaves management
 - Expense reports
 - Recruitment management
 - Timesheets
@@ -156,16 +157,14 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 ### Other application/modules
 
 - Electronic Document Management (EDM)
-- Bookmarks management
+- Bookmarks
 - Reporting
 - Data export/import
 - Barcodes
-- Margin calculations
 - LDAP connectivity
 - ClickToDial integration
 - Mass emailing
 - RSS integration
-- Skype integration
 - Social platforms linking
 - Payment platforms integration (PayPal, Stripe, Paybox...)
 - Email-Collector
@@ -174,13 +173,12 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 
 ### Other general features
 
-- Localization in most major languages
-- Multi-Language Support
+- Multi-Language Support (Localization in most major languages)
 - Multi-Users and groups with finely grained rights
 - Multi-Currency
 - Multi-Company (by adding of an external module)
 - Very user friendly and easy to use
-- customizable Dashboard
+- Customizable dashboards
 - Highly customizable: enable only the modules you need, add user personalized fields, choose your skin, several menu managers (can be used by internal users as a back-office with a particular menu, or by external users as a front-office with another one)
 - APIs (REST, SOAP)
 - Code that is easy to understand, maintain and develop (PHP with no heavy framework; trigger and hook architecture)
@@ -190,8 +188,9 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
   - Canadian double taxes (federal/province) and other countries using cumulative VAT
   - Tunisian tax stamp
   - Argentina invoice numbering using A,B,C...
+  - ZATCA e-invoicing QR-Code
   - Compatible with [European directives](https://europa.eu/legislation_summaries/taxation/l31057_en.htm) (2006/112/CE ... 2010/45/UE)
-  - Compatible with European GDPR rules
+  - Compatible with data privacy rules (europe GDPR, ...)
   - ...
 - Flexible PDF & ODT generation for invoices, proposals, orders...
 - ...
@@ -243,6 +242,7 @@ Follow Dolibarr project on:
 - [Facebook](https://www.facebook.com/dolibarr)
 - [Twitter](https://www.twitter.com/dolibarr)
 - [LinkedIn](https://www.linkedin.com/company/association-dolibarr)
+- [Reddit](https://www.reddit.com/r/Dolibarr_ERP_CRM/)
 - [YouTube](https://www.youtube.com/user/DolibarrERPCRM)
 - [GitHub](https://github.com/Dolibarr/dolibarr)
 

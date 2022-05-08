@@ -7,6 +7,7 @@
  * Copyright (C) 2015       Jean-François Ferry		<jfefe@aternatik.fr>
  * Copyright (C) 2018    	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2021		Frédéric France			<frederic.france@netlogic.fr>
+ * Copyright (C) 2022		Charlène Benke			<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -148,7 +149,7 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 if (GETPOST('cancel', 'alpha')) {
 	$action = 'list'; $massaction = '';
 }
-if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend' && $massaction != 'confirm_createbills') {
+if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
 	$massaction = '';
 }
 
@@ -170,7 +171,7 @@ if (empty($reshook)) {
 		$search_contrat_ref = "";
 		$search_desc = "";
 		$search_status = "";
-		$toselect = '';
+		$toselect = array();
 		$search_array_options = array();
 	}
 
@@ -245,7 +246,7 @@ if (!empty($conf->projet->enabled)) {
 if (!empty($conf->contrat->enabled)) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."contrat as c on f.fk_contrat = c.rowid";
 }
-if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
+if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (f.rowid = ef.fk_object)";
 }
 if (empty($conf->global->FICHINTER_DISABLE_DETAILS) && $atleastonefieldinlines) {
@@ -665,7 +666,7 @@ if ($resql) {
 			}
 		}
 		if (!empty($arrayfields['f.description']['checked'])) {
-			print '<td>'.dol_trunc(dolGetFirstLineOfText($obj->description), 48).'</td>';
+			print '<td>'.dol_trunc(dolGetFirstLineOfText(dol_string_nohtmltag($obj->description, 1)), 48).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -722,7 +723,7 @@ if ($resql) {
 		}
 		// Fields of detail of line
 		if (!empty($arrayfields['fd.description']['checked'])) {
-			print '<td>'.dolGetFirstLineOfText($obj->descriptiondetail).'</td>';
+			print '<td>'.dol_trunc(dolGetFirstLineOfText(dol_string_nohtmltag($obj->descriptiondetail, 1)), 48).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -739,6 +740,7 @@ if ($resql) {
 				$totalarray['nbfield']++;
 			}
 			if (!$i) {
+				$totalarray['type'][$totalarray['nbfield']] = 'duration';
 				$totalarray['pos'][$totalarray['nbfield']] = 'fd.duree';
 			}
 			$totalarray['val']['fd.duree'] += $obj->duree;

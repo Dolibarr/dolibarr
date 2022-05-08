@@ -41,6 +41,13 @@ if (!defined('NOBROWSERNOTIF')) {
 }
 // If this page is public (can be called outside logged session)
 
+// For MultiCompany module.
+// Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
+$entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
+if (is_numeric($entity)) {
+	define("DOLENTITY", $entity);
+}
+
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/ticket/class/actions_ticket.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formticket.class.php';
@@ -163,7 +170,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 		if ($object->dao->close($user)) {
 			setEventMessages($langs->trans('TicketMarkedAsClosed'), null, 'mesgs');
 
-			$url = 'view.php?action=view_ticket&track_id='.GETPOST('track_id', 'alpha');
+			$url = 'view.php?action=view_ticket&track_id='.GETPOST('track_id', 'alpha').(!empty($entity) && !empty($conf->multicompany->enabled)?'&entity='.$entity:'');
 			header("Location: ".$url);
 			exit;
 		} else {
@@ -175,8 +182,6 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 	if (!$error && $action == "add_message" && $display_ticket && GETPOSTISSET('btn_add_message')) {
 		// TODO Add message...
 		$ret = $object->dao->newMessage($user, $action, 0, 1);
-
-
 
 
 		if (!$error) {
@@ -229,7 +234,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 	if ($display_ticket) {
 		// Confirmation close
 		if ($action == 'close') {
-			print $form->formconfirm($_SERVER["PHP_SELF"]."?track_id=".$track_id, $langs->trans("CloseATicket"), $langs->trans("ConfirmCloseAticket"), "confirm_public_close", '', '', 1);
+			print $form->formconfirm($_SERVER["PHP_SELF"]."?track_id=".$track_id.(!empty($entity) && !empty($conf->multicompany->enabled)?'&entity='.$entity:''), $langs->trans("CloseATicket"), $langs->trans("ConfirmCloseAticket"), "confirm_public_close", '', '', 1);
 		}
 
 		print '<div id="form_view_ticket" class="margintoponly">';
@@ -341,7 +346,8 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 			$formticket->track_id = $object->dao->track_id;
 			$formticket->id = $object->dao->id;
 
-			$formticket->param = array('track_id' => $object->dao->track_id, 'fk_user_create' => '-1', 'returnurl' => DOL_URL_ROOT.'/public/ticket/view.php');
+			$formticket->param = array('track_id' => $object->dao->track_id, 'fk_user_create' => '-1',
+									   'returnurl' => DOL_URL_ROOT.'/public/ticket/view.php'.(!empty($entity) && !empty($conf->multicompany->enabled)?'?entity='.$entity:''));
 
 			$formticket->withfile = 2;
 			$formticket->withcancel = 1;
@@ -350,7 +356,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 		}
 
 		if ($action != 'presend') {
-			print '<form method="post" id="form_view_ticket_list" name="form_view_ticket_list" enctype="multipart/form-data" action="'.DOL_URL_ROOT.'/public/ticket/list.php">';
+			print '<form method="post" id="form_view_ticket_list" name="form_view_ticket_list" action="'.DOL_URL_ROOT.'/public/ticket/list.php'.(!empty($entity) && !empty($conf->multicompany->enabled)?'?entity='.$entity:'').'">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="view_ticketlist">';
 			print '<input type="hidden" name="track_id" value="'.$object->dao->track_id.'">';
@@ -365,11 +371,11 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 
 			if ($object->dao->fk_statut < Ticket::STATUS_CLOSED) {
 				// New message
-				print '<div class="inline-block divButAction"><a  class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=presend&mode=init&track_id='.$object->dao->track_id.'">'.$langs->trans('AddMessage').'</a></div>';
+				print '<div class="inline-block divButAction"><a  class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=presend&mode=init&track_id='.$object->dao->track_id.(!empty($entity) && !empty($conf->multicompany->enabled)?'&entity='.$entity:'').'">'.$langs->trans('AddMessage').'</a></div>';
 
 				// Close ticket
 				if ($object->dao->fk_statut >= Ticket::STATUS_NOT_READ && $object->dao->fk_statut < Ticket::STATUS_CLOSED) {
-					print '<div class="inline-block divButAction"><a  class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=close&track_id='.$object->dao->track_id.'">'.$langs->trans('CloseTicket').'</a></div>';
+					print '<div class="inline-block divButAction"><a  class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=close&track_id='.$object->dao->track_id.(!empty($entity) && !empty($conf->multicompany->enabled)?'&entity='.$entity:'').'">'.$langs->trans('CloseTicket').'</a></div>';
 				}
 			}
 
@@ -380,13 +386,13 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 		print load_fiche_titre($langs->trans('TicketMessagesList'), '', 'conversation');
 		$object->viewTicketMessages(false, true, $object->dao);
 	} else {
-		print '<div class="error">Not Allowed<br><a href="'.$_SERVER['PHP_SELF'].'?track_id='.$object->dao->track_id.'" rel="nofollow noopener">'.$langs->trans('Back').'</a></div>';
+		print '<div class="error">Not Allowed<br><a href="'.$_SERVER['PHP_SELF'].'?track_id='.$object->dao->track_id.(!empty($entity) && !empty($conf->multicompany->enabled)?'?entity='.$entity:'').'" rel="nofollow noopener">'.$langs->trans('Back').'</a></div>';
 	}
 } else {
 	print '<div class="center opacitymedium margintoponly marginbottomonly">'.$langs->trans("TicketPublicMsgViewLogIn").'</div>';
 
 	print '<div id="form_view_ticket">';
-	print '<form method="post" name="form_view_ticket"  enctype="multipart/form-data" action="'.$_SERVER['PHP_SELF'].'">';
+	print '<form method="post" name="form_view_ticket" action="'.$_SERVER['PHP_SELF'].(!empty($entity) && !empty($conf->multicompany->enabled)?'?entity='.$entity:'').'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="view_ticket">';
 

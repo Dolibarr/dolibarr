@@ -480,7 +480,7 @@ class Dolresource extends CommonObject
 	 *  @param	array		$filter    	  filter output
 	 *  @return int          	<0 if KO, >0 if OK
 	 */
-	public function fetch_all($sortorder, $sortfield, $limit, $offset, $filter = '')
+	public function fetchAll($sortorder, $sortfield, $limit, $offset, $filter = '')
 	{
 		// phpcs:enable
 		global $conf;
@@ -497,7 +497,7 @@ class Dolresource extends CommonObject
 		$sql .= " t.fk_code_type_resource,";
 		$sql .= " t.tms,";
 		// Add fields from extrafields
-		if (!empty($extrafields->attributes[$this->table_element]['label'])) {
+		if (!empty($extrafields->attributes[$this->table_element]) && !empty($extrafields->attributes[$this->table_element]['label'])) {
 			foreach ($extrafields->attributes[$this->table_element]['label'] as $key => $val) {
 				$sql .= ($extrafields->attributes[$this->table_element]['type'][$key] != 'separate' ? "ef.".$key." as options_".$key.', ' : '');
 			}
@@ -557,183 +557,6 @@ class Dolresource extends CommonObject
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
-	}
-
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	 /**
-	  *	Load all objects into $this->lines
-	  *
-	  *  @param	string		$sortorder    sort order
-	  *  @param	string		$sortfield    sort field
-	  *  @param	int			$limit		  limit page
-	  *  @param	int			$offset    	  page
-	  *  @param	array		$filter    	  filter output
-	  *  @return int          	<0 if KO, >0 if OK
-	  */
-	public function fetch_all_resources($sortorder, $sortfield, $limit, $offset, $filter = '')
-	{
-		// phpcs:enable
-		global $conf;
-		$sql = "SELECT ";
-		$sql .= " t.rowid,";
-		$sql .= " t.resource_id,";
-		$sql .= " t.resource_type,";
-		$sql .= " t.element_id,";
-		$sql .= " t.element_type,";
-		$sql .= " t.busy,";
-		$sql .= " t.mandatory,";
-		$sql .= " t.fk_user_create,";
-		$sql .= " t.tms";
-		$sql .= ' FROM '.MAIN_DB_PREFIX.'element_resources as t ';
-		$sql .= " WHERE t.entity IN (".getEntity('resource').")";
-
-		//Manage filter
-		if (!empty($filter)) {
-			foreach ($filter as $key => $value) {
-				if (strpos($key, 'date')) {
-					$sql .= " AND ".$key." = '".$this->db->idate($value)."'";
-				} else {
-					$sql .= " AND ".$key." LIKE '%".$this->db->escape($value)."%'";
-				}
-			}
-		}
-		$sql .= $this->db->order($sortfield, $sortorder);
-		if ($limit) {
-			$sql .= $this->db->plimit($limit + 1, $offset);
-		}
-		dol_syslog(get_class($this)."::fetch_all", LOG_DEBUG);
-
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			$num = $this->db->num_rows($resql);
-			if ($num) {
-				while ($obj = $this->db->fetch_object($resql)) {
-					$line = new Dolresource($this->db);
-					$line->id = $obj->rowid;
-					$line->resource_id = $obj->resource_id;
-					$line->resource_type	= $obj->resource_type;
-					$line->element_id = $obj->element_id;
-					$line->element_type		= $obj->element_type;
-					$line->busy = $obj->busy;
-					$line->mandatory = $obj->mandatory;
-					$line->fk_user_create = $obj->fk_user_create;
-
-					if ($obj->resource_id && $obj->resource_type) {
-						$line->objresource = fetchObjectByElement($obj->resource_id, $obj->resource_type);
-					}
-					if ($obj->element_id && $obj->element_type) {
-						$line->objelement = fetchObjectByElement($obj->element_id, $obj->element_type);
-					}
-					$this->lines[] = $line;
-				}
-				$this->db->free($resql);
-			}
-			return $num;
-		} else {
-			$this->error = $this->db->lasterror();
-			return -1;
-		}
-	}
-
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *	Load all objects into $this->lines
-	 *
-	 *  @param	string		$sortorder    sort order
-	 *  @param	string		$sortfield    sort field
-	 *  @param	int			$limit		  limit page
-	 *  @param	int			$offset    	  page
-	 *  @param	array		$filter    	  filter output
-	 *  @return int          	<0 if KO, >0 if OK
-	 */
-	public function fetch_all_used($sortorder, $sortfield, $limit, $offset = 1, $filter = '')
-	{
-		// phpcs:enable
-		global $conf;
-
-		if (!$sortorder) {
-			$sortorder = "ASC";
-		}
-		if (!$sortfield) {
-			$sortfield = "t.rowid";
-		}
-
-		$sql = "SELECT ";
-		$sql .= " t.rowid,";
-		$sql .= " t.resource_id,";
-		$sql .= " t.resource_type,";
-		$sql .= " t.element_id,";
-		$sql .= " t.element_type,";
-		$sql .= " t.busy,";
-		$sql .= " t.mandatory,";
-		$sql .= " t.fk_user_create,";
-		$sql .= " t.tms";
-		$sql .= ' FROM '.MAIN_DB_PREFIX.'element_resources as t ';
-		$sql .= " WHERE t.entity IN (".getEntity('resource').")";
-
-		//Manage filter
-		if (!empty($filter)) {
-			foreach ($filter as $key => $value) {
-				if (strpos($key, 'date')) {
-					$sql .= " AND ".$key." = '".$this->db->idate($value)."'";
-				} else {
-					$sql .= " AND ".$key." LIKE '%".$this->db->escape($value)."%'";
-				}
-			}
-		}
-		$sql .= $this->db->order($sortfield, $sortorder);
-		if ($limit) {
-			$sql .= $this->db->plimit($limit + 1, $offset);
-		}
-		dol_syslog(get_class($this)."::fetch_all", LOG_DEBUG);
-
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			$num = $this->db->num_rows($resql);
-			if ($num) {
-				$this->lines = array();
-				while ($obj = $this->db->fetch_object($resql)) {
-					$line = new Dolresource($this->db);
-					$line->id = $obj->rowid;
-					$line->resource_id = $obj->resource_id;
-					$line->resource_type	= $obj->resource_type;
-					$line->element_id = $obj->element_id;
-					$line->element_type		= $obj->element_type;
-					$line->busy = $obj->busy;
-					$line->mandatory = $obj->mandatory;
-					$line->fk_user_create = $obj->fk_user_create;
-
-					$this->lines[] = fetchObjectByElement($obj->resource_id, $obj->resource_type);
-				}
-				$this->db->free($resql);
-			}
-			return $num;
-		} else {
-			$this->error = $this->db->lasterror();
-			return -1;
-		}
-	}
-
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 * Fetch all resources available, declared by modules
-	 * Load available resource in array $this->available_resources
-	 *
-	 * @return int 	number of available resources declared by modules
-	 * @deprecated, remplaced by hook getElementResources
-	 * @see getElementResources()
-	 */
-	public function fetch_all_available()
-	{
-		// phpcs:enable
-		global $conf;
-
-		if (!empty($conf->modules_parts['resources'])) {
-			$this->available_resources = (array) $conf->modules_parts['resources'];
-
-			return count($this->available_resources);
-		}
-		return 0;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -933,7 +756,7 @@ class Dolresource extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $get_params = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
 	{
-		global $conf, $langs;
+		global $conf, $langs, $hookmanager;
 
 		$result = '';
 		$label = img_picto('', $this->picto).' <u>'.$langs->trans("Resource").'</u>';
@@ -986,6 +809,15 @@ class Dolresource extends CommonObject
 		}
 		$result .= $linkend;
 
+		global $action;
+		$hookmanager->initHooks(array($this->element . 'dao'));
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
+		}
 		return $result;
 	}
 
@@ -1015,5 +847,36 @@ class Dolresource extends CommonObject
 		global $langs;
 
 		return '';
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *      Charge indicateurs this->nb de tableau de bord
+	 *
+	 *      @return     int         <0 if KO, >0 if OK
+	 */
+	public function load_state_board()
+	{
+		// phpcs:enable
+		global $conf;
+
+		$this->nb = array();
+
+		$sql = "SELECT count(r.rowid) as nb";
+		$sql .= " FROM ".MAIN_DB_PREFIX."resource as r";
+		$sql .= " WHERE r.entity IN (".getEntity('resource').")";
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			while ($obj = $this->db->fetch_object($resql)) {
+				$this->nb["dolresource"] = $obj->nb;
+			}
+			$this->db->free($resql);
+			return 1;
+		} else {
+			dol_print_error($this->db);
+			$this->error = $this->db->error();
+			return -1;
+		}
 	}
 }

@@ -90,7 +90,7 @@ print load_fiche_titre($langs->trans("CompanyFoundation"), '', 'title_setup');
 
 $head = company_admin_prepare_head();
 
-print dol_get_fiche_head($head, 'socialnetworks', $langs->trans("SocialNetworksInformation"), -1, 'company');
+print dol_get_fiche_head($head, 'socialnetworks', '', -1, '');
 
 print '<span class="opacitymedium">'.$langs->trans("CompanyFundationDesc", $langs->transnoentities("Save"))."</span><br>\n";
 print "<br>\n";
@@ -114,6 +114,8 @@ print '<td>'.$form->textwithpicto($langs->trans("Url"), $langs->trans("KeepEmpty
 print '<td></td>';
 print "</tr>\n";
 
+$listofnetworks = dol_sort_array($listofnetworks, 'label');
+//var_dump($listofnetworks);
 
 foreach ($listofnetworks as $key => $value) {
 	if (!empty($value['active'])) {

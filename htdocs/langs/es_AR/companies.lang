@@ -200,7 +200,6 @@ ThisUserIsNot=Este usuario no es un cliente, cliente potencial o proveedor.
 VATIntraCheck=Cheque
 VATIntraCheckDesc=El ID de IVA debe incluir el prefijo del país. El enlace <b>%s</b> utiliza el servicio de verificación de IVA europeo (VIES) que requiere acceso a Internet desde Dolibarr.
 VATIntraCheckableOnEUSite=Consulte el ID de IVA intracomunitario en el sitio web de la Comisión Europea
-VATIntraManualCheck=También puedes consultar manualmente en el sitio web de la Comisión Europea <a href="%s" target="_blank">%s</a>
 ErrorVATCheckMS_UNAVAILABLE=No es posible comprobar. El servicio de verificación no lo proporciona el estado del miembro (%s).
 NorProspectNorCustomer=Ni cliente ni cliente potencial
 ProspectLevel=Cliente potencia

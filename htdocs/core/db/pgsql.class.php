@@ -116,7 +116,7 @@ class DoliDBPgsql extends DoliDB
 			$this->connected = false;
 			$this->ok = false;
 			$this->error = 'Host, login or password incorrect';
-			dol_syslog(get_class($this)."::DoliDBPgsql : Erreur Connect ".$this->error, LOG_ERR);
+			dol_syslog(get_class($this)."::DoliDBPgsql : Erreur Connect ".$this->error.'. Failed to connect to host='.$host.' port='.$port.' user='.$user, LOG_ERR);
 		}
 
 		// Si connexion serveur ok et si connexion base demandee, on essaie connexion base
@@ -423,7 +423,7 @@ class DoliDBPgsql extends DoliDB
 		}
 
 		// if local connection failed or not requested, use TCP/IP
-		if (!$this->db) {
+		if (empty($this->db)) {
 			if (!$host) {
 				$host = "localhost";
 			}
@@ -432,7 +432,11 @@ class DoliDBPgsql extends DoliDB
 			}
 
 			$con_string = "host='".$host."' port='".$port."' dbname='".$name."' user='".$login."' password='".$passwd."'";
-			$this->db = @pg_connect($con_string);
+			try {
+				$this->db = @pg_connect($con_string);
+			} catch (Exception $e) {
+				print $e->getMessage();
+			}
 		}
 
 		// now we test if at least one connect method was a success
@@ -495,7 +499,7 @@ class DoliDBPgsql extends DoliDB
 	 * @param	int		$usesavepoint	0=Default mode, 1=Run a savepoint before and a rollback to savepoint if error (this allow to have some request with errors inside global transactions).
 	 * @param   string	$type           Type of SQL order ('ddl' for insert, update, select, delete or 'dml' for create, alter...)
 	 * @param	int		$result_mode	Result mode (not used with pgsql)
-	 * @return	false|resource			Resultset of answer
+	 * @return	bool|resource			Resultset of answer
 	 */
 	public function query($query, $usesavepoint = 0, $type = 'auto', $result_mode = 0)
 	{
@@ -580,7 +584,7 @@ class DoliDBPgsql extends DoliDB
 	{
 		// phpcs:enable
 		// If resultset not provided, we take the last used by connexion
-		if (!is_resource($resultset)) {
+		if (!is_resource($resultset) && !is_object($resultset)) {
 			$resultset = $this->_results;
 		}
 		return pg_fetch_object($resultset);
@@ -597,7 +601,7 @@ class DoliDBPgsql extends DoliDB
 	{
 		// phpcs:enable
 		// If resultset not provided, we take the last used by connexion
-		if (!is_resource($resultset)) {
+		if (!is_resource($resultset) && !is_object($resultset)) {
 			$resultset = $this->_results;
 		}
 		return pg_fetch_array($resultset);
@@ -614,7 +618,7 @@ class DoliDBPgsql extends DoliDB
 	{
 		// phpcs:enable
 		// Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connexion
-		if (!is_resource($resultset)) {
+		if (!is_resource($resultset) && !is_object($resultset)) {
 			$resultset = $this->_results;
 		}
 		return pg_fetch_row($resultset);
@@ -632,7 +636,7 @@ class DoliDBPgsql extends DoliDB
 	{
 		// phpcs:enable
 		// If resultset not provided, we take the last used by connexion
-		if (!is_resource($resultset)) {
+		if (!is_resource($resultset) && !is_object($resultset)) {
 			$resultset = $this->_results;
 		}
 		return pg_num_rows($resultset);
@@ -650,7 +654,7 @@ class DoliDBPgsql extends DoliDB
 	{
 		// phpcs:enable
 		// If resultset not provided, we take the last used by connexion
-		if (!is_resource($resultset)) {
+		if (!is_resource($resultset) && !is_object($resultset)) {
 			$resultset = $this->_results;
 		}
 		// pgsql necessite un resultset pour cette fonction contrairement
@@ -668,11 +672,11 @@ class DoliDBPgsql extends DoliDB
 	public function free($resultset = null)
 	{
 		// If resultset not provided, we take the last used by connexion
-		if (!is_resource($resultset)) {
+		if (!is_resource($resultset) && !is_object($resultset)) {
 			$resultset = $this->_results;
 		}
 		// Si resultset en est un, on libere la memoire
-		if (is_resource($resultset)) {
+		if (is_resource($resultset) || is_object($resultset)) {
 			pg_free_result($resultset);
 		}
 	}
@@ -916,7 +920,8 @@ class DoliDBPgsql extends DoliDB
 		// Test charset match LC_TYPE (pgsql error otherwise)
 		//print $charset.' '.setlocale(LC_CTYPE,'0'); exit;
 
-		$sql = "CREATE DATABASE '".$this->escape($database)."' OWNER '".$this->escape($owner)."' ENCODING '".$this->escape($charset)."'";
+		// NOTE: Do not use ' around the database name
+		$sql = "CREATE DATABASE ".$this->escape($database)." OWNER '".$this->escape($owner)."' ENCODING '".$this->escape($charset)."'";
 		dol_syslog($sql, LOG_DEBUG);
 		$ret = $this->query($sql);
 		return $ret;

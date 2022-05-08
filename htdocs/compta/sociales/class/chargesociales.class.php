@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2016-2020 Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2016-2022 Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2017      Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2021      Gauthier VERDOL		<gauthier.verdol@atm-consulting.fr>
  *
@@ -139,7 +139,7 @@ class ChargeSociales extends CommonObject
 	{
 		$sql = "SELECT cs.rowid, cs.date_ech";
 		$sql .= ", cs.libelle as label, cs.fk_type, cs.amount, cs.fk_projet as fk_project, cs.paye, cs.periode, cs.import_key";
-		$sql .= ", cs.fk_account, cs.fk_mode_reglement, cs.fk_user";
+		$sql .= ", cs.fk_account, cs.fk_mode_reglement, cs.fk_user, note_public, note_private";
 		$sql .= ", c.libelle as type_label";
 		$sql .= ', p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
 		$sql .= " FROM ".MAIN_DB_PREFIX."chargesociales as cs";
@@ -172,6 +172,8 @@ class ChargeSociales extends CommonObject
 				$this->amount = $obj->amount;
 				$this->fk_project = $obj->fk_project;
 				$this->fk_user = $obj->fk_user;
+				$this->note_public = $obj->note_public;
+				$this->note_private = $obj->note_private;
 				$this->paye = $obj->paye;
 				$this->periode = $this->db->jdate($obj->periode);
 				$this->import_key = $this->import_key;
@@ -198,7 +200,7 @@ class ChargeSociales extends CommonObject
 		$newamount = price2num($this->amount, 'MT');
 
 		// Validation of parameters
-		if (!($newamount > 0) || empty($this->date_ech) || empty($this->periode)) {
+		if ($newamount == 0 || empty($this->date_ech) || empty($this->periode)) {
 			return false;
 		}
 
@@ -362,7 +364,7 @@ class ChargeSociales extends CommonObject
 		if (!$error) {
 			if (!$notrigger) {
 				// Call trigger
-				$result = $this->call_trigger('SOCIALCHARGES_MODIFY', $user);
+				$result = $this->call_trigger('SOCIALCONTRIBUTION_MODIFY', $user);
 				if ($result < 0) {
 					$error++;
 				}
@@ -560,7 +562,7 @@ class ChargeSociales extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $short = 0, $save_lastsearch_value = -1)
 	{
-		global $langs, $conf, $user, $form;
+		global $langs, $conf, $user, $form, $hookmanager;
 
 		if (!empty($conf->dol_no_mouse_hover)) {
 			$notooltip = 1; // Force disable tooltips
@@ -625,7 +627,15 @@ class ChargeSociales extends CommonObject
 			$result .= $this->ref;
 		}
 		$result .= $linkend;
-
+		global $action;
+		$hookmanager->initHooks(array($this->element . 'dao'));
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
+		}
 		return $result;
 	}
 

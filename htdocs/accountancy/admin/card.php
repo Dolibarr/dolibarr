@@ -300,7 +300,7 @@ if ($action == 'create') {
 
 		// Edit mode
 		if ($action == 'update') {
-			print dol_get_fiche_head($head, 'card', $langs->trans('AccountAccounting'), 0, 'billr');
+			print dol_get_fiche_head($head, 'card', $langs->trans('AccountAccounting'), 0, 'accounting_account');
 
 			print '<form name="update" action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";
 			print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -368,7 +368,7 @@ if ($action == 'create') {
 			// View mode
 			$linkback = '<a href="'.DOL_URL_ROOT.'/accountancy/admin/account.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-			print dol_get_fiche_head($head, 'card', $langs->trans('AccountAccounting'), -1, 'billr');
+			print dol_get_fiche_head($head, 'card', $langs->trans('AccountAccounting'), -1, 'accounting_account');
 
 			dol_banner_tab($object, 'ref', $linkback, 1, 'account_number', 'ref');
 
@@ -417,13 +417,13 @@ if ($action == 'create') {
 			print '<div class="tabsAction">';
 
 			if (!empty($user->rights->accounting->chartofaccount)) {
-				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=update&token='.newToken().'&id='.$id.'">'.$langs->trans('Modify').'</a>';
+				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=update&token='.newToken().'&id='.$object->id.'">'.$langs->trans('Modify').'</a>';
 			} else {
 				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans('Modify').'</a>';
 			}
 
 			if (!empty($user->rights->accounting->chartofaccount)) {
-				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$id.'">'.$langs->trans('Delete').'</a>';
+				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$object->id.'">'.$langs->trans('Delete').'</a>';
 			} else {
 				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans('Delete').'</a>';
 			}

@@ -113,6 +113,7 @@ class doc_generic_ticket_odt extends ModelePDFTicket
 		$texte = $this->description.".<br>\n";
 		$texte .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" enctype="multipart/form-data">';
 		$texte .= '<input type="hidden" name="token" value="'.newToken().'">';
+		$texte .= '<input type="hidden" name="page_y" value="">';
 		$texte .= '<input type="hidden" name="action" value="setModuleOptions">';
 		$texte .= '<input type="hidden" name="param1" value="TICKET_ADDON_PDF_ODT_PATH">';
 
@@ -150,7 +151,7 @@ class doc_generic_ticket_odt extends ModelePDFTicket
 		$texte .= $conf->global->TICKET_ADDON_PDF_ODT_PATH;
 		$texte .= '</textarea>';
 		$texte .= '</div><div style="display: inline-block; vertical-align: middle;">';
-		$texte .= '<input type="submit" class="button small" name="Button"value="'.$langs->trans("Modify").'">';
+		$texte .= '<input type="submit" class="button small reposition" name="modify" value="'.$langs->trans("Modify").'">';
 		$texte .= '<br></div></div>';
 
 		// Scan directories
@@ -167,7 +168,7 @@ class doc_generic_ticket_odt extends ModelePDFTicket
 		// Add input to upload a new template file.
 		$texte .= '<div>'.$langs->trans("UploadNewTemplate").' <input type="file" name="uploadfile">';
 		$texte .= '<input type="hidden" value="TICKET_ADDON_PDF_ODT_PATH" name="keyforuploaddir">';
-		$texte .= '<input type="submit" class="button small" value="'.dol_escape_htmltag($langs->trans("Upload")).'" name="upload">';
+		$texte .= '<input type="submit" class="button small reposition" value="'.dol_escape_htmltag($langs->trans("Upload")).'" name="upload">';
 		$texte .= '</div>';
 
 		$texte .= '</td>';

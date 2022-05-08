@@ -456,6 +456,13 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 			migrate_export_import_profiles('export');
 			migrate_export_import_profiles('import');
 		}
+
+		// Scripts for 16.0
+		$afterversionarray = explode('.', '15.0.9');
+		$beforeversionarray = explode('.', '16.0.9');
+		if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
+			migrate_user_photospath2();
+		}
 	}
 
 
@@ -598,7 +605,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 		}
 
 		//if (!empty($conf->use_javascript_ajax)) {		// use_javascript_ajax is not defined
-		print '<script type="text/javascript" language="javascript">
+		print '<script type="text/javascript">
 		jQuery(document).ready(function() {
 			function init_trrunsql()
 			{
@@ -4505,13 +4512,100 @@ function migrate_user_photospath()
 									}
 									// dol_delete_dir($origin.'/'.$file);
 								}
-							} else // it is a file
-							{
+							} else { // it is a file
 								if (!dol_is_file($destin.'/'.$file)) {
 									//print $origin.'/'.$file.' -> '.$destin.'/'.$file.'<br>'."\n";
 									print '.';
 									dol_copy($origin.'/'.$file, $destin.'/'.$file, 0, 0);
 									//var_dump('eee');exit;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	print '</td></tr>';
+}
+
+/**
+ * Migrate file from old path users/99/file.jpg into users/99/photos/file.jpg
+ *
+ * @return	void
+ */
+function migrate_user_photospath2()
+{
+	global $conf, $db, $langs, $user;
+
+	print '<tr><td colspan="4">';
+
+	print '<b>'.$langs->trans('MigrationUserPhotoPath')."</b><br>\n";
+
+	include_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+	$fuser = new User($db);
+
+	if (!is_object($user)) {
+		$user = $fuser; // To avoid error during migration
+	}
+
+	$sql = "SELECT rowid as uid from ".MAIN_DB_PREFIX."user"; // Get list of all users
+	$resql = $db->query($sql);
+	if ($resql) {
+		while ($obj = $db->fetch_object($resql)) {
+			$fuser->fetch($obj->uid);
+			//echo '<hr>'.$fuser->id.' -> '.$fuser->entity;
+			$entity = (empty($fuser->entity) ? 1 : $fuser->entity);
+			if ($entity > 1) {
+				$dir = DOL_DATA_ROOT.'/'.$entity.'/users';
+			} else {
+				$dir = $conf->user->multidir_output[$entity]; // $conf->user->multidir_output[] for each entity is construct by the multicompany module
+			}
+
+			if ($dir) {
+				//print "Process user id ".$fuser->id."<br>\n";
+				$origin = $dir.'/'.$fuser->id;
+				$destin = $dir.'/'.$fuser->id.'/photos';
+
+				$origin_osencoded = dol_osencode($origin);
+
+				dol_mkdir($destin);
+
+				//echo '<hr>'.$origin.' -> '.$destin;
+				if (dol_is_dir($origin)) {
+					$handle = opendir($origin_osencoded);
+					if (is_resource($handle)) {
+						while (($file = readdir($handle)) !== false) {
+							if ($file == '.' || $file == '..' || $file == 'photos') {
+								continue;
+							}
+							if (!empty($fuser->photo) && ($file != $fuser->photo && $file != 'thumbs')) {
+								continue;
+							}
+
+							if (dol_is_dir($origin.'/'.$file)) {	// it is a dir (like 'thumbs')
+								$thumbs = opendir($origin_osencoded.'/'.$file);
+								if (is_resource($thumbs)) {
+									dol_mkdir($destin.'/'.$file);
+									while (($thumb = readdir($thumbs)) !== false) {
+										if (!dol_is_file($destin.'/'.$file.'/'.$thumb)) {
+											if ($thumb == '.' || $thumb == '..') {
+												continue;
+											}
+
+											//print $origin.'/'.$file.'/'.$thumb.' -> '.$destin.'/'.$file.'/'.$thumb.'<br>'."\n";
+											print '.';
+											dol_copy($origin.'/'.$file.'/'.$thumb, $destin.'/'.$file.'/'.$thumb, 0, 0);
+										}
+									}
+									// dol_delete_dir($origin.'/'.$file);
+								}
+							} else { // it is a file
+								if (!dol_is_file($destin.'/'.$file)) {
+									//print $origin.'/'.$file.' -> '.$destin.'/'.$file.'<br>'."\n";
+									print '.';
+									dol_copy($origin.'/'.$file, $destin.'/'.$file, 0, 0);
 								}
 							}
 						}

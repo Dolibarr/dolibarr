@@ -150,6 +150,11 @@ class Project extends CommonObject
 	 */
 	public $price_booth;
 
+	/**
+	 * @var float Max attendees
+	 */
+	public $max_attendees;
+
 	public $statuts_short;
 	public $statuts_long;
 
@@ -248,6 +253,7 @@ class Project extends CommonObject
 		'accept_booth_suggestions' =>array('type'=>'integer', 'label'=>'AllowUnknownPeopleSuggestBooth', 'enabled'=>1, 'visible'=>-1, 'position'=>147),
 		'price_registration' =>array('type'=>'double(24,8)', 'label'=>'PriceOfRegistration', 'enabled'=>1, 'visible'=>-1, 'position'=>148),
 		'price_booth' =>array('type'=>'double(24,8)', 'label'=>'PriceOfBooth', 'enabled'=>1, 'visible'=>-1, 'position'=>149),
+		'max_attendees' =>array('type'=>'integer', 'label'=>'MaxNbOfAttendees', 'enabled'=>1, 'visible'=>-1, 'position'=>150),
 		'datec' =>array('type'=>'datetime', 'label'=>'DateCreationShort', 'enabled'=>1, 'visible'=>-2, 'position'=>200),
 		'tms' =>array('type'=>'timestamp', 'label'=>'DateModificationShort', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>205),
 		'fk_user_creat' =>array('type'=>'integer', 'label'=>'UserCreation', 'enabled'=>1, 'visible'=>0, 'notnull'=>1, 'position'=>210),
@@ -372,6 +378,7 @@ class Project extends CommonObject
 		$sql .= ", accept_booth_suggestions";
 		$sql .= ", price_registration";
 		$sql .= ", price_booth";
+		$sql .= ", max_attendees";
 		$sql .= ", email_msgid";
 		$sql .= ", note_private";
 		$sql .= ", note_public";
@@ -399,6 +406,7 @@ class Project extends CommonObject
 		$sql .= ", ".($this->accept_booth_suggestions ? 1 : 0);
 		$sql .= ", ".(strcmp($this->price_registration, '') ? price2num($this->price_registration) : 'null');
 		$sql .= ", ".(strcmp($this->price_booth, '') ? price2num($this->price_booth) : 'null');
+		$sql .= ", ".(strcmp($this->max_attendees, '') ? ((int) $this->max_attendees) : 'null');
 		$sql .= ", ".($this->email_msgid ? "'".$this->db->escape($this->email_msgid)."'" : 'null');
 		$sql .= ", ".($this->note_private ? "'".$this->db->escape($this->note_private)."'" : 'null');
 		$sql .= ", ".($this->note_public ? "'".$this->db->escape($this->note_public)."'" : 'null');
@@ -479,6 +487,8 @@ class Project extends CommonObject
 			return -3;
 		}
 
+		$this->entity = ((isset($this->entity) && is_numeric($this->entity)) ? $this->entity : $conf->entity);
+
 		if (dol_strlen(trim($this->ref)) > 0) {
 			$this->db->begin();
 
@@ -507,6 +517,8 @@ class Project extends CommonObject
 			$sql .= ", accept_booth_suggestions = ".($this->accept_booth_suggestions ? 1 : 0);
 			$sql .= ", price_registration = ".(strcmp($this->price_registration, '') ? price2num($this->price_registration) : "null");
 			$sql .= ", price_booth = ".(strcmp($this->price_booth, '') ? price2num($this->price_booth) : "null");
+			$sql .= ", max_attendees = ".(strcmp($this->max_attendees, '') ? price2num($this->max_attendees) : "null");
+			$sql .= ", entity = ".((int) $this->entity);
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(get_class($this)."::update", LOG_DEBUG);
@@ -592,7 +604,7 @@ class Project extends CommonObject
 		$sql = "SELECT rowid, entity, ref, title, description, public, datec, opp_amount, budget_amount,";
 		$sql .= " tms, dateo, datee, date_close, fk_soc, fk_user_creat, fk_user_modif, fk_user_close, fk_statut as status, fk_opp_status, opp_percent,";
 		$sql .= " note_private, note_public, model_pdf, usage_opportunity, usage_task, usage_bill_time, usage_organize_event, email_msgid,";
-		$sql .= " accept_conference_suggestions, accept_booth_suggestions, price_registration, price_booth";
+		$sql .= " accept_conference_suggestions, accept_booth_suggestions, price_registration, price_booth, max_attendees";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet";
 		if (!empty($id)) {
 			$sql .= " WHERE rowid = ".((int) $id);
@@ -650,6 +662,7 @@ class Project extends CommonObject
 				$this->accept_booth_suggestions = (int) $obj->accept_booth_suggestions;
 				$this->price_registration = $obj->price_registration;
 				$this->price_booth = $obj->price_booth;
+				$this->max_attendees = $obj->max_attendees;
 				$this->email_msgid = $obj->email_msgid;
 
 				$this->db->free($resql);
@@ -747,7 +760,7 @@ class Project extends CommonObject
 			'fk_projet' => $projectkey,
 			'ids' => $ids,
 		);
-		$reshook = $hookmanager->executeHooks('getElementList', $parameters, $object, $action);
+		$reshook = $hookmanager->executeHooks('getElementList', $parameters);
 		if ($reshook > 0) {
 			$sql = $hookmanager->resPrint;
 		} else {
@@ -1264,7 +1277,7 @@ class Project extends CommonObject
 
 		global $action;
 		$hookmanager->initHooks(array('projectdao'));
-		$parameters = array('id'=>$this->id, 'getnomurl'=>$result);
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;

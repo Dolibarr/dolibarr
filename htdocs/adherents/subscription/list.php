@@ -52,8 +52,8 @@ $sall = '';
 $date_select = GETPOST("date_select", 'alpha');
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -111,7 +111,7 @@ $result = restrictedArea($user, 'adherent', '', '', 'cotisation');
 if (GETPOST('cancel', 'alpha')) {
 	$action = 'list'; $massaction = '';
 }
-if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend' && $massaction != 'confirm_createbills') {
+if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
 	$massaction = '';
 }
 
@@ -135,7 +135,7 @@ if (empty($reshook)) {
 		$search_note = "";
 		$search_amount = "";
 		$search_account = "";
-		$toselect = '';
+		$toselect = array();
 		$search_array_options = array();
 	}
 }

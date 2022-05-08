@@ -68,6 +68,7 @@ if (!$user->admin) {
 // Parameters
 $action = GETPOST('action', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
+$modulepart = GETPOST('modulepart', 'aZ09');	// Used by actions_setmoduleoptions.inc.php
 
 $value = GETPOST('value', 'alpha');
 $label = GETPOST('label', 'alpha');
@@ -327,7 +328,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 
 								print '<td class="center">';
 								$constforvar = 'RECRUITMENT_'.strtoupper($myTmpObjectKey).'_ADDON';
-								if ($conf->global->$constforvar == $file) {
+								if (getDolGlobalString($constforvar) == $file) {
 									print img_picto($langs->trans("Activated"), 'switch_on');
 								} else {
 									print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&object='.strtolower($myTmpObjectKey).'&value='.urlencode($file).'">';
@@ -470,7 +471,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 										// Default
 										print '<td class="center">';
 										$constforvar = 'RECRUITMENT_'.strtoupper($myTmpObjectKey).'_ADDON';
-										if ($conf->global->$constforvar == $name) {
+										if (getDolGlobalString($constforvar) == $name) {
 											//print img_picto($langs->trans("Default"), 'on');
 											// Even if choice is the default value, we allow to disable it. Replace this with previous line if you need to disable unset
 											print '<a href="'.$_SERVER["PHP_SELF"].'?action=unsetdoc&token='.newToken().'&object='.urlencode(strtolower($myTmpObjectKey)).'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'&type='.urlencode($type).'" alt="'.$langs->trans("Disable").'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';

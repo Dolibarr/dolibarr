@@ -71,8 +71,8 @@ $search_amount = GETPOST("search_amount", 'alpha'); // alpha because we must be 
 $search_status = GETPOST('search_status', 'intcomma');
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield			= GETPOST("sortfield", 'alpha');
-$sortorder			= GETPOST("sortorder", 'alpha');
+$sortfield			= GETPOST('sortfield', 'aZ09comma');
+$sortorder			= GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 
 if (empty($page) || $page == -1) {
@@ -148,7 +148,7 @@ if (empty($reshook)) {
 		$search_company = '';
 		$search_status = '';
 		$option = '';
-		$toselect = '';
+		$toselect = array();
 		$search_array_options = array();
 	}
 }
@@ -340,7 +340,6 @@ print '<input type="hidden" name="action" value="list">';
 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-print '<input type="hidden" name="search_status" value="'.$search_status.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 print_barre_liste($langs->trans("ReceivedCustomersPayments"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'bill', 0, '', '', $limit, 0, 0, 1);
@@ -528,11 +527,8 @@ while ($i < min($num, $limit)) {
 
 	// Date
 	if (!empty($arrayfields['p.datep']['checked'])) {
-		$dateformatforpayment = 'day';
-		if (!empty($conf->global->INVOICE_USE_HOURS_FOR_PAYMENT)) {
-			$dateformatforpayment = 'dayhour';
-		}
-		print '<td class="center">'.dol_print_date($db->jdate($objp->datep), $dateformatforpayment).'</td>';
+		$dateformatforpayment = 'dayhour';
+		print '<td class="center">'.dol_print_date($db->jdate($objp->datep), $dateformatforpayment, 'tzuser').'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}

@@ -768,7 +768,7 @@ class Skilldet extends CommonObject
 
 		global $action, $hookmanager;
 		$hookmanager->initHooks(array('skilldetdao'));
-		$parameters = array('id'=>$this->id, 'getnomurl'=>$result);
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -882,27 +882,6 @@ class Skilldet extends CommonObject
 		$this->initAsSpecimenCommon();
 	}
 
-	/**
-	 * 	Create an array of lines
-	 *
-	 * 	@return array|int		array of lines if OK, <0 if KO
-	 */
-	public function getLinesArray()
-	{
-		$this->lines = array();
-
-		$objectline = new SkilldetLine($this->db);
-		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_skilldet = '.$this->id));
-
-		if (is_numeric($result)) {
-			$this->error = $this->error;
-			$this->errors = $this->errors;
-			return $result;
-		} else {
-			$this->lines = $result;
-			return $this->lines;
-		}
-	}
 
 	/**
 	 *  Returns the reference to the following non used object depending on the active numbering module.

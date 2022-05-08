@@ -126,7 +126,7 @@ class Documents extends DolibarrApi
 	 * @param	string	$langcode		Language code like 'en_US', 'fr_FR', 'es_ES', ... (If not set, use the default language).
 	 * @return  array                   List of documents
 	 *
-	 * @throws RestException 500
+	 * @throws RestException 500 System error
 	 * @throws RestException 501
 	 * @throws RestException 400
 	 * @throws RestException 401
@@ -249,7 +249,7 @@ class Documents extends DolibarrApi
 	 * @throws RestException 400
 	 * @throws RestException 401
 	 * @throws RestException 404
-	 * @throws RestException 500
+	 * @throws RestException 500 System error
 	 *
 	 * @url GET /
 	 */
@@ -458,6 +458,20 @@ class Documents extends DolibarrApi
 			}
 
 			$upload_dir = $conf->expensereport->dir_output.'/'.dol_sanitizeFileName($object->ref);
+		} elseif ($modulepart == 'knowledgemanagement') {
+			require_once DOL_DOCUMENT_ROOT.'/knowledgemanagement/class/knowledgerecord.class.php';
+
+			if (!DolibarrApiAccess::$user->rights->knowledgemanagement->knowledgerecord->read && !DolibarrApiAccess::$user->rights->knowledgemanagement->knowledgerecord->read) {
+				throw new RestException(401);
+			}
+
+			$object = new KnowledgeRecord($this->db);
+			$result = $object->fetch($id, $ref);
+			if (!$result) {
+				throw new RestException(404, 'KM article not found');
+			}
+
+			$upload_dir = $conf->knowledgemanagement->dir_output.'/knowledgerecord/'.dol_sanitizeFileName($object->ref);
 		} elseif ($modulepart == 'categorie' || $modulepart == 'category') {
 			require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
@@ -546,7 +560,7 @@ class Documents extends DolibarrApi
 	 * @throws RestException 400
 	 * @throws RestException 401
 	 * @throws RestException 404
-	 * @throws RestException 500
+	 * @throws RestException 500 System error
 	 *
 	 * @url POST /upload
 	 */
@@ -597,6 +611,16 @@ class Documents extends DolibarrApi
 
 				require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 				$object = new FactureFournisseur($this->db);
+			} elseif ($modulepart == 'commande' || $modulepart == 'order') {
+					$modulepart = 'commande';
+
+					require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+					$object = new Commande($this->db);
+			} elseif ($modulepart == 'commande_fournisseur' || $modulepart == 'supplier_order') {
+					$modulepart = 'supplier_order';
+
+					require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
+					$object = new CommandeFournisseur($this->db);
 			} elseif ($modulepart == 'project') {
 				require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 				$object = new Project($this->db);
@@ -624,6 +648,9 @@ class Documents extends DolibarrApi
 			} elseif ($modulepart == 'expensereport') {
 				require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 				$object = new ExpenseReport($this->db);
+			} elseif ($modulepart == 'fichinter') {
+				require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
+				$object = new Fichinter($this->db);
 			} elseif ($modulepart == 'adherent' || $modulepart == 'member') {
 				$modulepart = 'adherent';
 				require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
@@ -652,7 +679,7 @@ class Documents extends DolibarrApi
 			}
 
 			// Special cases that need to use get_exdir to get real dir of object
-			// If future, all object should use this to define path of documents.
+			// In future, all object should use this to define path of documents.
 			if ($modulepart == 'supplier_invoice') {
 				$tmpreldir = get_exdir($object->id, 2, 0, 0, $object, 'invoice_supplier');
 			}
