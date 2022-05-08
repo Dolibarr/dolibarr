@@ -51,10 +51,10 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 		if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) $trclass .= ' liste_sub_total';
 		print '<tr class="' . $trclass . '"  data-element="' . $objectlink->element . '"  data-id="' . $objectlink->id . '" >';
 		print '<td class="linkedcol-element" >' . $langs->trans("Task");
-		if (!empty($showImportButton) && $conf->global->MAIN_ENABLE_IMPORT_LINKED_OBJECT_LINES) {
-			$url = DOL_URL_ROOT . '/projet/tasks/task.php?id=' . $objectlink->id;
-			print '<a class="objectlinked_importbtn" href="' . $url . '&amp;action=selectlines"  data-element="' . $objectlink->element . '"  data-id="' . $objectlink->id . '"  > <i class="fa fa-indent"></i> </a>';
-		}
+	if (!empty($showImportButton) && $conf->global->MAIN_ENABLE_IMPORT_LINKED_OBJECT_LINES) {
+		$url = DOL_URL_ROOT . '/projet/tasks/task.php?id=' . $objectlink->id;
+		print '<a class="objectlinked_importbtn" href="' . $url . '&amp;action=selectlines"  data-element="' . $objectlink->element . '"  data-id="' . $objectlink->id . '"  > <i class="fa fa-indent"></i> </a>';
+	}
 		print '</td>';
 		print '<td class="linkedcol-name nowraponall" >' . $objectlink->getNomUrl(1) . '</td>';
 		print '<td class="linkedcol-ref" >' . $objectlink->ref_client .' '. $objectlink->label . '</td>';
