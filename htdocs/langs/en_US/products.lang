@@ -426,4 +426,4 @@ PMPReal=Real PMP
 RealValuation=Real Valuation
 ConfirmEditExtrafield = Select the extrafield you want modify
 ConfirmEditExtrafieldQuestion = Are you sure you want to modify this extrafield?
-ModifyValueExtrafields = Modify value of a extrafield
+ModifyValueExtrafields = Modify value of an extrafield
