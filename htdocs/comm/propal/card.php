@@ -690,7 +690,7 @@ if (empty($reshook)) {
 				}
 
 				$deposit = null;
-				$locationTarget = $_SERVER['PHP_SELF'] . '?id=' . $object->id;
+				$locationTarget = '';
 
 				$deposit_percent_from_payment_terms = getDictionaryValue(MAIN_DB_PREFIX . 'c_payment_term', 'deposit_percent', $object->cond_reglement_id);
 
@@ -720,6 +720,7 @@ if (empty($reshook)) {
 
 				if (!$error) {
 					$db->commit();
+
 					if ($deposit && empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 						$ret = $deposit->fetch($deposit->id); // Reload to get new records
 						$outputlangs = $langs;
@@ -736,12 +737,15 @@ if (empty($reshook)) {
 							setEventMessages($deposit->error, $deposit->errors, 'errors');
 						}
 					}
+
+					if ($locationTarget) {
+						header('Location: ' . $locationTarget);
+						exit;
+					}
 				} else {
 					$db->rollback();
+					$action = '';
 				}
-
-				header('Location: ' . $locationTarget);
-				exit;
 			}
 		}
 	} elseif ($action == 'confirm_reopen' && $usercanclose && !GETPOST('cancel', 'alpha')) {
@@ -1706,7 +1710,7 @@ if ($action == 'create') {
 	print '<tr class="field_duree_validitee"><td class="titlefieldcreate fieldrequired">'.$langs->trans("ValidityDuration").'</td><td class="valuefieldcreate">'.img_picto('', 'clock', 'class="paddingright"').'<input name="duree_validite" class="width50" value="'.(GETPOSTISSET('duree_validite') ? GETPOST('duree_validite', 'alphanohtml') : $conf->global->PROPALE_VALIDITY_DURATION).'"> '.$langs->trans("days").'</td></tr>';
 
 	// Terms of payment
-	print '<tr><td class="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td>';
+	print '<tr class="field_cond_reglement_id"><td class="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td>';
 	print img_picto('', 'paiment');
 	$form->select_conditions_paiements((GETPOSTISSET('cond_reglement_id') && GETPOST('cond_reglement_id') != 0) ? GETPOST('cond_reglement_id', 'int') : $soc->cond_reglement_id, 'cond_reglement_id', 1, 1, 0, '', (GETPOSTISSET('cond_reglement_id_deposit_percent') ? GETPOST('cond_reglement_id_deposit_percent', 'alpha') : $soc->deposit_percent));
 	print '</td></tr>';

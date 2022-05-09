@@ -1177,7 +1177,7 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
-			$locationTarget = $_SERVER['PHP_SELF'] . '?id=' . $object->id;
+			$locationTarget = '';
 			$db->begin();
 			$result = $object->valid($user, $idwarehouse);
 			if ($result >= 0) {
@@ -1205,6 +1205,7 @@ if (empty($reshook)) {
 						setEventMessage('DepositGenerated');
 						$locationTarget = DOL_URL_ROOT . '/compta/facture/card.php?id=' . $deposit->id;
 					} else {
+						$error++;
 						setEventMessages($object->error, $object->errors, 'errors');
 					}
 				}
@@ -1236,6 +1237,11 @@ if (empty($reshook)) {
 							$deposit->generateDocument($deposit->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 						}
 					}
+
+					if ($locationTarget) {
+						header('Location: ' . $locationTarget);
+						exit;
+					}
 				} else {
 					$db->rollback();
 				}
@@ -1243,9 +1249,6 @@ if (empty($reshook)) {
 				$db->rollback();
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
-
-			header('Location: ' . $locationTarget);
-			exit;
 		}
 	} elseif ($action == 'confirm_modif' && $usercancreate) {
 		// Go back to draft status
