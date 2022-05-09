@@ -39,6 +39,7 @@ $confirm    = GETPOST('confirm', 'alpha');
 $cancel     = GETPOST('cancel', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'inventorycard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
+$include_sub_warehouse = !empty(GETPOST('include_sub_warehouse')) ? GETPOST('include_sub_warehouse') : 0;
 
 if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
 	$result = restrictedArea($user, 'stock', $id);
@@ -294,7 +295,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$formquestion = '';
 		if ($conf->global->INVENTORY_INCLUDE_SUB_WAREHOUSE && !empty($object->fk_warehouse)) {
 			$formquestion = array(
-				array('type' => 'checkbox', 'name' => 'include_sub_warehouse', 'label' => $langs->trans("IncludeSubWarehouse"), 'value' => 0, 'size' => '10'),
+				array('type' => 'checkbox', 'name' => 'include_sub_warehouse', 'label' => $langs->trans("IncludeSubWarehouse"), 'value' => 1, 'size' => '10'),
 			);
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateInventory'), $langs->trans('IncludeSubWarehouseExplanation'), 'confirm_validate', $formquestion, '', 1);
 		}

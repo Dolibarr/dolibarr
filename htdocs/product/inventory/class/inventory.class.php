@@ -257,14 +257,13 @@ class Inventory extends CommonObject
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
 	 * @return int             <0 if KO, Id of created object if OK
 	 */
-	public function validate(User $user, $notrigger = false)
+	public function validate(User $user, $notrigger = false, $include_sub_warehouse = 0)
 	{
 		global $conf;
 		$this->db->begin();
 
 		$result = 0;
 
-		$this->include_sub_warehouse = GETPOST('include_sub_warehouse');
 		if ($this->status == self::STATUS_DRAFT) {
 			// Delete inventory
 			$sql = 'DELETE FROM '.$this->db->prefix().'inventorydet WHERE fk_inventory = '.((int) $this->id);
@@ -291,7 +290,7 @@ class Inventory extends CommonObject
 			}
 			if ($this->fk_warehouse > 0) {
 				$sql .= " AND (ps.fk_entrepot = ".((int) $this->fk_warehouse);
-				if (!empty($this->include_sub_warehouse) && $conf->global->INVENTORY_INCLUDE_SUB_WAREHOUSE) {
+				if (!empty($include_sub_warehouse) && $conf->global->INVENTORY_INCLUDE_SUB_WAREHOUSE) {
 					$this->getchildWarehouse($this->fk_warehouse, $TChildWarehouses);
 					$sql .= " OR ps.fk_entrepot IN (".filter_var(implode(',', $TChildWarehouses), FILTER_SANITIZE_STRING).")";
 				}
