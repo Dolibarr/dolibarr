@@ -565,7 +565,9 @@ if (empty($reshook)) {
 			$reshook=$hookmanager->executeHooks('completeTakePosAddLine', $parameters, $invoice, $action);
 			if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-			$idoflineadded = $invoice->addline($prod->description, $price, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idproduct, $customer->remise_percent, '', 0, 0, 0, '', $price_base_type, $price_ttc, $prod->type, -1, 0, '', 0, (!empty($parent_line)) ? $parent_line : '', null, '', '', $array_options, 100, '', null, 0);
+			if (empty($reshook)) {
+				$idoflineadded = $invoice->addline($prod->description, $price, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idproduct, $customer->remise_percent, '', 0, 0, 0, '', $price_base_type, $price_ttc, $prod->type, -1, 0, '', 0, (!empty($parent_line)) ? $parent_line : '', null, '', '', $array_options, 100, '', null, 0);
+			}
 
 			if (!empty($conf->global->TAKEPOS_CUSTOMER_DISPLAY)) {
 				$CUSTOMER_DISPLAY_line1 = $prod->label;
