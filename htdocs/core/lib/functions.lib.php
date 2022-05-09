@@ -9878,7 +9878,7 @@ function getDictionaryValue($tablename, $field, $id, $checkentity = false, $rowi
 	if (is_null($dictvalues)) {
 		$dictvalues = array();
 
-		$sql = "SELECT * FROM ".$tablename." WHERE 1 = 1"; // Here select * is allowed as it is generic code and we don't have list of fields
+		$sql = "SELECT * FROM ".MAIN_DB_PREFIX.$tablename." WHERE 1 = 1"; // Here select * is allowed as it is generic code and we don't have list of fields
 		if ($checkentity) {
 			$sql .= ' AND entity IN (0,'.getEntity($tablename).')';
 		}
