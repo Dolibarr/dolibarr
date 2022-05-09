@@ -289,7 +289,7 @@ ValidateHistory=Bind Automatically
 AutomaticBindingDone=Automatic bindings done (%s) - Automatic binding not possible for some record (%s)
 
 ErrorAccountancyCodeIsAlreadyUse=Error, you cannot delete this accounting account because it is used
-MvtNotCorrectlyBalanced=Movement not correctly balanced. Debit = %s | Credit = %s
+MvtNotCorrectlyBalanced=Movement not correctly balanced. Debit = %s & Credit = %s
 Balancing=Balancing
 FicheVentilation=Binding card
 GeneralLedgerIsWritten=Transactions are written in the Ledger
