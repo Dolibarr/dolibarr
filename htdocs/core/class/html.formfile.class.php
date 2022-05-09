@@ -892,7 +892,7 @@ class FormFile
 					}
 					$out .= '>';
 					$out .= img_mime($file["name"], $langs->trans("File").': '.$file["name"]);
-					$out .= dol_trunc($file["name"], 150);
+					$out .= dol_trunc($file["name"], 40);
 					$out .= '</a>'."\n";
 					$out .= $this->showPreview($file, $modulepart, $relativepath, 0, $param);
 					$out .= '</td>';
