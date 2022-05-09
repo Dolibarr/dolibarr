@@ -2471,12 +2471,13 @@ a.tmenudisabled:link, a.tmenudisabled:visited, a.tmenudisabled:hover, a.tmenudis
 
 a.tmenu:link, a.tmenu:visited, a.tmenu:hover, a.tmenu:active {
 	padding: 0px 2px 0px 2px;
+	margin: 0px 0px 0px 0px;
 	white-space: nowrap;
 	color: var(--colortextbackhmenu);
 	text-decoration: none;
 }
 a.tmenusel:link, a.tmenusel:visited, a.tmenusel:hover, a.tmenusel:active {
-	padding: 0px 4px 0px 4px;
+	padding: 0px 2px 0px 2px;
 	margin: 0px 0px 0px 0px;
 	white-space: nowrap;
 	color: var(--colortextbackhmenu);
