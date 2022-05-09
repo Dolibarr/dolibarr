@@ -4030,7 +4030,7 @@ class Form
 	 *										> 0 : force deposit percentage (for example, from company object)
 	 *	@return	string
 	 */
-	public function getSelectConditionsPaiements($selected = 0, $htmlname = 'condid', $filtertype = -1, $addempty = 0, $noinfoadmin = 0, $deposit_percent = -1)
+	public function getSelectConditionsPaiements($selected = 0, $htmlname = 'condid', $filtertype = -1, $addempty = 0, $noinfoadmin = 0, $morecss = '', $deposit_percent = -1)
 	{
 
 		global $langs, $user, $conf;
