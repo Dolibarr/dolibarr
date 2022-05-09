@@ -242,7 +242,7 @@ Follow Dolibarr project on:
 - [Facebook](https://www.facebook.com/dolibarr)
 - [Twitter](https://www.twitter.com/dolibarr)
 - [LinkedIn](https://www.linkedin.com/company/association-dolibarr)
-- [Reddit](https://www.reddit.com/r/Dolibarr/)
+- [Reddit](https://www.reddit.com/r/Dolibarr_ERP_CRM/)
 - [YouTube](https://www.youtube.com/user/DolibarrERPCRM)
 - [GitHub](https://github.com/Dolibarr/dolibarr)
 
