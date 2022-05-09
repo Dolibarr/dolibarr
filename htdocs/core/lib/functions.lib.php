@@ -7141,7 +7141,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__TICKET_USER_ASSIGN__'] = '__TICKET_USER_ASSIGN__';
 			}
 
-			if (!empty($conf->recruitment->enabled) && (!is_object($object) || $object->element == 'candidature')) {
+			if (!empty($conf->recruitment->enabled) && (!is_object($object) || $object->element == 'recruitmentcandidature')) {
 				$substitutionarray['__CANDIDATE_FULLNAME__'] = '__CANDIDATE_FULLNAME__';
 				$substitutionarray['__CANDIDATE_FIRSTNAME__'] = '__CANDIDATE_FIRSTNAME__';
 				$substitutionarray['__CANDIDATE_LASTNAME__'] = '__CANDIDATE_LASTNAME__';
@@ -7290,8 +7290,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 
 			if (is_object($object) && $object->element == 'recruitmentcandidature') {
 				$substitutionarray['__CANDIDATE_FULLNAME__'] = $object->getFullName($outputlangs);
-				$substitutionarray['__CANDIDATE_FIRSTNAME__'] = $object->firstname;
-				$substitutionarray['__CANDIDATE_LASTNAME__'] = $object->lastname;
+				$substitutionarray['__CANDIDATE_FIRSTNAME__'] = isset($object->firstname) ? $object->firstname : '';
+				$substitutionarray['__CANDIDATE_LASTNAME__'] = isset($object->lastname) ? $object->lastname : '';
 			}
 
 			if (is_object($object->project)) {
@@ -9878,7 +9878,7 @@ function getDictionaryValue($tablename, $field, $id, $checkentity = false, $rowi
 	if (is_null($dictvalues)) {
 		$dictvalues = array();
 
-		$sql = "SELECT * FROM ".$tablename." WHERE 1 = 1"; // Here select * is allowed as it is generic code and we don't have list of fields
+		$sql = "SELECT * FROM ".MAIN_DB_PREFIX.$tablename." WHERE 1 = 1"; // Here select * is allowed as it is generic code and we don't have list of fields
 		if ($checkentity) {
 			$sql .= ' AND entity IN (0,'.getEntity($tablename).')';
 		}
