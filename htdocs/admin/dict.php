@@ -209,7 +209,7 @@ $tabsql[8] = "SELECT t.id	 as rowid, t.code as code, t.libelle, t.fk_country as 
 $tabsql[9] = "SELECT c.code_iso as code, c.label, c.unicode, c.active FROM ".MAIN_DB_PREFIX."c_currencies AS c";
 $tabsql[10] = "SELECT t.rowid, t.code, t.taux, t.localtax1_type, t.localtax1, t.localtax2_type, t.localtax2, c.label as country, c.code as country_code, t.fk_pays as country_id, t.recuperableonly, t.note, t.active, t.accountancy_code_sell, t.accountancy_code_buy FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c WHERE t.fk_pays=c.rowid";
 $tabsql[11] = "SELECT t.rowid as rowid, t.element, t.source, t.code, t.libelle, t.position, t.active FROM ".MAIN_DB_PREFIX."c_type_contact AS t";
-$tabsql[12] = "SELECT c.rowid as rowid, c.code, c.libelle, c.libelle_facture, c.nbjour, c.type_cdr, c.decalage, c.active, c.sortorder, c.entity FROM ".MAIN_DB_PREFIX."c_payment_term AS c WHERE c.entity = ".getEntity($tabname[12]);
+$tabsql[12] = "SELECT c.rowid as rowid, c.code, c.libelle, c.libelle_facture, c.deposit_percent, c.nbjour, c.type_cdr, c.decalage, c.active, c.sortorder, c.entity FROM ".MAIN_DB_PREFIX."c_payment_term AS c WHERE c.entity = ".getEntity($tabname[12]);
 $tabsql[13] = "SELECT c.id    as rowid, c.code, c.libelle, c.type, c.active, c.entity FROM ".MAIN_DB_PREFIX."c_paiement AS c WHERE c.entity = ".getEntity($tabname[13]);
 $tabsql[14] = "SELECT e.rowid as rowid, e.code as code, e.label, e.price, e.organization, e.fk_pays as country_id, c.code as country_code, c.label as country, e.active FROM ".MAIN_DB_PREFIX."c_ecotaxe AS e, ".MAIN_DB_PREFIX."c_country as c WHERE e.fk_pays=c.rowid and c.active=1";
 $tabsql[15] = "SELECT rowid   as rowid, code, label as libelle, width, height, unit, active FROM ".MAIN_DB_PREFIX."c_paper_format";
@@ -303,7 +303,7 @@ $tabfield[8] = "code,libelle,country_id,country".(!empty($conf->global->SOCIETE_
 $tabfield[9] = "code,label,unicode";
 $tabfield[10] = "country_id,country,code,taux,localtax1_type,localtax1,localtax2_type,localtax2,recuperableonly,accountancy_code_sell,accountancy_code_buy,note";
 $tabfield[11] = "element,source,code,libelle,position";
-$tabfield[12] = "code,libelle,libelle_facture,nbjour,type_cdr,decalage,sortorder,entity";
+$tabfield[12] = "code,libelle,libelle_facture,deposit_percent,nbjour,type_cdr,decalage,sortorder,entity";
 $tabfield[13] = "code,libelle,type,entity";
 $tabfield[14] = "code,label,price,organization,country";
 $tabfield[15] = "code,libelle,width,height,unit";
@@ -350,7 +350,7 @@ $tabfieldvalue[8] = "code,libelle,country".(!empty($conf->global->SOCIETE_SORT_O
 $tabfieldvalue[9] = "code,label,unicode";
 $tabfieldvalue[10] = "country,code,taux,localtax1_type,localtax1,localtax2_type,localtax2,recuperableonly,accountancy_code_sell,accountancy_code_buy,note";
 $tabfieldvalue[11] = "element,source,code,libelle,position";
-$tabfieldvalue[12] = "code,libelle,libelle_facture,nbjour,type_cdr,decalage,sortorder";
+$tabfieldvalue[12] = "code,libelle,libelle_facture,deposit_percent,nbjour,type_cdr,decalage,sortorder";
 $tabfieldvalue[13] = "code,libelle,type";
 $tabfieldvalue[14] = "code,label,price,organization,country";
 $tabfieldvalue[15] = "code,libelle,width,height,unit";
@@ -397,7 +397,7 @@ $tabfieldinsert[8] = "code,libelle,fk_country".(!empty($conf->global->SOCIETE_SO
 $tabfieldinsert[9] = "code_iso,label,unicode";
 $tabfieldinsert[10] = "fk_pays,code,taux,localtax1_type,localtax1,localtax2_type,localtax2,recuperableonly,accountancy_code_sell,accountancy_code_buy,note";
 $tabfieldinsert[11] = "element,source,code,libelle,position";
-$tabfieldinsert[12] = "code,libelle,libelle_facture,nbjour,type_cdr,decalage,sortorder,entity";
+$tabfieldinsert[12] = "code,libelle,libelle_facture,deposit_percent,nbjour,type_cdr,decalage,sortorder,entity";
 $tabfieldinsert[13] = "code,libelle,type,entity";
 $tabfieldinsert[14] = "code,label,price,organization,fk_pays";
 $tabfieldinsert[15] = "code,label,width,height,unit";
@@ -761,7 +761,7 @@ if (empty($reshook)) {
 				continue; // For a column name 'sortorder', we use the field name 'position'
 			}
 			if ((!GETPOSTISSET($value) || GETPOST($value) == '')
-				&& (!in_array($value, array('decalage', 'module', 'accountancy_code', 'accountancy_code_sell', 'accountancy_code_buy', 'tracking', 'picto'))  // Fields that are not mandatory
+					&& (!in_array($value, array('decalage', 'module', 'accountancy_code', 'accountancy_code_sell', 'accountancy_code_buy', 'tracking', 'picto', 'deposit_percent'))  // Fields that are not mandatory
 					&& ($id != 10 || ($value != 'code' && $value != 'note')) // Field code and note is not mandatory for dictionary table 10
 					)
 				) {
@@ -773,6 +773,9 @@ if (empty($reshook)) {
 				}
 				if ($fieldnamekey == 'libelle_facture') {
 					$fieldnamekey = 'LabelOnDocuments';
+				}
+				if ($fieldnamekey == 'deposit_percent') {
+					$fieldnamekey = 'DepositPercent';
 				}
 				if ($fieldnamekey == 'nbjour') {
 					$fieldnamekey = 'NbOfDays';
@@ -1356,6 +1359,10 @@ if ($id) {
 			if ($value == 'libelle_facture') {
 				$valuetoshow = $form->textwithtooltip($langs->trans("LabelOnDocuments"), $langs->trans("LabelUsedByDefault"), 2, 1, img_help(1, ''));
 			}
+			if ($value == 'deposit_percent') {
+				$valuetoshow = $langs->trans('DepositPercent');
+				$class = 'right';
+			}
 			if ($value == 'country') {
 				if (in_array('region_id', $fieldlist)) {
 					print '<td>&nbsp;</td>'; continue;
@@ -1716,6 +1723,10 @@ if ($id) {
 			}
 			if ($value == 'libelle_facture') {
 				$valuetoshow = $langs->trans("LabelOnDocuments");
+			}
+			if ($value == 'deposit_percent') {
+				$valuetoshow = $langs->trans('DepositPercent');
+				$cssprefix = 'right ';
 			}
 			if ($value == 'country') {
 				$valuetoshow = $langs->trans("Country");
@@ -2097,7 +2108,7 @@ if ($id) {
 							if ($value == 'tracking') {
 								$class .= ' tdoverflowauto';
 							}
-							if (in_array($value, array('pos', 'position'))) {
+							if (in_array($value, array('pos', 'position', 'deposit_percent'))) {
 								$class .= ' right';
 							}
 							if (in_array($value, array('localtax1_type', 'localtax2_type'))) {
@@ -2499,7 +2510,7 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 			if ($fieldlist[$field] == 'code') {
 				$class = 'maxwidth100';
 			}
-			if (in_array($fieldlist[$field], array('pos', 'position'))) {
+			if (in_array($fieldlist[$field], array('pos', 'position', 'deposit_percent'))) {
 				$classtd = 'right'; $class = 'maxwidth50 right';
 			}
 			if (in_array($fieldlist[$field], array('dayrule', 'day', 'month', 'year', 'use_default', 'affect', 'delay', 'public', 'sortorder', 'sens', 'category_type', 'fk_parent'))) {

@@ -787,7 +787,7 @@ $sql .= ' c.date_valid, c.date_commande, c.note_public, c.note_private, c.date_l
 $sql .= ' c.date_creation as date_creation, c.tms as date_update, c.date_cloture as date_cloture,';
 $sql .= ' p.rowid as project_id, p.ref as project_ref, p.title as project_label,';
 $sql .= ' u.login, u.lastname, u.firstname, u.email as user_email, u.statut as user_statut, u.entity, u.photo, u.office_phone, u.office_fax, u.user_mobile, u.job, u.gender,';
-$sql .= ' c.fk_cond_reglement,c.fk_mode_reglement,c.fk_shipping_method,';
+$sql .= ' c.fk_cond_reglement,c.deposit_percent,c.fk_mode_reglement,c.fk_shipping_method,';
 $sql .= ' c.fk_input_reason, c.import_key';
 if (($search_categ_cus > 0) || ($search_categ_cus == -2)) {
 	$sql .= ", cc.fk_categorie, cc.fk_soc";
@@ -1479,7 +1479,7 @@ if ($resql) {
 	// Payment term
 	if (!empty($arrayfields['c.fk_cond_reglement']['checked'])) {
 		print '<td class="liste_titre">';
-		$form->select_conditions_paiements($search_fk_cond_reglement, 'search_fk_cond_reglement', -1, 1, 1);
+		$form->select_conditions_paiements($search_fk_cond_reglement, 'search_fk_cond_reglement', 1, 1, 1);
 		print '</td>';
 	}
 	// Payment mode
@@ -2032,7 +2032,7 @@ if ($resql) {
 		// Payment terms
 		if (!empty($arrayfields['c.fk_cond_reglement']['checked'])) {
 			print '<td>';
-			$form->form_conditions_reglement($_SERVER['PHP_SELF'], $obj->fk_cond_reglement, 'none');
+			$form->form_conditions_reglement($_SERVER['PHP_SELF'], $obj->fk_cond_reglement, 'none', 0, '', 1, $obj->deposit_percent);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
