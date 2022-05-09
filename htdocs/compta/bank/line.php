@@ -609,9 +609,9 @@ if ($result) {
 
 		if (!$objp->rappro) {
 				print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Update").'"></div><br>';
-			}else{
-				print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Update").'" disabled></div><br>';
-			}
+		} else {
+			print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Update").'" disabled></div><br>';
+		}
 
 		print "</form>";
 
