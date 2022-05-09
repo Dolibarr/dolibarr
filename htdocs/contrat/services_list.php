@@ -201,7 +201,7 @@ if (empty($reshook)) {
 		$filter_opcloture = "";
 		$mode = '';
 		$filter = '';
-		$toselect = '';
+		$toselect = array();
 		$search_array_options = array();
 	}
 }

@@ -285,7 +285,7 @@ if (empty($reshook)) {
 		$search_accept_booth_suggestions = '';
 		$search_price_registration = '';
 		$search_price_booth = '';
-		$toselect = '';
+		$toselect = array();
 		$search_array_options = array();
 		$search_category_array = array();
 	}

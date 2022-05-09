@@ -135,7 +135,7 @@ if (empty($reshook)) {
 		$search_note = "";
 		$search_amount = "";
 		$search_account = "";
-		$toselect = '';
+		$toselect = array();
 		$search_array_options = array();
 	}
 }

@@ -133,7 +133,7 @@ if (empty($reshook)) {
 		$search_type = '';
 		$search_prev_solde = '';
 		$search_new_solde = '';
-		$toselect = '';
+		$toselect = array();
 		$search_array_options = array();
 	}
 

@@ -1267,7 +1267,7 @@ if ($ispaymentok) {
 							$outputlangs = new Translate('', $conf);
 							$outputlangs->setDefaultLang(empty($thirdparty->default_lang) ? $mysoc->default_lang : $thirdparty->default_lang);
 							// Load traductions files required by page
-							$outputlangs->loadLangs(array("main", "members"));
+							$outputlangs->loadLangs(array("main", "members", "eventorganization"));
 							// Get email content from template
 							$arraydefaultmessage = null;
 
@@ -1298,7 +1298,22 @@ if ($ispaymentok) {
 
 							$ishtml = dol_textishtml($texttosend); // May contain urls
 
-							$mailfile = new CMailFile($subjecttosend, $sendto, $from, $texttosend, array(), array(), array(), '', '', 0, $ishtml);
+							// Attach a file ?
+							$file = '';
+							$listofpaths = array();
+							$listofnames = array();
+							$listofmimes = array();
+							if (is_object($object)) {
+								$invoicediroutput = $conf->facture->dir_output;
+								$fileparams = dol_most_recent_file($invoicediroutput.'/'.$object->ref, preg_quote($object->ref, '/').'[^\-]+');
+								$file = $fileparams['fullname'];
+
+								$listofpaths = array($file);
+								$listofnames = array(basename($file));
+								$listofmimes = array(dol_mimetype($file));
+							}
+
+							$mailfile = new CMailFile($subjecttosend, $sendto, $from, $texttosend, $listofpaths, $listofmimes, $listofnames, '', '', 0, $ishtml);
 
 							$result = $mailfile->sendfile();
 							if ($result) {
@@ -1456,7 +1471,7 @@ if ($ispaymentok) {
 										$outputlangs = new Translate('', $conf);
 										$outputlangs->setDefaultLang(empty($thirdparty->default_lang) ? $mysoc->default_lang : $thirdparty->default_lang);
 										// Load traductions files required by page
-										$outputlangs->loadLangs(array("main", "members"));
+										$outputlangs->loadLangs(array("main", "members", "eventorganization"));
 										// Get email content from template
 										$arraydefaultmessage = null;
 
