@@ -9862,7 +9862,7 @@ function dol_mimetype($file, $default = 'application/octet-stream', $mode = 0)
  * Return the value of a filed into a dictionary for the record $id.
  * This also set all the values into a cache for a next search.
  *
- * @param string	$tablename		Name of dictionary
+ * @param string	$tablename		Name of table dictionary (without the MAIN_DB_PREFIX, example: 'c_holiday_types')
  * @param string	$field			The name of field where to find the value to return
  * @param int		$id				Id of line record
  * @param bool		$checkentity	Add filter on entity
@@ -9872,6 +9872,8 @@ function dol_mimetype($file, $default = 'application/octet-stream', $mode = 0)
 function getDictionaryValue($tablename, $field, $id, $checkentity = false, $rowidfield = 'rowid')
 {
 	global $conf, $db;
+
+	$tablename = preg_replace('/^'.preg_quote(MAIN_DB_PREFIX, '/').'/', '', $tablename);	// Clean name of table for backward compatibility.
 
 	$dictvalues = (isset($conf->cache['dictvalues_'.$tablename]) ? $conf->cache['dictvalues_'.$tablename] : null);
 

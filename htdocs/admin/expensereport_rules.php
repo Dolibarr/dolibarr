@@ -266,11 +266,11 @@ foreach ($rules as $rule) {
 		if ($rule->fk_c_type_fees == -1) {
 			echo $langs->trans('AllExpenseReport');
 		} else {
-			$key = getDictionaryValue(MAIN_DB_PREFIX . 'c_type_fees', 'code', $rule->fk_c_type_fees, false, 'id');
+			$key = getDictionaryValue('c_type_fees', 'code', $rule->fk_c_type_fees, false, 'id');
 			if ($key && $key != $langs->trans($key)) {
 				echo $langs->trans($key);
 			} else {
-				$value = getDictionaryValue(MAIN_DB_PREFIX . 'c_type_fees', 'label', $rule->fk_c_type_fees, false, 'id');
+				$value = getDictionaryValue('c_type_fees', 'label', $rule->fk_c_type_fees, false, 'id');
 				echo $langs->trans($value ? $value : 'Undefined'); // TODO check to return trans of 'code'
 			}
 		}
