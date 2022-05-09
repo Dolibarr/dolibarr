@@ -215,7 +215,7 @@ if (empty($reshook)) {
 		$search_status = "";
 		$catid = "";
 		$sall = "";
-		$toselect = '';
+		$toselect = array();
 		$search_array_options = array();
 	}
 

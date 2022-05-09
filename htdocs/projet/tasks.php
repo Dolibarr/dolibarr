@@ -209,7 +209,7 @@ if (empty($reshook)) {
 		$search_progresscalc = '';
 		$search_progressdeclare = '';
 		$search_task_budget_amount = '';
-		$toselect = '';
+		$toselect = array();
 		$search_array_options = array();
 		$search_date_start_startmonth = "";
 		$search_date_start_startyear = "";

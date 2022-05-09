@@ -90,7 +90,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
 	$transkey = '';
 	$transvalue = '';
-	$toselect = '';
+	$toselect = array();
 	$search_array_options = array();
 }
 

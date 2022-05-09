@@ -331,7 +331,7 @@ class modTicket extends DolibarrModules
 	{
 		global $conf, $langs;
 
-		$result = $this->_load_tables('/install/mysql/tables/', 'ticket');
+		$result = $this->_load_tables('/install/mysql/', 'ticket');
 		if ($result < 0) {
 			return -1; // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
 		}
