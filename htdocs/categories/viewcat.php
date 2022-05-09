@@ -734,9 +734,9 @@ if ($type == Categorie::TYPE_MEMBER) {
 			print '<input type="hidden" name="action" value="addintocategory">';
 			print '<table class="noborder centpercent">';
 			print '<tr class="liste_titre"><td>';
-			print $langs->trans("AddMemberIntoCategory").' &nbsp;';
+			print $langs->trans("AssignCategoryTo").' &nbsp;';
 			print $form->selectMembers('', 'elemid');
-			print '<input type="submit" class="button buttongen" value="'.$langs->trans("ClassifyInCategory").'"></td>';
+			print '<input type="submit" class="button buttongen" value="'.$langs->trans("Save").'"></td>';
 			print '</tr>';
 			print '</table>';
 			print '</form>';

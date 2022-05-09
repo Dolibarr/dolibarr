@@ -105,6 +105,8 @@ ALTER TABLE llx_bank ADD COLUMN amount_main_currency double(24,8) NULL;
 
 -- v16
 
+ALTER TABLE llx_societe_account DROP FOREIGN KEY llx_societe_account_fk_website;
+
 UPDATE llx_cronjob set label = 'RecurringInvoicesJob' where label = 'RecurringInvoices';
 UPDATE llx_cronjob set label = 'RecurringSupplierInvoicesJob' where label = 'RecurringSupplierInvoices';
 
@@ -325,6 +327,15 @@ UPDATE llx_c_availability SET type_duration = 'w', qty = 2 WHERE code = 'AV_2W';
 UPDATE llx_c_availability SET type_duration = 'w', qty = 3 WHERE code = 'AV_3W';
 UPDATE llx_c_availability SET type_duration = 'w', qty = 4 WHERE code = 'AV_4W';
 
+
+-- Deposit generation helper with specific payment terms
+ALTER TABLE llx_c_payment_term ADD COLUMN deposit_percent VARCHAR(63) DEFAULT NULL AFTER decalage;
+ALTER TABLE llx_societe ADD COLUMN deposit_percent VARCHAR(63) DEFAULT NULL AFTER cond_reglement;
+ALTER TABLE llx_propal ADD COLUMN deposit_percent VARCHAR(63) DEFAULT NULL AFTER fk_cond_reglement;
+ALTER TABLE llx_commande ADD COLUMN deposit_percent VARCHAR(63) DEFAULT NULL AFTER fk_cond_reglement;
+INSERT INTO llx_c_payment_term(code, sortorder, active, libelle, libelle_facture, type_cdr, nbjour, deposit_percent) values ('DEP30PCTDEL', 13, 0, '__DEPOSIT_PERCENT__% deposit', '__DEPOSIT_PERCENT__% deposit, remainder on delivery', 0, 1, '30');
+
+
 ALTER TABLE llx_boxes_def ADD COLUMN fk_user integer DEFAULT 0 NOT NULL;
 
 ALTER TABLE llx_contratdet ADD COLUMN rang integer DEFAULT 0 AFTER info_bits;
@@ -339,8 +350,14 @@ ALTER TABLE llx_takepos_floor_tables ADD UNIQUE(entity,label);
 ALTER TABLE llx_partnership ADD COLUMN url_to_check varchar(255);
 ALTER TABLE llx_c_partnership_type ADD COLUMN keyword	varchar(128);
 
+
 ALTER TABLE llx_eventorganization_conferenceorboothattendee	ADD COLUMN firstname varchar(100);
 ALTER TABLE llx_eventorganization_conferenceorboothattendee	ADD COLUMN lastname varchar(100);
 ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD COLUMN email_company varchar(128) after email;
 
-ALTER TABLE llx_inventory ADD COLUMN fk_categories_product VARCHAR(255) DEFAULT NULL AFTER fk_product;
+ALTER TABLE llx_inventory ADD COLUMN categories_product VARCHAR(255) DEFAULT NULL AFTER fk_product;
+
+ALTER TABLE llx_c_email_template ADD COLUMN email_from varchar(255);
+ALTER TABLE llx_c_email_template ADD COLUMN email_to varchar(255);
+ALTER TABLE llx_c_email_template ADD COLUMN email_tocc varchar(255);
+ALTER TABLE llx_c_email_template ADD COLUMN email_tobcc varchar(255);

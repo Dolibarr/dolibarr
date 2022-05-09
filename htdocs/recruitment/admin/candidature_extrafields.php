@@ -59,7 +59,9 @@ require DOL_DOCUMENT_ROOT.'/core/actions_extrafields.inc.php';
  * View
  */
 
+$textobject = $langs->transnoentitiesnoconv("Candidature");
 
+$help_url = '';
 llxHeader('', $langs->trans("RecruitmentSetup"), $help_url);
 
 

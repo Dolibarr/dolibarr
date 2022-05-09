@@ -366,7 +366,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 
 	$search_fac_rec_source_title = '';
 	$option = '';
 	$filter = '';
-	$toselect = '';
+	$toselect = array();
 	$search_array_options = array();
 	$search_categ_cus = 0;
 }

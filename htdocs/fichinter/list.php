@@ -171,7 +171,7 @@ if (empty($reshook)) {
 		$search_contrat_ref = "";
 		$search_desc = "";
 		$search_status = "";
-		$toselect = '';
+		$toselect = array();
 		$search_array_options = array();
 	}
 

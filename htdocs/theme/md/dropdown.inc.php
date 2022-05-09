@@ -26,7 +26,7 @@ button.dropdown-item.global-search-item {
 }
 div#topmenu-quickadd-dropdown {
 	position: fixed;
-	<?php echo $right; ?>: 65px;
+	<?php echo $right; ?>: 55px;
 	top: 0px;
 }
 div#topmenu-bookmark-dropdown {
@@ -121,6 +121,15 @@ button.dropdown-item.global-search-item {
 	border-radius: 4px;
 	-webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);
 	box-shadow: 0 6px 12px rgba(0,0,0,.175);
+}
+
+
+/* CSS to hide the arrow to show open/close */
+div#topmenu-quickadd-dropdown, div#topmenu-bookmark-dropdown {
+	padding-right: 2px;
+}
+div#topmenu-quickadd-dropdown a::after, div#topmenu-bookmark-dropdown a::after {
+	display: none;
 }
 
 

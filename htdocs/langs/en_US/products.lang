@@ -424,4 +424,7 @@ PMPExpected=Expected PMP
 ExpectedValuation=Expected Valuation
 PMPReal=Real PMP
 RealValuation=Real Valuation
+ConfirmEditExtrafield = Select the extrafield you want modify
+ConfirmEditExtrafieldQuestion = Are you sure you want to modify this extrafield?
+ModifyValueExtrafields = Modify value of an extrafield
 OrProductsWithCategories=Or products with tags/categories
