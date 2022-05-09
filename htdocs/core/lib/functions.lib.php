@@ -8351,7 +8351,7 @@ function verifCond($strToEvaluate)
  * @param 	string	$s					String to evaluate
  * @param	int		$returnvalue		0=No return (used to execute eval($a=something)). 1=Value of eval is returned (used to eval($something)).
  * @param   int     $hideerrors     	1=Hide errors
- * @param	string	$onlysimplestring	0=Accept all chars, 1=Accept only simple string with char 'a-z0-9\s^$_->&|=!?():"\',/' and restrict use of (, 2=Accept also ';' and no restriction on (.
+ * @param	string	$onlysimplestring	0=Accept all chars, 1=Accept only simple string with char 'a-z0-9\s^$_+-.*\/>&|=!?():"\',/';', 2=Accept also ';[]'
  * @return	mixed						Nothing or return result of eval
  */
 function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1')
@@ -8370,7 +8370,7 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1'
 	if ($onlysimplestring == '1') {
 		// We must accept: '1 && getDolGlobalInt("doesnotexist1") && $conf->global->MAIN_FEATURES_LEVEL'
 		// We must accept: '$conf->barcode->enabled && preg_match(\'/^(AAA|BBB)/\',$leftmenu)'
-		if (preg_match('/[^a-z0-9\s'.preg_quote('^$_+-*>&|=!?():"\',/', '/').']/i', $s)) {
+		if (preg_match('/[^a-z0-9\s'.preg_quote('^$_+-.*>&|=!?():"\',/', '/').']/i', $s)) {
 			if ($returnvalue) {
 				return 'Bad string syntax to evaluate (found chars that are not chars for simplestring): '.$s;
 			} else {
@@ -8382,7 +8382,7 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1'
 		}
 	} elseif ($onlysimplestring == '2') {
 		// We must accept: (($reloadedobj = new Task($db)) && ($reloadedobj->fetchNoCompute($object->id) > 0) && ($secondloadedobj = new Project($db)) && ($secondloadedobj->fetchNoCompute($reloadedobj->fk_project) > 0)) ? $secondloadedobj->ref : "Parent project not found"
-		if (preg_match('/[^a-z0-9\s'.preg_quote('^$_+-*>&|=!?():"\',/;[]', '/').']/i', $s)) {
+		if (preg_match('/[^a-z0-9\s'.preg_quote('^$_+-.*>&|=!?():"\',/;[]', '/').']/i', $s)) {
 			if ($returnvalue) {
 				return 'Bad string syntax to evaluate (found chars that are not chars for simplestring): '.$s;
 			} else {
@@ -8407,7 +8407,7 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1'
 			return '';
 		}
 	}
-	if (strpos($s, '.') !== false) {
+	if (preg_match('/[^0-9]+\.[^0-9]+/', $s)) {	// We refuse . if not between 2 numbers
 		if ($returnvalue) {
 			return 'Bad string syntax to evaluate (dot char is forbidden): '.$s;
 		} else {
