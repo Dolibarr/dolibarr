@@ -672,5 +672,5 @@ ALTER TABLE llx_ticket ADD COLUMN date_last_msg_sent datetime AFTER date_read;
 UPDATE llx_const SET name = 'WORKFLOW_TICKET_CREATE_INTERVENTION' WHERE name = 'TICKET_AUTO_CREATE_FICHINTER_CREATE';
 
 -- Add products categories field on inventory card
-ALTER TABLE llx_inventory ADD COLUMN fk_categories_product VARCHAR(255) DEFAULT NULL AFTER fk_product;
+ALTER TABLE llx_inventory ADD COLUMN categories_product VARCHAR(255) DEFAULT NULL AFTER fk_product;
 
