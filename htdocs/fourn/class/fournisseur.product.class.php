@@ -414,7 +414,7 @@ class ProductFournisseur extends Product
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				// Call trigger
-				$result = $this->call_trigger('SUPPLIER_PRODUCT_BUYPRICE_UPDATE', $user);
+				$result = $this->call_trigger('SUPPLIER_PRODUCT_BUYPRICE_MODIFY', $user);
 				if ($result < 0) {
 					$error++;
 				}
@@ -970,6 +970,23 @@ class ProductFournisseur extends Product
 		);
 
 		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+	}
+
+	/**
+	 * Function used to replace a product id with another one.
+	 *
+	 * @param DoliDB $db Database handler
+	 * @param int $origin_id Old product id
+	 * @param int $dest_id New product id
+	 * @return bool
+	 */
+	public static function replaceProduct(DoliDB $db, $origin_id, $dest_id)
+	{
+		$tables = array(
+			'product_fournisseur_price'
+		);
+
+		return CommonObject::commonReplaceProduct($db, $origin_id, $dest_id, $tables);
 	}
 
 	/**

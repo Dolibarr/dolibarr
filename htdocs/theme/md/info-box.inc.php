@@ -133,7 +133,7 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 	display: block;
 	position: relative;
 	min-height: 90px;
-	background: #fff;
+	background: var(--colorbacklineimpair2);
 	width: 100%;
 	/* box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1); */
 	border-radius: 2px;

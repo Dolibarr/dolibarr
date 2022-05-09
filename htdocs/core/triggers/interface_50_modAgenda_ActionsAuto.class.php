@@ -187,6 +187,14 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			$object->actionmsg = $langs->transnoentities("PropalValidatedInDolibarr", ($object->newref ? $object->newref : $object->ref));
 
 			$object->sendtoid = 0;
+		} elseif ($action == 'PROPAL_MODIFY') {
+			// Load translation files required by the page
+			$langs->loadLangs(array("agenda", "other", "propal"));
+
+			if (empty($object->actionmsg2)) $object->actionmsg2 = $langs->transnoentities("PropalBackToDraftInDolibarr", ($object->newref ? $object->newref : $object->ref));
+			$object->actionmsg = $langs->transnoentities("PropalBackToDraftInDolibarr", ($object->newref ? $object->newref : $object->ref));
+
+			$object->sendtoid = 0;
 		} elseif ($action == 'PROPAL_SENTBYMAIL') {
 			// Load translation files required by the page
 			$langs->loadLangs(array("agenda", "other", "propal"));
@@ -958,11 +966,13 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			}
 		}
 
+		/* Seems no more required: We have the data in dedicated field now.
 		if (!empty($user->login)) {
 			$object->actionmsg = dol_concatdesc($langs->transnoentities("Author").': '.$user->login, $object->actionmsg);
 		} elseif (isset($object->origin_email)) {
 			$object->actionmsg = dol_concatdesc($langs->transnoentities("Author").': '.$object->origin_email, $object->actionmsg);
 		}
+		*/
 
 		dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
@@ -1019,7 +1029,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		$actioncomm->type_code   = $object->actiontypecode; // Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
 		$actioncomm->code        = 'AC_'.$action;
 		$actioncomm->label       = $object->actionmsg2;
-		$actioncomm->note_private = $object->actionmsg; // TODO Replace with ($actioncomm->email_msgid ? $object->email_content : $object->actionmsg)
+		$actioncomm->note_private = $object->actionmsg;
 		$actioncomm->fk_project  = $projectid;
 		$actioncomm->datep       = $now;
 		$actioncomm->datef       = $now;

@@ -97,7 +97,20 @@ ALTER TABLE llx_partnership ADD UNIQUE INDEX uk_fk_type_fk_soc (fk_type, fk_soc,
 ALTER TABLE llx_partnership ADD UNIQUE INDEX uk_fk_type_fk_member (fk_type, fk_member, date_partnership_start);
 
 
+-- Add column to help to fix a very critical bug when transferring into accounting bank record of a bank account into another currency.
+-- Idea is to update this column manually in v15 with value in currency of company for bank that are not into the main currency and the transfer
+-- into accounting will use it in priority if value is not null. The script repair.sql contains the sequence to fix datas in llx_bank.
+ALTER TABLE llx_bank ADD COLUMN amount_main_currency double(24,8) NULL;
+
+
 -- v16
+
+ALTER TABLE llx_societe_account DROP FOREIGN KEY llx_societe_account_fk_website;
+
+UPDATE llx_cronjob set label = 'RecurringInvoicesJob' where label = 'RecurringInvoices';
+UPDATE llx_cronjob set label = 'RecurringSupplierInvoicesJob' where label = 'RecurringSupplierInvoices';
+
+ALTER TABLE llx_facture ADD INDEX idx_facture_datef (datef);
 
 ALTER TABLE llx_projet_task_time ADD COLUMN fk_product integer NULL;
 
@@ -115,6 +128,9 @@ INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) value
 INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) values ('HOLIDAY_MODIFY','Expense report modified','Executed when an expense report is modified','expensereport',212);
 
 ALTER TABLE llx_ticket ADD COLUMN date_last_msg_sent datetime AFTER date_read;
+
+UPDATE llx_const SET name = 'WORKFLOW_TICKET_LINK_CONTRACT' WHERE name = 'TICKET_AUTO_ASSIGN_CONTRACT_CREATE';
+UPDATE llx_const SET name = 'WORKFLOW_TICKET_CREATE_INTERVENTION' WHERE name = 'TICKET_AUTO_CREATE_FICHINTER_CREATE';
 
 CREATE TABLE llx_stock_mouvement_extrafields (
     rowid integer AUTO_INCREMENT PRIMARY KEY,
@@ -281,10 +297,22 @@ ALTER TABLE llx_bank_account ADD COLUMN pti_in_ctti smallint DEFAULT 0 AFTER dom
 UPDATE llx_c_ticket_type SET use_default=1 WHERE code='OTHER' AND NOT EXISTS(SELECT * FROM (SELECT * FROM llx_c_ticket_type) AS t WHERE use_default=1);
 
 
+ALTER TABLE llx_user DROP COLUMN webcal_login;
+ALTER TABLE llx_user DROP COLUMN module_comm;
+ALTER TABLE llx_user DROP COLUMN module_compta;
+ALTER TABLE llx_user DROP COLUMN ref_int;
+
+ALTER TABLE llx_user ADD COLUMN ref_employee varchar(50) DEFAULT NULL AFTER entity;
+ALTER TABLE llx_user ADD COLUMN national_registration_number varchar(50) DEFAULT NULL;
+
+
 ALTER TABLE llx_propal ADD last_main_doc VARCHAR(255) NULL AFTER model_pdf;
 
 UPDATE llx_c_country SET eec=0 WHERE eec IS NULL;
 ALTER TABLE llx_c_country MODIFY COLUMN eec tinyint DEFAULT 0 NOT NULL;
+ALTER TABLE llx_inventorydet ADD COLUMN pmp_real double DEFAULT NULL;
+ALTER TABLE llx_inventorydet ADD COLUMN pmp_expected double DEFAULT NULL;
+
 
 
 ALTER TABLE llx_chargesociales ADD COLUMN note_private text;
@@ -298,4 +326,39 @@ UPDATE llx_c_availability SET type_duration = 'w', qty = 1 WHERE code = 'AV_1W';
 UPDATE llx_c_availability SET type_duration = 'w', qty = 2 WHERE code = 'AV_2W';
 UPDATE llx_c_availability SET type_duration = 'w', qty = 3 WHERE code = 'AV_3W';
 UPDATE llx_c_availability SET type_duration = 'w', qty = 4 WHERE code = 'AV_4W';
+
+
+-- Deposit generation helper with specific payment terms
+ALTER TABLE llx_c_payment_term ADD COLUMN deposit_percent VARCHAR(63) DEFAULT NULL AFTER decalage;
+ALTER TABLE llx_societe ADD COLUMN deposit_percent VARCHAR(63) DEFAULT NULL AFTER cond_reglement;
+ALTER TABLE llx_propal ADD COLUMN deposit_percent VARCHAR(63) DEFAULT NULL AFTER fk_cond_reglement;
+ALTER TABLE llx_commande ADD COLUMN deposit_percent VARCHAR(63) DEFAULT NULL AFTER fk_cond_reglement;
+INSERT INTO llx_c_payment_term(code, sortorder, active, libelle, libelle_facture, type_cdr, nbjour, deposit_percent) values ('DEP30PCTDEL', 13, 0, '__DEPOSIT_PERCENT__% deposit', '__DEPOSIT_PERCENT__% deposit, remainder on delivery', 0, 1, '30');
+
+
+ALTER TABLE llx_boxes_def ADD COLUMN fk_user integer DEFAULT 0 NOT NULL;
+
+ALTER TABLE llx_contratdet ADD COLUMN rang integer DEFAULT 0 AFTER info_bits;
+
+ALTER TABLE llx_actioncomm MODIFY COLUMN note mediumtext;
+
+DELETE FROM llx_boxes WHERE box_id IN (select rowid FROM llx_boxes_def WHERE file IN ('box_bom.php@bom', 'box_bom.php'));
+DELETE FROM llx_boxes_def WHERE file IN ('box_bom.php@bom', 'box_bom.php');
+
+ALTER TABLE llx_takepos_floor_tables ADD UNIQUE(entity,label);
+
+ALTER TABLE llx_partnership ADD COLUMN url_to_check varchar(255);
+ALTER TABLE llx_c_partnership_type ADD COLUMN keyword	varchar(128);
+
+
+ALTER TABLE llx_eventorganization_conferenceorboothattendee	ADD COLUMN firstname varchar(100);
+ALTER TABLE llx_eventorganization_conferenceorboothattendee	ADD COLUMN lastname varchar(100);
+ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD COLUMN email_company varchar(128) after email;
+
+
+ALTER TABLE llx_c_email_template ADD COLUMN email_from varchar(255);
+ALTER TABLE llx_c_email_template ADD COLUMN email_to varchar(255);
+ALTER TABLE llx_c_email_template ADD COLUMN email_tocc varchar(255);
+ALTER TABLE llx_c_email_template ADD COLUMN email_tobcc varchar(255);
+
 

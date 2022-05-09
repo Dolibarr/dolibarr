@@ -852,7 +852,8 @@ class BookKeeping extends CommonObject
 		$sql .= " t.piece_num,";
 		$sql .= " t.date_creation,";
 		$sql .= " t.date_export,";
-		$sql .= " t.date_validated as date_validation";
+		$sql .= " t.date_validated as date_validation,";
+		$sql .= " t.import_key";
 		// Manage filter
 		$sqlwhere = array();
 		if (count($filter) > 0) {
@@ -947,6 +948,7 @@ class BookKeeping extends CommonObject
 				$line->date_creation = $this->db->jdate($obj->date_creation);
 				$line->date_export = $this->db->jdate($obj->date_export);
 				$line->date_validation = $this->db->jdate($obj->date_validation);
+				$line->import_key = $obj->import_key;
 
 				$this->lines[] = $line;
 

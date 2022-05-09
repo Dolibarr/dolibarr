@@ -39,6 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
  */
 class FactureRec extends CommonInvoice
 {
+	const TRIGGER_PREFIX = 'BILLREC';
 	/**
 	 * @var string ID to identify managed object
 	 */
@@ -501,7 +502,7 @@ class FactureRec extends CommonInvoice
 
 			if (!$error && !$notrigger) {
 				// Call trigger
-				$result = $this->call_trigger('BILLREC_UPDATE', $user);
+				$result = $this->call_trigger('BILLREC_MODIFY', $user);
 				if ($result < 0) {
 					$this->db->rollback();
 					return -2;
@@ -816,7 +817,14 @@ class FactureRec extends CommonInvoice
 			$this->error = $this->db->lasterror();
 			$error = -2;
 		}
-
+		if (!$error && !$notrigger) {
+			// Call trigger
+			$result = $this->call_trigger('BILLREC_DELETE', $user);
+			if ($result < 0) {
+				$error++;
+			}
+			// End call triggers
+		}
 		if (!$error) {
 			$this->db->commit();
 			return 1;
@@ -937,6 +945,13 @@ class FactureRec extends CommonInvoice
 				$product_type = $product->type;
 			}
 
+			// Rank to use
+			$ranktouse = $rang;
+			if ($ranktouse == -1) {
+				$rangmax = $this->line_max(0);
+				$ranktouse = $rangmax + 1;
+			}
+
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."facturedet_rec (";
 			$sql .= "fk_facture";
 			$sql .= ", label";
@@ -995,7 +1010,7 @@ class FactureRec extends CommonInvoice
 			$sql .= ", ".($fk_fournprice > 0 ? $fk_fournprice : 'null');
 			$sql .= ", ".($pa_ht ? price2num($pa_ht) : 0);
 			$sql .= ", ".((int) $info_bits);
-			$sql .= ", ".((int) $rang);
+			$sql .= ", ".((int) $ranktouse);
 			$sql .= ", ".((int) $special_code);
 			$sql .= ", ".($fk_unit ? ((int) $fk_unit) : "null");
 			$sql .= ", ".(int) $this->fk_multicurrency;
@@ -1752,6 +1767,23 @@ class FactureRec extends CommonInvoice
 	}
 
 	/**
+	 * Function used to replace a product id with another one.
+	 *
+	 * @param DoliDB $db Database handler
+	 * @param int $origin_id Old product id
+	 * @param int $dest_id New product id
+	 * @return bool
+	 */
+	public static function replaceProduct(DoliDB $db, $origin_id, $dest_id)
+	{
+		$tables = array(
+			'facturedet_rec'
+		);
+
+		return CommonObject::commonReplaceProduct($db, $origin_id, $dest_id, $tables);
+	}
+
+	/**
 	 *	Update frequency and unit
 	 *
 	 *	@param     	int		$frequency		value of frequency
@@ -2122,7 +2154,7 @@ class FactureLigneRec extends CommonInvoiceLine
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet_rec SET";
-		$sql .= " fk_facture = ".$this->fk_facture;
+		$sql .= " fk_facture = ".((int) $this->fk_facture);
 		$sql .= ", label=".(!empty($this->label) ? "'".$this->db->escape($this->label)."'" : "null");
 		$sql .= ", description='".$this->db->escape($this->desc)."'";
 		$sql .= ", price=".price2num($this->price);
@@ -2134,10 +2166,10 @@ class FactureLigneRec extends CommonInvoiceLine
 		$sql .= ", localtax2_tx=".price2num($this->localtax2_tx);
 		$sql .= ", localtax2_type='".$this->db->escape($this->localtax2_type)."'";
 		$sql .= ", fk_product=".($this->fk_product > 0 ? $this->fk_product : "null");
-		$sql .= ", product_type=".$this->product_type;
-		$sql .= ", remise_percent='".price2num($this->remise_percent)."'";
-		$sql .= ", subprice='".price2num($this->subprice)."'";
-		$sql .= ", info_bits='".price2num($this->info_bits)."'";
+		$sql .= ", product_type=".((int) $this->product_type);
+		$sql .= ", remise_percent=".price2num($this->remise_percent);
+		$sql .= ", subprice=".price2num($this->subprice);
+		$sql .= ", info_bits=".price2num($this->info_bits);
 		$sql .= ", date_start_fill=".(int) $this->date_start_fill;
 		$sql .= ", date_end_fill=".(int) $this->date_end_fill;
 		if (empty($this->skip_update_total)) {
@@ -2168,7 +2200,7 @@ class FactureLigneRec extends CommonInvoiceLine
 
 			if (!$error && !$notrigger) {
 				// Call trigger
-				$result = $this->call_trigger('LINEBILLREC_UPDATE', $user);
+				$result = $this->call_trigger('LINEBILLREC_MODIFY', $user);
 				if ($result < 0) {
 					$error++;
 				}

@@ -291,7 +291,7 @@ if (empty($reshook)) {
 		$search_date_approve_end = '';
 		$billed = '';
 		$search_billed = '';
-		$toselect = '';
+		$toselect = array();
 		$search_array_options = array();
 	}
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')
@@ -355,6 +355,8 @@ if (empty($reshook)) {
 
 		$db->begin();
 
+		$default_ref_supplier=dol_print_date(dol_now(), '%Y%m%d%H%M%S');
+
 		foreach ($orders as $id_order) {
 			$cmd = new CommandeFournisseur($db);
 			if ($cmd->fetch($id_order) <= 0) {
@@ -371,9 +373,8 @@ if (empty($reshook)) {
 				$objecttmp->mode_reglement_id	= $cmd->mode_reglement_id;
 				$objecttmp->fk_project = $cmd->fk_project;
 				$objecttmp->multicurrency_code = $cmd->multicurrency_code;
-				if (empty($createbills_onebythird)) {
-					$objecttmp->ref_client = $cmd->ref_client;
-				}
+				$objecttmp->ref_supplier = !empty($cmd->ref_supplier) ? $cmd->ref_supplier : $default_ref_supplier;
+				$default_ref_supplier+=1;
 
 				$datefacture = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 				if (empty($datefacture)) {
@@ -1194,7 +1195,7 @@ if ($resql) {
 	$moreforfilter = '';
 
 	// If the user can view prospects other than his'
-	if ($user->rights->societe->client->voir || $socid) {
+	if ($user->rights->user->user->lire) {
 		$langs->load("commercial");
 		$moreforfilter .= '<div class="divsearchfield">';
 		$tmptitle = $langs->trans('ThirdPartiesOfSaleRepresentative');

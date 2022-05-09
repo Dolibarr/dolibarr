@@ -14,7 +14,7 @@ if (isset($totalarray['pos'])) {
 		$i++;
 		if (!empty($totalarray['pos'][$i])) {
 			print '<td class="right">';
-			if ($totalarray['type'][$i] == 'duration') {
+			if (isset($totalarray['type']) && $totalarray['type'][$i] == 'duration') {
 				print (!empty($totalarray['val'][$totalarray['pos'][$i]])?convertSecondToTime($totalarray['val'][$totalarray['pos'][$i]], 'allhourmin'):0);
 			} else {
 				print price(!empty($totalarray['val'][$totalarray['pos'][$i]])?$totalarray['val'][$totalarray['pos'][$i]]:0);

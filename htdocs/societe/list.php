@@ -249,7 +249,7 @@ $arrayfields = array(
 	's.idprof6'=>array('label'=>"ProfId6Short", 'position'=>45, 'checked'=>$checkedprofid6),
 	's.tva_intra'=>array('label'=>"VATIntraShort", 'position'=>50, 'checked'=>0),
 	'customerorsupplier'=>array('label'=>'NatureOfThirdParty', 'position'=>61, 'checked'=>1),
-	's.fk_prospectlevel'=>array('label'=>"ProspectLevelShort", 'position'=>62, 'checked'=>$checkprospectlevel),
+	's.fk_prospectlevel'=>array('label'=>"ProspectLevel", 'position'=>62, 'checked'=>$checkprospectlevel),
 	's.fk_stcomm'=>array('label'=>"StatusProsp", 'position'=>63, 'checked'=>$checkstcomm),
 	's2.nom'=>array('label'=>'ParentCompany', 'position'=>64, 'checked'=>0),
 	's.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
@@ -365,7 +365,7 @@ if (empty($reshook)) {
 		$search_level = '';
 		$search_parent_name = '';
 		$search_import_key = '';
-		$toselect = '';
+		$toselect = array();
 		$search_array_options = array();
 	}
 
@@ -870,10 +870,13 @@ if ($user->rights->societe->creer) {
 	$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
 }
 if ($user->rights->societe->creer) {
-	$arrayofmassactions['preenable'] = img_picto('', '', 'class="pictofixedwidth"').$langs->trans("SetToEnabled");
+	$arrayofmassactions['preenable'] = img_picto('', 'stop-circle', 'class="pictofixedwidth"').$langs->trans("SetToEnabled");
 }
 if ($user->rights->societe->creer) {
-	$arrayofmassactions['predisable'] = img_picto('', '', 'class="pictofixedwidth"').$langs->trans("SetToDisabled");
+	$arrayofmassactions['predisable'] = img_picto('', 'stop-circle', 'class="pictofixedwidth"').$langs->trans("SetToDisabled");
+}
+if ($user->rights->societe->creer) {
+	$arrayofmassactions['presetcommercial'] = img_picto('', 'user', 'class="pictofixedwidth"').$langs->trans("AllocateCommercial");
 }
 if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete', 'preaffecttag', 'preenable', 'preclose'))) {
 	$arrayofmassactions = array();
@@ -1645,7 +1648,7 @@ while ($i < min($num, $limit)) {
 				$titlealt = $val['label'];
 			}
 			if ($obj->stcomm_id != $val['id']) {
-				print '<a class="pictosubstatus" href="'.$_SERVER["PHP_SELF"].'?stcommsocid='.$obj->rowid.'&stcomm='.urlencode($val['code']).'&action=setstcomm&token='.newToken().$param.($page ? '&page='.urlencode($page) : '').'">'.img_action($titlealt, $val['code'], $val['picto']).'</a>';
+				print '<a class="pictosubstatus reposition" href="'.$_SERVER["PHP_SELF"].'?stcommsocid='.$obj->rowid.'&stcomm='.urlencode($val['code']).'&action=setstcomm&token='.newToken().$param.($page ? '&page='.urlencode($page) : '').'">'.img_action($titlealt, $val['code'], $val['picto']).'</a>';
 			}
 		}
 		print '</div></div></td>';

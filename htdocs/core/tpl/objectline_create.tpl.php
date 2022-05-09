@@ -10,6 +10,7 @@
  * Copyright (C) 2018		Ferran Marcet		<fmarcet@2byte.es>
  * Copyright (C) 2019		Nicolas ZABOURI		<info@inovea-conseil.com>
  * Copyright (C) 2022		OpenDSI				<support@open-dsi.fr>
+ * Copyright (C) 2022      	Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -315,6 +316,11 @@ if ($nolinesbefore) {
 			echo '<input type="hidden" name="pbq" id="pbq" value="">';
 			echo '</span>';
 		}
+
+		if (!empty($conf->global->MAIN_ADD_LINE_AT_POSITION)) {
+			echo '<br>'.$langs->trans('AddLineOnPosition').' : <input type="number" name="rank" step="1" min="0" style="width: 5em;">';
+		}
+
 		if (is_object($hookmanager) && empty($senderissupplier)) {
 			$parameters = array('fk_parent_line'=>GETPOST('fk_parent_line', 'int'));
 			$reshook = $hookmanager->executeHooks('formCreateProductOptions', $parameters, $object, $action);

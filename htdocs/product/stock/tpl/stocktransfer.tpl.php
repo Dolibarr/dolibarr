@@ -137,7 +137,7 @@ print '</td>';
 print '</tr>';
 
 // Extrafield template
-include 'extrafields_add.tpl.php';
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
 
 print '</table>';
 
