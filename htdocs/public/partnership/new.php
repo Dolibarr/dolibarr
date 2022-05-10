@@ -278,7 +278,7 @@ if (empty($reshook) && $action == 'add') {
 			*/
 
 			// Send email to the foundation to say a new member subscribed with autosubscribe form
-			if (!empty($conf->global->MAIN_INFO_SOCIETE_MAIL) && !empty($conf->global->PARTNERSHIP_AUTOREGISTER_NOTIF_MAIL_SUBJECT) &&
+			if (getDolGlobalString('MAIN_INFO_SOCIETE_MAIL') && !empty($conf->global->PARTNERSHIP_AUTOREGISTER_NOTIF_MAIL_SUBJECT) &&
 				  !empty($conf->global->PARTNERSHIP_AUTOREGISTER_NOTIF_MAIL)) {
 				// Define link to login card
 				$appli = constant('DOL_APPLICATION_TITLE');
@@ -295,13 +295,13 @@ if (empty($reshook) && $action == 'add') {
 					$appli .= " ".DOL_VERSION;
 				}
 
-				$to = $partnership->makeSubstitution($conf->global->MAIN_INFO_SOCIETE_MAIL);
-				$from = $conf->global->PARTNERSHIP_MAIL_FROM;
+				$to = $partnership->makeSubstitution(getDolGlobalString('MAIN_INFO_SOCIETE_MAIL'));
+				$from = getDolGlobalString('PARTNERSHIP_MAIL_FROM');
 				$mailfile = new CMailFile(
-					'['.$appli.'] '.$conf->global->PARTNERSHIP_AUTOREGISTER_NOTIF_MAIL_SUBJECT,
+					'['.$appli.'] '.getDolGlobalString('PARTNERSHIP_AUTOREGISTER_NOTIF_MAIL_SUBJECT', 'Partnership request'),
 					$to,
 					$from,
-					$partnership->makeSubstitution($conf->global->PARTNERSHIP_AUTOREGISTER_NOTIF_MAIL),
+					$partnership->makeSubstitution(getDolGlobalString('PARTNERSHIP_AUTOREGISTER_NOTIF_MAIL')),
 					array(),
 					array(),
 					array(),
@@ -523,7 +523,7 @@ if (empty($conf->global->PARTNERSHIP_NEWFORM_FORCETYPE)) {
 }
 
 // Company
-print '<tr id="trcompany" class="trcompany"><td>'.$langs->trans("Company").'</td><td>';
+print '<tr id="trcompany" class="trcompany"><td>'.$langs->trans("Company").' <span style="color:red;">*</span></td><td>';
 print img_picto('', 'company', 'class="pictofixedwidth"');
 print '<input type="text" name="societe" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('societe')).'"></td></tr>'."\n";
 // Lastname
@@ -531,7 +531,7 @@ print '<tr><td>'.$langs->trans("Lastname").' <span style="color: red">*</span></
 // Firstname
 print '<tr><td>'.$langs->trans("Firstname").' <span style="color: red">*</span></td><td><input type="text" name="firstname" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('firstname')).'"></td></tr>'."\n";
 // EMail
-print '<tr><td>'.$langs->trans("Email").($conf->global->PARTNERSHIP_MAIL_REQUIRED ? ' <span style="color:red;">*</span>' : '').'</td><td>';
+print '<tr><td>'.$langs->trans("Email").' <span style="color:red;">*</span></td><td>';
 //print img_picto('', 'email', 'class="pictofixedwidth"');
 print '<input type="text" name="email" maxlength="255" class="minwidth200" value="'.dol_escape_htmltag(GETPOST('email')).'"></td></tr>'."\n";
 // Address
