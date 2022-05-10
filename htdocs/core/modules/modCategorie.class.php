@@ -481,6 +481,7 @@ class modCategorie extends DolibarrModules
 					'cp.fk_product'=>array('rule'=>'fetchidfromref', 'classfile'=>'/product/class/product.class.php', 'class'=>'Product', 'method'=>'fetch', 'element'=>'Product')
 			);
 			$this->import_examplevalues_array[$r] = array('cp.fk_categorie'=>"rowid or label", 'cp.fk_product'=>"rowid or ref");
+			$this->import_updatekeys_array[$r] = array('cp.fk_categorie' => 'Category', 'cp.fk_product' => 'ProductRef');
 		}
 
 		// 1 Suppliers
