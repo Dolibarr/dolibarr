@@ -4720,6 +4720,9 @@ div.titre {
 	padding-bottom: 5px;
 	font-weight: 400;
 }
+div.titre.small {
+	font-size: 1em;
+}
 div.fiche > table.table-fiche-title:first-of-type div {
 	color: var(--colortexttitlenotab);
 	font-size: 1.1em;
