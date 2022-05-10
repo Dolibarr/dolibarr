@@ -2223,7 +2223,7 @@ function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs
 
 	$ret = '';
 	$countriesusingstate = array('AU', 'CA', 'US', 'IN', 'GB', 'ES', 'UK', 'TR', 'CN'); // See also MAIN_FORCE_STATE_INTO_ADDRESS
-
+	$sep = "\n";
 	// See format of addresses on https://en.wikipedia.org/wiki/Address
 	// Address
 	if (empty($mode)) {
@@ -2233,12 +2233,13 @@ function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs
 	if (isset($object->country_code) && in_array($object->country_code, array('AU', 'CA', 'US', 'CN')) || !empty($conf->global->MAIN_FORCE_STATE_INTO_ADDRESS)) {
 		// US: title firstname name \n address lines \n town, state, zip \n country
 		$town = ($extralangcode ? $object->array_languages['town'][$extralangcode] : (empty($object->town) ? '' : $object->town));
-		$ret .= ($ret ? $sep : '').$town;
+		$ret .= (($ret && $town) ? $sep : '').$town;
+
 		if (!empty($object->state))	{
-			$ret .= ($ret ? ", " : '').$object->state;
+			$ret .= ($ret ? ($town ? ", " : $sep) : '').$object->state;
 		}
 		if (!empty($object->zip)) {
-			$ret .= ($ret ? ", " : '').$object->zip;
+			$ret .= ($ret ? (($town || $object->state) ? ", " : $sep) : '').$object->zip;
 		}
 	} elseif (isset($object->country_code) && in_array($object->country_code, array('GB', 'UK'))) {
 		// UK: title firstname name \n address lines \n town state \n zip \n country
@@ -7140,7 +7141,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__TICKET_USER_ASSIGN__'] = '__TICKET_USER_ASSIGN__';
 			}
 
-			if (!empty($conf->recruitment->enabled) && (!is_object($object) || $object->element == 'candidature')) {
+			if (!empty($conf->recruitment->enabled) && (!is_object($object) || $object->element == 'recruitmentcandidature')) {
 				$substitutionarray['__CANDIDATE_FULLNAME__'] = '__CANDIDATE_FULLNAME__';
 				$substitutionarray['__CANDIDATE_FIRSTNAME__'] = '__CANDIDATE_FIRSTNAME__';
 				$substitutionarray['__CANDIDATE_LASTNAME__'] = '__CANDIDATE_LASTNAME__';
@@ -7289,8 +7290,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 
 			if (is_object($object) && $object->element == 'recruitmentcandidature') {
 				$substitutionarray['__CANDIDATE_FULLNAME__'] = $object->getFullName($outputlangs);
-				$substitutionarray['__CANDIDATE_FIRSTNAME__'] = $object->firstname;
-				$substitutionarray['__CANDIDATE_LASTNAME__'] = $object->lastname;
+				$substitutionarray['__CANDIDATE_FIRSTNAME__'] = isset($object->firstname) ? $object->firstname : '';
+				$substitutionarray['__CANDIDATE_LASTNAME__'] = isset($object->lastname) ? $object->lastname : '';
 			}
 
 			if (is_object($object->project)) {
@@ -8350,7 +8351,7 @@ function verifCond($strToEvaluate)
  * @param 	string	$s					String to evaluate
  * @param	int		$returnvalue		0=No return (used to execute eval($a=something)). 1=Value of eval is returned (used to eval($something)).
  * @param   int     $hideerrors     	1=Hide errors
- * @param	string	$onlysimplestring	0=Accept all chars, 1=Accept only simple string with char 'a-z0-9\s^$_->&|=!?():"\',/' and restrict use of (, 2=Accept also ';' and no restriction on (.
+ * @param	string	$onlysimplestring	0=Accept all chars, 1=Accept only simple string with char 'a-z0-9\s^$_+-.*\/>&|=!?():"\',/';', 2=Accept also ';[]'
  * @return	mixed						Nothing or return result of eval
  */
 function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1')
@@ -8369,7 +8370,7 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1'
 	if ($onlysimplestring == '1') {
 		// We must accept: '1 && getDolGlobalInt("doesnotexist1") && $conf->global->MAIN_FEATURES_LEVEL'
 		// We must accept: '$conf->barcode->enabled && preg_match(\'/^(AAA|BBB)/\',$leftmenu)'
-		if (preg_match('/[^a-z0-9\s'.preg_quote('^$_+-*>&|=!?():"\',/', '/').']/i', $s)) {
+		if (preg_match('/[^a-z0-9\s'.preg_quote('^$_+-.*>&|=!?():"\',/', '/').']/i', $s)) {
 			if ($returnvalue) {
 				return 'Bad string syntax to evaluate (found chars that are not chars for simplestring): '.$s;
 			} else {
@@ -8381,7 +8382,7 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1'
 		}
 	} elseif ($onlysimplestring == '2') {
 		// We must accept: (($reloadedobj = new Task($db)) && ($reloadedobj->fetchNoCompute($object->id) > 0) && ($secondloadedobj = new Project($db)) && ($secondloadedobj->fetchNoCompute($reloadedobj->fk_project) > 0)) ? $secondloadedobj->ref : "Parent project not found"
-		if (preg_match('/[^a-z0-9\s'.preg_quote('^$_+-*>&|=!?():"\',/;[]', '/').']/i', $s)) {
+		if (preg_match('/[^a-z0-9\s'.preg_quote('^$_+-.*>&|=!?():"\',/;[]', '/').']/i', $s)) {
 			if ($returnvalue) {
 				return 'Bad string syntax to evaluate (found chars that are not chars for simplestring): '.$s;
 			} else {
@@ -8406,7 +8407,7 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1'
 			return '';
 		}
 	}
-	if (strpos($s, '.') !== false) {
+	if (preg_match('/[^0-9]+\.[^0-9]+/', $s)) {	// We refuse . if not between 2 numbers
 		if ($returnvalue) {
 			return 'Bad string syntax to evaluate (dot char is forbidden): '.$s;
 		} else {
@@ -8990,6 +8991,9 @@ function printCommonFooter($zone = 'private')
 								print 'jQuery("select[name=\''.$paramkey.'\']").prop(\'required\',true);'."\n";
 								print 'jQuery("select[name=\''.$paramkey.'\'] option[value=\'-1\']").prop(\'value\', \'\');'."\n";
 								print 'jQuery("select[name=\''.$paramkey.'\'] option[value=\'0\']").prop(\'value\', \'\');'."\n";
+
+								// Add 'field required' class on closest td for all input elements : input, textarea and select
+								print 'jQuery(":input[name=\'' . $paramkey . '\']").closest("tr").find("td:first").addClass("fieldrequired");' . "\n";
 							}
 						}
 					}
@@ -9858,7 +9862,7 @@ function dol_mimetype($file, $default = 'application/octet-stream', $mode = 0)
  * Return the value of a filed into a dictionary for the record $id.
  * This also set all the values into a cache for a next search.
  *
- * @param string	$tablename		Name of dictionary
+ * @param string	$tablename		Name of table dictionary (without the MAIN_DB_PREFIX, example: 'c_holiday_types')
  * @param string	$field			The name of field where to find the value to return
  * @param int		$id				Id of line record
  * @param bool		$checkentity	Add filter on entity
@@ -9869,12 +9873,14 @@ function getDictionaryValue($tablename, $field, $id, $checkentity = false, $rowi
 {
 	global $conf, $db;
 
+	$tablename = preg_replace('/^'.preg_quote(MAIN_DB_PREFIX, '/').'/', '', $tablename);	// Clean name of table for backward compatibility.
+
 	$dictvalues = (isset($conf->cache['dictvalues_'.$tablename]) ? $conf->cache['dictvalues_'.$tablename] : null);
 
 	if (is_null($dictvalues)) {
 		$dictvalues = array();
 
-		$sql = "SELECT * FROM ".$tablename." WHERE 1 = 1"; // Here select * is allowed as it is generic code and we don't have list of fields
+		$sql = "SELECT * FROM ".MAIN_DB_PREFIX.$tablename." WHERE 1 = 1"; // Here select * is allowed as it is generic code and we don't have list of fields
 		if ($checkentity) {
 			$sql .= ' AND entity IN (0,'.getEntity($tablename).')';
 		}

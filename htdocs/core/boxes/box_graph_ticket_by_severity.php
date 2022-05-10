@@ -191,19 +191,19 @@ class box_graph_ticket_by_severity extends ModeleBoxes
 				}
 				$stringtoprint .= '</div>';
 				$this->info_box_contents[][]=array(
-					'td' => 'center',
+					'td' => 'class="center"',
 					'text' => $stringtoprint
 				);
 			} else {
 				$this->info_box_contents[0][0] = array(
-					'td' => 'class="center opacitymedium"',
-					'text' => $langs->trans("BoxNoTicketSeverity")
+					'td' => '',
+					'text' => '<span class="opacitymedium">'.$langs->trans("BoxNoTicketSeverity").'</span>'
 				);
 			}
 		} else {
 			$this->info_box_contents[0][0] = array(
-				'td' => 'class="left"',
-				'text' => $langs->trans("ReadPermissionNotAllowed"),
+				'td' => '',
+				'text' => '<span class="opacitymedium">'.$langs->trans("ReadPermissionNotAllowed").'</span>',
 			);
 		}
 	}

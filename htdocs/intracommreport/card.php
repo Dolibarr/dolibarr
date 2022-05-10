@@ -23,7 +23,8 @@
  */
 
 
-/** Terms
+/**
+ *  Terms
  *
  *	DEB = Declaration d'Exchanges de Biens (FR)   =  Declaration of Exchange of Goods (EN)
  *  DES = Déclaration Européenne de Services (FR) =  European Declaration of Services (EN)
@@ -32,7 +33,6 @@
  *
  */
 
-
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
@@ -40,6 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/intracommreport/class/intracommreport.class.php
 
 $langs->loadLangs(array("intracommreport"));
 
+$id = GETPOST('id', 'int');
 $action = GETPOST('action');
 $exporttype = GETPOSTISSET('exporttype') ? GETPOST('exporttype', 'alphanohtml') : 'deb'; // DEB or DES
 $year = GETPOSTINT('year');
@@ -65,9 +66,13 @@ $formother = new FormOther($db);
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('intracommcard', 'globalcard'));
 
+$error = 0;
+
+
 /*
  * 	Actions
  */
+
 $parameters = array('id' => $id);
 // Note that $action and $object may have been modified by some hooks
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);
@@ -132,6 +137,7 @@ if ($action == 'add' && $user->rights->intracommreport->write) {
 	}
 }
 
+
 /*
  * View
  */
@@ -151,7 +157,7 @@ if ($action == 'create') {
 	print '<table class="border" width="100%">';
 
 	// Label
-	print '<tr><td class="titlefieldcreate">'.$langs->trans("Label").'</td><td><input type="text" class="minwidth200" name="label" autofocus="autofocus"></td></tr>';
+	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td><td><input type="text" class="minwidth200" name="label" autofocus="autofocus"></td></tr>';
 
 	// Declaration
 	print '<tr><td class="fieldrequired">'.$langs->trans("Declaration")."</td><td>\n";
@@ -164,8 +170,8 @@ if ($action == 'create') {
 	print $langs->trans("AnalysisPeriod");
 	print '</td>';
 	print '<td>';
-	print $formother->select_month($month ? date('M') : $month, 'month', 0, 1, 'widthauto valignmiddle ');
-	print $formother->select_year($year ? date('Y') : $year, 'year', 0, 3, 3);
+	print $formother->select_month($month ? date('M') : $month, 'month', 0, 1, 'widthauto valignmiddle ', true);
+	print $formother->selectyear($year ? date('Y') : $year, 'year', 0, 3, 3, 0, 0, '', '', true);
 	print '</td>';
 	print '</tr>';
 

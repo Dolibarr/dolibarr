@@ -2438,7 +2438,7 @@ $heightmenu = 48; /* height of top menu, part with image */
 $heightmenu2 = 48; /* height of top menu, ârt with login  */
 $disableimages = 0;
 $maxwidthloginblock = 110;
-if (!empty($conf->global->THEME_TOPMENU_DISABLE_IMAGE)) {
+if (getDolGlobalInt('THEME_TOPMENU_DISABLE_IMAGE') == 1) {
 	$heightmenu = 30; $disableimages = 1; $maxwidthloginblock = 180; $minwidthtmenu = 0;
 }
 ?>
@@ -2623,98 +2623,21 @@ a.tmenuimage:focus, .mainmenu.topmenuimage:focus {
 	outline: none;
 }
 
-/* Do not load menu img if hidden to save bandwidth */
-<?php if (empty($dol_hide_topmenu)) { ?>
-	<?php if (!defined('DISABLE_FONT_AWSOME')) { ?>
-		<?php include dol_buildpath($path.'/theme/'.$theme.'/main_menu_fa_icons.inc.php', 0); ?>
-	<?php } ?>
 
 div.mainmenu.home{
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/home.png', 1) ?>);
 	background-position-x: center;
 }
 
-div.mainmenu.billing {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/money.png', 1) ?>);
-}
-
-div.mainmenu.accountancy {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/money.png', 1) ?>);
-}
-
-div.mainmenu.agenda {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/agenda.png', 1) ?>);
-}
-
-div.mainmenu.bank {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/bank.png', 1) ?>);
-}
-
-div.mainmenu.cashdesk {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/pointofsale.png', 1) ?>);
-}
-
-div.mainmenu.takepos {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/pointofsale.png', 1) ?>);
-}
-
-div.mainmenu.companies {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/company.png', 1) ?>);
-}
-
-div.mainmenu.commercial {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/commercial.png', 1) ?>);
-}
-
-div.mainmenu.ecm {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/ecm.png', 1) ?>);
-}
-
-div.mainmenu.externalsite {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/externalsite.png', 1) ?>);
-}
-
-div.mainmenu.ftp {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/tools.png', 1) ?>);
-}
-
-div.mainmenu.hrm {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/holiday.png', 1) ?>);
-}
-
-div.mainmenu.members {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/members.png', 1) ?>);
-}
-
 div.mainmenu.menu {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/menu.png', 1) ?>);
 	top: 10px;
 	left: 1px;
 }
 
-div.mainmenu.products {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/products.png', 1) ?>);
-}
 
-div.mainmenu.mrp {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/products.png', 1) ?>);
-}
 
-div.mainmenu.project {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/project.png', 1) ?>);
-}
-
-div.mainmenu.ticket {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/ticket.png', 1) ?>);
-}
-
-div.mainmenu.tools {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/tools.png', 1) ?>);
-}
-
-div.mainmenu.website {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/externalsite.png', 1) ?>);
-}
+/* Do not load menu img if hidden to save bandwidth */
+<?php if (empty($dol_hide_topmenu)) { ?>
+	<?php include dol_buildpath($path.'/theme/'.$theme.'/main_menu_fa_icons.inc.php', 0); ?>
 
 	<?php
 	// Add here more div for other menu entries. moduletomainmenu=array('module name'=>'name of class for div')
@@ -3162,6 +3085,7 @@ div.blockvmenulogo
 	object-fit: contain;
 	width: inherit;
 	height: inherit;
+	image-rendering: -webkit-optimize-contrast;
 }
 #mainmenutd_companylogo::after {
 	content: unset;
@@ -4666,6 +4590,9 @@ div.titre {
 	padding-bottom: 5px;
 	text-transform: uppercase;
 	/* text-shadow: 1px 1px 2px #FFFFFF; */
+}
+div.titre.small {
+	font-size: 1em;
 }
 div.titre {
 	color: var(--colortexttitlenotab);

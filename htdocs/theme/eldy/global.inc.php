@@ -240,7 +240,7 @@ input, select {
 }
 #mainbody input.button:not(.buttongen):not(.bordertransp), #mainbody a.button:not(.buttongen):not(.bordertransp) {
 	background: var(--butactionbg);
-	color: var(--textbutaction)!important;
+	color: var(--textbutaction);
 	border-radius: 3px;
 	border-collapse: collapse;
 	border: none;
@@ -1956,6 +1956,7 @@ div.blockvmenulogo
 	object-fit: contain;
 	width: inherit;
 	height: inherit;
+	image-rendering: -webkit-optimize-contrast;
 }
 #mainmenutd_companylogo::after, #mainmenutd_menu::after {
 	content: unset !important;
@@ -2470,12 +2471,13 @@ a.tmenudisabled:link, a.tmenudisabled:visited, a.tmenudisabled:hover, a.tmenudis
 
 a.tmenu:link, a.tmenu:visited, a.tmenu:hover, a.tmenu:active {
 	padding: 0px 2px 0px 2px;
+	margin: 0px 0px 0px 0px;
 	white-space: nowrap;
 	color: var(--colortextbackhmenu);
 	text-decoration: none;
 }
 a.tmenusel:link, a.tmenusel:visited, a.tmenusel:hover, a.tmenusel:active {
-	padding: 0px 4px 0px 4px;
+	padding: 0px 2px 0px 2px;
 	margin: 0px 0px 0px 0px;
 	white-space: nowrap;
 	color: var(--colortextbackhmenu);
@@ -2587,8 +2589,7 @@ button.ui-button.ui-corner-all.ui-widget:focus {
 /* For mainmenu, we always load the img */
 
 div.mainmenu.menu {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/menu.png', 1) ?>);
-	<?php print $disableimages ? '' : 'top: 7px'; ?>
+	<?php print $disableimages ? '' : 'top: 10px'; ?>
 }
 #mainmenutd_menu a.tmenuimage {
 	display: unset;
@@ -2601,6 +2602,56 @@ a.tmenuimage:hover{
 	text-decoration: none;
 }
 
+
+/* To show text of top menu on hover only (THEME_TOPMENU_DISABLE_IMAGE == 2) */
+
+<?php if (in_array(getDolGlobalInt('THEME_TOPMENU_DISABLE_IMAGE'), array(2, 3, 4))) { ?>
+.tmenulabel:not(.menuhider), .tmenulabel:not(.menuhider)::before {
+	 display: none;
+	 /* opacity: 0; To show text after transition */
+}
+a.tmenuimage:not(.menuhider), a.tmenuimage:not(.menuhider)::before,
+div.tmenuimage:not(.menuhider), div.tmenuimage:not(.menuhider)::before,
+span.tmenuimage:not(.menuhider), span.tmenuimage:not(.menuhider)::before {
+	font-size: 1.3em;
+	margin-top: 8px !important;
+}
+
+<?php } ?>
+<?php if (getDolGlobalInt('THEME_TOPMENU_DISABLE_IMAGE') == 2) { ?>
+.tmenudiv:hover .tmenulabel:not(.menuhider), .tmenudiv:hover .tmenulabel:not(.menuhider)::before {
+	display: block;
+	position: relative;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	/* For transition transition-delay: 1000ms;
+	transition-property: all; */
+	opacity: 1;
+	display: initial !important;
+	line-height: 0.6em !important;
+	height: 1em !important;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	color: var(--colortextbackhmenu);
+	top: 0px;
+}
+
+.tmenudiv:hover .tmenuimage:not(.menuhider), .tmenudiv:hover .tmenuimage:not(.menuhider)::before {
+	/* For transition transition-delay: 1000ms;
+	transition-property: all; */
+	margin-top: 0px !important;
+}
+
+<?php } ?>
+<?php if (getDolGlobalInt('THEME_TOPMENU_DISABLE_IMAGE') == 3) { ?>
+li.tmenu:hover .tmenulabel:not(.menuhider), li.tmenu:hover .tmenulabel:not(.menuhider)::before {
+	display: initial !important;
+}
+li.tmenu:hover .tmenuimage:not(.menuhider), li.tmenu:hover .tmenuimage:not(.menuhider):before {
+	font-size: 1.1em !important;
+	margin-top: 0px !important;
+}
+<?php } ?>
 
 
 
@@ -2662,12 +2713,14 @@ a.tmenuimage:hover{
 				$url = dol_buildpath($path.'/theme/'.$theme.'/img/menus/generic'.(min($generic, 4))."_over.png", 1);
 				print "div.mainmenu.".$val." {\n";
 				print "	background-image: url(".$url.");\n";
+				print " background-position-y: 3px;\n";
 				print "}\n";
 			}
 			$generic++;
 		} else {
 			print "div.mainmenu.".$val." {\n";
 			print "	background-image: url(".$url.");\n";
+			print " background-position-y: 3px;\n";
 			print "}\n";
 		}
 	}
@@ -3779,12 +3832,6 @@ div.pagination {
 div.pagination a {
 	font-weight: normal;
 }
-/*div.pagination a.butAction, div.fichehalfright a.butAction {
-	margin-right: 0px !important;
-}
-div.tabsAction a.butActionDelete:last-child, div.tabsAction a.butAction:last-child {
-	margin-right: 0px !important;
-}*/
 div.pagination ul
 {
   list-style: none;
@@ -4672,6 +4719,9 @@ div.titre {
 	padding-top: 5px;
 	padding-bottom: 5px;
 	font-weight: 400;
+}
+div.titre.small {
+	font-size: 1em;
 }
 div.fiche > table.table-fiche-title:first-of-type div {
 	color: var(--colortexttitlenotab);
@@ -7295,11 +7345,18 @@ div.clipboardCPValue.hidewithsize {
 		white-space: nowrap;
 		  overflow: hidden;
 		  text-overflow: ellipsis;
+
 		  color: var(--colortextbackhmenu);
+		  /* color: var(--colorbackhmenu1); */
 	}
+	.tmenuimage {
+		color: var(--colortextbackhmenu);
+	}
+
 	.mainmenuaspan {
 		  font-size: 0.9em;
 		  padding-right: 0;
+		  padding-left: 0;
 	}
 	.topmenuimage {
 		background-size: 22px auto;
@@ -7354,6 +7411,15 @@ div.clipboardCPValue.hidewithsize {
 /* rule to reduce top menu - 3rd reduction: The menu for user is on left */
 @media only screen and (max-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3) ? round($nbtopmenuentries * 47, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3; ?>px)	/* reduction 3 */
 {
+	<?php if (getDolGlobalInt('THEME_TOPMENU_DISABLE_IMAGE') == 2) { ?>
+	.tmenudiv .tmenulabel span.mainmenuaspan {
+		display: none !important;
+	}
+	.tmenudiv:hover .tmenuimage:not(.menuhider), .tmenudiv:hover .tmenuimage:not(.menuhider):before {
+		margin-top: 8px !important;
+	}
+	<?php } ?>
+
 	.side-nav {
 		z-index: 200;
 		background: var(--colorbackvmenu1);

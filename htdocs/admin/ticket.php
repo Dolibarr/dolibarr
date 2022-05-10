@@ -99,6 +99,50 @@ if ($action == 'updateMask') {
 	// par appel methode canBeActivated
 
 	dolibarr_set_const($db, "TICKET_ADDON", $value, 'chaine', 0, '', $conf->entity);
+} elseif ($action == 'setvarworkflow') {
+	$param_auto_read = GETPOST('TICKET_AUTO_READ_WHEN_CREATED_FROM_BACKEND', 'alpha');
+	$res = dolibarr_set_const($db, 'TICKET_AUTO_READ_WHEN_CREATED_FROM_BACKEND', $param_auto_read, 'chaine', 0, '', $conf->entity);
+	if (!($res > 0)) {
+		$error++;
+	}
+
+	$param_auto_assign = GETPOST('TICKET_AUTO_ASSIGN_USER_CREATE', 'alpha');
+	$res = dolibarr_set_const($db, 'TICKET_AUTO_ASSIGN_USER_CREATE', $param_auto_assign, 'chaine', 0, '', $conf->entity);
+	if (!($res > 0)) {
+		$error++;
+	}
+
+	$param_limit_view = GETPOST('TICKET_LIMIT_VIEW_ASSIGNED_ONLY', 'alpha');
+	$res = dolibarr_set_const($db, 'TICKET_LIMIT_VIEW_ASSIGNED_ONLY', $param_limit_view, 'chaine', 0, '', $conf->entity);
+	if (!($res > 0)) {
+		$error++;
+	}
+
+	if (GETPOSTISSET('product_category_id')) {
+		$param_ticket_product_category = GETPOST('product_category_id', 'int');
+		$res = dolibarr_set_const($db, 'TICKET_PRODUCT_CATEGORY', $param_ticket_product_category, 'chaine', 0, '', $conf->entity);
+		if (!($res > 0)) {
+			$error++;
+		}
+	}
+
+	$param_delay_first_response = GETPOST('delay_first_response', 'int');
+	$res = dolibarr_set_const($db, 'TICKET_DELAY_BEFORE_FIRST_RESPONSE', $param_delay_first_response, 'chaine', 0, '', $conf->entity);
+	if (!($res > 0)) {
+		$error++;
+	}
+
+	$param_delay_between_responses = GETPOST('delay_between_responses', 'int');
+	$res = dolibarr_set_const($db, 'TICKET_DELAY_SINCE_LAST_RESPONSE', $param_delay_between_responses, 'chaine', 0, '', $conf->entity);
+	if (!($res > 0)) {
+		$error++;
+	}
+
+	$param_auto_notify_close = GETPOST('TICKET_NOTIFY_AT_CLOSING', 'alpha');
+	$res = dolibarr_set_const($db, 'TICKET_NOTIFY_AT_CLOSING', $param_auto_notify_close, 'chaine', 0, '', $conf->entity);
+	if (!($res > 0)) {
+		$error++;
+	}
 } elseif ($action == 'setvar') {
 	include_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
 
@@ -146,50 +190,6 @@ if ($action == 'updateMask') {
 	if (!($res > 0)) {
 		$error++;
 	}
-}
-
-if ($action == 'setvarworkflow') {
-	$param_auto_read = GETPOST('TICKET_AUTO_READ_WHEN_CREATED_FROM_BACKEND', 'alpha');
-	$res = dolibarr_set_const($db, 'TICKET_AUTO_READ_WHEN_CREATED_FROM_BACKEND', $param_auto_read, 'chaine', 0, '', $conf->entity);
-	if (!($res > 0)) {
-		$error++;
-	}
-
-	$param_auto_assign = GETPOST('TICKET_AUTO_ASSIGN_USER_CREATE', 'alpha');
-	$res = dolibarr_set_const($db, 'TICKET_AUTO_ASSIGN_USER_CREATE', $param_auto_assign, 'chaine', 0, '', $conf->entity);
-	if (!($res > 0)) {
-		$error++;
-	}
-}
-
-if ($action == 'setvarworkflowother' || $action == 'setvarworkflow') {
-	$param_ticket_product_category = GETPOST('product_category_id', 'int');
-	$res = dolibarr_set_const($db, 'TICKET_PRODUCT_CATEGORY', $param_ticket_product_category, 'chaine', 0, '', $conf->entity);
-	if (!($res > 0)) {
-		$error++;
-	}
-}
-
-if ($action == 'setvarother') {
-	$param_must_exists = GETPOST('TICKET_EMAIL_MUST_EXISTS', 'alpha');
-	$res = dolibarr_set_const($db, 'TICKET_EMAIL_MUST_EXISTS', $param_must_exists, 'chaine', 0, '', $conf->entity);
-	if (!($res > 0)) {
-		$error++;
-	}
-
-	$param_disable_email = GETPOST('TICKET_DISABLE_NOTIFICATION_MAILS', 'alpha');
-	$res = dolibarr_set_const($db, 'TICKET_DISABLE_NOTIFICATION_MAILS', $param_disable_email, 'chaine', 0, '', $conf->entity);
-	if (!($res > 0)) {
-		$error++;
-	}
-
-	if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
-		$param_show_module_logo = GETPOST('TICKET_SHOW_MODULE_LOGO', 'alpha');
-		$res = dolibarr_set_const($db, 'TICKET_SHOW_MODULE_LOGO', $param_show_module_logo, 'chaine', 0, '', $conf->entity);
-		if (!($res > 0)) {
-			$error++;
-		}
-	}
 
 	if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
 		$param_notification_also_main_addressemail = GETPOST('TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS', 'alpha');
@@ -198,32 +198,7 @@ if ($action == 'setvarother') {
 			$error++;
 		}
 	}
-
-	$param_limit_view = GETPOST('TICKET_LIMIT_VIEW_ASSIGNED_ONLY', 'alpha');
-	$res = dolibarr_set_const($db, 'TICKET_LIMIT_VIEW_ASSIGNED_ONLY', $param_limit_view, 'chaine', 0, '', $conf->entity);
-	if (!($res > 0)) {
-		$error++;
-	}
-
-	$param_delay_first_response = GETPOST('delay_first_response', 'int');
-	$res = dolibarr_set_const($db, 'TICKET_DELAY_BEFORE_FIRST_RESPONSE', $param_delay_first_response, 'chaine', 0, '', $conf->entity);
-	if (!($res > 0)) {
-		$error++;
-	}
-
-	$param_delay_between_responses = GETPOST('delay_between_responses', 'int');
-	$res = dolibarr_set_const($db, 'TICKET_DELAY_SINCE_LAST_RESPONSE', $param_delay_between_responses, 'chaine', 0, '', $conf->entity);
-	if (!($res > 0)) {
-		$error++;
-	}
-
-	$param_auto_notify_close = GETPOST('TICKET_NOTIFY_AT_CLOSING', 'alpha');
-	$res = dolibarr_set_const($db, 'TICKET_NOTIFY_AT_CLOSING', $param_auto_notify_close, 'chaine', 0, '', $conf->entity);
-	if (!($res > 0)) {
-		$error++;
-	}
 }
-
 
 
 /*
@@ -384,8 +359,8 @@ if ($resql) {
 
 
 print '<div class="div-table-responsive-no-min">';
-print "<table class=\"noborder\" width=\"100%\">\n";
-print "<tr class=\"liste_titre\">\n";
+print '<table class="noborder cenpercent">'."\n";
+print '<tr class="liste_titre">'."\n";
 print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
 print '<td class="center" width="60">'.$langs->trans("Status")."</td>\n";
@@ -502,13 +477,14 @@ foreach ($dirmodels as $reldir) {
 print '</table>';
 print '</div><br>';
 
-if (empty($conf->use_javascript_ajax)) {
-	print '<form method="post" action="'.$_SERVER['PHP_SELF'].'" enctype="multipart/form-data" >';
-	print '<input type="hidden" name="token" value="'.newToken().'">';
-	print '<input type="hidden" name="action" value="setvarworkflow">';
-}
+
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" enctype="multipart/form-data" >';
+print '<input type="hidden" name="token" value="'.newToken().'">';
+print '<input type="hidden" name="action" value="setvarworkflow">';
+print '<input type="hidden" name="page_y" value="">';
 
 print load_fiche_titre($langs->trans("Other"), '', '');
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
@@ -563,34 +539,24 @@ print $formcategory->textwithpicto('', $langs->trans("TicketsAutoNotifyCloseHelp
 print '</td>';
 print '</tr>';
 
-// Choose which product category is used for tickets
-if ($conf->use_javascript_ajax) {
-	print '<form method="post" action="'.$_SERVER['PHP_SELF'].'" enctype="multipart/form-data" >';
-	print '<input type="hidden" name="token" value="'.newToken().'">';
-	print '<input type="hidden" name="action" value="setvarworkflowother">';
+if (! empty($conf->product->enabled)) {
+	print '<tr class="oddeven"><td>'.$langs->trans("TicketChooseProductCategory").'</td>';
+	print '<td class="left">';
+	$formcategory->selectProductCategory($conf->global->TICKET_PRODUCT_CATEGORY, 'product_category_id');
+	if ($conf->use_javascript_ajax) {
+		print ajax_combobox('select_'.$htmlname);
+	}
+	print '</td>';
+	print '<td class="center">';
+	print $formcategory->textwithpicto('', $langs->trans("TicketChooseProductCategoryHelp"), 1, 'help');
+	print '</td>';
+	print '</tr>';
 }
-
-print '<tr class="oddeven"><td>'.$langs->trans("TicketChooseProductCategory").'</td>';
-print '<td class="left">';
-$formcategory->selectProductCategory($conf->global->TICKET_PRODUCT_CATEGORY, 'product_category_id');
-if ($conf->use_javascript_ajax) {
-	print ajax_combobox('select_'.$htmlname);
-}
-print '</td>';
-print '<td class="center">';
-print $formcategory->textwithpicto('', $langs->trans("TicketChooseProductCategoryHelp"), 1, 'help');
-print '</td>';
-print '</tr>';
-
-// Define wanted maximum time elapsed before answers to tickets
-print '<form method="post" action="'.$_SERVER['PHP_SELF'].'" enctype="multipart/form-data" >';
-print '<input type="hidden" name="action" value="setvarother">';
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("TicketsDelayBeforeFirstAnswer")."</td>";
 print '<td class="left">
-	<input type="number" value="'.$conf->global->TICKET_DELAY_BEFORE_FIRST_RESPONSE.'" name="delay_first_response">
-	<input type="submit" class="button small" value="'.$langs->trans("Save").'">
+	<input type="number" value="'.$conf->global->TICKET_DELAY_BEFORE_FIRST_RESPONSE.'" name="delay_first_response" class="width50">
 	</td>';
 print '<td class="center">';
 print $formcategory->textwithpicto('', $langs->trans("TicketsDelayBeforeFirstAnswerHelp"), 1, 'help');
@@ -600,8 +566,7 @@ print '</tr>';
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("TicketsDelayBetweenAnswers")."</td>";
 print '<td class="left">
-	<input type="number" value="'.$conf->global->TICKET_DELAY_SINCE_LAST_RESPONSE.'" name="delay_between_responses">
-	<input type="submit" class="button small" value="'.$langs->trans("Save").'">
+	<input type="number" value="'.$conf->global->TICKET_DELAY_SINCE_LAST_RESPONSE.'" name="delay_between_responses" class="width50">
 	</td>';
 print '<td class="center">';
 print $formcategory->textwithpicto('', $langs->trans("TicketsDelayBetweenAnswersHelp"), 1, 'help');
@@ -610,9 +575,7 @@ print '</tr>';
 
 print '</table><br>';
 
-print '<div class="center">';
-print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
-print '</div>';
+print $formcategory->buttonsSaveCancel("Save", '', array(), 0, 'reposition');
 
 print '</form>';
 
@@ -622,9 +585,10 @@ print load_fiche_titre($langs->trans("Notification"), '', '');
 
 print '<table class="noborder centpercent">';
 
-print '<form method="post" action="'.$_SERVER['PHP_SELF'].'" enctype="multipart/form-data" >';
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" enctype="multipart/form-data" >';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="setvar">';
+print '<input type="hidden" name="page_y" value="">';
 
 print '<tr class="liste_titre">';
 print '<td colspan="3">'.$langs->trans("Email").'</td>';
@@ -699,7 +663,7 @@ print '</td></tr>';
 
 print '</table>';
 
-print $formcategory->buttonsSaveCancel("Save", '');
+print $formcategory->buttonsSaveCancel("Save", '', array(), 0, 'reposition');
 
 print '</form>';
 

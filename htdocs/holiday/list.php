@@ -200,7 +200,7 @@ if (empty($reshook)) {
 		$search_valideur = "";
 		$search_status = "";
 		$search_type = '';
-		$toselect = '';
+		$toselect = array();
 		$search_array_options = array();
 	}
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')

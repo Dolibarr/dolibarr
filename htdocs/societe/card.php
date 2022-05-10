@@ -84,6 +84,7 @@ $error = 0; $errors = array();
 $action		= (GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view');
 $cancel		= GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
+$backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 $confirm	= GETPOST('confirm', 'alpha');
 
 $socid = GETPOST('socid', 'int') ?GETPOST('socid', 'int') : GETPOST('id', 'int');
@@ -134,16 +135,6 @@ $upload_dir = $conf->societe->multidir_output[isset($object->entity) ? $object->
 
 // Security check
 $result = restrictedArea($user, 'societe', $socid, '&societe', '', 'fk_soc', 'rowid', 0);
-
-/*
-if ($object->id > 0) {
-	if ($object->client == 0 && $object->fournisseur > 0) {
-		if (!empty($user->rights->fournisseur->lire)) {
-			accessforbidden();
-		}
-	}
-}
-*/
 
 
 
@@ -413,11 +404,11 @@ if (empty($reshook)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ThirdPartyName")), null, 'errors');
 			$error++;
 		}
-		if (GETPOST('client') < 0) {
+		if (GETPOST('client', 'int') && GETPOST('client', 'int') < 0) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ProspectCustomer")), null, 'errors');
 			$error++;
 		}
-		if (GETPOST('fournisseur') < 0) {
+		if (GETPOSTISSET('fournisseur') && GETPOST('fournisseur', 'int') < 0) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Supplier")), null, 'errors');
 			$error++;
 		}
