@@ -167,6 +167,9 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 	}
 	$conf->db->dolibarr_main_db_cryptkey = $dolibarr_main_db_cryptkey;
 
+	// Load global conf
+	$conf->setValues($db);
+
 
 	$listofentities = array(1);
 
@@ -4621,7 +4624,7 @@ function migrate_user_photospath2()
 			if ($entity > 1) {
 				$dir = DOL_DATA_ROOT.'/'.$entity.'/users';
 			} else {
-				$dir = $conf->user->multidir_output[$entity]; // $conf->user->multidir_output[] for each entity is construct by the multicompany module
+				$dir = DOL_DATA_ROOT.'/users';
 			}
 
 			if ($dir) {
