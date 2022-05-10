@@ -558,7 +558,17 @@ if (empty($reshook)) {
 		}
 		if ($idoflineadded <= 0) {
 			$invoice->fetch_thirdparty();
-			$idoflineadded = $invoice->addline($prod->description, $price, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idproduct, $customer->remise_percent, '', 0, 0, 0, '', $price_base_type, $price_ttc, $prod->type, -1, 0, '', 0, (!empty($parent_line)) ? $parent_line : '', null, '', '', 0, 100, '', null, 0);
+			$array_options = array();
+
+			// complete line by hook
+			$parameters = array('prod' => $prod);
+			$reshook=$hookmanager->executeHooks('completeTakePosAddLine', $parameters, $invoice, $action);
+			if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+
+			if (empty($reshook)) {
+				$idoflineadded = $invoice->addline($prod->description, $price, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idproduct, $customer->remise_percent, '', 0, 0, 0, '', $price_base_type, $price_ttc, $prod->type, -1, 0, '', 0, (!empty($parent_line)) ? $parent_line : '', null, '', '', $array_options, 100, '', null, 0);
+			}
+
 			if (!empty($conf->global->TAKEPOS_CUSTOMER_DISPLAY)) {
 				$CUSTOMER_DISPLAY_line1 = $prod->label;
 				$CUSTOMER_DISPLAY_line2 = price($price_ttc);
