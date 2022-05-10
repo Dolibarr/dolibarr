@@ -7,6 +7,7 @@
 -- Copyright (C) 2007 	    Patrick Raguin        <patrick.raguin@gmail.com>
 -- Copyright (C) 2011 	    Juanjo Menent         <jmenent@2byte.es>
 -- Copyright (C) 2020 	    Udo Tamm              <dev@dolibit.de>
+-- Copyright (C) 2022 	    Éric Seigne           <eric.seigne@cap-rel.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -56,6 +57,7 @@ INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'BWP'
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'BGN', '[1083,1074]', 1,			'Bulgaria Lev');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'BRL', '[82,36]', 1,				  'Brazil Real');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'BND', '[36]', 1,				    'Brunei Darussalam Dollar');
+INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'BIF', NULL, 1,				    'Burundi Franc');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'KHR', '[6107]', 1,			  	'Cambodia Riel');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'CAD', '[36]', 1,				    'Canada Dollar');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'CVE', '[4217]', 1,          'Cap Verde Escudo');
