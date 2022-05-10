@@ -6494,6 +6494,9 @@ dl.dropdown {
 	overflow: auto;
 	border-radius: 2px;
 }
+.dropdown dd ul.selectedfieldsleft {
+	right: auto;
+}
 .dropdown dd ul li {
 	white-space: nowrap;
 	font-weight: normal;
