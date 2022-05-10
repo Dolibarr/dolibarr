@@ -5055,8 +5055,8 @@ class Form
 				$autoOpen = false;
 				$dialogconfirm .= '-'.$button;
 			}
-			$pageyes = $page.(preg_match('/\?/', $page) ? '&' : '?').'action='.$action.'&confirm=yes';
-			$pageno = ($useajax == 2 ? $page.(preg_match('/\?/', $page) ? '&' : '?').'confirm=no' : '');
+			$pageyes = $page.(preg_match('/\?/', $page) ? '&' : '?').'action='.urlencode($action).'&confirm=yes';
+			$pageno = ($useajax == 2 ? $page.(preg_match('/\?/', $page) ? '&' : '?').'action='.urlencode($action).'&confirm=no' : '');
 
 			// Add input fields into list of fields to read during submit (inputok and inputko)
 			if (is_array($formquestion)) {

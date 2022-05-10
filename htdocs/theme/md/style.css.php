@@ -4591,6 +4591,9 @@ div.titre {
 	text-transform: uppercase;
 	/* text-shadow: 1px 1px 2px #FFFFFF; */
 }
+div.titre.small {
+	font-size: 1em;
+}
 div.titre {
 	color: var(--colortexttitlenotab);
 }
