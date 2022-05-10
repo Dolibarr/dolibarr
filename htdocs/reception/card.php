@@ -210,6 +210,8 @@ if (empty($reshook)) {
 				$ret = $object->fetch($id); // Reload to get new records
 				$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			}
+		} else {
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
 
