@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012-2107 Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2019	   Ferran Marcet		<fmarcet@2byte.es>
- * Copyright (C) 2021	   Anthony Berton		<bertonanthony@gmail.com>
+ * Copyright (C) 2021-2022 Anthony Berton		<bertonanthony@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -168,10 +168,6 @@ if ($action == 'update') {
 
 	if (GETPOSTISSET('PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME')) {
 		dolibarr_set_const($db, "PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME", GETPOST('PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME', 'alpha'), 'chaine', 0, '', $conf->entity);
-	}
-
-	if (GETPOSTISSET('PDF_INVERT_ALIAS_NAME_THIRDPARTY')) {
-		dolibarr_set_const($db, "PDF_INVERT_ALIAS_NAME_THIRDPARTY", GETPOST('PDF_INVERT_ALIAS_NAME_THIRDPARTY', 'alpha'), 'chaine', 0, '', $conf->entity);
 	}
 
 	if (GETPOSTISSET('PDF_USE_A')) {
