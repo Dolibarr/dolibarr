@@ -2611,12 +2611,13 @@ abstract class CommonObject
 	/**
 	 *  Change the payments terms
 	 *
-	 *  @param		int		$id		Id of new payment terms
-	 *  @return		int				>0 if OK, <0 if KO
+	 *  @param		int		$id					Id of new payment terms
+	 *  @param		string	$deposit_percent	% of deposit if needed by payment terms
+	 *  @return		int							>0 if OK, <0 if KO
 	 */
-	public function setPaymentTerms($id)
+	public function setPaymentTerms($id, $deposit_percent = null)
 	{
-		dol_syslog(get_class($this).'::setPaymentTerms('.$id.')');
+		dol_syslog(get_class($this).'::setPaymentTerms('.$id.', '.var_export($deposit_percent, true).')');
 		if ($this->statut >= 0 || $this->element == 'societe') {
 			// TODO uniformize field name
 			$fieldname = 'fk_cond_reglement';
@@ -2627,8 +2628,17 @@ abstract class CommonObject
 				$fieldname = 'cond_reglement_supplier';
 			}
 
+			if (empty($deposit_percent) || $deposit_percent < 0) {
+				$deposit_percent = getDictionaryValue('c_payment_term', 'deposit_percent', $id);
+			}
+
+			if ($deposit_percent > 100) {
+				$deposit_percent = 100;
+			}
+
 			$sql = 'UPDATE '.$this->db->prefix().$this->table_element;
 			$sql .= " SET ".$fieldname." = ".(($id > 0 || $id == '0') ? ((int) $id) : 'NULL');
+			$sql .= " , deposit_percent = " . (! empty($deposit_percent) ? "'".$this->db->escape($deposit_percent)."'" : 'NULL');
 			$sql .= ' WHERE rowid='.((int) $this->id);
 
 			if ($this->db->query($sql)) {
@@ -2638,6 +2648,7 @@ abstract class CommonObject
 					$this->cond_reglement_supplier_id = $id;
 				}
 				$this->cond_reglement = $id; // for compatibility
+				$this->deposit_percent = $deposit_percent;
 				return 1;
 			} else {
 				dol_syslog(get_class($this).'::setPaymentTerms Error '.$sql.' - '.$this->db->error());

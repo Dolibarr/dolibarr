@@ -55,8 +55,9 @@ $userid = $user->id;
 // Security check
 $result = restrictedArea($user, 'ticket', 0, '', '', '', '');
 
-$nowyear = strftime("%Y", dol_now());
-$year = GETPOST('year') > 0 ? GETPOST('year') : $nowyear;
+$nowarray = dol_getdate(dol_now(), true);
+$nowyear = $nowarray['year'];
+$year = GETPOST('year', 'int') > 0 ? GETPOST('year', 'int') : $nowyear;
 $startyear = $year - (empty($conf->global->MAIN_STATS_GRAPHS_SHOW_N_YEARS) ? 2 : max(1, min(10, $conf->global->MAIN_STATS_GRAPHS_SHOW_N_YEARS)));
 $endyear = $year;
 
@@ -76,7 +77,6 @@ $object = new Ticket($db);
 $resultboxes = FormOther::getBoxesArea($user, "11"); // Load $resultboxes (selectboxlist + boxactivated + boxlista + boxlistb)
 
 $form = new Form($db);
-$tickesupstatic = new Ticket($db);
 
 llxHeader('', $langs->trans('TicketsIndex'), '');
 
@@ -108,7 +108,6 @@ if (empty($shownb) && empty($showtot)) {
 	$shownb = 0;
 }
 
-$nowarray = dol_getdate(dol_now(), true);
 if (empty($endyear)) {
 	$endyear = $nowarray['year'];
 }
@@ -204,21 +203,21 @@ if ($result) {
 	$dataseries = array();
 	$colorseries = array();
 
-	$dataseries[] = array('label' => $langs->transnoentitiesnoconv($tickesupstatic->statuts_short[Ticket::STATUS_NOT_READ]), 'data' => round($tick['unread']));
+	$dataseries[] = array('label' => $langs->transnoentitiesnoconv($object->statuts_short[Ticket::STATUS_NOT_READ]), 'data' => round($tick['unread']));
 	$colorseries[Ticket::STATUS_NOT_READ] = '-'.$badgeStatus0;
-	$dataseries[] = array('label' => $langs->transnoentitiesnoconv($tickesupstatic->statuts_short[Ticket::STATUS_READ]), 'data' => round($tick['read']));
+	$dataseries[] = array('label' => $langs->transnoentitiesnoconv($object->statuts_short[Ticket::STATUS_READ]), 'data' => round($tick['read']));
 	$colorseries[Ticket::STATUS_READ] = $badgeStatus1;
-	$dataseries[] = array('label' => $langs->transnoentitiesnoconv($tickesupstatic->statuts_short[Ticket::STATUS_ASSIGNED]), 'data' => round($tick['assigned']));
+	$dataseries[] = array('label' => $langs->transnoentitiesnoconv($object->statuts_short[Ticket::STATUS_ASSIGNED]), 'data' => round($tick['assigned']));
 	$colorseries[Ticket::STATUS_ASSIGNED] = $badgeStatus3;
-	$dataseries[] = array('label' => $langs->transnoentitiesnoconv($tickesupstatic->statuts_short[Ticket::STATUS_IN_PROGRESS]), 'data' => round($tick['inprogress']));
+	$dataseries[] = array('label' => $langs->transnoentitiesnoconv($object->statuts_short[Ticket::STATUS_IN_PROGRESS]), 'data' => round($tick['inprogress']));
 	$colorseries[Ticket::STATUS_IN_PROGRESS] = $badgeStatus4;
-	$dataseries[] = array('label' => $langs->transnoentitiesnoconv($tickesupstatic->statuts_short[Ticket::STATUS_WAITING]), 'data' => round($tick['waiting']));
+	$dataseries[] = array('label' => $langs->transnoentitiesnoconv($object->statuts_short[Ticket::STATUS_WAITING]), 'data' => round($tick['waiting']));
 	$colorseries[Ticket::STATUS_WAITING] = '-'.$badgeStatus4;
-	$dataseries[] = array('label' => $langs->transnoentitiesnoconv($tickesupstatic->statuts_short[Ticket::STATUS_NEED_MORE_INFO]), 'data' => round($tick['needmoreinfo']));
+	$dataseries[] = array('label' => $langs->transnoentitiesnoconv($object->statuts_short[Ticket::STATUS_NEED_MORE_INFO]), 'data' => round($tick['needmoreinfo']));
 	$colorseries[Ticket::STATUS_NEED_MORE_INFO] = '-'.$badgeStatus3;
-	$dataseries[] = array('label' => $langs->transnoentitiesnoconv($tickesupstatic->statuts_short[Ticket::STATUS_CANCELED]), 'data' => round($tick['canceled']));
+	$dataseries[] = array('label' => $langs->transnoentitiesnoconv($object->statuts_short[Ticket::STATUS_CANCELED]), 'data' => round($tick['canceled']));
 	$colorseries[Ticket::STATUS_CANCELED] = $badgeStatus9;
-	$dataseries[] = array('label' => $langs->transnoentitiesnoconv($tickesupstatic->statuts_short[Ticket::STATUS_CLOSED]), 'data' => round($tick['closed']));
+	$dataseries[] = array('label' => $langs->transnoentitiesnoconv($object->statuts_short[Ticket::STATUS_CLOSED]), 'data' => round($tick['closed']));
 	$colorseries[Ticket::STATUS_CLOSED] = $badgeStatus6;
 } else {
 	dol_print_error($db);
@@ -358,18 +357,18 @@ if ($result) {
 		while ($i < $num) {
 			$objp = $db->fetch_object($result);
 
-			$tickesupstatic->id = $objp->rowid;
-			$tickesupstatic->ref = $objp->ref;
-			$tickesupstatic->track_id = $objp->track_id;
-			$tickesupstatic->fk_statut = $objp->fk_statut;
-			$tickesupstatic->progress = $objp->progress;
-			$tickesupstatic->subject = $objp->subject;
+			$object->id = $objp->rowid;
+			$object->ref = $objp->ref;
+			$object->track_id = $objp->track_id;
+			$object->fk_statut = $objp->fk_statut;
+			$object->progress = $objp->progress;
+			$object->subject = $objp->subject;
 
 			print '<tr class="oddeven">';
 
 			// Ref
 			print '<td class="nowraponall">';
-			print $tickesupstatic->getNomUrl(1);
+			print $object->getNomUrl(1);
 			print "</td>\n";
 
 			// Creation date
@@ -405,7 +404,7 @@ if ($result) {
 			print "</td>";
 
 			print '<td class="nowraponall right">';
-			print $tickesupstatic->getLibStatut(5);
+			print $object->getLibStatut(5);
 			print "</td>";
 
 			print "</tr>\n";

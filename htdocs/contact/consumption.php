@@ -355,7 +355,7 @@ if (empty($elementTypeArray) && !$object->thirdparty->client && !$object->thirdp
 
 // Define type of elements
 $typeElementString = $form->selectarray("type_element", $elementTypeArray, GETPOST('type_element'), $showempty, 0, 0, '', 0, 0, $disabled, '', 'maxwidth150onsmartphone');
-$button = '<input type="submit" class="button" name="button_third" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+$button = '<input type="submit" class="button small" name="button_third" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 
 $param = '';
 $param .= "&sref=".urlencode($sref);

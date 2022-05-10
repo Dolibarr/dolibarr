@@ -161,7 +161,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_batch = "";
 	$search_qty = '';
 	$sall = "";
-	$toselect = '';
+	$toselect = array();
 	$search_array_options = array();
 }
 

@@ -4591,6 +4591,9 @@ div.titre {
 	text-transform: uppercase;
 	/* text-shadow: 1px 1px 2px #FFFFFF; */
 }
+div.titre.small {
+	font-size: 1em;
+}
 div.titre {
 	color: var(--colortexttitlenotab);
 }
@@ -6255,6 +6258,9 @@ dl.dropdown {
 	list-style:none;
 	max-height: 264px;
 	overflow: auto;
+}
+.dropdown dd ul.selectedfieldsleft {
+	right: auto;
 }
 .dropdown dd ul li {
 	white-space: nowrap;
