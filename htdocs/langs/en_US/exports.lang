@@ -137,3 +137,4 @@ MultipleRecordFoundWithTheseFilters=Multiple records have been found with these 
 StocksWithBatch=Stocks and location (warehouse) of products with batch/serial number
 WarningFirstImportedLine=The first line(s) will not be imported with the current selection
 NotUsedFields=Fields of database not used
+SelectImportFieldsSource = Choose the source file fields you want to import and their target field in database by choosing the fields in each select boxes, or select a predefined import profile:

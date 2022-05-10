@@ -791,8 +791,10 @@ if ($step == 4 && $datatoimport) {
 		// Put into array fieldssource starting with 1.
 		$i = 1;
 		foreach ($arrayrecord as $key => $val) {
-			$fieldssource[$i]['example1'] = dol_trunc($val['val'], 24);
-			$i++;
+			if ($val["type"] != -1) {
+				$fieldssource[$i]['example1'] = dol_trunc($val['val'], 24);
+				$i++;
+			}
 		}
 		$obj->import_close_file();
 	}
@@ -994,7 +996,7 @@ if ($step == 4 && $datatoimport) {
 
 	print '<div class="marginbottomonly">';
 	print '<span class="opacitymedium">';
-	$s = $langs->trans("SelectImportFields", '{s1}');
+	$s = $langs->trans("SelectImportFieldsSource", '{s1}');
 	$s = str_replace('{s1}', img_picto('', 'grip_title', '', false, 0, 0, '', '', 0), $s);
 	print $s;
 	print '</span> ';
