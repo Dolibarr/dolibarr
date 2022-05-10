@@ -787,7 +787,7 @@ class ImportCsv extends ModeleImports
 
 						$is_table_category_link = false;
 						$fname = 'rowid';
-						if(strpos($tablename, '_categorie_') !== false) {
+						if (strpos($tablename, '_categorie_') !== false) {
 							$is_table_category_link = true;
 							$fname='*';
 						}
@@ -814,7 +814,7 @@ class ImportCsv extends ModeleImports
 									$res = $this->db->fetch_object($resql);
 									if ($resql->num_rows == 1) {
 										$lastinsertid = $res->rowid;
-										if($is_table_category_link) $lastinsertid = 'linktable'; // used to apply update on tables like llx_categorie_product and avoid being blocked for all file content if at least one entry already exists
+										if ($is_table_category_link) $lastinsertid = 'linktable'; // used to apply update on tables like llx_categorie_product and avoid being blocked for all file content if at least one entry already exists
 										$last_insert_id_array[$tablename] = $lastinsertid;
 									} elseif ($resql->num_rows > 1) {
 										$this->errors[$error]['lib'] = $langs->trans('MultipleRecordFoundWithTheseFilters', implode(', ', $filters));
@@ -876,7 +876,7 @@ class ImportCsv extends ModeleImports
 								}
 								$sqlend = " WHERE ".$keyfield." = ".((int) $lastinsertid);
 
-								if($is_table_category_link) {
+								if ($is_table_category_link) {
 									$sqlend = " WHERE " . implode(' AND ', $where);
 								}
 
