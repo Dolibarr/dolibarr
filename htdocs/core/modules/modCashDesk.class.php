@@ -51,7 +51,7 @@ class modCashDesk extends DolibarrModules
 		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		$this->description = "CashDesk module";
 
-		$this->version = 'deprecated';
+		$this->version = 'dolibarr_deprecated';
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		$this->picto = 'cash-register';
