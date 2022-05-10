@@ -35,8 +35,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/import.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('exports', 'compta', 'errors'));
 
-$selectimport = true;
-
 // Security check
 $result = restrictedArea($user, 'import');
 
@@ -320,54 +318,6 @@ if ($step == 4 && $action == 'select_model') {
 		}
 		$_SESSION["dol_array_match_file_to_database"] = $serialized_array_match_file_to_database;
 	}
-}
-
-if ($action == 'saveorder') {
-	// Enregistrement de la position des champs
-	dol_syslog("boxorder=".GETPOST('boxorder')." datatoimport=".GETPOST("datatoimport"), LOG_DEBUG);
-	$part = explode(':', GETPOST('boxorder'));
-	$colonne = $part[0];
-	$list = $part[1];
-	dol_syslog('column='.$colonne.' list='.$list);
-
-	// Init targets fields array
-	$fieldstarget = $objimport->array_import_fields[0];
-
-	// Reinit match arrays. We redefine array_match_file_to_database
-	$serialized_array_match_file_to_database = '';
-	$array_match_file_to_database = array();
-	$fieldsarray = explode(',', $list);
-	$pos = 0;
-	foreach ($fieldsarray as $fieldnb) {	// For each elem in list. fieldnb start from 1 to ...
-		// Get name of database fields at position $pos and put it into $namefield
-		$posbis = 0; $namefield = '';
-		foreach ($fieldstarget as $key => $val) {	// key:   val:
-			//dol_syslog('AjaxImport key='.$key.' val='.$val);
-			if ($posbis < $pos) {
-				$posbis++;
-				continue;
-			}
-			// We found the key of targets that is at position pos
-			$namefield = $key;
-			//dol_syslog('AjaxImport Field name found for file field nb '.$fieldnb.'='.$namefield);
-
-			break;
-		}
-
-		if ($fieldnb && $namefield) {
-			$array_match_file_to_database[$fieldnb] = $namefield;
-			if ($serialized_array_match_file_to_database) {
-				$serialized_array_match_file_to_database .= ',';
-			}
-			$serialized_array_match_file_to_database .= ($fieldnb.'='.$namefield);
-		}
-
-		$pos++;
-	}
-
-	// We save new matching in session
-	$_SESSION["dol_array_match_file_to_database"] = $serialized_array_match_file_to_database;
-	dol_syslog('dol_array_match_file_to_database='.$serialized_array_match_file_to_database);
 }
 if ($action == 'saveselectorder') {
 	// Enregistrement de la position des champs
@@ -793,7 +743,7 @@ if ($step == 3 && $datatoimport) {
 
 
 // STEP 4: Page to make matching between source file and database fields
-if ($step == 4 && $datatoimport && $selectimport) {
+if ($step == 4 && $datatoimport) {
 	$serialized_array_match_file_to_database = isset($_SESSION["dol_array_match_file_to_database_select"]) ? $_SESSION["dol_array_match_file_to_database_select"] : '';
 	$array_match_file_to_database = array();
 	$fieldsarray = explode(',', $serialized_array_match_file_to_database);
@@ -885,7 +835,8 @@ if ($step == 4 && $datatoimport && $selectimport) {
 	$array_match_database_to_file = array_flip($array_match_file_to_database);
 
 	$fieldstarget_tmp = array();
-
+	$arraykeysfieldtarget = array_keys($fieldstarget);
+	$position = 0;
 	foreach ($fieldstarget as $key => $label) {
 		$isrequired = preg_match('/\*$/', $label);
 		if (!empty($isrequired)) {
@@ -896,9 +847,27 @@ if ($step == 4 && $datatoimport && $selectimport) {
 		}
 		if (!empty($array_match_database_to_file[$key])) {
 			$fieldstarget_tmp[$key]["imported"] = true;
+			$fieldstarget_tmp[$key]["position"] = $array_match_database_to_file[$key]-1;
+			$keytoswap = $key;
+			while (!empty($array_match_database_to_file[$keytoswap])) {
+				if ($position+1 > $array_match_database_to_file[$keytoswap]) {
+					$keytoswapwith = $array_match_database_to_file[$keytoswap]-1;
+					$tmp = [$keytoswap=>$fieldstarget_tmp[$keytoswap]];
+					unset($fieldstarget_tmp[$keytoswap]);
+					$fieldstarget_tmp = arrayInsert($fieldstarget_tmp, $keytoswapwith, $tmp);
+					$keytoswapwith = $arraykeysfieldtarget[$array_match_database_to_file[$keytoswap]-1];
+					$tmp = $fieldstarget_tmp[$keytoswapwith];
+					unset($fieldstarget_tmp[$keytoswapwith]);
+					$fieldstarget_tmp[$keytoswapwith] = $tmp;
+					$keytoswap = $keytoswapwith;
+				} else {
+					break;
+				}
+			}
 		} else {
 			$fieldstarget_tmp[$key]["imported"] = false;
 		}
+		$position++;
 	}
 	$fieldstarget = $fieldstarget_tmp;
 
@@ -1144,7 +1113,6 @@ if ($step == 4 && $datatoimport && $selectimport) {
 		print '</option>';
 		print $optionsnotused;
 		print '</select>';
-		//print ajax_combobox("select_".$newlabel);
 		print "</td>";
 		print '<td class="nowraponall" style="font-weight:normal; text-align:right">';
 		$filecolumn = !empty($array_match_database_to_file[$code])?$array_match_database_to_file[$code]:0;
@@ -1210,7 +1178,7 @@ if ($step == 4 && $datatoimport && $selectimport) {
 	print '</td></tr>';
 
 	// List of not imported fields
-	print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("NotImportedFields").'</td></tr>';
+	print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("NotUsedFields").'</td></tr>';
 
 	print '<tr valign="top"><td width="50%">';
 
@@ -1261,15 +1229,42 @@ if ($step == 4 && $datatoimport && $selectimport) {
 		print '$(".targetselectchange").focus(function(){'."\n";
 		print 'previousselectedvalueimport = $(this).val();'."\n";
 		print 'previousselectedlabelimport = $(this).children("option:selected").text();'."\n";
+		print 'console.log(previousselectedvalueimport)'."\n";
 		print '})'."\n";
 		print '$(".targetselectchange").change(function(){'."\n";
 		print 'if(previousselectedlabelimport != "" && previousselectedvalueimport != -1){'."\n";
-		print '$(".targetselectchange").not($( this )).append(new Option(previousselectedlabelimport,previousselectedvalueimport));'."\n";
+		print '$(".targetselectchange").not($(this)).append(new Option(previousselectedlabelimport,previousselectedvalueimport));'."\n";
+		print 'let valuetochange = $(this).val(); '."\n";
+		print '$(".boxtdunused").each(function(){'."\n";
+		print 'if ($(this).text().includes(valuetochange)){'."\n";
+		print 'arraychild = $(this)[0].childNodes'."\n";
+		print 'arraytexttomodify = arraychild[0].textContent.split(" ")'."\n";
+		print 'arraytexttomodify[1] = previousselectedvalueimport '."\n";
+		print 'textmodified = arraytexttomodify.join(" ") '."\n";
+		print 'arraychild[0].textContent = textmodified'."\n";
+		print 'arraychild[1].innerHTML = previousselectedlabelimport'."\n";
+		print '}'."\n";
+		print '})'."\n";
 		print '}'."\n";
 		print 'if($( this ).val() != -1){'."\n";
 		print '$(".targetselectchange").not($( this )).find(\'option[value="\'+$( this ).val()+\'"]\').remove();'."\n";
-		print '$(".targetselectchange").not($( this )).find(\'option[value="\'+$( this ).val()+\'"]\').remove();'."\n";
 		print '}'."\n";
+		print '$(this).blur()'."\n";
+		print 'arrayselectedfields = [];'."\n";
+		print 'arrayselectedfields.push("0");'."\n";
+		print '$(".targetselectchange").each(function(){'."\n";
+		print 'value = $(this).val()'."\n";
+		print 'arrayselectedfields.push(value);'."\n";
+		print '});'."\n";
+		print '$.ajax({'."\n";
+		print 'type: "POST",'."\n";
+		print 'dataType: "json",'."\n";
+		print 'url: "'.$_SERVER["PHP_SELF"].'?action=saveselectorder",'."\n";
+		print 'data: "selectorder="+arrayselectedfields.toString(),'."\n";
+		print 'success: function(){'."\n";
+		print 'console.log("Select order saved");'."\n";
+		print '},'."\n";
+		print '});'."\n";
 		print '});'."\n";
 		print '})'."\n";
 		print '</script>'."\n";
@@ -1282,30 +1277,9 @@ if ($step == 4 && $datatoimport && $selectimport) {
 
 	if (count($array_match_file_to_database)) {
 		if ($mandatoryfieldshavesource) {
-			print '<a class="butAction saveorderselect" href="#'/*import.php?step=5'.$param.'&filetoimport='.urlencode($filetoimport)*/.'">'.$langs->trans("NextStep").'</a>';
+			print '<a class="butAction saveorderselect" href="import.php?step=5'.$param.'&filetoimport='.urlencode($filetoimport).'">'.$langs->trans("NextStep").'</a>';
 		} else {
 			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("SomeMandatoryFieldHaveNoSource")).'">'.$langs->trans("NextStep").'</a>';
-		}
-		if ($conf->use_javascript_ajax) {
-			print '<script type="text/javascript">'."\n";
-			print'$(".saveorderselect").on("click",function(){
-				arrayselectedfields = [];
-				arrayselectedfields.push("0");
-				$(".targetselectchange").each(function(){
-					value = $(this).val()
-					arrayselectedfields.push(value);
-				});
-				$.ajax({
-					type: "POST",
-					dataType: "json",
-					url: "'.$_SERVER["PHP_SELF"].'?action=saveselectorder",
-					data: "selectorder="+arrayselectedfields.toString(),
-					success: function(){
-						window.location.href="'.$_SERVER["PHP_SELF"].'?step=5'.$param.'&filetoimport='.urlencode($filetoimport).'";
-					},
-				});
-			})';
-			print '</script>'."\n";
 		}
 	}
 
@@ -2238,7 +2212,11 @@ function show_elem($fieldssource, $pos, $key, $var, $nostyle = '')
 		// The image must have the class 'boxhandle' beause it's value used in DOM draggable objects to define the area used to catch the full object
 		//print img_picto($langs->trans("MoveField", $pos), 'grip_title', 'class="boxhandle" style="cursor:move;"');
 		print '</td>';
-		print '<td class="nowraponall" style="font-weight: normal">';
+		if (isset($fieldssource[$pos]['imported']) && $fieldssource[$pos]['imported'] == false) {
+			print '<td class="nowraponall boxtdunused" style="font-weight: normal">';
+		} else {
+			print '<td class="nowraponall" style="font-weight: normal">';
+		}
 		print $langs->trans("Field").' '.$pos;
 		if (empty($fieldssource[$pos]['example1'])) {
 			$example = $fieldssource[$pos]['label'];
@@ -2288,4 +2266,31 @@ function getnewkey(&$fieldssource, &$listofkey)
 
 	$listofkey[$i] = 1;
 	return $i;
+}
+/**
+ * Return array with element inserted in it at position $position
+ *
+ * @param 	array	$array			Array of field source
+ * @param	mixed	$position		key of postion to insert to
+ * @param	array	$insertArray	Array to insert
+ * @return	array
+ */
+function arrayInsert($array, $position, $insertArray)
+{
+	$ret = [];
+
+	if ($position == count($array)) {
+		$ret = $array + $insertArray;
+	} else {
+		$i = 0;
+		foreach ($array as $key => $value) {
+			if ($position == $i++) {
+				$ret += $insertArray;
+			}
+
+			$ret[$key] = $value;
+		}
+	}
+
+	return $ret;
 }
