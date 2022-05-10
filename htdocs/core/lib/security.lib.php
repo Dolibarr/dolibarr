@@ -644,7 +644,7 @@ function checkUserAccessToObject($user, array $featuresarray, $objectid = 0, $ta
 						$sql .= " WHERE dbt.".$dbt_select." IN (".$db->sanitize($objectid, 1).")";
 						$sql .= " AND ((ug.fk_user = dbt.rowid";
 						$sql .= " AND ug.entity IN (".getEntity('usergroup')."))";
-						$sql .= " OR dbt.entity = 0)"; // Show always superadmin
+						$sql .= " OR dbt.entity IN (0, ".$conf->entity."))"; // Show always superadmin
 					}
 				} else {
 					$sql .= " WHERE dbt.".$dbt_select." IN (".$db->sanitize($objectid, 1).")";
