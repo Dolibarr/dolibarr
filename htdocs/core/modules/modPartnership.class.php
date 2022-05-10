@@ -177,8 +177,7 @@ class modPartnership extends DolibarrModules
 		// Array to add new pages in new tabs
 		$this->tabs = array();
 
-		$tabtoadd = (!empty(getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR')) && getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR') == 'member') ? 'member' : 'thirdparty';
-
+		$tabtoadd = getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR', 'thirdparty');
 		if ($tabtoadd == 'member') {
 			$fk_mainmenu = "members";
 		} else {
