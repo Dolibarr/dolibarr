@@ -384,3 +384,25 @@ insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9,934,
 -- Regions Angola (rowid country=35)
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES (35, 35001, 'AO', NULL, 'Angola');
 
+
+
+-- Burundi Regions (id country=61) -- https://fr.wikipedia.org/wiki/Provinces_du_Burundi
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES ( 61, 6101, '', 0, "Bubanza");
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES ( 61, 6102, '', 0, "Bujumbura Mairie");
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES ( 61, 6103, '', 0, "Bujumbura Rural");
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES ( 61, 6104, '', 0, "Bururi");
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES ( 61, 6105, '', 0, "Cankuzo");
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES ( 61, 6106, '', 0, "Cibitoke");
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES ( 61, 6107, '', 0, "Gitega");
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES ( 61, 6108, '', 0, "Karuzi");
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES ( 61, 6109, '', 0, "Kayanza");
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES ( 61, 6110, '', 0, "Kirundo");
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES ( 61, 6111, '', 0, "Makamba");
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES ( 61, 6112, '', 0, "Muramvya");
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES ( 61, 6113, '', 0, "Muyinga");
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES ( 61, 6114, '', 0, "Mwaro");
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES ( 61, 6115, '', 0, "Ngozi");
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES ( 61, 6116, '', 0, "Rumonge");
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES ( 61, 6117, '', 0, "Rutana");
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES ( 61, 6118, '', 0, "Ruyigi");
+
