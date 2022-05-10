@@ -339,3 +339,9 @@ insert into llx_c_forme_juridique (fk_pays, code, libelle) values (13, '1306','S
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (13, '1307','Société en participation');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (13, '1308','Groupe de sociétés');
 
+-- Burundi (id contry=61)
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (61,'6100','Indépendant - Personne physique');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (61,'6101','Société Unipersonnelle');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (61,'6102','Société de personne à responsabilité limité (SPRL)');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (61,'6103','Société anonyme (SA)');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (61,'6104','Société coopérative');
