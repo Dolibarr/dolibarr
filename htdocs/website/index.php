@@ -1087,7 +1087,7 @@ if ($action == 'addcontainer' && $usercanedit) {
 				$filetpl = $pathofwebsite.'/page'.$pageid.'.tpl.php';
 
 				// Generate the index.php page (to be the home page) and the wrapper.php file
-				$result = dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl, $filewrapper);
+				$result = dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl, $filewrapper, $object);
 
 				if ($result <= 0) {
 					setEventMessages('Failed to write file '.$fileindex, null, 'errors');
@@ -1580,7 +1580,7 @@ if ($action == 'updatecss' && $usercanedit) {
 
 
 			// Save wrapper.php
-			$result = dolSaveIndexPage($pathofwebsite, '', '', $filewrapper);
+			$result = dolSaveIndexPage($pathofwebsite, '', '', $filewrapper, $object);
 
 
 			// Message if no error
@@ -1621,7 +1621,7 @@ if ($action == 'setashome' && $usercanedit) {
 		$filetpl = $pathofwebsite.'/page'.$pageid.'.tpl.php';
 
 		// Generate the index.php page to be the home page
-		$result = dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl, $filewrapper);
+		$result = dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl, $filewrapper, $object);
 
 		if ($result) {
 			setEventMessages($langs->trans("Saved"), null, 'mesgs');
@@ -2181,7 +2181,7 @@ if ($action == 'regeneratesite' && $usercanedit) {
 	$pathtomediasinwebsite = $pathofwebsite.'/medias';
 	if (!is_link(dol_osencode($pathtomediasinwebsite))) {
 		dol_syslog("Create symlink for ".$pathtomedias." into name ".$pathtomediasinwebsite);
-		dol_mkdir(dirname($pathtomediasinwebsite)); // To be sure dir for website exists
+		dol_mkdir(dirname($pathtomediasinwebsite)); // To be sure that the directory for website exists
 		$result = symlink($pathtomedias, $pathtomediasinwebsite);
 		if (!$result) {
 			setEventMessages($langs->trans("ErrorFieldToCreateSymLinkToMedias", $pathtomediasinwebsite, $pathtomedias), null, 'errors');
