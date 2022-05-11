@@ -121,6 +121,9 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
 				$i++;
 				$texttoinsert .= "\t\t'".$key."' => array('type'=>'".$val['type']."',";
 				$texttoinsert .= " 'label'=>'".$val['label']."',";
+				if ($val['picto']) {
+					$texttoinsert .= " 'picto'=>'".$val['picto']."',";
+				}
 				$texttoinsert .= " 'enabled'=>'".($val['enabled'] !== '' ? $val['enabled'] : 1)."',";
 				$texttoinsert .= " 'position'=>".($val['position'] !== '' ? $val['position'] : 50).",";
 				$texttoinsert .= " 'notnull'=>".(empty($val['notnull']) ? 0 : $val['notnull']).",";

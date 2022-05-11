@@ -756,7 +756,7 @@ class Ticket extends CommonObject
 			$sql .= $this->db->plimit($limit + 1, $offset);
 		}
 
-		dol_syslog(get_class($this)."::fetch_all", LOG_DEBUG);
+		dol_syslog(get_class($this)."::fetchAll", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 
 		if ($resql) {
@@ -829,7 +829,7 @@ class Ticket extends CommonObject
 			return $num;
 		} else {
 			$this->error = "Error ".$this->db->lasterror();
-			dol_syslog(get_class($this)."::fetch_all ".$this->error, LOG_ERR);
+			dol_syslog(get_class($this)."::fetchAll ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -2009,38 +2009,6 @@ class Ticket extends CommonObject
 				return -1;
 			}
 		} else {
-			return -1;
-		}
-	}
-
-	/**
-	 *     Link element with a project
-	 * 	   Override core function because of key name 'fk_project' used for this module
-	 *
-	 *     @param  int 		$projectid 			Project id to link element to
-	 *     @return int                   	   <0 if KO, >0 if OK
-	 */
-	public function setProject($projectid)
-	{
-		if (!$this->table_element) {
-			dol_syslog(get_class($this)."::setProject was called on objet with property table_element not defined", LOG_ERR);
-			return -1;
-		}
-
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-		if ($projectid) {
-			$sql .= ' SET fk_project = '.((int) $projectid);
-		} else {
-			$sql .= ' SET fk_project = NULL';
-		}
-		$sql .= ' WHERE rowid = '.((int) $this->id);
-
-		dol_syslog(get_class($this)."::setProject sql=".$sql);
-		if ($this->db->query($sql)) {
-			$this->fk_project = ((int) $projectid);
-			return 1;
-		} else {
-			dol_print_error($this->db);
 			return -1;
 		}
 	}

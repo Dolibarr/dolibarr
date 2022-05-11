@@ -190,8 +190,8 @@ $sql .= $db->order($sortfield, $sortorder);
 
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
-	$result = $db->query($sql);
-	$nbtotalofrecords = $db->num_rows($result);
+	$resql = $db->query($sql);
+	$nbtotalofrecords = $db->num_rows($resql);
 
 	// if total resultset is smaller then paging size (filtering), goto and load page 0
 	if (($page * $limit) > $nbtotalofrecords) {
@@ -202,15 +202,15 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 
 $sql .= $db->plimit($limit + 1, $offset);
 
-$result = $db->query($sql);
-if (!$result) {
+$resql = $db->query($sql);
+if (!$resql) {
 	dol_print_error($db);
 	llxFooter();
 	$db->close();
 	exit;
 }
 
-$num = $db->num_rows($result);
+$num = $db->num_rows($resql);
 
 $param = '';
 if (!empty($contextpage) && $contextpage != $_SERVER['PHP_SELF']) {
@@ -429,7 +429,7 @@ print '</tr>';
 $i = 0;
 $totalarray = array();
 while ($i < min($num, $limit)) {
-	$obj = $db->fetch_object($result);
+	$obj = $db->fetch_object($resql);
 
 	$tva_static->id = $obj->rowid;
 	$tva_static->ref = $obj->rowid;
@@ -549,11 +549,27 @@ $totalarray['nbfield']++;
 // Show total line
 include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 
-print '</table>';
-print '</div>';
-print '</form>';
+// If no record found
+if ($num == 0) {
+	$colspan = 1;
+	foreach ($arrayfields as $key => $val) {
+		if (!empty($val['checked'])) {
+			$colspan++;
+		}
+	}
+	print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
+}
 
-$db->free($result);
+$db->free($resql);
+
+$parameters = array('arrayfields'=>$arrayfields, 'sql'=>$sql);
+$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object); // Note that $action and $object may have been modified by hook
+print $hookmanager->resPrint;
+
+print '</table>'."\n";
+print '</div>'."\n";
+
+print '</form>'."\n";
 
 // End of page
 llxFooter();

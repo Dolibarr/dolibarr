@@ -275,6 +275,8 @@ class User extends CommonObject
 
 	public $datelastlogin;
 	public $datepreviouslogin;
+	public $iplastlogin;
+	public $ippreviouslogin;
 	public $datestartvalidity;
 	public $dateendvalidity;
 
@@ -295,7 +297,7 @@ class User extends CommonObject
 	public $all_permissions_are_loaded;
 
 	/**
-	 * @var int Number of rights granted to the user
+	 * @var int Number of rights granted to the user. Value loaded after a getrights().
 	 */
 	public $nb_rights;
 
@@ -435,6 +437,8 @@ class User extends CommonObject
 		$sql .= " u.tms as datem,";
 		$sql .= " u.datelastlogin as datel,";
 		$sql .= " u.datepreviouslogin as datep,";
+		$sql .= " u.iplastlogin,";
+		$sql .= " u.ippreviouslogin,";
 		$sql .= " u.datelastpassvalidation,";
 		$sql .= " u.datestartvalidity,";
 		$sql .= " u.dateendvalidity,";
@@ -562,6 +566,8 @@ class User extends CommonObject
 				$this->datem				= $this->db->jdate($obj->datem);
 				$this->datelastlogin = $this->db->jdate($obj->datel);
 				$this->datepreviouslogin = $this->db->jdate($obj->datep);
+				$this->iplastlogin = $obj->iplastlogin;
+				$this->ippreviouslogin = $obj->ippreviouslogin;
 				$this->datestartvalidity = $this->db->jdate($obj->datestartvalidity);
 				$this->dateendvalidity = $this->db->jdate($obj->dateendvalidity);
 
@@ -877,15 +883,18 @@ class User extends CommonObject
 				$i = 0;
 				while ($i < $num) {
 					$obj = $this->db->fetch_object($result);
-					$nid = $obj->id;
 
-					$sql = "DELETE FROM ".$this->db->prefix()."user_rights WHERE fk_user = ".((int) $this->id)." AND fk_id = ".((int) $nid)." AND entity = ".((int) $entity);
-					if (!$this->db->query($sql)) {
-						$error++;
-					}
-					$sql = "INSERT INTO ".$this->db->prefix()."user_rights (entity, fk_user, fk_id) VALUES (".((int) $entity).", ".((int) $this->id).", ".((int) $nid).")";
-					if (!$this->db->query($sql)) {
-						$error++;
+					if ($obj) {
+						$nid = $obj->id;
+
+						$sql = "DELETE FROM ".$this->db->prefix()."user_rights WHERE fk_user = ".((int) $this->id)." AND fk_id = ".((int) $nid)." AND entity = ".((int) $entity);
+						if (!$this->db->query($sql)) {
+							$error++;
+						}
+						$sql = "INSERT INTO ".$this->db->prefix()."user_rights (entity, fk_user, fk_id) VALUES (".((int) $entity).", ".((int) $this->id).", ".((int) $nid).")";
+						if (!$this->db->query($sql)) {
+							$error++;
+						}
 					}
 
 					$i++;
@@ -1090,6 +1099,14 @@ class User extends CommonObject
 			}
 		}
 
+		// For avoid error
+		if (!isset($this->rights) || !is_object($this->rights)) {
+			$this->rights = new stdClass(); // For avoid error
+		}
+		if (!isset($this->rights->user) || !is_object($this->rights->user)) {
+			$this->rights->user = new stdClass(); // For avoid error
+		}
+
 		// Get permission of users + Get permissions of groups
 
 		// First user permissions
@@ -1115,7 +1132,6 @@ class User extends CommonObject
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 			$i = 0;
-
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
 
@@ -1125,9 +1141,6 @@ class User extends CommonObject
 					$subperms = $obj->subperms;
 
 					if (!empty($perms)) {
-						if (!isset($this->rights) || !is_object($this->rights)) {
-							$this->rights = new stdClass(); // For avoid error
-						}
 						if (!empty($module)) {
 							if (!isset($this->rights->$module) || !is_object($this->rights->$module)) {
 								$this->rights->$module = new stdClass();
@@ -1194,9 +1207,6 @@ class User extends CommonObject
 					$subperms = $obj->subperms;
 
 					if (!empty($perms)) {
-						if (!isset($this->rights) || !is_object($this->rights)) {
-							$this->rights = new stdClass(); // For avoid error
-						}
 						if (!empty($module)) {
 							if (!isset($this->rights->$module) || !is_object($this->rights->$module)) {
 								$this->rights->$module = new stdClass();
@@ -1224,6 +1234,63 @@ class User extends CommonObject
 				$i++;
 			}
 			$this->db->free($resql);
+		}
+
+		// Force permission on user for admin
+		if (!empty($this->admin)) {
+			if (empty($this->rights->user->user)) {
+				$this->rights->user->user = new stdClass();
+			}
+			$listofpermtotest = array('lire', 'creer', 'password', 'supprimer', 'export');
+			foreach ($listofpermtotest as $permtotest) {
+				if (empty($this->rights->user->user->$permtotest)) {
+					$this->rights->user->user->$permtotest = 1;
+					$this->nb_rights++;
+				}
+			}
+			if (empty($this->rights->user->self)) {
+				$this->rights->user->self = new stdClass();
+			}
+			$listofpermtotest = array('creer', 'password');
+			foreach ($listofpermtotest as $permtotest) {
+				if (empty($this->rights->user->self->$permtotest)) {
+					$this->rights->user->self->$permtotest = 1;
+					$this->nb_rights++;
+				}
+			}
+			// Add test on advanced permissions
+			if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
+				if (empty($this->rights->user->user_advance)) {
+					$this->rights->user->user_advance = new stdClass();
+				}
+				$listofpermtotest = array('readperms', 'write');
+				foreach ($listofpermtotest as $permtotest) {
+					if (empty($this->rights->user->user_advance->$permtotest)) {
+						$this->rights->user->user_advance->$permtotest = 1;
+						$this->nb_rights++;
+					}
+				}
+				if (empty($this->rights->user->self_advance)) {
+					$this->rights->user->self_advance = new stdClass();
+				}
+				$listofpermtotest = array('readperms', 'writeperms');
+				foreach ($listofpermtotest as $permtotest) {
+					if (empty($this->rights->user->self_advance->$permtotest)) {
+						$this->rights->user->self_advance->$permtotest = 1;
+						$this->nb_rights++;
+					}
+				}
+				if (empty($this->rights->user->group_advance)) {
+					$this->rights->user->group_advance = new stdClass();
+				}
+				$listofpermtotest = array('read', 'readperms', 'write', 'delete');
+				foreach ($listofpermtotest as $permtotest) {
+					if (empty($this->rights->user) || empty($this->rights->user->group_advance->$permtotest)) {
+						$this->rights->user->group_advance->$permtotest = 1;
+						$this->nb_rights++;
+					}
+				}
+			}
 		}
 
 		// For backward compatibility
@@ -2111,9 +2178,13 @@ class User extends CommonObject
 		// phpcs:enable
 		$now = dol_now();
 
+		$userremoteip = getUserRemoteIP();
+
 		$sql = "UPDATE ".$this->db->prefix()."user SET";
 		$sql .= " datepreviouslogin = datelastlogin,";
+		$sql .= " ippreviouslogin = iplastlogin,";
 		$sql .= " datelastlogin = '".$this->db->idate($now)."',";
+		$sql .= " iplastlogin = '".$this->db->escape($userremoteip)."',";
 		$sql .= " tms = tms"; // La date de derniere modif doit changer sauf pour la mise a jour de date de derniere connexion
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
@@ -2122,6 +2193,8 @@ class User extends CommonObject
 		if ($resql) {
 			$this->datepreviouslogin = $this->datelastlogin;
 			$this->datelastlogin = $now;
+			$this->ippreviouslogin = $this->iplastlogin;
+			$this->iplastlogin = $userremoteip;
 			return 1;
 		} else {
 			$this->error = $this->db->lasterror().' sql='.$sql;
@@ -3116,7 +3189,9 @@ class User extends CommonObject
 		$this->datem = $now;
 
 		$this->datelastlogin = $now;
+		$this->iplastlogin = '127.0.0.1';
 		$this->datepreviouslogin = $now;
+		$this->ippreviouslogin = '127.0.0.1';
 		$this->statut = 1;
 
 		$this->entity = 1;
@@ -3734,7 +3809,7 @@ class User extends CommonObject
 	 */
 	public function findUserIdByEmail($email)
 	{
-		if ($this->findUserIdByEmailCache[$email]) {
+		if (isset($this->findUserIdByEmailCache[$email])) {
 			return $this->findUserIdByEmailCache[$email];
 		}
 

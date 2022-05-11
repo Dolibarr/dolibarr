@@ -311,7 +311,7 @@ table.postablelines tr td {
 
 .posinvoiceline td {
 	height: 40px !important;
-	background-color: var(--colorbacklineimpair1);
+	background-color: var(--colorbacklineimpair2);
 }
 
 .postablelines td.linecolht {

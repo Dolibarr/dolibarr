@@ -163,7 +163,7 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 if (GETPOST('cancel', 'alpha')) {
 	$action = 'list'; $massaction = '';
 }
-if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend' && $massaction != 'confirm_createbills') {
+if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
 	$massaction = '';
 }
 
@@ -201,7 +201,7 @@ if (empty($reshook)) {
 		$filter_opcloture = "";
 		$mode = '';
 		$filter = '';
-		$toselect = '';
+		$toselect = array();
 		$search_array_options = array();
 	}
 }

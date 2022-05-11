@@ -222,6 +222,8 @@ class modMyModule extends DolibarrModules
 			'tabrowid'=>array("rowid", "rowid", "rowid"),
 			// Condition to show each dictionary
 			'tabcond'=>array($conf->mymodule->enabled, $conf->mymodule->enabled, $conf->mymodule->enabled)
+			// Help tooltip for each fields of the dictionary
+			'tabhelp'=>array(array('code'=>$langs->trans('CodeTooltipHelp')))
 		);
 		*/
 
@@ -426,7 +428,7 @@ class modMyModule extends DolibarrModules
 	{
 		global $conf, $langs;
 
-		//$result = $this->_load_tables('/install/mysql/tables/', 'mymodule');
+		//$result = $this->_load_tables('/install/mysql/', 'mymodule');
 		$result = $this->_load_tables('/mymodule/sql/');
 		if ($result < 0) {
 			return -1; // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
