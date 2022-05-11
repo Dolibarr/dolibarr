@@ -48,7 +48,7 @@ if (!defined('NOREQUIRETRAN')) {
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
-
+$hookmanager->initHooks(array('rowinterface'));
 // Security check
 // This is done later into view.
 
@@ -116,7 +116,11 @@ if (GETPOST('roworder', 'alpha', 3) && GETPOST('table_element_line', 'aZ09', 3)
 			$perm = 1;
 		}
 	}
-
+	$parameters = array('roworder'=> &$roworder, 'table_element_line' => &$table_element_line, 'fk_element' => &$fk_element, 'element_id' => &$element_id, 'perm' => &$perm);
+	$reshook = $hookmanager->executeHooks('checkRowPerms', $parameters, $this, $action);
+	if ($reshook > 0) {
+		$perm = $hookmanager->resArray['perm'];
+	}
 	if (! $perm) {
 		// We should not be here. If we are not allowed to reorder rows, feature should not be visible on script.
 		// If we are here, it is a hack attempt, so we report a warning.
