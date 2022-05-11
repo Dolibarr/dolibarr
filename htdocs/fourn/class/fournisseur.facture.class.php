@@ -2277,9 +2277,10 @@ class FactureFournisseur extends CommonInvoice
 	 * @param 		string		$fk_unit 			Code of the unit to use. Null to use the default one
 	 * @param		double		$pu_devise			Amount in currency
 	 * @param		string		$ref_supplier		Supplier ref
+	 * @param	integer	$rang	line rank
 	 * @return    	int           					<0 if KO, >0 if OK
 	 */
-	public function updateline($id, $desc, $pu, $vatrate, $txlocaltax1 = 0, $txlocaltax2 = 0, $qty = 1, $idproduct = 0, $price_base_type = 'HT', $info_bits = 0, $type = 0, $remise_percent = 0, $notrigger = false, $date_start = '', $date_end = '', $array_options = 0, $fk_unit = null, $pu_devise = 0, $ref_supplier = '')
+	public function updateline($id, $desc, $pu, $vatrate, $txlocaltax1 = 0, $txlocaltax2 = 0, $qty = 1, $idproduct = 0, $price_base_type = 'HT', $info_bits = 0, $type = 0, $remise_percent = 0, $notrigger = false, $date_start = '', $date_end = '', $array_options = 0, $fk_unit = null, $pu_devise = 0, $ref_supplier = '', $rang=0)
 	{
 		global $mysoc, $langs;
 
@@ -2401,6 +2402,7 @@ class FactureFournisseur extends CommonInvoice
 		$line->product_type = $product_type;
 		$line->info_bits = $info_bits;
 		$line->fk_unit = $fk_unit;
+		$line->rang = $rang;
 
 		if (is_array($array_options) && count($array_options) > 0) {
 			// We replace values in this->line->array_options only for entries defined into $array_options
@@ -3685,6 +3687,10 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$sql .= ", product_type = ".((int) $this->product_type);
 		$sql .= ", info_bits = ".((int) $this->info_bits);
 		$sql .= ", fk_unit = ".($fk_unit > 0 ? (int) $fk_unit : 'null');
+
+		if (!empty($this->rang)) {
+			$sql .= ", rang=".((int) $this->rang);
+		}
 
 		// Multicurrency
 		$sql .= " , multicurrency_subprice=".price2num($this->multicurrency_subprice)."";
