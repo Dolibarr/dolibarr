@@ -322,8 +322,8 @@ function dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl, $filewrapper, $o
 			@chmod($fileindex, octdec($conf->global->MAIN_UMASK));
 		}
 
-		if ($object->fk_default_home > 0) {
-			$objectpage = new WebsitePage($db);
+		if (is_object($object) && $object->fk_default_home > 0) {
+			$objectpage = new WebsitePage($this->db);
 			$objectpage->fetch($object->fk_default_home);
 
 			// Create a version for sublanguages

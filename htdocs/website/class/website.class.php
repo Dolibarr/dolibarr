@@ -1361,7 +1361,7 @@ class Website extends CommonObject
 			$pathofwebsite = $conf->website->dir_output.'/'.$object->ref;
 			$fileindex = $pathofwebsite.'/index.php';
 			$filetpl = '';
-			if ($object->fk_default_home) {
+			if ($object->fk_default_home > 0) {
 				$filetpl = $pathofwebsite.'/page'.$object->fk_default_home.'.tpl.php';
 			}
 			$filewrapper = $pathofwebsite.'/wrapper.php';
