@@ -296,7 +296,7 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
  */
 function dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl, $filewrapper, $object = null)
 {
-	global $conf;
+	global $conf, $db;
 
 	$result1 = false;
 	$result2 = false;
@@ -323,7 +323,7 @@ function dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl, $filewrapper, $o
 		}
 
 		if (is_object($object) && $object->fk_default_home > 0) {
-			$objectpage = new WebsitePage($this->db);
+			$objectpage = new WebsitePage($db);
 			$objectpage->fetch($object->fk_default_home);
 
 			// Create a version for sublanguages
