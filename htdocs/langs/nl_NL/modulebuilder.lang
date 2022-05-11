@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - loan
-ModuleBuilderDesc=Deze tool mag alleen worden gebruikt door ervaren gebruikers of ontwikkelaars. Het biedt hulpprogramma's om uw eigen module te bouwen of te bewerken. Documentatie voor alternatieve <a href="%s" target="_blank">handmatige ontwikkeling kunt u vinden op</a> .
+ModuleBuilderDesc=This tool must be used only by experienced users or developers. It provides utilities to build or edit your own module. Documentation for alternative <a href="%s" target="_blank" rel="noopener noreferrer">manual development is here</a>.
 EnterNameOfModuleDesc=Voer de naam in van de module / toepassing die u wilt maken zonder spaties. Gebruik hoofdletters om woorden te scheiden (bijvoorbeeld: MyModule, EcommerceForShop, SyncWithMySystem ...)
 EnterNameOfObjectDesc=Voer de naam in van het object dat u wilt maken zonder spaties. Gebruik hoofdletters om woorden te scheiden (bijvoorbeeld: MyObject, Student, Teacher ...). Het CRUD-classfile, maar ook het API-bestand, pagina's voor het weergeven/toevoegen/bewerken/verwijderen van objecten en SQL-bestanden worden gegenereerd.
 ModuleBuilderDesc2=Pad waar modules worden gegenereerd / bewerkt (eerste map voor externe modules gedefinieerd in %s): <strong>%s</strong>
@@ -85,7 +85,7 @@ ListOfPermissionsDefined=Lijst met gedefinieerde machtigingen
 SeeExamples=Zie hier voorbeelden
 EnabledDesc=Voorwaarde om dit veld actief te hebben (voorbeelden: 1 of $ conf-&gt; global-&gt; MYMODULE_MYOPTION)
 VisibleDesc=Is het veld zichtbaar? (Voorbeelden: 0 = nooit zichtbaar, 1 = zichtbaar op lijst en formulieren maken / bijwerken / bekijken, 2 = alleen zichtbaar op lijst, 3 = alleen zichtbaar op formulier maken / bijwerken / bekijken (geen lijst), 4 = zichtbaar op lijst en update / view form only (not create), 5 = Alleen zichtbaar op lijst eindweergave formulier (niet create, not update). <br> <br> Het gebruik van een negatieve waarde betekent dat het veld niet standaard wordt weergegeven op de lijst, maar kan worden geselecteerd voor weergave). <br> <br> Het kan een uitdrukking zijn, bijvoorbeeld: <br> preg_match ('/ public /', $ _SERVER ['PHP_SELF'])? 0: 1 <br> ($ user-> rechten-> vakantie-> vakantie-> vakantie-> vakantie->)
-DisplayOnPdfDesc=Toon dit veld op compatibele PDF-documenten, u kunt de positie beheren met het veld "Positie". <br/> Momenteel bekend compatible PDF modellen zijn: Eratosthenes (order), espadon (schip), spons (facturen), cyaan (Propal / offerte), Cornas (leverancier volgorde) <br/> <br/> <strong> Voor document: </strong> <br/> 0 = niet weergegeven <br/> 1 = weergave <br/> 2 = alleen weergegeven als niet leeg <br/> <br/> <strong> Voor documentregels: </strong> <br/> 0 = niet weergegeven <br/> 1 = weergegeven in een kolom <br/> 3 = weergave in regel kolomomschrijving na de beschrijving <br/> 4 = weergave in de beschrijving positie daarachter beschrijving alleen indien niet leeg
+DisplayOnPdfDesc=Geef dit veld weer op compatibele PDF-documenten, u kunt de positie beheren met het veld "Positie". <br> Momenteel bekende compatibele PDF-modellen zijn: eratosthene (bestelling), espadon (schip), spons (facturen), cyaan (propal/offerte), cornas (bestelling leverancier) <br> <br> <strong>65 Voor document = weergave <br> 2 = weergave alleen indien niet leeg <br> <br> <strong> Voor documentregels: </strong> <br> 0 = niet weergegeven beschrijving <br>ccbeschrijving = in kolom beschrijving alleen indien niet leeg
 DisplayOnPdf=Weergeven in PDF
 IsAMeasureDesc=Kan de waarde van het veld worden gecumuleerd om een totaal in de lijst te krijgen? (Voorbeelden: 1 of 0)
 SearchAllDesc=Wordt het veld gebruikt om een zoekopdracht uit het snelzoekprogramma te doen? (Voorbeelden: 1 of 0)
@@ -98,7 +98,7 @@ MenusDefDescTooltip=De menu&#39;s van uw module / toepassing worden gedefinieerd
 DictionariesDefDescTooltip=De woordenboeken van uw module / applicatie worden gedefinieerd in de array <strong>$ this-&gt; woordenboeken</strong> in het modulebeschrijvingsbestand. U kunt dit bestand handmatig bewerken of de ingesloten editor gebruiken. <br><br> Opmerking: eenmaal gedefinieerd (en module opnieuw geactiveerd), zijn woordenboeken ook zichtbaar in het installatiegebied voor beheerders op %s.
 PermissionsDefDescTooltip=De machtigingen die door uw module / toepassing worden verstrekt, worden gedefinieerd in de array <strong>$ this-&gt; -rechten</strong> in het modulebeschrijvingsbestand. U kunt dit bestand handmatig bewerken of de ingesloten editor gebruiken. <br><br> Opmerking: Eenmaal gedefinieerd (en module opnieuw geactiveerd), zijn machtigingen zichtbaar in de standaardinstellingen voor machtigingen %s.
 HooksDefDesc=Definieer in de <b>eigenschap module_parts ['hooks']</b> , in de modulebeschrijving, de context van hooks die u wilt beheren (lijst met contexten kan worden gevonden door te zoeken op '<b>initHooks (</b>' in kerncode). <br> Bewerk het haakbestand om code van uw gekoppelde functies toe te voegen (haakbare functies zijn te vinden door te zoeken op '<b>executeHooks</b>' in de kerncode).
-TriggerDefDesc=Definieer in het triggerbestand de code die u wilt uitvoeren voor elke uitgevoerde bedrijfsgebeurtenis.
+TriggerDefDesc=Define in the trigger file the code that you want to execute when a business event external to your module is executed (events triggered by other modules).
 SeeIDsInUse=Zie ID's die in uw installatie worden gebruikt
 SeeReservedIDsRangeHere=Zie bereik van gereserveerde ID's
 ToolkitForDevelopers=Toolkit voor Dolibarr-ontwikkelaars
@@ -133,7 +133,9 @@ IncludeDocGeneration=Ik wil enkele documenten genereren van het object
 IncludeDocGenerationHelp=Als u dit aanvinkt, wordt er een code gegenereerd om een vak "Document genereren" aan de record toe te voegen.
 ShowOnCombobox=Waarde weergeven in combobox
 KeyForTooltip=Sleutel voor knopinfo
-CSSClass=CSS-klasse
+CSSClass=CSS voor het bewerken/aanmaken van formulier
+CSSViewClass=CSS voor leesformulier
+CSSListClass=CSS voor lijst
 NotEditable=Niet bewerkbaar
 ForeignKey=Vreemde sleutel
 TypeOfFieldsHelp=Type velden: <br> varchar (99), dubbel (24,8), real, tekst, html, datetime, timestamp, integer, integer: ClassName: relativepath / to / classfile.class.php [: 1 [: filter]] ('1' betekent we voegen een + -knop toe na de combo om het record te maken, 'filter' kan 'status = 1 EN fk_user = __USER_ID EN entiteit IN (bijvoorbeeld __SHARED_ENTITIES__)' zijn)
@@ -141,3 +143,5 @@ AsciiToHtmlConverter=Ascii naar HTML converter
 AsciiToPdfConverter=Ascii naar PDF converter
 TableNotEmptyDropCanceled=Tabel is niet leeg. Drop is geannuleerd.
 ModuleBuilderNotAllowed=De modulebouwer is beschikbaar maar niet toegestaan voor uw gebruiker.
+ImportExportProfiles=Profielen importeren en exporteren
+ValidateModBuilderDesc=Put 1 if this field need to be validated with $this->validateField() or 0 if validation required

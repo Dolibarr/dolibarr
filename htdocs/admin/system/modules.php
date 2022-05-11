@@ -25,7 +25,7 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-if (!$user->admin) {
+if (empty($user->admin)) {
 	accessforbidden();
 }
 
@@ -40,11 +40,15 @@ $search_id = GETPOST("search_id", 'alpha');
 $search_version = GETPOST("search_version", 'alpha');
 $search_permission = GETPOST("search_permission", 'alpha');
 
-$sortfield			= GETPOST("sortfield", 'alpha');
-$sortorder			= GETPOST("sortorder", 'alpha');
+$sortfield			= GETPOST('sortfield', 'aZ09comma');
+$sortorder			= GETPOST('sortorder', 'aZ09comma');
 
-if (!$sortfield) $sortfield = "id";
-if (!$sortorder) $sortorder = "asc";
+if (!$sortfield) {
+	$sortfield = "id";
+}
+if (!$sortorder) {
+	$sortorder = "asc";
+}
 
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
 $hookmanager->initHooks(array('moduleoverview'));
@@ -61,6 +65,7 @@ $arrayfields = array(
 );
 
 $arrayfields = dol_sort_array($arrayfields, 'position');
+$param = '';
 
 
 /*
@@ -69,7 +74,9 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
 if (empty($reshook)) {
 	// Selection of new fields
@@ -84,6 +91,7 @@ $modules_files = array();
 $modules_fullpath = array();
 $modulesdir = dolGetModulesDirs();
 $rights_ids = array();
+$arrayofpermissions = array();
 
 foreach ($modulesdir as $dir) {
 	$handle = @opendir(dol_osencode($dir));
@@ -97,8 +105,7 @@ foreach ($modulesdir as $dir) {
 					if (in_array($file, $modules_files)) {
 						// File duplicate
 						print "Warning duplicate file found : ".$file." (Found ".$dir.$file.", already found ".$modules_fullpath[$file].")<br>";
-					}
-					else {
+					} else {
 						// File to load
 						$res = include_once $dir.$file;
 						if (class_exists($modName)) {
@@ -108,12 +115,10 @@ foreach ($modulesdir as $dir) {
 								$modules[$objMod->numero] = $objMod;
 								$modules_files[$objMod->numero] = $file;
 								$modules_fullpath[$file] = $dir.$file;
-							}
-							catch (Exception $e) {
+							} catch (Exception $e) {
 								dol_syslog("Failed to load ".$dir.$file." ".$e->getMessage(), LOG_ERR);
 							}
-						}
-						else {
+						} else {
 							print "Warning bad descriptor file : ".$dir.$file." (Class ".$modName." not found into file)<br>";
 						}
 					}
@@ -125,21 +130,23 @@ foreach ($modulesdir as $dir) {
 }
 
 // create pre-filtered list for modules
-foreach ($modules as $key=>$module) {
+foreach ($modules as $key => $module) {
 	$newModule = new stdClass();
 
 	$newModule->name = $module->getName();
 	$newModule->version = $module->getVersion();
 	$newModule->id = $key;
-	$newModule->module_position = $module->module_position;
+	$newModule->module_position = $module->getModulePosition();
 
 	$alt = $module->name.' - '.$modules_files[$key];
 
 	if (!empty($module->picto)) {
-		if (preg_match('/^\//', $module->picto)) $newModule->picto = img_picto($alt, $module->picto, 'width="14px"', 1);
-		else $newModule->picto = img_object($alt, $module->picto, 'width="14px"');
-	}
-	else {
+		if (preg_match('/^\//', $module->picto)) {
+			$newModule->picto = img_picto($alt, $module->picto, 'width="14px"', 1);
+		} else {
+			$newModule->picto = img_object($alt, $module->picto, 'width="14px"');
+		}
+	} else {
 		$newModule->picto = img_object($alt, 'generic', 'width="14px"');
 	}
 
@@ -149,7 +156,7 @@ foreach ($modules as $key=>$module) {
 			if (empty($rights[0])) {
 				continue;
 			}
-
+			$arrayofpermissions[$rights[0]] = array('label'=> 'user->rights->'.$module->rights_class.'->'.$rights[4].(empty($rights[5]) ? '' : '->'.$rights[5]));
 			$permission[] = $rights[0];
 
 			array_push($rights_ids, $rights[0]);
@@ -159,11 +166,17 @@ foreach ($modules as $key=>$module) {
 	$newModule->permission = $permission;
 
 	// pre-filter list
-	if ($search_name && !stristr($newModule->name, $search_name))			continue;
-	if ($search_version && !stristr($newModule->version, $search_version))	continue;
-	if ($search_id && !stristr($newModule->id, $search_id))					continue;
+	if (!empty($search_name) && !stristr($newModule->name, $search_name)) {
+		continue;
+	}
+	if (!empty($search_version) && !stristr($newModule->version, $search_version)) {
+		continue;
+	}
+	if (!empty($search_id) && !stristr($newModule->id, $search_id)) {
+		continue;
+	}
 
-	if ($search_permission) {
+	if (!empty($search_permission)) {
 		$found = false;
 
 		foreach ($newModule->permission as $permission) {
@@ -173,7 +186,9 @@ foreach ($modules as $key=>$module) {
 			}
 		}
 
-		if (!$found) continue;
+		if (!$found) {
+			continue;
+		}
 	}
 
 	$moduleList[] = $newModule;
@@ -188,7 +203,9 @@ foreach ($modules as $key=>$module) {
 llxHeader();
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" name="formulaire">';
-if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+if ($optioncss != '') {
+	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+}
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 print '<input type="hidden" name="action" value="list">';
@@ -196,7 +213,7 @@ print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-print_barre_liste($langs->trans("AvailableModules"), $page, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, $massactionbutton, -1, '', 'title_setup', 0, '', '', 0, 1, 1);
+print_barre_liste($langs->trans("AvailableModules"), empty($page) ? 0 : $page, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', -1, '', 'title_setup', 0, '', '', 0, 1, 1);
 
 print '<span class="opacitymedium">'.$langs->trans("ToActivateModule").'</span>';
 print '<br>';
@@ -213,26 +230,26 @@ print '<tr class="liste_titre_filter">';
 
 if ($arrayfields['name']['checked']) {
 	print '<td class="liste_titre left">';
-	print '<input class="flat" type="text" name="search_name" size="8" value="'.$search_name.'">';
+	print '<input class="flat" type="text" name="search_name" size="8" value="'.dol_escape_htmltag($search_name).'">';
 	print '</td>';
 }
 if ($arrayfields['version']['checked']) {
 	print '<td class="liste_titre left">';
-	print '<input class="flat" type="text" name="search_version" size="8" value="'.$search_version.'">';
+	print '<input class="flat" type="text" name="search_version" size="6" value="'.dol_escape_htmltag($search_version).'">';
 	print '</td>';
 }
 if ($arrayfields['id']['checked']) {
 	print '<td class="liste_titre left">';
-	print '<input class="flat" type="text" name="search_id" size="8" value="'.$search_id.'">';
-	print '</td>';
-}
-if ($arrayfields['module_position']['checked']) {
-	print '<td class="liste_titre left">';
+	print '<input class="flat" type="text" name="search_id" size="6 value="'.dol_escape_htmltag($search_id).'">';
 	print '</td>';
 }
 if ($arrayfields['permission']['checked']) {
 	print '<td class="liste_titre left">';
-	print '<input class="flat" type="text" name="search_permission" size="8" value="'.$search_permission.'">';
+	print '<input class="flat" type="text" name="search_permission" size="8" value="'.dol_escape_htmltag($search_permission).'">';
+	print '</td>';
+}
+if ($arrayfields['module_position']['checked']) {
+	print '<td class="liste_titre left">';
 	print '</td>';
 }
 
@@ -252,13 +269,13 @@ if ($arrayfields['version']['checked']) {
 	print_liste_field_titre($arrayfields['version']['label'], $_SERVER["PHP_SELF"], "version", "", "", "", $sortfield, $sortorder);
 }
 if ($arrayfields['id']['checked']) {
-	print_liste_field_titre($arrayfields['id']['label'], $_SERVER["PHP_SELF"], "id", "", "", "", $sortfield, $sortorder);
-}
-if ($arrayfields['module_position']['checked']) {
-	print_liste_field_titre($arrayfields['module_position']['label'], $_SERVER["PHP_SELF"], "module_position", "", "", "", $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['id']['label'], $_SERVER["PHP_SELF"], "id", "", "", "", $sortfield, $sortorder, 'nowraponall ');
 }
 if ($arrayfields['permission']['checked']) {
 	print_liste_field_titre($arrayfields['permission']['label'], $_SERVER["PHP_SELF"], "permission", "", "", "", $sortfield, $sortorder);
+}
+if ($arrayfields['module_position']['checked']) {
+	print_liste_field_titre($arrayfields['module_position']['label'], $_SERVER["PHP_SELF"], "module_position", "", "", "", $sortfield, $sortorder);
 }
 
 // Fields from hook
@@ -270,20 +287,33 @@ print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $
 print '</tr>';
 
 // sort list
-if ($sortfield == "name" && $sortorder == "asc") usort($moduleList, function (stdClass $a, stdClass $b) {
-	return strcasecmp($a->name, $b->name); });
-if ($sortfield == "name" && $sortorder == "desc") usort($moduleList, function (stdClass $a, stdClass $b) {
-	return strcasecmp($b->name, $a->name); });
-if ($sortfield == "version" && $sortorder == "asc") usort($moduleList, function (stdClass $a, stdClass $b) {
-	return strcasecmp($a->version, $b->version); });
-if ($sortfield == "version" && $sortorder == "desc") usort($moduleList, function (stdClass $a, stdClass $b) {
-	return strcasecmp($b->version, $a->version); });
-if ($sortfield == "id" && $sortorder == "asc") usort($moduleList, "compareIdAsc");
-if ($sortfield == "id" && $sortorder == "desc") usort($moduleList, "compareIdDesc");
-if ($sortfield == "permission" && $sortorder == "asc") usort($moduleList, "comparePermissionIdsAsc");
-if ($sortfield == "permission" && $sortorder == "desc") usort($moduleList, "comparePermissionIdsDesc");
-
-$moduleList = dol_sort_array($moduleList, 'module_position');
+if ($sortfield == "name" && $sortorder == "asc") {
+	usort($moduleList, function (stdClass $a, stdClass $b) {
+		return strcasecmp($a->name, $b->name);
+	});
+} elseif ($sortfield == "name" && $sortorder == "desc") {
+	usort($moduleList, function (stdClass $a, stdClass $b) {
+		return strcasecmp($b->name, $a->name);
+	});
+} elseif ($sortfield == "version" && $sortorder == "asc") {
+	usort($moduleList, function (stdClass $a, stdClass $b) {
+		return strcasecmp($a->version, $b->version);
+	});
+} elseif ($sortfield == "version" && $sortorder == "desc") {
+	usort($moduleList, function (stdClass $a, stdClass $b) {
+		return strcasecmp($b->version, $a->version);
+	});
+} elseif ($sortfield == "id" && $sortorder == "asc") {
+	usort($moduleList, "compareIdAsc");
+} elseif ($sortfield == "id" && $sortorder == "desc") {
+	usort($moduleList, "compareIdDesc");
+} elseif ($sortfield == "permission" && $sortorder == "asc") {
+	usort($moduleList, "comparePermissionIdsAsc");
+} elseif ($sortfield == "permission" && $sortorder == "desc") {
+	usort($moduleList, "comparePermissionIdsDesc");
+} else {
+	$moduleList = dol_sort_array($moduleList, 'module_position');
+}
 
 foreach ($moduleList as $module) {
 	print '<tr class="oddeven">';
@@ -296,23 +326,21 @@ foreach ($moduleList as $module) {
 	}
 
 	if ($arrayfields['version']['checked']) {
-		print '<td>'.$module->version.'</td>';
+		print '<td class="nowraponall">'.$module->version.'</td>';
 	}
 
 	if ($arrayfields['id']['checked']) {
 		print '<td class="center">'.$module->id.'</td>';
 	}
 
-	if ($arrayfields['module_position']['checked']) {
-		print '<td class="center">'.$module->module_position.'</td>';
-	}
-
 	if ($arrayfields['permission']['checked']) {
 		$idperms = '';
 
 		foreach ($module->permission as $permission) {
-			$idperms .= ($idperms ? ", " : "").$permission;
 			$translationKey = "Permission".$permission;
+			$labelpermission = $langs->trans($translationKey);
+			$labelpermission .= ' : '.$arrayofpermissions[$permission]['label'];
+			$idperms .= ($idperms ? ", " : "").'<span title="'.$labelpermission.'">'.$permission.'</a>';
 
 			if (!empty($conf->global->MAIN_SHOW_PERMISSION)) {
 				if (empty($langs->tab_translate[$translationKey])) {
@@ -322,7 +350,11 @@ foreach ($moduleList as $module) {
 			}
 		}
 
-		print '<td>'.($idperms ? $idperms : "&nbsp;").'</td>';
+		print '<td><span class="opacitymedium">'.($idperms ? $idperms : "&nbsp;").'</span></td>';
+	}
+
+	if ($arrayfields['module_position']['checked']) {
+		print '<td class="center">'.$module->module_position.'</td>';
 	}
 
 	print '<td></td>';
@@ -359,9 +391,11 @@ $db->close();
   */
 function compareIdAsc(stdClass $a, stdClass $b)
 {
-	if ($a->id == $b->id) return 0;
+	if ((int) $a->id == (int) $b->id) {
+		return 0;
+	}
 
-	return $a->id > $b->id ? -1 : 1;
+	return ((int) $a->id < (int) $b->id) ? -1 : 1;
 }
 
  /**
@@ -373,9 +407,11 @@ function compareIdAsc(stdClass $a, stdClass $b)
   */
 function compareIdDesc(stdClass $a, stdClass $b)
 {
-	if ($a->id == $b->id) return 0;
+	if ((int) $a->id == (int) $b->id) {
+		return 0;
+	}
 
-	return $b->id > $a->id ? -1 : 1;
+	return ((int) $b->id < (int) $a->id) ? -1 : 1;
 }
 
  /**
@@ -387,14 +423,22 @@ function compareIdDesc(stdClass $a, stdClass $b)
   */
 function comparePermissionIdsAsc(stdClass $a, stdClass $b)
 {
-	if (empty($a->permission) && empty($b->permission)) return compareIdAsc($a, $b);
+	if (empty($a->permission) && empty($b->permission)) {
+		return compareIdAsc($a, $b);
+	}
 
-	if (empty($a->permission)) return 1;
-	if (empty($b->permission)) return -1;
+	if (empty($a->permission)) {
+		return 1;
+	}
+	if (empty($b->permission)) {
+		return -1;
+	}
 
-	if ($a->permission[0] == $b->permission[0]) return 0;
+	if ($a->permission[0] == $b->permission[0]) {
+		return 0;
+	}
 
-	return $a->permission[0] > $b->permission[0] ? -1 : 1;
+	return $a->permission[0] < $b->permission[0] ? -1 : 1;
 }
 
  /**
@@ -406,12 +450,20 @@ function comparePermissionIdsAsc(stdClass $a, stdClass $b)
   */
 function comparePermissionIdsDesc(stdClass $a, stdClass $b)
 {
-	if (empty($a->permission) && empty($b->permission)) return compareIdDesc($a, $b);
+	if (empty($a->permission) && empty($b->permission)) {
+		return compareIdDesc($a, $b);
+	}
 
-	if (empty($a->permission)) return -1;
-	if (empty($b->permission)) return 1;
+	if (empty($a->permission)) {
+		return -1;
+	}
+	if (empty($b->permission)) {
+		return 1;
+	}
 
-	if ($a->permission[0] == $b->permission[0]) return 0;
+	if ($a->permission[0] == $b->permission[0]) {
+		return 0;
+	}
 
-	return $a->permission[0] > $b->permission[0] ? 1 : -1;
+	return $b->permission[0] < $a->permission[0] ? -1 : 1;
 }

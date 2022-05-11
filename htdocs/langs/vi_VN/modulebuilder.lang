@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - loan
-ModuleBuilderDesc=Công cụ này phải chỉ được sử dụng bởi người dùng hoặc nhà phát triển có kinh nghiệm. Nó cung cấp các tiện ích để xây dựng hoặc chỉnh sửa mô-đun của riêng bạn. Tài liệu cho <a href="%s" target="_blank">phát triển thủ công ở đây </a>.
+ModuleBuilderDesc=This tool must be used only by experienced users or developers. It provides utilities to build or edit your own module. Documentation for alternative <a href="%s" target="_blank" rel="noopener noreferrer">manual development is here</a>.
 EnterNameOfModuleDesc=Nhập tên của mô-đun / ứng dụng để tạo không có khoảng trắng. Sử dụng chữ hoa để phân tách các từ (Ví dụ: MyModule, ECommerceForShop, SyncWithMySystem ...)
 EnterNameOfObjectDesc=Nhập tên của đối tượng để tạo không có khoảng trắng. Sử dụng chữ hoa để phân tách các từ (Ví dụ: MyObject, Student, Teacher ...). Tệp lớp CRUD, nhưng cũng là tệp API, các trang để liệt kê/thêm/chỉnh sửa/xóa đối tượng và các tệp SQL sẽ được tạo.
 ModuleBuilderDesc2=Đường dẫn nơi các mô-đun được tạo/chỉnh sửa (thư mục đầu tiên cho các mô-đun bên ngoài được xác định vào %s): <strong>%s</strong>
@@ -85,7 +85,7 @@ ListOfPermissionsDefined=Danh sách các quyền được định nghĩa
 SeeExamples=Xem ví dụ ở đây
 EnabledDesc=Điều kiện để có trường này hoạt động (Ví dụ: 1 hoặc $conf-> golobal->MYMODULE_MYOPTION)
 VisibleDesc=Is the field visible ? (Examples: 0=Never visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create), 5=Visible on list end view form only (not create, not update).<br><br>Using a negative value means field is not shown by default on list but can be selected for viewing).<br><br>It can be an expression, for example:<br>preg_match('/public/', $_SERVER['PHP_SELF'])?0:1<br>($user->rights->holiday->define_holiday ? 1 : 0)
-DisplayOnPdfDesc=Display this field on compatible PDF documents, you can manage position with "Position" field.<br/>Currently, known compatibles PDF models are : eratosthene (order), espadon (ship), sponge (invoices), cyan (propal/quotation), cornas (supplier order)<br/><br/><strong>For document :</strong><br/>0 = not displayed <br/>1 = display<br/>2 = display only if not empty<br/><br/><strong>For document lines :</strong><br/>0 = not displayed <br/>1 = displayed in a column<br/>3 = display in line description column after the description<br/>4 = display in description column after the description only if not empty
+DisplayOnPdfDesc=Display this field on compatible PDF documents, you can manage position with "Position" field.<br>Currently, known compatibles PDF models are : eratosthene (order), espadon (ship), sponge (invoices), cyan (propal/quotation), cornas (supplier order)<br><br><strong>For document :</strong><br>0 = not displayed <br>1 = display<br>2 = display only if not empty<br><br><strong>For document lines :</strong><br>0 = not displayed <br>1 = displayed in a column<br>3 = display in line description column after the description<br>4 = display in description column after the description only if not empty
 DisplayOnPdf=Hiển thị trên file PDF
 IsAMeasureDesc=Giá trị của trường có thể được tích lũy để có được tổng số vào danh sách không? (Ví dụ: 1 hoặc 0)
 SearchAllDesc=Là trường được sử dụng để thực hiện tìm kiếm từ công cụ tìm kiếm nhanh? (Ví dụ: 1 hoặc 0)
@@ -98,7 +98,7 @@ MenusDefDescTooltip=Các menu được cung cấp bởi mô-đun / ứng dụng 
 DictionariesDefDescTooltip=Các từ điển được cung cấp bởi mô-đun / ứng dụng của bạn được định nghĩa trong mảng <strong>$this->dictionaries</strong> vào tệp mô tả mô-đun. Bạn có thể chỉnh sửa thủ công tệp này hoặc sử dụng trình chỉnh sửa được nhúng. <br><br> Lưu ý: Sau khi được định nghĩa (và kích hoạt lại mô-đun), từ điển cũng được hiển thị trong khu vực thiết lập cho người dùng quản trị viên trên %s.
 PermissionsDefDescTooltip=Các quyền được cung cấp bởi mô-đun / ứng dụng của bạn được định nghĩa trong mảng <strong>$this->rights</strong> vào tệp mô tả mô-đun. Bạn có thể chỉnh sửa thủ công tệp này hoặc sử dụng trình chỉnh sửa được nhúng. <br><br> Lưu ý: Sau khi được định nghĩa (và kích hoạt lại mô-đun), các quyền được hiển thị trong thiết lập quyền mặc định %s.
 HooksDefDesc=Định nghĩa trong thuộc tính <b>module_parts ['hook']</b> , trong mô tả mô-đun, ngữ cảnh của các hook bạn muốn quản lý (có thể tìm thấy danh sách các ngữ cảnh bằng cách tìm kiếm trên ' <b>initHooks (</b> ' trong mã lõi). <br> Chỉnh sửa tệp hook để thêm mã của các hàm hooked của bạn (có thể tìm thấy các hàm hookable bằng cách tìm kiếm trên ' <b>execHooks</b> ' trong mã lõi).
-TriggerDefDesc=Định nghĩa trong tệp trigger mã bạn muốn thực thi cho mỗi sự kiện kinh doanh được thực thi.
+TriggerDefDesc=Define in the trigger file the code that you want to execute when a business event external to your module is executed (events triggered by other modules).
 SeeIDsInUse=Xem ID được sử dụng trong cài đặt của bạn
 SeeReservedIDsRangeHere=Xem phạm vi ID dành riêng
 ToolkitForDevelopers=Bộ công cụ dành cho nhà phát triển Dolibarr
@@ -133,7 +133,9 @@ IncludeDocGeneration=Tôi muốn tạo một số tài liệu từ đối tượ
 IncludeDocGenerationHelp=Nếu bạn kiểm tra điều này, một số mã sẽ được tạo để thêm hộp "Tạo tài liệu" trong hồ sơ.
 ShowOnCombobox=Hiển thị giá trị vào combobox
 KeyForTooltip=Khóa cho tooltip
-CSSClass=Lớp CSS
+CSSClass=CSS for edit/create form
+CSSViewClass=CSS for read form
+CSSListClass=CSS for list
 NotEditable=Không thể chỉnh sửa
 ForeignKey=Khóa ngoại
 TypeOfFieldsHelp=Kiểu trường: <br> varchar (99), double (24,8), real, text, html, datetime, timestamp, integer, integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]] ('1' có nghĩa là chúng ta thêm nút + sau khi kết hợp để tạo bản ghi, ví dụ 'bộ lọc' có thể là 'status=1 AND fk_user = __USER_ID AND entity IN (__SHARED_ENTEER__)')
@@ -141,3 +143,5 @@ AsciiToHtmlConverter=Chuyển mã ASCII sang HTML
 AsciiToPdfConverter=Chuyển ASCII sang PDF
 TableNotEmptyDropCanceled=Table not empty. Drop has been canceled.
 ModuleBuilderNotAllowed=The module builder is available but not allowed to your user.
+ImportExportProfiles=Import and export profiles
+ValidateModBuilderDesc=Put 1 if this field need to be validated with $this->validateField() or 0 if validation required

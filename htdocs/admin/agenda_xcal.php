@@ -29,8 +29,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
 
 
-if (!$user->admin)
+if (!$user->admin) {
 	accessforbidden();
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "other", "agenda"));
@@ -39,8 +40,7 @@ $def = array();
 $actionsave = GETPOST('save', 'alpha');
 
 // Sauvegardes parametres
-if ($actionsave)
-{
+if ($actionsave) {
 	$i = 0;
 
 	$db->begin();
@@ -50,8 +50,7 @@ if ($actionsave)
 	$i += dolibarr_set_const($db, 'MAIN_AGENDA_EXPORT_CACHE', trim(GETPOST('MAIN_AGENDA_EXPORT_CACHE', 'alpha')), 'chaine', 0, '', $conf->entity);
 	$i += dolibarr_set_const($db, 'AGENDA_EXPORT_FIX_TZ', trim(GETPOST('AGENDA_EXPORT_FIX_TZ', 'alpha')), 'chaine', 0, '', $conf->entity);
 
-	if ($i >= 4)
-	{
+	if ($i >= 4) {
 		$db->commit();
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
@@ -66,7 +65,9 @@ if ($actionsave)
  * View
  */
 
-if (!isset($conf->global->MAIN_AGENDA_EXPORT_PAST_DELAY)) $conf->global->MAIN_AGENDA_EXPORT_PAST_DELAY = 100;
+if (!isset($conf->global->MAIN_AGENDA_EXPORT_PAST_DELAY)) {
+	$conf->global->MAIN_AGENDA_EXPORT_PAST_DELAY = 100;
+}
 
 $wikihelp = 'EN:Module_Agenda_En|FR:Module_Agenda|ES:Módulo_Agenda';
 llxHeader('', $langs->trans("AgendaSetup"), $wikihelp);
@@ -97,8 +98,9 @@ print "</tr>";
 print '<tr class="oddeven">';
 print '<td class="fieldrequired">'.$langs->trans("PasswordTogetVCalExport")."</td>";
 print '<td><input required="required" type="text" class="flat" id="MAIN_AGENDA_XCAL_EXPORTKEY" name="MAIN_AGENDA_XCAL_EXPORTKEY" value="'.(GETPOST('MAIN_AGENDA_XCAL_EXPORTKEY', 'alpha') ?GETPOST('MAIN_AGENDA_XCAL_EXPORTKEY', 'alpha') : $conf->global->MAIN_AGENDA_XCAL_EXPORTKEY).'" size="40">';
-if (!empty($conf->use_javascript_ajax))
+if (!empty($conf->use_javascript_ajax)) {
 	print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token" class="linkobject"');
+}
 print '</td>';
 print "<td>&nbsp;</td>";
 print "</tr>";
@@ -137,9 +139,7 @@ print '</table>';
 
 print dol_get_fiche_end();
 
-print '<div class="center">';
-print '<input type="submit" name="save" class="button button-save" value="'.$langs->trans("Save").'">';
-print "</div>";
+print $form->buttonsSaveCancel("Save", '');
 
 print "</form>\n";
 
@@ -158,19 +158,43 @@ $getentity = ($conf->entity > 1 ? "&entity=".$conf->entity : "");
 
 // Show message
 $message = '';
-$urlvcal = '<a href="'.$urlwithroot.'/public/agenda/agendaexport.php?format=vcal'.$getentity.'&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY ?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) : '...').'" target="_blank">';
+
+$urlvcal = '<a href="'.$urlwithroot.'/public/agenda/agendaexport.php?format=vcal'.$getentity.'&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY ?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) : '...').'" target="_blank" rel="noopener noreferrer">';
 $urlvcal .= $urlwithroot.'/public/agenda/agendaexport.php?format=vcal'.$getentity.'&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY ?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) : 'KEYNOTDEFINED').'</a>';
-$message .= img_picto('', 'globe').' '.$langs->trans("WebCalUrlForVCalExport", 'vcal', $urlvcal);
+$message .= img_picto('', 'globe').' '.str_replace('{url}', $urlvcal, '<span class="opacitymedium">'.$langs->trans("WebCalUrlForVCalExport", 'vcal', '').'</span>');
+$message .= '<div class="urllink">';
+$message .= '<input type="text" id="onlinepaymenturl1" class="quatrevingtpercent" value="'.$urlwithroot.'/public/agenda/agendaexport.php?format=vcal'.$getentity.'&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY ?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) : '...').'">';
+if (!empty($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY)) {
+	$message .= ' <a href="'.$urlwithroot.'/public/agenda/agendaexport.php?format=vcal'.$getentity.'&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY ?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) : '...').'">'.img_picto('', 'download').'</a>';
+}
+$message .= '</div>';
+$message .= ajax_autoselect('onlinepaymenturl1');
 $message .= '<br>';
-$urlical = '<a href="'.$urlwithroot.'/public/agenda/agendaexport.php?format=ical&type=event'.$getentity.'&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY ?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) : '...').'" target="_blank">';
+
+$urlical = '<a href="'.$urlwithroot.'/public/agenda/agendaexport.php?format=ical&type=event'.$getentity.'&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY ?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) : '...').'" target="_blank" rel="noopener noreferrer">';
 $urlical .= $urlwithroot.'/public/agenda/agendaexport.php?format=ical&type=event'.$getentity.'&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY ?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) : 'KEYNOTDEFINED').'</a>';
-$message .= img_picto('', 'globe').' '.$langs->trans("WebCalUrlForVCalExport", 'ical/ics', $urlical);
+$message .= img_picto('', 'globe').' '.str_replace('{url}', $urlical, '<span class="opacitymedium">'.$langs->trans("WebCalUrlForVCalExport", 'ical/ics', '').'</span>');
+$message .= '<div class="urllink">';
+$message .= '<input type="text" id="onlinepaymenturl2" class="quatrevingtpercent" value="'.$urlwithroot.'/public/agenda/agendaexport.php?format=ical'.$getentity.'&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY ?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) : '...').'">';
+if (!empty($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY)) {
+	$message .= ' <a href="'.$urlwithroot.'/public/agenda/agendaexport.php?format=ical'.$getentity.'&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY ?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) : '...').'">'.img_picto('', 'download').'</a>';
+}
+$message .= '</div>';
+$message .= ajax_autoselect('onlinepaymenturl2');
 $message .= '<br>';
-$urlrss = '<a href="'.$urlwithroot.'/public/agenda/agendaexport.php?format=rss'.$getentity.'&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY ?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) : '...').'" target="_blank">';
+
+$urlrss = '<a href="'.$urlwithroot.'/public/agenda/agendaexport.php?format=rss'.$getentity.'&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY ?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) : '...').'" target="_blank" rel="noopener noreferrer">';
 $urlrss .= $urlwithroot.'/public/agenda/agendaexport.php?format=rss'.$getentity.'&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY ?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) : 'KEYNOTDEFINED').'</a>';
-$message .= img_picto('', 'globe').' '.$langs->trans("WebCalUrlForVCalExport", 'rss', $urlrss);
+$message .= img_picto('', 'globe').' '.str_replace('{url}', $urlrss, '<span class="opacitymedium">'.$langs->trans("WebCalUrlForVCalExport", 'rss', '').'</span>');
+$message .= '<div class="urllink">';
+$message .= '<input type="text" id="onlinepaymenturl3" class="quatrevingtpercent" value="'.$urlwithroot.'/public/agenda/agendaexport.php?format=rss'.$getentity.'&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY ?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) : '...').'">';
+if (!empty($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY)) {
+	$message .= ' <a href="'.$urlwithroot.'/public/agenda/agendaexport.php?format=rss'.$getentity.'&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY ?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) : '...').'">'.img_picto('', 'download').'</a>';
+}
+$message .= '</div>';
+$message .= ajax_autoselect('onlinepaymenturl3');
 $message .= '<br>';
-$message .= '<br>';
+
 print $message;
 
 $message = $langs->trans("AgendaUrlOptions1", $user->login, $user->login).'<br>';
@@ -183,8 +207,7 @@ $message .= $langs->trans("AgendaUrlOptionsIncludeHolidays", '1', '1').'<br>';
 
 print info_admin($message);
 
-if (!empty($conf->use_javascript_ajax))
-{
+if (!empty($conf->use_javascript_ajax)) {
 	print "\n".'<script type="text/javascript">';
 	print '$(document).ready(function () {
             $("#generate_token").click(function() {

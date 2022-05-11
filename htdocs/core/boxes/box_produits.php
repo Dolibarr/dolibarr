@@ -2,7 +2,7 @@
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2015-2021 Frederic France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -103,8 +103,8 @@ class box_produits extends ModeleBoxes
 			}
 			// Add where from hooks
 			if (is_object($hookmanager)) {
-				$parameters = array('boxproductlist'=>1);
-				$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
+				$parameters = array('boxproductlist' => 1, 'boxcode' => $this->boxcode);
+				$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $productstatic); // Note that $action and $object may have been modified by hook
 				$sql .= $hookmanager->resPrint;
 			}
 			$sql .= $this->db->order('p.datec', 'DESC');
@@ -122,8 +122,8 @@ class box_produits extends ModeleBoxes
 					if (!empty($conf->global->MAIN_MULTILANGS)) { // si l'option est active
 						$sqld = "SELECT label";
 						$sqld .= " FROM ".MAIN_DB_PREFIX."product_lang";
-						$sqld .= " WHERE fk_product=".$objp->rowid;
-						$sqld .= " AND lang='".$this->db->escape($langs->getDefaultLang())."'";
+						$sqld .= " WHERE fk_product = ".((int) $objp->rowid);
+						$sqld .= " AND lang = '".$this->db->escape($langs->getDefaultLang())."'";
 						$sqld .= " LIMIT 1";
 
 						$resultd = $this->db->query($sqld);
@@ -180,7 +180,7 @@ class box_produits extends ModeleBoxes
 						}
 					}
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="right"',
+						'td' => 'class="nowraponall right amount"',
 						'text' => $price,
 					);
 
@@ -190,13 +190,13 @@ class box_produits extends ModeleBoxes
 					);
 
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="right"',
-						'text' => dol_print_date($datem, 'day'),
+						'td' => 'class="center nowraponall"',
+						'text' => dol_print_date($datem, 'day', 'tzuserrel'),
 					);
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right" width="18"',
-						'text' => '<span class="statusrefsell">'.$productstatic->LibStatut($objp->tosell, 3, 0).'<span>',
+						'text' => '<span class="statusrefsell">'.$productstatic->LibStatut($objp->tosell, 3, 0).'</span>',
 						'asis' => 1
 					);
 

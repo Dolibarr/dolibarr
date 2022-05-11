@@ -30,7 +30,7 @@ function zapierAdminPrepareHead()
 {
 	global $langs, $conf;
 
-	$langs->load("zapier@zapier");
+	$langs->load("zapier");
 
 	$h = 0;
 	$head = array();

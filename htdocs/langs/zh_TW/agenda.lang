@@ -4,7 +4,7 @@ Actions=事件
 Agenda=應辦事項
 TMenuAgenda=應辦事項
 Agendas=應辦事項
-LocalAgenda=內部行事曆
+LocalAgenda=預設行事曆
 ActionsOwnedBy=事件承辦人
 ActionsOwnedByShort=承辦人
 AffectedTo=指定給
@@ -20,7 +20,7 @@ MenuToDoActions=全部未完成事件
 MenuDoneActions=全部已停止事件
 MenuToDoMyActions=我的未完成事件
 MenuDoneMyActions=我的已停止事件
-ListOfEvents=事件清單(內部事件)
+ListOfEvents=事件清單(預設行事曆)
 ActionsAskedBy=誰的事件報表
 ActionsToDoBy=事件指定給
 ActionsDoneBy=由誰完成事件
@@ -38,6 +38,7 @@ ActionsEvents=Dolibarr 會在待辦事項中自動建立行動事件
 EventRemindersByEmailNotEnabled=電子郵件事件提醒未在%s模組設定中啟用。
 ##### Agenda event labels #####
 NewCompanyToDolibarr=合作方 %s 已建立
+COMPANY_MODIFYInDolibarr= 合作方%s已變更
 COMPANY_DELETEInDolibarr=合作方%s已刪除
 ContractValidatedInDolibarr=合約 %s 已驗證
 CONTRACT_DELETEInDolibarr=合約%s已刪除
@@ -63,6 +64,7 @@ ShipmentClassifyClosedInDolibarr=裝運%s已歸類為開票
 ShipmentUnClassifyCloseddInDolibarr=發貨%s已分類為重新打開
 ShipmentBackToDraftInDolibarr=裝運%s回到草稿狀態
 ShipmentDeletedInDolibarr=裝運%s已刪除
+ShipmentCanceledInDolibarr=發貨%s已取消
 ReceptionValidatedInDolibarr=接收%s已驗證
 OrderCreatedInDolibarr=訂單 %s 已建立
 OrderValidatedInDolibarr=訂單 %s 已驗證
@@ -87,6 +89,7 @@ OrderDeleted=訂單已刪除
 InvoiceDeleted=發票已刪除
 DraftInvoiceDeleted=發票草稿已刪除
 CONTACT_CREATEInDolibarr=聯絡人%s已建立
+CONTACT_MODIFYInDolibarr=聯絡人%s已變更
 CONTACT_DELETEInDolibarr=聯絡人%s已刪除
 PRODUCT_CREATEInDolibarr=產品 %s 已建立
 PRODUCT_MODIFYInDolibarr=產品 %s 已修改
@@ -119,6 +122,7 @@ MRP_MO_UNVALIDATEInDolibarr=MO已設定為草稿狀態
 MRP_MO_PRODUCEDInDolibarr=MO已生產
 MRP_MO_DELETEInDolibarr=MO已刪除
 MRP_MO_CANCELInDolibarr=MO已取消
+PAIDInDolibarr=%s已付款
 ##### End agenda events #####
 AgendaModelModule=事件的文件範本
 DateActionStart=開始日期
@@ -130,7 +134,7 @@ AgendaUrlOptions4=<b>logint = %s</b>將限制輸出分配給用戶<b>%s</b> （�
 AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> 將限制輸出為已連結專案操作 <b>PROJECT_ID</b>.
 AgendaUrlOptionsNotAutoEvent=<b>notactiontype = systemauto</b>排除自動事件。
 AgendaUrlOptionsIncludeHolidays=設定<b>includeholidays=1</b>以包括假期活動。
-AgendaShowBirthdayEvents=顯示連絡人生日
+AgendaShowBirthdayEvents=聯絡人生日
 AgendaHideBirthdayEvents=隱藏連絡人生日
 Busy=忙錄
 ExportDataset_event1=待辦行程事件清單
@@ -167,3 +171,4 @@ ReminderType=回調類型
 AddReminder=為此事件建立自動提醒通知
 ErrorReminderActionCommCreation=為此事件建立提醒通知時出現錯誤
 BrowserPush=查看彈出通知
+ActiveByDefault=預設為啟用

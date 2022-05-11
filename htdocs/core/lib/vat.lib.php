@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2016	Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2018   Philippe Grand      <philippe.grand@atoo-net.com>
+ * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +38,7 @@ function vat_prepare_head($object)
 	$head = array();
 
 	$head[$tab][0] = DOL_URL_ROOT.'/compta/tva/card.php?id='.$object->id;
-	$head[$tab][1] = $langs->trans('VATPayment');
+	$head[$tab][1] = $langs->trans('VATDeclaration');
 	$head[$tab][2] = 'card';
 	$tab++;
 
@@ -54,7 +55,9 @@ function vat_prepare_head($object)
 	$nbLinks = Link::count($db, $object->element, $object->id);
 	$head[$tab][0] = DOL_URL_ROOT.'/compta/tva/document.php?id='.$object->id;
 	$head[$tab][1] = $langs->trans("Documents");
-	if (($nbFiles + $nbLinks) > 0) $head[$tab][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
+	if (($nbFiles + $nbLinks) > 0) {
+		$head[$tab][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
+	}
 	$head[$tab][2] = 'documents';
 	$tab++;
 

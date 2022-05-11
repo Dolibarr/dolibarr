@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - accountancy
-Accounting=Compte
-ACCOUNTING_EXPORT_SEPARATORCSV=Séparateur de colonne pour le fichier export
+ACCOUNTING_EXPORT_SEPARATORCSV=Séparateur de colonne pour le fichier d'exportation
 ACCOUNTING_EXPORT_DATE=Format de date pour le fichier export
 ACCOUNTING_EXPORT_PIECE=Exporter le nombre de pièces
 ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Exporter avec compte global
@@ -13,8 +12,11 @@ ACCOUNTING_EXPORT_ENDLINE=Sélectionner le type de retour de chariot
 ACCOUNTING_EXPORT_PREFIX_SPEC=Spécifiez le préfixe du nom de fichier
 DefaultForService=Par défaut pour le service
 DefaultForProduct=Défaut pour le produit
+ProductForThisThirdparty=Produit pour ce tier
+ServiceForThisThirdparty=Service pour ce tier
 CantSuggest=Ne peut pas suggérer
 AccountancySetupDoneFromAccountancyMenu=La plupart de la configuration de la comptabilité se fait à partir du menu %s
+ConfigAccountingExpert=Configuration du module comptabilité (Partie double)
 CurrentDedicatedAccountingAccount=Compte dédié actuel
 AssignDedicatedAccountingAccount=Nouveau compte à attribuer
 InvoiceLabel=Etiquette de facture
@@ -87,7 +89,6 @@ LineOfExpenseReport=Ligne de rapport de dépenses
 NoAccountSelected=Aucun compte comptable sélectionné
 VentilatedinAccount=Lié avec succès au compte comptable
 XLineFailedToBeBinded=%s produits / services n'étaient liés à aucun compte comptable
-ACCOUNTING_LIMIT_LIST_VENTILATION=Maximum number of lines on list and bind page (recommended: 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=Commencez le tri de la page "Reliure à faire" par les éléments les plus récents
 ACCOUNTING_LIST_SORT_VENTILATION_DONE=Commencez le tri de la page "Reliure faite" par les éléments les plus récents
 ACCOUNTING_LENGTH_DESCRIPTION=Tronquer la description des produits et services dans les listes après les caractères X (Best = 50)
@@ -118,7 +119,6 @@ DescVentilTodoExpenseReport=Les lignes de rapport de frais de liaison ne sont pa
 DescVentilExpenseReport=Consultez ici la liste des lignes de rapport de dépenses liées (ou non) à un compte comptable de frais
 DescVentilDoneExpenseReport=Consultez ici la liste des rapports des lignes de dépenses et de leurs comptes comptables
 ValidateMovements=Valider les écritures
-AutomaticBindingDone=Liaison automatique effectuée
 FicheVentilation=Carte de reliure
 GeneralLedgerIsWritten=Les transactions sont écrites dans le Ledger
 ChangeBinding=Changer la liaison

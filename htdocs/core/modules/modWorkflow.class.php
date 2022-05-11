@@ -21,7 +21,7 @@
  *      \brief		Workflow management
  *      \file       htdocs/core/modules/modWorkflow.class.php
  *      \ingroup    workflow
- *      \brief      File to describe and activate module Workflow
+ *      \brief      Description and activation file for the module Workflow
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
@@ -51,7 +51,7 @@ class modWorkflow extends DolibarrModules
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		// Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
-		$this->description = "Workflow management";
+		$this->description = "Inter-modules workflow management";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = 'dolibarr';
 		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
@@ -72,7 +72,7 @@ class modWorkflow extends DolibarrModules
 		$this->depends = array(); // List of module class names as string that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
-		$this->phpmin = array(5, 4); // Minimum version of PHP required by module
+		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(2, 8); // Minimum version of Dolibarr required by module
 		$this->langfiles = array("@workflow");
 
@@ -87,10 +87,16 @@ class modWorkflow extends DolibarrModules
 			0=>array('WORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL', 'chaine', '1', 'WORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL', 0, 'current', 0),
 			1=>array('WORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL', 'chaine', '1', 'WORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL', 0, 'current', 0),
 			2=>array('WORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING', 'chaine', '1', 'WORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING', 0, 'current', 0),
+			3=>array('WORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED', 'chaine', '1', 'WORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED', 0, 'current', 0),
 			4=>array('WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER', 'chaine', '1', 'WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER', 0, 'current', 0),
 			5=>array('WORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL', 'chaine', '1', 'WORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL', 0, 'current', 0),
-			6=>array('WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER', 'chaine', '1', 'WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER', 0, 'current', 0),
-			7=>array('WORKFLOW_BILL_ON_RECEPTION', 'chaine', '1', 'WORKFLOW_BILL_ON_RECEPTION', 0, 'current', 0)
+			6=>array('WORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION', 'chaine', '1', 'WORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION', 0, 'current', 0),
+			7=>array('WORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED', 'chaine', '1', 'WORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED', 0, 'current', 0),
+			8=>array('WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER', 'chaine', '1', 'WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER', 0, 'current', 0),
+			9=>array('WORKFLOW_BILL_ON_RECEPTION', 'chaine', '1', 'WORKFLOW_BILL_ON_RECEPTION', 0, 'current', 0),
+			10=>array('WORKFLOW_TICKET_LINK_CONTRACT', 'chaine', '0', 'Automatically link a ticket to available contracts', 0, 'current', 0),
+			11=>array('WORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS', 'chaine', '0', 'Search among parent companies contracts when automatically linking a ticket to available contracts', 0, 'current', 0),
+			11=>array('WORKFLOW_TICKET_CREATE_INTERVENTION', 'chaine', '1', 'WORKFLOW_TICKET_CREATE_INTERVENTION', 0, 'current', 0)
 		);
 
 		// Boxes
@@ -101,44 +107,44 @@ class modWorkflow extends DolibarrModules
 		$r = 0;
 
 		/*
-        $r++;
-        $this->rights[$r][0] = 6001; // id de la permission
-        $this->rights[$r][1] = "Lire les workflow"; // libelle de la permission
-        $this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)
-        $this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
-        $this->rights[$r][4] = 'read';
-        */
+		$r++;
+		$this->rights[$r][0] = 6001; // id de la permission
+		$this->rights[$r][1] = "Lire les workflow"; // libelle de la permission
+		$this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
+		$this->rights[$r][4] = 'read';
+		*/
 
 		// Main menu entries
 		$this->menus = array(); // List of menus to add
 		$r = 0;
 		/*
-        $this->menu[$r]=array('fk_menu'=>0,
-                                'type'=>'top',
-                                'titre'=>'Workflow',
-                                'mainmenu'=>'workflow',
-                                'url'=>'/workflow/index.php',
-                                'langs'=>'@workflow',
-                                'position'=>100,
-                                'perms'=>'$user->rights->workflow->read',
-                                'enabled'=>'$conf->workflow->enabled',
-                                'target'=>'',
-                                'user'=>0);
-        $r++;
+		$this->menu[$r]=array('fk_menu'=>0,
+								'type'=>'top',
+								'titre'=>'Workflow',
+								'mainmenu'=>'workflow',
+								'url'=>'/workflow/index.php',
+								'langs'=>'@workflow',
+								'position'=>100,
+								'perms'=>'$user->rights->workflow->read',
+								'enabled'=>'$conf->workflow->enabled',
+								'target'=>'',
+								'user'=>0);
+		$r++;
 
-        $this->menu[$r]=array(  'fk_menu'=>'r=0',
-                                'type'=>'left',
-                                'titre'=>'Workflow',
-                                'mainmenu'=>'workflow',
-                                'url'=>'/workflow/index.php',
-                                'langs'=>'@workflow',
-                                'position'=>101,
-                                'enabled'=>1,
-                                'perms'=>'$user->rights->workflow->read',
-                                'target'=>'',
-                                'user'=>0);
-        $r++;
-        */
+		$this->menu[$r]=array(  'fk_menu'=>'r=0',
+								'type'=>'left',
+								'titre'=>'Workflow',
+								'mainmenu'=>'workflow',
+								'url'=>'/workflow/index.php',
+								'langs'=>'@workflow',
+								'position'=>101,
+								'enabled'=>1,
+								'perms'=>'$user->rights->workflow->read',
+								'target'=>'',
+								'user'=>0);
+		$r++;
+		*/
 	}
 
 

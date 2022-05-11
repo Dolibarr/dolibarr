@@ -27,8 +27,7 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($conf) || !is_object($conf))
-{
+if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
 	exit;
 }
@@ -42,60 +41,58 @@ $listofexamplesforlink = 'Societe:societe/class/societe.class.php<br>Contact:con
 
 <!-- BEGIN PHP TEMPLATE admin_extrafields_edit.tpl.php -->
 <script>
-    jQuery(document).ready(function() {
-    	function init_typeoffields(type)
-    	{
-        	console.log("select a new type (edit) = "+type);
-    		var size = jQuery("#size");
-    		var computed_value = jQuery("#computed_value");
-    		var langfile = jQuery("#langfile");
-    		var default_value = jQuery("#default_value");
-    		var unique = jQuery("#unique");
-    		var required = jQuery("#required");
-    		var alwayseditable = jQuery("#alwayseditable");
-    		var list = jQuery("#list");
-            var totalizable = jQuery("#totalizable");
-    		<?php
-			if ((GETPOST('type', 'alpha') != "select") && (GETPOST('type', 'alpha') != "sellist"))
-			{
+	jQuery(document).ready(function() {
+		function init_typeoffields(type)
+		{
+			console.log("select a new type (edit) = "+type);
+			var size = jQuery("#size");
+			var computed_value = jQuery("#computed_value");
+			var langfile = jQuery("#langfile");
+			var default_value = jQuery("#default_value");
+			var unique = jQuery("#unique");
+			var required = jQuery("#required");
+			var alwayseditable = jQuery("#alwayseditable");
+			var list = jQuery("#list");
+			var totalizable = jQuery("#totalizable");
+			<?php
+			if ((GETPOST('type', 'alpha') != "select") && (GETPOST('type', 'alpha') != "sellist")) {
 				print 'jQuery("#value_choice").hide();';
 			}
 
-			if (GETPOST('type', 'alpha') == "separate")
-			{
+			if (GETPOST('type', 'alpha') == "separate") {
 				print "jQuery('#size, #default_value, #langfile').val('').prop('disabled', true);";
 				print 'jQuery("#value_choice").hide();';
 			}
 			?>
 
-    		// Case of computed field
-    		if (type == 'varchar' || type == 'int' || type == 'double' || type == 'price') {
-    			jQuery("tr.extra_computed_value").show();
-    		} else {
-    			computed_value.val(''); jQuery("tr.extra_computed_value").hide();
-    		}
-    		if (computed_value.val())
-    		{
-        		console.log("We enter a computed formula");
-        		jQuery("#default_value").val('');
-        		/* jQuery("#unique, #required, #alwayseditable, #list").removeAttr('checked'); */
-        		jQuery("#default_value, #unique, #required, #alwayseditable, #list").attr('disabled', true);
-        		jQuery("tr.extra_default_value, tr.extra_unique, tr.extra_required, tr.extra_alwayseditable, tr.extra_list").hide();
-    		}
-    		else
-    		{
-        		console.log("No computed formula");
-        		jQuery("#default_value, #unique, #required, #alwayseditable, #list").attr('disabled', false);
-        		jQuery("tr.extra_default_value, tr.extra_unique, tr.extra_required, tr.extra_alwayseditable, tr.extra_list").show();
-    		}
+			// Case of computed field
+			if (type == 'varchar' || type == 'int' || type == 'double' || type == 'price') {
+				jQuery("tr.extra_computed_value").show();
+			} else {
+				computed_value.val(''); jQuery("tr.extra_computed_value").hide();
+			}
+			if (computed_value.val())
+			{
+				console.log("We enter a computed formula");
+				jQuery("#default_value").val('');
+				/* jQuery("#unique, #required, #alwayseditable, #list").removeAttr('checked'); */
+				jQuery("#default_value, #unique, #required, #alwayseditable, #list").attr('disabled', true);
+				jQuery("tr.extra_default_value, tr.extra_unique, tr.extra_required, tr.extra_alwayseditable, tr.extra_list").hide();
+			}
+			else
+			{
+				console.log("No computed formula");
+				jQuery("#default_value, #unique, #required, #alwayseditable, #list").attr('disabled', false);
+				jQuery("tr.extra_default_value, tr.extra_unique, tr.extra_required, tr.extra_alwayseditable, tr.extra_list").show();
+			}
 
 			if (type == 'date') { size.val('').prop('disabled', true); unique.removeAttr('disabled'); jQuery("#value_choice").hide();jQuery("#helpchkbxlst").hide(); }
 			else if (type == 'datetime') { size.val('').prop('disabled', true); unique.removeAttr('disabled'); jQuery("#value_choice").hide(); jQuery("#helpchkbxlst").hide();}
-    		else if (type == 'double')   { size.removeAttr('disabled'); unique.removeAttr('disabled'); jQuery("#value_choice").hide(); jQuery("#helpchkbxlst").hide();}
+			else if (type == 'double')   { size.removeAttr('disabled'); unique.removeAttr('disabled'); jQuery("#value_choice").hide(); jQuery("#helpchkbxlst").hide();}
 			else if (type == 'int')      { size.removeAttr('disabled'); unique.removeAttr('disabled'); jQuery("#value_choice").hide(); jQuery("#helpchkbxlst").hide();}
 			else if (type == 'text')     { size.removeAttr('disabled'); unique.prop('disabled', true).removeAttr('checked'); jQuery("#value_choice").hide();jQuery("#helpchkbxlst").hide(); }
 			else if (type == 'html')     { size.removeAttr('disabled'); unique.prop('disabled', true).removeAttr('checked'); jQuery("#value_choice").hide();jQuery("#helpchkbxlst").hide(); }
-    		else if (type == 'varchar')  { size.removeAttr('disabled'); unique.removeAttr('disabled'); jQuery("#value_choice").hide();jQuery("#helpchkbxlst").hide(); }
+			else if (type == 'varchar')  { size.removeAttr('disabled'); unique.removeAttr('disabled'); jQuery("#value_choice").hide();jQuery("#helpchkbxlst").hide(); }
 			else if (type == 'password') { size.val('').prop('disabled', true); unique.removeAttr('checked').prop('disabled', true); required.val('').prop('disabled', true); default_value.val('').prop('disabled', true); jQuery("#value_choice").show(); jQuery(".spanforparamtooltip").hide(); jQuery("#helppassword").show();}
 			else if (type == 'boolean')  { size.val('').prop('disabled', true); unique.removeAttr('checked').prop('disabled', true); jQuery("#value_choice").hide(); jQuery("#helpchkbxlst").hide();}
 			else if (type == 'price')    { size.val('').prop('disabled', true); unique.removeAttr('checked').prop('disabled', true); jQuery("#value_choice").hide(); jQuery("#helpchkbxlst").hide();}
@@ -126,17 +123,17 @@ $listofexamplesforlink = 'Societe:societe/class/societe.class.php<br>Contact:con
 				default_value.removeAttr('disabled');
 				required.removeAttr('disabled'); alwayseditable.removeAttr('disabled'); list.removeAttr('disabled');
 			}
-    	}
-    	init_typeoffields(jQuery("#type").val());
-    	jQuery("#type").change(function() {
-    		init_typeoffields($(this).val());
-    	});
+		}
+		init_typeoffields(jQuery("#type").val());
+		jQuery("#type").change(function() {
+			init_typeoffields($(this).val());
+		});
 
-    	// If we enter a formula, we disable other fields
-    	jQuery("#computed_value").keyup(function() {
-    		init_typeoffields(jQuery('#type').val());
-    	});
-    });
+		// If we enter a formula, we disable other fields
+		jQuery("#computed_value").keyup(function() {
+			init_typeoffields(jQuery('#type').val());
+		});
+	});
 </script>
 
 <!-- Form to edit an extra field -->
@@ -144,7 +141,7 @@ $listofexamplesforlink = 'Societe:societe/class/societe.class.php<br>Contact:con
 <input type="hidden" name="token" value="<?php echo newToken(); ?>">
 <input type="hidden" name="attrname" value="<?php echo $attrname; ?>">
 <input type="hidden" name="action" value="update">
-<input type="hidden" name="rowid" value="<?php echo $rowid ?>">
+<input type="hidden" name="rowid" value="<?php echo (empty($rowid) ? '' : $rowid) ?>">
 <input type="hidden" name="enabled" value="<?php echo $extrafields->attributes[$elementtype]['enabled'][$attrname]; ?>">
 
 <?php print dol_get_fiche_head(); ?>
@@ -171,24 +168,20 @@ $entitycurrentorall = $extrafields->attributes[$elementtype]['entityid'][$attrna
 $printable = $extrafields->attributes[$elementtype]['printable'][$attrname];
 $enabled = $extrafields->attributes[$elementtype]['enabled'][$attrname];
 
-if ((($type == 'select') || ($type == 'checkbox') || ($type == 'radio')) && is_array($param))
-{
+if ((($type == 'select') || ($type == 'checkbox') || ($type == 'radio')) && is_array($param)) {
 	$param_chain = '';
-	foreach ($param['options'] as $key => $value)
-	{
-		if (strlen($key))
-		{
+	foreach ($param['options'] as $key => $value) {
+		if (strlen($key)) {
 			$param_chain .= $key.','.$value."\n";
 		}
 	}
-} elseif (($type == 'sellist') || ($type == 'chkbxlst') || ($type == 'link') || ($type == 'password') || ($type == 'separate'))
-{
+} elseif (($type == 'sellist') || ($type == 'chkbxlst') || ($type == 'link') || ($type == 'password') || ($type == 'separate')) {
 	$paramlist = array_keys($param['options']);
 	$param_chain = $paramlist[0];
 }
 ?>
 <!-- Label -->
-<tr><td class="titlefield fieldrequired"><?php echo $langs->trans("LabelOrTranslationKey"); ?></td><td class="valeur"><input type="text" name="label" size="40" value="<?php echo $label; ?>"></td></tr>
+<tr><td class="titlefieldcreate fieldrequired"><?php echo $langs->trans("LabelOrTranslationKey"); ?></td><td class="valeur"><input type="text" name="label" size="40" value="<?php echo $label; ?>"></td></tr>
 
 <!-- Code -->
 <tr><td class="fieldrequired"><?php echo $langs->trans("AttributeCode"); ?></td><td class="valeur"><?php echo $attrname; ?></td></tr>
@@ -215,16 +208,19 @@ if ($size <= 255 && in_array($type, array('text', 'html'))) {
 	$typewecanchangeinto['text'][] = 'varchar';
 }*/
 
-if (in_array($type, array_keys($typewecanchangeinto)))
-{
+if (in_array($type, array_keys($typewecanchangeinto))) {
 	$newarray = array();
 	print '<select id="type" class="flat type" name="type">';
-	foreach ($type2label as $key => $val)
-	{
+	foreach ($type2label as $key => $val) {
 		$selected = '';
-		if ($key == (GETPOST('type', 'alpha') ?GETPOST('type', 'alpha') : $type)) $selected = ' selected="selected"';
-		if (in_array($key, $typewecanchangeinto[$type])) print '<option value="'.$key.'"'.$selected.'>'.$val.'</option>';
-		else print '<option value="'.$key.'" disabled="disabled"'.$selected.'>'.$val.'</option>';
+		if ($key == (GETPOST('type', 'alpha') ?GETPOST('type', 'alpha') : $type)) {
+			$selected = ' selected="selected"';
+		}
+		if (in_array($key, $typewecanchangeinto[$type])) {
+			print '<option value="'.$key.'"'.$selected.'>'.$val.'</option>';
+		} else {
+			print '<option value="'.$key.'" disabled="disabled"'.$selected.'>'.$val.'</option>';
+		}
 	}
 	print '</select>';
 	print ajax_combobox('type');
@@ -244,18 +240,18 @@ if (in_array($type, array_keys($typewecanchangeinto)))
 	<?php echo $langs->trans("Value"); ?>
 </td>
 <td>
-    <table class="nobordernopadding">
-    <tr><td>
-    	<textarea name="param" id="param" cols="80" rows="<?php echo ROWS_4 ?>"><?php echo dol_htmlcleanlastbr($param_chain); ?></textarea>
-    </td><td>
-    <span id="helpselect" class="spanforparamtooltip"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpselect"), 1, 0, '', 0, 2, 'helpvalue1')?></span>
-    <span id="helpsellist" class="spanforparamtooltip"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpsellist"), 1, 0, '', 0, 2, 'helpvalue2')?></span>
-    <span id="helpchkbxlst" class="spanforparamtooltip"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpchkbxlst"), 1, 0, '', 0, 2, 'helpvalue3')?></span>
-    <span id="helplink" class="spanforparamtooltip"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelplink").'<br><br>'.$langs->trans("Examples").':<br>'.$listofexamplesforlink, 1, 0, '', 0, 2, 'helpvalue4')?></span>
-    <span id="helppassword" class="spanforparamtooltip"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpPassword"), 1, 0, '', 0, 2, 'helpvalue5')?></span>
-    <span id="helpseparate" class="spanforparamtooltip"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpSeparator"), 1, 0, '', 0, 2, 'helpvalue6')?></span>
-    </td></tr>
-    </table>
+	<table class="nobordernopadding">
+	<tr><td>
+		<textarea name="param" id="param" cols="80" rows="<?php echo ROWS_4 ?>"><?php echo dol_htmlcleanlastbr($param_chain); ?></textarea>
+	</td><td>
+	<span id="helpselect" class="spanforparamtooltip"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpselect"), 1, 0, '', 0, 2, 'helpvalue1')?></span>
+	<span id="helpsellist" class="spanforparamtooltip"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpsellist"), 1, 0, '', 0, 2, 'helpvalue2')?></span>
+	<span id="helpchkbxlst" class="spanforparamtooltip"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpchkbxlst"), 1, 0, '', 0, 2, 'helpvalue3')?></span>
+	<span id="helplink" class="spanforparamtooltip"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelplink").'<br><br>'.$langs->trans("Examples").':<br>'.$listofexamplesforlink, 1, 0, '', 0, 2, 'helpvalue4')?></span>
+	<span id="helppassword" class="spanforparamtooltip"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpPassword"), 1, 0, '', 0, 2, 'helpvalue5')?></span>
+	<span id="helpseparate" class="spanforparamtooltip"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpSeparator"), 1, 0, '', 0, 2, 'helpvalue6')?></span>
+	</td></tr>
+	</table>
 </td>
 </tr>
 
@@ -266,11 +262,14 @@ if (in_array($type, array_keys($typewecanchangeinto)))
 <tr><td class="titlefield"><?php echo $langs->trans("LanguageFile"); ?></td><td class="valeur"><input type="text" name="langfile" class="minwidth200" value="<?php echo dol_escape_htmltag($langfile); ?>"></td></tr>
 
 <!-- Computed value -->
+<tr class="extra_computed_value">
 <?php if (empty($conf->global->MAIN_STORE_COMPUTED_EXTRAFIELDS)) { ?>
-	<tr class="extra_computed_value"><td><?php echo $form->textwithpicto($langs->trans("ComputedFormula"), $langs->trans("ComputedFormulaDesc"), 1, 'help', '', 0, 2, 'tooltipcompute'); ?></td><td class="valeur"><input id="computed_value" class="quatrevingtpercent" type="text" name="computed_value" value="<?php echo dol_escape_htmltag($computed); ?>"></td></tr>
+	<td><?php echo $form->textwithpicto($langs->trans("ComputedFormula"), $langs->trans("ComputedFormulaDesc"), 1, 'help', '', 0, 2, 'tooltipcompute'); ?></td>
 <?php } else { ?>
-	<tr class="extra_computed_value"><td><?php echo $form->textwithpicto($langs->trans("ComputedFormula"), $langs->trans("ComputedFormulaDesc")).$form->textwithpicto($langs->trans("Computedpersistent"), $langs->trans("ComputedpersistentDesc"), 1, 'warning'); ?></td><td class="valeur"><input id="computed_value" class="quatrevingtpercent" type="text" name="computed_value" value="<?php echo dol_escape_htmltag($computed); ?>"></td></tr>
+	<td><?php echo $form->textwithpicto($langs->trans("ComputedFormula"), $langs->trans("ComputedFormulaDesc")).$form->textwithpicto($langs->trans("Computedpersistent"), $langs->trans("ComputedpersistentDesc"), 1, 'warning'); ?></td>
 <?php } ?>
+<td class="valeur"><textarea name="computed_value" id="computed_value" class="quatrevingtpercent" rows="<?php echo ROWS_4 ?>"><?php echo dol_htmlcleanlastbr($computed); ?></textarea></td>
+</tr>
 
 <!-- Default Value (at sql setup level) -->
 <tr class="extra_default_value"><td><?php echo $langs->trans("DefaultValue").' ('.$langs->trans("Database").')'; ?></td><td class="valeur"><input id="default_value" type="text" name="default_value" size="5" value="<?php echo dol_escape_htmltag($default); ?>"></td></tr>
@@ -296,9 +295,9 @@ if (in_array($type, array_keys($typewecanchangeinto)))
 <!-- Help tooltip -->
 <tr class="help"><td><?php echo $form->textwithpicto($langs->trans("HelpOnTooltip"), $langs->trans("HelpOnTooltipDesc")); ?></td><td class="valeur"><input id="help" class="quatrevingtpercent" type="text" name="help" value="<?php echo dol_escape_htmltag($help); ?>"></td></tr>
 
-<?php if ($conf->multicompany->enabled) { ?>
+<?php if (!empty($conf->multicompany->enabled)) { ?>
 	<!-- Multicompany entity -->
-    <tr><td><?php echo $langs->trans("AllEntities"); ?></td><td class="valeur"><input id="entitycurrentorall" type="checkbox" name="entitycurrentorall"<?php echo (empty($entitycurrentorall) ? ' checked' : ''); ?>></td></tr>
+	<tr><td><?php echo $langs->trans("AllEntities"); ?></td><td class="valeur"><input id="entitycurrentorall" type="checkbox" name="entitycurrentorall"<?php echo (empty($entitycurrentorall) ? ' checked' : ''); ?>></td></tr>
 <?php } ?>
 
 <!-- Show Enabled property when value is not a common value -->

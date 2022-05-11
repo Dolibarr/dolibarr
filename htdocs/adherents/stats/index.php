@@ -24,6 +24,7 @@
  */
 
 require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherentstats.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
@@ -31,8 +32,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 $WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 
-$userid = GETPOST('userid', 'int'); if ($userid < 0) $userid = 0;
-$socid = GETPOST('socid', 'int'); if ($socid < 0) $socid = 0;
+$userid = GETPOST('userid', 'int'); if ($userid < 0) {
+	$userid = 0;
+}
+$socid = GETPOST('socid', 'int'); if ($socid < 0) {
+	$socid = 0;
+}
 
 // Security check
 if ($user->socid > 0) {
@@ -42,7 +47,7 @@ if ($user->socid > 0) {
 $result = restrictedArea($user, 'adherent', '', '', 'cotisation');
 
 $year = strftime("%Y", time());
-$startyear = $year - 2;
+$startyear = $year - (empty($conf->global->MAIN_STATS_GRAPHS_SHOW_N_YEARS) ? 2 : max(1, min(10, $conf->global->MAIN_STATS_GRAPHS_SHOW_N_YEARS)));
 $endyear = $year;
 
 // Load translation files required by the page
@@ -53,12 +58,13 @@ $langs->loadLangs(array("companies", "members"));
  * View
  */
 
+$memberstatic = new Adherent($db);
 $form = new Form($db);
 
 $title = $langs->trans("SubscriptionsStatistics");
 llxHeader('', $title);
 
-print load_fiche_titre($title, '', 'members');
+print load_fiche_titre($title, '', $memberstatic->picto);
 
 $dir = $conf->adherent->dir_temp;
 
@@ -131,9 +137,9 @@ if (!$mesg) {
 }
 
 
-$head = member_stats_prepare_head($adh);
+$head = member_stats_prepare_head($memberstatic);
 
-print dol_get_fiche_head($head, 'statssubscription', $langs->trans("Statistics"), -1, 'user');
+print dol_get_fiche_head($head, 'statssubscription', '', -1, '');
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
@@ -145,12 +151,14 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<table class="border centpercent">';
 print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
 print '<tr><td>'.$langs->trans("Member").'</td><td>';
+print img_picto('', 'company', 'class="pictofixedwidth"');
 print $form->select_company($id,'memberid','',1);
 print '</td></tr>';
 print '<tr><td>'.$langs->trans("User").'</td><td>';
-print $form->select_dolusers($userid, 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
+print img_picto('', 'user', 'class="pictofixedwidth"');
+print $form->select_dolusers($userid, 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
 print '</td></tr>';
-print '<tr><td class="center" colspan="2"><input type="submit" name="submit" class="button" value="'.$langs->trans("Refresh").'"></td></tr>';
+print '<tr><td class="center" colspan="2"><input type="submit" name="submit" class="button small" value="'.$langs->trans("Refresh").'"></td></tr>';
 print '</table>';
 print '</form>';
 print '<br><br>';
@@ -181,19 +189,17 @@ foreach ($data as $val) {
 		//print '</a>';
 		print '</td>';
 		print '<td class="right">0</td>';
-		print '<td class="right">0</td>';
-		print '<td class="right">0</td>';
+		print '<td class="right amount nowraponall">0</td>';
+		print '<td class="right amount nowraponall">0</td>';
 		print '</tr>';
 	}
 	print '<tr class="oddeven" height="24">';
 	print '<td class="center">';
-	//print '<a href="month.php?year='.$year.'">';
-	print $year;
-	//print '</a>';
+	print '<a href="'.DOL_URL_ROOT.'/adherents/subscription/list.php?date_select='.((int) $year).'">'.$year.'</a>';
 	print '</td>';
 	print '<td class="right">'.$val['nb'].'</td>';
-	print '<td class="right">'.price(price2num($val['total'], 'MT'), 1).'</td>';
-	print '<td class="right">'.price(price2num($val['avg'], 'MT'), 1).'</td>';
+	print '<td class="right amount nowraponall"><span class="amount">'.price(price2num($val['total'], 'MT'), 1).'</span></td>';
+	print '<td class="right amount nowraponall"><span class="amount">'.price(price2num($val['avg'], 'MT'), 1).'</span></td>';
 	print '</tr>';
 	$oldyear = $year;
 }
@@ -202,12 +208,14 @@ print '</table>';
 print '</div>';
 
 
-print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+print '</div><div class="fichetwothirdright">';
 
 
 // Show graphs
 print '<table class="border centpercent"><tr class="pair nohover"><td class="center">';
-if ($mesg) { print $mesg; } else {
+if ($mesg) {
+	print $mesg;
+} else {
 	print $px1->show();
 	print "<br>\n";
 	print $px2->show();
@@ -215,7 +223,7 @@ if ($mesg) { print $mesg; } else {
 print '</td></tr></table>';
 
 
-print '</div></div></div>';
+print '</div></div>';
 print '<div style="clear:both"></div>';
 
 

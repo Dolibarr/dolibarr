@@ -49,15 +49,14 @@ function categories_prepare_head(Categorie $object, $type)
 	$head[$h][2] = 'photos';
 	$h++;
 
-	if (!empty($conf->global->MAIN_MULTILANGS))
-	{
+	if (!empty($conf->global->MAIN_MULTILANGS)) {
 		$head[$h][0] = DOL_URL_ROOT.'/categories/traduction.php?id='.$object->id.'&amp;type='.$type;
 		$head[$h][1] = $langs->trans("Translation");
 		$head[$h][2] = 'translation';
 		$h++;
 	}
 
-	$head[$h][0] = DOL_URL_ROOT.'/categories/info.php?id='.$object->id;
+	$head[$h][0] = DOL_URL_ROOT.'/categories/info.php?id='.$object->id.'&amp;type='.$type;
 	$head[$h][1] = $langs->trans("Info");
 	$head[$h][2] = 'info';
 	$h++;

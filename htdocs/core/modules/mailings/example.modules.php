@@ -20,7 +20,7 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/mailings/modules_mailings.php';
 // CHANGE THIS: Class name must be called mailing_xxx with xxx=name of your selector
 
 /**
-	    \class      mailing_example
+		\class      mailing_example
 		\brief      Class to manage a list of personalised recipients for mailing feature
 */
 class mailing_example extends MailingTargets

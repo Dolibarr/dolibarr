@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - accountancy
+Accounting=Contabilizando
 ACCOUNTING_EXPORT_SEPARATORCSV=Separador de columna de archivo a exportar
 ACCOUNTING_EXPORT_DATE=Formato de fecha de archivo a exportar
 ACCOUNTING_EXPORT_PIECE=Exportar el número de pieza
@@ -6,6 +7,7 @@ ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Exportar con cuenta global
 ACCOUNTING_EXPORT_LABEL=Etiqueta de exportación
 ACCOUNTING_EXPORT_AMOUNT=Monto de exportación
 ACCOUNTING_EXPORT_DEVISE=Moneda de exportación
+ACCOUNTING_EXPORT_ENDLINE=Seleccionar el tipo de retorno de carro
 ACCOUNTING_EXPORT_PREFIX_SPEC=Especifique el prefijo del nombre del fichero
 DefaultForService=Servicio por defecto
 DefaultForProduct=Producto por defecto
@@ -20,14 +22,13 @@ CreateMvts=Crear nueva transacción
 UpdateMvts=Modificación de una transacción
 InvoiceLines=Líneas de facturas para enlazar
 InvoiceLinesDone=Líneas de facturas vinculadas
-IntoAccount=Vincular la línea con la cuenta de contabilidad
+IntoAccount=Vincular la línea con la cuenta contable
 Ventilate=Vincular
 Processing=Procesando
 EndProcessing=Proceso finalizado.
 Lineofinvoice=Línea de factura
 VentilatedinAccount=Vinculado con éxito a la cuenta contable
 NotVentilatedinAccount=No vinculado a la cuenta contable
-ACCOUNTING_LIMIT_LIST_VENTILATION=Maximum number of lines on list and bind page (recommended: 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=Comienza la clasificación de la página "Vinculación a hacer" por los elementos más recientes
 ACCOUNTING_LIST_SORT_VENTILATION_DONE=Comienza la clasificación de la página "Encuadernación realizada" por los elementos más recientes
 ACCOUNTING_LENGTH_DESCRIPTION=Truncar la descripción de los productos y servicios en los listados después de los caracteres x (mejor = 50)

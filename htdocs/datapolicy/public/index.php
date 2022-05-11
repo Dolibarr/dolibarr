@@ -22,12 +22,15 @@
  * \brief   datapolicy setup page.
  */
 
-if (!defined('NOLOGIN'))
+if (!defined('NOLOGIN')) {
 	define("NOLOGIN", 1); // This means this output page does not require to be logged.
-if (!defined('NOCSRFCHECK'))
+}
+if (!defined('NOCSRFCHECK')) {
 	define('NOCSRFCHECK', '1'); // Do not check anti CSRF attack test
-if (!defined('NOREQUIREMENU'))
+}
+if (!defined('NOREQUIREMENU')) {
 	define('NOREQUIREMENU', '1');
+}
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';

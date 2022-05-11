@@ -16,11 +16,12 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($conf) || !is_object($conf))
-{
+if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
 	exit;
 }
+
+print '<!-- linesalesrepresentative.tpl.php -->';
 
 // Sale representative
 print '<tr><td>';
@@ -29,7 +30,7 @@ print $langs->trans('SalesRepresentatives');
 print '</td>';
 if ($action != 'editsalesrepresentatives' && $user->rights->societe->creer) {
 	print '<td class="right">';
-	print '<a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?action=editsalesrepresentatives&amp;socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a>';
+	print '<a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?action=editsalesrepresentatives&token='.newToken().'&socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a>';
 	print '</td>';
 }
 print '</tr></table>';
@@ -42,9 +43,11 @@ if ($action == 'editsalesrepresentatives') {
 	print '<input type="hidden" name="socid" value="'.$object->id.'" />';
 	$userlist = $form->select_dolusers('', '', 0, null, 0, '', '', 0, 0, 0, '', 0, '', '', 0, 1);
 	$arrayselected = GETPOST('commercial', 'array');
-	if (empty($arrayselected)) $arrayselected = $object->getSalesRepresentatives($user, 1);
+	if (empty($arrayselected)) {
+		$arrayselected = $object->getSalesRepresentatives($user, 1);
+	}
 	print $form->multiselectarray('commercial', $userlist, $arrayselected, null, null, null, null, "90%");
-	print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'" />';
+	print '<input type="submit" class="button valignmiddle small" value="'.$langs->trans("Modify").'" />';
 	print '</form>';
 } else {
 	$listsalesrepresentatives = $object->getSalesRepresentatives($user);
@@ -62,9 +65,12 @@ if ($action == 'editsalesrepresentatives') {
 			$userstatic->phone = $val['phone'];
 			$userstatic->job = $val['job'];
 			$userstatic->entity = $val['entity'];
+			$userstatic->gender = $val['gender'];
 			print $userstatic->getNomUrl(-1);
 			print ' ';
 		}
-	} else print '<span class="opacitymedium">'.$langs->trans("NoSalesRepresentativeAffected").'</span>';
+	} else {
+		print '<span class="opacitymedium">'.$langs->trans("NoSalesRepresentativeAffected").'</span>';
+	}
 	print '</td></tr>';
 }

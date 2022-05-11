@@ -13,13 +13,14 @@ descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Märk länkad källans förslag som 
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Märk länkad källsäljorder som fakturerad när kundfaktura är bekräftat (och om fakturans storlek är densamma som totalbeloppet för den länkade ordern)
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Märk länkad källsäljorder som fakturerad när kundfaktura är inställd att betala (och om fakturans storlek är densamma som totalbeloppet för den länkade ordern)
 descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Märk länkad källsäljningsorder som skickas när en försändelse är bekräftat (och om den mängd som skickas av alla leveranser är densamma som i den ordning som ska uppdateras)
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=Classify linked source sales order as shipped when a shipment is closed (and if the quantity shipped by all shipments is the same as in the order to update)
 # Autoclassify purchase order
 descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Märk länkad källleverantörsförslag som fakturerat när leverantörsfaktura är bekräftat (och om fakturans storlek är densamma som det totala beloppet för det länkade förslaget)
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Märk kopplad inköpsorder som fakturerad när leverantörsfaktura är bekräftat (och om fakturans storlek är densamma som totalbeloppet för den länkade ordern)
-descWORKFLOW_BILL_ON_RECEPTION=Classify receptions to "billed" when a linked supplier order is validated
+descWORKFLOW_BILL_ON_RECEPTION=Klassificera mottagningar till "fakturerade" när en länkad leverantörsorder är validerad
 # Autoclose intervention
-descWORKFLOW_TICKET_CLOSE_INTERVENTION=Close all interventions linked to the ticket when a ticket is closed
+descWORKFLOW_TICKET_CLOSE_INTERVENTION=Stäng alla ingripanden kopplade till biljetten när en biljett är stängd
 AutomaticCreation=Automatisk skapande
 AutomaticClassification=Automatisk uppmärkning
 # Autoclassify shipment
-descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Classify linked source shipment as closed when customer invoice is validated
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Klassificera länkad källtransport som stängd när kundfakturan valideras

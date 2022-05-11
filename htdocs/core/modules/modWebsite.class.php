@@ -20,7 +20,7 @@
  *  \brief      website module descriptor.
  *  \file       htdocs/core/modules/modWebsite.class.php
  *  \ingroup    websites
- *  \brief      Description and activation file for module Website
+ *  \brief      Description and activation file for the module Website
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
@@ -68,14 +68,14 @@ class modWebsite extends DolibarrModules
 		$this->depends = array('modFckeditor'); // List of modules id that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of modules id to disable if this one is disabled
 		$this->conflictwith = array(); // List of modules id this module is in conflict with
-		$this->phpmin = array(5, 4); // Minimum version of PHP required by module
+		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
 		$this->langfiles = array("website");
 
 		// Constants
-	   	$this->const = array();
+		$this->const = array();
 
 		// New pages on tabs
-	   	//$this->tabs[] = array();  					// To add a new tab identified by code tabname1
+		//$this->tabs[] = array();  					// To add a new tab identified by code tabname1
 
 		// Boxes
 		$this->boxes = array();
@@ -109,11 +109,18 @@ class modWebsite extends DolibarrModules
 		$this->rights[$r][4] = 'delete';
 		$r++;
 
+		$this->rights[$r][0] = 10008;
+		$this->rights[$r][1] = 'Export website content';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'export';
+		$r++;
+
 		// Main menu entries
 		$r = 0;
 		$this->menu[$r] = array('fk_menu'=>'0', // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 								'type'=>'top', // This is a Left menu entry
 								'titre'=>'WebSites',
+								'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth em092"'),
 								'mainmenu'=>'website',
 								'url'=>'/website/index.php',
 								'langs'=>'website', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
@@ -129,8 +136,11 @@ class modWebsite extends DolibarrModules
 
 		$this->export_code[$r] = $this->rights_class.'_'.$r;
 		$this->export_label[$r] = 'MyWebsitePages'; // Translation key (used only if key ExportDataset_xxx_z not found)
+		$this->export_permission[$r] = array(array("website", "export"));
 		$this->export_icon[$r] = 'globe';
-		$keyforclass = 'WebsitePage'; $keyforclassfile = '/website/class/websitepage.class.php'; $keyforelement = 'Website';
+		$keyforclass = 'WebsitePage';
+		$keyforclassfile = '/website/class/websitepage.class.php';
+		$keyforelement = 'Website';
 		include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
 		//$keyforselect='myobject'; $keyforelement='myobject'; $keyforaliasextra='extra';
 		//include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
@@ -154,23 +164,25 @@ class modWebsite extends DolibarrModules
 	{
 		global $conf, $langs;
 
+		$result = $this->_load_tables('/install/mysql/', 'website');
+		if ($result < 0) {
+			return -1; // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
+		}
+
 		// Remove permissions and default values
 		$this->remove($options);
 
 		// Copy flags and octicons directory
 		$dirarray = array('common/flags'=>'flags', 'common/octicons/build/svg'=>'octicons');
-		foreach ($dirarray as $dirfrom => $dirtarget)
-		{
+		foreach ($dirarray as $dirfrom => $dirtarget) {
 			$src = DOL_DOCUMENT_ROOT.'/theme/'.$dirfrom;
 			$dest = DOL_DATA_ROOT.'/medias/image/'.$dirtarget;
 
-			if (is_dir($src))
-			{
+			if (is_dir($src)) {
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 				dol_mkdir($dest);
 				$result = dolCopyDir($src, $dest, 0, 0);
-				if ($result < 0)
-				{
+				if ($result < 0) {
 					$langs->load("errors");
 					$this->error = $langs->trans('ErrorFailToCopyDir', $src, $dest);
 					return 0;

@@ -16,8 +16,8 @@ ThisService=Šis pakalpojums
 ThisProduct=Šis produkts
 DefaultForService=Noklusējums pakalpojumam
 DefaultForProduct=Noklusējums produktam
-ProductForThisThirdparty=Product for this thirdparty
-ServiceForThisThirdparty=Service for this thirdparty
+ProductForThisThirdparty=Produkts šai trešajai pusei
+ServiceForThisThirdparty=Pakalpojums šai trešajai pusei
 CantSuggest=Nevar ieteikt
 AccountancySetupDoneFromAccountancyMenu=Lielākā daļa grāmatvedības iestatīšanas tiek veikta no izvēlnes %s
 ConfigAccountingExpert=Moduļa uzskaites konfigurācija (dubultā ieraksts)
@@ -37,8 +37,8 @@ OtherInfo=Cita informācija
 DeleteCptCategory=No grāmatvedības konta noņemt grupu
 ConfirmDeleteCptCategory=Vai tiešām vēlaties noņemt šo grāmatvedības kontu no grāmatvedības konta grupas?
 JournalizationInLedgerStatus=Žurnālistikas statuss
-AlreadyInGeneralLedger=Jau pārskaitīts grāmatvedības žurnālos un virsgrāmatā
-NotYetInGeneralLedger=Vēl nav pārsūtīts uz žurnāliem un grāmatām
+AlreadyInGeneralLedger=Jau pārsūtīts uz grāmatvedības žurnāliem un virsgrāmatu
+NotYetInGeneralLedger=Vēl nav pārsūtīts uz grāmatvedības žurnāliem un virsgrāmatu
 GroupIsEmptyCheckSetup=Grupa ir tukša, pārbaudiet personalizētās grāmatvedības grupas iestatījumus
 DetailByAccount=Parādīt detalizētu informāciju par kontu
 AccountWithNonZeroValues=Konti, kuriem nav nulles vērtības
@@ -48,9 +48,10 @@ CountriesNotInEEC=Valstis, kas nav EEK valstīs
 CountriesInEECExceptMe=Valstis EEK, izņemot %s
 CountriesExceptMe=Visas valstis, izņemot %s
 AccountantFiles=Eksportēt pirmdokumentus
-ExportAccountingSourceDocHelp=Izmantojot šo rīku, varat eksportēt avota notikumus (sarakstu un PDF failus), kas tika izmantoti grāmatvedības ģenerēšanai. Lai eksportētu žurnālus, izmantojiet izvēlnes ierakstu %s - %s.
+ExportAccountingSourceDocHelp=Izmantojot šo rīku, varat eksportēt avota notikumus (sarakstu CSV un PDF formātā), kas tiek izmantoti jūsu grāmatvedības uzskaitei.
+ExportAccountingSourceDocHelp2=Lai eksportētu žurnālus, izmantojiet izvēlnes ierakstu %s - %s.
 VueByAccountAccounting=Skatīt pēc grāmatvedības konta
-VueBySubAccountAccounting=View by accounting subaccount
+VueBySubAccountAccounting=Skatīt pēc grāmatvedības apakškonta
 
 MainAccountForCustomersNotDefined=Galvenais grāmatvedības konts klientiem, kas nav definēti iestatījumos
 MainAccountForSuppliersNotDefined=Galvenais grāmatvedības konts piegādātājiem, kas nav definēti iestatījumos
@@ -131,7 +132,7 @@ InvoiceLinesDone=Iesaistīto rēķinu līnijas
 ExpenseReportLines=Izdevumu atskaites līnijas, kas saistītas
 ExpenseReportLinesDone=Saistītās izdevumu pārskatu līnijas
 IntoAccount=Bind line ar grāmatvedības kontu
-TotalForAccount=Kopā grāmatvedības kontā
+TotalForAccount=Kopējais grāmatvedības konts
 
 
 Ventilate=Saistīt
@@ -147,7 +148,7 @@ NotVentilatedinAccount=Nav saistošs grāmatvedības kontam
 XLineSuccessfullyBinded=%s produkti/pakalpojumi, kas veiksmīgi piesaistīti grāmatvedības kontam
 XLineFailedToBeBinded=%s produkti/pakalpojumi nav saistīti ar nevienu grāmatvedības kontu
 
-ACCOUNTING_LIMIT_LIST_VENTILATION=Maximum number of lines on list and bind page (recommended: 50)
+ACCOUNTING_LIMIT_LIST_VENTILATION=Maksimālais rindu skaits saraksta un iesiešanas lapā (ieteicams: 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=Sāciet lappuses "Saistīšanu darīt" šķirošanu ar jaunākajiem elementiem
 ACCOUNTING_LIST_SORT_VENTILATION_DONE=Sāciet lappuses "Saistīšana pabeigta" šķirošanu ar jaunākajiem elementiem
 
@@ -158,7 +159,7 @@ ACCOUNTING_LENGTH_AACCOUNT=Trešo pušu grāmatvedības kontu garums (ja iestat�
 ACCOUNTING_MANAGE_ZERO=Atļaujiet pārvaldīt atšķirīgu skaitu nulles grāmatvedības konta beigās. Nepieciešamas dažas valstis (piemēram, Šveice). Ja iestatījums ir izslēgts (noklusējums), varat iestatīt šādus divus parametrus, lai pieprasītu lietojumprogrammai pievienot virtuālās nulles.
 BANK_DISABLE_DIRECT_INPUT=Atspējot tiešu darījumu reģistrāciju bankas kontā
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Iespējot eksporta projektu žurnālā
-ACCOUNTANCY_COMBO_FOR_AUX=Iespējot kombinēto sarakstu papildu kontam (var būt lēni, ja jums ir daudz trešo personu)
+ACCOUNTANCY_COMBO_FOR_AUX=Iespējot kombinēto sarakstu meitas kontam (tas var būt lēns, ja jums ir daudz trešo pušu, pārtraukt iespēju meklēt daļu vērtības)
 ACCOUNTING_DATE_START_BINDING=Definējiet datumu, lai sāktu iesiešanu un pārskaitīšanu grāmatvedībā. Zem šī datuma darījumi netiks pārnesti uz grāmatvedību.
 ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=Pārsūtot grāmatvedību, pēc noklusējuma atlasiet periodu
 
@@ -201,17 +202,17 @@ Docdate=Datums
 Docref=Atsauce
 LabelAccount=Konta nosaukums
 LabelOperation=Etiķetes darbība
-Sens=Direction
-AccountingDirectionHelp=For an accounting account of a customer, use Credit to record a payment you received<br>For an accounting account of a supplier, use Debit to record a payment you make
+Sens=Virziens
+AccountingDirectionHelp=Klienta grāmatvedības kontā izmantojiet kredītu, lai reģistrētu saņemto maksājumu <br> Piegādātāja grāmatvedības kontā izmantojiet Debets, lai reģistrētu veikto maksājumu
 LetteringCode=Burtu kods
 Lettering=Burti
 Codejournal=Žurnāls
 JournalLabel=Žurnāla etiķete
 NumPiece=Gabala numurs
 TransactionNumShort=Num. darījums
-AccountingCategory=Personalizētas grupas
-GroupByAccountAccounting=Group by general ledger account
-GroupBySubAccountAccounting=Group by subledger account
+AccountingCategory=Pielāgota grupa
+GroupByAccountAccounting=Grupēt pēc galvenās grāmatas konta
+GroupBySubAccountAccounting=Grupēt pēc apakšzinēja konta
 AccountingAccountGroupsDesc=Šeit jūs varat definēt dažas grāmatvedības kontu grupas. Tie tiks izmantoti personificētiem grāmatvedības pārskatiem.
 ByAccounts=Pēc kontiem
 ByPredefinedAccountGroups=Iepriekš definētās grupas
@@ -245,15 +246,15 @@ DescThirdPartyReport=Konsultējieties ar trešo pušu klientu un pārdevēju sar
 ListAccounts=Grāmatvedības kontu saraksts
 UnknownAccountForThirdparty=Nezināmas trešās puses konts. Mēs izmantosim %s
 UnknownAccountForThirdpartyBlocking=Nezināms trešās puses konts. Bloķēšanas kļūda
-ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Trešās puses konts nav definēts vai trešā persona nav zināma. Mēs izmantosim %s
+ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Pakalpojumu sniedzēja konts nav definēts vai trešā puse vai lietotājs nav zināms. Mēs izmantosim %s
 ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored=Trešā puse nav zināma un subleger nav definēts maksājumā. Mēs saglabāsim tukšu subleger konta vērtību.
-ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Trešās puses konts nav definēts vai trešā persona nav zināma. Bloķēšanas kļūda.
+ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Pakalpojumu sniedzēja konts nav definēts vai trešā puse vai lietotājs nav zināms. Bloķēšanas kļūda.
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Nav noteikts nezināms trešās puses konts un gaidīšanas konts. Bloķēšanas kļūda
 PaymentsNotLinkedToProduct=Maksājums nav saistīts ar kādu produktu / pakalpojumu
 OpeningBalance=Sākuma bilance
 ShowOpeningBalance=Rādīt sākuma atlikumu
 HideOpeningBalance=Slēpt sākuma atlikumu
-ShowSubtotalByGroup=Show subtotal by level
+ShowSubtotalByGroup=Rādīt starpsummu pēc līmeņa
 
 Pcgtype=Kontu grupa
 PcgtypeDesc=Kontu grupa tiek izmantota kā iepriekš definēti “filtra” un “grupēšanas” kritēriji dažiem grāmatvedības pārskatiem. Piemēram, “IENĀKUMS” vai “IZDEVUMI” tiek izmantoti kā produktu uzskaites kontu grupas, lai izveidotu izdevumu / ienākumu pārskatu.
@@ -276,16 +277,16 @@ DescVentilExpenseReport=Konsultējieties šeit ar izdevumu pārskatu rindiņu sa
 DescVentilExpenseReportMore=Ja jūs izveidojat grāmatvedības kontu uz izdevumu pārskata rindiņu veida, programma varēs visu saistību starp jūsu rēķina pārskatu rindiņām un jūsu kontu diagrammas grāmatvedības kontu veikt tikai ar vienu klikšķi, izmantojot pogu <strong> "%s" </strong>. Ja kontam nav iestatīta maksu vārdnīca vai ja jums joprojām ir dažas rindiņas, kurām nav saistības ar kādu kontu, izvēlnē "<strong> %s </ strong>" būs jāveic manuāla piesaistīšana.
 DescVentilDoneExpenseReport=Konsultējieties šeit ar izdevumu pārskatu rindu sarakstu un to maksu grāmatvedības kontu
 
-Closure=Annual closure
+Closure=Gada slēgšana
 DescClosure=Šeit apskatiet neapstiprināto kustību skaitu mēnesī, un fiskālie gadi jau ir atvērti
 OverviewOfMovementsNotValidated=1. solis / Nepārvērtēts kustību pārskats. (Nepieciešams, lai slēgtu fiskālo gadu)
-AllMovementsWereRecordedAsValidated=All movements were recorded as validated
-NotAllMovementsCouldBeRecordedAsValidated=Not all movements could be recorded as validated
+AllMovementsWereRecordedAsValidated=Visas kustības tika reģistrētas kā apstiprinātas
+NotAllMovementsCouldBeRecordedAsValidated=Ne visas kustības varēja reģistrēt kā apstiprinātas
 ValidateMovements=Apstipriniet kustības
 DescValidateMovements=Jebkādas rakstīšanas, burtu un izdzēsto tekstu izmaiņas vai dzēšana būs aizliegtas. Visi vingrinājumu ieraksti ir jāapstiprina, pretējā gadījumā aizvēršana nebūs iespējama
 
 ValidateHistory=Piesaistiet automātiski
-AutomaticBindingDone=Automātiskā piesaistīšana pabeigta
+AutomaticBindingDone=Automātiskā saistīšana ir pabeigta (%s) — dažiem ierakstiem automātiskā saistīšana nav iespējama (%s)
 
 ErrorAccountancyCodeIsAlreadyUse=Kļūda, nevarat izdzēst šo grāmatvedības kontu, jo tas tiek izmantots
 MvtNotCorrectlyBalanced=Kustība nav pareizi sabalansēta. Debits = %s | Kredīts = %s
@@ -297,10 +298,10 @@ NoNewRecordSaved=Neviens ieraksts žurnālistikai nav
 ListOfProductsWithoutAccountingAccount=Produktu saraksts, uz kuriem nav saistīta kāds grāmatvedības konts
 ChangeBinding=Mainiet saites
 Accounted=Uzskaitīts virsgrāmatā
-NotYetAccounted=Vēl nav uzskaitīti virsgrāmatā
+NotYetAccounted=Vēl nav pārnests uz grāmatvedību
 ShowTutorial=Rādīt apmācību
 NotReconciled=Nesaskaņots
-WarningRecordWithoutSubledgerAreExcluded=Warning, all operations without subledger account defined are filtered and excluded from this view
+WarningRecordWithoutSubledgerAreExcluded=Brīdinājums: visas darbības, kurās nav definēts apakškārtas konts, tiek filtrētas un izslēgtas no šī skata
 
 ## Admin
 BindingOptions=Iesiešanas iespējas
@@ -328,6 +329,9 @@ ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Atspējot saistīšanu un pārsūtīšan
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Atspējojiet grāmatvedībā iesiešanu un pārskaitīšanu izdevumu pārskatos (grāmatvedībā netiks ņemti vērā izdevumu pārskati)
 
 ## Export
+NotifiedExportDate=Atzīmēt eksportētās rindas kā eksportētas (rindu modificēšana nebūs iespējama)
+NotifiedValidationDate=Apstipriniet eksportētos ierakstus (mainīt vai dzēst rindas nebūs iespējams)
+ConfirmExportFile=Apstiprinājums par grāmatvedības eksporta faila ģenerēšanu?
 ExportDraftJournal=Eksporta žurnāla projekts
 Modelcsv=Eksporta modulis
 Selectmodelcsv=Atlasiet eksporta modeli
@@ -335,21 +339,22 @@ Modelcsv_normal=Klasiskais eksports
 Modelcsv_CEGID=Eksports uz CEGID ekspertu kompāniju
 Modelcsv_COALA=Eksportēt Sage Coala
 Modelcsv_bob50=Eksportēt Sage BOB 50
-Modelcsv_ciel=Eksportēt Sage Ciel Compta vai Compta Evolution
+Modelcsv_ciel=Eksportēt uz Sage50, Ciel Compta vai Compta Evo. (XIMPORT formāts)
 Modelcsv_quadratus=Eksportēt Quadratus QuadraCompta
 Modelcsv_ebp=Eksportēt uz EBP
 Modelcsv_cogilog=Eksportēt uz Cogilog
-Modelcsv_agiris=Eksports uz Agiris
+Modelcsv_agiris=Eksports Agiris Isacompta
 Modelcsv_LDCompta=Eksports LD Compta (v9) (pārbaude)
 Modelcsv_LDCompta10=Eksports LD Compta (v10 un jaunākiem)
 Modelcsv_openconcerto=Eksportēt OpenConcerto (tests)
 Modelcsv_configurable=Eksportēt CSV konfigurējamu
 Modelcsv_FEC=Eksporta FEC
-Modelcsv_FEC2=Export FEC (With dates generation writing / document reversed)
+Modelcsv_FEC2=Eksportēt FEC (ar datumu ģenerēšanas / dokumenta maiņu)
 Modelcsv_Sage50_Swiss=Eksports uz Sage 50 Šveici
-Modelcsv_winfic=Eksportēt Winfic - eWinfic - WinSis Compta
-Modelcsv_Gestinumv3=Export for Gestinum (v3)
-Modelcsv_Gestinumv5Export for Gestinum (v5)
+Modelcsv_winfic=Eksportēt uz Winfic - eWinfic - WinSis Compta
+Modelcsv_Gestinumv3=Gestinum eksports (v3)
+Modelcsv_Gestinumv5=Eksportēt uz Gestinum (v5)
+Modelcsv_charlemagne=Eksports Aplim Charlemagne
 ChartofaccountsId=Kontu konts. Id
 
 ## Tools - Init accounting account on product / service
@@ -382,7 +387,8 @@ SaleExport=Eksporta pārdošana
 SaleEEC=Pārdošana EEK
 SaleEECWithVAT=Pārdošana EEK ar PVN nav spēkā, tāpēc domājams, ka tā NAV iekšējā tirdzniecība, un ieteiktais konts ir standarta produkta konts.
 SaleEECWithoutVATNumber=Pārdošana EEK bez PVN, bet trešās puses PVN ID nav definēts. Mēs atteicamies no standarta produkta standarta konta. Ja nepieciešams, varat salabot trešās personas PVN ID vai produkta kontu.
-
+ForbiddenTransactionAlreadyExported=Aizliegts: darījums ir apstiprināts un/vai eksportēts.
+ForbiddenTransactionAlreadyValidated=Aizliegts: darījums ir apstiprināts.
 ## Dictionary
 Range=Grāmatvedības konta diapazons
 Calculated=Aprēķināts
@@ -399,10 +405,33 @@ NoJournalDefined=Nav definēts žurnāls
 Binded=Līnijas saistītas
 ToBind=Rindiņas saistīt
 UseMenuToSetBindindManualy=Līnijas, kas vēl nav saistītas, izmantojiet izvēlni <a href="%s"> %s </a>, lai padarītu saistošu manuāli
+SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Diemžēl šis modulis nav saderīgs ar situāciju rēķinu eksperimentālo līdzekli
 
 ## Import
 ImportAccountingEntries=Grāmatvedības ieraksti
+ImportAccountingEntriesFECFormat=Grāmatvedības ieraksti - FEC formāts
+FECFormatJournalCode=Kodu žurnāls (JournalCode)
+FECFormatJournalLabel=Iezīmju žurnāls (JournalLib)
+FECFormatEntryNum=Gabala numurs (EcritureNum)
+FECFormatEntryDate=Gabala datums (EcritureDate)
+FECFormatGeneralAccountNumber=Vispārējais konta numurs (CompteNum)
+FECFormatGeneralAccountLabel=Vispārīga konta iezīme (CompteLib)
+FECFormatSubledgerAccountNumber=Zemesgrāmatas konta numurs (CompAuxNum)
+FECFormatSubledgerAccountLabel=Zemesgrāmatas konta numurs (CompAuxLib)
+FECFormatPieceRef=Piece ref (PieceRef)
+FECFormatPieceDate=Gabala datuma izveide (PieceDate)
+FECFormatLabelOperation=Etiķetes darbība (EcritureLib)
+FECFormatDebit=Debets (debets)
+FECFormatCredit=Kredīts (kredīts)
+FECFormatReconcilableCode=Saskaņojams kods (EcritureLet)
+FECFormatReconcilableDate=Samierināms datums (DateLet)
+FECFormatValidateDate=Gabala datums ir validēts (ValidDate)
+FECFormatMulticurrencyAmount=Daudzvalūtu summa (Montantdevise)
+FECFormatMulticurrencyCode=Daudzvalūtu kods (Idevise)
+
 DateExport=Eksporta datums
 WarningReportNotReliable=Brīdinājums. Šis pārskats nav balstīts uz grāmatvedi, tādēļ tajā nav darījumu, kas Manuāli ir manuāli modificēts. Ja žurnāls ir atjaunināts, grāmatvedības skats ir precīzāks.
 ExpenseReportJournal=Izdevumu atskaites žurnāls
 InventoryJournal=Inventāra žurnāls
+
+NAccounts=%s konti

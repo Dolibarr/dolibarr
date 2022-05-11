@@ -21,18 +21,30 @@
  *       \brief      Public orders for customers
  */
 
-if (!defined("NOLOGIN"))       define("NOLOGIN", '1'); // If this page is public (can be called outside logged session)
-if (!defined('NOIPCHECK'))	   define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
-if (!defined('NOBROWSERNOTIF')) define('NOBROWSERNOTIF', '1');
+if (!defined("NOLOGIN")) {
+	define("NOLOGIN", '1'); // If this page is public (can be called outside logged session)
+}
+if (!defined('NOIPCHECK')) {
+	define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
+}
+if (!defined('NOBROWSERNOTIF')) {
+	define('NOBROWSERNOTIF', '1');
+}
 
 require '../../main.inc.php';
 
-if (!$conf->global->TAKEPOS_AUTO_ORDER) accessforbidden(); // If Auto Order is disabled never allow NO LOGIN access
+if (!$conf->global->TAKEPOS_AUTO_ORDER) {
+	accessforbidden(); // If Auto Order is disabled never allow NO LOGIN access
+}
 
 $_SESSION["basiclayout"] = 1;
 $_SESSION["takeposterminal"] = 1;
 
 define('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE', 1);
-if (GETPOSTISSET("mobilepage")) require '../invoice.php';
-elseif (GETPOSTISSET("genimg")) require DOL_DOCUMENT_ROOT.'/takepos/genimg/index.php';
-else require '../phone.php';
+if (GETPOSTISSET("mobilepage")) {
+	require '../invoice.php';
+} elseif (GETPOSTISSET("genimg")) {
+	require DOL_DOCUMENT_ROOT.'/takepos/genimg/index.php';
+} else {
+	require '../phone.php';
+}

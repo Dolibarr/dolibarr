@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2014 Olivier Geffroy      <jeff@jeffinfo.com>
  * Copyright (C) 2013-2014 Florian Henry        <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2019 Alexandre Spangaro   <aspangaro@open-dsi.fr>
+ * Copyright (C) 2013-2021 Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2014-2015 Ari Elbaz (elarifr)  <github@accedinfo.com>
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2014      Juanjo Menent        <jmenent@2byte.es>
@@ -38,8 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 $langs->loadLangs(array("compta", "bills", "admin", "accountancy", "other"));
 
 // Security access
-if (empty($user->rights->accounting->chartofaccount))
-{
+if (empty($user->rights->accounting->chartofaccount)) {
 	accessforbidden();
 }
 
@@ -49,8 +48,9 @@ $action = GETPOST('action', 'aZ09');
 $list = array(
 	'ACCOUNTING_LENGTH_GACCOUNT',
 	'ACCOUNTING_LENGTH_AACCOUNT',
-//    'ACCOUNTING_LENGTH_DESCRIPTION',         // adjust size displayed for lines description for dol_trunc
-//    'ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT', // adjust size displayed for select account description for dol_trunc
+//	'ACCOUNTING_LIMIT_LIST_VENTILATION'		   // there is already a global parameter to define the nb of records in lists, we must use it in priority. Having one parameter for nb of record for each page is deprecated.
+//	'ACCOUNTING_LENGTH_DESCRIPTION',         // adjust size displayed for lines description for dol_trunc
+//	'ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT', // adjust size displayed for select account description for dol_trunc
 );
 
 $list_binding = array(
@@ -88,10 +88,8 @@ if (in_array($action, array(
 if ($action == 'update') {
 	$error = 0;
 
-	if (!$error)
-	{
-		foreach ($list as $constname)
-		{
+	if (!$error) {
+		foreach ($list as $constname) {
 			$constvalue = GETPOST($constname, 'alpha');
 			if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
 				$error++;
@@ -101,8 +99,7 @@ if ($action == 'update') {
 			setEventMessages($langs->trans("Error"), null, 'errors');
 		}
 
-		foreach ($list_binding as $constname)
-		{
+		foreach ($list_binding as $constname) {
 			$constvalue = GETPOST($constname, 'alpha');
 
 			if ($constname == 'ACCOUNTING_DATE_START_BINDING') {
@@ -261,7 +258,23 @@ llxHeader('', $title);
 
 $linkback = '';
 //$linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php?restore_lastsearch_values=1">' . $langs->trans("BackToModuleList") . '</a>';
-print load_fiche_titre($langs->trans('ConfigAccountingExpert'), $linkback, 'accountancy');
+print load_fiche_titre($title, $linkback, 'accountancy');
+
+// Show message if accountancy hidden options are activated to help to resolve some problems
+if (!$user->admin) {
+	if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+		print '<div class="info">' . $langs->trans("ConstantIsOn", "FACTURE_DEPOSITS_ARE_JUST_PAYMENTS") . '</div>';
+	}
+	if (!empty($conf->global->ACCOUNTANCY_USE_PRODUCT_ACCOUNT_ON_THIRDPARTY)) {
+		print '<div class="info">' . $langs->trans("ConstantIsOn", "ACCOUNTANCY_USE_PRODUCT_ACCOUNT_ON_THIRDPARTY") . '</div>';
+	}
+	if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
+		print '<div class="info">' . $langs->trans("ConstantIsOn", "MAIN_COMPANY_PERENTITY_SHARED") . '</div>';
+	}
+	if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
+		print '<div class="info">' . $langs->trans("ConstantIsOn", "MAIN_PRODUCT_PERENTITY_SHARED") . '</div>';
+	}
+}
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -304,7 +317,10 @@ if (!empty($conf->global->BANK_DISABLE_DIRECT_INPUT)) {
 print '</tr>';
 
 print '<tr class="oddeven">';
-print '<td>'.$langs->trans("ACCOUNTANCY_COMBO_FOR_AUX").'</td>';
+print '<td>'.$langs->trans("ACCOUNTANCY_COMBO_FOR_AUX");
+print ' - <span class="opacitymedium">'.$langs->trans("NotRecommended").'</span>';
+print '</td>';
+
 if (!empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX)) {
 	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&action=setACCOUNTANCY_COMBO_FOR_AUX&value=0">';
 	print img_picto($langs->trans("Activated"), 'switch_on');
@@ -330,11 +346,12 @@ if (!empty($conf->global->ACCOUNTING_MANAGE_ZERO)) {
 print '</tr>';
 
 // Param a user $user->rights->accounting->chartofaccount can access
-foreach ($list as $key)
-{
+foreach ($list as $key) {
 	print '<tr class="oddeven value">';
 
-	if (!empty($conf->global->ACCOUNTING_MANAGE_ZERO) && ($key == 'ACCOUNTING_LENGTH_GACCOUNT' || $key == 'ACCOUNTING_LENGTH_AACCOUNT')) continue;
+	if (!empty($conf->global->ACCOUNTING_MANAGE_ZERO) && ($key == 'ACCOUNTING_LENGTH_GACCOUNT' || $key == 'ACCOUNTING_LENGTH_AACCOUNT')) {
+		continue;
+	}
 
 	// Param
 	$label = $langs->trans($key);
@@ -383,8 +400,7 @@ if (!empty($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_DONE)) {
 print '</tr>';
 
 // Param a user $user->rights->accounting->chartofaccount can access
-foreach ($list_binding as $key)
-{
+foreach ($list_binding as $key) {
 	print '<tr class="oddeven value">';
 
 	// Param
@@ -446,7 +462,7 @@ print '</tr>';
 
 print '</table>';
 
-print '<div class="center"><input type="submit" class="button" value="'.$langs->trans('Modify').'" name="button"></div>';
+print '<div class="center"><input type="submit" class="button button-edit" name="button" value="'.$langs->trans('Modify').'"></div>';
 
 print '</form>';
 

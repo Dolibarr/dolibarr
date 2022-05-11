@@ -121,7 +121,7 @@ abstract class CommonStickerGenerator
 	 *	@param	string		$outputdir			Output directory for pdf file
 	 *  @return int             				1=OK, 0=KO
 	 */
-	public abstract function write_file($arrayofrecords, $outputlangs, $srctemplatepath, $outputdir = '');
+	abstract public function write_file($arrayofrecords, $outputlangs, $srctemplatepath, $outputdir = '');
 	// phpcs:enable
 
 	/**
@@ -132,7 +132,7 @@ abstract class CommonStickerGenerator
 	 * @param   array     	$param          Associative array containing label content and optional parameters
 	 * @return  void
 	 */
-	public abstract function addSticker(&$pdf, $outputlangs, $param);
+	abstract public function addSticker(&$pdf, $outputlangs, $param);
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
@@ -289,7 +289,7 @@ abstract class CommonStickerGenerator
 		// phpcs:enable
 		$this->_Metric = $format['metric'];
 		$this->_Avery_Name = $format['name'];
-		$this->_Avery_Code = $format['code'];
+		$this->_Avery_Code = empty($format['code'])?'':$format['code'];
 		$this->_Margin_Left = $this->convertMetric($format['marginLeft'], $this->_Metric, $this->_Metric_Doc);
 		$this->_Margin_Top = $this->convertMetric($format['marginTop'], $this->_Metric, $this->_Metric_Doc);
 		$this->_X_Space = $this->convertMetric($format['SpaceX'], $this->_Metric, $this->_Metric_Doc);

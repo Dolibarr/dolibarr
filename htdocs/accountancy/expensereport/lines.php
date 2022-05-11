@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2016	Olivier Geffroy		<jeff@jeffinfo.com>
- * Copyright (C) 2013-2017	Alexandre Spangaro	<aspangaro@open-dsi.fr>
+ * Copyright (C) 2013-2022	Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2014-2015	Ari Elbaz (elarifr)	<github@accedinfo.com>
  * Copyright (C) 2013-2016	Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2014		Juanjo Menent		<jmenent@2byte.es>
@@ -26,8 +26,8 @@
  */
 require '../../main.inc.php';
 
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
@@ -49,21 +49,29 @@ $search_desc = GETPOST('search_desc', 'alpha');
 $search_amount = GETPOST('search_amount', 'alpha');
 $search_account = GETPOST('search_account', 'alpha');
 $search_vat = GETPOST('search_vat', 'alpha');
-$search_day = GETPOST("search_day", "int");
-$search_month = GETPOST("search_month", "int");
-$search_year = GETPOST("search_year", "int");
+$search_date_startday = GETPOST('search_date_startday', 'int');
+$search_date_startmonth = GETPOST('search_date_startmonth', 'int');
+$search_date_startyear = GETPOST('search_date_startyear', 'int');
+$search_date_endday = GETPOST('search_date_endday', 'int');
+$search_date_endmonth = GETPOST('search_date_endmonth', 'int');
+$search_date_endyear = GETPOST('search_date_endyear', 'int');
+$search_date_start = dol_mktime(0, 0, 0, $search_date_startmonth, $search_date_startday, $search_date_startyear);	// Use tzserver
+$search_date_end = dol_mktime(23, 59, 59, $search_date_endmonth, $search_date_endday, $search_date_endyear);
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : (empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION) ? $conf->liste_limit : $conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION);
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page < 0) $page = 0;
+if (empty($page) || $page < 0) {
+	$page = 0;
+}
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-$offset = $limit * $page;
-if (!$sortfield)
+if (!$sortfield) {
 	$sortfield = "erd.date, erd.rowid";
+}
 if (!$sortorder) {
 	if ($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_DONE > 0) {
 		$sortorder = "DESC";
@@ -71,10 +79,16 @@ if (!$sortorder) {
 }
 
 // Security check
-if ($user->socid > 0)
+if (empty($conf->accounting->enabled)) {
 	accessforbidden();
-if (!$user->rights->accounting->bind->write)
+}
+if ($user->socid > 0) {
 	accessforbidden();
+}
+if (empty($user->rights->accounting->mouvements->lire)) {
+	accessforbidden();
+}
+
 
 $formaccounting = new FormAccounting($db);
 
@@ -84,8 +98,7 @@ $formaccounting = new FormAccounting($db);
  */
 
 // Purge search criteria
-if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // Both test are required to be compatible with all browsers
-{
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // Both test are required to be compatible with all browsers
 	$search_login = '';
 	$search_expensereport = '';
 	$search_label = '';
@@ -93,27 +106,30 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_amount = '';
 	$search_account = '';
 	$search_vat = '';
-	$search_day = '';
-	$search_month = '';
-	$search_year = '';
+	$search_date_startday = '';
+	$search_date_startmonth = '';
+	$search_date_startyear = '';
+	$search_date_endday = '';
+	$search_date_endmonth = '';
+	$search_date_endyear = '';
+	$search_date_start = '';
+	$search_date_end = '';
 }
 
-if (is_array($changeaccount) && count($changeaccount) > 0) {
+if (is_array($changeaccount) && count($changeaccount) > 0 && $user->rights->accounting->bind->write) {
 	$error = 0;
 
-	if (!(GETPOST('account_parent', 'int') >= 0))
-	{
+	if (!(GETPOST('account_parent', 'int') >= 0)) {
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Account")), null, 'errors');
 	}
 
-	if (!$error)
-	{
+	if (!$error) {
 		$db->begin();
 
 		$sql1 = "UPDATE ".MAIN_DB_PREFIX."expensereport_det as erd";
 		$sql1 .= " SET erd.fk_code_ventilation=".(GETPOST('account_parent', 'int') > 0 ? GETPOST('account_parent', 'int') : '0');
-		$sql1 .= ' WHERE erd.rowid IN ('.implode(',', $changeaccount).')';
+		$sql1 .= ' WHERE erd.rowid IN ('.$db->sanitize(implode(',', $changeaccount)).')';
 
 		dol_syslog('accountancy/expensereport/lines.php::changeaccount sql= '.$sql1);
 		$resql1 = $db->query($sql1);
@@ -198,19 +214,22 @@ if (strlen(trim($search_account))) {
 if (strlen(trim($search_vat))) {
 	$sql .= natural_search("erd.tva_tx", price2num($search_vat), 1);
 }
-$sql .= dolSqlDateFilter('erd.date', $search_day, $search_month, $search_year);
+if ($search_date_start) {
+	$sql .= " AND erd.date >= '".$db->idate($search_date_start)."'";
+}
+if ($search_date_end) {
+	$sql .= " AND erd.date <= '".$db->idate($search_date_end)."'";
+}
 $sql .= " AND er.entity IN (".getEntity('expensereport', 0).")"; // We don't share object for accountancy
 
 $sql .= $db->order($sortfield, $sortorder);
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
-{
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
-	if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
-	{
+	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -218,29 +237,61 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 
 $sql .= $db->plimit($limit + 1, $offset);
 
-dol_syslog('accountancy/expensereport/lines.php::list');
+dol_syslog("accountancy/expensereport/lines.php", LOG_DEBUG);
 $result = $db->query($sql);
-
 if ($result) {
 	$num_lines = $db->num_rows($result);
 	$i = 0;
 
 	$param = '';
-	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
-	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
-	if ($search_login)       $param .= '&search_login='.urlencode($search_login);
-	if ($search_expensereport) $param .= "&search_expensereport=".urlencode($search_expensereport);
-	if ($search_label)		$param .= "&search_label=".urlencode($search_label);
-	if ($search_desc)		$param .= "&search_desc=".urlencode($search_desc);
-	if ($search_account)	$param .= "&search_account=".urlencode($search_account);
-	if ($search_vat)		$param .= "&search_vat=".urlencode($search_vat);
-	if ($search_day)        $param .= '&search_day='.urlencode($search_day);
-	if ($search_month)      $param .= '&search_month='.urlencode($search_month);
-	if ($search_year)       $param .= '&search_year='.urlencode($search_year);
+	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
+		$param .= '&contextpage='.urlencode($contextpage);
+	}
+	if ($limit > 0 && $limit != $conf->liste_limit) {
+		$param .= '&limit='.urlencode($limit);
+	}
+	if ($search_login) {
+		$param .= '&search_login='.urlencode($search_login);
+	}
+	if ($search_expensereport) {
+		$param .= "&search_expensereport=".urlencode($search_expensereport);
+	}
+	if ($search_label) {
+		$param .= "&search_label=".urlencode($search_label);
+	}
+	if ($search_desc) {
+		$param .= "&search_desc=".urlencode($search_desc);
+	}
+	if ($search_account) {
+		$param .= "&search_account=".urlencode($search_account);
+	}
+	if ($search_vat) {
+		$param .= "&search_vat=".urlencode($search_vat);
+	}
+	if ($search_date_startday) {
+		$param .= '&search_date_startday='.urlencode($search_date_startday);
+	}
+	if ($search_date_startmonth) {
+		$param .= '&search_date_startmonth='.urlencode($search_date_startmonth);
+	}
+	if ($search_date_startyear) {
+		$param .= '&search_date_startyear='.urlencode($search_date_startyear);
+	}
+	if ($search_date_endday) {
+		$param .= '&search_date_endday='.urlencode($search_date_endday);
+	}
+	if ($search_date_endmonth) {
+		$param .= '&search_date_endmonth='.urlencode($search_date_endmonth);
+	}
+	if ($search_date_endyear) {
+		$param .= '&search_date_endyear='.urlencode($search_date_endyear);
+	}
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">'."\n";
 	print '<input type="hidden" name="action" value="ventil">';
-	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	if ($optioncss != '') {
+		print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	}
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
@@ -248,12 +299,11 @@ if ($result) {
 	print '<input type="hidden" name="page" value="'.$page.'">';
 
 	print_barre_liste($langs->trans("ExpenseReportLinesDone"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num_lines, $nbtotalofrecords, 'title_accountancy', 0, '', '', $limit);
-
 	print '<span class="opacitymedium">'.$langs->trans("DescVentilDoneExpenseReport").'</span><br>';
 
-	print '<br><div class="inline-block divButAction">'.$langs->trans("ChangeAccount").'<br>';
+	print '<br><div class="inline-block divButAction paddingbottom">'.$langs->trans("ChangeAccount").' ';
 	print $formaccounting->select_account($account_parent, 'account_parent', 2, array(), 0, 0, 'maxwidth300 maxwidthonsmartphone valignmiddle');
-	print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("ChangeBinding").'" /></div>';
+	print '<input type="submit" class="button small valignmiddle" value="'.$langs->trans("ChangeBinding").'"/></div>';
 
 	$moreforfilter = '';
 
@@ -268,9 +318,12 @@ if ($result) {
 		print '<td class="liste_titre"></td>';
 	}
 	print '<td class="liste_titre center">';
-   	if (!empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat valignmiddle maxwidth25" type="text" maxlength="2" name="search_day" value="'.$search_day.'">';
-   	print '<input class="flat valignmiddle maxwidth25" type="text" maxlength="2" name="search_month" value="'.$search_month.'">';
-   	$formother->select_year($search_year, 'search_year', 1, 20, 5);
+	print '<div class="nowrap">';
+	print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+	print '</div>';
+	print '<div class="nowrap">';
+	print $form->selectDate($search_date_end ? $search_date_end : -1, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+	print '</div>';
 	print '</td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_label" value="'.dol_escape_htmltag($search_label).'"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_desc" value="'.dol_escape_htmltag($search_desc).'"></td>';
@@ -352,13 +405,13 @@ if ($result) {
 
 		// Fees description -- Can be null
 		print '<td>';
-		$text = dolGetFirstLineOfText(dol_string_nohtmltag($objp->comments));
+		$text = dolGetFirstLineOfText(dol_string_nohtmltag($objp->comments, 1));
 		$trunclength = empty($conf->global->ACCOUNTING_LENGTH_DESCRIPTION) ? 32 : $conf->global->ACCOUNTING_LENGTH_DESCRIPTION;
 		print $form->textwithtooltip(dol_trunc($text, $trunclength), $objp->comments);
 		print '</td>';
 
 		// Amount without taxes
-		print '<td class="nowrap right">'.price($objp->total_ht).'</td>';
+		print '<td class="right nowraponall amount">'.price($objp->total_ht).'</td>';
 
 		// Vat rate
 		print '<td class="center">'.vatrate($objp->tva_tx.($objp->vat_src_code ? ' ('.$objp->vat_src_code.')' : '')).'</td>';

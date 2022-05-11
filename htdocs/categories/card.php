@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005		Matthieu Valleton	<mv@seeschloss.org>
- * Copyright (C) 2006-2017	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2021	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2014	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2007		Patrick Raguin		<patrick.raguin@gmail.com>
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
@@ -37,14 +37,16 @@ $langs->load("categories");
 
 // Security check
 $socid = (int) GETPOST('socid', 'int');
-if (!$user->rights->categorie->lire) accessforbidden();
+if (!$user->rights->categorie->lire) {
+	accessforbidden();
+}
 
-$action		= GETPOST('action', 'alpha');
+$action = GETPOST('action', 'alpha');
 $cancel		= GETPOST('cancel', 'alpha');
 $origin		= GETPOST('origin', 'alpha');
 $catorigin  = (int) GETPOST('catorigin', 'int');
-$type       = GETPOST('type', 'aZ09');
-$urlfrom	= GETPOST('urlfrom', 'alpha');
+$type = GETPOST('type', 'aZ09');
+$urlfrom = GETPOST('urlfrom', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 
 $label = (string) GETPOST('label', 'alphanohtml');
@@ -54,15 +56,29 @@ $visible = (int) GETPOST('visible', 'int');
 $parent = (int) GETPOST('parent', 'int');
 
 if ($origin) {
-	if ($type == Categorie::TYPE_PRODUCT)     $idProdOrigin     = $origin;
-	if ($type == Categorie::TYPE_SUPPLIER)    $idSupplierOrigin = $origin;
-	if ($type == Categorie::TYPE_CUSTOMER)    $idCompanyOrigin  = $origin;
-	if ($type == Categorie::TYPE_MEMBER)      $idMemberOrigin   = $origin;
-	if ($type == Categorie::TYPE_CONTACT)     $idContactOrigin  = $origin;
-	if ($type == Categorie::TYPE_PROJECT)     $idProjectOrigin  = $origin;
+	if ($type == Categorie::TYPE_PRODUCT) {
+		$idProdOrigin     = $origin;
+	}
+	if ($type == Categorie::TYPE_SUPPLIER) {
+		$idSupplierOrigin = $origin;
+	}
+	if ($type == Categorie::TYPE_CUSTOMER) {
+		$idCompanyOrigin  = $origin;
+	}
+	if ($type == Categorie::TYPE_MEMBER) {
+		$idMemberOrigin   = $origin;
+	}
+	if ($type == Categorie::TYPE_CONTACT) {
+		$idContactOrigin  = $origin;
+	}
+	if ($type == Categorie::TYPE_PROJECT) {
+		$idProjectOrigin  = $origin;
+	}
 }
 
-if ($catorigin && $type == Categorie::TYPE_PRODUCT) $idCatOrigin = $catorigin;
+if ($catorigin && $type == Categorie::TYPE_PRODUCT) {
+	$idCatOrigin = $catorigin;
+}
 
 $object = new Categorie($db);
 
@@ -80,13 +96,10 @@ $error = 0;
  */
 
 // Add action
-if ($action == 'add' && $user->rights->categorie->creer)
-{
-	// Action ajout d'une categorie
-	if ($cancel)
-	{
-		if ($urlfrom)
-		{
+if ($action == 'add' && $user->rights->categorie->creer) {
+	// Action add a category
+	if ($cancel) {
+		if ($urlfrom) {
 			header("Location: ".$urlfrom);
 			exit;
 		} elseif ($backtopage) {
@@ -125,24 +138,25 @@ if ($action == 'add' && $user->rights->categorie->creer)
 	$object->visible = $visible;
 	$object->type = $type;
 
-	if ($parent != "-1") $object->fk_parent = $parent;
+	if ($parent != "-1") {
+		$object->fk_parent = $parent;
+	}
 
 	$ret = $extrafields->setOptionalsFromPost(null, $object);
-	if ($ret < 0) $error++;
+	if ($ret < 0) {
+		$error++;
+	}
 
-	if (!$object->label)
-	{
+	if (!$object->label) {
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Ref")), null, 'errors');
 		$action = 'create';
 	}
 
 	// Create category in database
-	if (!$error)
-	{
+	if (!$error) {
 		$result = $object->create($user);
-		if ($result > 0)
-		{
+		if ($result > 0) {
 			$action = 'confirmed';
 			$_POST["addcat"] = '';
 		} else {
@@ -152,41 +166,31 @@ if ($action == 'add' && $user->rights->categorie->creer)
 }
 
 // Confirm action
-if (($action == 'add' || $action == 'confirmed') && $user->rights->categorie->creer)
-{
-	// Action confirmation de creation categorie
-	if ($action == 'confirmed')
-	{
-		if ($urlfrom)
-		{
+if (($action == 'add' || $action == 'confirmed') && $user->rights->categorie->creer) {
+	// Action confirmation of creation category
+	if ($action == 'confirmed') {
+		if ($urlfrom) {
 			header("Location: ".$urlfrom);
 			exit;
-		} elseif ($backtopage)
-		{
+		} elseif ($backtopage) {
 			header("Location: ".$backtopage);
 			exit;
-		} elseif ($idProdOrigin)
-		{
+		} elseif ($idProdOrigin) {
 			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idProdOrigin.'&type='.$type.'&mesg='.urlencode($langs->trans("CatCreated")));
 			exit;
-		} elseif ($idCompanyOrigin)
-		{
+		} elseif ($idCompanyOrigin) {
 			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idCompanyOrigin.'&type='.$type.'&mesg='.urlencode($langs->trans("CatCreated")));
 			exit;
-		} elseif ($idSupplierOrigin)
-		{
+		} elseif ($idSupplierOrigin) {
 			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idSupplierOrigin.'&type='.$type.'&mesg='.urlencode($langs->trans("CatCreated")));
 			exit;
-		} elseif ($idMemberOrigin)
-		{
+		} elseif ($idMemberOrigin) {
 			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idMemberOrigin.'&type='.$type.'&mesg='.urlencode($langs->trans("CatCreated")));
 			exit;
-		} elseif ($idContactOrigin)
-		{
+		} elseif ($idContactOrigin) {
 			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idContactOrigin.'&type='.$type.'&mesg='.urlencode($langs->trans("CatCreated")));
 			exit;
-		} elseif ($idProjectOrigin)
-		{
+		} elseif ($idProjectOrigin) {
 			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idProjectOrigin.'&type='.$type.'&mesg='.urlencode($langs->trans("CatCreated")));
 			exit;
 		}
@@ -204,14 +208,13 @@ if (($action == 'add' || $action == 'confirmed') && $user->rights->categorie->cr
 $form = new Form($db);
 $formother = new FormOther($db);
 
-$helpurl = '';
-llxHeader("", $langs->trans("Categories"), $helpurl);
+$help_url = 'EN:Module_Categories|FR:Module_Catégories|DE:Modul_Kategorien';
 
-if ($user->rights->categorie->creer)
-{
+llxHeader("", $langs->trans("Categories"), $help_url);
+
+if ($user->rights->categorie->creer) {
 	// Create or add
-	if ($action == 'create' || GETPOST("addcat") == 'addcat')
-	{
+	if ($action == 'create' || GETPOST("addcat") == 'addcat') {
 		dol_set_focus('#label');
 
 		print '<form action="'.$_SERVER['PHP_SELF'].'?type='.$type.'" method="POST">';
@@ -222,8 +225,12 @@ if ($user->rights->categorie->creer)
 		print '<input type="hidden" name="id" value="'.GETPOST('origin', 'alpha').'">';
 		print '<input type="hidden" name="type" value="'.$type.'">';
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
-		if ($origin) print '<input type="hidden" name="origin" value="'.$origin.'">';
-		if ($catorigin)	print '<input type="hidden" name="catorigin" value="'.$catorigin.'">';
+		if ($origin) {
+			print '<input type="hidden" name="origin" value="'.$origin.'">';
+		}
+		if ($catorigin) {
+			print '<input type="hidden" name="catorigin" value="'.$catorigin.'">';
+		}
 
 		print load_fiche_titre($langs->trans("CreateCat"));
 
@@ -250,6 +257,7 @@ if ($user->rights->categorie->creer)
 
 		// Parent category
 		print '<tr><td>'.$langs->trans("AddIn").'</td><td>';
+		print img_picto($langs->trans("ParentCategory"), 'category', 'class="pictofixedwidth"');
 		print $form->select_all_categories($type, $catorigin, 'parent');
 		print ajax_combobox('parent');
 		print '</td></tr>';
@@ -257,9 +265,8 @@ if ($user->rights->categorie->creer)
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
-		if (empty($reshook))
-		{
-			print $object->showOptionals($extrafields, 'edit', $parameters);
+		if (empty($reshook)) {
+			print $object->showOptionals($extrafields, 'create', $parameters);
 		}
 
 		print '</table>';
@@ -267,7 +274,7 @@ if ($user->rights->categorie->creer)
 		print dol_get_fiche_end('');
 
 		print '<div class="center">';
-		print '<input type="submit" class="button" value="'.$langs->trans("CreateThisCat").'" name="creation" />';
+		print '<input type="submit" class="button b" value="'.$langs->trans("CreateThisCat").'" name="creation" />';
 		print '&nbsp; &nbsp; &nbsp;';
 		print '<input type="submit" class="button button-cancel" value="'.$langs->trans("Cancel").'" name="cancel" />';
 		print '</div>';

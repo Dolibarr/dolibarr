@@ -37,23 +37,26 @@ $ref = GETPOST('ref', 'alpha');
 $childids = $user->getAllChildIds(1);
 
 // Security check
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 $result = restrictedArea($user, 'expensereport', $id, 'expensereport');
 
 $object = new ExpenseReport($db);
-if (!$object->fetch($id, $ref) > 0)
-{
+if (!$object->fetch($id, $ref) > 0) {
 	dol_print_error($db);
 }
 
-if ($object->id > 0)
-{
+if ($object->id > 0) {
 	// Check current user can read this expense report
 	$canread = 0;
-	if (!empty($user->rights->expensereport->readall)) $canread = 1;
-	if (!empty($user->rights->expensereport->lire) && in_array($object->fk_user_author, $childids)) $canread = 1;
-	if (!$canread)
-	{
+	if (!empty($user->rights->expensereport->readall)) {
+		$canread = 1;
+	}
+	if (!empty($user->rights->expensereport->lire) && in_array($object->fk_user_author, $childids)) {
+		$canread = 1;
+	}
+	if (!$canread) {
 		accessforbidden();
 	}
 }
@@ -69,8 +72,7 @@ $title = $langs->trans("ExpenseReport")." - ".$langs->trans("Info");
 $helpurl = "EN:Module_Expense_Reports";
 llxHeader("", $title, $helpurl);
 
-if ($id > 0 || !empty($ref))
-{
+if ($id > 0 || !empty($ref)) {
 	$object = new ExpenseReport($db);
 	$object->fetch($id, $ref);
 	$object->info($object->id);

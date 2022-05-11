@@ -29,7 +29,9 @@ $langs->load("compta");
 
 // Security check
 $socid = GETPOST('socid', 'int');
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 $result = restrictedArea($user, 'tax', '', '', 'charges');
 $ltt = GETPOST("localTaxType", 'int');
 
@@ -43,23 +45,25 @@ llxHeader();
 $localtax_static = new Localtax($db);
 
 $url = DOL_URL_ROOT.'/compta/localtax/card.php?action=create&localTaxType='.$ltt;
-if (!empty($socid)) $url .= '&socid='.$socid;
+if (!empty($socid)) {
+	$url .= '&socid='.$socid;
+}
 $newcardbutton = dolGetButtonTitle($langs->trans('NewLocalTaxPayment', ($ltt + 1)), '', 'fa fa-plus-circle', $url, '', $user->rights->tax->charges->creer);
 
 print load_fiche_titre($langs->transcountry($ltt == 2 ? "LT2Payments" : "LT1Payments", $mysoc->country_code), $newcardbutton, 'title_accountancy');
 
 $sql = "SELECT rowid, amount, label, f.datev, f.datep";
 $sql .= " FROM ".MAIN_DB_PREFIX."localtax as f ";
-$sql .= " WHERE f.entity = ".$conf->entity." AND localtaxtype = ".$db->escape($ltt);
+$sql .= " WHERE f.entity = ".$conf->entity." AND localtaxtype = ".((int) $ltt);
 $sql .= " ORDER BY datev DESC";
 
 $result = $db->query($sql);
-if ($result)
-{
+if ($result) {
 	$num = $db->num_rows($result);
 	$i = 0;
 	$total = 0;
 
+	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td class="nowrap" align="left">'.$langs->trans("Ref").'</td>';
@@ -69,8 +73,7 @@ if ($result)
 	print "<td align=\"right\">".$langs->trans("PayedByThisPayment")."</td>";
 	print "</tr>\n";
 	$var = 1;
-	while ($i < $num)
-	{
+	while ($i < $num) {
 		$obj = $db->fetch_object($result);
 
 		print '<tr class="oddeven">';
@@ -83,15 +86,17 @@ if ($result)
 		print '<td class="left">'.dol_print_date($db->jdate($obj->datep), 'day')."</td>\n";
 		$total = $total + $obj->amount;
 
-		print "<td align=\"right\">".price($obj->amount)."</td>";
+		print '<td class="right nowraponall"><span class="amount">'.price($obj->amount).'</span></td>';
 		print "</tr>\n";
 
 		$i++;
 	}
 	print '<tr class="liste_total"><td colspan="4">'.$langs->trans("Total").'</td>';
-	print '<td class="right">'.price($total).'</td></tr>';
+	print '<td class="right"><span class="amount">'.price($total).'</span></td></tr>';
 
 	print "</table>";
+	print '</div>';
+
 	$db->free($result);
 } else {
 	dol_print_error($db);

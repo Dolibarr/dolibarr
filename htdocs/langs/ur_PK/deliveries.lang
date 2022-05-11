@@ -1,0 +1,33 @@
+# Dolibarr language file - Source file is en_US - deliveries
+Delivery=ترسیل
+DeliveryRef=حوالگی کی ترسیل
+DeliveryCard=رسید کارڈ
+DeliveryOrder=ترسیل کی رسید
+DeliveryDate=ادئیگی کی تاریخ
+CreateDeliveryOrder=ترسیل کی رسید تیار کریں۔
+DeliveryStateSaved=ڈیلیوری کی حالت محفوظ ہو گئی۔
+SetDeliveryDate=شپنگ کی تاریخ طے کریں۔
+ValidateDeliveryReceipt=ترسیل کی رسید کی توثیق کریں۔
+ValidateDeliveryReceiptConfirm=کیا آپ واقعی اس ترسیل کی رسید کی توثیق کرنا چاہتے ہیں؟
+DeleteDeliveryReceipt=ترسیل کی رسید کو حذف کریں۔
+DeleteDeliveryReceiptConfirm=کیا آپ واقعی ڈیلیوری رسید <b> %s </b> کو حذف کرنا چاہتے ہیں؟
+DeliveryMethod=ترسیل کا طریقہ
+TrackingNumber=ٹریکنگ نمبر
+DeliveryNotValidated=ڈیلیوری کی توثیق نہیں ہوئی۔
+StatusDeliveryCanceled=منسوخ
+StatusDeliveryDraft=مسودہ
+StatusDeliveryValidated=موصول ہوا۔
+# merou PDF model
+NameAndSignature=نام اور دستخط:
+ToAndDate=___________________________________ پر ________________________________
+GoodStatusDeclaration=اوپر کا سامان اچھی حالت میں ملا ہے،
+Deliverer=پہنچانے والا:
+Sender=بھیجنے والا
+Recipient=وصول کنندہ
+ErrorStockIsNotEnough=کافی اسٹاک نہیں ہے۔
+Shippable=قابل ترسیل
+NonShippable=قابل ترسیل نہیں۔
+ShowShippableStatus=قابل ترسیل حیثیت دکھائیں۔
+ShowReceiving=ترسیل کی رسید دکھائیں۔
+NonExistentOrder=غیر موجود آرڈر
+StockQuantitiesAlreadyAllocatedOnPreviousLines = اسٹاک کی مقدار پہلے ہی پچھلی لائنوں پر مختص کی گئی ہے۔

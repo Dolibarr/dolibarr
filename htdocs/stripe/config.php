@@ -44,8 +44,7 @@ $stripearrayofkeysbyenv = array(
 );
 
 $stripearrayofkeys = array();
-if (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha'))
-{
+if (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha')) {
 	$stripearrayofkeys = $stripearrayofkeysbyenv[0]; // Test
 } else {
 	$stripearrayofkeys = $stripearrayofkeysbyenv[1]; // Live

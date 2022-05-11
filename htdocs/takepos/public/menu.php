@@ -21,15 +21,23 @@
  *       \brief      Public menu for customers
  */
 
-if (!defined("NOLOGIN"))       define("NOLOGIN", '1'); // If this page is public (can be called outside logged session)
-if (!defined('NOIPCHECK'))	   define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
-if (!defined('NOBROWSERNOTIF')) define('NOBROWSERNOTIF', '1');
+if (!defined("NOLOGIN")) {
+	define("NOLOGIN", '1'); // If this page is public (can be called outside logged session)
+}
+if (!defined('NOIPCHECK')) {
+	define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
+}
+if (!defined('NOBROWSERNOTIF')) {
+	define('NOBROWSERNOTIF', '1');
+}
 
 require '../../main.inc.php';
 
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
-if (!$conf->global->TAKEPOS_QR_MENU) accessforbidden(); // If Restaurant Menu is disabled never allow NO LOGIN access
+if (!$conf->global->TAKEPOS_QR_MENU) {
+	accessforbidden(); // If Restaurant Menu is disabled never allow NO LOGIN access
+}
 ?>
 <!DOCTYPE html>
 <html>
@@ -43,21 +51,18 @@ if (!$conf->global->TAKEPOS_QR_MENU) accessforbidden(); // If Restaurant Menu is
 <body>
 <!-- partial:index.partial.html -->
 <body>
-    <div class="grid-container">
-      <div class="grid-x grid-padding-x menu2">
-        <div class="cell small-12">
-          <h1><?php print $mysoc->name; ?> - <small><?php print $langs->trans('RestaurantMenu'); ?></small></h1>
+	<div class="grid-container">
+	  <div class="grid-x grid-padding-x menu2">
+		<div class="cell small-12">
+		  <h1><?php print $mysoc->name; ?> - <small><?php print $langs->trans('RestaurantMenu'); ?></small></h1>
 
 <?php
 $categorie = new Categorie($db);
 $categories = $categorie->get_full_arbo('product', (($conf->global->TAKEPOS_ROOT_CATEGORY_ID > 0) ? $conf->global->TAKEPOS_ROOT_CATEGORY_ID : 0), 1);
 $levelofrootcategory = 0;
-if ($conf->global->TAKEPOS_ROOT_CATEGORY_ID > 0)
-{
-	foreach ($categories as $key => $categorycursor)
-	{
-		if ($categorycursor['id'] == $conf->global->TAKEPOS_ROOT_CATEGORY_ID)
-		{
+if ($conf->global->TAKEPOS_ROOT_CATEGORY_ID > 0) {
+	foreach ($categories as $key => $categorycursor) {
+		if ($categorycursor['id'] == $conf->global->TAKEPOS_ROOT_CATEGORY_ID) {
 			$levelofrootcategory = $categorycursor['level'];
 			break;
 		}
@@ -67,10 +72,8 @@ $levelofmaincategories = $levelofrootcategory + 1;
 
 $maincategories = array();
 $subcategories = array();
-foreach ($categories as $key => $categorycursor)
-{
-	if ($categorycursor['level'] == $levelofmaincategories)
-	{
+foreach ($categories as $key => $categorycursor) {
+	if ($categorycursor['level'] == $levelofmaincategories) {
 		$maincategories[$key] = $categorycursor;
 	} else {
 		$subcategories[$key] = $categorycursor;
@@ -103,12 +106,12 @@ foreach ($maincategories as $cat) {
 ?>
 			</div>
 		</div>
-    </div>
-    <footer class="footer">
-      <div class="container">
-        <p class="text-muted"><?php print $mysoc->name; ?></p>
-      </div>
-    </footer>
+	</div>
+	<footer class="footer">
+	  <div class="container">
+		<p class="text-muted"><?php print $mysoc->name; ?></p>
+	  </div>
+	</footer>
   </body>
 <!-- partial -->
   <script src='https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js'></script>

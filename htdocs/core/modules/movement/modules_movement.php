@@ -17,7 +17,7 @@
  */
 
 /**
- *  \file       htdocs/core/modules/stock/modules_movement.php
+ *  \file       htdocs/core/modules/movement/modules_movement.php
  *  \ingroup    stock
  *  \brief      File with parent class for generating PDF of a stock movements
  */
@@ -50,11 +50,11 @@ abstract class ModelePDFMovement extends CommonDocGenerator
 		global $conf;
 
 		$type = 'movement';
-		$liste = array();
+		$list = array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$liste = getListOfModels($db, $type, $maxfilenamelength);
+		$list = getListOfModels($db, $type, $maxfilenamelength);
 
-		return $liste;
+		return $list;
 	}
 }

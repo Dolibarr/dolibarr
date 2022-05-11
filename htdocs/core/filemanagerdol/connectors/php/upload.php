@@ -22,10 +22,11 @@
  * This is the "File Uploader" for PHP.
  */
 
-require 'config.php';
+require 'config.php';	// This include the main.inc.php
 require 'util.php';
 require 'io.php';
 require 'commands.php';
+
 
 /**
  * SendError
@@ -41,8 +42,9 @@ function SendError($number, $text)
 
 
 // Check if this uploader has been enabled.
-if (!$Config['Enabled'])
+if (!$Config['Enabled']) {
 	SendUploadResults('1', '', '', 'This file uploader is disabled. Please check the "filemanagerdol/connectors/php/config.php" file');
+}
 
 $sCommand = 'QuickUpload';
 
@@ -52,12 +54,15 @@ $sType = isset($_GET['Type']) ? $_GET['Type'] : 'File';
 $sCurrentFolder = "/";
 
 // Is enabled the upload?
-if (!IsAllowedCommand($sCommand))
+if (!IsAllowedCommand($sCommand)) {
 	SendUploadResults('1', '', '', 'The ""'.$sCommand.'"" command isn\'t allowed');
+}
 
 // Check if it is an allowed type.
-if (!IsAllowedType($sType))
+if (!IsAllowedType($sType)) {
 	SendUploadResults(1, '', '', 'Invalid type specified');
+}
+
 
 
 // @CHANGE

@@ -25,7 +25,9 @@
  * \brief Script to send a mail to dolibarr users linked to companies with services to expire
  */
 
-if (!defined('NOSESSION')) define('NOSESSION', '1');
+if (!defined('NOSESSION')) {
+	define('NOSESSION', '1');
+}
 
 $sapi_type = php_sapi_name();
 $script_file = basename(__FILE__);
@@ -79,8 +81,9 @@ $sql .= " u.rowid as uid, u.lastname, u.firstname, u.email, u.lang";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe AS s, ".MAIN_DB_PREFIX."contrat AS c, ".MAIN_DB_PREFIX."contratdet AS cd";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product AS p ON p.rowid = cd.fk_product, ".MAIN_DB_PREFIX."societe_commerciaux AS sc, ".MAIN_DB_PREFIX."user AS u";
 $sql .= " WHERE s.rowid = c.fk_soc AND c.rowid = cd.fk_contrat AND c.statut > 0 AND cd.statut<5";
-if (is_numeric($duration_value))
+if (is_numeric($duration_value)) {
 	$sql .= " AND cd.date_fin_validite < '".$db->idate(dol_time_plus_duree($now, $duration_value, "d"))."'";
+}
 $sql .= " AND sc.fk_soc = s.rowid AND sc.fk_user = u.rowid";
 $sql .= " ORDER BY u.email ASC, s.rowid ASC, c.ref ASC"; // Order by email to allow one message per email
 
@@ -90,6 +93,7 @@ if ($resql) {
 	$num = $db->num_rows($resql);
 	$i = 0;
 	$oldemail = 'none';
+	$oldsalerepresentative = '';
 	$olduid = 0;
 	$oldlang = '';
 	$total = 0;
@@ -107,8 +111,9 @@ if ($resql) {
 				if (dol_strlen($oldemail) && $oldemail != 'none') {
 					envoi_mail($mode, $oldemail, $message, $total, $oldlang, $oldsalerepresentative, $duration_value);
 				} else {
-					if ($oldemail != 'none')
+					if ($oldemail != 'none') {
 						print "- No email sent for ".$oldsalerepresentative.", total: ".$total."\n";
+					}
 				}
 				$oldemail = $obj->email;
 				$olduid = $obj->uid;
@@ -118,8 +123,9 @@ if ($resql) {
 				$total = 0;
 				$foundtoprocess = 0;
 				$salerepresentative = dolGetFirstLastname($obj->firstname, $obj->lastname);
-				if (empty($obj->email))
+				if (empty($obj->email)) {
 					print "Warning: Sale representative ".$salerepresentative." has no email. Notice disabled.\n";
+				}
 			}
 
 			// Define line content
@@ -135,9 +141,11 @@ if ($resql) {
 				$foundtoprocess++;
 			}
 			print "Service to expire ".$obj->ref.", label ".dol_concatdesc($obj->plabel, $obj->description).", due date ".dol_print_date($db->jdate($obj->date_fin_validite), 'day')." (linked to company ".$obj->name.", sale representative ".dolGetFirstLastname($obj->firstname, $obj->lastname).", email ".$obj->email."): ";
-			if (dol_strlen($obj->email))
+			if (dol_strlen($obj->email)) {
 				print "qualified.";
-			else print "disqualified (no email).";
+			} else {
+				print "disqualified (no email).";
+			}
 			print "\n";
 
 			unset($outputlangs);
@@ -148,12 +156,12 @@ if ($resql) {
 
 		// Si il reste des envois en buffer
 		if ($foundtoprocess) {
-			if (dol_strlen($oldemail) && $oldemail != 'none') // Break onto email (new email)
-			{
+			if (dol_strlen($oldemail) && $oldemail != 'none') { // Break onto email (new email)
 				envoi_mail($mode, $oldemail, $message, $total, $oldlang, $oldsalerepresentative, $duration_value);
 			} else {
-				if ($oldemail != 'none')
+				if ($oldemail != 'none') {
 					print "- No email sent for ".$oldsalerepresentative.", total: ".$total."\n";
+				}
 			}
 		}
 	} else {
@@ -184,8 +192,9 @@ function envoi_mail($mode, $oldemail, $message, $total, $userlang, $oldsalerepre
 {
 	global $conf, $langs;
 
-	if (getenv('DOL_FORCE_EMAIL_TO'))
+	if (getenv('DOL_FORCE_EMAIL_TO')) {
 		$oldemail = getenv('DOL_FORCE_EMAIL_TO');
+	}
 
 	$newlangs = new Translate('', $conf);
 	$newlangs->setDefaultLang(empty($userlang) ? (empty($conf->global->MAIN_LANG_DEFAULT) ? 'auto' : $conf->global->MAIN_LANG_DEFAULT) : $userlang);
@@ -230,8 +239,9 @@ function envoi_mail($mode, $oldemail, $message, $total, $userlang, $oldsalerepre
 	$allmessage .= $langs->trans("Total")." = ".price($total, 0, $userlang, 0, 0, - 1, $conf->currency).($usehtml ? "<br>\n" : "\n");
 	if (!empty($conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_SALESREPRESENTATIVES_FOOTER)) {
 		$allmessage .= $conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_SALESREPRESENTATIVES_FOOTER;
-		if (dol_textishtml($conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_SALESREPRESENTATIVES_FOOTER))
+		if (dol_textishtml($conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_SALESREPRESENTATIVES_FOOTER)) {
 			$usehtml += 1;
+		}
 	}
 
 	$mail = new CMailFile($subject, $sendto, $from, $allmessage, array(), array(), array(), '', '', 0, $msgishtml);

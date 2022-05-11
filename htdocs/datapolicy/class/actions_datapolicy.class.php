@@ -117,11 +117,11 @@ class ActionsDatapolicy
 				$object->state_id = '';
 				$object->skype = '';
 				$object->country_id = '';
-				$object->note_private = $object->note_private.'<br/>'.$langs->trans('ANONYMISER_AT', dol_print_date(time()));
+				$object->note_private = $object->note_private.'<br>'.$langs->trans('ANONYMISER_AT', dol_print_date(time()));
 
 				if ($object->update($object->id, $user, 0)) {
 					// On supprime les contacts associé
-					$sql = "DELETE FROM ".MAIN_DB_PREFIX."socpeople WHERE fk_soc = ".$object->id;
+					$sql = "DELETE FROM ".MAIN_DB_PREFIX."socpeople WHERE fk_soc = ".((int) $object->id);
 					$this->db->query($sql);
 
 					setEventMessages($langs->trans('ANONYMISER_SUCCESS'), array());
@@ -196,7 +196,6 @@ class ActionsDatapolicy
 			echo $object->phone_pro.';';
 			echo $object->phone_perso.';';
 			echo $object->phone_mobile.';';
-			echo $object->jabberid.';';
 			echo dol_print_date($object->birth).';';
 			exit;
 		} elseif ($parameters['currentcontext'] == 'contactcard' && $action == 'send_datapolicy') {
@@ -332,8 +331,7 @@ class ActionsDatapolicy
 		global $conf, $user, $langs;
 		$langs->load('datapolicy@datapolicy');
 
-		if (!empty($conf->global->DATAPOLICIES_ENABLE_EMAILS))
-		{
+		if (!empty($conf->global->DATAPOLICIES_ENABLE_EMAILS)) {
 			$dialog = '<div id="dialogdatapolicy" style="display:none;" title="'.$langs->trans('DATAPOLICIES_PORTABILITE_TITLE').'">';
 			$dialog .= '<div class="confirmmessage">'.img_help('', '').' '.$langs->trans('DATAPOLICIES_PORTABILITE_CONFIRMATION').'</div>';
 			$dialog .= "</div>";
@@ -361,11 +359,11 @@ class ActionsDatapolicy
                       </script>';
 			echo $dialog;
 			if ($parameters['currentcontext'] == 'thirdpartycard' && in_array($object->forme_juridique_code, array(11, 12, 13, 15, 17, 18, 19, 35, 60, 200, 311, 312, 316, 401, 600, 700, 1005)) || $object->typent_id == 8) {
-				echo '<div class="inline-block divButAction"><a target="_blank" id="rpgpdbtn" class="butAction" href="'.$_SERVER["PHP_SELF"]."?socid=".$object->id.'&action=datapolicy_portabilite" title="'.$langs->trans('DATAPOLICIES_PORTABILITE_TITLE').'">'.$langs->trans("DATAPOLICIES_PORTABILITE").'</a></div>';
+				echo '<div class="inline-block divButAction"><a target="_blank" rel="noopener noreferrer" id="rpgpdbtn" class="butAction" href="'.$_SERVER["PHP_SELF"]."?socid=".$object->id.'&action=datapolicy_portabilite" title="'.$langs->trans('DATAPOLICIES_PORTABILITE_TITLE').'">'.$langs->trans("DATAPOLICIES_PORTABILITE").'</a></div>';
 			} elseif ($parameters['currentcontext'] == 'membercard') {
-				echo '<div class="inline-block divButAction"><a target="_blank" id="rpgpdbtn" class="butAction" href="'.$_SERVER["PHP_SELF"]."?rowid=".$object->id.'&action=datapolicy_portabilite" title="'.$langs->trans('DATAPOLICIES_PORTABILITE_TITLE').'">'.$langs->trans("DATAPOLICIES_PORTABILITE").'</a></div>';
+				echo '<div class="inline-block divButAction"><a target="_blank" rel="noopener noreferrer" id="rpgpdbtn" class="butAction" href="'.$_SERVER["PHP_SELF"]."?rowid=".$object->id.'&action=datapolicy_portabilite" title="'.$langs->trans('DATAPOLICIES_PORTABILITE_TITLE').'">'.$langs->trans("DATAPOLICIES_PORTABILITE").'</a></div>';
 			} elseif ($parameters['currentcontext'] == 'contactcard') {
-				echo '<div class="inline-block divButAction"><a target="_blank" id="rpgpdbtn" class="butAction" href="'.$_SERVER["PHP_SELF"]."?id=".$object->id.'&action=datapolicy_portabilite" title="'.$langs->trans('DATAPOLICIES_PORTABILITE_TITLE').'">'.$langs->trans("DATAPOLICIES_PORTABILITE").'</a></div>';
+				echo '<div class="inline-block divButAction"><a target="_blank" rel="noopener noreferrer" id="rpgpdbtn" class="butAction" href="'.$_SERVER["PHP_SELF"]."?id=".$object->id.'&action=datapolicy_portabilite" title="'.$langs->trans('DATAPOLICIES_PORTABILITE_TITLE').'">'.$langs->trans("DATAPOLICIES_PORTABILITE").'</a></div>';
 			}
 			if (!empty($object->mail) && empty($object->array_options['options_datapolicy_send']) && $parameters['currentcontext'] == 'thirdpartycard' && in_array($object->forme_juridique_code, array(11, 12, 13, 15, 17, 18, 19, 35, 60, 200, 311, 312, 316, 401, 600, 700, 1005)) || $object->typent_id == 8) {
 				echo '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"]."?socid=".$object->id.'&action=send_datapolicy" title="'.$langs->trans('DATAPOLICIES_SEND').'">'.$langs->trans("DATAPOLICIES_SEND").'</a></div>';

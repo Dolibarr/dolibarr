@@ -34,7 +34,9 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 $langs->loadLangs(array("admin", "withdrawals"));
 
 // Security check
-if (!$user->admin) accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
 
 $action = GETPOST('action', 'aZ09');
 $type = 'paymentorder';
@@ -46,54 +48,65 @@ $error = 0;
  * Actions
  */
 
-if ($action == "set")
-{
+if ($action == "set") {
 	$db->begin();
 
 	$id = GETPOST('PRELEVEMENT_ID_BANKACCOUNT', 'int');
 	$account = new Account($db);
-	if ($account->fetch($id) > 0)
-	{
+	if ($account->fetch($id) > 0) {
 		$res = dolibarr_set_const($db, "PRELEVEMENT_ID_BANKACCOUNT", $id, 'chaine', 0, '', $conf->entity);
-		if (!($res > 0)) $error++;
+		if (!($res > 0)) {
+			$error++;
+		}
 		/*
-        $res = dolibarr_set_const($db, "PRELEVEMENT_CODE_BANQUE", $account->code_banque,'chaine',0,'',$conf->entity);
-        if (! $res > 0) $error++;
-        $res = dolibarr_set_const($db, "PRELEVEMENT_CODE_GUICHET", $account->code_guichet,'chaine',0,'',$conf->entity);
-        if (! $res > 0) $error++;
-        $res = dolibarr_set_const($db, "PRELEVEMENT_NUMERO_COMPTE", $account->number,'chaine',0,'',$conf->entity);
-        if (! $res > 0) $error++;
-        $res = dolibarr_set_const($db, "PRELEVEMENT_NUMBER_KEY", $account->cle_rib,'chaine',0,'',$conf->entity);
-        if (! $res > 0) $error++;
-        $res = dolibarr_set_const($db, "PRELEVEMENT_IBAN", $account->iban,'chaine',0,'',$conf->entity);
-        if (! $res > 0) $error++;
-        $res = dolibarr_set_const($db, "PRELEVEMENT_BIC", $account->bic,'chaine',0,'',$conf->entity);
-        if (! $res > 0) $error++;
-        $res = dolibarr_set_const($db, "PRELEVEMENT_RAISON_SOCIALE", $account->proprio,'chaine',0,'',$conf->entity);
-        if (! $res > 0) $error++;
-        */
-	} else $error++;
+		$res = dolibarr_set_const($db, "PRELEVEMENT_CODE_BANQUE", $account->code_banque,'chaine',0,'',$conf->entity);
+		if (! $res > 0) $error++;
+		$res = dolibarr_set_const($db, "PRELEVEMENT_CODE_GUICHET", $account->code_guichet,'chaine',0,'',$conf->entity);
+		if (! $res > 0) $error++;
+		$res = dolibarr_set_const($db, "PRELEVEMENT_NUMERO_COMPTE", $account->number,'chaine',0,'',$conf->entity);
+		if (! $res > 0) $error++;
+		$res = dolibarr_set_const($db, "PRELEVEMENT_NUMBER_KEY", $account->cle_rib,'chaine',0,'',$conf->entity);
+		if (! $res > 0) $error++;
+		$res = dolibarr_set_const($db, "PRELEVEMENT_IBAN", $account->iban,'chaine',0,'',$conf->entity);
+		if (! $res > 0) $error++;
+		$res = dolibarr_set_const($db, "PRELEVEMENT_BIC", $account->bic,'chaine',0,'',$conf->entity);
+		if (! $res > 0) $error++;
+		$res = dolibarr_set_const($db, "PRELEVEMENT_RAISON_SOCIALE", $account->proprio,'chaine',0,'',$conf->entity);
+		if (! $res > 0) $error++;
+		*/
+	} else {
+		$error++;
+	}
 
+	/* Moved to account
 	$res = dolibarr_set_const($db, "PRELEVEMENT_ICS", GETPOST("PRELEVEMENT_ICS"), 'chaine', 0, '', $conf->entity);
 	if (!($res > 0)) $error++;
+	*/
+	if (GETPOST("PRELEVEMENT_USER") > 0) {
+		$res = dolibarr_set_const($db, "PRELEVEMENT_USER", GETPOST("PRELEVEMENT_USER"), 'chaine', 0, '', $conf->entity);
+		if (!($res > 0)) {
+			$error++;
+		}
+	}
+	if (GETPOST("PRELEVEMENT_END_TO_END") || GETPOST("PRELEVEMENT_END_TO_END") == "") {
+		$res = dolibarr_set_const($db, "PRELEVEMENT_END_TO_END", GETPOST("PRELEVEMENT_END_TO_END"), 'chaine', 0, '', $conf->entity);
+		if (!($res > 0)) {
+			$error++;
+		}
+	}
+	if (GETPOST("PRELEVEMENT_USTRD") || GETPOST("PRELEVEMENT_USTRD") == "") {
+		$res = dolibarr_set_const($db, "PRELEVEMENT_USTRD", GETPOST("PRELEVEMENT_USTRD"), 'chaine', 0, '', $conf->entity);
+		if (!($res > 0)) {
+			$error++;
+		}
+	}
 
-    if (GETPOST("PRELEVEMENT_USER") > 0) {
-        $res = dolibarr_set_const($db, "PRELEVEMENT_USER", GETPOST("PRELEVEMENT_USER"), 'chaine', 0, '', $conf->entity);
-        if (! ($res > 0)) $error++;
-    }
-    if (GETPOST("PRELEVEMENT_END_TO_END") || GETPOST("PRELEVEMENT_END_TO_END") == "") {
-        $res = dolibarr_set_const($db, "PRELEVEMENT_END_TO_END", GETPOST("PRELEVEMENT_END_TO_END"), 'chaine', 0, '', $conf->entity);
-        if (! ($res > 0)) $error++;
-    }
-    if (GETPOST("PRELEVEMENT_USTRD") || GETPOST("PRELEVEMENT_USTRD") == "") {
-        $res = dolibarr_set_const($db, "PRELEVEMENT_USTRD", GETPOST("PRELEVEMENT_USTRD"), 'chaine', 0, '', $conf->entity);
-        if (! ($res > 0)) $error++;
-    }
+	$res = dolibarr_set_const($db, "PRELEVEMENT_ADDDAYS", GETPOST("PRELEVEMENT_ADDDAYS"), 'chaine', 0, '', $conf->entity);
+	if (!($res > 0)) {
+		$error++;
+	}
 
-    $res = dolibarr_set_const($db, "PRELEVEMENT_ADDDAYS", GETPOST("PRELEVEMENT_ADDDAYS"), 'chaine', 0, '', $conf->entity);
-    if (! ($res > 0)) $error++;
-
-    if (! $error) {
+	if (!$error) {
 		$db->commit();
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
@@ -102,19 +115,17 @@ if ($action == "set")
 	}
 }
 
-if ($action == "addnotif")
-{
+if ($action == "addnotif") {
 	$bon = new BonPrelevement($db);
-	$bon->AddNotification($db, GETPOST('user', 'int'), $action);
+	$bon->addNotification($db, GETPOST('user', 'int'), $action);
 
 	header("Location: ".$_SERVER["PHP_SELF"]);
 	exit;
 }
 
-if ($action == "deletenotif")
-{
+if ($action == "deletenotif") {
 	$bon = new BonPrelevement($db);
-	$bon->DeleteNotificationById(GETPOST('notif', 'int'));
+	$bon->deleteNotificationById(GETPOST('notif', 'int'));
 
 	header("Location: ".$_SERVER["PHP_SELF"]);
 	exit;
@@ -146,13 +157,17 @@ print '<td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
 print "</tr>";
 
+
 // Bank account (from Banks module)
 print '<tr class="oddeven"><td class="fieldrequired">'.$langs->trans("BankToReceiveWithdraw").'</td>';
-print '<td class="left">';
-$form->select_comptes($conf->global->PRELEVEMENT_ID_BANKACCOUNT, 'PRELEVEMENT_ID_BANKACCOUNT', 0, "courant=1", 1);
+print '<td>';
+print img_picto('', 'bank_account', 'class="pictofixedwidth"');
+print $form->select_comptes($conf->global->PRELEVEMENT_ID_BANKACCOUNT, 'PRELEVEMENT_ID_BANKACCOUNT', 0, "courant=1", 1, '', 0, 'minwidth200', 1);
 print '</td></tr>';
 
+/* Moved to bank account data
 // ICS
+
 print '<tr class="oddeven"><td class="fieldrequired">';
 $htmltext = $langs->trans("AskThisIDToYourBank");
 print $form->textwithpicto($langs->trans("ICS"), $htmltext);
@@ -161,11 +176,13 @@ print '<td class="left">';
 print '<input type="text" name="PRELEVEMENT_ICS" value="'.$conf->global->PRELEVEMENT_ICS.'" size="15" >';
 print '</td>';
 print '</td></tr>';
+*/
 
 //User
 print '<tr class="oddeven"><td class="fieldrequired">'.$langs->trans("ResponsibleUser").'</td>';
-print '<td class="left">';
-print $form->select_dolusers($conf->global->PRELEVEMENT_USER, 'PRELEVEMENT_USER', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
+print '<td>';
+print img_picto('', 'user', 'class="pictofixedwidth"');
+print $form->select_dolusers($conf->global->PRELEVEMENT_USER, 'PRELEVEMENT_USER', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'minwidth200 maxwidth500');
 print '</td>';
 print '</tr>';
 
@@ -174,8 +191,8 @@ print '<tr class="oddeven"><td>';
 $htmltext = $langs->trans("KeepThisEmptyInMostCases");
 print $form->textwithpicto($langs->trans("END_TO_END"), $htmltext);
 print '</td>';
-print '<td class="left">';
-print '<input type="text" name="PRELEVEMENT_END_TO_END" value="'.$conf->global->PRELEVEMENT_END_TO_END.'" size="15" ></td>';
+print '<td>';
+print '<input type="text" name="PRELEVEMENT_END_TO_END" value="'.$conf->global->PRELEVEMENT_END_TO_END.'" class="width100"></td>';
 print '</td></tr>';
 
 //USTRD
@@ -184,20 +201,21 @@ $htmltext = $langs->trans("KeepThisEmptyInMostCases");
 print $form->textwithpicto($langs->trans("USTRD"), $htmltext);
 print '</td>';
 print '<td class="left">';
-print '<input type="text" name="PRELEVEMENT_USTRD" value="'.$conf->global->PRELEVEMENT_USTRD.'" size="15" ></td>';
+print '<input type="text" name="PRELEVEMENT_USTRD" value="'.$conf->global->PRELEVEMENT_USTRD.'" class="width100"></td>';
 print '</td></tr>';
 
 //ADDDAYS
 print '<tr class="oddeven"><td>'.$langs->trans("ADDDAYS").'</td>';
-print '<td class="left">';
-if (empty($conf->global->PRELEVEMENT_ADDDAYS)) $conf->global->PRELEVEMENT_ADDDAYS = 0;
-print '<input type="text" name="PRELEVEMENT_ADDDAYS" value="'.$conf->global->PRELEVEMENT_ADDDAYS.'" size="5" ></td>';
+print '<td>';
+if (empty($conf->global->PRELEVEMENT_ADDDAYS)) {
+	$conf->global->PRELEVEMENT_ADDDAYS = 0;
+}
+print '<input type="text" name="PRELEVEMENT_ADDDAYS" value="'.$conf->global->PRELEVEMENT_ADDDAYS.'"  class="width50"></td>';
 print '</td></tr>';
 
 print '</table>';
-print '<br>';
 
-print '<div class="center"><input type="submit" class="button button-save" value="'.$langs->trans("Save").'"></div>';
+print $form->buttonsSaveCancel("Save", '');
 
 print '</form>';
 
@@ -220,18 +238,18 @@ $sql.= " AND entity = ".$conf->entity;
 $resql=$db->query($sql);
 if ($resql)
 {
-    $i = 0;
-    $num_rows=$db->num_rows($resql);
-    while ($i < $num_rows)
-    {
-        $array = $db->fetch_array($resql);
-        array_push($def, $array[0]);
-        $i++;
-    }
+	$i = 0;
+	$num_rows=$db->num_rows($resql);
+	while ($i < $num_rows)
+	{
+		$array = $db->fetch_array($resql);
+		array_push($def, $array[0]);
+		$i++;
+	}
 }
 else
 {
-    dol_print_error($db);
+	dol_print_error($db);
 }
 
 
@@ -249,118 +267,116 @@ clearstatcache();
 
 foreach ($dirmodels as $reldir)
 {
-    foreach (array('','/doc') as $valdir)
-    {
-        $dir = dol_buildpath($reldir."core/modules/paymentorders".$valdir);
+	foreach (array('','/doc') as $valdir)
+	{
+		$dir = dol_buildpath($reldir."core/modules/paymentorders".$valdir);
 
-        if (is_dir($dir))
-        {
-            $handle=opendir($dir);
-            if (is_resource($handle))
-            {
-                while (($file = readdir($handle))!==false)
-                {
-                    $filelist[]=$file;
-                }
-                closedir($handle);
-                arsort($filelist);
+		if (is_dir($dir))
+		{
+			$handle=opendir($dir);
+			if (is_resource($handle))
+			{
+				while (($file = readdir($handle))!==false)
+				{
+					$filelist[]=$file;
+				}
+				closedir($handle);
+				arsort($filelist);
 
-                foreach($filelist as $file)
-                {
-                    if (preg_match('/\.modules\.php$/i',$file) && preg_match('/^(pdf_|doc_)/',$file))
-                    {
+				foreach($filelist as $file)
+				{
+					if (preg_match('/\.modules\.php$/i',$file) && preg_match('/^(pdf_|doc_)/',$file))
+					{
 
-                        if (file_exists($dir.'/'.$file))
-                        {
-                            $name = substr($file, 4, dol_strlen($file) -16);
-                            $classname = substr($file, 0, dol_strlen($file) -12);
+						if (file_exists($dir.'/'.$file))
+						{
+							$name = substr($file, 4, dol_strlen($file) -16);
+							$classname = substr($file, 0, dol_strlen($file) -12);
 
-                            require_once $dir.'/'.$file;
-                            $module = new $classname($db);
+							require_once $dir.'/'.$file;
+							$module = new $classname($db);
 
-                            $modulequalified=1;
-                            if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) $modulequalified=0;
-                            if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) $modulequalified=0;
+							$modulequalified=1;
+							if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) $modulequalified=0;
+							if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) $modulequalified=0;
 
-                            if ($modulequalified)
-                            {
-                                $var = !$var;
-                                print '<tr class="oddeven"><td width="100">';
-                                print (empty($module->name)?$name:$module->name);
-                                print "</td><td>\n";
-                                if (method_exists($module,'info')) print $module->info($langs);
-                                else print $module->description;
-                                print '</td>';
+							if ($modulequalified) {
+								print '<tr class="oddeven"><td width="100">';
+								print (empty($module->name)?$name:$module->name);
+								print "</td><td>\n";
+								if (method_exists($module,'info')) print $module->info($langs);
+								else print $module->description;
+								print '</td>';
 
-                                // Active
-                                if (in_array($name, $def))
-                                {
-                                    print '<td class="center">'."\n";
-                                    print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=del&value='.$name.'">';
-                                    print img_picto($langs->trans("Enabled"),'switch_on');
-                                    print '</a>';
-                                    print '</td>';
-                                }
-                                else
-                                {
-                                    print '<td class="center">'."\n";
-                                    print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=set&amp;token='.newToken().'&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
-                                    print "</td>";
-                                }
+								// Active
+								if (in_array($name, $def))
+								{
+									print '<td class="center">'."\n";
+									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=del&token='.newToken().'&value='.urlencode($name).'">';
+									print img_picto($langs->trans("Enabled"),'switch_on');
+									print '</a>';
+									print '</td>';
+								}
+								else
+								{
+									print '<td class="center">'."\n";
+									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=set&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
+									print "</td>";
+								}
 
-                                // Default
-                                print '<td class="center">';
-                                if ($conf->global->PAYMENTORDER_ADDON_PDF == $name)
-                                {
-                                    print img_picto($langs->trans("Default"),'on');
-                                }
-                                else
-                                {
-                                    print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;token='.newToken().'&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
-                                }
-                                print '</td>';
+								// Default
+								print '<td class="center">';
+								if ($conf->global->PAYMENTORDER_ADDON_PDF == $name)
+								{
+									print img_picto($langs->trans("Default"),'on');
+								}
+								else
+								{
+									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.$name.'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+								}
+								print '</td>';
 
-                                // Info
-                                $htmltooltip =    ''.$langs->trans("Name").': '.$module->name;
-                                $htmltooltip.='<br>'.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
-                                if ($module->type == 'pdf')
-                                {
-                                    $htmltooltip.='<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
-                                }
-                                $htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
-                                $htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo,1,1);
-                                $htmltooltip.='<br>'.$langs->trans("PaymentMode").': '.yn($module->option_modereg,1,1);
-                                $htmltooltip.='<br>'.$langs->trans("PaymentConditions").': '.yn($module->option_condreg,1,1);
-                                $htmltooltip.='<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang,1,1);
-                                //$htmltooltip.='<br>'.$langs->trans("Discounts").': '.yn($module->option_escompte,1,1);
-                                //$htmltooltip.='<br>'.$langs->trans("CreditNote").': '.yn($module->option_credit_note,1,1);
-                                $htmltooltip.='<br>'.$langs->trans("WatermarkOnDraftOrders").': '.yn($module->option_draft_watermark,1,1);
+								// Info
+								$htmltooltip =    ''.$langs->trans("Name").': '.$module->name;
+								$htmltooltip.='<br>'.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
+								if ($module->type == 'pdf')
+								{
+									$htmltooltip.='<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
+								}
+								$htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
+								$htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo,1,1);
+								$htmltooltip.='<br>'.$langs->trans("PaymentMode").': '.yn($module->option_modereg,1,1);
+								$htmltooltip.='<br>'.$langs->trans("PaymentConditions").': '.yn($module->option_condreg,1,1);
+								$htmltooltip.='<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang,1,1);
+								//$htmltooltip.='<br>'.$langs->trans("Discounts").': '.yn($module->option_escompte,1,1);
+								//$htmltooltip.='<br>'.$langs->trans("CreditNote").': '.yn($module->option_credit_note,1,1);
+								$htmltooltip.='<br>'.$langs->trans("WatermarkOnDraftOrders").': '.yn($module->option_draft_watermark,1,1);
 
 
-                                print '<td class="center">';
-                                print $form->textwithpicto('',$htmltooltip,1,0);
-                                print '</td>';
+								print '<td class="center">';
+								print $form->textwithpicto('',$htmltooltip,1,0);
+								print '</td>';
 
-                                // Preview
-                                print '<td class="center">';
-                                if ($module->type == 'pdf')
-                                {
-                                    print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
-                                }
-                                else
-                                {
-                                    print img_object($langs->trans("PreviewNotAvailable"),'generic');
-                                }
-                                print '</td>';
+								// Preview
+								print '<td class="center">';
+								if ($module->type == 'pdf')
+								{
+									print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
+								}
+								else
+								{
+									print img_object($langs->trans("PreviewNotAvailable"),'generic');
+								}
+								print '</td>';
 
-                                print "</tr>\n";
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
+								print "</tr>\n";
+							}
+						}
+					}
+				}
+			}
+		}
+	}
 }
 
 */
@@ -378,73 +394,73 @@ print '<br>';
 /* Disable this, there is no trigger with elementtype 'withdraw'
 if (! empty($conf->global->MAIN_MODULE_NOTIFICATION))
 {
-    $langs->load("mails");
-    print load_fiche_titre($langs->trans("Notifications"));
+	$langs->load("mails");
+	print load_fiche_titre($langs->trans("Notifications"));
 
-    $sql = "SELECT u.rowid, u.lastname, u.firstname, u.fk_soc, u.email";
-    $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
-    $sql.= " WHERE entity IN (".getEntity('invoice').")";
+	$sql = "SELECT u.rowid, u.lastname, u.firstname, u.fk_soc, u.email";
+	$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
+	$sql.= " WHERE entity IN (".getEntity('invoice').")";
 
-    $resql=$db->query($sql);
-    if ($resql)
-    {
-        $num = $db->num_rows($resql);
-        $i = 0;
-        while ($i < $num)
-        {
-            $obj = $db->fetch_object($resql);
+	$resql=$db->query($sql);
+	if ($resql)
+	{
+		$num = $db->num_rows($resql);
+		$i = 0;
+		while ($i < $num)
+		{
+			$obj = $db->fetch_object($resql);
 
-            if (!$obj->fk_soc)
-            {
-                $username=dolGetFirstLastname($obj->firstname,$obj->lastname);
-                $internalusers[$obj->rowid] = $username;
-            }
+			if (!$obj->fk_soc)
+			{
+				$username=dolGetFirstLastname($obj->firstname,$obj->lastname);
+				$internalusers[$obj->rowid] = $username;
+			}
 
-            $i++;
-        }
-        $db->free($resql);
-    }
+			$i++;
+		}
+		$db->free($resql);
+	}
 
-    // Get list of triggers for module withdraw
-    $sql = "SELECT rowid, code, label";
-    $sql.= " FROM ".MAIN_DB_PREFIX."c_action_trigger";
-    $sql.= " WHERE elementtype = 'withdraw'";
-    $sql.= " ORDER BY rang ASC";
+	// Get list of triggers for module withdraw
+	$sql = "SELECT rowid, code, label";
+	$sql.= " FROM ".MAIN_DB_PREFIX."c_action_trigger";
+	$sql.= " WHERE elementtype = 'withdraw'";
+	$sql.= " ORDER BY rang ASC";
 
-    $resql = $db->query($sql);
-    if ($resql)
-    {
-        $num = $db->num_rows($resql);
-        $i = 0;
-        while ($i < $num)
-        {
-            $obj = $db->fetch_object($resql);
-            $label=($langs->trans("Notify_".$obj->code)!="Notify_".$obj->code?$langs->trans("Notify_".$obj->code):$obj->label);
-            $actions[$obj->rowid]=$label;
-            $i++;
-        }
-        $db->free($resql);
-    }
+	$resql = $db->query($sql);
+	if ($resql)
+	{
+		$num = $db->num_rows($resql);
+		$i = 0;
+		while ($i < $num)
+		{
+			$obj = $db->fetch_object($resql);
+			$label=($langs->trans("Notify_".$obj->code)!="Notify_".$obj->code?$langs->trans("Notify_".$obj->code):$obj->label);
+			$actions[$obj->rowid]=$label;
+			$i++;
+		}
+		$db->free($resql);
+	}
 
 
-    print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=addnotif">';
-    print '<input type="hidden" name="token" value="'.newToken().'">';
-    print '<table class="noborder centpercent">';
-    print '<tr class="liste_titre">';
-    print '<td>'.$langs->trans("User").'</td>';
-    print '<td>'.$langs->trans("Value").'</td>';
-    print '<td class="right">'.$langs->trans("Action").'</td>';
-    print "</tr>\n";
+	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=addnotif&token='.newToken().'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<table class="noborder centpercent">';
+	print '<tr class="liste_titre">';
+	print '<td>'.$langs->trans("User").'</td>';
+	print '<td>'.$langs->trans("Value").'</td>';
+	print '<td class="right">'.$langs->trans("Action").'</td>';
+	print "</tr>\n";
 
-    print '<tr class="impair"><td class="left">';
-    print $form->selectarray('user',$internalusers);//  select_dolusers(0,'user',0);
-    print '</td>';
+	print '<tr class="impair"><td class="left">';
+	print $form->selectarray('user',$internalusers);//  select_dolusers(0,'user',0);
+	print '</td>';
 
-    print '<td>';
-    print $form->selectarray('action',$actions);//  select_dolusers(0,'user',0);
-    print '</td>';
+	print '<td>';
+	print $form->selectarray('action',$actions);//  select_dolusers(0,'user',0);
+	print '</td>';
 
-    print '<td class="right"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td></tr>';
+	print '<td class="right"><input type="submit" class="button button-add" value="'.$langs->trans("Add").'"></td></tr>';
 
 	// List of current notifications for objet_type='withdraw'
 	$sql = "SELECT u.lastname, u.firstname,";
@@ -459,22 +475,22 @@ if (! empty($conf->global->MAIN_MODULE_NOTIFICATION))
 	$resql = $db->query($sql);
 	if ($resql)
 	{
-	    $num = $db->num_rows($resql);
-	    $i = 0;
-	    while ($i < $num)
-	    {
-	        $obj = $db->fetch_object($resql);
+		$num = $db->num_rows($resql);
+		$i = 0;
+		while ($i < $num)
+		{
+			$obj = $db->fetch_object($resql);
 
 
-	        print '<tr class="oddeven">';
-	        print '<td>'.dolGetFirstLastname($obj->firstname,$obj->lastname).'</td>';
-	        $label=($langs->trans("Notify_".$obj->code)!="Notify_".$obj->code?$langs->trans("Notify_".$obj->code):$obj->label);
-	        print '<td>'.$label.'</td>';
-	        print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=deletenotif&token='.newToken().'&notif='.$obj->rowid.'">'.img_delete().'</a></td>';
-	        print '</tr>';
-	        $i++;
-	    }
-	    $db->free($resql);
+			print '<tr class="oddeven">';
+			print '<td>'.dolGetFirstLastname($obj->firstname,$obj->lastname).'</td>';
+			$label=($langs->trans("Notify_".$obj->code)!="Notify_".$obj->code?$langs->trans("Notify_".$obj->code):$obj->label);
+			print '<td>'.$label.'</td>';
+			print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=deletenotif&token='.newToken().'&notif='.$obj->rowid.'">'.img_delete().'</a></td>';
+			print '</tr>';
+			$i++;
+		}
+		$db->free($resql);
 	}
 
 	print '</table>';

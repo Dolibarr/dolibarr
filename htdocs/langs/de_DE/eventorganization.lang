@@ -1,0 +1,167 @@
+# Copyright (C) 2021		Florian Henry			<florian.henry@scopen.fr>
+# Copyright (C) 2021		Dorian Vabre			<dorian.vabre@gmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+ModuleEventOrganizationName = Veranstaltungsorganisation
+EventOrganizationDescription =  Veranstaltungsorganisation mit dem Modul 'Projekte'
+EventOrganizationDescriptionLong= Verwalten Sie die Organisation einer Veranstaltung (Show, Konferenzbeiträge, Teilnehmer oder Referenten, mit öffentlichen Seiten für Vorschläge, Abstimmung oder Registrierung)
+#
+# Menu
+#
+EventOrganizationMenuLeft = Veranstaltungen
+EventOrganizationConferenceOrBoothMenuLeft = Konferenzbeitrag oder Stand
+
+PaymentEvent=Zahlung einer Veranstaltung
+
+#
+# Admin page
+#
+NewRegistration=Anmeldung
+EventOrganizationSetup=Einstellungen für die Veranstaltungsorganisation
+EventOrganization=Veranstaltungsorganisation
+Settings=Einstellungen
+EventOrganizationSetupPage = Einstellungsseite für die Veranstaltungsorganisation
+EVENTORGANIZATION_TASK_LABEL = Bezeichnung der Aufgaben, die automatisch erstellt werden sollen, wenn das Projekt bestätigt wird
+EVENTORGANIZATION_TASK_LABELTooltip = Mit der Validierung einer organisierten Veranstaltung können einige Aufgaben automatisch im Projekt erstellt werden <br> <br> Zum Beispiel: <br> Aufruf für Konferenzbeiträge senden <br> Aufruf für Standbuchungen senden <br> Anfragen für Konferenzbeiträge empfangen <br>Anfragen für Stände empfangen <br>Veranstaltungsbuchung für Teilnehmer freigeben<br>Veranstaltungserinnerung an Referenten senden <br>Veranstaltungserinnerung an Standinhaber senden <br>  Veranstaltungserinnerung an Teilnehmer senden
+EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = Kategorie, die Drittanbietern hinzugefügt werden soll, wird automatisch erstellt, wenn jemand einen Konferenzbeitrag vorschlägt
+EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = Kategorie, die Drittanbietern hinzugefügt werden soll, wird automatisch erstellt, wenn sie einen Stand vorschlagen
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = Vorlage einer E-Mail, die nach Erhalt eines Vorschlags für einen Konferenzbeitrag gesendet werden soll.
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH = Vorlage einer E-Mail, die nach Erhalt eines Standvorschlags gesendet werden soll.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = E-Mail-Vorlage, die nach der Bezahlung eines registrierten Standes gesendet wird.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = E-Mail-Vorlage, die nach der Bezahlung der Anmeldung zu einer Veranstaltung gesendet wird. 
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = E-Mail-Vorlage, die verwendet werden soll, wenn E-Mails durch Massenaktion "E-Mails senden" an Redner gesendet werden
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = E-Mail-Vorlage, die verwendet werden soll, wenn E-Mails durch Massenaktion „E-Mails senden“ an Teilnehmer gesendet werden
+EVENTORGANIZATION_FILTERATTENDEES_CAT = Schränkt im Formular zum Erstellen/Hinzufügen eines Teilnehmers die Liste der Geschäftspartner auf diejenigen aus der Kategorie ein
+EVENTORGANIZATION_FILTERATTENDEES_TYPE = Schränkt im Formular zum Erstellen/Hinzufügen eines Teilnehmers die Liste der Geschäftspartner auf diejenigen des Typs ein
+
+#
+# Object
+#
+EventOrganizationConfOrBooth= Konferenzbeitrag oder Stand
+ManageOrganizeEvent = Veranstaltung organisieren
+ConferenceOrBooth = Konferenzbeitrag oder Stand
+ConferenceOrBoothTab = Konferenzbeitrag oder Stand
+AmountPaid = Bezahlter Betrag
+DateOfRegistration = Datum der Anmeldung
+ConferenceOrBoothAttendee = Referent eines Konferenzbeitrags oder Standinhaber
+
+#
+# Template Mail
+#
+YourOrganizationEventConfRequestWasReceived = Ihre Anfrage für einen Konferenzbeitrag wurde empfangen
+YourOrganizationEventBoothRequestWasReceived = Ihre Anfrage für Stand wurde empfangen
+EventOrganizationEmailAskConf = Anfrage für einen Konferenzbeitrag
+EventOrganizationEmailAskBooth = Anfrage für Stand
+EventOrganizationEmailBoothPayment = Bezahlung Ihres Standes
+EventOrganizationEmailRegistrationPayment = Anmeldung zu einer Veranstaltung
+EventOrganizationMassEmailAttendees = Kommunikation mit den Teilnehmern
+EventOrganizationMassEmailSpeakers = Kommunikation mit den Sprechern
+ToSpeakers=An Redner
+
+#
+# Event
+#
+AllowUnknownPeopleSuggestConf=Personen erlauben, Konferenzbeiträge vorzuschlagen
+AllowUnknownPeopleSuggestConfHelp=Unbekannten Personen erlauben, einen Konferenzbeitrag vorzuschlagen, den sie halten möchten
+AllowUnknownPeopleSuggestBooth=Personen erlauben, sich für einen Stand zu bewerben
+AllowUnknownPeopleSuggestBoothHelp=Unbekannten Personen erlauben, sich für einen Stand zu bewerben
+PriceOfRegistration=Buchungskosten für die Teilnahme
+PriceOfRegistrationHelp=Preis für die Anmeldung/Teilnahme an der Veranstaltung
+PriceOfBooth=Buchungskosten für einen Stand
+PriceOfBoothHelp=Buchungskosten für einen Stand
+EventOrganizationICSLink=Verknüpfe ICS für Vorträge
+ConferenceOrBoothInformation=Informationen zu Konferenzbeitrag oder Stand
+Attendees=Teilnehmer
+ListOfAttendeesOfEvent=Teilnehmerliste des Veranstaltungsprojekts
+DownloadICSLink = ICS-Link herunterladen
+EVENTORGANIZATION_SECUREKEY = Seed, um den Schlüssel für die öffentliche Registrierungsseite zu sichern, die zum Vorschlagen eines Vortrags dient
+SERVICE_BOOTH_LOCATION = Service, der für die Rechnungszeile über einen Stand verwendet wird
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Service, der für die Rechnungszeile über eine Teilnahmebuchung einer Veranstaltung verwendet wird
+NbVotes=Anzahl der Stimmen
+#
+# Status
+#
+EvntOrgDraft = Entwurf
+EvntOrgSuggested = Empfohlen
+EvntOrgConfirmed = Bestätigt
+EvntOrgNotQualified = Nicht qualifiziert
+EvntOrgDone = Erledigt
+EvntOrgCancelled = Abgesagt
+#
+# Public page
+#
+SuggestForm = Vorschlagsseite
+SuggestOrVoteForConfOrBooth = Seite für Vorschlag oder Abstimmung
+EvntOrgRegistrationHelpMessage = Hier können Sie für einen Konferenzbeitrag abstimmen oder einen neuen für die Veranstaltung vorschlagen. Sie können sich auch für einen Stand während der Veranstaltung bewerben.
+EvntOrgRegistrationConfHelpMessage = Hier können Sie einen neue Konferenzbeitrag vorschlagen, der während der Veranstaltung gehalten werden soll.
+EvntOrgRegistrationBoothHelpMessage = Hier können Sie sich für einen Stand während der Veranstaltung bewerben.
+ListOfSuggestedConferences = Liste der vorgeschlagenen Konferenzbeiträge
+ListOfSuggestedBooths = Liste der vorgeschlagenen Stände
+ListOfConferencesOrBooths=Liste der Konferenzbeiträge und Stände des Veranstaltungsprojekts
+SuggestConference = Einen neuen Konferenzbeitrag vorschlagen
+SuggestBooth = Einen Stand vorschlagen
+ViewAndVote = Vorgeschlagene Veranstaltungen ansehen und abstimmen
+PublicAttendeeSubscriptionGlobalPage = Öffentlicher Link für die Anmeldung zur Veranstaltung
+PublicAttendeeSubscriptionPage = Öffentlicher Link für die Anmeldung nur zu dieser Veranstaltung
+MissingOrBadSecureKey = Der Sicherheitsschlüssel ist ungültig oder fehlt
+EvntOrgWelcomeMessage = Mit diesem Formular können Sie sich als neuer Teilnehmer für die Veranstaltung anmelden: <b> %s </b>
+EvntOrgDuration = Diese Konferenz beginnt am %s und endet am %s.
+ConferenceAttendeeFee = Konferenzteilnehmergebühr für die Veranstaltung: '%s' vom %s bis %s.
+BoothLocationFee = Stand für die Veranstaltung: '%s' vom %s bis %s
+EventType = Ereignistyp
+LabelOfBooth=Stand-Label
+LabelOfconference=Konferenz-Label
+ConferenceIsNotConfirmed=Anmeldung nicht möglich, Konferenz ist noch nicht bestätigt
+DateMustBeBeforeThan=%s muss vor %s sein
+DateMustBeAfterThan=%s muss nach %s sein
+
+NewSubscription=Anmeldung
+OrganizationEventConfRequestWasReceived=Ihr Vorschlag für einen Konferenzbeitrag ist eingegangen
+OrganizationEventBoothRequestWasReceived=Ihre Anfrage für einen Stand ist eingegangen
+OrganizationEventPaymentOfBoothWasReceived=Ihre Zahlung für Ihren Stand wurde erfasst
+OrganizationEventPaymentOfRegistrationWasReceived=Ihre Zahlung für Ihre Veranstaltungsanmeldung wurde erfasst
+OrganizationEventBulkMailToAttendees=Dies ist eine Erinnerung, dass Sie Teilnehmer der Veranstaltung sind
+OrganizationEventBulkMailToSpeakers=Dies ist eine Erinnerung, dass Sie an der Veranstaltung als Referent teilnehmen
+OrganizationEventLinkToThirdParty=Verknüpfung mit Geschäftspartner (Kunde, Lieferant oder Partner)
+
+NewSuggestionOfBooth=Bewerbung für einen Stand
+NewSuggestionOfConference=Bewerbung für einen Konferenzbeitrag
+
+#
+# Vote page
+#
+EvntOrgRegistrationWelcomeMessage = Willkommen auf der Vorschlagseite für Konferenzbeiträge und Stände.
+EvntOrgRegistrationConfWelcomeMessage = Willkommen auf der Vorschlagsseite für Konferenzbeiträge.
+EvntOrgRegistrationBoothWelcomeMessage = Willkommen auf der Vorschlagsseite für Stände.
+EvntOrgVoteHelpMessage = Hier können Sie die vorgeschlagenen Veranstaltungen für das Projekt einsehen und für sie abstimmen
+VoteOk = Ihre Stimme wurde angenommen.
+AlreadyVoted = Sie haben bereits für diese Veranstaltung abgestimmt.
+VoteError = Bei der Abstimmung ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.
+
+SubscriptionOk = Ihre Anmeldung wurde bestätigt
+ConfAttendeeSubscriptionConfirmation = Bestätigung Ihrer Anmeldung zu einer Veranstaltung
+Attendee = Teilnehmer
+PaymentConferenceAttendee = Zahlung für Konferenzteilnehmer
+PaymentBoothLocation = Zahlung für einen Stand
+DeleteConferenceOrBoothAttendee=Teilnehmer entfernen
+RegistrationAndPaymentWereAlreadyRecorder=Für die E-Mail-Adresse <b> %s </b> wurden bereits eine Anmeldung und eine Zahlung erfasst
+EmailAttendee=Teilnehmer-E-Mail
+EmailCompanyForInvoice=Firmen-E-Mail (für Rechnung, falls abweichend von der Teilnehmer-E-Mail)
+ErrorSeveralCompaniesWithEmailContactUs=Es wurden mehrere Unternehmen mit dieser E-Mail-Adresse gefunden, sodass wir Ihre Registrierung nicht automatisch validieren können. Bitte kontaktieren Sie uns unter %s für eine manuelle Validierung
+ErrorSeveralCompaniesWithNameContactUs=Es wurden mehrere Unternehmen mit diesem Namen gefunden, sodass wir Ihre Registrierung nicht automatisch validieren können. Bitte kontaktieren Sie uns unter %s für eine manuelle Validierung
+NoPublicActionsAllowedForThisEvent=Für diese Veranstaltung sind keine Aktionen für die Öffentlichkeit zugänglich

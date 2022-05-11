@@ -19,15 +19,19 @@
  */
 
 
-if (!defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1');
+if (!defined('NOTOKENRENEWAL')) {
+	define('NOTOKENRENEWAL', '1');
+}
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/opensurvey/fonctions.php';
+require_once DOL_DOCUMENT_ROOT.'/opensurvey/lib/opensurvey.lib.php';
 
 // Security check
-if (!$user->rights->opensurvey->write) accessforbidden();
+if (!$user->rights->opensurvey->write) {
+	accessforbidden();
+}
 
 $langs->load("opensurvey");
 

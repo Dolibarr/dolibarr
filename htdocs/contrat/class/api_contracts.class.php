@@ -106,6 +106,10 @@ class Contracts extends DolibarrApi
 	{
 		global $db, $conf;
 
+		if (!DolibarrApiAccess::$user->rights->contrat->lire) {
+			throw new RestException(401);
+		}
+
 		$obj_ret = array();
 
 		// case of external user, $thirdparty_ids param is ignored and replaced by user's socid
@@ -113,38 +117,47 @@ class Contracts extends DolibarrApi
 
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;
-		if (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) $search_sale = DolibarrApiAccess::$user->id;
+		if (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) {
+			$search_sale = DolibarrApiAccess::$user->id;
+		}
 
 		$sql = "SELECT t.rowid";
-		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
+		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) {
+			$sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
+		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."contrat as t";
 
-		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
+		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) {
+			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
+		}
 
 		$sql .= ' WHERE t.entity IN ('.getEntity('contrat').')';
-		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql .= " AND t.fk_soc = sc.fk_soc";
-		if ($socids) $sql .= " AND t.fk_soc IN (".$socids.")";
-		if ($search_sale > 0) $sql .= " AND t.rowid = sc.fk_soc"; // Join for the needed table to filter by sale
+		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) {
+			$sql .= " AND t.fk_soc = sc.fk_soc";
+		}
+		if ($socids) {
+			$sql .= " AND t.fk_soc IN (".$this->db->sanitize($socids).")";
+		}
+		if ($search_sale > 0) {
+			$sql .= " AND t.rowid = sc.fk_soc"; // Join for the needed table to filter by sale
+		}
 		// Insert sale filter
-		if ($search_sale > 0)
-		{
-			$sql .= " AND sc.fk_user = ".$search_sale;
+		if ($search_sale > 0) {
+			$sql .= " AND sc.fk_user = ".((int) $search_sale);
 		}
 		// Add sql filters
-		if ($sqlfilters)
-		{
-			if (!DolibarrApi::_checkFilters($sqlfilters))
-			{
-				throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+		if ($sqlfilters) {
+			$errormessage = '';
+			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
+				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
 			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
-			if ($page < 0)
-			{
+			if ($page < 0) {
 				$page = 0;
 			}
 			$offset = $limit * $page;
@@ -155,13 +168,11 @@ class Contracts extends DolibarrApi
 		dol_syslog("API Rest request");
 		$result = $this->db->query($sql);
 
-		if ($result)
-		{
+		if ($result) {
 			$num = $this->db->num_rows($result);
 			$min = min($num, ($limit <= 0 ? $num : $limit));
 			$i = 0;
-			while ($i < $min)
-			{
+			while ($i < $min) {
 				$obj = $this->db->fetch_object($result);
 				$contrat_static = new Contrat($this->db);
 				if ($contrat_static->fetch($obj->rowid)) {
@@ -196,12 +207,12 @@ class Contracts extends DolibarrApi
 			$this->contract->$field = $value;
 		}
 		/*if (isset($request_data["lines"])) {
-          $lines = array();
-          foreach ($request_data["lines"] as $line) {
-            array_push($lines, (object) $line);
-          }
-          $this->contract->lines = $lines;
-        }*/
+		  $lines = array();
+		  foreach ($request_data["lines"] as $line) {
+			array_push($lines, (object) $line);
+		  }
+		  $this->contract->lines = $lines;
+		}*/
 		if ($this->contract->create(DolibarrApiAccess::$user) < 0) {
 			throw new RestException(500, "Error creating contract", array_merge(array($this->contract->error), $this->contract->errors));
 		}
@@ -264,7 +275,12 @@ class Contracts extends DolibarrApi
 		if (!DolibarrApi::_checkAccessToResource('contrat', $this->contract->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
+
 		$request_data = (object) $request_data;
+
+		$request_data->desc = checkVal($request_data->desc, 'restricthtml');
+		$request_data->price_base_type = checkVal($request_data->price_base_type);
+
 		$updateRes = $this->contract->addline(
 			$request_data->desc,
 			$request_data->subprice,
@@ -276,7 +292,7 @@ class Contracts extends DolibarrApi
 			$request_data->remise_percent,
 			$request_data->date_start, // date_start = date planned start, date ouverture = date_start_real
 			$request_data->date_end, // date_end = date planned end, date_cloture = date_end_real
-			$request_data->HT,
+			$request_data->price_base_type ? $request_data->price_base_type : 'HT',
 			$request_data->subprice_excl_tax,
 			$request_data->info_bits,
 			$request_data->fk_fournprice,
@@ -320,6 +336,9 @@ class Contracts extends DolibarrApi
 
 		$request_data = (object) $request_data;
 
+		$request_data->desc = checkVal($request_data->desc, 'restricthtml');
+		$request_data->price_base_type = checkVal($request_data->price_base_type);
+
 		$updateRes = $this->contract->updateline(
 			$lineid,
 			$request_data->desc,
@@ -333,7 +352,7 @@ class Contracts extends DolibarrApi
 			$request_data->localtax2_tx,
 			$request_data->date_ouverture,
 			$request_data->date_cloture,
-			'HT',
+			$request_data->price_base_type ? $request_data->price_base_type : 'HT',
 			$request_data->info_bits,
 			$request_data->fk_fourn_price,
 			$request_data->pa_ht,
@@ -416,8 +435,6 @@ class Contracts extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		// $request_data = (object) $request_data;
-
 		$updateRes = $this->contract->close_line(DolibarrApiAccess::$user, $lineid, $datestart, $comment);
 
 		if ($updateRes > 0) {
@@ -491,7 +508,9 @@ class Contracts extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 		foreach ($request_data as $field => $value) {
-			if ($field == 'id') continue;
+			if ($field == 'id') {
+				continue;
+			}
 			$this->contract->$field = $value;
 		}
 
@@ -667,8 +686,9 @@ class Contracts extends DolibarrApi
 	{
 		$contrat = array();
 		foreach (Contracts::$FIELDS as $field) {
-			if (!isset($data[$field]))
+			if (!isset($data[$field])) {
 				throw new RestException(400, "$field field missing");
+			}
 			$contrat[$field] = $data[$field];
 		}
 		return $contrat;

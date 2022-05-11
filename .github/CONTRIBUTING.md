@@ -4,15 +4,17 @@ How to contribute to Dolibarr
 Bug reports and feature requests
 --------------------------------
 
-<a name="not-a-support-forum"></a>*Note*: Issues are not a support forum. If you need help using the software, please use [the forums](https://www.dolibarr.org/forum.php). Forums exist in different languages.
+<a name="not-a-support-forum"></a>*Note*: **GitHub Issues is not a support forum.** If you have questions about Dolibarr / need help using the software, please use [the forums](https://www.dolibarr.org/forum.php). Forums exist in different languages.
 
 Issues are managed on [GitHub](https://github.com/Dolibarr/dolibarr/issues). 
-Default language here is english. So please prepare your contributions in english.
+Default **language here is english**. So please prepare your contributions in english.
 
 1. Please [use the search engine](https://help.github.com/articles/searching-issues) to check if nobody's already reported your problem.
 2. [Create an issue](https://help.github.com/articles/creating-an-issue). Choose an appropriate title. Prepend appropriately with Bug or Feature Request.
-4. Tell us the version you are using!   (look at  /htdocs/admin/system/dolibarr.php?  and check if you are using the latest version) 
-3. Write a report with as much detail as possible (Use [screenshots](https://help.github.com/articles/issue-attachments) or even screencasts and provide logging and debugging informations whenever possible).
+3. Tell us the version you are using!   (look at  /htdocs/admin/system/dolibarr.php?  and check if you are using the latest version) 
+4. Write a report with as much detail as possible (Use [screenshots](https://help.github.com/articles/issue-attachments) or even screencasts and provide logging and debugging informations whenever possible).
+5. Delete unnecessary submissions.
+6. **Check your Message at Preview before sending.**
 
 
 
@@ -24,8 +26,9 @@ Default language here is english. So please prepare your contributions in englis
 1. [Fork](https://help.github.com/articles/fork-a-repo) the [GitHub repository](https://github.com/Dolibarr/dolibarr).
 2. Clone your fork.
 3. Choose a branch(See the [Branches](#branches) section below).
-4. Commit and push your changes.
-5. [Make a pull request](https://help.github.com/articles/creating-a-pull-request).
+4. Read our developer documentation on the [Dolibarr Wiki](https://wiki.dolibarr.org/index.php?title=Developer_documentation).
+5. Commit and push your changes.
+6. [Make a pull request](https://help.github.com/articles/creating-a-pull-request).
 
 <span id="branches" name="branches"></span>
 ### Branches
@@ -114,13 +117,13 @@ a process to follow to optimize the chance to have PRs merged efficiently...
 
 Also, some code changes need a prior approbation:
 
-* if you want to include a new external library (into htdocs/includes directory), please ask before to the core project manager (mention @dolibarr-yoda in your issue) to see if such a library can be accepted.
+* if you want to include a new external library (into htdocs/includes directory), please ask before to the core project manager (mention @dolibarr-jedi in your issue) to see if such a library can be accepted.
 
-* if you add a new table, you must first create a page on https://wiki.dolibarr.org/index.php/Category:Table_SQL (copy an existing page changing its name to see it into this index page). Then ask the project manager (@dolibarr-yoda) if the new data model you plan to add is compatible with curent and future works in progress and can be accepted as you suggest.
+* if you add a new tables or fields, you MUST first submit a standalone PR with the data structure changes you plan to add/modify (and only data structure changes). Start development only once this data structure has been accepted.
 
 Once a PR has been submitted, you may need to wait for its integration. It is common that the project leader let the PR open for a long delay to allow every developer discuss about the PR (A label is added in such a case).
 
-If the label of PR start with "Draft" or "WIP" (Work In Progress), it will not be analyzed for merging until you change the label of PR (but it can be analyzed for discussion).
+If the label of PR start with "Draft" or "WIP" (Work In Progress), it will not be analyzed for merging until you change the label of the PR (but it can be analyzed for discussion).
 
 If your PR has errors reported by the Continuous Integration Platform, it means your PR is not valid and nothing will be done with it. It will be kept open to allow developers to fix this, or it may be closed several month later. Don't expect anything on your PR if you have such errors, you MUST first fix the Continuous Integration error to have it taken into consideration.
 

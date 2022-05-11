@@ -21,6 +21,7 @@ ErrorPHPDoesNotSupportCurl=Instalasi PHP Anda tidak mendukung Curl.
 ErrorPHPDoesNotSupportCalendar=Instalasi PHP Anda tidak mendukung ekstensi kalender php.
 ErrorPHPDoesNotSupportUTF8=Instalasi PHP Anda tidak mendukung fungsi UTF8. Dolibarr tidak dapat bekerja dengan benar. Atasi ini sebelum menginstal Dolibarr.
 ErrorPHPDoesNotSupportIntl=Instalasi PHP Anda tidak mendukung fungsi Intl.
+ErrorPHPDoesNotSupportMbstring=Your PHP installation does not support mbstring functions.
 ErrorPHPDoesNotSupportxDebug=Instalasi PHP Anda tidak mendukung perluasan fungsi debug.
 ErrorPHPDoesNotSupport=Instalasi PHP Anda tidak mendukung fungsi %s.
 ErrorDirDoesNotExists=Direktori %s tidak ada.
@@ -206,6 +207,7 @@ MigrationUserPhotoPath=Migrasi jalur foto untuk pengguna
 MigrationFieldsSocialNetworks=Migrasi pengguna memasukkan jejaring sosial (%s)
 MigrationReloadModule=Muat ulang modul %s
 MigrationResetBlockedLog=Atur ulang modul BlockedLog untuk algoritma v7
+MigrationImportOrExportProfiles=Migrasi profil impor atau ekspor (%s)
 ShowNotAvailableOptions=Tampilkan opsi yang tidak tersedia
 HideNotAvailableOptions=Sembunyikan opsi yang tidak tersedia
 ErrorFoundDuringMigration=Kesalahan dilaporkan selama proses migrasi sehingga langkah selanjutnya tidak tersedia. Untuk mengabaikan kesalahan, Anda dapat <a href="%s"> klik di sini </a>, tetapi aplikasi atau beberapa fitur mungkin tidak berfungsi dengan benar sampai kesalahan diselesaikan.

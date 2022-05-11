@@ -141,13 +141,18 @@ class Events // extends CommonObject
 
 		// Clean parameters
 		$this->description = trim($this->description);
-		if (empty($this->user_agent)) $this->user_agent = (empty($_SERVER['HTTP_USER_AGENT']) ? '' : $_SERVER['HTTP_USER_AGENT']);
+		if (empty($this->user_agent)) {
+			$this->user_agent = (empty($_SERVER['HTTP_USER_AGENT']) ? '' : $_SERVER['HTTP_USER_AGENT']);
+		}
 
 		// Check parameters
-		if (empty($this->description)) { $this->error = 'ErrorBadValueForParameterCreateEventDesc'; return -1; }
+		if (empty($this->description)) {
+			$this->error = 'ErrorBadValueForParameterCreateEventDesc';
+			return -1;
+		}
 
 		// Insert request
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."events(";
+		$sql = "INSERT INTO ".$this->db->prefix()."events(";
 		$sql .= "type,";
 		$sql .= "entity,";
 		$sql .= "ip,";
@@ -158,20 +163,19 @@ class Events // extends CommonObject
 		$sql .= "prefix_session";
 		$sql .= ") VALUES (";
 		$sql .= " '".$this->db->escape($this->type)."',";
-		$sql .= " ".$conf->entity.",";
+		$sql .= " ".((int) $conf->entity).",";
 		$sql .= " '".$this->db->escape(getUserRemoteIP())."',";
 		$sql .= " ".($this->user_agent ? "'".$this->db->escape(dol_trunc($this->user_agent, 250))."'" : 'NULL').",";
 		$sql .= " '".$this->db->idate($this->dateevent)."',";
-		$sql .= " ".($user->id ? "'".$this->db->escape($user->id)."'" : 'NULL').",";
+		$sql .= " ".($user->id > 0 ? ((int) $user->id) : 'NULL').",";
 		$sql .= " '".$this->db->escape(dol_trunc($this->description, 250))."',";
 		$sql .= " '".$this->db->escape(dol_getprefix())."'";
 		$sql .= ")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."events");
+		if ($resql) {
+			$this->id = $this->db->last_insert_id($this->db->prefix()."events");
 			return $this->id;
 		} else {
 			$this->error = "Error ".$this->db->lasterror();
@@ -198,16 +202,15 @@ class Events // extends CommonObject
 		// Put here code to add control on parameters values
 
 		// Update request
-		$sql = "UPDATE ".MAIN_DB_PREFIX."events SET";
+		$sql = "UPDATE ".$this->db->prefix()."events SET";
 		$sql .= " type='".$this->db->escape($this->type)."',";
 		$sql .= " dateevent='".$this->db->idate($this->dateevent)."',";
 		$sql .= " description='".$this->db->escape($this->description)."'";
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if (!$resql)
-		{
+		if (!$resql) {
 			$this->error = "Error ".$this->db->lasterror();
 			return -1;
 		}
@@ -234,15 +237,13 @@ class Events // extends CommonObject
 		$sql .= " t.ip,";
 		$sql .= " t.user_agent,";
 		$sql .= " t.prefix_session";
-		$sql .= " FROM ".MAIN_DB_PREFIX."events as t";
-		$sql .= " WHERE t.rowid = ".$id;
+		$sql .= " FROM ".$this->db->prefix()."events as t";
+		$sql .= " WHERE t.rowid = ".((int) $id);
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			if ($this->db->num_rows($resql))
-			{
+		if ($resql) {
+			if ($this->db->num_rows($resql)) {
 				$obj = $this->db->fetch_object($resql);
 
 				$this->id = $obj->rowid;
@@ -273,13 +274,12 @@ class Events // extends CommonObject
 	 */
 	public function delete($user)
 	{
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."events";
-		$sql .= " WHERE rowid=".$this->id;
+		$sql = "DELETE FROM ".$this->db->prefix()."events";
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if (!$resql)
-		{
+		if (!$resql) {
 			$this->error = "Error ".$this->db->lasterror();
 			return -1;
 		}

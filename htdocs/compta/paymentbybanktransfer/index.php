@@ -38,15 +38,19 @@ $langs->loadLangs(array('banks', 'categories', 'withdrawals'));
 
 // Security check
 $socid = GETPOST('socid', 'int');
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 $result = restrictedArea($user, 'paymentbybanktransfer', '', '');
+
+$usercancreate = $user->rights->paymentbybanktransfer->create;
 
 
 /*
  * Actions
  */
 
-
+// None
 
 
 /*
@@ -55,13 +59,17 @@ $result = restrictedArea($user, 'paymentbybanktransfer', '', '');
 
 llxHeader('', $langs->trans("SuppliersStandingOrdersArea"));
 
-if (prelevement_check_config() < 0)
-{
+if (prelevement_check_config('bank-transfer') < 0) {
 	$langs->load("errors");
-	setEventMessages($langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("Withdraw")), null, 'errors');
+	setEventMessages($langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("PaymentByBankTransfer")), null, 'errors');
 }
 
-print load_fiche_titre($langs->trans("SuppliersStandingOrdersArea"));
+$newcardbutton = '';
+if ($usercancreate) {
+	$newcardbutton .= dolGetButtonTitle($langs->trans('NewPaymentByBankTransfer'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/compta/prelevement/create.php?type=bank-transfer');
+}
+
+print load_fiche_titre($langs->trans("SuppliersStandingOrdersArea"), $newcardbutton);
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
@@ -82,10 +90,10 @@ print $bprev->nbOfInvoiceToPay('bank-transfer');
 print '</a>';
 print '</td></tr>';
 
-print '<tr class="oddeven"><td>'.$langs->trans("AmountToWithdraw").'</td>';
-print '<td class="right">';
+print '<tr class="oddeven"><td>'.$langs->trans("AmountToTransfer").'</td>';
+print '<td class="right"><span class="amount">';
 print price($bprev->SommeAPrelever('bank-transfer'), '', '', 1, -1, -1, 'auto');
-print '</td></tr></table></div><br>';
+print '</span></td></tr></table></div><br>';
 
 
 
@@ -94,27 +102,31 @@ print '</td></tr></table></div><br>';
  */
 $sql = "SELECT f.ref, f.rowid, f.total_ttc, f.fk_statut, f.paye, f.type,";
 $sql .= " pfd.date_demande, pfd.amount,";
-$sql .= " s.nom as name, s.email, s.rowid as socid, s.tva_intra";
+$sql .= " s.nom as name, s.email, s.rowid as socid, s.tva_intra, s.siren as idprof1, s.siret as idprof2, s.ape as idprof3, s.idprof4, s.idprof5, s.idprof6";
 $sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f,";
 $sql .= " ".MAIN_DB_PREFIX."societe as s";
-if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+if (empty($user->rights->societe->client->voir) && !$socid) {
+	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+}
 $sql .= ", ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
 $sql .= " WHERE s.rowid = f.fk_soc";
 $sql .= " AND f.entity IN (".getEntity('supplier_invoice').")";
 $sql .= " AND f.total_ttc > 0";
-if (empty($conf->global->WITHDRAWAL_ALLOW_ANY_INVOICE_STATUS))
-{
+if (empty($conf->global->WITHDRAWAL_ALLOW_ANY_INVOICE_STATUS)) {
 	$sql .= " AND f.fk_statut = ".FactureFournisseur::STATUS_VALIDATED;
 }
 $sql .= " AND pfd.traite = 0";
 $sql .= " AND pfd.ext_payment_id IS NULL";
 $sql .= " AND pfd.fk_facture_fourn = f.rowid";
-if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
-if ($socid) $sql .= " AND f.fk_soc = ".$socid;
+if (empty($user->rights->societe->client->voir) && !$socid) {
+	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
+}
+if ($socid) {
+	$sql .= " AND f.fk_soc = ".((int) $socid);
+}
 
 $resql = $db->query($sql);
-if ($resql)
-{
+if ($resql) {
 	$num = $db->num_rows($resql);
 	$i = 0;
 
@@ -122,10 +134,8 @@ if ($resql)
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<th colspan="5">'.$langs->trans("SupplierInvoiceWaitingWithdraw").' ('.$num.')</th></tr>';
-	if ($num)
-	{
-		while ($i < $num && $i < 20)
-		{
+	if ($num) {
+		while ($i < $num && $i < 20) {
 			$obj = $db->fetch_object($resql);
 
 			$invoicestatic->id = $obj->rowid;
@@ -139,6 +149,15 @@ if ($resql)
 			$thirdpartystatic->name = $obj->name;
 			$thirdpartystatic->email = $obj->email;
 			$thirdpartystatic->tva_intra = $obj->tva_intra;
+			$thirdpartystatic->siren = $obj->idprof1;
+			$thirdpartystatic->siret = $obj->idprof2;
+			$thirdpartystatic->ape = $obj->idprof3;
+			$thirdpartystatic->idprof1 = $obj->idprof1;
+			$thirdpartystatic->idprof2 = $obj->idprof2;
+			$thirdpartystatic->idprof3 = $obj->idprof3;
+			$thirdpartystatic->idprof4 = $obj->idprof4;
+			$thirdpartystatic->idprof5 = $obj->idprof5;
+			$thirdpartystatic->idprof6 = $obj->idprof6;
 
 			print '<tr class="oddeven"><td>';
 			print $invoicestatic->getNomUrl(1, 'withdraw');
@@ -149,7 +168,7 @@ if ($resql)
 			print '</td>';
 
 			print '<td class="right">';
-			print price($obj->amount);
+			print '<span class="amount">'.price($obj->amount).'</span>';
 			print '</td>';
 
 			print '<td class="right">';
@@ -163,7 +182,7 @@ if ($resql)
 			$i++;
 		}
 	} else {
-		print '<tr class="oddeven"><td colspan="5" class="opacitymedium">'.$langs->trans("NoSupplierInvoiceToWithdraw", $langs->transnoentitiesnoconv("BankTransfer")).'</td></tr>';
+		print '<tr class="oddeven"><td colspan="5"><span class="opacitymedium">'.$langs->trans("NoSupplierInvoiceToWithdraw", $langs->transnoentitiesnoconv("BankTransfer")).'</span></td></tr>';
 	}
 	print "</table></div><br>";
 } else {
@@ -171,7 +190,7 @@ if ($resql)
 }
 
 
-print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+print '</div><div class="fichetwothirdright">';
 
 
 /*
@@ -187,8 +206,7 @@ $sql .= " ORDER BY datec DESC";
 $sql .= $db->plimit($limit);
 
 $result = $db->query($sql);
-if ($result)
-{
+if ($result) {
 	$num = $db->num_rows($result);
 	$i = 0;
 
@@ -203,8 +221,7 @@ if ($result)
 	print '</tr>';
 
 	if ($num > 0) {
-		while ($i < min($num, $limit))
-		{
+		while ($i < min($num, $limit)) {
 			$obj = $db->fetch_object($result);
 
 			print '<tr class="oddeven">';
@@ -216,14 +233,14 @@ if ($result)
 			print $bprev->getNomUrl(1);
 			print "</td>\n";
 			print '<td>'.dol_print_date($db->jdate($obj->datec), "dayhour")."</td>\n";
-			print '<td class="right">'.price($obj->amount)."</td>\n";
-			print '<td class="right">'.$bprev->getLibStatut(3)."</td>\n";
+			print '<td class="right"><span class="amount">'.price($obj->amount)."</span></td>\n";
+			print '<td class="right"><span class="amount">'.$bprev->getLibStatut(3)."</span></td>\n";
 
 			print "</tr>\n";
 			$i++;
 		}
 	} else {
-		print '<tr><td class="opacitymedium" colspan="4">'.$langs->trans("None").'</td></tr>';
+		print '<tr><td colspan="4"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 	}
 
 	print "</table></div><br>";
@@ -233,7 +250,7 @@ if ($result)
 }
 
 
-print '</div></div></div>';
+print '</div></div>';
 
 // End of page
 llxFooter();

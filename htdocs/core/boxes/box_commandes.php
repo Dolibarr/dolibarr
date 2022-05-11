@@ -83,10 +83,9 @@ class box_commandes extends ModeleBoxes
 		$societestatic = new Societe($this->db);
 		$userstatic = new User($this->db);
 
-		$this->info_box_head = array('text' => $langs->trans("BoxTitleLast".($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE ? "" : "Modified")."CustomerOrders", $max));
+		$this->info_box_head = array('text' => $langs->trans("BoxTitleLast".(!empty($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) ? "" : "Modified")."CustomerOrders", $max));
 
-		if ($user->rights->commande->lire)
-		{
+		if ($user->rights->commande->lire) {
 			$sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias";
 			$sql .= ", s.code_client, s.code_compta, s.client";
 			$sql .= ", s.logo, s.email, s.entity";
@@ -98,18 +97,29 @@ class box_commandes extends ModeleBoxes
 			$sql .= ", c.fk_user_valid";
 			$sql .= ", c.facture";
 			$sql .= ", c.total_ht";
-			$sql .= ", c.tva as total_tva";
+			$sql .= ", c.total_tva";
 			$sql .= ", c.total_ttc";
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 			$sql .= ", ".MAIN_DB_PREFIX."commande as c";
-			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			if (empty($user->rights->societe->client->voir) && !$user->socid) {
+				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			}
 			$sql .= " WHERE c.fk_soc = s.rowid";
 			$sql .= " AND c.entity IN (".getEntity('commande').")";
-			if (!empty($conf->global->ORDER_BOX_LAST_ORDERS_VALIDATED_ONLY)) $sql .= " AND c.fk_statut = 1";
-			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
-			if ($user->socid) $sql .= " AND s.rowid = ".$user->socid;
-			if ($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) $sql .= " ORDER BY c.date_commande DESC, c.ref DESC ";
-			else $sql .= " ORDER BY c.tms DESC, c.ref DESC ";
+			if (!empty($conf->global->ORDER_BOX_LAST_ORDERS_VALIDATED_ONLY)) {
+				$sql .= " AND c.fk_statut = 1";
+			}
+			if (empty($user->rights->societe->client->voir) && !$user->socid) {
+				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
+			}
+			if ($user->socid) {
+				$sql .= " AND s.rowid = ".((int) $user->socid);
+			}
+			if (!empty($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE)) {
+				$sql .= " ORDER BY c.date_commande DESC, c.ref DESC ";
+			} else {
+				$sql .= " ORDER BY c.tms DESC, c.ref DESC ";
+			}
 			$sql .= $this->db->plimit($max, 0);
 
 			$result = $this->db->query($sql);
@@ -153,12 +163,14 @@ class box_commandes extends ModeleBoxes
 					);
 
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="nowraponall right"',
+						'td' => 'class="nowraponall right amount"',
 						'text' => price($objp->total_ht, 0, $langs, 0, -1, -1, $conf->currency),
 					);
 
 					if (!empty($conf->global->ORDER_BOX_LAST_ORDERS_SHOW_VALIDATE_USER)) {
-						if ($objp->fk_user_valid > 0) $userstatic->fetch($objp->fk_user_valid);
+						if ($objp->fk_user_valid > 0) {
+							$userstatic->fetch($objp->fk_user_valid);
+						}
 						$this->info_box_contents[$line][] = array(
 							'td' => 'class="right"',
 							'text' => (($objp->fk_user_valid > 0) ? $userstatic->getNomUrl(1) : ''),
@@ -168,7 +180,7 @@ class box_commandes extends ModeleBoxes
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right"',
-						'text' => dol_print_date($date, 'day'),
+						'text' => dol_print_date($date, 'day', 'tzuserrel'),
 					);
 
 					$this->info_box_contents[$line][] = array(
@@ -179,10 +191,12 @@ class box_commandes extends ModeleBoxes
 					$line++;
 				}
 
-				if ($num == 0) $this->info_box_contents[$line][0] = array(
+				if ($num == 0) {
+					$this->info_box_contents[$line][0] = array(
 					'td' => 'class="center opacitymedium"',
 					'text'=>$langs->trans("NoRecordedOrders")
-				);
+					);
+				}
 
 				$this->db->free($result);
 			} else {

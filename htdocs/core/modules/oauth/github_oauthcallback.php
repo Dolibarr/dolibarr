@@ -71,9 +71,10 @@ $credentials = new Credentials(
 );
 
 $requestedpermissionsarray = array();
-if (GETPOST('state')) $requestedpermissionsarray = explode(',', GETPOST('state')); // Example: 'user'. 'state' parameter is standard to retrieve some parameters back
-if ($action != 'delete' && empty($requestedpermissionsarray))
-{
+if (GETPOST('state')) {
+	$requestedpermissionsarray = explode(',', GETPOST('state')); // Example: 'user'. 'state' parameter is standard to retrieve some parameters back
+}
+if ($action != 'delete' && empty($requestedpermissionsarray)) {
 	print 'Error, parameter state is not defined';
 	exit;
 }
@@ -92,8 +93,7 @@ $langs->load("oauth");
  * Actions
  */
 
-if ($action == 'delete')
-{
+if ($action == 'delete') {
 	$storage->clearToken('GitHub');
 
 	setEventMessages($langs->trans('TokenDeleted'), null, 'mesgs');
@@ -102,8 +102,7 @@ if ($action == 'delete')
 	exit();
 }
 
-if (!empty($_GET['code']))     // We are coming from oauth provider page
-{
+if (!empty($_GET['code'])) {     // We are coming from oauth provider page
 	// We should have
 	//$_GET=array('code' => string 'aaaaaaaaaaaaaa' (length=20), 'state' => string 'user,public_repo' (length=16))
 
@@ -147,8 +146,7 @@ if (!empty($_GET['code']))     // We are coming from oauth provider page
 
 	// This may create record into oauth_state before the header redirect.
 	// Creation of record with state in this tables depend on the Provider used (see its constructor).
-	if (GETPOST('state'))
-	{
+	if (GETPOST('state')) {
 		$url = $apiService->getAuthorizationUri(array('state'=>GETPOST('state')));
 	} else {
 		$url = $apiService->getAuthorizationUri(); // Parameter state will be randomly generated

@@ -25,7 +25,9 @@
  * \brief Script de mise a jour des types de membres dans LDAP depuis base Dolibarr
  */
 
-if (!defined('NOSESSION')) define('NOSESSION', '1');
+if (!defined('NOSESSION')) {
+	define('NOSESSION', '1');
+}
 
 $sapi_type = php_sapi_name();
 $script_file = basename(__FILE__);
@@ -67,6 +69,12 @@ dol_syslog($script_file." launched with arg ".join(',', $argv));
  * exit(-1);
  * }
  */
+
+if (!empty($dolibarr_main_db_readonly)) {
+	print "Error: instance in read-onyl mode\n";
+	exit(-1);
+}
+
 
 $sql = "SELECT rowid";
 $sql .= " FROM ".MAIN_DB_PREFIX."adherent_type";
@@ -113,7 +121,6 @@ if ($resql) {
 		}
 
 		$ldap->unbind();
-		$ldap->close();
 	} else {
 		print $ldap->error;
 	}

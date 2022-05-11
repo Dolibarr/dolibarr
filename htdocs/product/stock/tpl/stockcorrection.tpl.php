@@ -30,14 +30,18 @@ if (empty($conf) || !is_object($conf)) {
 <!-- BEGIN PHP TEMPLATE STOCKCORRECTION.TPL.PHP -->
 <?php
 $productref = '';
-if ($object->element == 'product') $productref = $object->ref;
+if ($object->element == 'product') {
+	$productref = $object->ref;
+}
 
 $langs->load("productbatch");
 
 
-if (empty($id)) $id = $object->id;
+if (empty($id)) {
+	$id = $object->id;
+}
 
-print '<script type="text/javascript" language="javascript">
+print '<script type="text/javascript">
 		jQuery(document).ready(function() {
 			function init_price()
 			{
@@ -46,7 +50,24 @@ print '<script type="text/javascript" language="javascript">
 			}
 			init_price();
 			jQuery("#mouvement").change(function() {
+				console.log("We change the direction of movement");
 				init_price();
+			});
+			jQuery("#nbpiece").keyup(function(event) {
+				console.log("We enter a qty on "+event.which);
+				if ( event.which == 54 ) {  /* char - */
+					console.log("We set direction to value 1");
+					jQuery("#nbpiece").val(jQuery("#nbpiece").val().replace("-", ""));
+
+					jQuery("#mouvement option").removeAttr("selected").change();
+					jQuery("#mouvement option[value=1]").attr("selected","selected").trigger("change");
+					jQuery("#mouvement").trigger("change");
+				} else if ( event.which == 187 ) {  /* char + */
+					console.log("We set direction to value 0");
+					jQuery("#mouvement option").removeAttr("selected").change();
+					jQuery("#mouvement option[value=0]").attr("selected","selected").trigger("change");
+					jQuery("#mouvement").trigger("change");
+				}
 			});
 		});
 		</script>';
@@ -69,12 +90,10 @@ if ($object->element == 'product') {
 	print '<td class="fieldrequired">'.$langs->trans("Warehouse").'</td>';
 	print '<td>';
 	$ident = (GETPOST("dwid") ?GETPOST("dwid", 'int') : (GETPOST('id_entrepot') ? GETPOST('id_entrepot', 'int') : ($object->element == 'product' && $object->fk_default_warehouse ? $object->fk_default_warehouse : 'ifone')));
-	if (empty($ident) && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE)) $ident = $conf->global->MAIN_DEFAULT_WAREHOUSE;
+	if (empty($ident) && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE)) {
+		$ident = $conf->global->MAIN_DEFAULT_WAREHOUSE;
+	}
 	print img_picto('', 'stock').$formproduct->selectWarehouses($ident, 'id_entrepot', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, null, 'minwidth100');
-	print ' &nbsp; <select class="button buttongen" name="mouvement" id="mouvement">';
-	print '<option value="0">'.$langs->trans("Add").'</option>';
-	print '<option value="1"'.(GETPOST('mouvement') ? ' selected="selected"' : '').'>'.$langs->trans("Delete").'</option>';
-	print '</select>';
 	print '</td>';
 }
 if ($object->element == 'stock') {
@@ -82,14 +101,19 @@ if ($object->element == 'stock') {
 	print '<td>';
 	print img_picto('', 'product');
 	$form->select_produits(GETPOST('product_id', 'int'), 'product_id', (empty($conf->global->STOCK_SUPPORTS_SERVICES) ? '0' : ''), 0, 0, -1, 2, '', 0, null, 0, 1, 0, 'maxwidth500');
-	print ' &nbsp; <select class="button buttongen" name="mouvement" id="mouvement">';
-	print '<option value="0">'.$langs->trans("Add").'</option>';
-	print '<option value="1"'.(GETPOST('mouvement') ? ' selected="selected"' : '').'>'.$langs->trans("Delete").'</option>';
-	print '</select>';
 	print '</td>';
 }
 print '<td class="fieldrequired">'.$langs->trans("NumberOfUnit").'</td>';
-print '<td><input name="nbpiece" id="nbpiece" class="maxwidth75" value="'.GETPOST("nbpiece").'"></td>';
+print '<td>';
+if ($object->element == 'product' || $object->element == 'stock') {
+	print '<select name="mouvement" id="mouvement" class="minwidth100 valignmiddle">';
+	print '<option value="0">'.$langs->trans("Add").'</option>';
+	print '<option value="1"'.(GETPOST('mouvement') ? ' selected="selected"' : '').'>'.$langs->trans("Delete").'</option>';
+	print '</select>';
+	print ajax_combobox("mouvement");
+}
+print '<input name="nbpiece" id="nbpiece" class="center valignmiddle maxwidth75" value="'.GETPOST("nbpiece").'">';
+print '</td>';
 print '</tr>';
 
 // If product is a Kit, we ask if we must disable stock change of subproducts
@@ -107,8 +131,7 @@ if (!empty($conf->global->PRODUIT_SOUSPRODUITS) && $object->element == 'product'
 if (!empty($conf->productbatch->enabled) &&
 (($object->element == 'product' && $object->hasbatch())
 || ($object->element == 'stock'))
-)
-{
+) {
 	print '<tr>';
 	print '<td'.($object->element == 'stock' ? '' : ' class="fieldrequired"').'>'.$langs->trans("batch_number").'</td><td colspan="3">';
 	print '<input type="text" name="batch_number" size="40" value="'.GETPOST("batch_number").'">';
@@ -134,8 +157,7 @@ if (!empty($conf->productbatch->enabled) &&
 print '<tr>';
 print '<td>'.$langs->trans("UnitPurchaseValue").'</td>';
 print '<td colspan="'.(!empty($conf->projet->enabled) ? '1' : '3').'"><input name="unitprice" id="unitprice" size="10" value="'.GETPOST("unitprice").'"></td>';
-if (!empty($conf->projet->enabled))
-{
+if (!empty($conf->projet->enabled)) {
 	print '<td>'.$langs->trans('Project').'</td>';
 	print '<td>';
 	print img_picto('', 'project');
@@ -151,8 +173,14 @@ print '<td>'.$langs->trans("MovementLabel").'</td>';
 print '<td>';
 print '<input type="text" name="label" class="minwidth300" value="'.$valformovementlabel.'">';
 print '</td>';
-print '<td>'.$langs->trans("InventoryCode").'</td><td><input class="maxwidth100onsmartphone" name="inventorycode" id="inventorycode" value="'.(GETPOSTISSET("inventorycode") ? GETPOST("inventorycode", 'alpha') : dol_print_date(dol_now(), '%y%m%d%H%M%S')).'"></td>';
+print '<td>'.$langs->trans("InventoryCode").'</td>';
+print '<td>';
+print '<input class="maxwidth100onsmartphone" name="inventorycode" id="inventorycode" value="'.(GETPOSTISSET("inventorycode") ? GETPOST("inventorycode", 'alpha') : dol_print_date(dol_now(), '%Y%m%d%H%M%S')).'">';
+print '</td>';
 print '</tr>';
+
+// Extrafield template
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
 
 print '</table>';
 

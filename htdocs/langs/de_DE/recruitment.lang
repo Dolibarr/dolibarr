@@ -18,42 +18,42 @@
 #
 
 # Module label 'ModuleRecruitmentName'
-ModuleRecruitmentName = Rekrutierung
+ModuleRecruitmentName = Personalbeschaffung
 # Module description 'ModuleRecruitmentDesc'
-ModuleRecruitmentDesc = Verwalten und verfolgen Sie Personalbeschaffung-Kampagnen für neue Job-Positionen.
+ModuleRecruitmentDesc = Verwalten und verfolgen Sie Rekrutierungs-Kampagnen für neue Job-Positionen.
 
 #
 # Admin page
 #
-RecruitmentSetup = Personalbeschaffungs-Konfiguration
+RecruitmentSetup = Rekrutierung-Konfiguration
 Settings = Einstellungen
-RecruitmentSetupPage = Geben Sie hier die Konfiguration der Haupteinstellungen für das Modul Personalbeschaffung ein
-RecruitmentArea=Personalbeschaffungs-Bereich
+RecruitmentSetupPage = Geben Sie hier die Konfiguration der Haupteinstellungen für das Modul Rekrutierung ein
+RecruitmentArea=Personalbeschaffungsbereich
 PublicInterfaceRecruitmentDesc=Öffentliche Seiten von Stellen sind öffentliche URLs um offene Stellen anzeigen und darauf antworten zu können. Für jede offene Stelle existiert ein eigener Link zu jedem Stelleneintrag.
-EnablePublicRecruitmentPages=Öffentliche Seiten von offenen Stellen aktivieren
+EnablePublicRecruitmentPages=Öffentliche Seiten mit offenen Stellen aktivieren
 
 #
 # About page
 #
 About = Über
-RecruitmentAbout = Über Personalbeschaffung
-RecruitmentAboutPage = Personalbeschaffung über Seite
+RecruitmentAbout = Über Rekrutierung
+RecruitmentAboutPage = Seite 'Über Personalbeschaffung' 
 NbOfEmployeesExpected=Erwartete Anzahl von Mitarbeitern
 JobLabel=Bezeichnung der beruflichen Position
 WorkPlace=Arbeitsplatz
 DateExpected=Erwartetes Datum
 FutureManager=Zukünftiger Manager
-ResponsibleOfRecruitement=Verantwortlich für die Rekrutierung
+ResponsibleOfRecruitement=Verantwortlicher für die Personalbeschaffung
 IfJobIsLocatedAtAPartner=Wenn sich der Job an einem Partnerort befindet
-PositionToBeFilled=Position
+PositionToBeFilled=Position der Stelle
 PositionsToBeFilled=Berufspositionen
 ListOfPositionsToBeFilled=Liste der Stellen
 NewPositionToBeFilled=Neue Stellen
 
 JobOfferToBeFilled=Zu besetzende Stelle
 ThisIsInformationOnJobPosition=Information über die zu besetzende Position
-ContactForRecruitment=Kontakt für die Personalbeschaffung
-EmailRecruiter=Recruiter per E-Mail anschreiben
+ContactForRecruitment=Ansprechpartner für die Rekrutierung
+EmailRecruiter=E-Mail Rekruter
 ToUseAGenericEmail=So verwenden Sie eine generische E-Mail. Falls nicht definiert, wird die E-Mail-Adresse des für die Personalbeschaffung Verantwortlichen verwendet
 NewCandidature=Neue Bewerbung
 ListOfCandidatures=Liste der Bewerbungen
@@ -72,5 +72,5 @@ YourCandidatureAnswerMessage=Vielen Dank für Ihre Bewerbung. <br> ...
 JobClosedTextCandidateFound=Die Stelle ist geschlossen. Die Position wurde besetzt.
 JobClosedTextCanceled=Die Stelle ist geschlossen.
 ExtrafieldsJobPosition=Ergänzende Attribute (Stellenangebote)
-ExtrafieldsCandidatures=Ergänzende Attribute (Bewerbungen)
+ExtrafieldsApplication=Ergänzende Attribute (Bewerbungen)
 MakeOffer=Machen Sie ein Angebot

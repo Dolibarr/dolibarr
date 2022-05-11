@@ -21,7 +21,7 @@
  *	\brief      Module pour gerer les deplacements et notes de frais
  *	\file       htdocs/core/modules/modDeplacement.class.php
  *	\ingroup    deplacement
- *	\brief      Fichier de description et activation du module Deplacement et notes de frais
+ *	\brief      Description and activation file for the module trips (deprecated)
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
@@ -129,17 +129,22 @@ class modDeplacement extends DolibarrModules
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'user as u';
 		$this->export_sql_end[$r] .= ', '.MAIN_DB_PREFIX.'deplacement as d';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON d.fk_soc = s.rowid';
-		if (empty($user->rights->societe->client->voir)) $this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_commerciaux as sc ON sc.fk_soc = s.rowid';
+		if (empty($user->rights->societe->client->voir)) {
+			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_commerciaux as sc ON sc.fk_soc = s.rowid';
+		}
 		$this->export_sql_end[$r] .= ' WHERE d.fk_user = u.rowid';
 		$this->export_sql_end[$r] .= ' AND d.entity IN ('.getEntity('deplacement').')';
-		if (empty($user->rights->societe->client->voir)) $this->export_sql_end[$r] .= ' AND (sc.fk_user = '.(empty($user) ? 0 : $user->id).' OR d.fk_soc IS NULL)';
+		if (empty($user->rights->societe->client->voir)) {
+			$this->export_sql_end[$r] .= ' AND (sc.fk_user = '.(empty($user) ? 0 : $user->id).' OR d.fk_soc IS NULL)';
+		}
 
-		if (!empty($user))   // Not defined during migration process
-		{
+		if (!empty($user)) {   // Not defined during migration process
 			$childids = $user->getAllChildIds();
 			$childids[] = $user->id;
 
-			if (empty($user->rights->deplacement->readall) && empty($user->rights->deplacement->lire_tous)) $this->export_sql_end[$r] .= ' AND d.fk_user IN ('.join(',', $childids).')';
+			if (empty($user->rights->deplacement->readall) && empty($user->rights->deplacement->lire_tous)) {
+				$this->export_sql_end[$r] .= ' AND d.fk_user IN ('.$this->db->sanitize(join(',', $childids)).')';
+			}
 		}
 	}
 
@@ -154,6 +159,11 @@ class modDeplacement extends DolibarrModules
 	 */
 	public function init($options = '')
 	{
+		$result = $this->_load_tables('/install/mysql/', 'deplacement');
+		if ($result < 0) {
+			return -1; // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
+		}
+
 		// Permissions
 		$this->remove($options);
 

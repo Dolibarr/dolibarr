@@ -24,7 +24,7 @@ if (empty($object) || !is_object($object)) {
 }
 
 // $permissionnote 	must be defined by caller. For example $permissionnote=$user->rights->module->create
-// $cssclass   		must be defined by caller. For example $cssclass='fieldtitle"
+// $cssclass   		must be defined by caller. For example $cssclass='fieldtitle'
 $module       = $object->element;
 $note_public  = 'note_public';
 $note_private = 'note_private';
@@ -35,24 +35,26 @@ $permission = (isset($permissionnote) ? $permissionnote : (isset($permission) ? 
 $moreparam = (isset($moreparam) ? $moreparam : '');
 $value_public = $object->note_public;
 $value_private = $object->note_private;
-if (!empty($conf->global->MAIN_AUTO_TIMESTAMP_IN_PUBLIC_NOTES))
-{
+if (!empty($conf->global->MAIN_AUTO_TIMESTAMP_IN_PUBLIC_NOTES)) {
 	$stringtoadd = dol_print_date(dol_now(), 'dayhour').' '.$user->getFullName($langs).' --';
-	if (GETPOST('action', 'aZ09') == 'edit'.$note_public)
-	{
+	if (GETPOST('action', 'aZ09') == 'edit'.$note_public) {
 		$value_public = dol_concatdesc($value_public, ($value_public ? "\n" : "")."-- ".$stringtoadd);
-		if (dol_textishtml($value_public)) $value_public .= "<br>\n";
-		else $value_public .= "\n";
+		if (dol_textishtml($value_public)) {
+			$value_public .= "<br>\n";
+		} else {
+			$value_public .= "\n";
+		}
 	}
 }
-if (!empty($conf->global->MAIN_AUTO_TIMESTAMP_IN_PRIVATE_NOTES))
-{
+if (!empty($conf->global->MAIN_AUTO_TIMESTAMP_IN_PRIVATE_NOTES)) {
 	$stringtoadd = dol_print_date(dol_now(), 'dayhour').' '.$user->getFullName($langs).' --';
-	if (GETPOST('action', 'aZ09') == 'edit'.$note_private)
-	{
+	if (GETPOST('action', 'aZ09') == 'edit'.$note_private) {
 		$value_private = dol_concatdesc($value_private, ($value_private ? "\n" : "")."-- ".$stringtoadd);
-		if (dol_textishtml($value_private)) $value_private .= "<br>\n";
-		else $value_private .= "\n";
+		if (dol_textishtml($value_private)) {
+			$value_private .= "<br>\n";
+		} else {
+			$value_private .= "\n";
+		}
 	}
 }
 
@@ -68,9 +70,17 @@ if ($module == 'propal') {
 } elseif ($module == 'project_task') {
 	$permission = $user->rights->projet->creer;
 } elseif ($module == 'invoice_supplier') {
-	$permission = $user->rights->fournisseur->facture->creer;
+	if (empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) {
+		$permission = $user->rights->fournisseur->facture->creer;
+	} else {
+		$permission = $user->rights->supplier_invoice->creer;
+	}
 } elseif ($module == 'order_supplier') {
-	$permission = $user->rights->fournisseur->commande->creer;
+	if (empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) {
+		$permission = $user->rights->fournisseur->commande->creer;
+	} else {
+		$permission = $user->rights->supplier_order->creer;
+	}
 } elseif ($module == 'societe') {
 	$permission = $user->rights->societe->creer;
 } elseif ($module == 'contact') {
@@ -79,21 +89,36 @@ if ($module == 'propal') {
 	$permission = $user->rights->expedition->creer;
 } elseif ($module == 'product') {
 	$permission = $user->rights->produit->creer;
+} elseif ($module == 'ecmfiles') {
+	$permission = $user->rights->ecm->setup;
 }
 //else dol_print_error('','Bad value '.$module.' for param module');
 
-if (!empty($conf->fckeditor->enabled) && !empty($conf->global->FCKEDITOR_ENABLE_SOCIETE)) $typeofdata = 'ckeditor:dolibarr_notes:100%:200::1:12:95%:0'; // Rem: This var is for all notes, not only thirdparties note.
-else $typeofdata = 'textarea:12:95%';
+if (!empty($conf->fckeditor->enabled) && !empty($conf->global->FCKEDITOR_ENABLE_SOCIETE)) {
+	$typeofdata = 'ckeditor:dolibarr_notes:100%:200::1:12:95%:0'; // Rem: This var is for all notes, not only thirdparties note.
+} else {
+	$typeofdata = 'textarea:12:95%';
+}
+if (!empty($conf->fckeditor->enabled) && !empty($conf->global->FCKEDITOR_ENABLE_NOTE_PUBLIC)) {
+	$typeofdatapub = 'ckeditor:dolibarr_notes:100%:200::1:12:95%:0'; // Rem: This var is for all notes, not only thirdparties note.
+} else {
+	$typeofdatapub = 'textarea:12:95%';
+}
+if (!empty($conf->fckeditor->enabled) && !empty($conf->global->FCKEDITOR_ENABLE_NOTE_PRIVATE)) {
+	$typeofdatapriv = 'ckeditor:dolibarr_notes:100%:200::1:12:95%:0'; // Rem: This var is for all notes, not only thirdparties note.
+} else {
+	$typeofdatapriv = 'textarea:12:95%';
+}
 
 print '<!-- BEGIN PHP TEMPLATE NOTES -->'."\n";
 print '<div class="tagtable border table-border tableforfield centpercent">'."\n";
 print '<div class="tagtr table-border-row">'."\n";
 $editmode = (GETPOST('action', 'aZ09') == 'edit'.$note_public);
 print '<div class="tagtd tagtdnote tdtop'.($editmode ? '' : ' sensiblehtmlcontent').' table-key-border-col'.(empty($cssclass) ? '' : ' '.$cssclass).'"'.($colwidth ? ' style="width: '.$colwidth.'%"' : '').'>'."\n";
-print $form->editfieldkey("NotePublic", $note_public, $value_public, $object, $permission, $typeofdata, $moreparam, '', 0);
+print $form->editfieldkey("NotePublic", $note_public, $value_public, $object, $permission, $typeofdatapub, $moreparam, '', 0);
 print '</div>'."\n";
 print '<div class="tagtd wordbreak table-val-border-col'.($editmode ? '' : ' sensiblehtmlcontent').'">'."\n";
-print $form->editfieldval("NotePublic", $note_public, $value_public, $object, $permission, $typeofdata, '', null, null, $moreparam, 1)."\n";
+print $form->editfieldval("NotePublic", $note_public, $value_public, $object, $permission, $typeofdatapub, '', null, null, $moreparam, 1)."\n";
 print '</div>'."\n";
 print '</div>'."\n";
 if (empty($user->socid)) {
@@ -101,10 +126,10 @@ if (empty($user->socid)) {
 	print '<div class="tagtr table-border-row">'."\n";
 	$editmode = (GETPOST('action', 'aZ09') == 'edit'.$note_private);
 	print '<div class="tagtd tagtdnote tdtop'.($editmode ? '' : ' sensiblehtmlcontent').' table-key-border-col'.(empty($cssclass) ? '' : ' '.$cssclass).'"'.($colwidth ? ' style="width: '.$colwidth.'%"' : '').'>'."\n";
-	print $form->editfieldkey("NotePrivate", $note_private, $value_private, $object, $permission, $typeofdata, $moreparam, '', 0);
+	print $form->editfieldkey("NotePrivate", $note_private, $value_private, $object, $permission, $typeofdatapriv, $moreparam, '', 0);
 	print '</div>'."\n";
 	print '<div class="tagtd wordbreak table-val-border-col'.($editmode ? '' : ' sensiblehtmlcontent').'">'."\n";
-	print $form->editfieldval("NotePrivate", $note_private, $value_private, $object, $permission, $typeofdata, '', null, null, $moreparam, 1);
+	print $form->editfieldval("NotePrivate", $note_private, $value_private, $object, $permission, $typeofdatapriv, '', null, null, $moreparam, 1);
 	print '</div>'."\n";
 	print '</div>'."\n";
 }

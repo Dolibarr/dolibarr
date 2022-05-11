@@ -139,11 +139,13 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 		dol_syslog(get_class($this)."::getNextValue", LOG_DEBUG);
 
 		$resql = $db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$obj = $db->fetch_object($resql);
-			if ($obj) $max = intval($obj->max);
-			else $max = 0;
+			if ($obj) {
+				$max = intval($obj->max);
+			} else {
+				$max = 0;
+			}
 		} else {
 			return -1;
 		}
@@ -151,8 +153,11 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 		$date	= dol_now();
 		$yymm	= strftime("%y%m", $date);
 
-		if ($max >= (pow(10, 5) - 1)) $num = $max + 1; // If counter > 99999, we do not format on 5 chars, we take number as it is
-		else $num = sprintf("%05s", $max + 1);
+		if ($max >= (pow(10, 5) - 1)) {
+			$num = $max + 1; // If counter > 99999, we do not format on 5 chars, we take number as it is
+		} else {
+			$num = sprintf("%05s", $max + 1);
+		}
 
 		dol_syslog(get_class($this)."::getNextValue return ".$prefix.$yymm."-".$num);
 		return $prefix.$yymm."-".$num;
@@ -179,25 +184,20 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 		$result = 0;
 		$code = strtoupper(trim($code));
 
-		if (empty($code) && $this->code_null && empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED))
-		{
+		if (empty($code) && $this->code_null && empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED)) {
 			$result = 0;
-		} elseif (empty($code) && (!$this->code_null || !empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED)))
-		{
+		} elseif (empty($code) && (!$this->code_null || !empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED))) {
 			$result = -2;
 		} else {
-			if ($this->verif_syntax($code) >= 0)
-			{
+			if ($this->verif_syntax($code) >= 0) {
 				$is_dispo = $this->verif_dispo($db, $code, $soc, $type);
-				if ($is_dispo <> 0)
-				{
+				if ($is_dispo <> 0) {
 					$result = -3;
 				} else {
 					$result = 0;
 				}
 			} else {
-				if (dol_strlen($code) == 0)
-				{
+				if (dol_strlen($code) == 0) {
 					$result = -2;
 				} else {
 					$result = -1;
@@ -226,17 +226,20 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 		global $conf, $mc;
 
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe";
-		if ($type == 1) $sql .= " WHERE code_fournisseur = '".$db->escape($code)."'";
-		else $sql .= " WHERE code_client = '".$db->escape($code)."'";
+		if ($type == 1) {
+			$sql .= " WHERE code_fournisseur = '".$db->escape($code)."'";
+		} else {
+			$sql .= " WHERE code_client = '".$db->escape($code)."'";
+		}
 		$sql .= " AND entity IN (".getEntity('societe').")";
-		if ($soc->id > 0) $sql .= " AND rowid <> ".$soc->id;
+		if ($soc->id > 0) {
+			$sql .= " AND rowid <> ".$soc->id;
+		}
 
 		dol_syslog(get_class($this)."::verif_dispo", LOG_DEBUG);
 		$resql = $db->query($sql);
-		if ($resql)
-		{
-			if ($db->num_rows($resql) == 0)
-			{
+		if ($resql) {
+			if ($db->num_rows($resql) == 0) {
 				return 0;
 			} else {
 				return -1;
@@ -259,8 +262,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 		// phpcs:enable
 		$res = 0;
 
-		if (dol_strlen($code) < 11)
-		{
+		if (dol_strlen($code) < 11) {
 			$res = -1;
 		} else {
 			$res = 0;

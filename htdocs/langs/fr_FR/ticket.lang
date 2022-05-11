@@ -19,7 +19,7 @@
 #
 
 Module56000Name=Gestionnaire de tickets
-Module56000Desc=Système de ticket pour de l'assistance ou une demande d'accompagnement
+Module56000Desc=Gestionnaire de tickets d'assistance ou de gestion de demandes internes/clients/fournisseurs
 
 Permission56001=Voir tickets
 Permission56002=Modifier des tickets
@@ -34,7 +34,8 @@ TicketDictResolution=Ticket - Résolution
 
 TicketTypeShortCOM=Question commerciale
 TicketTypeShortHELP=Demande d'aide fonctionnelle
-TicketTypeShortISSUE=Problème ou bogue
+TicketTypeShortISSUE=Question ou bug
+TicketTypeShortPROBLEM=Problème
 TicketTypeShortREQUEST=Demande de changement ou d'amélioration
 TicketTypeShortPROJET=Projet
 TicketTypeShortOTHER=Autre
@@ -43,6 +44,8 @@ TicketSeverityShortLOW=Faible
 TicketSeverityShortNORMAL=Normal
 TicketSeverityShortHIGH=Élevé
 TicketSeverityShortBLOCKING=Critique, bloquant
+
+TicketCategoryShortOTHER=Autre
 
 ErrorBadEmailAddress=Champ '%s' incorrect
 MenuTicketMyAssign=Mes tickets
@@ -54,22 +57,25 @@ TypeContact_ticket_internal_SUPPORTTEC=Utilisateur assigné
 TypeContact_ticket_external_SUPPORTCLI=Contact client / suivi des tickets
 TypeContact_ticket_external_CONTRIBUTOR=Contributeur externe
 
-OriginEmail=E-mail source
+OriginEmail=Email demandeur
 Notify_TICKET_SENTBYMAIL=Envoi d'un message du ticket par e-mail
 
 # Status
 Read=Lu
 Assigned=Assigné
 InProgress=En cours
-NeedMoreInformation=Attente d'information
+NeedMoreInformation=Attente retour demandeur
+NeedMoreInformationShort=En attente de retour
 Answered=Répondu
 Waiting=En attente
-Closed=Fermé
+SolvedClosed=Résolu
 Deleted=Supprimé
 
 # Dict
 Type=Type
 Severity=Sévérité
+TicketGroupIsPublic=Le groupe est public
+TicketGroupIsPublicDesc=Si un groupe de tickets est public, il sera visible dans le formulaire lors de la création d’un ticket à partir de l’interface publique
 
 # Email templates
 MailToSendTicketMessage=Pour envoyer un e-mail depuis un ticket
@@ -84,10 +90,10 @@ TicketPublicAccess=Une interface publique ne nécessitant aucune identification 
 TicketSetupDictionaries=Les types de ticket, sévérité et codes analytiques sont paramétrables à partir des dictionnaires
 TicketParamModule=Configuration des variables du module
 TicketParamMail=Configuration de la messagerie
-TicketEmailNotificationFrom=Email from de notification
-TicketEmailNotificationFromHelp=Utilisé dans les messages de réponses des tickets par exemple
-TicketEmailNotificationTo=E-mail de notification à
-TicketEmailNotificationToHelp=Envoyer des notifications par e-mail à cette adresse.
+TicketEmailNotificationFrom=Adresse e-mail émettrice des réponses aux tickets
+TicketEmailNotificationFromHelp=Adresse e-mail émettrice des réponses aux tickets envoyées depuis Dolibarr
+TicketEmailNotificationTo=Notifier cette adresse e-mail lors d'un nouveau ticket
+TicketEmailNotificationToHelp=Si présente, cette adresse e-mail sera notifiée de la création d'un nouvau ticket
 TicketNewEmailBodyLabel=Texte du message envoyé après la création d'un ticket
 TicketNewEmailBodyHelp=Le texte spécifié ici sera inséré dans l'e-mail confirmant la création d'un nouveau ticket depuis l'interface publique. Les informations sur la consultation du ticket sont automatiquement ajoutées.
 TicketParamPublicInterface=Configuration de l'interface publique\n
@@ -115,7 +121,7 @@ TicketsShowModuleLogoHelp=Activer cette option pour cacher le logo du module dan
 TicketsShowCompanyLogo=Afficher le logo de la société dans l'interface publique
 TicketsShowCompanyLogoHelp=Activez cette option pour masquer le logo de la société dans les pages de l'interface publique
 TicketsEmailAlsoSendToMainAddress=Envoyer également une notification à l'adresse e-mail principale
-TicketsEmailAlsoSendToMainAddressHelp=Activer cette option pour envoyer un email à "Email de notification de" adresse (voir configuration ci-dessous)
+TicketsEmailAlsoSendToMainAddressHelp=Activer cette option pour envoyer aussi un email à l'adresse définie dans la configuration "%s" (Voir onglet "%s")
 TicketsLimitViewAssignedOnly=Limiter l'afficher des tickets assignés à l'utilisateur courant (non valable pour les utilisateurs externes, toujours limité par le tiers dont ils dépendent)
 TicketsLimitViewAssignedOnlyHelp=Seuls les tickets affectés à l'utilisateur actuel seront visibles. Ne s'applique pas à un utilisateur disposant de droits de gestion des tickets.
 TicketsActivatePublicInterface=Activer l'interface publique
@@ -126,10 +132,13 @@ TicketNumberingModules=Module de numérotation des tickets
 TicketsModelModule=Modèles de documents pour les tickets
 TicketNotifyTiersAtCreation=Notifier le tiers à la création
 TicketsDisableCustomerEmail=Toujours désactiver les courriels lorsqu'un ticket est créé depuis l'interface publique
-TicketsPublicNotificationNewMessage=Envoyer un (des) courriel (s) lorsqu’un nouveau message est ajouté
+TicketsPublicNotificationNewMessage=Envoyer un ou des emails lorsqu’un nouveau message/commentaire est ajouté à un ticket
 TicketsPublicNotificationNewMessageHelp=Envoyer un (des) courriel(s) lorsqu’un nouveau message est ajouté à partir de l’interface publique (à l’utilisateur désigné ou au courriel de notification  (mise à jour) et/ou au courriel de notification)
 TicketPublicNotificationNewMessageDefaultEmail=Emails de notifications à (mise à jour)
-TicketPublicNotificationNewMessageDefaultEmailHelp=Envoyez une notification email de nouveau message à cette adresse si le ticket n’a pas d’utilisateur assigné ou si l’utilisateur n’a pas d’email.
+TicketPublicNotificationNewMessageDefaultEmailHelp=Envoyez un email à cette adresse email pour chaque nouveau message de notifications si le ticket n'a pas d'utilisateur assigné ou si l'utilisateur n'a pas d'email connu.
+TicketsAutoReadTicket=Automatiquement marquer le ticket comme lu
+TicketsAutoReadTicketHelp=Automatiquement marquer le ticket comme lu s'il est créé depuis le backoffice.
+
 #
 # Index & list page
 #
@@ -158,7 +167,7 @@ CreatedBy=Créé par
 NewTicket=Nouveau ticket
 SubjectAnswerToTicket=Réponse ticket
 TicketTypeRequest=Type de demande
-TicketCategory=Groupe
+TicketCategory=Catégorisation du ticket
 SeeTicket=Voir le ticket
 TicketMarkedAsRead=Le ticket a été marqué comme lu
 TicketReadOn=Lu
@@ -176,15 +185,17 @@ MessageSuccessfullyAdded=Ticket créé
 TicketMessageSuccessfullyAdded=Message ajouté avec succès
 TicketMessagesList=Liste des messages
 NoMsgForThisTicket=Pas de message pour ce ticket
-Properties=Classification
+TicketProperties=Classification
 LatestNewTickets=Les %s derniers tickets (non lus)
 TicketSeverity=Sévérité
 ShowTicket=Voir le ticket
 RelatedTickets=Tickets liés
 TicketAddIntervention=Créer intervention
-CloseTicket=Fermer le ticket
-CloseATicket=Fermer un ticket
+CloseTicket=Fermer|Résoudre ticket
+AbandonTicket=Abandonner le ticket
+CloseATicket=Fermer|Résoudre un ticket
 ConfirmCloseAticket=Confirmer la fermeture du ticket
+ConfirmAbandonTicket=Confirmez-vous la fermeture du ticket au statut 'Abandonné'
 ConfirmDeleteTicket=Confirmez la suppression du ticket
 TicketDeletedSuccess=Ticket supprimé avec succès
 TicketMarkedAsClosed=Ticket indiqué fermé
@@ -198,17 +209,18 @@ TicketGoIntoContactTab=Rendez-vous dans le tableau "Contacts" pour les sélectio
 TicketMessageMailIntro=Introduction
 TicketMessageMailIntroHelp=Ce texte est ajouté seulement au début de l'email et ne sera pas sauvegardé.
 TicketMessageMailIntroLabelAdmin=Introduction du message lors de l'envoi d'un e-mail
-TicketMessageMailIntroText=Bonjour <br> Une nouvelle réponse a été ajoutée à un ticket que vous suivez. Voici le message :<br>
+TicketMessageMailIntroText=Bonjour, <br> Une nouvelle réponse a été ajoutée à un ticket que vous suivez. Voici le message :<br>
 TicketMessageMailIntroHelpAdmin=Ce texte sera inséré après le message de réponse.
 TicketMessageMailSignature=Signature
 TicketMessageMailSignatureHelp=Ce texte est ajouté seulement à la fin de l'email et ne sera pas sauvegardé.
-TicketMessageMailSignatureText=<p> Cordialement, </p> <p> -- </p>
+TicketMessageMailSignatureText=Message envoyé par <b>%s</b> via Dolibarr
 TicketMessageMailSignatureLabelAdmin=Signature de l'email de réponse
 TicketMessageMailSignatureHelpAdmin=Ce texte sera inséré après le message de réponse.
 TicketMessageHelp=Seul ce texte sera sauvegardé dans la liste des messages sur la fiche ticket.
 TicketMessageSubstitutionReplacedByGenericValues=Les variables de substitution sont remplacées par des valeurs génériques.
 TimeElapsedSince=Temps écoulé depuis
 TicketTimeToRead=Temps écoulé avant la lecture
+TicketTimeElapsedBeforeSince=Temps écoulé avant / depuis
 TicketContacts=Contacts ticket
 TicketDocumentsLinked=Documents liés
 ConfirmReOpenTicket=Voulez-vous ré-ouvrir ce ticket ?
@@ -259,8 +271,8 @@ TicketNewEmailBody=Ceci est un message automatique pour confirmer l'enregistreme
 TicketNewEmailBodyCustomer=Ceci est un email automatique pour confirmer qu'un nouveau ticket vient d'être créé dans votre compte.
 TicketNewEmailBodyInfosTicket=Informations pour la surveillance du ticket
 TicketNewEmailBodyInfosTrackId=Numéro de suivi du ticket : %s
-TicketNewEmailBodyInfosTrackUrl=Vous pouvez voir la progression du ticket en cliquant sur le lien ci-dessus.
-TicketNewEmailBodyInfosTrackUrlCustomer=Vous pouvez voir la progression du ticket en cliquant sur le lien ci-dessus.
+TicketNewEmailBodyInfosTrackUrl=Vous pouvez voir la progression du ticket en cliquant sur le lien ci-contre
+TicketNewEmailBodyInfosTrackUrlCustomer=Vous pouvez voir la progression du ticket en cliquant sur le lien ci-contre
 TicketEmailPleaseDoNotReplyToThisEmail=Merci de ne pas répondre directement à ce courriel ! Utilisez le lien pour répondre via l'interface.
 TicketPublicInfoCreateTicket=Ce formulaire vous permet d'enregistrer un ticket dans notre système de gestion.
 TicketPublicPleaseBeAccuratelyDescribe=Veuillez décrire avec précision le problème. Fournissez le plus d'informations possibles pour nous permettre d'identifier correctement votre demande.
@@ -302,3 +314,14 @@ BoxLastModifiedTicket=Derniers tickets modifiés
 BoxLastModifiedTicketDescription=Les %s derniers tickets modifiés
 BoxLastModifiedTicketContent=
 BoxLastModifiedTicketNoRecordedTickets=Pas de tickets modifiés récemment
+BoxTicketType=Répartition des tickets ouverts par type
+BoxTicketSeverity=Nombre de tickets ouverts par sévérité
+BoxNoTicketSeverity=Aucun ticket ouvert
+BoxTicketLastXDays=Nombre de nouveaux tickets par jour ces %s derniers jours
+BoxTicketLastXDayswidget = Nombre de nouveaux tickets par jour ces X derniers jours
+BoxNoTicketLastXDays=Aucun nouveau ticket ces %s derniers jours
+BoxNumberOfTicketByDay=Nombre de nouveaux tickets par jour
+BoxNewTicketVSClose=Nombre de nouveaux tickets par rapport aux tickets fermés (aujourd'hui)
+TicketCreatedToday=Ticket créé aujourd'hui
+TicketClosedToday=Ticket fermé aujourd'hui
+KMFoundForTicketGroup=Nous avons trouvé des sujets et des FAQ pouvant répondre à votre question, merci de les consulter avant de soumettre le ticket

@@ -29,6 +29,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 
 $year = GETPOST('year', 'int');
 
+// Security check
+if ($user->socid) {
+	$socid = $user->socid;
+}
+restrictedArea($user, 'expedition');
+
 
 /*
  * View

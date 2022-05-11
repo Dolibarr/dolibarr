@@ -25,8 +25,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/donation.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
-if (!empty($conf->projet->enabled))
-{
+if (!empty($conf->projet->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
@@ -39,7 +38,9 @@ $action = GETPOST('action', 'aZ09');
 $projectid = (GETPOST('projectid') ? GETPOST('projectid', 'int') : 0);
 
 // Security check
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 $result = restrictedArea($user, 'don', $id, '');
 
 $object = new Don($db);
@@ -47,8 +48,7 @@ $object->fetch($id);
 /*
  * Actions
  */
-if ($action == 'classin' && $user->rights->don->creer)
-{
+if ($action == 'classin' && $user->rights->don->creer) {
 	$object->fetch($id);
 	$object->setProject($projectid);
 }
@@ -57,11 +57,15 @@ if ($action == 'classin' && $user->rights->don->creer)
  * View
  */
 $title = $langs->trans('Donation')." - ".$langs->trans('Info');
-$helpurl = "";
-llxHeader('', $title, $helpurl);
+
+$help_url = 'EN:Module_Donations|FR:Module_Dons|ES:M&oacute;dulo_Donaciones|DE:Modul_Spenden';
+
+llxHeader('', $title, $help_url);
 
 $form = new Form($db);
-if (!empty($conf->projet->enabled)) { $formproject = new FormProjets($db); }
+if (!empty($conf->projet->enabled)) {
+	$formproject = new FormProjets($db);
+}
 
 $object->info($id);
 
@@ -73,14 +77,12 @@ $linkback = '<a href="'.DOL_URL_ROOT.'/don/list.php'.(!empty($socid) ? '?socid='
 
 $morehtmlref = '<div class="refidno">';
 // Project
-if (!empty($conf->projet->enabled))
-{
+if (!empty($conf->projet->enabled)) {
 	$langs->load("projects");
 	$morehtmlref .= $langs->trans('Project').' ';
-	if ($user->rights->don->creer)
-	{
+	if ($user->rights->don->creer) {
 		if ($action != 'classify') {
-			// $morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+			// $morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 		}
 		if ($action == 'classify') {
 			//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
@@ -97,9 +99,10 @@ if (!empty($conf->projet->enabled))
 		if (!empty($object->fk_project)) {
 			$proj = new Project($db);
 			$proj->fetch($object->fk_project);
-			$morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$object->fk_project.'" title="'.$langs->trans('ShowProject').'">';
-			$morehtmlref .= $proj->ref;
-			$morehtmlref .= '</a>';
+			$morehtmlref .= ' : '.$proj->getNomUrl(1);
+			if ($proj->title) {
+				$morehtmlref .= ' - '.$proj->title;
+			}
 		} else {
 			$morehtmlref .= '';
 		}

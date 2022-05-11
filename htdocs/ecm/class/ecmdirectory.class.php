@@ -40,7 +40,7 @@ class EcmDirectory extends CommonObject
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
-	public $picto = 'dir';
+	public $picto = 'folder-open';
 
 	/**
 	 * @var int ID
@@ -144,7 +144,6 @@ class EcmDirectory extends CommonObject
 
 		// Clean parameters
 		$this->label = dol_sanitizeFileName(trim($this->label));
-		$this->fk_parent = trim($this->fk_parent);
 		$this->description = trim($this->description);
 		$this->date_c = $now;
 		$this->fk_user_c = $user->id;
@@ -155,7 +154,7 @@ class EcmDirectory extends CommonObject
 
 		// Check if same directory does not exists with this name
 		$relativepath = $this->label;
-		if ($this->fk_parent) {
+		if ($this->fk_parent > 0) {
 			$parent = new EcmDirectory($this->db);
 			$parent->fetch($this->fk_parent);
 			$relativepath = $parent->getRelativePath().$relativepath;
@@ -194,11 +193,11 @@ class EcmDirectory extends CommonObject
 			$sql .= ") VALUES (";
 			$sql .= " '".$this->db->escape($this->label)."',";
 			$sql .= " '".$this->db->escape($conf->entity)."',";
-			$sql .= " '".$this->db->escape($this->fk_parent)."',";
+			$sql .= " ".($this->fk_parent > 0 ? ((int) $this->fk_parent) : "null").",";
 			$sql .= " '".$this->db->escape($this->description)."',";
-			$sql .= " ".$this->cachenbofdoc.",";
+			$sql .= " ".((int) $this->cachenbofdoc).",";
 			$sql .= " '".$this->db->idate($this->date_c)."',";
-			$sql .= " '".$this->db->escape($this->fk_user_c)."'";
+			$sql .= " ".($this->fk_user_c > 0 ? ((int) $this->fk_user_c) : "null");
 			$sql .= ")";
 
 			dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -249,20 +248,19 @@ class EcmDirectory extends CommonObject
 
 		// Clean parameters
 		$this->label = trim($this->label);
-		$this->fk_parent = trim($this->fk_parent);
 		$this->description = trim($this->description);
-
-		// Check parameters
-		// Put here code to add control on parameters values
+		if ($this->fk_parent <= 0) {
+			$this->fk_parent = 0;
+		}
 
 		$this->db->begin();
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."ecm_directories SET";
-		$sql .= " label='".$this->db->escape($this->label)."',";
-		$sql .= " fk_parent='".$this->db->escape($this->fk_parent)."',";
-		$sql .= " description='".$this->db->escape($this->description)."'";
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " label = '".$this->db->escape($this->label)."',";
+		$sql .= " fk_parent = ".($this->fk_parent > 0 ? ((int) $this->fk_parent) : "null").",";
+		$sql .= " description = '".$this->db->escape($this->description)."'";
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -305,7 +303,7 @@ class EcmDirectory extends CommonObject
 		} else {
 			$sql .= " cachenbofdoc = cachenbofdoc ".$value." 1";
 		}
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::changeNbOfFiles", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -403,7 +401,7 @@ class EcmDirectory extends CommonObject
 		$this->db->begin();
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."ecm_directories";
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -476,7 +474,7 @@ class EcmDirectory extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $max = 0, $more = '', $notooltip = 0)
 	{
-		global $langs;
+		global $langs, $hookmanager;
 
 		$result = '';
 		//$newref=str_replace('_',' ',$this->ref);
@@ -508,6 +506,15 @@ class EcmDirectory extends CommonObject
 		}
 		$result .= $linkend;
 
+		global $action;
+		$hookmanager->initHooks(array($this->element . 'dao'));
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
+		}
 		return $result;
 	}
 
@@ -620,10 +627,10 @@ class EcmDirectory extends CommonObject
 	 *				date_c              Date creation
 	 * 				fk_user_c           User creation
 	 *  			login_c             Login creation
-	 * 				fullpath	        Full path of id (Added by build_path_from_id_categ call)
-	 *              fullrelativename    Full path name (Added by build_path_from_id_categ call)
-	 * 				fulllabel	        Full label (Added by build_path_from_id_categ call)
-	 * 				level		        Level of line (Added by build_path_from_id_categ call)
+	 * 				fullpath	        Full path of id (Added by buildPathFromId call)
+	 *              fullrelativename    Full path name (Added by buildPathFromId call)
+	 * 				fulllabel	        Full label (Added by buildPathFromId call)
+	 * 				level		        Level of line (Added by buildPathFromId call)
 	 *
 	 *  @param	int		$force	        Force reload of full arbo even if already loaded in cache $this->cats
 	 *	@return	array			        Tableau de array
@@ -646,6 +653,7 @@ class EcmDirectory extends CommonObject
 		$sql .= " c.fk_user_c,";
 		$sql .= " c.date_c,";
 		$sql .= " u.login as login_c,";
+		$sql .= " u.statut as statut_c,";
 		$sql .= " ca.rowid as rowid_fille";
 		$sql .= " FROM ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."ecm_directories as c";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."ecm_directories as ca";
@@ -667,7 +675,8 @@ class EcmDirectory extends CommonObject
 				$this->cats[$obj->rowid]['description'] = $obj->description;
 				$this->cats[$obj->rowid]['cachenbofdoc'] = $obj->cachenbofdoc;
 				$this->cats[$obj->rowid]['date_c'] = $this->db->jdate($obj->date_c);
-				$this->cats[$obj->rowid]['fk_user_c'] = $obj->fk_user_c;
+				$this->cats[$obj->rowid]['fk_user_c'] = (int) $obj->fk_user_c;
+				$this->cats[$obj->rowid]['statut_c'] = (int) $obj->statut_c;
 				$this->cats[$obj->rowid]['login_c'] = $obj->login_c;
 
 				if (!empty($obj->rowid_fille)) {
@@ -689,10 +698,10 @@ class EcmDirectory extends CommonObject
 
 		// We add properties fullxxx to all elements
 		foreach ($this->cats as $key => $val) {
-			if (isset($motherof[$key])) {
+			if (isset($this->motherof[$key])) {
 				continue;
 			}
-			$this->build_path_from_id_categ($key, 0);
+			$this->buildPathFromId($key, 0);
 		}
 
 		$this->cats = dol_sort_array($this->cats, 'fulllabel', 'asc', true, false);
@@ -701,7 +710,6 @@ class EcmDirectory extends CommonObject
 		return $this->cats;
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Define properties fullpath, fullrelativename, fulllabel of a directory of array this->cats and all its childs.
 	 *  Separator between directories is always '/', whatever is OS.
@@ -710,9 +718,8 @@ class EcmDirectory extends CommonObject
 	 * 	@param	int		$protection		Deep counter to avoid infinite loop
 	 * 	@return	void
 	 */
-	public function build_path_from_id_categ($id_categ, $protection = 0)
+	private function buildPathFromId($id_categ, $protection = 0)
 	{
-		// phpcs:enable
 		// Define fullpath
 		if (!empty($this->cats[$id_categ]['id_mere'])) {
 			$this->cats[$id_categ]['fullpath'] = $this->cats[$this->cats[$id_categ]['id_mere']]['fullpath'];
@@ -729,14 +736,14 @@ class EcmDirectory extends CommonObject
 		// We count number of _ to have level (we use strlen that is faster than dol_strlen)
 		$this->cats[$id_categ]['level'] = strlen(preg_replace('/([^_])/i', '', $this->cats[$id_categ]['fullpath']));
 
-		// Traite ces enfants
+		// Process children
 		$protection++;
 		if ($protection > 20) {
-			return; // On ne traite pas plus de 20 niveaux
+			return; // We never go more than 20 levels
 		}
 		if (isset($this->cats[$id_categ]['id_children']) && is_array($this->cats[$id_categ]['id_children'])) {
 			foreach ($this->cats[$id_categ]['id_children'] as $key => $val) {
-				$this->build_path_from_id_categ($val, $protection);
+				$this->buildPathFromId($val, $protection);
 			}
 		}
 	}
@@ -762,7 +769,7 @@ class EcmDirectory extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX."ecm_directories SET";
 		$sql .= " cachenbofdoc = '".count($filelist)."'";
 		if (empty($all)) {  // By default
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 		} else {
 			$sql .= " WHERE entity = ".$conf->entity;
 		}

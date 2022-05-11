@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2017		 Oscss-Shop              <support@oscss-shop.fr>.
  * Copyright (C) 2008-2011   Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2020       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2020        Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modifyion 2.0 (the "License");
  * it under the terms of the GNU General Public License as published bypliance with the License.
@@ -17,7 +17,6 @@
  * or see https://www.gnu.org/
  */
 
-if (!defined('REQUIRE_JQUERY_BLOCKUI')) define('REQUIRE_JQUERY_BLOCKUI', 1);
 if (!defined('NOTOKENRENEWAL')) {
 	define('NOTOKENRENEWAL', 1);
 }
@@ -47,7 +46,8 @@ try {
 	$url = $conf->global->MAIN_MODULE_DOLISTORE_API_SRV.'/api/images/products/'.$id_product.'/'.$id_image.'/'.$quality;
 	$api = new PrestaShopWebservice(
 		$conf->global->MAIN_MODULE_DOLISTORE_API_SRV,
-		$conf->global->MAIN_MODULE_DOLISTORE_API_KEY, $dolistore->debug_api
+		$conf->global->MAIN_MODULE_DOLISTORE_API_KEY,
+		$dolistore->debug_api
 	);
 	//echo $url;
 	$request = $api->executeRequest($url, array(CURLOPT_CUSTOMREQUEST => 'GET'));
@@ -56,7 +56,11 @@ try {
 } catch (PrestaShopWebserviceException $e) {
 	// Here we are dealing with errors
 	$trace = $e->getTrace();
-	if ($trace[0]['args'][0] == 404) die('Bad ID');
-	elseif ($trace[0]['args'][0] == 401) die('Bad auth key');
-	else die('Can not access to '.$conf->global->MAIN_MODULE_DOLISTORE_API_SRV);
+	if ($trace[0]['args'][0] == 404) {
+		die('Bad ID');
+	} elseif ($trace[0]['args'][0] == 401) {
+		die('Bad auth key');
+	} else {
+		die('Can not access to '.$conf->global->MAIN_MODULE_DOLISTORE_API_SRV);
+	}
 }

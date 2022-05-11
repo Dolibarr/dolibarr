@@ -7,7 +7,7 @@
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -44,40 +44,49 @@ if ($user->socid) {
 	$action = '';
 	$socid = $user->socid;
 }
-if ($user->socid)
+if ($user->socid) {
 	$socid = $user->socid;
+}
 
 // Get parameters
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page == -1) { $page = 0; }
+if (empty($page) || $page == -1) {
+	$page = 0;
+}
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (!$sortorder)
+if (!$sortorder) {
 	$sortorder = "ASC";
-if (!$sortfield)
+}
+if (!$sortfield) {
 	$sortfield = "name";
+}
 
 $object = new Account($db);
-if ($id > 0 || !empty($ref)) $object->fetch($id, $ref);
+if ($id > 0 || !empty($ref)) {
+	$object->fetch($id, $ref);
+}
+
 
 $result = restrictedArea($user, 'banque', $object->id, 'bank_account', '', '');
+
+$permissiontoadd = $user->rights->banque->modifier;	// Used by the include of actions_dellink.inc.php
 
 
 /*
  * Actions
  */
 
-if ($object->id > 0)
-{
+if ($object->id > 0) {
 	$object->fetch_thirdparty();
 	$upload_dir = $conf->bank->dir_output."/".dol_sanitizeFileName($object->ref);
 }
 
-include_once DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
+include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
 
 /*
@@ -85,8 +94,10 @@ include_once DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
  */
 
 $title = $langs->trans("FinancialAccount").' - '.$langs->trans("Documents");
-$helpurl = "";
-llxHeader('', $title, $helpurl);
+
+$help_url = "EN:Module_Banks_and_Cash|FR:Module_Banques_et_Caisses";
+
+llxHeader("", $title, $help_url);
 
 $form = new Form($db);
 
@@ -127,7 +138,7 @@ if ($id > 0 || !empty($ref)) {
 
 
 		$modulepart = 'bank';
-		$permission = $user->rights->banque->modifier;
+		$permissiontoadd = $user->rights->banque->modifier;
 		$permtoedit = $user->rights->banque->modifier;
 		$param = '&id='.$object->id;
 		include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';

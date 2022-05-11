@@ -1,5 +1,7 @@
 <?php
-if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
+if (!defined('ISLOADEDBYSTEELSHEET')) {
+	die('Must be call by steelsheet');
+} ?>
 /* <style type="text/css" > */
 
 /*
@@ -7,34 +9,42 @@ if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
  * -------------------
  */
 
-.info-box-module-external span.info-box-icon-version {
-    background: #bbb;
+.info-box-module.--external span.info-box-icon-version {
+	background: #bbb;
+}
+
+.info-box-module.--external.--need-update span.info-box-icon-version{
+	background: #bc9525;
 }
 
 .info-box {
 	display: block;
-    position: relative;
+	position: relative;
 	min-height: 90px;
-	/* background: #fff; */
+	background: var(--colorbacklineimpair2);
 	width: 100%;
 	box-shadow: 1px 1px 15px rgba(192, 192, 192, 0.2);
-    border-radius: 2px;
-    border: 1px solid #e9e9e9;
+	border-radius: 2px;
+	border: 1px solid #e9e9e9;
 	margin-bottom: 15px;
 }
 .info-box.info-box-sm {
-    min-height: 80px;
-    margin-bottom: 10px;
+	min-height: 80px;
+	margin-bottom: 10px;
 	/* background: #fff; */
 }
-.opened-dash-board-wrap .info-box.info-box-sm {
-    border-radius: 0 0 0 20px;
+.opened-dash-board-wrap .info-box, .opened-dash-board-wrap .info-box .info-box-icon  {
+	border-radius: 0 0 0 15px;
 }
+/*.opened-dash-board-wrap .box-flex-item {
+	border-radius: 10px;
+}*/
+
 .info-box-more {
-    float: right;
-    top: 5px;
-    position: absolute;
-    right: 8px;
+	float: right;
+	top: 5px;
+	position: absolute;
+	right: 8px;
 }
 
 .info-box small {
@@ -71,31 +81,32 @@ if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 	border-bottom-right-radius: 0;
 	border-bottom-left-radius: 2px;
 	display: block;
-    overflow: hidden;
+	overflow: hidden;
 	float: left;
 	height: 90px;
-	width: 90px;
+	width: 88px;
 	text-align: center;
-	font-size: 45px;
+	font-size: 2.8em;
 	line-height: 90px;
-	background: rgba(0, 0, 0, 0.08) !important;
+	background: var(--colorbacktitle1) !important;
 }
 
 .info-box-module .info-box-icon {
-    padding-top: 5px;
-    padding-bottom: 5px;
+	padding-top: 5px;
+	padding-bottom: 5px;
 }
 .info-box-sm .info-box-icon {
-    height: 80px;
-    width: 78px;
-    font-size: 25px;
-    line-height: 92px;
+	height: 80px;
+	width: 78px;
+	font-size: 25px;
+	line-height: 92px;
+}
+.opened-dash-board-wrap .info-box .info-box-icon {
+	font-size: 2em;
 }
 .opened-dash-board-wrap .info-box-sm .info-box-icon {
-    border-radius: 0 0 0 20px;
-}
-.opened-dash-board-wrap .info-box-sm .info-box-icon {
-    line-height: 80px;
+	border-radius: 0 0 0 20px;
+	line-height: 80px;
 }
 .info-box-module .info-box-icon {
 	height: 98px;
@@ -104,75 +115,76 @@ if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 	max-width: 100%;
 }
 .info-box-module .info-box-icon > img {
-    max-width: 60%;
+	max-width: 60%;
 }
 
 a.info-box-text.info-box-text-a {
-    display: table-cell;
+	display: table-cell;
 }
 a.info-box-text-a i.fa.fa-exclamation-triangle {
-    font-size: 0.9em;
+	font-size: 0.9em;
 }
 
 .info-box-icon-text{
-    box-sizing: border-box;
-    display: block;
-    position: absolute;
-    width: 90px;
-    bottom: 0px;
-    color: #ffffff;
-    background-color: rgba(0,0,0,0.1);
-    cursor: default;
+	box-sizing: border-box;
+	display: block;
+	position: absolute;
+	width: 90px;
+	bottom: 0px;
+	color: #ffffff;
+	background-color: rgba(0,0,0,0.1);
+	cursor: default;
 
-    font-size: 10px;
-    line-height: 15px;
-    padding: 0px 3px;
-    text-align: center;
-    opacity: 0;
-    -webkit-transition: opacity 0.5s, visibility 0s 0.5s;
-    transition: opacity 0.5s, visibility 0s 0.5s;
+	font-size: 10px;
+	line-height: 15px;
+	padding: 0px 3px;
+	text-align: center;
+	opacity: 0;
+	-webkit-transition: opacity 0.5s, visibility 0s 0.5s;
+	transition: opacity 0.5s, visibility 0s 0.5s;
 }
 
 .info-box-icon-version {
-    box-sizing: border-box;
-    display: block;
-    position: absolute;
-    width: 90px;
-    bottom: 0px;
-    color: #ffffff;
-    background-color: rgba(0,0,0,0.1);
-    cursor: default;
+	box-sizing: border-box;
+	display: block;
+	position: absolute;
+	width: 90px;
+	bottom: 0px;
+	color: #ffffff;
+	background-color: rgba(0,0,0,0.1);
+	cursor: default;
 
-    font-size: 10px;
-    line-height: 22px;
-    padding: 0px 3px;
-    text-align: center;
-    opacity: 1;
-    -webkit-transition: opacity 0.5s, visibility 0s 0.5s;
-    transition: opacity 0.5s, visibility 0s 0.5s;
+	font-size: 10px;
+	line-height: 1.5em;
+	padding: 4px 3px;
+	text-align: center;
+	opacity: 1;
+	-webkit-transition: opacity 0.5s, visibility 0s 0.5s;
+	transition: opacity 0.5s, visibility 0s 0.5s;
 }
-.box-flex-item.info-box-module.info-box-module-disabled {
-    /* opacity: 0.6; */
+
+.box-flex-item.info-box-module.--disabled {
+	/* opacity: 0.6; */
 }
 
 .info-box-actions {
 	position: absolute;
-    right: 0;
-    bottom: 0;
+	right: 0;
+	bottom: 0;
 }
 
 <?php if (empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS) && !empty($conf->global->MAIN_INCLUDE_GLOBAL_STATS_IN_OPENED_DASHBOARD)) { ?>
 .info-box-icon-text{
-    opacity: 1;
+	opacity: 1;
 }
 <?php } ?>
 
 .info-box-sm .info-box-icon-text, .info-box-sm .info-box-icon-version{
-    overflow: hidden;
-    width: 80px;
+	overflow: hidden;
+	width: 80px;
 }
 .info-box:hover .info-box-icon-text{
-    opacity: 1;
+	opacity: 1;
 }
 
 .info-box-content {
@@ -180,10 +192,10 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 	margin-left: 84px;
 }
 .info-box-sm .info-box-content{
-    margin-left: 80px;
+	margin-left: 80px;
 }
 .info-box-sm .info-box-module-enabled {
-    /* background: linear-gradient(0.35turn, #fff, #fff, #f6faf8, #e4efe8) */ 
+	/* background: linear-gradient(0.35turn, #fff, #fff, #f6faf8, #e4efe8) */
 	background: var(--infoboxmoduleenabledbgcolor);
 }
 .info-box-content-warning span.font-status4 {
@@ -193,7 +205,7 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 	background: #ffd7a3;
 }*/
 /*.info-box-icon.info-box-icon-module-enabled {
-    background: #e4f0e4 !important;
+	background: #e4f0e4 !important;
 }*/
 
 .info-box-number {
@@ -240,20 +252,26 @@ a.info-box-text{ text-decoration: none;}
 include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 $prefix = '';
-if (!empty($conf->global->THEME_INFOBOX_COLOR_ON_BACKGROUND)) $prefix = 'background-';
+if (!empty($conf->global->THEME_INFOBOX_COLOR_ON_BACKGROUND)) {
+	$prefix = 'background-';
+}
 
-if (!isset($conf->global->THEME_SATURATE_RATIO)) $conf->global->THEME_SATURATE_RATIO = 0.7;
-if (GETPOSTISSET('THEME_SATURATE_RATIO')) $conf->global->THEME_SATURATE_RATIO = GETPOST('THEME_SATURATE_RATIO', 'int');
+if (!isset($conf->global->THEME_SATURATE_RATIO)) {
+	$conf->global->THEME_SATURATE_RATIO = 0.7;
+}
+if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
+	$conf->global->THEME_SATURATE_RATIO = GETPOST('THEME_SATURATE_RATIO', 'int');
+}
 
 ?>
 .info-box-icon {
 	<?php if ($prefix) { ?>
 	color: #fff !important;
 	<?php } ?>
-    opacity: 0.95;
-    <?php if (isset($conf->global->THEME_SATURATE_RATIO)) { ?>
-        filter: saturate(<?php echo $conf->global->THEME_SATURATE_RATIO; ?>);
-    <?php } ?>
+	opacity: 0.95;
+	<?php if (isset($conf->global->THEME_SATURATE_RATIO)) { ?>
+		filter: saturate(<?php echo $conf->global->THEME_SATURATE_RATIO; ?>);
+	<?php } ?>
 }
 
 .customer-back {
@@ -287,7 +305,7 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) $conf->global->THEME_SATURATE_RATIO = 
 	<?php echo $prefix; ?>color: #b06080 !important;
 }
 .bg-infobox-propal, .bg-infobox-facture, .bg-infobox-commande {
-	<?php echo $prefix; ?>color: #55955d !important;
+	<?php echo $prefix; ?>color: #65953d !important;
 }
 .bg-infobox-supplier_proposal, .bg-infobox-invoice_supplier, .bg-infobox-order_supplier {
 	<?php echo $prefix; ?>color: #599caf !important;
@@ -317,14 +335,16 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) $conf->global->THEME_SATURATE_RATIO = 
 .infobox-action{
 	color: #b06080 !important;
 }
-.infobox-propal:not(.pictotitle),
-.infobox-facture:not(.pictotitle),
-.infobox-commande:not(.pictotitle) {
-	color: #65955d !important;
+/* Color for customer object */
+.infobox-propal:not(.pictotitle):not(.error),
+.infobox-facture:not(.pictotitle):not(.error),
+.infobox-commande:not(.pictotitle):not(.error) {
+	color: #65953d !important;
 }
-.infobox-supplier_proposal:not(.pictotitle),
-.infobox-invoice_supplier:not(.pictotitle),
-.infobox-order_supplier:not(.pictotitle){
+/* Color for vendor object */
+.infobox-supplier_proposal:not(.pictotitle):not(.error),
+.infobox-invoice_supplier:not(.pictotitle):not(.error),
+.infobox-order_supplier:not(.pictotitle):not(.error) {
 	color: #599caf !important;
 }
 .infobox-contrat, .infobox-ticket{
@@ -356,14 +376,14 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) $conf->global->THEME_SATURATE_RATIO = 
 	content: "\f571";
 }
 .fa-dol-project:before {
-	content: "\f0e8";
+	content: "\f542";
 }
 .fa-dol-commande:before,
 .fa-dol-order_supplier:before {
 	content: "\f570";
 }
 .fa-dol-contrat:before {
-	content: "\f1e6";
+	content: "\f0f2";
 }
 .fa-dol-ticket:before {
 	content: "\f3ff";
@@ -372,7 +392,7 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) $conf->global->THEME_SATURATE_RATIO = 
 	content: "\f19c";
 }
 .fa-dol-member:before {
-	content: "\f0c0";
+	content: "\f007";
 }
 .fa-dol-expensereport:before {
 	content: "\f555";
@@ -417,6 +437,10 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) $conf->global->THEME_SATURATE_RATIO = 
 	/*justify-content: space-between;*/
 }
 
+.box-flex-grow-zero{
+	flex-grow: 0 !important;
+}
+
 .box-flex-item{
 	flex-grow : 1;
 	flex-shrink: 1;
@@ -435,13 +459,13 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) $conf->global->THEME_SATURATE_RATIO = 
 }
 .info-box-module {
 	min-width: 350px;
-    max-width: 350px;
+	max-width: 350px;
 }
 
 @media only screen and (max-width: 1740px) {
 	.info-box-module {
-	    min-width: 315px;
-	    max-width: 315px;
+		min-width: 315px;
+		max-width: 315px;
 	}
 }
 
@@ -463,12 +487,16 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) $conf->global->THEME_SATURATE_RATIO = 
 @media only screen and (max-width: 767px)
 {
 	.box-flex-container {
-	    margin: 0 0 0 0px !important;
-	    width: 100% !important;
+		margin: 0 0 0 0px !important;
+		width: 100% !important;
 	}
 	.info-box-module {
 		width: 100%;
 		max-width: unset;
+	}
+
+	.info-box-sm .info-box-icon-text, .info-box-sm .info-box-icon-version {
+		width: 60px;
 	}
 	.info-box-sm .info-box-icon {
 		width: 60px;

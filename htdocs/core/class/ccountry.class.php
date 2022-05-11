@@ -94,16 +94,24 @@ class Ccountry // extends CommonObject
 		$error = 0;
 
 		// Clean parameters
-		if (isset($this->code)) $this->code = trim($this->code);
-		if (isset($this->code_iso)) $this->code_iso = trim($this->code_iso);
-		if (isset($this->label)) $this->label = trim($this->label);
-		if (isset($this->active)) $this->active = trim($this->active);
+		if (isset($this->code)) {
+			$this->code = trim($this->code);
+		}
+		if (isset($this->code_iso)) {
+			$this->code_iso = trim($this->code_iso);
+		}
+		if (isset($this->label)) {
+			$this->label = trim($this->label);
+		}
+		if (isset($this->active)) {
+			$this->active = trim($this->active);
+		}
 
 		// Check parameters
 		// Put here code to add control on parameters values
 
 		// Insert request
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."c_country(";
+		$sql = "INSERT INTO ".$this->db->prefix()."c_country(";
 		$sql .= "rowid,";
 		$sql .= "code,";
 		$sql .= "code_iso,";
@@ -119,20 +127,20 @@ class Ccountry // extends CommonObject
 
 		$this->db->begin();
 
-	   	dol_syslog(get_class($this)."::create", LOG_DEBUG);
+		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
+		if (!$resql) {
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
+		}
 
-		if (!$error)
-		{
-			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."c_country");
+		if (!$error) {
+			$this->id = $this->db->last_insert_id($this->db->prefix()."c_country");
 		}
 
 		// Commit or rollback
-		if ($error)
-		{
-			foreach ($this->errors as $errmsg)
-			{
+		if ($error) {
+			foreach ($this->errors as $errmsg) {
 				dol_syslog(get_class($this)."::create ".$errmsg, LOG_ERR);
 				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
@@ -156,22 +164,24 @@ class Ccountry // extends CommonObject
 	public function fetch($id, $code = '', $code_iso = '')
 	{
 		$sql = "SELECT";
-  		$sql .= " t.rowid,";
-  		$sql .= " t.code,";
-  		$sql .= " t.code_iso,";
-  		$sql .= " t.label,";
-  		$sql .= " t.active";
-		$sql .= " FROM ".MAIN_DB_PREFIX."c_country as t";
-		if ($id) $sql .= " WHERE t.rowid = ".((int) $id);
-		elseif ($code) $sql .= " WHERE t.code = '".$this->db->escape(strtoupper($code))."'";
-		elseif ($code_iso) $sql .= " WHERE t.code_iso = '".$this->db->escape(strtoupper($code_iso))."'";
+		$sql .= " t.rowid,";
+		$sql .= " t.code,";
+		$sql .= " t.code_iso,";
+		$sql .= " t.label,";
+		$sql .= " t.active";
+		$sql .= " FROM ".$this->db->prefix()."c_country as t";
+		if ($id) {
+			$sql .= " WHERE t.rowid = ".((int) $id);
+		} elseif ($code) {
+			$sql .= " WHERE t.code = '".$this->db->escape(strtoupper($code))."'";
+		} elseif ($code_iso) {
+			$sql .= " WHERE t.code_iso = '".$this->db->escape(strtoupper($code_iso))."'";
+		}
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			if ($this->db->num_rows($resql))
-			{
+		if ($resql) {
+			if ($this->db->num_rows($resql)) {
 				$obj = $this->db->fetch_object($resql);
 
 				if ($obj) {
@@ -188,7 +198,7 @@ class Ccountry // extends CommonObject
 				return 0;
 			}
 		} else {
-	  		$this->error = "Error ".$this->db->lasterror();
+			$this->error = "Error ".$this->db->lasterror();
 			return -1;
 		}
 	}
@@ -207,34 +217,43 @@ class Ccountry // extends CommonObject
 		$error = 0;
 
 		// Clean parameters
-		if (isset($this->code)) $this->code = trim($this->code);
-		if (isset($this->code_iso)) $this->code_iso = trim($this->code_iso);
-		if (isset($this->label)) $this->label = trim($this->label);
-		if (isset($this->active)) $this->active = trim($this->active);
+		if (isset($this->code)) {
+			$this->code = trim($this->code);
+		}
+		if (isset($this->code_iso)) {
+			$this->code_iso = trim($this->code_iso);
+		}
+		if (isset($this->label)) {
+			$this->label = trim($this->label);
+		}
+		if (isset($this->active)) {
+			$this->active = trim($this->active);
+		}
 
 
 		// Check parameters
 		// Put here code to add control on parameters values
 
 		// Update request
-		$sql = "UPDATE ".MAIN_DB_PREFIX."c_country SET";
+		$sql = "UPDATE ".$this->db->prefix()."c_country SET";
 		$sql .= " code=".(isset($this->code) ? "'".$this->db->escape($this->code)."'" : "null").",";
 		$sql .= " code_iso=".(isset($this->code_iso) ? "'".$this->db->escape($this->code_iso)."'" : "null").",";
 		$sql .= " label=".(isset($this->label) ? "'".$this->db->escape($this->label)."'" : "null").",";
 		$sql .= " active=".(isset($this->active) ? $this->active : "null")."";
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
+		if (!$resql) {
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
+		}
 
 		// Commit or rollback
-		if ($error)
-		{
-			foreach ($this->errors as $errmsg)
-			{
+		if ($error) {
+			foreach ($this->errors as $errmsg) {
 				dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
 				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
@@ -247,32 +266,33 @@ class Ccountry // extends CommonObject
 	}
 
 
- 	/**
- 	 *  Delete object in database
- 	 *
- 	 *	@param  User	$user        User that delete
- 	 *  @param	int		$notrigger	 0=launch triggers after, 1=disable triggers
- 	 *  @return	int					 <0 if KO, >0 if OK
- 	 */
+	/**
+	 *  Delete object in database
+	 *
+	 *	@param  User	$user        User that delete
+	 *  @param	int		$notrigger	 0=launch triggers after, 1=disable triggers
+	 *  @return	int					 <0 if KO, >0 if OK
+	 */
 	public function delete($user, $notrigger = 0)
 	{
 		global $conf, $langs;
 		$error = 0;
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."c_country";
-		$sql .= " WHERE rowid=".$this->id;
+		$sql = "DELETE FROM ".$this->db->prefix()."c_country";
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
 
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
+		if (!$resql) {
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
+		}
 
 		// Commit or rollback
-		if ($error)
-		{
-			foreach ($this->errors as $errmsg)
-			{
+		if ($error) {
+			foreach ($this->errors as $errmsg) {
 				dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
 				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}

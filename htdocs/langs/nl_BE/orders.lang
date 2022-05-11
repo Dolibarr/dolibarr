@@ -1,6 +1,7 @@
 # Dolibarr language file - Source file is en_US - orders
 OrderToProcess=Te verwerken bestelling
 NewOrder=Nieuwe bestelling
+NewSupplierOrderShort=Nieuwe bestelling
 MakeOrder=Bestelling ingeven
 StatusOrderDraftShort=Ontwerp bestelling
 StatusOrderSentShort=In uitvoering
