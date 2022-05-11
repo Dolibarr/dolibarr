@@ -117,7 +117,11 @@ if (GETPOST('roworder', 'alpha', 3) && GETPOST('table_element_line', 'aZ09', 3)
 		}
 	}
 	$parameters = array('roworder'=> &$roworder, 'table_element_line' => &$table_element_line, 'fk_element' => &$fk_element, 'element_id' => &$element_id, 'perm' => &$perm);
-	$reshook = $hookmanager->executeHooks('checkRowPerms', $parameters, $this, $action);
+	$row = new GenericObject($db);
+	$row->table_element_line = $table_element_line;
+	$row->fk_element = $fk_element;
+	$row->id = $element_id;
+	$reshook = $hookmanager->executeHooks('checkRowPerms', $parameters, $row, $action);
 	if ($reshook > 0) {
 		$perm = $hookmanager->resArray['perm'];
 	}
@@ -137,10 +141,7 @@ if (GETPOST('roworder', 'alpha', 3) && GETPOST('table_element_line', 'aZ09', 3)
 		}
 	}
 
-	$row = new GenericObject($db);
-	$row->table_element_line = $table_element_line;
-	$row->fk_element = $fk_element;
-	$row->id = $element_id;
+
 
 	$row->line_ajaxorder($newrowordertab); // This update field rank or position in table row->table_element_line
 
