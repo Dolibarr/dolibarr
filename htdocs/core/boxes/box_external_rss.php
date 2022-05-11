@@ -127,7 +127,7 @@ class box_external_rss extends ModeleBoxes
 			// Feed common fields
 			$href = $item['link'];
 			$title = urldecode($item['title']);
-			$date = $item['date_timestamp']; // date will be empty if conversion into timestamp failed
+			$date = empty($item['date_timestamp']) ? null : $item['date_timestamp']; // date will be empty if conversion into timestamp failed
 			if ($rssparser->getFormat() == 'rss') {   // If RSS
 				if (!$date && isset($item['pubdate'])) {
 					$date = $item['pubdate'];

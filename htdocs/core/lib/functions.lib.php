@@ -2988,7 +2988,7 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 	if (!empty($conf->global->MAIN_PHONE_SEPAR)) {
 		$separ = $conf->global->MAIN_PHONE_SEPAR;
 	}
-	if (empty($countrycode)) {
+	if (empty($countrycode) && is_object($mysoc)) {
 		$countrycode = $mysoc->country_code;
 	}
 
