@@ -638,7 +638,8 @@ class SupplierInvoices extends DolibarrApi
 			$request_data->array_options,
 			$request_data->fk_unit,
 			$request_data->multicurrency_subprice,
-			$request_data->ref_supplier
+			$request_data->ref_supplier,
+			$request_data->rang
 		);
 
 		if ($updateRes > 0) {
