@@ -31,7 +31,7 @@ IntracommReportTitle=準備ProDouane格式的XML檔案
 
 # List
 IntracommReportList=已產生報單清單
-IntracommReportNumber=申報數量
+IntracommReportNumber=申報編號
 IntracommReportPeriod=分析週期
 IntracommReportTypeDeclaration=報單類型
 IntracommReportDownload=下載 XML檔案
