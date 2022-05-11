@@ -1068,7 +1068,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '</table>';
 		print '</div>';
 
-		// traitement entrepot par défaut
+		// default warehouse processing
 		print '<script type="text/javascript">
 			$(document).ready(function () {
 				$("select[name=fk_default_warehouse]").change(function() {
