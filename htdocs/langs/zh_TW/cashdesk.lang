@@ -134,3 +134,5 @@ PrintWithoutDetailsButton=增加"不列印詳細資訊"按鈕
 PrintWithoutDetailsLabelDefault=預設列印行標籤時不包含詳細資訊
 PrintWithoutDetails=不列印詳細資訊
 YearNotDefined=年份未定義
+TakeposBarcodeRuleToInsertProduct=插入產品的條碼規則
+TakeposBarcodeRuleToInsertProductDesc=從掃描的條碼中讀取產品參考號 + 數量的規則。 <br> 如果為空（預設值），應用程式將使用掃描的完整條碼來搜尋產品。 <br> <br>如果已定義，語法必須為：<br> <b> ref:NB+qu:NB+qd:NB+other:NB：NB </b> <br>其中NB是來自掃描的條碼使用讀取的數據與字元數：<ul> <li> <b> ref </b>：產品參考號碼</li> <li> <b>qu</b>：當插入項目（單位）時設定的數量<l/i> <li> <b> qd </b>：當插入項目（小數）時設定的數量</li> <li> <b>other</b>：其他字元</li> </ul>
