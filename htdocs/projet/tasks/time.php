@@ -905,6 +905,9 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				$linktocreatetimeBtnStatus = -2;
 				$linktocreatetimeHelpText = $langs->trans("NotOwnerOfProject");
 			}
+		} else {
+			$linktocreatetimeBtnStatus = -2;
+			$linktocreatetimeHelpText = $langs->trans("NotEnoughPermissions");
 		}
 
 		$paramsbutton = array('morecss'=>'reposition');
