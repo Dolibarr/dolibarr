@@ -1,14 +1,14 @@
 # Dolibarr language file - Source file is en_US - ftp
-FTPClientSetup=FTP客戶端模組設定
-NewFTPClient=新的FTP連接設定
-FTPArea=FTP區域
-FTPAreaDesc=此畫面顯示FTP服務器的圖示。
-SetupOfFTPClientModuleNotComplete=FTP客戶端模組設定似乎不完整
-FTPFeatureNotSupportedByYourPHP=您的PHP不支援FTP功能
-FailedToConnectToFTPServer=無法連接到FTP服務器（服務器%s，港口%s）
-FailedToConnectToFTPServerWithCredentials=無法登錄到FTP服務器的定義登錄/密碼
+FTPClientSetup=FTP或SFTP客戶端模組設定
+NewFTPClient=新的FTP / FTPS連線設定
+FTPArea=FTP / FTPS區域
+FTPAreaDesc=此畫面顯示FTP和SFTP伺服器的檢視。
+SetupOfFTPClientModuleNotComplete=FTP或SFTP的客戶端模組設定似乎不完整
+FTPFeatureNotSupportedByYourPHP=您的PHP不支援FTP或SFTP功能
+FailedToConnectToFTPServer=無法連接到伺服器（伺服器%s，連接埠%s）
+FailedToConnectToFTPServerWithCredentials=使用已定義的用戶名/密碼登錄伺服器失敗
 FTPFailedToRemoveFile=無法刪除文件<b>%s。</b>
 FTPFailedToRemoveDir=無法刪除資料夾<b>%s</b> ：檢查權限，並且確認資料夾內無檔案。
 FTPPassiveMode=被動模式
-ChooseAFTPEntryIntoMenu=從選單中選擇一個FTP站台...
+ChooseAFTPEntryIntoMenu=從選單中選擇一個FTP/SFTP站台...
 FailedToGetFile=無法獲取檔案 %s
