@@ -2014,38 +2014,6 @@ class Ticket extends CommonObject
 	}
 
 	/**
-	 *     Link element with a project
-	 * 	   Override core function because of key name 'fk_project' used for this module
-	 *
-	 *     @param  int 		$projectid 			Project id to link element to
-	 *     @return int                   	   <0 if KO, >0 if OK
-	 */
-	public function setProject($projectid)
-	{
-		if (!$this->table_element) {
-			dol_syslog(get_class($this)."::setProject was called on objet with property table_element not defined", LOG_ERR);
-			return -1;
-		}
-
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-		if ($projectid) {
-			$sql .= ' SET fk_project = '.((int) $projectid);
-		} else {
-			$sql .= ' SET fk_project = NULL';
-		}
-		$sql .= ' WHERE rowid = '.((int) $this->id);
-
-		dol_syslog(get_class($this)."::setProject sql=".$sql);
-		if ($this->db->query($sql)) {
-			$this->fk_project = ((int) $projectid);
-			return 1;
-		} else {
-			dol_print_error($this->db);
-			return -1;
-		}
-	}
-
-	/**
 	 *     Link element with a contract
 	 *
 	 *     @param  int $contractid Contract id to link element to
