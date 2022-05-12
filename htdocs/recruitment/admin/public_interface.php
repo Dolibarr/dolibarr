@@ -96,6 +96,7 @@ print dol_get_fiche_head($head, 'publicurl', '', -1, '');
 
 print '<span class="opacitymedium">'.$langs->trans("PublicInterfaceRecruitmentDesc").'</span><br><br>';
 
+$param = '';
 
 $enabledisablehtml = $langs->trans("EnablePublicRecruitmentPages").' ';
 if (empty($conf->global->RECRUITMENT_ENABLE_PUBLIC_INTERFACE)) {

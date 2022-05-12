@@ -232,7 +232,12 @@ function PrintCategories(first) {
 			continue;
 		}
 		$("#catdivdesc"+i).show();
-		$("#catdesc"+i).text(categories[parseInt(i)+parseInt(first)]['label']);
+		<?php
+		if (getDolGlobalString('TAKEPOS_SHOW_CATEGORY_DESCRIPTION') == 1) { ?>
+			$("#catdesc"+i).html(categories[parseInt(i)+parseInt(first)]['label'].bold() + ' - ' + categories[parseInt(i)+parseInt(first)]['description']);
+		<?php } else { ?>
+			$("#catdesc"+i).text(categories[parseInt(i)+parseInt(first)]['label']);
+		<?php }	?>
 		$("#catimg"+i).attr("src","genimg/index.php?query=cat&id="+categories[parseInt(i)+parseInt(first)]['rowid']);
 		$("#catdiv"+i).data("rowid",categories[parseInt(i)+parseInt(first)]['rowid']);
 		$("#catdiv"+i).attr('class', 'wrapper');
@@ -266,7 +271,12 @@ function MoreCategories(moreorless) {
 			continue;
 		}
 		$("#catdivdesc"+i).show();
-		$("#catdesc"+i).text(categories[i+(<?php echo ($MAXCATEG - 2); ?> * pagecategories)]['label']);
+		<?php
+		if (getDolGlobalString('TAKEPOS_SHOW_CATEGORY_DESCRIPTION') == 1) { ?>
+			$("#catdesc"+i).html(categories[i+(<?php echo ($MAXCATEG - 2); ?> * pagecategories)]['label'].bold() + ' - ' + categories[i+(<?php echo ($MAXCATEG - 2); ?> * pagecategories)]['description']);
+		<?php } else { ?>
+			$("#catdesc"+i).text(categories[i+(<?php echo ($MAXCATEG - 2); ?> * pagecategories)]['label']);
+		<?php } ?>
 		$("#catimg"+i).attr("src","genimg/index.php?query=cat&id="+categories[i+(<?php echo ($MAXCATEG - 2); ?> * pagecategories)]['rowid']);
 		$("#catdiv"+i).data("rowid",categories[i+(<?php echo ($MAXCATEG - 2); ?> * pagecategories)]['rowid']);
 		$("#catwatermark"+i).show();
@@ -295,8 +305,13 @@ function LoadProducts(position, issubcat) {
 	jQuery.each(subcategories, function(i, val) {
 		if (currentcat==val.fk_parent) {
 			$("#prodivdesc"+ishow).show();
-			$("#prodesc"+ishow).text(val.label);
-			$("#probutton"+ishow).text(val.label);
+			<?php if (getDolGlobalString('TAKEPOS_SHOW_CATEGORY_DESCRIPTION') == 1) { ?>
+				$("#prodesc"+ishow).html(val.label.bold() + ' - ' + val.description);
+			   $("#probutton"+ishow).html(val.label);
+			<?php } else { ?>
+				$("#prodesc"+ishow).text(val.label);
+			  $("#probutton"+ishow).text(val.label);
+			<?php } ?>
 			$("#probutton"+ishow).show();
 			$("#proprice"+ishow).attr("class", "hidden");
 			$("#proprice"+ishow).html("");
@@ -343,13 +358,13 @@ function LoadProducts(position, issubcat) {
 					if (getDolGlobalInt('TAKEPOS_SHOW_PRODUCT_REFERENCE') == 1) {
 						echo '$("#prodesc"+ishow).html(data[parseInt(idata)][\'ref\'].bold() + \' - \' + data[parseInt(idata)][\'label\']);';
 					} else {
-						echo '$("#prodesc"+ishow).text(data[parseInt(idata)][\'label\']);';
+						echo '$("#prodesc"+ishow).html(data[parseInt(idata)][\'label\']);';
 					}
 					echo '$("#proimg"+ishow).attr("title", titlestring);';
 					echo '$("#proimg"+ishow).attr("src", "genimg/index.php?query=pro&id="+data[idata][\'id\']);';
 				} else {
 					echo '$("#probutton"+ishow).show();';
-					echo '$("#probutton"+ishow).text(data[parseInt(idata)][\'label\']);';
+					echo '$("#probutton"+ishow).html(data[parseInt(idata)][\'label\']);';
 				}
 				?>
 				if (data[parseInt(idata)]['price_formated']) {
@@ -361,6 +376,13 @@ function LoadProducts(position, issubcat) {
 				$("#prodiv"+ishow).attr("class","wrapper2");
 				$("#prowatermark"+ishow).hide();
 				ishow++; //Next product to show after print data product
+				<?php
+				// Add js from hooks
+				$parameters=array();
+				$parameters['caller'] = 'loadProducts';
+				$hookmanager->executeHooks('completeJSProductDisplay', $parameters);
+				print $hookmanager->resPrint;
+				?>
 			}
 			//console.log("Hide the prowatermark for ishow="+ishow);
 			idata++; //Next data everytime
@@ -372,6 +394,9 @@ function LoadProducts(position, issubcat) {
 
 function MoreProducts(moreorless) {
 	console.log("MoreProducts");
+
+	if ($('#search_pagination').val() != '') return Search2('<?php echo $keyCodeForEnter; ?>', moreorless);
+
 	var maxproduct = <?php echo ($MAXPRODUCT - 2); ?>;
 
 	if (moreorless=="more"){
@@ -414,9 +439,9 @@ function MoreProducts(moreorless) {
 				if (getDolGlobalInt('TAKEPOS_SHOW_PRODUCT_REFERENCE') == 1) { ?>
 					$("#prodesc"+ishow).html(data[parseInt(idata)]['ref'].bold() + ' - ' + data[parseInt(idata)]['label']);
 				<?php } else { ?>
-					$("#prodesc"+ishow).text(data[parseInt(idata)]['label']);
+					$("#prodesc"+ishow).html(data[parseInt(idata)]['label']);
 				<?php } ?>
-				$("#probutton"+ishow).text(data[parseInt(idata)]['label']);
+				$("#probutton"+ishow).html(data[parseInt(idata)]['label']);
 				$("#probutton"+ishow).show();
 				if (data[parseInt(idata)]['price_formated']) {
 					$("#proprice"+ishow).attr("class", "productprice");
@@ -556,12 +581,32 @@ function New() {
  * @param   {int}			keyCodeForEnter     Key code for "enter"
  * return   {void}
  */
-function Search2(keyCodeForEnter) {
+function Search2(keyCodeForEnter, moreorless) {
 	console.log("Search2 Call ajax search to replace products keyCodeForEnter="+keyCodeForEnter);
+
+	var search_term  = $('#search').val();
+	var search_start = 0;
+	var search_limit = <?php echo $MAXPRODUCT - 2; ?>;
+	if (moreorless != null) {
+		search_term = $('#search_pagination').val();
+		search_start = $('#search_start_'+moreorless).val();
+	}
+
+	if (search_term == '') {
+		$("[id^=prowatermark]").html("");
+		$("[id^=prodesc]").text("");
+		$("[id^=probutton]").text("");
+		$("[id^=probutton]").hide();
+		$("[id^=proprice]").attr("class", "hidden");
+		$("[id^=proprice]").html("");
+		$("[id^=proimg]").attr("src", "genimg/empty.png");
+		$("[id^=prodiv]").data("rowid", "");
+		return;
+	}
 
 	var search = false;
 	var eventKeyCode = window.event.keyCode;
-	if (typeof keyCodeForEnter === 'undefined' || eventKeyCode == keyCodeForEnter) {
+	if (keyCodeForEnter == '' || eventKeyCode == keyCodeForEnter) {
 		search = true;
 	}
 
@@ -576,9 +621,11 @@ function Search2(keyCodeForEnter) {
 
 			pageproducts = 0;
 			jQuery(".wrapper2 .catwatermark").hide();
-			$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=search&term=' + $('#search').val(), function (data) {
+			var nbsearchresults = 0;
+			$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=search&term=' + search_term + '&search_start=' + search_start + '&search_limit=' + search_limit, function (data) {
 				for (i = 0; i < <?php echo $MAXPRODUCT ?>; i++) {
 					if (typeof (data[i]) == "undefined") {
+						$("#prowatermark" + i).html("");
 						$("#prodesc" + i).text("");
 						$("#probutton" + i).text("");
 						$("#probutton" + i).hide();
@@ -597,10 +644,10 @@ function Search2(keyCodeForEnter) {
 					if (getDolGlobalInt('TAKEPOS_SHOW_PRODUCT_REFERENCE') == 1) { ?>
 					$("#prodesc" + i).html(data[i]['ref'].bold() + ' - ' + data[i]['label']);
 					<?php } else { ?>
-						$("#prodesc" + i).text(data[i]['label']);
+						$("#prodesc" + i).html(data[i]['label']);
 					<?php } ?>
 					$("#prodivdesc" + i).show();
-					$("#probutton" + i).text(data[i]['label']);
+					$("#probutton" + i).html(data[i]['label']);
 					$("#probutton" + i).show();
 					if (data[i]['price_formated']) {
 						$("#proprice" + i).attr("class", "productprice");
@@ -615,6 +662,16 @@ function Search2(keyCodeForEnter) {
 					}
 					$("#prodiv" + i).data("rowid", data[i]['rowid']);
 					$("#prodiv" + i).data("iscat", 0);
+
+					<?php
+					// Add js from hooks
+					$parameters=array();
+					$parameters['caller'] = 'search2';
+					$hookmanager->executeHooks('completeJSProductDisplay', $parameters);
+					print $hookmanager->resPrint;
+					?>
+
+					nbsearchresults++;
 				}
 			}).always(function (data) {
 				// If there is only 1 answer
@@ -638,6 +695,24 @@ function Search2(keyCodeForEnter) {
 						$('#search').select();
 					}
 					else ClearSearch();
+				}
+				// memorize search_term and start for pagination
+				$("#search_pagination").val($("#search").val());
+				if (search_start == 0) {
+					$("#prodiv<?php echo $MAXPRODUCT - 2; ?> span").hide();
+				}
+				else {
+					$("#prodiv<?php echo $MAXPRODUCT - 2; ?> span").show();
+					var search_start_less = Math.max(0, parseInt(search_start) - parseInt(<?php echo $MAXPRODUCT - 2;?>));
+					$("#search_start_less").val(search_start_less);
+				}
+				if (nbsearchresults != <?php echo $MAXPRODUCT - 2; ?>) {
+					$("#prodiv<?php echo $MAXPRODUCT - 1; ?> span").hide();
+				}
+				else {
+					$("#prodiv<?php echo $MAXPRODUCT - 1; ?> span").show();
+					var search_start_more = parseInt(search_start) + parseInt(<?php echo $MAXPRODUCT - 2;?>);
+					$("#search_start_more").val(search_start_more);
 				}
 			});
 		}, 500); // 500ms delay
@@ -915,7 +990,7 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 			</div>
 			<div class="topnav-right">
 				<div class="login_block_other">
-				<input type="text" id="search" name="search" class="input-search-takepos" onkeyup="Search2(<?php echo $keyCodeForEnter; ?>);" placeholder="<?php echo dol_escape_htmltag($langs->trans("Search")); ?>" autofocus>
+				<input type="text" id="search" name="search" class="input-search-takepos" onkeyup="Search2('<?php echo dol_escape_js($keyCodeForEnter); ?>', null);" placeholder="<?php echo dol_escape_htmltag($langs->trans("Search")); ?>" autofocus>
 				<a onclick="ClearSearch();"><span class="fa fa-backspace"></span></a>
 				<a href="<?php echo DOL_URL_ROOT.'/'; ?>" target="backoffice" rel="opener"><!-- we need rel="opener" here, we are on same domain and we need to be able to reuse this tab several times -->
 				<span class="fas fa-home"></span></a>
@@ -1210,7 +1285,7 @@ if (!empty($conf->global->TAKEPOS_WEIGHING_SCALE)) {
 		if (!empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 			print '<!-- Show the search input text -->'."\n";
 			print '<div class="margintoponly">';
-			print '<input type="text" id="search" class="input-search-takepos" name="search" onkeyup="Search2('.$keyCodeForEnter.');" style="width: 80%; width:calc(100% - 51px); font-size: 150%;" placeholder="'.dol_escape_htmltag($langs->trans("Search")).'" autofocus> ';
+			print '<input type="text" id="search" class="input-search-takepos" name="search" onkeyup="Search2(\''.dol_escape_js($keyCodeForEnter).'\', null);" style="width: 80%; width:calc(100% - 51px); font-size: 150%;" placeholder="'.dol_escape_htmltag($langs->trans("Search")).'" autofocus> ';
 			print '<a class="marginleftonly hideonsmartphone" onclick="ClearSearch();">'.img_picto('', 'searchclear').'</a>';
 			print '</div>';
 		}
@@ -1243,10 +1318,10 @@ if (!empty($conf->global->TAKEPOS_WEIGHING_SCALE)) {
 				<?php
 				if ($count == ($MAXCATEG - 2)) {
 					//echo '<img class="imgwrapper" src="img/arrow-prev-top.png" height="100%" id="catimg'.$count.'" />';
-					echo '<span class="fa fa-chevron-left centerinmiddle" style="font-size: 5em;"></span>';
+					echo '<span class="fa fa-chevron-left centerinmiddle" style="font-size: 5em; cursor: pointer;"></span>';
 				} elseif ($count == ($MAXCATEG - 1)) {
 					//echo '<img class="imgwrapper" src="img/arrow-next-top.png" height="100%" id="catimg'.$count.'" />';
-					echo '<span class="fa fa-chevron-right centerinmiddle" style="font-size: 5em;"></span>';
+					echo '<span class="fa fa-chevron-right centerinmiddle" style="font-size: 5em; cursor: pointer;"></span>';
 				} else {
 					if (!getDolGlobalString('TAKEPOS_HIDE_CATEGORY_IMAGES')) {
 						echo '<img class="imgwrapper" height="100%" id="catimg'.$count.'" />';
@@ -1285,10 +1360,10 @@ if (!empty($conf->global->TAKEPOS_WEIGHING_SCALE)) {
 					<?php
 					if ($count == ($MAXPRODUCT - 2)) {
 						//echo '<img class="imgwrapper" src="img/arrow-prev-top.png" height="100%" id="proimg'.$count.'" />';
-						print '<span class="fa fa-chevron-left centerinmiddle" style="font-size: 5em;"></span>';
+						print '<span class="fa fa-chevron-left centerinmiddle" style="font-size: 5em; cursor: pointer;"></span>';
 					} elseif ($count == ($MAXPRODUCT - 1)) {
 						//echo '<img class="imgwrapper" src="img/arrow-next-top.png" height="100%" id="proimg'.$count.'" />';
-						print '<span class="fa fa-chevron-right centerinmiddle" style="font-size: 5em;"></span>';
+						print '<span class="fa fa-chevron-right centerinmiddle" style="font-size: 5em; cursor: pointer;"></span>';
 					} else {
 						if (getDolGlobalString('TAKEPOS_HIDE_PRODUCT_IMAGES')) {
 							echo '<button type="button" id="probutton'.$count.'" class="productbutton" style="display: none;"></button>';
@@ -1309,6 +1384,9 @@ if (!empty($conf->global->TAKEPOS_WEIGHING_SCALE)) {
 		$count++;
 	}
 	?>
+				<input type="hidden" id="search_start_less" value="0">
+				<input type="hidden" id="search_start_more" value="0">
+				<input type="hidden" id="search_pagination" value="">
 		</div>
 	</div>
 </div>

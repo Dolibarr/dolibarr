@@ -111,7 +111,7 @@ if (empty($reshook)) {
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
 		$search_name = '';
 		$search_supervisor = '';
-		$toselect = '';
+		$toselect = array();
 		$search_array_options = array();
 	}
 

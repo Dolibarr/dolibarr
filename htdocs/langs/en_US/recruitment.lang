@@ -74,3 +74,5 @@ JobClosedTextCanceled=The job position is closed.
 ExtrafieldsJobPosition=Complementary attributes (job positions)
 ExtrafieldsApplication=Complementary attributes (job applications)
 MakeOffer=Make an offer
+WeAreRecruiting=We are recruiting. This is a list of open positions to be filled...
+NoPositionOpen=No positions open at the moment

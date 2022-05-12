@@ -55,6 +55,7 @@ if (is_numeric($entity)) {
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/partnership/class/partnership.class.php';
+require_once DOL_DOCUMENT_ROOT.'/partnership/class/partnership_type.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 
@@ -204,9 +205,9 @@ if (empty($reshook) && $action == 'add') {
 		$partnership = new Partnership($db);
 
 		// We try to find the thirdparty or the member
-		if (empty($conf->global->PARTNERSHIP_IS_MANAGED_FOR) || $conf->global->PARTNERSHIP_IS_MANAGED_FOR == 'thirdparty') {
+		if (getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR', 'thirdparty') == 'thirdparty') {
 			$partnership->fk_member = 0;
-		} elseif ($conf->global->PARTNERSHIP_IS_MANAGED_FOR == 'member') {
+		} elseif (getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR', 'thirdparty') == 'member') {
 			$partnership->fk_soc = 0;
 		}
 
@@ -277,7 +278,7 @@ if (empty($reshook) && $action == 'add') {
 			*/
 
 			// Send email to the foundation to say a new member subscribed with autosubscribe form
-			if (!empty($conf->global->MAIN_INFO_SOCIETE_MAIL) && !empty($conf->global->PARTNERSHIP_AUTOREGISTER_NOTIF_MAIL_SUBJECT) &&
+			if (getDolGlobalString('MAIN_INFO_SOCIETE_MAIL') && !empty($conf->global->PARTNERSHIP_AUTOREGISTER_NOTIF_MAIL_SUBJECT) &&
 				  !empty($conf->global->PARTNERSHIP_AUTOREGISTER_NOTIF_MAIL)) {
 				// Define link to login card
 				$appli = constant('DOL_APPLICATION_TITLE');
@@ -294,13 +295,13 @@ if (empty($reshook) && $action == 'add') {
 					$appli .= " ".DOL_VERSION;
 				}
 
-				$to = $partnership->makeSubstitution($conf->global->MAIN_INFO_SOCIETE_MAIL);
-				$from = $conf->global->PARTNERSHIP_MAIL_FROM;
+				$to = $partnership->makeSubstitution(getDolGlobalString('MAIN_INFO_SOCIETE_MAIL'));
+				$from = getDolGlobalString('PARTNERSHIP_MAIL_FROM');
 				$mailfile = new CMailFile(
-					'['.$appli.'] '.$conf->global->PARTNERSHIP_AUTOREGISTER_NOTIF_MAIL_SUBJECT,
+					'['.$appli.'] '.getDolGlobalString('PARTNERSHIP_AUTOREGISTER_NOTIF_MAIL_SUBJECT', 'Partnership request'),
 					$to,
 					$from,
-					$partnership->makeSubstitution($conf->global->PARTNERSHIP_AUTOREGISTER_NOTIF_MAIL),
+					$partnership->makeSubstitution(getDolGlobalString('PARTNERSHIP_AUTOREGISTER_NOTIF_MAIL')),
 					array(),
 					array(),
 					array(),
@@ -435,14 +436,14 @@ if (empty($reshook) && $action == 'added') {
 
 $form = new Form($db);
 $formcompany = new FormCompany($db);
-$partnershipt = new AdherentType($db);
+
 $extrafields->fetch_name_optionals_label('partnership'); // fetch optionals attributes and labels
 
 
-llxHeaderVierge($langs->trans("NewSubscription"));
+llxHeaderVierge($langs->trans("NewPartnershipRequest"));
 
 
-print load_fiche_titre($langs->trans("NewSubscription"), '', '', 0, 0, 'center');
+print load_fiche_titre($langs->trans("NewPartnershipRequest"), '', '', 0, 0, 'center');
 
 
 print '<div align="center">';
@@ -452,7 +453,7 @@ print '<div class="center subscriptionformhelptext justify">';
 if (!empty($conf->global->PARTNERSHIP_NEWFORM_TEXT)) {
 	print $langs->trans($conf->global->PARTNERSHIP_NEWFORM_TEXT)."<br>\n";
 } else {
-	print $langs->trans("NewSubscriptionDesc", $conf->global->MAIN_INFO_SOCIETE_MAIL)."<br>\n";
+	print $langs->trans("NewPartnershipRequestDesc", $conf->global->MAIN_INFO_SOCIETE_MAIL)."<br>\n";
 }
 print '</div>';
 
@@ -505,45 +506,34 @@ if (empty($conf->global->PARTNERSHIP_NEWFORM_FORCETYPE)) {
 }
 */
 
-// Moral/Physic attribute
-$morphys["phy"] = $langs->trans("Physical");
-$morphys["mor"] = $langs->trans("Moral");
-if (empty($conf->global->PARTNERSHIP_NEWFORM_FORCEMORPHY)) {
-	print '<tr class="morphy"><td class="titlefield">'.$langs->trans('MemberNature').' <span style="color: red">*</span></td><td>'."\n";
-	print $form->selectarray("morphy", $morphys, GETPOST('morphy'), 1);
+$partnershiptype = new PartnershipType($db);
+$listofpartnershipobj = $partnershiptype->fetchAll('', '', 1000);
+$listofpartnership = array();
+foreach ($listofpartnershipobj as $partnershipobj) {
+	$listofpartnership[$partnershipobj->id] = $partnershipobj->label;
+}
+
+if (empty($conf->global->PARTNERSHIP_NEWFORM_FORCETYPE)) {
+	print '<tr class="morphy"><td class="titlefield">'.$langs->trans('PartnershipType').' <span style="color: red">*</span></td><td>'."\n";
+	print $form->selectarray("partnershiptype", $listofpartnership, GETPOSTISSET('partnershiptype') ? GETPOST('partnershiptype', 'int') : 'ifone', 1);
 	print '</td></tr>'."\n";
 } else {
-	print $morphys[$conf->global->PARTNERSHIP_NEWFORM_FORCEMORPHY];
-	print '<input type="hidden" id="morphy" name="morphy" value="'.$conf->global->PARTNERSHIP_NEWFORM_FORCEMORPHY.'">';
+	print $listofpartnership[$conf->global->PARTNERSHIP_NEWFORM_FORCETYPE];
+	print '<input type="hidden" id="partnershiptype" name="partnershiptype" value="'.$conf->global->PARTNERSHIP_NEWFORM_FORCETYPE.'">';
 }
 
 // Company
-print '<tr id="trcompany" class="trcompany"><td>'.$langs->trans("Company").'</td><td>';
+print '<tr id="trcompany" class="trcompany"><td>'.$langs->trans("Company").' <span style="color:red;">*</span></td><td>';
 print img_picto('', 'company', 'class="pictofixedwidth"');
 print '<input type="text" name="societe" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('societe')).'"></td></tr>'."\n";
-// Title
-print '<tr><td class="titlefield">'.$langs->trans('UserTitle').'</td><td>';
-print $formcompany->select_civility(GETPOST('civility_id'), 'civility_id').'</td></tr>'."\n";
 // Lastname
 print '<tr><td>'.$langs->trans("Lastname").' <span style="color: red">*</span></td><td><input type="text" name="lastname" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('lastname')).'"></td></tr>'."\n";
 // Firstname
 print '<tr><td>'.$langs->trans("Firstname").' <span style="color: red">*</span></td><td><input type="text" name="firstname" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('firstname')).'"></td></tr>'."\n";
 // EMail
-print '<tr><td>'.$langs->trans("Email").($conf->global->PARTNERSHIP_MAIL_REQUIRED ? ' <span style="color:red;">*</span>' : '').'</td><td>';
+print '<tr><td>'.$langs->trans("Email").' <span style="color:red;">*</span></td><td>';
 //print img_picto('', 'email', 'class="pictofixedwidth"');
 print '<input type="text" name="email" maxlength="255" class="minwidth200" value="'.dol_escape_htmltag(GETPOST('email')).'"></td></tr>'."\n";
-// Login
-if (empty($conf->global->PARTNERSHIP_LOGIN_NOT_REQUIRED)) {
-	print '<tr><td>'.$langs->trans("Login").' <span style="color: red">*</span></td><td><input type="text" name="login" maxlength="50" class="minwidth100"value="'.dol_escape_htmltag(GETPOST('login')).'"></td></tr>'."\n";
-	print '<tr><td>'.$langs->trans("Password").' <span style="color: red">*</span></td><td><input type="password" maxlength="128" name="pass1" class="minwidth100" value="'.GETPOST("pass1", "nohtml").'"></td></tr>'."\n";
-	print '<tr><td>'.$langs->trans("PasswordAgain").' <span style="color: red">*</span></td><td><input type="password" maxlength="128" name="pass2" class="minwidth100" value="'.GETPOST("pass2", "nohtml").'"></td></tr>'."\n";
-}
-// Gender
-print '<tr><td>'.$langs->trans("Gender").'</td>';
-print '<td>';
-$arraygender = array('man'=>$langs->trans("Genderman"), 'woman'=>$langs->trans("Genderwoman"));
-print $form->selectarray('gender', $arraygender, GETPOST('gender') ?GETPOST('gender') : $object->gender, 1);
-print '</td></tr>';
 // Address
 print '<tr><td>'.$langs->trans("Address").'</td><td>'."\n";
 print '<textarea name="address" id="address" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.dol_escape_htmltag(GETPOST('address', 'restricthtml'), 0, 1).'</textarea></td></tr>'."\n";

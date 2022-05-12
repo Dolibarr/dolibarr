@@ -214,7 +214,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_thirdparty_user = '';
 	$search_num_releve = '';
 	$search_conciliated = '';
-	$toselect = '';
+	$toselect = array();
 
 	$search_account = "";
 	if ($id > 0 || !empty($ref)) {

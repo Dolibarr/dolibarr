@@ -90,6 +90,7 @@ CategorieRecursivHelp=If option is on, when you add a product into a subcategory
 AddProductServiceIntoCategory=Add the following product/service
 AddCustomerIntoCategory=Assign category to customer
 AddSupplierIntoCategory=Assign category to supplier
+AssignCategoryTo=Assign category to
 ShowCategory=Show tag/category
 ByDefaultInList=By default in list
 ChooseCategory=Choose category

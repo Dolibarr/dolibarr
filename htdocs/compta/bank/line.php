@@ -52,11 +52,12 @@ if (!empty($conf->salaries->enabled)) {
 
 
 $id = GETPOST('rowid', 'int');
-$accountid = (GETPOST('id', 'int') ? GETPOST('id', 'int') : GETPOST('account', 'int'));
+$rowid = GETPOST("rowid", 'int');
+$accountoldid = GETPOST('account', 'int');		// GETPOST('account') is old account id
+$accountid = GETPOST('accountid', 'int');		// GETPOST('accountid') is new account id
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
-$rowid = GETPOST("rowid", 'int');
 $orig_account = GETPOST("orig_account");
 $backtopage = GETPOST('backtopage', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
@@ -69,7 +70,7 @@ if ($user->socid) {
 	$socid = $user->socid;
 }
 
-$result = restrictedArea($user, 'banque', $accountid, 'bank_account');
+$result = restrictedArea($user, 'banque', $accountoldid, 'bank_account');
 if (empty($user->rights->banque->lire) && empty($user->rights->banque->consolidate)) {
 	accessforbidden();
 }
@@ -127,15 +128,19 @@ if ($user->rights->banque->modifier && $action == "update") {
 	$acline->fetch($rowid);
 
 	$acsource = new Account($db);
-	$acsource->fetch($id);
+	$acsource->fetch($accountoldid);
 
 	$actarget = new Account($db);
 	if (GETPOST('accountid', 'int') > 0 && !$acline->rappro && !$acline->getVentilExportCompta()) {	// We ask to change bank account
 		$actarget->fetch(GETPOST('accountid', 'int'));
 	} else {
-		$actarget->fetch($id);
+		$actarget->fetch($accountoldid);
 	}
 
+	if (!($actarget->id > 0)) {
+		setEventMessages($langs->trans("ErrorFailedToLoadBankAccount"), null, 'errors');
+		$error++;
+	}
 	if ($actarget->courant == Account::TYPE_CASH && GETPOST('value', 'alpha') != 'LIQ') {
 		setEventMessages($langs->trans("ErrorCashAccountAcceptsOnlyCashMoney"), null, 'errors');
 		$error++;
@@ -229,7 +234,7 @@ if ($user->rights->banque->consolidate && ($action == 'num_releve' || $action ==
 		$db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."bank";
-		$sql .= " SET num_releve=".($num_rel ? "'".$db->escape($num_rel)."'" : "null");
+		$sql .= " SET num_releve = ".($num_rel ? "'".$db->escape($num_rel)."'" : "null");
 		if (empty($num_rel)) {
 			$sql .= ", rappro = 0";
 		} else {
@@ -307,7 +312,6 @@ if ($result) {
 		print '<input type="hidden" name="action" value="update">';
 		print '<input type="hidden" name="orig_account" value="'.$orig_account.'">';
 		print '<input type="hidden" name="account" value="'.$acct->id.'">';
-		print '<input type="hidden" name="id" value="'.$acct->id.'">';
 
 		print dol_get_fiche_head($head, 'bankline', $langs->trans('LineRecord'), 0, 'accountline', 0);
 
