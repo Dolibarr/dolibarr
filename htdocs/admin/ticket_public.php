@@ -159,7 +159,7 @@ if ($action == 'setTICKET_ENABLE_PUBLIC_INTERFACE') {
 			$errors[] = $db->lasterror();
 		}
 	}
-} elseif (preg_match('/set_(.*)/',$action,$reg)) {
+} elseif (preg_match('/set_(.*)/', $action,$reg)) {
 	$code = $reg[1];
 	$value = GETPOSTISSET($code) ? GETPOST($code, 'int') : 1;
 	$res = dolibarr_set_const($db, $code, $value, 'chaine', 0, '', $conf->entity);
@@ -190,7 +190,7 @@ if ($action == 'setTICKET_ENABLE_PUBLIC_INTERFACE') {
 			}
 		}
 	}
-} elseif (preg_match('/del_(.*)/',$action,$reg)) {
+} elseif (preg_match('/del_(.*)/', $action,$reg)) {
 	$code = $reg[1];
 	$res = dolibarr_del_const($db, $code, $conf->entity);
 	if (!($res > 0)) {
