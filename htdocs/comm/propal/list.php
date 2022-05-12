@@ -988,6 +988,12 @@ if ($resql) {
 		$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 	}
 
+	$parameters = ['arrayofmassactions'=>&$arrayofmassactions];
+	$reshook = $hookmanager->executeHooks('doListMassActions', $parameters);
+	if ($reshook < 0) {
+		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+	}
+
 	if (in_array($massaction, array('presend', 'predelete', 'closed'))) {
 		$arrayofmassactions = array();
 	}
