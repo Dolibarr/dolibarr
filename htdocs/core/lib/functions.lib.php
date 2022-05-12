@@ -7270,7 +7270,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 
 		// For backward compatibility
 		if ($onlykey != 2) {
-			$substitutionarray['__TOTAL_TTC__']    = is_object($object) ? (!empty($object->total_ttc) ? price($object->total_ttc) : null) : '';
+			$substitutionarray['__TOTAL_HT__']     = is_object($object) ? price($object->total_ttc) : '';
 			$substitutionarray['__TOTAL_HT__']     = is_object($object) ? price($object->total_ht) : '';
 			$substitutionarray['__TOTAL_VAT__']    = is_object($object) ? (isset($object->total_vat) ? $object->total_vat : $object->total_tva) : '';
 		}
