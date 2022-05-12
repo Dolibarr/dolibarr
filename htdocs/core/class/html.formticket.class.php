@@ -1208,19 +1208,37 @@ class FormTicket
 		jQuery(document).ready(function() {
 			send_email=' . $send_email.';
 			if (send_email) {
+				if (!jQuery("#send_msg_email").is(":checked")) {
+					jQuery("#send_msg_email").prop("checked", true).trigger("change");
+				}
 				jQuery(".email_line").show();
 			} else {
+				if (!jQuery("#private_message").is(":checked")) {
+					jQuery("#private_message").prop("checked", true).trigger("change");
+				}
 				jQuery(".email_line").hide();
 			}
 
 			jQuery("#send_msg_email").click(function() {
 				if(jQuery(this).is(":checked")) {
+					if (jQuery("#private_message").is(":checked")) {
+						jQuery("#private_message").prop("checked", false).trigger("change");
+					}
 					jQuery(".email_line").show();
 				}
 				else {
 					jQuery(".email_line").hide();
 				}
-            });';
+            });
+
+            jQuery("#private_message").click(function() {
+				if (jQuery(this).is(":checked")) {
+					if (jQuery("#send_msg_email").is(":checked")) {
+						jQuery("#send_msg_email").prop("checked", false).trigger("change");
+					}
+					jQuery(".email_line").hide();
+				}
+			});';
 		print '});
 		</script>';
 

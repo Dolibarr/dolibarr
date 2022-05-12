@@ -148,7 +148,7 @@ if (empty($reshook)) {
 		$search_company = '';
 		$search_status = '';
 		$option = '';
-		$toselect = '';
+		$toselect = array();
 		$search_array_options = array();
 	}
 }

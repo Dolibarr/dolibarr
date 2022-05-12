@@ -615,11 +615,12 @@ if ($mode == 'future') {
 	$colspan++;
 }
 
-print '<tr class="liste_total"><td>'.$langs->trans("Totalforthispage").'</td>';
-print '<td></td><td></td><td class="right">'.price(price2num($totalbuyingprice, 'MT')).'</td><td></td><td></td><td></td><td></td></tr>';
 
 if (empty($date) || !$dateIsValid) {
 	print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("EnterADateCriteria").'</span></td></tr>';
+} else {
+	print '<tr class="liste_total"><td>'.$langs->trans("Totalforthispage").'</td>';
+	print '<td></td><td></td><td class="right">'.price(price2num($totalbuyingprice, 'MT')).'</td><td></td><td></td><td></td><td></td></tr>';
 }
 
 print '</table>';

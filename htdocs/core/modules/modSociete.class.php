@@ -44,7 +44,7 @@ class modSociete extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-		global $conf, $user;
+		global $conf, $user, $mysoc, $langs;
 
 		$this->db = $db;
 		$this->numero = 1;
@@ -657,11 +657,34 @@ class modSociete extends DolibarrModules
 		);
 		$this->import_updatekeys_array[$r] = array(
 			's.nom' => 'Name',
+			's.zip' => 'Zip',
+			's.email' => 'Email',
 			's.code_client' => 'CustomerCode',
 			's.code_fournisseur' => 'SupplierCode',
 			's.code_compta' => 'CustomerAccountancyCode',
 			's.code_compta_fournisseur' => 'SupplierAccountancyCode'
 		);
+		// Add profids as criteria to search duplicates
+		$langs->load("companies");
+		$i=1;
+		while ($i <= 6) {
+			if ($i == 1) {
+				$this->import_updatekeys_array[$r]['s.siren'] = 'ProfId1'.(empty($mysoc->country_code) ? '' : $mysoc->country_code);
+			}
+			if ($i == 2) {
+				$this->import_updatekeys_array[$r]['s.siret'] = 'ProfId2'.(empty($mysoc->country_code) ? '' : $mysoc->country_code);
+			}
+			if ($i == 3) {
+				$this->import_updatekeys_array[$r]['s.ape'] = 'ProfId3'.(empty($mysoc->country_code) ? '' : $mysoc->country_code);
+			}
+			if ($i >= 4) {
+				//var_dump($langs->trans('ProfId'.$i.(empty($mysoc->country_code) ? '' : $mysoc->country_code)));
+				if ($langs->trans('ProfId'.$i.(empty($mysoc->country_code) ? '' : $mysoc->country_code)) != '-') {
+					$this->import_updatekeys_array[$r]['s.idprof'.$i] = 'ProfId'.$i.(empty($mysoc->country_code) ? '' : $mysoc->country_code);
+				}
+			}
+			$i++;
+		}
 
 		// Import list of contacts/additional addresses and attributes
 		$r++;

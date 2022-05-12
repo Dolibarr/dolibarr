@@ -502,8 +502,8 @@ interface Database
 	/**
 	 * Returns the current line (as an object) for the resultset cursor
 	 *
-	 * @param   resource $resultset 	Cursor of the desired request
-	 * @return  Object                  Object result line or false if KO or end of cursor
+	 * @param   resource|Connection		$resultset 		Handler of the desired request
+	 * @return  Object                  				Object result line or false if KO or end of cursor
 	 */
 	public function fetch_object($resultset);
 	// phpcs:enable

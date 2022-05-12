@@ -527,9 +527,8 @@ if (!empty($conf->tax->enabled) && !empty($user->rights->tax->charges->lire)) {
 
 					if ($i >= $max) {
 						$othernb += 1;
+						$tot_ttc += $obj->amount;
 						$i++;
-						$total_ht += $obj->total_ht;
-						$total_ttc += $obj->total_ttc;
 						continue;
 					}
 
