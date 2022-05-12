@@ -214,7 +214,7 @@ class modPartnership extends DolibarrModules
 		$this->dictionaries=array(
 			'langs'=>'partnership@partnership',
 			// List of tables we want to see into dictonnary editor
-			'tabname'=>array(MAIN_DB_PREFIX."c_partnership_type"),
+			'tabname'=>array("c_partnership_type"),
 			// Label of tables
 			'tablib'=>array("PartnershipType"),
 			// Request to select fields
