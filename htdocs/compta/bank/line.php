@@ -184,7 +184,7 @@ if ($user->rights->banque->modifier && $action == "update") {
 		}
 		$sql .= " fk_account = ".((int) $actarget->id);
 		$sql .= " WHERE rowid = ".((int) $acline->id);
-print $sql;
+
 		$result = $db->query($sql);
 		if (!$result) {
 			$error++;
