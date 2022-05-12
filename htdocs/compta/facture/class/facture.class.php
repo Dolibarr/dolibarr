@@ -2692,7 +2692,7 @@ class Facture extends CommonInvoice
 			return -1;
 		}
 		if (!empty($conf->global-> INVOICE_CHECK_POSTERIOR_DATE)) {
-			$last_of_type = $this->willBeLastOfSameType();
+			$last_of_type = $this->willBeLastOfSameType($allow_validated_drafts = true);
 			if (!$last_of_type[0]) {
 				$this->error = $langs->transnoentities("ErrorInvoiceIsNotLastOfSameType", $this->ref , dol_print_date($this->date, 'day'), dol_print_date($last_of_type[1], 'day'));
 				return -1;
@@ -5213,10 +5213,10 @@ class Facture extends CommonInvoice
 
 	/**
 	 * See if current invoice date is posterior to the last invoice date among validated invoices of same type.
-	 * @param bool 	$strict		compare precise time or only days.
+	 * @param 	boolean 	$allow_validated_drafts			return true if the invoice has been validated before returning to DRAFT state.
 	 * @return boolean
 	 */
-	public function willBeLastOfSameType()
+	public function willBeLastOfSameType($allow_validated_drafts = false)
 	{
 		// get date of last validated invoices of same type
 		$sql  = 'SELECT datef';
@@ -5233,7 +5233,12 @@ class Facture extends CommonInvoice
 				$last_date = $this->db->jdate($obj->datef);
 				$invoice_date = $this->date;
 
-				return [$invoice_date >= $last_date, $last_date];
+				$is_last_of_same_type = $invoice_date >= $last_date;
+				if ($allow_validated_drafts) {
+					$is_last_of_same_type = $is_last_of_same_type || (!strpos($this->ref, 'PROV') && $this->status == self::STATUS_DRAFT);
+				}
+
+				return [$is_last_of_same_type, $last_date];
 			} else {
 				// element is first of type to be validated
 				return [true];
