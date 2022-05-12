@@ -2158,3 +2158,5 @@ YouShouldSetThisToOff=You should set this to 0 or off
 InstallAndUpgradeLockedBy=Install and upgrades are locked by the file <b>%s</b>
 IfYouUseASecondTaxYouMustSetYouUseTheMainTax=If you want to use a second tax, you must enable also the first sales tax
 IfYouUseAThirdTaxYouMustSetYouUseTheMainTax=If you want to use a third tax, you must enable also the first sales tax
+DEBUGBAR_USE_LOG_FILE=Use the <b>dolibarr.log</b> file to trap Logs
+UsingLogFileShowAllRecordOfSubrequestButIsSlower=Use the dolibarr.log file to trap Logs instead of live memory catching. It allows to catch all logs instead of only log of current process (so including the one of ajax subrequests pages) but will make your instance very very slow. Not recommended.

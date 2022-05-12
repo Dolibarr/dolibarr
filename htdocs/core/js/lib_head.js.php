@@ -963,6 +963,7 @@ function document_preview(file, type, title)
 		img.src = file;
 
 	}
+
 	function show_preview(mode) {
 		/* console.log("mode="+mode+" file="+file+" type="+type+" width="+width+" height="+height); */
 		var newElem = '<object name="objectpreview" data="'+file+'" type="'+type+'" width="'+object_width+'" height="'+object_height+'" param="noparam"></object>';
@@ -977,6 +978,7 @@ function document_preview(file, type, title)
 		}
 
 		$("#dialogforpopup").html(newElem);
+
 		$("#dialogforpopup").dialog({
 			closeOnEscape: true,
 			resizable: true,
