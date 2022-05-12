@@ -134,10 +134,10 @@ class modTicket extends DolibarrModules
 		$this->dictionaries = array(
 			'langs' => 'ticket',
 			'tabname' => array(
-				MAIN_DB_PREFIX."c_ticket_type",
-				MAIN_DB_PREFIX."c_ticket_severity",
-				MAIN_DB_PREFIX."c_ticket_category",
-				MAIN_DB_PREFIX."c_ticket_resolution"
+				"c_ticket_type",
+				"c_ticket_severity",
+				"c_ticket_category",
+				"c_ticket_resolution"
 			),
 			'tablib' => array(
 				"TicketDictType",

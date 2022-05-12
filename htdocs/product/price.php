@@ -1753,7 +1753,7 @@ if ((empty($conf->global->PRODUIT_CUSTOMER_PRICES) || $action == 'showlog_defaul
 						if (empty($positiverates)) {
 							$positiverates = '0';
 						}
-						echo vatrate($positiverates.($objp->default_vat_code ? ' ('.$objp->default_vat_code.')' : ''), '%', $objp->tva_npr);
+						echo vatrate($positiverates.($objp->default_vat_code ? ' ('.$objp->default_vat_code.')' : ''), '%', !empty($objp->tva_npr) ? $objp->tva_npr : 0);
 						/*
 						if ($objp->default_vat_code)
 						{
