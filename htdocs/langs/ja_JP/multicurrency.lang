@@ -35,4 +35,4 @@ ErrorUpdateRate=レート変更時のエラー
 Codemulticurrency=通貨コード
 UpdateRate=レートを変更する
 CancelUpdate=キャンセル
-NoEmptyRate=レートフィールドは空であってはなりません
+NoEmptyRate=レートフィールドは空であってはならない

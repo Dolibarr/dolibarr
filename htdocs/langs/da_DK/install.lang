@@ -8,6 +8,7 @@ ConfFileIsNotWritable=Konfigurationsfilen <b> %s </ b> kan ikke skrives. Tjek ti
 ConfFileIsWritable=<b>Konfigurationsfil %s</b> er skrivbar.
 ConfFileMustBeAFileNotADir=Konfigurationsfil <b> %s </b>skal være en fil, ikke en mappe.
 ConfFileReload=Genindlæsning af parametre fra konfigurationsfilen.
+NoReadableConfFileSoStartInstall=Konfigurationsfilen <b> conf/conf.php </b> eksisterer ikke eller kan ikke genskabes. Vi kører installationsprocessen for at prøve at initialisere den.
 PHPSupportPOSTGETOk=Denne PHP understøtter variablerne POST og GET.
 PHPSupportPOSTGETKo=Det er muligt, at din PHP opsætning ikke understøtter variabler POST og / eller GET. Kontroller parameteren <b> variables_order </ b> i php.ini.
 PHPSupportSessions=Denne PHP understøtter sessioner.

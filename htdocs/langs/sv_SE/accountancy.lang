@@ -62,24 +62,24 @@ MainAccountForSubscriptionPaymentNotDefined=Huvudkonton för abonnemangsbetalnin
 AccountancyArea=Redovisningsområde
 AccountancyAreaDescIntro=Användningen av bokföringsmodulen görs i flera steg:
 AccountancyAreaDescActionOnce=Följande åtgärder utförs vanligtvis en gång bara, eller en gång per år ...
-AccountancyAreaDescActionOnceBis=Nästa steg bör göras för att spara dig tid i framtiden genom att föreslå dig rätt standardbokföringskonto när du gör bokföringen (skrivning i sloggboker och huvudbok)
+AccountancyAreaDescActionOnceBis=Next steps should be done to save you time in future by suggesting you automaticaly the correct default accounting account when transferring data in accounting
 AccountancyAreaDescActionFreq=Följande åtgärder utförs vanligtvis varje månad, vecka eller dag för mycket stora företag ...
 
-AccountancyAreaDescJournalSetup=STEG %s: Skapa eller kolla innehållet i din loggboklista från menyn %s
+AccountancyAreaDescJournalSetup=STEP %s: Check content of your journal list from menu %s
 AccountancyAreaDescChartModel=STEG %s: Kontrollera att det finns en kontodiagrammodell eller skapa en från menyn %s
 AccountancyAreaDescChart=STEG %s: Välj och | eller slutför ditt kontoplan från meny %s
 
 AccountancyAreaDescVat=STEG %s: Definiera redovisningskonton för varje moms. För detta, använd menyinmatningen %s.
 AccountancyAreaDescDefault=STEG %s: Definiera standardbokföringskonton. För detta, använd menyinmatningen %s.
-AccountancyAreaDescExpenseReport=STEG %s: Definiera standardbokföringskonto för varje typ av kostnadsrapport. För detta, använd menyinmatningen %s.
+AccountancyAreaDescExpenseReport=STEP %s: Define default accounting accounts for each type of Expense report. For this, use the menu entry %s.
 AccountancyAreaDescSal=STEG %s: Definiera standardbokföringskonto för betalning av löner. För detta, använd menyinmatningen %s.
-AccountancyAreaDescContrib=STEG %s: Definiera standardbokföringskonto för specialkostnader (diverse skatter). För detta, använd menyinmatningen %s.
+AccountancyAreaDescContrib=STEP %s: Define default accounting accounts for Taxes (special expenses). For this, use the menu entry %s.
 AccountancyAreaDescDonation=STEG %s: Definiera standardbokföringskonto för donation. För detta, använd menyinmatningen %s.
 AccountancyAreaDescSubscription=STEG %s: Definiera standardbokföringskonto för medlemsabonnemang. För detta, använd menyinmatningen %s.
 AccountancyAreaDescMisc=STEG %s: Ange obligatoriskt standardkonto och standardbokföringskonto för diverse transaktioner. För detta, använd menyinmatningen %s.
 AccountancyAreaDescLoan=STEG %s: Definiera standardbokföringskonto för lån. För detta, använd menyinmatningen %s.
 AccountancyAreaDescBank=STEG %s: Definiera bokföringskonto och kontokod för varje bank- och bokföringskonto. För detta, använd menyinmatningen %s.
-AccountancyAreaDescProd=STEG %s: Definiera bokföringskonto på dina produkter / tjänster. För detta, använd menyinmatningen %s.
+AccountancyAreaDescProd=STEP %s: Define accounting accounts on your Products/Services. For this, use the menu entry %s.
 
 AccountancyAreaDescBind=STEG %s: Kontrollera bindningen mellan befintliga %s linjer och bokföringskonto är klar så att applikationen kommer att kunna bokföra transaktioner i huvudboken med ett klick. Korrigera saknade bindningar. För detta, använd menyinmatningen %s.
 AccountancyAreaDescWriteRecords=STEG %s: Skriv transaktioner i huvudboken. För detta, gå till menyn <strong> %s </strong>, och klicka på knappen <strong> %s </strong>.
@@ -112,7 +112,7 @@ MenuAccountancyClosure=Stängning
 MenuAccountancyValidationMovements=Validera rörelser
 ProductsBinding=Produkter konton
 TransferInAccounting=Överföring i bokföring
-RegistrationInAccounting=Registrering i bokföring
+RegistrationInAccounting=Recording in accounting
 Binding=Förbindande till konton
 CustomersVentilation=Kundfaktura förbindande
 SuppliersVentilation=Leverantörsfaktura förbindande
@@ -120,7 +120,7 @@ ExpenseReportsVentilation=Utläggsrapport förbindande
 CreateMvts=Skapa ny transaktion
 UpdateMvts=Ändring av en transaktion
 ValidTransaction=Bekräfta transaktionen
-WriteBookKeeping=Registrera transaktioner i bokföring
+WriteBookKeeping=Record transactions in accounting
 Bookkeeping=Huvudbok
 BookkeepingSubAccount=Underledger
 AccountBalance=Kontobalans
@@ -219,12 +219,12 @@ ByPredefinedAccountGroups=Av fördefinierade grupper
 ByPersonalizedAccountGroups=Av personliga grupper
 ByYear=Per år
 NotMatch=Inte inställd
-DeleteMvt=Ta bort några operationer från redovisningen
+DeleteMvt=Delete some lines from accounting
 DelMonth=Månad att ta bort
 DelYear=År att radera
 DelJournal=Loggbok att radera
-ConfirmDeleteMvt=Detta raderar alla operationer i bokföringen för året / månaden och / eller för en viss journal (minst ett kriterium krävs). Du måste återanvända funktionen '%s' för att ha den raderade posten tillbaka i huvudboken.
-ConfirmDeleteMvtPartial=Detta raderar transaktionen från bokföringen (alla transaktionsrader relaterade till samma transaktion raderas)
+ConfirmDeleteMvt=This will delete all lines in accountancy for the year/month and/or for a specific journal (At least one criterion is required). You will have to reuse the feature '%s' to have the deleted record back in the ledger.
+ConfirmDeleteMvtPartial=This will delete the transaction from the accounting (all lines related to the same transaction will be deleted)
 FinanceJournal=Finansloggbok
 ExpenseReportsJournal=Utläggsrapporter loggbok
 DescFinanceJournal=Finansbokföring inklusive alla typer av betalningar via bankkonto
@@ -278,11 +278,11 @@ DescVentilExpenseReportMore=Om du ställer in bokföringskonto på typ av kostna
 DescVentilDoneExpenseReport=Här kan du se listan över raderna för kostnadsrapporter och deras bokföringskonto
 
 Closure=Årlig nedläggning
-DescClosure=Se här antalet rörelser per månad som inte har validerats och räkenskapsår som redan är öppna
-OverviewOfMovementsNotValidated=Steg 1 / Översikt över rörelser har inte validerats. (Nödvändigt för att avsluta ett räkenskapsår)
-AllMovementsWereRecordedAsValidated=Alla rörelser registrerades som validerade
-NotAllMovementsCouldBeRecordedAsValidated=Inte alla rörelser kunde spelas in som validerade
-ValidateMovements=Validera rörelser
+DescClosure=Consult here the number of movements by month who are not yet validated & locked
+OverviewOfMovementsNotValidated=Overview of movements not validated and locked
+AllMovementsWereRecordedAsValidated=All movements were recorded as validated and locked
+NotAllMovementsCouldBeRecordedAsValidated=Not all movements could be recorded as validated and locked
+ValidateMovements=Validate and lock record...
 DescValidateMovements=Alla ändringar eller raderingar av skrift, bokstäver och raderingar är förbjudna. Alla bidrag till en övning måste valideras, annars är det inte möjligt att stänga
 
 ValidateHistory=Förbind automatiskt
@@ -294,14 +294,15 @@ Balancing=Balansering
 FicheVentilation=Förbindande kort
 GeneralLedgerIsWritten=Transaktioner skrivs i huvudboken
 GeneralLedgerSomeRecordWasNotRecorded=Några av transaktionerna kunde inte bokföras. Om det inte finns något annat felmeddelande beror det troligen på att de redan var bokförade.
-NoNewRecordSaved=Inga flera linjer att bokföra
+NoNewRecordSaved=No more record to transfer
 ListOfProductsWithoutAccountingAccount=Förteckning över produkter som inte är kopplade till något kontokonto
 ChangeBinding=Ändra bindningen
 Accounted=Redovisas i huvudbok
 NotYetAccounted=Not yet transferred to accounting
 ShowTutorial=Visa handledning
 NotReconciled=Inte avstämd
-WarningRecordWithoutSubledgerAreExcluded=Varning, alla åtgärder utan underskrivningskonto definieras filtreras och utesluts från den här vyn
+WarningRecordWithoutSubledgerAreExcluded=Warning, all lines without subledger account defined are filtered and excluded from this view
+AccountRemovedFromCurrentChartOfAccount=Accounting account that does not exist in the current chart of accounts
 
 ## Admin
 BindingOptions=Bindande alternativ
@@ -329,8 +330,9 @@ ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Inaktivera bindning och överföring av 
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Inaktivera bindning och överföring i bokföring på kostnadsrapporter (kostnadsrapporter kommer inte att beaktas vid redovisning)
 
 ## Export
-NotifiedExportDate=Flag exported lines as exported (modification of the lines will not be possible)
-NotifiedValidationDate=Validate the exported entries (modification or deletion of the lines will not be possible)
+NotifiedExportDate=Flag exported lines as Exported <span class="warning">(to modify a line, you will need to delete the whole transaction and re-transfert it into accounting)</span>
+NotifiedValidationDate=Validate and Lock the exported entries <span class="warning">(same effect than the "Closure" feature, modification and deletion of the lines will DEFINITELY not be possible)</span>
+DateValidationAndLock=Date validation and lock
 ConfirmExportFile=Bekräftelse på generering av bokföringsexportfilen?
 ExportDraftJournal=Exportera utkast till loggbok
 Modelcsv=Modell av export
@@ -394,6 +396,21 @@ Range=Räckvidd av bokföringskonto
 Calculated=Beräknad
 Formula=Formel
 
+## Reconcile
+Unlettering=Unreconcile
+AccountancyNoLetteringModified=No reconcile modified
+AccountancyOneLetteringModifiedSuccessfully=One reconcile successfully modified
+AccountancyLetteringModifiedSuccessfully=%s reconcile successfully modified
+AccountancyNoUnletteringModified=No unreconcile modified
+AccountancyOneUnletteringModifiedSuccessfully=One unreconcile successfully modified
+AccountancyUnletteringModifiedSuccessfully=%s unreconcile successfully modified
+
+## Confirm box
+ConfirmMassUnlettering=Bulk Unreconcile confirmation
+ConfirmMassUnletteringQuestion=Are you sure you want to Unreconcile the %s selected record(s)?
+ConfirmMassDeleteBookkeepingWriting=Bulk Delete confirmation
+ConfirmMassDeleteBookkeepingWritingQuestion=This will delete the transaction from the accounting (all lines related to the same transaction will be deleted) Are you sure you want to delete the %s selected record(s)?
+
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Några obligatoriska steg för installationen var inte färdiga, var god fyll i dem
 ErrorNoAccountingCategoryForThisCountry=Ingen redovisningskoncern tillgänglig för land %s (Se Hem - Inställning - Ordböcker)
@@ -406,6 +423,9 @@ Binded=Förbundna rader
 ToBind=Rader att förbinda
 UseMenuToSetBindindManualy=Linjer som ännu inte är bundna, använd menyn <a href="%s"> %s </a> för att göra bindningen manuellt
 SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Sorry this module is not compatible with the experimental feature of situation invoices
+AccountancyErrorMismatchLetterCode=Mismatch in reconcile code
+AccountancyErrorMismatchBalanceAmount=The balance (%s) is not equal to 0
+AccountancyErrorLetteringBookkeeping=Errors have occurred concerning the transactions: %s
 
 ## Import
 ImportAccountingEntries=Redovisningsposter

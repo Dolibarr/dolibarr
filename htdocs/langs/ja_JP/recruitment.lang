@@ -74,3 +74,5 @@ JobClosedTextCanceled=求人は終了した。
 ExtrafieldsJobPosition=補完的な属性(役職)
 ExtrafieldsApplication=補完的な属性(求人応募)
 MakeOffer=申し出する
+WeAreRecruiting=募集中。これは、募集職種のリスト...
+NoPositionOpen=現在募集職種なし

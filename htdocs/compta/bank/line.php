@@ -184,7 +184,7 @@ if ($user->rights->banque->modifier && $action == "update") {
 		}
 		$sql .= " fk_account = ".((int) $actarget->id);
 		$sql .= " WHERE rowid = ".((int) $acline->id);
-
+print $sql;
 		$result = $db->query($sql);
 		if (!$result) {
 			$error++;
@@ -332,7 +332,7 @@ if ($result) {
 		print '<td>';
 		if (!$objp->rappro && !$bankline->getVentilExportCompta()) {
 			print img_picto('', 'bank_account', 'class="paddingright"');
-			print $form->select_comptes($acct->id, 'accountid', 0, '', 0, '', 0, '', 1);
+			print $form->select_comptes($acct->id, 'accountid', 0, '', ($acct->id > 0 ? $acct->id : 1), '', 0, '', 1);
 		} else {
 			print $acct->getNomUrl(1, 'transactions', 'reflabel');
 		}
