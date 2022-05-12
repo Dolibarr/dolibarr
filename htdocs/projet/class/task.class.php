@@ -1183,6 +1183,7 @@ class Task extends CommonObjectLine
 		dol_syslog(get_class($this)."::addTimeSpent", LOG_DEBUG);
 
 		$ret = 0;
+		$now = dol_now();
 
 		// Check parameters
 		if (!is_object($user)) {
@@ -1220,6 +1221,7 @@ class Task extends CommonObjectLine
 		$sql .= ", task_duration";
 		$sql .= ", fk_user";
 		$sql .= ", note";
+		$sql .= ", datec";
 		$sql .= ") VALUES (";
 		$sql .= ((int) $this->id);
 		$sql .= ", '".$this->db->idate($this->timespent_date)."'";
@@ -1228,6 +1230,7 @@ class Task extends CommonObjectLine
 		$sql .= ", ".((int) $this->timespent_duration);
 		$sql .= ", ".((int) $this->timespent_fk_user);
 		$sql .= ", ".(isset($this->timespent_note) ? "'".$this->db->escape($this->timespent_note)."'" : "null");
+		$sql .= ", '".$this->db->idate($now)."'";
 		$sql .= ")";
 
 		$resql = $this->db->query($sql);
