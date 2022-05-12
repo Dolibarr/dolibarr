@@ -102,6 +102,7 @@ WrongSupplierCode=Vendor code invalid
 CustomerCodeModel=Customer code model
 SupplierCodeModel=Vendor code model
 Gencod=Barcode
+GencodBuyPrice=Barcode of price ref
 ##### Professional ID #####
 ProfId1Short=Prof. id 1
 ProfId2Short=Prof. id 2
