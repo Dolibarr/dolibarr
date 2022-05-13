@@ -283,7 +283,6 @@ ErrorAttributeIsUsedIntoProduct=Cet attribut est utilisé dans une ou plusieurs 
 ErrorAttributeValueIsUsedIntoProduct=Cette valeur d'attribut est utilisée dans une ou plusieurs variantes de produit
 ErrorPaymentInBothCurrency=Erreur, tous les montants doivent être entrés dans la même colonne.
 ErrorYouTryToPayInvoicesInACurrencyFromBankWithAnotherCurrency=Vous essayez de payer une facture en monnaie %s depuis un compte en %s
-ErrorRequestTooLarge=Error, request too large
 ErrorAjaxRequestFailed=La requête a échoué
 
 # Warnings
