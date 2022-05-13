@@ -1257,9 +1257,10 @@ class FactureRec extends CommonInvoice
 	 *
 	 *  @param	int		$restrictioninvoiceid		0=All qualified template invoices found. > 0 = restrict action on invoice ID
 	 *  @param	int		$forcevalidation		1=Force validation of invoice whatever is template auto_validate flag.
+	 *	@param     	int 	$notrigger 			Disable the trigger
 	 *  @return	int								0 if OK, < 0 if KO (this function is used also by cron so only 0 is OK)
 	 */
-	public function createRecurringInvoices($restrictioninvoiceid = 0, $forcevalidation = 0)
+	public function createRecurringInvoices($restrictioninvoiceid = 0, $forcevalidation = 0, $notrigger = 0)
 	{
 		global $conf, $langs, $db, $user, $hookmanager;
 
@@ -1339,6 +1340,8 @@ class FactureRec extends CommonInvoice
 						$this->error = $facture->error;
 						$error++;
 					}
+
+
 					if (!$error && ($facturerec->auto_validate || $forcevalidation)) {
 						$result = $facture->validate($user);
 						if ($result <= 0) {
@@ -1356,6 +1359,16 @@ class FactureRec extends CommonInvoice
 							$this->error = $facture->error;
 							$error++;
 						}
+					}
+					if (!$error && !$notrigger) {
+						// Call trigger
+						$result = $facturerec->call_trigger('BILLREC_CREATEBILL', $user);
+						if ($result < 0) {
+							$this->errors = $facturerec->errors;
+							$this->error = $facturerec->error;
+							$error++;
+						}
+						// End call triggers
 					}
 				} else {
 					$error++;
