@@ -1825,8 +1825,7 @@ class FactureFournisseur extends CommonInvoice
 							dol_syslog(__METHOD__.' '.$this->error, LOG_ERR);
 							return -1;
 						}
-					}
-					elseif ($key == 'ACCOUNTANCY_CODE_SUPPLIER') {
+					} elseif ($key == 'ACCOUNTANCY_CODE_SUPPLIER') {
 						// Check for mandatory
 						if (!empty($conf->global->SOCIETE_ACCOUNTANCY_CODE_SUPPLIER_INVOICE_MANDATORY) && empty($this->thirdparty->code_compta_fournisseur)) {
 							$langs->load("errors");
