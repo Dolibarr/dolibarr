@@ -31,6 +31,7 @@ ErrorBadThirdPartyName=Bad value for third-party name
 ForbiddenBySetupRules=Forbidden by setup rules
 ErrorProdIdIsMandatory=The %s is mandatory
 ErrorAccountancyCodeCustomerIsMandatory=The accountancy code of customer %s is mandatory
+ErrorAccountancyCodeSupplierIsMandatory=The accountancy code of supplier %s is mandatory
 ErrorBadCustomerCodeSyntax=Bad syntax for customer code
 ErrorBadBarCodeSyntax=Bad syntax for barcode. May be you set a bad barcode type or you defined a barcode mask for numbering that does not match value scanned.
 ErrorCustomerCodeRequired=Customer code required
