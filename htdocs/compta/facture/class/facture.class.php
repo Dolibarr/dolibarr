@@ -2951,6 +2951,25 @@ class Facture extends CommonInvoice
 				}
 			}
 
+			/*
+			 * Set situation_final to 0 if is a credit note and the invoice source is a invoice situation (case when invoice situation is at 100%)
+			 * So we can continue to create new invoice situation
+			 */
+			if (!$error && $this->type == self::TYPE_CREDIT_NOTE && $this->fk_facture_source > 0) {
+				$invoice_situation = new Facture($this->db);
+				$result = $invoice_situation->fetch($this->fk_facture_source);
+				if ($result > 0) {
+					$invoice_situation->situation_final = 0;
+					// Disable triggers because module can force situation_final to 1 by triggers (ex: SubTotal)
+					$result = $invoice_situation->setFinal($user, 1);
+				}
+				if ($result < 0) {
+					$this->error = $invoice_situation->error;
+					$this->errors = $invoice_situation->errors;
+					$error++;
+				}
+			}
+
 			// Trigger calls
 			if (!$error && !$notrigger) {
 				// Call trigger
