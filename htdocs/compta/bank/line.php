@@ -125,7 +125,11 @@ if ($user->rights->banque->modifier && $action == "update") {
 	$error = 0;
 
 	$acline = new AccountLine($db);
-	$acline->fetch($rowid);
+	$result = $acline->fetch($rowid);
+	if ($result <= 0) {
+		dol_syslog('Failed to read bank line with id '.$rowid, LOG_ERR);	// This happens due to old bug that has set fk_account to null.
+		$acline->id = $rowid;
+	}
 
 	$acsource = new Account($db);
 	$acsource->fetch($accountoldid);
@@ -332,7 +336,7 @@ if ($result) {
 		print '<td>';
 		if (!$objp->rappro && !$bankline->getVentilExportCompta()) {
 			print img_picto('', 'bank_account', 'class="paddingright"');
-			print $form->select_comptes($acct->id, 'accountid', 0, '', 0, '', 0, '', 1);
+			print $form->select_comptes($acct->id, 'accountid', 0, '', ($acct->id > 0 ? $acct->id : 1), '', 0, '', 1);
 		} else {
 			print $acct->getNomUrl(1, 'transactions', 'reflabel');
 		}

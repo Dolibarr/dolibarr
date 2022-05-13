@@ -74,3 +74,5 @@ JobClosedTextCanceled=Die Stelle ist geschlossen.
 ExtrafieldsJobPosition=Ergänzende Attribute (Stellenangebote)
 ExtrafieldsApplication=Ergänzende Attribute (Bewerbungen)
 MakeOffer=Machen Sie ein Angebot
+WeAreRecruiting=Wir stellen ein. Dies ist eine Liste mit offenen Stellen, die zu besetzen sind...
+NoPositionOpen=Zur Zeit sind keine Stellen offen

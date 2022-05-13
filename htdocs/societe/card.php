@@ -84,7 +84,9 @@ $error = 0; $errors = array();
 $action		= (GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view');
 $cancel		= GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
+$backtopagejsfields = GETPOST('backtopagejsfields', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
+$dol_openinpopup = GETPOST('dol_openinpopup', 'aZ09');
 $confirm	= GETPOST('confirm', 'alpha');
 
 $socid = GETPOST('socid', 'int') ?GETPOST('socid', 'int') : GETPOST('id', 'int');
@@ -909,7 +911,7 @@ if (empty($reshook)) {
 
 	// Actions to build doc
 	$id = $socid;
-	$upload_dir = $conf->societe->multidir_output[$object->entity];
+	$upload_dir = !empty($conf->societe->multidir_output[$object->entity])?$conf->societe->multidir_output[$object->entity]:$conf->societe->dir_output;
 	$permissiontoadd = $user->rights->societe->creer;
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 }
@@ -1262,8 +1264,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '<form enctype="multipart/form-data" action="'.$_SERVER["PHP_SELF"].'" method="post" name="formsoc" autocomplete="off">'; // Chrome ignor autocomplete
 
 		print '<input type="hidden" name="action" value="add">';
-		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
+		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+		print '<input type="hidden" name="backtopagejsfields" value="'.$backtopagejsfields.'">';
 		print '<input type="hidden" name="private" value='.$object->particulier.'>';
 		print '<input type="hidden" name="type" value='.GETPOST("type", 'alpha').'>';
 		print '<input type="hidden" name="LastName" value="'.$langs->trans('ThirdPartyName').' / '.$langs->trans('LastName').'">';
@@ -1721,7 +1724,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		print dol_get_fiche_end();
 
-		print $form->buttonsSaveCancel("AddThirdParty");
+		print $form->buttonsSaveCancel("AddThirdParty", 'Cancel', null, 0, '', $dol_openinpopup);
 
 		print '</form>'."\n";
 	} elseif ($action == 'edit') {

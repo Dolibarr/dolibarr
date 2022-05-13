@@ -986,6 +986,7 @@ if (!$variants) {
 	$num = 0;
 	$total = 0;
 	$totalvalue = $totalvaluesell = 0;
+	$totalwithpmp = 0;
 
 	$resql = $db->query($sql);
 	if ($resql) {

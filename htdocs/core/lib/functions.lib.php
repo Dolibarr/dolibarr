@@ -1575,36 +1575,70 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
  *  Such buttons must be included inside a HTML form.
  *
  *	@param	string	$name				A name for the html component
- *	@param	string	$label 	    		Label of button
+ *	@param	string	$label 	    		Label shown in Popup title top bar
  *	@param  string	$buttonstring  		button string
  *	@param  string	$url				Url to open
  *  @param	string	$disabled			Disabled text
+ *  @param	string	$morecss			More CSS
+ *  @param	string	$backtopagejsfields	The back to page must be managed using javascript instead of a redirect.
+ *  									Value is 'Name of html component to set with id:Name of html component to set with label'
+ *  									TODO Support this mode, for example when used from the page create a project on thirdparty creation.
  * 	@return	string						HTML component with button
  */
-function dolButtonToOpenUrlInDialogPopup($name, $label, $buttonstring, $url, $disabled = '')
+function dolButtonToOpenUrlInDialogPopup($name, $label, $buttonstring, $url, $disabled = '', $morecss = 'button bordertransp', $backtopagejsfields = '')
 {
 	if (strpos($url, '?') > 0) {
-		$url .= '&dol_hide_topmenu=1&dol_hide_leftmenu=1&dol_openinpopup=1';
+		$url .= '&dol_hide_topmenu=1&dol_hide_leftmenu=1&dol_openinpopup='.urlencode($name);
 	} else {
-		$url .= '?dol_hide_menuinpopup=1&dol_hide_leftmenu=1&dol_openinpopup=1';
+		$url .= '?dol_hide_topmenu=1&dol_hide_leftmenu=1&dol_openinpopup='.urlencode($name);
+	}
+
+	$out .= '';
+
+	$backtopagejsfieldsid = ''; $backtopagejsfieldslabel = '';
+	if ($backtopagejsfields) {
+		$url .= '&backtopagejsfields='.urlencode($backtopagejsfields);
+		$tmpbacktopagejsfields = explode(':', $backtopagejsfields);
+		$backtopagejsfieldsid = empty($tmpbacktopagejsfields[0]) ? '' : $tmpbacktopagejsfields[0];
+		$backtopagejsfieldslabel = empty($tmpbacktopagejsfields[1]) ? '' : $tmpbacktopagejsfields[1];
 	}
 
 	//print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("MediaFiles")).'" name="file_manager">';
-	$out = '<a class="button bordertransp button_'.$name.'"'.$disabled.' title="'.dol_escape_htmltag($label).'">'.$buttonstring.'</a>';
+	$out .= '<!-- a link for button to open url into a dialog popup backtopagejsfields = '.$backtopagejsfields.' -->'."\n";
+	$out .= '<a class="cursorpointer button_'.$name.($morecss ? ' '.$morecss : '').'"'.$disabled.' title="'.dol_escape_htmltag($label).'">'.$buttonstring.'</a>';
+	$out .= '<div id="idfordialog'.$name.'" class="hidden">div for dialog</div>';
+	$out .= '<div id="varforreturndialogid'.$name.'" class="hidden">div for returned id</div>';
+	$out .= '<div id="varforreturndialoglabel'.$name.'" class="hidden">div for returned label</div>';
 	$out .= '<!-- Add js code to open dialog popup on dialog -->';
 	$out .= '<script type="text/javascript">
 				jQuery(document).ready(function () {
 					jQuery(".button_'.$name.'").click(function () {
-						console.log("Open popup with jQuery(...).dialog() on URL '.dol_escape_js(DOL_URL_ROOT.$url).'")
-						var $dialog = $(\'<div></div>\').html(\'<iframe class="iframedialog" style="border: 0px;" src="'.DOL_URL_ROOT.$url.'" width="100%" height="98%"></iframe>\')
-							.dialog({
-								autoOpen: false,
-							 	modal: true,
-							 	height: (window.innerHeight - 150),
-							 	width: \'80%\',
-							 	title: "'.dol_escape_js($label).'"
-							});
-						$dialog.dialog(\'open\');
+						console.log(\'Open popup with jQuery(...).dialog() on URL '.dol_escape_js(DOL_URL_ROOT.$url).'\');
+						var $tmpdialog = $(\'#idfordialog'.$name.'\');
+						$tmpdialog.html(\'<iframe class="iframedialog" id="iframedialog'.$name.'" style="border: 0px;" src="'.DOL_URL_ROOT.$url.'" width="100%" height="98%"></iframe>\');
+						$tmpdialog.dialog({
+							autoOpen: false,
+						 	modal: true,
+						 	height: (window.innerHeight - 150),
+						 	width: \'80%\',
+						 	title: \''.dol_escape_js($label).'\',
+							open: function (event, ui) {
+								console.log("open popup");
+       						},
+							close: function (event, ui) {
+								returnedid = jQuery("#varforreturndialogid'.$name.'").text();
+								returnedlabel = jQuery("#varforreturndialoglabel'.$name.'").text();
+								console.log("popup has been closed. returnedid="+returnedid+" returnedlabel="+returnedlabel);
+								if (returnedid != "" && returnedid != "div for returned id") {
+									jQuery("#'.(empty($backtopagejsfieldsid)?"none":$backtopagejsfieldsid).'").val(returnedid);
+								}
+								if (returnedlabel != "" && returnedlabel != "div for returned label") {
+									jQuery("#'.(empty($backtopagejsfieldslabel)?"none":$backtopagejsfieldslabel).'").val(returnedlabel);
+								}
+							}
+						});
+
+						$tmpdialog.dialog(\'open\');
 					});
 				});
 			</script>';
@@ -2988,7 +3022,7 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 	if (!empty($conf->global->MAIN_PHONE_SEPAR)) {
 		$separ = $conf->global->MAIN_PHONE_SEPAR;
 	}
-	if (empty($countrycode)) {
+	if (empty($countrycode) && is_object($mysoc)) {
 		$countrycode = $mysoc->country_code;
 	}
 

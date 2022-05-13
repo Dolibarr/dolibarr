@@ -90,10 +90,10 @@ TicketPublicAccess=A public interface requiring no identification is available a
 TicketSetupDictionaries=The type of ticket, severity and analytic codes are configurable from dictionaries
 TicketParamModule=Module variable setup
 TicketParamMail=Email setup
-TicketEmailNotificationFrom=Notification email from
-TicketEmailNotificationFromHelp=Used into ticket message answer by example
-TicketEmailNotificationTo=Notifiche via email a
-TicketEmailNotificationToHelp=Invia email di notifica a questo indirizzo
+TicketEmailNotificationFrom=Sender e-mail for ticket answers
+TicketEmailNotificationFromHelp=Sender e-mail for ticket answers sent from Dolibarr
+TicketEmailNotificationTo=Notify ticket creation to this e-mail address
+TicketEmailNotificationToHelp=If present, this e-mail address will be notified of a ticket creation
 TicketNewEmailBodyLabel=Text message sent after creating a ticket
 TicketNewEmailBodyHelp=The text specified here will be inserted into the email confirming the creation of a new ticket from the public interface. Information on the consultation of the ticket are automatically added.
 TicketParamPublicInterface=Public interface setup
@@ -136,6 +136,18 @@ TicketsPublicNotificationNewMessage=Invia e-mail quando un nuovo messaggio/comme
 TicketsPublicNotificationNewMessageHelp=Invia e-mail quando si aggiunge un nuovo messaggio dall'interfaccia pubblica (all'utente assegnato o all'e-mail di notifica a (aggiorna) e / o all'e-mail di notifica a)
 TicketPublicNotificationNewMessageDefaultEmail=Notifiche via email (aggiornamento)
 TicketPublicNotificationNewMessageDefaultEmailHelp=Invia un'e-mail a questo indirizzo per ogni nuovo messaggio di notifica se al ticket non è assegnato un utente o se l'utente non ha alcuna e-mail nota.
+TicketsAutoReadTicket=Automatically mark the ticket as read (when created from backoffice)
+TicketsAutoReadTicketHelp=Automatically mark the ticket as read when created from backoffice. When ticket is create from the public interface, ticket remains with the status "Not Read".
+TicketsDelayBeforeFirstAnswer=A new ticket should receive a first answer before (hours):
+TicketsDelayBeforeFirstAnswerHelp=If a new ticket has not received an answer after this time period (in hours), an important warning icon will be displayed in the list view.
+TicketsDelayBetweenAnswers=An unresolved ticket should not be unactive during (hours):
+TicketsDelayBetweenAnswersHelp=If an unresolved ticket that has already received an answer has not had further interaction after this time period (in hours), a warning icon will be displayed in the list view.
+TicketsAutoNotifyClose=Automatically notify thirdparty when closing a ticket
+TicketsAutoNotifyCloseHelp=When closing a ticket, you will be proposed to send a message to one of thirdparty's contacts. On mass closing, a message will be sent to one contact of the thirdparty linked to the ticket.
+TicketWrongContact=Provided contact is not part of current ticket contacts. Email not sent.
+TicketChooseProductCategory=Product category for ticket support
+TicketChooseProductCategoryHelp=Select the product category of ticket support. This will be used to automatically link a contract to a ticket.
+
 #
 # Index & list page
 #
@@ -151,6 +163,8 @@ OrderByDateAsc=Ordina per data crescente
 OrderByDateDesc=Ordina per data decrescente
 ShowAsConversation=Mostra come elenco di conversazioni
 MessageListViewType=Mostra come elenco di tabelle
+ConfirmMassTicketClosingSendEmail=Automatically send emails when closing tickets
+ConfirmMassTicketClosingSendEmailQuestion=Do you want to notify thirdparties when closing these tickets ?
 
 #
 # Ticket card
@@ -205,12 +219,12 @@ ErrorMailRecipientIsEmptyForSendTicketMessage=Il destinatario è vuoto. Nessuna 
 TicketGoIntoContactTab=Please go into "Contacts" tab to select them
 TicketMessageMailIntro=Introduction
 TicketMessageMailIntroHelp=Questo testo viene aggiunto solo all'inizio dell'email e non verrà salvato
-TicketMessageMailIntroLabelAdmin=Introduction to the message when sending email
-TicketMessageMailIntroText=Buongiorno,<br>Abbiamo risposto alla sua richiesta. Messaggio:<br>
-TicketMessageMailIntroHelpAdmin=This text will be inserted before the text of the response to a ticket.
+TicketMessageMailIntroLabelAdmin=Introduction text to all ticket answers
+TicketMessageMailIntroText=Hello,<br>A new answer has been added to a ticket that you follow. Here is the message:<br>
+TicketMessageMailIntroHelpAdmin=This text will be inserted before the answer when replying to a ticket from Dolibarr
 TicketMessageMailSignature=Firma
 TicketMessageMailSignatureHelp=This text is added only at the end of the email and will not be saved.
-TicketMessageMailSignatureText=<p>Sincerely,</p><p>--</p>
+TicketMessageMailSignatureText=Message sent by <b>%s</b> via Dolibarr
 TicketMessageMailSignatureLabelAdmin=Firma dell'email di risposta
 TicketMessageMailSignatureHelpAdmin=Questo testo verrà inserito dopo il messaggio di risposta
 TicketMessageHelp=Only this text will be saved in the message list on ticket card.
@@ -238,9 +252,16 @@ TicketChangeStatus=Modifica stato
 TicketConfirmChangeStatus=Confirm the status change: %s ?
 TicketLogStatusChanged=Status changed: %s to %s
 TicketNotNotifyTiersAtCreate=Not notify company at create
+NotifyThirdpartyOnTicketClosing=Contacts to notify while closing the ticket
+TicketNotifyAllTiersAtClose=All related contacts
+TicketNotNotifyTiersAtClose=No related contact
 Unread=Unread
 TicketNotCreatedFromPublicInterface=Non disponibile. Il ticket non è stato creato dall'interfaccia pubblica.
 ErrorTicketRefRequired=È richiesto il nome di riferimento del biglietto
+TicketsDelayForFirstResponseTooLong=Too much time elapsed since ticket opening without any answer.
+TicketsDelayFromLastResponseTooLong=Too much time elapsed since last answer on this ticket.
+TicketNoContractFoundToLink=No contract was found to be automatically linked to this ticket. Please link a contract manually.
+TicketManyContractsLinked=Many contracts have been automatically linked to this ticket. Make sure to verify which should be chosen.
 
 #
 # Logs
@@ -268,8 +289,9 @@ TicketNewEmailBody=Questa email automatica conferma che è stato registrato un n
 TicketNewEmailBodyCustomer=This is an automatic email to confirm a new ticket has just been created into your account.
 TicketNewEmailBodyInfosTicket=Informazioni utili per tua richiesta
 TicketNewEmailBodyInfosTrackId=Numero ID della tua richiesta: %s
-TicketNewEmailBodyInfosTrackUrl=Puoi seguire l'avanzamento del ticket cliccando il link qui sopra
+TicketNewEmailBodyInfosTrackUrl=You can view the progress of the ticket by clicking the following link
 TicketNewEmailBodyInfosTrackUrlCustomer=You can view the progress of the ticket in the specific interface by clicking the following link
+TicketCloseEmailBodyInfosTrackUrlCustomer=You can consult the history of this ticket by clicking the following link
 TicketEmailPleaseDoNotReplyToThisEmail=Please do not reply directly to this email! Use the link to reply into the interface.
 TicketPublicInfoCreateTicket=Questo modulo consente di registrare un ticket di supporto nel nostro sistema di gestione ticketing.
 TicketPublicPleaseBeAccuratelyDescribe=Descrivi il problema dettagliatamente. Fornisci più informazioni possibili per consentirci di identificare la tua richiesta.
@@ -291,6 +313,10 @@ NewUser=Nuovo utente
 NumberOfTicketsByMonth=Numero di ticket per mese
 NbOfTickets=Number of tickets
 # notifications
+TicketCloseEmailSubjectCustomer=Ticket closed
+TicketCloseEmailBodyCustomer=This is an automatic message to notify you that ticket %s has just been closed.
+TicketCloseEmailSubjectAdmin=Ticket closed - Réf %s (public ticket ID %s)
+TicketCloseEmailBodyAdmin=A ticket with ID #%s has just been closed, see information:
 TicketNotificationEmailSubject=Ticket %s updated
 TicketNotificationEmailBody=Questo è un messaggio automatico per confermare che il ticket %s è stato aggiornato
 TicketNotificationRecipient=Notification recipient

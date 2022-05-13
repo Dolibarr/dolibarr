@@ -7734,7 +7734,7 @@ class Form
 						$val = preg_replace('/t\./', '', $val);
 						$label .= (($label && $obj->$val) ? ($oldvalueforshowoncombobox != $objecttmp->fields[$val]['showoncombobox'] ? ' - ' : ' ') : '');
 						$label .= $obj->$val;
-						$oldvalueforshowoncombobox = $objecttmp->fields[$val]['showoncombobox'];
+						$oldvalueforshowoncombobox = !empty($objecttmp->fields[$val]['showoncombobox']) ? $objecttmp->fields[$val]['showoncombobox'] : 0;
 					}
 					if (empty($outputmode)) {
 						if ($preselectedvalue > 0 && $preselectedvalue == $obj->rowid) {
@@ -10079,14 +10079,15 @@ class Form
 	/**
 	 * Output the buttons to submit a creation/edit form
 	 *
-	 * @param   string  $save_label     Alternative label for save button
-	 * @param   string  $cancel_label   Alternative label for cancel button
-	 * @param   array   $morebuttons    Add additional buttons between save and cancel
-	 * @param   bool    $withoutdiv     Option to remove enclosing centered div
-	 * @param	string	$morecss		More CSS
-	 * @return 	string					Html code with the buttons
+	 * @param   string  $save_label     	Alternative label for save button
+	 * @param   string  $cancel_label   	Alternative label for cancel button
+	 * @param   array   $morebuttons    	Add additional buttons between save and cancel
+	 * @param   bool    $withoutdiv     	Option to remove enclosing centered div
+	 * @param	string	$morecss			More CSS
+	 * @param	string	$dol_openinpopup	If the button are shown in a context of a page shown inside a popup, we put here the string name of popup.
+	 * @return 	string						Html code with the buttons
 	 */
-	public function buttonsSaveCancel($save_label = 'Save', $cancel_label = 'Cancel', $morebuttons = array(), $withoutdiv = 0, $morecss = '')
+	public function buttonsSaveCancel($save_label = 'Save', $cancel_label = 'Cancel', $morebuttons = array(), $withoutdiv = 0, $morecss = '', $dol_openinpopup = '')
 	{
 		global $langs;
 
@@ -10123,6 +10124,19 @@ class Form
 			$retstring .= '<input type="submit" class="button button-'.$button['name'].($morecss ? ' '.$morecss : '').' '.$addclass.'" name="'.$button['name'].'" value="'.dol_escape_htmltag($langs->trans($button['label_key'])).'">';
 		}
 		$retstring .= $withoutdiv ? '': '</div>';
+
+		if ($dol_openinpopup) {
+			$retstring .= '<!-- buttons are shown into a $dol_openinpopup='.$dol_openinpopup.' context, so we enable the close of dialog on cancel -->'."\n";
+			$retstring .= '<script>';
+			$retstring .= 'jQuery(".button-cancel").click(function(e) {
+				e.preventDefault(); console.log(\'We click on cancel in iframe popup '.$dol_openinpopup.'\');
+				window.parent.jQuery(\'#idfordialog'.$dol_openinpopup.'\').dialog(\'close\');
+				 });';
+			$retstring .= '</script>';
+			// TODO @LDR for the save button, in action "add", set parent var to return data and close the window
+			//$retstring .= '<a onclick="javascript:$(\'#varforreturndialogid'.$dol_openinpopup.'\', window.parent.document).text(\'setid\');">setid</a> ';
+			//$retstring .= '<a onclick="javascript:$(\'#varforreturndialoglabel'.$dol_openinpopup.'\', window.parent.document).text(\'setlabel\');">setlabel</a>';
+		}
 
 		return $retstring;
 	}

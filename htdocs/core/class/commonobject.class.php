@@ -2236,7 +2236,7 @@ abstract class CommonObject
 	 *	Link element with a project
 	 *
 	 *	@param     	int		$projectid		Project id to link element to
-	 *	@param     	int		$notrigger		Disable all triggers
+	 *  @param		int		$notrigger		Disable the trigger
 	 *	@return		int						<0 if KO, >0 if OK
 	 */
 	public function setProject($projectid, $notrigger = 0)

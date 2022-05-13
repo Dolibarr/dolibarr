@@ -181,7 +181,6 @@ ListOfContactsAddresses=Lista de contactos / direcciones
 ListOfThirdParties=Lista de cliente/proveedor
 ShowContact=Dirección de contacto
 ContactsAllShort=Todos (Sin filtro)
-ContactType=Tipo de Contacto
 ContactForOrders=Contacto del pedido
 ContactForOrdersOrShipments=Contacto de los pedidos o envíos
 ContactForProposals=Contacto de la propuesta

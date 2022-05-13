@@ -1010,22 +1010,26 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		$linktocreatetimeBtnStatus = 0;
 		$linktocreatetimeUrl = '';
 		$linktocreatetimeHelpText = '';
-		if ($user->rights->projet->all->lire || $user->rights->projet->time) {
+		if (!empty($user->rights->projet->time)) {
 			if ($projectstatic->public || $userRead > 0) {
 				$linktocreatetimeBtnStatus = 1;
 
-				if (!empty($projectidforalltimes)) {		// We are on tab 'Time Spent' of project
+				if (!empty($projectidforalltimes)) {
+					// We are on tab 'Time Spent' of project
 					$backtourl = $_SERVER['PHP_SELF'].'?projectid='.$projectstatic->id.($withproject ? '&withproject=1' : '');
-					$linktocreatetimeUrl = $_SERVER['PHP_SELF'].'?'.($withproject ? 'withproject=1' : '').'&projectid='.$projectstatic->id.'&action=createtime'.$param.'&backtopage='.urlencode($backtourl);
-				} else // We are on tab 'Time Spent' of task
-				{
+					$linktocreatetimeUrl = $_SERVER['PHP_SELF'].'?'.($withproject ? 'withproject=1' : '').'&projectid='.$projectstatic->id.'&action=createtime&token='.newToken().$param.'&backtopage='.urlencode($backtourl);
+				} else {
+					// We are on tab 'Time Spent' of task
 					$backtourl = $_SERVER['PHP_SELF'].'?id='.$object->id.($withproject ? '&withproject=1' : '');
-					$linktocreatetimeUrl = $_SERVER['PHP_SELF'].'?'.($withproject ? 'withproject=1' : '').($object->id > 0 ? '&id='.$object->id : '&projectid='.$projectstatic->id).'&action=createtime'.$param.'&backtopage='.urlencode($backtourl);
+					$linktocreatetimeUrl = $_SERVER['PHP_SELF'].'?'.($withproject ? 'withproject=1' : '').($object->id > 0 ? '&id='.$object->id : '&projectid='.$projectstatic->id).'&action=createtime&token='.newToken().$param.'&backtopage='.urlencode($backtourl);
 				}
 			} else {
 				$linktocreatetimeBtnStatus = -2;
 				$linktocreatetimeHelpText = $langs->trans("NotOwnerOfProject");
 			}
+		} else {
+			$linktocreatetimeBtnStatus = -2;
+			$linktocreatetimeHelpText = $langs->trans("NotEnoughPermissions");
 		}
 
 		$paramsbutton = array('morecss'=>'reposition');
