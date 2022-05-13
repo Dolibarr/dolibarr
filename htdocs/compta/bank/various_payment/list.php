@@ -40,7 +40,6 @@ $socid = GETPOST("socid", "int");
 if ($user->socid) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'banque', '', '', '');
 
 $optioncss = GETPOST('optioncss', 'alpha');
 
@@ -173,6 +172,11 @@ $arrayfields = array(
 
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
+$object = new PaymentVarious($db);
+
+$result = restrictedArea($user, 'banque', '', '', '');
+
+
 /*
  * Actions
  */
@@ -271,19 +275,19 @@ if ($search_all) {
 $sql .= $db->order($sortfield, $sortorder);
 
 $totalnboflines = 0;
-$result = $db->query($sql);
-if ($result) {
-	$totalnboflines = $db->num_rows($result);
+$resql = $db->query($sql);
+if ($resql) {
+	$totalnboflines = $db->num_rows($resql);
 }
 $sql .= $db->plimit($limit + 1, $offset);
 
-$result = $db->query($sql);
-if ($result) {
-	$num = $db->num_rows($result);
+$resql = $db->query($sql);
+if ($resql) {
+	$num = $db->num_rows($resql);
 
 	// Direct jump if only one record found
 	if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $search_all) {
-		$obj = $db->fetch_object($result);
+		$obj = $db->fetch_object($resql);
 		$id = $obj->rowid;
 		header("Location: ".DOL_URL_ROOT.'/compta/bank/various_payment/card.php?id='.$id);
 		exit;
@@ -541,7 +545,7 @@ if ($result) {
 
 	$totalarray = array();
 	while ($i < min($num, $limit)) {
-		$obj = $db->fetch_object($result);
+		$obj = $db->fetch_object($resql);
 
 		$variousstatic->id = $obj->rowid;
 		$variousstatic->ref = $obj->rowid;
@@ -704,7 +708,7 @@ if ($result) {
 			$totalarray['nbfield']++;
 		}
 
-		print "</tr>";
+		print '</tr>'."\n";
 
 		$i++;
 	}
@@ -712,11 +716,27 @@ if ($result) {
 	// Show total line
 	include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 
-	print "</table>";
-	print '</div>';
-	print '</form>';
+	// If no record found
+	if ($num == 0) {
+		$colspan = 1;
+		foreach ($arrayfields as $key => $val) {
+			if (!empty($val['checked'])) {
+				$colspan++;
+			}
+		}
+		print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
+	}
 
-	$db->free($result);
+	$db->free($resql);
+
+	$parameters = array('arrayfields'=>$arrayfields, 'sql'=>$sql);
+	$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object); // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
+
+	print '</table>'."\n";
+	print '</div>'."\n";
+
+	print '</form>'."\n";
 } else {
 	dol_print_error($db);
 }

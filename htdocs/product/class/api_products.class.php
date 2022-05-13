@@ -189,6 +189,7 @@ class Products extends DolibarrApi
 
 		$sql = "SELECT t.rowid, t.ref, t.ref_ext";
 		$sql .= " FROM ".$this->db->prefix()."product as t";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_extrafields AS ef ON ef.fk_object = t.rowid";	// So we will be able to filter on extrafields
 		if ($category > 0) {
 			$sql .= ", ".$this->db->prefix()."categorie_product as c";
 		}
@@ -217,6 +218,7 @@ class Products extends DolibarrApi
 			// Show only services
 			$sql .= " AND t.fk_product_type = 1";
 		}
+
 		// Add sql filters
 		if ($sqlfilters) {
 			$errormessage = '';

@@ -173,27 +173,34 @@ class box_members_by_type extends ModeleBoxes
 				$line = 0;
 				$this->info_box_contents[$line][] = array(
 					'td' => 'class=""',
-					'text' => $langs->trans("MembersTypes"),
+					'text' => '',
 				);
+				$labelstatus = $staticmember->LibStatut($staticmember::STATUS_DRAFT, 0, 0, 1);
 				$this->info_box_contents[$line][] = array(
-					'td' => 'class="right"',
-					'text' => $langs->trans("MembersStatusToValid"),	// Draft
+					'td' => 'class="right tdoverflowmax100" width="15%" title="'.dol_escape_htmltag($labelstatus).'"',
+					'text' => $labelstatus
 				);
+				$labelstatus = $langs->trans("UpToDate");
+				$labelstatus = $staticmember->LibStatut($staticmember::STATUS_VALIDATED, 1, dol_now() + 86400, 1);
 				$this->info_box_contents[$line][] = array(
-					'td' => 'class="right"',
-					'text' => $langs->trans("UpToDate"),
+					'td' => 'class="right tdoverflowmax100" width="15%" title="'.dol_escape_htmltag($labelstatus).'"',
+					'text' => $labelstatus,
 				);
+				$labelstatus = $langs->trans("OutOfDate");
+				$labelstatus = $staticmember->LibStatut($staticmember::STATUS_VALIDATED, 1, dol_now() - 86400, 1);
 				$this->info_box_contents[$line][] = array(
-					'td' => 'class="right"',
-					'text' => $langs->trans("OutOfDate"),
+					'td' => 'class="right tdoverflowmax100" width="15%" title="'.dol_escape_htmltag($labelstatus).'"',
+					'text' => $labelstatus
 				);
+				$labelstatus = $staticmember->LibStatut($staticmember::STATUS_EXCLUDED, 0, 0, 1);
 				$this->info_box_contents[$line][] = array(
-					'td' => 'class="right"',
-					'text' => $langs->trans("MembersStatusExcluded"),
+					'td' => 'class="right tdoverflowmax100" width="15%" title="'.dol_escape_htmltag($labelstatus).'"',
+					'text' => $labelstatus
 				);
+				$labelstatus = $staticmember->LibStatut($staticmember::STATUS_RESILIATED, 0, 0, 1);
 				$this->info_box_contents[$line][] = array(
-					'td' => 'class="right"',
-					'text' => $langs->trans("MembersStatusResiliated"),
+					'td' => 'class="right tdoverflowmax100" width="15%" title="'.dol_escape_htmltag($labelstatus).'"',
+					'text' => $labelstatus
 				);
 				$line++;
 				foreach ($AdherentType as $key => $adhtype) {

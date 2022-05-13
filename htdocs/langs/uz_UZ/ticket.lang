@@ -90,10 +90,10 @@ TicketPublicAccess=Identifikatsiyani talab qilmaydigan umumiy interfeys quyidagi
 TicketSetupDictionaries=Chipta turi, jiddiyligi va analitik kodlari lug'atlarda sozlanishi mumkin
 TicketParamModule=Modulning o'zgaruvchini sozlash
 TicketParamMail=Elektron pochtani sozlash
-TicketEmailNotificationFrom=Bildirishnoma elektron pochtasi
-TicketEmailNotificationFromHelp=Misol uchun chipta xabarining javobiga ishlatilgan
-TicketEmailNotificationTo=Bildirishnomalar elektron pochta manziliga
-TicketEmailNotificationToHelp=Ushbu manzilga elektron pochta xabarnomalarini yuboring.
+TicketEmailNotificationFrom=Sender e-mail for ticket answers
+TicketEmailNotificationFromHelp=Sender e-mail for ticket answers sent from Dolibarr
+TicketEmailNotificationTo=Notify ticket creation to this e-mail address
+TicketEmailNotificationToHelp=If present, this e-mail address will be notified of a ticket creation
 TicketNewEmailBodyLabel=Chipta yaratilgandan so'ng yuborilgan matnli xabar
 TicketNewEmailBodyHelp=Bu erda ko'rsatilgan matn ommaviy interfeysdan yangi chipta yaratilganligini tasdiqlovchi elektron pochtaga kiritiladi. Chipta maslahati to'g'risidagi ma'lumotlar avtomatik ravishda qo'shiladi.
 TicketParamPublicInterface=Umumiy interfeysni sozlash
@@ -136,6 +136,18 @@ TicketsPublicNotificationNewMessage=Chipta yangi xabar / sharh qo'shilganda elek
 TicketsPublicNotificationNewMessageHelp=Umumiy interfeysdan yangi xabar qo'shilganda elektron pochta xabarlarini yuboring (tayinlangan foydalanuvchiga yoki bildirishnomalar elektron pochtasiga (yangilash) va / yoki elektron pochta xabarlariga)
 TicketPublicNotificationNewMessageDefaultEmail=Bildirishnomalar elektron pochtasi (yangilash)
 TicketPublicNotificationNewMessageDefaultEmailHelp=Agar chiptada foydalanuvchi tayinlanmagan bo'lsa yoki foydalanuvchi ma'lum bir elektron pochta xabariga ega bo'lmasa, har bir yangi xabar xabarnomasi uchun ushbu manzilga elektron pochta xabarini yuboring.
+TicketsAutoReadTicket=Automatically mark the ticket as read (when created from backoffice)
+TicketsAutoReadTicketHelp=Automatically mark the ticket as read when created from backoffice. When ticket is create from the public interface, ticket remains with the status "Not Read".
+TicketsDelayBeforeFirstAnswer=A new ticket should receive a first answer before (hours):
+TicketsDelayBeforeFirstAnswerHelp=If a new ticket has not received an answer after this time period (in hours), an important warning icon will be displayed in the list view.
+TicketsDelayBetweenAnswers=An unresolved ticket should not be unactive during (hours):
+TicketsDelayBetweenAnswersHelp=If an unresolved ticket that has already received an answer has not had further interaction after this time period (in hours), a warning icon will be displayed in the list view.
+TicketsAutoNotifyClose=Automatically notify thirdparty when closing a ticket
+TicketsAutoNotifyCloseHelp=When closing a ticket, you will be proposed to send a message to one of thirdparty's contacts. On mass closing, a message will be sent to one contact of the thirdparty linked to the ticket.
+TicketWrongContact=Provided contact is not part of current ticket contacts. Email not sent.
+TicketChooseProductCategory=Product category for ticket support
+TicketChooseProductCategoryHelp=Select the product category of ticket support. This will be used to automatically link a contract to a ticket.
+
 #
 # Index & list page
 #
@@ -151,6 +163,8 @@ OrderByDateAsc=Sana bo'yicha o'sish sanasi bo'yicha saralash
 OrderByDateDesc=Kamayish sanasi bo'yicha saralash
 ShowAsConversation=Suhbat ro'yxati sifatida ko'rsatish
 MessageListViewType=Jadval ro'yxati sifatida ko'rsatish
+ConfirmMassTicketClosingSendEmail=Automatically send emails when closing tickets
+ConfirmMassTicketClosingSendEmailQuestion=Do you want to notify thirdparties when closing these tickets ?
 
 #
 # Ticket card
@@ -205,12 +219,12 @@ ErrorMailRecipientIsEmptyForSendTicketMessage=Qabul qiluvchi bo'sh. Elektron poc
 TicketGoIntoContactTab=Ularni tanlash uchun "Kontaktlar" yorlig'iga o'ting
 TicketMessageMailIntro=Kirish
 TicketMessageMailIntroHelp=Ushbu matn faqat elektron pochta boshida qo'shiladi va saqlanmaydi.
-TicketMessageMailIntroLabelAdmin=Elektron pochta xabarlarini yuborishda xabar bilan tanishish
-TicketMessageMailIntroText=Salom, <br> Siz bog'langan chiptaga yangi javob yuborildi. Mana xabar: <br>
-TicketMessageMailIntroHelpAdmin=Ushbu matn chiptaga javob matnidan oldin kiritiladi.
+TicketMessageMailIntroLabelAdmin=Introduction text to all ticket answers
+TicketMessageMailIntroText=Hello,<br>A new answer has been added to a ticket that you follow. Here is the message:<br>
+TicketMessageMailIntroHelpAdmin=This text will be inserted before the answer when replying to a ticket from Dolibarr
 TicketMessageMailSignature=Imzo
 TicketMessageMailSignatureHelp=Ushbu matn faqat elektron pochta oxirida qo'shiladi va saqlanmaydi.
-TicketMessageMailSignatureText= <p> Hurmat bilan, </p> <p> - </p>
+TicketMessageMailSignatureText=Message sent by <b>%s</b> via Dolibarr
 TicketMessageMailSignatureLabelAdmin=Javob elektron pochtasining imzosi
 TicketMessageMailSignatureHelpAdmin=Ushbu matn javob xabaridan keyin kiritiladi.
 TicketMessageHelp=Faqat ushbu matn chipta kartasidagi xabarlar ro'yxatida saqlanadi.
@@ -238,9 +252,16 @@ TicketChangeStatus=Vaziyatni o'zgartirish
 TicketConfirmChangeStatus=Vaziyat o'zgarishini tasdiqlang: %s?
 TicketLogStatusChanged=Holat o'zgartirildi: %s dan %s ga
 TicketNotNotifyTiersAtCreate=Yaratganda kompaniyani xabardor qilmang
+NotifyThirdpartyOnTicketClosing=Contacts to notify while closing the ticket
+TicketNotifyAllTiersAtClose=All related contacts
+TicketNotNotifyTiersAtClose=No related contact
 Unread=O'qilmagan
 TicketNotCreatedFromPublicInterface=Mavjud emas. Chipta umumiy interfeysdan yaratilmagan.
 ErrorTicketRefRequired=Chipta ma'lumotnomasining nomi talab qilinadi
+TicketsDelayForFirstResponseTooLong=Too much time elapsed since ticket opening without any answer.
+TicketsDelayFromLastResponseTooLong=Too much time elapsed since last answer on this ticket.
+TicketNoContractFoundToLink=No contract was found to be automatically linked to this ticket. Please link a contract manually.
+TicketManyContractsLinked=Many contracts have been automatically linked to this ticket. Make sure to verify which should be chosen.
 
 #
 # Logs
@@ -268,8 +289,9 @@ TicketNewEmailBody=Bu yangi chiptani ro'yxatdan o'tkazganingizni tasdiqlovchi av
 TicketNewEmailBodyCustomer=Bu sizning hisobingizda yangi chipta yaratilganligini tasdiqlovchi avtomatik elektron pochta xabaridir.
 TicketNewEmailBodyInfosTicket=Chiptani kuzatish uchun ma'lumot
 TicketNewEmailBodyInfosTrackId=Chiptalarni kuzatish raqami: %s
-TicketNewEmailBodyInfosTrackUrl=Yuqoridagi havolani bosish orqali chipta borishi bilan tanishishingiz mumkin.
+TicketNewEmailBodyInfosTrackUrl=You can view the progress of the ticket by clicking the following link
 TicketNewEmailBodyInfosTrackUrlCustomer=Siz quyidagi havolani bosish orqali ma'lum bir interfeysda chipta borishini ko'rishingiz mumkin
+TicketCloseEmailBodyInfosTrackUrlCustomer=You can consult the history of this ticket by clicking the following link
 TicketEmailPleaseDoNotReplyToThisEmail=Iltimos, ushbu elektron pochtaga to'g'ridan-to'g'ri javob bermang! Interfeysga javob berish uchun havoladan foydalaning.
 TicketPublicInfoCreateTicket=Ushbu shakl sizning boshqaruv tizimimizda qo'llab-quvvatlash chiptasini yozib olishga imkon beradi.
 TicketPublicPleaseBeAccuratelyDescribe=Iltimos, muammoni aniq tasvirlab bering. Sizning so'rovingizni to'g'ri aniqlab olishimiz uchun imkon qadar ko'proq ma'lumotlarni taqdim eting.
@@ -291,6 +313,10 @@ NewUser=Yangi foydalanuvchi
 NumberOfTicketsByMonth=Oyiga chiptalar soni
 NbOfTickets=Chiptalar soni
 # notifications
+TicketCloseEmailSubjectCustomer=Ticket closed
+TicketCloseEmailBodyCustomer=This is an automatic message to notify you that ticket %s has just been closed.
+TicketCloseEmailSubjectAdmin=Ticket closed - Réf %s (public ticket ID %s)
+TicketCloseEmailBodyAdmin=A ticket with ID #%s has just been closed, see information:
 TicketNotificationEmailSubject=%s chiptasi yangilandi
 TicketNotificationEmailBody=Bu sizga %s chiptasi yangilanganligi haqida xabar berish uchun avtomatik xabar
 TicketNotificationRecipient=Bildirishnoma oluvchi

@@ -124,3 +124,7 @@ ValidatorIsSupervisorByDefault=Standardmäßig ist der Prüfer der Supervisor de
 UserPersonalEmail=Private E-Mail-Adresse
 UserPersonalMobile=Private Mobiltelefonnummer
 WarningNotLangOfInterface=Warnung: das ist die eingestellte Muttersprache die der Benutzer spricht, nicht die ausgewählte Sprache der Benutzeroberfläche. Um die angezeigte Sprache der Benutzeroberfläche zu ändern, gehe zum Tab %s
+DateLastLogin=Datum der letzten Anmeldung
+DatePreviousLogin=Datum der vorangegangenen Anmeldung
+IPLastLogin=IP der letzten Anmeldung
+IPPreviousLogin=IP der vorangegangenen Anmeldung
