@@ -519,6 +519,16 @@ class modSociete extends DolibarrModules
 		if (!empty($conf->global->ACCOUNTANCY_USE_PRODUCT_ACCOUNT_ON_THIRDPARTY)) {
 			$this->import_fields_array[$r] += array('s.accountancy_code_sell'=>'ProductAccountancySellCode', 's.accountancy_code_buy'=>'ProductAccountancyBuyCode');
 		}
+		// Add social networks fields
+		if (!empty($conf->socialnetworks->enabled)) {
+			$sql = "SELECT code, label FROM ".MAIN_DB_PREFIX."c_socialnetworks WHERE active = 1";
+			$resql = $this->db->query($sql);
+			while ($obj = $this->db->fetch_object($resql)) {
+				$fieldname = 's.socialnetworks_'.$obj->code;
+				$fieldlabel = ucfirst($obj->label);
+				$this->import_fields_array[$r][$fieldname] = $fieldlabel;
+			}
+		}
 		// Add extra fields
 		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE type <> 'separate' AND elementtype = 'societe' AND entity IN (0, ".$conf->entity.")";
 		$resql = $this->db->query($sql);
@@ -695,6 +705,16 @@ class modSociete extends DolibarrModules
 			's.note_private' => "NotePrivate",
 			's.note_public' => "NotePublic"
 		);
+		// Add social networks fields
+		if (!empty($conf->socialnetworks->enabled)) {
+			$sql = "SELECT code, label FROM ".MAIN_DB_PREFIX."c_socialnetworks WHERE active = 1";
+			$resql = $this->db->query($sql);
+			while ($obj = $this->db->fetch_object($resql)) {
+				$fieldname = 's.socialnetworks_'.$obj->code;
+				$fieldlabel = ucfirst($obj->label);
+				$this->import_fields_array[$r][$fieldname] = $fieldlabel;
+			}
+		}
 		// Add extra fields
 		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE type != 'separate' AND elementtype = 'socpeople' AND entity IN (0, ".$conf->entity.")";
 		$resql = $this->db->query($sql);
