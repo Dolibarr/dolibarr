@@ -56,7 +56,7 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 				continue; // The field was not submited to be edited
 			}
 		} else {
-			if (!GETPOSTISSET($key)) {
+			if (!GETPOSTISSET($key) && !preg_match('/^chkbxlst:/', $object->fields[$key]['type'])) {
 				continue; // The field was not submited to be edited
 			}
 		}
@@ -86,6 +86,12 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 		} elseif ($object->fields[$key]['type'] == 'reference') {
 			$tmparraykey = array_keys($object->param_list);
 			$value = $tmparraykey[GETPOST($key)].','.GETPOST($key.'2');
+		} elseif (preg_match('/^chkbxlst:(.*)/', $object->fields[$key]['type'])) {
+			$value = '';
+			$values_arr = GETPOST($key, 'array');
+			if (!empty($values_arr)) {
+				$value = implode(',', $values_arr);
+			}
 		} else {
 			$value = GETPOST($key, 'alphanohtml');
 		}
@@ -151,7 +157,7 @@ if ($action == 'update' && !empty($permissiontoadd)) {
 				continue;
 			}
 		} else {
-			if (!GETPOSTISSET($key)) {
+			if (!GETPOSTISSET($key) && !preg_match('/^chkbxlst:/', $object->fields[$key]['type'])) {
 				continue; // The field was not submited to be edited
 			}
 		}
@@ -189,6 +195,12 @@ if ($action == 'update' && !empty($permissiontoadd)) {
 			$value = ((GETPOST($key, 'aZ09') == 'on' || GETPOST($key, 'aZ09') == '1') ? 1 : 0);
 		} elseif ($object->fields[$key]['type'] == 'reference') {
 			$value = array_keys($object->param_list)[GETPOST($key)].','.GETPOST($key.'2');
+		} elseif (preg_match('/^chkbxlst:/', $object->fields[$key]['type'])) {
+			$value = '';
+			$values_arr = GETPOST($key, 'array');
+			if (!empty($values_arr)) {
+				$value = implode(',', $values_arr);
+			}
 		} else {
 			$value = GETPOST($key, 'alpha');
 		}
