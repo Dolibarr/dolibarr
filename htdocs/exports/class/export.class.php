@@ -615,6 +615,9 @@ class Export
 			} else {
 				$filename = "export_".$datatoexport;
 			}
+			if (!empty($conf->global->EXPORT_NAME_WITH_DT)) {
+				$filename .= dol_print_date(dol_now(), '%Y%m%d%_%H%M');
+			}
 			$filename .= '.'.$objmodel->getDriverExtension();
 			$dirname = $conf->export->dir_temp.'/'.$user->id;
 
