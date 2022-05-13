@@ -980,19 +980,37 @@ class FormTicket
 		jQuery(document).ready(function() {
 			send_email=' . $send_email.';
 			if (send_email) {
+				if (!jQuery("#send_msg_email").is(":checked")) {
+					jQuery("#send_msg_email").prop("checked", true).trigger("change");
+				}
 				jQuery(".email_line").show();
 			} else {
+				if (!jQuery("#private_message").is(":checked")) {
+					jQuery("#private_message").prop("checked", true).trigger("change");
+				}
 				jQuery(".email_line").hide();
 			}
 
 			jQuery("#send_msg_email").click(function() {
 				if(jQuery(this).is(":checked")) {
+					if (jQuery("#private_message").is(":checked")) {
+						jQuery("#private_message").prop("checked", false).trigger("change");
+					}
 					jQuery(".email_line").show();
 				}
 				else {
 					jQuery(".email_line").hide();
 				}
-            });';
+            });
+
+            jQuery("#private_message").click(function() {
+				if (jQuery(this).is(":checked")) {
+					if (jQuery("#send_msg_email").is(":checked")) {
+						jQuery("#send_msg_email").prop("checked", false).trigger("change");
+					}
+					jQuery(".email_line").hide();
+				}
+			});';
 		print '});
 		</script>';
 
@@ -1033,7 +1051,7 @@ class FormTicket
 			// Zone to select its email template
 			if (count($modelmail_array) > 0) {
 				print '<tr class="email_line"><td></td><td colspan="2"><div style="padding: 3px 0 3px 0">'."\n";
-				print $langs->trans('SelectMailModel').': '.$formmail->selectarray('modelmailselected', $modelmail_array, $this->param['models_id'], 1);
+				 print $langs->trans('SelectMailModel').': '.$formmail->selectarray('modelmailselected', $modelmail_array, $this->param['models_id'], 1,0,"","",0,0,0,'','minwidth200');
 				if ($user->admin) {
 					print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 				}

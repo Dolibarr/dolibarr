@@ -59,9 +59,14 @@ class AccountancyExport
 	public static $EXPORT_TYPE_LDCOMPTA10 = 120;
 	public static $EXPORT_TYPE_GESTIMUMV3 = 130;
 	public static $EXPORT_TYPE_GESTIMUMV5 = 135;
+	// Generic FEC after that
 	public static $EXPORT_TYPE_FEC = 1000;
 	public static $EXPORT_TYPE_FEC2 = 1010;
 
+	/**
+	 * @var DoliDB	Database handler
+	 */
+	public $db;
 
 	/**
 	 * @var string[] Error codes (or messages)
@@ -85,11 +90,11 @@ class AccountancyExport
 	 *
 	 * @param DoliDb $db Database handler
 	 */
-	public function __construct(DoliDB &$db)
+	public function __construct(DoliDB $db)
 	{
 		global $conf;
 
-		$this->db = &$db;
+		$this->db = $db;
 		$this->separator = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
 		$this->end_line = empty($conf->global->ACCOUNTING_EXPORT_ENDLINE) ? "\n" : ($conf->global->ACCOUNTING_EXPORT_ENDLINE == 1 ? "\n" : "\r\n");
 	}
@@ -903,15 +908,8 @@ class AccountancyExport
 		print "ValidDate".$separator;
 		print "Montantdevise".$separator;
 		print "Idevise".$separator;
-		// Easya 2022 - PR18949 - Accountancy - Format FEC/FEC2 - Add column NumFacture
-		// Code annulé
-		/*
-			print "DateLimitReglmt";
-		*/
-		// Code remplacé
 		print "DateLimitReglmt".$separator;
 		print "NumFacture";
-		// Easya 2022 - PR18949 - Fin
 		print $end_line;
 
 		foreach ($objectLines as $line) {
@@ -921,11 +919,10 @@ class AccountancyExport
 				$date_creation = dol_print_date($line->date_creation, '%Y%m%d');
 				$date_document = dol_print_date($line->doc_date, '%Y%m%d');
 				$date_lettering = dol_print_date($line->date_lettering, '%Y%m%d');
-				$date_validation = dol_print_date($line->date_validated, '%Y%m%d');
+				$date_validation = dol_print_date($line->date_validation, '%Y%m%d');
 				$date_limit_payment = dol_print_date($line->date_lim_reglement, '%Y%m%d');
 
-				// Easya 2022 - PR18949 - Accountancy - Format FEC/FEC2 - Add column NumFacture
-				// Code ajouté
+				$refInvoice = '';
 				if ($line->doc_type == 'customer_invoice') {
 					// Customer invoice
 					require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
@@ -941,7 +938,6 @@ class AccountancyExport
 
 					$refInvoice = $invoice->ref_supplier;
 				}
-				// Easya 2022 - PR18949 - Fin
 
 				// FEC:JournalCode
 				print $line->code_journal . $separator;
@@ -974,6 +970,8 @@ class AccountancyExport
 				print dol_string_unaccent($date_creation) . $separator;
 
 				// FEC:EcritureLib
+				// Clean label operation to prevent problem on export with tab separator & other character
+				$line->label_operation = str_replace(array("\t", "\n", "\r"), " ", $line->label_operation);
 				print dol_string_unaccent($line->label_operation) . $separator;
 
 				// FEC:Debit
@@ -995,19 +993,15 @@ class AccountancyExport
 				print $line->multicurrency_amount . $separator;
 
 				// FEC:Idevise
-				print $line->multicurrency_code.$separator;
+				print $line->multicurrency_code . $separator;
 
 				// FEC_suppl:DateLimitReglmt
-				// Easya 2022 - PR18949 - Accountancy - Format FEC/FEC2 - Add column NumFacture
-				// Code annulé
-				/*
-				print $date_limit_payment;
-				*/
-				// Code remplacé
 				print $date_limit_payment . $separator;
+
 				// FEC_suppl:NumFacture
+				// Clean ref invoice to prevent problem on export with tab separator & other character
+				$refInvoice = str_replace(array("\t", "\n", "\r"), " ", $refInvoice);
 				print dol_trunc(self::toAnsi($refInvoice), 17, 'right', 'UTF-8', 1);
-				// Easya 2022 - PR18949 - Fin
 
 				print $end_line;
 			}
@@ -1045,15 +1039,8 @@ class AccountancyExport
 		print "ValidDate".$separator;
 		print "Montantdevise".$separator;
 		print "Idevise".$separator;
-		// Easya 2022 - PR18949 - Accountancy - Format FEC/FEC2 - Add column NumFacture
-		// Code annulé
-		/*
-			print "DateLimitReglmt";
-		*/
-		// Code remplacé
 		print "DateLimitReglmt".$separator;
 		print "NumFacture";
-		// Easya 2022 - PR18949 - Fin
 		print $end_line;
 
 		foreach ($objectLines as $line) {
@@ -1063,11 +1050,10 @@ class AccountancyExport
 				$date_creation = dol_print_date($line->date_creation, '%Y%m%d');
 				$date_document = dol_print_date($line->doc_date, '%Y%m%d');
 				$date_lettering = dol_print_date($line->date_lettering, '%Y%m%d');
-				$date_validation = dol_print_date($line->date_validated, '%Y%m%d');
+				$date_validation = dol_print_date($line->date_validation, '%Y%m%d');
 				$date_limit_payment = dol_print_date($line->date_lim_reglement, '%Y%m%d');
 
-				// Easya 2022 - PR18949 - Accountancy - Format FEC/FEC2 - Add column NumFacture
-				// Code ajouté
+				$refInvoice = '';
 				if ($line->doc_type == 'customer_invoice') {
 					// Customer invoice
 					require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
@@ -1083,7 +1069,6 @@ class AccountancyExport
 
 					$refInvoice = $invoice->ref_supplier;
 				}
-				// Easya 2022 - PR18949 - Fin
 
 				// FEC:JournalCode
 				print $line->code_journal . $separator;
@@ -1116,6 +1101,8 @@ class AccountancyExport
 				print $date_document . $separator;
 
 				// FEC:EcritureLib
+				// Clean label operation to prevent problem on export with tab separator & other character
+				$line->label_operation = str_replace(array("\t", "\n", "\r"), " ", $line->label_operation);
 				print dol_string_unaccent($line->label_operation) . $separator;
 
 				// FEC:Debit
@@ -1140,16 +1127,13 @@ class AccountancyExport
 				print $line->multicurrency_code . $separator;
 
 				// FEC_suppl:DateLimitReglmt
-				// Easya 2022 - PR18949 - Accountancy - Format FEC/FEC2 - Add column NumFacture
-				// Code annulé
-				/*
-				print $date_limit_payment;
-				*/
-				// Code remplacé
 				print $date_limit_payment . $separator;
+
 				// FEC_suppl:NumFacture
+				// Clean ref invoice to prevent problem on export with tab separator & other character
+				$refInvoice = str_replace(array("\t", "\n", "\r"), " ", $refInvoice);
 				print dol_trunc(self::toAnsi($refInvoice), 17, 'right', 'UTF-8', 1);
-				// Easya 2022 - PR18949 - Fin
+
 
 				print $end_line;
 			}
@@ -1726,6 +1710,8 @@ class AccountancyExport
 
 			print self::trunc($line->label_compte, 60).$separator; //Account label
 			print self::trunc($line->doc_ref, 20).$separator; //Piece
+			// Clean label operation to prevent problem on export with tab separator & other character
+			$line->label_operation = str_replace(array("\t", "\n", "\r"), " ", $line->label_operation);
 			print self::trunc($line->label_operation, 60).$separator; //Operation label
 			print price(abs($line->debit - $line->credit)).$separator; //Amount
 			print $line->sens.$separator; //Direction

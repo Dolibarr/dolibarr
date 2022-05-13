@@ -191,6 +191,17 @@ if ($massaction == 'presend') {
 
 	print dol_get_fiche_end();
 }
+
+if ($massaction == 'presetcommercial') {
+	$formquestion = array();
+	$userlist = $form->select_dolusers('', '', 0, null, 0, '', '', 0, 0, 0, 'AND u.statut = 1', 0, '', '', 0, 1);
+	$formquestion[] = array('type' => 'other',
+		'name' => 'affectedcommercial',
+		'label' => $form->editfieldkey('AllocateCommercial', 'commercial_id', '', $object, 0),
+		'value' => $form->multiselectarray('commercial', $userlist, null, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0, '', '', '', 1));
+	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmAllocateCommercial"), $langs->trans("ConfirmAllocateCommercialQuestion", count($toselect)), "affectcommercial", $formquestion, 1, 0, 200, 500, 1);
+}
+
 // Allow Pre-Mass-Action hook (eg for confirmation dialog)
 $parameters = array(
 	'toselect' => $toselect,

@@ -392,7 +392,7 @@ if (!empty($conf->barcode->enabled)) {
 	print '<tr class="oddeven"><td>';
 	print $form->textwithpicto($langs->trans("TakeposBarcodeRuleToInsertProduct"), $langs->trans("TakeposBarcodeRuleToInsertProductDesc"));
 	print '<td colspan="2">';
-	print '<input type="text" name="TAKEPOS_BARCODE_RULE_TO_INSERT_PRODUCT" value="' . (!empty($conf->global->TAKEPOS_BARCODE_RULE_TO_INSERT_PRODUCT) ? $conf->global->TAKEPOS_BARCODE_RULE_TO_INSERT_PRODUCT : '') . '">';
+	print '<input type="text" name="TAKEPOS_BARCODE_RULE_TO_INSERT_PRODUCT" value="' . (getDolGlobalString('TAKEPOS_BARCODE_RULE_TO_INSERT_PRODUCT')) . '">';
 	print "</td></tr>\n";
 }
 

@@ -302,6 +302,7 @@ NotYetAccounted=Pas encore transféré en comptabilité
 ShowTutorial=Afficher le tutoriel
 NotReconciled=Non rapproché
 WarningRecordWithoutSubledgerAreExcluded=Attention : toutes les opérations sans compte auxiliaire défini sont filtrées et exclues de cet écran
+AccountRemovedFromCurrentChartOfAccount=Compte comptable qui n'existe pas dans le plan comptable actuel
 
 ## Admin
 BindingOptions=Options de liaisons avec les codes comptables
@@ -393,6 +394,21 @@ Range=Plage de comptes
 Calculated=Calculé
 Formula=Formule
 
+## Lettering
+Unlettering=Délettrage
+AccountancyNoLetteringModified=Aucun lettrage éffectué
+AccountancyOneLetteringModifiedSuccessfully=Un lettrage a été éffectué
+AccountancyLetteringModifiedSuccessfully=%s lettrages ont été éffectués
+AccountancyNoUnletteringModified=Aucun délettrage éffectué
+AccountancyOneUnletteringModifiedSuccessfully=Un délettrage a été éffectué
+AccountancyUnletteringModifiedSuccessfully=%s délettrage ont été éffectués
+
+## Confirm box
+ConfirmMassUnlettering=Confirmation de délettrage en masse
+ConfirmMassUnletteringQuestion=Êtes-vous sur de vouloir délettrer les %s enregistrement(s) sélectionné(s) ?
+ConfirmMassDeleteBookkeepingWriting=Confirmation de suppression en masse
+ConfirmMassDeleteBookkeepingWritingQuestion=Cette action supprime l'écriture de la comptabilité (toutes les lignes opérations liées à une même écriture seront effacées). Êtes-vous sur de vouloir supprimer les %s enregistrement(s) sélectionné(s) ?
+
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Certaines étapes obligatoires de la configuration n'ont pas été réalisées, merci de compléter cette dernière
 ErrorNoAccountingCategoryForThisCountry=Pas de catégories de regroupement comptable disponibles pour le pays %s (Voir Accueil - Configuration - Dictionnaires)
@@ -404,6 +420,10 @@ NoJournalDefined=Pas de journal défini
 Binded=Lignes liées
 ToBind=Lignes à lier
 UseMenuToSetBindindManualy=Lignes non encore liées, utilisez le menu <a href="%s"> %s </a> pour effectuer la liaison manuellement.
+SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Désolé ce module n'est pas compatible avec la fonctionnalité expérimentale des factures de situation
+AccountancyErrorMismatchLetterCode=Incohérence dans le code de lettrage
+AccountancyErrorMismatchBalanceAmount=Le montant de la balance (%s) n'est pas égale à 0
+AccountancyErrorLetteringBookkeeping=Des erreurs se sont produites concernant les transactions: %s
 
 ## Import
 ImportAccountingEntries=Écritures comptables

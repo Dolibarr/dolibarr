@@ -655,6 +655,12 @@ ALTER TABLE llx_c_socialnetworks ADD UNIQUE INDEX idx_c_socialnetworks_code_enti
 
 ALTER TABLE llx_propaldet ADD COLUMN import_key varchar(14);
 
+-- Backport 15.0.0 -> 16.0.0
+ALTER TABLE llx_product_attribute_value MODIFY COLUMN ref VARCHAR(180) NOT NULL;
+ALTER TABLE llx_product_attribute_value MODIFY COLUMN value VARCHAR(255) NOT NULL;
+ALTER TABLE llx_product_attribute_value ADD COLUMN position INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE llx_product_attribute CHANGE rang position INTEGER DEFAULT 0 NOT NULL;
+
 -- Easya 2022.5
 
 -- Dictionaries - add possibility to manage countries in EEC #20261
@@ -674,3 +680,6 @@ UPDATE llx_const SET name = 'WORKFLOW_TICKET_CREATE_INTERVENTION' WHERE name = '
 -- Add products categories field on inventory card
 ALTER TABLE llx_inventory ADD COLUMN categories_product VARCHAR(255) DEFAULT NULL AFTER fk_product;
 
+
+-- Add input reason on invoice
+ALTER TABLE llx_facture ADD COLUMN fk_input_reason integer NULL DEFAULT NULL AFTER last_main_doc;
