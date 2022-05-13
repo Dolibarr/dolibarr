@@ -677,3 +677,6 @@ ALTER TABLE llx_ticket ADD COLUMN date_last_msg_sent datetime AFTER date_read;
 -- Rename value to create ficheinter automatically ont tickets
 UPDATE llx_const SET name = 'WORKFLOW_TICKET_CREATE_INTERVENTION' WHERE name = 'TICKET_AUTO_CREATE_FICHINTER_CREATE';
 
+
+-- Add input reason on invoice
+ALTER TABLE llx_facture ADD COLUMN fk_input_reason integer NULL DEFAULT NULL AFTER last_main_doc;
