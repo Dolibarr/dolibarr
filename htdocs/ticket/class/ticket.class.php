@@ -1372,7 +1372,12 @@ class Ticket extends CommonObject
 		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref.'<br>';
 		$label .= '<b>'.$langs->trans('TicketTrackId').':</b> '.$this->track_id.'<br>';
 		$label .= '<b>'.$langs->trans('Subject').':</b> '.$this->subject;
-
+		if ($this->date_creation) {
+			$label .= '<br><b>'.$langs->trans('DateCreation').':</b> '.$this->date_creation;
+		}
+		if ($this->date_modification) {
+			$label .= '<br><b>'.$langs->trans('DateModification').':</b> '.$this->date_modification;
+		}
 		$url = DOL_URL_ROOT.'/ticket/card.php?id='.$this->id;
 
 		if ($option != 'nolink') {
