@@ -475,7 +475,7 @@ class Documents extends DolibarrApi
 		} elseif ($modulepart == 'ticket') {
 			require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
 
-			if (!DolibarrApiAccess::$user->rights->societe->client->voir && !DolibarrApiAccess::$user->rights->societe->client->voir) {
+			if (!DolibarrApiAccess::$user->rights->ticket->read && !DolibarrApiAccess::$user->rights->ticket->read) {
 				throw new RestException(401);
 			}
 
