@@ -21,6 +21,7 @@ ErrorPHPDoesNotSupportCurl=Din PHP-installation stöder inte Curl.
 ErrorPHPDoesNotSupportCalendar=Din PHP-installation stöder inte php-kalendertillägg.
 ErrorPHPDoesNotSupportUTF8=Din PHP-installation stöder inte UTF8-funktioner. Dolibarr kan inte fungera korrekt. Lös det här innan du installerar Dolibarr.
 ErrorPHPDoesNotSupportIntl=Din PHP-installation stöder inte Intl-funktioner.
+ErrorPHPDoesNotSupportMbstring=Your PHP installation does not support mbstring functions.
 ErrorPHPDoesNotSupportxDebug=Din PHP-installation stöder inte utökade felsökningsfunktioner.
 ErrorPHPDoesNotSupport=Din PHP-installation stöder inte %s-funktioner.
 ErrorDirDoesNotExists=Nummer %s finns inte.
@@ -206,7 +207,7 @@ MigrationUserPhotoPath=Migrering av bildvägar för användare
 MigrationFieldsSocialNetworks=Migrering av användarnas fält sociala nätverk (%s)
 MigrationReloadModule=Ladda om modulen %s
 MigrationResetBlockedLog=Återställningsmodul BlockedLog för v7-algoritmen
-MigrationImportOrExportProfiles=Migration of import or export profiles (%s)
+MigrationImportOrExportProfiles=Migrering av import- eller exportprofiler (%s)
 ShowNotAvailableOptions=Visa otillgängliga alternativ
 HideNotAvailableOptions=Dölj otillgängliga alternativ
 ErrorFoundDuringMigration=Fel (er) rapporterades under migreringsprocessen så nästa steg är inte tillgängligt. För att ignorera fel kan du <a href="%s"> klicka här </a>, men programmet eller vissa funktioner kanske inte fungerar korrekt tills felen har lösts.

@@ -35,6 +35,9 @@ OnlyOneFieldForXAxisIsPossible=Doar 1 câmp este posibil pentru axa X. Doar prim
 AtLeastOneMeasureIsRequired=Cel puţin 1 câmp pentru metrică este necesar
 AtLeastOneXAxisIsRequired=Cel puţin 1 câmp pentru axa X este necesar
 LatestBlogPosts=Ultimile postări din blog
+notiftouser=Către utilizatori
+notiftofixedemail=Către corespondenţa poştală
+notiftouserandtofixedemail=Către utilizator şi corespondenţa poştală
 Notify_ORDER_VALIDATE=Comanda de vânzare a fost validată
 Notify_ORDER_SENTBYMAIL=Comanda de vânzare a fost trimisă prin poștă
 Notify_ORDER_SUPPLIER_SENTBYMAIL=Comanda de achiziţie a fost trimisă pe email
@@ -255,6 +258,10 @@ PassEncoding=Codarea parolei
 PermissionsAdd=Au fost adăugate permisiuni
 PermissionsDelete=Permisiunile au fost eliminate
 YourPasswordMustHaveAtLeastXChars=Parola ta trebuie să aibă cel puțin <strong>%s</strong> caractere
+PasswordNeedAtLeastXUpperCaseChars=Parola trebuie să conţină cel puțin <strong>%s</strong> caractere majuscule
+PasswordNeedAtLeastXDigitChars=Parola trebuie să conţină cel puțin <strong>%s</strong> caractere numerice
+PasswordNeedAtLeastXSpecialChars=Parola trebuie să conţină cel puțin <strong>%s</strong> caractere speciale
+PasswordNeedNoXConsecutiveChars=Parola nu trebuie să aibă <strong>%s</strong> caractere similare consecutive
 YourPasswordHasBeenReset=Parola ta a fost resetată cu succes
 ApplicantIpAddress=Adresa IP a solicitantului
 SMSSentTo=SMS trimis la %s
@@ -265,6 +272,7 @@ ProjectCreatedByEmailCollector=Proiect creat de colectorul de email-uri din emai
 TicketCreatedByEmailCollector=Tichet creat de colectorul de email-uri din email-ul cu MSGID %s
 OpeningHoursFormatDesc=Foloseşte un - pentru a separa orele de lucru.<br>Foloseşte un spaţiu pentru a introduce intervale oarare diferite.<br>Exemplu: 8-12 14-18
 SuffixSessionName=Sufix pentru numele sesiunii
+LoginWith=Autentificare cu %s
 
 ##### Export #####
 ExportsArea=Export date
@@ -291,3 +299,7 @@ PopuCom=Produse/servicii după popularitate pe comenzile de vânzare
 ProductStatistics=Statistici produse/servicii
 NbOfQtyInOrders=Cantitate în comenzi 
 SelectTheTypeOfObjectToAnalyze=Selectează un obiect pentru a-i vedea statisticile...
+
+ConfirmBtnCommonContent = Eşti sigur că vrei să  "%s" ?
+ConfirmBtnCommonTitle = Confirmare acţiune
+CloseDialog = Închide

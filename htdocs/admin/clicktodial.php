@@ -101,8 +101,8 @@ print '<br>';
 print $langs->trans("ClickToDialUrlDesc").'<br>';
 print '<br>';
 print '<span class="opacitymedium">';
-print $langs->trans("Example").':<br>';
-print 'http://myphoneserver/mypage?login=__LOGIN__&password=__PASS__&caller=__PHONEFROM__&called=__PHONETO__<br>';
+print $langs->trans("Examples").':<br>';
+print 'https://myphoneserver/mypage?login=__LOGIN__&password=__PASS__&caller=__PHONEFROM__&called=__PHONETO__<br>';
 print 'sip:__PHONETO__@my.sip.server';
 print '</span>';
 
@@ -117,7 +117,7 @@ print '</td></tr>';
 print '</table>';
 print '</div>';
 
-print '<div class="center"><br><input type="submit" class="button" value="'.$langs->trans("Modify").'"></div>';
+print $form->buttonsSaveCancel("Modify", '');
 
 print '</form><br><br>';
 
@@ -134,7 +134,7 @@ if (!empty($conf->global->CLICKTODIAL_URL)) {
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print $langs->trans("LinkToTestClickToDial", $user->login).' : ';
 	print '<input class="flat" type="text" name="phonefortest" value="'.dol_escape_htmltag($phonefortest).'">';
-	print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("RefreshPhoneLink")).'">';
+	print '<input type="submit" class="button small" value="'.dol_escape_htmltag($langs->trans("RefreshPhoneLink")).'">';
 	print '</form>';
 
 	$setupcomplete = 1;
@@ -149,7 +149,7 @@ if (!empty($conf->global->CLICKTODIAL_URL)) {
 	}
 
 	if ($setupcomplete) {
-		print $langs->trans("LinkToTest", $user->login).': '.dol_print_phone($phonefortest, '', 0, 0, 'AC_TEL');
+		print $langs->trans("LinkToTest", $user->login).': &nbsp; '.dol_print_phone($phonefortest, '', 0, 0, 'AC_TEL', '', 'mobile');
 	} else {
 		$langs->load("errors");
 		print '<div class="warning">'.$langs->trans("WarningClickToDialUserSetupNotComplete").'</div>';

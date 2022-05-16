@@ -125,6 +125,7 @@ class Tva extends CommonObject
 
 		// Insert request
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."tva(";
+		$sql .= "entity,";
 		$sql .= "datec,";
 		$sql .= "datep,";
 		$sql .= "datev,";
@@ -136,6 +137,7 @@ class Tva extends CommonObject
 		$sql .= "fk_user_creat,";
 		$sql .= "fk_user_modif";
 		$sql .= ") VALUES (";
+		$sql .= " ".((int) $conf->entity).", ";
 		$sql .= " '".$this->db->idate($now)."',";
 		$sql .= " '".$this->db->idate($this->datep)."',";
 		$sql .= " '".$this->db->idate($this->datev)."',";
@@ -144,8 +146,8 @@ class Tva extends CommonObject
 		$sql .= " '".$this->db->escape($this->note)."',";
 		$sql .= " '".$this->db->escape($this->fk_account)."',";
 		$sql .= " '".$this->db->escape($this->type_payment)."',";
-		$sql .= " '".($this->fk_user_creat > 0 ? (int) $this->fk_user_creat : (int) $user->id)."',";
-		$sql .= " '".$this->db->escape($this->fk_user_modif)."'";
+		$sql .= " ".($this->fk_user_creat > 0 ? (int) $this->fk_user_creat : (int) $user->id).",";
+		$sql .= " ".($this->fk_user_modif > 0 ? (int) $this->fk_user_modif : (int) $user->id);
 		$sql .= ")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -247,7 +249,7 @@ class Tva extends CommonObject
 		// phpcs:enable
 		$sql = "UPDATE ".MAIN_DB_PREFIX."tva SET";
 		$sql .= " paye = 1";
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			return 1;
@@ -267,7 +269,7 @@ class Tva extends CommonObject
 		// phpcs:enable
 		$sql = "UPDATE ".MAIN_DB_PREFIX."tva SET";
 		$sql .= " paye = 0";
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			return 1;
@@ -596,7 +598,7 @@ class Tva extends CommonObject
 		}
 		$sql .= ", '".$this->db->escape($user->id)."'";
 		$sql .= ", NULL";
-		$sql .= ", ".$conf->entity;
+		$sql .= ", ".((int) $conf->entity);
 		$sql .= ")";
 
 		dol_syslog(get_class($this)."::addPayment", LOG_DEBUG);
@@ -768,7 +770,7 @@ class Tva extends CommonObject
 
 		$sql = 'SELECT sum(amount) as amount';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$table;
-		$sql .= ' WHERE '.$field.' = '.$this->id;
+		$sql .= " WHERE ".$field." = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::getSommePaiement", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -866,15 +868,15 @@ class Tva extends CommonObject
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			//$langs->load("mymodule");
-			$this->labelStatus[self::STATUS_UNPAID] = $langs->trans('BillStatusNotPaid');
-			$this->labelStatus[self::STATUS_PAID] = $langs->trans('BillStatusPaid');
+			$this->labelStatus[self::STATUS_UNPAID] = $langs->transnoentitiesnoconv('BillStatusNotPaid');
+			$this->labelStatus[self::STATUS_PAID] = $langs->transnoentitiesnoconv('BillStatusPaid');
 			if ($status == self::STATUS_UNPAID && $alreadypaid <> 0) {
-				$this->labelStatus[self::STATUS_UNPAID] = $langs->trans("BillStatusStarted");
+				$this->labelStatus[self::STATUS_UNPAID] = $langs->transnoentitiesnoconv("BillStatusStarted");
 			}
-			$this->labelStatusShort[self::STATUS_UNPAID] = $langs->trans('BillStatusNotPaid');
-			$this->labelStatusShort[self::STATUS_PAID] = $langs->trans('BillStatusPaid');
+			$this->labelStatusShort[self::STATUS_UNPAID] = $langs->transnoentitiesnoconv('BillStatusNotPaid');
+			$this->labelStatusShort[self::STATUS_PAID] = $langs->transnoentitiesnoconv('BillStatusPaid');
 			if ($status == self::STATUS_UNPAID && $alreadypaid <> 0) {
-				$this->labelStatusShort[self::STATUS_UNPAID] = $langs->trans("BillStatusStarted");
+				$this->labelStatusShort[self::STATUS_UNPAID] = $langs->transnoentitiesnoconv("BillStatusStarted");
 			}
 		}
 

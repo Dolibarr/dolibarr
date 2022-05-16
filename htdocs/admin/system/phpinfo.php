@@ -183,6 +183,22 @@ print "<td>".$name."</td>";
 print getResultColumn($name, $activatedExtensions, $loadedExtensions, $functions);
 print "</tr>";
 
+$functions = ["easter_date"];
+$name      = "Calendar";
+
+print "<tr>";
+print "<td>".$name."</td>";
+print getResultColumn($name, $activatedExtensions, $loadedExtensions, $functions);
+print "</tr>";
+
+$functions = ["simplexml_load_string"];
+$name      = "Xml";
+
+print "<tr>";
+print "<td>".$name."</td>";
+print getResultColumn($name, $activatedExtensions, $loadedExtensions, $functions);
+print "</tr>";
+
 if (empty($_SERVER["SERVER_ADMIN"]) || $_SERVER["SERVER_ADMIN"] != 'doliwamp@localhost') {
 	$functions = ["locale_get_primary_language", "locale_get_region"];
 	$name      = "Intl";

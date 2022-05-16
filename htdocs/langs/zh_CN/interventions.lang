@@ -64,5 +64,5 @@ InterLineDuration=线路持续时间干预
 InterLineDesc=线描述干预
 RepeatableIntervention=Template of intervention
 ToCreateAPredefinedIntervention=To create a predefined or recurring intervention, create a common intervention and convert it into intervention template
-Reopen=重新打开
 ConfirmReopenIntervention=Are you sure you want to open back the intervention <b>%s</b>?
+GenerateInter=Generate intervention

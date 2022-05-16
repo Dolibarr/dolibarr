@@ -77,6 +77,9 @@ $search_project_ref = GETPOST('search_project_ref', 'alpha');
 $search_thirdparty = GETPOST('search_thirdparty', 'alpha');
 $search_declared_progress = GETPOST('search_declared_progress', 'alpha');
 
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
+
 $startdayarray = dol_get_first_day_week($day, $month, $year);
 
 $prev = $startdayarray;
@@ -95,7 +98,7 @@ $next_day   = $next['day'];
 
 // Define firstdaytoshow and lastdaytoshow (warning: lastdaytoshow is last second to show + 1)
 $firstdaytoshow = dol_mktime(0, 0, 0, $first_month, $first_day, $first_year);
-$lastdaytoshow = dol_time_plus_duree($firstdaytoshow, 7, 'd');
+$firstdaytoshowgmt = dol_mktime(0, 0, 0, $first_month, $first_day, $first_year, 'gmt');
 
 if (empty($search_usertoprocessid) || $search_usertoprocessid == $user->id) {
 	$usertoprocess = $user;
@@ -116,6 +119,7 @@ $extrafields = new ExtraFields($db);
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
+// Definition of fields for list
 $arrayfields = array();
 /*$arrayfields=array(
  // Project
@@ -135,7 +139,7 @@ $arrayfields['timeconsumed'] = array('label'=>'TimeConsumed', 'checked'=>1, 'ena
  }*/
 // Definition of fields for list
 // Extra fields
-if (is_array($extrafields->attributes['projet_task']['label']) && count($extrafields->attributes['projet_task']['label']) > 0) {
+if (!empty($extrafields->attributes['projet_task']['label']) && is_array($extrafields->attributes['projet_task']['label']) && count($extrafields->attributes['projet_task']['label']) > 0) {
 	foreach ($extrafields->attributes['projet_task']['label'] as $key => $val) {
 		if (!empty($extrafields->attributes['projet_task']['list'][$key])) {
 			$arrayfields["efpt.".$key] = array('label'=>$extrafields->attributes['projet_task']['label'][$key], 'checked'=>(($extrafields->attributes['projet_task']['list'][$key] < 0) ? 0 : 1), 'position'=>$extrafields->attributes['projet_task']['pos'][$key], 'enabled'=>(abs((int) $extrafields->attributes['projet_task']['list'][$key]) != 3 && $extrafields->attributes['projet_task']['perms'][$key]));
@@ -254,7 +258,7 @@ if ($action == 'addtime' && $user->rights->projet->lire && GETPOST('assigntask')
 }
 
 if ($action == 'addtime' && $user->rights->projet->lire && GETPOST('formfilteraction') != 'listafterchangingselectedfields') {
-	$timetoadd = $_POST['task'];
+	$timetoadd = GETPOST('task');
 	if (empty($timetoadd)) {
 		setEventMessages($langs->trans("ErrorTimeSpentIsEmpty"), null, 'errors');
 	} else {
@@ -438,7 +442,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
 // Show navigation bar
 $nav = '<a class="inline-block valignmiddle" href="?year='.$prev_year."&month=".$prev_month."&day=".$prev_day.$param.'">'.img_previous($langs->trans("Previous"))."</a>\n";
-$nav .= " <span id=\"month_name\">".dol_print_date(dol_mktime(0, 0, 0, $first_month, $first_day, $first_year), "%Y").", ".$langs->trans("WeekShort")." ".$week." </span>\n";
+$nav .= ' <span id="month_name">'.dol_print_date(dol_mktime(0, 0, 0, $first_month, $first_day, $first_year), "%Y").", ".$langs->trans("WeekShort")." ".$week." </span>\n";
 $nav .= '<a class="inline-block valignmiddle" href="?year='.$next_year."&month=".$next_month."&day=".$next_day.$param.'">'.img_next($langs->trans("Next"))."</a>\n";
 $nav .= ' '.$form->selectDate(-1, '', 0, 0, 2, "addtime", 1, 1).' ';
 $nav .= ' <button type="submit" name="submitdateselect" value="x" class="bordertransp"><span class="fa fa-search"></span></button>';
@@ -501,8 +505,15 @@ print '<div class="clearboth" style="padding-bottom: 20px;"></div>';
 
 $startday = dol_mktime(12, 0, 0, $startdayarray['first_month'], $startdayarray['first_day'], $startdayarray['first_year']);
 
+$numendworkingday = 0;
+$numstartworkingday = 0;
 // Get if user is available or not for each day
 $isavailable = array();
+
+// Assume from Monday to Friday if conf empty or badly formed
+$numstartworkingday = 1;
+$numendworkingday = 5;
+
 if (!empty($conf->global->MAIN_DEFAULT_WORKING_DAYS)) {
 	$tmparray = explode('-', $conf->global->MAIN_DEFAULT_WORKING_DAYS);
 	if (count($tmparray) >= 2) {
@@ -513,26 +524,18 @@ if (!empty($conf->global->MAIN_DEFAULT_WORKING_DAYS)) {
 
 for ($idw = 0; $idw < 7; $idw++) {
 	$dayinloopfromfirstdaytoshow = dol_time_plus_duree($firstdaytoshow, $idw, 'd'); // $firstdaytoshow is a date with hours = 0
-	$dayinloop = dol_time_plus_duree($startday, $idw, 'd');
-
-	// Useless because $dayinloopwithouthours should be same than $dayinloopfromfirstdaytoshow
-	//$tmparray = dol_getdate($dayinloop);
-	//$dayinloopwithouthours=dol_mktime(0, 0, 0, $tmparray['mon'], $tmparray['mday'], $tmparray['year']);
-	//print dol_print_date($dayinloop, 'dayhour').' ';
-	//print dol_print_date($dayinloopwithouthours, 'dayhour').' ';
-	//print dol_print_date($dayinloopfromfirstdaytoshow, 'dayhour').'<br>';
+	$dayinloopfromfirstdaytoshowgmt = dol_time_plus_duree($firstdaytoshowgmt, $idw, 'd'); // $firstdaytoshow is a date with hours = 0
 
 	$statusofholidaytocheck = Holiday::STATUS_APPROVED;
 
 	$isavailablefordayanduser = $holiday->verifDateHolidayForTimestamp($usertoprocess->id, $dayinloopfromfirstdaytoshow, $statusofholidaytocheck);
 	$isavailable[$dayinloopfromfirstdaytoshow] = $isavailablefordayanduser; // in projectLinesPerWeek later, we are using $firstdaytoshow and dol_time_plus_duree to loop on each day
 
-	$test = num_public_holiday($dayinloopfromfirstdaytoshow, $dayinloopfromfirstdaytoshow + 86400, $mysoc->country_code);
+	$test = num_public_holiday($dayinloopfromfirstdaytoshowgmt, $dayinloopfromfirstdaytoshowgmt + 86400, $mysoc->country_code);
 	if ($test) {
 		$isavailable[$dayinloopfromfirstdaytoshow] = array('morning'=>false, 'afternoon'=>false, 'morning_reason'=>'public_holiday', 'afternoon_reason'=>'public_holiday');
 	}
 }
-//var_dump($isavailable);
 
 
 
@@ -648,10 +651,10 @@ $extrafieldsobjectkey = 'projet_task';
 $extrafieldsobjectprefix = 'efpt.';
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 if (!empty($arrayfields['t.planned_workload']['checked'])) {
-	print '<th class="right leftborder plannedworkload maxwidth75 right">'.$langs->trans("PlannedWorkload").'</th>';
+	print '<th class="leftborder plannedworkload minwidth75 maxwidth100 right" title="'.dol_escape_htmltag($langs->trans("PlannedWorkload")).'">'.$langs->trans("PlannedWorkload").'</th>';
 }
 if (!empty($arrayfields['t.progress']['checked'])) {
-	print '<th class="maxwidth75 right">'.$langs->trans("ProgressDeclared").'</th>';
+	print '<th class="right minwidth75 maxwidth100" title="'.dol_escape_htmltag($langs->trans("ProgressDeclared")).'">'.$langs->trans("ProgressDeclared").'</th>';
 }
 if (!empty($arrayfields['timeconsumed']['checked'])) {
 	print '<th class="right maxwidth100">'.$langs->trans("TimeSpent").'<br>';
@@ -660,17 +663,11 @@ if (!empty($arrayfields['timeconsumed']['checked'])) {
 	print '<span class="opacitymedium paddingleft">'.$langs->trans("Everybody").'</span>';
 	print '</span>';
 	print '</th>';
-	print '<th class="maxwidth75 right">'.$langs->trans("TimeSpent").($usertoprocess->firstname ? '<br>'.$usertoprocess->getNomUrl(-2).'<span class="opacitymedium paddingleft">'.dol_trunc($usertoprocess->firstname, 10).'</span>' : '').'</th>';
+	print '<th class="right maxwidth75 maxwidth100">'.$langs->trans("TimeSpent").($usertoprocess->firstname ? '<br><span class="nowraponall">'.$usertoprocess->getNomUrl(-2).'<span class="opacitymedium paddingleft">'.dol_trunc($usertoprocess->firstname, 10).'</span></span>' : '').'</th>';
 }
 for ($idw = 0; $idw < 7; $idw++) {
 	$dayinloopfromfirstdaytoshow = dol_time_plus_duree($firstdaytoshow, $idw, 'd'); // $firstdaytoshow is a date with hours = 0
-	$dayinloop = dol_time_plus_duree($startday, $idw, 'd');
-	/*print $dayinloopfromfirstdaytoshow;
-	print dol_print_date($dayinloopfromfirstdaytoshow, 'dayhour', 'gmt');
-	print dol_print_date($dayinloopfromfirstdaytoshow, 'dayhour');
-	print dol_print_date($dayinloopfromfirstdaytoshow, '%a', 'gmt');
-	print dol_print_date($dayinloopfromfirstdaytoshow, '%a');
-	print '<br>';*/
+
 	$cssweekend = '';
 	if ((($idw + 1) < $numstartworkingday) || (($idw + 1) > $numendworkingday)) {	// This is a day is not inside the setup of working days, so we use a week-end css.
 		$cssweekend = 'weekend';
@@ -687,7 +684,7 @@ for ($idw = 0; $idw < 7; $idw++) {
 		$cssonholiday .= 'onholidayafternoon ';
 	}
 
-	print '<th width="6%" align="center" class="bold hide'.$idw.($cssonholiday ? ' '.$cssonholiday : '').($cssweekend ? ' '.$cssweekend : '').'">';
+	print '<th width="6%" class="center bold hide'.$idw.($cssonholiday ? ' '.$cssonholiday : '').($cssweekend ? ' '.$cssweekend : '').'">';
 	print dol_print_date($dayinloopfromfirstdaytoshow, '%a');
 	print '<br>'.dol_print_date($dayinloopfromfirstdaytoshow, 'dayreduceformat').'</th>';
 }
@@ -852,9 +849,7 @@ print '</div>';
 
 print '<input type="hidden" id="numberOfLines" name="numberOfLines" value="'.count($tasksarray).'"/>'."\n";
 
-print '<div class="center">';
-print '<input type="submit" class="button button-save" name="save" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
-print '</div>';
+print $form->buttonsSaveCancel("Save", '');
 
 print '</form>'."\n\n";
 

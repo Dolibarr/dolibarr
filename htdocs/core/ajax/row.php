@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010-2015 Regis Houssin       <regis.houssin@inodbox.com>
+/* Copyright (C) 2010-2021 Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2017      Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -48,7 +48,7 @@ if (!defined('NOREQUIRETRAN')) {
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
-
+$hookmanager->initHooks(array('rowinterface'));
 // Security check
 // This is done later into view.
 
@@ -79,9 +79,7 @@ if (GETPOST('roworder', 'alpha', 3) && GETPOST('table_element_line', 'aZ09', 3)
 		$perm = 1;
 	} elseif ($table_element_line == 'facturedet' && $user->rights->facture->creer) {
 		$perm = 1;
-	} elseif ($table_element_line == 'facturerecdet' && $user->rights->facture->creer) {
-		$perm = 1;
-	} elseif ($table_element_line == 'ecm_files' && $user->rights->ecm->creer) {
+	} elseif ($table_element_line == 'facturedet_rec' && $user->rights->facture->creer) {
 		$perm = 1;
 	} elseif ($table_element_line == 'emailcollector_emailcollectoraction' && $user->admin) {
 		$perm = 1;
@@ -89,15 +87,31 @@ if (GETPOST('roworder', 'alpha', 3) && GETPOST('table_element_line', 'aZ09', 3)
 		$perm = 1;
 	} elseif ($table_element_line == 'mrp_production' && $user->rights->mrp->write) {
 		$perm = 1;
-	} elseif ($table_element_line == 'supplier_proposaldet' && $user->rights->supplier_proposal->write) {
+	} elseif ($table_element_line == 'supplier_proposaldet' && $user->rights->supplier_proposal->creer) {
 		$perm = 1;
 	} elseif ($table_element_line == 'commande_fournisseurdet' && $user->rights->fournisseur->commande->creer) {
 		$perm = 1;
 	} elseif ($table_element_line == 'facture_fourn_det' && $user->rights->fournisseur->facture->creer) {
 		$perm = 1;
-	} elseif ($table_element_line == 'ecm_files' && $fk_element == 'fk_product' && (!empty($user->rights->produit->creer) || !empty($user->rights->service->creer))) {
+	} elseif ($table_element_line == 'facture_fourn_det_rec' && $user->rights->fournisseur->facture->creer) {
 		$perm = 1;
-	} elseif ($table_element_line == 'ecm_files' && $fk_element == 'fk_ticket' && !empty($user->rights->ticket->write)) {
+	} elseif ($table_element_line == 'product_attribute_value' && $fk_element == 'fk_product_attribute' && ($user->rights->produit->lire || $user->rights->service->lire)) {
+		$perm = 1;
+	} elseif ($table_element_line == 'ecm_files') {		// Used when of page "documents.php"
+		if (!empty($user->rights->ecm->creer)) {
+			$perm = 1;
+		} elseif ($fk_element == 'fk_product' && (!empty($user->rights->produit->creer) || !empty($user->rights->service->creer))) {
+			$perm = 1;
+		} elseif ($fk_element == 'fk_ticket' && !empty($user->rights->ticket->write)) {
+			$perm = 1;
+		} elseif ($fk_element == 'fk_holiday' && !empty($user->rights->holiday->write)) {
+			$perm = 1;
+		} elseif ($fk_element == 'fk_soc' && !empty($user->rights->societe->creer)) {
+			$perm = 1;
+		}
+	} elseif ($table_element_line == 'product_association' && $fk_element == 'fk_product' && (!empty($user->rights->produit->creer) || !empty($user->rights->service->creer))) {
+		$perm = 1;
+	} elseif ($table_element_line == 'projet_task' && $fk_element == 'fk_projet' && $user->rights->projet->creer) {
 		$perm = 1;
 	} else {
 		$tmparray = explode('_', $table_element_line);
@@ -106,12 +120,20 @@ if (GETPOST('roworder', 'alpha', 3) && GETPOST('table_element_line', 'aZ09', 3)
 			$perm = 1;
 		}
 	}
-
+	$parameters = array('roworder'=> &$roworder, 'table_element_line' => &$table_element_line, 'fk_element' => &$fk_element, 'element_id' => &$element_id, 'perm' => &$perm);
+	$row = new GenericObject($db);
+	$row->table_element_line = $table_element_line;
+	$row->fk_element = $fk_element;
+	$row->id = $element_id;
+	$reshook = $hookmanager->executeHooks('checkRowPerms', $parameters, $row, $action);
+	if ($reshook > 0) {
+		$perm = $hookmanager->resArray['perm'];
+	}
 	if (! $perm) {
 		// We should not be here. If we are not allowed to reorder rows, feature should not be visible on script.
 		// If we are here, it is a hack attempt, so we report a warning.
 		print 'Bad permission to modify position of lines for object in table '.$table_element_line;
-		dol_syslog('Bad permission to modify position of lines for object in table '.$table_element_line.', fk_element '.$fk_element, LOG_WARNING);
+		dol_syslog('Bad permission to modify position of lines for object in table='.$table_element_line.', fk_element='.$fk_element, LOG_WARNING);
 		accessforbidden('Bad permission to modify position of lines for object in table '.$table_element_line);
 	}
 
@@ -123,10 +145,7 @@ if (GETPOST('roworder', 'alpha', 3) && GETPOST('table_element_line', 'aZ09', 3)
 		}
 	}
 
-	$row = new GenericObject($db);
-	$row->table_element_line = $table_element_line;
-	$row->fk_element = $fk_element;
-	$row->id = $element_id;
+
 
 	$row->line_ajaxorder($newrowordertab); // This update field rank or position in table row->table_element_line
 

@@ -188,7 +188,7 @@ class Productlot extends CommonObject
 		// Put here code to add control on parameters values
 
 		// Insert request
-		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.$this->table_element.'(';
+		$sql = 'INSERT INTO '.$this->db->prefix().$this->table_element.'(';
 		$sql .= 'entity,';
 		$sql .= 'fk_product,';
 		$sql .= 'batch,';
@@ -230,7 +230,7 @@ class Productlot extends CommonObject
 		}
 
 		if (!$error) {
-			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
+			$this->id = $this->db->last_insert_id($this->db->prefix().$this->table_element);
 
 			// Actions on extra fields
 			if (!$error) {
@@ -279,8 +279,8 @@ class Productlot extends CommonObject
 		global $conf;
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
-		$sql = 'SELECT';
-		$sql .= ' t.rowid,';
+		$sql = "SELECT";
+		$sql .= " t.rowid,";
 		$sql .= " t.entity,";
 		$sql .= " t.fk_product,";
 		$sql .= " t.batch,";
@@ -296,11 +296,11 @@ class Productlot extends CommonObject
 		$sql .= " t.fk_user_creat,";
 		$sql .= " t.fk_user_modif,";
 		$sql .= " t.import_key";
-		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
+		$sql .= " FROM ".$this->db->prefix().$this->table_element." as t";
 		if ($product_id > 0 && $batch != '') {
 			$sql .= " WHERE t.batch = '".$this->db->escape($batch)."' AND t.fk_product = ".((int) $product_id);
 		} else {
-			$sql .= ' WHERE t.rowid = '.((int) $id);
+			$sql .= " WHERE t.rowid = ".((int) $id);
 		}
 
 		$resql = $this->db->query($sql);
@@ -394,7 +394,7 @@ class Productlot extends CommonObject
 		}
 
 		// Update request
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET';
+		$sql = 'UPDATE '.$this->db->prefix().$this->table_element.' SET';
 		$sql .= ' entity = '.(isset($this->entity) ? $this->entity : "null").',';
 		$sql .= ' fk_product = '.(isset($this->fk_product) ? $this->fk_product : "null").',';
 		$sql .= ' batch = '.(isset($this->batch) ? "'".$this->db->escape($this->batch)."'" : "null").',';
@@ -468,18 +468,18 @@ class Productlot extends CommonObject
 
 		//if (!$error) {
 			//if (!$notrigger) {
-				// Uncomment this and change MYOBJECT to your own tag if you
+				// Uncomment this and change PRODUCTLOT to your own tag if you
 				// want this action calls a trigger.
 
 				//// Call triggers
-				//$result=$this->call_trigger('MYOBJECT_DELETE',$user);
+				//$result=$this->call_trigger('PRODUCTLOT_DELETE',$user);
 				//if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
 				//// End call triggers
 			//}
 		//}
 
 		if (!$error) {
-			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element;
+			$sql = 'DELETE FROM '.$this->db->prefix().$this->table_element;
 			$sql .= ' WHERE rowid='.((int) $this->id);
 
 			$resql = $this->db->query($sql);

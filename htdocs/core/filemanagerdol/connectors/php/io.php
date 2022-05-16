@@ -408,7 +408,8 @@ EOF;
 	}
 
 	$rpl = array('\\' => '\\\\', '"' => '\\"');
-	echo 'window.parent.OnUploadCompleted('.$errorNumber.',"'.strtr($fileUrl, $rpl).'","'.strtr($fileName, $rpl).'", "'.strtr($customMsg, $rpl).'");';
+	echo 'console.log('.$errorNumber.');';
+	echo 'window.parent.OnUploadCompleted('.$errorNumber.', "'.strtr($fileUrl, $rpl).'", "'.strtr($fileName, $rpl).'", "'.strtr($customMsg, $rpl).'");';
 	echo '</script>';
 	exit;
 }

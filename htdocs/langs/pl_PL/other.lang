@@ -35,6 +35,9 @@ OnlyOneFieldForXAxisIsPossible=Obecnie możliwe jest tylko 1 pole jako oś X. Wy
 AtLeastOneMeasureIsRequired=Wymagane jest co najmniej 1 pole do pomiaru
 AtLeastOneXAxisIsRequired=Wymagane jest co najmniej 1 pole dla osi X.
 LatestBlogPosts=Najnowsze posty na blogu
+notiftouser=To users
+notiftofixedemail=To fixed mail
+notiftouserandtofixedemail=To user and fixed mail
 Notify_ORDER_VALIDATE=Zamówienie sprzedaży zostało zatwierdzone
 Notify_ORDER_SENTBYMAIL=Zamówienie sprzedaży wysłane pocztą
 Notify_ORDER_SUPPLIER_SENTBYMAIL=Zamówienie wysłane e-mailem
@@ -255,6 +258,10 @@ PassEncoding=Kodowanie hasła
 PermissionsAdd=Uprawnienia dodane
 PermissionsDelete=Uprawnienia usunięte
 YourPasswordMustHaveAtLeastXChars=Twoje hasło musi składać się z <strong>%s</strong> znaków
+PasswordNeedAtLeastXUpperCaseChars=The password need at least <strong>%s</strong> upper case chars
+PasswordNeedAtLeastXDigitChars=The password need at least <strong>%s</strong> numeric chars
+PasswordNeedAtLeastXSpecialChars=The password need at least <strong>%s</strong> special chars
+PasswordNeedNoXConsecutiveChars=The password must not have <strong>%s</strong> consecutive similar chars
 YourPasswordHasBeenReset=Twoje hasło zostało zresetowane pomyślnie
 ApplicantIpAddress=Adres IP wnioskodawcy
 SMSSentTo=SMS wysłany na numer %s
@@ -265,6 +272,7 @@ ProjectCreatedByEmailCollector=Projekt utworzony przez kolektor poczty e-mail z 
 TicketCreatedByEmailCollector=Bilet utworzony przez zbierającego wiadomości e-mail z wiadomości e-mail MSGID %s
 OpeningHoursFormatDesc=Użyj - aby oddzielić godziny otwarcia i zamknięcia. <br> Użyj spacji, aby wprowadzić różne zakresy. <br> Przykład: 8-12 14-18
 SuffixSessionName=Sufiks nazwy sesji
+LoginWith=Login with %s
 
 ##### Export #####
 ExportsArea=Wywóz obszarze
@@ -291,3 +299,7 @@ PopuCom=Produkty / usługi według popularności w Zamówieniach
 ProductStatistics=Statystyki produktów / usług
 NbOfQtyInOrders=Ilość w zamówieniach
 SelectTheTypeOfObjectToAnalyze=Wybierz obiekt, aby wyświetlić jego statystyki...
+
+ConfirmBtnCommonContent = Are you sure you want to "%s" ?
+ConfirmBtnCommonTitle = Confirm your action
+CloseDialog = Zamknij

@@ -166,11 +166,11 @@ class Delivery extends CommonObject
 		$sql .= ", fk_incoterms, location_incoterms";
 		$sql .= ") VALUES (";
 		$sql .= "'(PROV)'";
-		$sql .= ", ".$conf->entity;
-		$sql .= ", ".$this->socid;
+		$sql .= ", ".((int) $conf->entity);
+		$sql .= ", ".((int) $this->socid);
 		$sql .= ", '".$this->db->escape($this->ref_customer)."'";
 		$sql .= ", '".$this->db->idate($now)."'";
-		$sql .= ", ".$user->id;
+		$sql .= ", ".((int) $user->id);
 		$sql .= ", ".($this->date_delivery ? "'".$this->db->idate($this->date_delivery)."'" : "null");
 		$sql .= ", ".($this->fk_delivery_address > 0 ? $this->fk_delivery_address : "null");
 		$sql .= ", ".(!empty($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null");
@@ -189,7 +189,7 @@ class Delivery extends CommonObject
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."delivery ";
 			$sql .= "SET ref = '".$this->db->escape($numref)."'";
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog("Delivery::create", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -211,7 +211,7 @@ class Delivery extends CommonObject
 						$origin_id = $this->lines[$i]->commande_ligne_id; // For backward compatibility
 					}
 
-					if (!$this->create_line($origin_id, $this->lines[$i]->qty, $this->lines[$i]->fk_product, $this->lines[$i]->description)) {
+					if (!$this->create_line($origin_id, $this->lines[$i]->qty, $this->lines[$i]->fk_product, $this->lines[$i]->description, $this->lines[$i]->array_options)) {
 						$error++;
 					}
 				}
@@ -262,9 +262,10 @@ class Delivery extends CommonObject
 	 *	@param	string	$qty					Quantity
 	 *	@param	string	$fk_product				Id of predefined product
 	 *	@param	string	$description			Description
+	 *  @param	array	$array_options			Array options
 	 *	@return	int								<0 if KO, >0 if OK
 	 */
-	public function create_line($origin_id, $qty, $fk_product, $description)
+	public function create_line($origin_id, $qty, $fk_product, $description, $array_options = null)
 	{
 		// phpcs:enable
 		$error = 0;
@@ -273,14 +274,23 @@ class Delivery extends CommonObject
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."deliverydet (fk_delivery, fk_origin_line,";
 		$sql .= " fk_product, description, qty)";
-		$sql .= " VALUES (".$this->id.",".$origin_id.",";
-		$sql .= " ".($idprod > 0 ? $idprod : "null").",";
+		$sql .= " VALUES (".$this->id.",".((int) $origin_id).",";
+		$sql .= " ".($idprod > 0 ? ((int) $idprod) : "null").",";
 		$sql .= " ".($description ? "'".$this->db->escape($description)."'" : "null").",";
-		$sql .= $qty.")";
+		$sql .= (price2num($qty, 'MS')).")";
 
 		dol_syslog(get_class($this)."::create_line", LOG_DEBUG);
 		if (!$this->db->query($sql)) {
 			$error++;
+		}
+
+		$id = $this->db->last_insert_id(MAIN_DB_PREFIX."deliverydet");
+
+		if (is_array($array_options) && count($array_options) > 0) {
+			$line = new DeliveryLine($this->db);
+			$line->id = $id;
+			$line->array_options = $array_options;
+			$result = $line->insertExtraFields();
 		}
 
 		if ($error == 0) {
@@ -385,7 +395,7 @@ class Delivery extends CommonObject
 		$error = 0;
 
 		if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->expedition->delivery->creer))
-		|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->expedition->delivery_advance->validate))) {
+			|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->expedition->delivery_advance->validate))) {
 			if (!empty($conf->global->DELIVERY_ADDON_NUMBER)) {
 				// Setting the command numbering module name
 				$modName = $conf->global->DELIVERY_ADDON_NUMBER;
@@ -412,7 +422,7 @@ class Delivery extends CommonObject
 					$sql .= " FROM ".MAIN_DB_PREFIX."delivery";
 					$sql .= " WHERE ref = '".$this->db->escape($numref)."'";
 					$sql .= " AND fk_statut <> 0";
-					$sql .= " AND entity = ".$conf->entity;
+					$sql .= " AND entity = ".((int) $conf->entity);
 
 					$resql = $this->db->query($sql);
 					if ($resql) {
@@ -427,7 +437,7 @@ class Delivery extends CommonObject
 					$sql .= ", fk_statut = 1";
 					$sql .= ", date_valid = '".$this->db->idate($now)."'";
 					$sql .= ", fk_user_valid = ".$user->id;
-					$sql .= " WHERE rowid = ".$this->id;
+					$sql .= " WHERE rowid = ".((int) $this->id);
 					$sql .= " AND fk_statut = 0";
 
 					$resql = $this->db->query($sql);
@@ -453,7 +463,7 @@ class Delivery extends CommonObject
 						if (preg_match('/^[\(]?PROV/i', $this->ref)) {
 							// Now we rename also files into index
 							$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'expedition/receipt/".$this->db->escape($this->newref)."'";
-							$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'expedition/receipt/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+							$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'expedition/receipt/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 							$resql = $this->db->query($sql);
 							if (!$resql) {
 								$error++; $this->error = $this->db->lasterror();
@@ -531,7 +541,9 @@ class Delivery extends CommonObject
 			$line->description       = $expedition->lines[$i]->description;
 			$line->qty               = $expedition->lines[$i]->qty_shipped;
 			$line->fk_product        = $expedition->lines[$i]->fk_product;
-
+			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($expedition->lines[$i]->array_options) && count($expedition->lines[$i]->array_options) > 0) { // For avoid conflicts if trigger used
+				$line->array_options = $expedition->lines[$i]->array_options;
+			}
 			$this->lines[$i] = $line;
 		}
 
@@ -589,18 +601,23 @@ class Delivery extends CommonObject
 	/**
 	 * 	Add line
 	 *
-	 *	@param	int		$origin_id		Origin id
-	 *	@param	int		$qty			Qty
+	 *	@param	int		$origin_id				Origin id
+	 *	@param	int		$qty					Qty
+	 *  @param	array	$array_options			Array options
 	 *	@return	void
 	 */
-	public function addline($origin_id, $qty)
+	public function addline($origin_id, $qty, $array_options = null)
 	{
+		global $conf;
+
 		$num = count($this->lines);
 		$line = new DeliveryLine($this->db);
 
 		$line->origin_id = $origin_id;
 		$line->qty = $qty;
-
+		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($array_options) && count($array_options) > 0) { // For avoid conflicts if trigger used
+			$line->array_options = $array_options;
+		}
 		$this->lines[$num] = $line;
 	}
 
@@ -641,7 +658,7 @@ class Delivery extends CommonObject
 		$error = 0;
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."deliverydet";
-		$sql .= " WHERE fk_delivery = ".$this->id;
+		$sql .= " WHERE fk_delivery = ".((int) $this->id);
 		if ($this->db->query($sql)) {
 			// Delete linked object
 			$res = $this->deleteObjectLinked();
@@ -651,7 +668,7 @@ class Delivery extends CommonObject
 
 			if (!$error) {
 				$sql = "DELETE FROM ".MAIN_DB_PREFIX."delivery";
-				$sql .= " WHERE rowid = ".$this->id;
+				$sql .= " WHERE rowid = ".((int) $this->id);
 				if ($this->db->query($sql)) {
 					$this->db->commit();
 
@@ -708,7 +725,7 @@ class Delivery extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $save_lastsearch_value = -1)
 	{
-		global $langs;
+		global $langs, $hookmanager;
 
 		$result = '';
 
@@ -719,8 +736,8 @@ class Delivery extends CommonObject
 
 		//if ($option !== 'nolink')
 		//{
-			// Add param to save lastsearch_values or not
-			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
+		// Add param to save lastsearch_values or not
+		$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
 		if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 			$add_save_lastsearch_values = 1;
 		}
@@ -740,6 +757,16 @@ class Delivery extends CommonObject
 			$result .= ' ';
 		}
 		$result .= $linkstart.$this->ref.$linkend;
+
+		global $action;
+		$hookmanager->initHooks(array($this->element . 'dao'));
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
+		}
 		return $result;
 	}
 
@@ -761,7 +788,7 @@ class Delivery extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."commandedet as cd, ".MAIN_DB_PREFIX."deliverydet as ld";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p on p.rowid = ld.fk_product";
 		$sql .= " WHERE ld.fk_origin_line = cd.rowid";
-		$sql .= " AND ld.fk_delivery = ".$this->id;
+		$sql .= " AND ld.fk_delivery = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::fetch_lines", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -769,9 +796,9 @@ class Delivery extends CommonObject
 			$num = $this->db->num_rows($resql);
 			$i = 0;
 			while ($i < $num) {
-				$line = new DeliveryLine($this->db);
-
 				$obj = $this->db->fetch_object($resql);
+
+				$line = new DeliveryLine($this->db);
 
 				$line->id = $obj->rowid;
 				$line->label = $obj->custom_label;
@@ -846,12 +873,12 @@ class Delivery extends CommonObject
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			//$langs->load("mymodule");
-			$this->labelStatus[-1] = $langs->trans('StatusDeliveryCanceled');
-			$this->labelStatus[0] = $langs->trans('StatusDeliveryDraft');
-			$this->labelStatus[1] = $langs->trans('StatusDeliveryValidated');
-			$this->labelStatusShort[-1] = $langs->trans('StatusDeliveryCanceled');
-			$this->labelStatusShort[0] = $langs->trans('StatusDeliveryDraft');
-			$this->labelStatusShort[1] = $langs->trans('StatusDeliveryValidated');
+			$this->labelStatus[-1] = $langs->transnoentitiesnoconv('StatusDeliveryCanceled');
+			$this->labelStatus[0] = $langs->transnoentitiesnoconv('StatusDeliveryDraft');
+			$this->labelStatus[1] = $langs->transnoentitiesnoconv('StatusDeliveryValidated');
+			$this->labelStatusShort[-1] = $langs->transnoentitiesnoconv('StatusDeliveryCanceled');
+			$this->labelStatusShort[0] = $langs->transnoentitiesnoconv('StatusDeliveryDraft');
+			$this->labelStatusShort[1] = $langs->transnoentitiesnoconv('StatusDeliveryValidated');
 		}
 
 		$statusType = 'status0';
@@ -958,8 +985,8 @@ class Delivery extends CommonObject
 				$sql .= " WHERE ld.fk_delivery = l.rowid";
 				$sql .= " AND ld.fk_origin_line = cd.rowid";
 				$sql .= " AND cd.fk_".$this->linked_object[0]['type']." = c.rowid";
-				$sql .= " AND cd.fk_".$this->linked_object[0]['type']." = ".$this->linked_object[0]['linkid'];
-				$sql .= " AND ld.fk_origin_line = ".$objSourceLine->rowid;
+				$sql .= " AND cd.fk_".$this->linked_object[0]['type']." = ".((int) $this->linked_object[0]['linkid']);
+				$sql .= " AND ld.fk_origin_line = ".((int) $objSourceLine->rowid);
 				$sql .= " GROUP BY ld.fk_origin_line";
 
 				$result = $this->db->query($sql);
@@ -980,7 +1007,7 @@ class Delivery extends CommonObject
 					$array[$i]['label'] = $objSourceLine->label ? $objSourceLine->label : $objSourceLine->description;
 				}
 
-					$i++;
+				$i++;
 			}
 			return $array;
 		} else {
@@ -1001,7 +1028,7 @@ class Delivery extends CommonObject
 		if ($user->rights->expedition->creer) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."delivery";
 			$sql .= " SET date_delivery = ".($delivery_date ? "'".$this->db->idate($delivery_date)."'" : 'null');
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(get_class($this)."::setDeliveryDate", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -1064,6 +1091,23 @@ class Delivery extends CommonObject
 		);
 
 		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+	}
+
+	/**
+	 * Function used to replace a product id with another one.
+	 *
+	 * @param DoliDB $db Database handler
+	 * @param int $origin_id Old product id
+	 * @param int $dest_id New product id
+	 * @return bool
+	 */
+	public static function replaceProduct(DoliDB $db, $origin_id, $dest_id)
+	{
+		$tables = array(
+			'deliverydet'
+		);
+
+		return CommonObject::commonReplaceProduct($db, $origin_id, $dest_id, $tables);
 	}
 }
 

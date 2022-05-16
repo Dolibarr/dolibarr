@@ -47,3 +47,8 @@ KnowledgeRecord = Article
 KnowledgeRecordExtraFields = Camps extra per a l'article
 GroupOfTicket=Grup de tiquets
 YouCanLinkArticleToATicketCategory=Podeu adjuntar un article a un grup de tiquets (per tant, l'article es suggerirà durant la qualificació dels nous tiquets)
+SuggestedForTicketsInGroup=Suggerit per a entrades quan el grup està
+
+SetObsolete=S'estableix com a obsolet
+ConfirmCloseKM=Confirmeu el tancament d'aquest article com a obsolet?
+ConfirmReopenKM=Voleu restaurar aquest article a l'estat "Validat"?

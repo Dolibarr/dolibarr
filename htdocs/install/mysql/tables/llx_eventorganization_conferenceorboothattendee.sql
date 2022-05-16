@@ -1,4 +1,4 @@
--- Copyright (C) ---Put here your own copyright and developer email---
+-- Copyright (C) 2021-2022 Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -19,14 +19,19 @@ CREATE TABLE llx_eventorganization_conferenceorboothattendee(
 	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
 	ref varchar(128) NOT NULL, 
 	fk_soc integer,
-	fk_actioncomm integer NOT NULL, 
-	email varchar(100),
+	fk_actioncomm integer,
+	fk_project integer NOT NULL,
+	fk_invoice integer NULL,
+	email varchar(128),
+    email_company varchar(128),
+	firstname varchar(100),
+	lastname varchar(100),
 	date_subscription datetime, 
 	amount double DEFAULT NULL, 
 	note_public text, 
 	note_private text, 
 	date_creation datetime NOT NULL, 
-	tms timestamp, 
+	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
 	fk_user_creat integer, 
 	fk_user_modif integer, 
 	last_main_doc varchar(255), 

@@ -92,17 +92,17 @@ $vals = array();
 $sql = "SELECT count(cd.rowid) as nb, cd.statut as status";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= ", ".MAIN_DB_PREFIX."contratdet as cd, ".MAIN_DB_PREFIX."contrat as c";
-if (!$user->rights->societe->client->voir && !$socid) {
+if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 $sql .= " WHERE cd.fk_contrat = c.rowid AND c.fk_soc = s.rowid";
 $sql .= " AND (cd.statut != 4 OR (cd.statut = 4 AND (cd.date_fin_validite is null or cd.date_fin_validite >= '".$db->idate($now)."')))";
 $sql .= " AND c.entity IN (".getEntity('contract', 0).")";
 if ($user->socid) {
-	$sql .= ' AND c.fk_soc = '.$user->socid;
+	$sql .= ' AND c.fk_soc = '.((int) $user->socid);
 }
-if (!$user->rights->societe->client->voir && !$socid) {
-	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+if (empty($user->rights->societe->client->voir) && !$socid) {
+	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 $sql .= " GROUP BY cd.statut";
 $resql = $db->query($sql);
@@ -129,17 +129,17 @@ if ($resql) {
 $sql = "SELECT count(cd.rowid) as nb, cd.statut as status";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= ", ".MAIN_DB_PREFIX."contratdet as cd, ".MAIN_DB_PREFIX."contrat as c";
-if (!$user->rights->societe->client->voir && !$socid) {
+if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 $sql .= " WHERE cd.fk_contrat = c.rowid AND c.fk_soc = s.rowid";
 $sql .= " AND (cd.statut = 4 AND cd.date_fin_validite < '".$db->idate($now)."')";
 $sql .= " AND c.entity IN (".getEntity('contract', 0).")";
 if ($user->socid) {
-	$sql .= ' AND c.fk_soc = '.$user->socid;
+	$sql .= ' AND c.fk_soc = '.((int) $user->socid);
 }
-if (!$user->rights->societe->client->voir && !$socid) {
-	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+if (empty($user->rights->societe->client->voir) && !$socid) {
+	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 $sql .= " GROUP BY cd.statut";
 $resql = $db->query($sql);
@@ -240,14 +240,14 @@ if (!empty($conf->contrat->enabled) && $user->rights->contrat->lire) {
 	$sql = "SELECT c.rowid, c.ref,";
 	$sql .= " s.nom as name, s.rowid as socid";
 	$sql .= " FROM ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."societe as s";
-	if (!$user->rights->societe->client->voir && !$socid) {
+	if (empty($user->rights->societe->client->voir) && !$socid) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= " WHERE s.rowid = c.fk_soc";
 	$sql .= " AND c.entity IN (".getEntity('contract', 0).")";
 	$sql .= " AND c.statut = 0";
-	if (!$user->rights->societe->client->voir && !$socid) {
-		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+	if (empty($user->rights->societe->client->voir) && !$socid) {
+		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	if ($socid) {
 		$sql .= " AND c.fk_soc = ".((int) $socid);
@@ -298,20 +298,20 @@ if (!empty($conf->contrat->enabled) && $user->rights->contrat->lire) {
 }
 
 
-print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+print '</div><div class="fichetwothirdright">';
 
 
 // Last modified contracts
 $max = 5;
 $sql = 'SELECT ';
-$sql .= ' sum('.$db->ifsql("cd.statut=0", 1, 0).') as nb_initial,';
-$sql .= ' sum('.$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NULL OR cd.date_fin_validite >= '".$db->idate($now)."')", 1, 0).') as nb_running,';
-$sql .= ' sum('.$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NOT NULL AND cd.date_fin_validite < '".$db->idate($now)."')", 1, 0).') as nb_expired,';
-$sql .= ' sum('.$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NOT NULL AND cd.date_fin_validite < '".$db->idate($now - $conf->contrat->services->expires->warning_delay)."')", 1, 0).') as nb_late,';
-$sql .= ' sum('.$db->ifsql("cd.statut=5", 1, 0).') as nb_closed,';
+$sql .= " sum(".$db->ifsql("cd.statut=0", 1, 0).') as nb_initial,';
+$sql .= " sum(".$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NULL OR cd.date_fin_validite >= '".$db->idate($now)."')", 1, 0).') as nb_running,';
+$sql .= " sum(".$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NOT NULL AND cd.date_fin_validite < '".$db->idate($now)."')", 1, 0).') as nb_expired,';
+$sql .= " sum(".$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NOT NULL AND cd.date_fin_validite < '".$db->idate($now - $conf->contrat->services->expires->warning_delay)."')", 1, 0).') as nb_late,';
+$sql .= " sum(".$db->ifsql("cd.statut=5", 1, 0).') as nb_closed,';
 $sql .= " c.rowid as cid, c.ref, c.datec, c.tms, c.statut, s.nom as name, s.rowid as socid";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,";
-if (!$user->rights->societe->client->voir && !$socid) {
+if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= " ".MAIN_DB_PREFIX."societe_commerciaux as sc,";
 }
 $sql .= " ".MAIN_DB_PREFIX."contrat as c";
@@ -319,8 +319,8 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."contratdet as cd ON c.rowid = cd.fk_contra
 $sql .= " WHERE c.fk_soc = s.rowid";
 $sql .= " AND c.entity IN (".getEntity('contract', 0).")";
 $sql .= " AND c.statut > 0";
-if (!$user->rights->societe->client->voir && !$socid) {
-	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+if (empty($user->rights->societe->client->voir) && !$socid) {
+	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 if ($socid) {
 	$sql .= " AND s.rowid = ".((int) $socid);
@@ -346,22 +346,27 @@ if ($result) {
 
 	while ($i < $num) {
 		$obj = $db->fetch_object($result);
+		$datem = $db->jdate($obj->tms);
+
+		$staticcontrat->ref = ($obj->ref ? $obj->ref : $obj->cid);
+		$staticcontrat->id = $obj->cid;
+
+		$staticcompany->id = $obj->socid;
+		$staticcompany->name = $obj->name;
 
 		print '<tr class="oddeven">';
 		print '<td class="nowraponall">';
-		$staticcontrat->ref = ($obj->ref ? $obj->ref : $obj->cid);
-		$staticcontrat->id = $obj->cid;
 		print $staticcontrat->getNomUrl(1, 16);
 		if ($obj->nb_late) {
 			print img_warning($langs->trans("Late"));
 		}
 		print '</td>';
 		print '<td>';
-		$staticcompany->id = $obj->socid;
-		$staticcompany->name = $obj->name;
 		print $staticcompany->getNomUrl(1, '', 20);
 		print '</td>';
-		print '<td class="center">'.dol_print_date($db->jdate($obj->tms), 'dayhour').'</td>';
+		print '<td class="center nowraponall" title="'.dol_escape_htmltag($langs->trans("DateModification").': '.dol_print_date($datem, 'dayhour', 'tzuserrel')).'">';
+		print dol_print_date($datem, 'dayhour');
+		print '</td>';
 		//print '<td class="left">'.$staticcontrat->LibStatut($obj->statut,2).'</td>';
 		print '<td class="right nowraponall" width="32">'.($obj->nb_initial > 0 ? '<span class="paddingright">'.$obj->nb_initial.'</span>'.$staticcontratligne->LibStatut(0, 3, -1, 'class="paddingleft"') : '').'</td>';
 		print '<td class="right nowraponall" width="32">'.($obj->nb_running > 0 ? '<span class="paddingright">'.$obj->nb_running.'</span>'.$staticcontratligne->LibStatut(4, 3, 0, 'class="marginleft"') : '').'</td>';
@@ -386,7 +391,7 @@ $sql .= " s.nom as name,";
 $sql .= " p.rowid as pid, p.ref as pref, p.label as plabel, p.fk_product_type as ptype, p.entity as pentity";
 $sql .= " FROM (".MAIN_DB_PREFIX."contrat as c";
 $sql .= ", ".MAIN_DB_PREFIX."societe as s";
-if (!$user->rights->societe->client->voir && !$socid) {
+if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 $sql .= ", ".MAIN_DB_PREFIX."contratdet as cd";
@@ -394,8 +399,8 @@ $sql .= ") LEFT JOIN ".MAIN_DB_PREFIX."product as p ON cd.fk_product = p.rowid";
 $sql .= " WHERE c.entity IN (".getEntity('contract', 0).")";
 $sql .= " AND cd.fk_contrat = c.rowid";
 $sql .= " AND c.fk_soc = s.rowid";
-if (!$user->rights->societe->client->voir && !$socid) {
-	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+if (empty($user->rights->societe->client->voir) && !$socid) {
+	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 if ($socid) {
 	$sql .= " AND s.rowid = ".((int) $socid);
@@ -451,7 +456,7 @@ if ($resql) {
 		print "</tr>\n";
 		$i++;
 	}
-	$db->free();
+	$db->free($resql);
 
 	print "</table></div>";
 } else {
@@ -466,7 +471,7 @@ $sql .= " s.nom as name,";
 $sql .= " p.rowid as pid, p.ref as pref, p.label as plabel, p.fk_product_type as ptype, p.entity as pentity";
 $sql .= " FROM (".MAIN_DB_PREFIX."contrat as c";
 $sql .= ", ".MAIN_DB_PREFIX."societe as s";
-if (!$user->rights->societe->client->voir && !$socid) {
+if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 $sql .= ", ".MAIN_DB_PREFIX."contratdet as cd";
@@ -476,8 +481,8 @@ $sql .= " AND c.statut = 1";
 $sql .= " AND cd.statut = 0";
 $sql .= " AND cd.fk_contrat = c.rowid";
 $sql .= " AND c.fk_soc = s.rowid";
-if (!$user->rights->societe->client->voir && !$socid) {
-	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+if (empty($user->rights->societe->client->voir) && !$socid) {
+	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 if ($socid) {
 	$sql .= " AND s.rowid = ".((int) $socid);
@@ -532,7 +537,8 @@ if ($resql) {
 		print "</tr>\n";
 		$i++;
 	}
-	$db->free();
+
+	$db->free($resql);
 
 	print "</table></div>";
 } else {
@@ -547,7 +553,7 @@ $sql .= " s.nom as name,";
 $sql .= " p.rowid as pid, p.ref as pref, p.label as plabel, p.fk_product_type as ptype, p.entity as pentity";
 $sql .= " FROM (".MAIN_DB_PREFIX."contrat as c";
 $sql .= ", ".MAIN_DB_PREFIX."societe as s";
-if (!$user->rights->societe->client->voir && !$socid) {
+if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 $sql .= ", ".MAIN_DB_PREFIX."contratdet as cd";
@@ -558,8 +564,8 @@ $sql .= " AND cd.statut = 4";
 $sql .= " AND cd.date_fin_validite < '".$db->idate($now)."'";
 $sql .= " AND cd.fk_contrat = c.rowid";
 $sql .= " AND c.fk_soc = s.rowid";
-if (!$user->rights->societe->client->voir && !$socid) {
-	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+if (empty($user->rights->societe->client->voir) && !$socid) {
+	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 if ($socid) {
 	$sql .= " AND s.rowid = ".((int) $socid);
@@ -614,7 +620,7 @@ if ($resql) {
 		print "</tr>\n";
 		$i++;
 	}
-	$db->free();
+	$db->free($resql);
 
 	print "</table></div>";
 } else {
@@ -622,7 +628,7 @@ if ($resql) {
 }
 
 
-print '</div></div></div>';
+print '</div></div>';
 
 $parameters = array('user' => $user);
 $reshook = $hookmanager->executeHooks('dashboardContracts', $parameters, $object); // Note that $action and $object may have been modified by hook

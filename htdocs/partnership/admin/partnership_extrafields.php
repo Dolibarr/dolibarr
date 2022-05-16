@@ -65,6 +65,8 @@ require DOL_DOCUMENT_ROOT.'/core/actions_extrafields.inc.php';
  * View
  */
 
+$textobject = $langs->transnoentitiesnoconv("Partnership");
+
 $help_url = '';
 $title = $langs->trans("PartnershipSetup");
 

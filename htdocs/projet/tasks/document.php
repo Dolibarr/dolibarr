@@ -37,25 +37,17 @@ $langs->loadLangs(array('projects', 'other'));
 
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
-$mine = $_REQUEST['mode'] == 'mine' ? 1 : 0;
+$mine = GETPOST('mode') == 'mine' ? 1 : 0;
 //if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $withproject = GETPOST('withproject', 'int');
 $project_ref = GETPOST('project_ref', 'alpha');
 
-// Security check
-$socid = 0;
-//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
-//$result=restrictedArea($user,'projet',$id,'');
-if (!$user->rights->projet->lire) {
-	accessforbidden();
-}
-
 // Get parameters
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -72,6 +64,18 @@ if (!$sortfield) {
 
 $object = new Task($db);
 $projectstatic = new Project($db);
+
+if ($id > 0 || $ref) {
+	$object->fetch($id, $ref);
+}
+
+// Security check
+$socid = 0;
+
+restrictedArea($user, 'projet', $object->fk_project, 'projet&project');
+
+$permissiontoadd = $user->rights->projet->creer; // Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles.inc.php
+
 
 /*
  * Actions
@@ -92,25 +96,21 @@ if (!empty($project_ref) && !empty($withproject)) {
 }
 
 if ($id > 0 || !empty($ref)) {
-	if ($object->fetch($id, $ref) > 0) {
-		if (!empty($conf->global->PROJECT_ALLOW_COMMENT_ON_TASK) && method_exists($object, 'fetchComments') && empty($object->comments)) {
-			$object->fetchComments();
-		}
-		$projectstatic->fetch($object->fk_project);
-		if (!empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($projectstatic, 'fetchComments') && empty($projectstatic->comments)) {
-			$projectstatic->fetchComments();
-		}
-
-		if (!empty($projectstatic->socid)) {
-			$projectstatic->fetch_thirdparty();
-		}
-
-		$object->project = clone $projectstatic;
-
-		$upload_dir = $conf->projet->dir_output.'/'.dol_sanitizeFileName($projectstatic->ref).'/'.dol_sanitizeFileName($object->ref);
-	} else {
-		dol_print_error($db);
+	if (!empty($conf->global->PROJECT_ALLOW_COMMENT_ON_TASK) && method_exists($object, 'fetchComments') && empty($object->comments)) {
+		$object->fetchComments();
 	}
+	$projectstatic->fetch($object->fk_project);
+	if (!empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($projectstatic, 'fetchComments') && empty($projectstatic->comments)) {
+		$projectstatic->fetchComments();
+	}
+
+	if (!empty($projectstatic->socid)) {
+		$projectstatic->fetch_thirdparty();
+	}
+
+	$object->project = clone $projectstatic;
+
+	$upload_dir = $conf->projet->dir_output.'/'.dol_sanitizeFileName($projectstatic->ref).'/'.dol_sanitizeFileName($object->ref);
 }
 
 include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
@@ -152,7 +152,7 @@ if ($object->id > 0) {
 		$morehtmlref .= '</div>';
 
 		// Define a complementary filter for search of next/prev ref.
-		if (!$user->rights->projet->all->lire) {
+		if (empty($user->rights->projet->all->lire)) {
 			$objectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 0);
 			$projectstatic->next_prev_filter = " rowid IN (".$db->sanitize(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
 		}
@@ -233,7 +233,6 @@ if ($object->id > 0) {
 
 		print '</div>';
 		print '<div class="fichehalfright">';
-		print '<div class="ficheaddleft">';
 		print '<div class="underbanner clearboth"></div>';
 
 		print '<table class="border tableforfield centpercent">';
@@ -252,7 +251,6 @@ if ($object->id > 0) {
 
 		print '</table>';
 
-		print '</div>';
 		print '</div>';
 		print '</div>';
 

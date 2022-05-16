@@ -118,6 +118,4 @@ AddAll=Agregar todos
 RemoveAll=Quitar todos
 AdvTgtAddContact=Agregar correos acorde al criterio
 AdvTgtOrCreateNewFilter=Nombre del filtro nuevo
-NoContactWithCategoryFound=No se encontraron contactos/direcciones con la categoría buscada
-NoContactLinkedToThirdpartieWithCategoryFound=No se encontraron contactos/direcciones con la categoría buscada
 ContactsWithThirdpartyFilter=Contactos con filtro de terceros

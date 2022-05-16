@@ -64,5 +64,5 @@ InterLineDuration=Chiziq davomiyligi aralashuvi
 InterLineDesc=Chiziq ta'rifi aralashuvi
 RepeatableIntervention=Interventsiya shabloni
 ToCreateAPredefinedIntervention=Oldindan belgilangan yoki takrorlanadigan aralashuvni yaratish uchun umumiy aralashuvni yarating va uni aralashuv shabloniga o'zgartiring
-Reopen=Qayta oching
 ConfirmReopenIntervention=Siz aralashuvni qayta ochishni xohlaysizmi <b> %s </b>?
+GenerateInter=Interventsiya yarating

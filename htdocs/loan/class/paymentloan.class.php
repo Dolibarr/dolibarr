@@ -332,7 +332,6 @@ class PaymentLoan extends CommonObject
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."payment_loan SET";
-
 		$sql .= " fk_loan=".(isset($this->fk_loan) ? $this->fk_loan : "null").",";
 		$sql .= " datec=".(dol_strlen($this->datec) != 0 ? "'".$this->db->idate($this->datec)."'" : 'null').",";
 		$sql .= " tms=".(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
@@ -347,7 +346,6 @@ class PaymentLoan extends CommonObject
 		$sql .= " fk_bank=".(isset($this->fk_bank) ? $this->fk_bank : "null").",";
 		$sql .= " fk_user_creat=".(isset($this->fk_user_creat) ? $this->fk_user_creat : "null").",";
 		$sql .= " fk_user_modif=".(isset($this->fk_user_modif) ? $this->fk_user_modif : "null")."";
-
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
@@ -389,7 +387,7 @@ class PaymentLoan extends CommonObject
 
 		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_url";
-			$sql .= " WHERE type='payment_loan' AND url_id=".$this->id;
+			$sql .= " WHERE type='payment_loan' AND url_id=".((int) $this->id);
 
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -619,7 +617,7 @@ class PaymentLoan extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $maxlen = 0, $notooltip = 0, $moretitle = '', $save_lastsearch_value = -1)
 	{
-		global $langs, $conf;
+		global $langs, $conf, $hookmanager;
 
 		if (!empty($conf->dol_no_mouse_hover)) {
 			$notooltip = 1; // Force disable tooltips
@@ -656,6 +654,15 @@ class PaymentLoan extends CommonObject
 		}
 		$result .= $linkend;
 
+		global $action;
+		$hookmanager->initHooks(array($this->element . 'dao'));
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
+		}
 		return $result;
 	}
 }

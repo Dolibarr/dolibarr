@@ -17,7 +17,7 @@
 
  use Luracast\Restler\RestException;
 
-require 'ticket.class.php';
+require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ticket.lib.php';
 
 
@@ -274,8 +274,9 @@ class Tickets extends DolibarrApi
 		}
 		// Add sql filters
 		if ($sqlfilters) {
-			if (!DolibarrApi::_checkFilters($sqlfilters)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+			$errormessage = '';
+			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
+				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
 			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
 			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
@@ -376,7 +377,7 @@ class Tickets extends DolibarrApi
 		}
 		$this->ticket->message = $ticketMessageText;
 		if (!$this->ticket->createTicketMessage(DolibarrApiAccess::$user)) {
-			throw new RestException(500);
+			throw new RestException(500, 'Error when creating ticket');
 		}
 		return $this->ticket->id;
 	}
@@ -437,7 +438,7 @@ class Tickets extends DolibarrApi
 		}
 
 		if (!$this->ticket->delete($id)) {
-			throw new RestException(500);
+			throw new RestException(500, 'Error when deleting ticket');
 		}
 
 		return array(

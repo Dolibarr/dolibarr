@@ -34,6 +34,8 @@ if (empty($conf) || !is_object($conf)) {
 
 require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
 
+$langs->load("ecm");
+
 if (empty($module)) {
 	$module = 'ecm';
 }
@@ -233,7 +235,7 @@ if ($action == 'convertimgwebp' && $permtoadd) {
 if (empty($action) || $action == 'editfile' || $action == 'file_manager' || preg_match('/refresh/i', $action) || $action == 'delete') {
 	$langs->load("ecm");
 
-	print '<table width="100%" class="liste noborderbottom">'."\n";
+	print '<table class="liste centpercent">'."\n";
 
 	print '<!-- Title for manual directories -->'."\n";
 	print '<tr class="liste_titre">'."\n";

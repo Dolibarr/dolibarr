@@ -27,17 +27,19 @@ StockDetailPerBatch=Krājumu dati par partiju
 SerialNumberAlreadyInUse=Sērijas numurs %s jau tiek izmantots produktam %s
 TooManyQtyForSerialNumber=Jums var būt tikai viens produkts %s sērijas numuram %s
 ManageLotMask=Pielāgota maska
-CustomMasks=Option to define a different numbering mask for each product
-BatchLotNumberingModules=Numbering rule for automatic generation of lot number
-BatchSerialNumberingModules=Numbering rule for automatic generation of serial number (for products with property 1 unique lot/serial for each product)
-QtyToAddAfterBarcodeScan=Katram skenētajam svītrkodam / partijai / sērijai jāpievieno daudzums
+CustomMasks=Iespēja katram produktam noteikt atšķirīgu numerācijas masku
+BatchLotNumberingModules=Numerācijas noteikums partijas numura automātiskai ģenerēšanai
+BatchSerialNumberingModules=Numerācijas noteikums automātiskai sērijas numura ģenerēšanai (produktiem ar īpašību 1 unikāla partija / sērija katram produktam)
+QtyToAddAfterBarcodeScan=Daudzums līdz %s par katru skenēto svītrkodu/sēriju/sēriju
 LifeTime=Mūža ilgums (dienās)
 EndOfLife=Dzīves beigas
 ManufacturingDate=Ražošanas datums
 DestructionDate=Iznīcināšanas datums
 FirstUseDate=Pirmās lietošanas datums
 QCFrequency=Kvalitātes kontroles biežums (dienās)
-
+ShowAllLots=Rādīt visas partijas
+HideLots=Slēpt daudz
 #Traceability - qc status
 OutOfOrder=Nedarbojas
 InWorkingOrder=Darba kārtībā
+ToReplace=Aizvietot

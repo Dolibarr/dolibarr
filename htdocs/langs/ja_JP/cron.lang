@@ -1,12 +1,12 @@
 # Dolibarr language file - Source file is en_US - cron
 # About page
 # Right
-Permission23101 = スケジュールされたジョブを読む
+Permission23101 = スケジュールされたジョブを読込む
 Permission23102 = スケジュールされたジョブの作成/更新
 Permission23103 = スケジュールされたジョブを削除する
 Permission23104 = スケジュールされたジョブを実行する
 # Admin
-CronSetup=スケジュールされたジョブ管理のセットアップ
+CronSetup=スケジュールされたジョブ管理の設定
 URLToLaunchCronJobs=ブラウザから修飾されたcronジョブを確認して起動するためのURL
 OrToLaunchASpecificJob=または、ブラウザから特定のジョブを確認して起動する
 KeyForCronAccess=cronジョブを起動するためのURLのセキュリティキー
@@ -57,7 +57,7 @@ CronSaveSucess=保存成功
 CronNote=コメント
 CronFieldMandatory=フィールド%sは必須 
 CronErrEndDateStartDt=終了日を開始日より前にすることはできない
-StatusAtInstall=モジュールインストール時のステータス
+StatusAtInstall=モジュールインストール時の状態
 CronStatusActiveBtn=スケジュール
 CronStatusInactiveBtn=無効にする
 CronTaskInactive=このジョブは無効になっている（スケジュールされていない）
@@ -82,6 +82,8 @@ UseMenuModuleToolsToAddCronJobs=メニュー ”<a href="%s">ホーム - 管理�
 JobDisabled=ジョブが無効 
 MakeLocalDatabaseDumpShort=ローカルデータベースのバックアップ
 MakeLocalDatabaseDump=ローカルデータベースダンプを作成する。パラメータは次のもの: 圧縮 ('gz' or 'bz' or 'none')、バックアップ種別 ('mysql', 'pgsql', 'auto')、1、 'auto' またはビルドするファイル名、保持するバックアップファイルの数
+MakeSendLocalDatabaseDumpShort=ローカルデータベースのバックアップを送信する
+MakeSendLocalDatabaseDump=ローカルデータベースのバックアップを電子メールで送信する。パラメータは次のとおり 。to、from、subject、message、filename（送信されたファイルの名前）、filter（データベースのバックアップのみの「sql」）
 WarningCronDelayed=注意、パフォーマンスの目的で、有効なジョブの次の実行日が何であれ、ジョブは実行される前に最大%s時間まで遅延する可能性がある。
 DATAPOLICYJob=データクリーナとアノニマイザ
 JobXMustBeEnabled=ジョブ%sを有効にする必要がある

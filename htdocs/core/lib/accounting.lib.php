@@ -103,7 +103,7 @@ function length_accountg($account)
 		return $account;
 	}
 
-	$g = $conf->global->ACCOUNTING_LENGTH_GACCOUNT;
+	$g = getDolGlobalInt('ACCOUNTING_LENGTH_GACCOUNT');
 	if (!is_empty($g)) {
 		// Clean parameters
 		$i = strlen($account);
@@ -142,7 +142,7 @@ function length_accounta($accounta)
 		return $accounta;
 	}
 
-	$a = $conf->global->ACCOUNTING_LENGTH_AACCOUNT;
+	$a = getDolGlobalInt('ACCOUNTING_LENGTH_AACCOUNT');
 	if (!is_empty($a)) {
 		// Clean parameters
 		$i = strlen($accounta);

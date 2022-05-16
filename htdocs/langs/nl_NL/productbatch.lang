@@ -27,17 +27,19 @@ StockDetailPerBatch=Voorraad details per lot
 SerialNumberAlreadyInUse=Serienummer %s wordt al gebruikt voor product %s
 TooManyQtyForSerialNumber=U kunt slechts één product %s hebben voor serienummer %s
 ManageLotMask=Aangepast masker
-CustomMasks=Option to define a different numbering mask for each product
-BatchLotNumberingModules=Numbering rule for automatic generation of lot number
-BatchSerialNumberingModules=Numbering rule for automatic generation of serial number (for products with property 1 unique lot/serial for each product)
-QtyToAddAfterBarcodeScan=Aantal toe te voegen voor elke gescande barcode/lot/serie
+CustomMasks=Optie om voor elk product een ander soort nummer te gebruiken
+BatchLotNumberingModules=Regel voor automatische generatie van het lot nummer
+BatchSerialNumberingModules=Regel voor de automatische generatie van het serienummer (alleen voor producten met een uniek serienummer per product)
+QtyToAddAfterBarcodeScan=Qty to %s for each barcode/lot/serial scanned
 LifeTime=Levensduur (in dagen)
 EndOfLife=Einde van het leven
 ManufacturingDate=Fabricage datum
 DestructionDate=Vernietigingsdatum:
 FirstUseDate=Datum eerste gebruik
 QCFrequency=Frequentie kwaliteitscontrole (in dagen)
-
+ShowAllLots=Toon alle kavels
+HideLots=Verberg kavels
 #Traceability - qc status
 OutOfOrder=Buiten gebruik
 InWorkingOrder=In werkende staat
+ToReplace=vervang

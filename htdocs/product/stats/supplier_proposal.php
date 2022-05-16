@@ -140,13 +140,13 @@ if ($id > 0 || !empty($ref)) {
 			$sql = "SELECT DISTINCT s.nom as name, s.rowid as socid, p.rowid as propalid, p.ref, d.total_ht as amount,";
 			//$sql .= " p.ref_supplier,";
 			$sql .= "p.date_valid, p.fk_statut as statut, d.rowid, d.qty";
-			if (!$user->rights->societe->client->voir && !$socid) {
+			if (empty($user->rights->societe->client->voir) && !$socid) {
 				$sql .= ", sc.fk_soc, sc.fk_user ";
 			}
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 			$sql .= ",".MAIN_DB_PREFIX."supplier_proposal as p";
 			$sql .= ", ".MAIN_DB_PREFIX."supplier_proposaldet as d";
-			if (!$user->rights->societe->client->voir && !$socid) {
+			if (empty($user->rights->societe->client->voir) && !$socid) {
 				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			}
 			$sql .= " WHERE p.fk_soc = s.rowid";
@@ -159,8 +159,8 @@ if ($id > 0 || !empty($ref)) {
 			if (!empty($search_year)) {
 				$sql .= ' AND YEAR(p.datep) IN ('.$db->sanitize($search_year).')';
 			}
-			if (!$user->rights->societe->client->voir && !$socid) {
-				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+			if (empty($user->rights->societe->client->voir) && !$socid) {
+				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			if ($socid) {
 				$sql .= " AND p.fk_soc = ".((int) $socid);
@@ -198,6 +198,7 @@ if ($id > 0 || !empty($ref)) {
 				}
 
 				print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$product->id.'" name="search_form">'."\n";
+				print '<input type="hidden" name="token" value="'.newToken().'">';
 				if (!empty($sortfield)) {
 					print '<input type="hidden" name="sortfield" value="'.$sortfield.'"/>';
 				}

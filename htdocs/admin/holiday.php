@@ -39,6 +39,8 @@ if (!$user->admin) {
 
 $action = GETPOST('action', 'aZ09');
 $value = GETPOST('value', 'alpha');
+$modulepart = GETPOST('modulepart', 'aZ09');	// Used by actions_setmoduleoptions.inc.php
+
 $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');
 $type = 'contract';
@@ -220,7 +222,7 @@ foreach ($dirmodels as $reldir) {
 							$langs->load("errors");
 							print '<div class="error">'.$langs->trans($tmp).'</div>';
 						} elseif ($tmp == 'NotConfigured') {
-							print $langs->trans($tmp);
+							print '<span class="opacitymedium">'.$langs->trans($tmp).'</span>';
 						} else {
 							print $tmp;
 						}
@@ -230,7 +232,7 @@ foreach ($dirmodels as $reldir) {
 						if ($conf->global->HOLIDAY_ADDON == "$file") {
 							print img_picto($langs->trans("Activated"), 'switch_on');
 						} else {
-							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;token='.newToken().'&amp;value='.urlencode($file).'">';
+							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&value='.urlencode($file).'">';
 							print img_picto($langs->trans("Disabled"), 'switch_off');
 							print '</a>';
 						}
@@ -274,147 +276,141 @@ print '</div>';
 print '<br>';
 
 
-if ($conf->global->MAIN_FEATURES_LEVEL < 2) {
-	print dol_get_fiche_end();
-	// End of page
-	llxFooter();
-	$db->close();
-	exit;
-}
-
 /*
  *  Documents models for Holidays
  */
 
-print load_fiche_titre($langs->trans("TemplatePDFHolidays"), '', '');
+if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
+	print load_fiche_titre($langs->trans("TemplatePDFHolidays"), '', '');
 
-// Defined model definition table
-$def = array();
-$sql = "SELECT nom";
-$sql .= " FROM ".MAIN_DB_PREFIX."document_model";
-$sql .= " WHERE type = '".$db->escape($type)."'";
-$sql .= " AND entity = ".$conf->entity;
-$resql = $db->query($sql);
-if ($resql) {
-	$i = 0;
-	$num_rows = $db->num_rows($resql);
-	while ($i < $num_rows) {
-		$array = $db->fetch_array($resql);
-		array_push($def, $array[0]);
-		$i++;
+	// Defined model definition table
+	$def = array();
+	$sql = "SELECT nom";
+	$sql .= " FROM ".MAIN_DB_PREFIX."document_model";
+	$sql .= " WHERE type = '".$db->escape($type)."'";
+	$sql .= " AND entity = ".$conf->entity;
+	$resql = $db->query($sql);
+	if ($resql) {
+		$i = 0;
+		$num_rows = $db->num_rows($resql);
+		while ($i < $num_rows) {
+			$array = $db->fetch_array($resql);
+			array_push($def, $array[0]);
+			$i++;
+		}
+	} else {
+		dol_print_error($db);
 	}
-} else {
-	dol_print_error($db);
-}
 
 
-print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder centpercent">';
-print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Name").'</td>';
-print '<td>'.$langs->trans("Description").'</td>';
-print '<td align="center" width="60">'.$langs->trans("Status")."</td>\n";
-print '<td align="center" width="60">'.$langs->trans("Default")."</td>\n";
-print '<td align="center" width="80">'.$langs->trans("ShortInfo").'</td>';
-print '<td align="center" width="80">'.$langs->trans("Preview").'</td>';
-print "</tr>\n";
+	print '<div class="div-table-responsive-no-min">';
+	print '<table class="noborder centpercent">';
+	print '<tr class="liste_titre">';
+	print '<td>'.$langs->trans("Name").'</td>';
+	print '<td>'.$langs->trans("Description").'</td>';
+	print '<td align="center" width="60">'.$langs->trans("Status")."</td>\n";
+	print '<td align="center" width="60">'.$langs->trans("Default")."</td>\n";
+	print '<td align="center" width="80">'.$langs->trans("ShortInfo").'</td>';
+	print '<td align="center" width="80">'.$langs->trans("Preview").'</td>';
+	print "</tr>\n";
 
-clearstatcache();
+	clearstatcache();
 
-foreach ($dirmodels as $reldir) {
-	foreach (array('', '/doc') as $valdir) {
-		$realpath = $reldir."core/modules/holiday".$valdir;
-		$dir = dol_buildpath($realpath);
+	foreach ($dirmodels as $reldir) {
+		foreach (array('', '/doc') as $valdir) {
+			$realpath = $reldir."core/modules/holiday".$valdir;
+			$dir = dol_buildpath($realpath);
 
-		if (is_dir($dir)) {
-			$handle = opendir($dir);
-			if (is_resource($handle)) {
-				while (($file = readdir($handle)) !== false) {
-					$filelist[] = $file;
-				}
-				closedir($handle);
-				arsort($filelist);
+			if (is_dir($dir)) {
+				$handle = opendir($dir);
+				if (is_resource($handle)) {
+					while (($file = readdir($handle)) !== false) {
+						$filelist[] = $file;
+					}
+					closedir($handle);
+					arsort($filelist);
 
-				foreach ($filelist as $file) {
-					if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file)) {
-						if (file_exists($dir.'/'.$file)) {
-							$name = substr($file, 4, dol_strlen($file) - 16);
-							$classname = substr($file, 0, dol_strlen($file) - 12);
+					foreach ($filelist as $file) {
+						if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file)) {
+							if (file_exists($dir.'/'.$file)) {
+								$name = substr($file, 4, dol_strlen($file) - 16);
+								$classname = substr($file, 0, dol_strlen($file) - 12);
 
-							require_once $dir.'/'.$file;
-							$module = new $classname($db);
+								require_once $dir.'/'.$file;
+								$module = new $classname($db);
 
-							$modulequalified = 1;
-							if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
-								$modulequalified = 0;
-							}
-							if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
-								$modulequalified = 0;
-							}
-
-							if ($modulequalified) {
-								print '<tr class="oddeven"><td width="100">';
-								print (empty($module->name) ? $name : $module->name);
-								print "</td><td>\n";
-								if (method_exists($module, 'info')) {
-									print $module->info($langs);
-								} else {
-									print $module->description;
+								$modulequalified = 1;
+								if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+									$modulequalified = 0;
 								}
-								print '</td>';
+								if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+									$modulequalified = 0;
+								}
 
-								// Active
-								if (in_array($name, $def)) {
-									print '<td class="center">'."\n";
-									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=del&value='.$name.'">';
-									print img_picto($langs->trans("Enabled"), 'switch_on');
-									print '</a>';
+								if ($modulequalified) {
+									print '<tr class="oddeven"><td width="100">';
+									print (empty($module->name) ? $name : $module->name);
+									print "</td><td>\n";
+									if (method_exists($module, 'info')) {
+										print $module->info($langs);
+									} else {
+										print $module->description;
+									}
 									print '</td>';
-								} else {
-									print '<td class="center">'."\n";
-									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=set&amp;token='.newToken().'&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
-									print "</td>";
+
+									// Active
+									if (in_array($name, $def)) {
+										print '<td class="center">'."\n";
+										print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=del&token='.newToken().'&value='.urlencode($name).'">';
+										print img_picto($langs->trans("Enabled"), 'switch_on');
+										print '</a>';
+										print '</td>';
+									} else {
+										print '<td class="center">'."\n";
+										print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=set&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+										print "</td>";
+									}
+
+									// Default
+									print '<td class="center">';
+									if ($conf->global->HOLIDAY_ADDON_PDF == $name) {
+										print img_picto($langs->trans("Default"), 'on');
+									} else {
+										print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+									}
+									print '</td>';
+
+									// Info
+									$htmltooltip = ''.$langs->trans("Name").': '.$module->name;
+									$htmltooltip .= '<br>'.$langs->trans("Type").': '.($module->type ? $module->type : $langs->trans("Unknown"));
+									if ($module->type == 'pdf') {
+										$htmltooltip .= '<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
+									}
+									$htmltooltip .= '<br>'.$langs->trans("Path").': '.preg_replace('/^\//', '', $realpath).'/'.$file;
+
+									$htmltooltip .= '<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
+									$htmltooltip .= '<br>'.$langs->trans("Logo").': '.yn($module->option_logo, 1, 1);
+									$htmltooltip .= '<br>'.$langs->trans("PaymentMode").': '.yn($module->option_modereg, 1, 1);
+									$htmltooltip .= '<br>'.$langs->trans("PaymentConditions").': '.yn($module->option_condreg, 1, 1);
+									$htmltooltip .= '<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang, 1, 1);
+									$htmltooltip .= '<br>'.$langs->trans("WatermarkOnDraftOrders").': '.yn($module->option_draft_watermark, 1, 1);
+
+
+									print '<td class="center">';
+									print $form->textwithpicto('', $htmltooltip, 1, 0);
+									print '</td>';
+
+									// Preview
+									print '<td class="center">';
+									if ($module->type == 'pdf') {
+										print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
+									} else {
+										print img_object($langs->trans("PreviewNotAvailable"), 'generic');
+									}
+									print '</td>';
+
+									print "</tr>\n";
 								}
-
-								// Default
-								print '<td class="center">';
-								if ($conf->global->HOLIDAY_ADDON_PDF == $name) {
-									print img_picto($langs->trans("Default"), 'on');
-								} else {
-									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;token='.newToken().'&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
-								}
-								print '</td>';
-
-								// Info
-								$htmltooltip = ''.$langs->trans("Name").': '.$module->name;
-								$htmltooltip .= '<br>'.$langs->trans("Type").': '.($module->type ? $module->type : $langs->trans("Unknown"));
-								if ($module->type == 'pdf') {
-									$htmltooltip .= '<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
-								}
-								$htmltooltip .= '<br>'.$langs->trans("Path").': '.preg_replace('/^\//', '', $realpath).'/'.$file;
-
-								$htmltooltip .= '<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
-								$htmltooltip .= '<br>'.$langs->trans("Logo").': '.yn($module->option_logo, 1, 1);
-								$htmltooltip .= '<br>'.$langs->trans("PaymentMode").': '.yn($module->option_modereg, 1, 1);
-								$htmltooltip .= '<br>'.$langs->trans("PaymentConditions").': '.yn($module->option_condreg, 1, 1);
-								$htmltooltip .= '<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang, 1, 1);
-								$htmltooltip .= '<br>'.$langs->trans("WatermarkOnDraftOrders").': '.yn($module->option_draft_watermark, 1, 1);
-
-
-								print '<td class="center">';
-								print $form->textwithpicto('', $htmltooltip, 1, 0);
-								print '</td>';
-
-								// Preview
-								print '<td class="center">';
-								if ($module->type == 'pdf') {
-									print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
-								} else {
-									print img_object($langs->trans("PreviewNotAvailable"), 'generic');
-								}
-								print '</td>';
-
-								print "</tr>\n";
 							}
 						}
 					}
@@ -422,11 +418,11 @@ foreach ($dirmodels as $reldir) {
 			}
 		}
 	}
-}
 
-print '</table>';
-print '</div>';
-print "<br>";
+	print '</table>';
+	print '</div>';
+	print "<br>";
+}
 
 
 /*
@@ -446,42 +442,123 @@ print '<td>'.$langs->trans("Parameter").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Value").'</td>';
 print "</tr>\n";
 
-$substitutionarray = pdf_getSubstitutionArray($langs, array('objectamount'), null, 2);
-$substitutionarray['__(AnyTranslationKey)__'] = $langs->trans("Translation");
-$htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';
-foreach ($substitutionarray as $key => $val) {
-	$htmltext .= $key.'<br>';
+/*var_dump($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_MONDAY);
+var_dump($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_FRIDAY);
+var_dump($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY);
+var_dump($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY);
+*/
+if (!isset($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY)) {
+	$conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY = 1;
 }
-$htmltext .= '</i>';
+if (!isset($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY)) {
+	$conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY = 1;
+}
+/*
+var_dump($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_MONDAY);
+var_dump($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_FRIDAY);
+var_dump($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY);
+var_dump($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY);
+*/
 
-print '<tr class="oddeven"><td colspan="2">';
-print $form->textwithpicto($langs->trans("FreeLegalTextOnHolidays"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext, 1, 'help', '', 0, 2, 'tooltiphelp');
-print '<br>';
-$variablename = 'HOLIDAY_FREE_TEXT';
-if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT)) {
-	print '<textarea name="'.$variablename.'" class="flat" cols="120">'.$conf->global->$variablename.'</textarea>';
+// Set working days
+print '<tr class="oddeven">';
+print "<td>".$langs->trans("XIsAUsualNonWorkingDay", $langs->transnoentitiesnoconv("Monday"))."</td>";
+print '<td class="center">';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('MAIN_NON_WORKING_DAYS_INCLUDE_MONDAY', array(), null, 0);
 } else {
-	include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor = new DolEditor($variablename, $conf->global->$variablename, '', 80, 'dolibarr_notes');
-	print $doleditor->Create();
+	if (!empty($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_MONDAY)) {
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_other&token='.newToken().'&MAIN_NON_WORKING_DAYS_INCLUDE_MONDAY=1">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+	} else {
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_other&token='.newToken().'&MAIN_NON_WORKING_DAYS_INCLUDE_MONDAY=0">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+	}
 }
-print '</td></tr>'."\n";
+print "</td>";
+print "</tr>";
 
-//Use draft Watermark
+// Set working days
+print '<tr class="oddeven">';
+print "<td>".$langs->trans("XIsAUsualNonWorkingDay", $langs->transnoentitiesnoconv("Friday"))."</td>";
+print '<td class="center">';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('MAIN_NON_WORKING_DAYS_INCLUDE_FRIDAY', array(), null, 0);
+} else {
+	if (!empty($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_FRIDAY)) {
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_other&token='.newToken().'&MAIN_NON_WORKING_DAYS_INCLUDE_FRIDAY=1">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+	} else {
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_other&token='.newToken().'&MAIN_NON_WORKING_DAYS_INCLUDE_FRIDAY=0">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+	}
+}
+print "</td>";
+print "</tr>";
 
-print '<tr class="oddeven"><td>';
-print $form->textwithpicto($langs->trans("WatermarkOnDraftHolidayCards"), $htmltext, 1, 'help', '', 0, 2, 'watermarktooltip').'<br>';
-print '</td><td>';
-print '<input class="flat minwidth200" type="text" name="HOLIDAY_DRAFT_WATERMARK" value="'.$conf->global->HOLIDAY_DRAFT_WATERMARK.'">';
-print '</td></tr>'."\n";
+// Set working days
+print '<tr class="oddeven">';
+print "<td>".$langs->trans("XIsAUsualNonWorkingDay", $langs->transnoentitiesnoconv("Saturday"))."</td>";
+print '<td class="center">';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY', array(), null, 0, 0, 0, 2, 0, 1);
+} else {
+	if (!empty($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY)) {
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_other&token='.newToken().'&MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY=1">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+	} else {
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_other&token='.newToken().'&MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY=0">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+	}
+}
+print "</td>";
+print "</tr>";
+
+// Set working days
+print '<tr class="oddeven">';
+print "<td>".$langs->trans("XIsAUsualNonWorkingDay", $langs->transnoentitiesnoconv("Sunday"))."</td>";
+print '<td class="center">';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY', array(), null, 0, 0, 0, 2, 0, 1);
+} else {
+	if (!empty($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY)) {
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_other&token='.newToken().'&MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY=1">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+	} else {
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_other&token='.newToken().'&MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY=0">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+	}
+}
+print "</td>";
+print "</tr>";
+
+if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
+	$substitutionarray = pdf_getSubstitutionArray($langs, array('objectamount'), null, 2);
+	$substitutionarray['__(AnyTranslationKey)__'] = $langs->trans("Translation");
+	$htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';
+	foreach ($substitutionarray as $key => $val) {
+		$htmltext .= $key.'<br>';
+	}
+	$htmltext .= '</i>';
+
+	print '<tr class="oddeven"><td colspan="2">';
+	print $form->textwithpicto($langs->trans("FreeLegalTextOnHolidays"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext, 1, 'help', '', 0, 2, 'tooltiphelp');
+	print '<br>';
+	$variablename = 'HOLIDAY_FREE_TEXT';
+	if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT)) {
+		print '<textarea name="'.$variablename.'" class="flat" cols="120">'.$conf->global->$variablename.'</textarea>';
+	} else {
+		include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+		$doleditor = new DolEditor($variablename, $conf->global->$variablename, '', 80, 'dolibarr_notes');
+		print $doleditor->Create();
+	}
+	print '</td></tr>'."\n";
+
+	//Use draft Watermark
+
+	print '<tr class="oddeven"><td>';
+	print $form->textwithpicto($langs->trans("WatermarkOnDraftHolidayCards"), $htmltext, 1, 'help', '', 0, 2, 'watermarktooltip').'<br>';
+	print '</td><td>';
+	print '<input class="flat minwidth200" type="text" name="HOLIDAY_DRAFT_WATERMARK" value="'.$conf->global->HOLIDAY_DRAFT_WATERMARK.'">';
+	print '</td></tr>'."\n";
+}
 
 print '</table>';
 print '</div>';
 
-
-print '<div class="center">';
-print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
-print '</div>';
+print $form->buttonsSaveCancel("Save", '');
 
 print '</form>';
 
