@@ -268,7 +268,7 @@ class Export
 					continue;
 				}
 				if ($value != '') {
-					$sqlWhere .= " and ".$this->build_filterQuery($this->array_export_TypeFields[$indice][$key], $key, $array_filterValue[$key]);
+					$sqlWhere .= " AND ".$this->build_filterQuery($this->array_export_TypeFields[$indice][$key], $key, $array_filterValue[$key]);
 				}
 			}
 			$sql .= $sqlWhere;
@@ -350,6 +350,13 @@ class Export
 			case 'Boolean':
 				$szFilterQuery = " ".$NameField."=".(is_numeric($ValueField) ? $ValueField : ($ValueField == 'yes' ? 1 : 0));
 				break;
+			case 'FormSelect':
+				if (is_numeric($ValueField) && $ValueField > 0) {
+					$szFilterQuery = " ".$NameField." = ".((float) $ValueField);
+				} else {
+					$szFilterQuery = " 1=1";	// Test always true
+				}
+				break;
 			case 'Status':
 			case 'List':
 				if (is_numeric($ValueField)) {
@@ -402,7 +409,7 @@ class Export
 	public function build_filterField($TypeField, $NameField, $ValueField)
 	{
 		// phpcs:enable
-		global $conf, $langs;
+		global $conf, $langs, $form;
 
 		$szFilterField = '';
 		$InfoFieldList = explode(":", $TypeField);
@@ -442,6 +449,16 @@ class Export
 				}
 				$szFilterField .= ' value="0">'.yn(0).'</option>';
 				$szFilterField .= "</select>";
+				break;
+			case 'FormSelect':
+				//var_dump($NameField);
+				if ($InfoFieldList[1] == 'select_company') {
+					$szFilterField .= $form->select_company('', $NameField, '', 1);
+				} elseif ($InfoFieldList[1] == 'selectcontacts') {
+					$szFilterField .= $form->selectcontacts(0, '', $NameField, '&nbsp;');
+				} elseif ($InfoFieldList[1] == 'select_dolusers') {
+					$szFilterField .= $form->select_dolusers('', $NameField, 1);
+				}
 				break;
 			case 'List':
 				// 0 : Type du champ
