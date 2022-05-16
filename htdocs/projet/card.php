@@ -651,8 +651,10 @@ if ($action == 'create' && $user->rights->projet->creer) {
 		print '<input type="hidden" name="public" id="public" value="'.GETPOST('public').'">';
 
 		if (GETPOST('public') == 0) {
+			print img_picto($langs->trans('PrivateProject'), 'private', 'class="paddingrightonly"');
 			print $langs->trans("PrivateProject");
 		} else {
+			print img_picto($langs->trans('SharedProject'), 'world', 'class="paddingrightonly"');
 			print $langs->trans("SharedProject");
 		}
 	}
@@ -926,8 +928,10 @@ if ($action == 'create' && $user->rights->projet->creer) {
 			print '<input type="hidden" id="public" name="public" value="'.$object->public.'">';
 
 			if ($object->public == 0) {
+				print img_picto($langs->trans('PrivateProject'), 'private', 'class="paddingrightonly"');
 				print $langs->trans("PrivateProject");
 			} else {
+				print img_picto($langs->trans('SharedProject'), 'world', 'class="paddingrightonly"');
 				print $langs->trans("SharedProject");
 			}
 		}
@@ -1075,8 +1079,10 @@ if ($action == 'create' && $user->rights->projet->creer) {
 		// Visibility
 		print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
 		if ($object->public) {
+			print img_picto($langs->trans('SharedProject'), 'world', 'class="paddingrightonly"');
 			print $langs->trans('SharedProject');
 		} else {
+			print img_picto($langs->trans('SharedProject'), 'private', 'class="paddingrightonly"');
 			print $langs->trans('PrivateProject');
 		}
 		print '</td></tr>';

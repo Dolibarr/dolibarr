@@ -1097,7 +1097,8 @@ if ($step == 4 && $datatoimport) {
 		$entityicon = !empty($entitytoicon[$entity]) ? $entitytoicon[$entity] : $entity; // $entityicon must string name of picto of the field like 'project', 'company', 'contact', 'modulename', ...
 		$entitylang = $entitytolang[$entity] ? $entitytolang[$entity] : $objimport->array_import_label[0]; // $entitylang must be a translation key to describe object the field is related to, like 'Company', 'Contact', 'MyModyle', ...
 
-		print '<td class="nowraponall" style="font-weight: normal">=>'.img_object('', $entityicon).' '.$langs->trans($entitylang).'</td>';
+		print '<td class="nowraponall" style="font-weight: normal">=> '.img_object('', $entityicon).' '.$langs->trans($entitylang).'</td>';
+
 		print '<td class="nowraponall" style="font-weight: normal">';
 		print '<select id="selectorderimport_'.($i+1).'" class="targetselectchange minwidth300" name="select_'.$line["label"].'">';
 		if ($line["imported"]) {
@@ -1107,17 +1108,19 @@ if ($step == 4 && $datatoimport) {
 			print '<option selected="" value="-1">&nbsp;</option>';
 			print '<option value="'.$code.'">';
 		}
-		$text = $langs->trans($line["label"]);
 		$more = '';
+		$text = $langs->trans($line["label"]);
 		if ($line["required"]) {
-			$text .= "*";
+			print '<strong>'.$text.'*</strong>';
+		} else {
+			print $text;
 		}
-		print $text;
 		print '</option>';
 		print $optionsnotused;
 		print '</select>';
 		//print ajax_combobox('selectorderimport_'.($i+1));
 		print "</td>";
+
 		print '<td class="nowraponall" style="font-weight:normal; text-align:right">';
 		$filecolumn = !empty($array_match_database_to_file[$code])?$array_match_database_to_file[$code]:0;
 		// Source field info
@@ -1182,6 +1185,7 @@ if ($step == 4 && $datatoimport) {
 	print '</td></tr>';
 
 	// List of not imported fields
+	/*
 	print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("NotUsedFields").'</td></tr>';
 
 	print '<tr valign="top"><td width="50%">';
@@ -1220,6 +1224,7 @@ if ($step == 4 && $datatoimport) {
 		$i++;
 	}
 	print '</td></tr>';
+	*/
 
 	print '</table>';
 	print '</div>';
