@@ -8,6 +8,7 @@ ConfFileIsNotWritable=O ficheiro de configuración <b>%s</b> non se pode escribi
 ConfFileIsWritable=O ficheiro de configuración <b>%s</b> é escribíbel.
 ConfFileMustBeAFileNotADir=O ficheiro de configuración <b>%s</b> debe ser un ficheiro, non un directorio.
 ConfFileReload=Recargando parámetros do ficheiro de configuración.
+NoReadableConfFileSoStartInstall=O ficheiro de configuración <b> conf/conf.php </b> non existe ou non se pode recuperar. Realizaremos o proceso de instalación para tentar inicializalo.
 PHPSupportPOSTGETOk=Este PHP admite variables POST e GET.
 PHPSupportPOSTGETKo=É posible que a súa configuración de PHP non admita variables POST e/ou GET. Comprobe o parámetro <b>variables_order</b> en php.ini.
 PHPSupportSessions=Este PHP admite sesións.
@@ -21,6 +22,7 @@ ErrorPHPDoesNotSupportCurl=A súa instalación de PHP non admite Curl.
 ErrorPHPDoesNotSupportCalendar=A súa instalación de PHP non admite extensións do calendario php.
 ErrorPHPDoesNotSupportUTF8=A súa instalación de PHP non admite funcións UTF8. Dolibarr non pode funcionar correctamente. Resolva isto antes de instalar Dolibarr.
 ErrorPHPDoesNotSupportIntl=​​= A súa instalación de PHP non admite funcións Intl.
+ErrorPHPDoesNotSupportMbstring=A súa instalación de PHP non admite funcións mbstring.
 ErrorPHPDoesNotSupportxDebug=A súa instalación de PHP non admite funcións de depuración extensivas.
 ErrorPHPDoesNotSupport=A súa instalación de PHP non admite funcións de %s.
 ErrorDirDoesNotExists=O directorio %s non existe.
@@ -206,7 +208,7 @@ MigrationUserPhotoPath=Migración de enderezos de fotos para usuarios
 MigrationFieldsSocialNetworks=Migración de redes sociais dos campos dos usuarios (%s)
 MigrationReloadModule=Recargar o módulo %s
 MigrationResetBlockedLog=Restablecer o módulo BlockedLog para o algoritmo v7
-MigrationImportOrExportProfiles=Migration of import or export profiles (%s)
+MigrationImportOrExportProfiles=Migración de perfís de importación ou exportación (%s) 
 ShowNotAvailableOptions=Amosar as opcións non dispoñibles
 HideNotAvailableOptions=Ocultar opcións non dispoñibles
 ErrorFoundDuringMigration=Informáronse erros durante o proceso de migración polo que o seguinte paso non está dispoñible. Para ignorar os erros, pode <a href="%s"> facer clic aquí </a>, pero é posible que a aplicación ou algunhas funcións non funcionen correctamente ata que non se resolvan os erros.

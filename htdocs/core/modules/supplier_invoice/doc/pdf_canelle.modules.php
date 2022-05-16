@@ -133,7 +133,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		$this->db = $db;
 		$this->name = "canelle";
 		$this->description = $langs->trans('SuppliersInvoiceModel');
-		$this->update_main_doc_field = 1;		// Save the name of generated file as the main doc when generating a doc with this template
+		$this->update_main_doc_field = 1; // Save the name of generated file as the main doc when generating a doc with this template
 
 		// Page dimensions
 		$this->type = 'pdf';
@@ -181,6 +181,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		}
 
 		$this->tva = array();
+		$this->tva_array = array();
 		$this->localtax1 = array();
 		$this->localtax2 = array();
 		$this->atleastoneratenotnull = 0;
@@ -212,6 +213,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		if (!is_object($object->thirdparty)) {
 			$object->thirdparty = $mysoc; // If fetch_thirdparty fails, object has no socid (specimen)
 		}
+
 		$this->emetteur = $object->thirdparty;
 		if (!$this->emetteur->country_code) {
 			$this->emetteur->country_code = substr($langs->defaultlang, -2); // By default, if was not defined
@@ -231,8 +233,6 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		$nblines = count($object->lines);
 
 		if ($conf->fournisseur->facture->dir_output) {
-			$object->fetch_thirdparty();
-
 			$deja_regle = $object->getSommePaiement((!empty($conf->multicurrency->enabled) && $object->multicurrency_tx != 1) ? 1 : 0);
 			$amount_credit_notes_included = $object->getSumCreditNotesUsed((!empty($conf->multicurrency->enabled) && $object->multicurrency_tx != 1) ? 1 : 0);
 			$amount_deposits_included = $object->getSumDepositsUsed((!empty($conf->multicurrency->enabled) && $object->multicurrency_tx != 1) ? 1 : 0);
@@ -1239,7 +1239,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 			}
 
 			// Recipient name
-			if ($usecontact && ($object->contact->fk_soc != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)))) {
+			if ($usecontact && ($object->contact->socid != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)))) {
 				$thirdparty = $object->contact;
 			} else {
 				$thirdparty = $mysoc;

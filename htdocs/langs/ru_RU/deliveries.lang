@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Доставка
-DeliveryRef=Ref Доставка
+DeliveryRef=Ссылка Доставка
 DeliveryCard=Квитанция
 DeliveryOrder=Квитанция о доставке
 DeliveryDate=Дата доставки
@@ -10,7 +10,7 @@ SetDeliveryDate=Установить дату отправки
 ValidateDeliveryReceipt=Подтверждение получения доставки
 ValidateDeliveryReceiptConfirm=Вы уверены, что хотите подтвердить эту квитанцию о доставке?
 DeleteDeliveryReceipt=Удалить подтверждение доставки
-DeleteDeliveryReceiptConfirm=Вы действительно хотите удалить квитанцию о доставке <b> %s </b>?
+DeleteDeliveryReceiptConfirm=Вы действительно хотите удалить квитанцию о доставке <b>%s</b>?
 DeliveryMethod=Способ доставки
 TrackingNumber=Номер отправления
 DeliveryNotValidated=Доставка не подтверждена

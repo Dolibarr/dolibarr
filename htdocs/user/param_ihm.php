@@ -207,6 +207,9 @@ if (!empty($conf->adherent->enabled)) {
 if (!empty($conf->agenda->enabled)) {
 	$tmparray['comm/action/index.php?mainmenu=agenda&leftmenu='] = 'Agenda';
 }
+if (!empty($conf->ticket->enabled)) {
+	$tmparray['ticket/list.php?mainmenu=ticket&leftmenu='] = 'Tickets';
+}
 
 $head = user_prepare_head($object);
 
@@ -235,7 +238,7 @@ if ($action == 'edit') {
 
 
 	if (!empty($conf->use_javascript_ajax)) {
-		print '<script type="text/javascript" language="javascript">
+		print '<script type="text/javascript">
         jQuery(document).ready(function() {
         	function init_myfunc()
         	{
@@ -328,11 +331,7 @@ if ($action == 'edit') {
 	showSkins($object, (($user->admin || empty($dolibarr_main_demo)) ? 1 : 0), true);
 
 
-	print '<div class="center">';
-	print '<input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'">';
-	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
-	print '</div>';
+	print $form->buttonsSaveCancel();
 } else {
 	print dol_get_fiche_head($head, 'guisetup', $title, -1, 'user');
 
@@ -409,12 +408,12 @@ if ($action == 'edit') {
 
 	print '<div class="tabsAction">';
 	if (empty($user->admin) && !empty($dolibarr_main_demo)) {
-		print "<a class=\"butActionRefused classfortooltip\" title=\"".$langs->trans("FeatureDisabledInDemo")."\" href=\"#\">".$langs->trans("Modify")."</a>";
+		print '<a class="butActionRefused classfortooltip" title="'.$langs->trans("FeatureDisabledInDemo").'" href="#">'.$langs->trans("Modify").'</a>';
 	} else {
 		if ($caneditfield || !empty($user->admin)) {       // Si utilisateur edite = utilisateur courant (pas besoin de droits particulier car il s'agit d'une page de modif d'output et non de données) ou si admin
-			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&amp;id='.$object->id.'">'.$langs->trans("Modify").'</a>';
+			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Modify").'</a>';
 		} else {
-			print "<a class=\"butActionRefused classfortooltip\" title=\"".$langs->trans("NotEnoughPermissions")."\" href=\"#\">".$langs->trans("Modify")."</a>";
+			print '<a class="butActionRefused classfortooltip" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$langs->trans("Modify").'</a>';
 		}
 	}
 

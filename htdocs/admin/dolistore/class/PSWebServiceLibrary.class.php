@@ -232,7 +232,10 @@ class PrestaShopWebservice
 		if ($response != '') {
 			libxml_clear_errors();
 			libxml_use_internal_errors(true);
-			$xml = simplexml_load_string($response, 'SimpleXMLElement', LIBXML_NOCDATA);
+			if (!function_exists('simplexml_load_string')) {
+				throw new PrestaShopWebserviceException('Method simplexml_load_string not available. Your PHP does not support xml.');
+			}
+			$xml = simplexml_load_string($response, 'SimpleXMLElement', LIBXML_NOCDATA|LIBXML_NONET);
 			if (libxml_get_errors()) {
 				$msg = var_export(libxml_get_errors(), true);
 				libxml_clear_errors();

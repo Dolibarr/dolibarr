@@ -35,6 +35,9 @@ OnlyOneFieldForXAxisIsPossible=Only 1 field is currently possible as X-Axis. Onl
 AtLeastOneMeasureIsRequired=At least 1 field for measure is required
 AtLeastOneXAxisIsRequired=At least 1 field for X-Axis is required
 LatestBlogPosts=Latest Blog Posts
+notiftouser=To users
+notiftofixedemail=To fixed mail
+notiftouserandtofixedemail=To user and fixed mail
 Notify_ORDER_VALIDATE=Sales order validated
 Notify_ORDER_SENTBYMAIL=Sales order sent by mail
 Notify_ORDER_SUPPLIER_SENTBYMAIL=Purchase order sent by email
@@ -255,6 +258,10 @@ PassEncoding=Password encoding
 PermissionsAdd=Permissions added
 PermissionsDelete=Permissions removed
 YourPasswordMustHaveAtLeastXChars=Your password must have at least <strong>%s</strong> chars
+PasswordNeedAtLeastXUpperCaseChars=The password need at least <strong>%s</strong> upper case chars
+PasswordNeedAtLeastXDigitChars=The password need at least <strong>%s</strong> numeric chars
+PasswordNeedAtLeastXSpecialChars=The password need at least <strong>%s</strong> special chars
+PasswordNeedNoXConsecutiveChars=The password must not have <strong>%s</strong> consecutive similar chars
 YourPasswordHasBeenReset=Your password has been reset successfully
 ApplicantIpAddress=IP address of applicant
 SMSSentTo=SMS sent to %s
@@ -265,6 +272,7 @@ ProjectCreatedByEmailCollector=Project created by email collector from email MSG
 TicketCreatedByEmailCollector=Ticket created by email collector from email MSGID %s
 OpeningHoursFormatDesc=Use a - to separate opening and closing hours.<br>Use a space to enter different ranges.<br>Example: 8-12 14-18
 SuffixSessionName=Suffix for session name
+LoginWith=Login with %s
 
 ##### Export #####
 ExportsArea=Področje izvoza
@@ -291,3 +299,7 @@ PopuCom=Products/Services by popularity in Orders
 ProductStatistics=Products/Services Statistics
 NbOfQtyInOrders=Qty in orders
 SelectTheTypeOfObjectToAnalyze=Select an object to view its statistics...
+
+ConfirmBtnCommonContent = Are you sure you want to "%s" ?
+ConfirmBtnCommonTitle = Confirm your action
+CloseDialog = Zapri

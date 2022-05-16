@@ -6,7 +6,7 @@ OtherSupport=Другие виды поддержки
 ToSeeListOfAvailableRessources=Связаться/Смотреть имеющиеся ресурсы:
 HelpCenter=Справочный центр
 DolibarrHelpCenter=Центр справки и поддержки Dolibarr
-ToGoBackToDolibarr=В противном случае <a href="%s"> щелкните здесь, чтобы продолжить использование Dolibarr </a>.
+ToGoBackToDolibarr=В противном случае <a href="%s">щелкните здесь, чтобы продолжить использование Dolibarr</a>.
 TypeOfSupport=Тип поддержки
 TypeSupportCommunauty=Сообщество (бесплатно)
 TypeSupportCommercial=Коммерческая
@@ -16,8 +16,8 @@ Efficiency=Эффективность
 TypeHelpOnly=Только справка
 TypeHelpDev=Справка + Разработка
 TypeHelpDevForm=Помощь + Развитие + Обучение
-BackToHelpCenter=В противном случае <a href="%s"> вернитесь на домашнюю страницу справочного центра </a>.
+BackToHelpCenter=В противном случае <a href="%s">вернитесь на домашнюю страницу справочного центра</a>.
 LinkToGoldMember=Вы можете позвонить одному из тренеров, предварительно выбранных Dolibarr для вашего языка (%s), щелкнув его виджет (статус и максимальная цена обновляются автоматически):
 PossibleLanguages=Поддерживаемые языки
 SubscribeToFoundation=Помогите проекту Долибарр, подпишитесь на фонд
-SeeOfficalSupport=Для официальной поддержки Dolibarr на вашем языке: <br> <b> <a href="%s" target="_blank"> %s </a> </b>
+SeeOfficalSupport=Для официальной поддержки Dolibarr на вашем языке: <br><b><a href="%s" target="_blank">%s</a></b>

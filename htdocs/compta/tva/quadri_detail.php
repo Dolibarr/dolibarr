@@ -6,7 +6,7 @@
  * Copyright (C) 2014       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2019       Eric Seigne             <eric.seigne@cap-rel.fr>
- * Copyright (C) 2021       Open-Dsi                <support@open-dsi.fr>
+ * Copyright (C) 2021-2022  Open-Dsi                <support@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +47,7 @@ $langs->loadLangs(array("other", "compta", "banks", "bills", "companies", "produ
 
 $refresh = (GETPOSTISSET('submit') || GETPOSTISSET('vat_rate_show') || GETPOSTISSET('invoice_type')) ? true : false;
 $invoice_type = GETPOSTISSET('invoice_type') ? GETPOST('invoice_type', 'alpha') : '';
-$vat_rate_show = GETPOSTISSET('vat_rate_show') ? GETPOST('vat_rate_show', 'int') : -1;
+$vat_rate_show = GETPOSTISSET('vat_rate_show') ? GETPOST('vat_rate_show', 'alphanohtml') : -1;
 
 include DOL_DOCUMENT_ROOT.'/compta/tva/initdatesforvat.inc.php';
 
@@ -409,7 +409,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 			print '<td class="tax_rate" colspan="' . ($span+1) . '">';
 			print $langs->trans('Rate') . ' : ' . vatrate($rate) . '%';
 			print ' - <a href="'.DOL_URL_ROOT.'/compta/tva/quadri_detail.php?invoice_type=customer';
-			if (!GETPOSTISSET('vat_rate_show') || GETPOST('vat_rate_show') != $rate) {
+			if ($invoice_type != 'customer' || !GETPOSTISSET('vat_rate_show') || GETPOST('vat_rate_show') != $rate) {
 				print '&amp;vat_rate_show='.urlencode($rate);
 			}
 			print '&amp;date_startyear='.urlencode($date_start_year).'&amp;date_startmonth='.urlencode($date_start_month).'&amp;date_startday='.urlencode($date_start_day).'&amp;date_endyear='.urlencode($date_end_year).'&amp;date_endmonth='.urlencode($date_end_month).'&amp;date_endday='.urlencode($date_end_day).'">' . img_picto('', 'chevron-down', 'class="paddingrightonly"') . $langs->trans('VATReportShowByRateDetails') . '</a>';
@@ -643,7 +643,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 			print '<td class="tax_rate" colspan="' . ($span+1) . '">';
 			print $langs->trans('Rate') . ' : ' . vatrate($rate) . '%';
 			print ' - <a href="'.DOL_URL_ROOT.'/compta/tva/quadri_detail.php?invoice_type=supplier';
-			if (!GETPOSTISSET('vat_rate_show') || GETPOST('vat_rate_show') != $rate) {
+			if ($invoice_type != 'supplier' || !GETPOSTISSET('vat_rate_show') || GETPOST('vat_rate_show') != $rate) {
 				print '&amp;vat_rate_show='.urlencode($rate);
 			}
 			print '&amp;date_startyear='.urlencode($date_start_year).'&amp;date_startmonth='.urlencode($date_start_month).'&amp;date_startday='.urlencode($date_start_day).'&amp;date_endyear='.urlencode($date_end_year).'&amp;date_endmonth='.urlencode($date_end_month).'&amp;date_endday='.urlencode($date_end_day).'">' . img_picto('', 'chevron-down', 'class="paddingrightonly"') . $langs->trans('VATReportShowByRateDetails') . '</a>';

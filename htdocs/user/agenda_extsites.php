@@ -226,10 +226,12 @@ while ($i <= $MAXAGENDA) {
 print '</table>';
 print '</div>';
 
-
-print '<div class="center">';
-print '<input type="submit" id="save" name="save" class="button hideifnotset button-save" value="'.$langs->trans("Save").'">';
-print "</div>";
+$addition_button = array(
+	'name' => 'save',
+	'label_key' => 'Save',
+	'addclass' => 'hideifnotset',
+);
+print $form->buttonsSaveCancel("", "", $addition_button);
 
 print dol_get_fiche_end();
 

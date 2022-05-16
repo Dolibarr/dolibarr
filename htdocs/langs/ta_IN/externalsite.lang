@@ -1,0 +1,5 @@
+# Dolibarr language file - Source file is en_US - externalsite
+ExternalSiteSetup=வெளிப்புற இணையதளத்திற்கான இணைப்பை அமைக்கவும்
+ExternalSiteURL=HTML iframe உள்ளடக்கத்தின் வெளிப்புற தள URL
+ExternalSiteModuleNotComplete=ExternalSite தொகுதி சரியாக உள்ளமைக்கப்படவில்லை.
+ExampleMyMenuEntry=எனது மெனு பதிவு

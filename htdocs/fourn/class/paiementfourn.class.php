@@ -93,7 +93,7 @@ class PaiementFourn extends Paiement
 
 		$sql = 'SELECT p.rowid, p.ref, p.entity, p.datep as dp, p.amount, p.statut, p.fk_bank, p.multicurrency_amount,';
 		$sql .= ' c.code as payment_code, c.libelle as payment_type,';
-		$sql .= ' p.num_paiement as num_payment, p.note, b.fk_account';
+		$sql .= ' p.num_paiement as num_payment, p.note, b.fk_account, p.fk_paiement';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'paiementfourn as p';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as c ON p.fk_paiement = c.id';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid';
@@ -130,6 +130,7 @@ class PaiementFourn extends Paiement
 				$this->note_private         = $obj->note;
 				$this->type_code            = $obj->payment_code;
 				$this->type_label           = $obj->payment_type;
+				$this->fk_paiement           = $obj->fk_paiement;
 				$this->statut               = $obj->statut;
 
 				$error = 1;
@@ -159,11 +160,12 @@ class PaiementFourn extends Paiement
 		$error = 0;
 		$way = $this->getWay();
 
+		$now = dol_now();
+
 		// Clean parameters
 		$totalamount = 0;
 		$totalamount_converted = 0;
-
-		dol_syslog(get_class($this)."::create", LOG_DEBUG);
+		$atleastonepaymentnotnull = 0;
 
 		if ($way == 'dolibarr') {
 			$amounts = &$this->amounts;
@@ -173,23 +175,62 @@ class PaiementFourn extends Paiement
 			$amounts_to_update = &$this->amounts;
 		}
 
+		$currencyofpayment = '';
+
 		foreach ($amounts as $key => $value) {
+			if (empty($value)) {
+				continue;
+			}
+			// $key is id of invoice, $value is amount, $way is a 'dolibarr' if amount is in main currency, 'customer' if in foreign currency
 			$value_converted = Multicurrency::getAmountConversionFromInvoiceRate($key, $value ? $value : 0, $way, 'facture_fourn');
+			// Add controls of input validity
+			if ($value_converted === false) {
+				// We failed to find the conversion for one invoice
+				$this->error = 'FailedToFoundTheConversionRateForInvoice';
+				return -1;
+			}
+			if (empty($currencyofpayment)) {
+				$currencyofpayment = $this->multicurrency_code[$key];
+			}
+			if ($currencyofpayment != $this->multicurrency_code[$key]) {
+				// If we have invoices with different currencies in the payment, we stop here
+				$this->error = 'ErrorYouTryToPayInvoicesWithDifferentCurrenciesInSamePayment';
+				return -1;
+			}
+
 			$totalamount_converted += $value_converted;
 			$amounts_to_update[$key] = price2num($value_converted, 'MT');
 
 			$newvalue = price2num($value, 'MT');
 			$amounts[$key] = $newvalue;
 			$totalamount += $newvalue;
+			if (!empty($newvalue)) {
+				$atleastonepaymentnotnull++;
+			}
 		}
+
+		if (!empty($currencyofpayment)) {
+			// We must check that the currency of invoices is the same than the currency of the bank
+			$bankaccount = new Account($this->db);
+			$bankaccount->fetch($this->fk_account);
+			$bankcurrencycode = empty($bankaccount->currency_code) ? $conf->currency : $bankaccount->currency_code;
+			if ($currencyofpayment != $bankcurrencycode && $currencyofpayment != $conf->currency && $bankcurrencycode != $conf->currency) {
+				$langs->load("errors");
+				$this->error = $langs->trans('ErrorYouTryToPayInvoicesInACurrencyFromBankWithAnotherCurrency', $currencyofpayment, $bankcurrencycode);
+				return -1;
+			}
+		}
+
+
 		$totalamount = price2num($totalamount);
 		$totalamount_converted = price2num($totalamount_converted);
+
+		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 
 		$this->db->begin();
 
 		if ($totalamount <> 0) { // On accepte les montants negatifs
 			$ref = $this->getNextNumRef(is_object($thirdparty) ? $thirdparty : '');
-			$now = dol_now();
 
 			if ($way == 'dolibarr') {
 				$total = $totalamount;
@@ -201,8 +242,8 @@ class PaiementFourn extends Paiement
 
 			$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'paiementfourn (';
 			$sql .= 'ref, entity, datec, datep, amount, multicurrency_amount, fk_paiement, num_paiement, note, fk_user_author, fk_bank)';
-			$sql .= " VALUES ('".$this->db->escape($ref)."', ".$conf->entity.", '".$this->db->idate($now)."',";
-			$sql .= " '".$this->db->idate($this->datepaye)."', '".$total."', '".$mtotal."', ".$this->paiementid.", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note_private)."', ".$user->id.", 0)";
+			$sql .= " VALUES ('".$this->db->escape($ref)."', ".((int) $conf->entity).", '".$this->db->idate($now)."',";
+			$sql .= " '".$this->db->idate($this->datepaye)."', ".((float) $total).", ".((float) $mtotal).", ".((int) $this->paiementid).", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note_private)."', ".((int) $user->id).", 0)";
 
 			$resql = $this->db->query($sql);
 			if ($resql) {
@@ -214,7 +255,7 @@ class PaiementFourn extends Paiement
 					if (is_numeric($amount) && $amount <> 0) {
 						$amount = price2num($amount);
 						$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'paiementfourn_facturefourn (fk_facturefourn, fk_paiementfourn, amount, multicurrency_amount)';
-						$sql .= ' VALUES ('.$facid.','.$this->id.',\''.$amount.'\', \''.$this->multicurrency_amounts[$key].'\')';
+						$sql .= " VALUES (".((int) $facid).", ".((int) $this->id).", ".((float) $amount).', '.((float) $this->multicurrency_amounts[$key]).')';
 						$resql = $this->db->query($sql);
 						if ($resql) {
 							$invoice = new FactureFournisseur($this->db);
@@ -223,10 +264,10 @@ class PaiementFourn extends Paiement
 							// If we want to closed paid invoices
 							if ($closepaidinvoices) {
 								$paiement = $invoice->getSommePaiement();
-								//$creditnotes=$invoice->getSumCreditNotesUsed();
-								$creditnotes = 0;
-								//$deposits=$invoice->getSumDepositsUsed();
-								$deposits = 0;
+								$creditnotes=$invoice->getSumCreditNotesUsed();
+								//$creditnotes = 0;
+								$deposits=$invoice->getSumDepositsUsed();
+								//$deposits = 0;
 								$alreadypayed = price2num($paiement + $creditnotes + $deposits, 'MT');
 								$remaintopay = price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits, 'MT');
 								if ($remaintopay == 0) {
@@ -238,7 +279,7 @@ class PaiementFourn extends Paiement
 										// Insert one discount by VAT rate category
 										require_once DOL_DOCUMENT_ROOT . '/core/class/discount.class.php';
 										$discount = new DiscountAbsolute($this->db);
-										$discount->fetch('', $invoice->id);
+										$discount->fetch('', 0, $invoice->id);
 										if (empty($discount->id)) {    // If the invoice was not yet converted into a discount (this may have been done manually before we come here)
 											$discount->discount_type = 1; // Supplier discount
 											$discount->description = '(DEPOSIT)';
@@ -345,7 +386,7 @@ class PaiementFourn extends Paiement
 			$this->total = $total;
 			$this->multicurrency_amount = $mtotal;
 			$this->db->commit();
-			dol_syslog('PaiementFourn::Create Ok Total = '.$this->total);
+			dol_syslog('PaiementFourn::Create Ok Total = '.$this->amount.', Total currency = '.$this->multicurrency_amount);
 			return $this->id;
 		} else {
 			$this->db->rollback();
@@ -398,11 +439,11 @@ class PaiementFourn extends Paiement
 
 		// Efface la ligne de paiement (dans paiement_facture et paiement)
 		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'paiementfourn_facturefourn';
-		$sql .= ' WHERE fk_paiementfourn = '.$this->id;
+		$sql .= ' WHERE fk_paiementfourn = '.((int) $this->id);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'paiementfourn';
-			$sql .= ' WHERE rowid = '.$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 			$result = $this->db->query($sql);
 			if (!$result) {
 				$this->error = $this->db->error();
@@ -484,16 +525,16 @@ class PaiementFourn extends Paiement
 	/**
 	 *	Return list of supplier invoices the payment point to
 	 *
-	 *	@param      string	$filter         SQL filter
+	 *	@param      string	$filter         SQL filter. Warning: This value must not come from a user input.
 	 *	@return     array           		Array of supplier invoice id
 	 */
 	public function getBillsArray($filter = '')
 	{
 		$sql = 'SELECT fk_facturefourn';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf, '.MAIN_DB_PREFIX.'facture_fourn as f';
-		$sql .= ' WHERE pf.fk_facturefourn = f.rowid AND fk_paiementfourn = '.$this->id;
+		$sql .= ' WHERE pf.fk_facturefourn = f.rowid AND fk_paiementfourn = '.((int) $this->id);
 		if ($filter) {
-			$sql .= ' AND '.$filter;
+			$sql .= " AND ".$filter;
 		}
 
 		dol_syslog(get_class($this).'::getBillsArray', LOG_DEBUG);
@@ -593,7 +634,11 @@ class PaiementFourn extends Paiement
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $mode = 'withlistofinvoices', $notooltip = 0, $morecss = '')
 	{
-		global $langs;
+		global $langs, $conf, $hookmanager;
+
+		if (!empty($conf->dol_no_mouse_hover)) {
+			$notooltip = 1; // Force disable tooltips
+		}
 
 		$result = '';
 
@@ -609,8 +654,12 @@ class PaiementFourn extends Paiement
 
 		$label = img_picto('', $this->picto).' <u>'.$langs->trans("Payment").'</u><br>';
 		$label .= '<strong>'.$langs->trans("Ref").':</strong> '.$text;
-		if ($this->datepaye ? $this->datepaye : $this->date) {
-			$label .= '<br><strong>'.$langs->trans("Date").':</strong> '.dol_print_date($this->datepaye ? $this->datepaye : $this->date, 'dayhour', 'tzuser');
+		$dateofpayment = ($this->datepaye ? $this->datepaye : $this->date);
+		if ($dateofpayment) {
+			$label .= '<br><strong>'.$langs->trans("Date").':</strong> '.dol_print_date($dateofpayment, 'dayhour', 'tzuser');
+		}
+		if ($this->amount) {
+			$label .= '<br><strong>'.$langs->trans("Amount").':</strong> '.price($this->amount, 0, $langs, 1, -1, -1, $conf->currency);
 		}
 
 		$linkclose = '';
@@ -638,6 +687,15 @@ class PaiementFourn extends Paiement
 		}
 		$result .= $linkend;
 
+		global $action;
+		$hookmanager->initHooks(array($this->element . 'dao'));
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
+		}
 		return $result;
 	}
 

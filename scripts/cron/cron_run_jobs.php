@@ -76,9 +76,6 @@ $userlogin = $argv[2];
 $version = DOL_VERSION;
 $error = 0;
 
-// Language Management
-$langs->loadLangs(array('main', 'admin', 'cron', 'dict'));
-
 
 /*
  * Main
@@ -130,7 +127,7 @@ if ($userlogin == 'firstadmin') {
 
 // Check user login
 $user = new User($db);
-$result = $user->fetch('', $userlogin);
+$result = $user->fetch('', $userlogin, '', 1);
 if ($result < 0) {
 	echo "User Error: ".$user->error;
 	dol_syslog("cron_run_jobs.php:: User Error:".$user->error, LOG_ERR);
@@ -142,6 +139,19 @@ if ($result < 0) {
 		exit(-1);
 	}
 }
+
+// Reload langs
+$langcode = (empty($conf->global->MAIN_LANG_DEFAULT) ? 'auto' : $conf->global->MAIN_LANG_DEFAULT);
+if (!empty($user->conf->MAIN_LANG_DEFAULT)) {
+	$langcode = $user->conf->MAIN_LANG_DEFAULT;
+}
+if ($langs->getDefaultLang() != $langcode) {
+	$langs->setDefaultLang($langcode);
+	$langs->tab_translate = array();
+}
+// Language Management
+$langs->loadLangs(array('main', 'admin', 'cron', 'dict'));
+
 $user->getrights();
 
 if (isset($argv[3]) && $argv[3]) {
@@ -200,8 +210,8 @@ if (is_array($qualifiedjobs) && (count($qualifiedjobs) > 0)) {
 			$mysoc->setMysoc($conf);
 
 			// Force recheck that user is ok for the entity to process and reload permission for entity
-			if ($conf->entity != $user->entity && $user->entity != 0) {
-				$result = $user->fetch('', $userlogin, '', 0, $conf->entity);
+			if ($conf->entity != $user->entity) {
+				$result = $user->fetch('', $userlogin, '', 1);
 				if ($result < 0) {
 					echo "\nUser Error: ".$user->error."\n";
 					dol_syslog("cron_run_jobs.php:: User Error:".$user->error, LOG_ERR);
@@ -223,6 +233,8 @@ if (is_array($qualifiedjobs) && (count($qualifiedjobs) > 0)) {
 			}
 			if ($langs->getDefaultLang() != $langcode) {
 				$langs->setDefaultLang($langcode);
+				$langs->tab_translate = array();
+				$langs->loadLangs(array('main', 'admin', 'cron', 'dict'));
 			}
 		}
 

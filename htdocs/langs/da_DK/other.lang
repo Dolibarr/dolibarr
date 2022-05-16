@@ -35,6 +35,9 @@ OnlyOneFieldForXAxisIsPossible=Kun 1 felt er i øjeblikket muligt som X-Axis. Ku
 AtLeastOneMeasureIsRequired=Mindst 1 felt til mål er påkrævet
 AtLeastOneXAxisIsRequired=Mindst 1 felt til X-Axis kræves
 LatestBlogPosts=Seneste blogindlæg
+notiftouser=Til brugerne
+notiftofixedemail=Til fast post
+notiftouserandtofixedemail=Til bruger og fast mail
 Notify_ORDER_VALIDATE=Salgsordre godkendt
 Notify_ORDER_SENTBYMAIL=Salgsordre sendes med posten
 Notify_ORDER_SUPPLIER_SENTBYMAIL=Indkøbsordre sendt via e-mail
@@ -255,6 +258,10 @@ PassEncoding=Kodeord for kodeord
 PermissionsAdd=Tilladelser tilføjet
 PermissionsDelete=Tilladelser fjernet
 YourPasswordMustHaveAtLeastXChars=Dit kodeord skal have mindst <strong> %s </ strong> tegn
+PasswordNeedAtLeastXUpperCaseChars=Adgangskoden skal have mindst <strong> %s </strong> store bogstaver
+PasswordNeedAtLeastXDigitChars=Adgangskoden skal have mindst <strong> %s </strong> numeriske tegn
+PasswordNeedAtLeastXSpecialChars=Adgangskoden skal mindst have <strong> %s </strong> specielle tegn
+PasswordNeedNoXConsecutiveChars=Adgangskoden må ikke have <strong> %s </strong> fortløbende lignende tegn
 YourPasswordHasBeenReset=Dit kodeord er nulstillet
 ApplicantIpAddress=Ansøgerens IP-adresse
 SMSSentTo=SMS sendt til %s
@@ -265,6 +272,7 @@ ProjectCreatedByEmailCollector=Projekt skabt via e-mail indsamler fra mail MSGID
 TicketCreatedByEmailCollector=Billet skabt via e-mail indsamler fra mail MSGID %s
 OpeningHoursFormatDesc=Brug et - til separat åbning og lukning timer. <br> brug en mellemrum"Space" til at indtaste forskellige område. <br> Eksempel: 8-12 14-18
 SuffixSessionName=Suffiks til sessionens navn
+LoginWith=Log ind med %s
 
 ##### Export #####
 ExportsArea=Eksport område
@@ -291,3 +299,7 @@ PopuCom=Produkter/tjenester efter popularitet i ordrer
 ProductStatistics=Produkter / services statistik
 NbOfQtyInOrders=Antal i ordrer
 SelectTheTypeOfObjectToAnalyze=Vælg et objekt for at se dets statistik ...
+
+ConfirmBtnCommonContent = Er du sikker på, at du vil "%s"?
+ConfirmBtnCommonTitle = Bekræft din handling
+CloseDialog = Luk

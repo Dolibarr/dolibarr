@@ -45,6 +45,8 @@ TicketSeverityShortNORMAL=正常
 TicketSeverityShortHIGH=高
 TicketSeverityShortBLOCKING=嚴重，阻止中
 
+TicketCategoryShortOTHER=其他
+
 ErrorBadEmailAddress=欄位'%s'不正確
 MenuTicketMyAssign=我的服務單
 MenuTicketMyAssignNonClosed=我的開放服務單
@@ -55,7 +57,7 @@ TypeContact_ticket_internal_SUPPORTTEC=已分配用戶
 TypeContact_ticket_external_SUPPORTCLI=客戶聯絡人/事件追踪
 TypeContact_ticket_external_CONTRIBUTOR=外部合作者
 
-OriginEmail=Reporter Email
+OriginEmail=填寫人Email
 Notify_TICKET_SENTBYMAIL=以電子郵件發送服務單訊息
 
 # Status
@@ -66,7 +68,7 @@ NeedMoreInformation=等待作者回覆
 NeedMoreInformationShort=等待回覆
 Answered=已回覆
 Waiting=等待中
-Closed=已關閉
+SolvedClosed=已解決
 Deleted=已刪除
 
 # Dict
@@ -85,13 +87,13 @@ TicketSetup=服務單模組設定
 TicketSettings=設定
 TicketSetupPage=
 TicketPublicAccess=以下網址提供了無需認證的公共界面
-TicketSetupDictionaries=服務單類型，嚴重性和分析代碼可通過詞典設定
+TicketSetupDictionaries=服務單類型，嚴重性和分析代碼可前往分類進行設定
 TicketParamModule=模組變數設定
 TicketParamMail=電子郵件設定
-TicketEmailNotificationFrom=電子郵件通知寄件人
-TicketEmailNotificationFromHelp=已在服務單中使用範例訊息回覆
-TicketEmailNotificationTo=電子郵件通知收件人
-TicketEmailNotificationToHelp=發送電子郵件通知到此地址。
+TicketEmailNotificationFrom=回應服務單寄件者e-mail
+TicketEmailNotificationFromHelp=從Dolibarr回應服務單寄件者e-mail
+TicketEmailNotificationTo=服務單建立通知傳送至此電子郵件
+TicketEmailNotificationToHelp=如果存在，將通知此電子郵件有服務單被建立
 TicketNewEmailBodyLabel=建立服務單後發送的訊息
 TicketNewEmailBodyHelp=此處指定的文字將插入到從公共界面建立新服務單的電子郵件中。將自動加入有關故障服務單諮詢的資訊。
 TicketParamPublicInterface=公共界面設定
@@ -129,11 +131,23 @@ TicketsAutoAssignTicketHelp=建立服務單時，可以自動將用戶分配給�
 TicketNumberingModules=服務單編號模組
 TicketsModelModule=服務單的文件範本
 TicketNotifyTiersAtCreation=建立時通知合作方
-TicketsDisableCustomerEmail=從公共界面建立服務單時，始終禁用電子郵件
+TicketsDisableCustomerEmail=從公共界面建立服務單時，停用發送電子郵件
 TicketsPublicNotificationNewMessage=當有新的訊息/意見新增到服務單時寄送Email
 TicketsPublicNotificationNewMessageHelp=當公共界面有新增訊息時寄送電子郵件(給已分配用戶或寄送通知電子郵件給(更新)與/或通知電子郵件給)
 TicketPublicNotificationNewMessageDefaultEmail=通知電子郵件寄送到（更新）
 TicketPublicNotificationNewMessageDefaultEmailHelp=如果服務單未分配給用戶或是用戶沒有已知的電子郵件則為每一個新訊息提醒寄送一封電子郵件至這個信箱
+TicketsAutoReadTicket=自動將服務單標記為已讀取（從後台建立時）
+TicketsAutoReadTicketHelp=從後台建立服務單時自動將服務單標記為已讀取。從公共界面建立服務單時，服務單狀態保持為“未讀取”狀態。
+TicketsDelayBeforeFirstAnswer=新服務單應該在多久之內收到第一個回覆（小時）：
+TicketsDelayBeforeFirstAnswerHelp=如果新服務單在此時間之後仍未收到回覆(小時)，清單視圖中將顯示一個重要的警告標誌。
+TicketsDelayBetweenAnswers=未解決的服務單在多久內不應該是非活動狀態（小時）：
+TicketsDelayBetweenAnswersHelp=如果已收到回覆的未解決服務單在此時間內(小時)沒有進一步的互動，則清單視圖中將顯示一個警告標誌。
+TicketsAutoNotifyClose=關閉服務單時自動通知合作方
+TicketsAutoNotifyCloseHelp=關閉服務單時，系統會建議您向合作方的其中一位聯絡人發送訊息。在批次關閉時，將向與連結到服務單的合作方聯絡人發送一則訊息。
+TicketWrongContact=提供的聯絡人不屬於目前服務單的聯絡人。電子郵件未發送。
+TicketChooseProductCategory=服務單支援的產品類別
+TicketChooseProductCategoryHelp=選擇服務單支援的產品類別。這將用於自動將合約連結到服務單。
+
 #
 # Index & list page
 #
@@ -149,6 +163,8 @@ OrderByDateAsc=依日期升序排序
 OrderByDateDesc=依日期降序排序
 ShowAsConversation=顯示為對話清單
 MessageListViewType=顯示為表格列表
+ConfirmMassTicketClosingSendEmail=關閉服務單時自動發送電子郵件
+ConfirmMassTicketClosingSendEmailQuestion=您想在關閉這些服務單時通知合作方嗎？
 
 #
 # Ticket card
@@ -180,15 +196,17 @@ MessageSuccessfullyAdded=服務單已新增
 TicketMessageSuccessfullyAdded=訊息已成功新增
 TicketMessagesList=訊息清單
 NoMsgForThisTicket=沒有關於此服務單的訊息
-Properties=分類
+TicketProperties=分類
 LatestNewTickets=最後%s張最新服務單（未讀）
 TicketSeverity=嚴重程度
 ShowTicket=查閱服務單
 RelatedTickets=相關服務單
 TicketAddIntervention=建立干預
-CloseTicket=關閉服務單
-CloseATicket=關閉服務單
+CloseTicket=已關閉|已解決服務單
+AbandonTicket=放棄的服務單
+CloseATicket=關閉|解決一筆服務單
 ConfirmCloseAticket=確認關閉服務單
+ConfirmAbandonTicket=您確定要將關閉的服務單狀態更改為"已放棄"嗎?
 ConfirmDeleteTicket=請確認要刪除服務單
 TicketDeletedSuccess=服務單刪除成功
 TicketMarkedAsClosed=服務單標記為已關閉
@@ -201,12 +219,12 @@ ErrorMailRecipientIsEmptyForSendTicketMessage=收件人為空。未發送電子�
 TicketGoIntoContactTab=請進入“通訊錄”標籤中進行選擇
 TicketMessageMailIntro=介紹
 TicketMessageMailIntroHelp=此段文字只會加到電子郵件的開頭，不會被保存。
-TicketMessageMailIntroLabelAdmin=發送電子郵件時的訊息簡介
-TicketMessageMailIntroText=你好, <br>在您聯絡的服務單上有新的回覆。這是消息： <br>
+TicketMessageMailIntroLabelAdmin=所有服務單回應的訊息簡介
+TicketMessageMailIntroText=你好, <br>在您聯絡的服務單上有新的回覆。訊息為： <br>
 TicketMessageMailIntroHelpAdmin=此段文字將插入到服務單回應文字之前。
 TicketMessageMailSignature=電子郵件簽名
 TicketMessageMailSignatureHelp=此段文字只會加到電子郵件的底部，不會被保存。
-TicketMessageMailSignatureText=<p>真誠的</p><p> - </p>
+TicketMessageMailSignatureText=<b> %s </b> 以 Dolibarr 發送的訊息
 TicketMessageMailSignatureLabelAdmin=回覆電子郵件的簽名
 TicketMessageMailSignatureHelpAdmin=此段文字將插入到回覆訊息之後。
 TicketMessageHelp=此段文字將會被儲存在服務單卡片的訊息清單中。
@@ -234,9 +252,16 @@ TicketChangeStatus=變更狀態
 TicketConfirmChangeStatus=確認狀態更改：%s？
 TicketLogStatusChanged=狀態已更改：%s到%s
 TicketNotNotifyTiersAtCreate=建立時不通知公司
+NotifyThirdpartyOnTicketClosing=關閉服務單時要通知的聯絡人
+TicketNotifyAllTiersAtClose=所有相關的聯絡人
+TicketNotNotifyTiersAtClose=無相關的聯絡人
 Unread=未讀
 TicketNotCreatedFromPublicInterface=無法使用。服務單不是從公共界面建立的。
 ErrorTicketRefRequired=服務單參考名稱為必填
+TicketsDelayForFirstResponseTooLong=自從服務單開啟以來已經過去了太多時間而沒有任何答案。
+TicketsDelayFromLastResponseTooLong=此服務單自從最後一次的回覆以來已過去了太多時間。
+TicketNoContractFoundToLink=沒有發現可以自動連結至此服務單的合約。請手動連結合約。
+TicketManyContractsLinked=有許多合約已自動連結至此服務單。請確認應該選擇哪一個合約。
 
 #
 # Logs
@@ -264,8 +289,9 @@ TicketNewEmailBody=這是一封自動電子郵件，用於確認您已註冊新�
 TicketNewEmailBodyCustomer=這是一封自動電子郵件，用於確認您的帳戶中剛剛建立了新服務單。
 TicketNewEmailBodyInfosTicket=服務單監控資訊
 TicketNewEmailBodyInfosTrackId=服務單追蹤編號：%s
-TicketNewEmailBodyInfosTrackUrl=您可以通過點擊上面的連結查看服務單的進度。
+TicketNewEmailBodyInfosTrackUrl=您可以通過點擊上面的連結查看服務單的進度
 TicketNewEmailBodyInfosTrackUrlCustomer=您可以通過點擊以下連結在特定界面中查看服務單的進度
+TicketCloseEmailBodyInfosTrackUrlCustomer=您可以通過點擊以下連結查看此服務單的歷史紀錄
 TicketEmailPleaseDoNotReplyToThisEmail=請不要直接回覆此電子郵件！請使用回覆連結。
 TicketPublicInfoCreateTicket=此表格使您可以在我們的管理系統中記錄支援服務單。
 TicketPublicPleaseBeAccuratelyDescribe=請準確描述問題。提供盡可能多的訊息使我們能夠正確辨別您的要求。
@@ -287,6 +313,10 @@ NewUser=新用戶
 NumberOfTicketsByMonth=每月服務單總數量
 NbOfTickets=服務單數量
 # notifications
+TicketCloseEmailSubjectCustomer=服務單已關閉
+TicketCloseEmailBodyCustomer=這是一條自動通知，通知您服務單 %s 剛剛已關閉。
+TicketCloseEmailSubjectAdmin=服務單已關閉 - Réf %s（公共服務單 ID %s）
+TicketCloseEmailBodyAdmin=ID 為 #%s 的服務單剛剛已關閉，請查閱資訊：
 TicketNotificationEmailSubject=服務單%s已更新
 TicketNotificationEmailBody=這是一條自動訊息，通知您服務單%s剛剛更新
 TicketNotificationRecipient=通知收件人
@@ -314,6 +344,7 @@ BoxTicketLastXDays=最近 %s 天中依日期的新服務單數量
 BoxTicketLastXDayswidget = 最近X天中依日期的新服務單數量
 BoxNoTicketLastXDays=最近%s天沒有新服務單
 BoxNumberOfTicketByDay=每日新服務單數量
-BoxNewTicketVSClose=今日的新服務單數量與今日已關閉的服務單數量
+BoxNewTicketVSClose=服務單與已關閉服務單（本日）
 TicketCreatedToday=今天建立的服務單
 TicketClosedToday=今日已關閉的服務單
+KMFoundForTicketGroup=我們找到了可以回答您問題的主題和常見問題解答，感謝您在提交服務單以前檢查它們

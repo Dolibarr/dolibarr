@@ -184,7 +184,7 @@ class MailingTargets // This can't be abstract as it is used for some method
 				$sql .= "'".$this->db->escape($targetarray['other'])."',";
 				$sql .= "'".$this->db->escape($targetarray['source_url'])."',";
 				$sql .= (empty($targetarray['source_id']) ? 'null' : "'".$this->db->escape($targetarray['source_id'])."'").",";
-				$sql .= "'".$this->db->escape(dol_hash($dolibarr_main_instance_unique_id.';'.$targetarray['email'].';'.$targetarray['lastname'].';'.$mailing_id.';'.$conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY, 'md5'))."',";
+				$sql .= "'".$this->db->escape(dol_hash($dolibarr_main_instance_unique_id.";".$targetarray['email'].";".$targetarray['lastname'].";".$mailing_id.";".$conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY, 'md5'))."',";
 				$sql .= "'".$this->db->escape($targetarray['source_type'])."')";
 				dol_syslog(__METHOD__, LOG_DEBUG);
 				$result = $this->db->query($sql);
@@ -208,7 +208,7 @@ class MailingTargets // This can't be abstract as it is used for some method
 		//Update the status to show thirdparty mail that don't want to be contacted anymore'
 		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
 		$sql .= " SET statut=3";
-		$sql .= " WHERE fk_mailing=".$mailing_id." AND email in (SELECT email FROM ".MAIN_DB_PREFIX."societe where fk_stcomm=-1)";
+		$sql .= " WHERE fk_mailing = ".((int) $mailing_id)." AND email in (SELECT email FROM ".MAIN_DB_PREFIX."societe where fk_stcomm=-1)";
 		$sql .= " AND source_type='thirdparty'";
 		dol_syslog(__METHOD__.": mailing update status to display thirdparty mail that do not want to be contacted");
 		$result=$this->db->query($sql);
@@ -216,7 +216,7 @@ class MailingTargets // This can't be abstract as it is used for some method
 		//Update the status to show contact mail that don't want to be contacted anymore'
 		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
 		$sql .= " SET statut=3";
-		$sql .= " WHERE fk_mailing=".$mailing_id." AND source_type='contact' AND (email in (SELECT sc.email FROM ".MAIN_DB_PREFIX."socpeople AS sc ";
+		$sql .= " WHERE fk_mailing = ".((int) $mailing_id)." AND source_type='contact' AND (email in (SELECT sc.email FROM ".MAIN_DB_PREFIX."socpeople AS sc ";
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe s ON s.rowid=sc.fk_soc WHERE s.fk_stcomm=-1 OR no_email=1))";
 		dol_syslog(__METHOD__.": mailing update status to display contact mail that do not want to be contacted",LOG_DEBUG);
 		$result=$this->db->query($sql);
@@ -224,7 +224,7 @@ class MailingTargets // This can't be abstract as it is used for some method
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
 		$sql .= " SET statut=3";
-		$sql .= " WHERE fk_mailing=".$mailing_id." AND email IN (SELECT mu.email FROM ".MAIN_DB_PREFIX."mailing_unsubscribe AS mu WHERE mu.entity IN ('".getEntity('mailing')."'))";
+		$sql .= " WHERE fk_mailing = ".((int) $mailing_id)." AND email IN (SELECT mu.email FROM ".MAIN_DB_PREFIX."mailing_unsubscribe AS mu WHERE mu.entity IN ('".getEntity('mailing')."'))";
 
 		dol_syslog(__METHOD__.":mailing update status to display emails that do not want to be contacted anymore", LOG_DEBUG);
 		$result = $this->db->query($sql);

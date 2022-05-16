@@ -1,8 +1,8 @@
 # ProductBATCH language file - Source file is en_US - ProductBATCH
 ManageLotSerial=Chargen-/Serien-Nr. benutzen 
-ProductStatusOnBatch=Ja (Charge erforderlich)
-ProductStatusOnSerial=Ja  (einzigartige Seriennummer erforderlich)
-ProductStatusNotOnBatch=Nein  (keine Chargen-/Serien-Nr.)
+ProductStatusOnBatch=Ja (Chargennummer erforderlich)
+ProductStatusOnSerial=Ja (eindeutige Seriennummer erforderlich)
+ProductStatusNotOnBatch=Nein (keine Chargen-/Serien-Nr.)
 ProductStatusOnBatchShort=Lot
 ProductStatusOnSerialShort=Seriennummer
 ProductStatusNotOnBatchShort=Keine
@@ -27,17 +27,19 @@ StockDetailPerBatch=Lagerdetail nach Chargen
 SerialNumberAlreadyInUse=Die Seriennummer %s wird bereits für das Produkt %s verwendet
 TooManyQtyForSerialNumber=Sie können nur ein Produkt %s für die Seriennummer %s haben
 ManageLotMask=Benutzerdefinierte Maske
-CustomMasks=Option to define a different numbering mask for each product
-BatchLotNumberingModules=Numbering rule for automatic generation of lot number
-BatchSerialNumberingModules=Numbering rule for automatic generation of serial number (for products with property 1 unique lot/serial for each product)
-QtyToAddAfterBarcodeScan=Menge, die für jeden gescannten Barcode / jedes Los / jede Serienummer hinzugefügt werden muss
-LifeTime=Life span (in days)
-EndOfLife=End of life
-ManufacturingDate=Manufacturing date
-DestructionDate=Destruction date
-FirstUseDate=First use date
-QCFrequency=Quality control frequency (in days)
-
+CustomMasks=Option, für jedes Produkt ein anderes Nummerierungsschema zu definieren
+BatchLotNumberingModules=Nummerierungsregel zur automatischen Generierung der Chargennummer
+BatchSerialNumberingModules=Nummerierungsregel zur automatischen Generierung der Seriennummer (für Produkte mit der Eigenschaft 1 eindeutiges Los/Serie für jedes Produkt)
+QtyToAddAfterBarcodeScan=Menge an %s für jeden gescannten Barcode/jede Charge/jede  Seriennummer
+LifeTime=Lebensdauer (in Tagen)
+EndOfLife=Ende der Lebensdauer
+ManufacturingDate=Herstellungsdatum
+DestructionDate=Datum der Vernichtung
+FirstUseDate=Datum der ersten Verwendung
+QCFrequency=Häufigkeit der Qualitätskontrolle (in Tagen)
+ShowAllLots=Alle Lose anzeigen
+HideLots=Lose ausblenden
 #Traceability - qc status
-OutOfOrder=Out of order
-InWorkingOrder=In working order
+OutOfOrder=Außer Betrieb
+InWorkingOrder=In betriebsfähigem Zustand
+ToReplace=Ersetzen

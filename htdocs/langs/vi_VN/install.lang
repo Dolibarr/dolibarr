@@ -21,6 +21,7 @@ ErrorPHPDoesNotSupportCurl=Cài đặt PHP của bạn không hỗ trợ Curl.
 ErrorPHPDoesNotSupportCalendar=Cài đặt PHP của bạn không hỗ trợ các phần mở rộng lịch php.
 ErrorPHPDoesNotSupportUTF8=Cài đặt PHP của bạn không hỗ trợ các chức năng UTF8. Dolibarr không thể hoạt động chính xác. Giải quyết điều này trước khi cài đặt Dolibarr.
 ErrorPHPDoesNotSupportIntl=Cài đặt PHP của bạn không hỗ trợ các chức năng Intl.
+ErrorPHPDoesNotSupportMbstring=Your PHP installation does not support mbstring functions.
 ErrorPHPDoesNotSupportxDebug=PHP của bạn không hỗ trợ mở rộng chức năng debug
 ErrorPHPDoesNotSupport=PHP của bạn không hỗ trợ %s hàm
 ErrorDirDoesNotExists=Thư mục %s không tồn tại.

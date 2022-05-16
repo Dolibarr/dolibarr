@@ -64,15 +64,15 @@ class FormIntervention
 	public function select_interventions($socid = -1, $selected = '', $htmlname = 'interventionid', $maxlength = 16, $showempty = 1, $draftonly = false)
 	{
 		// phpcs:enable
-		global $db, $user, $conf, $langs;
+		global $user, $conf, $langs;
 
 		$out = '';
 
 		$hideunselectables = false;
 
 		// Search all contacts
-		$sql = 'SELECT f.rowid, f.ref, f.fk_soc, f.fk_statut';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.'fichinter as f';
+		$sql = "SELECT f.rowid, f.ref, f.fk_soc, f.fk_statut";
+		$sql .= " FROM ".$this->db->prefix()."fichinter as f";
 		$sql .= " WHERE f.entity = ".$conf->entity;
 		if ($socid != '') {
 			if ($socid == '0') {
@@ -99,7 +99,7 @@ class FormIntervention
 				while ($i < $num) {
 					$obj = $this->db->fetch_object($resql);
 					// If we ask to filter on a company and user has no permission to see all companies and project is linked to another company, we hide project.
-					if ($socid > 0 && (empty($obj->fk_soc) || $obj->fk_soc == $socid) && !$user->rights->societe->lire) {
+					if ($socid > 0 && (empty($obj->fk_soc) || $obj->fk_soc == $socid) && empty($user->rights->societe->lire)) {
 						// Do nothing
 					} else {
 						$labeltoshow = dol_trunc($obj->ref, 18);

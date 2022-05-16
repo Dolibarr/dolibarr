@@ -68,7 +68,7 @@ if ($modulepart == 'produit' || $modulepart == 'product' || $modulepart == 'serv
 	$accessallowed = 1;
 } elseif ($modulepart == 'member') {
 	$result = restrictedArea($user, 'adherent', $id, '', '', 'fk_soc', 'rowid');
-	if (!$user->rights->adherent->lire) {
+	if (empty($user->rights->adherent->lire)) {
 		accessforbidden();
 	}
 	$accessallowed = 1;
@@ -86,7 +86,7 @@ if ($modulepart == 'produit' || $modulepart == 'product' || $modulepart == 'serv
 	$accessallowed = 1;
 } elseif ($modulepart == 'bank') {
 	$result = restrictedArea($user, 'banque', $id, 'bank_account');
-	if (!$user->rights->banque->lire) {
+	if (empty($user->rights->banque->lire)) {
 		accessforbidden();
 	}
 	$accessallowed = 1;
@@ -98,7 +98,7 @@ if ($modulepart == 'produit' || $modulepart == 'product' || $modulepart == 'serv
 	$accessallowed = 1;
 } elseif ($modulepart == 'facture_fourn' || $modulepart == 'facture_fournisseur') {
 	$result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture');
-	if (!$user->rights->fournisseur->facture->lire) {
+	if (empty($user->rights->fournisseur->facture->lire)) {
 		accessforbidden();
 	}
 	$accessallowed = 1;
@@ -413,7 +413,6 @@ if ($action == 'confirm_crop') {
 
 	$fullpath = $dir."/".$original_file;
 
-	//var_dump($fullpath.' '.$_POST['w'].'x'.$_POST['h'].'-'.$_POST['x'].'x'.$_POST['y']);exit;
 	$result = dol_imageResizeOrCrop($fullpath, 1, GETPOST('w', 'int'), GETPOST('h', 'int'), GETPOST('x', 'int'), GETPOST('y', 'int'));
 
 	if ($result == $fullpath) {
@@ -475,7 +474,7 @@ if ($action == 'confirm_crop') {
  * View
  */
 
-$title= $langs->trans("ImageEditor");
+$title = $langs->trans("ImageEditor");
 $morejs = array('/includes/jquery/plugins/jcrop/js/jquery.Jcrop.min.js', '/core/js/lib_photosresize.js');
 $morecss = array('/includes/jquery/plugins/jcrop/css/jquery.Jcrop.css');
 
@@ -536,11 +535,16 @@ if (!empty($conf->use_javascript_ajax)) {
 	$widthforcrop = $width;
 	$refsizeforcrop = 'orig';
 	$ratioforcrop = 1;
+
 	// If image is too large, we use another scale.
-	if (!empty($_SESSION['dol_screenwidth']) && ($widthforcrop > round($_SESSION['dol_screenwidth'] / 2))) {
-		$ratioforcrop = 2;
-		$widthforcrop = round($_SESSION['dol_screenwidth'] / $ratioforcrop);
-		$refsizeforcrop = 'screenwidth';
+	if (!empty($_SESSION['dol_screenwidth'])) {
+		$widthforcroporigin = $widthforcrop;
+		while ($widthforcrop > round($_SESSION['dol_screenwidth'] / 1.5)) {
+			//var_dump($widthforcrop.' '.round($_SESSION['dol_screenwidth'] / 1.5));
+			$ratioforcrop = 2 * $ratioforcrop;
+			$widthforcrop = floor($widthforcroporigin / $ratioforcrop);
+			$refsizeforcrop = 'screenwidth';
+		}
 	}
 
 	print '<!-- Form to crop -->'."\n";
@@ -571,8 +575,11 @@ if (!empty($conf->use_javascript_ajax)) {
 		      <input type="hidden" id="file" name="file" value="'.dol_escape_htmltag($original_file).'" />
 		      <input type="hidden" id="action" name="action" value="confirm_crop" />
 		      <input type="hidden" id="product" name="product" value="'.dol_escape_htmltag($id).'" />
+		      <input type="hidden" id="dol_screenwidth" name="dol_screenwidth" value="'.$_SESSION['dol_screenwidth'].'" />
 		      <input type="hidden" id="refsizeforcrop" name="refsizeforcrop" value="'.$refsizeforcrop.'" />
-		      <input type="hidden" id="ratioforcrop" name="ratioforcrop" value="'.$ratioforcrop.'" /><!-- field used by core/lib/lib_photoresize.js -->
+		      <input type="hidden" id="ratioforcrop" name="ratioforcrop" value="'.$ratioforcrop.'" /><!-- value in field used by js/lib/lib_photoresize.js -->
+		      <input type="hidden" id="imagewidth" name="imagewidth" value="'.$width.'" /><!-- value in field used by js/lib/lib_photoresize.js -->
+		      <input type="hidden" id="imageheight" name="imageheight" value="'.$height.'" /><!-- value in field used by js/lib/lib_photoresize.js -->
 	          <input type="hidden" name="modulepart" value="'.dol_escape_htmltag($modulepart).'" />
 		      <input type="hidden" name="id" value="'.dol_escape_htmltag($id).'" />
 		      <br>
@@ -589,7 +596,7 @@ if (!empty($conf->use_javascript_ajax)) {
 }
 
 /* Check that mandatory fields are filled */
-print '<script type="text/javascript" language="javascript">
+print '<script type="text/javascript">
 jQuery(document).ready(function() {
 	$("#submitcrop").click(function(e) {
         console.log("We click on submitcrop");

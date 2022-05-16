@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2019  Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2019-2020  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2021  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2021 Dorian Laurent <i.merraha@sofimedmaroc.com>
  * Copyright (C) 2021 NextGestion <contact@nextgestion.com>
  *
@@ -23,7 +23,7 @@
  * 	\defgroup   partnership     Module Partnership
  *  \brief      Partnership module descriptor.
  *
- *  \file       htdocs/partnership/core/modules/modPartnership.class.php
+ *  \file       htdocs/core/modules/modPartnership.class.php
  *  \ingroup    partnership
  *  \brief      Description and activation file for module Partnership
  */
@@ -75,7 +75,7 @@ class modPartnership extends DolibarrModules
 		// $this->editor_url = 'https://www.example.com';
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'
-		$this->version = 'development';
+		$this->version = 'dolibarr';
 		// Url to the file with your last numberversion of this module
 		//$this->url_last_version = 'http://www.example.com/versionmodule.txt';
 
@@ -177,8 +177,7 @@ class modPartnership extends DolibarrModules
 		// Array to add new pages in new tabs
 		$this->tabs = array();
 
-		$tabtoadd = (!empty(getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR')) && getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR') == 'member') ? 'member' : 'thirdparty';
-
+		$tabtoadd = getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR', 'thirdparty');
 		if ($tabtoadd == 'member') {
 			$fk_mainmenu = "members";
 		} else {
@@ -215,23 +214,25 @@ class modPartnership extends DolibarrModules
 		$this->dictionaries=array(
 			'langs'=>'partnership@partnership',
 			// List of tables we want to see into dictonnary editor
-			'tabname'=>array(MAIN_DB_PREFIX."c_partnership_type"),
+			'tabname'=>array("c_partnership_type"),
 			// Label of tables
 			'tablib'=>array("PartnershipType"),
 			// Request to select fields
-			'tabsql'=>array('SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'c_partnership_type as f WHERE f.entity = '.$conf->entity),
+			'tabsql'=>array('SELECT f.rowid as rowid, f.code, f.label, f.keyword, f.active FROM '.MAIN_DB_PREFIX.'c_partnership_type as f WHERE f.entity = '.((int) $conf->entity)),
 			// Sort order
 			'tabsqlsort'=>array("label ASC"),
 			// List of fields (result of select to show dictionary)
-			'tabfield'=>array("code,label"),
+			'tabfield'=>array("code,label,keyword"),
 			// List of fields (list of fields to edit a record)
-			'tabfieldvalue'=>array("code,label"),
+			'tabfieldvalue'=>array("code,label,keyword"),
 			// List of fields (list of fields for insert)
-			'tabfieldinsert'=>array("code,label"),
+			'tabfieldinsert'=>array("code,label,keyword"),
 			// Name of columns with primary key (try to always name it 'rowid')
 			'tabrowid'=>array("rowid"),
 			// Condition to show each dictionary
-			'tabcond'=>array($conf->partnership->enabled)
+			'tabcond'=>array($conf->partnership->enabled),
+			// Help tooltip for each fields of the dictionary
+			'tabhelp'=>array(array('keyword'=>$langs->trans('KeywordToCheckInWebsite')))
 		);
 
 		// Boxes/Widgets
@@ -408,7 +409,7 @@ class modPartnership extends DolibarrModules
 	{
 		global $conf, $langs;
 
-		$result = $this->_load_tables('/partnership/sql/');
+		$result = $this->_load_tables('/install/mysql/', 'partnership');
 		if ($result < 0) {
 			return -1; // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
 		}
@@ -428,7 +429,7 @@ class modPartnership extends DolibarrModules
 		$sql = array();
 
 		// Document templates
-		$moduledir = 'partnership';
+		$moduledir = dol_sanitizeFileName('partnership');
 		$myTmpObjects = array();
 		$myTmpObjects['Partnership'] = array('includerefgeneration'=>0, 'includedocgeneration'=>0);
 
@@ -437,8 +438,8 @@ class modPartnership extends DolibarrModules
 				continue;
 			}
 			if ($myTmpObjectArray['includerefgeneration']) {
-				$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/partnership/template_partnerships.odt';
-				$dirodt = DOL_DATA_ROOT.'/doctemplates/partnership';
+				$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/'.$moduledir.'/template_partnerships.odt';
+				$dirodt = DOL_DATA_ROOT.'/doctemplates/'.$moduledir;
 				$dest = $dirodt.'/template_partnerships.odt';
 
 				if (file_exists($src) && !file_exists($dest)) {
@@ -453,10 +454,10 @@ class modPartnership extends DolibarrModules
 				}
 
 				$sql = array_merge($sql, array(
-					"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'standard_".strtolower($myTmpObjectKey)."' AND type = '".strtolower($myTmpObjectKey)."' AND entity = ".$conf->entity,
-					"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('standard_".strtolower($myTmpObjectKey)."','".strtolower($myTmpObjectKey)."',".$conf->entity.")",
-					"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'generic_".strtolower($myTmpObjectKey)."_odt' AND type = '".strtolower($myTmpObjectKey)."' AND entity = ".$conf->entity,
-					"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('generic_".strtolower($myTmpObjectKey)."_odt', '".strtolower($myTmpObjectKey)."', ".$conf->entity.")"
+					"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'standard_".strtolower($myTmpObjectKey)."' AND type = '".strtolower($myTmpObjectKey)."' AND entity = ".((int) $conf->entity),
+					"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('standard_".strtolower($myTmpObjectKey)."','".strtolower($myTmpObjectKey)."',".((int) $conf->entity).")",
+					"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'generic_".strtolower($myTmpObjectKey)."_odt' AND type = '".strtolower($myTmpObjectKey)."' AND entity = ".((int) $conf->entity),
+					"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('generic_".strtolower($myTmpObjectKey)."_odt', '".strtolower($myTmpObjectKey)."', ".((int) $conf->entity).")"
 				));
 			}
 		}

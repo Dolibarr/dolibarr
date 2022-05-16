@@ -50,12 +50,14 @@ $socid = 0;
 if ($user->socid) {
 	$socid = $user->socid;
 }
+$userid = $user->id;
 
 // Security check
 $result = restrictedArea($user, 'ticket', 0, '', '', '', '');
 
-$nowyear = strftime("%Y", dol_now());
-$year = GETPOST('year') > 0 ? GETPOST('year') : $nowyear;
+$nowarray = dol_getdate(dol_now(), true);
+$nowyear = $nowarray['year'];
+$year = GETPOST('year', 'int') > 0 ? GETPOST('year', 'int') : $nowyear;
 $startyear = $year - (empty($conf->global->MAIN_STATS_GRAPHS_SHOW_N_YEARS) ? 2 : max(1, min(10, $conf->global->MAIN_STATS_GRAPHS_SHOW_N_YEARS)));
 $endyear = $year;
 
@@ -75,7 +77,6 @@ $object = new Ticket($db);
 $resultboxes = FormOther::getBoxesArea($user, "11"); // Load $resultboxes (selectboxlist + boxactivated + boxlista + boxlistb)
 
 $form = new Form($db);
-$tickesupstatic = new Ticket($db);
 
 llxHeader('', $langs->trans('TicketsIndex'), '');
 
@@ -96,7 +97,7 @@ if (in_array('DOLUSERCOOKIE_ticket_by_status', $autosetarray)) {
 	$endyear = GETPOST($param_year, 'int');
 	$shownb = GETPOST($param_shownb, 'alpha');
 	$showtot = GETPOST($param_showtot, 'alpha');
-} else {
+} elseif (!empty($_COOKIE['DOLUSERCOOKIE_ticket_by_status'])) {
 	$tmparray = json_decode($_COOKIE['DOLUSERCOOKIE_ticket_by_status'], true);
 	$endyear = $tmparray['year'];
 	$shownb = $tmparray['shownb'];
@@ -104,9 +105,9 @@ if (in_array('DOLUSERCOOKIE_ticket_by_status', $autosetarray)) {
 }
 if (empty($shownb) && empty($showtot)) {
 	$showtot = 1;
+	$shownb = 0;
 }
 
-$nowarray = dol_getdate(dol_now(), true);
 if (empty($endyear)) {
 	$endyear = $nowarray['year'];
 }
@@ -146,13 +147,13 @@ $tick = array(
 
 $sql = "SELECT t.fk_statut, COUNT(t.fk_statut) as nb";
 $sql .= " FROM ".MAIN_DB_PREFIX."ticket as t";
-if (!$user->rights->societe->client->voir && !$socid) {
+if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 $sql .= ' WHERE t.entity IN ('.getEntity('ticket').')';
 $sql .= dolSqlDateFilter('datec', 0, 0, $endyear);
 
-if (!$user->rights->societe->client->voir && !$socid) {
+if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= " AND t.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 
@@ -202,27 +203,27 @@ if ($result) {
 	$dataseries = array();
 	$colorseries = array();
 
-	$dataseries[] = array('label' => $langs->transnoentitiesnoconv($tickesupstatic->statuts_short[Ticket::STATUS_NOT_READ]), 'data' => round($tick['unread']));
+	$dataseries[] = array('label' => $langs->transnoentitiesnoconv($object->statuts_short[Ticket::STATUS_NOT_READ]), 'data' => round($tick['unread']));
 	$colorseries[Ticket::STATUS_NOT_READ] = '-'.$badgeStatus0;
-	$dataseries[] = array('label' => $langs->transnoentitiesnoconv($tickesupstatic->statuts_short[Ticket::STATUS_READ]), 'data' => round($tick['read']));
+	$dataseries[] = array('label' => $langs->transnoentitiesnoconv($object->statuts_short[Ticket::STATUS_READ]), 'data' => round($tick['read']));
 	$colorseries[Ticket::STATUS_READ] = $badgeStatus1;
-	$dataseries[] = array('label' => $langs->transnoentitiesnoconv($tickesupstatic->statuts_short[Ticket::STATUS_ASSIGNED]), 'data' => round($tick['assigned']));
+	$dataseries[] = array('label' => $langs->transnoentitiesnoconv($object->statuts_short[Ticket::STATUS_ASSIGNED]), 'data' => round($tick['assigned']));
 	$colorseries[Ticket::STATUS_ASSIGNED] = $badgeStatus3;
-	$dataseries[] = array('label' => $langs->transnoentitiesnoconv($tickesupstatic->statuts_short[Ticket::STATUS_IN_PROGRESS]), 'data' => round($tick['inprogress']));
+	$dataseries[] = array('label' => $langs->transnoentitiesnoconv($object->statuts_short[Ticket::STATUS_IN_PROGRESS]), 'data' => round($tick['inprogress']));
 	$colorseries[Ticket::STATUS_IN_PROGRESS] = $badgeStatus4;
-	$dataseries[] = array('label' => $langs->transnoentitiesnoconv($tickesupstatic->statuts_short[Ticket::STATUS_WAITING]), 'data' => round($tick['waiting']));
+	$dataseries[] = array('label' => $langs->transnoentitiesnoconv($object->statuts_short[Ticket::STATUS_WAITING]), 'data' => round($tick['waiting']));
 	$colorseries[Ticket::STATUS_WAITING] = '-'.$badgeStatus4;
-	$dataseries[] = array('label' => $langs->transnoentitiesnoconv($tickesupstatic->statuts_short[Ticket::STATUS_NEED_MORE_INFO]), 'data' => round($tick['needmoreinfo']));
+	$dataseries[] = array('label' => $langs->transnoentitiesnoconv($object->statuts_short[Ticket::STATUS_NEED_MORE_INFO]), 'data' => round($tick['needmoreinfo']));
 	$colorseries[Ticket::STATUS_NEED_MORE_INFO] = '-'.$badgeStatus3;
-	$dataseries[] = array('label' => $langs->transnoentitiesnoconv($tickesupstatic->statuts_short[Ticket::STATUS_CANCELED]), 'data' => round($tick['canceled']));
+	$dataseries[] = array('label' => $langs->transnoentitiesnoconv($object->statuts_short[Ticket::STATUS_CANCELED]), 'data' => round($tick['canceled']));
 	$colorseries[Ticket::STATUS_CANCELED] = $badgeStatus9;
-	$dataseries[] = array('label' => $langs->transnoentitiesnoconv($tickesupstatic->statuts_short[Ticket::STATUS_CLOSED]), 'data' => round($tick['closed']));
+	$dataseries[] = array('label' => $langs->transnoentitiesnoconv($object->statuts_short[Ticket::STATUS_CLOSED]), 'data' => round($tick['closed']));
 	$colorseries[Ticket::STATUS_CLOSED] = $badgeStatus6;
 } else {
 	dol_print_error($db);
 }
 
-$stringtoshow = '<script type="text/javascript" language="javascript">
+$stringtoshow = '<script type="text/javascript">
     jQuery(document).ready(function() {
         jQuery("#idsubimgDOLUSERCOOKIE_ticket_by_status").click(function() {
             jQuery("#idfilterDOLUSERCOOKIE_ticket_by_status").toggle();
@@ -317,14 +318,14 @@ $sql .= " FROM ".MAIN_DB_PREFIX."ticket as t";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_type as type ON type.code=t.type_code";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_category as category ON category.code=t.category_code";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_severity as severity ON severity.code=t.severity_code";
-if (!$user->rights->societe->client->voir && !$socid) {
+if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 
 $sql .= ' WHERE t.entity IN ('.getEntity('ticket').')';
 $sql .= " AND t.fk_statut=0";
-if (!$user->rights->societe->client->voir && !$socid) {
-	$sql .= " AND t.fk_soc = sc.fk_soc AND sc.fk_user = ".$user->id;
+if (empty($user->rights->societe->client->voir) && !$socid) {
+	$sql .= " AND t.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 
 if ($user->socid > 0) {
@@ -332,7 +333,7 @@ if ($user->socid > 0) {
 } else {
 	// Restricted to assigned user only
 	if (!empty($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY) && !$user->rights->ticket->manage) {
-		$sql .= " AND t.fk_user_assign=".$user->id;
+		$sql .= " AND t.fk_user_assign = ".((int) $user->id);
 	}
 }
 $sql .= $db->order("t.datec", "DESC");
@@ -356,18 +357,18 @@ if ($result) {
 		while ($i < $num) {
 			$objp = $db->fetch_object($result);
 
-			$tickesupstatic->id = $objp->rowid;
-			$tickesupstatic->ref = $objp->ref;
-			$tickesupstatic->track_id = $objp->track_id;
-			$tickesupstatic->fk_statut = $objp->fk_statut;
-			$tickesupstatic->progress = $objp->progress;
-			$tickesupstatic->subject = $objp->subject;
+			$object->id = $objp->rowid;
+			$object->ref = $objp->ref;
+			$object->track_id = $objp->track_id;
+			$object->fk_statut = $objp->fk_statut;
+			$object->progress = $objp->progress;
+			$object->subject = $objp->subject;
 
 			print '<tr class="oddeven">';
 
 			// Ref
 			print '<td class="nowraponall">';
-			print $tickesupstatic->getNomUrl(1);
+			print $object->getNomUrl(1);
 			print "</td>\n";
 
 			// Creation date
@@ -388,8 +389,10 @@ if ($result) {
 
 			// Category
 			print '<td class="nowrap">';
-			$s = $langs->getLabelFromKey($db, 'TicketCategoryShort'.$objp->category_code, 'c_ticket_category', 'code', 'label', $objp->category_code);
-			print '<span title="'.dol_escape_htmltag($s).'">'.$s.'</span>';
+			if (!empty($obp->category_code)) {
+				$s = $langs->getLabelFromKey($db, 'TicketCategoryShort'.$objp->category_code, 'c_ticket_category', 'code', 'label', $objp->category_code);
+				print '<span title="'.dol_escape_htmltag($s).'">'.$s.'</span>';
+			}
 			//print $objp->category_label;
 			print "</td>";
 
@@ -401,7 +404,7 @@ if ($result) {
 			print "</td>";
 
 			print '<td class="nowraponall right">';
-			print $tickesupstatic->getLibStatut(5);
+			print $object->getLibStatut(5);
 			print "</td>";
 
 			print "</tr>\n";

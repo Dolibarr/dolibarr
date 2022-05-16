@@ -81,7 +81,7 @@ class mod_takepos_ref_universal extends ModeleNumRefTakepos
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
 		$texte .= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskvalue" value="'.$conf->global->TAKEPOS_REF_UNIVERSAL_MASK.'">', $tooltip, 1, 1).'</td>';
 
-		$texte .= '<td align="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
+		$texte .= '<td align="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit" name="Button"value="'.$langs->trans("Modify").'"></td>';
 
 		$texte .= '</tr>';
 
@@ -119,7 +119,7 @@ class mod_takepos_ref_universal extends ModeleNumRefTakepos
 	 * @param   string		$mode       'next' for next value or 'last' for last value
 	 * @return  string      Value if KO, <0 if KO
 	 */
-	public function getNextValue($objsoc = 0, $invoice = null, $mode = 'next')
+	public function getNextValue($objsoc = null, $invoice = null, $mode = 'next')
 	{
 		global $db, $conf;
 

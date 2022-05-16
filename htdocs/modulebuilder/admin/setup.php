@@ -89,7 +89,8 @@ if (preg_match('/del_(.*)/', $action, $reg)) {
 
 $form = new Form($db);
 
-llxHeader('', $langs->trans("ModulebuilderSetup"));
+$help_url = '';
+llxHeader('', $langs->trans("ModulebuilderSetup"), $help_url);
 
 $linkback = '<a href="'.($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php').'">'.$langs->trans("BackToModuleList").'</a>';
 
@@ -120,14 +121,14 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
 
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("UseAboutPage").'</td>';
-	print '<td class="center">';
+	print '<td>';
 	if ($conf->use_javascript_ajax) {
 		print ajax_constantonoff('MODULEBUILDER_USE_ABOUT');
 	} else {
 		if (empty($conf->global->MODULEBUILDER_USE_ABOUT)) {
-			print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=set_MODULEBUILDER_USE_ABOUT&amp;token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+			print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=set_MODULEBUILDER_USE_ABOUT&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 		} else {
-			print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=del_MODULEBUILDER_USE_ABOUT&amp;token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+			print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=del_MODULEBUILDER_USE_ABOUT&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 		}
 	}
 	print '</td></tr>';
@@ -193,7 +194,7 @@ print '</tr>';
 
 print '</table>';
 
-print '<center><input type="submit" class="button button-save" value="'.$langs->trans("Save").'" name="Button"></center>';
+print $form->buttonsSaveCancel("Save", '');
 
 if (GETPOST('withtab', 'alpha')) {
 	print dol_get_fiche_end();

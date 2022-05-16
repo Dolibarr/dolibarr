@@ -180,10 +180,11 @@ $head = ticketAdminPrepareHead();
 
 print dol_get_fiche_head($head, 'public', $langs->trans("Module56000Name"), -1, "ticket");
 
-print '<span class="opacitymedium">'.$langs->trans("TicketPublicAccess").'</span> : <a class="wordbreak" href="'.dol_buildpath('/public/ticket/index.php', 1).'" target="_blank" >'.dol_buildpath('/public/ticket/index.php', 2).'</a>';
+print '<span class="opacitymedium">'.$langs->trans("TicketPublicAccess").'</span> : <a class="wordbreak" href="'.DOL_URL_ROOT.'/public/ticket/index.php" target="_blank" rel="noopener noreferrer">'.dol_buildpath('/public/ticket/index.php', 2).'</a>';
 
 print dol_get_fiche_end();
 
+$param = '';
 
 $enabledisablehtml = $langs->trans("TicketsActivatePublicInterface").' ';
 if (empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE)) {
@@ -326,33 +327,6 @@ if (!empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE)) {
 	print $form->textwithpicto('', $langs->trans("TicketPublicInterfaceTextHelpMessageHelpAdmin"), 1, 'help');
 	print '</td></tr>';
 
-	// Activate email creation to user
-	print '<tr class="pair"><td>'.$langs->trans("TicketsDisableCustomerEmail").'</td>';
-	print '<td class="left">';
-	if ($conf->use_javascript_ajax) {
-		print ajax_constantonoff('TICKET_DISABLE_CUSTOMER_MAILS');
-	} else {
-		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("TICKET_DISABLE_CUSTOMER_MAILS", $arrval, $conf->global->TICKET_DISABLE_CUSTOMER_MAILS);
-	}
-	print '</td>';
-	print '<td class="center">';
-	print $form->textwithpicto('', $langs->trans("TicketsDisableEmailHelp"), 1, 'help');
-	print '</td>';
-	print '</tr>';
-
-	// Texte de création d'un ticket
-	$mail_mesg_new = $conf->global->TICKET_MESSAGE_MAIL_NEW ? $conf->global->TICKET_MESSAGE_MAIL_NEW : $langs->trans('TicketNewEmailBody');
-	print '<tr><td>'.$langs->trans("TicketNewEmailBodyLabel").'</label>';
-	print '</td><td>';
-	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor = new DolEditor('TICKET_MESSAGE_MAIL_NEW', $mail_mesg_new, '100%', 120, 'dolibarr_mailings', '', false, true, $conf->global->FCKEDITOR_ENABLE_MAIL, ROWS_2, 70);
-	$doleditor->Create();
-	print '</td>';
-	print '<td class="center">';
-	print $form->textwithpicto('', $langs->trans("TicketNewEmailBodyHelp"), 1, 'help');
-	print '</td></tr>';
-
 	// Url public interface
 	$url_interface = $conf->global->TICKET_URL_PUBLIC_INTERFACE;
 	print '<tr><td>'.$langs->trans("TicketUrlPublicInterfaceLabelAdmin").'</label>';
@@ -363,8 +337,45 @@ if (!empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE)) {
 	print $form->textwithpicto('', $langs->trans("TicketUrlPublicInterfaceHelpAdmin"), 1, 'help');
 	print '</td></tr>';
 
+	print '</table>';
+
+	print '<br><br>';
+
+	print_fiche_titre($langs->trans("Emails"));
+
+	print '<div class="div-table-responsive-no-min">';
+	print '<table class="noborder centpercent">';
+
+	// Activate email creation to user
+	print '<tr class="pair"><td>';
+	print $form->textwithpicto($langs->trans("TicketsDisableCustomerEmail"), $langs->trans("TicketsDisableEmailHelp"), 1, 'help');
+	print '</td>';
+	print '<td class="left">';
+	if ($conf->use_javascript_ajax) {
+		print ajax_constantonoff('TICKET_DISABLE_CUSTOMER_MAILS');
+	} else {
+		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+		print $form->selectarray("TICKET_DISABLE_CUSTOMER_MAILS", $arrval, $conf->global->TICKET_DISABLE_CUSTOMER_MAILS);
+	}
+	print '</td>';
+	print '</tr>';
+
+	// Text of email after creatio of a ticket
+	$mail_mesg_new = $conf->global->TICKET_MESSAGE_MAIL_NEW ? $conf->global->TICKET_MESSAGE_MAIL_NEW : $langs->trans('TicketNewEmailBody');
+	print '<tr><td>';
+	print $form->textwithpicto($langs->trans("TicketNewEmailBodyLabel"), $langs->trans("TicketNewEmailBodyHelp"), 1, 'help');
+	print '</label>';
+	print '</td><td>';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+	$doleditor = new DolEditor('TICKET_MESSAGE_MAIL_NEW', $mail_mesg_new, '100%', 120, 'dolibarr_mailings', '', false, true, $conf->global->FCKEDITOR_ENABLE_MAIL, ROWS_2, 70);
+	$doleditor->Create();
+	print '</td>';
+	print '</tr>';
+
 	// Activate email notification when a new message is added
-	print '<tr class="pair"><td>'.$langs->trans("TicketsPublicNotificationNewMessage").'</td>';
+	print '<tr class="pair"><td>';
+	print $form->textwithpicto($langs->trans("TicketsPublicNotificationNewMessage"), $langs->trans("TicketsPublicNotificationNewMessageHelp"), 1, 'help');
+	print '</td>';
 	print '<td class="left">';
 	if ($conf->use_javascript_ajax) {
 		print ajax_constantonoff('TICKET_PUBLIC_NOTIFICATION_NEW_MESSAGE_ENABLED');
@@ -373,24 +384,20 @@ if (!empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE)) {
 		print $form->selectarray("TICKET_PUBLIC_NOTIFICATION_NEW_MESSAGE_ENABLED", $arrval, $conf->global->TICKET_PUBLIC_NOTIFICATION_NEW_MESSAGE_ENABLED);
 	}
 	print '</td>';
-	print '<td align="center">';
-	print $form->textwithpicto('', $langs->trans("TicketsPublicNotificationNewMessageHelp"), 1, 'help');
-	print '</td>';
 	print '</tr>';
 
 	// Send notification when a new message is added to a email if a user is not assigned to the ticket
-	print '<tr><td>'.$langs->trans("TicketPublicNotificationNewMessageDefaultEmail").'</label>';
+	print '<tr><td>';
+	print $form->textwithpicto($langs->trans("TicketPublicNotificationNewMessageDefaultEmail"), $langs->trans("TicketPublicNotificationNewMessageDefaultEmailHelp"), 1, 'help');
 	print '</td><td>';
 	print '<input type="text" name="TICKET_PUBLIC_NOTIFICATION_NEW_MESSAGE_DEFAULT_EMAIL" value="'.$conf->global->TICKET_PUBLIC_NOTIFICATION_NEW_MESSAGE_DEFAULT_EMAIL.'" size="40" ></td>';
 	print '</td>';
-	print '<td align="center">';
-	print $form->textwithpicto('', $langs->trans("TicketPublicNotificationNewMessageDefaultEmailHelp"), 1, 'help');
-	print '</td></tr>';
+	print '</tr>';
 
 	print '</table>';
 	print '</div>';
 
-	print '<div class="center"><input type="submit" class="button button-save" value="'.$langs->trans("Save").'"></div>';
+	print $form->buttonsSaveCancel("Save", '');
 
 	print '</form>';
 }

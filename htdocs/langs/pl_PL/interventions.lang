@@ -64,5 +64,5 @@ InterLineDuration=Linia czasu trwania interwencji
 InterLineDesc=Lini aopisu interwencji
 RepeatableIntervention=Szablon interwencji
 ToCreateAPredefinedIntervention=Aby utworzyć predefiniowaną lub powtarzającą się interwencję, utwórz wspólną interwencję i przekształć ją w szablon interwencji
-Reopen=Otworzyć na nowo
 ConfirmReopenIntervention=Czy na pewno chcesz ponownie otworzyć interwencję <b> %s </b>?
+GenerateInter=Generate intervention

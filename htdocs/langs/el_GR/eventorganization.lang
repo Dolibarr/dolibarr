@@ -17,131 +17,153 @@
 #
 # Generic
 #
-ModuleEventOrganizationName = Event Organization
-EventOrganizationDescription = Event Organization through Module Project
-EventOrganizationDescriptionLong= Manage Event organization for conference, attendees, speaker, and attendees, with public subcription page
+ModuleEventOrganizationName = Οργάνωση Εκδηλώσεων
+EventOrganizationDescription = Οργάνωση εκδήλωσης μέσω Ενότητας Έργου
+EventOrganizationDescriptionLong= Διαχειριστείτε τη διοργάνωση μιας εκδήλωσης (παράσταση, συνέδρια, συμμετέχοντες ή ομιλητές, με δημόσιες σελίδες για πρόταση, ψηφοφορία ή εγγραφή)
 #
 # Menu
 #
-EventOrganizationMenuLeft = Organized events
-EventOrganizationConferenceOrBoothMenuLeft = Conference Or Booth
+EventOrganizationMenuLeft = Οργανωμένες εκδηλώσεις
+EventOrganizationConferenceOrBoothMenuLeft = Συνέδριο ή Περίπτερο
+
+PaymentEvent=Πληρωμή εκδήλωσης
 
 #
 # Admin page
 #
-EventOrganizationSetup = Event Organization setup
-Settings = Ρυθμίσεις
-EventOrganizationSetupPage = Event Organization setup page
-EVENTORGANIZATION_TASK_LABEL = Label of tasks to create automatically when project is validated
-EVENTORGANIZATION_TASK_LABELTooltip = When you validate an organized event, some tasks can be automatically created in the project<br><br>For example: <br>Send Call for Conference<br>Send Call for Booth<br>Receive call for conferences<br>Receive call for Booth<br>Open subscriptions to events for attendees<br>Send remind of event to speakers<br>Send remind of event to Booth hoster<br>Send remind of event to attendees
-EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = Category to add to third-parties automatically created when someone suggests a conference
-EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = Category to add to third-parties automatically created when they suggests a booth
-EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = Template of email to send after receiving a suggestion of a conference.
-EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH = Template of email to send after receiving a suggestion of a booth.
-EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Template of email to send  after a subscription to a booth has been paid.
-EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = Template of email to send after a subscription to an event has been paid.
-EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Template of email of massaction to attendes
-EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Template of email of massaction to speakers
-EVENTORGANIZATION_FILTERATTENDEES_CAT = Filter thirdpartie's select list in attendees creation card/form with category
-EVENTORGANIZATION_FILTERATTENDEES_TYPE = Filter thirdpartie's select list in attendees creation card/form with customer type
+NewRegistration=Εγγραφή
+EventOrganizationSetup=Ρύθμιση οργάνωσης εκδηλώσεων
+EventOrganization=Οργάνωση εκδήλωσης
+Settings=Ρυθμίσεις
+EventOrganizationSetupPage = Σελίδα ρύθμισης οργάνωσης εκδηλώσεων
+EVENTORGANIZATION_TASK_LABEL = Ετικέτα εργασιών για αυτόματη δημιουργία κατά την επικύρωση του έργου
+EVENTORGANIZATION_TASK_LABELTooltip = Όταν επικυρώσετε μια εκδήλωση προς οργάνωση, ορισμένες εργασίες μπορούν να δημιουργηθούν αυτόματα στο πρόγραμμα <br> <br> Για παράδειγμα: <br> Αποστολή Πρόσκλησης για Συνέδρια <br> Αποστολή Πρόσκλησης για Περίπτερα <br> Επικύρωση προτάσεων Συνεδρίων <br>Επικύρωση αίτησης για Περίπτερα <br> Άνοιγμα συνδρομών  για τους συμμετέχοντες στην εκδήλωση<br> Αποστολή μιας υπενθύμισης της εκδήλωσης στους ομιλητές <br> Αποστολή μιας υπενθύμισης της εκδήλωσης στους οικοδεσπότες Περίπτερου<br> Αποστολή μιας υπενθύμισης της εκδήλωσης στους συμμετέχοντες
+EVENTORGANIZATION_TASK_LABELTooltip2=Διατηρήστε το κενό εάν δεν χρειάζεται να δημιουργείτε εργασίες αυτόματα.
+EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = Κατηγορία για προσθήκη σε τρίτα μέρη που δημιουργείται αυτόματα όταν κάποιος προτείνει μια διάσκεψη
+EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = Κατηγορία για προσθήκη σε τρίτα μέρη που δημιουργείται αυτόματα όταν προτείνουν ένα περίπτερο
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = Πρότυπο email για αποστολή μετά τη λήψη πρότασης για μια διάσκεψη.
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH = Πρότυπο email για αποστολή αφού λάβετε πρόταση περίπτερου.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Πρότυπο email για αποστολή μετά την πληρωμή της εγγραφής για ένα περίπτερο.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = Πρότυπο email για αποστολή μετά την πληρωμή της εγγραφής σε μια εκδήλωση.
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Πρότυπο email για χρήση κατά την αποστολή μηνυμάτων ηλεκτρονικού ταχυδρομείου από τη μαζική αποστολή "Αποστολή email" σε ομιλητές
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Πρότυπο email για χρήση κατά την αποστολή μηνυμάτων ηλεκτρονικού ταχυδρομείου από τη μαζική αποστολή "Αποστολή email" στη λίστα συμμετεχόντων
+EVENTORGANIZATION_FILTERATTENDEES_CAT = Στη φόρμα δημιουργίας/προσθήκης συμμετέχοντα, περιορίζει τη λίστα τρίτων μόνο σε τρίτα μέρη της κατηγορίας
+EVENTORGANIZATION_FILTERATTENDEES_TYPE = Στη φόρμα δημιουργίας/προσθήκης συμμετέχοντα, τη λίστα τρίτων μερών περιορίζεται σε τρίτα μέρη με τη φύση
 
 #
 # Object
 #
-EventOrganizationConfOrBooth= Conference Or Booth
-ManageOrganizeEvent = Manage event organisation
-ConferenceOrBooth = Conference Or Booth
-ConferenceOrBoothTab = Conference Or Booth
-AmountOfSubscriptionPaid = Amount of subscription paid
-DateSubscription = Date of subscription
-ConferenceOrBoothAttendee = Conference Or Booth Attendee
+EventOrganizationConfOrBooth= Συνέδριο ή Περίπτερο
+ManageOrganizeEvent = Διαχειριστείτε την οργάνωση μιας εκδήλωσης
+ConferenceOrBooth = Συνέδριο ή Περίπτερο
+ConferenceOrBoothTab = Συνέδριο ή Περίπτερο
+AmountPaid = Ποσό που καταβλήθηκε
+DateOfRegistration = Ημερομηνία εγγραφής
+ConferenceOrBoothAttendee = Συμμετέχων σε συνέδριο ή περίπτερο
 
 #
 # Template Mail
 #
-YourOrganizationEventConfRequestWasReceived = Your request for conference was received
-YourOrganizationEventBoothRequestWasReceived = Your request for booth was received
-EventOrganizationEmailAskConf = Request for conference
-EventOrganizationEmailAskBooth = Request for booth
-EventOrganizationEmailSubsBooth = Subscription for booth
-EventOrganizationEmailSubsEvent = Subscription for an event
-EventOrganizationMassEmailAttendees = Communication to attendees
-EventOrganizationMassEmailSpeakers = Communication to speakers
+YourOrganizationEventConfRequestWasReceived = Το αίτημά σας για συνδιάσκεψη ελήφθη
+YourOrganizationEventBoothRequestWasReceived = Το αίτημά σας για περίπτερο ελήφθη
+EventOrganizationEmailAskConf = Αίτημα για συνέδριο
+EventOrganizationEmailAskBooth = Αίτημα για περίπτερο
+EventOrganizationEmailBoothPayment = Πληρωμή του περιπτέρου σας
+EventOrganizationEmailRegistrationPayment = Εγγραφή για εκδήλωση
+EventOrganizationMassEmailAttendees = Επικοινωνία με συμμετέχοντες
+EventOrganizationMassEmailSpeakers = Επικοινωνία με ομιλητές
+ToSpeakers=Σε ομιλητές
 
 #
 # Event
 #
-AllowUnknownPeopleSuggestConf=Allow unknown people to suggest conferences
-AllowUnknownPeopleSuggestConfHelp=Allow unknown people to suggest conferences
-AllowUnknownPeopleSuggestBooth=Allow unknown people to suggest booth
-AllowUnknownPeopleSuggestBoothHelp=Allow unknown people to suggest booth
-PriceOfRegistration=Price of registration
-PriceOfRegistrationHelp=Price of registration
-PriceOfBooth=Subscription price to stand a booth
-PriceOfBoothHelp=Subscription price to stand a booth
-EventOrganizationICSLink=Link ICS for events
-ConferenceOrBoothInformation=Conference Or Booth informations
-Attendees = Attendees
-DownloadICSLink = Download ICS link
-EVENTORGANIZATION_SECUREKEY = Secure Key of the public registration link to a conference
-SERVICE_BOOTH_LOCATION = Service used for the invoice row about a booth location
-SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Service used for the invoice row about an attendee subscription to a conference
-NbVotes=Number of votes
+AllowUnknownPeopleSuggestConf=Επιτρέψτε σε όλους να προτείνουν συνέδρια
+AllowUnknownPeopleSuggestConfHelp=Επιτρέψτε σε άγνωστα άτομα να προτείνουν μια διάσκεψη που θέλουν να κάνουν
+AllowUnknownPeopleSuggestBooth=Επιτρέψτε σε όλους να κάνουν αίτηση για περίπτερο
+AllowUnknownPeopleSuggestBoothHelp=Επιτρέψτε σε άγνωστα άτομα να κάνουν αίτηση για περίπτερο
+PriceOfRegistration=Τιμή εγγραφής
+PriceOfRegistrationHelp=Τιμή που πρέπει να πληρωθεί για εγγραφή ή συμμετοχή στην εκδήλωση
+PriceOfBooth=Τιμή συνδρομής για να στηθεί ένα περίπτερο
+PriceOfBoothHelp=Τιμή συνδρομής για να στηθεί ένα περίπτερο
+EventOrganizationICSLink=Σύνδεσμος ICS για συνέδρια
+ConferenceOrBoothInformation=Πληροφορίες για το συνέδριο ή το περίπτερο
+Attendees=Συμμετέχοντες
+ListOfAttendeesOfEvent=Λίστα συμμετεχόντων της εκδήλωσης
+DownloadICSLink = Λήψη συνδέσμου ICS
+EVENTORGANIZATION_SECUREKEY = Seed για να εξασφαλίσετε το κλειδί για τη δημόσια σελίδα εγγραφής για να προτείνετε μια διάσκεψη
+SERVICE_BOOTH_LOCATION = Υπηρεσία που χρησιμοποιείται για τη γραμμή τιμολογίου σχετικά με τη θέση του περιπτέρου
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Υπηρεσία που χρησιμοποιείται για τη γραμμή τιμολογίου σχετικά με τη συνδρομή ενός συμμετέχοντος σε μια εκδήλωση
+NbVotes=Αριθμός ψήφων
 #
 # Status
 #
 EvntOrgDraft = Πρόχειρο
-EvntOrgSuggested = Suggested
-EvntOrgConfirmed = Confirmed
-EvntOrgNotQualified = Not Qualified
+EvntOrgSuggested = Προτεινόμενα
+EvntOrgConfirmed = Επιβεβαιωμένο
+EvntOrgNotQualified = Μη επιλεγμένο
 EvntOrgDone = Ολοκληρωμένες
-EvntOrgCancelled = Cancelled
+EvntOrgCancelled = Ακυρώθηκε
 #
 # Public page
 #
-SuggestForm = Suggestion page
-RegisterPage = Page for conferences or booth
-EvntOrgRegistrationHelpMessage = Here, you can vote for an event, or suggest a new conference or booth for the project
-EvntOrgRegistrationConfHelpMessage = Here, you can suggest a new conference for the project
-EvntOrgRegistrationBoothHelpMessage = Here, you can suggest a new booth for the project
-ListOfSuggestedConferences = List of suggested conferences
-ListOfSuggestedBooths = List of suggested booths
-SuggestConference = Suggest a new conference
-SuggestBooth = Suggest a booth
-ViewAndVote = View and vote for suggested events
-PublicAttendeeSubscriptionPage = Public link of registration to a conference
-MissingOrBadSecureKey = The security key is invalid or missing
-EvntOrgWelcomeMessage = This form allows you to register as a new participant to the conference : '%s'
-EvntOrgDuration = This conference starts on %s and ends on %s.
-ConferenceAttendeeFee = Conference attendee fee for the event : '%s' occurring from %s to %s.
-BoothLocationFee = Booth location for the event : '%s' occurring from %s to %s
+SuggestForm = Σελίδα πρότασης
+SuggestOrVoteForConfOrBooth = Σελίδα για πρόταση ή ψήφο
+EvntOrgRegistrationHelpMessage = Εδώ, μπορείτε να ψηφίσετε για ένα συνέδριο ή να προτείνετε ένα νέο για την εκδήλωση. Μπορείτε επίσης να κάνετε αίτηση για την απόκτηση περίπτερου κατά τη διάρκεια της εκδήλωσης.
+EvntOrgRegistrationConfHelpMessage = Εδώ, μπορείτε να προτείνετε ένα νέο συνέδριο για προώθηση κατά τη διάρκεια της εκδήλωσης.
+EvntOrgRegistrationBoothHelpMessage = Εδώ, μπορείτε να κάνετε αίτηση για να έχετε ένα περίπτερο κατά τη διάρκεια της εκδήλωσης.
+ListOfSuggestedConferences = Λίστα προτεινόμενων συνεδρίων
+ListOfSuggestedBooths = Λίστα προτεινόμενων περιπτέρων
+ListOfConferencesOrBooths=Κατάλογος συνεδρίων ή περιπτέρων του έργου εκδήλωσης
+SuggestConference = Προτείνετε ένα νέο συνέδριο
+SuggestBooth = Προτείνετε ένα περίπτερο
+ViewAndVote = Δείτε και ψηφίστε για προτεινόμενες εκδηλώσεις
+PublicAttendeeSubscriptionGlobalPage = Δημόσιος σύνδεσμος για εγγραφή στην εκδήλωση
+PublicAttendeeSubscriptionPage = Δημόσιος σύνδεσμος για εγγραφή σε αυτήν την εκδήλωση μόνο 
+MissingOrBadSecureKey = Το κλειδί ασφαλείας δεν είναι έγκυρο ή λείπει
+EvntOrgWelcomeMessage = Αυτή η φόρμα σάς επιτρέπει να εγγραφείτε ως νέος συμμετέχων στην εκδήλωση: <b> %s </b>
+EvntOrgDuration = Αυτή η διάσκεψη ξεκινά στις %s και τελειώνει στις %s.
+ConferenceAttendeeFee = Χρέωση συμμετεχόντων στο συνέδριο για την εκδήλωση : «%s» που διεξάγεται από %s έως %s.
+BoothLocationFee = Θέση περιπτέρου για την εκδήλωση : "%s" που διεξάγεται από %s έως %s
 EventType = Τύπος συμβάντος
-LabelOfBooth=Booth label
-LabelOfconference=Conference label
-ConferenceIsNotConfirmed=Subcription not available, conference is not confirmed yet
+LabelOfBooth=Ετικέτα περιπτέρου
+LabelOfconference=Ετικέτα συνεδρίου
+ConferenceIsNotConfirmed=Η εγγραφή δεν είναι διαθέσιμη, το συνέδριο δεν έχει επιβεβαιωθεί ακόμα
+DateMustBeBeforeThan=Το %s πρέπει να είναι πριν από το %s
+DateMustBeAfterThan=Το %s πρέπει να είναι μετά το %s
+
+NewSubscription=Εγγραφή
+OrganizationEventConfRequestWasReceived=Η πρότασή σας για μια διάσκεψη έχει ληφθεί
+OrganizationEventBoothRequestWasReceived=Το αίτημά σας για ένα περίπτερο έχει ληφθεί
+OrganizationEventPaymentOfBoothWasReceived=Η πληρωμή για το περίπτερό σας έχει καταγραφεί
+OrganizationEventPaymentOfRegistrationWasReceived=Η πληρωμή σας για την εγγραφή της εκδήλωσής έχει καταγραφεί
+OrganizationEventBulkMailToAttendees=Αυτή είναι μια υπενθύμιση για τη συμμετοχή σας στην εκδήλωση ως συμμετέχων
+OrganizationEventBulkMailToSpeakers=Αυτή είναι μια υπενθύμιση για τη συμμετοχή σας στην εκδήλωση ως ομιλητής
+OrganizationEventLinkToThirdParty=Σύνδεσμος με τρίτο μέρος (πελάτη, προμηθευτή ή συνεργάτη)
+
+NewSuggestionOfBooth=Αίτηση για περίπτερο
+NewSuggestionOfConference=Αίτηση για συνέδριο
 
 #
 # Vote page
 #
-EvntOrgRegistrationWelcomeMessage = Welcome on the conference or booth suggestion page.
-EvntOrgRegistrationConfWelcomeMessage = Welcome on the conference suggestion page.
-EvntOrgRegistrationBoothWelcomeMessage = Welcome on the booth suggestion page.
-EvntOrgVoteHelpMessage = Here, you can view and vote for the suggested events for the project
-VoteOk = Your vote has been accepted.
-AlreadyVoted = You have already voted for this event.
-VoteError = An error has occurred during the vote, please try again.
+EvntOrgRegistrationWelcomeMessage = Καλώς ήρθατε στη σελίδα προτάσεων για συνέδριο ή περίπτερο.
+EvntOrgRegistrationConfWelcomeMessage = Καλώς ήρθατε στη σελίδα προτάσεων συνεδρίων.
+EvntOrgRegistrationBoothWelcomeMessage = Καλώς ήρθατε στη σελίδα προτάσεων περιπτέρων.
+EvntOrgVoteHelpMessage = Εδώ, μπορείτε να δείτε και να ψηφίσετε τις προτεινόμενες εκδηλώσεις για το έργο
+VoteOk = Η ψήφος σας έγινε αποδεκτή.
+AlreadyVoted = Έχετε ήδη ψηφίσει για αυτήν την εκδήλωση.
+VoteError = Παρουσιάστηκε σφάλμα κατά την ψηφοφορία, παρακαλώ δοκιμάστε ξανά.
 
-#
-# SubscriptionOk page
-#
-SubscriptionOk = Your subscription to this conference has been validated
-#
-# Subscription validation mail
-#
-ConfAttendeeSubscriptionConfirmation = Confirmation of your subscription to a conference
-#
-# Payment page
-#
-Attendee = Attendee
-PaymentConferenceAttendee = Conference attendee payment
-PaymentBoothLocation = Booth location payment
+SubscriptionOk = Η εγγραφή σας έχει επικυρωθεί
+ConfAttendeeSubscriptionConfirmation = Επιβεβαίωση της συνδρομής σας σε μια εκδήλωση
+Attendee = Συμμετέχων
+PaymentConferenceAttendee = Πληρωμή συμμετεχόντων στο συνέδριο
+PaymentBoothLocation = Πληρωμή θέσης περιπτέρου
+DeleteConferenceOrBoothAttendee=Κατάργηση συμμετέχοντος
+RegistrationAndPaymentWereAlreadyRecorder=Μια εγγραφή και μια πληρωμή έχουν ήδη καταγραφεί για το email <b> %s </b>
+EmailAttendee=Email του συμμετέχοντα
+EmailCompanyForInvoice=Διεύθυνση ηλεκτρονικού ταχυδρομείου εταιρείας (για τιμολόγιο, εάν διαφέρει από το email του συμμετέχοντα)
+ErrorSeveralCompaniesWithEmailContactUs=Έχουν βρεθεί πολλές εταιρείες με αυτό το email, επομένως δεν μπορούμε να επικυρώσουμε αυτόματα την εγγραφή σας. Παρακαλώ επικοινωνήστε μαζί μας στο %s 
+ErrorSeveralCompaniesWithNameContactUs=Έχουν βρεθεί πολλές εταιρείες με αυτό το όνομα, επομένως δεν μπορούμε να επικυρώσουμε αυτόματα την εγγραφή σας. Παρακαλώ επικοινωνήστε μαζί μας στο %s
+NoPublicActionsAllowedForThisEvent=Καμία δημόσια δράση δεν είναι ανοιχτή στο κοινό για αυτήν την εκδήλωση
+MaxNbOfAttendees=Μέγιστος αριθμός συμμετεχόντων

@@ -104,5 +104,7 @@ function moPrepareHead($object)
 	//); // to remove a tab
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'mo@mrp');
 
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'mo@mrp', 'remove');
+
 	return $head;
 }

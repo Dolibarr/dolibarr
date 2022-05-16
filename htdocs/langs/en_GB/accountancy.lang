@@ -7,7 +7,6 @@ OverviewOfAmountOfLinesBound=Overview of number of lines already bound to an fin
 DeleteCptCategory=Remove finance account from group
 JournalizationInLedgerStatus=Status of journals
 GroupIsEmptyCheckSetup=Group is empty, check setup of the personalised finance group
-ExportAccountingSourceDocHelp=With this tool, you can export the source events (list and PDFs) that were used to generate your accountancy. To export your journals, use the menu entry %s - %s.
 MainAccountForCustomersNotDefined=Main finance account for customers not defined in setup
 MainAccountForUsersNotDefined=Main finance account for users not defined in setup
 MainAccountForVatPaymentNotDefined=Main finance account for VAT payment not defined in setup
@@ -81,7 +80,6 @@ DescVentilTodoExpenseReport=Link expense report lines not already linked with a 
 DescVentilExpenseReport=View here the list of expense report lines linked (or not) to a fee finance account
 DescVentilDoneExpenseReport=View here the list of the lines of expense reports and their fees account
 ValidateHistory=Link Automatically
-AutomaticBindingDone=Automatic link done
 ErrorAccountancyCodeIsAlreadyUse=Error, you cannot delete this finance account because it is used
 MvtNotCorrectlyBalanced=Transaction not correctly balanced. Debit = %s | Credit = %s
 FicheVentilation=Link card

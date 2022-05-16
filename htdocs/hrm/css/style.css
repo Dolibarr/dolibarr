@@ -1,0 +1,130 @@
+#compare ul,#compare li,#compare h3 {margin: 0; padding: 0;}
+
+#compare div {
+  margin: 20px;
+}
+
+#compare ul {
+  list-style-type: none;
+  width: 100%;
+}
+
+#compare h3 {
+  font: bold 20px/1.5 Helvetica, Verdana, sans-serif;
+}
+
+#compare li img {
+  float: left;
+  margin: 0 15px 0 0;
+  max-width:80px;
+}
+
+#compare li p {
+  font: 200 12px/1.5 Georgia, Times New Roman, serif;
+}
+
+#compare li {
+  padding: 10px;
+  overflow: auto;
+  border-bottom: 2px solid #98b880;
+}
+#compare ul.competence li,#compare ul.note li {
+  height:48px;
+  overflow: hidden;
+  border-bottom: 2px solid #6C286C;
+}
+
+#compare li:hover {
+  background: #eee;
+  cursor: pointer;
+}
+
+#compare li.disabled {
+  color:#999;
+  border-bottom: 2px solid #ff0000;
+}
+
+#compare li.disabled img,#compare li.disabled p {
+  display:none;
+}
+
+span.note {
+	font: bold Helvetica, Verdana, sans-serif;
+	background: #eee none repeat scroll 0 0;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    color: #555;
+    cursor: pointer;
+    display: inline-block;
+    margin: 2px;
+    min-width: 20px;
+    padding: 5px 7px;
+    text-align: center;
+    font-weight: bold;
+}
+span.note.none {
+	background: #BA7777 none repeat scroll 0 0;
+}
+#compare ul.diff li {
+	text-align: center;
+	border-bottom:0 none;
+	height:48px;
+	overflow: hidden;
+	border-bottom: 2px solid #77BABA;
+}
+span.diffnote {
+	display: inline-block;
+	background: #c3e6cb;
+	width:42px;
+	height: 42px;
+	overflow: hidden;
+	border:none;
+	box-sizing: border-box;
+}
+span.diffnote.little {
+	width:25px;
+	height: 25px;
+	border-width:3px;
+}
+span.toohappy {
+	background: #3097D1;
+	border:5px solid #3097D1;
+}
+span.veryhappy {
+	border:5px solid #3097D1;
+}
+span.toosad {
+	background: #ccc;
+	border:5px solid #ccc;
+}
+span.sad {
+	background:#bd4147;
+}
+/*span.diffnote {
+	display: inline-block;
+	background: url(img/smiley.png);
+	width:42px;
+	height: 42px;
+	overflow: hidden;
+}
+span.toohappy {
+	background-position: -105px 0px;
+}
+span.veryhappy {
+	background-position: -53px 0px;
+}
+span.toosad {
+	background-position: -105px -52px;
+}
+span.sad {
+	background-position: 0px -52px;
+}*/
+
+span.bubble {
+	background-color: #ccc;
+	border:1px;
+	display:inline-block;
+	width:20px;
+	height:20px;
+	border-radius:20px;
+}

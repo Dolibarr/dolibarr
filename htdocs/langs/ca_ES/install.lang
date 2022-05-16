@@ -21,6 +21,7 @@ ErrorPHPDoesNotSupportCurl=La vostra instal·lació de PHP no admet Curl.
 ErrorPHPDoesNotSupportCalendar=La vostra instal·lació de PHP no admet extensions de calendari php.
 ErrorPHPDoesNotSupportUTF8=La vostra instal·lació de PHP no admet funcions UTF8. Dolibarr no pot funcionar correctament. Resoleu-ho abans d’instal·lar Dolibarr.
 ErrorPHPDoesNotSupportIntl=La vostra instal·lació de PHP no admet funcions Intl.
+ErrorPHPDoesNotSupportMbstring=La vostra instal·lació de PHP no admet les funcions mbstring.
 ErrorPHPDoesNotSupportxDebug=La vostra instal·lació de PHP no admet funcions de depuració extres.
 ErrorPHPDoesNotSupport=La teva instal·lació PHP no admet funcions %s.
 ErrorDirDoesNotExists=La carpeta <b>%s</b> no existeix o no és accessible.
@@ -206,7 +207,7 @@ MigrationUserPhotoPath=Migració de rutes per les fotos dels usuaris
 MigrationFieldsSocialNetworks=Migració de camps de xarxes socials d'usuaris (%s)
 MigrationReloadModule=Recarrega el mòdul %s
 MigrationResetBlockedLog=Restablir el mòdul BlockedLog per l'algoritme v7
-MigrationImportOrExportProfiles=Migration of import or export profiles (%s)
+MigrationImportOrExportProfiles=Migració de perfils d'importació o exportació (%s)
 ShowNotAvailableOptions=Mostra les opcions no disponibles
 HideNotAvailableOptions=Amaga les opcions no disponibles
 ErrorFoundDuringMigration=S'han reportat error(s) durant el procés de migració, de manera que el següent pas no està disponible. Per ignorar els errors, podeu <a href="%s"> fer clic aquí </a>, però l'aplicació o algunes funcions no funcionen correctament fins que es resolen els errors.

@@ -32,3 +32,4 @@ DONATION_ART238=Zeige Artikel 238 des CGI, falls Sie betroffen sind
 DONATION_ART885=Zeige Artikel 885 des CGI, falls Sie betroffen sind
 DonationPayment=Spendenzahlung
 DonationValidated=Spende %s validiert
+DonationUseThirdparties=Verwenden Sie einen bestehenden Geschäftskontakt als Grundlage von Spenderdaten

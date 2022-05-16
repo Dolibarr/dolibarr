@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - loan
-ModuleBuilderDesc=This tool must be used only by experienced users or developers. It provides utilities to build or edit your own module. Documentation for alternative <a href="%s" target="_blank">manual development is here</a>.
+ModuleBuilderDesc=This tool must be used only by experienced users or developers. It provides utilities to build or edit your own module. Documentation for alternative <a href="%s" target="_blank" rel="noopener noreferrer">manual development is here</a>.
 EnterNameOfModuleDesc=输入要创建的模块/应用的名称，不含空格。使用大写字母分隔单词（例如：MyModule，EcommerceForShop，SyncWithMySystem ......）
 EnterNameOfObjectDesc=输入要创建的对象的名称，不包含空格。使用大写字母分隔单词（例如：MyObject，Student，Teacher ...）。将会生成包含CRUD方法的类文件，同时生成API文件，同时生成"列表/添加/编辑/删除"对象的页面和SQL文件。
 ModuleBuilderDesc2=Path where modules are generated/edited (first directory for external modules defined into %s): <strong>%s</strong>
@@ -52,7 +52,7 @@ LanguageFile=语言文件
 ObjectProperties=Object Properties
 ConfirmDeleteProperty=Are you sure you want to delete the property <strong>%s</strong>? This will change code in PHP class but also remove column from table definition of object.
 NotNull=不是NULL
-NotNullDesc=1 =将数据库设置为NOT NULL。 -1 =如果为空（''或0），则允许空值和强制值为NULL。
+NotNullDesc=1=Set database to NOT NULL, 0=Allow null values, -1=Allow null values by forcing value to NULL if empty ('' or 0)
 SearchAll=用于'搜索所有'
 DatabaseIndex=数据库索引
 FileAlreadyExists=文件%s已存在
@@ -94,11 +94,11 @@ LanguageDefDesc=在此文件中输入每个语言文件的所有密钥和翻译�
 MenusDefDesc=Define here the menus provided by your module
 DictionariesDefDesc=Define here the dictionaries provided by your module
 PermissionsDefDesc=Define here the new permissions provided by your module
-MenusDefDescTooltip=The menus provided by your module/application are defined into the array <strong>$this->menus</strong> into the module descriptor file. You can edit manually this file or use the embedded editor.<br><br>Note: Once defined (and module re-activated), menus are also visible into the menu editor available to administrator users on %s.
+MenusDefDescTooltip=The menus provided by your module/application are defined into the array <strong>$this->menus</strong> into the module descriptor file. You can edit manually this file or use the embedded editor.<br><br>Note: Once defined (and the module re-activated), the menus are also visible into the menu editor available to administrator users on %s.
 DictionariesDefDescTooltip=The dictionaries provided by your module/application are defined into the array <strong>$this->dictionaries</strong> into the module descriptor file. You can edit manually this file or use the embedded editor.<br><br>Note: Once defined (and module re-activated), dictionaries are also visible into the setup area to administrator users on %s.
 PermissionsDefDescTooltip=The permissions provided by your module/application are defined into the array <strong>$this->rights</strong> into the module descriptor file. You can edit manually this file or use the embedded editor.<br><br>Note: Once defined (and module re-activated), permissions are visible into the default permissions setup %s.
 HooksDefDesc=在<b> module_parts ['hooks'] </b>属性中定义，在模块描述符中，您想要管理的钩子的上下文（上下文列表可以通过搜索'<b> initHooks找到（</b>'在核心代码中。）<br>编辑钩子文件以添加钩子函数的代码（可通过在核心代码中搜索'<b> executeHooks </b>'找到可钩子函数）。
-TriggerDefDesc=在触发器文件中定义要为执行的每个业务事件执行的代码。
+TriggerDefDesc=Define in the trigger file the code that you want to execute when a business event external to your module is executed (events triggered by other modules).
 SeeIDsInUse=查看安装中使用的ID
 SeeReservedIDsRangeHere=查看保留ID的范围
 ToolkitForDevelopers=Dolibarr开发人员工具包
@@ -110,7 +110,7 @@ DropTableIfEmpty=(Destroy table if empty)
 TableDoesNotExists=表%s不存在
 TableDropped=表%s已删除
 InitStructureFromExistingTable=构建现有表的结构数组字符串
-UseAboutPage=Disable the about page
+UseAboutPage=Do not generate the About page
 UseDocFolder=Disable the documentation folder
 UseSpecificReadme=使用特定的自述文件
 ContentOfREADMECustomized=Note: The content of the README.md file has been replaced with the specific value defined into setup of ModuleBuilder.
@@ -127,9 +127,9 @@ UseSpecificEditorURL = Use a specific editor URL
 UseSpecificFamily = Use a specific family
 UseSpecificAuthor = Use a specific author
 UseSpecificVersion = Use a specific initial version
-IncludeRefGeneration=The reference of object must be generated automatically
-IncludeRefGenerationHelp=Check this if you want to include code to manage the generation automatically of the reference
-IncludeDocGeneration=I want to generate some documents from the object
+IncludeRefGeneration=The reference of object must be generated automatically by custom numbering rules
+IncludeRefGenerationHelp=Check this if you want to include code to manage the generation of the reference automatically using custom numbering rules
+IncludeDocGeneration=I want to generate some documents from templates for the object
 IncludeDocGenerationHelp=If you check this, some code will be generated to add a "Generate document" box on the record.
 ShowOnCombobox=Show value into combobox
 KeyForTooltip=Key for tooltip
@@ -138,9 +138,15 @@ CSSViewClass=CSS for read form
 CSSListClass=CSS for list
 NotEditable=Not editable
 ForeignKey=Foreign key
-TypeOfFieldsHelp=Type of fields:<br>varchar(99), double(24,8), real, text, html, datetime, timestamp, integer, integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]] ('1' means we add a + button after the combo to create the record, 'filter' can be 'status=1 AND fk_user = __USER_ID AND entity IN (__SHARED_ENTITIES__)' for example)
+TypeOfFieldsHelp=Type of fields:<br>varchar(99), double(24,8), real, text, html, datetime, timestamp, integer, integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]]<br>'1' means we add a + button after the combo to create the record<br>'filter' is a sql condition, example: 'status=1 AND fk_user=__USER_ID__ AND entity IN (__SHARED_ENTITIES__)'
 AsciiToHtmlConverter=Ascii to HTML converter
 AsciiToPdfConverter=Ascii to PDF converter
 TableNotEmptyDropCanceled=Table not empty. Drop has been canceled.
 ModuleBuilderNotAllowed=The module builder is available but not allowed to your user.
 ImportExportProfiles=Import and export profiles
+ValidateModBuilderDesc=Set this to 1 if you want to have the method $this->validateField() of object being called to validate the content of the field during insert or upadate. Set 0 if there is no validation required.
+WarningDatabaseIsNotUpdated=Warning: The database is not updated automatically, you must destroy tables and disable-enable the module to have tables recreated
+LinkToParentMenu=Parent menu (fk_xxxxmenu)
+ListOfTabsEntries=List of tab entries
+TabsDefDesc=Define here the tabs provided by your module
+TabsDefDescTooltip=The tabs provided by your module/application are defined into the array <strong>$this->tabs</strong> into the module descriptor file. You can edit manually this file or use the embedded editor.
