@@ -236,7 +236,7 @@ print '</td></tr>';
 // Opportunity status
 if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
 	print '<tr><td>'.$langs->trans("OpportunityStatusShort").'</td><td>';
-	print $formproject->selectOpportunityStatus('search_opp_status', $search_opp_status, 1, 0, 1, 0, 'maxwidth300', 1);
+	print $formproject->selectOpportunityStatus('search_opp_status', $search_opp_status, 1, 0, 1, 0, 'maxwidth300', 1, 1);
 	print '</td></tr>';
 }
 

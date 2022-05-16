@@ -45,7 +45,6 @@ if (!defined('NOIPCHECK')) {
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
-// TODO This should be useless. Because entity must be retrieve from object ref and not from url.
 $entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
 if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
@@ -132,9 +131,9 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
 		print '</div>';
 	}
 
-	if (!empty($conf->global->PROJECT_IMAGE_PUBLIC_ORGANIZEDEVENT)) {
-		print '<div class="backimagepublicorganizedevent">';
-		print '<img id="idPROJECT_IMAGE_PUBLIC_ORGANIZEDEVENT" src="'.$conf->global->PROJECT_IMAGE_PUBLIC_ORGANIZEDEVENT.'">';
+	if (!empty($conf->global->PROJECT_IMAGE_PUBLIC_NEWLEAD)) {
+		print '<div class="backimagepublicnewlead">';
+		print '<img id="idPROJECT_IMAGE_PUBLIC_NEWLEAD" src="'.$conf->global->PROJECT_IMAGE_PUBLIC_NEWLEAD.'">';
 		print '</div>';
 	}
 
@@ -159,22 +158,6 @@ function llxFooterVierge()
 }
 
 
-$arrayofdata = array();
-if (GETPOST('action') == 'addlead') {
-	// When a json request is sent
-	$entityBody = file_get_contents('php://input');
-
-	if ($entityBody) {
-		$arrayofdata = json_decode($entityBody, true);
-	}
-
-	print 'Date received and lead created';
-
-	$db->close();
-	exit;
-}
-
-
 
 /*
  * Actions
@@ -194,42 +177,6 @@ if (empty($reshook) && $action == 'add') {
 
 	$db->begin();
 
-	// test if lead already exists
-	/*
-	if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
-		if (!GETPOST('login')) {
-			$error++;
-			$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Login"))."<br>\n";
-		}
-		$sql = "SELECT login FROM ".MAIN_DB_PREFIX."adherent WHERE login='".$db->escape(GETPOST('login'))."'";
-		$result = $db->query($sql);
-		if ($result) {
-			$num = $db->num_rows($result);
-		}
-		if ($num != 0) {
-			$error++;
-			$langs->load("errors");
-			$errmsg .= $langs->trans("ErrorLoginAlreadyExists")."<br>\n";
-		}
-		if (!GETPOSTISSET("pass1") || !GETPOSTISSET("pass2") || GETPOST("pass1", 'none') == '' || GETPOST("pass2", 'none') == '' || GETPOST("pass1", 'none') != GETPOST("pass2", 'none')) {
-			$error++;
-			$langs->load("errors");
-			$errmsg .= $langs->trans("ErrorPasswordsMustMatch")."<br>\n";
-		}
-		if (!GETPOST("email")) {
-			$error++;
-			$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("EMail"))."<br>\n";
-		}
-	}
-	*/
-	if (GETPOST('type') <= 0) {
-		$error++;
-		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type"))."<br>\n";
-	}
-	if (!in_array(GETPOST('morphy'), array('mor', 'phy'))) {
-		$error++;
-		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv('Nature'))."<br>\n";
-	}
 	if (!GETPOST("lastname")) {
 		$error++;
 		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Lastname"))."<br>\n";
@@ -238,27 +185,87 @@ if (empty($reshook) && $action == 'add') {
 		$error++;
 		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Firstname"))."<br>\n";
 	}
+	if (!GETPOST("email")) {
+		$error++;
+		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Email"))."<br>\n";
+	}
+	if (!GETPOST("description")) {
+		$error++;
+		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Message"))."<br>\n";
+	}
 	if (GETPOST("email") && !isValidEmail(GETPOST("email"))) {
 		$error++;
 		$langs->load("errors");
 		$errmsg .= $langs->trans("ErrorBadEMail", GETPOST("email"))."<br>\n";
 	}
+	// Set default opportunity status
+	$defaultoppstatus = getDolGlobalString('PROJECT_DEFAULT_OPPORTUNITY_STATUS_FOR_ONLINE_LEAD');
+	if (empty($defaultoppstatus)) {
+		$error++;
+		$langs->load("errors");
+		$errmsg .= $langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("Project"))."<br>\n";
+	}
 
 	if (!$error) {
-		// email a peu pres correct et le login n'existe pas
 		$proj = new Project($db);
-		$proj->statut      = -1;
+		$thirdparty = new Societe($db);
+
+		// Search thirdparty and set it if found to the new created project
+		$result = $thirdparty->fetch(0, '', '', '', '', '', '', '', '', '', $object->email);
+		if ($result > 0) {
+			$proj->socid = $thirdparty->id;
+		}
+
+		// Defined the ref into $defaultref
+		$defaultref = '';
+		$modele = empty($conf->global->PROJECT_ADDON) ? 'mod_project_simple' : $conf->global->PROJECT_ADDON;
+
+		// Search template files
+		$file = ''; $classname = ''; $filefound = 0;
+		$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+		foreach ($dirmodels as $reldir) {
+			$file = dol_buildpath($reldir."core/modules/project/".$modele.'.php', 0);
+			if (file_exists($file)) {
+				$filefound = 1;
+				$classname = $modele;
+				break;
+			}
+		}
+
+		if ($filefound) {
+			$result = dol_include_once($reldir."core/modules/project/".$modele.'.php');
+			$modProject = new $classname;
+
+			$defaultref = $modProject->getNextValue($thirdparty, $object);
+		}
+
+		if (is_numeric($defaultref) && $defaultref <= 0) {
+			$defaultref = '';
+		}
+
+		if (empty($defaultref)) {
+			$defaultref = 'PJ'.dol_print_date(dol_now(), 'dayrfc');
+		}
+
+		$proj->ref         = $defaultref;
+		$proj->statut      = $proj::STATUS_DRAFT;
+		$proj->status      = $proj::STATUS_DRAFT;
 		$proj->email       = GETPOST("email");
-		$proj->note_private = GETPOST("note_private");
+		$proj->public      = 1;
+		$proj->usage_opportunity = 1;
+		$proj->title       = $langs->trans("LeadFromPublicForm");
+		$proj->description = GETPOST("description", "alphanohtml");
+		$proj->opp_status  = $defaultoppstatus;
+		$proj->fk_opp_status  = $defaultoppstatus;
 
-
-		// Fill array 'array_options' with data from add form
+		// Fill array 'array_options' with data from the form
 		$extrafields->fetch_name_optionals_label($proj->table_element);
 		$ret = $extrafields->setOptionalsFromPost(null, $proj);
 		if ($ret < 0) {
 			$error++;
 		}
 
+		// Create the project
 		$result = $proj->create($user);
 		if ($result > 0) {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
@@ -275,7 +282,7 @@ if (empty($reshook) && $action == 'add') {
 				$outputlangs = new Translate('', $conf);
 				$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
 				// Load traductions files required by page
-				$outputlangs->loadLangs(array("main", "members"));
+				$outputlangs->loadLangs(array("main", "members", "projects"));
 				// Get email content from template
 				$arraydefaultmessage = null;
 				$labeltouse = $conf->global->PROJECT_EMAIL_TEMPLATE_AUTOLEAD;
@@ -288,11 +295,15 @@ if (empty($reshook) && $action == 'add') {
 					$subject = $arraydefaultmessage->topic;
 					$msg     = $arraydefaultmessage->content;
 				}
+				if (empty($labeltosue)) {
+					$labeltouse = '['.$mysoc->name.'] '.$langs->trans("YourMessage");
+					$msg = $langs->trans("YourMessageHasBeenReceived");
+				}
 
 				$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
 				complete_substitutions_array($substitutionarray, $outputlangs, $object);
 				$subjecttosend = make_substitutions($subject, $substitutionarray, $outputlangs);
-				$texttosend = make_substitutions(dol_concatdesc($msg, $adht->getMailOnValid()), $substitutionarray, $outputlangs);
+				$texttosend = make_substitutions($msg, $substitutionarray, $outputlangs);
 
 				if ($subjecttosend && $texttosend) {
 					$moreinheader = 'X-Dolibarr-Info: send_an_email by public/lead/new.php'."\r\n";
@@ -317,10 +328,11 @@ if (empty($reshook) && $action == 'add') {
 			if (!empty($entity)) {
 				$urlback .= '&entity='.$entity;
 			}
-			dol_syslog("project lead ".$proj->ref." was created, we redirect to ".$urlback);
+
+			dol_syslog("project lead ".$proj->ref." has been created, we redirect to ".$urlback);
 		} else {
 			$error++;
-			$errmsg .= join('<br>', $proj->errors);
+			$errmsg .= $proj->error.'<br>'.join('<br>', $proj->errors);
 		}
 	}
 
@@ -334,23 +346,16 @@ if (empty($reshook) && $action == 'add') {
 	}
 }
 
-// Create lead from $arrayofdata
-if (empty($reshook) && !empty($arrayofdata)) {
-	// TODO
-	dol_syslog(var_export($arrayofdata, true));
-	// ...
-}
-
 // Action called after a submitted was send and member created successfully
 // If MEMBER_URL_REDIRECT_SUBSCRIPTION is set to url we never go here because a redirect was done to this url.
 // backtopage parameter with an url was set on member submit page, we never go here because a redirect was done to this url.
 if (empty($reshook) && $action == 'added') {
-	llxHeaderVierge($langs->trans("NewMemberForm"));
+	llxHeaderVierge($langs->trans("NewLeadForm"));
 
 	// Si on a pas ete redirige
-	print '<br>';
+	print '<br><br>';
 	print '<div class="center">';
-	print $langs->trans("NewMemberbyWeb");
+	print $langs->trans("NewLeadbyWeb");
 	print '</div>';
 
 	llxFooterVierge();
@@ -365,8 +370,8 @@ if (empty($reshook) && $action == 'added') {
 
 $form = new Form($db);
 $formcompany = new FormCompany($db);
-$extrafields->fetch_name_optionals_label('project'); // fetch optionals attributes and labels
 
+$extrafields->fetch_name_optionals_label($object->table_element); // fetch optionals attributes and labels
 
 llxHeaderVierge($langs->trans("NewContact"));
 
@@ -415,14 +420,16 @@ jQuery(document).ready(function () {
 print '<table class="border" summary="form to subscribe" id="tablesubscribe">'."\n";
 
 // Lastname
-print '<tr><td>'.$langs->trans("Lastname").' <span style="color: red">*</span></td><td><input type="text" name="lastname" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('lastname')).'"></td></tr>'."\n";
+print '<tr><td>'.$langs->trans("Lastname").' <span style="color: red">*</span></td><td><input type="text" name="lastname" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('lastname')).'" required></td></tr>'."\n";
 // Firstname
-print '<tr><td>'.$langs->trans("Firstname").' <span style="color: red">*</span></td><td><input type="text" name="firstname" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('firstname')).'"></td></tr>'."\n";
+print '<tr><td>'.$langs->trans("Firstname").' <span style="color: red">*</span></td><td><input type="text" name="firstname" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('firstname')).'" required></td></tr>'."\n";
+// EMail
+print '<tr><td>'.$langs->trans("Email").' <span style="color: red">*</span></td><td><input type="text" name="email" maxlength="255" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('email')).'" required></td></tr>'."\n";
 // Company
 print '<tr id="trcompany" class="trcompany"><td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('societe')).'"></td></tr>'."\n";
 // Address
 print '<tr><td>'.$langs->trans("Address").'</td><td>'."\n";
-print '<textarea name="address" id="address" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.dol_escape_htmltag(GETPOST('address', 'restricthtml'), 0, 1).'</textarea></td></tr>'."\n";
+print '<textarea name="address" id="address" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_2.'">'.dol_escape_htmltag(GETPOST('address', 'restricthtml'), 0, 1).'</textarea></td></tr>'."\n";
 // Zip / Town
 print '<tr><td>'.$langs->trans('Zip').' / '.$langs->trans('Town').'</td><td>';
 print $formcompany->select_ziptown(GETPOST('zipcode'), 'zipcode', array('town', 'selectcountry_id', 'state_id'), 6, 1);
@@ -453,21 +460,20 @@ print '</td></tr>';
 if (empty($conf->global->SOCIETE_DISABLE_STATE)) {
 	print '<tr><td>'.$langs->trans('State').'</td><td>';
 	if ($country_code) {
-		print $formcompany->select_state(GETPOST("state_id"), $country_code);
+		print $formcompany->select_state(GETPOST("state_id", 'int'), $country_code);
 	} else {
 		print '';
 	}
 	print '</td></tr>';
 }
-// EMail
-print '<tr><td>'.$langs->trans("Email").' <span style="color: red">*</span></td><td><input type="text" name="email" maxlength="255" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('email')).'"></td></tr>'."\n";
+
 // Other attributes
 $tpl_context = 'public'; // define template context to public
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
 // Comments
 print '<tr>';
-print '<td class="tdtop">'.$langs->trans("Comments").'</td>';
-print '<td class="tdtop"><textarea name="note_private" id="note_private" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.dol_escape_htmltag(GETPOST('note_private', 'restricthtml'), 0, 1).'</textarea></td>';
+print '<td class="tdtop">'.$langs->trans("Message").' <span style="color: red">*</span></td>';
+print '<td class="tdtop"><textarea name="description" id="description" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_5.'" required>'.dol_escape_htmltag(GETPOST('description', 'restricthtml'), 0, 1).'</textarea></td>';
 print '</tr>'."\n";
 
 print "</table>\n";

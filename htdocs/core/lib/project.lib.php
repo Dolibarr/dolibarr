@@ -509,14 +509,12 @@ function project_admin_prepare_head()
 	$head[$h][2] = 'attributes_task';
 	$h++;
 
-	if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
-		$langs->load("members");
+	$langs->load("members");
 
-		$head[$h][0] = DOL_URL_ROOT.'/projet/admin/website.php';
-		$head[$h][1] = $langs->trans("BlankSubscriptionForm");
-		$head[$h][2] = 'website';
-		$h++;
-	}
+	$head[$h][0] = DOL_URL_ROOT.'/projet/admin/website.php';
+	$head[$h][1] = $langs->trans("BlankSubscriptionForm");
+	$head[$h][2] = 'website';
+	$h++;
 
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'project_admin', 'remove');
 
@@ -2819,7 +2817,7 @@ function getTaskProgressView($task, $label = true, $progressNumber = true, $hide
 		$out .= '        </div>';
 	} else {
 		// bad
-		$out .= '        <div class="progress-bar progress-bar-consumed" style="width: '.floatval($progressCalculated).'%" title="'.floatval($progressCalculated).'%">';
+		$out .= '        <div class="progress-bar progress-bar-consumed-late" style="width: '.floatval($progressCalculated).'%" title="'.floatval($progressCalculated).'%">';
 		$out .= '        <div class="progress-bar '.$progressBarClass.'" style="width: '.($task->progress ? floatval($task->progress / $progressCalculated * 100).'%' : '1px').'" title="'.floatval($task->progress).'%"></div>';
 		$out .= '        </div>';
 	}

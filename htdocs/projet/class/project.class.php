@@ -159,7 +159,9 @@ class Project extends CommonObject
 	public $statuts_long;
 
 	public $statut; // 0=draft, 1=opened, 2=closed
+
 	public $opp_status; // opportunity status, into table llx_c_lead_status
+	public $fk_opp_status; // opportunity status, into table llx_c_lead_status
 	public $opp_percent; // opportunity probability
 
 	public $email_msgid;

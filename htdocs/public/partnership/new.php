@@ -419,7 +419,7 @@ if (empty($reshook) && $action == 'added') {
 	llxHeaderVierge($langs->trans("NewPartnershipForm"));
 
 	// Si on a pas ete redirige
-	print '<br>';
+	print '<br><br>';
 	print '<div class="center">';
 	print $langs->trans("NewPartnershipbyWeb");
 	print '</div>';
@@ -437,7 +437,7 @@ if (empty($reshook) && $action == 'added') {
 $form = new Form($db);
 $formcompany = new FormCompany($db);
 
-$extrafields->fetch_name_optionals_label('partnership'); // fetch optionals attributes and labels
+$extrafields->fetch_name_optionals_label($partnership->table_element); // fetch optionals attributes and labels
 
 
 llxHeaderVierge($langs->trans("NewPartnershipRequest"));

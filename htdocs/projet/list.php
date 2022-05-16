@@ -932,7 +932,7 @@ if (!empty($arrayfields['p.public']['checked'])) {
 // Opp status
 if (!empty($arrayfields['p.fk_opp_status']['checked'])) {
 	print '<td class="liste_titre nowrap center">';
-	print $formproject->selectOpportunityStatus('search_opp_status', $search_opp_status, 1, 0, 1, 0, 'maxwidth100', 1);
+	print $formproject->selectOpportunityStatus('search_opp_status', $search_opp_status, 1, 0, 1, 0, 'maxwidth100', 1, 0);
 	print '</td>';
 }
 if (!empty($arrayfields['p.opp_amount']['checked'])) {
