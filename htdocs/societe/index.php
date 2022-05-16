@@ -353,7 +353,7 @@ if ($result) {
 			$lastmodified .= $thirdparty_static->getTypeUrl();
 			$lastmodified .= '</td>';
 			// Last modified date
-			$lastmodified .= '<td class="right tddate">';
+			$lastmodified .= '<td class="right tddate" title="'.dol_escape_htmltag($langs->trans("DateModification").' '.dol_print_date($thirdparty_static->date_modification, 'dayhour')).'">';
 			$lastmodified .= dol_print_date($thirdparty_static->date_modification, 'day');
 			$lastmodified .= "</td>";
 			$lastmodified .= '<td class="right nowrap">';
