@@ -959,7 +959,9 @@ if ($action == 'create' && $user->rights->projet->creer) {
 
 			// Opportunity amount
 			print '<tr class="classuseopportunity'.$classfortr.'"><td>'.$langs->trans("OpportunityAmount").'</td>';
-			print '<td><input size="5" type="text" name="opp_amount" value="'.(GETPOSTISSET('opp_amount') ? GETPOST('opp_amount') : (strcmp($object->opp_amount, '') ? price2num($object->opp_amount) : '')).'"></td>';
+			print '<td><input size="5" type="text" name="opp_amount" value="'.(GETPOSTISSET('opp_amount') ? GETPOST('opp_amount') : (strcmp($object->opp_amount, '') ? price2num($object->opp_amount) : '')).'">';
+			print $langs->getCurrencySymbol($conf->currency);
+			print '</td>';
 			print '</tr>';
 		}
 
@@ -970,7 +972,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 		if ($comefromclone) {
 			print ' checked ';
 		}
-		print '/><label for="reportdate">'.$langs->trans("ProjectReportDate").'</label>';
+		print '/><label for="reportdate" class="opacitymedium">'.$langs->trans("ProjectReportDate").'</label>';
 		print '</td></tr>';
 
 		// Date end
@@ -980,7 +982,9 @@ if ($action == 'create' && $user->rights->projet->creer) {
 
 		// Budget
 		print '<tr><td>'.$langs->trans("Budget").'</td>';
-		print '<td><input size="5" type="text" name="budget_amount" value="'.(GETPOSTISSET('budget_amount') ? GETPOST('budget_amount') : (strcmp($object->budget_amount, '') ? price2num($object->budget_amount) : '')).'"></td>';
+		print '<td><input size="5" type="text" name="budget_amount" value="'.(GETPOSTISSET('budget_amount') ? GETPOST('budget_amount') : (strcmp($object->budget_amount, '') ? price2num($object->budget_amount) : '')).'">';
+		print $langs->getCurrencySymbol($conf->currency);
+		print '</td>';
 		print '</tr>';
 
 		// Description
