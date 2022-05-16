@@ -31,6 +31,6 @@ CREATE TABLE llx_webhook_target(
 	url varchar(255) NOT NULL,
 	connection_method varchar(255) NULL,	-- to store the way to authenticate to the webhook
 	connection_data varchar(255) NULL, 		-- to store the data to use to authenticate to the webhook
-	trigger_codes text NOT NULL				-- list of selected trigger that must call the webhook
+	trigger_codes text NULL					-- list of selected trigger that must call the webhook
 	-- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;
