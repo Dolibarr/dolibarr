@@ -487,15 +487,6 @@ class Ticket extends CommonObject
 
 			if (!$error) {
 				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."ticket");
-
-				if (!$notrigger) {
-					// Call trigger
-					$result = $this->call_trigger('TICKET_CREATE', $user);
-					if ($result < 0) {
-						$error++;
-					}
-					// End call triggers
-				}
 			}
 
 			if (!$error && ! empty($conf->global->TICKET_ADD_AUTHOR_AS_CONTACT)) {
@@ -511,6 +502,15 @@ class Ticket extends CommonObject
 				if ($result < 0) {
 					$error++;
 				}
+			}
+
+			if (!$error && !$notrigger) {
+				// Call trigger
+				$result = $this->call_trigger('TICKET_CREATE', $user);
+				if ($result < 0) {
+					$error++;
+				}
+				// End call triggers
 			}
 
 			// Commit or rollback
