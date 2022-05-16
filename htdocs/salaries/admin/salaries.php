@@ -120,7 +120,7 @@ foreach ($list as $key) {
 	// Value
 	print '<td>';
 	if (!empty($conf->accounting->enabled)) {
-		print $formaccounting->select_account($conf->global->$key, $key, 1, '', 1, 1);
+		print $formaccounting->select_account(getDolGlobalString($key), $key, 1, '', 1, 1);
 	} else {
 		print '<input type="text" size="20" id="'.$key.'" name="'.$key.'" value="'.$conf->global->$key.'">';
 	}
@@ -133,7 +133,7 @@ print "</table>\n";
 
 //print dol_get_fiche_end();
 
-print '<div class="center"><input type="submit" class="button" value="'.$langs->trans('Modify').'" name="button"></div>';
+print '<div class="center"><input type="submit" class="button button-edit" name="button" value="'.$langs->trans('Modify').'"></div>';
 
 print '</form><br>';
 

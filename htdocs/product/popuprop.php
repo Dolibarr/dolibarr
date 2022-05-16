@@ -30,7 +30,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('commande', 'propal', 'bills', 'other'));
+$langs->loadLangs(array('commande', 'propal', 'bills', 'other', 'products'));
 
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
@@ -44,8 +44,8 @@ if (!empty($user->socid)) {
 }
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -82,7 +82,7 @@ $title = $langs->trans("Statistics");
 
 llxHeader('', $title, $helpurl);
 
-print load_fiche_titre($title, $mesg, 'product');
+print load_fiche_titre($title, '', 'product');
 
 
 $param = '';
@@ -101,6 +101,7 @@ if ($mode != '') {
 	$param .= '&mode='.urlencode($mode);
 }
 
+
 $h = 0;
 $head = array();
 
@@ -115,7 +116,7 @@ $head[$h][2] = 'popularity';
 $h++;
 
 
-print dol_get_fiche_head($head, 'popularity', $langs->trans("Statistics"), -1);
+print dol_get_fiche_head($head, 'popularity', '', -1);
 
 
 // Array of liens to show
@@ -141,6 +142,9 @@ if ($type !== '') {
 	$sql .= " AND fk_product_type = ".((int) $type);
 }
 $sql .= " GROUP BY p.rowid, p.label, p.ref, p.fk_product_type";
+
+$num = 0;
+$totalnboflines = 0;
 
 if (!empty($mode) && $mode != '-1') {
 	$result = $db->query($sql);
@@ -178,7 +182,7 @@ $arrayofmode = array(
 	'facture' => 'Facture'
 	);
 $title .= ' '.$form->selectarray('mode', $arrayofmode, $mode, 1);
-$title .= ' <input type="submit" class="button" name="refresh" value="'.$langs->trans("Refresh").'">';
+$title .= ' <input type="submit" class="button small" name="refresh" value="'.$langs->trans("Refresh").'">';
 
 
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
@@ -198,7 +202,7 @@ print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sort
 
 print '<table class="noborder centpercent">';
 
-print "<tr class=\"liste_titre\">";
+print '<tr class="liste_titre">';
 print_liste_field_titre('Ref', $_SERVER["PHP_SELF"], 'p.ref', '', $param, '', $sortfield, $sortorder);
 print_liste_field_titre('Type', $_SERVER["PHP_SELF"], 'p.fk_product_type', '', $param, '', $sortfield, $sortorder);
 print_liste_field_titre('Label', $_SERVER["PHP_SELF"], 'p.label', '', $param, '', $sortfield, $sortorder);
@@ -212,7 +216,7 @@ if ($mode && $mode != '-1') {
 			$sql = "SELECT label";
 			$sql .= " FROM ".MAIN_DB_PREFIX."product_lang";
 			$sql .= " WHERE fk_product = ".((int) $prodid);
-			$sql .= " AND lang='".$db->escape($langs->getDefaultLang())."'";
+			$sql .= " AND lang = '".$db->escape($langs->getDefaultLang())."'";
 			$sql .= " LIMIT 1";
 
 			$resultp = $db->query($sql);

@@ -196,10 +196,10 @@ class modCommande extends DolibarrModules
 			's.rowid'=>"IdCompany", 's.nom'=>'CompanyName', 'ps.nom'=>'ParentCompany', 's.address'=>'Address', 's.zip'=>'Zip', 's.town'=>'Town', 'd.nom'=>'State', 'co.label'=>'Country',
 			'co.code'=>"CountryCode", 's.phone'=>'Phone', 's.siren'=>'ProfId1', 's.siret'=>'ProfId2', 's.ape'=>'ProfId3', 's.idprof4'=>'ProfId4', 'c.rowid'=>"Id",
 			'c.ref'=>"Ref", 'c.ref_client'=>"RefCustomer", 'c.fk_soc'=>"IdCompany", 'c.date_creation'=>"DateCreation", 'c.date_commande'=>"OrderDate",
-			'c.date_livraison'=>"DateDeliveryPlanned", 'c.amount_ht'=>"Amount", 'c.remise_percent'=>"GlobalDiscount", 'c.total_ht'=>"TotalHT",
+			'c.date_livraison'=>"DateDeliveryPlanned", 'c.amount_ht'=>"Amount", 'c.total_ht'=>"TotalHT",
 			'c.total_ttc'=>"TotalTTC", 'c.facture'=>"Billed", 'c.fk_statut'=>'Status', 'c.note_public'=>"Note", 'c.date_livraison'=>'DeliveryDate',
 			'c.fk_user_author'=>'CreatedById', 'uc.login'=>'CreatedByLogin', 'c.fk_user_valid'=>'ValidatedById', 'uv.login'=>'ValidatedByLogin',
-			'pj.ref'=>'ProjectRef', 'cd.rowid'=>'LineId', 'cd.label'=>"Label", 'cd.description'=>"LineDescription", 'cd.product_type'=>'TypeOfLineServiceOrProduct',
+			'pj.ref'=>'ProjectRef', 'cd.rowid'=>'LineId', 'cd.description'=>"LineDescription", 'cd.product_type'=>'TypeOfLineServiceOrProduct',
 			'cd.tva_tx'=>"LineVATRate", 'cd.qty'=>"LineQty", 'cd.total_ht'=>"LineTotalHT", 'cd.total_tva'=>"LineTotalVAT", 'cd.total_ttc'=>"LineTotalTTC",
 			'p.rowid'=>'ProductId', 'p.ref'=>'ProductRef', 'p.label'=>'ProductLabel'
 		);
@@ -210,10 +210,17 @@ class modCommande extends DolibarrModules
 			$this->export_fields_array[$r]['c.multicurrency_total_tva'] = 'MulticurrencyAmountVAT';
 			$this->export_fields_array[$r]['c.multicurrency_total_ttc'] = 'MulticurrencyAmountTTC';
 		}
+		// Add multicompany field
+		if (!empty($conf->global->MULTICOMPANY_ENTITY_IN_EXPORT_IF_SHARED)) {
+			$nbofallowedentities = count(explode(',', getEntity('commande')));
+			if (!empty($conf->multicompany->enabled) && $nbofallowedentities > 1) {
+				$this->export_fields_array[$r]['c.entity'] = 'Entity';
+			}
+		}
 		//$this->export_TypeFields_array[$r]=array(
 		//	's.rowid'=>"List:societe:nom",'s.nom'=>'Text','s.address'=>'Text','s.zip'=>'Text','s.town'=>'Text','co.label'=>'List:c_country:label:label',
 		//	'co.code'=>'Text','s.phone'=>'Text','s.siren'=>'Text','s.siret'=>'Text','s.ape'=>'Text','s.idprof4'=>'Text','c.ref'=>"Text",'c.ref_client'=>"Text",
-		//	'c.date_creation'=>"Date",'c.date_commande'=>"Date",'c.amount_ht'=>"Numeric",'c.remise_percent'=>"Numeric",'c.total_ht'=>"Numeric",
+		//	'c.date_creation'=>"Date",'c.date_commande'=>"Date",'c.amount_ht'=>"Numeric",'c.total_ht'=>"Numeric",
 		//	'c.total_ttc'=>"Numeric",'c.facture'=>"Boolean",'c.fk_statut'=>'Status','c.note_public'=>"Text",'c.date_livraison'=>'Date','cd.description'=>"Text",
 		//	'cd.product_type'=>'Boolean','cd.tva_tx'=>"Numeric",'cd.qty'=>"Numeric",'cd.total_ht'=>"Numeric",'cd.total_tva'=>"Numeric",'cd.total_ttc'=>"Numeric",
 		//	'p.rowid'=>'List:product:ref','p.ref'=>'Text','p.label'=>'Text'
@@ -221,17 +228,18 @@ class modCommande extends DolibarrModules
 		$this->export_TypeFields_array[$r] = array(
 			's.nom'=>'Text', 'ps.nom'=>'Text', 's.address'=>'Text', 's.zip'=>'Text', 's.town'=>'Text', 'co.label'=>'List:c_country:label:label', 'co.code'=>'Text', 's.phone'=>'Text',
 			's.siren'=>'Text', 's.siret'=>'Text', 's.ape'=>'Text', 's.idprof4'=>'Text', 'c.ref'=>"Text", 'c.ref_client'=>"Text", 'c.date_creation'=>"Date",
-			'c.date_commande'=>"Date", 'c.date_livraison'=>"Date", 'c.amount_ht'=>"Numeric", 'c.remise_percent'=>"Numeric", 'c.total_ht'=>"Numeric",
+			'c.date_commande'=>"Date", 'c.date_livraison'=>"Date", 'c.amount_ht'=>"Numeric", 'c.total_ht'=>"Numeric",
 			'c.total_ttc'=>"Numeric", 'c.facture'=>"Boolean", 'c.fk_statut'=>'Status', 'c.note_public'=>"Text", 'c.date_livraison'=>'Date', 'pj.ref'=>'Text',
 			'cd.description'=>"Text", 'cd.product_type'=>'Boolean', 'cd.tva_tx'=>"Numeric", 'cd.qty'=>"Numeric", 'cd.total_ht'=>"Numeric", 'cd.total_tva'=>"Numeric",
-			'cd.total_ttc'=>"Numeric", 'p.rowid'=>'List:product:ref::product', 'p.ref'=>'Text', 'p.label'=>'Text', 'd.nom'=>'Text'
+			'cd.total_ttc'=>"Numeric", 'p.rowid'=>'List:product:ref::product', 'p.ref'=>'Text', 'p.label'=>'Text', 'd.nom'=>'Text',
+			'c.entity'=>'List:entity:label:rowid',
 		);
 		$this->export_entities_array[$r] = array(
 			's.rowid'=>"company", 's.nom'=>'company', 'ps.nom'=>'company', 's.address'=>'company', 's.zip'=>'company', 's.town'=>'company', 'd.nom'=>'company', 'co.label'=>'company',
 			'co.code'=>'company', 's.phone'=>'company', 's.siren'=>'company', 's.ape'=>'company', 's.idprof4'=>'company', 's.siret'=>'company', 'c.rowid'=>"order",
 			'c.ref'=>"order", 'c.ref_client'=>"order", 'c.fk_soc'=>"order", 'c.date_creation'=>"order", 'c.date_commande'=>"order", 'c.amount_ht'=>"order",
-			'c.remise_percent'=>"order", 'c.total_ht'=>"order", 'c.total_ttc'=>"order", 'c.facture'=>"order", 'c.fk_statut'=>"order", 'c.note'=>"order",
-			'c.date_livraison'=>"order", 'pj.ref'=>'project', 'cd.rowid'=>'order_line', 'cd.label'=>"order_line", 'cd.description'=>"order_line",
+			'c.total_ht'=>"order", 'c.total_ttc'=>"order", 'c.facture'=>"order", 'c.fk_statut'=>"order", 'c.note'=>"order",
+			'c.date_livraison'=>"order", 'pj.ref'=>'project', 'cd.rowid'=>'order_line', 'cd.description'=>"order_line",
 			'cd.product_type'=>'order_line', 'cd.tva_tx'=>"order_line", 'cd.qty'=>"order_line", 'cd.total_ht'=>"order_line", 'cd.total_tva'=>"order_line",
 			'cd.total_ttc'=>"order_line", 'p.rowid'=>'product', 'p.ref'=>'product', 'p.label'=>'product'
 		);
@@ -285,21 +293,20 @@ class modCommande extends DolibarrModules
 		$this->import_code[$r] = 'commande_'.$r;
 		$this->import_label[$r] = 'CustomersOrders';
 		$this->import_icon[$r] = $this->picto;
-		$this->import_entities_array[$r] = [];
-		$this->import_tables_array[$r] = ['c' => MAIN_DB_PREFIX.'commande', 'extra' => MAIN_DB_PREFIX.'commande_extrafields'];
-		$this->import_tables_creator_array[$r] = ['c' => 'fk_user_author']; // Fields to store import user id
-		$this->import_fields_array[$r] = [
-			'c.ref'               => 'Document Ref*',
+		$this->import_entities_array[$r] = array();
+		$this->import_tables_array[$r] = array('c' => MAIN_DB_PREFIX.'commande', 'extra' => MAIN_DB_PREFIX.'commande_extrafields');
+		$this->import_tables_creator_array[$r] = array('c' => 'fk_user_author'); // Fields to store import user id
+		$import_sample = array();
+		$this->import_fields_array[$r] = array(
+			'c.ref'               => 'Ref*',
 			'c.ref_client'        => 'RefCustomer',
 			'c.fk_soc'            => 'ThirdPartyName*',
 			'c.fk_projet'         => 'ProjectId',
 			'c.date_creation'     => 'DateCreation',
-			'c.date_valid'        => 'DateValid',
-			'c.date_commande'     => 'DateOrder',
+			'c.date_valid'        => 'DateValidation',
+			'c.date_commande'     => 'OrderDate*',
 			'c.fk_user_modif'     => 'ModifiedById',
 			'c.fk_user_valid'     => 'ValidatedById',
-			'c.fk_statut'         => 'Status*',
-			'c.remise_percent'    => 'GlobalDiscount',
 			'c.total_tva'         => 'TotalTVA',
 			'c.total_ht'          => 'TotalHT',
 			'c.total_ttc'         => 'TotalTTC',
@@ -309,8 +316,9 @@ class modCommande extends DolibarrModules
 			'c.date_livraison'    => 'DeliveryDate',
 			'c.fk_cond_reglement' => 'Payment Condition',
 			'c.fk_mode_reglement' => 'Payment Mode',
-			'c.model_pdf'         => 'Model'
-		];
+			'c.model_pdf'         => 'Model',
+			'c.fk_statut'         => 'Status*'
+		);
 
 		if (!empty($conf->multicurrency->enabled)) {
 			$this->import_fields_array[$r]['c.multicurrency_code']      = 'Currency';
@@ -319,70 +327,64 @@ class modCommande extends DolibarrModules
 			$this->import_fields_array[$r]['c.multicurrency_total_tva'] = 'MulticurrencyAmountVAT';
 			$this->import_fields_array[$r]['c.multicurrency_total_ttc'] = 'MulticurrencyAmountTTC';
 		}
+		$import_extrafield_sample = array();
+		$keyforselect = 'commande';
+		$keyforelement = 'order';
+		$keyforaliasextra = 'extra';
+		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinimport.inc.php';
 
-		// Add extra fields
-		$import_extrafield_sample = [];
-		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'commande' AND entity IN (0, ".$conf->entity.")";
-		$resql = $this->db->query($sql);
-
-		if ($resql) {
-			while ($obj = $this->db->fetch_object($resql)) {
-				$fieldname = 'extra.'.$obj->name;
-				$fieldlabel = ucfirst($obj->label);
-				$this->import_fields_array[$r][$fieldname] = $fieldlabel.($obj->fieldrequired ? '*' : '');
-				$import_extrafield_sample[$fieldname] = $fieldlabel;
-			}
-		}
-		// End add extra fields
-
-		$this->import_fieldshidden_array[$r] = ['extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'commande'];
-		$this->import_regex_array[$r] = [
-			'c.ref' => '(CPV\d{4}-\d{4}|CO\d{4}-\d{4}|PROV.{1,32}$)',
+		$this->import_fieldshidden_array[$r] = array('extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'commande');
+		$this->import_regex_array[$r] = array(
 			'c.multicurrency_code' => 'code@'.MAIN_DB_PREFIX.'multicurrency'
-		];
-
-		$this->import_updatekeys_array[$r] = ['c.ref' => 'Ref'];
-		$this->import_convertvalue_array[$r] = [
-			'c.fk_soc' => [
+		);
+		$this->import_examplevalues_array[$r] = array_merge($import_sample, $import_extrafield_sample);
+		$this->import_updatekeys_array[$r] = array('c.ref' => 'Ref');
+		$this->import_convertvalue_array[$r] = array(
+			'c.ref' => array(
+				'rule'=>'getrefifauto',
+				'class'=>(empty($conf->global->COMMANDE_ADDON) ? 'mod_commande_marbre' : $conf->global->COMMANDE_ADDON),
+				'path'=>"/core/modules/commande/".(empty($conf->global->COMMANDE_ADDON) ? 'mod_commande_marbre' : $conf->global->COMMANDE_ADDON).'.php',
+				'classobject'=>'Commande',
+				'pathobject'=>'/commande/class/commande.class.php',
+			),
+			'c.fk_soc' => array(
 				'rule'    => 'fetchidfromref',
 				'file'    => '/societe/class/societe.class.php',
 				'class'   => 'Societe',
 				'method'  => 'fetch',
 				'element' => 'ThirdParty'
-			],
-			'c.fk_user_valid' => [
+			),
+			'c.fk_user_valid' => array(
 				'rule'    => 'fetchidfromref',
 				'file'    => '/user/class/user.class.php',
 				'class'   => 'User',
 				'method'  => 'fetch',
 				'element' => 'user'
-			],
-			'c.fk_mode_reglement' => [
+			),
+			'c.fk_mode_reglement' => array(
 				'rule' => 'fetchidfromcodeorlabel',
 				'file' => '/compta/paiement/class/cpaiement.class.php',
 				'class' => 'Cpaiement',
 				'method' => 'fetch',
 				'element' => 'cpayment'
-			],
-		];
+			),
+		);
 
 		//Import CPV Lines
 		$r++;
 		$this->import_code[$r] = 'commande_lines_'.$r;
 		$this->import_label[$r] = 'SaleOrderLines';
 		$this->import_icon[$r] = $this->picto;
-		$this->import_entities_array[$r] = [];
-		$this->import_tables_array[$r] = ['cd' => MAIN_DB_PREFIX.'commandedet', 'extra' => MAIN_DB_PREFIX.'commandedet_extrafields'];
-		$this->import_fields_array[$r] = [
-			'cd.fk_commande'    => 'Document Ref*',
-			'cd.fk_parent_line' => 'PrParentLine',
+		$this->import_entities_array[$r] = array();
+		$this->import_tables_array[$r] = array('cd' => MAIN_DB_PREFIX.'commandedet', 'extra' => MAIN_DB_PREFIX.'commandedet_extrafields');
+		$this->import_fields_array[$r] = array(
+			'cd.fk_commande'    => 'CustomerOrder*',
+			'cd.fk_parent_line' => 'ParentLine',
 			'cd.fk_product'     => 'IdProduct',
-			'cd.label'          => 'Label',
 			'cd.description'    => 'LineDescription',
 			'cd.tva_tx'         => 'LineVATRate',
 			'cd.qty'            => 'LineQty',
 			'cd.remise_percent' => 'Reduc. Percent',
-			'cd.remise'         => 'Reduc.',
 			'cd.price'          => 'Price',
 			'cd.subprice'       => 'Sub Price',
 			'cd.total_ht'       => 'LineTotalHT',
@@ -393,7 +395,7 @@ class modCommande extends DolibarrModules
 			'cd.date_end'       => 'End Date',
 			'cd.buy_price_ht'   => 'LineBuyPriceHT',
 			'cd.rang'           => 'LinePosition'
-		];
+		);
 
 		if (!empty($conf->multicurrency->enabled)) {
 			$this->import_fields_array[$r]['cd.multicurrency_code'] = 'Currency';
@@ -403,17 +405,11 @@ class modCommande extends DolibarrModules
 			$this->import_fields_array[$r]['cd.multicurrency_total_ttc'] = 'MulticurrencyAmountTTC';
 		}
 
-		// Add extra fields
-		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'commandedet' AND entity IN (0, ".$conf->entity.")";
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			while ($obj = $this->db->fetch_object($resql)) {
-				$fieldname = 'extra.'.$obj->name;
-				$fieldlabel = ucfirst($obj->label);
-				$this->import_fields_array[$r][$fieldname] = $fieldlabel.($obj->fieldrequired ? '*' : '');
-			}
-		}
-		// End add extra fields
+		$import_extrafield_sample = array();
+		$keyforselect = 'commandedet';
+		$keyforelement = 'orderline';
+		$keyforaliasextra = 'extra';
+		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinimport.inc.php';
 
 		$this->import_fieldshidden_array[$r] = ['extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'commandedet'];
 		$this->import_regex_array[$r] = [
@@ -466,8 +462,8 @@ class modCommande extends DolibarrModules
 		}
 
 		$sql = array(
-				"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[0][2])."' AND type = 'order' AND entity = ".$conf->entity,
-				"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[0][2])."','order',".$conf->entity.")"
+				"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[0][2])."' AND type = 'order' AND entity = ".((int) $conf->entity),
+				"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[0][2])."', 'order', ".((int) $conf->entity).")"
 		);
 
 		return $this->_init($sql, $options);

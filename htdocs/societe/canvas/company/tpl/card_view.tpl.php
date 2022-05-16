@@ -62,7 +62,7 @@ print dol_get_fiche_head($head, 'card', $langs->trans("ThirdParty"), 0, 'company
 	<td><?php echo $langs->trans('CustomerCode'); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['code_client']; ?>
 	<?php if ($this->control->tpl['checkcustomercode'] <> 0) { ?>
-	<font class="error">(<?php echo $langs->trans("WrongCustomerCode"); ?>)</font>
+	<span class="error">(<?php echo $langs->trans("WrongCustomerCode"); ?>)</span>
 	<?php } ?>
 	</td>
 </tr>
@@ -73,7 +73,7 @@ print dol_get_fiche_head($head, 'card', $langs->trans("ThirdParty"), 0, 'company
 	<td><?php echo $langs->trans('SupplierCode'); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['code_fournisseur']; ?>
 	<?php if ($this->control->tpl['checksuppliercode'] <> 0) { ?>
-	<font class="error">(<?php echo $langs->trans("WrongSupplierCode"); ?>)</font>
+	<span class="error">(<?php echo $langs->trans("WrongSupplierCode"); ?>)</span>
 	<?php } ?>
 	</td>
 </tr>
@@ -134,7 +134,7 @@ for ($i = 1; $i <= 4; $i++) {
 			if ($this->control->tpl['checkprofid'.$i] > 0) {
 				echo ' &nbsp; '.$this->control->tpl['urlprofid'.$i];
 			} else {
-				echo ' <font class="error">('.$langs->trans("ErrorWrongValue").')</font>';
+				echo ' <span class="error">('.$langs->trans("ErrorWrongValue").')</span>';
 			}
 		}
 		echo '</td>';
@@ -260,14 +260,14 @@ for ($i = 1; $i <= 4; $i++) {
 
 <div class="tabsAction">
 <?php if ($user->rights->societe->creer) { ?>
-<a class="butAction" href="<?php echo $_SERVER["PHP_SELF"].'?socid='.$this->control->tpl['id'].'&amp;action=edit&amp;canvas='.$canvas; ?>"><?php echo $langs->trans("Modify"); ?></a>
+<a class="butAction" href="<?php echo $_SERVER["PHP_SELF"].'?socid='.$this->control->tpl['id'].'&action=edit&token='.newToken().'&canvas='.urlencode($canvas); ?>"><?php echo $langs->trans("Modify"); ?></a>
 <?php } ?>
 
 <?php if ($user->rights->societe->supprimer) { ?>
 	<?php if ($conf->use_javascript_ajax) { ?>
 		<span id="action-delete" class="butActionDelete"><?php echo $langs->trans('Delete'); ?></span>
 	<?php } else { ?>
-		<a class="butActionDelete" href="<?php echo $_SERVER["PHP_SELF"].'?socid='.$this->control->tpl['id'].'&amp;action=delete&amp;token='.newToken().'&amp;canvas='.$canvas; ?>"><?php echo $langs->trans('Delete'); ?></a>
+		<a class="butActionDelete" href="<?php echo $_SERVER["PHP_SELF"].'?socid='.$this->control->tpl['id'].'&action=delete&token='.newToken().'&canvas='.urlencode($canvas); ?>"><?php echo $langs->trans('Delete'); ?></a>
 	<?php } ?>
 <?php } ?>
 </div>

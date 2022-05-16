@@ -35,6 +35,9 @@ OnlyOneFieldForXAxisIsPossible=Bare ett felt er for øyeblikket mulig som X-Akse
 AtLeastOneMeasureIsRequired=Det kreves minst ett felt for mål
 AtLeastOneXAxisIsRequired=Minst ett felt for X-akse er påkrevd
 LatestBlogPosts=Siste blogginnlegg
+notiftouser=To users
+notiftofixedemail=To fixed mail
+notiftouserandtofixedemail=To user and fixed mail
 Notify_ORDER_VALIDATE=Salgsordre validert
 Notify_ORDER_SENTBYMAIL=Salgsordre sendt via epost
 Notify_ORDER_SUPPLIER_SENTBYMAIL=Innkjøpsordre sendt via e-post
@@ -255,6 +258,10 @@ PassEncoding=Passordkoding
 PermissionsAdd=Tillatelser lagt til
 PermissionsDelete=Tillatelser fjernet
 YourPasswordMustHaveAtLeastXChars=Passordet ditt må ha minst <strong> %s </strong> tegn
+PasswordNeedAtLeastXUpperCaseChars=The password need at least <strong>%s</strong> upper case chars
+PasswordNeedAtLeastXDigitChars=The password need at least <strong>%s</strong> numeric chars
+PasswordNeedAtLeastXSpecialChars=The password need at least <strong>%s</strong> special chars
+PasswordNeedNoXConsecutiveChars=The password must not have <strong>%s</strong> consecutive similar chars
 YourPasswordHasBeenReset=Ditt passord er tilbakestilt
 ApplicantIpAddress=IP-adresse til søkeren
 SMSSentTo=SMS sendt til %s
@@ -265,6 +272,7 @@ ProjectCreatedByEmailCollector=Prosjekt opprettet av e-post samler fra e-post MS
 TicketCreatedByEmailCollector=Supportseddel opprettet av e-post samler fra e-post MSGID %s
 OpeningHoursFormatDesc=Bruk en bindestrek for å skille åpning og stengetid. <br> Bruk et mellomrom for å angi forskjellige områder. <br> Eksempel: 8-12 14-18
 SuffixSessionName=Suffix for session name
+LoginWith=Login with %s
 
 ##### Export #####
 ExportsArea=Eksportområde
@@ -291,3 +299,7 @@ PopuCom=Varer/tjenester etter popularitet i ordre
 ProductStatistics=Varer/Tjenestestatistikk
 NbOfQtyInOrders=Antall i ordre
 SelectTheTypeOfObjectToAnalyze=Select an object to view its statistics...
+
+ConfirmBtnCommonContent = Are you sure you want to "%s" ?
+ConfirmBtnCommonTitle = Confirm your action
+CloseDialog = Lukk

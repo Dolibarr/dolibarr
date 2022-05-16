@@ -325,6 +325,11 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$test="Text with ' encoded with the numeric html entity converted into text entity &#39; (like when submited by CKEditor)";
 		$result=testSqlAndScriptInject($test, 0);	// result must be 0
 		$this->assertEquals(0, $result, 'Error on testSqlAndScriptInject mmm');
+
+		$test="/dolibarr/htdocs/index.php/".chr('246')."abc";	// Add the char %F6 into the variable
+		$result=testSqlAndScriptInject($test, 2);
+		//print "test=".$test." result=".$result."\n";
+		$this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject with a non valid UTF8 char');
 	}
 
 	/**
@@ -349,7 +354,8 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$_POST["param1"]="333";
 		$_GET["param2"]='a/b#e(pr)qq-rr\cc';
 		$_GET["param3"]='"&#110;a/b#e(pr)qq-rr\cc';    // Same than param2 + " and &#110;
-		$_GET["param4"]='../dir';
+		$_GET["param4a"]='..&#47;../dir';
+		$_GET["param4b"]='..&#92;..\dirwindows';
 		$_GET["param5"]="a_1-b";
 		$_POST["param6"]="&quot;&gt;<svg o&#110;load='console.log(&quot;123&quot;)'&gt;";
 		$_POST["param6b"]='<<<../>../>../svg><<<../>../>../animate =alert(1)>abc';
@@ -358,7 +364,7 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$_POST['param8b']='<img src=x onerror=alert(document.location) t=';		// this is html obfuscated by non closing tag
 		$_POST['param8c']='< with space after is ok';
 		$_POST['param8d']='<abc123 is html to clean';
-		$_POST['param8e']='<123abc is not html to clean';
+		$_POST['param8e']='<123abc is not html to clean';	// other similar case: '<2021-12-12'
 		$_POST['param8f']='abc<<svg <><<animate onbegin=alert(document.domain) a';
 		$_POST["param9"]='is_object($object) ? ($object->id < 10 ? round($object->id / 2, 2) : (2 * $user->id) * (int) substr($mysoc->zip, 1, 2)) : \'objnotdefined\'';
 		$_POST["param10"]='is_object($object) ? ($object->id < 10 ? round($object->id / 2, 2) : (2 * $user->id) * (int) substr($mysoc->zip, 1, 2)) : \'<abc>objnotdefined\'';
@@ -394,9 +400,13 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($result, 'na/b#e(pr)qq-rr\cc', 'Test on param3');
 
-		$result=GETPOST("param4", 'alpha');  // Must return string sanitized from ../
+		$result=GETPOST("param4a", 'alpha');  // Must return string sanitized from ../
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($result, 'dir');
+
+		$result=GETPOST("param4b", 'alpha');  // Must return string sanitized from ../
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals($result, 'dirwindows');
 
 		// Test with aZ09
 
@@ -412,7 +422,11 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($result, '');
 
-		$result=GETPOST("param4", 'aZ09');  // Must return '' as string contains car not in aZ09 definition
+		$result=GETPOST("param4a", 'aZ09');  // Must return '' as string contains car not in aZ09 definition
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('', $result);
+
+		$result=GETPOST("param4b", 'aZ09');  // Must return '' as string contains car not in aZ09 definition
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('', $result);
 
@@ -492,6 +506,10 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		print __METHOD__." result param7 = ".$result."\n";
 		$this->assertEquals('"c:\this is a path~1\aaan &#x;;;;" abcdef', $result);
 
+		$result=GETPOST("param8e", 'restricthtml');
+		print __METHOD__." result param8e = ".$result."\n";
+		$this->assertEquals('', $result);
+
 		$result=GETPOST("param12", 'restricthtml');
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals(trim($_POST["param12"]), $result, 'Test a string with DOCTYPE and restricthtml');
@@ -506,11 +524,11 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 
 		$result=GETPOST("param14", 'restricthtml');
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals("Text with ' encoded with the numeric html entity converted into text entity &apos; (like when submited by CKEditor)", $result, 'Test 14');
+		$this->assertEquals("Text with ' encoded with the numeric html entity converted into text entity &#39; (like when submited by CKEditor)", $result, 'Test 14');
 
 		$result=GETPOST("param15", 'restricthtml');		// <img onerror<=alert(document.domain)> src=>0xbeefed
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals("<img onerror=alert(document.domain) src=>0xbeefed", $result, 'Test 15a');	// The GETPOST return a harmull string
+		$this->assertEquals("<img onerror=alert(document.domain) src=>0xbeefed", $result, 'Test 15');	// The GETPOST return a harmull string
 
 		// Test with restricthtml + MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES to test disabling of bad atrributes
 		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 1;
@@ -561,37 +579,9 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$_POST["backtopage"]='javascripT&javascript#javascriptxjavascript3a alert(1)';
 		$result=GETPOST("backtopage");
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals('x3a alert(1)', $result, 'Test for backtopage param');
+		$this->assertEquals('x3aalert(1)', $result, 'Test for backtopage param');
 
 		return $result;
-	}
-
-	/**
-	 * testCheckLoginPassEntity
-	 *
-	 * @return	void
-	 */
-	public function testCheckLoginPassEntity()
-	{
-		$login=checkLoginPassEntity('loginbidon', 'passwordbidon', 1, array('dolibarr'));
-		print __METHOD__." login=".$login."\n";
-		$this->assertEquals($login, '');
-
-		$login=checkLoginPassEntity('admin', 'passwordbidon', 1, array('dolibarr'));
-		print __METHOD__." login=".$login."\n";
-		$this->assertEquals($login, '');
-
-		$login=checkLoginPassEntity('admin', 'admin', 1, array('dolibarr'));            // Should works because admin/admin exists
-		print __METHOD__." login=".$login."\n";
-		$this->assertEquals($login, 'admin', 'The test to check if pass of user "admin" is "admin" has failed');
-
-		$login=checkLoginPassEntity('admin', 'admin', 1, array('http','dolibarr'));    // Should work because of second authetntication method
-		print __METHOD__." login=".$login."\n";
-		$this->assertEquals($login, 'admin');
-
-		$login=checkLoginPassEntity('admin', 'admin', 1, array('forceuser'));
-		print __METHOD__." login=".$login."\n";
-		$this->assertEquals($login, '');    // Expected '' because should failed because login 'auto' does not exists
 	}
 
 	/**
@@ -663,10 +653,14 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 	 */
 	public function testDolStringOnlyTheseHtmlAttributes()
 	{
+		$stringtotest = 'eée';
+		$decodedstring = dol_string_onlythesehtmlattributes($stringtotest);
+		$this->assertEquals('e&eacute;e', $decodedstring, 'Function did not sanitize correclty with test 1');
+
 		$stringtotest = '<div onload="ee"><a href="123"><span class="abc">abc</span></a></div>';
 		$decodedstring = dol_string_onlythesehtmlattributes($stringtotest);
 		$decodedstring = preg_replace("/\n$/", "", $decodedstring);
-		$this->assertEquals('<div><a href="123"><span class="abc">abc</span></a></div>', $decodedstring, 'Function did not sanitize correclty with test 1');
+		$this->assertEquals('<div><a href="123"><span class="abc">abc</span></a></div>', $decodedstring, 'Function did not sanitize correclty with test 2');
 
 		return 0;
 	}
@@ -740,43 +734,48 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$url = 'https://www.dolibarr.fr';	// This is a redirect 301 page
 		$tmp = getURLContent($url, 'GET', '', 0);	// We do NOT follow
 		print __METHOD__." url=".$url."\n";
-		$this->assertEquals(301, $tmp['http_code'], 'GET url 301 without following -> 301');
+		$this->assertEquals(301, $tmp['http_code'], 'Should GET url 301 without following -> 301');
 
 		$url = 'https://www.dolibarr.fr';	// This is a redirect 301 page
-		$tmp = getURLContent($url);		// We DO follow
+		$tmp = getURLContent($url);		// We DO follow a page with return 300 so result should be 200
 		print __METHOD__." url=".$url."\n";
-		$this->assertEquals(200, $tmp['http_code'], 'GET url 301 with following -> 200');	// Test error if return does not contains 'not supported'
+		$this->assertEquals(200, $tmp['http_code'], 'Should GET url 301 with following -> 200 but we get '.$tmp['http_code']);
 
 		$url = 'http://localhost';
 		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
 		print __METHOD__." url=".$url."\n";
-		$this->assertEquals(400, $tmp['http_code'], 'GET url to '.$url.' that resolves to a local URL');	// Test we receive an error because localtest.me is not an external URL
+		$this->assertEquals(400, $tmp['http_code'], 'Should GET url to '.$url.' that resolves to a local URL');	// Test we receive an error because localtest.me is not an external URL
 
 		$url = 'http://127.0.0.1';
 		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
 		print __METHOD__." url=".$url."\n";
-		$this->assertEquals(400, $tmp['http_code'], 'GET url to '.$url.' that is a local URL');	// Test we receive an error because 127.0.0.1 is not an external URL
+		$this->assertEquals(400, $tmp['http_code'], 'Should GET url to '.$url.' that is a local URL');	// Test we receive an error because 127.0.0.1 is not an external URL
 
 		$url = 'http://127.0.2.1';
 		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
 		print __METHOD__." url=".$url."\n";
-		$this->assertEquals(400, $tmp['http_code'], 'GET url to '.$url.' that is a local URL');	// Test we receive an error because 127.0.2.1 is not an external URL
+		$this->assertEquals(400, $tmp['http_code'], 'Should GET url to '.$url.' that is a local URL');	// Test we receive an error because 127.0.2.1 is not an external URL
 
 		$url = 'https://169.254.0.1';
 		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
 		print __METHOD__." url=".$url."\n";
-		$this->assertEquals(400, $tmp['http_code'], 'GET url to '.$url.' that is a local URL');	// Test we receive an error because 169.254.0.1 is not an external URL
+		$this->assertEquals(400, $tmp['http_code'], 'Should GET url to '.$url.' that is a local URL');	// Test we receive an error because 169.254.0.1 is not an external URL
 
 		$url = 'http://[::1]';
 		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
 		print __METHOD__." url=".$url."\n";
-		$this->assertEquals(400, $tmp['http_code'], 'GET url to '.$url.' that is a local URL');	// Test we receive an error because [::1] is not an external URL
+		$this->assertEquals(400, $tmp['http_code'], 'Should GET url to '.$url.' that is a local URL');	// Test we receive an error because [::1] is not an external URL
 
 		/*$url = 'localtest.me';
 		 $tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL
 		 print __METHOD__." url=".$url."\n";
-		 $this->assertEquals(400, $tmp['http_code'], 'GET url to '.$url.' that resolves to a local URL');	// Test we receive an error because localtest.me is not an external URL
+		 $this->assertEquals(400, $tmp['http_code'], 'Should GET url to '.$url.' that resolves to a local URL');	// Test we receive an error because localtest.me is not an external URL
 		 */
+
+		$url = 'http://192.0.0.192';
+		$tmp = getURLContent($url, 'GET', '', 0, array(), array('http', 'https'), 0);		// Only external URL but on an IP in blacklist
+		print __METHOD__." url=".$url." tmp['http_code'] = ".$tmp['http_code']."\n";
+		$this->assertEquals(400, $tmp['http_code'], 'Access should be refused and was not');	// Test we receive an error because ip is in blacklist
 
 		return 0;
 	}
@@ -853,15 +852,26 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 
 		include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 		include_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
-		$result=dol_eval('(($reloadedobj = new Task($db)) && ($reloadedobj->fetchNoCompute($object->id) > 0) && ($secondloadedobj = new Project($db)) && ($secondloadedobj->fetchNoCompute($reloadedobj->fk_project) > 0)) ? $secondloadedobj->ref: "Parent project not found"', 1, 1);
+
+		$s = '(($reloadedobj = new Task($db)) && ($reloadedobj->fetchNoCompute($object->id) > 0) && ($secondloadedobj = new Project($db)) && ($secondloadedobj->fetchNoCompute($reloadedobj->fk_project) > 0)) ? $secondloadedobj->ref : "Parent project not found"';
+		$result=dol_eval($s, 1, 1, '2');
 		print "result = ".$result."\n";
 		$this->assertEquals('Parent project not found', $result);
 
-		$result=dol_eval('$a=function() { }; $a;', 1, 1);
+		$s = '(($reloadedobj = new Task($db)) && ($reloadedobj->fetchNoCompute($object->id) > 0) && ($secondloadedobj = new Project($db)) && ($secondloadedobj->fetchNoCompute($reloadedobj->fk_project) > 0)) ? $secondloadedobj->ref : \'Parent project not found\'';
+		$result=dol_eval($s, 1, 1, '2');
+		print "result = ".$result."\n";
+		$this->assertEquals('Parent project not found', $result);
+
+		$result=dol_eval('$a=function() { }; $a;', 1, 1, '');
 		print "result = ".$result."\n";
 		$this->assertContains('Bad string syntax to evaluate', $result);
 
 		$result=dol_eval('$a=exec("ls");', 1, 1);
+		print "result = ".$result."\n";
+		$this->assertContains('Bad string syntax to evaluate', $result);
+
+		$result=dol_eval('$a=exec ("ls")', 1, 1);
 		print "result = ".$result."\n";
 		$this->assertContains('Bad string syntax to evaluate', $result);
 
@@ -872,5 +882,70 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$result=dol_eval('`ls`', 1, 0);
 		print "result = ".$result."\n";
 		$this->assertContains('Bad string syntax to evaluate', $result);
+
+		$result=dol_eval("('ex'.'ec')('echo abc')", 1, 0);
+		print "result = ".$result."\n";
+		$this->assertContains('Bad string syntax to evaluate', $result);
+
+		$result=dol_eval("sprintf(\"%s%s\", \"ex\", \"ec\")('echo abc')", 1, 0);
+		print "result = ".$result."\n";
+		$this->assertContains('Bad string syntax to evaluate', $result);
+
+		$result=dol_eval("90402.38+267678+0", 1, 1, 1);
+		print "result = ".$result."\n";
+		$this->assertEquals('358080.38', $result);
+
+		global $leftmenu;	// Used into strings to eval
+
+		$leftmenu = 'AAA';
+		$result=dol_eval('$conf->currency && preg_match(\'/^(AAA|BBB)/\',$leftmenu)', 1, 1, '1');
+		print "result = ".$result."\n";
+		$this->assertTrue($result);
+
+		// Same with syntax error
+		$leftmenu = 'XXX';
+		$result=dol_eval('$conf->currency && preg_match(\'/^(AAA|BBB)/\',$leftmenu)', 1, 1, '1');
+		print "result = ".$result."\n";
+		$this->assertFalse($result);
+
+
+		// Case with param onlysimplestring = 1
+
+		$result=dol_eval('1 && getDolGlobalInt("doesnotexist1") && $conf->global->MAIN_FEATURES_LEVEL', 1, 0);	// Should return false and not a 'Bad string syntax to evaluate ...'
+		print "result = ".$result."\n";
+		$this->assertFalse($result);
+
+		$result=dol_eval("(\$a.'aa')", 1, 0);
+		print "result = ".$result."\n";
+		$this->assertContains('Bad string syntax to evaluate', $result);
+	}
+
+
+	/**
+	 * testCheckLoginPassEntity
+	 *
+	 * @return	void
+	 */
+	public function testCheckLoginPassEntity()
+	{
+		$login=checkLoginPassEntity('loginbidon', 'passwordbidon', 1, array('dolibarr'));
+		print __METHOD__." login=".$login."\n";
+		$this->assertEquals($login, '');
+
+		$login=checkLoginPassEntity('admin', 'passwordbidon', 1, array('dolibarr'));
+		print __METHOD__." login=".$login."\n";
+		$this->assertEquals($login, '');
+
+		$login=checkLoginPassEntity('admin', 'admin', 1, array('dolibarr'));            // Should works because admin/admin exists
+		print __METHOD__." login=".$login."\n";
+		$this->assertEquals($login, 'admin', 'The test to check if pass of user "admin" is "admin" has failed');
+
+		$login=checkLoginPassEntity('admin', 'admin', 1, array('http','dolibarr'));    // Should work because of second authentication method
+		print __METHOD__." login=".$login."\n";
+		$this->assertEquals($login, 'admin');
+
+		$login=checkLoginPassEntity('admin', 'admin', 1, array('forceuser'));
+		print __METHOD__." login=".$login."\n";
+		$this->assertEquals('', $login, 'Error');    // Expected '' because should failed because login 'auto' does not exists
 	}
 }

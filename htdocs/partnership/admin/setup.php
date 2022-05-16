@@ -65,8 +65,10 @@ if ($action == 'setting') {
 	$error += $partnership->delete_menus();
 	$error += $partnership->insert_menus();
 
-	if (GETPOST("PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL", 'int'))
+	if (GETPOSTISSET("PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL")) {
 		dolibarr_set_const($db, "PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL", GETPOST("PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL", 'int'), 'chaine', 0, '', $conf->entity);
+	}
+
 	dolibarr_set_const($db, "PARTNERSHIP_BACKLINKS_TO_CHECK", GETPOST("PARTNERSHIP_BACKLINKS_TO_CHECK"), 'chaine', 0, '', $conf->entity);
 }
 
@@ -122,8 +124,8 @@ print '</tr>';
 print '<tr class="oddeven"><td>'.$langs->trans("PARTNERSHIP_IS_MANAGED_FOR").'</td>';
 print '<td>';
 print '<select class="flat minwidth100" id="select_PARTNERSHIP_IS_MANAGED_FOR" name="PARTNERSHIP_IS_MANAGED_FOR">';
-print '<option value="thirdparty" '.(($conf->global->PARTNERSHIP_IS_MANAGED_FOR == 'thirdparty') ? 'selected' : '').'>'.$langs->trans("ThirdParty").'</option>';
-print '<option value="member" '.(($conf->global->PARTNERSHIP_IS_MANAGED_FOR == 'member') ? 'selected' : '').'>'.$langs->trans("Members").'</option>';
+print '<option value="thirdparty" '.((getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR', 'thirdparty') == 'thirdparty') ? 'selected' : '').'>'.$langs->trans("ThirdParty").'</option>';
+print '<option value="member" '.((getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR', 'thirdparty') == 'member') ? 'selected' : '').'>'.$langs->trans("Members").'</option>';
 print '</select>';
 print ajax_combobox('select_PARTNERSHIP_IS_MANAGED_FOR');
 print '</td>';
@@ -131,16 +133,16 @@ print '<td><span class="opacitymedium">'.$langs->trans("partnershipforthirdparty
 print '</tr>';
 
 
-if (!empty($conf->global->PARTNERSHIP_IS_MANAGED_FOR) && $conf->global->PARTNERSHIP_IS_MANAGED_FOR == 'member') {
-	print '<tr class="oddeven"><td>'.$langs->trans("PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL").'</td>';
-	print '<td>';
-	$dnbdays = '15';
-	$backlinks = (!empty($conf->global->PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL)) ? $conf->global->PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL : $dnbdays;
-	print '<input class="maxwidth50" type="text" name="PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL" value="'.$backlinks.'">';
-	print '</td>';
-	print '<td><span class="opacitymedium">'.$dnbdays.'</span></td>';
-	print '</tr>';
-}
+//if (getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR') == 'member') {
+print '<tr class="oddeven"><td>'.$langs->trans("PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL").'</td>';
+print '<td>';
+$dnbdays = '30';
+$backlinks = (!empty($conf->global->PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL)) ? $conf->global->PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL : $dnbdays;
+print '<input class="maxwidth50" type="text" name="PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL" value="'.$backlinks.'">';
+print '</td>';
+print '<td><span class="opacitymedium">'.$dnbdays.'</span></td>';
+print '</tr>';
+//}
 
 print '</table>';
 print '</div>';

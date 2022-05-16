@@ -5,15 +5,16 @@ var oop = require("../lib/oop");
 var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
 
 var stringEscape = /\\(?:[nrt0'"\\]|x[\da-fA-F]{2}|u\{[\da-fA-F]{6}\})/.source;
+var wordPattern = /[a-zA-Z_\xa1-\uffff][a-zA-Z0-9_\xa1-\uffff]*/.source;
 var RustHighlightRules = function() {
 
     this.$rules = { start:
        [ { token: 'variable.other.source.rust',
-           regex: '\'[a-zA-Z_][a-zA-Z0-9_]*(?![\\\'])' },
+           regex: '\'' + wordPattern + '(?![\\\'])' },
          { token: 'string.quoted.single.source.rust',
            regex: "'(?:[^'\\\\]|" + stringEscape + ")'" },
          { token: 'identifier',
-           regex:  /r#[a-zA-Z_][a-zA-Z0-9_]*\b/ },
+           regex:  "r#" + wordPattern + "\\b" },
          {
             stateName: "bracketedComment",
             onMatch : function(value, currentState, stack){
@@ -53,8 +54,8 @@ var RustHighlightRules = function() {
                 regex: stringEscape },
               { defaultToken: 'string.quoted.double.source.rust' } ] },
          { token: [ 'keyword.source.rust', 'text', 'entity.name.function.source.rust' ],
-           regex: '\\b(fn)(\\s+)((?:r#)?[a-zA-Z_][a-zA-Z0-9_]*)' },
-         { token: 'support.constant', regex: '\\b[a-zA-Z_][\\w\\d]*::' },
+           regex: '\\b(fn)(\\s+)((?:r#)?'+ wordPattern + ')' },
+         { token: 'support.constant', regex: wordPattern + '::' },
          { token: 'keyword.source.rust',
            regex: '\\b(?:abstract|alignof|as|async|await|become|box|break|catch|continue|const|crate|default|do|dyn|else|enum|extern|for|final|if|impl|in|let|loop|macro|match|mod|move|mut|offsetof|override|priv|proc|pub|pure|ref|return|self|sizeof|static|struct|super|trait|type|typeof|union|unsafe|unsized|use|virtual|where|while|yield)\\b' },
          { token: 'storage.type.source.rust',

@@ -309,7 +309,7 @@ class MenuManager
 					print '</ul>';
 				}
 				if ($val['enabled'] == 2) {
-					print '<font class="vsmenudisabled">'.$val['titre'].'</font>';
+					print '<span class="vsmenudisabled">'.$val['titre'].'</span>';
 				}
 				print '</li>';
 				print '</ul>'."\n";

@@ -130,9 +130,17 @@ print '
 		}
 </script>';
 
-$sql = "(SELECT s.rowid, s.nom as name , s.address, s.zip , s.town, s.code_compta as compta , ";
-$sql .= " s.fk_forme_juridique , s.fk_pays , s.phone , s.fax ,   f.datec , f.fk_soc , cp.label as country ";
+$sql = "(SELECT s.rowid, s.nom as name , s.address, s.zip , s.town";
+if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
+	$sql .= ", spe.accountancy_code_customer as compta";
+} else {
+	$sql .= ", s.code_compta";
+}
+$sql .= ", s.fk_forme_juridique , s.fk_pays , s.phone , s.fax ,   f.datec , f.fk_soc , cp.label as country ";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
+if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
+	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe_perentity as spe ON spe.fk_soc = s.rowid AND spe.entity = " . ((int) $conf->entity);
+}
 $sql .= ", ".MAIN_DB_PREFIX."facture as f";
 $sql .= ", ".MAIN_DB_PREFIX."c_country as cp";
 $sql .= " WHERE f.fk_soc = s.rowid";
@@ -146,9 +154,17 @@ if ($socid > 0) {
 }
 $sql .= " GROUP BY name";
 $sql .= ")";
-$sql .= "UNION (SELECT s.rowid, s.nom as name , s.address, s.zip , s.town, s.code_compta_fournisseur as compta , ";
+$sql .= "UNION (SELECT s.rowid, s.nom as name , s.address, s.zip , s.town,  , ";
+if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
+	$sql .= ", spe.accountancy_code_supplier as compta";
+} else {
+	$sql .= ", s.code_compta_fournisseur as compta";
+}
 $sql .= " s.fk_forme_juridique , s.fk_pays , s.phone , s.fax ,   ff.datec , ff.fk_soc , cp.label as country ";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
+if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
+	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe_perentity as spe ON spe.fk_soc = s.rowid AND spe.entity = " . ((int) $conf->entity);
+}
 $sql .= ", ".MAIN_DB_PREFIX."facture_fourn as ff";
 $sql .= ", ".MAIN_DB_PREFIX."c_country as cp";
 $sql .= " WHERE ff.fk_soc = s.rowid";

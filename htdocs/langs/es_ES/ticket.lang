@@ -45,6 +45,8 @@ TicketSeverityShortNORMAL=Normal
 TicketSeverityShortHIGH=Alto
 TicketSeverityShortBLOCKING=Crítico, Bloqueo
 
+TicketCategoryShortOTHER=Otro
+
 ErrorBadEmailAddress=El campo '%s' es incorrecto
 MenuTicketMyAssign=Mis tickets
 MenuTicketMyAssignNonClosed=Mis tickets abiertos
@@ -55,7 +57,7 @@ TypeContact_ticket_internal_SUPPORTTEC=Usuario asignado
 TypeContact_ticket_external_SUPPORTCLI=Contacto cliente / seguimiento de incidentes
 TypeContact_ticket_external_CONTRIBUTOR=Contribuidor externo
 
-OriginEmail=Reporter Email
+OriginEmail=Email del emisor
 Notify_TICKET_SENTBYMAIL=Enviar mensaje de ticket por e-mail
 
 # Status
@@ -66,7 +68,7 @@ NeedMoreInformation=Esperando comentarios del remitente
 NeedMoreInformationShort=Esperando comentarios
 Answered=Contestado
 Waiting=En espera
-Closed=Cerrado
+SolvedClosed=Resuelto
 Deleted=Eliminado
 
 # Dict
@@ -88,10 +90,10 @@ TicketPublicAccess=Una interfaz pública que no requiere identificación está d
 TicketSetupDictionaries=Los tipos de categorías y  los niveles de gravedad se pueden configurar en los diccionarios
 TicketParamModule=Configuración de variables del módulo
 TicketParamMail=Configuración de E-Mail
-TicketEmailNotificationFrom=E-mail de notificación de
-TicketEmailNotificationFromHelp=Utilizado en la respuesta del mensaje del ticket por ejemplo
-TicketEmailNotificationTo=Notificaciones e-mail a
-TicketEmailNotificationToHelp=Envíe notificaciones por e-mail a esta dirección.
+TicketEmailNotificationFrom=Sender e-mail for ticket answers
+TicketEmailNotificationFromHelp=Sender e-mail for ticket answers sent from Dolibarr
+TicketEmailNotificationTo=Notify ticket creation to this e-mail address
+TicketEmailNotificationToHelp=If present, this e-mail address will be notified of a ticket creation
 TicketNewEmailBodyLabel=Mensaje de texto enviado después de crear un ticket
 TicketNewEmailBodyHelp=El texto especificado aquí se insertará en el e-mail de confirmación de creación de un nuevo ticket desde la interfaz pública. La información sobre la consulta del ticket se agrega automáticamente.
 TicketParamPublicInterface=Configuración de interfaz pública
@@ -134,6 +136,18 @@ TicketsPublicNotificationNewMessage=Enviar correo electrónico (s) cuando se agr
 TicketsPublicNotificationNewMessageHelp=Enviar e-mail(s) cuando se añade un nuevo mensaje desde la interfaz pública (al usuario asignado o al e-mail de notificaciones (actualización) y o el e-mail de notificaciones a)
 TicketPublicNotificationNewMessageDefaultEmail=Notificaciones por e-mail a (actualización)
 TicketPublicNotificationNewMessageDefaultEmailHelp=Envíe un correo electrónico a esta dirección para cada notificación de mensaje nuevo si el ticket no tiene un usuario asignado o si el usuario no tiene ningún correo electrónico conocido.
+TicketsAutoReadTicket=Marcar automáticamente el ticket como leído (cuando se crea desde backoffice)
+TicketsAutoReadTicketHelp=Marca automáticamente el ticket como leído cuando se crea desde el backoffice. Cuando se crea un ticket desde la interfaz pública, el ticket permanece con el estado "No leído".
+TicketsDelayBeforeFirstAnswer=Un nuevo ticket debe recibir una primera respuesta antes de (horas):
+TicketsDelayBeforeFirstAnswerHelp=Si un nuevo ticket no ha recibido una respuesta después de este período de tiempo (en horas), se mostrará un icono de advertencia en la vista de listado.
+TicketsDelayBetweenAnswers=Un ticket no resuelto no debe estar inactivo durante (horas):
+TicketsDelayBetweenAnswersHelp=Si un ticket sin resolver que ya recibió una respuesta no ha tenido más interacción después de este período de tiempo (en horas), se mostrará un icono de advertencia en la vista de listado.
+TicketsAutoNotifyClose=Notificar automáticamente a un tercero al cerrar un ticket
+TicketsAutoNotifyCloseHelp=Al cerrar un ticket, se le propondrá enviar un mensaje a uno de los contactos de un tercero. En el cierre masivo, se enviará un mensaje a un contacto del tercero vinculado al ticket.
+TicketWrongContact=El contacto proporcionado no forma parte de los contactos del ticket actual. E-Mail no enviado.
+TicketChooseProductCategory=Product category for ticket support
+TicketChooseProductCategoryHelp=Select the product category of ticket support. This will be used to automatically link a contract to a ticket.
+
 #
 # Index & list page
 #
@@ -149,6 +163,8 @@ OrderByDateAsc=Ordenar por fecha ascendente
 OrderByDateDesc=Ordenar por fecha descendente
 ShowAsConversation=Mostrar como lista de conversación
 MessageListViewType=Mostrar como lista de tabla
+ConfirmMassTicketClosingSendEmail=Envíar e-mails automáticamente al cerrar tickets
+ConfirmMassTicketClosingSendEmailQuestion=¿Quiere avisar a los terceros al cerrar estos tickets?
 
 #
 # Ticket card
@@ -180,15 +196,17 @@ MessageSuccessfullyAdded=Ticket añadido
 TicketMessageSuccessfullyAdded=Mensaje añadido correctamente
 TicketMessagesList=Listado de mensajes
 NoMsgForThisTicket=Ningún mensaje para este ticket
-Properties=Clasificación
+TicketProperties=Clasificación
 LatestNewTickets=Últimos %s tickets (no leídos)
 TicketSeverity=Gravedad
 ShowTicket=Ver ticket
 RelatedTickets=Tickets relacionados
 TicketAddIntervention=Crear intervención
-CloseTicket=Cerrar ticket
-CloseATicket=Cerrar un ticket
+CloseTicket=Cerrar|Resolver ticket
+AbandonTicket=Abandonar ticket
+CloseATicket=Cerrar | Resolver un ticket
 ConfirmCloseAticket=Confirmar el cierre del ticket
+ConfirmAbandonTicket=¿Confirma el cierre del ticket al estado 'Abandonado'?
 ConfirmDeleteTicket=Confirme la eliminación del ticket
 TicketDeletedSuccess=Ticket eliminado con éxito
 TicketMarkedAsClosed=Ticket marcado como cerrado
@@ -201,12 +219,12 @@ ErrorMailRecipientIsEmptyForSendTicketMessage=El destinatario está vacío. No s
 TicketGoIntoContactTab=Vaya a la pestaña "Contactos" para seleccionarlos
 TicketMessageMailIntro=Introducción
 TicketMessageMailIntroHelp=Este texto es añadido solo al principio del email y no será salvado.
-TicketMessageMailIntroLabelAdmin=Introducción al mensaje cuando se envía un e-mail
-TicketMessageMailIntroText=Hola, <br>Se envió una nueva respuesta a un ticket. Aquí está el mensaje: <br>
-TicketMessageMailIntroHelpAdmin=Este texto se insertará antes del texto de la respuesta a un ticket.
+TicketMessageMailIntroLabelAdmin=Introduction text to all ticket answers
+TicketMessageMailIntroText=Hello,<br>A new answer has been added to a ticket that you follow. Here is the message:<br>
+TicketMessageMailIntroHelpAdmin=This text will be inserted before the answer when replying to a ticket from Dolibarr
 TicketMessageMailSignature=Firma
 TicketMessageMailSignatureHelp=Este texto se agrega solo al final del e-mail y no se guardará.
-TicketMessageMailSignatureText=<p>Cordialmente,</p><p>--</p>
+TicketMessageMailSignatureText=Message sent by <b>%s</b> via Dolibarr
 TicketMessageMailSignatureLabelAdmin=Firma del e-mail de respuesta
 TicketMessageMailSignatureHelpAdmin=Este texto se insertará después del mensaje de respuesta.
 TicketMessageHelp=Solo este texto se guardará en la lista de mensajes en la ficha del ticket
@@ -234,9 +252,16 @@ TicketChangeStatus=Cambiar estado
 TicketConfirmChangeStatus=¿Confirma el cambio de estado: %s?
 TicketLogStatusChanged=Estado cambiado: %s a %s
 TicketNotNotifyTiersAtCreate=No notificar a la compañía al crear
+NotifyThirdpartyOnTicketClosing=Contactos a notificar al cerrar el ticket
+TicketNotifyAllTiersAtClose=Todos los contactos relacionados
+TicketNotNotifyTiersAtClose=Ningún contacto relacionado
 Unread=No leído
 TicketNotCreatedFromPublicInterface=No disponible. El ticket no se creó desde la interfaz pública.
 ErrorTicketRefRequired=La referencia del ticket es obligatoria
+TicketsDelayForFirstResponseTooLong=Ha transcurrido demasiado tiempo desde la apertura del ticket sin ninguna respuesta.
+TicketsDelayFromLastResponseTooLong=Ha transcurrido demasiado tiempo desde la última respuesta en este ticket.
+TicketNoContractFoundToLink=No contract was found to be automatically linked to this ticket. Please link a contract manually.
+TicketManyContractsLinked=Many contracts have been automatically linked to this ticket. Make sure to verify which should be chosen.
 
 #
 # Logs
@@ -264,8 +289,9 @@ TicketNewEmailBody=Este es un e-mail automático para confirmar que ha registrad
 TicketNewEmailBodyCustomer=Este es un e-mail automático para confirmar que se acaba de crear un nuevo ticket en su cuenta.
 TicketNewEmailBodyInfosTicket=Información para monitorear el ticket
 TicketNewEmailBodyInfosTrackId=Número de seguimiento del ticket: %s
-TicketNewEmailBodyInfosTrackUrl=Puedes ver la progresión del ticket haciendo click sobre el siguiente enlace.
+TicketNewEmailBodyInfosTrackUrl=You can view the progress of the ticket by clicking the following link
 TicketNewEmailBodyInfosTrackUrlCustomer=Puede ver el progreso del ticket en la interfaz específica haciendo clic en el siguiente enlace
+TicketCloseEmailBodyInfosTrackUrlCustomer=Puede consultar el historial de este ticket haciendo clic en el siguiente enlace
 TicketEmailPleaseDoNotReplyToThisEmail=¡Por favor no responda directamente a este correo! Use el enlace para responder.
 TicketPublicInfoCreateTicket=Este formulario le permite registrar un ticket de soporte en nuestro sistema.
 TicketPublicPleaseBeAccuratelyDescribe=Por favor describa precisamente el problema. Provea la mayor cantidad de información posible para permitirnos identificar su solicitud.
@@ -287,6 +313,10 @@ NewUser=Nuevo usuario
 NumberOfTicketsByMonth=Número de tickets por mes
 NbOfTickets=Número de tickets
 # notifications
+TicketCloseEmailSubjectCustomer=Ticket cerrado
+TicketCloseEmailBodyCustomer=Este es un mensaje automático para notificarle que el ticket %s acaba de cerrarse.
+TicketCloseEmailSubjectAdmin=Ticket cerrado - Ref %s (ID público de ticket %s)
+TicketCloseEmailBodyAdmin=Se acaba de cerrar un ticket con ID #%s, ver información:
 TicketNotificationEmailSubject=Ticket %s actualizado
 TicketNotificationEmailBody=Este es un mensaje automático para notificarle que el ticket %s acaba de ser actualizado
 TicketNotificationRecipient=Recipiente de notificación
@@ -314,6 +344,7 @@ BoxTicketLastXDays=Número de tickets nuevos por días los últimos %s días
 BoxTicketLastXDayswidget = Número de tickets nuevos por días los últimos X días
 BoxNoTicketLastXDays=No hay entradas nuevas los últimos días %s
 BoxNumberOfTicketByDay=Número de tickets nuevos por día
-BoxNewTicketVSClose=Número de tickets nuevos de hoy en comparación con los tickets cerrados de hoy
+BoxNewTicketVSClose=Número de tickets / tickets cerrados (hoy)
 TicketCreatedToday=Ticket creado hoy
 TicketClosedToday=Ticket cerrado hoy
+KMFoundForTicketGroup=Encontramos temas y preguntas frecuentes que pueden responder a su pregunta, gracias por consultarlos antes de enviar el ticket

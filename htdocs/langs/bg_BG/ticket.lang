@@ -45,6 +45,8 @@ TicketSeverityShortNORMAL=Нормален
 TicketSeverityShortHIGH=Висок
 TicketSeverityShortBLOCKING=Critical, Blocking
 
+TicketCategoryShortOTHER=Други
+
 ErrorBadEmailAddress=Полето "%s" е неправилно
 MenuTicketMyAssign=Мои тикети
 MenuTicketMyAssignNonClosed=Мои активни тикети
@@ -66,7 +68,7 @@ NeedMoreInformation=Waiting for reporter feedback
 NeedMoreInformationShort=Waiting for feedback
 Answered=Отговорен
 Waiting=В изчакване
-Closed=Приключен
+SolvedClosed=Solved
 Deleted=Изтрит
 
 # Dict
@@ -88,10 +90,10 @@ TicketPublicAccess=Публичен интерфейс, който не изис
 TicketSetupDictionaries=Видът на тикета, приоритетът и категорията се конфигурират от речници
 TicketParamModule=Настройка на променливите в модула
 TicketParamMail=Настройка за имейл известяване
-TicketEmailNotificationFrom=Известяващ имейл от
-TicketEmailNotificationFromHelp=Използван при отговор и изпращане на тикет съобщения
-TicketEmailNotificationTo=Известяващ имейл до
-TicketEmailNotificationToHelp=Използван за получаване на известия от тикет съобщения
+TicketEmailNotificationFrom=Sender e-mail for ticket answers
+TicketEmailNotificationFromHelp=Sender e-mail for ticket answers sent from Dolibarr
+TicketEmailNotificationTo=Notify ticket creation to this e-mail address
+TicketEmailNotificationToHelp=If present, this e-mail address will be notified of a ticket creation
 TicketNewEmailBodyLabel=Текстово съобщение, изпратено след създаване на тикет
 TicketNewEmailBodyHelp=Текстът, посочен тук, ще бъде включен в имейла, потвърждаващ създаването на нов тикет от публичния интерфейс. Информацията с детайлите на тикета се добавя автоматично.
 TicketParamPublicInterface=Настройка на публичен интерфейс
@@ -134,6 +136,18 @@ TicketsPublicNotificationNewMessage=Send email(s) when a new message/comment is 
 TicketsPublicNotificationNewMessageHelp=Send email(s) when a new message is added from public interface (to assigned user or the notifications email to (update) and/or the notifications email to)
 TicketPublicNotificationNewMessageDefaultEmail=Notifications email to (update)
 TicketPublicNotificationNewMessageDefaultEmailHelp=Send an email to this address for each new message notifications if the ticket doesn't have a user assigned to it or if the user doesn't have any known email.
+TicketsAutoReadTicket=Automatically mark the ticket as read (when created from backoffice)
+TicketsAutoReadTicketHelp=Automatically mark the ticket as read when created from backoffice. When ticket is create from the public interface, ticket remains with the status "Not Read".
+TicketsDelayBeforeFirstAnswer=A new ticket should receive a first answer before (hours):
+TicketsDelayBeforeFirstAnswerHelp=If a new ticket has not received an answer after this time period (in hours), an important warning icon will be displayed in the list view.
+TicketsDelayBetweenAnswers=An unresolved ticket should not be unactive during (hours):
+TicketsDelayBetweenAnswersHelp=If an unresolved ticket that has already received an answer has not had further interaction after this time period (in hours), a warning icon will be displayed in the list view.
+TicketsAutoNotifyClose=Automatically notify thirdparty when closing a ticket
+TicketsAutoNotifyCloseHelp=When closing a ticket, you will be proposed to send a message to one of thirdparty's contacts. On mass closing, a message will be sent to one contact of the thirdparty linked to the ticket.
+TicketWrongContact=Provided contact is not part of current ticket contacts. Email not sent.
+TicketChooseProductCategory=Product category for ticket support
+TicketChooseProductCategoryHelp=Select the product category of ticket support. This will be used to automatically link a contract to a ticket.
+
 #
 # Index & list page
 #
@@ -149,6 +163,8 @@ OrderByDateAsc=Сортиране по възходяща дата
 OrderByDateDesc=Сортиране по низходяща дата
 ShowAsConversation=Показване като списък със съобщения
 MessageListViewType=Показване като списък с таблици
+ConfirmMassTicketClosingSendEmail=Automatically send emails when closing tickets
+ConfirmMassTicketClosingSendEmailQuestion=Do you want to notify thirdparties when closing these tickets ?
 
 #
 # Ticket card
@@ -180,15 +196,17 @@ MessageSuccessfullyAdded=Тикетът е добавен
 TicketMessageSuccessfullyAdded=Съобщението е успешно добавено
 TicketMessagesList=Списък със съобщения
 NoMsgForThisTicket=Няма съобщение за този тикет
-Properties=Реквизити
+TicketProperties=Реквизити
 LatestNewTickets=Тикети: %s последни (непрочетени)
 TicketSeverity=Приоритет
 ShowTicket=Преглед на тикет
 RelatedTickets=Свързани тикети
 TicketAddIntervention=Създаване на интервенция
-CloseTicket=Приключване на тикет
-CloseATicket=Приключване на тикет
+CloseTicket=Close|Solve ticket
+AbandonTicket=Abandon ticket
+CloseATicket=Close|Solve a ticket
 ConfirmCloseAticket=Потвърдете приключването на тикета
+ConfirmAbandonTicket=Do you confirm the closing of the ticket to status 'Abandonned'
 ConfirmDeleteTicket=Потвърдете изтриването на тикета
 TicketDeletedSuccess=Тикетът е успешно изтрит
 TicketMarkedAsClosed=Тикетът е маркиран като приключен
@@ -201,12 +219,12 @@ ErrorMailRecipientIsEmptyForSendTicketMessage=Полето за получате
 TicketGoIntoContactTab=Моля отидете в раздел "Контакти" откъдето може да изберете
 TicketMessageMailIntro=Въведение
 TicketMessageMailIntroHelp=Този текст се добавя само в началото на имейла и няма да бъде запазен.
-TicketMessageMailIntroLabelAdmin=Въведение към съобщението при изпращане на имейл
-TicketMessageMailIntroText=Здравейте,<br>Беше добавено ново съобщение към тикет, в който сте посочен като контакт. Ето и съобщението:<br>
-TicketMessageMailIntroHelpAdmin=Този текст ще бъде вмъкнат преди текста на съобщението към тикета.
+TicketMessageMailIntroLabelAdmin=Introduction text to all ticket answers
+TicketMessageMailIntroText=Hello,<br>A new answer has been added to a ticket that you follow. Here is the message:<br>
+TicketMessageMailIntroHelpAdmin=This text will be inserted before the answer when replying to a ticket from Dolibarr
 TicketMessageMailSignature=Подпис
 TicketMessageMailSignatureHelp=Този текст се добавя само в края на имейла и няма да бъде запазен.
-TicketMessageMailSignatureText=<p>Поздрави,</p><p>--</p>
+TicketMessageMailSignatureText=Message sent by <b>%s</b> via Dolibarr
 TicketMessageMailSignatureLabelAdmin=Подпис в отговора към имейла
 TicketMessageMailSignatureHelpAdmin=Този текст ще бъде вмъкнат след съобщението за отговор.
 TicketMessageHelp=Само този текст ще бъде запазен в списъка със съобщения към тикета.
@@ -234,9 +252,16 @@ TicketChangeStatus=Промяна на статус
 TicketConfirmChangeStatus=Потвърдете промяната на статуса на: %s?
 TicketLogStatusChanged=Статусът е променен: от %s на %s
 TicketNotNotifyTiersAtCreate=Да не се уведомява фирмата при създаване на тикета
+NotifyThirdpartyOnTicketClosing=Contacts to notify while closing the ticket
+TicketNotifyAllTiersAtClose=All related contacts
+TicketNotNotifyTiersAtClose=No related contact
 Unread=Непрочетен
 TicketNotCreatedFromPublicInterface=Не е налично. Тикетът не беше създаден от публичният интерфейс.
 ErrorTicketRefRequired=Изисква се референтен номер на тикета
+TicketsDelayForFirstResponseTooLong=Too much time elapsed since ticket opening without any answer.
+TicketsDelayFromLastResponseTooLong=Too much time elapsed since last answer on this ticket.
+TicketNoContractFoundToLink=No contract was found to be automatically linked to this ticket. Please link a contract manually.
+TicketManyContractsLinked=Many contracts have been automatically linked to this ticket. Make sure to verify which should be chosen.
 
 #
 # Logs
@@ -264,8 +289,9 @@ TicketNewEmailBody=Това е автоматичен имейл, който п�
 TicketNewEmailBodyCustomer=Това е автоматичен имейл, който потвърждава, че е създаден нов тикет във вашият фирмен профил.
 TicketNewEmailBodyInfosTicket=Информация за наблюдение на тикета
 TicketNewEmailBodyInfosTrackId=Проследяващ код на тикета: %s
-TicketNewEmailBodyInfosTrackUrl=Може да следите напредъка по тикета като кликнете на връзката по-горе.
+TicketNewEmailBodyInfosTrackUrl=You can view the progress of the ticket by clicking the following link
 TicketNewEmailBodyInfosTrackUrlCustomer=Може да следите напредъка по тикета в специалния интерфейс като кликнете върху следната връзка
+TicketCloseEmailBodyInfosTrackUrlCustomer=You can consult the history of this ticket by clicking the following link
 TicketEmailPleaseDoNotReplyToThisEmail=Моля, не отговаряйте директно на този имейл! Използвайте връзката, за да отговорите, чрез интерфейса.
 TicketPublicInfoCreateTicket=Тази форма позволява да регистрирате тикет в системата за управление и обслужване на запитвания.
 TicketPublicPleaseBeAccuratelyDescribe=Моля, опишете подробно проблема. Посочете възможно най-много информация, за да ни позволите да идентифицираме правилно това запитване.
@@ -287,6 +313,10 @@ NewUser=Нов потребител
 NumberOfTicketsByMonth=Брой тикети на месец
 NbOfTickets=Брой тикети
 # notifications
+TicketCloseEmailSubjectCustomer=Ticket closed
+TicketCloseEmailBodyCustomer=This is an automatic message to notify you that ticket %s has just been closed.
+TicketCloseEmailSubjectAdmin=Ticket closed - Réf %s (public ticket ID %s)
+TicketCloseEmailBodyAdmin=A ticket with ID #%s has just been closed, see information:
 TicketNotificationEmailSubject=Тикет с проследяващ код %s е актуализиран
 TicketNotificationEmailBody=Здравейте,\nТова е автоматично съобщение, което има за цел да ви уведоми, че тикет с проследяващ код %s е актуализиран.
 TicketNotificationRecipient=Получател на известието
@@ -314,6 +344,7 @@ BoxTicketLastXDays=Number of new tickets by days the last %s days
 BoxTicketLastXDayswidget = Number of new tickets by days the last X days
 BoxNoTicketLastXDays=No new tickets the last %s days
 BoxNumberOfTicketByDay=Number of new tickets by day
-BoxNewTicketVSClose=Number of today's new tickets versus today's closed tickets
+BoxNewTicketVSClose=Number of tickets versus closed tickets (today)
 TicketCreatedToday=Ticket created today
 TicketClosedToday=Ticket closed today
+KMFoundForTicketGroup=We found topics and FAQs that may answers your question, thanks to check them before submitting the ticket

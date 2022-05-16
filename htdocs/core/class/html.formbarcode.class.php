@@ -67,7 +67,7 @@ class FormBarCode
 		$disable = '';
 
 		if (!empty($conf->use_javascript_ajax)) {
-			print "\n".'<script type="text/javascript" language="javascript">';
+			print "\n".'<script type="text/javascript">';
 			print 'jQuery(document).ready(function () {
                         jQuery("#select'.$idForm.'").change(function() {
                             var formName = document.getElementById("form'.$idForm.'");
@@ -139,7 +139,7 @@ class FormBarCode
 		$out = '';
 
 		$sql = "SELECT rowid, code, libelle";
-		$sql .= " FROM ".MAIN_DB_PREFIX."c_barcode_type";
+		$sql .= " FROM ".$this->db->prefix()."c_barcode_type";
 		$sql .= " WHERE coder <> '0'";
 		$sql .= " AND entity = ".$conf->entity;
 		$sql .= " ORDER BY code";

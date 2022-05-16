@@ -1,0 +1,32 @@
+# Dolibarr language file - Source file is en_US - oauth
+ConfigOAuth=Cyfluniad OAuth
+OAuthServices=Gwasanaethau OAuth
+ManualTokenGeneration=Cynhyrchu tocyn â llaw
+TokenManager=Rheolwr Tocyn
+IsTokenGenerated=Ydy tocyn yn cael ei gynhyrchu?
+NoAccessToken=Dim tocyn mynediad wedi'i gadw yn y gronfa ddata leol
+HasAccessToken=Cynhyrchwyd tocyn a'i gadw mewn cronfa ddata leol
+NewTokenStored=Tocyn wedi'i dderbyn a'i gadw
+ToCheckDeleteTokenOnProvider=Cliciwch yma i wirio/dileu awdurdodiad sydd wedi'i gadw gan ddarparwr %s OAuth
+TokenDeleted=Tocyn wedi'i ddileu
+RequestAccess=Cliciwch yma i ofyn am / adnewyddu mynediad a derbyn tocyn newydd i'w arbed
+DeleteAccess=Cliciwch yma i ddileu tocyn
+UseTheFollowingUrlAsRedirectURI=Defnyddiwch yr URL canlynol fel yr URI Ailgyfeirio wrth greu eich manylion adnabod gyda'ch darparwr OAuth:
+ListOfSupportedOauthProviders=Rhowch y manylion adnabod a ddarparwyd gan eich darparwr OAuth2. Dim ond darparwyr OAuth2 a gefnogir sydd wedi'u rhestru yma. Gall y gwasanaethau hyn gael eu defnyddio gan fodiwlau eraill sydd angen eu dilysu OAuth2.
+OAuthSetupForLogin=Tudalen i gynhyrchu tocyn OAuth
+SeePreviousTab=Gweler y tab blaenorol
+OAuthIDSecret=OAuth ID a Chyfrinach
+TOKEN_REFRESH=Token Refresh Presennol
+TOKEN_EXPIRED=Tocyn wedi dod i ben
+TOKEN_EXPIRE_AT=Tocyn yn dod i ben am
+TOKEN_DELETE=Dileu tocyn sydd wedi'i gadw
+OAUTH_GOOGLE_NAME=OAuth gwasanaeth Google
+OAUTH_GOOGLE_ID=ID Google OAuth
+OAUTH_GOOGLE_SECRET=OAuth Cyfrinach Google
+OAUTH_GOOGLE_DESC=Ewch i <a class="notasortlink" href="https://console.developers.google.com/" target="_blank" rel="noopener noreferrer external"> y dudalen hon </a> yna "Credentials" i greu tystlythyrau OAuth
+OAUTH_GITHUB_NAME=Gwasanaeth OAuth GitHub
+OAUTH_GITHUB_ID=OAuth GitHub Id
+OAUTH_GITHUB_SECRET=Cyfrinach OAuth GitHub
+OAUTH_GITHUB_DESC=Ewch i <a class="notasortlink" href="https://github.com/settings/developers" target="_blank" rel="noopener noreferrer external"> y dudalen hon </a> yna "Cofrestru cais newydd" i greu manylion OAuth
+OAUTH_STRIPE_TEST_NAME=Prawf Stripe OAuth
+OAUTH_STRIPE_LIVE_NAME=OAuth Stripe yn Fyw

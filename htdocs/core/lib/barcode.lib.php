@@ -20,7 +20,7 @@
 
 /**
  *	\file       htdocs/core/lib/barcode.lib.php
- *	\brief      Set of functions used for barcode generation
+ *	\brief      Set of functions used for barcode generation (internal lib, also code 'phpbarcode')
  *	\ingroup    core
  */
 
@@ -59,7 +59,10 @@ if (empty($font_loc)) {
 if (defined('PHP-BARCODE_PATH_COMMAND')) {
 	$genbarcode_loc = constant('PHP-BARCODE_PATH_COMMAND');
 } else {
-	$genbarcode_loc = $conf->global->GENBARCODE_LOCATION;
+	$genbarcode_loc = '';
+	if (!empty($conf->global->GENBARCODE_LOCATION)) {
+		$genbarcode_loc = $conf->global->GENBARCODE_LOCATION;
+	}
 }
 
 
@@ -69,7 +72,7 @@ if (defined('PHP-BARCODE_PATH_COMMAND')) {
  * Print barcode
  *
  * @param	string	       $code		Code
- * @param	string	       $encoding	Encoding
+ * @param	string	       $encoding	Encoding ('EAN13', 'ISBN', 'C128', 'UPC', 'CBR', 'QRCODE', 'DATAMATRIX', 'ANY'...)
  * @param	integer	       $scale		Scale
  * @param	string	       $mode		'png' or 'jpg' ...
  * @return	array|string   $bars		array('encoding': the encoding which has been used, 'bars': the bars, 'text': text-positioning info) or string with error message
@@ -149,11 +152,9 @@ function barcode_encode($code, $encoding)
 		dol_syslog("barcode.lib.php::barcode_encode Use genbarcode ".$genbarcode_loc." code=".$code." encoding=".$encoding);
 		$bars = barcode_encode_genbarcode($code, $encoding);
 	} else {
-		print "barcode_encode needs an external programm for encodings other then EAN/ISBN (code=".$code.", encoding=".$encoding.")<BR>\n";
+		print "barcode_encode needs an external program for encodings other then EAN/ISBN (code=".dol_escape_htmltag($code).", encoding=".dol_escape_htmltag($encoding).")<BR>\n";
 		print "<UL>\n";
 		print "<LI>download gnu-barcode from <A href=\"https://www.gnu.org/software/barcode/\">www.gnu.org/software/barcode/</A>\n";
-		print "<LI>compile and install them\n";
-		print "<LI>download genbarcode from <A href=\"http://www.ashberg.de/bar/\">www.ashberg.de/bar/</A>\n";
 		print "<LI>compile and install them\n";
 		print "<LI>specify path the genbarcode in barcode module setup\n";
 		print "</UL>\n";

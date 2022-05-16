@@ -46,6 +46,8 @@ if (!$user->admin || (empty($conf->product->enabled) && empty($conf->service->en
 
 $action = GETPOST('action', 'aZ09');
 $value = GETPOST('value', 'alpha');
+$modulepart = GETPOST('modulepart', 'aZ09');	// Used by actions_setmoduleoptions.inc.php
+
 $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');
 $type = 'product';
@@ -142,32 +144,16 @@ if ($action == 'other') {
 	$value = GETPOST('activate_usesearchtoselectproduct', 'alpha');
 	$res = dolibarr_set_const($db, "PRODUIT_USE_SEARCH_TO_SELECT", $value, 'chaine', 0, '', $conf->entity);
 
-	$value = GETPOST('activate_useProdFournDesc', 'alpha');
-	$res = dolibarr_set_const($db, "PRODUIT_FOURN_TEXTS", $value, 'chaine', 0, '', $conf->entity);
-
 	$value = GETPOST('activate_FillProductDescAuto', 'alpha');
 	$res = dolibarr_set_const($db, "PRODUIT_AUTOFILL_DESC", $value, 'chaine', 0, '', $conf->entity);
 
-	if ($value) {
-		$sql_test = "SELECT count(desc_fourn) as cpt FROM ".MAIN_DB_PREFIX."product_fournisseur_price WHERE 1";
-		$resql = $db->query($sql_test);
-		if (!$resql && $db->lasterrno == 'DB_ERROR_NOSUCHFIELD') { // if the field does not exist, we create it
-			$sql_new = "ALTER TABLE ".MAIN_DB_PREFIX."product_fournisseur_price ADD COLUMN desc_fourn text";
-			$resql_new = $db->query($sql_new);
-		}
-	}
+	$value = GETPOST('PRODUIT_FOURN_TEXTS', 'alpha');
+	$res = dolibarr_set_const($db, "PRODUIT_FOURN_TEXTS", $value, 'chaine', 0, '', $conf->entity);
 
-	$value = GETPOST('activate_useProdSupplierPackaging', 'alpha');
+	$value = GETPOST('PRODUCT_USE_SUPPLIER_PACKAGING', 'alpha');
 	$res = dolibarr_set_const($db, "PRODUCT_USE_SUPPLIER_PACKAGING", $value, 'chaine', 0, '', $conf->entity);
-	if ($value) {
-		$sql_test = "SELECT count(packaging) as cpt FROM ".MAIN_DB_PREFIX."product_fournisseur_price WHERE 1";
-		$resql = $db->query($sql_test);
-		if (!$resql && $db->lasterrno == 'DB_ERROR_NOSUCHFIELD') { // if the field does not exist, we create it
-			$sql_new = "ALTER TABLE ".MAIN_DB_PREFIX."product_fournisseur_price ADD COLUMN packaging double(24,8) DEFAULT 1";
-			$resql_new = $db->query($sql_new);
-		}
-	}
 }
+
 
 if ($action == 'specimen') { // For products
 	$modele = GETPOST('module', 'alpha');
@@ -248,12 +234,22 @@ if ($action == 'set') {
 	}
 }
 
-//if ($action == 'other')
-//{
-//    $value = GETPOST('activate_units', 'alpha');
-//    $res = dolibarr_set_const($db, "PRODUCT_USE_UNITS", $value, 'chaine', 0, '', $conf->entity);
-//	if (! $res > 0) $error++;
-//}
+// To enable a constant whithout javascript
+if (preg_match('/set_(.+)/', $action, $reg)) {
+	$keyforvar = $reg[1];
+	if ($keyforvar) {
+		$value = 1;
+		$res = dolibarr_set_const($db, $keyforvar, $value, 'chaine', 0, '', $conf->entity);
+	}
+}
+
+// To disable a constant whithout javascript
+if (preg_match('/del_(.+)/', $action, $reg)) {
+	$keyforvar = $reg[1];
+	if ($keyforvar) {
+		$res = dolibarr_del_const($db, $keyforvar, $conf->entity);
+	}
+}
 
 if ($action) {
 	if (!$error) {
@@ -346,7 +342,7 @@ foreach ($dirproduct as $dirroot) {
 					}
 					print '<td class="center">';
 					if (!$disabled) {
-						print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setcodeproduct&token='.newToken().'&value='.$file.'">';
+						print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setcodeproduct&token='.newToken().'&value='.urlencode($file).'">';
 					}
 					print img_picto($langs->trans("Disabled"), 'switch_off');
 					if (!$disabled) {
@@ -448,13 +444,13 @@ foreach ($dirmodels as $reldir) {
 								// Active
 								if (in_array($name, $def)) {
 									print '<td class="center">'."\n";
-									print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&value='.$name.'">';
+									print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&token='.newToken().'&value='.urlencode($name).'">';
 									print img_picto($langs->trans("Enabled"), 'switch_on');
 									print '</a>';
 									print '</td>';
 								} else {
 									print '<td class="center">'."\n";
-									print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;token='.newToken().'&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+									print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 									print "</td>";
 								}
 
@@ -463,7 +459,7 @@ foreach ($dirmodels as $reldir) {
 								if ($conf->global->PRODUCT_ADDON_PDF == $name) {
 									print img_picto($langs->trans("Default"), 'on');
 								} else {
-									print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;token='.newToken().'&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+									print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 								}
 								print '</td>';
 
@@ -588,7 +584,7 @@ print '</tr>';
 if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) {
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("MultiPricesNumPrices").'</td>';
-	print '<td class="right"><input size="3" type="text" class="flat" name="value_PRODUIT_MULTIPRICES_LIMIT" value="'.$conf->global->PRODUIT_MULTIPRICES_LIMIT.'"></td>';
+	print '<td class="right"><input size="3" type="text" class="flat right" name="value_PRODUIT_MULTIPRICES_LIMIT" value="'.$conf->global->PRODUIT_MULTIPRICES_LIMIT.'"></td>';
 	print '</tr>';
 }
 
@@ -602,16 +598,18 @@ print '</tr>';
 
 if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) {
 	print '<tr class="oddeven">';
-	print '<td>'.$langs->trans("UseProductFournDesc").'</td>';
-	print '<td class="right">';
-	print $form->selectyesno("activate_useProdFournDesc", (!empty($conf->global->PRODUIT_FOURN_TEXTS) ? $conf->global->PRODUIT_FOURN_TEXTS : 0), 1);
+	print '<td>'.$langs->trans("UseProductSupplierPackaging").'</td>';
+	print '<td align="right">';
+	print ajax_constantonoff("PRODUCT_USE_SUPPLIER_PACKAGING", array(), $conf->entity, 0, 0, 0, 0);
+	//print $form->selectyesno("activate_useProdSupplierPackaging", (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING) ? $conf->global->PRODUCT_USE_SUPPLIER_PACKAGING : 0), 1);
 	print '</td>';
 	print '</tr>';
 
 	print '<tr class="oddeven">';
-	print '<td>'.$langs->trans("UseProductSupplierPackaging").'</td>';
-	print '<td align="right">';
-	print $form->selectyesno("activate_useProdSupplierPackaging", (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING) ? $conf->global->PRODUCT_USE_SUPPLIER_PACKAGING : 0), 1);
+	print '<td>'.$langs->trans("UseProductFournDesc").'</td>';
+	print '<td class="right">';
+	print ajax_constantonoff("PRODUIT_FOURN_TEXTS", array(), $conf->entity, 0, 0, 0, 0);
+	//print $form->selectyesno("activate_useProdFournDesc", (!empty($conf->global->PRODUIT_FOURN_TEXTS) ? $conf->global->PRODUIT_FOURN_TEXTS : 0), 1);
 	print '</td>';
 	print '</tr>';
 }
@@ -762,10 +760,10 @@ if (!empty($conf->global->PRODUCT_CANVAS_ABILITY)) {
 						if ($conf->global->$const) {
 							print img_picto($langs->trans("Active"), 'tick');
 							print '</td><td class="right">';
-							print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;token='.newToken().'&amp;spe='.urlencode($file).'&amp;value=0">'.$langs->trans("Disable").'</a>';
+							print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&token='.newToken().'&spe='.urlencode($file).'&value=0">'.$langs->trans("Disable").'</a>';
 						} else {
 							print '&nbsp;</td><td class="right">';
-							print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;token='.newToken().'&amp;spe='.urlencode($file).'&amp;value=1">'.$langs->trans("Activate").'</a>';
+							print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&token='.newToken().'&spe='.urlencode($file).'&value=1">'.$langs->trans("Activate").'</a>';
 						}
 
 						print '</td></tr>';

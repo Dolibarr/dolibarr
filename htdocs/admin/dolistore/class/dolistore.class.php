@@ -84,7 +84,7 @@ class Dolistore
 
 		try {
 			$this->api = new PrestaShopWebservice($conf->global->MAIN_MODULE_DOLISTORE_API_SRV, $conf->global->MAIN_MODULE_DOLISTORE_API_KEY, $this->debug_api);
-			dol_syslog("Call API with MAIN_MODULE_DOLISTORE_API_SRV = ".$conf->global->MAIN_MODULE_DOLISTORE_API_SRV);
+			dol_syslog("Call API with MAIN_MODULE_DOLISTORE_API_SRV = ".getDolGlobalString('MAIN_MODULE_DOLISTORE_API_SRV'));
 			// $conf->global->MAIN_MODULE_DOLISTORE_API_KEY is for the login of basic auth. There is no password as it is public data.
 
 			// Here we set the option array for the Webservice : we want categories resources
@@ -134,7 +134,7 @@ class Dolistore
 
 		try {
 			$this->api = new PrestaShopWebservice($conf->global->MAIN_MODULE_DOLISTORE_API_SRV, $conf->global->MAIN_MODULE_DOLISTORE_API_KEY, $this->debug_api);
-			dol_syslog("Call API with MAIN_MODULE_DOLISTORE_API_SRV = ".$conf->global->MAIN_MODULE_DOLISTORE_API_SRV);
+			dol_syslog("Call API with MAIN_MODULE_DOLISTORE_API_SRV = ".getDolGlobalString('MAIN_MODULE_DOLISTORE_API_SRV'));
 			// $conf->global->MAIN_MODULE_DOLISTORE_API_KEY is for the login of basic auth. There is no password as it is public data.
 
 			// Here we set the option array for the Webservice : we want products resources
@@ -217,15 +217,15 @@ class Dolistore
 		for ($i = 0; $i < $nbofcateg; $i++) {
 			$cat = $this->categories[$i];
 			if ($cat->is_root_category == 1 && $parent == 0) {
-				$html .= '<li class="root"><h3 class="nomargesupinf"><a class="nomargesupinf link2cat" href="?mode=marketplace&categorie='.$cat->id.'" ';
-				$html .= 'title="'.dol_escape_htmltag(strip_tags($cat->description->language[$this->lang - 1])).'">'.$cat->name->language[$this->lang - 1].' <sup>'.$cat->nb_products_recursive.'</sup></a></h3>';
+				$html .= '<li class="root"><h3 class="nomargesupinf"><a class="nomargesupinf link2cat" href="?mode=marketplace&categorie='.((int) $cat->id).'" ';
+				$html .= 'title="'.dol_escape_htmltag(strip_tags($cat->description->language[$this->lang - 1])).'">'.dol_escape_htmltag($cat->name->language[$this->lang - 1]).' <sup>'.dol_escape_htmltag($cat->nb_products_recursive).'</sup></a></h3>';
 				$html .= self::get_categories($cat->id);
 				$html .= "</li>\n";
 			} elseif (trim($cat->id_parent) == $parent && $cat->active == 1 && trim($cat->id_parent) != 0) { // si cat est de ce niveau
 				$select = ($cat->id == $this->categorie) ? ' selected' : '';
-				$html .= '<li><a class="link2cat'.$select.'" href="?mode=marketplace&categorie='.$cat->id.'"';
+				$html .= '<li><a class="link2cat'.$select.'" href="?mode=marketplace&categorie='.((int) $cat->id).'"';
 				$html .= ' title="'.dol_escape_htmltag(strip_tags($cat->description->language[$this->lang - 1])).'" ';
-				$html .= '>'.$cat->name->language[$this->lang - 1].' <sup>'.$cat->nb_products_recursive.'</sup></a>';
+				$html .= '>'.dol_escape_htmltag($cat->name->language[$this->lang - 1]).' <sup>'.dol_escape_htmltag($cat->nb_products_recursive).'</sup></a>';
 				$html .= self::get_categories($cat->id);
 				$html .= "</li>\n";
 			}
@@ -267,8 +267,8 @@ class Dolistore
 
 			// add image or default ?
 			if ($product->id_default_image != '') {
-				$image_url = DOL_URL_ROOT.'/admin/dolistore/ajax/image.php?id_product='.$product->id.'&id_image='.$product->id_default_image;
-				$images = '<a href="'.$image_url.'" class="documentpreview" target="_blank" mime="image/png" title="'.$product->name->language[$this->lang - 1].', '.$langs->trans('Version').' '.$product->module_version.'">';
+				$image_url = DOL_URL_ROOT.'/admin/dolistore/ajax/image.php?id_product='.urlencode(((int) $product->id)).'&id_image='.urlencode(((int) $product->id_default_image));
+				$images = '<a href="'.$image_url.'" class="documentpreview" target="_blank" rel="noopener noreferrer" mime="image/png" title="'.dol_escape_htmltag($product->name->language[$this->lang - 1].', '.$langs->trans('Version').' '.$product->module_version).'">';
 				$images .= '<img src="'.$image_url.'&quality=home_default" style="max-height:250px;max-width: 210px;" alt="" /></a>';
 			} else {
 				$images = '<img src="'.DOL_URL_ROOT.'/admin/dolistore/img/NoImageAvailable.png" />';
@@ -277,14 +277,15 @@ class Dolistore
 			// free or pay ?
 			if ($product->price > 0) {
 				$price = '<h3>'.price(price2num($product->price, 'MT'), 0, $langs, 1, -1, -1, 'EUR').' '.$langs->trans("HT").'</h3>';
-				$download_link = '<a target="_blank" href="'.$this->shop_url.$product->id.'"><img width="32" src="'.DOL_URL_ROOT.'/admin/dolistore/img/follow.png" /></a>';
+				$download_link = '<a target="_blank" href="'.$this->shop_url.urlencode($product->id).'"><img width="32" src="'.DOL_URL_ROOT.'/admin/dolistore/img/follow.png" /></a>';
 			} else {
 				$price         = '<h3>'.$langs->trans('Free').'</h3>';
-				$download_link = '<a target="_blank" href="'.$this->shop_url.$product->id.'"><img width="32" src="'.DOL_URL_ROOT.'/admin/dolistore/img/Download-128.png" /></a>';
-				$download_link .= '<br><br><a target="_blank" href="'.$this->shop_url.$product->id.'"><img width="32" src="'.DOL_URL_ROOT.'/admin/dolistore/img/follow.png" /></a>';
+				$download_link = '<a target="_blank" rel="noopener noreferrer" href="'.$this->shop_url.urlencode($product->id).'"><img width="32" src="'.DOL_URL_ROOT.'/admin/dolistore/img/Download-128.png" /></a>';
+				$download_link .= '<br><br><a target="_blank" href="'.$this->shop_url.urlencode($product->id).'"><img width="32" src="'.DOL_URL_ROOT.'/admin/dolistore/img/follow.png" /></a>';
 			}
 
-			//checking versions
+			// Set and check version
+			$version = '';
 			if ($this->version_compare($product->dolibarr_min, DOL_VERSION) <= 0) {
 				if ($this->version_compare($product->dolibarr_max, DOL_VERSION) >= 0) {
 					//compatible
@@ -307,7 +308,7 @@ class Dolistore
 				}
 			} else {
 				//need update
-				$version    = '<span class="compatibleafterupdate">'.$langs->trans(
+				$version = '<span class="compatibleafterupdate">'.$langs->trans(
 					'CompatibleAfterUpdate',
 					DOL_VERSION,
 					$product->dolibarr_min,
@@ -316,17 +317,22 @@ class Dolistore
 				$compatible = 'NotCompatible';
 			}
 
-			//.'<br><a class="inline-block valignmiddle" target="_blank" href="'.$this->shop_url.$product->id.'"><span class="details button">'.$langs->trans("SeeInMarkerPlace").'</span></a>
-
 			//output template
-			$html .= '<tr class="app oddeven '.$compatible.'">
-                <td class="center" width="210"><div class="newAppParent">'.$newapp.$images.'</div></td>
-                <td class="margeCote"><h2 class="appTitle">'.$product->name->language[$this->lang - 1]
-						.'<br><small>'.$version.'</small></h2>
-                    <small> '.dol_print_date(dol_stringtotime($product->date_upd), 'dayhour').' - '.$langs->trans('Ref').': '.$product->reference.' - '.$langs->trans('Id').': '.$product->id.'</small><br><br>'.$product->description_short->language[$this->lang - 1].'</td>';
+			$html .= '<tr class="app oddeven '.dol_escape_htmltag($compatible).'">';
+			$html .= '<td class="center" width="210"><div class="newAppParent">';
+			$html .= $newapp.$images;	// No dol_escape_htmltag, it is already escape html
+			$html .= '</div></td>';
+			$html .= '<td class="margeCote"><h2 class="appTitle">';
+			$html .= dol_escape_htmltag($product->name->language[$this->lang - 1]);
+			$html .= '<br><small>';
+			$html .= $version;			// No dol_escape_htmltag, it is already escape html
+			$html .= '</small></h2>';
+			$html .= '<small> '.dol_print_date(dol_stringtotime($product->date_upd), 'dayhour').' - '.$langs->trans('Ref').': '.dol_escape_htmltag($product->reference).' - '.dol_escape_htmltag($langs->trans('Id')).': '.((int) $product->id).'</small><br><br>'.dol_escape_htmltag($product->description_short->language[$this->lang - 1]).'</td>';
 			// do not load if display none
 			//$html .= '<td style="display:none;" class="long_description">'.$product->description->language[$this->lang - 1].'</td>';
-			$html .= '<td class="margeCote center">'.$price.'</td>';
+			$html .= '<td class="margeCote center">';
+			$html .= $price;
+			$html .= '</td>';
 			$html .= '<td class="margeCote">'.$download_link.'</td>';
 			$html .= '</tr>';
 		}
@@ -343,7 +349,7 @@ class Dolistore
 	public function get_previous_link($text = '<<')
 	{
 		// phpcs:enable
-		return '<a href="'.$this->get_previous_url().'" class="button">'.$text.'</a>';
+		return '<a href="'.$this->get_previous_url().'" class="button">'.dol_escape_htmltag($text).'</a>';
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -356,7 +362,7 @@ class Dolistore
 	public function get_next_link($text = '>>')
 	{
 		// phpcs:enable
-		return '<a href="'.$this->get_next_url().'" class="button">'.$text.'</a>';
+		return '<a href="'.$this->get_next_url().'" class="button">'.dol_escape_htmltag($text).'</a>';
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

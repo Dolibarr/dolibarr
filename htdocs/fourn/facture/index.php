@@ -27,9 +27,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
 
-// Security check
-restrictedArea($user, 'fournisseur', 0, '', 'facture');
-
 // Load translation files required by the page
 $langs->loadLangs(['bills', 'boxes']);
 
@@ -47,9 +44,21 @@ $maxDraftCount = empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->glob
 $maxLatestEditCount = 5;
 $maxOpenCount = empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD;
 
+// Security check
+restrictedArea($user, 'fournisseur', 0, '', 'facture');
+
+
 /*
-* View
-*/
+ * Actions
+ */
+
+// None
+
+
+
+/*
+ * View
+ */
 
 llxHeader("", $langs->trans("SupplierInvoicesArea"), 'EN:Suppliers_Invoices|FR:FactureFournisseur|ES:Facturas_de_proveedores');
 
@@ -58,21 +67,34 @@ print load_fiche_titre($langs->trans("SupplierInvoicesArea"), '', 'supplier_invo
 print '<div class="fichecenter">';
 
 print '<div class="fichethirdleft">';
-print getNumberInvoicesPieChart('suppliers');
-//print getPurchaseInvoicePieChart($socid);
-print '<br>';
-print getDraftSupplierTable($maxDraftCount, $socid);
+$tmp = getNumberInvoicesPieChart('suppliers');
+if ($tmp) {
+	print $tmp;
+	print '<br>';
+}
+
+$tmp = getDraftSupplierTable($max, $socid);
+if ($tmp) {
+	print $tmp;
+	print '<br>';
+}
 
 print '</div>';
 
 print '<div class="fichetwothirdright">';
-print '<div class="ficheaddleft">';
 
-print getPurchaseInvoiceLatestEditTable($maxLatestEditCount, $socid);
-print '<br>';
-print getPurchaseInvoiceUnpaidOpenTable($max, $socid);
+$tmp = getPurchaseInvoiceLatestEditTable($maxLatestEditCount, $socid);
+if ($tmp) {
+	print $tmp;
+	print '<br>';
+}
 
-print '</div>';
+$tmp = getPurchaseInvoiceUnpaidOpenTable($max, $socid);
+if ($tmp) {
+	print $tmp;
+	print '<br>';
+}
+
 print '</div>';
 
 print '</div>';

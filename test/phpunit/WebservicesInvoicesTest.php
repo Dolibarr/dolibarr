@@ -414,7 +414,7 @@ class WebservicesInvoicesTest extends PHPUnit\Framework\TestCase
 			$result=0;
 		}
 		if (! $result || ! empty($result['faultstring'])) {
-			print $this->soapclient->error_str;
+			print 'Error: '.$this->soapclient->error_str;
 			print "\n<br>\n";
 			print $this->soapclient->request;
 			print "\n<br>\n";
@@ -422,6 +422,7 @@ class WebservicesInvoicesTest extends PHPUnit\Framework\TestCase
 			print "\n";
 		}
 
+		print __METHOD__." count(result)=".(is_array($result) ? count($result) : 0)."\n";
 		print __METHOD__." result=".$result['result']['result_code'].$result['result']['result_label']."\n";
 		$this->assertEquals('OK', $result['result']['result_code']);
 		$this->assertEquals('ref-phpunit-2', $result['ref_ext']);

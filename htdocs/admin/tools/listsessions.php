@@ -22,8 +22,13 @@
  *      \brief      List of PHP sessions
  */
 
+if (! defined('CSRFCHECK_WITH_TOKEN')) {
+	define('CSRFCHECK_WITH_TOKEN', '1');		// Force use of CSRF protection with tokens even for GET
+}
+
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+
 
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "install", "users", "other"));
@@ -42,8 +47,8 @@ if ($user->socid > 0) {
 }
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -185,14 +190,14 @@ print '<div class="tabsAction">';
 
 
 if (empty($conf->global->MAIN_ONLY_LOGIN_ALLOWED)) {
-	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=lock">'.$langs->trans("LockNewSessions").'</a>';
+	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=lock&token='.newToken().'">'.$langs->trans("LockNewSessions").'</a>';
 } else {
-	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=confirm_unlock">'.$langs->trans("UnlockNewSessions").'</a>';
+	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=confirm_unlock&token='.newToken().'">'.$langs->trans("UnlockNewSessions").'</a>';
 }
 
 if ($savehandler == 'files') {
 	if (count($listofsessions)) {
-		print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=purge">'.$langs->trans("PurgeSessions").'</a>';
+		print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=purge&token='.newToken().'">'.$langs->trans("PurgeSessions").'</a>';
 	}
 }
 

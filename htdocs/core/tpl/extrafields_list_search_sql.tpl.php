@@ -33,11 +33,11 @@ if (!empty($extrafieldsobjectkey) && !empty($search_array_options) && is_array($
 				$sql .= " AND ".$extrafieldsobjectprefix.$tmpkey." = '".$db->idate($crit)."'";
 			} elseif (is_array($crit)) {
 				if ($crit['start'] !== '' && $crit['end'] !== '') {
-					$sql .= ' AND ('.$extrafieldsobjectprefix.$tmpkey." BETWEEN '". $db->idate($crit['start']). "' AND '".$db->idate($crit['end']) . "')";
+					$sql .= " AND (".$extrafieldsobjectprefix.$tmpkey." BETWEEN '". $db->idate($crit['start']). "' AND '".$db->idate($crit['end']) . "')";
 				} elseif ($crit['start'] !== '') {
-					$sql .= ' AND ('.$extrafieldsobjectprefix.$tmpkey." >= '". $db->idate($crit['start'])."')";
+					$sql .= " AND (".$extrafieldsobjectprefix.$tmpkey." >= '". $db->idate($crit['start'])."')";
 				} elseif ($crit['end'] !== '') {
-					$sql .= ' AND ('.$extrafieldsobjectprefix.$tmpkey." <= '". $db->idate($crit['end'])."')";
+					$sql .= " AND (".$extrafieldsobjectprefix.$tmpkey." <= '". $db->idate($crit['end'])."')";
 				}
 			}
 		} elseif (in_array($typ, array('boolean'))) {
@@ -65,7 +65,7 @@ if (!empty($extrafieldsobjectkey) && !empty($search_array_options) && is_array($
 			if (is_array($crit)) {
 				$crit = implode(' ', $crit); // natural_search() expects a string
 			} elseif ($typ === 'select' and is_string($crit) and strpos($crit, ' ') === false) {
-				$sql .= ' AND ('.$extrafieldsobjectprefix.$tmpkey.' = "'.$db->escape($crit).'")';
+				$sql .= " AND (".$extrafieldsobjectprefix.$tmpkey." = '".$db->escape($crit)."')";
 				continue;
 			}
 			$sql .= natural_search($extrafieldsobjectprefix.$tmpkey, $crit, $mode_search);

@@ -393,9 +393,10 @@ class DoliDBSqlite3 extends DoliDB
 	 * 	@param	int		$usesavepoint	0=Default mode, 1=Run a savepoint before and a rollbock to savepoint if error (this allow to have some request with errors inside global transactions).
 	 * 									Note that with Mysql, this parameter is not used as Myssql can already commit a transaction even if one request is in error, without using savepoints.
 	 *  @param  string	$type           Type of SQL order ('ddl' for insert, update, select, delete or 'dml' for create, alter...)
-	 *	@return	SQLite3Result			Resultset of answer
+	 * @param	int		$result_mode	Result mode (not used with sqlite)
+	 *	@return	bool|SQLite3Result		Resultset of answer
 	 */
-	public function query($query, $usesavepoint = 0, $type = 'auto')
+	public function query($query, $usesavepoint = 0, $type = 'auto', $result_mode = 0)
 	{
 		global $conf, $dolibarr_main_db_readonly;
 
@@ -406,6 +407,7 @@ class DoliDBSqlite3 extends DoliDB
 		$this->error = '';
 
 		// Convert MySQL syntax to SQLite syntax
+		$reg = array();
 		if (preg_match('/ALTER\s+TABLE\s*(.*)\s*ADD\s+CONSTRAINT\s+(.*)\s*FOREIGN\s+KEY\s*\(([\w,\s]+)\)\s*REFERENCES\s+(\w+)\s*\(([\w,\s]+)\)/i', $query, $reg)) {
 			// Ajout d'une clef étrangère à la table
 			// procédure de remplacement de la table pour ajouter la contrainte
@@ -420,7 +422,7 @@ class DoliDBSqlite3 extends DoliDB
 			$descTable = $this->db->querySingle("SELECT sql FROM sqlite_master WHERE name='".$this->escape($tablename)."'");
 
 			// 1- Renommer la table avec un nom temporaire
-			$this->query('ALTER TABLE '.$tablename.' RENAME TO tmp_'.$tablename);
+			$this->query("ALTER TABLE ".$tablename." RENAME TO tmp_".$tablename);
 
 			// 2- Recréer la table avec la contrainte ajoutée
 
@@ -435,10 +437,10 @@ class DoliDBSqlite3 extends DoliDB
 			$this->query($descTable);
 
 			// 3- Transférer les données
-			$this->query('INSERT INTO '.$tablename.' SELECT * FROM tmp_'.$tablename);
+			$this->query("INSERT INTO ".$tablename." SELECT * FROM tmp_".$tablename);
 
 			// 4- Supprimer la table temporaire
-			$this->query('DROP TABLE tmp_'.$tablename);
+			$this->query("DROP TABLE tmp_".$tablename);
 
 			// dummy statement
 			$query = "SELECT 0";
@@ -504,7 +506,7 @@ class DoliDBSqlite3 extends DoliDB
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Renvoie la ligne courante (comme un objet) pour le curseur resultset
+	 * 	Returns the current line (as an object) for the resultset cursor
 	 *
 	 *	@param	SQLite3Result	$resultset  Curseur de la requete voulue
 	 *	@return	false|object				Object result line or false if KO or end of cursor
@@ -645,6 +647,17 @@ class DoliDBSqlite3 extends DoliDB
 	}
 
 	/**
+	 *	Escape a string to insert data
+	 *
+	 *	@param	string	$stringtoencode		String to escape
+	 *	@return	string						String escaped
+	 */
+	public function escapeunderscore($stringtoencode)
+	{
+		return str_replace('_', '\_', $stringtoencode);
+	}
+
+	/**
 	 *	Renvoie le code erreur generique de l'operation precedente.
 	 *
 	 *	@return	string		Error code (Exemples: DB_ERROR_TABLE_ALREADY_EXISTS, DB_ERROR_RECORD_ALREADY_EXISTS...)
@@ -743,34 +756,34 @@ class DoliDBSqlite3 extends DoliDB
 	}
 
 	/**
-	 *  Encrypt sensitive data in database
-	 *  Warning: This function includes the escape, so it must use direct value
+	 * Encrypt sensitive data in database
+	 * Warning: This function includes the escape and add the SQL simple quotes on strings.
 	 *
-	 *  @param  string  $fieldorvalue   Field name or value to encrypt
-	 *  @param	int		$withQuotes     Return string with quotes
-	 *  @return string          		XXX(field) or XXX('value') or field or 'value'
+	 * @param	string	$fieldorvalue	Field name or value to encrypt
+	 * @param	int		$withQuotes		Return string including the SQL simple quotes. This param must always be 1 (Value 0 is bugged and deprecated).
+	 * @return	string					XXX(field) or XXX('value') or field or 'value'
 	 */
-	public function encrypt($fieldorvalue, $withQuotes = 0)
+	public function encrypt($fieldorvalue, $withQuotes = 1)
 	{
 		global $conf;
 
 		// Type of encryption (2: AES (recommended), 1: DES , 0: no encryption)
-		$cryptType = ($conf->db->dolibarr_main_db_encryption ? $conf->db->dolibarr_main_db_encryption : 0);
+		$cryptType = (!empty($conf->db->dolibarr_main_db_encryption) ? $conf->db->dolibarr_main_db_encryption : 0);
 
 		//Encryption key
 		$cryptKey = (!empty($conf->db->dolibarr_main_db_cryptkey) ? $conf->db->dolibarr_main_db_cryptkey : '');
 
-		$return = ($withQuotes ? "'" : "").$this->escape($fieldorvalue).($withQuotes ? "'" : "");
+		$escapedstringwithquotes = ($withQuotes ? "'" : "").$this->escape($fieldorvalue).($withQuotes ? "'" : "");
 
 		if ($cryptType && !empty($cryptKey)) {
 			if ($cryptType == 2) {
-				$return = 'AES_ENCRYPT('.$return.',\''.$cryptKey.'\')';
+				$escapedstringwithquotes = "AES_ENCRYPT(".$escapedstringwithquotes.", '".$this->escape($cryptKey)."')";
 			} elseif ($cryptType == 1) {
-				$return = 'DES_ENCRYPT('.$return.',\''.$cryptKey.'\')';
+				$escapedstringwithquotes = "DES_ENCRYPT(".$escapedstringwithquotes.", '".$this->escape($cryptKey)."')";
 			}
 		}
 
-		return $return;
+		return $escapedstringwithquotes;
 	}
 
 	/**
@@ -839,17 +852,12 @@ class DoliDBSqlite3 extends DoliDB
 		}
 
 		// ALTER DATABASE dolibarr_db DEFAULT CHARACTER SET latin DEFAULT COLLATE latin1_swedish_ci
-		$sql = 'CREATE DATABASE '.$database;
-		$sql .= ' DEFAULT CHARACTER SET '.$charset.' DEFAULT COLLATE '.$collation;
+		$sql = "CREATE DATABASE ".$this->escape($database);
+		$sql .= " DEFAULT CHARACTER SET ".$this->escape($charset)." DEFAULT COLLATE ".$this->escape($collation);
 
 		dol_syslog($sql, LOG_DEBUG);
 		$ret = $this->query($sql);
-		if (!$ret) {
-			// We try again for compatibility with Mysql < 4.1.1
-			$sql = 'CREATE DATABASE '.$database;
-			$ret = $this->query($sql);
-			dol_syslog($sql, LOG_DEBUG);
-		}
+
 		return $ret;
 	}
 
@@ -868,9 +876,13 @@ class DoliDBSqlite3 extends DoliDB
 
 		$like = '';
 		if ($table) {
-			$like = "LIKE '".$table."'";
+			$tmptable = preg_replace('/[^a-z0-9\.\-\_%]/i', '', $table);
+
+			$like = "LIKE '".$this->escape($tmptable)."'";
 		}
-		$sql = "SHOW TABLES FROM ".$database." ".$like.";";
+		$tmpdatabase = preg_replace('/[^a-z0-9\.\-\_]/i', '', $database);
+
+		$sql = "SHOW TABLES FROM ".$tmpdatabase." ".$like.";";
 		//print $sql;
 		$result = $this->query($sql);
 		if ($result) {
@@ -894,7 +906,9 @@ class DoliDBSqlite3 extends DoliDB
 		// phpcs:enable
 		$infotables = array();
 
-		$sql = "SHOW FULL COLUMNS FROM ".$table.";";
+		$tmptable = preg_replace('/[^a-z0-9\.\-\_]/i', '', $table);
+
+		$sql = "SHOW FULL COLUMNS FROM ".$tmptable.";";
 
 		dol_syslog($sql, LOG_DEBUG);
 		$result = $this->query($sql);
@@ -995,7 +1009,9 @@ class DoliDBSqlite3 extends DoliDB
 	public function DDLDropTable($table)
 	{
 		// phpcs:enable
-		$sql = "DROP TABLE ".$table;
+		$tmptable = preg_replace('/[^a-z0-9\.\-\_]/i', '', $table);
+
+		$sql = "DROP TABLE ".$tmptable;
 
 		if (!$this->query($sql)) {
 			return -1;
@@ -1105,8 +1121,9 @@ class DoliDBSqlite3 extends DoliDB
 	public function DDLDropField($table, $field_name)
 	{
 		// phpcs:enable
-		$sql = "ALTER TABLE ".$table." DROP COLUMN `".$field_name."`";
-		dol_syslog(get_class($this)."::DDLDropField ".$sql, LOG_DEBUG);
+		$tmp_field_name = preg_replace('/[^a-z0-9\.\-\_]/i', '', $field_name);
+
+		$sql = "ALTER TABLE ".$table." DROP COLUMN `".$tmp_field_name."`";
 		if (!$this->query($sql)) {
 			$this->error = $this->lasterror();
 			return -1;

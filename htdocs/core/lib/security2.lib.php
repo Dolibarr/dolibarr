@@ -111,7 +111,7 @@ function checkLoginPassEntity($usertotest, $passwordtotest, $entitytotest, $auth
 					// Load translation files required by the page
 					$langs->loadLangs(array('other', 'main', 'errors'));
 
-					$_SESSION["dol_loginmesg"] = $langs->trans("ErrorFailedToLoadLoginFileForMode", $mode);
+					$_SESSION["dol_loginmesg"] = (empty($_SESSION["dol_loginmesg"]) ? '' : $_SESSION["dol_loginmesg"].', ').$langs->transnoentitiesnoconv("ErrorFailedToLoadLoginFileForMode", $mode);
 				}
 			}
 		}
@@ -157,7 +157,7 @@ if (!function_exists('dol_loginfunction')) {
 
 		// Note: $conf->css looks like '/theme/eldy/style.css.php'
 		/*
-		$conf->css = "/theme/".(GETPOST('theme','alpha')?GETPOST('theme','alpha'):$conf->theme)."/style.css.php";
+		$conf->css = "/theme/".(GETPOST('theme','aZ09')?GETPOST('theme','aZ09'):$conf->theme)."/style.css.php";
 		$themepath=dol_buildpath($conf->css,1);
 		if (! empty($conf->modules_parts['theme']))		// Using this feature slow down application
 		{
@@ -187,7 +187,8 @@ if (!function_exists('dol_loginfunction')) {
 			$template_dir = DOL_DOCUMENT_ROOT."/core/tpl/";
 		}
 
-		// Set cookie for timeout management
+		// Set cookie for timeout management. We set it as a cookie so we will be able to use it to set timeout on next page before the session start
+		// and the conf file is loaded.
 		$prefix = dol_getprefix('');
 		$sessiontimeout = 'DOLSESSTIMEOUT_'.$prefix;
 		if (!empty($conf->global->MAIN_SESSION_TIMEOUT)) {
@@ -215,14 +216,19 @@ if (!function_exists('dol_loginfunction')) {
 		}
 
 		// Execute hook getLoginPageOptions (for table)
-		$parameters = array('entity' => GETPOST('entity', 'int'));
+		$parameters = array('entity' => GETPOST('entity', 'int'), 'switchentity' => GETPOST('switchentity', 'int'));
 		$reshook = $hookmanager->executeHooks('getLoginPageOptions', $parameters); // Note that $action and $object may have been modified by some hooks.
 		$morelogincontent = $hookmanager->resPrint;
 
 		// Execute hook getLoginPageExtraOptions (eg for js)
-		$parameters = array('entity' => GETPOST('entity', 'int'));
+		$parameters = array('entity' => GETPOST('entity', 'int'), 'switchentity' => GETPOST('switchentity', 'int'));
 		$reshook = $hookmanager->executeHooks('getLoginPageExtraOptions', $parameters); // Note that $action and $object may have been modified by some hooks.
 		$moreloginextracontent = $hookmanager->resPrint;
+
+		//Redirect after connection
+		$parameters = array('entity' => GETPOST('entity', 'int'), 'switchentity' => GETPOST('switchentity', 'int'));
+		$reshook = $hookmanager->executeHooks('redirectAfterConnection', $parameters); // Note that $action and $object may have been modified by some hooks.
+		$php_self = $hookmanager->resPrint;
 
 		// Login
 		$login = (!empty($hookmanager->resArray['username']) ? $hookmanager->resArray['username'] : (GETPOST("username", "alpha") ? GETPOST("username", "alpha") : $demologin));
@@ -234,7 +240,7 @@ if (!function_exists('dol_loginfunction')) {
 
 		if (!empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small)) {
 			$urllogo = DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_small);
-		} elseif (!empty($mysoc->logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$mysoc->logo))	{
+		} elseif (!empty($mysoc->logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$mysoc->logo)) {
 			$urllogo = DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/'.$mysoc->logo);
 			$width = 128;
 		} elseif (!empty($mysoc->logo_squarred_small) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_squarred_small)) {

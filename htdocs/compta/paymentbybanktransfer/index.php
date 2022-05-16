@@ -43,12 +43,14 @@ if ($user->socid) {
 }
 $result = restrictedArea($user, 'paymentbybanktransfer', '', '');
 
+$usercancreate = $user->rights->paymentbybanktransfer->create;
+
 
 /*
  * Actions
  */
 
-
+// None
 
 
 /*
@@ -62,7 +64,12 @@ if (prelevement_check_config('bank-transfer') < 0) {
 	setEventMessages($langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("PaymentByBankTransfer")), null, 'errors');
 }
 
-print load_fiche_titre($langs->trans("SuppliersStandingOrdersArea"));
+$newcardbutton = '';
+if ($usercancreate) {
+	$newcardbutton .= dolGetButtonTitle($langs->trans('NewPaymentByBankTransfer'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/compta/prelevement/create.php?type=bank-transfer');
+}
+
+print load_fiche_titre($langs->trans("SuppliersStandingOrdersArea"), $newcardbutton);
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
@@ -83,7 +90,7 @@ print $bprev->nbOfInvoiceToPay('bank-transfer');
 print '</a>';
 print '</td></tr>';
 
-print '<tr class="oddeven"><td>'.$langs->trans("AmountToWithdraw").'</td>';
+print '<tr class="oddeven"><td>'.$langs->trans("AmountToTransfer").'</td>';
 print '<td class="right"><span class="amount">';
 print price($bprev->SommeAPrelever('bank-transfer'), '', '', 1, -1, -1, 'auto');
 print '</span></td></tr></table></div><br>';
@@ -95,10 +102,10 @@ print '</span></td></tr></table></div><br>';
  */
 $sql = "SELECT f.ref, f.rowid, f.total_ttc, f.fk_statut, f.paye, f.type,";
 $sql .= " pfd.date_demande, pfd.amount,";
-$sql .= " s.nom as name, s.email, s.rowid as socid, s.tva_intra";
+$sql .= " s.nom as name, s.email, s.rowid as socid, s.tva_intra, s.siren as idprof1, s.siret as idprof2, s.ape as idprof3, s.idprof4, s.idprof5, s.idprof6";
 $sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f,";
 $sql .= " ".MAIN_DB_PREFIX."societe as s";
-if (!$user->rights->societe->client->voir && !$socid) {
+if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 $sql .= ", ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
@@ -111,8 +118,8 @@ if (empty($conf->global->WITHDRAWAL_ALLOW_ANY_INVOICE_STATUS)) {
 $sql .= " AND pfd.traite = 0";
 $sql .= " AND pfd.ext_payment_id IS NULL";
 $sql .= " AND pfd.fk_facture_fourn = f.rowid";
-if (!$user->rights->societe->client->voir && !$socid) {
-	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+if (empty($user->rights->societe->client->voir) && !$socid) {
+	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 if ($socid) {
 	$sql .= " AND f.fk_soc = ".((int) $socid);
@@ -142,6 +149,15 @@ if ($resql) {
 			$thirdpartystatic->name = $obj->name;
 			$thirdpartystatic->email = $obj->email;
 			$thirdpartystatic->tva_intra = $obj->tva_intra;
+			$thirdpartystatic->siren = $obj->idprof1;
+			$thirdpartystatic->siret = $obj->idprof2;
+			$thirdpartystatic->ape = $obj->idprof3;
+			$thirdpartystatic->idprof1 = $obj->idprof1;
+			$thirdpartystatic->idprof2 = $obj->idprof2;
+			$thirdpartystatic->idprof3 = $obj->idprof3;
+			$thirdpartystatic->idprof4 = $obj->idprof4;
+			$thirdpartystatic->idprof5 = $obj->idprof5;
+			$thirdpartystatic->idprof6 = $obj->idprof6;
 
 			print '<tr class="oddeven"><td>';
 			print $invoicestatic->getNomUrl(1, 'withdraw');
@@ -152,7 +168,7 @@ if ($resql) {
 			print '</td>';
 
 			print '<td class="right">';
-			print price($obj->amount);
+			print '<span class="amount">'.price($obj->amount).'</span>';
 			print '</td>';
 
 			print '<td class="right">';
@@ -166,7 +182,7 @@ if ($resql) {
 			$i++;
 		}
 	} else {
-		print '<tr class="oddeven"><td colspan="5" class="opacitymedium">'.$langs->trans("NoSupplierInvoiceToWithdraw", $langs->transnoentitiesnoconv("BankTransfer")).'</td></tr>';
+		print '<tr class="oddeven"><td colspan="5"><span class="opacitymedium">'.$langs->trans("NoSupplierInvoiceToWithdraw", $langs->transnoentitiesnoconv("BankTransfer")).'</span></td></tr>';
 	}
 	print "</table></div><br>";
 } else {
@@ -174,7 +190,7 @@ if ($resql) {
 }
 
 
-print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+print '</div><div class="fichetwothirdright">';
 
 
 /*
@@ -185,6 +201,7 @@ $limit = 5;
 $sql = "SELECT p.rowid, p.ref, p.amount, p.datec, p.statut";
 $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
 $sql .= " WHERE p.type = 'bank-transfer'";
+$sql .= " AND p.entity IN (".getEntity('invoice').")";
 $sql .= " ORDER BY datec DESC";
 $sql .= $db->plimit($limit);
 
@@ -223,7 +240,7 @@ if ($result) {
 			$i++;
 		}
 	} else {
-		print '<tr><td class="opacitymedium" colspan="4">'.$langs->trans("None").'</td></tr>';
+		print '<tr><td colspan="4"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 	}
 
 	print "</table></div><br>";
@@ -233,7 +250,7 @@ if ($result) {
 }
 
 
-print '</div></div></div>';
+print '</div></div>';
 
 // End of page
 llxFooter();

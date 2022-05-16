@@ -16,4 +16,5 @@ Journals=Diarios Contables
 JournalFinancial=Diarios Financieros
 AssignDedicatedAccountingAccount=Nueva cuenta para asignar
 InvoiceLabel=Etiqueta de la factura
-ExportAccountingSourceDocHelp=With this tool, you can export the source events (list and PDFs) that were used to generate your accountancy. To export your journals, use the menu entry %s - %s.
+MvtNotCorrectlyBalanced=Movement not correctly balanced. Debit = %s | Credit = %s
+ConfirmMassDeleteBookkeepingWriting=Confirmar Eliminar en Masa

@@ -2126,6 +2126,129 @@ if ($action == 'create') {
 			}
 		}
 
+		$deposit_percent_from_payment_terms = getDictionaryValue('c_payment_term', 'deposit_percent', $object->cond_reglement_id);
+
+		if (! empty($deposit_percent_from_payment_terms) && ! empty($conf->facture->enabled) && ! empty($user->rights->facture->creer)) {
+			require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
+
+			$object->fetchObjectLinked();
+
+			$eligibleForDepositGeneration = true;
+
+			if (array_key_exists('facture', $object->linkedObjects)) {
+				foreach ($object->linkedObjects['facture'] as $invoice) {
+					if ($invoice->type == Facture::TYPE_DEPOSIT) {
+						$eligibleForDepositGeneration = false;
+						break;
+					}
+				}
+			}
+
+			if ($eligibleForDepositGeneration && array_key_exists('commande', $object->linkedObjects)) {
+				foreach ($object->linkedObjects['commande'] as $order) {
+					$order->fetchObjectLinked();
+
+					if (array_key_exists('facture', $order->linkedObjects)) {
+						foreach ($order->linkedObjects['facture'] as $invoice) {
+							if ($invoice->type == Facture::TYPE_DEPOSIT) {
+								$eligibleForDepositGeneration = false;
+								break 2;
+							}
+						}
+					}
+				}
+			}
+
+
+			if ($eligibleForDepositGeneration) {
+				$formquestion[] = array(
+					'type' => 'checkbox',
+					'tdclass' => 'showonlyifsigned',
+					'name' => 'generate_deposit',
+					'label' => $form->textwithpicto($langs->trans('GenerateDeposit', $object->deposit_percent), $langs->trans('DepositGenerationPermittedByThePaymentTermsSelected'))
+				);
+
+				$formquestion[] = array(
+					'type' => 'date',
+					'tdclass' => 'fieldrequired showonlyifgeneratedeposit',
+					'name' => 'datef',
+					'label' => $langs->trans('DateInvoice'),
+					'value' => dol_now(),
+					'datenow' => true
+				);
+
+				if (! empty($conf->global->INVOICE_POINTOFTAX_DATE)) {
+					$formquestion[] = array(
+						'type' => 'date',
+						'tdclass' => 'fieldrequired showonlyifgeneratedeposit',
+						'name' => 'date_pointoftax',
+						'label' => $langs->trans('DatePointOfTax'),
+						'value' => dol_now(),
+						'datenow' => true
+					);
+				}
+
+				ob_start();
+				$form->select_conditions_paiements(0, 'cond_reglement_id', -1, 0, 0, 'minwidth200');
+				$paymentTermsSelect = ob_get_clean();
+
+				$formquestion[] = array(
+					'type' => 'other',
+					'tdclass' => 'fieldrequired showonlyifgeneratedeposit',
+					'name' => 'cond_reglement_id',
+					'label' => $langs->trans('PaymentTerm'),
+					'value' => $paymentTermsSelect
+				);
+
+				$formquestion[] = array(
+					'type' => 'checkbox',
+					'tdclass' => 'showonlyifgeneratedeposit',
+					'name' => 'validate_generated_deposit',
+					'label' => $langs->trans('ValidateGeneratedDeposit')
+				);
+
+				$formquestion[] = array(
+					'type' => 'onecolumn',
+					'value' => '
+						<script>
+							let signedValue = ' . $object::STATUS_SIGNED . ';
+
+							$(document).ready(function() {
+								$("[name=generate_deposit]").change(function () {
+									let $self = $(this);
+									let $target = $(".showonlyifgeneratedeposit").parent(".tagtr");
+
+									if (! $self.parents(".tagtr").is(":hidden") && $self.is(":checked")) {
+										$target.show();
+									} else {
+										$target.hide();
+									}
+
+									return true;
+								});
+
+								$("#statut").change(function() {
+									let $target = $(".showonlyifsigned").parent(".tagtr");
+
+									if ($(this).val() == signedValue) {
+										$target.show();
+									} else {
+										$target.hide();
+									}
+
+									$("[name=generate_deposit]").trigger("change");
+
+									return true;
+								});
+
+								$("#statut").trigger("change");
+							});
+						</script>
+					'
+				);
+			}
+		}
+
 		if (!empty($conf->notification->enabled)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
 			$notify = new Notify($db);

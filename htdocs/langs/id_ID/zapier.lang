@@ -16,6 +16,6 @@
 ModuleZapierForDolibarrName = Zapier untuk Dolibarr
 ModuleZapierForDolibarrDesc = Zapier untuk modul Dolibarr
 ZapierForDolibarrSetup=Pengaturan Zapier untuk Dolibarr
-ZapierDescription=Interface with Zapier
-ZapierAbout=About the module Zapier
-ZapierSetupPage=There is no need for a setup on Dolibarr side to use Zapier. However, you must generate and publish a package on zapier to be able to use Zapier with Dolibarr. See documentation on <a href="https://wiki.dolibarr.org/index.php/Module_Zapier">this wiki page</a>.
+ZapierDescription=Antarmuka dengan Zapier
+ZapierAbout=Tentang modul Zapier
+ZapierSetupPage=Tidak perlu pengaturan di sisi Dolibarr untuk menggunakan Zapier. Namun, Anda harus membuat dan memublikasikan paket di zapier agar dapat menggunakan Zapier dengan Dolibarr. Lihat dokumentasi di <a href="https://wiki.dolibarr.org/index.php/Module_Zapier"> halaman wiki ini </a> .

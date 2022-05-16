@@ -2,7 +2,6 @@
 if (!defined('ISLOADEDBYSTEELSHEET')) {
 	die('Must be call by steelsheet');
 } ?>
-
 /* <style type="text/css" > dont remove this line it's an ide hack */
 /*
  * Dropdown of user popup
@@ -10,6 +9,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 
 .bookmark-footer a.top-menu-dropdown-link {
 	white-space: normal;
+	word-break: break-word;
 }
 
 button.dropdown-item.global-search-item {
@@ -21,29 +21,36 @@ button.dropdown-item.global-search-item {
 }
 
 
-#topmenu-bookmark-dropdown a.login-dropdown-a {
+#topmenu-quickadd-dropdown a.login-dropdown-a, #topmenu-bookmark-dropdown a.login-dropdown-a {
 	color: #fff;
+}
+div#topmenu-quickadd-dropdown {
+	position: fixed;
+	<?php echo $right; ?>: 55px;
+	top: 0px;
 }
 div#topmenu-bookmark-dropdown {
 	position: fixed;
-	right: 20px;
+	<?php echo $right; ?>: 20px;
 	top: 0px;
 }
+
 
 #topmenu-login-dropdown .dropdown-toggle:after {
 	display: none;
 }
 
-#topmenu-bookmark-dropdown .dropdown-menu {
-	width: 300px;
+#topmenu-quickadd-dropdown .dropdown-menu, #topmenu-bookmark-dropdown .dropdown-menu {
+	min-width: 300px;
+	max-width: 360px;
 }
 
 button.dropdown-item.global-search-item {
 	outline: none;
 }
 
-.open>.dropdown-search, .open>.dropdown-bookmark, .open>.dropdown-menu{
-	display: block;
+.open>.dropdown-search, .open>.dropdown-quickadd, .open>.dropdown-bookmark, .open>.dropdown-menu{
+	display: block !important;
 }
 
 .dropdown-search {
@@ -114,6 +121,15 @@ button.dropdown-item.global-search-item {
 	border-radius: 4px;
 	-webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);
 	box-shadow: 0 6px 12px rgba(0,0,0,.175);
+}
+
+
+/* CSS to hide the arrow to show open/close */
+div#topmenu-quickadd-dropdown, div#topmenu-bookmark-dropdown {
+	padding-right: 2px;
+}
+div#topmenu-quickadd-dropdown a::after, div#topmenu-bookmark-dropdown a::after {
+	display: none;
 }
 
 
@@ -193,8 +209,8 @@ button.dropdown-item.global-search-item {
 	max-width: 100%;
 }
 
-div#topmenu-global-search-dropdown, div#topmenu-bookmark-dropdown {
-	line-height: 46px;
+div#topmenu-global-search-dropdown, div#topmenu-quickadd-dropdown, div#topmenu-bookmark-dropdown {
+	line-height: <?php echo (getDolGlobalInt('THEME_TOPMENU_DISABLE_IMAGE') == 1 ? '35' : '46' ); ?>px;
 }
 a.top-menu-dropdown-link {
 	padding: 8px;
@@ -214,7 +230,7 @@ a.top-menu-dropdown-link {
 }
 
 .dropdown-menu > .user-header{
-	background: rgb(<?php echo $colorbackhmenu1 ?>);
+	background: rgb(--colorbackhmenu1);
 }
 
 
@@ -237,6 +253,7 @@ a.top-menu-dropdown-link {
 	border-top: 1px solid #f0f0f0;
 	background-color: #f9f9f9;
 	padding: 10px;
+	text-align: start;
 }
 
 
@@ -254,7 +271,8 @@ a.top-menu-dropdown-link {
 	max-height: calc(90vh - 110px) ;
 	white-space: normal;
 }
-#topmenu-bookmark-dropdown .dropdown-menu > .bookmark-body, #topmenu-bookmark-dropdown .dropdown-body{
+#topmenu-quickadd-dropdown .dropdown-menu > .bookmark-body, #topmenu-quickadd-dropdown .dropdown-body,
+#topmenu-bookmark-dropdown .dropdown-menu > .bookmark-body, #topmenu-bookmark-dropdown .dropdown-body {
 	max-height: 60vh ; /* fallback for browsers without support for calc() */
 	max-height: calc(90vh - 200px) ;
 }
@@ -276,7 +294,7 @@ a.top-menu-dropdown-link {
 }
 
 
-#topmenu-login-dropdown, #topmenu-bookmark-dropdown, #topmenu-global-search-dropdown {
+#topmenu-login-dropdown, #topmenu-quickadd-dropdown, #topmenu-bookmark-dropdown, #topmenu-global-search-dropdown {
 	padding: 0 5px 0 5px;
 }
 #topmenu-login-dropdown a:hover{
@@ -285,7 +303,7 @@ a.top-menu-dropdown-link {
 
 #topmenuloginmoreinfo-btn, #topmenulogincompanyinfo-btn {
 	display: block;
-	text-aling: right;
+	text-align: start;
 	color:#666;
 	cursor: pointer;
 }
@@ -294,6 +312,10 @@ a.top-menu-dropdown-link {
 	display: none;
 	clear: both;
 	font-size: 0.95em;
+}
+
+a.dropdown-item {
+	text-align: start;
 }
 
 .button-top-menu-dropdown {
@@ -342,7 +364,7 @@ a.top-menu-dropdown-link {
 	display: block !important;
 	box-sizing: border-box;
 	width: 100%;
-	padding: .25rem 1.5rem .25rem 1rem;
+	padding: .3em 1.5em .4em 1em;
 	clear: both;
 	font-weight: 400;
 	color: #212529  !important;
@@ -365,12 +387,18 @@ a.top-menu-dropdown-link {
 	-webkit-font-smoothing: antialiased;
 	text-align:center;
 	text-decoration:none;
-	margin-right: 5px;
+	margin-<?php echo $right; ?>: 5px;
 	display: inline-block;
 	content: "\f0da";
 	color: rgba(0,0,0,0.3);
 }
+.multicompany-item::before {
+	content: none !important;
+}
 
+.dropdown-item.bookmark-item-external::before {
+	content: "\f35d";
+}
 
 .dropdown-item.active, .dropdown-item:hover, .dropdown-item:focus  {
 	color: #<?php echo $colortextbackhmenu; ?> !important;
@@ -410,10 +438,18 @@ a.top-menu-dropdown-link {
 /* smartphone */
 @media only screen and (max-width: 767px)
 {
+	#topmenu-quickadd-dropdown .dropdown-menu {
+		min-width: 220px;
+		max-width: 235px;
+	}
+	#topmenu-bookmark-dropdown .dropdown-menu {
+		min-width: 220px;
+		max-width: 360px;
+	}
+
 	#topmenu-bookmark-dropdown a.login-dropdown-a {
 		color: #000;
 	}
-
 	#topmenu-bookmark-dropdown .dropdown-menu {
 		width: 230px;
 	}
@@ -452,7 +488,7 @@ a.top-menu-dropdown-link {
 
 
 .dropdown-search-input::placeholder {
-	color: color(#575756 a(0.8));
+	color: color(#575756);
 	letter-spacing: 1.5px;
 }
 

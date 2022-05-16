@@ -67,6 +67,8 @@ $socid = 0;
 if ($user->socid) {
 	$socid = $user->socid;
 }
+
+$allowed = 0;
 if (!empty($user->rights->accounting->chartofaccount)) {
 	$allowed = 1; // Dictionary with list of banks accounting account allowed to manager of chart account
 }
@@ -77,8 +79,8 @@ if (!$allowed) {
 $diroutputmassaction = $conf->bank->dir_output.'/temp/massgeneration/'.$user->id;
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -183,7 +185,7 @@ $sql = "SELECT b.rowid, b.label, b.courant, b.rappro, b.account_number, b.fk_acc
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
 	}
 }
 // Add fields from hooks
@@ -191,7 +193,7 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 $sql .= " FROM ".MAIN_DB_PREFIX."bank_account as b";
-if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
+if (!empty($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (b.rowid = ef.fk_object)";
 }
 
@@ -333,12 +335,12 @@ $objecttmp = new Account($db);
 $trackid = 'bank'.$object->id;
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
-if ($sall) {
-	foreach ($fieldstosearchall as $key => $val) {
-		$fieldstosearchall[$key] = $langs->trans($val);
-	}
-	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall).join(', ', $fieldstosearchall).'</div>';
-}
+//if ($sall) {
+//	foreach ($fieldstosearchall as $key => $val) {
+//		$fieldstosearchall[$key] = $langs->trans($val);
+//	}
+//	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall).join(', ', $fieldstosearchall).'</div>';
+//}
 
 $moreforfilter = '';
 
@@ -504,6 +506,8 @@ print "</tr>\n";
 
 $totalarray = array();
 $totalarray['nbfield'] = 0;
+$totalarray['val'] = array('balance'=>0);
+$total = array();
 $found = 0;
 $i = 0;
 $lastcurrencycode = '';
@@ -583,10 +587,14 @@ foreach ($accounts as $key => $type) {
 	// Accountancy journal
 	if (!empty($arrayfields['b.fk_accountancy_journal']['checked'])) {
 		print '<td>';
-		if (!empty($conf->accounting->enabled) && !empty($objecttmp->fk_accountancy_journal)) {
-			$accountingjournal = new AccountingJournal($db);
-			$accountingjournal->fetch($objecttmp->fk_accountancy_journal);
-			print $accountingjournal->getNomUrl(0, 1, 1, '', 1);
+		if (!empty($conf->accounting->enabled)) {
+			if (empty($objecttmp->fk_accountancy_journal)) {
+				print img_warning($langs->trans("Mandatory"));
+			} else {
+				$accountingjournal = new AccountingJournal($db);
+				$accountingjournal->fetch($objecttmp->fk_accountancy_journal);
+				print $accountingjournal->getNomUrl(0, 1, 1, '', 1);
+			}
 		} else {
 			print '';
 		}
@@ -622,7 +630,7 @@ foreach ($accounts as $key => $type) {
 			if ($result < 0) {
 				setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
 			} else {
-				print '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?action=reconcile&sortfield=b.datev,b.dateo,b.rowid&sortorder=asc,asc,asc&id='.$objecttmp->id.'&search_account='.$objecttmp->id.'&search_conciliated=0&contextpage=banktransactionlist">';
+				print '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?action=reconcile&sortfield=b.datev,b.dateo,b.rowid&sortorder=desc,desc,desc&id='.$objecttmp->id.'&search_account='.$objecttmp->id.'&search_conciliated=0&contextpage=banktransactionlist">';
 				print '<span class="badge badge-info classfortooltip" title="'.dol_htmlentities($langs->trans("TransactionsToConciliate")).'">';
 				print $result->nbtodo;
 				print '</span>';
@@ -712,7 +720,11 @@ foreach ($accounts as $key => $type) {
 
 	print '</tr>';
 
-	$total[$objecttmp->currency_code] += $solde;
+	if (empty($total[$objecttmp->currency_code])) {
+		$total[$objecttmp->currency_code] = $solde;
+	} else {
+		$total[$objecttmp->currency_code] += $solde;
+	}
 
 	$i++;
 }

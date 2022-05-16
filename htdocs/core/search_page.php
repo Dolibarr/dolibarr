@@ -20,7 +20,7 @@
 
 /**
  *       \file       htdocs/core/search_page.php
- *       \brief      File to return a page with search boxes
+ *       \brief      File to return a page with the complete search form (all search input fields)
  */
 
 //if (! defined('NOREQUIREUSER'))   define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
@@ -55,10 +55,22 @@ $left = ($langs->trans("DIRECTION") == 'rtl' ? 'right' : 'left');
  * View
  */
 
+// Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
+if (empty($dolibarr_nocache) && GETPOST('cache', 'int')) {
+	header('Cache-Control: max-age='.GETPOST('cache', 'int').', public');
+	// For a .php, we must set an Expires to avoid to have it forced to an expired value by the web server
+	header('Expires: '.gmdate('D, d M Y H:i:s', dol_now('gmt') + GETPOST('cache', 'int')).' GMT');
+	// HTTP/1.0
+	header('Pragma: token=public');
+} else {
+	// HTTP/1.0
+	header('Cache-Control: no-cache');
+}
+
 $title = $langs->trans("Search");
 
 // URL http://mydolibarr/core/search_page?dol_use_jmobile=1 can be used for tests
-$head = '<!-- Quick access -->'."\n";
+$head = '<!-- Quick access -->'."\n";	// This is used by DoliDroid to know page is a search page
 $arrayofjs = array();
 $arrayofcss = array();
 top_htmlhead($head, $title, 0, 0, $arrayofjs, $arrayofcss);
@@ -77,7 +89,7 @@ $hookmanager->initHooks(array('searchform'));
 // Define $searchform
 $searchform = '';
 
-if ($conf->use_javascript_ajax && 1 == 2) {   // select2 is ko with jmobile
+if ($conf->use_javascript_ajax && 1 == 2) {   // select2 is not best with smartphone
 	if (!is_object($form)) {
 		$form = new Form($db);
 	}

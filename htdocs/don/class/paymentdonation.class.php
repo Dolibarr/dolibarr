@@ -64,7 +64,8 @@ class PaymentDonation extends CommonObject
 
 	public $amounts = array(); // Array of amounts
 
-	public $typepayment;
+	public $fk_typepayment;	// Payment mode ID
+	public $paymenttype;	// Payment mode ID
 
 	public $num_payment;
 
@@ -268,7 +269,8 @@ class PaymentDonation extends CommonObject
 				$this->tms            = $this->db->jdate($obj->tms);
 				$this->datep		  = $this->db->jdate($obj->datep);
 				$this->amount         = $obj->amount;
-				$this->fk_typepayment = $obj->fk_typepayment;
+				$this->fk_typepayment = $obj->fk_typepayment;	// For backward compatibility
+				$this->paymenttype    = $obj->fk_typepayment;
 				$this->num_payment    = $obj->num_payment;
 				$this->note_public    = $obj->note_public;
 				$this->fk_bank        = $obj->fk_bank;
@@ -545,6 +547,7 @@ class PaymentDonation extends CommonObject
 		$this->datep = '';
 		$this->amount = '';
 		$this->fk_typepayment = '';
+		$this->paymenttype = '';
 		$this->num_payment = '';
 		$this->note_public = '';
 		$this->fk_bank = '';
@@ -661,7 +664,7 @@ class PaymentDonation extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $maxlen = 0)
 	{
-		global $langs;
+		global $langs, $hookmanager;
 
 		$result = '';
 
@@ -684,6 +687,15 @@ class PaymentDonation extends CommonObject
 			}
 		}
 
+		global $action;
+		$hookmanager->initHooks(array($this->element . 'dao'));
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
+		}
 		return $result;
 	}
 }

@@ -71,7 +71,7 @@ top_httphead('text/json');
 if (empty($dolibarr_nocache)) {
 	header('Cache-Control: max-age=10800, public, must-revalidate');
 	// For a text/json, we must set an Expires to avoid to have it forced to an expired value by the web server
-	header('Expires: '.gmdate('D, d M Y H:i:s', dol_now('gmt') + 10800) . ' GMT');
+	header('Expires: '.gmdate('D, d M Y H:i:s', dol_now('gmt') + 10800).' GMT');
 } else {
 	header('Cache-Control: no-cache');
 }

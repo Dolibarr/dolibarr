@@ -4,6 +4,7 @@
  * Copyright (C) 2015		Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2016		Juanjo Menent   	<jmenent@2byte.es>
  * Copyright (C) 2019	   Nicolas ZABOURI     <info@inovea-conseil.com>
+ * Copyright (C) 2021		Ferran Marcet		<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,7 +67,7 @@ function bank_prepare_head(Account $object)
 	$head[$h][2] = 'graph';
 	$h++;
 
-	if ($object->courant != Account::TYPE_CASH) {
+	if ($object->courant != Account::TYPE_CASH || !empty($conf->global->BANK_CAN_RECONCILIATE_CASHACCOUNT)) {
 		$nbReceipts = 0;
 
 		// List of all standing receipts
@@ -276,7 +277,9 @@ function checkIbanForAccount($account)
 {
 	require_once DOL_DOCUMENT_ROOT.'/includes/php-iban/oophp-iban.php';
 
-	$iban = new IBAN($account->iban);
+	$ibantocheck = ($account->iban ? $account->iban : $account->iban_prefix);		// iban or iban_prefix for backward compatibility
+
+	$iban = new IBAN($ibantocheck);
 	$check = $iban->Verify();
 
 	if ($check) {

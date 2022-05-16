@@ -55,8 +55,8 @@ if (GETPOST('actioncode', 'array')) {
 $search_agenda_label = GETPOST('search_agenda_label');
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -71,13 +71,17 @@ if (!$sortorder) {
 	$sortorder = 'DESC,DESC';
 }
 
-$object = new DolResource($db);
-$object->fetch($id, $ref);
-
 // Initialize technical objects
 //$object=new MyObject($db);
 $extrafields = new ExtraFields($db);
 $hookmanager->initHooks(array('agendaresource'));
+
+$object = new DolResource($db);
+
+// Load object
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+
+$result = restrictedArea($user, 'resource', $object->id, 'resource');
 
 // Security check
 if (!$user->rights->resource->read) {

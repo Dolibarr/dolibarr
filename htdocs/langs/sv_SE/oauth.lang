@@ -29,4 +29,4 @@ OAUTH_GITHUB_ID=OAuth GitHub Id
 OAUTH_GITHUB_SECRET=OAuth GitHub Secret
 OAUTH_GITHUB_DESC=Gå till <a class="notasortlink" href="https://github.com/settings/developers" target="_blank"> den här sidan </a> sedan "Registrera en ny applikation" för att skapa OAuth-uppgifter
 OAUTH_STRIPE_TEST_NAME=OAuth Stripe Test
-OAUTH_STRIPE_LIVE_NAME=OAuth Stripe Live
+OAUTH_STRIPE_LIVE_NAME=OAuth Strip Live

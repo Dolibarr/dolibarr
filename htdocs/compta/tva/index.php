@@ -514,7 +514,7 @@ if ($refresh === true) {
 	print '</table>';
 
 
-	print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+	print '</div><div class="fichetwothirdright">';
 
 
 	/*
@@ -544,7 +544,7 @@ if ($refresh === true) {
 
 	pt($db, $sql, $langs->trans("Month"));
 
-	print '</div></div>';
+	print '</div>';
 }
 
 llxFooter();

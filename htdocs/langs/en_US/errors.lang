@@ -9,6 +9,7 @@ ErrorBadMXDomain=Email %s seems incorrect (domain has no valid MX record)
 ErrorBadUrl=Url %s is incorrect
 ErrorBadValueForParamNotAString=Bad value for your parameter. It appends generally when translation is missing.
 ErrorRefAlreadyExists=Reference <b>%s</b> already exists.
+ErrorTitleAlreadyExists=Title <b>%s</b> already exists.
 ErrorLoginAlreadyExists=Login %s already exists.
 ErrorGroupAlreadyExists=Group %s already exists.
 ErrorEmailAlreadyExists=Email %s already exists.
@@ -27,7 +28,9 @@ ErrorThisContactIsAlreadyDefinedAsThisType=This contact is already defined as co
 ErrorCashAccountAcceptsOnlyCashMoney=This bank account is a cash account, so it accepts payments of type cash only.
 ErrorFromToAccountsMustDiffers=Source and targets bank accounts must be different.
 ErrorBadThirdPartyName=Bad value for third-party name
+ForbiddenBySetupRules=Forbidden by setup rules
 ErrorProdIdIsMandatory=The %s is mandatory
+ErrorAccountancyCodeCustomerIsMandatory=The accountancy code of customer %s is mandatory
 ErrorBadCustomerCodeSyntax=Bad syntax for customer code
 ErrorBadBarCodeSyntax=Bad syntax for barcode. May be you set a bad barcode type or you defined a barcode mask for numbering that does not match value scanned.
 ErrorCustomerCodeRequired=Customer code required
@@ -64,7 +67,7 @@ ErrorDestinationAlreadyExists=Another file with the name <b>%s</b> already exist
 ErrorPartialFile=File not received completely by server.
 ErrorNoTmpDir=Temporary directy %s does not exists.
 ErrorUploadBlockedByAddon=Upload blocked by a PHP/Apache plugin.
-ErrorFileSizeTooLarge=File size is too large.
+ErrorFileSizeTooLarge=File size is too large or file not provided.
 ErrorFieldTooLong=Field %s is too long.
 ErrorSizeTooLongForIntType=Size too long for int type (%s digits maximum)
 ErrorSizeTooLongForVarcharType=Size too long for string type (%s chars maximum)
@@ -83,7 +86,7 @@ ErrorCantSaveADoneUserWithZeroPercentage=Can't save an action with "status not s
 ErrorRefAlreadyExists=Ref used for creation already exists.
 ErrorPleaseTypeBankTransactionReportName=Please enter the bank statement name where the entry has to be reported (Format YYYYMM or YYYYMMDD)
 ErrorRecordHasChildren=Failed to delete record since it has some child records.
-ErrorRecordHasAtLeastOneChildOfType=Object has at least one child of type %s
+ErrorRecordHasAtLeastOneChildOfType=Object %s has at least one child of type %s
 ErrorRecordIsUsedCantDelete=Can't delete record. It is already used or included into another object.
 ErrorModuleRequireJavascript=Javascript must not be disabled to have this feature working. To enable/disable Javascript, go to menu Home->Setup->Display.
 ErrorPasswordsMustMatch=Both typed passwords must match each other
@@ -111,6 +114,7 @@ ErrorFailedToLoadRSSFile=Fails to get RSS feed. Try to add constant MAIN_SIMPLEX
 ErrorForbidden=Access denied.<br>You try to access to a page, area or feature of a disabled module or without being in an authenticated session or that is not allowed to your user.
 ErrorForbidden2=Permission for this login can be defined by your Dolibarr administrator from menu %s->%s.
 ErrorForbidden3=It seems that Dolibarr is not used through an authenticated session. Take a look at Dolibarr setup documentation to know how to manage authentications (htaccess, mod_auth or other...).
+ErrorForbidden4=Note: clear your browser cookies to destroy existing sessions for this login.
 ErrorNoImagickReadimage=Class Imagick is not found in this PHP. No preview can be available. Administrators can disable this tab from menu Setup - Display.
 ErrorRecordAlreadyExists=Record already exists
 ErrorLabelAlreadyExists=This label already exists
@@ -265,6 +269,23 @@ ErrorAPercentIsRequired=Error, please fill in the percentage correctly
 ErrorYouMustFirstSetupYourChartOfAccount=You must first setup your chart of account
 ErrorFailedToFindEmailTemplate=Failed to find template with code name %s
 ErrorDurationForServiceNotDefinedCantCalculateHourlyPrice=Duration not defined on service. No way to calculate the hourly price.
+ErrorActionCommPropertyUserowneridNotDefined=User's owner is required
+ErrorActionCommBadType=Selected event type (id: %n, code: %s) do not exist in Event Type dictionary
+CheckVersionFail=Version check fail
+ErrorWrongFileName=Name of the file cannot have __SOMETHING__ in it
+ErrorNotInDictionaryPaymentConditions=Not in Payment Terms Dictionary, please modify.
+ErrorIsNotADraft=%s is not a draft
+ErrorExecIdFailed=Can't execute command "id"
+ErrorBadCharIntoLoginName=Unauthorized character in the login name
+ErrorRequestTooLarge=Error, request too large
+ErrorNotApproverForHoliday=You are not the approver for leave %s 
+ErrorAttributeIsUsedIntoProduct=This attribute is used in one or more product variants
+ErrorAttributeValueIsUsedIntoProduct=This attribute value is used in one or more product variants
+ErrorPaymentInBothCurrency=Error, all amounts must be entered in the same column
+ErrorYouTryToPayInvoicesInACurrencyFromBankWithAnotherCurrency=You try to pay invoices in the currency %s from an account with the currency %s 
+ErrorInvoiceLoadThirdParty=Can't load third-party object for invoice "%s"
+ErrorInvoiceLoadThirdPartyKey=Third-party key "%s" no set for invoice "%s"
+ErrorDeleteLineNotAllowedByObjectStatus=Delete line is not allowed by actual object status
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Your PHP parameter upload_max_filesize (%s) is higher than PHP parameter post_max_size (%s). This is not a consistent setup.
@@ -298,8 +319,39 @@ WarningTheHiddenOptionIsOn=Warning, the hidden option <b>%s</b> is on.
 WarningCreateSubAccounts=Warning, you can't create directly a sub account, you must create a third party or an user and assign them an accounting code to find them in this list
 WarningAvailableOnlyForHTTPSServers=Available only if using HTTPS secured connection.
 WarningModuleXDisabledSoYouMayMissEventHere=Module %s has not been enabled. So you may miss a lot of event here.
-ErrorActionCommPropertyUserowneridNotDefined=User's owner is required
-ErrorActionCommBadType=Selected event type (id: %n, code: %s) do not exist in Event Type dictionary
-CheckVersionFail=Version check fail
-ErrorWrongFileName=Name of the file cannot have __SOMETHING__ in it
-ErrorNotInDictionaryPaymentConditions=Not in Payment Terms Dictionary, please modify.
+WarningPaypalPaymentNotCompatibleWithStrict=The value 'Strict' makes the online payment features not working correctly. Use 'Lax' instead.
+
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+>>>>>>> branch '15.0' of git@github.com:Dolibarr/dolibarr.git
+# Validate
+RequireValidValue = Value not valid
+RequireAtLeastXString = Requires at least %s character(s)
+RequireXStringMax = Requires %s character(s) max
+RequireAtLeastXDigits = Requires at least %s digit(s)
+RequireXDigitsMax = Requires %s digit(s) max
+RequireValidNumeric = Requires a numeric value
+RequireValidEmail = Email address is not valid
+RequireMaxLength = Length must be less than %s chars
+RequireMinLength = Length must be more than %s char(s)
+RequireValidUrl = Require valid URL
+RequireValidDate = Require a valid date
+RequireANotEmptyValue = Is required
+RequireValidDuration = Require a valid duration
+RequireValidExistingElement = Require an existing value
+RequireValidBool = Require a valid boolean
+BadSetupOfField = Error bad setup of field
+BadSetupOfFieldClassNotFoundForValidation = Error bad setup of field : Class not found for validation
+BadSetupOfFieldFileNotFound = Error bad setup of field : File not found for inclusion
+BadSetupOfFieldFetchNotCallable = Error bad setup of field : Fetch not callable on class
+<<<<<<< HEAD
+=======
+=======
+=======
+>>>>>>> branch '13.0' of git@github.com:Dolibarr/dolibarr.git
+>>>>>>> branch '14.0' of git@github.com:Dolibarr/dolibarr.git
+=======
+>>>>>>> branch '14.0' of git@github.com:Dolibarr/dolibarr.git
+>>>>>>> branch '15.0' of git@github.com:Dolibarr/dolibarr.git
