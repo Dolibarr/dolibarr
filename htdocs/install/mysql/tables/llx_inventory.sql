@@ -28,7 +28,8 @@ CREATE TABLE llx_inventory
   fk_user_modif integer,                    -- user making last change
   fk_user_valid integer,                    -- valideur de la fiche
   fk_warehouse integer DEFAULT NULL, 
-  fk_product integer DEFAULT NULL, 
+  fk_product integer DEFAULT NULL,
+  categories_product varchar(255) DEFAULT NULL, -- product categories id separated by comma
   status integer DEFAULT 0, 
   title varchar(255) NOT NULL, 
   date_inventory datetime DEFAULT NULL,

@@ -677,7 +677,6 @@ ALTER TABLE llx_ticket ADD COLUMN date_last_msg_sent datetime AFTER date_read;
 -- Rename value to create ficheinter automatically ont tickets
 UPDATE llx_const SET name = 'WORKFLOW_TICKET_CREATE_INTERVENTION' WHERE name = 'TICKET_AUTO_CREATE_FICHINTER_CREATE';
 
-
 -- Deposit generation helper with specific payment terms
 ALTER TABLE llx_c_payment_term ADD COLUMN deposit_percent real DEFAULT NULL AFTER decalage;
 ALTER TABLE llx_societe ADD COLUMN deposit_percent real DEFAULT NULL AFTER cond_reglement;
@@ -685,5 +684,8 @@ ALTER TABLE llx_propal ADD COLUMN deposit_percent real DEFAULT NULL AFTER fk_con
 ALTER TABLE llx_commande ADD COLUMN deposit_percent real DEFAULT NULL AFTER fk_cond_reglement;
 INSERT INTO llx_c_payment_term(code, sortorder, active, libelle, libelle_facture, type_cdr, nbjour, deposit_percent) values ('DEP30PCTDEL', 13, 0, '__DEPOSIT_PERCENT__% deposit', '__DEPOSIT_PERCENT__% deposit, remainder on delivery', 0, 1, 30);
 
+-- Add products categories field on inventory card
+ALTER TABLE llx_inventory ADD COLUMN categories_product VARCHAR(255) DEFAULT NULL AFTER fk_product;
 
-
+-- Add input reason on invoice
+ALTER TABLE llx_facture ADD COLUMN fk_input_reason integer NULL DEFAULT NULL AFTER last_main_doc;
