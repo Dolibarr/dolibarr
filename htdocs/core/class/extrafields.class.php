@@ -1948,14 +1948,15 @@ class ExtraFields
 	/**
 	 * Fill array_options property of object by extrafields value (using for data sent by forms)
 	 *
-	 * @param   array	$extralabels    Deprecated (old $array of extrafields, now set this to null)
-	 * @param   object	$object         Object
-	 * @param	string	$onlykey		Only some keys are filled:
-	 *                                  'string' => When we make update of only one extrafield ($action = 'update_extras'), calling page can set this to avoid to have other extrafields being reset.
-	 *                                  '@GETPOSTISSET' => When we make update of several extrafields ($action = 'update'), calling page can set this to avoid to have fields not into POST being reset.
-	 * @return	int						1 if array_options set, 0 if no value, -1 if error (field required missing for example)
+	 * @param   array	$extralabels    	Deprecated (old $array of extrafields, now set this to null)
+	 * @param   object	$object         	Object
+	 * @param	string	$onlykey			Only some keys are filled:
+	 *                                  	'string' => When we make update of only one extrafield ($action = 'update_extras'), calling page can set this to avoid to have other extrafields being reset.
+	 *                                  	'@GETPOSTISSET' => When we make update of several extrafields ($action = 'update'), calling page can set this to avoid to have fields not into POST being reset.
+	 * @param	int		$todefaultifmissing 1=Set value to the default value in database if value is mandatory and missing
+	 * @return	int							1 if array_options set, 0 if no value, -1 if error (field required missing for example)
 	 */
-	public function setOptionalsFromPost($extralabels, &$object, $onlykey = '')
+	public function setOptionalsFromPost($extralabels, &$object, $onlykey = '', $todefaultifmissing = 0)
 	{
 		global $_POST, $langs;
 
@@ -2015,8 +2016,10 @@ class ExtraFields
 						|| (!is_array($_POST["options_".$key]) && isset($_POST["options_".$key]) && $this->attributes[$object->table_element]['type'][$key] == 'sellist' && $_POST['options_'.$key] == '0')
 						|| (is_array($_POST["options_".$key]) && empty($_POST["options_".$key]))) {
 						//print 'ccc'.$value.'-'.$this->attributes[$object->table_element]['required'][$key];
+
+						// Field is not defined. We mark this as a problem. We may fix it later if there is a default value and $todefaultifmissing is set.
 						$nofillrequired++;
-						$error_field_required[] = $langs->transnoentitiesnoconv($value);
+						$error_field_required[$key] = $langs->transnoentitiesnoconv($value);
 					}
 				}
 
@@ -2047,12 +2050,22 @@ class ExtraFields
 					}
 				}
 
+				if (!empty($error_field_required[$key]) && $todefaultifmissing) {
+					// Value is required but we have a default value and we asked to set empty value to the default value
+					if (!empty($this->attributes[$object->table_element]['default']) && !is_null($this->attributes[$object->table_element]['default'][$key])) {
+						$value_key = $this->attributes[$object->table_element]['default'][$key];
+						unset($error_field_required[$key]);
+						$nofillrequired--;
+					}
+				}
+
 				$object->array_options["options_".$key] = $value_key;
 			}
 
 			if ($nofillrequired) {
 				$langs->load('errors');
-				setEventMessages($langs->trans('ErrorFieldsRequired').' : '.implode(', ', $error_field_required), null, 'errors');
+				$this->error = $langs->trans('ErrorFieldsRequired').' : '.implode(', ', $error_field_required);
+				setEventMessages($this->error, null, 'errors');
 				return -1;
 			} else {
 				return 1;
