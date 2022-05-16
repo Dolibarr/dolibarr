@@ -3009,7 +3009,7 @@ class Facture extends CommonInvoice
 			return -1;
 		}
 		if (!empty($conf->global-> INVOICE_CHECK_POSTERIOR_DATE)) {
-			$last_of_type = $this->willBeLastOfSameType($allow_validated_drafts = true);
+			$last_of_type = $this->willBeLastOfSameType(true);
 			if (!$last_of_type[0]) {
 				$this->error = $langs->transnoentities("ErrorInvoiceIsNotLastOfSameType", $this->ref, dol_print_date($this->date, 'day'), dol_print_date($last_of_type[1], 'day'));
 				return -1;
