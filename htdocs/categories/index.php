@@ -102,7 +102,8 @@ if (empty($nosearch)) {
 	print '<td colspan="3">'.$langs->trans("Search").'</td>';
 	print '</tr>';
 	print '<tr class="oddeven nohover"><td>';
-	print $langs->trans("Name").':</td><td><input class="flat inputsearch" type="text" name="catname" value="'.$catname.'"/></td><td><input type="submit" class="button" value="'.$langs->trans("Search").'"></td></tr>';
+	print $langs->trans("Name").':</td><td><input class="flat inputsearch" type="text" name="catname" value="'.dol_escape_htmltag($catname).'"></td>';
+	print '<td><input type="submit" class="button small" value="'.$langs->trans("Search").'"></td></tr>';
 	print '</table></form>';
 
 
