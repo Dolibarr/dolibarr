@@ -80,6 +80,7 @@ class User extends CommonObject
 	 * @var string gender
 	 */
 	public $gender;
+
 	public $birth;
 
 	/**

@@ -8922,10 +8922,11 @@ class Form
 					$addgendertxt .= '<i class="fas fa-venus"></i>';
 					break;
 				case 'other':
-					$addgendertxt .= '<i class="fas fa-genderless"></i>';
+					$addgendertxt .= '<i class="fas fa-transgender"></i>';
 					break;
 			}
 		}
+
 		/*
 		$addadmin = '';
 		if (property_exists($object, 'admin')) {
@@ -9067,7 +9068,7 @@ class Form
 				$ret .= dol_htmlentities($fullname).$addgendertxt.((!empty($object->societe) && $object->societe != $fullname) ? ' ('.dol_htmlentities($object->societe).')' : '');
 			}
 		} elseif (in_array($object->element, array('contact', 'user', 'usergroup'))) {
-			$ret .= dol_htmlentities($object->getFullName($langs));
+			$ret .= dol_htmlentities($object->getFullName($langs)).$addgendertxt;
 		} elseif (in_array($object->element, array('action', 'agenda'))) {
 			$ret .= $object->ref.'<br>'.$object->label;
 		} elseif (in_array($object->element, array('adherent_type'))) {

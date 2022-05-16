@@ -1050,7 +1050,7 @@ div.urllink, div.urllink a {
 .fa-info-circle {
 	padding-<?php echo $left; ?>: 3px;
 }
-i.fa-mars::before, i.fa-venus::before, i.fa-genderless::before  {
+i.fa-mars::before, i.fa-venus::before, i.fa-genderless::before, i.fa-transgender::before  {
 	color: #888 !important;
 	opacity: 0.4;
 	padding-<?php echo $left; ?>: 3px;
