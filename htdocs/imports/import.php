@@ -352,6 +352,7 @@ if ($step == 1 || !$datatoimport) {
 	$serialized_array_match_file_to_database = '';
 	$array_match_file_to_database = array();
 	$_SESSION["dol_array_match_file_to_database"] = '';
+	$_SESSION["dol_array_match_file_to_database_select"] = '';
 
 	$param = '';
 	if ($excludefirstline) {
