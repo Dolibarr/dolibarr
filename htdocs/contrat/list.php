@@ -633,7 +633,6 @@ if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire && ($use
 }
 // Filter on customer categories
 if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire) {
-	$moreforfilter .= ' | ';
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->transnoentities('CustomersProspectsCategoriesShort');
 	$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"');
