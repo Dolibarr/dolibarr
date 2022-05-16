@@ -1105,21 +1105,22 @@ if ($action == 'create' && $user->rights->projet->creer) {
 
 			// Opportunity Amount
 			print '<tr><td>'.$langs->trans("OpportunityAmount").'</td><td>';
-			/*if ($object->opp_status)
-			{
-			   print price($obj->opp_amount, 1, $langs, 1, 0, -1, $conf->currency);
-			}*/
 			if (strcmp($object->opp_amount, '')) {
 				print '<span class="amount">'.price($object->opp_amount, 0, $langs, 1, 0, -1, $conf->currency).'</span>';
+				if (strcmp($object->opp_percent, '')) {
+					print ' &nbsp; &nbsp; &nbsp; <span title="'.dol_escape_htmltag($langs->trans('OpportunityWeightedAmount')).'"><span class="opacitymedium">'.$langs->trans("Weighted").'</span>: <span class="amount">'.price($object->opp_amount * $object->opp_percent / 100, 0, $langs, 1, 0, -1, $conf->currency).'</span></span>';
+				}
 			}
 			print '</td></tr>';
 
 			// Opportunity Weighted Amount
+			/*
 			print '<tr><td>'.$langs->trans('OpportunityWeightedAmount').'</td><td>';
 			if (strcmp($object->opp_amount, '') && strcmp($object->opp_percent, '')) {
 				print '<span class="amount">'.price($object->opp_amount * $object->opp_percent / 100, 0, $langs, 1, 0, -1, $conf->currency).'</span>';
 			}
 			print '</td></tr>';
+			*/
 		}
 
 		// Date start - end
