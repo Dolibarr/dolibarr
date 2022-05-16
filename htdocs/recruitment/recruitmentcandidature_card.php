@@ -134,7 +134,9 @@ if (empty($reshook)) {
 	$triggermodname = 'RECRUITMENTCANDIDATURE_MODIFY'; // Name of trigger action code to execute when we modify record
 
 	// Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen
+	$object->email_fields_no_propagate_in_actioncomm = 1;
 	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
+	$object->email_fields_no_propagate_in_actioncomm = 0;
 
 	// Actions when linking object each other
 	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';
