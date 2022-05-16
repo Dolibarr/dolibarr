@@ -509,12 +509,14 @@ function project_admin_prepare_head()
 	$head[$h][2] = 'attributes_task';
 	$h++;
 
-	$langs->load("members");
+	if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
+		$langs->load("members");
 
-	$head[$h][0] = DOL_URL_ROOT.'/projet/admin/website.php';
-	$head[$h][1] = $langs->trans("BlankSubscriptionForm");
-	$head[$h][2] = 'website';
-	$h++;
+		$head[$h][0] = DOL_URL_ROOT.'/projet/admin/website.php';
+		$head[$h][1] = $langs->trans("BlankSubscriptionForm");
+		$head[$h][2] = 'website';
+		$h++;
+	}
 
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'project_admin', 'remove');
 

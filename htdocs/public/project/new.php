@@ -206,16 +206,53 @@ if (empty($reshook) && $action == 'add') {
 		$errmsg .= $langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("Project"))."<br>\n";
 	}
 
-	if (!$error) {
-		$proj = new Project($db);
-		$thirdparty = new Societe($db);
+	$proj = new Project($db);
+	$thirdparty = new Societe($db);
 
+	if (!$error) {
 		// Search thirdparty and set it if found to the new created project
 		$result = $thirdparty->fetch(0, '', '', '', '', '', '', '', '', '', $object->email);
 		if ($result > 0) {
 			$proj->socid = $thirdparty->id;
-		}
+		} else {
+			// Create the prospect
+			if (GETPOST('societe')) {
+				$thirdparty->name =  GETPOST('societe');
+				$thirdparty->name_alias = dolGetFirstLastname(GETPOST('firstname'), GETPOST('lastname'));
+			} else {
+				$thirdparty->name = dolGetFirstLastname(GETPOST('firstname'), GETPOST('lastname'));
+			}
+			$thirdparty->address = GETPOST('address');
+			$thirdparty->zip = GETPOST('zip');
+			$thirdparty->town = GETPOST('town');
+			$thirdparty->country_id = GETPOST('country_id', 'int');
+			$thirdparty->state_id = GETPOST('state_id');
+			$thirdparty->client = $thirdparty::PROSPECT;
+			$thirdparty->code_client = 'auto';
+			$thirdparty->code_fournisseur = 'auto';
 
+			// Fill array 'array_options' with data from the form
+			$extrafields->fetch_name_optionals_label($thirdparty->table_element);
+			$ret = $extrafields->setOptionalsFromPost(null, $thirdparty, '', 1);
+			//var_dump($thirdparty->array_options);exit;
+			if ($ret < 0) {
+				$error++;
+				$errmsg = ($extrafields->error ? $extrafields->error.'<br>' : '').join('<br>', $extrafields->errors);
+			}
+
+			if (!$error) {
+				$result = $thirdparty->create($user);
+				if ($result <= 0) {
+					$error++;
+					$errmsg = ($thirdparty->error ? $thirdparty->error.'<br>' : '').join('<br>', $thirdparty->errors);
+				} else {
+					$proj->socid = $thirdparty->id;
+				}
+			}
+		}
+	}
+
+	if (!$error) {
 		// Defined the ref into $defaultref
 		$defaultref = '';
 		$modele = empty($conf->global->PROJECT_ADDON) ? 'mod_project_simple' : $conf->global->PROJECT_ADDON;
