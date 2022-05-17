@@ -2044,7 +2044,7 @@ class Product extends CommonObject
 
 
 	/**
-	 * Modify customer price of a product/Service
+	 * Modify customer price of a product/Service for a given level
 	 *
 	 * @param  double $newprice          New price
 	 * @param  string $newpricebase      HT or TTC

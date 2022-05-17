@@ -267,7 +267,7 @@ if ($action == "confirm_update") {
 			if ($mode != '_tmp') {
 				setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
 			}
-			$action = 'update';
+			$action = '';
 			$id = $object->id;
 			$piece_num = $object->piece_num;
 		}
@@ -431,12 +431,12 @@ if ($action == 'create') {
 		// Account movement
 		print '<tr>';
 		print '<td class="titlefield">'.$langs->trans("NumMvts").'</td>';
-		print '<td>'.$object->piece_num.'</td>';
+		print '<td>'.($mode == '_tmp' ? '<span class="opacitymedium" title="Id tmp '.$object->piece_num.'">'.$langs->trans("Draft").'</span>' : $object->piece_num).'</td>';
 		print '</tr>';
 
 		// Date
 		print '<tr><td>';
-		print '<table class="nobordernopadding" width="100%"><tr><td>';
+		print '<table class="nobordernopadding centpercent"><tr><td>';
 		print $langs->trans('Docdate');
 		print '</td>';
 		if ($action != 'editdate') {
@@ -647,6 +647,12 @@ if ($action == 'create') {
 
 				print "</tr>\n";
 
+				// Empty line is the first line of $object->linesmvt
+				// So we must get the first line (the empty one) and put it at the end of the array
+				// in order to display it correctly to the user
+				$empty_line = array_shift($object->linesmvt);
+				$object->linesmvt[]= $empty_line;
+
 				foreach ($object->linesmvt as $line) {
 					print '<tr class="oddeven">';
 					$total_debit += $line->debit;
@@ -677,7 +683,33 @@ if ($action == 'create') {
 						print '<input type="hidden" name="id" value="'.$line->id.'">'."\n";
 						print '<input type="submit" class="button" name="update" value="'.$langs->trans("Update").'">';
 						print '</td>';
+					} elseif (empty($line->numero_compte) || (empty($line->debit) && empty($line->credit))) {
+						if ($action == "" || $action == 'add') {
+							print '<!-- td columns in add mode -->';
+							print '<td>';
+							print $formaccounting->select_account('', 'accountingaccount_number', 1, array(), 1, 1, '');
+							print '</td>';
+							print '<td>';
+							// TODO For the moment we keep a free input text instead of a combo. The select_auxaccount has problem because:
+							// It does not use the setup of "key pressed" to select a thirdparty and this hang browser on large databases.
+							// Also, it is not possible to use a value that is not in the list.
+							// Also, the label is not automatically filled when a value is selected.
+							if (!empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX)) {
+								print $formaccounting->select_auxaccount('', 'subledger_account', 1, 'maxwidth250', '', 'subledger_label');
+							} else {
+								print '<input type="text" class="maxwidth150" name="subledger_account" value="" placeholder="' . dol_escape_htmltag($langs->trans("SubledgerAccount")) . '">';
+							}
+							print '<br><input type="text" class="maxwidth150" name="subledger_label" value="" placeholder="' . dol_escape_htmltag($langs->trans("SubledgerAccountLabel")) . '">';
+							print '</td>';
+							print '<td><input type="text" class="minwidth200" name="label_operation" value="' . $label_operation . '"/></td>';
+							print '<td class="right"><input type="text" size="6" class="right" name="debit" value=""/></td>';
+							print '<td class="right"><input type="text" size="6" class="right" name="credit" value=""/></td>';
+							print '<td>';
+							print '<input type="submit" class="button" name="save" value="' . $langs->trans("Add") . '">';
+							print '</td>';
+						}
 					} else {
+						print '<!-- td columns in display mode -->';
 						$resultfetch = $accountingaccount->fetch(null, $line->numero_compte, true);
 						print '<td>';
 						if ($resultfetch > 0) {
@@ -731,35 +763,6 @@ if ($action == 'create') {
 
 				if ($total_debit != $total_credit) {
 					setEventMessages(null, array($langs->trans('MvtNotCorrectlyBalanced', $total_debit, $total_credit)), 'warnings');
-				}
-
-				if (empty($object->date_export) && empty($object->date_validation)) {
-					if ($action == "" || $action == 'add') {
-						print '<tr class="oddeven">';
-						print '<!-- td columns in add mode -->';
-						print '<td>';
-						print $formaccounting->select_account('', 'accountingaccount_number', 1, array(), 1, 1, '');
-						print '</td>';
-						print '<td>';
-						// TODO For the moment we keep a free input text instead of a combo. The select_auxaccount has problem because:
-						// It does not use the setup of "key pressed" to select a thirdparty and this hang browser on large databases.
-						// Also, it is not possible to use a value that is not in the list.
-						// Also, the label is not automatically filled when a value is selected.
-						if (!empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX)) {
-							print $formaccounting->select_auxaccount('', 'subledger_account', 1);
-						} else {
-							print '<input type="text" class="maxwidth150" name="subledger_account" value="" placeholder="' . dol_escape_htmltag($langs->trans("SubledgerAccount")) . '">';
-						}
-						print '<br><input type="text" class="maxwidth150" name="subledger_label" value="" placeholder="' . dol_escape_htmltag($langs->trans("SubledgerAccountLabel")) . '">';
-						print '</td>';
-						print '<td><input type="text" class="minwidth200" name="label_operation" value="' . $label_operation . '"/></td>';
-						print '<td class="right"><input type="text" size="6" class="right" name="debit" value=""/></td>';
-						print '<td class="right"><input type="text" size="6" class="right" name="credit" value=""/></td>';
-						print '<td>';
-						print '<input type="submit" class="button" name="save" value="' . $langs->trans("Add") . '">';
-						print '</td>';
-						print '</tr>';
-					}
 				}
 
 				print '</table>';

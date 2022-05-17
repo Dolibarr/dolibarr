@@ -210,6 +210,8 @@ if (empty($reshook)) {
 				$ret = $object->fetch($id); // Reload to get new records
 				$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			}
+		} else {
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
 
@@ -350,8 +352,10 @@ if (empty($reshook)) {
 				}
 				$qty = "qtyl".$i;
 				$comment = "comment".$i;
-				$eatby = "dlc".$i;
-				$sellby = "dluo".$i;
+				// EATBY <-> DLUO see productbatch.class.php
+				// SELLBY <-> DLC
+				$eatby = "dluo".$i;
+				$sellby = "dlc".$i;
 				$batch = "batch".$i;
 				$cost_price = "cost_price".$i;
 
@@ -626,9 +630,11 @@ if (empty($reshook)) {
 						$batch = "batch".$line_id;
 						$dlc = "dlc".$line_id;
 						$dluo = "dluo".$line_id;
-						$eatby = GETPOST($dlc, 'alpha');
+						// EATBY <-> DLUO
+						$eatby = GETPOST($dluo, 'alpha');
 						$eatbydate = str_replace('/', '-', $eatby);
-						$sellby = GETPOST($dluo, 'alpha');
+						// SELLBY <-> DLC
+						$sellby = GETPOST($dlc, 'alpha');
 						$sellbydate = str_replace('/', '-', $sellby);
 						$line->batch = GETPOST($batch, 'alpha');
 						$line->eatby = strtotime($eatbydate);
@@ -639,8 +645,7 @@ if (empty($reshook)) {
 						setEventMessages($line->error, $line->errors, 'errors');
 						$error++;
 					}
-				} else // Product no predefined
-				{
+				} else { // Product no predefined
 					$qty = "qtyl".$line_id;
 					$line->id = $line_id;
 					$line->qty = GETPOST($qty, 'int');

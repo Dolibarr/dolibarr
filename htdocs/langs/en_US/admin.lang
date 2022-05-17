@@ -2221,3 +2221,5 @@ PreviousHash=Previous hash
 LateWarningAfter="Late" warning after
 TemplateforBusinessCards=Template for a business card in different size
 HashForPing=Hash used for ping
+DEBUGBAR_USE_LOG_FILE=Use the <b>dolibarr.log</b> file to trap Logs
+UsingLogFileShowAllRecordOfSubrequestButIsSlower=Use the dolibarr.log file to trap Logs instead of live memory catching. It allows to catch all logs instead of only log of current process (so including the one of ajax subrequests pages) but will make your instance very very slow. Not recommended.

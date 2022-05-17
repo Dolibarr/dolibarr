@@ -774,6 +774,7 @@ if ($action == 'create') {
 				print '</tr>';
 			}
 
+			// TODO ICS is not used with bank transfer !
 			if ($conf->paymentbybanktransfer->enabled) {
 				print '<tr><td>'.$form->textwithpicto($langs->trans("IDS"), $langs->trans("IDS").' ('.$langs->trans("UsedFor", $langs->transnoentitiesnoconv("BankTransfer")).')').'</td>';
 				print '<td>'.$object->ics_transfer.'</td>';
