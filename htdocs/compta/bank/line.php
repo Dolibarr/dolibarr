@@ -127,7 +127,7 @@ if ($user->rights->banque->modifier && $action == "update") {
 	$acline = new AccountLine($db);
 	$result = $acline->fetch($rowid);
 	if ($result <= 0) {
-		dol_syslog('Failed to read bank line with id '.$rowid, LOG_ERR);	// This happens due to old bug that has set fk_account to null.
+		dol_syslog('Failed to read bank line with id '.$rowid, LOG_WARNING);	// This happens due to old bug that has set fk_account to null.
 		$acline->id = $rowid;
 	}
 
@@ -334,11 +334,12 @@ if ($result) {
 		// Bank account
 		print '<tr><td class="titlefieldcreate">'.$langs->trans("Account").'</td>';
 		print '<td>';
-		if (!$objp->rappro && !$bankline->getVentilExportCompta()) {
+		// $objp->fk_account may be not > 0 if data was lost by an old bug. In such a case, we let a chance to user to fix it.
+		if (($objp->rappro || $bankline->getVentilExportCompta()) && $objp->fk_account > 0) {
+			print $acct->getNomUrl(1, 'transactions', 'reflabel');
+		} else {
 			print img_picto('', 'bank_account', 'class="paddingright"');
 			print $form->select_comptes($acct->id, 'accountid', 0, '', ($acct->id > 0 ? $acct->id : 1), '', 0, '', 1);
-		} else {
-			print $acct->getNomUrl(1, 'transactions', 'reflabel');
 		}
 		print '</td>';
 		print '</tr>';

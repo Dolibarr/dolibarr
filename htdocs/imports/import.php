@@ -352,6 +352,7 @@ if ($step == 1 || !$datatoimport) {
 	$serialized_array_match_file_to_database = '';
 	$array_match_file_to_database = array();
 	$_SESSION["dol_array_match_file_to_database"] = '';
+	$_SESSION["dol_array_match_file_to_database_select"] = '';
 
 	$param = '';
 	if ($excludefirstline) {
@@ -1078,16 +1079,16 @@ if ($step == 4 && $datatoimport) {
 		}
 	}
 
-	$height = '24px'; //needs px for css height attribute below
+	$height = '32px'; //needs px for css height attribute below
 	$i = 0;
 	$mandatoryfieldshavesource = true;
 
-	print '<table width="100%" class="nobordernopadding">';
+	print '<table class="nobordernopadding centpercent tableimport">';
 	foreach ($fieldstarget as $code => $line) {
 		if ($i == $minpos) {
 			break;
 		}
-		print '<tr class="oddeven" style="height:'.$height.'">';
+		print '<tr style="height:'.$height.'" class="trimport oddevenimport">';
 		$entity = (!empty($objimport->array_import_entities[0][$code]) ? $objimport->array_import_entities[0][$code] : $objimport->array_import_icon[0]);
 
 		$tablealias = preg_replace('/(\..*)$/i', '', $code);
@@ -1096,7 +1097,8 @@ if ($step == 4 && $datatoimport) {
 		$entityicon = !empty($entitytoicon[$entity]) ? $entitytoicon[$entity] : $entity; // $entityicon must string name of picto of the field like 'project', 'company', 'contact', 'modulename', ...
 		$entitylang = $entitytolang[$entity] ? $entitytolang[$entity] : $objimport->array_import_label[0]; // $entitylang must be a translation key to describe object the field is related to, like 'Company', 'Contact', 'MyModyle', ...
 
-		print '<td class="nowraponall" style="font-weight: normal">=>'.img_object('', $entityicon).' '.$langs->trans($entitylang).'</td>';
+		print '<td class="nowraponall" style="font-weight: normal">=> '.img_object('', $entityicon).' '.$langs->trans($entitylang).'</td>';
+
 		print '<td class="nowraponall" style="font-weight: normal">';
 		print '<select id="selectorderimport_'.($i+1).'" class="targetselectchange minwidth300" name="select_'.$line["label"].'">';
 		if ($line["imported"]) {
@@ -1106,16 +1108,19 @@ if ($step == 4 && $datatoimport) {
 			print '<option selected="" value="-1">&nbsp;</option>';
 			print '<option value="'.$code.'">';
 		}
-		$text = $langs->trans($line["label"]);
 		$more = '';
+		$text = $langs->trans($line["label"]);
 		if ($line["required"]) {
-			$text .= "*";
+			print '<strong>'.$text.'*</strong>';
+		} else {
+			print $text;
 		}
-		print $text;
 		print '</option>';
 		print $optionsnotused;
 		print '</select>';
+		//print ajax_combobox('selectorderimport_'.($i+1));
 		print "</td>";
+
 		print '<td class="nowraponall" style="font-weight:normal; text-align:right">';
 		$filecolumn = !empty($array_match_database_to_file[$code])?$array_match_database_to_file[$code]:0;
 		// Source field info
@@ -1180,6 +1185,7 @@ if ($step == 4 && $datatoimport) {
 	print '</td></tr>';
 
 	// List of not imported fields
+	/*
 	print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("NotUsedFields").'</td></tr>';
 
 	print '<tr valign="top"><td width="50%">';
@@ -1218,12 +1224,13 @@ if ($step == 4 && $datatoimport) {
 		$i++;
 	}
 	print '</td></tr>';
+	*/
 
 	print '</table>';
 	print '</div>';
 
 
-	if ($conf->use_javascript_ajax) {
+	if (!empty($conf->use_javascript_ajax)) {
 		print '<script type="text/javascript">'."\n";
 		print 'var previousselectedvalueimport = "0";'."\n";
 		print 'var previousselectedlabelimport = "0";'."\n";
@@ -1231,7 +1238,7 @@ if ($step == 4 && $datatoimport) {
 		print '$(".targetselectchange").focus(function(){'."\n";
 		print 'previousselectedvalueimport = $(this).val();'."\n";
 		print 'previousselectedlabelimport = $(this).children("option:selected").text();'."\n";
-		print 'console.log(previousselectedvalueimport)'."\n";
+		print 'console.log("previousselectedvalueimport="+previousselectedvalueimport)'."\n";
 		print '})'."\n";
 		print '$(".targetselectchange").change(function(){'."\n";
 		print 'if(previousselectedlabelimport != "" && previousselectedvalueimport != -1){'."\n";
@@ -1258,15 +1265,17 @@ if ($step == 4 && $datatoimport) {
 		print 'value = $(this).val()'."\n";
 		print 'arrayselectedfields.push(value);'."\n";
 		print '});'."\n";
-		print '$.ajax({'."\n";
-		print 'type: "POST",'."\n";
-		print 'dataType: "json",'."\n";
-		print 'url: "'.$_SERVER["PHP_SELF"].'?action=saveselectorder",'."\n";
-		print 'data: "selectorder="+arrayselectedfields.toString(),'."\n";
-		print 'success: function(){'."\n";
-		print 'console.log("Select order saved");'."\n";
-		print '},'."\n";
+
+		print "$.ajax({\n";
+		print "		type: 'POST',\n";
+		print "		dataType: 'json',\n";
+		print "		url: '".dol_escape_js($_SERVER["PHP_SELF"])."?action=saveselectorder&token=".newToken()."',\n";
+		print "		data: 'selectorder='+arrayselectedfields.toString(),\n";
+		print "		success: function(){\n";
+		print "			console.log('Select order saved');\n";
+		print "		},\n";
 		print '});'."\n";
+
 		print '});'."\n";
 		print '})'."\n";
 		print '</script>'."\n";
@@ -2173,24 +2182,24 @@ $db->close();
  */
 function show_elem($fieldssource, $pos, $key, $var, $nostyle = '')
 {
-	global $langs, $bc;
+	global $langs;
 
-	$height = '28px';
+	$height = '32px';
 
 	if ($key == 'none') {
 		//stop multiple duplicate ids with no number
 		print "\n\n<!-- Box_no-key start-->\n";
 		print '<div class="box boximport" style="padding:0;">'."\n";
-		print '<table summary="boxtable_no-key" width="100%" class="nobordernopadding">'."\n";
+		print '<table summary="boxtable_no-key" class="centpercent nobordernopadding">'."\n";
 	} else {
 		print "\n\n<!-- Box ".$pos." start -->\n";
 		print '<div class="box boximport" style="padding: 0;" id="boxto_'.$pos.'">'."\n";
 
-		print '<table summary="boxtable'.$pos.'" width="100%" class="nobordernopadding">'."\n";
+		print '<table summary="boxtable'.$pos.'" class="nobordernopadding centpercent tableimport">'."\n";
 	}
 
 	if (($pos && $pos > count($fieldssource)) && (!isset($fieldssource[$pos]["imported"]))) {	// No fields
-		print '<tr'.($nostyle ? '' : ' '.$bc[$var]).' style="height:'.$height.'">';
+		print '<tr style="height:'.$height.'" class="trimport oddevenimport">';
 		print '<td class="nocellnopadding" width="16" style="font-weight: normal">';
 		//print img_picto(($pos > 0 ? $langs->trans("MoveField", $pos) : ''), 'grip_title', 'class="boxhandle" style="cursor:move;"');
 		print '</td>';
@@ -2199,7 +2208,7 @@ function show_elem($fieldssource, $pos, $key, $var, $nostyle = '')
 		print '</td>';
 		print '</tr>';
 	} elseif ($key == 'none') {	// Empty line
-		print '<tr'.($nostyle ? '' : ' '.$bc[$var]).' style="height:'.$height.'">';
+		print '<tr style="height:'.$height.'" class="trimport oddevenimport">';
 		print '<td class="nocellnopadding" width="16" style="font-weight: normal">';
 		print '&nbsp;';
 		print '</td>';
@@ -2209,7 +2218,7 @@ function show_elem($fieldssource, $pos, $key, $var, $nostyle = '')
 		print '</tr>';
 	} else {
 		// Print field of source file
-		print '<tr'.($nostyle ? '' : ' '.$bc[$var]).' style="height:'.$height.'">';
+		print '<tr style="height:'.$height.'" class="trimport oddevenimport">';
 		print '<td class="nocellnopadding" width="16" style="font-weight: normal">';
 		// The image must have the class 'boxhandle' beause it's value used in DOM draggable objects to define the area used to catch the full object
 		//print img_picto($langs->trans("MoveField", $pos), 'grip_title', 'class="boxhandle" style="cursor:move;"');

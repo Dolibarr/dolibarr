@@ -80,6 +80,7 @@ class User extends CommonObject
 	 * @var string gender
 	 */
 	public $gender;
+
 	public $birth;
 
 	/**
@@ -717,7 +718,8 @@ class User extends CommonObject
 			'knowledgerecord' => 'knowledgerecord@knowledgemanagement',
 			'skill@hrm' => 'all@hrm', // skill / job / position objects rights are for the moment grouped into right level "all"
 			'job@hrm' => 'all@hrm', // skill / job / position objects rights are for the moment grouped into right level "all"
-			'position@hrm' => 'all@hrm' // skill / job / position objects rights are for the moment grouped into right level "all"
+			'position@hrm' => 'all@hrm', // skill / job / position objects rights are for the moment grouped into right level "all"
+			'facturerec' => 'facture'
 		);
 		if (!empty($moduletomoduletouse[$module])) {
 			$module = $moduletomoduletouse[$module];

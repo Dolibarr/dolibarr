@@ -121,7 +121,7 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 
 	// Fill array 'array_options' with data from add form
 	if (!$error) {
-		$ret = $extrafields->setOptionalsFromPost(null, $object);
+		$ret = $extrafields->setOptionalsFromPost(null, $object, '', 1);
 		if ($ret < 0) {
 			$error++;
 		}

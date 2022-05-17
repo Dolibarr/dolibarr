@@ -651,8 +651,10 @@ if ($action == 'create' && $user->rights->projet->creer) {
 		print '<input type="hidden" name="public" id="public" value="'.GETPOST('public').'">';
 
 		if (GETPOST('public') == 0) {
+			print img_picto($langs->trans('PrivateProject'), 'private', 'class="paddingrightonly"');
 			print $langs->trans("PrivateProject");
 		} else {
+			print img_picto($langs->trans('SharedProject'), 'world', 'class="paddingrightonly"');
 			print $langs->trans("SharedProject");
 		}
 	}
@@ -926,8 +928,10 @@ if ($action == 'create' && $user->rights->projet->creer) {
 			print '<input type="hidden" id="public" name="public" value="'.$object->public.'">';
 
 			if ($object->public == 0) {
+				print img_picto($langs->trans('PrivateProject'), 'private', 'class="paddingrightonly"');
 				print $langs->trans("PrivateProject");
 			} else {
+				print img_picto($langs->trans('SharedProject'), 'world', 'class="paddingrightonly"');
 				print $langs->trans("SharedProject");
 			}
 		}
@@ -955,7 +959,9 @@ if ($action == 'create' && $user->rights->projet->creer) {
 
 			// Opportunity amount
 			print '<tr class="classuseopportunity'.$classfortr.'"><td>'.$langs->trans("OpportunityAmount").'</td>';
-			print '<td><input size="5" type="text" name="opp_amount" value="'.(GETPOSTISSET('opp_amount') ? GETPOST('opp_amount') : (strcmp($object->opp_amount, '') ? price2num($object->opp_amount) : '')).'"></td>';
+			print '<td><input size="5" type="text" name="opp_amount" value="'.(GETPOSTISSET('opp_amount') ? GETPOST('opp_amount') : (strcmp($object->opp_amount, '') ? price2num($object->opp_amount) : '')).'">';
+			print $langs->getCurrencySymbol($conf->currency);
+			print '</td>';
 			print '</tr>';
 		}
 
@@ -966,7 +972,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 		if ($comefromclone) {
 			print ' checked ';
 		}
-		print '/><label for="reportdate">'.$langs->trans("ProjectReportDate").'</label>';
+		print '/><label for="reportdate" class="opacitymedium">'.$langs->trans("ProjectReportDate").'</label>';
 		print '</td></tr>';
 
 		// Date end
@@ -976,7 +982,9 @@ if ($action == 'create' && $user->rights->projet->creer) {
 
 		// Budget
 		print '<tr><td>'.$langs->trans("Budget").'</td>';
-		print '<td><input size="5" type="text" name="budget_amount" value="'.(GETPOSTISSET('budget_amount') ? GETPOST('budget_amount') : (strcmp($object->budget_amount, '') ? price2num($object->budget_amount) : '')).'"></td>';
+		print '<td><input size="5" type="text" name="budget_amount" value="'.(GETPOSTISSET('budget_amount') ? GETPOST('budget_amount') : (strcmp($object->budget_amount, '') ? price2num($object->budget_amount) : '')).'">';
+		print $langs->getCurrencySymbol($conf->currency);
+		print '</td>';
 		print '</tr>';
 
 		// Description
@@ -1075,8 +1083,10 @@ if ($action == 'create' && $user->rights->projet->creer) {
 		// Visibility
 		print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
 		if ($object->public) {
+			print img_picto($langs->trans('SharedProject'), 'world', 'class="paddingrightonly"');
 			print $langs->trans('SharedProject');
 		} else {
+			print img_picto($langs->trans('SharedProject'), 'private', 'class="paddingrightonly"');
 			print $langs->trans('PrivateProject');
 		}
 		print '</td></tr>';
@@ -1099,21 +1109,22 @@ if ($action == 'create' && $user->rights->projet->creer) {
 
 			// Opportunity Amount
 			print '<tr><td>'.$langs->trans("OpportunityAmount").'</td><td>';
-			/*if ($object->opp_status)
-			{
-			   print price($obj->opp_amount, 1, $langs, 1, 0, -1, $conf->currency);
-			}*/
 			if (strcmp($object->opp_amount, '')) {
 				print '<span class="amount">'.price($object->opp_amount, 0, $langs, 1, 0, -1, $conf->currency).'</span>';
+				if (strcmp($object->opp_percent, '')) {
+					print ' &nbsp; &nbsp; &nbsp; <span title="'.dol_escape_htmltag($langs->trans('OpportunityWeightedAmount')).'"><span class="opacitymedium">'.$langs->trans("Weighted").'</span>: <span class="amount">'.price($object->opp_amount * $object->opp_percent / 100, 0, $langs, 1, 0, -1, $conf->currency).'</span></span>';
+				}
 			}
 			print '</td></tr>';
 
 			// Opportunity Weighted Amount
+			/*
 			print '<tr><td>'.$langs->trans('OpportunityWeightedAmount').'</td><td>';
 			if (strcmp($object->opp_amount, '') && strcmp($object->opp_percent, '')) {
 				print '<span class="amount">'.price($object->opp_amount * $object->opp_percent / 100, 0, $langs, 1, 0, -1, $conf->currency).'</span>';
 			}
 			print '</td></tr>';
+			*/
 		}
 
 		// Date start - end

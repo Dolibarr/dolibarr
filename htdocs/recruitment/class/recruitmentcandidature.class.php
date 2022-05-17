@@ -62,6 +62,11 @@ class RecruitmentCandidature extends CommonObject
 	 */
 	public $picto = 'recruitmentcandidature';
 
+	/**
+	 * @var int		Do not exploit fields email_xxx into triggers.
+	 */
+	public $email_fields_no_propagate_in_actioncomm;
+
 
 	const STATUS_DRAFT = 0;
 	const STATUS_VALIDATED = 1;
