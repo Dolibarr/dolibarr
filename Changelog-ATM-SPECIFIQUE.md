@@ -1,4 +1,7 @@
 dolibarr/htdocs/compta/facture/card.php
+l 4937 => partage de paiement entre entités
+
+dolibarr/htdocs/compta/facture/card.php
     l 1522 => le commit 84f5e3677cf900ff9d268389f2cae84ca0801592 de la 8.0_arcoop
     n'avait pas été réintroduit lors de la MDV : TVA à 0 sur les factures d'acompte
 
