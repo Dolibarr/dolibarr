@@ -5883,14 +5883,16 @@ class Form
 	/**
 	 *	Return array of currencies in user language
 	 *
-	 *  @param	string	$selected    preselected currency code
-	 *  @param  string	$htmlname    name of HTML select list
-	 *  @param  integer	$useempty    1=Add empty line
-	 *  @param string $filter Optional filters criteras (example: 'code <> x', ' in (1,3)')
-	 *  @param bool $excludeConfCurrency false  = If company current currency not in table, we add it into list. Should always be available.  true = we are in currency_rate update , we don't want to see conf->currency in select
+	 *  @param	string	$selected   			Preselected currency code
+	 *  @param  string	$htmlname   			Name of HTML select list
+	 *  @param  integer	$useempty   			1=Add empty line
+	 *  @param 	string 	$filter 				Optional filters criteras (example: 'code <> x', ' in (1,3)')
+	 *  @param 	bool 	$excludeConfCurrency 	false = If company current currency not in table, we add it into list. Should always be available.
+	 *  										true = we are in currency_rate update , we don't want to see conf->currency in select
+	 *  @param	string	$morecss				More css
 	 * 	@return	string
 	 */
-	public function selectMultiCurrency($selected = '', $htmlname = 'multicurrency_code', $useempty = 0, $filter = '', $excludeConfCurrency = false)
+	public function selectMultiCurrency($selected = '', $htmlname = 'multicurrency_code', $useempty = 0, $filter = '', $excludeConfCurrency = false, $morecss = '')
 	{
 		global $conf, $langs;
 
@@ -5911,7 +5913,7 @@ class Form
 		}
 
 		$out = '';
-		$out .= '<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
+		$out .= '<select class="flat'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'" id="'.$htmlname.'">';
 		if ($useempty) {
 			$out .= '<option value="">&nbsp;</option>';
 		}
