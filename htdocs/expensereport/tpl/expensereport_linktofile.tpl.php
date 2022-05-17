@@ -102,7 +102,9 @@ if (empty($conf->global->EXPENSEREPORT_DISABLE_ATTACHMENT_ON_LINES)) {
 			}
 			print '<br>';
 			$checked = '';
-			//var_dump(GETPOST($file['relativename'])); var_dump($file['relativename']); var_dump($_FILES['userfile']['name']);
+			//var_dump(GETPOST($file['relativename']));
+			//var_dump($file['relativename']);
+			//var_dump($_FILES['userfile']['name']);
 			// If a file was just uploaded, we check to preselect it
 			if (is_array($_FILES['userfile']['name'])) {
 				foreach ($_FILES['userfile']['name'] as $tmpfile) {

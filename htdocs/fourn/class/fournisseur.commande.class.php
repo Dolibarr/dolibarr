@@ -3399,12 +3399,12 @@ class CommandeFournisseur extends CommonOrder
 					$diff_array = array_diff_assoc($qtydelivered, $qtywished); // Warning: $diff_array is done only on common keys.
 					$keysinwishednotindelivered = array_diff(array_keys($qtywished), array_keys($qtydelivered)); // To check we also have same number of keys
 					$keysindeliverednotinwished = array_diff(array_keys($qtydelivered), array_keys($qtywished)); // To check we also have same number of keys
-					/*var_dump(array_keys($qtydelivered));
-					var_dump(array_keys($qtywished));
-					var_dump($diff_array);
-					var_dump($keysinwishednotindelivered);
-					var_dump($keysindeliverednotinwished);
-					exit;*/
+					//var_dump(array_keys($qtydelivered));
+					//var_dump(array_keys($qtywished));
+					//var_dump($diff_array);
+					//var_dump($keysinwishednotindelivered);
+					//var_dump($keysindeliverednotinwished);
+					//exit;
 
 					if (count($diff_array) == 0 && count($keysinwishednotindelivered) == 0 && count($keysindeliverednotinwished) == 0) { //No diff => mean everythings is received
 						if ($closeopenorder) {

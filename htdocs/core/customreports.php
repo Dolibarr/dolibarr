@@ -880,8 +880,8 @@ if ($mode == 'graph') {
 	$px1 = new DolGraph();
 	$mesg = $px1->isGraphKo();
 	if (!$mesg) {
-		/*var_dump($legend);
-		var_dump($data);*/
+		//var_dump($legend);
+		//var_dump($data);
 		$px1->SetData($data);
 		unset($data);
 

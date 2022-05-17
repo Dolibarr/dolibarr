@@ -1066,8 +1066,8 @@ class BonPrelevement extends CommonObject
 					// This also set the property $this->total with amount that is included into file
 					$result = $this->generate($format, $executiondate, $type);
 					if ($result < 0) {
-						/*var_dump($this->error);
-						var_dump($this->invoice_in_error); */
+						//var_dump($this->error);
+						//var_dump($this->invoice_in_error);
 						$error++;
 					}
 				}
