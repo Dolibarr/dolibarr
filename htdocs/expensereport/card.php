@@ -1302,7 +1302,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
 	// Actions to build doc
-	$upload_dir = $conf->expensereport->dir_output;
+	$upload_dir = $conf->expensereport->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
 	$permissiontoadd = $user->rights->expensereport->creer;
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 }
@@ -2008,7 +2008,7 @@ if ($action == 'create') {
 				}
 				print '<td>'.$langs->trans('Description').'</td>';
 				print '<td class="right">'.$langs->trans('VAT').'</td>';
-				print '<td class="right">'.$langs->trans('PriceUHT').'</td>';
+				print '<td class="right" value="disabled">'.$langs->trans('PriceUHT').'</td>';
 				print '<td class="right">'.$langs->trans('PriceUTTC').'</td>';
 				print '<td class="right">'.$langs->trans('Qty').'</td>';
 				if ($action != 'editline') {
@@ -2084,7 +2084,7 @@ if ($action == 'create') {
 
 						if ($action != 'editline') {
 							print '<td class="right">'.price($line->total_ht).'</td>';
-							print '<td class="right">'.price($line->total_ttc).'</td>';
+							print '<td class="right"value="disabled">'.price($line->total_ttc).'</td>';
 						}
 
 						// Column with preview
@@ -2099,7 +2099,7 @@ if ($action == 'create') {
 								$fileinfo = pathinfo($ecmfilesstatic->filepath.'/'.$ecmfilesstatic->filename);
 								if (image_format_supported($fileinfo['basename']) > 0) {
 									$minifile = getImageFileNameForSize($fileinfo['basename'], '_mini'); // For new thumbs using same ext (in lower case howerver) than original
-									if (!dol_is_file($conf->expensereport->dir_output.'/'.$relativepath.'/'.$minifile)) {
+									if (!dol_is_file($conf->expensereport->multidir_output[$object->entity].'/'.$relativepath.'/'.$minifile)) {
 										$minifile = getImageFileNameForSize($fileinfo['basename'], '_mini', '.png'); // For backward compatibility of old thumbs that were created with filename in lower case and with .png extension
 									}
 									//print $file['path'].'/'.$minifile.'<br>';
@@ -2116,8 +2116,8 @@ if ($action == 'create') {
 									$modulepart = 'expensereport';
 									$thumbshown = 0;
 									if (preg_match('/\.pdf$/i', $ecmfilesstatic->filename)) {
-										$filepdf = $conf->expensereport->dir_output.'/'.$relativepath.'/'.$ecmfilesstatic->filename;
-										$fileimage = $conf->expensereport->dir_output.'/'.$relativepath.'/'.$ecmfilesstatic->filename.'_preview.png';
+										$filepdf = $conf->expensereport->multidir_output[$object->entity].'/'.$relativepath.'/'.$ecmfilesstatic->filename;
+										$fileimage = $conf->expensereport->multidir_output[$object->entity].'/'.$relativepath.'/'.$ecmfilesstatic->filename.'_preview.png';
 										$relativepathimage = $relativepath.'/'.$ecmfilesstatic->filename.'_preview.png';
 
 										$pdfexists = file_exists($filepdf);
@@ -2280,7 +2280,7 @@ if ($action == 'create') {
 
 						// Unit price
 						print '<td class="right">';
-						print '<input type="text" min="0" class="right maxwidth50" id="value_unit_ht" name="value_unit_ht" value="'.dol_escape_htmltag(price2num($line->value_unit_ht)).'" />';
+						print '<input type="hidden" min="0" class="right maxwidth50" id="value_unit_ht" name="value_unit_ht" value="'.dol_escape_htmltag(price2num($line->value_unit_ht)).'" />';
 						print '</td>';
 
 						// Unit price with tax
@@ -2335,7 +2335,7 @@ if ($action == 'create') {
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 					require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
-					$upload_dir = $conf->expensereport->dir_output."/".dol_sanitizeFileName($object->ref);
+					$upload_dir = $conf->expensereport->multidir_output[$object->entity]."/".dol_sanitizeFileName($object->ref);
 					$arrayoffiles = dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png|'.preg_quote(dol_sanitizeFileName($object->ref.'.pdf'), '/').')$');
 					$nbFiles = count($arrayoffiles);
 					$nbLinks = Link::count($db, $object->element, $object->id);
@@ -2408,7 +2408,7 @@ if ($action == 'create') {
 				}
 					print '<td>'.$langs->trans('Description').'</td>';
 					print '<td class="right">'.$langs->trans('VAT').'</td>';
-					print '<td class="right">'.$langs->trans('PriceUHT').'</td>';
+					print '<td class="right" type="hidden">'.$langs->trans('PriceUHT').'</td>';
 					print '<td class="right">'.$langs->trans('PriceUTTC').'</td>';
 					print '<td class="right">'.$langs->trans('Qty').'</td>';
 					print '<td></td>';
@@ -2462,7 +2462,7 @@ if ($action == 'create') {
 
 					// Unit price net
 					print '<td class="right">';
-					print '<input type="text" class="right maxwidth50" id="value_unit_ht" name="value_unit_ht" value="'.dol_escape_htmltag($value_unit_ht).'">';
+					print '<input type="hidden" class="right maxwidth50" id="value_unit_ht" name="value_unit_ht" value="'.dol_escape_htmltag($value_unit_ht).'">';
 					print '</td>';
 
 					// Unit price with tax
@@ -2716,12 +2716,13 @@ if ($action != 'presend') {
 
 	if ($user->rights->expensereport->creer && $action != 'create' && $action != 'edit') {
 		$filename = dol_sanitizeFileName($object->ref);
-		$filedir = $conf->expensereport->dir_output."/".dol_sanitizeFileName($object->ref);
+		$filedir = $conf->expensereport->multidir_output[$object->entity]."/".dol_sanitizeFileName($object->ref);
 		$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 		$genallowed	= $user->rights->expensereport->creer;
 		$delallowed	= $user->rights->expensereport->creer;
 		$var = true;
-		print $formfile->showdocuments('expensereport', $filename, $filedir, $urlsource, $genallowed, $delallowed);
+
+		print $formfile->showdocuments('expensereport', $filename, $filedir, $urlsource, $genallowed, $delallowed, '', 1, 0, 0, 0, 0, '', '', '', '','', $object);
 		$somethingshown = $formfile->numoffiles;
 	}
 
@@ -2746,7 +2747,7 @@ if ($action != 'presend') {
 // Presend form
 $modelmail = 'expensereport';
 $defaulttopic = 'SendExpenseReportRef';
-$diroutput = $conf->expensereport->dir_output;
+$diroutput = $conf->expensereport->multidir_output[$object->entity];
 $trackid = 'exp'.$object->id;
 
 include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';

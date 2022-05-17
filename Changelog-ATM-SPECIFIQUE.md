@@ -1,4 +1,6 @@
-
+dolibarr/htdocs/compta/facture/card.php
+    l 1522 => le commit 84f5e3677cf900ff9d268389f2cae84ca0801592 de la 8.0_arcoop
+    n'avait pas été réintroduit lors de la MDV : TVA à 0 sur les factures d'acompte
 
 dolibarr/htdocs/expensereport/card.php  
     Ne PAS afficher le bouton de validation pour les utilisateurs du groupe entrepreneur ID 1  
