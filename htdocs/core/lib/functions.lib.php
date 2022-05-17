@@ -1593,7 +1593,7 @@ function dolButtonToOpenUrlInDialogPopup($name, $label, $buttonstring, $url, $di
 		$url .= '?dol_hide_topmenu=1&dol_hide_leftmenu=1&dol_openinpopup='.urlencode($name);
 	}
 
-	$out .= '';
+	$out = '';
 
 	$backtopagejsfieldsid = ''; $backtopagejsfieldslabel = '';
 	if ($backtopagejsfields) {

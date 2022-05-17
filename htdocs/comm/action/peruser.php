@@ -1130,7 +1130,9 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 
 	$colorindexused[$user->id] = 0; // Color index for current user (user->id) is always 0
 	$nextindextouse = count($colorindexused); // At first run this is 0, so first user has 0, next 1, ...
-	//if ($username->id && $day==1) var_dump($eventarray);
+	//if ($username->id && $day==1) {
+	//var_dump($eventarray);
+	//}
 
 	// We are in a particular day for $username, now we scan all events
 	foreach ($eventarray as $daykey => $notused) {

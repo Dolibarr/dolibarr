@@ -210,8 +210,8 @@ function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handle
 					if (!empty($reg[2])) {
 						if (is_numeric($reg[2])) {	// This is a version
 							$versionrequest = explode('.', $reg[2]);
-							//print var_dump($versionrequest);
-							//print var_dump($versionarray);
+							//var_dump($versionrequest);
+							//var_dump($versionarray);
 							if (!count($versionrequest) || !count($versionarray) || versioncompare($versionrequest, $versionarray) > 0) {
 								$qualified = 0;
 							}

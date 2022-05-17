@@ -481,7 +481,7 @@ class ImportXlsx extends ModeleImports
 												/*include_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancysystem.class.php';
 												$tmpchartofaccount = new AccountancySystem($this->db);
 												$tmpchartofaccount->fetch($conf->global->CHARTOFACCOUNTS);
-												var_dump($tmpchartofaccount->ref.' - '.$arrayrecord[0]['val']);
+												//var_dump($tmpchartofaccount->ref.' - '.$arrayrecord[0]['val']);
 												if ((! ($conf->global->CHARTOFACCOUNTS > 0)) || $tmpchartofaccount->ref != $arrayrecord[0]['val'])
 												{
 													$this->errors[$error]['lib']=$langs->trans('ErrorImportOfChartLimitedToCurrentChart', $tmpchartofaccount->ref);
