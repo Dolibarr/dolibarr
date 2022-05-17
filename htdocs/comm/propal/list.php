@@ -229,6 +229,7 @@ $arrayfields = array(
 	'p.note_public'=>array('label'=>'NotePublic', 'checked'=>0, 'position'=>510, 'enabled'=>(empty($conf->global->MAIN_LIST_ALLOW_PUBLIC_NOTES))),
 	'p.note_private'=>array('label'=>'NotePrivate', 'checked'=>0, 'position'=>511, 'enabled'=>(empty($conf->global->MAIN_LIST_ALLOW_PRIVATE_NOTES))),
 	'p.fk_statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000),
+	'p.date_signature'=>array('label'=>"DateOfSignature", 'checked'=>0, 'position'=>500),
 );
 
 // Extra fields
@@ -505,7 +506,7 @@ $sql .= " country.code as country_code,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
 $sql .= ' p.rowid, p.entity as propal_entity, p.note_private, p.total_ht, p.total_tva, p.total_ttc, p.localtax1, p.localtax2, p.ref, p.ref_client, p.fk_statut as status, p.fk_user_author, p.datep as dp, p.fin_validite as dfv,p.date_livraison as ddelivery,';
 $sql .= ' p.fk_multicurrency, p.multicurrency_code, p.multicurrency_tx, p.multicurrency_total_ht, p.multicurrency_total_tva, p.multicurrency_total_ttc,';
-$sql .= ' p.datec as date_creation, p.tms as date_update, p.date_cloture as date_cloture,';
+$sql .= ' p.datec as date_creation, p.tms as date_update, p.date_cloture as date_cloture,p.date_signature as date_signature,';
 $sql .= ' p.note_public, p.note_private,';
 $sql .= ' p.fk_cond_reglement,p.fk_mode_reglement,p.fk_shipping_method,p.fk_input_reason,';
 $sql .= " pr.rowid as project_id, pr.ref as project_ref, pr.title as project_label,";
@@ -1267,6 +1268,11 @@ if ($resql) {
 		print '<td class="liste_titre">';
 		print '</td>';
 	}
+	// Date signature
+	if (!empty($arrayfields['p.date_signature']['checked'])) {
+		print '<td class="liste_titre">';
+		print '</td>';
+	}
 	if (!empty($arrayfields['p.note_public']['checked'])) {
 		// Note public
 		print '<td class="liste_titre">';
@@ -1421,6 +1427,9 @@ if ($resql) {
 	}
 	if (!empty($arrayfields['p.date_cloture']['checked'])) {
 		print_liste_field_titre($arrayfields['p.date_cloture']['label'], $_SERVER["PHP_SELF"], "p.date_cloture", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
+	}
+	if (!empty($arrayfields['p.date_signature']['checked'])) {
+		print_liste_field_titre($arrayfields['p.date_signature']['label'], $_SERVER["PHP_SELF"], "p.date_signature", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
 	}
 	if (!empty($arrayfields['p.note_public']['checked'])) {
 		print_liste_field_titre($arrayfields['p.note_public']['label'], $_SERVER["PHP_SELF"], "p.note_public", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
@@ -1916,6 +1925,15 @@ if ($resql) {
 		if (!empty($arrayfields['p.date_cloture']['checked'])) {
 			print '<td align="center" class="nowrap">';
 			print dol_print_date($db->jdate($obj->date_cloture), 'dayhour', 'tzuser');
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Date signature
+		if (!empty($arrayfields['p.date_signature']['checked'])) {
+			print '<td align="center" class="nowrap">';
+			print dol_print_date($db->jdate($obj->date_signature), 'dayhour', 'tzuser');
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
