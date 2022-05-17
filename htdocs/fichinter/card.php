@@ -454,7 +454,7 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'setref_client' && $user->rights->ficheinter->creer) {
 		// Positionne ref client
-		$result = $object->setRefClient($user, GETPOST('ref_client','alpha'));
+		$result = $object->setRefClient($user, GETPOST('ref_client', 'alpha'));
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
