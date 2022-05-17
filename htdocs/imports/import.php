@@ -1016,7 +1016,7 @@ if ($step == 4 && $datatoimport) {
 
 	//var_dump($array_match_file_to_database);
 
-	print '<tr valign="top"><td width="50%">';
+	print '<tr valign="top"><td width="50%" class="nopaddingleftimp nopaddingrightimp">';
 
 	$fieldsplaced = array();
 	$valforsourcefieldnb = array();
@@ -1047,6 +1047,7 @@ if ($step == 4 && $datatoimport) {
 	//var_dump($valforsourcefieldnb);
 
 	// Complete source fields from count($fieldssource)+1 to count($fieldstarget)
+	/*
 	$more = 1;
 	$num = count($fieldssource);
 	while ($lefti <= $num) {
@@ -1058,12 +1059,13 @@ if ($step == 4 && $datatoimport) {
 		$lefti++;
 		$more++;
 	}
+	*/
 
 	print "</div>\n";
 	print "<!-- End box left container -->\n";
 
 
-	print '</td><td width="50%">';
+	print '</td><td width="50%" class="nopaddingleftimp nopaddingrightimp">';
 
 	// List of target fields
 	$optionsnotused = "";

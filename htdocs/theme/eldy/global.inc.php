@@ -818,6 +818,12 @@ textarea.centpercent {
 .nopaddingright {
 	padding-right: 0;
 }
+.nopaddingleftimp {
+	padding-left: 0 !important;
+}
+.nopaddingrightimp {
+	padding-right: 0 !important;
+}
 .paddingleft {
 	padding-<?php print $left; ?>: 4px;
 }
