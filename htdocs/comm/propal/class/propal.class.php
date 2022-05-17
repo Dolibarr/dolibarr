@@ -1455,6 +1455,7 @@ class Propal extends CommonObject
 		$sql = "SELECT p.rowid, p.ref, p.entity, p.remise, p.remise_percent, p.remise_absolue, p.fk_soc";
 		$sql .= ", p.total_ttc, p.total_tva, p.localtax1, p.localtax2, p.total_ht";
 		$sql .= ", p.datec";
+		$sql .= ", p.date_signature as dates";
 		$sql .= ", p.date_valid as datev";
 		$sql .= ", p.datep as dp";
 		$sql .= ", p.fin_validite as dfv";
@@ -1538,6 +1539,7 @@ class Propal extends CommonObject
 				$this->date_creation = $this->db->jdate($obj->datec); //Creation date
 				$this->date_validation = $this->db->jdate($obj->datev); //Validation date
 				$this->date_modification = $this->db->jdate($obj->date_modification); // tms
+				$this->date_signature = $this->db->jdate($obj->dates); // Signature date
 				$this->date                 = $this->db->jdate($obj->dp); // Proposal date
 				$this->datep                = $this->db->jdate($obj->dp); // deprecated
 				$this->fin_validite         = $this->db->jdate($obj->dfv);
