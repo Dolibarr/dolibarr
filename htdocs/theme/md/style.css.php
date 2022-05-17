@@ -4187,7 +4187,7 @@ div.tabBar .noborder {
 }
 div .tdtop {
 	vertical-align: top !important;
-	padding-top: 5px !important;
+	padding-top: 8px !important;
 	padding-bottom: 0px !important;
 }
 
