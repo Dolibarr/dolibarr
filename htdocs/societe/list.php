@@ -420,15 +420,15 @@ $prospectstatic->client = 2;
 $prospectstatic->loadCacheOfProspStatus();
 
 
-$title = $langs->trans("ListOfThirdParties");
+$title = $langs->trans("ThirdParties");
 if ($type == 'c' && (empty($search_type) || ($search_type == '1,3'))) {
-	$title = $langs->trans("ListOfCustomers");
+	$title = $langs->trans("Customers");
 }
 if ($type == 'p' && (empty($search_type) || ($search_type == '2,3'))) {
-	$title = $langs->trans("ListOfProspects");
+	$title = $langs->trans("Prospects");
 }
 if ($type == 'f' && (empty($search_type) || ($search_type == '4'))) {
-	$title = $langs->trans("ListOfSuppliers");
+	$title = $langs->trans("Suppliers");
 }
 
 // Select every potentiels, and note each potentiels which fit in search parameters

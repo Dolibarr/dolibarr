@@ -1015,12 +1015,12 @@ if ($resql) {
 	if ($socid > 0) {
 		$soc = new Societe($db);
 		$soc->fetch($socid);
-		$title = $langs->trans('ListOfOrders').' - '.$soc->name;
+		$title = $langs->trans('CustomersOrders').' - '.$soc->name;
 		if (empty($search_company)) {
 			$search_company = $soc->name;
 		}
 	} else {
-		$title = $langs->trans('ListOfOrders');
+		$title = $langs->trans('CustomersOrders');
 	}
 	if (strval($search_status) == '0') {
 		$title .= ' - '.$langs->trans('StatusOrderDraftShort');

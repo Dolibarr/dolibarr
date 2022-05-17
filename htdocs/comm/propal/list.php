@@ -765,12 +765,12 @@ if ($resql) {
 	if ($socid > 0) {
 		$soc = new Societe($db);
 		$soc->fetch($socid);
-		$title = $langs->trans('ListOfProposals').' - '.$soc->name;
+		$title = $langs->trans('Proposals').' - '.$soc->name;
 		if (empty($search_societe)) {
 			$search_societe = $soc->name;
 		}
 	} else {
-		$title = $langs->trans('ListOfProposals');
+		$title = $langs->trans('Proposals');
 	}
 
 	$num = $db->num_rows($resql);

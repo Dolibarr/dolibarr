@@ -711,7 +711,7 @@ $formorder = new FormOrder($db);
 $formother = new FormOther($db);
 $formcompany = new FormCompany($db);
 
-$title = $langs->trans("ListOfSupplierOrders");
+$title = $langs->trans("SuppliersOrders");
 if ($socid > 0) {
 	$fourn = new Fournisseur($db);
 	$fourn->fetch($socid);

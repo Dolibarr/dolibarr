@@ -333,7 +333,7 @@ $user_temp = new User($db);
 $socstatic = new Societe($db);
 
 $help_url = '';
-$title = $langs->trans('TicketList');
+$title = $langs->trans('Tickets');
 $morejs = array();
 $morecss = array();
 
