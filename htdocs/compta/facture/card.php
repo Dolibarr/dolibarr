@@ -1519,7 +1519,10 @@ if (empty($reshook)) {
 											if ($qualified) {
 												$totalamount += $lines[$i]->total_ht; // Fixme : is it not for the customer ? Shouldn't we take total_ttc ?
 												$tva_tx = $lines[$i]->tva_tx;
+												/********************* SPÉ ARCOOP *********************/
+												/*********** TVA à 0 sur factures d'acompte ***********/
 												if(! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $tva_tx = 0;
+												/******************* FIN SPÉ ARCOOP *******************/
 												$amountdeposit[$tva_tx] += ($lines[$i]->total_ht * $valuedeposit) / 100;
 											}
 										}
