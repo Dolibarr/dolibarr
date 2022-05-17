@@ -240,7 +240,7 @@ class pdf_standard extends ModeleExpenseReport
 				$file = $dir."/SPECIMEN.pdf";
 			} else {
 				$objectref = dol_sanitizeFileName($object->ref);
-				$dir = $conf->expensereport->dir_output."/".$objectref;
+				$dir = $conf->expensereport->multidir_output[$object->entity]."/".$objectref;
 				$file = $dir."/".$objectref.".pdf";
 			}
 
