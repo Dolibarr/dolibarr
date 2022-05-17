@@ -498,7 +498,7 @@ class Task extends CommonObjectLine
 								$oldpath = $file["fullname"];
 								$newpath = str_replace($this->oldcopy->ref, $this->ref, $oldpath);
 								if (!empty($newpath)) {
-									$res = dol_move($oldpath,$newpath);
+									$res = dol_move($oldpath, $newpath);
 									if (!$res) {
 										$langs->load("errors");
 										$this->error = $langs->trans('ErrorFailToRenameFile', $oldpath, $newpath);
