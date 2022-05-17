@@ -470,7 +470,7 @@ class Task extends CommonObjectLine
 		}
 
 		if (!$error && (is_object($this->oldcopy) && $this->oldcopy->ref !== $this->ref)) {
-			// We remove directory
+			// We rename directory
 			if ($conf->projet->dir_output) {
 				$project = new Project($this->db);
 				$project->fetch($this->fk_project);
@@ -479,11 +479,34 @@ class Task extends CommonObjectLine
 				$newdir = $conf->projet->dir_output.'/'.dol_sanitizeFileName($project->ref).'/'.dol_sanitizeFileName($this->ref);
 				if (file_exists($olddir)) {
 					include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-					$res = dol_move($olddir, $newdir);
+					$res = @rename($olddir, $newdir);
 					if (!$res) {
 						$langs->load("errors");
 						$this->error = $langs->trans('ErrorFailToRenameDir', $olddir, $newdir);
 						$error++;
+					}
+				}
+
+				if (!$error) {
+					// We rename directory files
+					if (file_exists($newdir)) {
+						include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+						$files = dol_dir_list($newdir);
+						if (!empty($files) && is_array($files)) {
+							foreach ($files as $key => $file) {
+								if (!file_exists($file["fullname"])) continue;
+								$oldpath = $file["fullname"];
+								$newpath = str_replace($this->oldcopy->ref, $this->ref, $oldpath);
+								if (!empty($newpath)) {
+									$res = dol_move($oldpath,$newpath);
+									if (!$res) {
+										$langs->load("errors");
+										$this->error = $langs->trans('ErrorFailToRenameFile', $oldpath, $newpath);
+										$error++;
+									}
+								}
+							}
+						}
 					}
 				}
 			}
