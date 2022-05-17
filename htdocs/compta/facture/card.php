@@ -4935,7 +4935,9 @@ if ($action == 'create') {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid';
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as ba ON b.fk_account = ba.rowid';
 	$sql .= ' WHERE pf.fk_facture = '.$object->id.' AND pf.fk_paiement = p.rowid';
-	$sql .= ' AND p.entity IN ('.getEntity('invoice').')';
+	/** SPE ARCOOP partage des paiements */
+//	$sql .= ' AND p.entity IN ('.getEntity('invoice').')';
+	/** FIN SPE ARCOOP partage des paiements */
 	$sql .= ' ORDER BY p.datep, p.tms';
 
 	$result = $db->query($sql);
