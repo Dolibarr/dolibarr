@@ -1575,36 +1575,70 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
  *  Such buttons must be included inside a HTML form.
  *
  *	@param	string	$name				A name for the html component
- *	@param	string	$label 	    		Label of button
+ *	@param	string	$label 	    		Label shown in Popup title top bar
  *	@param  string	$buttonstring  		button string
  *	@param  string	$url				Url to open
  *  @param	string	$disabled			Disabled text
+ *  @param	string	$morecss			More CSS
+ *  @param	string	$backtopagejsfields	The back to page must be managed using javascript instead of a redirect.
+ *  									Value is 'Name of html component to set with id:Name of html component to set with label'
+ *  									TODO Support this mode, for example when used from the page create a project on thirdparty creation.
  * 	@return	string						HTML component with button
  */
-function dolButtonToOpenUrlInDialogPopup($name, $label, $buttonstring, $url, $disabled = '')
+function dolButtonToOpenUrlInDialogPopup($name, $label, $buttonstring, $url, $disabled = '', $morecss = 'button bordertransp', $backtopagejsfields = '')
 {
 	if (strpos($url, '?') > 0) {
-		$url .= '&dol_hide_topmenu=1&dol_hide_leftmenu=1&dol_openinpopup=1';
+		$url .= '&dol_hide_topmenu=1&dol_hide_leftmenu=1&dol_openinpopup='.urlencode($name);
 	} else {
-		$url .= '?dol_hide_menuinpopup=1&dol_hide_leftmenu=1&dol_openinpopup=1';
+		$url .= '?dol_hide_topmenu=1&dol_hide_leftmenu=1&dol_openinpopup='.urlencode($name);
+	}
+
+	$out = '';
+
+	$backtopagejsfieldsid = ''; $backtopagejsfieldslabel = '';
+	if ($backtopagejsfields) {
+		$url .= '&backtopagejsfields='.urlencode($backtopagejsfields);
+		$tmpbacktopagejsfields = explode(':', $backtopagejsfields);
+		$backtopagejsfieldsid = empty($tmpbacktopagejsfields[0]) ? '' : $tmpbacktopagejsfields[0];
+		$backtopagejsfieldslabel = empty($tmpbacktopagejsfields[1]) ? '' : $tmpbacktopagejsfields[1];
 	}
 
 	//print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("MediaFiles")).'" name="file_manager">';
-	$out = '<a class="button bordertransp button_'.$name.'"'.$disabled.' title="'.dol_escape_htmltag($label).'">'.$buttonstring.'</a>';
+	$out .= '<!-- a link for button to open url into a dialog popup backtopagejsfields = '.$backtopagejsfields.' -->'."\n";
+	$out .= '<a class="cursorpointer button_'.$name.($morecss ? ' '.$morecss : '').'"'.$disabled.' title="'.dol_escape_htmltag($label).'">'.$buttonstring.'</a>';
+	$out .= '<div id="idfordialog'.$name.'" class="hidden">div for dialog</div>';
+	$out .= '<div id="varforreturndialogid'.$name.'" class="hidden">div for returned id</div>';
+	$out .= '<div id="varforreturndialoglabel'.$name.'" class="hidden">div for returned label</div>';
 	$out .= '<!-- Add js code to open dialog popup on dialog -->';
 	$out .= '<script type="text/javascript">
 				jQuery(document).ready(function () {
 					jQuery(".button_'.$name.'").click(function () {
-						console.log("Open popup with jQuery(...).dialog() on URL '.dol_escape_js(DOL_URL_ROOT.$url).'")
-						var $dialog = $(\'<div></div>\').html(\'<iframe class="iframedialog" style="border: 0px;" src="'.DOL_URL_ROOT.$url.'" width="100%" height="98%"></iframe>\')
-							.dialog({
-								autoOpen: false,
-							 	modal: true,
-							 	height: (window.innerHeight - 150),
-							 	width: \'80%\',
-							 	title: "'.dol_escape_js($label).'"
-							});
-						$dialog.dialog(\'open\');
+						console.log(\'Open popup with jQuery(...).dialog() on URL '.dol_escape_js(DOL_URL_ROOT.$url).'\');
+						var $tmpdialog = $(\'#idfordialog'.$name.'\');
+						$tmpdialog.html(\'<iframe class="iframedialog" id="iframedialog'.$name.'" style="border: 0px;" src="'.DOL_URL_ROOT.$url.'" width="100%" height="98%"></iframe>\');
+						$tmpdialog.dialog({
+							autoOpen: false,
+						 	modal: true,
+						 	height: (window.innerHeight - 150),
+						 	width: \'80%\',
+						 	title: \''.dol_escape_js($label).'\',
+							open: function (event, ui) {
+								console.log("open popup");
+       						},
+							close: function (event, ui) {
+								returnedid = jQuery("#varforreturndialogid'.$name.'").text();
+								returnedlabel = jQuery("#varforreturndialoglabel'.$name.'").text();
+								console.log("popup has been closed. returnedid="+returnedid+" returnedlabel="+returnedlabel);
+								if (returnedid != "" && returnedid != "div for returned id") {
+									jQuery("#'.(empty($backtopagejsfieldsid)?"none":$backtopagejsfieldsid).'").val(returnedid);
+								}
+								if (returnedlabel != "" && returnedlabel != "div for returned label") {
+									jQuery("#'.(empty($backtopagejsfieldslabel)?"none":$backtopagejsfieldslabel).'").val(returnedlabel);
+								}
+							}
+						});
+
+						$tmpdialog.dialog(\'open\');
 					});
 				});
 			</script>';
@@ -2233,12 +2267,13 @@ function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs
 	if (isset($object->country_code) && in_array($object->country_code, array('AU', 'CA', 'US', 'CN')) || !empty($conf->global->MAIN_FORCE_STATE_INTO_ADDRESS)) {
 		// US: title firstname name \n address lines \n town, state, zip \n country
 		$town = ($extralangcode ? $object->array_languages['town'][$extralangcode] : (empty($object->town) ? '' : $object->town));
-		$ret .= ($ret ? $sep : '').$town;
+		$ret .= (($ret && $town) ? $sep : '').$town;
+
 		if (!empty($object->state))	{
-			$ret .= ($ret ? ", " : '').$object->state;
+			$ret .= ($ret ? ($town ? ", " : $sep) : '').$object->state;
 		}
 		if (!empty($object->zip)) {
-			$ret .= ($ret ? ", " : '').$object->zip;
+			$ret .= ($ret ? (($town || $object->state) ? ", " : $sep) : '').$object->zip;
 		}
 	} elseif (isset($object->country_code) && in_array($object->country_code, array('GB', 'UK'))) {
 		// UK: title firstname name \n address lines \n town state \n zip \n country
@@ -2322,7 +2357,7 @@ function dol_strftime($fmt, $ts = false, $is_gmt = false)
  * 	@param	string		$tzoutput		true or 'gmt' => string is for Greenwich location
  * 										false or 'tzserver' => output string is for local PHP server TZ usage
  * 										'tzuser' => output string is for user TZ (current browser TZ with current dst) => In a future, we should have same behaviour than 'tzuserrel'
- *                                      'tzuserrel' => output string is for user TZ (current browser TZ with dst or not, depending on date position) (TODO not implemented yet)
+ *                                      'tzuserrel' => output string is for user TZ (current browser TZ with dst or not, depending on date position)
  *	@param	Translate	$outputlangs	Object lang that contains language for text translation.
  *  @param  boolean		$encodetooutput false=no convert into output pagecode
  * 	@return string      				Formated date or '' if time is null
@@ -2987,7 +3022,7 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 	if (!empty($conf->global->MAIN_PHONE_SEPAR)) {
 		$separ = $conf->global->MAIN_PHONE_SEPAR;
 	}
-	if (empty($countrycode)) {
+	if (empty($countrycode) && is_object($mysoc)) {
 		$countrycode = $mysoc->country_code;
 	}
 
@@ -3753,7 +3788,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'recent', 'reception', 'recruitmentcandidature', 'recruitmentjobposition', 'resource', 'recurring',
 				'shapes', 'square', 'stop-circle', 'supplier', 'supplier_proposal', 'supplier_order', 'supplier_invoice',
 				'timespent', 'title_setup', 'title_accountancy', 'title_bank', 'title_hrm', 'title_agenda',
-				'uncheck', 'user-cog', 'user-injured', 'user-md', 'vat', 'website', 'workstation',
+				'uncheck', 'user-cog', 'user-injured', 'user-md', 'vat', 'website', 'workstation', 'world', 'private',
 				'conferenceorbooth', 'eventorganization'
 			))) {
 			$fakey = $pictowithouttext;
@@ -3804,7 +3839,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'title_agenda'=>'calendar-alt',
 				'uncheck'=>'times', 'uparrow'=>'share', 'vat'=>'money-check-alt', 'vcard'=>'address-card',
 				'jabber'=>'comment-o',
-				'website'=>'globe-americas', 'workstation'=>'pallet',
+				'website'=>'globe-americas', 'workstation'=>'pallet', 'world'=>'globe', 'private'=>'user-lock',
 				'conferenceorbooth'=>'chalkboard-teacher', 'eventorganization'=>'project-diagram'
 			);
 			if ($pictowithouttext == 'off') {
@@ -3873,7 +3908,8 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'error'=>'pictoerror', 'warning'=>'pictowarning', 'switch_on'=>'font-status4', 'switch_on_red'=>'font-status8',
 				'holiday'=>'infobox-holiday', 'info'=>'opacityhigh', 'invoice'=>'infobox-commande',
 				'knowledgemanagement'=>'infobox-contrat rotate90', 'loan'=>'infobox-bank_account',
-				'payment'=>'infobox-bank_account', 'payment_vat'=>'infobox-bank_account', 'poll'=>'infobox-adherent', 'pos'=>'infobox-bank_account', 'project'=>'infobox-project', 'projecttask'=>'infobox-project', 'propal'=>'infobox-propal',
+				'payment'=>'infobox-bank_account', 'payment_vat'=>'infobox-bank_account', 'poll'=>'infobox-adherent', 'pos'=>'infobox-bank_account', 'project'=>'infobox-project', 'projecttask'=>'infobox-project',
+				'propal'=>'infobox-propal', 'private'=>'infobox-project',
 				'reception'=>'flip', 'recruitmentjobposition'=>'infobox-adherent', 'recruitmentcandidature'=>'infobox-adherent',
 				'resource'=>'infobox-action',
 				'salary'=>'infobox-bank_account', 'shipment'=>'infobox-commande', 'supplier_invoice'=>'infobox-order_supplier', 'supplier_invoicea'=>'infobox-order_supplier', 'supplier_invoiced'=>'infobox-order_supplier',
@@ -3896,7 +3932,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				//'dolly'=>'#a69944', 'dollyrevert'=>'#a69944',
 				'lot'=>'#a69944',
 				'map-marker-alt'=>'#aaa', 'mrp'=>'#a69944', 'product'=>'#a69944', 'service'=>'#a69944', 'inventory'=>'#a69944', 'stock'=>'#a69944', 'movement'=>'#a69944',
-				'other'=>'#ddd',
+				'other'=>'#ddd', 'world'=>'#986c6a',
 				'partnership'=>'#6c6aa8', 'playdisabled'=>'#ccc', 'printer'=>'#444', 'projectpub'=>'#986c6a', 'reception'=>'#a69944', 'resize'=>'#444', 'rss'=>'#cba',
 				//'shipment'=>'#a69944',
 				'security'=>'#999', 'square'=>'#888', 'stop-circle'=>'#888', 'stats'=>'#444', 'switch_off'=>'#999', 'technic'=>'#999', 'timespent'=>'#555',
@@ -7140,7 +7176,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__TICKET_USER_ASSIGN__'] = '__TICKET_USER_ASSIGN__';
 			}
 
-			if (!empty($conf->recruitment->enabled) && (!is_object($object) || $object->element == 'candidature')) {
+			if (!empty($conf->recruitment->enabled) && (!is_object($object) || $object->element == 'recruitmentcandidature')) {
 				$substitutionarray['__CANDIDATE_FULLNAME__'] = '__CANDIDATE_FULLNAME__';
 				$substitutionarray['__CANDIDATE_FIRSTNAME__'] = '__CANDIDATE_FIRSTNAME__';
 				$substitutionarray['__CANDIDATE_LASTNAME__'] = '__CANDIDATE_LASTNAME__';
@@ -7289,8 +7325,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 
 			if (is_object($object) && $object->element == 'recruitmentcandidature') {
 				$substitutionarray['__CANDIDATE_FULLNAME__'] = $object->getFullName($outputlangs);
-				$substitutionarray['__CANDIDATE_FIRSTNAME__'] = $object->firstname;
-				$substitutionarray['__CANDIDATE_LASTNAME__'] = $object->lastname;
+				$substitutionarray['__CANDIDATE_FIRSTNAME__'] = isset($object->firstname) ? $object->firstname : '';
+				$substitutionarray['__CANDIDATE_LASTNAME__'] = isset($object->lastname) ? $object->lastname : '';
 			}
 
 			if (is_object($object->project)) {
@@ -8350,7 +8386,7 @@ function verifCond($strToEvaluate)
  * @param 	string	$s					String to evaluate
  * @param	int		$returnvalue		0=No return (used to execute eval($a=something)). 1=Value of eval is returned (used to eval($something)).
  * @param   int     $hideerrors     	1=Hide errors
- * @param	string	$onlysimplestring	0=Accept all chars, 1=Accept only simple string with char 'a-z0-9\s^$_->&|=!?():"\',/' and restrict use of (, 2=Accept also ';' and no restriction on (.
+ * @param	string	$onlysimplestring	0=Accept all chars, 1=Accept only simple string with char 'a-z0-9\s^$_+-.*\/>&|=!?():"\',/';', 2=Accept also ';[]'
  * @return	mixed						Nothing or return result of eval
  */
 function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1')
@@ -8369,7 +8405,7 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1'
 	if ($onlysimplestring == '1') {
 		// We must accept: '1 && getDolGlobalInt("doesnotexist1") && $conf->global->MAIN_FEATURES_LEVEL'
 		// We must accept: '$conf->barcode->enabled && preg_match(\'/^(AAA|BBB)/\',$leftmenu)'
-		if (preg_match('/[^a-z0-9\s'.preg_quote('^$_+-*>&|=!?():"\',/', '/').']/i', $s)) {
+		if (preg_match('/[^a-z0-9\s'.preg_quote('^$_+-.*>&|=!?():"\',/', '/').']/i', $s)) {
 			if ($returnvalue) {
 				return 'Bad string syntax to evaluate (found chars that are not chars for simplestring): '.$s;
 			} else {
@@ -8381,7 +8417,7 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1'
 		}
 	} elseif ($onlysimplestring == '2') {
 		// We must accept: (($reloadedobj = new Task($db)) && ($reloadedobj->fetchNoCompute($object->id) > 0) && ($secondloadedobj = new Project($db)) && ($secondloadedobj->fetchNoCompute($reloadedobj->fk_project) > 0)) ? $secondloadedobj->ref : "Parent project not found"
-		if (preg_match('/[^a-z0-9\s'.preg_quote('^$_+-*>&|=!?():"\',/;[]', '/').']/i', $s)) {
+		if (preg_match('/[^a-z0-9\s'.preg_quote('^$_+-.*>&|=!?():"\',/;[]', '/').']/i', $s)) {
 			if ($returnvalue) {
 				return 'Bad string syntax to evaluate (found chars that are not chars for simplestring): '.$s;
 			} else {
@@ -8406,7 +8442,7 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1'
 			return '';
 		}
 	}
-	if (strpos($s, '.') !== false) {
+	if (preg_match('/[^0-9]+\.[^0-9]+/', $s)) {	// We refuse . if not between 2 numbers
 		if ($returnvalue) {
 			return 'Bad string syntax to evaluate (dot char is forbidden): '.$s;
 		} else {
@@ -9861,7 +9897,7 @@ function dol_mimetype($file, $default = 'application/octet-stream', $mode = 0)
  * Return the value of a filed into a dictionary for the record $id.
  * This also set all the values into a cache for a next search.
  *
- * @param string	$tablename		Name of dictionary
+ * @param string	$tablename		Name of table dictionary (without the MAIN_DB_PREFIX, example: 'c_holiday_types')
  * @param string	$field			The name of field where to find the value to return
  * @param int		$id				Id of line record
  * @param bool		$checkentity	Add filter on entity
@@ -9872,12 +9908,14 @@ function getDictionaryValue($tablename, $field, $id, $checkentity = false, $rowi
 {
 	global $conf, $db;
 
+	$tablename = preg_replace('/^'.preg_quote(MAIN_DB_PREFIX, '/').'/', '', $tablename);	// Clean name of table for backward compatibility.
+
 	$dictvalues = (isset($conf->cache['dictvalues_'.$tablename]) ? $conf->cache['dictvalues_'.$tablename] : null);
 
 	if (is_null($dictvalues)) {
 		$dictvalues = array();
 
-		$sql = "SELECT * FROM ".$tablename." WHERE 1 = 1"; // Here select * is allowed as it is generic code and we don't have list of fields
+		$sql = "SELECT * FROM ".MAIN_DB_PREFIX.$tablename." WHERE 1 = 1"; // Here select * is allowed as it is generic code and we don't have list of fields
 		if ($checkentity) {
 			$sql .= ' AND entity IN (0,'.getEntity($tablename).')';
 		}

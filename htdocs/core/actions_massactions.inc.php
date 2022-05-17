@@ -90,7 +90,7 @@ if (!$error && $massaction == 'confirm_presend') {
 		if ($objecttmp->element == 'expensereport') {
 			$thirdparty = new User($db);
 		}
-		if ($objecttmp->element == 'partnership' && $conf->global->PARTNERSHIP_IS_MANAGED_FOR == 'member') {
+		if ($objecttmp->element == 'partnership' && getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR') == 'member') {
 			$thirdparty = new Adherent($db);
 		}
 		if ($objecttmp->element == 'holiday') {
@@ -110,7 +110,7 @@ if (!$error && $massaction == 'confirm_presend') {
 				if ($objecttmp->element == 'expensereport') {
 					$thirdpartyid = $objecttmp->fk_user_author;
 				}
-				if ($objecttmp->element == 'partnership' && $conf->global->PARTNERSHIP_IS_MANAGED_FOR == 'member') {
+				if ($objecttmp->element == 'partnership' && getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR') == 'member') {
 					$thirdpartyid = $objecttmp->fk_member;
 				}
 				if ($objecttmp->element == 'holiday') {
@@ -264,7 +264,7 @@ if (!$error && $massaction == 'confirm_presend') {
 						$fuser = new User($db);
 						$fuser->fetch($objectobj->fk_user_author);
 						$sendto = $fuser->email;
-					} elseif ($objectobj->element == 'partnership' && $conf->global->PARTNERSHIP_IS_MANAGED_FOR == 'member') {
+					} elseif ($objectobj->element == 'partnership' && getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR') == 'member') {
 						$fadherent = new Adherent($db);
 						$fadherent->fetch($objectobj->fk_member);
 						$sendto = $fadherent->email;
@@ -1295,6 +1295,49 @@ if (!$error && ($massaction == 'disable' || ($action == 'disable' && $confirm ==
 			setEventMessages($langs->trans("RecordsDisabled", $nbok), null, 'mesgs');
 		} else {
 			setEventMessages($langs->trans("RecordDisabled"), null, 'mesgs');
+		}
+		$db->commit();
+	} else {
+		$db->rollback();
+	}
+}
+
+if (!$error && $action == 'confirm_edit_value_extrafields' && $confirm == 'yes' && $permissiontoadd) {
+	$db->begin();
+
+	$objecttmp = new $objectclass($db);
+	$e = new ExtraFields($db);// fetch optionals attributes and labels
+	$e->fetch_name_optionals_label($objecttmp->table_element);
+
+	$nbok = 0;
+	$extrafieldKeyToUpdate = GETPOST('extrafield-key-to-update');
+
+
+	foreach ($toselect as $toselectid) {
+		/** @var CommonObject $objecttmp */
+		$objecttmp = new $objectclass($db); // to avoid ghost data
+		$result = $objecttmp->fetch($toselectid);
+		if ($result>0) {
+			// Fill array 'array_options' with data from add form
+			$ret = $e->setOptionalsFromPost(null, $objecttmp, $extrafieldKeyToUpdate);
+			if ($ret > 0) {
+				$objecttmp->insertExtraFields();
+			} else {
+				$error++;
+				setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+			}
+		} else {
+			setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+			$error++;
+			break;
+		}
+	}
+
+	if (!$error) {
+		if ($nbok > 1) {
+			setEventMessages($langs->trans("RecordsDisabled", $nbok), null, 'mesgs');
+		} else {
+			setEventMessages($langs->trans("save"), null, 'mesgs');
 		}
 		$db->commit();
 	} else {

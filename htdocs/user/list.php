@@ -661,7 +661,7 @@ if (!empty($arrayfields['u.firstname']['checked'])) {
 	print '<td class="liste_titre"><input type="text" name="search_firstname" class="maxwidth50" value="'.$search_firstname.'"></td>';
 }
 if (!empty($arrayfields['u.gender']['checked'])) {
-	print '<td class="liste_titre">';
+	print '<td class="liste_titre center">';
 	$arraygender = array('man'=>$langs->trans("Genderman"), 'woman'=>$langs->trans("Genderwoman"), 'other'=>$langs->trans("Genderother"));
 	print $form->selectarray('search_gender', $arraygender, $search_gender, 1);
 	print '</td>';
@@ -748,7 +748,7 @@ if (!empty($arrayfields['u.firstname']['checked'])) {
 	print_liste_field_titre("FirstName", $_SERVER['PHP_SELF'], "u.firstname", $param, "", "", $sortfield, $sortorder);
 }
 if (!empty($arrayfields['u.gender']['checked'])) {
-	print_liste_field_titre("Gender", $_SERVER['PHP_SELF'], "u.gender", $param, "", "", $sortfield, $sortorder);
+	print_liste_field_titre("Gender", $_SERVER['PHP_SELF'], "u.gender", $param, "", "", $sortfield, $sortorder, 'center ');
 }
 if (!empty($arrayfields['u.employee']['checked'])) {
 	print_liste_field_titre("Employee", $_SERVER['PHP_SELF'], "u.employee", $param, "", "", $sortfield, $sortorder, 'center ');
@@ -891,9 +891,23 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		}
 	}
 	if (!empty($arrayfields['u.gender']['checked'])) {
-		print '<td>';
+		print '<td class="center">';
 		if ($obj->gender) {
-			print $langs->trans("Gender".$obj->gender);
+			// Preparing gender's display if there is one
+			$addgendertxt = '';
+			switch ($obj->gender) {
+				case 'man':
+					$addgendertxt .= '<i class="fas fa-mars" title="'.dol_escape_htmltag($langs->trans("Gender".$obj->gender)).'"></i>';
+					break;
+				case 'woman':
+					$addgendertxt .= '<i class="fas fa-venus" title="'.dol_escape_htmltag($langs->trans("Gender".$obj->gender)).'"></i>';
+					break;
+				case 'other':
+					$addgendertxt .= '<i class="fas fa-transgender" title="'.dol_escape_htmltag($langs->trans("Gender".$obj->gender)).'"></i>';
+					break;
+			}
+			print $addgendertxt;
+			//print $langs->trans("Gender".$obj->gender);
 		}
 		print '</td>';
 		if (!$i) {

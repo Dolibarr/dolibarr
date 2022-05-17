@@ -305,7 +305,7 @@ if (empty($reshook)) {
 		$object->fetch($id);
 
 		if (!empty($conf->global-> INVOICE_CHECK_POSTERIOR_DATE)) {
-			$last_of_type = $object->willBeLastOfSameType();
+			$last_of_type = $object->willBeLastOfSameType(true);
 			if (empty($object->date_validation) && !$last_of_type[0]) {
 				setEventMessages($langs->transnoentities("ErrorInvoiceIsNotLastOfSameType", $object->ref, dol_print_date($object->date, 'day'), dol_print_date($last_of_type[1], 'day')), null, 'errors');
 				$action = '';
@@ -3287,10 +3287,21 @@ if ($action == 'create') {
 					'variable' => $langs->transnoentitiesnoconv('VarAmountOneLine', $langs->transnoentitiesnoconv('Deposit')),
 					'variablealllines' => $langs->transnoentitiesnoconv('VarAmountAllLines')
 				);
-				print $form->selectarray('typedeposit', $arraylist, GETPOST('typedeposit', 'aZ09'), 0, 0, 0, '', 1);
+				$typedeposit = GETPOST('typedeposit', 'aZ09');
+				$valuedeposit = GETPOST('valuedeposit', 'int');
+				if (empty($typedeposit) && ! empty($objectsrc->deposit_percent)) {
+					$origin_payment_conditions_deposit_percent = getDictionaryValue('c_payment_term', 'deposit_percent', $objectsrc->cond_reglement_id);
+					if (! empty($origin_payment_conditions_deposit_percent)) {
+						$typedeposit = 'variable';
+					}
+				}
+				if (empty($valuedeposit) && $typedeposit == 'variable' && ! empty($objectsrc->deposit_percent)) {
+					$valuedeposit = $objectsrc->deposit_percent;
+				}
+				print $form->selectarray('typedeposit', $arraylist, $typedeposit, 0, 0, 0, '', 1);
 				print '</td>';
 				print '<td class="nowrap" style="padding-left: 5px">';
-				print '<span class="opacitymedium paddingleft">'.$langs->trans("AmountOrPercent").'</span><input type="text" id="valuedeposit" name="valuedeposit" class="width75 right" value="'.GETPOST('valuedeposit', 'int').'"/>';
+				print '<span class="opacitymedium paddingleft">'.$langs->trans("AmountOrPercent").'</span><input type="text" id="valuedeposit" name="valuedeposit" class="width75 right" value="'.$valuedeposit.'"/>';
 				print '</td>';
 			}
 			print '</tr></table>';

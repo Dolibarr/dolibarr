@@ -969,6 +969,12 @@ textarea.centpercent {
 .nopaddingright {
 	padding-right: 0;
 }
+.nopaddingleftimp {
+	padding-left: 0 !important;
+}
+.nopaddingrightimp {
+	padding-right: 0 !important;
+}
 .paddingleft {
 	padding-<?php print $left; ?>: 4px;
 }
@@ -1050,7 +1056,7 @@ div.urllink, div.urllink a {
 .fa-info-circle {
 	padding-<?php echo $left; ?>: 3px;
 }
-i.fa-mars::before, i.fa-venus::before, i.fa-genderless::before  {
+i.fa-mars::before, i.fa-venus::before, i.fa-genderless::before, i.fa-transgender::before  {
 	color: #888 !important;
 	opacity: 0.4;
 	padding-<?php echo $left; ?>: 3px;
@@ -1656,7 +1662,7 @@ tr.nobottom td {
 .minheight30 { min-height: 30px; }
 .minheight40 { min-height: 40px; }
 .titlefieldcreate { width: 20%; }
-.titlefield       { /* width: 25%; */ width: 250px; }
+.titlefield       { /* width: 25%; */ min-width: 250px; }
 .titlefieldmiddle { width: 50%; }
 .imgmaxwidth180 { max-width: 180px; }
 .imgmaxheight50 { max-height: 50px; }
@@ -1858,7 +1864,7 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 	.minwidth300imp { min-width: 120px !important; }
 	.minwidth400imp { min-width: 150px !important; }
 	.minwidth500imp { min-width: 250px !important; }
-	.titlefield { width: auto; }
+	.titlefield { width: auto; min-width: unset; }
 	.titlefieldcreate { width: auto; }
 
 	#tooltip {
@@ -3929,7 +3935,7 @@ ul.noborder li:nth-child(odd):not(.liste_titre) {
 	-webkit-box-shadow: unset;
 }
 
-.oddeven:hover, .evenodd:hover, .impair:hover, .pair:hover
+.oddeven:hover, .evenodd:hover, .oddevenimport:hover, .evenoddimport:hover, .impair:hover, .pair:hover
 {
 	background: rgb(<?php echo $colorbacklinepairhover; ?>) !important;
 }
@@ -4590,6 +4596,9 @@ div.titre {
 	padding-bottom: 5px;
 	text-transform: uppercase;
 	/* text-shadow: 1px 1px 2px #FFFFFF; */
+}
+div.titre.small {
+	font-size: 1em;
 }
 div.titre {
 	color: var(--colortexttitlenotab);
@@ -6256,6 +6265,9 @@ dl.dropdown {
 	max-height: 264px;
 	overflow: auto;
 }
+.dropdown dd ul.selectedfieldsleft {
+	right: auto;
+}
 .dropdown dd ul li {
 	white-space: nowrap;
 	font-weight: normal;
@@ -7215,6 +7227,7 @@ div.clipboardCPValue.hidewithsize {
 
 	.titlefield {
 		width: auto !important;		/* We want to ignore the 30%, try to use more if you can */
+		min-width: unset;
 	}
 	.tableforfield>tr>td:first-child, .tableforfield>tbody>tr>td:first-child, div.tableforfield div.tagtr>div.tagtd:first-of-type {
 		/* max-width: 100px; */			/* but no more than 100px */

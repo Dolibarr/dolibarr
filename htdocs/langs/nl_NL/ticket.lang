@@ -90,10 +90,10 @@ TicketPublicAccess=Een openbare interface waarbij geen identificatie vereist is,
 TicketSetupDictionaries=Het type ticket, ernst en analysecodes zijn configureerbaar vanuit woordenboeken
 TicketParamModule=Module variabele instelling
 TicketParamMail=E-mail set-up
-TicketEmailNotificationFrom=Bevestigings e-mail van
-TicketEmailNotificationFromHelp=Gebruikt als voorbeeld antwoord in het ticketbericht
-TicketEmailNotificationTo=Notificatie e-mail naar
-TicketEmailNotificationToHelp=Verzend e-mail notificatie naar dit adres.
+TicketEmailNotificationFrom=Sender e-mail for ticket answers
+TicketEmailNotificationFromHelp=Sender e-mail for ticket answers sent from Dolibarr
+TicketEmailNotificationTo=Notify ticket creation to this e-mail address
+TicketEmailNotificationToHelp=If present, this e-mail address will be notified of a ticket creation
 TicketNewEmailBodyLabel=SMS verzonden na het maken van een ticket
 TicketNewEmailBodyHelp=De tekst die hier wordt opgegeven, wordt in de e-mail ingevoegd die bevestigt dat er een nieuwe ticket is aangemaakt in de openbare interface. Informatie over de raadpleging van de ticket wordt automatisch toegevoegd.
 TicketParamPublicInterface=Instellingen openbare interface
@@ -136,6 +136,18 @@ TicketsPublicNotificationNewMessage=Stuur e-mail(s) wanneer een nieuw bericht/op
 TicketsPublicNotificationNewMessageHelp=Stuur e-mail (s) wanneer een nieuw bericht is toegevoegd vanuit de openbare interface (naar de toegewezen gebruiker of de e-mail met meldingen naar (update) en / of de e-mail met meldingen naar)
 TicketPublicNotificationNewMessageDefaultEmail=E-mailmeldingen voor (update)
 TicketPublicNotificationNewMessageDefaultEmailHelp=Stuur een e-mail naar dit adres voor elke nieuw berichtmelding als er geen gebruiker aan het ticket is toegewezen of als de gebruiker geen bekend e-mailadres heeft.
+TicketsAutoReadTicket=Automatically mark the ticket as read (when created from backoffice)
+TicketsAutoReadTicketHelp=Automatically mark the ticket as read when created from backoffice. When ticket is create from the public interface, ticket remains with the status "Not Read".
+TicketsDelayBeforeFirstAnswer=A new ticket should receive a first answer before (hours):
+TicketsDelayBeforeFirstAnswerHelp=If a new ticket has not received an answer after this time period (in hours), an important warning icon will be displayed in the list view.
+TicketsDelayBetweenAnswers=An unresolved ticket should not be unactive during (hours):
+TicketsDelayBetweenAnswersHelp=If an unresolved ticket that has already received an answer has not had further interaction after this time period (in hours), a warning icon will be displayed in the list view.
+TicketsAutoNotifyClose=Automatically notify thirdparty when closing a ticket
+TicketsAutoNotifyCloseHelp=When closing a ticket, you will be proposed to send a message to one of thirdparty's contacts. On mass closing, a message will be sent to one contact of the thirdparty linked to the ticket.
+TicketWrongContact=Provided contact is not part of current ticket contacts. Email not sent.
+TicketChooseProductCategory=Product category for ticket support
+TicketChooseProductCategoryHelp=Select the product category of ticket support. This will be used to automatically link a contract to a ticket.
+
 #
 # Index & list page
 #
@@ -151,6 +163,8 @@ OrderByDateAsc=Sorteer op oplopende datum
 OrderByDateDesc=Sorteer op aflopende datum
 ShowAsConversation=Weergeven als conversatielijst
 MessageListViewType=Weergeven als tabellijst
+ConfirmMassTicketClosingSendEmail=Automatically send emails when closing tickets
+ConfirmMassTicketClosingSendEmailQuestion=Do you want to notify thirdparties when closing these tickets ?
 
 #
 # Ticket card
@@ -205,12 +219,12 @@ ErrorMailRecipientIsEmptyForSendTicketMessage=Geadresseerde is leeg. Geen e-mail
 TicketGoIntoContactTab=Ga naar het tabblad "Contacten" om ze te selecteren
 TicketMessageMailIntro=Introductie
 TicketMessageMailIntroHelp=Deze tekst wordt alleen aan het begin van de e-mail toegevoegd en zal niet worden opgeslagen.
-TicketMessageMailIntroLabelAdmin=Inleiding tot het bericht bij het verzenden van e-mail
-TicketMessageMailIntroText=Hallo, <br> Er is een nieuw antwoord verzonden op een ticket. Dit is het bericht: <br>
-TicketMessageMailIntroHelpAdmin=Deze tekst wordt ingevoegd vóór de tekst van het antwoord op een ticket.
+TicketMessageMailIntroLabelAdmin=Introduction text to all ticket answers
+TicketMessageMailIntroText=Hello,<br>A new answer has been added to a ticket that you follow. Here is the message:<br>
+TicketMessageMailIntroHelpAdmin=This text will be inserted before the answer when replying to a ticket from Dolibarr
 TicketMessageMailSignature=Handtekening
 TicketMessageMailSignatureHelp=Deze tekst wordt alleen aan het einde van de e-mail toegevoegd en wordt niet opgeslagen.
-TicketMessageMailSignatureText=<p> Met vriendelijke groet, </p><p> - </p>
+TicketMessageMailSignatureText=Message sent by <b>%s</b> via Dolibarr
 TicketMessageMailSignatureLabelAdmin=Handtekening van reactie e-mail
 TicketMessageMailSignatureHelpAdmin=Deze tekst wordt ingevoegd na het antwoordbericht.
 TicketMessageHelp=Alleen deze tekst zal worden bewaard in de berichtenlijst op de ticketkaart.
@@ -238,9 +252,16 @@ TicketChangeStatus=Verander status
 TicketConfirmChangeStatus=Bevestig de statusverandering: %s?
 TicketLogStatusChanged=Status gewijzigd: %s in %s
 TicketNotNotifyTiersAtCreate=Geen bedrijf melden bij aanmaken
+NotifyThirdpartyOnTicketClosing=Contacts to notify while closing the ticket
+TicketNotifyAllTiersAtClose=All related contacts
+TicketNotNotifyTiersAtClose=No related contact
 Unread=Niet gelezen
 TicketNotCreatedFromPublicInterface=Niet beschikbaar. Ticket is niet gemaakt vanuit de openbare interface.
 ErrorTicketRefRequired=Naam van ticket is vereist
+TicketsDelayForFirstResponseTooLong=Too much time elapsed since ticket opening without any answer.
+TicketsDelayFromLastResponseTooLong=Too much time elapsed since last answer on this ticket.
+TicketNoContractFoundToLink=No contract was found to be automatically linked to this ticket. Please link a contract manually.
+TicketManyContractsLinked=Many contracts have been automatically linked to this ticket. Make sure to verify which should be chosen.
 
 #
 # Logs
@@ -268,8 +289,9 @@ TicketNewEmailBody=Dit is een automatische e-mail om te bevestigen dat je een ni
 TicketNewEmailBodyCustomer=Dit is een automatische e-mail om te bevestigen dat er zojuist een nieuw ticket is aangemaakt in uw account.
 TicketNewEmailBodyInfosTicket=Informatie voor het bewaken van het ticket
 TicketNewEmailBodyInfosTrackId=Ticket volgnummer: %s
-TicketNewEmailBodyInfosTrackUrl=U kunt de voortgang van de ticket bekijken door op de bovenstaande link te klikken.
+TicketNewEmailBodyInfosTrackUrl=You can view the progress of the ticket by clicking the following link
 TicketNewEmailBodyInfosTrackUrlCustomer=U kunt de voortgang van het ticket bekijken in de specifieke interface door op de volgende link te klikken
+TicketCloseEmailBodyInfosTrackUrlCustomer=You can consult the history of this ticket by clicking the following link
 TicketEmailPleaseDoNotReplyToThisEmail=Beantwoord deze e-mail niet rechtstreeks! Gebruik de link om in de gebruikersinterface te antwoorden.
 TicketPublicInfoCreateTicket=Met dit formulier kunt u een support ticket vastleggen in ons ticket beheersysteem.
 TicketPublicPleaseBeAccuratelyDescribe=Beschrijf alstublieft het probleem zo nauwkeurig mogelijk. Geef alle beschikbare informatie om ons in staat te stellen uw verzoek op de juiste manier te kunnen identificeren en te behandelen .
@@ -291,6 +313,10 @@ NewUser=Nieuwe gebruiker
 NumberOfTicketsByMonth=Aantal tickets per maand
 NbOfTickets=Aantal tickets
 # notifications
+TicketCloseEmailSubjectCustomer=Ticket closed
+TicketCloseEmailBodyCustomer=This is an automatic message to notify you that ticket %s has just been closed.
+TicketCloseEmailSubjectAdmin=Ticket closed - Réf %s (public ticket ID %s)
+TicketCloseEmailBodyAdmin=A ticket with ID #%s has just been closed, see information:
 TicketNotificationEmailSubject=Ticket %s bijgewerkt
 TicketNotificationEmailBody=Dit is een automatisch bericht om u te laten weten dat ticket %s zojuist is bijgewerkt
 TicketNotificationRecipient=Kennisgeving ontvanger

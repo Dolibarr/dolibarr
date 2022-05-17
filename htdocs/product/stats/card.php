@@ -46,6 +46,7 @@ $mode = (GETPOST('mode', 'alpha') ? GETPOST('mode', 'alpha') : 'byunit');
 $search_year   = GETPOST('search_year', 'int');
 $search_categ  = GETPOST('search_categ', 'int');
 $notab = GETPOST('notab', 'int');
+$type = GETPOST('type', 'alpha');
 
 $error = 0;
 $mesg = '';

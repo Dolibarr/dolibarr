@@ -772,16 +772,6 @@ class Contrat extends CommonObject
 
 		$now = dol_now();
 
-		/*
-		if (!is_object($extrafields)) {
-			require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-			$extrafields = new ExtraFields($this->db);
-		}
-
-		$line = new ContratLigne($this->db);
-		$extrafields->fetch_name_optionals_label(ContratLigne::$table_element, true);
-		*/
-
 		$this->lines = array();
 		$pos = 0;
 
@@ -875,7 +865,7 @@ class Contrat extends CommonObject
 				$line->date_fin_prevue   = $this->db->jdate($objp->date_fin_validite);
 				$line->date_fin_reel     = $this->db->jdate($objp->date_cloture);
 
-				// Retrieve all extrafields for contract
+				// Retrieve all extrafields for contract line
 				// fetch optionals attributes and labels
 				$line->fetch_optionals();
 

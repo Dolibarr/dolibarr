@@ -291,7 +291,7 @@ if (empty($reshook)) {
 		$search_date_approve_end = '';
 		$billed = '';
 		$search_billed = '';
-		$toselect = '';
+		$toselect = array();
 		$search_array_options = array();
 	}
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')

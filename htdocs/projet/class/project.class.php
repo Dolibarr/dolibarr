@@ -159,7 +159,9 @@ class Project extends CommonObject
 	public $statuts_long;
 
 	public $statut; // 0=draft, 1=opened, 2=closed
+
 	public $opp_status; // opportunity status, into table llx_c_lead_status
+	public $fk_opp_status; // opportunity status, into table llx_c_lead_status
 	public $opp_percent; // opportunity probability
 
 	public $email_msgid;
@@ -236,14 +238,14 @@ class Project extends CommonObject
 		'datee' =>array('type'=>'date', 'label'=>'DateEnd', 'enabled'=>1, 'visible'=>1, 'position'=>35),
 		'description' =>array('type'=>'text', 'label'=>'Description', 'enabled'=>1, 'visible'=>3, 'position'=>55, 'searchall'=>1),
 		'public' =>array('type'=>'integer', 'label'=>'Visibility', 'enabled'=>1, 'visible'=>1, 'position'=>65),
-		'fk_opp_status' =>array('type'=>'integer', 'label'=>'OpportunityStatusShort', 'enabled'=>1, 'visible'=>1, 'position'=>75),
-		'opp_percent' =>array('type'=>'double(5,2)', 'label'=>'OpportunityProbabilityShort', 'enabled'=>1, 'visible'=>1, 'position'=>80),
+		'fk_opp_status' =>array('type'=>'integer', 'label'=>'OpportunityStatusShort', 'enabled'=>'!empty($conf->global->PROJECT_USE_OPPORTUNITIES)', 'visible'=>1, 'position'=>75),
+		'opp_percent' =>array('type'=>'double(5,2)', 'label'=>'OpportunityProbabilityShort', 'enabled'=>'!empty($conf->global->PROJECT_USE_OPPORTUNITIES)', 'visible'=>1, 'position'=>80),
 		'note_private' =>array('type'=>'text', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>0, 'position'=>85, 'searchall'=>1),
 		'note_public' =>array('type'=>'text', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>90, 'searchall'=>1),
 		'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'ModelPdf', 'enabled'=>1, 'visible'=>0, 'position'=>95),
 		'date_close' =>array('type'=>'datetime', 'label'=>'DateClosing', 'enabled'=>1, 'visible'=>0, 'position'=>105),
 		'fk_user_close' =>array('type'=>'integer', 'label'=>'UserClosing', 'enabled'=>1, 'visible'=>0, 'position'=>110),
-		'opp_amount' =>array('type'=>'double(24,8)', 'label'=>'OpportunityAmountShort', 'enabled'=>1, 'visible'=>1, 'position'=>115),
+		'opp_amount' =>array('type'=>'double(24,8)', 'label'=>'OpportunityAmountShort', 'enabled'=>1, 'visible'=>'!empty($conf->global->PROJECT_USE_OPPORTUNITIES)', 'position'=>115),
 		'budget_amount' =>array('type'=>'double(24,8)', 'label'=>'Budget', 'enabled'=>1, 'visible'=>1, 'position'=>119),
 		'usage_bill_time' =>array('type'=>'integer', 'label'=>'UsageBillTimeShort', 'enabled'=>1, 'visible'=>-1, 'position'=>130),
 		'usage_opportunity' =>array('type'=>'integer', 'label'=>'UsageOpportunity', 'enabled'=>1, 'visible'=>-1, 'position'=>135),
@@ -1204,7 +1206,8 @@ class Project extends CommonObject
 		$label .= ($label ? '<br>' : '').'<b>'.$langs->trans('Ref').': </b>'.$this->ref; // The space must be after the : to not being explode when showing the title in img_picto
 		$label .= ($label ? '<br>' : '').'<b>'.$langs->trans('Label').': </b>'.$this->title; // The space must be after the : to not being explode when showing the title in img_picto
 		if (isset($this->public)) {
-			$label .= '<br><b>'.$langs->trans("Visibility").":</b> ".($this->public ? $langs->trans("SharedProject") : $langs->trans("PrivateProject"));
+			$label .= '<br><b>'.$langs->trans("Visibility").":</b> ";
+			$label .= ($this->public ? img_picto($langs->trans('SharedProject'), 'world', 'class="paddingrightonly"').$langs->trans("SharedProject") : img_picto($langs->trans('PrivateProject'), 'private', 'class="paddingrightonly"').$langs->trans("PrivateProject"));
 		}
 		if (!empty($this->thirdparty_name)) {
 			$label .= ($label ? '<br>' : '').'<b>'.$langs->trans('ThirdParty').': </b>'.$this->thirdparty_name; // The space must be after the : to not being explode when showing the title in img_picto

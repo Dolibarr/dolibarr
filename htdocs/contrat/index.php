@@ -346,22 +346,28 @@ if ($result) {
 
 	while ($i < $num) {
 		$obj = $db->fetch_object($result);
+		$datem = $db->jdate($obj->tms);
+
+		$staticcontrat->ref = ($obj->ref ? $obj->ref : $obj->cid);
+		$staticcontrat->id = $obj->cid;
+
+		$staticcompany->id = $obj->socid;
+		$staticcompany->name = $obj->name;
 
 		print '<tr class="oddeven">';
 		print '<td class="nowraponall">';
-		$staticcontrat->ref = ($obj->ref ? $obj->ref : $obj->cid);
-		$staticcontrat->id = $obj->cid;
 		print $staticcontrat->getNomUrl(1, 16);
 		if ($obj->nb_late) {
 			print img_warning($langs->trans("Late"));
 		}
 		print '</td>';
+
 		print '<td class="tdoverflowmax150">';
-		$staticcompany->id = $obj->socid;
-		$staticcompany->name = $obj->name;
 		print $staticcompany->getNomUrl(1, '', 20);
 		print '</td>';
-		print '<td class="center nowraponall">'.dol_print_date($db->jdate($obj->tms), 'dayhour').'</td>';
+		print '<td class="center nowraponall" title="'.dol_escape_htmltag($langs->trans("DateModification").': '.dol_print_date($datem, 'dayhour', 'tzuserrel')).'">';
+		print dol_print_date($datem, 'dayhour');
+		print '</td>';
 		//print '<td class="left">'.$staticcontrat->LibStatut($obj->statut,2).'</td>';
 		print '<td class="right nowraponall" width="32">'.($obj->nb_initial > 0 ? '<span class="paddingright">'.$obj->nb_initial.'</span>'.$staticcontratligne->LibStatut(0, 3, -1, 'class="paddingleft"') : '').'</td>';
 		print '<td class="right nowraponall" width="32">'.($obj->nb_running > 0 ? '<span class="paddingright">'.$obj->nb_running.'</span>'.$staticcontratligne->LibStatut(4, 3, 0, 'class="marginleft"') : '').'</td>';
@@ -451,7 +457,7 @@ if ($resql) {
 		print "</tr>\n";
 		$i++;
 	}
-	$db->free();
+	$db->free($resql);
 
 	print "</table></div>";
 } else {
@@ -532,7 +538,8 @@ if ($resql) {
 		print "</tr>\n";
 		$i++;
 	}
-	$db->free();
+
+	$db->free($resql);
 
 	print "</table></div>";
 } else {
@@ -614,7 +621,7 @@ if ($resql) {
 		print "</tr>\n";
 		$i++;
 	}
-	$db->free();
+	$db->free($resql);
 
 	print "</table></div>";
 } else {

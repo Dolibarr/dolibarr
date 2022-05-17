@@ -209,7 +209,7 @@ if (empty($reshook)) {
 		$search_progresscalc = '';
 		$search_progressdeclare = '';
 		$search_task_budget_amount = '';
-		$toselect = '';
+		$toselect = array();
 		$search_array_options = array();
 		$search_date_start_startmonth = "";
 		$search_date_start_startyear = "";
@@ -603,8 +603,10 @@ if ($id > 0 || !empty($ref)) {
 	// Visibility
 	print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
 	if ($object->public) {
+		print img_picto($langs->trans('SharedProject'), 'world', 'class="paddingrightonly"');
 		print $langs->trans('SharedProject');
 	} else {
+		print img_picto($langs->trans('PrivateProject'), 'private', 'class="paddingrightonly"');
 		print $langs->trans('PrivateProject');
 	}
 	print '</td></tr>';

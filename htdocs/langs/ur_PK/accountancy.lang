@@ -62,24 +62,24 @@ MainAccountForSubscriptionPaymentNotDefined=رکنیت کی ادائیگی کے 
 AccountancyArea=اکاؤنٹنگ ایریا
 AccountancyAreaDescIntro=اکاؤنٹنسی ماڈیول کا استعمال کئی مراحل میں کیا جاتا ہے:
 AccountancyAreaDescActionOnce=درج ذیل اعمال عام طور پر صرف ایک بار، یا سال میں ایک بار کیے جاتے ہیں...
-AccountancyAreaDescActionOnceBis=جرنلائزیشن کرتے وقت آپ کو صحیح ڈیفالٹ اکاؤنٹنگ اکاؤنٹ تجویز کرکے مستقبل میں آپ کا وقت بچانے کے لیے اگلے اقدامات کیے جائیں (جرائد اور جنرل لیجر میں ریکارڈ لکھنا)
+AccountancyAreaDescActionOnceBis=Next steps should be done to save you time in future by suggesting you automaticaly the correct default accounting account when transferring data in accounting
 AccountancyAreaDescActionFreq=درج ذیل کارروائیاں عام طور پر بہت بڑی کمپنیوں کے لیے ہر مہینے، ہفتے یا دن کی جاتی ہیں...
 
-AccountancyAreaDescJournalSetup=STEP %s: مینو %s سے اپنے جریدے کی فہرست کا مواد بنائیں یا چیک کریں۔
+AccountancyAreaDescJournalSetup=STEP %s: Check content of your journal list from menu %s
 AccountancyAreaDescChartModel=STEP %s: چیک کریں کہ اکاؤنٹ کے چارٹ کا ماڈل موجود ہے یا مینو سے ایک بنائیں %s
 AccountancyAreaDescChart=STEP %s: منتخب کریں اور|یا اپنے اکاؤنٹ کا چارٹ مینو %s سے مکمل کریں
 
 AccountancyAreaDescVat=STEP %s: ہر VAT کی شرح کے لیے اکاؤنٹنگ اکاؤنٹس کی وضاحت کریں۔ اس کے لیے مینو انٹری %s استعمال کریں۔
 AccountancyAreaDescDefault=STEP %s: پہلے سے طے شدہ اکاؤنٹنگ اکاؤنٹس کی وضاحت کریں۔ اس کے لیے مینو انٹری %s استعمال کریں۔
-AccountancyAreaDescExpenseReport=STEP %s: ہر قسم کے اخراجات کی رپورٹ کے لیے ڈیفالٹ اکاؤنٹنگ اکاؤنٹس کی وضاحت کریں۔ اس کے لیے مینو انٹری %s استعمال کریں۔
+AccountancyAreaDescExpenseReport=STEP %s: Define default accounting accounts for each type of Expense report. For this, use the menu entry %s.
 AccountancyAreaDescSal=STEP %s: تنخواہوں کی ادائیگی کے لیے پہلے سے طے شدہ اکاؤنٹنگ اکاؤنٹس کی وضاحت کریں۔ اس کے لیے مینو انٹری %s استعمال کریں۔
-AccountancyAreaDescContrib=STEP %s: خصوصی اخراجات (متفرق ٹیکس) کے لیے پہلے سے طے شدہ اکاؤنٹنگ اکاؤنٹس کی وضاحت کریں۔ اس کے لیے مینو انٹری %s استعمال کریں۔
+AccountancyAreaDescContrib=STEP %s: Define default accounting accounts for Taxes (special expenses). For this, use the menu entry %s.
 AccountancyAreaDescDonation=STEP %s: عطیہ کے لیے ڈیفالٹ اکاؤنٹنگ اکاؤنٹس کی وضاحت کریں۔ اس کے لیے مینو انٹری %s استعمال کریں۔
 AccountancyAreaDescSubscription=STEP %s: ممبر سبسکرپشن کے لیے ڈیفالٹ اکاؤنٹنگ اکاؤنٹس کی وضاحت کریں۔ اس کے لیے مینو انٹری %s استعمال کریں۔
 AccountancyAreaDescMisc=STEP %s: متفرق لین دین کے لیے لازمی ڈیفالٹ اکاؤنٹ اور ڈیفالٹ اکاؤنٹنگ اکاؤنٹس کی وضاحت کریں۔ اس کے لیے مینو انٹری %s استعمال کریں۔
 AccountancyAreaDescLoan=STEP %s: قرضوں کے لیے پہلے سے طے شدہ اکاؤنٹنگ اکاؤنٹس کی وضاحت کریں۔ اس کے لیے مینو انٹری %s استعمال کریں۔
 AccountancyAreaDescBank=STEP %s: ہر بینک اور مالیاتی کھاتوں کے لیے اکاؤنٹنگ اکاؤنٹس اور جرنل کوڈ کی وضاحت کریں۔ اس کے لیے مینو انٹری %s استعمال کریں۔
-AccountancyAreaDescProd=STEP %s: اپنی مصنوعات/سروسز پر اکاؤنٹنگ اکاؤنٹس کی وضاحت کریں۔ اس کے لیے مینو انٹری %s استعمال کریں۔
+AccountancyAreaDescProd=STEP %s: Define accounting accounts on your Products/Services. For this, use the menu entry %s.
 
 AccountancyAreaDescBind=STEP %s: موجودہ %s لائنوں کے درمیان بائنڈنگ کو چیک کریں اور اکاؤنٹنگ اکاؤنٹ مکمل ہو گیا ہے، لہذا ایپلیکیشن ایک کلک میں لیجر میں لین دین کو جرنلائز کر سکے گی۔ مکمل گمشدہ پابندیاں۔ اس کے لیے مینو انٹری %s استعمال کریں۔
 AccountancyAreaDescWriteRecords=STEP %s: لیجر میں لین دین لکھیں۔ اس کے لیے، مینو میں جائیں <strong> %s </strong>، اور بٹن پر کلک کریں <strong> %s a0a65d07z.
@@ -112,7 +112,7 @@ MenuAccountancyClosure=بندش
 MenuAccountancyValidationMovements=نقل و حرکت کی توثیق کریں۔
 ProductsBinding=مصنوعات کے اکاؤنٹس
 TransferInAccounting=اکاؤنٹنگ میں منتقلی
-RegistrationInAccounting=اکاؤنٹنگ میں رجسٹریشن
+RegistrationInAccounting=Recording in accounting
 Binding=اکاؤنٹس کا پابند
 CustomersVentilation=کسٹمر انوائس بائنڈنگ
 SuppliersVentilation=وینڈر انوائس بائنڈنگ
@@ -120,7 +120,7 @@ ExpenseReportsVentilation=اخراجات کی رپورٹ کا پابند
 CreateMvts=نیا لین دین بنائیں
 UpdateMvts=لین دین میں ترمیم
 ValidTransaction=لین دین کی توثیق کریں۔
-WriteBookKeeping=اکاؤنٹنگ میں لین دین کو رجسٹر کریں۔
+WriteBookKeeping=Record transactions in accounting
 Bookkeeping=لیجر
 BookkeepingSubAccount=ذیلی
 AccountBalance=اکاؤنٹ بیلنس
@@ -219,12 +219,12 @@ ByPredefinedAccountGroups=پہلے سے طے شدہ گروپوں کے ذریعے
 ByPersonalizedAccountGroups=ذاتی نوعیت کے گروپوں کے ذریعے
 ByYear=سال کے حساب سے
 NotMatch=سیٹ نہیں ہے
-DeleteMvt=اکاؤنٹنگ سے کچھ آپریشن لائنوں کو حذف کریں۔
+DeleteMvt=Delete some lines from accounting
 DelMonth=حذف کرنے کا مہینہ
 DelYear=حذف کرنے کا سال
 DelJournal=حذف کرنے کے لیے جرنل
-ConfirmDeleteMvt=یہ سال/ماہ اور/یا کسی مخصوص جریدے کے لیے اکاؤنٹنگ کی تمام آپریشن لائنوں کو حذف کر دے گا (کم از کم ایک معیار درکار ہے)۔ حذف شدہ ریکارڈ کو لیجر میں واپس لانے کے لیے آپ کو '%s' فیچر کو دوبارہ استعمال کرنا ہوگا۔
-ConfirmDeleteMvtPartial=یہ اکاؤنٹنگ سے لین دین کو حذف کر دے گا (اسی لین دین سے متعلق تمام آپریشن لائنوں کو حذف کر دیا جائے گا)
+ConfirmDeleteMvt=This will delete all lines in accountancy for the year/month and/or for a specific journal (At least one criterion is required). You will have to reuse the feature '%s' to have the deleted record back in the ledger.
+ConfirmDeleteMvtPartial=This will delete the transaction from the accounting (all lines related to the same transaction will be deleted)
 FinanceJournal=فنانس جرنل
 ExpenseReportsJournal=اخراجات کی رپورٹ کا جریدہ
 DescFinanceJournal=فنانس جرنل بشمول بینک اکاؤنٹ کے ذریعے ادائیگیوں کی تمام اقسام
@@ -278,11 +278,11 @@ DescVentilExpenseReportMore=اگر آپ اکاؤنٹنگ اکاؤنٹ کو اخ�
 DescVentilDoneExpenseReport=یہاں اخراجات کی رپورٹوں کی فہرست اور ان کے فیس اکاؤنٹنگ اکاؤنٹ سے مشورہ کریں۔
 
 Closure=سالانہ بندش
-DescClosure=یہاں ماہ کے لحاظ سے نقل و حرکت کی تعداد سے مشورہ کریں جن کی توثیق نہیں ہوئی اور مالی سال پہلے ہی کھلے ہیں۔
-OverviewOfMovementsNotValidated=مرحلہ 1/ نقل و حرکت کا جائزہ درست نہیں ہے۔ (مالی سال بند کرنا ضروری ہے)
-AllMovementsWereRecordedAsValidated=تمام نقل و حرکت کو توثیق کے طور پر ریکارڈ کیا گیا تھا۔
-NotAllMovementsCouldBeRecordedAsValidated=تمام حرکات کو توثیق کے طور پر ریکارڈ نہیں کیا جا سکتا
-ValidateMovements=نقل و حرکت کی توثیق کریں۔
+DescClosure=Consult here the number of movements by month who are not yet validated & locked
+OverviewOfMovementsNotValidated=Overview of movements not validated and locked
+AllMovementsWereRecordedAsValidated=All movements were recorded as validated and locked
+NotAllMovementsCouldBeRecordedAsValidated=Not all movements could be recorded as validated and locked
+ValidateMovements=Validate and lock record...
 DescValidateMovements=تحریر، حروف اور حذف میں کسی قسم کی ترمیم یا حذف ممنوع ہو گا۔ مشق کے لیے تمام اندراجات کی توثیق ہونی چاہیے ورنہ بند کرنا ممکن نہیں ہوگا۔
 
 ValidateHistory=خودکار طور پر باندھیں۔
@@ -294,14 +294,15 @@ Balancing=توازن
 FicheVentilation=بائنڈنگ کارڈ
 GeneralLedgerIsWritten=لین دین لیجر میں لکھا جاتا ہے۔
 GeneralLedgerSomeRecordWasNotRecorded=کچھ لین دین کو جرنلائز نہیں کیا جا سکا۔ اگر کوئی اور غلطی کا پیغام نہیں ہے، تو شاید اس کی وجہ یہ ہے کہ وہ پہلے ہی جرنلائز ہو چکے تھے۔
-NoNewRecordSaved=جرنلائز کرنے کے لیے مزید کوئی ریکارڈ نہیں۔
+NoNewRecordSaved=No more record to transfer
 ListOfProductsWithoutAccountingAccount=پروڈکٹس کی فہرست کسی اکاؤنٹنگ اکاؤنٹ کے پابند نہیں ہے۔
 ChangeBinding=بائنڈنگ کو تبدیل کریں۔
 Accounted=لیجر میں حساب
 NotYetAccounted=ابھی تک اکاؤنٹنگ میں منتقل نہیں ہوا ہے۔
 ShowTutorial=ٹیوٹوریل دکھائیں۔
 NotReconciled=صلح نہیں ہوئی۔
-WarningRecordWithoutSubledgerAreExcluded=انتباہ، سبلیجر اکاؤنٹ کے بغیر تمام آپریشنز کو فلٹر کیا گیا ہے اور اس منظر سے خارج کر دیا گیا ہے۔
+WarningRecordWithoutSubledgerAreExcluded=Warning, all lines without subledger account defined are filtered and excluded from this view
+AccountRemovedFromCurrentChartOfAccount=Accounting account that does not exist in the current chart of accounts
 
 ## Admin
 BindingOptions=بائنڈنگ کے اختیارات
@@ -329,8 +330,9 @@ ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=خریداری پر اکاؤنٹنسی �
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=اخراجات کی رپورٹوں پر اکاؤنٹنسی میں بائنڈنگ اور ٹرانسفر کو غیر فعال کریں (اکاؤنٹنگ میں اخراجات کی رپورٹوں کو مدنظر نہیں رکھا جائے گا)
 
 ## Export
-NotifiedExportDate=برآمد شدہ لائنوں کو ایکسپورٹ کے طور پر جھنڈا لگائیں (لائنوں میں ترمیم ممکن نہیں ہوگی)
-NotifiedValidationDate=برآمد شدہ اندراجات کی توثیق کریں (لائنوں میں ترمیم یا حذف کرنا ممکن نہیں ہوگا)
+NotifiedExportDate=Flag exported lines as Exported <span class="warning">(to modify a line, you will need to delete the whole transaction and re-transfert it into accounting)</span>
+NotifiedValidationDate=Validate and Lock the exported entries <span class="warning">(same effect than the "Closure" feature, modification and deletion of the lines will DEFINITELY not be possible)</span>
+DateValidationAndLock=Date validation and lock
 ConfirmExportFile=اکاؤنٹنگ برآمد فائل کی نسل کی تصدیق؟
 ExportDraftJournal=ڈرافٹ جرنل برآمد کریں۔
 Modelcsv=ایکسپورٹ کا ماڈل
@@ -394,6 +396,21 @@ Range=اکاؤنٹنگ اکاؤنٹ کی حد
 Calculated=حساب لگایا
 Formula=فارمولا
 
+## Reconcile
+Unlettering=Unreconcile
+AccountancyNoLetteringModified=No reconcile modified
+AccountancyOneLetteringModifiedSuccessfully=One reconcile successfully modified
+AccountancyLetteringModifiedSuccessfully=%s reconcile successfully modified
+AccountancyNoUnletteringModified=No unreconcile modified
+AccountancyOneUnletteringModifiedSuccessfully=One unreconcile successfully modified
+AccountancyUnletteringModifiedSuccessfully=%s unreconcile successfully modified
+
+## Confirm box
+ConfirmMassUnlettering=Bulk Unreconcile confirmation
+ConfirmMassUnletteringQuestion=Are you sure you want to Unreconcile the %s selected record(s)?
+ConfirmMassDeleteBookkeepingWriting=Bulk Delete confirmation
+ConfirmMassDeleteBookkeepingWritingQuestion=This will delete the transaction from the accounting (all lines related to the same transaction will be deleted) Are you sure you want to delete the %s selected record(s)?
+
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=سیٹ اپ کے کچھ لازمی اقدامات نہیں کیے گئے، براہ کرم انہیں مکمل کریں۔
 ErrorNoAccountingCategoryForThisCountry=ملک %s کے لیے کوئی اکاؤنٹنگ اکاؤنٹ گروپ دستیاب نہیں (دیکھیں ہوم - سیٹ اپ - ڈکشنریز)
@@ -406,6 +423,9 @@ Binded=لکیریں جڑی ہوئی ہیں۔
 ToBind=باندھنے کے لیے لکیریں۔
 UseMenuToSetBindindManualy=لائنیں ابھی تک پابند نہیں ہیں، دستی طور پر بائنڈنگ بنانے کے لیے مینو <a href="%s"> %s </a> استعمال کریں۔
 SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=معذرت کے ساتھ یہ ماڈیول حالات کی رسیدوں کی تجرباتی خصوصیت سے مطابقت نہیں رکھتا
+AccountancyErrorMismatchLetterCode=Mismatch in reconcile code
+AccountancyErrorMismatchBalanceAmount=The balance (%s) is not equal to 0
+AccountancyErrorLetteringBookkeeping=Errors have occurred concerning the transactions: %s
 
 ## Import
 ImportAccountingEntries=اکاؤنٹنگ اندراجات

@@ -592,8 +592,10 @@ if ($projectid > 0 || $project_ref) {
 		// Visibility
 		print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
 		if ($projectstat->public) {
+			print img_picto($langs->trans('SharedProject'), 'world', 'class="paddingrightonly"');
 			print $langs->trans('SharedProject');
 		} else {
+			print img_picto($langs->trans('PrivateProject'), 'private', 'class="paddingrightonly"');
 			print $langs->trans('PrivateProject');
 		}
 		print '</td></tr>';
@@ -834,7 +836,9 @@ foreach ($object->fields as $key => $val) {
 				$arrayofstatus[$key2] = $val2;
 			}
 			print '<td class="liste_titre'.($cssforfield ? ' '.$cssforfield : '').'">';
-			//var_dump($arrayofstatus);var_dump($search['fk_statut']);var_dump(array_values($search[$key]));
+			//var_dump($arrayofstatus);
+			//var_dump($search['fk_statut']);
+			//var_dump(array_values($search[$key]));
 			$selectedarray = null;
 			if (!empty($search[$key])) {
 				$selectedarray = array_values($search[$key]);

@@ -82,6 +82,8 @@ UseMenuModuleToolsToAddCronJobs=Gå til menyen " <a href="%s">Hjem - Administrat
 JobDisabled=Jobb deaktivert
 MakeLocalDatabaseDumpShort=Backup av lokal database
 MakeLocalDatabaseDump=Opprett en lokal database dump. Parametrene er: komprimering ('gz' eller 'bz' eller 'ingen'), backup type ('mysql', 'pgsql', 'auto'), 1, 'auto' eller filnavn for å bygge, antall backupfiler som skal beholdes
+MakeSendLocalDatabaseDumpShort=Send sikkerhetskopi av lokal database
+MakeSendLocalDatabaseDump=Send sikkerhetskopi av lokal database via e-post. Parametrene er: til, fra, emne, melding, filnavn (navn på fil sendt), filter ('sql' kun for sikkerhetskopiering av database)
 WarningCronDelayed=NB, for ytelsesformål, uansett neste utførelsesdato for aktiverte jobber, kan jobbene dine forsinkes til maksimalt %s timer før de kjøres.
 DATAPOLICYJob=Datarenser og anonymiserer
 JobXMustBeEnabled=Jobb %s må være aktivert

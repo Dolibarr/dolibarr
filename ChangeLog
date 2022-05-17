@@ -9,7 +9,7 @@ English Dolibarr ChangeLog
 For users:
 ---------------
 
-NEW: PHP 8.0 compatibility
+NEW: PHP 8.1 compatibility
 
 
 
@@ -27,6 +27,8 @@ NEW: A lot of addition of hooks.
 
 
 Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
+* There is a new specific permission to be allowed to enter timesheets. If you use timesheet, don't forget to give the new permission (disable and 
+  enable the module project if it is not visible).
 * The default value for MAIN_SECURITY_CSRF_WITH_TOKEN has been set to 2. It means any POST and any GET request that contains the "action" or "massaction"
   with a value of a sensitive action must also a valid token parameter (With previous value 1, only POST was concerned). Note: With value 3, any URL
   with parameter "action" or "massaction" need the token, whatever is the value of the action.
@@ -37,7 +39,7 @@ Following changes may create regressions for some external modules, but were nec
 * Move massaction 'confirm_createbills' from actions_massactions.inc.php to commande/list.php
 * Method fetch_all_resources(), fetch_all_used(), fetch_all_available() of DolResource has been removed (they were not used by core code).
 * Method fetch_all of DolResource has been renamed into fetchAll() to match naming conventions.
-
+* The hook 'upgrade' and 'doUpgrade2" has been renamed 'doUpgradeBefore' and 'doUpgradeAfterDB'. A new trigger 'doUpgradeAfterFiles' has been introduced.
 
 ***** ChangeLog for 15.0.1 compared to 15.0.0 *****
 FIX: #19777 #20281

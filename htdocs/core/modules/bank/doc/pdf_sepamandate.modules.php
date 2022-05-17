@@ -397,11 +397,11 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 					$bottomlasttab = $this->page_hauteur - $heightforinfotot - $heightforfreetext - $heightforfooter + 1;
 				}
 
-				/*var_dump($tab_top);
-				var_dump($heightforinfotot);
-				var_dump($heightforfreetext);
-				var_dump($heightforfooter);
-				var_dump($bottomlasttab);*/
+				//var_dump($tab_top);
+				//var_dump($heightforinfotot);
+				//var_dump($heightforfreetext);
+				//var_dump($heightforfooter);
+				//var_dump($bottomlasttab);
 
 				// Affiche zone infos
 				$posy = $this->_tableau_info($pdf, $object, $bottomlasttab, $outputlangs);

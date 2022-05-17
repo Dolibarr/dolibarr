@@ -135,8 +135,8 @@ if (empty($reshook)) {
 	}
 
 	if ($cancel) {
-		/*var_dump($cancel);
-		 var_dump($backtopage);exit;*/
+		//var_dump($cancel);
+		//var_dump($backtopage);exit;
 		if (!empty($backtopageforcancel)) {
 			header("Location: ".$backtopageforcancel);
 			exit;
@@ -554,7 +554,7 @@ if ($action == 'create') {
 	print '<tr><td>';
 	print $form->editfieldkey('Amount', 'amount', '', $object, 0, 'string', '', 1).'</td><td>';
 	print '<input name="amount" id="amount" class="minwidth75 maxwidth100" value="'.GETPOST("amount").'">&nbsp;';
-	print '<button class="dpInvisibleButtons" id="updateAmountWithLastSalary" name="_useless" type="button">'.$langs->trans('UpdateAmountWithLastSalary').'</a>';
+	print '<button class="dpInvisibleButtons datenow" id="updateAmountWithLastSalary" name="_useless" type="button">'.$langs->trans('UpdateAmountWithLastSalary').'</a>';
 	print '</td>';
 	print '</tr>';
 
