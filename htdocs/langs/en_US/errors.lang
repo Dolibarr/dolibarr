@@ -275,6 +275,9 @@ ErrorIsNotADraft=%s is not a draft
 ErrorExecIdFailed=Can't execute command "id"
 ErrorBadCharIntoLoginName=Unauthorized character in the login name
 ErrorNotApproverForHoliday=You are not the approver for leave %s 
+ErrorInvoiceLoadThirdParty=Can't load third-party object for invoice "%s"
+ErrorInvoiceLoadThirdPartyKey=Third-party key "%s" no set for invoice "%s"
+ErrorDeleteLineNotAllowedByObjectStatus=Delete line is not allowed by actual object status
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Your PHP parameter upload_max_filesize (%s) is higher than PHP parameter post_max_size (%s). This is not a consistent setup.
@@ -308,9 +311,9 @@ WarningTheHiddenOptionIsOn=Warning, the hidden option <b>%s</b> is on.
 WarningCreateSubAccounts=Warning, you can't create directly a sub account, you must create a third party or an user and assign them an accounting code to find them in this list
 WarningAvailableOnlyForHTTPSServers=Available only if using HTTPS secured connection.
 WarningModuleXDisabledSoYouMayMissEventHere=Module %s has not been enabled. So you may miss a lot of event here.
-<<<<<<< HEAD
 WarningPaypalPaymentNotCompatibleWithStrict=The value 'Strict' makes the online payment features not working correctly. Use 'Lax' instead.
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 # Validate
 RequireValidValue = Value not valid
@@ -335,4 +338,6 @@ BadSetupOfFieldFetchNotCallable = Error bad setup of field : Fetch not callable 
 =======
 =======
 >>>>>>> branch '13.0' of git@github.com:Dolibarr/dolibarr.git
+>>>>>>> branch '14.0' of git@github.com:Dolibarr/dolibarr.git
+=======
 >>>>>>> branch '14.0' of git@github.com:Dolibarr/dolibarr.git

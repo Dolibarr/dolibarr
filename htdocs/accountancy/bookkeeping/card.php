@@ -431,12 +431,12 @@ if ($action == 'create') {
 		// Account movement
 		print '<tr>';
 		print '<td class="titlefield">'.$langs->trans("NumMvts").'</td>';
-		print '<td>'.$object->piece_num.'</td>';
+		print '<td>'.($mode == '_tmp' ? '<span class="opacitymedium" title="Id tmp '.$object->piece_num.'">'.$langs->trans("Draft").'</span>' : $object->piece_num).'</td>';
 		print '</tr>';
 
 		// Date
 		print '<tr><td>';
-		print '<table class="nobordernopadding" width="100%"><tr><td>';
+		print '<table class="nobordernopadding centpercent"><tr><td>';
 		print $langs->trans('Docdate');
 		print '</td>';
 		if ($action != 'editdate') {
