@@ -201,7 +201,7 @@ abstract class CommonObject
 	public $user;
 
 	/**
-	 * @var string 	The type of originating object ('commande', 'facture', ...)
+	 * @var string 	The type of originating object ('commande', 'facture', ...). Note: on some object this field is called $origin_type
 	 * @see fetch_origin()
 	 */
 	public $origin;

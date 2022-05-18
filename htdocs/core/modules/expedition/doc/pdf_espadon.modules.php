@@ -120,7 +120,7 @@ class pdf_espadon extends ModelePdfExpedition
 	 *
 	 *	@param	DoliDB	$db		Database handler
 	 */
-	public function __construct($db)
+	public function __construct(DoliDB $db)
 	{
 		global $conf, $langs, $mysoc;
 
