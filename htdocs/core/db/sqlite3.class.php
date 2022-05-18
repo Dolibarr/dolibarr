@@ -1026,7 +1026,7 @@ class DoliDBSqlite3 extends DoliDB
 	 *
 	 *	@param	string		$table	Name of table
 	 *	@param	string		$field	Optionnel : Name of field if we want description of field
-	 *	@return	SQLite3Result		Resource
+	 *	@return	bool|SQLite3Result		Resource
 	 */
 	public function DDLDescTable($table, $field = "")
 	{

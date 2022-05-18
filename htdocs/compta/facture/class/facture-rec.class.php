@@ -222,7 +222,7 @@ class FactureRec extends CommonInvoice
 	 *
 	 * 	@param		DoliDB		$db		Database handler
 	 */
-	public function __construct($db)
+	public function __construct(DoliDB $db)
 	{
 		$this->db = $db;
 	}
