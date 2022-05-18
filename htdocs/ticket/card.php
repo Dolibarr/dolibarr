@@ -1510,7 +1510,7 @@ if ($action == 'create' || $action == 'presend') {
 			$morehtmlright = '';
 
 			$messagingUrl = DOL_URL_ROOT.'/ticket/agenda.php?track_id='.$object->track_id;
-			$morehtmlright .= dolGetButtonTitle($langs->trans('MessageListViewType'), '', 'fa fa-list-alt imgforviewmode', $messagingUrl, '', 1);
+			$morehtmlright .= dolGetButtonTitle($langs->trans('MessageListViewType'), '', 'fa fa-bars imgforviewmode', $messagingUrl, '', 1);
 
 			// Show link to add a message (if read and not closed)
 			$btnstatus = $object->fk_statut < Ticket::STATUS_CLOSED && $action != "presend" && $action != "presend_addmessage" && $action != "add_message";
@@ -1551,7 +1551,7 @@ if ($action == 'create' || $action == 'presend') {
 				$morehtmlcenter = '<div class="nowraponall">';
 				$morehtmlcenter .= dolGetButtonTitle($langs->trans('FullConversation'), '', 'fa fa-comments imgforviewmode', DOL_URL_ROOT.'/ticket/messaging.php?id='.$object->id);
 				$morehtmlcenter .= ' ';
-				$morehtmlcenter .= dolGetButtonTitle($langs->trans('FullList'), '', 'fa fa-list-alt imgforviewmode', DOL_URL_ROOT.'/ticket/agenda.php?id='.$object->id);
+				$morehtmlcenter .= dolGetButtonTitle($langs->trans('FullList'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/ticket/agenda.php?id='.$object->id);
 				$morehtmlcenter .= '</div>';
 
 				// List of actions on element
