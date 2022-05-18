@@ -3481,6 +3481,8 @@ div .tdtop {
 	vertical-align: top !important;
 	/*padding-top: 10px !important;
 	padding-bottom: 2px !important; */
+	padding-top: 6px !important;
+	padding-bottom: 4px !important;
 }
 
 table.border td, table.bordernooddeven td, div.border div div.tagtd {
