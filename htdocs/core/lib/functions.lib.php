@@ -1593,7 +1593,7 @@ function dolButtonToOpenUrlInDialogPopup($name, $label, $buttonstring, $url, $di
 		$url .= '?dol_hide_topmenu=1&dol_hide_leftmenu=1&dol_openinpopup='.urlencode($name);
 	}
 
-	$out .= '';
+	$out = '';
 
 	$backtopagejsfieldsid = ''; $backtopagejsfieldslabel = '';
 	if ($backtopagejsfields) {
@@ -1628,7 +1628,7 @@ function dolButtonToOpenUrlInDialogPopup($name, $label, $buttonstring, $url, $di
 							close: function (event, ui) {
 								returnedid = jQuery("#varforreturndialogid'.$name.'").text();
 								returnedlabel = jQuery("#varforreturndialoglabel'.$name.'").text();
-								console.log("popup has been closed. returnedid="+returnedid+" returnedlabel="+returnedlabel);
+								console.log("popup has been closed. returnedid (js var defined into parent page)="+returnedid+" returnedlabel="+returnedlabel);
 								if (returnedid != "" && returnedid != "div for returned id") {
 									jQuery("#'.(empty($backtopagejsfieldsid)?"none":$backtopagejsfieldsid).'").val(returnedid);
 								}

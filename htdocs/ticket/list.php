@@ -333,7 +333,7 @@ $user_temp = new User($db);
 $socstatic = new Societe($db);
 
 $help_url = '';
-$title = $langs->trans('TicketList');
+$title = $langs->trans('Tickets');
 $morejs = array();
 $morecss = array();
 
@@ -836,7 +836,9 @@ foreach ($object->fields as $key => $val) {
 				$arrayofstatus[$key2] = $val2;
 			}
 			print '<td class="liste_titre'.($cssforfield ? ' '.$cssforfield : '').'">';
-			//var_dump($arrayofstatus);var_dump($search['fk_statut']);var_dump(array_values($search[$key]));
+			//var_dump($arrayofstatus);
+			//var_dump($search['fk_statut']);
+			//var_dump(array_values($search[$key]));
 			$selectedarray = null;
 			if (!empty($search[$key])) {
 				$selectedarray = array_values($search[$key]);

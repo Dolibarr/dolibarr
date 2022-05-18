@@ -421,15 +421,15 @@ $prospectstatic->client = 2;
 $prospectstatic->loadCacheOfProspStatus();
 
 
-$title = $langs->trans("ListOfThirdParties");
+$title = $langs->trans("ThirdParties");
 if ($type == 'c' && (empty($search_type) || ($search_type == '1,3'))) {
-	$title = $langs->trans("ListOfCustomers");
+	$title = $langs->trans("Customers");
 }
 if ($type == 'p' && (empty($search_type) || ($search_type == '2,3'))) {
-	$title = $langs->trans("ListOfProspects");
+	$title = $langs->trans("Prospects");
 }
 if ($type == 'f' && (empty($search_type) || ($search_type == '4'))) {
-	$title = $langs->trans("ListOfSuppliers");
+	$title = $langs->trans("Suppliers");
 }
 
 // Select every potentiels, and note each potentiels which fit in search parameters
@@ -1501,7 +1501,7 @@ while ($i < min($num, $limit)) {
 	}
 	// Address
 	if (!empty($arrayfields['s.address']['checked'])) {
-		print '<td>'.dol_escape_htmltag($obj->address).'</td>';
+		print '<td class="tdoverflowmax250" title="'.dol_escape_htmltag($obj->address).'">'.dol_escape_htmltag($obj->address).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -1708,7 +1708,7 @@ while ($i < min($num, $limit)) {
 	print $hookmanager->resPrint;
 	// Date creation
 	if (!empty($arrayfields['s.datec']['checked'])) {
-		print '<td class="center nowrap">';
+		print '<td class="center nowraponall">';
 		print dol_print_date($db->jdate($obj->date_creation), 'dayhour', 'tzuser');
 		print '</td>';
 		if (!$i) {
@@ -1717,7 +1717,7 @@ while ($i < min($num, $limit)) {
 	}
 	// Date modification
 	if (!empty($arrayfields['s.tms']['checked'])) {
-		print '<td class="center nowrap">';
+		print '<td class="center nowraponall">';
 		print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
 		print '</td>';
 		if (!$i) {
@@ -1726,7 +1726,7 @@ while ($i < min($num, $limit)) {
 	}
 	// Status
 	if (!empty($arrayfields['s.status']['checked'])) {
-		print '<td class="center nowrap">'.$companystatic->getLibStatut(5).'</td>';
+		print '<td class="center nowraponall">'.$companystatic->getLibStatut(5).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}

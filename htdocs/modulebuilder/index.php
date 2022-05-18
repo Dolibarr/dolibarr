@@ -393,7 +393,8 @@ if ($dirins && in_array($action, array('initapi', 'initphpunit', 'initpagecontac
 		$varnametoupdate = 'showtabofpageagenda';
 	}
 
-	//var_dump($srcfile);var_dump($destfile);
+	//var_dump($srcfile);
+	//var_dump($destfile);
 	$result = dol_copy($srcfile, $destfile, 0, 0);
 
 	if ($result > 0) {
@@ -437,11 +438,13 @@ if ($dirins && $action == 'initsqlextrafields' && !empty($module)) {
 	$srcdir = DOL_DOCUMENT_ROOT.'/modulebuilder/template';
 	$srcfile1 = $srcdir.'/sql/llx_mymodule_myobject_extrafields.sql';
 	$destfile1 = $dirins.'/'.strtolower($module).'/sql/llx_'.strtolower($module).'_'.strtolower($objectname).'_extrafields.sql';
-	//var_dump($srcfile);var_dump($destfile);
+	//var_dump($srcfile);
+	//var_dump($destfile);
 	$result1 = dol_copy($srcfile1, $destfile1, 0, 0);
 	$srcfile2 = $srcdir.'/sql/llx_mymodule_myobject_extrafields.key.sql';
 	$destfile2 = $dirins.'/'.strtolower($module).'/sql/llx_'.strtolower($module).'_'.strtolower($objectname).'_extrafields.key.sql';
-	//var_dump($srcfile);var_dump($destfile);
+	//var_dump($srcfile);
+	//var_dump($destfile);
 	$result2 = dol_copy($srcfile2, $destfile2, 0, 0);
 
 	if ($result1 > 0 && $result2 > 0) {
@@ -489,7 +492,8 @@ if ($dirins && $action == 'inithook' && !empty($module)) {
 	$srcdir = DOL_DOCUMENT_ROOT.'/modulebuilder/template';
 	$srcfile = $srcdir.'/class/actions_mymodule.class.php';
 	$destfile = $dirins.'/'.strtolower($module).'/class/actions_'.strtolower($module).'.class.php';
-	//var_dump($srcfile);var_dump($destfile);
+	//var_dump($srcfile);
+	//var_dump($destfile);
 	$result = dol_copy($srcfile, $destfile, 0, 0);
 
 	if ($result > 0) {
@@ -522,7 +526,8 @@ if ($dirins && $action == 'inittrigger' && !empty($module)) {
 	$srcdir = DOL_DOCUMENT_ROOT.'/modulebuilder/template';
 	$srcfile = $srcdir.'/core/triggers/interface_99_modMyModule_MyModuleTriggers.class.php';
 	$destfile = $dirins.'/'.strtolower($module).'/core/triggers/interface_99_mod'.$module.'_'.$module.'Triggers.class.php';
-	//var_dump($srcfile);var_dump($destfile);
+	//var_dump($srcfile);
+	//var_dump($destfile);
 	$result = dol_copy($srcfile, $destfile, 0, 0);
 
 	if ($result > 0) {
@@ -555,7 +560,8 @@ if ($dirins && $action == 'initwidget' && !empty($module)) {
 	$srcdir = DOL_DOCUMENT_ROOT.'/modulebuilder/template';
 	$srcfile = $srcdir.'/core/boxes/mymodulewidget1.php';
 	$destfile = $dirins.'/'.strtolower($module).'/core/boxes/'.strtolower($module).'widget1.php';
-	//var_dump($srcfile);var_dump($destfile);
+	//var_dump($srcfile);
+	//var_dump($destfile);
 	$result = dol_copy($srcfile, $destfile, 0, 0);
 
 	if ($result > 0) {
@@ -588,7 +594,8 @@ if ($dirins && $action == 'initcss' && !empty($module)) {
 	$srcdir = DOL_DOCUMENT_ROOT.'/modulebuilder/template';
 	$srcfile = $srcdir.'/css/mymodule.css.php';
 	$destfile = $dirins.'/'.strtolower($module).'/css/'.strtolower($module).'.css.php';
-	//var_dump($srcfile);var_dump($destfile);
+	//var_dump($srcfile);
+	//var_dump($destfile);
 	$result = dol_copy($srcfile, $destfile, 0, 0);
 
 	if ($result > 0) {
@@ -626,7 +633,8 @@ if ($dirins && $action == 'initjs' && !empty($module)) {
 	$srcdir = DOL_DOCUMENT_ROOT.'/modulebuilder/template';
 	$srcfile = $srcdir.'/js/mymodule.js.php';
 	$destfile = $dirins.'/'.strtolower($module).'/js/'.strtolower($module).'.js.php';
-	//var_dump($srcfile);var_dump($destfile);
+	//var_dump($srcfile);
+	//var_dump($destfile);
 	$result = dol_copy($srcfile, $destfile, 0, 0);
 
 	if ($result > 0) {
@@ -664,7 +672,8 @@ if ($dirins && $action == 'initcli' && !empty($module)) {
 	$srcdir = DOL_DOCUMENT_ROOT.'/modulebuilder/template';
 	$srcfile = $srcdir.'/scripts/mymodule.php';
 	$destfile = $dirins.'/'.strtolower($module).'/scripts/'.strtolower($module).'.php';
-	//var_dump($srcfile);var_dump($destfile);
+	//var_dump($srcfile);
+	//var_dump($destfile);
 	$result = dol_copy($srcfile, $destfile, 0, 0);
 
 	if ($result > 0) {
@@ -702,7 +711,8 @@ if ($dirins && $action == 'initdoc' && !empty($module)) {
 	$srcdir = DOL_DOCUMENT_ROOT.'/modulebuilder/template';
 	$srcfile = $srcdir.'/doc/Documentation.asciidoc';
 	$destfile = $dirins.'/'.strtolower($module).'/doc/Documentation.asciidoc';
-	//var_dump($srcfile);var_dump($destfile);
+	//var_dump($srcfile);
+	//var_dump($destfile);
 	$result = dol_copy($srcfile, $destfile, 0, 0);
 
 	if ($result > 0) {
@@ -2632,7 +2642,8 @@ if ($module == 'initmodule') {
 						$pathtoobjlib   = strtolower($module).'/lib/'.strtolower($module).'_'.strtolower($tabobj).'.lib.php';
 						$pathtopicto    = strtolower($module).'/img/object_'.strtolower($tabobj).'.png';
 
-						//var_dump($pathtoclass); var_dump($dirread);
+						//var_dump($pathtoclass);
+						//var_dump($dirread);
 						$realpathtoclass    = $dirread.'/'.$pathtoclass;
 						$realpathtoapi      = $dirread.'/'.$pathtoapi;
 						$realpathtoagenda   = $dirread.'/'.$pathtoagenda;

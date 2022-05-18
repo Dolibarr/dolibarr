@@ -356,7 +356,7 @@ class pdf_ban extends ModeleBankAccountDoc
 
 		foreach($object->linkedObjects as $objecttype => $objects)
 		{
-			var_dump($objects);exit;
+			//var_dump($objects);exit;
 			if ($objecttype == 'commande')
 			{
 				$outputlangs->load('orders');

@@ -1191,7 +1191,8 @@ if (count($listofextcals)) {
 			foreach ($icalevents as $icalevent) {
 				//var_dump($icalevent);
 
-				//print $icalevent['SUMMARY'].'->'.var_dump($icalevent).'<br>';exit;
+				//print $icalevent['SUMMARY'].'->';
+				//var_dump($icalevent);exit;
 				if (!empty($icalevent['RRULE'])) {
 					continue; // We found a repeatable event. It was already split into unitary events, so we discard general rule.
 				}

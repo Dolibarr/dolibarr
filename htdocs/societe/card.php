@@ -704,8 +704,14 @@ if (empty($reshook)) {
 							$url = DOL_URL_ROOT."/fourn/card.php?socid=".$object->id;
 						}
 
-						header("Location: ".$url);
-						exit;
+						// TODO @LDR
+						if ($dol_openinpopup && $backtopagejsfields) {
+							print 'TODO Set js var of parent with id, then close popup.';
+							exit;
+						} else {
+							header("Location: ".$url);
+							exit;
+						}
 					}
 				} else {
 					$db->rollback();

@@ -2494,7 +2494,8 @@ class Ticket extends CommonObject
 			if (!$error && $id > 0) {
 				setEventMessages($langs->trans('TicketMessageSuccessfullyAdded'), null, 'mesgs');
 
-				//var_dump($_SESSION); var_dump($listofpaths);exit;
+				//var_dump($_SESSION);
+				//var_dump($listofpaths);exit;
 
 				/*
 				 * Public area

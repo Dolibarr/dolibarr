@@ -104,10 +104,9 @@ function dolSessionWrite($sess_id, $val)
 	global $sessionlastvalueread;
 	global $sessionidfound;
 
-	/*var_dump('write '.$sess_id);
-	var_dump($val);
-	var_dump('sessionlastvalueread='.$sessionlastvalueread.' sessionidfound='.$sessionidfound);
-	*/
+	//var_dump('write '.$sess_id);
+	//var_dump($val);
+	//var_dump('sessionlastvalueread='.$sessionlastvalueread.' sessionidfound='.$sessionidfound);
 
 	//$sessionlastvalueread='';
 	if ($sessionlastvalueread != $val) {
@@ -141,7 +140,7 @@ function dolSessionWrite($sess_id, $val)
 			$insert_query = "INSERT INTO ".MAIN_DB_PREFIX."session";
 			$insert_query .= "(session_id, session_variable, last_accessed, fk_user, remote_ip, user_agent)";
 			$insert_query .= " VALUES ('".$dbsession->escape($sess_id)."', '".$dbsession->escape($val)."', '".$dbsession->idate($time_stamp)."', 0, '".$dbsession->escape(getUserRemoteIP())."', '".$dbsession->escape(substr($_SERVER['HTTP_USER_AGENT'], 0, 255)."')";
-			var_dump($insert_query);
+			//var_dump($insert_query);
 			$result = $dbsession->query($insert_query);
 			if (!$result) {
 				dol_print_error($dbsession);

@@ -961,7 +961,9 @@ function show_day_events_pertype($username, $day, $month, $year, $monthshown, $s
 	$ymd = sprintf("%04d", $year).sprintf("%02d", $month).sprintf("%02d", $day);
 
 	$nextindextouse = count($colorindexused); // At first run, this is 0, so fist user has 0, next 1, ...
-	//if ($username->id && $day==1) var_dump($eventarray);
+	//if ($username->id && $day==1) {
+	//var_dump($eventarray);
+	//}
 
 	// We are in a particular day for $username, now we scan all events
 	foreach ($eventarray as $daykey => $notused) {

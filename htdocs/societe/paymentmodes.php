@@ -545,7 +545,9 @@ if (empty($reshook)) {
 					$resql = $db->query($sql);
 				}
 			}
-			//var_dump($sql);	var_dump($newcu);		var_dump($num); exit;
+			//var_dump($sql);
+			//var_dump($newcu);
+			//var_dump($num); exit;
 
 			if (!$error) {
 				$stripecu = $newcu;
