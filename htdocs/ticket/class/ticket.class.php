@@ -2701,7 +2701,9 @@ class Ticket extends CommonObject
 								// If public interface is not enable, use link to internal page into mail
 								$url_public_ticket = (!empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE) ?
 										(!empty($conf->global->TICKET_URL_PUBLIC_INTERFACE) ? $conf->global->TICKET_URL_PUBLIC_INTERFACE.'/view.php' : dol_buildpath('/public/ticket/view.php', 2)) : dol_buildpath('/ticket/card.php', 2)).'?track_id='.$object->track_id;
-								$message .= '<br>'.$langs->trans('TicketNewEmailBodyInfosTrackUrlCustomer').' : <a href="'.$url_public_ticket.'">'.$object->track_id.'</a><br>';
+								if(empty($conf->global->TICKET_REMOVE_TRACK_URL)){
+									$message .= '<br>'.$langs->trans('TicketNewEmailBodyInfosTrackUrlCustomer').' : <a href="'.$url_public_ticket.'">'.$object->track_id.'</a><br>';
+								}
 
 								// Build final message
 								$message = $message_intro.'<br><br>'.$message;
@@ -2716,7 +2718,7 @@ class Ticket extends CommonObject
 								if ($object->fk_soc > 0 && !in_array($object->origin_email, $sendto)) {
 									$object->socid = $object->fk_soc;
 									$object->fetch_thirdparty();
-									if (!empty($object->thirdparty->email)) {
+									if (!empty($object->thirdparty->email) && empty($conf->global->TICKET_REMOVE_THIRDPARTY_MAIL_COPY)) {
 										$sendto[] = $object->thirdparty->email;
 									}
 								}
