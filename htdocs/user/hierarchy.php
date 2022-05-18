@@ -54,7 +54,7 @@ $mode = GETPOST("mode", 'alpha');
 $userstatic = new User($db);
 $search_statut = GETPOST('search_statut', 'int');
 
-if ($search_statut == '') {
+if ($search_statut == '' || $search_statut == '0') {
 	$search_statut = '1';
 }
 
