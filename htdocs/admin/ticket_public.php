@@ -408,7 +408,7 @@ if (!empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE)) {
 
 	print '<br><br>';
 
-	print_fiche_titre($langs->trans("Emails"));
+	print load_fiche_titre($langs->trans("Emails"));
 
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
