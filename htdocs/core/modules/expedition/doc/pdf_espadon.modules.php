@@ -642,7 +642,7 @@ class pdf_espadon extends ModelePdfExpedition
 
 
 					if ($this->getColumnStatus('weight')) {
-						$this->printStdColumnContent($pdf, $curY, 'weight', $weighttxt.(($weighttxt && $voltxt) ? '<br>' : '').$voltxt, array('html'=>1));
+						$this->printStdColumnContent($pdf, $curY, 'weight', $weighttxt.(($weighttxt && $voltxt) ? '<br>' : '').$voltxt);
 						$nexY = max($pdf->GetY(), $nexY);
 					}
 
