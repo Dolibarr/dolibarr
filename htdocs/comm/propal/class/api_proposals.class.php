@@ -645,7 +645,7 @@ class Proposals extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		$contacts = $this->invoice->liste_contact();
+		$contacts = $this->propal->liste_contact();
 
 		foreach ($contacts as $contact) {
 			if ($contact['id'] == $contactid && $contact['code'] == $type) {
