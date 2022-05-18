@@ -5024,7 +5024,7 @@ class Facture extends CommonInvoice
 		$sql .= " WHERE f.entity IN (".getEntity('invoice', 0).")";
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			if ($resql->num_rows > 0) {
+			if ($this->db->num_rows($resql) > 0) {
 				$res = $this->db->fetch_array($resql);
 				$ref = $res['max(situation_cycle_ref)'];
 				$ref++;
@@ -5069,7 +5069,7 @@ class Facture extends CommonInvoice
 		$sql .= ' AND entity = '.($this->entity > 0 ? $this->entity : $conf->entity);
 		$resql = $this->db->query($sql);
 		$res = array();
-		if ($resql && $resql->num_rows > 0) {
+		if ($resql && $this->db->num_rows($resql) > 0) {
 			while ($row = $this->db->fetch_object($resql)) {
 				$id = $row->rowid;
 				$situation = new Facture($this->db);
@@ -5147,7 +5147,7 @@ class Facture extends CommonInvoice
 			$sql .= ' AND entity = '.($this->entity > 0 ? $this->entity : $conf->entity);
 			$resql = $this->db->query($sql);
 
-			if ($resql && $resql->num_rows > 0) {
+			if ($resql && $this->db->num_rows($resql) > 0) {
 				$res = $this->db->fetch_array($resql);
 				$last = $res['max(situation_counter)'];
 				return ($last == $this->situation_counter);
@@ -6287,7 +6287,7 @@ class FactureLigne extends CommonInvoiceLine
 
 			$sql = "SELECT situation_percent FROM ".MAIN_DB_PREFIX."facturedet WHERE rowid = ".((int) $this->fk_prev_id);
 			$resql = $this->db->query($sql);
-			if ($resql && $resql->num_rows > 0) {
+			if ($resql && $this->db->num_rows($resql) > 0) {
 				$res = $this->db->fetch_array($resql);
 
 				$returnPercent = floatval($res['situation_percent']);
