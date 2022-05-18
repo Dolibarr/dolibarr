@@ -1967,6 +1967,9 @@ td.showDragHandle {
 	padding-top: 16px;
 <?php } ?>
 }
+.bodyforlist #id-right {
+	padding-bottom: 4px;
+}
 
 /* DOL_XXX For having horizontal scroll into array (like with smartphone) */
 

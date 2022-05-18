@@ -73,13 +73,14 @@ $canadduser = (!empty($user->admin) || $user->rights->user->user->creer);
 
 $form = new Form($db);
 
+$title = $langs->trans("Users").' - '.$langs->trans("HierarchicView");
 $arrayofjs = array(
 	'/includes/jquery/plugins/jquerytreeview/jquery.treeview.js',
 	'/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js',
 );
 $arrayofcss = array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.css');
 
-llxHeader('', $langs->trans("ListOfUsers").' - '.$langs->trans("HierarchicView"), '', '', 0, 0, $arrayofjs, $arrayofcss);
+llxHeader('', $title, '', '', 0, 0, $arrayofjs, $arrayofcss, '', 'bodyforlist');
 
 
 // Load hierarchy of users
@@ -141,24 +142,20 @@ if (!is_array($user_arbo) && $user_arbo < 0) {
 
 	//var_dump($data);
 
-	$title = $langs->trans("ListOfUsers").' - '.$langs->trans("HierarchicView");
-
 	$param = "search_statut=".urlencode($search_statut);
 
 	$newcardbutton = '';
+	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', DOL_URL_ROOT.'/user/list.php?mode=kanban'.(($search_statut != '' && $search_statut >= 0) ? '&search_statut='.$search_statut : '').preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars paddingleft imgforviewmode', DOL_URL_ROOT.'/user/list.php?mode=common'.(($search_statut != '' && $search_statut >= 0) ? '&search_statut='.$search_statut : '').preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('HierarchicView'), '', 'fa fa-stream paddingleft imgforviewmode', DOL_URL_ROOT.'/user/hierarchy.php?mode=hierarchy'.(($search_statut != '' && $search_statut >= 0) ? '&search_statut='.$search_statut : '').preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', (($mode == 'hierarchy') ? 2 : 1), array('morecss'=>'reposition'));
+	$newcardbutton .= dolGetButtonTitleSeparator();
 	$newcardbutton .= dolGetButtonTitle($langs->trans('NewUser'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/user/card.php?action=create'.($mode == 'employee' ? '&employee=1' : '').'&leftmenu=', '', $canadduser);
-
-	$morehtmlright = '';
-
-	$morehtmlright .= dolGetButtonTitle($langs->trans("List"), '', 'fa fa-list paddingleft imgforviewmode', DOL_URL_ROOT.'/user/list.php'.(($search_statut != '' && $search_statut >= 0) ? '?search_statut='.$search_statut : ''));
-	$param = array('morecss'=>'marginleftonly btnTitleSelected');
-	$morehtmlright .= dolGetButtonTitle($langs->trans("HierarchicView"), '', 'fa fa-stream paddingleft imgforviewmode', DOL_URL_ROOT.'/user/hierarchy.php'.(($search_statut != '' && $search_statut >= 0) ? '?search_statut='.$search_statut : ''), '', 1, $param);
 
 	$massactionbutton = '';
 	$num = 0;
 	$limit = 0;
 
-	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, '', 'user', 0, $morehtmlright.' '.$newcardbutton, '', $limit, 0, 0, 1);
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, '', 'user', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 	if ($optioncss != '') {

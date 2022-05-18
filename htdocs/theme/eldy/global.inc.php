@@ -1882,6 +1882,9 @@ td.showDragHandle {
 	background: var(--colorbackbody);
 	padding-bottom: 20px;
 }
+.bodyforlist #id-right {
+	padding-bottom: 4px;
+}
 
 /* DOL_XXX For having horizontal scroll into array (like with smartphone) */
 
@@ -3573,7 +3576,7 @@ div .tdtop {
 	/*padding-top: 10px !important;
 	padding-bottom: 2px !important; */
 	padding-top: 6px !important;
-    padding-bottom: 4px !important;
+	padding-bottom: 4px !important;
 }
 
 table.border td, table.bordernooddeven td, div.border div div.tagtd {
