@@ -4879,7 +4879,7 @@ abstract class CommonObject
 				$product_static->fetch($line->fk_product);
 
 				$product_static->ref = $line->ref; //can change ref in hook
-				$product_static->label = $line->label; //can change label in hook
+				$product_static->label = !empty($line->label) ? $line->label : ""; //can change label in hook
 
 				$text = $product_static->getNomUrl(1);
 
@@ -4915,7 +4915,7 @@ abstract class CommonObject
 				$description .= (!empty($conf->global->PRODUIT_DESC_IN_FORM) ? '' : dol_htmlentitiesbr($line->description)); // Description is what to show on popup. We shown nothing if already into desc.
 			}
 
-			$line->pu_ttc = price2num($line->subprice * (1 + ($line->tva_tx / 100)), 'MU');
+			$line->pu_ttc = price2num((!empty($line->subprice) ? $line->subprice : 0) * (1 + ((!empty($line->tva_tx) ? $line->tva_tx : 0) / 100)), 'MU');
 
 			// Output template part (modules that overwrite templates must declare this into descriptor)
 			// Use global variables + $dateSelector + $seller and $buyer
@@ -6837,7 +6837,7 @@ abstract class CommonObject
 				if ((string) $key == '') {
 					continue;
 				}
-				list($val, $parent) = explode('|', $val);
+				if (strpos($val, "|") !== false) list($val, $parent) = explode('|', $val);
 				$out .= '<option value="'.$key.'"';
 				$out .= (((string) $value == (string) $key) ? ' selected' : '');
 				$out .= (!empty($parent) ? ' parent="'.$parent.'"' : '');
