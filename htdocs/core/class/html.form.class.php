@@ -466,6 +466,8 @@ class Form
 			$ext_element	= false;
 			$button_only	= false;
 			$inputOption = '';
+			$rows = '';
+			$cols = '';
 
 			if (is_object($object)) {
 				$element = $object->element;
@@ -1001,9 +1003,10 @@ class Form
 	 *  @param  string	$htmloption     		Options html on select object
 	 * 	@param	int		$forcecombo				Force to load all values and output a standard combobox (with no beautification)
 	 *  @param	array	$events					Event options to run on change. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
+	 *  @param	array	$disableautocomplete	Disable autocomplete
 	 *  @return string           				HTML string with select and input
 	 */
-	public function select_incoterms($selected = '', $location_incoterms = '', $page = '', $htmlname = 'incoterm_id', $htmloption = '', $forcecombo = 1, $events = array())
+	public function select_incoterms($selected = '', $location_incoterms = '', $page = '', $htmlname = 'incoterm_id', $htmloption = '', $forcecombo = 1, $events = array(), $disableautocomplete = 0)
 	{
 		// phpcs:enable
 		global $conf, $langs;
@@ -1038,8 +1041,6 @@ class Form
 			$num = $this->db->num_rows($resql);
 			$i = 0;
 			if ($num) {
-				$foundselected = false;
-
 				while ($i < $num) {
 					$obj = $this->db->fetch_object($resql);
 					$incotermArray[$i]['rowid'] = $obj->rowid;
@@ -1901,6 +1902,7 @@ class Form
 	{
 		// phpcs:enable
 		global $conf, $user, $langs, $hookmanager;
+		global $action;
 
 		// If no preselected user defined, we take current user
 		if ((is_numeric($selected) && ($selected < -2 || empty($selected))) && empty($conf->global->SOCIETE_DISABLE_DEFAULT_SALESREPRESENTATIVE)) {
@@ -2414,6 +2416,7 @@ class Form
 
 		if (!$forcecombo) {
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
+			$events = array();
 			$out .= ajax_combobox($htmlname, $events, getDolGlobalInt("PRODUIT_USE_SEARCH_TO_SELECT"));
 		}
 
@@ -4192,6 +4195,7 @@ class Form
 				}
 			}
 			$out .= '>';
+			$value = '';
 			if ($format == 0) {
 				$value = ($maxlength ?dol_trunc($arraytypes['label'], $maxlength) : $arraytypes['label']);
 			} elseif ($format == 1) {
@@ -5883,14 +5887,16 @@ class Form
 	/**
 	 *	Return array of currencies in user language
 	 *
-	 *  @param	string	$selected    preselected currency code
-	 *  @param  string	$htmlname    name of HTML select list
-	 *  @param  integer	$useempty    1=Add empty line
-	 *  @param string $filter Optional filters criteras (example: 'code <> x', ' in (1,3)')
-	 *  @param bool $excludeConfCurrency false  = If company current currency not in table, we add it into list. Should always be available.  true = we are in currency_rate update , we don't want to see conf->currency in select
+	 *  @param	string	$selected   			Preselected currency code
+	 *  @param  string	$htmlname   			Name of HTML select list
+	 *  @param  integer	$useempty   			1=Add empty line
+	 *  @param 	string 	$filter 				Optional filters criteras (example: 'code <> x', ' in (1,3)')
+	 *  @param 	bool 	$excludeConfCurrency 	false = If company current currency not in table, we add it into list. Should always be available.
+	 *  										true = we are in currency_rate update , we don't want to see conf->currency in select
+	 *  @param	string	$morecss				More css
 	 * 	@return	string
 	 */
-	public function selectMultiCurrency($selected = '', $htmlname = 'multicurrency_code', $useempty = 0, $filter = '', $excludeConfCurrency = false)
+	public function selectMultiCurrency($selected = '', $htmlname = 'multicurrency_code', $useempty = 0, $filter = '', $excludeConfCurrency = false, $morecss = '')
 	{
 		global $conf, $langs;
 
@@ -5911,7 +5917,7 @@ class Form
 		}
 
 		$out = '';
-		$out .= '<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
+		$out .= '<select class="flat'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'" id="'.$htmlname.'">';
 		if ($useempty) {
 			$out .= '<option value="">&nbsp;</option>';
 		}
@@ -6331,6 +6337,9 @@ class Form
 
 		// Analysis of the pre-selection date
 		$reg = array();
+		$shour = '';
+		$smin = '';
+		$ssec = '';
 		if (preg_match('/^([0-9]+)\-([0-9]+)\-([0-9]+)\s?([0-9]+)?:?([0-9]+)?/', $set_time, $reg)) {	// deprecated usage
 			// Date format 'YYYY-MM-DD' or 'YYYY-MM-DD HH:MM:SS'
 			$syear	= (!empty($reg[1]) ? $reg[1] : '');
@@ -6347,10 +6356,6 @@ class Form
 				$shour = dol_print_date($set_time, "%H", $gm);
 				$smin = dol_print_date($set_time, "%M", $gm);
 				$ssec = dol_print_date($set_time, "%S", $gm);
-			} else {
-				$shour = '';
-				$smin = '';
-				$ssec = '';
 			}
 		} else {
 			// Date est '' ou vaut -1
@@ -6876,6 +6881,7 @@ class Form
 				unset($tickettmpselect);
 			}
 
+			$urloption = '';
 			$out .= ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/ticket/ajax/tickets.php', $urloption, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT, 1, $ajaxoptions);
 
 			if (empty($hidelabel)) $out .= $langs->trans("RefOrLabel").' : ';
@@ -7018,16 +7024,11 @@ class Form
 	protected function constructTicketListOption(&$objp, &$opt, &$optJson, $selected, $filterkey = '')
 	{
 		$outkey = '';
-		$outval = '';
 		$outref = '';
-		$outlabel = '';
 		$outtype = '';
-
-		$label = $objp->label;
 
 		$outkey = $objp->rowid;
 		$outref = $objp->ref;
-		$outlabel = $objp->label;
 		$outtype = $objp->fk_product_type;
 
 		$opt = '<option value="'.$objp->rowid.'"';
@@ -7036,10 +7037,9 @@ class Form
 		$opt .= $objp->ref;
 		$objRef = $objp->ref;
 		if (!empty($filterkey) && $filterkey != '') $objRef = preg_replace('/('.preg_quote($filterkey, '/').')/i', '<strong>$1</strong>', $objRef, 1);
-		$outval .= $objRef;
 
 		$opt .= "</option>\n";
-		$optJson = array('key'=>$outkey, 'value'=>$outref, 'type'=>$outtypem);
+		$optJson = array('key'=>$outkey, 'value'=>$outref, 'type'=>$outtype);
 	}
 
 	/**
@@ -7619,7 +7619,7 @@ class Form
 		if (!empty($objecttmp->fields)) {	// For object that declare it, it is better to use declared fields (like societe, contact, ...)
 			$tmpfieldstoshow = '';
 			foreach ($objecttmp->fields as $key => $val) {
-				if (!dol_eval($val['enabled'], 1, 1, 1, '1')) {
+				if (!dol_eval($val['enabled'], 1, 1, '1')) {
 					continue;
 				}
 				if (!empty($val['showoncombobox'])) {
@@ -7646,6 +7646,7 @@ class Form
 
 		$out = '';
 		$outarray = array();
+		$tmparray = array();
 
 		$num = 0;
 
@@ -8284,7 +8285,7 @@ class Form
 	 *	@param	string	$htmlname		Name of HTML field
 	 *	@param	array	$array			Array with array of fields we could show. This array may be modified according to setup of user.
 	 *  @param  string  $varpage        Id of context for page. Can be set by caller with $varpage=(empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage);
-	 * 	@param	string	$pos       		position colon on liste value left or right
+	 * 	@param	string	$pos       		Position colon on liste value 'left' or '' (meaning 'right').
 	 *	@return	string					HTML multiselect string
 	 *  @see selectarray()
 	 */
@@ -9351,10 +9352,12 @@ class Form
 		global $conf, $user, $langs;
 
 		// Permettre l'exclusion de groupes
+		$excludeGroups = null;
 		if (is_array($exclude)) {
 			$excludeGroups = implode(",", $exclude);
 		}
 		// Permettre l'inclusion de groupes
+		$includeGroups = null;
 		if (is_array($include)) {
 			$includeGroups = implode(",", $include);
 		}
@@ -9918,7 +9921,7 @@ class Form
 						//if ($disabled) $out.=' disabled';						// with select2, field can't be preselected if disabled
 						$out .= '>' . $labeltoshow . '</option>';
 					} else {
-						if ($hideunselectables && $disabled && ($selected != $obj->rowid)) {
+						if ($disabled && ($selected != $obj->rowid)) {
 							$resultat = '';
 						} else {
 							$resultat = '<option value="' . $obj->rowid . '"';

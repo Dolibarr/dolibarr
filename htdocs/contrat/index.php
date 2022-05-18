@@ -361,7 +361,8 @@ if ($result) {
 			print img_warning($langs->trans("Late"));
 		}
 		print '</td>';
-		print '<td>';
+
+		print '<td class="tdoverflowmax150">';
 		print $staticcompany->getNomUrl(1, '', 20);
 		print '</td>';
 		print '<td class="center nowraponall" title="'.dol_escape_htmltag($langs->trans("DateModification").': '.dol_print_date($datem, 'dayhour', 'tzuserrel')).'">';
@@ -444,7 +445,7 @@ if ($resql) {
 			}
 		}
 		print '</td>';
-		print '<td>';
+		print '<td class="tdoverflowmax125">';
 		$staticcompany->id = $obj->fk_soc;
 		$staticcompany->name = $obj->name;
 		print $staticcompany->getNomUrl(1, '', 20);
@@ -526,7 +527,7 @@ if ($resql) {
 			}
 		}
 		print '</td>';
-		print '<td>';
+		print '<td class="tdoverflowmax125">';
 		$staticcompany->id = $obj->fk_soc;
 		$staticcompany->name = $obj->name;
 		print $staticcompany->getNomUrl(1, '', 20);
@@ -609,7 +610,7 @@ if ($resql) {
 			}
 		}
 		print '</td>';
-		print '<td>';
+		print '<td class="tdoverflowmax125">';
 		$staticcompany->id = $obj->fk_soc;
 		$staticcompany->name = $obj->name;
 		print $staticcompany->getNomUrl(1, '', 20);

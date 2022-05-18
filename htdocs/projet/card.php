@@ -619,7 +619,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 		if (!GETPOSTISSET('backtopage')) {
 			$url = '/societe/card.php?action=create&client=3&fournisseur=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create');
 			$newbutton = '<span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddThirdParty").'"></span>';
-			// TODO @LDR Impletment this
+			// TODO @LDR Implement this
 			//$tmpbacktopagejsfields = 'socid:search_socid';
 			//print dolButtonToOpenUrlInDialogPopup('addthirdparty', $langs->transnoentitiesnoconv('AddThirdParty'), $newbutton, $url, '', '', $tmpbacktopagejsfields);
 			print ' <a href="'.DOL_URL_ROOT.$url.'">'.$newbutton.'</a>';

@@ -748,6 +748,7 @@ class AccountingAccount extends CommonObject
 		$reshook = $hookmanager->executeHooks('accoutancyBindingCalculation', $parameters); // Note that $action and $object may have been modified by some hooks
 
 		if (empty($reshook)) {
+			$const_name = '';
 			if ($type == 'customer') {
 				$const_name = "SOLD";
 			} elseif ($type == 'supplier') {

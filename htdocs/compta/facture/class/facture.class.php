@@ -428,7 +428,7 @@ class Facture extends CommonInvoice
 	 *
 	 * 	@param	DoliDB		$db			Database handler
 	 */
-	public function __construct($db)
+	public function __construct(DoliDB $db)
 	{
 		$this->db = $db;
 	}
@@ -1652,13 +1652,13 @@ class Facture extends CommonInvoice
 				0, // date_start
 				0, // date_end
 				0,
-				$lines[$i]->info_bits, // info_bits
+				0, // info_bits
 				0,
 				'HT',
 				0,
 				0, // product_type
 				1,
-				$lines[$i]->special_code,
+				0, // special_code
 				$deposit->origin,
 				0,
 				0,
@@ -5503,6 +5503,7 @@ class Facture extends CommonInvoice
 						$sendContent = make_substitutions($content, $substitutionarray, $outputlangs, 1);
 
 						// Recipient
+						$to = '';
 						$res = $tmpinvoice->fetch_thirdparty();
 						$recipient = $tmpinvoice->thirdparty;
 						if ($res > 0) {
@@ -5524,7 +5525,7 @@ class Facture extends CommonInvoice
 							$error++;
 						}
 
-						if (!$error) {
+						if (!$error && $to) {
 							// Errors Recipient
 							$errors_to = $conf->global->MAIN_MAIL_ERRORS_TO;
 

@@ -150,7 +150,6 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		$this->option_tva = 1; // Manage the vat option FACTURE_TVAOPTION
 		$this->option_modereg = 1; // Display payment mode
 		$this->option_condreg = 1; // Display payment terms
-		$this->option_codeproduitservice = 1; // Display product-service code
 		$this->option_multilang = 1; // Available in several languages
 
 		// Define column position
@@ -967,13 +966,14 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 	/**
 	 *  Show payments table
 	 *
-	 *  @param  TCPDF               $pdf            Object PDF
-	 *  @param  Object			    $object         Object to show
-	 *  @param  int                 $posy           Position y in PDF
-	 *  @param  Translate           $outputlangs    Object langs for output
-	 *  @return int                                 <0 if KO, >0 if OK
+	 *  @param  TCPDF       $pdf            	Object PDF
+	 *  @param  Object		$object         	Object to show
+	 *  @param  int         $posy           	Position y in PDF
+	 *  @param  Translate   $outputlangs    	Object langs for output
+	 *  @param  int			$heightforfooter 	Height for footer
+	 *  @return int                             <0 if KO, >0 if OK
 	 */
-	protected function _tableau_versements(&$pdf, $object, $posy, $outputlangs)
+	protected function _tableau_versements(&$pdf, $object, $posy, $outputlangs, $heightforfooter = 0)
 	{
 		// phpcs:enable
 		global $conf;

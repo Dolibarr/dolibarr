@@ -61,6 +61,19 @@ abstract class CommonObjectLine extends CommonObject
 	public $date_fin_prevue;
 	public $date_fin_reel;
 
+	public $weight;
+	public $weight_units;
+	public $width;
+	public $width_units;
+	public $height;
+	public $height_units;
+	public $length;
+	public $length_units;
+	public $surface;
+	public $surface_units;
+	public $volume;
+	public $volume_units;
+
 
 	/**
 	 *	Constructor

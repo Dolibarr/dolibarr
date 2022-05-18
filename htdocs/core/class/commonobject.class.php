@@ -116,6 +116,11 @@ abstract class CommonObject
 	public $array_languages = null; // Value is array() when load already tried
 
 	/**
+	 * @var mixed		Array of linked objects, set and used when calling ->create() to be able to create links during the creation of object
+	 */
+	public $linked_objects;
+
+	/**
 	 * @var int[][]		Array of linked objects ids. Loaded by ->fetchObjectLinked
 	 */
 	public $linkedObjectsIds;
@@ -201,7 +206,7 @@ abstract class CommonObject
 	public $user;
 
 	/**
-	 * @var string 	The type of originating object ('commande', 'facture', ...)
+	 * @var string 	The type of originating object ('commande', 'facture', ...). Note: on some object this field is called $origin_type
 	 * @see fetch_origin()
 	 */
 	public $origin;

@@ -111,6 +111,18 @@ class pdf_standard extends ModelePDFStock
 	 */
 	public $emetteur;
 
+	public $wref;
+	public $posxdesc;
+	public $posxlabel;
+	public $posxtva;
+	public $posxqty;
+	public $posxup;
+	public $posxunit;
+	public $posxdiscount;
+	public $postotalht;
+
+	public $tabTitleHeight;
+
 
 	/**
 	 *	Constructor
@@ -174,12 +186,6 @@ class pdf_standard extends ModelePDFStock
 			$this->posxdiscount -= 20;
 			$this->postotalht -= 20;
 		}
-		$this->tva = array();
-		$this->tva_array = array();
-		$this->localtax1 = array();
-		$this->localtax2 = array();
-		$this->atleastoneratenotnull = 0;
-		$this->atleastonediscount = 0;
 
 		$this->tabTitleHeight = 11;
 	}

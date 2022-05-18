@@ -117,6 +117,14 @@ class pdf_standard extends ModelePDFSuppliersPayments
 	 */
 	public $emetteur;
 
+	public $posxdate;
+	public $posxreffacturefourn;
+	public $posxreffacture;
+	public $posxtype;
+	public $posxtotalht;
+	public $posxtva;
+	public $posxtotalttc;
+
 
 	/**
 	 *	Constructor

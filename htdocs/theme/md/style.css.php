@@ -1967,6 +1967,9 @@ td.showDragHandle {
 	padding-top: 16px;
 <?php } ?>
 }
+.bodyforlist #id-right {
+	padding-bottom: 4px;
+}
 
 /* DOL_XXX For having horizontal scroll into array (like with smartphone) */
 
@@ -4187,7 +4190,7 @@ div.tabBar .noborder {
 }
 div .tdtop {
 	vertical-align: top !important;
-	padding-top: 5px !important;
+	padding-top: 8px !important;
 	padding-bottom: 0px !important;
 }
 
@@ -5174,6 +5177,7 @@ td.gtaskname {
 /* CSS for treeview */
 .treeview ul { background-color: transparent !important; margin-bottom: 4px !important; margin-top: 0 !important; padding-top: 8px !important; }
 .treeview li { background-color: transparent !important; padding: 0 0 0 16px !important; min-height: 30px; }
+.treeview li table { min-height: 30px; }
 .treeview .hover { color: var(--colortextlink) !important; text-decoration: underline !important; }
 .treeview .hitarea { margin-top: 3px; }
 

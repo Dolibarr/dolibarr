@@ -41,6 +41,105 @@ Following changes may create regressions for some external modules, but were nec
 * Method fetch_all of DolResource has been renamed into fetchAll() to match naming conventions.
 * The hook 'upgrade' and 'doUpgrade2" has been renamed 'doUpgradeBefore' and 'doUpgradeAfterDB'. A new trigger 'doUpgradeAfterFiles' has been introduced.
 
+
+
+***** ChangeLog for 15.0.2 compared to 15.0.1 *****
+
+FIX: #19777 #20281
+FIX: #20140 #20301
+FIX: #20279 Accountancy - PostGreSQL - Error on mass update lines already binded
+FIX: #20476 migration postgresql 14.0.x to 15.0.x packaging type
+FIX: #20733 Inventory: Do not use batch qty even if present if batch module is disabled.
+FIX: action comm list: holiday last day not included + handle duration with halfdays
+FIX: Add missing entity on salary's payment
+FIX: Add 'recruitment' into check array
+FIX: add tools to fix bad bank amount in accounting with multicurrency
+FIX: assign member cateogry to a member
+FIX: backport
+FIX: bad bank amount in accounting with multicurrency
+FIX: Bad condition on remx
+FIX: Bad filter on date on salary list
+FIX: bad link to add a customer price (token duplicated)
+FIX: bad status of member on widget by type and status
+FIX: better error management at product selling price update
+FIX: Can't edit bank record
+FIX: check mandatory thirdparty fields for mass action
+FIX: check thirdparty object loaded and properties exist
+FIX: comment
+FIX: compatibility for ticket number sharing
+FIX: compatibility with multicompany sharings
+FIX: contact card: single extrafield update failed
+FIX: country not visible into list of states
+FIX: Delete an extrafield where type is double
+FIX: deprecated module are not more viewed as external modules
+FIX: Disable customer type by default if type prospect/customer is disabled
+FIX: each time we create a supplier order, we need to give it a ref_supplier
+FIX: Error management
+FIX: fatal error for $db  usage in tpl
+FIX: filter into the list of product lots
+FIX: Filter on Object Referent page give CRSF page
+FIX: Fix default options ($hidedetails, $hidedesc, $hideref) with globales when generate PDF in mass actions
+FIX: Fix search by filters
+FIX: Fix the adding of lines in the create invoice functions
+FIX: forgotten form confirm before various payment delete
+FIX: holiday/leave requests: write status change emails in HTML
+FIX: include discount price for PMP after a reception (Issue #20029)
+FIX: incrementation
+FIX: in salary stats and payment list, we must check right perms as well as salary list
+FIX: intervention entity missing
+FIX: label tax cat trad
+FIX: Mass action ship orders
+FIX: missing advanced perms
+FIX: missing call to executeHooks()
+FIX: Missing entity on adding new VAT
+FIX: missing hook for row ordering
+FIX: missing hook parameter ($possiblelinks)
+FIX: missing parenthesis
+FIX: missing picto in combo of mass actions of thirdparties.
+FIX: missing signature library when ODT model is used
+FIX: Missing unset fields after updateline expensereport
+FIX: ModuileBuilder - Fix getLinesArray() error reporting
+FIX: Move delete task time trigger position
+FIX: Navigation between invoices
+FIX: No empty line inserted into accounting_bookkeeping
+FIX: Numbering of sepa files
+FIX: object cloning: set unique extrafield values to null to prevent duplicates
+FIX: on update with action reminder in future there is user key error
+FIX: originproductline array td identification data-id
+FIX: out of memory when more than 100 000 invoices.
+FIX: permit access to medias when logged in a different entity
+FIX: phpcs
+FIX: project creation prevented if PROJECTLEADER contact role renamed, de-activated or deleted
+FIX: project timesheet by week: cleanup unused code
+FIX: project timesheet: public holidays offset by 1 day
+FIX: project timesheets: assume Saturday and Sunday as default weekend days when working days conf is empty or badly formed
+FIX: propal list: bad error management when setting "not signed" mass action
+FIX: propal list mass action translations and error management (v14 edition)
+FIX: propal list: missing not signed massaction translation keys for transifex
+FIX: PR returns
+FIX: ref_client doesn't exists on supplier invoice, then ref_fourn needs to have a default value when we want to bill several supplier orders
+FIX: replenish and manage product stock by warhouse
+FIX: sending email on payment of registration of event
+FIX: SEPA ICS is not mandatory for bank transfer
+FIX: Set datec when add time spent on a project task
+FIX: status filter on supplierOrder stats doesn't work
+FIX: stickler-ci
+FIX: still prevent project creation if PROJECTLEADER role unavailable, but with a specific error message
+FIX: Supplier order stats
+FIX: Tabulation must be allowed for HTML content
+FIX: tool to fix bank account not in main currency for vendor invoice
+FIX: translations
+FIX: Travis + Update dev
+FIX: truncate Customer Reference too long on PDF header (PR #20718)
+FIX: uniformize code
+FIX: Update of sale price (log not correctly updated)
+FIX: user actions rights when mulit-company transverse mode is enabled
+FIX: user employee tab: offset in open days messes up holiday length calculation
+FIX: We need to have a different default_ref_supplier for each new fourn invoice
+FIX: "WHERE" clause missing on resource export
+FIX: #yogosha9754
+
+
 ***** ChangeLog for 15.0.1 compared to 15.0.0 *****
 FIX: #19777 #20281
 FIX: bad position of extrafields for interventions
