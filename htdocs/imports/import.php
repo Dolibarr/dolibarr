@@ -1106,14 +1106,14 @@ if ($step == 4 && $datatoimport) {
 			if ($j == $i) {
 				print ' selected';
 			}
-			print " data-html='".dol_escape_htmltag($label)."'";
+			print ' data-html="'.dol_escape_htmltag($label).'"';
 			print '>';
 			print $label;
 			print '</options>';
 			$j++;
 		}
 		print '</select>';
-		//print ajax_combobox('selectorderimport_'.($i+1));
+		print ajax_combobox('selectorderimport_'.($i+1));
 		print "</td>";
 
 		print '<td class="nowraponall" style="font-weight:normal; text-align:right">';
