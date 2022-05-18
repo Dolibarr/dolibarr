@@ -74,6 +74,9 @@ abstract class CommonObjectLine extends CommonObject
 	public $volume;
 	public $volume_units;
 
+	public $multilangs;
+
+
 
 	/**
 	 *	Constructor

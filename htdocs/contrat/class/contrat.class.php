@@ -871,9 +871,11 @@ class Contrat extends CommonObject
 
 				// multilangs
 				if (!empty($conf->global->MAIN_MULTILANGS) && !empty($objp->fk_product) && !empty($loadalsotranslation)) {
-					$line = new Product($this->db);
-					$line->fetch($objp->fk_product);
-					$line->getMultiLangs();
+					$tmpproduct = new Product($this->db);
+					$tmpproduct->fetch($objp->fk_product);
+					$tmpproduct->getMultiLangs();
+
+					$line->multilangs = $tmpproduct->multilangs;
 				}
 
 				$this->lines[$pos] = $line;
@@ -2743,6 +2745,7 @@ class ContratLigne extends CommonObjectLine
 	public $fk_user_cloture;
 
 	public $commentaire;
+
 
 	const STATUS_INITIAL = 0;
 	const STATUS_OPEN = 4;
