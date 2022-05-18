@@ -27,6 +27,7 @@ require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
 require_once DOL_DOCUMENT_ROOT."/ticket/class/ticket.class.php";
 require_once DOL_DOCUMENT_ROOT."/core/lib/ticket.lib.php";
 require_once DOL_DOCUMENT_ROOT."/core/class/html.formcategory.class.php";
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsetup.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "ticket"));
@@ -46,6 +47,55 @@ $scandir = GETPOST('scandir', 'alpha');
 $type = 'ticket';
 
 $error = 0;
+
+$formSetup = new FormSetup($db);
+
+
+// Auto mark ticket read when created from backoffice
+$item = $formSetup->newItem('TICKET_AUTO_READ_WHEN_CREATED_FROM_BACKEND');
+$item->setAsYesNo();
+$item->nameText = $langs->transnoentities('TicketsAutoReadTicket');
+$item->helpText = $langs->transnoentities('TicketsAutoReadTicketHelp');
+
+// Auto assign ticket at user who created it
+$item = $formSetup->newItem('TICKET_AUTO_ASSIGN_USER_CREATE');
+$item->setAsYesNo();
+$item->nameText = $langs->transnoentities('TicketsAutoAssignTicket');
+$item->helpText = $langs->transnoentities('TicketsAutoAssignTicketHelp');
+
+// Auto notify contacts when closing the ticket
+$item = $formSetup->newItem('TICKET_NOTIFY_AT_CLOSING');
+$item->setAsYesNo();
+$item->nameText = $langs->transnoentities('TicketsAutoNotifyClose');
+$item->helpText = $langs->transnoentities('TicketsAutoNotifyCloseHelp');
+
+if (! empty($conf->product->enabled)) {
+	$item = $formSetup->newItem('TICKET_PRODUCT_CATEGORY');
+	$item->setAsCategory('product');
+	$item->nameText = $langs->transnoentities('TicketChooseProductCategory');
+	$item->helpText = $langs->transnoentities('TicketChooseProductCategoryHelp');
+}
+
+$item = $formSetup->newItem('TICKET_DELAY_BEFORE_FIRST_RESPONSE');
+$item->fieldAttr['type'] = 'number';
+$item->nameText = $langs->transnoentities('TicketsDelayBeforeFirstAnswer');
+$item->helpText = $langs->transnoentities('TicketsDelayBeforeFirstAnswerHelp');
+
+$item = $formSetup->newItem('TICKET_DELAY_SINCE_LAST_RESPONSE');
+$item->fieldAttr['type'] = 'number';
+$item->nameText = $langs->transnoentities('TicketsDelayBetweenAnswers');
+$item->helpText = $langs->transnoentities('TicketsDelayBetweenAnswersHelp');
+
+// TODO : Allow use dolibarr mail template system instead of hard coded mail template and remove this option and add a select template model option
+$item = $formSetup->newItem('TICKET_REMOVE_TRACK_URL');
+$item->setAsYesNo();
+$item->nameText = $langs->transnoentities('TicketsRemoveTrackUrl');
+$item->helpText = $langs->transnoentities('TicketsRemoveTrackUrlHelp');
+
+$item = $formSetup->newItem('TICKET_REMOVE_THIRDPARTY_MAIL_COPY');
+$item->setAsYesNo();
+$item->nameText = $langs->transnoentities('TicketsRemoveThirdPartyEmailCopy');
+$item->helpText = $langs->transnoentities('TicketsRemoveThirdPartyEmailCopyHelp');
 
 
 /*
@@ -99,50 +149,10 @@ if ($action == 'updateMask') {
 	// par appel methode canBeActivated
 
 	dolibarr_set_const($db, "TICKET_ADDON", $value, 'chaine', 0, '', $conf->entity);
-} elseif ($action == 'setvarworkflow') {
-	$param_auto_read = GETPOST('TICKET_AUTO_READ_WHEN_CREATED_FROM_BACKEND', 'alpha');
-	$res = dolibarr_set_const($db, 'TICKET_AUTO_READ_WHEN_CREATED_FROM_BACKEND', $param_auto_read, 'chaine', 0, '', $conf->entity);
-	if (!($res > 0)) {
-		$error++;
-	}
-
-	$param_auto_assign = GETPOST('TICKET_AUTO_ASSIGN_USER_CREATE', 'alpha');
-	$res = dolibarr_set_const($db, 'TICKET_AUTO_ASSIGN_USER_CREATE', $param_auto_assign, 'chaine', 0, '', $conf->entity);
-	if (!($res > 0)) {
-		$error++;
-	}
-
-	$param_limit_view = GETPOST('TICKET_LIMIT_VIEW_ASSIGNED_ONLY', 'alpha');
-	$res = dolibarr_set_const($db, 'TICKET_LIMIT_VIEW_ASSIGNED_ONLY', $param_limit_view, 'chaine', 0, '', $conf->entity);
-	if (!($res > 0)) {
-		$error++;
-	}
-
-	if (GETPOSTISSET('product_category_id')) {
-		$param_ticket_product_category = GETPOST('product_category_id', 'int');
-		$res = dolibarr_set_const($db, 'TICKET_PRODUCT_CATEGORY', $param_ticket_product_category, 'chaine', 0, '', $conf->entity);
-		if (!($res > 0)) {
-			$error++;
-		}
-	}
-
-	$param_delay_first_response = GETPOST('delay_first_response', 'int');
-	$res = dolibarr_set_const($db, 'TICKET_DELAY_BEFORE_FIRST_RESPONSE', $param_delay_first_response, 'chaine', 0, '', $conf->entity);
-	if (!($res > 0)) {
-		$error++;
-	}
-
-	$param_delay_between_responses = GETPOST('delay_between_responses', 'int');
-	$res = dolibarr_set_const($db, 'TICKET_DELAY_SINCE_LAST_RESPONSE', $param_delay_between_responses, 'chaine', 0, '', $conf->entity);
-	if (!($res > 0)) {
-		$error++;
-	}
-
-	$param_auto_notify_close = GETPOST('TICKET_NOTIFY_AT_CLOSING', 'alpha');
-	$res = dolibarr_set_const($db, 'TICKET_NOTIFY_AT_CLOSING', $param_auto_notify_close, 'chaine', 0, '', $conf->entity);
-	if (!($res > 0)) {
-		$error++;
-	}
+} if ($action == 'update' && !empty($formSetup) && is_object($formSetup) && !empty($user->admin)) {
+	$formSetup->saveConfFromPost();
+	header('Location:'.$_SERVER['PHP_SELF']);
+	exit;
 } elseif ($action == 'setvar') {
 	include_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
 
@@ -478,106 +488,21 @@ print '</table>';
 print '</div><br>';
 
 
-print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" enctype="multipart/form-data" >';
-print '<input type="hidden" name="token" value="'.newToken().'">';
-print '<input type="hidden" name="action" value="setvarworkflow">';
-print '<input type="hidden" name="page_y" value="">';
-
-print load_fiche_titre($langs->trans("Other"), '', '');
-print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder centpercent">';
-
-print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Parameter").'</td>';
-print '<td></td>';
-print '<td></td>';
-print "</tr>\n";
-
-// Auto mark ticket read when created from backoffice
-print '<tr class="oddeven"><td>'.$langs->trans("TicketsAutoReadTicket").'</td>';
-print '<td class="left">';
-if ($conf->use_javascript_ajax) {
-	print ajax_constantonoff('TICKET_AUTO_READ_WHEN_CREATED_FROM_BACKEND');
+if ($action == 'edit') {
+	print $formSetup->generateOutput(true);
+	print '<br>';
 } else {
-	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-	print $formcategory->selectarray("TICKET_AUTO_READ_WHEN_CREATED_FROM_BACKEND", $arrval, $conf->global->TICKET_AUTO_READ_WHEN_CREATED_FROM_BACKEND);
-}
-print '</td>';
-print '<td class="center">';
-print $formcategory->textwithpicto('', $langs->trans("TicketsAutoReadTicketHelp"), 1, 'help');
-print '</td>';
-print '</tr>';
+	if (!empty($formSetup->items)) {
+		print $formSetup->generateOutput();
 
-// Auto assign ticket at user who created it
-print '<tr class="oddeven">';
-print '<td>'.$langs->trans("TicketsAutoAssignTicket").'</td>';
-print '<td class="left">';
-if ($conf->use_javascript_ajax) {
-	print ajax_constantonoff('TICKET_AUTO_ASSIGN_USER_CREATE');
-} else {
-	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-	print $formcategory->selectarray("TICKET_AUTO_ASSIGN_USER_CREATE", $arrval, $conf->global->TICKET_AUTO_ASSIGN_USER_CREATE);
-}
-print '</td>';
-print '<td class="center">';
-print $formcategory->textwithpicto('', $langs->trans("TicketsAutoAssignTicketHelp"), 1, 'help');
-print '</td>';
-print '</tr>';
-
-// Auto notify contacts when closing the ticket
-print '<tr class="oddeven"><td>'.$langs->trans("TicketsAutoNotifyClose").'</td>';
-print '<td class="left">';
-if ($conf->use_javascript_ajax) {
-	print ajax_constantonoff('TICKET_NOTIFY_AT_CLOSING');
-} else {
-	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-	print $formcategory->selectarray("TICKET_NOTIFY_AT_CLOSING", $arrval, $conf->global->TICKET_NOTIFY_AT_CLOSING);
-}
-print '</td>';
-print '<td class="center">';
-print $formcategory->textwithpicto('', $langs->trans("TicketsAutoNotifyCloseHelp"), 1, 'help');
-print '</td>';
-print '</tr>';
-
-if (! empty($conf->product->enabled)) {
-	print '<tr class="oddeven"><td>'.$langs->trans("TicketChooseProductCategory").'</td>';
-	print '<td class="left">';
-	$formcategory->selectProductCategory($conf->global->TICKET_PRODUCT_CATEGORY, 'product_category_id');
-	if ($conf->use_javascript_ajax) {
-		print ajax_combobox('select_'.$htmlname);
+		print '<div class="tabsAction">';
+		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a>';
+		print '</div>';
+	} else {
+		print '<br>'.$langs->trans("NothingToSetup");
 	}
-	print '</td>';
-	print '<td class="center">';
-	print $formcategory->textwithpicto('', $langs->trans("TicketChooseProductCategoryHelp"), 1, 'help');
-	print '</td>';
-	print '</tr>';
 }
 
-print '<tr class="oddeven">';
-print '<td>'.$langs->trans("TicketsDelayBeforeFirstAnswer")."</td>";
-print '<td class="left">
-	<input type="number" value="'.$conf->global->TICKET_DELAY_BEFORE_FIRST_RESPONSE.'" name="delay_first_response" class="width50">
-	</td>';
-print '<td class="center">';
-print $formcategory->textwithpicto('', $langs->trans("TicketsDelayBeforeFirstAnswerHelp"), 1, 'help');
-print '</td>';
-print '</tr>';
-
-print '<tr class="oddeven">';
-print '<td>'.$langs->trans("TicketsDelayBetweenAnswers")."</td>";
-print '<td class="left">
-	<input type="number" value="'.$conf->global->TICKET_DELAY_SINCE_LAST_RESPONSE.'" name="delay_between_responses" class="width50">
-	</td>';
-print '<td class="center">';
-print $formcategory->textwithpicto('', $langs->trans("TicketsDelayBetweenAnswersHelp"), 1, 'help');
-print '</td>';
-print '</tr>';
-
-print '</table><br>';
-
-print $formcategory->buttonsSaveCancel("Save", '', array(), 0, 'reposition');
-
-print '</form>';
 
 
 // Admin var of module

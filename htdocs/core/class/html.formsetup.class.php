@@ -1013,6 +1013,7 @@ class FormSetupItem
 			}
 			$out.= $this->langs->trans($template->label);
 		} elseif (preg_match('/category:/', $this->type)) {
+			require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 			$c = new Categorie($this->db);
 			$result = $c->fetch($this->fieldValue);
 			if ($result < 0) {
