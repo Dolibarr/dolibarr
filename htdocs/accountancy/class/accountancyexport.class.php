@@ -980,6 +980,8 @@ class AccountancyExport
 				print dol_string_unaccent($date_creation) . $separator;
 
 				// FEC:EcritureLib
+				// Clean label operation to prevent problem on export with tab separator & other character
+				$line->label_operation = str_replace(array("\t", "\n", "\r"), " ", $line->label_operation);
 				print dol_string_unaccent($line->label_operation) . $separator;
 
 				// FEC:Debit
@@ -1007,6 +1009,8 @@ class AccountancyExport
 				print $date_limit_payment . $separator;
 
 				// FEC_suppl:NumFacture
+				// Clean ref invoice to prevent problem on export with tab separator & other character
+				$refInvoice = str_replace(array("\t", "\n", "\r"), " ", $refInvoice);
 				print dol_trunc(self::toAnsi($refInvoice), 17, 'right', 'UTF-8', 1);
 
 				print $end_line;
@@ -1107,6 +1111,8 @@ class AccountancyExport
 				print $date_document . $separator;
 
 				// FEC:EcritureLib
+				// Clean label operation to prevent problem on export with tab separator & other character
+				$line->label_operation = str_replace(array("\t", "\n", "\r"), " ", $line->label_operation);
 				print dol_string_unaccent($line->label_operation) . $separator;
 
 				// FEC:Debit
@@ -1134,6 +1140,8 @@ class AccountancyExport
 				print $date_limit_payment . $separator;
 
 				// FEC_suppl:NumFacture
+				// Clean ref invoice to prevent problem on export with tab separator & other character
+				$refInvoice = str_replace(array("\t", "\n", "\r"), " ", $refInvoice);
 				print dol_trunc(self::toAnsi($refInvoice), 17, 'right', 'UTF-8', 1);
 
 
@@ -1712,6 +1720,8 @@ class AccountancyExport
 
 			print self::trunc($line->label_compte, 60).$separator; //Account label
 			print self::trunc($line->doc_ref, 20).$separator; //Piece
+			// Clean label operation to prevent problem on export with tab separator & other character
+			$line->label_operation = str_replace(array("\t", "\n", "\r"), " ", $line->label_operation);
 			print self::trunc($line->label_operation, 60).$separator; //Operation label
 			print price(abs($line->debit - $line->credit)).$separator; //Amount
 			print $line->sens.$separator; //Direction

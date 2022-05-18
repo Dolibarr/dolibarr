@@ -110,6 +110,19 @@ class pdf_standard extends ModelePDFMovement
 	public $emetteur;
 
 
+	public $wref;
+	public $posxidref;
+	public $posxdatemouv;
+	public $posxdesc;
+	public $posxlabel;
+	public $posxtva;
+	public $posxqty;
+	public $posxup;
+	public $posxunit;
+	public $posxdiscount;
+	public $postotalht;
+
+
 	/**
 	 *	Constructor
 	 *
@@ -174,11 +187,6 @@ class pdf_standard extends ModelePDFMovement
 			$this->posxdiscount -= 20;
 			$this->postotalht -= 20;
 		}
-		$this->tva = array();
-		$this->localtax1 = array();
-		$this->localtax2 = array();
-		$this->atleastoneratenotnull = 0;
-		$this->atleastonediscount = 0;
 	}
 
 
@@ -395,19 +403,6 @@ class pdf_standard extends ModelePDFMovement
 				}
 
 				$num = $this->db->num_rows($resql);
-
-				$arrayofselected = is_array($toselect) ? $toselect : array();
-
-				$i = 0;
-				$help_url = 'EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
-				if ($msid) {
-					$texte = $langs->trans('StockMovementForId', $msid);
-				} else {
-					$texte = $langs->trans("ListOfStockMovements");
-					if ($id) {
-						$texte .= ' ('.$langs->trans("ForThisWarehouse").')';
-					}
-				}
 			}
 
 			// Definition of $dir and $file

@@ -1548,7 +1548,7 @@ class DolGraph
 			}
 		}
 		if ($direction == 'height') {
-			return (empty($conf->dol_optimize_smallscreen) ? ($defaultsize ? $defaultsize : '200') : '160');
+			return (empty($conf->dol_optimize_smallscreen) ? ($defaultsize ? $defaultsize : '220') : '200');
 		}
 		return 0;
 	}

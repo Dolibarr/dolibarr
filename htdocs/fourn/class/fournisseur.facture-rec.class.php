@@ -127,6 +127,13 @@ class FactureFournisseurRec extends CommonInvoice
 
 	public $model_pdf;
 
+	/**
+	 * Invoice lines
+	 * @var FactureFournisseurLigneRec[]
+	 */
+	public $lines = array();
+
+
 	/* Override fields in CommonObject
 	public $entity;
 	public $date_creation;

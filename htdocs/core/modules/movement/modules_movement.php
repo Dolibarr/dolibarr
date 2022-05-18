@@ -35,6 +35,8 @@ abstract class ModelePDFMovement extends CommonDocGenerator
 	 */
 	public $error = '';
 
+	public $option_codestockservice;
+
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**

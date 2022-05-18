@@ -121,6 +121,16 @@ button.dropdown-item.global-search-item {
 	text-decoration: none !important;
 }
 
+
+/* CSS to hide the arrow to show open/close */
+div#topmenu-quickadd-dropdown, div#topmenu-bookmark-dropdown {
+	padding-right: 5px;
+}
+div#topmenu-quickadd-dropdown a::after, div#topmenu-bookmark-dropdown a::after {
+	display: none;
+}
+
+
 .dropdown-toggle::after {
 	/* font part */
 	<?php if (!empty($conf->global->USE_FONTAWESOME6)) { ?>
@@ -144,6 +154,7 @@ button.dropdown-item.global-search-item {
 	-ms-transition: -ms-transform .2s ease-in-out;
 	transition: transform .2s ease-in-out;
 }
+
 
 .open>.dropdown-toggle::after {
 	transform: rotate(180deg);
@@ -201,7 +212,7 @@ button.dropdown-item.global-search-item {
 }
 
 div#topmenu-global-search-dropdown, div#topmenu-bookmark-dropdown, div#topmenu-quickadd-dropdown {
-	<?php if (empty($conf->global->THEME_TOPMENU_DISABLE_IMAGE)) { ?>
+	<?php if (!getDolGlobalInt('THEME_TOPMENU_DISABLE_IMAGE')) { ?>
 		line-height: 46px;
 	<?php } ?>
 }
@@ -240,26 +251,28 @@ a.top-menu-dropdown-link {
 	clear: both;
 }
 
-.dropdown-menu > .bookmark-footer{
+.dropdown-menu > .bookmark-footer {
 	border-top: 1px solid #f0f0f0;
 	background-color: #f9f9f9;
 	padding: 10px;
+	text-align: start;
 }
 
 
-.dropdown-menu > .user-body, .dropdown-body{
+.dropdown-menu > .user-body, .dropdown-body {
 	padding: 15px;
 	border-bottom: 1px solid #f4f4f4;
 	border-top: 1px solid #dddddd;
 	white-space: normal;
 }
 
-.dropdown-menu > .bookmark-body, .dropdown-body{
+.dropdown-menu > .bookmark-body, .dropdown-body {
 	overflow-y: auto;
 	max-height: 60vh ; /* fallback for browsers without support for calc() */
 	max-height: calc(90vh - 110px) ;
 	white-space: normal;
 }
+#topmenu-quickadd-dropdown .dropdown-menu > .bookmark-body, #topmenu-quickadd-dropdown .dropdown-body,
 #topmenu-bookmark-dropdown .dropdown-menu > .bookmark-body, #topmenu-bookmark-dropdown .dropdown-body{
 	max-height: 60vh ; /* fallback for browsers without support for calc() */
 	max-height: calc(90vh - 200px) ;
@@ -291,7 +304,7 @@ a.top-menu-dropdown-link {
 
 #topmenuloginmoreinfo-btn, #topmenulogincompanyinfo-btn {
 	display: block;
-	text-align: right;
+	text-align: start;
 	color:#666;
 	cursor: pointer;
 }
@@ -300,6 +313,10 @@ a.top-menu-dropdown-link {
 	display: none;
 	clear: both;
 	font-size: 0.95em;
+}
+
+a.dropdown-item {
+	text-align: start;
 }
 
 .button-top-menu-dropdown {

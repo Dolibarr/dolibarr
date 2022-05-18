@@ -487,15 +487,6 @@ class Ticket extends CommonObject
 
 			if (!$error) {
 				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."ticket");
-
-				if (!$notrigger) {
-					// Call trigger
-					$result = $this->call_trigger('TICKET_CREATE', $user);
-					if ($result < 0) {
-						$error++;
-					}
-					// End call triggers
-				}
 			}
 
 			if (!$error && ! empty($conf->global->TICKET_ADD_AUTHOR_AS_CONTACT)) {
@@ -511,6 +502,15 @@ class Ticket extends CommonObject
 				if ($result < 0) {
 					$error++;
 				}
+			}
+
+			if (!$error && !$notrigger) {
+				// Call trigger
+				$result = $this->call_trigger('TICKET_CREATE', $user);
+				if ($result < 0) {
+					$error++;
+				}
+				// End call triggers
 			}
 
 			// Commit or rollback
@@ -756,7 +756,7 @@ class Ticket extends CommonObject
 			$sql .= $this->db->plimit($limit + 1, $offset);
 		}
 
-		dol_syslog(get_class($this)."::fetch_all", LOG_DEBUG);
+		dol_syslog(get_class($this)."::fetchAll", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 
 		if ($resql) {
@@ -829,7 +829,7 @@ class Ticket extends CommonObject
 			return $num;
 		} else {
 			$this->error = "Error ".$this->db->lasterror();
-			dol_syslog(get_class($this)."::fetch_all ".$this->error, LOG_ERR);
+			dol_syslog(get_class($this)."::fetchAll ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -1372,7 +1372,12 @@ class Ticket extends CommonObject
 		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref.'<br>';
 		$label .= '<b>'.$langs->trans('TicketTrackId').':</b> '.$this->track_id.'<br>';
 		$label .= '<b>'.$langs->trans('Subject').':</b> '.$this->subject;
-
+		if ($this->date_creation) {
+			$label .= '<br><b>'.$langs->trans('DateCreation').':</b> '.$this->date_creation;
+		}
+		if ($this->date_modification) {
+			$label .= '<br><b>'.$langs->trans('DateModification').':</b> '.$this->date_modification;
+		}
 		$url = DOL_URL_ROOT.'/ticket/card.php?id='.$this->id;
 
 		if ($option != 'nolink') {
@@ -2014,38 +2019,6 @@ class Ticket extends CommonObject
 	}
 
 	/**
-	 *     Link element with a project
-	 * 	   Override core function because of key name 'fk_project' used for this module
-	 *
-	 *     @param  int 		$projectid 			Project id to link element to
-	 *     @return int                   	   <0 if KO, >0 if OK
-	 */
-	public function setProject($projectid)
-	{
-		if (!$this->table_element) {
-			dol_syslog(get_class($this)."::setProject was called on objet with property table_element not defined", LOG_ERR);
-			return -1;
-		}
-
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-		if ($projectid) {
-			$sql .= ' SET fk_project = '.((int) $projectid);
-		} else {
-			$sql .= ' SET fk_project = NULL';
-		}
-		$sql .= ' WHERE rowid = '.((int) $this->id);
-
-		dol_syslog(get_class($this)."::setProject sql=".$sql);
-		if ($this->db->query($sql)) {
-			$this->fk_project = ((int) $projectid);
-			return 1;
-		} else {
-			dol_print_error($this->db);
-			return -1;
-		}
-	}
-
-	/**
 	 *     Link element with a contract
 	 *
 	 *     @param  int $contractid Contract id to link element to
@@ -2521,7 +2494,8 @@ class Ticket extends CommonObject
 			if (!$error && $id > 0) {
 				setEventMessages($langs->trans('TicketMessageSuccessfullyAdded'), null, 'mesgs');
 
-				//var_dump($_SESSION); var_dump($listofpaths);exit;
+				//var_dump($_SESSION);
+				//var_dump($listofpaths);exit;
 
 				/*
 				 * Public area

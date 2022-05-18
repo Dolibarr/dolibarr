@@ -46,8 +46,11 @@ $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
+$backtopagejsfields = GETPOST('backtopagejsfields', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
 $confirm = GETPOST('confirm', 'aZ09');
+$dol_openinpopup = GETPOST('dol_openinpopup', 'aZ09');
+
 $status = GETPOST('status', 'int');
 $opp_status = GETPOST('opp_status', 'int');
 $opp_percent = price2num(GETPOST('opp_percent', 'alpha'));
@@ -505,9 +508,10 @@ if ($action == 'create' && $user->rights->projet->creer) {
 	print load_fiche_titre($titlenew, '', 'project');
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+	print '<input type="hidden" name="backtopagejsfields" value="'.$backtopagejsfields.'">';
 
 	print dol_get_fiche_head();
 
@@ -605,7 +609,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 		if (!empty($conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST)) {
 			$filteronlist = $conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST;
 		}
-		$text = img_picto('', 'company').$form->select_company(GETPOST('socid', 'int'), 'socid', $filteronlist, 'SelectThirdParty', 1, 0, array(), 0, 'minwidth300 widthcentpercentminusxx');
+		$text = img_picto('', 'company').$form->select_company(GETPOST('socid', 'int'), 'socid', $filteronlist, 'SelectThirdParty', 1, 0, array(), 0, 'minwidth300 widthcentpercentminusxx maxwidth500');
 		if (empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) && empty($conf->dol_use_jmobile)) {
 			$texthelp = $langs->trans("IfNeedToUseOtherObjectKeepEmpty");
 			print $form->textwithtooltip($text.' '.img_help(), $texthelp, 1);
@@ -613,7 +617,12 @@ if ($action == 'create' && $user->rights->projet->creer) {
 			print $text;
 		}
 		if (!GETPOSTISSET('backtopage')) {
-			print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddThirdParty").'"></span></a>';
+			$url = '/societe/card.php?action=create&client=3&fournisseur=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create');
+			$newbutton = '<span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddThirdParty").'"></span>';
+			// TODO @LDR Implement this
+			//$tmpbacktopagejsfields = 'socid:search_socid';
+			//print dolButtonToOpenUrlInDialogPopup('addthirdparty', $langs->transnoentitiesnoconv('AddThirdParty'), $newbutton, $url, '', '', $tmpbacktopagejsfields);
+			print ' <a href="'.DOL_URL_ROOT.$url.'">'.$newbutton.'</a>';
 		}
 		print '</td></tr>';
 	}
@@ -642,8 +651,10 @@ if ($action == 'create' && $user->rights->projet->creer) {
 		print '<input type="hidden" name="public" id="public" value="'.GETPOST('public').'">';
 
 		if (GETPOST('public') == 0) {
+			print img_picto($langs->trans('PrivateProject'), 'private', 'class="paddingrightonly"');
 			print $langs->trans("PrivateProject");
 		} else {
+			print img_picto($langs->trans('SharedProject'), 'world', 'class="paddingrightonly"');
 			print $langs->trans("SharedProject");
 		}
 	}
@@ -917,8 +928,10 @@ if ($action == 'create' && $user->rights->projet->creer) {
 			print '<input type="hidden" id="public" name="public" value="'.$object->public.'">';
 
 			if ($object->public == 0) {
+				print img_picto($langs->trans('PrivateProject'), 'private', 'class="paddingrightonly"');
 				print $langs->trans("PrivateProject");
 			} else {
+				print img_picto($langs->trans('SharedProject'), 'world', 'class="paddingrightonly"');
 				print $langs->trans("SharedProject");
 			}
 		}
@@ -946,7 +959,9 @@ if ($action == 'create' && $user->rights->projet->creer) {
 
 			// Opportunity amount
 			print '<tr class="classuseopportunity'.$classfortr.'"><td>'.$langs->trans("OpportunityAmount").'</td>';
-			print '<td><input size="5" type="text" name="opp_amount" value="'.(GETPOSTISSET('opp_amount') ? GETPOST('opp_amount') : (strcmp($object->opp_amount, '') ? price2num($object->opp_amount) : '')).'"></td>';
+			print '<td><input size="5" type="text" name="opp_amount" value="'.(GETPOSTISSET('opp_amount') ? GETPOST('opp_amount') : (strcmp($object->opp_amount, '') ? price2num($object->opp_amount) : '')).'">';
+			print $langs->getCurrencySymbol($conf->currency);
+			print '</td>';
 			print '</tr>';
 		}
 
@@ -957,7 +972,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 		if ($comefromclone) {
 			print ' checked ';
 		}
-		print '/><label for="reportdate">'.$langs->trans("ProjectReportDate").'</label>';
+		print '/><label for="reportdate" class="opacitymedium">'.$langs->trans("ProjectReportDate").'</label>';
 		print '</td></tr>';
 
 		// Date end
@@ -967,7 +982,9 @@ if ($action == 'create' && $user->rights->projet->creer) {
 
 		// Budget
 		print '<tr><td>'.$langs->trans("Budget").'</td>';
-		print '<td><input size="5" type="text" name="budget_amount" value="'.(GETPOSTISSET('budget_amount') ? GETPOST('budget_amount') : (strcmp($object->budget_amount, '') ? price2num($object->budget_amount) : '')).'"></td>';
+		print '<td><input size="5" type="text" name="budget_amount" value="'.(GETPOSTISSET('budget_amount') ? GETPOST('budget_amount') : (strcmp($object->budget_amount, '') ? price2num($object->budget_amount) : '')).'">';
+		print $langs->getCurrencySymbol($conf->currency);
+		print '</td>';
 		print '</tr>';
 
 		// Description
@@ -1066,8 +1083,10 @@ if ($action == 'create' && $user->rights->projet->creer) {
 		// Visibility
 		print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
 		if ($object->public) {
+			print img_picto($langs->trans('SharedProject'), 'world', 'class="paddingrightonly"');
 			print $langs->trans('SharedProject');
 		} else {
+			print img_picto($langs->trans('SharedProject'), 'private', 'class="paddingrightonly"');
 			print $langs->trans('PrivateProject');
 		}
 		print '</td></tr>';
@@ -1090,21 +1109,22 @@ if ($action == 'create' && $user->rights->projet->creer) {
 
 			// Opportunity Amount
 			print '<tr><td>'.$langs->trans("OpportunityAmount").'</td><td>';
-			/*if ($object->opp_status)
-			{
-			   print price($obj->opp_amount, 1, $langs, 1, 0, -1, $conf->currency);
-			}*/
 			if (strcmp($object->opp_amount, '')) {
 				print '<span class="amount">'.price($object->opp_amount, 0, $langs, 1, 0, -1, $conf->currency).'</span>';
+				if (strcmp($object->opp_percent, '')) {
+					print ' &nbsp; &nbsp; &nbsp; <span title="'.dol_escape_htmltag($langs->trans('OpportunityWeightedAmount')).'"><span class="opacitymedium">'.$langs->trans("Weighted").'</span>: <span class="amount">'.price($object->opp_amount * $object->opp_percent / 100, 0, $langs, 1, 0, -1, $conf->currency).'</span></span>';
+				}
 			}
 			print '</td></tr>';
 
 			// Opportunity Weighted Amount
+			/*
 			print '<tr><td>'.$langs->trans('OpportunityWeightedAmount').'</td><td>';
 			if (strcmp($object->opp_amount, '') && strcmp($object->opp_percent, '')) {
 				print '<span class="amount">'.price($object->opp_amount * $object->opp_percent / 100, 0, $langs, 1, 0, -1, $conf->currency).'</span>';
 			}
 			print '</td></tr>';
+			*/
 		}
 
 		// Date start - end

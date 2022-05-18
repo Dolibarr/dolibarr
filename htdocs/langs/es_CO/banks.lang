@@ -70,7 +70,6 @@ AddBankRecordLong=Agregar entrada manualmente
 Conciliated=Conciliado
 DateConciliating=Conciliar fecha
 BankLineConciliated=Entrada conciliada con recibo bancario
-Reconciled=Conciliado
 SupplierInvoicePayment=Pago de proveedor
 WithdrawalPayment=Orden de pago de débito
 SocialContributionPayment=Pago de impuestos sociales / fiscales

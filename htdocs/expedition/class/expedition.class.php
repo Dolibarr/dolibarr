@@ -752,7 +752,7 @@ class Expedition extends CommonObject
 
 					//var_dump($this->lines[$i]);
 					$mouvS = new MouvementStock($this->db);
-					$mouvS->origin = dol_clone($this, 1);
+					//$mouvS->origin = dol_clone($this, 1);
 					$mouvS->setOrigin($this->element, $this->id);
 
 					if (empty($obj->edbrowid)) {

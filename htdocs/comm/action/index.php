@@ -110,7 +110,7 @@ $week = GETPOST("week", "int") ?GETPOST("week", "int") : date("W");
 $day = GETPOST("day", "int") ?GETPOST("day", "int") : date("d");
 $pid = GETPOST("search_projectid", "int", 3) ? GETPOST("search_projectid", "int", 3) : GETPOST("projectid", "int", 3);
 $status = GETPOSTISSET("search_status") ? GETPOST("search_status", 'aZ09') : GETPOST("status", 'aZ09'); // status may be 0, 50, 100, 'todo'
-$type = GETPOSTISSET("search_type", 'aZ09') ? GETPOST("search_type", 'aZ09') : GETPOST("type", 'aZ09');
+$type = GETPOSTISSET("search_type") ? GETPOST("search_type", 'aZ09') : GETPOST("type", 'aZ09');
 $maxprint = GETPOSTISSET("maxprint") ? GETPOST("maxprint", 'int') : $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW;
 $optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 
@@ -277,12 +277,12 @@ if (empty($conf->global->AGENDA_DISABLE_EXT)) {
 		if (!empty($conf->global->$source) && !empty($conf->global->$name)) {
 			// Note: $conf->global->buggedfile can be empty or 'uselocalandtznodaylight' or 'uselocalandtzdaylight'
 			$listofextcals[] = array(
-				'src'=>$conf->global->$source,
-				'name'=>$conf->global->$name,
+				'src' => getDolGlobalString($source),
+				'name' => getDolGlobalString($name),
 				'offsettz' => (!empty($conf->global->$offsettz) ? $conf->global->$offsettz : 0),
-				'color'=>$conf->global->$color,
-				'default'=>$conf->global->$default,
-				'buggedfile'=>(isset($conf->global->buggedfile) ? $conf->global->buggedfile : 0)
+				'color' => getDolGlobalString($color),
+				'default' => getDolGlobalString($default),
+				'buggedfile' => (isset($conf->global->buggedfile) ? $conf->global->buggedfile : 0)
 			);
 		}
 	}
@@ -302,12 +302,12 @@ if (empty($user->conf->AGENDA_DISABLE_EXT)) {
 		if (!empty($user->conf->$source) && !empty($user->conf->$name)) {
 			// Note: $conf->global->buggedfile can be empty or 'uselocalandtznodaylight' or 'uselocalandtzdaylight'
 			$listofextcals[] = array(
-				'src'=>$user->conf->$source,
-				'name'=>$user->conf->$name,
+				'src' => $user->conf->$source,
+				'name' => $user->conf->$name,
 				'offsettz' => (!empty($user->conf->$offsettz) ? $user->conf->$offsettz : 0),
-				'color'=>$user->conf->$color,
-				'default'=>$user->conf->$default,
-				'buggedfile'=>(isset($user->conf->buggedfile) ? $user->conf->buggedfile : 0)
+				'color' => $user->conf->$color,
+				'default' => $user->conf->$default,
+				'buggedfile' => (isset($user->conf->buggedfile) ? $user->conf->buggedfile : 0)
 			);
 		}
 	}
@@ -397,7 +397,7 @@ if ($actioncode || GETPOSTISSET('search_actioncode')) {
 if ($resourceid > 0) {
 	$param .= "&search_resourceid=".urlencode($resourceid);
 }
-if ($status || GETPOSTISSET('status')) {
+if ($status || GETPOSTISSET('status') || GETPOSTISSET('search_status')) {
 	$param .= "&search_status=".urlencode($status);
 }
 if ($filter) {
@@ -622,7 +622,7 @@ if (!empty($conf->use_javascript_ajax)) {	// If javascript on
 	$s .= '<div class="nowrap inline-block minheight30"><input type="checkbox" id="check_birthday" name="check_birthday" class="check_birthday"><label for="check_birthday"> <span class="check_birthday_text">'.$langs->trans("AgendaShowBirthdayEvents").'</span></label> &nbsp; </div>';
 
 	// Calendars from hooks
-	$parameters = array(); $object = null;
+	$parameters = array();
 	$reshook = $hookmanager->executeHooks('addCalendarChoice', $parameters, $object, $action);
 	if (empty($reshook)) {
 		$s .= $hookmanager->resPrint;
@@ -1191,7 +1191,8 @@ if (count($listofextcals)) {
 			foreach ($icalevents as $icalevent) {
 				//var_dump($icalevent);
 
-				//print $icalevent['SUMMARY'].'->'.var_dump($icalevent).'<br>';exit;
+				//print $icalevent['SUMMARY'].'->';
+				//var_dump($icalevent);exit;
 				if (!empty($icalevent['RRULE'])) {
 					continue; // We found a repeatable event. It was already split into unitary events, so we discard general rule.
 				}
@@ -1213,7 +1214,7 @@ if (count($listofextcals)) {
 					$addevent = true;
 				} elseif (!is_array($icalevent['DTSTART'])) { // not fullday event (DTSTART is not array. It is a value like '19700101T000000Z' for 00:00 in greenwitch)
 					$datestart = $icalevent['DTSTART'];
-					$dateend = $icalevent['DTEND'];
+					$dateend = empty($icalevent['DTEND']) ? $datestart : $icalevent['DTEND'];
 
 					$datestart += +($offsettz * 3600);
 					$dateend += +($offsettz * 3600);

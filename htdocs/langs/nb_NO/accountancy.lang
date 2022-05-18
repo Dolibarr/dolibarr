@@ -62,24 +62,24 @@ MainAccountForSubscriptionPaymentNotDefined=Hovedregnskapskonto for abonnementsb
 AccountancyArea=Regnskapsområde
 AccountancyAreaDescIntro=Bruk av regnskapsmodulen er gjort i flere skritt:
 AccountancyAreaDescActionOnce=Følgende tiltak blir vanligvis utført en gang, eller en gang i året ...
-AccountancyAreaDescActionOnceBis=De neste skrittene bør gjøres for å spare tid i fremtiden ved å foreslå deg riktig standardregnskapskonto når du foretar journalføringen (skriv inn post i journaler og hovedbok)
+AccountancyAreaDescActionOnceBis=Next steps should be done to save you time in future by suggesting you automaticaly the correct default accounting account when transferring data in accounting
 AccountancyAreaDescActionFreq=Følgende tiltak blir vanligvis utført hver måned, uke eller dag for svært store selskaper ...
 
-AccountancyAreaDescJournalSetup=TRINN %s: Lag eller kontroller innholdet i din journalliste fra menyen %s
+AccountancyAreaDescJournalSetup=STEP %s: Check content of your journal list from menu %s
 AccountancyAreaDescChartModel=TRINN %s: Sjekk at det finnes en modell av kontoplan eller lag en fra menyen %s
 AccountancyAreaDescChart=TRINN %s: Velg og|eller fullfør kontoplanen din fra meny %s
 
 AccountancyAreaDescVat=TRINN %s: Definer regnskapskonto for hver MVA-sats. Bruk menyoppføringen %s.
 AccountancyAreaDescDefault=TRINN %s: Definer standard regnskapskontoer. For dette, bruk menyoppføringen %s.
-AccountancyAreaDescExpenseReport=TRINN %s: Definer standard regnskapskontoer for hver type kostnadsrapport. Bruk menyoppføringen %s.
+AccountancyAreaDescExpenseReport=STEP %s: Define default accounting accounts for each type of Expense report. For this, use the menu entry %s.
 AccountancyAreaDescSal=TRINN %s: Definer standard regnskapskonto for betaling av lønn. Bruk menyoppføring %s.
-AccountancyAreaDescContrib=TRINN %s: Definer standard regnskapskonto for spesielle utgifter (diverse skatter). For dette, bruk menyoppføringen %s.
+AccountancyAreaDescContrib=STEP %s: Define default accounting accounts for Taxes (special expenses). For this, use the menu entry %s.
 AccountancyAreaDescDonation=TRINN %s: Definer standard regnskapskonto for donasjoner. Bruk menyoppføringen %s.
 AccountancyAreaDescSubscription=TRINN %s: Definer standard regnskapskonto for medlemsabonnement. Bruk menyoppføringen %s.
 AccountancyAreaDescMisc=TRINN %s: Definer obligatorisk standardkonto og standard regnskapskontoer for diverse transaksjoner. Bruk menyoppføringen %s.
 AccountancyAreaDescLoan=TRINN %s: Definer standard regnskapskonto for lån. Bruk menyoppføringen %s.
 AccountancyAreaDescBank=TRINN %s: Definer regnskapskontoer og journalkode for hver bank- og finansregnskap. For dette, bruk menyoppføringen %s.
-AccountancyAreaDescProd=TRINN %s: Definer regnskapskontoer for dine varer/tjenester. Bruk menyoppføringen %s.
+AccountancyAreaDescProd=STEP %s: Define accounting accounts on your Products/Services. For this, use the menu entry %s.
 
 AccountancyAreaDescBind=TRINN %s: Kontroller at bindingen mellom eksisterende %s linjer og regnskapskonto er ferdig, slik at applikasjonen vil kunne journalføre transaksjoner i hovedboken med ett klikk. Fullfør manglende bindinger. Bruk menyen %s.
 AccountancyAreaDescWriteRecords=TRINN %s: Skriv transaksjoner inn i hovedboken. For dette, gå til menyen <strong> %s</strong>, og klikk på knappen <strong>%s</strong>.
@@ -112,7 +112,7 @@ MenuAccountancyClosure=Nedleggelse
 MenuAccountancyValidationMovements=Valider bevegelser
 ProductsBinding=Varekontoer
 TransferInAccounting=Overføring i regnskap
-RegistrationInAccounting=Registrering i regnskap
+RegistrationInAccounting=Recording in accounting
 Binding=Binding til kontoer
 CustomersVentilation=Binding av kundefakturaer
 SuppliersVentilation=Leverandørfaktura-bindinger
@@ -120,7 +120,7 @@ ExpenseReportsVentilation=Utgiftsrapport-binding
 CreateMvts=Opprett ny transaksjon
 UpdateMvts=Endre en transaksjon
 ValidTransaction=Valider transaksjonen
-WriteBookKeeping=Registrer transaksjoner i regnskap
+WriteBookKeeping=Record transactions in accounting
 Bookkeeping=Hovedbok
 BookkeepingSubAccount=Sub-Hovedbok
 AccountBalance=Kontobalanse
@@ -219,12 +219,12 @@ ByPredefinedAccountGroups=Etter forhåndsdefinerte grupper
 ByPersonalizedAccountGroups=Etter personlige grupper
 ByYear=Etter år
 NotMatch=Ikke valgt
-DeleteMvt=Slett noen operasjonslinjer fra regnskapet
+DeleteMvt=Delete some lines from accounting
 DelMonth=Måned å slette
 DelYear=År som skal slettes
 DelJournal=Journal som skal slettes
-ConfirmDeleteMvt=Dette vil slette alle operasjonslinjene i regnskapet for året/måneden og/eller for en bestemt journal (minst ett kriterium kreves). Du må bruke funksjonen '%s' for å hente den slettede posten tilbake til hovedboken.
-ConfirmDeleteMvtPartial=Dette vil slette transaksjonen fra regnskapet (alle operasjonslinjer relatert til den samme transaksjonen vil bli slettet)
+ConfirmDeleteMvt=This will delete all lines in accountancy for the year/month and/or for a specific journal (At least one criterion is required). You will have to reuse the feature '%s' to have the deleted record back in the ledger.
+ConfirmDeleteMvtPartial=This will delete the transaction from the accounting (all lines related to the same transaction will be deleted)
 FinanceJournal=Finansjournal
 ExpenseReportsJournal=Journal for utgiftsrapporter
 DescFinanceJournal=Finansjournal med alle typer betalinger etter bankkonto
@@ -278,11 +278,11 @@ DescVentilExpenseReportMore=Hvis du setter opp regnskapskonto med type utgiftsra
 DescVentilDoneExpenseReport=Liste over utgiftsrapport-linjer og tilhørende gebyr-regnskapskonto
 
 Closure=Årsavslutning
-DescClosure=Kontroller antall bevegelser per måned som ikke er validert og regnskapsår som allerede er åpne
-OverviewOfMovementsNotValidated=Trinn 1 / Oversikt over bevegelser som ikke er validert. (Nødvendig for å avslutte et regnskapsår)
-AllMovementsWereRecordedAsValidated=Alle bevegelser ble registrert som validert
-NotAllMovementsCouldBeRecordedAsValidated=Ikke alle bevegelser kunne registreres som validert
-ValidateMovements=Valider bevegelser
+DescClosure=Consult here the number of movements by month who are not yet validated & locked
+OverviewOfMovementsNotValidated=Overview of movements not validated and locked
+AllMovementsWereRecordedAsValidated=All movements were recorded as validated and locked
+NotAllMovementsCouldBeRecordedAsValidated=Not all movements could be recorded as validated and locked
+ValidateMovements=Validate and lock record...
 DescValidateMovements=Enhver modifisering eller fjerning av skriving, bokstaver og sletting vil være forbudt. Alle påmeldinger for en oppgave må valideres, ellers er det ikke mulig å lukke
 
 ValidateHistory=Bind automatisk
@@ -294,14 +294,15 @@ Balancing=Balansering
 FicheVentilation=Binding-kort
 GeneralLedgerIsWritten=Transaksjoner blir skrevet inn i hovedboken
 GeneralLedgerSomeRecordWasNotRecorded=Noen av transaksjonene kunne ikke journalføres. Hvis det ikke er noen annen feilmelding, er dette trolig fordi de allerede var journalført.
-NoNewRecordSaved=Ingen flere poster å journalisere
+NoNewRecordSaved=No more record to transfer
 ListOfProductsWithoutAccountingAccount=Liste over varer som ikke bundet til en regnskapskonto
 ChangeBinding=Endre bindingen
 Accounted=Regnskapsført i hovedbok
 NotYetAccounted=Not yet transferred to accounting
 ShowTutorial=Vis veiledning
 NotReconciled=Ikke sammenslått
-WarningRecordWithoutSubledgerAreExcluded=Advarsel, alle operasjoner uten definert sub-hovedbokskonto er filtrert og ekskludert fra denne visningen
+WarningRecordWithoutSubledgerAreExcluded=Warning, all lines without subledger account defined are filtered and excluded from this view
+AccountRemovedFromCurrentChartOfAccount=Accounting account that does not exist in the current chart of accounts
 
 ## Admin
 BindingOptions=Bindingsalternativer
@@ -329,8 +330,9 @@ ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Deaktiver binding og overføring til reg
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Deaktiver binding og overføring til regnskap på utgiftsrapporter (utgiftsrapporter blir ikke tatt med i regnskapet)
 
 ## Export
-NotifiedExportDate=Flag exported lines as exported (modification of the lines will not be possible)
-NotifiedValidationDate=Validate the exported entries (modification or deletion of the lines will not be possible)
+NotifiedExportDate=Flag exported lines as Exported <span class="warning">(to modify a line, you will need to delete the whole transaction and re-transfert it into accounting)</span>
+NotifiedValidationDate=Validate and Lock the exported entries <span class="warning">(same effect than the "Closure" feature, modification and deletion of the lines will DEFINITELY not be possible)</span>
+DateValidationAndLock=Date validation and lock
 ConfirmExportFile=Confirmation of the generation of the accounting export file ?
 ExportDraftJournal=Eksporter utkastjournal
 Modelcsv=Eksportmodell
@@ -394,6 +396,21 @@ Range= Oversikt over regnskapskonto
 Calculated=Kalkulert
 Formula=Formel
 
+## Reconcile
+Unlettering=Unreconcile
+AccountancyNoLetteringModified=No reconcile modified
+AccountancyOneLetteringModifiedSuccessfully=One reconcile successfully modified
+AccountancyLetteringModifiedSuccessfully=%s reconcile successfully modified
+AccountancyNoUnletteringModified=No unreconcile modified
+AccountancyOneUnletteringModifiedSuccessfully=One unreconcile successfully modified
+AccountancyUnletteringModifiedSuccessfully=%s unreconcile successfully modified
+
+## Confirm box
+ConfirmMassUnlettering=Bulk Unreconcile confirmation
+ConfirmMassUnletteringQuestion=Are you sure you want to Unreconcile the %s selected record(s)?
+ConfirmMassDeleteBookkeepingWriting=Bekreft massesletting
+ConfirmMassDeleteBookkeepingWritingQuestion=This will delete the transaction from the accounting (all lines related to the same transaction will be deleted) Are you sure you want to delete the %s selected record(s)?
+
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Noen obligatoriske trinn for oppsett ble ikke gjort, vennligst fullfør disse
 ErrorNoAccountingCategoryForThisCountry=Ingen regnskapskonto-gruppe tilgjengelig for land %s (Se Hjem - Oppsett - Ordbøker)
@@ -406,6 +423,9 @@ Binded=Bundne linjer
 ToBind=Linjer som skal bindes
 UseMenuToSetBindindManualy=Linjer som ennå ikke er bundet, bruk menyen <a href="%s"> %s </a> for å gjøre bindingen manuelt
 SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Sorry this module is not compatible with the experimental feature of situation invoices
+AccountancyErrorMismatchLetterCode=Mismatch in reconcile code
+AccountancyErrorMismatchBalanceAmount=The balance (%s) is not equal to 0
+AccountancyErrorLetteringBookkeeping=Errors have occurred concerning the transactions: %s
 
 ## Import
 ImportAccountingEntries=Regnskapsposter
