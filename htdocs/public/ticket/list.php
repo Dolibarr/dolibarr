@@ -362,7 +362,7 @@ if ($action == "view_ticketlist") {
 		}
 		$sql .= " WHERE t.entity IN (".getEntity('ticket').")";
 		$sql .= " AND ((tc.source = 'external'";
-		$sql .= " AND tc.element='".$db->escape($object->dao->element)."'";
+		$sql .= " AND tc.element='".$db->escape($object->element)."'";
 		$sql .= " AND tc.active=1)";
 		$sql .= " OR (sp.email='".$db->escape($_SESSION['email_customer'])."'";
 		$sql .= " OR s.email='".$db->escape($_SESSION['email_customer'])."'";
@@ -706,7 +706,7 @@ if ($action == "view_ticketlist") {
 			}
 		}
 	} else {
-		print '<div class="error">Not Allowed<br><a href="'.$_SERVER['PHP_SELF'].'?track_id='.$object->dao->track_id.'">'.$langs->trans('Back').'</a></div>';
+		print '<div class="error">Not Allowed<br><a href="'.$_SERVER['PHP_SELF'].'?track_id='.$object->track_id.'">'.$langs->trans('Back').'</a></div>';
 	}
 } else {
 	print '<p class="center">'.$langs->trans("TicketPublicMsgViewLogIn").'</p>';
