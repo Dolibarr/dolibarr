@@ -76,10 +76,12 @@ abstract class CommonObjectLine extends CommonObject
 
 	public $multilangs;
 
-	public $product_ref;
-	public $product_label;
-	public $product_type;
-	public $product_desc;
+	public $product_type;		// type in line
+	public $product_ref;		// ref in product table
+	public $product_label;		// label in product table
+	public $product_desc;		// desc in product table
+	public $fk_product_type;	// type in product table
+
 	public $qty;
 	public $duree;
 	public $remise_percent;
