@@ -48,7 +48,7 @@ if (!defined('NOREQUIRETRAN')) {
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
-
+$hookmanager->initHooks(array('rowinterface'));
 // Security check
 // This is done later into view.
 
@@ -95,6 +95,8 @@ if (GETPOST('roworder', 'alpha', 3) && GETPOST('table_element_line', 'aZ09', 3)
 		$perm = 1;
 	} elseif ($table_element_line == 'facture_fourn_det_rec' && $user->rights->fournisseur->facture->creer) {
 		$perm = 1;
+	} elseif ($table_element_line == 'product_attribute_value' && $fk_element == 'fk_product_attribute' && ($user->rights->produit->lire || $user->rights->service->lire)) {
+		$perm = 1;
 	} elseif ($table_element_line == 'ecm_files') {		// Used when of page "documents.php"
 		if (!empty($user->rights->ecm->creer)) {
 			$perm = 1;
@@ -118,7 +120,15 @@ if (GETPOST('roworder', 'alpha', 3) && GETPOST('table_element_line', 'aZ09', 3)
 			$perm = 1;
 		}
 	}
-
+	$parameters = array('roworder'=> &$roworder, 'table_element_line' => &$table_element_line, 'fk_element' => &$fk_element, 'element_id' => &$element_id, 'perm' => &$perm);
+	$row = new GenericObject($db);
+	$row->table_element_line = $table_element_line;
+	$row->fk_element = $fk_element;
+	$row->id = $element_id;
+	$reshook = $hookmanager->executeHooks('checkRowPerms', $parameters, $row, $action);
+	if ($reshook > 0) {
+		$perm = $hookmanager->resArray['perm'];
+	}
 	if (! $perm) {
 		// We should not be here. If we are not allowed to reorder rows, feature should not be visible on script.
 		// If we are here, it is a hack attempt, so we report a warning.
@@ -135,10 +145,7 @@ if (GETPOST('roworder', 'alpha', 3) && GETPOST('table_element_line', 'aZ09', 3)
 		}
 	}
 
-	$row = new GenericObject($db);
-	$row->table_element_line = $table_element_line;
-	$row->fk_element = $fk_element;
-	$row->id = $element_id;
+
 
 	$row->line_ajaxorder($newrowordertab); // This update field rank or position in table row->table_element_line
 

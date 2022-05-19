@@ -44,7 +44,7 @@ class modSociete extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-		global $conf, $user;
+		global $conf, $user, $mysoc, $langs;
 
 		$this->db = $db;
 		$this->numero = 1;
@@ -306,7 +306,7 @@ class modSociete extends DolibarrModules
 		$this->export_fields_array[$r] += array('u.login'=>'SaleRepresentativeLogin', 'u.firstname'=>'SaleRepresentativeFirstname', 'u.lastname'=>'SaleRepresentativeLastname');
 
 		//$this->export_TypeFields_array[$r]=array(
-		//	's.rowid'=>"List:societe:nom",'s.nom'=>"Text",'s.status'=>"Text",'s.client'=>"Boolean",'s.fournisseur'=>"Boolean",'s.datec'=>"Date",'s.tms'=>"Date",
+		//	's.rowid'=>"Numeric",'s.nom'=>"Text",'s.status'=>"Text",'s.client'=>"Boolean",'s.fournisseur'=>"Boolean",'s.datec'=>"Date",'s.tms'=>"Date",
 		//	's.code_client'=>"Text",'s.code_fournisseur'=>"Text",'s.address'=>"Text",'s.zip'=>"Text",'s.town'=>"Text",'c.label'=>"List:c_country:label:label",
 		//	'c.code'=>"Text",'s.phone'=>"Text",'s.fax'=>"Text",'s.url'=>"Text",'s.email'=>"Text",'s.default_lang'=>"Text",'s.canvas' => "Canvas",'s.siret'=>"Text",'s.siren'=>"Text",
 		//	's.ape'=>"Text",'s.idprof4'=>"Text",'s.idprof5'=>"Text",'s.idprof6'=>"Text",'s.tva_intra'=>"Text",'s.capital'=>"Numeric",'s.note'=>"Text",
@@ -380,7 +380,7 @@ class modSociete extends DolibarrModules
 		// Add multicompany field
 		if (! empty($conf->global->MULTICOMPANY_ENTITY_IN_EXPORT_IF_SHARED)) {
 			if (!empty($conf->multicompany->enabled)) {
-				$nbofallowedentities = count(explode(',', getEntity('socpeople')));
+				$nbofallowedentities = count(explode(',', getEntity('contact')));
 				if ($nbofallowedentities > 1) {
 					$this->export_fields_array[$r]['c.entity'] = 'Entity';
 				}
@@ -397,7 +397,7 @@ class modSociete extends DolibarrModules
 			'c.address'=>"Text", 'c.zip'=>"Text", 'c.town'=>"Text", 'd.nom'=>'Text', 'r.nom'=>'Text', 'co.label'=>"List:c_country:label:rowid", 'co.code'=>"Text", 'c.phone'=>"Text",
 			'c.fax'=>"Text", 'c.email'=>"Text",
 			'c.statut'=>"Status",
-			's.rowid'=>"List:societe:nom::thirdparty", 's.nom'=>"Text", 's.status'=>"Status", 's.code_client'=>"Text", 's.code_fournisseur'=>"Text",
+			's.rowid'=>"Numeric", 's.nom'=>"Text", 's.status'=>"Status", 's.code_client'=>"Text", 's.code_fournisseur'=>"Text",
 			's.code_compta'=>"Text", 's.code_compta_fournisseur'=>"Text",
 			's.client'=>"Text", 's.fournisseur'=>"Text",
 			's.address'=>"Text", 's.zip'=>"Text", 's.town'=>"Text", 's.phone'=>"Text", 's.email'=>"Text",
@@ -437,7 +437,7 @@ class modSociete extends DolibarrModules
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as co ON c.fk_pays = co.rowid';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'socpeople_extrafields as extra ON extra.fk_object = c.rowid';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_typent as t ON s.fk_typent = t.id';
-		$this->export_sql_end[$r] .= ' WHERE c.entity IN ('.getEntity('socpeople').')';
+		$this->export_sql_end[$r] .= ' WHERE c.entity IN ('.getEntity('contact').')';
 		if (is_object($user) && empty($user->rights->societe->client->voir)) {
 			$this->export_sql_end[$r] .= ' AND (sc.fk_user = '.((int) $user->id).' ';
 			if (!empty($conf->global->SOCIETE_EXPORT_SUBORDINATES_CHILDS)) {
@@ -657,11 +657,34 @@ class modSociete extends DolibarrModules
 		);
 		$this->import_updatekeys_array[$r] = array(
 			's.nom' => 'Name',
+			's.zip' => 'Zip',
+			's.email' => 'Email',
 			's.code_client' => 'CustomerCode',
 			's.code_fournisseur' => 'SupplierCode',
 			's.code_compta' => 'CustomerAccountancyCode',
 			's.code_compta_fournisseur' => 'SupplierAccountancyCode'
 		);
+		// Add profids as criteria to search duplicates
+		$langs->load("companies");
+		$i=1;
+		while ($i <= 6) {
+			if ($i == 1) {
+				$this->import_updatekeys_array[$r]['s.siren'] = 'ProfId1'.(empty($mysoc->country_code) ? '' : $mysoc->country_code);
+			}
+			if ($i == 2) {
+				$this->import_updatekeys_array[$r]['s.siret'] = 'ProfId2'.(empty($mysoc->country_code) ? '' : $mysoc->country_code);
+			}
+			if ($i == 3) {
+				$this->import_updatekeys_array[$r]['s.ape'] = 'ProfId3'.(empty($mysoc->country_code) ? '' : $mysoc->country_code);
+			}
+			if ($i >= 4) {
+				//var_dump($langs->trans('ProfId'.$i.(empty($mysoc->country_code) ? '' : $mysoc->country_code)));
+				if ($langs->trans('ProfId'.$i.(empty($mysoc->country_code) ? '' : $mysoc->country_code)) != '-') {
+					$this->import_updatekeys_array[$r]['s.idprof'.$i] = 'ProfId'.$i.(empty($mysoc->country_code) ? '' : $mysoc->country_code);
+				}
+			}
+			$i++;
+		}
 
 		// Import list of contacts/additional addresses and attributes
 		$r++;

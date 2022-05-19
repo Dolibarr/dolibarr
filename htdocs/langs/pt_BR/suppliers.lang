@@ -1,5 +1,6 @@
 # Dolibarr language file - Source file is en_US - suppliers
 SuppliersInvoice=Fatura do fornecedor
+SupplierInvoices=Faturas de fornecedores
 ShowSupplierInvoice=Mostrar fatura do fornecedor
 TotalBuyingPriceMinShort=Total de precos de compra dos subprodutos
 TotalSellingPriceMinShort=Total de preços de venda de sub-produtos
@@ -12,8 +13,8 @@ SupplierPayment=Pagamento de fornecedores
 SuppliersArea=Área de fornecedores
 RefSupplierShort=Ref. fornecedor
 Availability=Entrega
-ExportDataset_fournisseur_1=Faturas do fornecedores e detalhes da fatura
-ExportDataset_fournisseur_2=Faturas e pagamentos do fornecedores
+ExportDataset_fournisseur_1=Faturas de fornecedores e detalhes da fatura
+ExportDataset_fournisseur_2=Faturas e pagamentos de fornecedores
 ExportDataset_fournisseur_3=Pedidos de compra e detalhes do pedido
 ConfirmApproveThisOrder=Tem certeza que deseja aprovar o pedido <b>%s</b>?
 DenyingThisOrder=Negar esta pedido

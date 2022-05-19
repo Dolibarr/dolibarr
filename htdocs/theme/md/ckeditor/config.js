@@ -47,7 +47,7 @@ CKEDITOR.editorConfig = function( config )
 	    ['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
 	    ['BidiLtr', 'BidiRtl'],
 	    ['Link','Unlink','Anchor'],
-	    ['Image','Table','HorizontalRule','Smiley','SpecialChar','PageBreak','Iframe'],
+	    ['Image','Table','HorizontalRule','Smiley','SpecialChar'],
 	    ['Styles','Format','Font','FontSize'],
 	    ['TextColor','BGColor'],
 	 	['Source']

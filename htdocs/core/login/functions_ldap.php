@@ -109,9 +109,9 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 			$userSearchFilter = str_replace('%1%', $usertotest, $dolibarr_main_auth_ldap_filter);
 		}
 
-		// If admin login provided
+		// If admin login or ldap auth filter provided
 		// Code to get user in LDAP from an admin connection (may differ from user connection, done later)
-		if ($ldapadminlogin) {
+		if ($ldapadminlogin || $dolibarr_main_auth_ldap_filter) {
 			$result = $ldap->connect_bind();
 			if ($result > 0) {
 				$resultFetchLdapUser = $ldap->fetch($usertotest, $userSearchFilter);
@@ -260,7 +260,7 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 			 ** 53 - Account inactive (manually locked out by administrator)
 			 */
 			dol_syslog("functions_ldap::check_user_password_ldap Authentication KO failed to connect to LDAP for '".$usertotest."'", LOG_NOTICE);
-			if (is_resource($ldap->connection)) {    // If connection ok but bind ko
+			if (is_resource($ldap->connection) || is_object($ldap->connection)) {    // If connection ok but bind ko
 				$ldap->ldapErrorCode = ldap_errno($ldap->connection);
 				$ldap->ldapErrorText = ldap_error($ldap->connection);
 				dol_syslog("functions_ldap::check_user_password_ldap ".$ldap->ldapErrorCode." ".$ldap->ldapErrorText);

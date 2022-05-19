@@ -89,7 +89,8 @@ if (preg_match('/del_(.*)/', $action, $reg)) {
 
 $form = new Form($db);
 
-llxHeader('', $langs->trans("ModulebuilderSetup"));
+$help_url = '';
+llxHeader('', $langs->trans("ModulebuilderSetup"), $help_url);
 
 $linkback = '<a href="'.($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php').'">'.$langs->trans("BackToModuleList").'</a>';
 

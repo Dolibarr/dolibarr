@@ -203,7 +203,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_date_end = '';
 	$sall = "";
 	$search_status = "";
-	$toselect = '';
+	$toselect = array();
 	$search_type_thirdparty = '';
 	$search_array_options = array();
 }
@@ -312,6 +312,9 @@ if ($search_zip) {
 if ($search_town) {
 	$sql .= natural_search(array('s.town'), $search_town);
 }
+if ($search_country && $search_country != '-1') {
+	$sql .= " AND s.fk_pays IN (".$db->sanitize($search_country).')';
+}
 if ($search_sale > 0) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $search_sale);
 }
@@ -338,37 +341,61 @@ if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	}
 }
 // Add where from hooks
-$parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldListGroupBy', $parameters); // Note that $action and $object may have been modified by hook
+$parameters = array('search_dfyear' => $search_dfyear, 'search_op2df'=>$search_op2df);
+$reshook = $hookmanager->executeHooks('printFieldListGroupBy', $parameters, $object); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
-if ($search_dfyear > 0 && $search_op2df) {
-	if ($search_op2df == '<=') {
-		$sql .= " HAVING MIN(".$db->ifsql("cd.statut=4", "cd.date_fin_validite", "null").") <= '".$db->idate(dol_get_last_day($search_dfyear, $search_dfmonth, false))."'";
-	} elseif ($search_op2df == '>=') {
-		$sql .= " HAVING MIN(".$db->ifsql("cd.statut=4", "cd.date_fin_validite", "null").") >= '".$db->idate(dol_get_first_day($search_dfyear, $search_dfmonth, false))."'";
-	} else {
-		$sql .= " HAVING MIN(".$db->ifsql("cd.statut=4", "cd.date_fin_validite", "null").") <= '".$db->idate(dol_get_last_day($search_dfyear, $search_dfmonth, false))."' AND MIN(".$db->ifsql("cd.statut=4", "cd.date_fin_validite", "null").") >= '".$db->idate(dol_get_first_day($search_dfyear, $search_dfmonth, false))."'";
+// Add HAVING from hooks
+$parameters = array('search_dfyear' => $search_dfyear, 'search_op2df'=>$search_op2df);
+$reshook = $hookmanager->executeHooks('printFieldListHaving', $parameters, $object); // Note that $action and $object may have been modified by hook
+if (empty($reshook)) {
+	if ($search_dfyear > 0 && $search_op2df) {
+		if ($search_op2df == '<=') {
+			$sql .= " HAVING MIN(".$db->ifsql("cd.statut=4", "cd.date_fin_validite", "null").") <= '".$db->idate(dol_get_last_day($search_dfyear, $search_dfmonth, false))."'";
+		} elseif ($search_op2df == '>=') {
+			$sql .= " HAVING MIN(".$db->ifsql("cd.statut=4", "cd.date_fin_validite", "null").") >= '".$db->idate(dol_get_first_day($search_dfyear, $search_dfmonth, false))."'";
+		} else {
+			$sql .= " HAVING MIN(".$db->ifsql("cd.statut=4", "cd.date_fin_validite", "null").") <= '".$db->idate(dol_get_last_day($search_dfyear, $search_dfmonth, false))."' AND MIN(".$db->ifsql("cd.statut=4", "cd.date_fin_validite", "null").") >= '".$db->idate(dol_get_first_day($search_dfyear, $search_dfmonth, false))."'";
+		}
 	}
 }
-$sql .= $db->order($sortfield, $sortorder);
-
-$totalnboflines = 0;
-$result = $db->query($sql);
-if ($result) {
-	$totalnboflines = $db->num_rows($result);
-}
+$sql .= $hookmanager->resPrint;
 
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
-	$result = $db->query($sql);
-	$nbtotalofrecords = $db->num_rows($result);
+	//$result = $db->query($sql);
+	//$nbtotalofrecords = $db->num_rows($result);
+
+	if ($search_dfyear > 0 && $search_op2df) {
+		$resql = $db->query($sql, 0, 'auto', 1);
+		while ($db->fetch_object($resql)) {
+			if (empty($nbtotalofrecords)) {
+				$nbtotalofrecords = 1;    // We can't make +1 because init value is ''
+			} else {
+				$nbtotalofrecords++;
+			}
+		}
+	} else {
+		$sqlforcount = preg_replace('/^SELECT[a-zA-Z0-9\._\s\(\),=<>\:\-\']+\sFROM/', 'SELECT COUNT(*) as nbtotalofrecords FROM', $sql);
+		$sqlforcount = preg_replace('/LEFT JOIN '.MAIN_DB_PREFIX.'contratdet as cd ON c.rowid = cd.fk_contrat/', '', $sqlforcount);
+		$sqlforcount = preg_replace('/LEFT JOIN '.MAIN_DB_PREFIX.'categorie_product as cp ON cp.fk_product=cd.fk_product/', '', $sqlforcount);
+		$sqlforcount = preg_replace('/AND cp.fk_categorie = '.((int) $search_product_category).'/', '', $sqlforcount);
+		$sqlforcount = preg_replace('/GROUP BY.*$/', '', $sqlforcount);
+
+		$resql = $db->query($sqlforcount);
+		$objforcount = $db->fetch_object($resql);
+		$nbtotalofrecords = $objforcount->nbtotalofrecords;
+	}
+
 	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
 }
 
-$sql .= $db->plimit($limit + 1, $offset);
+$sql .= $db->order($sortfield, $sortorder);
+if ($limit) {
+	$sql .= $db->plimit($limit + 1, $offset);
+}
 
 $resql = $db->query($sql);
 if (!$resql) {
@@ -465,6 +492,9 @@ if ($search_user > 0) {
 if ($search_type_thirdparty > 0) {
 	$param .= '&search_type_thirdparty='.urlencode($search_type_thirdparty);
 }
+if ($search_country != '') {
+	$param .= "&search_country=".urlencode($search_country);
+}
 if ($search_product_category > 0) {
 	$param .= '&search_product_category='.urlencode($search_product_category);
 }
@@ -508,7 +538,7 @@ print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-print_barre_liste($langs->trans("ListOfContracts"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $totalnboflines, 'contract', 0, $newcardbutton, '', $limit, 0, 0, 1);
+print_barre_liste($langs->trans("ListOfContracts"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'contract', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 $topicmail = "SendContractRef";
 $modelmail = "contract";
@@ -526,7 +556,7 @@ if ($sall) {
 $moreforfilter = '';
 
 // If the user can view prospects other than his'
-if ($user->rights->societe->client->voir || $socid) {
+if ($user->rights->user->user->lire) {
 	$langs->load("commercial");
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('ThirdPartiesOfSaleRepresentative');
@@ -663,7 +693,7 @@ if (!empty($arrayfields['lower_planned_end_date']['checked'])) {
 		print '</br>';
 		print $formother->select_month($search_dfmonth, 'search_dfmonth', 1, 0);
 		print ' ';
-		$formother->select_year($search_dfyear, 'search_dfyear', 1, 20, 5, 0, 0, '');
+		print $formother->selectyear($search_dfyear, 'search_dfyear', 1, 20, 5, 0, 0, '');
 		print '</td>';
 }
 // Status

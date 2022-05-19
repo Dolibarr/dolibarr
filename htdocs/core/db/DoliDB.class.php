@@ -97,6 +97,17 @@ abstract class DoliDB implements Database
 	}
 
 	/**
+	 * Return SQL string to force an index
+	 *
+	 * @param	string	$nameofindex	Name of index
+	 * @return	string					SQL string
+	 */
+	public function hintindex($nameofindex)
+	{
+		return '';
+	}
+
+	/**
 	 *   Convert (by PHP) a GM Timestamp date into a string date with PHP server TZ to insert into a date field.
 	 *   Function to use to build INSERT, UPDATE or WHERE predica
 	 *
@@ -106,7 +117,7 @@ abstract class DoliDB implements Database
 	 */
 	public function idate($param, $gm = 'tzserver')
 	{
-		// TODO $param should be gmt, so we should add $gm to 'gmt' instead of default 'tzserver'
+		// TODO $param should be gmt, so we should have default $gm to 'gmt' instead of default 'tzserver'
 		return dol_print_date($param, "%Y-%m-%d %H:%M:%S", $gm);
 	}
 

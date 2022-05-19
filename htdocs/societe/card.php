@@ -6,7 +6,7 @@
  * Copyright (C) 2005-2017  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2008       Patrick Raguin          <patrick.raguin@auguria.net>
  * Copyright (C) 2010-2020  Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2011-2021  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2011-2022  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
@@ -84,6 +84,9 @@ $error = 0; $errors = array();
 $action		= (GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view');
 $cancel		= GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
+$backtopagejsfields = GETPOST('backtopagejsfields', 'alpha');
+$backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
+$dol_openinpopup = GETPOST('dol_openinpopup', 'aZ09');
 $confirm	= GETPOST('confirm', 'alpha');
 
 $socid = GETPOST('socid', 'int') ?GETPOST('socid', 'int') : GETPOST('id', 'int');
@@ -134,16 +137,6 @@ $upload_dir = $conf->societe->multidir_output[isset($object->entity) ? $object->
 
 // Security check
 $result = restrictedArea($user, 'societe', $socid, '&societe', '', 'fk_soc', 'rowid', 0);
-
-/*
-if ($object->id > 0) {
-	if ($object->client == 0 && $object->fournisseur > 0) {
-		if (!empty($user->rights->fournisseur->lire)) {
-			accessforbidden();
-		}
-	}
-}
-*/
 
 
 
@@ -413,11 +406,11 @@ if (empty($reshook)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ThirdPartyName")), null, 'errors');
 			$error++;
 		}
-		if (GETPOST('client') < 0) {
+		if (GETPOST('client', 'int') && GETPOST('client', 'int') < 0) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ProspectCustomer")), null, 'errors');
 			$error++;
 		}
-		if (GETPOST('fournisseur') < 0) {
+		if (GETPOSTISSET('fournisseur') && GETPOST('fournisseur', 'int') < 0) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Supplier")), null, 'errors');
 			$error++;
 		}
@@ -711,8 +704,14 @@ if (empty($reshook)) {
 							$url = DOL_URL_ROOT."/fourn/card.php?socid=".$object->id;
 						}
 
-						header("Location: ".$url);
-						exit;
+						// TODO @LDR
+						if ($dol_openinpopup && $backtopagejsfields) {
+							print 'TODO Set js var of parent with id, then close popup.';
+							exit;
+						} else {
+							header("Location: ".$url);
+							exit;
+						}
 					}
 				} else {
 					$db->rollback();
@@ -918,7 +917,7 @@ if (empty($reshook)) {
 
 	// Actions to build doc
 	$id = $socid;
-	$upload_dir = $conf->societe->multidir_output[$object->entity];
+	$upload_dir = !empty($conf->societe->multidir_output[$object->entity])?$conf->societe->multidir_output[$object->entity]:$conf->societe->dir_output;
 	$permissiontoadd = $user->rights->societe->creer;
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 }
@@ -1004,23 +1003,28 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		$modCodeFournisseur = new $module;
 
 		// Define if customer/prospect or supplier status is set or not
-		if (GETPOST("type") != 'f') {
+		if (GETPOST("type", 'aZ') != 'f') {
 			$object->client = -1;
 			if (!empty($conf->global->THIRDPARTY_CUSTOMERPROSPECT_BY_DEFAULT)) {
 				$object->client = 3;
 			}
 		}
 		// Prospect / Customer
-		if (GETPOST("type") == 'c') {
+		if (GETPOST("type", 'aZ') == 'c') {
 			if (!empty($conf->global->THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT)) {
 				$object->client = $conf->global->THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT;
 			} else {
 				$object->client = 3;
 			}
 		}
-		if (GETPOST("type") == 'p') {
+		if (GETPOST("type", 'aZ') == 'p') {
 			$object->client = 2;
 		}
+
+		if (!empty($conf->global->SOCIETE_DISABLE_PROSPECTSCUSTOMERS) && $object->client == 3) {
+			$object->client = 1;
+		}
+
 		if (((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) && (GETPOST("type") == 'f' || (GETPOST("type") == '' && !empty($conf->global->THIRDPARTY_SUPPLIER_BY_DEFAULT)))) {
 			$object->fournisseur = 1;
 		}
@@ -1175,13 +1179,15 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
                         	document.formsoc.private.value=1;
                         });
 
+						var canHaveCategoryIfNotCustomerProspectSupplier = ' . (empty($conf->global->THIRDPARTY_CAN_HAVE_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT) ? '0' : '1') . ';
+
 						init_customer_categ();
 			  			$("#customerprospect").change(function() {
 								init_customer_categ();
 						});
 						function init_customer_categ() {
 								console.log("is customer or prospect = "+jQuery("#customerprospect").val());
-								if (jQuery("#customerprospect").val() == 0 && (jQuery("#fournisseur").val() == 0 || ' . (empty($conf->global->THIRDPARTY_CAN_HAVE_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT_SUPPLIER) ? '1' : '0').'))
+								if (jQuery("#customerprospect").val() == 0 && !canHaveCategoryIfNotCustomerProspectSupplier)
 								{
 									jQuery(".visibleifcustomer").hide();
 								}
@@ -1264,8 +1270,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '<form enctype="multipart/form-data" action="'.$_SERVER["PHP_SELF"].'" method="post" name="formsoc" autocomplete="off">'; // Chrome ignor autocomplete
 
 		print '<input type="hidden" name="action" value="add">';
-		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
+		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+		print '<input type="hidden" name="backtopagejsfields" value="'.$backtopagejsfields.'">';
 		print '<input type="hidden" name="private" value='.$object->particulier.'>';
 		print '<input type="hidden" name="type" value='.GETPOST("type", 'alpha').'>';
 		print '<input type="hidden" name="LastName" value="'.$langs->trans('ThirdPartyName').' / '.$langs->trans('LastName').'">';
@@ -1312,16 +1319,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		// Alias names (commercial, trademark or alias names)
 		print '<tr id="name_alias"><td><label for="name_alias_input">'.$langs->trans('AliasNames').'</label></td>';
 		print '<td colspan="3"><input type="text" class="minwidth300" name="name_alias" id="name_alias_input" value="'.dol_escape_htmltag($object->name_alias).'"></td></tr>';
-
-		// Parent company
-		if (empty($conf->global->SOCIETE_DISABLE_PARENTCOMPANY)) {
-			print '<tr>';
-			print '<td>'.$langs->trans('ParentCompany').'</td>';
-			print '<td colspan="3" class="maxwidthonsmartphone">';
-			print img_picto('', 'company', 'class="paddingrightonly"');
-			print $form->select_thirdparty_list('', 'parent_company_id', '', $langs->trans("ThirdParty"));
-			print '</td></tr>';
-		}
 
 		// Prospect/Customer
 		print '<tr><td class="titlefieldcreate">'.$form->editfieldkey('ProspectCustomer', 'customerprospect', '', $object, 0, 'string', '', 1).'</td>';
@@ -1634,12 +1631,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			$langs->load('categories');
 
 			// Customer
-			//if ($object->prospect || $object->client || (! $object->fournisseur && ! empty($conf->global->THIRDPARTY_CAN_HAVE_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT_SUPPLIER))) {
 			print '<tr class="visibleifcustomer"><td class="toptd">'.$form->editfieldkey('CustomersProspectsCategoriesShort', 'custcats', '', $object, 0).'</td><td colspan="3">';
 			$cate_arbo = $form->select_all_categories(Categorie::TYPE_CUSTOMER, null, 'parent', null, null, 1);
 			print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('custcats', $cate_arbo, GETPOST('custcats', 'array'), null, null, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 			print "</td></tr>";
-			//}
 
 			if (!empty($conf->global->THIRDPARTY_SUGGEST_ALSO_ADDRESS_CREATION)) {
 				print '<tr class="individualline"><td class="toptd">'.$form->editfieldkey('ContactCategoriesShort', 'contcats', '', $object, 0).'</td><td colspan="3">';
@@ -1669,6 +1664,16 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		// Other attributes
 		$parameters = array('socid'=>$socid, 'colspan' => ' colspan="3"', 'colspanvalue' => '3');
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
+
+		// Parent company
+		if (empty($conf->global->SOCIETE_DISABLE_PARENTCOMPANY)) {
+			print '<tr>';
+			print '<td>'.$langs->trans('ParentCompany').'</td>';
+			print '<td colspan="3" class="maxwidthonsmartphone">';
+			print img_picto('', 'company', 'class="paddingrightonly"');
+			print $form->select_company(GETPOST('parent_company_id'), 'parent_company_id', '', 'SelectThirdParty', 0, 0, null, 0, 'minwidth300 maxwidth500 widthcentpercentminusxx');
+			print '</td></tr>';
+		}
 
 		// Assign a sale representative
 		print '<tr>';
@@ -1725,7 +1730,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		print dol_get_fiche_end();
 
-		print $form->buttonsSaveCancel("AddThirdParty");
+		print $form->buttonsSaveCancel("AddThirdParty", 'Cancel', null, 0, '', $dol_openinpopup);
 
 		print '</form>'."\n";
 	} elseif ($action == 'edit') {
@@ -1909,13 +1914,15 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
     				}
     			});
 
+				var canHaveCategoryIfNotCustomerProspectSupplier = ' . (empty($conf->global->THIRDPARTY_CAN_HAVE_CUSTOMER_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT) ? '0' : '1') . ';
+
 				init_customer_categ();
 	  			$("#customerprospect").change(function() {
 					init_customer_categ();
 				});
        			function init_customer_categ() {
 					console.log("is customer or prospect = "+jQuery("#customerprospect").val());
-					if (jQuery("#customerprospect").val() == 0 && (jQuery("#fournisseur").val() == 0 || '.(empty($conf->global->THIRDPARTY_CAN_HAVE_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT_SUPPLIER) ? '1' : '0').'))
+					if (jQuery("#customerprospect").val() == 0 && !canHaveCategoryIfNotCustomerProspectSupplier)
 					{
 						jQuery(".visibleifcustomer").hide();
 					}
@@ -2729,7 +2736,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		// Tags / categories
 		if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire)) {
 			// Customer
-			if ($object->prospect || $object->client || (!$object->fournisseur && !empty($conf->global->THIRDPARTY_CAN_HAVE_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT_SUPPLIER))) {
+			if ($object->prospect || $object->client || !empty($conf->global->THIRDPARTY_CAN_HAVE_CUSTOMER_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT)) {
 				print '<tr><td>'.$langs->trans("CustomersCategoriesShort").'</td>';
 				print '<td>';
 				print $form->showCategories($object->id, Categorie::TYPE_CUSTOMER, 1);
@@ -2919,18 +2926,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				}
 
 				if (empty($user->socid)) {
-					if (!empty($object->email) || $at_least_one_email_contact) {
-						$langs->load("mails");
-						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?socid='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a>'."\n";
-					} else {
-						$langs->load("mails");
-						print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NoEMail")).'">'.$langs->trans('SendMail').'</a>'."\n";
-					}
+					$langs->load("mails");
+					$title = '';
+					if (empty($object->email) && !$at_least_one_email_contact) { $title = $langs->trans('NoEMail'); }
+					print dolGetButtonAction($title, $langs->trans('SendMail'), 'default', $_SERVER['PHP_SELF'].'?socid='.$object->id.'&action=presend&mode=init#formmailbeforetitle', 'btn-send-mail', !empty($object->email) || $at_least_one_email_contact);
 				}
 
-				if ($user->rights->societe->creer) {
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a>'."\n";
-				}
+				print dolGetButtonAction('', $langs->trans('Modify'), 'default', $_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=edit&token='.newToken(), '', $permissiontoadd);
 
 				if (!empty($conf->adherent->enabled)) {
 					$adh = new Adherent($db);
@@ -2940,16 +2942,16 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					}
 				}
 
-				if ($user->rights->societe->supprimer) {
-					print '<a class="butActionDelete" href="card.php?action=merge&socid='.$object->id.'" title="'.dol_escape_htmltag($langs->trans("MergeThirdparties")).'">'.$langs->trans('Merge').'</a>'."\n";
-				}
+				print dolGetButtonAction($langs->trans('MergeThirdparties'), $langs->trans('Merge'), 'danger', $_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=merge&token='.newToken(), '', $permissiontodelete);
 
 				if ($user->rights->societe->supprimer) {
+					$deleteUrl = $_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=delete&token='.newToken();
+					$buttonId = 'action-delete-no-ajax';
 					if ($conf->use_javascript_ajax && empty($conf->dol_use_jmobile)) {	// We can't use preloaded confirm form with jmobile
-						print '<span id="action-delete" class="butActionDelete">'.$langs->trans('Delete').'</span>'."\n";
-					} else {
-						print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=delete&token='.newToken().'">'.$langs->trans('Delete').'</a>'."\n";
+						$deleteUrl = '';
+						$buttonId = 'action-delete';
 					}
+					print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $deleteUrl, $buttonId, $permissiontodelete);
 				}
 			}
 
@@ -2987,7 +2989,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			$MAXEVENT = 10;
 
-			$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-list-alt imgforviewmode', DOL_URL_ROOT.'/societe/agenda.php?socid='.$object->id);
+			$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/societe/agenda.php?socid='.$object->id);
 
 			// List of actions on element
 			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';

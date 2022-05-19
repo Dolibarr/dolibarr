@@ -256,12 +256,12 @@ class Website extends CommonObject
 				}
 			}
 
-			// Uncomment this and change MYOBJECT to your own tag if you
+			// Uncomment this and change WEBSITE to your own tag if you
 			// want this action to call a trigger.
 			// if (!$notrigger) {
 
 			//     // Call triggers
-			//     $result = $this->call_trigger('MYOBJECT_CREATE',$user);
+			//     $result = $this->call_trigger('WEBSITE_CREATE',$user);
 			//     if ($result < 0) $error++;
 			//     // End call triggers
 			// }
@@ -560,7 +560,7 @@ class Website extends CommonObject
 			}
 
 			//// Call triggers
-			//$result=$this->call_trigger('MYOBJECT_MODIFY',$user);
+			//$result=$this->call_trigger('WEBSITE_MODIFY',$user);
 			//if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
 			//// End call triggers
 		}
@@ -587,6 +587,8 @@ class Website extends CommonObject
 	 */
 	public function delete(User $user, $notrigger = false)
 	{
+		global $conf;
+
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$error = 0;
@@ -595,11 +597,11 @@ class Website extends CommonObject
 
 		if (!$error) {
 			if (!$notrigger) {
-				// Uncomment this and change MYOBJECT to your own tag if you
+				// Uncomment this and change WEBSITE to your own tag if you
 				// want this action calls a trigger.
 
 				//// Call triggers
-				//$result=$this->call_trigger('MYOBJECT_DELETE',$user);
+				//$result=$this->call_trigger('WEBSITE_DELETE',$user);
 				//if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
 				//// End call triggers
 			}
@@ -618,7 +620,7 @@ class Website extends CommonObject
 		}
 
 		if (!$error && !empty($this->ref)) {
-			$pathofwebsite = DOL_DATA_ROOT.'/website/'.$this->ref;
+			$pathofwebsite = DOL_DATA_ROOT.($conf->entity > 1 ? '/'.$conf->entity : '').'/website/'.$this->ref;
 
 			dol_delete_dir_recursive($pathofwebsite);
 		}
@@ -678,8 +680,8 @@ class Website extends CommonObject
 		$oldidforhome = $object->fk_default_home;
 		$oldref = $object->ref;
 
-		$pathofwebsiteold = $dolibarr_main_data_root.'/website/'.dol_sanitizeFileName($oldref);
-		$pathofwebsitenew = $dolibarr_main_data_root.'/website/'.dol_sanitizeFileName($newref);
+		$pathofwebsiteold = $dolibarr_main_data_root.($conf->entity > 1 ? '/'.$conf->entity : '').'/website/'.dol_sanitizeFileName($oldref);
+		$pathofwebsitenew = $dolibarr_main_data_root.($conf->entity > 1 ? '/'.$conf->entity : '').'/website/'.dol_sanitizeFileName($newref);
 		dol_delete_dir_recursive($pathofwebsitenew);
 
 		$fileindex = $pathofwebsitenew.'/index.php';
@@ -786,7 +788,7 @@ class Website extends CommonObject
 
 				// Re-generates the index.php page to be the home page, and re-generates the wrapper.php
 				//--------------------------------------------------------------------------------------
-				$result = dolSaveIndexPage($pathofwebsitenew, $fileindex, $filetpl, $filewrapper);
+				$result = dolSaveIndexPage($pathofwebsitenew, $fileindex, $filetpl, $filewrapper, $object);
 			}
 		}
 
@@ -1275,7 +1277,7 @@ class Website extends CommonObject
 
 		// Regenerate index page to point to the new index page
 		$pathofwebsite = $conf->website->dir_output.'/'.$object->ref;
-		dolSaveIndexPage($pathofwebsite, $pathofwebsite.'/index.php', $pathofwebsite.'/page'.$object->fk_default_home.'.tpl.php', $pathofwebsite.'/wrapper.php');
+		dolSaveIndexPage($pathofwebsite, $pathofwebsite.'/index.php', $pathofwebsite.'/page'.$object->fk_default_home.'.tpl.php', $pathofwebsite.'/wrapper.php', $object);
 
 		if ($error) {
 			$this->db->rollback();
@@ -1287,7 +1289,7 @@ class Website extends CommonObject
 	}
 
 	/**
-	 * Rebuild all files of a containers of a website. Rebuild also the wrapper.php file. TODO Add other files too.
+	 * Rebuild all files of all the pages/containers of a website. Rebuild also the index and wrapper.php file.
 	 * Note: Files are already regenerated during importWebSite so this function is useless when importing a website.
 	 *
 	 * @return 	int						<0 if KO, >=0 if OK
@@ -1339,12 +1341,12 @@ class Website extends CommonObject
 				$aliasesarray[] = $objectpagestatic->pageurl;
 			}
 
-			// Regenerate all aliases pages (pages with a natural name)
+			// Regenerate also all aliases pages (pages with a natural name) by calling dolSavePageAlias()
 			if (is_array($aliasesarray)) {
 				foreach ($aliasesarray as $aliasshortcuttocreate) {
 					if (trim($aliasshortcuttocreate)) {
 						$filealias = $conf->website->dir_output.'/'.$object->ref.'/'.trim($aliasshortcuttocreate).'.php';
-						$result = dolSavePageAlias($filealias, $object, $objectpagestatic);
+						$result = dolSavePageAlias($filealias, $object, $objectpagestatic);	// This includes also a copy into sublanguage directories.
 						if (!$result) {
 							$this->errors[] = 'Failed to write file '.basename($filealias);
 							$error++;
@@ -1357,10 +1359,15 @@ class Website extends CommonObject
 		}
 
 		if (!$error) {
-			// Save wrapper.php
+			// Save index.php and wrapper.php
 			$pathofwebsite = $conf->website->dir_output.'/'.$object->ref;
+			$fileindex = $pathofwebsite.'/index.php';
+			$filetpl = '';
+			if ($object->fk_default_home > 0) {
+				$filetpl = $pathofwebsite.'/page'.$object->fk_default_home.'.tpl.php';
+			}
 			$filewrapper = $pathofwebsite.'/wrapper.php';
-			dolSaveIndexPage($pathofwebsite, '', '', $filewrapper);
+			dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl, $filewrapper, $object);	// This includes also a version of index.php into sublanguage directories
 		}
 
 		if ($error) {

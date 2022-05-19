@@ -115,7 +115,9 @@ class MenuManager
 		$this->tabMenu = $tabMenu;
 		//var_dump($tabMenu);
 
-		//if ($forcemainmenu == 'all') { var_dump($this->tabMenu); exit; }
+		//if ($forcemainmenu == 'all') {
+		//var_dump($this->tabMenu);
+		//}
 	}
 
 

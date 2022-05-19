@@ -260,12 +260,19 @@ if ($search_user) {
 if ($search_label) {
 	$sql .= natural_search(array('s.label'), $search_label);
 }
-if (!empty($search_date_start_from) && !empty($search_date_start_to)) {
-	$sql .= " AND s.datesp BETWEEN '".$db->idate($search_date_start_from)."' AND '".$db->idate($search_date_start_to)."'";
+if (!empty($search_date_start_from)) {
+	$sql .= " AND s.datesp >= '".$db->idate($search_date_start_from)."'";
 }
-if (!empty($search_date_end_from) && !empty($search_date_end_to)) {
-	$sql .= " AND s.dateep BETWEEN '".$db->idate($search_date_end_from)."' AND '".$db->idate($search_date_end_to)."'";
+if (!empty($search_date_end_from)) {
+	$sql .= " AND s.dateep >= '".$db->idate($search_date_end_from)."'";
 }
+if (!empty($search_date_start_to)) {
+	$sql .= " AND s.datesp <= '".$db->idate($search_date_start_to)."'";
+}
+if (!empty($search_date_end_to)) {
+	$sql .= " AND s.dateep <= '".$db->idate($search_date_end_to)."'";
+}
+
 if ($search_amount) {
 	$sql .= natural_search("s.amount", $search_amount, 1);
 }
@@ -499,7 +506,7 @@ print '</tr>'."\n";
 
 // Detect if we need a fetch on each output line
 $needToFetchEachLine = 0;
-if (is_array($extrafields->attributes[$object->table_element]['computed']) && count($extrafields->attributes[$object->table_element]['computed']) > 0) {
+if (isset($extrafields->attributes[$object->table_element]['computed']) && is_array($extrafields->attributes[$object->table_element]['computed']) && count($extrafields->attributes[$object->table_element]['computed']) > 0) {
 	foreach ($extrafields->attributes[$object->table_element]['computed'] as $key => $val) {
 		if (preg_match('/\$object/', $val)) {
 			$needToFetchEachLine++; // There is at least one compute field that use $object

@@ -36,8 +36,9 @@ EventOrganizationSetup=イベント組織の設定
 EventOrganization=イベント主催
 Settings=設定
 EventOrganizationSetupPage = イベント組織設定ページ
-EVENTORGANIZATION_TASK_LABEL = プロジェクトが検証されたときに自動的に作成するタスクのラベル
-EVENTORGANIZATION_TASK_LABELTooltip = 組織化されたイベントを検証すると、プロジェクトにいくつかのタスクが自動的に作成される。<br><br>例：<br>会議の呼び出しを送信<br>ブースの呼び出しを送信 <br>会議の呼出を受信 <br>ブースの呼出を受信 <br>参加者にイベントへのサブスクリプションを公開 <br> 話者にイベントのリマインダーを送信<br>ブースの主催者にイベントのリマインダーを送信<br>参加者にイベントのリマインダーを送信
+EVENTORGANIZATION_TASK_LABEL = プロジェクトは検証済なら自動的に作成するタスクのラベル
+EVENTORGANIZATION_TASK_LABELTooltip = 整理するイベントを検証と、プロジェクトにいくつかのタスクが自動的に作成される<br><br>例: <br>カンファレンス募集を送信<br>ブース募集を送信<br>カンファレンス提案を検証<br>ブース申請を検証<br>出席者向けのイベント参加登録を開始<br>話者にイベント催告を送信<br>ブース主催者にイベント催告を送信<br>出席者にイベント催告を送信
+EVENTORGANIZATION_TASK_LABELTooltip2=タスクを自動的に作成する必要がない場合は、空のままにする。
 EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = 誰かが会議を提案したときに自動的に作成される取引先に追加するカテゴリ
 EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = ブースを提案したときに自動的に作成される取引先に追加するカテゴリ
 EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = 会議の提案を受け取った後に送信する電子メールのテンプレート。
@@ -63,9 +64,9 @@ ConferenceOrBoothAttendee = 会議またはブースの参加者
 #
 # Template Mail
 #
-YourOrganizationEventConfRequestWasReceived = 会議リクエストは受信済
+YourOrganizationEventConfRequestWasReceived = 会議要求は受信済
 YourOrganizationEventBoothRequestWasReceived = ブースの要望は受信済み
-EventOrganizationEmailAskConf = 会議のリクエスト
+EventOrganizationEmailAskConf = 会議の要求
 EventOrganizationEmailAskBooth = ブースのご要望
 EventOrganizationEmailBoothPayment = ブースのお支払い
 EventOrganizationEmailRegistrationPayment = イベントへの登録
@@ -126,7 +127,7 @@ BoothLocationFee = イベントのブース位置: '%s' で %s から %s まで
 EventType = イベント種別
 LabelOfBooth=ブースラベル
 LabelOfconference=会議ラベル
-ConferenceIsNotConfirmed=登録できません。会議はまだ確定されていない
+ConferenceIsNotConfirmed=登録できない。会議はまだ確定されていない
 DateMustBeBeforeThan=%sは必ず%sの前
 DateMustBeAfterThan=%sは必ず%sの後
 
@@ -150,18 +151,19 @@ EvntOrgRegistrationConfWelcomeMessage = カンファレンスの提案ページ�
 EvntOrgRegistrationBoothWelcomeMessage = ブース提案ページへようこそ。
 EvntOrgVoteHelpMessage = ここで、プロジェクトの提案されたイベントを表示して投票できる
 VoteOk = あなたの投票が承認された。
-AlreadyVoted = あなたはすでにこのイベントに投票している。
+AlreadyVoted = あなたは既にこのイベントに投票している。
 VoteError = 投票中にエラーが発生した。もう一度やり直し願う。
 
-SubscriptionOk = 登録が検証された
+SubscriptionOk = 登録は検証済
 ConfAttendeeSubscriptionConfirmation = イベントへのサブスクリプションの確定
 Attendee = 参加者
 PaymentConferenceAttendee = 会議参加者の支払い
 PaymentBoothLocation = ブースの場所の支払い
 DeleteConferenceOrBoothAttendee=出席者を削除する
-RegistrationAndPaymentWereAlreadyRecorder=電子メール<b>%s</b>の登録と支払いはすでに記録されている
+RegistrationAndPaymentWereAlreadyRecorder=電子メール<b>%s</b>の登録と支払いは既に記録されている
 EmailAttendee=参加者の電子メール
 EmailCompanyForInvoice=法人の電子メール（請求書に対して、参加者の電子メールと異なる場合）
-ErrorSeveralCompaniesWithEmailContactUs=このメールを使用している会社がいくつか見つかったため、登録を自動的に検証することはできない。手動検証については、%sまで問い合わせること。
-ErrorSeveralCompaniesWithNameContactUs=この名前の会社がいくつか見つかったため、登録を自動的に検証することはできない。手動検証については、%sまで問い合わせること。
+ErrorSeveralCompaniesWithEmailContactUs=このメールを使用している会社がいくつか見つかったため、登録を自動的に検証ことはできない。手動検証については、%sまで問い合わせること。
+ErrorSeveralCompaniesWithNameContactUs=この名前の会社がいくつか見つかったため、登録を自動的に検証ことはできない。手動検証については、%sまで問い合わせること。
 NoPublicActionsAllowedForThisEvent=このイベントの公開アクションは公開されていない
+MaxNbOfAttendees=参加者の最大数

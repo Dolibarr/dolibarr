@@ -59,7 +59,9 @@ class Task extends CommonObjectLine
 	/**
 	 * @var array	List of child tables. To test if we can delete object.
 	 */
-	protected $childtables = array('projet_task_time');
+	protected $childtables = array(
+		'projet_task_time' => array('name' => 'Task', 'parent' => 'projet_task', 'parentkey' => 'fk_task')
+	);
 
 	/**
 	 * @var int ID parent task
@@ -918,6 +920,7 @@ class Task extends CommonObjectLine
 		// Add where from extra fields
 		$extrafieldsobjectkey = 'projet_task';
 		$extrafieldsobjectprefix = 'efpt.';
+		global $db; // needed for extrafields_list_search_sql.tpl
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 		// Add where from hooks
 		$parameters = array();
@@ -1182,6 +1185,7 @@ class Task extends CommonObjectLine
 		dol_syslog(get_class($this)."::addTimeSpent", LOG_DEBUG);
 
 		$ret = 0;
+		$now = dol_now();
 
 		// Check parameters
 		if (!is_object($user)) {
@@ -1219,6 +1223,7 @@ class Task extends CommonObjectLine
 		$sql .= ", task_duration";
 		$sql .= ", fk_user";
 		$sql .= ", note";
+		$sql .= ", datec";
 		$sql .= ") VALUES (";
 		$sql .= ((int) $this->id);
 		$sql .= ", '".$this->db->idate($this->timespent_date)."'";
@@ -1227,6 +1232,7 @@ class Task extends CommonObjectLine
 		$sql .= ", ".((int) $this->timespent_duration);
 		$sql .= ", ".((int) $this->timespent_fk_user);
 		$sql .= ", ".(isset($this->timespent_note) ? "'".$this->db->escape($this->timespent_note)."'" : "null");
+		$sql .= ", '".$this->db->idate($now)."'";
 		$sql .= ")";
 
 		$resql = $this->db->query($sql);
@@ -1767,23 +1773,23 @@ class Task extends CommonObjectLine
 
 		$this->db->begin();
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."projet_task_time";
-		$sql .= " WHERE rowid = ".((int) $this->timespent_id);
-
-		dol_syslog(get_class($this)."::delTimeSpent", LOG_DEBUG);
-		$resql = $this->db->query($sql);
-		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+		if (!$notrigger) {
+			// Call trigger
+			$result = $this->call_trigger('TASK_TIMESPENT_DELETE', $user);
+			if ($result < 0) {
+				$error++;
+			}
+			// End call triggers
 		}
 
 		if (!$error) {
-			if (!$notrigger) {
-				// Call trigger
-				$result = $this->call_trigger('TASK_TIMESPENT_DELETE', $user);
-				if ($result < 0) {
-					$error++;
-				}
-				// End call triggers
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."projet_task_time";
+			$sql .= " WHERE rowid = ".((int) $this->timespent_id);
+
+			dol_syslog(get_class($this)."::delTimeSpent", LOG_DEBUG);
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$error++; $this->errors[] = "Error ".$this->db->lasterror();
 			}
 		}
 

@@ -103,8 +103,8 @@ class box_produits extends ModeleBoxes
 			}
 			// Add where from hooks
 			if (is_object($hookmanager)) {
-				$parameters = array('boxproductlist'=>1);
-				$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
+				$parameters = array('boxproductlist' => 1, 'boxcode' => $this->boxcode);
+				$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $productstatic); // Note that $action and $object may have been modified by hook
 				$sql .= $hookmanager->resPrint;
 			}
 			$sql .= $this->db->order('p.datec', 'DESC');

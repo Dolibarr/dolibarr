@@ -199,6 +199,7 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 				|| preg_match('/modules\/.*\/doc\/(doc|pdf)_/', $file['relativename'])
 				|| preg_match('/modules\/(import|mailings|printing)\//', $file['relativename'])
 				|| in_array($file['name'], array('modules_boxes.php', 'rapport.pdf.php', 'TraceableDB.php'))) {
+				// Check into Class files
 				if (! in_array($file['name'], array(
 					'api.class.php',
 					'commonobject.class.php',
@@ -224,9 +225,11 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 					//exit;
 				}
 			} else {
+				// Check into Include files
 				if (! in_array($file['name'], array(
 					'objectline_view.tpl.php',
 					'extrafieldsinexport.inc.php',
+					'extrafieldsinimport.inc.php',
 					'DolQueryCollector.php'
 				))) {
 					// Must not found $this->db->
@@ -244,6 +247,25 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 				}
 			}
 
+			// Check if a var_dump has been forgotten
+			if (!preg_match('/test\/phpunit/', $file['fullname'])) {
+				$ok=true;
+				$matches=array();
+				preg_match_all('/(.)\s*var_dump/', $filecontent, $matches, PREG_SET_ORDER);
+				//var_dump($matches);
+				foreach ($matches as $key => $val) {
+					if ($val[1] != '/' && $val[1] != '*') {
+						$ok=false;
+						break;
+					}
+					break;
+				}
+				//print __METHOD__." Result for checking we don't have non escaped string in sql requests for file ".$file."\n";
+				$this->assertTrue($ok, 'Found string var_dump that is not just after /* or // in '.$file['relativename']);
+				//exit;
+			}
+
+			// Check get_class followed by __METHOD__
 			$ok=true;
 			$matches=array();
 			preg_match_all('/'.preg_quote('get_class($this)."::".__METHOD__', '/').'/', $filecontent, $matches, PREG_SET_ORDER);

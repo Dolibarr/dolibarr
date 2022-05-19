@@ -519,7 +519,7 @@ if ($step == 2 && $datatoexport) {
 	print '<span class="opacitymedium">'.$langs->trans("SelectExportFields").'</span> ';
 	$htmlother->select_export_model($exportmodelid, 'exportmodelid', $datatoexport, 1, $user->id);
 	print ' ';
-	print '<input type="submit" class="button" value="'.$langs->trans("Select").'">';
+	print '<input type="submit" class="button small" value="'.$langs->trans("Select").'">';
 	print '</div>';
 	print '</form>';
 
@@ -868,12 +868,18 @@ if ($step == 4 && $datatoexport) {
 	print '<td>'.$list.'</td>';
 	print '</tr>';
 
-	// List of filtered fiels
+	// List of filtered fields
 	if (isset($objexport->array_export_TypeFields[0]) && is_array($objexport->array_export_TypeFields[0])) {
 		print '<tr><td>'.$langs->trans("FilteredFields").'</td>';
 		$list = '';
 		if (!empty($array_filtervalue)) {
 			foreach ($array_filtervalue as $code => $value) {
+				if (preg_match('/^FormSelect:/', $objexport->array_export_TypeFields[0][$code])) {
+					// We discard this filter if it is a FromSelect field with a value of -1.
+					if ($value == -1) {
+						continue;
+					}
+				}
 				if (isset($objexport->array_export_fields[0][$code])) {
 					$list .= ($list ? ', ' : '');
 					if (isset($array_filtervalue[$code]) && preg_match('/^\s*[<>]/', $array_filtervalue[$code])) {
@@ -1015,7 +1021,7 @@ if ($step == 4 && $datatoexport) {
 		print $form->selectarray('visibility', $arrayvisibility, 'private');
 		print '</td>';
 		print '<td class="right">';
-		print '<input type="submit" class="button reposition button-save" value="'.$langs->trans("Save").'">';
+		print '<input type="submit" class="button reposition button-save small" value="'.$langs->trans("Save").'">';
 		print '</td></tr>';
 
 		$tmpuser = new User($db);
@@ -1148,6 +1154,12 @@ if ($step == 5 && $datatoexport) {
 		$list = '';
 		if (!empty($array_filtervalue)) {
 			foreach ($array_filtervalue as $code => $value) {
+				if (preg_match('/^FormSelect:/', $objexport->array_export_TypeFields[0][$code])) {
+					// We discard this filter if it is a FromSelect field with a value of -1.
+					if ($value == -1) {
+						continue;
+					}
+				}
 				if (isset($objexport->array_export_fields[0][$code])) {
 					$list .= ($list ? ', ' : '');
 					if (isset($array_filtervalue[$code]) && preg_match('/^\s*[<>]/', $array_filtervalue[$code])) {

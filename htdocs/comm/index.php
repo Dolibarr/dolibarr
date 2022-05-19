@@ -568,9 +568,15 @@ if (!empty($conf->societe->enabled) && $user->rights->societe->lire) {
 	if (empty($user->rights->societe->client->voir) && !$socid) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
-	if ($socid) {
-		$sql .= " AND s.rowid = $socid";
+	// Add where from hooks
+	$parameters = array('socid' => $socid);
+	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $companystatic); // Note that $action and $object may have been modified by hook
+	if (empty($reshook)) {
+		if ($socid > 0) {
+			$sql .= " AND s.rowid = ".((int) $socid);
+		}
 	}
+	$sql .= $hookmanager->resPrint;
 	$sql .= " ORDER BY s.tms DESC";
 	$sql .= $db->plimit($max, 0);
 
@@ -628,7 +634,11 @@ if (!empty($conf->societe->enabled) && $user->rights->societe->lire) {
 				print $s;
 
 				print '</td>';
-				print '<td class="right nowrap tddate">'.dol_print_date($db->jdate($objp->tms), 'day').'</td>';
+
+				$datem = $db->jdate($objp->tms);
+				print '<td class="right nowrap tddate" title="'.dol_escape_htmltag($langs->trans("DateModification").': '.dol_print_date($datem, 'dayhour', 'tzuserrel')).'">';
+				print dol_print_date($datem, 'day', 'tzuserrel');
+				print '</td>';
 				print '</tr>';
 
 				$i++;
@@ -664,9 +674,15 @@ if (((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_S
 	if (empty($user->rights->societe->client->voir) && !$user->socid) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
-	if ($socid) {
-		$sql .= " AND s.rowid = ".((int) $socid);
+	// Add where from hooks
+	$parameters = array('socid' => $socid);
+	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $companystatic); // Note that $action and $object may have been modified by hook
+	if (empty($reshook)) {
+		if ($socid > 0) {
+			$sql .= " AND s.rowid = ".((int) $socid);
+		}
 	}
+	$sql .= $hookmanager->resPrint;
 	$sql .= " ORDER BY s.datec DESC";
 	$sql .= $db->plimit($max, 0);
 
@@ -713,7 +729,11 @@ if (((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_S
 				print $s;
 
 				print '</td>';
-				print '<td class="right tddate">'.dol_print_date($db->jdate($objp->dm), 'day').'</td>';
+
+				$datem = $db->jdate($objp->dm);
+				print '<td class="right tddate" title="'.dol_escape_htmltag($langs->trans("DateModification").': '.dol_print_date($datem, 'dayhour', 'tzuserrel')).'">';
+				print dol_print_date($datem, 'day', 'tzuserrel');
+				print '</td>';
 				print '</tr>';
 
 				$i++;
@@ -910,7 +930,10 @@ if (!empty($conf->propal->enabled) && $user->rights->propal->lire) {
 				print '</td>';
 
 				print '<td class="nowrap">'.$companystatic->getNomUrl(1, 'customer', 44).'</td>';
-				print '<td class="right tddate">'.dol_print_date($db->jdate($obj->dp), 'day').'</td>';
+				$datem = $db->jdate($obj->dp);
+				print '<td class="center tddate" title="'.dol_escape_htmltag($langs->trans("Date").': '.dol_print_date($datem, 'day', 'tzserver')).'">';
+				print dol_print_date($datem, 'day', 'tzserver');
+				print '</td>';
 				print '<td class="right tdamount amount">'.price(!empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT) ? $obj->total_ht : $obj->total_ttc).'</td>';
 				print '<td align="center" width="14">'.$propalstatic->LibStatut($obj->fk_statut, 3).'</td>';
 
@@ -1027,7 +1050,11 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
 				print '</td>';
 
 				print '<td class="nowrap">'.$companystatic->getNomUrl(1, 'customer', 44).'</td>';
-				print '<td class="right tddate">'.dol_print_date($db->jdate($obj->dv), 'day').'</td>';
+				$datem = $db->jdate($obj->dv);
+				print '<td class="center tddate" title="'.dol_escape_htmltag($langs->trans("DateValue").': '.dol_print_date($datem, 'day', 'tzserver')).'">';
+				print dol_print_date($datem, 'day', 'tzserver');
+				print '</td>';
+
 				print '<td class="right tdamount amount">'.price(!empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT) ? $obj->total_ht : $obj->total_ttc).'</td>';
 				print '<td align="center" width="14">'.$orderstatic->LibStatut($obj->fk_statut, $obj->billed, 3).'</td>';
 

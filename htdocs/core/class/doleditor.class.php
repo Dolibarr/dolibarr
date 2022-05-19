@@ -170,6 +170,9 @@ class DolEditor
 				if (empty($conf->global->FCKEDITOR_ENABLE_WSC)) {	// spellchecker has end of life december 2021
 					$pluginstodisable .= ',wsc';
 				}
+				if (empty($conf->global->FCKEDITOR_ENABLE_PDF)) {
+					$pluginstodisable .= ',exportpdf';
+				}
 				$scaytautostartup = '';
 				if (!empty($conf->global->FCKEDITOR_ENABLE_SCAYT_AUTOSTARTUP)) {
 					$scaytautostartup = 'scayt_autoStartup: true,';
@@ -189,14 +192,14 @@ class DolEditor
                             tmpeditor = CKEDITOR.replace(\''.$this->htmlname.'\',
             					{
             						/* property:xxx is same than CKEDITOR.config.property = xxx */
-            						customConfig : ckeditorConfig,
-									removePlugins : \''.$pluginstodisable.'\',
-            						readOnly : '.($this->readonly ? 'true' : 'false').',
-                            		htmlEncodeOutput :'.$htmlencode_force.',
-            						allowedContent :'.($disallowAnyContent ? 'false' : 'true').',
-            						extraAllowedContent : \'a[target];div{float,display}\',						/* Add the style float and display into div to default other allowed tags */
-									disallowedContent : '.($disallowAnyContent ? '\'\'' : '\'\'').',
-            						fullPage : '.($fullpage ? 'true' : 'false').',
+            						customConfig: ckeditorConfig,
+									removePlugins: \''.$pluginstodisable.'\',
+            						readOnly: '.($this->readonly ? 'true' : 'false').',
+                            		htmlEncodeOutput:'.$htmlencode_force.',
+            						allowedContent:'.($disallowAnyContent ? 'false' : 'true').',		/* Advanced Content Filter (ACF) is own when allowedContent is false */
+            						extraAllowedContent: \'a[target];div{float,display}\',				/* Add the style float and display into div to default other allowed tags */
+									disallowedContent: '.($disallowAnyContent ? '\'\'' : '\'\'').',	/* Tags that are not allowed */
+            						fullPage: '.($fullpage ? 'true' : 'false').',						/* if true, the html, header and body tags are kept */
                             		toolbar: \''.$this->toolbarname.'\',
             						toolbarStartupExpanded: '.($this->toolbarstartexpanded ? 'true' : 'false').',
             						width: '.($this->width ? '\''.$this->width.'\'' : '\'\'').',

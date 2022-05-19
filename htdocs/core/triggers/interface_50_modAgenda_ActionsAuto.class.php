@@ -187,6 +187,14 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			$object->actionmsg = $langs->transnoentities("PropalValidatedInDolibarr", ($object->newref ? $object->newref : $object->ref));
 
 			$object->sendtoid = 0;
+		} elseif ($action == 'PROPAL_MODIFY') {
+			// Load translation files required by the page
+			$langs->loadLangs(array("agenda", "other", "propal"));
+
+			if (empty($object->actionmsg2)) $object->actionmsg2 = $langs->transnoentities("PropalBackToDraftInDolibarr", ($object->newref ? $object->newref : $object->ref));
+			$object->actionmsg = $langs->transnoentities("PropalBackToDraftInDolibarr", ($object->newref ? $object->newref : $object->ref));
+
+			$object->sendtoid = 0;
 		} elseif ($action == 'PROPAL_SENTBYMAIL') {
 			// Load translation files required by the page
 			$langs->loadLangs(array("agenda", "other", "propal"));
@@ -916,7 +924,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			}
 		}
 
-		// If trackid is not defined, we set it
+		// If trackid is not defined, we set it.
+		// Note that it should be set by caller. This is for compatibility purpose only.
 		if (empty($object->trackid)) {
 			// See also similar list into emailcollector.class.php
 			if (preg_match('/^COMPANY_/', $action)) {
@@ -958,11 +967,13 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			}
 		}
 
+		/* Seems no more required: We have the data in dedicated field now.
 		if (!empty($user->login)) {
 			$object->actionmsg = dol_concatdesc($langs->transnoentities("Author").': '.$user->login, $object->actionmsg);
 		} elseif (isset($object->origin_email)) {
 			$object->actionmsg = dol_concatdesc($langs->transnoentities("Author").': '.$object->origin_email, $object->actionmsg);
 		}
+		*/
 
 		dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
@@ -1019,7 +1030,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		$actioncomm->type_code   = $object->actiontypecode; // Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
 		$actioncomm->code        = 'AC_'.$action;
 		$actioncomm->label       = $object->actionmsg2;
-		$actioncomm->note_private = $object->actionmsg; // TODO Replace with ($actioncomm->email_msgid ? $object->email_content : $object->actionmsg)
+		$actioncomm->note_private = $object->actionmsg;
 		$actioncomm->fk_project  = $projectid;
 		$actioncomm->datep       = $now;
 		$actioncomm->datef       = $now;
@@ -1029,15 +1040,17 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		$actioncomm->contact_id = $contactforaction->id; // deprecated, use ->socpeopleassigned instead
 		$actioncomm->authorid    = $user->id; // User saving action
 		$actioncomm->userownerid = $user->id; // Owner of action
-		// Fields defined when action is an email (content should be into object->actionmsg to be added into note, subject into object->actionms2 to be added into label)
-		$actioncomm->email_msgid   = empty($object->email_msgid) ? null : $object->email_msgid;
-		$actioncomm->email_from    = empty($object->email_from) ? null : $object->email_from;
-		$actioncomm->email_sender  = empty($object->email_sender) ? null : $object->email_sender;
-		$actioncomm->email_to      = empty($object->email_to) ? null : $object->email_to;
-		$actioncomm->email_tocc    = empty($object->email_tocc) ? null : $object->email_tocc;
-		$actioncomm->email_tobcc   = empty($object->email_tobcc) ? null : $object->email_tobcc;
-		$actioncomm->email_subject = empty($object->email_subject) ? null : $object->email_subject;
-		$actioncomm->errors_to     = empty($object->errors_to) ? null : $object->errors_to;
+		// Fields defined when action is an email (content should be into object->actionmsg to be added into event note, subject should be into object->actionms2 to be added into event label)
+		if (!property_exists($object, 'email_fields_no_propagate_in_actioncomm') || empty($object->email_fields_no_propagate_in_actioncomm)) {
+			$actioncomm->email_msgid   = empty($object->email_msgid) ? null : $object->email_msgid;
+			$actioncomm->email_from    = empty($object->email_from) ? null : $object->email_from;
+			$actioncomm->email_sender  = empty($object->email_sender) ? null : $object->email_sender;
+			$actioncomm->email_to      = empty($object->email_to) ? null : $object->email_to;
+			$actioncomm->email_tocc    = empty($object->email_tocc) ? null : $object->email_tocc;
+			$actioncomm->email_tobcc   = empty($object->email_tobcc) ? null : $object->email_tobcc;
+			$actioncomm->email_subject = empty($object->email_subject) ? null : $object->email_subject;
+			$actioncomm->errors_to     = empty($object->errors_to) ? null : $object->errors_to;
+		}
 
 		// Object linked (if link is for thirdparty, contact, project it is a recording error. We should not have links in link table
 		// for such objects because there is already a dedicated field into table llx_actioncomm or llx_actioncomm_resources.

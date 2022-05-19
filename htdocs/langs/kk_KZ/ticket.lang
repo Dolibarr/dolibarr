@@ -90,10 +90,10 @@ TicketPublicAccess=Сәйкестендіруді қажет етпейтін ж
 TicketSetupDictionaries=Билеттің түрі, маңыздылығы мен аналитикалық кодтары сөздіктерден конфигурацияланады
 TicketParamModule=Айнымалы модульді баптау
 TicketParamMail=Электрондық поштаны реттеу
-TicketEmailNotificationFrom=Хабарлама электрондық поштасы
-TicketEmailNotificationFromHelp=Мысал бойынша билет хабарламасына жауап ретінде қолданылады
-TicketEmailNotificationTo=Хабарлама электрондық поштаға
-TicketEmailNotificationToHelp=Осы мекенжайға электрондық хабарландырулар жіберіңіз.
+TicketEmailNotificationFrom=Sender e-mail for ticket answers
+TicketEmailNotificationFromHelp=Sender e-mail for ticket answers sent from Dolibarr
+TicketEmailNotificationTo=Notify ticket creation to this e-mail address
+TicketEmailNotificationToHelp=If present, this e-mail address will be notified of a ticket creation
 TicketNewEmailBodyLabel=Билетті жасағаннан кейін мәтіндік хабарлама жіберіледі
 TicketNewEmailBodyHelp=Мұнда көрсетілген мәтін ашық интерфейстен жаңа билеттің жасалуын растайтын электрондық поштаға енгізіледі. Билеттің консультациясы туралы ақпарат автоматты түрде қосылады.
 TicketParamPublicInterface=Жалпыға ортақ интерфейсті орнату
@@ -136,6 +136,18 @@ TicketsPublicNotificationNewMessage=Билетке жаңа хабарлама/�
 TicketsPublicNotificationNewMessageHelp=Ортақ интерфейстен жаңа хабарлама қосылған кезде электрондық поштаны жіберіңіз (тағайындалған пайдаланушыға немесе хабарландыру электрондық поштасына (жаңарту) және/немесе хабарландырулар электрондық поштасына)
 TicketPublicNotificationNewMessageDefaultEmail=Хабарлама электрондық поштасы (жаңарту)
 TicketPublicNotificationNewMessageDefaultEmailHelp=Егер билетте тағайындалған пайдаланушы болмаса немесе пайдаланушының белгілі электрондық поштасы болмаса, әрбір жаңа хабарландыру үшін осы мекен -жайға электрондық хат жіберіңіз.
+TicketsAutoReadTicket=Automatically mark the ticket as read (when created from backoffice)
+TicketsAutoReadTicketHelp=Automatically mark the ticket as read when created from backoffice. When ticket is create from the public interface, ticket remains with the status "Not Read".
+TicketsDelayBeforeFirstAnswer=A new ticket should receive a first answer before (hours):
+TicketsDelayBeforeFirstAnswerHelp=If a new ticket has not received an answer after this time period (in hours), an important warning icon will be displayed in the list view.
+TicketsDelayBetweenAnswers=An unresolved ticket should not be unactive during (hours):
+TicketsDelayBetweenAnswersHelp=If an unresolved ticket that has already received an answer has not had further interaction after this time period (in hours), a warning icon will be displayed in the list view.
+TicketsAutoNotifyClose=Automatically notify thirdparty when closing a ticket
+TicketsAutoNotifyCloseHelp=When closing a ticket, you will be proposed to send a message to one of thirdparty's contacts. On mass closing, a message will be sent to one contact of the thirdparty linked to the ticket.
+TicketWrongContact=Provided contact is not part of current ticket contacts. Email not sent.
+TicketChooseProductCategory=Product category for ticket support
+TicketChooseProductCategoryHelp=Select the product category of ticket support. This will be used to automatically link a contract to a ticket.
+
 #
 # Index & list page
 #
@@ -151,6 +163,8 @@ OrderByDateAsc=Өсу күні бойынша сұрыптау
 OrderByDateDesc=Азаю күні бойынша сұрыптау
 ShowAsConversation=Әңгіме тізімі ретінде көрсету
 MessageListViewType=Кесте тізімі ретінде көрсету
+ConfirmMassTicketClosingSendEmail=Automatically send emails when closing tickets
+ConfirmMassTicketClosingSendEmailQuestion=Do you want to notify thirdparties when closing these tickets ?
 
 #
 # Ticket card
@@ -205,12 +219,12 @@ ErrorMailRecipientIsEmptyForSendTicketMessage=Алушы бос. Электро�
 TicketGoIntoContactTab=Оларды таңдау үшін «Контактілер» қойындысына өтіңіз
 TicketMessageMailIntro=Кіріспе
 TicketMessageMailIntroHelp=Бұл мәтін электрондық поштаның басында ғана қосылады және сақталмайды.
-TicketMessageMailIntroLabelAdmin=Электрондық поштаны жіберу кезінде хабарламаға кіріспе
-TicketMessageMailIntroText=Сәлеметсіз бе, <br> Сіз хабарласатын билетке жаңа жауап жіберілді. Міне, хабарлама: <br>
-TicketMessageMailIntroHelpAdmin=Бұл мәтін билетке жауап мәтінінің алдында енгізіледі.
+TicketMessageMailIntroLabelAdmin=Introduction text to all ticket answers
+TicketMessageMailIntroText=Hello,<br>A new answer has been added to a ticket that you follow. Here is the message:<br>
+TicketMessageMailIntroHelpAdmin=This text will be inserted before the answer when replying to a ticket from Dolibarr
 TicketMessageMailSignature=Қолтаңба
 TicketMessageMailSignatureHelp=Бұл мәтін электрондық поштаның соңына ғана қосылады және сақталмайды.
-TicketMessageMailSignatureText= <p> Құрметпен, </p> <p> - </p>
+TicketMessageMailSignatureText=Message sent by <b>%s</b> via Dolibarr
 TicketMessageMailSignatureLabelAdmin=Жауап электрондық поштасының қолтаңбасы
 TicketMessageMailSignatureHelpAdmin=Бұл мәтін жауап хабарынан кейін енгізіледі.
 TicketMessageHelp=Билеттер картасындағы хабарламалар тізімінде тек осы мәтін сақталады.
@@ -238,9 +252,16 @@ TicketChangeStatus=Күйді өзгерту
 TicketConfirmChangeStatus=Күйдің өзгеруін растаңыз: %s?
 TicketLogStatusChanged=Күй өзгерді: %s %s
 TicketNotNotifyTiersAtCreate=Жасау кезінде компанияға хабарламаңыз
+NotifyThirdpartyOnTicketClosing=Contacts to notify while closing the ticket
+TicketNotifyAllTiersAtClose=All related contacts
+TicketNotNotifyTiersAtClose=No related contact
 Unread=Оқылмаған
 TicketNotCreatedFromPublicInterface=Жоқ. Билет жалпыға қолжетімді интерфейстен жасалмады.
 ErrorTicketRefRequired=Билеттің сілтеме аты қажет
+TicketsDelayForFirstResponseTooLong=Too much time elapsed since ticket opening without any answer.
+TicketsDelayFromLastResponseTooLong=Too much time elapsed since last answer on this ticket.
+TicketNoContractFoundToLink=No contract was found to be automatically linked to this ticket. Please link a contract manually.
+TicketManyContractsLinked=Many contracts have been automatically linked to this ticket. Make sure to verify which should be chosen.
 
 #
 # Logs
@@ -268,8 +289,9 @@ TicketNewEmailBody=Бұл жаңа билетті тіркегеніңізді �
 TicketNewEmailBodyCustomer=Бұл сіздің шотыңызға жаңа билет енгізілгенін растайтын автоматты электрондық хат.
 TicketNewEmailBodyInfosTicket=Билетті бақылауға арналған ақпарат
 TicketNewEmailBodyInfosTrackId=Билеттердің бақылау нөмірі: %s
-TicketNewEmailBodyInfosTrackUrl=Билеттің барысын жоғарыдағы сілтемені басу арқылы көруге болады.
+TicketNewEmailBodyInfosTrackUrl=You can view the progress of the ticket by clicking the following link
 TicketNewEmailBodyInfosTrackUrlCustomer=Келесі сілтемені басу арқылы арнайы интерфейсте билеттің барысын көруге болады
+TicketCloseEmailBodyInfosTrackUrlCustomer=You can consult the history of this ticket by clicking the following link
 TicketEmailPleaseDoNotReplyToThisEmail=Бұл электрондық поштаға тікелей жауап бермеңіз! Интерфейске жауап беру үшін сілтемені пайдаланыңыз.
 TicketPublicInfoCreateTicket=Бұл форма біздің билік жүйесінде қолдау билетін жазуға мүмкіндік береді.
 TicketPublicPleaseBeAccuratelyDescribe=Мәселені нақты сипаттаңыз. Сіздің сұранысты дұрыс анықтауға мүмкіндік беретін барынша көп ақпарат беріңіз.
@@ -291,6 +313,10 @@ NewUser=Жаңа қолданушы
 NumberOfTicketsByMonth=Билеттер саны айына
 NbOfTickets=Билеттер саны
 # notifications
+TicketCloseEmailSubjectCustomer=Ticket closed
+TicketCloseEmailBodyCustomer=This is an automatic message to notify you that ticket %s has just been closed.
+TicketCloseEmailSubjectAdmin=Ticket closed - Réf %s (public ticket ID %s)
+TicketCloseEmailBodyAdmin=A ticket with ID #%s has just been closed, see information:
 TicketNotificationEmailSubject=Билет %s жаңартылды
 TicketNotificationEmailBody=Бұл автоматты түрде %s билеті жаңартылғанын хабарлайды.
 TicketNotificationRecipient=Хабарлама алушы

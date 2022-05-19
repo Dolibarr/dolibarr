@@ -121,7 +121,7 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 
 	// Fill array 'array_options' with data from add form
 	if (!$error) {
-		$ret = $extrafields->setOptionalsFromPost(null, $object);
+		$ret = $extrafields->setOptionalsFromPost(null, $object, '', 1);
 		if ($ret < 0) {
 			$error++;
 		}
@@ -255,6 +255,12 @@ if ($action == 'update' && !empty($permissiontoadd)) {
 		$result = $object->update($user);
 		if ($result > 0) {
 			$action = 'view';
+			$urltogo = $backtopage ? str_replace('__ID__', $result, $backtopage) : $backurlforlist;
+			$urltogo = preg_replace('/--IDFORBACKTOPAGE--/', $object->id, $urltogo); // New method to autoselect project after a New on another form object creation
+			if ($urltogo) {
+				header("Location: " . $urltogo);
+				exit;
+			}
 		} else {
 			$error++;
 			// Creation KO

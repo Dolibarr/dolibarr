@@ -1,23 +1,23 @@
 # Dolibarr language file - Source file is en_US - help
-CommunitySupport=Forum/Wiki support
-EMailSupport=Emails support
-RemoteControlSupport=Online real-time / remote support
-OtherSupport=Other support
-ToSeeListOfAvailableRessources=To contact/see available resources:
-HelpCenter=Help Center
-DolibarrHelpCenter=Dolibarr Help and Support Center
-ToGoBackToDolibarr=Otherwise, <a href="%s">click here to continue to use Dolibarr</a>.
-TypeOfSupport=Type of support
-TypeSupportCommunauty=Community (free)
-TypeSupportCommercial=Commercial
+CommunitySupport=Підтримка форуму/вікі
+EMailSupport=Підтримка електронної пошти
+RemoteControlSupport=Онлайн-підтримка в режимі реального часу / віддалена
+OtherSupport=Інша підтримка
+ToSeeListOfAvailableRessources=Щоб зв’язатися/переглянути доступні ресурси:
+HelpCenter=Центр допомоги
+DolibarrHelpCenter=Центр довідки та підтримки Dolibarr
+ToGoBackToDolibarr=В іншому випадку <a href="%s"> натисніть тут, щоб продовжити використовувати Dolibarr </a> .
+TypeOfSupport=Тип опори
+TypeSupportCommunauty=Спільнота (безкоштовно)
+TypeSupportCommercial=Комерційний
 TypeOfHelp=Тип
-NeedHelpCenter=Need help or support?
-Efficiency=Efficiency
-TypeHelpOnly=Help only
-TypeHelpDev=Help+Development
-TypeHelpDevForm=Help+Development+Training
-BackToHelpCenter=Otherwise, <a href="%s">go back to Help center home page</a>.
-LinkToGoldMember=You can call one of the trainers preselected by Dolibarr for your language (%s) by clicking their Widget (status and maximum price are automatically updated):
-PossibleLanguages=Supported languages
-SubscribeToFoundation=Help the Dolibarr project, subscribe to the foundation
-SeeOfficalSupport=For official Dolibarr support in your language: <br><b><a href="%s" target="_blank">%s</a></b>
+NeedHelpCenter=Потрібна допомога чи підтримка?
+Efficiency=Ефективність
+TypeHelpOnly=Тільки допомога
+TypeHelpDev=Допомога+Розвиток
+TypeHelpDevForm=Допомога+Розвиток+Навчання
+BackToHelpCenter=В іншому випадку <a href="%s"> поверніться на домашню сторінку довідкового центру </a> .
+LinkToGoldMember=Ви можете зателефонувати до одного з тренерів, попередньо обраних Dolibarr для вашої мови (%s), натиснувши їх віджет (статус і максимальна ціна оновлюються автоматично):
+PossibleLanguages=Підтримувані мови
+SubscribeToFoundation=Допоможіть проекту Dolibarr, підпишіться на фонд
+SeeOfficalSupport=Для офіційної підтримки Dolibarr вашою мовою: <br> <b> <a href="%s" target="_blank" rel="noopener noreferrer"> %s </a> a09a4b739f17f8

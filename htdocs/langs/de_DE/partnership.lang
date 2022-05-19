@@ -59,6 +59,7 @@ BacklinkNotFoundOnPartnerWebsite=Backlink auf Partner-Website nicht gefunden
 ConfirmClosePartnershipAsk=Möchten Sie diese Partnerschaft wirklich beenden?
 PartnershipType=Partnerschaftstyp
 PartnershipRefApproved=Partnerschaft %s genehmigt
+KeywordToCheckInWebsite=Wenn Sie überprüfen möchten, ob ein bestimmtes Schlüsselwort auf der Website jedes Partners vorhanden ist, definieren Sie dieses Schlüsselwort hier
 
 #
 # Template Mail
@@ -90,3 +91,4 @@ PartnershipAccepted=Bestätigt
 PartnershipRefused=Abgelehnt
 PartnershipCanceled=storniert
 PartnershipManagedFor=Partner sind
+

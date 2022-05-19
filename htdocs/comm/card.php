@@ -10,6 +10,7 @@
  * Copyright (C) 2015-2021 Frédéric France             <frederic.france@netlogic.fr>
  * Copyright (C) 2015      Marcos García               <marcosgdf@gmail.com>
  * Copyright (C) 2020      Open-Dsi         		   <support@open-dsi.fr>
+ * Copyright (C) 2022      Anthony Berton     			<anthony.berton@bb2a.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,6 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 if (!empty($conf->facture->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 }
@@ -112,6 +114,7 @@ $cancel = GETPOST('cancel', 'alpha');
 
 $object = new Client($db);
 $extrafields = new ExtraFields($db);
+$formfile = new FormFile($db);
 
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -159,7 +162,8 @@ if (empty($reshook)) {
 	// set accountancy code
 	if ($action == 'setcustomeraccountancycode') {
 		$result = $object->fetch($id);
-		$object->code_compta = GETPOST("customeraccountancycode");
+		$object->code_compta_client = GETPOST("customeraccountancycode");
+		$object->code_compta = $object->code_compta_client; // For Backward compatibility
 		$result = $object->update($object->id, $user, 1, 1, 0);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -169,7 +173,7 @@ if (empty($reshook)) {
 	// terms of the settlement
 	if ($action == 'setconditions' && $user->rights->societe->creer) {
 		$object->fetch($id);
-		$result = $object->setPaymentTerms(GETPOST('cond_reglement_id', 'int'));
+		$result = $object->setPaymentTerms(GETPOST('cond_reglement_id', 'int'), GETPOST('cond_reglement_id_deposit_percent', 'alpha'));
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
@@ -357,9 +361,9 @@ if ($object->id > 0) {
 
 		print '<tr>';
 		print '<td>';
-		print $form->editfieldkey("CustomerAccountancyCode", 'customeraccountancycode', $object->code_compta, $object, $user->rights->societe->creer);
+		print $form->editfieldkey("CustomerAccountancyCode", 'customeraccountancycode', $object->code_compta_client, $object, $user->rights->societe->creer);
 		print '</td><td>';
-		print $form->editfieldval("CustomerAccountancyCode", 'customeraccountancycode', $object->code_compta, $object, $user->rights->societe->creer);
+		print $form->editfieldval("CustomerAccountancyCode", 'customeraccountancycode', $object->code_compta_client, $object, $user->rights->societe->creer);
 		print '</td>';
 		print '</tr>';
 	}
@@ -411,9 +415,9 @@ if ($object->id > 0) {
 	print '</tr></table>';
 	print '</td><td>';
 	if ($action == 'editconditions') {
-		$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->cond_reglement_id, 'cond_reglement_id', 1);
+		$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->cond_reglement_id, 'cond_reglement_id', 1, '', 1, $object->deposit_percent);
 	} else {
-		$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->cond_reglement_id, 'none');
+		$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->cond_reglement_id, 'none', 0, '', 1, $object->deposit_percent);
 	}
 	print "</td>";
 	print '</tr>';
@@ -683,7 +687,7 @@ if ($object->id > 0) {
 	}
 
 	print '</div><div class="fichehalfright">';
-	print '<div class="underbanner clearboth"></div>';
+	print '<div class="underbanner underbanner-before-box clearboth"></div>';
 
 	$boxstat = '';
 
@@ -691,7 +695,7 @@ if ($object->id > 0) {
 	$MAXLIST = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
 
 	// Lien recap
-	$boxstat .= '<div class="box">';
+	$boxstat .= '<div class="box box-halfright">';
 	$boxstat .= '<table summary="'.dol_escape_htmltag($langs->trans("DolibarrStateBoard")).'" class="border boxtable boxtablenobottom boxtablenotop" width="100%">';
 	$boxstat .= '<tr class="impair nohover"><td colspan="2" class="tdboxstats nohover">';
 
@@ -859,6 +863,36 @@ if ($object->id > 0) {
 				$propal_static->total_tva = $objp->total_tva;
 				$propal_static->total_ttc = $objp->total_ttc;
 				print $propal_static->getNomUrl(1);
+
+				// Preview
+				$filedir = $conf->propal->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
+				$file_list = null;
+				if (!empty($filedir)) {
+					$file_list = dol_dir_list($filedir, 'files', 0, '', '(\.meta|_preview.*.*\.png)$', 'date', SORT_DESC);
+				}
+				if (is_array($file_list)) {
+					// Defined relative dir to DOL_DATA_ROOT
+					$relativedir = '';
+					if ($filedir) {
+						$relativedir = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $filedir);
+						$relativedir = preg_replace('/^[\\/]/', '', $relativedir);
+					}
+					// Get list of files stored into database for same relative directory
+					if ($relativedir) {
+						completeFileArrayWithDatabaseInfo($file_list, $relativedir);
+
+						//var_dump($sortfield.' - '.$sortorder);
+						if (!empty($sortfield) && !empty($sortorder)) {	// If $sortfield is for example 'position_name', we will sort on the property 'position_name' (that is concat of position+name)
+							$file_list = dol_sort_array($file_list, $sortfield, $sortorder);
+						}
+					}
+					$relativepath = dol_sanitizeFileName($objp->ref).'/'.dol_sanitizeFileName($objp->ref).'.pdf';
+					print $formfile->showPreview($file_list, $propal_static->element, $relativepath, 0, $param);
+				}
+				// $filename = dol_sanitizeFileName($objp->ref);
+				// $filedir = $conf->propal->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
+				// $urlsource = '/comm/propal/card.php?id='.$objp->cid;
+				// print $formfile->getDocumentsLink($propal_static->element, $filename, $filedir);
 				if (($db->jdate($objp->date_limit) < ($now - $conf->propal->cloture->warning_delay)) && $objp->fk_statut == $propal_static::STATUS_VALIDATED) {
 					print " ".img_warning();
 				}
@@ -940,7 +974,38 @@ if ($object->id > 0) {
 				print '<tr class="oddeven">';
 				print '<td class="nowraponall">';
 				print $commande_static->getNomUrl(1);
-				print '</td><td class="right" width="80px">'.dol_print_date($db->jdate($objp->dc), 'day')."</td>\n";
+				// Preview
+				$filedir = $conf->commande->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
+				$file_list = null;
+				if (!empty($filedir)) {
+					$file_list = dol_dir_list($filedir, 'files', 0, '', '(\.meta|_preview.*.*\.png)$', 'date', SORT_DESC);
+				}
+				if (is_array($file_list)) {
+					// Defined relative dir to DOL_DATA_ROOT
+					$relativedir = '';
+					if ($filedir) {
+						$relativedir = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $filedir);
+						$relativedir = preg_replace('/^[\\/]/', '', $relativedir);
+					}
+					// Get list of files stored into database for same relative directory
+					if ($relativedir) {
+						completeFileArrayWithDatabaseInfo($file_list, $relativedir);
+
+						//var_dump($sortfield.' - '.$sortorder);
+						if (!empty($sortfield) && !empty($sortorder)) {	// If $sortfield is for example 'position_name', we will sort on the property 'position_name' (that is concat of position+name)
+							$file_list = dol_sort_array($file_list, $sortfield, $sortorder);
+						}
+					}
+					$relativepath = dol_sanitizeFileName($objp->ref).'/'.dol_sanitizeFileName($objp->ref).'.pdf';
+					print $formfile->showPreview($file_list, $commande_static->element, $relativepath, 0, $param);
+				}
+				// $filename = dol_sanitizeFileName($objp->ref);
+				// $filedir = $conf->order->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
+				// $urlsource = '/commande/card.php?id='.$objp->cid;
+				// print $formfile->getDocumentsLink($commande_static->element, $filename, $filedir);
+				print '</td>';
+
+				print '<td class="right" width="80px">'.dol_print_date($db->jdate($objp->dc), 'day')."</td>\n";
 				print '<td class="right" style="min-width: 60px">'.price($objp->total_ht).'</td>';
 				print '<td class="right" style="min-width: 60px" class="nowrap">'.$commande_static->LibStatut($objp->fk_statut, $objp->facture, 5).'</td></tr>';
 				$i++;
@@ -1003,6 +1068,35 @@ if ($object->id > 0) {
 				print '<tr class="oddeven">';
 				print '<td class="nowraponall">';
 				print $sendingstatic->getNomUrl(1);
+				// Preview
+				$filedir = $conf->expedition->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
+				$file_list = null;
+				if (!empty($filedir)) {
+					$file_list = dol_dir_list($filedir, 'files', 0, '', '(\.meta|_preview.*.*\.png)$', 'date', SORT_DESC);
+				}
+				if (is_array($file_list)) {
+					// Defined relative dir to DOL_DATA_ROOT
+					$relativedir = '';
+					if ($filedir) {
+						$relativedir = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $filedir);
+						$relativedir = preg_replace('/^[\\/]/', '', $relativedir);
+					}
+					// Get list of files stored into database for same relative directory
+					if ($relativedir) {
+						completeFileArrayWithDatabaseInfo($file_list, $relativedir);
+
+						//var_dump($sortfield.' - '.$sortorder);
+						if (!empty($sortfield) && !empty($sortorder)) {	// If $sortfield is for example 'position_name', we will sort on the property 'position_name' (that is concat of position+name)
+							$file_list = dol_sort_array($file_list, $sortfield, $sortorder);
+						}
+					}
+					$relativepath = dol_sanitizeFileName($objp->ref).'/'.dol_sanitizeFileName($objp->ref).'.pdf';
+					print $formfile->showPreview($file_list, $sendingstatic->element, $relativepath, 0, $param);
+				}
+				// $filename = dol_sanitizeFileName($objp->ref);
+				// $filedir = $conf->expedition->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
+				// $urlsource = '/expedition/card.php?id='.$objp->cid;
+				// print $formfile->getDocumentsLink($sendingstatic->element, $filename, $filedir);
 				print '</td>';
 				if ($objp->date_creation > 0) {
 					print '<td class="right" width="80px">'.dol_print_date($db->jdate($objp->date_creation), 'day').'</td>';
@@ -1076,6 +1170,35 @@ if ($object->id > 0) {
 				print '<tr class="oddeven">';
 				print '<td class="nowraponall">';
 				print $contrat->getNomUrl(1, 12);
+				// Preview
+				$filedir = $conf->contrat->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
+				$file_list = null;
+				if (!empty($filedir)) {
+					$file_list = dol_dir_list($filedir, 'files', 0, '', '(\.meta|_preview.*.*\.png)$', 'date', SORT_DESC);
+				}
+				if (is_array($file_list)) {
+					// Defined relative dir to DOL_DATA_ROOT
+					$relativedir = '';
+					if ($filedir) {
+						$relativedir = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $filedir);
+						$relativedir = preg_replace('/^[\\/]/', '', $relativedir);
+					}
+					// Get list of files stored into database for same relative directory
+					if ($relativedir) {
+						completeFileArrayWithDatabaseInfo($file_list, $relativedir);
+
+						//var_dump($sortfield.' - '.$sortorder);
+						if (!empty($sortfield) && !empty($sortorder)) {	// If $sortfield is for example 'position_name', we will sort on the property 'position_name' (that is concat of position+name)
+							$file_list = dol_sort_array($file_list, $sortfield, $sortorder);
+						}
+					}
+					$relativepath = dol_sanitizeFileName($objp->ref).'/'.dol_sanitizeFileName($objp->ref).'.pdf';
+					print $formfile->showPreview($file_list, $contrat->element, $relativepath, 0, $param);
+				}
+				// $filename = dol_sanitizeFileName($objp->ref);
+				// $filedir = $conf->contrat->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
+				// $urlsource = '/contrat/card.php?id='.$objp->cid;
+				// print $formfile->getDocumentsLink($contrat->element, $filename, $filedir);
 				print $late;
 				print "</td>\n";
 				print '<td class="nowrap">'.dol_trunc($objp->refsup, 12)."</td>\n";
@@ -1137,6 +1260,35 @@ if ($object->id > 0) {
 				print '<tr class="oddeven">';
 				print '<td class="nowraponall">';
 				print $fichinter_static->getNomUrl(1);
+				// Preview
+				$filedir = $conf->fichinter->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
+				$file_list = null;
+				if (!empty($filedir)) {
+					$file_list = dol_dir_list($filedir, 'files', 0, '', '(\.meta|_preview.*.*\.png)$', 'date', SORT_DESC);
+				}
+				if (is_array($file_list)) {
+					// Defined relative dir to DOL_DATA_ROOT
+					$relativedir = '';
+					if ($filedir) {
+						$relativedir = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $filedir);
+						$relativedir = preg_replace('/^[\\/]/', '', $relativedir);
+					}
+					// Get list of files stored into database for same relative directory
+					if ($relativedir) {
+						completeFileArrayWithDatabaseInfo($file_list, $relativedir);
+
+						//var_dump($sortfield.' - '.$sortorder);
+						if (!empty($sortfield) && !empty($sortorder)) {	// If $sortfield is for example 'position_name', we will sort on the property 'position_name' (that is concat of position+name)
+							$file_list = dol_sort_array($file_list, $sortfield, $sortorder);
+						}
+					}
+					$relativepath = dol_sanitizeFileName($objp->ref).'/'.dol_sanitizeFileName($objp->ref).'.pdf';
+					print $formfile->showPreview($file_list, $fichinter_static->element, $relativepath, 0, $param);
+				}
+				// $filename = dol_sanitizeFileName($objp->ref);
+				// $filedir = $conf->fichinter->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
+				// $urlsource = '/fichinter/card.php?id='.$objp->cid;
+				// print $formfile->getDocumentsLink($fichinter_static->element, $filename, $filedir);
 				print '</td>'."\n";
 				//print '<td class="right" width="80px">'.dol_print_date($db->jdate($objp->startdate)).'</td>'."\n";
 				print '<td class="right" style="min-width: 60px">'.convertSecondToTime($objp->duration).'</td>'."\n";
@@ -1213,6 +1365,7 @@ if ($object->id > 0) {
 				print '<td class="nowrap">';
 				print $invoicetemplate->getNomUrl(1);
 				print '</td>';
+
 				if ($objp->frequency && $objp->date_last_gen > 0) {
 					print '<td class="right" width="80px">'.dol_print_date($db->jdate($objp->date_last_gen), 'day').'</td>';
 				} else {
@@ -1301,6 +1454,35 @@ if ($object->id > 0) {
 				print '<tr class="oddeven">';
 				print '<td class="nowraponall">';
 				print $facturestatic->getNomUrl(1);
+				// Preview
+				$filedir = $conf->facture->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
+				$file_list = null;
+				if (!empty($filedir)) {
+					$file_list = dol_dir_list($filedir, 'files', 0, '', '(\.meta|_preview.*.*\.png)$', 'date', SORT_DESC);
+				}
+				if (is_array($file_list)) {
+					// Defined relative dir to DOL_DATA_ROOT
+					$relativedir = '';
+					if ($filedir) {
+						$relativedir = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $filedir);
+						$relativedir = preg_replace('/^[\\/]/', '', $relativedir);
+					}
+					// Get list of files stored into database for same relative directory
+					if ($relativedir) {
+						completeFileArrayWithDatabaseInfo($file_list, $relativedir);
+
+						//var_dump($sortfield.' - '.$sortorder);
+						if (!empty($sortfield) && !empty($sortorder)) {	// If $sortfield is for example 'position_name', we will sort on the property 'position_name' (that is concat of position+name)
+							$file_list = dol_sort_array($file_list, $sortfield, $sortorder);
+						}
+					}
+					$relativepath = dol_sanitizeFileName($objp->ref).'/'.dol_sanitizeFileName($objp->ref).'.pdf';
+					print $formfile->showPreview($file_list, $facturestatic->element, $relativepath, 0, $param);
+				}
+				// $filename = dol_sanitizeFileName($objp->ref);
+				// $filedir = $conf->facture->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
+				// $urlsource = '/compta/facture/card.php?id='.$objp->cid;
+				//print $formfile->getDocumentsLink($facturestatic->element, $filename, $filedir);
 				print '</td>';
 				if ($objp->df > 0) {
 					print '<td class="right" width="80px">'.dol_print_date($db->jdate($objp->df), 'day').'</td>';

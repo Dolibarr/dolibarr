@@ -91,7 +91,7 @@ class modResource extends DolibarrModules
 
 		// Dependencies
 		// List of modules id that must be enabled if this module is enabled
-		$this->depends = array();
+		$this->depends = array('modResource');
 		// List of modules id to disable if this one is disabled
 		$this->requiredby = array('modPlace');
 		// Minimum version of PHP required by module
@@ -185,11 +185,11 @@ class modResource extends DolibarrModules
 
 		// Menus declaration
 		$this->menu[$r] = array(
-			'fk_menu'=>'fk_mainmenu=tools',
+			'fk_menu'=>'fk_mainmenu=agenda',
 			'type'=>'left',
 			'titre'=> 'MenuResourceIndex',
 			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth em92"'),
-			'mainmenu'=>'tools',
+			'mainmenu'=>'agenda',
 			'leftmenu'=> 'resource',
 			'url'=> '/resource/list.php',
 			'langs'=> 'resource',
@@ -201,10 +201,10 @@ class modResource extends DolibarrModules
 		$r++;
 
 		$this->menu[$r++] = array(
-			'fk_menu'=>'fk_mainmenu=tools,fk_leftmenu=resource', //On utilise les ancres définis dans le menu parent déclaré au dessus
+			'fk_menu'=>'fk_mainmenu=agenda,fk_leftmenu=resource', //On utilise les ancres définis dans le menu parent déclaré au dessus
 			'type'=> 'left', // Toujours un menu gauche
 			'titre'=> 'MenuResourceAdd',
-			'mainmenu'=> 'tools',
+			'mainmenu'=> 'agenda',
 			'leftmenu'=> 'resource_add',
 			'url'=> '/resource/card.php?action=create',
 			'langs'=> 'resource',
@@ -216,10 +216,10 @@ class modResource extends DolibarrModules
 		);
 
 		$this->menu[$r++] = array(
-			'fk_menu'=>'fk_mainmenu=tools,fk_leftmenu=resource', //On utilise les ancres définis dans le menu parent déclaré au dessus
+			'fk_menu'=>'fk_mainmenu=agenda,fk_leftmenu=resource', //On utilise les ancres définis dans le menu parent déclaré au dessus
 			'type'=> 'left', // Toujours un menu gauche
 			'titre'=> 'List',
-			'mainmenu'=> 'tools',
+			'mainmenu'=> 'agenda',
 			'leftmenu'=> 'resource_list',
 			'url'=> '/resource/list.php',
 			'langs'=> 'resource',
@@ -252,7 +252,7 @@ class modResource extends DolibarrModules
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'resource as r';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_resource as c ON c.rowid=r.fk_code_type_resource';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'resource_extrafields as extra ON extra.fk_object = r.rowid';
-		$this->export_sql_end[$r] .= ' AND r.entity IN ('.getEntity('resource').')';
+		$this->export_sql_end[$r] .= ' WHERE r.entity IN ('.getEntity('resource').')';
 
 
 		// Imports

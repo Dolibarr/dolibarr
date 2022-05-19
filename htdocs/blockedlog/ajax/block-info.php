@@ -92,11 +92,11 @@ function formatObject($objtoshow, $prefix)
 				$s .= '<tr><td>'.($prefix ? $prefix.' > ' : '').$key.'</td>';
 				$s .= '<td>';
 				if (in_array($key, array('date', 'datef', 'dateh', 'datec', 'datem', 'datep'))) {
-					/*var_dump(is_object($val));
-					var_dump(is_array($val));
-					var_dump(is_array($val));
-					var_dump(@get_class($val));
-					var_dump($val);*/
+					//var_dump(is_object($val));
+					//var_dump(is_array($val));
+					//var_dump(is_array($val));
+					//var_dump(@get_class($val));
+					//var_dump($val);
 					$s .= dol_print_date($val, 'dayhour');
 				} else {
 					$s .= $val;
