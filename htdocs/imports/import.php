@@ -1318,15 +1318,15 @@ if ($step == 4 && $datatoimport) {
 		print '		$("select.targetselectchange").each(function(){'."\n";
 		print '			id = $(this).attr(\'id\')'."\n";
 		print '			value = $(this).val()'."\n";
-		print '         console.log("a selected value has been found for component "+id+" = "+value);'."\n";
+		//print '         console.log("a selected value has been found for component "+id+" = "+value);'."\n";
 		print '			arrayofselectedvalues.push(value);'."\n";
 		print '		});'."\n";
 		print '		console.log("List of all selected values");'."\n";
 		print '		console.log(arrayofselectedvalues);'."\n";
-		print '     console.log("Set the option to disabled for every entry that is currently selected (so into arrayofselectedvalues)");'."\n";
+		print '     console.log("Set the option to disabled for every entry that is currently selected somewhere else (so into arrayofselectedvalues)");'."\n";
 		print '     $.each( arrayofselectedvalues, function( key, value ) {'."\n";	// Loop on each selected value
 		print '         if (value != -1) {'."\n";
-		print '     		console.log("Process key="+key+" value="+value+" to disable.");'."\n";
+		//print '     		console.log("Process key="+key+" value="+value+" to disable.");'."\n";
 		print '				$("select.targetselectchange").find(\'option[value="\'+value+\'"]:not(:selected)\').prop("disabled", true);'."\n";	// Set to disabled except if currently selected
 		print '         }'."\n";
 		print '     });'."\n";
@@ -1334,7 +1334,7 @@ if ($step == 4 && $datatoimport) {
 
 		// Function to save the selection in database
 		print 'function saveSelection() {'."\n";
-		print '		console.log(arrayofselectedvalues);'."\n";
+		//print '		console.log(arrayofselectedvalues);'."\n";
 		print '		arrayselectedfields = [];'."\n";
 		print '		arrayselectedfields.push("0");'."\n";
 		print '     $.each( arrayofselectedvalues, function( key, value ) {'."\n";
