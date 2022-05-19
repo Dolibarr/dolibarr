@@ -10141,9 +10141,6 @@ class Form
 				window.parent.jQuery(\'#idfordialog'.$dol_openinpopup.'\').dialog(\'close\');
 				 });';
 			$retstring .= '</script>';
-			// TODO @LDR for the save button, in action "add", set parent var to return data and close the window
-			//$retstring .= '<a onclick="javascript:$(\'#varforreturndialogid'.$dol_openinpopup.'\', window.parent.document).text(\'setid\');">setid</a> ';
-			//$retstring .= '<a onclick="javascript:$(\'#varforreturndialoglabel'.$dol_openinpopup.'\', window.parent.document).text(\'setlabel\');">setlabel</a>';
 		}
 
 		return $retstring;

@@ -706,7 +706,21 @@ if (empty($reshook)) {
 
 						// TODO @LDR
 						if ($dol_openinpopup && $backtopagejsfields) {
-							print 'TODO Set js var of parent with id, then close popup.';
+							// TODO @LDR for the save button, in action "add", set parent var to return data and close the window
+							//$retstring .= '<a onclick="javascript:$(\'#varforreturndialogid'.$dol_openinpopup.'\', window.parent.document).text(\'setid\');">setid</a> ';
+							//$retstring .= '<a onclick="javascript:$(\'#varforreturndialoglabel'.$dol_openinpopup.'\', window.parent.document).text(\'setlabel\');">setlabel</a>';
+							$retstring = '';
+							$retstring .= '<script>';
+							$retstring .= 'jQuery(document).ready() {
+												console.log(\'We execute action to create. We save id and go back - '.$dol_openinpopup.'\');
+												console.log(\'id = '.$object->id.'\');
+												$(\'#varforreturndialogid'.$dol_openinpopup.'\', window.parent.document).text(\'newid\');
+												$(\'#varforreturndialoglabel'.$dol_openinpopup.'\', window.parent.document).text(\'newlabel\');
+												//window.parent.jQuery(\'#idfordialog'.$dol_openinpopup.'\').dialog(\'close\');
+				 							});';
+							$retstring .= '</script>';
+							$retstring .= 'Set js var of parent with id of object created then close popup.';
+							print $retstring;
 							exit;
 						} else {
 							header("Location: ".$url);
