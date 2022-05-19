@@ -1367,7 +1367,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 if ($dirins && $action == 'initdic' && $module && $dicname) {
 	if (!$error) {
 		$newdicname = $dicname;
-		if (!preg_match('/^c_/, $newdicname')) {
+		if (!preg_match('/^c_/', $newdicname)) {
 			$newdicname = 'c_'.$dicname;
 		}
 

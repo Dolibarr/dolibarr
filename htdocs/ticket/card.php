@@ -1268,6 +1268,7 @@ if ($action == 'create' || $action == 'presend') {
 			$companystatic = new Societe($db);
 			$contactstatic = new Contact($db);
 			$userstatic = new User($db);
+			$var = false;
 			foreach (array('internal', 'external') as $source) {
 				$tmpobject = $object;
 				$tab = $tmpobject->listeContact(-1, $source);

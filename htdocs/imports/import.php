@@ -1029,10 +1029,8 @@ if ($step == 4 && $datatoimport) {
 	print '<div id="left" class="connectedSortable">'."\n";
 
 	// List of source fields
-	$var = true;
 	$lefti = 1;
 	foreach ($fieldssource as $key => $val) {
-		$var = !$var;
 		show_elem($fieldssource, $key, $val, $var); // key is field number in source file
 		$listofkeys[$key] = 1;
 		$fieldsplaced[$key] = 1;
@@ -2210,7 +2208,7 @@ $db->close();
  * @param	array	$fieldssource	List of source fields
  * @param	int		$pos			Pos
  * @param	string	$key			Key
- * @param	boolean	$var			Line style (odd or not)
+ * @param	boolean	$var			Line style (odd or not). No more used.
  * @param	int		$nostyle		Hide style
  * @return	void
  */

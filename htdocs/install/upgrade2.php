@@ -1422,11 +1422,9 @@ function migrate_paiementfourn_facturefourn($db, $langs, $conf)
 		if ($select_resql) {
 			$select_num = $db->num_rows($select_resql);
 			$i = 0;
-			$var = true;
 
 			// Pour chaque paiement fournisseur, on insere une ligne dans paiementfourn_facturefourn
 			while (($i < $select_num) && (!$error)) {
-				$var = !$var;
 				$select_obj = $db->fetch_object($select_resql);
 
 				// Verifier si la ligne est deja dans la nouvelle table. On ne veut pas inserer de doublons.
