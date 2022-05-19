@@ -1584,8 +1584,7 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
  *  @param	string	$disabled			Disabled text
  *  @param	string	$morecss			More CSS
  *  @param	string	$backtopagejsfields	The back to page must be managed using javascript instead of a redirect.
- *  									Value is 'Name of html component to set with id:Name of html component to set with label'
- *  									TODO Support this mode, for example when used from the page create a project on thirdparty creation.
+ *  									Value is 'keyforpopupid:Name_of_html_component_to_set_with id,Name_of_html_component_to_set_with_label'
  * 	@return	string						HTML component with button
  */
 function dolButtonToOpenUrlInDialogPopup($name, $label, $buttonstring, $url, $disabled = '', $morecss = 'button bordertransp', $backtopagejsfields = '')
@@ -1600,10 +1599,16 @@ function dolButtonToOpenUrlInDialogPopup($name, $label, $buttonstring, $url, $di
 
 	$backtopagejsfieldsid = ''; $backtopagejsfieldslabel = '';
 	if ($backtopagejsfields) {
-		$url .= '&backtopagejsfields='.urlencode($backtopagejsfields);
 		$tmpbacktopagejsfields = explode(':', $backtopagejsfields);
-		$backtopagejsfieldsid = empty($tmpbacktopagejsfields[0]) ? '' : $tmpbacktopagejsfields[0];
-		$backtopagejsfieldslabel = empty($tmpbacktopagejsfields[1]) ? '' : $tmpbacktopagejsfields[1];
+		if (empty($tmpbacktopagejsfields[1])) {	// If the part 'keyforpopupid:' is missing, we add $name for it.
+			$backtopagejsfields = $name.":".$backtopagejsfields;
+			$tmp2backtopagejsfields = explode(',', $tmpbacktopagejsfields[0]);
+		} else {
+			$tmp2backtopagejsfields = explode(',', $tmpbacktopagejsfields[1]);
+		}
+		$backtopagejsfieldsid = empty($tmp2backtopagejsfields[0]) ? '' : $tmp2backtopagejsfields[0];
+		$backtopagejsfieldslabel = empty($tmp2backtopagejsfields[1]) ? '' : $tmp2backtopagejsfields[1];
+		$url .= '&backtopagejsfields='.urlencode($backtopagejsfields);
 	}
 
 	//print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("MediaFiles")).'" name="file_manager">';
@@ -1626,7 +1631,7 @@ function dolButtonToOpenUrlInDialogPopup($name, $label, $buttonstring, $url, $di
 						 	width: \'80%\',
 						 	title: \''.dol_escape_js($label).'\',
 							open: function (event, ui) {
-								console.log("open popup");
+								console.log("open popup name='.$name.', backtopagejsfields='.$backtopagejsfields.'");
        						},
 							close: function (event, ui) {
 								returnedid = jQuery("#varforreturndialogid'.$name.'").text();

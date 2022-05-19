@@ -46,6 +46,7 @@ $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
+$backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 $backtopagejsfields = GETPOST('backtopagejsfields', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
 $confirm = GETPOST('confirm', 'aZ09');
@@ -620,9 +621,12 @@ if ($action == 'create' && $user->rights->projet->creer) {
 			$url = '/societe/card.php?action=create&client=3&fournisseur=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create');
 			$newbutton = '<span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddThirdParty").'"></span>';
 			// TODO @LDR Implement this
-			//$tmpbacktopagejsfields = 'socid:search_socid';
-			//print dolButtonToOpenUrlInDialogPopup('addthirdparty', $langs->transnoentitiesnoconv('AddThirdParty'), $newbutton, $url, '', '', $tmpbacktopagejsfields);
-			print ' <a href="'.DOL_URL_ROOT.$url.'">'.$newbutton.'</a>';
+			if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
+				$tmpbacktopagejsfields = 'addthirdparty:socid,search_socid';
+				print dolButtonToOpenUrlInDialogPopup('addthirdparty', $langs->transnoentitiesnoconv('AddThirdParty'), $newbutton, $url, '', '', $tmpbacktopagejsfields);
+			} else {
+				print ' <a href="'.DOL_URL_ROOT.$url.'">'.$newbutton.'</a>';
+			}
 		}
 		print '</td></tr>';
 	}
