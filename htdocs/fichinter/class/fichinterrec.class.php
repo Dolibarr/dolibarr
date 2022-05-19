@@ -401,10 +401,6 @@ class FichinterRec extends Fichinter
 				$line->special_code = $objp->special_code;
 				$line->fk_unit = $objp->fk_unit;
 
-				// Ne plus utiliser
-				$line->price = $objp->price;
-				$line->remise = $objp->remise;
-
 				$this->lines[$i] = $line;
 
 				$i++;

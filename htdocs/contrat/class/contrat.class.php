@@ -2991,7 +2991,6 @@ class ContratLigne extends CommonObjectLine
 				$this->localtax2_type = $obj->localtax2_type;
 				$this->qty = $obj->qty;
 				$this->remise_percent = $obj->remise_percent;
-				$this->remise = $obj->remise;
 				$this->fk_remise_except = $obj->fk_remise_except;
 				$this->subprice = $obj->subprice;
 				$this->price_ht = $obj->price_ht;
@@ -3049,7 +3048,6 @@ class ContratLigne extends CommonObjectLine
 		$this->localtax2_tx = trim($this->localtax2_tx);
 		$this->qty = trim($this->qty);
 		$this->remise_percent = trim($this->remise_percent);
-		$this->remise = trim($this->remise);
 		$this->fk_remise_except = (int) $this->fk_remise_except;
 		$this->subprice = price2num($this->subprice);
 		$this->price_ht = price2num($this->price_ht);

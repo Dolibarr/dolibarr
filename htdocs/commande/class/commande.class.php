@@ -1666,7 +1666,6 @@ class Commande extends CommonOrder
 
 			// TODO Ne plus utiliser
 			$this->line->price = $price;
-			$this->line->remise = $remise;
 
 			if (is_array($array_options) && count($array_options) > 0) {
 				$this->line->array_options = $array_options;
@@ -2010,7 +2009,6 @@ class Commande extends CommonOrder
 			$line->price = -$remise->amount_ht;
 			$line->fk_product = 0; // Id produit predefini
 			$line->qty = 1;
-			$line->remise = 0;
 			$line->remise_percent = 0;
 			$line->rang = -1;
 			$line->info_bits = 2;
@@ -3264,7 +3262,6 @@ class Commande extends CommonOrder
 
 			// TODO deprecated
 			$this->line->price = $price;
-			$this->line->remise = $remise;
 
 			if (is_array($array_options) && count($array_options) > 0) {
 				// We replace values in this->line->array_options only for entries defined into $array_options
@@ -4406,9 +4403,6 @@ class OrderLine extends CommonOrderLine
 		if (empty($this->rang)) {
 			$this->rang = 0;
 		}
-		if (empty($this->remise)) {
-			$this->remise = 0;
-		}
 		if (empty($this->remise_percent)) {
 			$this->remise_percent = 0;
 		}
@@ -4580,9 +4574,6 @@ class OrderLine extends CommonOrderLine
 		}
 		if (empty($this->marge_tx)) {
 			$this->marge_tx = 0;
-		}
-		if (empty($this->remise)) {
-			$this->remise = 0;
 		}
 		if (empty($this->remise_percent)) {
 			$this->remise_percent = 0;

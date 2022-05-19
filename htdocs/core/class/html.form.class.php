@@ -2755,7 +2755,6 @@ class Form
 							$objp->price = $objp2->price;
 							$objp->unitprice = $objp2->unitprice;
 							$objp->remise_percent = $objp2->remise_percent;
-							$objp->remise = $objp2->remise;
 
 							//$objp->tva_tx is not overwritten by $objp2 value
 							//$objp->default_vat_code is not overwritten by $objp2 value

@@ -560,7 +560,6 @@ class Facture extends CommonInvoice
 
 			$this->array_options = $_facrec->array_options;
 
-			//if (! $this->remise) $this->remise = 0;
 			if (!$this->mode_reglement_id) {
 				$this->mode_reglement_id = 0;
 			}

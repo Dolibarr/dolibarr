@@ -490,7 +490,6 @@ class Propal extends CommonObject
 			$line->subprice = -$remise->amount_ht;
 			$line->fk_product = 0; // Id produit predefined
 			$line->qty = 1;
-			$line->remise = 0;
 			$line->remise_percent = 0;
 			$line->rang = -1;
 			$line->info_bits = 2;
@@ -736,7 +735,6 @@ class Propal extends CommonObject
 
 			// TODO deprecated
 			$this->line->price = $price;
-			$this->line->remise = $remise;
 
 			if (is_array($array_options) && count($array_options) > 0) {
 				$this->line->array_options = $array_options;
@@ -936,7 +934,6 @@ class Propal extends CommonObject
 
 			// TODO deprecated
 			$this->line->price = $price;
-			$this->line->remise = $remise;
 
 			if (is_array($array_options) && count($array_options) > 0) {
 				// We replace values in this->line->array_options only for entries defined into $array_options
@@ -4134,9 +4131,6 @@ class PropaleLigne extends CommonObjectLine
 		if (empty($this->rang)) {
 			$this->rang = 0;
 		}
-		if (empty($this->remise)) {
-			$this->remise = 0;
-		}
 		if (empty($this->remise_percent) || !is_numeric($this->remise_percent)) {
 			$this->remise_percent = 0;
 		}
@@ -4365,9 +4359,6 @@ class PropaleLigne extends CommonObjectLine
 		}
 		if (empty($this->price)) {
 			$this->price = 0; // TODO A virer
-		}
-		if (empty($this->remise)) {
-			$this->remise = 0; // TODO A virer
 		}
 		if (empty($this->remise_percent)) {
 			$this->remise_percent = 0;
