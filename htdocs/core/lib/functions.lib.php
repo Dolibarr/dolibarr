@@ -547,6 +547,9 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 							}
 						} elseif (isset($user->default_values[$relativepathstring]['filters'])) {
 							foreach ($user->default_values[$relativepathstring]['filters'] as $defkey => $defval) {	// $defkey is a querystring like 'a=b&c=d', $defval is key of user
+								if (!empty($_GET['disabledefaultvalues'])) {	// If set of default values has been disabled by a request parameter
+									continue;
+								}
 								$qualified = 0;
 								if ($defkey != '_noquery_') {
 									$tmpqueryarraytohave = explode('&', $defkey);

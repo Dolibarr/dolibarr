@@ -3571,7 +3571,7 @@ tr.liste_titre.box_titre td table td, .bordernooddeven tr td {
 div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border-col, div.tabBar .table-val-border-col {
 	vertical-align: middle;
 }
-div .tdtop {
+div .tdtop:not(.tagtdnote) {
 	vertical-align: top !important;
 	/*padding-top: 10px !important;
 	padding-bottom: 2px !important; */
@@ -4519,6 +4519,9 @@ table.noborder.boxtable tr td {
 a.valignmiddle.dashboardlineindicator {
 	line-height: 30px;
 }
+.height30 {
+	height: 30px !important;
+}
 
 tr.box_titre {
 	height: 26px;
@@ -5047,9 +5050,10 @@ table.dp {
 	vertical-align:middle;
 	cursor: pointer;
 }
-.datenowlink
-{
+.datenowlink {
 	color: var(--colortextlink);
+	font-size: 0.8em;
+	opacity: 0.7;
 }
 
 
