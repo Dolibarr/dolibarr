@@ -709,7 +709,6 @@ if (empty($reshook)) {
 		// Check that all mandatory fields are filled
 		$ok = 1;
 		foreach ($listfield as $f => $value) {
-
 			// Discard check of mandatory fields for country for some tables
 			if ($value == 'country_id' && in_array($tablib[$id], array('DictionaryPublicHolidays', 'DictionaryVAT', 'DictionaryRegion', 'DictionaryCompanyType', 'DictionaryHolidayTypes', 'DictionaryRevenueStamp', 'DictionaryAccountancysystem', 'DictionaryAccountancyCategory'))) {
 				continue; // For some pages, country is not mandatory
