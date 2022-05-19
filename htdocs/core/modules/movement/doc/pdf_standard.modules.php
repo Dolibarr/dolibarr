@@ -53,6 +53,11 @@ class pdf_standard extends ModelePDFMovement
 	public $description;
 
 	/**
+	 * @var int     Save the name of generated file as the main doc when generating a doc with this template
+	 */
+	public $update_main_doc_field;
+
+	/**
 	 * @var string document type
 	 */
 	public $type;
@@ -70,7 +75,8 @@ class pdf_standard extends ModelePDFMovement
 	public $version = 'dolibarr';
 
 	/**
-	 * @var Societe Issuer
+	 * Issuer
+	 * @var Societe Object that emits
 	 */
 	public $emetteur;
 
@@ -104,7 +110,7 @@ class pdf_standard extends ModelePDFMovement
 		$this->name = "stdmouvement";
 		$this->description = $langs->trans("DocumentModelStandardPDF");
 
-		// Page size for A4 format
+		// Dimension page
 		$this->type = 'pdf';
 		$formatarray = pdf_getFormat();
 		$this->page_largeur = $formatarray['width'];
@@ -122,7 +128,7 @@ class pdf_standard extends ModelePDFMovement
 
 		// Get source company
 		$this->emetteur = $mysoc;
-		if (!$this->emetteur->country_code) {
+		if (empty($this->emetteur->country_code)) {
 			$this->emetteur->country_code = substr($langs->defaultlang, -2); // By default if not defined
 		}
 
@@ -167,10 +173,12 @@ class pdf_standard extends ModelePDFMovement
 	 *  @param		int				$hideref			Do not show ref
 	 *	@return		int         						1 if OK, <=0 if KO
 	 */
-	public function write_file($object, $outputlangs, $srctemplatepath, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
+	public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
 		// phpcs:enable
-		global $user, $langs, $conf, $mysoc, $db, $hookmanager;
+		global $user, $langs, $conf, $mysoc, $db, $hookmanager, $nblines;
+
+		dol_syslog("write_file outputlangs->defaultlang=".(is_object($outputlangs) ? $outputlangs->defaultlang : 'null'));
 
 		if (!is_object($outputlangs)) {
 			$outputlangs = $langs;
@@ -180,7 +188,7 @@ class pdf_standard extends ModelePDFMovement
 			$outputlangs->charset_output = 'ISO-8859-1';
 		}
 
-		// Load traductions files required by page
+		// Load traductions files required by the page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "stocks", "orders", "deliveries"));
 
 		/**
@@ -452,7 +460,7 @@ class pdf_standard extends ModelePDFMovement
 					$pdf->useTemplate($tplidx);
 				}
 				$pagenb++;
-				$this->_pagehead($pdf, $object, 1, $outputlangs);
+				$top_shift = $this->_pagehead($pdf, $object, 1, $outputlangs);
 				$pdf->SetFont('', '', $default_font_size - 1);
 				$pdf->MultiCell(0, 3, ''); // Set interline to 3
 				$pdf->SetTextColor(0, 0, 0);
@@ -464,7 +472,8 @@ class pdf_standard extends ModelePDFMovement
 
 				// Show list of product of the MouvementStock
 
-				$nexY += 5;
+				$nexY = $tab_top - 1;
+
 				$nexY = $pdf->GetY();
 				$nexY += 10;
 
