@@ -2364,6 +2364,7 @@ class Commande extends CommonOrder
 	 *	@param      User	$user		User object
 	 *  @param      int		$lineid		Id of line to delete
 	 *  @return     int        		 	>0 if OK, 0 if nothing to do, <0 if KO
+	 *
 	 */
 	public function deleteline($user = null, $lineid = 0)
 	{
@@ -3407,9 +3408,10 @@ class Commande extends CommonOrder
 	 *
 	 *	@param	User	$user		User object
 	 *	@param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
+	 *	@param	int		$idwarehouse	Warehouse ID to use for stock change (Used only if option STOCK_CALCULATE_ON_VALIDATE_ORDER is on)
 	 * 	@return	int					<=0 if KO, >0 if OK
 	 */
-	public function delete($user, $notrigger = 0)
+	public function delete($user, $notrigger = 0, $idwarehouse = -1)
 	{
 		global $conf, $langs;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -3433,6 +3435,26 @@ class Commande extends CommonOrder
 		if ($this->nb_expedition() != 0) {
 			$this->errors[] = $langs->trans('SomeShipmentExists');
 			$error++;
+		}
+
+
+		// If stock decrementation is set on validate order
+		if ($this->statut == self::STATUS_VALIDATED && !empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 1) {
+			$result = 0;
+			require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
+			$langs->load("agenda");
+			$num = count($this->lines);
+			for ($i = 0; $i < $num; $i++) {
+				if ($this->lines[$i]->fk_product > 0) {
+					$mouvP = new MouvementStock($this->db);
+					$mouvP->origin = &$this;
+					// We increment stock of product (and sub-products)
+					$result = $mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, 0, $langs->trans("OrderDeleted", $this->ref));
+					if ($result < 0) {
+						$error++; $this->error = $mouvP->error; break;
+					}
+				}
+			}
 		}
 
 		// Delete extrafields of lines and lines
