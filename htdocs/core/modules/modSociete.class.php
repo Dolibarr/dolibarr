@@ -467,7 +467,7 @@ class modSociete extends DolibarrModules
 			's.nom' => "Name*",
 			's.name_alias' => "AliasNameShort",
 			's.parent' => "ParentCompany",
-			's.status' => "Status",
+			's.status' => "Status*",
 			's.code_client' => "CustomerCode",
 			's.code_fournisseur' => "SupplierCode",
 			's.code_compta' => "CustomerAccountancyCode",
