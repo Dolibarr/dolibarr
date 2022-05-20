@@ -126,6 +126,8 @@ class AdherentType extends CommonObject
 
 	public $multilangs = array();
 
+	public $other = array();
+
 
 	/**
 	 *	Constructor
