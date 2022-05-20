@@ -1308,8 +1308,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<span id="TypeName" class="fieldrequired">'.$form->editfieldkey('ThirdPartyName', 'name', '', $object, 0).'</span>';
 		}
 		print '</td><td'.(empty($conf->global->SOCIETE_USEPREFIX) ? ' colspan="3"' : '').'>';
-		//print '<input type="text" class="minwidth300" maxlength="128" name="name" id="name" value="'.dol_escape_htmltag($object->name).'" autofocus="autofocus">';
-		//print $form->widgetForTranslation("name", $object, $permissiontoadd, 'string', 'alpahnohtml', 'minwidth300');
+
+		print '<input type="text" class="minwidth300" maxlength="128" name="name" id="name" value="'.dol_escape_htmltag($object->name).'" autofocus="autofocus">';
+		print $form->widgetForTranslation("name", $object, $permissiontoadd, 'string', 'alpahnohtml', 'minwidth300');
+		/* Disabled. Must be implenteted by keeping the input text but calling ajax on a keydown of the input and output
+		   data of duplicate into a div under the input. We need to keep the widgetForTranslation also for some countries.
+		 */
+		/*
 		print '<select class="name" name="name" id="name" style="min-width:500px"></select>';
 		print "\n".'<script type="text/javascript">';
 		print '$(document).ready(function () {
@@ -1335,7 +1340,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				allowClear: true,
 				minimumInputLength: 3,
 				language: select2arrayoflanguage,
-				containerCssClass: ":all:",	
+				containerCssClass: ":all:",
 				selectionCssClass: ":all:",
 				tags: true,
 				templateResult: formatCustomer,
@@ -1354,7 +1359,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				} else {
 					logo = \'<div class="floatleft inline-block valigntop photowithmargin" style="padding:0 10px"><div class="photosociete photoref" alt="No photo"><span class="fas fa-building" style="color: #6c6aa8;"></span></div></div>\';
 				}
-				
+
 				var $container = $("<div class=\'select2-result-repository clearfix\'>" +
 					 "<div class=\'select2-result-repository__avatar floatleft inline-block valigntop\'>" + logo +
 					  "<div class=\'select2-result-repository__meta floatleft inline-block valigntop\'>" +
@@ -1398,6 +1403,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		});
 		</script>
 		';
+		*/
 		print '</td>';
 		if (!empty($conf->global->SOCIETE_USEPREFIX)) {  // Old not used prefix field
 			print '<td>'.$langs->trans('Prefix').'</td><td><input type="text" size="5" maxlength="5" name="prefix_comm" value="'.dol_escape_htmltag($object->prefix_comm).'"></td>';
