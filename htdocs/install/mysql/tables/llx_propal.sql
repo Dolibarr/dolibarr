@@ -58,6 +58,7 @@ create table llx_propal
   fk_account			integer,						-- bank account
   fk_currency			varchar(3),						-- currency code
   fk_cond_reglement		integer,						-- condition de reglement (30 jours, fin de mois ...)
+  deposit_percent		real DEFAULT NULL,				-- default deposit % if payment term needs it
   fk_mode_reglement		integer,						-- mode de reglement (Virement, Prelevement)
  
   note_private			text,

@@ -127,12 +127,13 @@ class FormTicket
 	/**
 	 * Show the form to input ticket
 	 *
-	 * @param  	int	 		$withdolfichehead		With dol_get_fiche_head() and dol_get_fiche_end()
-	 * @param	string		$mode					Mode ('create' or 'edit')
-	 * @param	int			$public					1=If we show the form for the public interface
+	 * @param  	int	 			$withdolfichehead		With dol_get_fiche_head() and dol_get_fiche_end()
+	 * @param	string			$mode					Mode ('create' or 'edit')
+	 * @param	int				$public					1=If we show the form for the public interface
+	 * @param	Contact|null	$with_contact			[=NULL] Contact to link to this ticket if exists
 	 * @return 	void
 	 */
-	public function showForm($withdolfichehead = 0, $mode = 'edit', $public = 0)
+	public function showForm($withdolfichehead = 0, $mode = 'edit', $public = 0, Contact $with_contact = null)
 	{
 		global $conf, $langs, $user, $hookmanager;
 
@@ -178,10 +179,104 @@ class FormTicket
 		}
 
 		// TITLE
+		$email = GETPOSTISSET('email') ? GETPOST('email', 'alphanohtml') : '';
 		if ($this->withemail) {
 			print '<tr><td class="titlefield"><label for="email"><span class="fieldrequired">'.$langs->trans("Email").'</span></label></td><td>';
-			print '<input  class="text minwidth200" id="email" name="email" value="'.(GETPOST('email', 'alpha') ? GETPOST('email', 'alpha') : $subject).'" autofocus>';
+			print '<input class="text minwidth200" id="email" name="email" value="'.$email.'" autofocus>';
 			print '</td></tr>';
+
+			if ($with_contact) {
+				// contact search and result
+				$html_contact_search  = '';
+				$html_contact_search .= '<tr id="contact_search_line">';
+				$html_contact_search .= '<td class="titlefield">';
+				$html_contact_search .= '<label for="contact"><span class="fieldrequired">' . $langs->trans('Contact') . '</span></label>';
+				$html_contact_search .= '<input type="hidden" id="contact_id" name="contact_id" value="" />';
+				$html_contact_search .= '</td>';
+				$html_contact_search .= '<td id="contact_search_result"></td>';
+				$html_contact_search .= '</tr>';
+				print $html_contact_search;
+				// contact lastname
+				$html_contact_lastname = '';
+				$html_contact_lastname .= '<tr id="contact_lastname_line" class="contact_field"><td class="titlefield"><label for="contact_lastname"><span class="fieldrequired">' . $langs->trans('Lastname') . '</span></label></td><td>';
+				$html_contact_lastname .= '<input type="text" id="contact_lastname" name="contact_lastname" value="' . dol_escape_htmltag(GETPOSTISSET('contact_lastname') ? GETPOST('contact_lastname', 'alphanohtml') : '') . '" />';
+				$html_contact_lastname .= '</td></tr>';
+				print $html_contact_lastname;
+				// contact firstname
+				$html_contact_firstname  = '';
+				$html_contact_firstname .= '<tr id="contact_firstname_line" class="contact_field"><td class="titlefield"><label for="contact_firstname"><span class="fieldrequired">' . $langs->trans('Firstname') . '</span></label></td><td>';
+				$html_contact_firstname .= '<input type="text" id="contact_firstname" name="contact_firstname" value="' . dol_escape_htmltag(GETPOSTISSET('contact_firstname') ? GETPOST('contact_firstname', 'alphanohtml') : '') . '" />';
+				$html_contact_firstname .= '</td></tr>';
+				print $html_contact_firstname;
+				// company name
+				$html_company_name  = '';
+				$html_company_name .= '<tr id="contact_company_name_line" class="contact_field"><td><label for="company_name"><span>' . $langs->trans('Company') . '</span></label></td><td>';
+				$html_company_name .= '<input type="text" id="company_name" name="company_name" value="' . dol_escape_htmltag(GETPOSTISSET('company_name') ? GETPOST('company_name', 'alphanohtml') : '') . '" />';
+				$html_company_name .= '</td></tr>';
+				print $html_company_name;
+				// contact phone
+				$html_contact_phone  = '';
+				$html_contact_phone .= '<tr id="contact_phone_line" class="contact_field"><td><label for="contact_phone"><span>' . $langs->trans('Phone') . '</span></label></td><td>';
+				$html_contact_phone .= '<input type="text" id="contact_phone" name="contact_phone" value="' . dol_escape_htmltag(GETPOSTISSET('contact_phone') ? GETPOST('contact_phone', 'alphanohtml') : '') . '" />';
+				$html_contact_phone .= '</td></tr>';
+				print $html_contact_phone;
+
+				// search contact form email
+				$langs->load('errors');
+				print '<script type="text/javascript">
+                    jQuery(document).ready(function() {
+                        var contact = jQuery.parseJSON("'.dol_escape_js(json_encode($with_contact), 2).'");
+                        jQuery("#contact_search_line").hide();
+                        if (contact) {
+                        	if (contact.id > 0) {
+                        		jQuery("#contact_search_line").show();
+                        		jQuery("#contact_id").val(contact.id);
+								jQuery("#contact_search_result").html(contact.firstname+" "+contact.lastname);
+								jQuery(".contact_field").hide();
+                        	} else {
+                        		jQuery(".contact_field").show();
+                        	}
+                        }
+
+                    	jQuery("#email").change(function() {
+                            jQuery("#contact_search_line").show();
+                            jQuery("#contact_search_result").html("'.dol_escape_js($langs->trans('Select2SearchInProgress')).'");
+                            jQuery("#contact_id").val("");
+                            jQuery("#contact_lastname").val("");
+                            jQuery("#contact_firstname").val("");
+                            jQuery("#company_name").val("");
+                            jQuery("#contact_phone").val("");
+
+                            jQuery.getJSON(
+                                "'.dol_escape_js(dol_buildpath('/public/ticket/ajax/ajax.php', 1)).'",
+								{
+									action: "getContacts",
+									email: jQuery("#email").val()
+								},
+								function(response) {
+									if (response.error) {
+                                        jQuery("#contact_search_result").html("<span class=\"error\">"+response.error+"</span>");
+									} else {
+                                        var contact_list = response.contacts;
+										if (contact_list.length == 1) {
+                                            var contact = contact_list[0];
+											jQuery("#contact_id").val(contact.id);
+											jQuery("#contact_search_result").html(contact.firstname+" "+contact.lastname);
+                                            jQuery(".contact_field").hide();
+										} else if (contact_list.length <= 0) {
+                                            jQuery("#contact_search_line").hide();
+                                            jQuery(".contact_field").show();
+										}
+									}
+								}
+                            ).fail(function(jqxhr, textStatus, error) {
+    							var error_msg = "'.dol_escape_js($langs->trans('ErrorAjaxRequestFailed')).'"+" ["+textStatus+"] : "+error;
+                                jQuery("#contact_search_result").html("<span class=\"error\">"+error_msg+"</span>");
+                            });
+                        });
+                    });
+                    </script>';
+			}
 		}
 
 		// If ticket created from another object
@@ -268,7 +363,7 @@ class FormTicket
 			print '</span>';
 			print '<span class="nowrap inline-block">';
 			print '<img class="inline-block valignmiddle" src="'.DOL_URL_ROOT.'/core/antispamimage.php" border="0" width="80" height="32" id="img_securitycode" />';
-			print '<a class="inline-block valignmiddle" href="'.$php_self.'" tabindex="4" data-role="button">'.img_picto($langs->trans("Refresh"), 'refresh', 'id="captcha_refresh_img"').'</a>';
+			print '<a class="inline-block valignmiddle" href="" tabindex="4" data-role="button">'.img_picto($langs->trans("Refresh"), 'refresh', 'id="captcha_refresh_img"').'</a>';
 			print '</span>';
 			print '</td></tr>';
 		}
@@ -980,19 +1075,37 @@ class FormTicket
 		jQuery(document).ready(function() {
 			send_email=' . $send_email.';
 			if (send_email) {
+				if (!jQuery("#send_msg_email").is(":checked")) {
+					jQuery("#send_msg_email").prop("checked", true).trigger("change");
+				}
 				jQuery(".email_line").show();
 			} else {
+				if (!jQuery("#private_message").is(":checked")) {
+					jQuery("#private_message").prop("checked", true).trigger("change");
+				}
 				jQuery(".email_line").hide();
 			}
 
 			jQuery("#send_msg_email").click(function() {
 				if(jQuery(this).is(":checked")) {
+					if (jQuery("#private_message").is(":checked")) {
+						jQuery("#private_message").prop("checked", false).trigger("change");
+					}
 					jQuery(".email_line").show();
 				}
 				else {
 					jQuery(".email_line").hide();
 				}
-            });';
+            });
+
+            jQuery("#private_message").click(function() {
+				if (jQuery(this).is(":checked")) {
+					if (jQuery("#send_msg_email").is(":checked")) {
+						jQuery("#send_msg_email").prop("checked", false).trigger("change");
+					}
+					jQuery(".email_line").hide();
+				}
+			});';
 		print '});
 		</script>';
 
@@ -1033,7 +1146,7 @@ class FormTicket
 			// Zone to select its email template
 			if (count($modelmail_array) > 0) {
 				print '<tr class="email_line"><td></td><td colspan="2"><div style="padding: 3px 0 3px 0">'."\n";
-				print $langs->trans('SelectMailModel').': '.$formmail->selectarray('modelmailselected', $modelmail_array, $this->param['models_id'], 1);
+				 print $langs->trans('SelectMailModel').': '.$formmail->selectarray('modelmailselected', $modelmail_array, $this->param['models_id'], 1,0,"","",0,0,0,'','minwidth200');
 				if ($user->admin) {
 					print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 				}

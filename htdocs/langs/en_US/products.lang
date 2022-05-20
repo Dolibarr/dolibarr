@@ -402,3 +402,4 @@ PMPValueShort=WAP
 PuttingPricesUpToDate=Update prices with current known prices
 SwitchOnSaleStatus=Switch on sale status
 SwitchOnPurchaseStatus=Switch on purchase status
+OrProductsWithCategories=Or products with tags/categories
