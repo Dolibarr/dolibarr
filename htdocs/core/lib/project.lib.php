@@ -2129,7 +2129,7 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 	{
 		$sql .= " AND p.rowid = t.fk_projet";
 		$sql .= " AND ec.element_id = t.rowid";
-		$sql .= " AND ec.fk_socpeople = ".$user->id;
+		$sql .= " AND ec.fk_socpeople = ".$user->contact_id;
 		$sql .= " AND ec.fk_c_type_contact = ctc.rowid"; // Replace the 2 lines with ec.fk_c_type_contact in $arrayidtypeofcontact
 		$sql .= " AND ctc.element = 'project_task'";
 	}

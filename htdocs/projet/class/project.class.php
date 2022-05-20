@@ -1354,14 +1354,14 @@ class Project extends CommonObject
 		{
 			$sql .= " AND ( p.public = 1";
 			$sql .= " OR ( ec.fk_c_type_contact IN (".join(',', array_keys($listofprojectcontacttype)).")";
-			$sql .= " AND ec.fk_socpeople = ".$user->id.")";
+			$sql .= " AND ec.fk_socpeople = ".$user->contact_id.")";
 			$sql .= " )";
 		} elseif ($mode == 1)
 		{
 			$sql .= " AND ec.element_id = p.rowid";
 			$sql .= " AND (";
 			$sql .= "  ( ec.fk_c_type_contact IN (".join(',', array_keys($listofprojectcontacttype)).")";
-			$sql .= " AND ec.fk_socpeople = ".$user->id.")";
+			$sql .= " AND ec.fk_socpeople = ".$user->contact_id.")";
 			$sql .= " )";
 		} elseif ($mode == 2)
 		{
