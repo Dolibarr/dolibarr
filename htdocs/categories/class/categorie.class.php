@@ -259,6 +259,12 @@ class Categorie extends CommonObject
 	public $motherof = array();
 
 	/**
+	 * @var array Childs
+	 */
+	public $childs = array();
+
+
+	/**
 	 *	Constructor
 	 *
 	 *  @param		DoliDB		$db     Database handler
