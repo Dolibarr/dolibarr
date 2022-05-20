@@ -27,7 +27,7 @@ class FormSetup
 	 */
 	public $db;
 
-	/** @var FormSetupItem[]  */
+	/** @var FormSetupItem[] */
 	public $items = array();
 
 	/**
