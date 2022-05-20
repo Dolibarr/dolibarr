@@ -211,7 +211,7 @@ function llxHeaderTicket($title, $head = "", $disablejs = 0, $disablehead = 0, $
 
 	print '<body id="mainbody" class="publicnewticketform">';
 	print '<div class="center">';
-
+	$urllogo = false;
 	// Define urllogo
 	if (!empty($conf->global->TICKET_SHOW_COMPANY_LOGO) || !empty($conf->global->TICKET_PUBLIC_INTERFACE_TOPIC)) {
 		// Print logo
