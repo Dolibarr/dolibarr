@@ -2801,7 +2801,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		if ($fuser->rights->facture->{$lire} || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
-		if ($fuser->societe_id > 0) {
+		if ($fuser->socid > 0) {
 			$original_file = $conf->facture->dir_output.'/payments/private/'.$fuser->id.'/'.$original_file;
 		} else {
 			$original_file = $conf->facture->dir_output.'/payments/'.$original_file;
