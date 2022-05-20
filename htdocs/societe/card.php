@@ -1308,8 +1308,96 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<span id="TypeName" class="fieldrequired">'.$form->editfieldkey('ThirdPartyName', 'name', '', $object, 0).'</span>';
 		}
 		print '</td><td'.(empty($conf->global->SOCIETE_USEPREFIX) ? ' colspan="3"' : '').'>';
-		print '<input type="text" class="minwidth300" maxlength="128" name="name" id="name" value="'.dol_escape_htmltag($object->name).'" autofocus="autofocus">';
-		print $form->widgetForTranslation("name", $object, $permissiontoadd, 'string', 'alpahnohtml', 'minwidth300');
+		//print '<input type="text" class="minwidth300" maxlength="128" name="name" id="name" value="'.dol_escape_htmltag($object->name).'" autofocus="autofocus">';
+		//print $form->widgetForTranslation("name", $object, $permissiontoadd, 'string', 'alpahnohtml', 'minwidth300');
+		print '<select class="name" name="name" id="name" style="min-width:500px"></select>';
+		print "\n".'<script type="text/javascript">';
+		print '$(document).ready(function () {
+			$("#name").select2({
+				ajax: {
+				  url: "' . DOL_URL_ROOT . '/core/ajax/ajaxcompanies.php",
+				  dataType: "json",
+				  delay: 250,
+				  data: function (params) {
+						return {
+							newcompany: params.term // search term
+						};
+				  },
+				  processResults: function (data, params) {
+					  return {
+						results: data
+					  };
+				  },
+				  cache: true
+				},
+
+				placeholder: "' . $langs->trans('Name of the new third party. In the meantime we check if it already exists...') . '",
+				allowClear: true,
+				minimumInputLength: 3,
+				language: select2arrayoflanguage,
+				containerCssClass: ":all:",	
+				selectionCssClass: ":all:",
+				tags: true,
+				templateResult: formatCustomer,
+				templateSelection: formatCustomerSelection
+			});
+
+			function formatCustomer (Customer) {
+				if(Customer.label === undefined) {
+					return Customer.text;
+				}
+
+				if(Customer.logo !== null ) {
+					logo = \'<img src="\';
+					logo += \'' . DOL_URL_ROOT . '/viewimage.php?modulepart=societe&amp;entity=1&amp;file=\' + Customer.key + "%2Flogos%2Fthumbs%2F" + Customer.logo.replace(".", "_mini.") + "&amp;cache=0";
+					logo += \'" /></div>\';
+				} else {
+					logo = \'<div class="floatleft inline-block valigntop photowithmargin" style="padding:0 10px"><div class="photosociete photoref" alt="No photo"><span class="fas fa-building" style="color: #6c6aa8;"></span></div></div>\';
+				}
+				
+				var $container = $("<div class=\'select2-result-repository clearfix\'>" +
+					 "<div class=\'select2-result-repository__avatar floatleft inline-block valigntop\'>" + logo +
+					  "<div class=\'select2-result-repository__meta floatleft inline-block valigntop\'>" +
+						"<div class=\'select2-result-repository__title\'></div>" +
+						"<div class=\'select2-result-repository__name_alias\'></div>" +
+						"<div class=\'select2-result-repository__code_client\'></div>" +
+						"<div class=\'select2-result-repository__code_fournisseur\'></div>" +
+						"<div class=\'select2-result-repository__companies_info\'>" +
+						  "<div class=\'select2-result-repository__email\'><i class=\'fa fa-at\'></i> </div>" +
+						  "<div class=\'select2-result-repository__address\'><i class=\'fa fa-flag\'></i> </div>" +
+						  "<div class=\'select2-result-repository__zip\'><i class=\'fa fa-circle-o\'></i> </div>" +
+						  "<div class=\'select2-result-repository__country\'><i class=\'fa fa-globe-americas\'></i> </div>" +
+						  "<div class=\'select2-result-repository__departement\'><i class=\'fa fa-circle-o\'></i> </div>" +
+						  "<div class=\'select2-result-repository__town\'><i class=\'fa fa-circle-o\'></i> </div>" +
+						  "<div class=\'select2-result-repository__siren\'><i class=\'fa fa-circle-o\'></i> </div>" +
+						  "<div class=\'select2-result-repository__datec\'><i class=\'fa fa-calendar\'></i> </div>" +
+						"</div>" +
+					  "</div>" +
+					"</div>"
+				);
+
+				$container.find(".select2-result-repository__title").text(Customer.label);
+				$container.find(".select2-result-repository__name_alias").text(Customer.name_alias ? Customer.name_alias : "");
+				$container.find(".select2-result-repository__code_client").text(Customer.code_client ? Customer.code_client  : "");
+				$container.find(".select2-result-repository__code_fournisseur").text((Customer.code_fournisseur!==null) ? Customer.code_fournisseur : "");
+				$container.find(".select2-result-repository__email").append("' . $langs->trans('EMail') . ': " + (Customer.email !== null ? Customer.email : ""));
+				$container.find(".select2-result-repository__address").append("' . $langs->trans('Address') . ': " + (Customer.address !== null ? Customer.address : ""));
+				$container.find(".select2-result-repository__country").append("' . $langs->trans('Country') . ': " + (Customer.country !== null ? Customer.country : ""));
+				$container.find(".select2-result-repository__departement").append("' . $langs->trans('Region-State') . ': " + (Customer.departement !== null ? Customer.departement : ""));
+				$container.find(".select2-result-repository__zip").append("' . $langs->trans('Zip') . ': " + (Customer.zip !== null ? Customer.zip : ""));
+				$container.find(".select2-result-repository__town").append("' . $langs->trans('Town') . ': " + (Customer.town !== null ? Customer.town : ""));
+				$container.find(".select2-result-repository__siren").append("' . $langs->trans('Siren') . ': " + (Customer.siren !== null ? Customer.siren : ""));
+				$container.find(".select2-result-repository__datec").append("' . $langs->trans('Created') . ': " + (Customer.datec !== null ? Customer.datec : ""));
+
+				return $container;
+			}
+
+			function formatCustomerSelection (selection) {
+				return selection.label || selection.text;
+			}
+		});
+		</script>
+		';
 		print '</td>';
 		if (!empty($conf->global->SOCIETE_USEPREFIX)) {  // Old not used prefix field
 			print '<td>'.$langs->trans('Prefix').'</td><td><input type="text" size="5" maxlength="5" name="prefix_comm" value="'.dol_escape_htmltag($object->prefix_comm).'"></td>';
