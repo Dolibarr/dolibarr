@@ -953,7 +953,7 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 			console.log("We find supplier price :"+up+" qty: "+qty+" discount: "+discount+" for product "+jQuery('#idprodfournprice').val());
 
 			jQuery("#price_ht").val(up);
-            $('#tva_tx option').removeAttr('selected').filter('[value='+tva_tx+']').prop('selected', true);
+			$('#tva_tx option').removeAttr('selected').filter('[value='+tva_tx+']').prop('selected', true);
 				
 			if (jQuery("#qty").val() < qty)
 			{
