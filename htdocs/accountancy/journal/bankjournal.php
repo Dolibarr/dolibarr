@@ -4,7 +4,7 @@
  * Copyright (C) 2011       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2012       Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2013       Christophe Battarel     <christophe.battarel@altairis.fr>
- * Copyright (C) 2013-2019  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2013-2021  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2013-2014  Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2013-2014  Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2017-2021  Frédéric France         <frederic.france@netlogic.fr>
@@ -119,7 +119,14 @@ if (!GETPOSTISSET('date_startmonth') && (empty($date_start) || empty($date_end))
 
 $sql  = "SELECT b.rowid, b.dateo as do, b.datev as dv, b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type, b.fk_account,";
 $sql .= " ba.courant, ba.ref as baref, ba.account_number, ba.fk_accountancy_journal,";
-$sql .= " soc.code_compta, soc.code_compta_fournisseur, soc.rowid as socid, soc.nom as name, soc.email as email, bu1.type as typeop_company,";
+$sql .= " soc.rowid as socid, soc.nom as name, soc.email as email, bu1.type as typeop_company,";
+if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
+	$sql .= " spe.accountancy_code_customer as code_compta,";
+	$sql .= " spe.accountancy_code_supplier as code_compta_fournisseur,";
+} else {
+	$sql .= " soc.code_compta,";
+	$sql .= " soc.code_compta_fournisseur,";
+}
 $sql .= " u.accountancy_code, u.rowid as userid, u.lastname as lastname, u.firstname as firstname, u.email as useremail, u.statut as userstatus,";
 $sql .= " bu2.type as typeop_user,";
 $sql .= " bu3.type as typeop_payment, bu4.type as typeop_payment_supplier";
@@ -130,9 +137,12 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank_url as bu2 ON bu2.fk_bank = b.rowid A
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank_url as bu3 ON bu3.fk_bank = b.rowid AND bu3.type='payment'";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank_url as bu4 ON bu4.fk_bank = b.rowid AND bu4.type='payment_supplier'";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as soc on bu1.url_id=soc.rowid";
+if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
+	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe_perentity as spe ON spe.fk_soc = soc.rowid AND spe.entity = " . ((int) $conf->entity);
+}
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on bu2.url_id=u.rowid";
 $sql .= " WHERE ba.fk_accountancy_journal=".((int) $id_journal);
-$sql .= ' AND b.amount != 0 AND ba.entity IN ('.getEntity('bank_account', 0).')'; // We don't share object for accountancy
+$sql .= ' AND b.amount <> 0 AND ba.entity IN ('.getEntity('bank_account', 0).')'; // We don't share object for accountancy
 if ($date_start && $date_end) {
 	$sql .= " AND b.dateo >= '".$db->idate($date_start)."' AND b.dateo <= '".$db->idate($date_end)."'";
 }
@@ -272,6 +282,7 @@ if ($result) {
 		$tabpay[$obj->rowid]["fk_bank"] = $obj->rowid;
 		$tabpay[$obj->rowid]["bank_account_ref"] = $obj->baref;
 		$tabpay[$obj->rowid]["fk_bank_account"] = $obj->fk_account;
+		$reg = array();
 		if (preg_match('/^\((.*)\)$/i', $obj->label, $reg)) {
 			$tabpay[$obj->rowid]["lib"] = $langs->trans($reg[1]);
 		} else {
@@ -362,12 +373,12 @@ if ($result) {
 
 					// Retrieve the accounting code of the social contribution of the payment from link of payment.
 					// Note: We have the social contribution id, it can be faster to get accounting code from social contribution id.
-					$sqlmid = 'SELECT cchgsoc.accountancy_code';
+					$sqlmid = "SELECT cchgsoc.accountancy_code";
 					$sqlmid .= " FROM ".MAIN_DB_PREFIX."c_chargesociales cchgsoc";
-					$sqlmid .= " INNER JOIN ".MAIN_DB_PREFIX."chargesociales as chgsoc ON chgsoc.fk_type=cchgsoc.id";
-					$sqlmid .= " INNER JOIN ".MAIN_DB_PREFIX."paiementcharge as paycharg ON paycharg.fk_charge=chgsoc.rowid";
+					$sqlmid .= " INNER JOIN ".MAIN_DB_PREFIX."chargesociales as chgsoc ON chgsoc.fk_type = cchgsoc.id";
+					$sqlmid .= " INNER JOIN ".MAIN_DB_PREFIX."paiementcharge as paycharg ON paycharg.fk_charge = chgsoc.rowid";
 					$sqlmid .= " INNER JOIN ".MAIN_DB_PREFIX."bank_url as bkurl ON bkurl.url_id=paycharg.rowid AND bkurl.type = 'payment_sc'";
-					$sqlmid .= " WHERE bkurl.fk_bank=".$obj->rowid;
+					$sqlmid .= " WHERE bkurl.fk_bank = ".((int) $obj->rowid);
 
 					dol_syslog("accountancy/journal/bankjournal.php:: sqlmid=".$sqlmid, LOG_DEBUG);
 					$resultmid = $db->query($sqlmid);
@@ -648,6 +659,8 @@ if (!$error && $action == 'writebookkeeping') {
 				// Line into thirdparty account
 				foreach ($tabtp[$key] as $k => $mt) {
 					if ($mt) {
+						$lettering = false;
+
 						$reflabel = '';
 						if (!empty($val['lib'])) {
 							$reflabel .= dol_string_nohtmltag($val['lib']).($val['soclib'] ? " - " : "");
@@ -676,11 +689,13 @@ if (!$error && $action == 'writebookkeeping') {
 						$bookkeeping->date_creation = $now;
 
 						if ($tabtype[$key] == 'payment') {	// If payment is payment of customer invoice, we get ref of invoice
+							$lettering = true;
 							$bookkeeping->subledger_account = $k; // For payment, the subledger account is stored as $key of $tabtp
 							$bookkeeping->subledger_label = $tabcompany[$key]['name']; // $tabcompany is defined only if we are sure there is 1 thirdparty for the bank transaction
 							$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER;
 							$bookkeeping->label_compte = $accountingaccountcustomer->label;
 						} elseif ($tabtype[$key] == 'payment_supplier') {	// If payment is payment of supplier invoice, we get ref of invoice
+							$lettering = true;
 							$bookkeeping->subledger_account = $k; // For payment, the subledger account is stored as $key of $tabtp
 							$bookkeeping->subledger_label = $tabcompany[$key]['name']; // $tabcompany is defined only if we are sure there is 1 thirdparty for the bank transaction
 							$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER;
@@ -762,6 +777,12 @@ if (!$error && $action == 'writebookkeeping') {
 								$error++;
 								$errorforline++;
 								setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
+							}
+						} else {
+							if ($lettering && getDolGlobalInt('ACCOUNTING_ENABLE_LETTERING')) {
+								require_once DOL_DOCUMENT_ROOT . '/accountancy/class/lettering.class.php';
+								$lettering_static = new Lettering($db);
+								$nb_lettering = $lettering_static->bookkeepingLetteringAll(array($bookkeeping->id));
 							}
 						}
 					}
@@ -1019,7 +1040,7 @@ if (empty($action) || $action == 'view') {
 
 
 	// Test that setup is complete (we are in accounting, so test on entity is always on $conf->entity only, no sharing allowed)
-	$sql = 'SELECT COUNT(rowid) as nb FROM '.MAIN_DB_PREFIX.'bank_account WHERE entity = '.$conf->entity.' AND fk_accountancy_journal IS NULL AND clos=0';
+	$sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."bank_account WHERE entity = ".((int) $conf->entity)." AND fk_accountancy_journal IS NULL AND clos=0";
 	$resql = $db->query($sql);
 	if ($resql) {
 		$obj = $db->fetch_object($resql);
@@ -1047,7 +1068,7 @@ if (empty($action) || $action == 'view') {
 	}
 
 
-	print '<div class="tabsAction tabsActionNoBottom">';
+	print '<div class="tabsAction tabsActionNoBottom centerimp">';
 
 	if (!empty($conf->global->ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL) && $in_bookkeeping == 'notyet') {
 		print '<input type="button" class="butAction" name="exportcsv" value="'.$langs->trans("ExportDraftJournal").'" onclick="launch_export();" />';

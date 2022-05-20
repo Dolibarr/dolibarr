@@ -276,6 +276,7 @@ ErrorInvoiceLoadThirdParty=Can't load third-party object for invoice "%s"
 ErrorInvoiceLoadThirdPartyKey=Third-party key "%s" no set for invoice "%s"
 ErrorAttributeIsUsedIntoProduct=This attribute is used in one or more product variants
 ErrorAttributeValueIsUsedIntoProduct=This attribute value is used in one or more product variants
+ErrorAjaxRequestFailed=Request failed
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Your PHP parameter upload_max_filesize (%s) is higher than PHP parameter post_max_size (%s). This is not a consistent setup.

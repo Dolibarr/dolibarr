@@ -306,29 +306,51 @@ if (!$error && $massaction == 'confirm_presend') {
 					// TODO Set subdir to be compatible with multi levels dir trees
 					// $subdir = get_exdir($objectobj->id, 2, 0, 0, $objectobj, $objectobj->element)
 					$filedir = $uploaddir.'/'.$subdir.dol_sanitizeFileName($objectobj->ref);
-					$file = $filedir.'/'.$filename;
+					$filepath = $filedir.'/'.$filename;
 
 					// For supplier invoices, we use the file provided by supplier, not the one we generate
 					if ($objectobj->element == 'invoice_supplier') {
 						$fileparams = dol_most_recent_file($uploaddir.'/'.get_exdir($objectobj->id, 2, 0, 0, $objectobj, $objectobj->element).$objectobj->ref, preg_quote($objectobj->ref, '/').'([^\-])+');
-						$file = $fileparams['fullname'];
+						$filepath = $fileparams['fullname'];
 					}
 
-					$mime = dol_mimetype($file);
+					// try to find other files generated for this object (last_main_doc)
+					$filename_found = '';
+					$filepath_found = '';
+					$file_check_list = array();
+					$file_check_list[] = array(
+						'name' => $filename,
+						'path' => $filepath,
+					);
+					if (!empty($conf->global->MAIL_MASS_ACTION_ADD_LAST_IF_MAIN_DOC_NOT_FOUND) && !empty($objectobj->last_main_doc)) {
+						$file_check_list[] = array(
+							'name' => basename($objectobj->last_main_doc),
+							'path' => DOL_DATA_ROOT . '/' . $objectobj->last_main_doc,
+						);
+					}
+					foreach ($file_check_list as $file_check_arr) {
+						if (dol_is_file($file_check_arr['path'])) {
+							$filename_found = $file_check_arr['name'];
+							$filepath_found = $file_check_arr['path'];
+							break;
+						}
+					}
 
-					if (dol_is_file($file)) {
+					if ($filepath_found) {
 						// Create form object
 						$attachedfilesThirdpartyObj[$thirdpartyid][$objectid] = array(
-							'paths'=>array($file),
-							'names'=>array($filename),
-							'mimes'=>array($mime)
+							'paths'=>array($filepath_found),
+							'names'=>array($filename_found),
+							'mimes'=>array(dol_mimetype($filepath_found))
 						);
 					} else {
-							$nbignored++;
-							$langs->load("errors");
-							$resaction .= '<div class="error">'.$langs->trans('ErrorCantReadFile', $file).'</div><br>';
-							dol_syslog('Failed to read file: '.$file, LOG_WARNING);
-							continue;
+						$nbignored++;
+						$langs->load("errors");
+						foreach ($file_check_list as $file_check_arr) {
+							$resaction .= '<div class="error">'.$langs->trans('ErrorCantReadFile', $file_check_arr['path']).'</div><br>';
+							dol_syslog('Failed to read file: '.$file_check_arr['path'], LOG_WARNING);
+						}
+						continue;
 					}
 				}
 
@@ -659,6 +681,7 @@ if ($massaction == 'confirm_createbills') {   // Create bills from orders.
 			$objecttmp->type = $objecttmp::TYPE_STANDARD;
 			$objecttmp->cond_reglement_id = !empty($cmd->cond_reglement_id) ? $cmd->cond_reglement_id : $cmd->thirdparty->cond_reglement_id;
 			$objecttmp->mode_reglement_id = !empty($cmd->mode_reglement_id) ? $cmd->mode_reglement_id : $cmd->thirdparty->mode_reglement_id;
+			$objecttmp->demand_reason_id = !empty($cmd->demand_reason_id) ? $cmd->demand_reason_id : $cmd->thirdparty->demand_reason_id;
 
 			$objecttmp->fk_project = $cmd->fk_project;
 			$objecttmp->multicurrency_code = $cmd->multicurrency_code;

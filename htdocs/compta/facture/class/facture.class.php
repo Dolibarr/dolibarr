@@ -330,6 +330,7 @@ class Facture extends CommonInvoice
 		'note_private' =>array('type'=>'text', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>205),
 		'note_public' =>array('type'=>'text', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>0, 'position'=>210),
 		'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>1, 'visible'=>0, 'position'=>215),
+		'fk_input_reason' =>array('type'=>'integer', 'label'=>'Source', 'enabled'=>1, 'visible'=>-1, 'position'=>220),
 		'extraparams' =>array('type'=>'varchar(255)', 'label'=>'Extraparams', 'enabled'=>1, 'visible'=>-1, 'position'=>225),
 		'situation_cycle_ref' =>array('type'=>'smallint(6)', 'label'=>'Situation cycle ref', 'enabled'=>'$conf->global->INVOICE_USE_SITUATION', 'visible'=>-1, 'position'=>230),
 		'situation_counter' =>array('type'=>'smallint(6)', 'label'=>'Situation counter', 'enabled'=>'$conf->global->INVOICE_USE_SITUATION', 'visible'=>-1, 'position'=>235),
@@ -648,6 +649,7 @@ class Facture extends CommonInvoice
 		$sql .= ", fk_account";
 		$sql .= ", module_source, pos_source, fk_fac_rec_source, fk_facture_source, fk_user_author, fk_projet";
 		$sql .= ", fk_cond_reglement, fk_mode_reglement, date_lim_reglement, model_pdf";
+		$sql .= ", fk_input_reason";
 		$sql .= ", situation_cycle_ref, situation_counter, situation_final";
 		$sql .= ", fk_incoterms, location_incoterms";
 		$sql .= ", fk_multicurrency";
@@ -683,6 +685,7 @@ class Facture extends CommonInvoice
 		$sql .= ", ".((int) $this->mode_reglement_id);
 		$sql .= ", '".$this->db->idate($this->date_lim_reglement)."'";
 		$sql .= ", ".(isset($this->model_pdf) ? "'".$this->db->escape($this->model_pdf)."'" : "null");
+		$sql .= ", ".($this->demand_reason_id > 0 ? ((int) $this->demand_reason_id) : "null");
 		$sql .= ", ".($this->situation_cycle_ref ? "'".$this->db->escape($this->situation_cycle_ref)."'" : "null");
 		$sql .= ", ".($this->situation_counter ? "'".$this->db->escape($this->situation_counter)."'" : "null");
 		$sql .= ", ".($this->situation_final ? $this->situation_final : 0);
@@ -1445,6 +1448,292 @@ class Facture extends CommonInvoice
 	}
 
 	/**
+	 * Creates a deposit from a proposal or an order by grouping lines by VAT rates
+	 *
+	 * @param	Propal|Commande		$origin					The original proposal or order
+	 * @param	int					$date					Invoice date
+	 * @param	int					$payment_terms_id		Invoice payment terms
+	 * @param	User				$user					Object user
+	 * @param	int					$notrigger				1=Does not execute triggers, 0= execute triggers
+	 * @param	bool				$autoValidateDeposit	Whether to aumatically validate the deposit created
+	 * @param	array				$overrideFields			Array of fields to force values
+	 * @return	Facture|null								The deposit created, or null if error (populates $origin->error in this case)
+	 */
+	static public function createDepositFromOrigin(CommonObject $origin, $date, $payment_terms_id, User $user, $notrigger = 0, $autoValidateDeposit = false, $overrideFields = array())
+	{
+		global $conf, $langs, $hookmanager, $action;
+
+		if (! in_array($origin->element, array('propal', 'commande'))) {
+			$origin->error = 'ErrorCanOnlyAutomaticallyGenerateADepositFromProposalOrOrder';
+			return null;
+		}
+
+		if (empty($date)) {
+			$origin->error = $langs->trans('ErrorFieldRequired', $langs->transnoentities('DateInvoice'));
+			return null;
+		}
+
+		require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
+
+		if ($date > (dol_get_last_hour(dol_now('tzuserrel')) + (empty($conf->global->INVOICE_MAX_FUTURE_DELAY) ? 0 : $conf->global->INVOICE_MAX_FUTURE_DELAY))) {
+			$origin->error = 'ErrorDateIsInFuture';
+			return null;
+		}
+
+		if ($payment_terms_id <= 0) {
+			$origin->error = $langs->trans('ErrorFieldRequired', $langs->transnoentities('PaymentConditionsShort'));
+			return null;
+		}
+
+		$payment_conditions_deposit_percent = getDictvalue(MAIN_DB_PREFIX . 'c_payment_term', 'deposit_percent', $origin->cond_reglement_id);
+
+		if (empty($payment_conditions_deposit_percent)) {
+			$origin->error = 'ErrorPaymentConditionsNotEligibleToDepositCreation';
+			return null;
+		}
+
+		if (empty($origin->deposit_percent)) {
+			$origin->error = $langs->trans('ErrorFieldRequired', $langs->transnoentities('DepositPercent'));
+			return null;
+		}
+
+		$deposit = new self($origin->db);
+		$deposit->socid = $origin->socid;
+		$deposit->type = self::TYPE_DEPOSIT;
+		$deposit->fk_project = $origin->fk_project;
+		$deposit->ref_client = $origin->ref_client;
+		$deposit->date = $date;
+		$deposit->mode_reglement_id = $origin->mode_reglement_id;
+		$deposit->cond_reglement_id = $payment_terms_id;
+		$deposit->availability_id = $origin->availability_id;
+		$deposit->demand_reason_id = $origin->demand_reason_id;
+		$deposit->fk_account = $origin->fk_account;
+		$deposit->fk_incoterms = $origin->fk_incoterms;
+		$deposit->location_incoterms = $origin->location_incoterms;
+		$deposit->fk_multicurrency = $origin->fk_multicurrency;
+		$deposit->multicurrency_code = $origin->multicurrency_code;
+		$deposit->multicurrency_tx = $origin->multicurrency_tx;
+		$deposit->module_source = $origin->module_source;
+		$deposit->pos_source = $origin->pos_source;
+		$deposit->model_pdf = 'crabe';
+
+		$modelByTypeConfName = 'FACTURE_ADDON_PDF_' . $deposit->type;
+
+		if (!empty($conf->global->$modelByTypeConfName)) {
+			$deposit->model_pdf = $conf->global->$modelByTypeConfName;
+		} elseif (!empty($conf->global->FACTURE_ADDON_PDF)) {
+			$deposit->model_pdf = $conf->global->FACTURE_ADDON_PDF;
+		}
+
+		if (empty($conf->global->MAIN_DISABLE_PROPAGATE_NOTES_FROM_ORIGIN)) {
+			$deposit->note_private = $origin->note_private;
+			$deposit->note_public = $origin->note_public;
+		}
+
+		$deposit->origin = $origin->element;
+		$deposit->origin_id = $origin->id;
+
+		$origin->fetch_optionals();
+
+		foreach ($origin->array_options as $extrakey => $value) {
+			$deposit->array_options[$extrakey] = $value;
+		}
+
+		$deposit->linked_objects[$deposit->origin] = $deposit->origin_id;
+
+		foreach ($overrideFields as $key => $value) {
+			$deposit->$key = $value;
+		}
+
+		$deposit->context['createdepositfromorigin'] = 'createdepositfromorigin';
+
+		$origin->db->begin();
+
+		// Facture::create() also imports contact from origin
+		$createReturn = $deposit->create($user, $notrigger);
+
+		if ($createReturn <= 0) {
+			$origin->db->rollback();
+			$origin->error = $deposit->error;
+			$origin->errors = $deposit->errors;
+			return null;
+		}
+
+		$amount_ttc_diff = 0;
+		$amountdeposit = array();
+		$descriptions = array();
+
+		if (! empty($conf->global->MAIN_DEPOSIT_MULTI_TVA)) {
+			$amount = $origin->total_ttc * ($origin->deposit_percent / 100);
+
+			$TTotalByTva = array();
+			foreach ($origin->lines as &$line) {
+				if (!empty($line->special_code)) {
+					continue;
+				}
+				$TTotalByTva[$line->tva_tx] += $line->total_ttc;
+				$descriptions[$line->tva_tx] .= '<li>' . (! empty($line->product_ref) ? $line->product_ref . ' - ' :  '');
+				$descriptions[$line->tva_tx] .= (! empty($line->product_label) ? $line->product_label . ' - ' : '');
+				$descriptions[$line->tva_tx] .= $langs->trans('Qty') . ' : ' . $line->qty;
+				$descriptions[$line->tva_tx] .= ' - ' . $langs->trans('TotalHT') . ' : ' . price($line->total_ht) . '</li>';
+			}
+
+			foreach ($TTotalByTva as $tva => &$total) {
+				$coef = $total / $origin->total_ttc; // Calc coef
+				$am = $amount * $coef;
+				$amount_ttc_diff += $am;
+				$amountdeposit[$tva] += $am / (1 + $tva / 100); // Convert into HT for the addline
+			}
+		} else {
+			$totalamount = 0;
+			$lines = $origin->lines;
+			$numlines = count($lines);
+			for ($i = 0; $i < $numlines; $i++) {
+				if (empty($lines[$i]->qty)) {
+					continue; // We discard qty=0, it is an option
+				}
+				if (!empty($lines[$i]->special_code)) {
+					continue; // We discard special_code (frais port, ecotaxe, option, ...)
+				}
+
+				$totalamount += $lines[$i]->total_ht; // Fixme : is it not for the customer ? Shouldn't we take total_ttc ?
+				$tva_tx = $lines[$i]->tva_tx;
+				$amountdeposit[$tva_tx] += ($lines[$i]->total_ht * $origin->deposit_percent) / 100;
+				$descriptions[$tva_tx] .= '<li>' . (! empty($lines[$i]->product_ref) ? $lines[$i]->product_ref . ' - ' :  '');
+				$descriptions[$tva_tx] .= (! empty($lines[$i]->product_label) ? $lines[$i]->product_label . ' - ' : '');
+				$descriptions[$tva_tx] .= $langs->trans('Qty') . ' : ' . $lines[$i]->qty;
+				$descriptions[$tva_tx] .= ' - ' . $langs->trans('TotalHT') . ' : ' . price($lines[$i]->total_ht) . '</li>';
+			}
+
+			if ($totalamount == 0) {
+				$amountdeposit[0] = 0;
+			}
+
+			$amount_ttc_diff = $amountdeposit[0];
+		}
+
+		foreach ($amountdeposit as $tva => $amount) {
+			if (empty($amount)) {
+				continue;
+			}
+
+			$descline = '(DEPOSIT) ('. $origin->deposit_percent .'%) - '.$origin->ref;
+
+			// Hidden conf
+			if (! empty($conf->global->INVOICE_DEPOSIT_VARIABLE_MODE_DETAIL_LINES_IN_DESCRIPTION) && ! empty($descriptions[$tva])) {
+				$descline .= '<ul>' . $descriptions[$tva] . '</ul>';
+			}
+
+			$addlineResult = $deposit->addline(
+				$descline,
+				$amount, // subprice
+				1, // quantity
+				$tva, // vat rate
+				0, // localtax1_tx
+				0, // localtax2_tx
+				(empty($conf->global->INVOICE_PRODUCTID_DEPOSIT) ? 0 : $conf->global->INVOICE_PRODUCTID_DEPOSIT), // fk_product
+				0, // remise_percent
+				0, // date_start
+				0, // date_end
+				0,
+				$lines[$i]->info_bits, // info_bits
+				0,
+				'HT',
+				0,
+				0, // product_type
+				1,
+				$lines[$i]->special_code,
+				$deposit->origin,
+				0,
+				0,
+				0,
+				0
+				//,$langs->trans('Deposit') //Deprecated
+			);
+
+			if ($addlineResult < 0) {
+				$origin->db->rollback();
+				$origin->error = $deposit->error;
+				$origin->errors = $deposit->errors;
+				return null;
+			}
+		}
+
+		$diff = $deposit->total_ttc - $amount_ttc_diff;
+
+		if (!empty($conf->global->MAIN_DEPOSIT_MULTI_TVA) && $diff != 0) {
+			$deposit->fetch_lines();
+			$subprice_diff = $deposit->lines[0]->subprice - $diff / (1 + $deposit->lines[0]->tva_tx / 100);
+
+			$updatelineResult = $deposit->updateline(
+				$deposit->lines[0]->id,
+				$deposit->lines[0]->desc,
+				$subprice_diff,
+				$deposit->lines[0]->qty,
+				$deposit->lines[0]->remise_percent,
+				$deposit->lines[0]->date_start,
+				$deposit->lines[0]->date_end,
+				$deposit->lines[0]->tva_tx,
+				0,
+				0,
+				'HT',
+				$deposit->lines[0]->info_bits,
+				$deposit->lines[0]->product_type,
+				0,
+				0,
+				0,
+				$deposit->lines[0]->pa_ht,
+				$deposit->lines[0]->label,
+				0,
+				array(),
+				100
+			);
+
+			if ($updatelineResult < 0) {
+				$origin->db->rollback();
+				$origin->error = $deposit->error;
+				$origin->errors = $deposit->errors;
+				return null;
+			}
+		}
+
+
+		if (! is_object($hookmanager)) {
+			require_once DOL_DOCUMENT_ROOT . '/core/class/hookmanager.class.php';
+			$hookmanager = new HookManager($origin->db);
+		}
+
+		$hookmanager->initHooks(array('invoicedao'));
+
+		$parameters = array('objFrom' => $origin);
+		$reshook = $hookmanager->executeHooks('createFrom', $parameters, $deposit, $action); // Note that $action and $object may have been
+		// modified by hook
+		if ($reshook < 0) {
+			$origin->db->rollback();
+			$origin->error = $hookmanager->error;
+			$origin->errors = $hookmanager->errors;
+			return null;
+		}
+
+		if (! empty($autoValidateDeposit)) {
+			$validateReturn = $deposit->validate($user, '', 0, $notrigger);
+
+			if ($validateReturn < 0) {
+				$origin->db->rollback();
+				$origin->error = $deposit->error;
+				$origin->errors = $deposit->errors;
+				return null;
+			}
+		}
+
+		unset($deposit->context['createdepositfromorigin']);
+
+		$origin->db->commit();
+
+		return $deposit;
+	}
+
+	/**
 	 *  Return clicable link of object (with eventually picto)
 	 *
 	 *  @param	int		$withpicto       			Add picto into link
@@ -1631,6 +1920,7 @@ class Facture extends CommonInvoice
 		$sql .= ', f.date_valid as datev';
 		$sql .= ', f.tms as datem';
 		$sql .= ', f.note_private, f.note_public, f.fk_statut, f.paye, f.close_code, f.close_note, f.fk_user_author, f.fk_user_valid, f.model_pdf, f.last_main_doc';
+		$sql .= ", f.fk_input_reason";
 		$sql .= ', f.fk_facture_source, f.fk_fac_rec_source';
 		$sql .= ', f.fk_mode_reglement, f.fk_cond_reglement, f.fk_projet as fk_project, f.extraparams';
 		$sql .= ', f.situation_cycle_ref, f.situation_counter, f.situation_final';
@@ -1645,6 +1935,7 @@ class Facture extends CommonInvoice
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'facture as f';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as c ON f.fk_cond_reglement = c.rowid';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as p ON f.fk_mode_reglement = p.id';
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_input_reason as dr ON f.fk_input_reason = dr.rowid";
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON f.fk_incoterms = i.rowid';
 
 		if ($rowid) {
@@ -1723,6 +2014,7 @@ class Facture extends CommonInvoice
 				$this->model_pdf = $obj->model_pdf;
 				$this->modelpdf = $obj->model_pdf; // deprecated
 				$this->last_main_doc = $obj->last_main_doc;
+				$this->demand_reason_id		= $obj->fk_input_reason;
 				$this->situation_cycle_ref  = $obj->situation_cycle_ref;
 				$this->situation_counter    = $obj->situation_counter;
 				$this->situation_final      = $obj->situation_final;
@@ -2033,6 +2325,7 @@ class Facture extends CommonInvoice
 		$sql .= " note_private=".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null").",";
 		$sql .= " note_public=".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null").",";
 		$sql .= " model_pdf=".(isset($this->model_pdf) ? "'".$this->db->escape($this->model_pdf)."'" : "null").",";
+		$sql .= " fk_input_reason=".($this->demand_reason_id > 0 ? $this->db->escape($this->demand_reason_id) : "null").",";
 		$sql .= " import_key=".(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null").",";
 		$sql .= " situation_cycle_ref=".(empty($this->situation_cycle_ref) ? "null" : $this->db->escape($this->situation_cycle_ref)).",";
 		$sql .= " situation_counter=".(empty($this->situation_counter) ? "null" : $this->db->escape($this->situation_counter)).",";
@@ -2692,7 +2985,7 @@ class Facture extends CommonInvoice
 			return -1;
 		}
 		if (!empty($conf->global-> INVOICE_CHECK_POSTERIOR_DATE)) {
-			$last_of_type = $this->willBeLastOfSameType();
+			$last_of_type = $this->willBeLastOfSameType($allow_validated_drafts = true);
 			if (!$last_of_type[0]) {
 				$this->error = $langs->transnoentities("ErrorInvoiceIsNotLastOfSameType", $this->ref , dol_print_date($this->date, 'day'), dol_print_date($last_of_type[1], 'day'));
 				return -1;
@@ -2700,56 +2993,64 @@ class Facture extends CommonInvoice
 		}
 
 		// Check for mandatory fields in thirdparty (defined into setup)
-		$array_to_check = array('IDPROF1', 'IDPROF2', 'IDPROF3', 'IDPROF4', 'IDPROF5', 'IDPROF6', 'EMAIL');
-		foreach ($array_to_check as $key)
-		{
-			$keymin = strtolower($key);
-			$i = (int) preg_replace('/[^0-9]/', '', $key);
-			if ($i == 1) {
-				if (!is_object($this->thirdparty)) {
-					$langs->load('errors');
-					$this->error = $langs->trans('ErrorInvoiceLoadThirdParty', $this->ref);
-					dol_syslog(__METHOD__.' '.$this->error, LOG_ERR);
-					return -1;
+		if (!empty($this->thirdparty) && is_object($this->thirdparty)) {
+			$array_to_check = array('IDPROF1', 'IDPROF2', 'IDPROF3', 'IDPROF4', 'IDPROF5', 'IDPROF6', 'EMAIL', 'ACCOUNTANCY_CODE_CUSTOMER');
+			foreach ($array_to_check as $key) {
+				$keymin = strtolower($key);
+				if (!property_exists($this->thirdparty, $keymin)) {
+					continue;
 				}
-			}
-			if (!property_exists($this->thirdparty, $keymin)) {
-				$langs->load('errors');
-				$this->error = $langs->trans('ErrorInvoiceLoadThirdPartyKey', $keymin, $this->ref);
-				dol_syslog(__METHOD__.' '.$this->error, LOG_ERR);
-				return -1;
-			}
-			$vallabel = $this->thirdparty->$keymin;
+				$vallabel = $this->thirdparty->$keymin;
 
-			if ($i > 0)
-			{
-				if ($this->thirdparty->isACompany())
-				{
-					// Check for mandatory prof id (but only if country is other than ours)
-					if ($mysoc->country_id > 0 && $this->thirdparty->country_id == $mysoc->country_id)
-					{
-						$idprof_mandatory = 'SOCIETE_'.$key.'_INVOICE_MANDATORY';
-						if (!$vallabel && !empty($conf->global->$idprof_mandatory))
-						{
+				$i = (int) preg_replace('/[^0-9]/', '', $key);
+				if ($i > 0) {
+					if ($this->thirdparty->isACompany()) {
+						// Check for mandatory prof id (but only if country is other than ours)
+						if ($mysoc->country_id > 0 && $this->thirdparty->country_id == $mysoc->country_id) {
+							$idprof_mandatory = 'SOCIETE_'.$key.'_INVOICE_MANDATORY';
+							if (!$vallabel && !empty($conf->global->$idprof_mandatory)) {
+								$langs->load("errors");
+								$this->error = $langs->trans('ErrorProdIdIsMandatory', $langs->transcountry('ProfId'.$i, $this->thirdparty->country_code)).' ('.$langs->trans("ForbiddenBySetupRules").') ['.$langs->trans('Company').' : '.$this->thirdparty->name.']';
+								dol_syslog(__METHOD__.' '.$this->error, LOG_ERR);
+								return -1;
+							}
+						}
+					}
+				} else {
+					if ($key == 'EMAIL') {
+						// Check for mandatory
+						if (!empty($conf->global->SOCIETE_EMAIL_INVOICE_MANDATORY) && !isValidEMail($this->thirdparty->email)) {
 							$langs->load("errors");
-							$this->error = $langs->trans('ErrorProdIdIsMandatory', $langs->transcountry('ProfId'.$i, $this->thirdparty->country_code)).' ('.$langs->trans("ForbiddenBySetupRules").') ['.$langs->trans('Company').' : '.$this->thirdparty->name.']';
+							$this->error = $langs->trans("ErrorBadEMail", $this->thirdparty->email).' ('.$langs->trans("ForbiddenBySetupRules").') ['.$langs->trans('Company').' : '.$this->thirdparty->name.']';
+							dol_syslog(__METHOD__.' '.$this->error, LOG_ERR);
+							return -1;
+						}
+					}
+					if ($key == 'ACCOUNTANCY_CODE_CUSTOMER') {
+						// Check for mandatory
+						if (!empty($conf->global->SOCIETE_ACCOUNTANCY_CODE_CUSTOMER_INVOICE_MANDATORY) && empty($this->thirdparty->code_compta)) {
+							$langs->load("errors");
+							$this->error = $langs->trans("ErrorAccountancyCodeCustomerIsMandatory", $this->thirdparty->name).' ('.$langs->trans("ForbiddenBySetupRules").')';
 							dol_syslog(__METHOD__.' '.$this->error, LOG_ERR);
 							return -1;
 						}
 					}
 				}
-			} else {
-				if ($key == 'EMAIL')
-				{
-					// Check for mandatory
-					if (!empty($conf->global->SOCIETE_EMAIL_INVOICE_MANDATORY) && !isValidEMail($this->thirdparty->email))
-					{
-						$langs->load("errors");
-						$this->error = $langs->trans("ErrorBadEMail", $this->thirdparty->email).' ('.$langs->trans("ForbiddenBySetupRules").') ['.$langs->trans('Company').' : '.$this->thirdparty->name.']';
-						dol_syslog(__METHOD__.' '.$this->error, LOG_ERR);
-						return -1;
-					}
-				}
+			}
+		}
+
+		// Check for mandatory fields in $this
+		$array_to_check = array('REF_CLIENT'=>'RefCustomer');
+		foreach ($array_to_check as $key => $val) {
+			$keymin = strtolower($key);
+			$vallabel = $this->$keymin;
+
+			// Check for mandatory
+			$keymandatory = 'INVOICE_'.$key.'_MANDATORY_FOR_VALIDATION';
+			if (!$vallabel && !empty($conf->global->$keymandatory)) {
+				$langs->load("errors");
+				$error++;
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv($val)), null, 'errors');
 			}
 		}
 
@@ -2940,6 +3241,25 @@ class Facture extends CommonInvoice
 							}
 						}
 					}
+				}
+			}
+
+			/*
+			 * Set situation_final to 0 if is a credit note and the invoice source is a invoice situation (case when invoice situation is at 100%)
+			 * So we can continue to create new invoice situation
+			 */
+			if (!$error && $this->type == self::TYPE_CREDIT_NOTE && $this->fk_facture_source > 0) {
+				$invoice_situation = new Facture($this->db);
+				$result = $invoice_situation->fetch($this->fk_facture_source);
+				if ($result > 0) {
+					$invoice_situation->situation_final = 0;
+					// Disable triggers because module can force situation_final to 1 by triggers (ex: SubTotal)
+					$result = $invoice_situation->setFinal($user, 1);
+				}
+				if ($result < 0) {
+					$this->error = $invoice_situation->error;
+					$this->errors = $invoice_situation->errors;
+					$error++;
 				}
 			}
 
@@ -5205,10 +5525,10 @@ class Facture extends CommonInvoice
 
 	/**
 	 * See if current invoice date is posterior to the last invoice date among validated invoices of same type.
-	 * @param bool 	$strict		compare precise time or only days.
+	 * @param 	boolean 	$allow_validated_drafts			return true if the invoice has been validated before returning to DRAFT state.
 	 * @return boolean
 	 */
-	public function willBeLastOfSameType()
+	public function willBeLastOfSameType($allow_validated_drafts = false)
 	{
 		// get date of last validated invoices of same type
 		$sql  = 'SELECT datef';
@@ -5225,7 +5545,12 @@ class Facture extends CommonInvoice
 				$last_date = $this->db->jdate($obj->datef);
 				$invoice_date = $this->date;
 
-				return [$invoice_date >= $last_date, $last_date];
+				$is_last_of_same_type = $invoice_date >= $last_date;
+				if ($allow_validated_drafts) {
+					$is_last_of_same_type = $is_last_of_same_type || (!strpos($this->ref, 'PROV') && $this->status == self::STATUS_DRAFT);
+				}
+
+				return [$is_last_of_same_type, $last_date];
 			} else {
 				// element is first of type to be validated
 				return [true];
