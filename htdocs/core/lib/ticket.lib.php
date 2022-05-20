@@ -656,6 +656,7 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
 
 		$actualCycleDate = false;
 
+		$i = 0;
 		foreach ($histo as $key => $value) {
 			$actionstatic->fetch($histo[$key]['id']); // TODO Do we need this, we already have a lot of data of line into $histo
 
