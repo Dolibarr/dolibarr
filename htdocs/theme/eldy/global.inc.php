@@ -240,7 +240,7 @@ input, select {
 }
 #mainbody input.button:not(.buttongen):not(.bordertransp), #mainbody a.button:not(.buttongen):not(.bordertransp) {
 	background: var(--butactionbg);
-	color: var(--textbutaction)!important;
+	color: var(--textbutaction);
 	border-radius: 3px;
 	border-collapse: collapse;
 	border: none;
@@ -818,6 +818,12 @@ textarea.centpercent {
 .nopaddingright {
 	padding-right: 0;
 }
+.nopaddingleftimp {
+	padding-left: 0 !important;
+}
+.nopaddingrightimp {
+	padding-right: 0 !important;
+}
 .paddingleft {
 	padding-<?php print $left; ?>: 4px;
 }
@@ -901,7 +907,7 @@ div.urllink, div.urllink a {
 	color: #339 !important;
 }
 
-i.fa-mars::before, i.fa-venus::before, i.fa-genderless::before  {
+i.fa-mars::before, i.fa-venus::before, i.fa-genderless::before, i.fa-transgender::before  {
 	color: #888 !important;
 	opacity: 0.4;
 	padding-<?php echo $left; ?>: 3px;
@@ -1567,7 +1573,7 @@ table[summary="list_of_modules"] .fa-cog {
 .minheight30 { min-height: 30px; }
 .minheight40 { min-height: 40px; }
 .titlefieldcreate { width: 20%; }
-.titlefield       { /* width: 25%; */ width: 250px; }
+.titlefield       { /* width: 25%; */ min-width: 250px; width: 25%; }
 .titlefieldmiddle { width: 45%; }
 .titlefieldmax45 { max-width: 45%; }
 .imgmaxwidth180 { max-width: 180px; }
@@ -1773,7 +1779,7 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 	.minwidth300imp { min-width: 120px !important; }
 	.minwidth400imp { min-width: 150px !important; }
 	.minwidth500imp { min-width: 250px !important; }
-	.titlefield { width: auto; }
+	.titlefield { width: auto; min-width: unset; }
 	.titlefieldcreate { width: auto; }
 
 	#tooltip {
@@ -1875,6 +1881,9 @@ td.showDragHandle {
 	width: 100%;
 	background: var(--colorbackbody);
 	padding-bottom: 20px;
+}
+.bodyforlist #id-right {
+	padding-bottom: 4px;
 }
 
 /* DOL_XXX For having horizontal scroll into array (like with smartphone) */
@@ -2471,12 +2480,13 @@ a.tmenudisabled:link, a.tmenudisabled:visited, a.tmenudisabled:hover, a.tmenudis
 
 a.tmenu:link, a.tmenu:visited, a.tmenu:hover, a.tmenu:active {
 	padding: 0px 2px 0px 2px;
+	margin: 0px 0px 0px 0px;
 	white-space: nowrap;
 	color: var(--colortextbackhmenu);
 	text-decoration: none;
 }
 a.tmenusel:link, a.tmenusel:visited, a.tmenusel:hover, a.tmenusel:active {
-	padding: 0px 4px 0px 4px;
+	padding: 0px 2px 0px 2px;
 	margin: 0px 0px 0px 0px;
 	white-space: nowrap;
 	color: var(--colortextbackhmenu);
@@ -2605,27 +2615,45 @@ a.tmenuimage:hover{
 /* To show text of top menu on hover only (THEME_TOPMENU_DISABLE_IMAGE == 2) */
 
 <?php if (in_array(getDolGlobalInt('THEME_TOPMENU_DISABLE_IMAGE'), array(2, 3, 4))) { ?>
-.tmenulabel:not(.menuhider), .tmenulabel:not(.menuhider):before {
-	display: none;
+.tmenulabel:not(.menuhider), .tmenulabel:not(.menuhider)::before {
+	 display: none;
+	 /* opacity: 0; To show text after transition */
 }
-a.tmenuimage:not(.menuhider), a.tmenuimage:not(.menuhider):before,
-div.tmenuimage:not(.menuhider), div.tmenuimage:not(.menuhider):before,
-span.tmenuimage:not(.menuhider), span.tmenuimage:not(.menuhider):before {
+a.tmenuimage:not(.menuhider), a.tmenuimage:not(.menuhider)::before,
+div.tmenuimage:not(.menuhider), div.tmenuimage:not(.menuhider)::before,
+span.tmenuimage:not(.menuhider), span.tmenuimage:not(.menuhider)::before {
 	font-size: 1.3em;
-	margin-top: 10px !important;
+	margin-top: 8px !important;
 }
+
 <?php } ?>
 <?php if (getDolGlobalInt('THEME_TOPMENU_DISABLE_IMAGE') == 2) { ?>
-.tmenudiv:hover .tmenulabel:not(.menuhider), .tmenudiv:hover .tmenulabel:not(.menuhider):before {
+.tmenudiv:hover .tmenulabel:not(.menuhider), .tmenudiv:hover .tmenulabel:not(.menuhider)::before {
+	display: block;
+	position: relative;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	/* For transition transition-delay: 1000ms;
+	transition-property: all; */
+	opacity: 1;
 	display: initial !important;
+	line-height: 0.6em !important;
+	height: 1em !important;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	color: var(--colortextbackhmenu);
+	top: 0px;
 }
-.tmenudiv:hover .tmenuimage:not(.menuhider), .tmenudiv:hover .tmenuimage:not(.menuhider):before {
-	font-size: 1.1em !important;
+
+.tmenudiv:hover .tmenuimage:not(.menuhider), .tmenudiv:hover .tmenuimage:not(.menuhider)::before {
+	/* For transition transition-delay: 1000ms;
+	transition-property: all; */
 	margin-top: 0px !important;
 }
+
 <?php } ?>
 <?php if (getDolGlobalInt('THEME_TOPMENU_DISABLE_IMAGE') == 3) { ?>
-li.tmenu:hover .tmenulabel:not(.menuhider), li.tmenu:hover .tmenulabel:not(.menuhider):before {
+li.tmenu:hover .tmenulabel:not(.menuhider), li.tmenu:hover .tmenulabel:not(.menuhider)::before {
 	display: initial !important;
 }
 li.tmenu:hover .tmenuimage:not(.menuhider), li.tmenu:hover .tmenuimage:not(.menuhider):before {
@@ -2694,12 +2722,14 @@ li.tmenu:hover .tmenuimage:not(.menuhider), li.tmenu:hover .tmenuimage:not(.menu
 				$url = dol_buildpath($path.'/theme/'.$theme.'/img/menus/generic'.(min($generic, 4))."_over.png", 1);
 				print "div.mainmenu.".$val." {\n";
 				print "	background-image: url(".$url.");\n";
+				print " background-position-y: 3px;\n";
 				print "}\n";
 			}
 			$generic++;
 		} else {
 			print "div.mainmenu.".$val." {\n";
 			print "	background-image: url(".$url.");\n";
+			print " background-position-y: 3px;\n";
 			print "}\n";
 		}
 	}
@@ -3541,8 +3571,12 @@ tr.liste_titre.box_titre td table td, .bordernooddeven tr td {
 div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border-col, div.tabBar .table-val-border-col {
 	vertical-align: middle;
 }
-div .tdtop {
+div .tdtop:not(.tagtdnote) {
 	vertical-align: top !important;
+	/*padding-top: 10px !important;
+	padding-bottom: 2px !important; */
+	padding-top: 5px !important;
+	padding-bottom: 0px !important;
 }
 
 table.border td, table.bordernooddeven td, div.border div div.tagtd {
@@ -3811,12 +3845,6 @@ div.pagination {
 div.pagination a {
 	font-weight: normal;
 }
-/*div.pagination a.butAction, div.fichehalfright a.butAction {
-	margin-right: 0px !important;
-}
-div.tabsAction a.butActionDelete:last-child, div.tabsAction a.butAction:last-child {
-	margin-right: 0px !important;
-}*/
 div.pagination ul
 {
   list-style: none;
@@ -3958,7 +3986,7 @@ table.hidepaginationnext .paginationnext {
 
 
 /* Set the color for hover lines */
-.oddeven:hover, .evenodd:hover, .impair:hover, .pair:hover
+.oddeven:hover, .evenodd:hover, .oddevenimport:hover, .evenoddimport:hover, .impair:hover, .pair:hover
 {
 	background: var(--colorbacklinepairhover) !important;		/* Must be background to be stronger than background of odd or even */
 }
@@ -4491,6 +4519,9 @@ table.noborder.boxtable tr td {
 a.valignmiddle.dashboardlineindicator {
 	line-height: 30px;
 }
+.height30 {
+	height: 30px !important;
+}
 
 tr.box_titre {
 	height: 26px;
@@ -4704,6 +4735,9 @@ div.titre {
 	padding-top: 5px;
 	padding-bottom: 5px;
 	font-weight: 400;
+}
+div.titre.small {
+	font-size: 1em;
 }
 div.fiche > table.table-fiche-title:first-of-type div {
 	color: var(--colortexttitlenotab);
@@ -5016,9 +5050,10 @@ table.dp {
 	vertical-align:middle;
 	cursor: pointer;
 }
-.datenowlink
-{
+.datenowlink {
 	color: var(--colortextlink);
+	font-size: 0.8em;
+	opacity: 0.7;
 }
 
 
@@ -5302,6 +5337,7 @@ td.cal_other_month {
 /* CSS for treeview */
 .treeview ul { background-color: transparent !important; margin-bottom: 4px !important; margin-top: 0 !important; padding-top: 2px !important; }
 .treeview li { background-color: transparent !important; padding: 0 0 0 16px !important; min-height: 30px; }
+.treeview li table { min-height: 30px; }
 .treeview .hover { color: var(--colortextlink) !important; text-decoration: underline !important; }
 .treeview .hitarea { margin-top: 3px; }
 
@@ -6476,6 +6512,9 @@ dl.dropdown {
 	overflow: auto;
 	border-radius: 2px;
 }
+.dropdown dd ul.selectedfieldsleft {
+	right: auto;
+}
 .dropdown dd ul li {
 	white-space: nowrap;
 	font-weight: normal;
@@ -7327,11 +7366,18 @@ div.clipboardCPValue.hidewithsize {
 		white-space: nowrap;
 		  overflow: hidden;
 		  text-overflow: ellipsis;
+
 		  color: var(--colortextbackhmenu);
+		  /* color: var(--colorbackhmenu1); */
 	}
+	.tmenuimage {
+		color: var(--colortextbackhmenu);
+	}
+
 	.mainmenuaspan {
 		  font-size: 0.9em;
 		  padding-right: 0;
+		  padding-left: 0;
 	}
 	.topmenuimage {
 		background-size: 22px auto;
@@ -7386,6 +7432,15 @@ div.clipboardCPValue.hidewithsize {
 /* rule to reduce top menu - 3rd reduction: The menu for user is on left */
 @media only screen and (max-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3) ? round($nbtopmenuentries * 47, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3; ?>px)	/* reduction 3 */
 {
+	<?php if (getDolGlobalInt('THEME_TOPMENU_DISABLE_IMAGE') == 2) { ?>
+	.tmenudiv .tmenulabel span.mainmenuaspan {
+		display: none !important;
+	}
+	.tmenudiv:hover .tmenuimage:not(.menuhider), .tmenudiv:hover .tmenuimage:not(.menuhider):before {
+		margin-top: 8px !important;
+	}
+	<?php } ?>
+
 	.side-nav {
 		z-index: 200;
 		background: var(--colorbackvmenu1);

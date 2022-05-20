@@ -259,7 +259,7 @@ if (empty($reshook)) {
 		$search_lettering_code = '';
 		$search_not_reconciled = '';
 		$search_import_key = '';
-		$toselect = '';
+		$toselect = array();
 	}
 
 	// Must be after the remove filter action, before the export.
@@ -651,6 +651,11 @@ if (preg_match('/^asc/i', $sortorder)) {
 	$sortorder = "asc";
 } else {
 	$sortorder = "desc";
+}
+
+// Warning to explain why list of record is not consistent with the other list view (missing a lot of lines)
+if ($type == 'sub') {
+	print info_admin($langs->trans("WarningRecordWithoutSubledgerAreExcluded"));
 }
 
 $moreforfilter = '';

@@ -350,7 +350,7 @@ class FichinterRec extends Fichinter
 		// phpcs:enable
 		$this->lines = array();
 
-		$sql = 'SELECT l.rowid, l.fk_product, l.product_type, l.label as custom_label, l.description, ';
+		$sql = 'SELECT l.rowid, l.fk_product, l.product_type as product_type, l.label as custom_label, l.description, ';
 		$sql .= ' l.price, l.qty, l.tva_tx, l.remise, l.remise_percent, l.subprice, l.duree, ';
 		$sql .= ' l.total_ht, l.total_tva, l.total_ttc,';
 		$sql .= ' l.rang, l.special_code,';
@@ -378,7 +378,7 @@ class FichinterRec extends Fichinter
 				$line->product_ref = $objp->product_ref; // Ref product
 				$line->product_label = $objp->product_label; // Label product
 				$line->product_desc = $objp->product_desc; // Description product
-				$line->fk_product_type = $objp->fk_product_type; // Type of product
+				$line->fk_product_type = $objp->fk_product_type; // Type in product
 				$line->qty = $objp->qty;
 				$line->duree = $objp->duree;
 				$line->duration = $objp->duree;
@@ -400,10 +400,6 @@ class FichinterRec extends Fichinter
 				$line->rang = $objp->rang;
 				$line->special_code = $objp->special_code;
 				$line->fk_unit = $objp->fk_unit;
-
-				// Ne plus utiliser
-				$line->price = $objp->price;
-				$line->remise = $objp->remise;
 
 				$this->lines[$i] = $line;
 

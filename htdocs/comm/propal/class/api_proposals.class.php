@@ -519,7 +519,9 @@ class Proposals extends DolibarrApi
 			isset($request_data->date_end) ? $request_data->date_end : $propalline->date_end,
 			isset($request_data->array_options) ? $request_data->array_options : $propalline->array_options,
 			isset($request_data->fk_unit) ? $request_data->fk_unit : $propalline->fk_unit,
-			isset($request_data->multicurrency_subprice) ? $request_data->multicurrency_subprice : $propalline->subprice
+			isset($request_data->multicurrency_subprice) ? $request_data->multicurrency_subprice : $propalline->subprice,
+			0,
+			isset($request_data->rang) ? $request_data->rang : $propalline->rang
 		);
 
 		if ($updateRes > 0) {
@@ -643,7 +645,7 @@ class Proposals extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		$contacts = $this->invoice->liste_contact();
+		$contacts = $this->propal->liste_contact();
 
 		foreach ($contacts as $contact) {
 			if ($contact['id'] == $contactid && $contact['code'] == $type) {

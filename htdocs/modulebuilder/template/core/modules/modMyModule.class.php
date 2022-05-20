@@ -205,7 +205,7 @@ class modMyModule extends DolibarrModules
 		$this->dictionaries=array(
 			'langs'=>'mymodule@mymodule',
 			// List of tables we want to see into dictonnary editor
-			'tabname'=>array(MAIN_DB_PREFIX."table1", MAIN_DB_PREFIX."table2", MAIN_DB_PREFIX."table3"),
+			'tabname'=>array("table1", "table2", "table3"),
 			// Label of tables
 			'tablib'=>array("Table1", "Table2", "Table3"),
 			// Request to select fields
@@ -428,7 +428,7 @@ class modMyModule extends DolibarrModules
 	{
 		global $conf, $langs;
 
-		//$result = $this->_load_tables('/install/mysql/tables/', 'mymodule');
+		//$result = $this->_load_tables('/install/mysql/', 'mymodule');
 		$result = $this->_load_tables('/mymodule/sql/');
 		if ($result < 0) {
 			return -1; // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')

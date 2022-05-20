@@ -1420,6 +1420,8 @@ class FichinterLigne extends CommonObjectLine
 	 */
 	public $fk_element = 'fk_fichinter';
 
+
+
 	/**
 	 *  Constructor
 	 *

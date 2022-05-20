@@ -384,6 +384,7 @@ if ($search_onpurchase != '' && $search_onpurchase != '-1') {
 $sql .= " GROUP BY p.rowid, p.ref, p.label, p.description, p.tosell, p.tobuy, p.tva_tx,";
 $sql .= " p.fk_product_type,";
 $sql .= ' p.tms,';
+$sql .= ' aa.rowid,';
 if (empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
 	$sql .= " p.accountancy_code_sell, p.accountancy_code_sell_intra, p.accountancy_code_sell_export, p.accountancy_code_buy, p.accountancy_code_buy_intra, p.accountancy_code_buy_export";
 } else {
@@ -394,8 +395,8 @@ $sql .= $db->order($sortfield, $sortorder);
 
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
-	$result = $db->query($sql);
-	$nbtotalofrecords = $db->num_rows($result);
+	$resql = $db->query($sql);
+	$nbtotalofrecords = $db->num_rows($resql);
 	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
@@ -405,9 +406,9 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 $sql .= $db->plimit($limit + 1, $offset);
 
 dol_syslog("/accountancy/admin/productaccount.php", LOG_DEBUG);
-$result = $db->query($sql);
-if ($result) {
-	$num = $db->num_rows($result);
+$resql = $db->query($sql);
+if ($resql) {
+	$num = $db->num_rows($resql);
 	$i = 0;
 
 	$param = '';
@@ -607,7 +608,7 @@ if ($result) {
 
 	$i = 0;
 	while ($i < min($num, $limit)) {
-		$obj = $db->fetch_object($result);
+		$obj = $db->fetch_object($resql);
 
 		// Ref produit as link
 		$product_static->ref = $obj->ref;
@@ -890,7 +891,7 @@ if ($result) {
 
 	print '</form>';
 
-	$db->free($result);
+	$db->free($resql);
 } else {
 	dol_print_error($db);
 }

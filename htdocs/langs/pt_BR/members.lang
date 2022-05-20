@@ -55,7 +55,6 @@ DescADHERENT_CARD_TEXT_RIGHT=Texto impresso em cartões de membros (alinhar à d
 DescADHERENT_CARD_FOOTER_TEXT=Texto a imprimir na parte inferior do cartão de membro
 HTPasswordExport=geração Arquivo htpassword
 MoreActions=Ação complementar em gravação
-LinkToGeneratedPages=Gerar cartões de visitas
 LinkToGeneratedPagesDesc=Esta tela permite gerar arquivos PDF com cartões de visita para todos os seus membros ou um membro particular.
 DocForAllMembersCards=Gerar cartões de visita para todos os membros
 DocForLabels=Gerar folhas de endereço

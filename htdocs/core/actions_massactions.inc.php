@@ -90,7 +90,7 @@ if (!$error && $massaction == 'confirm_presend') {
 		if ($objecttmp->element == 'expensereport') {
 			$thirdparty = new User($db);
 		}
-		if ($objecttmp->element == 'partnership' && $conf->global->PARTNERSHIP_IS_MANAGED_FOR == 'member') {
+		if ($objecttmp->element == 'partnership' && getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR') == 'member') {
 			$thirdparty = new Adherent($db);
 		}
 		if ($objecttmp->element == 'holiday') {
@@ -110,7 +110,7 @@ if (!$error && $massaction == 'confirm_presend') {
 				if ($objecttmp->element == 'expensereport') {
 					$thirdpartyid = $objecttmp->fk_user_author;
 				}
-				if ($objecttmp->element == 'partnership' && $conf->global->PARTNERSHIP_IS_MANAGED_FOR == 'member') {
+				if ($objecttmp->element == 'partnership' && getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR') == 'member') {
 					$thirdpartyid = $objecttmp->fk_member;
 				}
 				if ($objecttmp->element == 'holiday') {
@@ -264,7 +264,7 @@ if (!$error && $massaction == 'confirm_presend') {
 						$fuser = new User($db);
 						$fuser->fetch($objectobj->fk_user_author);
 						$sendto = $fuser->email;
-					} elseif ($objectobj->element == 'partnership' && $conf->global->PARTNERSHIP_IS_MANAGED_FOR == 'member') {
+					} elseif ($objectobj->element == 'partnership' && getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR') == 'member') {
 						$fadherent = new Adherent($db);
 						$fadherent->fetch($objectobj->fk_member);
 						$sendto = $fadherent->email;
@@ -327,29 +327,51 @@ if (!$error && $massaction == 'confirm_presend') {
 					// TODO Set subdir to be compatible with multi levels dir trees
 					// $subdir = get_exdir($objectobj->id, 2, 0, 0, $objectobj, $objectobj->element)
 					$filedir = $uploaddir.'/'.$subdir.dol_sanitizeFileName($objectobj->ref);
-					$file = $filedir.'/'.$filename;
+					$filepath = $filedir.'/'.$filename;
 
 					// For supplier invoices, we use the file provided by supplier, not the one we generate
 					if ($objectobj->element == 'invoice_supplier') {
 						$fileparams = dol_most_recent_file($uploaddir.'/'.get_exdir($objectobj->id, 2, 0, 0, $objectobj, $objectobj->element).$objectobj->ref, preg_quote($objectobj->ref, '/').'([^\-])+');
-						$file = $fileparams['fullname'];
+						$filepath = $fileparams['fullname'];
 					}
 
-					$mime = dol_mimetype($file);
+					// try to find other files generated for this object (last_main_doc)
+					$filename_found = '';
+					$filepath_found = '';
+					$file_check_list = array();
+					$file_check_list[] = array(
+						'name' => $filename,
+						'path' => $filepath,
+					);
+					if (!empty($conf->global->MAIL_MASS_ACTION_ADD_LAST_IF_MAIN_DOC_NOT_FOUND) && !empty($objectobj->last_main_doc)) {
+						$file_check_list[] = array(
+							'name' => basename($objectobj->last_main_doc),
+							'path' => DOL_DATA_ROOT . '/' . $objectobj->last_main_doc,
+						);
+					}
+					foreach ($file_check_list as $file_check_arr) {
+						if (dol_is_file($file_check_arr['path'])) {
+							$filename_found = $file_check_arr['name'];
+							$filepath_found = $file_check_arr['path'];
+							break;
+						}
+					}
 
-					if (dol_is_file($file)) {
+					if ($filepath_found) {
 						// Create form object
 						$attachedfilesThirdpartyObj[$thirdpartyid][$objectid] = array(
-							'paths'=>array($file),
-							'names'=>array($filename),
-							'mimes'=>array($mime)
+							'paths'=>array($filepath_found),
+							'names'=>array($filename_found),
+							'mimes'=>array(dol_mimetype($filepath_found))
 						);
 					} else {
-							$nbignored++;
-							$langs->load("errors");
-							$resaction .= '<div class="error">'.$langs->trans('ErrorCantReadFile', $file).'</div><br>';
-							dol_syslog('Failed to read file: '.$file, LOG_WARNING);
-							continue;
+						$nbignored++;
+						$langs->load("errors");
+						foreach ($file_check_list as $file_check_arr) {
+							$resaction .= '<div class="error">'.$langs->trans('ErrorCantReadFile', $file_check_arr['path']).'</div><br>';
+							dol_syslog('Failed to read file: '.$file_check_arr['path'], LOG_WARNING);
+						}
+						continue;
 					}
 				}
 
@@ -1273,6 +1295,49 @@ if (!$error && ($massaction == 'disable' || ($action == 'disable' && $confirm ==
 			setEventMessages($langs->trans("RecordsDisabled", $nbok), null, 'mesgs');
 		} else {
 			setEventMessages($langs->trans("RecordDisabled"), null, 'mesgs');
+		}
+		$db->commit();
+	} else {
+		$db->rollback();
+	}
+}
+
+if (!$error && $action == 'confirm_edit_value_extrafields' && $confirm == 'yes' && $permissiontoadd) {
+	$db->begin();
+
+	$objecttmp = new $objectclass($db);
+	$e = new ExtraFields($db);// fetch optionals attributes and labels
+	$e->fetch_name_optionals_label($objecttmp->table_element);
+
+	$nbok = 0;
+	$extrafieldKeyToUpdate = GETPOST('extrafield-key-to-update');
+
+
+	foreach ($toselect as $toselectid) {
+		/** @var CommonObject $objecttmp */
+		$objecttmp = new $objectclass($db); // to avoid ghost data
+		$result = $objecttmp->fetch($toselectid);
+		if ($result>0) {
+			// Fill array 'array_options' with data from add form
+			$ret = $e->setOptionalsFromPost(null, $objecttmp, $extrafieldKeyToUpdate);
+			if ($ret > 0) {
+				$objecttmp->insertExtraFields();
+			} else {
+				$error++;
+				setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+			}
+		} else {
+			setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+			$error++;
+			break;
+		}
+	}
+
+	if (!$error) {
+		if ($nbok > 1) {
+			setEventMessages($langs->trans("RecordsDisabled", $nbok), null, 'mesgs');
+		} else {
+			setEventMessages($langs->trans("save"), null, 'mesgs');
 		}
 		$db->commit();
 	} else {

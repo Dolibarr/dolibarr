@@ -121,8 +121,17 @@ button.dropdown-item.global-search-item {
 	text-decoration: none !important;
 }
 
+
+/* CSS to hide the arrow to show open/close */
+div#topmenu-quickadd-dropdown, div#topmenu-bookmark-dropdown {
+	padding-right: 5px;
+}
+div#topmenu-quickadd-dropdown a::after, div#topmenu-bookmark-dropdown a::after {
+	display: none;
+}
+
+
 .dropdown-toggle::after {
-	/* font part */
 	font-family: "Font Awesome 5 Free";
 	font-size: 0.7em;
 	font-weight: 900;
@@ -140,6 +149,7 @@ button.dropdown-item.global-search-item {
 	-ms-transition: -ms-transform .2s ease-in-out;
 	transition: transform .2s ease-in-out;
 }
+
 
 .open>.dropdown-toggle::after {
 	transform: rotate(180deg);
