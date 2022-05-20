@@ -121,7 +121,7 @@ class modDeplacement extends DolibarrModules
 		$this->export_label[$r] = 'ListTripsAndExpenses';
 		$this->export_permission[$r] = array(array("deplacement", "export"));
 		$this->export_fields_array[$r] = array('u.login'=>'Login', 'u.lastname'=>'Lastname', 'u.firstname'=>'Firstname', 'd.rowid'=>"TripId", 'd.type'=>"Type", 'd.km'=>"FeesKilometersOrAmout", 'd.dated'=>"Date", 'd.note_private'=>'NotePrivate', 'd.note_public'=>'NotePublic', 's.nom'=>'ThirdParty');
-		$this->export_TypeFields_array[$r] = array('u.rowid'=>'List:user:name', 'u.login'=>'Text', 'u.lastname'=>'Text', 'u.firstname'=>'Text', 'd.type'=>"Text", 'd.km'=>"Numeric", 'd.dated'=>"Date", 'd.note_private'=>'Text', 'd.note_public'=>'Text', 's.rowid'=>"List:societe:CompanyName", 's.nom'=>'Text');
+		$this->export_TypeFields_array[$r] = array('u.rowid'=>'List:user:name', 'u.login'=>'Text', 'u.lastname'=>'Text', 'u.firstname'=>'Text', 'd.type'=>"Text", 'd.km'=>"Numeric", 'd.dated'=>"Date", 'd.note_private'=>'Text', 'd.note_public'=>'Text', 's.rowid'=>"Numeric", 's.nom'=>'Text');
 		$this->export_entities_array[$r] = array('u.login'=>'user', 'u.lastname'=>'user', 'u.firstname'=>'user', 'd.rowid'=>"trip", 'd.type'=>"trip", 'd.km'=>"trip", 'd.dated'=>"trip", 'd.note_private'=>'trip', 'd.note_public'=>'trip', 's.nom'=>'company');
 		$this->export_dependencies_array[$r] = array('trip'=>'d.rowid'); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them
 
@@ -159,7 +159,7 @@ class modDeplacement extends DolibarrModules
 	 */
 	public function init($options = '')
 	{
-		$result = $this->_load_tables('/install/mysql/tables/', 'deplacement');
+		$result = $this->_load_tables('/install/mysql/', 'deplacement');
 		if ($result < 0) {
 			return -1; // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
 		}

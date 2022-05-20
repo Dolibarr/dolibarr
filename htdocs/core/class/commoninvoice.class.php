@@ -93,12 +93,17 @@ abstract class CommonInvoice extends CommonObject
 	const STATUS_ABANDONED = 3;
 
 
+	public $totalpaid;			// duplicate with sumpayed
+	public $totaldeposits;		// duplicate with sumdeposit
+	public $totalcreditnotes;	// duplicate with sumcreditnote
+
 	public $sumpayed;
 	public $sumpayed_multicurrency;
 	public $sumdeposit;
 	public $sumdeposit_multicurrency;
 	public $sumcreditnote;
 	public $sumcreditnote_multicurrency;
+	public $remaintopay;
 
 
 	/**
@@ -862,11 +867,11 @@ abstract class CommonInvoice extends CommonObject
 		$pricewithtax = implode(unpack("H*", price2num($pricewithtaxstring, 2)));
 		$pricetax = implode(unpack("H*", $pricetaxstring));
 
-		var_dump(strlen($this->thirdparty->name));
-		var_dump(str_pad(dechex('9'), 2, '0', STR_PAD_LEFT));
-		var_dump($this->thirdparty->name);
-		var_dump(implode(unpack("H*", $this->thirdparty->name)));
-		var_dump(price($this->total_tva, 0, $tmplang, 0, -1, 2));
+		//var_dump(strlen($this->thirdparty->name));
+		//var_dump(str_pad(dechex('9'), 2, '0', STR_PAD_LEFT));
+		//var_dump($this->thirdparty->name);
+		//var_dump(implode(unpack("H*", $this->thirdparty->name)));
+		//var_dump(price($this->total_tva, 0, $tmplang, 0, -1, 2));
 
 		$s = '01'.str_pad(dechex(strlen($this->thirdparty->name)), 2, '0', STR_PAD_LEFT).$name;
 		$s .= '02'.str_pad(dechex(strlen($this->thirdparty->tva_intra)), 2, '0', STR_PAD_LEFT).$vatnumber;

@@ -714,10 +714,10 @@ if (empty($reshook)) {
 
 		$dateinvoice = dol_mktime(0, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'), 'tzserver');	// If we enter the 02 january, we need to save the 02 january for server
 		$datedue = dol_mktime(0, 0, 0, GETPOST('echmonth', 'int'), GETPOST('echday', 'int'), GETPOST('echyear', 'int'), 'tzserver');
-		/*var_dump($dateinvoice.' '.dol_print_date($dateinvoice, 'dayhour'));
-		var_dump(dol_now('tzuserrel').' '.dol_get_last_hour(dol_now('tzuserrel')).' '.dol_print_date(dol_now('tzuserrel'),'dayhour').' '.dol_print_date(dol_get_last_hour(dol_now('tzuserrel')), 'dayhour'));
-		var_dump($db->idate($dateinvoice));
-		exit;*/
+		//var_dump($dateinvoice.' '.dol_print_date($dateinvoice, 'dayhour'));
+		//var_dump(dol_now('tzuserrel').' '.dol_get_last_hour(dol_now('tzuserrel')).' '.dol_print_date(dol_now('tzuserrel'),'dayhour').' '.dol_print_date(dol_get_last_hour(dol_now('tzuserrel')), 'dayhour'));
+		//var_dump($db->idate($dateinvoice));
+		//exit;
 
 		// Replacement invoice
 		if (GETPOST('type') == FactureFournisseur::TYPE_REPLACEMENT) {
@@ -1904,7 +1904,7 @@ if ($action == 'create') {
 	$currency_code = $conf->currency;
 
 	$societe = '';
-	if (GETPOST('socid') > 0) {
+	if (GETPOST('socid', 'int') > 0) {
 		$societe = new Societe($db);
 		$societe->fetch(GETPOST('socid', 'int'));
 		if (!empty($conf->multicurrency->enabled) && !empty($societe->multicurrency_code)) {
@@ -3466,10 +3466,9 @@ if ($action == 'create') {
 			// Remainder to pay
 			print '<tr><td colspan="'.$nbcols.'" class="right">';
 			print '<span class="opacitymedium">';
-			if ($resteapayeraffiche >= 0) {
-				print $langs->trans('RemainderToPay');
-			} else {
-				print $langs->trans('ExcessPaid');
+			print $langs->trans('RemainderToPay');
+			if ($resteapayeraffiche < 0) {
+				print ' ('.$langs->trans('NegativeIfExcessPaid').')';
 			}
 			print '</span>';
 			print '</td>';
@@ -3479,10 +3478,9 @@ if ($action == 'create') {
 			if ($object->multicurrency_code != $conf->currency || $object->multicurrency_tx != 1) {
 				print '<tr><td colspan="'.$nbcols.'" class="right">';
 				print '<span class="opacitymedium">';
-				if ($resteapayeraffiche <= 0) {
-					print $langs->trans('RemainderToPayBackMulticurrency');
-				} else {
-					print $langs->trans('ExcessPaidMulticurrency');
+				print $langs->trans('RemainderToPayMulticurrency');
+				if ($resteapayeraffiche < 0) {
+					print ' ('.$langs->trans('NegativeIfExcessPaid').')';
 				}
 				print '</span>';
 				print '</td>';
@@ -3503,10 +3501,9 @@ if ($action == 'create') {
 			// Remainder to pay back
 			print '<tr><td colspan="'.$nbcols.'" class="right">';
 			print '<span class="opacitymedium">';
-			if ($resteapayeraffiche <= 0) {
-				print $langs->trans('RemainderToPayBack');
-			} else {
-				print $langs->trans('ExcessPaid');
+			print $langs->trans('RemainderToPayBack');
+			if ($resteapayeraffiche > 0) {
+				print ' ('.$langs->trans('NegativeIfExcessRefunded').')';
 			}
 			print '</td>';
 			print '</span>';
@@ -3516,10 +3513,9 @@ if ($action == 'create') {
 			if ($object->multicurrency_code != $conf->currency || $object->multicurrency_tx != 1) {
 				print '<tr><td colspan="'.$nbcols.'" class="right">';
 				print '<span class="opacitymedium">';
-				if ($resteapayeraffiche <= 0) {
-					print $langs->trans('RemainderToPayBackMulticurrency');
-				} else {
-					print $langs->trans('ExcessPaidMulticurrency');
+				print $langs->trans('RemainderToPayBackMulticurrency');
+				if ($resteapayeraffiche> 0) {
+					print ' ('.$langs->trans('NegativeIfExcessRefunded').')';
 				}
 				print '</span>';
 				print '</td>';

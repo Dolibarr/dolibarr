@@ -330,9 +330,9 @@ function completeFileArrayWithDatabaseInfo(&$filearray, $relativedir)
 		}
 	}
 
-	/*var_dump($relativedir);
-	var_dump($filearray);
-	var_dump($filearrayindatabase);*/
+	//var_dump($relativedir);
+	//var_dump($filearray);
+	//var_dump($filearrayindatabase);
 
 	// Complete filearray with properties found into $filearrayindatabase
 	foreach ($filearray as $key => $val) {

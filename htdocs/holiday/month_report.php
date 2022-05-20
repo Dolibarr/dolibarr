@@ -95,7 +95,7 @@ if (empty($reshook)) {
 		$search_employee = '';
 		$search_type = '';
 		$search_description = '';
-		$toselect = '';
+		$toselect = array();
 		$search_array_options = array();
 	}
 

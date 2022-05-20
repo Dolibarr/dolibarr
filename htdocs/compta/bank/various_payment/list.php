@@ -40,7 +40,6 @@ $socid = GETPOST("socid", "int");
 if ($user->socid) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'banque', '', '', '');
 
 $optioncss = GETPOST('optioncss', 'alpha');
 
@@ -173,6 +172,11 @@ $arrayfields = array(
 
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
+$object = new PaymentVarious($db);
+
+$result = restrictedArea($user, 'banque', '', '', '');
+
+
 /*
  * Actions
  */
@@ -271,19 +275,19 @@ if ($search_all) {
 $sql .= $db->order($sortfield, $sortorder);
 
 $totalnboflines = 0;
-$result = $db->query($sql);
-if ($result) {
-	$totalnboflines = $db->num_rows($result);
+$resql = $db->query($sql);
+if ($resql) {
+	$totalnboflines = $db->num_rows($resql);
 }
 $sql .= $db->plimit($limit + 1, $offset);
 
-$result = $db->query($sql);
-if ($result) {
-	$num = $db->num_rows($result);
+$resql = $db->query($sql);
+if ($resql) {
+	$num = $db->num_rows($resql);
 
 	// Direct jump if only one record found
 	if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $search_all) {
-		$obj = $db->fetch_object($result);
+		$obj = $db->fetch_object($resql);
 		$id = $obj->rowid;
 		header("Location: ".DOL_URL_ROOT.'/compta/bank/various_payment/card.php?id='.$id);
 		exit;
@@ -535,13 +539,13 @@ if ($result) {
 	$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 
-	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'maxwidthsearch ');
+	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'maxwidthsearch center ');
 	print '</tr>';
 
 
 	$totalarray = array();
 	while ($i < min($num, $limit)) {
-		$obj = $db->fetch_object($result);
+		$obj = $db->fetch_object($resql);
 
 		$variousstatic->id = $obj->rowid;
 		$variousstatic->ref = $obj->rowid;
@@ -652,7 +656,7 @@ if ($result) {
 		if ($arrayfields['account']['checked']) {
 			$accountingaccount->fetch('', $obj->accountancy_code, 1);
 
-			print '<td>'.$accountingaccount->getNomUrl(0, 1, 1, '', 1).'</td>';
+			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->accountancy_code.' '.$obj->accountancy_label).'">'.$accountingaccount->getNomUrl(0, 1, 1, '', 1).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -660,7 +664,7 @@ if ($result) {
 
 		// Accounting subledger account
 		if ($arrayfields['subledger']['checked']) {
-			print '<td>'.length_accounta($obj->subledger_account).'</td>';
+			print '<td class="tdoverflowmax150">'.length_accounta($obj->subledger_account).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -704,7 +708,7 @@ if ($result) {
 			$totalarray['nbfield']++;
 		}
 
-		print "</tr>";
+		print '</tr>'."\n";
 
 		$i++;
 	}
@@ -712,11 +716,27 @@ if ($result) {
 	// Show total line
 	include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 
-	print "</table>";
-	print '</div>';
-	print '</form>';
+	// If no record found
+	if ($num == 0) {
+		$colspan = 1;
+		foreach ($arrayfields as $key => $val) {
+			if (!empty($val['checked'])) {
+				$colspan++;
+			}
+		}
+		print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
+	}
 
-	$db->free($result);
+	$db->free($resql);
+
+	$parameters = array('arrayfields'=>$arrayfields, 'sql'=>$sql);
+	$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object); // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
+
+	print '</table>'."\n";
+	print '</div>'."\n";
+
+	print '</form>'."\n";
 } else {
 	dol_print_error($db);
 }

@@ -384,6 +384,13 @@ INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (20, '2010', '
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (20, '2011', 'Ideell förening');
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (20, '2012', 'Stiftelse');
 
+-- Burundi (id contry=61)
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (61,'6100','Indépendant - Personne physique');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (61,'6101','Société Unipersonnelle');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (61,'6102','Société de personne à responsabilité limité (SPRL)');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (61,'6103','Société anonyme (SA)');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (61,'6104','Société coopérative');
+
 -- Croatia (id country=76)
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (76, '7601', 'Društvo s ograničenom odgovornošću (d.o.o.)');
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (76, '7602', 'Jednostavno društvo s ograničenom odgovornošću (j.d.o.o.)');

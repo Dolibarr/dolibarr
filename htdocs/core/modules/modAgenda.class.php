@@ -211,8 +211,8 @@ class modAgenda extends DolibarrModules
 			'url'=>'/comm/action/index.php',
 			'langs'=>'agenda',
 			'position'=>86,
-			'perms'=>'$user->rights->agenda->myactions->read',
-			'enabled'=>'$conf->agenda->enabled',
+			'perms'=>'$user->rights->agenda->myactions->read || $user->rights->resource->read',
+			'enabled'=>'$conf->agenda->enabled || $conf->resource->enabled',
 			'target'=>'',
 			'user'=>2,
 		);

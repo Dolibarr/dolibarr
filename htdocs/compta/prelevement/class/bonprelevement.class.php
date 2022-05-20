@@ -922,7 +922,7 @@ class BonPrelevement extends CommonObject
 
 				$sql = "SELECT substring(ref from char_length(ref) - 1)";	// To extract "YYMMXX" from "TYYMMXX"
 				$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons";
-				$sql .= " WHERE ref LIKE '%".$this->db->escape($ref)."%'";
+				$sql .= " WHERE ref LIKE '_".$this->db->escape($ref)."%'";
 				$sql .= " AND entity = ".((int) $conf->entity);
 				$sql .= " ORDER BY ref DESC LIMIT 1";
 
@@ -933,7 +933,7 @@ class BonPrelevement extends CommonObject
 					$row = $this->db->fetch_row($resql);
 
 					// Build the new ref
-					$ref = "T".$ref.str_pad(dol_substr("00".(intval($row[0]) + 1), 0, 2), 2, "0", STR_PAD_LEFT);
+					$ref = "T".$ref.sprintf("%02d", (intval($row[0]) + 1));
 
 					// $conf->abc->dir_output may be:
 					// /home/ldestailleur/git/dolibarr_15.0/documents/abc/
@@ -1066,8 +1066,8 @@ class BonPrelevement extends CommonObject
 					// This also set the property $this->total with amount that is included into file
 					$result = $this->generate($format, $executiondate, $type);
 					if ($result < 0) {
-						/*var_dump($this->error);
-						var_dump($this->invoice_in_error); */
+						//var_dump($this->error);
+						//var_dump($this->invoice_in_error);
 						$error++;
 					}
 				}

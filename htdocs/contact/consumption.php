@@ -355,7 +355,7 @@ if (empty($elementTypeArray) && !$object->thirdparty->client && !$object->thirdp
 
 // Define type of elements
 $typeElementString = $form->selectarray("type_element", $elementTypeArray, GETPOST('type_element'), $showempty, 0, 0, '', 0, 0, $disabled, '', 'maxwidth150onsmartphone');
-$button = '<input type="submit" class="button" name="button_third" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+$button = '<input type="submit" class="button small" name="button_third" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 
 $param = '';
 $param .= "&sref=".urlencode($sref);
@@ -410,7 +410,7 @@ if ($sql_select) {
 	print '</td>';
 	print '<td class="liste_titre nowrap center">'; // date
 	print $formother->select_month($month ? $month : -1, 'month', 1, 0, 'valignmiddle');
-	$formother->select_year($year ? $year : -1, 'year', 1, 20, 1);
+	print $formother->selectyear($year ? $year : -1, 'year', 1, 20, 1);
 	print '</td>';
 	print '<td class="liste_titre center">';
 	print '</td>';
