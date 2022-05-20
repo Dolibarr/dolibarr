@@ -6843,13 +6843,13 @@ abstract class CommonObject
 			if ((!isset($this->fields[$key]['default'])) || ($this->fields[$key]['notnull'] != 1)) {
 				$out .= '<option value="0">&nbsp;</option>';
 			}
-			foreach ($param['options'] as $key => $val) {
-				if ((string) $key == '') {
+			foreach ($param['options'] as $index => $val) {
+				if ((string) $index == '') {
 					continue;
 				}
 				if (strpos($val, "|") !== false) list($val, $parent) = explode('|', $val);
-				$out .= '<option value="'.$key.'"';
-				$out .= (((string) $value == (string) $key) ? ' selected' : '');
+				$out .= '<option value="'.$index.'"';
+				$out .= (((string) $value == (string) $index) ? ' selected' : '');
 				$out .= (!empty($parent) ? ' parent="'.$parent.'"' : '');
 				$out .= '>'.$val.'</option>';
 			}
