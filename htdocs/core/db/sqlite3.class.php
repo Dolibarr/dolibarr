@@ -38,7 +38,10 @@ class DoliDBSqlite3 extends DoliDB
 	const LABEL = 'Sqlite3';
 	//! Version min database
 	const VERSIONMIN = '3.0.0';
-	/** @var SQLite3Result Resultset of last query */
+
+	/**
+	 * @var SQLite3Result|boolean 	Resultset of last query
+	 */
 	private $_results;
 
 	const WEEK_MONDAY_FIRST = 1;

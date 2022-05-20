@@ -484,7 +484,7 @@ print '</span>';
 
 print '<input type="file" name="userfile" size="20" maxlength="80"> &nbsp; &nbsp; ';
 $out = (empty($conf->global->MAIN_UPLOAD_DOC) ? ' disabled' : '');
-print '<input type="submit" class="button" value="'.$langs->trans("ImportFromCSV").'"'.$out.' name="sendit">';
+print '<input type="submit" class="button small" value="'.$langs->trans("ImportFromCSV").'"'.$out.' name="sendit">';
 $out = '';
 if (!empty($conf->global->MAIN_UPLOAD_DOC)) {
 	$max = $conf->global->MAIN_UPLOAD_DOC; // In Kb

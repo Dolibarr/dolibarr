@@ -84,8 +84,8 @@ $error = 0; $errors = array();
 $action		= (GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view');
 $cancel		= GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
-$backtopagejsfields = GETPOST('backtopagejsfields', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
+$backtopagejsfields = GETPOST('backtopagejsfields', 'alpha');
 $dol_openinpopup = GETPOST('dol_openinpopup', 'aZ09');
 $confirm	= GETPOST('confirm', 'alpha');
 
@@ -689,6 +689,27 @@ if (empty($reshook)) {
 				if ($result >= 0 && !$error) {
 					$db->commit();
 
+					if ($backtopagejsfields) {
+						llxHeader('', '', '');
+
+						$tmpbacktopagejsfields = explode(':', $backtopagejsfields);
+						$dol_openinpopup = $tmpbacktopagejsfields[0];
+
+						$retstring = '<script>';
+						$retstring .= 'jQuery(document).ready(function() {
+												console.log(\'We execute action to create. We save id and go back - '.$dol_openinpopup.'\');
+												console.log(\'id = '.$object->id.'\');
+												$(\'#varforreturndialogid'.$dol_openinpopup.'\', window.parent.document).text(\''.$object->id.'\');
+												$(\'#varforreturndialoglabel'.$dol_openinpopup.'\', window.parent.document).text(\''.$object->name.'\');
+												window.parent.jQuery(\'#idfordialog'.$dol_openinpopup.'\').dialog(\'close\');
+				 							});';
+						$retstring .= '</script>';
+						print $retstring;
+
+						llxFooter();
+						exit;
+					}
+
 					if (!empty($backtopage)) {
 						$backtopage = preg_replace('/--IDFORBACKTOPAGE--/', $object->id, $backtopage); // New method to autoselect project after a New on another form object creation
 						if (preg_match('/\?/', $backtopage)) {
@@ -704,14 +725,8 @@ if (empty($reshook)) {
 							$url = DOL_URL_ROOT."/fourn/card.php?socid=".$object->id;
 						}
 
-						// TODO @LDR
-						if ($dol_openinpopup && $backtopagejsfields) {
-							print 'TODO Set js var of parent with id, then close popup.';
-							exit;
-						} else {
-							header("Location: ".$url);
-							exit;
-						}
+						header("Location: ".$url);
+						exit;
 					}
 				} else {
 					$db->rollback();
@@ -2989,7 +3004,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			$MAXEVENT = 10;
 
-			$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-list-alt imgforviewmode', DOL_URL_ROOT.'/societe/agenda.php?socid='.$object->id);
+			$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/societe/agenda.php?socid='.$object->id);
 
 			// List of actions on element
 			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';

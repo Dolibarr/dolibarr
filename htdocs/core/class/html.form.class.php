@@ -2755,7 +2755,6 @@ class Form
 							$objp->price = $objp2->price;
 							$objp->unitprice = $objp2->unitprice;
 							$objp->remise_percent = $objp2->remise_percent;
-							$objp->remise = $objp2->remise;
 
 							//$objp->tva_tx is not overwritten by $objp2 value
 							//$objp->default_vat_code is not overwritten by $objp2 value
@@ -10142,9 +10141,6 @@ class Form
 				window.parent.jQuery(\'#idfordialog'.$dol_openinpopup.'\').dialog(\'close\');
 				 });';
 			$retstring .= '</script>';
-			// TODO @LDR for the save button, in action "add", set parent var to return data and close the window
-			//$retstring .= '<a onclick="javascript:$(\'#varforreturndialogid'.$dol_openinpopup.'\', window.parent.document).text(\'setid\');">setid</a> ';
-			//$retstring .= '<a onclick="javascript:$(\'#varforreturndialoglabel'.$dol_openinpopup.'\', window.parent.document).text(\'setlabel\');">setlabel</a>';
 		}
 
 		return $retstring;

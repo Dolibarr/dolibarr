@@ -1662,7 +1662,7 @@ tr.nobottom td {
 .minheight30 { min-height: 30px; }
 .minheight40 { min-height: 40px; }
 .titlefieldcreate { width: 20%; }
-.titlefield       { /* width: 25%; */ min-width: 250px; }
+.titlefield       { /* width: 25%; */ min-width: 250px; width: 25%; }
 .titlefieldmiddle { width: 50%; }
 .imgmaxwidth180 { max-width: 180px; }
 .imgmaxheight50 { max-height: 50px; }
@@ -4188,7 +4188,7 @@ div.tabBar .noborder {
 	-webkit-box-shadow: 0px 0px 0px #f4f4f4 !important;
 	box-shadow: 0px 0px 0px #f4f4f4 !important;
 }
-div .tdtop {
+div .tdtop:not(.tagtdnote) {
 	vertical-align: top !important;
 	padding-top: 8px !important;
 	padding-bottom: 0px !important;
@@ -4381,6 +4381,9 @@ span.dashboardlineko {
 }
 a.valignmiddle.dashboardlineindicator {
 	line-height: 30px;
+}
+.height30 {
+	height: 30px !important;
 }
 
 tr.box_titre {
@@ -4895,9 +4898,10 @@ table.dp {
 	vertical-align:middle;
 	cursor: pointer;
 }
-.datenowlink
-{
+.datenowlink {
 	color: rgb(<?php print $colortextlink; ?>);
+	font-size: 0.8em;
+	opacity: 0.7;
 }
 
 .categtextwhite, .treeview .categtextwhite.hover {

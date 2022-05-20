@@ -116,6 +116,11 @@ abstract class CommonObject
 	public $array_languages = null; // Value is array() when load already tried
 
 	/**
+	 * @var array		To sotre result of ->liste_contact()
+	 */
+	public $contacts_ids;
+
+	/**
 	 * @var mixed		Array of linked objects, set and used when calling ->create() to be able to create links during the creation of object
 	 */
 	public $linked_objects;

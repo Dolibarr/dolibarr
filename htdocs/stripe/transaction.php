@@ -207,12 +207,12 @@ if (!$rowid) {
 			//}
 			//print "</td>\n";
 			// Date payment
-			print '<td class="center">'.dol_print_date($txn->created, '%d/%m/%Y %H:%M')."</td>\n";
+			print '<td class="center">'.dol_print_date($txn->created, 'dayhour')."</td>\n";
 			// Type
 			print '<td>'.$txn->type.'</td>';
 			// Amount
-			print '<td class="right">'.price(($txn->amount) / 100, 0, '', 1, - 1, - 1, strtoupper($txn->currency))."</td>";
-			print '<td class="right">'.price(($txn->fee) / 100, 0, '', 1, - 1, - 1, strtoupper($txn->currency))."</td>";
+			print '<td class="right"><span class="amount">'.price(($txn->amount) / 100, 0, '', 1, - 1, - 1, strtoupper($txn->currency))."</span></td>";
+			print '<td class="right"><span class="amount">'.price(($txn->fee) / 100, 0, '', 1, - 1, - 1, strtoupper($txn->currency))."</span></td>";
 			// Status
 			print "<td class='right'>";
 			if ($txn->status == 'available') {

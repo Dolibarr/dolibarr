@@ -93,12 +93,17 @@ abstract class CommonInvoice extends CommonObject
 	const STATUS_ABANDONED = 3;
 
 
+	public $totalpaid;			// duplicate with sumpayed
+	public $totaldeposits;		// duplicate with sumdeposit
+	public $totalcreditnotes;	// duplicate with sumcreditnote
+
 	public $sumpayed;
 	public $sumpayed_multicurrency;
 	public $sumdeposit;
 	public $sumdeposit_multicurrency;
 	public $sumcreditnote;
 	public $sumcreditnote_multicurrency;
+	public $remaintopay;
 
 
 	/**

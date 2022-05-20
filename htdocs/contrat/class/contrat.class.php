@@ -871,9 +871,11 @@ class Contrat extends CommonObject
 
 				// multilangs
 				if (!empty($conf->global->MAIN_MULTILANGS) && !empty($objp->fk_product) && !empty($loadalsotranslation)) {
-					$line = new Product($this->db);
-					$line->fetch($objp->fk_product);
-					$line->getMultiLangs();
+					$tmpproduct = new Product($this->db);
+					$tmpproduct->fetch($objp->fk_product);
+					$tmpproduct->getMultiLangs();
+
+					$line->multilangs = $tmpproduct->multilangs;
 				}
 
 				$this->lines[$pos] = $line;
@@ -2744,6 +2746,7 @@ class ContratLigne extends CommonObjectLine
 
 	public $commentaire;
 
+
 	const STATUS_INITIAL = 0;
 	const STATUS_OPEN = 4;
 	const STATUS_CLOSED = 5;
@@ -2988,7 +2991,6 @@ class ContratLigne extends CommonObjectLine
 				$this->localtax2_type = $obj->localtax2_type;
 				$this->qty = $obj->qty;
 				$this->remise_percent = $obj->remise_percent;
-				$this->remise = $obj->remise;
 				$this->fk_remise_except = $obj->fk_remise_except;
 				$this->subprice = $obj->subprice;
 				$this->price_ht = $obj->price_ht;
@@ -3046,7 +3048,6 @@ class ContratLigne extends CommonObjectLine
 		$this->localtax2_tx = trim($this->localtax2_tx);
 		$this->qty = trim($this->qty);
 		$this->remise_percent = trim($this->remise_percent);
-		$this->remise = trim($this->remise);
 		$this->fk_remise_except = (int) $this->fk_remise_except;
 		$this->subprice = price2num($this->subprice);
 		$this->price_ht = price2num($this->price_ht);
