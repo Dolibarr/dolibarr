@@ -481,7 +481,7 @@ class ImportXlsx extends ModeleImports
 												/*include_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancysystem.class.php';
 												$tmpchartofaccount = new AccountancySystem($this->db);
 												$tmpchartofaccount->fetch($conf->global->CHARTOFACCOUNTS);
-												var_dump($tmpchartofaccount->ref.' - '.$arrayrecord[0]['val']);
+												//var_dump($tmpchartofaccount->ref.' - '.$arrayrecord[0]['val']);
 												if ((! ($conf->global->CHARTOFACCOUNTS > 0)) || $tmpchartofaccount->ref != $arrayrecord[0]['val'])
 												{
 													$this->errors[$error]['lib']=$langs->trans('ErrorImportOfChartLimitedToCurrentChart', $tmpchartofaccount->ref);
@@ -844,11 +844,12 @@ class ImportXlsx extends ModeleImports
 
 								$resql = $this->db->query($sqlSelect);
 								if ($resql) {
-									$res = $this->db->fetch_object($resql);
-									if ($resql->num_rows == 1) {
+									$num_rows = $this->db->num_rows($resql);
+									if ($num_rows == 1) {
+										$res = $this->db->fetch_object($resql);
 										$lastinsertid = $res->rowid;
 										$last_insert_id_array[$tablename] = $lastinsertid;
-									} elseif ($resql->num_rows > 1) {
+									} elseif ($num_rows > 1) {
 										$this->errors[$error]['lib'] = $langs->trans('MultipleRecordFoundWithTheseFilters', implode(', ', $filters));
 										$this->errors[$error]['type'] = 'SQL';
 										$error++;
@@ -877,7 +878,7 @@ class ImportXlsx extends ModeleImports
 								$resql = $this->db->query($sqlSelect);
 								if ($resql) {
 									$res = $this->db->fetch_object($resql);
-									if ($resql->num_rows == 1) {
+									if ($this->db->num_rows($resql) == 1) {
 										// We have a row referencing this last foreign key, continue with UPDATE.
 									} else {
 										// No record found referencing this last foreign key,

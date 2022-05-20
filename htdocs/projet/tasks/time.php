@@ -823,8 +823,10 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			// Visibility
 			print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
 			if ($projectstatic->public) {
+				print img_picto($langs->trans('SharedProject'), 'world', 'class="paddingrightonly"');
 				print $langs->trans('SharedProject');
 			} else {
+				print img_picto($langs->trans('PrivateProject'), 'private', 'class="paddingrightonly"');
 				print $langs->trans('PrivateProject');
 			}
 			print '</td></tr>';
@@ -888,22 +890,26 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		$linktocreatetimeBtnStatus = 0;
 		$linktocreatetimeUrl = '';
 		$linktocreatetimeHelpText = '';
-		if ($user->rights->projet->all->lire || $user->rights->projet->time) {
+		if (!empty($user->rights->projet->time)) {
 			if ($projectstatic->public || $userRead > 0) {
 				$linktocreatetimeBtnStatus = 1;
 
-				if (!empty($projectidforalltimes)) {		// We are on tab 'Time Spent' of project
+				if (!empty($projectidforalltimes)) {
+					// We are on tab 'Time Spent' of project
 					$backtourl = $_SERVER['PHP_SELF'].'?projectid='.$projectstatic->id.($withproject ? '&withproject=1' : '');
-					$linktocreatetimeUrl = $_SERVER['PHP_SELF'].'?'.($withproject ? 'withproject=1' : '').'&projectid='.$projectstatic->id.'&action=createtime'.$param.'&backtopage='.urlencode($backtourl);
-				} else // We are on tab 'Time Spent' of task
-				{
+					$linktocreatetimeUrl = $_SERVER['PHP_SELF'].'?'.($withproject ? 'withproject=1' : '').'&projectid='.$projectstatic->id.'&action=createtime&token='.newToken().$param.'&backtopage='.urlencode($backtourl);
+				} else {
+					// We are on tab 'Time Spent' of task
 					$backtourl = $_SERVER['PHP_SELF'].'?id='.$object->id.($withproject ? '&withproject=1' : '');
-					$linktocreatetimeUrl = $_SERVER['PHP_SELF'].'?'.($withproject ? 'withproject=1' : '').($object->id > 0 ? '&id='.$object->id : '&projectid='.$projectstatic->id).'&action=createtime'.$param.'&backtopage='.urlencode($backtourl);
+					$linktocreatetimeUrl = $_SERVER['PHP_SELF'].'?'.($withproject ? 'withproject=1' : '').($object->id > 0 ? '&id='.$object->id : '&projectid='.$projectstatic->id).'&action=createtime&token='.newToken().$param.'&backtopage='.urlencode($backtourl);
 				}
 			} else {
 				$linktocreatetimeBtnStatus = -2;
 				$linktocreatetimeHelpText = $langs->trans("NotOwnerOfProject");
 			}
+		} else {
+			$linktocreatetimeBtnStatus = -2;
+			$linktocreatetimeHelpText = $langs->trans("NotEnoughPermissions");
 		}
 
 		$paramsbutton = array('morecss'=>'reposition');
@@ -1556,7 +1562,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_day" value="'.$search_day.'">';
 			}
 			print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_month" value="'.$search_month.'">';
-			$formother->select_year($search_year, 'search_year', 1, 20, 5);
+			print $formother->selectyear($search_year, 'search_year', 1, 20, 5);
 			print '</td>';
 		}
 		if (!empty($allprojectforuser)) {

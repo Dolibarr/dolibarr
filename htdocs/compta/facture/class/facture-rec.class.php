@@ -222,7 +222,7 @@ class FactureRec extends CommonInvoice
 	 *
 	 * 	@param		DoliDB		$db		Database handler
 	 */
-	public function __construct($db)
+	public function __construct(DoliDB $db)
 	{
 		$this->db = $db;
 	}
@@ -270,6 +270,7 @@ class FactureRec extends CommonInvoice
 		if ($result > 0) {
 			// On positionne en mode brouillon la facture
 			$this->brouillon = 1;
+			$this->fk_soc = $facsrc->socid;
 
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."facture_rec (";
 			$sql .= "titre";
@@ -301,7 +302,7 @@ class FactureRec extends CommonInvoice
 			$sql .= ", suspended";
 			$sql .= ") VALUES (";
 			$sql .= "'".$this->db->escape($this->titre ? $this->titre : $this->title)."'";
-			$sql .= ", ".((int) $facsrc->socid);
+			$sql .= ", ".((int) $this->fk_soc);
 			$sql .= ", ".((int) $conf->entity);
 			$sql .= ", '".$this->db->idate($now)."'";
 			$sql .= ", ".(!empty($facsrc->total_ttc) ? ((float) $facsrc->total_ttc) : '0');
@@ -1256,9 +1257,10 @@ class FactureRec extends CommonInvoice
 	 *
 	 *  @param	int		$restrictioninvoiceid		0=All qualified template invoices found. > 0 = restrict action on invoice ID
 	 *  @param	int		$forcevalidation		1=Force validation of invoice whatever is template auto_validate flag.
+	 *	@param     	int 	$notrigger 			Disable the trigger
 	 *  @return	int								0 if OK, < 0 if KO (this function is used also by cron so only 0 is OK)
 	 */
-	public function createRecurringInvoices($restrictioninvoiceid = 0, $forcevalidation = 0)
+	public function createRecurringInvoices($restrictioninvoiceid = 0, $forcevalidation = 0, $notrigger = 0)
 	{
 		global $conf, $langs, $db, $user, $hookmanager;
 
@@ -1338,6 +1340,8 @@ class FactureRec extends CommonInvoice
 						$this->error = $facture->error;
 						$error++;
 					}
+
+
 					if (!$error && ($facturerec->auto_validate || $forcevalidation)) {
 						$result = $facture->validate($user);
 						if ($result <= 0) {
@@ -1355,6 +1359,16 @@ class FactureRec extends CommonInvoice
 							$this->error = $facture->error;
 							$error++;
 						}
+					}
+					if (!$error && !$notrigger) {
+						// Call trigger
+						$result = $facturerec->call_trigger('BILLREC_CREATEBILL', $user);
+						if ($result < 0) {
+							$this->errors = $facturerec->errors;
+							$this->error = $facturerec->error;
+							$error++;
+						}
+						// End call triggers
 					}
 				} else {
 					$error++;
@@ -1788,10 +1802,13 @@ class FactureRec extends CommonInvoice
 	 *
 	 *	@param     	int		$frequency		value of frequency
 	 *	@param     	string	$unit 			unit of frequency  (d, m, y)
+	 *	@param     	int 	$notrigger 		Disable the trigger
 	 *	@return		int						<0 if KO, >0 if OK
 	 */
-	public function setFrequencyAndUnit($frequency, $unit)
+	public function setFrequencyAndUnit($frequency, $unit, $notrigger = 0)
 	{
+		global $user;
+
 		if (!$this->table_element) {
 			dol_syslog(get_class($this)."::setFrequencyAndUnit was called on objet with property table_element not defined", LOG_ERR);
 			return -1;
@@ -1815,6 +1832,16 @@ class FactureRec extends CommonInvoice
 			if (!empty($unit)) {
 				$this->unit_frequency = $unit;
 			}
+
+			if (!$notrigger) {
+				// Call trigger
+				$result = $this->call_trigger('BILLREC_MODIFY', $user);
+				if ($result < 0) {
+					return $result;
+				}
+				// End call triggers
+			}
+
 			return 1;
 		} else {
 			dol_print_error($this->db);
@@ -1827,10 +1854,14 @@ class FactureRec extends CommonInvoice
 	 *
 	 *	@param     	datetime	$date					date of execution
 	 *	@param     	int			$increment_nb_gen_done	0 do nothing more, >0 increment nb_gen_done
+	 *	@param     	int 	    $notrigger		 		Disable the trigger
 	 *	@return		int									<0 if KO, >0 if OK
 	 */
-	public function setNextDate($date, $increment_nb_gen_done = 0)
+	public function setNextDate($date, $increment_nb_gen_done = 0, $notrigger = 0)
 	{
+
+		global $user;
+
 		if (!$this->table_element) {
 			dol_syslog(get_class($this)."::setNextDate was called on objet with property table_element not defined", LOG_ERR);
 			return -1;
@@ -1848,6 +1879,15 @@ class FactureRec extends CommonInvoice
 			if ($increment_nb_gen_done > 0) {
 				$this->nb_gen_done++;
 			}
+
+			if (!$notrigger) {
+				// Call trigger
+				$result = $this->call_trigger('BILLREC_MODIFY', $user);
+				if ($result < 0) {
+					return $result;
+				}
+				// End call triggers
+			}
 			return 1;
 		} else {
 			dol_print_error($this->db);
@@ -1859,10 +1899,14 @@ class FactureRec extends CommonInvoice
 	 *	Update the maximum period
 	 *
 	 *	@param     	int		$nb		number of maximum period
+	 *	@param     	int 	$notrigger Disable the trigger
 	 *	@return		int				<0 if KO, >0 if OK
 	 */
-	public function setMaxPeriod($nb)
+	public function setMaxPeriod($nb, $notrigger = 0)
 	{
+
+		global $user;
+
 		if (!$this->table_element) {
 			dol_syslog(get_class($this)."::setMaxPeriod was called on objet with property table_element not defined", LOG_ERR);
 			return -1;
@@ -1879,6 +1923,16 @@ class FactureRec extends CommonInvoice
 		dol_syslog(get_class($this)."::setMaxPeriod", LOG_DEBUG);
 		if ($this->db->query($sql)) {
 			$this->nb_gen_max = $nb;
+
+			if (!$notrigger) {
+				// Call trigger
+				$result = $this->call_trigger('BILLREC_MODIFY', $user);
+				if ($result < 0) {
+					return $result;
+				}
+				// End call triggers
+			}
+
 			return 1;
 		} else {
 			dol_print_error($this->db);
@@ -1890,10 +1944,13 @@ class FactureRec extends CommonInvoice
 	 *	Update the auto validate flag of invoice
 	 *
 	 *	@param     	int		$validate		0 to create in draft, 1 to create and validate invoice
+	 *	@param     	int 	$notrigger 		Disable the trigger
 	 *	@return		int						<0 if KO, >0 if OK
 	 */
-	public function setAutoValidate($validate)
+	public function setAutoValidate($validate, $notrigger = 0)
 	{
+		global $user;
+
 		if (!$this->table_element) {
 			dol_syslog(get_class($this)."::setAutoValidate was called on objet with property table_element not defined", LOG_ERR);
 			return -1;
@@ -1906,6 +1963,16 @@ class FactureRec extends CommonInvoice
 		dol_syslog(get_class($this)."::setAutoValidate", LOG_DEBUG);
 		if ($this->db->query($sql)) {
 			$this->auto_validate = $validate;
+
+			if (!$notrigger) {
+				// Call trigger
+				$result = $this->call_trigger('BILLREC_MODIFY', $user);
+				if ($result < 0) {
+					return $result;
+				}
+				// End call triggers
+			}
+
 			return 1;
 		} else {
 			dol_print_error($this->db);
@@ -1917,10 +1984,13 @@ class FactureRec extends CommonInvoice
 	 *	Update the auto generate documents
 	 *
 	 *	@param     	int		$validate		0 no document, 1 to generate document
+	 *	@param     	int 	$notrigger 		Disable the trigger
 	 *	@return		int						<0 if KO, >0 if OK
 	 */
-	public function setGeneratePdf($validate)
+	public function setGeneratePdf($validate, $notrigger = 0)
 	{
+		global $user;
+
 		if (!$this->table_element) {
 			dol_syslog(get_class($this)."::setGeneratePdf was called on objet with property table_element not defined", LOG_ERR);
 			return -1;
@@ -1933,6 +2003,16 @@ class FactureRec extends CommonInvoice
 		dol_syslog(get_class($this)."::setGeneratePdf", LOG_DEBUG);
 		if ($this->db->query($sql)) {
 			$this->generate_pdf = $validate;
+
+			if (!$notrigger) {
+				// Call trigger
+				$result = $this->call_trigger('BILLREC_MODIFY', $user);
+				if ($result < 0) {
+					return $result;
+				}
+				// End call triggers
+			}
+
 			return 1;
 		} else {
 			dol_print_error($this->db);
@@ -1944,10 +2024,12 @@ class FactureRec extends CommonInvoice
 	 *  Update the model for documents
 	 *
 	 *  @param     	string		$model		model of document generator
+	 *	@param     	int 	$notrigger 		Disable the trigger
 	 *  @return		int						<0 if KO, >0 if OK
 	 */
-	public function setModelPdf($model)
+	public function setModelPdf($model, $notrigger = 0)
 	{
+		global $user;
 		if (!$this->table_element) {
 			dol_syslog(get_class($this)."::setModelPdf was called on objet with property table_element not defined", LOG_ERR);
 			return -1;
@@ -1960,6 +2042,16 @@ class FactureRec extends CommonInvoice
 		dol_syslog(get_class($this)."::setModelPdf", LOG_DEBUG);
 		if ($this->db->query($sql)) {
 			$this->model_pdf = $model;
+
+			if (!$notrigger) {
+				// Call trigger
+				$result = $this->call_trigger('BILLREC_MODIFY', $user);
+				if ($result < 0) {
+					return $result;
+				}
+				// End call triggers
+			}
+
 			return 1;
 		} else {
 			dol_print_error($this->db);

@@ -59,6 +59,7 @@ $conf_or_booth_id = GETPOST('conforboothid', 'int');
 
 $withproject = GETPOST('withproject', 'int');
 $fk_project = GETPOST('fk_project', 'int') ? GETPOST('fk_project', 'int') : GETPOST('projectid', 'int');
+$projectid = $fk_project;
 
 $withProjectUrl='';
 
@@ -459,10 +460,12 @@ if ($projectstatic->id > 0 || $confOrBooth > 0) {
 
 		// Visibility
 		print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
-		if ($projectstatic->public) {
-			print $langs->trans('SharedProject');
+		if ($projectstatic->public == 0) {
+			print img_picto($langs->trans('PrivateProject'), 'private', 'class="paddingrightonly"');
+			print $langs->trans("PrivateProject");
 		} else {
-			print $langs->trans('PrivateProject');
+			print img_picto($langs->trans('SharedProject'), 'world', 'class="paddingrightonly"');
+			print $langs->trans("SharedProject");
 		}
 		print '</td></tr>';
 
@@ -539,6 +542,12 @@ if ($projectstatic->id > 0 || $confOrBooth > 0) {
 		print $form->editfieldkey($form->textwithpicto($langs->trans('PriceOfRegistration'), $langs->trans("PriceOfRegistrationHelp")), 'price_registration', '', $projectstatic, 0, 'amount', '', 0, 0, 'projectid');
 		print '</td><td>';
 		print $form->editfieldval($form->textwithpicto($langs->trans('PriceOfRegistration'), $langs->trans("PriceOfRegistrationHelp")), 'price_registration', $projectstatic->price_registration, $projectstatic, 0, 'amount', '', 0, 0, '', 0, '', 'projectid');
+		print "</td></tr>";
+
+		print '<tr><td class="titlefield">';
+		print $form->editfieldkey($form->textwithpicto($langs->trans('MaxNbOfAttendees'), ''), 'max_attendees', '', $projectstatic, $permissiontoadd, 'integer:3', '&withproject=1', 0, 0, 'projectid');
+		print '</td><td class="valuefield">';
+		print $form->editfieldval($form->textwithpicto($langs->trans('MaxNbOfAttendees'), ''), 'max_attendees', $projectstatic->max_attendees, $projectstatic, $permissiontoadd, 'integer:3', '', 0, 0, '&withproject=1', 0, '', 'projectid');
 		print "</td></tr>";
 
 		print '<tr><td valign="middle">'.$langs->trans("EventOrganizationICSLink").'</td><td>';

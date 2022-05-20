@@ -3399,12 +3399,12 @@ class CommandeFournisseur extends CommonOrder
 					$diff_array = array_diff_assoc($qtydelivered, $qtywished); // Warning: $diff_array is done only on common keys.
 					$keysinwishednotindelivered = array_diff(array_keys($qtywished), array_keys($qtydelivered)); // To check we also have same number of keys
 					$keysindeliverednotinwished = array_diff(array_keys($qtydelivered), array_keys($qtywished)); // To check we also have same number of keys
-					/*var_dump(array_keys($qtydelivered));
-					var_dump(array_keys($qtywished));
-					var_dump($diff_array);
-					var_dump($keysinwishednotindelivered);
-					var_dump($keysindeliverednotinwished);
-					exit;*/
+					//var_dump(array_keys($qtydelivered));
+					//var_dump(array_keys($qtywished));
+					//var_dump($diff_array);
+					//var_dump($keysinwishednotindelivered);
+					//var_dump($keysindeliverednotinwished);
+					//exit;
 
 					if (count($diff_array) == 0 && count($keysinwishednotindelivered) == 0 && count($keysindeliverednotinwished) == 0) { //No diff => mean everythings is received
 						if ($closeopenorder) {
@@ -3491,6 +3491,8 @@ class CommandeFournisseur extends CommonOrder
 	{
 		$this->receptions = array();
 
+		dol_syslog(get_class($this)."::loadReceptions", LOG_DEBUG);
+
 		$sql = 'SELECT cd.rowid, cd.fk_product,';
 		$sql .= ' sum(cfd.qty) as qty';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'commande_fournisseur_dispatch as cfd,';
@@ -3512,18 +3514,16 @@ class CommandeFournisseur extends CommonOrder
 		}
 		$sql .= ' GROUP BY cd.rowid, cd.fk_product';
 
-
-		dol_syslog(get_class($this)."::loadReceptions", LOG_DEBUG);
-		$result = $this->db->query($sql);
-		if ($result) {
-			$num = $this->db->num_rows($result);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$num = $this->db->num_rows($resql);
 			$i = 0;
 			while ($i < $num) {
-				$obj = $this->db->fetch_object($result);
+				$obj = $this->db->fetch_object($resql);
 				empty($this->receptions[$obj->rowid]) ? $this->receptions[$obj->rowid] = $obj->qty : $this->receptions[$obj->rowid] += $obj->qty;
 				$i++;
 			}
-			$this->db->free();
+			$this->db->free($resql);
 
 			return $num;
 		} else {
@@ -3750,9 +3750,6 @@ class CommandeFournisseurLigne extends CommonOrderLine
 		}
 		if (empty($this->rang)) {
 			$this->rang = 0;
-		}
-		if (empty($this->remise)) {
-			$this->remise = 0;
 		}
 		if (empty($this->remise_percent)) {
 			$this->remise_percent = 0;

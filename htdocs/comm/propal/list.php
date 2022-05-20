@@ -377,14 +377,14 @@ if ($action == 'validate' && $permissiontovalidate) {
 			if ($tmpproposal->fetch($checked) > 0) {
 				if ($tmpproposal->statut == $tmpproposal::STATUS_DRAFT) {
 					if ($tmpproposal->valid($user) > 0) {
-						setEventMessage($langs->trans('hasBeenValidated', $tmpproposal->ref), 'mesgs');
+						setEventMessages($langs->trans('hasBeenValidated', $tmpproposal->ref), null, 'mesgs');
 					} else {
-						setEventMessage($tmpproposal->error, $tmpproposal->errors, 'errors');
+						setEventMessages($tmpproposal->error, $tmpproposal->errors, 'errors');
 						$error++;
 					}
 				} else {
 					$langs->load("errors");
-					setEventMessage($langs->trans('ErrorIsNotADraft', $tmpproposal->ref), 'errors');
+					setEventMessages($langs->trans('ErrorIsNotADraft', $tmpproposal->ref), null, 'errors');
 					$error++;
 				}
 			} else {
@@ -410,7 +410,7 @@ if ($action == "sign" && $permissiontoclose) {
 				if ($tmpproposal->statut == $tmpproposal::STATUS_VALIDATED) {
 					$tmpproposal->statut = $tmpproposal::STATUS_SIGNED;
 					if ($tmpproposal->closeProposal($user, $tmpproposal::STATUS_SIGNED) >= 0) {
-						setEventMessage($tmpproposal->ref." ".$langs->trans('Signed'), 'mesgs');
+						setEventMessages($tmpproposal->ref." ".$langs->trans('Signed'), null, 'mesgs');
 					} else {
 						setEventMessages($tmpproposal->error, $tmpproposal->errors, 'errors');
 						$error++;
@@ -765,12 +765,12 @@ if ($resql) {
 	if ($socid > 0) {
 		$soc = new Societe($db);
 		$soc->fetch($socid);
-		$title = $langs->trans('ListOfProposals').' - '.$soc->name;
+		$title = $langs->trans('Proposals').' - '.$soc->name;
 		if (empty($search_societe)) {
 			$search_societe = $soc->name;
 		}
 	} else {
-		$title = $langs->trans('ListOfProposals');
+		$title = $langs->trans('Proposals');
 	}
 
 	$num = $db->num_rows($resql);

@@ -1666,7 +1666,6 @@ class Commande extends CommonOrder
 
 			// TODO Ne plus utiliser
 			$this->line->price = $price;
-			$this->line->remise = $remise;
 
 			if (is_array($array_options) && count($array_options) > 0) {
 				$this->line->array_options = $array_options;
@@ -2010,7 +2009,6 @@ class Commande extends CommonOrder
 			$line->price = -$remise->amount_ht;
 			$line->fk_product = 0; // Id produit predefini
 			$line->qty = 1;
-			$line->remise = 0;
 			$line->remise_percent = 0;
 			$line->rang = -1;
 			$line->info_bits = 2;
@@ -2154,9 +2152,11 @@ class Commande extends CommonOrder
 
 				// multilangs
 				if (!empty($conf->global->MAIN_MULTILANGS) && !empty($objp->fk_product) && !empty($loadalsotranslation)) {
-					$line = new Product($this->db);
-					$line->fetch($objp->fk_product);
-					$line->getMultiLangs();
+					$tmpproduct = new Product($this->db);
+					$tmpproduct->fetch($objp->fk_product);
+					$tmpproduct->getMultiLangs();
+
+					$line->multilangs = $tmpproduct->multilangs;
 				}
 
 				$this->lines[$i] = $line;
@@ -3087,9 +3087,10 @@ class Commande extends CommonOrder
 	 *  @param		double			$pu_ht_devise		Amount in currency
 	 * 	@param		int				$notrigger			disable line update trigger
 	 * 	@param		string			$ref_ext			external reference
+	 * @param       integer $rang   line rank
 	 *  @return   	int              					< 0 if KO, > 0 if OK
 	 */
-	public function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1 = 0.0, $txlocaltax2 = 0.0, $price_base_type = 'HT', $info_bits = 0, $date_start = '', $date_end = '', $type = 0, $fk_parent_line = 0, $skip_update_total = 0, $fk_fournprice = null, $pa_ht = 0, $label = '', $special_code = 0, $array_options = 0, $fk_unit = null, $pu_ht_devise = 0, $notrigger = 0, $ref_ext = '')
+	public function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1 = 0.0, $txlocaltax2 = 0.0, $price_base_type = 'HT', $info_bits = 0, $date_start = '', $date_end = '', $type = 0, $fk_parent_line = 0, $skip_update_total = 0, $fk_fournprice = null, $pa_ht = 0, $label = '', $special_code = 0, $array_options = 0, $fk_unit = null, $pu_ht_devise = 0, $notrigger = 0, $ref_ext = '', $rang = 0)
 	{
 		global $conf, $mysoc, $langs, $user;
 
@@ -3214,6 +3215,7 @@ class Commande extends CommonOrder
 			$line->oldline = $staticline;
 			$this->line = $line;
 			$this->line->context = $this->context;
+			$this->line->rang = $rang;
 
 			// Reorder if fk_parent_line change
 			if (!empty($fk_parent_line) && !empty($staticline->fk_parent_line) && $fk_parent_line != $staticline->fk_parent_line) {
@@ -3260,7 +3262,6 @@ class Commande extends CommonOrder
 
 			// TODO deprecated
 			$this->line->price = $price;
-			$this->line->remise = $remise;
 
 			if (is_array($array_options) && count($array_options) > 0) {
 				// We replace values in this->line->array_options only for entries defined into $array_options
@@ -4402,9 +4403,6 @@ class OrderLine extends CommonOrderLine
 		if (empty($this->rang)) {
 			$this->rang = 0;
 		}
-		if (empty($this->remise)) {
-			$this->remise = 0;
-		}
 		if (empty($this->remise_percent)) {
 			$this->remise_percent = 0;
 		}
@@ -4445,7 +4443,7 @@ class OrderLine extends CommonOrderLine
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'commandedet';
 		$sql .= ' (fk_commande, fk_parent_line, label, description, qty, ref_ext,';
 		$sql .= ' vat_src_code, tva_tx, localtax1_tx, localtax2_tx, localtax1_type, localtax2_type,';
-		$sql .= ' fk_product, product_type, remise_percent, subprice, price, remise, fk_remise_except,';
+		$sql .= ' fk_product, product_type, remise_percent, subprice, price, fk_remise_except,';
 		$sql .= ' special_code, rang, fk_product_fournisseur_price, buy_price_ht,';
 		$sql .= ' info_bits, total_ht, total_tva, total_localtax1, total_localtax2, total_ttc, date_start, date_end,';
 		$sql .= ' fk_unit';
@@ -4468,7 +4466,6 @@ class OrderLine extends CommonOrderLine
 		$sql .= " '".price2num($this->remise_percent)."',";
 		$sql .= " ".(price2num($this->subprice) !== '' ?price2num($this->subprice) : "null").",";
 		$sql .= " ".($this->price != '' ? "'".price2num($this->price)."'" : "null").",";
-		$sql .= " '".price2num($this->remise)."',";
 		$sql .= ' '.(!empty($this->fk_remise_except) ? $this->fk_remise_except : "null").',';
 		$sql .= ' '.((int) $this->special_code).',';
 		$sql .= ' '.((int) $this->rang).',';
@@ -4576,9 +4573,6 @@ class OrderLine extends CommonOrderLine
 		}
 		if (empty($this->marge_tx)) {
 			$this->marge_tx = 0;
-		}
-		if (empty($this->remise)) {
-			$this->remise = 0;
 		}
 		if (empty($this->remise_percent)) {
 			$this->remise_percent = 0;

@@ -231,7 +231,7 @@ class IntracommReport extends CommonObject
 		if ($resql) {
 			$i = 1;
 
-			if (empty($resql->num_rows)) {
+			if ($this->db->num_rows($resql) <= 0) {
 				$this->errors[] = 'No data for this period';
 				return 0;
 			}

@@ -167,13 +167,21 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 	}
 	$conf->db->dolibarr_main_db_cryptkey = $dolibarr_main_db_cryptkey;
 
+	// Load global conf
+	$conf->setValues($db);
+
 
 	$listofentities = array(1);
 
 	// Create the global $hookmanager object
 	include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 	$hookmanager = new HookManager($db);
-	$reshook = $hookmanager->initHooks(array('doUpgradeBefore'));
+	$hookmanager->initHooks(array('upgrade2'));
+
+	$parameters = array('versionfrom' => $versionfrom, 'versionto' => $versionto);
+	$object = new stdClass();
+	$action = "upgrade";
+	$reshook = $hookmanager->executeHooks('doUpgradeBefore', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 	if ($reshook >= 0 && is_array($hookmanager->resArray)) {
 		// Example: $hookmanager->resArray = array(2, 3, 10);
 		$listofentities = array_unique(array_merge($listofentities, $hookmanager->resArray));
@@ -1414,11 +1422,9 @@ function migrate_paiementfourn_facturefourn($db, $langs, $conf)
 		if ($select_resql) {
 			$select_num = $db->num_rows($select_resql);
 			$i = 0;
-			$var = true;
 
 			// Pour chaque paiement fournisseur, on insere une ligne dans paiementfourn_facturefourn
 			while (($i < $select_num) && (!$error)) {
-				$var = !$var;
 				$select_obj = $db->fetch_object($select_resql);
 
 				// Verifier si la ligne est deja dans la nouvelle table. On ne veut pas inserer de doublons.
@@ -4616,7 +4622,7 @@ function migrate_user_photospath2()
 			if ($entity > 1) {
 				$dir = DOL_DATA_ROOT.'/'.$entity.'/users';
 			} else {
-				$dir = $conf->user->multidir_output[$entity]; // $conf->user->multidir_output[] for each entity is construct by the multicompany module
+				$dir = DOL_DATA_ROOT.'/users';
 			}
 
 			if ($dir) {

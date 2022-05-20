@@ -1048,17 +1048,15 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 		print '</td>';
 		print '</tr>';
 	} else {
-		/*var_dump($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER);
+		//var_dump($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER);
+		/*
 		$default=$langs->trans('No');
 		print '<tr class="oddeven">';
 		print '<td>'.$langs->trans("MAIN_OPTIMIZEFORTEXTBROWSER").'</td>';
 		print '<td colspan="'.($colspan-1).'">';
-		if ($edit)
-		{
+		if ($edit) {
 			print $form->selectyesno('MAIN_OPTIMIZEFORTEXTBROWSER', $conf->global->MAIN_OPTIMIZEFORTEXTBROWSER, 1);
-		}
-		else
-		{
+		} else {
 			print yn($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER);
 		}
 		print ' &nbsp; wspan class="opacitymedium">'.$langs->trans("Default").'</span>: <strong>'.$default.'</strong> ';

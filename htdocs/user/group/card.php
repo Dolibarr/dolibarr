@@ -257,7 +257,7 @@ $formfile = new FormFile($db);
 if ($action == 'create') {
 	print load_fiche_titre($langs->trans("NewGroup"), '', 'object_group');
 
-	print dol_set_focus('#nom');
+	dol_set_focus('#nom');
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';

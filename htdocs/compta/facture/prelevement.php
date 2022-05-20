@@ -281,8 +281,8 @@ if ($object->id > 0) {
 	}
 
 	$author = new User($db);
-	if ($object->user_author) {
-		$author->fetch($object->user_author);
+	if ($object->fk_user_author) {
+		$author->fetch($object->fk_user_author);
 	}
 
 	if ($type == 'bank-transfer') {
@@ -310,9 +310,9 @@ if ($object->id > 0) {
 	$sql .= " AND pfd.ext_payment_id IS NULL";
 	$sql .= " ORDER BY pfd.date_demande DESC";
 
-	$result_sql = $db->query($sql);
-	if ($result_sql) {
-		$num = $db->num_rows($result_sql);
+	$resql = $db->query($sql);
+	if ($resql) {
+		$num = $db->num_rows($resql);
 		$numopen = $num;
 	} else {
 		dol_print_error($db);
@@ -695,9 +695,9 @@ if ($object->id > 0) {
 	$sql .= " AND pfd.traite = 0";
 	$sql .= " AND pfd.ext_payment_id IS NULL";
 
-	$result_sql = $db->query($sql);
-	if ($result_sql) {
-		$obj = $db->fetch_object($result_sql);
+	$resql = $db->query($sql);
+	if ($resql) {
+		$obj = $db->fetch_object($resql);
 		if ($obj) {
 			$pending = $obj->amount;
 		}
@@ -797,17 +797,17 @@ if ($object->id > 0) {
 	$sql .= " AND pfd.ext_payment_id IS NULL";
 	$sql .= " ORDER BY pfd.date_demande DESC";
 
-	$result_sql = $db->query($sql);
+	$resql = $db->query($sql);
 
 	$num = 0;
-	if ($result_sql) {
+	if ($resql) {
 		$i = 0;
 
 		$tmpuser = new User($db);
 
 		$num = $db->num_rows($result);
 		while ($i < $num) {
-			$obj = $db->fetch_object($result_sql);
+			$obj = $db->fetch_object($resql);
 
 			$tmpuser->id = $obj->user_id;
 			$tmpuser->login = $obj->login;
@@ -840,7 +840,7 @@ if ($object->id > 0) {
 			$i++;
 		}
 
-		$db->free($result_sql);
+		$db->free($resql);
 	} else {
 		dol_print_error($db);
 	}

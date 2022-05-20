@@ -770,7 +770,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 		 * Menu COMPTA-FINANCIAL
 		 */
 		if ($mainmenu == 'accountancy') {
-			get_left_menu_accountancy($mainmenu, $newmenu, $usemenuhider, $leftmenu, $type_user, $db);
+			get_left_menu_accountancy($mainmenu, $newmenu, $usemenuhider, $leftmenu, $type_user);
 		}
 
 		/*

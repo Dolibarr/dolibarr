@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2013-2014  Olivier Geffroy         <jeff@jeffinfo.com>
- * Copyright (C) 2013-2022  Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2014-2015  Ari Elbaz (elarifr)     <github@accedinfo.com>
- * Copyright (C) 2013-2014  Florian Henry           <florian.henry@open-concept.pro>
+/* Copyright (C) 2013-2014	Olivier Geffroy			<jeff@jeffinfo.com>
+ * Copyright (C) 2013-2022	Alexandre Spangaro		<aspangaro@open-dsi.fr>
+ * Copyright (C) 2014-2015	Ari Elbaz (elarifr)		<github@accedinfo.com>
+ * Copyright (C) 2013-2021	Florian Henry			<florian.henry@open-concept.pro>
+ * Copyright (C) 2021      	Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2014       Juanjo Menent           <jmenent@2byte.es>s
  * Copyright (C) 2016       Laurent Destailleur     <eldy@users.sourceforge.net>
  *
@@ -47,6 +48,7 @@ $show_files = GETPOST('show_files', 'int');
 $confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
 $optioncss = GETPOST('optioncss', 'alpha');
+$default_account = GETPOST('default_account', 'int');
 
 // Select Box
 $mesCasesCochees = GETPOST('toselect', 'array');
@@ -442,12 +444,15 @@ if ($result) {
 
 	$arrayofmassactions = array(
 		'ventil'=>img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Ventilate")
+		,'set_default_account'=>img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("ConfirmPreselectAccount")
 		//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 		//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 	);
 	//if ($user->rights->mymodule->supprimer) $arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 	//if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
-	$massactionbutton = $form->selectMassAction('ventil', $arrayofmassactions, 1);
+	if ($massaction !== 'set_default_account') {
+		$massactionbutton = $form->selectMassAction('ventil', $arrayofmassactions, 1);
+	}
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">'."\n";
 	print '<input type="hidden" name="action" value="ventil">';
@@ -461,6 +466,14 @@ if ($result) {
 	print '<input type="hidden" name="page" value="'.$page.'">';
 
 	print_barre_liste($langs->trans("InvoiceLines"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num_lines, $nbtotalofrecords, 'title_accountancy', 0, '', '', $limit);
+
+	if ($massaction == 'set_default_account') {
+		$formquestion[]=array('type' => 'other',
+				'name' => 'set_default_account',
+				'label' => $langs->trans("AccountancyCode"),
+				'value' => $formaccounting->select_account('', 'default_account', 1, array(), 0, 0, 'maxwidth200 maxwidthonsmartphone', 'cachewithshowemptyone'));
+		print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmPreselectAccount"), $langs->trans("ConfirmPreselectAccountQuestion", count($toselect)), "confirm_set_default_account", $formquestion, 1, 0, 200, 500, 1);
+	}
 
 	print '<span class="opacitymedium">'.$langs->trans("DescVentilTodoCustomer").'</span></br><br>';
 
@@ -736,7 +749,7 @@ if ($result) {
 
 		// Suggested accounting account
 		print '<td>';
-		print $formaccounting->select_account($suggestedid, 'codeventil'.$facturefourn_static_det->id, 1, array(), 0, 0, 'codeventil maxwidth200 maxwidthonsmartphone', 'cachewithshowemptyone');
+		print $formaccounting->select_account(($default_account > 0 && $confirm === 'yes' && in_array($objp->rowid."_".$i, $toselect)) ? $default_account : $suggestedid, 'codeventil'.$facturefourn_static_det->id, 1, array(), 0, 0, 'codeventil maxwidth200 maxwidthonsmartphone', 'cachewithshowemptyone');
 		print '</td>';
 
 		// Column with checkbox
@@ -745,6 +758,14 @@ if ($result) {
 		if (!empty($suggestedid) && $suggestedaccountingaccountfor != '' && $suggestedaccountingaccountfor != 'eecwithoutvatnumber') {
 			$ischecked = 1;
 		}
+
+		if (!empty($toselect)) {
+			$ischecked = 0;
+			if (in_array($objp->rowid."_".$i, $toselect)) {
+				$ischecked=1;
+			}
+		}
+
 		print '<input type="checkbox" class="flat checkforselect checkforselect'.$facturefourn_static_det->id.'" name="toselect[]" value="'.$facturefourn_static_det->id."_".$i.'"'.($ischecked ? " checked" : "").'/>';
 		print '</td>';
 

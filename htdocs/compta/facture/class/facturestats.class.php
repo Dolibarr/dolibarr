@@ -57,7 +57,7 @@ class FactureStats extends Stats
 	 * 	@param	int			$typentid   Id typent of thirdpary for filter
 	 * 	@param	int			$categid    Id category of thirdpary for filter
 	 */
-	public function __construct($db, $socid, $mode, $userid = 0, $typentid = 0, $categid = 0)
+	public function __construct(DoliDB $db, $socid, $mode, $userid = 0, $typentid = 0, $categid = 0)
 	{
 		global $user, $conf;
 

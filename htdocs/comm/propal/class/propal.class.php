@@ -490,7 +490,6 @@ class Propal extends CommonObject
 			$line->subprice = -$remise->amount_ht;
 			$line->fk_product = 0; // Id produit predefined
 			$line->qty = 1;
-			$line->remise = 0;
 			$line->remise_percent = 0;
 			$line->rang = -1;
 			$line->info_bits = 2;
@@ -736,7 +735,6 @@ class Propal extends CommonObject
 
 			// TODO deprecated
 			$this->line->price = $price;
-			$this->line->remise = $remise;
 
 			if (is_array($array_options) && count($array_options) > 0) {
 				$this->line->array_options = $array_options;
@@ -806,9 +804,10 @@ class Propal extends CommonObject
 	 * 	@param 		string		$fk_unit 			Code of the unit to use. Null to use the default one
 	 * 	@param		double		$pu_ht_devise		Unit price in currency
 	 * 	@param		int			$notrigger			disable line update trigger
+	 * @param       integer $rang   line rank
 	 *  @return     int     		        		0 if OK, <0 if KO
 	 */
-	public function updateline($rowid, $pu, $qty, $remise_percent, $txtva, $txlocaltax1 = 0.0, $txlocaltax2 = 0.0, $desc = '', $price_base_type = 'HT', $info_bits = 0, $special_code = 0, $fk_parent_line = 0, $skip_update_total = 0, $fk_fournprice = 0, $pa_ht = 0, $label = '', $type = 0, $date_start = '', $date_end = '', $array_options = 0, $fk_unit = null, $pu_ht_devise = 0, $notrigger = 0)
+	public function updateline($rowid, $pu, $qty, $remise_percent, $txtva, $txlocaltax1 = 0.0, $txlocaltax2 = 0.0, $desc = '', $price_base_type = 'HT', $info_bits = 0, $special_code = 0, $fk_parent_line = 0, $skip_update_total = 0, $fk_fournprice = 0, $pa_ht = 0, $label = '', $type = 0, $date_start = '', $date_end = '', $array_options = 0, $fk_unit = null, $pu_ht_devise = 0, $notrigger = 0, $rang = 0)
 	{
 		global $mysoc, $langs;
 
@@ -894,6 +893,7 @@ class Propal extends CommonObject
 			$line->oldline = $staticline;
 			$this->line = $line;
 			$this->line->context = $this->context;
+			$this->line->rang = $rang;
 
 			// Reorder if fk_parent_line change
 			if (!empty($fk_parent_line) && !empty($staticline->fk_parent_line) && $fk_parent_line != $staticline->fk_parent_line) {
@@ -934,7 +934,6 @@ class Propal extends CommonObject
 
 			// TODO deprecated
 			$this->line->price = $price;
-			$this->line->remise = $remise;
 
 			if (is_array($array_options) && count($array_options) > 0) {
 				// We replace values in this->line->array_options only for entries defined into $array_options
@@ -1898,14 +1897,15 @@ class Propal extends CommonObject
 
 				// multilangs
 				if (!empty($conf->global->MAIN_MULTILANGS) && !empty($objp->fk_product) && !empty($loadalsotranslation)) {
-					$line = new Product($this->db);
-					$line->fetch($objp->fk_product);
-					$line->getMultiLangs();
+					$tmpproduct = new Product($this->db);
+					$tmpproduct->fetch($objp->fk_product);
+					$tmpproduct->getMultiLangs();
+
+					$line->multilangs = $tmpproduct->multilangs;
 				}
 
 				$this->lines[$i] = $line;
-				//dol_syslog("1 ".$line->fk_product);
-				//print "xx $i ".$this->lines[$i]->fk_product;
+
 				$i++;
 			}
 
@@ -3991,6 +3991,7 @@ class PropaleLigne extends CommonObjectLine
 	public $multicurrency_total_tva;
 	public $multicurrency_total_ttc;
 
+
 	/**
 	 * 	Class line Contructor
 	 *
@@ -4129,9 +4130,6 @@ class PropaleLigne extends CommonObjectLine
 		}
 		if (empty($this->rang)) {
 			$this->rang = 0;
-		}
-		if (empty($this->remise)) {
-			$this->remise = 0;
 		}
 		if (empty($this->remise_percent) || !is_numeric($this->remise_percent)) {
 			$this->remise_percent = 0;
@@ -4361,9 +4359,6 @@ class PropaleLigne extends CommonObjectLine
 		}
 		if (empty($this->price)) {
 			$this->price = 0; // TODO A virer
-		}
-		if (empty($this->remise)) {
-			$this->remise = 0; // TODO A virer
 		}
 		if (empty($this->remise_percent)) {
 			$this->remise_percent = 0;

@@ -92,14 +92,26 @@ if ($type == 'conf') {
 		$errmsg .= $project->error;
 	}
 }
+
+$currentnbofattendees = 0;
 if ($type == 'global') {
 	$resultproject = $project->fetch($id);
 	if ($resultproject < 0) {
 		$error++;
 		$errmsg .= $project->error;
+	} else {
+		$sql = "SELECT COUNT(*) as nb FROM ".MAIN_DB_PREFIX."projet";
+		$sql .= " WHERE ".MAIN_DB_PREFIX."eventorganization_conferenceorboothattendee = ".((int) $project->id);
+
+		$resql = $db->query($resql);
+		if ($resql) {
+			$obj = $db->fetch_object($resql);
+			if ($obj) {
+				$currentnbofattendees = $obj->nb;
+			}
+		}
 	}
 }
-
 
 // Security check
 $securekeyreceived = GETPOST('securekey', 'alpha');
@@ -628,6 +640,7 @@ print '<div class="center subscriptionformhelptext justify">';
 
 print $langs->trans("EvntOrgWelcomeMessage", $project->title . ' '. $conference->label);
 print '<br>';
+$maxattendees = 0;
 if ($conference->id) {
 	print $langs->trans("Date").': ';
 	print dol_print_date($conference->datep);
@@ -642,138 +655,149 @@ if ($conference->id) {
 		print ' - ';
 		print dol_print_date($project->date_end);
 	}
+	$maxattendees = $project->max_attendees;
 }
 print '</div>';
+
+if ($maxattendees && $currentnbofattendees >= $maxattendees) {
+	print '<br>';
+	print '<div class="warning">'.$langs->trans("MaxNbOfAttendeesReached").'</div>';
+	print '<br>';
+}
+
 
 print '<br>';
 
 dol_htmloutput_errors($errmsg);
 
-if (!empty($conference->id) && $conference->status==ConferenceOrBooth::STATUS_CONFIRMED  || (!empty($project->id) && $project->status==Project::STATUS_VALIDATED)) {
-	// Print form
-	print '<form action="' . $_SERVER["PHP_SELF"] . '" method="POST" name="newmember">' . "\n";
-	print '<input type="hidden" name="token" value="' . newToken() . '" / >';
-	print '<input type="hidden" name="entity" value="' . $entity . '" />';
-	print '<input type="hidden" name="action" value="add" />';
-	print '<input type="hidden" name="type" value="' . $type . '" />';
-	print '<input type="hidden" name="id" value="' . $conference->id . '" />';
-	print '<input type="hidden" name="fk_project" value="' . $project->id . '" />';
-	print '<input type="hidden" name="securekey" value="' . $securekeyreceived . '" />';
+if ((!empty($conference->id) && $conference->status == ConferenceOrBooth::STATUS_CONFIRMED) || (!empty($project->id) && $project->status == Project::STATUS_VALIDATED)) {
+	if (empty($maxattendees) || $currentnbofattendees < $maxattendees) {
+		// Print form
+		print '<form action="' . $_SERVER["PHP_SELF"] . '" method="POST" name="newmember">' . "\n";
+		print '<input type="hidden" name="token" value="' . newToken() . '" / >';
+		print '<input type="hidden" name="entity" value="' . $entity . '" />';
+		print '<input type="hidden" name="action" value="add" />';
+		print '<input type="hidden" name="type" value="' . $type . '" />';
+		print '<input type="hidden" name="id" value="' . $conference->id . '" />';
+		print '<input type="hidden" name="fk_project" value="' . $project->id . '" />';
+		print '<input type="hidden" name="securekey" value="' . $securekeyreceived . '" />';
 
-	print '<br>';
+		print '<br>';
 
-	print '<br><span class="opacitymedium">' . $langs->trans("FieldsWithAreMandatory", '*') . '</span><br>';
-	//print $langs->trans("FieldsWithIsForPublic",'**').'<br>';
+		print '<br><span class="opacitymedium">' . $langs->trans("FieldsWithAreMandatory", '*') . '</span><br>';
+		//print $langs->trans("FieldsWithIsForPublic",'**').'<br>';
 
-	print dol_get_fiche_head('');
+		print dol_get_fiche_head('');
 
-	print '<script type="text/javascript">
-	jQuery(document).ready(function () {
+		print '<script type="text/javascript">
 		jQuery(document).ready(function () {
-			jQuery("#selectcountry_id").change(function() {
-			   document.newmember.action.value="create";
-			   document.newmember.submit();
+			jQuery(document).ready(function () {
+				jQuery("#selectcountry_id").change(function() {
+				   document.newmember.action.value="create";
+				   document.newmember.submit();
+				});
 			});
 		});
-	});
-	</script>';
+		</script>';
 
-	print '<table class="border" summary="form to subscribe" id="tablesubscribe">' . "\n";
+		print '<table class="border" summary="form to subscribe" id="tablesubscribe">' . "\n";
 
-	// Email
-	print '<tr><td>' . $langs->trans("EmailAttendee") . '<span style="color: red">*</span></td><td>';
-	print img_picto('', 'email', 'class="pictofixedwidth"');
-	print '<input type="text" name="email" maxlength="255" class="minwidth200" value="' . dol_escape_htmltag(GETPOST('email')) . '"></td></tr>' . "\n";
-
-	// Company
-	print '<tr id="trcompany" class="trcompany"><td>' . $langs->trans("Company");
-	if (!empty(floatval($project->price_registration))) {
-		print '<span style="color: red">*</span>';
-	}
-	print ' </td><td>';
-	print img_picto('', 'company', 'class="pictofixedwidth"');
-	print '<input type="text" name="societe" class="minwidth200" value="' . dol_escape_htmltag(GETPOST('societe')) . '"></td></tr>' . "\n";
-
-	// Email company for invoice
-	if ($project->price_registration) {
-		print '<tr><td>' . $langs->trans("EmailCompanyForInvoice") . '</td><td>';
+		// Email
+		print '<tr><td>' . $langs->trans("EmailAttendee") . '<span style="color: red">*</span></td><td>';
 		print img_picto('', 'email', 'class="pictofixedwidth"');
-		print '<input type="text" name="emailcompany" maxlength="255" class="minwidth200" value="' . dol_escape_htmltag(GETPOST('emailcompany')) . '"></td></tr>' . "\n";
-	}
+		print '<input type="text" name="email" maxlength="255" class="minwidth200 widthcentpercentminusx maxwidth300" value="' . dol_escape_htmltag(GETPOST('email')) . '"></td></tr>' . "\n";
 
-	// Address
-	print '<tr><td>' . $langs->trans("Address") . '</td><td>' . "\n";
-	print '<textarea name="address" id="address" wrap="soft" class="centpercent" rows="' . ROWS_2 . '">' . dol_escape_htmltag(GETPOST('address', 'restricthtml'), 0, 1) . '</textarea></td></tr>' . "\n";
+		// Company
+		print '<tr id="trcompany" class="trcompany"><td>' . $langs->trans("Company");
+		if (!empty(floatval($project->price_registration))) {
+			print '<span style="color: red">*</span>';
+		}
+		print ' </td><td>';
+		print img_picto('', 'company', 'class="pictofixedwidth"');
+		print '<input type="text" name="societe" class="minwidth200 widthcentpercentminusx maxwidth300" value="' . dol_escape_htmltag(GETPOST('societe')) . '"></td></tr>' . "\n";
 
-	// Zip / Town
-	print '<tr><td>' . $langs->trans('Zip') . ' / ' . $langs->trans('Town') . '</td><td>';
-	print $formcompany->select_ziptown(GETPOST('zipcode'), 'zipcode', array('town', 'selectcountry_id', 'state_id'), 6, 1);
-	print ' / ';
-	print $formcompany->select_ziptown(GETPOST('town'), 'town', array('zipcode', 'selectcountry_id', 'state_id'), 0, 1);
-	print '</td></tr>';
+		// Email company for invoice
+		if ($project->price_registration) {
+			print '<tr><td>' . $langs->trans("EmailCompanyForInvoice") . '</td><td>';
+			print img_picto('', 'email', 'class="pictofixedwidth"');
+			print '<input type="text" name="emailcompany" maxlength="255" class="minwidth200 widthcentpercentminusx maxwidth300" value="' . dol_escape_htmltag(GETPOST('emailcompany')) . '"></td></tr>' . "\n";
+		}
 
-	// Country
-	print '<tr><td>' . $langs->trans('Country') . '<span style="color: red">*</span></td><td>';
-	print img_picto('', 'country', 'class="pictofixedwidth"');
-	$country_id = GETPOST('country_id');
-	if (!$country_id && !empty($conf->global->MEMBER_NEWFORM_FORCECOUNTRYCODE)) {
-		$country_id = getCountry($conf->global->MEMBER_NEWFORM_FORCECOUNTRYCODE, 2, $db, $langs);
-	}
-	if (!$country_id && !empty($conf->geoipmaxmind->enabled)) {
-		$country_code = dol_user_country();
-		//print $country_code;
-		if ($country_code) {
-			$new_country_id = getCountry($country_code, 3, $db, $langs);
-			//print 'xxx'.$country_code.' - '.$new_country_id;
-			if ($new_country_id) {
-				$country_id = $new_country_id;
+		// Address
+		print '<tr><td>' . $langs->trans("Address") . '</td><td>' . "\n";
+		print '<textarea name="address" id="address" wrap="soft" class="centpercent" rows="' . ROWS_2 . '">' . dol_escape_htmltag(GETPOST('address', 'restricthtml'), 0, 1) . '</textarea></td></tr>' . "\n";
+
+		// Zip / Town
+		print '<tr><td>' . $langs->trans('Zip') . ' / ' . $langs->trans('Town') . '</td><td>';
+		print $formcompany->select_ziptown(GETPOST('zipcode'), 'zipcode', array('town', 'selectcountry_id', 'state_id'), 6, 1);
+		print ' / ';
+		print $formcompany->select_ziptown(GETPOST('town'), 'town', array('zipcode', 'selectcountry_id', 'state_id'), 0, 1);
+		print '</td></tr>';
+
+		// Country
+		print '<tr><td>' . $langs->trans('Country') . '<span style="color: red">*</span></td><td>';
+		print img_picto('', 'country', 'class="pictofixedwidth"');
+		$country_id = GETPOST('country_id');
+		if (!$country_id && !empty($conf->global->MEMBER_NEWFORM_FORCECOUNTRYCODE)) {
+			$country_id = getCountry($conf->global->MEMBER_NEWFORM_FORCECOUNTRYCODE, 2, $db, $langs);
+		}
+		if (!$country_id && !empty($conf->geoipmaxmind->enabled)) {
+			$country_code = dol_user_country();
+			//print $country_code;
+			if ($country_code) {
+				$new_country_id = getCountry($country_code, 3, $db, $langs);
+				//print 'xxx'.$country_code.' - '.$new_country_id;
+				if ($new_country_id) {
+					$country_id = $new_country_id;
+				}
 			}
 		}
-	}
-	$country_code = getCountry($country_id, 2, $db, $langs);
-	print $form->select_country($country_id, 'country_id');
-	print '</td></tr>';
-	// State
-	if (empty($conf->global->SOCIETE_DISABLE_STATE)) {
-		print '<tr><td>' . $langs->trans('State') . '</td><td>';
-		if ($country_code) {
-			print $formcompany->select_state(GETPOST("state_id"), $country_code);
-		} else {
-			print '';
+		$country_code = getCountry($country_id, 2, $db, $langs);
+		print $form->select_country($country_id, 'country_id', '', 0, 'minwidth200 widthcentpercentminusx maxwidth300');
+		print '</td></tr>';
+		// State
+		if (empty($conf->global->SOCIETE_DISABLE_STATE)) {
+			print '<tr><td>' . $langs->trans('State') . '</td><td>';
+			if ($country_code) {
+				print img_picto('', 'state', 'class="pictofixedwidth"');
+				print $formcompany->select_state(GETPOST("state_id"), $country_code);
+			} else {
+				print '';
+			}
+			print '</td></tr>';
 		}
+
+		if ($project->price_registration) {
+			print '<tr><td>' . $langs->trans('Price') . '</td><td>';
+			print price($project->price_registration, 1, $langs, 1, -1, -1, $conf->currency);
+			print '</td></tr>';
+		}
+
+		$notetoshow = $note_public;
+		print '<tr><td>' . $langs->trans('Note') . '</td><td>';
+		if (!empty($conf->global->EVENTORGANIZATION_DEFAULT_NOTE_ON_REGISTRATION)) {
+			$notetoshow = str_replace('\n', "\n", $conf->global->EVENTORGANIZATION_DEFAULT_NOTE_ON_REGISTRATION);
+		}
+		print '<textarea name="note_public" class="centpercent" rows="'.ROWS_9.'">'.dol_escape_htmltag($notetoshow, 0, 1).'</textarea>';
 		print '</td></tr>';
+
+		print "</table>\n";
+
+		print dol_get_fiche_end();
+
+		// Save
+		print '<div class="center">';
+		print '<input type="submit" value="' . $langs->trans("Submit") . '" id="submitsave" class="button">';
+		if (!empty($backtopage)) {
+			print ' &nbsp; &nbsp; <input type="submit" value="' . $langs->trans("Cancel") . '" id="submitcancel" class="button button-cancel">';
+		}
+		print '</div>';
+
+
+		print "</form>\n";
+		print "<br>";
+		print '</div></div>';
 	}
-
-	if ($project->price_registration) {
-		print '<tr><td>' . $langs->trans('Price') . '</td><td>';
-		print price($project->price_registration, 1, $langs, 1, -1, -1, $conf->currency);
-		print '</td></tr>';
-	}
-
-	$notetoshow = $note_public;
-	print '<tr><td>' . $langs->trans('Note') . '</td><td>';
-	if (!empty($conf->global->EVENTORGANIZATION_DEFAULT_NOTE_ON_REGISTRATION)) {
-		$notetoshow = str_replace('\n', "\n", $conf->global->EVENTORGANIZATION_DEFAULT_NOTE_ON_REGISTRATION);
-	}
-	print '<textarea name="note_public" class="centpercent" rows="'.ROWS_9.'">'.dol_escape_htmltag($notetoshow, 0, 1).'</textarea>';
-	print '</td></tr>';
-
-	print "</table>\n";
-
-	print dol_get_fiche_end();
-
-	// Save
-	print '<div class="center">';
-	print '<input type="submit" value="' . $langs->trans("Submit") . '" id="submitsave" class="button">';
-	if (!empty($backtopage)) {
-		print ' &nbsp; &nbsp; <input type="submit" value="' . $langs->trans("Cancel") . '" id="submitcancel" class="button button-cancel">';
-	}
-	print '</div>';
-
-
-	print "</form>\n";
-	print "<br>";
-	print '</div></div>';
 } else {
 	print $langs->trans("ConferenceIsNotConfirmed");
 }

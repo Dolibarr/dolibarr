@@ -1228,7 +1228,8 @@ class EmailCollector extends CommonObject
 				$header = imap_fetchheader($connection, $imapemail, 0);
 				$overview = imap_fetch_overview($connection, $imapemail, 0);
 
-				/* print $header; var_dump($overview); */
+				// print $header;
+				// var_dump($overview);
 
 				// Process $header of email
 				$header = preg_replace('/\r\n\s+/m', ' ', $header); // When a header line is on several lines, merge lines
@@ -1336,19 +1337,20 @@ class EmailCollector extends CommonObject
 
 				$this->getmsg($connection, $imapemail);
 
-				//print $plainmsg; var_dump($plainmsg); exit;
+				//print $plainmsg;
+				//var_dump($plainmsg); exit;
 
 				//$htmlmsg,$plainmsg,$charset,$attachments
 				$messagetext = $plainmsg ? $plainmsg : dol_string_nohtmltag($htmlmsg, 0);
 				// Removed emojis
 				$messagetext = preg_replace('/[\x{10000}-\x{10FFFF}]/u', "\xEF\xBF\xBD", $messagetext);
 
-				/*var_dump($plainmsg);
-				var_dump($htmlmsg);
-				var_dump($messagetext);*/
-				/*var_dump($charset);
-				var_dump($attachments);
-				exit;*/
+				//var_dump($plainmsg);
+				//var_dump($htmlmsg);
+				//var_dump($messagetext);
+				//var_dump($charset);
+				//var_dump($attachments);
+				//exit;
 
 				// Parse IMAP email structure
 				/*
@@ -1381,11 +1383,13 @@ class EmailCollector extends CommonObject
 						}
 					}
 				}
-				//var_dump($result); var_dump($partplain); var_dump($parthtml);
+				//var_dump($result);
+				//var_dump($partplain);
+				//var_dump($parthtml);
 
-				var_dump($structure);
-				var_dump($parthtml);
-				var_dump($partplain);
+				//var_dump($structure);
+				//var_dump($parthtml);
+				//var_dump($partplain);
 
 				$messagetext = imap_fetchbody($connection, $imapemail, ($parthtml != '-1' ? $parthtml : ($partplain != '-1' ? $partplain : 1)), FT_PEEK);
 				*/
@@ -1436,8 +1440,13 @@ class EmailCollector extends CommonObject
 
 					foreach ($arrayofreferences as $reference) {
 						//print "Process mail ".$iforemailloop." email_msgid ".$msgid.", date ".dol_print_date($date, 'dayhour').", subject ".$subject.", reference ".dol_escape_htmltag($reference)."<br>\n";
-						if (preg_match('/dolibarr-([a-z]+)([0-9]+)@'.preg_quote($host, '/').'/', $reference, $reg)) {
-							// This is a Dolibarr reference
+						$resultsearchtrackid = preg_match('/dolibarr-([a-z]+)([0-9]+)@'.preg_quote($host, '/').'/', $reference, $reg);
+						if (empty($resultsearchtrackid) && getDolGlobalString('EMAIL_ALTERNATIVE_HOST_SIGNATURE')) {
+							$resultsearchtrackid = preg_match('/dolibarr-([a-z]+)([0-9]+)@'.preg_quote(getDolGlobalString('EMAIL_ALTERNATIVE_HOST_SIGNATURE'), '/').'/', $reference, $reg);
+						}
+
+						if ($resultsearchtrackid) {
+							// This is a Dolibarr reference of the server
 							$trackid = $reg[1].$reg[2];
 
 							$objectid = $reg[2];
@@ -1886,12 +1895,12 @@ class EmailCollector extends CommonObject
 							// Overwrite values with values extracted from source email
 							$errorforthisaction = $this->overwritePropertiesOfObject($actioncomm, $operation['actionparam'], $messagetext, $subject, $header);
 
-							/*var_dump($fk_element_id);
-							var_dump($fk_element_type);
-							var_dump($alreadycreated);
-							var_dump($operation['type']);
-							var_dump($actioncomm);
-							exit;*/
+							//var_dump($fk_element_id);
+							//var_dump($fk_element_type);
+							//var_dump($alreadycreated);
+							//var_dump($operation['type']);
+							//var_dump($actioncomm);
+							//exit;
 
 							if ($errorforthisaction) {
 								$errorforactions++;
@@ -1911,7 +1920,7 @@ class EmailCollector extends CommonObject
 						if (count($pj) > 0) {
 							$sql = "SELECT rowid as id FROM " . MAIN_DB_PREFIX . "user WHERE email LIKE '%" . $from . "%'";
 							$resql = $this->db->query($sql);
-							if ($resql->num_rows == 0) {
+							if ($this->db->num_rows($resql) == 0) {
 								$this->errors = 'User Not allowed to add documents';
 							}
 							$arrayobject = array(

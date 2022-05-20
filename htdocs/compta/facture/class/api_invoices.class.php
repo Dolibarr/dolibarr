@@ -451,7 +451,8 @@ class Invoices extends DolibarrApi
 			$request_data->fk_unit,
 			$request_data->multicurrency_subprice,
 			0,
-			$request_data->ref_ext
+			$request_data->ref_ext,
+			$request_data->rang
 		);
 
 		if ($updateRes > 0) {

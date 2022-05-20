@@ -714,10 +714,10 @@ if (empty($reshook)) {
 
 		$dateinvoice = dol_mktime(0, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'), 'tzserver');	// If we enter the 02 january, we need to save the 02 january for server
 		$datedue = dol_mktime(0, 0, 0, GETPOST('echmonth', 'int'), GETPOST('echday', 'int'), GETPOST('echyear', 'int'), 'tzserver');
-		/*var_dump($dateinvoice.' '.dol_print_date($dateinvoice, 'dayhour'));
-		var_dump(dol_now('tzuserrel').' '.dol_get_last_hour(dol_now('tzuserrel')).' '.dol_print_date(dol_now('tzuserrel'),'dayhour').' '.dol_print_date(dol_get_last_hour(dol_now('tzuserrel')), 'dayhour'));
-		var_dump($db->idate($dateinvoice));
-		exit;*/
+		//var_dump($dateinvoice.' '.dol_print_date($dateinvoice, 'dayhour'));
+		//var_dump(dol_now('tzuserrel').' '.dol_get_last_hour(dol_now('tzuserrel')).' '.dol_print_date(dol_now('tzuserrel'),'dayhour').' '.dol_print_date(dol_get_last_hour(dol_now('tzuserrel')), 'dayhour'));
+		//var_dump($db->idate($dateinvoice));
+		//exit;
 
 		// Replacement invoice
 		if (GETPOST('type') == FactureFournisseur::TYPE_REPLACEMENT) {

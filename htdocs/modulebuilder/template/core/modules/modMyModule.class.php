@@ -205,7 +205,7 @@ class modMyModule extends DolibarrModules
 		$this->dictionaries=array(
 			'langs'=>'mymodule@mymodule',
 			// List of tables we want to see into dictonnary editor
-			'tabname'=>array(MAIN_DB_PREFIX."table1", MAIN_DB_PREFIX."table2", MAIN_DB_PREFIX."table3"),
+			'tabname'=>array("table1", "table2", "table3"),
 			// Label of tables
 			'tablib'=>array("Table1", "Table2", "Table3"),
 			// Request to select fields
