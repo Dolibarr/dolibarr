@@ -86,7 +86,7 @@ $setupnotempty = 0;
 $useFormSetup = 1;
 
 if (!class_exists('FormSetup')) {
-	// For retrocompatibility Dolibarr < 15.0
+	// For retrocompatibility Dolibarr < 17.0
 	if (versioncompare(explode('.', DOL_VERSION), array(17)) < 0 && !class_exists('FormSetup')) {
 		require_once __DIR__.'/../backport/v17/core/class/html.formsetup.class.php';
 	} else {
