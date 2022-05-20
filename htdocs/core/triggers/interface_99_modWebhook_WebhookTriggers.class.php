@@ -93,6 +93,7 @@ class InterfaceWebhookTriggers extends DolibarrTriggers
 		if (empty($conf->webhook) || empty($conf->webhook->enabled)) {
 			return 0; // If module is not enabled, we do nothing
 		}
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 
 		// Or you can execute some code here
 		$nbPosts = 0;
@@ -104,10 +105,11 @@ class InterfaceWebhookTriggers extends DolibarrTriggers
 			if (is_array($actionarray) && in_array($action, $actionarray)) {
 				$jsonstr = '{"triggercode":'.json_encode($action).',"object":'.json_encode($object).'}';
 				$response = getURLContent($tmpobject->url, 'POST', $jsonstr);
-				if (empty($response['curl_error_no'])) {
+				if (empty($response['curl_error_no']) && $response['http_code'] >= 200 && $response['http_code'] < 300) {
 					$nbPosts ++;
 				} else {
 					$errors ++;
+					dol_syslog("Failed to get url with httpcode=".(!empty($response['http_code']) ? $response['http_code'] : "")." curl_error_no=".(!empty($response['curl_error_no']) ? $response['curl_error_no'] : ""), LOG_DEBUG);
 				}
 			}
 		}
