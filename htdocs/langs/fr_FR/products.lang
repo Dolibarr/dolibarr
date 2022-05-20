@@ -411,3 +411,4 @@ Rank=Classement
 SwitchOnSaleStatus=Basculer le statut En Vente
 SwitchOnPurchaseStatus=Basculer le statut En Achat
 PuttingPricesUpToDate=Mettre à jour les prix
+OrProductsWithCategories=Ou produits avec tags/categories

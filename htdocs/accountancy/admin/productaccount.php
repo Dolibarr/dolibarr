@@ -384,6 +384,7 @@ if ($search_onpurchase != '' && $search_onpurchase != '-1') {
 $sql .= " GROUP BY p.rowid, p.ref, p.label, p.description, p.tosell, p.tobuy, p.tva_tx,";
 $sql .= " p.fk_product_type,";
 $sql .= ' p.tms,';
+$sql .= " aa.rowid,";
 if (empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
 	$sql .= " p.accountancy_code_sell, p.accountancy_code_sell_intra, p.accountancy_code_sell_export, p.accountancy_code_buy, p.accountancy_code_buy_intra, p.accountancy_code_buy_export";
 } else {
