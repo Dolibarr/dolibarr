@@ -249,7 +249,7 @@ if ($dirins && $action == 'initmodule' && $modulename) {
 			$error++;
 			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorFailToCreateDir", $backportDest), null, 'errors');
-			$tryToCopyFromSetupClass = true;
+			$tryToCopyFromSetupClass = false;
 		}
 
 		if ($tryToCopyFromSetupClass) {
@@ -260,7 +260,7 @@ if ($dirins && $action == 'initmodule' && $modulename) {
 					$langs->load("errors");
 					setEventMessages($langs->trans("ErrorFailToCopyFile", $backportFileSrc, $backportFileDest), null, 'errors');
 				} else {
-					setEventMessages($langs->trans("AllFilesDidAlreadyExist", $backportFileDest), null, 'warnings');
+					setEventMessages($langs->trans("FileDidAlreadyExist", $backportFileDest), null, 'warnings');
 				}
 			}
 		}
