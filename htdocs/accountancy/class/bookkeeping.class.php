@@ -265,8 +265,8 @@ class BookKeeping extends CommonObject
 			$this->credit = 0.0;
 		}
 
-		// Check parameters (numreo_compte can only be NULL when creating the transaction but not for mouvement in transaction )
-		if (($this->numero_compte == "" || $this->numero_compte == '-1' || $this->numero_compte == 'NotDefined') && ($this->credit != 0.0 || $this->credit != 0.0)) {
+		// Check parameters
+		if (($this->numero_compte == "") || $this->numero_compte == '-1' || $this->numero_compte == 'NotDefined') {
 			$langs->loadLangs(array("errors"));
 			if (in_array($this->doc_type, array('bank', 'expense_report'))) {
 				$this->errors[] = $langs->trans('ErrorFieldAccountNotDefinedForBankLine', $this->fk_docdet, $this->doc_type);

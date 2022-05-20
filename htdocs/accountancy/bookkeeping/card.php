@@ -330,19 +330,16 @@ if ($action == 'setdocref') {
 		$action = '';
 	}
 }
-echo "<pre>";print_r($object);echo "</pre>";
+
 // Validate transaction
 if ($action == 'valid') {
 	$result = $object->transformTransaction(0, $piece_num);
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
-		$action == '';
 	} else {
 		header("Location: list.php?sortfield=t.piece_num&sortorder=asc");
 		exit;
 	}
-	echo "<pre>";print_r($object);echo "</pre>";
-
 }
 
 
