@@ -281,8 +281,8 @@ if ($object->id > 0) {
 	}
 
 	$author = new User($db);
-	if ($object->user_author) {
-		$author->fetch($object->user_author);
+	if ($object->fk_user_author) {
+		$author->fetch($object->fk_user_author);
 	}
 
 	if ($type == 'bank-transfer') {
