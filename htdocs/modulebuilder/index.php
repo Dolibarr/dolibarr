@@ -1442,33 +1442,36 @@ if ($dirins && $action == 'addproperty' && empty($cancel) && !empty($module) && 
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Type")), null, 'errors');
 		}
 
-		if (!$error) {
+		if (!$error && !GETPOST('regenerateclasssql')&& !GETPOST('regeneratemissing')) {
 			$addfieldentry = array(
-				'name'=>GETPOST('propname', 'aZ09'),
-				'label'=>GETPOST('proplabel', 'alpha'),
-				'type'=>GETPOST('proptype', 'alpha'),
-				'arrayofkeyval'=>GETPOST('proparrayofkeyval', 'restricthtml'), // Example json string '{"0":"Draft","1":"Active","-1":"Cancel"}'
-				'visible'=>GETPOST('propvisible', 'int'),
-				'enabled'=>GETPOST('propenabled', 'int'),
-				'position'=>GETPOST('propposition', 'int'),
-				'notnull'=>GETPOST('propnotnull', 'int'),
-				'index'=>GETPOST('propindex', 'int'),
-				'searchall'=>GETPOST('propsearchall', 'int'),
-				'isameasure'=>GETPOST('propisameasure', 'int'),
-				'comment'=>GETPOST('propcomment', 'alpha'),
-				'help'=>GETPOST('prophelp', 'alpha'),
-				'css'=>GETPOST('propcss', 'alpha'),				// Can be 'maxwidth500 widthcentpercentminusxx' for example
-				'cssview'=>GETPOST('propcssview', 'alpha'),
-				'csslist'=>GETPOST('propcsslist', 'alpha'),
-				'default'=>GETPOST('propdefault', 'restricthtml'),
-				'noteditable'=>intval(GETPOST('propnoteditable', 'int')),
-				'validate' => GETPOST('propvalidate', 'int')
+			'name'=>GETPOST('propname', 'aZ09'),
+			'label'=>GETPOST('proplabel', 'alpha'),
+			'type'=>GETPOST('proptype', 'alpha'),
+			'arrayofkeyval'=>GETPOST('proparrayofkeyval', 'restricthtml'), // Example json string '{"0":"Draft","1":"Active","-1":"Cancel"}'
+			'visible'=>GETPOST('propvisible', 'int'),
+			'enabled'=>GETPOST('propenabled', 'int'),
+			'position'=>GETPOST('propposition', 'int'),
+			'notnull'=>GETPOST('propnotnull', 'int'),
+			'index'=>GETPOST('propindex', 'int'),
+			'searchall'=>GETPOST('propsearchall', 'int'),
+			'isameasure'=>GETPOST('propisameasure', 'int'),
+			'comment'=>GETPOST('propcomment', 'alpha'),
+			'help'=>GETPOST('prophelp', 'alpha'),
+			'css'=>GETPOST('propcss', 'alpha'),        // Can be 'maxwidth500 widthcentpercentminusxx' for example
+			'cssview'=>GETPOST('propcssview', 'alpha'),
+			'csslist'=>GETPOST('propcsslist', 'alpha'),
+			'default'=>GETPOST('propdefault', 'restricthtml'),
+			'noteditable'=>intval(GETPOST('propnoteditable', 'int')),
+			'validate' => GETPOST('propvalidate', 'int')
 			);
+
 
 			if (!empty($addfieldentry['arrayofkeyval']) && !is_array($addfieldentry['arrayofkeyval'])) {
 				$addfieldentry['arrayofkeyval'] = json_decode($addfieldentry['arrayofkeyval'], true);
 			}
 		}
+	} else {
+		$addfieldentry = array();
 	}
 
 	/*if (GETPOST('regeneratemissing'))
