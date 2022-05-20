@@ -1,4 +1,6 @@
 <?php
+use Sabre\VObject\Parser\Json;
+
 /* Copyright (C) 2011-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2011-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  *
@@ -216,7 +218,7 @@ class FileUpload
 	/**
 	 * Set delete url
 	 *
-	 * @param 	string	$file		Filename
+	 * @param 	object	$file		Filename
 	 * @return	void
 	 */
 	protected function setFileDeleteUrl($file)
@@ -301,7 +303,7 @@ class FileUpload
 	 * Enter description here ...
 	 *
 	 * @param 	string	$uploaded_file		Uploade file
-	 * @param 	string	$file				File
+	 * @param 	object	$file				File
 	 * @param 	string	$error				Error
 	 * @param	string	$index				Index
 	 * @return  boolean                     True if OK, False if KO
@@ -538,7 +540,7 @@ class FileUpload
 	/**
 	 * Delete uploaded file
 	 *
-	 * @return	void
+	 * @return	string
 	 */
 	public function delete()
 	{
