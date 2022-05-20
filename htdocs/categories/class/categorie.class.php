@@ -256,8 +256,14 @@ class Categorie extends CommonObject
 	/**
 	 * @var array Mother of table
 	 */
-	public $motherof = array();
+	public $motherof = array();	
+	
+	/**
+	 * @var array Childs
+	 */
+	public $childs = array();
 
+	
 	/**
 	 *	Constructor
 	 *
