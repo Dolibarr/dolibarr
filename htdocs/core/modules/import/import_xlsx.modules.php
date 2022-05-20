@@ -760,7 +760,9 @@ class ImportXlsx extends ModeleImports
 								$socialkey = array_search("socialnetworks", $listfields);
 								if (empty($listvalues[$socialkey]) || $listvalues[$socialkey] == "null") {
 									$socialnetwork = explode("_", $fieldname)[1];
-									$newvalue = '\'{ "'.$socialnetwork.'" : "'.$this->db->escape($newval).'" }\'';
+									$json = new stdClass();
+									$json->$socialnetwork = $newval;
+									$newvalue = json_encode($json);
 									$listvalues[$socialkey] = $newvalue;
 								} else {
 									$socialnetwork = explode("_", $fieldname)[1];

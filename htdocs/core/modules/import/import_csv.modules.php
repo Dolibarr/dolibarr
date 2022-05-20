@@ -717,14 +717,16 @@ class ImportCsv extends ModeleImports
 								$socialkey = array_search("socialnetworks", $listfields);
 								if (empty($listvalues[$socialkey]) || $listvalues[$socialkey] == "null") {
 									$socialnetwork = explode("_", $fieldname)[1];
-									$newvalue = '\'{ "'.$socialnetwork.'" : "'.$this->db->escape($newval).'" }\'';
-									$listvalues[$socialkey] = $newvalue;
+									$json = new stdClass();
+									$json->$socialnetwork = $newval;
+									$newvalue = json_encode($json);
+									$listvalues[$socialkey] = "'".$this->db->escape($newvalue)."'";
 								} else {
 									$socialnetwork = explode("_", $fieldname)[1];
 									$jsondata = $listvalues[$socialkey];
 									$jsondata = str_replace("'", "", $jsondata);
 									$json = json_decode($jsondata);
-									$json->$socialnetwork = $this->db->escape($newval);
+									$json->$socialnetwork = $newval;
 									$listvalues[$socialkey] = "'".$this->db->escape(json_encode($json))."'";
 								}
 							}
