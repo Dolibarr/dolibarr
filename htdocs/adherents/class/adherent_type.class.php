@@ -122,6 +122,8 @@ class AdherentType extends CommonObject
 	public $members = array();
 
 	public $multilangs = array();
+        
+	public $other = array();
 
 
 	/**
