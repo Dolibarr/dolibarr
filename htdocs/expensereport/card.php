@@ -1365,7 +1365,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
 	// Actions to build doc
-	$upload_dir = $conf->expensereport->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
+	$upload_dir = $conf->expensereport->multidir_output[$object->entity];
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 }
 
