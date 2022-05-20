@@ -304,6 +304,8 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
 	}
 	$sortfield_new = implode(',', $sortfield_new_list);
 
+	$sql = '';
+
 	if (!empty($conf->agenda->enabled)) {
 		// Search histo on actioncomm
 		if (is_object($objcon) && $objcon->id > 0) {
