@@ -240,10 +240,24 @@ class FormSetup
 	 * saveConfFromPost
 	 *
 	 * @param 	bool 		$noMessageInUpdate display event message on errors and success
-	 * @return 	void|null
+	 * @return	 int        -1 if KO, 1 if OK
 	 */
 	public function saveConfFromPost($noMessageInUpdate = false)
 	{
+		global $hookmanager;
+
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('formSetupBeforeSaveConfFromPost', $parameters, $this); // Note that $action and $object may have been modified by some hooks
+		if ($reshook < 0) {
+			$this->setErrors($hookmanager->errors);
+			return -1;
+		}
+
+		if ($reshook > 0) {
+			return $reshook;
+		}
+
+
 		if (empty($this->items)) {
 			return null;
 		}
@@ -265,11 +279,13 @@ class FormSetup
 			if (empty($noMessageInUpdate)) {
 				setEventMessages($this->langs->trans("SetupSaved"), null);
 			}
+			return 1;
 		} else {
 			$this->db->rollback();
 			if (empty($noMessageInUpdate)) {
 				setEventMessages($this->langs->trans("SetupNotSaved"), null, 'errors');
 			}
+			return -1;
 		}
 	}
 
@@ -652,6 +668,20 @@ class FormSetupItem
 	 */
 	public function saveConfValue()
 	{
+		global $hookmanager;
+
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('formSetupBeforeSaveConfValue', $parameters, $this); // Note that $action and $object may have been modified by some hooks
+		if ($reshook < 0) {
+			$this->setErrors($hookmanager->errors);
+			return -1;
+		}
+
+		if ($reshook > 0) {
+			return $reshook;
+		}
+
+
 		if (!empty($this->saveCallBack) && is_callable($this->saveCallBack)) {
 			return call_user_func($this->saveCallBack, $this);
 		}
