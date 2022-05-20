@@ -57,8 +57,8 @@ dol_syslog($script_file." launched with arg ".join(',', $argv));
 
 $datetimeprev = dol_now();
 
-$month = strftime("%m", $datetimeprev);
-$year = strftime("%Y", $datetimeprev);
+$month = date("%m", $datetimeprev);
+$year = date("%Y", $datetimeprev);
 
 $user = new user($db);
 $user->fetch($conf->global->PRELEVEMENT_USER);

@@ -2332,15 +2332,15 @@ function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs
 /**
  *	Format a string.
  *
- *	@param	string	$fmt		Format of strftime function (http://php.net/manual/fr/function.strftime.php)
+ *	@param	string	$fmt		Format of date function (http://php.net/manual/fr/function.date.php)
  *  @param	int		$ts			Timesamp (If is_gmt is true, timestamp is already includes timezone and daylight saving offset, if is_gmt is false, timestamp is a GMT timestamp and we must compensate with server PHP TZ)
  *  @param	int		$is_gmt		See comment of timestamp parameter
  *	@return	string				A formatted string
  */
-function dol_strftime($fmt, $ts = false, $is_gmt = false)
+function dol_date($fmt, $ts = false, $is_gmt = false)
 {
 	if ((abs($ts) <= 0x7FFFFFFF)) { // check if number in 32-bit signed range
-		return ($is_gmt) ? @gmstrftime($fmt, $ts) : @strftime($fmt, $ts);
+		return ($is_gmt) ? @gmdate($fmt, $ts) : @date($fmt, $ts);
 	} else {
 		return 'Error date into a not supported range';
 	}
@@ -2351,7 +2351,7 @@ function dol_strftime($fmt, $ts = false, $is_gmt = false)
  * 	Return charset is always UTF-8, except if encodetoouput is defined. In this case charset is output charset
  *
  *	@param	int			$time			GM Timestamps date
- *	@param	string		$format      	Output date format (tag of strftime function)
+ *	@param	string		$format      	Output date format (tag of date function)
  *										"%d %b %Y",
  *										"%d/%m/%Y %H:%M",
  *										"%d/%m/%Y %H:%M:%S",
@@ -2469,12 +2469,12 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 
 	// Clean format
 	if (preg_match('/%b/i', $format)) {		// There is some text to translate
-		// We inhibate translation to text made by strftime functions. We will use trans instead later.
+		// We inhibate translation to text made by date functions. We will use trans instead later.
 		$format = str_replace('%b', '__b__', $format);
 		$format = str_replace('%B', '__B__', $format);
 	}
 	if (preg_match('/%a/i', $format)) {		// There is some text to translate
-		// We inhibate translation to text made by strftime functions. We will use trans instead later.
+		// We inhibate translation to text made by date functions. We will use trans instead later.
 		$format = str_replace('%a', '__a__', $format);
 		$format = str_replace('%A', '__A__', $format);
 	}
@@ -2498,13 +2498,13 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 		$ssec	= (!empty($reg[6]) ? $reg[6] : '');
 
 		$time = dol_mktime($shour, $smin, $ssec, $smonth, $sday, $syear, true);
-		$ret = adodb_strftime($format, $time + $offsettz + $offsetdst, $to_gmt);
+		$ret = adodb_date($format, $time + $offsettz + $offsetdst, $to_gmt);
 	} else {
 		// Date is a timestamps
 		if ($time < 100000000000) {	// Protection against bad date values
 			$timetouse = $time + $offsettz + $offsetdst; // TODO Replace this with function Date PHP. We also should not use anymore offsettz and offsetdst but only offsettzstring.
 
-			$ret = adodb_strftime($format, $timetouse, $to_gmt);	// If to_gmt = false then adodb_strftime use TZ of server
+			$ret = adodb_date($format, $timetouse, $to_gmt);	// If to_gmt = false then adodb_date use TZ of server
 		} else {
 			$ret = 'Bad value '.$time.' for date';
 		}
@@ -2513,8 +2513,8 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 	if (preg_match('/__b__/i', $format)) {
 		$timetouse = $time + $offsettz + $offsetdst; // TODO Replace this with function Date PHP. We also should not use anymore offsettz and offsetdst but only offsettzstring.
 
-		// Here ret is string in PHP setup language (strftime was used). Now we convert to $outputlangs.
-		$month = adodb_strftime('%m', $timetouse, $to_gmt);		// If to_gmt = false then adodb_strftime use TZ of server
+		// Here ret is string in PHP setup language (date was used). Now we convert to $outputlangs.
+		$month = adodb_date('%m', $timetouse, $to_gmt);		// If to_gmt = false then adodb_date use TZ of server
 		$month = sprintf("%02d", $month); // $month may be return with format '06' on some installation and '6' on other, so we force it to '06'.
 		if ($encodetooutput) {
 			$monthtext = $outputlangs->transnoentities('Month'.$month);
@@ -2533,7 +2533,7 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 		//print "time=$time offsettz=$offsettz offsetdst=$offsetdst offsettzstring=$offsettzstring";
 		$timetouse = $time + $offsettz + $offsetdst; // TODO Replace this with function Date PHP. We also should not use anymore offsettz and offsetdst but only offsettzstring.
 
-		$w = adodb_strftime('%w', $timetouse, $to_gmt);		// If to_gmt = false then adodb_strftime use TZ of server
+		$w = adodb_date('%w', $timetouse, $to_gmt);		// If to_gmt = false then adodb_date use TZ of server
 		$dayweek = $outputlangs->transnoentitiesnoconv('Day'.$w);
 		$ret = str_replace('__A__', $dayweek, $ret);
 		$ret = str_replace('__a__', dol_substr($dayweek, 0, 3), $ret);

@@ -45,12 +45,12 @@ if (!$user->admin) {
 // Date range
 $year = GETPOST("year");
 if (empty($year)) {
-	$year_current = strftime("%Y", dol_now());
-	$month_current = strftime("%m", dol_now());
+	$year_current = date("%Y", dol_now());
+	$month_current = date("%m", dol_now());
 	$year_start = $year_current;
 } else {
 	$year_current = $year;
-	$month_current = strftime("%m", dol_now());
+	$month_current = date("%m", dol_now());
 	$year_start = $year;
 }
 $date_start = dol_mktime(0, 0, 0, $date_startmonth, $date_startday, $date_startyear);

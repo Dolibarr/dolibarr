@@ -764,8 +764,8 @@ class BonPrelevement extends CommonObject
 			$datetimeprev = $executiondate;
 		}
 
-		$month = strftime("%m", $datetimeprev);
-		$year = strftime("%Y", $datetimeprev);
+		$month = date("%m", $datetimeprev);
+		$year = date("%Y", $datetimeprev);
 
 		$this->invoice_in_error = array();
 		$this->thirdparty_in_error = array();
@@ -1750,8 +1750,8 @@ class BonPrelevement extends CommonObject
 		// Date d'echeance C1
 
 		fputs($this->file, "       ");
-		fputs($this->file, strftime("%d%m", $this->date_echeance));
-		fputs($this->file, substr(strftime("%y", $this->date_echeance), 1));
+		fputs($this->file, date("%d%m", $this->date_echeance));
+		fputs($this->file, substr(date("%y", $this->date_echeance), 1));
 
 		// Raison Sociale Destinataire C2
 
@@ -1976,8 +1976,8 @@ class BonPrelevement extends CommonObject
 		// Date d'echeance C1
 
 		fputs($this->file, "       ");
-		fputs($this->file, strftime("%d%m", $this->date_echeance));
-		fputs($this->file, substr(strftime("%y", $this->date_echeance), 1));
+		fputs($this->file, date("%d%m", $this->date_echeance));
+		fputs($this->file, substr(date("%y", $this->date_echeance), 1));
 
 		// Raison Sociale C2
 

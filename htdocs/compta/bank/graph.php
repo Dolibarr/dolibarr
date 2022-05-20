@@ -185,7 +185,7 @@ if ($result < 0) {
 
 		$subtotal = 0;
 		$day = dol_mktime(12, 0, 0, $month, 1, $year);
-		$textdate = strftime("%Y%m%d", $day);
+		$textdate = date("%Y%m%d", $day);
 		$xyear = substr($textdate, 0, 4);
 		$xday = substr($textdate, 6, 2);
 		$xmonth = substr($textdate, 4, 2);
@@ -200,11 +200,11 @@ if ($result < 0) {
 			}
 			$datamin[$i] = $object->min_desired;
 			$dataall[$i] = $object->min_allowed;
-			//$labels[$i] = strftime("%d",$day);
+			//$labels[$i] = date("%d",$day);
 			$labels[$i] = $xday;
 
 			$day += 86400;
-			$textdate = strftime("%Y%m%d", $day);
+			$textdate = date("%Y%m%d", $day);
 			$xyear = substr($textdate, 0, 4);
 			$xday = substr($textdate, 6, 2);
 			$xmonth = substr($textdate, 4, 2);
@@ -329,7 +329,7 @@ if ($result < 0) {
 		$subtotal = 0;
 		$now = time();
 		$day = dol_mktime(12, 0, 0, 1, 1, $year);
-		$textdate = strftime("%Y%m%d", $day);
+		$textdate = date("%Y%m%d", $day);
 		$xyear = substr($textdate, 0, 4);
 		$xday = substr($textdate, 6, 2);
 
@@ -349,7 +349,7 @@ if ($result < 0) {
 			}*/
 			$labels[$i] = dol_print_date($day, "%Y%m");
 			$day += 86400;
-			$textdate = strftime("%Y%m%d", $day);
+			$textdate = date("%Y%m%d", $day);
 			$xyear = substr($textdate, 0, 4);
 			$xday = substr($textdate, 6, 2);
 			$i++;
@@ -446,12 +446,12 @@ if ($result < 0) {
 		$subtotal = 0;
 
 		$day = $min;
-		$textdate = strftime("%Y%m%d", $day);
+		$textdate = date("%Y%m%d", $day);
 		//print "x".$textdate;
 		$i = 0;
 		while ($day <= ($max + 86400)) {	// On va au dela du dernier jour
 			$subtotal = $subtotal + (isset($amounts[$textdate]) ? $amounts[$textdate] : 0);
-			//print strftime ("%e %d %m %y",$day)." ".$subtotal."\n<br>";
+			//print date ("%e %d %m %y",$day)." ".$subtotal."\n<br>";
 			if ($day > ($max + 86400)) {
 				$datas[$i] = ''; // Valeur speciale permettant de ne pas tracer le graph
 			} else {
@@ -466,7 +466,7 @@ if ($result < 0) {
 			$labels[$i] = substr($textdate, 0, 6);
 
 			$day += 86400;
-			$textdate = strftime("%Y%m%d", $day);
+			$textdate = date("%Y%m%d", $day);
 			$i++;
 		}
 

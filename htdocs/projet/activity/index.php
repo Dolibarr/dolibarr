@@ -324,7 +324,7 @@ if (!empty($conf->global->PROJECT_TASK_TIME_YEAR)) {
 	print '<div class="div-table-responsive-no-min">';
 	print '<br><table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans("ActivityOnProjectThisYear").': '.strftime("%Y", $now).'</td>';
+	print '<td>'.$langs->trans("ActivityOnProjectThisYear").': '.date("%Y", $now).'</td>';
 	print '<td class="right">'.$langs->trans("Time").'</td>';
 	print "</tr>\n";
 
@@ -336,7 +336,7 @@ if (!empty($conf->global->PROJECT_TASK_TIME_YEAR)) {
 	$sql .= " AND p.entity = ".((int) $conf->entity);
 	$sql .= " AND tt.fk_task = t.rowid";
 	$sql .= " AND tt.fk_user = ".((int) $user->id);
-	$sql .= " AND YEAR(task_date) = '".strftime("%Y", $now)."'";
+	$sql .= " AND YEAR(task_date) = '".date("%Y", $now)."'";
 	$sql .= " AND p.rowid in (".$db->sanitize($projectsListId).")";
 	$sql .= " GROUP BY p.rowid, p.ref, p.title, p.public";
 

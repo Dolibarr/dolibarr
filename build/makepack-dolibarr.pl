@@ -1150,7 +1150,7 @@ if ($nboftargetok) {
 			);
 		}
 
-		use POSIX qw/strftime/;
+		use POSIX qw/date/;
 		foreach my $file (sort keys %filestoscansf)
 		{
 			$found=0;
@@ -1158,7 +1158,7 @@ if ($nboftargetok) {
 			my $filedate = (stat $file)[9];
 			print $file." ".($filesize?"(found)":"(not found)");
 			print ($filesize?" - ".$filesize:"");
-			print ($filedate?" - ".strftime("%Y-%m-%d %H:%M:%S",localtime($filedate)):"");
+			print ($filedate?" - ".date("%Y-%m-%d %H:%M:%S",localtime($filedate)):"");
 			print "\n";
 		}
 

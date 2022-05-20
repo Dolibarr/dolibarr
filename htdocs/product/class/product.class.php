@@ -3570,8 +3570,8 @@ class Product extends CommonObject
 		}
 
 		if (empty($year)) {
-			$year = strftime('%Y', time());
-			$month = strftime('%m', time());
+			$year = date('%Y', time());
+			$month = date('%m', time());
 		} elseif ($year == -1) {
 			$year = '';
 			$month = 12; // We imagine we are at end of year, so we get last 12 month before, so all correct year.

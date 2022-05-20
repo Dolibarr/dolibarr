@@ -35,7 +35,7 @@ $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 $userid = GETPOST('userid', 'int');
 $socid = GETPOST('socid', 'int');
 
-$nowyear = strftime("%Y", dol_now());
+$nowyear = date("%Y", dol_now());
 $year = GETPOST('year') > 0 ?GETPOST('year') : $nowyear;
 $startyear = $year - (empty($conf->global->MAIN_STATS_GRAPHS_SHOW_N_YEARS) ? 2 : max(1, min(10, $conf->global->MAIN_STATS_GRAPHS_SHOW_N_YEARS)));
 $endyear = $year;

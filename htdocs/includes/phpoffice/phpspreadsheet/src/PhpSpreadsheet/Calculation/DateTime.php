@@ -519,7 +519,7 @@ class DateTime
                 if ($testVal2 !== false) {
                     $testVal3 = strtok('- ');
                     if ($testVal3 === false) {
-                        $testVal3 = strftime('%Y');
+                        $testVal3 = date('%Y');
                     }
                 } else {
                     return Functions::VALUE();
@@ -542,16 +542,16 @@ class DateTime
         if (($PHPDateArray !== false) && ($PHPDateArray['error_count'] == 0)) {
             // Execute function
             if ($PHPDateArray['year'] == '') {
-                $PHPDateArray['year'] = strftime('%Y');
+                $PHPDateArray['year'] = date('%Y');
             }
             if ($PHPDateArray['year'] < 1900) {
                 return Functions::VALUE();
             }
             if ($PHPDateArray['month'] == '') {
-                $PHPDateArray['month'] = strftime('%m');
+                $PHPDateArray['month'] = date('%m');
             }
             if ($PHPDateArray['day'] == '') {
-                $PHPDateArray['day'] = strftime('%d');
+                $PHPDateArray['day'] = date('%d');
             }
             if (!checkdate($PHPDateArray['month'], $PHPDateArray['day'], $PHPDateArray['year'])) {
                 return Functions::VALUE();

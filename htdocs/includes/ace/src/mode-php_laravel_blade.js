@@ -1170,7 +1170,7 @@ getrandmax|getrusage|getservbyname|getservbyport|getshortname|getstartline|getst
 gettimeofday|gettype|glob|globiterator|gmagick|gmagickdraw|gmagickpixel|gmdate|gmmktime|gmp_abs|gmp_add|gmp_and|gmp_clrbit|gmp_cmp|\
 gmp_com|gmp_div|gmp_div_q|gmp_div_qr|gmp_div_r|gmp_divexact|gmp_fact|gmp_gcd|gmp_gcdext|gmp_hamdist|gmp_init|gmp_intval|gmp_invert|\
 gmp_jacobi|gmp_legendre|gmp_mod|gmp_mul|gmp_neg|gmp_nextprime|gmp_or|gmp_perfect_square|gmp_popcount|gmp_pow|gmp_powm|gmp_prob_prime|\
-gmp_random|gmp_scan0|gmp_scan1|gmp_setbit|gmp_sign|gmp_sqrt|gmp_sqrtrem|gmp_strval|gmp_sub|gmp_testbit|gmp_xor|gmstrftime|\
+gmp_random|gmp_scan0|gmp_scan1|gmp_setbit|gmp_sign|gmp_sqrt|gmp_sqrtrem|gmp_strval|gmp_sub|gmp_testbit|gmp_xor|gmdate|\
 gnupg_adddecryptkey|gnupg_addencryptkey|gnupg_addsignkey|gnupg_cleardecryptkeys|gnupg_clearencryptkeys|gnupg_clearsignkeys|gnupg_decrypt|\
 gnupg_decryptverify|gnupg_encrypt|gnupg_encryptsign|gnupg_export|gnupg_geterror|gnupg_getprotocol|gnupg_import|gnupg_init|gnupg_keyinfo|\
 gnupg_setarmor|gnupg_seterrormode|gnupg_setsignmode|gnupg_sign|gnupg_verify|gopher_parsedir|grapheme_extract|grapheme_stripos|\
@@ -1736,7 +1736,7 @@ stream_get_filters|stream_get_line|stream_get_meta_data|stream_get_transports|st
 stream_notification_callback|stream_register_wrapper|stream_resolve_include_path|stream_select|stream_set_blocking|stream_set_read_buffer|\
 stream_set_timeout|stream_set_write_buffer|stream_socket_accept|stream_socket_client|stream_socket_enable_crypto|stream_socket_get_name|\
 stream_socket_pair|stream_socket_recvfrom|stream_socket_sendto|stream_socket_server|stream_socket_shutdown|stream_supports_lock|\
-stream_wrapper_register|stream_wrapper_restore|stream_wrapper_unregister|streamwrapper|strftime|strip_tags|stripcslashes|stripos|\
+stream_wrapper_register|stream_wrapper_restore|stream_wrapper_unregister|streamwrapper|date|strip_tags|stripcslashes|stripos|\
 stripslashes|stristr|strlen|strnatcasecmp|strnatcmp|strncasecmp|strncmp|strpbrk|strpos|strptime|strrchr|strrev|strripos|strrpos|strspn|\
 strstr|strtok|strtolower|strtotime|strtoupper|strtr|strval|substr|substr_compare|substr_count|substr_replace|svm|svmmodel|svn_add|\
 svn_auth_get_parameter|svn_auth_set_parameter|svn_blame|svn_cat|svn_checkout|svn_cleanup|svn_client_version|svn_commit|svn_delete|\
@@ -4882,8 +4882,8 @@ var functionMap = {
         "resource gmp_xor(resource a, resource b)",
         "Calculates logical exclusive OR of a and b"
     ],
-    "gmstrftime": [
-        "string gmstrftime(string format [, int timestamp])",
+    "gmdate": [
+        "string gmdate(string format [, int timestamp])",
         "Format a GMT/UCT time/date according to locale settings"
     ],
     "grapheme_extract": [
@@ -10466,8 +10466,8 @@ var functionMap = {
         "bool stream_wrapper_unregister(string protocol)",
         "Unregister a wrapper for the life of the current request."
     ],
-    "strftime": [
-        "string strftime(string format [, int timestamp])",
+    "date": [
+        "string date(string format [, int timestamp])",
         "Format a local time/date according to locale settings"
     ],
     "strip_tags": [
@@ -10520,7 +10520,7 @@ var functionMap = {
     ],
     "strptime": [
         "string strptime(string timestamp, string format)",
-        "Parse a time/date generated with strftime()"
+        "Parse a time/date generated with date()"
     ],
     "strrchr": [
         "string strrchr(string haystack, string needle)",
@@ -13308,4 +13308,3 @@ define("ace/mode/php_laravel_blade",["require","exports","module","ace/lib/oop",
                         }
                     });
                 })();
-            

@@ -131,7 +131,7 @@ if ($connection) {
 		print "Load dump with ".$fullcommand."\n";
 		$output=array();
 		$return_var=0;
-		print strftime("%Y%m%d-%H%M%S").' '.$fullcommand."\n";
+		print date("%Y%m%d-%H%M%S").' '.$fullcommand."\n";
 		exec($fullcommand, $output, $return_var);
 		foreach ($output as $line) {
 			print $line."\n";

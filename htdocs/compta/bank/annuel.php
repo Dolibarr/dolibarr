@@ -47,7 +47,7 @@ if ($user->socid) {
 $result = restrictedArea($user, 'banque', $fieldvalue, 'bank_account&bank_account', '', '', $fieldtype);
 
 $year_start = GETPOST('year_start');
-$year_current = strftime("%Y", time());
+$year_current = date("%Y", time());
 if (!$year_start) {
 	$year_start = $year_current - 2;
 	$year_end = $year_current;

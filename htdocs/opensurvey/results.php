@@ -714,18 +714,18 @@ if ($object->format == "D") {
 
 		$currenty = 0;
 		if ($current) {
-			$currenty = strftime("%Y", $current);
+			$currenty = date("%Y", $current);
 		}
 		$next = 0;
 		if ($next) {
-			$nexty = strftime("%Y", $next);
+			$nexty = date("%Y", $next);
 		}
 		if (isset($toutsujet[$i + 1]) && ($currenty == $nexty)) {
 			$colspan++;
 		} else {
 			print '<td colspan='.$colspan.' class="annee">';
 			if ($current) {
-				print strftime("%Y", $current);
+				print date("%Y", $current);
 			}
 			print '</td>'."\n";
 			$colspan = 1;
@@ -745,7 +745,7 @@ if ($object->format == "D") {
 	//affichage des mois
 	$colspan = 1;
 	for ($i = 0; $i < $nbofsujet; $i++) {
-		$cur = intval($toutsujet[$i]); // intval() est utiliser pour supprimer le suffixe @* qui déplaît logiquement à strftime()
+		$cur = intval($toutsujet[$i]); // intval() est utiliser pour supprimer le suffixe @* qui déplaît logiquement à date()
 
 		if (isset($toutsujet[$i + 1]) === false) {
 			$next = false;

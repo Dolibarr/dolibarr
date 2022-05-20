@@ -39,12 +39,12 @@ $nbofyear = 4;
 // Date range
 $year = GETPOST('year', 'int');
 if (empty($year)) {
-	$year_current = strftime("%Y", dol_now());
-	$month_current = strftime("%m", dol_now());
+	$year_current = date("%Y", dol_now());
+	$month_current = date("%m", dol_now());
 	$year_start = $year_current - ($nbofyear - 1);
 } else {
 	$year_current = $year;
-	$month_current = strftime("%m", dol_now());
+	$month_current = date("%m", dol_now());
 	$year_start = $year - ($nbofyear - 1);
 }
 $date_start = dol_mktime(0, 0, 0, $date_startmonth, $date_startday, $date_startyear, 'tzserver');	// We use timezone of server so report is same from everywhere
@@ -307,8 +307,8 @@ print '</tr>';
 $now_show_delta = 0;
 $minyear = substr($minyearmonth, 0, 4);
 $maxyear = substr($maxyearmonth, 0, 4);
-$nowyear = strftime("%Y", dol_now());
-$nowyearmonth = strftime("%Y-%m", dol_now());
+$nowyear = date("%Y", dol_now());
+$nowyearmonth = date("%Y-%m", dol_now());
 $maxyearmonth = max($maxyearmonth, $nowyearmonth);
 $now = dol_now();
 $casenow = dol_print_date($now, "%Y-%m");

@@ -51,7 +51,7 @@ if ($page < 0) {
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $offset = $limit * $page;
 
-$year = strftime("%Y", time());
+$year = date("%Y", time());
 
 
 /*

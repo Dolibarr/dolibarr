@@ -38,7 +38,7 @@ $localTaxType = GETPOST('localTaxType', 'int');
 // Date range
 $year = GETPOST("year", "int");
 if (empty($year)) {
-	$year_current = strftime("%Y", dol_now());
+	$year_current = date("%Y", dol_now());
 	$year_start = $year_current;
 } else {
 	$year_current = $year;

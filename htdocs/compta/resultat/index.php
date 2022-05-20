@@ -47,12 +47,12 @@ $nbofyear = 4;
 // Date range
 $year = GETPOST('year', 'int');
 if (empty($year)) {
-	$year_current = strftime("%Y", dol_now());
-	$month_current = strftime("%m", dol_now());
+	$year_current = date("%Y", dol_now());
+	$month_current = date("%m", dol_now());
 	$year_start = $year_current - ($nbofyear - 1);
 } else {
 	$year_current = $year;
-	$month_current = strftime("%m", dol_now());
+	$month_current = date("%m", dol_now());
 	$year_start = $year - ($nbofyear - 1);
 }
 $date_start = dol_mktime(0, 0, 0, $date_startmonth, $date_startday, $date_startyear);
@@ -1040,7 +1040,7 @@ for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++) {
 		if ($mois > 12) {
 			$annee_decalage = $annee + 1;
 		}
-		$case = strftime("%Y-%m", dol_mktime(12, 0, 0, $mois_modulo, 1, $annee_decalage));
+		$case = date("%Y-%m", dol_mktime(12, 0, 0, $mois_modulo, 1, $annee_decalage));
 
 		print '<td class="right">';
 		if ($modecompta == 'CREANCES-DETTES' || $modecompta == 'BOOKKEEPING') {

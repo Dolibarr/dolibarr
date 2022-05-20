@@ -184,7 +184,7 @@ snippet doc_h\n\
 	 *\n\
 	 * @author ${2:`g:snips_author`}\n\
 	 * @version ${3:$Id$}\n\
-	 * @copyright ${4:$2}, `strftime('%d %B, %Y')`\n\
+	 * @copyright ${4:$2}, `date('%d %B, %Y')`\n\
 	 * @package ${5:default}\n\
 	 */\n\
 \n\
@@ -394,4 +394,3 @@ exports.scope = "php";
                         }
                     });
                 })();
-            

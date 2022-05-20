@@ -336,7 +336,7 @@ if ($object->format == "D") {
 	//display of months
 	$colspan = 1;
 	for ($i = 0; $i < $nbofsujet; $i++) {
-		$cur = intval($toutsujet[$i]); // intval() est utiliser pour supprimer le suffixe @* qui déplaît logiquement à strftime()
+		$cur = intval($toutsujet[$i]); // intval() est utiliser pour supprimer le suffixe @* qui déplaît logiquement à date()
 
 		if (isset($toutsujet[$i + 1]) === false) {
 			$next = false;

@@ -1498,8 +1498,8 @@ if (count($arrayofuniqueproduct) == 1 && is_numeric($year)) {
 		$productidselected = $key;
 		$productlabelselected = $val;
 	}
-	$datebefore = dol_get_first_day($year ? $year : strftime("%Y", time()), $month ? $month : 1, true);
-	$dateafter = dol_get_last_day($year ? $year : strftime("%Y", time()), $month ? $month : 12, true);
+	$datebefore = dol_get_first_day($year ? $year : date("%Y", time()), $month ? $month : 1, true);
+	$dateafter = dol_get_last_day($year ? $year : date("%Y", time()), $month ? $month : 12, true);
 	$balancebefore = $movement->calculateBalanceForProductBefore($productidselected, $datebefore);
 	$balanceafter = $movement->calculateBalanceForProductBefore($productidselected, $dateafter);
 

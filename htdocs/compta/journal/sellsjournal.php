@@ -76,8 +76,8 @@ $morequery = '&date_startyear='.$date_startyear.'&date_startmonth='.$date_startm
 llxHeader('', $langs->trans("SellsJournal"), '', '', 0, 0, '', '', $morequery);
 
 
-$year_current = strftime("%Y", dol_now());
-$pastmonth = strftime("%m", dol_now()) - 1;
+$year_current = date("%Y", dol_now());
+$pastmonth = date("%m", dol_now()) - 1;
 $pastmonthyear = $year_current;
 if ($pastmonth == 0) {
 	$pastmonth = 12;

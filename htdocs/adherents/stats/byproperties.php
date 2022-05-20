@@ -39,7 +39,7 @@ if ($user->socid > 0) {
 }
 $result = restrictedArea($user, 'adherent', '', '', 'cotisation');
 
-$year = strftime("%Y", time());
+$year = date("%Y", time());
 $startyear = $year - (empty($conf->global->MAIN_STATS_GRAPHS_SHOW_N_YEARS) ? 2 : max(1, min(10, $conf->global->MAIN_STATS_GRAPHS_SHOW_N_YEARS)));
 $endyear = $year;
 

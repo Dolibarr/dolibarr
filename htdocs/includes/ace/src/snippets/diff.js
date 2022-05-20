@@ -9,7 +9,7 @@ snippet header DEP-3 style header\n\
 	Forwarded: ${5:no|not-needed|url}\n\
 	Author: ${6:`g:snips_author`}\n\
 	Reviewed-by: ${7:name and email}\n\
-	Last-Update: ${8:`strftime(\"%Y-%m-%d\")`}\n\
+	Last-Update: ${8:`date(\"%Y-%m-%d\")`}\n\
 	Applied-Upstream: ${9:upstream version|url|commit}\n\
 \n\
 ";
@@ -22,4 +22,3 @@ exports.scope = "diff";
                         }
                     });
                 })();
-            

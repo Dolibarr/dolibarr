@@ -148,7 +148,7 @@ class mod_contract_serpis extends ModelNumRefContracts
 		}
 
 		$date = $contract->date_contrat;
-		$yymm = strftime("%y%m", $date);
+		$yymm = date("%y%m", $date);
 
 		if ($max >= (pow(10, 4) - 1)) {
 			$num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is

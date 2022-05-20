@@ -1,8 +1,8 @@
 <?php
 /**
-ADOdb Date Library, part of the ADOdb abstraction library 
-See Wiki: https://adodb.org/dokuwiki/doku.php?id=v5:datetime:datetime_index 
-Download: https://github.com/ADOdb/ADOdb/blob/master/adodb-time.inc.php 
+ADOdb Date Library, part of the ADOdb abstraction library
+See Wiki: https://adodb.org/dokuwiki/doku.php?id=v5:datetime:datetime_index
+Download: https://github.com/ADOdb/ADOdb/blob/master/adodb-time.inc.php
 
 PHP native date functions use integer timestamps for computations.
 Because of this, dates are restricted to the years 1901-2038 on Unix
@@ -25,8 +25,8 @@ This library replaces native functions as follows:
 	gmdate()   with  adodb_gmdate()
 	mktime()   with  adodb_mktime()
 	gmmktime() with  adodb_gmmktime()
-	strftime() with  adodb_strftime()
-	strftime() with  adodb_gmstrftime()
+	date() with  adodb_date()
+	date() with  adodb_gmdate()
 </pre>
 
 The parameters are identical, except that adodb_date() accepts a subset
@@ -162,10 +162,10 @@ Converts a gmt date to a unix timestamp.  Unlike the function gmmktime(), it sup
 dates outside the 1901 to 2038 range. Differs from gmmktime() in that all parameters
 are currently compulsory.
 
-** FUNCTION adodb_gmstrftime($fmt, $timestamp = false)
+** FUNCTION adodb_gmdate($fmt, $timestamp = false)
 Convert a timestamp to a formatted GMT date.
 
-** FUNCTION adodb_strftime($fmt, $timestamp = false)
+** FUNCTION adodb_date($fmt, $timestamp = false)
 
 Convert a timestamp to a formatted local date. Internally converts $fmt into
 adodb_date format, then echo result.
@@ -272,7 +272,7 @@ Added PHP 5.2.0 compatability fixes.
  *
 
 - 19 March 2006 0.24
-Changed strftime() locale detection, because some locales prepend the day of week to the date when %c is used.
+Changed date() locale detection, because some locales prepend the day of week to the date when %c is used.
 
 - 10 Feb 2006 0.23
 PHP5 compat: when we detect PHP5, the RFC2822 format for gmt 0000hrs is changed from -0000 to +0000.
@@ -286,7 +286,7 @@ In PHP 4.3.11, the 'r' format has changed. Leading 0 in day is added. Changed fo
 Added support for negative months in adodb_mktime().
 
 - 24 Feb 2005 0.20
-Added limited strftime/gmstrftime support. x10 improvement in performance of adodb_date().
+Added limited date/gmdate support. x10 improvement in performance of adodb_date().
 
 - 21 Dec 2004 0.17
 In adodb_getdate(), the timestamp was accidentally converted to gmt when $is_gmt is false.
@@ -431,14 +431,14 @@ function adodb_date_test_date($y1,$m,$d=13)
 	return true;
 }
 
-function adodb_date_test_strftime($fmt)
+function adodb_date_test_date($fmt)
 {
-	$s1 = strftime($fmt);
-	$s2 = adodb_strftime($fmt);
+	$s1 = date($fmt);
+	$s2 = adodb_date($fmt);
 
 	if ($s1 == $s2) return true;
 
-	echo "error for $fmt,  strftime=$s1, adodb=$s2<br>";
+	echo "error for $fmt,  date=$s1, adodb=$s2<br>";
 	return false;
 }
 
@@ -468,9 +468,9 @@ function adodb_date_test()
 	echo 'php  : ',date($fmt,$t),'<br>';
 	echo '</pre>';
 
-	adodb_date_test_strftime('%Y %m %x %X');
-	adodb_date_test_strftime("%A %d %B %Y");
-	adodb_date_test_strftime("%H %M S");
+	adodb_date_test_date('%Y %m %x %X');
+	adodb_date_test_date("%A %d %B %Y");
+	adodb_date_test_date("%H %M S");
 
 	$t = adodb_mktime(0,0,0);
 	if (!(adodb_date('Y-m-d') == date('Y-m-d'))) print 'Error in '.adodb_mktime(0,0,0).'<br>';
@@ -1348,34 +1348,34 @@ function adodb_mktime($hr,$min,$sec,$mon=false,$day=false,$year=false,$is_dst=fa
 	return $ret;
 }
 
-function adodb_gmstrftime($fmt, $ts=false)
+function adodb_gmdate($fmt, $ts=false)
 {
-	return adodb_strftime($fmt,$ts,true);
+	return adodb_date($fmt,$ts,true);
 }
 
 // hack - convert to adodb_date
-function adodb_strftime($fmt, $ts=false,$is_gmt=false)
+function adodb_date($fmt, $ts=false,$is_gmt=false)
 {
 global $ADODB_DATE_LOCALE;
 
 	if (!defined('ADODB_TEST_DATES')) {
 		if ((abs($ts) <= 0x7FFFFFFF)) { // check if number in 32-bit signed range
 			if (!defined('ADODB_NO_NEGATIVE_TS') || $ts >= 0) // if windows, must be +ve integer
-				return ($is_gmt)? @gmstrftime($fmt,$ts): @strftime($fmt,$ts);
+				return ($is_gmt)? @gmdate($fmt,$ts): @date($fmt,$ts);
 
 		}
 	}
 
 	if (empty($ADODB_DATE_LOCALE)) {
 	/*
-		$tstr = strtoupper(gmstrftime('%c',31366800)); // 30 Dec 1970, 1 am
+		$tstr = strtoupper(gmdate('%c',31366800)); // 30 Dec 1970, 1 am
 		$sep = substr($tstr,2,1);
 		$hasAM = strrpos($tstr,'M') !== false;
 	*/
 		# see http://phplens.com/lens/lensforum/msgs.php?id=14865 for reasoning, and changelog for version 0.24
-		$dstr = gmstrftime('%x',31366800); // 30 Dec 1970, 1 am
+		$dstr = gmdate('%x',31366800); // 30 Dec 1970, 1 am
 		$sep = substr($dstr,2,1);
-		$tstr = strtoupper(gmstrftime('%X',31366800)); // 30 Dec 1970, 1 am
+		$tstr = strtoupper(gmdate('%X',31366800)); // 30 Dec 1970, 1 am
 		$hasAM = strrpos($tstr,'M') !== false;
 
 		$ADODB_DATE_LOCALE = array();
@@ -1437,12 +1437,12 @@ global $ADODB_DATE_LOCALE;
 			case 'S': $fmtdate .= 's'; break;
 			case 't': $fmtdate .= "\t"; break;
 			case 'T': $fmtdate .= 'H:i:s'; break;
-			case 'u': $fmtdate .= '?u'; $parseu = true; break; // wrong strftime=1-based, date=0-based
-			case 'U': $fmtdate .= '?U'; $parseU = true; break;// wrong strftime=1-based, date=0-based
+			case 'u': $fmtdate .= '?u'; $parseu = true; break; // wrong date=1-based, date=0-based
+			case 'U': $fmtdate .= '?U'; $parseU = true; break;// wrong date=1-based, date=0-based
 			case 'x': $fmtdate .= $ADODB_DATE_LOCALE[0]; break;
 			case 'X': $fmtdate .= $ADODB_DATE_LOCALE[1]; break;
-			case 'w': $fmtdate .= '?w'; $parseu = true; break; // wrong strftime=1-based, date=0-based
-			case 'W': $fmtdate .= '?W'; $parseU = true; break;// wrong strftime=1-based, date=0-based
+			case 'w': $fmtdate .= '?w'; $parseu = true; break; // wrong date=1-based, date=0-based
+			case 'W': $fmtdate .= '?W'; $parseU = true; break;// wrong date=1-based, date=0-based
 			case 'y': $fmtdate .= 'y'; break;
 			case 'Y': $fmtdate .= 'Y'; break;
 			case 'Z': $fmtdate .= 'T'; break;
