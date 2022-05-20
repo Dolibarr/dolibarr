@@ -35,7 +35,7 @@
 
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-require_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 
 
 /**
@@ -138,8 +138,8 @@ class AccountancyExport
 
 		// allow modules to define export formats
 		global $hookmanager;
-		$reshook = $hookmanager->executeHooks('getType', $parameters, $listofexporttypes); 
-		
+		$reshook = $hookmanager->executeHooks('getType', $parameters, $listofexporttypes);
+
 		ksort($listofexporttypes, SORT_NUMERIC);
 
 		return $listofexporttypes;
@@ -179,8 +179,8 @@ class AccountancyExport
 		global $hookmanager;
 		$code = $formatcode[$type];
 		$parameters = array('type' => $type);
-		$reshook = $hookmanager->executeHooks('getFormatCode', $parameters, $code); 
-	
+		$reshook = $hookmanager->executeHooks('getFormatCode', $parameters, $code);
+
 		return $code;
 	}
 
@@ -281,8 +281,8 @@ class AccountancyExport
 
 		global $hookmanager;
 		$parameters = array();
-		$reshook = $hookmanager->executeHooks('getTypeConfig', $parameters, $exporttypes); 
-	    return $exporttypes;
+		$reshook = $hookmanager->executeHooks('getTypeConfig', $parameters, $exporttypes);
+		return $exporttypes;
 	}
 
 
@@ -369,12 +369,12 @@ class AccountancyExport
 				break;
 			default:
 				global $hookmanager;
-				$parameters = array('format' => $formatexportset);	
+				$parameters = array('format' => $formatexportset);
 				// file contents will be created in the hooked function via print
-				$reshook = $hookmanager->executeHooks('export', $parameters, $TData); 
+				$reshook = $hookmanager->executeHooks('export', $parameters, $TData);
 				if ($reshook != 1) {
 					$this->errors[] = $langs->trans('accountancy_error_modelnotfound');
-				} 
+				}
 				break;
 		}
 	}
