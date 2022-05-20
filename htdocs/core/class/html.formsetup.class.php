@@ -653,7 +653,7 @@ class FormSetupItem
 	public function saveConfValue()
 	{
 		if (!empty($this->saveCallBack) && is_callable($this->saveCallBack)) {
-			return call_user_func($this->saveCallBack);
+			return call_user_func($this->saveCallBack, $this);
 		}
 
 		// Modify constant only if key was posted (avoid resetting key to the null value)
@@ -1013,6 +1013,7 @@ class FormSetupItem
 			}
 			$out.= $this->langs->trans($template->label);
 		} elseif (preg_match('/category:/', $this->type)) {
+			require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 			$c = new Categorie($this->db);
 			$result = $c->fetch($this->fieldValue);
 			if ($result < 0) {
