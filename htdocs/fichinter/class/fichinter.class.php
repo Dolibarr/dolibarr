@@ -1349,7 +1349,6 @@ class Fichinter extends CommonObject
 				$line->fetch_optionals();
 
 				$this->lines[$i] = $line;
-
 				$i++;
 			}
 			$this->db->free($resql);
