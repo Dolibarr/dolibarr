@@ -981,6 +981,4 @@ class Security
 		}
 		exit(0);
 	}
-
-
 }
