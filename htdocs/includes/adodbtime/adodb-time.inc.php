@@ -1,8 +1,8 @@
 <?php
 /**
-ADOdb Date Library, part of the ADOdb abstraction library 
-See Wiki: https://adodb.org/dokuwiki/doku.php?id=v5:datetime:datetime_index 
-Download: https://github.com/ADOdb/ADOdb/blob/master/adodb-time.inc.php 
+ADOdb Date Library, part of the ADOdb abstraction library
+See Wiki: https://adodb.org/dokuwiki/doku.php?id=v5:datetime:datetime_index
+Download: https://github.com/ADOdb/ADOdb/blob/master/adodb-time.inc.php
 
 PHP native date functions use integer timestamps for computations.
 Because of this, dates are restricted to the years 1901-2038 on Unix
@@ -1361,7 +1361,7 @@ global $ADODB_DATE_LOCALE;
 	if (!defined('ADODB_TEST_DATES')) {
 		if ((abs($ts) <= 0x7FFFFFFF)) { // check if number in 32-bit signed range
 			if (!defined('ADODB_NO_NEGATIVE_TS') || $ts >= 0) // if windows, must be +ve integer
-				return ($is_gmt)? @gmstrftime($fmt,$ts): @strftime($fmt,$ts);
+				return ($is_gmt)? @gmdate($fmt,$ts): @date($fmt,$ts);
 
 		}
 	}
@@ -1373,9 +1373,9 @@ global $ADODB_DATE_LOCALE;
 		$hasAM = strrpos($tstr,'M') !== false;
 	*/
 		# see http://phplens.com/lens/lensforum/msgs.php?id=14865 for reasoning, and changelog for version 0.24
-		$dstr = gmstrftime('%x',31366800); // 30 Dec 1970, 1 am
+		$dstr = gmdate('%x',31366800); // 30 Dec 1970, 1 am
 		$sep = substr($dstr,2,1);
-		$tstr = strtoupper(gmstrftime('%X',31366800)); // 30 Dec 1970, 1 am
+		$tstr = strtoupper(gmdate('%X',31366800)); // 30 Dec 1970, 1 am
 		$hasAM = strrpos($tstr,'M') !== false;
 
 		$ADODB_DATE_LOCALE = array();
