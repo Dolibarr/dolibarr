@@ -14,6 +14,9 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <https://www.gnu.org/licenses/>.
 -- ========================================================================
+--
+-- Table for extrafields of fixed asset model
+--
 
 CREATE TABLE llx_asset_model_extrafields
 (

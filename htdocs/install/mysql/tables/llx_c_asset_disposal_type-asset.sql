@@ -14,6 +14,8 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see https://www.gnu.org/licenses/.
 -- ========================================================================
+--
+-- Table to store disposal type for a fixed asset
 
 CREATE TABLE llx_c_asset_disposal_type
 (

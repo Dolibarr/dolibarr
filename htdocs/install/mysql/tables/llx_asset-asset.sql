@@ -14,6 +14,12 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see https://www.gnu.org/licenses/.
 -- ========================================================================
+--
+-- Table for fixed asset
+--
+-- Data example:
+-- INSERT INTO `llx_asset` (`rowid`, `ref`, `entity`, `label`, `fk_asset_model`, `reversal_amount_ht`, `acquisition_value_ht`, `recovered_vat`, `reversal_date`, `date_acquisition`, `date_start`, `qty`, `acquisition_type`, `asset_type`, `not_depreciated`, `disposal_date`, `disposal_amount_ht`, `fk_disposal_type`, `disposal_depreciated`, `disposal_subject_to_vat`, `note_public`, `note_private`, `date_creation`, `tms`, `fk_user_creat`, `fk_user_modif`, `last_main_doc`, `import_key`, `model_pdf`, `status`) VALUES
+-- (1, 'LAPTOP', 1, 'LAPTOP xxx for accountancy department', 1, NULL, 1000.00000000, NULL, NULL, '2022-01-18', '2022-01-20', 0, 0, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2022-01-18 14:31:21', '2022-03-09 14:09:46', 1, 1, NULL, NULL, NULL, 0);
 
 CREATE TABLE llx_asset(
 	rowid                   integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
