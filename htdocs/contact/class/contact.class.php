@@ -182,6 +182,12 @@ class Contact extends CommonObject
 	public $email;
 
 	/**
+	 * URL
+	 * @var string
+	 */
+	public $url;
+
+	/**
 	 * Unsuscribe all : 1 = contact has globaly unsubscribe of all mass emailings
 	 * @var int
 	 */
@@ -314,6 +320,7 @@ class Contact extends CommonObject
 	 * @var string picto
 	 */
 	public $stcomm_picto;
+
 
 	/**
 	 *	Constructor

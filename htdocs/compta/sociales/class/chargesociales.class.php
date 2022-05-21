@@ -113,6 +113,11 @@ class ChargeSociales extends CommonObject
 	 */
 	public $fk_user;
 
+	/**
+	 * @var double total
+	 */
+	public $total;
+
 
 	const STATUS_UNPAID = 0;
 	const STATUS_PAID = 1;
@@ -123,7 +128,7 @@ class ChargeSociales extends CommonObject
 	 *
 	 * @param	DoliDB		$db		Database handler
 	 */
-	public function __construct($db)
+	public function __construct(DoliDB $db)
 	{
 		$this->db = $db;
 	}

@@ -317,6 +317,7 @@ if ($step == 4 && $action == 'select_model') {
 			}
 		}
 		$_SESSION["dol_array_match_file_to_database"] = $serialized_array_match_file_to_database;
+		$_SESSION['dol_array_match_file_to_database_select'] = $_SESSION["dol_array_match_file_to_database"];
 	}
 }
 if ($action == 'saveselectorder') {
@@ -745,6 +746,7 @@ if ($step == 3 && $datatoimport) {
 
 // STEP 4: Page to make matching between source file and database fields
 if ($step == 4 && $datatoimport) {
+	//var_dump($_SESSION["dol_array_match_file_to_database_select"]);
 	$serialized_array_match_file_to_database = isset($_SESSION["dol_array_match_file_to_database_select"]) ? $_SESSION["dol_array_match_file_to_database_select"] : '';
 	$array_match_file_to_database = array();
 	$fieldsarray = explode(',', $serialized_array_match_file_to_database);
@@ -793,7 +795,7 @@ if ($step == 4 && $datatoimport) {
 		$i = 1;
 		foreach ($arrayrecord as $key => $val) {
 			if ($val["type"] != -1) {
-				$fieldssource[$i]['example1'] = dol_trunc($val['val'], 24);
+				$fieldssource[$i]['example1'] = dol_trunc($val['val'], 128);
 				$i++;
 			}
 		}
@@ -804,6 +806,11 @@ if ($step == 4 && $datatoimport) {
 	$fieldstarget = $objimport->array_import_fields[0];
 	$minpos = min(count($fieldssource), count($fieldstarget));
 	//var_dump($array_match_file_to_database);
+
+	$initialloadofstep4 = false;
+	if (empty($_SESSION['dol_array_match_file_to_database_select'])) {
+		$initialloadofstep4 = true;
+	}
 
 	// Is it a first time in page (if yes, we must initialize array_match_file_to_database)
 	if (count($array_match_file_to_database) == 0) {
@@ -836,6 +843,7 @@ if ($step == 4 && $datatoimport) {
 		$_SESSION["dol_array_match_file_to_database_select"] = $serialized_array_match_file_to_database;
 	}
 	$array_match_database_to_file = array_flip($array_match_file_to_database);
+
 
 	$fieldstarget_tmp = array();
 	$arraykeysfieldtarget = array_keys($fieldstarget);
@@ -876,6 +884,7 @@ if ($step == 4 && $datatoimport) {
 
 	//print $serialized_array_match_file_to_database;
 	//print $_SESSION["dol_array_match_file_to_database"];
+	//print $_SESSION["dol_array_match_file_to_database_select"];
 	//var_dump($array_match_file_to_database);exit;
 
 	// Now $array_match_file_to_database contains  fieldnb(1,2,3...)=>fielddatabase(key in $array_match_file_to_database)
@@ -903,7 +912,7 @@ if ($step == 4 && $datatoimport) {
 	print '<div class="underbanner clearboth"></div>';
 	print '<div class="fichecenter">';
 
-	print '<table width="100%" class="border tableforfield">';
+	print '<table class="centpercent border tableforfield">';
 
 	// Module
 	print '<tr><td class="titlefieldcreate">'.$langs->trans("Module").'</td>';
@@ -1029,10 +1038,9 @@ if ($step == 4 && $datatoimport) {
 	print '<div id="left" class="connectedSortable">'."\n";
 
 	// List of source fields
-	$var = true;
+	$var = false;
 	$lefti = 1;
 	foreach ($fieldssource as $key => $val) {
-		$var = !$var;
 		show_elem($fieldssource, $key, $val, $var); // key is field number in source file
 		$listofkeys[$key] = 1;
 		$fieldsplaced[$key] = 1;
@@ -1051,7 +1059,7 @@ if ($step == 4 && $datatoimport) {
 
 	print '</td><td width="50%" class="nopaddingrightimp">';
 
-	// List of target fields
+	// Set the list of all possible target fields in Dolibarr.
 	$optionsnotused = "";
 	$optionsall = array();
 	foreach ($fieldstarget as $code => $line) {
@@ -1064,15 +1072,27 @@ if ($step == 4 && $datatoimport) {
 		if (!$line["imported"]) {
 			$optionsnotused .= $text;
 		}
-		$optionsall[$code] = array('label'=>$langs->trans($line["label"]), 'required'=>(empty($line["required"]) ? 0 : 1));
+		$optionsall[$code] = array('label'=>$langs->trans($line["label"]), 'required'=>(empty($line["required"]) ? 0 : 1), 'position'=>$line['position']);
 	}
+	// $optionsall is an array of all possible fields. key=>array('label'=>..., 'xxx')
 
 	$height = '32px'; //needs px for css height attribute below
 	$i = 0;
 	$mandatoryfieldshavesource = true;
 
+	//var_dump($fieldstarget);
+	//var_dump($optionsall);
+	//exit;
+	/*
+	var_dump($_SESSION['dol_array_match_file_to_database']);
+	var_dump($_SESSION['dol_array_match_file_to_database_select']);
+	var_dump($optionsall);
+	var_dump($fieldssource);
+	var_dump($fieldstarget);
+	*/
+
 	print '<table class="nobordernopadding centpercent tableimport">';
-	foreach ($fieldstarget as $code => $line) {
+	foreach ($fieldssource as $code => $line) {	// $fieldssource is an array code=column num,  line=content on first line for column in source file.
 		if ($i == $minpos) {
 			break;
 		}
@@ -1087,8 +1107,17 @@ if ($step == 4 && $datatoimport) {
 
 		//print '<td class="nowraponall" style="font-weight: normal">=> '.img_object('', $entityicon).' '.$langs->trans($entitylang).'</td>';
 		print '<td class="nowraponall" style="font-weight: normal">=> </td>';
-
 		print '<td class="nowraponall" style="font-weight: normal">';
+
+		$modetoautofillmapping = 'session';		// Use setup in session
+		if ($initialloadofstep4) {
+			$modetoautofillmapping = 'guess';
+		}
+		//var_dump($_SESSION['dol_array_match_file_to_database_select']);
+		//var_dump($modetoautofillmapping);
+		//var_dump($_SESSION['dol_array_match_file_to_database']);
+		//var_dump($modetoautofillmapping);
+
 		print '<select id="selectorderimport_'.($i+1).'" class="targetselectchange minwidth300" name="select_'.$line["label"].'">';
 		if ($line["imported"]) {
 			print '<option value="-1">&nbsp;</option>';
@@ -1097,23 +1126,59 @@ if ($step == 4 && $datatoimport) {
 		}
 
 		$j = 0;
-		foreach ($optionsall as $code => $val) {
-			$label = $val['required'] ? '<strong>' : '';
-			$label .= $val['label'];
-			$label .= $val['required'] ? '*</strong>' : '';
+		foreach ($optionsall as $tmpcode => $tmpval) {	// Loop on each entry to add into each combo list.
+			$label = $tmpval['required'] ? '<strong>' : '';
+			$label .= $tmpval['label'];
+			$label .= $tmpval['required'] ? '*</strong>' : '';
 
-			print '<option value="'.$code.'"';
-			if ($j == $i) {
-				print ' selected';
+			// If we must guess how to fill the preselected value, and we can't because input value are not string
+			if ($modetoautofillmapping == 'guess' && $j == 0 && is_numeric($tmpval)) {
+				$modetoautofillmapping = 'orderoftargets';
 			}
-			print " data-html='".dol_escape_htmltag($label)."'";
+
+			print '<option value="'.$tmpcode.'"';
+			if ($modetoautofillmapping == 'orderoftargets') {
+				// The mode where we fill the preselected value of combo one by one in order of available targets fields in the declaration in descriptor file.
+				if ($j == $i) {
+					print ' selected';
+				}
+			} elseif ($modetoautofillmapping == 'guess') {
+				// The mode where we try to guess which value to preselect from the name in first column of source file.
+				$regs = array();
+				if (preg_match('/^(.+)\((.+)\)$/', $line['example1'], $regs)) {
+					$tmpstring1 = $regs[1];
+					$tmpstring2 = $regs[2];
+				} else {
+					$tmpstring1 = $line['example1'];
+					$tmpstring2 = '';
+				}
+				$tmpstring1 = str_replace('*', '', trim($tmpstring1));
+				$tmpstring2 = str_replace('*', '', trim($tmpstring2));
+				if ($tmpstring1 && ($tmpstring1 == $tmpcode || $tmpstring1 == $tmpval)) {
+					print ' selected';
+					// TODO Check that $tmpcode not already selected
+				} elseif ($tmpstring2 && ($tmpstring2 == $tmpcode || $tmpstring2 == $tmpval)) {
+					print ' selected';
+					// TODO Check that $tmpcode not already selected
+				}
+			} elseif ($modetoautofillmapping == 'session' && !empty($_SESSION['dol_array_match_file_to_database_select'])) {
+				$tmpselectioninsession = dolExplodeIntoArray($_SESSION['dol_array_match_file_to_database_select'], ',', '=');
+				//var_dump($code);
+				//var_dump($tmpselectioninsession);
+				//if ($tmpselectioninsession[$j] == $code) {
+				if ($tmpselectioninsession[($i+1)] == $tmpcode) {
+					print ' selected';
+				}
+				print ' data-debug="'.$tmpcode.'-'.$code.'-'.$j.'-'.$tmpselectioninsession[($i+1)].'"';
+			}
+			print ' data-html="'.dol_escape_htmltag($label).'"';
 			print '>';
 			print $label;
 			print '</options>';
 			$j++;
 		}
 		print '</select>';
-		//print ajax_combobox('selectorderimport_'.($i+1));
+		print ajax_combobox('selectorderimport_'.($i+1));
 		print "</td>";
 
 		print '<td class="nowraponall" style="font-weight:normal; text-align:right">';
@@ -1124,7 +1189,7 @@ if ($step == 4 && $datatoimport) {
 			$htmltext .= $langs->trans("DataComeFromNoWhere").'<br>';
 		} else {
 			if (empty($objimport->array_import_convertvalue[0][$code])) {	// If source file does not need convertion
-				$filecolumntoshow = $i + 1;
+				$filecolumntoshow = num2Alpha($i);
 				$htmltext .= $langs->trans("DataComeFromFileFieldNb", $filecolumntoshow).'<br>';
 			} else {
 				if ($objimport->array_import_convertvalue[0][$code]['rule'] == 'fetchidfromref') {
@@ -1248,25 +1313,28 @@ if ($step == 4 && $datatoimport) {
 		// - Then we set to disabled all fields that are selected
 		print 'function setOptionsToDisabled() {'."\n";
 		print '		console.log("Remove the disabled flag everywhere");'."\n";
-		print '		$(".targetselectchange").not($( this )).find(\'option\').prop("disabled", false);'."\n";
+		print '		$("select.targetselectchange").not($( this )).find(\'option\').prop("disabled", false);'."\n";	// Enable all options
 		print '		arrayofselectedvalues = [];'."\n";
-		print '		$(".targetselectchange").each(function(){'."\n";
+		print '		$("select.targetselectchange").each(function(){'."\n";
+		print '			id = $(this).attr(\'id\')'."\n";
 		print '			value = $(this).val()'."\n";
+		//print '         console.log("a selected value has been found for component "+id+" = "+value);'."\n";
 		print '			arrayofselectedvalues.push(value);'."\n";
 		print '		});'."\n";
 		print '		console.log("List of all selected values");'."\n";
 		print '		console.log(arrayofselectedvalues);'."\n";
-		print '     console.log("Set the disabled flag for every entry in arrayofselectedvalues");'."\n";
-		print '     $.each( arrayofselectedvalues, function( key, value ) {'."\n";
+		print '     console.log("Set the option to disabled for every entry that is currently selected somewhere else (so into arrayofselectedvalues)");'."\n";
+		print '     $.each( arrayofselectedvalues, function( key, value ) {'."\n";	// Loop on each selected value
 		print '         if (value != -1) {'."\n";
-		print '     	console.log("Process key="+key+" value="+value);'."\n";
-		print '			$(".targetselectchange").find(\'option[value="\'+value+\'"]\').prop("disabled", true);'."\n";
+		//print '     		console.log("Process key="+key+" value="+value+" to disable.");'."\n";
+		print '				$("select.targetselectchange").find(\'option[value="\'+value+\'"]:not(:selected)\').prop("disabled", true);'."\n";	// Set to disabled except if currently selected
 		print '         }'."\n";
 		print '     });'."\n";
 		print '};'."\n";
 
-		// Function to save the selection
+		// Function to save the selection in database
 		print 'function saveSelection() {'."\n";
+		//print '		console.log(arrayofselectedvalues);'."\n";
 		print '		arrayselectedfields = [];'."\n";
 		print '		arrayselectedfields.push("0");'."\n";
 		print '     $.each( arrayofselectedvalues, function( key, value ) {'."\n";
@@ -2210,7 +2278,7 @@ $db->close();
  * @param	array	$fieldssource	List of source fields
  * @param	int		$pos			Pos
  * @param	string	$key			Key
- * @param	boolean	$var			Line style (odd or not)
+ * @param	boolean	$var			Line style (odd or not). No more used.
  * @param	int		$nostyle		Hide style
  * @return	void
  */
@@ -2257,14 +2325,14 @@ function show_elem($fieldssource, $pos, $key, $var, $nostyle = '')
 		print '<td class="nocellnopadding" width="16" style="font-weight: normal">';
 		// The image must have the class 'boxhandle' beause it's value used in DOM draggable objects to define the area used to catch the full object
 		//print img_picto($langs->trans("MoveField", $pos), 'grip_title', 'class="boxhandle" style="cursor:move;"');
-		print img_picto($langs->trans("Field").' '.$pos, 'file', 'class="pictofixedwith"');
+		print img_picto($langs->trans("Column").' '.num2Alpha($pos - 1), 'file', 'class="pictofixedwith"');
 		print '</td>';
 		if (isset($fieldssource[$pos]['imported']) && $fieldssource[$pos]['imported'] == false) {
 			print '<td class="nowraponall boxtdunused" style="font-weight: normal">';
 		} else {
 			print '<td class="nowraponall" style="font-weight: normal">';
 		}
-		print $langs->trans("Field").' '.$pos;
+		print $langs->trans("Column").' '.num2Alpha($pos - 1).' (#'.$pos.')';
 		if (empty($fieldssource[$pos]['example1'])) {
 			$example = $fieldssource[$pos]['label'];
 		} else {
@@ -2286,6 +2354,20 @@ function show_elem($fieldssource, $pos, $key, $var, $nostyle = '')
 
 	print "</div>\n";
 	print "<!-- Box end -->\n\n";
+}
+
+
+/**
+ * Return a numeric into an Excel like column number
+ *
+ * @param	string		$n		Numeric value
+ * @return 	string				Column in Excel format
+ */
+function num2Alpha($n)
+{
+	for ($r = ""; $n >= 0; $n = intval($n / 26) - 1)
+		$r = chr($n%26 + 0x41) . $r;
+		return $r;
 }
 
 

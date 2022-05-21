@@ -73,6 +73,7 @@ class FormTicket
 	public $ispublic; // To show information or not into public form
 
 	public $withtitletopic;
+	public $withtopicreadonly;
 	public $withcompany; // affiche liste déroulante company
 	public $withfromsocid;
 	public $withfromcontactid;
@@ -83,6 +84,11 @@ class FormTicket
 	public $withref; // Show ref field
 
 	public $withcancel;
+
+	public $type_code;
+	public $category_code;
+	public $severity_code;
+
 
 	/**
 	 *
@@ -113,7 +119,7 @@ class FormTicket
 		$this->withcompany = $conf->societe->enabled ? 1 : 0;
 		$this->withfromsocid = 0;
 		$this->withfromcontactid = 0;
-		//$this->withthreadid=0;
+		//$this->withreadid=0;
 		//$this->withtitletopic='';
 		$this->withnotifytiersatcreate = 0;
 		$this->withusercreate = 1;
@@ -280,6 +286,7 @@ class FormTicket
 		}
 
 		// If ticket created from another object
+		$subelement = '';
 		if (isset($this->param['origin']) && $this->param['originid'] > 0) {
 			// Parse element/subelement (ex: project_task)
 			$element = $subelement = $this->param['origin'];
@@ -331,8 +338,8 @@ class FormTicket
 				print $langs->trans('SubjectAnswerToTicket').' '.$this->topic_title;
 				print '</td></tr>';
 			} else {
-				if ($this->withthreadid > 0) {
-					$subject = $langs->trans('SubjectAnswerToTicket').' '.$this->withthreadid.' : '.$this->topic_title.'';
+				if ($this->withreadid > 0) {
+					$subject = $langs->trans('SubjectAnswerToTicket').' '.$this->withreadid.' : '.$this->topic_title.'';
 				}
 				print '<input class="text minwidth500" id="subject" name="subject" value="'.(GETPOST('subject', 'alpha') ? GETPOST('subject', 'alpha') : $subject).'" autofocus />';
 				print '</td></tr>';
@@ -628,11 +635,11 @@ class FormTicket
 
 		print '<br>';
 
-		print $form->buttonsSaveCancel((($this->withthreadid > 0) ? "SendResponse" : "CreateTicket"), ($this->withcancel ? "Cancel" : ""));
+		print $form->buttonsSaveCancel((($this->withreadid > 0) ? "SendResponse" : "CreateTicket"), ($this->withcancel ? "Cancel" : ""));
 
 		/*
 		print '<div class="center">';
-		print '<input type="submit" class="button" name="add" value="'.$langs->trans(($this->withthreadid > 0 ? "SendResponse" : "CreateTicket")).'" />';
+		print '<input type="submit" class="button" name="add" value="'.$langs->trans(($this->withreadid > 0 ? "SendResponse" : "CreateTicket")).'" />';
 		if ($this->withcancel) {
 			print " &nbsp; &nbsp; &nbsp;";
 			print '<input class="button button-cancel" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
@@ -1267,7 +1274,7 @@ class FormTicket
 		if (GETPOST('mode', 'alpha') == 'init' || (GETPOST('modelmailselected', 'alpha') && GETPOST('modelmailselected', 'alpha') != '-1')) {
 			if (!empty($arraydefaultmessage->joinfiles) && is_array($this->param['fileinit'])) {
 				foreach ($this->param['fileinit'] as $file) {
-					$this->add_attached_files($file, basename($file), dol_mimetype($file));
+					$formmail->add_attached_files($file, basename($file), dol_mimetype($file));
 				}
 			}
 		}
@@ -1365,6 +1372,9 @@ class FormTicket
 
 		// External users can't send message email
 		if ($user->rights->ticket->write && !$user->socid) {
+			$ticketstat = new Ticket($this->db);
+			$res = $ticketstat->fetch('', '', $this->track_id);
+
 			print '<tr><td></td><td>';
 			$checkbox_selected = (GETPOST('send_email') == "1" ? ' checked' : ($conf->global->TICKETS_MESSAGE_FORCE_MAIL?'checked':''));
 			print '<input type="checkbox" name="send_email" value="1" id="send_msg_email" '.$checkbox_selected.'/> ';
@@ -1395,17 +1405,17 @@ class FormTicket
 
 			// Subject
 			print '<tr class="email_line"><td>'.$langs->trans('Subject').'</td>';
-			print '<td><input type="text" class="text minwidth500" name="subject" value="['.$conf->global->MAIN_INFO_SOCIETE_NOM.' - '.$langs->trans("Ticket").' '.$this->ref.'] '.$langs->trans('TicketNewMessage').'" />';
+			print '<td><input type="text" class="text minwidth500" name="subject" value="['.$conf->global->MAIN_INFO_SOCIETE_NOM.' - '.$langs->trans("Ticket").' '.$ticketstat->ref.'] '.$langs->trans('TicketNewMessage').'" />';
 			print '</td></tr>';
 
 			// Destinataires
 			print '<tr class="email_line"><td>'.$langs->trans('MailRecipients').'</td><td>';
-			$ticketstat = new Ticket($this->db);
-			$res = $ticketstat->fetch('', '', $this->track_id);
 			if ($res) {
 				// Retrieve email of all contacts (internal and external)
 				$contacts = $ticketstat->getInfosTicketInternalContact();
 				$contacts = array_merge($contacts, $ticketstat->getInfosTicketExternalContact());
+
+				$sendto = array();
 
 				// Build array to display recipient list
 				if (is_array($contacts) && count($contacts) > 0) {
@@ -1416,7 +1426,7 @@ class FormTicket
 					}
 				}
 
-				if ($ticketstat->origin_email && !in_array($this->dao->origin_email, $sendto)) {
+				if ($ticketstat->origin_email && !in_array($ticketstat->origin_email, $sendto)) {
 					$sendto[] = dol_escape_htmltag($ticketstat->origin_email).' <small class="opacitymedium">('.$langs->trans("TicketEmailOriginIssuer").")</small>";
 				}
 

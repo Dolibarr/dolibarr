@@ -2168,6 +2168,7 @@ class Holiday extends CommonObject
 		if ($affect >= 0) {
 			$sql .= " AND affect = ".((int) $affect);
 		}
+		$sql .= " ORDER BY sortorder";
 
 		$result = $this->db->query($sql);
 		if ($result) {

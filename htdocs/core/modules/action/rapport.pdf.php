@@ -63,6 +63,14 @@ class CommActionRapport
 
 	public $marge_basse;
 
+	public $format;
+
+	public $type;
+
+	public $page_hauteur;
+
+	public $page_largeur;
+
 
 	/**
 	 * Constructor
