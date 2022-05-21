@@ -113,6 +113,11 @@ class ChargeSociales extends CommonObject
 	 */
 	public $fk_user;
 
+	/**
+	 * @var double total
+	 */
+	public $total;
+
 
 	const STATUS_UNPAID = 0;
 	const STATUS_PAID = 1;
