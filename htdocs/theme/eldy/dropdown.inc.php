@@ -103,7 +103,7 @@ button.dropdown-item.global-search-item {
 	display: none;
 	float: left;
 	min-width: 160px;
-	margin: 2px 0 0;
+	margin: 0;
 	font-size: 14px;
 	text-align: left;
 	list-style: none;
@@ -111,7 +111,8 @@ button.dropdown-item.global-search-item {
 	-webkit-background-clip: padding-box;
 	background-clip: padding-box;
 	border: 1px solid rgba(0,0,0,.15);
-	border-radius: 4px;
+	border-top: none;
+	border-radius: 0 0 4px 4px;
 	-webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);
 	box-shadow: 0 6px 12px rgba(0,0,0,.175);
 }
@@ -147,15 +148,14 @@ button.dropdown-item.global-search-item {
 .side-nav-vert .user-menu .dropdown-menu, .topnav .user-menu .dropdown-menu {
 	border-top-right-radius: 0;
 	border-top-left-radius: 0;
-	padding: 1px 0 0 0;
-	border-top-width: 0;
+	padding: 0;
 	width: 300px;
 }
 .topnav .user-menu .dropdown-menu {
 	top: 50px;
 }
 .side-nav-vert .user-menu .dropdown-menu, .topnav .user-menu .dropdown-menu {
-	margin-top: 0;
+	margin-top: 5px;
 	border-top-left-radius: 0;
 	border-top-right-radius: 0;
 }

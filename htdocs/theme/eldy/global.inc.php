@@ -2924,6 +2924,7 @@ div.login a:hover {
 	vertical-align: middle;
 }
 div.login_block_user {
+	box-sizing: border-box;
 	--default-top-menu-line-height: <?php echo $disableimages ? '25' : '50'; ?>px;
 	display: inline-block;
 	vertical-align: middle;
