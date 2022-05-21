@@ -436,6 +436,13 @@ class Societe extends CommonObject
 	public $idprof3;
 
 	/**
+	 * @var string Professional ID 3
+	 * @deprecated
+	 * @see $idprof3
+	 */
+	public $ape;
+
+	/**
 	 * Professional ID 4 (Ex: RCS in France)
 	 * @var string
 	 */
