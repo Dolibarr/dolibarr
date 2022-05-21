@@ -699,7 +699,9 @@ class Documents extends DolibarrApi
 		}
 
 		$destfile = $upload_dir.'/'.$original_file;
-		$destfiletmp = DOL_DATA_ROOT.'/admin/temp/'.$original_file;
+		$destdirtmp = DOL_DATA_ROOT.'/admin/temp/';
+		mkdir($destdirtmp, 0777, TRUE);
+		$destfiletmp = $destdirtmp.$original_file;
 		dol_delete_file($destfiletmp);
 		//var_dump($original_file);exit;
 
