@@ -13,12 +13,11 @@ if (isset($totalarray['pos'])) {
 	while ($i < $totalarray['nbfield']) {
 		$i++;
 		if (!empty($totalarray['pos'][$i])) {
-			if(!empty($totalarray['type'][$i])){
-				if($totalarray['type'][$i] == 'duration'){
+			if (!empty($totalarray['type'][$i])) {
+				if ($totalarray['type'][$i] == 'duration') {
 					print '<td class="right">'.(!empty($totalarray['val'][$totalarray['pos'][$i]])? convertSecondToTime($totalarray['val'][$totalarray['pos'][$i]]): '00:00').'</td>';
 				}
-			}
-			else {
+			} else {
 				print '<td class="right">' . price(!empty($totalarray['val'][$totalarray['pos'][$i]]) ? $totalarray['val'][$totalarray['pos'][$i]] : 0) . '</td>';
 			}
 		} else {
