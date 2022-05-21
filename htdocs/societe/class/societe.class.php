@@ -409,6 +409,14 @@ class Societe extends CommonObject
 	public $idprof1;
 
 	/**
+	 * @var string Professional ID 1
+	 * @deprecated
+	 * @see $idprof1
+	 */
+	public $siren;
+
+
+	/**
 	 * Professional ID 2 (Ex: Siret in France)
 	 * @var string
 	 */
