@@ -155,6 +155,7 @@ class Asset extends CommonObject
 	public $import_key;
 	public $model_pdf;
 	public $status;
+	public $supplier_invoice_id;
 
 	// /**
 	//  * @var string    Field with ID of parent key if this object has a parent
