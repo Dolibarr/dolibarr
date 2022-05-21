@@ -49,6 +49,12 @@ class Tva extends CommonObject
 	 */
 	public $picto = 'payment';
 
+	/**
+	 * @deprecated
+	 * @see $amount
+	 */
+	public $total;
+
 	public $tms;
 	public $datep;
 	public $datev;
