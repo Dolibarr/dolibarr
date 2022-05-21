@@ -436,7 +436,7 @@ if ($action == 'edit') {
 						if ($resprod > 0) {
 							print $product->ref;
 						} elseif ($resprod < 0) {
-							setEventMessages(null, $object->errors, "errors");
+							setEventMessages(null, $product->errors, "errors");
 						}
 					} else {
 						print $conf->global->{$constname};

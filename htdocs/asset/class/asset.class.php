@@ -144,6 +144,7 @@ class Asset extends CommonObject
 	public $fk_disposal_type;
 	public $disposal_depreciated;
 	public $disposal_subject_to_vat;
+	public $supplier_invoice_id;
 	public $note_public;
 	public $note_private;
 	public $date_creation;
@@ -154,6 +155,7 @@ class Asset extends CommonObject
 	public $import_key;
 	public $model_pdf;
 	public $status;
+	public $supplier_invoice_id;
 
 	// /**
 	//  * @var string    Field with ID of parent key if this object has a parent

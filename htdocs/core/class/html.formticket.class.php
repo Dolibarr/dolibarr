@@ -1274,7 +1274,7 @@ class FormTicket
 		if (GETPOST('mode', 'alpha') == 'init' || (GETPOST('modelmailselected', 'alpha') && GETPOST('modelmailselected', 'alpha') != '-1')) {
 			if (!empty($arraydefaultmessage->joinfiles) && is_array($this->param['fileinit'])) {
 				foreach ($this->param['fileinit'] as $file) {
-					$this->add_attached_files($file, basename($file), dol_mimetype($file));
+					$formmail->add_attached_files($file, basename($file), dol_mimetype($file));
 				}
 			}
 		}
