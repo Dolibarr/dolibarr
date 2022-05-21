@@ -1310,6 +1310,11 @@ class FactureRec extends CommonInvoice
 					$facture->status = self::STATUS_DRAFT;
 					$facture->date = (empty($facturerec->date_when) ? $now : $facturerec->date_when); // We could also use dol_now here but we prefer date_when so invoice has real date when we would like even if we generate later.
 					$facture->socid = $facturerec->socid;
+					if (!empty($facturerec->fk_multicurrency)) {
+						$facture->fk_multicurrency = $facturerec->fk_multicurrency;
+						$facture->multicurrency_code = $facturerec->multicurrency_code;
+						$facture->multicurrency_tx = $facturerec->multicurrency_tx;
+					}
 
 					$invoiceidgenerated = $facture->create($user);
 					if ($invoiceidgenerated <= 0) {
