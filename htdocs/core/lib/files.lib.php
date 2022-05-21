@@ -972,7 +972,7 @@ function dol_move($srcfile, $destfile, $newmask = 0, $overwriteifexists = 1, $te
  * @param	int		$overwriteifexists	Overwrite directory if exists (1 by default)
  * @param	int		$indexdatabase		Index new file into database.
  * @param	int		$renamedircontent	Rename contents inside srcdir.
- * 
+ *
  * @return boolean 	True if OK, false if KO
 */
 function dol_move_dir($srcdir, $destdir, $overwriteifexists = 1, $indexdatabase = 1, $renamedircontent = 1)
