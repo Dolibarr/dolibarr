@@ -86,8 +86,8 @@ $setupnotempty = 0;
 $useFormSetup = 1;
 
 if (!class_exists('FormSetup')) {
-	// For retrocompatibility Dolibarr < 17.0
-	if (versioncompare(explode('.', DOL_VERSION), array(17)) < 0 && !class_exists('FormSetup')) {
+	// For retrocompatibility Dolibarr < 16.0
+	if (floatval(DOL_VERSION) < 16.0 && !class_exists('FormSetup')) {
 		require_once __DIR__.'/../backport/v17/core/class/html.formsetup.class.php';
 	} else {
 		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsetup.class.php';
@@ -125,9 +125,9 @@ $formSetup->newItem('MYMODULE_MYPARAM6')->setAsSecureKey()->enabled = 0; // disa
 // Setup conf MYMODULE_MYPARAM7
 $formSetup->newItem('MYMODULE_MYPARAM7')->setAsProduct();
 
-
 $formSetup->newItem('Title')->setAsTitle();
 
+// Setup conf MYMODULE_MYPARAM8
 $item = $formSetup->newItem('MYMODULE_MYPARAM8');
 $TField = array(
 	'test01' => $langs->trans('test01'),
@@ -139,6 +139,11 @@ $TField = array(
 );
 $item->setAsMultiSelect($TField);
 $item->helpText = $langs->transnoentities('MYMODULE_MYPARAM8');
+
+
+// Setup conf MYMODULE_MYPARAM9
+$formSetup->newItem('MYMODULE_MYPARAM9')->setAsSelect($TField);
+
 
 $setupnotempty =+ count($formSetup->items);
 
