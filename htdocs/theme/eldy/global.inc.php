@@ -650,6 +650,7 @@ div.floatright
 .inline-block
 {
 	display:inline-block;
+	position: relative;
 }
 .largenumber {
 	font-size: 1.4em;
@@ -2519,7 +2520,7 @@ li.menuhider:hover {
 	background-image: none !important;
 }
 
-li.tmenusel::after, li.tmenu:hover::after{
+li.tmenusel::after, li.tmenu:hover::after, .login_block .dropdown.open::after {
 	content: "";
 	position:absolute;
 	bottom:0px;
@@ -2923,10 +2924,11 @@ div.login a:hover {
 	vertical-align: middle;
 }
 div.login_block_user {
+	--default-top-menu-line-height: <?php echo $disableimages ? '25' : '50'; ?>px;
 	display: inline-block;
 	vertical-align: middle;
-	line-height: <?php echo $disableimages ? '25' : '52'; ?>px;
-	height: <?php echo $disableimages ? '25' : '52'; ?>px;
+	line-height: var(--default-top-menu-line-height);
+	height: var(--default-top-menu-line-height);
 }
 div.login_block_other {
 	display: inline-block;

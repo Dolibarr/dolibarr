@@ -121,40 +121,6 @@ button.dropdown-item.global-search-item {
 	text-decoration: none !important;
 }
 
-
-/* CSS to hide the arrow to show open/close */
-div#topmenu-quickadd-dropdown, div#topmenu-bookmark-dropdown {
-	padding-right: 5px;
-}
-div#topmenu-quickadd-dropdown a::after, div#topmenu-bookmark-dropdown a::after {
-	display: none;
-}
-
-
-.dropdown-toggle::after {
-	font-family: "Font Awesome 5 Free";
-	font-size: 0.7em;
-	font-weight: 900;
-	font-style: normal;
-	font-variant: normal;
-	text-rendering: auto;
-	-webkit-font-smoothing: antialiased;
-	text-align:center;
-	text-decoration:none;
-	margin:  auto 3px;
-	display: inline-block;
-	content: "\f078";
-
-	-webkit-transition: -webkit-transform .2s ease-in-out;
-	-ms-transition: -ms-transform .2s ease-in-out;
-	transition: transform .2s ease-in-out;
-}
-
-
-.open>.dropdown-toggle::after {
-	transform: rotate(180deg);
-}
-
 /*
 * MENU Dropdown
 */
@@ -203,14 +169,8 @@ div#topmenu-quickadd-dropdown a::after, div#topmenu-bookmark-dropdown a::after {
 
 #topmenu-global-search-dropdown .dropdown-menu{
 	width: 300px;
-	max-width: 100%;
 }
 
-div#topmenu-global-search-dropdown, div#topmenu-bookmark-dropdown, div#topmenu-quickadd-dropdown {
-	<?php if (!getDolGlobalInt('THEME_TOPMENU_DISABLE_IMAGE')) { ?>
-		line-height: 46px;
-	<?php } ?>
-}
 a.top-menu-dropdown-link {
 	padding: 8px;
 }
@@ -290,8 +250,8 @@ a.top-menu-dropdown-link {
 }
 
 
-#topmenu-login-dropdown, #topmenu-bookmark-dropdown, #topmenu-global-search-dropdown {
-	padding: 0 5px 0 5px;
+#topmenu-login-dropdown > a, #topmenu-bookmark-dropdown > a, #topmenu-quickadd-dropdown > a, #topmenu-global-search-dropdown > a {
+	padding: 2px 5px 0 5px;
 }
 #topmenu-login-dropdown a:hover{
 	text-decoration: none;

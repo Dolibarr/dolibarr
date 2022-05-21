@@ -2667,6 +2667,7 @@ function top_menu_search()
         </div>
     </div>';
 
+
 	$html .= '
     <!-- Code to show/hide the user drop-down -->
     <script>
