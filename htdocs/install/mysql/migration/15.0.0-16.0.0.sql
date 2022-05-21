@@ -374,6 +374,8 @@ ALTER TABLE llx_c_email_template ADD COLUMN email_to varchar(255);
 ALTER TABLE llx_c_email_template ADD COLUMN email_tocc varchar(255);
 ALTER TABLE llx_c_email_template ADD COLUMN email_tobcc varchar(255);
 
+ALTER TABLE llx_fichinter ADD COLUMN ref_client varchar(255) after ref_ext;
+
 ALTER TABLE llx_c_holiday_types ADD COLUMN sortorder smallint;
 
 ALTER TABLE llx_expedition MODIFY COLUMN ref_customer varchar(255);
