@@ -121,7 +121,9 @@ $usercansend = (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->
 $usercancreateorder = $user->rights->commande->creer;
 $usercancreateinvoice = $user->rights->facture->creer;
 $usercancreatecontract = $user->rights->contrat->creer;
-$usercancreateintervention = $user->rights->ficheinter->creer;
+if ($conf->ficheinter->enabled) {
+	$usercancreateintervention = $user->rights->ficheinter->creer;
+}
 $usercancreatepurchaseorder = ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer);
 
 $permissionnote = $usercancreate; // Used by the include of actions_setnotes.inc.php
