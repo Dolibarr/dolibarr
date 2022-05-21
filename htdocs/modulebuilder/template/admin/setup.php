@@ -88,7 +88,7 @@ $useFormSetup = 1;
 if (!class_exists('FormSetup')) {
 	// For retrocompatibility Dolibarr < 16.0
 	if (floatval(DOL_VERSION) < 16.0 && !class_exists('FormSetup')) {
-		require_once __DIR__.'/../backport/v17/core/class/html.formsetup.class.php';
+		require_once __DIR__.'/../backport/v16/core/class/html.formsetup.class.php';
 	} else {
 		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsetup.class.php';
 	}
@@ -104,6 +104,7 @@ $item->cssClass = 'minwidth500';
 
 // Setup conf MYMODULE_MYPARAM1 as a simple string input
 $item = $formSetup->newItem('MYMODULE_MYPARAM1');
+$item->defaultFieldValue = 'default value';
 
 // Setup conf MYMODULE_MYPARAM1 as a simple textarea input but we replace the text of field title
 $item = $formSetup->newItem('MYMODULE_MYPARAM2');
@@ -143,6 +144,20 @@ $item->helpText = $langs->transnoentities('MYMODULE_MYPARAM8');
 
 // Setup conf MYMODULE_MYPARAM9
 $formSetup->newItem('MYMODULE_MYPARAM9')->setAsSelect($TField);
+
+
+// Setup conf MYMODULE_MYPARAM10
+$item = $formSetup->newItem('MYMODULE_MYPARAM10');
+$item->setAsColor();
+$item->defaultFieldValue = '#FF0000';
+$item->nameText = $item->getNameText().' more html text ';
+$item->fieldInputOverride = '';
+$item->helpText = $langs->transnoentities('AnHelpMessage');
+//$item->fieldValue = '';
+//$item->fieldAttr = array() ; // fields attribute only for compatible fields like input text
+//$item->fieldOverride = false; // set this var to override field output will override $fieldInputOverride and $fieldOutputOverride too
+//$item->fieldInputOverride = false; // set this var to override field input
+//$item->fieldOutputOverride = false; // set this var to override field output
 
 
 $setupnotempty =+ count($formSetup->items);

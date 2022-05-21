@@ -240,7 +240,7 @@ if ($dirins && $action == 'initmodule' && $modulename) {
 
 		// Copy last html.formsetup.class.php' to backport folder
 		$tryToCopyFromSetupClass = true;
-		$backportDest = $destdir .'/backport/v17/core/class';
+		$backportDest = $destdir .'/backport/v16/core/class';
 		$backportFileSrc = DOL_DOCUMENT_ROOT.'/core/class/html.formsetup.class.php';
 		$backportFileDest = $backportDest.'/html.formsetup.class.php';
 		$result = dol_mkdir($backportDest);
