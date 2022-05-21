@@ -155,6 +155,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 		$this->option_credit_note = 1; // Support credit notes
 		$this->option_freetext = 1; // Support add of a personalised text
 		$this->option_draft_watermark = 1; //Support add of a watermark on drafts
+		$this->watermark = '';
 
 		// Get source company
 		$this->emetteur = $mysoc;
@@ -205,7 +206,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 	/**
 	 *  Function to build pdf onto disk
 	 *
-	 *  @param		Object		$object				Object to generate
+	 *  @param		SupplierProposal		$object				Object to generate
 	 *  @param		Translate	$outputlangs		Lang output object
 	 *  @param		string		$srctemplatepath	Full path of source filename for generator using a template file
 	 *  @param		int			$hidedetails		Do not show line details
@@ -228,6 +229,11 @@ class pdf_aurore extends ModelePDFSupplierProposal
 
 		// Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "products", "supplier_proposal"));
+
+		//  Show Draft Watermark
+		if ($object->statut == $object::STATUS_DRAFT && (!empty($conf->global->SUPPLIER_PROPOSAL_DRAFT_WATERMARK))) {
+			$this->watermark = $conf->global->SUPPLIER_PROPOSAL_DRAFT_WATERMARK;
+		}
 
 		$nblines = count($object->lines);
 
@@ -1284,11 +1290,6 @@ class pdf_aurore extends ModelePDFSupplierProposal
 
 		pdf_pagehead($pdf, $outputlangs, $this->page_hauteur);
 
-		//  Show Draft Watermark
-		if ($object->statut == 0 && (!empty($conf->global->SUPPLIER_PROPOSAL_DRAFT_WATERMARK))) {
-			pdf_watermark($pdf, $outputlangs, $this->page_hauteur, $this->page_largeur, 'mm', $conf->global->SUPPLIER_PROPOSAL_DRAFT_WATERMARK);
-		}
-
 		$pdf->SetTextColor(0, 0, 60);
 		$pdf->SetFont('', 'B', $default_font_size + 3);
 
@@ -1496,6 +1497,6 @@ class pdf_aurore extends ModelePDFSupplierProposal
 	{
 		global $conf;
 		$showdetails = empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS) ? 0 : $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
-		return pdf_pagefoot($pdf, $outputlangs, 'SUPPLIER_PROPOSAL_FREE_TEXT', $this->emetteur, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext);
+		return pdf_pagefoot($pdf, $outputlangs, 'SUPPLIER_PROPOSAL_FREE_TEXT', $this->emetteur, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext, $this->page_largeur, $this->watermark);
 	}
 }
