@@ -106,6 +106,12 @@ class PaymentSocialContribution extends CommonObject
 	public $chid;
 
 	/**
+	 * @var integer|string datepaye
+	 */
+	public $datepaye;
+
+
+	/**
 	 *	Constructor
 	 *
 	 *  @param		DoliDB		$db      Database handler
