@@ -107,6 +107,11 @@ class PaymentVAT extends CommonObject
 	public $datepaye;
 
 	/**
+	 * @var integer|string paiementtype
+	 */
+	public $paiementtype;
+
+	/**
 	 *	Constructor
 	 *
 	 *  @param		DoliDB		$db      Database handler
