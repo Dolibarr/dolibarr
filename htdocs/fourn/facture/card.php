@@ -1974,10 +1974,10 @@ if ($action == 'create') {
 		$objectsrc->fetch_optionals();
 		$object->array_options = $objectsrc->array_options;
 	} else {
-		$cond_reglement_id = $societe->cond_reglement_supplier_id;
-		$mode_reglement_id = $societe->mode_reglement_supplier_id;
-		$transport_mode_id = $societe->transport_mode_supplier_id;
-		$fk_account = $societe->fk_account;
+		$cond_reglement_id = !empty($societe->cond_reglement_supplier_id) ? $societe->cond_reglement_supplier_id : 0;
+		$mode_reglement_id = !empty($societe->mode_reglement_supplier_id) ? $societe->mode_reglement_supplier_id : 0;
+		$transport_mode_id = !empty($societe->transport_mode_supplier_id) ? $societe->transport_mode_supplier_id : 0;
+		$fk_account = !empty($societe->fk_account) ? $societe->fk_account : 0;
 		$datetmp = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 		$dateinvoice = ($datetmp == '' ? (empty($conf->global->MAIN_AUTOFILL_DATE) ?-1 : '') : $datetmp);
 		$datetmp = dol_mktime(12, 0, 0, GETPOST('echmonth', 'int'), GETPOST('echday', 'int'), GETPOST('echyear', 'int'));
@@ -2004,7 +2004,7 @@ if ($action == 'create') {
 	print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
-	if ($societe->id > 0) {
+	if (!empty($societe->id) && $societe->id > 0) {
 		print '<input type="hidden" name="socid" value="'.$societe->id.'">'."\n";
 	}
 	print '<input type="hidden" name="origin" value="'.$origin.'">';
@@ -2030,12 +2030,12 @@ if ($action == 'create') {
 	print '<tr><td class="fieldrequired">'.$langs->trans('Supplier').'</td>';
 	print '<td>';
 
-	if ($societe->id > 0 && ($fac_recid <= 0 || !empty($invoice_predefined->frequency))) {
+	if (!empty($societe->id) && $societe->id > 0 && ($fac_recid <= 0 || !empty($invoice_predefined->frequency))) {
 		$absolute_discount = $societe->getAvailableDiscounts('', '', 0, 1);
 		print $societe->getNomUrl(1, 'supplier');
 		print '<input type="hidden" name="socid" value="'.$societe->id.'">';
 	} else {
-		print img_picto('', 'company').$form->select_company($societe->id, 'socid', 's.fournisseur=1', 'SelectThirdParty', 0, 0, null, 0, 'minwidth300 widthcentpercentminusxx maxwidth500');
+		print img_picto('', 'company').$form->select_company(!empty($societe->id) ? $societe->id : 0, 'socid', 's.fournisseur=1', 'SelectThirdParty', 0, 0, null, 0, 'minwidth300 widthcentpercentminusxx maxwidth500');
 		// reload page to retrieve supplier informations
 		if (!empty($conf->global->RELOAD_PAGE_ON_SUPPLIER_CHANGE)) {
 			print '<script type="text/javascript">
@@ -2123,8 +2123,8 @@ if ($action == 'create') {
 	}
 
 	// Ref supplier
-	print '<tr><td class="fieldrequired">'.$langs->trans('RefSupplier').'</td><td><input name="ref_supplier" value="'.(GETPOSTISSET('ref_supplier') ? GETPOST('ref_supplier') : $objectsrc->ref_supplier).'" type="text"';
-	if ($societe->id > 0) {
+	print '<tr><td class="fieldrequired">'.$langs->trans('RefSupplier').'</td><td><input name="ref_supplier" value="'.(GETPOSTISSET('ref_supplier') ? GETPOST('ref_supplier') : (!empty($objectsrc->ref_supplier) ? $objectsrc->ref_supplier : '')).'" type="text"';
+	if (!empty($societe->id) && $societe->id > 0) {
 		print ' autofocus';
 	}
 	print '></td>';
@@ -2266,7 +2266,7 @@ if ($action == 'create') {
 	*/
 
 	if (empty($origin)) {
-		if ($societe->id > 0) {
+		if (!empty($societe->id) && $societe->id > 0) {
 			// Credit note
 			if (empty($conf->global->INVOICE_DISABLE_CREDIT_NOTE)) {
 				// Show link for credit note
@@ -2356,7 +2356,7 @@ if ($action == 'create') {
 
 	print '</td></tr>';
 
-	if ($societe->id > 0) {
+	if (!empty($societe->id) && $societe->id > 0) {
 		// Discounts for third party
 		print '<tr><td>'.$langs->trans('Discounts').'</td><td>';
 
@@ -2406,14 +2406,14 @@ if ($action == 'create') {
 		$langs->load('projects');
 		print '<tr><td>'.$langs->trans('Project').'</td><td>';
 		print img_picto('', 'project', 'class="pictofixedwidth"').$formproject->select_projects((empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) ? $societe->id : -1), $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500 widthcentpercentminusxx');
-		print ' <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$soc->id.'&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id.($fac_recid > 0 ? '&fac_rec='.$fac_recid : '')).'"><span class="fa fa-plus-circle valignmiddle" title="'.$langs->trans("AddProject").'"></span></a>';
+		print ' <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.(!empty($soc->id) ? $soc->id : 0).'&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.(!empty($soc->id) ? $soc->id : 0).($fac_recid > 0 ? '&fac_rec='.$fac_recid : '')).'"><span class="fa fa-plus-circle valignmiddle" title="'.$langs->trans("AddProject").'"></span></a>';
 		print '</td></tr>';
 	}
 
 	// Incoterms
 	if (!empty($conf->incoterm->enabled)) {
 		print '<tr>';
-		print '<td><label for="incoterm_id">'.$form->textwithpicto($langs->trans("IncotermLabel"), $objectsrc->label_incoterms, 1).'</label></td>';
+		print '<td><label for="incoterm_id">'.$form->textwithpicto($langs->trans("IncotermLabel"), !empty($objectsrc->label_incoterms) ? $objectsrc->label_incoterms : '', 1).'</label></td>';
 		print '<td colspan="3" class="maxwidthonsmartphone">';
 		print $form->select_incoterms(GETPOSTISSET('incoterm_id') ? GETPOST('incoterm_id', 'alphanohtml') : (!empty($objectsrc->fk_incoterms) ? $objectsrc->fk_incoterms : ''), GETPOSTISSET('location_incoterms') ? GETPOST('location_incoterms', 'alphanohtml') : (!empty($objectsrc->location_incoterms) ? $objectsrc->location_incoterms : ''));
 		print '</td></tr>';
@@ -2487,7 +2487,7 @@ if ($action == 'create') {
 	print '</tr>';
 
 
-	if (is_object($objectsrc)) {
+	if (!empty($objectsrc) && is_object($objectsrc)) {
 		print "\n<!-- ".$classname." info -->";
 		print "\n";
 		print '<input type="hidden" name="amount"         value="'.$objectsrc->total_ht.'">'."\n";
@@ -2549,7 +2549,7 @@ if ($action == 'create') {
 	print $form->buttonsSaveCancel("CreateDraft");
 
 	// Show origin lines
-	if (is_object($objectsrc)) {
+	if (!empty($objectsrc) && is_object($objectsrc)) {
 		print '<br>';
 
 		$title = $langs->trans('ProductsAndServices');

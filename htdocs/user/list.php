@@ -339,6 +339,7 @@ if ($contextpage == 'employeelist' && $search_employee == 1) {
 }
 $morejs = array();
 $morecss = array();
+$morehtmlright = "";
 
 // Build and execute select
 // --------------------------------------------------------------------
