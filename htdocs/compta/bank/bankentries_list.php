@@ -629,7 +629,7 @@ if ($search_conciliated != '' && $search_conciliated != '-1') {
 	$sql .= " AND b.rappro = ".((int) $search_conciliated);
 }
 if ($search_fk_bordereau > 0) {
-	$sql .= " AND b.fk_bordereau = " . ((int)$search_fk_bordereau);
+	$sql .= " AND b.fk_bordereau = " . ((int) $search_fk_bordereau);
 }
 if ($search_thirdparty_user) {
 	$sql.= " AND (b.rowid IN ";
@@ -1709,7 +1709,6 @@ if ($resql) {
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
-
 		}
 
 		// Action edit/delete and select
