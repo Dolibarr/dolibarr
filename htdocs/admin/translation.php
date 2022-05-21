@@ -90,7 +90,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
 	$transkey = '';
 	$transvalue = '';
-	$toselect = '';
+	$toselect = array();
 	$search_array_options = array();
 }
 
@@ -254,6 +254,66 @@ $head = translation_prepare_head();
 
 print dol_get_fiche_head($head, $mode, '', -1, '');
 
+
+$langcode = GETPOSTISSET('langcode') ? GETPOST('langcode') : $langs->defaultlang;
+
+$newlang = new Translate('', $conf);
+$newlang->setDefaultLang($langcode);
+
+$langsenfileonly = new Translate('', $conf);
+$langsenfileonly->setDefaultLang('en_US');
+
+$newlangfileonly = new Translate('', $conf);
+$newlangfileonly->setDefaultLang($langcode);
+
+$recordtoshow = array();
+
+// Search modules dirs
+$modulesdir = dolGetModulesDirs();
+
+$listoffiles = array();
+$listoffilesexternalmodules = array();
+
+// Search into dir of modules (the $modulesdir is already a list that loop on $conf->file->dol_document_root)
+$i = 0;
+foreach ($modulesdir as $keydir => $tmpsearchdir) {
+	$searchdir = $tmpsearchdir; // $searchdir can be '.../htdocs/core/modules/' or '.../htdocs/custom/mymodule/core/modules/'
+
+	// Directory of translation files
+	$dir_lang = dirname(dirname($searchdir))."/langs/".$langcode; // The 2 dirname is to go up in dir for 2 levels
+	$dir_lang_osencoded = dol_osencode($dir_lang);
+
+	$filearray = dol_dir_list($dir_lang_osencoded, 'files', 0, '', '', $sortfield, (strtolower($sortorder) == 'asc' ?SORT_ASC:SORT_DESC), 1);
+	foreach ($filearray as $file) {
+		$tmpfile = preg_replace('/.lang/i', '', basename($file['name']));
+		$moduledirname = (basename(dirname(dirname($dir_lang))));
+
+		$langkey = $tmpfile;
+		if ($i > 0) {
+			$langkey .= '@'.$moduledirname;
+		}
+		//var_dump($i.' - '.$keydir.' - '.$dir_lang_osencoded.' -> '.$moduledirname . ' / ' . $tmpfile.' -> '.$langkey);
+
+		$result = $newlang->load($langkey, 0, 0, '', 0); // Load translation files + database overwrite
+		$result = $newlangfileonly->load($langkey, 0, 0, '', 1); // Load translation files only
+		if ($result < 0) {
+			print 'Failed to load language file '.$tmpfile.'<br>'."\n";
+		} else {
+			$listoffiles[$langkey] = $tmpfile;
+			if (strpos($langkey, '@') !== false) {
+				$listoffilesexternalmodules[$langkey] = $tmpfile;
+			}
+		}
+		//print 'After loading lang '.$langkey.', newlang has '.count($newlang->tab_translate).' records<br>'."\n";
+
+		$result = $langsenfileonly->load($langkey, 0, 0, '', 1); // Load translation files only
+	}
+	$i++;
+}
+
+$nbtotaloffiles = count($listoffiles);
+$nbtotaloffilesexternal = count($listoffilesexternalmodules);
+
 if ($mode == 'overwrite') {
 	print '<input type="hidden" name="page" value="'.$page.'">';
 
@@ -304,7 +364,7 @@ if ($mode == 'overwrite') {
 	print '</td>';
 	print '<td class="center">';
 	print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
-	print '<input type="submit" class="button"'.$disabled.' value="'.$langs->trans("Add").'" name="add" title="'.dol_escape_htmltag($langs->trans("YouMustEnabledTranslationOverwriteBefore")).'">';
+	print '<input type="submit" class="button"'.$disabled.' value="'.$langs->trans("Add").'" name="add" title="'.dol_escape_htmltag($langs->trans("YouMustEnableTranslationOverwriteBefore")).'">';
 	print "</td>\n";
 	print '</tr>';
 
@@ -348,7 +408,14 @@ if ($mode == 'overwrite') {
 			if ($action == 'edit' && $obj->rowid == GETPOST('rowid', 'int')) {
 				print '<input type="text" class="quatrevingtpercent" name="transvalue" value="'.dol_escape_htmltag($obj->transvalue).'">';
 			} else {
+				//print $obj->transkey.' '.$langsenfileonly->tab_translate[$obj->transkey];
+				$titleforvalue = $langs->trans("Translation").' en_US for key '.$obj->transkey.':<br>'.($langsenfileonly->tab_translate[$obj->transkey] ? $langsenfileonly->trans($obj->transkey) : '<span class="opacitymedium">'.$langs->trans("None").'</span>');
+				/*if ($obj->lang != 'en_US') {
+					$titleforvalue .= '<br>'.$langs->trans("Translation").' '.$obj->lang.' '...;
+				}*/
+				print '<span title="'.dol_escape_htmltag($titleforvalue).'" class="classfortooltip">';
 				print dol_escape_htmltag($obj->transvalue);
+				print '</span>';
 			}
 			print '</td>';
 
@@ -376,24 +443,10 @@ if ($mode == 'overwrite') {
 }
 
 if ($mode == 'searchkey') {
-	$langcode = GETPOSTISSET('langcode') ? GETPOST('langcode') : $langs->defaultlang;
-
-	$newlang = new Translate('', $conf);
-	$newlang->setDefaultLang($langcode);
-
-	$newlangfileonly = new Translate('', $conf);
-	$newlangfileonly->setDefaultLang($langcode);
-
-	$recordtoshow = array();
-
-	// Search modules dirs
-	$modulesdir = dolGetModulesDirs();
-
-	$nbtotaloffiles = 0;
 	$nbempty = 0;
-	/*var_dump($langcode);
-	 var_dump($transkey);
-	 var_dump($transvalue);*/
+	//var_dump($langcode);
+	//var_dump($transkey);
+	//var_dump($transvalue);
 	if (empty($langcode) || $langcode == '-1') {
 		$nbempty++;
 	}
@@ -403,41 +456,10 @@ if ($mode == 'searchkey') {
 	if (empty($transvalue)) {
 		$nbempty++;
 	}
+
 	if ($action == 'search' && ($nbempty > 999)) {    // 999 to disable this
 		setEventMessages($langs->trans("WarningAtLeastKeyOrTranslationRequired"), null, 'warnings');
 	} else {
-		// Search into dir of modules (the $modulesdir is already a list that loop on $conf->file->dol_document_root)
-		$i = 0;
-		foreach ($modulesdir as $keydir => $tmpsearchdir) {
-			$searchdir = $tmpsearchdir; // $searchdir can be '.../htdocs/core/modules/' or '.../htdocs/custom/mymodule/core/modules/'
-
-			// Directory of translation files
-			$dir_lang = dirname(dirname($searchdir))."/langs/".$langcode; // The 2 dirname is to go up in dir for 2 levels
-			$dir_lang_osencoded = dol_osencode($dir_lang);
-
-			$filearray = dol_dir_list($dir_lang_osencoded, 'files', 0, '', '', $sortfield, (strtolower($sortorder) == 'asc' ?SORT_ASC:SORT_DESC), 1);
-			foreach ($filearray as $file) {
-				$tmpfile = preg_replace('/.lang/i', '', basename($file['name']));
-				$moduledirname = (basename(dirname(dirname($dir_lang))));
-
-				$langkey = $tmpfile;
-				if ($i > 0) {
-					$langkey .= '@'.$moduledirname;
-				}
-				//var_dump($i.' - '.$keydir.' - '.$dir_lang_osencoded.' -> '.$moduledirname . ' / ' . $tmpfile.' -> '.$langkey);
-
-				$result = $newlang->load($langkey, 0, 0, '', 0); // Load translation files + database overwrite
-				$result = $newlangfileonly->load($langkey, 0, 0, '', 1); // Load translation files only
-				if ($result < 0) {
-					print 'Failed to load language file '.$tmpfile.'<br>'."\n";
-				} else {
-					$nbtotaloffiles++;
-				}
-				//print 'After loading lang '.$langkey.', newlang has '.count($newlang->tab_translate).' records<br>'."\n";
-			}
-			$i++;
-		}
-
 		// Now search into translation array
 		foreach ($newlang->tab_translate as $key => $val) {
 			if ($transkey && !preg_match('/'.preg_quote($transkey, '/').'/i', $key)) {
@@ -461,7 +483,7 @@ if ($mode == 'searchkey') {
 	//print 'param='.$param.' $_SERVER["PHP_SELF"]='.$_SERVER["PHP_SELF"].' num='.$num.' page='.$page.' nbtotalofrecords='.$nbtotalofrecords." sortfield=".$sortfield." sortorder=".$sortorder;
 	$title = $langs->trans("Translation");
 	if ($nbtotalofrecords > 0) {
-		$title .= ' <span class="opacitymedium colorblack paddingleft">('.$nbtotalofrecords.' / '.$nbtotalofrecordswithoutfilters.' - '.$nbtotaloffiles.' '.$langs->trans("Files").')</span>';
+		$title .= ' <span class="opacitymedium colorblack paddingleft">('.$nbtotalofrecords.' / '.$nbtotalofrecordswithoutfilters.' - <span title="'.dol_escape_htmltag(($nbtotaloffiles - $nbtotaloffilesexternal).' core - '.($nbtotaloffilesexternal).' external').'">'.$nbtotaloffiles.' '.$langs->trans("Files").'</span>)</span>';
 	}
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, -1 * $nbtotalofrecords, '', 0, '', '', $limit, 0, 0, 1);
 
@@ -532,8 +554,12 @@ if ($mode == 'searchkey') {
 			break;
 		}
 		print '<tr class="oddeven"><td>'.$langcode.'</td><td>'.$key.'</td><td class="small">';
+		$titleforvalue = $langs->trans("Translation").' en_US for key '.$key.':<br>'.($langsenfileonly->tab_translate[$key] ? $langsenfileonly->trans($key) : '<span class="opacitymedium">'.$langs->trans("None").'</span>');
+		print '<span title="'.dol_escape_htmltag($titleforvalue).'" class="classfortooltip">';
 		print dol_escape_htmltag($val);
-		print '</td><td class="right nowraponall">';
+		print '</span>';
+		print '</td>';
+		print '<td class="right nowraponall">';
 		if (!empty($newlangfileonly->tab_translate[$key])) {
 			if ($val != $newlangfileonly->tab_translate[$key]) {
 				// retrieve rowid

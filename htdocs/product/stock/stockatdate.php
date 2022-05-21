@@ -363,7 +363,7 @@ print $form->select_produits($productid, 'productid', '', 0, 0, -1, 2, '', 0, ar
 print ' <span class="clearbothonsmartphone marginleftonly paddingleftonly marginrightonly paddingrightonly">&nbsp;</span> ';
 print img_picto('', 'stock', 'class="pictofiwedwidth"');
 print '</span> ';
-print $formproduct->selectWarehouses((GETPOSTISSET('fk_warehouse') ? $fk_warehouse : 'ifone'), 'fk_warehouse', '', 1, 0, 0, $langs->trans('Warehouse'), 0, 0, null, '', null, 1, false, 'e.ref');
+print $formproduct->selectWarehouses((GETPOSTISSET('fk_warehouse') ? $fk_warehouse : 'ifonenodefault'), 'fk_warehouse', '', 1, 0, 0, $langs->trans('Warehouse'), 0, 0, null, '', null, 1, false, 'e.ref');
 print '</div>';
 
 $parameters = array();
@@ -565,7 +565,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			// PMP value
 			print '<td class="right">';
 			if (price2num($objp->estimatedvalue, 'MT')) {
-				print price(price2num($objp->estimatedvalue, 'MT'), 1);
+				print '<span class="amount">'.price(price2num($objp->estimatedvalue, 'MT'), 1).'</span>';
 			} else {
 				print '';
 			}
@@ -578,7 +578,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 				print price(price2num($objp->sellvalue, 'MT'), 1);
 			} else {
 				$htmltext = $langs->trans("OptionMULTIPRICESIsOn");
-				print $form->textwithtooltip($langs->trans("Variable"), $htmltext);
+				print $form->textwithtooltip('<span class="opacitymedium">'.$langs->trans("Variable").'</span>', $htmltext);
 			}
 			print'</td>';
 
@@ -615,11 +615,12 @@ if ($mode == 'future') {
 	$colspan++;
 }
 
-print '<tr class="liste_total"><td>'.$langs->trans("Totalforthispage").'</td>';
-print '<td></td><td></td><td class="right">'.price(price2num($totalbuyingprice, 'MT')).'</td><td></td><td></td><td></td><td></td></tr>';
 
 if (empty($date) || !$dateIsValid) {
 	print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("EnterADateCriteria").'</span></td></tr>';
+} else {
+	print '<tr class="liste_total"><td>'.$langs->trans("Totalforthispage").'</td>';
+	print '<td></td><td></td><td class="right">'.price(price2num($totalbuyingprice, 'MT')).'</td><td></td><td></td><td></td><td></td></tr>';
 }
 
 print '</table>';

@@ -1161,40 +1161,36 @@ class DolGraph
 		// Special case for Graph of type 'pie', 'piesemicircle', or 'polar'
 		if (isset($this->type[$firstlot]) && (in_array($this->type[$firstlot], array('pie', 'polar', 'piesemicircle')))) {
 			$type = $this->type[$firstlot]; // pie or polar
-			$this->stringtoshow .= 'var options = {' . "\n";
+			//$this->stringtoshow .= 'var options = {' . "\n";
+			$this->stringtoshow .= 'var options = { maintainAspectRatio: false, aspectRatio: 2.5, ';
+
+
 			$legendMaxLines = 0; // Does not work
+
+			/* For Chartjs v2.9 */
 			if (empty($showlegend)) {
 				$this->stringtoshow .= 'legend: { display: false }, ';
 			} else {
-				$this->stringtoshow .= 'legend: { position: \'' . ($showlegend == 2 ? 'right' : 'top') . '\'';
+				$this->stringtoshow .= 'legend: { labels: { boxWidth: 15 }, position: \'' . ($showlegend == 2 ? 'right' : 'top') . '\'';
 				if (!empty($legendMaxLines)) {
 					$this->stringtoshow .= ', maxLines: ' . $legendMaxLines . '';
 				}
-				/* This has no effect on chartjs version with dol v14
-				$this->stringtoshow .= ', labels: {
-					color: \'rgb(255, 0, 0)\',
-					// This more specific font property overrides the global property
-					font: {
-						size: 24
-					}
-				}';
-				*/
 				$this->stringtoshow .= ' }, ' . "\n";
 			}
 
-			/* This has no effect on chartjs version with dol v14
-			$this->stringtoshow .= 'plugins: {
-				legend: {
-					display: true,
-					labels: {
-						color: \'rgb(255, 0, 0)\',
-						// This more specific font property overrides the global property
-						font: {
-							size: 24
-						}
-					}
+			/* For Chartjs v3.5 */
+			$this->stringtoshow .= 'plugins: { ';
+			if (empty($showlegend)) {
+				$this->stringtoshow .= 'legend: { display: false }, ';
+			} else {
+				$this->stringtoshow .= 'legend: { labels: { boxWidth: 15 }, position: \'' . ($showlegend == 2 ? 'right' : 'top') . '\'';
+				if (!empty($legendMaxLines)) {
+					$this->stringtoshow .= ', maxLines: ' . $legendMaxLines . '';
 				}
-			},'."\n"; */
+				$this->stringtoshow .= ' }, ' . "\n";
+			}
+			$this->stringtoshow .= ' }, ' . "\n";
+
 
 			if ($this->type[$firstlot] == 'piesemicircle') {
 				$this->stringtoshow .= 'circumference: Math.PI,' . "\n";
@@ -1291,25 +1287,42 @@ class DolGraph
 			$this->stringtoshow .= '});' . "\n";
 		} else {
 			// Other cases, graph of type 'bars', 'lines', 'linesnopoint'
-			$type = 'bar';
+			$type = 'bar'; $xaxis = '';
 
 			if (!isset($this->type[$firstlot]) || $this->type[$firstlot] == 'bars') {
 				$type = 'bar';
 			}
 			if (isset($this->type[$firstlot]) && $this->type[$firstlot] == 'horizontalbars') {
-				$type = 'horizontalBar';
+				$type = 'bar'; $xaxis = "indexAxis: 'y', ";
 			}
 			if (isset($this->type[$firstlot]) && ($this->type[$firstlot] == 'lines' || $this->type[$firstlot] == 'linesnopoint')) {
 				$type = 'line';
 			}
 
 			$this->stringtoshow .= 'var options = { maintainAspectRatio: false, aspectRatio: 2.5, ';
+			$this->stringtoshow .= $xaxis;
+
+			/* For Chartjs v2.9 */
+			/*
 			if (empty($showlegend)) {
-				$this->stringtoshow .= 'legend: { display: false }, ';
+				$this->stringtoshow .= 'legend: { display: false }, '."\n";
 			} else {
-				$this->stringtoshow .= 'legend: { position: \'' . ($showlegend == 2 ? 'right' : 'top') . '\' },';
+				$this->stringtoshow .= 'legend: { maxWidth: '.round($this->width / 2).', labels: { boxWidth: 15 }, position: \'' . ($showlegend == 2 ? 'right' : 'top') . '\' }, '."\n";
 			}
-			$this->stringtoshow .= 'scales: { xAxes: [{ ';
+			*/
+
+			/* For Chartjs v3.5 */
+			$this->stringtoshow .= 'plugins: { '."\n";
+			if (empty($showlegend)) {
+				$this->stringtoshow .= 'legend: { display: false }, '."\n";
+			} else {
+				$this->stringtoshow .= 'legend: { maxWidth: '.round($this->width / 2).', labels: { boxWidth: 15 }, position: \'' . ($showlegend == 2 ? 'right' : 'top') . '\' },'."\n";
+			}
+			$this->stringtoshow .= "}, \n";
+
+			/* For Chartjs v2.9 */
+			/*
+			 $this->stringtoshow .= 'scales: { xAxis: [{ ';
 			if ($this->hideXValues) {
 				$this->stringtoshow .= ' ticks: { display: false }, display: true,';
 			}
@@ -1319,11 +1332,12 @@ class DolGraph
 				$this->stringtoshow .= ', stacked: true';
 			}
 			$this->stringtoshow .= ' }]';
-			$this->stringtoshow .= ', yAxes: [{ ticks: { beginAtZero: true }';
+			$this->stringtoshow .= ', yAxis: [{ ticks: { beginAtZero: true }';
 			if ($type == 'bar' && count($arrayofgroupslegend) > 0) {
 				$this->stringtoshow .= ', stacked: true';
 			}
 			$this->stringtoshow .= ' }] }';
+			*/
 
 			// Add a callback to change label to show only positive value
 			if (is_array($this->tooltipsLabels) || is_array($this->tooltipsTitles)) {
@@ -1534,7 +1548,7 @@ class DolGraph
 			}
 		}
 		if ($direction == 'height') {
-			return (empty($conf->dol_optimize_smallscreen) ? ($defaultsize ? $defaultsize : '200') : '160');
+			return (empty($conf->dol_optimize_smallscreen) ? ($defaultsize ? $defaultsize : '220') : '200');
 		}
 		return 0;
 	}

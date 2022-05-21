@@ -140,7 +140,7 @@ class CMailFile
 	 */
 	public function __construct($subject, $to, $from, $msg, $filename_list = array(), $mimetype_list = array(), $mimefilename_list = array(), $addr_cc = "", $addr_bcc = "", $deliveryreceipt = 0, $msgishtml = 0, $errors_to = '', $css = '', $trackid = '', $moreinheader = '', $sendcontext = 'standard', $replyto = '')
 	{
-		global $conf, $dolibarr_main_data_root;
+		global $conf, $dolibarr_main_data_root, $user;
 
 		// Clean values of $mimefilename_list
 		if (is_array($mimefilename_list)) {
@@ -149,31 +149,7 @@ class CMailFile
 			}
 		}
 
-		// Add autocopy to if not already in $to (Note: Adding bcc for specific modules are also done from pages)
-		if (!empty($conf->global->MAIN_MAIL_AUTOCOPY_TO) && !preg_match('/'.preg_quote($conf->global->MAIN_MAIL_AUTOCOPY_TO, '/').'/i', $to)) {
-			$addr_bcc .= ($addr_bcc ? ', ' : '').$conf->global->MAIN_MAIL_AUTOCOPY_TO;
-		}
-
-		$this->subject = $subject;
-		$this->addr_to = $to;
-		$this->addr_from = $from;
-		$this->msg = $msg;
-		$this->filename_list = $filename_list;
-		$this->mimetype_list = $mimetype_list;
-		$this->mimefilename_list = $mimefilename_list;
-		$this->addr_cc = $addr_cc;
-		$this->addr_bcc = $addr_bcc;
-		$this->deliveryreceipt = $deliveryreceipt;
-		if (empty($replyto)) {
-			$replyto = $from;
-		}
-		$this->reply_to = $replyto;
-		$this->errors_to = $errors_to;
-		$this->trackid = $trackid;
 		$this->sendcontext = $sendcontext;
-		$this->filename_list = $filename_list;
-		$this->mimetype_list = $mimetype_list;
-		$this->mimefilename_list = $mimefilename_list;
 
 		// Define this->sendmode
 		$this->sendmode = '';
@@ -186,10 +162,7 @@ class CMailFile
 			}
 		}
 		if (empty($this->sendmode)) {
-			$this->sendmode = $conf->global->MAIN_MAIL_SENDMODE;
-		}
-		if (empty($this->sendmode)) {
-			$this->sendmode = 'mail';
+			$this->sendmode = (!empty($conf->global->MAIN_MAIL_SENDMODE) ? $conf->global->MAIN_MAIL_SENDMODE : 'mail');
 		}
 
 		// We define end of line (RFC 821).
@@ -278,20 +251,52 @@ class CMailFile
 			}
 		}
 
-		// Add autocopy to if not already in $to (Note: Adding bcc for specific modules are also done from pages)
-		if (!empty($conf->global->MAIN_MAIL_AUTOCOPY_TO) && !preg_match('/'.preg_quote($conf->global->MAIN_MAIL_AUTOCOPY_TO, '/').'/i', $to)) {
-			$addr_bcc .= ($addr_bcc ? ', ' : '').$conf->global->MAIN_MAIL_AUTOCOPY_TO;
+		// Add auto copy to if not already in $to (Note: Adding bcc for specific modules are also done from pages)
+		// For example MAIN_MAIL_AUTOCOPY_TO can be 'email@example.com, __USER_EMAIL__, ...'
+		if (!empty($conf->global->MAIN_MAIL_AUTOCOPY_TO)) {
+			$listofemailstoadd = explode(',', $conf->global->MAIN_MAIL_AUTOCOPY_TO);
+			foreach ($listofemailstoadd as $key => $val) {
+				$emailtoadd = $listofemailstoadd[$key];
+				if (trim($emailtoadd) == '__USER_EMAIL__') {
+					if (!empty($user) && !empty($user->email)) {
+						$emailtoadd = $user->email;
+					} else {
+						$emailtoadd = '';
+					}
+				}
+				if ($emailtoadd && preg_match('/'.preg_quote($emailtoadd, '/').'/i', $to)) {
+					$emailtoadd = '';	// Email already in the "To"
+				}
+				if ($emailtoadd) {
+					$listofemailstoadd[$key] = $emailtoadd;
+				} else {
+					unset($listofemailstoadd[$key]);
+				}
+			}
+			if (!empty($listofemailstoadd)) {
+				$addr_bcc .= ($addr_bcc ? ', ' : '').join(', ', $listofemailstoadd);
+			}
 		}
 
+		$this->subject = $subject;
 		$this->addr_to = $to;
+		$this->addr_from = $from;
+		$this->msg = $msg;
+		$this->filename_list = $filename_list;
+		$this->mimetype_list = $mimetype_list;
+		$this->mimefilename_list = $mimefilename_list;
 		$this->addr_cc = $addr_cc;
 		$this->addr_bcc = $addr_bcc;
-		$this->reply_to = $replyto;
-		$this->addr_from = $from;
-		$this->subject = $subject;
-		$this->errors_to = $errors_to;
 		$this->deliveryreceipt = $deliveryreceipt;
+		if (empty($replyto)) {
+			$replyto = $from;
+		}
+		$this->reply_to = $replyto;
+		$this->errors_to = $errors_to;
 		$this->trackid = $trackid;
+		$this->filename_list = $filename_list;
+		$this->mimetype_list = $mimetype_list;
+		$this->mimefilename_list = $mimefilename_list;
 
 		if (!empty($conf->global->MAIN_MAIL_FORCE_SENDTO)) {
 			$this->addr_to = $conf->global->MAIN_MAIL_FORCE_SENDTO;
@@ -592,7 +597,7 @@ class CMailFile
 			}
 
 			$sendingmode = $this->sendmode;
-			if ($this->context == 'emailing' && !empty($conf->global->MAILING_NO_USING_PHPMAIL) && $sendingmode == 'mail') {
+			if ($this->sendcontext == 'emailing' && !empty($conf->global->MAILING_NO_USING_PHPMAIL) && $sendingmode == 'mail') {
 				// List of sending methods
 				$listofmethods = array();
 				$listofmethods['mail'] = 'PHP mail function';

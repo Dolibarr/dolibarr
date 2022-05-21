@@ -202,7 +202,7 @@ class FormProduct
 	/**
 	 *  Return list of warehouses
 	 *
-	 *  @param  string|int  $selected           Id of preselected warehouse ('' or '-1' for no value, 'ifone'=select value if one value otherwise no value, '-2' to use the default value from setup)
+	 *  @param  string|int  $selected           Id of preselected warehouse ('' or '-1' for no value, 'ifone' and 'ifonenodefault' = select value if one value otherwise no value, '-2' to use the default value from setup)
 	 *  @param  string      $htmlname           Name of html select html
 	 *  @param  string      $filterstatus       warehouse status filter, following comma separated filter options can be used
 	 *                                          'warehouseopen' = select products from open warehouses,
@@ -279,7 +279,7 @@ class FormProduct
 			}
 
 			$out .= '<option value="'.$id.'"';
-			if ($selected == $id || ($selected == 'ifone' && $nbofwarehouses == 1)) {
+			if ($selected == $id || (preg_match('/^ifone/', $selected) && $nbofwarehouses == 1)) {
 				$out .= ' selected';
 			}
 			$out .= ' data-html="'.dol_escape_htmltag($label).'"';

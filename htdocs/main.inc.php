@@ -89,7 +89,7 @@ function testSqlAndScriptInject($val, $type)
 	// Decode string first because a lot of things are obfuscated by encoding or multiple encoding.
 	// So <svg o&#110;load='console.log(&quot;123&quot;)' become <svg onload='console.log(&quot;123&quot;)'
 	// So "&colon;&apos;" become ":'" (due to ENT_HTML5)
-	// Loop to decode until no more thing to decode.
+	// Loop to decode until no more things to decode.
 	//print "before decoding $val\n";
 	do {
 		$oldval = $val;
@@ -97,16 +97,30 @@ function testSqlAndScriptInject($val, $type)
 		//$val = preg_replace_callback('/&#(x?[0-9][0-9a-f]+;?)/i', 'realCharForNumericEntities', $val); // Sometimes we have entities without the ; at end so html_entity_decode does not work but entities is still interpreted by browser.
 		$val = preg_replace_callback('/&#(x?[0-9][0-9a-f]+;?)/i', function ($m) {
 			return realCharForNumericEntities($m); }, $val);
-	} while ($oldval != $val);
-	//print "after  decoding $val\n";
 
-	// We clean string because some hacks try to obfuscate evil strings by inserting non printable chars. Example: 'java(ascci09)scr(ascii00)ipt' is processed like 'javascript' (whatever is place of evil ascii char)
-	// We should use dol_string_nounprintableascii but function is not yet loaded/available
-	$val = preg_replace('/[\x00-\x1F\x7F]/u', '', $val); // /u operator makes UTF8 valid characters being ignored so are not included into the replace
-	// We clean html comments because some hacks try to obfuscate evil strings by inserting HTML comments. Example: on<!-- -->error=alert(1)
-	$val = preg_replace('/<!--[^>]*-->/', '', $val);
+		// We clean html comments because some hacks try to obfuscate evil strings by inserting HTML comments. Example: on<!-- -->error=alert(1)
+		$val = preg_replace('/<!--[^>]*-->/', '', $val);
+		$val = preg_replace('/[\r\n]/', '', $val);
+	} while ($oldval != $val);
+	//print "type = ".$type." after decoding: ".$val."\n";
 
 	$inj = 0;
+
+	// We check string because some hacks try to obfuscate evil strings by inserting non printable chars. Example: 'java(ascci09)scr(ascii00)ipt' is processed like 'javascript' (whatever is place of evil ascii char)
+	// We should use dol_string_nounprintableascii but function is not yet loaded/available
+	// Example of valid UTF8 chars:
+	// utf8=utf8mb3:    '\x09', '\x0A', '\x0D', '\x7E'
+	// utf8=utf8mb3: 	'\xE0\xA0\x80'
+	// utf8mb4: 		'\xF0\x9D\x84\x9E'   (but this may be refused by the database insert if pagecode is utf8=utf8mb3)
+	$newval = preg_replace('/[\x00-\x08\x0B-\x0C\x0E-\x1F\x7F]/u', '', $val); // /u operator makes UTF8 valid characters being ignored so are not included into the replace
+
+	// Note that $newval may also be completely empty '' when non valid UTF8 are found.
+	if ($newval != $val) {
+		// If $val has changed after removing non valid UTF8 chars, it means we have an evil string.
+		$inj += 1;
+	}
+	//print 'type='.$type.'-val='.$val.'-newval='.$newval."-inj=".$inj."\n";
+
 	// For SQL Injection (only GET are used to scan for such injection strings)
 	if ($type == 1 || $type == 3) {
 		$inj += preg_match('/delete\s+from/i', $val);
@@ -149,7 +163,7 @@ function testSqlAndScriptInject($val, $type)
 	// List of dom events is on https://www.w3schools.com/jsref/dom_obj_event.asp and https://developer.mozilla.org/en-US/docs/Web/API/GlobalEventHandlers
 	$inj += preg_match('/on(mouse|drag|key|load|touch|pointer|select|transition)([a-z]*)\s*=/i', $val); // onmousexxx can be set on img or any html tag like <img title='...' onmouseover=alert(1)>
 	$inj += preg_match('/on(abort|afterprint|animation|auxclick|beforecopy|beforecut|beforeprint|beforeunload|blur|cancel|canplay|canplaythrough|change|click|close|contextmenu|cuechange|copy|cut)\s*=/i', $val);
-	$inj += preg_match('/on(dblclick|drop|durationchange|emptied|ended|error|focus|focusin|focusout|formdata|gotpointercapture|hashchange|input|invalid)\s*=/i', $val);
+	$inj += preg_match('/on(dblclick|drop|durationchange|emptied|end|ended|error|focus|focusin|focusout|formdata|gotpointercapture|hashchange|input|invalid)\s*=/i', $val);
 	$inj += preg_match('/on(lostpointercapture|offline|online|pagehide|pageshow)\s*=/i', $val);
 	$inj += preg_match('/on(paste|pause|play|playing|progress|ratechange|reset|resize|scroll|search|seeked|seeking|show|stalled|start|submit|suspend)\s*=/i', $val);
 	$inj += preg_match('/on(timeupdate|toggle|unload|volumechange|waiting|wheel)\s*=/i', $val);
@@ -158,15 +172,14 @@ function testSqlAndScriptInject($val, $type)
 	$tmpval = preg_replace('/<[^<]+>/', '', $val);
 	// List of dom events is on https://www.w3schools.com/jsref/dom_obj_event.asp and https://developer.mozilla.org/en-US/docs/Web/API/GlobalEventHandlers
 	$inj += preg_match('/on(mouse|drag|key|load|touch|pointer|select|transition)([a-z]*)\s*=/i', $val); // onmousexxx can be set on img or any html tag like <img title='...' onmouseover=alert(1)>
-	$inj += preg_match('/on(abort|afterprint|animation|auxclick|beforeprint|beforeunload|blur|cancel|canplay|canplaythrough|change|click|close|contextmenu|cuechange|copy|cut)\s*=/i', $tmpval);
-	$inj += preg_match('/on(dblclick|drop|durationchange|emptied|ended|error|focus|focusin|focusout|formdata|gotpointercapture|hashchange|input|invalid)\s*=/i', $tmpval);
+	$inj += preg_match('/on(abort|afterprint|animation|auxclick|beforecopy|beforecut|beforeprint|beforeunload|blur|cancel|canplay|canplaythrough|change|click|close|contextmenu|cuechange|copy|cut)\s*=/i', $tmpval);
+	$inj += preg_match('/on(dblclick|drop|durationchange|emptied|end|ended|error|focus|focusin|focusout|formdata|gotpointercapture|hashchange|input|invalid)\s*=/i', $tmpval);
 	$inj += preg_match('/on(lostpointercapture|offline|online|pagehide|pageshow)\s*=/i', $tmpval);
 	$inj += preg_match('/on(paste|pause|play|playing|progress|ratechange|reset|resize|scroll|search|seeked|seeking|show|stalled|start|submit|suspend)\s*=/i', $tmpval);
 	$inj += preg_match('/on(timeupdate|toggle|unload|volumechange|waiting|wheel)\s*=/i', $tmpval);
 
 	//$inj += preg_match('/on[A-Z][a-z]+\*=/', $val);   // To lock event handlers onAbort(), ...
 	$inj += preg_match('/&#58;|&#0000058|&#x3A/i', $val); // refused string ':' encoded (no reason to have it encoded) to lock 'javascript:...'
-
 	$inj += preg_match('/javascript\s*:/i', $val);
 	$inj += preg_match('/vbscript\s*:/i', $val);
 	// For XSS Injection done by adding javascript closing html tags like with onmousemove, etc... (closing a src or href tag with not cleaned param)
@@ -268,7 +281,20 @@ if (!empty($_POST["DOL_AUTOSET_COOKIE"])) {
 	$cookiename = $tmpautoset[0];
 	$cookievalue = json_encode($cookiearrayvalue);
 	//var_dump('setcookie cookiename='.$cookiename.' cookievalue='.$cookievalue);
-	setcookie($cookiename, empty($cookievalue) ? '' : $cookievalue, empty($cookievalue) ? 0 : (time() + (86400 * 354)), '/', null, (empty($dolibarr_main_force_https) ? false : true), true); // keep cookie 1 year and add tag httponly
+	if (PHP_VERSION_ID < 70300) {
+		setcookie($cookiename, empty($cookievalue) ? '' : $cookievalue, empty($cookievalue) ? 0 : (time() + (86400 * 354)), '/', null, ((empty($dolibarr_main_force_https) && isHTTPS() === false) ? false : true), true); // keep cookie 1 year and add tag httponly
+	} else {
+		// Only available for php >= 7.3
+		$cookieparams = array(
+			'expires' => empty($cookievalue) ? 0 : (time() + (86400 * 354)),
+			'path' => '/',
+			//'domain' => '.mywebsite.com', // the dot at the beginning allows compatibility with subdomains
+			'secure' => ((empty($dolibarr_main_force_https) && isHTTPS() === false) ? false : true),
+			'httponly' => true,
+			'samesite' => 'Lax'	// None || Lax  || Strict
+		);
+		setcookie($cookiename, empty($cookievalue) ? '' : $cookievalue, $cookieparams);
+	}
 	if (empty($cookievalue)) {
 		unset($_COOKIE[$cookiename]);
 	}
@@ -282,7 +308,7 @@ if (!empty($php_session_save_handler) && $php_session_save_handler == 'db') {
 
 // Init session. Name of session is specific to Dolibarr instance.
 // Must be done after the include of filefunc.inc.php so global variables of conf file are defined (like $dolibarr_main_instance_unique_id or $dolibarr_main_force_https).
-// Note: the function dol_getprefix is defined into functions.lib.php but may have been defined to return a different key to manage another area to protect.
+// Note: the function dol_getprefix() is defined into functions.lib.php but may have been defined to return a different key to manage another area to protect.
 $prefix = dol_getprefix('');
 $sessionname = 'DOLSESSID_'.$prefix;
 $sessiontimeout = 'DOLSESSTIMEOUT_'.$prefix;
@@ -290,11 +316,23 @@ if (!empty($_COOKIE[$sessiontimeout])) {
 	ini_set('session.gc_maxlifetime', $_COOKIE[$sessiontimeout]);
 }
 
-
 // This create lock, released by session_write_close() or end of page.
 // We need this lock as long as we read/write $_SESSION ['vars']. We can remove lock when finished.
 if (!defined('NOSESSION')) {
-	session_set_cookie_params(0, '/', null, (empty($dolibarr_main_force_https) ? false : true), true); // Add tag secure and httponly on session cookie (same as setting session.cookie_httponly into php.ini). Must be called before the session_start.
+	if (PHP_VERSION_ID < 70300) {
+		session_set_cookie_params(0, '/', null, ((empty($dolibarr_main_force_https) && isHTTPS() === false) ? false : true), true); // Add tag secure and httponly on session cookie (same as setting session.cookie_httponly into php.ini). Must be called before the session_start.
+	} else {
+		// Only available for php >= 7.3
+		$sessioncookieparams = array(
+			'lifetime' => 0,
+			'path' => '/',
+			//'domain' => '.mywebsite.com', // the dot at the beginning allows compatibility with subdomains
+			'secure' => ((empty($dolibarr_main_force_https) && isHTTPS() === false) ? false : true),
+			'httponly' => true,
+			'samesite' => 'Lax'	// None || Lax  || Strict
+		);
+		session_set_cookie_params($sessioncookieparams);
+	}
 	session_name($sessionname);
 	session_start();	// This call the open and read of session handler
 	//exit;	// this exist generates a call to write and close
@@ -493,6 +531,7 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt(
 			$sensitiveget = true;
 		}
 	}
+
 	// Check a token is provided for all cases that need a mandatory token
 	// (all POST actions + all login, actions and mass actions on pages with CSRFCHECK_WITH_TOKEN set + all sensitive GET actions)
 	if (
@@ -504,12 +543,13 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt(
 		// If token is not provided or empty, error (we are in case it is mandatory)
 		if (!GETPOST('token', 'alpha') || GETPOST('token', 'alpha') == 'notrequired') {
 			if (GETPOST('uploadform', 'int')) {
-				dol_syslog("--- Access to ".(empty($_SERVER["REQUEST_METHOD"]) ? '' : $_SERVER["REQUEST_METHOD"].' ').$_SERVER["PHP_SELF"]." refused. File size too large.");
+				dol_syslog("--- Access to ".(empty($_SERVER["REQUEST_METHOD"]) ? '' : $_SERVER["REQUEST_METHOD"].' ').$_SERVER["PHP_SELF"]." refused. File size too large or not provided.");
 				$langs->loadLangs(array("errors", "install"));
 				print $langs->trans("ErrorFileSizeTooLarge").' ';
 				print $langs->trans("ErrorGoBackAndCorrectParameters");
 				die;
 			} else {
+				http_response_code(403);
 				if (defined('CSRFCHECK_WITH_TOKEN')) {
 					dol_syslog("--- Access to ".(empty($_SERVER["REQUEST_METHOD"]) ? '' : $_SERVER["REQUEST_METHOD"].' ').$_SERVER["PHP_SELF"]." refused by CSRF protection (CSRFCHECK_WITH_TOKEN protection) in main.inc.php. Token not provided.", LOG_WARNING);
 					print "Access to a page that needs a token (constant CSRFCHECK_WITH_TOKEN is defined) is refused by CSRF protection in main.inc.php. Token not provided.\n";
@@ -528,12 +568,16 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt(
 	}
 
 	$sessiontokenforthisurl = (empty($_SESSION['token']) ? '' : $_SESSION['token']);
-	// TODO Get the sessiontokenforthisurl into the array of session token
+	// TODO Get the sessiontokenforthisurl into an array of session token (one array per base URL so we can use the CSRF per page and we keep ability for several tabs per url in a browser)
 	if (GETPOSTISSET('token') && GETPOST('token') != 'notrequired' && GETPOST('token', 'alpha') != $sessiontokenforthisurl) {
-		dol_syslog("--- Access to ".(empty($_SERVER["REQUEST_METHOD"]) ? '' : $_SERVER["REQUEST_METHOD"].' ').$_SERVER["PHP_SELF"]." refused by CSRF protection (invalid token), so we disable POST and some GET parameters - referer=".$_SERVER['HTTP_REFERER'].", action=".GETPOST('action', 'aZ09').", _GET|POST['token']=".GETPOST('token', 'alpha').", _SESSION['token']=".$_SESSION['token'], LOG_WARNING);
-		//print 'Unset POST by CSRF protection in main.inc.php.';	// Do not output anything because this create problems when using the BACK button on browsers.
+		dol_syslog("--- Access to ".(empty($_SERVER["REQUEST_METHOD"]) ? '' : $_SERVER["REQUEST_METHOD"].' ').$_SERVER["PHP_SELF"]." refused by CSRF protection (invalid token), so we disable POST and some GET parameters - referer=".$_SERVER['HTTP_REFERER'].", action=".GETPOST('action', 'aZ09').", _GET|POST['token']=".GETPOST('token', 'alpha'), LOG_WARNING);
+		//dol_syslog("_SESSION['token']=".$sessiontokenforthisurl, LOG_DEBUG);
+		// Do not output anything on standard output because this create problems when using the BACK button on browsers. So we just set a message into session.
 		setEventMessages('SecurityTokenHasExpiredSoActionHasBeenCanceledPleaseRetry', null, 'warnings');
-		if (isset($_POST['id'])) $savid = ((int) $_POST['id']);
+		$savid = null;
+		if (isset($_POST['id'])) {
+			$savid = ((int) $_POST['id']);
+		}
 		unset($_POST);
 		//unset($_POST['action']); unset($_POST['massaction']);
 		//unset($_POST['confirm']); unset($_POST['confirmmassaction']);
@@ -541,7 +585,10 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt(
 		unset($_GET['action']);
 		unset($_GET['confirmmassaction']);
 		unset($_GET['massaction']);
-		if (isset($savid)) $_POST['id'] = ((int) $savid);
+		unset($_GET['token']);			// TODO Make a redirect if we have a token in url to remove it ?
+		if (isset($savid)) {
+			$_POST['id'] = ((int) $savid);
+		}
 	}
 
 	// Note: There is another CSRF protection into the filefunc.inc.php
@@ -730,11 +777,14 @@ if (!defined('NOLOGIN')) {
 		// Validation of login/pass/entity
 		// If ok, the variable login will be returned
 		// If error, we will put error message in session under the name dol_loginmesg
+		// Note authmode is an array for example: array('0'=>'dolibarr', '1'=>'google');
 		if ($test && $goontestloop && (GETPOST('actionlogin', 'aZ09') == 'login' || $dolibarr_main_authentication != 'dolibarr')) {
 			$login = checkLoginPassEntity($usertotest, $passwordtotest, $entitytotest, $authmode);
 			if ($login === '--bad-login-validity--') {
 				$login = '';
 			}
+
+			$dol_authmode = '';
 
 			if ($login) {
 				$dol_authmode = $conf->authmode; // This properties is defined only when logged, to say what mode was successfully used
@@ -1290,15 +1340,16 @@ if (!function_exists("llxHeader")) {
 	 * @param	string			$morequerystring	Query string to add to the link "print" to get same parameters (use only if autodetect fails)
 	 * @param   string  		$morecssonbody      More CSS on body tag. For example 'classforhorizontalscrolloftabs'.
 	 * @param	string			$replacemainareaby	Replace call to main_area() by a print of this string
-	 * @param	int				$disablenofollow	Disable the "nofollow" on page
+	 * @param	int				$disablenofollow	Disable the "nofollow" on meta robot header
+	 * @param	int				$disablenoindex		Disable the "noindex" on meta robot header
 	 * @return	void
 	 */
-	function llxHeader($head = '', $title = '', $help_url = '', $target = '', $disablejs = 0, $disablehead = 0, $arrayofjs = '', $arrayofcss = '', $morequerystring = '', $morecssonbody = '', $replacemainareaby = '', $disablenofollow = 0)
+	function llxHeader($head = '', $title = '', $help_url = '', $target = '', $disablejs = 0, $disablehead = 0, $arrayofjs = '', $arrayofcss = '', $morequerystring = '', $morecssonbody = '', $replacemainareaby = '', $disablenofollow = 0, $disablenoindex = 0)
 	{
 		global $conf;
 
 		// html header
-		top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss, 0, $disablenofollow);
+		top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss, 0, $disablenofollow, $disablenoindex);
 
 		$tmpcsstouse = 'sidebar-collapse'.($morecssonbody ? ' '.$morecssonbody : '');
 		// If theme MD and classic layer, we open the menulayer by default.
@@ -1316,11 +1367,11 @@ if (!function_exists("llxHeader")) {
 		print '<body id="mainbody" class="'.$tmpcsstouse.'">'."\n";
 
 		// top menu and left menu area
-		if (empty($conf->dol_hide_topmenu) || GETPOST('dol_invisible_topmenu', 'int')) {
+		if ((empty($conf->dol_hide_topmenu) || GETPOST('dol_invisible_topmenu', 'int')) && !GETPOST('dol_openinpopup', 'aZ09')) {
 			top_menu($head, $title, $target, $disablejs, $disablehead, $arrayofjs, $arrayofcss, $morequerystring, $help_url);
 		}
 
-		if (empty($conf->dol_hide_leftmenu)) {
+		if (empty($conf->dol_hide_leftmenu) && !GETPOST('dol_openinpopup', 'aZ09')) {
 			left_menu('', $help_url, '', '', 1, $title, 1); // $menumanager is retrieved with a global $menumanager inside this function
 		}
 
@@ -1411,10 +1462,11 @@ function top_httphead($contenttype = 'text/html', $forcenocache = 0)
  * @param 	array  	$arrayofjs		 Array of complementary js files
  * @param 	array  	$arrayofcss		 Array of complementary css files
  * @param 	int    	$disableforlogin Do not load heavy js and css for login pages
- * @param   int     $disablenofollow Disable no follow tag
+ * @param   int     $disablenofollow Disable nofollow tag for meta robots
+ * @param   int     $disablenoindex  Disable noindex tag for meta robots
  * @return	void
  */
-function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arrayofjs = '', $arrayofcss = '', $disableforlogin = 0, $disablenofollow = 0)
+function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arrayofjs = '', $arrayofcss = '', $disableforlogin = 0, $disablenofollow = 0, $disablenoindex = 0)
 {
 	global $db, $conf, $langs, $user, $mysoc, $hookmanager;
 
@@ -1426,11 +1478,8 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 
 	print '<!doctype html>'."\n";
 
-	if (!empty($conf->global->MAIN_USE_CACHE_MANIFEST)) {
-		print '<html lang="'.substr($langs->defaultlang, 0, 2).'" manifest="'.DOL_URL_ROOT.'/cache.manifest">'."\n";
-	} else {
-		print '<html lang="'.substr($langs->defaultlang, 0, 2).'">'."\n";
-	}
+	print '<html lang="'.substr($langs->defaultlang, 0, 2).'">'."\n";
+
 	//print '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr">'."\n";
 	if (empty($disablehead)) {
 		if (!is_object($hookmanager)) {
@@ -1448,7 +1497,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 
 		// Displays meta
 		print '<meta charset="utf-8">'."\n";
-		print '<meta name="robots" content="noindex'.($disablenofollow ? '' : ',nofollow').'">'."\n"; // Do not index
+		print '<meta name="robots" content="'.($disablenoindex ? 'index' : 'noindex').($disablenofollow ? ',follow' : ',nofollow').'">'."\n"; // Do not index
 		print '<meta name="viewport" content="width=device-width, initial-scale=1.0">'."\n"; // Scale for mobile device
 		print '<meta name="author" content="Dolibarr Development Team">'."\n";
 		if (getDolGlobalInt('MAIN_FEATURES_LEVEL')) {
@@ -1664,7 +1713,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 			}
 			// Chart
 			if (empty($disableforlogin) && (empty($conf->global->MAIN_JS_GRAPH) || $conf->global->MAIN_JS_GRAPH == 'chart') && !defined('DISABLE_JS_GRAPH')) {
-				print '<script src="'.DOL_URL_ROOT.'/includes/nnnick/chartjs/dist/Chart.min.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
+				print '<script src="'.DOL_URL_ROOT.'/includes/nnnick/chartjs/dist/chart.min.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
 			}
 
 			// jQuery jeditable for Edit In Place features
@@ -2034,6 +2083,7 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 		print "</div>\n"; // end div class="login_block"
 
 		print '</header>';
+		//print '<header class="header2">&nbsp;</header>';
 
 		print '<div style="clear: both;"></div>';
 		print "<!-- End top horizontal menu -->\n\n";
@@ -2100,6 +2150,7 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId6", $mysoc->country_code).'</b>: <span>'.dol_print_profids(getDolGlobalString("MAIN_INFO_PROFID6"), 6).'</span>';
 	}
 	$dropdownBody .= '<br><b>'.$langs->trans("VATIntraShort").'</b>: <span>'.dol_print_profids(getDolGlobalString("MAIN_INFO_TVAINTRA"), 'VAT').'</span>';
+	$dropdownBody .= '<br><b>'.$langs->trans("Country").'</b>: <span>'.($mysoc->country_code ? $langs->trans("Country".$mysoc->country_code) : '').'</span>';
 
 	$dropdownBody .= '</div>';
 
@@ -2238,7 +2289,7 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 	    </div>';
 	} else {
 		$btnUser = '<!-- div for user link -->
-	    <div id="topmenu-login-dropdown" class="userimg atoplogin dropdown user user-menu  inline-block">
+	    <div id="topmenu-login-dropdown" class="userimg atoplogin dropdown user user-menu inline-block">
 	    	<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$user->id.'">
 	    	'.$userImage.'
 	    		<span class="hidden-xs maxwidth200 atoploginusername hideonsmartphone">'.dol_trunc($user->firstname ? $user->firstname : $user->login, 10).'</span>
@@ -2269,10 +2320,12 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 	            });
 
 	            $("#topmenulogincompanyinfo-btn").on("click", function() {
+					console.log("Clik on topmenulogincompanyinfo-btn");
 	                $("#topmenulogincompanyinfo").slideToggle();
 	            });
 
 	            $("#topmenuloginmoreinfo-btn").on("click", function() {
+					console.log("Clik on topmenuloginmoreinfo-btn");
 	                $("#topmenuloginmoreinfo").slideToggle();
 	            });';
 		}
@@ -2293,185 +2346,14 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
  */
 function top_menu_quickadd()
 {
-	global $langs, $conf, $db, $hookmanager, $user;
-	global $menumanager;
+	global $langs;
 
 	$html = '';
-	// Define $dropDownQuickAddHtml
-	$dropDownQuickAddHtml = '<div class="dropdown-header bookmark-header center">';
-	$dropDownQuickAddHtml .= $langs->trans('QuickAdd');
-	$dropDownQuickAddHtml .= '</div>';
-
-	$dropDownQuickAddHtml .= '<div class="quickadd-body dropdown-body">';
-	$dropDownQuickAddHtml .= '<div class="quickadd">';
-	if (!empty($conf->societe->enabled) && $user->rights->societe->creer) {
-		$langs->load("companies");
-		$dropDownQuickAddHtml .= '
-                <!-- Thirdparty link -->
-                <div class="quickaddblock center">
-                    <a class="quickadddropdown-icon-link" href="'.DOL_URL_ROOT.'/societe/card.php?action=create" title="'.$langs->trans("MenuNewThirdParty").'">
-                    '. img_picto('', 'object_company').'<br>'.$langs->trans("ThirdParty").'</a>
-                </div>
-                ';
-	}
-
-	if (!empty($conf->societe->enabled) && $user->rights->societe->contact->creer) {
-		$langs->load("companies");
-		$dropDownQuickAddHtml .= '
-                <!-- Contact link -->
-                <div class="quickaddblock center">
-                    <a class="quickadddropdown-icon-link" href="'.DOL_URL_ROOT.'/contact/card.php?action=create" title="'.$langs->trans("NewContactAddress").'">
-                    '. img_picto('', 'object_contact').'<br>'.$langs->trans("Contact").'</a>
-                </div>
-                ';
-	}
-
-	if (!empty($conf->propal->enabled) && $user->rights->propale->creer) {
-		$langs->load("propal");
-		$dropDownQuickAddHtml .= '
-                <!-- Propal link -->
-                <div class="quickaddblock center">
-                    <a class="quickadddropdown-icon-link" href="'.DOL_URL_ROOT.'/comm/propal/card.php?action=create" title="'.$langs->trans("NewPropal").'">
-                    '. img_picto('', 'object_propal').'<br>'.$langs->trans("Proposal").'</a>
-                </div>
-                ';
-	}
-
-	if (!empty($conf->commande->enabled) && $user->rights->commande->creer) {
-		$langs->load("orders");
-		$dropDownQuickAddHtml .= '
-                <!-- Order link -->
-                <div class="quickaddblock center">
-                    <a class="quickadddropdown-icon-link" href="'.DOL_URL_ROOT.'/commande/card.php?action=create" title="'.$langs->trans("NewOrder").'">
-                    '. img_picto('', 'object_order').'<br>'.$langs->trans("Order").'</a>
-                </div>
-                ';
-	}
-
-	if (!empty($conf->facture->enabled) && $user->rights->facture->creer) {
-		$langs->load("bills");
-		$dropDownQuickAddHtml .= '
-                <!-- Invoice link -->
-                <div class="quickaddblock center">
-                    <a class="quickadddropdown-icon-link" href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create" title="'.$langs->trans("NewBill").'">
-                    '. img_picto('', 'object_bill').'<br>'.$langs->trans("Bill").'</a>
-                </div>
-                ';
-	}
-
-	if (!empty($conf->contrat->enabled) && $user->rights->contrat->creer) {
-		$langs->load("contracts");
-		$dropDownQuickAddHtml .= '
-                <!-- Contract link -->
-                <div class="quickaddblock center">
-                    <a class="quickadddropdown-icon-link" href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create" title="'.$langs->trans("NewContractSubscription").'">
-                    '. img_picto('', 'object_contract').'<br>'.$langs->trans("Contract").'</a>
-                </div>
-                ';
-	}
-
-	if (!empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposal->creer) {
-		$langs->load("supplier_proposal");
-		$dropDownQuickAddHtml .= '
-                <!-- Supplier proposal link -->
-                <div class="quickaddblock center">
-                    <a class="quickadddropdown-icon-link" href="'.DOL_URL_ROOT.'/supplier_proposal/card.php?action=create" title="'.$langs->trans("NewAskPrice").'">
-                    '. img_picto('', 'object_propal').'<br>'.$langs->trans("AskPrice").'</a>
-                </div>
-                ';
-	}
-
-	if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->rights->fournisseur->commande->creer) || (!empty($conf->supplier_order->enabled) && $user->rights->supplier_order->creer)) {
-		$langs->load("orders");
-		$dropDownQuickAddHtml .= '
-                <!-- Supplier order link -->
-                <div class="quickaddblock center">
-                    <a class="quickadddropdown-icon-link" href="'.DOL_URL_ROOT.'/fourn/commande/card.php?action=create" title="'.$langs->trans("NewSupplierOrderShort").'">
-                    '. img_picto('', 'object_order').'<br>'.$langs->trans("SupplierOrder").'</a>
-                </div>
-                ';
-	}
-
-	if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->rights->fournisseur->facture->creer) || (!empty($conf->supplier_invoice->enabled) && $user->rights->supplier_invoice->creer)) {
-		$langs->load("bills");
-		$dropDownQuickAddHtml .= '
-                <!-- Supplier invoice link -->
-                <div class="quickaddblock center">
-                    <a class="quickadddropdown-icon-link" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?action=create" title="'.$langs->trans("NewBill").'">
-                    '. img_picto('', 'object_bill').'<br>'.$langs->trans("SupplierBill").'</a>
-                </div>
-                ';
-	}
-
-	if (!empty($conf->product->enabled) && $user->rights->produit->creer) {
-		$langs->load("products");
-		$dropDownQuickAddHtml .= '
-                <!-- Product link -->
-                <div class="quickaddblock center">
-                    <a class="quickadddropdown-icon-link" href="'.DOL_URL_ROOT.'/product/card.php?action=create&amp;type=0" title="'.$langs->trans("NewProduct").'">
-                    '. img_picto('', 'object_product').'<br>'.$langs->trans("Product").'</a>
-                </div>
-                ';
-	}
-
-	if (!empty($conf->service->enabled) && $user->rights->service->creer) {
-		$langs->load("products");
-		$dropDownQuickAddHtml .= '
-                <!-- Service link -->
-                <div class="quickaddblock center">
-                    <a class="quickadddropdown-icon-link" href="'.DOL_URL_ROOT.'/product/card.php?action=create&amp;type=1" title="'.$langs->trans("NewService").'">
-                    '. img_picto('', 'object_service').'<br>'.$langs->trans("Service").'</a>
-                </div>
-                ';
-	}
-
-	if (!empty($conf->expensereport->enabled) && $user->rights->expensereport->creer) {
-		$langs->load("trips");
-		$dropDownQuickAddHtml .= '
-                <!-- Expense report link -->
-                <div class="quickaddblock center">
-                    <a class="quickadddropdown-icon-link" href="'.DOL_URL_ROOT.'/expensereport/card.php?action=create&fk_user_author='.$user->id.'" title="'.$langs->trans("AddTrip").'">
-                    '. img_picto('', 'object_trip').'<br>'.$langs->trans("ExpenseReport").'</a>
-                </div>
-                ';
-	}
-
-	if (!empty($conf->holiday->enabled) && $user->rights->holiday->write) {
-		$langs->load("holiday");
-		$dropDownQuickAddHtml .= '
-                <!-- Holiday link -->
-                <div class="quickaddblock center">
-                    <a class="quickadddropdown-icon-link" href="'.DOL_URL_ROOT.'/holiday/card.php?action=create&fuserid='.$user->id.'" title="'.$langs->trans("AddCP").'">
-                    '. img_picto('', 'object_holiday').'<br>'.$langs->trans("Holidays").'</a>
-                </div>
-                ';
-	}
-
-	// Execute hook printTopRightMenu (hooks should output string like '<div class="login"><a href="">mylink</a></div>')
-	$parameters = array();
-	$result = $hookmanager->executeHooks('printQuickAddBlock', $parameters); // Note that $action and $object may have been modified by some hooks
-	if (is_numeric($result)) {
-		if ($result == 0) {
-			$dropDownQuickAddHtml .= $hookmanager->resPrint; // add
-		} else {
-			$dropDownQuickAddHtml = $hookmanager->resPrint; // replace
-		}
-	} else {
-		$dropDownQuickAddHtml .= $result; // For backward compatibility
-	}
-
-	$dropDownQuickAddHtml .= '</div>';
-	$dropDownQuickAddHtml .= '</div>';
 
 	$html .= '<!-- div for quick add link -->
     <div id="topmenu-quickadd-dropdown" class="atoplogin dropdown inline-block">
-        <a class="dropdown-toggle login-dropdown-a" data-toggle="dropdown" href="#" title="'.$langs->trans('QuickAdd').' ('.$langs->trans('QuickAddMenuShortCut').')">
-            <i class="fa fa-plus-circle" ></i>
-        </a>
-
-        <div class="dropdown-menu">
-            '.$dropDownQuickAddHtml.'
-        </div>
+        <a class="dropdown-toggle login-dropdown-a" data-toggle="dropdown" href="#" title="'.$langs->trans('QuickAdd').' ('.$langs->trans('QuickAddMenuShortCut').')"><i class="fa fa-plus-circle"></i></a>
+        <div class="dropdown-menu">'.printDropdownQuickadd().'</div>
     </div>';
 	$html .= '
         <!-- Code to show/hide the user drop-down -->
@@ -2507,6 +2389,152 @@ function top_menu_quickadd()
 }
 
 /**
+ * Generate list of quickadd items
+ *
+ * @return string HTML output
+ */
+function printDropdownQuickadd()
+{
+	global $conf, $user, $langs, $hookmanager;
+
+	$items = array(
+		'items' => array(
+			array(
+				"url" => "/societe/card.php?action=create&amp;mainmenu=companies",
+				"title" => "MenuNewThirdParty@companies",
+				"name" => "ThirdParty@companies",
+				"picto" => "object_company",
+				"activation" => !empty($conf->societe->enabled) && $user->rights->societe->creer, // vs hooking
+				"position" => 10,
+			),
+			array(
+				"url" => "/contact/card.php?action=create&amp;mainmenu=companies",
+				"title" => "NewContactAddress@companies",
+				"name" => "Contact@companies",
+				"picto" => "object_contact",
+				"activation" => !empty($conf->societe->enabled) && $user->rights->societe->contact->creer, // vs hooking
+				"position" => 20,
+			),
+			array(
+				"url" => "/comm/propal/card.php?action=create&amp;mainmenu=commercial",
+				"title" => "NewPropal@propal",
+				"name" => "Proposal@propal",
+				"picto" => "object_propal",
+				"activation" => !empty($conf->propal->enabled) && $user->rights->propale->creer, // vs hooking
+				"position" => 30,
+			),
+
+			array(
+				"url" => "/commande/card.php?action=create&amp;mainmenu=commercial",
+				"title" => "NewOrder@orders",
+				"name" => "Order@orders",
+				"picto" => "object_order",
+				"activation" => !empty($conf->commande->enabled) && $user->rights->commande->creer, // vs hooking
+				"position" => 40,
+			),
+			array(
+				"url" => "/compta/facture/card.php?action=create&amp;mainmenu=billing",
+				"title" => "NewBill@bills",
+				"name" => "Bill@bills",
+				"picto" => "object_bill",
+				"activation" => !empty($conf->facture->enabled) && $user->rights->facture->creer, // vs hooking
+				"position" => 50,
+			),
+			array(
+				"url" => "/contrat/card.php?action=create&amp;mainmenu=commercial",
+				"title" => "NewContractSubscription@contracts",
+				"name" => "Contract@contracts",
+				"picto" => "object_contract",
+				"activation" => !empty($conf->contrat->enabled) && $user->rights->contrat->creer, // vs hooking
+				"position" => 60,
+			),
+			array(
+				"url" => "/supplier_proposal/card.php?action=create&amp;mainmenu=commercial",
+				"title" => "SupplierProposalNew@supplier_proposal",
+				"name" => "SupplierProposal@supplier_proposal",
+				"picto" => "object_propal",
+				"activation" => !empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposal->creer, // vs hooking
+				"position" => 70,
+			),
+			array(
+				"url" => "/fourn/commande/card.php?action=create&amp;mainmenu=commercial",
+				"title" => "NewSupplierOrderShort@orders",
+				"name" => "SupplierOrder@orders",
+				"picto" => "object_order",
+				"activation" => (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->rights->fournisseur->commande->creer) || (!empty($conf->supplier_order->enabled) && $user->rights->supplier_order->creer), // vs hooking
+				"position" => 80,
+			),
+			array(
+				"url" => "/fourn/facture/card.php?action=create&amp;mainmenu=billing",
+				"title" => "NewBill@bills",
+				"name" => "SupplierBill@bills",
+				"picto" => "object_bill",
+				"activation" => (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->rights->fournisseur->facture->creer) || (!empty($conf->supplier_invoice->enabled) && $user->rights->supplier_invoice->creer), // vs hooking
+				"position" => 90,
+			),
+			array(
+				"url" => "/product/card.php?action=create&amp;type=0&amp;mainmenu=products",
+				"title" => "NewProduct@products",
+				"name" => "Product@products",
+				"picto" => "object_product",
+				"activation" => !empty($conf->product->enabled) && $user->rights->produit->creer, // vs hooking
+				"position" => 100,
+			),
+			array(
+				"url" => "/product/card.php?action=create&amp;type=1&amp;mainmenu=products",
+				"title" => "NewService@products",
+				"name" => "Service@products",
+				"picto" => "object_service",
+				"activation" => !empty($conf->service->enabled) && $user->rights->service->creer, // vs hooking
+				"position" => 110,
+			),
+		),
+	);
+
+	$dropDownQuickAddHtml = '';
+
+	// Define $dropDownQuickAddHtml
+	$dropDownQuickAddHtml .= '<div class="quickadd-body dropdown-body">';
+	$dropDownQuickAddHtml .= '<div class="dropdown-quickadd-list">';
+
+	// Allow the $items of the menu to be manipulated by modules
+	$parameters = array();
+	$hook_items = $items;
+	$reshook = $hookmanager->executeHooks('menuDropdownQuickaddItems', $parameters, $hook_items); // Note that $action and $object may have been modified by some hooks
+	if (is_numeric($reshook) && !empty($hookmanager->results) && is_array($hookmanager->results)) {
+		if ($reshook == 0) {
+			$items['items'] = array_merge($items['items'], $hookmanager->results); // add
+		} else {
+			$items = $hookmanager->results; // replace
+		}
+
+		// Sort menu items by 'position' value
+		$position = array();
+		foreach ($items['items'] as $key => $row) {
+			$position[$key] = $row['position'];
+		}
+		array_multisort($position, SORT_ASC, $items['items']);
+	}
+
+	foreach ($items['items'] as $item) {
+		if (!$item['activation']) {
+			continue;
+		}
+		$langs->load(explode('@', $item['title'])[1]);
+		$langs->load(explode('@', $item['name'])[1]);
+		$dropDownQuickAddHtml .= '
+			<a class="dropdown-item quickadd-item" href="'.DOL_URL_ROOT.$item['url'].'" title="'.$langs->trans(explode('@', $item['title'])[0]).'">
+			'. img_picto('', $item['picto'], 'style="width:18px;"') . ' ' . $langs->trans(explode('@', $item['name'])[0]) . '</a>
+		';
+	}
+
+	$dropDownQuickAddHtml .= '</div>';
+	$dropDownQuickAddHtml .= '</div>';
+
+	return $dropDownQuickAddHtml;
+}
+
+/**
  * Build the tooltip on top menu bookmark
  *
  * @return  string                  HTML content
@@ -2533,9 +2561,7 @@ function top_menu_bookmark()
 		} else {
 			$html .= '<!-- div for bookmark link -->
 	        <div id="topmenu-bookmark-dropdown" class="dropdown inline-block">
-	            <a class="dropdown-toggle login-dropdown-a" data-toggle="dropdown" href="#" title="'.$langs->trans('Bookmarks').' ('.$langs->trans('BookmarksMenuShortCut').')">
-	                <i class="fa fa-star" ></i>
-	            </a>
+	            <a class="dropdown-toggle login-dropdown-a" data-toggle="dropdown" href="#" title="'.$langs->trans('Bookmarks').' ('.$langs->trans('BookmarksMenuShortCut').')"><i class="fa fa-star"></i></a>
 	            <div class="dropdown-menu">
 	                '.printDropdownBookmarksList().'
 	            </div>
@@ -3233,6 +3259,7 @@ if (!function_exists("llxFooter")) {
 									id:<?php echo $object->id; ?>
 									, element:'<?php echo $object->element ?>'
 									, action:'DOC_PREVIEW'
+									, token: '<?php echo currentToken(); ?>'
 								}
 						);
 					});
@@ -3242,6 +3269,7 @@ if (!function_exists("llxFooter")) {
 									id:<?php echo $object->id; ?>
 									, element:'<?php echo $object->element ?>'
 									, action:'DOC_DOWNLOAD'
+									, token: '<?php echo currentToken(); ?>'
 								}
 						);
 					});
@@ -3260,7 +3288,7 @@ if (!function_exists("llxFooter")) {
 		$forceping = GETPOST('forceping', 'alpha');
 		if (($_SERVER["PHP_SELF"] == DOL_URL_ROOT.'/index.php') || $forceping) {
 			//print '<!-- instance_unique_id='.$conf->file->instance_unique_id.' MAIN_FIRST_PING_OK_ID='.$conf->global->MAIN_FIRST_PING_OK_ID.' -->';
-			$hash_unique_id = md5('dolibarr'.$conf->file->instance_unique_id);
+			$hash_unique_id = md5('dolibarr'.$conf->file->instance_unique_id);	// Do not use dol_hash(), must not change if salt changes.
 
 			if (empty($conf->global->MAIN_FIRST_PING_OK_DATE)
 				|| (!empty($conf->file->instance_unique_id) && ($hash_unique_id != $conf->global->MAIN_FIRST_PING_OK_ID) && ($conf->global->MAIN_FIRST_PING_OK_ID != 'disabled'))
@@ -3290,6 +3318,7 @@ if (!function_exists("llxFooter")) {
 						?>
 							<script>
 							jQuery(document).ready(function (tmp) {
+								console.log("Try Ping with hash_unique_id is md5('dolibarr'+instance_unique_id)");
 								$.ajax({
 									  method: "POST",
 									  url: "<?php echo $url_for_ping ?>",

@@ -781,7 +781,11 @@ class FormMail extends Form
 					} elseif ($this->withmaindocfile == -1) {
 						$out .= '<input type="checkbox" id="addmaindocfile" name="addmaindocfile" value="1" checked="checked" />';
 					}
-					$out .= ' <label for="addmaindocfile">'.$langs->trans("JoinMainDoc").'.</label><br>';
+					if (!empty($conf->global->MAIL_MASS_ACTION_ADD_LAST_IF_MAIN_DOC_NOT_FOUND)) {
+						$out .= ' <label for="addmaindocfile">'.$langs->trans("JoinMainDocOrLastGenerated").'.</label><br>';
+					} else {
+						$out .= ' <label for="addmaindocfile">'.$langs->trans("JoinMainDoc").'.</label><br>';
+					}
 				}
 
 				if (is_numeric($this->withfile)) {
@@ -1202,6 +1206,9 @@ class FormMail extends Form
 			if (!empty($conf->global->MAIL_FORCE_DELIVERY_RECEIPT_INVOICE) && !empty($this->param['models']) && $this->param['models'] == 'facture_send') {
 				$defaultvaluefordeliveryreceipt = 1;
 			}
+			if (!empty($conf->global->MAIL_FORCE_DELIVERY_RECEIPT_SUPPLIER_ORDER) && !empty($this->param['models']) && $this->param['models'] == 'order_supplier_send') {
+				$defaultvaluefordeliveryreceipt = 1;
+			}
 			$out .= $form->selectyesno('deliveryreceipt', (GETPOSTISSET("deliveryreceipt") ? GETPOST("deliveryreceipt") : $defaultvaluefordeliveryreceipt), 1);
 		}
 		$out .= "</td></tr>\n";
@@ -1250,16 +1257,16 @@ class FormMail extends Form
 	 *  Return templates of email with type = $type_template or type = 'all'.
 	 *  This search into table c_email_templates. Used by the get_form function.
 	 *
-	 *  @param	DoliDB		$db				Database handler
+	 *  @param	DoliDB		$dbs			Database handler
 	 *  @param	string		$type_template	Get message for model/type=$type_template, type='all' also included.
 	 *  @param	User		$user			Get template public or limited to this user
 	 *  @param	Translate	$outputlangs	Output lang object
-	 *  @param	int			$id				Id of template to find, or -1 for first found with position 0, or 0 for first found whatever is position (priority order depends on lang provided or not) or -2 for exact match with label (no answer if not found)
+	 *  @param	int			$id				Id of template to get, or -1 for first found with position 0, or 0 for first found whatever is position (priority order depends on lang provided or not) or -2 for exact match with label (no answer if not found)
 	 *  @param  int         $active         1=Only active template, 0=Only disabled, -1=All
-	 *  @param	string		$label			Label of template
+	 *  @param	string		$label			Label of template to get
 	 *  @return ModelMail|integer			One instance of ModelMail or -1 if error
 	 */
-	public function getEMailTemplate($db, $type_template, $user, $outputlangs, $id = 0, $active = 1, $label = '')
+	public function getEMailTemplate($dbs, $type_template, $user, $outputlangs, $id = 0, $active = 1, $label = '')
 	{
 		global $conf, $langs;
 
@@ -1279,18 +1286,18 @@ class FormMail extends Form
 		}
 
 		$sql = "SELECT rowid, module, label, type_template, topic, joinfiles, content, content_lines, lang";
-		$sql .= " FROM ".$db->prefix().'c_email_templates';
-		$sql .= " WHERE (type_template='".$db->escape($type_template)."' OR type_template='all')";
+		$sql .= " FROM ".$dbs->prefix().'c_email_templates';
+		$sql .= " WHERE (type_template='".$dbs->escape($type_template)."' OR type_template='all')";
 		$sql .= " AND entity IN (".getEntity('c_email_templates').")";
 		$sql .= " AND (private = 0 OR fk_user = ".((int) $user->id).")"; // Get all public or private owned
 		if ($active >= 0) {
 			$sql .= " AND active = ".((int) $active);
 		}
 		if ($label) {
-			$sql .= " AND label = '".$db->escape($label)."'";
+			$sql .= " AND label = '".$dbs->escape($label)."'";
 		}
 		if (!($id > 0) && $languagetosearch) {
-			$sql .= " AND (lang = '".$db->escape($languagetosearch)."'".($languagetosearchmain ? " OR lang = '".$db->escape($languagetosearchmain)."'" : "")." OR lang IS NULL OR lang = '')";
+			$sql .= " AND (lang = '".$dbs->escape($languagetosearch)."'".($languagetosearchmain ? " OR lang = '".$dbs->escape($languagetosearchmain)."'" : "")." OR lang IS NULL OR lang = '')";
 		}
 		if ($id > 0) {
 			$sql .= " AND rowid=".(int) $id;
@@ -1299,22 +1306,22 @@ class FormMail extends Form
 			$sql .= " AND position=0";
 		}
 		if ($languagetosearch) {
-			$sql .= $db->order("position,lang,label", "ASC,DESC,ASC"); // We want line with lang set first, then with lang null or ''
+			$sql .= $dbs->order("position,lang,label", "ASC,DESC,ASC"); // We want line with lang set first, then with lang null or ''
 		} else {
-			$sql .= $db->order("position,lang,label", "ASC,ASC,ASC"); // If no language provided, we give priority to lang not defined
+			$sql .= $dbs->order("position,lang,label", "ASC,ASC,ASC"); // If no language provided, we give priority to lang not defined
 		}
-		//$sql .= $db->plimit(1);
+		//$sql .= $dbs->plimit(1);
 		//print $sql;
 
-		$resql = $db->query($sql);
+		$resql = $dbs->query($sql);
 		if (!$resql) {
-			dol_print_error($db);
+			dol_print_error($dbs);
 			return -1;
 		}
 
 		// Get first found
 		while (1) {
-			$obj = $db->fetch_object($resql);
+			$obj = $dbs->fetch_object($resql);
 
 			if ($obj) {
 				// If template is for a module, check module is enabled; if not, take next template
@@ -1386,7 +1393,8 @@ class FormMail extends Form
 			}
 		}
 
-		$db->free($resql);
+		$dbs->free($resql);
+
 		return $ret;
 	}
 
@@ -1525,10 +1533,12 @@ class FormMail extends Form
 					if (!is_object($extrafields)) {
 						$extrafields = new ExtraFields($this->db);
 					}
-					$extrafields->fetch_name_optionals_label('product', true);
 					$product = new Product($this->db);
 					$product->fetch($line->fk_product, '', '', 1);
 					$product->fetch_optionals();
+
+					$extrafields->fetch_name_optionals_label($product->table_element, true);
+
 					if (is_array($extrafields->attributes[$product->table_element]['label']) && count($extrafields->attributes[$product->table_element]['label']) > 0) {
 						foreach ($extrafields->attributes[$product->table_element]['label'] as $key => $label) {
 							$substit_line['__PRODUCT_EXTRAFIELD_'.strtoupper($key).'__'] = $product->array_options['options_'.$key];

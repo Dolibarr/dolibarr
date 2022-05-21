@@ -165,7 +165,7 @@ class PaymentVarious extends CommonObject
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-	public function __construct($db)
+	public function __construct(DoliDB $db)
 	{
 		$this->db = $db;
 		$this->element = 'payment_various';
@@ -721,7 +721,7 @@ class PaymentVarious extends CommonObject
 
 		global $action;
 		$hookmanager->initHooks(array('variouspayment'));
-		$parameters = array('id'=>$this->id, 'getnomurl'=>$result);
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;

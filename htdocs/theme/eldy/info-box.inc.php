@@ -21,7 +21,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 	display: block;
 	position: relative;
 	min-height: 90px;
-	/* background: #fff; */
+	background: var(--colorbacklineimpair2);
 	width: 100%;
 	box-shadow: 1px 1px 15px rgba(192, 192, 192, 0.2);
 	border-radius: 2px;
@@ -88,7 +88,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 	text-align: center;
 	font-size: 2.8em;
 	line-height: 90px;
-	background: rgba(0, 0, 0, 0.08) !important;
+	background: var(--colorbacktitle1) !important;
 }
 
 .info-box-module .info-box-icon {

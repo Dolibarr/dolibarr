@@ -233,7 +233,7 @@ function llxHeaderTicket($title, $head = "", $disablejs = 0, $disablehead = 0, $
 		print '<div class="backgreypublicpayment">';
 		print '<div class="logopublicpayment">';
 		if ($urllogo) {
-			print '<a href="'.($conf->global->TICKET_URL_PUBLIC_INTERFACE ? $conf->global->TICKET_URL_PUBLIC_INTERFACE : dol_buildpath('/public/ticket/index.php', 1)).'">';
+			print '<a href="'.($conf->global->TICKET_URL_PUBLIC_INTERFACE ? $conf->global->TICKET_URL_PUBLIC_INTERFACE : dol_buildpath('/public/ticket/index.php?entity='.$conf->entity, 1)).'">';
 			print '<img id="dolpaymentlogo" src="'.$urllogo.'"';
 			print '>';
 			print '</a>';
@@ -476,7 +476,7 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
 	if ($sql) {	// May not be defined if module Agenda is not enabled and mailing module disabled too
 		$sql .= $db->order($sortfield_new, $sortorder);
 
-		dol_syslog("company.lib::show_actions_done", LOG_DEBUG);
+		dol_syslog("ticket.lib::show_ticket_messaging", LOG_DEBUG);
 		$resql = $db->query($sql);
 		if ($resql) {
 			$i = 0;
@@ -491,7 +491,7 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
 					$result = $contactaction->fetchResources();
 					if ($result < 0) {
 						dol_print_error($db);
-						setEventMessage("company.lib::show_actions_done Error fetch ressource", 'errors');
+						setEventMessage("ticket.lib::show_ticket_messaging Error fetch ressource", 'errors');
 					}
 
 					//if ($donetodo == 'todo') $sql.= " AND ((a.percent >= 0 AND a.percent < 100) OR (a.percent = -1 AND a.datep > '".$db->idate($now)."'))";

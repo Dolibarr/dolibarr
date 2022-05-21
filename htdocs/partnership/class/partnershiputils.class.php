@@ -64,7 +64,7 @@ class PartnershipUtils
 	{
 		global $conf, $langs, $user;
 
-		$managedfor = $conf->global->PARTNERSHIP_IS_MANAGED_FOR;
+		$managedfor	= getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR', 'thirdparty');
 
 		if ($managedfor != 'member') {
 			return 0; // If option 'PARTNERSHIP_IS_MANAGED_FOR' = 'thirdparty', this cron job does nothing.
@@ -219,7 +219,7 @@ class PartnershipUtils
 	{
 		global $conf, $langs, $user;
 
-		$managedfor = $conf->global->PARTNERSHIP_IS_MANAGED_FOR;
+		$managedfor = getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR');
 
 		$partnership = new Partnership($this->db);
 		$MAXPERCALL = (empty($conf->global->PARTNERSHIP_MAX_WARNING_BACKLINK_PER_CALL) ? 10 : $conf->global->PARTNERSHIP_MAX_WARNING_BACKLINK_PER_CALL); // Limit to 10 per call

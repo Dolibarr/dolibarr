@@ -46,10 +46,6 @@ $sortfield                      = GETPOST('sortfield','alpha');
 $page                           = GETPOST('page','int');
 */
 
-if (!$user->rights->resource->read) {
-		accessforbidden();
-}
-
 $object = new Dolresource($db);
 
 $hookmanager->initHooks(array('element_resource'));
@@ -71,9 +67,20 @@ $cancel                 = GETPOST('cancel', 'alpha');
 $confirm                = GETPOST('confirm', 'alpha');
 $socid                  = GETPOST('socid', 'int');
 
+if (empty($mandatory)) {
+	$mandatory = 0;
+}
+if (empty($busy)) {
+	$busy = 0;
+}
+
 if ($socid > 0) { // Special for thirdparty
 	$element_id = $socid;
 	$element = 'societe';
+}
+
+if (!$user->rights->resource->read) {
+	accessforbidden();
 }
 
 // Permission is not permission on resources. We just make link here on objects.
@@ -158,7 +165,7 @@ if (empty($reshook)) {
 					$objstat->errors[] = $objstat->error;
 				} else {
 					if ($db->num_rows($resql) > 0) {
-						// already in use
+						// Resource already in use
 						$error++;
 						$objstat->error = $langs->trans('ErrorResourcesAlreadyInUse').' : ';
 						while ($obj = $db->fetch_object($resql)) {
@@ -234,7 +241,7 @@ if (empty($reshook)) {
 					$object->errors[] = $object->error;
 				} else {
 					if ($db->num_rows($resql) > 0) {
-						// already in use
+						// Resource already in use
 						$error++;
 						$object->error = $langs->trans('ErrorResourcesAlreadyInUse').' : ';
 						while ($obj = $db->fetch_object($resql)) {
@@ -365,7 +372,7 @@ if (!$ret) {
 
 			print '<div class="underbanner clearboth"></div>';
 
-			print '<table class="border tableforfield" width="100%">';
+			print '<table class="border tableforfield centpercent">';
 
 			// Type
 			if (!empty($conf->global->AGENDA_USE_EVENT_TYPE)) {
@@ -383,7 +390,8 @@ if (!$ret) {
 			if (empty($act->fulldayevent)) {
 				print dol_print_date($act->datep, 'dayhour', 'tzuser');
 			} else {
-				print dol_print_date($act->datep, 'day', 'tzuser');
+				$tzforfullday = getDolGlobalString('MAIN_STORE_FULL_EVENT_IN_GMT');
+				print dol_print_date($act->datep, 'day', ($tzforfullday ? $tzforfullday : 'tzuser'));
 			}
 			if ($act->percentage == 0 && $act->datep && $act->datep < ($now - $delay_warning)) {
 				print img_warning($langs->trans("Late"));
@@ -396,7 +404,8 @@ if (!$ret) {
 			if (empty($act->fulldayevent)) {
 				print dol_print_date($act->datef, 'dayhour', 'tzuser');
 			} else {
-				print dol_print_date($act->datef, 'day', 'tzuser');
+				$tzforfullday = getDolGlobalString('MAIN_STORE_FULL_EVENT_IN_GMT');
+				print dol_print_date($act->datef, 'day', ($tzforfullday ? $tzforfullday : 'tzuser'));
 			}
 			if ($act->percentage > 0 && $act->percentage < 100 && $act->datef && $act->datef < ($now - $delay_warning)) {
 				print img_warning($langs->trans("Late"));

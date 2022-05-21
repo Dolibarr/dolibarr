@@ -45,6 +45,11 @@ $langs->loadLangs(array("users", "companies", "agenda", "commercial", "other", "
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'actioncommlist'; // To manage different context of search
+$optioncss = GETPOST('optioncss', 'alpha');
+$toselect = GETPOST('toselect', 'array');
+$confirm = GETPOST('confirm', 'alpha');
+
+$disabledefaultvalues = GETPOST('disabledefaultvalues', 'int');
 
 $mode = GETPOST('mode', 'aZ09');
 if (empty($mode) && preg_match('/show_/', $action)) {
@@ -54,12 +59,9 @@ $resourceid = GETPOST("search_resourceid", "int") ?GETPOST("search_resourceid", 
 $pid = GETPOST("search_projectid", 'int', 3) ?GETPOST("search_projectid", 'int', 3) : GETPOST("projectid", 'int', 3);
 $search_status = (GETPOST("search_status", 'aZ09') != '') ? GETPOST("search_status", 'aZ09') : GETPOST("status", 'aZ09');
 $type = GETPOST('search_type', 'alphanohtml') ?GETPOST('search_type', 'alphanohtml') : GETPOST('type', 'alphanohtml');
-$optioncss = GETPOST('optioncss', 'alpha');
 $year = GETPOST("year", 'int');
 $month = GETPOST("month", 'int');
 $day = GETPOST("day", 'int');
-$toselect = GETPOST('toselect', 'array');
-$confirm = GETPOST('confirm', 'alpha');
 
 // Set actioncode (this code must be same for setting actioncode into peruser, listacton and index)
 if (GETPOST('search_actioncode', 'array')) {
@@ -68,11 +70,9 @@ if (GETPOST('search_actioncode', 'array')) {
 		$actioncode = '0';
 	}
 } else {
-	$actioncode = GETPOST("search_actioncode", "alpha", 3) ?GETPOST("search_actioncode", "alpha", 3) : (GETPOST("search_actioncode") == '0' ? '0' : (empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_TYPE));
+	$actioncode = GETPOST("search_actioncode", "alpha", 3) ?GETPOST("search_actioncode", "alpha", 3) : (GETPOST("search_actioncode") == '0' ? '0' : ((empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE) || $disabledefaultvalues) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_TYPE));
 }
-if ($actioncode == '' && empty($actioncodearray)) {
-	$actioncode = (empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_TYPE);
-}
+
 $search_id = GETPOST('search_id', 'alpha');
 $search_title = GETPOST('search_title', 'alpha');
 $search_note = GETPOST('search_note', 'alpha');
@@ -83,7 +83,7 @@ $datestart_dtend = dol_mktime(23, 59, 59, GETPOST('datestart_dtendmonth', 'int')
 $dateend_dtstart = dol_mktime(0, 0, 0, GETPOST('dateend_dtstartmonth', 'int'), GETPOST('dateend_dtstartday', 'int'), GETPOST('dateend_dtstartyear', 'int'), 'tzuserrel');
 $dateend_dtend = dol_mktime(23, 59, 59, GETPOST('dateend_dtendmonth', 'int'), GETPOST('dateend_dtendday', 'int'), GETPOST('dateend_dtendyear', 'int'), 'tzuserrel');
 if ($search_status == '' && !GETPOSTISSET('search_status')) {
-	$search_status = (empty($conf->global->AGENDA_DEFAULT_FILTER_STATUS) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_STATUS);
+	$search_status = ((empty($conf->global->AGENDA_DEFAULT_FILTER_STATUS) || $disabledefaultvalues) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_STATUS);
 }
 if (empty($mode) && !GETPOSTISSET('mode')) {
 	$mode = (empty($conf->global->AGENDA_DEFAULT_VIEW) ? 'show_month' : $conf->global->AGENDA_DEFAULT_VIEW);
@@ -216,8 +216,15 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$datestart_dtend = '';
 	$dateend_dtstart = '';
 	$dateend_dtend = '';
+	$actioncode = '';
 	$search_status = '';
-	$toselect = '';
+	$pid = '';
+	$socid = '';
+	$resourceid = '';
+	$filter = '';
+	$filtert = '';
+	$usergroup = '';
+	$toselect = array();
 	$search_array_options = array();
 }
 
@@ -299,7 +306,7 @@ if ($actioncode != '') {
 if ($resourceid > 0) {
 	$param .= "&search_resourceid=".urlencode($resourceid);
 }
-if ($search_status != '' && $search_status > -1) {
+if ($search_status != '') {
 	$param .= "&search_status=".urlencode($search_status);
 }
 if ($filter) {
@@ -693,7 +700,7 @@ $tmpforcreatebutton = dol_getdate(dol_now(), true);
 $newparam = '&month='.str_pad($month, 2, "0", STR_PAD_LEFT).'&year='.$tmpforcreatebutton['year'];
 
 //$param='month='.$monthshown.'&year='.$year;
-$hourminsec = '100000';
+$hourminsec = dol_print_date(dol_mktime(10, 0, 0, 1, 1, 1970, 'gmt'), '%H', 'gmt').'0000';	// Set $hourminsec to '100000' to auto set hour to 10:00 at creation
 
 $url = DOL_URL_ROOT.'/comm/action/card.php?action=create';
 $url .= '&datep='.sprintf("%04d%02d%02d", $tmpforcreatebutton['year'], $tmpforcreatebutton['mon'], $tmpforcreatebutton['mday']).$hourminsec;
@@ -943,8 +950,8 @@ while ($i < min($num, $limit)) {
 	// Description
 	if (!empty($arrayfields['a.note']['checked'])) {
 		print '<td class="tdoverflowonsmartphone">';
-		$text = dolGetFirstLineOfText(dol_string_nohtmltag($actionstatic->note_private, 0));
-		print $form->textwithtooltip(dol_trunc($text, 40), $actionstatic->note_private);
+		$text = dolGetFirstLineOfText(dol_string_nohtmltag($actionstatic->note_private, 1));
+		print $form->textwithtooltip(dol_trunc($text, 48), $actionstatic->note_private);
 		print '</td>';
 	}
 
@@ -953,7 +960,12 @@ while ($i < min($num, $limit)) {
 	// Start date
 	if (!empty($arrayfields['a.datep']['checked'])) {
 		print '<td class="center nowraponall">';
-		print dol_print_date($db->jdate($obj->dp), $formatToUse, 'tzuser');
+		if (empty($obj->fulldayevent)) {
+			print dol_print_date($db->jdate($obj->dp), $formatToUse, 'tzuser');
+		} else {
+			$tzforfullday = getDolGlobalString('MAIN_STORE_FULL_EVENT_IN_GMT');
+			print dol_print_date($db->jdate($obj->dp), $formatToUse, ($tzforfullday ? $tzforfullday : 'tzuser'));
+		}
 		$late = 0;
 		if ($actionstatic->hasDelay() && $actionstatic->percentage >= 0 && $actionstatic->percentage < 100 ) {
 			$late = 1;
@@ -967,7 +979,12 @@ while ($i < min($num, $limit)) {
 	// End date
 	if (!empty($arrayfields['a.datep2']['checked'])) {
 		print '<td class="center nowraponall">';
-		print dol_print_date($db->jdate($obj->dp2), $formatToUse, 'tzuser');
+		if (empty($obj->fulldayevent)) {
+			print dol_print_date($db->jdate($obj->dp2), $formatToUse, 'tzuser');
+		} else {
+			$tzforfullday = getDolGlobalString('MAIN_STORE_FULL_EVENT_IN_GMT');
+			print dol_print_date($db->jdate($obj->dp2), $formatToUse, ($tzforfullday ? $tzforfullday : 'tzuser'));
+		}
 		print '</td>';
 	}
 

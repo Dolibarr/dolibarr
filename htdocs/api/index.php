@@ -77,7 +77,6 @@ if (preg_match('/\/api\/index\.php/', $_SERVER["PHP_SELF"])) {
 	header('Access-Control-Allow-Headers: Content-Type, Authorization, api_key, DOLAPIKEY');
 }
 
-
 $res = 0;
 if (!$res && file_exists("../main.inc.php")) {
 	$res = include '../main.inc.php';
@@ -101,7 +100,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 $url = $_SERVER['PHP_SELF'];
 if (preg_match('/api\/index\.php$/', $url)) {	// sometimes $_SERVER['PHP_SELF'] is 'api\/index\.php' instead of 'api\/index\.php/explorer.php' or 'api\/index\.php/method'
-	$url = $_SERVER['PHP_SELF'].$_SERVER['PATH_INFO'];
+	$url = $_SERVER['PHP_SELF'].(empty($_SERVER['PATH_INFO']) ? $_SERVER['ORIG_PATH_INFO'] : $_SERVER['PATH_INFO']);
 }
 // Fix for some NGINX setups (this should not be required even with NGINX, however setup of NGINX are often mysterious and this may help is such cases)
 if (!empty($conf->global->MAIN_NGINX_FIX)) {
@@ -158,6 +157,25 @@ if (!empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/swagger.json' || $
 
 $api = new DolibarrApi($db, '', $refreshcache);
 //var_dump($api->r->apiVersionMap);
+
+// If MAIN_API_DEBUG is set to 1, we save logs into file "dolibarr_api.log"
+if (!empty($conf->global->MAIN_API_DEBUG)) {
+	$r = $api->r;
+	$r->onCall(function () use ($r) {
+		// Don't log Luracast Restler Explorer recources calls
+		//if (!preg_match('/^explorer/', $r->url)) {
+		//	'method'  => $api->r->requestMethod,
+		//	'url'     => $api->r->url,
+		//	'route'   => $api->r->apiMethodInfo->className.'::'.$api->r->apiMethodInfo->methodName,
+		//	'version' => $api->r->getRequestedApiVersion(),
+		//	'data'    => $api->r->getRequestData(),
+		//dol_syslog("Debug API input ".var_export($r, true), LOG_DEBUG, 0, '_api');
+		dol_syslog("Debug API url ".var_export($r->url, true), LOG_DEBUG, 0, '_api');
+		dol_syslog("Debug API input ".var_export($r->getRequestData(), true), LOG_DEBUG, 0, '_api');
+		//}
+	});
+}
+
 
 // Enable the Restler API Explorer.
 // See https://github.com/Luracast/Restler-API-Explorer for more info.

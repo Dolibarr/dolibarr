@@ -89,7 +89,8 @@ if (preg_match('/del_(.*)/', $action, $reg)) {
 
 $form = new Form($db);
 
-llxHeader('', $langs->trans("ModulebuilderSetup"));
+$help_url = '';
+llxHeader('', $langs->trans("ModulebuilderSetup"), $help_url);
 
 $linkback = '<a href="'.($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php').'">'.$langs->trans("BackToModuleList").'</a>';
 
@@ -120,7 +121,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
 
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("UseAboutPage").'</td>';
-	print '<td class="center">';
+	print '<td>';
 	if ($conf->use_javascript_ajax) {
 		print ajax_constantonoff('MODULEBUILDER_USE_ABOUT');
 	} else {

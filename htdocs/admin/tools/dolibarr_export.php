@@ -214,10 +214,6 @@ if (in_array($type, array('mysql', 'mysqli'))) {
 
 	print '<br>';
 	print '<fieldset><legend>'.$langs->trans("ExportOptions").'</legend>';
-	print '<div class="formelementrow">';
-	print '<input type="checkbox" name="use_transaction" value="yes" id="checkbox_use_transaction" />';
-	print '<label for="checkbox_use_transaction">'.$langs->trans("UseTransactionnalMode").'</label>';
-	print '</div>';
 
 	if (!empty($conf->global->MYSQL_OLD_OPTION_DISABLE_FK)) {
 		print '<div class="formelementrow">';
@@ -239,13 +235,34 @@ if (in_array($type, array('mysql', 'mysqli'))) {
 	print '<option value="ORACLE">ORACLE</option>';
 	print '<option value="POSTGRESQL">POSTGRESQL</option>';
 	print '</select>';
-	print '<br>';
+	print '<br><br>';
 
-	print '<input type="checkbox" name="use_mysql_quick_param" value="yes" id="checkbox_use_quick" />';
+	print '<div class="formelementrow">';
+	print '<input type="checkbox" name="use_transaction" value="yes" id="checkbox_use_transaction" checked="checked" />';
+	print '<label for="checkbox_use_transaction">'.$langs->trans("UseTransactionnalMode").'</label>';
+	print '</div>';
+
+	print '<input type="checkbox" name="use_mysql_quick_param" value="yes" id="checkbox_use_quick" checked="checked" />';
 	print '<label for="checkbox_use_quick">';
 	print $form->textwithpicto($langs->trans('ExportUseMySQLQuickParameter'), $langs->trans('ExportUseMySQLQuickParameterHelp'));
 	print '</label>';
 	print '<br>';
+
+	$execmethod = 0;
+	if (!empty($conf->global->MAIN_EXEC_USE_POPEN)) {
+		$execmethod = $conf->global->MAIN_EXEC_USE_POPEN;
+	}
+	if (empty($execmethod)) {
+		$execmethod = 1;
+	}
+	if ($execmethod == 1) {
+		// If we use the "exec" method for shell, we ask if we need to use the alternative low memory exec mode.
+		print '<input type="checkbox" name="lowmemorydump" value="yes" id="lowmemorydump"'.(GETPOSTISSET('lowmemorydump') ? GETPOST('lowmemorydump', 'alpha') : getDolGlobalString('MAIN_LOW_MEMORY_DUMP') ? ' checked="checked"' : '').'" />';
+		print '<label for="lowmemorydump">';
+		print $form->textwithpicto($langs->trans('ExportUseLowMemoryMode'), $langs->trans('ExportUseLowMemoryModeHelp'));
+		print '</label>';
+		print '<br>';
+	}
 
 	print '<!-- <input type="checkbox" name="drop_database" value="yes" id="checkbox_drop_database" />';
 	print '<label for="checkbox_drop_database">'.$langs->trans("AddDropDatabase").'</label>';
@@ -553,6 +570,7 @@ print '</form>';
 print '</fieldset>';
 
 
+$title = $langs->trans("BackupZipWizard");
 
 print "<br>\n";
 print "<!-- Dump of a server -->\n";
@@ -571,7 +589,7 @@ print '</span>';
 
 print '<div id="backupfilesleft" class="fichehalfleft">';
 
-print load_fiche_titre($title ? $title : $langs->trans("BackupZipWizard"));
+print load_fiche_titre($title);
 
 print '<label for="zipfilename_template" class="line-height-large paddingbottom">'.$langs->trans("FileNameToGenerate").'</label><br>';
 $prefix = 'documents';

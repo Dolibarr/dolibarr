@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 $langs->loadLangs(array('companies', 'products', 'admin', 'mails', 'other', 'errors'));
 
 $action = GETPOST('action', 'aZ09');
-$cancel = GETPOST('cancel', 'alpha');
+$cancel = GETPOST('cancel', 'aZ09');
 
 if (!$user->admin) {
 	accessforbidden();
@@ -40,17 +40,22 @@ if (!$user->admin) {
 $usersignature = $user->signature;
 // For action = test or send, we ensure that content is not html, even for signature, because this we want a test with NO html.
 if ($action == 'test' || $action == 'send') {
-	$usersignature = dol_string_nohtmltag($usersignature);
+	$usersignature = dol_string_nohtmltag($usersignature, 2);
 }
 
 $substitutionarrayfortest = array(
-'__LOGIN__' => $user->login,
-'__ID__' => 'TESTIdRecord',
-'__EMAIL__' => 'TESTEMail',
-'__LASTNAME__' => 'TESTLastname',
-'__FIRSTNAME__' => 'TESTFirstname',
-'__USER_SIGNATURE__' => (($user->signature && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN)) ? $usersignature : ''),
-//'__PERSONALIZED__' => 'TESTPersonalized'	// Hiden because not used yet
+	'__DOL_MAIN_URL_ROOT__'=>DOL_MAIN_URL_ROOT,
+	'__ID__' => 'RecipientIdRecord',
+	//'__EMAIL__' => 'RecipientEMail',				// Done into actions_sendmails
+	'__CHECK_READ__' => (!empty($object) && is_object($object) && is_object($object->thirdparty)) ? '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.$object->thirdparty->tag.'&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" width="1" height="1" style="width:1px;height:1px" border="0"/>' : '',
+	'__USER_SIGNATURE__' => (($user->signature && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN)) ? $usersignature : ''), // Done into actions_sendmails
+	'__LOGIN__' => $user->login,
+	'__LASTNAME__' => 'RecipientLastname',
+	'__FIRSTNAME__' => 'RecipientFirstname',
+	'__ADDRESS__'=> 'RecipientAddress',
+	'__ZIP__'=> 'RecipientZip',
+	'__TOWN_'=> 'RecipientTown',
+	'__COUNTRY__'=> 'RecipientCountry'
 );
 complete_substitutions_array($substitutionarrayfortest, $langs);
 
@@ -86,10 +91,10 @@ $trackid = (($action == 'testhtml') ? "testhtml" : "test");
 $sendcontext = 'emailing'; // Force to use dedicated context of setup for emailing
 include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
-if ($action == 'presend' && GETPOST('trackid') == 'test') {
+if ($action == 'presend' && GETPOST('trackid', 'alphanohtml') == 'test') {
 	$action = 'test';
 }
-if ($action == 'presend' && GETPOST('trackid') == 'testhtml') {
+if ($action == 'presend' && GETPOST('trackid', 'alphanohtml') == 'testhtml') {
 	$action = 'testhtml';
 }
 
@@ -271,12 +276,15 @@ if ($action == 'edit') {
 
 	// Host server
 
-	print '<tr class="oddeven hideifdefault"><td>';
+	print '<tr class="oddeven hideifdefault">';
 	if (!$conf->use_javascript_ajax && $linuxlike && $conf->global->MAIN_MAIL_SENDMODE_EMAILING == 'mail') {
+		print '<td>';
 		print $langs->trans("MAIN_MAIL_SMTP_SERVER_NotAvailableOnLinuxLike");
 		print '</td><td>';
-		print $langs->trans("SeeLocalSendMailSetup");
+		print '<span class="opacitymedium">'.$langs->trans("SeeLocalSendMailSetup").'</span>';
+		print '</td>';
 	} else {
+		print '<td>';
 		$mainserver = (!empty($conf->global->MAIN_MAIL_SMTP_SERVER_EMAILING) ? $conf->global->MAIN_MAIL_SMTP_SERVER_EMAILING : '');
 		$smtpserver = ini_get('SMTP') ?ini_get('SMTP') : $langs->transnoentities("Undefined");
 		if ($linuxlike) {
@@ -287,17 +295,19 @@ if ($action == 'edit') {
 		print '</td><td>';
 		// SuperAdministrator access only
 		if (empty($conf->multicompany->enabled) || ($user->admin && !$user->entity)) {
-			print '<input class="flat" id="MAIN_MAIL_SMTP_SERVER_EMAILING" name="MAIN_MAIL_SMTP_SERVER_EMAILING" size="18" value="'.$mainserver.'">';
+			print '<input class="flat minwidth300" id="MAIN_MAIL_SMTP_SERVER_EMAILING" name="MAIN_MAIL_SMTP_SERVER_EMAILING" size="18" value="'.$mainserver.'">';
 			print '<input type="hidden" id="MAIN_MAIL_SMTP_SERVER_EMAILING_sav" name="MAIN_MAIL_SMTP_SERVER_EMAILING_sav" value="'.$mainserver.'">';
-			print '<span id="smtp_server_mess">'.$langs->trans("SeeLocalSendMailSetup").'</span>';
+			print '<span id="smtp_server_mess" class="opacitymedium">'.$langs->trans("SeeLocalSendMailSetup").'</span>';
+			print ' <span class="opacitymedium smtp_method">'.$langs->trans("SeeLinkToOnlineDocumentation").'</span>';
 		} else {
 			$text = !empty($mainserver) ? $mainserver : $smtpserver;
 			$htmltext = $langs->trans("ContactSuperAdminForChange");
 			print $form->textwithpicto($text, $htmltext, 1, 'superadmin');
 			print '<input type="hidden" id="MAIN_MAIL_SMTP_SERVER_EMAILING" name="MAIN_MAIL_SMTP_SERVER_EMAILING" value="'.$mainserver.'">';
 		}
+		print '</td>';
 	}
-	print '</td></tr>';
+	print '</tr>';
 
 	// Port
 
@@ -305,7 +315,7 @@ if ($action == 'edit') {
 	if (!$conf->use_javascript_ajax && $linuxlike && $conf->global->MAIN_MAIL_SENDMODE_EMAILING == 'mail') {
 		print $langs->trans("MAIN_MAIL_SMTP_PORT_NotAvailableOnLinuxLike");
 		print '</td><td>';
-		print $langs->trans("SeeLocalSendMailSetup");
+		print '<span class="opacitymedium">'.$langs->trans("SeeLocalSendMailSetup").'</span>';
 	} else {
 		$mainport = (!empty($conf->global->MAIN_MAIL_SMTP_PORT_EMAILING) ? $conf->global->MAIN_MAIL_SMTP_PORT_EMAILING : '');
 		$smtpport = ini_get('smtp_port') ?ini_get('smtp_port') : $langs->transnoentities("Undefined");
@@ -319,7 +329,7 @@ if ($action == 'edit') {
 		if (empty($conf->multicompany->enabled) || ($user->admin && !$user->entity)) {
 			print '<input class="flat" id="MAIN_MAIL_SMTP_PORT_EMAILING" name="MAIN_MAIL_SMTP_PORT_EMAILING" size="3" value="'.$mainport.'">';
 			print '<input type="hidden" id="MAIN_MAIL_SMTP_PORT_EMAILING_sav" name="MAIN_MAIL_SMTP_PORT_EMAILING_sav" value="'.$mainport.'">';
-			print '<span id="smtp_port_mess">'.$langs->trans("SeeLocalSendMailSetup").'</span>';
+			print '<span id="smtp_port_mess" class="opacitymedium">'.$langs->trans("SeeLocalSendMailSetup").'</span>';
 		} else {
 			$text = (!empty($mainport) ? $mainport : $smtpport);
 			$htmltext = $langs->trans("ContactSuperAdminForChange");
@@ -360,7 +370,6 @@ if ($action == 'edit') {
 	}
 
 	// TLS
-
 	print '<tr class="oddeven hideifdefault"><td>'.$langs->trans("MAIN_MAIL_EMAIL_TLS").'</td><td>';
 	if (!empty($conf->use_javascript_ajax) || (isset($conf->global->MAIN_MAIL_SENDMODE_EMAILING) && in_array($conf->global->MAIN_MAIL_SENDMODE_EMAILING, array('smtps', 'swiftmailer')))) {
 		if (function_exists('openssl_open')) {
@@ -374,7 +383,6 @@ if ($action == 'edit') {
 	print '</td></tr>';
 
 	// STARTTLS
-
 	print '<tr class="oddeven hideifdefault"><td>'.$langs->trans("MAIN_MAIL_EMAIL_STARTTLS").'</td><td>';
 	if (!empty($conf->use_javascript_ajax) || (isset($conf->global->MAIN_MAIL_SENDMODE_EMAILING) && in_array($conf->global->MAIN_MAIL_SENDMODE_EMAILING, array('smtps', 'swiftmailer')))) {
 		if (function_exists('openssl_open')) {
@@ -388,7 +396,6 @@ if ($action == 'edit') {
 	print '</td></tr>';
 
 	// SMTP_ALLOW_SELF_SIGNED_EMAILING
-
 	print '<tr class="oddeven hideifdefault"><td>'.$langs->trans("MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED").'</td><td>';
 	if (!empty($conf->use_javascript_ajax) || (isset($conf->global->MAIN_MAIL_SENDMODE_EMAILING) && in_array($conf->global->MAIN_MAIL_SENDMODE_EMAILING, array('smtps', 'swiftmailer')))) {
 		if (function_exists('openssl_open')) {
@@ -414,6 +421,7 @@ if ($action == 'edit') {
 	print '<span class="opacitymedium">'.$langs->trans("EMailsDesc")."</span><br>\n";
 	print "<br><br>\n";
 
+	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
@@ -460,7 +468,7 @@ if ($action == 'edit') {
 				print yn(0).' ('.$langs->trans("YourPHPDoesNotHaveSSLSupport").')';
 			}
 		} else {
-			print yn(0).' ('.$langs->trans("NotSupported").')';
+			print '<span class="opacitymedium">'.yn(0).' ('.$langs->trans("NotSupported").')</span>';
 		}
 		print '</td></tr>';
 
@@ -492,6 +500,7 @@ if ($action == 'edit') {
 	}
 
 	print '</table>';
+	print '</div>';
 
 	print dol_get_fiche_end();
 
@@ -543,6 +552,7 @@ if ($action == 'edit') {
 
 	// Run the test to connect
 	if ($action == 'testconnect') {
+		print '<div id="formmailaftertstconnect" name="formmailaftertstconnect"></div>';
 		print load_fiche_titre($langs->trans("DoTestServerAvailability"));
 
 		include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
@@ -573,16 +583,18 @@ if ($action == 'edit') {
 		// Cree l'objet formulaire mail
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 		$formmail = new FormMail($db);
+		$formmail->trackid = (($action == 'testhtml') ? "testhtml" : "test");
 		$formmail->fromname = (GETPOSTISSET('fromname') ? GETPOST('fromname', 'restricthtml') : $conf->global->MAIN_MAIL_EMAIL_FROM);
 		$formmail->frommail = (GETPOSTISSET('frommail') ? GETPOST('frommail', 'restricthtml') : $conf->global->MAIN_MAIL_EMAIL_FROM);
-		$formmail->trackid = (($action == 'testhtml') ? "testhtml" : "test");
+		$formmail->fromid = $user->id;
+		$formmail->fromalsorobot = 1;
 		$formmail->withfromreadonly = 0;
 		$formmail->withsubstit = 0;
 		$formmail->withfrom = 1;
 		$formmail->witherrorsto = 1;
-		$formmail->withto = (!GETPOST('sendto') ? GETPOST('sendto', 'restricthtml') : ($user->email ? $user->email : 1));
-		$formmail->withtocc = (!GETPOST(['sendtocc']) ? GETPOST('sendtocc', 'restricthtml') : 1); // ! empty to keep field if empty
-		$formmail->withtoccc = (!GETPOST(['sendtoccc']) ? GETPOST('sendtoccc', 'restricthtml') : 1); // ! empty to keep field if empty
+		$formmail->withto = (GETPOSTISSET('sendto') ? GETPOST('sendto', 'restricthtml') : ($user->email ? $user->email : 1));
+		$formmail->withtocc = (GETPOSTISSET(['sendtocc']) ? GETPOST('sendtocc', 'restricthtml') : 1); // ! empty to keep field if empty
+		$formmail->withtoccc = (GETPOSTISSET(['sendtoccc']) ? GETPOST('sendtoccc', 'restricthtml') : 1); // ! empty to keep field if empty
 		$formmail->withtopic = (GETPOSTISSET('subject') ? GETPOST('subject') : $langs->trans("Test"));
 		$formmail->withtopicreadonly = 0;
 		$formmail->withfile = 2;
@@ -601,7 +613,7 @@ if ($action == 'edit') {
 		$formmail->param["returnurl"] = $_SERVER["PHP_SELF"];
 
 		// Init list of files
-		if (GETPOST("mode") == 'init') {
+		if (GETPOST("mode", "aZ09") == 'init') {
 			$formmail->clear_attached_files();
 		}
 

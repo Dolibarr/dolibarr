@@ -121,50 +121,53 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
 				$i++;
 				$texttoinsert .= "\t\t'".$key."' => array('type'=>'".$val['type']."',";
 				$texttoinsert .= " 'label'=>'".$val['label']."',";
+				if ($val['picto']) {
+					$texttoinsert .= " 'picto'=>'".$val['picto']."',";
+				}
 				$texttoinsert .= " 'enabled'=>'".($val['enabled'] !== '' ? $val['enabled'] : 1)."',";
 				$texttoinsert .= " 'position'=>".($val['position'] !== '' ? $val['position'] : 50).",";
 				$texttoinsert .= " 'notnull'=>".(empty($val['notnull']) ? 0 : $val['notnull']).",";
 				$texttoinsert .= " 'visible'=>".($val['visible'] !== '' ? $val['visible'] : -1).",";
-				if ($val['noteditable']) {
+				if (!empty($val['noteditable'])) {
 					$texttoinsert .= " 'noteditable'=>'".$val['noteditable']."',";
 				}
-				if ($val['default'] || $val['default'] === '0') {
+				if (!empty($val['default']) || (isset($val['default']) && $val['default'] === '0')) {
 					$texttoinsert .= " 'default'=>'".$val['default']."',";
 				}
-				if ($val['index']) {
+				if (!empty($val['index'])) {
 					$texttoinsert .= " 'index'=>".$val['index'].",";
 				}
-				if ($val['foreignkey']) {
+				if (!empty($val['foreignkey'])) {
 					$texttoinsert .= " 'foreignkey'=>'".$val['foreignkey']."',";
 				}
-				if ($val['searchall']) {
+				if (!empty($val['searchall'])) {
 					$texttoinsert .= " 'searchall'=>".$val['searchall'].",";
 				}
-				if ($val['isameasure']) {
+				if (!empty($val['isameasure'])) {
 					$texttoinsert .= " 'isameasure'=>'".$val['isameasure']."',";
 				}
-				if ($val['css']) {
+				if (!empty($val['css'])) {
 					$texttoinsert .= " 'css'=>'".$val['css']."',";
 				}
-				if ($val['cssview']) {
+				if (!empty($val['cssview'])) {
 					$texttoinsert .= " 'cssview'=>'".$val['cssview']."',";
 				}
-				if ($val['csslist']) {
+				if (!empty($val['csslist'])) {
 					$texttoinsert .= " 'csslist'=>'".$val['csslist']."',";
 				}
-				if ($val['help']) {
+				if (!empty($val['help'])) {
 					$texttoinsert .= " 'help'=>\"".preg_replace('/"/', '', $val['help'])."\",";
 				}
-				if ($val['showoncombobox']) {
+				if (!empty($val['showoncombobox'])) {
 					$texttoinsert .= " 'showoncombobox'=>'".$val['showoncombobox']."',";
 				}
-				if ($val['disabled']) {
+				if (!empty($val['disabled'])) {
 					$texttoinsert .= " 'disabled'=>'".$val['disabled']."',";
 				}
-				if ($val['autofocusoncreate']) {
+				if (!empty($val['autofocusoncreate'])) {
 					$texttoinsert .= " 'autofocusoncreate'=>'".$val['autofocusoncreate']."',";
 				}
-				if ($val['arrayofkeyval']) {
+				if (!empty($val['arrayofkeyval'])) {
 					$texttoinsert .= " 'arrayofkeyval'=>array(";
 					$i = 0;
 					foreach ($val['arrayofkeyval'] as $key2 => $val2) {
@@ -176,10 +179,10 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
 					}
 					$texttoinsert .= "),";
 				}
-				if ($val['validate']) {
+				if (!empty($val['validate'])) {
 					$texttoinsert .= " 'validate'=>'".$val['validate']."',";
 				}
-				if ($val['comment']) {
+				if (!empty($val['comment'])) {
 					$texttoinsert .= " 'comment'=>\"".preg_replace('/"/', '', $val['comment'])."\"";
 				}
 
@@ -311,7 +314,7 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
 			if ($key == 'entity') {
 				$texttoinsert .= ' DEFAULT 1';
 			} else {
-				if ($val['default'] != '') {
+				if (!empty($val['default'])) {
 					if (preg_match('/^null$/i', $val['default'])) {
 						$texttoinsert .= " DEFAULT NULL";
 					} elseif (preg_match('/varchar/', $type)) {

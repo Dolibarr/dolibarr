@@ -38,7 +38,10 @@ if (!empty($extrafieldsobjectkey) && !empty($extrafields->attributes[$extrafield
 					//var_dump($extrafields->attributes[$extrafieldsobjectkey]['computed'][$key]);
 					//var_dump($obj);
 					//var_dump($extrafields->attributes[$extrafieldsobjectkey]['computed'][$key]);
-					$value = dol_eval($extrafields->attributes[$extrafieldsobjectkey]['computed'][$key], 1);
+					$value = dol_eval($extrafields->attributes[$extrafieldsobjectkey]['computed'][$key], 1, 1, '0');
+					if (is_numeric(price2num($value)) && $extrafields->attributes[$extrafieldsobjectkey]['totalizable'][$key]) {
+						$obj->$tmpkey = price2num($value);
+					}
 					//var_dump($value);
 				}
 

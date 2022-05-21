@@ -2,6 +2,7 @@
 /* Copyright (C) 2016      Marcos García       <marcosgdf@gmail.com>
  * Copyright (C) 2017      Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2019 Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2022   Open-Dsi		<support@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,6 +51,10 @@ $confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
 $cancel = GETPOST('cancel', 'alpha');
 $delete_product = GETPOST('delete_product', 'alpha');
+$subaction = GETPOST('subaction', 'aZ09');
+$backtopage = GETPOST('backtopage', 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 
 // Security check
 $fieldvalue = (!empty($id) ? $id : $ref);
@@ -64,7 +69,7 @@ if ($id > 0 || $ref) {
 	$object->fetch($id, $ref);
 }
 
-$selectedvariant = $_SESSION['addvariant_'.$object->id];
+$selectedvariant = !empty($_SESSION['addvariant_'.$object->id]) ? $_SESSION['addvariant_'.$object->id] : 0;
 
 // Security check
 if (empty($conf->variants->enabled)) {
@@ -84,6 +89,9 @@ if ($object->id > 0) {
 } else {
 	restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 }
+$usercanread = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->lire) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->lire));
+$usercancreate = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->creer) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->creer));
+$usercandelete = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->supprimer) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->supprimer));
 
 
 /*
@@ -106,8 +114,19 @@ if ($action == 'add') {
 }
 if ($action == 'create' && GETPOST('selectvariant', 'alpha')) {	// We click on select combination
 	$action = 'add';
-	if (GETPOST('attribute') != '-1' && GETPOST('value') != '-1') {
-		$selectedvariant[GETPOST('attribute').':'.GETPOST('value')] = GETPOST('attribute').':'.GETPOST('value');
+	$attribute_id = GETPOST('attribute', 'int');
+	$attribute_value_id = GETPOST('value', 'int');
+	if ($attribute_id> 0 && $attribute_value_id > 0) {
+		$feature = $attribute_id . '-' . $attribute_value_id;
+		$selectedvariant[$feature] = $feature;
+		$_SESSION['addvariant_'.$object->id] = $selectedvariant;
+	}
+}
+if ($action == 'create' && $subaction == 'delete') {	// We click on select combination
+	$action = 'add';
+	$feature = GETPOST('feature', 'intcomma');
+	if (isset($selectedvariant[$feature])) {
+		unset($selectedvariant[$feature]);
 		$_SESSION['addvariant_'.$object->id] = $selectedvariant;
 	}
 }
@@ -118,7 +137,7 @@ $prodcomb2val = new ProductCombination2ValuePair($db);
 
 $productCombination2ValuePairs1 = array();
 
-if (($action == 'add' || $action == 'create') && empty($massaction) && !GETPOST('selectvariant', 'alpha')) {	// We click on Create all defined combinations
+if (($action == 'add' || $action == 'create') && empty($massaction) && !GETPOST('selectvariant', 'alpha') && empty($subaction)) {	// We click on Create all defined combinations
 	//$features = GETPOST('features', 'array');
 	$features = $_SESSION['addvariant_'.$object->id];
 
@@ -146,13 +165,8 @@ if (($action == 'add' || $action == 'create') && empty($massaction) && !GETPOST(
 
 		//First, sanitize
 		foreach ($features as $feature) {
-			$explode = explode(':', $feature);
-
-			if ($prodattr->fetch($explode[0]) < 0) {
-				continue;
-			}
-
-			if ($prodattr_val->fetch($explode[1]) < 0) {
+			$explode = explode('-', $feature);
+			if ($prodattr->fetch($explode[0]) <= 0 || $prodattr_val->fetch($explode[1]) <= 0) {
 				continue;
 			}
 
@@ -262,7 +276,7 @@ if (($action == 'add' || $action == 'create') && empty($massaction) && !GETPOST(
 		exit();
 	}
 
-	$prodcomb->variation_weight = $weight_impact;
+	$prodcomb->variation_weight = price2num($weight_impact);
 
 	// for conf PRODUIT_MULTIPRICES
 	if ($conf->global->PRODUIT_MULTIPRICES) {
@@ -460,19 +474,16 @@ if (!empty($id) || !empty($ref)) {
 			//First, sanitize
 			$listofvariantselected = '<div id="parttoaddvariant">';
 			if (!empty($features)) {
+				$toprint = array();
 				foreach ($features as $feature) {
-					$explode = explode(':', $feature);
-
-					if ($prodattr->fetch($explode[0]) < 0) {
+					$explode = explode('-', $feature);
+					if ($prodattr->fetch($explode[0]) <= 0 || $prodattr_val->fetch($explode[1]) <= 0) {
 						continue;
 					}
-
-					if ($prodattr_val->fetch($explode[1]) < 0) {
-						continue;
-					}
-
-					$listofvariantselected .= '<i>'.$prodattr->label.'</i>:'.$prodattr_val->value.' ';
+					$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #ddd;">' . $prodattr->label.' : '.$prodattr_val->value .
+						' <a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=create&subaction=delete&feature='.urlencode($feature).'">' . img_delete() . '</a></li>';
 				}
+				$listofvariantselected .= '<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">' . implode(' ', $toprint) . '</ul></div>';
 			}
 			$listofvariantselected .= '</div>';
 			//print dol_get_fiche_end();
@@ -572,9 +583,8 @@ if (!empty($id) || !empty($ref)) {
 
 		print load_fiche_titre($title);
 
-		print '<form method="post" id="combinationform" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+		print '<form method="post" id="combinationform" action="'.$_SERVER["PHP_SELF"] .'?id='.$object->id.'">'."\n";
 		print '<input type="hidden" name="token" value="'.newToken().'">';
-		print '<input type="hidden" name="id" value="'.dol_escape_htmltag($id).'">'."\n";
 		print '<input type="hidden" name="action" value="'.(($valueid > 0) ? "update" : "create").'">'."\n";
 		if ($valueid > 0) {
 			print '<input type="hidden" name="valueid" value="'.$valueid.'">'."\n";
@@ -820,10 +830,9 @@ if (!empty($id) || !empty($ref)) {
 
 
 		// List of variants
-		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+		print '<form method="POST" action="'.$_SERVER["PHP_SELF"] .'?id='.$object->id.'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="massaction">';
-		print '<input type="hidden" name="id" value="'.$id.'">';
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
 		// List of mass actions available

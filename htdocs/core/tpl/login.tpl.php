@@ -31,7 +31,7 @@ if (empty($conf) || !is_object($conf)) {
 }
 
 // DDOS protection
-$size = (int) $_SERVER['CONTENT_LENGTH'];
+$size = (empty($_SERVER['CONTENT_LENGTH']) ? 0 : (int) $_SERVER['CONTENT_LENGTH']);
 if ($size > 10000) {
 	http_response_code(413);
 	$langs->loadLangs(array("errors", "install"));
@@ -136,7 +136,7 @@ $(document).ready(function () {
 <input type="hidden" name="token" value="<?php echo newToken(); ?>" />
 <input type="hidden" name="actionlogin" value="login">
 <input type="hidden" name="loginfunction" value="loginfunction" />
-<!-- Add fields to send local user information -->
+<!-- Add fields to store and send local user information. This fields are filled by the core/js/dst.js -->
 <input type="hidden" name="tz" id="tz" value="" />
 <input type="hidden" name="tz_string" id="tz_string" value="" />
 <input type="hidden" name="dst_observed" id="dst_observed" value="" />

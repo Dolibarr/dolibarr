@@ -87,6 +87,11 @@ class Mailing extends CommonObject
 	public $email_from;
 
 	/**
+	 * @var string email to
+	 */
+	public $sendto;
+
+	/**
 	 * @var string email reply to
 	 */
 	public $email_replyto;
@@ -174,6 +179,11 @@ class Mailing extends CommonObject
 	 * @var array statuts
 	 */
 	public $statuts = array();
+
+	/**
+	 * @var array substitutionarray
+	 */
+	public $substitutionarray;
 
 
 	/**
@@ -740,7 +750,7 @@ class Mailing extends CommonObject
 
 		global $action;
 		$hookmanager->initHooks(array('emailingdao'));
-		$parameters = array('id'=>$this->id, 'getnomurl'=>$result);
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;

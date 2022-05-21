@@ -133,7 +133,7 @@ class FormSetup
 	 */
 	public function generateOutput($editMode = false)
 	{
-		global $hookmanager, $action;
+		global $hookmanager, $action, $langs;
 		require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 
 		$parameters = array(
@@ -177,6 +177,8 @@ class FormSetup
 				$out .= '<div class="form-setup-button-container center">'; // Todo : remove .center by adding style to form-setup-button-container css class in all themes
 				$out.= $this->htmlOutputMoreButton;
 				$out .= '<input class="button button-save" type="submit" value="' . $this->langs->trans("Save") . '">'; // Todo fix dolibarr style for <button and use <button instead of input
+				$out .= ' &nbsp;&nbsp; ';
+				$out .= '<a class="button button-cancel" type="submit" href="' . $this->formAttributes['action'] . '">'.$langs->trans('Cancel').'</a>';
 				$out .= '</div>';
 			}
 
@@ -238,10 +240,24 @@ class FormSetup
 	 * saveConfFromPost
 	 *
 	 * @param 	bool 		$noMessageInUpdate display event message on errors and success
-	 * @return 	void|null
+	 * @return	 int        -1 if KO, 1 if OK
 	 */
 	public function saveConfFromPost($noMessageInUpdate = false)
 	{
+		global $hookmanager;
+
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('formSetupBeforeSaveConfFromPost', $parameters, $this); // Note that $action and $object may have been modified by some hooks
+		if ($reshook < 0) {
+			$this->setErrors($hookmanager->errors);
+			return -1;
+		}
+
+		if ($reshook > 0) {
+			return $reshook;
+		}
+
+
 		if (empty($this->items)) {
 			return null;
 		}
@@ -263,11 +279,13 @@ class FormSetup
 			if (empty($noMessageInUpdate)) {
 				setEventMessages($this->langs->trans("SetupSaved"), null);
 			}
+			return 1;
 		} else {
 			$this->db->rollback();
 			if (empty($noMessageInUpdate)) {
 				setEventMessages($this->langs->trans("SetupNotSaved"), null, 'errors');
 			}
+			return -1;
 		}
 	}
 
@@ -283,8 +301,13 @@ class FormSetup
 
 		$out = '';
 		if ($item->enabled==1) {
+			$trClass = 'oddeven';
+			if ($item->getType() == 'title') {
+				$trClass = 'liste_titre';
+			}
+
 			$this->setupNotEmpty++;
-			$out.= '<tr class="oddeven">';
+			$out.= '<tr class="'.$trClass.'">';
 
 			$out.= '<td class="col-setup-title">';
 			$out.= '<span id="helplink'.$item->confKey.'" class="spanforparamtooltip">';
@@ -579,6 +602,15 @@ class FormSetupItem
 	/** @var int $rank  */
 	public $rank = 0;
 
+	/** @var array set this var for options on select and multiselect items   */
+	public $fieldOptions = array();
+
+	/** @var callable $saveCallBack  */
+	public $saveCallBack;
+
+	/** @var callable $setValueFromPostCallBack  */
+	public $setValueFromPostCallBack;
+
 	/**
 	 * @var string $errors
 	 */
@@ -636,6 +668,24 @@ class FormSetupItem
 	 */
 	public function saveConfValue()
 	{
+		global $hookmanager;
+
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('formSetupBeforeSaveConfValue', $parameters, $this); // Note that $action and $object may have been modified by some hooks
+		if ($reshook < 0) {
+			$this->setErrors($hookmanager->errors);
+			return -1;
+		}
+
+		if ($reshook > 0) {
+			return $reshook;
+		}
+
+
+		if (!empty($this->saveCallBack) && is_callable($this->saveCallBack)) {
+			return call_user_func($this->saveCallBack, $this);
+		}
+
 		// Modify constant only if key was posted (avoid resetting key to the null value)
 		if ($this->type != 'title') {
 			$result = dolibarr_set_const($this->db, $this->confKey, $this->fieldValue, 'chaine', 0, '', $this->entity);
@@ -647,6 +697,25 @@ class FormSetupItem
 		}
 	}
 
+	/**
+	 * Set an override function for saving data
+	 * @param callable $callBack a callable function
+	 * @return void
+	 */
+	public function setSaveCallBack(callable $callBack)
+	{
+		$this->saveCallBack = $callBack;
+	}
+
+	/**
+	 * Set an override function for get data from post
+	 * @param callable $callBack a callable function
+	 * @return void
+	 */
+	public function setValueFromPostCallBack(callable $callBack)
+	{
+		$this->setValueFromPostCallBack = $callBack;
+	}
 
 	/**
 	 * Save const value based on htdocs/core/actions_setmoduleoptions.inc.php
@@ -654,6 +723,10 @@ class FormSetupItem
 	 */
 	public function setValueFromPost()
 	{
+		if (!empty($this->setValueFromPostCallBack) && is_callable($this->setValueFromPostCallBack)) {
+			return call_user_func($this->setValueFromPostCallBack);
+		}
+
 		// Modify constant only if key was posted (avoid resetting key to the null value)
 		if ($this->type != 'title') {
 			if (preg_match('/category:/', $this->type)) {
@@ -662,6 +735,13 @@ class FormSetupItem
 				} else {
 					$val_const = GETPOST($this->confKey, 'int');
 				}
+			} elseif ($this->type == 'multiselect') {
+				$val = GETPOST($this->confKey, 'array');
+				if ($val && is_array($val)) {
+					$val_const = implode(',', $val);
+				}
+			} elseif ($this->type == 'html') {
+				$val_const = GETPOST($this->confKey, 'restricthtml');
 			} else {
 				$val_const = GETPOST($this->confKey, 'alpha');
 			}
@@ -719,6 +799,10 @@ class FormSetupItem
 
 		if ($this->type == 'title') {
 			$out.= $this->generateOutputField(); // title have no input
+		} elseif ($this->type == 'multiselect') {
+			$out.= $this->generateInputFieldMultiSelect();
+		} elseif ($this->type == 'select') {
+			$out.= $this->generateInputFieldSelect();
 		} elseif ($this->type == 'textarea') {
 			$out.= $this->generateInputFieldTextarea();
 		} elseif ($this->type== 'html') {
@@ -851,6 +935,29 @@ class FormSetupItem
 		return $out;
 	}
 
+
+	/**
+	 * @return string
+	 */
+	public function generateInputFieldMultiSelect()
+	{
+		$TSelected = array();
+		if ($this->fieldValue) {
+			$TSelected = explode(',', $this->fieldValue);
+		}
+
+		return $this->form->multiselectarray($this->confKey, $this->fieldOptions, $TSelected, 0, 0, '', 0, 0, 'style="min-width:100px"');
+	}
+
+
+	/**
+	 * @return string
+	 */
+	public function generateInputFieldSelect()
+	{
+		return $this->form->selectarray($this->confKey, $this->fieldOptions, $this->fieldValue);
+	}
+
 	/**
 	 * get the type : used for old module builder setup conf style conversion and tests
 	 * because this two class will quickly evolve it's important to not set or get directly $this->type (will be protected) so this method exist
@@ -916,6 +1023,10 @@ class FormSetupItem
 			// nothing to do
 		} elseif ($this->type == 'textarea') {
 			$out.= dol_nl2br($this->fieldValue);
+		} elseif ($this->type == 'multiselect') {
+			$out.= $this->generateOutputFieldMultiSelect();
+		} elseif ($this->type == 'select') {
+			$out.= $this->generateOutputFieldSelect();
 		} elseif ($this->type== 'html') {
 			$out.=  $this->fieldValue;
 		} elseif ($this->type == 'yesno') {
@@ -932,6 +1043,7 @@ class FormSetupItem
 			}
 			$out.= $this->langs->trans($template->label);
 		} elseif (preg_match('/category:/', $this->type)) {
+			require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 			$c = new Categorie($this->db);
 			$result = $c->fetch($this->fieldValue);
 			if ($result < 0) {
@@ -968,6 +1080,41 @@ class FormSetupItem
 		return $out;
 	}
 
+
+	/**
+	 * @return string
+	 */
+	public function generateOutputFieldMultiSelect()
+	{
+		$outPut = '';
+		$TSelected = array();
+		if (!empty($this->fieldValue)) {
+			$TSelected = explode(',', $this->fieldValue);
+		}
+
+		if (!empty($TSelected)) {
+			foreach ($TSelected as $selected) {
+				if (!empty($this->fieldOptions[$selected])) {
+					$outPut.= dolGetBadge('', $this->fieldOptions[$selected], 'info').' ';
+				}
+			}
+		}
+		return $outPut;
+	}
+
+
+	/**
+	 * @return string
+	 */
+	public function generateOutputFieldSelect()
+	{
+		$outPut = '';
+		if (!empty($this->fieldOptions[$this->fieldValue])) {
+			$outPut = $this->fieldOptions[$this->fieldValue];
+		}
+
+		return $outPut;
+	}
 
 	/*
 	 * METHODS FOR SETTING DISPLAY TYPE
@@ -1074,6 +1221,39 @@ class FormSetupItem
 	public function setAsTitle()
 	{
 		$this->type = 'title';
+		return $this;
+	}
+
+
+	/**
+	 * Set type of input as a simple title
+	 * no data to store
+	 * @param array $fieldOptions A table of field options
+	 * @return self
+	 */
+	public function setAsMultiSelect($fieldOptions)
+	{
+		if (is_array($fieldOptions)) {
+			$this->fieldOptions = $fieldOptions;
+		}
+
+		$this->type = 'multiselect';
+		return $this;
+	}
+
+	/**
+	 * Set type of input as a simple title
+	 * no data to store
+	 * @param array $fieldOptions  A table of field options
+	 * @return self
+	 */
+	public function setAsSelect($fieldOptions)
+	{
+		if (is_array($fieldOptions)) {
+			$this->fieldOptions = $fieldOptions;
+		}
+
+		$this->type = 'select';
 		return $this;
 	}
 }

@@ -40,6 +40,8 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 
 $langs->loadLangs(array("companies", "bills", "members", "users", "mails", 'other'));
 
+$optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
+
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $id = GETPOST('rowid', 'int') ?GETPOST('rowid', 'int') : GETPOST('id', 'int');
@@ -499,7 +501,7 @@ if ($rowid > 0) {
 
 	// Login
 	if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
-		print '<tr><td class="titlefield">'.$langs->trans("Login").' / '.$langs->trans("Id").'</td><td class="valeur">'.$object->login.'&nbsp;</td></tr>';
+		print '<tr><td class="titlefield">'.$langs->trans("Login").' / '.$langs->trans("Id").'</td><td class="valeur">'.dol_escape_htmltag($object->login).'</td></tr>';
 	}
 
 	// Type
@@ -510,25 +512,24 @@ if ($rowid > 0) {
 	print '</tr>';
 
 	// Company
-	print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur">'.$object->company.'</td></tr>';
+	print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur">'.dol_escape_htmltag($object->company).'</td></tr>';
 
 	// Civility
-	print '<tr><td>'.$langs->trans("UserTitle").'</td><td class="valeur">'.$object->getCivilityLabel().'&nbsp;</td>';
+	print '<tr><td>'.$langs->trans("UserTitle").'</td><td class="valeur">'.$object->getCivilityLabel().'</td>';
 	print '</tr>';
 
 	// Password
 	if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
-		print '<tr><td>'.$langs->trans("Password").'</td><td>'.preg_replace('/./i', '*', $object->pass);
+		print '<tr><td>'.$langs->trans("Password").'</td><td>';
 		if ($object->pass) {
 			print preg_replace('/./i', '*', $object->pass);
 		} else {
 			if ($user->admin) {
-				print $langs->trans("Crypted").': '.$object->pass_indatabase_crypted;
-			} else {
-				print $langs->trans("Hidden");
+				print '<!-- '.$langs->trans("Crypted").': '.$object->pass_indatabase_crypted.' -->';
 			}
+			print '<span class="opacitymedium">'.$langs->trans("Hidden").'</span>';
 		}
-		if ((!empty($object->pass) || !empty($object->pass_crypted)) && empty($object->user_id)) {
+		if (!empty($object->pass_indatabase) && empty($object->user_id)) {	// Show warning only for old password still in clear (does not happen anymore)
 			$langs->load("errors");
 			$htmltext = $langs->trans("WarningPasswordSetWithNoAccount");
 			print ' '.$form->textwithpicto('', $htmltext, 1, 'warning');
@@ -544,15 +545,17 @@ if ($rowid > 0) {
 			print " ".img_warning($langs->trans("Late"));
 		}
 	} else {
-		if (!$adht->subscription) {
+		if ($object->need_subscription == 0) {
+			print $langs->trans("SubscriptionNotNeeded");
+		} elseif (!$adht->subscription) {
 			print $langs->trans("SubscriptionNotRecorded");
-			if ($object->statut > 0) {
-				print " ".img_warning($langs->trans("Late")); // Display a delay picto only if it is not a draft and is not canceled
+			if (Adherent::STATUS_VALIDATED == $object->statut) {
+				print " ".img_warning($langs->trans("Late")); // displays delay Pictogram only if not a draft, not excluded and not resiliated
 			}
 		} else {
 			print $langs->trans("SubscriptionNotReceived");
-			if ($object->statut > 0) {
-				print " ".img_warning($langs->trans("Late")); // Display a delay picto only if it is not a draft and is not canceled
+			if (Adherent::STATUS_VALIDATED == $object->statut) {
+				print " ".img_warning($langs->trans("Late")); // displays delay Pictogram only if not a draft, not excluded and not resiliated
 			}
 		}
 	}
@@ -561,24 +564,25 @@ if ($rowid > 0) {
 	print '</table>';
 
 	print '</div>';
-	print '<div class="fichehalfright">';
 
+	print '<div class="fichehalfright">';
 	print '<div class="underbanner clearboth"></div>';
+
 	print '<table class="border tableforfield centpercent">';
 
-	// Birthday
-	print '<tr><td class="titlefield">'.$langs->trans("DateOfBirth").'</td><td class="valeur">'.dol_print_date($object->birth, 'day').'</td></tr>';
-
-	// Public
-	print '<tr><td>'.$langs->trans("Public").'</td><td class="valeur">'.yn($object->public).'</td></tr>';
-
-	// Categories
+	// Tags / Categories
 	if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire)) {
 		print '<tr><td>'.$langs->trans("Categories").'</td>';
 		print '<td colspan="2">';
 		print $form->showCategories($object->id, Categorie::TYPE_MEMBER, 1);
 		print '</td></tr>';
 	}
+
+	// Birth Date
+	print '<tr><td class="titlefield">'.$langs->trans("DateOfBirth").'</td><td class="valeur">'.dol_print_date($object->birth, 'day').'</td></tr>';
+
+	// Public
+	print '<tr><td>'.$langs->trans("Public").'</td><td class="valeur">'.yn($object->public).'</td></tr>';
 
 	// Other attributes
 	$cols = 2;
@@ -660,8 +664,6 @@ if ($rowid > 0) {
 	print '<div style="clear:both"></div>';
 
 	print dol_get_fiche_end();
-
-	print '</form>';
 
 
 	/*

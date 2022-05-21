@@ -72,12 +72,15 @@ class mailing_thirdparties extends MailingTargets
 
 		$addDescription = "";
 		// Select the third parties from category
-		if (empty($_POST['filter'])) {
+		if (!GETPOST('filter')) {
 			$sql = "SELECT s.rowid as id, s.email as email, s.nom as name, null as fk_contact, null as firstname, null as label";
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 			$sql .= " WHERE s.email <> ''";
 			$sql .= " AND s.entity IN (".getEntity('societe').")";
 			$sql .= " AND s.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".((int) $mailing_id).")";
+			if (GETPOST('default_lang', 'alpha')) {
+				$sql .= " AND s.default_lang LIKE '".$this->db->escape(GETPOST('default_lang', 'alpha'))."%'";
+			}
 		} else {
 			$addFilter = "";
 			if (GETPOSTISSET("filter_client") && GETPOST("filter_client") <> '-1') {
@@ -108,6 +111,11 @@ class mailing_thirdparties extends MailingTargets
 					$addDescription .= $langs->trans("Disabled");
 				}
 			}
+			if (GETPOST('default_lang', 'alpha')) {
+				$addFilter .= " AND s.default_lang LIKE '".$this->db->escape(GETPOST('default_lang', 'alpha'))."%'";
+				$addDescription = $langs->trans('DefaultLang')."=";
+			}
+
 			$sql = "SELECT s.rowid as id, s.email as email, s.nom as name, null as fk_contact, null as firstname, c.label as label";
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."categorie_societe as cs, ".MAIN_DB_PREFIX."categorie as c";
 			$sql .= " WHERE s.email <> ''";
@@ -302,6 +310,13 @@ class mailing_thirdparties extends MailingTargets
 		$s .= '<option value="0">'.$langs->trans("Disabled").'</option>';
 		$s .= '</select>';
 		$s .= ajax_combobox("filter_status_thirdparties");
+
+		// Choose language
+		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
+		$formadmin = new FormAdmin($this->db);
+		$s .= $langs->trans("DefaultLang").': ';
+		$s .= $formadmin->select_language($langs->getDefaultLang(1), 'filter_lang', 0, 0, 1, 0, 0, '', 0, 0, 0, null, 1);
+
 		return $s;
 	}
 

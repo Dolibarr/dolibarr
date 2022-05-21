@@ -159,6 +159,7 @@ if (empty($reshook)) {
 					$categories = GETPOST('categories', 'array');
 					$object->setCategories($categories);
 					if (!empty($backtopage)) {
+						$backtopage = str_replace("__ID__", $id, $backtopage);
 						header("Location: ".$backtopage);
 						exit;
 					} else {
@@ -959,7 +960,7 @@ if ($action != 'create' && $action != 'edit' && $action != 'delete') {
 	$delallowed = $usercancreate;
 	$modulepart = 'stock';
 
-	print $formfile->showdocuments($modulepart, $object->ref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 0, 0, 0, 28, 0, '', 0, '', $object->default_lang, '', $object);
+	print $formfile->showdocuments($modulepart, $objectref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 0, 0, 0, 28, 0, '', 0, '', $object->default_lang, '', $object);
 	$somethingshown = $formfile->numoffiles;
 
 	print '</div><div class="fichehalfright">';
@@ -967,7 +968,7 @@ if ($action != 'create' && $action != 'edit' && $action != 'delete') {
 	$MAXEVENT = 10;
 
 	$morehtmlcenter = '';
-	//$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-list-alt imgforviewmode', DOL_URL_ROOT.'/product/stock/agenda.php?id='.$object->id);
+	//$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/product/stock/agenda.php?id='.$object->id);
 
 	// List of actions on element
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';

@@ -83,7 +83,7 @@ if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'y
 		foreach ($_POST as $key => $value) {
 			if (substr($key, 0, 7) == 'amount_') {
 				$other_chid = substr($key, 7);
-				$amounts[$other_chid] = price2num($_POST[$key]);
+				$amounts[$other_chid] = price2num(GETPOST($key));
 			}
 		}
 
@@ -198,7 +198,7 @@ if ($action == 'create') {
 	if ($resql) {
 		$obj = $db->fetch_object($resql);
 		$sumpaid = $obj->total;
-		$db->free();
+		$db->free($resql);
 	}
 	/*print '<tr><td>'.$langs->trans("AlreadyPaid").'</td><td>'.price($sumpaid,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
 	print '<tr><td class="tdtop">'.$langs->trans("RemainderToPay").'</td><td>'.price($total-$sumpaid,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';*/

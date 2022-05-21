@@ -27,7 +27,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
 require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
 require_once DOL_DOCUMENT_ROOT."/opensurvey/class/opensurveysondage.class.php";
-require_once DOL_DOCUMENT_ROOT."/opensurvey/fonctions.php";
+require_once DOL_DOCUMENT_ROOT."/opensurvey/lib/opensurvey.lib.php";
 
 // Security check
 if (empty($user->rights->opensurvey->read)) {
@@ -53,7 +53,7 @@ $nblines = $object->fetch_lines();
 
 // Return to the results
 if (GETPOST('retoursondage')) {
-	header('Location: results.php?id='.GETPOST('id', 'int'));
+	header('Location: results.php?id='.(GETPOSTISSET('id_sondage') ? GETPOST('id_sondage', 'aZ09') : GETPOST('id', 'int')));
 	exit;
 }
 
@@ -103,13 +103,13 @@ $testmodifier = false;
 $testligneamodifier = false;
 $ligneamodifier = -1;
 for ($i = 0; $i < $nblines; $i++) {
-	if (isset($_POST['modifierligne'.$i])) {
+	if (GETPOSTISSET('modifierligne'.$i)) {
 		$ligneamodifier = $i;
 		$testligneamodifier = true;
 	}
 
 	//test pour voir si une ligne est a modifier
-	if (isset($_POST['validermodifier'.$i])) {
+	if (GETPOSTISSET('validermodifier'.$i)) {
 		$modifier = $i;
 		$testmodifier = true;
 	}
@@ -153,7 +153,7 @@ if (GETPOST("ajoutercolonne") && GETPOST('nouvellecolonne') && $object->format =
 
 	//on rajoute la valeur a la fin de tous les sujets deja entrés
 	$nouveauxsujets .= ',';
-	$nouveauxsujets .= str_replace(array(",", "@"), " ", GETPOST("nouvellecolonne")).(empty($_POST["typecolonne"]) ? '' : '@'.GETPOST("typecolonne"));
+	$nouveauxsujets .= str_replace(array(",", "@"), " ", GETPOST("nouvellecolonne")).(!GETPOST("typecolonne") ? '' : '@'.GETPOST("typecolonne"));
 
 	//mise a jour avec les nouveaux sujets dans la base
 	$sql = 'UPDATE '.MAIN_DB_PREFIX."opensurvey_sondage";
@@ -588,6 +588,7 @@ if (GETPOST('ajoutsujet')) {
 		$tmparray = array('checkbox'=>$langs->trans("CheckBox"), 'yesno'=>$langs->trans("YesNoList"), 'foragainst'=>$langs->trans("PourContreList"));
 		print $langs->trans("Type").' '.$form->selectarray("typecolonne", $tmparray, GETPOST('typecolonne')).'<br><br>';
 		print '<input type="submit" class="button" name="ajoutercolonne" value="'.dol_escape_htmltag($langs->trans("Add")).'">';
+		print '<input type="hidden" name="id_sondage" value="'.dol_escape_htmltag($object->id_sondage).'">';
 		print ' &nbsp; &nbsp; ';
 		print '<input type="submit" class="button button-cancel" name="retoursondage" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
 		print '<br><br>'."\n";
@@ -608,7 +609,7 @@ if (GETPOST('ajoutsujet')) {
 
 		print '&nbsp;';
 
-		print $formother->select_year('', 'nouvelleannee', 1, 0, 5, 0, 1);
+		print $formother->selectyear('', 'nouvelleannee', 1, 0, 5, 0, 1);
 
 		print '<br><br>'.$langs->trans("AddStartHour").': <br><br>'."\n";
 		print '<select name="nouvelleheuredebut"> '."\n";
@@ -663,6 +664,7 @@ $nbcolonnes = substr_count($object->sujet, ',') + 1;
 
 print '<form name="formulaire" action="" method="POST">'."\n";
 print '<input type="hidden" name="token" value="'.newToken().'">';
+print '<input type="hidden" name="page_y" value="">';
 
 print '<div class="cadre div-table-responsive-no-min"> '."\n";
 
@@ -851,7 +853,7 @@ while ($compteur < $num) {
 	print '<tr><td>'."\n";
 
 	if ($user->rights->opensurvey->write) {
-		print '<input type="image" name="effaceligne'.$compteur.'" src="'.img_picto('', 'delete.png', '', false, 1).'">'."\n";
+		print '<input type="image" class="reposition" name="effaceligne'.$compteur.'" src="'.img_picto('', 'delete.png', '', false, 1).'">'."\n";
 	}
 
 	// Name
@@ -1012,7 +1014,7 @@ while ($compteur < $num) {
 
 	// Button edit at end of line
 	if ($compteur != $ligneamodifier && ($user->rights->opensurvey->write)) {
-		print '<td class="casevide"><input type="submit" class="button" name="modifierligne'.$compteur.'" value="'.dol_escape_htmltag($langs->trans("Edit")).'"></td>'."\n";
+		print '<td class="casevide"><input type="submit" class="button reposition" name="modifierligne'.$compteur.'" value="'.dol_escape_htmltag($langs->trans("Edit")).'"></td>'."\n";
 	}
 
 	//demande de confirmation pour modification de ligne
@@ -1021,7 +1023,7 @@ while ($compteur < $num) {
 			if ($compteur == $i) {
 				print '<td class="casevide">';
 				print '<input type="hidden" name="idtomodify'.$compteur.'" value="'.$obj->id_users.'">';
-				print '<input type="submit" class="button button-save" name="validermodifier'.$compteur.'" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
+				print '<input type="submit" class="button button-save reposition" name="validermodifier'.$compteur.'" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
 				print '</td>'."\n";
 			}
 		}
@@ -1147,7 +1149,7 @@ $compteursujet = 0;
 $meilleursujet = '';
 for ($i = 0; $i < $nbcolonnes; $i++) {
 	if (isset($sumfor[$i]) === true && isset($meilleurecolonne) === true && $sumfor[$i] == $meilleurecolonne) {
-		$meilleursujet .= ", ";
+		$meilleursujet .= ($meilleursujet ? ", " : "");
 
 		if ($object->format == "D") {
 			$meilleursujetexport = $toutsujet[$i];
@@ -1156,7 +1158,7 @@ for ($i = 0; $i < $nbcolonnes; $i++) {
 				$toutsujetdate = explode("@", $toutsujet[$i]);
 				$meilleursujet .= dol_print_date($toutsujetdate[0], 'daytext').($toutsujetdate[0] ? ' ('.dol_print_date($toutsujetdate[0], '%A').')' : '').' - '.$toutsujetdate[1];
 			} else {
-				$meilleursujet .= dol_print_date($toutsujet[$i], 'daytext').($toutsujet[$i] ? ' ('.dol_print_date($toutsujet[$i], '%A').')' : '');
+				$meilleursujet .= dol_print_date((empty($toutsujet[$i]) ? 0 : $toutsujet[$i]), 'daytext').' ('.dol_print_date((empty($toutsujet[$i]) ? 0 : $toutsujet[$i]), '%A').')';
 			}
 		} else {
 			$tmps = explode('@', $toutsujet[$i]);

@@ -249,7 +249,7 @@ print load_fiche_titre($langs->trans("PDF"), '', 'title_setup');
 
 $head = pdf_admin_prepare_head();
 
-print dol_get_fiche_head($head, 'general', $langs->trans("PDF"), -1, 'pdf');
+print dol_get_fiche_head($head, 'general', '', -1, '');
 
 print '<span class="opacitymedium">'.$form->textwithpicto($langs->trans("PDFDesc"), $s)."</span><br>\n";
 print "<br>\n";
@@ -309,7 +309,7 @@ print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Par
 
 // Show sender name
 
-/* Set option as hidden because no need of this for 99.99% of users.
+/* Set option as hidden because no need of this for 99.99% of users. Having it as hidden feature is enough.
 print '<tr class="oddeven"><td>'.$langs->trans("MAIN_PDF_HIDE_SENDER_NAME").'</td><td>';
 if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('MAIN_PDF_HIDE_SENDER_NAME');
@@ -321,7 +321,7 @@ print '</td></tr>';
 
 // Hide VAT Intra on address
 
-print '<tr class="oddeven"><td>'.$langs->trans("ShowVATIntaInAddress").'</td><td>';
+print '<tr class="oddeven"><td>'.$langs->trans("ShowVATIntaInAddress").' - <span class="opacitymedium">'.$langs->trans("ThirdPartyAddress").'</span></td><td>';
 if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('MAIN_TVAINTRA_NOT_IN_ADDRESS');
 } else {
@@ -340,7 +340,7 @@ for ($i = 1; $i <= 6; $i++) {
 		$pid = img_warning().' <span class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CompanyCountry")).'</span>';
 	}
 	if ($pid) {
-		print '<tr class="oddeven"><td>'.$langs->trans("ShowProfIdInAddress").' - '.$pid.'</td><td>';
+		print '<tr class="oddeven"><td>'.$langs->trans("ShowProfIdInAddress").' - '.$pid.' - <span class="opacitymedium">'.$langs->trans("ThirdPartyAddress").'</span></td><td>';
 		$keyforconstant = 'MAIN_PROFID'.$i.'_IN_ADDRESS';
 		if ($conf->use_javascript_ajax) {
 			print ajax_constantonoff($keyforconstant);

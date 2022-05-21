@@ -7,7 +7,7 @@
  * Copyright (C) 2009-2017	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2014-2018	Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
- * Copyright (C) 2015-2020	Frédéric France			<frederic.france@netlogic.fr>
+ * Copyright (C) 2015-2022	Frédéric France			<frederic.france@netlogic.fr>
  * Copyright (C) 2015		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2016		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2018-2019	Thibault FOUCART		<support@ptibogxiv.net>
@@ -659,8 +659,7 @@ class Adherent extends CommonObject
 		$nbrowsaffected = 0;
 		$error = 0;
 
-		dol_syslog(get_class($this)."::update notrigger=".$notrigger.", nosyncuser=".$nosyncuser.", nosyncuserpass=".$nosyncuserpass." nosyncthirdparty=".$nosyncthirdparty.", email=".
-			$this->email);
+		dol_syslog(get_class($this)."::update notrigger=".$notrigger.", nosyncuser=".$nosyncuser.", nosyncuserpass=".$nosyncuserpass." nosyncthirdparty=".$nosyncthirdparty.", email=".$this->email);
 
 		// Clean parameters
 		$this->lastname = trim($this->lastname) ? trim($this->lastname) : trim($this->lastname);
@@ -693,7 +692,9 @@ class Adherent extends CommonObject
 		$sql .= ", gender = ".($this->gender != -1 ? "'".$this->db->escape($this->gender)."'" : "null"); // 'man' or 'woman'
 		$sql .= ", login = ".($this->login ? "'".$this->db->escape($this->login)."'" : "null");
 		$sql .= ", societe = ".($this->company ? "'".$this->db->escape($this->company)."'" : ($this->societe ? "'".$this->db->escape($this->societe)."'" : "null"));
-		$sql .= ", fk_soc = ".($this->socid > 0 ? $this->db->escape($this->socid) : "null");
+		if ($this->socid) {
+			$sql .= ", fk_soc = ".($this->socid > 0 ? $this->db->escape($this->socid) : "null");	 // Must be modified only when creating from a third-party
+		}
 		$sql .= ", address = ".($this->address ? "'".$this->db->escape($this->address)."'" : "null");
 		$sql .= ", zip = ".($this->zip ? "'".$this->db->escape($this->zip)."'" : "null");
 		$sql .= ", town = ".($this->town ? "'".$this->db->escape($this->town)."'" : "null");
@@ -713,9 +714,6 @@ class Adherent extends CommonObject
 		$sql .= ", fk_adherent_type = ".$this->db->escape($this->typeid);
 		$sql .= ", morphy = '".$this->db->escape($this->morphy)."'";
 		$sql .= ", birth = ".($this->birth ? "'".$this->db->idate($this->birth)."'" : "null");
-		if ($this->socid) {
-			$sql .= ", fk_soc = '".$this->db->escape($this->socid)."'"; // Must be modified only when creating from a third-party
-		}
 		if ($this->datefin) {
 			$sql .= ", datefin = '".$this->db->idate($this->datefin)."'"; // Must be modified only when deleting a subscription
 		}
@@ -1536,9 +1534,9 @@ class Adherent extends CommonObject
 	 *
 	 *	@param	int	        $date        		Date of effect of subscription
 	 *	@param	double		$amount     		Amount of subscription (0 accepted for some members)
-	 *	@param	int			$accountid			Id bank account
-	 *	@param	string		$operation			Type of payment (if Id bank account provided). Example: 'CB', ...
-	 *	@param	string		$label				Label operation (if Id bank account provided)
+	 *	@param	int			$accountid			Id bank account. NOT USED.
+	 *	@param	string		$operation			Code of payment mode (if Id bank account provided). Example: 'CB', ... NOT USED.
+	 *	@param	string		$label				Label operation (if Id bank account provided).
 	 *	@param	string		$num_chq			Numero cheque (if Id bank account provided)
 	 *	@param	string		$emetteur_nom		Name of cheque writer
 	 *	@param	string		$emetteur_banque	Name of bank of cheque
@@ -1805,6 +1803,7 @@ class Adherent extends CommonObject
 				$paiement = new Paiement($this->db);
 				$paiement->datepaye = $paymentdate;
 				$paiement->amounts = $amounts;
+				$paiement->paiementcode = $operation;
 				$paiement->paiementid = dol_getIdFromCode($this->db, $operation, 'c_paiement', 'code', 'id', 1);
 				$paiement->num_payment = $num_chq;
 				$paiement->note_public = $label;
@@ -2164,7 +2163,7 @@ class Adherent extends CommonObject
 	 */
 	public function getNomUrl($withpictoimg = 0, $maxlen = 0, $option = 'card', $mode = '', $morecss = '', $save_lastsearch_value = -1, $notooltip = 0, $addlinktonotes = 0)
 	{
-		global $conf, $langs;
+		global $conf, $langs, $hookmanager;
 
 		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && $withpictoimg) {
 			$withpictoimg = 0;
@@ -2282,7 +2281,15 @@ class Adherent extends CommonObject
 				$result .= '</span>';
 			}
 		}
-
+		global $action;
+		$hookmanager->initHooks(array($this->element . 'dao'));
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
+		}
 		return $result;
 	}
 

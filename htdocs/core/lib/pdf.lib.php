@@ -527,102 +527,100 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
 
 		if ($mode == 'target' || preg_match('/targetwithdetails/', $mode)) {
 			if ($usecontact) {
-				$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->convToOutputCharset($targetcontact->getFullName($outputlangs, 1));
+				if (is_object($targetcontact)) {
+					$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->convToOutputCharset($targetcontact->getFullName($outputlangs, 1));
 
-				if (!empty($targetcontact->address)) {
-					$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->convToOutputCharset(dol_format_address($targetcontact));
-				} else {
-					$companytouseforaddress = $targetcompany;
+					if (!empty($targetcontact->address)) {
+						$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->convToOutputCharset(dol_format_address($targetcontact));
+					} else {
+						$companytouseforaddress = $targetcompany;
 
-					// Contact on a thirdparty that is a different thirdparty than the thirdparty of object
-					if ($targetcontact->socid > 0 && $targetcontact->socid != $targetcompany->id) {
-						$targetcontact->fetch_thirdparty();
-						$companytouseforaddress = $targetcontact->thirdparty;
+						// Contact on a thirdparty that is a different thirdparty than the thirdparty of object
+						if ($targetcontact->socid > 0 && $targetcontact->socid != $targetcompany->id) {
+							$targetcontact->fetch_thirdparty();
+							$companytouseforaddress = $targetcontact->thirdparty;
+						}
+
+						$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->convToOutputCharset(dol_format_address($companytouseforaddress));
+					}
+					// Country
+					if (!empty($targetcontact->country_code) && $targetcontact->country_code != $sourcecompany->country_code) {
+						$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$targetcontact->country_code));
+					} elseif (empty($targetcontact->country_code) && !empty($targetcompany->country_code) && ($targetcompany->country_code != $sourcecompany->country_code)) {
+						$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$targetcompany->country_code));
 					}
 
-					$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->convToOutputCharset(dol_format_address($companytouseforaddress));
-				}
-				// Country
-				if (!empty($targetcontact->country_code) && $targetcontact->country_code != $sourcecompany->country_code) {
-					$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$targetcontact->country_code));
-				} elseif (empty($targetcontact->country_code) && !empty($targetcompany->country_code) && ($targetcompany->country_code != $sourcecompany->country_code)) {
-					$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$targetcompany->country_code));
-				}
-
-				if (!empty($conf->global->MAIN_PDF_ADDALSOTARGETDETAILS) || preg_match('/targetwithdetails/', $mode)) {
-					// Phone
-					if (!empty($conf->global->MAIN_PDF_ADDALSOTARGETDETAILS) || $mode == 'targetwithdetails' || preg_match('/targetwithdetails_phone/', $mode)) {
-						if (!empty($targetcontact->phone_pro) || !empty($targetcontact->phone_mobile)) {
-							$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->transnoentities("Phone").": ";
+					if (!empty($conf->global->MAIN_PDF_ADDALSOTARGETDETAILS) || preg_match('/targetwithdetails/', $mode)) {
+						// Phone
+						if (!empty($conf->global->MAIN_PDF_ADDALSOTARGETDETAILS) || $mode == 'targetwithdetails' || preg_match('/targetwithdetails_phone/', $mode)) {
+							if (!empty($targetcontact->phone_pro) || !empty($targetcontact->phone_mobile)) {
+								$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->transnoentities("Phone").": ";
+							}
+							if (!empty($targetcontact->phone_pro)) {
+								$stringaddress .= $outputlangs->convToOutputCharset($targetcontact->phone_pro);
+							}
+							if (!empty($targetcontact->phone_pro) && !empty($targetcontact->phone_mobile)) {
+								$stringaddress .= " / ";
+							}
+							if (!empty($targetcontact->phone_mobile)) {
+								$stringaddress .= $outputlangs->convToOutputCharset($targetcontact->phone_mobile);
+							}
 						}
-						if (!empty($targetcontact->phone_pro)) {
-							$stringaddress .= $outputlangs->convToOutputCharset($targetcontact->phone_pro);
+						// Fax
+						if (!empty($conf->global->MAIN_PDF_ADDALSOTARGETDETAILS) || $mode == 'targetwithdetails' || preg_match('/targetwithdetails_fax/', $mode)) {
+							if ($targetcontact->fax) {
+								$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->transnoentities("Fax").": ".$outputlangs->convToOutputCharset($targetcontact->fax);
+							}
 						}
-						if (!empty($targetcontact->phone_pro) && !empty($targetcontact->phone_mobile)) {
-							$stringaddress .= " / ";
+						// EMail
+						if (!empty($conf->global->MAIN_PDF_ADDALSOTARGETDETAILS) || $mode == 'targetwithdetails' || preg_match('/targetwithdetails_email/', $mode)) {
+							if ($targetcontact->email) {
+								$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->transnoentities("Email").": ".$outputlangs->convToOutputCharset($targetcontact->email);
+							}
 						}
-						if (!empty($targetcontact->phone_mobile)) {
-							$stringaddress .= $outputlangs->convToOutputCharset($targetcontact->phone_mobile);
-						}
-					}
-					// Fax
-					if (!empty($conf->global->MAIN_PDF_ADDALSOTARGETDETAILS) || $mode == 'targetwithdetails' || preg_match('/targetwithdetails_fax/', $mode)) {
-						if ($targetcontact->fax) {
-							$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->transnoentities("Fax").": ".$outputlangs->convToOutputCharset($targetcontact->fax);
-						}
-					}
-					// EMail
-					if (!empty($conf->global->MAIN_PDF_ADDALSOTARGETDETAILS) || $mode == 'targetwithdetails' || preg_match('/targetwithdetails_email/', $mode)) {
-						if ($targetcontact->email) {
-							$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->transnoentities("Email").": ".$outputlangs->convToOutputCharset($targetcontact->email);
-						}
-					}
-					// Web
-					if (!empty($conf->global->MAIN_PDF_ADDALSOTARGETDETAILS) || $mode == 'targetwithdetails' || preg_match('/targetwithdetails_url/', $mode)) {
-						if ($targetcontact->url) {
-							$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->transnoentities("Web").": ".$outputlangs->convToOutputCharset($targetcontact->url);
+						// Web
+						if (!empty($conf->global->MAIN_PDF_ADDALSOTARGETDETAILS) || $mode == 'targetwithdetails' || preg_match('/targetwithdetails_url/', $mode)) {
+							if ($targetcontact->url) {
+								$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->transnoentities("Web").": ".$outputlangs->convToOutputCharset($targetcontact->url);
+							}
 						}
 					}
 				}
 			} else {
-				$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->convToOutputCharset(dol_format_address($targetcompany));
-				// Country
-				if (!empty($targetcompany->country_code) && $targetcompany->country_code != $sourcecompany->country_code) {
-					$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$targetcompany->country_code));
-				}
+				if (is_object($targetcompany)) {
+					$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->convToOutputCharset(dol_format_address($targetcompany));
+					// Country
+					if (!empty($targetcompany->country_code) && $targetcompany->country_code != $sourcecompany->country_code) {
+						$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$targetcompany->country_code));
+					}
 
-				if (!empty($conf->global->MAIN_PDF_ADDALSOTARGETDETAILS) || preg_match('/targetwithdetails/', $mode)) {
-					// Phone
-					if (!empty($conf->global->MAIN_PDF_ADDALSOTARGETDETAILS) || $mode == 'targetwithdetails' || preg_match('/targetwithdetails_phone/', $mode)) {
-						if (!empty($targetcompany->phone) || !empty($targetcompany->phone_mobile)) {
-							$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->transnoentities("Phone").": ";
+					if (!empty($conf->global->MAIN_PDF_ADDALSOTARGETDETAILS) || preg_match('/targetwithdetails/', $mode)) {
+						// Phone
+						if (!empty($conf->global->MAIN_PDF_ADDALSOTARGETDETAILS) || $mode == 'targetwithdetails' || preg_match('/targetwithdetails_phone/', $mode)) {
+							if (!empty($targetcompany->phone)) {
+								$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->transnoentities("Phone").": ";
+							}
+							if (!empty($targetcompany->phone)) {
+								$stringaddress .= $outputlangs->convToOutputCharset($targetcompany->phone);
+							}
 						}
-						if (!empty($targetcompany->phone)) {
-							$stringaddress .= $outputlangs->convToOutputCharset($targetcompany->phone);
+						// Fax
+						if (!empty($conf->global->MAIN_PDF_ADDALSOTARGETDETAILS) || $mode == 'targetwithdetails' || preg_match('/targetwithdetails_fax/', $mode)) {
+							if ($targetcompany->fax) {
+								$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->transnoentities("Fax").": ".$outputlangs->convToOutputCharset($targetcompany->fax);
+							}
 						}
-						if (!empty($targetcompany->phone) && !empty($targetcompany->phone_mobile)) {
-							$stringaddress .= " / ";
+						// EMail
+						if (!empty($conf->global->MAIN_PDF_ADDALSOTARGETDETAILS) || $mode == 'targetwithdetails' || preg_match('/targetwithdetails_email/', $mode)) {
+							if ($targetcompany->email) {
+								$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->transnoentities("Email").": ".$outputlangs->convToOutputCharset($targetcompany->email);
+							}
 						}
-						if (!empty($targetcompany->phone_mobile)) {
-							$stringaddress .= $outputlangs->convToOutputCharset($targetcompany->phone_mobile);
-						}
-					}
-					// Fax
-					if (!empty($conf->global->MAIN_PDF_ADDALSOTARGETDETAILS) || $mode == 'targetwithdetails' || preg_match('/targetwithdetails_fax/', $mode)) {
-						if ($targetcompany->fax) {
-							$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->transnoentities("Fax").": ".$outputlangs->convToOutputCharset($targetcompany->fax);
-						}
-					}
-					// EMail
-					if (!empty($conf->global->MAIN_PDF_ADDALSOTARGETDETAILS) || $mode == 'targetwithdetails' || preg_match('/targetwithdetails_email/', $mode)) {
-						if ($targetcompany->email) {
-							$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->transnoentities("Email").": ".$outputlangs->convToOutputCharset($targetcompany->email);
-						}
-					}
-					// Web
-					if (!empty($conf->global->MAIN_PDF_ADDALSOTARGETDETAILS) || $mode == 'targetwithdetails' || preg_match('/targetwithdetails_url/', $mode)) {
-						if ($targetcompany->url) {
-							$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->transnoentities("Web").": ".$outputlangs->convToOutputCharset($targetcompany->url);
+						// Web
+						if (!empty($conf->global->MAIN_PDF_ADDALSOTARGETDETAILS) || $mode == 'targetwithdetails' || preg_match('/targetwithdetails_url/', $mode)) {
+							if ($targetcompany->url) {
+								$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->transnoentities("Web").": ".$outputlangs->convToOutputCharset($targetcompany->url);
+							}
 						}
 					}
 				}
@@ -1130,6 +1128,11 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 
 	$pdf->SetFont('', '', 7);
 	$pdf->SetDrawColor(224, 224, 224);
+	// Option for footer text color
+	if (!empty($conf->global->PDF_FOOTER_TEXT_COLOR)) {
+		list($r, $g, $b) = sscanf($conf->global->PDF_FOOTER_TEXT_COLOR, '%d, %d, %d');
+		$pdf->SetTextColor($r, $g, $b);
+	}
 
 	// The start of the bottom of this page footer is positioned according to # of lines
 	$freetextheight = 0;
@@ -1161,9 +1164,17 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 			$marginwithfooter = $marge_basse + $freetextheight + $mycustomfooterheight;
 			$posy = $marginwithfooter + 0;
 
+			// Option for footer background color (without freetext zone)
+			if (getDolGlobalString('PDF_FOOTER_BACKGROUND_COLOR')) {
+				list($r, $g, $b) = sscanf($conf->global->PDF_FOOTER_BACKGROUND_COLOR, '%d, %d, %d');
+				$pdf->SetAutoPageBreak(0, 0); // Disable auto pagebreak
+				$pdf->Rect(0, $dims['hk'] - $posy + $freetextheight, $dims['wk'] + 1, $marginwithfooter + 1, 'F', '', $fill_color = array($r, $g, $b));
+				$pdf->SetAutoPageBreak(1, 0); // Restore pagebreak
+			}
+
 			if ($line) {	// Free text
 				$pdf->SetXY($dims['lm'], -$posy);
-				if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT)) {   // by default
+				if (!getDolGlobalString('PDF_ALLOW_HTML_FOR_FREE_TEXT')) {   // by default
 					$pdf->MultiCell(0, 3, $line, 0, $align, 0);
 				} else {
 					$pdf->writeHTMLCell($pdf->page_largeur - $pdf->margin_left - $pdf->margin_right, $freetextheight, $dims['lm'], $dims['hk'] - $marginwithfooter, dol_htmlentitiesbr($line, 1, 'UTF-8', 0));
@@ -1172,10 +1183,23 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 			}
 
 			$pdf->SetY(-$posy);
-			$pdf->line($dims['lm'], $dims['hk'] - $posy, $dims['wk'] - $dims['rm'], $dims['hk'] - $posy);
-			$posy--;
 
-			$pdf->writeHTMLCell($pdf->page_largeur - $pdf->margin_left - $pdf->margin_right, $freetextheight, $dims['lm'], $dims['hk'] - $posy, dol_htmlentitiesbr($mycustomfooter, 1, 'UTF-8', 0));
+			// Hide footer line if footer background color is set
+			if (!getDolGlobalString('PDF_FOOTER_BACKGROUND_COLOR')) {
+				$pdf->line($dims['lm'], $dims['hk'] - $posy, $dims['wk'] - $dims['rm'], $dims['hk'] - $posy);
+			}
+
+			// Option for set top margin height of footer after freetext
+			if (getDolGlobalString('PDF_FOOTER_TOP_MARGIN') || getDolGlobalString('PDF_FOOTER_TOP_MARGIN') === '0') {
+				// TODO Remove this case. Height should be good automatically, only $posy-- should be required.
+				$posy -= getDolGlobalInt('PDF_FOOTER_TOP_MARGIN');
+			} else {
+				$posy--;
+			}
+
+			if (getDolGlobalString('PDF_FOOTER_DISABLE_PAGEBREAK') === '1') { $pdf->SetAutoPageBreak(0, 0); } // Option for disable auto pagebreak
+			$pdf->writeHTMLCell($pdf->page_largeur - $pdf->margin_left - $pdf->margin_right, $mycustomfooterheight, $dims['lm'], $dims['hk'] - $posy, dol_htmlentitiesbr($mycustomfooter, 1, 'UTF-8', 0));
+			if (getDolGlobalString('PDF_FOOTER_DISABLE_PAGEBREAK') === '1') { $pdf->SetAutoPageBreak(1, 0); } // Restore pagebreak
 
 			$posy -= $mycustomfooterheight - 3;
 		} else {
@@ -1183,9 +1207,17 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 			$marginwithfooter = $marge_basse + $freetextheight + (!empty($line1) ? 3 : 0) + (!empty($line2) ? 3 : 0) + (!empty($line3) ? 3 : 0) + (!empty($line4) ? 3 : 0);
 			$posy = $marginwithfooter + 0;
 
+			// Option for footer background color (without freetext zone)
+			if (getDolGlobalString('PDF_FOOTER_BACKGROUND_COLOR')) {
+				list($r, $g, $b) = sscanf($conf->global->PDF_FOOTER_BACKGROUND_COLOR, '%d, %d, %d');
+				$pdf->SetAutoPageBreak(0, 0); // Disable auto pagebreak
+				$pdf->Rect(0, $dims['hk'] - $posy + $freetextheight, $dims['wk'] + 1, $marginwithfooter + 1, 'F', '', $fill_color = array($r, $g, $b));
+				$pdf->SetAutoPageBreak(1, 0); // Restore pagebreak
+			}
+
 			if ($line) {	// Free text
 				$pdf->SetXY($dims['lm'], -$posy);
-				if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT)) {   // by default
+				if (!getDolGlobalString('PDF_ALLOW_HTML_FOR_FREE_TEXT')) {   // by default
 					$pdf->MultiCell(0, 3, $line, 0, $align, 0);
 				} else {
 					$pdf->writeHTMLCell($pdf->page_largeur - $pdf->margin_left - $pdf->margin_right, $freetextheight, $dims['lm'], $dims['hk'] - $marginwithfooter, dol_htmlentitiesbr($line, 1, 'UTF-8', 0));
@@ -1194,8 +1226,19 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 			}
 
 			$pdf->SetY(-$posy);
-			$pdf->line($dims['lm'], $dims['hk'] - $posy, $dims['wk'] - $dims['rm'], $dims['hk'] - $posy);
-			$posy--;
+
+			// Hide footer line if footer background color is set
+			if (!getDolGlobalString('PDF_FOOTER_BACKGROUND_COLOR')) {
+				$pdf->line($dims['lm'], $dims['hk'] - $posy, $dims['wk'] - $dims['rm'], $dims['hk'] - $posy);
+			}
+
+			// Option for set top margin height of footer after freetext
+			if (getDolGlobalString('PDF_FOOTER_TOP_MARGIN') || getDolGlobalString('PDF_FOOTER_TOP_MARGIN') === '0') {
+				// TODO Remove this case. Height should be good automatically, only $posy-- should be required.
+				$posy -= getDolGlobalString('PDF_FOOTER_TOP_MARGIN');
+			} else {
+				$posy--;
+			}
 
 			if (!empty($line1)) {
 				$pdf->SetFont('', 'B', 7);
@@ -1393,7 +1436,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 				$note = $prodser->multilangs[$outputlangs->defaultlang]["other"];
 			}
 		}
-	} elseif ($object->element == 'facture' || $object->element == 'facturefourn') {
+	} elseif (($object->element == 'facture' || $object->element == 'facturefourn') && preg_match('/^\(DEPOSIT\).+/', $desc)) { // We must not replace '(DEPOSIT)' when it is alone, it will be translated and detailed later
 		$desc = str_replace('(DEPOSIT)', $outputlangs->trans('Deposit'), $desc);
 	}
 

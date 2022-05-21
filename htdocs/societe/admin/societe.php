@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2011-2012 Juanjo Menent        <jmenent@2byte.es>
+/* Copyright (C) 2004       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004       Eric Seigne             <eric.seigne@ryxeo.com>
+ * Copyright (C) 2005-2011  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2011-2012  Juanjo Menent           <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -254,7 +254,7 @@ if ($action == "setaskforshippingmet") {
 	}
 }
 
-//Activate "Disable prospect/customer type"
+// Activate "Disable prospect/customer type"
 if ($action == "setdisableprospectcustomer") {
 	$setdisableprospectcustomer = GETPOST('value', 'int');
 	$res = dolibarr_set_const($db, "SOCIETE_DISABLE_PROSPECTSCUSTOMERS", $setdisableprospectcustomer, 'yesno', 0, '', $conf->entity);
@@ -626,7 +626,7 @@ foreach ($dirsociete as $dirroot) {
 					// Preview
 					print '<td class="center nowrap">';
 					if ($module->type == 'pdf') {
-						$linkspec = '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&token='.newToken().'&module='.$name.'">'.img_object($langs->trans("Preview"), 'bill').'</a>';
+						$linkspec = '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&token='.newToken().'&module='.$name.'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
 					} else {
 						$linkspec = img_object($langs->trans("PreviewNotAvailable"), 'generic');
 					}
@@ -780,7 +780,7 @@ if (!$conf->use_javascript_ajax) {
 	);
 	print $form->selectarray("activate_COMPANY_USE_SEARCH_TO_SELECT", $arrval, (property_exists($conf->global, 'COMPANY_USE_SEARCH_TO_SELECT')?$conf->global->COMPANY_USE_SEARCH_TO_SELECT:''), 0, 0, 0, '', 0, 0, 0, '', 'minwidth75imp');
 	print '</td><td class="right">';
-	print '<input type="submit" class="button reposition" name="COMPANY_USE_SEARCH_TO_SELECT" value="'.$langs->trans("Modify").'">';
+	print '<input type="submit" class="button small reposition" name="COMPANY_USE_SEARCH_TO_SELECT" value="'.$langs->trans("Modify").'">';
 	print "</td>";
 }
 print '</tr>';
@@ -801,7 +801,7 @@ if (!$conf->use_javascript_ajax) {
 	);
 	print $form->selectarray("activate_CONTACT_USE_SEARCH_TO_SELECT", $arrval, (property_exists($conf->global, 'CONTACT_USE_SEARCH_TO_SELECT')?$conf->global->CONTACT_USE_SEARCH_TO_SELECT:''), 0, 0, 0, '', 0, 0, 0, '', 'minwidth75imp');
 	print '</td><td class="right">';
-	print '<input type="submit" class="button reposition" name="CONTACT_USE_SEARCH_TO_SELECT" value="'.$langs->trans("Modify").'">';
+	print '<input type="submit" class="button small eposition" name="CONTACT_USE_SEARCH_TO_SELECT" value="'.$langs->trans("Modify").'">';
 	print "</td>";
 }
 print '</tr>';
@@ -905,7 +905,7 @@ if (empty($conf->global->SOCIETE_DISABLE_PROSPECTSCUSTOMERS)) {
 	print $formcompany->selectProspectCustomerType((property_exists($conf->global, 'THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT')?$conf->global->THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT:''), 'defaultcustomertype', 'defaultcustomertype', 'admin');
 	print '</td>';
 	print '<td class="center">';
-	print '<input type="submit" class="button reposition" name="THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT" value="'.$langs->trans("Modify").'">';
+	print '<input type="submit" class="button small reposition" name="THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT" value="'.$langs->trans("Modify").'">';
 	print '</td>';
 	print '</tr>';
 }

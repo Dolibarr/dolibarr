@@ -62,6 +62,11 @@ class RecruitmentCandidature extends CommonObject
 	 */
 	public $picto = 'recruitmentcandidature';
 
+	/**
+	 * @var int		Do not exploit fields email_xxx into triggers.
+	 */
+	public $email_fields_no_propagate_in_actioncomm;
+
 
 	const STATUS_DRAFT = 0;
 	const STATUS_VALIDATED = 1;
@@ -106,7 +111,7 @@ class RecruitmentCandidature extends CommonObject
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'comment'=>"Id"),
 		'entity' => array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'position'=>5, 'notnull'=>1, 'default'=>'1', 'index'=>1),
 		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>'1', 'position'=>10, 'notnull'=>1, 'visible'=>4, 'noteditable'=>'1', 'default'=>'(PROV)', 'index'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'comment'=>"Reference of candidature"),
-		'fk_recruitmentjobposition' => array('type'=>'integer:RecruitmentJobPosition:recruitment/class/recruitmentjobposition.class.php', 'label'=>'Job', 'enabled'=>'1', 'position'=>15, 'notnull'=>0, 'visible'=>1, 'index'=>1, 'picto'=>'recruitmentjobposition', 'css'=>'maxwidth500'),
+		'fk_recruitmentjobposition' => array('type'=>'integer:RecruitmentJobPosition:recruitment/class/recruitmentjobposition.class.php', 'label'=>'Job', 'enabled'=>'1', 'position'=>15, 'notnull'=>0, 'visible'=>1, 'index'=>1, 'picto'=>'recruitmentjobposition', 'css'=>'maxwidth500', 'csslist'=>'minwidth125'),
 		'note_public' => array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>'1', 'position'=>61, 'notnull'=>0, 'visible'=>0,),
 		'note_private' => array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>'1', 'position'=>62, 'notnull'=>0, 'visible'=>0,),
 		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>'1', 'position'=>500, 'notnull'=>1, 'visible'=>-2,),
@@ -265,7 +270,8 @@ class RecruitmentCandidature extends CommonObject
 			foreach ($object->array_options as $key => $option) {
 				$shortkey = preg_replace('/options_/', '', $key);
 				if (!empty($extrafields->attributes[$this->table_element]['unique'][$shortkey])) {
-					//var_dump($key); var_dump($clonedObj->array_options[$key]); exit;
+					//var_dump($key);
+					//var_dump($clonedObj->array_options[$key]); exit;
 					unset($object->array_options[$key]);
 				}
 			}
@@ -762,7 +768,7 @@ class RecruitmentCandidature extends CommonObject
 
 		global $action, $hookmanager;
 		$hookmanager->initHooks(array('recruitmentcandidaturedao'));
-		$parameters = array('id'=>$this->id, 'getnomurl'=>$result);
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;

@@ -316,8 +316,9 @@ if (empty($reshook)) {
 
 		$result = $object->delete(); // TODO Add $user as first param
 		if ($result > 0) {
-			if ($backtopage) {
-				header("Location: ".$backtopage);
+			setEventMessages("RecordDeleted", null, 'mesgs');
+			if ($backurlforlist) {
+				header("Location: ".$backurlforlist);
 				exit;
 			} else {
 				header("Location: ".DOL_URL_ROOT.'/contact/list.php');
@@ -520,6 +521,29 @@ if (empty($reshook)) {
 		}
 	}
 
+	// Update extrafields
+	if ($action == 'update_extras' && ! empty($user->rights->societe->contact->creer)) {
+		$object->oldcopy = dol_clone($object);
+
+		// Fill array 'array_options' with data from update form
+		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
+		if ($ret < 0) {
+			$error++;
+		}
+
+		if (!$error) {
+			$result = $object->insertExtraFields('CONTACT_MODIFY');
+			if ($result < 0) {
+				setEventMessages($object->error, $object->errors, 'errors');
+				$error++;
+			}
+		}
+
+		if ($error) {
+			$action = 'edit_extras';
+		}
+	}
+
 	// Actions to send emails
 	$triggersendname = 'CONTACT_SENTBYMAIL';
 	$paramname = 'id';
@@ -601,7 +625,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			 */
 			$object->canvas = $canvas;
 
-			$object->state_id = GETPOST("state_id");
+			$object->state_id = GETPOST("state_id", "int");
 
 			// We set country_id, country_code and label for the selected country
 			$object->country_id = GETPOST("country_id") ? GETPOST("country_id", "int") : (empty($objsoc->country_id) ? $mysoc->country_id : $objsoc->country_id);
@@ -674,7 +698,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					print '</td></tr>';
 				} else {
 					print '<tr><td><label for="socid">'.$langs->trans("ThirdParty").'</label></td><td colspan="3" class="maxwidthonsmartphone">';
-					print img_picto('', 'company').$form->select_company($socid, 'socid', '', 'SelectThirdParty');
+					print img_picto('', 'company').$form->select_company($socid, 'socid', '', 'SelectThirdParty', 0, 0, null, 0, 'minwidth300 maxwidth500 widthcentpercentminusxx');
 					print '</td></tr>';
 				}
 			}
@@ -833,7 +857,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 						if (!empty($value['icon'])) {
 							print '<span class="fa '.$value['icon'].'"></span>';
 						}
-						print '<input type="text" name="'.$key.'" id="'.$key.'" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET($key) ?GETPOST($key, 'alphanohtml') : $object->socialnetworks[$key]).'">';
+						print '<input type="text" name="'.$key.'" id="'.$key.'" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET($key) ?GETPOST($key, 'alphanohtml') : (!empty($object->socialnetworks[$key]) ? $object->socialnetworks[$key] : "")).'">';
 						print '</td>';
 						print '</tr>';
 					} elseif (!empty($object->socialnetworks[$key])) {
@@ -1527,7 +1551,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			$MAXEVENT = 10;
 
-			$morehtmlright = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-list-alt imgforviewmode', DOL_URL_ROOT.'/contact/agenda.php?id='.$object->id);
+			$morehtmlright = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/contact/agenda.php?id='.$object->id);
 
 			// List of actions on element
 			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';

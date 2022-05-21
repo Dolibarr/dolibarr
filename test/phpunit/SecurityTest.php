@@ -325,6 +325,11 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$test="Text with ' encoded with the numeric html entity converted into text entity &#39; (like when submited by CKEditor)";
 		$result=testSqlAndScriptInject($test, 0);	// result must be 0
 		$this->assertEquals(0, $result, 'Error on testSqlAndScriptInject mmm');
+
+		$test="/dolibarr/htdocs/index.php/".chr('246')."abc";	// Add the char %F6 into the variable
+		$result=testSqlAndScriptInject($test, 2);
+		//print "test=".$test." result=".$result."\n";
+		$this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject with a non valid UTF8 char');
 	}
 
 	/**
@@ -574,37 +579,9 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$_POST["backtopage"]='javascripT&javascript#javascriptxjavascript3a alert(1)';
 		$result=GETPOST("backtopage");
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals('x3a alert(1)', $result, 'Test for backtopage param');
+		$this->assertEquals('x3aalert(1)', $result, 'Test for backtopage param');
 
 		return $result;
-	}
-
-	/**
-	 * testCheckLoginPassEntity
-	 *
-	 * @return	void
-	 */
-	public function testCheckLoginPassEntity()
-	{
-		$login=checkLoginPassEntity('loginbidon', 'passwordbidon', 1, array('dolibarr'));
-		print __METHOD__." login=".$login."\n";
-		$this->assertEquals($login, '');
-
-		$login=checkLoginPassEntity('admin', 'passwordbidon', 1, array('dolibarr'));
-		print __METHOD__." login=".$login."\n";
-		$this->assertEquals($login, '');
-
-		$login=checkLoginPassEntity('admin', 'admin', 1, array('dolibarr'));            // Should works because admin/admin exists
-		print __METHOD__." login=".$login."\n";
-		$this->assertEquals($login, 'admin', 'The test to check if pass of user "admin" is "admin" has failed');
-
-		$login=checkLoginPassEntity('admin', 'admin', 1, array('http','dolibarr'));    // Should work because of second authentication method
-		print __METHOD__." login=".$login."\n";
-		$this->assertEquals($login, 'admin');
-
-		$login=checkLoginPassEntity('admin', 'admin', 1, array('forceuser'));
-		print __METHOD__." login=".$login."\n";
-		$this->assertEquals($login, '');    // Expected '' because should failed because login 'auto' does not exists
 	}
 
 	/**
@@ -875,11 +852,18 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 
 		include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 		include_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
-		$result=dol_eval('(($reloadedobj = new Task($db)) && ($reloadedobj->fetchNoCompute($object->id) > 0) && ($secondloadedobj = new Project($db)) && ($secondloadedobj->fetchNoCompute($reloadedobj->fk_project) > 0)) ? $secondloadedobj->ref: "Parent project not found"', 1, 1);
+
+		$s = '(($reloadedobj = new Task($db)) && ($reloadedobj->fetchNoCompute($object->id) > 0) && ($secondloadedobj = new Project($db)) && ($secondloadedobj->fetchNoCompute($reloadedobj->fk_project) > 0)) ? $secondloadedobj->ref : "Parent project not found"';
+		$result=dol_eval($s, 1, 1, '2');
 		print "result = ".$result."\n";
 		$this->assertEquals('Parent project not found', $result);
 
-		$result=dol_eval('$a=function() { }; $a;', 1, 1);
+		$s = '(($reloadedobj = new Task($db)) && ($reloadedobj->fetchNoCompute($object->id) > 0) && ($secondloadedobj = new Project($db)) && ($secondloadedobj->fetchNoCompute($reloadedobj->fk_project) > 0)) ? $secondloadedobj->ref : \'Parent project not found\'';
+		$result=dol_eval($s, 1, 1, '2');
+		print "result = ".$result."\n";
+		$this->assertEquals('Parent project not found', $result);
+
+		$result=dol_eval('$a=function() { }; $a;', 1, 1, '');
 		print "result = ".$result."\n";
 		$this->assertContains('Bad string syntax to evaluate', $result);
 
@@ -898,5 +882,70 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$result=dol_eval('`ls`', 1, 0);
 		print "result = ".$result."\n";
 		$this->assertContains('Bad string syntax to evaluate', $result);
+
+		$result=dol_eval("('ex'.'ec')('echo abc')", 1, 0);
+		print "result = ".$result."\n";
+		$this->assertContains('Bad string syntax to evaluate', $result);
+
+		$result=dol_eval("sprintf(\"%s%s\", \"ex\", \"ec\")('echo abc')", 1, 0);
+		print "result = ".$result."\n";
+		$this->assertContains('Bad string syntax to evaluate', $result);
+
+		$result=dol_eval("90402.38+267678+0", 1, 1, 1);
+		print "result = ".$result."\n";
+		$this->assertEquals('358080.38', $result);
+
+		global $leftmenu;	// Used into strings to eval
+
+		$leftmenu = 'AAA';
+		$result=dol_eval('$conf->currency && preg_match(\'/^(AAA|BBB)/\',$leftmenu)', 1, 1, '1');
+		print "result = ".$result."\n";
+		$this->assertTrue($result);
+
+		// Same with syntax error
+		$leftmenu = 'XXX';
+		$result=dol_eval('$conf->currency && preg_match(\'/^(AAA|BBB)/\',$leftmenu)', 1, 1, '1');
+		print "result = ".$result."\n";
+		$this->assertFalse($result);
+
+
+		// Case with param onlysimplestring = 1
+
+		$result=dol_eval('1 && getDolGlobalInt("doesnotexist1") && $conf->global->MAIN_FEATURES_LEVEL', 1, 0);	// Should return false and not a 'Bad string syntax to evaluate ...'
+		print "result = ".$result."\n";
+		$this->assertFalse($result);
+
+		$result=dol_eval("(\$a.'aa')", 1, 0);
+		print "result = ".$result."\n";
+		$this->assertContains('Bad string syntax to evaluate', $result);
+	}
+
+
+	/**
+	 * testCheckLoginPassEntity
+	 *
+	 * @return	void
+	 */
+	public function testCheckLoginPassEntity()
+	{
+		$login=checkLoginPassEntity('loginbidon', 'passwordbidon', 1, array('dolibarr'));
+		print __METHOD__." login=".$login."\n";
+		$this->assertEquals($login, '');
+
+		$login=checkLoginPassEntity('admin', 'passwordbidon', 1, array('dolibarr'));
+		print __METHOD__." login=".$login."\n";
+		$this->assertEquals($login, '');
+
+		$login=checkLoginPassEntity('admin', 'admin', 1, array('dolibarr'));            // Should works because admin/admin exists
+		print __METHOD__." login=".$login."\n";
+		$this->assertEquals($login, 'admin', 'The test to check if pass of user "admin" is "admin" has failed');
+
+		$login=checkLoginPassEntity('admin', 'admin', 1, array('http','dolibarr'));    // Should work because of second authentication method
+		print __METHOD__." login=".$login."\n";
+		$this->assertEquals($login, 'admin');
+
+		$login=checkLoginPassEntity('admin', 'admin', 1, array('forceuser'));
+		print __METHOD__." login=".$login."\n";
+		$this->assertEquals('', $login, 'Error');    // Expected '' because should failed because login 'auto' does not exists
 	}
 }

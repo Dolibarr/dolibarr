@@ -64,6 +64,7 @@ class BonPrelevement extends CommonObject
 	public $emetteur_numero_compte;
 	public $emetteur_code_banque;
 	public $emetteur_number_key;
+	public $sepa_xml_pti_in_ctti;
 
 	public $emetteur_iban;
 	public $emetteur_bic;
@@ -107,6 +108,7 @@ class BonPrelevement extends CommonObject
 		$this->emetteur_numero_compte = "";
 		$this->emetteur_code_banque = "";
 		$this->emetteur_number_key = "";
+		$this->sepa_xml_pti_in_ctti = false;
 
 		$this->emetteur_iban = "";
 		$this->emetteur_bic = "";
@@ -918,9 +920,9 @@ class BonPrelevement extends CommonObject
 			if (!$error) {
 				$ref = substr($year, -2).$month;
 
-				$sql = "SELECT substring(ref from char_length(ref) - 1)";
+				$sql = "SELECT substring(ref from char_length(ref) - 1)";	// To extract "YYMMXX" from "TYYMMXX"
 				$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons";
-				$sql .= " WHERE ref LIKE '%".$this->db->escape($ref)."%'";
+				$sql .= " WHERE ref LIKE '_".$this->db->escape($ref)."%'";
 				$sql .= " AND entity = ".((int) $conf->entity);
 				$sql .= " ORDER BY ref DESC LIMIT 1";
 
@@ -929,8 +931,14 @@ class BonPrelevement extends CommonObject
 
 				if ($resql) {
 					$row = $this->db->fetch_row($resql);
-					$ref = "T".$ref.str_pad(dol_substr("00".intval($row[0]) + 1, 0, 2), 2, "0", STR_PAD_LEFT);
 
+					// Build the new ref
+					$ref = "T".$ref.sprintf("%02d", (intval($row[0]) + 1));
+
+					// $conf->abc->dir_output may be:
+					// /home/ldestailleur/git/dolibarr_15.0/documents/abc/
+					// or
+					// /home/ldestailleur/git/dolibarr_15.0/documents/X/abc with X >= 2 with multicompany.
 					if ($type != 'bank-transfer') {
 						$dir = $conf->prelevement->dir_output.'/receipts';
 					} else {
@@ -947,7 +955,7 @@ class BonPrelevement extends CommonObject
 					$sql .= "ref, entity, datec, type";
 					$sql .= ") VALUES (";
 					$sql .= "'".$this->db->escape($ref)."'";
-					$sql .= ", ".$conf->entity;
+					$sql .= ", ".((int) $conf->entity);
 					$sql .= ", '".$this->db->idate($now)."'";
 					$sql .= ", '".($type == 'bank-transfer' ? 'bank-transfer' : 'debit-order')."'";
 					$sql .= ")";
@@ -1038,10 +1046,11 @@ class BonPrelevement extends CommonObject
 					}
 					$account = new Account($this->db);
 					if ($account->fetch($id) > 0) {
-						$this->emetteur_code_banque = $account->code_banque;
+						$this->emetteur_code_banque        = $account->code_banque;
 						$this->emetteur_code_guichet       = $account->code_guichet;
 						$this->emetteur_numero_compte      = $account->number;
-						$this->emetteur_number_key = $account->cle_rib;
+						$this->emetteur_number_key         = $account->cle_rib;
+						$this->sepa_xml_pti_in_ctti        = (bool) $account->pti_in_ctti;
 						$this->emetteur_iban               = $account->iban;
 						$this->emetteur_bic                = $account->bic;
 
@@ -1057,8 +1066,8 @@ class BonPrelevement extends CommonObject
 					// This also set the property $this->total with amount that is included into file
 					$result = $this->generate($format, $executiondate, $type);
 					if ($result < 0) {
-						/*var_dump($this->error);
-						var_dump($this->invoice_in_error); */
+						//var_dump($this->error);
+						//var_dump($this->invoice_in_error);
 						$error++;
 					}
 				}
@@ -1260,7 +1269,7 @@ class BonPrelevement extends CommonObject
 
 		global $action, $hookmanager;
 		$hookmanager->initHooks(array('banktransferdao'));
-		$parameters = array('id'=>$this->id, 'getnomurl'=>$result);
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -1828,7 +1837,7 @@ class BonPrelevement extends CommonObject
 		$DtOfSgntr = dol_print_date($row_datec, '%Y-%m-%d');
 
 		if ($type != 'bank-transfer') {
-			// SEPA Paiement Information of buyer for Direct debit
+			// SEPA Paiement Information of buyer for Direct Debit
 			$XML_DEBITOR = '';
 			$XML_DEBITOR .= '			<DrctDbtTxInf>'.$CrLf;
 			$XML_DEBITOR .= '				<PmtId>'.$CrLf;
@@ -1881,6 +1890,24 @@ class BonPrelevement extends CommonObject
 			// Add EndToEndId. Must be a unique ID for each payment (for example by including bank, buyer or seller, date, checksum)
 			$XML_CREDITOR .= '					<EndToEndId>'.(($conf->global->PRELEVEMENT_END_TO_END != "") ? $conf->global->PRELEVEMENT_END_TO_END : ('CT-'.dol_trunc($row_idfac.'-'.$row_ref, 20, 'right', 'UTF-8', 1)).'-'.$Rowing).'</EndToEndId>'.$CrLf; // ISO20022 states that EndToEndId has a MaxLength of 35 characters
 			$XML_CREDITOR .= '				</PmtId>'.$CrLf;
+			if (!empty($this->sepa_xml_pti_in_ctti)) {
+				$XML_CREDITOR .= '				<PmtTpInf>' . $CrLf;
+
+				// Can be 'NORM' for normal or 'HIGH' for high priority level
+				if (!empty($conf->global->PAYMENTBYBANKTRANSFER_FORCE_HIGH_PRIORITY)) {
+					$instrprty = 'HIGH';
+				} else {
+					$instrprty = 'NORM';
+				}
+				$XML_CREDITOR .= '					<InstrPrty>'.$instrprty.'</InstrPrty>' . $CrLf;
+				$XML_CREDITOR .= '					<SvcLvl>' . $CrLf;
+				$XML_CREDITOR .= '						<Cd>SEPA</Cd>' . $CrLf;
+				$XML_CREDITOR .= '					</SvcLvl>' . $CrLf;
+				$XML_CREDITOR .= '					<CtgyPurp>' . $CrLf;
+				$XML_CREDITOR .= '						<Cd>CORE</Cd>' . $CrLf;
+				$XML_CREDITOR .= '					</CtgyPurp>' . $CrLf;
+				$XML_CREDITOR .= '				</PmtTpInf>' . $CrLf;
+			}
 			$XML_CREDITOR .= '				<Amt>'.$CrLf;
 			$XML_CREDITOR .= '					<InstdAmt Ccy="EUR">'.round($row_somme, 2).'</InstdAmt>'.$CrLf;
 			$XML_CREDITOR .= '				</Amt>'.$CrLf;
@@ -2031,6 +2058,7 @@ class BonPrelevement extends CommonObject
 			$this->emetteur_code_guichet = $account->code_guichet;
 			$this->emetteur_numero_compte = $account->number;
 			$this->emetteur_number_key = $account->cle_rib;
+			$this->sepa_xml_pti_in_ctti = (bool) $account->pti_in_ctti;
 			$this->emetteur_iban = $account->iban;
 			$this->emetteur_bic = $account->bic;
 
@@ -2054,7 +2082,7 @@ class BonPrelevement extends CommonObject
 			$RefBon = $obj->ref;
 
 			if ($type != 'bank-transfer') {
-				// SEPA Paiement Information of my company for Direct debit
+				// SEPA Paiement Information of my company for Direct Debit
 				$XML_SEPA_INFO = '';
 				$XML_SEPA_INFO .= '		<PmtInf>'.$CrLf;
 				$XML_SEPA_INFO .= '			<PmtInfId>'.('DD/'.$dateTime_YMD.'/ID'.$IdBon.'-'.$RefBon).'</PmtInfId>'.$CrLf;
@@ -2125,17 +2153,17 @@ class BonPrelevement extends CommonObject
 				//$XML_SEPA_INFO .= '			<BtchBookg>False</BtchBookg>'.$CrLf;
 				$XML_SEPA_INFO .= '			<NbOfTxs>'.$nombre.'</NbOfTxs>'.$CrLf;
 				$XML_SEPA_INFO .= '			<CtrlSum>'.$total.'</CtrlSum>'.$CrLf;
-				/*
-				$XML_SEPA_INFO .= '			<PmtTpInf>'.$CrLf;
-				$XML_SEPA_INFO .= '				<SvcLvl>'.$CrLf;
-				$XML_SEPA_INFO .= '					<Cd>SEPA</Cd>'.$CrLf;
-				$XML_SEPA_INFO .= '				</SvcLvl>'.$CrLf;
-				$XML_SEPA_INFO .= '				<LclInstrm>'.$CrLf;
-				$XML_SEPA_INFO .= '					<Cd>TRF</Cd>'.$CrLf;
-				$XML_SEPA_INFO .= '				</LclInstrm>'.$CrLf;
-				$XML_SEPA_INFO .= '				<CtgyPurp><Cd>SECU</Cd></CtgyPurp>'.$CrLf;
-				$XML_SEPA_INFO .= '			</PmtTpInf>'.$CrLf;
-				*/
+				if (!empty($this->sepa_xml_pti_in_ctti) && !empty($format)) {	// @TODO Using $format (FRST ou RCUR) in a section for a Credit Transfer looks strange.
+					$XML_SEPA_INFO .= '			<PmtTpInf>' . $CrLf;
+					$XML_SEPA_INFO .= '				<SvcLvl>' . $CrLf;
+					$XML_SEPA_INFO .= '					<Cd>SEPA</Cd>' . $CrLf;
+					$XML_SEPA_INFO .= '				</SvcLvl>' . $CrLf;
+					$XML_SEPA_INFO .= '				<LclInstrm>' . $CrLf;
+					$XML_SEPA_INFO .= '					<Cd>CORE</Cd>' . $CrLf;
+					$XML_SEPA_INFO .= '				</LclInstrm>' . $CrLf;
+					$XML_SEPA_INFO .= '				<SeqTp>' . $format . '</SeqTp>' . $CrLf;
+					$XML_SEPA_INFO .= '			</PmtTpInf>' . $CrLf;
+				}
 				$XML_SEPA_INFO .= '			<ReqdExctnDt>'.dol_print_date($dateTime_ETAD, 'dayrfc').'</ReqdExctnDt>'.$CrLf;
 				$XML_SEPA_INFO .= '			<Dbtr>'.$CrLf;
 				$XML_SEPA_INFO .= '				<Nm>'.dolEscapeXML(strtoupper(dol_string_unaccent($this->raison_sociale))).'</Nm>'.$CrLf;

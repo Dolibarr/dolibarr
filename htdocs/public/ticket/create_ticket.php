@@ -63,6 +63,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'other', 'mails', 'ticket'));
@@ -78,6 +79,11 @@ $hookmanager->initHooks(array('publicnewticketcard', 'globalcard'));
 
 $object = new Ticket($db);
 $extrafields = new ExtraFields($db);
+$contacts = array();
+$with_contact = null;
+if (!empty($conf->global->TICKET_CREATE_THIRD_PARTY_WITH_CONTACT_IF_NOT_EXIST)) {
+	$with_contact = new Contact($db);
+}
 
 $extrafields->fetch_name_optionals_label($object->table_element);
 
@@ -126,7 +132,7 @@ if (empty($reshook) && GETPOST('removedfile', 'alpha') && !GETPOST('save', 'alph
 	$upload_dir_tmp = $vardir.'/temp/'.session_id();
 
 	// TODO Delete only files that was uploaded from email form
-	dol_remove_file_process($_POST['removedfile'], 0, 0);
+	dol_remove_file_process(GETPOST('removedfile'), 0, 0);
 	$action = 'create_ticket';
 }
 
@@ -153,18 +159,50 @@ if (empty($reshook) && $action == 'create_ticket' && GETPOST('save', 'alpha')) {
 		}
 	}
 
+	$contact_lastname = '';
+	$contact_firstname = '';
+	$company_name = '';
+	$contact_phone = '';
+	if ($with_contact) {
+		// set linked contact to add in form
+		if (is_array($contacts) && count($contacts) == 1) {
+			$with_contact = current($contacts);
+		}
+
+		// check mandatory fields on contact
+		$contact_lastname = trim(GETPOST('contact_lastname', 'alphanohtml'));
+		$contact_firstname = trim(GETPOST('contact_firstname', 'alphanohtml'));
+		$company_name = trim(GETPOST('company_name', 'alphanohtml'));
+		$contact_phone = trim(GETPOST('contact_phone', 'alphanohtml'));
+		if (!($with_contact->id > 0)) {
+			// check lastname
+			if (empty($contact_lastname)) {
+				$error++;
+				array_push($object->errors, $langs->trans('ErrorFieldRequired', $langs->transnoentities('Lastname')));
+				$action = '';
+			}
+			// check firstname
+			if (empty($contact_firstname)) {
+				$error++;
+				array_push($object->errors, $langs->trans('ErrorFieldRequired', $langs->transnoentities('Firstname')));
+				$action = '';
+			}
+		}
+	}
+
 	if (!GETPOST("subject", "restricthtml")) {
 		$error++;
 		array_push($object->errors, $langs->trans("ErrorFieldRequired", $langs->transnoentities("Subject")));
 		$action = '';
-	} elseif (!GETPOST("message", "restricthtml")) {
+	}
+	if (!GETPOST("message", "restricthtml")) {
 		$error++;
-		array_push($object->errors, $langs->trans("ErrorFieldRequired", $langs->transnoentities("message")));
+		array_push($object->errors, $langs->trans("ErrorFieldRequired", $langs->transnoentities("Message")));
 		$action = '';
 	}
 
 	// Check email address
-	if (!isValidEmail($origin_email)) {
+	if (!empty($origin_email) && !isValidEmail($origin_email)) {
 		$error++;
 		array_push($object->errors, $langs->trans("ErrorBadEmailAddress", $langs->transnoentities("email")));
 		$action = '';
@@ -193,6 +231,48 @@ if (empty($reshook) && $action == 'create_ticket' && GETPOST('save', 'alpha')) {
 		$object->type_code = GETPOST("type_code", 'aZ09');
 		$object->category_code = GETPOST("category_code", 'aZ09');
 		$object->severity_code = GETPOST("severity_code", 'aZ09');
+
+		if (!is_object($user)) {
+			$user = new User($db);
+		}
+
+		// create third-party with contact
+		$usertoassign = 0;
+		if ($with_contact && !($with_contact->id > 0)) {
+			$company = new Societe($db);
+			if (!empty($company_name)) {
+				$company->name = $company_name;
+			} else {
+				$company->particulier = 1;
+				$company->name = dolGetFirstLastname($contact_firstname, $contact_lastname);
+			}
+			$result = $company->create($user);
+			if ($result < 0) {
+				$error++;
+				$errors = ($company->error ? array($company->error) : $company->errors);
+				array_push($object->errors, $errors);
+				$action = 'create_ticket';
+			}
+
+			// create contact and link to this new company
+			if (!$error) {
+				$with_contact->email = $origin_email;
+				$with_contact->lastname = $contact_lastname;
+				$with_contact->firstname = $contact_firstname;
+				$with_contact->socid = $company->id;
+				$with_contact->phone_pro = $contact_phone;
+				$result = $with_contact->create($user);
+				if ($result < 0) {
+					$error++;
+					$errors = ($with_contact->error ? array($with_contact->error) : $with_contact->errors);
+					array_push($object->errors, $errors);
+					$action = 'create_ticket';
+				} else {
+					$contacts = array($with_contact);
+				}
+			}
+		}
+
 		if (is_array($searched_companies)) {
 			$object->fk_soc = $searched_companies[0]->id;
 		}
@@ -206,9 +286,6 @@ if (empty($reshook) && $action == 'create_ticket' && GETPOST('save', 'alpha')) {
 
 		// Generate new ref
 		$object->ref = $object->getDefaultRef();
-		if (!is_object($user)) {
-			$user = new User($db);
-		}
 
 		$object->context['disableticketemail'] = 1; // Disable emails sent by ticket trigger when creation is done from this page, emails are already sent later
 
@@ -259,16 +336,16 @@ if (empty($reshook) && $action == 'create_ticket' && GETPOST('save', 'alpha')) {
 				$message  = ($conf->global->TICKET_MESSAGE_MAIL_NEW ? $conf->global->TICKET_MESSAGE_MAIL_NEW : $langs->transnoentities('TicketNewEmailBody')).'<br><br>';
 				$message .= $langs->transnoentities('TicketNewEmailBodyInfosTicket').'<br>';
 
-				$url_public_ticket = ($conf->global->TICKET_URL_PUBLIC_INTERFACE ? $conf->global->TICKET_URL_PUBLIC_INTERFACE.'/' : dol_buildpath('/public/ticket/view.php', 2)).'?track_id='.$object->track_id;
+				$url_public_ticket = ($conf->global->TICKET_URL_PUBLIC_INTERFACE ? $conf->global->TICKET_URL_PUBLIC_INTERFACE.'/view.php' : dol_buildpath('/public/ticket/view.php', 2)).'?track_id='.$object->track_id;
 				$infos_new_ticket = $langs->transnoentities('TicketNewEmailBodyInfosTrackId', '<a href="'.$url_public_ticket.'" rel="nofollow noopener">'.$object->track_id.'</a>').'<br>';
 				$infos_new_ticket .= $langs->transnoentities('TicketNewEmailBodyInfosTrackUrl').'<br><br>';
 
 				$message .= $infos_new_ticket;
-				$message .= $conf->global->TICKET_MESSAGE_MAIL_SIGNATURE ? $conf->global->TICKET_MESSAGE_MAIL_SIGNATURE : $langs->transnoentities('TicketMessageMailSignatureText');
+				$message .= getDolGlobalString('TICKET_MESSAGE_MAIL_SIGNATURE', $langs->transnoentities('TicketMessageMailSignatureText', $mysoc->name));
 
 				$sendto = GETPOST('email', 'alpha');
 
-				$from = $conf->global->MAIN_INFO_SOCIETE_NOM.' <'.$conf->global->TICKET_NOTIFICATION_EMAIL_FROM.'>';
+				$from = $conf->global->MAIN_INFO_SOCIETE_NOM.' <'.getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM').'>';
 				$replyto = $from;
 				$sendtocc = '';
 				$deliveryreceipt = 0;
@@ -402,7 +479,7 @@ if ($action != "infos_success") {
 		print '</div>';
 	} else {
 		print '<div class="info marginleftonly marginrightonly">'.$langs->trans('TicketPublicInfoCreateTicket').'</div>';
-		$formticket->showForm(0, 'edit', 1);
+		$formticket->showForm(0, 'edit', 1, $with_contact);
 	}
 }
 
