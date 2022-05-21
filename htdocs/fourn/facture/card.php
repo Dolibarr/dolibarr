@@ -2266,7 +2266,7 @@ if ($action == 'create') {
 	*/
 
 	if (empty($origin)) {
-		if (!empty($societe->id ) && $societe->id > 0) {
+		if (!empty($societe->id) && $societe->id > 0) {
 			// Credit note
 			if (empty($conf->global->INVOICE_DISABLE_CREDIT_NOTE)) {
 				// Show link for credit note

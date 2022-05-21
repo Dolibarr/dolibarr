@@ -55,8 +55,8 @@ $dol_openinpopup = GETPOST('dol_openinpopup', 'aZ09');
 $status = GETPOST('status', 'int');
 $opp_status = GETPOST('opp_status', 'int');
 $opp_percent = price2num(GETPOST('opp_percent', 'alpha'));
-$objcanvas = GETPOST("objcanvas","alpha");
-$comefromclone = GETPOST("comefromclone","alpha");
+$objcanvas = GETPOST("objcanvas", "alpha");
+$comefromclone = GETPOST("comefromclone", "alpha");
 
 if ($id == '' && $ref == '' && ($action != "create" && $action != "add" && $action != "update" && !GETPOST("cancel"))) {
 	accessforbidden();
