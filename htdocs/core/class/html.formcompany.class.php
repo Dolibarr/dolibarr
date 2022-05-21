@@ -366,6 +366,32 @@ class FormCompany extends Form
 		return $out;
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *   Returns the drop-down list of departments/provinces/cantons for all countries or for a given country.
+	 *   In the case of an all-country list, the display breaks on the country.
+	 *   The key of the list is the code (there can be several entries for a given code but in this case, the country field differs).
+	 *   Thus the links with the departments are done on a department independently of its name.
+	 *
+	 *    @param	string		$parent_field_id        Parent select name to monitor
+	 *    @param	integer		$selected        	Code state preselected (mus be state id)
+	 *    @param    integer		$country_codeid    	Country code or id: 0=list for all countries, otherwise country code or country rowid to show
+	 *    @param    string		$htmlname			Id of department. If '', we want only the string with <option>
+	 *    @param	string		$morecss			Add more css
+	 * 	  @return	string						String with HTML select
+	 *    @see select_country()
+	 */
+	public function select_state_ajax($parent_field_id='country_id', $selected = 0, $country_codeid = 0, $htmlname = 'state_id', $morecss = 'maxwidth200onsmartphone  minwidth300')
+	{
+		$html = '<script>';
+		$html.='$("select[name=\"'.$parent_field_id.'\"]").change(function(){
+				$.ajax( "'.dol_buildpath('/core/ajax/ziptown.php',2).'", { data:{ selected: $("select[name=\"'.$htmlname.'\"]").val(), country_codeid: $(this).val(), htmlname:"'.$htmlname.'", morecss:"'.$morecss.'" } } )
+				.done(function(msg) {
+					$("span#target_'.$htmlname.'").html(msg);
+				})
+			});';
+		return $html.'</script><span id="target_'.$htmlname.'">'.$this->select_state($selected,$country_codeid,$htmlname,$morecss).'</span>';
+	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**

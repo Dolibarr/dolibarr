@@ -141,6 +141,9 @@ if (GETPOST('zipcode') || GETPOST('town')) {
 	}
 
 	echo json_encode($return_arr);
+} elseif (isset($_GET['country_codeid'])) {
+    $formcompany = new FormCompany($db);
+    print $formcompany->select_state(GETPOST('selected', 'int', 1), GETPOST('country_codeid', 'int', 1), GETPOST('htmlname', 'alpha', 1), GETPOST('morecss', 'alpha', 1));
 }
 
 $db->close();
