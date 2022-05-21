@@ -67,6 +67,15 @@ class PaiementFourn extends Paiement
 	 */
 	public $type_code;
 
+	/**
+	 * @var string Id of prelevement
+	 */
+	public $id_prelevement;
+
+	/**
+	 * @var string num_prelevement
+	 */
+	public $num_prelevement;
 
 
 	/**
