@@ -965,6 +965,69 @@ function dol_move($srcfile, $destfile, $newmask = 0, $overwriteifexists = 1, $te
 }
 
 /**
+ * Move a directory into another name.
+ *
+ * @param	string	$srcdir 			Source directory
+ * @param	string 	$destdir			Destination directory
+ * @param	int		$overwriteifexists	Overwrite directory if exists (1 by default)
+ * @param	int		$indexdatabase		Index new file into database.
+ * @param	int		$renamedircontent	Rename contents inside srcdir.
+ * 
+ * @return boolean 	True if OK, false if KO
+*/
+function dol_move_dir($srcdir, $destdir, $overwriteifexists = 1, $indexdatabase = 1, $renamedircontent = 1)
+{
+
+	global $user, $db, $conf;
+	$result = false;
+
+	dol_syslog("files.lib.php::dol_dir_move srcdir=".$srcdir." destdir=".$destdir." overwritifexists=".$overwriteifexists);
+	$srcexists = dol_is_dir($srcdir);
+	$srcbasename = basename($srcdir);
+	$destexists = dol_is_dir($destdir);
+
+	if (!$srcexists) {
+		dol_syslog("files.lib.php::dol_dir_move srcdir does not exists. we ignore the move request.");
+		return false;
+	}
+
+	if ($overwriteifexists || !$destexists) {
+		$newpathofsrcdir = dol_osencode($srcdir);
+		$newpathofdestdir = dol_osencode($destdir);
+
+		$result = @rename($newpathofsrcdir, $newpathofdestdir);
+
+		if ($result && $renamedircontent) {
+			if (file_exists($newpathofdestdir)) {
+				$destbasename = basename($newpathofdestdir);
+				$files = dol_dir_list($newpathofdestdir);
+				if (!empty($files) && is_array($files)) {
+					foreach ($files as $key => $file) {
+						if (!file_exists($file["fullname"])) continue;
+						$oldpath = $file["fullname"];
+
+						$newpath = str_replace($srcbasename, $destbasename, $oldpath);
+						if (!empty($newpath)) {
+							if (dol_is_dir($oldpath)) {
+								$res = dol_move_dir($oldpath, $newpath, $overwriteifexists, $indexdatabase, $renamedircontent);
+							} else {
+								$res = dol_move($oldpath, $newpath);
+							}
+							if (!$res) {
+								return $result;
+							}
+						}
+					}
+					$result = true;
+				}
+			}
+		}
+	}
+
+	return $result;
+}
+
+/**
  *	Unescape a file submitted by upload.
  *  PHP escape char " (%22) or char ' (%27) into $FILES.
  *
