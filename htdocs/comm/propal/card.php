@@ -212,7 +212,6 @@ if (empty($reshook)) {
 
 llxHeader('', $title, $help_url);
 Actions::propal_card_actions();
-
 // End of page
 llxFooter();
 $db->close();

@@ -30,9 +30,19 @@
 -- -- VPGSQL8.2 SELECT dol_util_rebuild_sequences();
 
 
-ALTER TABLE llx_holiday ADD COLUMN nb_open_day double(24,8) DEFAULT NULL;
 
 -- Missing in v15 or lower
+
+-- VMYSQL4.3 ALTER TABLE llx_c_civility CHANGE COLUMN rowid rowid INTEGER NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE llx_c_transport_mode ADD UNIQUE INDEX uk_c_transport_mode (code, entity);
+
+ALTER TABLE llx_c_shipment_mode MODIFY COLUMN tracking varchar(255) NULL;
+
+ALTER TABLE llx_holiday ADD COLUMN nb_open_day double(24,8) DEFAULT NULL;
+
+ALTER TABLE llx_element_tag ADD COLUMN fk_categorie INTEGER;
+
 
 insert into llx_c_type_resource (code, label, active) values ('RES_ROOMS', 'Rooms',  1);
 insert into llx_c_type_resource (code, label, active) values ('RES_CARS',  'Cars',  1);
@@ -364,4 +374,8 @@ ALTER TABLE llx_c_email_template ADD COLUMN email_to varchar(255);
 ALTER TABLE llx_c_email_template ADD COLUMN email_tocc varchar(255);
 ALTER TABLE llx_c_email_template ADD COLUMN email_tobcc varchar(255);
 
+ALTER TABLE llx_fichinter ADD COLUMN ref_client varchar(255) after ref_ext;
+
 ALTER TABLE llx_c_holiday_types ADD COLUMN sortorder smallint;
+
+ALTER TABLE llx_expedition MODIFY COLUMN ref_customer varchar(255);

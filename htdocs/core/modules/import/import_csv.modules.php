@@ -709,15 +709,37 @@ class ImportCsv extends ModeleImports
 						}
 
 						// Define $listfields and $listvalues to build SQL request
-						$listfields[] = $fieldname;
-
-						// Note: arrayrecord (and 'type') is filled with ->import_read_record called by import.php page before calling import_insert
-						if (empty($newval) && $arrayrecord[($key - 1)]['type'] < 0) {
-							$listvalues[] = ($newval == '0' ? $newval : "null");
-						} elseif (empty($newval) && $arrayrecord[($key - 1)]['type'] == 0) {
-							$listvalues[] = "''";
+						if ($conf->socialnetworks->enabled && strpos($fieldname, "socialnetworks") !== false) {
+							if (!in_array("socialnetworks", $listfields)) {
+								$listfields[] = "socialnetworks";
+							}
+							if (!empty($newval) && $arrayrecord[($key - 1)]['type'] > 0) {
+								$socialkey = array_search("socialnetworks", $listfields);
+								if (empty($listvalues[$socialkey]) || $listvalues[$socialkey] == "null") {
+									$socialnetwork = explode("_", $fieldname)[1];
+									$json = new stdClass();
+									$json->$socialnetwork = $newval;
+									$newvalue = json_encode($json);
+									$listvalues[$socialkey] = "'".$this->db->escape($newvalue)."'";
+								} else {
+									$socialnetwork = explode("_", $fieldname)[1];
+									$jsondata = $listvalues[$socialkey];
+									$jsondata = str_replace("'", "", $jsondata);
+									$json = json_decode($jsondata);
+									$json->$socialnetwork = $newval;
+									$listvalues[$socialkey] = "'".$this->db->escape(json_encode($json))."'";
+								}
+							}
 						} else {
-							$listvalues[] = "'".$this->db->escape($newval)."'";
+							$listfields[] = $fieldname;
+							// Note: arrayrecord (and 'type') is filled with ->import_read_record called by import.php page before calling import_insert
+							if (empty($newval) && $arrayrecord[($key - 1)]['type'] < 0) {
+								$listvalues[] = ($newval == '0' ? $newval : "null");
+							} elseif (empty($newval) && $arrayrecord[($key - 1)]['type'] == 0) {
+								$listvalues[] = "''";
+							} else {
+								$listvalues[] = "'".$this->db->escape($newval)."'";
+							}
 						}
 					}
 					$i++;
