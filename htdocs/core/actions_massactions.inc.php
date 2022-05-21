@@ -614,6 +614,9 @@ if (!$error && $massaction == 'confirm_presend') {
 								if ($triggername == 'SUPPLIERPROPOSAL_SENTBYMAIL') {
 									$triggername = 'PROPOSAL_SUPPLIER_SENTBYMAIL';
 								}
+								if ($triggername == 'PROJET_SENTBYMAIL') {
+									$triggername = 'PROJECT_SENTBYMAIL';
+								}
 
 								if (!empty($triggername)) {
 									// Call trigger

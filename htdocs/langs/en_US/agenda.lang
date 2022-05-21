@@ -86,6 +86,7 @@ SupplierInvoiceSentByEMail=Vendor invoice %s sent by email
 ShippingSentByEMail=Shipment %s sent by email
 ShippingValidated= Shipment %s validated
 InterventionSentByEMail=Intervention %s sent by email
+ProjectSentByEMail=Project %s sent by email
 ProposalDeleted=Proposal deleted
 OrderDeleted=Order deleted
 InvoiceDeleted=Invoice deleted

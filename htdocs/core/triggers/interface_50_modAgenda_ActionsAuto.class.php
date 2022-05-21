@@ -836,6 +836,19 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			}
 
 			$object->sendtoid = 0;
+		} elseif ($action == 'PROJECT_SENTBYMAIL') {
+			// Load translation files required by the page
+			$langs->loadLangs(array("agenda", "other", "projects"));
+
+			if (empty($object->actionmsg2)) {
+				$object->actionmsg2 = $langs->transnoentities("ProjectSentByEMail", $object->ref);
+			}
+			if (empty($object->actionmsg)) {
+				$object->actionmsg = $langs->transnoentities("ProjectSentByEMail", $object->ref);
+			}
+
+			// Parameters $object->sendtoid defined by caller
+			//$object->sendtoid=0;
 		} elseif ($action == 'TASK_CREATE') {
 			// Project tasks
 			// Load translation files required by the page
