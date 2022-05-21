@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2017 	Laurent Destailleur <eldy@products.sourceforge.net>
+ * Copyright (C) 2019 	David COUDRAY - Société PROSERV
+ * Copyright (C) 2022 	Eric SEIGNE <eric.seigne@cap-rel.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 
+require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 
 /**
  *	Class to build documents using ODF templates generator
@@ -265,9 +268,11 @@ class pdf_standard extends ModelePDFProduct
 				$tab_height = 130;
 				$tab_height_newpage = 150;
 
+				$nexY = $tab_top;
+				$this->_photos($pdf, $object, $outputlangs, $nexY);
 				// Label of product
 				$pdf->SetFont('', 'B', $default_font_size);
-				$pdf->writeHTMLCell(190, 3, $this->marge_gauche, $tab_top, dol_htmlentitiesbr($object->label), 0, 1);
+				$pdf->writeHTMLCell(190, 3, $this->marge_gauche, $nexY, dol_htmlentitiesbr($object->label), 0, 1);
 				$nexY = $pdf->GetY();
 
 				$pdf->SetFont('', '', $default_font_size);
@@ -582,6 +587,45 @@ class pdf_standard extends ModelePDFProduct
 			$this->error = $langs->trans("ErrorConstantNotDefined", "PRODUCT_OUTPUTDIR");
 			return 0;
 		}
+	}
+
+	/**
+	 *  Insert 4 pictures into document.
+	 *
+	 *  @param	TCPDF		$pdf	 		Object PDF
+	 *  @param  object		$object	 	Object to show
+	 *  @param  Translate	$outputlangs	Object lang for output
+	 *  @param	int			$nexY			Position Y to start
+	 *
+	 *  @return	void
+	 */
+	private function _photos(&$pdf, $object, $outputlangs, &$nexY)
+	{
+		global $default_font_size, $conf, $langs;
+		$objphoto = new Product($this->db);
+		$objphoto->fetch($object->ref);
+		$dir = $conf->produit->dir_output.'/'.dol_sanitizeFileName($object->ref).'/';
+		$posX = $this->marge_gauche;
+		$maxH = 0;
+		$nbPics = 4; //fixed number pics displayed
+		$padding = 5; //horizontal padding between pictures
+		//calc pic width
+		$fixedW = ($this->page_largeur - $this->marge_gauche - $this->$marge_droite - ($nbPics * $padding)) / $nbPics;
+		foreach ($objphoto->liste_photos($dir, $nbPics) as $key => $obj) {
+			$realpath = $dir.$obj['photo_vignette'];
+
+			$imgsize = dol_getImageSize($realpath);
+			$ratio = ($imgsize['width'] / $fixedW);
+			$h = $imgsize['height'] / $ratio;
+			if ($h > $maxH) {
+				$maxH = $h;
+			}
+			$info = $pdf->Image($realpath, $posX, $nexY, $fixedW, $h, '', '', '', true);
+
+			$posX += $fixedW + $padding;
+		}
+		dol_syslog("photos : $nexY += $maxH");
+		$nexY += $maxH;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
