@@ -2071,7 +2071,7 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 		$toprightmenu .= top_menu_bookmark();
 
 		// Add user dropdown
-		$toprightmenu .= top_menu_user();
+		$toprightmenu .= top_menu_user(1);
 
 		$toprightmenu .= '</div></div>';
 
@@ -2124,7 +2124,7 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 		}
 
 		$userImage = '<img class="photo photouserphoto userphoto" alt="No photo" src="'.DOL_URL_ROOT.$nophoto.'">';
-		$userDropDownImage = '<img class="photo dropdown-user-image" alt="No photo" src="'.DOL_URL_ROOT.$nophoto.'">';
+		$userDropDownImage = '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$user->id.'"><img class="photo dropdown-user-image" alt="No photo" src="'.DOL_URL_ROOT.$nophoto.'"></a>';
 	}
 
 	$dropdownBody = '';
@@ -2247,8 +2247,11 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 		$btnUser = '<!-- div for user link -->
 	    <div id="topmenu-login-dropdown" class="userimg atoplogin dropdown user user-menu inline-block">
 	        <a href="'.DOL_URL_ROOT.'/user/card.php?id='.$user->id.'" class="dropdown-toggle login-dropdown-a" data-toggle="dropdown">
-	            '.$userImage.'<span class="hidden-xs maxwidth200 atoploginusername hideonsmartphone paddingleft">'.dol_trunc($user->firstname ? $user->firstname : $user->login, 10).'</span>
-	        </a>
+	            '.$userImage;
+
+		if (empty($hideloginname)) $btnUser.='<span class="hidden-xs maxwidth200 atoploginusername hideonsmartphone paddingleft">'.dol_trunc($user->firstname ? $user->firstname : $user->login, 10).'</span>';
+
+		$btnUser.='</a>
 	        <div class="dropdown-menu">
 	            <!-- User image -->
 	            <div class="user-header">
