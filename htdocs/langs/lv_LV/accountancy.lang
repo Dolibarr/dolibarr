@@ -62,24 +62,24 @@ MainAccountForSubscriptionPaymentNotDefined=Galvenais grāmatvedības konts abon
 AccountancyArea=Grāmatvedības zona
 AccountancyAreaDescIntro=Grāmatvedības moduļa lietošana tiek veikta vairākos posmos:
 AccountancyAreaDescActionOnce=Šīs darbības parasti izpilda tikai vienu reizi vai reizi gadā ...
-AccountancyAreaDescActionOnceBis=Veicot nākamo darbību, lai nākotnē ietaupītu laiku, ierosinot pareizu noklusējuma grāmatvedības kontu žurnālistikas veikšanā (rakstot žurnālu un galveno virsgrāmatu)
+AccountancyAreaDescActionOnceBis=Nākamās darbības jāveic, lai ietaupītu jūsu laiku nākotnē, automātiski iesakot pareizo noklusējuma grāmatvedības kontu, pārsūtot datus grāmatvedībā
 AccountancyAreaDescActionFreq=Šīs darbības parasti tiek veiktas katru mēnesi, nedēļu vai dienu ļoti lieliem uzņēmumiem ...
 
-AccountancyAreaDescJournalSetup=Solis %s: izveidojiet vai pārbaudiet žurnāla satura saturu no izvēlnes %s
+AccountancyAreaDescJournalSetup=SOLIS %s: pārbaudiet žurnālu saraksta saturu izvēlnē %s
 AccountancyAreaDescChartModel=Solis %s: pārbaudiet, vai pastāv konta diagrammas modelis, vai izveidojiet to no izvēlnes %s
 AccountancyAreaDescChart=Solis %s: izvēlnē %s atlasiet un vai aizpildiet kontu no izvēlnes.
 
 AccountancyAreaDescVat=Solis %s: definējiet katras PVN likmes grāmatvedības kontus. Izmantojiet izvēlnes ierakstu %s.
 AccountancyAreaDescDefault=Solis %s: definējiet noklusējuma grāmatvedības kontus. Šajā nolūkā izmantojiet izvēlnes ierakstu %s.
-AccountancyAreaDescExpenseReport=STEP %s: definējiet noklusējuma uzskaites kontus katram izdevumu pārskatam. Šajā nolūkā izmantojiet izvēlnes ierakstu %s.
+AccountancyAreaDescExpenseReport=SOLIS %s: definējiet noklusējuma grāmatvedības kontus katram Izdevumu pārskata veidam. Šim nolūkam izmantojiet izvēlnes ierakstu %s.
 AccountancyAreaDescSal=Solis %s: definējiet noklusējuma uzskaites kontus algu izmaksāšanai. Izmantojiet izvēlnes ierakstu %s.
-AccountancyAreaDescContrib=Solis %s: definējiet noklusējuma grāmatvedības kontus īpašiem izdevumiem (dažādiem nodokļiem). Izmantojiet izvēlnes ierakstu %s.
+AccountancyAreaDescContrib=SOLIS %s: definējiet noklusējuma grāmatvedības kontus nodokļiem (īpašiem izdevumiem). Šim nolūkam izmantojiet izvēlnes ierakstu %s.
 AccountancyAreaDescDonation=Solis %s: definējiet noklusējuma uzskaites kontus ziedojumiem. Izmantojiet izvēlnes ierakstu %s.
 AccountancyAreaDescSubscription=STEP %s: definējiet noklusējuma grāmatvedības kontus dalībnieku abonementam. Lai to izdarītu, izmantojiet izvēlnes ierakstu %s.
 AccountancyAreaDescMisc=Solis %s: norādiet obligātos noklusējuma kontu un noklusējuma grāmatvedības kontus dažādiem darījumiem. Šajā nolūkā izmantojiet izvēlnes ierakstu %s.
 AccountancyAreaDescLoan=STEP %s: definējiet noklusējuma aizņēmumu grāmatvedības uzskaiti. Šajā nolūkā izmantojiet izvēlnes ierakstu %s.
 AccountancyAreaDescBank=Solis %s: definējiet grāmatvedības kontus un žurnāla kodu katrai bankai un finanšu kontiem. Izmantojiet izvēlnes ierakstu %s.
-AccountancyAreaDescProd=Solis %s: definējiet savu produktu/pakalpojumu grāmatvedības kontus. Izmantojiet izvēlnes ierakstu %s.
+AccountancyAreaDescProd=SOLIS %s: definējiet grāmatvedības kontus saviem produktiem/pakalpojumiem. Šim nolūkam izmantojiet izvēlnes ierakstu %s.
 
 AccountancyAreaDescBind=STEP %s: pārbaudiet saistību starp esošajām %s līnijām un grāmatvedības kontu, tāpēc pieteikums varēs žurnālizēt darījumus Ledger ar vienu klikšķi. Pabeigt trūkstošos piesaisti. Šajā nolūkā izmantojiet izvēlnes ierakstu %s.
 AccountancyAreaDescWriteRecords=Solis %s: rakstīt darījumus uz grāmatvedi. Lai to izdarītu, dodieties uz izvēlni <strong> %s </strong> un noklikšķiniet uz pogas <strong>%s</strong>.
@@ -112,7 +112,7 @@ MenuAccountancyClosure=Slēgšana
 MenuAccountancyValidationMovements=Apstipriniet kustības
 ProductsBinding=Produktu konti
 TransferInAccounting=Pārskaitījums grāmatvedībā
-RegistrationInAccounting=Reģistrācija grāmatvedībā
+RegistrationInAccounting=Ierakstīšana grāmatvedībā
 Binding=Saistīšana ar kontiem
 CustomersVentilation=Klienta rēķins saistošs
 SuppliersVentilation=Piegādātāja rēķins saistošs
@@ -120,7 +120,7 @@ ExpenseReportsVentilation=Izdevumu pārskats ir saistošs
 CreateMvts=Izveidot jaunu darījumu
 UpdateMvts=Darījuma grozīšana
 ValidTransaction=Apstipriniet darījumu
-WriteBookKeeping=Reģistrējiet darījumus grāmatvedībā
+WriteBookKeeping=Ierakstīt darījumus grāmatvedībā
 Bookkeeping=Grāmatvedis
 BookkeepingSubAccount=Zemesgrāmata
 AccountBalance=Konta bilance
@@ -219,12 +219,12 @@ ByPredefinedAccountGroups=Iepriekš definētās grupas
 ByPersonalizedAccountGroups=Personalizētās grupas
 ByYear=Pēc gada
 NotMatch=Nav iestatīts
-DeleteMvt=Izdzēsiet dažas operāciju rindas no grāmatvedības
+DeleteMvt=Izdzēsiet dažas rindas no grāmatvedības
 DelMonth=Mēnesis kas jādzēš
 DelYear=Gads kurš jādzēš
 DelJournal=Žurnāls kurš jādzēš
-ConfirmDeleteMvt=Tas izdzēsīs visas grāmatvedības operāciju rindas par gadu / mēnesi un / vai konkrētu žurnālu (nepieciešams vismaz viens kritērijs). Jums būs atkārtoti jāizmanto līdzeklis '%s', lai dzēstais ieraksts atgrieztos virsgrāmatā.
-ConfirmDeleteMvtPartial=Tādējādi darījums tiks dzēsts no grāmatvedības (visas operācijas rindas, kas saistītas ar to pašu darījumu, tiks dzēstas)
+ConfirmDeleteMvt=Tādējādi tiks dzēstas visas gada/mēneša un/vai konkrēta žurnāla grāmatvedības rindas (ir nepieciešams vismaz viens kritērijs). Jums būs atkārtoti jāizmanto līdzeklis “%s”, lai dzēstais ieraksts būtu atpakaļ virsgrāmatā.
+ConfirmDeleteMvtPartial=Tādējādi darījums tiks dzēsts no uzskaites (tiks dzēstas visas ar to pašu darījumu saistītās rindas)
 FinanceJournal=Finanšu žurnāls
 ExpenseReportsJournal=Izdevumu pārskatu žurnāls
 DescFinanceJournal=Finance journal including all the types of payments by bank account
@@ -278,11 +278,11 @@ DescVentilExpenseReportMore=Ja jūs izveidojat grāmatvedības kontu uz izdevumu
 DescVentilDoneExpenseReport=Konsultējieties šeit ar izdevumu pārskatu rindu sarakstu un to maksu grāmatvedības kontu
 
 Closure=Gada slēgšana
-DescClosure=Šeit apskatiet neapstiprināto kustību skaitu mēnesī, un fiskālie gadi jau ir atvērti
-OverviewOfMovementsNotValidated=1. solis / Nepārvērtēts kustību pārskats. (Nepieciešams, lai slēgtu fiskālo gadu)
-AllMovementsWereRecordedAsValidated=Visas kustības tika reģistrētas kā apstiprinātas
-NotAllMovementsCouldBeRecordedAsValidated=Ne visas kustības varēja reģistrēt kā apstiprinātas
-ValidateMovements=Apstipriniet kustības
+DescClosure=Consult here the number of movements by month who are not yet validated & locked
+OverviewOfMovementsNotValidated=Overview of movements not validated and locked
+AllMovementsWereRecordedAsValidated=All movements were recorded as validated and locked
+NotAllMovementsCouldBeRecordedAsValidated=Not all movements could be recorded as validated and locked
+ValidateMovements=Apstiprināt un bloķēt ierakstu...
 DescValidateMovements=Jebkādas rakstīšanas, burtu un izdzēsto tekstu izmaiņas vai dzēšana būs aizliegtas. Visi vingrinājumu ieraksti ir jāapstiprina, pretējā gadījumā aizvēršana nebūs iespējama
 
 ValidateHistory=Piesaistiet automātiski
@@ -294,14 +294,15 @@ Balancing=Līdzsvarošana
 FicheVentilation=Iesiešanas kartiņa
 GeneralLedgerIsWritten=Darījumi ir rakstīti grāmatvedībā
 GeneralLedgerSomeRecordWasNotRecorded=Daži darījumi nevarēja tikt publicēti žurnālā. Ja nav citas kļūdas ziņojuma, iespējams, ka tie jau tika publicēti.
-NoNewRecordSaved=Neviens ieraksts žurnālistikai nav
+NoNewRecordSaved=Vairs nav pārsūtāmu ierakstu
 ListOfProductsWithoutAccountingAccount=Produktu saraksts, uz kuriem nav saistīta kāds grāmatvedības konts
 ChangeBinding=Mainiet saites
 Accounted=Uzskaitīts virsgrāmatā
 NotYetAccounted=Vēl nav pārnests uz grāmatvedību
 ShowTutorial=Rādīt apmācību
 NotReconciled=Nesaskaņots
-WarningRecordWithoutSubledgerAreExcluded=Brīdinājums: visas darbības, kurās nav definēts apakškārtas konts, tiek filtrētas un izslēgtas no šī skata
+WarningRecordWithoutSubledgerAreExcluded=Brīdinājums! Visas rindas bez apakšvirsgrāmatas konta tiek filtrētas un izslēgtas no šī skata
+AccountRemovedFromCurrentChartOfAccount=Accounting account that does not exist in the current chart of accounts
 
 ## Admin
 BindingOptions=Iesiešanas iespējas
@@ -329,8 +330,9 @@ ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Atspējot saistīšanu un pārsūtīšan
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Atspējojiet grāmatvedībā iesiešanu un pārskaitīšanu izdevumu pārskatos (grāmatvedībā netiks ņemti vērā izdevumu pārskati)
 
 ## Export
-NotifiedExportDate=Atzīmēt eksportētās rindas kā eksportētas (rindu modificēšana nebūs iespējama)
-NotifiedValidationDate=Apstipriniet eksportētos ierakstus (mainīt vai dzēst rindas nebūs iespējams)
+NotifiedExportDate=Atzīmējiet eksportētās rindas kā Eksportētas <span class="warning"> (lai mainītu rindu, jums būs jāizdzēš viss darījums un atkārtoti jāpārsūta uz grāmatvedību) </span>
+NotifiedValidationDate=Apstipriniet un bloķējiet eksportētos ierakstus <span class="warning"> (tāds pats efekts kā funkcijai "Aizvērt", rindu modifikācija un dzēšana NOTEIKTI nebūs iespējama) </span>
+DateValidationAndLock=Datuma apstiprināšana un bloķēšana
 ConfirmExportFile=Apstiprinājums par grāmatvedības eksporta faila ģenerēšanu?
 ExportDraftJournal=Eksporta žurnāla projekts
 Modelcsv=Eksporta modulis
@@ -394,6 +396,21 @@ Range=Grāmatvedības konta diapazons
 Calculated=Aprēķināts
 Formula=Formula
 
+## Reconcile
+Unlettering=Unreconcile
+AccountancyNoLetteringModified=No reconcile modified
+AccountancyOneLetteringModifiedSuccessfully=One reconcile successfully modified
+AccountancyLetteringModifiedSuccessfully=%s reconcile successfully modified
+AccountancyNoUnletteringModified=No unreconcile modified
+AccountancyOneUnletteringModifiedSuccessfully=One unreconcile successfully modified
+AccountancyUnletteringModifiedSuccessfully=%s unreconcile successfully modified
+
+## Confirm box
+ConfirmMassUnlettering=Bulk Unreconcile confirmation
+ConfirmMassUnletteringQuestion=Are you sure you want to Unreconcile the %s selected record(s)?
+ConfirmMassDeleteBookkeepingWriting=Bulk Delete confirmation
+ConfirmMassDeleteBookkeepingWritingQuestion=This will delete the transaction from the accounting (all lines related to the same transaction will be deleted) Are you sure you want to delete the %s selected record(s)?
+
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Daži obligāti uzstādīšanas soļi nav pabeigti, lūdzu, aizpildiet tos
 ErrorNoAccountingCategoryForThisCountry=No accounting account group available for country %s (See Home - Setup - Dictionaries)
@@ -406,6 +423,9 @@ Binded=Līnijas saistītas
 ToBind=Rindiņas saistīt
 UseMenuToSetBindindManualy=Līnijas, kas vēl nav saistītas, izmantojiet izvēlni <a href="%s"> %s </a>, lai padarītu saistošu manuāli
 SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Diemžēl šis modulis nav saderīgs ar situāciju rēķinu eksperimentālo līdzekli
+AccountancyErrorMismatchLetterCode=Mismatch in reconcile code
+AccountancyErrorMismatchBalanceAmount=The balance (%s) is not equal to 0
+AccountancyErrorLetteringBookkeeping=Errors have occurred concerning the transactions: %s
 
 ## Import
 ImportAccountingEntries=Grāmatvedības ieraksti

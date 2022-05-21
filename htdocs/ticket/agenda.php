@@ -239,7 +239,7 @@ if (!empty($object->id)) {
 	$messagingUrl = DOL_URL_ROOT.'/ticket/messaging.php?track_id='.$object->track_id;
 	$morehtmlright .= dolGetButtonTitle($langs->trans('ShowAsConversation'), '', 'fa fa-comments imgforviewmode', $messagingUrl, '', 1);
 	$messagingUrl = DOL_URL_ROOT.'/ticket/agenda.php?track_id='.$object->track_id;
-	$morehtmlright .= dolGetButtonTitle($langs->trans('MessageListViewType'), '', 'fa fa-list-alt imgforviewmode', $messagingUrl, '', 1, array('morecss'=>'btnTitleSelected'));
+	$morehtmlright .= dolGetButtonTitle($langs->trans('MessageListViewType'), '', 'fa fa-bars imgforviewmode', $messagingUrl, '', 1, array('morecss'=>'btnTitleSelected'));
 
 	// Show link to add a message (if read and not closed)
 	$btnstatus = $object->fk_statut < Ticket::STATUS_CLOSED && $action != "presend" && $action != "presend_addmessage";

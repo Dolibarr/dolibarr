@@ -79,7 +79,7 @@ $permissiontodelete 	= $user->rights->partnership->delete || ($permissiontoadd &
 $permissionnote 		= $user->rights->partnership->write; // Used by the include of actions_setnotes.inc.php
 $permissiondellink 		= $user->rights->partnership->write; // Used by the include of actions_dellink.inc.php
 $upload_dir 			= $conf->partnership->multidir_output[isset($object->entity) ? $object->entity : 1];
-$managedfor 			= empty($conf->global->PARTNERSHIP_IS_MANAGED_FOR) ? 'thirdparty' : $conf->global->PARTNERSHIP_IS_MANAGED_FOR;
+$managedfor 			= getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR', 'thirdparty');
 
 if (empty($conf->partnership->enabled)) accessforbidden();
 if (empty($permissiontoread)) accessforbidden();
@@ -641,7 +641,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		$MAXEVENT = 10;
 
-		$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-list-alt imgforviewmode', DOL_URL_ROOT.'/partnership/partnership_agenda.php?id='.$object->id);
+		$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/partnership/partnership_agenda.php?id='.$object->id);
 
 		// List of actions on element
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';

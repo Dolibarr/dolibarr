@@ -34,6 +34,9 @@ ALTER TABLE llx_holiday ADD COLUMN nb_open_day double(24,8) DEFAULT NULL;
 
 -- Missing in v15 or lower
 
+insert into llx_c_type_resource (code, label, active) values ('RES_ROOMS', 'Rooms',  1);
+insert into llx_c_type_resource (code, label, active) values ('RES_CARS',  'Cars',  1);
+
 ALTER TABLE llx_c_actioncomm MODIFY COLUMN libelle varchar(128);
 ALTER TABLE llx_c_availability MODIFY COLUMN label varchar(128);
 ALTER TABLE llx_c_barcode_type MODIFY COLUMN libelle varchar(128);
@@ -361,4 +364,4 @@ ALTER TABLE llx_c_email_template ADD COLUMN email_to varchar(255);
 ALTER TABLE llx_c_email_template ADD COLUMN email_tocc varchar(255);
 ALTER TABLE llx_c_email_template ADD COLUMN email_tobcc varchar(255);
 
-
+ALTER TABLE llx_c_holiday_types ADD COLUMN sortorder smallint;

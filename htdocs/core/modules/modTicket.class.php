@@ -134,10 +134,10 @@ class modTicket extends DolibarrModules
 		$this->dictionaries = array(
 			'langs' => 'ticket',
 			'tabname' => array(
-				MAIN_DB_PREFIX."c_ticket_type",
-				MAIN_DB_PREFIX."c_ticket_severity",
-				MAIN_DB_PREFIX."c_ticket_category",
-				MAIN_DB_PREFIX."c_ticket_resolution"
+				"c_ticket_type",
+				"c_ticket_severity",
+				"c_ticket_category",
+				"c_ticket_resolution"
 			),
 			'tablib' => array(
 				"TicketDictType",
@@ -171,8 +171,8 @@ class modTicket extends DolibarrModules
 			0=>array('file'=>'box_last_ticket.php', 'enabledbydefaulton'=>'Home'),
 			1=>array('file'=>'box_last_modified_ticket.php', 'enabledbydefaulton'=>'Home'),
 			2=>array('file'=>'box_ticket_by_severity.php', 'enabledbydefaulton'=>'ticketindex'),
-			3=>array('file'=>'box_nb_ticket_last_x_days.php', 'enabledbydefaulton'=>'ticketindex'),
-			4=>array('file'=>'box_nb_tickets_type.php', 'enabledbydefaulton'=>'ticketindex'),
+			3=>array('file'=>'box_graph_nb_ticket_last_x_days.php', 'enabledbydefaulton'=>'ticketindex'),
+			4=>array('file'=>'box_graph_nb_tickets_type.php', 'enabledbydefaulton'=>'ticketindex'),
 			5=>array('file'=>'box_new_vs_close_ticket.php', 'enabledbydefaulton'=>'ticketindex')
 		); // Boxes list
 

@@ -305,7 +305,7 @@ if (empty($reshook)) {
 		$object->fetch($id);
 
 		if (!empty($conf->global-> INVOICE_CHECK_POSTERIOR_DATE)) {
-			$last_of_type = $object->willBeLastOfSameType();
+			$last_of_type = $object->willBeLastOfSameType(true);
 			if (empty($object->date_validation) && !$last_of_type[0]) {
 				setEventMessages($langs->transnoentities("ErrorInvoiceIsNotLastOfSameType", $object->ref, dol_print_date($object->date, 'day'), dol_print_date($last_of_type[1], 'day')), null, 'errors');
 				$action = '';
@@ -3290,7 +3290,7 @@ if ($action == 'create') {
 				$typedeposit = GETPOST('typedeposit', 'aZ09');
 				$valuedeposit = GETPOST('valuedeposit', 'int');
 				if (empty($typedeposit) && ! empty($objectsrc->deposit_percent)) {
-					$origin_payment_conditions_deposit_percent = getDictionaryValue(MAIN_DB_PREFIX . 'c_payment_term', 'deposit_percent', $objectsrc->cond_reglement_id);
+					$origin_payment_conditions_deposit_percent = getDictionaryValue('c_payment_term', 'deposit_percent', $objectsrc->cond_reglement_id);
 					if (! empty($origin_payment_conditions_deposit_percent)) {
 						$typedeposit = 'variable';
 					}

@@ -135,8 +135,8 @@ if (empty($reshook)) {
 	}
 
 	if ($cancel) {
-		/*var_dump($cancel);
-		 var_dump($backtopage);exit;*/
+		//var_dump($cancel);
+		//var_dump($backtopage);exit;
 		if (!empty($backtopageforcancel)) {
 			header("Location: ".$backtopageforcancel);
 			exit;
@@ -1110,7 +1110,7 @@ if ($id) {
 
 		$MAXEVENT = 10;
 
-		$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-list-alt imgforviewmode', dol_buildpath('/mymodule/myobject_agenda.php', 1).'?id='.$object->id);
+		$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-bars imgforviewmode', dol_buildpath('/mymodule/myobject_agenda.php', 1).'?id='.$object->id);
 
 		// List of actions on element
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';

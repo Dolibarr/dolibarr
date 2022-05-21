@@ -62,24 +62,24 @@ MainAccountForSubscriptionPaymentNotDefined=Ҳисоби асосии баҳис
 AccountancyArea=Минтақаи баҳисобгирӣ
 AccountancyAreaDescIntro=Истифодаи модули ҳисобдорӣ дар якчанд марҳила сурат мегирад:
 AccountancyAreaDescActionOnce=Амалҳои зерин одатан танҳо як маротиба ё дар як сол як маротиба иҷро карда мешаванд ...
-AccountancyAreaDescActionOnceBis=Қадамҳои минбаъда бояд барои сарфаи вақти шумо дар оянда бо пешниҳоди ҳисоби дурусти баҳисобгирии муҳосибӣ ҳангоми навиштани рӯзноманигорӣ анҷом дода шаванд (сабт дар маҷаллаҳо ва дафтари умумӣ)
+AccountancyAreaDescActionOnceBis=Next steps should be done to save you time in future by suggesting you automaticaly the correct default accounting account when transferring data in accounting
 AccountancyAreaDescActionFreq=Амалҳои зерин одатан барои ширкатҳои хеле калон ҳар моҳ, ҳафта ё рӯз иҷро карда мешаванд ...
 
-AccountancyAreaDescJournalSetup=ҚАДАМИ %s: Аз менюи %s мундариҷаи рӯйхати журнали худро созед ё тафтиш кунед
+AccountancyAreaDescJournalSetup=STEP %s: Check content of your journal list from menu %s
 AccountancyAreaDescChartModel=ҚАДАМИ %s: мавҷуд будани модели диаграммаи ҳисобро тафтиш кунед ё аз менюи %s эҷод кунед
 AccountancyAreaDescChart=ҚАДАМИ %s: Диаграммаи ҳисоби худро аз менюи %s интихоб кунед ва | ё пур кунед.
 
 AccountancyAreaDescVat=ҚАДАМИ %s: Ҳисобҳои баҳисобгирии ҳар як Меъёрҳои андоз аз арзиши иловашударо муайян кунед. Барои ин, вуруди менюи %s -ро истифода баред.
 AccountancyAreaDescDefault=ҚАДАМИ %s: Ҳисобҳои пешфарзии баҳисобгириро муайян кунед. Барои ин, вуруди менюи %s -ро истифода баред.
-AccountancyAreaDescExpenseReport=ҚАДАМИ %s: Ҳисобҳои пешфарзии баҳисобгирии ҳар як намуди ҳисоботи хароҷотро муайян кунед. Барои ин, вуруди менюи %s -ро истифода баред.
+AccountancyAreaDescExpenseReport=STEP %s: Define default accounting accounts for each type of Expense report. For this, use the menu entry %s.
 AccountancyAreaDescSal=ҚАДАМИ %s: Ҳисобҳои пешфарзии баҳисобгирии музди меҳнатро муайян кунед. Барои ин, вуруди менюи %s -ро истифода баред.
-AccountancyAreaDescContrib=ҚАДАМИ %s: Ҳисобҳои пешфарзии баҳисобгирии хароҷоти махсусро муайян кунед (андозҳои гуногун). Барои ин, вуруди менюи %s -ро истифода баред.
+AccountancyAreaDescContrib=STEP %s: Define default accounting accounts for Taxes (special expenses). For this, use the menu entry %s.
 AccountancyAreaDescDonation=ҚАДАМИ %s: Ҳисобҳои пешфарзии баҳисобгирии хайрияро муайян кунед. Барои ин, вуруди менюи %s -ро истифода баред.
 AccountancyAreaDescSubscription=ҚАДАМИ %s: Ҳисобҳои пешфарзии баҳисобгирии аъзоёнро муайян кунед. Барои ин, вуруди менюи %s -ро истифода баред.
 AccountancyAreaDescMisc=ҚАДАМИ %s: Ҳисоби пешфарзии ҳатмӣ ва ҳисобҳои пешфарзро барои амалиётҳои гуногун муайян кунед. Барои ин, вуруди менюи %s -ро истифода баред.
 AccountancyAreaDescLoan=ҚАДАМИ %s: Ҳисобҳои пешфарзии баҳисобгирии қарзҳоро муайян кунед. Барои ин, вуруди менюи %s -ро истифода баред.
 AccountancyAreaDescBank=ҚАДАМИ %s: Ҳисобҳои баҳисобгирӣ ва коди маҷаллаҳоро барои ҳар як бонк ва ҳисобҳои молиявӣ муайян кунед. Барои ин, вуруди менюи %s -ро истифода баред.
-AccountancyAreaDescProd=ҚАДАМИ %s: Ҳисобҳои баҳисобгирии маҳсулот/хидматҳои худро муайян кунед. Барои ин, вуруди менюи %s -ро истифода баред.
+AccountancyAreaDescProd=STEP %s: Define accounting accounts on your Products/Services. For this, use the menu entry %s.
 
 AccountancyAreaDescBind=ҚАДАМИ %s: Ҳатмии хатҳои мавҷудаи %s ва ҳисоби баҳисобгирии муҳосибиро тафтиш кунед, аз ин рӯ, барнома метавонад дар як клик амалиётҳоро дар дафтарчаи журналӣ ба қайд гирад. Пайвастҳои пурраи гумшуда. Барои ин, вуруди менюи %s -ро истифода баред.
 AccountancyAreaDescWriteRecords=ҚАДАМИ %s: Амалиётҳоро ба дафтар нависед. Барои ин ба менюи <strong> %s </strong> ворид шавед ва тугмаи <strong> %s a0a65d071f6fc9z -ро пахш кунед.
@@ -112,7 +112,7 @@ MenuAccountancyClosure=Бастани
 MenuAccountancyValidationMovements=Ҳаракатҳоро тасдиқ кунед
 ProductsBinding=Ҳисобҳои маҳсулот
 TransferInAccounting=Интиқол дар баҳисобгирӣ
-RegistrationInAccounting=Бақайдгирӣ дар баҳисобгирӣ
+RegistrationInAccounting=Recording in accounting
 Binding=Ҳатмӣ ба ҳисобҳо
 CustomersVentilation=Ҳатмии фактураи муштарӣ
 SuppliersVentilation=Ҳисобнома -фактураи фурӯшанда
@@ -120,7 +120,7 @@ ExpenseReportsVentilation=Ҳатмии ҳисоботи хароҷот
 CreateMvts=Эҷоди амалиёти нав
 UpdateMvts=Тағир додани амалиёт
 ValidTransaction=Транзаксияро тасдиқ кунед
-WriteBookKeeping=Амалиётҳоро дар баҳисобгирӣ ба қайд гиред
+WriteBookKeeping=Record transactions in accounting
 Bookkeeping=Китоб
 BookkeepingSubAccount=Подшоҳ
 AccountBalance=Тавозуни суратҳисоб
@@ -219,12 +219,12 @@ ByPredefinedAccountGroups=Аз рӯи гурӯҳҳои пешакӣ муайян
 ByPersonalizedAccountGroups=Аз ҷониби гурӯҳҳои инфиродӣ
 ByYear=Аз рӯи сол
 NotMatch=Танзим нашудааст
-DeleteMvt=Баъзе хатҳои амалиётро аз баҳисобгирӣ нест кунед
+DeleteMvt=Delete some lines from accounting
 DelMonth=Моҳ барои нест кардан
 DelYear=Сол барои нест кардан
 DelJournal=Журнал барои нест кардан
-ConfirmDeleteMvt=Ин ҳама сатрҳои амалиёти баҳисобгирии сол/моҳ ва/ё маҷаллаи мушаххасро нест мекунад (Ҳадди ақал як меъёр лозим аст). Шумо бояд хусусияти '%s' -ро дубора истифода баред, то сабти нестшударо дар дафтар баргардонед.
-ConfirmDeleteMvtPartial=Ин амалиётро аз баҳисобгирӣ нест мекунад (ҳама хатҳои амалиёти марбут ба як амалиёт нест карда мешаванд)
+ConfirmDeleteMvt=This will delete all lines in accountancy for the year/month and/or for a specific journal (At least one criterion is required). You will have to reuse the feature '%s' to have the deleted record back in the ledger.
+ConfirmDeleteMvtPartial=This will delete the transaction from the accounting (all lines related to the same transaction will be deleted)
 FinanceJournal=Маҷаллаи молиявӣ
 ExpenseReportsJournal=Маҷаллаи ҳисоботи хароҷот
 DescFinanceJournal=Маҷаллаи молиявӣ, аз ҷумла ҳама намуди пардохтҳо бо суратҳисоби бонкӣ
@@ -278,11 +278,11 @@ DescVentilExpenseReportMore=Агар шумо ҳисоби баҳисобгир�
 DescVentilDoneExpenseReport=Дар ин ҷо ба рӯйхати хатҳои ҳисобот дар бораи хароҷот ва ҳисоби баҳисобгирии хароҷоти онҳо муроҷиат кунед
 
 Closure=Бастани солона
-DescClosure=Дар ин ҷо шумораи ҳаракатҳо аз рӯи моҳро баррасӣ кунед, ки тасдиқ нашудаанд ва солҳои молиявӣ аллакай кушода шудаанд
-OverviewOfMovementsNotValidated=Қадами 1/ Шарҳи ҳаракатҳо тасдиқ нашудааст. (Барои бастани соли молиявӣ зарур аст)
-AllMovementsWereRecordedAsValidated=Ҳама ҳаракатҳо ҳамчун тасдиқшуда сабт карда шуданд
-NotAllMovementsCouldBeRecordedAsValidated=На ҳама ҳаракатҳоро метавон ҳамчун тасдиқшуда сабт кард
-ValidateMovements=Ҳаракатҳоро тасдиқ кунед
+DescClosure=Consult here the number of movements by month who are not yet validated & locked
+OverviewOfMovementsNotValidated=Overview of movements not validated and locked
+AllMovementsWereRecordedAsValidated=All movements were recorded as validated and locked
+NotAllMovementsCouldBeRecordedAsValidated=Not all movements could be recorded as validated and locked
+ValidateMovements=Validate and lock record...
 DescValidateMovements=Ҳама гуна тағир ё нест кардани навиштан, навиштан ва нест кардан манъ карда мешавад. Ҳама сабтҳо барои машқ бояд тасдиқ карда шаванд, вагарна пӯшида намешавад
 
 ValidateHistory=Ба таври худкор пайваст кунед
@@ -294,14 +294,15 @@ Balancing=Тавозун
 FicheVentilation=Корти ҳатмӣ
 GeneralLedgerIsWritten=Амалиётҳо дар дафтар навишта мешаванд
 GeneralLedgerSomeRecordWasNotRecorded=Баъзе транзаксияҳоро нашр кардан ғайриимкон буд. Агар паёми хатогии дигар вуҷуд надошта бошад, ин шояд аз он сабаб бошад, ки онҳо аллакай рӯзноманигор буданд.
-NoNewRecordSaved=Дигар сабти журналистон нест
+NoNewRecordSaved=No more record to transfer
 ListOfProductsWithoutAccountingAccount=Рӯйхати маҳсулоте, ки ба ягон ҳисоби баҳисобгирӣ вобастагӣ надоранд
 ChangeBinding=Пайвастшавиро тағир диҳед
 Accounted=Дар дафтари баҳисобгирӣ
 NotYetAccounted=Not yet transferred to accounting
 ShowTutorial=Нишон додани дарсӣ
 NotReconciled=Оштӣ нашудааст
-WarningRecordWithoutSubledgerAreExcluded=Огоҳӣ, ҳама амалиёте, ки ҳисоби зерҳисобиро муайян накардаанд, филтр карда шудаанд ва аз ин намуд хориҷ карда шудаанд
+WarningRecordWithoutSubledgerAreExcluded=Warning, all lines without subledger account defined are filtered and excluded from this view
+AccountRemovedFromCurrentChartOfAccount=Accounting account that does not exist in the current chart of accounts
 
 ## Admin
 BindingOptions=Вариантҳои ҳатмӣ
@@ -329,8 +330,9 @@ ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Ҳатмӣ ва интиқол дар м
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Ҳатмӣ ва интиқол дар муҳосибот дар ҳисоботи хароҷотро хомӯш кунед (ҳисоботи хароҷот ҳангоми баҳисобгирӣ ба назар гирифта намешаванд)
 
 ## Export
-NotifiedExportDate=Flag exported lines as exported (modification of the lines will not be possible)
-NotifiedValidationDate=Validate the exported entries (modification or deletion of the lines will not be possible)
+NotifiedExportDate=Flag exported lines as Exported <span class="warning">(to modify a line, you will need to delete the whole transaction and re-transfert it into accounting)</span>
+NotifiedValidationDate=Validate and Lock the exported entries <span class="warning">(same effect than the "Closure" feature, modification and deletion of the lines will DEFINITELY not be possible)</span>
+DateValidationAndLock=Date validation and lock
 ConfirmExportFile=Тасдиқи тавлиди файли содироти баҳисобгирӣ?
 ExportDraftJournal=Содироти маҷаллаи лоиҳа
 Modelcsv=Модели содирот
@@ -394,6 +396,21 @@ Range=Меъёри ҳисоби баҳисобгирӣ
 Calculated=Ҳисоб карда шудааст
 Formula=Формула
 
+## Reconcile
+Unlettering=Unreconcile
+AccountancyNoLetteringModified=No reconcile modified
+AccountancyOneLetteringModifiedSuccessfully=One reconcile successfully modified
+AccountancyLetteringModifiedSuccessfully=%s reconcile successfully modified
+AccountancyNoUnletteringModified=No unreconcile modified
+AccountancyOneUnletteringModifiedSuccessfully=One unreconcile successfully modified
+AccountancyUnletteringModifiedSuccessfully=%s unreconcile successfully modified
+
+## Confirm box
+ConfirmMassUnlettering=Bulk Unreconcile confirmation
+ConfirmMassUnletteringQuestion=Are you sure you want to Unreconcile the %s selected record(s)?
+ConfirmMassDeleteBookkeepingWriting=Bulk Delete confirmation
+ConfirmMassDeleteBookkeepingWritingQuestion=This will delete the transaction from the accounting (all lines related to the same transaction will be deleted) Are you sure you want to delete the %s selected record(s)?
+
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Баъзе қадамҳои ҳатмии насбкунӣ иҷро нашудаанд, лутфан онҳоро анҷом диҳед
 ErrorNoAccountingCategoryForThisCountry=Ҳеҷ як гурӯҳи ҳисобҳои баҳисобгирӣ барои кишвар %s мавҷуд нест (Ба хона нигаред - Танзимот - Луғатҳо)
@@ -406,6 +423,9 @@ Binded=Хатҳо баста шудаанд
 ToBind=Хатҳо барои пайвастан
 UseMenuToSetBindindManualy=Сатрҳо ҳанӯз баста нашудаанд, барои дастӣ бастани пайванд аз менюи <a href="%s"> %s </a> истифода баред
 SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Sorry this module is not compatible with the experimental feature of situation invoices
+AccountancyErrorMismatchLetterCode=Mismatch in reconcile code
+AccountancyErrorMismatchBalanceAmount=The balance (%s) is not equal to 0
+AccountancyErrorLetteringBookkeeping=Errors have occurred concerning the transactions: %s
 
 ## Import
 ImportAccountingEntries=Сабтҳои баҳисобгирӣ

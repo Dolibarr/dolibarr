@@ -1184,7 +1184,7 @@ if (empty($reshook)) {
 				$error = 0;
 				$deposit = null;
 
-				$deposit_percent_from_payment_terms = getDictionaryValue(MAIN_DB_PREFIX . 'c_payment_term', 'deposit_percent', $object->cond_reglement_id);
+				$deposit_percent_from_payment_terms = getDictionaryValue('c_payment_term', 'deposit_percent', $object->cond_reglement_id);
 
 				if (
 					GETPOST('generate_deposit', 'alpha') == 'on' && ! empty($deposit_percent_from_payment_terms)
@@ -1733,10 +1733,10 @@ if ($action == 'create' && $usercancreate) {
 	$form->selectAvailabilityDelay($availability_id, 'availability_id', '', 1, 'maxwidth200 widthcentpercentminusx');
 	print '</td></tr>';
 
-	// Terms of the settlement
+	// Terms of payment
 	print '<tr><td class="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td>';
-	print img_picto('', 'paiment', 'class="pictofixedwidth"');
-	$form->select_conditions_paiements($cond_reglement_id, 'cond_reglement_id', 1, 1, 0, '', $deposit_percent);
+	print img_picto('', 'payment', 'class="pictofixedwidth"');
+	$form->select_conditions_paiements($cond_reglement_id, 'cond_reglement_id', 1, 1, 0, 'maxwidth200 widthcentpercentminusx', $deposit_percent);
 	print '</td></tr>';
 
 	// Payment mode
@@ -1836,7 +1836,7 @@ if ($action == 'create' && $usercancreate) {
 		print '<tr>';
 		print '<td>'.$form->editfieldkey("Currency", 'multicurrency_code', '', $object, 0).'</td>';
 		print '<td class="maxwidthonsmartphone">';
-		print img_picto('', 'currency', 'class="pictofixedwidth"').$form->selectMultiCurrency($currency_code, 'multicurrency_code');
+		print img_picto('', 'currency', 'class="pictofixedwidth"').$form->selectMultiCurrency($currency_code, 'multicurrency_code', 0, '', false, 'maxwidth200 widthcentpercentminusx');
 		print '</td></tr>';
 	}
 
@@ -2025,7 +2025,7 @@ if ($action == 'create' && $usercancreate) {
 			if ($nbMandated > 0 ) $text .= '<div><span class="clearboth nowraponall warning">'.$langs->trans("mandatoryPeriodNeedTobeSetMsgValidate").'</span></div>';
 
 
-			$deposit_percent_from_payment_terms = getDictionaryValue(MAIN_DB_PREFIX . 'c_payment_term', 'deposit_percent', $object->cond_reglement_id);
+			$deposit_percent_from_payment_terms = getDictionaryValue('c_payment_term', 'deposit_percent', $object->cond_reglement_id);
 
 			if (! empty($deposit_percent_from_payment_terms) && ! empty($conf->facture->enabled) && ! empty($user->rights->facture->creer)) {
 				require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';

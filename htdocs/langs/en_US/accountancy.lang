@@ -182,6 +182,7 @@ DONATION_ACCOUNTINGACCOUNT=Accounting account to register donations
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Accounting account to register subscriptions
 
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Accounting account by default to register customer deposit
+UseAuxiliaryAccountOnCustomerDeposit=Use sub-accounts on customer deposit lines
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Accounting account by default for the bought products (used if not defined in the product sheet)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Accounting account by default for the bought products in EEC (used if not defined in the product sheet)
@@ -289,7 +290,7 @@ ValidateHistory=Bind Automatically
 AutomaticBindingDone=Automatic bindings done (%s) - Automatic binding not possible for some record (%s)
 
 ErrorAccountancyCodeIsAlreadyUse=Error, you cannot delete this accounting account because it is used
-MvtNotCorrectlyBalanced=Movement not correctly balanced. Debit = %s | Credit = %s
+MvtNotCorrectlyBalanced=Movement not correctly balanced. Debit = %s & Credit = %s
 Balancing=Balancing
 FicheVentilation=Binding card
 GeneralLedgerIsWritten=Transactions are written in the Ledger

@@ -534,7 +534,7 @@ foreach ($accounts as $key => $type) {
 
 	// Ref
 	if (!empty($arrayfields['b.ref']['checked'])) {
-		print '<td class="nowrap">'.$objecttmp->getNomUrl(1).'</td>';
+		print '<td class="nowraponall">'.$objecttmp->getNomUrl(1).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -586,7 +586,7 @@ foreach ($accounts as $key => $type) {
 
 	// Accountancy journal
 	if (!empty($arrayfields['b.fk_accountancy_journal']['checked'])) {
-		print '<td>';
+		print '<td class="tdoverflowmax125">';
 		if (!empty($conf->accounting->enabled)) {
 			if (empty($objecttmp->fk_accountancy_journal)) {
 				print img_warning($langs->trans("Mandatory"));
@@ -606,7 +606,7 @@ foreach ($accounts as $key => $type) {
 
 	// Currency
 	if (!empty($arrayfields['b.currency_code']['checked'])) {
-		print '<td class="center">';
+		print '<td class="center nowraponall">';
 		print $objecttmp->currency_code;
 		print '</td>';
 		if (!$i) {
@@ -616,7 +616,7 @@ foreach ($accounts as $key => $type) {
 
 	// Transactions to reconcile
 	if (!empty($arrayfields['toreconcile']['checked'])) {
-		print '<td class="center">';
+		print '<td class="center tdoverflowmax125">';
 
 		$conciliate = $objecttmp->canBeConciliated();
 		if ($conciliate == -2) {
@@ -663,7 +663,7 @@ foreach ($accounts as $key => $type) {
 	print $hookmanager->resPrint;
 	// Date creation
 	if (!empty($arrayfields['b.datec']['checked'])) {
-		print '<td class="center">';
+		print '<td class="center nowraponall">';
 		print dol_print_date($objecttmp->date_creation, 'dayhour');
 		print '</td>';
 		if (!$i) {
@@ -672,7 +672,7 @@ foreach ($accounts as $key => $type) {
 	}
 	// Date modification
 	if (!empty($arrayfields['b.tms']['checked'])) {
-		print '<td class="center">';
+		print '<td class="center nowraponall">';
 		print dol_print_date($objecttmp->date_update, 'dayhour');
 		print '</td>';
 		if (!$i) {

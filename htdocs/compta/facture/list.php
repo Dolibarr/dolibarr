@@ -2415,16 +2415,27 @@ if ($resql) {
 		include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 	}
 
+	// If no record found
+	if ($num == 0) {
+		$colspan = 1;
+		foreach ($arrayfields as $key => $val) {
+			if (!empty($val['checked'])) {
+				$colspan++;
+			}
+		}
+		print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
+	}
+
 	$db->free($resql);
 
 	$parameters = array('arrayfields'=>$arrayfields, 'sql'=>$sql);
-	$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters); // Note that $action and $object may have been modified by hook
+	$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 
-	print "</table>\n";
-	print '</div>';
+	print '</table>'."\n";
+	print '</div>'."\n";
 
-	print "</form>\n";
+	print '</form>'."\n";
 
 	// Show the file area only when this page is not opend from the Extended POS
 	if ($contextpage != 'poslist') {
