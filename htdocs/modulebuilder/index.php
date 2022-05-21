@@ -238,6 +238,33 @@ if ($dirins && $action == 'initmodule' && $modulename) {
 			}
 		}
 
+		// Copy last html.formsetup.class.php' to backport folder
+		$tryToCopyFromSetupClass = true;
+		$backportDest = $destdir .'/backport/v17/core/class';
+		$backportFileSrc = DOL_DOCUMENT_ROOT.'/core/class/html.formsetup.class.php';
+		$backportFileDest = $backportDest.'/html.formsetup.class.php';
+		$result = dol_mkdir($backportDest);
+
+		if ($result < 0) {
+			$error++;
+			$langs->load("errors");
+			setEventMessages($langs->trans("ErrorFailToCreateDir", $backportDest), null, 'errors');
+			$tryToCopyFromSetupClass = false;
+		}
+
+		if ($tryToCopyFromSetupClass) {
+			$result = dol_copy($backportFileSrc, $backportFileDest);
+			if ($result <= 0) {
+				if ($result < 0) {
+					$error++;
+					$langs->load("errors");
+					setEventMessages($langs->trans("ErrorFailToCopyFile", $backportFileSrc, $backportFileDest), null, 'errors');
+				} else {
+					setEventMessages($langs->trans("FileDidAlreadyExist", $backportFileDest), null, 'warnings');
+				}
+			}
+		}
+
 		if (!empty($conf->global->MODULEBUILDER_USE_ABOUT)) {
 			dol_delete_file($destdir.'/admin/about.php');
 		}
