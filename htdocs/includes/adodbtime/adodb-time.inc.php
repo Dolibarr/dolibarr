@@ -1373,9 +1373,9 @@ global $ADODB_DATE_LOCALE;
 		$hasAM = strrpos($tstr,'M') !== false;
 	*/
 		# see http://phplens.com/lens/lensforum/msgs.php?id=14865 for reasoning, and changelog for version 0.24
-		$dstr = gmdate('%x',31366800); // 30 Dec 1970, 1 am
+		$dstr = gmdate('x',31366800); // 30 Dec 1970, 1 am
 		$sep = substr($dstr,2,1);
-		$tstr = strtoupper(gmdate('%X',31366800)); // 30 Dec 1970, 1 am
+		$tstr = strtoupper(gmdate('X',31366800)); // 30 Dec 1970, 1 am
 		$hasAM = strrpos($tstr,'M') !== false;
 
 		$ADODB_DATE_LOCALE = array();
