@@ -81,6 +81,11 @@ class Tva extends CommonObject
 	 */
 	public $fk_user_modif;
 
+	/**
+	 * @var integer|string paiementtype
+	 */
+	public $paiementtype;
+
 
 	const STATUS_UNPAID = 0;
 	const STATUS_PAID = 1;
