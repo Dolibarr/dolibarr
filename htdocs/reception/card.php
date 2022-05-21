@@ -270,9 +270,9 @@ if (empty($reshook)) {
 		$object->origin_id = $origin_id;
 		$object->fk_project = GETPOST('projectid', 'int');
 		$object->weight = GETPOST('weight', 'int') == '' ? null : GETPOST('weight', 'int');
-		$object->sizeH = GETPOST('sizeH', 'int') == '' ? null : GETPOST('sizeH', 'int');
-		$object->sizeW = GETPOST('sizeW', 'int') == '' ? null : GETPOST('sizeW', 'int');
-		$object->sizeS = GETPOST('sizeS', 'int') == '' ? null : GETPOST('sizeS', 'int');
+		$object->trueHeight = GETPOST('trueHeight', 'int') == '' ? null : GETPOST('trueHeight', 'int');
+		$object->trueWidth = GETPOST('trueWidth', 'int') == '' ? null : GETPOST('trueWidth', 'int');
+		$object->trueDepth = GETPOST('trueDepth', 'int') == '' ? null : GETPOST('trueDepth', 'int');
 		$object->size_units = GETPOST('size_units', 'int');
 		$object->weight_units = GETPOST('weight_units', 'int');
 
@@ -849,9 +849,9 @@ if ($action == 'create') {
 			// Dim
 			print '<tr><td>';
 			print $langs->trans("Width").' x '.$langs->trans("Height").' x '.$langs->trans("Depth");
-			print ' </td><td colspan="3"><input name="sizeW" size="4" value="'.GETPOST('sizeW', 'int').'">';
-			print ' x <input name="sizeH" size="4" value="'.GETPOST('sizeH', 'int').'">';
-			print ' x <input name="sizeS" size="4" value="'.GETPOST('sizeS', 'int').'">';
+			print ' </td><td colspan="3"><input name="trueWidth" size="4" value="'.GETPOST('trueWidth', 'int').'">';
+			print ' x <input name="trueHeight" size="4" value="'.GETPOST('trueHeight', 'int').'">';
+			print ' x <input name="trueDepth" size="4" value="'.GETPOST('trueDepth', 'int').'">';
 			print ' ';
 			$text = $formproduct->selectMeasuringUnits("size_units", "size", GETPOST('size_units', 'int'), 0, 2);
 			$htmltext = $langs->trans("KeepEmptyForAutoCalculation");
