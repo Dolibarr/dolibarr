@@ -129,6 +129,7 @@ class AssetModel extends CommonObject
 	public $import_key;
 	public $model_pdf;
 	public $status;
+	public $asset_depreciation_options;
 
 	// /**
 	//  * @var string    Field with ID of parent key if this object has a parent
