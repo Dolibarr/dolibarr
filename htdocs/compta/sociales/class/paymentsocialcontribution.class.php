@@ -110,6 +110,11 @@ class PaymentSocialContribution extends CommonObject
 	 */
 	public $datepaye;
 
+	/**
+	 * @var integer|string paiementtype
+	 */
+	public $paiementtype;
+
 
 	/**
 	 *	Constructor
