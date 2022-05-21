@@ -44,7 +44,7 @@ $action = GETPOST('action', 'aZ09');
 $object = new Facture($db);
 // Load object
 if ($id > 0 || !empty($ref)) {
-	$object->fetch($id, $ref, '', '', $conf->global->INVOICE_USE_SITUATION);
+	$object->fetch($id, $ref, '', '', (!empty($conf->global->INVOICE_USE_SITUATION) ? $conf->global->INVOICE_USE_SITUATION : 0));
 }
 
 $permissionnote = $user->rights->facture->creer; // Used by the include of actions_setnotes.inc.php
