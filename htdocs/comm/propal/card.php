@@ -838,7 +838,7 @@ if (empty($reshook)) {
 		$prod_entry_mode = GETPOST('prod_entry_mode');
 		if ($prod_entry_mode == 'free') {
 			$idprod = 0;
-			$tva_tx = (GETPOST('tva_tx') ? price2num(GETPOST('tva_tx')) : 0);
+			$tva_tx = (GETPOST('tva_tx') ? price2num(preg_replace('/\s*\(.*\)/', '', GETPOST('tva_tx'))) : 0);
 		} else {
 			$idprod = GETPOST('idprod', 'int');
 			$tva_tx = '';
