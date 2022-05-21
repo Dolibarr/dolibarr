@@ -381,16 +381,16 @@ class FormCompany extends Form
 	 * 	  @return	string						String with HTML select
 	 *    @see select_country()
 	 */
-	public function select_state_ajax($parent_field_id='country_id', $selected = 0, $country_codeid = 0, $htmlname = 'state_id', $morecss = 'maxwidth200onsmartphone  minwidth300')
+	public function select_state_ajax($parent_field_id = 'country_id', $selected = 0, $country_codeid = 0, $htmlname = 'state_id', $morecss = 'maxwidth200onsmartphone  minwidth300')
 	{
 		$html = '<script>';
 		$html.='$("select[name=\"'.$parent_field_id.'\"]").change(function(){
-				$.ajax( "'.dol_buildpath('/core/ajax/ziptown.php',2).'", { data:{ selected: $("select[name=\"'.$htmlname.'\"]").val(), country_codeid: $(this).val(), htmlname:"'.$htmlname.'", morecss:"'.$morecss.'" } } )
+				$.ajax( "'.dol_buildpath('/core/ajax/ziptown.php', 2).'", { data:{ selected: $("select[name=\"'.$htmlname.'\"]").val(), country_codeid: $(this).val(), htmlname:"'.$htmlname.'", morecss:"'.$morecss.'" } } )
 				.done(function(msg) {
 					$("span#target_'.$htmlname.'").html(msg);
 				})
 			});';
-		return $html.'</script><span id="target_'.$htmlname.'">'.$this->select_state($selected,$country_codeid,$htmlname,$morecss).'</span>';
+		return $html.'</script><span id="target_'.$htmlname.'">'.$this->select_state($selected, $country_codeid, $htmlname, $morecss).'</span>';
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

@@ -1048,7 +1048,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 	// Country
 	print '<tr><td>'.$form->editfieldkey('Country', 'selectcountry_id', '', $object, 0).'</td><td class="maxwidthonsmartphone">';
 	print img_picto('', 'country', 'class="pictofixedwidth"');
-	print $form->select_country((GETPOST('country_id') != '' ?GETPOST('country_id') : $object->country_id),'country_id');
+	print $form->select_country((GETPOST('country_id') != '' ?GETPOST('country_id') : $object->country_id), 'country_id');
 	if ($user->admin) {
 		print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 	}
@@ -1058,7 +1058,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 	if (empty($conf->global->USER_DISABLE_STATE)) {
 		print '<tr><td>'.$form->editfieldkey('State', 'state_id', '', $object, 0).'</td><td class="maxwidthonsmartphone">';
 		print img_picto('', 'state', 'class="pictofixedwidth"');
-		print $formcompany->select_state_ajax('country_id',$object->state_id, $object->country_id, 'state_id');
+		print $formcompany->select_state_ajax('country_id', $object->state_id, $object->country_id, 'state_id');
 		print '</td></tr>';
 	}
 
