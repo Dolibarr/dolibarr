@@ -149,7 +149,7 @@ class Invoices extends DolibarrApi
 		// Add external contacts ids
 		if ($contact_list > -1) {
 			$tmparray = $this->invoice->liste_contact(-1, 'external', $contact_list);
-			if(is_array($tmparray)) {
+			if (is_array($tmparray)) {
 				$this->invoice->contacts_ids = $tmparray;
 			}
 		}
