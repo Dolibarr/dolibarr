@@ -110,6 +110,11 @@ class Paiement extends CommonObject
 	public $ext_payment_id;
 
 	/**
+	 * @var string Id of prelevement
+	 */
+	public $id_prelevement;
+
+	/**
 	 * @var string Name of external payment mode
 	 */
 	public $ext_payment_site;
