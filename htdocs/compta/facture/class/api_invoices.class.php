@@ -148,7 +148,10 @@ class Invoices extends DolibarrApi
 
 		// Add external contacts ids
 		if ($contact_list > -1) {
-			$this->invoice->contacts_ids = $this->invoice->liste_contact(-1, 'external', $contact_list);
+			$tmparray = $this->invoice->liste_contact(-1, 'external', $contact_list);
+			if(is_array($tmparray)) {
+				$this->invoice->contacts_ids = $tmparray;
+			}
 		}
 
 		$this->invoice->fetchObjectLinked();
@@ -267,8 +270,10 @@ class Invoices extends DolibarrApi
 					$invoice_static->remaintopay = price2num($invoice_static->total_ttc - $invoice_static->totalpaid - $invoice_static->totalcreditnotes - $invoice_static->totaldeposits, 'MT');
 
 					// Add external contacts ids
-					$invoice_static->contacts_ids = $invoice_static->liste_contact(-1, 'external', 1);
-
+					$tmparray = $invoice_static->liste_contact(-1, 'external', 1);
+					if (is_array($tmparray)) {
+						$invoice_static->contacts_ids = $tmparray;
+					}
 					$obj_ret[] = $this->_cleanObjectDatas($invoice_static);
 				}
 				$i++;
@@ -1768,7 +1773,10 @@ class Invoices extends DolibarrApi
 
 		// Add external contacts ids
 		if ($contact_list > -1) {
-			$this->template_invoice->contacts_ids = $this->template_invoice->liste_contact(-1, 'external', $contact_list);
+			$tmparray = $this->template_invoice->liste_contact(-1, 'external', $contact_list);
+			if (is_array($tmparray)) {
+				$this->template_invoice->contacts_ids = $tmparray;
+			}
 		}
 
 		$this->template_invoice->fetchObjectLinked();
