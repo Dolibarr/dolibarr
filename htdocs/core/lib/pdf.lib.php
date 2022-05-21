@@ -973,13 +973,15 @@ function pdf_bank(&$pdf, $outputlangs, $curx, $cury, $account, $onlynumber = 0, 
  * 	@param	Societe		$fromcompany	Object company
  * 	@param	int			$marge_basse	Margin bottom we use for the autobreak
  * 	@param	int			$marge_gauche	Margin left (no more used)
- * 	@param	int			$page_hauteur	Page height (no more used)
+ * 	@param	int			$page_hauteur	Page height
  * 	@param	Object		$object			Object shown in PDF
  * 	@param	int			$showdetails	Show company adress details into footer (0=Nothing, 1=Show address, 2=Show managers, 3=Both)
  *  @param	int			$hidefreetext	1=Hide free text, 0=Show free text
+ *  @param	int			$page_largeur	Page width
+ *  @param	int			$watermark		Watermark text to print on page
  * 	@return	int							Return height of bottom margin including footer text
  */
-function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_basse, $marge_gauche, $page_hauteur, $object, $showdetails = 0, $hidefreetext = 0)
+function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_basse, $marge_gauche, $page_hauteur, $object, $showdetails = 0, $hidefreetext = 0, $page_largeur = 0, $watermark = '')
 {
 	global $conf, $user, $mysoc, $hookmanager;
 
@@ -1230,6 +1232,11 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 		$pdf->SetXY($dims['wk'] - $dims['rm'] - 15, -$posy);
 		//print 'xxx'.$pdf->PageNo().'-'.$pdf->getAliasNbPages().'-'.$pdf->getAliasNumPage();exit;
 		$pdf->MultiCell(15, 2, $pdf->PageNo().'/'.$pdf->getAliasNbPages(), 0, 'R', 0);
+	}
+
+	//  Show Draft Watermark
+	if (!empty($watermark)) {
+		pdf_watermark($pdf, $outputlangs, $page_hauteur, $page_largeur, 'mm', $watermark);
 	}
 
 	return $marginwithfooter;
