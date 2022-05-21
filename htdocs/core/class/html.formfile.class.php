@@ -1330,7 +1330,7 @@ class FormFile
 				if ($file['name'] != '.'
 						&& $file['name'] != '..'
 						&& !preg_match('/\.meta$/i', $file['name'])) {
-					if ($filearray[$key]['rowid'] > 0) {
+					if (array_key_exists('rowid', $filearray[$key]) && $filearray[$key]['rowid'] > 0) {
 						$lastrowid = $filearray[$key]['rowid'];
 					}
 					$filepath = $relativepath.$file['name'];
@@ -1339,8 +1339,8 @@ class FormFile
 					$nboflines++;
 					print '<!-- Line list_of_documents '.$key.' relativepath = '.$relativepath.' -->'."\n";
 					// Do we have entry into database ?
-					print '<!-- In database: position='.$filearray[$key]['position'].' -->'."\n";
-					print '<tr class="oddeven" id="row-'.($filearray[$key]['rowid'] > 0 ? $filearray[$key]['rowid'] : 'AFTER'.$lastrowid.'POS'.($i + 1)).'">';
+					print '<!-- In database: position='.(array_key_exists('position', $filearray[$key]) ? $filearray[$key]['position'] : 0).' -->'."\n";
+					print '<tr class="oddeven" id="row-'.(array_key_exists('rowid', $filearray[$key]) . ($filearray[$key]['rowid'] > 0 : 0) ? $filearray[$key]['rowid'] : 'AFTER'.$lastrowid.'POS'.($i + 1)).'">';
 
 					// File name
 					print '<td class="minwith200 tdoverflowmax500">';
