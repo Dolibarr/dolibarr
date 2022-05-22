@@ -857,8 +857,8 @@ abstract class CommonInvoice extends CommonObject
 		*/
 
 		// Using TLV format
-		$s = pack('C1', 1).pack('C1', strlen($this->thirdparty->name)).$mysoc->name;
-		$s .= pack('C1', 2).pack('C1', strlen($this->thirdparty->tva_intra)).$mysoc->tva_intra;
+		$s = pack('C1', 1).pack('C1', strlen($mysoc->name)).$mysoc->name;
+		$s .= pack('C1', 2).pack('C1', strlen($mysoc->tva_intra)).$mysoc->tva_intra;
 		$s .= pack('C1', 3).pack('C1', strlen($datestring)).$datestring;
 		$s .= pack('C1', 4).pack('C1', strlen($pricewithtaxstring)).$pricewithtaxstring;
 		$s .= pack('C1', 5).pack('C1', strlen($pricetaxstring)).$pricetaxstring;
