@@ -1425,10 +1425,10 @@ class Invoices extends DolibarrApi
 		}
 
 		// Calculate amount to pay
-		$totalpaye = $this->invoice->getSommePaiement();
+		$totalpaid = $this->invoice->getSommePaiement();
 		$totalcreditnotes = $this->invoice->getSumCreditNotesUsed();
 		$totaldeposits = $this->invoice->getSumDepositsUsed();
-		$resteapayer = price2num($this->invoice->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits, 'MT');
+		$resteapayer = price2num($this->invoice->total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits, 'MT');
 
 		$this->db->begin();
 
@@ -1567,10 +1567,10 @@ class Invoices extends DolibarrApi
 			}
 
 			// Calculate amount to pay
-			$totalpaye = $this->invoice->getSommePaiement($is_multicurrency);
+			$totalpaid = $this->invoice->getSommePaiement($is_multicurrency);
 			$totalcreditnotes = $this->invoice->getSumCreditNotesUsed($is_multicurrency);
 			$totaldeposits = $this->invoice->getSumDepositsUsed($is_multicurrency);
-			$remainstopay = $amount = price2num($total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits, 'MT');
+			$remainstopay = $amount = price2num($total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits, 'MT');
 
 			if (!$is_multicurrency && $amountarray["amount"] != 'remain') {
 				$amount = price2num($amountarray["amount"], 'MT');

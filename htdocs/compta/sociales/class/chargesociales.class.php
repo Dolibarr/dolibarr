@@ -118,6 +118,7 @@ class ChargeSociales extends CommonObject
 	 */
 	public $total;
 
+	public $totalpaid;
 
 	const STATUS_UNPAID = 0;
 	const STATUS_PAID = 1;

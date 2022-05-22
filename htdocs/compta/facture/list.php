@@ -472,10 +472,10 @@ if ($action == 'makepayment_confirm' && !empty($user->rights->facture->paiement)
 			$objecttmp = new Facture($db);
 			$result = $objecttmp->fetch($toselectid);
 			if ($result > 0) {
-				$totalpaye = $objecttmp->getSommePaiement();
+				$totalpaid = $objecttmp->getSommePaiement();
 				$totalcreditnotes = $objecttmp->getSumCreditNotesUsed();
 				$totaldeposits = $objecttmp->getSumDepositsUsed();
-				$objecttmp->resteapayer = price2num($objecttmp->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits, 'MT');
+				$objecttmp->resteapayer = price2num($objecttmp->total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits, 'MT');
 				if ($objecttmp->statut == Facture::STATUS_DRAFT) {
 					$error++;
 					setEventMessages($objecttmp->ref.' '.$langs->trans("Draft"), $objecttmp->errors, 'errors');

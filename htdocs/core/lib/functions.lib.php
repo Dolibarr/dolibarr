@@ -2115,9 +2115,9 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 			$morehtmlstatus .= '<span class="statusrefbuy">'.$object->getLibStatut(6, 1).'</span>';
 		}
 	} elseif (in_array($object->element, array('facture', 'invoice', 'invoice_supplier', 'chargesociales', 'loan', 'tva', 'salary'))) {
-		$tmptxt = $object->getLibStatut(6, $object->totalpaye);
+		$tmptxt = $object->getLibStatut(6, $object->totalpaid);
 		if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3)) {
-			$tmptxt = $object->getLibStatut(5, $object->totalpaye);
+			$tmptxt = $object->getLibStatut(5, $object->totalpaid);
 		}
 		$morehtmlstatus .= $tmptxt;
 	} elseif ($object->element == 'contrat' || $object->element == 'contract') {
