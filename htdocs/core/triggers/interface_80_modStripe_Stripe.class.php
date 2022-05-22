@@ -202,8 +202,8 @@ class InterfaceStripe extends DolibarrTriggers
 			$this->db->query($sql);
 		}
 
-		// If payment mode is linked to Stripee, we update/delete Stripe too
-		if ($action == 'COMPANYPAYMENTMODE_MODIFY' && $object->type == 'card') {
+		// If payment mode is linked to Stripe, we update/delete Stripe too
+		if ($action == 'COMPANYPAYMENTMODE_CREATE' && $object->type == 'card') {
 			// For creation of credit card, we do not create in Stripe automatically
 		}
 		if ($action == 'COMPANYPAYMENTMODE_MODIFY' && $object->type == 'card') {
@@ -222,6 +222,7 @@ class InterfaceStripe extends DolibarrTriggers
 					}
 
 					if ($customer) {
+						dol_syslog("We got the customer, so now we update the credit card", LOG_DEBUG);
 						$card = $stripe->cardStripe($customer, $object, $stripeacc, $servicestatus);
 						if ($card) {
 							$card->metadata = array('dol_id'=>$object->id, 'dol_version'=>DOL_VERSION, 'dol_entity'=>$conf->entity, 'ipaddress'=>(empty($_SERVER['REMOTE_ADDR']) ? '' : $_SERVER['REMOTE_ADDR']));
