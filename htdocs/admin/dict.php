@@ -585,6 +585,10 @@ complete_dictionary_with_modules($taborder, $tabname, $tablib, $tabsql, $tabsqls
 $i = 0;
 foreach ($tabcomplete as $key => $value) {
 	$i++;
+	// When a dictionnary is commented
+	if (!isset($tabcond[$i])) {
+		continue;
+	}
 	$tabcomplete[$key]['id'] = $i;
 	$tabcomplete[$key]['cond'] = $tabcond[$i];
 	$tabcomplete[$key]['rowid'] = $tabrowid[$i];
@@ -607,7 +611,7 @@ if (empty($sortfield)) {
 	$tmp1 = explode(',', empty($tabcomplete[$keytable]['sqlsort']) ? '' : $tabcomplete[$keytable]['sqlsort']);
 	$tmp2 = explode(' ', $tmp1[0]);
 	$sortfield = preg_replace('/^.*\./', '', $tmp2[0]);
-	$sortorder = $tmp2[1];
+	$sortorder = (!empty($tmp2[1]) ? $tmp2[1] : '');
 	//var_dump($sortfield);var_dump($sortorder);
 }
 

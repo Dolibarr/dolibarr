@@ -151,6 +151,12 @@ class MyObject extends CommonObject
 	public $amount;
 
 	/**
+	 * @var int Thirdparty ID
+	 */
+	public $socid;		// both socid and fk_soc are used
+	public $fk_soc;		// both socid and fk_soc are used
+
+	/**
 	 * @var int Status
 	 */
 	public $status;
