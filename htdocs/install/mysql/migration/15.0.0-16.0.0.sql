@@ -379,3 +379,8 @@ ALTER TABLE llx_fichinter ADD COLUMN ref_client varchar(255) after ref_ext;
 ALTER TABLE llx_c_holiday_types ADD COLUMN sortorder smallint;
 
 ALTER TABLE llx_expedition MODIFY COLUMN ref_customer varchar(255);
+
+ALTER TABLE llx_extrafields ADD COLUMN css varchar(128);
+ALTER TABLE llx_extrafields ADD COLUMN cssview varchar(128);
+ALTER TABLE llx_extrafields ADD COLUMN csslist varchar(128);
+
