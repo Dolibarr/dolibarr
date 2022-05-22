@@ -18,7 +18,6 @@ filter:
         - dev/*
         - doc/*
         - documents/*
-        - htdocs/includes/*
         - node_modules/*
         - test/*
     dependency_paths:
