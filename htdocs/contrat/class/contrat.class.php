@@ -96,6 +96,13 @@ class Contrat extends CommonObject
 	public $ref_customer;
 
 	/**
+	 * @var string ref_client
+	 * @deprecated
+	 * @see $ref_customer
+	 */
+	public $ref_client;
+
+	/**
 	 * Supplier reference of the contract
 	 * @var string
 	 */
