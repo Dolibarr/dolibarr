@@ -188,7 +188,7 @@ function societe_prepare_head(Societe $object)
 
 	// Related items
 	if ((!empty($conf->commande->enabled) || !empty($conf->propal->enabled) || !empty($conf->facture->enabled) || !empty($conf->ficheinter->enabled) || (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled))
-		&& empty($conf->global->THIRPARTIES_DISABLE_RELATED_OBJECT_TAB)) {
+		&& empty($conf->global->THIRDPARTIES_DISABLE_RELATED_OBJECT_TAB)) {
 		$head[$h][0] = DOL_URL_ROOT.'/societe/consumption.php?socid='.$object->id;
 		$head[$h][1] = $langs->trans("Referers");
 		$head[$h][2] = 'consumption';
