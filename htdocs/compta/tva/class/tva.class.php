@@ -65,6 +65,11 @@ class Tva extends CommonObject
 	public $totalpaid;
 
 	/**
+	 * @var integer|string totalpaye
+	 */
+	public $totalpaye;
+
+	/**
 	 * @var string label
 	 */
 	public $label;
