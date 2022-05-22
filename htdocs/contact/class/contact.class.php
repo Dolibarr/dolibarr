@@ -163,6 +163,11 @@ class Contact extends CommonObject
 	public $state_code;
 
 	/**
+	 * @var string // Code of typent
+	 */
+	public $typent_code;
+
+	/**
 	 * @var string // Label of department
 	 */
 	public $state;
