@@ -619,6 +619,7 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 if ($limit > 0 && $limit != $conf->liste_limit) {
 	$param .= '&limit='.urlencode($limit);
 }
+if (!empty($search)) {
 foreach ($search as $key => $val) {
 	if (is_array($search[$key]) && count($search[$key])) {
 		foreach ($search[$key] as $skey) {
@@ -629,6 +630,7 @@ foreach ($search as $key => $val) {
 	} elseif ($search[$key] != '') {
 		$param .= '&search_'.$key.'='.urlencode($search[$key]);
 	}
+}
 }
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
