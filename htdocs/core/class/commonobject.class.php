@@ -116,7 +116,7 @@ abstract class CommonObject
 	public $array_languages = null; // Value is array() when load already tried
 
 	/**
-	 * @var array		To sotre result of ->liste_contact()
+	 * @var array		To store result of ->liste_contact()
 	 */
 	public $contacts_ids;
 
@@ -8819,7 +8819,7 @@ abstract class CommonObject
 					}
 				}
 			} else {
-				$this->{$field} = $obj->{$field};
+				$this->{$field} = !empty($obj->{$field}) ? $obj->{$field} : null;
 			}
 		}
 

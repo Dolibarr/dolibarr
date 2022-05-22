@@ -272,7 +272,8 @@ function dol_dir_list_in_database($path, $filter = "", $excludefilter = null, $s
 					"cover" => $obj->cover,
 					"position" => (int) $obj->position,
 					"acl" => $obj->acl,
-					"share" => $obj->share
+					"share" => $obj->share,
+					"description" => $obj->description
 				);
 			}
 			$i++;
