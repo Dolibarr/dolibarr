@@ -16,7 +16,7 @@
  * or see https://www.gnu.org/
  */
 
-class AbstractActions
+abstract class AbstractActions
 {
 	function actions_setnotes()
 	{
