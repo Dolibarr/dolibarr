@@ -276,6 +276,10 @@ $form = new Form($db);
 $userstatic = new User($db);
 $formactions = new FormActions($db);
 
+$actionstatic = new ActionComm($db);
+$societestatic = new Societe($db);
+$contactstatic = new Contact($db);
+
 $nav = '';
 $nav .= $form->selectDate($dateselect, 'dateselect', 0, 0, 1, '', 1, 0);
 $nav .= ' <input type="submit" name="submitdateselect" class="button" value="'.$langs->trans("Refresh").'">';
@@ -597,12 +601,6 @@ if (!$resql) {
 
 $num = $db->num_rows($resql);
 
-
-$actionstatic = new ActionComm($db);
-$societestatic = new Societe($db);
-
-$num = $db->num_rows($resql);
-
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
 // Local calendar
@@ -864,18 +862,21 @@ print $hookmanager->resPrint;
 
 if (!empty($arrayfields['a.datec']['checked'])) {
 	print_liste_field_titre($arrayfields['a.datec']['label'], $_SERVER["PHP_SELF"], "a.datec,a.id", $param, "", 'align="center"', $sortfield, $sortorder);
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['a.tms']['checked'])) {
 	print_liste_field_titre($arrayfields['a.tms']['label'], $_SERVER["PHP_SELF"], "a.tms,a.id", $param, "", 'align="center"', $sortfield, $sortorder);
+	$totalarray['nbfield']++;
 }
 
 if (!empty($arrayfields['a.percent']['checked'])) {
 	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "a.percent", $param, "", 'align="center"', $sortfield, $sortorder);
+	$totalarray['nbfield']++;
 }
 print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
+$totalarray['nbfield']++;
 print "</tr>\n";
 
-$contactstatic = new Contact($db);
 $now = dol_now();
 $delay_warning = $conf->global->MAIN_DELAY_ACTIONS_TODO * 24 * 60 * 60;
 
@@ -895,10 +896,10 @@ while ($i < $imaxinloop) {
 	if (empty($obj)) {
 		break; // Should not happen
 	}
-	
+
 	// Store properties in $object
 	$object->setVarsFromFetchObj($obj);
-	
+
 	// Discard auto action if option is on
 	if (!empty($conf->global->AGENDA_ALWAYS_HIDE_AUTO) && $obj->type_code == 'AC_OTH_AUTO') {
 		$i++;
