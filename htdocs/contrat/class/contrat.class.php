@@ -2629,6 +2629,11 @@ class ContratLigne extends CommonObjectLine
 	 */
 	public $ref;
 
+	/**
+	 * @var string desc // Description line
+	 */
+	public $desc;
+
 	public $tms;
 
 	/**
