@@ -981,13 +981,13 @@ function dol_move_dir($srcdir, $destdir, $overwriteifexists = 1, $indexdatabase 
 	global $user, $db, $conf;
 	$result = false;
 
-	dol_syslog("files.lib.php::dol_dir_move srcdir=".$srcdir." destdir=".$destdir." overwritifexists=".$overwriteifexists);
+	dol_syslog("files.lib.php::dol_move_dir srcdir=".$srcdir." destdir=".$destdir." overwritifexists=".$overwriteifexists." indexdatabase=".$indexdatabase." renamedircontent=".$renamedircontent);
 	$srcexists = dol_is_dir($srcdir);
 	$srcbasename = basename($srcdir);
 	$destexists = dol_is_dir($destdir);
 
 	if (!$srcexists) {
-		dol_syslog("files.lib.php::dol_dir_move srcdir does not exists. we ignore the move request.");
+		dol_syslog("files.lib.php::dol_move_dir srcdir does not exists. we ignore the move request.");
 		return false;
 	}
 
@@ -1004,14 +1004,15 @@ function dol_move_dir($srcdir, $destdir, $overwriteifexists = 1, $indexdatabase 
 				if (!empty($files) && is_array($files)) {
 					foreach ($files as $key => $file) {
 						if (!file_exists($file["fullname"])) continue;
-						$oldpath = $file["fullname"];
+						$filepath = $file["path"];
+						$oldname = $file["name"];
 
-						$newpath = str_replace($srcbasename, $destbasename, $oldpath);
-						if (!empty($newpath)) {
-							if (dol_is_dir($oldpath)) {
-								$res = dol_move_dir($oldpath, $newpath, $overwriteifexists, $indexdatabase, $renamedircontent);
+						$newname = str_replace($srcbasename, $destbasename, $oldname);
+						if (!empty($newname) && $newname !== $oldname) {
+							if ($file["type"] == "dir") {
+								$res = dol_move_dir($filepath.'/'.$oldname, $filepath.'/'.$newname, $overwriteifexists, $indexdatabase, $renamedircontent);
 							} else {
-								$res = dol_move($oldpath, $newpath);
+								$res = dol_move($filepath.'/'.$oldname, $filepath.'/'.$newname);
 							}
 							if (!$res) {
 								return $result;
@@ -1023,7 +1024,6 @@ function dol_move_dir($srcdir, $destdir, $overwriteifexists = 1, $indexdatabase 
 			}
 		}
 	}
-
 	return $result;
 }
 
