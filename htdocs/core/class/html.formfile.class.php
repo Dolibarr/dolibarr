@@ -1340,7 +1340,8 @@ class FormFile
 					print '<!-- Line list_of_documents '.$key.' relativepath = '.$relativepath.' -->'."\n";
 					// Do we have entry into database ?
 					print '<!-- In database: position='.(array_key_exists('position', $filearray[$key]) ? $filearray[$key]['position'] : 0).' -->'."\n";
-					print '<tr class="oddeven" id="row-'.(array_key_exists('rowid', $filearray[$key]) ? ($filearray[$key]['rowid'] > 0) : 0) ? $filearray[$key]['rowid'] : 'AFTER'.$lastrowid.'POS'.($i + 1).'">';
+					print '<tr class="oddeven" id="row-'.((array_key_exists('rowid', $filearray[$key]) && $filearray[$key]['rowid'] > 0) ? $filearray[$key]['rowid'] : 'AFTER'.$lastrowid.'POS'.($i + 1)).'">';
+
 
 					// File name
 					print '<td class="minwith200 tdoverflowmax500">';
