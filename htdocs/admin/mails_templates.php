@@ -57,6 +57,7 @@ $langs->loadLangs($langsArray);
 $action = GETPOST('action', 'aZ09') ?GETPOST('action', 'aZ09') : 'view';
 $massaction = GETPOST('massaction', 'alpha');
 $confirm = GETPOST('confirm', 'alpha'); // Result of a confirmation
+$mode = GETPOST('mode', 'aZ09');
 
 $id = GETPOST('id', 'int');
 $rowid = GETPOST('rowid', 'alpha');
@@ -619,18 +620,18 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 if ($limit > 0 && $limit != $conf->liste_limit) {
 	$param .= '&limit='.urlencode($limit);
 }
-if (!empty($search)) {
-foreach ($search as $key => $val) {
-	if (is_array($search[$key]) && count($search[$key])) {
-		foreach ($search[$key] as $skey) {
-			if ($skey != '') {
-				$param .= '&search_'.$key.'[]='.urlencode($skey);
+if (!empty($search) && is_array($search)) {
+	foreach ($search as $key => $val) {
+		if (is_array($search[$key]) && count($search[$key])) {
+			foreach ($search[$key] as $skey) {
+				if ($skey != '') {
+					$param .= '&search_'.$key.'[]='.urlencode($skey);
+				}
 			}
+		} elseif ($search[$key] != '') {
+			$param .= '&search_'.$key.'='.urlencode($search[$key]);
 		}
-	} elseif ($search[$key] != '') {
-		$param .= '&search_'.$key.'='.urlencode($search[$key]);
 	}
-}
 }
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
