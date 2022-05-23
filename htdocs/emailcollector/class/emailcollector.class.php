@@ -900,9 +900,17 @@ class EmailCollector extends CommonObject
 							// Overwrite param $tmpproperty
 							$valueextracted = isset($regforval[count($regforval) - 1]) ?trim($regforval[count($regforval) - 1]) : null;
 							if (strtolower($sourcefield) == 'header') {
-								$object->$tmpproperty = $this->decodeSMTPSubject($valueextracted);
+								if (preg_match('/^options_/', $tmpproperty)) {
+									$object->array_options[preg_replace('/^options_/', '', $tmpproperty)] = $this->decodeSMTPSubject($valueextracted);
+								} else {
+									$object->$tmpproperty = $this->decodeSMTPSubject($valueextracted);
+								}
 							} else {
-								$object->$tmpproperty = $valueextracted;
+								if (preg_match('/^options_/', $tmpproperty)) {
+									$object->array_options[preg_replace('/^options_/', '', $tmpproperty)] = $this->decodeSMTPSubject($valueextracted);
+								} else {
+									$object->$tmpproperty = $this->decodeSMTPSubject($valueextracted);
+								}
 							}
 						} else {
 							// Regex not found
