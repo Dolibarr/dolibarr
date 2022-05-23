@@ -2377,7 +2377,7 @@ if ($action == 'create') {
 
 						// Quantity
 						print '<td class="right">';
-						print '<input type="text" min="0" class="right maxwidth50" name="qty" value="'.dol_escape_htmltag($line->qty).'" />';  // We must be able to enter decimal qty
+						print '<input type="text" min="0" class="right maxwidth50" id="input_qty" name="qty" value="'.dol_escape_htmltag($line->qty).'" />';  // We must be able to enter decimal qty
 						print '</td>';
 
 						//print '<td class="right">'.$langs->trans('AmountHT').'</td>';
@@ -2559,7 +2559,7 @@ if ($action == 'create') {
 
 				// Quantity
 				print '<td class="right inputqty">';
-				print '<input type="text" min="0" class="right maxwidth50" name="qty" value="'.dol_escape_htmltag($qty ? $qty : 1).'">'; // We must be able to enter decimal qty
+				print '<input type="text" min="0" class="right maxwidth50" id="input_qty" name="qty" value="'.dol_escape_htmltag($qty ? $qty : 1).'">'; // We must be able to enter decimal qty
 				print '</td>';
 
 				// Picture
@@ -2579,7 +2579,7 @@ if ($action == 'create') {
 
 			print '</table>';
 			print '</div>';
-
+			//var_dump($object);
 			print '<script javascript>
 
 			/* JQuery for product free or predefined select */
@@ -2596,6 +2596,51 @@ if ($action == 'create') {
 						jQuery("#value_unit_ht").val("");
 					}
 				});
+
+                /* price calculation */
+                jQuery("#input_qty, #fk_c_type_fees, #select_fk_c_exp_tax_cat, #vatrate ").change(function(event) {
+
+                    let type_fee = jQuery("#fk_c_type_fees").find(":selected").val();
+                    let tax_cat = jQuery("#select_fk_c_exp_tax_cat").find(":selected").val();
+                    let tva = jQuery("#vatrate").find(":selected").val();
+                    let qty = jQuery("#input_qty").val();
+
+
+					let path = "'.dol_buildpath("/expensereport/ajax/ajaxik.php", 1) .'";
+					path += "?fk_c_exp_tax_cat="+tax_cat;
+					path +="&fk_expense="+'.$object->id.';
+                    path += "&vatrate="+tva;
+                    path += "&qty="+qty;
+
+                    if (type_fee == 4) { // frais_kilométriques
+
+						jQuery.ajax({
+							url: path
+							,async:false
+							,dataType:"json"
+							,success:function(response) {
+                                if (response.response_status == "success"){
+
+                                jQuery("#value_unit_ht").val(response.data);
+                                }else{
+								  console.log(response.errorMessage)
+                                }
+
+							},
+
+						});
+
+
+                    }else{
+                        console.log("not a type concerned");
+                    }
+
+					/*console.log(event.which);		// discard event tag and arrows
+					if (event.which != 9 && (event.which < 37 || event.which > 40) && jQuery("#value_unit").val() != "") {
+						jQuery("#value_unit_ht").val("");
+					}*/
+				});
+
 			});
 
 			</script>';
