@@ -2567,7 +2567,7 @@ class ExpenseReport extends CommonObject
 	 *  @param     $tva              VAT rate
 	 *  @return    int              <0 if KO, total ttc if OK
 	 */
-	function computeTotalKm($fk_cat, $qty, $tva)
+	public function computeTotalKm($fk_cat, $qty, $tva)
 	{
 		global $langs,$user,$db,$conf;
 
