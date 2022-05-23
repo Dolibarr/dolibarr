@@ -2562,14 +2562,15 @@ class ExpenseReport extends CommonObject
 	/**
 	 *  \brief Compute the cost of the kilometers expense based on the number of kilometers and the vehicule category
 	 *
-	 *  @param     fk_cat           Category of the vehicule used
-	 *  @param     qty              Number of kilometers
-	 *  @param     tva              VAT rate
+	 *  @param     $fk_cat           Category of the vehicule used
+	 *  @param     $qty              Number of kilometers
+	 *  @param     $tva              VAT rate
 	 *  @return    int              <0 if KO, total ttc if OK
 	 */
 	function computeTotalKm($fk_cat, $qty, $tva)
 	{
 		global $langs,$user,$db,$conf;
+
 
 		$total_ttc = 0;
 		$ranges = array();
@@ -2597,6 +2598,7 @@ class ExpenseReport extends CommonObject
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_exp_tax_range r ON r.rowid = t.fk_range";
 		$sql .= " WHERE t.fk_cat = ".(int) $fk_cat;
 		$sql .= " ORDER BY r.range_ik ASC";
+		var_dump($sql);
 		dol_syslog("expenseReport::computeTotalkm sql=".$sql, LOG_DEBUG);
 
 		$result = $this->db->query($sql);
@@ -2614,6 +2616,7 @@ class ExpenseReport extends CommonObject
 
 				for ($i = 0; $i < $num; $i++) {
 					if ($i < ($num - 1)) {
+
 						if ($qty > $ranges[$i]->range && $qty < $ranges[$i+1]->range) {
 							$coef = $ranges[$i]->coef;
 							$offset = $ranges[$i]->offset;

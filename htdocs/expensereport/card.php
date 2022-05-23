@@ -2597,13 +2597,14 @@ if ($action == 'create') {
 					}
 				});
 
-                /* price calculation */
+                /* unit price coéf calculation */
                 jQuery("#input_qty, #fk_c_type_fees, #select_fk_c_exp_tax_cat, #vatrate ").change(function(event) {
 
                     let type_fee = jQuery("#fk_c_type_fees").find(":selected").val();
                     let tax_cat = jQuery("#select_fk_c_exp_tax_cat").find(":selected").val();
                     let tva = jQuery("#vatrate").find(":selected").val();
                     let qty = jQuery("#input_qty").val();
+                    console.log(qty);
 
 
 					let path = "'.dol_buildpath("/expensereport/ajax/ajaxik.php", 1) .'";
@@ -2623,7 +2624,7 @@ if ($action == 'create') {
 
                                 jQuery("#value_unit_ht").val(response.data);
                                 }else{
-								  console.log(response.errorMessage)
+								 /* console.log(response.errorMessage) */
                                 }
 
 							},
