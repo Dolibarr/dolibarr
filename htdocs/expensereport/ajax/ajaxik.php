@@ -88,14 +88,13 @@ if (empty($fk_expense) || $fk_expense < 0) {
 			$rep->errorMessage =  json_encode(array('error' => $langs->transnoentitiesnoconv('ErrorRecordNotFound'), 'fk_user_author' => $expense->fk_user_author));
 			$rep->response_status = 'error';
 		} else {
-
 			$expense = new ExpenseReport($db);
-			$result = $expense->computeTotalKm($fk_c_exp_tax_cat,$qty,$vatrate);
-			if ($result < 0){
+			$result = $expense->computeTotalKm($fk_c_exp_tax_cat, $qty, $vatrate);
+			if ($result < 0) {
 				$rep->error = $result;
 				$rep->errorMessage = $langs->trans('errorComputeTtcOnMileageExpense');
 				$rep->response_status = 'error';
-			}else{
+			} else {
 				$rep->data = $result;
 				$rep->response_status = 'success';
 			}
