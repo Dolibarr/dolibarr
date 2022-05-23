@@ -303,3 +303,4 @@ SelectTheTypeOfObjectToAnalyze=選擇一個項目以查看其統計資訊...
 ConfirmBtnCommonContent = 您確定要“%s”嗎？
 ConfirmBtnCommonTitle = 確認您的操作
 CloseDialog = 關閉
+Autofill = 自動填入

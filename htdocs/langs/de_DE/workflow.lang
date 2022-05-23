@@ -7,6 +7,7 @@ descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Erstelle automatisch einen Kundenauftrag, n
 descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Erstellt automatisch eine Kundenrechnung, nachdem ein Angebot als "unterzeichnet" markiert wurde. Diese neue Kundenrechnung lautet über den selben Betrag wie das Angebot.
 descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Erstelle automatisch eine Kundenrechnung, nachdem der Vertrag bestätigt wurde.
 descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Erstellt automatisch eine Kundenrechnung, nachdem ein Kundenauftrag geschlossen wurde. Die erstellte Rechnung lautet über denselben Betrag wie der Auftrag.
+descWORKFLOW_TICKET_CREATE_INTERVENTION=Bei der Erstellung eines Tickets automatisch einen Serviceauftrag erstellen.
 # Autoclassify customer proposal or order
 descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Setzt das  entsprechende Angebot auf "abgerechnet", sofern der Kundenauftrag auf "abgerechnet" gesetzt wurde und sofern der Gesamtbetrag im Kundenauftrag gleich dem im Angebot ist.
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Setzt das verknüpfte Angebot auf "abgerechnet", sofern die Kundenrechnung erstellt wurde und sofern der Rechnungsbetrag identisch zur Angebotsumme ist.
@@ -22,9 +23,14 @@ descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=Verknüpfte Lieferantenbestellung
 descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=Verknüpfte Lieferantenbestellung als eingegangen klassifizieren, wenn ein Wareneingang geschlossen wird (und wenn die von allen Wareneingängen eingegangene Menge mit der zu aktualisierenden Bestellung übereinstimmt)
 # Autoclassify purchase invoice
 descWORKFLOW_BILL_ON_RECEPTION=Klassifizieren Sie Empfänge als "in Rechnung gestellt", wenn eine verknüpfte Lieferantenbestellung validiert wird
+# Automatically link ticket to contract
+descWORKFLOW_TICKET_LINK_CONTRACT=Verknüpfen Sie beim Erstellen eines Tickets verfügbare Verträge passender Geschäftspartner
+descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=Suchen Sie beim Verknüpfen von Verträgen unter denen der Mutterunternehmen
 # Autoclose intervention
 descWORKFLOW_TICKET_CLOSE_INTERVENTION=Schließen Sie alle mit dem Ticket verknüpften Interaktionen, wenn ein Ticket geschlossen wird
 AutomaticCreation=automatische Erstellung
 AutomaticClassification=Automatische Klassifikation
 # Autoclassify shipment
-descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Klassifizieren Sie die verknüpfte Quellensendung als geschlossen, wenn die Kundenrechnung validiert ist.
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Klassifizieren Sie die verknüpfte Lieferung als geschlossen, wenn die Kundenrechnung validiert ist.
+AutomaticClosing=Automatisches Schließen
+AutomaticLinking=Automatisches Verknüpfen

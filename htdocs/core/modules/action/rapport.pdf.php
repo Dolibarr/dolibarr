@@ -63,6 +63,14 @@ class CommActionRapport
 
 	public $marge_basse;
 
+	public $format;
+
+	public $type;
+
+	public $page_hauteur;
+
+	public $page_largeur;
+
 
 	/**
 	 * Constructor
@@ -125,7 +133,7 @@ class CommActionRapport
 		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "products"));
 
 		$dir = $conf->agenda->dir_temp."/";
-		$file = $dir."actions-".$this->month."-".$this->year.".pdf";
+		$file = $dir."actions-".sprintf("%02d", $this->month)."-".sprintf("%04d", $this->year).".pdf";
 
 		if (!file_exists($dir)) {
 			if (dol_mkdir($dir) < 0) {

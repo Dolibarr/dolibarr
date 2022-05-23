@@ -59,6 +59,7 @@ BacklinkNotFoundOnPartnerWebsite=Backlink-ul nu a fost găsit pe site-ul partene
 ConfirmClosePartnershipAsk=Sigur vrei să anulezi acest parteneriat?
 PartnershipType=Tip parteneriat
 PartnershipRefApproved=Parteneriatul %s a fost aprobat
+KeywordToCheckInWebsite=Dacă vrei să verifici dacă un anumit cuvânt cheie este prezent pe site-ul fiecărui partener, definește acest cuvânt cheie aici
 
 #
 # Template Mail
@@ -90,3 +91,4 @@ PartnershipAccepted=Acceptat
 PartnershipRefused=Refuzat
 PartnershipCanceled=Anulat
 PartnershipManagedFor=Partenerii sunt
+

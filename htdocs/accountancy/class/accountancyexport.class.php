@@ -11,6 +11,7 @@
  * Copyright (C) 2017-2019  Frédéric France     <frederic.france@netlogic.fr>
  * Copyright (C) 2017       André Schild        <a.schild@aarboard.ch>
  * Copyright (C) 2020       Guillaume Alexandre <guillaume@tag-info.fr>
+ * Copyright (C) 2022		Joachim Kueter		<jkueter@gmx.de>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +35,7 @@
 
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 
 
 /**
@@ -93,11 +95,13 @@ class AccountancyExport
 	 */
 	public function __construct(DoliDB $db)
 	{
-		global $conf;
+		global $conf, $hookmanager;
 
 		$this->db = $db;
 		$this->separator = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
 		$this->end_line = empty($conf->global->ACCOUNTING_EXPORT_ENDLINE) ? "\n" : ($conf->global->ACCOUNTING_EXPORT_ENDLINE == 1 ? "\n" : "\r\n");
+
+		$hookmanager->initHooks(array('accountancyexport'));
 	}
 
 	/**
@@ -105,7 +109,7 @@ class AccountancyExport
 	 *
 	 * @return array of type
 	 */
-	public static function getType()
+	public function getType()
 	{
 		global $langs;
 
@@ -131,6 +135,10 @@ class AccountancyExport
 			self::$EXPORT_TYPE_FEC2 => $langs->trans('Modelcsv_FEC2'),
 			self::$EXPORT_TYPE_ISUITEEXPERT => 'Export iSuite Expert',
 		);
+
+		// allow modules to define export formats
+		global $hookmanager;
+		$reshook = $hookmanager->executeHooks('getType', $parameters, $listofexporttypes);
 
 		ksort($listofexporttypes, SORT_NUMERIC);
 
@@ -168,7 +176,12 @@ class AccountancyExport
 			self::$EXPORT_TYPE_ISUITEEXPERT => 'isuiteexpert',
 		);
 
-		return $formatcode[$type];
+		global $hookmanager;
+		$code = $formatcode[$type];
+		$parameters = array('type' => $type);
+		$reshook = $hookmanager->executeHooks('getFormatCode', $parameters, $code);
+
+		return $code;
 	}
 
 	/**
@@ -176,11 +189,11 @@ class AccountancyExport
 	 *
 	 * @return array of type
 	 */
-	public static function getTypeConfig()
+	public function getTypeConfig()
 	{
 		global $conf, $langs;
 
-		return array(
+		$exporttypes = array(
 			'param' => array(
 				self::$EXPORT_TYPE_CONFIGURABLE => array(
 					'label' => $langs->trans('Modelcsv_configurable'),
@@ -265,6 +278,11 @@ class AccountancyExport
 				'txt' => $langs->trans("txt")
 			),
 		);
+
+		global $hookmanager;
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('getTypeConfig', $parameters, $exporttypes);
+		return $exporttypes;
 	}
 
 
@@ -350,7 +368,13 @@ class AccountancyExport
 				$this->exportiSuiteExpert($TData);
 				break;
 			default:
-				$this->errors[] = $langs->trans('accountancy_error_modelnotfound');
+				global $hookmanager;
+				$parameters = array('format' => $formatexportset);
+				// file contents will be created in the hooked function via print
+				$reshook = $hookmanager->executeHooks('export', $parameters, $TData);
+				if ($reshook != 1) {
+					$this->errors[] = $langs->trans('accountancy_error_modelnotfound');
+				}
 				break;
 		}
 	}

@@ -234,6 +234,8 @@ if ($action == 'edit') {
 
 	dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
 
+	print '<div class="underbanner clearboth"></div>';
+
 	print dol_get_fiche_end();
 
 
@@ -338,6 +340,8 @@ if ($action == 'edit') {
 	$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 	dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
+
+	print '<div class="underbanner clearboth"></div>';
 
 	print dol_get_fiche_end();
 

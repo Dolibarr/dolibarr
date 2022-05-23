@@ -68,7 +68,7 @@ NeedMoreInformation=Venter på tilbakemelding på rapporten
 NeedMoreInformationShort=Venter på tilbakemelding
 Answered=Besvarte
 Waiting=Venter
-SolvedClosed=Solved
+SolvedClosed=Løst
 Deleted=Slettede
 
 # Dict
@@ -90,10 +90,10 @@ TicketPublicAccess=Et offentlig grensesnitt som ikke krever identifikasjon er ti
 TicketSetupDictionaries=Typen av billett, alvorlighetsgrad og analytiske koder kan konfigureres fra ordbøker
 TicketParamModule=Oppsett av modulvariabler
 TicketParamMail=Epostoppsett
-TicketEmailNotificationFrom=Varslings epost fra
-TicketEmailNotificationFromHelp=Brukes som eksempel i svar på supportseddel
-TicketEmailNotificationTo=Notifikasjons-epost til
-TicketEmailNotificationToHelp=Send e-postvarsler til denne adressen.
+TicketEmailNotificationFrom=Avsender e-post for billettsvar
+TicketEmailNotificationFromHelp=Avsender e-post for billettsvar sendt fra Dolibarr
+TicketEmailNotificationTo=Gi beskjed om opprettelse av billett til denne e-postadressen
+TicketEmailNotificationToHelp=Hvis tilstede, vil denne e-postadressen bli varslet om en billettoppretting
 TicketNewEmailBodyLabel=Tekstmelding sendt etter å ha opprettet en billett
 TicketNewEmailBodyHelp=Teksten som er angitt her, vil bli satt inn i epostbekreftelsen for opprettelsen av en ny supportseddel fra det offentlige grensesnittet. Informasjon om konsultasjon av supportseddelen blir automatisk lagt til.
 TicketParamPublicInterface=Oppsett av offentlig grensesnitt
@@ -136,6 +136,18 @@ TicketsPublicNotificationNewMessage=Send e-post (e) når en ny melding/kommentar
 TicketsPublicNotificationNewMessageHelp=Send epost(er) når en ny melding legges til fra det offentlige grensesnittet (til tildelt bruker eller varslings-eposten til (oppdatering) og/eller varslings-eposten til)
 TicketPublicNotificationNewMessageDefaultEmail=E-postvarsler til (oppdatere)
 TicketPublicNotificationNewMessageDefaultEmailHelp=Send en e-post til denne adressen for hver nye meldingsvarsling hvis billetten ikke har en bruker tildelt den, eller hvis brukeren ikke har noen kjent e-post.
+TicketsAutoReadTicket=Merk automatisk billetten som lest (når den er opprettet fra backoffice)
+TicketsAutoReadTicketHelp=Merk automatisk billetten som lest når den opprettes fra backoffice. Når billetten opprettes fra det offentlige grensesnittet, forblir billetten med statusen "Ikke lest".
+TicketsDelayBeforeFirstAnswer=A new ticket should receive a first answer before (hours):
+TicketsDelayBeforeFirstAnswerHelp=If a new ticket has not received an answer after this time period (in hours), an important warning icon will be displayed in the list view.
+TicketsDelayBetweenAnswers=An unresolved ticket should not be unactive during (hours):
+TicketsDelayBetweenAnswersHelp=If an unresolved ticket that has already received an answer has not had further interaction after this time period (in hours), a warning icon will be displayed in the list view.
+TicketsAutoNotifyClose=Automatically notify thirdparty when closing a ticket
+TicketsAutoNotifyCloseHelp=When closing a ticket, you will be proposed to send a message to one of thirdparty's contacts. On mass closing, a message will be sent to one contact of the thirdparty linked to the ticket.
+TicketWrongContact=Provided contact is not part of current ticket contacts. Email not sent.
+TicketChooseProductCategory=Produktkategori for billettstøtte
+TicketChooseProductCategoryHelp=Velg produktkategori for billettstøtte. Dette vil bli brukt til å automatisk knytte en kontrakt til en billett.
+
 #
 # Index & list page
 #
@@ -151,6 +163,8 @@ OrderByDateAsc=Sorter etter stigende dato
 OrderByDateDesc=Sorter etter synkende dato
 ShowAsConversation=Vis som samtaleliste
 MessageListViewType=Vis som tabell
+ConfirmMassTicketClosingSendEmail=Send e-post automatisk når du stenger billetter
+ConfirmMassTicketClosingSendEmailQuestion=Vil du varsle tredjeparter når du stenger disse billettene?
 
 #
 # Ticket card
@@ -188,11 +202,11 @@ TicketSeverity=Alvorlighetsgrad
 ShowTicket=Se supportseddel
 RelatedTickets=Relaterte supportsedler
 TicketAddIntervention=Opprett intervensjon
-CloseTicket=Close|Solve ticket
-AbandonTicket=Abandon ticket
-CloseATicket=Close|Solve a ticket
+CloseTicket=Lukk|Løs billett
+AbandonTicket=Forlat billett
+CloseATicket=Lukk|Løs en billett
 ConfirmCloseAticket=Bekreft lukking av supportseddel
-ConfirmAbandonTicket=Do you confirm the closing of the ticket to status 'Abandonned'
+ConfirmAbandonTicket=Bekrefter du lukkingen av billetten til status 'Forlatt'
 ConfirmDeleteTicket=Vennligst bekreft fjerning av supportseddel
 TicketDeletedSuccess=Supportseddel slettet
 TicketMarkedAsClosed=Supportseddel merket som lukket
@@ -205,12 +219,12 @@ ErrorMailRecipientIsEmptyForSendTicketMessage=Mottaker er tom. Ingen epost sendt
 TicketGoIntoContactTab=Vennligst gå inn på "Kontakter" -fanen for å velge
 TicketMessageMailIntro=Introduksjon
 TicketMessageMailIntroHelp=Denne teksten legges bare til i begynnelsen av eposten og vil ikke bli lagret.
-TicketMessageMailIntroLabelAdmin=Introduksjon i meldingen når du sender epost
-TicketMessageMailIntroText=Hei, <br> Et nytt svar ble sendt på en billett som du er kontakt for. Her er meldingen: <br>
-TicketMessageMailIntroHelpAdmin=Denne teksten blir satt inn før teksten til svaret på en supportseddel.
+TicketMessageMailIntroLabelAdmin=Introduksjonstekst til alle billettsvar
+TicketMessageMailIntroText=Hei, <br> Et nytt svar er lagt til en billett som du følger. Her er meldingen: <br>
+TicketMessageMailIntroHelpAdmin=Denne teksten vil bli satt inn før svaret når du svarer på en billett fra Dolibarr
 TicketMessageMailSignature=Signatur
 TicketMessageMailSignatureHelp=Denne teksten er bare lagt til i slutten av eposten og vil ikke bli lagret.
-TicketMessageMailSignatureText=<p> Med vennlig hilsen </p> <p> - </p>
+TicketMessageMailSignatureText=Melding sendt av <b> %s </b> via Dolibarr
 TicketMessageMailSignatureLabelAdmin=Signatur på svar-epost
 TicketMessageMailSignatureHelpAdmin=Denne teksten vil bli satt inn etter svarmeldingen.
 TicketMessageHelp=Kun denne teksten blir lagret i meldingslisten på supportseddelen.
@@ -238,9 +252,16 @@ TicketChangeStatus=Endre status
 TicketConfirmChangeStatus=Bekreft statusendringen: %s?
 TicketLogStatusChanged=Status endret: %s til %s
 TicketNotNotifyTiersAtCreate=Ikke gi beskjed til firmaet ved opprettelse
+NotifyThirdpartyOnTicketClosing=Kontakter å varsle når du lukker billetten
+TicketNotifyAllTiersAtClose=Alle relaterte kontakter
+TicketNotNotifyTiersAtClose=Ingen relatert kontakt
 Unread=Ulest
 TicketNotCreatedFromPublicInterface=Ikke tilgjengelig. Billett ble ikke opprettet fra offentlig grensesnitt.
 ErrorTicketRefRequired=Billettreferansenavn kreves
+TicketsDelayForFirstResponseTooLong=Too much time elapsed since ticket opening without any answer.
+TicketsDelayFromLastResponseTooLong=Too much time elapsed since last answer on this ticket.
+TicketNoContractFoundToLink=No contract was found to be automatically linked to this ticket. Please link a contract manually.
+TicketManyContractsLinked=Many contracts have been automatically linked to this ticket. Make sure to verify which should be chosen.
 
 #
 # Logs
@@ -268,8 +289,9 @@ TicketNewEmailBody=Dette er en automatisk epost for å bekrefte at du har regist
 TicketNewEmailBodyCustomer=Dette er en automatisk epost for å bekrefte at en ny supportseddel nettopp er opprettet i kontoen din.
 TicketNewEmailBodyInfosTicket=Informasjon for å overvåke supportseddelen
 TicketNewEmailBodyInfosTrackId=Billettsporingsnummer: %s
-TicketNewEmailBodyInfosTrackUrl=Du kan se fremdriften til supportseddelen ved å klikke på lenken over.
+TicketNewEmailBodyInfosTrackUrl=You can view the progress of the ticket by clicking the following link
 TicketNewEmailBodyInfosTrackUrlCustomer=Du kan se fremdriften til supportseddelen i det spesifikke grensesnittet ved å klikke på følgende lenke
+TicketCloseEmailBodyInfosTrackUrlCustomer=You can consult the history of this ticket by clicking the following link
 TicketEmailPleaseDoNotReplyToThisEmail=Vennligst ikke svar direkte på denne eposten! Bruk koblingen til å svare via grensesnittet.
 TicketPublicInfoCreateTicket=Dette skjemaet gir deg mulighet til å registrere en supportseddel i vårt styringssystem.
 TicketPublicPleaseBeAccuratelyDescribe=Vennligst beskriv problemet nøyaktig. Gi så mye informasjon som mulig slik at vi kan identifisere forespørselen din riktig.
@@ -291,6 +313,10 @@ NewUser=Ny bruker
 NumberOfTicketsByMonth=Antall billetter per måned
 NbOfTickets=Antall billetter
 # notifications
+TicketCloseEmailSubjectCustomer=Ticket closed
+TicketCloseEmailBodyCustomer=This is an automatic message to notify you that ticket %s has just been closed.
+TicketCloseEmailSubjectAdmin=Ticket closed - Réf %s (public ticket ID %s)
+TicketCloseEmailBodyAdmin=A ticket with ID #%s has just been closed, see information:
 TicketNotificationEmailSubject=Supportseddel%s oppdatert
 TicketNotificationEmailBody=Dette er en automatisk melding for å varsle deg om at billetten %s nettopp er oppdatert
 TicketNotificationRecipient=Meldingsmottaker

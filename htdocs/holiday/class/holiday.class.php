@@ -1117,11 +1117,9 @@ class Holiday extends CommonObject
 			if ($infos_CP['statut'] == 5) {
 				continue; // ignore not validated holidays
 			}
-			/*
-			 var_dump("--");
-			 var_dump("old: ".dol_print_date($infos_CP['date_debut'],'dayhour').' '.dol_print_date($infos_CP['date_fin'],'dayhour').' '.$infos_CP['halfday']);
-			 var_dump("new: ".dol_print_date($dateStart,'dayhour').' '.dol_print_date($dateEnd,'dayhour').' '.$halfday);
-			 */
+			//var_dump("--");
+			//var_dump("old: ".dol_print_date($infos_CP['date_debut'],'dayhour').' '.dol_print_date($infos_CP['date_fin'],'dayhour').' '.$infos_CP['halfday']);
+			//var_dump("new: ".dol_print_date($dateStart,'dayhour').' '.dol_print_date($dateEnd,'dayhour').' '.$halfday);
 
 			if ($halfday == 0) {
 				if ($dateStart >= $infos_CP['date_debut'] && $dateStart <= $infos_CP['date_fin']) {
@@ -2170,6 +2168,7 @@ class Holiday extends CommonObject
 		if ($affect >= 0) {
 			$sql .= " AND affect = ".((int) $affect);
 		}
+		$sql .= " ORDER BY sortorder";
 
 		$result = $this->db->query($sql);
 		if ($result) {
