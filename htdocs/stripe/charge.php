@@ -268,13 +268,13 @@ if (!$rowid) {
 		print "</td>\n";
 
 		// Date payment
-		print '<td class="center">'.dol_print_date($charge->created, '%d/%m/%Y %H:%M')."</td>\n";
+		print '<td class="center">'.dol_print_date($charge->created, 'dayhour')."</td>\n";
 		// Type
 		print '<td>';
 		print $type;
 		print '</td>';
 		// Amount
-		print '<td class="right">'.price(($charge->amount - $charge->amount_refunded) / 100, 0, '', 1, - 1, - 1, strtoupper($charge->currency))."</td>";
+		print '<td class="right"><span class="amount">'.price(($charge->amount - $charge->amount_refunded) / 100, 0, '', 1, - 1, - 1, strtoupper($charge->currency))."</span></td>";
 		// Status
 		print '<td class="right">';
 		print $status;

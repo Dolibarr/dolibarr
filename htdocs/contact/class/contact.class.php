@@ -131,6 +131,13 @@ class Contact extends CommonObject
 	public $civility;
 
 	/**
+	 * @var string The civilite code, not an integer
+	 * @deprecated
+	 * @see $civility_code
+	 */
+	public $civilite;
+
+	/**
 	 * @var string Address
 	 */
 	public $address;
@@ -180,6 +187,12 @@ class Contact extends CommonObject
 	 * @var string
 	 */
 	public $email;
+
+	/**
+	 * URL
+	 * @var string
+	 */
+	public $url;
 
 	/**
 	 * Unsuscribe all : 1 = contact has globaly unsubscribe of all mass emailings
@@ -314,6 +327,7 @@ class Contact extends CommonObject
 	 * @var string picto
 	 */
 	public $stcomm_picto;
+
 
 	/**
 	 *	Constructor

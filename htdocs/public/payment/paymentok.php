@@ -1051,8 +1051,10 @@ if ($ispaymentok) {
 				include_once DOL_DOCUMENT_ROOT.'/don/class/paymentdonation.class.php';
 				$paiement = new PaymentDonation($db);
 
+				$totalpaid = $FinalPaymentAmt;
+
 				if ($currencyCodeType == $conf->currency) {
-					$paiement->amounts = array($object->id => $FinalPaymentAmt); // Array with all payments dispatching with donation
+					$paiement->amounts = array($object->id => $totalpaid); // Array with all payments dispatching with donation
 				} else {
 					// PaymentDonation does not support multi currency
 					$postactionmessages[] = 'Payment donation can\'t be payed with diffent currency than '.$conf->currency;
@@ -1078,7 +1080,9 @@ if ($ispaymentok) {
 						$postactionmessages[] = 'Payment created';
 						$ispostactionok = 1;
 
-						if ($totalpayed >= $don->getRemainToPay()) $don->setPaid($don->id);
+						if ($totalpaid >= $don->getRemainToPay()) {
+							$don->setPaid($don->id);
+						}
 					}
 				}
 
@@ -1267,20 +1271,24 @@ if ($ispaymentok) {
 							$outputlangs = new Translate('', $conf);
 							$outputlangs->setDefaultLang(empty($thirdparty->default_lang) ? $mysoc->default_lang : $thirdparty->default_lang);
 							// Load traductions files required by page
-							$outputlangs->loadLangs(array("main", "members"));
+							$outputlangs->loadLangs(array("main", "members", "eventorganization"));
 							// Get email content from template
 							$arraydefaultmessage = null;
 
-							$labeltouse = $conf->global->EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT;
+							$idoftemplatetouse = $conf->global->EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT;	// Email to send for Event organization registration
 
-							if (!empty($labeltouse)) {
-								$arraydefaultmessage = $formmail->getEMailTemplate($db, 'conferenceorbooth', $user, $outputlangs, $labeltouse, 1, '');
+							if (!empty($idoftemplatetouse)) {
+								$arraydefaultmessage = $formmail->getEMailTemplate($db, 'conferenceorbooth', $user, $outputlangs, $idoftemplatetouse, 1, '');
 							}
 
-							if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
+							if (!empty($idoftemplatetouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
 								$subject = $arraydefaultmessage->topic;
 								$msg     = $arraydefaultmessage->content;
+							} else {
+								$subject = '['.$object->ref.' - '.$outputlangs->trans("NewRegistration").']';
+								$msg = $outputlangs->trans("OrganizationEventPaymentOfRegistrationWasReceived");
 							}
+
 
 							$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $thirdparty);
 							complete_substitutions_array($substitutionarray, $outputlangs, $object);
@@ -1294,13 +1302,28 @@ if ($ispaymentok) {
 
 							$ishtml = dol_textishtml($texttosend); // May contain urls
 
-							$mailfile = new CMailFile($subjecttosend, $sendto, $from, $texttosend, array(), array(), array(), '', '', 0, $ishtml);
+							// Attach a file ?
+							$file = '';
+							$listofpaths = array();
+							$listofnames = array();
+							$listofmimes = array();
+							if (is_object($object)) {
+								$invoicediroutput = $conf->facture->dir_output;
+								$fileparams = dol_most_recent_file($invoicediroutput.'/'.$object->ref, preg_quote($object->ref, '/').'[^\-]+');
+								$file = $fileparams['fullname'];
+
+								$listofpaths = array($file);
+								$listofnames = array(basename($file));
+								$listofmimes = array(dol_mimetype($file));
+							}
+
+							$mailfile = new CMailFile($subjecttosend, $sendto, $from, $texttosend, $listofpaths, $listofmimes, $listofnames, '', '', 0, $ishtml);
 
 							$result = $mailfile->sendfile();
 							if ($result) {
 								dol_syslog("EMail sent to ".$sendto, LOG_DEBUG, 0, '_payment');
 							} else {
-								dol_syslog("Failed to send EMail to ".$sendto, LOG_ERR, 0, '_payment');
+								dol_syslog("Failed to send EMail to ".$sendto.' - '.$mailfile->error, LOG_ERR, 0, '_payment');
 							}
 						}
 					}
@@ -1452,18 +1475,22 @@ if ($ispaymentok) {
 										$outputlangs = new Translate('', $conf);
 										$outputlangs->setDefaultLang(empty($thirdparty->default_lang) ? $mysoc->default_lang : $thirdparty->default_lang);
 										// Load traductions files required by page
-										$outputlangs->loadLangs(array("main", "members"));
+										$outputlangs->loadLangs(array("main", "members", "eventorganization"));
 										// Get email content from template
 										$arraydefaultmessage = null;
 
-										$labeltouse = $conf->global->EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT;
-										if (!empty($labeltouse)) {
-											$arraydefaultmessage = $formmail->getEMailTemplate($db, 'conferenceorbooth', $user, $outputlangs, $labeltouse, 1, '');
+										$idoftemplatetouse = $conf->global->EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH;	// Email sent after registration for a Booth
+
+										if (!empty($idoftemplatetouse)) {
+											$arraydefaultmessage = $formmail->getEMailTemplate($db, 'conferenceorbooth', $user, $outputlangs, $idoftemplatetouse, 1, '');
 										}
 
-										if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
+										if (!empty($idoftemplatetouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
 											$subject = $arraydefaultmessage->topic;
 											$msg     = $arraydefaultmessage->content;
+										} else {
+											$subject = '['.$booth->ref.' - '.$outputlangs->trans("NewRegistration").']';
+											$msg = $outputlangs->trans("OrganizationEventPaymentOfBoothWasReceived");
 										}
 
 										$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $thirdparty);

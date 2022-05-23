@@ -213,7 +213,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_date_end = '';
 	$sall = "";
 	$search_status = "";
-	$toselect = '';
+	$toselect = array();
 	$search_type_thirdparty = '';
 	$searchCategoryCustomerList = array();
 	$search_array_options = array();
@@ -322,6 +322,9 @@ if ($search_zip) {
 }
 if ($search_town) {
 	$sql .= natural_search(array('s.town'), $search_town);
+}
+if ($search_country && $search_country != '-1') {
+	$sql .= " AND s.fk_pays IN (".$db->sanitize($search_country).')';
 }
 if ($search_sale > 0) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $search_sale);
@@ -544,6 +547,9 @@ if ($search_user > 0) {
 if ($search_type_thirdparty > 0) {
 	$param .= '&search_type_thirdparty='.urlencode($search_type_thirdparty);
 }
+if ($search_country != '') {
+	$param .= "&search_country=".urlencode($search_country);
+}
 if ($search_product_category > 0) {
 	$param .= '&search_product_category='.urlencode($search_product_category);
 }
@@ -608,7 +614,7 @@ if ($sall) {
 $moreforfilter = '';
 
 // If the user can view prospects other than his'
-if ($user->rights->societe->client->voir || $socid) {
+if ($user->rights->user->user->lire) {
 	$langs->load("commercial");
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('ThirdPartiesOfSaleRepresentative');
@@ -757,7 +763,7 @@ if (!empty($arrayfields['lower_planned_end_date']['checked'])) {
 		print '</br>';
 		print $formother->select_month($search_dfmonth, 'search_dfmonth', 1, 0);
 		print ' ';
-		$formother->select_year($search_dfyear, 'search_dfyear', 1, 20, 5, 0, 0, '');
+		print $formother->selectyear($search_dfyear, 'search_dfyear', 1, 20, 5, 0, 0, '');
 		print '</td>';
 }
 // Status

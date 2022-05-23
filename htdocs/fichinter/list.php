@@ -58,6 +58,7 @@ $toselect = GETPOST('toselect', 'array');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'interventionlist';
 
 $search_ref = GETPOST('search_ref') ?GETPOST('search_ref', 'alpha') : GETPOST('search_inter', 'alpha');
+$search_ref_client = GETPOST('search_ref_client', 'alpha');
 $search_company = GETPOST('search_company', 'alpha');
 $search_desc = GETPOST('search_desc', 'alpha');
 $search_projet_ref = GETPOST('search_projet_ref', 'alpha');
@@ -122,6 +123,7 @@ if (!empty($conf->global->FICHINTER_DISABLE_DETAILS)) {
 // Definition of fields for list
 $arrayfields = array(
 	'f.ref'=>array('label'=>'Ref', 'checked'=>1),
+	'f.ref_client'=>array('label'=>'RefCustomer', 'checked'=>1),
 	's.nom'=>array('label'=>'ThirdParty', 'checked'=>1),
 	'pr.ref'=>array('label'=>'Project', 'checked'=>1, 'enabled'=>(empty($conf->projet->enabled) ? 0 : 1)),
 	'c.ref'=>array('label'=>'Contract', 'checked'=>1, 'enabled'=>(empty($conf->contrat->enabled) ? 0 : 1)),
@@ -133,7 +135,7 @@ $arrayfields = array(
 	'f.fk_statut'=>array('label'=>'Status', 'checked'=>1, 'position'=>1000),
 	'fd.description'=>array('label'=>"DescriptionOfLine", 'checked'=>1, 'enabled'=>empty($conf->global->FICHINTER_DISABLE_DETAILS) ? 1 : 0),
 	'fd.date'=>array('label'=>'DateOfLine', 'checked'=>1, 'enabled'=>empty($conf->global->FICHINTER_DISABLE_DETAILS) ? 1 : 0),
-	'fd.duree'=>array('label'=>'DurationOfLine', 'checked'=>1, 'enabled'=>empty($conf->global->FICHINTER_DISABLE_DETAILS) ? 1 : 0),
+	'fd.duree'=>array('label'=>'DurationOfLine', 'type'=> 'duration', 'checked'=>1, 'enabled'=>empty($conf->global->FICHINTER_DISABLE_DETAILS) ? 1 : 0), //type duration is here because in database, column 'duree' is double
 );
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
@@ -149,7 +151,7 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 if (GETPOST('cancel', 'alpha')) {
 	$action = 'list'; $massaction = '';
 }
-if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend' && $massaction != 'confirm_createbills') {
+if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
 	$massaction = '';
 }
 
@@ -166,12 +168,13 @@ if (empty($reshook)) {
 	// Purge search criteria
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
 		$search_ref = "";
+		$search_ref_client = "";
 		$search_company = "";
 		$search_projet_ref = "";
 		$search_contrat_ref = "";
 		$search_desc = "";
 		$search_status = "";
-		$toselect = '';
+		$toselect = array();
 		$search_array_options = array();
 	}
 
@@ -218,7 +221,7 @@ foreach ($arrayfields as $tmpkey => $tmpval) {
 }
 
 $sql = "SELECT";
-$sql .= " f.ref, f.rowid, f.fk_statut as status, f.description, f.datec as date_creation, f.tms as date_update, f.note_public, f.note_private,";
+$sql .= " f.ref, f.ref_client, f.rowid, f.fk_statut as status, f.description, f.datec as date_creation, f.tms as date_update, f.note_public, f.note_private,";
 if (empty($conf->global->FICHINTER_DISABLE_DETAILS) && $atleastonefieldinlines) {
 	$sql .= " fd.rowid as lineid, fd.description as descriptiondetail, fd.date as dp, fd.duree,";
 }
@@ -246,7 +249,7 @@ if (!empty($conf->projet->enabled)) {
 if (!empty($conf->contrat->enabled)) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."contrat as c on f.fk_contrat = c.rowid";
 }
-if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
+if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (f.rowid = ef.fk_object)";
 }
 if (empty($conf->global->FICHINTER_DISABLE_DETAILS) && $atleastonefieldinlines) {
@@ -266,6 +269,9 @@ $sql .= " WHERE f.entity IN (".getEntity('intervention').")";
 $sql .= " AND f.fk_soc = s.rowid";
 if ($search_ref) {
 	$sql .= natural_search('f.ref', $search_ref);
+}
+if ($search_ref_client) {
+	$sql .= natural_search('f.ref_client', $search_ref_client);
 }
 if ($search_company) {
 	$sql .= natural_search('s.nom', $search_company);
@@ -350,6 +356,9 @@ if ($resql) {
 	}
 	if ($search_ref) {
 		$param .= "&search_ref=".urlencode($search_ref);
+	}
+	if ($search_ref_client) {
+		$param .= "&search_ref_client=".urlencode($search_ref_client);
 	}
 	if ($search_company) {
 		$param .= "&search_company=".urlencode($search_company);
@@ -447,6 +456,11 @@ if ($resql) {
 		print '<input type="text" class="flat" name="search_ref" value="'.$search_ref.'" size="8">';
 		print '</td>';
 	}
+	if (!empty($arrayfields['f.ref_client']['checked'])) {
+		print '<td class="liste_titre">';
+		print '<input type="text" class="flat" name="search_ref_client" value="'.$search_ref_client.'" size="8">';
+		print '</td>';
+	}
 	if (!empty($arrayfields['s.nom']['checked'])) {
 		print '<td class="liste_titre">';
 		print '<input type="text" class="flat" name="search_company" value="'.$search_company.'" size="10">';
@@ -526,6 +540,9 @@ if ($resql) {
 	if (!empty($arrayfields['f.ref']['checked'])) {
 		print_liste_field_titre($arrayfields['f.ref']['label'], $_SERVER["PHP_SELF"], "f.ref", "", $param, '', $sortfield, $sortorder);
 	}
+	if (!empty($arrayfields['f.ref_client']['checked'])) {
+		print_liste_field_titre($arrayfields['f.ref_client']['label'], $_SERVER["PHP_SELF"], "f.ref_client", "", $param, '', $sortfield, $sortorder);
+	}
 	if (!empty($arrayfields['s.nom']['checked'])) {
 		print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER["PHP_SELF"], "s.nom", "", $param, '', $sortfield, $sortorder);
 	}
@@ -582,6 +599,7 @@ if ($resql) {
 
 		$objectstatic->id = $obj->rowid;
 		$objectstatic->ref = $obj->ref;
+		$objectstatic->ref_client = $obj->ref_client;
 		$objectstatic->statut = $obj->status;
 		$objectstatic->status = $obj->status;
 
@@ -626,6 +644,15 @@ if ($resql) {
 			print '</td></tr></table>';
 
 			print "</td>\n";
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		if (!empty($arrayfields['f.ref_client']['checked'])) {
+			// Customer ref
+			print '<td class="nowrap tdoverflowmax200">';
+			print $obj->ref_client;
+			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -741,7 +768,6 @@ if ($resql) {
 			}
 			if (!$i) {
 				$totalarray['type'][$totalarray['nbfield']] = 'duration';
-				$totalarray['pos'][$totalarray['nbfield']] = 'fd.duree';
 			}
 			$totalarray['val']['fd.duree'] += $obj->duree;
 		}
@@ -764,6 +790,8 @@ if ($resql) {
 		$total += $obj->duree;
 		$i++;
 	}
+
+
 
 	// Show total line
 	include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';

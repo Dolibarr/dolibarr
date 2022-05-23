@@ -450,9 +450,9 @@ class SupplierInvoices extends DolibarrApi
 		}
 
 		// Calculate amount to pay
-		$totalpaye = $this->invoice->getSommePaiement();
+		$totalpaid = $this->invoice->getSommePaiement();
 		$totaldeposits = $this->invoice->getSumDepositsUsed();
-		$resteapayer = price2num($this->invoice->total_ttc - $totalpaye - $totaldeposits, 'MT');
+		$resteapayer = price2num($this->invoice->total_ttc - $totalpaid - $totaldeposits, 'MT');
 
 		$this->db->begin();
 
@@ -647,7 +647,8 @@ class SupplierInvoices extends DolibarrApi
 			$request_data->array_options,
 			$request_data->fk_unit,
 			$request_data->multicurrency_subprice,
-			$request_data->ref_supplier
+			$request_data->ref_supplier,
+			$request_data->rang
 		);
 
 		if ($updateRes > 0) {

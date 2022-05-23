@@ -52,7 +52,7 @@ if (!empty($user->socid)) {
 	$socid = $user->socid;
 }
 
-if (empty($id) && $socid && (empty($conf->global->PARTNERSHIP_IS_MANAGED_FOR) || $conf->global->PARTNERSHIP_IS_MANAGED_FOR == 'thirdparty')) {
+if (empty($id) && $socid && (getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR', 'thirdparty') == 'thirdparty')) {
 	$id = $socid;
 }
 
@@ -94,8 +94,8 @@ $usercanclose = $user->rights->partnership->write; // Used by the include of act
 $upload_dir = $conf->partnership->multidir_output[isset($object->entity) ? $object->entity : 1];
 
 
-if (!empty($conf->global->PARTNERSHIP_IS_MANAGED_FOR) && $conf->global->PARTNERSHIP_IS_MANAGED_FOR != 'thirdparty') {
-	accessforbidden();
+if (getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR', 'thirdparty') != 'thirdparty') {
+	accessforbidden('Partnership is not activated for thirdparties');
 }
 if (empty($conf->partnership->enabled)) {
 	accessforbidden();

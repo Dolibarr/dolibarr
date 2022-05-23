@@ -558,11 +558,11 @@ if ($result) {
 }
 
 
-/*var_dump($tabpay);
-var_dump($tabcompany);
-var_dump($tabbq);
-var_dump($tabtp);
-var_dump($tabtype);*/
+//var_dump($tabpay);
+//var_dump($tabcompany);
+//var_dump($tabbq);
+//var_dump($tabtp);
+//var_dump($tabtype);
 
 // Write bookkeeping
 if (!$error && $action == 'writebookkeeping') {
@@ -594,9 +594,9 @@ if (!$error && $action == 'writebookkeeping') {
 		$db->begin();
 
 		// Introduce a protection. Total of tabtp must be total of tabbq
-		/*var_dump($tabpay);
-		var_dump($tabtp);
-		var_dump($tabbq);exit;*/
+		//var_dump($tabpay);
+		//var_dump($tabtp);
+		//var_dump($tabbq);exit;
 
 		// Bank
 		if (!$errorforline && is_array($tabbq[$key])) {
@@ -665,6 +665,8 @@ if (!$error && $action == 'writebookkeeping') {
 				// Line into thirdparty account
 				foreach ($tabtp[$key] as $k => $mt) {
 					if ($mt) {
+						$lettering = false;
+
 						$reflabel = '';
 						if (!empty($val['lib'])) {
 							$reflabel .= dol_string_nohtmltag($val['lib']).($val['soclib'] ? " - " : "");
@@ -693,11 +695,13 @@ if (!$error && $action == 'writebookkeeping') {
 						$bookkeeping->date_creation = $now;
 
 						if ($tabtype[$key] == 'payment') {	// If payment is payment of customer invoice, we get ref of invoice
+							$lettering = true;
 							$bookkeeping->subledger_account = $k; // For payment, the subledger account is stored as $key of $tabtp
 							$bookkeeping->subledger_label = $tabcompany[$key]['name']; // $tabcompany is defined only if we are sure there is 1 thirdparty for the bank transaction
 							$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER;
 							$bookkeeping->label_compte = $accountingaccountcustomer->label;
 						} elseif ($tabtype[$key] == 'payment_supplier') {	// If payment is payment of supplier invoice, we get ref of invoice
+							$lettering = true;
 							$bookkeeping->subledger_account = $k; // For payment, the subledger account is stored as $key of $tabtp
 							$bookkeeping->subledger_label = $tabcompany[$key]['name']; // $tabcompany is defined only if we are sure there is 1 thirdparty for the bank transaction
 							$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER;
@@ -779,6 +783,12 @@ if (!$error && $action == 'writebookkeeping') {
 								$error++;
 								$errorforline++;
 								setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
+							}
+						} else {
+							if ($lettering && getDolGlobalInt('ACCOUNTING_ENABLE_LETTERING')) {
+								require_once DOL_DOCUMENT_ROOT . '/accountancy/class/lettering.class.php';
+								$lettering_static = new Lettering($db);
+								$nb_lettering = $lettering_static->bookkeepingLetteringAll(array($bookkeeping->id));
 							}
 						}
 					}
@@ -1257,9 +1267,9 @@ if (empty($action) || $action == 'view') {
 						$accounttoshowsubledger = length_accounta($k);
 						if ($accounttoshow != $accounttoshowsubledger) {
 							if (empty($accounttoshowsubledger) || $accounttoshowsubledger == 'NotDefined') {
-								/*var_dump($tabpay[$key]);
-								var_dump($tabtype[$key]);
-								var_dump($tabbq[$key]);*/
+								//var_dump($tabpay[$key]);
+								//var_dump($tabtype[$key]);
+								//var_dump($tabbq[$key]);
 								//print '<span class="error">'.$langs->trans("ThirdpartyAccountNotDefined").'</span>';
 								if (!empty($tabcompany[$key]['code_compta'])) {
 									if (in_array($tabtype[$key], array('payment_various', 'payment_salary'))) {

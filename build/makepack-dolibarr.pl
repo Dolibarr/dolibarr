@@ -582,9 +582,7 @@ if ($nboftargetok) {
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/teclib*`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/timesheet*`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/webmail*`;
-		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/themes/oblyon*`;
-		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/themes/allscreen*`;
-		$ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/theme/common/octicons/LICENSE`;
+		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/theme/common/fontawesome-5/svgs`;
 		
 		# Removed other test files
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/public/test`;

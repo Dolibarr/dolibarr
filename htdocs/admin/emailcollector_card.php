@@ -428,15 +428,21 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				$connectstringtarget = $connectstringserver.$object->getEncodedUtf7($targetdir);
 			}
 
-			$timeoutconnect = empty($conf->global->MAIN_USE_CONNECT_TIMEOUT) ? 10 : $conf->global->MAIN_USE_CONNECT_TIMEOUT;
-			$timeoutread = empty($conf->global->MAIN_USE_RESPONSE_TIMEOUT) ? 30 : $conf->global->MAIN_USE_RESPONSE_TIMEOUT;
+			$timeoutconnect = empty($conf->global->MAIN_USE_CONNECT_TIMEOUT) ? 5 : $conf->global->MAIN_USE_CONNECT_TIMEOUT;
+			$timeoutread = empty($conf->global->MAIN_USE_RESPONSE_TIMEOUT) ? 20 : $conf->global->MAIN_USE_RESPONSE_TIMEOUT;
 
 			dol_syslog("imap_open connectstring=".$connectstringsource." login=".$object->login." password=".$object->password." timeoutconnect=".$timeoutconnect." timeoutread=".$timeoutread);
 
-			imap_timeout(IMAP_OPENTIMEOUT, $timeoutconnect);
-			imap_timeout(IMAP_READTIMEOUT, $timeoutread);
+			$result1 = imap_timeout(IMAP_OPENTIMEOUT, $timeoutconnect);	// timeout seems ignored with ssl connect
+			$result2 = imap_timeout(IMAP_READTIMEOUT, $timeoutread);
+			$result3 = imap_timeout(IMAP_WRITETIMEOUT, 5);
+			$result4 = imap_timeout(IMAP_CLOSETIMEOUT, 5);
+
+			dol_syslog("result1=".$result1." result2=".$result2." result3=".$result3." result4=".$result4);
 
 			$connection = imap_open($connectstringsource, $object->login, $object->password);
+
+			//dol_syslog("end imap_open connection=".var_export($connection, true));
 		} catch (Exception $e) {
 			print $e->getMessage();
 		}
@@ -490,7 +496,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<div class="div-table-responsive-no-min">';
 	print '<table id="tablelineoffilters" class="noborder margintable noshadow">';
 	print '<tr class="liste_titre nodrag nodrop">';
-	print '<td>'.img_picto('', 'filter', 'class="pictofixedwidth"').$form->textwithpicto($langs->trans("Filters"), $langs->trans("EmailCollectorFilterDesc")).'</td><td></td><td></td>';
+	print '<td>'.img_picto('', 'filter', 'class="pictofixedwidth opacitymedium"').$form->textwithpicto($langs->trans("Filters"), $langs->trans("EmailCollectorFilterDesc")).'</td><td></td><td></td>';
 	print '</tr>';
 	// Add filter
 	print '<tr class="oddeven nodrag nodrop">';
@@ -647,7 +653,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			print $form->textwithpicto('', $langs->transnoentitiesnoconv('EmailCollectorLoadThirdPartyHelp'));
 		}
 		print '</td>';
-		print '<td class="wordbreak minwidth300">';
+		print '<td class="wordbreak minwidth300 small">';
 		if ($action == 'editoperation' && $ruleaction['id'] == $operationid) {
 			print '<input type="text" class="quatrevingtquinzepercent" name="operationparam2" value="'.$ruleaction['actionparam'].'"><br>';
 			print '<input type="hidden" name="rowidoperation2" value="'.$ruleaction['id'].'">';

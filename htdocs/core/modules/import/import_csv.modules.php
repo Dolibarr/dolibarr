@@ -439,7 +439,7 @@ class ImportCsv extends ModeleImports
 												/*include_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancysystem.class.php';
 												 $tmpchartofaccount = new AccountancySystem($this->db);
 												 $tmpchartofaccount->fetch($conf->global->CHARTOFACCOUNTS);
-												 var_dump($tmpchartofaccount->ref.' - '.$arrayrecord[0]['val']);
+												 //var_dump($tmpchartofaccount->ref.' - '.$arrayrecord[0]['val']);
 												 if ((! ($conf->global->CHARTOFACCOUNTS > 0)) || $tmpchartofaccount->ref != $arrayrecord[0]['val'])
 												 {
 												 $this->errors[$error]['lib']=$langs->trans('ErrorImportOfChartLimitedToCurrentChart', $tmpchartofaccount->ref);
@@ -709,15 +709,37 @@ class ImportCsv extends ModeleImports
 						}
 
 						// Define $listfields and $listvalues to build SQL request
-						$listfields[] = $fieldname;
-
-						// Note: arrayrecord (and 'type') is filled with ->import_read_record called by import.php page before calling import_insert
-						if (empty($newval) && $arrayrecord[($key - 1)]['type'] < 0) {
-							$listvalues[] = ($newval == '0' ? $newval : "null");
-						} elseif (empty($newval) && $arrayrecord[($key - 1)]['type'] == 0) {
-							$listvalues[] = "''";
+						if ($conf->socialnetworks->enabled && strpos($fieldname, "socialnetworks") !== false) {
+							if (!in_array("socialnetworks", $listfields)) {
+								$listfields[] = "socialnetworks";
+							}
+							if (!empty($newval) && $arrayrecord[($key - 1)]['type'] > 0) {
+								$socialkey = array_search("socialnetworks", $listfields);
+								if (empty($listvalues[$socialkey]) || $listvalues[$socialkey] == "null") {
+									$socialnetwork = explode("_", $fieldname)[1];
+									$json = new stdClass();
+									$json->$socialnetwork = $newval;
+									$newvalue = json_encode($json);
+									$listvalues[$socialkey] = "'".$this->db->escape($newvalue)."'";
+								} else {
+									$socialnetwork = explode("_", $fieldname)[1];
+									$jsondata = $listvalues[$socialkey];
+									$jsondata = str_replace("'", "", $jsondata);
+									$json = json_decode($jsondata);
+									$json->$socialnetwork = $newval;
+									$listvalues[$socialkey] = "'".$this->db->escape(json_encode($json))."'";
+								}
+							}
 						} else {
-							$listvalues[] = "'".$this->db->escape($newval)."'";
+							$listfields[] = $fieldname;
+							// Note: arrayrecord (and 'type') is filled with ->import_read_record called by import.php page before calling import_insert
+							if (empty($newval) && $arrayrecord[($key - 1)]['type'] < 0) {
+								$listvalues[] = ($newval == '0' ? $newval : "null");
+							} elseif (empty($newval) && $arrayrecord[($key - 1)]['type'] == 0) {
+								$listvalues[] = "''";
+							} else {
+								$listvalues[] = "'".$this->db->escape($newval)."'";
+							}
 						}
 					}
 					$i++;
@@ -804,11 +826,12 @@ class ImportCsv extends ModeleImports
 
 								$resql = $this->db->query($sqlSelect);
 								if ($resql) {
-									$res = $this->db->fetch_object($resql);
-									if ($resql->num_rows == 1) {
+									$num_rows = $this->db->num_rows($resql);
+									if ($num_rows == 1) {
+										$res = $this->db->fetch_object($resql);
 										$lastinsertid = $res->rowid;
 										$last_insert_id_array[$tablename] = $lastinsertid;
-									} elseif ($resql->num_rows > 1) {
+									} elseif ($num_rows > 1) {
 										$this->errors[$error]['lib'] = $langs->trans('MultipleRecordFoundWithTheseFilters', implode(', ', $filters));
 										$this->errors[$error]['type'] = 'SQL';
 										$error++;
@@ -837,7 +860,7 @@ class ImportCsv extends ModeleImports
 								$resql = $this->db->query($sqlSelect);
 								if ($resql) {
 									$res = $this->db->fetch_object($resql);
-									if ($resql->num_rows == 1) {
+									if ($this->db->num_rows($resql) == 1) {
 										// We have a row referencing this last foreign key, continue with UPDATE.
 									} else {
 										// No record found referencing this last foreign key,

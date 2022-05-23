@@ -62,24 +62,24 @@ MainAccountForSubscriptionPaymentNotDefined=در برپاسازی برای پر�
 AccountancyArea=بخش حساب‌داری
 AccountancyAreaDescIntro=استفاده از بخش حساب‌داری در گام‌های متعددی انجام می‌پذیرد:
 AccountancyAreaDescActionOnce=عملیات زیر معمولا فقط یک بار انجام می‌شود، یا یک بار در سال...
-AccountancyAreaDescActionOnceBis=برای صرفه‌جوئی در زمان در آینده گام‌های بعدی باید با ارائۀ حساب حساب‌داری صحیح در هنگام دفترنویسی (نوشتن سطور دفاتر و دفترکل) انجام پذیرد 
+AccountancyAreaDescActionOnceBis=Next steps should be done to save you time in future by suggesting you automaticaly the correct default accounting account when transferring data in accounting
 AccountancyAreaDescActionFreq=عملیات زیر معمولا هر ماه یا هر هفته یا بار یا حتی هر روز یک بار برای شرکت‌های بسیار بزرگ انجام می‌پذیرد....
 
-AccountancyAreaDescJournalSetup=گام %s: ایجاد یا بررسی فهرست محتوای دفتر از گزینۀ %s
+AccountancyAreaDescJournalSetup=STEP %s: Check content of your journal list from menu %s
 AccountancyAreaDescChartModel=STEP %s: Check that a model of chart of account exists or create one from menu %s
 AccountancyAreaDescChart=STEP %s: Select and|or complete your chart of account from menu %s
 
 AccountancyAreaDescVat=گام %s: تعریف حساب‌های حساب‌داری برای هر یک از انواع ضریب‌های مالیات بر ارزش افزوده. برای این کار از گزینۀ %s استفاده نمائید.
 AccountancyAreaDescDefault=گام %s: تعریف حساب‌های حساب‌داری پیش‌فرض. برای این، از گزینۀ %s استفاده نمائید.
-AccountancyAreaDescExpenseReport=گام %s: تعریف حساب‌های حساب‌داری پیش‌فرض برای هر یک از انواع گزارش‌هزینه. برای این‌کار از گزینۀ %s استفاده نمائید.
+AccountancyAreaDescExpenseReport=STEP %s: Define default accounting accounts for each type of Expense report. For this, use the menu entry %s.
 AccountancyAreaDescSal=گام %s: تعریف حساب‌های حساب‌داری پیش‌فرض برای پرداخت حقوق. برای این، از گزینۀ %s استفاده نمائید.
-AccountancyAreaDescContrib=گام %s: تعریف حساب‌های حساب‌داری پیش‌فرض برای هزینه‌های خاص ( مالیات‌های متفرقه ). برای این، از گزینۀ %s استفاده نمائید.
+AccountancyAreaDescContrib=STEP %s: Define default accounting accounts for Taxes (special expenses). For this, use the menu entry %s.
 AccountancyAreaDescDonation=گام %s : تعریف حساب‌های حساب‌داری پیش‌فرض برای دریافت کمک‌. برای این، از گزینۀ %s استفاده نمائید.
 AccountancyAreaDescSubscription=گام %s: تعریف حساب حساب‌داری پیش‌فرض برای اشتراک اعضاء. برای این، از گزینۀ %s استفاده نمائید.
 AccountancyAreaDescMisc=گام %s : تعریف حساب پیش‌فرض الزامی و حساب‌های حساب‌داری پیش‌فرض برای تراکنش‌های متفرقه. برای این، از گزینۀ %s استفاده نمائید.
 AccountancyAreaDescLoan=گام %s: تعریف حساب‌‌های حساب‌داری پیش‌فرض برای وام‌ها. برای این از گزینۀ %s استفاده نمائید.
 AccountancyAreaDescBank=گام %s: تعریف حساب‌های حساب‌داری و شمارۀ‌دفتر برای هر بانک و حساب‌های مالی. برای این‌کار از گزینۀ %s استفاده نمائید.
-AccountancyAreaDescProd=گام %s: تعریف حساب‌های حساب‌دای برای محصولات/خدمات شما. برای این‌کار از فهرست %s استفاده نمائید.
+AccountancyAreaDescProd=STEP %s: Define accounting accounts on your Products/Services. For this, use the menu entry %s.
 
 AccountancyAreaDescBind=گام %s: بندهای میان سطور موجود %s و حساب حساب‌داری بررسی شده است، بنابراین برنامه خواهد توانست که تراکنش‌ها را با یک کلیک در دفترکل  بنویسد. بندهای مفقود را کامل کنید. برای این‌کار، از گزینۀ %s استفاده نمائید.
 AccountancyAreaDescWriteRecords=گام %s: نوشتن تراکنش‌ها در دفتر کل. برای این‌کار، به فهرست <strong>%s</strong> مراجعه کرده و روی کلید <strong>%s</strong> کلیک نمائید.
@@ -112,7 +112,7 @@ MenuAccountancyClosure=Closure
 MenuAccountancyValidationMovements=Validate movements
 ProductsBinding=حساب‌های محصولات
 TransferInAccounting=انتقال به‌داخل حساب‌داری
-RegistrationInAccounting=ثبت در حساب‌داری
+RegistrationInAccounting=Recording in accounting
 Binding=بندشدن به حساب‌ها
 CustomersVentilation=بندشدن به صورت‌حساب مشتری
 SuppliersVentilation=بندشدن به صورت‌حساب تامین‌کننده
@@ -120,7 +120,7 @@ ExpenseReportsVentilation=بندشدن به گزارش هزینه‌ها
 CreateMvts=ایجاد تراکنش جدید
 UpdateMvts=ویرایش تراکنش
 ValidTransaction=اعتباردهی به تراکنش
-WriteBookKeeping=Register transactions in accounting
+WriteBookKeeping=Record transactions in accounting
 Bookkeeping=دفترکل
 BookkeepingSubAccount=Subledger
 AccountBalance=موجودی حساب
@@ -219,12 +219,12 @@ ByPredefinedAccountGroups=به واسطۀ  گروه‌های از پیش‌تع�
 ByPersonalizedAccountGroups=به واسطۀ گروه‌های دل‌خواه
 ByYear=به واسطۀ سال
 NotMatch=تعیین نشده
-DeleteMvt=Delete some operation lines from accounting
+DeleteMvt=Delete some lines from accounting
 DelMonth=Month to delete
 DelYear=حذف سال
 DelJournal=حذف دفتر
-ConfirmDeleteMvt=This will delete all operation lines of the accounting for the year/month and/or for a specific journal (At least one criterion is required). You will have to reuse the feature '%s' to have the deleted record back in the ledger.
-ConfirmDeleteMvtPartial=This will delete the transaction from the accounting (all operation lines related to the same transaction will be deleted)
+ConfirmDeleteMvt=This will delete all lines in accountancy for the year/month and/or for a specific journal (At least one criterion is required). You will have to reuse the feature '%s' to have the deleted record back in the ledger.
+ConfirmDeleteMvtPartial=This will delete the transaction from the accounting (all lines related to the same transaction will be deleted)
 FinanceJournal=دفتر مالی
 ExpenseReportsJournal=دفتر گزارش هزینه
 DescFinanceJournal=دفتر مالی که شامل همۀ انواع پرداخت بواسطۀ حساب بانکی می‌شود
@@ -278,11 +278,11 @@ DescVentilExpenseReportMore=در صورتی‌که شما حساب‌حساب‌
 DescVentilDoneExpenseReport=در این قسمت فهرستی از سطور گزارشات هزینه و حساب‌حساب‌داری پرداخت آن‌ها را داشته باشید
 
 Closure=Annual closure
-DescClosure=Consult here the number of movements by month who are not validated & fiscal years already open
-OverviewOfMovementsNotValidated=Step 1/ Overview of movements not validated. (Necessary to close a fiscal year)
-AllMovementsWereRecordedAsValidated=All movements were recorded as validated
-NotAllMovementsCouldBeRecordedAsValidated=Not all movements could be recorded as validated
-ValidateMovements=Validate movements
+DescClosure=Consult here the number of movements by month who are not yet validated & locked
+OverviewOfMovementsNotValidated=Overview of movements not validated and locked
+AllMovementsWereRecordedAsValidated=All movements were recorded as validated and locked
+NotAllMovementsCouldBeRecordedAsValidated=Not all movements could be recorded as validated and locked
+ValidateMovements=Validate and lock record...
 DescValidateMovements=Any modification or deletion of writing, lettering and deletes will be prohibited. All entries for an exercise must be validated otherwise closing will not be possible
 
 ValidateHistory=بندکردن خودکار
@@ -294,14 +294,15 @@ Balancing=تعدیل
 FicheVentilation=بندشدن کارت
 GeneralLedgerIsWritten=تراکنش‌ها در دفترکل درج شده
 GeneralLedgerSomeRecordWasNotRecorded=برخی از تراکنش‌ها امکان دفترنویسی ندارند. در صورتی که خطای دیگری وجود نداشته باشد، این بدان معناست که قبلا در دفتر وارد شده‌اند.
-NoNewRecordSaved=ردیف دیگری برای دفترنویسی وجود ندارد
+NoNewRecordSaved=No more record to transfer
 ListOfProductsWithoutAccountingAccount=فهرست محصولاتی که به هیچ حساب حساب‌داری بند نشده‌اند
 ChangeBinding=تغییر بند‌شدن‌ها
 Accounted=در دفترکل حساب‌شده است
 NotYetAccounted=Not yet transferred to accounting
 ShowTutorial=Show Tutorial
 NotReconciled=وفق داده نشده
-WarningRecordWithoutSubledgerAreExcluded=Warning, all operations without subledger account defined are filtered and excluded from this view
+WarningRecordWithoutSubledgerAreExcluded=Warning, all lines without subledger account defined are filtered and excluded from this view
+AccountRemovedFromCurrentChartOfAccount=Accounting account that does not exist in the current chart of accounts
 
 ## Admin
 BindingOptions=Binding options
@@ -329,8 +330,9 @@ ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Disable binding & transfer in accountanc
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Disable binding & transfer in accountancy on expense reports (expense reports will not be taken into account in accounting)
 
 ## Export
-NotifiedExportDate=Flag exported lines as exported (modification of the lines will not be possible)
-NotifiedValidationDate=Validate the exported entries (modification or deletion of the lines will not be possible)
+NotifiedExportDate=Flag exported lines as Exported <span class="warning">(to modify a line, you will need to delete the whole transaction and re-transfert it into accounting)</span>
+NotifiedValidationDate=Validate and Lock the exported entries <span class="warning">(same effect than the "Closure" feature, modification and deletion of the lines will DEFINITELY not be possible)</span>
+DateValidationAndLock=Date validation and lock
 ConfirmExportFile=Confirmation of the generation of the accounting export file ?
 ExportDraftJournal=صادرکردن پیش‌نویس دفتر
 Modelcsv=نوع صادرات
@@ -394,6 +396,21 @@ Range=بازۀ حساب حساب‌داری
 Calculated=محاسبه‌شده
 Formula=فرمول
 
+## Reconcile
+Unlettering=Unreconcile
+AccountancyNoLetteringModified=No reconcile modified
+AccountancyOneLetteringModifiedSuccessfully=One reconcile successfully modified
+AccountancyLetteringModifiedSuccessfully=%s reconcile successfully modified
+AccountancyNoUnletteringModified=No unreconcile modified
+AccountancyOneUnletteringModifiedSuccessfully=One unreconcile successfully modified
+AccountancyUnletteringModifiedSuccessfully=%s unreconcile successfully modified
+
+## Confirm box
+ConfirmMassUnlettering=Bulk Unreconcile confirmation
+ConfirmMassUnletteringQuestion=Are you sure you want to Unreconcile the %s selected record(s)?
+ConfirmMassDeleteBookkeepingWriting=تائید حذف گروهی
+ConfirmMassDeleteBookkeepingWritingQuestion=This will delete the transaction from the accounting (all lines related to the same transaction will be deleted) Are you sure you want to delete the %s selected record(s)?
+
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=برخی گام‌های اجباری برپاسازی انجام نشده است، لطفا تکمیل کنید
 ErrorNoAccountingCategoryForThisCountry=هیچ گروه حساب‌ حساب‌داری برای کشور %s وجود ندارد ( به بخش خانه - برپاسازی - واژه‌نامه‌ها ) مراجعه نمائید
@@ -406,6 +423,9 @@ Binded=سطور بندشده
 ToBind=سطوری که باید بند شوند
 UseMenuToSetBindindManualy=سطوری که هنوز بند نشده‌اند، گزینۀ <a href="%s">%s</a> را برای ایجاد دستی بندهای مورد استفاده قرار دهید.
 SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Sorry this module is not compatible with the experimental feature of situation invoices
+AccountancyErrorMismatchLetterCode=Mismatch in reconcile code
+AccountancyErrorMismatchBalanceAmount=The balance (%s) is not equal to 0
+AccountancyErrorLetteringBookkeeping=Errors have occurred concerning the transactions: %s
 
 ## Import
 ImportAccountingEntries=ورودی‌های حساب‌داری

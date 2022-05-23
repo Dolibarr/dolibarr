@@ -172,7 +172,7 @@ $result = restrictedArea($user, 'adherent');
 if (GETPOST('cancel', 'alpha')) {
 	$action = 'list'; $massaction = '';
 }
-if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend' && $massaction != 'confirm_createbills') {
+if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
 	$massaction = '';
 }
 
@@ -215,7 +215,7 @@ if (empty($reshook)) {
 		$search_status = "";
 		$catid = "";
 		$sall = "";
-		$toselect = '';
+		$toselect = array();
 		$search_array_options = array();
 	}
 
@@ -304,6 +304,8 @@ $form = new Form($db);
 $formother = new FormOther($db);
 $membertypestatic = new AdherentType($db);
 $memberstatic = new Adherent($db);
+
+$title = $langs->trans("Members");
 
 $now = dol_now();
 
@@ -471,42 +473,41 @@ if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $
 	exit;
 }
 
-llxHeader('', $langs->trans("Member"), 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros');
+llxHeader('', $title, 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros');
 
-$titre = $langs->trans("MembersList");
 if (GETPOSTISSET("search_status")) {
 	if ($search_status == '-1,1') { // TODO : check this test as -1 == Adherent::STATUS_DRAFT and -2 == Adherent::STATUS_EXLCUDED
-		$titre = $langs->trans("MembersListQualified");
+		$title = $langs->trans("MembersListQualified");
 	}
 	if ($search_status == Adherent::STATUS_DRAFT) {
-		$titre = $langs->trans("MembersListToValid");
+		$title = $langs->trans("MembersListToValid");
 	}
 	if ($search_status == Adherent::STATUS_VALIDATED && $filter == '') {
-		$titre = $langs->trans("MenuMembersValidated");
+		$title = $langs->trans("MenuMembersValidated");
 	}
 	if ($search_status == Adherent::STATUS_VALIDATED && $filter == 'withoutsubscription') {
-		$titre = $langs->trans("MembersWithSubscriptionToReceive");
+		$title = $langs->trans("MembersWithSubscriptionToReceive");
 	}
 	if ($search_status == Adherent::STATUS_VALIDATED && $filter == 'uptodate') {
-		$titre = $langs->trans("MembersListUpToDate");
+		$title = $langs->trans("MembersListUpToDate");
 	}
 	if ($search_status == Adherent::STATUS_VALIDATED && $filter == 'outofdate') {
-		$titre = $langs->trans("MembersListNotUpToDate");
+		$title = $langs->trans("MembersListNotUpToDate");
 	}
 	if ((string) $search_status == (string) Adherent::STATUS_RESILIATED) {	// The cast to string is required to have test false when search_status is ''
-		$titre = $langs->trans("MembersListResiliated");
+		$title = $langs->trans("MembersListResiliated");
 	}
 	if ($search_status == Adherent::STATUS_EXCLUDED) {
-		$titre = $langs->trans("MembersListExcluded");
+		$title = $langs->trans("MembersListExcluded");
 	}
 } elseif ($action == 'search') {
-	$titre = $langs->trans("MembersListQualified");
+	$title = $langs->trans("MembersListQualified");
 }
 
 if ($search_type > 0) {
 	$membertype = new AdherentType($db);
 	$result = $membertype->fetch($search_type);
-	$titre .= " (".$membertype->label.")";
+	$title .= " (".$membertype->label.")";
 }
 
 $param = '';
@@ -587,7 +588,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
 // List of mass actions available
 $arrayofmassactions = array(
-	//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').'&ensp;'.$langs->trans("SendByMail"),
+	//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 	//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 );
 if ($user->rights->adherent->creer) {
@@ -623,7 +624,7 @@ print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-print_barre_liste($titre, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, $object->picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, $object->picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 $topicmail = "Information";
 $modelmail = "member";
