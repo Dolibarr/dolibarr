@@ -185,8 +185,10 @@ if ($id > 0 || !empty($ref)) {
 			// Visibility
 			print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
 			if ($projectstatic->public) {
+				print img_picto($langs->trans('SharedProject'), 'world', 'class="paddingrightonly"');
 				print $langs->trans('SharedProject');
 			} else {
+				print img_picto($langs->trans('PrivateProject'), 'private', 'class="paddingrightonly"');
 				print $langs->trans('PrivateProject');
 			}
 			print '</td></tr>';
@@ -203,19 +205,18 @@ if ($id > 0 || !empty($ref)) {
 
 				// Opportunity percent
 				print '<tr><td>'.$langs->trans("OpportunityProbability").'</td><td>';
-				if (strcmp($object->opp_percent, '')) {
+				if (strcmp($projectstatic->opp_percent, '')) {
 					print price($projectstatic->opp_percent, 0, $langs, 1, 0).' %';
 				}
 				print '</td></tr>';
 
 				// Opportunity Amount
 				print '<tr><td>'.$langs->trans("OpportunityAmount").'</td><td>';
-				/*if ($object->opp_status)
-				 {
-				 print price($obj->opp_amount, 1, $langs, 1, 0, -1, $conf->currency);
-				 }*/
 				if (strcmp($projectstatic->opp_amount, '')) {
 					print price($projectstatic->opp_amount, 0, $langs, 1, 0, -1, $conf->currency);
+					if (strcmp($projectstatic->opp_percent, '')) {
+						print ' &nbsp; &nbsp; &nbsp; <span title="'.dol_escape_htmltag($langs->trans('OpportunityWeightedAmount')).'"><span class="opacitymedium">'.$langs->trans("Weighted").'</span>: <span class="amount">'.price($projectstatic->opp_amount * $projectstatic->opp_percent / 100, 0, $langs, 1, 0, -1, $conf->currency).'</span></span>';
+					}
 				}
 				print '</td></tr>';
 			}

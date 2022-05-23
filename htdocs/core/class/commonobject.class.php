@@ -116,6 +116,16 @@ abstract class CommonObject
 	public $array_languages = null; // Value is array() when load already tried
 
 	/**
+	 * @var array		To store result of ->liste_contact()
+	 */
+	public $contacts_ids;
+
+	/**
+	 * @var mixed		Array of linked objects, set and used when calling ->create() to be able to create links during the creation of object
+	 */
+	public $linked_objects;
+
+	/**
 	 * @var int[][]		Array of linked objects ids. Loaded by ->fetchObjectLinked
 	 */
 	public $linkedObjectsIds;
@@ -201,7 +211,7 @@ abstract class CommonObject
 	public $user;
 
 	/**
-	 * @var string 	The type of originating object ('commande', 'facture', ...)
+	 * @var string 	The type of originating object ('commande', 'facture', ...). Note: on some object this field is called $origin_type
 	 * @see fetch_origin()
 	 */
 	public $origin;
@@ -2236,10 +2246,14 @@ abstract class CommonObject
 	 *	Link element with a project
 	 *
 	 *	@param     	int		$projectid		Project id to link element to
+	 *  @param		int		$notrigger		Disable the trigger
 	 *	@return		int						<0 if KO, >0 if OK
 	 */
-	public function setProject($projectid)
+	public function setProject($projectid, $notrigger = 0)
 	{
+		global $user;
+		$error = 0;
+
 		if (!$this->table_element) {
 			dol_syslog(get_class($this)."::setProject was called on objet with property table_element not defined", LOG_ERR);
 			return -1;
@@ -2270,13 +2284,33 @@ abstract class CommonObject
 			$sql .= " WHERE rowid = ".((int) $this->id);
 		}
 
+		$this->db->begin();
+
 		dol_syslog(get_class($this)."::setProject", LOG_DEBUG);
 		if ($this->db->query($sql)) {
 			$this->fk_project = ((int) $projectid);
-			return 1;
 		} else {
 			dol_print_error($this->db);
+			$error++;
+		}
+
+		// Triggers
+		if (!$error && !$notrigger) {
+			// Call triggers
+			$result = $this->call_trigger(strtoupper($this->element) . '_MODIFY', $user);
+			if ($result < 0) {
+				$error++;
+			} //Do also here what you must do to rollback action if trigger fail
+			// End call triggers
+		}
+
+		// Commit or rollback
+		if ($error) {
+			$this->db->rollback();
 			return -1;
+		} else {
+			$this->db->commit();
+			return 1;
 		}
 	}
 
@@ -2606,7 +2640,7 @@ abstract class CommonObject
 			}
 
 			if (empty($deposit_percent) || $deposit_percent < 0) {
-				$deposit_percent = getDictionaryValue(MAIN_DB_PREFIX . 'c_payment_term', 'deposit_percent', $id);
+				$deposit_percent = getDictionaryValue('c_payment_term', 'deposit_percent', $id);
 			}
 
 			if ($deposit_percent > 100) {
@@ -4855,7 +4889,7 @@ abstract class CommonObject
 				$product_static->fetch($line->fk_product);
 
 				$product_static->ref = $line->ref; //can change ref in hook
-				$product_static->label = $line->label; //can change label in hook
+				$product_static->label = !empty($line->label) ? $line->label : ""; //can change label in hook
 
 				$text = $product_static->getNomUrl(1);
 
@@ -4891,7 +4925,7 @@ abstract class CommonObject
 				$description .= (!empty($conf->global->PRODUIT_DESC_IN_FORM) ? '' : dol_htmlentitiesbr($line->description)); // Description is what to show on popup. We shown nothing if already into desc.
 			}
 
-			$line->pu_ttc = price2num($line->subprice * (1 + ($line->tva_tx / 100)), 'MU');
+			$line->pu_ttc = price2num((!empty($line->subprice) ? $line->subprice : 0) * (1 + ((!empty($line->tva_tx) ? $line->tva_tx : 0) / 100)), 'MU');
 
 			// Output template part (modules that overwrite templates must declare this into descriptor)
 			// Use global variables + $dateSelector + $seller and $buyer
@@ -6813,7 +6847,7 @@ abstract class CommonObject
 				if ((string) $key == '') {
 					continue;
 				}
-				list($val, $parent) = explode('|', $val);
+				if (strpos($val, "|") !== false) list($val, $parent) = explode('|', $val);
 				$out .= '<option value="'.$key.'"';
 				$out .= (((string) $value == (string) $key) ? ' selected' : '');
 				$out .= (!empty($parent) ? ' parent="'.$parent.'"' : '');
@@ -7781,7 +7815,7 @@ abstract class CommonObject
 	 * @param 	string      $keyprefix      Prefix string to add before name and id of field (can be used to avoid duplicate names)
 	 * @param	string		$onetrtd		All fields in same tr td. Used by objectline_create.tpl.php for example.
 	 * @param	string		$display_type	"card" for form display, "line" for document line display (extrafields on propal line, order line, etc...)
-	 * @return 	string
+	 * @return 	string						String with html content to show
 	 */
 	public function showOptionals($extrafields, $mode = 'view', $params = null, $keysuffix = '', $keyprefix = '', $onetrtd = 0, $display_type = 'card')
 	{
@@ -7790,13 +7824,20 @@ abstract class CommonObject
 		if (!is_object($form)) {
 			$form = new Form($db);
 		}
+		if (!is_object($extrafields)) {
+			dol_syslog('Bad parameter extrafields for showOptionals', LOG_ERR);
+			return 'Bad parameter extrafields for showOptionals';
+		}
+		if (!is_array($extrafields->attributes[$this->table_element])) {
+			dol_syslog("extrafields->attributes was not loaded with extrafields->fetch_name_optionals_label(table_element);", LOG_WARNING);
+		}
 
 		$out = '';
 
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('showOptionals', $parameters, $this, $action); // Note that $action and $object may have been modified by hook
 		if (empty($reshook)) {
-			if (key_exists('label', $extrafields->attributes[$this->table_element]) && is_array($extrafields->attributes[$this->table_element]['label']) && count($extrafields->attributes[$this->table_element]['label']) > 0) {
+			if (is_array($extrafields->attributes[$this->table_element]) && key_exists('label', $extrafields->attributes[$this->table_element]) && is_array($extrafields->attributes[$this->table_element]['label']) && count($extrafields->attributes[$this->table_element]['label']) > 0) {
 				$out .= "\n";
 				$out .= '<!-- commonobject:showOptionals --> ';
 				$out .= "\n";
@@ -8778,7 +8819,7 @@ abstract class CommonObject
 					}
 				}
 			} else {
-				$this->{$field} = $obj->{$field};
+				$this->{$field} = !empty($obj->{$field}) ? $obj->{$field} : null;
 			}
 		}
 

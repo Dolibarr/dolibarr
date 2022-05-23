@@ -546,6 +546,9 @@ CREATE TABLE llx_element_tag
     import_key    varchar(14)
 )ENGINE=innodb;
 
+ALTER TABLE llx_element_tag ADD COLUMN fk_categorie integer;
+ALTER TABLE llx_element_tag ADD COLUMN fk_element integer;
+
 ALTER TABLE llx_element_tag ADD UNIQUE INDEX idx_element_tag_uk (fk_categorie, fk_element);
 
 ALTER TABLE llx_element_tag ADD CONSTRAINT fk_element_tag_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);

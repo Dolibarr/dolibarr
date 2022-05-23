@@ -75,7 +75,7 @@ class modPartnership extends DolibarrModules
 		// $this->editor_url = 'https://www.example.com';
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'
-		$this->version = 'experimental';
+		$this->version = 'dolibarr';
 		// Url to the file with your last numberversion of this module
 		//$this->url_last_version = 'http://www.example.com/versionmodule.txt';
 
@@ -177,8 +177,7 @@ class modPartnership extends DolibarrModules
 		// Array to add new pages in new tabs
 		$this->tabs = array();
 
-		$tabtoadd = (!empty(getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR')) && getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR') == 'member') ? 'member' : 'thirdparty';
-
+		$tabtoadd = getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR', 'thirdparty');
 		if ($tabtoadd == 'member') {
 			$fk_mainmenu = "members";
 		} else {
@@ -215,7 +214,7 @@ class modPartnership extends DolibarrModules
 		$this->dictionaries=array(
 			'langs'=>'partnership@partnership',
 			// List of tables we want to see into dictonnary editor
-			'tabname'=>array(MAIN_DB_PREFIX."c_partnership_type"),
+			'tabname'=>array("c_partnership_type"),
 			// Label of tables
 			'tablib'=>array("PartnershipType"),
 			// Request to select fields

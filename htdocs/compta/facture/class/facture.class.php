@@ -429,7 +429,7 @@ class Facture extends CommonInvoice
 	 *
 	 * 	@param	DoliDB		$db			Database handler
 	 */
-	public function __construct($db)
+	public function __construct(DoliDB $db)
 	{
 		$this->db = $db;
 	}
@@ -561,7 +561,6 @@ class Facture extends CommonInvoice
 
 			$this->array_options = $_facrec->array_options;
 
-			//if (! $this->remise) $this->remise = 0;
 			if (!$this->mode_reglement_id) {
 				$this->mode_reglement_id = 0;
 			}
@@ -1504,7 +1503,7 @@ class Facture extends CommonInvoice
 			return null;
 		}
 
-		$payment_conditions_deposit_percent = getDictionaryValue(MAIN_DB_PREFIX . 'c_payment_term', 'deposit_percent', $origin->cond_reglement_id);
+		$payment_conditions_deposit_percent = getDictionaryValue('c_payment_term', 'deposit_percent', $origin->cond_reglement_id);
 
 		if (empty($payment_conditions_deposit_percent)) {
 			$origin->error = 'ErrorPaymentConditionsNotEligibleToDepositCreation';
@@ -1655,13 +1654,13 @@ class Facture extends CommonInvoice
 				0, // date_start
 				0, // date_end
 				0,
-				$lines[$i]->info_bits, // info_bits
+				0, // info_bits
 				0,
 				'HT',
 				0,
 				0, // product_type
 				1,
-				$lines[$i]->special_code,
+				0, // special_code
 				$deposit->origin,
 				0,
 				0,
@@ -2200,9 +2199,11 @@ class Facture extends CommonInvoice
 
 				// multilangs
 				if (!empty($conf->global->MAIN_MULTILANGS) && !empty($objp->fk_product) && !empty($loadalsotranslation)) {
-					$line = new Product($this->db);
-					$line->fetch($objp->fk_product);
-					$line->getMultiLangs();
+					$tmpproduct = new Product($this->db);
+					$tmpproduct->fetch($objp->fk_product);
+					$tmpproduct->getMultiLangs();
+
+					$line->multilangs = $tmpproduct->multilangs;
 				}
 
 				$this->lines[$i] = $line;
@@ -3016,7 +3017,7 @@ class Facture extends CommonInvoice
 			return -1;
 		}
 		if (!empty($conf->global-> INVOICE_CHECK_POSTERIOR_DATE)) {
-			$last_of_type = $this->willBeLastOfSameType();
+			$last_of_type = $this->willBeLastOfSameType(true);
 			if (!$last_of_type[0]) {
 				$this->error = $langs->transnoentities("ErrorInvoiceIsNotLastOfSameType", $this->ref, dol_print_date($this->date, 'day'), dol_print_date($last_of_type[1], 'day'));
 				return -1;
@@ -3847,9 +3848,10 @@ class Facture extends CommonInvoice
 	 * 	@param		double		$pu_ht_devise		Unit price in currency
 	 * 	@param		int			$notrigger			disable line update trigger
 	 *  @param		string		$ref_ext		    External reference of the line
+	 *  @param		integer		$rang		    	rank of line
 	 *  @return    	int             				< 0 if KO, > 0 if OK
 	 */
-	public function updateline($rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $price_base_type = 'HT', $info_bits = 0, $type = self::TYPE_STANDARD, $fk_parent_line = 0, $skip_update_total = 0, $fk_fournprice = null, $pa_ht = 0, $label = '', $special_code = 0, $array_options = 0, $situation_percent = 100, $fk_unit = null, $pu_ht_devise = 0, $notrigger = 0, $ref_ext = '')
+	public function updateline($rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $price_base_type = 'HT', $info_bits = 0, $type = self::TYPE_STANDARD, $fk_parent_line = 0, $skip_update_total = 0, $fk_fournprice = null, $pa_ht = 0, $label = '', $special_code = 0, $array_options = 0, $situation_percent = 100, $fk_unit = null, $pu_ht_devise = 0, $notrigger = 0, $ref_ext = '', $rang = 0)
 	{
 		global $conf, $user;
 		// Deprecation warning
@@ -3977,6 +3979,7 @@ class Facture extends CommonInvoice
 			$line->oldline = $staticline;
 			$this->line = $line;
 			$this->line->context = $this->context;
+			$this->line->rang = $rang;
 
 			// Reorder if fk_parent_line change
 			if (!empty($fk_parent_line) && !empty($staticline->fk_parent_line) && $fk_parent_line != $staticline->fk_parent_line) {
@@ -5029,7 +5032,7 @@ class Facture extends CommonInvoice
 		$sql .= " WHERE f.entity IN (".getEntity('invoice', 0).")";
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			if ($resql->num_rows > 0) {
+			if ($this->db->num_rows($resql) > 0) {
 				$res = $this->db->fetch_array($resql);
 				$ref = $res['max(situation_cycle_ref)'];
 				$ref++;
@@ -5074,7 +5077,7 @@ class Facture extends CommonInvoice
 		$sql .= ' AND entity = '.($this->entity > 0 ? $this->entity : $conf->entity);
 		$resql = $this->db->query($sql);
 		$res = array();
-		if ($resql && $resql->num_rows > 0) {
+		if ($resql && $this->db->num_rows($resql) > 0) {
 			while ($row = $this->db->fetch_object($resql)) {
 				$id = $row->rowid;
 				$situation = new Facture($this->db);
@@ -5152,7 +5155,7 @@ class Facture extends CommonInvoice
 			$sql .= ' AND entity = '.($this->entity > 0 ? $this->entity : $conf->entity);
 			$resql = $this->db->query($sql);
 
-			if ($resql && $resql->num_rows > 0) {
+			if ($resql && $this->db->num_rows($resql) > 0) {
 				$res = $this->db->fetch_array($resql);
 				$last = $res['max(situation_counter)'];
 				return ($last == $this->situation_counter);
@@ -5218,13 +5221,13 @@ class Facture extends CommonInvoice
 
 		$hasDelay = $this->date_lim_reglement < ($now - $conf->facture->client->warning_delay);
 		if ($hasDelay && !empty($this->retained_warranty) && !empty($this->retained_warranty_date_limit)) {
-			$totalpaye = $this->getSommePaiement();
-			$totalpaye = floatval($totalpaye);
+			$totalpaid = $this->getSommePaiement();
+			$totalpaid = floatval($totalpaid);
 			$RetainedWarrantyAmount = $this->getRetainedWarrantyAmount();
-			if ($totalpaye >= 0 && $RetainedWarrantyAmount >= 0) {
-				if (($totalpaye < $this->total_ttc - $RetainedWarrantyAmount) && $this->date_lim_reglement < ($now - $conf->facture->client->warning_delay)) {
+			if ($totalpaid >= 0 && $RetainedWarrantyAmount >= 0) {
+				if (($totalpaid < $this->total_ttc - $RetainedWarrantyAmount) && $this->date_lim_reglement < ($now - $conf->facture->client->warning_delay)) {
 					$hasDelay = 1;
-				} elseif ($totalpaye < $this->total_ttc && $this->retained_warranty_date_limit < ($now - $conf->facture->client->warning_delay)) {
+				} elseif ($totalpaid < $this->total_ttc && $this->retained_warranty_date_limit < ($now - $conf->facture->client->warning_delay)) {
 					$hasDelay = 1;
 				} else {
 					$hasDelay = 0;
@@ -5508,6 +5511,7 @@ class Facture extends CommonInvoice
 						$sendContent = make_substitutions($content, $substitutionarray, $outputlangs, 1);
 
 						// Recipient
+						$to = '';
 						$res = $tmpinvoice->fetch_thirdparty();
 						$recipient = $tmpinvoice->thirdparty;
 						if ($res > 0) {
@@ -5529,7 +5533,7 @@ class Facture extends CommonInvoice
 							$error++;
 						}
 
-						if (!$error) {
+						if (!$error && $to) {
 							// Errors Recipient
 							$errors_to = $conf->global->MAIN_MAIL_ERRORS_TO;
 
@@ -5572,9 +5576,10 @@ class Facture extends CommonInvoice
 
 	/**
 	 * See if current invoice date is posterior to the last invoice date among validated invoices of same type.
+	 * @param 	boolean 	$allow_validated_drafts			return true if the invoice has been validated before returning to DRAFT state.
 	 * @return boolean
 	 */
-	public function willBeLastOfSameType()
+	public function willBeLastOfSameType($allow_validated_drafts = false)
 	{
 		// get date of last validated invoices of same type
 		$sql  = "SELECT datef";
@@ -5591,7 +5596,12 @@ class Facture extends CommonInvoice
 				$last_date = $this->db->jdate($obj->datef);
 				$invoice_date = $this->date;
 
-				return [$invoice_date >= $last_date, $last_date];
+				$is_last_of_same_type = $invoice_date >= $last_date;
+				if ($allow_validated_drafts) {
+					$is_last_of_same_type = $is_last_of_same_type || (!strpos($this->ref, 'PROV') && $this->status == self::STATUS_DRAFT);
+				}
+
+				return [$is_last_of_same_type, $last_date];
 			} else {
 				// element is first of type to be validated
 				return [true];
@@ -6285,7 +6295,7 @@ class FactureLigne extends CommonInvoiceLine
 
 			$sql = "SELECT situation_percent FROM ".MAIN_DB_PREFIX."facturedet WHERE rowid = ".((int) $this->fk_prev_id);
 			$resql = $this->db->query($sql);
-			if ($resql && $resql->num_rows > 0) {
+			if ($resql && $this->db->num_rows($resql) > 0) {
 				$res = $this->db->fetch_array($resql);
 
 				$returnPercent = floatval($res['situation_percent']);

@@ -51,6 +51,12 @@ class Cstate // extends CommonObject
 
 	public $code_departement;
 	public $code;
+
+	/**
+	 * @var string name
+	 */
+	public $name = '';
+
 	/**
 	 * @var string
 	 * @deprecated
@@ -58,10 +64,7 @@ class Cstate // extends CommonObject
 	 */
 	public $nom = '';
 
-	/**
-	 * @var string name
-	 */
-	public $name = '';
+	public $label;
 
 	public $active;
 
@@ -88,7 +91,6 @@ class Cstate // extends CommonObject
 	 */
 	public function create($user, $notrigger = 0)
 	{
-		global $conf, $langs;
 		$error = 0;
 
 		// Clean parameters
@@ -155,7 +157,6 @@ class Cstate // extends CommonObject
 	 */
 	public function fetch($id, $code = '')
 	{
-		global $langs;
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
 		$sql .= " t.code_departement,";

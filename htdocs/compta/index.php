@@ -102,11 +102,9 @@ print load_fiche_titre($langs->trans("AccountancyTreasuryArea"), '', 'bill');
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
-//print getCustomerInvoicePieChart($socid);
 print getNumberInvoicesPieChart('customers');
 print '<br>';
 print getNumberInvoicesPieChart('fourn');
-//print getPurchaseInvoicePieChart($socid);
 print '<br>';
 print getCustomerInvoiceDraftTable($max, $socid);
 print '<br>';

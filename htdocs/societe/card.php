@@ -84,6 +84,9 @@ $error = 0; $errors = array();
 $action		= (GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view');
 $cancel		= GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
+$backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
+$backtopagejsfields = GETPOST('backtopagejsfields', 'alpha');
+$dol_openinpopup = GETPOST('dol_openinpopup', 'aZ09');
 $confirm	= GETPOST('confirm', 'alpha');
 
 $socid = GETPOST('socid', 'int') ?GETPOST('socid', 'int') : GETPOST('id', 'int');
@@ -134,16 +137,6 @@ $upload_dir = $conf->societe->multidir_output[isset($object->entity) ? $object->
 
 // Security check
 $result = restrictedArea($user, 'societe', $socid, '&societe', '', 'fk_soc', 'rowid', 0);
-
-/*
-if ($object->id > 0) {
-	if ($object->client == 0 && $object->fournisseur > 0) {
-		if (!empty($user->rights->fournisseur->lire)) {
-			accessforbidden();
-		}
-	}
-}
-*/
 
 
 
@@ -413,11 +406,11 @@ if (empty($reshook)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ThirdPartyName")), null, 'errors');
 			$error++;
 		}
-		if (GETPOST('client') < 0) {
+		if (GETPOST('client', 'int') && GETPOST('client', 'int') < 0) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ProspectCustomer")), null, 'errors');
 			$error++;
 		}
-		if (GETPOST('fournisseur') < 0) {
+		if (GETPOSTISSET('fournisseur') && GETPOST('fournisseur', 'int') < 0) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Supplier")), null, 'errors');
 			$error++;
 		}
@@ -696,6 +689,27 @@ if (empty($reshook)) {
 				if ($result >= 0 && !$error) {
 					$db->commit();
 
+					if ($backtopagejsfields) {
+						llxHeader('', '', '');
+
+						$tmpbacktopagejsfields = explode(':', $backtopagejsfields);
+						$dol_openinpopup = $tmpbacktopagejsfields[0];
+
+						$retstring = '<script>';
+						$retstring .= 'jQuery(document).ready(function() {
+												console.log(\'We execute action to create. We save id and go back - '.$dol_openinpopup.'\');
+												console.log(\'id = '.$object->id.'\');
+												$(\'#varforreturndialogid'.$dol_openinpopup.'\', window.parent.document).text(\''.$object->id.'\');
+												$(\'#varforreturndialoglabel'.$dol_openinpopup.'\', window.parent.document).text(\''.$object->name.'\');
+												window.parent.jQuery(\'#idfordialog'.$dol_openinpopup.'\').dialog(\'close\');
+				 							});';
+						$retstring .= '</script>';
+						print $retstring;
+
+						llxFooter();
+						exit;
+					}
+
 					if (!empty($backtopage)) {
 						$backtopage = preg_replace('/--IDFORBACKTOPAGE--/', $object->id, $backtopage); // New method to autoselect project after a New on another form object creation
 						if (preg_match('/\?/', $backtopage)) {
@@ -918,7 +932,7 @@ if (empty($reshook)) {
 
 	// Actions to build doc
 	$id = $socid;
-	$upload_dir = $conf->societe->multidir_output[$object->entity];
+	$upload_dir = !empty($conf->societe->multidir_output[$object->entity])?$conf->societe->multidir_output[$object->entity]:$conf->societe->dir_output;
 	$permissiontoadd = $user->rights->societe->creer;
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 }
@@ -1271,8 +1285,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '<form enctype="multipart/form-data" action="'.$_SERVER["PHP_SELF"].'" method="post" name="formsoc" autocomplete="off">'; // Chrome ignor autocomplete
 
 		print '<input type="hidden" name="action" value="add">';
-		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
+		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+		print '<input type="hidden" name="backtopagejsfields" value="'.$backtopagejsfields.'">';
 		print '<input type="hidden" name="private" value='.$object->particulier.'>';
 		print '<input type="hidden" name="type" value='.GETPOST("type", 'alpha').'>';
 		print '<input type="hidden" name="LastName" value="'.$langs->trans('ThirdPartyName').' / '.$langs->trans('LastName').'">';
@@ -1293,8 +1308,102 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<span id="TypeName" class="fieldrequired">'.$form->editfieldkey('ThirdPartyName', 'name', '', $object, 0).'</span>';
 		}
 		print '</td><td'.(empty($conf->global->SOCIETE_USEPREFIX) ? ' colspan="3"' : '').'>';
+
 		print '<input type="text" class="minwidth300" maxlength="128" name="name" id="name" value="'.dol_escape_htmltag($object->name).'" autofocus="autofocus">';
 		print $form->widgetForTranslation("name", $object, $permissiontoadd, 'string', 'alpahnohtml', 'minwidth300');
+		/* Disabled. Must be implenteted by keeping the input text but calling ajax on a keydown of the input and output
+		   data of duplicate into a div under the input. We need to keep the widgetForTranslation also for some countries.
+		 */
+		/*
+		print '<select class="name" name="name" id="name" style="min-width:500px"></select>';
+		print "\n".'<script type="text/javascript">';
+		print '$(document).ready(function () {
+			$("#name").select2({
+				ajax: {
+				  url: "' . DOL_URL_ROOT . '/core/ajax/ajaxcompanies.php",
+				  dataType: "json",
+				  delay: 250,
+				  data: function (params) {
+						return {
+							newcompany: params.term // search term
+						};
+				  },
+				  processResults: function (data, params) {
+					  return {
+						results: data
+					  };
+				  },
+				  cache: true
+				},
+
+				placeholder: "' . $langs->trans('Name of the new third party. In the meantime we check if it already exists...') . '",
+				allowClear: true,
+				minimumInputLength: 3,
+				language: select2arrayoflanguage,
+				containerCssClass: ":all:",
+				selectionCssClass: ":all:",
+				tags: true,
+				templateResult: formatCustomer,
+				templateSelection: formatCustomerSelection
+			});
+
+			function formatCustomer (Customer) {
+				if(Customer.label === undefined) {
+					return Customer.text;
+				}
+
+				if(Customer.logo !== null ) {
+					logo = \'<img src="\';
+					logo += \'' . DOL_URL_ROOT . '/viewimage.php?modulepart=societe&amp;entity=1&amp;file=\' + Customer.key + "%2Flogos%2Fthumbs%2F" + Customer.logo.replace(".", "_mini.") + "&amp;cache=0";
+					logo += \'" /></div>\';
+				} else {
+					logo = \'<div class="floatleft inline-block valigntop photowithmargin" style="padding:0 10px"><div class="photosociete photoref" alt="No photo"><span class="fas fa-building" style="color: #6c6aa8;"></span></div></div>\';
+				}
+
+				var $container = $("<div class=\'select2-result-repository clearfix\'>" +
+					 "<div class=\'select2-result-repository__avatar floatleft inline-block valigntop\'>" + logo +
+					  "<div class=\'select2-result-repository__meta floatleft inline-block valigntop\'>" +
+						"<div class=\'select2-result-repository__title\'></div>" +
+						"<div class=\'select2-result-repository__name_alias\'></div>" +
+						"<div class=\'select2-result-repository__code_client\'></div>" +
+						"<div class=\'select2-result-repository__code_fournisseur\'></div>" +
+						"<div class=\'select2-result-repository__companies_info\'>" +
+						  "<div class=\'select2-result-repository__email\'><i class=\'fa fa-at\'></i> </div>" +
+						  "<div class=\'select2-result-repository__address\'><i class=\'fa fa-flag\'></i> </div>" +
+						  "<div class=\'select2-result-repository__zip\'><i class=\'fa fa-circle-o\'></i> </div>" +
+						  "<div class=\'select2-result-repository__country\'><i class=\'fa fa-globe-americas\'></i> </div>" +
+						  "<div class=\'select2-result-repository__departement\'><i class=\'fa fa-circle-o\'></i> </div>" +
+						  "<div class=\'select2-result-repository__town\'><i class=\'fa fa-circle-o\'></i> </div>" +
+						  "<div class=\'select2-result-repository__siren\'><i class=\'fa fa-circle-o\'></i> </div>" +
+						  "<div class=\'select2-result-repository__datec\'><i class=\'fa fa-calendar\'></i> </div>" +
+						"</div>" +
+					  "</div>" +
+					"</div>"
+				);
+
+				$container.find(".select2-result-repository__title").text(Customer.label);
+				$container.find(".select2-result-repository__name_alias").text(Customer.name_alias ? Customer.name_alias : "");
+				$container.find(".select2-result-repository__code_client").text(Customer.code_client ? Customer.code_client  : "");
+				$container.find(".select2-result-repository__code_fournisseur").text((Customer.code_fournisseur!==null) ? Customer.code_fournisseur : "");
+				$container.find(".select2-result-repository__email").append("' . $langs->trans('EMail') . ': " + (Customer.email !== null ? Customer.email : ""));
+				$container.find(".select2-result-repository__address").append("' . $langs->trans('Address') . ': " + (Customer.address !== null ? Customer.address : ""));
+				$container.find(".select2-result-repository__country").append("' . $langs->trans('Country') . ': " + (Customer.country !== null ? Customer.country : ""));
+				$container.find(".select2-result-repository__departement").append("' . $langs->trans('Region-State') . ': " + (Customer.departement !== null ? Customer.departement : ""));
+				$container.find(".select2-result-repository__zip").append("' . $langs->trans('Zip') . ': " + (Customer.zip !== null ? Customer.zip : ""));
+				$container.find(".select2-result-repository__town").append("' . $langs->trans('Town') . ': " + (Customer.town !== null ? Customer.town : ""));
+				$container.find(".select2-result-repository__siren").append("' . $langs->trans('Siren') . ': " + (Customer.siren !== null ? Customer.siren : ""));
+				$container.find(".select2-result-repository__datec").append("' . $langs->trans('Created') . ': " + (Customer.datec !== null ? Customer.datec : ""));
+
+				return $container;
+			}
+
+			function formatCustomerSelection (selection) {
+				return selection.label || selection.text;
+			}
+		});
+		</script>
+		';
+		*/
 		print '</td>';
 		if (!empty($conf->global->SOCIETE_USEPREFIX)) {  // Old not used prefix field
 			print '<td>'.$langs->trans('Prefix').'</td><td><input type="text" size="5" maxlength="5" name="prefix_comm" value="'.dol_escape_htmltag($object->prefix_comm).'"></td>';
@@ -1730,7 +1839,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		print dol_get_fiche_end();
 
-		print $form->buttonsSaveCancel("AddThirdParty");
+		print $form->buttonsSaveCancel("AddThirdParty", 'Cancel', null, 0, '', $dol_openinpopup);
 
 		print '</form>'."\n";
 	} elseif ($action == 'edit') {
@@ -2989,7 +3098,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			$MAXEVENT = 10;
 
-			$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-list-alt imgforviewmode', DOL_URL_ROOT.'/societe/agenda.php?socid='.$object->id);
+			$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/societe/agenda.php?socid='.$object->id);
 
 			// List of actions on element
 			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
