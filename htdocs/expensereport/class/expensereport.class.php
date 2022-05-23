@@ -2598,7 +2598,7 @@ class ExpenseReport extends CommonObject
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_exp_tax_range r ON r.rowid = t.fk_range";
 		$sql .= " WHERE t.fk_cat = ".(int) $fk_cat;
 		$sql .= " ORDER BY r.range_ik ASC";
-		var_dump($sql);
+
 		dol_syslog("expenseReport::computeTotalkm sql=".$sql, LOG_DEBUG);
 
 		$result = $this->db->query($sql);
