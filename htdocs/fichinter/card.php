@@ -80,7 +80,7 @@ $hookmanager->initHooks(array('interventioncard', 'globalcard'));
 
 $object = new Fichinter($db);
 $extrafields = new ExtraFields($db);
-$objectsrc = null; 
+$objectsrc = null;
 
 $extrafields->fetch_name_optionals_label($object->table_element);
 
