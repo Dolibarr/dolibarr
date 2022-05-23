@@ -943,7 +943,7 @@ class pdf_azur extends ModelePDFPropales
 			$pdf->MultiCell(80, 4, $dlp, 0, 'L');
 
 			$posy = $pdf->GetY() + 1;
-		} 
+		}
 		if ($object->availability_code || $object->availability) {    // Show availability conditions
 			$pdf->SetFont('', 'B', $default_font_size - 2);
 			$pdf->SetXY($this->marge_gauche, $posy);
