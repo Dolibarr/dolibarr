@@ -6,6 +6,8 @@
  * Copyright (C) 2007      Patrick Raguin  		<patrick.raguin@gmail.com>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2022      Charlene Benke       <charlene@patas-monkey.com>
+
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -147,17 +149,18 @@ if ($socid > 0) {
 	$objcon = new stdClass();
 
 	$out = '';
-	$permok = $user->rights->agenda->myactions->create;
-	if ((!empty($objthirdparty->id) || !empty($objcon->id)) && $permok) {
-		if (is_object($objthirdparty) && get_class($objthirdparty) == 'Societe') {
-			$out .= '&amp;originid='.$objthirdparty->id.($objthirdparty->id > 0 ? '&amp;socid='.$objthirdparty->id : '').'&amp;backtopage='.urlencode($_SERVER['PHP_SELF'].($objthirdparty->id > 0 ? '?socid='.$objthirdparty->id : ''));
-		}
-		$out .= (!empty($objcon->id) ? '&amp;contactid='.$objcon->id : '').'&amp;percentage=-1';
-		$out .= '&amp;datep='.dol_print_date(dol_now(), 'dayhourlog');
-	}
-
-	$newcardbutton = '';
+		$newcardbutton = '';
 	if (!empty($conf->agenda->enabled)) {
+
+		$permok = $user->rights->agenda->myactions->create;
+		if ((!empty($objthirdparty->id) || !empty($objcon->id && $permok) {
+			if (is_object($objthirdparty) && get_class($objthirdparty) == 'Societe') {
+				$out .= '&amp;originid='.$objthirdparty->id.($objthirdparty->id > 0 ? '&amp;socid='.$objthirdparty->id : '').'&amp;backtopage='.urlencode($_SERVER['PHP_SELF'].($objthirdparty->id > 0 ? '?socid='.$objthirdparty->id : ''));
+			}
+			$out .= (!empty($objcon->id) ? '&amp;contactid='.$objcon->id : '').'&amp;percentage=-1';
+			$out .= '&amp;datep='.dol_print_date(dol_now(), 'dayhourlog');
+		}
+
 		if (!empty($user->rights->agenda->myactions->create) || !empty($user->rights->agenda->allactions->create)) {
 			$newcardbutton .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out);
 		}
