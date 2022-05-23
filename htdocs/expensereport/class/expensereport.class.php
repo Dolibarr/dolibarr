@@ -2616,7 +2616,6 @@ class ExpenseReport extends CommonObject
 
 				for ($i = 0; $i < $num; $i++) {
 					if ($i < ($num - 1)) {
-
 						if ($qty > $ranges[$i]->range && $qty < $ranges[$i+1]->range) {
 							$coef = $ranges[$i]->coef;
 							$offset = $ranges[$i]->offset;
