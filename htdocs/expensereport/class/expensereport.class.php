@@ -2576,12 +2576,12 @@ class ExpenseReport extends CommonObject
 		$coef = 0;
 		$offset = 0;
 
-		if ($fk_cat < 0){
+		if ($fk_cat < 0) {
 			$this->error = $langs->trans('ErrorBadParameterCat');
 			return -1;
 		}
 
-		if ($qty <= 0){
+		if ($qty <= 0) {
 			$this->error = $langs->trans('ErrorBadParameterQty');
 			return -1;
 		}
@@ -2601,62 +2601,45 @@ class ExpenseReport extends CommonObject
 
 		$result = $this->db->query($sql);
 
-		if ($result)
-		{
+		if ($result) {
 			$num = $this->db->num_rows($result);
 
-			if ($num)
-			{
-				for ($i = 0; $i < $num; $i++)
-				{
+			if ($num) {
+				for ($i = 0; $i < $num; $i++) {
 					$obj = $this->db->fetch_object($result);
 
 					$ranges[$i] = $obj;
 				}
 
 
-					for ($i = 0; $i < $num; $i++)
-					{
-						if ($i < ($num - 1))
-						{
-							if ($qty > $ranges[$i]->range && $qty < $ranges[$i+1]->range)
-							{
-								$coef = $ranges[$i]->coef;
-								$offset = $ranges[$i]->offset;
-							}
+				for ($i = 0; $i < $num; $i++) {
+					if ($i < ($num - 1)) {
+						if ($qty > $ranges[$i]->range && $qty < $ranges[$i+1]->range) {
+							$coef = $ranges[$i]->coef;
+							$offset = $ranges[$i]->offset;
 						}
-						else
-						{
-							if ($qty > $ranges[$i]->range)
-							{
-								$coef = $ranges[$i]->coef;
-								$offset = $ranges[$i]->offset;
-							}
+					} else {
+						if ($qty > $ranges[$i]->range) {
+							$coef = $ranges[$i]->coef;
+							$offset = $ranges[$i]->offset;
 						}
 					}
+				}
 
 				$total_ht = $coef;
 				//$total_ttc = price2num($total_ht + ( $total_ht * $tva / 100),'MT');
 				return $total_ht;
-			}
-			else
-			{
+			} else {
 				$this->error = $langs->trans('TaxUndefinedForThisCategory');
 
 				return -1;
 			}
-
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->error()." sql=".$sql;
 
 			return -1;
 		}
 	}
-
-
-
 }
 
 
