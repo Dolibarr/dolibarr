@@ -129,8 +129,12 @@ if ($action == "importSignature") {
 				$pdf->AddPage();
 				$pagecount = $pdf->setSourceFile($upload_dir.$ref.".pdf");		// original PDF
 
-				$tppl = $pdf->importPage(1);
-				$pdf->useTemplate($tppl);
+				for ($i=1;$i<($pagecount+1);$i++) {
+					if ($i>1) $pdf->AddPage();
+					$tppl=$pdf->importPage($i);
+					$pdf->useTemplate($tppl);
+				}
+
 				$pdf->Image($upload_dir.$filename, 129, 239.6, 60, 15);	// FIXME Position will be wrong with non A4 format. Use a value from width and height of page minus relative offset.
 				$pdf->Close();
 				$pdf->Output($newpdffilename, "F");

@@ -2069,69 +2069,6 @@ class Expedition extends CommonObject
 		}
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *  Update/create delivery method.
-	 *
-	 *  @param	string      $id     id method to activate
-	 *
-	 *  @return void
-	 */
-	public function update_delivery_method($id = '')
-	{
-		// phpcs:enable
-		if ($id == '') {
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."c_shipment_mode (code, libelle, description, tracking)";
-			$sql .= " VALUES ('".$this->db->escape($this->update['code'])."','".$this->db->escape($this->update['libelle'])."','".$this->db->escape($this->update['description'])."','".$this->db->escape($this->update['tracking'])."')";
-			$resql = $this->db->query($sql);
-		} else {
-			$sql = "UPDATE ".MAIN_DB_PREFIX."c_shipment_mode SET";
-			$sql .= " code='".$this->db->escape($this->update['code'])."'";
-			$sql .= ",libelle='".$this->db->escape($this->update['libelle'])."'";
-			$sql .= ",description='".$this->db->escape($this->update['description'])."'";
-			$sql .= ",tracking='".$this->db->escape($this->update['tracking'])."'";
-			$sql .= " WHERE rowid=".((int) $id);
-			$resql = $this->db->query($sql);
-		}
-		if ($resql < 0) {
-			dol_print_error($this->db, '');
-		}
-	}
-
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *  Activate delivery method.
-	 *
-	 *  @param      int      $id     id method to activate
-	 *  @return void
-	 */
-	public function activ_delivery_method($id)
-	{
-		// phpcs:enable
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.'c_shipment_mode SET active=1';
-		$sql .= " WHERE rowid = ".((int) $id);
-
-		$resql = $this->db->query($sql);
-	}
-
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *  DesActivate delivery method.
-	 *
-	 *  @param      int      $id     id method to desactivate
-	 *
-	 *  @return void
-	 */
-	public function disable_delivery_method($id)
-	{
-		// phpcs:enable
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.'c_shipment_mode SET active=0';
-		$sql .= " WHERE rowid= ".((int) $id);
-
-		$resql = $this->db->query($sql);
-	}
-
-
 	/**
 	 * Forge an set tracking url
 	 *

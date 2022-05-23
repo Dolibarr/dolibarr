@@ -204,7 +204,8 @@ if (empty($conf->global->ACCOUNTING_ENABLE_LETTERING)) {
 	unset($arrayfields['t.lettering_code']);
 }
 
-$listofformat = AccountancyExport::getType();
+$accountancyexport = new AccountancyExport($db);
+$listofformat = $accountancyexport->getType();
 $formatexportset = $conf->global->ACCOUNTING_EXPORT_MODELCSV;
 if (empty($listofformat[$formatexportset])) {
 	$formatexportset = 1;

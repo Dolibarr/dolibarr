@@ -49,12 +49,23 @@ class Tva extends CommonObject
 	 */
 	public $picto = 'payment';
 
+	/**
+	 * @deprecated
+	 * @see $amount
+	 */
+	public $total;
+
 	public $tms;
 	public $datep;
 	public $datev;
 	public $amount;
 	public $type_payment;
 	public $num_payment;
+
+	/**
+	 * @var integer|string totalpaid
+	 */
+	public $totalpaid;
 
 	/**
 	 * @var string label
@@ -80,6 +91,11 @@ class Tva extends CommonObject
 	 * @var int ID
 	 */
 	public $fk_user_modif;
+
+	/**
+	 * @var integer|string paiementtype
+	 */
+	public $paiementtype;
 
 
 	const STATUS_UNPAID = 0;
