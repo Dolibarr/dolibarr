@@ -87,7 +87,7 @@ if ($id || $ref) {
 
 	if (!empty($conf->productbatch->enabled)) {
 		$upload_dir = $conf->productbatch->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 1, $object, $modulepart);
-		$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
+		$filearray = dol_dir_list($upload_dir, "files");
 		if (empty($filearray)) {
 			// If no files linked yet, use new system on lot id. (Batch is not unique and can be same on different product)
 			$object->fetch($id, $productid, $batch);
