@@ -135,8 +135,8 @@ if (empty($reshook)) {
 	}
 
 	if ($cancel) {
-		/*var_dump($cancel);
-		 var_dump($backtopage);exit;*/
+		//var_dump($cancel);
+		//var_dump($backtopage);exit;
 		if (!empty($backtopageforcancel)) {
 			header("Location: ".$backtopageforcancel);
 			exit;
@@ -323,9 +323,9 @@ if ($action == 'add' && empty($cancel)) {
 
 if ($action == 'confirm_delete') {
 	$result = $object->fetch($id);
-	$totalpaye = $object->getSommePaiement();
+	$totalpaid = $object->getSommePaiement();
 
-	if (empty($totalpaye)) {
+	if (empty($totalpaid)) {
 		$db->begin();
 
 		$ret = $object->delete($user);
@@ -554,7 +554,7 @@ if ($action == 'create') {
 	print '<tr><td>';
 	print $form->editfieldkey('Amount', 'amount', '', $object, 0, 'string', '', 1).'</td><td>';
 	print '<input name="amount" id="amount" class="minwidth75 maxwidth100" value="'.GETPOST("amount").'">&nbsp;';
-	print '<button class="dpInvisibleButtons" id="updateAmountWithLastSalary" name="_useless" type="button">'.$langs->trans('UpdateAmountWithLastSalary').'</a>';
+	print '<button class="dpInvisibleButtons datenow" id="updateAmountWithLastSalary" name="_useless" type="button">'.$langs->trans('UpdateAmountWithLastSalary').'</a>';
 	print '</td>';
 	print '</tr>';
 
@@ -827,8 +827,8 @@ if ($id) {
 
 	$morehtmlref .= '</div>';
 
-	$totalpaye = $object->getSommePaiement();
-	$object->totalpaye = $totalpaye;
+	$totalpaid = $object->getSommePaiement();
+	$object->totalpaid = $totalpaid;
 
 	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', '');
 
@@ -945,7 +945,7 @@ if ($id) {
 	//print $sql;
 	$resql = $db->query($sql);
 	if ($resql) {
-		$totalpaye = 0;
+		$totalpaid = 0;
 
 		$num = $db->num_rows($resql);
 		$i = 0; $total = 0;
@@ -994,7 +994,7 @@ if ($id) {
 				}
 				print '<td class="right">'.price($objp->amount)."</td>\n";
 				print "</tr>";
-				$totalpaye += $objp->amount;
+				$totalpaid += $objp->amount;
 				$i++;
 			}
 		} else {
@@ -1003,10 +1003,10 @@ if ($id) {
 			print '</tr>';
 		}
 
-		print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("AlreadyPaid")." :</td><td class=\"right\">".price($totalpaye)."</td></tr>\n";
+		print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("AlreadyPaid")." :</td><td class=\"right\">".price($totalpaid)."</td></tr>\n";
 		print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("AmountExpected")." :</td><td class=\"right\">".price($object->amount)."</td></tr>\n";
 
-		$resteapayer = $object->amount - $totalpaye;
+		$resteapayer = $object->amount - $totalpaid;
 		$cssforamountpaymentcomplete = 'amountpaymentcomplete';
 
 		print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("RemainderToPay")." :</td>";
@@ -1067,7 +1067,7 @@ if ($id) {
 			print dolGetButtonAction('', $langs->trans('ToClone'), 'default', $_SERVER["PHP_SELF"].'?action=clone&token='.newToken().'&id='.$object->id, '');
 		}
 
-		if (!empty($user->rights->salaries->delete) && empty($totalpaye)) {
+		if (!empty($user->rights->salaries->delete) && empty($totalpaid)) {
 			print dolGetButtonAction('', $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$object->id, '');
 		} else {
 			print dolGetButtonAction($langs->trans('DisabledBecausePayments'), $langs->trans('Delete'),  'default', $_SERVER['PHP_SELF'].'#', '', false);
@@ -1110,7 +1110,7 @@ if ($id) {
 
 		$MAXEVENT = 10;
 
-		$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-list-alt imgforviewmode', dol_buildpath('/mymodule/myobject_agenda.php', 1).'?id='.$object->id);
+		$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-bars imgforviewmode', dol_buildpath('/mymodule/myobject_agenda.php', 1).'?id='.$object->id);
 
 		// List of actions on element
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';

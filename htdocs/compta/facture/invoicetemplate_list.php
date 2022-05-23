@@ -857,7 +857,7 @@ if ($resql) {
 				}
 			}
 			if (!empty($arrayfields['f.datec']['checked'])) {
-				print '<td class="center">';
+				print '<td class="center nowraponall">';
 				print dol_print_date($db->jdate($objp->datec), 'dayhour');
 				print '</td>';
 				if (!$i) {
@@ -865,7 +865,7 @@ if ($resql) {
 				}
 			}
 			if (!empty($arrayfields['f.tms']['checked'])) {
-				print '<td class="center">';
+				print '<td class="center nowraponall">';
 				print dol_print_date($db->jdate($objp->tms), 'dayhour');
 				print '</td>';
 				if (!$i) {

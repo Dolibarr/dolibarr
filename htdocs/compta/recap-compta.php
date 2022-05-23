@@ -158,7 +158,7 @@ if ($id > 0) {
 					print $fac->error."<br>";
 					continue;
 				}
-				$totalpaye = $fac->getSommePaiement();
+				$totalpaid = $fac->getSommePaiement();
 
 				$userstatic->id = $objf->userid;
 				$userstatic->login = $objf->login;
@@ -168,7 +168,7 @@ if ($id > 0) {
 					'date' => $fac->date,
 					'datefieldforsort' => $fac->date.'-'.$fac->ref,
 					'link' => $fac->getNomUrl(1),
-					'status' => $fac->getLibStatut(2, $totalpaye),
+					'status' => $fac->getLibStatut(2, $totalpaid),
 					'amount' => $fac->total_ttc,
 					'author' => $userstatic->getLoginUrl(1)
 				);

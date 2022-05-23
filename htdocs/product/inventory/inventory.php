@@ -28,6 +28,7 @@ include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 include_once DOL_DOCUMENT_ROOT.'/product/inventory/class/inventory.class.php';
 include_once DOL_DOCUMENT_ROOT.'/product/inventory/lib/inventory.lib.php';
 include_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
+include_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("stocks", "other", "productbatch"));
@@ -45,7 +46,8 @@ $fk_warehouse = GETPOST('fk_warehouse', 'int');
 $fk_product = GETPOST('fk_product', 'int');
 $lineid = GETPOST('lineid', 'int');
 $batch = GETPOST('batch', 'alphanohtml');
-
+$totalExpectedValuation = 0;
+$totalRealValuation = 0;
 if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
 	$result = restrictedArea($user, 'stock', $id);
 } else {
@@ -126,7 +128,7 @@ if (empty($reshook)) {
 		$db->begin();
 
 		$sql = 'SELECT id.rowid, id.datec as date_creation, id.tms as date_modification, id.fk_inventory, id.fk_warehouse,';
-		$sql .= ' id.fk_product, id.batch, id.qty_stock, id.qty_view, id.qty_regulated';
+		$sql .= ' id.fk_product, id.batch, id.qty_stock, id.qty_view, id.qty_regulated, id.pmp_real';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'inventorydet as id';
 		$sql .= ' WHERE id.fk_inventory = '.((int) $object->id);
 
@@ -175,8 +177,10 @@ if (empty($reshook)) {
 						$datemovement = '';
 						//$inventorycode = 'INV'.$object->id;
 						$inventorycode = 'INV-'.$object->ref;
+						$price = 0;
+						if (!empty($line->pmp_real) && !empty($conf->global->INVENTORY_MANAGE_REAL_PMP)) $price = $line->pmp_real;
 
-						$idstockmove = $stockmovment->_create($user, $line->fk_product, $line->fk_warehouse, $stock_movement_qty, $movement_type, 0, $langs->trans('LabelOfInventoryMovemement', $object->ref), $inventorycode, $datemovement, '', '', $line->batch);
+						$idstockmove = $stockmovment->_create($user, $line->fk_product, $line->fk_warehouse, $stock_movement_qty, $movement_type, $price, $langs->trans('LabelOfInventoryMovemement', $object->ref), $inventorycode, $datemovement, '', '', $line->batch);
 						if ($idstockmove < 0) {
 							$error++;
 							setEventMessages($stockmovment->error, $stockmovment->errors, 'errors');
@@ -195,6 +199,25 @@ if (empty($reshook)) {
 							$error++;
 							setEventMessages($db->lasterror(), null, 'errors');
 							break;
+						}
+					}
+
+					if (!empty($line->pmp_real) && !empty($conf->global->INVENTORY_MANAGE_REAL_PMP)) {
+						$sqlpmp = 'UPDATE '.MAIN_DB_PREFIX.'product SET pmp = '.((float) $line->pmp_real).' WHERE rowid = '.((int) $line->fk_product);
+						$resqlpmp = $db->query($sqlpmp);
+						if (! $resqlpmp) {
+							$error++;
+							setEventMessages($db->lasterror(), null, 'errors');
+							break;
+						}
+						if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
+							$sqlpmp = 'UPDATE '.MAIN_DB_PREFIX.'product_perentity SET pmp = '.((float) $line->pmp_real).' WHERE fk_product = '.((int) $line->fk_product).' AND entity='.$conf->entity;
+							$resqlpmp = $db->query($sqlpmp);
+							if (! $resqlpmp) {
+								$error++;
+								setEventMessages($db->lasterror(), null, 'errors');
+								break;
+							}
 						}
 					}
 				}
@@ -249,6 +272,8 @@ if (empty($reshook)) {
 					if ($result > 0) {
 						$inventoryline->qty_stock = price2num(GETPOST('stock_qty_'.$lineid, 'alpha'), 'MS');	// The new value that was set in as hidden field
 						$inventoryline->qty_view = $qtytoupdate;	// The new value we want
+						$inventoryline->pmp_real = price2num(GETPOST('realpmp_'.$lineid, 'alpha'), 'MS');
+						$inventoryline->pmp_expected = price2num(GETPOST('expectedpmp_'.$lineid, 'alpha'), 'MS');
 						$resultupdate = $inventoryline->update($user);
 					}
 				} else {
@@ -256,6 +281,8 @@ if (empty($reshook)) {
 					$result = $inventoryline->fetch($lineid);
 					if ($result > 0) {
 						$inventoryline->qty_view = null;			// The new value we want
+						$inventoryline->pmp_real = price2num(GETPOST('realpmp_'.$lineid, 'alpha'), 'MS');
+						$inventoryline->pmp_expected = price2num(GETPOST('expectedpmp_'.$lineid, 'alpha'), 'MS');
 						$resultupdate = $inventoryline->update($user);
 					}
 				}
@@ -593,6 +620,7 @@ if ($object->id > 0) {
 								var object = $(this)[0];
 								var objecttofill = $("#"+object.id+"_input")[0];
 								objecttofill.value = object.innerText;
+								jQuery(".realqty").trigger("change");
 							})
 							console.log("Values filled (after click on fillwithexpected)");
 							disablebuttonmakemovementandclose();
@@ -850,6 +878,7 @@ if ($object->id > 0) {
 			console.log("Clear all values");
 			disablebuttonmakemovementandclose();
 			jQuery(".realqty").val("");
+			jQuery(".realqty").trigger("change");
 			return false;	/* disable submit */
 		});
 		$(".undochangesqty").on("click", function undochangesqty() {
@@ -882,9 +911,17 @@ if ($object->id > 0) {
 		print '</td>';
 	}
 	print '<td class="right">'.$langs->trans("ExpectedQty").'</td>';
-	print '<td class="right">';
-	print $form->textwithpicto($langs->trans("RealQty"), $langs->trans("InventoryRealQtyHelp"));
-	print '</td>';
+	if (!empty($conf->global->INVENTORY_MANAGE_REAL_PMP)) {
+		print '<td class="right">'.$langs->trans('PMPExpected').'</td>';
+		print '<td class="right">'.$langs->trans('ExpectedValuation').'</td>';
+		print '<td class="right">'.$form->textwithpicto($langs->trans("RealQty"), $langs->trans("InventoryRealQtyHelp")).'</td>';
+		print '<td class="right">'.$langs->trans('PMPReal').'</td>';
+		print '<td class="right">'.$langs->trans('RealValuation').'</td>';
+	} else {
+		print '<td class="right">';
+		print $form->textwithpicto($langs->trans("RealQty"), $langs->trans("InventoryRealQtyHelp"));
+		print '</td>';
+	}
 	if ($object->status == $object::STATUS_DRAFT || $object->status == $object::STATUS_VALIDATED) {
 		// Actions or link to stock movement
 		print '<td class="center">';
@@ -915,6 +952,16 @@ if ($object->id > 0) {
 		print '<td class="right">';
 		print '<input type="text" name="qtytoadd" class="maxwidth75" value="">';
 		print '</td>';
+		if (!empty($conf->global->INVENTORY_MANAGE_REAL_PMP)) {
+			print '<td class="right">';
+			print '</td>';
+			print '<td class="right">';
+			print '</td>';
+			print '<td class="right">';
+			print '</td>';
+			print '<td class="right">';
+			print '</td>';
+		}
 		// Actions
 		print '<td class="center">';
 		print '<input type="submit" class="button paddingright" name="addline" value="'.$langs->trans("Add").'">';
@@ -924,7 +971,7 @@ if ($object->id > 0) {
 
 	// Request to show lines of inventory (prefilled after start/validate step)
 	$sql = 'SELECT id.rowid, id.datec as date_creation, id.tms as date_modification, id.fk_inventory, id.fk_warehouse,';
-	$sql .= ' id.fk_product, id.batch, id.qty_stock, id.qty_view, id.qty_regulated, id.fk_movement';
+	$sql .= ' id.fk_product, id.batch, id.qty_stock, id.qty_view, id.qty_regulated, id.fk_movement, id.pmp_real, id.pmp_expected';
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'inventorydet as id';
 	$sql .= ' WHERE id.fk_inventory = '.((int) $object->id);
 
@@ -976,7 +1023,13 @@ if ($object->id > 0) {
 
 			if (!empty($conf->productbatch->enabled)) {
 				print '<td id="id_'.$obj->rowid.'_batch" data-batch="'.dol_escape_htmltag($obj->batch).'">';
-				print dol_escape_htmltag($obj->batch);
+				$batch_static = new Productlot($db);
+				$res = $batch_static->fetch(0, $product_static->id, $obj->batch);
+				if ($res) {
+					print $batch_static->getNomUrl(1);
+				} else {
+					print dol_escape_htmltag($obj->batch);
+				}
 				print '</td>';
 			}
 
@@ -997,7 +1050,6 @@ if ($object->id > 0) {
 
 			// Real quantity
 			if ($object->status == $object::STATUS_DRAFT || $object->status == $object::STATUS_VALIDATED) {
-				print '<td class="right">';
 				$qty_view = GETPOST("id_".$obj->rowid) && price2num(GETPOST("id_".$obj->rowid), 'MS') >= 0 ? GETPOST("id_".$obj->rowid) : $obj->qty_view;
 
 				//if (!$hasinput && $qty_view !== null && $obj->qty_stock != $qty_view) {
@@ -1005,23 +1057,92 @@ if ($object->id > 0) {
 					$hasinput = true;
 				}
 
-				print '<a id="undochangesqty_'.$obj->rowid.'" href="#" class="undochangesqty reposition marginrightonly" title="'.dol_escape_htmltag($langs->trans("Clear")).'">';
-				print img_picto('', 'eraser', 'class="opacitymedium"');
-				print '</a>';
-				print '<input type="text" class="maxwidth75 right realqty" name="id_'.$obj->rowid.'" id="id_'.$obj->rowid.'_input" value="'.$qty_view.'">';
-				print '</td>';
+				if (! empty($conf->global->INVENTORY_MANAGE_REAL_PMP)) {
+					//PMP Expected
+					if (! empty($obj->pmp_expected)) $pmp_expected = $obj->pmp_expected;
+					else $pmp_expected = $product_static->pmp;
+					$pmp_valuation = $pmp_expected * $valuetoshow;
+					print '<td class="right">';
+					print price($pmp_expected);
+					print '<input type="hidden" name="expectedpmp_'.$obj->rowid.'" value="'.$pmp_expected.'"/>';
+					print '</td>';
+					print '<td class="right">';
+					print price($pmp_valuation);
+					print '</td>';
+
+					print '<td class="right">';
+					print '<a id="undochangesqty_'.$obj->rowid.'" href="#" class="undochangesqty reposition marginrightonly" title="'.dol_escape_htmltag($langs->trans("Clear")).'">';
+					print img_picto('', 'eraser', 'class="opacitymedium"');
+					print '</a>';
+					print '<input type="text" class="maxwidth50 right realqty" name="id_'.$obj->rowid.'" id="id_'.$obj->rowid.'_input" value="'.$qty_view.'">';
+					print '</td>';
+
+					//PMP Real
+					print '<td class="right">';
+
+
+					if (! empty($obj->pmp_real)) $pmp_real = $obj->pmp_real;
+					else $pmp_real = $product_static->pmp;
+					$pmp_valuation_real = $pmp_real * $qty_view;
+					print '<input type="text" class="maxwidth75 right realpmp'.$obj->fk_product.'" name="realpmp_'.$obj->rowid.'" id="id_'.$obj->rowid.'_input_pmp" value="'.price2num($pmp_real).'">';
+					print '</td>';
+					print '<td class="right">';
+					print '<input type="text" class="maxwidth75 right realvaluation'.$obj->fk_product.'" name="realvaluation_'.$obj->rowid.'" id="id_'.$obj->rowid.'_input_real_valuation" value="'.$pmp_valuation_real.'">';
+					print '</td>';
+
+					$totalExpectedValuation += $pmp_valuation;
+					$totalRealValuation += $pmp_valuation_real;
+				} else {
+					print '<td class="right">';
+					print '<a id="undochangesqty_'.$obj->rowid.'" href="#" class="undochangesqty reposition marginrightonly" title="'.dol_escape_htmltag($langs->trans("Clear")).'">';
+					print img_picto('', 'eraser', 'class="opacitymedium"');
+					print '</a>';
+					print '<input type="text" class="maxwidth50 right realqty" name="id_'.$obj->rowid.'" id="id_'.$obj->rowid.'_input" value="'.$qty_view.'">';
+					print '</td>';
+				}
 
 				// Picto delete line
 				print '<td class="right">';
 				print '<a class="reposition" href="'.DOL_URL_ROOT.'/product/inventory/inventory.php?id='.$object->id.'&lineid='.$obj->rowid.'&action=deleteline&token='.newToken().'">'.img_delete().'</a>';
 				$qty_tmp = price2num(GETPOST("id_".$obj->rowid."_input_tmp", 'MS')) >= 0 ? GETPOST("id_".$obj->rowid."_input_tmp") : $qty_view;
-				print '<input type="hidden" class="maxwidth75 right realqty" name="id_'.$obj->rowid.'_input_tmp" id="id_'.$obj->rowid.'_input_tmp" value="'.$qty_tmp.'">';
+				print '<input type="hidden" class="maxwidth50 right realqty" name="id_'.$obj->rowid.'_input_tmp" id="id_'.$obj->rowid.'_input_tmp" value="'.$qty_tmp.'">';
 				print '</td>';
 			} else {
-				print '<td class="right nowraponall">';
-				print $obj->qty_view;	// qty found
-				print '</td>';
-				print '<td class="nowraponall right">';
+				if (!empty($conf->global->INVENTORY_MANAGE_REAL_PMP)) {
+					//PMP Expected
+					if (! empty($obj->pmp_expected)) $pmp_expected = $obj->pmp_expected;
+					else $pmp_expected = $product_static->pmp;
+					$pmp_valuation = $pmp_expected * $valuetoshow;
+					print '<td class="right">';
+					print price($pmp_expected);
+					print '</td>';
+					print '<td class="right">';
+					print price($pmp_valuation);
+					print '</td>';
+
+					print '<td class="right nowraponall">';
+					print $obj->qty_view;	// qty found
+					print '</td>';
+
+					//PMP Real
+					print '<td class="right">';
+					if (! empty($obj->pmp_real)) $pmp_real = $obj->pmp_real;
+					else $pmp_real = $product_static->pmp;
+					$pmp_valuation_real = $pmp_real * $obj->qty_view;
+					print price($pmp_real);
+					print '</td>';
+					print '<td class="right">';
+					print price($pmp_valuation_real);
+					print '</td>';
+					print '<td class="nowraponall right">';
+
+					$totalExpectedValuation += $pmp_valuation;
+					$totalRealValuation += $pmp_valuation_real;
+				} else {
+					print '<td class="right nowraponall">';
+					print $obj->qty_view;	// qty found
+					print '</td>';
+				}
 				if ($obj->fk_movement > 0) {
 					$stockmovment = new MouvementStock($db);
 					$stockmovment->fetch($obj->fk_movement);
@@ -1036,7 +1157,14 @@ if ($object->id > 0) {
 	} else {
 		dol_print_error($db);
 	}
-
+	if (!empty($conf->global->INVENTORY_MANAGE_REAL_PMP)) {
+		print '<tr class="liste_total">';
+		print '<td colspan="5">'.$langs->trans("Total").'</td>';
+		print '<td class="right" colspan="2">'.price($totalExpectedValuation).'</td>';
+		print '<td class="right" id="totalRealValuation" colspan="2">'.price($totalRealValuation).'</td>';
+		print '<td></td>';
+		print '</tr>';
+	}
 	print '</table>';
 
 	print '</div>';
@@ -1059,6 +1187,74 @@ if ($object->id > 0) {
 				</script>';
 	}
 	print '</form>';
+
+
+	if (! empty($conf->global->INVENTORY_MANAGE_REAL_PMP)) {
+		?>
+		<script type="text/javascript">
+			$('.realqty').on('change', function () {
+				let realqty = $(this).closest('tr').find('.realqty').val();
+				let inputPmp = $(this).closest('tr').find('input[class*=realpmp]');
+				let realpmp = $(inputPmp).val();
+				if (!isNaN(realqty) && !isNaN(realpmp)) {
+					let realval = realqty * realpmp;
+					$(this).closest('tr').find('input[name^=realvaluation]').val(realval.toFixed(2));
+				}
+				updateTotalValuation();
+			});
+
+			$('input[class*=realpmp]').on('change', function () {
+				let inputQtyReal = $(this).closest('tr').find('.realqty');
+				let realqty = $(inputQtyReal).val();
+				let inputPmp = $(this).closest('tr').find('input[class*=realpmp]');
+				console.log(inputPmp);
+				let realPmpClassname = $(inputPmp).attr('class').match(/[\w-]*realpmp[\w-]*/g)[0];
+				let realpmp = $(inputPmp).val();
+				if (!isNaN(realpmp)) {
+					$('.'+realPmpClassname).val(realpmp); //For batch case if pmp is changed we change it everywhere it's same product and calc back everything
+
+					if (!isNaN(realqty)) {
+						let realval = realqty * realpmp;
+						$(this).closest('tr').find('input[name^=realvaluation]').val(realval.toFixed(2));
+					}
+					$('.realqty').trigger('change');
+					updateTotalValuation();
+				}
+			});
+
+			$('input[name^=realvaluation]').on('change', function () {
+				let inputQtyReal = $(this).closest('tr').find('.realqty');
+				let realqty = $(inputQtyReal).val();
+				let inputPmp = $(this).closest('tr').find('input[class*=realpmp]');
+				let inputRealValuation = $(this).closest('tr').find('input[name^=realvaluation]');
+				let realPmpClassname = $(inputPmp).attr('class').match(/[\w-]*realpmp[\w-]*/g)[0];
+				let realvaluation = $(inputRealValuation).val();
+				if (!isNaN(realvaluation) && !isNaN(realqty) && realvaluation !== '' && realqty !== '' && realqty !== 0) {
+					let realpmp = realvaluation / realqty
+					$('.'+realPmpClassname).val(realpmp); //For batch case if pmp is changed we change it everywhere it's same product and calc back everything
+					$('.realqty').trigger('change');
+					updateTotalValuation();
+				}
+			});
+
+			function updateTotalValuation() {
+				let total = 0;
+				$('input[name^=realvaluation]').each(function( index ) {
+					let val = $(this).val();
+					if(!isNaN(val)) total += parseFloat($(this).val());
+				});
+				let currencyFractionDigits = new Intl.NumberFormat('fr-FR', {
+					style: 'currency',
+					currency: 'EUR',
+				}).resolvedOptions().maximumFractionDigits;
+				$('#totalRealValuation').html(total.toLocaleString('fr-FR', {
+					maximumFractionDigits: currencyFractionDigits
+				}));
+			}
+
+		</script>
+		<?php
+	}
 }
 
 // End of page

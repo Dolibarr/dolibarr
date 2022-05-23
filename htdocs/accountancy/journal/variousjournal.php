@@ -43,17 +43,6 @@ if ($in_bookkeeping == '') {
 	$in_bookkeeping = 'notyet';
 }
 
-// Security check
-if (empty($conf->accounting->enabled)) {
-	accessforbidden();
-}
-if ($user->socid > 0) {
-	accessforbidden();
-}
-if (empty($user->rights->accounting->mouvements->lire)) {
-	accessforbidden();
-}
-
 // Get information of journal
 $object = new AccountingJournal($db);
 $result = $object->fetch($id_journal);
@@ -65,7 +54,7 @@ if ($result > 0) {
 	accessforbidden($langs->trans('ErrorRecordNotFound'));
 }
 
-$hookmanager->initHooks(array('globaljournal', $object->nature_text . 'journal'));
+$hookmanager->initHooks(array('globaljournal', $object->nature.'journal'));
 $parameters = array();
 
 $date_start = dol_mktime(0, 0, 0, $date_startmonth, $date_startday, $date_startyear);
@@ -92,6 +81,18 @@ $journal_data = $object->getData($user, $data_type, $date_start, $date_end, $in_
 if (!is_array($journal_data)) {
 	setEventMessages($object->error, $object->errors, 'errors');
 }
+
+// Security check
+if (empty($conf->accounting->enabled)) {
+	accessforbidden();
+}
+if ($user->socid > 0) {
+	accessforbidden();
+}
+if (empty($user->rights->accounting->mouvements->lire)) {
+	accessforbidden();
+}
+
 
 /*
  * Actions

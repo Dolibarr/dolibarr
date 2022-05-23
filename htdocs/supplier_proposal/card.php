@@ -741,7 +741,9 @@ if (empty($reshook)) {
 						$date_end
 					);
 
-					//var_dump($tva_tx);var_dump($productsupplier->fourn_pu);var_dump($price_base_type);exit;
+					//var_dump($tva_tx);
+					//var_dump($productsupplier->fourn_pu);
+					//var_dump($price_base_type);exit;
 					if ($result < 0) {
 						$error++;
 						setEventMessages($object->error, $object->errors, 'errors');

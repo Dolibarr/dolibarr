@@ -87,6 +87,11 @@ class Mailing extends CommonObject
 	public $email_from;
 
 	/**
+	 * @var string email to
+	 */
+	public $sendto;
+
+	/**
 	 * @var string email reply to
 	 */
 	public $email_replyto;
@@ -174,6 +179,16 @@ class Mailing extends CommonObject
 	 * @var array statuts
 	 */
 	public $statuts = array();
+
+	/**
+	 * @var array substitutionarray
+	 */
+	public $substitutionarray;
+
+	/**
+	 * @var array substitutionarrayfortest
+	 */
+	public $substitutionarrayfortest;
 
 
 	/**

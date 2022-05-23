@@ -124,3 +124,7 @@ ValidatorIsSupervisorByDefault=Por defecto, o responsable da validación é o su
 UserPersonalEmail=Email persoal
 UserPersonalMobile=Teléfono móbil persoal
 WarningNotLangOfInterface=Aviso, este é o idioma principal que fala o usuario, non o idioma da interface que escolleu ver. Para cambiar o idioma da interface visible por este usuario, vaia a lapela %s
+DateLastLogin=Data último inicio de sesión
+DatePreviousLogin=Data de inicio de sesión anterior
+IPLastLogin=IP último inicio de sesión
+IPPreviousLogin=IP de inicio de sesión anterior

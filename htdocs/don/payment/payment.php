@@ -149,7 +149,7 @@ $resql = $db->query($sql);
 if ($resql) {
 	$obj = $db->fetch_object($resql);
 	$sumpaid = $obj->total;
-	$db->free();
+	$db->free($resql);
 }
 
 

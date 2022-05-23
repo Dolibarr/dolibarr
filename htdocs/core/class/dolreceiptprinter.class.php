@@ -917,44 +917,46 @@ class dolReceiptPrinter extends Printer
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_array($resql);
+			if (empty($obj)) {
+				$error++;
+				$this->errors[] = 'PrinterDontExist';
+			}
+			if (!$error) {
+				$parameter = (isset($obj['parameter']) ? $obj['parameter'] : '');
+				try {
+					$type = $obj['fk_type'];
+					switch ($type) {
+						case 1:
+							$this->connector = new DummyPrintConnector();
+							break;
+						case 2:
+							$this->connector = new FilePrintConnector($parameter);
+							break;
+						case 3:
+							$parameters = explode(':', $parameter);
+							$this->connector = new NetworkPrintConnector($parameters[0], $parameters[1]);
+							break;
+						case 4:	// LPT1, smb://...
+							$this->connector = new WindowsPrintConnector(dol_sanitizePathName($parameter));
+							break;
+						case 5:
+							$this->connector = new CupsPrintConnector($parameter);
+							break;
+						default:
+							$this->connector = 'CONNECTOR_UNKNOWN';
+							break;
+					}
+					$this->printer = new Printer($this->connector, $this->profile);
+				} catch (Exception $e) {
+					$this->errors[] = $e->getMessage();
+					$error++;
+				}
+			}
 		} else {
 			$error++;
 			$this->errors[] = $this->db->lasterror;
 		}
-		if (empty($obj)) {
-			$error++;
-			$this->errors[] = 'PrinterDontExist';
-		}
-		if (!$error) {
-			$parameter = $obj['parameter'];
-			try {
-				switch ($obj['fk_type']) {
-					case 1:
-						$this->connector = new DummyPrintConnector();
-						break;
-					case 2:
-						$this->connector = new FilePrintConnector($parameter);
-						break;
-					case 3:
-						$parameters = explode(':', $parameter);
-						$this->connector = new NetworkPrintConnector($parameters[0], $parameters[1]);
-						break;
-					case 4:	// LPT1, smb://...
-						$this->connector = new WindowsPrintConnector(dol_sanitizePathName($parameter));
-						break;
-					case 5:
-						$this->connector = new CupsPrintConnector($parameter);
-						break;
-					default:
-						$this->connector = 'CONNECTOR_UNKNOWN';
-						break;
-				}
-				$this->printer = new Printer($this->connector, $this->profile);
-			} catch (Exception $e) {
-				$this->errors[] = $e->getMessage();
-				$error++;
-			}
-		}
+
 		return $error;
 	}
 }

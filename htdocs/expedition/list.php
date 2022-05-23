@@ -196,7 +196,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_datereceipt_start = '';
 	$search_datereceipt_end = '';
 	$search_status = '';
-	$toselect = '';
+	$toselect = array();
 	$search_array_options = array();
 	$search_categ_cus = 0;
 }
@@ -560,11 +560,11 @@ if ($sall) {
 $moreforfilter = '';
 
 // If the user can view prospects other than his'
-if ($user->rights->societe->client->voir || $socid) {
+if ($user->rights->user->user->lire) {
 	$langs->load("commercial");
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('ThirdPartiesOfSaleRepresentative');
-	$moreforfilter .= img_picto($tmptitle, 'user');
+	$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"');
 	$moreforfilter .= $formother->select_salesrepresentatives($search_sale, 'search_sale', $user, 0, $tmptitle, 'maxwidth200');
 	$moreforfilter .= '</div>';
 }
@@ -572,7 +572,7 @@ if ($user->rights->societe->client->voir || $socid) {
 if ($user->rights->user->user->lire) {
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('LinkedToSpecificUsers');
-	$moreforfilter .= img_picto($tmptitle, 'user');
+	$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"');
 	$moreforfilter .= $form->select_dolusers($search_user, 'search_user', $tmptitle, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth200');
 	$moreforfilter .= '</div>';
 }
