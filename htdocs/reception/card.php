@@ -1649,7 +1649,7 @@ if ($action == 'create') {
 		print '<br>';
 
 		print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder centpercent">';
+		print '<table id="tablelines" class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		// #
 		if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
