@@ -745,7 +745,7 @@ $moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$form-
 $moreforfilter .= '</div>';
 
 // Filter on customer categories
-if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire) {
+if (!empty($conf->global->MAIN_SEARCH_CATEGORY_CUSTOMER_ON_LISTS) && !empty($conf->categorie->enabled) && $user->rights->categorie->lire) {
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->transnoentities('CustomersProspectsCategoriesShort');
 	$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"');
