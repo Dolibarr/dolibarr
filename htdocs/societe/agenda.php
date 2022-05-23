@@ -151,7 +151,6 @@ if ($socid > 0) {
 	$out = '';
 		$newcardbutton = '';
 	if (!empty($conf->agenda->enabled)) {
-
 		$permok = $user->rights->agenda->myactions->create;
 		if ((!empty($objthirdparty->id) || !empty($objcon->id && $permok) {
 			if (is_object($objthirdparty) && get_class($objthirdparty) == 'Societe') {
