@@ -65,6 +65,7 @@ $mesg = GETPOST('msg', 'alpha');
 $origin = GETPOST('origin', 'alpha');
 $originid = (GETPOST('originid', 'int') ?GETPOST('originid', 'int') : GETPOST('origin_id', 'int')); // For backward compatibility
 $note_public = GETPOST('note_public', 'restricthtml');
+$note_private = GETPOST('note_private', 'restricthtml');
 $lineid = GETPOST('line_id', 'int');
 
 $error = 0;
