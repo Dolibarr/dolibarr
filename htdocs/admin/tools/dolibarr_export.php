@@ -257,7 +257,7 @@ if (in_array($type, array('mysql', 'mysqli'))) {
 	}
 	if ($execmethod == 1) {
 		// If we use the "exec" method for shell, we ask if we need to use the alternative low memory exec mode.
-		print '<input type="checkbox" name="lowmemorydump" value="yes" id="lowmemorydump"'.(GETPOSTISSET('lowmemorydump') ? GETPOST('lowmemorydump', 'alpha') : getDolGlobalString('MAIN_LOW_MEMORY_DUMP') ? ' checked="checked"' : '').'" />';
+		print '<input type="checkbox" name="lowmemorydump" value="yes" id="lowmemorydump"'.((GETPOSTISSET('lowmemorydump') ? GETPOST('lowmemorydump', 'alpha') : getDolGlobalString('MAIN_LOW_MEMORY_DUMP')) ? ' checked="checked"' : '').'" />';
 		print '<label for="lowmemorydump">';
 		print $form->textwithpicto($langs->trans('ExportUseLowMemoryMode'), $langs->trans('ExportUseLowMemoryModeHelp'));
 		print '</label>';

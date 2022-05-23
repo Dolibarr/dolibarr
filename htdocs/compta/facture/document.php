@@ -117,7 +117,7 @@ if ($id > 0 || !empty($ref)) {
 		$head = facture_prepare_head($object);
 		print dol_get_fiche_head($head, 'documents', $langs->trans('InvoiceCustomer'), -1, 'bill');
 
-		$totalpaye = $object->getSommePaiement();
+		$totalpaid = $object->getSommePaiement();
 
 		// Build file list
 		$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
@@ -172,7 +172,7 @@ if ($id > 0 || !empty($ref)) {
 		}
 		$morehtmlref .= '</div>';
 
-		$object->totalpaye = $totalpaye; // To give a chance to dol_banner_tab to use already paid amount to show correct status
+		$object->totalpaid = $totalpaid; // To give a chance to dol_banner_tab to use already paid amount to show correct status
 
 		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '', 0);
 

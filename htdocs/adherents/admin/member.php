@@ -248,8 +248,8 @@ if (!empty($conf->banque->enabled) && !empty($conf->societe->enabled) && !empty(
 	$arraychoices['bankviainvoice'] = $langs->trans("MoreActionBankViaInvoice");
 }
 print '<td>';
-print $form->selectarray('ADHERENT_BANK_USE', $arraychoices, $conf->global->ADHERENT_BANK_USE, 0);
-if ($conf->global->ADHERENT_BANK_USE == 'bankdirect' || $conf->global->ADHERENT_BANK_USE == 'bankviainvoice') {
+print $form->selectarray('ADHERENT_BANK_USE', $arraychoices, getDolGlobalString('ADHERENT_BANK_USE'), 0);
+if (getDolGlobalString('ADHERENT_BANK_USE') == 'bankdirect' || getDolGlobalString('ADHERENT_BANK_USE') == 'bankviainvoice') {
 	print '<br><div style="padding-top: 5px;"><span class="opacitymedium">'.$langs->trans("ABankAccountMustBeDefinedOnPaymentModeSetup").'</span></div>';
 }
 print '</td>';
@@ -378,16 +378,16 @@ foreach ($dirmodels as $reldir) {
 									print '</td>';
 								} else {
 									print '<td class="center">'."\n";
-									print '<a href="'.$_SERVER["PHP_SELF"].'?action=set_default&token='.newToken().'&value='.$name.'&scandir='.$module->scandir.'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+									print '<a href="'.$_SERVER["PHP_SELF"].'?action=set_default&token='.newToken().'&value='.$name.'&scandir='.(!empty($module->scandir) ? $module->scandir : '').'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 									print "</td>";
 								}
 
 								// Defaut
 								print '<td class="center">';
-								if ($conf->global->MEMBER_ADDON_PDF == $name) {
+								if (getDolGlobalString('MEMBER_ADDON_PDF') == $name) {
 									print img_picto($langs->trans("Default"), 'on');
 								} else {
-									print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.$name.'&scandir='.$module->scandir.'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+									print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.$name.'&scandir='.(!empty($module->scandir) ? $module->scandir : '').'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 								}
 								print '</td>';
 
@@ -398,8 +398,8 @@ foreach ($dirmodels as $reldir) {
 									$htmltooltip .= '<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
 								}
 								$htmltooltip .= '<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
-								$htmltooltip .= '<br>'.$langs->trans("Logo").': '.yn($module->option_logo, 1, 1);
-								$htmltooltip .= '<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang, 1, 1);
+								$htmltooltip .= '<br>'.$langs->trans("Logo").': '.yn(!empty($module->option_logo) ? $module->option_logo : 0, 1, 1);
+								$htmltooltip .= '<br>'.$langs->trans("MultiLanguage").': '.yn(!empty($module->option_multilang) ? $module->option_multilang : 0, 1, 1);
 
 
 								print '<td class="center">';

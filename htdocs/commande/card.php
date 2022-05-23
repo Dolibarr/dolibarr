@@ -1697,8 +1697,8 @@ if ($action == 'create' && $usercancreate) {
 	if ($socid > 0) {
 		// Contacts (ask contact only if thirdparty already defined).
 		print "<tr><td>".$langs->trans("DefaultContact").'</td><td>';
-		print img_picto('', 'contact');
-		print $form->selectcontacts($soc->id, $contactid, 'contactid', 1, $srccontactslist, '', 1);
+		print img_picto('', 'contact', 'class="pictofixedwidth"');
+		print $form->selectcontacts($soc->id, $contactid, 'contactid', 1, $srccontactslist, '', 1, 'maxwidth200 widthcentpercentminusx');
 		print '</td></tr>';
 
 		// Ligne info remises tiers
@@ -1755,7 +1755,7 @@ if ($action == 'create' && $usercancreate) {
 	// Shipping Method
 	if (!empty($conf->expedition->enabled)) {
 		print '<tr><td>'.$langs->trans('SendingMethod').'</td><td>';
-		print img_picto('', 'object_dollyrevert', 'class="pictofixedwidth"');
+		print img_picto('', 'object_dolly', 'class="pictofixedwidth"');
 		print $form->selectShippingMethod($shipping_method_id, 'shipping_method_id', '', 1, '', 0, 'maxwidth200 widthcentpercentminusx');
 		print '</td></tr>';
 	}

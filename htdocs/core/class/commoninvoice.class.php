@@ -742,17 +742,17 @@ abstract class CommonInvoice extends CommonObject
 				if ($row[0] == 0) {
 					$now = dol_now();
 
-					$totalpaye = $this->getSommePaiement();
+					$totalpaid = $this->getSommePaiement();
 					$totalcreditnotes = $this->getSumCreditNotesUsed();
 					$totaldeposits = $this->getSumDepositsUsed();
-					//print "totalpaye=".$totalpaye." totalcreditnotes=".$totalcreditnotes." totaldeposts=".$totaldeposits;
+					//print "totalpaid=".$totalpaid." totalcreditnotes=".$totalcreditnotes." totaldeposts=".$totaldeposits;
 
 					// We can also use bcadd to avoid pb with floating points
 					// For example print 239.2 - 229.3 - 9.9; does not return 0.
-					//$resteapayer=bcadd($this->total_ttc,$totalpaye,$conf->global->MAIN_MAX_DECIMALS_TOT);
+					//$resteapayer=bcadd($this->total_ttc,$totalpaid,$conf->global->MAIN_MAX_DECIMALS_TOT);
 					//$resteapayer=bcadd($resteapayer,$totalavoir,$conf->global->MAIN_MAX_DECIMALS_TOT);
 					if (empty($amount)) {
-						$amount = price2num($this->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits, 'MT');
+						$amount = price2num($this->total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits, 'MT');
 					}
 
 					if (is_numeric($amount) && $amount != 0) {
@@ -848,7 +848,7 @@ abstract class CommonInvoice extends CommonObject
 	 */
 	public function buildZATCAQRString()
 	{
-		global $conf;
+		global $conf, $mysoc;
 
 		$tmplang = new Translate('', $conf);
 		$tmplang->setDefaultLang('en_US');
@@ -885,8 +885,8 @@ abstract class CommonInvoice extends CommonObject
 		*/
 
 		// Using TLV format
-		$s = pack('C1', 1).pack('C1', strlen($this->thirdparty->name)).$this->thirdparty->name;
-		$s .= pack('C1', 2).pack('C1', strlen($this->thirdparty->tva_intra)).$this->thirdparty->tva_intra;
+		$s = pack('C1', 1).pack('C1', strlen($mysoc->name)).$mysoc->name;
+		$s .= pack('C1', 2).pack('C1', strlen($mysoc->tva_intra)).$mysoc->tva_intra;
 		$s .= pack('C1', 3).pack('C1', strlen($datestring)).$datestring;
 		$s .= pack('C1', 4).pack('C1', strlen($pricewithtaxstring)).$pricewithtaxstring;
 		$s .= pack('C1', 5).pack('C1', strlen($pricetaxstring)).$pricetaxstring;

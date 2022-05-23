@@ -183,7 +183,8 @@ if ($user->socid && $socid) {
  */
 
 if (GETPOST('cancel', 'alpha')) {
-	$mode = 'list'; $massaction = '';
+	$mode = 'list';
+	$massaction = '';
 }
 
 if (GETPOST("viewcal") || GETPOST("viewweek") || GETPOST("viewday")) {
@@ -268,12 +269,16 @@ if (empty($reshook)) {
 }
 
 /*
- *  View
+ * View
  */
 
 $form = new Form($db);
 $userstatic = new User($db);
 $formactions = new FormActions($db);
+
+$actionstatic = new ActionComm($db);
+$societestatic = new Societe($db);
+$contactstatic = new Contact($db);
 
 $nav = '';
 $nav .= $form->selectDate($dateselect, 'dateselect', 0, 0, 1, '', 1, 0);
@@ -282,7 +287,8 @@ $nav .= ' <input type="submit" name="submitdateselect" class="button" value="'.$
 $now = dol_now();
 
 $help_url = 'EN:Module_Agenda_En|FR:Module_Agenda|ES:M&omodulodulo_Agenda';
-llxHeader('', $langs->trans("Agenda"), $help_url);
+$title = $langs->trans("Agenda");
+llxHeader('', $title, $help_url);
 
 // Define list of all external calendars
 $listofextcals = array();
@@ -570,11 +576,11 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 		$nbtotalofrecords++;
 	}*/
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
-	$sqlforcount = preg_replace('/^SELECT[a-z0-9\._\s\(\),]+FROM/i', 'SELECT COUNT(*) as nbtotalofrecords FROM', $sql);
+	$sqlforcount = preg_replace('/^SELECT[a-zA-Z0-9\._\s\(\),]+FROM/i', 'SELECT COUNT(*) as nbtotalofrecords FROM', $sql);
 	$resql = $db->query($sqlforcount);
 	$objforcount = $db->fetch_object($resql);
 	$nbtotalofrecords = $objforcount->nbtotalofrecords;
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	if (($page * $limit) > $nbtotalofrecords) {	// if total of record found is smaller than page * limit, goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -592,12 +598,6 @@ if (!$resql) {
 	dol_print_error($db);
 	exit;
 }
-
-$num = $db->num_rows($resql);
-
-
-$actionstatic = new ActionComm($db);
-$societestatic = new Societe($db);
 
 $num = $db->num_rows($resql);
 
@@ -804,44 +804,57 @@ print '<td class="liste_titre" align="middle">';
 $searchpicto = $form->showFilterButtons();
 print $searchpicto;
 print '</td>';
-print "</tr>\n";
+print '</tr>'."\n";
 
+$totalarray = array();
+$totalarray['nbfield'] = 0;
+
+// Fields title label
+// --------------------------------------------------------------------
 print '<tr class="liste_titre">';
 if (!empty($arrayfields['a.id']['checked'])) {
 	print_liste_field_titre($arrayfields['a.id']['label'], $_SERVER["PHP_SELF"], "a.id", $param, "", "", $sortfield, $sortorder);
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['owner']['checked'])) {
 	print_liste_field_titre($arrayfields['owner']['label'], $_SERVER["PHP_SELF"], "", $param, "", "", $sortfield, $sortorder);
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['c.libelle']['checked'])) {
 	print_liste_field_titre($arrayfields['c.libelle']['label'], $_SERVER["PHP_SELF"], "c.libelle", $param, "", "", $sortfield, $sortorder);
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['a.label']['checked'])) {
 	print_liste_field_titre($arrayfields['a.label']['label'], $_SERVER["PHP_SELF"], "a.label", $param, "", "", $sortfield, $sortorder);
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['a.note']['checked'])) {
 	print_liste_field_titre($arrayfields['a.note']['label'], $_SERVER["PHP_SELF"], "a.note", $param, "", "", $sortfield, $sortorder);
+	$totalarray['nbfield']++;
 }
 //if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
 if (!empty($arrayfields['a.datep']['checked'])) {
 	print_liste_field_titre($arrayfields['a.datep']['label'], $_SERVER["PHP_SELF"], "a.datep,a.id", $param, '', 'align="center"', $sortfield, $sortorder);
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['a.datep2']['checked'])) {
 	print_liste_field_titre($arrayfields['a.datep2']['label'], $_SERVER["PHP_SELF"], "a.datep2", $param, '', 'align="center"', $sortfield, $sortorder);
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.nom']['checked'])) {
 	print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER["PHP_SELF"], "s.nom", $param, "", "", $sortfield, $sortorder);
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['a.fk_contact']['checked'])) {
 	print_liste_field_titre($arrayfields['a.fk_contact']['label'], $_SERVER["PHP_SELF"], "", $param, "", "", $sortfield, $sortorder);
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['a.fk_element']['checked'])) {
 	print_liste_field_titre($arrayfields['a.fk_element']['label'], $_SERVER["PHP_SELF"], "", $param, "", "", $sortfield, $sortorder);
+	$totalarray['nbfield']++;
 }
-
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
-
 // Hook fields
 $parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
@@ -849,18 +862,21 @@ print $hookmanager->resPrint;
 
 if (!empty($arrayfields['a.datec']['checked'])) {
 	print_liste_field_titre($arrayfields['a.datec']['label'], $_SERVER["PHP_SELF"], "a.datec,a.id", $param, "", 'align="center"', $sortfield, $sortorder);
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['a.tms']['checked'])) {
 	print_liste_field_titre($arrayfields['a.tms']['label'], $_SERVER["PHP_SELF"], "a.tms,a.id", $param, "", 'align="center"', $sortfield, $sortorder);
+	$totalarray['nbfield']++;
 }
 
 if (!empty($arrayfields['a.percent']['checked'])) {
 	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "a.percent", $param, "", 'align="center"', $sortfield, $sortorder);
+	$totalarray['nbfield']++;
 }
 print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
+$totalarray['nbfield']++;
 print "</tr>\n";
 
-$contactstatic = new Contact($db);
 $now = dol_now();
 $delay_warning = $conf->global->MAIN_DELAY_ACTIONS_TODO * 24 * 60 * 60;
 
@@ -869,8 +885,20 @@ $caction = new CActionComm($db);
 $arraylist = $caction->liste_array(1, 'code', '', (empty($conf->global->AGENDA_USE_EVENT_TYPE) ? 1 : 0), '', 1);
 $contactListCache = array();
 
-while ($i < min($num, $limit)) {
+// Loop on record
+// --------------------------------------------------------------------
+$i = 0;
+//$savnbfield = $totalarray['nbfield'];
+//$totalarray['nbfield'] = 0;
+$imaxinloop = ($limit ? min($num, $limit) : $num);
+while ($i < $imaxinloop) {
 	$obj = $db->fetch_object($resql);
+	if (empty($obj)) {
+		break; // Should not happen
+	}
+
+	// Store properties in $object
+	$object->setVarsFromFetchObj($obj);
 
 	// Discard auto action if option is on
 	if (!empty($conf->global->AGENDA_ALWAYS_HIDE_AUTO) && $obj->type_code == 'AC_OTH_AUTO') {
@@ -1087,12 +1115,20 @@ while ($i < min($num, $limit)) {
 	}
 	print '</td>';
 
-	print "</tr>\n";
+	print '</tr>'."\n";
+
 	$i++;
 }
-print "</table>";
-print '</div>';
-print '</form>';
+// If no record found
+if ($num == 0) {
+	print '<tr><td colspan="'.$totalarray['nbfield'].'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
+}
+
+
+print '</table>'."\n";
+print '</div>'."\n";
+
+print '</form>'."\n";
 
 $db->free($resql);
 

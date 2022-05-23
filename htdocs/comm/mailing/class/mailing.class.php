@@ -185,6 +185,11 @@ class Mailing extends CommonObject
 	 */
 	public $substitutionarray;
 
+	/**
+	 * @var array substitutionarrayfortest
+	 */
+	public $substitutionarrayfortest;
+
 
 	/**
 	 *  Constructor

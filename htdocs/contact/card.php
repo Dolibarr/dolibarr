@@ -316,8 +316,9 @@ if (empty($reshook)) {
 
 		$result = $object->delete(); // TODO Add $user as first param
 		if ($result > 0) {
-			if ($backtopage) {
-				header("Location: ".$backtopage);
+			setEventMessages("RecordDeleted", null, 'mesgs');
+			if ($backurlforlist) {
+				header("Location: ".$backurlforlist);
 				exit;
 			} else {
 				header("Location: ".DOL_URL_ROOT.'/contact/list.php');

@@ -394,10 +394,10 @@ class BonPrelevement extends CommonObject
 					$amounts[$fac->id] = $facs[$i][1];
 					$amountsperthirdparty[$fac->socid][$fac->id] = $facs[$i][1];
 
-					$totalpaye = $fac->getSommePaiement();
+					$totalpaid = $fac->getSommePaiement();
 					$totalcreditnotes = $fac->getSumCreditNotesUsed();
 					$totaldeposits = $fac->getSumDepositsUsed();
-					$alreadypayed = $totalpaye + $totalcreditnotes + $totaldeposits;
+					$alreadypayed = $totalpaid + $totalcreditnotes + $totaldeposits;
 
 					// @TODO Move this after creation of payment
 					if (price2num($alreadypayed + $facs[$i][1], 'MT') == $fac->total_ttc) {
