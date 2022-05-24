@@ -850,7 +850,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					print '<input id="qty_ordered'.$suffix.'" type="hidden" value="'.$line->qty.'">';
 					print '<input id="qty_dispatched'.$suffix.'" type="hidden" value="'.$alreadyconsumed.'">';
 
-					print '<tr>';
+					print '<tr data-line-id="'.$line->id.'">';
 					// Product
 					print '<td>'.$tmpproduct->getNomUrl(1);
 					print '<br><span class="opacitymedium small">'.$tmpproduct->label.'</span>';
@@ -920,7 +920,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					// Lot
 					if ($conf->productbatch->enabled) {
 						print '<td align="right">';
-						if(($action == 'consumeorproduce' || $action == 'consumeandproduceall') && $tmpproduct->status_batch == 2) print img_picto($langs->trans('SplitAllQuantity'), 'split.png', 'class="splitbutton field-error-icon" data-max-qty="1" onClick="addDispatchLine('.$line->id.', \'batch\', \'allmissingconsume\')"');
+						if(($action == 'consumeorproduce' || $action == 'consumeandproduceall') && $tmpproduct->status_batch == 2) print img_picto($langs->trans('SplitAllQuantity'), 'split.png', 'class="splitbutton splitallbutton field-error-icon" data-max-qty="1" onClick="addDispatchLine('.$line->id.', \'batch\', \'allmissingconsume\')"');
 						print '</td>';
 					}
 					// Action delete line
@@ -1241,7 +1241,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					print '</td>';
 					if ($conf->productbatch->enabled) {
 						print '<td align="right">';
-						if(($action == 'consumeorproduce' || $action == 'consumeandproduceall') && $tmpproduct->status_batch == 2) print img_picto($langs->trans('SplitAllQuantity'), 'split.png', 'class="splitbutton field-error-icon" onClick="addDispatchLine('.$line->id.', \'batch\', \'alltoproduce\')"'); //
+						if(($action == 'consumeorproduce' || $action == 'consumeandproduceall') && $tmpproduct->status_batch == 2) print img_picto($langs->trans('SplitAllQuantity'), 'split.png', 'class="splitbutton splitallbutton field-error-icon" onClick="addDispatchLine('.$line->id.', \'batch\', \'alltoproduce\')"'); //
 						print '</td>';
 					}
 
