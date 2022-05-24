@@ -366,7 +366,7 @@ $param .= "&socid=".urlencode($socid);
 $param .= "&type_element=".urlencode($type_element);
 
 $total_qty = 0;
-
+$num=0;
 if ($sql_select) {
 	$resql = $db->query($sql);
 	if (!$resql) {
