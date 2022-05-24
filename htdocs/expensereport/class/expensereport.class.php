@@ -2604,9 +2604,7 @@ class ExpenseReport extends CommonObject
 		$result = $this->db->query($sql);
 
 		if ($result) {
-
-			if ($conf->global->EXPENSEREPORT_CALCULATE_MILEAGE_EXPENSE_COEFFICIENT_ON_CURRENT_YEAR){
-
+			if ($conf->global->EXPENSEREPORT_CALCULATE_MILEAGE_EXPENSE_COEFFICIENT_ON_CURRENT_YEAR) {
 				$arrayDate = dol_getdate(dol_now());
 				$sql = " SELECT count(n.qty) as cumul FROM ".MAIN_DB_PREFIX."expensereport_det n";
 				$sql .= " LEFT JOIN  ".MAIN_DB_PREFIX."expensereport e ON e.rowid = n.fk_expensereport";
@@ -2616,12 +2614,11 @@ class ExpenseReport extends CommonObject
 				$sql.= " AND e.fk_statut = ".(int) ExpenseReport::STATUS_VALIDATED;
 				$resql = $this->db->query($sql);
 
-				if ($resql){
+				if ($resql) {
 					$obj = $this->db->fetch_object($resql);
 					$cumulYearQty = $obj->cumul;
 				}
 				$qty = $cumulYearQty + $qty;
-
 			}
 
 			$num = $this->db->num_rows($result);
@@ -2636,7 +2633,6 @@ class ExpenseReport extends CommonObject
 
 				for ($i = 0; $i < $num; $i++) {
 					if ($i < ($num - 1)) {
-
 						if ($qty > $ranges[$i]->range_ik && $qty < $ranges[$i+1]->range_ik) {
 							$coef = $ranges[$i]->coef;
 							$offset = $ranges[$i]->offset;
