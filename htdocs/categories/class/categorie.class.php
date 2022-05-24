@@ -919,7 +919,7 @@ class Categorie extends CommonObject
 
 		$categories = array();
 
-		$type = checkVal($type, 'aZ09');
+		$type = sanitizeVal($type, 'aZ09');
 
 		$sub_type = $type;
 		$subcol_name = "fk_".$type;
