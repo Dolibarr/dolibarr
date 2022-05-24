@@ -276,7 +276,7 @@ class Utils
 			$param = $dolibarr_main_db_name." -h ".$dolibarr_main_db_host;
 			$param .= " -u ".$dolibarr_main_db_user;
 			if (!empty($dolibarr_main_db_port)) {
-				$param .= " -P ".$dolibarr_main_db_port;
+				$param .= " -P ".$dolibarr_main_db_port." --protocol=tcp";
 			}
 			if (GETPOST("use_transaction", "alpha")) {
 				$param .= " --single-transaction";
