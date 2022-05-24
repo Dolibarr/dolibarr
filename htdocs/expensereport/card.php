@@ -2604,7 +2604,7 @@ if ($action == 'create') {
                     let tax_cat = jQuery("#select_fk_c_exp_tax_cat").find(":selected").val();
                     let tva = jQuery("#vatrate").find(":selected").val();
                     let qty = jQuery("#input_qty").val();
-                    console.log(qty);
+
 
 
 					let path = "'.dol_buildpath("/expensereport/ajax/ajaxik.php", 1) .'";
@@ -2621,12 +2621,9 @@ if ($action == 'create') {
 							,dataType:"json"
 							,success:function(response) {
                                 if (response.response_status == "success"){
-
                                 jQuery("#value_unit_ht").val(response.data);
-                                }else{
-								 /* console.log(response.errorMessage) */
+                                jQuery("#value_unit").val("");
                                 }
-
 							},
 
 						});

@@ -2572,10 +2572,10 @@ class ExpenseReport extends CommonObject
 		global $langs,$user,$db,$conf;
 
 
-		$total_ttc = 0;
+		$cumulYearQty = 0;
 		$ranges = array();
 		$coef = 0;
-		$offset = 0;
+
 
 		if ($fk_cat < 0) {
 			$this->error = $langs->trans('ErrorBadParameterCat');
@@ -2604,6 +2604,26 @@ class ExpenseReport extends CommonObject
 		$result = $this->db->query($sql);
 
 		if ($result) {
+
+			if ($conf->global->EXPENSEREPORT_CALCULATE_MILEAGE_EXPENSE_COEFFICIENT_ON_CURRENT_YEAR){
+
+				$arrayDate = dol_getdate(dol_now());
+				$sql = " SELECT count(n.qty) as cumul FROM ".MAIN_DB_PREFIX."expensereport_det n";
+				$sql .= " LEFT JOIN  ".MAIN_DB_PREFIX."expensereport e ON e.rowid = n.fk_expensereport";
+				$sql.= " WHERE e.fk_user_author = ".(int) $this->fk_user_author;
+				$sql.= " AND YEAR(n.date) = ".(int) $arrayDate['year'] ;
+				$sql.= " AND n.fk_c_type_fees = 4";
+				$sql.= " AND e.fk_statut = ".(int) ExpenseReport::STATUS_VALIDATED;
+				$resql = $this->db->query($sql);
+
+				if ($resql){
+					$obj = $this->db->fetch_object($resql);
+					$cumulYearQty = $obj->cumul;
+				}
+				$qty = $cumulYearQty + $qty;
+
+			}
+
 			$num = $this->db->num_rows($result);
 
 			if ($num) {
@@ -2617,12 +2637,12 @@ class ExpenseReport extends CommonObject
 				for ($i = 0; $i < $num; $i++) {
 					if ($i < ($num - 1)) {
 
-						if ($qty > $ranges[$i]->range && $qty < $ranges[$i+1]->range) {
+						if ($qty > $ranges[$i]->range_ik && $qty < $ranges[$i+1]->range_ik) {
 							$coef = $ranges[$i]->coef;
 							$offset = $ranges[$i]->offset;
 						}
 					} else {
-						if ($qty > $ranges[$i]->range) {
+						if ($qty > $ranges[$i]->range_ik) {
 							$coef = $ranges[$i]->coef;
 							$offset = $ranges[$i]->offset;
 						}
