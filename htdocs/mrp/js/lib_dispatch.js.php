@@ -189,7 +189,9 @@ function addDispatchTR(qtyOrdered, qtyDispatched, index, nbrTrs, warehouseId, in
 		$("#"+inputId+"-"+index+(nbrTrs)).data('type', type);
 		$("#"+inputId+"-"+index+(nbrTrs)).data('index', index);
         if(mode == 'allmissingconsume' || mode == 'alltoproduce') {
-            $row.find("input[id^='"+inputId+"']").val(qty);
+            let currentQtyDispatched = qtyDispatched+qty;
+            if((currentQtyDispatched+qty) > qtyOrdered) $row.find("input[id^='"+inputId+"']").val(qtyOrdered - currentQtyDispatched);
+             else  $row.find("input[id^='"+inputId+"']").val(qty);
         }
 	}
 }
