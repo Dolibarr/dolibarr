@@ -87,13 +87,15 @@ $langs->loadLangs(array("mymodule@mymodule", "other"));
 // Get parameters
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
+$lineid   = GETPOST('lineid', 'int');
+
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'myobjectcard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
-$lineid   = GETPOST('lineid', 'int');
+$dol_openinpopup = GETPOST('dol_openinpopup', 'aZ09');
 
 // Initialize technical objects
 $object = new MyObject($db);
@@ -122,12 +124,23 @@ if (empty($action) && empty($id) && empty($ref)) {
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
 
+// There is several ways to check permission.
+// Set $enablepermissioncheck to 1 to enable a minimum low level of checks
+$enablepermissioncheck = 0;
+if ($enablepermissioncheck) {
+	$permissiontoread = $user->rights->mymodule->myobject->read;
+	$permissiontoadd = $user->rights->mymodule->myobject->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+	$permissiontodelete = $user->rights->mymodule->myobject->delete || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
+	$permissionnote = $user->rights->mymodule->myobject->write; // Used by the include of actions_setnotes.inc.php
+	$permissiondellink = $user->rights->mymodule->myobject->write; // Used by the include of actions_dellink.inc.php
+} else {
+	$permissiontoread = 1;
+	$permissiontoadd = 1; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+	$permissiontodelete = 1;
+	$permissionnote = 1;
+	$permissiondellink = 1;
+}
 
-$permissiontoread = $user->rights->mymodule->myobject->read;
-$permissiontoadd = $user->rights->mymodule->myobject->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-$permissiontodelete = $user->rights->mymodule->myobject->delete || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
-$permissionnote = $user->rights->mymodule->myobject->write; // Used by the include of actions_setnotes.inc.php
-$permissiondellink = $user->rights->mymodule->myobject->write; // Used by the include of actions_dellink.inc.php
 $upload_dir = $conf->mymodule->multidir_output[isset($object->entity) ? $object->entity : 1].'/myobject';
 
 // Security check (enable the most restrictive one)
@@ -135,8 +148,8 @@ $upload_dir = $conf->mymodule->multidir_output[isset($object->entity) ? $object-
 //if ($user->socid > 0) $socid = $user->socid;
 //$isdraft = (isset($object->status) && ($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 //restrictedArea($user, $object->element, $object->id, $object->table_element, '', 'fk_soc', 'rowid', $isdraft);
-//if (empty($conf->mymodule->enabled)) accessforbidden();
-//if (!$permissiontoread) accessforbidden();
+if (empty($conf->mymodule->enabled)) accessforbidden();
+if (!$permissiontoread) accessforbidden();
 
 
 /*
@@ -230,6 +243,11 @@ llxHeader('', $title, $help_url);
 
 // Part to create
 if ($action == 'create') {
+	if (empty($permissiontoadd)) {
+		accessforbidden($langs->trans('NotEnoughPermissions'), 0, 1);
+		exit;
+	}
+
 	print load_fiche_titre($langs->trans("NewObject", $langs->transnoentitiesnoconv("MyObject")), '', 'object_'.$object->picto);
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
@@ -573,7 +591,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		$MAXEVENT = 10;
 
-		$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-list-alt imgforviewmode', dol_buildpath('/mymodule/myobject_agenda.php', 1).'?id='.$object->id);
+		$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-bars imgforviewmode', dol_buildpath('/mymodule/myobject_agenda.php', 1).'?id='.$object->id);
 
 		// List of actions on element
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';

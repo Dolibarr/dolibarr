@@ -30,10 +30,11 @@ require_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
 require_once DOL_DOCUMENT_ROOT.'/bom/lib/bom.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("mrp", "other"));
+$langs->loadLangs(array("mrp", "other", "stocks"));
 
 // Get parameters
 $id = GETPOST('id', 'int');
+$lineid = GETPOST('lineid', 'int');
 $ref        = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm    = GETPOST('confirm', 'alpha');
@@ -170,7 +171,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$keyforbreak = 'duration';
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_view.tpl.php';
 
-	print '<tr><td>'.$form->textwithpicto($langs->trans("TotalCost"), $langs->trans("BOMTotalCost")).'</td><td>'.price($object->total_cost).'</td></tr>';
+	print '<tr><td>'.$form->textwithpicto($langs->trans("TotalCost"), $langs->trans("BOMTotalCost")).'</td><td><span class="amount">'.price($object->total_cost).'</span></td></tr>';
 	print '<tr><td>'.$langs->trans("UnitCost").'</td><td>'.price($object->unit_cost).'</td></tr>';
 
 	// Other attributes
@@ -184,7 +185,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	print dol_get_fiche_end();
 
-	$viewlink = dolGetButtonTitle($langs->trans('GroupByProduct'), '', 'fa fa-list-alt imgforviewmode', $_SERVER['PHP_SELF'].'?id='.$object->id.'&token='.newToken(), '', 1, array('morecss' => 'reposition '.($action !== 'treeview' ? 'btnTitleSelected':'')));
+	$viewlink = dolGetButtonTitle($langs->trans('GroupByProduct'), '', 'fa fa-bars imgforviewmode', $_SERVER['PHP_SELF'].'?id='.$object->id.'&token='.newToken(), '', 1, array('morecss' => 'reposition '.($action !== 'treeview' ? 'btnTitleSelected':'')));
 	$viewlink .= dolGetButtonTitle($langs->trans('TreeStructure'), '', 'fa fa-stream imgforviewmode', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=treeview&token='.newToken(), '', 1, array('morecss' => 'reposition marginleftonly '.($action == 'treeview' ? 'btnTitleSelected':'')));
 
 	print load_fiche_titre($langs->trans("BillOfMaterials"), $viewlink, 'cubes');
@@ -211,9 +212,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<a id="hide_all" href="#">'.img_picto('', 'folder', 'class="paddingright"').$langs->trans("UndoExpandAll").'</a>&nbsp;';
 	}
 	print '</td>';
-	print '<td class="linecolqty">'.$langs->trans('Quantity').'</td>';
-	print '<td class="linecolstock">'.$form->textwithpicto($langs->trans("PhysicalStock"), $text_stock_options, 1).'</td>';
-	print '<td class="linecoltheoricalstock">'.$form->textwithpicto($langs->trans("VirtualStock"), $langs->trans("VirtualStockDesc")).'</td>';
+	print '<td class="linecolqty right">'.$langs->trans('Quantity').'</td>';
+	print '<td class="linecolstock right">'.$form->textwithpicto($langs->trans("PhysicalStock"), $text_stock_options, 1).'</td>';
+	print '<td class="linecoltheoricalstock right">'.$form->textwithpicto($langs->trans("VirtualStock"), $langs->trans("VirtualStockDesc")).'</td>';
 	print  '</tr>';
 	if (! empty($TChildBom)) {
 		if ($action == 'treeview') {
@@ -227,9 +228,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					print img_picto('', 'folder-open');
 					print '</a>';
 					print  '</td>';
-					print '<td class="linecolqty">'.$TProduct['qty'].'</td>';
-					print '<td class="linecolstock"></td>';
-					print '<td class="linecoltheoricalstock"></td>';
+					print '<td class="linecolqty right">'.$TProduct['qty'].'</td>';
+					print '<td class="linecolstock right"></td>';
+					print '<td class="linecoltheoricalstock right"></td>';
 					print '</tr>';
 				}
 				if (! empty($TProduct['product'])) {
@@ -241,9 +242,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						if ($fk_bom != $object->id) print '<tr class="sub_bom_lines oddeven" parentid="'.$fk_bom.'">';
 						else print '<tr class="oddeven">';
 						print '<td class="linecoldescription">'.str_repeat($repeatChar, $TInfos['level']).$prod->getNomUrl(1).'</td>';
-						print '<td class="linecolqty">'.$TInfos['qty'].'</td>';
-						print '<td class="linecolstock">'.$prod->stock_reel.'</td>';
-						print '<td class="linecoltheoricalstock">'.$prod->stock_theorique.'</td>';
+						print '<td class="linecolqty right">'.$TInfos['qty'].'</td>';
+						print '<td class="linecolstock right">'.price2num($prod->stock_reel, 'MS').'</td>';
+						print '<td class="linecoltheoricalstock right">'.$prod->stock_theorique.'</td>';
 						print '</tr>';
 					}
 				}
@@ -256,9 +257,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				if (empty($prod->stock_reel)) $prod->stock_reel = 0;
 				print '<tr class="oddeven">';
 				print '<td class="linecoldescription">'.$prod->getNomUrl(1).'</td>';
-				print '<td class="linecolqty">'.$qty.'</td>';
-				print '<td class="linecolstock">'.$prod->stock_reel.'</td>';
-				print '<td class="linecoltheoricalstock">'.$prod->stock_theorique.'</td>';
+				print '<td class="linecolqty right">'.$qty.'</td>';
+				print '<td class="linecolstock right">'.price2num($prod->stock_reel, 'MS').'</td>';
+				print '<td class="linecoltheoricalstock right">'.$prod->stock_theorique.'</td>';
 				print '</tr>';
 			}
 		}

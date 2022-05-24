@@ -86,23 +86,21 @@ class FormActions
                 	select_status();
 
                     $('#select' + htmlname).change(function() {
+						console.log('We change field select '+htmlname);
                         select_status();
                     });
-                    // FIXME use another method for update combobox
-                    //$('#val' + htmlname).change(function() {
-                        //select_status();
-                    //});
                 });
 
                 function select_status() {
                     var defaultvalue = $('#select' + htmlname).val();
+					console.log('val='+defaultvalue);
                     var percentage = $('input[name=percentage]');
                     var selected = '".(isset($selected) ? dol_escape_js($selected) : '')."';
                     var value = (selected>0?selected:(defaultvalue>=0?defaultvalue:''));
 
                     percentage.val(value);
 
-                    if (defaultvalue == -1) {
+                    if (defaultvalue == 'na' || defaultvalue == -1) {
 						percentage.prop('disabled', true);
                         $('.hideifna').hide();
                     }
@@ -131,7 +129,7 @@ class FormActions
 			}
 			print '<select '.($canedit ? '' : 'disabled ').'name="'.$htmlname.'" id="select'.$htmlname.'" class="flat'.($morecss ? ' '.$morecss : '').'">';
 			if ($showempty) {
-				print '<option value=""'.($selected == '' ? ' selected' : '').'>&nbsp;</option>';
+				print '<option value="-1"'.($selected == '' ? ' selected' : '').'>&nbsp;</option>';
 			}
 			foreach ($listofstatus as $key => $val) {
 				print '<option value="'.$key.'"'.(($selected == $key && strlen($selected) == strlen($key)) || (($selected > 0 && $selected < 100) && $key == '50') ? ' selected' : '').'>'.$val.'</option>';

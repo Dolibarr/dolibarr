@@ -127,12 +127,12 @@ class Ctyperesource
 		if (!$error) {
 			$this->id = $this->db->last_insert_id($this->db->prefix().$this->table_element);
 
-			// Uncomment this and change MYOBJECT to your own tag if you
+			// Uncomment this and change CTYPERESOURCE to your own tag if you
 			// want this action to call a trigger.
 			//if (!$notrigger) {
 
 			//  // Call triggers
-			//  $result=$this->call_trigger('MYOBJECT_CREATE',$user);
+			//  $result=$this->call_trigger('CTYPERESOURCE_CREATE',$user);
 			//  if ($result < 0) $error++;
 			//  // End call triggers
 			//}
@@ -325,12 +325,12 @@ class Ctyperesource
 			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 		}
 
-		// Uncomment this and change MYOBJECT to your own tag if you
+		// Uncomment this and change CTYPERESOURCE to your own tag if you
 		// want this action calls a trigger.
 		//if (!$error && !$notrigger) {
 
 		//  // Call triggers
-		//  $result=$this->call_trigger('MYOBJECT_MODIFY',$user);
+		//  $result=$this->call_trigger('CTYPERESOURCE_MODIFY',$user);
 		//  if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
 		//  // End call triggers
 		//}
@@ -363,12 +363,12 @@ class Ctyperesource
 
 		$this->db->begin();
 
-		// Uncomment this and change MYOBJECT to your own tag if you
+		// Uncomment this and change CTYPERESOURCE to your own tag if you
 		// want this action calls a trigger.
 		//if (!$error && !$notrigger) {
 
 		//  // Call triggers
-		//  $result=$this->call_trigger('MYOBJECT_DELETE',$user);
+		//  $result=$this->call_trigger('CTYPERESOURCE_DELETE',$user);
 		//  if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
 		//  // End call triggers
 		//}

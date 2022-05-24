@@ -78,7 +78,7 @@ if ($action == 'add_payment') {
 		foreach ($_POST as $key => $value) {
 			if (substr($key, 0, 7) == 'amount_') {
 				$other_chid = substr($key, 7);
-				$amounts[$other_chid] = price2num($_POST[$key]);
+				$amounts[$other_chid] = price2num(GETPOST($key));
 			}
 		}
 
@@ -110,7 +110,7 @@ if ($action == 'add_payment') {
 			}
 
 			if (!$error) {
-				$result = $payment->addPaymentToBank($user, 'payment_donation', '(DonationPayment)', $_POST['accountid'], '', '');
+				$result = $payment->addPaymentToBank($user, 'payment_donation', '(DonationPayment)', GETPOST('accountid', 'int'), '', '');
 				if (!$result > 0) {
 					$errmsg = $payment->error;
 					setEventMessages($errmsg, null, 'errors');
@@ -149,7 +149,7 @@ $resql = $db->query($sql);
 if ($resql) {
 	$obj = $db->fetch_object($resql);
 	$sumpaid = $obj->total;
-	$db->free();
+	$db->free($resql);
 }
 
 

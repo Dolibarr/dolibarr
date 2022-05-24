@@ -120,9 +120,10 @@ if (empty($reshook)) {
 				$skillAdded->fk_object = $id;
 				$skillAdded->objecttype = $objecttype;
 				$ret = $skillAdded->create($user);
-				if ($ret < 0) setEventMessage($skillAdded->error, 'errors');
+				if ($ret < 0) setEventMessages($skillAdded->error, null, 'errors');
 				//else unset($TSkillsToAdd);
 			}
+			if ($ret > 0) setEventMessages($langs->trans("SaveAddSkill"), null);
 		}
 	} elseif ($action == 'saveSkill') {
 		if (!empty($TNote)) {
@@ -135,10 +136,14 @@ if (empty($reshook)) {
 					}
 				}
 			}
+			setEventMessages($langs->trans("SaveLevelSkill"), null);
+			header("Location: " . DOL_URL_ROOT.'/hrm/skill_tab.php?id=' . $id. '&objecttype=job');
+			exit;
 		}
 	} elseif ($action == 'confirm_deleteskill' && $confirm == 'yes') {
 		$skillToDelete = new SkillRank($db);
 		$ret = $skillToDelete->fetch($lineid);
+		setEventMessages($langs->trans("DeleteSkill"), null);
 		if ($ret > 0) {
 			$skillToDelete->delete($user);
 		}
@@ -242,12 +247,67 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	print '<div class="fichecenter">';
 	print '<div class="fichehalfleft">';
+
 	print '<div class="underbanner clearboth"></div>';
-	print '<table class="border centpercent tableforfield">' . "\n";
+	print '<table class="border centpercent tableforfield">';
+
+	// Login
+	print '<tr><td class="titlefield">'.$langs->trans("Login").'</td>';
+	if (!empty($object->ldap_sid) && $object->statut == 0) {
+		print '<td class="error">';
+		print $langs->trans("LoginAccountDisableInDolibarr");
+		print '</td>';
+	} else {
+		print '<td>';
+		$addadmin = '';
+		if (property_exists($object, 'admin')) {
+			if (!empty($conf->multicompany->enabled) && !empty($object->admin) && empty($object->entity)) {
+				$addadmin .= img_picto($langs->trans("SuperAdministratorDesc"), "redstar", 'class="paddingleft"');
+			} elseif (!empty($object->admin)) {
+				$addadmin .= img_picto($langs->trans("AdministratorDesc"), "star", 'class="paddingleft"');
+			}
+		}
+		print showValueWithClipboardCPButton($object->login).$addadmin;
+		print '</td>';
+	}
+	print '</tr>'."\n";
+
 	$object->fields['label']['visible']=0; // Already in banner
-	include DOL_DOCUMENT_ROOT . '/core/tpl/commonfields_view.tpl.php';
+	$object->fields['firstname']['visible']=0; // Already in banner
+	$object->fields['lastname']['visible']=0; // Already in banner
+	//include DOL_DOCUMENT_ROOT . '/core/tpl/commonfields_view.tpl.php';
+
+	// Ref employee
+	print '<tr><td class="titlefield">'.$langs->trans("RefEmployee").'</td>';
+	print '<td class="error">';
+	print showValueWithClipboardCPButton($object->ref_employee);
+	print '</td>';
+	print '</tr>'."\n";
+
+	// National Registration Number
+	print '<tr><td class="titlefield">'.$langs->trans("NationalRegistrationNumber").'</td>';
+	print '<td class="error">';
+	print showValueWithClipboardCPButton($object->national_registration_number);
+	print '</td>';
+	print '</tr>'."\n";
+
+	/*print '<tr><td class="titlefield">'.$langs->trans("NbOfActiveNotifications").'</td>';   // Notification for this thirdparty
+	 print '<td colspan="3">';
+	 $nbofrecipientemails=0;
+	 $notify=new Notify($db);
+	 $tmparray = $notify->getNotificationsArray('', 0, null, $object->id, array('user'));
+	 foreach($tmparray as $tmpkey => $tmpval)
+	 {
+	 $nbofrecipientemails++;
+	 }
+	 print $nbofrecipientemails;
+	 print '</td></tr>';*/
+
 	print '</table>';
+
 	print '</div>';
+	print '</div>';
+
 
 	print '<div class="clearboth"></div><br>';
 
@@ -291,7 +351,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	}
 	print '</tr>';
 	if (!is_array($TSkillsJob) || empty($TSkillsJob)) {
-		print '<tr><td>' . $langs->trans("NoRecordFound") . '</td></tr>';
+		print '<tr><td><span class="opacitymedium">' . $langs->trans("NoRecordFound") . '</span></td></tr>';
 	} else {
 		$sk = new Skill($db);
 		foreach ($TSkillsJob as $skillElement) {

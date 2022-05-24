@@ -164,12 +164,12 @@ class pdf_crabe extends ModelePDFFactures
 		$this->option_tva = 1; // Manage the vat option FACTURE_TVAOPTION
 		$this->option_modereg = 1; // Display payment mode
 		$this->option_condreg = 1; // Display payment terms
-		$this->option_codeproduitservice = 1; // Display product-service code
 		$this->option_multilang = 1; // Available in several languages
 		$this->option_escompte = 1; // Displays if there has been a discount
 		$this->option_credit_note = 1; // Support credit notes
 		$this->option_freetext = 1; // Support add of a personalised text
 		$this->option_draft_watermark = 1; // Support add of a watermark on drafts
+		$this->watermark = '';
 
 		// Get source company
 		$this->emetteur = $mysoc;
@@ -249,6 +249,11 @@ class pdf_crabe extends ModelePDFFactures
 		// Load translation files required by the page
 		$outputlangs->loadLangs(array("main", "bills", "products", "dict", "companies"));
 
+		// Show Draft Watermark
+		if ($object->statut == $object::STATUS_DRAFT && (!empty($conf->global->FACTURE_DRAFT_WATERMARK))) {
+			$this->watermark = $conf->global->FACTURE_DRAFT_WATERMARK;
+		}
+
 		global $outputlangsbis;
 		$outputlangsbis = null;
 		if (!empty($conf->global->PDF_USE_ALSO_LANGUAGE_CODE) && $outputlangs->defaultlang != $conf->global->PDF_USE_ALSO_LANGUAGE_CODE) {
@@ -299,11 +304,11 @@ class pdf_crabe extends ModelePDFFactures
 
 			// Definition of $dir and $file
 			if ($object->specimen) {
-				$dir = $conf->facture->dir_output;
+				$dir = empty($conf->facture->multidir_output[$conf->entity]) ? $conf->facture->dir_output : $conf->facture->multidir_output[$conf->entity];
 				$file = $dir."/SPECIMEN.pdf";
 			} else {
 				$objectref = dol_sanitizeFileName($object->ref);
-				$dir = $conf->facture->dir_output."/".$objectref;
+				$dir = (empty($conf->facture->multidir_output[$conf->entity]) ? $conf->facture->dir_output : $conf->facture->multidir_output[$conf->entity])."/".$objectref;
 				$file = $dir."/".$objectref.".pdf";
 			}
 			if (!file_exists($dir)) {
@@ -477,7 +482,7 @@ class pdf_crabe extends ModelePDFFactures
 				}
 
 				$tab_top += $extra_under_address_shift;
-				$tab_top_newpage += $extra_under_address_shift;
+				$tab_top_newpage += 0;
 
 				// Incoterm
 				$height_incoterms = 0;
@@ -874,12 +879,12 @@ class pdf_crabe extends ModelePDFFactures
 	/**
 	 *  Show payments table
 	 *
-	 *  @param	TCPDF		$pdf            Object PDF
-	 *  @param  Facture		$object         Object invoice
-	 *  @param  int			$posy           Position y in PDF
-	 *  @param  Translate	$outputlangs    Object langs for output
-	 *  @param  int			$heightforfooter height for footer
-	 *  @return int             			<0 if KO, >0 if OK
+	 *  @param	TCPDF		$pdf            	Object PDF
+	 *  @param  Facture		$object         	Object invoice
+	 *  @param  int			$posy           	Position y in PDF
+	 *  @param  Translate	$outputlangs    	Object langs for output
+	 *  @param  int			$heightforfooter 	Height for footer
+	 *  @return int             				<0 if KO, >0 if OK
 	 */
 	protected function _tableau_versements(&$pdf, $object, $posy, $outputlangs, $heightforfooter = 0)
 	{
@@ -897,7 +902,7 @@ class pdf_crabe extends ModelePDFFactures
 		$tab3_width = 80;
 		$tab3_height = 4;
 		if ($this->page_largeur < 210) { // To work with US executive format
-			$tab3_posx -= 20;
+			$tab3_posx -= 15;
 		}
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
@@ -1289,7 +1294,8 @@ class pdf_crabe extends ModelePDFFactures
 		$col1x = 120;
 		$col2x = 170;
 		if ($this->page_largeur < 210) { // To work with US executive format
-			$col2x -= 20;
+			$col1x -= 15;
+			$col2x -= 10;
 		}
 		$largcol2 = ($this->page_largeur - $this->marge_droite - $col2x);
 
@@ -1717,11 +1723,6 @@ class pdf_crabe extends ModelePDFFactures
 
 		pdf_pagehead($pdf, $outputlangs, $this->page_hauteur);
 
-		// Show Draft Watermark
-		if ($object->statut == $object::STATUS_DRAFT && (!empty($conf->global->FACTURE_DRAFT_WATERMARK))) {
-			  pdf_watermark($pdf, $outputlangs, $this->page_hauteur, $this->page_largeur, 'mm', $conf->global->FACTURE_DRAFT_WATERMARK);
-		}
-
 		$pdf->SetTextColor(0, 0, 60);
 		$pdf->SetFont('', 'B', $default_font_size + 3);
 
@@ -2047,6 +2048,6 @@ class pdf_crabe extends ModelePDFFactures
 	{
 		global $conf;
 		$showdetails = empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS) ? 0 : $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
-		return pdf_pagefoot($pdf, $outputlangs, 'INVOICE_FREE_TEXT', $this->emetteur, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext);
+		return pdf_pagefoot($pdf, $outputlangs, 'INVOICE_FREE_TEXT', $this->emetteur, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext, $this->page_largeur, $this->watermark);
 	}
 }

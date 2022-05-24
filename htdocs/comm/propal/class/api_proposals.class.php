@@ -135,8 +135,13 @@ class Proposals extends DolibarrApi
 		}
 
 		// Add external contacts ids.
-		$this->propal->contacts_ids = $this->propal->liste_contact(-1, 'external', $contact_list);
+		$tmparray = $this->propal->liste_contact(-1, 'external', $contact_list);
+		if (is_array($tmparray)) {
+			$this->propal->contacts_ids = $tmparray;
+		}
+
 		$this->propal->fetchObjectLinked();
+
 		return $this->_cleanObjectDatas($this->propal);
 	}
 
@@ -228,7 +233,10 @@ class Proposals extends DolibarrApi
 				$proposal_static = new Propal($this->db);
 				if ($proposal_static->fetch($obj->rowid)) {
 					// Add external contacts ids
-					$proposal_static->contacts_ids = $proposal_static->liste_contact(-1, 'external', 1);
+					$tmparray = $proposal_static->liste_contact(-1, 'external', 1);
+					if (is_array($tmparray)) {
+						$proposal_static->contacts_ids = $tmparray;
+					}
 					$obj_ret[] = $this->_cleanObjectDatas($proposal_static);
 				}
 				$i++;
@@ -519,7 +527,9 @@ class Proposals extends DolibarrApi
 			isset($request_data->date_end) ? $request_data->date_end : $propalline->date_end,
 			isset($request_data->array_options) ? $request_data->array_options : $propalline->array_options,
 			isset($request_data->fk_unit) ? $request_data->fk_unit : $propalline->fk_unit,
-			isset($request_data->multicurrency_subprice) ? $request_data->multicurrency_subprice : $propalline->subprice
+			isset($request_data->multicurrency_subprice) ? $request_data->multicurrency_subprice : $propalline->subprice,
+			0,
+			isset($request_data->rang) ? $request_data->rang : $propalline->rang
 		);
 
 		if ($updateRes > 0) {
@@ -625,7 +635,7 @@ class Proposals extends DolibarrApi
 	  *
 	  * @throws RestException 401
 	  * @throws RestException 404
-	  * @throws RestException 500
+	  * @throws RestException 500 System error
 	  */
 	public function deleteContact($id, $contactid, $type)
 	{
@@ -643,7 +653,7 @@ class Proposals extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		$contacts = $this->invoice->liste_contact();
+		$contacts = $this->propal->liste_contact();
 
 		foreach ($contacts as $contact) {
 			if ($contact['id'] == $contactid && $contact['code'] == $type) {
@@ -799,7 +809,7 @@ class Proposals extends DolibarrApi
 	 * @throws RestException 304
 	 * @throws RestException 401
 	 * @throws RestException 404
-	 * @throws RestException 500
+	 * @throws RestException 500 System error
 	 *
 	 * @return array
 	 */

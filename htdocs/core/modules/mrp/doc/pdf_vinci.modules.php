@@ -150,7 +150,6 @@ class pdf_vinci extends ModelePDFMo
 		$this->marge_basse = isset($conf->global->MAIN_PDF_MARGIN_BOTTOM) ? $conf->global->MAIN_PDF_MARGIN_BOTTOM : 10;
 
 		$this->option_logo = 1; // Display logo
-		$this->option_codeproduitservice = 1; // Display product-service code
 		$this->option_multilang = 1; //Available in several languages
 		$this->option_escompte = 0; // Displays if there has been a discount
 		$this->option_credit_note = 0; // Support credit notes

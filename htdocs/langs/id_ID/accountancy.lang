@@ -62,24 +62,24 @@ MainAccountForSubscriptionPaymentNotDefined=Akun akuntansi utama untuk pembayara
 AccountancyArea=Bidang akuntansi
 AccountancyAreaDescIntro=Penggunaan modul akuntansi dilakukan dalam beberapa langkah:
 AccountancyAreaDescActionOnce=Tindakan berikut ini biasanya dilakukan hanya sekali saja, atau sekali setahun...
-AccountancyAreaDescActionOnceBis=Langkah-langkah selanjutnya harus dilakukan untuk menghemat waktu Anda di masa depan dengan menyarankan akun akuntansi standar yang benar ketika membuat Pencatatan Jurnal (menulis catatan dalam Jurnal dan Buku Besar)
+AccountancyAreaDescActionOnceBis=Next steps should be done to save you time in future by suggesting you automaticaly the correct default accounting account when transferring data in accounting
 AccountancyAreaDescActionFreq=Tindakan berikut ini biasanya dilakukan setiap bulan, minggu atau hari untuk perusahaan yang sangat besar...
 
-AccountancyAreaDescJournalSetup=LANGKAH %s: Buat atau periksa konten daftar jurnal Anda dari menu %s
+AccountancyAreaDescJournalSetup=STEP %s: Check content of your journal list from menu %s
 AccountancyAreaDescChartModel=LANGKAH %s: Periksa apakah tersedia model bagan akun atau buat model barudari menu %s
 AccountancyAreaDescChart=LANGKAH %s: Pilih dan|atau selesaikan bagan akun Anda dari menu %s
 
 AccountancyAreaDescVat=LANGKAH %s: Tentukan akun akuntansi untuk setiap Tarif PPN. Untuk ini, gunakan entri menu %s.
 AccountancyAreaDescDefault=LANGKAH %s: Tentukan akun akuntansi standar. Untuk ini, gunakan entri menu %s.
-AccountancyAreaDescExpenseReport=LANGKAH %s: Tetapkan akun akuntansi standar untuk setiap jenis laporan pengeluaran. Untuk ini, gunakan entri menu %s.
+AccountancyAreaDescExpenseReport=STEP %s: Define default accounting accounts for each type of Expense report. For this, use the menu entry %s.
 AccountancyAreaDescSal=LANGKAH %s: Tentukan akun akuntansi standar untuk pembayaran gaji. Untuk ini, gunakan entri menu %s.
-AccountancyAreaDescContrib=LANGKAH %s: Tetapkan akun akuntansi standar untuk pengeluaran khusus (pajak lain - lain). Untuk ini, gunakan entri menu %s.
+AccountancyAreaDescContrib=STEP %s: Define default accounting accounts for Taxes (special expenses). For this, use the menu entry %s.
 AccountancyAreaDescDonation=LANGKAH %s: Tentukan akun akuntansi standar untuk donasi. Untuk ini, gunakan entri menu %s.
 AccountancyAreaDescSubscription=LANGKAH %s: Tetapkan akun akuntansi standar untuk langganan anggota. Untuk ini, gunakan entri menu %s.
 AccountancyAreaDescMisc=LANGKAH %s: Tetapkan akun standar wajib dan akun akuntansi standar untuk transaksi lain-lain. Untuk ini, gunakan entri menu %s.
 AccountancyAreaDescLoan=LANGKAH %s: Tentukan akun akuntansi standar untuk pinjaman. Untuk ini, gunakan entri menu %s.
 AccountancyAreaDescBank=LANGKAH %s: Tentukan akun akuntansi dan kode jurnal untuk masing-masing bank dan akun keuangan. Untuk ini, gunakan entri menu %s.
-AccountancyAreaDescProd=LANGKAH %s: Tentukan akun akuntansi pada produk/layanan Anda. Untuk ini, gunakan entri menu %s.
+AccountancyAreaDescProd=STEP %s: Define accounting accounts on your Products/Services. For this, use the menu entry %s.
 
 AccountancyAreaDescBind=LANGKAH %s: Periksa pengikatan antara garis %s yang ada dan akun akuntansi telah dilakukan, sehingga aplikasi akan dapat membuat jurnal transaksi di Buku Besar dalam satu klik. Lengkapi pengikatan yang hilang. Untuk ini, gunakan entri menu %s.
 AccountancyAreaDescWriteRecords=LANGKAH %s: Tulis transaksi ke dalam Buku Besar. Untuk ini, masuk ke menu <strong>%s</strong>, dan klik ke tombol <strong>%s</strong>.
@@ -112,7 +112,7 @@ MenuAccountancyClosure=Penutupan
 MenuAccountancyValidationMovements=Validasi gerakan
 ProductsBinding=Akun produk
 TransferInAccounting=Transfer dalam akuntansi
-RegistrationInAccounting=Pendaftaran dalam akuntansi
+RegistrationInAccounting=Recording in accounting
 Binding=Mengikat ke akun
 CustomersVentilation=Penjilidan faktur pelanggan
 SuppliersVentilation=Penjilidan faktur vendor
@@ -120,7 +120,7 @@ ExpenseReportsVentilation=Penjilidan laporan pengeluaran
 CreateMvts=Buat transaksi baru
 UpdateMvts=Modifikasi sebuah transaksi
 ValidTransaction=Validasi transaksi
-WriteBookKeeping=Daftarkan transaksi dalam akuntansi
+WriteBookKeeping=Record transactions in accounting
 Bookkeeping=Buku Besar
 BookkeepingSubAccount=Subledger
 AccountBalance=Saldo akun
@@ -219,12 +219,12 @@ ByPredefinedAccountGroups=Oleh kelompok yang telah ditentukan
 ByPersonalizedAccountGroups=Oleh grup yang dipersonalisasi
 ByYear=Tahun
 NotMatch=Tidak diatur
-DeleteMvt=Hapus beberapa jalur operasi dari akuntansi
+DeleteMvt=Delete some lines from accounting
 DelMonth=Bulan untuk dihapus
 DelYear=Tahun untuk dihapus
 DelJournal=Jurnal untuk dihapus
-ConfirmDeleteMvt=Ini akan menghapus semua baris operasi akuntansi untuk tahun / bulan dan / atau untuk jurnal tertentu (Setidaknya satu kriteria diperlukan). Anda harus menggunakan kembali fitur '%s' agar catatan yang dihapus kembali ke buku besar.
-ConfirmDeleteMvtPartial=Ini akan menghapus transaksi dari akunting (semua jalur operasi yang terkait dengan transaksi yang sama akan dihapus)
+ConfirmDeleteMvt=This will delete all lines in accountancy for the year/month and/or for a specific journal (At least one criterion is required). You will have to reuse the feature '%s' to have the deleted record back in the ledger.
+ConfirmDeleteMvtPartial=This will delete the transaction from the accounting (all lines related to the same transaction will be deleted)
 FinanceJournal=Finance journal
 ExpenseReportsJournal=Jurnal biaya laporan
 DescFinanceJournal=Finance journal including all the types of payments by bank account
@@ -278,11 +278,11 @@ DescVentilExpenseReportMore=Jika Anda mengatur akun akuntansi pada jenis garis l
 DescVentilDoneExpenseReport=Konsultasikan di sini daftar garis laporan pengeluaran dan akun akuntansi biayanya
 
 Closure=Penutupan tahunan
-DescClosure=Konsultasikan di sini jumlah gerakan berdasarkan bulan yang tidak divalidasi & tahun fiskal sudah terbuka
-OverviewOfMovementsNotValidated=Langkah 1 / Ikhtisar gerakan yang tidak divalidasi. (Diperlukan untuk menutup tahun fiskal)
-AllMovementsWereRecordedAsValidated=Semua pergerakan dicatat sebagai divalidasi
-NotAllMovementsCouldBeRecordedAsValidated=Tidak semua pergerakan dapat direkam sebagai divalidasi
-ValidateMovements=Validasi gerakan
+DescClosure=Consult here the number of movements by month who are not yet validated & locked
+OverviewOfMovementsNotValidated=Overview of movements not validated and locked
+AllMovementsWereRecordedAsValidated=All movements were recorded as validated and locked
+NotAllMovementsCouldBeRecordedAsValidated=Not all movements could be recorded as validated and locked
+ValidateMovements=Validate and lock record...
 DescValidateMovements=Setiap modifikasi atau penghapusan tulisan, huruf dan penghapusan akan dilarang. Semua entri untuk latihan harus divalidasi jika tidak, penutupan tidak akan mungkin
 
 ValidateHistory=Mengikat Secara Otomatis
@@ -294,14 +294,15 @@ Balancing=Menyeimbangkan
 FicheVentilation=Binding card
 GeneralLedgerIsWritten=Transaksi ditulis dalam Buku Besar
 GeneralLedgerSomeRecordWasNotRecorded=Beberapa transaksi tidak dapat dijurnal. Jika tidak ada pesan kesalahan lain, ini mungkin karena mereka sudah dijurnal.
-NoNewRecordSaved=Tidak ada lagi catatan untuk dijurnal
+NoNewRecordSaved=No more record to transfer
 ListOfProductsWithoutAccountingAccount=Daftar produk yang tidak terikat ke akun akuntansi apa pun
 ChangeBinding=Ubah ikatannya
 Accounted=Disumbang dalam buku besar
 NotYetAccounted=Not yet transferred to accounting
 ShowTutorial=Perlihatkan Tutorial
 NotReconciled=Tidak didamaikan
-WarningRecordWithoutSubledgerAreExcluded=Peringatan, semua operasi tanpa akun subledger ditentukan disaring dan dikecualikan dari tampilan ini
+WarningRecordWithoutSubledgerAreExcluded=Warning, all lines without subledger account defined are filtered and excluded from this view
+AccountRemovedFromCurrentChartOfAccount=Accounting account that does not exist in the current chart of accounts
 
 ## Admin
 BindingOptions=Opsi mengikat
@@ -329,8 +330,9 @@ ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Nonaktifkan pengikatan & transfer akunta
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Nonaktifkan pengikatan & transfer akuntansi pada laporan pengeluaran (laporan pengeluaran tidak akan diperhitungkan dalam akuntansi)
 
 ## Export
-NotifiedExportDate=Flag exported lines as exported (modification of the lines will not be possible)
-NotifiedValidationDate=Validate the exported entries (modification or deletion of the lines will not be possible)
+NotifiedExportDate=Flag exported lines as Exported <span class="warning">(to modify a line, you will need to delete the whole transaction and re-transfert it into accounting)</span>
+NotifiedValidationDate=Validate and Lock the exported entries <span class="warning">(same effect than the "Closure" feature, modification and deletion of the lines will DEFINITELY not be possible)</span>
+DateValidationAndLock=Date validation and lock
 ConfirmExportFile=Konfirmasi pembuatan file ekspor akuntansi?
 ExportDraftJournal=Ekspor draft jurnal
 Modelcsv=Model Ekspor
@@ -394,6 +396,21 @@ Range=Rentang akun-akun akuntansi
 Calculated=Terhitung
 Formula=Rumus
 
+## Reconcile
+Unlettering=Unreconcile
+AccountancyNoLetteringModified=No reconcile modified
+AccountancyOneLetteringModifiedSuccessfully=One reconcile successfully modified
+AccountancyLetteringModifiedSuccessfully=%s reconcile successfully modified
+AccountancyNoUnletteringModified=No unreconcile modified
+AccountancyOneUnletteringModifiedSuccessfully=One unreconcile successfully modified
+AccountancyUnletteringModifiedSuccessfully=%s unreconcile successfully modified
+
+## Confirm box
+ConfirmMassUnlettering=Bulk Unreconcile confirmation
+ConfirmMassUnletteringQuestion=Are you sure you want to Unreconcile the %s selected record(s)?
+ConfirmMassDeleteBookkeepingWriting=Bulk Delete confirmation
+ConfirmMassDeleteBookkeepingWritingQuestion=This will delete the transaction from the accounting (all lines related to the same transaction will be deleted) Are you sure you want to delete the %s selected record(s)?
+
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Beberapa langkah pengaturan wajib tidak dilakukan, harap lengkapi
 ErrorNoAccountingCategoryForThisCountry=Tidak ada grup akun akuntansi yang tersedia untuk negara %s (Lihat Beranda - Pengaturan - Kamus)
@@ -406,6 +423,9 @@ Binded=Garis terikat
 ToBind=Baris untuk mengikat
 UseMenuToSetBindindManualy=Baris belum terikat, gunakan menu <a href="%s"> %s </a> untuk membuat pengikatan secara manual
 SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Sorry this module is not compatible with the experimental feature of situation invoices
+AccountancyErrorMismatchLetterCode=Mismatch in reconcile code
+AccountancyErrorMismatchBalanceAmount=The balance (%s) is not equal to 0
+AccountancyErrorLetteringBookkeeping=Errors have occurred concerning the transactions: %s
 
 ## Import
 ImportAccountingEntries=Entri akuntansi

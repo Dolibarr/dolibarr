@@ -236,16 +236,16 @@ llxHeader('', $title, $helpurl);
 if ($object->id > 0) {
 	$selleruserevenustamp = $mysoc->useRevenueStamp();
 
-	$totalpaye = $object->getSommePaiement();
+	$totalpaid = $object->getSommePaiement();
 	$totalcreditnotes = $object->getSumCreditNotesUsed();
 	$totaldeposits = $object->getSumDepositsUsed();
-	//print "totalpaye=".$totalpaye." totalcreditnotes=".$totalcreditnotes." totaldeposts=".$totaldeposits;
+	//print "totalpaid=".$totalpaid." totalcreditnotes=".$totalcreditnotes." totaldeposts=".$totaldeposits;
 
 	// We can also use bcadd to avoid pb with floating points
 	// For example print 239.2 - 229.3 - 9.9; does not return 0.
-	//$resteapayer=bcadd($object->total_ttc,$totalpaye,$conf->global->MAIN_MAX_DECIMALS_TOT);
+	//$resteapayer=bcadd($object->total_ttc,$totalpaid,$conf->global->MAIN_MAX_DECIMALS_TOT);
 	//$resteapayer=bcadd($resteapayer,$totalavoir,$conf->global->MAIN_MAX_DECIMALS_TOT);
-	$resteapayer = price2num($object->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits, 'MT');
+	$resteapayer = price2num($object->total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits, 'MT');
 
 	if ($object->paye) {
 		$resteapayer = 0;
@@ -281,8 +281,8 @@ if ($object->id > 0) {
 	}
 
 	$author = new User($db);
-	if ($object->user_author) {
-		$author->fetch($object->user_author);
+	if ($object->fk_user_author) {
+		$author->fetch($object->fk_user_author);
 	}
 
 	if ($type == 'bank-transfer') {
@@ -310,9 +310,9 @@ if ($object->id > 0) {
 	$sql .= " AND pfd.ext_payment_id IS NULL";
 	$sql .= " ORDER BY pfd.date_demande DESC";
 
-	$result_sql = $db->query($sql);
-	if ($result_sql) {
-		$num = $db->num_rows($result_sql);
+	$resql = $db->query($sql);
+	if ($resql) {
+		$num = $db->num_rows($resql);
 		$numopen = $num;
 	} else {
 		dol_print_error($db);
@@ -384,7 +384,7 @@ if ($object->id > 0) {
 	}
 	$morehtmlref .= '</div>';
 
-	$object->totalpaye = $totalpaye; // To give a chance to dol_banner_tab to use already paid amount to show correct status
+	$object->totalpaid = $totalpaid; // To give a chance to dol_banner_tab to use already paid amount to show correct status
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, $moreparam, 0, '', '');
 
@@ -667,7 +667,7 @@ if ($object->id > 0) {
 	// Total with tax
 	print '<tr><td>'.$langs->trans('AmountTTC').'</td><td class="nowrap">'.price($object->total_ttc, 1, '', 1, - 1, - 1, $conf->currency).'</td></tr>';
 
-	$resteapayer = price2num($object->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits, 'MT');
+	$resteapayer = price2num($object->total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits, 'MT');
 
 	// TODO Replace this by an include with same code to show already done payment visible in invoice card
 	print '<tr><td>'.$langs->trans('RemainderToPay').'</td><td class="nowrap">'.price($resteapayer, 1, '', 1, - 1, - 1, $conf->currency).'</td></tr>';
@@ -695,9 +695,9 @@ if ($object->id > 0) {
 	$sql .= " AND pfd.traite = 0";
 	$sql .= " AND pfd.ext_payment_id IS NULL";
 
-	$result_sql = $db->query($sql);
-	if ($result_sql) {
-		$obj = $db->fetch_object($result_sql);
+	$resql = $db->query($sql);
+	if ($resql) {
+		$obj = $db->fetch_object($resql);
 		if ($obj) {
 			$pending = $obj->amount;
 		}
@@ -797,17 +797,17 @@ if ($object->id > 0) {
 	$sql .= " AND pfd.ext_payment_id IS NULL";
 	$sql .= " ORDER BY pfd.date_demande DESC";
 
-	$result_sql = $db->query($sql);
+	$resql = $db->query($sql);
 
 	$num = 0;
-	if ($result_sql) {
+	if ($resql) {
 		$i = 0;
 
 		$tmpuser = new User($db);
 
 		$num = $db->num_rows($result);
 		while ($i < $num) {
-			$obj = $db->fetch_object($result_sql);
+			$obj = $db->fetch_object($resql);
 
 			$tmpuser->id = $obj->user_id;
 			$tmpuser->login = $obj->login;
@@ -840,7 +840,7 @@ if ($object->id > 0) {
 			$i++;
 		}
 
-		$db->free($result_sql);
+		$db->free($resql);
 	} else {
 		dol_print_error($db);
 	}
@@ -912,7 +912,7 @@ if ($object->id > 0) {
 		}
 
 		if (!$numopen && !$numclosed) {
-			print '<tr class="oddeven"><td colspan="7" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+			print '<tr class="oddeven"><td colspan="7"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 		}
 
 		$db->free($result);

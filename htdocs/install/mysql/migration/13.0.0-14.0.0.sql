@@ -84,6 +84,9 @@ UPDATE llx_const set value = __ENCRYPT('eldy')__ WHERE __DECRYPT('value')__ = 'a
 UPDATE llx_const set value = __ENCRYPT('eldy')__ WHERE __DECRYPT('value')__ = 'cameleo';
 DELETE FROM llx_user_param where param = 'MAIN_THEME' and value in ('auguria', 'amarok', 'cameleo');
 
+ALTER TABLE llx_product_fournisseur_price ADD COLUMN packaging real DEFAULT NULL;
+ALTER TABLE llx_product_fournisseur_price MODIFY COLUMN packaging real DEFAULT NULL;
+
 
 -- For v14
 

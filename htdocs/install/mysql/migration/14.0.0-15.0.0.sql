@@ -35,6 +35,10 @@
 -- VMYSQL4.3 ALTER TABLE llx_partnership MODIFY COLUMN date_partnership_end date NULL;
 -- VPGSQL8.2 ALTER TABLE llx_partnership ALTER COLUMN date_partnership_end DROP NOT NULL;
 
+ALTER TABLE llx_product_fournisseur_price ADD COLUMN packaging real DEFAULT NULL;
+-- VMYSQL4.3 ALTER TABLE llx_product_fournisseur_price MODIFY COLUMN packaging real DEFAULT NULL;
+-- VPGSQL8.2 ALTER TABLE llx_product_fournisseur_price MODIFY COLUMN packaging real DEFAULT NULL USING packaging::real;
+
 ALTER TABLE llx_accounting_bookkeeping ADD COLUMN date_export datetime DEFAULT NULL;
 
 ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD COLUMN fk_project integer NOT NULL;
@@ -116,8 +120,8 @@ ALTER TABLE llx_product ADD COLUMN mandatory_period tinyint NULL DEFAULT 0;
 ALTER TABLE llx_holiday ADD COLUMN date_approve   DATETIME DEFAULT NULL;
 ALTER TABLE llx_holiday ADD COLUMN fk_user_approve integer DEFAULT NULL;
 
-ALTER TABLE llx_ticket MODIFY COLUMN progress integer;
-
+-- VMYSQL4.3 ALTER TABLE llx_ticket MODIFY COLUMN progress integer;
+-- VPGSQL8.2 ALTER TABLE llx_ticket MODIFY COLUMN progress integer USING progress::integer;
 
 ALTER TABLE llx_emailcollector_emailcollectoraction MODIFY COLUMN actionparam TEXT;
 
@@ -507,6 +511,7 @@ INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) value
 INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) values ('HOLIDAY_CANCEL','Holiday canceled','Executed when a holiday is canceled','holiday',802);
 INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) values ('HOLIDAY_DELETE','Holiday deleted','Executed when a holiday is deleted','holiday',804);
 
+
 -- We do not delete old mexican legal forms because they may have been used. User will have to insert the new one manually not inserted because of conflict if he need them.
 --DELETE FROM llx_c_forme_juridique WHERE code IN ('15401', '15402', '15403', '15404', '15405', '15406');
 
@@ -529,3 +534,26 @@ INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (154, 
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (154, '15417', '624 - Coordinados', 1);
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (154, '15418', '625 - Régimen de las Actividades Empresariales con ingresos a través de Plataformas Tecnológicas', 1);
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (154, '15419', '626 - Régimen Simplificado de Confianza', 1);
+
+-- VMYSQL4.3 ALTER TABLE llx_user MODIFY COLUMN fk_soc integer NULL;
+-- VPGSQL8.2 ALTER TABLE llx_user ALTER COLUMN fk_soc DROP NOT NULL;
+
+CREATE TABLE llx_element_tag
+(
+    rowid integer AUTO_INCREMENT PRIMARY KEY,
+    fk_categorie  integer NOT NULL,
+    fk_element  integer NOT NULL,
+    import_key    varchar(14)
+)ENGINE=innodb;
+
+ALTER TABLE llx_element_tag ADD COLUMN fk_categorie integer;
+ALTER TABLE llx_element_tag ADD COLUMN fk_element integer;
+
+ALTER TABLE llx_element_tag ADD UNIQUE INDEX idx_element_tag_uk (fk_categorie, fk_element);
+
+ALTER TABLE llx_element_tag ADD CONSTRAINT fk_element_tag_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
+
+-- Add column to help to fix a very critical bug when transferring into accounting bank record of a bank account into another currency.
+-- Idea is to update this column manually in v15 with value in currency of company for bank that are not into the main currency and the transfer
+-- into accounting will use it in priority if value is not null. The script repair.sql contains the sequence to fix datas in llx_bank.
+ALTER TABLE llx_bank ADD COLUMN amount_main_currency double(24,8) NULL;

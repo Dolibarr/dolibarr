@@ -57,6 +57,7 @@ $socid = GETPOST('socid', 'int');
 
 // Category
 $selected_cat = (int) GETPOST('search_categ', 'int');
+if ($selected_cat == -1) $selected_cat = '';
 $subcat = false;
 if (GETPOST('subcat', 'alpha') === 'yes') {
 	$subcat = true;

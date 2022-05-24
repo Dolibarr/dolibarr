@@ -101,12 +101,18 @@ $sql .= ' WHERE s.entity IN ('.getEntity('societe').')';
 if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
-if ($socid > 0) {
-	$sql .= " AND s.rowid = ".((int) $socid);
-}
 if (empty($user->rights->fournisseur->lire)) {
 	$sql .= " AND (s.fournisseur <> 1 OR s.client <> 0)"; // client=0, fournisseur=0 must be visible
 }
+// Add where from hooks
+$parameters = array('socid' => $socid);
+$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $thirdparty_static); // Note that $action and $object may have been modified by hook
+if (empty($reshook)) {
+	if ($socid > 0) {
+		$sql .= " AND s.rowid = ".((int) $socid);
+	}
+}
+$sql .= $hookmanager->resPrint;
 //print $sql;
 $result = $db->query($sql);
 if ($result) {
@@ -284,12 +290,18 @@ $sql .= ' WHERE s.entity IN ('.getEntity('societe').')';
 if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
-if ($socid) {
-	$sql .= " AND s.rowid = ".((int) $socid);
-}
 if (empty($user->rights->fournisseur->lire)) {
 	$sql .= " AND (s.fournisseur != 1 OR s.client != 0)";
 }
+// Add where from hooks
+$parameters = array('socid' => $socid);
+$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $thirdparty_static); // Note that $action and $object may have been modified by hook
+if (empty($reshook)) {
+	if ($socid > 0) {
+		$sql .= " AND s.rowid = ".((int) $socid);
+	}
+}
+$sql .= $hookmanager->resPrint;
 $sql .= $db->order("s.tms", "DESC");
 $sql .= $db->plimit($max, 0);
 
@@ -341,8 +353,8 @@ if ($result) {
 			$lastmodified .= $thirdparty_static->getTypeUrl();
 			$lastmodified .= '</td>';
 			// Last modified date
-			$lastmodified .= '<td class="right tddate">';
-			$lastmodified .= dol_print_date($thirdparty_static->date_modification, 'day');
+			$lastmodified .= '<td class="right tddate" title="'.dol_escape_htmltag($langs->trans("DateModification").' '.dol_print_date($thirdparty_static->date_modification, 'dayhour', 'tzuserrel')).'">';
+			$lastmodified .= dol_print_date($thirdparty_static->date_modification, 'day', 'tzuserrel');
 			$lastmodified .= "</td>";
 			$lastmodified .= '<td class="right nowrap">';
 			$lastmodified .= $thirdparty_static->getLibStatut(3);
@@ -390,7 +402,7 @@ print $boxlist;
 print '</div>';
 
 $parameters = array('user' => $user);
-$reshook = $hookmanager->executeHooks('dashboardThirdparties', $parameters, $object); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('dashboardThirdparties', $parameters, $thirdparty_static); // Note that $action and $object may have been modified by hook
 
 // End of page
 llxFooter();

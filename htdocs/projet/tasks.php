@@ -103,7 +103,7 @@ $search_date_end_endday = GETPOST('search_date_end_endday', 'int');
 $search_date_end_end = dol_mktime(23, 59, 59, $search_date_end_endmonth, $search_date_end_endday, $search_date_end_endyear);	// Use tzserver
 
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'projecttasklist';
-
+$optioncss  = GETPOST('optioncss', 'aZ');
 //if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
 
 $object = new Project($db);
@@ -209,7 +209,7 @@ if (empty($reshook)) {
 		$search_progresscalc = '';
 		$search_progressdeclare = '';
 		$search_task_budget_amount = '';
-		$toselect = '';
+		$toselect = array();
 		$search_array_options = array();
 		$search_date_start_startmonth = "";
 		$search_date_start_startyear = "";
@@ -303,8 +303,6 @@ if ($action == 'createtask' && $user->rights->projet->creer) {
 	$error = 0;
 
 	// If we use user timezone, we must change also view/list to use user timezone everywhere
-	//$date_start = dol_mktime($_POST['dateohour'],$_POST['dateomin'],0,$_POST['dateomonth'],$_POST['dateoday'],$_POST['dateoyear'],'user');
-	//$date_end = dol_mktime($_POST['dateehour'],$_POST['dateemin'],0,$_POST['dateemonth'],$_POST['dateeday'],$_POST['dateeyear'],'user');
 	$date_start = dol_mktime(GETPOST('dateohour', 'int'), GETPOST('dateomin', 'int'), 0, GETPOST('dateomonth', 'int'), GETPOST('dateoday', 'int'), GETPOST('dateoyear', 'int'));
 	$date_end = dol_mktime(GETPOST('dateehour', 'int'), GETPOST('dateemin', 'int'), 0, GETPOST('dateemonth', 'int'), GETPOST('dateeday', 'int'), GETPOST('dateeyear', 'int'));
 
@@ -318,7 +316,7 @@ if ($action == 'createtask' && $user->rights->projet->creer) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
 			$action = 'create';
 			$error++;
-		} elseif (empty($_POST['task_parent'])) {
+		} elseif (!GETPOST('task_parent')) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("ChildOfProjectTask")), null, 'errors');
 			$action = 'create';
 			$error++;
@@ -605,8 +603,10 @@ if ($id > 0 || !empty($ref)) {
 	// Visibility
 	print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
 	if ($object->public) {
+		print img_picto($langs->trans('SharedProject'), 'world', 'class="paddingrightonly"');
 		print $langs->trans('SharedProject');
 	} else {
+		print img_picto($langs->trans('PrivateProject'), 'private', 'class="paddingrightonly"');
 		print $langs->trans('PrivateProject');
 	}
 	print '</td></tr>';
@@ -765,7 +765,20 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	// Description
 	print '<tr><td class="tdtop">'.$langs->trans("Description").'</td>';
 	print '<td>';
-	print '<textarea name="description" class="quatrevingtpercent" rows="'.ROWS_4.'">'.$description.'</textarea>';
+
+	if (empty($conf->global->FCKEDITOR_ENABLE_SOCIETE)) {
+		print '<textarea name="description" class="quatrevingtpercent" rows="'.ROWS_4.'">'.$description.'</textarea>';
+	} else {
+		// WYSIWYG editor
+		include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+		$cked_enabled = (!empty($conf->global->FCKEDITOR_ENABLE_DETAILS) ? $conf->global->FCKEDITOR_ENABLE_DETAILS : 0);
+		if (!empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) {
+			$nbrows = $conf->global->MAIN_INPUT_DESC_HEIGHT;
+		}
+		$doleditor = new DolEditor('description', $object->description, '', 80, 'dolibarr_details', '', false, true, $cked_enabled, $nbrows);
+		print $doleditor->Create();
+	}
+
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("Budget").'</td>';
@@ -821,7 +834,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 	$title = $langs->trans("ListOfTasks");
-	$linktotasks = dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-list-alt imgforviewmode', DOL_URL_ROOT.'/projet/tasks.php?id='.$object->id, '', 1, array('morecss'=>'reposition btnTitleSelected'));
+	$linktotasks = dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/projet/tasks.php?id='.$object->id, '', 1, array('morecss'=>'reposition btnTitleSelected'));
 	$linktotasks .= dolGetButtonTitle($langs->trans('ViewGantt'), '', 'fa fa-stream imgforviewmode', DOL_URL_ROOT.'/projet/ganttview.php?id='.$object->id.'&withproject=1', '', 1, array('morecss'=>'reposition marginleftonly'));
 
 	//print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, $linktotasks, $num, $totalnboflines, 'generic', 0, '', '', 0, 1);
@@ -888,7 +901,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 		print '<td class="liste_titre center">';
 		/*print '<span class="nowraponall"><input class="flat valignmiddle width20" type="text" maxlength="2" name="search_dtstartday" value="'.$search_dtstartday.'">';
 		print '<input class="flat valignmiddle width20" type="text" maxlength="2" name="search_dtstartmonth" value="'.$search_dtstartmonth.'"></span>';
-		$formother->select_year($search_dtstartyear ? $search_dtstartyear : -1, 'search_dtstartyear', 1, 20, 5);*/
+		print $formother->selectyear($search_dtstartyear ? $search_dtstartyear : -1, 'search_dtstartyear', 1, 20, 5);*/
 		print '<div class="nowrap">';
 		print $form->selectDate($search_date_start_start ? $search_date_start_start : -1, 'search_date_start_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 		print '</div>';
@@ -902,7 +915,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 		print '<td class="liste_titre center">';
 		/*print '<span class="nowraponall"><input class="flat valignmiddle width20" type="text" maxlength="2" name="search_dtendday" value="'.$search_dtendday.'">';
 		print '<input class="flat valignmiddle width20" type="text" maxlength="2" name="search_dtendmonth" value="'.$search_dtendmonth.'"></span>';
-		$formother->select_year($search_dtendyear ? $search_dtendyear : -1, 'search_dtendyear', 1, 20, 5);*/
+		print $formother->selectyear($search_dtendyear ? $search_dtendyear : -1, 'search_dtendyear', 1, 20, 5);*/
 		print '<div class="nowrap">';
 		print $form->selectDate($search_date_end_start ? $search_date_end_start : -1, 'search_date_end_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 		print '</div>';

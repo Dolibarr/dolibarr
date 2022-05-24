@@ -232,11 +232,11 @@ class Contrat extends CommonObject
 		'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>35),
 		'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'position'=>40),
 		'date_contrat' =>array('type'=>'datetime', 'label'=>'Date contrat', 'enabled'=>1, 'visible'=>-1, 'position'=>45),
-		'fk_soc' =>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>70),
-		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Fk projet', 'enabled'=>1, 'visible'=>-1, 'position'=>75),
-		'fk_commercial_signature' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Fk commercial signature', 'enabled'=>1, 'visible'=>-1, 'position'=>80),
-		'fk_commercial_suivi' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Fk commercial suivi', 'enabled'=>1, 'visible'=>-1, 'position'=>85),
-		'fk_user_author' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Fk user author', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>90),
+		'fk_soc' =>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'enabled'=>'$conf->societe->enabled', 'visible'=>-1, 'notnull'=>1, 'position'=>70),
+		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Project', 'enabled'=>'$conf->projet->enabled', 'visible'=>-1, 'position'=>75),
+		'fk_commercial_signature' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'SaleRepresentative Signature', 'enabled'=>1, 'visible'=>-1, 'position'=>80),
+		'fk_commercial_suivi' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'SaleRepresentative follower', 'enabled'=>1, 'visible'=>-1, 'position'=>85),
+		'fk_user_author' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>90),
 		'note_private' =>array('type'=>'text', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>105),
 		'note_public' =>array('type'=>'text', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>0, 'position'=>110),
 		'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>1, 'visible'=>0, 'position'=>115),
@@ -245,7 +245,7 @@ class Contrat extends CommonObject
 		'ref_customer' =>array('type'=>'varchar(50)', 'label'=>'Ref customer', 'enabled'=>1, 'visible'=>-1, 'position'=>130),
 		'fk_user_modif' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>135),
 		'last_main_doc' =>array('type'=>'varchar(255)', 'label'=>'Last main doc', 'enabled'=>1, 'visible'=>-1, 'position'=>140),
-		'statut' =>array('type'=>'smallint(6)', 'label'=>'Statut', 'enabled'=>1, 'visible'=>-1, 'position'=>500, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Validated', 2=>'Closed'))
+		'statut' =>array('type'=>'smallint(6)', 'label'=>'Statut', 'enabled'=>1, 'visible'=>-1, 'position'=>500, 'notnull'=>1, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Validated', 2=>'Closed'))
 	);
 	// END MODULEBUILDER PROPERTIES
 
@@ -751,15 +751,14 @@ class Contrat extends CommonObject
 	 *  Load lines array into this->lines.
 	 *  This set also nbofserviceswait, nbofservicesopened, nbofservicesexpired and nbofservicesclosed
 	 *
-	 *	@param		int		$only_product	Return only physical products
-	 *	@param		int		$loadalsotranslation	Return translation for products
-	 *
-	 *  @return ContratLigne[]   Return array of contract lines
+	 *	@param		int				$only_services			0=Default, 1=Force only services (depending on setup, we may also have physical products in a contract)
+	 *	@param		int				$loadalsotranslation	0=Default, 1=Load also translations of product descriptions
+	 *  @return 	ContratLigne[]  						Return array of contract lines
 	 */
-	public function fetch_lines($only_product = 0, $loadalsotranslation = 0)
+	public function fetch_lines($only_services = 0, $loadalsotranslation = 0)
 	{
 		// phpcs:enable
-		global $langs, $conf, $extrafields;
+		global $langs, $conf;
 
 		$this->nbofservices = 0;
 		$this->nbofserviceswait = 0;
@@ -772,14 +771,6 @@ class Contrat extends CommonObject
 		$total_ht = 0;
 
 		$now = dol_now();
-
-		if (!is_object($extrafields)) {
-			require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-			$extrafields = new ExtraFields($this->db);
-		}
-
-		$line = new ContratLigne($this->db);
-		$extrafields->fetch_name_optionals_label($line->table_element, true);
 
 		$this->lines = array();
 		$pos = 0;
@@ -802,6 +793,9 @@ class Contrat extends CommonObject
 		$sql .= " d.product_type as type";
 		$sql .= " FROM ".MAIN_DB_PREFIX."contratdet as d LEFT JOIN ".MAIN_DB_PREFIX."product as p ON d.fk_product = p.rowid";
 		$sql .= " WHERE d.fk_contrat = ".((int) $this->id);
+		if ($only_services == 1) {
+			$sql .= " AND d.product_type = 1";
+		}
 		$sql .= " ORDER by d.rowid ASC";
 
 		dol_syslog(get_class($this)."::fetch_lines", LOG_DEBUG);
@@ -814,6 +808,7 @@ class Contrat extends CommonObject
 				$objp = $this->db->fetch_object($result);
 
 				$line = new ContratLigne($this->db);
+
 				$line->id = $objp->rowid;
 				$line->ref				= $objp->rowid;
 				$line->fk_contrat = $objp->fk_contrat;
@@ -840,7 +835,7 @@ class Contrat extends CommonObject
 				$line->type = $objp->type;
 
 				$line->fk_fournprice = $objp->fk_fournprice;
-				$marginInfos = getMarginInfos($objp->subprice, $objp->remise_percent, $objp->tva_tx, $objp->localtax1_tx, $objp->localtax2_tx, $line->fk_fournprice, $objp->pa_ht);
+				$marginInfos = getMarginInfos($objp->subprice, $objp->remise_percent, $objp->tva_tx, $objp->localtax1_tx, $objp->localtax2_tx, $objp->fk_fournprice, $objp->pa_ht);
 				$line->pa_ht = $marginInfos[0];
 
 				$line->fk_user_author = $objp->fk_user_author;
@@ -870,18 +865,21 @@ class Contrat extends CommonObject
 				$line->date_fin_prevue   = $this->db->jdate($objp->date_fin_validite);
 				$line->date_fin_reel     = $this->db->jdate($objp->date_cloture);
 
-				// Retrieve all extrafields for contract
+				// Retrieve all extrafields for contract line
 				// fetch optionals attributes and labels
 				$line->fetch_optionals();
 
 				// multilangs
 				if (!empty($conf->global->MAIN_MULTILANGS) && !empty($objp->fk_product) && !empty($loadalsotranslation)) {
-					$line = new Product($this->db);
-					$line->fetch($objp->fk_product);
-					$line->getMultiLangs();
+					$tmpproduct = new Product($this->db);
+					$tmpproduct->fetch($objp->fk_product);
+					$tmpproduct->getMultiLangs();
+
+					$line->multilangs = $tmpproduct->multilangs;
 				}
 
 				$this->lines[$pos] = $line;
+
 				$this->lines_id_index_mapper[$line->id] = $pos;
 
 				//dol_syslog("1 ".$line->desc);
@@ -1792,7 +1790,7 @@ class Contrat extends CommonObject
 
 			if (empty($error)) {
 				// Call trigger
-				$result = $this->call_trigger('LINECONTRACT_UPDATE', $user);
+				$result = $this->call_trigger('LINECONTRACT_MODIFY', $user);
 				if ($result < 0) {
 					$this->db->rollback();
 					return -3;
@@ -2130,19 +2128,27 @@ class Contrat extends CommonObject
 	/**
 	 *  Return list of other contracts for same company than current contract
 	 *
-	 *	@param	string		$option		'all' or 'others'
-	 *  @return array|int   			Array of contracts id or <0 if error
+	 *	@param	string		$option					'all' or 'others'
+	 *	@param	array		$status					sort contracts having these status
+	 *	@param  array		$product_categories		sort contracts containing these product categories
+	 *	@param	array		$line_status			sort contracts where lines have these status
+	 *  @return array|int   						Array of contracts id or <0 if error
 	 */
-	public function getListOfContracts($option = 'all')
+	public function getListOfContracts($option = 'all', $status = [], $product_categories = [], $line_status = [])
 	{
 		$tab = array();
 
 		$sql = "SELECT c.rowid, c.ref";
 		$sql .= " FROM ".MAIN_DB_PREFIX."contrat as c";
-		$sql .= " WHERE fk_soc =".((int) $this->socid);
-		if ($option == 'others') {
-			$sql .= " AND c.rowid <> ".((int) $this->id);
+		if (!empty($product_categories)) {
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."contratdet as cd ON cd.fk_contrat = c.rowid";
+			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = cd.fk_product AND cp.fk_categorie IN (".$this->db->sanitize(implode(', ', $product_categories)).")";
 		}
+		$sql .= " WHERE c.fk_soc =".((int) $this->socid);
+		$sql .= ($option == 'others') ? " AND c.rowid <> ".((int) $this->id) : "";
+		$sql .= (!empty($status)) ? " AND c.statut IN (".$this->db->sanitize(implode(', ', $status)).")" : "";
+		$sql .= (!empty($line_status)) ? " AND cd.statut IN (".$this->db->sanitize(implode(', ', $line_status)).")" : "";
+		$sql .= " GROUP BY c.rowid";
 
 		dol_syslog(get_class($this)."::getOtherContracts()", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -2461,6 +2467,23 @@ class Contrat extends CommonObject
 	}
 
 	/**
+	 * Function used to replace a product id with another one.
+	 *
+	 * @param DoliDB $db Database handler
+	 * @param int $origin_id Old product id
+	 * @param int $dest_id New product id
+	 * @return bool
+	 */
+	public static function replaceProduct(DoliDB $db, $origin_id, $dest_id)
+	{
+		$tables = array(
+			'contratdet'
+		);
+
+		return CommonObject::commonReplaceProduct($db, $origin_id, $dest_id, $tables);
+	}
+
+	/**
 	 * Load an object from its id and create a new one in database
 	 *
 	 * @param	User	$user		  User making the clone
@@ -2590,7 +2613,6 @@ class ContratLigne extends CommonObjectLine
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'contratdet';
-
 
 	/**
 	 * @var string Name to use for 'features' parameter to check module permissions with restrictedArea()
@@ -2724,6 +2746,7 @@ class ContratLigne extends CommonObjectLine
 
 	public $commentaire;
 
+
 	const STATUS_INITIAL = 0;
 	const STATUS_OPEN = 4;
 	const STATUS_CLOSED = 5;
@@ -2751,8 +2774,8 @@ class ContratLigne extends CommonObjectLine
 		//'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>1, 'visible'=>0, 'position'=>115),
 		//'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>120),
 		//'extraparams' =>array('type'=>'varchar(255)', 'label'=>'Extraparams', 'enabled'=>1, 'visible'=>-1, 'position'=>125),
-		'fk_user_ouverture' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserOpen', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>135),
-		'fk_user_cloture' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserCloture', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>135),
+		'fk_user_ouverture' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserStartingService', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>135),
+		'fk_user_cloture' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserClosingService', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>135),
 		'statut' =>array('type'=>'smallint(6)', 'label'=>'Statut', 'enabled'=>1, 'visible'=>-1, 'position'=>500, 'arrayofkeyval'=>array(0=>'Draft', 4=>'Open', 5=>'Closed'))
 	);
 	// END MODULEBUILDER PROPERTIES
@@ -2968,7 +2991,6 @@ class ContratLigne extends CommonObjectLine
 				$this->localtax2_type = $obj->localtax2_type;
 				$this->qty = $obj->qty;
 				$this->remise_percent = $obj->remise_percent;
-				$this->remise = $obj->remise;
 				$this->fk_remise_except = $obj->fk_remise_except;
 				$this->subprice = $obj->subprice;
 				$this->price_ht = $obj->price_ht;
@@ -3026,7 +3048,6 @@ class ContratLigne extends CommonObjectLine
 		$this->localtax2_tx = trim($this->localtax2_tx);
 		$this->qty = trim($this->qty);
 		$this->remise_percent = trim($this->remise_percent);
-		$this->remise = trim($this->remise);
 		$this->fk_remise_except = (int) $this->fk_remise_except;
 		$this->subprice = price2num($this->subprice);
 		$this->price_ht = price2num($this->price_ht);
@@ -3191,7 +3212,7 @@ class ContratLigne extends CommonObjectLine
 
 		if (!$error && !$notrigger) {
 			// Call trigger
-			$result = $this->call_trigger('LINECONTRACT_UPDATE', $user);
+			$result = $this->call_trigger('LINECONTRACT_MODIFY', $user);
 			if ($result < 0) {
 				$error++;
 				$this->db->rollback();

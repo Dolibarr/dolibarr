@@ -642,14 +642,14 @@ class dolReceiptPrinter extends Printer
 					case 'DOL_PRINT_OBJECT_LINES':
 						foreach ($object->lines as $line) {
 							if ($line->fk_product) {
-								$spacestoadd = $nbcharactbyline - strlen($line->ref) - strlen($line->qty) - 10 - 1;
+								$spacestoadd = $nbcharactbyline - strlen($line->ref) - strlen($line->qty) - strlen($line->subprice) - 10 - 1;
 								$spaces = str_repeat(' ', $spacestoadd > 0 ? $spacestoadd : 0);
-								$this->printer->text($line->ref.$spaces.$line->qty.' '.str_pad(price($line->total_ttc), 10, ' ', STR_PAD_LEFT)."\n");
-								$this->printer->text(strip_tags(htmlspecialchars_decode($line->product_label))."\n");
+								$this->printer->text($line->ref . $spaces . $line->qty . str_pad(price($line->subprice), 10, ' ', STR_PAD_LEFT) . ' ' . str_pad(price($line->total_ttc), 10, ' ', STR_PAD_LEFT) . "\n");
+								$this->printer->text(strip_tags(htmlspecialchars_decode($line->product_label))."\n \n");
 							} else {
-								$spacestoadd = $nbcharactbyline - strlen($line->description) - strlen($line->qty) - 10 - 1;
+								$spacestoadd = $nbcharactbyline - strlen($line->description) - strlen($line->qty) - strlen($line->subprice) - 10 - 1;
 								$spaces = str_repeat(' ', $spacestoadd > 0 ? $spacestoadd : 0);
-								$this->printer->text($line->description.$spaces.$line->qty.' '.str_pad(price($line->total_ttc), 10, ' ', STR_PAD_LEFT)."\n");
+								$this->printer->text($line->description.$spaces.$line->qty.' '.str_pad(price($line->subprice), 10, ' ', STR_PAD_LEFT).' '.str_pad(price($line->total_ttc), 10, ' ', STR_PAD_LEFT)."\n");
 							}
 						}
 						break;
@@ -917,44 +917,46 @@ class dolReceiptPrinter extends Printer
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_array($resql);
+			if (empty($obj)) {
+				$error++;
+				$this->errors[] = 'PrinterDontExist';
+			}
+			if (!$error) {
+				$parameter = (isset($obj['parameter']) ? $obj['parameter'] : '');
+				try {
+					$type = $obj['fk_type'];
+					switch ($type) {
+						case 1:
+							$this->connector = new DummyPrintConnector();
+							break;
+						case 2:
+							$this->connector = new FilePrintConnector($parameter);
+							break;
+						case 3:
+							$parameters = explode(':', $parameter);
+							$this->connector = new NetworkPrintConnector($parameters[0], $parameters[1]);
+							break;
+						case 4:	// LPT1, smb://...
+							$this->connector = new WindowsPrintConnector(dol_sanitizePathName($parameter));
+							break;
+						case 5:
+							$this->connector = new CupsPrintConnector($parameter);
+							break;
+						default:
+							$this->connector = 'CONNECTOR_UNKNOWN';
+							break;
+					}
+					$this->printer = new Printer($this->connector, $this->profile);
+				} catch (Exception $e) {
+					$this->errors[] = $e->getMessage();
+					$error++;
+				}
+			}
 		} else {
 			$error++;
 			$this->errors[] = $this->db->lasterror;
 		}
-		if (empty($obj)) {
-			$error++;
-			$this->errors[] = 'PrinterDontExist';
-		}
-		if (!$error) {
-			$parameter = $obj['parameter'];
-			try {
-				switch ($obj['fk_type']) {
-					case 1:
-						$this->connector = new DummyPrintConnector();
-						break;
-					case 2:
-						$this->connector = new FilePrintConnector($parameter);
-						break;
-					case 3:
-						$parameters = explode(':', $parameter);
-						$this->connector = new NetworkPrintConnector($parameters[0], $parameters[1]);
-						break;
-					case 4:	// LPT1, smb://...
-						$this->connector = new WindowsPrintConnector(dol_sanitizePathName($parameter));
-						break;
-					case 5:
-						$this->connector = new CupsPrintConnector($parameter);
-						break;
-					default:
-						$this->connector = 'CONNECTOR_UNKNOWN';
-						break;
-				}
-				$this->printer = new Printer($this->connector, $this->profile);
-			} catch (Exception $e) {
-				$this->errors[] = $e->getMessage();
-				$error++;
-			}
-		}
+
 		return $error;
 	}
 }

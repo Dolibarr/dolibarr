@@ -117,11 +117,11 @@ $arrayfields = array(
 foreach ($object->fields as $key => $val) {
 	// If $val['visible']==0, then we never show the field
 	if (!empty($val['visible'])) {
-		$visible = (int) dol_eval($val['visible'], 1);
+		$visible = (int) dol_eval($val['visible'], 1, 1, '1');
 		$arrayfields['t.'.$key] = array(
 			'label'=>$val['label'],
 			'checked'=>(($visible < 0) ? 0 : 1),
-			'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1)),
+			'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1, 1, '1')),
 			'position'=>$val['position'],
 			'help'=> isset($val['help']) ? $val['help'] : 'help'
 		);
@@ -677,7 +677,7 @@ while ($i < min($num, $limit)) {
 			}
 		} else {
 			$htmltext = $langs->trans("OptionMULTIPRICESIsOn");
-			print $form->textwithtooltip($langs->trans("Variable"), $htmltext);
+			print $form->textwithtooltip('<span class="opacitymedium">'.$langs->trans("Variable").'</span>', $htmltext);
 		}
 		print '</td>';
 		if (!$i) {

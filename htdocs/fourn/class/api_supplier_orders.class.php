@@ -309,7 +309,7 @@ class SupplierOrders extends DolibarrApi
 		}
 
 		if ($this->order->delete(DolibarrApiAccess::$user) < 0) {
-			throw new RestException(500);
+			throw new RestException(500, 'Error when deleting order');
 		}
 
 		return array(

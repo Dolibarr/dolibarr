@@ -7,7 +7,7 @@
  * Copyright (C) 2014		Marcos García		<marcosgdf@gmail.com>
  * Copyright (C) 2015		Bahfir Abbes		<bafbes@gmail.com>
  * Copyright (C) 2016-2017	Ferran Marcet		<fmarcet@2byte.es>
- * Copyright (C) 2019-2021  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2022  Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -246,10 +246,10 @@ class FormFile
 					$out .= '<td>'.$options.'</td>';
 				}
 				$out .= '<td valign="middle" class="nowrap">';
-				$out .= '<input type="checkbox" '.$rename.' class="savingdocmask" name="savingdocmask" value="'.dol_escape_js($savingdocmask).'"> ';
-				$out .= '<span class="opacitymedium">';
+				$out .= '<input type="checkbox" '.$rename.' class="savingdocmask" name="savingdocmask" id="savingdocmask" value="'.dol_escape_js($savingdocmask).'"> ';
+				$out .= '<label class="opacitymedium small" for="savingdocmask">';
 				$out .= $langs->trans("SaveUploadedFileWithMask", preg_replace('/__file__/', $langs->transnoentitiesnoconv("OriginFileName"), $savingdocmask), $langs->transnoentitiesnoconv("OriginFileName"));
-				$out .= '</span>';
+				$out .= '</label>';
 				$out .= '</td>';
 				$out .= '</tr>';
 			}
@@ -360,8 +360,8 @@ class FormFile
 	 *      This also set the property $this->numoffiles
 	 *
 	 *      @param      string				$modulepart         Module the files are related to ('propal', 'facture', 'facture_fourn', 'mymodule', 'mymodule:MyObject', 'mymodule_temp', ...)
-	 *      @param      string				$modulesubdir       Existing (so sanitized) sub-directory to scan (Example: '0/1/10', 'FA/DD/MM/YY/9999'). Use '' if file is not into subdir of module.
-	 *      @param      string				$filedir            Directory to scan
+	 *      @param      string				$modulesubdir       Existing (so sanitized) sub-directory to scan (Example: '0/1/10', 'FA/DD/MM/YY/9999'). Use '' if file is not into a subdir of module.
+	 *      @param      string				$filedir            Directory to scan (must not end with a /). Example: '/mydolibarrdocuments/facture/FAYYMM-1234'
 	 *      @param      string				$urlsource          Url of origin page (for return)
 	 *      @param      int|string[]        $genallowed         Generation is allowed (1/0 or array list of templates)
 	 *      @param      int					$delallowed         Remove is allowed (1/0)
@@ -790,7 +790,7 @@ class FormFile
 			}
 
 			// Button
-			$genbutton = '<input class="button buttongen reposition" id="'.$forname.'_generatebutton" name="'.$forname.'_generatebutton"';
+			$genbutton = '<input class="button buttongen reposition nomargintop nomarginbottom" id="'.$forname.'_generatebutton" name="'.$forname.'_generatebutton"';
 			$genbutton .= ' type="submit" value="'.$buttonlabel.'"';
 			if (!$allowgenifempty && !is_array($modellist) && empty($modellist)) {
 				$genbutton .= ' disabled';
@@ -894,7 +894,7 @@ class FormFile
 					}
 					$out .= '>';
 					$out .= img_mime($file["name"], $langs->trans("File").': '.$file["name"]);
-					$out .= dol_trunc($file["name"], 150);
+					$out .= dol_trunc($file["name"], 40);
 					$out .= '</a>'."\n";
 					$out .= $this->showPreview($file, $modulepart, $relativepath, 0, $param);
 					$out .= '</td>';
@@ -928,7 +928,7 @@ class FormFile
 						$fulllink = $urlwithroot.'/document.php'.($paramlink ? '?'.$paramlink : '');
 
 						$out .= img_picto($langs->trans("FileSharedViaALink"), 'globe').' ';
-						$out .= '<input type="text" class="quatrevingtpercentminusx width75" id="downloadlink'.$file['rowid'].'" name="downloadexternallink" title="'.dol_escape_htmltag($langs->trans("FileSharedViaALink")).'" value="'.dol_escape_htmltag($fulllink).'">';
+						$out .= '<input type="text" class="quatrevingtpercentminusx width75 nopadding small" id="downloadlink'.$file['rowid'].'" name="downloadexternallink" title="'.dol_escape_htmltag($langs->trans("FileSharedViaALink")).'" value="'.dol_escape_htmltag($fulllink).'">';
 						$out .= ajax_autoselect('downloadlink'.$file['rowid']);
 					} else {
 						//print '<span class="opacitymedium">'.$langs->trans("FileNotShared").'</span>';
@@ -986,6 +986,8 @@ class FormFile
 					$out .= '<td class="right">';
 					$out .= dol_print_date($file->datea, 'dayhour');
 					$out .= '</td>';
+					// for share link of files
+					$out .= '<td></td>';
 					if ($delallowed || $printer || $morepicto) {
 						$out .= '<td></td>';
 					}
@@ -1283,10 +1285,20 @@ class FormFile
 				}
 				print '<td></td>';
 				print '<td></td>';
-				if (!$disablemove) {
+				if (empty($disablemove) && count($filearray) > 1) {
 					print '<td></td>';
 				}
 				print "</tr>\n";
+			}
+
+			// Get list of files stored into database for same relative directory
+			if ($relativedir) {
+				completeFileArrayWithDatabaseInfo($filearray, $relativedir);
+
+				//var_dump($sortfield.' - '.$sortorder);
+				if ($sortfield && $sortorder) {	// If $sortfield is for example 'position_name', we will sort on the property 'position_name' (that is concat of position+name)
+					$filearray = dol_sort_array($filearray, $sortfield, $sortorder);
+				}
 			}
 
 			print '<tr class="liste_titre nodrag nodrop">';
@@ -1301,20 +1313,10 @@ class FormFile
 			print_liste_field_titre('');
 			// Action button
 			print_liste_field_titre('');
-			if (!$disablemove) {
+			if (empty($disablemove) && count($filearray) > 1) {
 				print_liste_field_titre('');
 			}
 			print "</tr>\n";
-
-			// Get list of files stored into database for same relative directory
-			if ($relativedir) {
-				completeFileArrayWithDatabaseInfo($filearray, $relativedir);
-
-				//var_dump($sortfield.' - '.$sortorder);
-				if ($sortfield && $sortorder) {	// If $sortfield is for example 'position_name', we will sort on the property 'position_name' (that is concat of position+name)
-					$filearray = dol_sort_array($filearray, $sortfield, $sortorder);
-				}
-			}
 
 			$nboffiles = count($filearray);
 			if ($nboffiles > 0) {
@@ -1328,7 +1330,7 @@ class FormFile
 				if ($file['name'] != '.'
 						&& $file['name'] != '..'
 						&& !preg_match('/\.meta$/i', $file['name'])) {
-					if ($filearray[$key]['rowid'] > 0) {
+					if (array_key_exists('rowid', $filearray[$key]) && $filearray[$key]['rowid'] > 0) {
 						$lastrowid = $filearray[$key]['rowid'];
 					}
 					$filepath = $relativepath.$file['name'];
@@ -1337,8 +1339,9 @@ class FormFile
 					$nboflines++;
 					print '<!-- Line list_of_documents '.$key.' relativepath = '.$relativepath.' -->'."\n";
 					// Do we have entry into database ?
-					print '<!-- In database: position='.$filearray[$key]['position'].' -->'."\n";
-					print '<tr class="oddeven" id="row-'.($filearray[$key]['rowid'] > 0 ? $filearray[$key]['rowid'] : 'AFTER'.$lastrowid.'POS'.($i + 1)).'">';
+					print '<!-- In database: position='.(array_key_exists('position', $filearray[$key]) ? $filearray[$key]['position'] : 0).' -->'."\n";
+					print '<tr class="oddeven" id="row-'.((array_key_exists('rowid', $filearray[$key]) && $filearray[$key]['rowid'] > 0) ? $filearray[$key]['rowid'] : 'AFTER'.$lastrowid.'POS'.($i + 1)).'">';
+
 
 					// File name
 					print '<td class="minwith200 tdoverflowmax500">';
@@ -1451,7 +1454,7 @@ class FormFile
 								$fulllink = $urlwithroot.'/document.php'.($paramlink ? '?'.$paramlink : '');
 
 								print img_picto($langs->trans("FileSharedViaALink"), 'globe').' ';
-								print '<input type="text" class="quatrevingtpercent minwidth200imp" id="downloadlink'.$filearray[$key]['rowid'].'" name="downloadexternallink" title="'.dol_escape_htmltag($langs->trans("FileSharedViaALink")).'" value="'.dol_escape_htmltag($fulllink).'">';
+								print '<input type="text" class="quatrevingtpercent minwidth200imp nopadding small" id="downloadlink'.$filearray[$key]['rowid'].'" name="downloadexternallink" title="'.dol_escape_htmltag($langs->trans("FileSharedViaALink")).'" value="'.dol_escape_htmltag($fulllink).'">';
 							} else {
 								//print '<span class="opacitymedium">'.$langs->trans("FileNotShared").'</span>';
 							}
@@ -1506,22 +1509,22 @@ class FormFile
 							if (!empty($conf->global->MAIN_ECM_DISABLE_JS)) {
 								$useajax = 0;
 							}
-							print '<a href="'.((($useinecm && $useinecm != 6) && $useajax) ? '#' : ($url.'?action=deletefile&token='.newToken().'&urlfile='.urlencode($filepath).$param)).'" class="'.($useajax ? 'reposition ' : '').'deletefilelink" rel="'.$filepath.'">'.img_delete().'</a>';
+							print '<a href="'.((($useinecm && $useinecm != 6) && $useajax) ? '#' : ($url.'?action=deletefile&token='.newToken().'&urlfile='.urlencode($filepath).$param)).'" class="reposition deletefilelink" rel="'.$filepath.'">'.img_delete().'</a>';
 						}
 						print "</td>";
 
-						if (empty($disablemove)) {
+						if (empty($disablemove) && count($filearray) > 1) {
 							if ($nboffiles > 1 && $conf->browser->layout != 'phone') {
 								print '<td class="linecolmove tdlineupdown center">';
 								if ($i > 0) {
 									print '<a class="lineupdown" href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&action=up&rowid='.$line->id.'">'.img_up('default', 0, 'imgupforline').'</a>';
 								}
-								if ($i < $nboffiles - 1) {
+								if ($i < ($nboffiles - 1)) {
 									print '<a class="lineupdown" href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&action=down&rowid='.$line->id.'">'.img_down('default', 0, 'imgdownforline').'</a>';
 								}
 								print '</td>';
 							} else {
-								print '<td'.(($conf->browser->layout != 'phone' && empty($disablemove)) ? ' class="linecolmove tdlineupdown center"' : ' class="linecolmove center"').'>';
+								print '<td'.(($conf->browser->layout != 'phone') ? ' class="linecolmove tdlineupdown center"' : ' class="linecolmove center"').'>';
 								print '</td>';
 							}
 						}
@@ -1531,7 +1534,7 @@ class FormFile
 						print '<input type="submit" class="button button-save" name="renamefilesave" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
 						print '<input type="submit" class="button button-cancel" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
 						print '</td>';
-						if (empty($disablemove)) {
+						if (empty($disablemove) && count($filearray) > 1) {
 							print '<td class="right"></td>';
 						}
 					}
@@ -1542,7 +1545,7 @@ class FormFile
 			}
 			if ($nboffiles == 0) {
 				$colspan = '6';
-				if (empty($disablemove)) {
+				if (empty($disablemove) && count($filearray) > 1) {
 					$colspan++; // 6 columns or 7
 				}
 				print '<tr class="oddeven"><td colspan="'.$colspan.'">';
@@ -1931,7 +1934,7 @@ class FormFile
 					$fulllink = $urlwithroot.'/document.php'.($paramlink ? '?'.$paramlink : '');
 
 					print img_picto($langs->trans("FileSharedViaALink"), 'globe').' ';
-					print '<input type="text" class="quatrevingtpercent width100 nopadding" id="downloadlink" name="downloadexternallink" value="'.dol_escape_htmltag($fulllink).'">';
+					print '<input type="text" class="quatrevingtpercent width100 nopadding nopadding small" id="downloadlink" name="downloadexternallink" value="'.dol_escape_htmltag($fulllink).'">';
 				}
 				//if (! empty($useinecm) && $useinecm != 6)  print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart;
 				//if ($forcedownload) print '&attachment=1';
@@ -2032,7 +2035,7 @@ class FormFile
 		print '<form action="'.$_SERVER['PHP_SELF'].($param ? '?'.$param : '').'" method="POST">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 
-		print '<table width="100%" class="liste noborder nobottom">';
+		print '<table class="liste noborder nobottom centpercent">';
 		print '<tr class="liste_titre">';
 		print_liste_field_titre(
 			$langs->trans("Links"),
@@ -2117,7 +2120,7 @@ class FormFile
 				print '<td class="right">';
 				print '<a href="'.$_SERVER['PHP_SELF'].'?action=update&linkid='.$link->id.$param.'&token='.newToken().'" class="editfilelink editfielda reposition" >'.img_edit().'</a>'; // id= is included into $param
 				if ($permissiontodelete) {
-					print ' &nbsp; <a class="deletefilelink" href="'.$_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&linkid='.$link->id.$param.'">'.img_delete().'</a>'; // id= is included into $param
+					print ' &nbsp; <a class="deletefilelink reposition" href="'.$_SERVER['PHP_SELF'].'?action=deletelink&token='.newToken().'&linkid='.((int) $link->id).$param.'">'.img_delete().'</a>'; // id= is included into $param
 				} else {
 					print '&nbsp;';
 				}
@@ -2144,7 +2147,7 @@ class FormFile
 	 * @param   array     $file           Array with data of file. Example: array('name'=>...)
 	 * @param   string    $modulepart     propal, facture, facture_fourn, ...
 	 * @param   string    $relativepath   Relative path of docs
-	 * @param   integer   $ruleforpicto   Rule for picto: 0=Use the generic preview picto, 1=Use the picto of mime type of file)
+	 * @param   integer   $ruleforpicto   Rule for picto: 0=Use the generic preview picto, 1=Use the picto of mime type of file). Use a negative value to show a generic picto even if preview not available.
 	 * @param	string	  $param		  More param on http links
 	 * @return  string    $out            Output string with HTML
 	 */
@@ -2160,11 +2163,15 @@ class FormFile
 				//$out.= '<a class="pictopreview">';
 				if (empty($ruleforpicto)) {
 					//$out.= img_picto($langs->trans('Preview').' '.$file['name'], 'detail');
-					$out .= '<span class="fa fa-search-plus" style="color: gray"></span>';
+					$out .= '<span class="fa fa-search-plus pictofixedwidth" style="color: gray"></span>';
 				} else {
-					$out .= img_mime($relativepath, $langs->trans('Preview').' '.$file['name']);
+					$out .= img_mime($relativepath, $langs->trans('Preview').' '.$file['name'], 'pictofixedwidth');
 				}
 				$out .= '</a>';
+			} else {
+				if ($ruleforpicto < 0) {
+					$out .= img_picto('', 'generic', '', false, 0, 0, '', 'paddingright pictofixedwidth');
+				}
 			}
 		}
 		return $out;

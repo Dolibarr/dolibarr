@@ -67,6 +67,11 @@ class ExtraFields
 	public $attributes;
 
 	/**
+	 * @var array	Array with boolean of status of groups
+	 */
+	public $expand_display;
+
+	/**
 	 * @var string Error code (or message)
 	 */
 	public $error = '';
@@ -916,9 +921,9 @@ class ExtraFields
 			$unique = $this->attributes[$extrafieldsobjectkey]['unique'][$key];
 			$required = $this->attributes[$extrafieldsobjectkey]['required'][$key];
 			$param = $this->attributes[$extrafieldsobjectkey]['param'][$key];
-			$perms = dol_eval($this->attributes[$extrafieldsobjectkey]['perms'][$key], 1);
+			$perms = dol_eval($this->attributes[$extrafieldsobjectkey]['perms'][$key], 1, 1, '1');
 			$langfile = $this->attributes[$extrafieldsobjectkey]['langfile'][$key];
-			$list = dol_eval($this->attributes[$extrafieldsobjectkey]['list'][$key], 1);
+			$list = dol_eval($this->attributes[$extrafieldsobjectkey]['list'][$key], 1, 1, '1');
 			$totalizable = $this->attributes[$extrafieldsobjectkey]['totalizable'][$key];
 			$help = $this->attributes[$extrafieldsobjectkey]['help'][$key];
 			$hidden = (empty($list) ? 1 : 0); // If empty, we are sure it is hidden, otherwise we show. If it depends on mode (view/create/edit form or list, this must be filtered by caller)
@@ -951,6 +956,8 @@ class ExtraFields
 				$morecss = 'minwidth400';
 			} elseif ($type == 'boolean') {
 				$morecss = '';
+			} elseif ($type == 'radio') {
+				$morecss = 'width25';
 			} else {
 				if (empty($size) || round($size) < 12) {
 					$morecss = 'minwidth100';
@@ -1142,7 +1149,7 @@ class ExtraFields
 					$sql = "SELECT ".$keyList;
 					$sql .= ' FROM '.$this->db->prefix().$InfoFieldList[0];
 					if (!empty($InfoFieldList[4])) {
-						// can use curent entity filter
+						// can use current entity filter
 						if (strpos($InfoFieldList[4], '$ENTITY$') !== false) {
 							$InfoFieldList[4] = str_replace('$ENTITY$', $conf->entity, $InfoFieldList[4]);
 						}
@@ -1257,7 +1264,7 @@ class ExtraFields
 				$out .= ' value="'.$keyopt.'"';
 				$out .= ' id="'.$keyprefix.$key.$keysuffix.'_'.$keyopt.'"';
 				$out .= ($value == $keyopt ? 'checked' : '');
-				$out .= '/><label for="'.$keyprefix.$key.$keysuffix.'_'.$keyopt.'">'.$val.'</label><br>';
+				$out .= '/><label for="'.$keyprefix.$key.$keysuffix.'_'.$keyopt.'">'.$langs->trans($val).'</label><br>';
 			}
 		} elseif ($type == 'chkbxlst') {
 			if (is_array($value)) {
@@ -1310,6 +1317,10 @@ class ExtraFields
 					$sql = "SELECT ".$keyList;
 					$sql .= ' FROM '.$this->db->prefix().$InfoFieldList[0];
 					if (!empty($InfoFieldList[4])) {
+						// can use current entity filter
+						if (strpos($InfoFieldList[4], '$ENTITY$') !== false) {
+							$InfoFieldList[4] = str_replace('$ENTITY$', $conf->entity, $InfoFieldList[4]);
+						}
 						// can use SELECT request
 						if (strpos($InfoFieldList[4], '$SEL$') !== false) {
 							$InfoFieldList[4] = str_replace('$SEL$', 'SELECT', $InfoFieldList[4]);
@@ -1506,9 +1517,9 @@ class ExtraFields
 			$unique = $this->attributes[$extrafieldsobjectkey]['unique'][$key];
 			$required = $this->attributes[$extrafieldsobjectkey]['required'][$key];
 			$param = $this->attributes[$extrafieldsobjectkey]['param'][$key];
-			$perms = dol_eval($this->attributes[$extrafieldsobjectkey]['perms'][$key], 1);
+			$perms = dol_eval($this->attributes[$extrafieldsobjectkey]['perms'][$key], 1, 1, '1');
 			$langfile = $this->attributes[$extrafieldsobjectkey]['langfile'][$key];
-			$list = dol_eval($this->attributes[$extrafieldsobjectkey]['list'][$key], 1);
+			$list = dol_eval($this->attributes[$extrafieldsobjectkey]['list'][$key], 1, 1, '1');
 			$help = $this->attributes[$extrafieldsobjectkey]['help'][$key];
 			$hidden = (empty($list) ? 1 : 0); // If $list empty, we are sure it is hidden, otherwise we show. If it depends on mode (view/create/edit form or list, this must be filtered by caller)
 		} else {
@@ -1661,7 +1672,7 @@ class ExtraFields
 				dol_syslog(get_class($this).'::showOutputField error '.$this->db->lasterror(), LOG_WARNING);
 			}
 		} elseif ($type == 'radio') {
-			$value = $param['options'][$value];
+			$value = $langs->trans($param['options'][$value]);
 		} elseif ($type == 'checkbox') {
 			$value_arr = explode(',', $value);
 			$value = '';
@@ -1851,9 +1862,10 @@ class ExtraFields
 	 * @param	string	$object			Object
 	 * @param	int		$colspan		Value of colspan to use (it must includes the first column with title)
 	 * @param	string	$display_type	"card" for form display, "line" for document line display (extrafields on propal line, order line, etc...)
+	 * @param 	string  $mode           Show output ('view') or input ('create' or 'edit') for extrafield
 	 * @return 	string					HTML code with line for separator
 	 */
-	public function showSeparator($key, $object, $colspan = 2, $display_type = 'card')
+	public function showSeparator($key, $object, $colspan = 2, $display_type = 'card', $mode = '')
 	{
 		global $conf, $langs;
 
@@ -1866,56 +1878,68 @@ class ExtraFields
 			$colspan=0;
 		}
 
+		$extrafield_param = $this->attributes[$object->table_element]['param'][$key];
+		$extrafield_param_list = array();
+		if (!empty($extrafield_param) && is_array($extrafield_param)) {
+			$extrafield_param_list = array_keys($extrafield_param['options']);
+		}
+		$extrafield_collapse_display_value = -1;
+		$expand_display = false;
+		if (is_array($extrafield_param_list) && count($extrafield_param_list) > 0) {
+			$extrafield_collapse_display_value = intval($extrafield_param_list[0]);
+			$expand_display = ((isset($_COOKIE['DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key]) || GETPOST('ignorecollapsesetup', 'int')) ? ($_COOKIE['DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key] ? true : false) : ($extrafield_collapse_display_value == 2 ? false : true));
+		}
+		if ($mode == 'create') {
+			$extrafield_collapse_display_value = 0;
+		}
+
 		$out = '<'.$tagtype.' id="trextrafieldseparator'.$key.(!empty($object->id)?'_'.$object->id:'').'" class="trextrafieldseparator trextrafieldseparator'.$key.(!empty($object->id)?'_'.$object->id:'').'">';
 		$out .= '<'.$tagtype_dyn.' '.(!empty($colspan)?'colspan="' . $colspan . '"':'').'>';
 		// Some js code will be injected here to manage the collapsing of extrafields
-		$out .='<strong>';
+		// Output the picto
+		$out .= '<span class="cursorpointer '.($extrafield_collapse_display_value == 0 ? 'fas fa-square opacitymedium' : 'far fa-'.(($expand_display ? 'minus' : 'plus').'-square')).'"></span>';
+		$out .= '&nbsp;';
+		$out .= '<strong>';
 		$out .= $langs->trans($this->attributes[$object->table_element]['label'][$key]);
 		$out .= '</strong>';
 		$out .= '</'.$tagtype_dyn.'>';
 		$out .= '</'.$tagtype.'>';
 
-		$extrafield_param = $this->attributes[$object->table_element]['param'][$key];
-		if (!empty($extrafield_param) && is_array($extrafield_param)) {
-			$extrafield_param_list = array_keys($extrafield_param['options']);
+		$collapse_group = $key.(!empty($object->id) ? '_'.$object->id : '');
+		//$extrafields_collapse_num = $this->attributes[$object->table_element]['pos'][$key].(!empty($object->id)?'_'.$object->id:'');
 
-			if (count($extrafield_param_list) > 0) {
-				$extrafield_collapse_display_value = intval($extrafield_param_list[0]);
-				if ($extrafield_collapse_display_value == 1 || $extrafield_collapse_display_value == 2) {
-					// Set the collapse_display status to cookie in priority or if ignorecollapsesetup is 1, if cookie and ignorecollapsesetup not defined, use the setup.
-					$collapse_display = ((isset($_COOKIE['DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key]) || GETPOST('ignorecollapsesetup', 'int')) ? ($_COOKIE['DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key] ? true : false) : ($extrafield_collapse_display_value == 2 ? false : true));
-					$extrafields_collapse_num = $this->attributes[$object->table_element]['pos'][$key].(!empty($object->id)?'_'.$object->id:'');
+		if ($extrafield_collapse_display_value == 1 || $extrafield_collapse_display_value == 2) {
+			// Set the collapse_display status to cookie in priority or if ignorecollapsesetup is 1, if cookie and ignorecollapsesetup not defined, use the setup.
+			$this->expand_display[$collapse_group] = $expand_display;
 
-					if (!empty($conf->use_javascript_ajax)) {
-						$out .= '<!-- Add js script to manage the collapse/uncollapse of extrafields separators '.$key.' -->'."\n";
-						$out .= '<script type="text/javascript">'."\n";
-						$out .= 'jQuery(document).ready(function(){'."\n";
-						if ($collapse_display === false) {
-							$out .= '   console.log("Inject js for the collapsing of extrafield '.$key.' - hide");';
-							$out .= '   jQuery("#trextrafieldseparator'.$key.(!empty($object->id)?'_'.$object->id:'').' '.$tagtype_dyn.'").prepend("<span class=\"cursorpointer far fa-plus-square\"></span>&nbsp;");'."\n";
-							$out .= '   jQuery(".trextrafields_collapse'.$extrafields_collapse_num.'").hide();'."\n";
-						} else {
-							$out .= '   console.log("Inject js for collapsing of extrafield '.$key.' - keep visible and set cookie");';
-							$out .= '   jQuery("#trextrafieldseparator'.$key.(!empty($object->id)?'_'.$object->id:'').' '.$tagtype_dyn.'").prepend("<span class=\"cursorpointer far fa-minus-square\"></span>&nbsp;");'."\n";
-							$out .= '   document.cookie = "DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key.'=1; path='.$_SERVER["PHP_SELF"].'"'."\n";
-						}
-						$out .= '   jQuery("#trextrafieldseparator'.$key.(!empty($object->id)?'_'.$object->id:'').'").click(function(){'."\n";
-						$out .= '       console.log("We click on collapse/uncollapse .trextrafields_collapse'.$extrafields_collapse_num.'");'."\n";
-						$out .= '       jQuery(".trextrafields_collapse'.$extrafields_collapse_num.'").toggle(100, function(){'."\n";
-						$out .= '           if (jQuery(".trextrafields_collapse'.$extrafields_collapse_num.'").is(":hidden")) {'."\n";
-						$out .= '               jQuery("#trextrafieldseparator'.$key.(!empty($object->id)?'_'.$object->id:'').' '.$tagtype_dyn.' span").addClass("fa-plus-square").removeClass("fa-minus-square");'."\n";
-						$out .= '               document.cookie = "DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key.'=0; path='.$_SERVER["PHP_SELF"].'"'."\n";
-						$out .= '           } else {'."\n";
-						$out .= '               jQuery("#trextrafieldseparator'.$key.(!empty($object->id)?'_'.$object->id:'').' '.$tagtype_dyn.' span").addClass("fa-minus-square").removeClass("fa-plus-square");'."\n";
-						$out .= '               document.cookie = "DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key.'=1; path='.$_SERVER["PHP_SELF"].'"'."\n";
-						$out .= '           }'."\n";
-						$out .= '       });'."\n";
-						$out .= '   });'."\n";
-						$out .= '});'."\n";
-						$out .= '</script>'."\n";
-					}
+			if (!empty($conf->use_javascript_ajax) && $mode != 'create') {
+				$out .= '<!-- Add js script to manage the collapse/uncollapse of extrafields separators '.$key.' -->'."\n";
+				$out .= '<script type="text/javascript">'."\n";
+				$out .= 'jQuery(document).ready(function(){'."\n";
+				if ($expand_display === false) {
+					$out .= '   console.log("Inject js for the collapsing of extrafield '.$key.' - hide");'."\n";
+					$out .= '   jQuery(".trextrafields_collapse'.$collapse_group.'").hide();'."\n";
+				} else {
+					$out .= '   console.log("Inject js for collapsing of extrafield '.$key.' - keep visible and set cookie");'."\n";
+					$out .= '   document.cookie = "DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key.'=1; path='.$_SERVER["PHP_SELF"].'"'."\n";
 				}
+				$out .= '   jQuery("#trextrafieldseparator'.$key.(!empty($object->id)?'_'.$object->id:'').'").click(function(){'."\n";
+				$out .= '       console.log("We click on collapse/uncollapse .trextrafields_collapse'.$collapse_group.'");'."\n";
+				$out .= '       jQuery(".trextrafields_collapse'.$collapse_group.'").toggle(100, function(){'."\n";
+				$out .= '           if (jQuery(".trextrafields_collapse'.$collapse_group.'").is(":hidden")) {'."\n";
+				$out .= '               jQuery("#trextrafieldseparator'.$key.(!empty($object->id)?'_'.$object->id:'').' '.$tagtype_dyn.' span").addClass("fa-plus-square").removeClass("fa-minus-square");'."\n";
+				$out .= '               document.cookie = "DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key.'=0; path='.$_SERVER["PHP_SELF"].'"'."\n";
+				$out .= '           } else {'."\n";
+				$out .= '               jQuery("#trextrafieldseparator'.$key.(!empty($object->id)?'_'.$object->id:'').' '.$tagtype_dyn.' span").addClass("fa-minus-square").removeClass("fa-plus-square");'."\n";
+				$out .= '               document.cookie = "DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key.'=1; path='.$_SERVER["PHP_SELF"].'"'."\n";
+				$out .= '           }'."\n";
+				$out .= '       });'."\n";
+				$out .= '   });'."\n";
+				$out .= '});'."\n";
+				$out .= '</script>'."\n";
 			}
+		} else {
+			$this->expand_display[$collapse_group] = 1;
 		}
 
 		return $out;
@@ -1924,14 +1948,15 @@ class ExtraFields
 	/**
 	 * Fill array_options property of object by extrafields value (using for data sent by forms)
 	 *
-	 * @param   array	$extralabels    Deprecated (old $array of extrafields, now set this to null)
-	 * @param   object	$object         Object
-	 * @param	string	$onlykey		Only some keys are filled:
-	 *                                  'string' => When we make update of only one extrafield ($action = 'update_extras'), calling page can set this to avoid to have other extrafields being reset.
-	 *                                  '@GETPOSTISSET' => When we make update of several extrafields ($action = 'update'), calling page can set this to avoid to have fields not into POST being reset.
-	 * @return	int						1 if array_options set, 0 if no value, -1 if error (field required missing for example)
+	 * @param   array	$extralabels    	Deprecated (old $array of extrafields, now set this to null)
+	 * @param   object	$object         	Object
+	 * @param	string	$onlykey			Only some keys are filled:
+	 *                                  	'string' => When we make update of only one extrafield ($action = 'update_extras'), calling page can set this to avoid to have other extrafields being reset.
+	 *                                  	'@GETPOSTISSET' => When we make update of several extrafields ($action = 'update'), calling page can set this to avoid to have fields not into POST being reset.
+	 * @param	int		$todefaultifmissing 1=Set value to the default value in database if value is mandatory and missing
+	 * @return	int							1 if array_options set, 0 if no value, -1 if error (field required missing for example)
 	 */
-	public function setOptionalsFromPost($extralabels, &$object, $onlykey = '')
+	public function setOptionalsFromPost($extralabels, &$object, $onlykey = '', $todefaultifmissing = 0)
 	{
 		global $_POST, $langs;
 
@@ -1960,17 +1985,17 @@ class ExtraFields
 
 				$enabled = 1;
 				if (isset($this->attributes[$object->table_element]['enabled'][$key])) {	// 'enabled' is often a condition on module enabled or not
-					$enabled = dol_eval($this->attributes[$object->table_element]['enabled'][$key], 1);
+					$enabled = dol_eval($this->attributes[$object->table_element]['enabled'][$key], 1, 1, '1');
 				}
 
 				$visibility = 1;
 				if (isset($this->attributes[$object->table_element]['list'][$key])) {		// 'list' is option for visibility
-					$visibility = dol_eval($this->attributes[$object->table_element]['list'][$key], 1);
+					$visibility = dol_eval($this->attributes[$object->table_element]['list'][$key], 1, 1, '1');
 				}
 
 				$perms = 1;
 				if (isset($this->attributes[$object->table_element]['perms'][$key])) {
-					$perms = dol_eval($this->attributes[$object->table_element]['perms'][$key], 1);
+					$perms = dol_eval($this->attributes[$object->table_element]['perms'][$key], 1, 1, '1');
 				}
 				if (empty($enabled)) {
 					continue;
@@ -1991,8 +2016,10 @@ class ExtraFields
 						|| (!is_array($_POST["options_".$key]) && isset($_POST["options_".$key]) && $this->attributes[$object->table_element]['type'][$key] == 'sellist' && $_POST['options_'.$key] == '0')
 						|| (is_array($_POST["options_".$key]) && empty($_POST["options_".$key]))) {
 						//print 'ccc'.$value.'-'.$this->attributes[$object->table_element]['required'][$key];
+
+						// Field is not defined. We mark this as a problem. We may fix it later if there is a default value and $todefaultifmissing is set.
 						$nofillrequired++;
-						$error_field_required[] = $langs->transnoentitiesnoconv($value);
+						$error_field_required[$key] = $langs->transnoentitiesnoconv($value);
 					}
 				}
 
@@ -2023,12 +2050,22 @@ class ExtraFields
 					}
 				}
 
+				if (!empty($error_field_required[$key]) && $todefaultifmissing) {
+					// Value is required but we have a default value and we asked to set empty value to the default value
+					if (!empty($this->attributes[$object->table_element]['default']) && !is_null($this->attributes[$object->table_element]['default'][$key])) {
+						$value_key = $this->attributes[$object->table_element]['default'][$key];
+						unset($error_field_required[$key]);
+						$nofillrequired--;
+					}
+				}
+
 				$object->array_options["options_".$key] = $value_key;
 			}
 
 			if ($nofillrequired) {
 				$langs->load('errors');
-				setEventMessages($langs->trans('ErrorFieldsRequired').' : '.implode(', ', $error_field_required), null, 'errors');
+				$this->error = $langs->trans('ErrorFieldsRequired').' : '.implode(', ', $error_field_required);
+				setEventMessages($this->error, null, 'errors');
 				return -1;
 			} else {
 				return 1;

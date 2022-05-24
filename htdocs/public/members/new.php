@@ -57,7 +57,6 @@ if (!defined('NOIPCHECK')) {
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
-// TODO This should be useless. Because entity must be retrieve from object ref and not from url.
 $entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
 if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
@@ -430,7 +429,7 @@ if (empty($reshook) && $action == 'added') {
 	llxHeaderVierge($langs->trans("NewMemberForm"));
 
 	// Si on a pas ete redirige
-	print '<br>';
+	print '<br><br>';
 	print '<div class="center">';
 	print $langs->trans("NewMemberbyWeb");
 	print '</div>';
@@ -448,7 +447,7 @@ if (empty($reshook) && $action == 'added') {
 $form = new Form($db);
 $formcompany = new FormCompany($db);
 $adht = new AdherentType($db);
-$extrafields->fetch_name_optionals_label('adherent'); // fetch optionals attributes and labels
+$extrafields->fetch_name_optionals_label($object->table_element); // fetch optionals attributes and labels
 
 
 llxHeaderVierge($langs->trans("NewSubscription"));

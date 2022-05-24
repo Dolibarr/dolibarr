@@ -327,7 +327,11 @@ class EcmFiles extends CommonObject
 		$resql = $this->db->query($sql);
 		if (!$resql) {
 			$error++;
-			$this->errors[] = 'Error '.$this->db->lasterror();
+			if ($this->db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+				$this->errors[] = 'Error DB_ERROR_RECORD_ALREADY_EXISTS : '.$this->db->lasterror();
+			} else {
+				$this->errors[] = 'Error '.$this->db->lasterror();
+			}
 			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 		}
 
@@ -365,7 +369,7 @@ class EcmFiles extends CommonObject
 	 * @param  string $ref         	   	Hash of file name (filename+filepath). Not always defined on some version.
 	 * @param  string $relativepath    	Relative path of file from document directory. Example: 'path/path2/file' or 'path/path2/*'
 	 * @param  string $hashoffile      	Hash of file content. Take the first one found if same file is at different places. This hash will also change if file content is changed.
-	 * @param  string $hashforshare    	Hash of file sharing.
+	 * @param  string $hashforshare    	Hash of file sharing or 'shared'
 	 * @param  string $src_object_type 	src_object_type to search (value of object->table_element)
 	 * @param  string $src_object_id 	src_object_id to search
 	 * @return int                 	   	<0 if KO, 0 if not found, >0 if OK
@@ -421,12 +425,16 @@ class EcmFiles extends CommonObject
 			$sql .= " AND t.label = '".$this->db->escape($hashoffile)."'";
 			$sql .= " AND t.entity = ".$conf->entity; // unique key include the entity so each company has its own index
 		} elseif (!empty($hashforshare)) {
-			$sql .= " AND t.share = '".$this->db->escape($hashforshare)."'";
+			if ($hashforshare != 'shared') {
+				$sql .= " AND t.share = '".$this->db->escape($hashforshare)."'";
+			} else {
+				$sql .= " AND t.share IS NOT NULL AND t.share <> ''";
+			}
 			//$sql .= " AND t.entity = ".$conf->entity;							// hashforshare already unique
 		} elseif ($src_object_type && $src_object_id) {
 			// Warning: May return several record, and only first one is returned !
 			$sql .= " AND t.src_object_type = '".$this->db->escape($src_object_type)."' AND t.src_object_id = ".((int) $src_object_id);
-			$sql .= " AND t.entity = ".$conf->entity;
+			$sql .= " AND t.entity = ".((int) $conf->entity);
 		} else {
 			$sql .= ' AND t.rowid = '.((int) $id); // rowid already unique
 		}

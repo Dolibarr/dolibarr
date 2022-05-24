@@ -24,7 +24,7 @@
 /**
  * \file 		htdocs/accountancy/admin/export.php
  * \ingroup 	Accountancy (Double entries)
- * \brief 		Setup page to configure accounting expert module
+ * \brief 		Setup page to configure accounting export module
  */
 require '../../main.inc.php';
 
@@ -47,7 +47,8 @@ $main_option = array(
 	'ACCOUNTING_EXPORT_PREFIX_SPEC',
 );
 
-$configuration = AccountancyExport::getTypeConfig();
+$accountancyexport = new AccountancyExport($db);
+$configuration = $accountancyexport->getTypeConfig();
 
 $listparam = $configuration['param'];
 
@@ -117,7 +118,7 @@ if ($action == 'update') {
 
 	if (!$error) {
 		// reload
-		$configuration = AccountancyExport::getTypeConfig();
+		$configuration = $accountancyexport->getTypeConfig();
 		$listparam = $configuration['param'];
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
@@ -237,7 +238,7 @@ if (!$conf->use_javascript_ajax) {
 	print "</td>";
 } else {
 	print '<td>';
-	$listmodelcsv = AccountancyExport::getType();
+	$listmodelcsv = $accountancyexport->getType();
 	print $form->selectarray("ACCOUNTING_EXPORT_MODELCSV", $listmodelcsv, $conf->global->ACCOUNTING_EXPORT_MODELCSV, 0, 0, 0, '', 0, 0, 0, '', '', 1);
 
 	print '</td>';

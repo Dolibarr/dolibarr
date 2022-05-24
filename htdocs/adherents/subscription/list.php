@@ -111,7 +111,7 @@ $result = restrictedArea($user, 'adherent', '', '', 'cotisation');
 if (GETPOST('cancel', 'alpha')) {
 	$action = 'list'; $massaction = '';
 }
-if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend' && $massaction != 'confirm_createbills') {
+if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
 	$massaction = '';
 }
 
@@ -135,7 +135,7 @@ if (empty($reshook)) {
 		$search_note = "";
 		$search_amount = "";
 		$search_account = "";
-		$toselect = '';
+		$toselect = array();
 		$search_array_options = array();
 	}
 }
