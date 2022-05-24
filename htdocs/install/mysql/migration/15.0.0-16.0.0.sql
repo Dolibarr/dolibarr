@@ -14,7 +14,9 @@
 -- To create a unique index ALTER TABLE llx_table ADD UNIQUE INDEX uk_table_field (field);
 -- To drop an index:        -- VMYSQL4.1 DROP INDEX nomindex on llx_table;
 -- To drop an index:        -- VPGSQL8.2 DROP INDEX nomindex;
--- To make pk to be auto increment (mysql):    -- VMYSQL4.3 ALTER TABLE llx_table CHANGE COLUMN rowid rowid INTEGER NOT NULL AUTO_INCREMENT;
+-- To make pk to be auto increment (mysql):
+-- -- VMYSQL4.3 ALTER TABLE llx_table ADD PRIMARY KEY(rowid);
+-- -- VMYSQL4.3 ALTER TABLE llx_table CHANGE COLUMN rowid rowid INTEGER NOT NULL AUTO_INCREMENT;
 -- To make pk to be auto increment (postgres):
 -- -- VPGSQL8.2 CREATE SEQUENCE llx_table_rowid_seq OWNED BY llx_table.rowid;
 -- -- VPGSQL8.2 ALTER TABLE llx_table ADD PRIMARY KEY (rowid);
@@ -33,8 +35,10 @@
 
 -- Missing in v15 or lower
 
+-- VMYSQL4.3 ALTER TABLE llx_c_civility ADD PRIMARY KEY(rowid);
 -- VMYSQL4.3 ALTER TABLE llx_c_civility CHANGE COLUMN rowid rowid INTEGER NOT NULL AUTO_INCREMENT;
 
+-- VMYSQL4.3 ALTER TABLE llx_c_payment_term ADD PRIMARY KEY(rowid);
 -- VMYSQL4.3 ALTER TABLE llx_c_payment_term CHANGE COLUMN rowid rowid INTEGER NOT NULL AUTO_INCREMENT;
 
 -- VPGSQL8.2 CREATE SEQUENCE llx_c_civility_rowid_seq OWNED BY llx_c_civility.rowid;
