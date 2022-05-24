@@ -100,12 +100,11 @@ function addDispatchLine(index, type, mode)
         if(mode == 'allmissingconsume' || mode == 'alltoproduce') {
             qty = parseFloat($($row).data('max-qty'));
             if(!(qty > 0)) qty = 1;
-            if(!(qtyDispatched > 0)) qtyDispatched = 1;
         }
 	}
 	console.log("qtyDispatched="+qtyDispatched+" qtyOrdered="+qtyOrdered);
     if(mode == 'allmissingconsume' || mode == 'alltoproduce') {
-        while(qtyDispatched < qtyOrdered) {
+        while((qtyDispatched+1) < qtyOrdered) {
             addDispatchTR(qtyOrdered, qtyDispatched, index, nbrTrs, warehouseId, inputId, type, qty, mode, $row);
             qtyDispatched += qty;
             nbrTrs++;
