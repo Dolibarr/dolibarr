@@ -31,91 +31,85 @@ $extrasize = GETPOST('size', 'intcomma');
 $type = GETPOST('type', 'alpha');
 $param = GETPOST('param', 'alpha');
 
-if ($type == 'double' && strpos($extrasize, ',') === false) $extrasize = '24,8';
-if ($type == 'date')     $extrasize = '';
-if ($type == 'datetime') $extrasize = '';
-if ($type == 'select')   $extrasize = '';
+if ($type == 'double' && strpos($extrasize, ',') === false) {
+	$extrasize = '24,8';
+}
+if ($type == 'date') {
+	$extrasize = '';
+}
+if ($type == 'datetime') {
+	$extrasize = '';
+}
+if ($type == 'select') {
+	$extrasize = '';
+}
 
 
 // Add attribute
-if ($action == 'add')
-{
-	if (GETPOST("button") != $langs->trans("Cancel"))
-	{
+if ($action == 'add') {
+	if (GETPOST("button") != $langs->trans("Cancel")) {
 		// Check values
-		if (!$type)
-		{
+		if (!$type) {
 			$error++;
 			$langs->load("errors");
 			$mesg[] = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type"));
 			$action = 'create';
 		}
-		if ($type == 'varchar' && $extrasize <= 0)
-		{
+		if ($type == 'varchar' && $extrasize <= 0) {
 			$error++;
 			$langs->load("errors");
 			$mesg[] = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Size"));
 			$action = 'edit';
 		}
-		if ($type == 'varchar' && $extrasize > $maxsizestring)
-		{
+		if ($type == 'varchar' && $extrasize > $maxsizestring) {
 			$error++;
 			$langs->load("errors");
 			$mesg[] = $langs->trans("ErrorSizeTooLongForVarcharType", $maxsizestring);
 			$action = 'create';
 		}
-		if ($type == 'int' && $extrasize > $maxsizeint)
-		{
+		if ($type == 'int' && $extrasize > $maxsizeint) {
 			$error++;
 			$langs->load("errors");
 			$mesg[] = $langs->trans("ErrorSizeTooLongForIntType", $maxsizeint);
 			$action = 'create';
 		}
-		if ($type == 'select' && !$param)
-		{
+		if ($type == 'select' && !$param) {
 			$error++;
 			$langs->load("errors");
 			$mesg[] = $langs->trans("ErrorNoValueForSelectType");
 			$action = 'create';
 		}
-		if ($type == 'sellist' && !$param)
-		{
+		if ($type == 'sellist' && !$param) {
 			$error++;
 			$langs->load("errors");
 			$mesg[] = $langs->trans("ErrorNoValueForSelectListType");
 			$action = 'create';
 		}
-		if ($type == 'checkbox' && !$param)
-		{
+		if ($type == 'checkbox' && !$param) {
 			$error++;
 			$langs->load("errors");
 			$mesg[] = $langs->trans("ErrorNoValueForCheckBoxType");
 			$action = 'create';
 		}
-		if ($type == 'link' && !$param)
-		{
+		if ($type == 'link' && !$param) {
 			$error++;
 			$langs->load("errors");
 			$mesg[] = $langs->trans("ErrorNoValueForLinkType");
 			$action = 'create';
 		}
-		if ($type == 'radio' && !$param)
-		{
+		if ($type == 'radio' && !$param) {
 			$error++;
 			$langs->load("errors");
 			$mesg[] = $langs->trans("ErrorNoValueForRadioType");
 			$action = 'create';
 		}
-		if ((($type == 'radio') || ($type == 'checkbox')) && $param)
-		{
+		if ((($type == 'radio') || ($type == 'checkbox')) && $param) {
 			// Construct array for parameter (value of select list)
 			$parameters = $param;
 			$parameters_array = explode("\r\n", $parameters);
-			foreach ($parameters_array as $param_ligne)
-			{
+			foreach ($parameters_array as $param_ligne) {
 				if (!empty($param_ligne)) {
-					if (preg_match_all('/,/', $param_ligne, $matches))
-					{
+					if (preg_match_all('/,/', $param_ligne, $matches)) {
 						if (count($matches[0]) > 1) {
 							$error++;
 							$langs->load("errors");
@@ -143,7 +137,7 @@ if ($action == 'add')
 
 		// Check reserved keyword with more than 3 characters
 		if (!$error) {
-			if (in_array(GETPOST('attrname', 'aZ09'), array('and', 'keyword', 'table', 'index', 'integer', 'float', 'double', 'position'))) {
+			if (in_array(GETPOST('attrname', 'aZ09'), array('and', 'keyword', 'table', 'index', 'int', 'integer', 'float', 'double', 'real', 'position'))) {
 				$error++;
 				$langs->load("errors");
 				$mesg[] = $langs->trans("ErrorReservedKeyword", GETPOST('attrname', 'aZ09'));
@@ -153,29 +147,33 @@ if ($action == 'add')
 
 		if (!$error) {
 			// attrname must be alphabetical and lower case only
-			if (GETPOSTISSET("attrname") && preg_match("/^[a-z0-9-_]+$/", GETPOST('attrname', 'aZ09')) && !is_numeric(GETPOST('attrname', 'aZ09'))) {
+			if (GETPOSTISSET("attrname") && preg_match("/^[a-z0-9_]+$/", GETPOST('attrname', 'aZ09')) && !is_numeric(GETPOST('attrname', 'aZ09'))) {
 				// Construct array for parameter (value of select list)
 				$default_value = GETPOST('default_value', 'alpha');
 				$parameters = $param;
 				$parameters_array = explode("\r\n", $parameters);
+				$params = array();
 				//In sellist we have only one line and it can have come to do SQL expression
 				if ($type == 'sellist' || $type == 'chkbxlst') {
-					foreach ($parameters_array as $param_ligne)
-					{
+					foreach ($parameters_array as $param_ligne) {
 						$params['options'] = array($parameters=>null);
 					}
 				} else {
 					// Else it's separated key/value and coma list
-					foreach ($parameters_array as $param_ligne)
-					{
+					foreach ($parameters_array as $param_ligne) {
 						list($key, $value) = explode(',', $param_ligne);
+						if (!array_key_exists('options', $params)) {
+							$params['options'] = array();
+						}
 						$params['options'][$key] = $value;
 					}
 				}
 
 				// Visibility: -1=not visible by default in list, 1=visible, 0=hidden
 				$visibility = GETPOST('list', 'alpha');
-				if ($type == 'separate') $visibility = 3;
+				if ($type == 'separate') {
+					$visibility = 3;
+				}
 
 				$result = $extrafields->addExtraField(
 					GETPOST('attrname', 'aZ09'),
@@ -189,7 +187,7 @@ if ($action == 'add')
 					$default_value,
 					$params,
 					(GETPOST('alwayseditable', 'alpha') ? 1 : 0),
-					(GETPOST('perms', 'alpha') ?GETPOST('perms', 'alpha') : ''),
+					(GETPOST('perms', 'alpha') ? GETPOST('perms', 'alpha') : ''),
 					$visibility,
 					GETPOST('help', 'alpha'),
 					GETPOST('computed_value', 'alpha'),
@@ -199,8 +197,7 @@ if ($action == 'add')
 					(GETPOST('totalizable', 'alpha') ? 1 : 0),
 					GETPOST('printable', 'alpha')
 				);
-				if ($result > 0)
-				{
+				if ($result > 0) {
 					setEventMessages($langs->trans('SetupSaved'), null, 'mesgs');
 					header("Location: ".$_SERVER["PHP_SELF"]);
 					exit;
@@ -223,77 +220,64 @@ if ($action == 'add')
 }
 
 // Rename field
-if ($action == 'update')
-{
-	if (GETPOST("button") != $langs->trans("Cancel"))
-	{
+if ($action == 'update') {
+	if (GETPOST("button") != $langs->trans("Cancel")) {
 		// Check values
-		if (!$type)
-		{
+		if (!$type) {
 			$error++;
 			$langs->load("errors");
 			$mesg[] = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type"));
 			$action = 'edit';
 		}
-		if ($type == 'varchar' && $extrasize <= 0)
-		{
+		if ($type == 'varchar' && $extrasize <= 0) {
 			$error++;
 			$langs->load("errors");
 			$mesg[] = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Size"));
 			$action = 'edit';
 		}
-		if ($type == 'varchar' && $extrasize > $maxsizestring)
-		{
+		if ($type == 'varchar' && $extrasize > $maxsizestring) {
 			$error++;
 			$langs->load("errors");
 			$mesg[] = $langs->trans("ErrorSizeTooLongForVarcharType", $maxsizestring);
 			$action = 'edit';
 		}
-		if ($type == 'int' && $extrasize > $maxsizeint)
-		{
+		if ($type == 'int' && $extrasize > $maxsizeint) {
 			$error++;
 			$langs->load("errors");
 			$mesg[] = $langs->trans("ErrorSizeTooLongForIntType", $maxsizeint);
 			$action = 'edit';
 		}
-		if ($type == 'select' && !$param)
-		{
+		if ($type == 'select' && !$param) {
 			$error++;
 			$langs->load("errors");
 			$mesg[] = $langs->trans("ErrorNoValueForSelectType");
 			$action = 'edit';
 		}
-		if ($type == 'sellist' && !$param)
-		{
+		if ($type == 'sellist' && !$param) {
 			$error++;
 			$langs->load("errors");
 			$mesg[] = $langs->trans("ErrorNoValueForSelectListType");
 			$action = 'edit';
 		}
-		if ($type == 'checkbox' && !$param)
-		{
+		if ($type == 'checkbox' && !$param) {
 			$error++;
 			$langs->load("errors");
 			$mesg[] = $langs->trans("ErrorNoValueForCheckBoxType");
 			$action = 'edit';
 		}
-		if ($type == 'radio' && !$param)
-		{
+		if ($type == 'radio' && !$param) {
 			$error++;
 			$langs->load("errors");
 			$mesg[] = $langs->trans("ErrorNoValueForRadioType");
 			$action = 'edit';
 		}
-		if ((($type == 'radio') || ($type == 'checkbox')) && $param)
-		{
+		if ((($type == 'radio') || ($type == 'checkbox')) && $param) {
 			// Construct array for parameter (value of select list)
 			$parameters = $param;
 			$parameters_array = explode("\r\n", $parameters);
-			foreach ($parameters_array as $param_ligne)
-			{
+			foreach ($parameters_array as $param_ligne) {
 				if (!empty($param_ligne)) {
-					if (preg_match_all('/,/', $param_ligne, $matches))
-					{
+					if (preg_match_all('/,/', $param_ligne, $matches)) {
 						if (count($matches[0]) > 1) {
 							$error++;
 							$langs->load("errors");
@@ -329,32 +313,34 @@ if ($action == 'update')
 			}
 		}
 
-		if (!$error)
-		{
-			if (GETPOSTISSET("attrname") && preg_match("/^\w[a-zA-Z0-9-_]*$/", GETPOST('attrname', 'aZ09')) && !is_numeric(GETPOST('attrname', 'aZ09')))
-			{
+		if (!$error) {
+			if (GETPOSTISSET("attrname") && preg_match("/^\w[a-zA-Z0-9-_]*$/", GETPOST('attrname', 'aZ09')) && !is_numeric(GETPOST('attrname', 'aZ09'))) {
 				$pos = GETPOST('pos', 'int');
 				// Construct array for parameter (value of select list)
 				$parameters = $param;
 				$parameters_array = explode("\r\n", $parameters);
+				$params = array();
 				//In sellist we have only one line and it can have come to do SQL expression
 				if ($type == 'sellist' || $type == 'chkbxlst') {
-					foreach ($parameters_array as $param_ligne)
-					{
+					foreach ($parameters_array as $param_ligne) {
 						$params['options'] = array($parameters=>null);
 					}
 				} else {
 					//Esle it's separated key/value and coma list
-					foreach ($parameters_array as $param_ligne)
-					{
+					foreach ($parameters_array as $param_ligne) {
 						list($key, $value) = explode(',', $param_ligne);
+						if (!array_key_exists('options', $params)) {
+							$params['options'] = array();
+						}
 						$params['options'][$key] = $value;
 					}
 				}
 
 				// Visibility: -1=not visible by default in list, 1=visible, 0=hidden
 				$visibility = GETPOST('list', 'alpha');
-				if ($type == 'separate') $visibility = 3;
+				if ($type == 'separate') {
+					$visibility = 3;
+				}
 
 				// Example: is_object($object) ? ($object->id < 10 ? round($object->id / 2, 2) : (2 * $user->id) * (int) substr($mysoc->zip, 1, 2)) : 'objnotdefined'
 				$computedvalue = GETPOST('computed_value', 'nohtml');
@@ -409,7 +395,9 @@ if ($action == 'delete') {
 		if ($result >= 0) {
 			header("Location: ".$_SERVER["PHP_SELF"]);
 			exit;
-		} else $mesg = $extrafields->error;
+		} else {
+			$mesg = $extrafields->error;
+		}
 	} else {
 		$error++;
 		$langs->load("errors");

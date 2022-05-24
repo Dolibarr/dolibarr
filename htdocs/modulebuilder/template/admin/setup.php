@@ -25,16 +25,30 @@
 // Load Dolibarr environment
 $res = 0;
 // Try main.inc.php into web root known defined into CONTEXT_DOCUMENT_ROOT (not always defined)
-if (!$res && !empty($_SERVER["CONTEXT_DOCUMENT_ROOT"])) $res = @include $_SERVER["CONTEXT_DOCUMENT_ROOT"]."/main.inc.php";
+if (!$res && !empty($_SERVER["CONTEXT_DOCUMENT_ROOT"])) {
+	$res = @include $_SERVER["CONTEXT_DOCUMENT_ROOT"]."/main.inc.php";
+}
 // Try main.inc.php into web root detected using web root calculated from SCRIPT_FILENAME
 $tmp = empty($_SERVER['SCRIPT_FILENAME']) ? '' : $_SERVER['SCRIPT_FILENAME']; $tmp2 = realpath(__FILE__); $i = strlen($tmp) - 1; $j = strlen($tmp2) - 1;
-while ($i > 0 && $j > 0 && isset($tmp[$i]) && isset($tmp2[$j]) && $tmp[$i] == $tmp2[$j]) { $i--; $j--; }
-if (!$res && $i > 0 && file_exists(substr($tmp, 0, ($i + 1))."/main.inc.php")) $res = @include substr($tmp, 0, ($i + 1))."/main.inc.php";
-if (!$res && $i > 0 && file_exists(dirname(substr($tmp, 0, ($i + 1)))."/main.inc.php")) $res = @include dirname(substr($tmp, 0, ($i + 1)))."/main.inc.php";
+while ($i > 0 && $j > 0 && isset($tmp[$i]) && isset($tmp2[$j]) && $tmp[$i] == $tmp2[$j]) {
+	$i--; $j--;
+}
+if (!$res && $i > 0 && file_exists(substr($tmp, 0, ($i + 1))."/main.inc.php")) {
+	$res = @include substr($tmp, 0, ($i + 1))."/main.inc.php";
+}
+if (!$res && $i > 0 && file_exists(dirname(substr($tmp, 0, ($i + 1)))."/main.inc.php")) {
+	$res = @include dirname(substr($tmp, 0, ($i + 1)))."/main.inc.php";
+}
 // Try main.inc.php using relative path
-if (!$res && file_exists("../../main.inc.php")) $res = @include "../../main.inc.php";
-if (!$res && file_exists("../../../main.inc.php")) $res = @include "../../../main.inc.php";
-if (!$res) die("Include of main fails");
+if (!$res && file_exists("../../main.inc.php")) {
+	$res = @include "../../main.inc.php";
+}
+if (!$res && file_exists("../../../main.inc.php")) {
+	$res = @include "../../../main.inc.php";
+}
+if (!$res) {
+	die("Include of main fails");
+}
 
 global $langs, $user;
 
@@ -46,35 +60,122 @@ require_once '../lib/mymodule.lib.php';
 // Translations
 $langs->loadLangs(array("admin", "mymodule@mymodule"));
 
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('mymodulesetup', 'globalsetup'));
+
 // Access control
-if (!$user->admin) accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
 
 // Parameters
 $action = GETPOST('action', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
+$modulepart = GETPOST('modulepart', 'aZ09');	// Used by actions_setmoduleoptions.inc.php
 
 $value = GETPOST('value', 'alpha');
 $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');
 $type = 'myobject';
 
-$arrayofparameters = array(
-	'MYMODULE_MYPARAM1'=>array('css'=>'minwidth200', 'enabled'=>1),
-	'MYMODULE_MYPARAM2'=>array('css'=>'minwidth500', 'enabled'=>1)
-);
 
 $error = 0;
 $setupnotempty = 0;
+
+// Set this to 1 to use the factory to manage constants. Warning, the generated module will be compatible with version v15+ only
+$useFormSetup = 1;
+
+if (!class_exists('FormSetup')) {
+	// For retrocompatibility Dolibarr < 16.0
+	if (floatval(DOL_VERSION) < 16.0 && !class_exists('FormSetup')) {
+		require_once __DIR__.'/../backport/v16/core/class/html.formsetup.class.php';
+	} else {
+		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsetup.class.php';
+	}
+}
+
+$formSetup = new FormSetup($db);
+
+
+// Hôte
+$item = $formSetup->newItem('NO_PARAM_JUST_TEXT');
+$item->fieldOverride = (empty($_SERVER['HTTPS']) ? 'http://' : 'https://') . $_SERVER['HTTP_HOST'];
+$item->cssClass = 'minwidth500';
+
+// Setup conf MYMODULE_MYPARAM1 as a simple string input
+$item = $formSetup->newItem('MYMODULE_MYPARAM1');
+$item->defaultFieldValue = 'default value';
+
+// Setup conf MYMODULE_MYPARAM1 as a simple textarea input but we replace the text of field title
+$item = $formSetup->newItem('MYMODULE_MYPARAM2');
+$item->nameText = $item->getNameText().' more html text ';
+
+// Setup conf MYMODULE_MYPARAM3
+$item = $formSetup->newItem('MYMODULE_MYPARAM3');
+$item->setAsThirdpartyType();
+
+// Setup conf MYMODULE_MYPARAM4 : exemple of quick define write style
+$formSetup->newItem('MYMODULE_MYPARAM4')->setAsYesNo();
+
+// Setup conf MYMODULE_MYPARAM5
+$formSetup->newItem('MYMODULE_MYPARAM5')->setAsEmailTemplate('thirdparty');
+
+// Setup conf MYMODULE_MYPARAM6
+$formSetup->newItem('MYMODULE_MYPARAM6')->setAsSecureKey()->enabled = 0; // disabled
+
+// Setup conf MYMODULE_MYPARAM7
+$formSetup->newItem('MYMODULE_MYPARAM7')->setAsProduct();
+
+$formSetup->newItem('Title')->setAsTitle();
+
+// Setup conf MYMODULE_MYPARAM8
+$item = $formSetup->newItem('MYMODULE_MYPARAM8');
+$TField = array(
+	'test01' => $langs->trans('test01'),
+	'test02' => $langs->trans('test02'),
+	'test03' => $langs->trans('test03'),
+	'test04' => $langs->trans('test04'),
+	'test05' => $langs->trans('test05'),
+	'test06' => $langs->trans('test06'),
+);
+$item->setAsMultiSelect($TField);
+$item->helpText = $langs->transnoentities('MYMODULE_MYPARAM8');
+
+
+// Setup conf MYMODULE_MYPARAM9
+$formSetup->newItem('MYMODULE_MYPARAM9')->setAsSelect($TField);
+
+
+// Setup conf MYMODULE_MYPARAM10
+$item = $formSetup->newItem('MYMODULE_MYPARAM10');
+$item->setAsColor();
+$item->defaultFieldValue = '#FF0000';
+$item->nameText = $item->getNameText().' more html text ';
+$item->fieldInputOverride = '';
+$item->helpText = $langs->transnoentities('AnHelpMessage');
+//$item->fieldValue = '';
+//$item->fieldAttr = array() ; // fields attribute only for compatible fields like input text
+//$item->fieldOverride = false; // set this var to override field output will override $fieldInputOverride and $fieldOutputOverride too
+//$item->fieldInputOverride = false; // set this var to override field input
+//$item->fieldOutputOverride = false; // set this var to override field output
+
+
+$setupnotempty =+ count($formSetup->items);
+
+
+$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 
 /*
  * Actions
  */
 
-if ((float) DOL_VERSION >= 6)
-{
-	include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
+// For retrocompatibility Dolibarr < 15.0
+if ( versioncompare(explode('.', DOL_VERSION), array(15)) < 0 && $action == 'update' && !empty($user->admin)) {
+	$formSetup->saveConfFromPost();
 }
+
+include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 if ($action == 'updateMask') {
 	$maskconst = GETPOST('maskconst', 'alpha');
@@ -102,26 +203,22 @@ if ($action == 'updateMask') {
 	// Search template files
 	$file = ''; $classname = ''; $filefound = 0;
 	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
-	foreach ($dirmodels as $reldir)
-	{
+	foreach ($dirmodels as $reldir) {
 		$file = dol_buildpath($reldir."core/modules/mymodule/doc/pdf_".$modele."_".strtolower($tmpobjectkey).".modules.php", 0);
-		if (file_exists($file))
-		{
+		if (file_exists($file)) {
 			$filefound = 1;
-			$classname = "pdf_".$modele;
+			$classname = "pdf_".$modele."_".strtolower($tmpobjectkey);
 			break;
 		}
 	}
 
-	if ($filefound)
-	{
+	if ($filefound) {
 		require_once $file;
 
 		$module = new $classname($db);
 
-		if ($module->write_file($tmpobject, $langs) > 0)
-		{
-			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=".strtolower($tmpobjectkey)."&file=SPECIMEN.pdf");
+		if ($module->write_file($tmpobject, $langs) > 0) {
+			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=mymodule-".strtolower($tmpobjectkey)."&file=SPECIMEN.pdf");
 			return;
 		} else {
 			setEventMessages($module->error, null, 'errors');
@@ -131,19 +228,15 @@ if ($action == 'updateMask') {
 		setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
 		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
 	}
-}
-
-elseif ($action == 'setmod') {
+} elseif ($action == 'setmod') {
 	// TODO Check if numbering module chosen can be activated by calling method canBeActivated
 	$tmpobjectkey = GETPOST('object');
 	if (!empty($tmpobjectkey)) {
 		$constforval = 'MYMODULE_'.strtoupper($tmpobjectkey)."_ADDON";
 		dolibarr_set_const($db, $constforval, $value, 'chaine', 0, '', $conf->entity);
 	}
-}
-
-// Activate a model
-elseif ($action == 'set') {
+} elseif ($action == 'set') {
+	// Activate a model
 	$ret = addDocumentModel($value, $type, $label, $scandir);
 } elseif ($action == 'del') {
 	$ret = delDocumentModel($value, $type);
@@ -151,13 +244,13 @@ elseif ($action == 'set') {
 		$tmpobjectkey = GETPOST('object');
 		if (!empty($tmpobjectkey)) {
 			$constforval = 'MYMODULE_'.strtoupper($tmpobjectkey).'_ADDON_PDF';
-			if ($conf->global->$constforval == "$value") dolibarr_del_const($db, $constforval, $conf->entity);
+			if ($conf->global->$constforval == "$value") {
+				dolibarr_del_const($db, $constforval, $conf->entity);
+			}
 		}
 	}
-}
-
-// Set or unset default model
-elseif ($action == 'setdoc') {
+} elseif ($action == 'setdoc') {
+	// Set or unset default model
 	$tmpobjectkey = GETPOST('object');
 	if (!empty($tmpobjectkey)) {
 		$constforval = 'MYMODULE_'.strtoupper($tmpobjectkey).'_ADDON_PDF';
@@ -189,72 +282,34 @@ elseif ($action == 'setdoc') {
 
 $form = new Form($db);
 
-$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
-
+$help_url = '';
 $page_name = "MyModuleSetup";
-llxHeader('', $langs->trans($page_name));
+
+llxHeader('', $langs->trans($page_name), $help_url);
 
 // Subheader
 $linkback = '<a href="'.($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1').'">'.$langs->trans("BackToModuleList").'</a>';
 
-print load_fiche_titre($langs->trans($page_name), $linkback, 'object_mymodule@mymodule');
+print load_fiche_titre($langs->trans($page_name), $linkback, 'title_setup');
 
 // Configuration header
 $head = mymoduleAdminPrepareHead();
-print dol_get_fiche_head($head, 'settings', '', -1, "mymodule@mymodule");
+print dol_get_fiche_head($head, 'settings', $langs->trans($page_name), -1, "mymodule@mymodule");
 
 // Setup page goes here
 echo '<span class="opacitymedium">'.$langs->trans("MyModuleSetupPage").'</span><br><br>';
 
 
-if ($action == 'edit')
-{
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-	print '<input type="hidden" name="token" value="'.newToken().'">';
-	print '<input type="hidden" name="action" value="update">';
-
-	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
-
-	foreach ($arrayofparameters as $key => $val)
-	{
-		print '<tr class="oddeven"><td>';
-		$tooltiphelp = (($langs->trans($key.'Tooltip') != $key.'Tooltip') ? $langs->trans($key.'Tooltip') : '');
-		print $form->textwithpicto($langs->trans($key), $tooltiphelp);
-		print '</td><td><input name="'.$key.'"  class="flat '.(empty($val['css']) ? 'minwidth200' : $val['css']).'" value="'.$conf->global->$key.'"></td></tr>';
-	}
-	print '</table>';
-
-	print '<br><div class="center">';
-	print '<input class="button button-save" type="submit" value="'.$langs->trans("Save").'">';
-	print '</div>';
-
-	print '</form>';
+if ($action == 'edit') {
+	print $formSetup->generateOutput(true);
 	print '<br>';
+} elseif (!empty($formSetup->items)) {
+	print $formSetup->generateOutput();
+	print '<div class="tabsAction">';
+	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a>';
+	print '</div>';
 } else {
-	if (!empty($arrayofparameters))
-	{
-		print '<table class="noborder centpercent">';
-		print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
-
-		foreach ($arrayofparameters as $key => $val)
-		{
-			$setupnotempty++;
-
-			print '<tr class="oddeven"><td>';
-			$tooltiphelp = (($langs->trans($key.'Tooltip') != $key.'Tooltip') ? $langs->trans($key.'Tooltip') : '');
-			print $form->textwithpicto($langs->trans($key), $tooltiphelp);
-			print '</td><td>'.$conf->global->$key.'</td></tr>';
-		}
-
-		print '</table>';
-
-		print '<div class="tabsAction">';
-		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a>';
-		print '</div>';
-	} else {
-		print '<br>'.$langs->trans("NothingToSetup");
-	}
+	print '<br>'.$langs->trans("NothingToSetup");
 }
 
 
@@ -264,7 +319,9 @@ $myTmpObjects['MyObject'] = array('includerefgeneration'=>0, 'includedocgenerati
 
 
 foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
-	if ($myTmpObjectKey == 'MyObject') continue;
+	if ($myTmpObjectKey == 'MyObject') {
+		continue;
+	}
 	if ($myTmpObjectArray['includerefgeneration']) {
 		/*
 		 * Orders Numbering model
@@ -284,19 +341,14 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 
 		clearstatcache();
 
-		foreach ($dirmodels as $reldir)
-		{
+		foreach ($dirmodels as $reldir) {
 			$dir = dol_buildpath($reldir."core/modules/".$moduledir);
 
-			if (is_dir($dir))
-			{
+			if (is_dir($dir)) {
 				$handle = opendir($dir);
-				if (is_resource($handle))
-				{
-					while (($file = readdir($handle)) !== false)
-					{
-						if (strpos($file, 'mod_'.strtolower($myTmpObjectKey).'_') === 0 && substr($file, dol_strlen($file) - 3, 3) == 'php')
-						{
+				if (is_resource($handle)) {
+					while (($file = readdir($handle)) !== false) {
+						if (strpos($file, 'mod_'.strtolower($myTmpObjectKey).'_') === 0 && substr($file, dol_strlen($file) - 3, 3) == 'php') {
 							$file = substr($file, 0, dol_strlen($file) - 4);
 
 							require_once $dir.'/'.$file.'.php';
@@ -304,11 +356,14 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 							$module = new $file($db);
 
 							// Show modules according to features level
-							if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
-							if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
+							if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+								continue;
+							}
+							if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+								continue;
+							}
 
-							if ($module->isEnabled())
-							{
+							if ($module->isEnabled()) {
 								dol_include_once('/'.$moduledir.'/class/'.strtolower($myTmpObjectKey).'.class.php');
 
 								print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
@@ -321,14 +376,16 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 								if (preg_match('/^Error/', $tmp)) {
 									$langs->load("errors");
 									print '<div class="error">'.$langs->trans($tmp).'</div>';
-								} elseif ($tmp == 'NotConfigured') print $langs->trans($tmp);
-								else print $tmp;
+								} elseif ($tmp == 'NotConfigured') {
+									print $langs->trans($tmp);
+								} else {
+									print $tmp;
+								}
 								print '</td>'."\n";
 
 								print '<td class="center">';
 								$constforvar = 'MYMODULE_'.strtoupper($myTmpObjectKey).'_ADDON';
-								if ($conf->global->$constforvar == $file)
-								{
+								if (getDolGlobalString($constforvar) == $file) {
 									print img_picto($langs->trans("Activated"), 'switch_on');
 								} else {
 									print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&object='.strtolower($myTmpObjectKey).'&value='.urlencode($file).'">';
@@ -348,9 +405,10 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 								if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
 									$htmltooltip .= ''.$langs->trans("NextValue").': ';
 									if ($nextval) {
-										if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured')
+										if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured') {
 											$nextval = $langs->trans($nextval);
-											$htmltooltip .= $nextval.'<br>';
+										}
+										$htmltooltip .= $nextval.'<br>';
 									} else {
 										$htmltooltip .= $langs->trans($module->error).'<br>';
 									}
@@ -387,12 +445,10 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 		$sql .= " WHERE type = '".$db->escape($type)."'";
 		$sql .= " AND entity = ".$conf->entity;
 		$resql = $db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$i = 0;
 			$num_rows = $db->num_rows($resql);
-			while ($i < $num_rows)
-			{
+			while ($i < $num_rows) {
 				$array = $db->fetch_array($resql);
 				array_push($def, $array[0]);
 				$i++;
@@ -413,31 +469,23 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 
 		clearstatcache();
 
-		foreach ($dirmodels as $reldir)
-		{
-			foreach (array('', '/doc') as $valdir)
-			{
+		foreach ($dirmodels as $reldir) {
+			foreach (array('', '/doc') as $valdir) {
 				$realpath = $reldir."core/modules/".$moduledir.$valdir;
 				$dir = dol_buildpath($realpath);
 
-				if (is_dir($dir))
-				{
+				if (is_dir($dir)) {
 					$handle = opendir($dir);
-					if (is_resource($handle))
-					{
-						while (($file = readdir($handle)) !== false)
-						{
+					if (is_resource($handle)) {
+						while (($file = readdir($handle)) !== false) {
 							$filelist[] = $file;
 						}
 						closedir($handle);
 						arsort($filelist);
 
-						foreach ($filelist as $file)
-						{
-							if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file))
-							{
-								if (file_exists($dir.'/'.$file))
-								{
+						foreach ($filelist as $file) {
+							if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file)) {
+								if (file_exists($dir.'/'.$file)) {
 									$name = substr($file, 4, dol_strlen($file) - 16);
 									$classname = substr($file, 0, dol_strlen($file) - 12);
 
@@ -445,49 +493,53 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 									$module = new $classname($db);
 
 									$modulequalified = 1;
-									if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) $modulequalified = 0;
-									if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) $modulequalified = 0;
+									if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+										$modulequalified = 0;
+									}
+									if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+										$modulequalified = 0;
+									}
 
-									if ($modulequalified)
-									{
+									if ($modulequalified) {
 										print '<tr class="oddeven"><td width="100">';
 										print (empty($module->name) ? $name : $module->name);
 										print "</td><td>\n";
-										if (method_exists($module, 'info')) print $module->info($langs);
-										else print $module->description;
+										if (method_exists($module, 'info')) {
+											print $module->info($langs);
+										} else {
+											print $module->description;
+										}
 										print '</td>';
 
 										// Active
-										if (in_array($name, $def))
-										{
+										if (in_array($name, $def)) {
 											print '<td class="center">'."\n";
-											print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;token='.newToken().'&amp;value='.$name.'">';
+											print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&token='.newToken().'&value='.urlencode($name).'">';
 											print img_picto($langs->trans("Enabled"), 'switch_on');
 											print '</a>';
 											print '</td>';
 										} else {
 											print '<td class="center">'."\n";
-											print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;token='.newToken().'&amp;value='.$name.'&amp;scan_dir='.urlencode($module->scandir).'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+											print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 											print "</td>";
 										}
 
 										// Default
 										print '<td class="center">';
 										$constforvar = 'MYMODULE_'.strtoupper($myTmpObjectKey).'_ADDON';
-										if ($conf->global->$constforvar == $name) {
+										if (getDolGlobalString($constforvar) == $name) {
 											//print img_picto($langs->trans("Default"), 'on');
 											// Even if choice is the default value, we allow to disable it. Replace this with previous line if you need to disable unset
-											print '<a href="'.$_SERVER["PHP_SELF"].'?action=unsetdoc&amp;token='.newToken().'&amp;object='.urlencode(strtolower($myTmpObjectKey)).'&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'&amp;type='.urlencode($type).'" alt="'.$langs->trans("Disable").'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+											print '<a href="'.$_SERVER["PHP_SELF"].'?action=unsetdoc&token='.newToken().'&object='.urlencode(strtolower($myTmpObjectKey)).'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'&amp;type='.urlencode($type).'" alt="'.$langs->trans("Disable").'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 										} else {
-											print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;token='.newToken().'&amp;object='.urlencode(strtolower($myTmpObjectKey)).'&amp;value='.$name.'&amp;scan_dir='.urlencode($module->scandir).'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+											print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&object='.urlencode(strtolower($myTmpObjectKey)).'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 										}
 										print '</td>';
 
 										// Info
 										$htmltooltip = ''.$langs->trans("Name").': '.$module->name;
 										$htmltooltip .= '<br>'.$langs->trans("Type").': '.($module->type ? $module->type : $langs->trans("Unknown"));
-										if ($module->type == 'pdf')
-										{
+										if ($module->type == 'pdf') {
 											$htmltooltip .= '<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
 										}
 										$htmltooltip .= '<br>'.$langs->trans("Path").': '.preg_replace('/^\//', '', $realpath).'/'.$file;
@@ -502,9 +554,9 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 
 										// Preview
 										print '<td class="center">';
-										if ($module->type == 'pdf')
-										{
-											print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'&object='.$myTmpObjectKey.'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
+										if ($module->type == 'pdf') {
+											$newname = preg_replace('/_'.preg_quote(strtolower($myTmpObjectKey), '/').'/', '', $name);
+											print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.urlencode($newname).'&object='.urlencode($myTmpObjectKey).'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
 										} else {
 											print img_object($langs->trans("PreviewNotAvailable"), 'generic');
 										}

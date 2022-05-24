@@ -1,4 +1,6 @@
 <?php
+use Stripe\BankAccount;
+
 /* Copyright (C) 2016 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2020 Josep Lluís Amador  <joseplluis@lliuretic.cat>
  *
@@ -75,13 +77,14 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 		$this->marge_haute = isset($conf->global->MAIN_PDF_MARGIN_TOP) ? $conf->global->MAIN_PDF_MARGIN_TOP : 10;
 		$this->marge_basse = isset($conf->global->MAIN_PDF_MARGIN_BOTTOM) ? $conf->global->MAIN_PDF_MARGIN_BOTTOM : 10;
 
-		$this->option_logo = 1; // Affiche logo FAC_PDF_LOGO
-		$this->option_tva = 1; // Gere option tva FACTURE_TVAOPTION
-		$this->option_codeproduitservice = 1; // Affiche code produit-service
+		$this->option_logo = 1; // Display logo FAC_PDF_LOGO
+		$this->option_tva = 1; // Manage the vat option FACTURE_TVAOPTION
 
 		// Retrieves transmitter
 		$this->emetteur = $mysoc;
-		if (!$this->emetteur->country_code) $this->emetteur->country_code = substr($langs->defaultlang, -2); // By default if not defined
+		if (!$this->emetteur->country_code) {
+			$this->emetteur->country_code = substr($langs->defaultlang, -2); // By default if not defined
+		}
 
 		// Define column position
 		$this->posxref = $this->marge_gauche;
@@ -106,44 +109,48 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 		// phpcs:enable
 		global $conf, $hookmanager, $langs, $user, $mysoc;
 
-		if (!is_object($outputlangs)) $outputlangs = $langs;
+		if (!is_object($outputlangs)) {
+			$outputlangs = $langs;
+		}
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
-		if (!empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output = 'ISO-8859-1';
+		if (!empty($conf->global->MAIN_USE_FPDF)) {
+			$outputlangs->charset_output = 'ISO-8859-1';
+		}
 
 		// Load translation files required by the page
 		$outputlangs->loadLangs(array("main", "dict", "withdrawals", "companies", "projects", "bills"));
 
-		if (!empty($conf->bank->dir_output))
-		{
+		if (!empty($conf->bank->dir_output)) {
 			//$nblines = count($object->lines);  // This is set later with array of tasks
 
 			// Definition of $dir and $file
-			if ($object->specimen)
-			{
-				if (!empty($moreparams['force_dir_output'])) $dir = $moreparams['force_dir_output'];
-				else $dir = $conf->bank->dir_output;
+			if ($object->specimen) {
+				if (!empty($moreparams['force_dir_output'])) {
+					$dir = $moreparams['force_dir_output'];
+				} else {
+					$dir = $conf->bank->dir_output;
+				}
 				$file = $dir."/SPECIMEN.pdf";
 			} else {
 				$objectref = dol_sanitizeFileName($object->ref);
-				if (!empty($moreparams['force_dir_output'])) $dir = $moreparams['force_dir_output'];
-				else $dir = $conf->bank->dir_output."/".$objectref;
+				if (!empty($moreparams['force_dir_output'])) {
+					$dir = $moreparams['force_dir_output'];
+				} else {
+					$dir = $conf->bank->dir_output."/".$objectref;
+				}
 				$file = $dir."/".$langs->transnoentitiesnoconv("SepaMandateShort").' '.$objectref."-".dol_sanitizeFileName($object->rum).".pdf";
 			}
 
-			if (!file_exists($dir))
-			{
-				if (dol_mkdir($dir) < 0)
-				{
+			if (!file_exists($dir)) {
+				if (dol_mkdir($dir) < 0) {
 					$this->error = $langs->transnoentities("ErrorCanNotCreateDir", $dir);
 					return 0;
 				}
 			}
 
-			if (file_exists($dir))
-			{
+			if (file_exists($dir)) {
 				// Add pdfgeneration hook
-				if (!is_object($hookmanager))
-				{
+				if (!is_object($hookmanager)) {
 					include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 					$hookmanager = new HookManager($this->db);
 				}
@@ -157,11 +164,12 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 				$heightforinfotot = 50; // Height reserved to output the info and total part
 				$heightforfreetext = (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT) ? $conf->global->MAIN_PDF_FREETEXT_HEIGHT : 5); // Height reserved to output the free text on last page
 				$heightforfooter = $this->marge_basse + 8; // Height reserved to output the footer (value include bottom margin)
-				if (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS)) $heightforfooter += 6;
+				if (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS)) {
+					$heightforfooter += 6;
+				}
 				$pdf->SetAutoPageBreak(1, 0);
 
-				if (class_exists('TCPDF'))
-				{
+				if (class_exists('TCPDF')) {
 					$pdf->setPrintHeader(false);
 					$pdf->setPrintFooter(false);
 				}
@@ -176,7 +184,9 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
 				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("SepaMandate"));
-				if (!empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) $pdf->SetCompression(false);
+				if (!empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) {
+					$pdf->SetCompression(false);
+				}
 
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite); // Left, Top, Right
 
@@ -189,13 +199,12 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 				$pdf->SetTextColor(0, 0, 0);
 
 				$tab_top = 50;
-				$tab_height = 200;
 				$tab_top_newpage = 40;
-				$tab_height_newpage = 210;
+
+				$tab_height = $this->page_hauteur - $tab_top - $heightforfooter - $heightforfreetext;
 
 				// Show notes
-				if (!empty($object->note_public))
-				{
+				if (!empty($object->note_public)) {
 					$pdf->SetFont('', '', $default_font_size - 1);
 					$pdf->writeHTMLCell(190, 3, $this->posxref, $tab_top - 2, dol_htmlentitiesbr($object->note_public), 0, 1);
 					$nexY = $pdf->GetY();
@@ -228,8 +237,17 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 				$posY = $pdf->GetY();
 				$posY += 2;
 				$pdf->SetXY($this->marge_gauche, $posY);
+
 				$ics = '';
-				if (!empty($conf->global->PRELEVEMENT_ICS)) $ics = $conf->global->PRELEVEMENT_ICS;
+				$idbankfordirectdebit = getDolGlobalInt('PRELEVEMENT_ID_BANKACCOUNT');
+				if ($idbankfordirectdebit > 0) {
+					$tmpbankfordirectdebit = new Account($this->db);
+					$tmpbankfordirectdebit->fetch($idbankfordirectdebit);
+					$ics = $tmpbankfordirectdebit->ics;	// ICS for direct debit
+				}
+				if (empty($ics) && !empty($conf->global->PRELEVEMENT_ICS)) {
+					$ics = $conf->global->PRELEVEMENT_ICS;
+				}
 				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $outputlangs->transnoentitiesnoconv("CreditorIdentifier").' ('.$outputlangs->transnoentitiesnoconv("ICS").') : '.$ics, 0, 'L');
 
 				$posY = $pdf->GetY();
@@ -241,7 +259,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 				$posY += 1;
 				$pdf->SetXY($this->marge_gauche, $posY);
 				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $outputlangs->transnoentitiesnoconv("Address").' : ', 0, 'L');
-				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $mysoc->getFullAddress(), 0, 'L');
+				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $mysoc->getFullAddress(1), 0, 'L');
 
 				$posY = $pdf->GetY();
 				$posY += 3;
@@ -266,12 +284,13 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $outputlangs->transnoentitiesnoconv("SEPAFillForm"), 0, 'C');
 
 				$thirdparty = new Societe($this->db);
-				if ($object->socid > 0) $thirdparty->fetch($object->socid);
+				if ($object->socid > 0) {
+					$thirdparty->fetch($object->socid);
+				}
 
 				$sepaname = '______________________________________________';
-				if ($thirdparty->id > 0)
-				{
-					$sepaname = $thirdparty->name.($object->account_owner ? ' ('.$object->account_owner.')' : '');
+				if ($thirdparty->id > 0) {
+					$sepaname = $thirdparty->name.($object->proprio ? ' ('.$object->proprio.')' : '');
 				}
 				$posY = $pdf->GetY();
 				$posY += 3;
@@ -281,7 +300,9 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $sepaname, 0, 'L');
 
 				$sepavatid = '__________________________________________________';
-				if (!empty($thirdparty->idprof1)) $sepavatid = $thirdparty->idprof1;
+				if (!empty($thirdparty->idprof1)) {
+					$sepavatid = $thirdparty->idprof1;
+				}
 				$posY = $pdf->GetY();
 				$posY += 1;
 				$pdf->SetXY($this->marge_gauche, $posY);
@@ -290,9 +311,11 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $sepavatid, 0, 'L');
 
 				$address = '______________________________________________';
-				if ($thirdparty->id > 0)
-				{
-					$address = $thirdparty->getFullAddress();
+				if ($thirdparty->id > 0) {
+					$tmpaddresswithoutcountry = $thirdparty->getFullAddress();	// we test on address without country
+					if ($tmpaddresswithoutcountry) {
+						$address = $thirdparty->getFullAddress(1);	// full address
+					}
 				}
 				$posY = $pdf->GetY();
 				$posY += 1;
@@ -300,15 +323,16 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $outputlangs->transnoentitiesnoconv("Address").' : ', 0, 'L');
 				$pdf->SetXY(80, $posY);
 				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $address, 0, 'L');
-				if (preg_match('/_____/', $address))
-				{
+				if (preg_match('/_____/', $address)) {
 					$posY += 6;
 					$pdf->SetXY(80, $posY);
 					$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $address, 0, 'L');
 				}
 
 				$ban = '__________________________________________________';
-				if (!empty($object->iban)) $ban = $object->iban;
+				if (!empty($object->iban)) {
+					$ban = $object->iban;
+				}
 				$posY = $pdf->GetY();
 				$posY += 1;
 				$pdf->SetXY($this->marge_gauche, $posY);
@@ -317,7 +341,9 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $ban, 0, 'L');
 
 				$bic = '__________________________________________________';
-				if (!empty($object->bic)) $bic = $object->bic;
+				if (!empty($object->bic)) {
+					$bic = $object->bic;
+				}
 				$posY = $pdf->GetY();
 				$posY += 1;
 				$pdf->SetXY($this->marge_gauche, $posY);
@@ -333,19 +359,22 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $txt, 0, 'L');
 				$pdf->Rect(80, $posY, 5, 5);
 				$pdf->SetXY(80, $posY);
-				if ($object->frstrecur == 'RECUR') $pdf->MultiCell(5, 3, 'X', 0, 'L');
+				if ($object->frstrecur == 'RECUR') {
+					$pdf->MultiCell(5, 3, 'X', 0, 'L');
+				}
 				$pdf->SetXY(86, $posY);
 				$txt = $langs->transnoentitiesnoconv("ModeRECUR").'  '.$langs->transnoentitiesnoconv("or");
 				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $txt, 0, 'L');
 				$posY += 6;
 				$pdf->Rect(80, $posY, 5, 5);
 				$pdf->SetXY(80, $posY);
-				if ($object->frstrecur == 'FRST') $pdf->MultiCell(5, 3, 'X', 0, 'L');
+				if ($object->frstrecur == 'FRST') {
+					$pdf->MultiCell(5, 3, 'X', 0, 'L');
+				}
 				$pdf->SetXY(86, $posY);
 				$txt = $langs->transnoentitiesnoconv("ModeFRST");
 				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $txt, 0, 'L');
-				if (empty($object->frstrecur))
-				{
+				if (empty($object->frstrecur)) {
 					$posY += 6;
 					$pdf->SetXY(80, $posY);
 					$txt = '('.$langs->transnoentitiesnoconv("PleaseCheckOne").')';
@@ -359,8 +388,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 
 
 				// Show square
-				if ($pagenb == 1)
-				{
+				if ($pagenb == 1) {
 					$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 0, 0);
 					$bottomlasttab = $this->page_hauteur - $heightforinfotot - $heightforfreetext - $heightforfooter + 1;
 				} else {
@@ -368,11 +396,11 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 					$bottomlasttab = $this->page_hauteur - $heightforinfotot - $heightforfreetext - $heightforfooter + 1;
 				}
 
-				/*var_dump($tab_top);
-				var_dump($heightforinfotot);
-				var_dump($heightforfreetext);
-				var_dump($heightforfooter);
-				var_dump($bottomlasttab);*/
+				//var_dump($tab_top);
+				//var_dump($heightforinfotot);
+				//var_dump($heightforfreetext);
+				//var_dump($heightforfooter);
+				//var_dump($bottomlasttab);
 
 				// Affiche zone infos
 				$posy = $this->_tableau_info($pdf, $object, $bottomlasttab, $outputlangs);
@@ -381,15 +409,16 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 				 * Footer of the page
 				 */
 				$this->_pagefoot($pdf, $object, $outputlangs);
-				if (method_exists($pdf, 'AliasNbPages')) $pdf->AliasNbPages();
+				if (method_exists($pdf, 'AliasNbPages')) {
+					$pdf->AliasNbPages();
+				}
 
 				$pdf->Close();
 
 				$pdf->Output($file, 'F');
 
 				// Add pdfgeneration hook
-				if (!is_object($hookmanager))
-				{
+				if (!is_object($hookmanager)) {
 					include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 					$hookmanager = new HookManager($this->db);
 				}
@@ -397,14 +426,14 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 				$parameters = array('file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs);
 				global $action;
 				$reshook = $hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
-				if ($reshook < 0)
-				{
+				if ($reshook < 0) {
 					$this->error = $hookmanager->error;
 					$this->errors = $hookmanager->errors;
 				}
 
-				if (!empty($conf->global->MAIN_UMASK))
-				@chmod($file, octdec($conf->global->MAIN_UMASK));
+				if (!empty($conf->global->MAIN_UMASK)) {
+					@chmod($file, octdec($conf->global->MAIN_UMASK));
+				}
 
 				$this->result = array('fullpath'=>$file);
 
@@ -472,7 +501,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 		$pdf->SetXY($this->marge_gauche, $posy);
 		$pdf->SetFont('', '', $default_font_size - $diffsizetitle);
 		$pdf->MultiCell(100, 6, $mysoc->name, 0, 'L', 0);
-		$pdf->MultiCell(100, 6, $outputlangs->convToOutputCharset($mysoc->getFullAddress()), 0, 'L', 0);
+		$pdf->MultiCell(100, 6, $outputlangs->convToOutputCharset($mysoc->getFullAddress(1)), 0, 'L', 0);
 		$posy = $pdf->GetY() + 2;
 
 		return $posy;
@@ -552,10 +581,8 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 
 		// Logo
 		$logo = $conf->mycompany->dir_output.'/logos/'.$mysoc->logo;
-		if ($mysoc->logo)
-		{
-			if (is_readable($logo))
-			{
+		if ($mysoc->logo) {
+			if (is_readable($logo)) {
 				$height = pdf_getHeightForLogo($logo);
 				$pdf->Image($logo, $this->marge_gauche, $posy, 0, $height); // width=0 (auto)
 			} else {
@@ -564,7 +591,9 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 				$pdf->MultiCell(100, 3, $langs->transnoentities("ErrorLogoFileNotFound", $logo), 0, 'L');
 				$pdf->MultiCell(100, 3, $langs->transnoentities("ErrorGoToModuleSetup"), 0, 'L');
 			}
-		} else $pdf->MultiCell(100, 4, $outputlangs->transnoentities($this->emetteur->name), 0, 'L');
+		} else {
+			$pdf->MultiCell(100, 4, $outputlangs->transnoentities($this->emetteur->name), 0, 'L');
+		}
 
 		$pdf->SetFont('', 'B', $default_font_size + 3);
 		$pdf->SetXY($posx, $posy);
@@ -576,10 +605,11 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
 		$daterum = '__________________';
-		if (!empty($object->date_rum))
-		{
+		if (!empty($object->date_rum)) {
 			$daterum = dol_print_date($object->date_rum, 'day', false, $outputlangs, true);
-		} else $daterum = dol_print_date($object->datec, 'day', false, $outputlangs, true); // For old record, the date_rum was not saved.
+		} else {
+			$daterum = dol_print_date($object->datec, 'day', false, $outputlangs, true); // For old record, the date_rum was not saved.
+		}
 		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Date")." : ".$daterum, '', 'R');
 		/*$posy+=6;
 		$pdf->SetXY($posx,$posy);
@@ -592,25 +622,25 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 		/* Removed: A project can have more than thousands linked objects (orders, invoices, proposals, etc....
 		$object->fetchObjectLinked();
 
-	    foreach($object->linkedObjects as $objecttype => $objects)
-	    {
-	        var_dump($objects);exit;
-	    	if ($objecttype == 'commande')
-	    	{
-	    		$outputlangs->load('orders');
-	    		$num=count($objects);
-	    		for ($i=0;$i<$num;$i++)
-	    		{
-	    			$posy+=4;
-	    			$pdf->SetXY($posx,$posy);
-	    			$pdf->SetFont('','', $default_font_size - 1);
-	    			$text=$objects[$i]->ref;
-	    			if ($objects[$i]->ref_client) $text.=' ('.$objects[$i]->ref_client.')';
-	    			$pdf->MultiCell(100, 4, $outputlangs->transnoentities("RefOrder")." : ".$outputlangs->transnoentities($text), '', 'R');
-	    		}
-	    	}
-	    }
-        */
+		foreach($object->linkedObjects as $objecttype => $objects)
+		{
+			var_dump($objects);exit;
+			if ($objecttype == 'commande')
+			{
+				$outputlangs->load('orders');
+				$num=count($objects);
+				for ($i=0;$i<$num;$i++)
+				{
+					$posy+=4;
+					$pdf->SetXY($posx,$posy);
+					$pdf->SetFont('','', $default_font_size - 1);
+					$text=$objects[$i]->ref;
+					if ($objects[$i]->ref_client) $text.=' ('.$objects[$i]->ref_client.')';
+					$pdf->MultiCell(100, 4, $outputlangs->transnoentities("RefOrder")." : ".$outputlangs->transnoentities($text), '', 'R');
+				}
+			}
+		}
+		*/
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore

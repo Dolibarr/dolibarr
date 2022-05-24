@@ -17,13 +17,27 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-if (!defined('NOCSRFCHECK')) define('NOCSRFCHECK', '1');
-if (!defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1'); // Do not roll the Anti CSRF token (used if MAIN_SECURITY_CSRF_WITH_TOKEN is on)
-if (!defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
-if (!defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');
-if (!defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
-if (!defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
-if (!defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN', '1');
+if (!defined('NOCSRFCHECK')) {
+	define('NOCSRFCHECK', '1');
+}
+if (!defined('NOTOKENRENEWAL')) {
+	define('NOTOKENRENEWAL', '1'); // Do not roll the Anti CSRF token (used if MAIN_SECURITY_CSRF_WITH_TOKEN is on)
+}
+if (!defined('NOREQUIREMENU')) {
+	define('NOREQUIREMENU', '1');
+}
+if (!defined('NOREQUIREHTML')) {
+	define('NOREQUIREHTML', '1');
+}
+if (!defined('NOREQUIREAJAX')) {
+	define('NOREQUIREAJAX', '1');
+}
+if (!defined('NOREQUIRESOC')) {
+	define('NOREQUIRESOC', '1');
+}
+if (!defined('NOREQUIRETRAN')) {
+	define('NOREQUIRETRAN', '1');
+}
 
 //if (! defined('NOREQUIREUSER'))            define('NOREQUIREUSER', '1');					// Do not load object $user
 //if (! defined('NOREQUIRESOC'))             define('NOREQUIRESOC', '1');					// Do not load object $mysoc
@@ -61,12 +75,9 @@ if ($action == 'stopreminder') {
 	$listofreminderid = GETPOST('listofreminderids', 'intcomma');
 
 	// Set the reminder as done
-	//foreach ($listofreminderidsarray as $listofreminderid) {
-	//	if (empty($listofreminderid)) continue;
-	//$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'action_reminder WHERE rowid = '.$listofreminderid.' AND fk_user = '.$user->id;
 	$sql = 'UPDATE '.MAIN_DB_PREFIX.'actioncomm_reminder SET status = 1';
 	$sql .= ' WHERE status = 0 AND rowid IN ('.$db->sanitize($db->escape($listofreminderid)).')';
-	$sql .= ' AND fk_user = '.$user->id.' AND entity = '.$conf->entity;
+	$sql .= ' AND fk_user = '.((int) $user->id).' AND entity = '.((int) $conf->entity);
 	$resql = $db->query($sql);
 	if (!$resql) {
 		dol_print_error($db);
@@ -103,25 +114,24 @@ $eventfound = array();
 
 // TODO Try to make a solution with only a javascript timer that is easier. Difficulty is to avoid notification twice when several tabs are opened.
 // This need to extend period to be sure to not miss and save in session what we notified to avoid duplicate.
-if (empty($_SESSION['auto_check_events_not_before']) || $time >= $_SESSION['auto_check_events_not_before'] || GETPOST('forcechecknow', 'int'))
-{
+if (empty($_SESSION['auto_check_events_not_before']) || $time >= $_SESSION['auto_check_events_not_before'] || GETPOST('forcechecknow', 'int')) {
 	/*$time_update = (int) $conf->global->MAIN_BROWSER_NOTIFICATION_FREQUENCY; // Always defined
-    if (!empty($_SESSION['auto_check_events_not_before']))
-    {
-        // We start scan from the not before so if two tabs were opend at differents seconds and we close one (so the js timer),
-        // then we are not losing periods
-        $starttime = $_SESSION['auto_check_events_not_before'];
-        // Protection to avoid too long sessions
-        if ($starttime < ($time - (int) $conf->global->MAIN_SESSION_TIMEOUT))
-        {
-            dol_syslog("We ask to check browser notification on a too large period. We fix this with current date.");
-            $starttime = $time;
-        }
-    } else {
-        $starttime = $time;
-    }
+	if (!empty($_SESSION['auto_check_events_not_before']))
+	{
+		// We start scan from the not before so if two tabs were opend at differents seconds and we close one (so the js timer),
+		// then we are not losing periods
+		$starttime = $_SESSION['auto_check_events_not_before'];
+		// Protection to avoid too long sessions
+		if ($starttime < ($time - (int) $conf->global->MAIN_SESSION_TIMEOUT))
+		{
+			dol_syslog("We ask to check browser notification on a too large period. We fix this with current date.");
+			$starttime = $time;
+		}
+	} else {
+		$starttime = $time;
+	}
 
-    $_SESSION['auto_check_events_not_before'] = $time + $time_update;
+	$_SESSION['auto_check_events_not_before'] = $time + $time_update;
 	*/
 
 	// Force save of the session change we did.
@@ -136,13 +146,13 @@ if (empty($_SESSION['auto_check_events_not_before']) || $time >= $_SESSION['auto
 	$sql = 'SELECT a.id as id_agenda, a.code, a.datep, a.label, a.location, ar.rowid as id_reminder, ar.dateremind, ar.fk_user as id_user_reminder';
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'actioncomm as a';
 	if (!empty($user->conf->MAIN_USER_WANT_ALL_EVENTS_NOTIFICATIONS)) {
-		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'actioncomm_reminder as ar ON a.id = ar.fk_actioncomm AND ar.fk_user = '.$user->id;
+		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'actioncomm_reminder as ar ON a.id = ar.fk_actioncomm AND ar.fk_user = '.((int) $user->id);
 		$sql .= ' WHERE a.code <> "AC_OTH_AUTO"';
 		$sql .= ' AND (';
 		$sql .= " (ar.typeremind = 'browser' AND ar.dateremind < '".$db->idate(dol_now())."' AND ar.status = 0 AND ar.entity = ".$conf->entity;
 		$sql .= ' )';
 	} else {
-		$sql .= ' JOIN '.MAIN_DB_PREFIX.'actioncomm_reminder as ar ON a.id = ar.fk_actioncomm AND ar.fk_user = '.$user->id;
+		$sql .= ' JOIN '.MAIN_DB_PREFIX.'actioncomm_reminder as ar ON a.id = ar.fk_actioncomm AND ar.fk_user = '.((int) $user->id);
 		$sql .= " AND ar.typeremind = 'browser' AND ar.dateremind < '".$db->idate(dol_now())."' AND ar.status = 0 AND ar.entity = ".$conf->entity;
 	}
 	$sql .= $db->order('datep', 'ASC');
@@ -150,8 +160,7 @@ if (empty($_SESSION['auto_check_events_not_before']) || $time >= $_SESSION['auto
 
 	$resql = $db->query($sql);
 	if ($resql) {
-		while ($obj = $db->fetch_object($resql))
-		{
+		while ($obj = $db->fetch_object($resql)) {
 			// Message must be formated and translated to be used with javascript directly
 			$event = array();
 			$event['type'] = 'agenda';
@@ -161,8 +170,10 @@ if (empty($_SESSION['auto_check_events_not_before']) || $time >= $_SESSION['auto
 			$event['code'] = $obj->code;
 			$event['label'] = $obj->label;
 			$event['location'] = $obj->location;
-			$event['reminder_date_formated'] = dol_print_date($db->jdate($obj->dateremind), 'standard');
-			$event['event_date_start_formated'] = dol_print_date($db->jdate($obj->datep), 'standard');
+			$event['reminder_date_formated_tzserver'] = dol_print_date($db->jdate($obj->dateremind), 'standard', 'tzserver');
+			$event['event_date_start_formated_tzserver'] = dol_print_date($db->jdate($obj->datep), 'standard', 'tzserver');
+			$event['reminder_date_formated'] = dol_print_date($db->jdate($obj->dateremind), 'standard', 'tzuser');
+			$event['event_date_start_formated'] = dol_print_date($db->jdate($obj->datep), 'standard', 'tzuser');
 
 			$eventfound[$obj->id_agenda] = $event;
 		}

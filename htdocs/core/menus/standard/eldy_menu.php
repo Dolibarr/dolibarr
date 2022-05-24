@@ -185,8 +185,8 @@ class MenuManager
 					print '<a class="alilevel0" href="#">';
 
 					// Add font-awesome
-					if ($val['level'] == 0 && $val['mainmenu'] == 'home') {
-						print '<span class="fa fa-home fa-fw paddingright" aria-hidden="true"></span>';
+					if ($val['level'] == 0 && !empty($val['prefix'])) {
+						print $val['prefix'];
 					}
 
 					print $val['titre'];
@@ -198,14 +198,19 @@ class MenuManager
 					$submenu = new Menu();
 					print_left_eldy_menu($this->db, $this->menu_array, $this->menu_array_after, $this->tabMenu, $submenu, 1, $tmpmainmenu, $tmpleftmenu, null, $this->type_user); // Fill $submenu (example with tmpmainmenu='home' tmpleftmenu='all', return left menu tree of Home)
 					// Note: $submenu contains menu entry with substitution not yet done
-					//if ($tmpmainmenu.'-'.$tmpleftmenu == 'home-all') { var_dump($submenu); exit; }
-					//if ($tmpmainmenu=='accountancy') { var_dump($submenu->liste); exit; }
+					//if ($tmpmainmenu.'-'.$tmpleftmenu == 'home-all') {
+					//var_dump($submenu); exit;
+					//}
+					//if ($tmpmainmenu=='accountancy') {
+					//var_dump($submenu->liste); exit;
+					//}
 					$nexturl = dol_buildpath($submenu->liste[0]['url'], 1);
 
 					$canonrelurl = preg_replace('/\?.*$/', '', $relurl);
 					$canonnexturl = preg_replace('/\?.*$/', '', $nexturl);
 					//var_dump($canonrelurl);
 					//var_dump($canonnexturl);
+
 					print '<ul>'."\n";
 					if (($canonrelurl != $canonnexturl && !in_array($val['mainmenu'], array('tools')))
 						|| (strpos($canonrelurl, '/product/index.php') !== false || strpos($canonrelurl, '/compta/bank/list.php') !== false)) {
@@ -213,7 +218,7 @@ class MenuManager
 						print str_pad('', 1).'<li class="lilevel1 ui-btn-icon-right ui-btn">'; // ui-btn to highlight on clic
 						print '<a href="'.$relurl.'">';
 						if ($langs->trans(ucfirst($val['mainmenu'])."Dashboard") == ucfirst($val['mainmenu'])."Dashboard") {  // No translation
-							if (in_array($val['mainmenu'], array('cashdesk', 'externalsite', 'website', 'collab'))) {
+							if (in_array($val['mainmenu'], array('cashdesk', 'externalsite', 'website', 'collab', 'takepos'))) {
 								print $langs->trans("Access");
 							} else {
 								print $langs->trans("Dashboard");
@@ -225,15 +230,18 @@ class MenuManager
 						print '</li>'."\n";
 					}
 
+					/*
 					if ($val['level'] == 0) {
 						if ($val['enabled']) {
 							$lastlevel[0] = 'enabled';
-						} elseif ($showmenu) {                 // Not enabled but visible (so greyed)
+						} elseif ($showmenu) {
+							// Not enabled but visible (so greyed)
 							$lastlevel[0] = 'greyed';
 						} else {
 							$lastlevel[0] = 'hidden';
 						}
 					}
+					*/
 
 					$lastlevel2 = array();
 					foreach ($submenu->liste as $key2 => $val2) {		// $val['url','titre','level','enabled'=0|1|2,'target','mainmenu','leftmenu'
@@ -313,7 +321,14 @@ class MenuManager
 					print '</ul>';
 				}
 				if ($val['enabled'] == 2) {
-					print '<font class="vsmenudisabled">'.$val['titre'].'</font>';
+					print '<span class="spanlilevel0 vsmenudisabled">';
+					// Add font-awesome
+					if ($val['level'] == 0 && !empty($val['prefix'])) {
+						print $val['prefix'];
+					}
+
+					print $val['titre'];
+					print '</span>';
 				}
 				print '</li>';
 				print '</ul>'."\n";

@@ -33,8 +33,12 @@ include_once DOL_DOCUMENT_ROOT.'/emailcollector/class/emailcollectorfilter.class
 include_once DOL_DOCUMENT_ROOT.'/emailcollector/class/emailcollectoraction.class.php';
 include_once DOL_DOCUMENT_ROOT.'/emailcollector/lib/emailcollector.lib.php';
 
-if (!$user->admin) accessforbidden();
-if (empty($conf->emailcollector->enabled)) accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
+if (empty($conf->emailcollector->enabled)) {
+	accessforbidden();
+}
 
 // Load traductions files required by page
 $langs->loadLangs(array("admin", "mails", "other"));
@@ -65,11 +69,17 @@ $search_array_options = $extrafields->getOptionalsFromPost($object->table_elemen
 $search_all = GETPOST("search_all", 'alpha');
 $search = array();
 foreach ($object->fields as $key => $val) {
-	if (GETPOST('search_'.$key, 'alpha')) $search[$key] = GETPOST('search_'.$key, 'alpha');
+	if (GETPOST('search_'.$key, 'alpha')) {
+		$search[$key] = GETPOST('search_'.$key, 'alpha');
+	}
 }
 
-if (GETPOST('saveoperation2')) $action = 'updateoperation';
-if (empty($action) && empty($id) && empty($ref)) $action = 'view';
+if (GETPOST('saveoperation2')) {
+	$action = 'updateoperation';
+}
+if (empty($action) && empty($id) && empty($ref)) {
+	$action = 'view';
+}
 
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
@@ -93,15 +103,19 @@ $debuginfo = '';
 
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-if (empty($reshook))
-{
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
+
+if (empty($reshook)) {
 	$error = 0;
 
 	$permissiontoadd = 1;
 	$permissiontodelete = 1;
-	if (empty($backtopage)) $backtopage = DOL_URL_ROOT.'/admin/emailcollector_card.php?id='.($id > 0 ? $id : '__ID__');
+	if (empty($backtopage)) {
+		$backtopage = DOL_URL_ROOT.'/admin/emailcollector_card.php?id='.($id > 0 ? $id : '__ID__');
+	}
 	$backurlforlist = DOL_URL_ROOT.'/admin/emailcollector_list.php';
 
 	// Actions cancel, add, update, delete or clone
@@ -114,8 +128,7 @@ if (empty($reshook))
 	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 }
 
-if (GETPOST('addfilter', 'alpha'))
-{
+if (GETPOST('addfilter', 'alpha')) {
 	$emailcollectorfilter = new EmailCollectorFilter($db);
 	$emailcollectorfilter->type = GETPOST('filtertype', 'aZ09');
 	$emailcollectorfilter->rulevalue = GETPOST('rulevalue', 'alpha');
@@ -123,16 +136,14 @@ if (GETPOST('addfilter', 'alpha'))
 	$emailcollectorfilter->status = 1;
 	$result = $emailcollectorfilter->create($user);
 
-	if ($result > 0)
-	{
+	if ($result > 0) {
 		$object->fetchFilters();
 	} else {
 		setEventMessages($emailcollectorfilter->errors, $emailcollectorfilter->error, 'errors');
 	}
 }
 
-if ($action == 'deletefilter')
-{
+if ($action == 'deletefilter') {
 	$emailcollectorfilter = new EmailCollectorFilter($db);
 	$emailcollectorfilter->fetch(GETPOST('filterid', 'int'));
 	if ($emailcollectorfilter->id > 0) {
@@ -145,8 +156,7 @@ if ($action == 'deletefilter')
 	}
 }
 
-if (GETPOST('addoperation', 'alpha'))
-{
+if (GETPOST('addoperation', 'alpha')) {
 	$emailcollectoroperation = new EmailCollectorAction($db);
 	$emailcollectoroperation->type = GETPOST('operationtype', 'aZ09');
 	$emailcollectoroperation->actionparam = GETPOST('operationparam', 'restricthtml');
@@ -158,6 +168,7 @@ if (GETPOST('addoperation', 'alpha'))
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Operation")), null, 'errors');
 	}
+
 	if (in_array($emailcollectoroperation->type, array('loadthirdparty', 'loadandcreatethirdparty'))
 		&& empty($emailcollectoroperation->actionparam)) {
 		$error++;
@@ -176,8 +187,7 @@ if (GETPOST('addoperation', 'alpha'))
 	}
 }
 
-if ($action == 'updateoperation')
-{
+if ($action == 'updateoperation') {
 	$emailcollectoroperation = new EmailCollectorAction($db);
 	$emailcollectoroperation->fetch(GETPOST('rowidoperation2', 'int'));
 
@@ -192,8 +202,7 @@ if ($action == 'updateoperation')
 	if (!$error) {
 		$result = $emailcollectoroperation->update($user);
 
-		if ($result > 0)
-		{
+		if ($result > 0) {
 			$object->fetchActions();
 		} else {
 			$error++;
@@ -201,8 +210,7 @@ if ($action == 'updateoperation')
 		}
 	}
 }
-if ($action == 'deleteoperation')
-{
+if ($action == 'deleteoperation') {
 	$emailcollectoroperation = new EmailCollectorAction($db);
 	$emailcollectoroperation->fetch(GETPOST('operationid', 'int'));
 	if ($emailcollectoroperation->id > 0) {
@@ -215,13 +223,11 @@ if ($action == 'deleteoperation')
 	}
 }
 
-if ($action == 'confirm_collect')
-{
+if ($action == 'confirm_collect') {
 	dol_include_once('/emailcollector/class/emailcollector.class.php');
 
 	$res = $object->doCollectOneCollector();
-	if ($res > 0)
-	{
+	if ($res > 0) {
 		$debuginfo = $object->debuginfo;
 		setEventMessages($object->lastresult, null, 'mesgs');
 	} else {
@@ -231,7 +237,6 @@ if ($action == 'confirm_collect')
 
 	$action = '';
 }
-
 
 
 
@@ -271,18 +276,13 @@ if ($action == 'create') {
 
 	print dol_get_fiche_end();
 
-	print '<div class="center">';
-	print '<input type="submit" class="button" name="add" value="'.dol_escape_htmltag($langs->trans("Create")).'">';
-	print '&nbsp; ';
-	print '<input type="'.($backtopage ? "submit" : "button").'" class="button button-cancel" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'"'.($backtopage ? '' : ' onclick="javascript:history.go(-1)"').'>'; // Cancel for create does not post form if we don't know the backtopage
-	print '</div>';
+	print $form->buttonsSaveCancel("Create");
 
 	print '</form>';
 }
 
 // Part to edit record
-if (($id || $ref) && $action == 'edit')
-{
+if (($id || $ref) && $action == 'edit') {
 	print load_fiche_titre($langs->trans("EmailCollector"));
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
@@ -305,16 +305,13 @@ if (($id || $ref) && $action == 'edit')
 
 	print dol_get_fiche_end();
 
-	print '<div class="center"><input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'">';
-	print ' &nbsp; <input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
-	print '</div>';
+	print $form->buttonsSaveCancel();
 
 	print '</form>';
 }
 
 // Part to show record
-if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create')))
-{
+if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'))) {
 	$res = $object->fetch_optionals();
 
 	$object->fetchFilters();
@@ -326,8 +323,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$formconfirm = '';
 
 	// Confirmation to delete
-	if ($action == 'delete')
-	{
+	if ($action == 'delete') {
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteEmailCollector'), $langs->trans('ConfirmDeleteEmailCollector'), 'confirm_delete', '', 0, 1);
 	}
 
@@ -349,15 +345,18 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Call Hook formConfirm
 	$parameters = array('formConfirm' => $formconfirm, 'lineid' => $lineid);
 	$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-	if (empty($reshook)) $formconfirm .= $hookmanager->resPrint;
-	elseif ($reshook > 0) $formconfirm = $hookmanager->resPrint;
+	if (empty($reshook)) {
+		$formconfirm .= $hookmanager->resPrint;
+	} elseif ($reshook > 0) {
+		$formconfirm = $hookmanager->resPrint;
+	}
 
 	// Print form confirm
 	print $formconfirm;
 
 	// Object card
 	// ------------------------------------------------------------
-	$linkback = '<a href="'.dol_buildpath('/admin/emailcollector_list.php', 1).'?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/admin/emailcollector_list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
 	$morehtmlref = '<div class="refidno">';
 	/*
@@ -369,36 +368,36 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		// Project
 		if (! empty($conf->projet->enabled))
 		{
-		    $langs->load("projects");
-		    $morehtmlref.='<br>'.$langs->trans('Project') . ' ';
-		    if ($user->rights->emailcollector->creer)
-		    {
-		        if ($action != 'classify')
-		        {
-		            $morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
-		            if ($action == 'classify') {
-		                //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
-		                $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
-		                $morehtmlref.='<input type="hidden" name="action" value="classin">';
-		                $morehtmlref.='<input type="hidden" name="token" value="'.newToken().'">';
-		                $morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
-		                $morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
-		                $morehtmlref.='</form>';
-		            } else {
-		                $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
-		            }
-		        }
-		    } else {
-		        if (! empty($object->fk_project)) {
-		            $proj = new Project($db);
-		            $proj->fetch($object->fk_project);
-		            $morehtmlref.='<a href="'.DOL_URL_ROOT.'/projet/card.php?id=' . $object->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
-		            $morehtmlref.=$proj->ref;
-		            $morehtmlref.='</a>';
-		        } else {
-		            $morehtmlref.='';
-		        }
-		    }
+			$langs->load("projects");
+			$morehtmlref.='<br>'.$langs->trans('Project') . ' ';
+			if ($user->rights->emailcollector->creer)
+			{
+				if ($action != 'classify')
+				{
+					$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+					if ($action == 'classify') {
+						//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
+						$morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+						$morehtmlref.='<input type="hidden" name="action" value="classin">';
+						$morehtmlref.='<input type="hidden" name="token" value="'.newToken().'">';
+						$morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+						$morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+						$morehtmlref.='</form>';
+					} else {
+						$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+					}
+				}
+			} else {
+				if (! empty($object->fk_project)) {
+					$proj = new Project($db);
+					$proj->fetch($object->fk_project);
+					$morehtmlref.='<a href="'.DOL_URL_ROOT.'/projet/card.php?id=' . $object->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
+					$morehtmlref.=$proj->ref;
+					$morehtmlref.='</a>';
+				} else {
+					$morehtmlref.='';
+				}
+			}
 		}
 	*/
 	$morehtmlref .= '</div>';
@@ -413,8 +412,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$connectstringsource = '';
 	$connectstringtarget = '';
 
-	if (function_exists('imap_open'))
-	{
+	if (function_exists('imap_open')) {
 		// Note: $object->host has been loaded by the fetch
 		$usessl = 1;
 
@@ -430,9 +428,22 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				$connectstringtarget = $connectstringserver.$object->getEncodedUtf7($targetdir);
 			}
 
+			$timeoutconnect = empty($conf->global->MAIN_USE_CONNECT_TIMEOUT) ? 5 : $conf->global->MAIN_USE_CONNECT_TIMEOUT;
+			$timeoutread = empty($conf->global->MAIN_USE_RESPONSE_TIMEOUT) ? 20 : $conf->global->MAIN_USE_RESPONSE_TIMEOUT;
+
+			dol_syslog("imap_open connectstring=".$connectstringsource." login=".$object->login." password=".$object->password." timeoutconnect=".$timeoutconnect." timeoutread=".$timeoutread);
+
+			$result1 = imap_timeout(IMAP_OPENTIMEOUT, $timeoutconnect);	// timeout seems ignored with ssl connect
+			$result2 = imap_timeout(IMAP_READTIMEOUT, $timeoutread);
+			$result3 = imap_timeout(IMAP_WRITETIMEOUT, 5);
+			$result4 = imap_timeout(IMAP_CLOSETIMEOUT, 5);
+
+			dol_syslog("result1=".$result1." result2=".$result2." result3=".$result3." result4=".$result4);
+
 			$connection = imap_open($connectstringsource, $object->login, $object->password);
-		} catch (Exception $e)
-		{
+
+			//dol_syslog("end imap_open connection=".var_export($connection, true));
+		} catch (Exception $e) {
 			print $e->getMessage();
 		}
 
@@ -441,19 +452,20 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$morehtml .= 'IMAP functions not available on your PHP. ';
 	}
 
-	if (!$connection)
-	{
+	if (!$connection) {
 		$morehtml .= 'Failed to open IMAP connection '.$connectstringsource;
 		if (function_exists('imap_last_error')) {
 			$morehtml .= '<br>'.imap_last_error();
 		}
+		dol_syslog("Error ".$morehtml, LOG_WARNING);
 		//var_dump(imap_errors())
 	} else {
+		dol_syslog("Imap connected. Now we call imap_num_msg()");
 		$morehtml .= imap_num_msg($connection);
 	}
 
-	if ($connection)
-	{
+	if ($connection) {
+		dol_syslog("Imap close");
 		imap_close($connection);
 	}
 
@@ -481,13 +493,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
 
 	// Filters
-	print '<div class="div-table-responsive">';
-	print '<table class="border centpercent tableforfield">';
-	print '<tr class="liste_titre">';
-	print '<td>'.$form->textwithpicto($langs->trans("Filters"), $langs->trans("EmailCollectorFilterDesc")).'</td><td></td><td></td>';
+	print '<div class="div-table-responsive-no-min">';
+	print '<table id="tablelineoffilters" class="noborder margintable noshadow">';
+	print '<tr class="liste_titre nodrag nodrop">';
+	print '<td>'.img_picto('', 'filter', 'class="pictofixedwidth opacitymedium"').$form->textwithpicto($langs->trans("Filters"), $langs->trans("EmailCollectorFilterDesc")).'</td><td></td><td></td>';
 	print '</tr>';
 	// Add filter
-	print '<tr class="oddeven">';
+	print '<tr class="oddeven nodrag nodrop">';
 	print '<td>';
 	$arrayoftypes = array(
 		'from'=>array('label'=>'MailFrom', 'data-placeholder'=>$langs->trans('SearchString')),
@@ -517,7 +529,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		'isnotanswer'=>array('label'=>'IsNotAnAnswer', 'data-noparam'=>1),
 		'isanswer'=>array('label'=>'IsAnAnswer', 'data-noparam'=>1)
 	);
-	print $form->selectarray('filtertype', $arrayoftypes, '', 1, 0, 0, '', 1, 0, 0, '', 'maxwidth500', 1, '', 2);
+	print $form->selectarray('filtertype', $arrayoftypes, '', 1, 0, 0, '', 1, 0, 0, '', 'maxwidth300', 1, '', 2);
 
 	print "\n";
 	print '<script>';
@@ -533,7 +545,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	/*$noparam = array();
 	foreach ($arrayoftypes as $key => $value)
 	{
-	    if ($value['noparam']) $noparam[] = $key;
+		if ($value['noparam']) $noparam[] = $key;
 	}*/
 	print '})';
 	print '</script>'."\n";
@@ -541,11 +553,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '</td><td>';
 	print '<input type="text" name="rulevalue" id="rulevalue">';
 	print '</td>';
-	print '<td class="right"><input type="submit" name="addfilter" id="addfilter" class="flat button" value="'.$langs->trans("Add").'"></td>';
+	print '<td class="right"><input type="submit" name="addfilter" id="addfilter" class="flat button small" value="'.$langs->trans("Add").'"></td>';
 	print '</tr>';
 	// List filters
-	foreach ($object->filters as $rulefilter)
-	{
+	foreach ($object->filters as $rulefilter) {
 		$rulefilterobj = new EmailCollectorFilter($db);
 		$rulefilterobj->fetch($rulefilter['id']);
 
@@ -568,20 +579,31 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	// Operations
 	print '<div class="div-table-responsive">';
-	print '<table id="tablelines" class="noborder noshadow tableforfield">';
-	print '<tr class="liste_titre">';
-	print '<td>'.$form->textwithpicto($langs->trans("EmailcollectorOperations"), $langs->trans("EmailcollectorOperationsDesc")).'</td><td></td><td></td><td></td>';
+	print '<table id="tablelines" class="noborder margintable noshadow">';
+	print '<tr class="liste_titre nodrag nodrop">';
+	print '<td>'.img_picto('', 'technic', 'class="pictofixedwidth"').$form->textwithpicto($langs->trans("EmailcollectorOperations"), $langs->trans("EmailcollectorOperationsDesc")).'</td><td></td><td></td><td></td>';
 	print '</tr>';
 	// Add operation
-	print '<tr class="oddeven">';
+	print '<tr class="oddeven nodrag nodrop">';
 	print '<td>';
 	$arrayoftypes = array(
 		'loadthirdparty'=>$langs->trans('LoadThirdPartyFromName', $langs->transnoentities("ThirdPartyName")),
 		'loadandcreatethirdparty'=>$langs->trans('LoadThirdPartyFromNameOrCreate', $langs->transnoentities("ThirdPartyName")),
+		'recordjoinpiece'=>'AttachJoinedDocumentsToObject',
 		'recordevent'=>'RecordEvent');
-	if ($conf->projet->enabled) $arrayoftypes['project'] = 'CreateLeadAndThirdParty';
-	if ($conf->ticket->enabled) $arrayoftypes['ticket'] = 'CreateTicketAndThirdParty';
-	if ($conf->recruitment->enabled) $arrayoftypes['candidature'] = 'CreateCandidature';
+	$arrayoftypesnocondition = $arrayoftypes;
+	if ($conf->projet->enabled) {
+		$arrayoftypes['project'] = 'CreateLeadAndThirdParty';
+	}
+	$arrayoftypesnocondition['project'] = 'CreateLeadAndThirdParty';
+	if ($conf->ticket->enabled) {
+		$arrayoftypes['ticket'] = 'CreateTicketAndThirdParty';
+	}
+	$arrayoftypesnocondition['ticket'] = 'CreateTicketAndThirdParty';
+	if ($conf->recruitment->enabled) {
+		$arrayoftypes['candidature'] = 'CreateCandidature';
+	}
+	$arrayoftypesnocondition['candidature'] = 'CreateCandidature';
 
 	// support hook for add action
 	$parameters = array('arrayoftypes' => $arrayoftypes);
@@ -590,7 +612,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	if ($res) {
 		$arrayoftypes = $hookmanager->resArray;
 	} else {
-		foreach ($hookmanager->resArray as $k=>$desc) {
+		foreach ($hookmanager->resArray as $k => $desc) {
 			$arrayoftypes[$k] = $desc;
 		}
 	}
@@ -603,44 +625,47 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$htmltext = $langs->transnoentitiesnoconv("OperationParamDesc");
 	print $form->textwithpicto('', $htmltext, 1, 'help', '', 0, 2, 'operationparamtt');
 	print '</td>';
-	print '<td class="right"><input type="submit" name="addoperation" id="addoperation" class="flat button" value="'.$langs->trans("Add").'"></td>';
+	print '<td class="right"><input type="submit" name="addoperation" id="addoperation" class="flat button small" value="'.$langs->trans("Add").'"></td>';
 	print '</tr>';
 	// List operations
 	$nboflines = count($object->actions);
 	$table_element_line = 'emailcollector_emailcollectoraction';
 	$fk_element = 'position';
 	$i = 0;
-	foreach ($object->actions as $ruleaction)
-	{
+	foreach ($object->actions as $ruleaction) {
 		$ruleactionobj = new EmailcollectorAction($db);
 		$ruleactionobj->fetch($ruleaction['id']);
 
 		print '<tr class="drag drop oddeven" id="row-'.$ruleaction['id'].'">';
 		print '<td>';
 		print '<!-- type of action: '.$ruleaction['type'].' -->';
-		print $langs->trans($arrayoftypes[$ruleaction['type']]);
-		if (in_array($ruleaction['type'], array('recordevent')))
-		{
+		if (array_key_exists($ruleaction['type'], $arrayoftypes)) {
+			print $langs->trans($arrayoftypes[$ruleaction['type']]);
+		} else {
+			if (array_key_exists($ruleaction['type'], $arrayoftypesnocondition)) {
+				print '<span class="opacitymedium">'.$langs->trans($arrayoftypesnocondition[$ruleaction['type']]).' - '.$langs->trans("Disabled").'</span>';
+			}
+		}
+
+		if (in_array($ruleaction['type'], array('recordevent'))) {
 			print $form->textwithpicto('', $langs->transnoentitiesnoconv('IfTrackingIDFoundEventWillBeLinked'));
 		} elseif (in_array($ruleaction['type'], array('loadthirdparty', 'loadandcreatethirdparty'))) {
 			print $form->textwithpicto('', $langs->transnoentitiesnoconv('EmailCollectorLoadThirdPartyHelp'));
 		}
 		print '</td>';
-		print '<td class="wordbreak">';
-		if ($action == 'editoperation' && $ruleaction['id'] == $operationid)
-		{
+		print '<td class="wordbreak minwidth300 small">';
+		if ($action == 'editoperation' && $ruleaction['id'] == $operationid) {
 			print '<input type="text" class="quatrevingtquinzepercent" name="operationparam2" value="'.$ruleaction['actionparam'].'"><br>';
-			print '<input type="hidden" name="rowidoperation2" value="'.$ruleaction['id'].'"><br>';
-			print '<input type="submit" class="button button-save" name="saveoperation2" value="'.$langs->trans("Save").'">';
-			print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
+			print '<input type="hidden" name="rowidoperation2" value="'.$ruleaction['id'].'">';
+			print '<input type="submit" class="button small button-save" name="saveoperation2" value="'.$langs->trans("Save").'">';
+			print '<input type="submit" class="button small button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 		} else {
 			print $ruleaction['actionparam'];
 		}
 		print '</td>';
 		// Move up/down
 		print '<td class="center linecolmove tdlineupdown">';
-		if ($i > 0)
-		{
+		if ($i > 0) {
 			print '<a class="lineupdown" href="'.$_SERVER['PHP_SELF'].'?action=up&amp;rowid='.$ruleaction['id'].'">'.img_up('default', 0, 'imgupforline').'</a>';
 		}
 		if ($i < count($object->actions) - 1) {
@@ -649,7 +674,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '</td>';
 		// Delete
 		print '<td class="right nowraponall">';
-		print '<a class="editfielda marginrightonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=editoperation&operationid='.$ruleaction['id'].'">'.img_edit().'</a>';
+		print '<a class="editfielda marginrightonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=editoperation&token='.newToken().'&operationid='.$ruleaction['id'].'">'.img_edit().'</a>';
 		print ' <a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=deleteoperation&token='.newToken().'&operationid='.$ruleaction['id'].'">'.img_delete().'</a>';
 		print '</td>';
 		print '</tr>';
@@ -680,19 +705,20 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<div class="tabsAction">'."\n";
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-		if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+		if ($reshook < 0) {
+			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+		}
 
-		if (empty($reshook))
-		{
+		if (empty($reshook)) {
 			// Edit
-			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit">'.$langs->trans("Edit").'</a></div>';
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&token='.newToken().'">'.$langs->trans("Edit").'</a></div>';
 
 			// Clone
-			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;socid='.$object->socid.'&amp;action=clone&amp;object=order">'.$langs->trans("ToClone").'</a></div>';
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&socid='.$object->socid.'&action=clone&token='.newToken().'&object=order">'.$langs->trans("ToClone").'</a></div>';
 
 			// Collect now
 			if (count($object->actions) > 0) {
-				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=collect">'.$langs->trans("CollectNow").'</a></div>';
+				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=collect&token='.newToken().'">'.$langs->trans("CollectNow").'</a></div>';
 			} else {
 				print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NoOperations")).'">'.$langs->trans("CollectNow").'</a></div>';
 			}
@@ -702,8 +728,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '</div>'."\n";
 	}
 
-	if (!empty($debuginfo))
-	{
+	if (!empty($debuginfo)) {
 		print info_admin($debuginfo);
 	}
 }

@@ -37,9 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'stocks', 'orders'));
 
-// Security check
-if ($user->socid) $socid = $user->socid;
-$result = restrictedArea($user, 'produit|service');
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'replenishorders'; // To manage different context of search
 
 $sall = GETPOST('search_all', 'alphanohtml');
 $sref = GETPOST('search_ref', 'alpha');
@@ -54,21 +52,32 @@ $search_dateday = GETPOST('search_dateday', 'int');
 $search_date = dol_mktime(0, 0, 0, $search_datemonth, $search_dateday, $search_dateyear);
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
-if (!$sortorder) $sortorder = 'DESC';
-if (!$sortfield) $sortfield = 'cf.date_creation';
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
+if (!$sortorder) {
+	$sortorder = 'DESC';
+}
+if (!$sortfield) {
+	$sortfield = 'cf.date_creation';
+}
 $page = GETPOST('page', 'int') ? GETPOST('page', 'int') : 0;
-if ($page < 0) $page = 0;
+if ($page < 0) {
+	$page = 0;
+}
 $offset = $limit * $page;
+
+// Security check
+if ($user->socid) {
+	$socid = $user->socid;
+}
+$result = restrictedArea($user, 'produit|service');
 
 
 /*
  * Actions
  */
 
-if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // Both test are required to be compatible with all browsers
-{
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // Both test are required to be compatible with all browsers
 	$sall = "";
 	$sref = "";
 	$snom = "";
@@ -115,7 +124,7 @@ $sql .= ' cf.rowid, cf.ref, cf.fk_statut, cf.total_ttc, cf.fk_user_author,';
 $sql .= ' u.login';
 $sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'commande_fournisseur as cf';
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as u ON cf.fk_user_author = u.rowid';
-if (!$user->rights->societe->client->voir && !$socid) {
+if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= ', '.MAIN_DB_PREFIX.'societe_commerciaux as sc';
 }
 $sql .= ' WHERE cf.fk_soc = s.rowid ';
@@ -127,16 +136,28 @@ if ($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER) {
 } else {
 	$sql .= ' AND cf.fk_statut < 5';
 }
-if (!$user->rights->societe->client->voir && !$socid) {
-	$sql .= ' AND s.rowid = sc.fk_soc AND sc.fk_user = '.$user->id;
+if (empty($user->rights->societe->client->voir) && !$socid) {
+	$sql .= ' AND s.rowid = sc.fk_soc AND sc.fk_user = '.((int) $user->id);
 }
-if ($sref) $sql .= natural_search('cf.ref', $sref);
-if ($snom) $sql .= natural_search('s.nom', $snom);
-if ($suser) $sql .= natural_search(array('u.lastname', 'u.firstname', 'u.login'), $suser);
-if ($sttc) $sql .= natural_search('cf.total_ttc', $sttc, 1);
+if ($sref) {
+	$sql .= natural_search('cf.ref', $sref);
+}
+if ($snom) {
+	$sql .= natural_search('s.nom', $snom);
+}
+if ($suser) {
+	natural_search(array('u.lastname', 'u.firstname', 'u.login'), $suser);
+}
+if ($sttc) {
+	$sql .= natural_search('cf.total_ttc', $sttc, 1);
+}
 $sql .= dolSqlDateFilter('cf.date_creation', $search_dateday, $search_datemonth, $search_dateyear);
-if ($sall) $sql .= natural_search(array('cf.ref', 'cf.note'), $sall);
-if (!empty($socid)) $sql .= ' AND s.rowid = '.$socid;
+if ($sall) {
+	$sql .= natural_search(array('cf.ref', 'cf.note'), $sall);
+}
+if (!empty($socid)) {
+	$sql .= ' AND s.rowid = '.((int) $socid);
+}
 if (GETPOST('statut', 'int')) {
 	$sql .= ' AND fk_statut = '.GETPOST('statut', 'int');
 }
@@ -148,29 +169,50 @@ if (!$search_product) {
 }
 
 $resql = $db->query($sql);
-if ($resql)
-{
+if ($resql) {
 	$num = $db->num_rows($resql);
 	$i = 0;
 
-	print '<span class="opacitymedium">'.$langs->trans("ReplenishmentOrdersDesc").'</span><br><br>';
+	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 
-	print '<form action="'.$_SERVER["PHP_SELF"].'" method="GET">';
+	print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ReplenishmentOrdersDesc").'</span><br class="hideonsmartphone">';
 
 	print_barre_liste('', $page, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', $num, 0, '');
 
 	$param = '';
-	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
-	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
-	if ($sref) $param .= '&search_ref='.urlencode($sref);
-	if ($snom) $param .= '&search_nom='.urlencode($snom);
-	if ($suser) $param .= '&search_user='.urlencode($suser);
-	if ($sttc) $param .= '&search_ttc='.urlencode($sttc);
-	if ($search_dateyear) $param .= '&search_dateyear='.urlencode($search_dateyear);
-	if ($search_datemonth) $param .= '&search_datemonth='.urlencode($search_datemonth);
-	if ($search_dateday) $param .= '&search_dateday='.urlencode($search_dateday);
-	if ($optioncss != '')     $param .= '&optioncss='.urlencode($optioncss);
+	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
+		$param .= '&contextpage='.urlencode($contextpage);
+	}
+	if ($limit > 0 && $limit != $conf->liste_limit) {
+		$param .= '&limit='.urlencode($limit);
+	}
+	if ($sref) {
+		$param .= '&search_ref='.urlencode($sref);
+	}
+	if ($snom) {
+		$param .= '&search_nom='.urlencode($snom);
+	}
+	if ($suser) {
+		$param .= '&search_user='.urlencode($suser);
+	}
+	if ($sttc) {
+		$param .= '&search_ttc='.urlencode($sttc);
+	}
+	if ($search_dateyear) {
+		$param .= '&search_dateyear='.urlencode($search_dateyear);
+	}
+	if ($search_datemonth) {
+		$param .= '&search_datemonth='.urlencode($search_datemonth);
+	}
+	if ($search_dateday) {
+		$param .= '&search_dateday='.urlencode($search_dateday);
+	}
+	if ($optioncss != '') {
+		$param .= '&optioncss='.urlencode($optioncss);
+	}
 
+	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 
 	print '<tr class="liste_titre_filter">';
@@ -183,10 +225,10 @@ if ($resql)
 	print '<td class="liste_titre">';
 	print '<input type="text" class="flat" name="search_user" value="'.dol_escape_htmltag($suser).'">';
 	print '</td>';
-	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" name="search_ttc" value="'.dol_escape_htmltag($sttc).'">';
+	print '<td class="liste_titre right">';
+	print '<input type="text" class="flat width75" name="search_ttc" value="'.dol_escape_htmltag($sttc).'">';
 	print '</td>';
-	print '<td class="liste_titre">';
+	print '<td class="liste_titre center">';
 	print $form->selectDate($search_date, 'search_date', 0, 0, 1, '', 1, 0, 0, '');
 	print '</td>';
 	print '<td class="liste_titre right">';
@@ -234,7 +276,8 @@ if ($resql)
 		$param,
 		'',
 		$sortfield,
-		$sortorder
+		$sortorder,
+		'right '
 	);
 	print_liste_field_titre(
 		'OrderCreation',
@@ -244,7 +287,8 @@ if ($resql)
 		$param,
 		'',
 		$sortfield,
-		$sortorder
+		$sortorder,
+		'center '
 	);
 	print_liste_field_titre(
 		'Status',
@@ -261,14 +305,12 @@ if ($resql)
 
 	$userstatic = new User($db);
 
-	while ($i < min($num, $search_product ? $num : $conf->liste_limit))
-	{
+	while ($i < min($num, $search_product ? $num : $conf->liste_limit)) {
 		$obj = $db->fetch_object($resql);
 
 		$showline = dolDispatchToDo($obj->rowid) && (!$search_product || in_array($search_product, getProducts($obj->rowid)));
 
-		if ($showline)
-		{
+		if ($showline) {
 			$href = DOL_URL_ROOT.'/fourn/commande/card.php?id='.$obj->rowid;
 
 			print '<tr>';
@@ -293,15 +335,15 @@ if ($resql)
 			print '<td>'.$txt.'</td>';
 
 			// Amount
-			print '<td>'.price($obj->total_ttc).'</td>';
+			print '<td class="right"><span class="amount">'.price($obj->total_ttc).'</span></td>';
 
 			// Date
 			if ($obj->dc) {
-				$date = dol_print_date($db->jdate($obj->dc), 'dayhour');
+				$date = dol_print_date($db->jdate($obj->dc), 'dayhour', 'tzuserrel');
 			} else {
 				$date = '-';
 			}
-			print '<td>'.$date.'</td>';
+			print '<td class="center">'.$date.'</td>';
 
 			// Statut
 			print '<td class="right">'.$commandestatic->LibStatut($obj->fk_statut, 5).'</td>';
@@ -311,6 +353,8 @@ if ($resql)
 		$i++;
 	}
 	print '</table>';
+	print '</div>';
+
 	print '</form>';
 
 	$db->free($resql);

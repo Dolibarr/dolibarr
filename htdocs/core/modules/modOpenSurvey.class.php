@@ -21,7 +21,7 @@
  *      \brief      Module to OpenSurvey integration.
  *      \file       htdocs/core/modules/modOpenSurvey.class.php
  *      \ingroup    opensurvey
- *      \brief      Description and activation file for module OpenSurvey
+ *      \brief      Description and activation file for the module OpenSurvey
  */
 include_once DOL_DOCUMENT_ROOT."/core/modules/DolibarrModules.class.php";
 
@@ -76,7 +76,7 @@ class modOpenSurvey extends DolibarrModules
 		$this->depends = array(); // List of module class names as string that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
-		$this->phpmin = array(5, 4); // Minimum version of PHP required by module
+		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(3, 4, 0); // Minimum version of Dolibarr required by module
 
 		// Constants
@@ -126,6 +126,7 @@ class modOpenSurvey extends DolibarrModules
 			'fk_menu'=>'fk_mainmenu=tools', // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 			'type'=>'left',
 			'titre'=>'Survey',
+			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth"'),
 			'mainmenu'=>'tools',
 			'leftmenu'=>'opensurvey',
 			'url'=>'/opensurvey/index.php?mainmenu=tools&leftmenu=opensurvey',
@@ -181,6 +182,13 @@ class modOpenSurvey extends DolibarrModules
 	 */
 	public function init($options = '')
 	{
+		global $conf, $langs;
+
+		$result = $this->_load_tables('/install/mysql/', 'opensurvey');
+		if ($result < 0) {
+			return -1; // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
+		}
+
 		// Permissions
 		$this->remove($options);
 

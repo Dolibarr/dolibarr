@@ -43,7 +43,9 @@ $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 
 // Security check
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
 $result = restrictedArea($user, 'contrat', $id);
 
 $object = new Contrat($db);
@@ -56,19 +58,16 @@ $hookmanager->initHooks(array('contractcard', 'globalcard'));
  * Actions
  */
 
-if ($action == 'addcontact' && $user->rights->contrat->creer)
-{
+if ($action == 'addcontact' && $user->rights->contrat->creer) {
 	$result = $object->fetch($id);
 
-	if ($result > 0 && $id > 0)
-	{
+	if ($result > 0 && $id > 0) {
 		$contactid = (GETPOST('userid') ? GETPOST('userid') : GETPOST('contactid'));
 		$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
 		$result = $object->add_contact($contactid, $typeid, GETPOST("source", 'aZ09'));
 	}
 
-	if ($result >= 0)
-	{
+	if ($result >= 0) {
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;
 	} else {
@@ -84,24 +83,20 @@ if ($action == 'addcontact' && $user->rights->contrat->creer)
 }
 
 // bascule du statut d'un contact
-if ($action == 'swapstatut' && $user->rights->contrat->creer)
-{
-	if ($object->fetch($id))
-	{
-		$result = $object->swapContactStatus(GETPOST('ligne'));
+if ($action == 'swapstatut' && $user->rights->contrat->creer) {
+	if ($object->fetch($id)) {
+		$result = $object->swapContactStatus(GETPOST('ligne', 'int'));
 	} else {
 		dol_print_error($db, $object->error);
 	}
 }
 
 // Delete contact
-if ($action == 'deletecontact' && $user->rights->contrat->creer)
-{
+if ($action == 'deletecontact' && $user->rights->contrat->creer) {
 	$object->fetch($id);
-	$result = $object->delete_contact($_GET["lineid"]);
+	$result = $object->delete_contact(GETPOST("lineid", 'int'));
 
-	if ($result >= 0)
-	{
+	if ($result >= 0) {
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;
 	}
@@ -125,10 +120,8 @@ $userstatic = new User($db);
 /*                                                                             */
 /* *************************************************************************** */
 
-if ($id > 0 || !empty($ref))
-{
-	if ($object->fetch($id, $ref) > 0)
-	{
+if ($id > 0 || !empty($ref)) {
+	if ($object->fetch($id, $ref) > 0) {
 		$object->fetch_thirdparty();
 
 		$head = contract_prepare_head($object);
@@ -146,9 +139,9 @@ if ($id > 0 || !empty($ref))
 		//if (! empty($modCodeContract->code_auto)) {
 			$morehtmlref .= $object->ref;
 		/*} else {
-            $morehtmlref.=$form->editfieldkey("",'ref',$object->ref,0,'string','',0,3);
-            $morehtmlref.=$form->editfieldval("",'ref',$object->ref,0,'string','',0,2);
-        }*/
+			$morehtmlref.=$form->editfieldkey("",'ref',$object->ref,0,'string','',0,3);
+			$morehtmlref.=$form->editfieldval("",'ref',$object->ref,0,'string','',0,2);
+		}*/
 
 		$morehtmlref .= '<div class="refidno">';
 		// Ref customer
@@ -166,7 +159,7 @@ if ($id > 0 || !empty($ref))
 			$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 			if ($user->rights->contrat->creer) {
 				if ($action != 'classify') {
-					//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+					//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 					$morehtmlref .= ' : ';
 				}
 				if ($action == 'classify') {
@@ -184,9 +177,10 @@ if ($id > 0 || !empty($ref))
 				if (!empty($object->fk_project)) {
 					$proj = new Project($db);
 					$proj->fetch($object->fk_project);
-					$morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$object->fk_project.'" title="'.$langs->trans('ShowProject').'">';
-					$morehtmlref .= $proj->ref;
-					$morehtmlref .= '</a>';
+					$morehtmlref .= ' : '.$proj->getNomUrl(1);
+					if ($proj->title) {
+						$morehtmlref .= ' - '.$proj->title;
+					}
 				} else {
 					$morehtmlref .= '';
 				}
@@ -213,8 +207,11 @@ if ($id > 0 || !empty($ref))
 		}
 		$absolute_discount = $object->thirdparty->getAvailableDiscounts();
 		print '. ';
-		if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount", price($absolute_discount), $langs->trans("Currency".$conf->currency));
-		else print $langs->trans("CompanyHasNoAbsoluteDiscount");
+		if ($absolute_discount) {
+			print $langs->trans("CompanyHasAbsoluteDiscount", price($absolute_discount), $langs->trans("Currency".$conf->currency));
+		} else {
+			print $langs->trans("CompanyHasNoAbsoluteDiscount");
+		}
 		print '.';
 		print '</td></tr>';
 

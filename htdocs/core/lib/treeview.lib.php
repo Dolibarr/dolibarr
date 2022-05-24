@@ -38,8 +38,7 @@ function tree_showpad(&$fulltree, $key, $silent = 0)
 	$pos = 1;
 
 	// Loop on each pos, because we will output an img for each pos
-	while ($pos <= $fulltree[$key]['level'] && $fulltree[$key]['level'] > 0)
-	{
+	while ($pos <= $fulltree[$key]['level'] && $fulltree[$key]['level'] > 0) {
 		// Process for column $pos
 
 		$atleastoneofthislevelafter = 0;
@@ -47,41 +46,41 @@ function tree_showpad(&$fulltree, $key, $silent = 0)
 		$nbofdocinsub = 0;
 		$found = 0;
 		//print 'x'.$key;
-		foreach ($fulltree as $key2 => $val2)
-		{
+		foreach ($fulltree as $key2 => $val2) {
 			//print "x".$pos." ".$key2." ".$found." ".$fulltree[$key2]['level'];
-			if ($found == 1) // We are after the entry to show
-			{
-				if ($fulltree[$key2]['level'] > $pos)
-				{
+			if ($found == 1) { // We are after the entry to show
+				if ($fulltree[$key2]['level'] > $pos) {
 					$nbofdirinsub++;
-					if (isset($fulltree[$key2]['cachenbofdoc']) && $fulltree[$key2]['cachenbofdoc'] > 0) $nbofdocinsub += $fulltree[$key2]['cachenbofdoc'];
+					if (isset($fulltree[$key2]['cachenbofdoc']) && $fulltree[$key2]['cachenbofdoc'] > 0) {
+						$nbofdocinsub += $fulltree[$key2]['cachenbofdoc'];
+					}
 				}
-				if ($fulltree[$key2]['level'] == $pos)
-				{
+				if ($fulltree[$key2]['level'] == $pos) {
 					$atleastoneofthislevelafter = 1;
 				}
-				if ($fulltree[$key2]['level'] <= $pos)
-				{
+				if ($fulltree[$key2]['level'] <= $pos) {
 					break;
 				}
 			}
-			if ($key2 == $key)    // We found ourself, so now every lower level will be counted
-			{
+			if ($key2 == $key) {    // We found ourself, so now every lower level will be counted
 				$found = 1;
 			}
 		}
 		//print $atleastoneofthislevelafter;
 
-		if (!$silent)
-		{
-			if ($atleastoneofthislevelafter)
-			{
-				if ($fulltree[$key]['level'] == $pos) print img_picto_common('', 'treemenu/branch.gif');
-				else print img_picto_common('', 'treemenu/line.gif');
+		if (!$silent) {
+			if ($atleastoneofthislevelafter) {
+				if ($fulltree[$key]['level'] == $pos) {
+					print img_picto_common('', 'treemenu/branch.gif');
+				} else {
+					print img_picto_common('', 'treemenu/line.gif');
+				}
 			} else {
-				if ($fulltree[$key]['level'] == $pos) print img_picto_common('', 'treemenu/branchbottom.gif');
-				else print img_picto_common('', 'treemenu/linebottom.gif');
+				if ($fulltree[$key]['level'] == $pos) {
+					print img_picto_common('', 'treemenu/branchbottom.gif');
+				} else {
+					print img_picto_common('', 'treemenu/linebottom.gif');
+				}
 			}
 		}
 		$pos++;
@@ -116,12 +115,13 @@ function tree_recur($tab, $pere, $rang, $iddivjstree = 'iddivjstree', $donoreset
 {
 	global $tree_recur_alreadyadded, $menu_handler_to_search;
 
-	if ($rang == 0 && empty($donoresetalreadyloaded)) $tree_recur_alreadyadded = array();
+	if ($rang == 0 && empty($donoresetalreadyloaded)) {
+		$tree_recur_alreadyadded = array();
+	}
 
-	if ($rang == 0)
-	{
+	if ($rang == 0) {
 		// Test also done with jstree and dynatree (not able to have <a> inside label)
-		print '<script type="text/javascript" language="javascript">
+		print '<script type="text/javascript">
 		$(document).ready(function(){
 			$("#'.$iddivjstree.'").treeview({
 				collapsed: true,
@@ -138,39 +138,33 @@ function tree_recur($tab, $pere, $rang, $iddivjstree = 'iddivjstree', $donoreset
 		print '<ul id="'.$iddivjstree.'">';
 	}
 
-	if ($rang > 50)
-	{
+	if ($rang > 50) {
 		return; // Protect against infinite loop. Max 50 depth
 	}
 
 	//ballayage du tableau
 	$sizeoftab = count($tab);
 	$ulprinted = 0;
-	for ($x = 0; $x < $sizeoftab; $x++)
-	{
+	for ($x = 0; $x < $sizeoftab; $x++) {
 		//var_dump($tab[$x]);exit;
 		// If an element has $pere for parent
-		if ($tab[$x]['fk_menu'] != -1 && $tab[$x]['fk_menu'] == $pere['rowid'])
-		{
+		if ($tab[$x]['fk_menu'] != -1 && $tab[$x]['fk_menu'] == $pere['rowid']) {
 			//print 'rang='.$rang.'-x='.$x." rowid=".$tab[$x]['rowid']." tab[x]['fk_leftmenu'] = ".$tab[$x]['fk_leftmenu']." leftmenu pere = ".$pere['leftmenu']."<br>\n";
-			if (empty($ulprinted) && !empty($pere['rowid']))
-			{
-				if (!empty($tree_recur_alreadyadded[$tab[$x]['rowid']]))
-				{
+			if (empty($ulprinted) && !empty($pere['rowid'])) {
+				if (!empty($tree_recur_alreadyadded[$tab[$x]['rowid']])) {
 					  dol_syslog('Error, record with id '.$tab[$x]['rowid'].' seems to be a child of record with id '.$pere['rowid'].' but it was already output. Complete field "leftmenu" and "mainmenu" on ALL records to avoid ambiguity.', LOG_WARNING);
 					  continue;
 				}
 
-				print '<ul'.(empty($pere['rowid']) ? ' id="treeData"' : '').'>'; $ulprinted++;
+				print '<ul'.(empty($pere['rowid']) ? ' id="treeData"' : '').'>';
+				$ulprinted++;
 			}
-			print "\n".'<li '.($tab[$x]['statut'] ? ' class="liuseractive"' : 'class="liuserdisabled"').'>';
-			if ($showfk)
-			{
+			print "\n".'<li '.(!empty($tab[$x]['statut']) ? ' class="liuseractive"' : 'class="liuserdisabled"').'>';
+			if ($showfk) {
 				print '<table class="nobordernopadding centpercent"><tr><td>';
-				print '<strong> &nbsp; ';
-				print $tab[$x]['title'];
-				print '&nbsp; (fk_mainmenu='.$tab[$x]['fk_mainmenu'].' fk_leftmenu='.$tab[$x]['fk_leftmenu'].')';
-				print '</td><td class="right">';
+				print '<span class="paddingleftonly">'.$tab[$x]['title'].'</span>';
+				print '&nbsp; <span class="opacitymedium">(fk_mainmenu='.$tab[$x]['fk_mainmenu'].' fk_leftmenu='.$tab[$x]['fk_leftmenu'].')</span>';
+				print '</td><td class="right nowraponall">';
 				print $tab[$x]['buttons'];
 				print '</td></tr></table>';
 			} else {
@@ -183,22 +177,20 @@ function tree_recur($tab, $pere, $rang, $iddivjstree = 'iddivjstree', $donoreset
 			print '</li>';
 		} elseif (!empty($tab[$x]['rowid']) && $tab[$x]['fk_menu'] == -1 && $tab[$x]['fk_mainmenu'] == $pere['mainmenu'] && $tab[$x]['fk_leftmenu'] == $pere['leftmenu']) {
 			//print 'rang='.$rang.'-x='.$x." rowid=".$tab[$x]['rowid']." tab[x]['fk_leftmenu'] = ".$tab[$x]['fk_leftmenu']." leftmenu pere = ".$pere['leftmenu']."<br>\n";
-			if (empty($ulprinted) && !empty($pere['rowid']))
-			{
-				if (!empty($tree_recur_alreadyadded[$tab[$x]['rowid']]))
-				{
+			if (empty($ulprinted) && !empty($pere['rowid'])) {
+				if (!empty($tree_recur_alreadyadded[$tab[$x]['rowid']])) {
 					dol_syslog('Error, record with id '.$tab[$x]['rowid'].' seems to be a child of record with id '.$pere['rowid'].' but it was already output. Complete field "leftmenu" and "mainmenu" on ALL records to avoid ambiguity.', LOG_WARNING);
 					//print 'Error, record with id '.$tab[$x]['rowid'].' seems to be a child of record with id '.$pere['rowid'].' but it was already output. Complete field "leftmenu" and "mainmenu" on ALL records to avoid ambiguity.';
 					continue;
 				}
 
-				print '<ul'.(empty($pere['rowid']) ? ' id="treeData"' : '').'>'; $ulprinted++;
+				print '<ul'.(empty($pere['rowid']) ? ' id="treeData"' : '').'>';
+				$ulprinted++;
 			}
-			print "\n".'<li '.($tab[$x]['statut'] ? ' class="liuseractive"' : 'class="liuserdisabled"').'>';
-			if ($showfk)
-			{
+			print "\n".'<li '.(!empty($tab[$x]['statut']) ? ' class="liuseractive"' : 'class="liuserdisabled"').'>';
+			if ($showfk) {
 				print '<table class="nobordernopadding centpercent"><tr><td>';
-				print '<strong> &nbsp; <a href="edit.php?menu_handler='.$menu_handler_to_search.'&action=edit&menuId='.$tab[$x]['rowid'].$moreparam.'">';
+				print '<strong> &nbsp; <a href="edit.php?menu_handler='.$menu_handler_to_search.'&action=edit&token='.newToken().'&menuId='.$tab[$x]['rowid'].$moreparam.'">';
 				print $tab[$x]['title'];
 				print '</a></strong>';
 				print '&nbsp; (mainmenu='.$tab[$x]['mainmenu'].' leftmenu='.$tab[$x]['leftmenu'].' - fk_mainmenu='.$tab[$x]['fk_mainmenu'].' fk_leftmenu='.$tab[$x]['fk_leftmenu'].')';
@@ -216,7 +208,11 @@ function tree_recur($tab, $pere, $rang, $iddivjstree = 'iddivjstree', $donoreset
 			print '</li>';
 		}
 	}
-	if (!empty($ulprinted) && !empty($pere['rowid'])) { print '</ul>'."\n"; }
+	if (!empty($ulprinted) && !empty($pere['rowid'])) {
+		print '</ul>'."\n";
+	}
 
-	if ($rang == 0) print '</ul>';
+	if ($rang == 0) {
+		print '</ul>';
+	}
 }

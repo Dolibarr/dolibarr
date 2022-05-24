@@ -34,7 +34,7 @@ include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 class box_comptes extends ModeleBoxes
 {
 	public $boxcode = "currentaccounts";
-	public $boximg = "object_bill";
+	public $boximg = "bank_account";
 	public $boxlabel = "BoxCurrentAccounts";
 	public $depends = array("banque"); // Box active if module banque active
 
@@ -64,7 +64,9 @@ class box_comptes extends ModeleBoxes
 
 		// disable module for such cases
 		$listofmodulesforexternal = explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL);
-		if (!in_array('banque', $listofmodulesforexternal) && !empty($user->socid)) $this->enabled = 0; // disabled for external users
+		if (!in_array('banque', $listofmodulesforexternal) && !empty($user->socid)) {
+			$this->enabled = 0; // disabled for external users
+		}
 
 		$this->hidden = !($user->rights->banque->lire);
 	}
@@ -120,7 +122,12 @@ class box_comptes extends ModeleBoxes
 					$account_static->accountancy_journal = $objp->accountancy_journal;
 					$solde = $account_static->solde(0);
 
-					$solde_total[$objp->currency_code] += $solde;
+					if (!array_key_exists($objp->currency_code, $solde_total)) {
+						$solde_total[$objp->currency_code] = $solde;
+					} else {
+						$solde_total[$objp->currency_code] += $solde;
+					}
+
 
 					$this->info_box_contents[$line][] = array(
 						'td' => '',
@@ -134,15 +141,18 @@ class box_comptes extends ModeleBoxes
 					);
 
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="right nowraponall"',
-						'text' => price($solde, 0, $langs, 1, -1, -1, $objp->currency_code)
+						'td' => 'class="nowraponall right amount"',
+						'text' => '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?id='.$account_static->id.'">'
+									.price($solde, 0, $langs, 1, -1, -1, $objp->currency_code)
+									.'</a>',
+						'asis' => 1,
 					);
 
 					$line++;
 				}
 
 				// Total
-				foreach ($solde_total as $key=>$solde) {
+				foreach ($solde_total as $key => $solde) {
 					$this->info_box_contents[$line][] = array(
 						'tr' => 'class="liste_total"',
 						'td' => 'class="liste_total left"',
@@ -154,7 +164,7 @@ class box_comptes extends ModeleBoxes
 					);
 
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="liste_total right nowraponall"',
+						'td' => 'class="liste_total nowraponall right amount"',
 						'text' => price($solde, 0, $langs, 0, -1, -1, $key)
 					);
 					$line++;

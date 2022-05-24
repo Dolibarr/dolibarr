@@ -12,8 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -29,33 +28,27 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("compta", "bills", "other", "main", "accountancy"));
+$langs->loadLangs(array("compta", "bills", "other", "accountancy"));
 
-$socid = GETPOST('socid', 'int');
+$validatemonth = GETPOST('validatemonth', 'int');
+$validateyear = GETPOST('validateyear', 'int');
 
 $action = GETPOST('action', 'aZ09');
-
-// Security check
-if (empty($conf->accounting->enabled)) {
-	accessforbidden();
-}
-if ($user->socid > 0)
-	accessforbidden();
-if (!$user->rights->accounting->fiscalyear->write)
-	accessforbidden();
 
 $object = new BookKeeping($db);
 
 $month_start = ($conf->global->SOCIETE_FISCAL_MONTH_START ? ($conf->global->SOCIETE_FISCAL_MONTH_START) : 1);
-if (GETPOST("year", 'int')) $year_start = GETPOST("year", 'int');
-else {
+if (GETPOST("year", 'int')) {
+	$year_start = GETPOST("year", 'int');
+} else {
 	$year_start = dol_print_date(dol_now(), '%Y');
-	if (dol_print_date(dol_now(), '%m') < $month_start) $year_start--; // If current month is lower that starting fiscal month, we start last year
+	if (dol_print_date(dol_now(), '%m') < $month_start) {
+		$year_start--; // If current month is lower that starting fiscal month, we start last year
+	}
 }
 $year_end = $year_start + 1;
 $month_end = $month_start - 1;
-if ($month_end < 1)
-{
+if ($month_end < 1) {
 	$month_end = 12;
 	$year_end--;
 }
@@ -63,56 +56,59 @@ $search_date_start = dol_mktime(0, 0, 0, $month_start, 1, $year_start);
 $search_date_end = dol_get_last_day($year_end, $month_end);
 $year_current = $year_start;
 
+// Security check
+if (empty($conf->accounting->enabled)) {
+	accessforbidden();
+}
+if ($user->socid > 0) {
+	accessforbidden();
+}
+if (empty($user->rights->accounting->fiscalyear->write)) {
+	accessforbidden();
+}
+
+
+
 /*
  * Actions
  */
-if ($action == 'validate_movements_confirm' && $user->rights->accounting->fiscalyear->write) {
-	$result = $object->fetchAll();
 
-	if ($result < 0)
-	{
-		setEventMessages($object->error, $object->errors, 'errors');
-	} else {
-		// Specify as export : update field date_validated on selected month/year
-		$error = 0;
-		$db->begin();
+$now = dol_now();
 
-		$date_start = dol_mktime(0, 0, 0, GETPOST('date_startmonth', 'int'), GETPOST('date_startday', 'int'), GETPOST('date_startyear', 'int'));
-		$date_end = dol_mktime(23, 59, 59, GETPOST('date_endmonth', 'int'), GETPOST('date_endday', 'int'), GETPOST('date_endyear', 'int'));
+if ($action == 'validate_movements_confirm' && !empty($user->rights->accounting->fiscalyear->write)) {
+	$date_start = dol_mktime(0, 0, 0, GETPOST('date_startmonth', 'int'), GETPOST('date_startday', 'int'), GETPOST('date_startyear', 'int'));
+	$date_end = dol_mktime(23, 59, 59, GETPOST('date_endmonth', 'int'), GETPOST('date_endday', 'int'), GETPOST('date_endyear', 'int'));
 
-		if (is_array($object->lines))
-		{
-			foreach ($object->lines as $movement)
-			{
-				$now = dol_now();
+	$error = 0;
 
-				$sql = " UPDATE ".MAIN_DB_PREFIX."accounting_bookkeeping";
-				$sql .= " SET date_validated = '".$db->idate($now)."'";
-				$sql .= " WHERE rowid = ".$movement->id;
-				$sql .= " AND doc_date >= '" . dol_print_date($date_start, 'dayrfc') . "'";
-                $sql .= " AND doc_date <= '" . dol_print_date($date_end, 'dayrfc') . "'";
+	$db->begin();
 
-				dol_syslog("/accountancy/closure/index.php :: Function validate_movement_confirm Specify movements as validated sql=".$sql, LOG_DEBUG);
-				$result = $db->query($sql);
-				if (!$result)
-				{
-					$error++;
-					break;
-				}
-			}
-		}
+	// Specify as export : update field date_validated on selected month/year
+	$sql = " UPDATE ".MAIN_DB_PREFIX."accounting_bookkeeping";
+	$sql .= " SET date_validated = '".$db->idate($now)."'";
+	$sql .= " WHERE entity = " . ((int) $conf->entity);
+	$sql .= " AND doc_date >= '" . $db->idate($date_start) . "'";
+	$sql .= " AND doc_date <= '" . $db->idate($date_end) . "'";
+	$sql .= " AND date_validated IS NULL";
 
-		if (!$error)
-		{
-			$db->commit();
-			setEventMessages($langs->trans("AllMovementsWereRecordedAsValidated"), null, 'mesgs');
-		} else {
-			$error++;
-			$db->rollback();
-			setEventMessages($langs->trans("NotAllMovementsCouldBeRecordedAsValidated"), null, 'errors');
-		}
+	dol_syslog("/accountancy/closure/index.php action=validate_movement_confirm -> Set movements as validated", LOG_DEBUG);
+	$result = $db->query($sql);
+	if (!$result) {
+		$error++;
+	}
+
+	if (!$error) {
+		$db->commit();
+
+		setEventMessages($langs->trans("AllMovementsWereRecordedAsValidated"), null, 'mesgs');
+
 		header("Location: ".$_SERVER['PHP_SELF']."?year=".$year_start);
 		exit;
+	} else {
+		$db->rollback();
+
+		setEventMessages($langs->trans("NotAllMovementsCouldBeRecordedAsValidated"), null, 'errors');
+		$action = '';
 	}
 }
 
@@ -123,7 +119,11 @@ if ($action == 'validate_movements_confirm' && $user->rights->accounting->fiscal
 $form = new Form($db);
 $formaccounting = new FormAccounting($db);
 
-llxHeader('', $langs->trans("Closure"));
+$title = $langs->trans('Closure');
+
+$help_url ='EN:Module_Double_Entry_Accounting';
+
+llxHeader('', $title, $help_url);
 
 if ($action == 'validate_movements') {
 	$form_question = array();
@@ -171,7 +171,9 @@ print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 for ($i = 1; $i <= 12; $i++) {
 	$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1) - 1;
-	if ($j > 12) $j -= 12;
+	if ($j > 12) {
+		$j -= 12;
+	}
 	print '<td width="60" class="right">'.$langs->trans('MonthShort'.str_pad($j, 2, '0', STR_PAD_LEFT)).'</td>';
 }
 print '<td width="60" class="right"><b>'.$langs->trans("Total").'</b></td></tr>';
@@ -179,8 +181,10 @@ print '<td width="60" class="right"><b>'.$langs->trans("Total").'</b></td></tr>'
 $sql = "SELECT COUNT(b.rowid) as detail,";
 for ($i = 1; $i <= 12; $i++) {
 	$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1) - 1;
-	if ($j > 12) $j -= 12;
-	$sql .= "  SUM(".$db->ifsql('MONTH(b.doc_date)='.$j, '1', '0').") AS month".str_pad($j, 2, '0', STR_PAD_LEFT).",";
+	if ($j > 12) {
+		$j -= 12;
+	}
+	$sql .= "  SUM(".$db->ifsql("MONTH(b.doc_date)=".$j, "1", "0").") AS month".str_pad($j, 2, "0", STR_PAD_LEFT).",";
 }
 $sql .= " COUNT(b.rowid) as total";
 $sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as b";
@@ -189,7 +193,7 @@ $sql .= " AND b.doc_date <= '".$db->idate($search_date_end)."'";
 $sql .= " AND b.entity IN (".getEntity('bookkeeping', 0).")"; // We don't share object for accountancy
 $sql .= " AND date_validated IS NULL";
 
-dol_syslog('htdocs/accountancy/closure/index.php sql='.$sql, LOG_DEBUG);
+dol_syslog('htdocs/accountancy/closure/index.php', LOG_DEBUG);
 $resql = $db->query($sql);
 if ($resql) {
 	$num = $db->num_rows($resql);

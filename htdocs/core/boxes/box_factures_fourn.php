@@ -81,11 +81,10 @@ class box_factures_fourn extends ModeleBoxes
 		$thirdpartystatic = new Fournisseur($this->db);
 
 		$this->info_box_head = array(
-			'text' => $langs->trans("BoxTitleLast".($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE ? "" : "Modified")."SupplierBills", $max)
+			'text' => $langs->trans("BoxTitleLast".(!empty($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) ? "" : "Modified")."SupplierBills", $max)
 		);
 
-		if ($user->rights->fournisseur->facture->lire)
-		{
+		if ($user->rights->fournisseur->facture->lire) {
 			$langs->load("bills");
 
 			$sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias";
@@ -101,18 +100,26 @@ class box_factures_fourn extends ModeleBoxes
 			$sql .= ', f.date_lim_reglement as datelimite, f.tms, f.type';
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 			$sql .= ", ".MAIN_DB_PREFIX."facture_fourn as f";
-			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			if (empty($user->rights->societe->client->voir) && !$user->socid) {
+				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			}
 			$sql .= " WHERE f.fk_soc = s.rowid";
 			$sql .= " AND f.entity = ".$conf->entity;
-			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
-			if ($user->socid) $sql .= " AND s.rowid = ".$user->socid;
-			if ($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) $sql .= " ORDER BY f.datef DESC, f.ref DESC ";
-			else $sql .= " ORDER BY f.tms DESC, f.ref DESC ";
+			if (empty($user->rights->societe->client->voir) && !$user->socid) {
+				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
+			}
+			if ($user->socid) {
+				$sql .= " AND s.rowid = ".((int) $user->socid);
+			}
+			if (!empty($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE)) {
+				$sql .= " ORDER BY f.datef DESC, f.ref DESC ";
+			} else {
+				$sql .= " ORDER BY f.tms DESC, f.ref DESC ";
+			}
 			$sql .= $this->db->plimit($max, 0);
 
 			$result = $this->db->query($sql);
-			if ($result)
-			{
+			if ($result) {
 				$num = $this->db->num_rows($result);
 
 				$line = 0;
@@ -135,6 +142,10 @@ class box_factures_fourn extends ModeleBoxes
 					$facturestatic->status = $objp->status;
 					$facturestatic->ref_supplier = $objp->ref_supplier;
 
+					$alreadypaid = $facturestatic->getSommePaiement();
+
+					$facturestatic->alreadypaid = $alreadypaid ? $alreadypaid : 0;
+
 					$thirdpartystatic->id = $objp->socid;
 					$thirdpartystatic->name = $objp->name;
 					$thirdpartystatic->name_alias = $objp->name_alias;
@@ -148,7 +159,7 @@ class box_factures_fourn extends ModeleBoxes
 					$late = '';
 
 					if ($facturestatic->hasDelay()) {
-						$late = img_warning(sprintf($l_due_date, dol_print_date($datelimite, 'day')));
+						$late = img_warning(sprintf($l_due_date, dol_print_date($datelimite, 'day', 'tzuserrel')));
 					}
 
 					$this->info_box_contents[$line][] = array(
@@ -172,18 +183,15 @@ class box_factures_fourn extends ModeleBoxes
 					);
 
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="right nowraponall"',
+						'td' => 'class="nowraponall right amount"',
 						'text' => price($objp->total_ht, 0, $langs, 0, -1, -1, $conf->currency),
 					);
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right"',
-						'text' => dol_print_date($date, 'day'),
+						'text' => dol_print_date($date, 'day', 'tzuserrel'),
 					);
 
-					$fac = new FactureFournisseur($this->db);
-					$fac->fetch($objp->facid);
-					$alreadypaid = $fac->getSommePaiement();
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right" width="18"',
 						'text' => $facturestatic->LibStatut($objp->paye, $objp->status, 3, $alreadypaid, $objp->type),
@@ -192,11 +200,12 @@ class box_factures_fourn extends ModeleBoxes
 					$line++;
 				}
 
-				if ($num == 0)
+				if ($num == 0) {
 					$this->info_box_contents[$line][0] = array(
 						'td' => 'class="center"',
 						'text'=>$langs->trans("NoModifiedSupplierBills"),
 					);
+				}
 
 				$this->db->free($result);
 			} else {

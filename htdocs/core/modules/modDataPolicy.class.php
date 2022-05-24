@@ -23,7 +23,7 @@
  *
  *  \file       htdocs/core/modules/modDataPolicy.class.php
  *  \ingroup    datapolicy
- *  \brief      Description and activation file for module DATAPOLICY
+ *  \brief      Description and activation file for the module datapolicy
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
@@ -132,13 +132,13 @@ class modDataPolicy extends DolibarrModules {
 			array('DATAPOLICY_ADHERENT', 'chaine', '', $langs->trans('NUMBER_MONTH_BEFORE_DELETION'), 0),
 		);
 
-		$country = explode(":", $conf->global->MAIN_INFO_SOCIETE_COUNTRY);
+		$country = explode(":", empty($conf->global->MAIN_INFO_SOCIETE_COUNTRY) ? '' : $conf->global->MAIN_INFO_SOCIETE_COUNTRY);
 
 		// Some keys to add into the overwriting translation tables
 		/* $this->overwrite_translation = array(
-          'en_US:ParentCompany'=>'Parent company or reseller',
-          'fr_FR:ParentCompany'=>'Maison mère ou revendeur'
-          ) */
+		  'en_US:ParentCompany'=>'Parent company or reseller',
+		  'fr_FR:ParentCompany'=>'Maison mère ou revendeur'
+		  ) */
 
 		if (!isset($conf->datapolicy) || !isset($conf->datapolicy->enabled)) {
 			$conf->datapolicy = new stdClass();
@@ -211,34 +211,32 @@ class modDataPolicy extends DolibarrModules {
 	{
 		global $langs;
 
-		$this->_load_tables('/datapolicy/sql/');
-
 		// Create extrafields
 		include_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 		$extrafields = new ExtraFields($this->db);
 
 		/*
-        // Extrafield contact
-        $result1 = $extrafields->addExtraField('datapolicy_consentement', $langs->trans("DATAPOLICY_consentement"), 'boolean', 101, 3, 'thirdparty', 0, 0, '', '', 1, '', '3', 0, '', '', 'datapolicy@datapolicy', '$conf->datapolicy->enabled');
-        $result1 = $extrafields->addExtraField('datapolicy_opposition_traitement', $langs->trans("DATAPOLICY_opposition_traitement"), 'boolean', 102, 3, 'thirdparty', 0, 0, '', '', 1, '', '3', 0, '', '', 'datapolicy@datapolicy', '$conf->datapolicy->enabled');
-        $result1 = $extrafields->addExtraField('datapolicy_opposition_prospection', $langs->trans("DATAPOLICY_opposition_prospection"), 'boolean', 103, 3, 'thirdparty', 0, 0, '', '', 1, '', '3', 0, '', '', 'datapolicy@datapolicy', '$conf->datapolicy->enabled');
-        $result1 = $extrafields->addExtraField('datapolicy_date', $langs->trans("DATAPOLICY_date"), 'date', 104, 3, 'thirdparty', 0, 0, '', '', 1, '', '3', 0);
-        $result1 = $extrafields->addExtraField('datapolicy_send', $langs->trans("DATAPOLICY_send"), 'date', 105, 3, 'thirdparty', 0, 0, '', '', 0, '', '0', 0);
+		// Extrafield contact
+		$result1 = $extrafields->addExtraField('datapolicy_consentement', $langs->trans("DATAPOLICY_consentement"), 'boolean', 101, 3, 'thirdparty', 0, 0, '', '', 1, '', '3', 0, '', '', 'datapolicy@datapolicy', '$conf->datapolicy->enabled');
+		$result1 = $extrafields->addExtraField('datapolicy_opposition_traitement', $langs->trans("DATAPOLICY_opposition_traitement"), 'boolean', 102, 3, 'thirdparty', 0, 0, '', '', 1, '', '3', 0, '', '', 'datapolicy@datapolicy', '$conf->datapolicy->enabled');
+		$result1 = $extrafields->addExtraField('datapolicy_opposition_prospection', $langs->trans("DATAPOLICY_opposition_prospection"), 'boolean', 103, 3, 'thirdparty', 0, 0, '', '', 1, '', '3', 0, '', '', 'datapolicy@datapolicy', '$conf->datapolicy->enabled');
+		$result1 = $extrafields->addExtraField('datapolicy_date', $langs->trans("DATAPOLICY_date"), 'date', 104, 3, 'thirdparty', 0, 0, '', '', 1, '', '3', 0);
+		$result1 = $extrafields->addExtraField('datapolicy_send', $langs->trans("DATAPOLICY_send"), 'date', 105, 3, 'thirdparty', 0, 0, '', '', 0, '', '0', 0);
 
-        // Extrafield Tiers
-        $result1 = $extrafields->addExtraField('datapolicy_consentement', $langs->trans("DATAPOLICY_consentement"), 'boolean', 101, 3, 'contact', 0, 0, '', '', 1, '', '3', 0, '', '', 'datapolicy@datapolicy', '$conf->datapolicy->enabled');
-        $result1 = $extrafields->addExtraField('datapolicy_opposition_traitement', $langs->trans("DATAPOLICY_opposition_traitement"), 'boolean', 102, 3, 'contact', 0, 0, '', '', 1, '', '3', 0, '', '', 'datapolicy@datapolicy', '$conf->datapolicy->enabled');
-        $result1 = $extrafields->addExtraField('datapolicy_opposition_prospection', $langs->trans("DATAPOLICY_opposition_prospection"), 'boolean', 103, 3, 'contact', 0, 0, '', '', 1, '', '3', 0, '', '', 'datapolicy@datapolicy', '$conf->datapolicy->enabled');
-        $result1 = $extrafields->addExtraField('datapolicy_date', $langs->trans("DATAPOLICY_date"), 'date', 104, 3, 'contact', 0, 0, '', '', 1, '', '3', 0);
-        $result1 = $extrafields->addExtraField('datapolicy_send', $langs->trans("DATAPOLICY_send"), 'date', 105, 3, 'contact', 0, 0, '', '', 0, '', '0', 0);
+		// Extrafield Tiers
+		$result1 = $extrafields->addExtraField('datapolicy_consentement', $langs->trans("DATAPOLICY_consentement"), 'boolean', 101, 3, 'contact', 0, 0, '', '', 1, '', '3', 0, '', '', 'datapolicy@datapolicy', '$conf->datapolicy->enabled');
+		$result1 = $extrafields->addExtraField('datapolicy_opposition_traitement', $langs->trans("DATAPOLICY_opposition_traitement"), 'boolean', 102, 3, 'contact', 0, 0, '', '', 1, '', '3', 0, '', '', 'datapolicy@datapolicy', '$conf->datapolicy->enabled');
+		$result1 = $extrafields->addExtraField('datapolicy_opposition_prospection', $langs->trans("DATAPOLICY_opposition_prospection"), 'boolean', 103, 3, 'contact', 0, 0, '', '', 1, '', '3', 0, '', '', 'datapolicy@datapolicy', '$conf->datapolicy->enabled');
+		$result1 = $extrafields->addExtraField('datapolicy_date', $langs->trans("DATAPOLICY_date"), 'date', 104, 3, 'contact', 0, 0, '', '', 1, '', '3', 0);
+		$result1 = $extrafields->addExtraField('datapolicy_send', $langs->trans("DATAPOLICY_send"), 'date', 105, 3, 'contact', 0, 0, '', '', 0, '', '0', 0);
 
-        // Extrafield Adherent
-        $result1 = $extrafields->addExtraField('datapolicy_consentement', $langs->trans("DATAPOLICY_consentement"), 'boolean', 101, 3, 'adherent', 0, 0, '', '', 1, '', '3', 0, '', '', 'datapolicy@datapolicy', '$conf->datapolicy->enabled');
-        $result1 = $extrafields->addExtraField('datapolicy_opposition_traitement', $langs->trans("DATAPOLICY_opposition_traitement"), 'boolean', 102, 3, 'adherent', 0, 0, '', '', 1, '', '3', 0, '', '', 'datapolicy@datapolicy', '$conf->datapolicy->enabled');
-        $result1 = $extrafields->addExtraField('datapolicy_opposition_prospection', $langs->trans("DATAPOLICY_opposition_prospection"), 'boolean', 103, 3, 'adherent', 0, 0, '', '', 1, '', '3', 0, '', '', 'datapolicy@datapolicy', '$conf->datapolicy->enabled');
-        $result1 = $extrafields->addExtraField('datapolicy_date', $langs->trans("DATAPOLICY_date"), 'date', 104, 3, 'adherent', 0, 0, '', '', 1, '', '3', 0);
-        $result1 = $extrafields->addExtraField('datapolicy_send', $langs->trans("DATAPOLICY_send"), 'date', 105, 3, 'adherent', 0, 0, '', '', 0, '', '0', 0);
-        */
+		// Extrafield Adherent
+		$result1 = $extrafields->addExtraField('datapolicy_consentement', $langs->trans("DATAPOLICY_consentement"), 'boolean', 101, 3, 'adherent', 0, 0, '', '', 1, '', '3', 0, '', '', 'datapolicy@datapolicy', '$conf->datapolicy->enabled');
+		$result1 = $extrafields->addExtraField('datapolicy_opposition_traitement', $langs->trans("DATAPOLICY_opposition_traitement"), 'boolean', 102, 3, 'adherent', 0, 0, '', '', 1, '', '3', 0, '', '', 'datapolicy@datapolicy', '$conf->datapolicy->enabled');
+		$result1 = $extrafields->addExtraField('datapolicy_opposition_prospection', $langs->trans("DATAPOLICY_opposition_prospection"), 'boolean', 103, 3, 'adherent', 0, 0, '', '', 1, '', '3', 0, '', '', 'datapolicy@datapolicy', '$conf->datapolicy->enabled');
+		$result1 = $extrafields->addExtraField('datapolicy_date', $langs->trans("DATAPOLICY_date"), 'date', 104, 3, 'adherent', 0, 0, '', '', 1, '', '3', 0);
+		$result1 = $extrafields->addExtraField('datapolicy_send', $langs->trans("DATAPOLICY_send"), 'date', 105, 3, 'adherent', 0, 0, '', '', 0, '', '0', 0);
+		*/
 
 		$sql = array();
 

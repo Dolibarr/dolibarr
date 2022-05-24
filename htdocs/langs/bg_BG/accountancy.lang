@@ -37,8 +37,8 @@ OtherInfo=Друга информация
 DeleteCptCategory=Премахване на счетоводна сметка от група
 ConfirmDeleteCptCategory=Сигурни ли сте, че искате да премахнете тази счетоводна сметка от групата счетоводни сметки?
 JournalizationInLedgerStatus=Статус на осчетоводяване
-AlreadyInGeneralLedger=Already transferred in accounting journals and ledger
-NotYetInGeneralLedger=Not yet transferred in accouting journals and ledger
+AlreadyInGeneralLedger=Already transferred to accounting journals and ledger
+NotYetInGeneralLedger=Not yet transferred to accouting journals and ledger
 GroupIsEmptyCheckSetup=Групата е празна, проверете настройката на персонализираната счетоводна група
 DetailByAccount=Показване на детайли по сметка
 AccountWithNonZeroValues=Сметки с различни от нула стойности
@@ -48,7 +48,8 @@ CountriesNotInEEC=Държави извън ЕИО
 CountriesInEECExceptMe=Държави в ЕИО, с изключение на %s
 CountriesExceptMe=Всички държави с изключение на %s
 AccountantFiles=Export source documents
-ExportAccountingSourceDocHelp=With this tool, you can export the source events (list and PDFs) that were used to generate your accountancy. To export your journals, use the menu entry %s - %s.
+ExportAccountingSourceDocHelp=With this tool, you can export the source events (list in CSV and PDFs) that are used to generate your accountancy.
+ExportAccountingSourceDocHelp2=To export your journals, use the menu entry %s - %s.
 VueByAccountAccounting=View by accounting account
 VueBySubAccountAccounting=View by accounting subaccount
 
@@ -61,24 +62,24 @@ MainAccountForSubscriptionPaymentNotDefined=Основна счетоводна 
 AccountancyArea=Секция за счетоводство
 AccountancyAreaDescIntro=Използването на счетоводния модул се извършва на няколко стъпки:
 AccountancyAreaDescActionOnce=Следните действия се изпълняват обикновено само веднъж или веднъж годишно...
-AccountancyAreaDescActionOnceBis=Следващите стъпки трябва да се направят, за да ви спестят време в бъдеще, като ви предлагат правилната счетоводна сметка по подразбиране при извършване на осчетоводяване (добавяне на записи в журнали и в главната счетоводна книга)
+AccountancyAreaDescActionOnceBis=Next steps should be done to save you time in future by suggesting you automaticaly the correct default accounting account when transferring data in accounting
 AccountancyAreaDescActionFreq=Следните действия се изпълняват обикновено всеки месец, седмица или ден при много големи компании...
 
-AccountancyAreaDescJournalSetup=СТЪПКА %s: Създайте или проверете съдържанието на списъка с журнали от меню %s
+AccountancyAreaDescJournalSetup=STEP %s: Check content of your journal list from menu %s
 AccountancyAreaDescChartModel=СТЪПКА %s: Проверете дали съществува шаблон за сметкоплан или създайте такъв от меню %s
 AccountancyAreaDescChart=СТЪПКА %s: Изберете и / или попълнете вашият сметкоплан от меню %s
 
 AccountancyAreaDescVat=СТЪПКА %s: Определете счетоводните сметки за всяка ставка на ДДС. За това използвайте менюто %s.
 AccountancyAreaDescDefault=СТЪПКА %s: Определете счетоводните сметки по подразбиране. За това използвайте менюто %s.
-AccountancyAreaDescExpenseReport=СТЪПКА %s: Определете счетоводните сметки по подразбиране за всеки вид разходен отчет. За това използвайте менюто %s.
+AccountancyAreaDescExpenseReport=STEP %s: Define default accounting accounts for each type of Expense report. For this, use the menu entry %s.
 AccountancyAreaDescSal=СТЪПКА %s: Определете счетоводните сметки по подразбиране за плащане на заплати. За това използвайте менюто %s.
-AccountancyAreaDescContrib=СТЪПКА %s: Определете счетоводните сметки по подразбиране за специални разходи (различни данъци). За това използвайте менюто %s.
+AccountancyAreaDescContrib=STEP %s: Define default accounting accounts for Taxes (special expenses). For this, use the menu entry %s.
 AccountancyAreaDescDonation=СТЪПКА %s: Определете счетоводните сметки по подразбиране за дарения. За това използвайте менюто %s.
 AccountancyAreaDescSubscription=СТЪПКА %s: Определете счетоводните сметки по подразбиране за членски внос. За това използвайте менюто %s.
 AccountancyAreaDescMisc=СТЪПКА %s: Определете задължителната сметка по подразбиране и счетоводните сметки по подразбиране за различни транзакции. За това използвайте менюто %s.
 AccountancyAreaDescLoan=СТЪПКА %s: Определете счетоводните сметки по подразбиране за кредити. За това използвайте менюто %s.
 AccountancyAreaDescBank=СТЪПКА %s: Определете счетоводните сметки и кодът на журнала за всяка банка и финансови сметки. За това използвайте менюто %s.
-AccountancyAreaDescProd=СТЪПКА %s: Определете счетоводните сметки за вашите продукти / услуги. За това използвайте менюто %s.
+AccountancyAreaDescProd=STEP %s: Define accounting accounts on your Products/Services. For this, use the menu entry %s.
 
 AccountancyAreaDescBind=СТЪПКА %s: Проверете обвързването между съществуващите %s реда и готовия счетоводен акаунт, така че системата да е в състояние да осчетоводи транзакции в главната счетоводна книга с едно кликване. Осъществете липсващите връзки. За това използвайте менюто %s.
 AccountancyAreaDescWriteRecords=СТЪПКА %s: Запишете транзакции в главната счетоводна книга. За това влезте в меню <strong>%s</strong> и кликнете върху бутон <strong>%s</strong>.
@@ -111,7 +112,7 @@ MenuAccountancyClosure=Приключване
 MenuAccountancyValidationMovements=Валидиране на движения
 ProductsBinding=Сметки за продукти
 TransferInAccounting=Прехвърляне към счетоводство
-RegistrationInAccounting=Регистриране в счетоводство
+RegistrationInAccounting=Recording in accounting
 Binding=Обвързване към сметки
 CustomersVentilation=Обвързване на фактура за продажба
 SuppliersVentilation=Обвързване на фактура за доставка
@@ -119,7 +120,7 @@ ExpenseReportsVentilation=Обвързващ на разходен отчет
 CreateMvts=Създаване на нова транзакция
 UpdateMvts=Променяне на транзакция
 ValidTransaction=Валидиране на транзакция
-WriteBookKeeping=Register transactions in accounting
+WriteBookKeeping=Record transactions in accounting
 Bookkeeping=Главна счетоводна книга
 BookkeepingSubAccount=Subledger
 AccountBalance=Салдо по сметка
@@ -131,7 +132,7 @@ InvoiceLinesDone=Свързани редове на фактури
 ExpenseReportLines=Редове на разходни отчети за свързване
 ExpenseReportLinesDone=Свързани редове на разходни отчети
 IntoAccount=Свързване на ред със счетоводна сметка
-TotalForAccount=Общо за счетоводна сметка
+TotalForAccount=Total accounting account
 
 
 Ventilate=Свързване
@@ -158,7 +159,7 @@ ACCOUNTING_LENGTH_AACCOUNT=Дължина на счетоводните смет
 ACCOUNTING_MANAGE_ZERO=Разрешава управление на различен брой нули в края на счетоводна сметка. Необходимо е в някои страни като Швейцария. Ако е изключено (по подразбиране) може да зададете следните два параметъра, за да поискате от системата да добави виртуални нули.
 BANK_DISABLE_DIRECT_INPUT=Деактивиране на директно добавяне на транзакция в банкова сметка
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Активиране на експортиране на журнали в състояние на чернова
-ACCOUNTANCY_COMBO_FOR_AUX=Активиране на комбиниран списък за дъщерна сметка (може да създаде забавяне, ако имате много контрагенти)
+ACCOUNTANCY_COMBO_FOR_AUX=Enable combo list for subsidiary account (may be slow if you have a lot of third parties, break ability to search on a part of value)
 ACCOUNTING_DATE_START_BINDING=Define a date to start binding & transfer in accountancy. Below this date, the transactions will not be transferred to accounting.
 ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=On accountancy transfer, select period show by default
 
@@ -202,14 +203,14 @@ Docref=Референция
 LabelAccount=Име на сметка
 LabelOperation=Име на операция
 Sens=Direction
-AccountingDirectionHelp=For an accounting account of a customer, use Credit to record a payment you received<br>For an accounting account of a supplier, use Debit to record a payment you make
+AccountingDirectionHelp=For an accounting account of a customer, use Credit to record a payment you have received<br>For an accounting account of a supplier, use Debit to record a payment you made
 LetteringCode=Буквен код
 Lettering=Означение
 Codejournal=Журнал
 JournalLabel=Име на журнал
 NumPiece=Пореден номер
 TransactionNumShort=Транзакция №
-AccountingCategory=Персонализирани групи
+AccountingCategory=Custom group
 GroupByAccountAccounting=Group by general ledger account
 GroupBySubAccountAccounting=Group by subledger account
 AccountingAccountGroupsDesc=Тук може да определите някои групи счетоводни сметки. Те ще бъдат използвани за персонализирани счетоводни отчети.
@@ -218,12 +219,12 @@ ByPredefinedAccountGroups=По предварително определени �
 ByPersonalizedAccountGroups=По персонализирани групи
 ByYear=По година
 NotMatch=Не е зададено
-DeleteMvt=Delete some operation lines from accounting
+DeleteMvt=Delete some lines from accounting
 DelMonth=Месец за изтриване
 DelYear=Година за изтриване
 DelJournal=Журнал за изтриване
-ConfirmDeleteMvt=This will delete all operation lines of the accounting for the year/month and/or for a specific journal (At least one criterion is required). You will have to reuse the feature '%s' to have the deleted record back in the ledger.
-ConfirmDeleteMvtPartial=This will delete the transaction from the accounting (all operation lines related to the same transaction will be deleted)
+ConfirmDeleteMvt=This will delete all lines in accountancy for the year/month and/or for a specific journal (At least one criterion is required). You will have to reuse the feature '%s' to have the deleted record back in the ledger.
+ConfirmDeleteMvtPartial=This will delete the transaction from the accounting (all lines related to the same transaction will be deleted)
 FinanceJournal=Финансов журнал
 ExpenseReportsJournal=Журнал за разходни отчети
 DescFinanceJournal=Финансов журнал, включващ всички видове плащания по банкова сметка
@@ -245,9 +246,9 @@ DescThirdPartyReport=Преглед на списъка с клиенти и д�
 ListAccounts=Списък на счетоводни сметки
 UnknownAccountForThirdparty=Неизвестна сметна на контрагент. Ще използваме %s
 UnknownAccountForThirdpartyBlocking=Неизвестна сметка на контрагент. Блокираща грешка.
-ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Сметката на контрагента не е определена или контрагента е неизвестен. Ще използваме %s
+ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Subledger account not defined or third party or user unknown. We will use %s
 ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored=Неизвестен контрагент или недефинирана счетоводна сметка за това плащане. Ще запазим счетоводната сметка без стойност.
-ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Сметката на контрагента не е определена или контрагента е неизвестен. Блокираща грешка.
+ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Subledger account not defined or third party or user unknown. Blocking error.
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Неизвестна сметка на контрагент и сметка за изчакване не са определени. Блокираща грешка.
 PaymentsNotLinkedToProduct=Плащането не е свързано с нито един продукт / услуга
 OpeningBalance=Начално салдо
@@ -277,15 +278,15 @@ DescVentilExpenseReportMore=Ако настроите счетоводна см�
 DescVentilDoneExpenseReport=Преглед на списъка с редове на разходни отчети и тяхната счетоводна сметка за такса
 
 Closure=Annual closure
-DescClosure=Преглед на броя движения за месец, които не са валидирани за активните фискални години
-OverviewOfMovementsNotValidated=Стъпка 1 / Преглед на движенията, които не са валидирани (необходимо за приключване на фискална година)
-AllMovementsWereRecordedAsValidated=All movements were recorded as validated
-NotAllMovementsCouldBeRecordedAsValidated=Not all movements could be recorded as validated
-ValidateMovements=Валидиране на движения
+DescClosure=Consult here the number of movements by month who are not yet validated & locked
+OverviewOfMovementsNotValidated=Overview of movements not validated and locked
+AllMovementsWereRecordedAsValidated=All movements were recorded as validated and locked
+NotAllMovementsCouldBeRecordedAsValidated=Not all movements could be recorded as validated and locked
+ValidateMovements=Validate and lock record...
 DescValidateMovements=Всякакви промени или изтриване на написаното ще бъдат забранени. Всички записи за изпълнение трябва да бъдат валидирани, в противен случай приключването няма да е възможно.
 
 ValidateHistory=Автоматично свързване
-AutomaticBindingDone=Автоматичното свързване завърши
+AutomaticBindingDone=Automatic bindings done (%s) - Automatic binding not possible for some record (%s)
 
 ErrorAccountancyCodeIsAlreadyUse=Грешка, не може да изтриете тази счетоводна сметка, защото се използва.
 MvtNotCorrectlyBalanced=Движението не е правилно балансирано. Дебит = %s | Credit = %s
@@ -293,14 +294,15 @@ Balancing=Балансиране
 FicheVentilation=Свързваща карта
 GeneralLedgerIsWritten=Транзакциите са записани в главната счетоводна книга
 GeneralLedgerSomeRecordWasNotRecorded=Някои от транзакциите не бяха осчетоводени. Ако няма друго съобщение за грешка, то това вероятно е, защото те вече са били осчетоводени.
-NoNewRecordSaved=Няма повече записи за осчетоводяване
+NoNewRecordSaved=No more record to transfer
 ListOfProductsWithoutAccountingAccount=Списък на продукти, които не са свързани с нито една счетоводна сметка
 ChangeBinding=Промяна на свързване
 Accounted=Осчетоводено в книгата
-NotYetAccounted=Все още не е осчетоводено в книгата
+NotYetAccounted=Not yet transferred to accounting
 ShowTutorial=Показване на урок
 NotReconciled=Не е съгласувано
-WarningRecordWithoutSubledgerAreExcluded=Warning, all operations without subledger account defined are filtered and excluded from this view
+WarningRecordWithoutSubledgerAreExcluded=Warning, all lines without subledger account defined are filtered and excluded from this view
+AccountRemovedFromCurrentChartOfAccount=Accounting account that does not exist in the current chart of accounts
 
 ## Admin
 BindingOptions=Binding options
@@ -328,6 +330,10 @@ ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Disable binding & transfer in accountanc
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Disable binding & transfer in accountancy on expense reports (expense reports will not be taken into account in accounting)
 
 ## Export
+NotifiedExportDate=Flag exported lines as Exported <span class="warning">(to modify a line, you will need to delete the whole transaction and re-transfert it into accounting)</span>
+NotifiedValidationDate=Validate and Lock the exported entries <span class="warning">(same effect than the "Closure" feature, modification and deletion of the lines will DEFINITELY not be possible)</span>
+DateValidationAndLock=Date validation and lock
+ConfirmExportFile=Confirmation of the generation of the accounting export file ?
 ExportDraftJournal=Експортиране на журнал в чернова
 Modelcsv=Модел на експортиране
 Selectmodelcsv=Изберете модел на експортиране
@@ -335,11 +341,11 @@ Modelcsv_normal=Класическо експортиране
 Modelcsv_CEGID=Експортиране за CEGID Expert Comptabilité
 Modelcsv_COALA=Експортиране за Sage Coala
 Modelcsv_bob50=Експортиране за Sage BOB 50
-Modelcsv_ciel=Експортиране за Sage Ciel Compta или Compta Evolution
+Modelcsv_ciel=Export for Sage50, Ciel Compta or Compta Evo. (Format XIMPORT)
 Modelcsv_quadratus=Експортиране за Quadratus QuadraCompta
 Modelcsv_ebp=Експортиране за EBP
 Modelcsv_cogilog=Експортиране за Cogilog
-Modelcsv_agiris=Експортиране за Agiris
+Modelcsv_agiris=Export for Agiris Isacompta
 Modelcsv_LDCompta=Експортиране за LD Compta (v9) (тест)
 Modelcsv_LDCompta10=Експортиране за LD Compta (v10 и по-нова)
 Modelcsv_openconcerto=Експортиране за OpenConcerto (Тест)
@@ -347,9 +353,10 @@ Modelcsv_configurable=Експортиране в конфигурируем CSV
 Modelcsv_FEC=Експортиране за FEC
 Modelcsv_FEC2=Export FEC (With dates generation writing / document reversed)
 Modelcsv_Sage50_Swiss=Експортиране за Sage 50 Швейцария
-Modelcsv_winfic=Експортиране за Winfic - eWinfic - WinSis Compta
+Modelcsv_winfic=Export for Winfic - eWinfic - WinSis Compta
 Modelcsv_Gestinumv3=Export for Gestinum (v3)
-Modelcsv_Gestinumv5Export for Gestinum (v5)
+Modelcsv_Gestinumv5=Export for Gestinum (v5)
+Modelcsv_charlemagne=Export for Aplim Charlemagne
 ChartofaccountsId=Идентификатор на сметкоплан
 
 ## Tools - Init accounting account on product / service
@@ -382,11 +389,27 @@ SaleExport=Експортна продажба
 SaleEEC=Вътреобщностна продажба
 SaleEECWithVAT=Продажба в ЕИО с ДДС различен от нула, за която се предполага, че НЕ е вътреобщностна продажба, поради тази причина се препоръчва стандартната сметка за продукти.
 SaleEECWithoutVATNumber=Продажба в ЕИО без ДДС, но идентификационният номер по ДДС на контрагента не е определен. Ще се използва стандартната сметка за продажба на продукти. Може да въведете идентификационен номер по ДДС на контрагента или сметка на продукта, ако е необходимо.
-
+ForbiddenTransactionAlreadyExported=Forbidden: The transaction has been validated and/or exported.
+ForbiddenTransactionAlreadyValidated=Forbidden: The transaction has been validated.
 ## Dictionary
 Range=Обхват на счетоводна сметка
 Calculated=Изчислено
 Formula=Формула
+
+## Reconcile
+Unlettering=Unreconcile
+AccountancyNoLetteringModified=No reconcile modified
+AccountancyOneLetteringModifiedSuccessfully=One reconcile successfully modified
+AccountancyLetteringModifiedSuccessfully=%s reconcile successfully modified
+AccountancyNoUnletteringModified=No unreconcile modified
+AccountancyOneUnletteringModifiedSuccessfully=One unreconcile successfully modified
+AccountancyUnletteringModifiedSuccessfully=%s unreconcile successfully modified
+
+## Confirm box
+ConfirmMassUnlettering=Bulk Unreconcile confirmation
+ConfirmMassUnletteringQuestion=Are you sure you want to Unreconcile the %s selected record(s)?
+ConfirmMassDeleteBookkeepingWriting=Потвърждение за масово изтриване
+ConfirmMassDeleteBookkeepingWritingQuestion=This will delete the transaction from the accounting (all lines related to the same transaction will be deleted) Are you sure you want to delete the %s selected record(s)?
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Някои задължителни стъпки за настройка не са направени, моля изпълнете ги.
@@ -399,10 +422,36 @@ NoJournalDefined=Няма определен журнал
 Binded=Свързани редове
 ToBind=Редове за свързване
 UseMenuToSetBindindManualy=Редовете все още не са свързани, използвайте меню <a href="%s">%s</a>, за да направите връзката ръчно
+SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Sorry this module is not compatible with the experimental feature of situation invoices
+AccountancyErrorMismatchLetterCode=Mismatch in reconcile code
+AccountancyErrorMismatchBalanceAmount=The balance (%s) is not equal to 0
+AccountancyErrorLetteringBookkeeping=Errors have occurred concerning the transactions: %s
 
 ## Import
 ImportAccountingEntries=Счетоводни записи
+ImportAccountingEntriesFECFormat=Accounting entries - FEC format
+FECFormatJournalCode=Code journal (JournalCode)
+FECFormatJournalLabel=Label journal (JournalLib)
+FECFormatEntryNum=Piece number (EcritureNum)
+FECFormatEntryDate=Piece date (EcritureDate)
+FECFormatGeneralAccountNumber=General account number (CompteNum)
+FECFormatGeneralAccountLabel=General account label (CompteLib)
+FECFormatSubledgerAccountNumber=Subledger account number (CompAuxNum)
+FECFormatSubledgerAccountLabel=Subledger account number (CompAuxLib)
+FECFormatPieceRef=Piece ref (PieceRef)
+FECFormatPieceDate=Piece date creation (PieceDate)
+FECFormatLabelOperation=Label operation (EcritureLib)
+FECFormatDebit=Debit (Debit)
+FECFormatCredit=Credit (Credit)
+FECFormatReconcilableCode=Reconcilable code (EcritureLet)
+FECFormatReconcilableDate=Reconcilable date (DateLet)
+FECFormatValidateDate=Piece date validated (ValidDate)
+FECFormatMulticurrencyAmount=Multicurrency amount (Montantdevise)
+FECFormatMulticurrencyCode=Multicurrency code (Idevise)
+
 DateExport=Дата на експортиране
 WarningReportNotReliable=Внимание, тази справка не се основава на главната счетоводна книга, така че не съдържа транзакция, ръчно променена в книгата. Ако осчетоводяването ви е актуално, то прегледът на счетоводството е по-точен.
 ExpenseReportJournal=Журнал за разходни отчети
 InventoryJournal=Журнал за инвентар
+
+NAccounts=%s accounts

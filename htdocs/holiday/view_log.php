@@ -61,15 +61,23 @@ $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page == -1 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha') || (empty($toselect) && $massaction === '0')) { $page = 0; }     // If $page is not defined, or '' or -1 or if we click on clear filters or if we select empty mass action
+if (empty($page) || $page == -1 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha') || (empty($toselect) && $massaction === '0')) {
+	$page = 0;
+}     // If $page is not defined, or '' or -1 or if we click on clear filters or if we select empty mass action
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (!$sortfield) $sortfield = "cpl.rowid";
-if (!$sortorder) $sortorder = "DESC";
+if (!$sortfield) {
+	$sortfield = "cpl.rowid";
+}
+if (!$sortorder) {
+	$sortorder = "DESC";
+}
 
 // Si l'utilisateur n'a pas le droit de lire cette page
-if (!$user->rights->holiday->readall) accessforbidden();
+if (!$user->rights->holiday->readall) {
+	accessforbidden();
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array('users', 'other', 'holiday'));
@@ -83,8 +91,7 @@ $hookmanager->initHooks(array('leavemovementlist')); // Note that conf->hooks_mo
 $arrayfields = array();
 $arrayofmassactions = array();
 
-if (empty($conf->holiday->enabled))
-{
+if (empty($conf->holiday->enabled)) {
 	llxHeader('', $langs->trans('CPTitreMenu'));
 	print '<div class="tabBar">';
 	print '<span style="color: #FF0000;">'.$langs->trans('NotActiveModCP').'</span>';
@@ -98,12 +105,18 @@ if (empty($conf->holiday->enabled))
  * Actions
  */
 
-if (GETPOST('cancel', 'alpha')) { $action = 'list'; $massaction = ''; }
-if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction = ''; }
+if (GETPOST('cancel', 'alpha')) {
+	$action = 'list'; $massaction = '';
+}
+if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
+	$massaction = '';
+}
 
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
 if (empty($reshook)) {
 	// Selection of new fields
@@ -120,7 +133,7 @@ if (empty($reshook)) {
 		$search_type = '';
 		$search_prev_solde = '';
 		$search_new_solde = '';
-		$toselect = '';
+		$toselect = array();
 		$search_array_options = array();
 	}
 
@@ -129,8 +142,7 @@ if (empty($reshook)) {
 		|| GETPOST('button_removefilter', 'alpha')
 		|| GETPOST('button_search_x', 'alpha')
 		|| GETPOST('button_search.x', 'alpha')
-		|| GETPOST('button_search', 'alpha'))
-	{
+		|| GETPOST('button_search', 'alpha')) {
 		$massaction = ''; // Protection to avoid mass action if we force a new search during a mass action confirmation
 	}
 
@@ -168,7 +180,8 @@ $formother = new FormOther($db);
 $holidaylogstatic = new stdClass();
 $alltypeleaves = $object->getTypes(1, -1); // To have labels
 
-llxHeader('', $langs->trans('CPTitreMenu'));
+$title = $langs->trans('CPTitreMenu');
+llxHeader('', $title);
 
 $sqlwhere = '';
 
@@ -184,13 +197,27 @@ if (!empty($search_year) && $search_year > 0) {
 	$sqlwhere .= "AND date_action BETWEEN '".$db->idate($from_date)."' AND '".$db->idate($to_date)."'";
 }
 
-if (!empty($search_id) && $search_id > 0)                   $sqlwhere .= natural_search('rowid', $search_id, 1);
-if (!empty($search_validator) && $search_validator > 0)     $sqlwhere .= natural_search('fk_user_action', $search_validator, 1);
-if (!empty($search_employee) && $search_employee > 0)       $sqlwhere .= natural_search('fk_user_update', $search_employee, 1);
-if (!empty($search_description))                            $sqlwhere .= natural_search('type_action', $search_description);
-if (!empty($search_type) && $search_type > 0)               $sqlwhere .= natural_search('fk_type', $search_type, 1);
-if (!empty($search_prev_solde))                             $sqlwhere .= natural_search('prev_solde', $search_prev_solde, 1);
-if (!empty($search_new_solde))                              $sqlwhere .= natural_search('new_solde', $search_new_solde, 1);
+if (!empty($search_id) && $search_id > 0) {
+	$sqlwhere .= natural_search('rowid', $search_id, 1);
+}
+if (!empty($search_validator) && $search_validator > 0) {
+	$sqlwhere .= natural_search('fk_user_action', $search_validator, 1);
+}
+if (!empty($search_employee) && $search_employee > 0) {
+	$sqlwhere .= natural_search('fk_user_update', $search_employee, 1);
+}
+if (!empty($search_description)) {
+	$sqlwhere .= natural_search('type_action', $search_description);
+}
+if (!empty($search_type) && $search_type > 0) {
+	$sqlwhere .= natural_search('fk_type', $search_type, 1);
+}
+if (!empty($search_prev_solde)) {
+	$sqlwhere .= natural_search('prev_solde', $search_prev_solde, 1);
+}
+if (!empty($search_new_solde)) {
+	$sqlwhere .= natural_search('new_solde', $search_new_solde, 1);
+}
 
 $sqlorder = $db->order($sortfield, $sortorder);
 
@@ -214,20 +241,44 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 $num = is_array($object->logs) ? count($object->logs) : 0;
 
 $param = '';
-if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"])   $param .= '&contextpage='.urlencode($contextpage);
-if ($limit > 0 && $limit != $conf->liste_limit)                     $param .= '&limit='.urlencode($limit);
-if (!empty($search_id))                                             $param .= '&search_statut='.urlencode($search_statut);
-if (!empty($search_month) && $search_month > 0)                     $param .= '&search_month='.urlencode($search_month);
-if (!empty($search_year) && $search_year > 0)                       $param .= '&search_year='.urlencode($search_year);
-if (!empty($search_validator) && $search_validator > 0)             $param .= '&search_validator='.urlencode($search_validator);
-if (!empty($search_employee) && $search_employee > 0)               $param .= '&search_employee='.urlencode($search_employee);
-if (!empty($search_description))                                    $param .= '&search_description='.urlencode($search_description);
-if (!empty($search_type) && $search_type > 0)                       $param .= '&search_type='.urlencode($search_type);
-if (!empty($search_prev_solde))                                     $param .= '&search_prev_solde='.urlencode($search_prev_solde);
-if (!empty($search_new_solde))                                      $param .= '&search_new_solde='.urlencode($search_new_solde);
+if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
+	$param .= '&contextpage='.urlencode($contextpage);
+}
+if ($limit > 0 && $limit != $conf->liste_limit) {
+	$param .= '&limit='.urlencode($limit);
+}
+if (!empty($search_id)) {
+	$param .= '&search_statut='.urlencode($search_statut);
+}
+if (!empty($search_month) && $search_month > 0) {
+	$param .= '&search_month='.urlencode($search_month);
+}
+if (!empty($search_year) && $search_year > 0) {
+	$param .= '&search_year='.urlencode($search_year);
+}
+if (!empty($search_validator) && $search_validator > 0) {
+	$param .= '&search_validator='.urlencode($search_validator);
+}
+if (!empty($search_employee) && $search_employee > 0) {
+	$param .= '&search_employee='.urlencode($search_employee);
+}
+if (!empty($search_description)) {
+	$param .= '&search_description='.urlencode($search_description);
+}
+if (!empty($search_type) && $search_type > 0) {
+	$param .= '&search_type='.urlencode($search_type);
+}
+if (!empty($search_prev_solde)) {
+	$param .= '&search_prev_solde='.urlencode($search_prev_solde);
+}
+if (!empty($search_new_solde)) {
+	$param .= '&search_new_solde='.urlencode($search_new_solde);
+}
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
-if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+if ($optioncss != '') {
+	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+}
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 print '<input type="hidden" name="action" value="list">';
@@ -348,15 +399,33 @@ print '</td>';
 print '</tr>';
 
 print '<tr class="liste_titre">';
-if (!empty($arrayfields['cpl.rowid']['checked'])) print_liste_field_titre($arrayfields['cpl.rowid']['label'], $_SERVER["PHP_SELF"], 'rowid', '', '', '', $sortfield, $sortorder);
-if (!empty($arrayfields['cpl.date_action']['checked'])) print_liste_field_titre($arrayfields['cpl.date_action']['label'], $_SERVER["PHP_SELF"], 'date_action', '', '', '', $sortfield, $sortorder, 'center ');
-if (!empty($arrayfields['cpl.fk_user_action']['checked'])) print_liste_field_titre($arrayfields['cpl.fk_user_action']['label'], $_SERVER["PHP_SELF"], 'fk_user_action', '', '', '', $sortfield, $sortorder);
-if (!empty($arrayfields['cpl.fk_user_update']['checked'])) print_liste_field_titre($arrayfields['cpl.fk_user_update']['label'], $_SERVER["PHP_SELF"], 'fk_user_update', '', '', '', $sortfield, $sortorder);
-if (!empty($arrayfields['cpl.type_action']['checked'])) print_liste_field_titre($arrayfields['cpl.type_action']['label'], $_SERVER["PHP_SELF"], 'type_action', '', '', '', $sortfield, $sortorder);
-if (!empty($arrayfields['cpl.fk_type']['checked'])) print_liste_field_titre($arrayfields['cpl.fk_type']['label'], $_SERVER["PHP_SELF"], 'fk_type', '', '', '', $sortfield, $sortorder);
-if (!empty($arrayfields['cpl.prev_solde']['checked'])) print_liste_field_titre($arrayfields['cpl.prev_solde']['label'], $_SERVER["PHP_SELF"], 'prev_solde', '', '', '', $sortfield, $sortorder, 'right ');
-if (!empty($arrayfields['variation']['checked'])) print_liste_field_titre($arrayfields['variation']['label'], $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'right ');
-if (!empty($arrayfields['cpl.new_solde']['checked'])) print_liste_field_titre($arrayfields['cpl.new_solde']['label'], $_SERVER["PHP_SELF"], 'new_solde', '', '', '', $sortfield, $sortorder, 'right ');
+if (!empty($arrayfields['cpl.rowid']['checked'])) {
+	print_liste_field_titre($arrayfields['cpl.rowid']['label'], $_SERVER["PHP_SELF"], 'rowid', '', '', '', $sortfield, $sortorder);
+}
+if (!empty($arrayfields['cpl.date_action']['checked'])) {
+	print_liste_field_titre($arrayfields['cpl.date_action']['label'], $_SERVER["PHP_SELF"], 'date_action', '', '', '', $sortfield, $sortorder, 'center ');
+}
+if (!empty($arrayfields['cpl.fk_user_action']['checked'])) {
+	print_liste_field_titre($arrayfields['cpl.fk_user_action']['label'], $_SERVER["PHP_SELF"], 'fk_user_action', '', '', '', $sortfield, $sortorder);
+}
+if (!empty($arrayfields['cpl.fk_user_update']['checked'])) {
+	print_liste_field_titre($arrayfields['cpl.fk_user_update']['label'], $_SERVER["PHP_SELF"], 'fk_user_update', '', '', '', $sortfield, $sortorder);
+}
+if (!empty($arrayfields['cpl.type_action']['checked'])) {
+	print_liste_field_titre($arrayfields['cpl.type_action']['label'], $_SERVER["PHP_SELF"], 'type_action', '', '', '', $sortfield, $sortorder);
+}
+if (!empty($arrayfields['cpl.fk_type']['checked'])) {
+	print_liste_field_titre($arrayfields['cpl.fk_type']['label'], $_SERVER["PHP_SELF"], 'fk_type', '', '', '', $sortfield, $sortorder);
+}
+if (!empty($arrayfields['cpl.prev_solde']['checked'])) {
+	print_liste_field_titre($arrayfields['cpl.prev_solde']['label'], $_SERVER["PHP_SELF"], 'prev_solde', '', '', '', $sortfield, $sortorder, 'right ');
+}
+if (!empty($arrayfields['variation']['checked'])) {
+	print_liste_field_titre($arrayfields['variation']['label'], $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'right ');
+}
+if (!empty($arrayfields['cpl.new_solde']['checked'])) {
+	print_liste_field_titre($arrayfields['cpl.new_solde']['label'], $_SERVER["PHP_SELF"], 'new_solde', '', '', '', $sortfield, $sortorder, 'right ');
+}
 print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 print '</tr>';
 

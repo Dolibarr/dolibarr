@@ -40,7 +40,14 @@ $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
 // Security check
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) {
+	$socid = $user->socid;
+}
+
+
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('supplier_proposalnote'));
+
 $result = restrictedArea($user, 'supplier_proposal', $id, 'supplier_proposal');
 
 $object = new SupplierProposal($db);
@@ -53,30 +60,36 @@ $object = new SupplierProposal($db);
 
 $permissionnote = $user->rights->supplier_proposal->creer; // Used by the include of actions_setnotes.inc.php
 
-include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not includ_once
+$reshook = $hookmanager->executeHooks('doActions', array(), $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
+if (empty($reshook)) {
+	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not include_once
+}
 
 
 /*
  * View
  */
-
-llxHeader('', $langs->trans('CommRequest'), 'EN:Ask_Price_Supplier|FR:Demande_de_prix_fournisseur');
+$title = $langs->trans('CommRequest')." - ".$langs->trans('Notes');
+$help_url = 'EN:Ask_Price_Supplier|FR:Demande_de_prix_fournisseur';
+llxHeader('', $title, $help_url);
 
 $form = new Form($db);
 
-if ($id > 0 || !empty($ref))
-{
-	if ($mesg) print $mesg;
+if ($id > 0 || !empty($ref)) {
+	if ($mesg) {
+		print $mesg;
+	}
 
 	$now = dol_now();
 
-	if ($object->fetch($id, $ref))
-	{
+	if ($object->fetch($id, $ref)) {
 		$object->fetch_thirdparty();
 
 		$societe = new Societe($db);
-		if ($societe->fetch($object->socid))
-		{
+		if ($societe->fetch($object->socid)) {
 			$head = supplier_proposal_prepare_head($object);
 			print dol_get_fiche_head($head, 'note', $langs->trans('CommRequest'), -1, 'supplier_proposal');
 
@@ -92,14 +105,12 @@ if ($id > 0 || !empty($ref))
 			// Thirdparty
 			$morehtmlref .= $langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1);
 			// Project
-			if (!empty($conf->projet->enabled))
-			{
+			if (!empty($conf->projet->enabled)) {
 				$langs->load("projects");
 				$morehtmlref .= '<br>'.$langs->trans('Project').' ';
-				if ($user->rights->supplier_proposal->creer)
-				{
+				if ($user->rights->supplier_proposal->creer) {
 					if ($action != 'classify') {
-						//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+						//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 						$morehtmlref .= ' : ';
 					}
 					if ($action == 'classify') {
@@ -117,9 +128,10 @@ if ($id > 0 || !empty($ref))
 					if (!empty($object->fk_project)) {
 						$proj = new Project($db);
 						$proj->fetch($object->fk_project);
-						$morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$object->fk_project.'" title="'.$langs->trans('ShowProject').'">';
-						$morehtmlref .= $proj->ref;
-						$morehtmlref .= '</a>';
+						$morehtmlref .= ' : '.$proj->getNomUrl(1);
+						if ($proj->title) {
+							$morehtmlref .= ' - '.$proj->title;
+						}
 					} else {
 						$morehtmlref .= '';
 					}

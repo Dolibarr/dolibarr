@@ -71,7 +71,7 @@ class box_fournisseurs extends ModeleBoxes
 	 */
 	public function loadBox($max = 5)
 	{
-		global $conf, $user, $langs;
+		global $conf, $user, $langs, $hookmanager;
 		$langs->load("boxes");
 
 		$this->max = $max;
@@ -81,29 +81,38 @@ class box_fournisseurs extends ModeleBoxes
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedSuppliers", $max));
 
-		if ($user->rights->societe->lire)
-		{
+		if ($user->rights->societe->lire) {
 			$sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias";
 			$sql .= ", s.code_fournisseur, s.code_compta_fournisseur, s.fournisseur";
 			$sql .= ", s.logo, s.email, s.entity";
 			$sql .= ", s.datec, s.tms, s.status";
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			if (empty($user->rights->societe->client->voir) && !$user->socid) {
+				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			}
 			$sql .= " WHERE s.fournisseur = 1";
 			$sql .= " AND s.entity IN (".getEntity('societe').")";
-			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
-			if ($user->socid) $sql .= " AND s.rowid = ".$user->socid;
+			if (empty($user->rights->societe->client->voir) && !$user->socid) {
+				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
+			}
+			// Add where from hooks
+			$parameters = array('socid' => $user->socid, 'boxcode' => $this->boxcode);
+			$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $thirdpartystatic); // Note that $action and $object may have been modified by hook
+			if (empty($reshook)) {
+				if ($user->socid > 0) {
+					$sql .= " AND s.rowid = ".((int) $user->socid);
+				}
+			}
+			$sql .= $hookmanager->resPrint;
 			$sql .= " ORDER BY s.tms DESC ";
 			$sql .= $this->db->plimit($max, 0);
 
 			$result = $this->db->query($sql);
-			if ($result)
-			{
+			if ($result) {
 				$num = $this->db->num_rows($result);
 
 				$line = 0;
-				while ($line < $num)
-				{
+				while ($line < $num) {
 					$objp = $this->db->fetch_object($result);
 					$datec = $this->db->jdate($objp->datec);
 					$datem = $this->db->jdate($objp->tms);
@@ -118,15 +127,15 @@ class box_fournisseurs extends ModeleBoxes
 					$thirdpartystatic->email = $objp->email;
 					$thirdpartystatic->entity = $objp->entity;
 
-				   	$this->info_box_contents[$line][] = array(
+					$this->info_box_contents[$line][] = array(
 						'td' => '',
 						'text' => $thirdpartystatic->getNomUrl(1, '', 40),
 						'asis' => 1,
 					);
 
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="right"',
-						'text' => dol_print_date($datem, "day"),
+						'td' => 'class="center nowraponall"',
+						'text' => dol_print_date($datem, "day", 'tzuserrel'),
 					);
 
 					$this->info_box_contents[$line][] = array(

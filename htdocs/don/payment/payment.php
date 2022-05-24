@@ -29,9 +29,10 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 $langs->load("bills");
 
-$chid = GETPOST("rowid");
+$chid = GETPOST("rowid", 'int');
 $action = GETPOST('action', 'aZ09');
 $amounts = array();
+$cancel = GETPOST('cancel');
 
 // Security check
 $socid = 0;
@@ -46,58 +47,48 @@ $object = new Don($db);
  * Actions
  */
 
-if ($action == 'add_payment')
-{
+if ($action == 'add_payment') {
 	$error = 0;
 
-	if ($_POST["cancel"])
-	{
+	if ($cancel) {
 		$loc = DOL_URL_ROOT.'/don/card.php?rowid='.$chid;
 		header("Location: ".$loc);
 		exit;
 	}
 
-	$datepaid = dol_mktime(12, 0, 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
+	$datepaid = dol_mktime(12, 0, 0, GETPOST("remonth"), GETPOST("reday"), GETPOST("reyear"));
 
-	if (!$_POST["paymenttype"] > 0)
-	{
+	if (!(GETPOST("paymenttype") > 0)) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("PaymentMode")), null, 'errors');
 		$error++;
 	}
-	if ($datepaid == '')
-	{
+	if ($datepaid == '') {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Date")), null, 'errors');
 		$error++;
 	}
-	if (!empty($conf->banque->enabled) && !$_POST["accountid"] > 0)
-	{
+	if (!empty($conf->banque->enabled) && !(GETPOST("accountid", 'int') > 0)) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("AccountToCredit")), null, 'errors');
 		$error++;
 	}
 
-	if (!$error)
-	{
+	if (!$error) {
 		$paymentid = 0;
 
 		// Read possible payments
-		foreach ($_POST as $key => $value)
-		{
-			if (substr($key, 0, 7) == 'amount_')
-			{
+		foreach ($_POST as $key => $value) {
+			if (substr($key, 0, 7) == 'amount_') {
 				$other_chid = substr($key, 7);
-				$amounts[$other_chid] = price2num($_POST[$key]);
+				$amounts[$other_chid] = price2num(GETPOST($key));
 			}
 		}
 
-		if (count($amounts) <= 0)
-		{
+		if (count($amounts) <= 0) {
 			$error++;
 			$errmsg = 'ErrorNoPaymentDefined';
 			setEventMessages($errmsg, null, 'errors');
 		}
 
-		if (!$error)
-		{
+		if (!$error) {
 			$db->begin();
 
 			// Create a line of payments
@@ -109,30 +100,25 @@ if ($action == 'add_payment')
 			$payment->num_payment  = GETPOST("num_payment", 'alphanohtml');
 			$payment->note_public  = GETPOST("note_public", 'restricthtml');
 
-			if (!$error)
-			{
+			if (!$error) {
 				$paymentid = $payment->create($user);
-				if ($paymentid < 0)
-				{
+				if ($paymentid < 0) {
 					$errmsg = $payment->error;
 					setEventMessages($errmsg, null, 'errors');
 					$error++;
 				}
 			}
 
-			if (!$error)
-			{
-				$result = $payment->addPaymentToBank($user, 'payment_donation', '(DonationPayment)', $_POST['accountid'], '', '');
-				if (!$result > 0)
-				{
+			if (!$error) {
+				$result = $payment->addPaymentToBank($user, 'payment_donation', '(DonationPayment)', GETPOST('accountid', 'int'), '', '');
+				if (!$result > 0) {
 					$errmsg = $payment->error;
 					setEventMessages($errmsg, null, 'errors');
 					$error++;
 				}
 			}
 
-			if (!$error)
-			{
+			if (!$error) {
 				$db->commit();
 				$loc = DOL_URL_ROOT.'/don/card.php?rowid='.$chid;
 				header('Location: '.$loc);
@@ -158,28 +144,25 @@ llxHeader();
 
 $sql = "SELECT sum(p.amount) as total";
 $sql .= " FROM ".MAIN_DB_PREFIX."payment_donation as p";
-$sql .= " WHERE p.fk_donation = ".$chid;
+$sql .= " WHERE p.fk_donation = ".((int) $chid);
 $resql = $db->query($sql);
-if ($resql)
-{
+if ($resql) {
 	$obj = $db->fetch_object($resql);
 	$sumpaid = $obj->total;
-	$db->free();
+	$db->free($resql);
 }
 
 
 // Form to create donation payment
-if ($action == 'create')
-{
+if ($action == 'create') {
 	$object->fetch($chid);
 
 	$total = $object->amount;
 
 	print load_fiche_titre($langs->trans("DoPayment"));
 
-	if (!empty($conf->use_javascript_ajax))
-	{
-		print "\n".'<script type="text/javascript" language="javascript">';
+	if (!empty($conf->use_javascript_ajax)) {
+		print "\n".'<script type="text/javascript">';
 		//Add js for AutoFill
 		print ' $(document).ready(function () {';
 		print ' 	$(".AutoFillAmout").on(\'click touchstart\', function(){
@@ -201,8 +184,8 @@ if ($action == 'create')
 	print '<table class="border centpercent tableforfieldcreate">';
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("Date").'</td><td colspan="2">';
-	$datepaid = dol_mktime(12, 0, 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
-	$datepayment = empty($conf->global->MAIN_AUTOFILL_DATE) ? (empty($_POST["remonth"]) ?-1 : $datepaid) : 0;
+	$datepaid = dol_mktime(12, 0, 0, GETPOST("remonth"), GETPOST("reday"), GETPOST("reyear"));
+	$datepayment = empty($conf->global->MAIN_AUTOFILL_DATE) ? (GETPOST("remonth") ? $datepaid : -1) : 0;
 	print $form->selectDate($datepayment, '', 0, 0, 0, "add_payment", 1, 1, 0, '', '', $object->date, '', 1, $langs->trans("DonationDate"));
 	print "</td>";
 	print '</tr>';
@@ -234,7 +217,7 @@ if ($action == 'create')
 	print dol_get_fiche_end();
 
 	/*
- 	 * List of payments on donation
+	  * List of payments on donation
 	 */
 
 	$num = 1;
@@ -252,8 +235,7 @@ if ($action == 'create')
 	$total = 0;
 	$totalrecu = 0;
 
-	while ($i < $num)
-	{
+	while ($i < $num) {
 		$objp = $object;
 
 		print '<tr class="oddeven">';
@@ -267,11 +249,11 @@ if ($action == 'create')
 		print '<td class="right">'.price($objp->amount - $sumpaid)."</td>";
 
 		print '<td class="center">';
-		if ($sumpaid < $objp->amount)
-		{
+		if ($sumpaid < $objp->amount) {
 			$namef = "amount_".$objp->id;
-			if (!empty($conf->use_javascript_ajax))
+			if (!empty($conf->use_javascript_ajax)) {
 				print img_picto("Auto fill", 'rightarrow', "class='AutoFillAmout' data-rowname='".$namef."' data-value='".price($objp->amount - $sumpaid)."'");
+			}
 			print '<input type="text" size="8" name="'.$namef.'">';
 		} else {
 			print '-';
@@ -298,11 +280,7 @@ if ($action == 'create')
 
 	print "</table>";
 
-	print '<br><div class="center">';
-	print '<input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'">';
-	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
-	print '</div>';
+	print $form->buttonsSaveCancel();
 
 	print "</form>\n";
 }

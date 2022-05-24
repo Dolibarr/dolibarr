@@ -79,32 +79,39 @@ class box_supplier_orders extends ModeleBoxes
 		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 		$thirdpartystatic = new Fournisseur($this->db);
 
-		$this->info_box_head = array('text' => $langs->trans("BoxTitleLatest".($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE ? "" : "Modified")."SupplierOrders", $max));
+		$this->info_box_head = array('text' => $langs->trans("BoxTitleLatest".(!empty($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) ? "" : "Modified")."SupplierOrders", $max));
 
-		if ($user->rights->fournisseur->commande->lire)
-		{
+		if ($user->rights->fournisseur->commande->lire) {
 			$sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias";
 			$sql .= ", s.code_fournisseur, s.code_compta_fournisseur, s.fournisseur";
 			$sql .= ", s.logo, s.email, s.entity";
 			$sql .= ", c.rowid, c.ref, c.tms, c.date_commande";
 			$sql .= ", c.total_ht";
-			$sql .= ", c.tva as total_tva";
+			$sql .= ", c.total_tva";
 			$sql .= ", c.total_ttc";
 			$sql .= ", c.fk_statut as status";
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 			$sql .= ", ".MAIN_DB_PREFIX."commande_fournisseur as c";
-			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			if (empty($user->rights->societe->client->voir) && !$user->socid) {
+				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			}
 			$sql .= " WHERE c.fk_soc = s.rowid";
 			$sql .= " AND c.entity IN (".getEntity('supplier_order').")";
-			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
-			if ($user->socid) $sql .= " AND s.rowid = ".$user->socid;
-			if ($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) $sql .= " ORDER BY c.date_commande DESC, c.ref DESC ";
-			else $sql .= " ORDER BY c.tms DESC, c.ref DESC ";
+			if (empty($user->rights->societe->client->voir) && !$user->socid) {
+				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
+			}
+			if ($user->socid) {
+				$sql .= " AND s.rowid = ".((int) $user->socid);
+			}
+			if (!empty($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE)) {
+				$sql .= " ORDER BY c.date_commande DESC, c.ref DESC ";
+			} else {
+				$sql .= " ORDER BY c.tms DESC, c.ref DESC ";
+			}
 			$sql .= $this->db->plimit($max, 0);
 
 			$result = $this->db->query($sql);
-			if ($result)
-			{
+			if ($result) {
 				$num = $this->db->num_rows($result);
 
 				$line = 0;
@@ -140,13 +147,13 @@ class box_supplier_orders extends ModeleBoxes
 					);
 
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="right nowraponall"',
+						'td' => 'class="nowraponall right amount"',
 						'text' => price($objp->total_ht, 0, $langs, 0, -1, -1, $conf->currency),
 					);
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right"',
-						'text' => dol_print_date($date, 'day'),
+						'text' => dol_print_date($date, 'day', 'tzuserrel'),
 					);
 
 					$this->info_box_contents[$line][] = array(
@@ -157,11 +164,12 @@ class box_supplier_orders extends ModeleBoxes
 					$line++;
 				}
 
-				if ($num == 0)
+				if ($num == 0) {
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="center"',
 						'text' => $langs->trans("NoSupplierOrder"),
 					);
+				}
 
 				$this->db->free($result);
 			} else {

@@ -75,8 +75,7 @@ class AntiVir
 
 		$return = 0;
 
-		if (preg_match('/\.virus$/i', $file))
-		{
+		if (preg_match('/\.virus$/i', $file)) {
 			$this->errors[] = 'File has an extension saying file is a virus';
 			return -97;
 		}
@@ -93,12 +92,14 @@ class AntiVir
 		// Run CLI command. If run of Windows, you can get return with echo %ERRORLEVEL%
 		$lastline = exec($fullcommand, $output, $return_var);
 
-		if (is_null($output)) $output = array();
+		if (is_null($output)) {
+			$output = array();
+		}
 
 		//print "x".$lastline." - ".join(',',$output)." - ".$return_var."y";exit;
 
 		/*
-        $outputfile=$conf->admin->dir_temp.'/dol_avscan_file.out.'.session_id();
+		$outputfile=$conf->admin->dir_temp.'/dol_avscan_file.out.'.session_id();
 		$handle = fopen($outputfile, 'w');
 		if ($handle)
 		{
@@ -130,14 +131,12 @@ class AntiVir
 		dol_syslog("AntiVir::dol_avscan_file Result return_var=".$return_var." output=".join(',', $output));
 
 		$returncodevirus = 1;
-		if ($return_var == $returncodevirus)	// Virus found
-		{
+		if ($return_var == $returncodevirus) {	// Virus found
 			$this->errors = $output;
 			return -99;
 		}
 
-		if ($return_var > 0)					// If other error
-		{
+		if ($return_var > 0) {					// If other error
 			$this->errors = $output;
 			return -98;
 		}
@@ -174,10 +173,13 @@ class AntiVir
 		$param = preg_replace('/%maxfilesize/', $maxfilesize, $param);
 		$param = preg_replace('/%file/', trim($file), $param);
 
-		if (!preg_match('/%file/', $conf->global->MAIN_ANTIVIRUS_PARAM))
+		if (!preg_match('/%file/', $conf->global->MAIN_ANTIVIRUS_PARAM)) {
 			$param = $param." ".escapeshellarg(trim($file));
+		}
 
-		if (preg_match("/\s/", $command)) $command = escapeshellarg($command); // Use quotes on command. Using escapeshellcmd fails.
+		if (preg_match("/\s/", $command)) {
+			$command = escapeshellarg($command); // Use quotes on command. Using escapeshellcmd fails.
+		}
 
 		$ret = $command.' '.$param;
 		//$ret=$command.' '.$param.' 2>&1';

@@ -33,33 +33,36 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 $action = GETPOST('action', 'aZ09');
 
 $socid = 0;
-if ($user->socid > 0)
-{
+if ($user->socid > 0) {
 	$action = '';
 	$socid = $user->socid;
 }
 
 $dir = $conf->facture->dir_output.'/payments';
-if (!$user->rights->societe->client->voir || $socid) $dir .= '/private/'.$user->id; // If user has no permission to see all, output dir is specific to user
+if (empty($user->rights->societe->client->voir) || $socid) {
+	$dir .= '/private/'.$user->id; // If user has no permission to see all, output dir is specific to user
+}
 
 $year = GETPOST('year', 'int');
-if (!$year) { $year = date("Y"); }
+if (!$year) {
+	$year = date("Y");
+}
 
 // Security check
-if (empty($user->rights->facture->lire)) accessforbidden();
+if (empty($user->rights->facture->lire)) {
+	accessforbidden();
+}
 
 
 /*
  * Actions
  */
 
-if ($action == 'builddoc')
-{
+if ($action == 'builddoc') {
 	$rap = new pdf_paiement($db);
 
 	$outputlangs = $langs;
-	if (GETPOST('lang_id', 'aZ09'))
-	{
+	if (GETPOST('lang_id', 'aZ09')) {
 		$outputlangs = new Translate("", $conf);
 		$outputlangs->setDefaultLang(GETPOST('lang_id', 'aZ09'));
 	}
@@ -67,15 +70,14 @@ if ($action == 'builddoc')
 	// We save charset_output to restore it because write_file can change it if needed for
 	// output format that does not support UTF8.
 	$sav_charset_output = $outputlangs->charset_output;
-	if ($rap->write_file($dir, $_POST["remonth"], $_POST["reyear"], $outputlangs) > 0)
-	{
+	if ($rap->write_file($dir, GETPOST("remonth", "int"), GETPOST("reyear", "int"), $outputlangs) > 0) {
 		$outputlangs->charset_output = $sav_charset_output;
 	} else {
 		$outputlangs->charset_output = $sav_charset_output;
 		dol_print_error($db, $obj->error);
 	}
 
-	$year = $_POST["reyear"];
+	$year = GETPOST("reyear", "int");
 }
 
 
@@ -100,7 +102,7 @@ $syear = GETPOST("reyear") ?GETPOST("reyear") : date("Y", time());
 
 print $formother->select_month($cmonth, 'remonth');
 
-print $formother->select_year($syear, 'reyear');
+print $formother->selectyear($syear, 'reyear');
 
 print '<input type="submit" class="button" value="'.$langs->trans("Create").'">';
 print '</form>';
@@ -110,16 +112,12 @@ clearstatcache();
 
 // Show link on other years
 $year_dirs = dol_dir_list($dir, 'directories', 0, '^[0-9]{4}$', '', 'DESC');
-foreach ($year_dirs as $d)
-{
+foreach ($year_dirs as $d) {
 	print '<a href="'.$_SERVER["PHP_SELF"].'?year='.$d['name'].'">'.$d['name'].'</a> &nbsp;';
 }
 
-$found = true;
-if ($year)
-{
-	if (is_dir($dir.'/'.$year))
-	{
+if ($year) {
+	if (is_dir($dir.'/'.$year)) {
 		if (!empty($year_dirs)) print '<br>';
 		print '<br>';
 		print '<table width="100%" class="noborder">';

@@ -54,11 +54,12 @@ class Export
 	public $array_export_examplevalues = array(); // array with examples for fields
 	public $array_export_help = array(); // array with tooltip help for fields
 
-	// To store export modules
+	// To store export templates
 	public $hexa; // List of fields in the export profile
 	public $hexafiltervalue; // List of search criteria in the export profile
 	public $datatoexport;
 	public $model_name; // Name of export profile
+	public $fk_user;
 
 	public $sqlusedforexport;
 
@@ -96,50 +97,49 @@ class Export
 
 		$modulesdir = dolGetModulesDirs();
 
-		foreach ($modulesdir as $dir)
-		{
+		foreach ($modulesdir as $dir) {
 			// Search available exports
 			$handle = @opendir(dol_osencode($dir));
-			if (is_resource($handle))
-			{
+			if (is_resource($handle)) {
 				// Search module files
-				while (($file = readdir($handle)) !== false)
-				{
+				while (($file = readdir($handle)) !== false) {
 					$reg = array();
-					if (is_readable($dir.$file) && preg_match("/^(mod.*)\.class\.php$/i", $file, $reg))
-					{
+					if (is_readable($dir.$file) && preg_match("/^(mod.*)\.class\.php$/i", $file, $reg)) {
 						$modulename = $reg[1];
 
 						// Defined if module is enabled
 						$enabled = true;
 						$part = strtolower(preg_replace('/^mod/i', '', $modulename));
-						if ($part == 'propale') $part = 'propal';
-						if (empty($conf->$part->enabled)) $enabled = false;
+						if ($part == 'propale') {
+							$part = 'propal';
+						}
+						if (empty($conf->$part->enabled)) {
+							$enabled = false;
+						}
 
-						if ($enabled)
-						{
+						if ($enabled) {
 							// Loading Class
 							$file = $dir.$modulename.".class.php";
 							$classname = $modulename;
 							require_once $file;
 							$module = new $classname($this->db);
 
-							if (isset($module->export_code) && is_array($module->export_code))
-							{
-								foreach ($module->export_code as $r => $value)
-								{
+							if (isset($module->export_code) && is_array($module->export_code)) {
+								foreach ($module->export_code as $r => $value) {
 									//print $i.'-'.$filter.'-'.$modulename.'-'.join(',',$module->export_code).'<br>';
-									if ($filter && ($filter != $module->export_code[$r])) continue;
+									if ($filter && ($filter != $module->export_code[$r])) {
+										continue;
+									}
 
 									// Test if condition to show are ok
-									if (!empty($module->export_enabled[$r]) && !verifCond($module->export_enabled[$r])) continue;
+									if (!empty($module->export_enabled[$r]) && !verifCond($module->export_enabled[$r])) {
+										continue;
+									}
 
 									// Test if permissions are ok
 									$bool = true;
-									if (isset($module->export_permission))
-									{
-										foreach ($module->export_permission[$r] as $val)
-										{
+									if (isset($module->export_permission)) {
+										foreach ($module->export_permission[$r] as $val) {
 											$perm = $val;
 											//print_r("$perm[0]-$perm[1]-$perm[2]<br>");
 											if (!empty($perm[2])) {
@@ -147,8 +147,12 @@ class Export
 											} else {
 												$bool = isset($user->rights->{$perm[0]}->{$perm[1]}) ? $user->rights->{$perm[0]}->{$perm[1]} : false;
 											}
-											if ($perm[0] == 'user' && $user->admin) $bool = true;
-											if (!$bool) break;
+											if ($perm[0] == 'user' && $user->admin) {
+												$bool = true;
+											}
+											if (!$bool) {
+												break;
+											}
 										}
 									}
 									//print $bool." $perm[0]"."<br>";
@@ -158,10 +162,8 @@ class Export
 									//	          {
 									// Charge fichier lang en rapport
 									$langtoload = $module->getLangFilesArray();
-									if (is_array($langtoload))
-									{
-										foreach ($langtoload as $key)
-										{
+									if (is_array($langtoload)) {
+										foreach ($langtoload as $key) {
 											$langs->load($key);
 										}
 									}
@@ -176,7 +178,7 @@ class Export
 									// Code du dataset export
 									$this->array_export_code[$i] = $module->export_code[$r];
 									// Define a key for sort
-									$this->array_export_code_for_sort[$i] = $module->module_position.'_'.$module->export_code[$r];	// Add a key into the module
+									$this->array_export_code_for_sort[$i] = $module->module_position.'_'.$module->export_code[$r]; // Add a key into the module
 									// Libelle du dataset export
 									$this->array_export_label[$i] = $module->getExportDatasetLabel($r);
 									// Tableau des champ a exporter (cle=champ, valeur=libelle)
@@ -234,12 +236,18 @@ class Export
 		$i = 0;
 
 		//print_r($array_selected);
-		foreach ($this->array_export_fields[$indice] as $key => $value)
-		{
-			if (!array_key_exists($key, $array_selected)) continue; // Field not selected
-			if (preg_match('/^none\./', $key)) continue; // A field that must not appears into SQL
-			if ($i > 0) $sql .= ', ';
-			else $i++;
+		foreach ($this->array_export_fields[$indice] as $key => $value) {
+			if (!array_key_exists($key, $array_selected)) {
+				continue; // Field not selected
+			}
+			if (preg_match('/^none\./', $key)) {
+				continue; // A field that must not appears into SQL
+			}
+			if ($i > 0) {
+				$sql .= ', ';
+			} else {
+				$i++;
+			}
 
 			if (strpos($key, ' as ') === false) {
 				$newfield = $key.' as '.str_replace(array('.', '-', '(', ')'), '_', $key);
@@ -252,14 +260,16 @@ class Export
 		$sql .= $this->array_export_sql_end[$indice];
 
 		// Add the WHERE part. Filtering into sql if a filtering array is provided
-		if (is_array($array_filterValue) && !empty($array_filterValue))
-		{
+		if (is_array($array_filterValue) && !empty($array_filterValue)) {
 			$sqlWhere = '';
 			// Loop on each condition to add
-			foreach ($array_filterValue as $key => $value)
-			{
-				if (preg_match('/GROUP_CONCAT/i', $key)) continue;
-				if ($value != '') $sqlWhere .= " and ".$this->build_filterQuery($this->array_export_TypeFields[$indice][$key], $key, $array_filterValue[$key]);
+			foreach ($array_filterValue as $key => $value) {
+				if (preg_match('/GROUP_CONCAT/i', $key)) {
+					continue;
+				}
+				if ($value != '') {
+					$sqlWhere .= " AND ".$this->build_filterQuery($this->array_export_TypeFields[$indice][$key], $key, $array_filterValue[$key]);
+				}
 			}
 			$sql .= $sqlWhere;
 		}
@@ -268,12 +278,12 @@ class Export
 		$sql .= $this->array_export_sql_order[$indice];
 
 		// Add the HAVING part.
-		if (is_array($array_filterValue) && !empty($array_filterValue))
-		{
+		if (is_array($array_filterValue) && !empty($array_filterValue)) {
 			// Loop on each condition to add
-			foreach ($array_filterValue as $key => $value)
-			{
-				if (preg_match('/GROUP_CONCAT/i', $key) and $value != '') $sql .= " HAVING ".$this->build_filterQuery($this->array_export_TypeFields[$indice][$key], $key, $array_filterValue[$key]);
+			foreach ($array_filterValue as $key => $value) {
+				if (preg_match('/GROUP_CONCAT/i', $key) and $value != '') {
+					$sql .= " HAVING ".$this->build_filterQuery($this->array_export_TypeFields[$indice][$key], $key, $array_filterValue[$key]);
+				}
 			}
 		}
 
@@ -287,60 +297,76 @@ class Export
 	 *      @param		string	$TypeField		Type of Field to filter
 	 *      @param		string	$NameField		Name of the field to filter
 	 *      @param		string	$ValueField		Value of the field for filter. Must not be ''
-	 *      @return		string					sql string of then field ex : "field='xxx'>"
+	 *      @return		string					SQL string of then field ex : "field='xxx'"
 	 */
 	public function build_filterQuery($TypeField, $NameField, $ValueField)
 	{
 		// phpcs:enable
+		$NameField = checkVal($NameField, 'aZ09');
+		$szFilterQuery = '';
+
 		//print $TypeField." ".$NameField." ".$ValueField;
 		$InfoFieldList = explode(":", $TypeField);
 		// build the input field on depend of the type of file
 		switch ($InfoFieldList[0]) {
 			case 'Text':
-				if (!(strpos($ValueField, '%') === false))
-					$szFilterQuery .= " ".$NameField." LIKE '".$ValueField."'";
-				else $szFilterQuery .= " ".$NameField." = '".$ValueField."'";
+				if (!(strpos($ValueField, '%') === false)) {
+					$szFilterQuery = " ".$NameField." LIKE '".$this->db->escape($ValueField)."'";
+				} else {
+					$szFilterQuery = " ".$NameField." = '".$this->db->escape($ValueField)."'";
+				}
 				break;
 			case 'Date':
-				if (strpos($ValueField, "+") > 0)
-				{
+				if (strpos($ValueField, "+") > 0) {
 					// mode plage
 					$ValueArray = explode("+", $ValueField);
 					$szFilterQuery = "(".$this->conditionDate($NameField, trim($ValueArray[0]), ">=");
 					$szFilterQuery .= " AND ".$this->conditionDate($NameField, trim($ValueArray[1]), "<=").")";
 				} else {
-					if (is_numeric(substr($ValueField, 0, 1)))
+					if (is_numeric(substr($ValueField, 0, 1))) {
 						$szFilterQuery = $this->conditionDate($NameField, trim($ValueField), "=");
-					else $szFilterQuery = $this->conditionDate($NameField, trim(substr($ValueField, 1)), substr($ValueField, 0, 1));
+					} else {
+						$szFilterQuery = $this->conditionDate($NameField, trim(substr($ValueField, 1)), substr($ValueField, 0, 1));
+					}
 				}
 				break;
 			case 'Duree':
 				break;
 			case 'Numeric':
-				// si le signe -
-				if (strpos($ValueField, "+") > 0)
-				{
+				// if there is a signe +
+				if (strpos($ValueField, "+") > 0) {
 					// mode plage
 					$ValueArray = explode("+", $ValueField);
-					$szFilterQuery = "(".$NameField.">=".$ValueArray[0];
-					$szFilterQuery .= " AND ".$NameField."<=".$ValueArray[1].")";
+					$szFilterQuery = "(".$NameField." >= ".((float) $ValueArray[0]);
+					$szFilterQuery .= " AND ".$NameField." <= ".((float) $ValueArray[1]).")";
 				} else {
-					if (is_numeric(substr($ValueField, 0, 1)))
-						$szFilterQuery = " ".$NameField."=".$ValueField;
-					else $szFilterQuery = " ".$NameField.substr($ValueField, 0, 1).substr($ValueField, 1);
+					if (is_numeric(substr($ValueField, 0, 1))) {
+						$szFilterQuery = " ".$NameField." = ".((float) $ValueField);
+					} else {
+						$szFilterQuery = " ".$NameField.substr($ValueField, 0, 1).((float) substr($ValueField, 1));
+					}
 				}
 				break;
 			case 'Boolean':
 				$szFilterQuery = " ".$NameField."=".(is_numeric($ValueField) ? $ValueField : ($ValueField == 'yes' ? 1 : 0));
 				break;
+			case 'FormSelect':
+				if (is_numeric($ValueField) && $ValueField > 0) {
+					$szFilterQuery = " ".$NameField." = ".((float) $ValueField);
+				} else {
+					$szFilterQuery = " 1=1";	// Test always true
+				}
+				break;
 			case 'Status':
 			case 'List':
-				if (is_numeric($ValueField))
-					$szFilterQuery = " ".$NameField."=".$ValueField;
-				else {
-					if (!(strpos($ValueField, '%') === false))
-						$szFilterQuery = " ".$NameField." LIKE '".$ValueField."'";
-					else $szFilterQuery = " ".$NameField." = '".$ValueField."'";
+				if (is_numeric($ValueField)) {
+					$szFilterQuery = " ".$NameField." = ".((float) $ValueField);
+				} else {
+					if (!(strpos($ValueField, '%') === false)) {
+						$szFilterQuery = " ".$NameField." LIKE '".$this->db->escape($ValueField)."'";
+					} else {
+						$szFilterQuery = " ".$NameField." = '".$this->db->escape($ValueField)."'";
+					}
 				}
 				break;
 			default:
@@ -360,10 +386,14 @@ class Export
 	 */
 	public function conditionDate($Field, $Value, $Sens)
 	{
-		// TODO date_format is forbidden, not performant and not portable. Use instead BETWEEN
-		if (strlen($Value) == 4) $Condition = " date_format(".$Field.",'%Y') ".$Sens." '".$Value."'";
-		elseif (strlen($Value) == 6) $Condition = " date_format(".$Field.",'%Y%m') ".$Sens." '".$Value."'";
-		else $Condition = " date_format(".$Field.",'%Y%m%d') ".$Sens." ".$Value;
+		// TODO date_format is forbidden, not performant and not portable. Use instead $Value to forge the range date.
+		if (strlen($Value) == 4) {
+			$Condition = " date_format(".$Field.",'%Y') ".$Sens." '".$this->db->escape($Value)."'";
+		} elseif (strlen($Value) == 6) {
+			$Condition = " date_format(".$Field.",'%Y%m') ".$Sens." '".$this->db->escape($Value)."'";
+		} else {
+			$Condition = " date_format(".$Field.",'%Y%m%d') ".$Sens." '".$this->db->escape($Value)."'";
+		}
 		return $Condition;
 	}
 
@@ -379,14 +409,13 @@ class Export
 	public function build_filterField($TypeField, $NameField, $ValueField)
 	{
 		// phpcs:enable
-		global $conf, $langs;
+		global $conf, $langs, $form;
 
 		$szFilterField = '';
 		$InfoFieldList = explode(":", $TypeField);
 
 		// build the input field on depend of the type of file
-		switch ($InfoFieldList[0])
-		{
+		switch ($InfoFieldList[0]) {
 			case 'Text':
 			case 'Date':
 				$szFilterField = '<input type="text" name="'.$NameField.'" value="'.$ValueField.'">';
@@ -394,7 +423,7 @@ class Export
 			case 'Duree':
 			case 'Numeric':
 			case 'Number':
-				// Must be a string text to allow to use comparison strings like "<= 999"
+				// Must be a string text to allow to use comparison strings like "<= 99.9"
 				$szFilterField = '<input type="text" size="6" name="'.$NameField.'" value="'.$ValueField.'">';
 				break;
 			case 'Status':
@@ -403,17 +432,33 @@ class Export
 			case 'Boolean':
 				$szFilterField = '<select name="'.$NameField.'" class="flat">';
 				$szFilterField .= '<option ';
-				if ($ValueField == '') $szFilterField .= ' selected ';
+				if ($ValueField == '') {
+					$szFilterField .= ' selected ';
+				}
 				$szFilterField .= ' value="">&nbsp;</option>';
 
 				$szFilterField .= '<option ';
-				if ($ValueField == 'yes' || $ValueField == '1') $szFilterField .= ' selected ';
+				if ($ValueField == 'yes' || $ValueField == '1') {
+					$szFilterField .= ' selected ';
+				}
 				$szFilterField .= ' value="1">'.yn(1).'</option>';
 
 				$szFilterField .= '<option ';
-				if ($ValueField == 'no' || $ValueField == '0') $szFilterField .= ' selected ';
+				if ($ValueField == 'no' || $ValueField == '0') {
+					$szFilterField .= ' selected ';
+				}
 				$szFilterField .= ' value="0">'.yn(0).'</option>';
 				$szFilterField .= "</select>";
+				break;
+			case 'FormSelect':
+				//var_dump($NameField);
+				if ($InfoFieldList[1] == 'select_company') {
+					$szFilterField .= $form->select_company('', $NameField, '', 1);
+				} elseif ($InfoFieldList[1] == 'selectcontacts') {
+					$szFilterField .= $form->selectcontacts(0, '', $NameField, '&nbsp;');
+				} elseif ($InfoFieldList[1] == 'select_dolusers') {
+					$szFilterField .= $form->select_dolusers('', $NameField, 1);
+				}
 				break;
 			case 'List':
 				// 0 : Type du champ
@@ -422,51 +467,50 @@ class Export
 				// 3 : Name of field with key (if it is not "rowid"). Used this field as key for combo list.
 				// 4 : Name of element for getEntity().
 
-				if (!empty($InfoFieldList[3]))
+				if (!empty($InfoFieldList[3])) {
 					$keyList = $InfoFieldList[3];
-				else $keyList = 'rowid';
-				$sql = 'SELECT '.$keyList.' as rowid, '.$InfoFieldList[2].' as label'.(empty($InfoFieldList[3]) ? '' : ', '.$InfoFieldList[3].' as code');
-				if ($InfoFieldList[1] == 'c_stcomm') $sql = 'SELECT id as id, '.$keyList.' as rowid, '.$InfoFieldList[2].' as label'.(empty($InfoFieldList[3]) ? '' : ', '.$InfoFieldList[3].' as code');
-				if ($InfoFieldList[1] == 'c_country') $sql = 'SELECT '.$keyList.' as rowid, '.$InfoFieldList[2].' as label, code as code';
-				$sql .= ' FROM '.MAIN_DB_PREFIX.$InfoFieldList[1];
+				} else {
+					$keyList = 'rowid';
+				}
+				$sql = "SELECT ".$keyList." as rowid, ".$InfoFieldList[2]." as label".(empty($InfoFieldList[3]) ? "" : ", ".$InfoFieldList[3]." as code");
+				if ($InfoFieldList[1] == 'c_stcomm') {
+					$sql = "SELECT id as id, ".$keyList." as rowid, ".$InfoFieldList[2]." as label".(empty($InfoFieldList[3]) ? "" : ", ".$InfoFieldList[3].' as code');
+				}
+				if ($InfoFieldList[1] == 'c_country') {
+					$sql = "SELECT ".$keyList." as rowid, ".$InfoFieldList[2]." as label, code as code";
+				}
+				$sql .= " FROM ".MAIN_DB_PREFIX.$InfoFieldList[1];
 				if (!empty($InfoFieldList[4])) {
 					$sql .= ' WHERE entity IN ('.getEntity($InfoFieldList[4]).')';
 				}
 
 				$resql = $this->db->query($sql);
-				if ($resql)
-				{
+				if ($resql) {
 					$szFilterField = '<select class="flat" name="'.$NameField.'">';
 					$szFilterField .= '<option value="0">&nbsp;</option>';
 					$num = $this->db->num_rows($resql);
 
 					$i = 0;
-					if ($num)
-					{
-						while ($i < $num)
-						{
+					if ($num) {
+						while ($i < $num) {
 							$obj = $this->db->fetch_object($resql);
-							if ($obj->label == '-')
-							{
+							if ($obj->label == '-') {
 								// Discard entry '-'
 								$i++;
 								continue;
 							}
 							//var_dump($InfoFieldList[1]);
 							$labeltoshow = dol_trunc($obj->label, 18);
-							if ($InfoFieldList[1] == 'c_stcomm')
-							{
+							if ($InfoFieldList[1] == 'c_stcomm') {
 								$langs->load("companies");
 								$labeltoshow = (($langs->trans("StatusProspect".$obj->id) != "StatusProspect".$obj->id) ? $langs->trans("StatusProspect".$obj->id) : $obj->label);
 							}
-							if ($InfoFieldList[1] == 'c_country')
-							{
+							if ($InfoFieldList[1] == 'c_country') {
 								//var_dump($sql);
 								$langs->load("dict");
 								$labeltoshow = (($langs->trans("Country".$obj->code) != "Country".$obj->code) ? $langs->trans("Country".$obj->code) : $obj->label);
 							}
-							if (!empty($ValueField) && $ValueField == $obj->rowid)
-							{
+							if (!empty($ValueField) && $ValueField == $obj->rowid) {
 								$szFilterField .= '<option value="'.$obj->rowid.'" selected>'.$labeltoshow.'</option>';
 							} else {
 								$szFilterField .= '<option value="'.$obj->rowid.'" >'.$labeltoshow.'</option>';
@@ -477,7 +521,9 @@ class Export
 					$szFilterField .= "</select>";
 
 					$this->db->free($resql);
-				} else dol_print_error($this->db);
+				} else {
+					dol_print_error($this->db);
+				}
 				break;
 		}
 
@@ -542,8 +588,7 @@ class Export
 		dol_syslog(__METHOD__." ".$model.", ".$datatoexport.", ".implode(",", $array_selected));
 
 		// Check parameters or context properties
-		if (empty($this->array_export_fields) || !is_array($this->array_export_fields))
-		{
+		if (empty($this->array_export_fields) || !is_array($this->array_export_fields)) {
 			$this->error = "ErrorBadParameter";
 			dol_syslog($this->error, LOG_ERR);
 			return -1;
@@ -556,22 +601,20 @@ class Export
 		require_once $dir.$file;
 		$objmodel = new $classname($this->db);
 
-		if (!empty($sqlquery)) $sql = $sqlquery;
-		else {
+		if (!empty($sqlquery)) {
+			$sql = $sqlquery;
+		} else {
 			// Define value for indice from $datatoexport
 			$foundindice = 0;
-			foreach ($this->array_export_code as $key => $dataset)
-			{
-				if ($datatoexport == $dataset)
-				{
+			foreach ($this->array_export_code as $key => $dataset) {
+				if ($datatoexport == $dataset) {
 					$indice = $key;
 					$foundindice++;
 					//print "Found indice = ".$indice." for dataset=".$datatoexport."\n";
 					break;
 				}
 			}
-			if (empty($foundindice))
-			{
+			if (empty($foundindice)) {
 				$this->error = "ErrorBadParameter can't find dataset ".$datatoexport." into preload arrays this->array_export_code";
 				return -1;
 			}
@@ -582,14 +625,15 @@ class Export
 		$this->sqlusedforexport = $sql;
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			//$this->array_export_label[$indice]
 			if (!empty($conf->global->EXPORT_PREFIX_SPEC)) {
 				$filename = $conf->global->EXPORT_PREFIX_SPEC."_".$datatoexport;
-			}
-			else {
+			} else {
 				$filename = "export_".$datatoexport;
+			}
+			if (!empty($conf->global->EXPORT_NAME_WITH_DT)) {
+				$filename .= dol_print_date(dol_now(), '%Y%m%d%_%H%M');
 			}
 			$filename .= '.'.$objmodel->getDriverExtension();
 			$dirname = $conf->export->dir_temp.'/'.$user->id;
@@ -600,55 +644,48 @@ class Export
 			dol_mkdir($dirname);
 			$result = $objmodel->open_file($dirname."/".$filename, $outputlangs);
 
-			if ($result >= 0)
-			{
+			if ($result >= 0) {
 				// Genere en-tete
 				$objmodel->write_header($outputlangs);
 
 				// Genere ligne de titre
 				$objmodel->write_title($this->array_export_fields[$indice], $array_selected, $outputlangs, isset($this->array_export_TypeFields[$indice]) ? $this->array_export_TypeFields[$indice] : null);
 
-				while ($obj = $this->db->fetch_object($resql))
-				{
+				while ($obj = $this->db->fetch_object($resql)) {
 					// Process special operations
-					if (!empty($this->array_export_special[$indice]))
-					{
-						foreach ($this->array_export_special[$indice] as $key => $value)
-						{
-							if (!array_key_exists($key, $array_selected)) continue; // Field not selected
+					if (!empty($this->array_export_special[$indice])) {
+						foreach ($this->array_export_special[$indice] as $key => $value) {
+							if (!array_key_exists($key, $array_selected)) {
+								continue; // Field not selected
+							}
 							// Operation NULLIFNEG
-							if ($this->array_export_special[$indice][$key] == 'NULLIFNEG')
-							{
+							if ($this->array_export_special[$indice][$key] == 'NULLIFNEG') {
 								//$alias=$this->array_export_alias[$indice][$key];
 								$alias = str_replace(array('.', '-', '(', ')'), '_', $key);
-								if ($obj->$alias < 0) $obj->$alias = '';
-							}
-							// Operation ZEROIFNEG
-							elseif ($this->array_export_special[$indice][$key] == 'ZEROIFNEG')
-							{
+								if ($obj->$alias < 0) {
+									$obj->$alias = '';
+								}
+							} elseif ($this->array_export_special[$indice][$key] == 'ZEROIFNEG') {
+								// Operation ZEROIFNEG
 								//$alias=$this->array_export_alias[$indice][$key];
 								$alias = str_replace(array('.', '-', '(', ')'), '_', $key);
-								if ($obj->$alias < 0) $obj->$alias = '0';
-							}
-							// Operation GETNUMOPENDAYS (for Holiday module)
-							elseif ($this->array_export_special[$indice][$key] == 'getNumOpenDays')
-							{
+								if ($obj->$alias < 0) {
+									$obj->$alias = '0';
+								}
+							} elseif ($this->array_export_special[$indice][$key] == 'getNumOpenDays') {
+								// Operation GETNUMOPENDAYS (for Holiday module)
 								include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 								//$alias=$this->array_export_alias[$indice][$key];
 								$alias = str_replace(array('.', '-', '(', ')'), '_', $key);
 								$obj->$alias = num_open_day(dol_stringtotime($obj->d_date_debut, 1), dol_stringtotime($obj->d_date_fin, 1), 0, 1, $obj->d_halfday, $mysoc->country_code);
-							}
-							// Operation INVOICEREMAINTOPAY
-							elseif ($this->array_export_special[$indice][$key] == 'getRemainToPay')
-							{
+							} elseif ($this->array_export_special[$indice][$key] == 'getRemainToPay') {
+								// Operation INVOICEREMAINTOPAY
 								//$alias=$this->array_export_alias[$indice][$key];
 								$alias = str_replace(array('.', '-', '(', ')'), '_', $key);
 								$remaintopay = '';
-								if ($obj->f_rowid > 0)
-								{
+								if ($obj->f_rowid > 0) {
 									global $tmpobjforcomputecall;
-									if (!is_object($tmpobjforcomputecall))
-									{
+									if (!is_object($tmpobjforcomputecall)) {
 										include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 										$tmpobjforcomputecall = new Facture($this->db);
 									}
@@ -707,8 +744,6 @@ class Export
 
 		$this->db->begin();
 
-		$filter = '';
-
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'export_model (';
 		$sql .= 'label,';
 		$sql .= 'type,';
@@ -719,14 +754,12 @@ class Export
 		$sql .= "'".$this->db->escape($this->model_name)."',";
 		$sql .= " '".$this->db->escape($this->datatoexport)."',";
 		$sql .= " '".$this->db->escape($this->hexa)."',";
-		$sql .= ' '.($user->id > 0 ? $user->id : 'null').",";
+		$sql .= ' '.(isset($this->fk_user) ? (int) $this->fk_user : 'null').",";
 		$sql .= " '".$this->db->escape($this->hexafiltervalue)."'";
 		$sql .= ")";
 
-		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$this->db->commit();
 			return 1;
 		} else {
@@ -751,11 +784,9 @@ class Export
 
 		dol_syslog("Export::fetch", LOG_DEBUG);
 		$result = $this->db->query($sql);
-		if ($result)
-		{
+		if ($result) {
 			$obj = $this->db->fetch_object($result);
-			if ($obj)
-			{
+			if ($obj) {
 				$this->id = $obj->rowid;
 				$this->model_name = $obj->label;
 				$this->datatoexport = $obj->type;
@@ -788,19 +819,19 @@ class Export
 		$error = 0;
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."export_model";
-		$sql .= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
 
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
+		if (!$resql) {
+			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+		}
 
 		// Commit or rollback
-		if ($error)
-		{
-			foreach ($this->errors as $errmsg)
-			{
+		if ($error) {
+			foreach ($this->errors as $errmsg) {
 				dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
 				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
@@ -829,12 +860,10 @@ class Export
 		$sql .= " ORDER BY rowid";
 
 		$result = $this->db->query($sql);
-		if ($result)
-		{
+		if ($result) {
 			$num = $this->db->num_rows($result);
 			$i = 0;
-			while ($i < $num)
-			{
+			while ($i < $num) {
 				$obj = $this->db->fetch_object($result);
 				$keyModel = array_search($obj->type, $this->array_export_code);
 				print "<tr>";

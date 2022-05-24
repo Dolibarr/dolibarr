@@ -89,9 +89,12 @@ abstract class ModeleNumRefTakepos
 	/**
 	 * Renvoi prochaine valeur attribuee
 	 *
-	 * @return     string      Valeur
+	 * @param   Societe     $objsoc     Object thirdparty
+	 * @param   Facture		$invoice	Object invoice
+	 * @param   string		$mode       'next' for next value or 'last' for last value
+	 * @return  string      Value if KO, <0 if KO
 	 */
-	public function getNextValue()
+	public function getNextValue($objsoc = null, $invoice = null, $mode = 'next')
 	{
 		global $langs;
 		return $langs->trans('NotAvailable');
@@ -107,10 +110,18 @@ abstract class ModeleNumRefTakepos
 		global $langs;
 		$langs->load("admin");
 
-		if ($this->version == 'development') return $langs->trans('VersionDevelopment');
-		if ($this->version == 'experimental') return $langs->trans('VersionExperimental');
-		if ($this->version == 'dolibarr') return DOL_VERSION;
-		if ($this->version) return $this->version;
+		if ($this->version == 'development') {
+			return $langs->trans('VersionDevelopment');
+		}
+		if ($this->version == 'experimental') {
+			return $langs->trans('VersionExperimental');
+		}
+		if ($this->version == 'dolibarr') {
+			return DOL_VERSION;
+		}
+		if ($this->version) {
+			return $this->version;
+		}
 		return $langs->trans('NotAvailable');
 	}
 }

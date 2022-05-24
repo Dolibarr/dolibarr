@@ -4,7 +4,7 @@
  * Copyright (C) 2006-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2021  Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,19 +29,24 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
 
-if (!$user->rights->user->user->lire && !$user->admin)
+if (!$user->rights->user->user->lire && !$user->admin) {
 	accessforbidden();
+}
 
 // Load translation files required by page
 $langs->loadLangs(array('users', 'companies'));
 
 // Security check (for external users)
 $socid = 0;
-if ($user->socid > 0)
+if ($user->socid > 0) {
 	$socid = $user->socid;
+}
 
-$sall = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
-$search_user = GETPOST('search_user', 'alpha');
+$optioncss = GETPOST('optioncss', 'alpha');
+$contextpage = GETPOST('optioncss', 'aZ09');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 
 // Load mode employee
 $mode = GETPOST("mode", 'alpha');
@@ -49,10 +54,11 @@ $mode = GETPOST("mode", 'alpha');
 $userstatic = new User($db);
 $search_statut = GETPOST('search_statut', 'int');
 
-if ($search_statut == '') $search_statut = '1';
+if ($search_statut == '' || $search_statut == '0') {
+	$search_statut = '1';
+}
 
-if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // Both test are required to be compatible with all browsers
-{
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // Both test are required to be compatible with all browsers
 	$search_statut = "";
 }
 
@@ -67,20 +73,20 @@ $canadduser = (!empty($user->admin) || $user->rights->user->user->creer);
 
 $form = new Form($db);
 
+$title = $langs->trans("Users").' - '.$langs->trans("HierarchicView");
 $arrayofjs = array(
 	'/includes/jquery/plugins/jquerytreeview/jquery.treeview.js',
 	'/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js',
 );
 $arrayofcss = array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.css');
 
-llxHeader('', $langs->trans("ListOfUsers").' - '.$langs->trans("HierarchicView"), '', '', 0, 0, $arrayofjs, $arrayofcss);
+llxHeader('', $title, '', '', 0, 0, $arrayofjs, $arrayofcss, '', 'bodyforlist');
 
 
 // Load hierarchy of users
 $user_arbo = $userstatic->get_full_tree(0, ($search_statut != '' && $search_statut >= 0) ? "statut = ".$search_statut : '');
 
-if (!is_array($user_arbo) && $user_arbo < 0)
-{
+if (!is_array($user_arbo) && $user_arbo < 0) {
 	setEventMessages($userstatic->error, $userstatic->errors, 'warnings');
 } else {
 	// Define fulltree array
@@ -89,10 +95,9 @@ if (!is_array($user_arbo) && $user_arbo < 0)
 	// Define data (format for treeview)
 	$data = array();
 	$data[] = array('rowid'=>0, 'fk_menu'=>-1, 'title'=>"racine", 'mainmenu'=>'', 'leftmenu'=>'', 'fk_mainmenu'=>'', 'fk_leftmenu'=>'');
-	foreach ($fulltree as $key => $val)
-	{
+	foreach ($fulltree as $key => $val) {
 		$userstatic->id = $val['id'];
-		$userstatic->ref = $val['label'];
+		$userstatic->ref = $val['id'];
 		$userstatic->login = $val['login'];
 		$userstatic->firstname = $val['firstname'];
 		$userstatic->lastname = $val['lastname'];
@@ -108,10 +113,8 @@ if (!is_array($user_arbo) && $user_arbo < 0)
 		$entitystring = '';
 
 		// TODO Set of entitystring should be done with a hook
-		if (!empty($conf->multicompany->enabled) && is_object($mc))
-		{
-			if (empty($entity))
-			{
+		if (!empty($conf->multicompany->enabled) && is_object($mc)) {
+			if (empty($entity)) {
 				$entitystring = $langs->trans("AllEntities");
 			} else {
 				$mc->getInfo($entity);
@@ -120,16 +123,14 @@ if (!is_array($user_arbo) && $user_arbo < 0)
 		}
 
 		$li = $userstatic->getNomUrl(-1, '', 0, 1);
-		if (!empty($conf->multicompany->enabled) && $userstatic->admin && !$userstatic->entity)
-		{
+		if (!empty($conf->multicompany->enabled) && $userstatic->admin && !$userstatic->entity) {
 			$li .= img_picto($langs->trans("SuperAdministrator"), 'redstar');
-		} elseif ($userstatic->admin)
-		{
+		} elseif ($userstatic->admin) {
 			$li .= img_picto($langs->trans("Administrator"), 'star');
 		}
-		$li .= ' ('.$val['login'].($entitystring ? ' - '.$entitystring : '').')';
+		$li .= ' <span class="opacitymedium">('.$val['login'].($entitystring ? ' - '.$entitystring : '').')</span>';
 
-		$entry = '<table class="nobordernopadding centpercent"><tr><td class="'.($val['statut'] ? 'usertdenabled' : 'usertddisabled').'">'.$li.'</td><td align="right" class="'.($val['statut'] ? 'usertdenabled' : 'usertddisabled').'">'.$userstatic->getLibStatut(2).'</td></tr></table>';
+		$entry = '<table class="nobordernopadding centpercent"><tr class="trtree"><td class="'.($val['statut'] ? 'usertdenabled' : 'usertddisabled').'">'.$li.'</td><td align="right" class="'.($val['statut'] ? 'usertdenabled' : 'usertddisabled').'">'.$userstatic->getLibStatut(2).'</td></tr></table>';
 
 		$data[] = array(
 			'rowid'=>$val['rowid'],
@@ -141,21 +142,25 @@ if (!is_array($user_arbo) && $user_arbo < 0)
 
 	//var_dump($data);
 
-	$title = $langs->trans("ListOfUsers").' - '.$langs->trans("HierarchicView");
-
 	$param = "search_statut=".urlencode($search_statut);
 
 	$newcardbutton = '';
+	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', DOL_URL_ROOT.'/user/list.php?mode=kanban'.(($search_statut != '' && $search_statut >= 0) ? '&search_statut='.$search_statut : '').preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars paddingleft imgforviewmode', DOL_URL_ROOT.'/user/list.php?mode=common'.(($search_statut != '' && $search_statut >= 0) ? '&search_statut='.$search_statut : '').preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('HierarchicView'), '', 'fa fa-stream paddingleft imgforviewmode', DOL_URL_ROOT.'/user/hierarchy.php?mode=hierarchy'.(($search_statut != '' && $search_statut >= 0) ? '&search_statut='.$search_statut : '').preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', (($mode == 'hierarchy') ? 2 : 1), array('morecss'=>'reposition'));
+	$newcardbutton .= dolGetButtonTitleSeparator();
 	$newcardbutton .= dolGetButtonTitle($langs->trans('NewUser'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/user/card.php?action=create'.($mode == 'employee' ? '&employee=1' : '').'&leftmenu=', '', $canadduser);
 
-	$morehtmlright .= dolGetButtonTitle($langs->trans("List"), '', 'fa fa-list paddingleft imgforviewmode', DOL_URL_ROOT.'/user/list.php'.(($search_statut != '' && $search_statut >= 0) ? '?search_statut='.$search_statut : ''));
-	$param = array('morecss'=>'marginleftonly btnTitleSelected');
-	$morehtmlright .= dolGetButtonTitle($langs->trans("HierarchicView"), '', 'fa fa-stream paddingleft imgforviewmode', DOL_URL_ROOT.'/user/hierarchy.php'.(($search_statut != '' && $search_statut >= 0) ? '?search_statut='.$search_statut : ''), '', 1, $param);
+	$massactionbutton = '';
+	$num = 0;
+	$limit = 0;
 
-	print load_fiche_titre($title, $morehtmlright.' '.$newcardbutton, 'user');
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, '', 'user', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
-	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	if ($optioncss != '') {
+		print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	}
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
@@ -163,6 +168,7 @@ if (!is_array($user_arbo) && $user_arbo < 0)
 	print '<input type="hidden" name="mode" value="'.$mode.'">';
 	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
+	print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 	print '<table class="liste nohover centpercent">';
 
 	print '<tr class="liste_titre_filter">';
@@ -170,7 +176,7 @@ if (!is_array($user_arbo) && $user_arbo < 0)
 	print '<td class="liste_titre">&nbsp;</td>';
 	// Status
 	print '<td class="liste_titre right">';
-	print $form->selectarray('search_statut', array('-1'=>'', '1'=>$langs->trans('Enabled')), $search_statut);
+	print $form->selectarray('search_statut', array('-1'=>'', '1'=>$langs->trans('Enabled')), $search_statut, 0, 0, 0, '', 0, 0, 0, '', 'minwidth75imp');
 	print '</td>';
 	print '<td class="liste_titre maxwidthsearch">';
 	$searchpicto = $form->showFilterAndCheckAddButtons(0);
@@ -180,7 +186,7 @@ if (!is_array($user_arbo) && $user_arbo < 0)
 
 	print '<tr class="liste_titre">';
 	print_liste_field_titre("HierarchicView");
-	print_liste_field_titre('<div id="iddivjstreecontrol"><a href="#">'.img_picto('', 'folder', 'class="paddingright"').$langs->trans("UndoExpandAll").'</a> | <a href="#">'.img_picto('', 'folder-open', 'class="paddingright"').$langs->trans("ExpandAll").'</a></div>', $_SERVER['PHP_SELF'], "", '', "", 'align="center"');
+	print_liste_field_titre('<div id="iddivjstreecontrol"><a href="#">'.img_picto('', 'folder', 'class="paddingright"').'<span class="hideonsmartphone">'.$langs->trans("UndoExpandAll").'</span></a> | <a href="#">'.img_picto('', 'folder-open', 'class="paddingright"').'<span class="hideonsmartphone">'.$langs->trans("ExpandAll").'</span></a></div>', $_SERVER['PHP_SELF'], "", '', "", 'align="center"');
 	print_liste_field_titre("Status", $_SERVER['PHP_SELF'], "", '', "", 'align="right"');
 	print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', '', '', '', 'maxwidthsearch ');
 	print '</tr>';
@@ -188,8 +194,7 @@ if (!is_array($user_arbo) && $user_arbo < 0)
 
 	$nbofentries = (count($data) - 1);
 
-	if ($nbofentries > 0)
-	{
+	if ($nbofentries > 0) {
 		print '<tr><td colspan="3">';
 		tree_recur($data, $data[0], 0);
 		print '</td>';
@@ -210,11 +215,13 @@ if (!is_array($user_arbo) && $user_arbo < 0)
 	}
 
 	print "</table>";
+	print '</div>';
+
 	print "</form>\n";
 }
 
 //
-/*print '<script type="text/javascript" language="javascript">
+/*print '<script type="text/javascript">
 jQuery(document).ready(function() {
 	function init_myfunc()
 	{

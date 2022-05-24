@@ -24,7 +24,9 @@ require '../../main.inc.php';
 
 $langs->load("admin");
 
-if (!$user->admin) accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
 
 $action = GETPOST('action', 'aZ09');
 
@@ -39,8 +41,7 @@ print load_fiche_titre("XCache", '', 'title_setup');
 
 print "<br>\n";
 
-if (!function_exists('xcache_info'))
-{
+if (!function_exists('xcache_info')) {
 	print 'XCache seems to be not installed. Function xcache_info not found.';
 	llxFooter();
 	exit;
@@ -57,23 +58,6 @@ print $langs->trans("xcache.optimizer").': '.yn(ini_get('xcache.optimizer')).' (
 print $langs->trans("xcache.stat").': '.yn(ini_get('xcache.stat')).'<br>'."\n";
 print $langs->trans("xcache.coverager").': '.yn(ini_get('xcache.coverager')).'<br>'."\n";
 
-//print xcache_get();
-/*
-$cacheinfos = array();
-for ($i = 0; $i < 10; $i ++)
-{
-    $data = xcache_info(XC_TYPE_PHP, $i);
-    $data['cacheid'] = $i;
-    $cacheinfos[] = $data;
-}
-
-var_dump($cacheinfos);
-
-if ($action == 'clear')
-{
-    xcache_clear_cache();
-}
-*/
 
 // End of page
 llxFooter();

@@ -70,12 +70,15 @@ class ReceptionStats extends Stats
 
 		//$this->where.= " AND c.fk_soc = s.rowid AND c.entity = ".$conf->entity;
 		$this->where .= " AND c.entity = ".$conf->entity;
-		if (!$user->rights->societe->client->voir && !$this->socid) $this->where .= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = ".$user->id;
-		if ($this->socid)
-		{
-			$this->where .= " AND c.fk_soc = ".$this->socid;
+		if (empty($user->rights->societe->client->voir) && !$this->socid) {
+			$this->where .= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
-		if ($this->userid > 0) $this->where .= ' AND c.fk_user_author = '.$this->userid;
+		if ($this->socid) {
+			$this->where .= " AND c.fk_soc = ".((int) $this->socid);
+		}
+		if ($this->userid > 0) {
+			$this->where .= ' AND c.fk_user_author = '.((int) $this->userid);
+		}
 	}
 
 	/**
@@ -90,7 +93,7 @@ class ReceptionStats extends Stats
 
 		$sql = "SELECT date_format(c.date_valid,'%m') as dm, COUNT(*) as nb";
 		$sql .= " FROM ".$this->from;
-		if (!$user->rights->societe->client->voir && !$this->socid) {
+		if (empty($user->rights->societe->client->voir) && !$this->socid) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
 		$sql .= " WHERE c.date_valid BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
@@ -114,7 +117,9 @@ class ReceptionStats extends Stats
 
 		$sql = "SELECT date_format(c.date_valid,'%Y') as dm, COUNT(*) as nb, SUM(c.".$this->field.")";
 		$sql .= " FROM ".$this->from;
-		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		if (empty($user->rights->societe->client->voir) && !$this->socid) {
+			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		}
 		$sql .= " WHERE ".$this->where;
 		$sql .= " GROUP BY dm";
 		$sql .= $this->db->order('dm', 'DESC');
@@ -133,7 +138,9 @@ class ReceptionStats extends Stats
 
 		$sql = "SELECT date_format(c.date_valid,'%Y') as year, COUNT(*) as nb, SUM(c.".$this->field.") as total, AVG(".$this->field.") as avg";
 		$sql .= " FROM ".$this->from;
-		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		if (empty($user->rights->societe->client->voir) && !$this->socid) {
+			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		}
 		$sql .= " WHERE ".$this->where;
 		$sql .= " GROUP BY year";
 		$sql .= $this->db->order('year', 'DESC');

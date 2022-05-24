@@ -78,27 +78,34 @@ class box_contracts extends ModeleBoxes
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastContracts", $max));
 
-		if ($user->rights->contrat->lire)
-		{
+		if ($user->rights->contrat->lire) {
 			$contractstatic = new Contrat($this->db);
 			$thirdpartytmp = new Societe($this->db);
 
 			$sql = "SELECT s.nom as name, s.rowid as socid, s.email, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur,";
-			$sql .= " c.rowid, c.ref, c.statut as fk_statut, c.date_contrat, c.datec, c.fin_validite, c.date_cloture";
-			$sql .= ", c.ref_customer, c.ref_supplier";
+			$sql .= " c.rowid, c.ref, c.statut as fk_statut, c.date_contrat, c.datec, c.tms as date_modification, c.fin_validite, c.date_cloture,";
+			$sql .= " c.ref_customer, c.ref_supplier";
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c";
-			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			if (empty($user->rights->societe->client->voir) && !$user->socid) {
+				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			}
 			$sql .= " WHERE c.fk_soc = s.rowid";
 			$sql .= " AND c.entity = ".$conf->entity;
-			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
-			if ($user->socid) $sql .= " AND s.rowid = ".$user->socid;
-			if ($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) $sql .= " ORDER BY c.date_contrat DESC, c.ref DESC ";
-			else $sql .= " ORDER BY c.tms DESC, c.ref DESC ";
+			if (empty($user->rights->societe->client->voir) && !$user->socid) {
+				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
+			}
+			if ($user->socid) {
+				$sql .= " AND s.rowid = ".((int) $user->socid);
+			}
+			if (! empty($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE)) {
+				$sql .= " ORDER BY c.date_contrat DESC, c.ref DESC ";
+			} else {
+				$sql .= " ORDER BY c.tms DESC, c.ref DESC ";
+			}
 			$sql .= $this->db->plimit($max, 0);
 
 			$resql = $this->db->query($sql);
-			if ($resql)
-			{
+			if ($resql) {
 				$num = $this->db->num_rows($resql);
 				$now = dol_now();
 
@@ -106,11 +113,11 @@ class box_contracts extends ModeleBoxes
 
 				$langs->load("contracts");
 
-				while ($line < $num)
-				{
+				while ($line < $num) {
 					$objp = $this->db->fetch_object($resql);
 
 					$datec = $this->db->jdate($objp->datec);
+					$datem = $this->db->jdate($objp->date_modification);
 					$dateterm = $this->db->jdate($objp->fin_validite);
 					$dateclose = $this->db->jdate($objp->date_cloture);
 					$late = '';
@@ -149,8 +156,8 @@ class box_contracts extends ModeleBoxes
 					);
 
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="right"',
-						'text' => dol_print_date($datec, 'day'),
+						'td' => 'class="center nowraponall" title="'.dol_escape_htmltag($langs->trans("DateModification").': '.dol_print_date($datem, 'dayhour', 'tzuserrel')).'"',
+						'text' => dol_print_date($datem, 'day', 'tzuserrel'),
 					);
 
 					$this->info_box_contents[$line][] = array(
@@ -162,11 +169,12 @@ class box_contracts extends ModeleBoxes
 					$line++;
 				}
 
-				if ($num == 0)
+				if ($num == 0) {
 					$this->info_box_contents[$line][0] = array(
 						'td' => 'class="center opacitymedium"',
 						'text'=>$langs->trans("NoRecordedContracts"),
 					);
+				}
 
 				$this->db->free($resql);
 			} else {

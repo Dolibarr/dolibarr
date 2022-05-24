@@ -20,7 +20,7 @@
  *  \brief      Add a log into a block chain for some actions.
  *  \file       htdocs/core/modules/modBlockedLog.class.php
  *  \ingroup    blockedlog
- *  \brief      Description and activation file for module BlockedLog
+ *  \brief      Description and activation file for the module BlockedLog
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
@@ -47,7 +47,7 @@ class modBlockedLog extends DolibarrModules
 		// It is used to group modules in module setup page
 		$this->family = "base";
 		// Module position in the family on 2 digits ('01', '10', '20', ...)
-		$this->module_position = '75';
+		$this->module_position = '76';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		$this->description = "Enable a log on some business events into a non reversible log. This module may be mandatory for some countries.";
@@ -80,19 +80,19 @@ class modBlockedLog extends DolibarrModules
 		// Currently, activation is not automatic because only companies (in France) making invoices to non business customers must
 		// enable this module.
 		/*if (! empty($conf->global->BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY))
-        {
-            $tmp=explode(',', $conf->global->BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY);
-            $this->automatic_activation = array();
-            foreach($tmp as $key)
-            {
-                $this->automatic_activation[$key]='BlockedLogActivatedBecauseRequiredByYourCountryLegislation';
-            }
-        }*/
+		{
+			$tmp=explode(',', $conf->global->BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY);
+			$this->automatic_activation = array();
+			foreach($tmp as $key)
+			{
+				$this->automatic_activation[$key]='BlockedLogActivatedBecauseRequiredByYourCountryLegislation';
+			}
+		}*/
 		//var_dump($this->automatic_activation);
 
 		$this->always_enabled = (!empty($conf->blockedlog->enabled)
 			&& !empty($conf->global->BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY)
-			&& in_array($mysoc->country_code, explode(',', $conf->global->BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY))
+			&& in_array((empty($mysoc->country_code) ? '' : $mysoc->country_code), explode(',', $conf->global->BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY))
 			&& $this->alreadyUsed());
 
 		// Constants
@@ -113,7 +113,7 @@ class modBlockedLog extends DolibarrModules
 		// -----------------
 		$this->rights = array(); // Permission array used by this module
 
-		$r = 0;
+		$r = 1;
 		$this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Read archived events and fingerprints'; // Permission label
 		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
@@ -124,18 +124,20 @@ class modBlockedLog extends DolibarrModules
 		// -----------------
 		$r = 0;
 		$this->menu[$r] = array(
-		'fk_menu'=>'fk_mainmenu=tools', // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-		'mainmenu'=>'tools',
-		'leftmenu'=>'blockedlogbrowser',
-		'type'=>'left', // This is a Left menu entry
-		'titre'=>'BrowseBlockedLog',
-		'url'=>'/blockedlog/admin/blockedlog_list.php?mainmenu=tools&leftmenu=blockedlogbrowser',
-		'langs'=>'blockedlog', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-		'position'=>200,
-		'enabled'=>'$conf->blockedlog->enabled', // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-		'perms'=>'$user->rights->blockedlog->read', // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
-		'target'=>'',
-		'user'=>2); // 0=Menu for internal users, 1=external users, 2=both
+			'fk_menu'=>'fk_mainmenu=tools', // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+			'mainmenu'=>'tools',
+			'leftmenu'=>'blockedlogbrowser',
+			'type'=>'left', // This is a Left menu entry
+			'titre'=>'BrowseBlockedLog',
+			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth"'),
+			'url'=>'/blockedlog/admin/blockedlog_list.php?mainmenu=tools&leftmenu=blockedlogbrowser',
+			'langs'=>'blockedlog', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+			'position'=>200,
+			'enabled'=>'$conf->blockedlog->enabled', // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+			'perms'=>'$user->rights->blockedlog->read', // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+			'target'=>'',
+			'user'=>2, // 0=Menu for internal users, 1=external users, 2=both
+		);
 		$r++;
 	}
 
@@ -168,9 +170,9 @@ class modBlockedLog extends DolibarrModules
 		$sql = array();
 
 		// If already used, we add an entry to show we enable module
-		   require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
+		require_once DOL_DOCUMENT_ROOT . '/blockedlog/class/blockedlog.class.php';
 
-		   $object = new stdClass();
+		$object = new stdClass();
 		$object->id = 1;
 		$object->element = 'module';
 		$object->ref = 'systemevent';
@@ -179,8 +181,7 @@ class modBlockedLog extends DolibarrModules
 
 		$b = new BlockedLog($this->db);
 		$result = $b->setObjectData($object, 'MODULE_SET', 0);
-		if ($result < 0)
-		{
+		if ($result < 0) {
 			$this->error = $b->error;
 			$this->errors = $b->erros;
 			return 0;
@@ -223,15 +224,13 @@ class modBlockedLog extends DolibarrModules
 
 		$b = new BlockedLog($this->db);
 		$result = $b->setObjectData($object, 'MODULE_RESET', 0);
-		if ($result < 0)
-		{
+		if ($result < 0) {
 			$this->error = $b->error;
 			$this->errors = $b->erros;
 			return 0;
 		}
 
-		if ($b->alreadyUsed(1))
-		{
+		if ($b->alreadyUsed(1)) {
 			$res = $b->create($user, '0000000000'); // If already used for something else than SET or UNSET, we log with error
 		} else {
 			$res = $b->create($user);

@@ -16,8 +16,7 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($conf) || !is_object($conf))
-{
+if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
 	exit;
 }
@@ -28,7 +27,7 @@ $object = $GLOBALS['object'];
 $statutarray = array('1' => $langs->trans("OnSell"), '0' => $langs->trans("NotOnSell"));
 ?>
 
-<!-- BEGIN PHP TEMPLATE -->
+<!-- BEGIN PHP TEMPLATE product/canvas/product/tpl/card_edit.tpl.php-->
 
 <?php
 $head = product_prepare_head($object);

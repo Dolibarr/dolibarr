@@ -37,8 +37,8 @@ OtherInfo=سایر اطلاعات
 DeleteCptCategory=حذف حساب حساب‌درای از گروه
 ConfirmDeleteCptCategory=اطمینان دارید که می‌خواهید این حساب حساب‌داری را از گروه حساب حساب‌داری حذف کنید؟
 JournalizationInLedgerStatus=وضعیت دفترنویسی
-AlreadyInGeneralLedger=Already transferred in accounting journals and ledger
-NotYetInGeneralLedger=Not yet transferred in accouting journals and ledger
+AlreadyInGeneralLedger=Already transferred to accounting journals and ledger
+NotYetInGeneralLedger=Not yet transferred to accouting journals and ledger
 GroupIsEmptyCheckSetup=گروه خالی است، برپاسازی گروه حساب‌داری انفرادی را بررسی کنید
 DetailByAccount=نمایش جزئیات مربوط به حساب
 AccountWithNonZeroValues=حساب‌هائی که صفر نیستند
@@ -48,7 +48,8 @@ CountriesNotInEEC=کشورهائی که در اتحادیۀ اروپا نیست�
 CountriesInEECExceptMe=کشورهائی که در اتحادیۀ اروپا هستند به استثناء %s
 CountriesExceptMe=همۀ کشورها باستثناء %s
 AccountantFiles=Export source documents
-ExportAccountingSourceDocHelp=With this tool, you can export the source events (list and PDFs) that were used to generate your accountancy. To export your journals, use the menu entry %s - %s.
+ExportAccountingSourceDocHelp=With this tool, you can export the source events (list in CSV and PDFs) that are used to generate your accountancy.
+ExportAccountingSourceDocHelp2=To export your journals, use the menu entry %s - %s.
 VueByAccountAccounting=View by accounting account
 VueBySubAccountAccounting=View by accounting subaccount
 
@@ -61,24 +62,24 @@ MainAccountForSubscriptionPaymentNotDefined=در برپاسازی برای پر�
 AccountancyArea=بخش حساب‌داری
 AccountancyAreaDescIntro=استفاده از بخش حساب‌داری در گام‌های متعددی انجام می‌پذیرد:
 AccountancyAreaDescActionOnce=عملیات زیر معمولا فقط یک بار انجام می‌شود، یا یک بار در سال...
-AccountancyAreaDescActionOnceBis=برای صرفه‌جوئی در زمان در آینده گام‌های بعدی باید با ارائۀ حساب حساب‌داری صحیح در هنگام دفترنویسی (نوشتن سطور دفاتر و دفترکل) انجام پذیرد 
+AccountancyAreaDescActionOnceBis=Next steps should be done to save you time in future by suggesting you automaticaly the correct default accounting account when transferring data in accounting
 AccountancyAreaDescActionFreq=عملیات زیر معمولا هر ماه یا هر هفته یا بار یا حتی هر روز یک بار برای شرکت‌های بسیار بزرگ انجام می‌پذیرد....
 
-AccountancyAreaDescJournalSetup=گام %s: ایجاد یا بررسی فهرست محتوای دفتر از گزینۀ %s
+AccountancyAreaDescJournalSetup=STEP %s: Check content of your journal list from menu %s
 AccountancyAreaDescChartModel=STEP %s: Check that a model of chart of account exists or create one from menu %s
 AccountancyAreaDescChart=STEP %s: Select and|or complete your chart of account from menu %s
 
 AccountancyAreaDescVat=گام %s: تعریف حساب‌های حساب‌داری برای هر یک از انواع ضریب‌های مالیات بر ارزش افزوده. برای این کار از گزینۀ %s استفاده نمائید.
 AccountancyAreaDescDefault=گام %s: تعریف حساب‌های حساب‌داری پیش‌فرض. برای این، از گزینۀ %s استفاده نمائید.
-AccountancyAreaDescExpenseReport=گام %s: تعریف حساب‌های حساب‌داری پیش‌فرض برای هر یک از انواع گزارش‌هزینه. برای این‌کار از گزینۀ %s استفاده نمائید.
+AccountancyAreaDescExpenseReport=STEP %s: Define default accounting accounts for each type of Expense report. For this, use the menu entry %s.
 AccountancyAreaDescSal=گام %s: تعریف حساب‌های حساب‌داری پیش‌فرض برای پرداخت حقوق. برای این، از گزینۀ %s استفاده نمائید.
-AccountancyAreaDescContrib=گام %s: تعریف حساب‌های حساب‌داری پیش‌فرض برای هزینه‌های خاص ( مالیات‌های متفرقه ). برای این، از گزینۀ %s استفاده نمائید.
+AccountancyAreaDescContrib=STEP %s: Define default accounting accounts for Taxes (special expenses). For this, use the menu entry %s.
 AccountancyAreaDescDonation=گام %s : تعریف حساب‌های حساب‌داری پیش‌فرض برای دریافت کمک‌. برای این، از گزینۀ %s استفاده نمائید.
 AccountancyAreaDescSubscription=گام %s: تعریف حساب حساب‌داری پیش‌فرض برای اشتراک اعضاء. برای این، از گزینۀ %s استفاده نمائید.
 AccountancyAreaDescMisc=گام %s : تعریف حساب پیش‌فرض الزامی و حساب‌های حساب‌داری پیش‌فرض برای تراکنش‌های متفرقه. برای این، از گزینۀ %s استفاده نمائید.
 AccountancyAreaDescLoan=گام %s: تعریف حساب‌‌های حساب‌داری پیش‌فرض برای وام‌ها. برای این از گزینۀ %s استفاده نمائید.
 AccountancyAreaDescBank=گام %s: تعریف حساب‌های حساب‌داری و شمارۀ‌دفتر برای هر بانک و حساب‌های مالی. برای این‌کار از گزینۀ %s استفاده نمائید.
-AccountancyAreaDescProd=گام %s: تعریف حساب‌های حساب‌دای برای محصولات/خدمات شما. برای این‌کار از فهرست %s استفاده نمائید.
+AccountancyAreaDescProd=STEP %s: Define accounting accounts on your Products/Services. For this, use the menu entry %s.
 
 AccountancyAreaDescBind=گام %s: بندهای میان سطور موجود %s و حساب حساب‌داری بررسی شده است، بنابراین برنامه خواهد توانست که تراکنش‌ها را با یک کلیک در دفترکل  بنویسد. بندهای مفقود را کامل کنید. برای این‌کار، از گزینۀ %s استفاده نمائید.
 AccountancyAreaDescWriteRecords=گام %s: نوشتن تراکنش‌ها در دفتر کل. برای این‌کار، به فهرست <strong>%s</strong> مراجعه کرده و روی کلید <strong>%s</strong> کلیک نمائید.
@@ -111,7 +112,7 @@ MenuAccountancyClosure=Closure
 MenuAccountancyValidationMovements=Validate movements
 ProductsBinding=حساب‌های محصولات
 TransferInAccounting=انتقال به‌داخل حساب‌داری
-RegistrationInAccounting=ثبت در حساب‌داری
+RegistrationInAccounting=Recording in accounting
 Binding=بندشدن به حساب‌ها
 CustomersVentilation=بندشدن به صورت‌حساب مشتری
 SuppliersVentilation=بندشدن به صورت‌حساب تامین‌کننده
@@ -119,7 +120,7 @@ ExpenseReportsVentilation=بندشدن به گزارش هزینه‌ها
 CreateMvts=ایجاد تراکنش جدید
 UpdateMvts=ویرایش تراکنش
 ValidTransaction=اعتباردهی به تراکنش
-WriteBookKeeping=Register transactions in accounting
+WriteBookKeeping=Record transactions in accounting
 Bookkeeping=دفترکل
 BookkeepingSubAccount=Subledger
 AccountBalance=موجودی حساب
@@ -131,7 +132,7 @@ InvoiceLinesDone=سطور بند شدۀ صورت‌حساب‌ها
 ExpenseReportLines=سطور گزارش هزینه‌ها که باید بند شوند
 ExpenseReportLinesDone=سطور بندشدۀ گزارش هزینه‌ها
 IntoAccount=بندکردن سطر به حساب حسابداری
-TotalForAccount=Total for accounting account
+TotalForAccount=Total accounting account
 
 
 Ventilate=بندکردن
@@ -158,7 +159,7 @@ ACCOUNTING_LENGTH_AACCOUNT=طول حساب‌های حساب‌داری شخص�
 ACCOUNTING_MANAGE_ZERO=امکان تغییر تعداد دیگری از صفر در انتخای حساب حساب‌داری. در برخی کشورها (مثل سوئیس) مورد احتیاج است. در صورتی که خاموش باشد (پیش‌فرض)، شما می‌توانید دو گزینۀ مقابل را تنظیم کنید تا از برنامه بخواهید صفرهای مجازی اضافه کند.
 BANK_DISABLE_DIRECT_INPUT=غیرفعال کردن ثبت مستقیم تراکنش در حساب بانکی
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=فعال کردن خروجی پیش‌نویس از دفتر
-ACCOUNTANCY_COMBO_FOR_AUX=فعال کردن فهرست ترکیبی برای حساب وابسته(ممکن است در صورتی که شخص‌سوم‌های زیادی داشته باشید، کند باشد)
+ACCOUNTANCY_COMBO_FOR_AUX=Enable combo list for subsidiary account (may be slow if you have a lot of third parties, break ability to search on a part of value)
 ACCOUNTING_DATE_START_BINDING=Define a date to start binding & transfer in accountancy. Below this date, the transactions will not be transferred to accounting.
 ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=On accountancy transfer, select period show by default
 
@@ -202,14 +203,14 @@ Docref=مرجع
 LabelAccount=برچسب حساب
 LabelOperation=عملیات برچسب
 Sens=Direction
-AccountingDirectionHelp=For an accounting account of a customer, use Credit to record a payment you received<br>For an accounting account of a supplier, use Debit to record a payment you make
+AccountingDirectionHelp=For an accounting account of a customer, use Credit to record a payment you have received<br>For an accounting account of a supplier, use Debit to record a payment you made
 LetteringCode=کد حروف‌بندی
 Lettering=حروف‌بندی
 Codejournal=دفتر
 JournalLabel=برچسب دفتر
 NumPiece=شمارۀ بخش
 TransactionNumShort=تعداد تراکنش‌ها
-AccountingCategory=گروه‌های دل‌خواه
+AccountingCategory=Custom group
 GroupByAccountAccounting=Group by general ledger account
 GroupBySubAccountAccounting=Group by subledger account
 AccountingAccountGroupsDesc=در این قسمت می‌توانید گروه‌های متشکل از حساب‌حساب‌داری بسازید. این گروه‌ها برای گزارش‌های دل‌خواه حساب‌داری استفاده می‌شود.
@@ -218,12 +219,12 @@ ByPredefinedAccountGroups=به واسطۀ  گروه‌های از پیش‌تع�
 ByPersonalizedAccountGroups=به واسطۀ گروه‌های دل‌خواه
 ByYear=به واسطۀ سال
 NotMatch=تعیین نشده
-DeleteMvt=Delete some operation lines from accounting
+DeleteMvt=Delete some lines from accounting
 DelMonth=Month to delete
 DelYear=حذف سال
 DelJournal=حذف دفتر
-ConfirmDeleteMvt=This will delete all operation lines of the accounting for the year/month and/or for a specific journal (At least one criterion is required). You will have to reuse the feature '%s' to have the deleted record back in the ledger.
-ConfirmDeleteMvtPartial=This will delete the transaction from the accounting (all operation lines related to the same transaction will be deleted)
+ConfirmDeleteMvt=This will delete all lines in accountancy for the year/month and/or for a specific journal (At least one criterion is required). You will have to reuse the feature '%s' to have the deleted record back in the ledger.
+ConfirmDeleteMvtPartial=This will delete the transaction from the accounting (all lines related to the same transaction will be deleted)
 FinanceJournal=دفتر مالی
 ExpenseReportsJournal=دفتر گزارش هزینه
 DescFinanceJournal=دفتر مالی که شامل همۀ انواع پرداخت بواسطۀ حساب بانکی می‌شود
@@ -245,9 +246,9 @@ DescThirdPartyReport=اینجا فهرست مشتری‌ها و تامین‌ک�
 ListAccounts=فهرست حساب‌های حسابداری
 UnknownAccountForThirdparty=حساب‌ شخص‌سوم ناشناخته. از %s استفاده می‌شود.
 UnknownAccountForThirdpartyBlocking=حساب شخص‌سوم ناشناخته. خطای انسدادی
-ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Third-party account not defined or third party unknown. We will use %s
+ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Subledger account not defined or third party or user unknown. We will use %s
 ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored=Third-party unknown and subledger not defined on the payment. We will keep the subledger account value empty.
-ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=حساب شخص‌سوم تعریف نشده یا شخص سوم ناشناخته است. خطای انسدادی
+ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Subledger account not defined or third party or user unknown. Blocking error.
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=حساب شخص‌سوم ناشناخته و حساب انتظار تعریف نشده است. خطای انسدادی
 PaymentsNotLinkedToProduct=پرداخت به هیچ محصول/خدمتی وصل نشده است
 OpeningBalance=Opening balance
@@ -277,15 +278,15 @@ DescVentilExpenseReportMore=در صورتی‌که شما حساب‌حساب‌
 DescVentilDoneExpenseReport=در این قسمت فهرستی از سطور گزارشات هزینه و حساب‌حساب‌داری پرداخت آن‌ها را داشته باشید
 
 Closure=Annual closure
-DescClosure=Consult here the number of movements by month who are not validated & fiscal years already open
-OverviewOfMovementsNotValidated=Step 1/ Overview of movements not validated. (Necessary to close a fiscal year)
-AllMovementsWereRecordedAsValidated=All movements were recorded as validated
-NotAllMovementsCouldBeRecordedAsValidated=Not all movements could be recorded as validated
-ValidateMovements=Validate movements
+DescClosure=Consult here the number of movements by month who are not yet validated & locked
+OverviewOfMovementsNotValidated=Overview of movements not validated and locked
+AllMovementsWereRecordedAsValidated=All movements were recorded as validated and locked
+NotAllMovementsCouldBeRecordedAsValidated=Not all movements could be recorded as validated and locked
+ValidateMovements=Validate and lock record...
 DescValidateMovements=Any modification or deletion of writing, lettering and deletes will be prohibited. All entries for an exercise must be validated otherwise closing will not be possible
 
 ValidateHistory=بندکردن خودکار
-AutomaticBindingDone=بندکردن خودکار انجام شد
+AutomaticBindingDone=Automatic bindings done (%s) - Automatic binding not possible for some record (%s)
 
 ErrorAccountancyCodeIsAlreadyUse=خطا! شما نمی‌توانید این حساب حساب‌داری را حذف کنید، زیرا در حال استفاده است.
 MvtNotCorrectlyBalanced=جابجائی به درستی انجام نشد. بدهی = %s | اعتبار= %s
@@ -293,14 +294,15 @@ Balancing=تعدیل
 FicheVentilation=بندشدن کارت
 GeneralLedgerIsWritten=تراکنش‌ها در دفترکل درج شده
 GeneralLedgerSomeRecordWasNotRecorded=برخی از تراکنش‌ها امکان دفترنویسی ندارند. در صورتی که خطای دیگری وجود نداشته باشد، این بدان معناست که قبلا در دفتر وارد شده‌اند.
-NoNewRecordSaved=ردیف دیگری برای دفترنویسی وجود ندارد
+NoNewRecordSaved=No more record to transfer
 ListOfProductsWithoutAccountingAccount=فهرست محصولاتی که به هیچ حساب حساب‌داری بند نشده‌اند
 ChangeBinding=تغییر بند‌شدن‌ها
 Accounted=در دفترکل حساب‌شده است
-NotYetAccounted=هنوز در دفترکل حساب نشده‌است
+NotYetAccounted=Not yet transferred to accounting
 ShowTutorial=Show Tutorial
 NotReconciled=وفق داده نشده
-WarningRecordWithoutSubledgerAreExcluded=Warning, all operations without subledger account defined are filtered and excluded from this view
+WarningRecordWithoutSubledgerAreExcluded=Warning, all lines without subledger account defined are filtered and excluded from this view
+AccountRemovedFromCurrentChartOfAccount=Accounting account that does not exist in the current chart of accounts
 
 ## Admin
 BindingOptions=Binding options
@@ -328,6 +330,10 @@ ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Disable binding & transfer in accountanc
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Disable binding & transfer in accountancy on expense reports (expense reports will not be taken into account in accounting)
 
 ## Export
+NotifiedExportDate=Flag exported lines as Exported <span class="warning">(to modify a line, you will need to delete the whole transaction and re-transfert it into accounting)</span>
+NotifiedValidationDate=Validate and Lock the exported entries <span class="warning">(same effect than the "Closure" feature, modification and deletion of the lines will DEFINITELY not be possible)</span>
+DateValidationAndLock=Date validation and lock
+ConfirmExportFile=Confirmation of the generation of the accounting export file ?
 ExportDraftJournal=صادرکردن پیش‌نویس دفتر
 Modelcsv=نوع صادرات
 Selectmodelcsv=انتخاب مدل صادرات
@@ -335,11 +341,11 @@ Modelcsv_normal=صادرات سنتی
 Modelcsv_CEGID=صادرات بر اساس CEGID Expert Comptabilité
 Modelcsv_COALA=صدور برای Sage Coala
 Modelcsv_bob50=صدور برای Sage BOB 50
-Modelcsv_ciel=صدور برای  Sage Ciel Compta یا Compta Evolution
+Modelcsv_ciel=Export for Sage50, Ciel Compta or Compta Evo. (Format XIMPORT)
 Modelcsv_quadratus=صدور برای Quadratus QuadraCompta
 Modelcsv_ebp=صدور برای EBP
 Modelcsv_cogilog=صدور برای Cogilog
-Modelcsv_agiris=صدور برای Agiris
+Modelcsv_agiris=Export for Agiris Isacompta
 Modelcsv_LDCompta=Export for LD Compta (v9) (Test)
 Modelcsv_LDCompta10=Export for LD Compta (v10 & higher)
 Modelcsv_openconcerto=صادرکردن برای OpenConcerto  (آزمایشی)
@@ -347,9 +353,10 @@ Modelcsv_configurable= صدور قابل پیکربندی CSV
 Modelcsv_FEC=Export FEC
 Modelcsv_FEC2=Export FEC (With dates generation writing / document reversed)
 Modelcsv_Sage50_Swiss=صادرکردن برای Sage 50 Switzerland
-Modelcsv_winfic=Export Winfic - eWinfic - WinSis Compta
+Modelcsv_winfic=Export for Winfic - eWinfic - WinSis Compta
 Modelcsv_Gestinumv3=Export for Gestinum (v3)
-Modelcsv_Gestinumv5Export for Gestinum (v5)
+Modelcsv_Gestinumv5=Export for Gestinum (v5)
+Modelcsv_charlemagne=Export for Aplim Charlemagne
 ChartofaccountsId=ساختار شناسۀ حساب‌‌ها
 
 ## Tools - Init accounting account on product / service
@@ -382,11 +389,27 @@ SaleExport=Export sale
 SaleEEC=Sale in EEC
 SaleEECWithVAT=Sale in EEC with a VAT not null, so we suppose this is NOT an intracommunautary sale and the suggested account is the standard product account.
 SaleEECWithoutVATNumber=Sale in EEC with no VAT but the VAT ID of thirdparty is not defined. We fallback on the product account for standard sales. You can fix the VAT ID of thirdparty or the product account if needed.
-
+ForbiddenTransactionAlreadyExported=Forbidden: The transaction has been validated and/or exported.
+ForbiddenTransactionAlreadyValidated=Forbidden: The transaction has been validated.
 ## Dictionary
 Range=بازۀ حساب حساب‌داری
 Calculated=محاسبه‌شده
 Formula=فرمول
+
+## Reconcile
+Unlettering=Unreconcile
+AccountancyNoLetteringModified=No reconcile modified
+AccountancyOneLetteringModifiedSuccessfully=One reconcile successfully modified
+AccountancyLetteringModifiedSuccessfully=%s reconcile successfully modified
+AccountancyNoUnletteringModified=No unreconcile modified
+AccountancyOneUnletteringModifiedSuccessfully=One unreconcile successfully modified
+AccountancyUnletteringModifiedSuccessfully=%s unreconcile successfully modified
+
+## Confirm box
+ConfirmMassUnlettering=Bulk Unreconcile confirmation
+ConfirmMassUnletteringQuestion=Are you sure you want to Unreconcile the %s selected record(s)?
+ConfirmMassDeleteBookkeepingWriting=تائید حذف گروهی
+ConfirmMassDeleteBookkeepingWritingQuestion=This will delete the transaction from the accounting (all lines related to the same transaction will be deleted) Are you sure you want to delete the %s selected record(s)?
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=برخی گام‌های اجباری برپاسازی انجام نشده است، لطفا تکمیل کنید
@@ -399,10 +422,36 @@ NoJournalDefined=دفتری تعریف نشده است
 Binded=سطور بندشده
 ToBind=سطوری که باید بند شوند
 UseMenuToSetBindindManualy=سطوری که هنوز بند نشده‌اند، گزینۀ <a href="%s">%s</a> را برای ایجاد دستی بندهای مورد استفاده قرار دهید.
+SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Sorry this module is not compatible with the experimental feature of situation invoices
+AccountancyErrorMismatchLetterCode=Mismatch in reconcile code
+AccountancyErrorMismatchBalanceAmount=The balance (%s) is not equal to 0
+AccountancyErrorLetteringBookkeeping=Errors have occurred concerning the transactions: %s
 
 ## Import
 ImportAccountingEntries=ورودی‌های حساب‌داری
+ImportAccountingEntriesFECFormat=Accounting entries - FEC format
+FECFormatJournalCode=Code journal (JournalCode)
+FECFormatJournalLabel=Label journal (JournalLib)
+FECFormatEntryNum=Piece number (EcritureNum)
+FECFormatEntryDate=Piece date (EcritureDate)
+FECFormatGeneralAccountNumber=General account number (CompteNum)
+FECFormatGeneralAccountLabel=General account label (CompteLib)
+FECFormatSubledgerAccountNumber=Subledger account number (CompAuxNum)
+FECFormatSubledgerAccountLabel=Subledger account number (CompAuxLib)
+FECFormatPieceRef=Piece ref (PieceRef)
+FECFormatPieceDate=Piece date creation (PieceDate)
+FECFormatLabelOperation=Label operation (EcritureLib)
+FECFormatDebit=Debit (Debit)
+FECFormatCredit=Credit (Credit)
+FECFormatReconcilableCode=Reconcilable code (EcritureLet)
+FECFormatReconcilableDate=Reconcilable date (DateLet)
+FECFormatValidateDate=Piece date validated (ValidDate)
+FECFormatMulticurrencyAmount=Multicurrency amount (Montantdevise)
+FECFormatMulticurrencyCode=Multicurrency code (Idevise)
+
 DateExport=Date export
 WarningReportNotReliable=هشدار! این گزارش بر مبنای دفتر کل نمی‌باشد، بنابراین دربردارندۀ تراکنش‌هائی که به شکل دستی در دفترکل ویرایش شده‌اند نیست. در صورتی که دفترنویسی شما روزآمد باشد، نمای «دفترنویسی» دقیق‌تر است.
 ExpenseReportJournal=دفتر گزارش هزینه‌ها
 InventoryJournal=دفتر انبار
+
+NAccounts=%s accounts

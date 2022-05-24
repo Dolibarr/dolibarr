@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012	   Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2021	   Ferran Marcet        <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +24,7 @@
  *	\brief      	Module pour gerer la tenue de stocks produits
  *	\file       htdocs/core/modules/modStock.class.php
  *	\ingroup    stock
- *	\brief      Fichier de description et activation du module Stock
+ *	\brief      Description and activation file for the module Stock
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
@@ -34,7 +35,6 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
  */
 class modStock extends DolibarrModules
 {
-
 	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
@@ -69,7 +69,7 @@ class modStock extends DolibarrModules
 		$this->depends = array("modProduct"); // List of module class names as string that must be enabled if this module is enabled
 		$this->requiredby = array("modProductBatch"); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
-		$this->phpmin = array(5, 4); // Minimum version of PHP required by module
+		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
 		$this->langfiles = array("stocks");
 
 		// Constants
@@ -148,20 +148,19 @@ class modStock extends DolibarrModules
 		$this->rights[4][4] = 'mouvement';
 		$this->rights[4][5] = 'creer';
 
-		if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
-		{
-			$this->rights[5][0] = 1011;
-			$this->rights[5][1] = 'inventoryReadPermission'; // Permission label
-			$this->rights[5][3] = 0; // Permission by default for new user (0/1)
-			$this->rights[5][4] = 'inventory_advance'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-			$this->rights[5][5] = 'read'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		$this->rights[5][0] = 1011;
+		$this->rights[5][1] = 'inventoryReadPermission'; // Permission label
+		$this->rights[5][3] = 0; // Permission by default for new user (0/1)
+		$this->rights[5][4] = 'inventory_advance'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		$this->rights[5][5] = 'read'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 
-			$this->rights[6][0] = 1012;
-			$this->rights[6][1] = 'inventoryCreatePermission'; // Permission label
-			$this->rights[6][3] = 0; // Permission by default for new user (0/1)
-			$this->rights[6][4] = 'inventory_advance'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-			$this->rights[6][5] = 'write'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		$this->rights[6][0] = 1012;
+		$this->rights[6][1] = 'inventoryCreatePermission'; // Permission label
+		$this->rights[6][3] = 0; // Permission by default for new user (0/1)
+		$this->rights[6][4] = 'inventory_advance'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		$this->rights[6][5] = 'write'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 
+		if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
 			$this->rights[8][0] = 1014;
 			$this->rights[8][1] = 'inventoryValidatePermission'; // Permission label
 			$this->rights[8][3] = 0; // Permission by default for new user (0/1)
@@ -173,6 +172,12 @@ class modStock extends DolibarrModules
 			$this->rights[9][3] = 0; // Permission by default for new user (0/1)
 			$this->rights[9][4] = 'inventory_advance'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 			$this->rights[9][5] = 'changePMP'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+
+			$this->rights[10][0] = 1016;
+			$this->rights[10][1] = 'inventoryDeletePermission'; // Permission label
+			$this->rights[10][3] = 0; // Permission by default for new user (0/1)
+			$this->rights[10][4] = 'inventory_advance'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+			$this->rights[10][5] = 'delete'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		}
 
 		// Main menu entries
@@ -206,7 +211,9 @@ class modStock extends DolibarrModules
 		);
 		$this->export_entities_array[$r] = array();	// We define here only fields that use another icon that the one defined into export_icon
 		$this->export_aggregate_array[$r] = array();
-		$keyforselect = 'warehouse'; $keyforelement = 'warehouse'; $keyforaliasextra = 'extra';
+		$keyforselect = 'warehouse';
+		$keyforelement = 'warehouse';
+		$keyforaliasextra = 'extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
@@ -228,23 +235,28 @@ class modStock extends DolibarrModules
 			'p.rowid'=>"ProductId", 'p.ref'=>"Ref", 'p.fk_product_type'=>"Type", 'p.label'=>"Label", 'p.description'=>"Description", 'p.note'=>"Note",
 			'p.price'=>"Price", 'p.tva_tx'=>'VAT', 'p.tosell'=>"OnSell", 'p.tobuy'=>'OnBuy', 'p.duration'=>"Duration",
 			'p.datec'=>'DateCreation', 'p.tms'=>'DateModification', 'p.pmp'=>'PMPValue', 'p.cost_price'=>'CostPrice',
+			'p.seuil_stock_alerte'=>'StockLimit',
 		);
 		$this->export_TypeFields_array[$r] = array(
 			'e.rowid'=>'List:entrepot:ref::stock', 'e.ref'=>'Text', 'e.lieu'=>'Text', 'e.address'=>'Text', 'e.zip'=>'Text', 'e.town'=>'Text',
-			'p.rowid'=>"List:product:label::product", 'p.ref'=>"Text", 'p.fk_product_type'=>"Text", 'p.label'=>"Text", 'p.description'=>"Text", 'p.note'=>"Text",
+			'p.rowid'=>"Numeric", 'p.ref'=>"Text", 'p.fk_product_type'=>"Text", 'p.label'=>"Text", 'p.description'=>"Text", 'p.note'=>"Text",
 			'p.price'=>"Numeric", 'p.tva_tx'=>'Numeric', 'p.tosell'=>"Boolean", 'p.tobuy'=>"Boolean", 'p.duration'=>"Duree",
 			'p.datec'=>'Date', 'p.tms'=>'Date', 'p.pmp'=>'Numeric', 'p.cost_price'=>'Numeric',
-			'ps.reel'=>'Numeric'
+			'ps.reel'=>'Numeric',
+			'p.seuil_stock_alerte'=>'Numeric',
 		);
 		$this->export_entities_array[$r] = array(
 			'p.rowid'=>"product", 'p.ref'=>"product", 'p.fk_product_type'=>"product", 'p.label'=>"product", 'p.description'=>"product", 'p.note'=>"product",
 			'p.price'=>"product", 'p.tva_tx'=>'product', 'p.tosell'=>"product", 'p.tobuy'=>"product", 'p.duration'=>"product",
 			'p.datec'=>'product', 'p.tms'=>'product', 'p.pmp'=>'product', 'p.cost_price'=>'product',
-			'ps.reel'=>'stock'
+			'ps.reel'=>'stock',
+			'p.seuil_stock_alerte'=>'product',
 		);	// We define here only fields that use another icon that the one defined into export_icon
 		$this->export_aggregate_array[$r] = array('ps.reel'=>'SUM'); // TODO Not used yet
 		$this->export_dependencies_array[$r] = array('stock'=>array('p.rowid', 'e.rowid')); // We must keep this until the aggregate_array is used. To have a unique key, if we ask a field of a child, to avoid the DISTINCT to discard them.
-		$keyforselect = 'product'; $keyforelement = 'product'; $keyforaliasextra = 'extra';
+		$keyforselect = 'product';
+		$keyforelement = 'product';
+		$keyforaliasextra = 'extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		$this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array('ps.reel'=>'Stock'));
 
@@ -254,8 +266,7 @@ class modStock extends DolibarrModules
 		$this->export_sql_end[$r] .= ' AND e.entity IN ('.getEntity('stock').')';
 
 		// Export stock including batch number
-		if ($conf->productbatch->enabled)
-		{
+		if (!empty($conf->productbatch->enabled)) {
 			$langs->load("productbatch");
 
 			// This request is same than previous but without field ps.stock (real stock in warehouse) and with link to subtable productbatch
@@ -275,7 +286,7 @@ class modStock extends DolibarrModules
 			);
 			$this->export_TypeFields_array[$r] = array(
 				'e.rowid'=>'List:entrepot:ref::stock', 'e.ref'=>'Text', 'e.lieu'=>'Text', 'e.description'=>'Text', 'e.address'=>'Text', 'e.zip'=>'Text', 'e.town'=>'Text',
-				'p.rowid'=>"List:product:label::product", 'p.ref'=>"Text", 'p.fk_product_type'=>"Text", 'p.label'=>"Text", 'p.description'=>"Text", 'p.note'=>"Text",
+				'p.rowid'=>"Numeric", 'p.ref'=>"Text", 'p.fk_product_type'=>"Text", 'p.label'=>"Text", 'p.description'=>"Text", 'p.note'=>"Text",
 				'p.price'=>"Numeric", 'p.tva_tx'=>'Numeric', 'p.tosell'=>"Boolean", 'p.tobuy'=>"Boolean", 'p.duration'=>"Duree",
 				'p.datec'=>'DateCreation', 'p.tms'=>'DateModification', 'p.pmp'=>'PMPValue', 'p.cost_price'=>'CostPrice',
 				'pb.batch'=>'Text', 'pb.qty'=>'Numeric',
@@ -290,7 +301,9 @@ class modStock extends DolibarrModules
 			);	// We define here only fields that use another icon that the one defined into export_icon
 			$this->export_aggregate_array[$r] = array('ps.reel'=>'SUM'); // TODO Not used yet
 			$this->export_dependencies_array[$r] = array('stockbatch'=>array('pb.rowid'), 'batch'=>array('pb.rowid')); // We must keep this until the aggregate_array is used. To add unique key if we ask a field of a child to avoid the DISTINCT to discard them.
-			$keyforselect = 'product_lot'; $keyforelement = 'batch'; $keyforaliasextra = 'extra';
+			$keyforselect = 'product_lot';
+			$keyforelement = 'batch';
+			$keyforaliasextra = 'extra';
 			include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 
 			$this->export_sql_start[$r] = 'SELECT DISTINCT ';
@@ -319,7 +332,7 @@ class modStock extends DolibarrModules
 		$this->export_TypeFields_array[$r] = array(
 			'sm.rowid'=>'Numeric', 'sm.value'=>'Numeric', 'sm.datem'=>'Date', 'sm.batch'=>'Text', 'sm.label'=>'Text', 'sm.inventorycode'=>'Text',
 			'e.rowid'=>'List:entrepot:ref::stock', 'e.ref'=>'Text', 'e.description'=>'Text', 'e.lieu'=>'Text', 'e.address'=>'Text', 'e.zip'=>'Text', 'e.town'=>'Text',
-			'p.rowid'=>"List:product:label::product", 'p.ref'=>"Text", 'p.fk_product_type'=>"Text", 'p.label'=>"Text", 'p.description'=>"Text", 'p.note'=>"Text",
+			'p.rowid'=>"Numeric", 'p.ref'=>"Text", 'p.fk_product_type'=>"Text", 'p.label'=>"Text", 'p.description'=>"Text", 'p.note'=>"Text",
 			'p.price'=>"Numeric", 'p.tva_tx'=>'Numeric', 'p.tosell'=>"Boolean", 'p.tobuy'=>"Boolean", 'p.duration'=>"Duree", 'p.datec'=>'Date', 'p.tms'=>'Date'
 		);
 		$this->export_entities_array[$r] = array(
@@ -327,8 +340,7 @@ class modStock extends DolibarrModules
 			'p.rowid'=>"product", 'p.ref'=>"product", 'p.fk_product_type'=>"product", 'p.label'=>"product", 'p.description'=>"product", 'p.note'=>"product",
 			'p.price'=>"product", 'p.tva_tx'=>'product', 'p.tosell'=>"product", 'p.tobuy'=>"product", 'p.duration'=>"product", 'p.datec'=>'product', 'p.tms'=>'product'
 		);	// We define here only fields that use another icon that the one defined into export_icon
-		if ($conf->productbatch->enabled)
-		{
+		if (!empty($conf->productbatch->enabled)) {
 			$this->export_fields_array[$r]['sm.batch'] = 'Batch';
 			$this->export_TypeFields_array[$r]['sm.batch'] = 'Text';
 			$this->export_entities_array[$r]['sm.batch'] = 'movement';
@@ -383,9 +395,9 @@ class modStock extends DolibarrModules
 				'e.phone'=>'(+33)(0)123456789',
 				'e.fax'=>'(+33)(0)123456790',
 				'e.statut'=>'1',
-                'e.fk_parent'=>'id or ref of warehouse'
-        );
-        $this->import_updatekeys_array[$r] = array('p.ref'=>'Ref');
+				'e.fk_parent'=>'id or ref of warehouse'
+		);
+		$this->import_updatekeys_array[$r] = array('p.ref'=>'Ref');
 
 		// Import stocks
 		$r++;
@@ -401,11 +413,11 @@ class modStock extends DolibarrModules
 			'ps.fk_entrepot'=>array('rule'=>'fetchidfromref', 'classfile'=>'/product/stock/class/entrepot.class.php', 'class'=>'Entrepot', 'method'=>'fetch', 'element'=>'ref')
 		  );
 		$this->import_examplevalues_array[$r] = array(
-		    'ps.fk_product'=>"id or ref of product", 'ps.fk_entrepot'=>"id or ref of warehouse", 'ps.reel'=>"10"
+			'ps.fk_product'=>"id or ref of product", 'ps.fk_entrepot'=>"id or ref of warehouse", 'ps.reel'=>"10"
 		);
 		$this->import_updatekeys_array[$r] = array('ps.fk_product'=>'Product', 'ps.fk_entrepot'=>"Warehouse");
 		$this->import_run_sql_after_array[$r] = array(    // Because we may change data that are denormalized, we must update dernormalized data after.
-			'UPDATE '.MAIN_DB_PREFIX.'product p SET p.stock= (SELECT SUM(ps.reel) FROM '.MAIN_DB_PREFIX.'product_stock ps WHERE ps.fk_product = p.rowid);'
+			'UPDATE '.MAIN_DB_PREFIX.'product as p SET p.stock = (SELECT SUM(ps.reel) FROM '.MAIN_DB_PREFIX.'product_stock ps WHERE ps.fk_product = p.rowid);'
 		);
 	}
 
@@ -422,6 +434,11 @@ class modStock extends DolibarrModules
 	{
 		global $conf, $langs;
 
+		$result = $this->_load_tables('/install/mysql/', 'stock');
+		if ($result < 0) {
+			return -1; // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
+		}
+
 		// Permissions
 		$this->remove($options);
 
@@ -430,13 +447,11 @@ class modStock extends DolibarrModules
 		$dirodt = DOL_DATA_ROOT.'/doctemplates/stocks';
 		$dest = $dirodt.'/template_warehouse.odt';
 
-		if (file_exists($src) && !file_exists($dest))
-		{
+		if (file_exists($src) && !file_exists($dest)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			dol_mkdir($dirodt);
 			$result = dol_copy($src, $dest, 0, 0);
-			if ($result < 0)
-			{
+			if ($result < 0) {
 				$langs->load("errors");
 				$this->error = $langs->trans('ErrorFailToCopyFile', $src, $dest);
 				return 0;
@@ -446,10 +461,10 @@ class modStock extends DolibarrModules
 		$sql = array();
 
 		$sql = array(
-			 "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[1][2])."' AND type = 'stock' AND entity = ".$conf->entity,
-			 "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[1][2])."','stock',".$conf->entity.")",
-			 "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[2][2])."' AND type = 'mouvement' AND entity = ".$conf->entity,
-			 "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[2][2])."','mouvement',".$conf->entity.")",
+			 "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[1][2])."' AND type = 'stock' AND entity = ".((int) $conf->entity),
+			 "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[1][2])."','stock',".((int) $conf->entity).")",
+			 "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[2][2])."' AND type = 'mouvement' AND entity = ".((int) $conf->entity),
+			 "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[2][2])."','mouvement',".((int) $conf->entity).")",
 		);
 
 		return $this->_init($sql, $options);

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2018		ATM Consulting		<support@atm-consulting.fr>
+ * Copyright (C) 2021       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,13 +25,23 @@
  * $backtopage				URL to come back to from discount modification pages
  */
 
+print '<!-- BEGIN object_discounts.tpl.php -->'."\n";
+
 $objclassname = get_class($object);
 $isInvoice = in_array($object->element, array('facture', 'invoice', 'facture_fourn', 'invoice_supplier'));
 $isNewObject = empty($object->id) && empty($object->rowid);
 
+// Clean variables not defined
+if (!isset($absolute_discount)) {
+	$absolute_discount = 0;
+}
+if (!isset($absolute_creditnote)) {
+	$absolute_creditnote = 0;
+}
+
 // Relative and absolute discounts
-$addrelativediscount = '<a href="'.DOL_URL_ROOT.'/comm/remise.php?id='.$thirdparty->id.'&backtopage='.$backtopage.'">'.$langs->trans("EditRelativeDiscount").'</a>';
-$addabsolutediscount = '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$thirdparty->id.'&backtopage='.$backtopage.'">'.$langs->trans("EditGlobalDiscounts").'</a>';
+$addrelativediscount = '<a href="'.DOL_URL_ROOT.'/comm/remise.php?id='.$thirdparty->id.'&backtopage='.$backtopage.'&action=create&token='.newToken().'">'.$langs->trans("EditRelativeDiscount").'</a>';
+$addabsolutediscount = '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$thirdparty->id.'&backtopage='.$backtopage.'&action=create&token='.newToken().'">'.$langs->trans("EditGlobalDiscounts").'</a>';
 $viewabsolutediscount = '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$thirdparty->id.'&backtopage='.$backtopage.'">'.$langs->trans("ViewAvailableGlobalDiscounts").'</a>';
 
 $fixedDiscount = $thirdparty->remise_percent;
@@ -38,19 +49,20 @@ if (!empty($discount_type)) {
 	$fixedDiscount = $thirdparty->remise_supplier_percent;
 }
 
-if ($fixedDiscount > 0)
-{
+if ($fixedDiscount > 0) {
 	$translationKey = (!empty($discount_type)) ? 'HasRelativeDiscountFromSupplier' : 'CompanyHasRelativeDiscount';
 	print $langs->trans($translationKey, $fixedDiscount).'.';
 } else {
 	$translationKey = (!empty($discount_type)) ? 'HasNoRelativeDiscountFromSupplier' : 'CompanyHasNoRelativeDiscount';
 	print '<span class="opacitymedium">'.$langs->trans($translationKey).'.</span>';
 }
-if ($isNewObject) print ' ('.$addrelativediscount.')';
+if ($isNewObject) {
+	print ' ('.$addrelativediscount.')';
+}
 
 // Is there is commercial discount or down payment available ?
 if ($absolute_discount > 0) {
-	if ($cannotApplyDiscount || !$isInvoice || $isNewObject || $object->statut > $objclassname::STATUS_DRAFT || $object->type == $objclassname::TYPE_CREDIT_NOTE || $object->type == $objclassname::TYPE_DEPOSIT) {
+	if (!empty($cannotApplyDiscount) || !$isInvoice || $isNewObject || $object->statut > $objclassname::STATUS_DRAFT || $object->type == $objclassname::TYPE_CREDIT_NOTE || $object->type == $objclassname::TYPE_DEPOSIT) {
 		$translationKey = !empty($discount_type) ? 'HasAbsoluteDiscountFromSupplier' : 'CompanyHasAbsoluteDiscount';
 		$text = $langs->trans($translationKey, price($absolute_discount), $langs->transnoentities("Currency".$conf->currency)).'.';
 
@@ -77,7 +89,7 @@ if ($absolute_discount > 0) {
 // Is there credit notes availables ?
 if ($absolute_creditnote > 0) {
 	// If validated, we show link "add credit note to payment"
-	if ($cannotApplyDiscount || !$isInvoice || $isNewObject || $object->statut != $objclassname::STATUS_VALIDATED || $object->type == $objclassname::TYPE_CREDIT_NOTE) {
+	if (!empty($cannotApplyDiscount) || !$isInvoice || $isNewObject || $object->statut != $objclassname::STATUS_VALIDATED || $object->type == $objclassname::TYPE_CREDIT_NOTE) {
 		$translationKey = !empty($discount_type) ? 'HasCreditNoteFromSupplier' : 'CompanyHasCreditNote';
 		$text = $langs->trans($translationKey, price($absolute_creditnote), $langs->transnoentities("Currency".$conf->currency)).'.';
 
@@ -86,7 +98,7 @@ if ($absolute_creditnote > 0) {
 		}
 
 		if ($absolute_discount <= 0 || $isNewObject) {
-			$text .= '('.$addabsolutediscount.')';
+			$text .= ' ('.$addabsolutediscount.')';
 		}
 
 		if ($isNewObject) {
@@ -109,3 +121,5 @@ if ($absolute_discount <= 0 && $absolute_creditnote <= 0) {
 		print ' ('.$addabsolutediscount.')';
 	}
 }
+
+print '<!-- END template -->';

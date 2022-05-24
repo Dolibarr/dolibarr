@@ -27,14 +27,17 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 require_once DOL_DOCUMENT_ROOT.'/cron/class/cronjob.class.php';
 
-if (!$user->admin)
+if (!$user->admin) {
 	accessforbidden();
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "other", "agenda"));
 
 $action = GETPOST('action', 'aZ09');
 $value = GETPOST('value', 'alpha');
+$modulepart = GETPOST('modulepart', 'aZ09');	// Used by actions_setmoduleoptions.inc.php
+
 $param = GETPOST('param', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
 $scandir = GETPOST('scandir', 'alpha');
@@ -47,12 +50,10 @@ $type = 'action';
 
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
-if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg))
-{
+if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg)) {
 	$code = $reg[1];
 	$value = (GETPOST($code, 'alpha') ? GETPOST($code, 'alpha') : 1);
-	if (dolibarr_set_const($db, $code, $value, 'chaine', 0, '', $conf->entity) > 0)
-	{
+	if (dolibarr_set_const($db, $code, $value, 'chaine', 0, '', $conf->entity) > 0) {
 		Header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
 	} else {
@@ -60,25 +61,21 @@ if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg))
 	}
 }
 
-if (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg))
-{
+if (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg)) {
 	$code = $reg[1];
-	if (dolibarr_del_const($db, $code, $conf->entity) > 0)
-	{
+	if (dolibarr_del_const($db, $code, $conf->entity) > 0) {
 		Header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
 	} else {
 		dol_print_error($db);
 	}
 }
-if ($action == 'set')
-{
+if ($action == 'set') {
 	dolibarr_set_const($db, 'AGENDA_USE_EVENT_TYPE_DEFAULT', GETPOST('AGENDA_USE_EVENT_TYPE_DEFAULT'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, 'AGENDA_DEFAULT_FILTER_TYPE', GETPOST('AGENDA_DEFAULT_FILTER_TYPE'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, 'AGENDA_DEFAULT_FILTER_STATUS', GETPOST('AGENDA_DEFAULT_FILTER_STATUS'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, 'AGENDA_DEFAULT_VIEW', GETPOST('AGENDA_DEFAULT_VIEW'), 'chaine', 0, '', $conf->entity);
-} elseif ($action == 'specimen')  // For orders
-{
+} elseif ($action == 'specimen') {  // For orders
 	$modele = GETPOST('module', 'alpha');
 
 	$commande = new CommandeFournisseur($db);
@@ -88,25 +85,21 @@ if ($action == 'set')
 	// Search template files
 	$file = ''; $classname = ''; $filefound = 0;
 	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
-	foreach ($dirmodels as $reldir)
-	{
+	foreach ($dirmodels as $reldir) {
 		$file = dol_buildpath($reldir."core/modules/action/doc/pdf_".$modele.".modules.php", 0);
-		if (file_exists($file))
-		{
+		if (file_exists($file)) {
 			$filefound = 1;
 			$classname = "pdf_".$modele;
 			break;
 		}
 	}
 
-	if ($filefound)
-	{
+	if ($filefound) {
 		require_once $file;
 
 		$module = new $classname($db, $commande);
 
-		if ($module->write_file($commande, $langs) > 0)
-		{
+		if ($module->write_file($commande, $langs) > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=action&file=SPECIMEN.pdf");
 			return;
 		} else {
@@ -117,27 +110,20 @@ if ($action == 'set')
 		setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
 		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
 	}
-}
-
-// Activate a model
-elseif ($action == 'setmodel')
-{
+} elseif ($action == 'setmodel') {
+	// Activate a model
 	//print "sssd".$value;
 	$ret = addDocumentModel($value, $type, $label, $scandir);
-} elseif ($action == 'del')
-{
+} elseif ($action == 'del') {
 	$ret = delDocumentModel($value, $type);
-	if ($ret > 0)
-	{
-		if ($conf->global->ACTION_EVENT_ADDON_PDF == "$value") dolibarr_del_const($db, 'ACTION_EVENT_ADDON_PDF', $conf->entity);
+	if ($ret > 0) {
+		if ($conf->global->ACTION_EVENT_ADDON_PDF == "$value") {
+			dolibarr_del_const($db, 'ACTION_EVENT_ADDON_PDF', $conf->entity);
+		}
 	}
-}
-
-// Set default model
-elseif ($action == 'setdoc')
-{
-	if (dolibarr_set_const($db, "ACTION_EVENT_ADDON_PDF", $value, 'chaine', 0, '', $conf->entity))
-	{
+} elseif ($action == 'setdoc') {
+	// Set default model
+	if (dolibarr_set_const($db, "ACTION_EVENT_ADDON_PDF", $value, 'chaine', 0, '', $conf->entity)) {
 		// The constant that has been read in front of the new set
 		// is therefore passed through a variable to have a coherent display
 		$conf->global->ACTION_EVENT_ADDON_PDF = $value;
@@ -145,8 +131,7 @@ elseif ($action == 'setdoc')
 
 	// On active le modele
 	$ret = delDocumentModel($value, $type);
-	if ($ret > 0)
-	{
+	if ($ret > 0) {
 		$ret = addDocumentModel($value, $type, $label, $scandir);
 	}
 }
@@ -184,21 +169,21 @@ print '</tr>'."\n";
 print '<tr class="oddeven">'."\n";
 print '<td>'.$langs->trans('AGENDA_REMINDER_BROWSER').'</td>'."\n";
 print '<td class="center">&nbsp;</td>'."\n";
-print '<td class="right">'."\n";
+print '<td class="right nowraponall">'."\n";
 
 if (empty($conf->global->AGENDA_REMINDER_BROWSER)) {
 	if (!isHTTPS()) {
 		$langs->load("errors");
 		print img_warning($langs->trans("WarningAvailableOnlyForHTTPSServers"), '', 'valignmiddle size15x').' ';
 	}
-	print '<a class="valignmiddle" href="'.$_SERVER['PHP_SELF'].'?action=set_AGENDA_REMINDER_BROWSER&amp;token='.newToken().'">'.img_picto($langs->trans('Disabled'), 'switch_off').'</a>';
+	print '<a class="valignmiddle" href="'.$_SERVER['PHP_SELF'].'?action=set_AGENDA_REMINDER_BROWSER&token='.newToken().'">'.img_picto($langs->trans('Disabled'), 'switch_off').'</a>';
 	print '</td></tr>'."\n";
 } else {
 	if (!isHTTPS()) {
 		$langs->load("errors");
 		print img_warning($langs->trans("WarningAvailableOnlyForHTTPSServers"), '', 'valignmiddle size15x').' ';
 	}
-	print '<a class="valignmiddle" href="'.$_SERVER['PHP_SELF'].'?action=del_AGENDA_REMINDER_BROWSER&amp;token='.newToken().'">'.img_picto($langs->trans('Enabled'), 'switch_on').'</a>';
+	print '<a class="valignmiddle" href="'.$_SERVER['PHP_SELF'].'?action=del_AGENDA_REMINDER_BROWSER&token='.newToken().'">'.img_picto($langs->trans('Enabled'), 'switch_on').'</a>';
 	print '</td></tr>'."\n";
 
 	print '<tr class="oddeven">'."\n";
@@ -207,9 +192,9 @@ if (empty($conf->global->AGENDA_REMINDER_BROWSER)) {
 	print '<td class="right">'."\n";
 
 	if (empty($conf->global->AGENDA_REMINDER_BROWSER_SOUND)) {
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_AGENDA_REMINDER_BROWSER_SOUND&amp;token='.newToken().'">'.img_picto($langs->trans('Disabled'), 'switch_off').'</a>';
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_AGENDA_REMINDER_BROWSER_SOUND&token='.newToken().'">'.img_picto($langs->trans('Disabled'), 'switch_off').'</a>';
 	} else {
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_AGENDA_REMINDER_BROWSER_SOUND&amp;token='.newToken().'">'.img_picto($langs->trans('Enabled'), 'switch_on').'</a>';
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_AGENDA_REMINDER_BROWSER_SOUND&token='.newToken().'">'.img_picto($langs->trans('Enabled'), 'switch_on').'</a>';
 	}
 
 	print '</td></tr>'."\n";
@@ -232,20 +217,21 @@ if (!empty($conf->cron->enabled)) {
 }
 print '</td>'."\n";
 print '<td class="center">&nbsp;</td>'."\n";
-print '<td class="right">'."\n";
+print '<td class="right nowraponall">'."\n";
 
 if (empty($conf->cron->enabled)) {
 	print '<span class="opacitymedium">'.$langs->trans("WarningModuleNotActive", $langs->transnoentitiesnoconv("Module2300Name")).'</span>';
 } else {
 	if (empty($conf->global->AGENDA_REMINDER_EMAIL)) {
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_AGENDA_REMINDER_EMAIL&amp;token='.newToken().'">'.img_picto($langs->trans('Disabled'), 'switch_off').'</a>';
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_AGENDA_REMINDER_EMAIL&token='.newToken().'">'.img_picto($langs->trans('Disabled'), 'switch_off').'</a>';
 	} else {
 		// Get the max frequency of reminder
 		if ($job->id > 0) {
 			if ($job->status != $job::STATUS_ENABLED) {
+				$langs->load("cron");
 				print '<span class="opacitymedium warning">'.$langs->trans("JobXMustBeEnabled", $langs->transnoentitiesnoconv("sendEmailsReminder")).'</span>';
 			} else {
-				print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_AGENDA_REMINDER_EMAIL&amp;token='.newToken().'">'.img_picto($langs->trans('Enabled'), 'switch_on').'</a>';
+				print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_AGENDA_REMINDER_EMAIL&token='.newToken().'">'.img_picto($langs->trans('Enabled'), 'switch_on').'</a>';
 			}
 		}
 	}

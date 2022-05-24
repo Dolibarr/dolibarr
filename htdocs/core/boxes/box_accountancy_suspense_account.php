@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -33,7 +33,7 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 class box_accountancy_suspense_account extends ModeleBoxes
 {
 	public $boxcode = "accountancy_suspense_account";
-	public $boximg = "object_invoice";
+	public $boximg = "accounting";
 	public $boxlabel = "BoxSuspenseAccount";
 	public $depends = array("accounting");
 
@@ -78,20 +78,17 @@ class box_accountancy_suspense_account extends ModeleBoxes
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleSuspenseAccount"));
 
-		if ($user->rights->accounting->mouvements->lire)
-		{
+		if ($user->rights->accounting->mouvements->lire) {
 			$suspenseAccount = $conf->global->ACCOUNTING_ACCOUNT_SUSPENSE;
-			if (!empty($suspenseAccount) && $suspenseAccount > 0)
-			{
+			if (!empty($suspenseAccount) && $suspenseAccount > 0) {
 				$sql = "SELECT COUNT(*) as nb_suspense_account";
 				$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as b";
-				$sql .= " WHERE b.numero_compte = ".$suspenseAccount;
+				$sql .= " WHERE b.numero_compte = '".$this->db->escape($suspenseAccount)."'";
 				$sql .= " AND b.entity = ".$conf->entity;
 
 				$result = $this->db->query($sql);
 				$nbSuspenseAccount = 0;
-				if ($result)
-				{
+				if ($result) {
 					$obj = $this->db->fetch_object($result);
 					$nbSuspenseAccount = $obj->nb_suspense_account;
 				}

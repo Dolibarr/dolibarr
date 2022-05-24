@@ -21,6 +21,7 @@ ErrorPHPDoesNotSupportCurl=你的PHP服务器不支持Curl。
 ErrorPHPDoesNotSupportCalendar=Your PHP installation does not support php calendar extensions.
 ErrorPHPDoesNotSupportUTF8=Your PHP installation does not support UTF8 functions. Dolibarr cannot work correctly. Resolve this before installing Dolibarr.
 ErrorPHPDoesNotSupportIntl=Your PHP installation does not support Intl functions.
+ErrorPHPDoesNotSupportMbstring=Your PHP installation does not support mbstring functions.
 ErrorPHPDoesNotSupportxDebug=Your PHP installation does not support extend debug functions.
 ErrorPHPDoesNotSupport=Your PHP installation does not support %s functions.
 ErrorDirDoesNotExists=目录 %s 不存在。
@@ -206,6 +207,7 @@ MigrationUserPhotoPath=Migration of photo paths for users
 MigrationFieldsSocialNetworks=Migration of users fields social networks (%s)
 MigrationReloadModule=重载模块%s
 MigrationResetBlockedLog=重置模块BlockedLog for v7算法
+MigrationImportOrExportProfiles=Migration of import or export profiles (%s)
 ShowNotAvailableOptions=Show unavailable options
 HideNotAvailableOptions=Hide unavailable options
 ErrorFoundDuringMigration=Error(s) were reported during the migration process so next step is not available. To ignore errors, you can <a href="%s">click here</a>, but the application or some features may not work correctly until the errors are resolved.

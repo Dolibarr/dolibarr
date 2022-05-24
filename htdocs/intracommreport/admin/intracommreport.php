@@ -17,7 +17,7 @@
  */
 
 /**
- *      \file		htdocs/admin/intracommreport.php
+ *      \file		htdocs/intracommreport/admin/intracommreport.php
  *      \ingroup	intracommreport
  *      \brief		Page to setup the module intracomm report
  */
@@ -30,7 +30,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "intracommreport"));
 
-if (!$user->admin) accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
 
 $action = GETPOST('action', 'aZ09');
 
@@ -46,10 +48,8 @@ $list_DES = array(
 if ($action == 'update') {
 	$error = 0;
 
-	if (!$error)
-	{
-		foreach ($list_DEB as $constname)
-		{
+	if (!$error) {
+		foreach ($list_DEB as $constname) {
 			$constvalue = GETPOST($constname, 'alpha');
 
 			if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
@@ -57,8 +57,7 @@ if ($action == 'update') {
 			}
 		}
 
-		foreach ($list_DES as $constname)
-		{
+		foreach ($list_DES as $constname) {
 			$constvalue = GETPOST($constname, 'alpha');
 
 			if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
@@ -110,8 +109,7 @@ print '<td>'.$langs->trans("Description").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
 print '</tr>';
 
-foreach ($list_DEB as $key)
-{
+foreach ($list_DEB as $key) {
 	print '<tr class="oddeven value">';
 
 	// Param
@@ -175,8 +173,7 @@ print '<td>'.$langs->trans("Description").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
 print '</tr>';
 
-foreach ($list_DES as $key)
-{
+foreach ($list_DES as $key) {
 	print '<tr class="oddeven value">';
 
 	// Param

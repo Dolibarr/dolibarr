@@ -33,7 +33,7 @@ global $langs;
 
 $err = 0;
 
-$setuplang = GETPOST("selectlang", '', 3) ?GETPOST("selectlang", '', 3) : (isset($_GET["lang"]) ? $_GET["lang"] : 'auto');
+$setuplang = GETPOST("selectlang", 'alpha', 3) ? GETPOST("selectlang", 'alpha', 3) : (GETPOST('lang', 'alpha', 1) ? GETPOST('lang', 'alpha', 1) : 'auto');
 $langs->setDefaultLang($setuplang);
 
 $langs->loadLangs(array("install", "errors"));
@@ -134,7 +134,7 @@ if (!empty($force_install_message)) {
 
 	<tr>
 		<td colspan="3" class="label">
-		<h3><img class="valigntextbottom" src="../theme/common/octicons/build/svg/globe.svg" width="20" alt="webserver"> <?php echo $langs->trans("WebServer"); ?></h3>
+		<h3><img class="valignmiddle inline-block paddingright" src="../theme/common/octicons/build/svg/globe.svg" width="20" alt="webserver"> <?php echo $langs->trans("WebServer"); ?></h3>
 		</td>
 	</tr>
 
@@ -142,8 +142,8 @@ if (!empty($force_install_message)) {
 	<tr>
 		<td class="label"><label for="main_dir"><b><?php print $langs->trans("WebPagesDirectory"); ?></b></label></td>
 <?php
-if (empty($dolibarr_main_url_root)) {
-	$dolibarr_main_document_root = detect_dolibarr_main_document_root();
+if (empty($dolibarr_main_document_root)) {
+	$dolibarr_main_document_root = GETPOSTISSET('main_dir') ? GETPOST('main_dir') : detect_dolibarr_main_document_root();
 }
 ?>
 		<td class="label">
@@ -174,9 +174,11 @@ if (!empty($force_install_noedit)) {
 	<tr>
 		<td class="label"><label for="main_data_dir"><b><?php print $langs->trans("DocumentsDirectory"); ?></b></label></td>
 		<?php
-		$dolibarr_main_data_root = @$force_install_main_data_root;
+		if (!empty($force_install_main_data_root)) {
+			$dolibarr_main_data_root = @$force_install_main_data_root;
+		}
 		if (empty($dolibarr_main_data_root)) {
-			$dolibarr_main_data_root = detect_dolibarr_main_data_root($dolibarr_main_document_root);
+			$dolibarr_main_data_root = GETPOSTISSET('main_data_dir') ? GETPOST('main_data_dir') : detect_dolibarr_main_data_root($dolibarr_main_document_root);
 		}
 		?>
 		<td class="label">
@@ -205,7 +207,7 @@ if (!empty($force_install_noedit)) {
 	<!-- Root URL $dolibarr_main_url_root -->
 	<?php
 	if (empty($dolibarr_main_url_root)) {
-		$dolibarr_main_url_root = detect_dolibarr_main_url_root();
+		$dolibarr_main_url_root = GETPOSTISSET('main_url') ? GETPOST('main_url') : detect_dolibarr_main_url_root();
 	}
 	?>
 	<tr>
@@ -261,7 +263,7 @@ if (!empty($force_install_noedit)) {
 
 	<tr>
 		<td colspan="3" class="label"><br>
-		<h3><img class="valigntextbottom" src="../theme/common/octicons/build/svg/database.svg" width="20" alt="webserver"> <?php echo $langs->trans("DolibarrDatabase"); ?></h3>
+		<h3><img class="valignmiddle inline-block paddingright" src="../theme/common/octicons/build/svg/database.svg" width="20" alt="webserver"> <?php echo $langs->trans("DolibarrDatabase"); ?></h3>
 		</td>
 	</tr>
 
@@ -293,7 +295,7 @@ if (!empty($force_install_noedit)) {
 		<td class="label">
 		<?php
 
-		$defaultype = !empty($dolibarr_main_db_type) ? $dolibarr_main_db_type : ($force_install_type ? $force_install_type : 'mysqli');
+		$defaultype = !empty($dolibarr_main_db_type) ? $dolibarr_main_db_type : (empty($force_install_type) ? 'mysqli' : $force_install_type);
 
 		$modules = array();
 		$nbok = $nbko = 0;
@@ -476,13 +478,13 @@ if (!empty($force_install_noedit)) {
 	<tr class="hidesqlite">
 		<td class="label"><label for="db_pass"><b><?php echo $langs->trans("Password"); ?></b></label></td>
 		<td class="label">
-			<input type="password"
+			<input type="password" class="text-security";
 				   id="db_pass" autocomplete="off"
 				   name="db_pass"
 				   value="<?php
 					// If $force_install_databasepass is on, we don't want to set password, we just show '***'. Real value will be extracted from the forced install file at step1.
 					$autofill = ((!empty($_SESSION['dol_save_pass'])) ? $_SESSION['dol_save_pass'] : str_pad('', strlen($force_install_databasepass), '*'));
-					if (!empty($dolibarr_main_prod)) {
+					if (!empty($dolibarr_main_prod) && empty($_SESSION['dol_save_pass'])) {    // So value can't be found if install page still accessible
 						$autofill = '';
 					}
 					print dol_escape_htmltag($autofill);
@@ -521,7 +523,7 @@ if (!empty($force_install_noedit)) {
 	?>
 	<tr class="hidesqlite hideroot">
 		<td colspan="3" class="label"><br>
-		<h3><img class="valigntextbottom" src="../theme/common/octicons/build/svg/shield.svg" width="20" alt="webserver"> <?php echo $langs->trans("DatabaseSuperUserAccess"); ?></h3>
+		<h3><img class="valignmiddle inline-block paddingright" src="../theme/common/octicons/build/svg/shield.svg" width="20" alt="webserver"> <?php echo $langs->trans("DatabaseSuperUserAccess"); ?></h3>
 		</td>
 	</tr>
 
@@ -532,7 +534,7 @@ if (!empty($force_install_noedit)) {
 				   id="db_user_root"
 				   name="db_user_root"
 				   class="needroot"
-				   value="<?php print (!empty($force_install_databaserootlogin)) ? $force_install_databaserootlogin : @$db_user_root; ?>"
+				   value="<?php print (!empty($force_install_databaserootlogin)) ? $force_install_databaserootlogin : (GETPOSTISSET('db_user_root') ? GETPOST('db_user_root') : (isset($db_user_root) ? $db_user_root : '')); ?>"
 				<?php if ($force_install_noedit > 0 && !empty($force_install_databaserootlogin)) {
 					print ' disabled';
 				} ?>
@@ -556,10 +558,10 @@ if (!empty($force_install_noedit)) {
 				   autocomplete="off"
 				   id="db_pass_root"
 				   name="db_pass_root"
-				   class="needroot"
+				   class="needroot text-security"
 				   value="<?php
 					// If $force_install_databaserootpass is on, we don't want to set password here, we just show '***'. Real value will be extracted from the forced install file at step1.
-					$autofill = ((!empty($force_install_databaserootpass)) ? str_pad('', strlen($force_install_databaserootpass), '*') : @$db_pass_root);
+					$autofill = ((!empty($force_install_databaserootpass)) ? str_pad('', strlen($force_install_databaserootpass), '*') : (isset($db_pass_root) ? $db_pass_root : ''));
 					if (!empty($dolibarr_main_prod)) {
 						$autofill = '';
 					}
@@ -613,12 +615,13 @@ jQuery(document).ready(function() {
 
 	function init_needroot()
 	{
+		console.log("init_needroot force_install_noedit=<?php echo $force_install_noedit?>");
 		/*alert(jQuery("#db_create_database").prop("checked")); */
 		if (jQuery("#db_create_database").is(":checked") || jQuery("#db_create_user").is(":checked"))
 		{
 			jQuery(".hideroot").show();
 			<?php
-			if ($force_install_noedit == 0) { ?>
+			if (empty($force_install_noedit)) { ?>
 				jQuery(".needroot").removeAttr('disabled');
 			<?php } ?>
 		}

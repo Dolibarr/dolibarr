@@ -1,0 +1,167 @@
+# Copyright (C) 2021		Florian Henry			<florian.henry@scopen.fr>
+# Copyright (C) 2021		Dorian Vabre			<dorian.vabre@gmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+ModuleEventOrganizationName = Tadbirni tashkil etish
+EventOrganizationDescription = Modul loyihasi orqali tadbirlarni tashkil etish
+EventOrganizationDescriptionLong= Tadbirni tashkil qilishni boshqaring (shou, konferentsiyalar, ishtirokchilar yoki ma'ruzachilar, takliflar, ovoz berish yoki ro'yxatdan o'tish uchun ochiq sahifalar bilan)
+#
+# Menu
+#
+EventOrganizationMenuLeft = Tashkil etilgan tadbirlar
+EventOrganizationConferenceOrBoothMenuLeft = Konferentsiya yoki stend
+
+PaymentEvent=Tadbir uchun to'lov
+
+#
+# Admin page
+#
+NewRegistration=Ro'yxatdan o'tish
+EventOrganizationSetup=Tadbirni tashkil qilishni sozlash
+EventOrganization=Tadbirni tashkil qilish
+Settings=Sozlamalar
+EventOrganizationSetupPage = Tadbirni tashkil etish sahifasi
+EVENTORGANIZATION_TASK_LABEL = Loyiha tasdiqlanganda avtomatik ravishda yaratiladigan vazifalar yorlig'i
+EVENTORGANIZATION_TASK_LABELTooltip = Agar tashkil etilgan tadbirda tasdiqlashimiz bo'lsa, ba'zi vazifalar avtomatik ravishda Masalan loyiha <br> <br> yaratilgan bo'lishi mumkin: konferensiyasi uchun <br> Send qo'ng'iroq <br> tashrif buyurganlar uchun voqealarga ochiq obuna <br> But uchun qo'ng'iroq olish <br> konferentsiyalar uchun qo'ng'iroq olish <br> But chaqiraman yuborish <br> Tadbirni ma'ruzachilarga eslatib turish
+EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = Kimdir konferentsiya taklif qilganda avtomatik ravishda tuziladigan uchinchi tomonlarga qo'shiladigan toifadir
+EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = Uchinchi shaxslarga qo'shiladigan toifani, ular stendni taklif qilganda avtomatik ravishda yaratiladi
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = Konferentsiya taklifini olgandan so'ng yuborish uchun elektron pochta shablonini.
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH = Stend taklifini olgandan keyin yuborish uchun elektron pochta shablonini.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Template of email to send after a registration to a booth has been paid.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = Tadbirga ro'yxatdan o'tgandan so'ng yuboriladigan elektron pochta shablonini.
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Template of email to use when sending emails from the massaction "Send emails" to speakers
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Template of email to use when sending emails from the massaction "Send emails" on attendee list
+EVENTORGANIZATION_FILTERATTENDEES_CAT = In the form to create/add an attendee, restricts the list of thirdparties to thirdparties in the category
+EVENTORGANIZATION_FILTERATTENDEES_TYPE = In the form to create/add an attendee, restricts the list of thirdparties to thirdparties with the nature
+
+#
+# Object
+#
+EventOrganizationConfOrBooth= Konferentsiya yoki stend
+ManageOrganizeEvent = Tadbirni tashkil qilishni boshqaring
+ConferenceOrBooth = Konferentsiya yoki stend
+ConferenceOrBoothTab = Konferentsiya yoki stend
+AmountPaid = To'langan miqdor
+DateOfRegistration = Ro'yxatdan o'tish sanasi
+ConferenceOrBoothAttendee = Konferentsiya yoki stend ishtirokchisi
+
+#
+# Template Mail
+#
+YourOrganizationEventConfRequestWasReceived = Konferentsiya uchun so'rovingiz qabul qilindi
+YourOrganizationEventBoothRequestWasReceived = Sizning kabinangizga bo'lgan talabingiz qabul qilindi
+EventOrganizationEmailAskConf = Konferentsiya uchun so'rov
+EventOrganizationEmailAskBooth = Stendga buyurtma
+EventOrganizationEmailBoothPayment = Stendingizning to'lovi
+EventOrganizationEmailRegistrationPayment = Tadbir uchun ro'yxatdan o'tish
+EventOrganizationMassEmailAttendees = Ishtirokchilar bilan aloqa
+EventOrganizationMassEmailSpeakers = Spikerlar bilan aloqa
+ToSpeakers=To speakers
+
+#
+# Event
+#
+AllowUnknownPeopleSuggestConf=Allow people to suggest conferences
+AllowUnknownPeopleSuggestConfHelp=Allow unknown people to suggest a conference they want to do
+AllowUnknownPeopleSuggestBooth=Allow people to apply for a booth
+AllowUnknownPeopleSuggestBoothHelp=Allow unknown people to apply for a booth
+PriceOfRegistration=Ro'yxatdan o'tish narxi
+PriceOfRegistrationHelp=Ro'yxatdan o'tish yoki tadbirda qatnashish uchun to'lanadigan narx
+PriceOfBooth=Stendda turish uchun obuna narxi
+PriceOfBoothHelp=Stendda turish uchun obuna narxi
+EventOrganizationICSLink=Link ICS for conferences
+ConferenceOrBoothInformation=Konferentsiya yoki stend ma'lumotlari
+Attendees=Ishtirokchilar
+ListOfAttendeesOfEvent=Loyiha ishtirokchilari ro'yxati
+DownloadICSLink = ICS havolasini yuklab oling
+EVENTORGANIZATION_SECUREKEY = Seed to secure the key for the public registration page to suggest a conference
+SERVICE_BOOTH_LOCATION = Stend joylashgan joy haqida hisob-faktura qatori uchun ishlatiladigan xizmat
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Service used for the invoice row about an attendee subscription to an event
+NbVotes=Ovozlar soni
+#
+# Status
+#
+EvntOrgDraft = Qoralama
+EvntOrgSuggested = Tavsiya etilgan
+EvntOrgConfirmed = Tasdiqlandi
+EvntOrgNotQualified = Malakali emas
+EvntOrgDone = Bajarildi
+EvntOrgCancelled = Bekor qilindi
+#
+# Public page
+#
+SuggestForm = Takliflar sahifasi
+SuggestOrVoteForConfOrBooth = Taklif yoki ovoz berish uchun sahifa
+EvntOrgRegistrationHelpMessage = Here, you can vote for a conference or suggest a new one for the event. You can also apply to have a booth during the event.
+EvntOrgRegistrationConfHelpMessage = Here, you can suggest a new conference to animate during the event.
+EvntOrgRegistrationBoothHelpMessage = Here, you can apply to have a booth during the event.
+ListOfSuggestedConferences = Tavsiya etilgan konferentsiyalar ro'yxati
+ListOfSuggestedBooths = Tavsiya etilgan kabinalar ro'yxati
+ListOfConferencesOrBooths=Loyiha konferentsiyalari yoki stendlari ro'yxati
+SuggestConference = Yangi konferentsiyani taklif eting
+SuggestBooth = Stendni taklif qiling
+ViewAndVote = Taklif etilgan tadbirlarni ko'ring va ovoz bering
+PublicAttendeeSubscriptionGlobalPage = Tadbirga ro'yxatdan o'tish uchun ochiq havola
+PublicAttendeeSubscriptionPage = Faqat ushbu tadbirga ro'yxatdan o'tish uchun ochiq havola
+MissingOrBadSecureKey = Elektron kalit yaroqsiz yoki yo'q
+EvntOrgWelcomeMessage = Ushbu shakl sizga tadbirning yangi ishtirokchisi sifatida ro'yxatdan o'tishga imkon beradi: <b> %s </b>
+EvntOrgDuration = Ushbu anjuman %s da boshlanadi va %s da tugaydi.
+ConferenceAttendeeFee = Tadbir uchun konferentsiya qatnashchilari uchun to'lov: '%s' %s dan %s gacha.
+BoothLocationFee = Hodisa uchun stend joylashuvi: %s dan %s gacha bo'lgan '%s'.
+EventType = Tadbir turi
+LabelOfBooth=Stend yorlig'i
+LabelOfconference=Konferentsiya yorlig'i
+ConferenceIsNotConfirmed=Ro'yxatdan o'tish mumkin emas, konferentsiya hali tasdiqlanmagan
+DateMustBeBeforeThan=%s %sdan oldin bo'lishi kerak
+DateMustBeAfterThan=%s %s dan keyin bo'lishi kerak
+
+NewSubscription=Ro'yxatdan o'tish
+OrganizationEventConfRequestWasReceived=Sizning konferentsiya haqidagi taklifingiz qabul qilindi
+OrganizationEventBoothRequestWasReceived=Stend uchun so'rovingiz qabul qilindi
+OrganizationEventPaymentOfBoothWasReceived=Stend uchun to'lovingiz qayd etildi
+OrganizationEventPaymentOfRegistrationWasReceived=Tadbirni ro'yxatdan o'tkazish uchun to'lovingiz qayd etildi
+OrganizationEventBulkMailToAttendees=Bu sizning tadbirda ishtirokchi sifatida ishtirok etishingizni eslatadi
+OrganizationEventBulkMailToSpeakers=Bu sizning ma'ruzachi sifatida tadbirda ishtirok etishingizni eslatadi
+OrganizationEventLinkToThirdParty=Link to third party (customer, supplier or partner)
+
+NewSuggestionOfBooth=Application for a booth
+NewSuggestionOfConference=Application for a conference
+
+#
+# Vote page
+#
+EvntOrgRegistrationWelcomeMessage = Konferentsiyada yoki kabinet takliflari sahifasida xush kelibsiz.
+EvntOrgRegistrationConfWelcomeMessage = Konferentsiya takliflari sahifasida xush kelibsiz.
+EvntOrgRegistrationBoothWelcomeMessage = Stend takliflari sahifasida xush kelibsiz.
+EvntOrgVoteHelpMessage = Bu erda siz loyiha uchun taklif qilingan tadbirlarni ko'rishingiz va ularga ovoz berishingiz mumkin
+VoteOk = Sizning ovozingiz qabul qilindi.
+AlreadyVoted = Siz ushbu tadbir uchun allaqachon ovoz bergansiz.
+VoteError = Ovoz berish paytida xatolik yuz berdi, qayta urinib ko'ring.
+
+SubscriptionOk = Sizning ro'yxatdan o'tishingiz tasdiqlandi
+ConfAttendeeSubscriptionConfirmation = Tadbirga obunangizni tasdiqlash
+Attendee = Ishtirokchi
+PaymentConferenceAttendee = Konferentsiya qatnashchilarining to'lovlari
+PaymentBoothLocation = Stend joylashgan joy uchun to'lov
+DeleteConferenceOrBoothAttendee=Remove attendee
+RegistrationAndPaymentWereAlreadyRecorder=<b> %s </b> elektron pochta uchun ro'yxatdan o'tish va to'lov allaqachon qayd qilingan.
+EmailAttendee=Ishtirokchining elektron pochtasi
+EmailCompanyForInvoice=Kompaniyaning elektron pochtasi (hisob -faktura uchun, agar ishtirokchining elektron pochtasi boshqacha bo'lsa)
+ErrorSeveralCompaniesWithEmailContactUs=Bu elektron pochtaga ega bo'lgan bir nechta kompaniyalar topildi, shuning uchun biz sizning ro'yxatdan o'tishingizni avtomatik tarzda tasdiqlay olmaymiz. Iltimos, qo'lda tekshirish uchun %s biz bilan bog'laning
+ErrorSeveralCompaniesWithNameContactUs=Bu nomdagi bir nechta kompaniyalar topilgan, shuning uchun biz sizning ro'yxatdan o'tishingizni avtomatik tarzda tasdiqlay olmaymiz. Iltimos, qo'lda tekshirish uchun %s biz bilan bog'laning
+NoPublicActionsAllowedForThisEvent=No public actions are open to public for this event

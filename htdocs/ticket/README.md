@@ -6,5 +6,5 @@ An issue tracker that provides a delicate balance between simplicity and power a
 Offer your customers an easy to use interface to report and follow status of their issue. Manage your issues from
 your backoffice.
  
+By enabling the Email Collector module, you can also having your ticket created automatically from input emails.
 
-(c) The development of this module has been initiated by the company <a href="https://librethic.io">Libr&thic</a> and is now part of Dolibarr ERP CRM core.

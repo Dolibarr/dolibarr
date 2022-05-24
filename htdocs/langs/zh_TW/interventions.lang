@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - interventions
-Intervention=干預措施
-Interventions=干預措施
+Intervention=干預
+Interventions=干預
 InterventionCard=干預卡
 NewIntervention=新干預
 AddIntervention=建立干預
@@ -41,9 +41,7 @@ InterventionsArea=干預區
 DraftFichinter=干預草案
 LastModifiedInterventions=最新%s已修改干預
 FichinterToProcess=進行干預
-##### Types de contacts #####
 TypeContact_fichinter_external_CUSTOMER=後續追蹤客戶聯絡人
-# Modele numérotation
 PrintProductsOnFichinter=在干預卡上也列印“產品”類型的行（不僅是服務）
 PrintProductsOnFichinterDetails=訂單產生的干預
 UseServicesDurationOnFichinter=將服務期限用於訂單產生的干預
@@ -52,8 +50,7 @@ UseDateWithoutHourOnFichinter=為干預記錄隱藏日期中的小時和分鐘
 InterventionStatistics=干預統計
 NbOfinterventions=干預卡數量
 NumberOfInterventionsByMonth=每月干預卡的數量（驗證日期）
-AmountOfInteventionNotIncludedByDefault=預設情況下，干預金額不包括在利潤中（在大多數情況下，時間表用於計算花費的時間）。將選項PROJECT_INCLUDE_INTERVENTION_AMOUNT_IN_PROFIT to 1加 到首頁- 設定- 其他中以包括它們。
-##### Exports #####
+AmountOfInteventionNotIncludedByDefault=預設情況下，干預金額不包括在利潤中（在大多數情況下，時間表用於計算花費的時間）。將選項PROJECT_INCLUDE_INTERVENTION_AMOUNT_IN_PROFIT加到首頁- 設定- 其他中並設定為1以包括它們。
 InterId=干預ID
 InterRef=干預參考
 InterDateCreation=干預的建立日期
@@ -65,3 +62,9 @@ InterLineId=干預行ID
 InterLineDate=干預行日期
 InterLineDuration=週期干預行
 InterLineDesc=干預行描述
+RepeatableIntervention=干預模板
+ToCreateAPredefinedIntervention=要創建預定義或定期干預，請創建一個通用乾預並將其轉換為乾預模板
+ConfirmReopenIntervention=您確定要打開干預<b> %s </b>嗎？
+GenerateInter=產生干預
+FichinterNoContractLinked=干預 %s 已在沒有連結合約的情況下建立。
+ErrorFicheinterCompanyDoesNotExist=公司不存在。干預尚未產生。

@@ -66,21 +66,23 @@ function printDropdownBookmarksList()
 
 
 	// Url to list bookmark
-	$listbtn = '<a class="top-menu-dropdown-link" title="'.$langs->trans('AddThisPageToBookmarks').'" href="'.DOL_URL_ROOT.'/bookmarks/list.php" >';
-	$listbtn .= '<span class="fa fa-list paddingright"></span>'.$langs->trans('Bookmarks').'</a>';
+	$listbtn = '<a class="top-menu-dropdown-link" title="'.dol_escape_htmltag($langs->trans('Bookmarks')).'" href="'.DOL_URL_ROOT.'/bookmarks/list.php">';
+	$listbtn .= img_picto('', 'bookmark', 'class="paddingright"').$langs->trans('Bookmarks').'</a>';
 
 	// Url to go on create new bookmark page
 	$newbtn = '';
 	if (!empty($user->rights->bookmark->creer)) {
-		//$urltoadd=DOL_URL_ROOT.'/bookmarks/card.php?action=create&amp;urlsource='.urlencode($url).'&amp;url='.urlencode($url);
-		$urltoadd = DOL_URL_ROOT.'/bookmarks/card.php?action=create&amp;url='.urlencode($url);
-		$newbtn .= '<a class="top-menu-dropdown-link" title="'.$langs->trans('AddThisPageToBookmarks').'" href="'.dol_escape_htmltag($urltoadd).'" >';
-		$newbtn .= img_picto('', 'bookmark', '', false, 0, 0, '', 'paddingright').dol_escape_htmltag($langs->trans('AddThisPageToBookmarks')).'</a>';
+		if (!preg_match('/bookmarks\/card.php/', $_SERVER['PHP_SELF'])) {
+			//$urltoadd=DOL_URL_ROOT.'/bookmarks/card.php?action=create&amp;urlsource='.urlencode($url).'&amp;url='.urlencode($url);
+			$urltoadd = DOL_URL_ROOT.'/bookmarks/card.php?action=create&amp;url='.urlencode($url);
+			$newbtn .= '<a class="top-menu-dropdown-link" title="'.$langs->trans('AddThisPageToBookmarks').'" href="'.dol_escape_htmltag($urltoadd).'" >';
+			$newbtn .= img_picto('', 'add', '', false, 0, 0, '', 'paddingright').dol_escape_htmltag($langs->trans('AddThisPageToBookmarks')).'</a>';
+		}
 	}
 
 	// Menu with list of bookmarks
 	$sql = "SELECT rowid, title, url, target FROM ".MAIN_DB_PREFIX."bookmark";
-	$sql .= " WHERE (fk_user = ".$user->id." OR fk_user is NULL OR fk_user = 0)";
+	$sql .= " WHERE (fk_user = ".((int) $user->id)." OR fk_user is NULL OR fk_user = 0)";
 	$sql .= " AND entity IN (".getEntity('bookmarks').")";
 	$sql .= " ORDER BY position";
 	if ($resql = $db->query($sql)) {
@@ -88,7 +90,7 @@ function printDropdownBookmarksList()
 			$bookmarkList = '<div id="dropdown-bookmarks-list" >';
 			$i = 0;
 			while ((empty($conf->global->BOOKMARKS_SHOW_IN_MENU) || $i < $conf->global->BOOKMARKS_SHOW_IN_MENU) && $obj = $db->fetch_object($resql)) {
-				$bookmarkList .= '<a class="dropdown-item bookmark-item'.(strpos($obj->url, 'http') === 0 ? ' bookmark-item-external' : '').'" id="bookmark-item-'.$obj->rowid.'" data-id="'.$obj->rowid.'" '.($obj->target == 1 ? ' target="_blank"' : '').' href="'.dol_escape_htmltag($obj->url).'" >';
+				$bookmarkList .= '<a class="dropdown-item bookmark-item'.(strpos($obj->url, 'http') === 0 ? ' bookmark-item-external' : '').'" id="bookmark-item-'.$obj->rowid.'" data-id="'.$obj->rowid.'" '.($obj->target == 1 ? ' target="_blank"  rel="noopener noreferrer"' : '').' href="'.dol_escape_htmltag($obj->url).'" >';
 				$bookmarkList .= dol_escape_htmltag($obj->title);
 				$bookmarkList .= '</a>';
 				$i++;
@@ -105,13 +107,15 @@ function printDropdownBookmarksList()
 			$searchForm .= dol_escape_htmltag($user->rights->bookmark->creer ? $langs->trans('EditBookmarks') : $langs->trans('ListOfBookmarks')).'...</option>';
 			// Url to go on create new bookmark page
 			if (!empty($user->rights->bookmark->creer)) {
-				$urltoadd = DOL_URL_ROOT.'/bookmarks/card.php?action=create&amp;url='.urlencode($url);
-				$searchForm .= '<option value="newbookmark" class="optionblue" rel="'.dol_escape_htmltag($urltoadd).'"';
-				$searchForm .= ' data-html="'.dol_escape_htmltag(img_picto('', 'bookmark').' '.$langs->trans('AddThisPageToBookmarks').'...').'">'.dol_escape_htmltag($langs->trans('AddThisPageToBookmarks').'...').'</option>';
+				if (!preg_match('/bookmarks\/card.php/', $_SERVER['PHP_SELF'])) {
+					$urltoadd = DOL_URL_ROOT.'/bookmarks/card.php?action=create&amp;url='.urlencode($url);
+					$searchForm .= '<option value="newbookmark" class="optionblue" rel="'.dol_escape_htmltag($urltoadd).'"';
+					$searchForm .= ' data-html="'.dol_escape_htmltag(img_picto('', 'bookmark').' '.$langs->trans('AddThisPageToBookmarks').'...').'">'.dol_escape_htmltag($langs->trans('AddThisPageToBookmarks').'...').'</option>';
+				}
 			}
 			$i = 0;
 			while ((empty($conf->global->BOOKMARKS_SHOW_IN_MENU) || $i < $conf->global->BOOKMARKS_SHOW_IN_MENU) && $obj = $db->fetch_object($resql)) {
-				$searchForm .= '<option name="bookmark'.$obj->rowid.'" value="'.$obj->rowid.'" '.($obj->target == 1 ? ' target="_blank"' : '').' rel="'.dol_escape_htmltag($obj->url).'" >';
+				$searchForm .= '<option name="bookmark'.$obj->rowid.'" value="'.$obj->rowid.'" '.($obj->target == 1 ? ' target="_blank" rel="noopener noreferrer"' : '').' rel="'.dol_escape_htmltag($obj->url).'" >';
 				$searchForm .= dol_escape_htmltag($obj->title);
 				$searchForm .= '</option>';
 				$i++;

@@ -35,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 /**
  *	Class to build documents using ODF templates generator
  */
-class pdf_stdandard extends ModelePDFMovement
+class pdf_standard extends ModelePDFMovement
 {
 	/**
 	 * @var DoliDb Database handler
@@ -51,6 +51,11 @@ class pdf_stdandard extends ModelePDFMovement
 	 * @var string model description (short text)
 	 */
 	public $description;
+
+	/**
+	 * @var int     Save the name of generated file as the main doc when generating a doc with this template
+	 */
+	public $update_main_doc_field;
 
 	/**
 	 * @var string document type
@@ -70,44 +75,23 @@ class pdf_stdandard extends ModelePDFMovement
 	public $version = 'dolibarr';
 
 	/**
-	 * @var int page_largeur
-	 */
-	public $page_largeur;
-
-	/**
-	 * @var int page_hauteur
-	 */
-	public $page_hauteur;
-
-	/**
-	 * @var array format
-	 */
-	public $format;
-
-	/**
-	 * @var int marge_gauche
-	 */
-	public $marge_gauche;
-
-	/**
-	 * @var int marge_droite
-	 */
-	public $marge_droite;
-
-	/**
-	 * @var int marge_haute
-	 */
-	public $marge_haute;
-
-	/**
-	 * @var int marge_basse
-	 */
-	public $marge_basse;
-
-	/**
-	 * @var Societe Issuer
+	 * Issuer
+	 * @var Societe Object that emits
 	 */
 	public $emetteur;
+
+
+	public $wref;
+	public $posxidref;
+	public $posxdatemouv;
+	public $posxdesc;
+	public $posxlabel;
+	public $posxtva;
+	public $posxqty;
+	public $posxup;
+	public $posxunit;
+	public $posxdiscount;
+	public $postotalht;
 
 
 	/**
@@ -126,7 +110,7 @@ class pdf_stdandard extends ModelePDFMovement
 		$this->name = "stdmouvement";
 		$this->description = $langs->trans("DocumentModelStandardPDF");
 
-		// Page size for A4 format
+		// Dimension page
 		$this->type = 'pdf';
 		$formatarray = pdf_getFormat();
 		$this->page_largeur = $formatarray['width'];
@@ -137,14 +121,16 @@ class pdf_stdandard extends ModelePDFMovement
 		$this->marge_haute = isset($conf->global->MAIN_PDF_MARGIN_TOP) ? $conf->global->MAIN_PDF_MARGIN_TOP : 10;
 		$this->marge_basse = isset($conf->global->MAIN_PDF_MARGIN_BOTTOM) ? $conf->global->MAIN_PDF_MARGIN_BOTTOM : 10;
 
-		$this->option_logo = 1; // Affiche logo
-		$this->option_codestockservice = 0; // Affiche code stock-service
-		$this->option_multilang = 1; // Dispo en plusieurs langues
+		$this->option_logo = 1; // Display logo
+		$this->option_codestockservice = 0; // Display stock-service code
+		$this->option_multilang = 1; // Available in several languages
 		$this->option_freetext = 0; // Support add of a personalised text
 
-		// Recupere emetteur
+		// Get source company
 		$this->emetteur = $mysoc;
-		if (!$this->emetteur->country_code) $this->emetteur->country_code = substr($langs->defaultlang, -2); // By default if not defined
+		if (empty($this->emetteur->country_code)) {
+			$this->emetteur->country_code = substr($langs->defaultlang, -2); // By default if not defined
+		}
 
 		// Define position of columns
 		$this->wref = 15;
@@ -159,10 +145,11 @@ class pdf_stdandard extends ModelePDFMovement
 		$this->posxdiscount = 167;
 		$this->postotalht = 180;
 
-		if (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT) || !empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_COLUMN)) $this->posxtva = $this->posxup;
+		if (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT) || !empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_COLUMN)) {
+			$this->posxtva = $this->posxup;
+		}
 		$this->posxpicture = $this->posxtva - (empty($conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH) ? 20 : $conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH); // width of images
-		if ($this->page_largeur < 210) // To work with US executive format
-		{
+		if ($this->page_largeur < 210) { // To work with US executive format
 			$this->posxpicture -= 20;
 			$this->posxtva -= 20;
 			$this->posxup -= 20;
@@ -171,11 +158,6 @@ class pdf_stdandard extends ModelePDFMovement
 			$this->posxdiscount -= 20;
 			$this->postotalht -= 20;
 		}
-		$this->tva = array();
-		$this->localtax1 = array();
-		$this->localtax2 = array();
-		$this->atleastoneratenotnull = 0;
-		$this->atleastonediscount = 0;
 	}
 
 
@@ -191,16 +173,22 @@ class pdf_stdandard extends ModelePDFMovement
 	 *  @param		int				$hideref			Do not show ref
 	 *	@return		int         						1 if OK, <=0 if KO
 	 */
-	public function write_file($object, $outputlangs, $srctemplatepath, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
+	public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
 		// phpcs:enable
-		global $user, $langs, $conf, $mysoc, $db, $hookmanager;
+		global $user, $langs, $conf, $mysoc, $db, $hookmanager, $nblines;
 
-		if (!is_object($outputlangs)) $outputlangs = $langs;
+		dol_syslog("write_file outputlangs->defaultlang=".(is_object($outputlangs) ? $outputlangs->defaultlang : 'null'));
+
+		if (!is_object($outputlangs)) {
+			$outputlangs = $langs;
+		}
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
-		if (!empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output = 'ISO-8859-1';
+		if (!empty($conf->global->MAIN_USE_FPDF)) {
+			$outputlangs->charset_output = 'ISO-8859-1';
+		}
 
-		// Load traductions files required by page
+		// Load traductions files required by the page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "stocks", "orders", "deliveries"));
 
 		/**
@@ -231,12 +219,18 @@ class pdf_stdandard extends ModelePDFMovement
 
 		$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 		$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-		$sortfield = GETPOST("sortfield", 'alpha');
-		$sortorder = GETPOST("sortorder", 'alpha');
-		if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+		$sortfield = GETPOST('sortfield', 'aZ09comma');
+		$sortorder = GETPOST('sortorder', 'aZ09comma');
+		if (empty($page) || $page == -1) {
+			$page = 0;
+		}     // If $page is not defined, or '' or -1
 		$offset = $limit * $page;
-		if (!$sortfield) $sortfield = "m.datem";
-		if (!$sortorder) $sortorder = "DESC";
+		if (!$sortfield) {
+			$sortfield = "m.datem";
+		}
+		if (!$sortorder) {
+			$sortorder = "DESC";
+		}
 
 		$pdluoid = GETPOST('pdluoid', 'int');
 
@@ -264,7 +258,9 @@ class pdf_stdandard extends ModelePDFMovement
 		$sql .= " u.login, u.photo, u.lastname, u.firstname";
 		// Add fields from extrafields
 		if (!empty($extrafields->attributes[$element]['label'])) {
-			foreach ($extrafields->attributes[$element]['label'] as $key => $val) $sql .= ($extrafields->attributes[$element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+			foreach ($extrafields->attributes[$element]['label'] as $key => $val) {
+				$sql .= ($extrafields->attributes[$element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
+			}
 		}
 		// Add fields from hooks
 		$parameters = array();
@@ -273,35 +269,65 @@ class pdf_stdandard extends ModelePDFMovement
 		$sql .= " FROM ".MAIN_DB_PREFIX."entrepot as e,";
 		$sql .= " ".MAIN_DB_PREFIX."product as p,";
 		$sql .= " ".MAIN_DB_PREFIX."stock_mouvement as m";
-		if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (m.rowid = ef.fk_object)";
+		if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (m.rowid = ef.fk_object)";
+		}
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON m.fk_user_author = u.rowid";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_lot as pl ON m.batch = pl.batch AND m.fk_product = pl.fk_product";
 		$sql .= " WHERE m.fk_product = p.rowid";
-		if ($msid > 0) $sql .= " AND m.rowid = ".$msid;
+		if ($msid > 0) {
+			$sql .= " AND m.rowid = ".((int) $msid);
+		}
 		$sql .= " AND m.fk_entrepot = e.rowid";
 		$sql .= " AND e.entity IN (".getEntity('stock').")";
-		if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) $sql .= " AND p.fk_product_type = 0";
-		if ($id > 0) $sql .= " AND e.rowid ='".$id."'";
-		if ($month > 0)
-		{
-			if ($year > 0)
+		if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+			$sql .= " AND p.fk_product_type = 0";
+		}
+		if ($id > 0) {
+			$sql .= " AND e.rowid = ".((int) $id);
+		}
+		if ($month > 0) {
+			if ($year > 0) {
 				$sql .= " AND m.datem BETWEEN '".$this->db->idate(dol_get_first_day($year, $month, false))."' AND '".$this->db->idate(dol_get_last_day($year, $month, false))."'";
-			else $sql .= " AND date_format(m.datem, '%m') = '$month'";
-		} elseif ($year > 0)
-		{
+			} else {
+				$sql .= " AND date_format(m.datem, '%m') = '".((int) $month)."'";
+			}
+		} elseif ($year > 0) {
 			$sql .= " AND m.datem BETWEEN '".$this->db->idate(dol_get_first_day($year, 1, false))."' AND '".$this->db->idate(dol_get_last_day($year, 12, false))."'";
 		}
-		if ($idproduct > 0) $sql .= " AND p.rowid = ".((int) $idproduct);
-		if (!empty($search_ref))			$sql .= natural_search('m.rowid', $search_ref, 1);
-		if (!empty($search_movement))      $sql .= natural_search('m.label', $search_movement);
-		if (!empty($search_inventorycode)) $sql .= natural_search('m.inventorycode', $search_inventorycode);
-		if (!empty($search_product_ref))   $sql .= natural_search('p.ref', $search_product_ref);
-		if (!empty($search_product))       $sql .= natural_search('p.label', $search_product);
-		if ($search_warehouse > 0)          $sql .= " AND e.rowid = ".((int) $this->db->escape($search_warehouse));
-		if (!empty($search_user))          $sql .= natural_search('u.login', $search_user);
-		if (!empty($search_batch))         $sql .= natural_search('m.batch', $search_batch);
-		if ($search_qty != '')				$sql .= natural_search('m.value', $search_qty, 1);
-		if ($search_type_mouvement > 0)		$sql .= " AND m.type_mouvement = '".$this->db->escape($search_type_mouvement)."'";
+		if ($idproduct > 0) {
+			$sql .= " AND p.rowid = ".((int) $idproduct);
+		}
+		if (!empty($search_ref)) {
+			$sql .= natural_search('m.rowid', $search_ref, 1);
+		}
+		if (!empty($search_movement)) {
+			$sql .= natural_search('m.label', $search_movement);
+		}
+		if (!empty($search_inventorycode)) {
+			$sql .= natural_search('m.inventorycode', $search_inventorycode);
+		}
+		if (!empty($search_product_ref)) {
+			$sql .= natural_search('p.ref', $search_product_ref);
+		}
+		if (!empty($search_product)) {
+			$sql .= natural_search('p.label', $search_product);
+		}
+		if ($search_warehouse > 0) {
+			$sql .= " AND e.rowid = ".((int) $this->db->escape($search_warehouse));
+		}
+		if (!empty($search_user)) {
+			$sql .= natural_search('u.login', $search_user);
+		}
+		if (!empty($search_batch)) {
+			$sql .= natural_search('m.batch', $search_batch);
+		}
+		if ($search_qty != '') {
+			$sql .= natural_search('m.value', $search_qty, 1);
+		}
+		if ($search_type_mouvement > 0) {
+			$sql .= " AND m.type_mouvement = '".$this->db->escape($search_type_mouvement)."'";
+		}
 		// Add where from extra fields
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 		// Add where from hooks
@@ -311,71 +337,59 @@ class pdf_stdandard extends ModelePDFMovement
 		$sql .= $this->db->order($sortfield, $sortorder);
 
 		$nbtotalofrecords = '';
-		if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
-		{
+		if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 			$result = $this->db->query($sql);
 			$nbtotalofrecords = $this->db->num_rows($result);
-			if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
-			{
+			if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 				$page = 0;
 				$offset = 0;
 			}
 		}
 
-		if (empty($search_inventorycode)) $sql .= $this->db->plimit($limit + 1, $offset);
+		if (empty($search_inventorycode)) {
+			$sql .= $this->db->plimit($limit + 1, $offset);
+		}
 
 
 		$resql = $this->db->query($sql);
 		$nbtotalofrecords = $this->db->num_rows($result);
 
 		/*
-         * END TODO
-         **/
+		 * END TODO
+		 **/
 
 		//$nblines = count($object->lines);
 
-		if ($conf->stock->dir_output)
-		{
-			if ($resql)
-			{
+		if ($conf->stock->dir_output) {
+			if ($resql) {
 				$product = new Product($this->db);
 				$object = new Entrepot($this->db);
 
-				if ($idproduct > 0)
-				{
+				if ($idproduct > 0) {
 					$product->fetch($idproduct);
 				}
-				if ($id > 0 || $ref)
-				{
+				if ($id > 0 || $ref) {
 					$result = $object->fetch($id, $ref);
-					if ($result < 0)
-					{
+					if ($result < 0) {
 						dol_print_error($this->db);
 					}
 				}
 
 				$num = $this->db->num_rows($resql);
-
-				$arrayofselected = is_array($toselect) ? $toselect : array();
-
-				$i = 0;
-				$help_url = 'EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
-				if ($msid) $texte = $langs->trans('StockMovementForId', $msid);
-				else {
-					$texte = $langs->trans("ListOfStockMovements");
-					if ($id) $texte .= ' ('.$langs->trans("ForThisWarehouse").')';
-				}
 			}
 
 			// Definition of $dir and $file
-			if ($object->specimen)
-			{
+			if ($object->specimen) {
 				$dir = $conf->stock->dir_output."/movement";
 				$file = $dir."/SPECIMEN.pdf";
 			} else {
 				$objectref = dol_sanitizeFileName($object->ref);
-				if (!empty($search_inventorycode)) $objectref .= "_".$id."_".$search_inventorycode;
-				if ($search_type_mouvement) $objectref .= "_".$search_type_mouvement;
+				if (!empty($search_inventorycode)) {
+					$objectref .= "_".$id."_".$search_inventorycode;
+				}
+				if ($search_type_mouvement) {
+					$objectref .= "_".$search_type_mouvement;
+				}
 				$dir = $conf->stock->dir_output."/movement/".$objectref;
 				$file = $dir."/".$objectref.".pdf";
 			}
@@ -386,20 +400,16 @@ class pdf_stdandard extends ModelePDFMovement
 
 			$productstatic = new Product($this->db);
 
-			if (!file_exists($dir))
-			{
-				if (dol_mkdir($dir) < 0)
-				{
+			if (!file_exists($dir)) {
+				if (dol_mkdir($dir) < 0) {
 					$this->error = $langs->transnoentities("ErrorCanNotCreateDir", $dir);
 					return -1;
 				}
 			}
 
-			if (file_exists($dir))
-			{
+			if (file_exists($dir)) {
 				// Add pdfgeneration hook
-				if (!is_object($hookmanager))
-				{
+				if (!is_object($hookmanager)) {
 					include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 					$hookmanager = new HookManager($this->db);
 				}
@@ -417,15 +427,13 @@ class pdf_stdandard extends ModelePDFMovement
 				$heightforfreetext = (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT) ? $conf->global->MAIN_PDF_FREETEXT_HEIGHT : 5); // Height reserved to output the free text on last page
 				$heightforfooter = $this->marge_basse + 8; // Height reserved to output the footer (value include bottom margin)
 
-				if (class_exists('TCPDF'))
-				{
+				if (class_exists('TCPDF')) {
 					$pdf->setPrintHeader(false);
 					$pdf->setPrintFooter(false);
 				}
 				$pdf->SetFont(pdf_getPDFFont($outputlangs));
 				// Set path to the background PDF File
-				if (empty($conf->global->MAIN_DISABLE_FPDI) && !empty($conf->global->MAIN_ADD_PDF_BACKGROUND))
-				{
+				if (empty($conf->global->MAIN_DISABLE_FPDI) && !empty($conf->global->MAIN_ADD_PDF_BACKGROUND)) {
 					$pagecount = $pdf->setSourceFile($conf->mycompany->dir_output.'/'.$conf->global->MAIN_ADD_PDF_BACKGROUND);
 					$tplidx = $pdf->importPage(1);
 				}
@@ -439,32 +447,33 @@ class pdf_stdandard extends ModelePDFMovement
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
 				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("Stock")." ".$outputlangs->convToOutputCharset($object->label));
-				if (!empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) $pdf->SetCompression(false);
+				if (!empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) {
+					$pdf->SetCompression(false);
+				}
 
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite); // Left, Top, Right
 
 
 				// New page
 				$pdf->AddPage();
-				if (!empty($tplidx)) $pdf->useTemplate($tplidx);
+				if (!empty($tplidx)) {
+					$pdf->useTemplate($tplidx);
+				}
 				$pagenb++;
-				$this->_pagehead($pdf, $object, 1, $outputlangs);
+				$top_shift = $this->_pagehead($pdf, $object, 1, $outputlangs);
 				$pdf->SetFont('', '', $default_font_size - 1);
 				$pdf->MultiCell(0, 3, ''); // Set interline to 3
 				$pdf->SetTextColor(0, 0, 0);
 
 				$tab_top = 42;
 				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD) ? 42 : 10);
-				$tab_height = 130;
-				$tab_height_newpage = 150;
 
-				/* ************************************************************************** */
-				/*                                                                            */
-				/* Affichage de la liste des produits du MouvementStock                           */
-				/*                                                                            */
-				/* ************************************************************************** */
+				$tab_height = $this->page_hauteur - $tab_top - $heightforfooter - $heightforfreetext;
 
-				$nexY += 5;
+				// Show list of product of the MouvementStock
+
+				$nexY = $tab_top - 1;
+
 				$nexY = $pdf->GetY();
 				$nexY += 10;
 
@@ -474,29 +483,27 @@ class pdf_stdandard extends ModelePDFMovement
 
 				//dol_syslog('List products', LOG_DEBUG);
 				$resql = $this->db->query($sql);
-				if ($resql)
-				{
+				if ($resql) {
 					$num = $this->db->num_rows($resql);
 					$i = 0;
 					$nblines = $num;
-					for ($i = 0; $i < $nblines; $i++)
-					{
+					for ($i = 0; $i < $nblines; $i++) {
 						$objp = $this->db->fetch_object($resql);
 
 						// Multilangs
-						if (!empty($conf->global->MAIN_MULTILANGS)) // si l'option est active
-						{
+						if (!empty($conf->global->MAIN_MULTILANGS)) { // si l'option est active
 							$sql = "SELECT label";
 							$sql .= " FROM ".MAIN_DB_PREFIX."product_lang";
-							$sql .= " WHERE fk_product=".$objp->rowid;
-							$sql .= " AND lang='".$this->db->escape($langs->getDefaultLang())."'";
+							$sql .= " WHERE fk_product = ".((int) $objp->rowid);
+							$sql .= " AND lang = '".$this->db->escape($langs->getDefaultLang())."'";
 							$sql .= " LIMIT 1";
 
 							$result = $this->db->query($sql);
-							if ($result)
-							{
+							if ($result) {
 								$objtp = $this->db->fetch_object($result);
-								if ($objtp->label != '') $objp->produit = $objtp->label;
+								if ($objtp->label != '') {
+									$objp->produit = $objtp->label;
+								}
 							}
 						}
 
@@ -516,8 +523,7 @@ class pdf_stdandard extends ModelePDFMovement
 						$pdf->startTransaction();
 						pdf_writelinedesc($pdf, $object, $i, $outputlangs, $this->posxtva - $curX, 3, $curX, $curY, $hideref, $hidedesc);
 						$pageposafter = $pdf->getPage();
-						if ($pageposafter > $pageposbefore)	// There is a pagebreak
-						{
+						if ($pageposafter > $pageposbefore) {	// There is a pagebreak
 							$pdf->rollbackTransaction(true);
 							$pageposafter = $pageposbefore;
 							//print $pageposafter.'-'.$pageposbefore;exit;
@@ -525,22 +531,26 @@ class pdf_stdandard extends ModelePDFMovement
 							pdf_writelinedesc($pdf, $object, $i, $outputlangs, $this->posxtva - $curX, 4, $curX, $curY, $hideref, $hidedesc);
 							$pageposafter = $pdf->getPage();
 							$posyafter = $pdf->GetY();
-							if ($posyafter > ($this->page_hauteur - ($heightforfooter + $heightforfreetext + $heightforinfotot)))	// There is no space left for total+free text
-							{
-								if ($i == ($nblines - 1))	// No more lines, and no space left to show total, so we create a new page
-								{
+							if ($posyafter > ($this->page_hauteur - ($heightforfooter + $heightforfreetext + $heightforinfotot))) {	// There is no space left for total+free text
+								if ($i == ($nblines - 1)) {	// No more lines, and no space left to show total, so we create a new page
 									$pdf->AddPage('', '', true);
-									if (!empty($tplidx)) $pdf->useTemplate($tplidx);
-									if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
+									if (!empty($tplidx)) {
+										$pdf->useTemplate($tplidx);
+									}
+									if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
+										$this->_pagehead($pdf, $object, 0, $outputlangs);
+									}
 									$pdf->setPage($pageposafter + 1);
 								}
 							} else {
 								// We found a page break
 
 								// Allows data in the first page if description is long enough to break in multiples pages
-								if (!empty($conf->global->MAIN_PDF_DATA_ON_FIRST_PAGE))
+								if (!empty($conf->global->MAIN_PDF_DATA_ON_FIRST_PAGE)) {
 									$showpricebeforepagebreak = 1;
-								else $showpricebeforepagebreak = 0;
+								} else {
+									$showpricebeforepagebreak = 0;
+								}
 							}
 						} else // No pagebreak
 						{
@@ -557,7 +567,8 @@ class pdf_stdandard extends ModelePDFMovement
 
 						// We suppose that a too long description is moved completely on next page
 						if ($pageposafter > $pageposbefore && empty($showpricebeforepagebreak)) {
-							$pdf->setPage($pageposafter); $curY = $tab_top_newpage;
+							$pdf->setPage($pageposafter);
+							$curY = $tab_top_newpage;
 						}
 
 						$pdf->SetFont('', '', $default_font_size - 1); // On repositionne la police par defaut
@@ -639,8 +650,7 @@ class pdf_stdandard extends ModelePDFMovement
 
 						$nexY += 3.5; // Add space between lines
 						// Add line
-						if (!empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblines - 1))
-						{
+						if (!empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblines - 1)) {
 							$pdf->setPage($pageposafter);
 							$pdf->SetLineStyle(array('dash'=>'1,1', 'color'=>array(80, 80, 80)));
 							//$pdf->SetDrawColor(190,190,200);
@@ -651,11 +661,9 @@ class pdf_stdandard extends ModelePDFMovement
 						$nexY += 2; // Add space between lines
 
 						// Detect if some page were added automatically and output _tableau for past pages
-						while ($pagenb < $pageposafter)
-						{
+						while ($pagenb < $pageposafter) {
 							$pdf->setPage($pagenb);
-							if ($pagenb == 1)
-							{
+							if ($pagenb == 1) {
 								$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1, $object->multicurrency_code);
 							} else {
 								$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1, $object->multicurrency_code);
@@ -664,12 +672,12 @@ class pdf_stdandard extends ModelePDFMovement
 							$pagenb++;
 							$pdf->setPage($pagenb);
 							$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
-							if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
+							if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
+								$this->_pagehead($pdf, $object, 0, $outputlangs);
+							}
 						}
-						if (isset($object->lines[$i + 1]->pagebreak) && $object->lines[$i + 1]->pagebreak)
-						{
-							if ($pagenb == 1)
-							{
+						if (isset($object->lines[$i + 1]->pagebreak) && $object->lines[$i + 1]->pagebreak) {
+							if ($pagenb == 1) {
 								$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1, $object->multicurrency_code);
 							} else {
 								$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1, $object->multicurrency_code);
@@ -677,9 +685,13 @@ class pdf_stdandard extends ModelePDFMovement
 							$this->_pagefoot($pdf, $object, $outputlangs, 1);
 							// New page
 							$pdf->AddPage();
-							if (!empty($tplidx)) $pdf->useTemplate($tplidx);
+							if (!empty($tplidx)) {
+								$pdf->useTemplate($tplidx);
+							}
 							$pagenb++;
-							if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
+							if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
+								$this->_pagehead($pdf, $object, 0, $outputlangs);
+							}
 						}
 					}
 
@@ -710,8 +722,7 @@ class pdf_stdandard extends ModelePDFMovement
 					dol_print_error($this->db);
 				}
 
-				if ($notetoshow)
-				{
+				if ($notetoshow) {
 					$substitutionarray = pdf_getSubstitutionArray($outputlangs, null, $object);
 					complete_substitutions_array($substitutionarray, $outputlangs, $object);
 					$notetoshow = make_substitutions($notetoshow, $substitutionarray, $outputlangs);
@@ -741,8 +752,7 @@ class pdf_stdandard extends ModelePDFMovement
 				$tab_top = $tab_top_newpage + 21;
 
 				// Show square
-				if ($pagenb == 1)
-				{
+				if ($pagenb == 1) {
 					$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 0, 0, $object->multicurrency_code);
 					$bottomlasttab = $this->page_hauteur - $heightforinfotot - $heightforfreetext - $heightforfooter + 1;
 				} else {
@@ -760,7 +770,9 @@ class pdf_stdandard extends ModelePDFMovement
 
 				// Pied de page
 				$this->_pagefoot($pdf, $object, $outputlangs);
-				if (method_exists($pdf, 'AliasNbPages')) $pdf->AliasNbPages();
+				if (method_exists($pdf, 'AliasNbPages')) {
+					$pdf->AliasNbPages();
+				}
 
 				$pdf->Close();
 
@@ -771,14 +783,14 @@ class pdf_stdandard extends ModelePDFMovement
 				$parameters = array('file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs);
 				global $action;
 				$reshook = $hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
-				if ($reshook < 0)
-				{
+				if ($reshook < 0) {
 					$this->error = $hookmanager->error;
 					$this->errors = $hookmanager->errors;
 				}
 
-				if (!empty($conf->global->MAIN_UMASK))
+				if (!empty($conf->global->MAIN_UMASK)) {
 					@chmod($file, octdec($conf->global->MAIN_UMASK));
+				}
 
 				$this->result = array('fullpath'=>$file);
 
@@ -813,7 +825,9 @@ class pdf_stdandard extends ModelePDFMovement
 
 		// Force to disable hidetop and hidebottom
 		$hidebottom = 0;
-		if ($hidetop) $hidetop = -1;
+		if ($hidetop) {
+			$hidetop = -1;
+		}
 
 		$currency = !empty($currency) ? $currency : $conf->currency;
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
@@ -822,14 +836,15 @@ class pdf_stdandard extends ModelePDFMovement
 		$pdf->SetTextColor(0, 0, 0);
 		$pdf->SetFont('', '', $default_font_size - 2);
 
-		if (empty($hidetop))
-		{
+		if (empty($hidetop)) {
 			$titre = $outputlangs->transnoentities("AmountInCurrency", $outputlangs->transnoentitiesnoconv("Currency".$currency));
 			$pdf->SetXY($this->page_largeur - $this->marge_droite - ($pdf->GetStringWidth($titre) + 3), $tab_top - 4);
 			$pdf->MultiCell(($pdf->GetStringWidth($titre) + 3), 2, $titre);
 
 			//$conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR='230,230,230';
-			if (!empty($conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR)) $pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_droite - $this->marge_gauche, 5, 'F', null, explode(',', $conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR));
+			if (!empty($conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR)) {
+				$pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_droite - $this->marge_gauche, 5, 'F', null, explode(',', $conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR));
+			}
 		}
 
 		$pdf->SetDrawColor(128, 128, 128);
@@ -846,8 +861,7 @@ class pdf_stdandard extends ModelePDFMovement
 		$pdf->SetTextColor(0, 0, 120);
 
 		//Ref mouv
-		if (empty($hidetop))
-		{
+		if (empty($hidetop)) {
 			//$pdf->line($this->marge_gauche, $tab_top+5, $this->page_largeur-$this->marge_droite, $tab_top+5);	// line takes a position y in 2nd parameter and 4th parameter
 			$pdf->SetXY($this->posxidref, $tab_top + 1);
 			$pdf->MultiCell($this->posxdatemouv - $this->posxdatemouv - 0.8, 3, $outputlangs->transnoentities("Ref"), '', 'L');
@@ -855,64 +869,56 @@ class pdf_stdandard extends ModelePDFMovement
 
 		//Date mouv
 		//$pdf->line($this->posxlabel-1, $tab_top, $this->posxlabel-1, $tab_top + $tab_height);
-		if (empty($hidetop))
-		{
+		if (empty($hidetop)) {
 			$pdf->SetXY($this->posxdatemouv, $tab_top + 1);
 			$pdf->MultiCell($this->posxdesc - $this->posxdatemouv, 2, $outputlangs->transnoentities("Date"), '', 'C');
 		}
 
 		//Ref Product
 		//$pdf->line($this->posxqty-1, $tab_top, $this->posxqty-1, $tab_top + $tab_height);
-		if (empty($hidetop))
-		{
+		if (empty($hidetop)) {
 			$pdf->SetXY($this->posxdesc - 1, $tab_top + 1);
 			$pdf->MultiCell($this->posxlabel - $this->posxdesc, 2, $outputlangs->transnoentities("Ref. Product"), '', 'C');
 		}
 
 		//Label Product
 		//$pdf->line($this->posxup-1, $tab_top, $this->posxup-1, $tab_top + $tab_height);
-		if (empty($hidetop))
-		{
+		if (empty($hidetop)) {
 			$pdf->SetXY($this->posxlabel - 1, $tab_top + 1);
 			$pdf->MultiCell($this->posxqty - $this->posxlabel, 2, $outputlangs->transnoentities("Label"), '', 'C');
 		}
 
 		//Lot/serie Product
 		//$pdf->line($this->posxqty - 1, $tab_top, $this->posxqty - 1, $tab_top + $tab_height);
-		if (empty($hidetop))
-		{
+		if (empty($hidetop)) {
 			$pdf->SetXY($this->posxqty, $tab_top + 1);
 			$pdf->MultiCell($this->posxup - $this->posxqty, 2, $outputlangs->transnoentities("Lot/Série"), '', 'C');
 		}
 
 		//Code Inv
 		//$pdf->line($this->posxup-1, $tab_top, $this->posxup-1, $tab_top + $tab_height);
-		if (empty($hidetop))
-		{
+		if (empty($hidetop)) {
 			$pdf->SetXY($this->posxup - 1, $tab_top + 1);
 			$pdf->MultiCell($this->posxunit - $this->posxup, 2, $outputlangs->transnoentities("Inventory Code"), '', 'C');
 		}
 
 		//Label mouvement
 		//$pdf->line($this->posxunit, $tab_top, $this->posxunit, $tab_top + $tab_height);
-		if (empty($hidetop))
-		{
+		if (empty($hidetop)) {
 			$pdf->SetXY($this->posxunit, $tab_top + 1);
 			$pdf->MultiCell($this->posxdiscount - $this->posxunit, 2, $outputlangs->transnoentities("Label Mouvement"), '', 'C');
 		}
 
 		//Origin
 		//$pdf->line($this->postotalht, $tab_top, $this->postotalht, $tab_top + $tab_height);
-		if (empty($hidetop))
-		{
+		if (empty($hidetop)) {
 			$pdf->SetXY($this->posxdiscount + 2, $tab_top + 1);
 			$pdf->MultiCell($this->postotalht - $this->posxdiscount - 0.8, 2, $outputlangs->transnoentities("Origin"), '', 'C');
 		}
 
 		//Qty
 		//$pdf->line($this->postotalht, $tab_top, $this->postotalht, $tab_top + $tab_height);
-		if (empty($hidetop))
-		{
+		if (empty($hidetop)) {
 			$pdf->SetXY($this->postotalht + 2, $tab_top + 1);
 			$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->postotalht, 2, $outputlangs->transnoentities("Qty"), '', 'C');
 		}
@@ -943,14 +949,16 @@ class pdf_stdandard extends ModelePDFMovement
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
-		if ($object->type == 1) $titlekey = 'ServiceSheet';
-		else $titlekey = 'StockSheet';
+		if ($object->type == 1) {
+			$titlekey = 'ServiceSheet';
+		} else {
+			$titlekey = 'StockSheet';
+		}
 
 		pdf_pagehead($pdf, $outputlangs, $this->page_hauteur);
 
 		// Show Draft Watermark
-		if ($object->statut == 0 && (!empty($conf->global->COMMANDE_DRAFT_WATERMARK)))
-		{
+		if ($object->statut == 0 && (!empty($conf->global->COMMANDE_DRAFT_WATERMARK))) {
 			pdf_watermark($pdf, $outputlangs, $this->page_hauteur, $this->page_largeur, 'mm', $conf->global->COMMANDE_DRAFT_WATERMARK);
 		}
 
@@ -964,10 +972,8 @@ class pdf_stdandard extends ModelePDFMovement
 
 		// Logo
 		$logo = $conf->mycompany->dir_output.'/logos/'.$this->emetteur->logo;
-		if ($this->emetteur->logo)
-		{
-			if (is_readable($logo))
-			{
+		if ($this->emetteur->logo) {
+			if (is_readable($logo)) {
 				$height = pdf_getHeightForLogo($logo);
 				$pdf->Image($logo, $this->marge_gauche, $posy, 0, $height); // width=0 (auto)
 			} else {
@@ -1015,8 +1021,7 @@ class pdf_stdandard extends ModelePDFMovement
 		$posy += 4;
 		$pdf->SetXY($posx - 50, $posy);
 		$e = new MouvementStock($this->db);
-		if (!empty($object->fk_parent) && $e->fetch($object->fk_parent) > 0)
-		{
+		if (!empty($object->fk_parent) && $e->fetch($object->fk_parent) > 0) {
 			$pdf->MultiCell(150, 3, $e->label, '', 'R');
 		} else {
 			$pdf->MultiCell(150, 3, $outputlangs->transnoentities("None"), '', 'R');
@@ -1051,16 +1056,14 @@ class pdf_stdandard extends ModelePDFMovement
 		$sql .= " FROM ".MAIN_DB_PREFIX."stock_mouvement as m";
 		$sql .= " WHERE m.fk_entrepot = ".((int) $object->id);
 		$resqlbis = $this->db->query($sql);
-		if ($resqlbis)
-		{
+		if ($resqlbis) {
 			$obj = $this->db->fetch_object($resqlbis);
 			$lastmovementdate = $this->db->jdate($obj->datem);
 		} else {
 			dol_print_error($this->db);
 		}
 
-		if ($lastmovementdate)
-		{
+		if ($lastmovementdate) {
 			$toWrite = dol_print_date($lastmovementdate, 'dayhour').' ';
 		} else {
 			$toWrite = $outputlangs->transnoentities("None");
@@ -1071,73 +1074,72 @@ class pdf_stdandard extends ModelePDFMovement
 
 
 		/*if ($object->ref_client)
-	    {
-	        $posy+=5;
-	        $pdf->SetXY($posx,$posy);
-	        $pdf->SetTextColor(0,0,60);
-	        $pdf->MultiCell(100, 3, $outputlangs->transnoentities("RefCustomer")." : " . $outputlangs->convToOutputCharset($object->ref_client), '', 'R');
-	    }*/
+		{
+			$posy+=5;
+			$pdf->SetXY($posx,$posy);
+			$pdf->SetTextColor(0,0,60);
+			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("RefCustomer")." : " . $outputlangs->convToOutputCharset($object->ref_client), '', 'R');
+		}*/
 
 		/*$posy+=4;
-	    $pdf->SetXY($posx,$posy);
-	    $pdf->SetTextColor(0,0,60);
-	    $pdf->MultiCell(100, 3, $outputlangs->transnoentities("OrderDate")." : " . dol_print_date($object->date,"%d %b %Y",false,$outputlangs,true), '', 'R');
-	    */
+		$pdf->SetXY($posx,$posy);
+		$pdf->SetTextColor(0,0,60);
+		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("OrderDate")." : " . dol_print_date($object->date,"%d %b %Y",false,$outputlangs,true), '', 'R');
+		*/
 
 		// Get contact
 		/*
-	    if (!empty($conf->global->DOC_SHOW_FIRST_SALES_REP))
-	    {
-	        $arrayidcontact=$object->getIdContact('internal','SALESREPFOLL');
-	        if (count($arrayidcontact) > 0)
-	        {
-	            $usertmp=new User($this->db);
-	            $usertmp->fetch($arrayidcontact[0]);
-	            $posy+=4;
-	            $pdf->SetXY($posx,$posy);
-	            $pdf->SetTextColor(0,0,60);
-	            $pdf->MultiCell(100, 3, $langs->trans("SalesRepresentative")." : ".$usertmp->getFullName($langs), '', 'R');
-	        }
-	    }*/
+		if (!empty($conf->global->DOC_SHOW_FIRST_SALES_REP))
+		{
+			$arrayidcontact=$object->getIdContact('internal','SALESREPFOLL');
+			if (count($arrayidcontact) > 0)
+			{
+				$usertmp=new User($this->db);
+				$usertmp->fetch($arrayidcontact[0]);
+				$posy+=4;
+				$pdf->SetXY($posx,$posy);
+				$pdf->SetTextColor(0,0,60);
+				$pdf->MultiCell(100, 3, $langs->trans("SalesRepresentative")." : ".$usertmp->getFullName($langs), '', 'R');
+			}
+		}*/
 
 		$posy += 2;
 
 		// Show list of linked objects
 		//$posy = pdf_writeLinkedObjects($pdf, $object, $outputlangs, $posx, $posy, 100, 3, 'R', $default_font_size);
 
-		if ($showaddress)
-		{
+		if ($showaddress) {
 			/*
-	        // Sender properties
-	        $carac_emetteur = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty);
+			// Sender properties
+			$carac_emetteur = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty);
 
-	        // Show sender
-	        $posy=42;
-	        $posx=$this->marge_gauche;
-	        if (! empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $posx=$this->page_largeur-$this->marge_droite-80;
-	        $hautcadre=40;
+			// Show sender
+			$posy=42;
+			$posx=$this->marge_gauche;
+			if (! empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $posx=$this->page_largeur-$this->marge_droite-80;
+			$hautcadre=40;
 
-	        // Show sender frame
-	        $pdf->SetTextColor(0,0,0);
-	        $pdf->SetFont('','', $default_font_size - 2);
-	        $pdf->SetXY($posx,$posy-5);
-	        $pdf->MultiCell(66,5, $outputlangs->transnoentities("BillFrom").":", 0, 'L');
-	        $pdf->SetXY($posx,$posy);
-	        $pdf->SetFillColor(230,230,230);
-	        $pdf->MultiCell(82, $hautcadre, "", 0, 'R', 1);
-	        $pdf->SetTextColor(0,0,60);
+			// Show sender frame
+			$pdf->SetTextColor(0,0,0);
+			$pdf->SetFont('','', $default_font_size - 2);
+			$pdf->SetXY($posx,$posy-5);
+			$pdf->MultiCell(80, 5, $outputlangs->transnoentities("BillFrom"), 0, 'L');
+			$pdf->SetXY($posx,$posy);
+			$pdf->SetFillColor(230,230,230);
+			$pdf->MultiCell(82, $hautcadre, "", 0, 'R', 1);
+			$pdf->SetTextColor(0,0,60);
 
-	        // Show sender name
-	        $pdf->SetXY($posx+2,$posy+3);
-	        $pdf->SetFont('','B', $default_font_size);
-	        $pdf->MultiCell(80, 4, $outputlangs->convToOutputCharset($this->emetteur->name), 0, 'L');
-	        $posy=$pdf->getY();
+			// Show sender name
+			$pdf->SetXY($posx+2,$posy+3);
+			$pdf->SetFont('','B', $default_font_size);
+			$pdf->MultiCell(80, 4, $outputlangs->convToOutputCharset($this->emetteur->name), 0, 'L');
+			$posy=$pdf->getY();
 
-	        // Show sender information
-	        $pdf->SetXY($posx+2,$posy);
-	        $pdf->SetFont('','', $default_font_size - 1);
-	        $pdf->MultiCell(80, 4, $carac_emetteur, 0, 'L');
-	        */
+			// Show sender information
+			$pdf->SetXY($posx+2,$posy);
+			$pdf->SetFont('','', $default_font_size - 1);
+			$pdf->MultiCell(80, 4, $carac_emetteur, 0, 'L');
+			*/
 		}
 
 		$pdf->SetTextColor(0, 0, 0);

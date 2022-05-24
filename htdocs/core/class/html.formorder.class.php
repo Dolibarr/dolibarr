@@ -62,8 +62,11 @@ class FormOrder extends Form
 			$options[$value] = $tmpsupplierorder->getLibStatut($short);
 		}
 
-		if (is_array($selected)) $selectedarray = $selected;
-		else $selectedarray = explode(',', $selected);
+		if (is_array($selected)) {
+			$selectedarray = $selected;
+		} else {
+			$selectedarray = explode(',', $selected);
+		}
 
 		print Form::multiselectarray($hmlname, $options, $selectedarray, 0);
 	}
@@ -84,7 +87,7 @@ class FormOrder extends Form
 		$listofmethods = array();
 
 		$sql = "SELECT rowid, code, libelle as label";
-		$sql .= " FROM ".MAIN_DB_PREFIX."c_input_method";
+		$sql .= " FROM ".$this->db->prefix()."c_input_method";
 		$sql .= " WHERE active = 1";
 
 		dol_syslog(get_class($this)."::selectInputMethod", LOG_DEBUG);

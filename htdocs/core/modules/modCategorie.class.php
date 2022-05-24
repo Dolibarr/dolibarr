@@ -23,7 +23,7 @@
  *      \brief      Module to manage categories
  *      \file       htdocs/core/modules/modCategorie.class.php
  *      \ingroup    category
- *      \brief      Fichier de description et activation du module Categorie
+ *      \brief      Description and activation file for the module Category
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
@@ -123,25 +123,49 @@ class modCategorie extends DolibarrModules
 		$this->export_code[$r] = $this->rights_class.'_list';
 		$this->export_label[$r] = 'CatListAll';
 		$this->export_icon[$r] = $this->picto;
-        $this->export_enabled[$r] = 'true';
+		$this->export_enabled[$r] = 'true';
 		$this->export_permission[$r] = array(array("categorie", "lire"));
 
 		$typeexample = "";
-		if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) { $typeexample .= ($typeexample ? " / " : "")."0=Product-Service"; }
-		if (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) { $typeexample .= ($typeexample ? "/" : "")."1=Supplier"; }
-		if (!empty($conf->societe->enabled)) { $typeexample .= ($typeexample ? " / " : "")."2=Customer-Prospect"; }
-		if (!empty($conf->adherent->enabled)) { $typeexample .= ($typeexample ? " / " : "")."3=Member"; }
-		if (!empty($conf->societe->enabled)) { $typeexample .= ($typeexample ? " / " : "")."4=Contact"; }
-		if (!empty($conf->bank->enabled)) { $typeexample .= ($typeexample ? " / " : "")."5=Bank account"; }
-		if (!empty($conf->projet->enabled)) { $typeexample .= ($typeexample ? " / " : "")."6=Project"; }
-		if (!empty($conf->user->enabled)) { $typeexample .= ($typeexample ? " / " : "")."7=User"; }
-		if (!empty($conf->bank->enabled)) { $typeexample .= ($typeexample ? " / " : "")."8=Bank line"; }
-		if (!empty($conf->stock->enabled)) { $typeexample .= ($typeexample ? " / " : "")."9=Warehouse"; }
-		if (!empty($conf->agenda->enabled)) { $typeexample .= ($typeexample ? " / " : "")."10=Agenda event"; }
-		if (!empty($conf->website->enabled)) { $typeexample .= ($typeexample ? " / " : "")."11=Website page"; }
+		if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) {
+			$typeexample .= ($typeexample ? " / " : "")."0=Product-Service";
+		}
+		if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) {
+			$typeexample .= ($typeexample ? "/" : "")."1=Supplier";
+		}
+		if (!empty($conf->societe->enabled)) {
+			$typeexample .= ($typeexample ? " / " : "")."2=Customer-Prospect";
+		}
+		if (!empty($conf->adherent->enabled)) {
+			$typeexample .= ($typeexample ? " / " : "")."3=Member";
+		}
+		if (!empty($conf->societe->enabled)) {
+			$typeexample .= ($typeexample ? " / " : "")."4=Contact";
+		}
+		if (!empty($conf->bank->enabled)) {
+			$typeexample .= ($typeexample ? " / " : "")."5=Bank account";
+		}
+		if (!empty($conf->projet->enabled)) {
+			$typeexample .= ($typeexample ? " / " : "")."6=Project";
+		}
+		if (!empty($conf->user->enabled)) {
+			$typeexample .= ($typeexample ? " / " : "")."7=User";
+		}
+		if (!empty($conf->bank->enabled)) {
+			$typeexample .= ($typeexample ? " / " : "")."8=Bank line";
+		}
+		if (!empty($conf->stock->enabled)) {
+			$typeexample .= ($typeexample ? " / " : "")."9=Warehouse";
+		}
+		if (!empty($conf->agenda->enabled)) {
+			$typeexample .= ($typeexample ? " / " : "")."10=Agenda event";
+		}
+		if (!empty($conf->website->enabled)) {
+			$typeexample .= ($typeexample ? " / " : "")."11=Website page";
+		}
 
-		$this->export_fields_array[$r] = array('cat.rowid'=>"CategId", 'cat.label'=>"Label", 'cat.type'=>"Type", 'cat.description'=>"Description", 'cat.fk_parent'=>"ParentCategory", 'pcat.label'=>"ParentCategoryLabel" );
-		$this->export_TypeFields_array[$r] = array('cat.label'=>"Text", 'cat.type'=>"Numeric", 'cat.description'=>"Text", 'cat.fk_parent'=>'List:categorie:label:rowid', 'pcat.label'=>'Text' );
+		$this->export_fields_array[$r] = array('cat.rowid'=>"CategId", 'cat.label'=>"Label", 'cat.type'=>"Type", 'cat.description'=>"Description", 'cat.fk_parent'=>"ParentCategory", 'pcat.label'=>"ParentCategoryLabel");
+		$this->export_TypeFields_array[$r] = array('cat.label'=>"Text", 'cat.type'=>"Numeric", 'cat.description'=>"Text", 'cat.fk_parent'=>'List:categorie:label:rowid', 'pcat.label'=>'Text');
 		$this->export_entities_array[$r] = array(); // We define here only fields that use another picto
 		$this->export_help_array[$r] = array('cat.type'=>$typeexample);
 
@@ -161,7 +185,9 @@ class modCategorie extends DolibarrModules
 		$this->export_TypeFields_array[$r] = array('cat.label'=>"Text", 'cat.description'=>"Text", 'cat.fk_parent'=>'List:categorie:label:rowid', 'p.ref'=>'Text', 'p.label'=>'Text');
 		$this->export_entities_array[$r] = array('p.rowid'=>'product', 'p.ref'=>'product', 'p.label'=>'product'); // We define here only fields that use another picto
 
-		$keyforselect = 'product'; $keyforelement = 'product'; $keyforaliasextra = 'extra';
+		$keyforselect = 'product';
+		$keyforelement = 'product';
+		$keyforaliasextra = 'extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
@@ -203,7 +229,9 @@ class modCategorie extends DolibarrModules
 			't.libelle'=>'company'
 		); // We define here only fields that use another picto
 
-		$keyforselect = 'societe'; $keyforelement = 'company'; $keyforaliasextra = 'extra';
+		$keyforselect = 'societe';
+		$keyforelement = 'company';
+		$keyforaliasextra = 'extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
@@ -247,7 +275,9 @@ class modCategorie extends DolibarrModules
 			't.libelle'=>'company', 'pl.code'=>'company', 'st.code'=>'company'
 		); // We define here only fields that use another picto
 
-		$keyforselect = 'societe'; $keyforelement = 'company'; $keyforaliasextra = 'extra';
+		$keyforselect = 'societe';
+		$keyforelement = 'company';
+		$keyforaliasextra = 'extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
@@ -273,7 +303,9 @@ class modCategorie extends DolibarrModules
 		$this->export_TypeFields_array[$r] = array('cat.label'=>"Text", 'cat.description'=>"Text", 'cat.fk_parent'=>'List:categorie:label:rowid', 'p.lastname'=>'Text', 'p.firstname'=>'Text');
 		$this->export_entities_array[$r] = array('p.rowid'=>'member', 'p.lastname'=>'member', 'p.firstname'=>'member'); // We define here only fields that use another picto
 
-		$keyforselect = 'adherent'; $keyforelement = 'member'; $keyforaliasextra = 'extra';
+		$keyforselect = 'adherent';
+		$keyforelement = 'member';
+		$keyforaliasextra = 'extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
@@ -324,7 +356,9 @@ class modCategorie extends DolibarrModules
 			's.phone'=>"company", 's.fax'=>"company", 's.url'=>"company", 's.email'=>"company"
 		); // We define here only fields that use another picto
 
-		$keyforselect = 'socpeople'; $keyforelement = 'contact'; $keyforaliasextra = 'extra';
+		$keyforselect = 'socpeople';
+		$keyforelement = 'contact';
+		$keyforaliasextra = 'extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
@@ -348,10 +382,12 @@ class modCategorie extends DolibarrModules
 		$this->export_enabled[$r] = '!empty($conf->projet->enabled)';
 		$this->export_permission[$r] = array(array("categorie", "lire"), array("projet", "export"));
 		$this->export_fields_array[$r] = array('cat.rowid'=>"CategId", 'cat.label'=>"Label", 'cat.description'=>"Description", 'cat.fk_parent'=>"ParentCategory", 'p.rowid'=>'ProjectId', 'p.ref'=>'Ref', 's.rowid'=>"IdThirdParty", 's.nom'=>"Name");
-		$this->export_TypeFields_array[$r] = array('cat.label'=>"Text", 'cat.description'=>"Text", 'cat.fk_parent'=>'List:categorie:label:rowid', 'p.ref'=>'Text', 's.rowid'=>"List:societe:nom:rowid", 's.nom'=>"Text");
+		$this->export_TypeFields_array[$r] = array('cat.label'=>"Text", 'cat.description'=>"Text", 'cat.fk_parent'=>'List:categorie:label:rowid', 'p.ref'=>'Text', 's.rowid'=>"Numeric", 's.nom'=>"Text");
 		$this->export_entities_array[$r] = array('p.rowid'=>'project', 'p.ref'=>'project', 's.rowid'=>"company", 's.nom'=>"company"); // We define here only fields that use another picto
 
-		$keyforselect = 'projet'; $keyforelement = 'project'; $keyforaliasextra = 'extra';
+		$keyforselect = 'projet';
+		$keyforelement = 'project';
+		$keyforaliasextra = 'extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
@@ -374,7 +410,9 @@ class modCategorie extends DolibarrModules
 		$this->export_TypeFields_array[$r] = array('cat.label'=>"Text", 'cat.description'=>"Text", 'cat.fk_parent'=>'List:categorie:label:rowid', 'p.login'=>'Text', 'p.lastname'=>'Text', 'p.firstname'=>'Text');
 		$this->export_entities_array[$r] = array('p.rowid'=>'user', 'p.login'=>'user', 'p.lastname'=>'user', 'p.firstname'=>'user'); // We define here only fields that use another picto
 
-		$keyforselect = 'user'; $keyforelement = 'user'; $keyforaliasextra = 'extra';
+		$keyforselect = 'user';
+		$keyforelement = 'user';
+		$keyforaliasextra = 'extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
@@ -422,14 +460,13 @@ class modCategorie extends DolibarrModules
 		);
 
 		$this->import_examplevalues_array[$r] = array(
-			'ca.label'=>"My Category Label", 'ca.type'=>$typeexample, 'ca.description'=>"My Category description",		// $typeexample built above in exports
+			'ca.label'=>"My Category Label", 'ca.type'=>$typeexample, 'ca.description'=>"My Category description", // $typeexample built above in exports
 			'ca.fk_parent' => 'rowid or label'
 		);
 		$this->import_updatekeys_array[$r] = array('ca.label'=>'Label');
 
 		// 0 Products
-		if (!empty($conf->product->enabled))
-		{
+		if (!empty($conf->product->enabled)) {
 			$r++;
 			$this->import_code[$r] = $this->rights_class.'_0_'.Categorie::$MAP_ID_TO_CODE[0];
 			$this->import_label[$r] = "CatProdLinks"; // Translation key
@@ -447,8 +484,7 @@ class modCategorie extends DolibarrModules
 		}
 
 		// 1 Suppliers
-		if (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled))
-		{
+		if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) {
 			$r++;
 			$this->import_code[$r] = $this->rights_class.'_1_'.Categorie::$MAP_ID_TO_CODE[1];
 			$this->import_label[$r] = "CatSupLinks"; // Translation key
@@ -465,12 +501,11 @@ class modCategorie extends DolibarrModules
 					'cs.fk_categorie'=>array('rule'=>'fetchidfromref', 'classfile'=>'/categories/class/categorie.class.php', 'class'=>'Categorie', 'method'=>'fetch', 'element'=>'category'),
 					'cs.fk_soc'=>array('rule'=>'fetchidfromref', 'classfile'=>'/societe/class/societe.class.php', 'class'=>'Societe', 'method'=>'fetch', 'element'=>'ThirdParty')
 			);
-			$this->import_examplevalues_array[$r] = array('cs.fk_categorie'=>"rowid or label", 'cs.fk_soc'=>"rowid or ref");
+			$this->import_examplevalues_array[$r] = array('cs.fk_categorie'=>"rowid or label", 'cs.fk_soc'=>"rowid or name");
 		}
 
 		// 2 Customers
-		if (!empty($conf->societe->enabled))
-		{
+		if (!empty($conf->societe->enabled)) {
 			$r++;
 			$this->import_code[$r] = $this->rights_class.'_2_'.Categorie::$MAP_ID_TO_CODE[2];
 			$this->import_label[$r] = "CatCusLinks"; // Translation key
@@ -487,12 +522,11 @@ class modCategorie extends DolibarrModules
 					'cs.fk_categorie'=>array('rule'=>'fetchidfromref', 'classfile'=>'/categories/class/categorie.class.php', 'class'=>'Categorie', 'method'=>'fetch', 'element'=>'category'),
 					'cs.fk_soc'=>array('rule'=>'fetchidfromref', 'classfile'=>'/societe/class/societe.class.php', 'class'=>'Societe', 'method'=>'fetch', 'element'=>'ThirdParty')
 			);
-			$this->import_examplevalues_array[$r] = array('cs.fk_categorie'=>"rowid or label", 'cs.fk_soc'=>"rowid or ref");
+			$this->import_examplevalues_array[$r] = array('cs.fk_categorie'=>"rowid or label", 'cs.fk_soc'=>"rowid or name");
 		}
 
 		// 3 Members
-		if (!empty($conf->adherent->enabled))
-		{
+		if (!empty($conf->adherent->enabled)) {
 			$r++;
 			$this->import_code[$r] = $this->rights_class.'_3_'.Categorie::$MAP_ID_TO_CODE[3];
 			$this->import_label[$r] = "CatMembersLinks"; // Translation key
@@ -504,14 +538,13 @@ class modCategorie extends DolibarrModules
 
 			$this->import_convertvalue_array[$r] = array(
 				'cs.fk_categorie'=>array('rule'=>'fetchidfromref', 'classfile'=>'/categories/class/categorie.class.php', 'class'=>'Categorie', 'method'=>'fetch', 'element'=>'category'),
-				'cs.fk_member'=>array('rule'=>'fetchidfromref','classfile'=>'/adherents/class/adherent.class.php','class'=>'Adherent','method'=>'fetch','element'=>'Member')
+				'cs.fk_member'=>array('rule'=>'fetchidfromref', 'classfile'=>'/adherents/class/adherent.class.php', 'class'=>'Adherent', 'method'=>'fetch', 'element'=>'Member')
 			);
 			$this->import_examplevalues_array[$r] = array('cs.fk_categorie'=>"rowid or label", 'cs.fk_member'=>"rowid or ref");
 		}
 
 		// 4 Contacts/Addresses
-		if (!empty($conf->societe->enabled))
-		{
+		if (!empty($conf->societe->enabled)) {
 			$r++;
 			$this->import_code[$r] = $this->rights_class.'_4_'.Categorie::$MAP_ID_TO_CODE[4];
 			$this->import_label[$r] = "CatContactsLinks"; // Translation key
@@ -534,8 +567,7 @@ class modCategorie extends DolibarrModules
 		// 5 Bank accounts, TODO ?
 
 		// 6 Projects
-		if (!empty($conf->projet->enabled))
-		{
+		if (!empty($conf->projet->enabled)) {
 			$r++;
 			$this->import_code[$r] = $this->rights_class.'_6_'.Categorie::$MAP_ID_TO_CODE[6];
 			$this->import_label[$r] = "CatProjectsLinks"; // Translation key
@@ -547,14 +579,13 @@ class modCategorie extends DolibarrModules
 
 			$this->import_convertvalue_array[$r] = array(
 				'cs.fk_categorie'=>array('rule'=>'fetchidfromref', 'classfile'=>'/categories/class/categorie.class.php', 'class'=>'Categorie', 'method'=>'fetch', 'element'=>'category'),
-				'cs.fk_project'=>array('rule'=>'fetchidfromref','classfile'=>'/projet/class/project.class.php','class'=>'Project','method'=>'fetch','element'=>'Project')
+				'cs.fk_project'=>array('rule'=>'fetchidfromref', 'classfile'=>'/projet/class/project.class.php', 'class'=>'Project', 'method'=>'fetch', 'element'=>'Project')
 			);
 			$this->import_examplevalues_array[$r] = array('cp.fk_categorie'=>"rowid or label", 'cp.fk_project'=>"rowid or ref");
 		}
 
 		// 7 Users
-		if (!empty($conf->user->enabled))
-		{
+		if (!empty($conf->user->enabled)) {
 			$r++;
 			$this->import_code[$r] = $this->rights_class.'_7_'.Categorie::$MAP_ID_TO_CODE[7];
 			$this->import_label[$r] = "CatUsersLinks"; // Translation key
@@ -566,7 +597,7 @@ class modCategorie extends DolibarrModules
 
 			$this->import_convertvalue_array[$r] = array(
 				'cu.fk_categorie'=>array('rule'=>'fetchidfromref', 'classfile'=>'/categories/class/categorie.class.php', 'class'=>'Categorie', 'method'=>'fetch', 'element'=>'category'),
-				'cu.fk_user'=>array('rule'=>'fetchidfromref','classfile'=>'/user/class/user.class.php','class'=>'User','method'=>'fetch','element'=>'User')
+				'cu.fk_user'=>array('rule'=>'fetchidfromref', 'classfile'=>'/user/class/user.class.php', 'class'=>'User', 'method'=>'fetch', 'element'=>'User')
 			);
 			$this->import_examplevalues_array[$r] = array('cu.fk_categorie'=>"rowid or label", 'cu.fk_user'=>"rowid or login");
 		}

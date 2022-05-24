@@ -24,6 +24,7 @@
  *  \brief      Module to manage product combinations based on product attributes
  *  \file       htdocs/core/modules/modVariants.class.php
  *  \ingroup    produit
+ *  \brief      Description and activation file for the module product variants
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
@@ -72,10 +73,10 @@ class modVariants extends DolibarrModules
 		$this->module_parts = array();
 
 		// Data directories to create when module is enabled.
-		// Example: this->dirs = array("/mymodule/temp");
+		// Example: this->dirs = array("/variants/temp");
 		$this->dirs = array();
 
-		// Config pages. Put here list of php page, stored into mymodule/admin directory, to use to setup module.
+		// Config pages. Put here list of php page, stored into variants/admin directory, to use to setup module.
 		$this->config_page_url = array('admin.php@variants');
 
 		// Dependencies
@@ -83,7 +84,7 @@ class modVariants extends DolibarrModules
 		$this->depends = array('modProduct'); // List of module class names as string that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
-		$this->phpmin = array(5, 4); // Minimum version of PHP required by module
+		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(3, 0); // Minimum version of Dolibarr required by module
 		$this->langfiles = array("products");
 
@@ -96,10 +97,9 @@ class modVariants extends DolibarrModules
 		);
 
 		// Dictionaries
-		if (!isset($conf->mymodule->enabled))
-		{
-			$conf->mymodule = new stdClass();
-			$conf->mymodule->enabled = 0;
+		if (!isset($conf->variants->enabled)) {
+			$conf->variants = new stdClass();
+			$conf->variants->enabled = 0;
 		}
 		$this->dictionaries = array();
 
@@ -109,5 +109,19 @@ class modVariants extends DolibarrModules
 
 		// Permissions
 		$this->rights = array(); // Permission array used by this module
+		$r = 0;
+
+		$this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
+		$this->rights[$r][1] = 'Read attributes of variants'; // Permission label
+		$this->rights[$r][4] = 'read'; // In php code, permission will be checked by test if ($user->rights->eventorganization->level1)
+		$r++;
+		$this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
+		$this->rights[$r][1] = 'Create/Update attributes of variants'; // Permission label
+		$this->rights[$r][4] = 'write'; // In php code, permission will be checked by test if ($user->rights->eventorganization->level1)
+		$r++;
+		$this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
+		$this->rights[$r][1] = 'Delete attributes of variants'; // Permission label
+		$this->rights[$r][4] = 'delete'; // In php code, permission will be checked by test if ($user->rights->eventorganization->level1)
+		$r++;
 	}
 }

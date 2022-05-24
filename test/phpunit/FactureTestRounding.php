@@ -29,8 +29,7 @@ global $conf,$user,$langs,$db;
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/compta/facture/class/facture.class.php';
 
-if (empty($user->id))
-{
+if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
 	$user->fetch(1);
 	$user->getrights();
@@ -75,272 +74,270 @@ class FactureTestRounding extends PHPUnit\Framework\TestCase
 	}
 
 	/**
-     * setUpBeforeClass
-     *
-     * @return void
-     */
-    public static function setUpBeforeClass()
-    {
-    	global $conf,$user,$langs,$db;
+	 * setUpBeforeClass
+	 *
+	 * @return void
+	 */
+	public static function setUpBeforeClass()
+	{
+		global $conf,$user,$langs,$db;
 		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
 
-    	print __METHOD__."\n";
-    }
+		print __METHOD__."\n";
+	}
 
-    /**
-     * tearDownAfterClass
-     *
-     * @return	void
-     */
-    public static function tearDownAfterClass()
-    {
-    	global $conf,$user,$langs,$db;
+	/**
+	 * tearDownAfterClass
+	 *
+	 * @return	void
+	 */
+	public static function tearDownAfterClass()
+	{
+		global $conf,$user,$langs,$db;
 		$db->rollback();
 
 		print __METHOD__."\n";
-    }
+	}
 
 	/**
 	 * Init phpunit tests
 	 *
 	 * @return	void
 	 */
-    protected function setUp()
-    {
-    	global $conf,$user,$langs,$db;
+	protected function setUp()
+	{
+		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
 		$user=$this->savuser;
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
 		print __METHOD__."\n";
-    }
+	}
 
 	/**
 	 * End phpunit tests
 	 *
 	 * @return	void
 	 */
-    protected function tearDown()
-    {
-    	print __METHOD__."\n";
-    }
+	protected function tearDown()
+	{
+		print __METHOD__."\n";
+	}
 
 
 
-    /**
-     * testFactureRoundingCreate1
-     * Test according to page http://wiki.dolibarr.org/index.php/Draft:VAT_calculation_and_rounding#Standard_usage
-     *
-     * @return int
-     */
-    public function testFactureRoundingCreate1()
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
+	/**
+	 * testFactureRoundingCreate1
+	 * Test according to page http://wiki.dolibarr.org/index.php/Draft:VAT_calculation_and_rounding#Standard_usage
+	 *
+	 * @return int
+	 */
+	public function testFactureRoundingCreate1()
+	{
+		global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
 
 		$conf->global->MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND=0;
 
-        $localobject=new Facture($this->savdb);
-        $localobject->initAsSpecimen();
-        $localobject->lines=array();
-        unset($localobject->total_ht);
-        unset($localobject->total_ttc);
-        unset($localobject->total_tva);
-        $result=$localobject->create($user);
+		$localobject=new Facture($this->savdb);
+		$localobject->initAsSpecimen();
+		$localobject->lines=array();
+		unset($localobject->total_ht);
+		unset($localobject->total_ttc);
+		unset($localobject->total_tva);
+		$result=$localobject->create($user);
 
-        // Add two lines
-        for ($i=0; $i<2; $i++)
-        {
-            $localobject->addline('Description '.$i, 1.24, 1, 10);
-        }
+		// Add two lines
+		for ($i=0; $i<2; $i++) {
+			$localobject->addline('Description '.$i, 1.24, 1, 10);
+		}
 
-        $newlocalobject=new Facture($this->savdb);
-        $newlocalobject->fetch($result);
-        //var_dump($newlocalobject);
+		$newlocalobject=new Facture($this->savdb);
+		$newlocalobject->fetch($result);
+		//var_dump($newlocalobject);
 
-        $this->assertEquals($newlocalobject->total_ht, 2.48);
-        $this->assertEquals($newlocalobject->total_tva, 0.24);
-        $this->assertEquals($newlocalobject->total_ttc, 2.72);
-        return $result;
-    }
-
-
-    /**
-     * testFactureRoundingCreate2
-     *
-     * @return int
-     *
-     * @depends	testFactureRoundingCreate1
-     * Test according to page http://wiki.dolibarr.org/index.php/Draft:VAT_calculation_and_rounding#Standard_usage
-     */
-    public function testFactureRoundingCreate2()
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
-
-        $conf->global->MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND=0;
-
-        $localobject=new Facture($this->savdb);
-        $localobject->initAsSpecimen();
-        $localobject->lines=array();
-        unset($localobject->total_ht);
-        unset($localobject->total_ttc);
-        unset($localobject->total_vat);
-        $result=$localobject->create($user);
-
-        // Add two lines
-        for ($i=0; $i<2; $i++)
-        {
-            $localobject->addline('Description '.$i, 1.24, 1, 10);
-        }
-
-        $newlocalobject=new Facture($this->savdb);
-        $newlocalobject->fetch($result);
-        //var_dump($newlocalobject);
-
-        $this->assertEquals($newlocalobject->total_ht, 2.48);
-        //$this->assertEquals($newlocalobject->total_tva, 0.25);
-        //$this->assertEquals($newlocalobject->total_ttc, 2.73);
-        return $result;
-    }
+		$this->assertEquals($newlocalobject->total_ht, 2.48);
+		$this->assertEquals($newlocalobject->total_tva, 0.24);
+		$this->assertEquals($newlocalobject->total_ttc, 2.72);
+		return $result;
+	}
 
 
-    /**
-     * testFactureAddLine1
-     *
-     * @return	void
-     */
-    public function testFactureAddLine1()
-    {
-    	global $conf,$user,$langs,$db;
-    	$conf=$this->savconf;
-    	$user=$this->savuser;
-    	$langs=$this->savlangs;
-    	$db=$this->savdb;
+	/**
+	 * testFactureRoundingCreate2
+	 *
+	 * @return int
+	 *
+	 * @depends	testFactureRoundingCreate1
+	 * Test according to page http://wiki.dolibarr.org/index.php/Draft:VAT_calculation_and_rounding#Standard_usage
+	 */
+	public function testFactureRoundingCreate2()
+	{
+		global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
 
-    	// With option MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND = 0
-    	$conf->global->MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND=0;
+		$conf->global->MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND=0;
 
-    	$localobject1a=new Facture($this->savdb);
-    	$localobject1a->initAsSpecimen('nolines');
-    	$facid=$localobject1a->create($user);
-    	$localobject1a->addline('Line 1', 6.36, 15, 21);	// This include update_price
-    	print __METHOD__." id=".$facid." total_ttc=".$localobject1a->total_ttc."\n";
-    	$this->assertEquals(95.40, $localobject1a->total_ht);
-    	$this->assertEquals(20.03, $localobject1a->total_tva);
-    	$this->assertEquals(115.43, $localobject1a->total_ttc);
+		$localobject=new Facture($this->savdb);
+		$localobject->initAsSpecimen();
+		$localobject->lines=array();
+		unset($localobject->total_ht);
+		unset($localobject->total_ttc);
+		unset($localobject->total_vat);
+		$result=$localobject->create($user);
 
-    	// With option MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND = 1
-    	$conf->global->MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND=1;
+		// Add two lines
+		for ($i=0; $i<2; $i++) {
+			$localobject->addline('Description '.$i, 1.24, 1, 10);
+		}
 
-    	$localobject1b=new Facture($this->savdb);
-    	$localobject1b->initAsSpecimen('nolines');
-    	$facid=$localobject1b->create($user);
-    	$localobject1b->addline('Line 1', 6.36, 15, 21);	// This include update_price
-    	print __METHOD__." id=".$facid." total_ttc=".$localobject1b->total_ttc."\n";
-    	$this->assertEquals(95.40, $localobject1b->total_ht, 'testFactureAddLine1 total_ht');
-    	$this->assertEquals(20.03, $localobject1b->total_tva, 'testFactureAddLine1 total_tva');
-    	$this->assertEquals(115.43, $localobject1b->total_ttc, 'testFactureAddLine1 total_ttc');
-    }
+		$newlocalobject=new Facture($this->savdb);
+		$newlocalobject->fetch($result);
+		//var_dump($newlocalobject);
 
-    /**
-     * testFactureAddLine2
-     *
-     * @return	void
-     *
-     * @depends	testFactureAddLine1
-     * The depends says test is run only if previous is ok
-     */
-    public function testFactureAddLine2()
-    {
-    	global $conf,$user,$langs,$db;
-    	$conf=$this->savconf;
-    	$user=$this->savuser;
-    	$langs=$this->savlangs;
-    	$db=$this->savdb;
+		$this->assertEquals($newlocalobject->total_ht, 2.48);
+		//$this->assertEquals($newlocalobject->total_tva, 0.25);
+		//$this->assertEquals($newlocalobject->total_ttc, 2.73);
+		return $result;
+	}
 
-    	// With option MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND = 0
-    	$conf->global->MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND=0;
 
-    	$localobject2=new Facture($this->savdb);
-    	$localobject2->initAsSpecimen('nolines');
-    	$facid=$localobject2->create($user);
-    	$localobject2->addline('Line 1', 6.36, 5, 21);
-    	$localobject2->addline('Line 2', 6.36, 5, 21);
-    	$localobject2->addline('Line 3', 6.36, 5, 21);
-    	print __METHOD__." id=".$facid." total_ttc=".$localobject2->total_ttc."\n";
-    	$this->assertEquals(95.40, $localobject2->total_ht);
-    	$this->assertEquals(20.04, $localobject2->total_tva);
-    	$this->assertEquals(115.44, $localobject2->total_ttc);
+	/**
+	 * testFactureAddLine1
+	 *
+	 * @return	void
+	 */
+	public function testFactureAddLine1()
+	{
+		global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
 
-    	// With option MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND = 1
-    	$conf->global->MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND=1;
+		// With option MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND = 0
+		$conf->global->MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND=0;
 
-    	$localobject2=new Facture($this->savdb);
-    	$localobject2->initAsSpecimen('nolines');
-    	$facid=$localobject2->create($user);
-    	$localobject2->addline('Line 1', 6.36, 5, 21);
-    	$localobject2->addline('Line 2', 6.36, 5, 21);
-    	$localobject2->addline('Line 3', 6.36, 5, 21);
-    	print __METHOD__." id=".$facid." total_ttc=".$localobject2->total_ttc."\n";
-    	$this->assertEquals(95.40, $localobject2->total_ht);
-    	$this->assertEquals(20.03, $localobject2->total_tva);
-    	$this->assertEquals(115.43, $localobject2->total_ttc);
-    }
+		$localobject1a=new Facture($this->savdb);
+		$localobject1a->initAsSpecimen('nolines');
+		$facid=$localobject1a->create($user);
+		$localobject1a->addline('Line 1', 6.36, 15, 21);	// This include update_price
+		print __METHOD__." id=".$facid." total_ttc=".$localobject1a->total_ttc."\n";
+		$this->assertEquals(95.40, $localobject1a->total_ht);
+		$this->assertEquals(20.03, $localobject1a->total_tva);
+		$this->assertEquals(115.43, $localobject1a->total_ttc);
 
-    /**
-     * testFactureAddLine3
-     *
-     * @return	void
-     *
-     * @depends	testFactureAddLine2
-     * The depends says test is run only if previous is ok
-     */
-    public function testFactureAddLine3()
-    {
-    	global $conf,$user,$langs,$db;
-    	$conf=$this->savconf;
-    	$user=$this->savuser;
-    	$langs=$this->savlangs;
-    	$db=$this->savdb;
+		// With option MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND = 1
+		$conf->global->MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND=1;
 
-    	// With option MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND = 0
-    	$conf->global->MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND=0;
+		$localobject1b=new Facture($this->savdb);
+		$localobject1b->initAsSpecimen('nolines');
+		$facid=$localobject1b->create($user);
+		$localobject1b->addline('Line 1', 6.36, 15, 21);	// This include update_price
+		print __METHOD__." id=".$facid." total_ttc=".$localobject1b->total_ttc."\n";
+		$this->assertEquals(95.40, $localobject1b->total_ht, 'testFactureAddLine1 total_ht');
+		$this->assertEquals(20.03, $localobject1b->total_tva, 'testFactureAddLine1 total_tva');
+		$this->assertEquals(115.43, $localobject1b->total_ttc, 'testFactureAddLine1 total_ttc');
+	}
 
-    	$localobject3=new Facture($this->savdb);
-    	$localobject3->initAsSpecimen('nolines');
-    	$facid=$localobject3->create($user);
-    	$localobject3->addline('Line 1', 6.36, 3, 21);
-    	$localobject3->addline('Line 2', 6.36, 3, 21);
-    	$localobject3->addline('Line 3', 6.36, 3, 21);
-    	$localobject3->addline('Line 4', 6.36, 3, 21);
-    	$localobject3->addline('Line 5', 6.36, 3, 21);
-    	print __METHOD__." id=".$facid." total_ttc=".$localobject3->total_ttc."\n";
-    	$this->assertEquals(95.40, $localobject3->total_ht);
-    	$this->assertEquals(20.05, $localobject3->total_tva);
-    	$this->assertEquals(115.45, $localobject3->total_ttc);
+	/**
+	 * testFactureAddLine2
+	 *
+	 * @return	void
+	 *
+	 * @depends	testFactureAddLine1
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testFactureAddLine2()
+	{
+		global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
 
-    	// With option MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND = 1
-    	$conf->global->MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND=1;
+		// With option MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND = 0
+		$conf->global->MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND=0;
 
-    	$localobject3=new Facture($this->savdb);
-    	$localobject3->initAsSpecimen('nolines');
-    	$facid=$localobject3->create($user);
-    	$localobject3->addline('Line 1', 6.36, 3, 21);
-    	$localobject3->addline('Line 2', 6.36, 3, 21);
-    	$localobject3->addline('Line 3', 6.36, 3, 21);
-    	$localobject3->addline('Line 4', 6.36, 3, 21);
-    	$localobject3->addline('Line 5', 6.36, 3, 21);
-    	print __METHOD__." id=".$facid." total_ttc=".$localobject3->total_ttc."\n";
-    	$this->assertEquals(95.40, $localobject3->total_ht);
-    	$this->assertEquals(20.03, $localobject3->total_tva);
-    	$this->assertEquals(115.43, $localobject3->total_ttc);
-    }
+		$localobject2=new Facture($this->savdb);
+		$localobject2->initAsSpecimen('nolines');
+		$facid=$localobject2->create($user);
+		$localobject2->addline('Line 1', 6.36, 5, 21);
+		$localobject2->addline('Line 2', 6.36, 5, 21);
+		$localobject2->addline('Line 3', 6.36, 5, 21);
+		print __METHOD__." id=".$facid." total_ttc=".$localobject2->total_ttc."\n";
+		$this->assertEquals(95.40, $localobject2->total_ht);
+		$this->assertEquals(20.04, $localobject2->total_tva);
+		$this->assertEquals(115.44, $localobject2->total_ttc);
+
+		// With option MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND = 1
+		$conf->global->MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND=1;
+
+		$localobject2=new Facture($this->savdb);
+		$localobject2->initAsSpecimen('nolines');
+		$facid=$localobject2->create($user);
+		$localobject2->addline('Line 1', 6.36, 5, 21);
+		$localobject2->addline('Line 2', 6.36, 5, 21);
+		$localobject2->addline('Line 3', 6.36, 5, 21);
+		print __METHOD__." id=".$facid." total_ttc=".$localobject2->total_ttc."\n";
+		$this->assertEquals(95.40, $localobject2->total_ht);
+		$this->assertEquals(20.03, $localobject2->total_tva);
+		$this->assertEquals(115.43, $localobject2->total_ttc);
+	}
+
+	/**
+	 * testFactureAddLine3
+	 *
+	 * @return	void
+	 *
+	 * @depends	testFactureAddLine2
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testFactureAddLine3()
+	{
+		global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
+
+		// With option MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND = 0
+		$conf->global->MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND=0;
+
+		$localobject3=new Facture($this->savdb);
+		$localobject3->initAsSpecimen('nolines');
+		$facid=$localobject3->create($user);
+		$localobject3->addline('Line 1', 6.36, 3, 21);
+		$localobject3->addline('Line 2', 6.36, 3, 21);
+		$localobject3->addline('Line 3', 6.36, 3, 21);
+		$localobject3->addline('Line 4', 6.36, 3, 21);
+		$localobject3->addline('Line 5', 6.36, 3, 21);
+		print __METHOD__." id=".$facid." total_ttc=".$localobject3->total_ttc."\n";
+		$this->assertEquals(95.40, $localobject3->total_ht);
+		$this->assertEquals(20.05, $localobject3->total_tva);
+		$this->assertEquals(115.45, $localobject3->total_ttc);
+
+		// With option MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND = 1
+		$conf->global->MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND=1;
+
+		$localobject3=new Facture($this->savdb);
+		$localobject3->initAsSpecimen('nolines');
+		$facid=$localobject3->create($user);
+		$localobject3->addline('Line 1', 6.36, 3, 21);
+		$localobject3->addline('Line 2', 6.36, 3, 21);
+		$localobject3->addline('Line 3', 6.36, 3, 21);
+		$localobject3->addline('Line 4', 6.36, 3, 21);
+		$localobject3->addline('Line 5', 6.36, 3, 21);
+		print __METHOD__." id=".$facid." total_ttc=".$localobject3->total_ttc."\n";
+		$this->assertEquals(95.40, $localobject3->total_ht);
+		$this->assertEquals(20.03, $localobject3->total_tva);
+		$this->assertEquals(115.43, $localobject3->total_ttc);
+	}
 }

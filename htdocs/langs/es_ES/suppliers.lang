@@ -1,6 +1,7 @@
 # Dolibarr language file - Source file is en_US - vendors
 Suppliers=Proveedores
 SuppliersInvoice=Factura proveedor
+SupplierInvoices=Facturas proveedor
 ShowSupplierInvoice=Ver factura de proveedor
 NewSupplier=Nuevo proveedor
 History=Histórico

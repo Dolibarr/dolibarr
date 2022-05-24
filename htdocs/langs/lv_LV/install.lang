@@ -21,6 +21,7 @@ ErrorPHPDoesNotSupportCurl=Jūsu PHP instalācija neatbalsta Curl.
 ErrorPHPDoesNotSupportCalendar=Jūsu PHP instalācija neatbalsta php kalendāra paplašinājumus.
 ErrorPHPDoesNotSupportUTF8=Jūsu PHP instalācija neatbalsta UTF8 funkcijas. Dolibarr nevar darboties pareizi. Atrisiniet to pirms Dolibarr instalēšanas.
 ErrorPHPDoesNotSupportIntl=Jūsu PHP instalācija neatbalsta Intl funkcijas.
+ErrorPHPDoesNotSupportMbstring=Jūsu PHP instalācija neatbalsta mbstring funkcijas.
 ErrorPHPDoesNotSupportxDebug=Jūsu PHP instalācija neatbalsta paplašināšanas atkļūdošanas funkcijas.
 ErrorPHPDoesNotSupport=Jūsu PHP instalācija neatbalsta %s funkcijas.
 ErrorDirDoesNotExists=Katalogs %s neeksistē.
@@ -206,6 +207,7 @@ MigrationUserPhotoPath=Lietotāju fotoattēlu migrēšana
 MigrationFieldsSocialNetworks=Lietotāju lauku migrācija sociālajos tīklos (%s)
 MigrationReloadModule=Reload module %s
 MigrationResetBlockedLog=Atjaunot moduli BlockedLog par v7 algoritmu
+MigrationImportOrExportProfiles=Importa vai eksporta profilu migrēšana (%s)
 ShowNotAvailableOptions=Parādīt nepieejamās iespējas
 HideNotAvailableOptions=Slēpt nepieejamās iespējas
 ErrorFoundDuringMigration=Migrēšanas laikā tika ziņots par kļūdu (-ēm), tāpēc nākamais solis nav pieejams. Lai ignorētu kļūdas, varat <a href="%s"> noklikšķināt šeit </a>, bet lietojumprogramma vai dažas funkcijas var nedarboties pareizi, līdz kļūdas nav atrisinātas.

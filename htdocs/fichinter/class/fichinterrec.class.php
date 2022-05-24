@@ -40,7 +40,7 @@ class FichinterRec extends Fichinter
 {
 	public $element = 'fichinterrec';
 	public $table_element = 'fichinter_rec';
-	public $table_element_line = 'fichinter_rec';
+	public $table_element_line = 'fichinterdet_rec';
 
 	/**
 	 * @var string Fieldname with ID of parent key if this field has a parent
@@ -182,18 +182,18 @@ class FichinterRec extends Fichinter
 
 			$sql .= ") VALUES (";
 			$sql .= "'".$this->db->escape($this->title)."'";
-			$sql .= ", ".($this->socid > 0 ? $this->socid : 'null');
-			$sql .= ", ".$conf->entity;
+			$sql .= ", ".($this->socid > 0 ? ((int) $this->socid) : 'null');
+			$sql .= ", ".((int) $conf->entity);
 			$sql .= ", '".$this->db->idate($now)."'";
-			$sql .= ", ".(!empty($fichintsrc->duration) ? $fichintsrc->duration : '0');
+			$sql .= ", ".(!empty($fichintsrc->duration) ? ((int) $fichintsrc->duration) : '0');
 			$sql .= ", ".(!empty($this->description) ? ("'".$this->db->escape($this->description)."'") : "null");
 			$sql .= ", ".(!empty($fichintsrc->note_private) ? ("'".$this->db->escape($fichintsrc->note_private)."'") : "null");
 			$sql .= ", ".(!empty($fichintsrc->note_public) ? ("'".$this->db->escape($fichintsrc->note_public)."'") : "null");
-			$sql .= ", ".$user->id;
+			$sql .= ", ".((int) $user->id);
 			// si c'est la même société on conserve les liens vers le projet et le contrat
 			if ($this->socid == $fichintsrc->socid) {
-				$sql .= ", ".(!empty($fichintsrc->fk_project) ? $fichintsrc->fk_project : "null");
-				$sql .= ", ".(!empty($fichintsrc->fk_contrat) ? $fichintsrc->fk_contrat : "null");
+				$sql .= ", ".(!empty($fichintsrc->fk_project) ? ((int) $fichintsrc->fk_project) : "null");
+				$sql .= ", ".(!empty($fichintsrc->fk_contrat) ? ((int) $fichintsrc->fk_contrat) : "null");
 			} else {
 				$sql .= ", null, null";
 			}
@@ -201,12 +201,12 @@ class FichinterRec extends Fichinter
 			$sql .= ", ".(!empty($fichintsrc->model_pdf) ? "'".$this->db->escape($fichintsrc->model_pdf)."'" : "''");
 
 			// récurrence
-			$sql .= ", ".(!empty($this->frequency) ? $this->frequency : "null");
+			$sql .= ", ".(!empty($this->frequency) ? ((int) $this->frequency) : "null");
 			$sql .= ", '".$this->db->escape($this->unit_frequency)."'";
 			$sql .= ", ".(!empty($this->date_when) ? "'".$this->db->idate($this->date_when)."'" : 'null');
 			$sql .= ", ".(!empty($this->date_last_gen) ? "'".$this->db->idate($this->date_last_gen)."'" : 'null');
 			$sql .= ", 0"; // we start à 0
-			$sql .= ", ".$this->nb_gen_max;
+			$sql .= ", ".((int) $this->nb_gen_max);
 			// $sql.= ", ".$this->auto_validate;
 			$sql .= ")";
 
@@ -214,8 +214,8 @@ class FichinterRec extends Fichinter
 				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
 
 				/*
-                 * Lines
-                 */
+				 * Lines
+				 */
 				$num = count($fichintsrc->lines);
 				for ($i = 0; $i < $num; $i++) {
 					//var_dump($fichintsrc->lines[$i]);
@@ -239,13 +239,14 @@ class FichinterRec extends Fichinter
 						$fichintsrc->lines[$i]->fk_unit
 					);
 
-					if ($result_insert < 0)
+					if ($result_insert < 0) {
 						$error++;
+					}
 				}
 
-				if ($error)
+				if ($error) {
 					$this->db->rollback();
-				else {
+				} else {
 					$this->db->commit();
 					return $this->id;
 				}
@@ -277,8 +278,11 @@ class FichinterRec extends Fichinter
 		$sql .= ', f.frequency, f.unit_frequency, f.date_when, f.date_last_gen, f.nb_gen_done, f.nb_gen_max, f.auto_validate';
 		$sql .= ', f.note_private, f.note_public, f.fk_user_author';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'fichinter_rec as f';
-		if ($rowid > 0) $sql .= ' WHERE f.rowid='.$rowid;
-		elseif ($ref) $sql .= " WHERE f.titre='".$this->db->escape($ref)."'";
+		if ($rowid > 0) {
+			$sql .= " WHERE f.rowid = ".((int) $rowid);
+		} elseif ($ref) {
+			$sql .= " WHERE f.titre = '".$this->db->escape($ref)."'";
+		}
 
 		dol_syslog(get_class($this)."::fetch rowid=".$rowid, LOG_DEBUG);
 
@@ -344,25 +348,28 @@ class FichinterRec extends Fichinter
 	public function fetch_lines($sall = 0)
 	{
 		// phpcs:enable
-		$sql = 'SELECT l.rowid, l.fk_product, l.product_type, l.label as custom_label, l.description, ';
-		$sql .= ' l.price, l.qty, l.tva_tx, l.remise, l.remise_percent, l.subprice, l.duree, ';
+		$this->lines = array();
+
+		$sql = 'SELECT l.rowid, l.fk_product, l.product_type as product_type, l.label as custom_label, l.description, ';
+		$sql .= ' l.price, l.qty, l.tva_tx, l.remise_percent, l.subprice, l.duree, ';
 		$sql .= ' l.total_ht, l.total_tva, l.total_ttc,';
 		$sql .= ' l.rang, l.special_code,';
 		$sql .= ' l.fk_unit, p.ref as product_ref, p.fk_product_type as fk_product_type,';
 		$sql .= ' p.label as product_label, p.description as product_desc';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'fichinterdet_rec as l';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product = p.rowid';
-		$sql .= ' WHERE l.fk_fichinter = '.$this->id;
+		$sql .= ' WHERE l.fk_fichinter = '.((int) $this->id);
 
-		dol_syslog('FichInter-rec::fetch_lines', LOG_DEBUG);
+		dol_syslog('FichinterRec::fetch_lines', LOG_DEBUG);
+
 		$result = $this->db->query($sql);
 		if ($result) {
 			$num = $this->db->num_rows($result);
 			$i = 0;
 			while ($i < $num) {
 				$objp = $this->db->fetch_object($result);
-				$line = new FichinterLigne($this->db);
 
+				$line = new FichinterLigne($this->db);
 				$line->id = $objp->rowid;
 				$line->label = $objp->custom_label; // Label line
 				$line->desc = $objp->description; // Description line
@@ -370,7 +377,7 @@ class FichinterRec extends Fichinter
 				$line->product_ref = $objp->product_ref; // Ref product
 				$line->product_label = $objp->product_label; // Label product
 				$line->product_desc = $objp->product_desc; // Description product
-				$line->fk_product_type = $objp->fk_product_type; // Type of product
+				$line->fk_product_type = $objp->fk_product_type; // Type in product
 				$line->qty = $objp->qty;
 				$line->duree = $objp->duree;
 				$line->duration = $objp->duree;
@@ -382,8 +389,6 @@ class FichinterRec extends Fichinter
 				$line->fk_product = $objp->fk_product;
 				$line->date_start = $objp->date_start;
 				$line->date_end = $objp->date_end;
-				$line->date_start = $objp->date_start;
-				$line->date_end = $objp->date_end;
 				$line->info_bits = $objp->info_bits;
 				$line->total_ht = $objp->total_ht;
 				$line->total_tva = $objp->total_tva;
@@ -392,10 +397,6 @@ class FichinterRec extends Fichinter
 				$line->rang = $objp->rang;
 				$line->special_code = $objp->special_code;
 				$line->fk_unit = $objp->fk_unit;
-
-				// Ne plus utiliser
-				$line->price = $objp->price;
-				$line->remise = $objp->remise;
 
 				$this->lines[$i] = $line;
 
@@ -421,17 +422,19 @@ class FichinterRec extends Fichinter
 	 */
 	public function delete($rowid = 0, $notrigger = 0, $idwarehouse = -1)
 	{
-		if (empty($rowid)) $rowid = $this->id;
+		if (empty($rowid)) {
+			$rowid = $this->id;
+		}
 
 		dol_syslog(get_class($this)."::delete rowid=".$rowid, LOG_DEBUG);
 
 		$error = 0;
 		$this->db->begin();
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."fichinterdet_rec WHERE fk_fichinter = ".$rowid;
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."fichinterdet_rec WHERE fk_fichinter = ".((int) $rowid);
 		dol_syslog($sql);
 		if ($this->db->query($sql)) {
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."fichinter_rec WHERE rowid = ".$rowid;
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."fichinter_rec WHERE rowid = ".((int) $rowid);
 			dol_syslog($sql);
 			if (!$this->db->query($sql)) {
 				$this->error = $this->db->lasterror();
@@ -481,14 +484,20 @@ class FichinterRec extends Fichinter
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
 		// Check parameters
-		if ($type < 0) return -1;
+		if ($type < 0) {
+			return -1;
+		}
 
 		if ($this->brouillon) {
 			// Clean parameters
 			$remise_percent = price2num($remise_percent);
 			$qty = price2num($qty);
-			if (!$qty) $qty = 1;
-			if (!$info_bits) $info_bits = 0;
+			if (!$qty) {
+				$qty = 1;
+			}
+			if (!$info_bits) {
+				$info_bits = 0;
+			}
 			$pu_ht = price2num($pu_ht);
 			$pu_ttc = price2num($pu_ttc);
 			if (!preg_match('/\((.*)\)/', $txtva)) {
@@ -587,7 +596,7 @@ class FichinterRec extends Fichinter
 			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter_rec ";
 			$sql .= " SET frequency='".$this->db->escape($freq)."'";
 			$sql .= ", date_last_gen='".$this->db->escape($courant)."'";
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			$resql = $this->db->query($sql);
 
@@ -616,14 +625,16 @@ class FichinterRec extends Fichinter
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $max = 0, $short = 0, $moretitle = '')
 	{
-		global $langs;
+		global $langs, $hookmanager;
 
 		$result = '';
 		$label = $langs->trans("ShowInterventionModel").': '.$this->ref;
 
 		$url = DOL_URL_ROOT.'/fichinter/card-rec.php?id='.$this->id;
 
-		if ($short) return $url;
+		if ($short) {
+			return $url;
+		}
 
 		$picto = 'intervention';
 
@@ -638,6 +649,15 @@ class FichinterRec extends Fichinter
 		}
 		if ($withpicto != 2) {
 			$result .= $link.$this->ref.$linkend;
+		}
+		global $action;
+		$hookmanager->initHooks(array($this->element . 'dao'));
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
 		}
 		return $result;
 	}
@@ -679,6 +699,22 @@ class FichinterRec extends Fichinter
 		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
 	}
 
+	/**
+	 * Function used to replace a product id with another one.
+	 *
+	 * @param DoliDB $db Database handler
+	 * @param int $origin_id Old product id
+	 * @param int $dest_id New product id
+	 * @return bool
+	 */
+	public static function replaceProduct(DoliDB $db, $origin_id, $dest_id)
+	{
+		$tables = array(
+			'fichinterdet_rec'
+		);
+
+		return CommonObject::commonReplaceProduct($db, $origin_id, $dest_id, $tables);
+	}
 
 	/**
 	 *	Update frequency and unit
@@ -704,12 +740,14 @@ class FichinterRec extends Fichinter
 		if (!empty($unit)) {
 			$sql .= ', unit_frequency = "'.$this->db->escape($unit).'"';
 		}
-		$sql .= ' WHERE rowid = '.$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::setFrequencyAndUnit", LOG_DEBUG);
 		if ($this->db->query($sql)) {
 			$this->frequency = $frequency;
-			if (!empty($unit)) $this->unit_frequency = $unit;
+			if (!empty($unit)) {
+				$this->unit_frequency = $unit;
+			}
 			return 1;
 		} else {
 			dol_print_error($this->db);
@@ -732,13 +770,17 @@ class FichinterRec extends Fichinter
 		}
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
 		$sql .= " SET date_when = ".($date ? "'".$this->db->idate($date)."'" : "null");
-		if ($increment_nb_gen_done > 0) $sql .= ', nb_gen_done = nb_gen_done + 1';
-		$sql .= ' WHERE rowid = '.$this->id;
+		if ($increment_nb_gen_done > 0) {
+			$sql .= ', nb_gen_done = nb_gen_done + 1';
+		}
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::setNextDate", LOG_DEBUG);
 		if ($this->db->query($sql)) {
 			$this->date_when = $date;
-			if ($increment_nb_gen_done > 0) $this->nb_gen_done++;
+			if ($increment_nb_gen_done > 0) {
+				$this->nb_gen_done++;
+			}
 			return 1;
 		} else {
 			dol_print_error($this->db);
@@ -759,11 +801,13 @@ class FichinterRec extends Fichinter
 			return -1;
 		}
 
-		if (empty($nb)) $nb = 0;
+		if (empty($nb)) {
+			$nb = 0;
+		}
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-		$sql .= ' SET nb_gen_max = '.$nb;
-		$sql .= ' WHERE rowid = '.$this->id;
+		$sql .= ' SET nb_gen_max = '.((int) $nb);
+		$sql .= ' WHERE rowid = '.((int) $this->id);
 
 		dol_syslog(get_class($this)."::setMaxPeriod", LOG_DEBUG);
 		if ($this->db->query($sql)) {
@@ -789,8 +833,8 @@ class FichinterRec extends Fichinter
 		}
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-		$sql .= ' SET auto_validate = '.$validate;
-		$sql .= ' WHERE rowid = '.$this->id;
+		$sql .= ' SET auto_validate = '.((int) $validate);
+		$sql .= ' WHERE rowid = '.((int) $this->id);
 
 		dol_syslog(get_class($this)."::setAutoValidate", LOG_DEBUG);
 		if ($this->db->query($sql)) {
@@ -818,10 +862,11 @@ class FichinterRec extends Fichinter
 		$sql .= ' SET nb_gen_done = nb_gen_done + 1';
 		$sql .= ' , date_last_gen = now()';
 		// si on et arrivé à la fin des génération
-		if ($this->nb_gen_max == $this->nb_gen_done + 1)
+		if ($this->nb_gen_max == $this->nb_gen_done + 1) {
 			$sql .= ' , statut = 1';
+		}
 
-		$sql .= ' WHERE rowid = '.$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::setAutoValidate", LOG_DEBUG);
 		if ($this->db->query($sql)) {

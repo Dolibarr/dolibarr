@@ -34,8 +34,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'exports', 'other'));
 
-if (!$user->admin)
+if (!$user->admin) {
 	accessforbidden();
+}
 
 $action = GETPOST('action', 'aZ09');
 
@@ -85,18 +86,19 @@ print '<td class="center" width="20">&nbsp;</td>';
 print '<td class="center" width="100"></td>'."\n";
 print '</tr>';
 
-// Example with a yes / no select
+/* No more need for this, you can set that a profile is public when saving it.
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("EXPORTS_SHARE_MODELS").'</td>';
 print '<td class="center" width="20">&nbsp;</td>';
 print '<td class="center" width="100">';
 print ajax_constantonoff('EXPORTS_SHARE_MODELS');
 print '</td></tr>';
+*/
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ExportCsvSeparator").'</td>';
 print '<td width="60" align="center"><input class="flat width50" maxlength="3" type="text" name="EXPORT_CSV_SEPARATOR_TO_USE" value="'.(empty($conf->global->EXPORT_CSV_SEPARATOR_TO_USE) ? ',' : $conf->global->EXPORT_CSV_SEPARATOR_TO_USE).'"></td>';
-print '<td class="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+print '<td class="right"><input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'"></td>';
 print '</tr>';
 
 print '</table>';

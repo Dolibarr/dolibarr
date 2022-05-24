@@ -21,7 +21,9 @@
  *       \brief      File that is entry point to call Dolibarr WebServices
  */
 
-if (!defined("NOCSRFCHECK"))    define("NOCSRFCHECK", '1');
+if (!defined("NOCSRFCHECK")) {
+	define("NOCSRFCHECK", '1');
+}
 
 require '../master.inc.php';
 require_once NUSOAP_PATH.'/nusoap.php'; // Include SOAP
@@ -38,8 +40,7 @@ dol_syslog("Call Dolibarr webservices interfaces");
 $langs->load("main");
 
 // Enable and test if module web services is enabled
-if (empty($conf->global->MAIN_MODULE_WEBSERVICES))
-{
+if (empty($conf->global->MAIN_MODULE_WEBSERVICES)) {
 	$langs->load("admin");
 	dol_syslog("Call Dolibarr webservices interfaces with module webservices disabled");
 	print $langs->trans("WarningModuleNotActive", 'WebServices').'.<br><br>';
@@ -112,16 +113,16 @@ $server->wsdl->addComplexType(
 );
 
 /*$server->wsdl->addComplexType(
-    'LinesArray',
-    'complexType',
-    'array',
-    '',
-    'SOAP-ENC:Array',
-    array(),
-    array(
-        array('ref'=>'SOAP-ENC:arrayType','wsdl:arrayType'=>'tns:line[]')
-    ),
-    'tns:line'
+	'LinesArray',
+	'complexType',
+	'array',
+	'',
+	'SOAP-ENC:Array',
+	array(),
+	array(
+		array('ref'=>'SOAP-ENC:arrayType','wsdl:arrayType'=>'tns:line[]')
+	),
+	'tns:line'
 );*/
 $server->wsdl->addComplexType(
 	'LinesArray2',
@@ -176,16 +177,16 @@ $server->wsdl->addComplexType(
 );
 /*
 $server->wsdl->addComplexType(
-    'InvoicesArray',
-    'complexType',
-    'array',
-    '',
-    'SOAP-ENC:Array',
-    array(),
-    array(
-        array('ref'=>'SOAP-ENC:arrayType','wsdl:arrayType'=>'tns:invoice[]')
-    ),
-    'tns:invoice'
+	'InvoicesArray',
+	'complexType',
+	'array',
+	'',
+	'SOAP-ENC:Array',
+	array(),
+	array(
+		array('ref'=>'SOAP-ENC:arrayType','wsdl:arrayType'=>'tns:invoice[]')
+	),
+	'tns:invoice'
 );*/
 $server->wsdl->addComplexType(
 	'InvoicesArray2',
@@ -252,16 +253,16 @@ $server->register(
 	'WS to create an invoice'
 );
 $server->register(
-		'createInvoiceFromOrder',
-		// Entry values
+	'createInvoiceFromOrder',
+	// Entry values
 		array('authentication'=>'tns:authentication', 'id_order'=>'xsd:string', 'ref_order'=>'xsd:string', 'ref_ext_order'=>'xsd:string'),
-		// Exit values
+	// Exit values
 		array('result'=>'tns:result', 'id'=>'xsd:string', 'ref'=>'xsd:string', 'ref_ext'=>'xsd:string'),
-		$ns,
-		$ns.'#createInvoiceFromOrder',
-		$styledoc,
-		$styleuse,
-		'WS to create an invoice from an order'
+	$ns,
+	$ns.'#createInvoiceFromOrder',
+	$styledoc,
+	$styleuse,
+	'WS to create an invoice from an order'
 );
 $server->register(
 	'updateInvoice',
@@ -292,7 +293,9 @@ function getInvoice($authentication, $id = '', $ref = '', $ref_ext = '')
 
 	dol_syslog("Function: getInvoice login=".$authentication['login']." id=".$id." ref=".$ref." ref_ext=".$ref_ext);
 
-	if ($authentication['entity']) $conf->entity = $authentication['entity'];
+	if ($authentication['entity']) {
+		$conf->entity = $authentication['entity'];
+	}
 
 	// Init and check authentication
 	$objectresp = array();
@@ -300,26 +303,21 @@ function getInvoice($authentication, $id = '', $ref = '', $ref_ext = '')
 	$error = 0;
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 	// Check parameters
-	if (!$error && (($id && $ref) || ($id && $ref_ext) || ($ref && $ref_ext)))
-	{
+	if (!$error && (($id && $ref) || ($id && $ref_ext) || ($ref && $ref_ext))) {
 		$error++;
 		$errorcode = 'BAD_PARAMETERS'; $errorlabel = "Parameter id, ref and ref_ext can't be both provided. You must choose one or other but not both.";
 	}
 
-	if (!$error)
-	{
+	if (!$error) {
 		$fuser->getrights();
 
-		if ($fuser->rights->facture->lire)
-		{
+		if ($fuser->rights->facture->lire) {
 			$invoice = new Facture($db);
 			$result = $invoice->fetch($id, $ref, $ref_ext);
-			if ($result > 0)
-			{
+			if ($result > 0) {
 				$linesresp = array();
 				$i = 0;
-				foreach ($invoice->lines as $line)
-				{
+				foreach ($invoice->lines as $line) {
 					//var_dump($line); exit;
 					$linesresp[] = array(
 						'id'=>$line->id,
@@ -346,7 +344,7 @@ function getInvoice($authentication, $id = '', $ref = '', $ref_ext = '')
 					'result'=>array('result_code'=>'OK', 'result_label'=>''),
 					'invoice'=>array(
 						'id' => $invoice->id,
-			   			'ref' => $invoice->ref,
+						'ref' => $invoice->ref,
 						'ref_ext' => $invoice->ref_ext ? $invoice->ref_ext : '', // If not defined, field is not added into soap
 						'thirdparty_id' => $invoice->socid,
 						'fk_user_author' => $invoice->user_author ? $invoice->user_author : '',
@@ -369,20 +367,17 @@ function getInvoice($authentication, $id = '', $ref = '', $ref_ext = '')
 						'payment_mode_id' => $invoice->mode_reglement_id ? $invoice->mode_reglement_id : '',
 						'lines' => $linesresp
 					));
-			}
-			else {
+			} else {
 				$error++;
 				$errorcode = 'NOT_FOUND'; $errorlabel = 'Object not found for id='.$id.' nor ref='.$ref.' nor ref_ext='.$ref_ext;
 			}
-		}
-		else {
+		} else {
 			$error++;
 			$errorcode = 'PERMISSION_DENIED'; $errorlabel = 'User does not have permission for this request';
 		}
 	}
 
-	if ($error)
-	{
+	if ($error) {
 		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
 	}
 
@@ -403,7 +398,9 @@ function getInvoicesForThirdParty($authentication, $idthirdparty)
 
 	dol_syslog("Function: getInvoicesForThirdParty login=".$authentication['login']." idthirdparty=".$idthirdparty);
 
-	if ($authentication['entity']) $conf->entity = $authentication['entity'];
+	if ($authentication['entity']) {
+		$conf->entity = $authentication['entity'];
+	}
 
 	// Init and check authentication
 	$objectresp = array();
@@ -411,31 +408,31 @@ function getInvoicesForThirdParty($authentication, $idthirdparty)
 	$error = 0;
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 
-	if ($fuser->socid) $socid = $fuser->socid;
+	if ($fuser->socid) {
+		$socid = $fuser->socid;
+	}
 
 	// Check parameters
-	if (!$error && empty($idthirdparty))
-	{
+	if (!$error && empty($idthirdparty)) {
 		$error++;
 		$errorcode = 'BAD_PARAMETERS'; $errorlabel = 'Parameter idthirdparty is not provided';
 	}
 
-	if (!$error)
-	{
+	if (!$error) {
 		$linesinvoice = array();
 
 		$sql = 'SELECT f.rowid as facid, ref as ref, ref_ext, type, fk_statut as status, total_ttc, total, tva';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'facture as f';
 		$sql .= " WHERE f.entity IN (".getEntity('invoice').")";
-		if ($idthirdparty != 'all') $sql .= " AND f.fk_soc = ".$db->escape($idthirdparty);
+		if ($idthirdparty != 'all') {
+			$sql .= " AND f.fk_soc = ".((int) $idthirdparty);
+		}
 
 		$resql = $db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$num = $db->num_rows($resql);
 			$i = 0;
-			while ($i < $num)
-			{
+			while ($i < $num) {
 				// En attendant remplissage par boucle
 				$obj = $db->fetch_object($resql);
 
@@ -443,18 +440,15 @@ function getInvoicesForThirdParty($authentication, $idthirdparty)
 				$invoice->fetch($obj->facid);
 
 				// Sécurité pour utilisateur externe
-				if ($socid && ($socid != $invoice->socid))
-				{
+				if ($socid && ($socid != $invoice->socid)) {
 					$error++;
 					$errorcode = 'PERMISSION_DENIED'; $errorlabel = $invoice->socid.' User does not have permission for this request';
 				}
 
-				if (!$error)
-				{
+				if (!$error) {
 					// Define lines of invoice
 					$linesresp = array();
-					foreach ($invoice->lines as $line)
-					{
+					foreach ($invoice->lines as $line) {
 						$linesresp[] = array(
 							'id'=>$line->id,
 							'type'=>$line->product_type,
@@ -508,15 +502,13 @@ function getInvoicesForThirdParty($authentication, $idthirdparty)
 				'invoices'=>$linesinvoice
 
 			);
-		}
-		else {
+		} else {
 			$error++;
 			$errorcode = $db->lasterrno(); $errorlabel = $db->lasterror();
 		}
 	}
 
-	if ($error)
-	{
+	if ($error) {
 		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
 	}
 
@@ -539,7 +531,9 @@ function createInvoice($authentication, $invoice)
 
 	dol_syslog("Function: createInvoice login=".$authentication['login']." id=".$invoice['id'].", ref=".$invoice['ref'].", ref_ext=".$invoice['ref_ext']);
 
-	if ($authentication['entity']) $conf->entity = $authentication['entity'];
+	if ($authentication['entity']) {
+		$conf->entity = $authentication['entity'];
+	}
 
 	// Init and check authentication
 	$objectresp = array();
@@ -552,8 +546,7 @@ function createInvoice($authentication, $invoice)
 		$error++; $errorcode = 'KO'; $errorlabel = "Invoice id or ref or ref_ext is mandatory.";
 	}
 
-	if (!$error)
-	{
+	if (!$error) {
 		$new_invoice = new Facture($db);
 		$new_invoice->socid = $invoice['thirdparty_id'];
 		$new_invoice->type = $invoice['type'];
@@ -571,16 +564,19 @@ function createInvoice($authentication, $invoice)
 		if ($res > 0) {
 			$new_invoice->mode_reglement_id = !empty($invoice['payment_mode_id']) ? $invoice['payment_mode_id'] : $soc->mode_reglement_id;
 			$new_invoice->cond_reglement_id = $soc->cond_reglement_id;
+		} else {
+			$new_invoice->mode_reglement_id = $invoice['payment_mode_id'];
 		}
-		else $new_invoice->mode_reglement_id = $invoice['payment_mode_id'];
 
 		// Trick because nusoap does not store data with same structure if there is one or several lines
 		$arrayoflines = array();
-		if (isset($invoice['lines']['line'][0])) $arrayoflines = $invoice['lines']['line'];
-		else $arrayoflines = $invoice['lines'];
+		if (isset($invoice['lines']['line'][0])) {
+			$arrayoflines = $invoice['lines']['line'];
+		} else {
+			$arrayoflines = $invoice['lines'];
+		}
 
-		foreach ($arrayoflines as $line)
-		{
+		foreach ($arrayoflines as $line) {
 			// $key can be 'line' or '0','1',...
 			$newline = new FactureLigne($db);
 			$newline->product_type = $line['type'];
@@ -603,27 +599,22 @@ function createInvoice($authentication, $invoice)
 		$db->begin();
 
 		$result = $new_invoice->create($fuser, 0, dol_stringtotime($invoice['date_due'], 'dayrfc'));
-		if ($result < 0)
-		{
+		if ($result < 0) {
 			$error++;
 		}
 
-		if (!$error && $invoice['status'] == Facture::STATUS_VALIDATED)   // We want invoice to have status validated
-		{
+		if (!$error && $invoice['status'] == Facture::STATUS_VALIDATED) {   // We want invoice to have status validated
 			$result = $new_invoice->validate($fuser);
-			if ($result < 0)
-			{
+			if ($result < 0) {
 				$error++;
 			}
 		}
 
-		if (!$error)
-		{
+		if (!$error) {
 			$db->commit();
 			$objectresp = array('result'=>array('result_code'=>'OK', 'result_label'=>''), 'id'=>$new_invoice->id,
 					'ref'=>$new_invoice->ref, 'ref_ext'=>$new_invoice->ref_ext);
-		}
-		else {
+		} else {
 			$db->rollback();
 			$error++;
 			$errorcode = 'KO';
@@ -632,8 +623,7 @@ function createInvoice($authentication, $invoice)
 		}
 	}
 
-	if ($error)
-	{
+	if ($error) {
 		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
 	}
 
@@ -655,14 +645,18 @@ function createInvoiceFromOrder($authentication, $id_order = '', $ref_order = ''
 
 	dol_syslog("Function: createInvoiceFromOrder login=".$authentication['login']." id=".$id_order.", ref=".$ref_order.", ref_ext=".$ref_ext_order);
 
-	if ($authentication['entity']) $conf->entity = $authentication['entity'];
+	if ($authentication['entity']) {
+		$conf->entity = $authentication['entity'];
+	}
 
 	// Init and check authentication
 	$objectresp = array();
 	$errorcode = ''; $errorlabel = '';
 	$error = 0;
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
-	if ($fuser->socid) $socid = $fuser->socid;
+	if ($fuser->socid) {
+		$socid = $fuser->socid;
+	}
 
 	// Check parameters
 	if (empty($id_order) && empty($ref_order) && empty($ref_ext_order)) {
@@ -670,51 +664,41 @@ function createInvoiceFromOrder($authentication, $id_order = '', $ref_order = ''
 	}
 
 	//////////////////////
-	if (!$error)
-	{
+	if (!$error) {
 		$fuser->getrights();
 
-		if ($fuser->rights->commande->lire)
-		{
+		if ($fuser->rights->commande->lire) {
 			$order = new Commande($db);
 			$result = $order->fetch($id_order, $ref_order, $ref_ext_order);
-			if ($result > 0)
-			{
+			if ($result > 0) {
 				// Security for external user
-				if ($socid && ($socid != $order->socid))
-				{
+				if ($socid && ($socid != $order->socid)) {
 					$error++;
 					$errorcode = 'PERMISSION_DENIED'; $errorlabel = $order->socid.'User does not have permission for this request';
 				}
 
-				if (!$error)
-				{
+				if (!$error) {
 					$newobject = new Facture($db);
 					$result = $newobject->createFromOrder($order, $fuser);
 
-					if ($result < 0)
-					{
+					if ($result < 0) {
 						$error++;
 						dol_syslog("Webservice server_invoice:: invoice creation from order failed", LOG_ERR);
 					}
 				}
-			}
-			else {
+			} else {
 				$error++;
 				$errorcode = 'NOT_FOUND'; $errorlabel = 'Object not found for id='.$id_order.' nor ref='.$ref_order.' nor ref_ext='.$ref_ext_order;
 			}
-		}
-		else {
+		} else {
 			$error++;
 			$errorcode = 'PERMISSION_DENIED'; $errorlabel = 'User does not have permission for this request';
 		}
 	}
 
-	if ($error)
-	{
+	if ($error) {
 		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
-	}
-	else {
+	} else {
 		$objectresp = array('result'=>array('result_code'=>'OK', 'result_label'=>''), 'id'=>$newobject->id, 'ref'=>$newobject->ref, 'ref_ext'=>$newobject->ref_ext);
 	}
 
@@ -735,7 +719,9 @@ function updateInvoice($authentication, $invoice)
 	dol_syslog("Function: updateInvoice login=".$authentication['login']." id=".$invoice['id'].
 			", ref=".$invoice['ref'].", ref_ext=".$invoice['ref_ext']);
 
-	if ($authentication['entity']) $conf->entity = $authentication['entity'];
+	if ($authentication['entity']) {
+		$conf->entity = $authentication['entity'];
+	}
 
 	// Init and check authentication
 	$objectresp = array();
@@ -748,8 +734,7 @@ function updateInvoice($authentication, $invoice)
 		$error++; $errorcode = 'KO'; $errorlabel = "Invoice id or ref or ref_ext is mandatory.";
 	}
 
-	if (!$error)
-	{
+	if (!$error) {
 		$objectfound = false;
 
 		$object = new Facture($db);
@@ -760,33 +745,29 @@ function updateInvoice($authentication, $invoice)
 
 			$db->begin();
 
-			if (isset($invoice['status']))
-			{
-				if ($invoice['status'] == Facture::STATUS_DRAFT)
-				{
+			if (isset($invoice['status'])) {
+				if ($invoice['status'] == Facture::STATUS_DRAFT) {
 					$result = $object->setDraft($fuser);
 				}
-				if ($invoice['status'] == Facture::STATUS_VALIDATED)
-				{
+				if ($invoice['status'] == Facture::STATUS_VALIDATED) {
 					$result = $object->validate($fuser);
 
-					if ($result >= 0)
-					{
+					if ($result >= 0) {
 						// Define output language
 						$outputlangs = $langs;
 						$object->generateDocument($object->model_pdf, $outputlangs);
 					}
 				}
 				if ($invoice['status'] == Facture::STATUS_CLOSED) {
-					$result = $object->set_paid($fuser, $invoice['close_code'], $invoice['close_note']);
+					$result = $object->setPaid($fuser, $invoice['close_code'], $invoice['close_note']);
 				}
-				if ($invoice['status'] == Facture::STATUS_ABANDONED)
-					$result = $object->set_canceled($fuser, $invoice['close_code'], $invoice['close_note']);
+				if ($invoice['status'] == Facture::STATUS_ABANDONED) {
+					$result = $object->setCanceled($fuser, $invoice['close_code'], $invoice['close_note']);
+				}
 			}
 		}
 
-		if ((!$error) && ($objectfound))
-		{
+		if ((!$error) && ($objectfound)) {
 			$db->commit();
 			$objectresp = array(
 					'result'=>array('result_code'=>'OK', 'result_label'=>''),
@@ -794,9 +775,7 @@ function updateInvoice($authentication, $invoice)
 					'ref'=>$object->ref,
 					'ref_ext'=>$object->ref_ext
 			);
-		}
-		elseif ($objectfound)
-		{
+		} elseif ($objectfound) {
 			$db->rollback();
 			$error++;
 			$errorcode = 'KO';
@@ -808,8 +787,7 @@ function updateInvoice($authentication, $invoice)
 		}
 	}
 
-	if ($error)
-	{
+	if ($error) {
 		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
 	}
 

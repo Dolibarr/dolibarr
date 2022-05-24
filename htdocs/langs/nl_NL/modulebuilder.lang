@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - loan
-ModuleBuilderDesc=Deze tool mag alleen worden gebruikt door ervaren gebruikers of ontwikkelaars. Het biedt hulpprogramma's om uw eigen module te bouwen of te bewerken. Documentatie voor alternatieve <a href="%s" target="_blank">handmatige ontwikkeling kunt u vinden op</a> .
+ModuleBuilderDesc=This tool must be used only by experienced users or developers. It provides utilities to build or edit your own module. Documentation for alternative <a href="%s" target="_blank" rel="noopener noreferrer">manual development is here</a>.
 EnterNameOfModuleDesc=Voer de naam in van de module / toepassing die u wilt maken zonder spaties. Gebruik hoofdletters om woorden te scheiden (bijvoorbeeld: MyModule, EcommerceForShop, SyncWithMySystem ...)
 EnterNameOfObjectDesc=Voer de naam in van het object dat u wilt maken zonder spaties. Gebruik hoofdletters om woorden te scheiden (bijvoorbeeld: MyObject, Student, Teacher ...). Het CRUD-classfile, maar ook het API-bestand, pagina's voor het weergeven/toevoegen/bewerken/verwijderen van objecten en SQL-bestanden worden gegenereerd.
 ModuleBuilderDesc2=Pad waar modules worden gegenereerd / bewerkt (eerste map voor externe modules gedefinieerd in %s): <strong>%s</strong>
@@ -52,7 +52,7 @@ LanguageFile=Bestand voor taal
 ObjectProperties=Object eigenschappen
 ConfirmDeleteProperty=Weet u zeker dat u de eigenschap <strong>%s</strong> wilt verwijderen? Dit zal de code in de PHP-klasse veranderen, maar ook de kolom verwijderen uit de tabeldefinitie van het object.
 NotNull=Niet NULL
-NotNullDesc=1 = Stel database in op NIET NULL. -1 = Laat null-waarden toe en forceer waarde op NULL als deze leeg is ('' of 0).
+NotNullDesc=1=Set database to NOT NULL, 0=Allow null values, -1=Allow null values by forcing value to NULL if empty ('' or 0)
 SearchAll=Gebruikt voor 'alles zoeken'
 DatabaseIndex=Database-index
 FileAlreadyExists=Bestand %s bestaat reeds
@@ -85,7 +85,7 @@ ListOfPermissionsDefined=Lijst met gedefinieerde machtigingen
 SeeExamples=Zie hier voorbeelden
 EnabledDesc=Voorwaarde om dit veld actief te hebben (voorbeelden: 1 of $ conf-&gt; global-&gt; MYMODULE_MYOPTION)
 VisibleDesc=Is het veld zichtbaar? (Voorbeelden: 0 = nooit zichtbaar, 1 = zichtbaar op lijst en formulieren maken / bijwerken / bekijken, 2 = alleen zichtbaar op lijst, 3 = alleen zichtbaar op formulier maken / bijwerken / bekijken (geen lijst), 4 = zichtbaar op lijst en update / view form only (not create), 5 = Alleen zichtbaar op lijst eindweergave formulier (niet create, not update). <br> <br> Het gebruik van een negatieve waarde betekent dat het veld niet standaard wordt weergegeven op de lijst, maar kan worden geselecteerd voor weergave). <br> <br> Het kan een uitdrukking zijn, bijvoorbeeld: <br> preg_match ('/ public /', $ _SERVER ['PHP_SELF'])? 0: 1 <br> ($ user-> rechten-> vakantie-> vakantie-> vakantie-> vakantie->)
-DisplayOnPdfDesc=Toon dit veld op compatibele PDF-documenten, u kunt de positie beheren met het veld "Positie". <br/> Momenteel bekend compatible PDF modellen zijn: Eratosthenes (order), espadon (schip), spons (facturen), cyaan (Propal / offerte), Cornas (leverancier volgorde) <br/> <br/> <strong> Voor document: </strong> <br/> 0 = niet weergegeven <br/> 1 = weergave <br/> 2 = alleen weergegeven als niet leeg <br/> <br/> <strong> Voor documentregels: </strong> <br/> 0 = niet weergegeven <br/> 1 = weergegeven in een kolom <br/> 3 = weergave in regel kolomomschrijving na de beschrijving <br/> 4 = weergave in de beschrijving positie daarachter beschrijving alleen indien niet leeg
+DisplayOnPdfDesc=Geef dit veld weer op compatibele PDF-documenten, u kunt de positie beheren met het veld "Positie". <br> Momenteel bekende compatibele PDF-modellen zijn: eratosthene (bestelling), espadon (schip), spons (facturen), cyaan (propal/offerte), cornas (bestelling leverancier) <br> <br> <strong>65 Voor document = weergave <br> 2 = weergave alleen indien niet leeg <br> <br> <strong> Voor documentregels: </strong> <br> 0 = niet weergegeven beschrijving <br>ccbeschrijving = in kolom beschrijving alleen indien niet leeg
 DisplayOnPdf=Weergeven in PDF
 IsAMeasureDesc=Kan de waarde van het veld worden gecumuleerd om een totaal in de lijst te krijgen? (Voorbeelden: 1 of 0)
 SearchAllDesc=Wordt het veld gebruikt om een zoekopdracht uit het snelzoekprogramma te doen? (Voorbeelden: 1 of 0)
@@ -94,11 +94,11 @@ LanguageDefDesc=Voer in deze bestanden de sleutel en de vertaling in voor elk ta
 MenusDefDesc=Definieer hier de menu&#39;s van uw module
 DictionariesDefDesc=Definieer hier de woordenboeken van uw module
 PermissionsDefDesc=Definieer hier de nieuwe machtigingen van uw module
-MenusDefDescTooltip=De menu&#39;s van uw module / toepassing worden gedefinieerd in de array <strong>$ this-&gt; menu&#39;s</strong> in het modulebeschrijvingsbestand. U kunt dit bestand handmatig bewerken of de ingesloten editor gebruiken. <br><br> Opmerking: Eenmaal gedefinieerd (en module opnieuw geactiveerd), zijn menu&#39;s ook zichtbaar in de menu-editor die beschikbaar is voor beheerders op %s.
+MenusDefDescTooltip=The menus provided by your module/application are defined into the array <strong>$this->menus</strong> into the module descriptor file. You can edit manually this file or use the embedded editor.<br><br>Note: Once defined (and the module re-activated), the menus are also visible into the menu editor available to administrator users on %s.
 DictionariesDefDescTooltip=De woordenboeken van uw module / applicatie worden gedefinieerd in de array <strong>$ this-&gt; woordenboeken</strong> in het modulebeschrijvingsbestand. U kunt dit bestand handmatig bewerken of de ingesloten editor gebruiken. <br><br> Opmerking: eenmaal gedefinieerd (en module opnieuw geactiveerd), zijn woordenboeken ook zichtbaar in het installatiegebied voor beheerders op %s.
 PermissionsDefDescTooltip=De machtigingen die door uw module / toepassing worden verstrekt, worden gedefinieerd in de array <strong>$ this-&gt; -rechten</strong> in het modulebeschrijvingsbestand. U kunt dit bestand handmatig bewerken of de ingesloten editor gebruiken. <br><br> Opmerking: Eenmaal gedefinieerd (en module opnieuw geactiveerd), zijn machtigingen zichtbaar in de standaardinstellingen voor machtigingen %s.
 HooksDefDesc=Definieer in de <b>eigenschap module_parts ['hooks']</b> , in de modulebeschrijving, de context van hooks die u wilt beheren (lijst met contexten kan worden gevonden door te zoeken op '<b>initHooks (</b>' in kerncode). <br> Bewerk het haakbestand om code van uw gekoppelde functies toe te voegen (haakbare functies zijn te vinden door te zoeken op '<b>executeHooks</b>' in de kerncode).
-TriggerDefDesc=Definieer in het triggerbestand de code die u wilt uitvoeren voor elke uitgevoerde bedrijfsgebeurtenis.
+TriggerDefDesc=Define in the trigger file the code that you want to execute when a business event external to your module is executed (events triggered by other modules).
 SeeIDsInUse=Zie ID's die in uw installatie worden gebruikt
 SeeReservedIDsRangeHere=Zie bereik van gereserveerde ID's
 ToolkitForDevelopers=Toolkit voor Dolibarr-ontwikkelaars
@@ -110,7 +110,7 @@ DropTableIfEmpty=(Vernietig de tabel als deze leeg is)
 TableDoesNotExists=Tabel %s bestaat niet
 TableDropped=Tabel %s verwijderd
 InitStructureFromExistingTable=Bouw de reeks structuurstructuren van een bestaande tabel
-UseAboutPage=Schakel de over-pagina uit
+UseAboutPage=Do not generate the About page
 UseDocFolder=Schakel de documentatie map uit
 UseSpecificReadme=Gebruik een specifieke Leesmij
 ContentOfREADMECustomized=Opmerking: de inhoud van het bestand README.md is vervangen door de specifieke waarde die is gedefinieerd in de setup van ModuleBuilder.
@@ -127,17 +127,26 @@ UseSpecificEditorURL = Gebruik een specifieke editor-URL
 UseSpecificFamily = Gebruik een specifieke familie
 UseSpecificAuthor = Gebruik een specifieke auteur
 UseSpecificVersion = Gebruik een specifieke eerste versie
-IncludeRefGeneration=De referentie van het object moet automatisch worden gegenereerd
-IncludeRefGenerationHelp=Vink dit aan als u code wilt opnemen om het genereren van de referentie automatisch te beheren
-IncludeDocGeneration=Ik wil enkele documenten genereren van het object
+IncludeRefGeneration=The reference of object must be generated automatically by custom numbering rules
+IncludeRefGenerationHelp=Check this if you want to include code to manage the generation of the reference automatically using custom numbering rules
+IncludeDocGeneration=I want to generate some documents from templates for the object
 IncludeDocGenerationHelp=Als u dit aanvinkt, wordt er een code gegenereerd om een vak "Document genereren" aan de record toe te voegen.
 ShowOnCombobox=Waarde weergeven in combobox
 KeyForTooltip=Sleutel voor knopinfo
-CSSClass=CSS-klasse
+CSSClass=CSS voor het bewerken/aanmaken van formulier
+CSSViewClass=CSS voor leesformulier
+CSSListClass=CSS voor lijst
 NotEditable=Niet bewerkbaar
 ForeignKey=Vreemde sleutel
-TypeOfFieldsHelp=Type velden: <br> varchar (99), dubbel (24,8), real, tekst, html, datetime, timestamp, integer, integer: ClassName: relativepath / to / classfile.class.php [: 1 [: filter]] ('1' betekent we voegen een + -knop toe na de combo om het record te maken, 'filter' kan 'status = 1 EN fk_user = __USER_ID EN entiteit IN (bijvoorbeeld __SHARED_ENTITIES__)' zijn)
+TypeOfFieldsHelp=Type of fields:<br>varchar(99), double(24,8), real, text, html, datetime, timestamp, integer, integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]]<br>'1' means we add a + button after the combo to create the record<br>'filter' is a sql condition, example: 'status=1 AND fk_user=__USER_ID__ AND entity IN (__SHARED_ENTITIES__)'
 AsciiToHtmlConverter=Ascii naar HTML converter
 AsciiToPdfConverter=Ascii naar PDF converter
 TableNotEmptyDropCanceled=Tabel is niet leeg. Drop is geannuleerd.
 ModuleBuilderNotAllowed=De modulebouwer is beschikbaar maar niet toegestaan voor uw gebruiker.
+ImportExportProfiles=Profielen importeren en exporteren
+ValidateModBuilderDesc=Set this to 1 if you want to have the method $this->validateField() of object being called to validate the content of the field during insert or upadate. Set 0 if there is no validation required.
+WarningDatabaseIsNotUpdated=Warning: The database is not updated automatically, you must destroy tables and disable-enable the module to have tables recreated
+LinkToParentMenu=Parent menu (fk_xxxxmenu)
+ListOfTabsEntries=List of tab entries
+TabsDefDesc=Define here the tabs provided by your module
+TabsDefDescTooltip=The tabs provided by your module/application are defined into the array <strong>$this->tabs</strong> into the module descriptor file. You can edit manually this file or use the embedded editor.

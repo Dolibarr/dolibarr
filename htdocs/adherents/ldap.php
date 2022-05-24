@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2006		Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2006-2017	Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2006-2021	Regis Houssin		<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +32,8 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "members", "ldap", "admin"));
 
-$rowid = GETPOST('id', 'int');
+$id = GETPOST('id', 'int');
+$ref = GETPOST('ref', 'alphanohtml');
 $action = GETPOST('action', 'aZ09');
 
 // Protection
@@ -42,11 +43,33 @@ if ($user->socid > 0) {
 }
 
 $object = new Adherent($db);
-$result = $object->fetch($rowid);
-if (!$result) {
-	dol_print_error($db, "Failed to get adherent: ".$object->error);
-	exit;
+
+// Fetch object
+if ($id > 0 || !empty($ref)) {
+	// Load member
+	$result = $object->fetch($id, $ref);
+
+	// Define variables to know what current user can do on users
+	$canadduser = (!empty($user->admin) || !empty($user->rights->user->user->creer));
+	// Define variables to know what current user can do on properties of user linked to edited member
+	if ($object->user_id) {
+		// $User is the user who edits, $object->user_id is the id of the related user in the edited member
+		$caneditfielduser = ((($user->id == $object->user_id) && !empty($user->rights->user->self->creer))
+			|| (($user->id != $object->user_id) && !empty($user->rights->user->user->creer)));
+		$caneditpassworduser = ((($user->id == $object->user_id) && $user->rights->user->self->password)
+			|| (($user->id != $object->user_id) && !empty($user->rights->user->user->password)));
+	}
 }
+
+// Define variables to determine what the current user can do on the members
+$canaddmember = $user->rights->adherent->creer;
+// Define variables to determine what the current user can do on the properties of a member
+if ($id) {
+	$caneditfieldmember = $user->rights->adherent->creer;
+}
+
+// Security check
+$result = restrictedArea($user, 'adherent', $object->id, '', '', 'socid', 'rowid', 0);
 
 
 /*
@@ -112,17 +135,17 @@ $adht->fetch($object->typeid);
 print '<tr><td>'.$langs->trans("Type").'</td><td class="valeur">'.$adht->getNomUrl(1)."</td></tr>\n";
 
 // LDAP DN
-print '<tr><td>LDAP '.$langs->trans("LDAPMemberDn").'</td><td class="valeur">'.$conf->global->LDAP_MEMBER_DN."</td></tr>\n";
+print '<tr><td>LDAP '.$langs->trans("LDAPMemberDn").'</td><td class="valeur">'.getDolGlobalString('LDAP_MEMBER_DN')."</td></tr>\n";
 
 // LDAP Cle
-print '<tr><td>LDAP '.$langs->trans("LDAPNamingAttribute").'</td><td class="valeur">'.$conf->global->LDAP_KEY_MEMBERS."</td></tr>\n";
+print '<tr><td>LDAP '.$langs->trans("LDAPNamingAttribute").'</td><td class="valeur">'.getDolGlobalString('LDAP_KEY_MEMBERS')."</td></tr>\n";
 
 // LDAP Server
-print '<tr><td>LDAP '.$langs->trans("Type").'</td><td class="valeur">'.$conf->global->LDAP_SERVER_TYPE."</td></tr>\n";
-print '<tr><td>LDAP '.$langs->trans("Version").'</td><td class="valeur">'.$conf->global->LDAP_SERVER_PROTOCOLVERSION."</td></tr>\n";
-print '<tr><td>LDAP '.$langs->trans("LDAPPrimaryServer").'</td><td class="valeur">'.$conf->global->LDAP_SERVER_HOST."</td></tr>\n";
-print '<tr><td>LDAP '.$langs->trans("LDAPSecondaryServer").'</td><td class="valeur">'.$conf->global->LDAP_SERVER_HOST_SLAVE."</td></tr>\n";
-print '<tr><td>LDAP '.$langs->trans("LDAPServerPort").'</td><td class="valeur">'.$conf->global->LDAP_SERVER_PORT."</td></tr>\n";
+print '<tr><td>LDAP '.$langs->trans("Type").'</td><td class="valeur">'.getDolGlobalString('LDAP_SERVER_TYPE')."</td></tr>\n";
+print '<tr><td>LDAP '.$langs->trans("Version").'</td><td class="valeur">'.getDolGlobalString('LDAP_SERVER_PROTOCOLVERSION')."</td></tr>\n";
+print '<tr><td>LDAP '.$langs->trans("LDAPPrimaryServer").'</td><td class="valeur">'.getDolGlobalString('LDAP_SERVER_HOST')."</td></tr>\n";
+print '<tr><td>LDAP '.$langs->trans("LDAPSecondaryServer").'</td><td class="valeur">'.getDolGlobalString('LDAP_SERVER_HOST_SLAVE')."</td></tr>\n";
+print '<tr><td>LDAP '.$langs->trans("LDAPServerPort").'</td><td class="valeur">'.getDolGlobalString('LDAP_SERVER_PORT')."</td></tr>\n";
 
 print '</table>';
 
@@ -131,18 +154,19 @@ print '</div>';
 print dol_get_fiche_end();
 
 /*
- * Barre d'actions
+ * Action bar
  */
-
 print '<div class="tabsAction">';
 
-if (!empty($conf->global->LDAP_MEMBER_ACTIVE) && $conf->global->LDAP_MEMBER_ACTIVE != 'ldap2dolibarr') {
+if (!empty($conf->global->LDAP_MEMBER_ACTIVE) && getDolGlobalString('LDAP_MEMBER_ACTIVE') != Ldap::SYNCHRO_LDAP_TO_DOLIBARR) {
 	print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=dolibarr2ldap">'.$langs->trans("ForceSynchronize").'</a></div>';
 }
 
 print "</div>\n";
 
-if (!empty($conf->global->LDAP_MEMBER_ACTIVE) && $conf->global->LDAP_MEMBER_ACTIVE != 'ldap2dolibarr') print "<br>\n";
+if (!empty($conf->global->LDAP_MEMBER_ACTIVE) && getDolGlobalString('LDAP_MEMBER_ACTIVE') != Ldap::SYNCHRO_LDAP_TO_DOLIBARR) {
+	print "<br>\n";
+}
 
 
 
@@ -166,7 +190,7 @@ if ($result > 0) {
 
 	if (empty($dn)) {
 		$langs->load("errors");
-		print '<tr class="oddeven"><td colspan="2"><font class="error">'.$langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("Member")).'</font></td></tr>';
+		print '<tr class="oddeven"><td colspan="2"><span class="error">'.$langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("Member")).'</span></td></tr>';
 	} else {
 		$records = $ldap->getAttribute($dn, $search);
 
@@ -175,17 +199,16 @@ if ($result > 0) {
 		// Show tree
 		if (((!is_numeric($records)) || $records != 0) && (!isset($records['count']) || $records['count'] > 0)) {
 			if (!is_array($records)) {
-				print '<tr class="oddeven"><td colspan="2"><font class="error">'.$langs->trans("ErrorFailedToReadLDAP").'</font></td></tr>';
+				print '<tr class="oddeven"><td colspan="2"><span class="error">'.$langs->trans("ErrorFailedToReadLDAP").'</span></td></tr>';
 			} else {
 				$result = show_ldap_content($records, 0, $records['count'], true);
 			}
 		} else {
-			print '<tr class="oddeven"><td colspan="2">'.$langs->trans("LDAPRecordNotFound").' (dn='.$dn.' - search='.$search.')</td></tr>';
+			print '<tr class="oddeven"><td colspan="2">'.$langs->trans("LDAPRecordNotFound").' (dn='.dol_escape_htmltag($dn).' - search='.dol_escape_htmltag($search).')</td></tr>';
 		}
 	}
 
 	$ldap->unbind();
-	$ldap->close();
 } else {
 	setEventMessages($ldap->error, $ldap->errors, 'errors');
 }

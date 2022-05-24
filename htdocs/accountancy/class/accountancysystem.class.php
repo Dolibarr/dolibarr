@@ -95,8 +95,7 @@ class AccountancySystem
 	{
 		global $conf;
 
-		if ($rowid > 0 || $ref)
-		{
+		if ($rowid > 0 || $ref) {
 			$sql  = "SELECT a.rowid, a.pcg_version, a.label, a.active";
 			$sql .= " FROM ".MAIN_DB_PREFIX."accounting_system as a";
 			$sql .= " WHERE";
@@ -106,7 +105,7 @@ class AccountancySystem
 				$sql .= " a.pcg_version = '".$this->db->escape($ref)."'";
 			}
 
-			dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
+			dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 			$result = $this->db->query($sql);
 			if ($result) {
 				$obj = $this->db->fetch_object($result);
@@ -144,9 +143,9 @@ class AccountancySystem
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."accounting_system";
 		$sql .= " (date_creation, fk_user_author, numero, label)";
-		$sql .= " VALUES ('".$this->db->idate($now)."',".$user->id.",'".$this->db->escape($this->numero)."','".$this->db->escape($this->label)."')";
+		$sql .= " VALUES ('".$this->db->idate($now)."',".((int) $user->id).",'".$this->db->escape($this->numero)."','".$this->db->escape($this->label)."')";
 
-		dol_syslog(get_class($this)."::create sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$id = $this->db->last_insert_id(MAIN_DB_PREFIX."accounting_system");

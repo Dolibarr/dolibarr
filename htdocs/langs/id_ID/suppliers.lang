@@ -1,6 +1,7 @@
 # Dolibarr language file - Source file is en_US - vendors
 Suppliers=Vendor
 SuppliersInvoice=Faktur vendor
+SupplierInvoices=Faktur vendor
 ShowSupplierInvoice=Tampilkan Faktur Penjual
 NewSupplier=Vendor baru
 History=Riwayat
@@ -38,7 +39,7 @@ MenuOrdersSupplierToBill=Beli pesanan untuk ditagih
 NbDaysToDelivery=Keterlambatan pengiriman (hari)
 DescNbDaysToDelivery=Penundaan pengiriman produk terlama dari pesanan ini
 SupplierReputation=Reputasi vendor
-ReferenceReputation=Reference reputation
+ReferenceReputation=Reputasi referensi
 DoNotOrderThisProductToThisSupplier=Jangan memesan
 NotTheGoodQualitySupplier=Kualitas rendah
 ReputationForThisProduct=Reputasi

@@ -26,7 +26,7 @@ create table llx_facture
 (
   rowid					integer AUTO_INCREMENT PRIMARY KEY,
 
-  ref				varchar(30)        NOT NULL,			-- invoice reference number
+  ref					varchar(30)        NOT NULL,			-- invoice reference number
   entity				integer  DEFAULT 1 NOT NULL,			-- multi company id
 
   ref_ext				varchar(255),							-- reference into an external system (not used by dolibarr)
@@ -42,7 +42,7 @@ create table llx_facture
   tms					timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,								-- last modification date
   date_closing				datetime,						-- date de cloture
   paye					smallint DEFAULT 0 NOT NULL,
-  --amount				double(24,8)     DEFAULT 0 NOT NULL,
+
   remise_percent		real     DEFAULT 0,						-- remise relative
   remise_absolue		real     DEFAULT 0,						-- remise absolue
   remise				real     DEFAULT 0,						-- remise totale calculee
@@ -50,11 +50,11 @@ create table llx_facture
   close_code			varchar(16),							-- Code motif cloture sans paiement complet
   close_note			varchar(128),							-- Commentaire cloture sans paiement complet
 
-  tva					double(24,8)     DEFAULT 0,				-- amount total tva apres remise totale
+  total_tva				double(24,8)     DEFAULT 0,				-- amount total tva apres remise totale
   localtax1				double(24,8)     DEFAULT 0,				-- amount total localtax1
   localtax2				double(24,8)     DEFAULT 0,				-- amount total localtax2	
   revenuestamp          double(24,8)     DEFAULT 0,				-- amount total revenuestamp
-  total					double(24,8)     DEFAULT 0,				-- amount total ht apres remise totale
+  total_ht				double(24,8)     DEFAULT 0,				-- amount total ht apres remise totale
   total_ttc				double(24,8)     DEFAULT 0,				-- amount total ttc apres remise totale
 
   fk_statut				smallint DEFAULT 0 NOT NULL,
@@ -88,9 +88,9 @@ create table llx_facture
 
   fk_transport_mode     integer,								-- for intracomm report
 
-  situation_cycle_ref smallint,  -- situation cycle reference
-  situation_counter   smallint,  -- situation counter
-  situation_final     smallint,  -- is the situation final ?
+  situation_cycle_ref smallint,  -- situation cycle reference. A key that is similar for all the serie.
+  situation_counter   smallint,  -- situation counter. The number into the serie: 1, 2, ...
+  situation_final     smallint,  -- 0 by default, 1 it if is the final invoice.
 
   retained_warranty							real DEFAULT NULL,  -- % of retained warranty
   retained_warranty_date_limit				date DEFAULT NULL,
@@ -100,7 +100,7 @@ create table llx_facture
   extraparams			varchar(255),							-- for other parameters with json format
   
   fk_multicurrency		integer,
-  multicurrency_code			varchar(255),
+  multicurrency_code			varchar(3),
   multicurrency_tx			double(24,8) DEFAULT 1,
   multicurrency_total_ht		double(24,8) DEFAULT 0,
   multicurrency_total_tva	double(24,8) DEFAULT 0,

@@ -28,8 +28,6 @@
  *      - interface_99_all_MyTrigger.class.php
  * - The file must stay in core/triggers
  * - The class name must be InterfaceMytrigger
- * - The constructor method must be named InterfaceMytrigger
- * - The name property name must be MyTrigger
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
@@ -92,7 +90,9 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
 	 */
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{
-		if (empty($conf->mymodule->enabled)) return 0; // If module is not enabled, we do nothing
+		if (empty($conf->mymodule) || empty($conf->mymodule->enabled)) {
+			return 0; // If module is not enabled, we do nothing
+		}
 
 		// Put here code you want to execute when a Dolibarr business events occurs.
 		// Data and type of action are stored into $object and $action
@@ -117,8 +117,6 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
 			//case 'USER_NEW_PASSWORD':
 			//case 'USER_ENABLEDISABLE':
 			//case 'USER_DELETE':
-			//case 'USER_SETINGROUP':
-			//case 'USER_REMOVEFROMGROUP':
 
 			// Actions
 			//case 'ACTION_MODIFY':

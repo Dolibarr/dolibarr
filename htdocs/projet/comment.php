@@ -44,13 +44,13 @@ $objectref = GETPOST("taskref", 'alpha'); // task ref
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $withproject = GETPOST('withproject', 'int');
-$project_ref = GETPOST('project_ref', 'alpha');
-$planned_workload = ((GETPOST('planned_workloadhour', 'int') != '' || GETPOST('planned_workloadmin', 'int') != '') ? (GETPOST('planned_workloadhour', 'int') > 0 ?GETPOST('planned_workloadhour', 'int') * 3600 : 0) + (GETPOST('planned_workloadmin', 'int') > 0 ?GETPOST('planned_workloadmin', 'int') * 60 : 0) : '');
 
 // Security check
 $socid = 0;
 //if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
-if (!$user->rights->projet->lire) accessforbidden();
+if (!$user->rights->projet->lire) {
+	accessforbidden();
+}
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('projectcard', 'globalcard'));
@@ -62,12 +62,13 @@ $object = new Project($db);
 $extrafields->fetch_name_optionals_label($object->table_element);
 
 // Load object
-if ($id > 0 || !empty($ref))
-{
+if ($id > 0 || !empty($ref)) {
 	$ret = $object->fetch($id, $ref); // If we create project, ref may be defined into POST but record does not yet exists into database
 	if ($ret > 0) {
 		$object->fetch_thirdparty();
-		if (!empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($object, 'fetchComments') && empty($object->comments)) $object->fetchComments();
+		if (!empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($object, 'fetchComments') && empty($object->comments)) {
+			$object->fetchComments();
+		}
 		$id = $object->id;
 	}
 }
@@ -79,8 +80,9 @@ include DOL_DOCUMENT_ROOT.'/core/actions_comments.inc.php';
  * View
 */
 
+$title = $langs->trans('CommentPage');
 
-llxHeader('', $langs->trans("CommentPage"));
+llxHeader('', $title, '');
 
 $form = new Form($db);
 $formother = new FormOther($db);
@@ -101,15 +103,15 @@ $morehtmlref = '<div class="refidno">';
 // Title
 $morehtmlref .= $object->title;
 // Thirdparty
-if ($object->thirdparty->id > 0) {
+if (!empty($object->thirdparty->id) && $object->thirdparty->id > 0) {
 	$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1, 'project');
 }
 $morehtmlref .= '</div>';
 
 // Define a complementary filter for search of next/prev ref.
-if (!$user->rights->projet->all->lire) {
+if (empty($user->rights->projet->all->lire)) {
 	$objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
-	$object->next_prev_filter = " rowid in (".(count($objectsListId) ? join(',', array_keys($objectsListId)) : '0').")";
+	$object->next_prev_filter = " rowid IN (".$db->sanitize(count($objectsListId) ? join(',', array_keys($objectsListId)) : '0').")";
 }
 
 dol_banner_tab($object, 'project_ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -122,20 +124,29 @@ print '<table class="border centpercent">';
 
 // Visibility
 print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
-if ($object->public) print $langs->trans('SharedProject');
-else print $langs->trans('PrivateProject');
+if ($object->public) {
+	print img_picto($langs->trans('SharedProject'), 'world', 'class="paddingrightonly"');
+	print $langs->trans('SharedProject');
+} else {
+	print img_picto($langs->trans('PrivateProject'), 'private', 'class="paddingrightonly"');
+	print $langs->trans('PrivateProject');
+}
 print '</td></tr>';
 
 // Date start - end
 print '<tr><td>'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
 print dol_print_date($object->date_start, 'day');
 $end = dol_print_date($object->date_end, 'day');
-if ($end) print ' - '.$end;
+if ($end) {
+	print ' - '.$end;
+}
 print '</td></tr>';
 
 // Budget
 print '<tr><td>'.$langs->trans("Budget").'</td><td>';
-if (strcmp($object->budget_amount, '')) print price($object->budget_amount, '', $langs, 1, 0, 0, $conf->currency);
+if (strcmp($object->budget_amount, '')) {
+	print price($object->budget_amount, '', $langs, 1, 0, 0, $conf->currency);
+}
 print '</td></tr>';
 
 // Other attributes
@@ -146,7 +157,6 @@ print '</table>';
 
 print '</div>';
 print '<div class="fichehalfright">';
-print '<div class="ficheaddleft">';
 print '<div class="underbanner clearboth"></div>';
 
 print '<table class="border centpercent">';
@@ -170,7 +180,6 @@ print '</td></tr>';
 
 print '</table>';
 
-print '</div>';
 print '</div>';
 print '</div>';
 

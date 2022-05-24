@@ -45,13 +45,13 @@ ViewWebsiteInProduction=Ver sitio web usando la URL de inicio
 SetHereVirtualHost= <u>Usar con Apache/NGinx /...</u><br>Crea en su servidor web (Apache, Nginx, ...) de un host virtual dedicado con PHP habilitado y un directorio raíz en <br> <strong> %s </strong>
 ExampleToUseInApacheVirtualHostConfig=Ejemplo para usar en la configuración del host virtual Apache:
 YouCanAlsoTestWithPHPS=En el entorno de desarrollo, es posible que prefiera probar el sitio con el servidor web incrustado de PHP (se requiere PHP 5.5) ejecutando <br><strong> php -S 0.0.0.0:8080 -t %s</strong>
-YouCanAlsoDeployToAnotherWHP=<u>Ejecute su sitio web con otro proveedor de alojamiento Dolibarr</u> <br> Si no tiene un servidor web como Apache o NGinx disponible en Internet, puede exportar e importar su sitio web a otra instancia de Dolibarr proporcionada por otro proveedor de alojamiento de Dolibarr que brinde una integración completa con el módulo del sitio web. Puede encontrar una lista de algunos proveedores de hosting Dolibarr en <a href="https://saas.dolibarr.org" target="_blank">https://saas.dolibarr.org</a>
-CheckVirtualHostPerms=Compruebe también que el host virtual tiene <strong>%s</strong> en archivos en <strong>%s</strong>
+YouCanAlsoDeployToAnotherWHP= <u>Ejecute su sitio web con otro proveedor de alojamiento Dolibarr</u> <br>Si no tiene un servidor web como Apache o NGinx disponible en Internet, puede exportar e importar su sitio web a otra instancia de Dolibarr proporcionada por otro proveedor de alojamiento Dolibarr que proporcione integración con el módulo de sitio web. Puede encontrar una lista de algunos proveedores de alojamiento Dolibarr en <a href="https://saas.dolibarr.org" target="_blank" rel="noopener noreferrer external">https://saas.dolibarr.org</a>
+CheckVirtualHostPerms=Compruebe también que el usuario del host virtual (por ejemplo, www-data) tiene <strong>%s</strong>permisos en archivos en <br><strong>%s</strong>
 ReadPerm=Leido
 WritePerm=Escribir
 TestDeployOnWeb=Prueba/despliegue en la web
 PreviewSiteServedByWebServer=<u>Vista previa de %s en una nueva pestaña.</u> <br><br>%s será servido por un servidor web externo (como Apache, Nginx, IIS). Debe instalar y configurar este servidor antes de apuntar al directorio:<br><strong>%s</strong><br> URL servida por el servidor externo: <br><strong>%s</strong>
-PreviewSiteServedByDolibarr=<u>Vista previa %s en una nueva pestaña.</u> <br> <br> El %s será servido por el servidor de Dolibarr por lo que no necesita instalar ningún servidor web extra (como Apache, Nginx, IIS). <br> El inconveniente es que la URL de las páginas no amigables y comienzan con la ruta de su Dolibarr. <br> URL que sirve Dolibarr: <br><strong>%s</strong>   <br> <br>Para utilizar su propio servidor web externo para servir esta web, cree un host virtual en su servidor web que apunte al directorio<br> <strong>%s</strong><br> luego escriba el nombre de este servidor virtual y haga clic en el otro botón de vista previa.
+PreviewSiteServedByDolibarr= <u> Obtenga una vista previa de %s en una pestaña nueva. </u> <br> <br> El %s será servido por el servidor Dolibarr por lo que no necesita ningún servidor web adicional (como Apache, Nginx, IIS) para ser instalado. <br> El inconveniente es que las URL de las páginas no son fáciles de usar y comienzan con la ruta de tu Dolibarr. <br> URL servida por Dolibarr: <br> <strong> %s </strong> <br> <br> Para utilizar su propio servidor web exterior al servicio de este sitio web, crear una máquina virtual en su servidor Web que señala en el directorio <br> <strong> %s </strong> <br> a continuación, introduzca el nombre de este servidor virtual en las propiedades de este sitio web y haga clic en el enlace "Probar / Implementar en la web".
 VirtualHostUrlNotDefined=URL del Host Virtual servido por un servidor externo no definido
 NoPageYet=No hay páginas todavía
 YouCanCreatePageOrImportTemplate=Puede crear una nueva página o importar una plantilla de sitio web completa
@@ -60,7 +60,7 @@ YouCanEditHtmlSourceckeditor=Puede editar código fuente HTML utilizando el bot�
 YouCanEditHtmlSource=<br><span class="fa fa-bug"></span> Puede incluir código PHP en este fuente usando los tags <strong>&lt;?php ?&gt;</strong>. Dispone de estas variables globales: $conf, $langs, $db, $mysoc, $user, $website.<br><br><span class="fa fa-bug"></span> También puede incluir contenido de otra Página/Contenedor con la siguiente sintaxis:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-download"></span> Para incluir un <strong>enlace para descargar</strong> un archivo guardado en el directorio <strong>documents</strong>, use el wrapper <strong>document.php</strong> :<br>Por ejemplo, para un archivo de documents/ecm (es necesario estar logueado), la sintaxis:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>Para un archivo de into documents/medias (directorio abierto para acceso público), la sintaxis es:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>Para un archivo compartido mediante un enlace compartido (acceso abierto utilizando la clave hash para compartir del archivo), la sintaxis es:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br><br><span class="fa fa-picture-o"></span> Para incluir una <strong>imagen</strong> guardada en el directorio <strong>documents</strong> , use el wrapper <strong>viewimage.php</strong> :<br>Ejemplo para una imagen de documents/medias (acceso abierto), la sintaxis es:<br><strong>&lt;a href="/viewimage.php?modulepart=medias&amp;file=[relative_dir/]filename.ext"&gt;</strong><br>
 #YouCanEditHtmlSource2=<br><span class="fa fa-picture-o"></span> To include a <strong>image</strong> shared publicaly, use the <strong>viewimage.php</strong> wrapper:<br>Example with a shared key 123456789, syntax is:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
 YouCanEditHtmlSource2=Para una imagen compartida con un enlace para compartir (acceso abierto usando la clave hash para compartir del archivo), la sintaxis es: <br><strong> &lt;img src="/viewimage.php? Hashp=12345679012 ..."&gt;</strong><br>
-YouCanEditHtmlSourceMore= <br>Más ejemplos de código HTML o dinámico disponibles en <a href="%s" target="_blank">la documentación wiki </a><br>.
+YouCanEditHtmlSourceMore= <br>Más ejemplos de código HTML o dinámico disponibles en <a href="%s" target="_blank" rel="noopener noreferrer external">la documentación wiki</a><br>.
 ClonePage=Clonar página/contenedor
 CloneSite=Clonar sitio
 SiteAdded=Sitio web agregado
@@ -137,3 +137,11 @@ PagesRegenerated=%s página(s)/contenedor(s) regenerados
 RegenerateWebsiteContent=Regenerar archivos de caché del sitio web
 AllowedInFrames=Permitido en marcos
 DefineListOfAltLanguagesInWebsiteProperties=Defina la lista de todos los idiomas disponibles en las propiedades del sitio web.
+GenerateSitemaps=Generar archivo de mapa del sitio del sitio web
+ConfirmGenerateSitemaps=Si confirma, borrará el archivo de mapa del sitio existente ...
+ConfirmSitemapsCreation=Confirmar la generación del mapa del sitio
+SitemapGenerated=Archivo de mapa del sitio <b> %s </b> generado
+ImportFavicon=Favicon
+ErrorFaviconType=El favicon debe ser png
+ErrorFaviconSize=El favicon debe tener un tamaño de 16x16, 32x32 o 64x64
+FaviconTooltip=Sube una imagen que debe ser png (16x16, 32x32 o 64x64)

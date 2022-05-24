@@ -231,7 +231,7 @@ class IntracommReport extends CommonObject
 		if ($resql) {
 			$i = 1;
 
-			if (empty($resql->num_rows)) {
+			if ($this->db->num_rows($resql) <= 0) {
 				$this->errors[] = 'No data for this period';
 				return 0;
 			}
@@ -286,7 +286,7 @@ class IntracommReport extends CommonObject
 		global $mysoc, $conf;
 
 		if ($type == 'expedition' || $exporttype == 'des') {
-			$sql = 'SELECT f.ref as refinvoice, f.total as total_ht';
+			$sql = 'SELECT f.ref as refinvoice, f.total_ht';
 			$table = 'facture';
 			$table_extraf = 'facture_extrafields';
 			$tabledet = 'facturedet';
@@ -417,7 +417,7 @@ class IntracommReport extends CommonObject
 						(
 							SELECT fk_product
 							FROM '.MAIN_DB_PREFIX.'categorie_product
-							WHERE fk_categorie = '.$categ_fraisdeport->id.'
+							WHERE fk_categorie = '.((int) $categ_fraisdeport->id).'
 						)
 					)';
 
@@ -437,7 +437,7 @@ class IntracommReport extends CommonObject
 	 */
 	public function getNextDeclarationNumber()
 	{
-		$resql = $this->db->query('SELECT MAX(numero_declaration) as max_declaration_number FROM '.MAIN_DB_PREFIX.$this->table_element.' WHERE exporttype="'.$this->exporttype.'"');
+		$resql = $this->db->query('SELECT MAX(numero_declaration) as max_declaration_number FROM '.MAIN_DB_PREFIX.$this->table_element." WHERE exporttype='".$this->db->escape($this->exporttype)."'");
 		if ($resql) {
 			$res = $this->db->fetch_object($resql);
 		}

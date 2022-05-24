@@ -1,0 +1,54 @@
+# Copyright (C) 2021 SuperAdmin
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see .
+
+#
+# Generic
+#
+
+# Module label 'ModuleKnowledgeManagementName'
+ModuleKnowledgeManagementName = Kunnskapsstyringssystem
+# Module description 'ModuleKnowledgeManagementDesc'
+ModuleKnowledgeManagementDesc=Administrer en Knowledge Management (KM) eller Help-Desk-base
+
+#
+# Admin page
+#
+KnowledgeManagementSetup = Oppsett av Kunnskapsstyringssystem
+Settings = Innstillinger
+KnowledgeManagementSetupPage = Kunnskapsstyringssystemets oppsettside
+
+
+#
+# About page
+#
+About = Om
+KnowledgeManagementAbout = Om kunnskapsadministrasjon
+KnowledgeManagementAboutPage = Om Kunnskapsadministrasjon side
+
+KnowledgeManagementArea = Kunnskapsadministrasjon
+MenuKnowledgeRecord = Kunnskapsbase
+ListKnowledgeRecord = Liste over artikler
+NewKnowledgeRecord = Ny artikkel
+ValidateReply = Valider løsningen
+KnowledgeRecords = Artikler
+KnowledgeRecord = Artikkel
+KnowledgeRecordExtraFields = Ekstra felt for artikkel
+GroupOfTicket=Billettgrupper
+YouCanLinkArticleToATicketCategory=Du kan koble en artikkel til en billettgruppe (artikkelen vil bli foreslått under kvalifisering av nye billetter)
+SuggestedForTicketsInGroup=Suggested for tickets when group is
+
+SetObsolete=Set as obsolete
+ConfirmCloseKM=Do you confirm the closing of this article as obsolete ?
+ConfirmReopenKM=Do you want to restore this article to status "Validated" ?

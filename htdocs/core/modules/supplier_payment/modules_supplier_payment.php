@@ -27,6 +27,41 @@ abstract class ModelePDFSuppliersPayments extends CommonDocGenerator
 	 */
 	public $error = '';
 
+	/**
+	 * @var int page_largeur
+	 */
+	public $page_largeur;
+
+	/**
+	 * @var int page_hauteur
+	 */
+	public $page_hauteur;
+
+	/**
+	 * @var array format
+	 */
+	public $format;
+
+	/**
+	 * @var int marge_gauche
+	 */
+	public $marge_gauche;
+
+	/**
+	 * @var int marge_droite
+	 */
+	public $marge_droite;
+
+	/**
+	 * @var int marge_haute
+	 */
+	public $marge_haute;
+
+	/**
+	 * @var int marge_basse
+	 */
+	public $marge_basse;
+
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
@@ -42,12 +77,12 @@ abstract class ModelePDFSuppliersPayments extends CommonDocGenerator
 		global $conf;
 
 		$type = 'supplier_payment';
-		$liste = array();
+		$list = array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$liste = getListOfModels($db, $type, $maxfilenamelength);
+		$list = getListOfModels($db, $type, $maxfilenamelength);
 
-		return $liste;
+		return $list;
 	}
 }
 
@@ -131,10 +166,15 @@ abstract class ModeleNumRefSupplierPayments
 		global $langs;
 		$langs->load("admin");
 
-		if ($this->version == 'development') return $langs->trans("VersionDevelopment");
-		elseif ($this->version == 'experimental') return $langs->trans("VersionExperimental");
-		elseif ($this->version == 'dolibarr') return DOL_VERSION;
-		elseif ($this->version) return $this->version;
+		if ($this->version == 'development') {
+			return $langs->trans("VersionDevelopment");
+		} elseif ($this->version == 'experimental') {
+			return $langs->trans("VersionExperimental");
+		} elseif ($this->version == 'dolibarr') {
+			return DOL_VERSION;
+		} elseif ($this->version) {
+			return $this->version;
+		}
 		return $langs->trans("NotAvailable");
 	}
 }

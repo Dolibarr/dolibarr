@@ -21,7 +21,7 @@
  *
  *  \file       htdocs/core/modules/modDav.class.php
  *  \ingroup    dav
- *  \brief      Description and activation file for module dav
+ *  \brief      Description and activation file for the module dav
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
@@ -108,8 +108,7 @@ class modDav extends DolibarrModules
 		);
 
 
-		if (!isset($conf->dav) || !isset($conf->dav->enabled))
-		{
+		if (!isset($conf->dav) || !isset($conf->dav->enabled)) {
 			$conf->dav = new stdClass();
 			$conf->dav->enabled = 0;
 		}
@@ -146,20 +145,6 @@ class modDav extends DolibarrModules
 
 		// Dictionaries
 		$this->dictionaries = array();
-		/* Example:
-        $this->dictionaries=array(
-            'langs'=>'mylangfile@dav',
-            'tabname'=>array(MAIN_DB_PREFIX."table1",MAIN_DB_PREFIX."table2",MAIN_DB_PREFIX."table3"),		// List of tables we want to see into dictonnary editor
-            'tablib'=>array("Table1","Table2","Table3"),													// Label of tables
-            'tabsql'=>array('SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table1 as f','SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table2 as f','SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table3 as f'),	// Request to select fields
-            'tabsqlsort'=>array("label ASC","label ASC","label ASC"),																					// Sort order
-            'tabfield'=>array("code,label","code,label","code,label"),																					// List of fields (result of select to show dictionary)
-            'tabfieldvalue'=>array("code,label","code,label","code,label"),																				// List of fields (list of fields to edit a record)
-            'tabfieldinsert'=>array("code,label","code,label","code,label"),																			// List of fields (list of fields for insert)
-            'tabrowid'=>array("rowid","rowid","rowid"),																									// Name of columns with primary key (try to always name it 'rowid')
-            'tabcond'=>array($conf->dav->enabled,$conf->dav->enabled,$conf->dav->enabled)												// Condition to show each dictionary
-        );
-        */
 
 
 		// Boxes/Widgets
@@ -267,8 +252,6 @@ class modDav extends DolibarrModules
 	 */
 	public function init($options = '')
 	{
-		//$this->_load_tables('/dav/sql/');
-
 		// Create extrafields
 		include_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 		$extrafields = new ExtraFields($this->db);

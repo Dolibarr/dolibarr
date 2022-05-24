@@ -6,6 +6,7 @@
  * Copyright (C) 2012-2014  Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2017		Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2022		OpenDSI				<support@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,8 +35,7 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($object) || !is_object($object))
-{
+if (empty($object) || !is_object($object)) {
 	print "Error, template page can't be called as URL";
 	exit;
 }
@@ -48,14 +48,16 @@ print "<thead>\n";
 print '<tr class="liste_titre nodrag nodrop">';
 
 // Adds a line numbering column
-if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) print '<td class="linecolnum center">&nbsp;</td>';
+if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
+	print '<td class="linecolnum center">&nbsp;</td>';
+}
 
 // Description
 print '<td class="linecoldescription">'.$langs->trans('Description').'</td>';
 
-if ($this->element == 'supplier_proposal' || $this->element == 'order_supplier' || $this->element == 'invoice_supplier')
-{
-	print '<td class="linerefsupplier"><span id="title_fourn_ref">'.$langs->trans("SupplierRef").'</span></td>';
+// Supplier ref
+if ($this->element == 'supplier_proposal' || $this->element == 'order_supplier' || $this->element == 'invoice_supplier' || $this->element == 'invoice_supplier_rec') {
+	print '<td class="linerefsupplier maxwidth125"><span id="title_fourn_ref">'.$langs->trans("SupplierRef").'</span></td>';
 }
 
 // VAT
@@ -66,11 +68,12 @@ if (!empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) || !empty($conf->global->FA
 	print $langs->trans('VAT');
 }
 
-if (in_array($object->element, array('propal', 'commande', 'facture')) && $object->status == $object::STATUS_DRAFT)
-{
+if (in_array($object->element, array('propal', 'commande', 'facture')) && $object->status == $object::STATUS_DRAFT) {
 	global $mysoc;
 
-	print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?mode=vatforalllines&id='.$object->id.'">'.img_edit($langs->trans("UpdateForAllLines"), 0, 'class="clickvatforalllines opacitymedium paddingleft cursorpointer"').'</a>';
+	if (empty($disableedit)) {
+		print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?mode=vatforalllines&id='.$object->id.'">'.img_edit($langs->trans("UpdateForAllLines"), 0, 'class="clickvatforalllines opacitymedium paddingleft cursorpointer"').'</a>';
+	}
 	//print '<script>$(document).ready(function() { $(".clickvatforalllines").click(function() { jQuery(".classvatforalllines").toggle(); }); });</script>';
 	if (GETPOST('mode', 'aZ09') == 'vatforalllines') {
 		print '<div class="classvatforalllines inline-block nowraponall">';
@@ -85,31 +88,51 @@ print '</td>';
 print '<td class="linecoluht right" style="width: 80px">'.$langs->trans('PriceUHT').'</td>';
 
 // Multicurrency
-if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) print '<td class="linecoluht_currency right" style="width: 80px">'.$langs->trans('PriceUHTCurrency', $this->multicurrency_code).'</td>';
+if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) {
+	print '<td class="linecoluht_currency right" style="width: 80px">'.$langs->trans('PriceUHTCurrency', $this->multicurrency_code).'</td>';
+}
 
-if ($inputalsopricewithtax) print '<td class="right" style="width: 80px">'.$langs->trans('PriceUTTC').'</td>';
+if ($inputalsopricewithtax) {
+	print '<td class="right" style="width: 80px">'.$langs->trans('PriceUTTC').'</td>';
+}
 
 // Qty
 print '<td class="linecolqty right">'.$langs->trans('Qty').'</td>';
 
-if (!empty($conf->global->PRODUCT_USE_UNITS))
-{
+// Unit
+if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 	print '<td class="linecoluseunit left">'.$langs->trans('Unit').'</td>';
 }
 
 // Reduction short
-print '<td class="linecoldiscount right">'.$langs->trans('ReductionShort').'</td>';
+print '<td class="linecoldiscount right">';
+print $langs->trans('ReductionShort');
+
+if (in_array($object->element, array('propal', 'commande', 'facture')) && $object->status == $object::STATUS_DRAFT) {
+	global $mysoc;
+
+	if (empty($disableedit)) {
+		print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?mode=remiseforalllines&id='.$object->id.'">'.img_edit($langs->trans("UpdateForAllLines"), 0, 'class="clickvatforalllines opacitymedium paddingleft cursorpointer"').'</a>';
+	}
+	//print '<script>$(document).ready(function() { $(".clickremiseforalllines").click(function() { jQuery(".classremiseforalllines").toggle(); }); });</script>';
+	if (GETPOST('mode', 'aZ09') == 'remiseforalllines') {
+		print '<div class="remiseforalllines inline-block nowraponall">';
+		print '<input class="inline-block smallpaddingimp width50 right" name="remiseforalllines" value="" placeholder="%">';
+		print '<input class="inline-block button smallpaddingimp" type="submit" name="submitforalllines" value="'.$langs->trans("Update").'">';
+		print '</div>';
+	}
+}
+print '</td>';
 
 // Fields for situation invoice
-if ($this->situation_cycle_ref) {
+if (isset($this->situation_cycle_ref) && $this->situation_cycle_ref) {
 	print '<td class="linecolcycleref right">'.$langs->trans('Progress').'</td>';
 	print '<td class="linecolcycleref2 right">'.$form->textwithpicto($langs->trans('TotalHT100Short'), $langs->trans('UnitPriceXQtyLessDiscount')).'</td>';
 }
 
-if ($usemargins && !empty($conf->margin->enabled) && empty($user->socid))
-{
-	if (!empty($user->rights->margins->creer))
-	{
+// Purchase price
+if ($usemargins && !empty($conf->margin->enabled) && empty($user->socid)) {
+	if (!empty($user->rights->margins->creer)) {
 		if ($conf->global->MARGIN_TYPE == "1") {
 			print '<td class="linecolmargin1 margininfos right" style="width: 80px">'.$langs->trans('BuyingPrice').'</td>';
 		} else {
@@ -129,9 +152,17 @@ if ($usemargins && !empty($conf->margin->enabled) && empty($user->socid))
 print '<td class="linecolht right">'.$langs->trans('TotalHTShort').'</td>';
 
 // Multicurrency
-if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) print '<td class="linecoltotalht_currency right">'.$langs->trans('TotalHTShortCurrency', $this->multicurrency_code).'</td>';
+if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) {
+	print '<td class="linecoltotalht_currency right">'.$langs->trans('TotalHTShortCurrency', $this->multicurrency_code).'</td>';
+}
 
-if ($outputalsopricetotalwithtax) print '<td class="right" style="width: 80px">'.$langs->trans('TotalTTCShort').'</td>';
+if ($outputalsopricetotalwithtax) {
+	print '<td class="right" style="width: 80px">'.$langs->trans('TotalTTCShort').'</td>';
+}
+
+if (!empty($conf->asset->enabled) && $object->element == 'invoice_supplier') {
+	print '<td class="linecolasset"></td>';
+}
 
 print '<td class="linecoledit"></td>'; // No width to allow autodim
 
@@ -139,8 +170,7 @@ print '<td class="linecoldelete" style="width: 10px"></td>';
 
 print '<td class="linecolmove" style="width: 10px"></td>';
 
-if ($action == 'selectlines')
-{
+if ($action == 'selectlines') {
 	print '<td class="linecolcheckall center">';
 	print '<input type="checkbox" class="linecheckboxtoggle" />';
 	print '<script>$(document).ready(function() {$(".linecheckboxtoggle").click(function() {var checkBoxes = $(".linecheckbox");checkBoxes.prop("checked", this.checked);})});</script>';

@@ -94,13 +94,17 @@ class box_project extends ModeleBoxes
 
 			// Get list of project id allowed to user (in a string list separated by coma)
 			$projectsListId = '';
-			if (!$user->rights->projet->all->lire) $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1, $socid);
+			if (empty($user->rights->projet->all->lire)) {
+				$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1, $socid);
+			}
 
 			$sql = "SELECT p.rowid, p.ref, p.title, p.fk_statut as status, p.public";
 			$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 			$sql .= " WHERE p.entity IN (".getEntity('project').")"; // Only current entity or severals if permission ok
 			$sql .= " AND p.fk_statut = 1"; // Only open projects
-			if (!$user->rights->projet->all->lire) $sql .= " AND p.rowid IN (".$projectsListId.")"; // public and assigned to, or restricted to company for external users
+			if (empty($user->rights->projet->all->lire)) {
+				$sql .= " AND p.rowid IN (".$this->db->sanitize($projectsListId).")"; // public and assigned to, or restricted to company for external users
+			}
 
 			$sql .= " ORDER BY p.datec DESC";
 			//$sql.= $this->db->plimit($max, 0);
@@ -132,8 +136,9 @@ class box_project extends ModeleBoxes
 
 					$sql = "SELECT count(*) as nb, sum(progress) as totprogress";
 					$sql .= " FROM ".MAIN_DB_PREFIX."projet as p LEFT JOIN ".MAIN_DB_PREFIX."projet_task as pt on pt.fk_projet = p.rowid";
-					   $sql .= " WHERE p.entity IN (".getEntity('project').')';
-					$sql .= " AND p.rowid = ".$objp->rowid;
+					$sql .= " WHERE p.entity IN (".getEntity('project').')';
+					$sql .= " AND p.rowid = ".((int) $objp->rowid);
+
 					$resultTask = $this->db->query($sql);
 					if ($resultTask) {
 						$objTask = $this->db->fetch_object($resultTask);
@@ -141,12 +146,14 @@ class box_project extends ModeleBoxes
 							'td' => 'class="right"',
 							'text' => $objTask->nb."&nbsp;".$langs->trans("Tasks"),
 						);
-						if ($objTask->nb > 0)
+						if ($objTask->nb > 0) {
 							$this->info_box_contents[$i][] = array(
 								'td' => 'class="right"',
 								'text' => round($objTask->totprogress / $objTask->nb, 0)."%",
 							);
-						else $this->info_box_contents[$i][] = array('td' => 'class="right"', 'text' => "N/A&nbsp;");
+						} else {
+							$this->info_box_contents[$i][] = array('td' => 'class="right"', 'text' => "N/A&nbsp;");
+						}
 						$totalnbTask += $objTask->nb;
 					} else {
 						$this->info_box_contents[$i][] = array('td' => 'class="right"', 'text' => round(0));
@@ -156,8 +163,7 @@ class box_project extends ModeleBoxes
 
 					$i++;
 				}
-				if ($max < $num)
-				{
+				if ($max < $num) {
 					$this->info_box_contents[$i][] = array('td' => 'colspan="5"', 'text' => '...');
 					$i++;
 				}

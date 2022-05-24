@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2012      Nicolas Villa aka Boyquotes http://informetic.fr
  * Copyright (C) 2013      Florian Henry	<florian.henry@open-concept.pro>
+ * Copyright (C) 2022		Anthony Berton	<anthony.berton@bb2a.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +22,7 @@
  *  \brief      cron module descriptor.
  *  \file       htdocs/core/modules/modCron.class.php
  *  \ingroup    cron
- *  \brief      Description and activation file for module Jobs
+ *  \brief      Description and activation file for the module Jobs
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
@@ -55,7 +56,7 @@ class modCron extends DolibarrModules
 		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		// Name of image file used for this module.
-		$this->picto = 'technic';
+		$this->picto = 'cron';
 
 		// Data directories to create when module is enabled
 		$this->dirs = array();
@@ -97,8 +98,9 @@ class modCron extends DolibarrModules
 
 		// Cronjobs
 		$this->cronjobs = array(
-			0=>array('entity'=>0, 'label'=>'PurgeDeleteTemporaryFilesShort', 'jobtype'=>'method', 'class'=>'core/class/utils.class.php', 'objectname'=>'Utils', 'method'=>'purgeFiles', 'parameters'=>'', 'comment'=>'PurgeDeleteTemporaryFiles', 'frequency'=>2, 'unitfrequency'=>3600 * 24 * 7, 'priority'=>50, 'status'=>1, 'test'=>true),
-			1=>array('entity'=>0, 'label'=>'MakeLocalDatabaseDumpShort', 'jobtype'=>'method', 'class'=>'core/class/utils.class.php', 'objectname'=>'Utils', 'method'=>'dumpDatabase', 'parameters'=>'none,auto,1,auto,10', 'comment'=>'MakeLocalDatabaseDump', 'frequency'=>1, 'unitfrequency'=>3600 * 24 * 7, 'priority'=>90, 'status'=>0, 'test'=>in_array($this->db->type, array('mysql', 'mysqli'))),
+			0=>array('entity'=>0, 'label'=>'PurgeDeleteTemporaryFilesShort', 'jobtype'=>'method', 'class'=>'core/class/utils.class.php', 'objectname'=>'Utils', 'method'=>'purgeFiles', 'parameters'=>'tempfilesold+logfiles', 'comment'=>'PurgeDeleteTemporaryFiles', 'frequency'=>2, 'unitfrequency'=>3600 * 24 * 7, 'priority'=>50, 'status'=>1, 'test'=>true),
+			1=>array('entity'=>0, 'label'=>'MakeLocalDatabaseDumpShort', 'jobtype'=>'method', 'class'=>'core/class/utils.class.php', 'objectname'=>'Utils', 'method'=>'dumpDatabase', 'parameters'=>'none,auto,1,auto,10', 'comment'=>'MakeLocalDatabaseDump', 'frequency'=>1, 'unitfrequency'=>3600 * 24 * 7, 'priority'=>90, 'status'=>0, 'test'=>'in_array($conf->db->type, array(\'mysql\', \'mysqli\'))'),
+			2=>array('entity'=>0, 'label'=>'MakeSendLocalDatabaseDumpShort', 'jobtype'=>'method', 'class'=>'core/class/utils.class.php', 'objectname'=>'Utils', 'method'=>'sendDumpDatabase', 'parameters'=>',,,,,sql', 'comment'=>'MakeSendLocalDatabaseDump', 'frequency'=>1, 'unitfrequency'=>604800, 'priority'=>91, 'status'=>0, 'test'=>'!empty($conf->global->MAIN_ALLOW_BACKUP_BY_EMAIL) && in_array($conf->db->type, array(\'mysql\', \'mysqli\'))'),
 			// 1=>array('entity'=>0, 'label'=>'My label', 'jobtype'=>'command', 'command'=>'', 'parameters'=>'', 'comment'=>'Comment', 'frequency'=>1, 'unitfrequency'=>3600*24)
 		);
 

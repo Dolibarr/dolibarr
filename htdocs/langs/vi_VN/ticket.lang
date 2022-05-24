@@ -34,7 +34,8 @@ TicketDictResolution=Ticket - Resolution
 
 TicketTypeShortCOM=Câu hỏi thương mại
 TicketTypeShortHELP=Yêu cầu trợ giúp chức năng
-TicketTypeShortISSUE=Sự cố, lỗi hoặc vấn đề
+TicketTypeShortISSUE=Issue or bug
+TicketTypeShortPROBLEM=Problem
 TicketTypeShortREQUEST=Yêu cầu thay đổi hoặc nâng cao
 TicketTypeShortPROJET=Dự án
 TicketTypeShortOTHER=Khác
@@ -43,6 +44,8 @@ TicketSeverityShortLOW=Thấp
 TicketSeverityShortNORMAL=Bình thường
 TicketSeverityShortHIGH=Cao
 TicketSeverityShortBLOCKING=Critical, Blocking
+
+TicketCategoryShortOTHER=Khác
 
 ErrorBadEmailAddress=Trường '%s' không chính xác
 MenuTicketMyAssign=Vé của tôi
@@ -54,22 +57,25 @@ TypeContact_ticket_internal_SUPPORTTEC=Người dùng được chỉ định
 TypeContact_ticket_external_SUPPORTCLI=Theo dõi liên lạc / sự cố khách hàng 
 TypeContact_ticket_external_CONTRIBUTOR=Người cộng tác bên ngoài
 
-OriginEmail=Nguồn email
+OriginEmail=Reporter Email
 Notify_TICKET_SENTBYMAIL=Gửi tin nhắn vé qua email
 
 # Status
 Read=Đọc
 Assigned=Phân công
 InProgress=Trong tiến trình xử lý
-NeedMoreInformation=Đang chờ thông tin
+NeedMoreInformation=Waiting for reporter feedback
+NeedMoreInformationShort=Waiting for feedback
 Answered=Đã trả lời
 Waiting=Đang chờ
-Closed=Đã đóng
+SolvedClosed=Solved
 Deleted=Đã xóa
 
 # Dict
 Type=Loại
 Severity=Mức độ nghiêm trọng
+TicketGroupIsPublic=Group is public
+TicketGroupIsPublicDesc=If a ticket group is public, it will be visible in the form when creating a ticket from the public interface
 
 # Email templates
 MailToSendTicketMessage=Để gửi email từ tin nhắn vé
@@ -84,10 +90,10 @@ TicketPublicAccess=Giao diện công cộng không yêu cầu nhận dạng có 
 TicketSetupDictionaries=Loại vé, mức độ nghiêm trọng và mã phân tích có thể được cấu hình từ từ điển
 TicketParamModule=Thiết lập biến thể mô-đun
 TicketParamMail=Thiết lập email
-TicketEmailNotificationFrom=Email thông báo từ
-TicketEmailNotificationFromHelp=Được sử dụng trong trả lời thông điệp vé bằng ví dụ
-TicketEmailNotificationTo=Thông báo email đến
-TicketEmailNotificationToHelp=Gửi thông báo email đến địa chỉ này.
+TicketEmailNotificationFrom=Sender e-mail for ticket answers
+TicketEmailNotificationFromHelp=Sender e-mail for ticket answers sent from Dolibarr
+TicketEmailNotificationTo=Notify ticket creation to this e-mail address
+TicketEmailNotificationToHelp=If present, this e-mail address will be notified of a ticket creation
 TicketNewEmailBodyLabel=Thông điệp văn bản được gửi sau khi tạo vé
 TicketNewEmailBodyHelp=Văn bản được chỉ định ở đây sẽ được chèn vào email xác nhận việc tạo vé mới từ giao diện công cộng. Thông tin về tham khảo của vé được tự động thêm vào.
 TicketParamPublicInterface=Thiết lập giao diện công cộng
@@ -114,8 +120,8 @@ TicketsShowModuleLogo=Hiển thị logo của mô-đun trong giao diện công c
 TicketsShowModuleLogoHelp=Cho phép tùy chọn này để ẩn mô-đun logo trong các trang của giao diện công cộng
 TicketsShowCompanyLogo=Hiển thị logo của công ty trong giao diện công cộng
 TicketsShowCompanyLogoHelp=Cho phép tùy chọn này để ẩn logo của công ty chính trong các trang của giao diện công cộng
-TicketsEmailAlsoSendToMainAddress=Đồng thời gửi thông báo đến địa chỉ email chính
-TicketsEmailAlsoSendToMainAddressHelp=Cho phép tùy chọn này để gửi email đến địa chỉ "Thông báo email từ" (xem thiết lập bên dưới)
+TicketsEmailAlsoSendToMainAddress=Also send a notification to the main email address
+TicketsEmailAlsoSendToMainAddressHelp=Enable this option to also send an email to the address defined into setup "%s" (see tab "%s")
 TicketsLimitViewAssignedOnly=Hạn chế hiển thị đối với vé được chỉ định cho người dùng hiện tại (không hiệu quả đối với người dùng bên ngoài, luôn bị giới hạn ở bên thứ ba mà họ phụ thuộc)
 TicketsLimitViewAssignedOnlyHelp=Chỉ có vé được chỉ định cho người dùng hiện tại sẽ hiển thị. Không áp dụng cho người dùng có quyền quản lý vé.
 TicketsActivatePublicInterface=Kích hoạt giao diện công cộng
@@ -126,10 +132,22 @@ TicketNumberingModules=Mô-đun đánh số vé
 TicketsModelModule=Document templates for tickets
 TicketNotifyTiersAtCreation=Thông báo cho bên thứ ba khi tạo
 TicketsDisableCustomerEmail=Luôn vô hiệu hóa email khi vé được tạo từ giao diện công cộng
-TicketsPublicNotificationNewMessage=Send email(s) when a new message is added
+TicketsPublicNotificationNewMessage=Send email(s) when a new message/comment is added to a ticket
 TicketsPublicNotificationNewMessageHelp=Send email(s) when a new message is added from public interface (to assigned user or the notifications email to (update) and/or the notifications email to)
 TicketPublicNotificationNewMessageDefaultEmail=Notifications email to (update)
-TicketPublicNotificationNewMessageDefaultEmailHelp=Send email new message notifications to this address if the ticket don't have a user assigned or the user don't have a email.
+TicketPublicNotificationNewMessageDefaultEmailHelp=Send an email to this address for each new message notifications if the ticket doesn't have a user assigned to it or if the user doesn't have any known email.
+TicketsAutoReadTicket=Automatically mark the ticket as read (when created from backoffice)
+TicketsAutoReadTicketHelp=Automatically mark the ticket as read when created from backoffice. When ticket is create from the public interface, ticket remains with the status "Not Read".
+TicketsDelayBeforeFirstAnswer=A new ticket should receive a first answer before (hours):
+TicketsDelayBeforeFirstAnswerHelp=If a new ticket has not received an answer after this time period (in hours), an important warning icon will be displayed in the list view.
+TicketsDelayBetweenAnswers=An unresolved ticket should not be unactive during (hours):
+TicketsDelayBetweenAnswersHelp=If an unresolved ticket that has already received an answer has not had further interaction after this time period (in hours), a warning icon will be displayed in the list view.
+TicketsAutoNotifyClose=Automatically notify thirdparty when closing a ticket
+TicketsAutoNotifyCloseHelp=When closing a ticket, you will be proposed to send a message to one of thirdparty's contacts. On mass closing, a message will be sent to one contact of the thirdparty linked to the ticket.
+TicketWrongContact=Provided contact is not part of current ticket contacts. Email not sent.
+TicketChooseProductCategory=Product category for ticket support
+TicketChooseProductCategoryHelp=Select the product category of ticket support. This will be used to automatically link a contract to a ticket.
+
 #
 # Index & list page
 #
@@ -145,6 +163,8 @@ OrderByDateAsc=Sắp xếp theo ngày tăng dần
 OrderByDateDesc=Sắp xếp theo ngày giảm dần
 ShowAsConversation=Hiển thị dưới dạng danh sách cuộc hội thoại
 MessageListViewType=Hiển thị dưới dạng danh sách bảng
+ConfirmMassTicketClosingSendEmail=Automatically send emails when closing tickets
+ConfirmMassTicketClosingSendEmailQuestion=Do you want to notify thirdparties when closing these tickets ?
 
 #
 # Ticket card
@@ -158,7 +178,7 @@ CreatedBy=Được tạo bởi
 NewTicket=Vé mới
 SubjectAnswerToTicket=Trả lời vé
 TicketTypeRequest=Loại yêu cầu
-TicketCategory=Nhóm
+TicketCategory=Ticket categorization
 SeeTicket=Xem vé
 TicketMarkedAsRead=Vé đã được đánh dấu là đã đọc
 TicketReadOn=Đọc tiếp
@@ -176,15 +196,17 @@ MessageSuccessfullyAdded=Đã thêm vé
 TicketMessageSuccessfullyAdded=Thông điệp đã được thêm thành công
 TicketMessagesList=Danh sách tin nhắn
 NoMsgForThisTicket=Không có tin nhắn cho vé này
-Properties=Phân loại
+TicketProperties=Phân loại
 LatestNewTickets=Vé mới nhất %s (không đọc)
 TicketSeverity=Mức độ nghiêm trọng
 ShowTicket=Xem vé
 RelatedTickets=Vé liên quan
 TicketAddIntervention=Tạo sự can thiệp
-CloseTicket=Đóng vé
-CloseATicket=Đóng vé
+CloseTicket=Close|Solve ticket
+AbandonTicket=Abandon ticket
+CloseATicket=Close|Solve a ticket
 ConfirmCloseAticket=Xác nhận đóng vé
+ConfirmAbandonTicket=Do you confirm the closing of the ticket to status 'Abandonned'
 ConfirmDeleteTicket=Vui lòng xác nhận xóa vé
 TicketDeletedSuccess=Vé đã xóa thành công
 TicketMarkedAsClosed=Vé được đánh dấu là đã đóng
@@ -197,18 +219,19 @@ ErrorMailRecipientIsEmptyForSendTicketMessage=Người nhận trống rỗng. Kh
 TicketGoIntoContactTab=Vui lòng vào tab "Danh bạ" để chọn chúng
 TicketMessageMailIntro=Giới thiệu
 TicketMessageMailIntroHelp=Văn bản này chỉ được thêm vào lúc bắt đầu email và sẽ không được lưu.
-TicketMessageMailIntroLabelAdmin=Giới thiệu tin nhắn khi gửi email
-TicketMessageMailIntroText=Xin chào, <br> Một phản hồi mới đã được gửi trên một vé mà bạn liên hệ. Đây là thông điệp: <br>
-TicketMessageMailIntroHelpAdmin=Văn bản này sẽ được chèn trước văn bản phản hồi cho một vé.
+TicketMessageMailIntroLabelAdmin=Introduction text to all ticket answers
+TicketMessageMailIntroText=Hello,<br>A new answer has been added to a ticket that you follow. Here is the message:<br>
+TicketMessageMailIntroHelpAdmin=This text will be inserted before the answer when replying to a ticket from Dolibarr
 TicketMessageMailSignature=Chữ ký
 TicketMessageMailSignatureHelp=Văn bản này chỉ được thêm vào cuối email và sẽ không được lưu.
-TicketMessageMailSignatureText=<p> Trân trọng, </p><p> - </p>
+TicketMessageMailSignatureText=Message sent by <b>%s</b> via Dolibarr
 TicketMessageMailSignatureLabelAdmin=Chữ ký của email phản hồi
 TicketMessageMailSignatureHelpAdmin=Văn bản này sẽ được chèn sau thông báo phản hồi.
 TicketMessageHelp=Chỉ văn bản này sẽ được lưu trong danh sách tin nhắn trên thẻ vé.
 TicketMessageSubstitutionReplacedByGenericValues=Các biến thay thế được thay thế bằng các giá trị chung.
 TimeElapsedSince=Thời gian trôi qua kể từ khi
 TicketTimeToRead=Thời gian trôi qua trước khi đọc
+TicketTimeElapsedBeforeSince=Time elapsed before / since
 TicketContacts=Liên hệ vé
 TicketDocumentsLinked=Tài liệu liên kết với vé
 ConfirmReOpenTicket=Xác nhận mở lại vé này?
@@ -229,9 +252,16 @@ TicketChangeStatus=Thay đổi trạng thái
 TicketConfirmChangeStatus=Xác nhận thay đổi trạng thái: %s?
 TicketLogStatusChanged=Trạng thái đã thay đổi: %s thành %s
 TicketNotNotifyTiersAtCreate=Không thông báo cho công ty khi tạo
+NotifyThirdpartyOnTicketClosing=Contacts to notify while closing the ticket
+TicketNotifyAllTiersAtClose=All related contacts
+TicketNotNotifyTiersAtClose=No related contact
 Unread=Chưa đọc
 TicketNotCreatedFromPublicInterface=Không có sẵn. Vé không được tạo từ giao diện công cộng.
 ErrorTicketRefRequired=Tên tham chiếu vé là bắt buộc
+TicketsDelayForFirstResponseTooLong=Too much time elapsed since ticket opening without any answer.
+TicketsDelayFromLastResponseTooLong=Too much time elapsed since last answer on this ticket.
+TicketNoContractFoundToLink=No contract was found to be automatically linked to this ticket. Please link a contract manually.
+TicketManyContractsLinked=Many contracts have been automatically linked to this ticket. Make sure to verify which should be chosen.
 
 #
 # Logs
@@ -259,8 +289,9 @@ TicketNewEmailBody=Đây là một email tự động để xác nhận bạn đ
 TicketNewEmailBodyCustomer=Đây là một email tự động để xác nhận một vé mới vừa được tạo vào tài khoản của bạn.
 TicketNewEmailBodyInfosTicket=Thông tin để giám sát vé
 TicketNewEmailBodyInfosTrackId=Số theo dõi vé: %s
-TicketNewEmailBodyInfosTrackUrl=Bạn có thể xem tiến trình của vé bằng cách nhấp vào liên kết ở trên.
+TicketNewEmailBodyInfosTrackUrl=You can view the progress of the ticket by clicking the following link
 TicketNewEmailBodyInfosTrackUrlCustomer=Bạn có thể xem tiến trình của vé trong giao diện cụ thể bằng cách nhấp vào liên kết sau
+TicketCloseEmailBodyInfosTrackUrlCustomer=You can consult the history of this ticket by clicking the following link
 TicketEmailPleaseDoNotReplyToThisEmail=Xin đừng trả lời trực tiếp email này! Sử dụng liên kết để trả lời trong giao diện.
 TicketPublicInfoCreateTicket=Biểu mẫu này cho phép bạn ghi lại một vé hỗ trợ trong hệ thống quản lý của chúng tôi.
 TicketPublicPleaseBeAccuratelyDescribe=Hãy mô tả chính xác vấn đề. Cung cấp hầu hết thông tin có thể để cho phép chúng tôi xác định chính xác yêu cầu của bạn.
@@ -282,6 +313,10 @@ NewUser=Người dùng mới
 NumberOfTicketsByMonth=Số lượng vé mỗi tháng
 NbOfTickets=Số lượng vé
 # notifications
+TicketCloseEmailSubjectCustomer=Ticket closed
+TicketCloseEmailBodyCustomer=This is an automatic message to notify you that ticket %s has just been closed.
+TicketCloseEmailSubjectAdmin=Ticket closed - Réf %s (public ticket ID %s)
+TicketCloseEmailBodyAdmin=A ticket with ID #%s has just been closed, see information:
 TicketNotificationEmailSubject=Vé %s được cập nhật
 TicketNotificationEmailBody=Đây là một tin nhắn tự động để thông báo cho bạn rằng vé %s vừa được cập nhật
 TicketNotificationRecipient=Người nhận thông báo
@@ -302,3 +337,14 @@ BoxLastModifiedTicket=Vé sửa đổi mới nhất
 BoxLastModifiedTicketDescription=Vé sửa đổi mới nhất %s
 BoxLastModifiedTicketContent=
 BoxLastModifiedTicketNoRecordedTickets=Không có vé sửa đổi gần đây
+BoxTicketType=Distribution of open tickets by type
+BoxTicketSeverity=Number of open tickets by severity
+BoxNoTicketSeverity=No tickets opened
+BoxTicketLastXDays=Number of new tickets by days the last %s days
+BoxTicketLastXDayswidget = Number of new tickets by days the last X days
+BoxNoTicketLastXDays=No new tickets the last %s days
+BoxNumberOfTicketByDay=Number of new tickets by day
+BoxNewTicketVSClose=Number of tickets versus closed tickets (today)
+TicketCreatedToday=Ticket created today
+TicketClosedToday=Ticket closed today
+KMFoundForTicketGroup=We found topics and FAQs that may answers your question, thanks to check them before submitting the ticket

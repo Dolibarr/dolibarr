@@ -21,7 +21,7 @@
  *      \brief      Module to manage expense report. Replace old module Deplacement.
  *      \file       htdocs/core/modules/modExpenseReport.class.php
  *      \ingroup    expensereport
- *      \brief      Description and activation file for module ExpenseReport
+ *      \brief      Description and activation file for the module ExpenseReport
  */
 include_once DOL_DOCUMENT_ROOT."/core/modules/DolibarrModules.class.php";
 
@@ -65,7 +65,7 @@ class modExpenseReport extends DolibarrModules
 		$this->depends = array(); // List of module class names as string that must be enabled if this module is enabled
 		// $this->conflictwith = array("modDeplacement"); // Deactivate for access on old information
 		$this->requiredby = array(); // List of modules id to disable if this one is disabled
-		$this->phpmin = array(5, 4); // Minimum version of PHP required by module
+		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(3, 7); // Minimum version of Dolibarr required by module
 		$this->langfiles = array("companies", "trips");
 
@@ -214,7 +214,9 @@ class modExpenseReport extends DolibarrModules
 		$this->export_alias_array[$r] = array('d.rowid'=>"idtrip", 'd.type'=>"type", 'd.note_private'=>'note_private', 'd.note_public'=>'note_public', 'u.lastname'=>'name', 'u.firstname'=>'firstname', 'u.login'=>'login');
 		$this->export_dependencies_array[$r] = array('expensereport_line'=>'ed.rowid', 'type_fees'=>'tf.rowid'); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them
 
-		$keyforselect = 'expensereport'; $keyforelement = 'expensereport'; $keyforaliasextra = 'extra';
+		$keyforselect = 'expensereport';
+		$keyforelement = 'expensereport';
+		$keyforaliasextra = 'extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		$keyforselect = 'user'; $keyforelement = 'user'; $keyforaliasextra = 'extrau';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
@@ -247,8 +249,8 @@ class modExpenseReport extends DolibarrModules
 		$this->remove($options);
 
 		$sql = array(
-				"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'standard' AND type='expensereport' AND entity = ".$conf->entity,
-				"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('standard','expensereport',".$conf->entity.")"
+			"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'standard' AND type='expensereport' AND entity = ".((int) $conf->entity),
+			"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('standard','expensereport',".((int) $conf->entity).")"
 		);
 
 		return $this->_init($sql, $options);

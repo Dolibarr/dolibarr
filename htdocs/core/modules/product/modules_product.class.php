@@ -38,26 +38,59 @@ abstract class ModelePDFProduct extends CommonDocGenerator
 	 */
 	public $error = '';
 
+	/**
+	 * @var int page_largeur
+	 */
+	public $page_largeur;
+
+	/**
+	 * @var int page_hauteur
+	 */
+	public $page_hauteur;
+
+	/**
+	 * @var array format
+	 */
+	public $format;
+
+	/**
+	 * @var int marge_gauche
+	 */
+	public $marge_gauche;
+
+	/**
+	 * @var int marge_droite
+	 */
+	public $marge_droite;
+
+	/**
+	 * @var int marge_haute
+	 */
+	public $marge_haute;
+
+	/**
+	 * @var int marge_basse
+	 */
+	public $marge_basse;
+
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return list of active generation modules
 	 *
-	 *  @param	DoliDB	$db     			Database handler
+	 *  @param	DoliDB	$dbs     			Database handler
 	 *  @param  integer	$maxfilenamelength  Max length of value to show
 	 *  @return	array						List of templates
 	 */
-	public static function liste_modeles($db, $maxfilenamelength = 0)
+	public static function liste_modeles($dbs, $maxfilenamelength = 0)
 	{
 		// phpcs:enable
-		global $conf;
-
 		$type = 'product';
-		$liste = array();
+		$list = array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$liste = getListOfModels($db, $type, $maxfilenamelength);
-		return $liste;
+		$list = getListOfModels($dbs, $type, $maxfilenamelength);
+		return $list;
 	}
 }
 
@@ -156,29 +189,29 @@ abstract class ModeleProductCode
 	/**
 	 *  Renvoi la liste des modeles de numérotation
 	 *
-	 *  @param	DoliDB	$db     			Database handler
+	 *  @param	DoliDB	$dbs     			Database handler
 	 *  @param  integer	$maxfilenamelength  Max length of value to show
 	 *  @return	array						List of numbers
 	 */
-	public static function liste_modeles($db, $maxfilenamelength = 0)
+	public static function liste_modeles($dbs, $maxfilenamelength = 0)
 	{
 		// phpcs:enable
-		$liste = array();
+		$list = array();
 		$sql = "";
 
-		$resql = $db->query($sql);
+		$resql = $dbs->query($sql);
 		if ($resql) {
-			$num = $db->num_rows($resql);
+			$num = $dbs->num_rows($resql);
 			$i = 0;
 			while ($i < $num) {
-				$row = $db->fetch_row($resql);
-				$liste[$row[0]] = $row[1];
+				$row = $dbs->fetch_row($resql);
+				$list[$row[0]] = $row[1];
 				$i++;
 			}
 		} else {
 			return -1;
 		}
-		return $liste;
+		return $list;
 	}
 
 	/**
@@ -193,7 +226,8 @@ abstract class ModeleProductCode
 	{
 		global $conf;
 
-		$langs->load("admin");
+		$langs->loadLangs(array("admin", "companies"));
+
 		$strikestart = '';
 		$strikeend = '';
 		if (!empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && !empty($this->code_null)) {

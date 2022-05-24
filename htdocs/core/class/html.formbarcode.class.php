@@ -66,9 +66,8 @@ class FormBarCode
 
 		$disable = '';
 
-		if (!empty($conf->use_javascript_ajax))
-		{
-			print "\n".'<script type="text/javascript" language="javascript">';
+		if (!empty($conf->use_javascript_ajax)) {
+			print "\n".'<script type="text/javascript">';
 			print 'jQuery(document).ready(function () {
                         jQuery("#select'.$idForm.'").change(function() {
                             var formName = document.getElementById("form'.$idForm.'");
@@ -82,13 +81,11 @@ class FormBarCode
 
 		// We check if barcode is already selected by default
 		if (((!empty($conf->product->enabled) || !empty($conf->service->enabled)) && $conf->global->PRODUIT_DEFAULT_BARCODE_TYPE == $code_id) ||
-		(!empty($conf->societe->enabled) && $conf->global->GENBARCODE_BARCODETYPE_THIRDPARTY == $code_id))
-		{
+		(!empty($conf->societe->enabled) && $conf->global->GENBARCODE_BARCODETYPE_THIRDPARTY == $code_id)) {
 			$disable = 'disabled';
 		}
 
-		if (!empty($conf->use_javascript_ajax))
-		{
+		if (!empty($conf->use_javascript_ajax)) {
 			$select_encoder = '<form action="'.DOL_URL_ROOT.'/admin/barcode.php" method="POST" id="form'.$idForm.'">';
 			$select_encoder .= '<input type="hidden" name="token" value="'.newToken().'">';
 			$select_encoder .= '<input type="hidden" name="action" value="update">';
@@ -99,14 +96,12 @@ class FormBarCode
 		$select_encoder .= '<select id="select'.$idForm.'" class="flat" name="'.$selectname.'">';
 		$select_encoder .= '<option value="0"'.($selected == 0 ? ' selected' : '').' '.$disable.'>'.$langs->trans('Disable').'</option>';
 		$select_encoder .= '<option value="-1" disabled>--------------------</option>';
-		foreach ($barcodelist as $key => $value)
-		{
+		foreach ($barcodelist as $key => $value) {
 			$select_encoder .= '<option value="'.$key.'"'.($selected == $key ? ' selected' : '').'>'.$value.'</option>';
 		}
 		$select_encoder .= '</select>';
 
-		if (!empty($conf->use_javascript_ajax))
-		{
+		if (!empty($conf->use_javascript_ajax)) {
 			$select_encoder .= '</form>';
 		}
 
@@ -144,7 +139,7 @@ class FormBarCode
 		$out = '';
 
 		$sql = "SELECT rowid, code, libelle";
-		$sql .= " FROM ".MAIN_DB_PREFIX."c_barcode_type";
+		$sql .= " FROM ".$this->db->prefix()."c_barcode_type";
 		$sql .= " WHERE coder <> '0'";
 		$sql .= " AND entity = ".$conf->entity;
 		$sql .= " ORDER BY code";
@@ -214,11 +209,11 @@ class FormBarCode
 			$out .= '<form method="post" action="'.$page.'">';
 			$out .= '<input type="hidden" name="token" value="'.newToken().'">';
 			$out .= '<input type="hidden" name="action" value="set'.$htmlname.'">';
-			$out .= '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
+			$out .= '<table class="nobordernopadding">';
 			$out .= '<tr><td>';
 			$out .= $this->selectBarcodeType($selected, $htmlname, 1);
 			$out .= '</td>';
-			$out .= '<td class="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+			$out .= '<td class="left"><input type="submit" class="button smallpaddingimp" value="'.$langs->trans("Modify").'">';
 			$out .= '</td></tr></table></form>';
 		}
 		return $out;

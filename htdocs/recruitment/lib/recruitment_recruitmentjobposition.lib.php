@@ -41,21 +41,37 @@ function recruitmentjobpositionPrepareHead($object)
 	$head[$h][2] = 'card';
 	$h++;
 
-	if ($conf->global->MAIN_FEATURES_LEVEL >= 1) {
-		$head[$h][0] = dol_buildpath("/recruitment/recruitmentjobposition_applications.php", 1).'?id='.$object->id;
-		$head[$h][1] = $langs->trans("Candidatures");
-		$head[$h][2] = 'candidatures';
-		$h++;
+	$head[$h][0] = dol_buildpath("/recruitment/recruitmentcandidature_list.php", 1).'?id='.$object->id;
+	$head[$h][1] = $langs->trans("Candidatures");
+	$sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."recruitment_recruitmentcandidature WHERE fk_recruitmentjobposition = ".((int) $object->id);
+	$resql = $db->query($sql);
+	if ($resql) {
+		$obj = $db->fetch_object($resql);
+		if ($obj) {
+			$nCandidature = $obj->nb;
+			if ($nCandidature > 0) {
+				$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nCandidature.'</span>';
+			}
+		}
+	} else {
+		dol_print_error($db);
 	}
+	$head[$h][2] = 'candidatures';
+	$h++;
 
-	if (isset($object->fields['note_public']) || isset($object->fields['note_private']))
-	{
+	if (isset($object->fields['note_public']) || isset($object->fields['note_private'])) {
 		$nbNote = 0;
-		if (!empty($object->note_private)) $nbNote++;
-		if (!empty($object->note_public)) $nbNote++;
+		if (!empty($object->note_private)) {
+			$nbNote++;
+		}
+		if (!empty($object->note_public)) {
+			$nbNote++;
+		}
 		$head[$h][0] = dol_buildpath('/recruitment/recruitmentjobposition_note.php', 1).'?id='.$object->id;
 		$head[$h][1] = $langs->trans('Notes');
-		if ($nbNote > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
+		if ($nbNote > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
+		}
 		$head[$h][2] = 'note';
 		$h++;
 	}
@@ -67,7 +83,9 @@ function recruitmentjobpositionPrepareHead($object)
 	$nbLinks = Link::count($db, $object->element, $object->id);
 	$head[$h][0] = dol_buildpath("/recruitment/recruitmentjobposition_document.php", 1).'?id='.$object->id;
 	$head[$h][1] = $langs->trans('Documents');
-	if (($nbFiles + $nbLinks) > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
+	if (($nbFiles + $nbLinks) > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
+	}
 	$head[$h][2] = 'document';
 	$h++;
 
@@ -113,17 +131,21 @@ function getPublicJobPositionUrl($mode, $ref = '', $localorexternal = 0)
 	//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
 	$urltouse = DOL_MAIN_URL_ROOT;
-	if ($localorexternal) $urltouse = $urlwithroot;
+	if ($localorexternal) {
+		$urltouse = $urlwithroot;
+	}
 
-	$out = $urltouse.'/public/recruitment/view.php?ref='.($mode ? '<font color="#666666">' : '').$ref.($mode ? '</font>' : '');
+	$out = $urltouse.'/public/recruitment/view.php?ref='.($mode ? '<span style="color: #666666">' : '').$ref.($mode ? '</span>' : '');
 	/*if (!empty($conf->global->RECRUITMENT_SECURITY_TOKEN))
 	{
-		if (empty($conf->global->RECRUITMENT_SECURITY_TOKEN)) $out .= '&securekey='.$conf->global->RECRUITMENT_SECURITY_TOKEN;
-		else $out .= '&securekey='.dol_hash($conf->global->RECRUITMENT_SECURITY_TOKEN, 2);
+		if (empty($conf->global->RECRUITMENT_SECURITY_TOKEN)) $out .= '&securekey='.urlencode($conf->global->RECRUITMENT_SECURITY_TOKEN);
+		else $out .= '&securekey='.urlencode(dol_hash($conf->global->RECRUITMENT_SECURITY_TOKEN, 2));
 	}*/
 
 	// For multicompany
-	if (!empty($out) && !empty($conf->multicompany->enabled)) $out .= "&entity=".$conf->entity; // Check the entity because we may have the same reference in several entities
+	if (!empty($out) && !empty($conf->multicompany->enabled)) {
+		$out .= "&entity=".$conf->entity; // Check the entity because we may have the same reference in several entities
+	}
 
 	return $out;
 }

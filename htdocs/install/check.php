@@ -26,6 +26,7 @@
  *	\ingroup    install
  *	\brief      Test if file conf can be modified and if does not exists, test if install process can create it
  */
+
 include_once 'inc.php';
 
 global $langs;
@@ -43,7 +44,9 @@ $langs->load("install");
 // Now we load forced/pre-set values from install.forced.php file.
 $useforcedwizard = false;
 $forcedfile = "./install.forced.php";
-if ($conffile == "/etc/dolibarr/conf.php") $forcedfile = "/etc/dolibarr/install.forced.php";
+if ($conffile == "/etc/dolibarr/conf.php") {
+	$forcedfile = "/etc/dolibarr/install.forced.php";
+}
 if (@file_exists($forcedfile)) {
 	$useforcedwizard = true;
 	include_once $forcedfile;
@@ -62,120 +65,147 @@ pHeader('', ''); // No next step for navigation buttons. Next step is defined by
 //print "<br>\n";
 //print $langs->trans("InstallEasy")."<br><br>\n";
 
-print '<h3><img class="valigntextbottom" src="../theme/common/octicons/build/svg/gear.svg" width="20" alt="Database"> '.$langs->trans("MiscellaneousChecks").":</h3>\n";
+print '<h3><img class="valignmiddle inline-block paddingright" src="../theme/common/octicons/build/svg/gear.svg" width="20" alt="Database"> ';
+print '<span class="inline-block">'.$langs->trans("MiscellaneousChecks")."</span></h3>\n";
 
 // Check browser
 $useragent = $_SERVER['HTTP_USER_AGENT'];
-if (!empty($useragent))
-{
+if (!empty($useragent)) {
 	$tmp = getBrowserInfo($_SERVER["HTTP_USER_AGENT"]);
 	$browserversion = $tmp['browserversion'];
 	$browsername = $tmp['browsername'];
-	if ($browsername == 'ie' && $browserversion < 7) print '<img src="../theme/eldy/img/warning.png" alt="Error"> '.$langs->trans("WarningBrowserTooOld")."<br>\n";
+	if ($browsername == 'ie' && $browserversion < 7) {
+		print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle"> '.$langs->trans("WarningBrowserTooOld")."<br>\n";
+	}
 }
 
 
 // Check PHP version
 $arrayphpminversionerror = array(5, 5, 0);
 $arrayphpminversionwarning = array(5, 6, 0);
-if (versioncompare(versionphparray(), $arrayphpminversionerror) < 0)        // Minimum to use (error if lower)
-{
-	print '<img src="../theme/eldy/img/error.png" alt="Error"> '.$langs->trans("ErrorPHPVersionTooLow", versiontostring($arrayphpminversionerror));
+if (versioncompare(versionphparray(), $arrayphpminversionerror) < 0) {        // Minimum to use (error if lower)
+	print '<img src="../theme/eldy/img/error.png" alt="Error" class="valignmiddle"> '.$langs->trans("ErrorPHPVersionTooLow", versiontostring($arrayphpminversionerror));
 	$checksok = 0; // 0=error, 1=warning
-} elseif (versioncompare(versionphparray(), $arrayphpminversionwarning) < 0)    // Minimum supported (warning if lower)
-{
-	print '<img src="../theme/eldy/img/warning.png" alt="Error"> '.$langs->trans("ErrorPHPVersionTooLow", versiontostring($arrayphpminversionwarning));
+} elseif (versioncompare(versionphparray(), $arrayphpminversionwarning) < 0) {    // Minimum supported (warning if lower)
+	print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle"> '.$langs->trans("ErrorPHPVersionTooLow", versiontostring($arrayphpminversionwarning));
 	$checksok = 0; // 0=error, 1=warning
 } else {
-	print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("PHPVersion")." ".versiontostring(versionphparray());
+	print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle"> '.$langs->trans("PHPVersion")." ".versiontostring(versionphparray());
 }
-if (empty($force_install_nophpinfo)) print ' (<a href="phpinfo.php" target="_blank">'.$langs->trans("MoreInformation").'</a>)';
+if (empty($force_install_nophpinfo)) {
+	print ' (<a href="phpinfo.php" target="_blank" rel="noopener noreferrer">'.$langs->trans("MoreInformation").'</a>)';
+}
 print "<br>\n";
 
 
 // Check PHP support for $_GET and $_POST
-if (!isset($_GET["testget"]) && !isset($_POST["testpost"]))	// We must keep $_GET and $_POST here
-{
-	print '<img src="../theme/eldy/img/warning.png" alt="Warning"> '.$langs->trans("PHPSupportPOSTGETKo");
-	print ' (<a href="'.$_SERVER["PHP_SELF"].'?testget=ok">'.$langs->trans("Recheck").'</a>)';
+if (!isset($_GET["testget"]) && !isset($_POST["testpost"])) {	// We must keep $_GET and $_POST here
+	print '<img src="../theme/eldy/img/warning.png" alt="Warning" class="valignmiddle"> '.$langs->trans("PHPSupportPOSTGETKo");
+	print ' (<a href="'.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?testget=ok">'.$langs->trans("Recheck").'</a>)';
 	print "<br>\n";
 	$checksok = 0;
 } else {
-	print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("PHPSupportPOSTGETOk")."<br>\n";
+	print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle"> '.$langs->trans("PHPSupportPOSTGETOk")."<br>\n";
 }
 
 
 // Check if session_id is enabled
-if (!function_exists("session_id"))
-{
-	print '<img src="../theme/eldy/img/error.png" alt="Error"> '.$langs->trans("ErrorPHPDoesNotSupportSessions")."<br>\n";
+if (!function_exists("session_id")) {
+	print '<img src="../theme/eldy/img/error.png" alt="Error" class="valignmiddle"> '.$langs->trans("ErrorPHPDoesNotSupportSessions")."<br>\n";
 	$checksok = 0;
 } else {
-	print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("PHPSupportSessions")."<br>\n";
+	print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle"> '.$langs->trans("PHPSupportSessions")."<br>\n";
 }
 
 
-// Check if GD is supported (we need GD for image conversion)
-if (!function_exists("imagecreate"))
-{
+// Check for mbstring extension
+if (!extension_loaded("mbstring")) {
 	$langs->load("errors");
-	print '<img src="../theme/eldy/img/warning.png" alt="Error"> '.$langs->trans("ErrorPHPDoesNotSupportGD")."<br>\n";
+	print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle"> '.$langs->trans("ErrorPHPDoesNotSupport", "MBString")."<br>\n";
+	// $checksok = 0; // If ko, just warning. So check must still be 1 (otherwise no way to install)
+} else {
+	print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle"> '.$langs->trans("PHPSupport", "MBString")."<br>\n";
+}
+
+// Check for json extension
+if (!extension_loaded("json")) {
+	$langs->load("errors");
+	print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle"> '.$langs->trans("ErrorPHPDoesNotSupport", "JSON")."<br>\n";
+	// $checksok = 0; // If ko, just warning. So check must still be 1 (otherwise no way to install)
+} else {
+	print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle"> '.$langs->trans("PHPSupport", "JSON")."<br>\n";
+}
+
+// Check if GD is supported (we need GD for image conversion)
+if (!function_exists("imagecreate")) {
+	$langs->load("errors");
+	print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle"> '.$langs->trans("ErrorPHPDoesNotSupport", "GD")."<br>\n";
 	// $checksok = 0;		// If ko, just warning. So check must still be 1 (otherwise no way to install)
 } else {
-	print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("PHPSupport", "GD")."<br>\n";
+	print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle"> '.$langs->trans("PHPSupport", "GD")."<br>\n";
 }
 
 
 // Check if Curl is supported
-if (!function_exists("curl_init"))
-{
+if (!function_exists("curl_init")) {
 	$langs->load("errors");
-	print '<img src="../theme/eldy/img/warning.png" alt="Error"> '.$langs->trans("ErrorPHPDoesNotSupportCurl")."<br>\n";
+	print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle"> '.$langs->trans("ErrorPHPDoesNotSupport", "Curl")."<br>\n";
 	// $checksok = 0;		// If ko, just warning. So check must still be 1 (otherwise no way to install)
 } else {
-	print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("PHPSupport", "Curl")."<br>\n";
+	print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle"> '.$langs->trans("PHPSupport", "Curl")."<br>\n";
 }
 
 // Check if PHP calendar extension is available
-if (!function_exists("easter_date"))
-{
-	print '<img src="../theme/eldy/img/warning.png" alt="Error"> '.$langs->trans("ErrorPHPDoesNotSupportCalendar")."<br>\n";
+if (!function_exists("easter_date")) {
+	print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle"> '.$langs->trans("ErrorPHPDoesNotSupport", "Calendar")."<br>\n";
 } else {
-	print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("PHPSupport", "Calendar")."<br>\n";
+	print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle"> '.$langs->trans("PHPSupport", "Calendar")."<br>\n";
 }
 
-
-// Check if UTF8 is supported
-if (!function_exists("utf8_encode"))
-{
+// Check if Curl is supported
+if (!function_exists("simplexml_load_string")) {
 	$langs->load("errors");
-	print '<img src="../theme/eldy/img/warning.png" alt="Error"> '.$langs->trans("ErrorPHPDoesNotSupportUTF8")."<br>\n";
+	print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle"> '.$langs->trans("ErrorPHPDoesNotSupport", "Xml")."<br>\n";
 	// $checksok = 0;		// If ko, just warning. So check must still be 1 (otherwise no way to install)
 } else {
-	print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("PHPSupport", "UTF8")."<br>\n";
+	print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle"> '.$langs->trans("PHPSupport", "Xml")."<br>\n";
 }
 
+// Check if UTF8 is supported
+if (!function_exists("utf8_encode")) {
+	$langs->load("errors");
+	print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle"> '.$langs->trans("ErrorPHPDoesNotSupport", "UTF8")."<br>\n";
+	// $checksok = 0; // If ko, just warning. So check must still be 1 (otherwise no way to install)
+} else {
+	print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle"> '.$langs->trans("PHPSupport", "UTF8")."<br>\n";
+}
 
 // Check if intl methods are supported
-if (empty($_SERVER["SERVER_ADMIN"]) || $_SERVER["SERVER_ADMIN"] != 'doliwamp@localhost')
-{
-	if (!function_exists("locale_get_primary_language") || !function_exists("locale_get_region"))
-	{
+if (empty($_SERVER["SERVER_ADMIN"]) || $_SERVER["SERVER_ADMIN"] != 'doliwamp@localhost') {
+	if (!function_exists("locale_get_primary_language") || !function_exists("locale_get_region")) {
 		$langs->load("errors");
-		print '<img src="../theme/eldy/img/warning.png" alt="Error"> '.$langs->trans("ErrorPHPDoesNotSupportIntl")."<br>\n";
+		print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle"> '.$langs->trans("ErrorPHPDoesNotSupport", "Intl")."<br>\n";
 		// $checksok = 0;		// If ko, just warning. So check must still be 1 (otherwise no way to install)
 	} else {
-		print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("PHPSupport", "Intl")."<br>\n";
+		print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle"> '.$langs->trans("PHPSupport", "Intl")."<br>\n";
 	}
 }
 
-if (!class_exists('ZipArchive'))
-{
+// Check if Curl is supported
+if (!function_exists("imap_open")) {
 	$langs->load("errors");
-	print '<img src="../theme/eldy/img/warning.png" alt="Error"> '.$langs->trans("ErrorPHPDoesNotSupport", "ZIP")."<br>\n";
+	print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle"> '.$langs->trans("ErrorPHPDoesNotSupport", "IMAP")."<br>\n";
 	// $checksok = 0;		// If ko, just warning. So check must still be 1 (otherwise no way to install)
 } else {
-	print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("PHPSupport", "ZIP")."<br>\n";
+	print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle"> '.$langs->trans("PHPSupport", "IMAP")."<br>\n";
+}
+
+if (!class_exists('ZipArchive')) {
+	$langs->load("errors");
+	print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle"> '.$langs->trans("ErrorPHPDoesNotSupport", "ZIP")."<br>\n";
+	// $checksok = 0;		// If ko, just warning. So check must still be 1 (otherwise no way to install)
+} else {
+	print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle"> '.$langs->trans("PHPSupport", "ZIP")."<br>\n";
 }
 
 // Check memory
@@ -183,35 +213,36 @@ $memrequiredorig = '64M';
 $memrequired = 64 * 1024 * 1024;
 $memmaxorig = @ini_get("memory_limit");
 $memmax = @ini_get("memory_limit");
-if ($memmaxorig != '')
-{
+if ($memmaxorig != '') {
 	preg_match('/([0-9]+)([a-zA-Z]*)/i', $memmax, $reg);
-	if ($reg[2])
-	{
-		if (strtoupper($reg[2]) == 'G') $memmax = $reg[1] * 1024 * 1024 * 1024;
-		if (strtoupper($reg[2]) == 'M') $memmax = $reg[1] * 1024 * 1024;
-		if (strtoupper($reg[2]) == 'K') $memmax = $reg[1] * 1024;
+	if ($reg[2]) {
+		if (strtoupper($reg[2]) == 'G') {
+			$memmax = $reg[1] * 1024 * 1024 * 1024;
+		}
+		if (strtoupper($reg[2]) == 'M') {
+			$memmax = $reg[1] * 1024 * 1024;
+		}
+		if (strtoupper($reg[2]) == 'K') {
+			$memmax = $reg[1] * 1024;
+		}
 	}
-	if ($memmax >= $memrequired || $memmax == -1)
-	{
-		print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("PHPMemoryOK", $memmaxorig, $memrequiredorig)."<br>\n";
+	if ($memmax >= $memrequired || $memmax == -1) {
+		print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle"> '.$langs->trans("PHPMemoryOK", $memmaxorig, $memrequiredorig)."<br>\n";
 	} else {
-		print '<img src="../theme/eldy/img/warning.png" alt="Warning"> '.$langs->trans("PHPMemoryTooLow", $memmaxorig, $memrequiredorig)."<br>\n";
+		print '<img src="../theme/eldy/img/warning.png" alt="Warning" class="valignmiddle"> '.$langs->trans("PHPMemoryTooLow", $memmaxorig, $memrequiredorig)."<br>\n";
 	}
 }
 
 
 // If that config file is present and filled
 clearstatcache();
-if (is_readable($conffile) && filesize($conffile) > 8)
-{
+if (is_readable($conffile) && filesize($conffile) > 8) {
 	dolibarr_install_syslog("check: conf file '".$conffile."' already defined");
 	$confexists = 1;
 	include_once $conffile;
 
 	$databaseok = 1;
-	if ($databaseok)
-	{
+	if ($databaseok) {
 		// Already installed for all parts (config and database). We can propose upgrade.
 		$allowupgrade = true;
 	} else {
@@ -223,8 +254,7 @@ if (is_readable($conffile) && filesize($conffile) > 8)
 	$confexists = 0;
 
 	// First we try by copying example
-	if (@copy($conffile.".example", $conffile))
-	{
+	if (@copy($conffile.".example", $conffile)) {
 		// Success
 		dolibarr_install_syslog("check: successfully copied file ".$conffile.".example into ".$conffile);
 	} else {
@@ -232,12 +262,13 @@ if (is_readable($conffile) && filesize($conffile) > 8)
 		dolibarr_install_syslog("check: failed to copy file ".$conffile.".example into ".$conffile.". We try to create it.", LOG_WARNING);
 
 		$fp = @fopen($conffile, "w");
-		if ($fp)
-		{
+		if ($fp) {
 			@fwrite($fp, '<?php');
 			@fputs($fp, "\n");
 			fclose($fp);
-		} else dolibarr_install_syslog("check: failed to create a new file ".$conffile." into current dir ".getcwd().". Please check permissions.", LOG_ERR);
+		} else {
+			dolibarr_install_syslog("check: failed to create a new file ".$conffile." into current dir ".getcwd().". Please check permissions.", LOG_ERR);
+		}
 	}
 
 	// First install: no upgrade necessary/required
@@ -247,27 +278,22 @@ if (is_readable($conffile) && filesize($conffile) > 8)
 
 
 // File is missing and cannot be created
-if (!file_exists($conffile))
-{
-	print '<img src="../theme/eldy/img/error.png" alt="Error"> '.$langs->trans("ConfFileDoesNotExistsAndCouldNotBeCreated", $conffiletoshow);
-	print "<br><br>";
+if (!file_exists($conffile)) {
+	print '<img src="../theme/eldy/img/error.png" alt="Error" class="valignmiddle"> '.$langs->trans("ConfFileDoesNotExistsAndCouldNotBeCreated", $conffiletoshow);
+	print '<br><br><div class="error">';
 	print $langs->trans("YouMustCreateWithPermission", $conffiletoshow);
-	print "<br><br>";
+	print '</div><br><br>'."\n";
 
-	print $langs->trans("CorrectProblemAndReloadPage", $_SERVER['PHP_SELF'].'?testget=ok');
+	print '<span class="opacitymedium">'.$langs->trans("CorrectProblemAndReloadPage", $_SERVER['PHP_SELF'].'?testget=ok').'</span>';
 	$err++;
 } else {
-	if (dol_is_dir($conffile))
-	{
+	if (dol_is_dir($conffile)) {
 		print '<img src="../theme/eldy/img/error.png" alt="Warning"> '.$langs->trans("ConfFileMustBeAFileNotADir", $conffiletoshow);
 
 		$allowinstall = 0;
-	}
-	// File exists but cannot be modified
-	elseif (!is_writable($conffile))
-	{
-		if ($confexists)
-		{
+	} elseif (!is_writable($conffile)) {
+		// File exists but cannot be modified
+		if ($confexists) {
 			print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("ConfFileExists", $conffiletoshow);
 		} else {
 			print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("ConfFileCouldBeCreated", $conffiletoshow);
@@ -277,11 +303,9 @@ if (!file_exists($conffile))
 		print "<br>\n";
 
 		$allowinstall = 0;
-	}
-	// File exists and can be modified
-	else {
-		if ($confexists)
-		{
+	} else {
+		// File exists and can be modified
+		if ($confexists) {
 			print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("ConfFileExists", $conffiletoshow);
 		} else {
 			print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("ConfFileCouldBeCreated", $conffiletoshow);
@@ -295,32 +319,28 @@ if (!file_exists($conffile))
 	print "<br>\n";
 
 	// Requirements met/all ok: display the next step button
-	if ($checksok)
-	{
+	if ($checksok) {
 		$ok = 0;
 
 		// Try to create db connection
-		if (file_exists($conffile))
-		{
+		if (file_exists($conffile)) {
 			include_once $conffile;
-			if (!empty($dolibarr_main_db_type) && !empty($dolibarr_main_document_root))
-			{
-				if (!file_exists($dolibarr_main_document_root."/core/lib/admin.lib.php"))
-				{
+			if (!empty($dolibarr_main_db_type) && !empty($dolibarr_main_document_root)) {
+				if (!file_exists($dolibarr_main_document_root."/core/lib/admin.lib.php")) {
 					print '<span class="error">A '.$conffiletoshow.' file exists with a dolibarr_main_document_root to '.$dolibarr_main_document_root.' that seems wrong. Try to fix or remove the '.$conffiletoshow.' file.</span><br>'."\n";
 					dol_syslog("A '".$conffiletoshow."' file exists with a dolibarr_main_document_root to ".$dolibarr_main_document_root." that seems wrong. Try to fix or remove the '".$conffiletoshow."' file.", LOG_WARNING);
 				} else {
 					require_once $dolibarr_main_document_root.'/core/lib/admin.lib.php';
 
 					// If password is encoded, we decode it
-					if (preg_match('/crypted:/i', $dolibarr_main_db_pass) || !empty($dolibarr_main_db_encrypted_pass))
-					{
+					if (preg_match('/crypted:/i', $dolibarr_main_db_pass) || !empty($dolibarr_main_db_encrypted_pass)) {
 						require_once $dolibarr_main_document_root.'/core/lib/security.lib.php';
-						if (preg_match('/crypted:/i', $dolibarr_main_db_pass))
-						{
+						if (preg_match('/crypted:/i', $dolibarr_main_db_pass)) {
 							$dolibarr_main_db_encrypted_pass = preg_replace('/crypted:/i', '', $dolibarr_main_db_pass); // We need to set this as it is used to know the password was initially crypted
 							$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_encrypted_pass);
-						} else $dolibarr_main_db_pass = dol_decode($dolibarr_main_db_encrypted_pass);
+						} else {
+							$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_encrypted_pass);
+						}
 					}
 
 					// $conf already created in inc.php
@@ -331,8 +351,7 @@ if (!file_exists($conffile))
 					$conf->db->user = $dolibarr_main_db_user;
 					$conf->db->pass = $dolibarr_main_db_pass;
 					$db = getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->db->pass, $conf->db->name, $conf->db->port);
-					if ($db->connected && $db->database_selected)
-					{
+					if ($db->connected && $db->database_selected) {
 						$ok = true;
 					}
 				}
@@ -340,16 +359,21 @@ if (!file_exists($conffile))
 		}
 
 		// If database access is available, we set more variables
-		if ($ok)
-		{
-			if (empty($dolibarr_main_db_encryption)) $dolibarr_main_db_encryption = 0;
+		if ($ok) {
+			if (empty($dolibarr_main_db_encryption)) {
+				$dolibarr_main_db_encryption = 0;
+			}
 			$conf->db->dolibarr_main_db_encryption = $dolibarr_main_db_encryption;
-			if (empty($dolibarr_main_db_cryptkey)) $dolibarr_main_db_cryptkey = '';
+			if (empty($dolibarr_main_db_cryptkey)) {
+				$dolibarr_main_db_cryptkey = '';
+			}
 			$conf->db->dolibarr_main_db_cryptkey = $dolibarr_main_db_cryptkey;
 
 			$conf->setValues($db);
 			// Reset forced setup after the setValues
-			if (defined('SYSLOG_FILE')) $conf->global->SYSLOG_FILE = constant('SYSLOG_FILE');
+			if (defined('SYSLOG_FILE')) {
+				$conf->global->SYSLOG_FILE = constant('SYSLOG_FILE');
+			}
 			$conf->global->MAIN_ENABLE_LOG_TO_HTML = 1;
 
 			// Current version is $conf->global->MAIN_VERSION_LAST_UPGRADE
@@ -359,14 +383,15 @@ if (!file_exists($conffile))
 		}
 
 		// Show title
-		if (!empty($conf->global->MAIN_VERSION_LAST_UPGRADE) || !empty($conf->global->MAIN_VERSION_LAST_INSTALL))
-		{
+		if (!empty($conf->global->MAIN_VERSION_LAST_UPGRADE) || !empty($conf->global->MAIN_VERSION_LAST_INSTALL)) {
 			print $langs->trans("VersionLastUpgrade").': <b><span class="ok">'.(empty($conf->global->MAIN_VERSION_LAST_UPGRADE) ? $conf->global->MAIN_VERSION_LAST_INSTALL : $conf->global->MAIN_VERSION_LAST_UPGRADE).'</span></b> - ';
 			print $langs->trans("VersionProgram").': <b><span class="ok">'.DOL_VERSION.'</span></b>';
 			//print ' '.img_warning($langs->trans("RunningUpdateProcessMayBeRequired"));
 			print '<br>';
 			print '<br>';
-		} else print "<br>\n";
+		} else {
+			print "<br>\n";
+		}
 
 		//print $langs->trans("InstallEasy")." ";
 		print '<h3><span class="soustitre">'.$langs->trans("ChooseYourSetupMode").'</span></h3>';
@@ -376,8 +401,7 @@ if (!file_exists($conffile))
 		$available_choices = array();
 		$notavailable_choices = array();
 
-		if (empty($dolibarr_main_db_host))	// This means install process was not run
-		{
+		if (empty($dolibarr_main_db_host)) {	// This means install process was not run
 			$foundrecommandedchoice = 1; // To show only once
 		}
 
@@ -387,18 +411,16 @@ if (!file_exists($conffile))
 		$choice .= '</td>';
 		$choice .= '<td class="listofchoicesdesc">';
 		$choice .= $langs->trans("FreshInstallDesc");
-		if (empty($dolibarr_main_db_host))	// This means install process was not run
-		{
+		if (empty($dolibarr_main_db_host)) {	// This means install process was not run
 			$choice .= '<br>';
 			//print $langs->trans("InstallChoiceRecommanded",DOL_VERSION,$conf->global->MAIN_VERSION_LAST_UPGRADE);
 			$choice .= '<div class="center"><div class="ok suggestedchoice">'.$langs->trans("InstallChoiceSuggested").'</div></div>';
-			// <img src="../theme/eldy/img/tick.png" alt="Ok"> ';
+			// <img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle"> ';
 		}
 
 		$choice .= '</td>';
 		$choice .= '<td class="center">';
-		if ($allowinstall)
-		{
+		if ($allowinstall) {
 			$choice .= '<a class="button" href="fileconf.php?selectlang='.$setuplang.'">'.$langs->trans("Start").'</a>';
 		} else {
 			$choice .= ($foundrecommandedchoice ? '<span class="warning">' : '').$langs->trans("InstallNotAllowed").($foundrecommandedchoice ? '</span>' : '');
@@ -415,36 +437,38 @@ if (!file_exists($conffile))
 
 		// Show upgrade lines
 		$allowupgrade = true;
-		if (empty($dolibarr_main_db_host))	// This means install process was not run
-		{
+		if (empty($dolibarr_main_db_host)) {	// This means install process was not run
 			$allowupgrade = false;
 		}
-		if (defined("MAIN_NOT_INSTALLED")) $allowupgrade = false;
-		if (GETPOST('allowupgrade')) $allowupgrade = true;
-		$migrationscript = array(array('from'=>'3.0.0', 'to'=>'3.1.0'),
-								array('from'=>'3.1.0', 'to'=>'3.2.0'),
-								array('from'=>'3.2.0', 'to'=>'3.3.0'),
-								array('from'=>'3.3.0', 'to'=>'3.4.0'),
-								array('from'=>'3.4.0', 'to'=>'3.5.0'),
-								array('from'=>'3.5.0', 'to'=>'3.6.0'),
-								array('from'=>'3.6.0', 'to'=>'3.7.0'),
-								array('from'=>'3.7.0', 'to'=>'3.8.0'),
-								array('from'=>'3.8.0', 'to'=>'3.9.0'),
-								array('from'=>'3.9.0', 'to'=>'4.0.0'),
-								array('from'=>'4.0.0', 'to'=>'5.0.0'),
-								array('from'=>'5.0.0', 'to'=>'6.0.0'),
-								array('from'=>'6.0.0', 'to'=>'7.0.0'),
-								array('from'=>'7.0.0', 'to'=>'8.0.0'),
-								array('from'=>'8.0.0', 'to'=>'9.0.0'),
-								array('from'=>'9.0.0', 'to'=>'10.0.0'),
-								array('from'=>'10.0.0', 'to'=>'11.0.0'),
-								array('from'=>'11.0.0', 'to'=>'12.0.0'),
-								array('from'=>'12.0.0', 'to'=>'13.0.0')
-		);
+		if (getDolGlobalInt("MAIN_NOT_INSTALLED")) {
+			$allowupgrade = false;
+		}
+		if (GETPOST('allowupgrade')) {
+			$allowupgrade = true;
+		}
+
+		$dir = DOL_DOCUMENT_ROOT."/install/mysql/migration/";	// We use mysql migration scripts whatever is database driver
+		dolibarr_install_syslog("Scan sql files for migration files in ".$dir);
+
+		// Get files list of migration file x.y.z-a.b.c.sql into /install/mysql/migration
+		$migrationscript = array();
+		$handle = opendir($dir);
+		if (is_resource($handle)) {
+			while (($file = readdir($handle)) !== false) {
+				$reg = array();
+				if (preg_match('/^(\d+\.\d+\.\d+)-(\d+\.\d+\.\d+)\.sql$/i', $file, $reg)) {
+					if (!empty($reg[2]) && version_compare(DOL_VERSION, $reg[2])) {
+						$migrationscript[] = array('from' => $reg[1], 'to' => $reg[2]);
+					}
+				}
+			}
+			$migrationscript = dol_sort_array($migrationscript, 'from', 'asc', 1);
+		} else {
+			print '<div class="error">'.$langs->trans("ErrorCanNotReadDir", $dir).'</div>';
+		}
 
 		$count = 0;
-		foreach ($migrationscript as $migarray)
-		{
+		foreach ($migrationscript as $migarray) {
 			$choice = '';
 
 			$count++;
@@ -459,20 +483,16 @@ if (!file_exists($conffile))
 			$newversionfrom = preg_replace('/(\.[0-9]+)$/i', '.*', $versionfrom);
 			$newversionto = preg_replace('/(\.[0-9]+)$/i', '.*', $versionto);
 			$newversionfrombis = '';
-			if (versioncompare($dolibarrversiontoarray, $versionarray) < -2)	// From x.y.z -> x.y.z+1
-			{
+			if (versioncompare($dolibarrversiontoarray, $versionarray) < -2) {	// From x.y.z -> x.y.z+1
 				$newversionfrombis = ' '.$langs->trans("or").' '.$versionto;
 			}
 
-			if ($ok)
-			{
-				if (count($dolibarrlastupgradeversionarray) >= 2)	// If database access is available and last upgrade version is known
-				{
+			if ($ok) {
+				if (count($dolibarrlastupgradeversionarray) >= 2) {	// If database access is available and last upgrade version is known
 					// Now we check if this is the first qualified choice
 					if ($allowupgrade && empty($foundrecommandedchoice) &&
 						(versioncompare($dolibarrversiontoarray, $dolibarrlastupgradeversionarray) > 0 || versioncompare($dolibarrversiontoarray, $versionarray) < -2)
-					)
-					{
+					) {
 						$foundrecommandedchoice = 1; // To show only once
 						$recommended_choice = true;
 					}
@@ -488,14 +508,12 @@ if (!file_exists($conffile))
 			$choice .= '<td class="listofchoicesdesc">';
 			$choice .= $langs->trans("UpgradeDesc");
 
-			if ($recommended_choice)
-			{
+			if ($recommended_choice) {
 				$choice .= '<br>';
 				//print $langs->trans("InstallChoiceRecommanded",DOL_VERSION,$conf->global->MAIN_VERSION_LAST_UPGRADE);
 				$choice .= '<div class="center">';
 				$choice .= '<div class="ok suggestedchoice">'.$langs->trans("InstallChoiceSuggested").'</div>';
-				if ($count < count($migarray))	// There are other choices after
-				{
+				if ($count < count($migarray)) {	// There are other choices after
 					print $langs->trans("MigrateIsDoneStepByStep", DOL_VERSION);
 				}
 				$choice .= '</div>';
@@ -503,19 +521,15 @@ if (!file_exists($conffile))
 
 			$choice .= '</td>';
 			$choice .= '<td class="center">';
-			if ($allowupgrade)
-			{
+			if ($allowupgrade) {
 				$disabled = false;
-				if ($foundrecommandedchoice == 2)
-				{
+				if ($foundrecommandedchoice == 2) {
 					$disabled = true;
 				}
-				if ($foundrecommandedchoice == 1)
-				{
+				if ($foundrecommandedchoice == 1) {
 					$foundrecommandedchoice = 2;
 				}
-				if ($disabled)
-				{
+				if ($disabled) {
 					$choice .= '<span class="opacitymedium">'.$langs->trans("NotYetAvailable").'</span>';
 				} else {
 					$choice .= '<a class="button runupgrade" href="upgrade.php?action=upgrade'.($count < count($migrationscript) ? '_'.$versionto : '').'&amp;selectlang='.$setuplang.'&amp;versionfrom='.$versionfrom.'&amp;versionto='.$versionto.'">'.$langs->trans("Start").'</a>';
@@ -534,8 +548,7 @@ if (!file_exists($conffile))
 		}
 
 		// If there is no choice at all, we show all of them.
-		if (empty($available_choices))
-		{
+		if (empty($available_choices)) {
 			$available_choices = $notavailable_choices;
 			$notavailable_choices = array();
 		}

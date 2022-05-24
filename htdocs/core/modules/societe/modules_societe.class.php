@@ -41,22 +41,21 @@ abstract class ModeleThirdPartyDoc extends CommonDocGenerator
 	/**
 	 *  Return list of active generation modules
 	 *
-	 * 	@param	DoliDB		$db					Database handler
+	 * 	@param	DoliDB		$dbs				Database handler
 	 *  @param	integer		$maxfilenamelength  Max length of value to show
 	 * 	@return	array							List of templates
 	 */
-	public static function liste_modeles($db, $maxfilenamelength = 0)
+	public static function liste_modeles($dbs, $maxfilenamelength = 0)
 	{
 		// phpcs:enable
-		global $conf;
 
 		$type = 'company';
-		$liste = array();
+		$list = array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$liste = getListOfModels($db, $type, $maxfilenamelength);
+		$list = getListOfModels($dbs, $type, $maxfilenamelength);
 
-		return $liste;
+		return $list;
 	}
 }
 
@@ -161,29 +160,29 @@ abstract class ModeleThirdPartyCode
 	/**
 	 *  Renvoie la liste des modeles de numérotation
 	 *
-	 *  @param	DoliDB	$db     			Database handler
+	 *  @param	DoliDB	$dbs     			Database handler
 	 *  @param  integer	$maxfilenamelength  Max length of value to show
 	 *  @return	array|int					List of numbers
 	 */
-	public static function liste_modeles($db, $maxfilenamelength = 0)
+	public static function liste_modeles($dbs, $maxfilenamelength = 0)
 	{
 		// phpcs:enable
-		$liste = array();
+		$list = array();
 		$sql = "";
 
-		$resql = $db->query($sql);
+		$resql = $dbs->query($sql);
 		if ($resql) {
-			$num = $db->num_rows($resql);
+			$num = $dbs->num_rows($resql);
 			$i = 0;
 			while ($i < $num) {
-				$row = $db->fetch_row($resql);
-				$liste[$row[0]] = $row[1];
+				$row = $dbs->fetch_row($resql);
+				$list[$row[0]] = $row[1];
 				$i++;
 			}
 		} else {
 			return -1;
 		}
-		return $liste;
+		return $list;
 	}
 
 	/**
@@ -198,7 +197,8 @@ abstract class ModeleThirdPartyCode
 	{
 		global $conf;
 
-		$langs->load("admin");
+		$langs->loadLangs(array("admin", "companies"));
+
 		$strikestart = '';
 		$strikeend = '';
 		if (!empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && !empty($this->code_null)) {
@@ -399,27 +399,4 @@ abstract class ModeleAccountancyCode
 
 		return $langs->trans("NotAvailable");
 	}
-}
-
-
-/**
- *  Create a document onto disk according to template module.
- *
- *	@param	DoliDB		$db  			Database handler
- *	@param  Facture		$object			Object invoice
- *  @param  string      $message        Message (not used, deprecated)
- *	@param	string		$modele			Force template to use ('' to not force)
- *	@param	Translate	$outputlangs	objet lang a utiliser pour traduction
- *  @param  int			$hidedetails    Hide details of lines
- *  @param  int			$hidedesc       Hide description
- *  @param  int			$hideref        Hide ref
- *	@return int        					<0 if KO, >0 if OK
- *  @deprecated Use the new function generateDocument of Objects class
- *  @see Societe::generateDocument()
- */
-function thirdparty_doc_create(DoliDB $db, Societe $object, $message, $modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
-{
-	dol_syslog(__METHOD__." is deprecated", LOG_WARNING);
-
-	return $object->generateDocument($modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
 }

@@ -51,7 +51,7 @@ abstract class ModelePDFRecruitmentCandidature extends CommonDocGenerator
 		// phpcs:enable
 		global $conf;
 
-		$type = 'recruitmentjobposition';
+		$type = 'recruitmentjobcandidature';
 		$list = array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -141,10 +141,18 @@ abstract class ModeleNumRefRecruitmentCandidature
 		global $langs;
 		$langs->load("admin");
 
-		if ($this->version == 'development') return $langs->trans("VersionDevelopment");
-		if ($this->version == 'experimental') return $langs->trans("VersionExperimental");
-		if ($this->version == 'dolibarr') return DOL_VERSION;
-		if ($this->version) return $this->version;
+		if ($this->version == 'development') {
+			return $langs->trans("VersionDevelopment");
+		}
+		if ($this->version == 'experimental') {
+			return $langs->trans("VersionExperimental");
+		}
+		if ($this->version == 'dolibarr') {
+			return DOL_VERSION;
+		}
+		if ($this->version) {
+			return $this->version;
+		}
 		return $langs->trans("NotAvailable");
 	}
 }

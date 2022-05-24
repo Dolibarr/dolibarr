@@ -2,7 +2,7 @@
 /* Module descriptor for ticket system
  * Copyright (C) 2013-2016  Jean-François FERRY     <hello@librethic.io>
  *               2016       Christophe Battarel     <christophe@altairis.fr>
- * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2021  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,8 +75,8 @@ class box_last_modified_ticket extends ModeleBoxes
 
 		$text = $langs->trans("BoxLastModifiedTicketDescription", $max);
 		$this->info_box_head = array(
-		 	'text' => $text,
-		 	'limit' => dol_strlen($text)
+			'text' => $text,
+			'limit' => dol_strlen($text)
 		);
 
 		$this->info_box_contents[0][0] = array(
@@ -94,14 +94,14 @@ class box_last_modified_ticket extends ModeleBoxes
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_ticket_severity as severity ON severity.code=t.severity_code";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid=t.fk_soc";
 
-			$sql .= " WHERE t.entity = ".$conf->entity;
+			$sql .= " WHERE t.entity IN (".getEntity('ticket').')';
 			//  		$sql.= " AND e.rowid = er.fk_event";
-			//if (!$user->rights->societe->client->voir && !$user->socid) $sql.= " WHERE s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+			//if (empty($user->rights->societe->client->voir) && !$user->socid) $sql.= " WHERE s.rowid = sc.fk_soc AND sc.fk_user = " .((int) $user->id);
 			if ($user->socid) {
-				$sql .= " AND t.fk_soc= ".$user->socid;
+				$sql .= " AND t.fk_soc = ".((int) $user->socid);
 			}
 
-			$sql .= " ORDER BY t.tms DESC, t.rowid DESC ";
+			$sql .= " ORDER BY t.tms DESC, t.rowid DESC";
 			$sql .= $this->db->plimit($max, 0);
 
 			$resql = $this->db->query($sql);
@@ -113,9 +113,6 @@ class box_last_modified_ticket extends ModeleBoxes
 				while ($i < $num) {
 					$objp = $this->db->fetch_object($resql);
 					$datec = $this->db->jdate($objp->datec);
-					$dateterm = $this->db->jdate($objp->fin_validite);
-					$dateclose = $this->db->jdate($objp->date_cloture);
-					$late = '';
 
 					$ticket = new Ticket($this->db);
 					$ticket->id = $objp->id;
@@ -148,7 +145,7 @@ class box_last_modified_ticket extends ModeleBoxes
 
 					// Subject
 					$this->info_box_contents[$i][$r] = array(
-						'td' => 'class="nowrap"',
+						'td' => 'class="nowrap tdoverflowmax150"',
 						'text' => $objp->subject, // Some event have no ref
 						'url' => DOL_URL_ROOT."/ticket/card.php?track_id=".$objp->track_id,
 					);
@@ -156,17 +153,16 @@ class box_last_modified_ticket extends ModeleBoxes
 
 					// Customer
 					$this->info_box_contents[$i][$r] = array(
-						'td' => 'class="tdoverflowmax150 maxwidth300onsmartphone"',
+						'td' => 'class="tdoverflowmax150"',
 						'text' => $link,
 						'asis' => 1,
 					);
 					$r++;
 
-
 					// Date creation
 					$this->info_box_contents[$i][$r] = array(
 						'td' => 'class="right"',
-						'text' => dol_print_date($datec, 'dayhour')
+						'text' => dol_print_date($datec, 'dayhour', 'tzuserrel')
 					);
 					$r++;
 
@@ -181,15 +177,15 @@ class box_last_modified_ticket extends ModeleBoxes
 				}
 
 				if ($num == 0) {
-					$this->info_box_contents[$i][0] = array('td' => 'class="center"', 'text'=>$langs->trans("BoxLastModifiedTicketNoRecordedTickets"));
+					$this->info_box_contents[$i][0] = array('td' => '', 'text'=>'<span class="opacitymedium">'.$langs->trans("BoxLastModifiedTicketNoRecordedTickets").'</span>');
 				}
 			} else {
 				dol_print_error($this->db);
 			}
 		} else {
 			$this->info_box_contents[0][0] = array(
-				'td' => 'class="left"',
-				'text' => $langs->trans("ReadPermissionNotAllowed"),
+				'td' => '',
+				'text' => '<span class="opacitymedium">'.$langs->trans("ReadPermissionNotAllowed").'</span>',
 			);
 		}
 	}

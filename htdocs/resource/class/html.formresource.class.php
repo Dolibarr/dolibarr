@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) - 2013-2015 Jean-François FERRY	<jfefe@aternatik.fr>
  * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2022       Ferran Marcet           <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +28,7 @@ require_once DOL_DOCUMENT_ROOT."/resource/class/dolresource.class.php";
 
 
 /**
- * Classe permettant la gestion des formulaire du module resource
+ * Class to manage forms for the module resource
  *
  * \remarks Utilisation: $formresource = new FormResource($db)
  * \remarks $formplace->proprietes=1 ou chaine ou tableau de valeurs
@@ -75,9 +76,10 @@ class FormResource
 	 *  @param	int		$outputmode		0=HTML select string, 1=Array, 2=without form tag
 	 *  @param	int		$limit			Limit number of answers
 	 *  @param	string	$morecss		More css
+	 * 	@param	bool	$multiple       add [] in the name of element and add 'multiple' attribut
 	 * 	@return	string					HTML string with
 	 */
-	public function select_resource_list($selected = '', $htmlname = 'fk_resource', $filter = '', $showempty = 0, $showtype = 0, $forcecombo = 0, $event = array(), $filterkey = '', $outputmode = 0, $limit = 20, $morecss = '')
+	public function select_resource_list($selected = '', $htmlname = 'fk_resource', $filter = '', $showempty = 0, $showtype = 0, $forcecombo = 0, $event = array(), $filterkey = '', $outputmode = 0, $limit = 20, $morecss = '', $multiple = false)
 	{
 		// phpcs:enable
 		global $conf, $user, $langs;
@@ -87,59 +89,65 @@ class FormResource
 
 		$resourcestat = new Dolresource($this->db);
 
-		$resources_used = $resourcestat->fetch_all('ASC', 't.rowid', $limit, 0, $filter);
+		$resources_used = $resourcestat->fetchAll('ASC', 't.rowid', $limit, 0, $filter);
 
-		if ($outputmode != 2)
-		{
+		if (!empty($selected) && !is_array($selected)) {
+			$selected = array($selected);
+		}
+
+		if ($outputmode != 2) {
 			$out = '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 			$out .= '<input type="hidden" name="token" value="'.newToken().'">';
 		}
 
-		if ($resourcestat)
-		{
-			if (!empty($conf->use_javascript_ajax) && !empty($conf->global->RESOURCE_USE_SEARCH_TO_SELECT) && !$forcecombo)
-			{
+		if ($resourcestat) {
+			// Construct $out and $outarray
+			$out .= '<select id="'.$htmlname.'" class="flat minwidth100'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.($multiple ? '[]' : '').'" '.($multiple ? 'multiple' : '').'>'."\n";
+			if ($showempty) {
+				$out .= '<option value="-1">&nbsp;</option>'."\n";
+			}
+
+			$num = 0;
+			if (is_array($resourcestat->lines)) {
+				$num = count($resourcestat->lines);
+			}
+
+			//var_dump($resourcestat->lines);
+			$i = 0;
+			if ($num) {
+				while ($i < $num) {
+					$resourceclass = ucfirst($resourcestat->lines[$i]->element);
+
+					$label = $resourcestat->lines[$i]->ref ? $resourcestat->lines[$i]->ref : ''.$resourcestat->lines[$i]->label;
+					if ($resourceclass != 'Dolresource') {
+						$label .= ' ('.$langs->trans($resourceclass).')';
+					}
+
+					// Test if entry is the first element of $selected.
+					if ((isset($selected[0]) && is_object($selected[0]) && $selected[0]->id == $resourcestat->lines[$i]->id) || ((!isset($selected[0]) || !is_object($selected[0])) && !empty($selected) && in_array($resourcestat->lines[$i]->id, $selected))) {
+						$out .= '<option value="'.$resourcestat->lines[$i]->id.'" selected>'.$label.'</option>';
+					} else {
+						$out .= '<option value="'.$resourcestat->lines[$i]->id.'">'.$label.'</option>';
+					}
+
+					array_push($outarray, array('key'=>$resourcestat->lines[$i]->id, 'value'=>$resourcestat->lines[$i]->id, 'label'=>$label));
+
+					$i++;
+					if (($i % 10) == 0) {
+						$out .= "\n";
+					}
+				}
+			}
+			$out .= '</select>'."\n";
+
+			if (!empty($conf->use_javascript_ajax) && !empty($conf->global->RESOURCE_USE_SEARCH_TO_SELECT) && !$forcecombo) {
 				//$minLength = (is_numeric($conf->global->RESOURCE_USE_SEARCH_TO_SELECT)?$conf->global->RESOURCE_USE_SEARCH_TO_SELECT:2);
 				$out .= ajax_combobox($htmlname, $event, $conf->global->RESOURCE_USE_SEARCH_TO_SELECT);
 			} else {
 				$out .= ajax_combobox($htmlname);
 			}
 
-			// Construct $out and $outarray
-			$out .= '<select id="'.$htmlname.'" class="flat minwidth100'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'">'."\n";
-			if ($showempty) $out .= '<option value="-1">&nbsp;</option>'."\n";
-
-			$num = 0;
-			if (is_array($resourcestat->lines)) $num = count($resourcestat->lines);
-
-			//var_dump($resourcestat->lines);
-			$i = 0;
-			if ($num)
-			{
-				while ($i < $num)
-				{
-					$resourceclass = ucfirst($resourcestat->lines[$i]->element);
-
-					$label = $resourcestat->lines[$i]->ref ? $resourcestat->lines[$i]->ref : ''.$resourcestat->lines[$i]->label;
-					if ($resourceclass != 'Dolresource') $label .= ' ('.$langs->trans($resourceclass).')';
-
-					if ($selected > 0 && $selected == $resourcestat->lines[$i]->id)
-					{
-						$out .= '<option value="'.$resourcestat->lines[$i]->id.'" selected>'.$label.'</option>';
-					} else {
-						$out .= '<option value="'.$resourcestat->lines[$i]->id.'">'.$label.'</option>';
-					}
-
-					array_push($outarray, array('key'=>$resourcestat->lines[$i]->id, 'value'=>$resourcestat->lines[$i]->label, 'label'=>$resourcestat->lines[$i]->label));
-
-					$i++;
-					if (($i % 10) == 0) $out .= "\n";
-				}
-			}
-			$out .= '</select>'."\n";
-
-			if ($outputmode != 2)
-			{
+			if ($outputmode != 2) {
 				$out .= '<input type="submit" class="button" value="'.$langs->trans("Search").'"> &nbsp; &nbsp; ';
 
 				$out .= '</form>';
@@ -148,7 +156,9 @@ class FormResource
 			dol_print_error($this->db);
 		}
 
-		if ($outputmode && $outputmode != 2) return $outarray;
+		if ($outputmode && $outputmode != 2) {
+			return $outarray;
+		}
 		return $out;
 	}
 
@@ -176,35 +186,57 @@ class FormResource
 
 		$filterarray = array();
 
-		if ($filtertype != '' && $filtertype != '-1') $filterarray = explode(',', $filtertype);
+		if ($filtertype != '' && $filtertype != '-1') {
+			$filterarray = explode(',', $filtertype);
+		}
 
 		$resourcestat->load_cache_code_type_resource();
 		print '<select id="select'.$htmlname.'" class="flat maxwidthonsmartphone select_'.$htmlname.'" name="'.$htmlname.'">';
-		if ($empty) print '<option value="">&nbsp;</option>';
-		if (is_array($resourcestat->cache_code_type_resource) && count($resourcestat->cache_code_type_resource))
-		{
-			foreach ($resourcestat->cache_code_type_resource as $id => $arraytypes)
-			{
+		if ($empty) {
+			print '<option value="">&nbsp;</option>';
+		}
+		if (is_array($resourcestat->cache_code_type_resource) && count($resourcestat->cache_code_type_resource)) {
+			foreach ($resourcestat->cache_code_type_resource as $id => $arraytypes) {
 				// We discard empty line if showempty is on because an empty line has already been output.
-				if ($empty && empty($arraytypes['code'])) continue;
+				if ($empty && empty($arraytypes['code'])) {
+					continue;
+				}
 
-				if ($format == 0) print '<option value="'.$id.'"';
-				elseif ($format == 1) print '<option value="'.$arraytypes['code'].'"';
-				elseif ($format == 2) print '<option value="'.$arraytypes['code'].'"';
-				elseif ($format == 3) print '<option value="'.$id.'"';
+				if ($format == 0) {
+					print '<option value="'.$id.'"';
+				} elseif ($format == 1) {
+					print '<option value="'.$arraytypes['code'].'"';
+				} elseif ($format == 2) {
+					print '<option value="'.$arraytypes['code'].'"';
+				} elseif ($format == 3) {
+					print '<option value="'.$id.'"';
+				}
 				// Si selected est text, on compare avec code, sinon avec id
-				if (preg_match('/[a-z]/i', $selected) && $selected == $arraytypes['code']) print ' selected';
-				elseif ($selected == $id) print ' selected';
+				if (preg_match('/[a-z]/i', $selected) && $selected == $arraytypes['code']) {
+					print ' selected';
+				} elseif ($selected == $id) {
+					print ' selected';
+				}
 				print '>';
-				if ($format == 0) $value = ($maxlength ?dol_trunc($arraytypes['label'], $maxlength) : $arraytypes['label']);
-				elseif ($format == 1) $value = $arraytypes['code'];
-				elseif ($format == 2) $value = ($maxlength ?dol_trunc($arraytypes['label'], $maxlength) : $arraytypes['label']);
-				elseif ($format == 3) $value = $arraytypes['code'];
-				print $value ? $value : '&nbsp;';
+				if ($format == 0) {
+					$value = ($maxlength ?dol_trunc($arraytypes['label'], $maxlength) : $arraytypes['label']);
+				} elseif ($format == 1) {
+					$value = $arraytypes['code'];
+				} elseif ($format == 2) {
+					$value = ($maxlength ?dol_trunc($arraytypes['label'], $maxlength) : $arraytypes['label']);
+				} elseif ($format == 3) {
+					$value = $arraytypes['code'];
+				}
+				if (empty($value)) {
+					$value = '&nbsp;';
+				}
+				print $value;
 				print '</option>';
 			}
 		}
 		print '</select>';
-		if ($user->admin && !$noadmininfo) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+		if ($user->admin && !$noadmininfo) {
+			print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+		}
 	}
 }

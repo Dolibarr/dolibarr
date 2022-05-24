@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - loan
-ModuleBuilderDesc=Šo rīku izmanto tikai pieredzējuši lietotāji vai izstrādātāji. Tas nodrošina komunālo pakalpojumu, lai izveidotu vai rediģētu savu moduli. Šeit ir dokumentācija alternatīvai <a href="%s" target="_blank">manuālai izstrādei</a> .
+ModuleBuilderDesc=Šo rīku drīkst izmantot tikai pieredzējuši lietotāji vai izstrādātāji. Tas nodrošina utilītas, lai izveidotu vai rediģētu savu moduli. Dokumentācija alternatīvai <a href="%s" target="_blank" rel="noopener noreferrer"> manuālai izstrādei ir pieejama šeit </a>.
 EnterNameOfModuleDesc=Enter name of the module/application to create with no spaces. Use uppercase to separate words (For example: MyModule, EcommerceForShop, SyncWithMySystem...)
 EnterNameOfObjectDesc=Enter name of the object to create with no spaces. Use uppercase to separate words (For example: MyObject, Student, Teacher...). The CRUD class file, but also API file, pages to list/add/edit/delete object and SQL files will be generated.
 ModuleBuilderDesc2=Ceļš, kurā tiek ģenerēti / rediģēti moduļi (pirmais ārējo moduļu katalogs, kas definēts %s): <strong> %s </strong>
@@ -40,7 +40,7 @@ PageForCreateEditView=PHP lapa, lai izveidotu / rediģētu / skatītu ierakstu
 PageForAgendaTab=PHP lappuse notikumu cilnē
 PageForDocumentTab=PHP lapas cilnei
 PageForNoteTab=PHP lapa piezīmju cilnē
-PageForContactTab=PHP page for contact tab
+PageForContactTab=PHP lapa kontaktu cilnei
 PathToModulePackage=Ceļš uz moduļa / pieteikuma pakotnes rāvienu
 PathToModuleDocumentation=Ceļš uz moduļa / lietojumprogrammas dokumentācijas failu (%s)
 SpaceOrSpecialCharAreNotAllowed=Spaces vai speciālās rakstzīmes nav atļautas.
@@ -52,7 +52,7 @@ LanguageFile=Valoda
 ObjectProperties=Objekta rekvizīti
 ConfirmDeleteProperty=Vai tiešām vēlaties dzēst īpašumu <strong> %s </strong>? Tas mainīs kodu PHP klasē, un no tabulas definīcijas kolonnas noņems arī objektu.
 NotNull=Nav NULL
-NotNullDesc=1 = Iestatiet datubāzi NOT NULL. -1 = Atļaut nulles vērtības un spēka vērtību NULL, ja tukšs ('' vai 0).
+NotNullDesc=1=Set database to NOT NULL, 0=Allow null values, -1=Allow null values by forcing value to NULL if empty ('' or 0)
 SearchAll=Lietots, lai "meklētu visu"
 DatabaseIndex=Datubāzes indekss
 FileAlreadyExists=Fails %s jau eksistē
@@ -85,7 +85,7 @@ ListOfPermissionsDefined=Noteikto atļauju saraksts
 SeeExamples=Skatiet piemērus šeit
 EnabledDesc=Nosacījums, lai šis lauks būtu aktīvs (piemēri: 1 vai $ conf-> globāla-> MYMODULE_MYOPTION)
 VisibleDesc=Vai lauks ir redzams? (Piemēri: 0 = nekad nav redzams, 1 = redzams sarakstā un izveidojiet / atjauniniet / skatiet veidlapas, 2 = ir redzams tikai sarakstā, 3 = ir redzams tikai izveides / atjaunināšanas / skata formā (nav sarakstā), 4 = ir redzams sarakstā un tikai atjaunināt / skatīt formu (neveidot), 5 = redzama tikai saraksta beigu skata formā (neveidot, ne atjaunināt). <br> <br> Negatīvas vērtības līdzekļu izmantošana lauka pēc noklusējuma netiek parādīta, bet to var atlasīt apskatei). <br> <br> Tas var būt izteiciens, piemēram: <br> preg_match ('/ public /', $ _SERVER ['PHP_SELF'])? 0: 1 <br> ($ user-> rights-> rights-
-DisplayOnPdfDesc=Parādiet šo lauku saderīgos PDF dokumentos. Varat pārvaldīt pozīciju ar lauku "Position". <br/> Pašlaik zināms savietojamie PDF modeļi ir: Eratostens (rīkojums), Espadon (kuģis), sūkli (rēķini), ciāna (propal / citāts), Cornas (piegādātājs rīkojums) <br/> <br/> <strong> Par dokumenta: </strong> <br/> 0 = nav redzams <br/> 1 = displejs <br/> 2 = parādīt tikai tad, ja nav iztukšot <br/> <br/> <strong> dokumentu līnijas: </strong> <br/> 0 = nav redzama <br/> 1 = parādīti kolonnā <br/> 3 = displeja līnija apraksta slejā pēc apraksta <br/> 4 = displeja apraksta ailē pēc tam, kad apraksts tikai tad, ja nav tukšs
+DisplayOnPdfDesc=Parādiet šo lauku saderīgos PDF dokumentos, pozīciju var pārvaldīt, izmantojot lauku “Pozīcija”. <br> Pašlaik zināmie saderīgie PDF modeļi ir: eratosthene (pasūtījums), espadon (kuģis), sūklis (rēķini), ciāns (propāls / citāts), radzenes (piegādātāja pasūtījums) = displejs <br> 2 = parādīt tikai tad, ja nav iztukšot <br> <br> <strong> dokumentu līnijas: </strong> <br> 0 = nav redzama <br> 1 = parādīti kolonnā <br> 3 = displeja līnija apraksta slejā pēc apraksta <br> 4 = displeja apraksta ailē pēc tam, kad apraksts tikai tad, ja tas nav tukšs
 DisplayOnPdf=Displejs PDF formātā
 IsAMeasureDesc=Vai lauka vērtību var uzkrāties, lai kopsumma tiktu iekļauta sarakstā? (Piemēri: 1 vai 0)
 SearchAllDesc=Vai laukums tiek izmantots, lai veiktu meklēšanu no ātrās meklēšanas rīka? (Piemēri: 1 vai 0)
@@ -94,11 +94,11 @@ LanguageDefDesc=Ievadiet šos failus, visu valodas faila atslēgu un tulkojumu.
 MenusDefDesc=Šeit norādiet savas moduļa nodrošinātās izvēlnes
 DictionariesDefDesc=Šeit definējiet vārdnīcas, kuras nodrošina jūsu modulis
 PermissionsDefDesc=Šeit definējiet jaunās atļaujas, ko sniedz jūsu modulis
-MenusDefDescTooltip=Jūsu moduļa / lietojumprogrammas piedāvātās izvēlnes ir definētas masīva <strong>$ this-&gt; izvēlnēs</strong> moduļa deskriptora failā. Šo failu var rediģēt manuāli vai izmantot iegulto redaktoru. <br><br> Piezīme. Kad definēts (un modulis atkārtoti aktivizēts), izvēlnes ir redzamas arī izvēlnes redaktorā, kas pieejams administratora lietotājiem %s.
+MenusDefDescTooltip=Jūsu moduļa/lietojumprogrammas nodrošinātās izvēlnes ir definētas masīvā <strong> $this->menus </strong> moduļa deskriptora failā. Varat manuāli rediģēt šo failu vai izmantot iegulto redaktoru. <br> <br> Piezīme. Pēc definēšanas (un moduļa atkārtotas aktivizēšanas) izvēlnes ir redzamas arī izvēlņu redaktorā, kas pieejams administratora lietotājiem vietnē %s.
 DictionariesDefDescTooltip=Jūsu moduļa / lietojumprogrammas piedāvātās vārdnīcas tiek definētas masīvā <strong>$ this-&gt; vārdnīcas</strong> moduļa deskriptora failā. Šo failu var rediģēt manuāli vai izmantot iegulto redaktoru. <br><br> Piezīme. Pēc definēšanas (un moduļa atkārtotas aktivizēšanas) vārdnīcas ir redzamas arī iestatīšanas apgabalā administratora lietotājiem vietnē %s.
 PermissionsDefDescTooltip=Jūsu moduļa / lietojumprogrammas piešķirtās atļaujas ir definētas masīva <strong>$ this-&gt; tiesību elementos</strong> moduļa deskriptora failā. Šo failu var rediģēt manuāli vai izmantot iegulto redaktoru. <br><br> Piezīme. Pēc definīcijas (un moduļa atkārtotas aktivizēšanas) atļaujas ir redzamas noklusējuma atļauju iestatījumā %s.
 HooksDefDesc=Modu deskriptorā <b> module_parts ['āķi'] </b>definējiet āķu kontekstu, kuru vēlaties pārvaldīt (konteksta sarakstu var atrast, veicot meklēšanu ar <b> initHooks (</b>'galvenajā kodā). <br> Rediģējiet āķa failu, lai pievienotu savu āķa funkciju kodu (kontaktu funkcijas var atrast, veicot meklēšanu ar kodu <b> executeHooks </b> ').
-TriggerDefDesc=Sprūda failā definējiet kodu, kuru vēlaties izpildīt katram notikušajam notikumam.
+TriggerDefDesc=Sprūda failā definējiet kodu, kuru vēlaties izpildīt, kad tiek izpildīts biznesa notikums ārpus jūsu moduļa (notikumi, ko aktivizē citi moduļi).
 SeeIDsInUse=Skatiet jūsu instalācijā izmantotos ID
 SeeReservedIDsRangeHere=Skatiet rezervēto ID diapazonu
 ToolkitForDevelopers=Dolibarr izstrādātāju rīks
@@ -106,11 +106,11 @@ TryToUseTheModuleBuilder=Ja jums ir zināšanas par SQL un PHP, jūs varat izman
 SeeTopRightMenu=Augšējā labajā izvēlnē skatiet <span class="fa fa-bug"></span>
 AddLanguageFile=Pievienot valodas failu
 YouCanUseTranslationKey=Šeit varat izmantot atslēgu, kas ir tulkošanas atslēga, kas tiek atrasta valodas failā (sk. Cilni "Valodas").
-DropTableIfEmpty=(Destroy table if empty)
+DropTableIfEmpty=(Iznīcināt tabulu, ja tā ir tukša)
 TableDoesNotExists=Tabula %s neeksistē
 TableDropped=Tabula %s dzēsta
 InitStructureFromExistingTable=Veidojiet esošās tabulas struktūras masīva virkni
-UseAboutPage=Atspējot par lapu
+UseAboutPage=Neģenerēj lapu Par
 UseDocFolder=Atspējot dokumentācijas mapi
 UseSpecificReadme=Izmantot īpašu IzlasiMani
 ContentOfREADMECustomized=Piezīme: faila README.md saturs ir aizstāts ar īpašo vērtību, kas definēta ModuleBuilder iestatīšanā.
@@ -127,17 +127,26 @@ UseSpecificEditorURL = Izmantojiet konkrētu redaktora URL
 UseSpecificFamily = Izmantojiet noteiktu ģimeni
 UseSpecificAuthor = Izmantojiet noteiktu autoru
 UseSpecificVersion = Izmantojiet konkrētu sākotnējo versiju
-IncludeRefGeneration=Objekta atsauce jāģenerē automātiski
-IncludeRefGenerationHelp=Atzīmējiet šo, ja vēlaties iekļaut kodu, lai automātiski pārvaldītu atsauces ģenerēšanu
-IncludeDocGeneration=Es gribu no objekta ģenerēt dažus dokumentus
+IncludeRefGeneration=The reference of object must be generated automatically by custom numbering rules
+IncludeRefGenerationHelp=Check this if you want to include code to manage the generation of the reference automatically using custom numbering rules
+IncludeDocGeneration=I want to generate some documents from templates for the object
 IncludeDocGenerationHelp=Ja to atzīmēsit, tiks izveidots kāds kods, lai ierakstam pievienotu rūtiņu “Ģenerēt dokumentu”.
 ShowOnCombobox=Rādīt vērtību kombinētajā lodziņā
 KeyForTooltip=Rīka padoma atslēga
-CSSClass=CSS klase
+CSSClass=CSS rediģēšanas / izveides veidlapai
+CSSViewClass=CSS lasāmai formai
+CSSListClass=CSS sarakstam
 NotEditable=Nav rediģējams
 ForeignKey=Sveša atslēga
-TypeOfFieldsHelp=Lauku tips: <br> varchar (99), double (24,8), real, text, html, datetime, timestamp, integer, integer: ClassName: reliapath / to / classfile.class.php [: 1 [: filter]] ('1' nozīmē mēs pievienojam pogu + pēc kombināta, lai izveidotu ierakstu; “filtrs” var būt “status = 1 UN fk_user = __USER_ID UN entītija (piemēram, __SHARED_ENTITIES__)”.
+TypeOfFieldsHelp=Lauku tips: <br> varchar(99), double(24,8), real, text, html, datetime, timestamp, integer, integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]] <br> '1' nozīmē, ka mēs pievienojam pogu + aiz kombinācijas, lai izveidotu ierakstu. <br> 'filtrs' ir SQL nosacījums, piemēram: 'status=1 AND fk_user=__USER_ID__ UN entītija IN (__SHARED_)'ITIES_SHARED_ENTIES.
 AsciiToHtmlConverter=Ascii uz HTML pārveidotāju
 AsciiToPdfConverter=Ascii uz PDF pārveidotāju
 TableNotEmptyDropCanceled=Tabula nav tukša. Dzēšana tika atcelta.
-ModuleBuilderNotAllowed=The module builder is available but not allowed to your user.
+ModuleBuilderNotAllowed=Moduļu veidotājs ir pieejams, bet nav atļauts jūsu lietotājam.
+ImportExportProfiles=Importēt un eksportēt profilus
+ValidateModBuilderDesc=Set this to 1 if you want to have the method $this->validateField() of object being called to validate the content of the field during insert or upadate. Set 0 if there is no validation required.
+WarningDatabaseIsNotUpdated=Brīdinājums: datu bāze netiek atjaunināta automātiski, jums ir jāiznīcina tabulas un jāatspējo un jāiespējo modulis, lai tabulas tiktu izveidotas atkārtoti.
+LinkToParentMenu=Vecāku izvēlne (fk_xxxxmenu)
+ListOfTabsEntries=List of tab entries
+TabsDefDesc=Define here the tabs provided by your module
+TabsDefDescTooltip=The tabs provided by your module/application are defined into the array <strong>$this->tabs</strong> into the module descriptor file. You can edit manually this file or use the embedded editor.

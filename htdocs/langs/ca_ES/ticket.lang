@@ -34,7 +34,8 @@ TicketDictResolution=Tiquet - Resolució
 
 TicketTypeShortCOM=Qüestió comercial
 TicketTypeShortHELP=Sol·licitud d'ajuda funcional
-TicketTypeShortISSUE=Incidència, error o problema
+TicketTypeShortISSUE=Incidència o error
+TicketTypeShortPROBLEM=Problema
 TicketTypeShortREQUEST=Sol·licitud de canvi o millora
 TicketTypeShortPROJET=Projecte
 TicketTypeShortOTHER=Altres
@@ -43,6 +44,8 @@ TicketSeverityShortLOW=Baix
 TicketSeverityShortNORMAL=Normal
 TicketSeverityShortHIGH=Alt
 TicketSeverityShortBLOCKING=Crític, bloqueig
+
+TicketCategoryShortOTHER=Altres
 
 ErrorBadEmailAddress=Camp '%s' incorrecte
 MenuTicketMyAssign=Els meus tiquets
@@ -54,25 +57,28 @@ TypeContact_ticket_internal_SUPPORTTEC=Usuari assignat
 TypeContact_ticket_external_SUPPORTCLI=Contacte de clients / seguiment d'incidents
 TypeContact_ticket_external_CONTRIBUTOR=Col·laborador extern
 
-OriginEmail=Origen de correu electrònic
+OriginEmail=Correu electrònic del reporter
 Notify_TICKET_SENTBYMAIL=Envia el missatge del tiquet per correu electrònic
 
 # Status
 Read=Llegit
 Assigned=Assignat
 InProgress=En progrés
-NeedMoreInformation=Esperant informació
+NeedMoreInformation=Esperant els comentaris del informador
+NeedMoreInformationShort=Esperant comentaris
 Answered=Respost
 Waiting=En espera
-Closed=Tancat
+SolvedClosed=Resolt
 Deleted=Esborrat
 
 # Dict
 Type=Tipus
 Severity=Gravetat
+TicketGroupIsPublic=El grup és públic
+TicketGroupIsPublicDesc=Si un grup de tiquets és públic, serà visible al formulari en crear un tiquet des de la interfície pública
 
 # Email templates
-MailToSendTicketMessage=Per enviar un missatge de correu electrònic a partir del tiquet
+MailToSendTicketMessage=Per a enviar correus electrònics des del missatge de tiquet
 
 #
 # Admin page
@@ -84,15 +90,15 @@ TicketPublicAccess=Una interfície pública que no necessita identificació est�
 TicketSetupDictionaries=El tipus de tiquet, gravetat i codis analítics es poden configurar des dels diccionaris
 TicketParamModule=Configuració del mòdul de variables
 TicketParamMail=Configuració de correu electrònic
-TicketEmailNotificationFrom=Notificació de correu electrònic procedent de
-TicketEmailNotificationFromHelp=S'utilitza en la resposta del tiquet per exemple
-TicketEmailNotificationTo=Notificacions de correu electrònic a 
-TicketEmailNotificationToHelp=Enviar notificacions per correu electrònic a aquesta adreça.
+TicketEmailNotificationFrom=Sender e-mail for ticket answers
+TicketEmailNotificationFromHelp=Sender e-mail for ticket answers sent from Dolibarr
+TicketEmailNotificationTo=Notify ticket creation to this e-mail address
+TicketEmailNotificationToHelp=If present, this e-mail address will be notified of a ticket creation
 TicketNewEmailBodyLabel=Missatge de text enviat després de crear un bitllet
 TicketNewEmailBodyHelp=El text especificat aquí s'inserirà en el correu electrònic confirmant la creació d'un nou tiquet des de la interfície pública. La informació sobre la consulta del tiquet s'afegeix automàticament.
 TicketParamPublicInterface=Configuració de la interfície pública
-TicketsEmailMustExist=Es requereix una adreça de correu electrònic correcta per crear un tiquet
-TicketsEmailMustExistHelp=A la interfície pública, l'adreça de correu electrònic ja s'hauria d'emplenar a la base de dades per crear un nou tiquet.
+TicketsEmailMustExist=Cal crear una adreça de correu electrònic existent per a crear un tiquet
+TicketsEmailMustExistHelp=A la interfície pública, l'adreça de correu electrònic ja s'hauria d'emplenar a la base de dades per a crear un nou tiquet.
 PublicInterface=Interfície pública
 TicketUrlPublicInterfaceLabelAdmin=URL alternativa per a la interfície pública
 TicketUrlPublicInterfaceHelpAdmin=És possible definir un àlies al servidor web i, per tant, posar a disposició la interfície pública amb una altra URL (el servidor ha d'actuar com a proxy en aquest nou URL)
@@ -114,8 +120,8 @@ TicketsShowModuleLogo=Mostra el logotip del mòdul a la interfície pública
 TicketsShowModuleLogoHelp=Activeu aquesta opció per a ocultar el mòdul de logotip a les pàgines de la interfície pública
 TicketsShowCompanyLogo=Mostra el logotip de l'empresa en la interfície pública
 TicketsShowCompanyLogoHelp=Activeu aquesta opció per a ocultar el logotip de l'empresa principal a les pàgines de la interfície pública
-TicketsEmailAlsoSendToMainAddress=També envieu notificacions a l'adreça electrònica principal
-TicketsEmailAlsoSendToMainAddressHelp=Activar aquesta opció per enviar un correu electrònic a l'adreça "Correu electrònic de notificació procedent de" (consulteu la configuració a continuació)
+TicketsEmailAlsoSendToMainAddress=També envieu una notificació a l’adreça de correu electrònic principal
+TicketsEmailAlsoSendToMainAddressHelp=Activeu aquesta opció per a enviar també un correu electrònic a l'adreça definida a la configuració "%s" (vegeu la pestanya "%s")
 TicketsLimitViewAssignedOnly=Restringir la visualització als tiquets assignats a l'usuari actual (no és efectiu per als usuaris externs, sempre estarà limitat al tercer de qui depengui)
 TicketsLimitViewAssignedOnlyHelp=Només es veuran les entrades assignades a l'usuari actual. No s'aplica a un usuari amb drets de gestió de tiquets.
 TicketsActivatePublicInterface=Activar la interfície pública
@@ -126,10 +132,22 @@ TicketNumberingModules=Mòdul de numeració de tiquets
 TicketsModelModule=Plantilles de document per a tiquets
 TicketNotifyTiersAtCreation=Notifica la creació de tercers
 TicketsDisableCustomerEmail=Desactiveu sempre els correus electrònics quan es crea un tiquet des de la interfície pública
-TicketsPublicNotificationNewMessage=Envia correus electrònics quan s'afegeixi un missatge nou
+TicketsPublicNotificationNewMessage=Envieu correu(s) electrònic(s) quan s'afegeixi un missatge / comentari nou a una entrada
 TicketsPublicNotificationNewMessageHelp=Envia correus electrònics quan s'afegeixi un missatge nou des de la interfície pública (a l'usuari assignat o al correu electrònic de notificacions a (actualitzar) i/o al correu electrònic de notificacions)
 TicketPublicNotificationNewMessageDefaultEmail=Notificar correu electrònic cap a (actualitzar)
-TicketPublicNotificationNewMessageDefaultEmailHelp=Envia notificacions de missatges nous per correu electrònic a aquesta adreça si el tiquet no té assignat cap usuari o l’usuari no en té cap.
+TicketPublicNotificationNewMessageDefaultEmailHelp=Envieu un correu electrònic a aquesta adreça per a cada nova notificació de missatges si el bitllet no té assignat cap usuari o si l’usuari no té cap correu electrònic conegut.
+TicketsAutoReadTicket=Marca automàticament el bitllet com a llegit (quan es crea des del backoffice)
+TicketsAutoReadTicketHelp=Marca automàticament el bitllet com a llegit quan es crea des del backoffice. Quan el bitllet es crea des de la interfície pública, el bitllet es manté amb l'estat "No llegit".
+TicketsDelayBeforeFirstAnswer=Un bitllet nou hauria de rebre una primera resposta abans (hores):
+TicketsDelayBeforeFirstAnswerHelp=Si un nou bitllet no ha rebut resposta després d'aquest període de temps (en hores), es mostrarà una icona d'advertència important a la vista de llista.
+TicketsDelayBetweenAnswers=Un bitllet no resolt no hauria d'estar inactiu durant (hores):
+TicketsDelayBetweenAnswersHelp=Si un tiquet no resolt que ja ha rebut una resposta no ha tingut més interacció després d'aquest període de temps (en hores), es mostrarà una icona d'advertència a la vista de llista.
+TicketsAutoNotifyClose=Aviseu automàticament a tercers quan tanqueu un bitllet
+TicketsAutoNotifyCloseHelp=Quan tanqueu un bitllet, se us proposarà enviar un missatge a un dels contactes de tercers. En el tancament massiu, s'enviarà un missatge a un contacte del tercer vinculat al bitllet.
+TicketWrongContact=El contacte sempre que no formi part dels contactes actuals de les entrades. Correu electrònic no enviat.
+TicketChooseProductCategory=Categoria de producte per al suport de bitllets
+TicketChooseProductCategoryHelp=Seleccioneu la categoria de producte de suport de bitllets. S'utilitzarà per enllaçar automàticament un contracte amb un bitllet.
+
 #
 # Index & list page
 #
@@ -145,6 +163,8 @@ OrderByDateAsc=Ordena per data ascendent
 OrderByDateDesc=Ordena per data descendent
 ShowAsConversation=Mostrar com a llista de converses
 MessageListViewType=Mostra com a llista de taula
+ConfirmMassTicketClosingSendEmail=Envieu correus electrònics automàticament quan tanqueu els tiquets
+ConfirmMassTicketClosingSendEmailQuestion=Voleu notificar als tercers quan tanqueu aquests tiquets?
 
 #
 # Ticket card
@@ -158,7 +178,7 @@ CreatedBy=Creat per
 NewTicket=Tiquet nou
 SubjectAnswerToTicket=Resposta de tiquet
 TicketTypeRequest=Tipus de sol·licitud
-TicketCategory=Grup
+TicketCategory=Categorització del tiquet
 SeeTicket=Consultar tiquet
 TicketMarkedAsRead=Tiquet ha estat marcat com llegit
 TicketReadOn=Segueix llegint
@@ -176,15 +196,17 @@ MessageSuccessfullyAdded=Tiquet afegit
 TicketMessageSuccessfullyAdded=El missatge s'ha afegit correctament
 TicketMessagesList=Llista de missatges
 NoMsgForThisTicket=No hi ha missatges per aquest tiquet
-Properties=Classificació
+TicketProperties=Classificació
 LatestNewTickets=Últimes entrades més noves %s (no llegides)
 TicketSeverity=Gravetat
 ShowTicket=Consultar tiquet
 RelatedTickets=Tiquets relacionats
 TicketAddIntervention=Crea intervenció
-CloseTicket=Tanca el tiquet
-CloseATicket=Tanca el tiquet
+CloseTicket=Tancar | Resoldre el bitllet
+AbandonTicket=Abandonar el bitllet
+CloseATicket=Tancar | Resoldre un bitllet
 ConfirmCloseAticket=Confirma el tancament del tiquet
+ConfirmAbandonTicket=Confirmeu el tancament del bitllet a l'estat "Abandonat"
 ConfirmDeleteTicket=Si us plau, confirmeu l'esborrat del tiquet
 TicketDeletedSuccess=Tiquet esborrat amb èxit
 TicketMarkedAsClosed=Tiquet marcat com tancat
@@ -197,18 +219,19 @@ ErrorMailRecipientIsEmptyForSendTicketMessage=El destinatari està buit. Email n
 TicketGoIntoContactTab=Aneu a la pestanya "Contactes" per seleccionar-los
 TicketMessageMailIntro=Introducció
 TicketMessageMailIntroHelp=Aquest text només s'afegeix al principi del correu electrònic i no es desarà.
-TicketMessageMailIntroLabelAdmin=Introducció al missatge en enviar missatges de correu electrònic
-TicketMessageMailIntroText=Hola, <br> S'ha enviat una nova resposta en un tiquet que n'ets contacte. Aquest és el missatge: <br>
-TicketMessageMailIntroHelpAdmin=Aquest text s'inserirà abans del text de la resposta a un tiquet.
+TicketMessageMailIntroLabelAdmin=Introduction text to all ticket answers
+TicketMessageMailIntroText=Hello,<br>A new answer has been added to a ticket that you follow. Here is the message:<br>
+TicketMessageMailIntroHelpAdmin=This text will be inserted before the answer when replying to a ticket from Dolibarr
 TicketMessageMailSignature=Signatura
 TicketMessageMailSignatureHelp=Aquest text només s'afegeix al final del correu electrònic i no es desarà.
-TicketMessageMailSignatureText=<p>Cordialment,</p><p>--</p>
+TicketMessageMailSignatureText=Message sent by <b>%s</b> via Dolibarr
 TicketMessageMailSignatureLabelAdmin=Signatura del correu electrònic de resposta
 TicketMessageMailSignatureHelpAdmin=Aquest text s'inserirà després del missatge de resposta.
 TicketMessageHelp=Només aquest text es guardarà a la llista de missatges de la targeta de tiquet.
 TicketMessageSubstitutionReplacedByGenericValues=Les variables de substitució es reemplacen per valors genèrics.
 TimeElapsedSince=Temps transcorregut des de 
 TicketTimeToRead=Temps transcorregut abans de llegir
+TicketTimeElapsedBeforeSince=Temps transcorregut abans / després 
 TicketContacts=Tiquet de contactes
 TicketDocumentsLinked=Documents vinculats al tiquet
 ConfirmReOpenTicket=Confirmeu la reobertura d'aquest tiquet?
@@ -229,9 +252,16 @@ TicketChangeStatus=Canvia l'estat
 TicketConfirmChangeStatus=Confirmeu el canvi d'estat: %s?
 TicketLogStatusChanged=Estat canviat: %s a %s
 TicketNotNotifyTiersAtCreate=No es notifica a l'empresa a crear
+NotifyThirdpartyOnTicketClosing=Contactes per a notificar mentre es tanca el tiquet
+TicketNotifyAllTiersAtClose=Tots els contactes relacionats
+TicketNotNotifyTiersAtClose=Cap contacte relacionat
 Unread=No llegit
 TicketNotCreatedFromPublicInterface=No disponible El tiquet no s'ha creat des de la interfície pública.
 ErrorTicketRefRequired=El nom de referència del tiquet és obligatori
+TicketsDelayForFirstResponseTooLong=Ha passat massa temps des de l'obertura del bitllet sense cap resposta.
+TicketsDelayFromLastResponseTooLong=Ha passat massa temps des de l'última resposta en aquest bitllet.
+TicketNoContractFoundToLink=No s'ha trobat cap contracte vinculat automàticament a aquest bitllet. Enllaceu un contracte manualment.
+TicketManyContractsLinked=Molts contractes s'han vinculat automàticament a aquest bitllet. Assegureu-vos de verificar quina s'ha de triar.
 
 #
 # Logs
@@ -259,11 +289,12 @@ TicketNewEmailBody=Aquest és un correu electrònic automàtic per confirmar que
 TicketNewEmailBodyCustomer=Aquest és un correu electrònic automàtic per confirmar que un nou tiquet acaba de ser creat al vostre compte.
 TicketNewEmailBodyInfosTicket=Informació per al seguiment del tiquet
 TicketNewEmailBodyInfosTrackId=Número de seguiment de tiquet: %s
-TicketNewEmailBodyInfosTrackUrl=Podeu veure el progrés del tiquet fent clic a l'enllaç de dalt.
+TicketNewEmailBodyInfosTrackUrl=You can view the progress of the ticket by clicking the following link
 TicketNewEmailBodyInfosTrackUrlCustomer=Podeu veure el progrés del tiquet a la interfície específica fent clic al següent enllaç
+TicketCloseEmailBodyInfosTrackUrlCustomer=Podeu consultar l'historial d'aquest tiquet fent clic al següent enllaç
 TicketEmailPleaseDoNotReplyToThisEmail=No respongueu directament a aquest correu electrònic. Utilitzeu l'enllaç per respondre des de la mateixa interfície.
 TicketPublicInfoCreateTicket=Aquest formulari us permet registrar un tiquet de suport al nostre sistema de gestió.
-TicketPublicPleaseBeAccuratelyDescribe=Descrigui amb precisió el problema. Proporcioneu la màxima informació possible per permetre que identifiquem correctament la vostra sol·licitud.
+TicketPublicPleaseBeAccuratelyDescribe=Descriviu amb precisió el problema. Proporcioneu la màxima informació possible per a permetre’ns identificar correctament la vostra sol·licitud.
 TicketPublicMsgViewLogIn=Introduïu l'identificador de traça dels tiquets (ID)
 TicketTrackId=ID de seguiment públic
 OneOfTicketTrackId=Un dels vostres ID de seguiment
@@ -282,6 +313,10 @@ NewUser=Usuari nou
 NumberOfTicketsByMonth=Nombre d’entrades mensuals
 NbOfTickets=Nombre d’entrades
 # notifications
+TicketCloseEmailSubjectCustomer=Tiquet tancat
+TicketCloseEmailBodyCustomer=Aquest és un missatge automàtic per notificar-vos que el bitllet %s s'acaba de tancar.
+TicketCloseEmailSubjectAdmin=Entrada tancada - Ref %s (ID de bitllet públic %s)
+TicketCloseEmailBodyAdmin=S'acaba de tancar un tiquet amb ID #%s, vegeu la informació:
 TicketNotificationEmailSubject=Tiquet %s actualitzat
 TicketNotificationEmailBody=Aquest és un missatge automàtic per a notificar-vos que el tiquet %s s'acaba d'actualitzar
 TicketNotificationRecipient=Destinatari de la notificació
@@ -302,3 +337,14 @@ BoxLastModifiedTicket=Últims tiquets modificats
 BoxLastModifiedTicketDescription=Últimes entrades modificades %s
 BoxLastModifiedTicketContent=
 BoxLastModifiedTicketNoRecordedTickets=No hi ha tiquets modificats recentment
+BoxTicketType=Distribució dels tiquets oberts per tipus
+BoxTicketSeverity=Nombre de bitllets oberts per gravetat
+BoxNoTicketSeverity=No s’ha obert cap entrada
+BoxTicketLastXDays=Nombre de bitllets nous per dies els darrers %s dies
+BoxTicketLastXDayswidget = Nombre de bitllets nous per dies els darrers X dies
+BoxNoTicketLastXDays=No hi ha entrades noves els darrers %s dies
+BoxNumberOfTicketByDay=Nombre de bitllets nous per dia
+BoxNewTicketVSClose=Nombre d'entrades versus entrades tancades (avui)
+TicketCreatedToday=Entrada creada avui
+TicketClosedToday=Entrada tancada avui
+KMFoundForTicketGroup=Hem trobat temes i preguntes més freqüents que poden respondre a la vostra pregunta, gràcies a comprovar-los abans d'enviar el bitllet

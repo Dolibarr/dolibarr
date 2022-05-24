@@ -22,11 +22,11 @@ class DolRequestDataCollector extends RequestDataCollector
 			if (isset($GLOBALS[$var])) {
 				$arrayofvalues = $GLOBALS[$var];
 
-				if ($var == '_COOKIE')
-				{
-					foreach ($arrayofvalues as $key => $val)
-					{
-						if (preg_match('/^DOLSESSID_/', $key)) $arrayofvalues[$key] = '*****hidden*****';
+				if ($var == '_COOKIE') {
+					foreach ($arrayofvalues as $key => $val) {
+						if (preg_match('/^DOLSESSID_/', $key)) {
+							$arrayofvalues[$key] = '*****hidden*****';
+						}
 					}
 					//var_dump($arrayofvalues);
 				}

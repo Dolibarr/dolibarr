@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - externalsite
-ExternalSiteSetup=Ρύθμιση συνδέσμου σε εξωτερικό website
-ExternalSiteURL=Εξωτερικές διεύθυνσης URL ιστοσελίδας
-ExternalSiteModuleNotComplete=Το Module Εξωτερικά Site δεν έχει ρυθμιστεί σωστά.
-ExampleMyMenuEntry=Καταχώρηση του μενού μου
+ExternalSiteSetup=Ρύθμιση συνδέσμου σε εξωτερικό ιστότοπο
+ExternalSiteURL=Διεύθυνση URL εξωτερικού ιστότοπου περιεχομένου HTML iframe
+ExternalSiteModuleNotComplete=Η ενότητα Εξωτερικός Ιστότοπος δεν έχει ρυθμιστεί σωστά.
+ExampleMyMenuEntry=Το μενού μου
