@@ -531,12 +531,11 @@ class Productbatch extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."product_lot as pl";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = pl.fk_product";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_batch AS pb ON pl.batch = pb.batch";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock AS ps ON ps.rowid = pb.fk_product_stock";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock AS ps ON ps.rowid = pb.fk_product_stock AND ps.fk_product = ".((int) $fk_product);
 		$sql .= " WHERE p.entity IN (".getEntity('product').")";
-		$sql .= " AND pl.fk_product = ".$fk_product;
-		$sql .= " AND ps.fk_product = ".$fk_product;
+		$sql .= " AND pl.fk_product = ".((int) $fk_product);
 		if ($fk_warehouse > 0) {
-			$sql .= " AND ps.fk_entrepot = ".$fk_warehouse;
+			$sql .= " AND ps.fk_entrepot = ".((int) $fk_warehouse);
 		}
 		if ($qty_min !== null) {
 			$sql .= " AND pb.qty > ".$qty_min;
