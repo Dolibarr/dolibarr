@@ -209,7 +209,12 @@ class modHoliday extends DolibarrModules
 		$this->rights[$r][4] = 'define_holiday'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$this->rights[$r][5] = ''; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$r++;
-
+		$this->rights[$r][0] = 20008; // Permission id (must not be already used)
+		$this->rights[$r][1] = 'Read leave on status draft'; // Permission label
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
+		$this->rights[$r][4] = 'read_draft_leave'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		$this->rights[$r][5] = ''; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		$r++;
 
 		// Menus
 		//-------

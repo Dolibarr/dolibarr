@@ -986,6 +986,7 @@ Permission20004=Read all leave requests (even those of user not subordinates)
 Permission20005=Create/modify leave requests for everybody (even those of user not subordinates)
 Permission20006=Administer leave requests (setup and update balance)
 Permission20007=Approve leave requests
+Permission20008=Read leave on status draft
 Permission23001=Read Scheduled job
 Permission23002=Create/update Scheduled job
 Permission23003=Delete Scheduled job
