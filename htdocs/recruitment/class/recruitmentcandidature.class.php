@@ -62,6 +62,11 @@ class RecruitmentCandidature extends CommonObject
 	 */
 	public $picto = 'recruitmentcandidature';
 
+	/**
+	 * @var int		Do not exploit fields email_xxx into triggers.
+	 */
+	public $email_fields_no_propagate_in_actioncomm;
+
 
 	const STATUS_DRAFT = 0;
 	const STATUS_VALIDATED = 1;
@@ -265,7 +270,8 @@ class RecruitmentCandidature extends CommonObject
 			foreach ($object->array_options as $key => $option) {
 				$shortkey = preg_replace('/options_/', '', $key);
 				if (!empty($extrafields->attributes[$this->table_element]['unique'][$shortkey])) {
-					//var_dump($key); var_dump($clonedObj->array_options[$key]); exit;
+					//var_dump($key);
+					//var_dump($clonedObj->array_options[$key]); exit;
 					unset($object->array_options[$key]);
 				}
 			}

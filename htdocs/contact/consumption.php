@@ -410,7 +410,7 @@ if ($sql_select) {
 	print '</td>';
 	print '<td class="liste_titre nowrap center">'; // date
 	print $formother->select_month($month ? $month : -1, 'month', 1, 0, 'valignmiddle');
-	$formother->select_year($year ? $year : -1, 'year', 1, 20, 1);
+	print $formother->selectyear($year ? $year : -1, 'year', 1, 20, 1);
 	print '</td>';
 	print '<td class="liste_titre center">';
 	print '</td>';

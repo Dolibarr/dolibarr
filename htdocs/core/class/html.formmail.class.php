@@ -1533,10 +1533,12 @@ class FormMail extends Form
 					if (!is_object($extrafields)) {
 						$extrafields = new ExtraFields($this->db);
 					}
-					$extrafields->fetch_name_optionals_label('product', true);
 					$product = new Product($this->db);
 					$product->fetch($line->fk_product, '', '', 1);
 					$product->fetch_optionals();
+
+					$extrafields->fetch_name_optionals_label($product->table_element, true);
+
 					if (is_array($extrafields->attributes[$product->table_element]['label']) && count($extrafields->attributes[$product->table_element]['label']) > 0) {
 						foreach ($extrafields->attributes[$product->table_element]['label'] as $key => $label) {
 							$substit_line['__PRODUCT_EXTRAFIELD_'.strtoupper($key).'__'] = $product->array_options['options_'.$key];

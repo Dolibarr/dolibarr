@@ -901,7 +901,7 @@ if (empty($reshook)) {
 		$prod_entry_mode = GETPOST('prod_entry_mode');
 		if ($prod_entry_mode == 'free') {
 			$idprod = 0;
-			$tva_tx = (GETPOST('tva_tx') ? price2num(GETPOST('tva_tx')) : 0);
+			$tva_tx = (GETPOST('tva_tx') ? price2num(preg_replace('/\s*\(.*\)/', '', GETPOST('tva_tx'))) : 0);
 		} else {
 			$idprod = GETPOST('idprod', 'int');
 			$tva_tx = '';
@@ -1644,7 +1644,7 @@ if ($action == 'create') {
 
 	// Ref customer
 	print '<tr class="field_ref_client"><td class="titlefieldcreate">'.$langs->trans('RefCustomer').'</td><td class="valuefieldcreate">';
-	print '<input type="text" name="ref_client" value="'.GETPOST('ref_client').'"></td>';
+	print '<input type="text" name="ref_client" value="'.(!empty($ref_client)?$ref_client:GETPOST('ref_client')).'"></td>';
 	print '</tr>';
 
 	// Third party

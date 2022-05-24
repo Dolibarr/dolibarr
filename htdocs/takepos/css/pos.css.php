@@ -436,8 +436,9 @@ tr.selected, tr.selected td {
 	/* font-weight: bold; */
 	background-color: rgb(240,230,210) !important;
 }
-.order {
-	color: limegreen;
+.order td {
+	color: green;
+	/* background-color: #f5f5f5; */
 }
 
 .colorwhite {

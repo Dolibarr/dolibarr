@@ -268,7 +268,10 @@ if (empty($reshook)) {
 						$sub_qty[$j]['id_batch'] = GETPOST($batch, 'int'); // the id into llx_product_batch of stock record to move
 						$subtotalqty += $sub_qty[$j]['q'];
 
-						//var_dump($qty);var_dump($batch);var_dump($sub_qty[$j]['q']);var_dump($sub_qty[$j]['id_batch']);
+						//var_dump($qty);
+						//var_dump($batch);
+						//var_dump($sub_qty[$j]['q']);
+						//var_dump($sub_qty[$j]['id_batch']);
 
 						$j++;
 						$batch = "batchl".$i."_".$j;
@@ -325,7 +328,6 @@ if (empty($reshook)) {
 		//var_dump($batch_line[2]);
 
 		if ($totalqty > 0) {		// There is at least one thing to ship
-			//var_dump($_POST);exit;
 			for ($i = 0; $i < $num; $i++) {
 				$qty = "qtyl".$i;
 				if (!isset($batch_line[$i])) {

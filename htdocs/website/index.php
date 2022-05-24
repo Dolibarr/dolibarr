@@ -410,7 +410,8 @@ if ($sortorder) {
 include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';	// This manage 'sendit' action when submitting new file.
 
 $backtopage = $savbacktopage;
-//var_dump($backtopage); var_dump($action);
+//var_dump($backtopage);
+//var_dump($action);
 
 if ($action == 'renamefile') {	// Must be after include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php'; If action were renamefile, we set it to 'file_manager'
 	$action = 'file_manager';
@@ -2789,6 +2790,7 @@ if (!GETPOST('hide_websitemenu')) {
 			$htmltext .= '<br><center>'.$langs->trans("GoTo").' <a href="'.$virtualurl.'" target="_website">'.$virtualurl.'</a></center><br>';
 		}
 		if (!empty($conf->global->WEBSITE_REPLACE_INFO_ABOUT_USAGE_WITH_WEBSERVER)) {
+			$htmltext .= '<!-- Message defined translate key set into WEBSITE_REPLACE_INFO_ABOUT_USAGE_WITH_WEBSERVER -->';
 			$htmltext .= '<br>'.$langs->trans($conf->global->WEBSITE_REPLACE_INFO_ABOUT_USAGE_WITH_WEBSERVER);
 		} else {
 			$htmltext .= $langs->trans("SetHereVirtualHost", $dataroot);
@@ -3067,7 +3069,7 @@ if (!GETPOST('hide_websitemenu')) {
 											// Allow some non-standard markup that we used in the introduction.
 											extraAllowedContent: \'span(*);cite(*);q(*);dl(*);dt(*);dd(*);ul(*);li(*);header(*);button(*);h1(*);h2(*);\',
 											//extraPlugins: \'sourcedialog\',
-											removePlugins: \'flash,stylescombo\',
+											removePlugins: \'flash,stylescombo,exportpdf,scayt,wsc,pagebreak,iframe,smiley\',
 											// Show toolbar on startup (optional).
 											// startupFocus: true
 										});

@@ -283,6 +283,7 @@ ErrorAttributeIsUsedIntoProduct=Cet attribut est utilisé dans une ou plusieurs 
 ErrorAttributeValueIsUsedIntoProduct=Cette valeur d'attribut est utilisée dans une ou plusieurs variantes de produit
 ErrorPaymentInBothCurrency=Erreur, tous les montants doivent être entrés dans la même colonne.
 ErrorYouTryToPayInvoicesInACurrencyFromBankWithAnotherCurrency=Vous essayez de payer une facture en monnaie %s depuis un compte en %s
+ErrorAjaxRequestFailed=La requête a échoué
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Votre paramètre PHP upload_max_filesize (%s) est supérieur au paramètre PHP post_max_size (%s). Ceci n'est pas une configuration cohérente.

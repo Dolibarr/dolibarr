@@ -371,6 +371,32 @@ function GETPOSTISSET($paramname)
 }
 
 /**
+ * Return true if the parameter $paramname is submit from a POST OR GET as an array.
+ * Can be used before GETPOST to know if the $check param of GETPOST need to check an array or a string
+ *
+ * @param 	string	$paramname		Name or parameter to test
+ *  @param	int		$method	     Type of method (0 = get then post, 1 = only get, 2 = only post, 3 = post then get)
+ * @return 	bool 				True if we have just submit a POST or GET request with the parameter provided (even if param is empty)
+ */
+function GETPOSTISARRAY($paramname, $method = 0)
+{
+	// for $method test need return the same $val as GETPOST
+	if (empty($method)) {
+		$val = isset($_GET[$paramname]) ? $_GET[$paramname] : (isset($_POST[$paramname]) ? $_POST[$paramname] : '');
+	} elseif ($method == 1) {
+		$val = isset($_GET[$paramname]) ? $_GET[$paramname] : '';
+	} elseif ($method == 2) {
+		$val = isset($_POST[$paramname]) ? $_POST[$paramname] : '';
+	} elseif ($method == 3) {
+		$val = isset($_POST[$paramname]) ? $_POST[$paramname] : (isset($_GET[$paramname]) ? $_GET[$paramname] : '');
+	} else {
+		$val = 'BadFirstParameterForGETPOST';
+	}
+
+	return is_array($val);
+}
+
+/**
  *  Return value of a param into GET or POST supervariable.
  *  Use the property $user->default_values[path]['createform'] and/or $user->default_values[path]['filters'] and/or $user->default_values[path]['sortorder']
  *  Note: The property $user->default_values is loaded by main.php when loading the user.
@@ -547,6 +573,9 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 							}
 						} elseif (isset($user->default_values[$relativepathstring]['filters'])) {
 							foreach ($user->default_values[$relativepathstring]['filters'] as $defkey => $defval) {	// $defkey is a querystring like 'a=b&c=d', $defval is key of user
+								if (!empty($_GET['disabledefaultvalues'])) {	// If set of default values has been disabled by a request parameter
+									continue;
+								}
 								$qualified = 0;
 								if ($defkey != '_noquery_') {
 									$tmpqueryarraytohave = explode('&', $defkey);
@@ -657,11 +686,11 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 				$tmpcheck = 'alphanohtml';
 			}
 			foreach ($out as $outkey => $outval) {
-				$out[$outkey] = checkVal($outval, $tmpcheck, $filter, $options);
+				$out[$outkey] = sanitizeVal($outval, $tmpcheck, $filter, $options);
 			}
 		}
 	} else {
-		$out = checkVal($out, $check, $filter, $options);
+		$out = sanitizeVal($out, $check, $filter, $options);
 	}
 
 	// Sanitizing for special parameters.
@@ -710,9 +739,11 @@ function GETPOSTINT($paramname, $method = 0)
 	return (int) GETPOST($paramname, 'int', $method, null, null, 0);
 }
 
+
 /**
- *  Return a value after checking on a rule. A sanitization may also have been done.
+ *  Return a sanitized or empty value after checking value against a rule.
  *
+ *  @deprecated
  *  @param  string|array  	$out	     Value to check/clear.
  *  @param  string  		$check	     Type of check/sanitizing
  *  @param  int     		$filter      Filter to apply when $check is set to 'custom'. (See http://php.net/manual/en/filter.filters.php for détails)
@@ -721,8 +752,23 @@ function GETPOSTINT($paramname, $method = 0)
  */
 function checkVal($out = '', $check = 'alphanohtml', $filter = null, $options = null)
 {
+	return sanitizeVal($out, $check, $filter, $options);
+}
+
+/**
+ *  Return a sanitized or empty value after checking value against a rule.
+ *
+ *  @param  string|array  	$out	     Value to check/clear.
+ *  @param  string  		$check	     Type of check/sanitizing
+ *  @param  int     		$filter      Filter to apply when $check is set to 'custom'. (See http://php.net/manual/en/filter.filters.php for détails)
+ *  @param  mixed   		$options     Options to pass to filter_var when $check is set to 'custom'
+ *  @return string|array    		     Value sanitized (string or array). It may be '' if format check fails.
+ */
+function sanitizeVal($out = '', $check = 'alphanohtml', $filter = null, $options = null)
+{
 	global $conf;
 
+	// TODO : use class "Validate" to perform tests (and add missing tests) if needed for factorize
 	// Check is done after replacement
 	switch ($check) {
 		case 'none':
@@ -1581,8 +1627,7 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
  *  @param	string	$disabled			Disabled text
  *  @param	string	$morecss			More CSS
  *  @param	string	$backtopagejsfields	The back to page must be managed using javascript instead of a redirect.
- *  									Value is 'Name of html component to set with id:Name of html component to set with label'
- *  									TODO Support this mode, for example when used from the page create a project on thirdparty creation.
+ *  									Value is 'keyforpopupid:Name_of_html_component_to_set_with id,Name_of_html_component_to_set_with_label'
  * 	@return	string						HTML component with button
  */
 function dolButtonToOpenUrlInDialogPopup($name, $label, $buttonstring, $url, $disabled = '', $morecss = 'button bordertransp', $backtopagejsfields = '')
@@ -1593,14 +1638,20 @@ function dolButtonToOpenUrlInDialogPopup($name, $label, $buttonstring, $url, $di
 		$url .= '?dol_hide_topmenu=1&dol_hide_leftmenu=1&dol_openinpopup='.urlencode($name);
 	}
 
-	$out .= '';
+	$out = '';
 
 	$backtopagejsfieldsid = ''; $backtopagejsfieldslabel = '';
 	if ($backtopagejsfields) {
-		$url .= '&backtopagejsfields='.urlencode($backtopagejsfields);
 		$tmpbacktopagejsfields = explode(':', $backtopagejsfields);
-		$backtopagejsfieldsid = empty($tmpbacktopagejsfields[0]) ? '' : $tmpbacktopagejsfields[0];
-		$backtopagejsfieldslabel = empty($tmpbacktopagejsfields[1]) ? '' : $tmpbacktopagejsfields[1];
+		if (empty($tmpbacktopagejsfields[1])) {	// If the part 'keyforpopupid:' is missing, we add $name for it.
+			$backtopagejsfields = $name.":".$backtopagejsfields;
+			$tmp2backtopagejsfields = explode(',', $tmpbacktopagejsfields[0]);
+		} else {
+			$tmp2backtopagejsfields = explode(',', $tmpbacktopagejsfields[1]);
+		}
+		$backtopagejsfieldsid = empty($tmp2backtopagejsfields[0]) ? '' : $tmp2backtopagejsfields[0];
+		$backtopagejsfieldslabel = empty($tmp2backtopagejsfields[1]) ? '' : $tmp2backtopagejsfields[1];
+		$url .= '&backtopagejsfields='.urlencode($backtopagejsfields);
 	}
 
 	//print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("MediaFiles")).'" name="file_manager">';
@@ -1623,12 +1674,12 @@ function dolButtonToOpenUrlInDialogPopup($name, $label, $buttonstring, $url, $di
 						 	width: \'80%\',
 						 	title: \''.dol_escape_js($label).'\',
 							open: function (event, ui) {
-								console.log("open popup");
+								console.log("open popup name='.$name.', backtopagejsfields='.$backtopagejsfields.'");
        						},
 							close: function (event, ui) {
 								returnedid = jQuery("#varforreturndialogid'.$name.'").text();
 								returnedlabel = jQuery("#varforreturndialoglabel'.$name.'").text();
-								console.log("popup has been closed. returnedid="+returnedid+" returnedlabel="+returnedlabel);
+								console.log("popup has been closed. returnedid (js var defined into parent page)="+returnedid+" returnedlabel="+returnedlabel);
 								if (returnedid != "" && returnedid != "div for returned id") {
 									jQuery("#'.(empty($backtopagejsfieldsid)?"none":$backtopagejsfieldsid).'").val(returnedid);
 								}
@@ -1772,7 +1823,7 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 				$out .= '<div class="tab tab'.($isactive?'active':'unactive').'" style="margin: 0 !important">';
 				if (!empty($links[$i][0])) {
 					$titletoshow = preg_replace('/<.*$/', '', $links[$i][1]);
-					$out .= '<a'.(!empty($links[$i][2]) ? ' id="'.$links[$i][2].'"' : '').' class="tab inline-block'.($morecss ? ' '.$morecss : '').'" href="'.$links[$i][0].'" title="'.dol_escape_htmltag($titletoshow).'">';
+					$out .= '<a'.(!empty($links[$i][2]) ? ' id="'.$links[$i][2].'"' : '').' class="tab inline-block valignmiddle'.($morecss ? ' '.$morecss : '').'" href="'.$links[$i][0].'" title="'.dol_escape_htmltag($titletoshow).'">';
 				}
 				$out .= $links[$i][1];
 				if (!empty($links[$i][0])) {
@@ -1820,7 +1871,7 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 		if (empty($tabsname)) {
 			$tabsname = str_replace("@", "", $picto);
 		}
-		$out .= '<div id="moretabs'.$tabsname.'" class="inline-block tabsElem">';
+		$out .= '<div id="moretabs'.$tabsname.'" class="inline-block tabsElem valignmiddle">';
 		$out .= '<div class="tab"><a href="#" class="tab moretab inline-block tabunactive"><span class="hideonsmartphone">'.$langs->trans("More").'</span>... ('.$nbintab.')</a></div>'; // Do not use "reposition" class in the "More".
 		$out .= '<div id="moretabsList'.$tabsname.'" style="width: '.$widthofpopup.'px; position: absolute; '.$left.': -999em; text-align: '.$left.'; margin:0px; padding:2px; z-index:10;">';
 		$out .= $outmore;
@@ -2107,9 +2158,9 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 			$morehtmlstatus .= '<span class="statusrefbuy">'.$object->getLibStatut(6, 1).'</span>';
 		}
 	} elseif (in_array($object->element, array('facture', 'invoice', 'invoice_supplier', 'chargesociales', 'loan', 'tva', 'salary'))) {
-		$tmptxt = $object->getLibStatut(6, $object->totalpaye);
+		$tmptxt = $object->getLibStatut(6, $object->totalpaid);
 		if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3)) {
-			$tmptxt = $object->getLibStatut(5, $object->totalpaye);
+			$tmptxt = $object->getLibStatut(5, $object->totalpaid);
 		}
 		$morehtmlstatus .= $tmptxt;
 	} elseif ($object->element == 'contrat' || $object->element == 'contract') {
@@ -2253,11 +2304,11 @@ function dol_bc($var, $moreclass = '')
  */
 function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs = '', $mode = 0, $extralangcode = '')
 {
-	global $conf, $langs;
+	global $conf, $langs, $hookmanager;
 
 	$ret = '';
 	$countriesusingstate = array('AU', 'CA', 'US', 'IN', 'GB', 'ES', 'UK', 'TR', 'CN'); // See also MAIN_FORCE_STATE_INTO_ADDRESS
-	$sep = "\n";
+
 	// See format of addresses on https://en.wikipedia.org/wiki/Address
 	// Address
 	if (empty($mode)) {
@@ -2320,6 +2371,14 @@ function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs
 		$langs->load("dict");
 		$ret .= (empty($object->country_code) ? '' : ($ret ? $sep : '').$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$object->country_code)));
 	}
+	if ($hookmanager) {
+		$parameters = array('withcountry' => $withcountry, 'sep' => $sep, 'outputlangs' => $outputlangs,'mode' => $mode, 'extralangcode' => $extralangcode);
+		$reshook = $hookmanager->executeHooks('formatAddress', $parameters, $object);
+		if ($reshook > 0) {
+			$ret = '';
+		}
+		$ret .= $hookmanager->resPrint;
+	}
 
 	return $ret;
 }
@@ -2357,7 +2416,7 @@ function dol_strftime($fmt, $ts = false, $is_gmt = false)
  * 	@param	string		$tzoutput		true or 'gmt' => string is for Greenwich location
  * 										false or 'tzserver' => output string is for local PHP server TZ usage
  * 										'tzuser' => output string is for user TZ (current browser TZ with current dst) => In a future, we should have same behaviour than 'tzuserrel'
- *                                      'tzuserrel' => output string is for user TZ (current browser TZ with dst or not, depending on date position) (TODO not implemented yet)
+ *                                      'tzuserrel' => output string is for user TZ (current browser TZ with dst or not, depending on date position)
  *	@param	Translate	$outputlangs	Object lang that contains language for text translation.
  *  @param  boolean		$encodetooutput false=no convert into output pagecode
  * 	@return string      				Formated date or '' if time is null
@@ -2445,6 +2504,9 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 	} elseif ($format == 'dayhourlog') {
 		// Format not sensitive to language
 		$format = '%Y%m%d%H%M%S';
+	} elseif ($format == 'dayhourlogsmall') {
+		// Format not sensitive to language
+		$format = '%Y%m%d%H%M';
 	} elseif ($format == 'dayhourldap') {
 		$format = '%Y%m%d%H%M%SZ';
 	} elseif ($format == 'dayhourxcard') {
@@ -2951,7 +3013,7 @@ function dol_print_socialnetworks($value, $cid, $socid, $type, $dictsocialnetwor
 		} else {
 			if (!empty($dictsocialnetworks[$type]['url'])) {
 				$link = str_replace('{socialid}', $value, $dictsocialnetworks[$type]['url']);
-				$htmllink .= '&nbsp;<a href="'.$link.'" target="_blank" rel="noopener noreferrer">'.dol_escape_htmltag($value).'</a>';
+				$htmllink .= '&nbsp;<a href="'.dol_sanitizeUrl($link).'" target="_blank" rel="noopener noreferrer">'.dol_escape_htmltag($value).'</a>';
 			} else {
 				$htmllink .= dol_escape_htmltag($value);
 			}
@@ -3788,7 +3850,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'recent', 'reception', 'recruitmentcandidature', 'recruitmentjobposition', 'resource', 'recurring',
 				'shapes', 'square', 'stop-circle', 'supplier', 'supplier_proposal', 'supplier_order', 'supplier_invoice',
 				'timespent', 'title_setup', 'title_accountancy', 'title_bank', 'title_hrm', 'title_agenda',
-				'uncheck', 'user-cog', 'user-injured', 'user-md', 'vat', 'website', 'workstation',
+				'uncheck', 'user-cog', 'user-injured', 'user-md', 'vat', 'website', 'workstation', 'world', 'private',
 				'conferenceorbooth', 'eventorganization'
 			))) {
 			$fakey = $pictowithouttext;
@@ -3839,7 +3901,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'title_agenda'=>'calendar-alt',
 				'uncheck'=>'times', 'uparrow'=>'share', 'vat'=>'money-check-alt', 'vcard'=>'address-card',
 				'jabber'=>'comment-o',
-				'website'=>'globe-americas', 'workstation'=>'pallet',
+				'website'=>'globe-americas', 'workstation'=>'pallet', 'world'=>'globe', 'private'=>'user-lock',
 				'conferenceorbooth'=>'chalkboard-teacher', 'eventorganization'=>'project-diagram'
 			);
 			if ($pictowithouttext == 'off') {
@@ -3908,7 +3970,8 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'error'=>'pictoerror', 'warning'=>'pictowarning', 'switch_on'=>'font-status4', 'switch_on_red'=>'font-status8',
 				'holiday'=>'infobox-holiday', 'info'=>'opacityhigh', 'invoice'=>'infobox-commande',
 				'knowledgemanagement'=>'infobox-contrat rotate90', 'loan'=>'infobox-bank_account',
-				'payment'=>'infobox-bank_account', 'payment_vat'=>'infobox-bank_account', 'poll'=>'infobox-adherent', 'pos'=>'infobox-bank_account', 'project'=>'infobox-project', 'projecttask'=>'infobox-project', 'propal'=>'infobox-propal',
+				'payment'=>'infobox-bank_account', 'payment_vat'=>'infobox-bank_account', 'poll'=>'infobox-adherent', 'pos'=>'infobox-bank_account', 'project'=>'infobox-project', 'projecttask'=>'infobox-project',
+				'propal'=>'infobox-propal', 'private'=>'infobox-project',
 				'reception'=>'flip', 'recruitmentjobposition'=>'infobox-adherent', 'recruitmentcandidature'=>'infobox-adherent',
 				'resource'=>'infobox-action',
 				'salary'=>'infobox-bank_account', 'shipment'=>'infobox-commande', 'supplier_invoice'=>'infobox-order_supplier', 'supplier_invoicea'=>'infobox-order_supplier', 'supplier_invoiced'=>'infobox-order_supplier',
@@ -3931,7 +3994,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				//'dolly'=>'#a69944', 'dollyrevert'=>'#a69944',
 				'lot'=>'#a69944',
 				'map-marker-alt'=>'#aaa', 'mrp'=>'#a69944', 'product'=>'#a69944', 'service'=>'#a69944', 'inventory'=>'#a69944', 'stock'=>'#a69944', 'movement'=>'#a69944',
-				'other'=>'#ddd',
+				'other'=>'#ddd', 'world'=>'#986c6a',
 				'partnership'=>'#6c6aa8', 'playdisabled'=>'#ccc', 'printer'=>'#444', 'projectpub'=>'#986c6a', 'reception'=>'#a69944', 'resize'=>'#444', 'rss'=>'#cba',
 				//'shipment'=>'#a69944',
 				'security'=>'#999', 'square'=>'#888', 'stop-circle'=>'#888', 'stats'=>'#444', 'switch_off'=>'#999', 'technic'=>'#999', 'timespent'=>'#555',

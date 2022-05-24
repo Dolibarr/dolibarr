@@ -44,7 +44,7 @@ $action = GETPOST('action', 'aZ09');
 $object = new Facture($db);
 // Load object
 if ($id > 0 || !empty($ref)) {
-	$object->fetch($id, $ref, '', '', $conf->global->INVOICE_USE_SITUATION);
+	$object->fetch($id, $ref, '', '', (!empty($conf->global->INVOICE_USE_SITUATION) ? $conf->global->INVOICE_USE_SITUATION : 0));
 }
 
 $permissionnote = $user->rights->facture->creer; // Used by the include of actions_setnotes.inc.php
@@ -99,7 +99,7 @@ if ($id > 0 || !empty($ref)) {
 
 	$head = facture_prepare_head($object);
 
-	$totalpaye = $object->getSommePaiement();
+	$totalpaid = $object->getSommePaiement();
 
 	print dol_get_fiche_head($head, 'note', $langs->trans("InvoiceCustomer"), -1, 'bill');
 
@@ -148,7 +148,7 @@ if ($id > 0 || !empty($ref)) {
 	}
 	$morehtmlref .= '</div>';
 
-	$object->totalpaye = $totalpaye; // To give a chance to dol_banner_tab to use already paid amount to show correct status
+	$object->totalpaid = $totalpaid; // To give a chance to dol_banner_tab to use already paid amount to show correct status
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '', 0);
 

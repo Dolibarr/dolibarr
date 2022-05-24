@@ -382,7 +382,7 @@ class modCategorie extends DolibarrModules
 		$this->export_enabled[$r] = '!empty($conf->projet->enabled)';
 		$this->export_permission[$r] = array(array("categorie", "lire"), array("projet", "export"));
 		$this->export_fields_array[$r] = array('cat.rowid'=>"CategId", 'cat.label'=>"Label", 'cat.description'=>"Description", 'cat.fk_parent'=>"ParentCategory", 'p.rowid'=>'ProjectId', 'p.ref'=>'Ref', 's.rowid'=>"IdThirdParty", 's.nom'=>"Name");
-		$this->export_TypeFields_array[$r] = array('cat.label'=>"Text", 'cat.description'=>"Text", 'cat.fk_parent'=>'List:categorie:label:rowid', 'p.ref'=>'Text', 's.rowid'=>"List:societe:nom:rowid", 's.nom'=>"Text");
+		$this->export_TypeFields_array[$r] = array('cat.label'=>"Text", 'cat.description'=>"Text", 'cat.fk_parent'=>'List:categorie:label:rowid', 'p.ref'=>'Text', 's.rowid'=>"Numeric", 's.nom'=>"Text");
 		$this->export_entities_array[$r] = array('p.rowid'=>'project', 'p.ref'=>'project', 's.rowid'=>"company", 's.nom'=>"company"); // We define here only fields that use another picto
 
 		$keyforselect = 'projet';
