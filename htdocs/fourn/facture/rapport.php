@@ -105,7 +105,7 @@ $syear = GETPOST("reyear") ?GETPOST("reyear") : date("Y", time());
 
 print $formother->select_month($cmonth, 'remonth');
 
-print $formother->select_year($syear, 'reyear');
+print $formother->selectyear($syear, 'reyear');
 
 print '<input type="submit" class="button" value="'.$langs->trans("Create").'">';
 print '</form>';

@@ -2229,6 +2229,11 @@ function dolGetElementUrl($objectid, $objecttype, $withpicto = 0, $option = '')
 		$classpath = 'product/stock/class';
 		$classfile = 'entrepot';
 		$classname = 'Entrepot';
+	} elseif ($objecttype == 'facturerec') {
+		$classpath = 'compta/facture/class';
+		$classfile = 'facture-rec';
+		$classname = 'FactureRec';
+		$module='facture';
 	}
 
 	if (!empty($conf->$module->enabled)) {

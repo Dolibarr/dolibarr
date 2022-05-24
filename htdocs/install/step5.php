@@ -228,7 +228,7 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 					$success = 1;
 				} else {
 					dolibarr_install_syslog('step5: FailedToCreateAdminLogin '.$newuser->error, LOG_ERR);
-					setEventMessage($langs->trans("FailedToCreateAdminLogin").' '.$newuser->error, null, 'errors');
+					setEventMessages($langs->trans("FailedToCreateAdminLogin").' '.$newuser->error, null, 'errors');
 					//header("Location: step4.php?error=3&selectlang=$setuplang".(isset($login) ? '&login='.$login : ''));
 					print '<br><div class="error">'.$langs->trans("FailedToCreateAdminLogin").': '.$newuser->error.'</div><br><br>';
 					print $langs->trans("ErrorGoBackAndCorrectParameters").'<br><br>';

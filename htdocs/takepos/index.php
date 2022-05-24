@@ -232,7 +232,12 @@ function PrintCategories(first) {
 			continue;
 		}
 		$("#catdivdesc"+i).show();
-		$("#catdesc"+i).html(categories[parseInt(i)+parseInt(first)]['label']);
+		<?php
+		if (getDolGlobalString('TAKEPOS_SHOW_CATEGORY_DESCRIPTION') == 1) { ?>
+			$("#catdesc"+i).html(categories[parseInt(i)+parseInt(first)]['label'].bold() + ' - ' + categories[parseInt(i)+parseInt(first)]['description']);
+		<?php } else { ?>
+			$("#catdesc"+i).text(categories[parseInt(i)+parseInt(first)]['label']);
+		<?php }	?>
 		$("#catimg"+i).attr("src","genimg/index.php?query=cat&id="+categories[parseInt(i)+parseInt(first)]['rowid']);
 		$("#catdiv"+i).data("rowid",categories[parseInt(i)+parseInt(first)]['rowid']);
 		$("#catdiv"+i).attr('class', 'wrapper');
@@ -266,7 +271,12 @@ function MoreCategories(moreorless) {
 			continue;
 		}
 		$("#catdivdesc"+i).show();
-		$("#catdesc"+i).html(categories[i+(<?php echo ($MAXCATEG - 2); ?> * pagecategories)]['label']);
+		<?php
+		if (getDolGlobalString('TAKEPOS_SHOW_CATEGORY_DESCRIPTION') == 1) { ?>
+			$("#catdesc"+i).html(categories[i+(<?php echo ($MAXCATEG - 2); ?> * pagecategories)]['label'].bold() + ' - ' + categories[i+(<?php echo ($MAXCATEG - 2); ?> * pagecategories)]['description']);
+		<?php } else { ?>
+			$("#catdesc"+i).text(categories[i+(<?php echo ($MAXCATEG - 2); ?> * pagecategories)]['label']);
+		<?php } ?>
 		$("#catimg"+i).attr("src","genimg/index.php?query=cat&id="+categories[i+(<?php echo ($MAXCATEG - 2); ?> * pagecategories)]['rowid']);
 		$("#catdiv"+i).data("rowid",categories[i+(<?php echo ($MAXCATEG - 2); ?> * pagecategories)]['rowid']);
 		$("#catwatermark"+i).show();
@@ -295,8 +305,13 @@ function LoadProducts(position, issubcat) {
 	jQuery.each(subcategories, function(i, val) {
 		if (currentcat==val.fk_parent) {
 			$("#prodivdesc"+ishow).show();
-			$("#prodesc"+ishow).html(val.label);
-			$("#probutton"+ishow).html(val.label);
+			<?php if (getDolGlobalString('TAKEPOS_SHOW_CATEGORY_DESCRIPTION') == 1) { ?>
+				$("#prodesc"+ishow).html(val.label.bold() + ' - ' + val.description);
+			   $("#probutton"+ishow).html(val.label);
+			<?php } else { ?>
+				$("#prodesc"+ishow).text(val.label);
+			  $("#probutton"+ishow).text(val.label);
+			<?php } ?>
 			$("#probutton"+ishow).show();
 			$("#proprice"+ishow).attr("class", "hidden");
 			$("#proprice"+ishow).html("");
@@ -361,6 +376,13 @@ function LoadProducts(position, issubcat) {
 				$("#prodiv"+ishow).attr("class","wrapper2");
 				$("#prowatermark"+ishow).hide();
 				ishow++; //Next product to show after print data product
+				<?php
+				// Add js from hooks
+				$parameters=array();
+				$parameters['caller'] = 'loadProducts';
+				$hookmanager->executeHooks('completeJSProductDisplay', $parameters);
+				print $hookmanager->resPrint;
+				?>
 			}
 			//console.log("Hide the prowatermark for ishow="+ishow);
 			idata++; //Next data everytime
@@ -570,6 +592,18 @@ function Search2(keyCodeForEnter, moreorless) {
 		search_start = $('#search_start_'+moreorless).val();
 	}
 
+	if (search_term == '') {
+		$("[id^=prowatermark]").html("");
+		$("[id^=prodesc]").text("");
+		$("[id^=probutton]").text("");
+		$("[id^=probutton]").hide();
+		$("[id^=proprice]").attr("class", "hidden");
+		$("[id^=proprice]").html("");
+		$("[id^=proimg]").attr("src", "genimg/empty.png");
+		$("[id^=prodiv]").data("rowid", "");
+		return;
+	}
+
 	var search = false;
 	var eventKeyCode = window.event.keyCode;
 	if (keyCodeForEnter == '' || eventKeyCode == keyCodeForEnter) {
@@ -591,6 +625,7 @@ function Search2(keyCodeForEnter, moreorless) {
 			$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=search&term=' + search_term + '&search_start=' + search_start + '&search_limit=' + search_limit, function (data) {
 				for (i = 0; i < <?php echo $MAXPRODUCT ?>; i++) {
 					if (typeof (data[i]) == "undefined") {
+						$("#prowatermark" + i).html("");
 						$("#prodesc" + i).text("");
 						$("#probutton" + i).text("");
 						$("#probutton" + i).hide();
@@ -627,6 +662,15 @@ function Search2(keyCodeForEnter, moreorless) {
 					}
 					$("#prodiv" + i).data("rowid", data[i]['rowid']);
 					$("#prodiv" + i).data("iscat", 0);
+
+					<?php
+					// Add js from hooks
+					$parameters=array();
+					$parameters['caller'] = 'search2';
+					$hookmanager->executeHooks('completeJSProductDisplay', $parameters);
+					print $hookmanager->resPrint;
+					?>
+
 					nbsearchresults++;
 				}
 			}).always(function (data) {

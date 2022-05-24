@@ -263,7 +263,7 @@ function societe_prepare_head(Societe $object)
 		$h++;
 	}
 
-	if (getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR') == 'thirdparty') {
+	if (getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR', 'thirdparty') == 'thirdparty') {
 		if (!empty($user->rights->partnership->read)) {
 			$langs->load("partnership");
 			$nbPartnership = is_array($object->partnerships) ? count($object->partnerships) : 0;

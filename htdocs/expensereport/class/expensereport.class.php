@@ -112,6 +112,9 @@ class ExpenseReport extends CommonObject
 	public $fk_user_validator; // User that is defined to approve
 
 	// Validation
+	/* @deprecated */
+	public $datevalid;
+
 	public $date_valid; // User making validation
 	public $fk_user_valid;
 	public $user_valid_infos;
@@ -1806,8 +1809,6 @@ class ExpenseReport extends CommonObject
 			// We don't know seller and buyer for expense reports
 			$seller = $mysoc;			// We use same than current company (expense report are often done in same country)
 			$seller->tva_assuj = 1;		// Most seller uses vat
-			$seller->localtax1_assuj = $mysoc->localtax1_assuj;		// We don't know, we reuse the state of company
-			$seller->localtax2_assuj = $mysoc->localtax1_assuj;		// We don't know, we reuse the state of company
 			$buyer = new Societe($this->db);
 
 			$localtaxes_type = getLocalTaxesFromRate($vatrate, 0, $buyer, $seller);
@@ -1891,10 +1892,7 @@ class ExpenseReport extends CommonObject
 		if (!is_object($seller)) {
 			$seller = $mysoc;			// We use same than current company (expense report are often done in same country)
 			$seller->tva_assuj = 1;		// Most seller uses vat
-			$seller->localtax1_assuj = $mysoc->localtax1_assuj;		// We don't know, we reuse the state of company
-			$seller->localtax2_assuj = $mysoc->localtax1_assuj;		// We don't know, we reuse the state of company
 		}
-		//$buyer = new Societe($this->db);
 
 		$expensereportrule = new ExpenseReportRule($db);
 		$rulestocheck = $expensereportrule->getAllRule($this->line->fk_c_type_fees, $this->line->date, $this->fk_user_author);
@@ -1979,10 +1977,7 @@ class ExpenseReport extends CommonObject
 		if (!is_object($seller)) {
 			$seller = $mysoc;			// We use same than current company (expense report are often done in same country)
 			$seller->tva_assuj = 1;		// Most seller uses vat
-			$seller->localtax1_assuj = $mysoc->localtax1_assuj;		// We don't know, we reuse the state of company
-			$seller->localtax2_assuj = $mysoc->localtax1_assuj;		// We don't know, we reuse the state of company
 		}
-		//$buyer = new Societe($this->db);
 
 		$expenseik = new ExpenseReportIk($this->db);
 		$range = $expenseik->getRangeByUser($userauthor, $this->line->fk_c_exp_tax_cat);
@@ -2618,9 +2613,11 @@ class ExpenseReportLine extends CommonObjectLine
 
 	public $projet_ref;
 	public $projet_title;
+	public $rang;
 
 	public $vatrate;
 	public $vat_src_code;
+	public $tva_tx;
 	public $localtax1_tx;
 	public $localtax2_tx;
 	public $localtax1_type;

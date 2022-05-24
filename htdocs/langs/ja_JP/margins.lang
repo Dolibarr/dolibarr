@@ -36,9 +36,9 @@ MarginTypeDesc=*ベストバイイング価格の利益=販売価格-製品カ�
 CostPrice=原価
 UnitCharges=ユニット料金
 Charges=料金
-AgentContactType=商業代理店の連絡先タイプ
-AgentContactTypeDetails=連絡先/住所ごとの利益報告書に使用される連絡先タイプ(請求書にリンクされている)を定義する。ほとんどの場合、連絡先が請求書で明示的に定義されていない可能性があるため、連絡先の統計の読み取りは信頼できないことに注意すること。
-rateMustBeNumeric=レートは数値でなければなりません
+AgentContactType=商取引代理店の連絡先タイプ
+AgentContactTypeDetails=連絡先/住所ごとの利益報告書に使用される連絡先タイプ(請求書にリンクされている)を定義する。ほとんどの場合、連絡先が請求書で明示的に定義されていない可能性があるため、連絡先の統計の読取りは信頼できないことに注意すること。
+rateMustBeNumeric=レートは数値でなければならない
 markRateShouldBeLesserThan100=マーク率は100未満である必要がある
 ShowMarginInfos=利益情報を表示する
 CheckMargins=利益の詳細

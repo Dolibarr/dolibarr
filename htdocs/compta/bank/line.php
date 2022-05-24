@@ -52,11 +52,12 @@ if (!empty($conf->salaries->enabled)) {
 
 
 $id = GETPOST('rowid', 'int');
-$accountid = (GETPOST('id', 'int') ? GETPOST('id', 'int') : GETPOST('account', 'int'));
+$rowid = GETPOST("rowid", 'int');
+$accountoldid = GETPOST('account', 'int');		// GETPOST('account') is old account id
+$accountid = GETPOST('accountid', 'int');		// GETPOST('accountid') is new account id
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
-$rowid = GETPOST("rowid", 'int');
 $orig_account = GETPOST("orig_account");
 $backtopage = GETPOST('backtopage', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
@@ -69,7 +70,7 @@ if ($user->socid) {
 	$socid = $user->socid;
 }
 
-$result = restrictedArea($user, 'banque', $accountid, 'bank_account');
+$result = restrictedArea($user, 'banque', $accountoldid, 'bank_account');
 if (empty($user->rights->banque->lire) && empty($user->rights->banque->consolidate)) {
 	accessforbidden();
 }
@@ -124,18 +125,26 @@ if ($user->rights->banque->modifier && $action == "update") {
 	$error = 0;
 
 	$acline = new AccountLine($db);
-	$acline->fetch($rowid);
+	$result = $acline->fetch($rowid);
+	if ($result <= 0) {
+		dol_syslog('Failed to read bank line with id '.$rowid, LOG_WARNING);	// This happens due to old bug that has set fk_account to null.
+		$acline->id = $rowid;
+	}
 
 	$acsource = new Account($db);
-	$acsource->fetch($id);
+	$acsource->fetch($accountoldid);
 
 	$actarget = new Account($db);
 	if (GETPOST('accountid', 'int') > 0 && !$acline->rappro && !$acline->getVentilExportCompta()) {	// We ask to change bank account
 		$actarget->fetch(GETPOST('accountid', 'int'));
 	} else {
-		$actarget->fetch($id);
+		$actarget->fetch($accountoldid);
 	}
 
+	if (!($actarget->id > 0)) {
+		setEventMessages($langs->trans("ErrorFailedToLoadBankAccount"), null, 'errors');
+		$error++;
+	}
 	if ($actarget->courant == Account::TYPE_CASH && GETPOST('value', 'alpha') != 'LIQ') {
 		setEventMessages($langs->trans("ErrorCashAccountAcceptsOnlyCashMoney"), null, 'errors');
 		$error++;
@@ -229,7 +238,7 @@ if ($user->rights->banque->consolidate && ($action == 'num_releve' || $action ==
 		$db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."bank";
-		$sql .= " SET num_releve=".($num_rel ? "'".$db->escape($num_rel)."'" : "null");
+		$sql .= " SET num_releve = ".($num_rel ? "'".$db->escape($num_rel)."'" : "null");
 		if (empty($num_rel)) {
 			$sql .= ", rappro = 0";
 		} else {
@@ -307,7 +316,6 @@ if ($result) {
 		print '<input type="hidden" name="action" value="update">';
 		print '<input type="hidden" name="orig_account" value="'.$orig_account.'">';
 		print '<input type="hidden" name="account" value="'.$acct->id.'">';
-		print '<input type="hidden" name="id" value="'.$acct->id.'">';
 
 		print dol_get_fiche_head($head, 'bankline', $langs->trans('LineRecord'), 0, 'accountline', 0);
 
@@ -326,11 +334,12 @@ if ($result) {
 		// Bank account
 		print '<tr><td class="titlefieldcreate">'.$langs->trans("Account").'</td>';
 		print '<td>';
-		if (!$objp->rappro && !$bankline->getVentilExportCompta()) {
-			print img_picto('', 'bank_account', 'class="paddingright"');
-			print $form->select_comptes($acct->id, 'accountid', 0, '', 0, '', 0, '', 1);
-		} else {
+		// $objp->fk_account may be not > 0 if data was lost by an old bug. In such a case, we let a chance to user to fix it.
+		if (($objp->rappro || $bankline->getVentilExportCompta()) && $objp->fk_account > 0) {
 			print $acct->getNomUrl(1, 'transactions', 'reflabel');
+		} else {
+			print img_picto('', 'bank_account', 'class="paddingright"');
+			print $form->select_comptes($acct->id, 'accountid', 0, '', ($acct->id > 0 ? $acct->id : 1), '', 0, '', 1);
 		}
 		print '</td>';
 		print '</tr>';

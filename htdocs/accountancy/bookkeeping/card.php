@@ -540,7 +540,7 @@ if (!empty($object->piece_num)) {
 	print '</td>';
 	print '</tr>';
 
-	// Date document creation
+	// Date document validation
 	print '<tr>';
 	print '<td class="titlefield">'.$langs->trans("DateValidation").'</td>';
 	print '<td>';

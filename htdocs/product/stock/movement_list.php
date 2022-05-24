@@ -223,7 +223,7 @@ if (empty($reshook)) {
 		$search_qty = '';
 		$search_fk_projet=0;
 		$sall = "";
-		$toselect = '';
+		$toselect = array();
 		$search_array_options = array();
 	}
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')

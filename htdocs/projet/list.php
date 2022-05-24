@@ -285,7 +285,7 @@ if (empty($reshook)) {
 		$search_accept_booth_suggestions = '';
 		$search_price_registration = '';
 		$search_price_booth = '';
-		$toselect = '';
+		$toselect = array();
 		$search_array_options = array();
 		$search_category_array = array();
 	}
@@ -830,7 +830,7 @@ $moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$form-
 $moreforfilter .= '</div>';
 
 // If the user can view thirdparties other than his'
-if ($user->rights->societe->client->voir || $socid) {
+if ($user->rights->user->user->lire) {
 	$langs->load("commercial");
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('ThirdPartiesOfSaleRepresentative');
@@ -898,7 +898,7 @@ if (!empty($arrayfields['p.dateo']['checked'])) {
 		print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_sday" value="'.dol_escape_htmltag($search_sday).'">';
 	}
 	print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_smonth" value="'.dol_escape_htmltag($search_smonth).'">';
-	$formother->select_year($search_syear ? $search_syear : -1, 'search_syear', 1, 20, 5, 0, 0, '', 'widthauto valignmiddle');*/
+	print $formother->selectyear($search_syear ? $search_syear : -1, 'search_syear', 1, 20, 5, 0, 0, '', 'widthauto valignmiddle');*/
 	print '<div class="nowrap">';
 	print $form->selectDate($search_date_start_start ? $search_date_start_start : -1, 'search_date_start_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 	print '</div>';
@@ -914,7 +914,7 @@ if (!empty($arrayfields['p.datee']['checked'])) {
 		print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_eday" value="'.dol_escape_htmltag($search_eday).'">';
 	}
 	print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_emonth" value="'.dol_escape_htmltag($search_emonth).'">';
-	$formother->select_year($search_eyear ? $search_eyear : -1, 'search_eyear', 1, 20, 5, 0, 0, '', 'widthauto valignmiddle');*/
+	print $formother->selectyear($search_eyear ? $search_eyear : -1, 'search_eyear', 1, 20, 5, 0, 0, '', 'widthauto valignmiddle');*/
 	print '<div class="nowrap">';
 	print $form->selectDate($search_date_end_start ? $search_date_end_start : -1, 'search_date_end_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 	print '</div>';
@@ -924,15 +924,19 @@ if (!empty($arrayfields['p.datee']['checked'])) {
 	print '</td>';
 }
 if (!empty($arrayfields['p.public']['checked'])) {
-	print '<td class="liste_titre">';
+	print '<td class="liste_titre center">';
 	$array = array(''=>'', 0 => $langs->trans("PrivateProject"), 1 => $langs->trans("SharedProject"));
 	print $form->selectarray('search_public', $array, $search_public);
+	print '</td>';
+}
+if (!empty($arrayfields['c.assigned']['checked'])) {
+	print '<td class="liste_titre center">';
 	print '</td>';
 }
 // Opp status
 if (!empty($arrayfields['p.fk_opp_status']['checked'])) {
 	print '<td class="liste_titre nowrap center">';
-	print $formproject->selectOpportunityStatus('search_opp_status', $search_opp_status, 1, 0, 1, 0, 'maxwidth100', 1);
+	print $formproject->selectOpportunityStatus('search_opp_status', $search_opp_status, 1, 0, 1, 0, 'maxwidth100', 1, 0);
 	print '</td>';
 }
 if (!empty($arrayfields['p.opp_amount']['checked'])) {
@@ -952,10 +956,6 @@ if (!empty($arrayfields['opp_weighted_amount']['checked'])) {
 if (!empty($arrayfields['p.budget_amount']['checked'])) {
 	print '<td class="liste_titre nowrap right">';
 	print '<input type="text" class="flat" name="search_budget_amount" size="4" value="'.$search_budget_amount.'">';
-	print '</td>';
-}
-if (!empty($arrayfields['c.assigned']['checked'])) {
-	print '<td class="liste_titre right">';
 	print '</td>';
 }
 if (!empty($arrayfields['p.usage_opportunity']['checked'])) {
@@ -1060,7 +1060,10 @@ if (!empty($arrayfields['p.datee']['checked'])) {
 	print_liste_field_titre($arrayfields['p.datee']['label'], $_SERVER["PHP_SELF"], "p.datee", "", $param, '', $sortfield, $sortorder, 'center ');
 }
 if (!empty($arrayfields['p.public']['checked'])) {
-	print_liste_field_titre($arrayfields['p.public']['label'], $_SERVER["PHP_SELF"], "p.public", "", $param, "", $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['p.public']['label'], $_SERVER["PHP_SELF"], "p.public", "", $param, "", $sortfield, $sortorder, 'center ');
+}
+if (!empty($arrayfields['c.assigned']['checked'])) {
+	print_liste_field_titre($arrayfields['c.assigned']['label'], $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'center ', '');
 }
 if (!empty($arrayfields['p.fk_opp_status']['checked'])) {
 	print_liste_field_titre($arrayfields['p.fk_opp_status']['label'], $_SERVER["PHP_SELF"], 'p.fk_opp_status', "", $param, '', $sortfield, $sortorder, 'center ');
@@ -1076,9 +1079,6 @@ if (!empty($arrayfields['opp_weighted_amount']['checked'])) {
 }
 if (!empty($arrayfields['p.budget_amount']['checked'])) {
 	print_liste_field_titre($arrayfields['p.budget_amount']['label'], $_SERVER["PHP_SELF"], 'p.budget_amount', "", $param, '', $sortfield, $sortorder, 'right ');
-}
-if (!empty($arrayfields['c.assigned']['checked'])) {
-	print_liste_field_titre($arrayfields['c.assigned']['label'], $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'center ', '');
 }
 if (!empty($arrayfields['p.usage_opportunity']['checked'])) {
 	print_liste_field_titre($arrayfields['p.usage_opportunity']['label'], $_SERVER["PHP_SELF"], 'p.usage_opportunity', "", $param, '', $sortfield, $sortorder, 'right ');
@@ -1174,8 +1174,8 @@ while ($i < min($num, $limit)) {
 		}
 		// Title
 		if (!empty($arrayfields['p.title']['checked'])) {
-			print '<td class="tdoverflowmax200">';
-			print dol_trunc($obj->title, 80);
+			print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($obj->title).'">';
+			print $obj->title;
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1258,16 +1258,53 @@ while ($i < min($num, $limit)) {
 		}
 		// Visibility
 		if (!empty($arrayfields['p.public']['checked'])) {
-			print '<td class="left">';
+			print '<td class="center">';
 			if ($obj->public) {
-				print $langs->trans('SharedProject');
+				print img_picto($langs->trans('SharedProject'), 'world', 'class="paddingrightonly"');
+				//print $langs->trans('SharedProject');
 			} else {
-				print $langs->trans('PrivateProject');
+				print img_picto($langs->trans('PrivateProject'), 'private', 'class="paddingrightonly"');
+				//print $langs->trans('PrivateProject');
 			}
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
+		}
+		// Contacts of project
+		if (!empty($arrayfields['c.assigned']['checked'])) {
+			print '<td class="center">';
+			$ifisrt = 1;
+			foreach (array('internal', 'external') as $source) {
+				$tab = $object->liste_contact(-1, $source);
+				$numcontact = count($tab);
+				if (!empty($numcontact)) {
+					foreach ($tab as $contactproject) {
+						//var_dump($contacttask);
+						if ($source == 'internal') {
+							$c = new User($db);
+						} else {
+							$c = new Contact($db);
+						}
+						$c->fetch($contactproject['id']);
+						if (!empty($c->photo)) {
+							if (get_class($c) == 'User') {
+								print $c->getNomUrl(-2, '', 0, 0, 24, 1, '', ($ifisrt ? '' : 'notfirst'));
+							} else {
+								print $c->getNomUrl(-2, '', 0, '', -1, 0, ($ifisrt ? '' : 'notfirst'));
+							}
+						} else {
+							if (get_class($c) == 'User') {
+								print $c->getNomUrl(2, '', 0, 0, 24, 1, '', ($ifisrt ? '' : 'notfirst'));
+							} else {
+								print $c->getNomUrl(2, '', 0, '', -1, 0, ($ifisrt ? '' : 'notfirst'));
+							}
+						}
+						$ifisrt = 0;
+					}
+				}
+			}
+			print '</td>';
 		}
 		// Opp Status
 		if (!empty($arrayfields['p.fk_opp_status']['checked'])) {
@@ -1339,41 +1376,6 @@ while ($i < min($num, $limit)) {
 			if (!$i) {
 				$totalarray['pos'][$totalarray['nbfield']] = 'p.budget_amount';
 			}
-		}
-		// Contacts of project
-		if (!empty($arrayfields['c.assigned']['checked'])) {
-			print '<td class="center">';
-			$ifisrt = 1;
-			foreach (array('internal', 'external') as $source) {
-				$tab = $object->liste_contact(-1, $source);
-				$numcontact = count($tab);
-				if (!empty($numcontact)) {
-					foreach ($tab as $contactproject) {
-						//var_dump($contacttask);
-						if ($source == 'internal') {
-							$c = new User($db);
-						} else {
-							$c = new Contact($db);
-						}
-						$c->fetch($contactproject['id']);
-						if (!empty($c->photo)) {
-							if (get_class($c) == 'User') {
-								print $c->getNomUrl(-2, '', 0, 0, 24, 1, '', ($ifisrt ? '' : 'notfirst'));
-							} else {
-								print $c->getNomUrl(-2, '', 0, '', -1, 0, ($ifisrt ? '' : 'notfirst'));
-							}
-						} else {
-							if (get_class($c) == 'User') {
-								print $c->getNomUrl(2, '', 0, 0, 24, 1, '', ($ifisrt ? '' : 'notfirst'));
-							} else {
-								print $c->getNomUrl(2, '', 0, '', -1, 0, ($ifisrt ? '' : 'notfirst'));
-							}
-						}
-						$ifisrt = 0;
-					}
-				}
-			}
-			print '</td>';
 		}
 		// Usage opportunity
 		if (!empty($arrayfields['p.usage_opportunity']['checked'])) {

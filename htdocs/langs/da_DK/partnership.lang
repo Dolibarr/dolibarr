@@ -59,6 +59,7 @@ BacklinkNotFoundOnPartnerWebsite=Backlink ikke fundet på partnerwebstedet
 ConfirmClosePartnershipAsk=Er du sikker på, at du vil annullere dette partnerskab?
 PartnershipType=Partnerskabstype
 PartnershipRefApproved=Partnerskab %s godkendt
+KeywordToCheckInWebsite=Hvis du vil kontrollere, at et givet søgeord er til stede på hver partners hjemmeside, skal du definere dette søgeord her
 
 #
 # Template Mail
@@ -90,3 +91,4 @@ PartnershipAccepted=Accepteret
 PartnershipRefused=Afvist
 PartnershipCanceled=Aflyst
 PartnershipManagedFor=Partnere er
+
