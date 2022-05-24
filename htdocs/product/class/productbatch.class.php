@@ -534,6 +534,7 @@ class Productbatch extends CommonObject
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock AS ps ON ps.rowid = pb.fk_product_stock";
 		$sql .= " WHERE p.entity IN (".getEntity('product').")";
 		$sql .= " AND pl.fk_product = ".$fk_product;
+		$sql .= " AND ps.fk_product = ".$fk_product;
 		if ($fk_warehouse > 0) {
 			$sql .= " AND ps.fk_entrepot = ".$fk_warehouse;
 		}
