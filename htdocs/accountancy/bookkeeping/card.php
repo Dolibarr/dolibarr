@@ -58,7 +58,7 @@ $journal_code = GETPOST('code_journal', 'alpha') ? GETPOST('code_journal', 'alph
 $accountingjournal->fetch(null, $journal_code);
 $journal_label = $accountingjournal->label;
 
-$next_num_mvt = (int) GETPOST('next_num_mvt', 'alpha');	
+$next_num_mvt = (int) GETPOST('next_num_mvt', 'alpha');
 $doc_ref = (string) GETPOST('doc_ref', 'alpha');
 $doc_date = (string) GETPOST('doc_date', 'alpha');
 $doc_date = $doc_date = dol_mktime(0, 0, 0, GETPOST('doc_datemonth', 'int'), GETPOST('doc_dateday', 'int'), GETPOST('doc_dateyear', 'int'));
@@ -416,7 +416,7 @@ if (!empty($object->piece_num)) {
 	print '<td><input type="text" class="minwidth200 name="doc_type" value=""/></td>';
 	print '</tr>';
 	*/
-/*
+	/*
 	// Account movement
 	print '<tr>';
 	print '<td class="titlefield">'.$langs->trans("NumMvts").'</td>';
@@ -506,7 +506,7 @@ if (!empty($object->piece_num)) {
 	}
 	print '</td>';
 	print '</tr>';
-*/
+	*/
 	print '</table>';
 
 	print '</div>';
