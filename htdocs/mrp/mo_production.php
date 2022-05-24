@@ -919,7 +919,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					}
 					// Lot
 					if ($conf->productbatch->enabled) {
-						print '<td align="right">';
+						print '<td align="right" class="splitall">';
 						if(($action == 'consumeorproduce' || $action == 'consumeandproduceall') && $tmpproduct->status_batch == 2) print img_picto($langs->trans('SplitAllQuantity'), 'split.png', 'class="splitbutton splitallbutton field-error-icon" data-max-qty="1" onClick="addDispatchLine('.$line->id.', \'batch\', \'allmissingconsume\')"');
 						print '</td>';
 					}
@@ -1240,7 +1240,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					print '<td>'; // Warehouse
 					print '</td>';
 					if ($conf->productbatch->enabled) {
-						print '<td align="right">';
+						print '<td align="right"  class="splitall">';
 						if(($action == 'consumeorproduce' || $action == 'consumeandproduceall') && $tmpproduct->status_batch == 2) print img_picto($langs->trans('SplitAllQuantity'), 'split.png', 'class="splitbutton splitallbutton field-error-icon" onClick="addDispatchLine('.$line->id.', \'batch\', \'alltoproduce\')"'); //
 						print '</td>';
 					}
