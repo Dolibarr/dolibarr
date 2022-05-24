@@ -2610,10 +2610,12 @@ class ExpenseReport extends CommonObject
 				$arrayDate = dol_getdate(dol_now());
 				$sql = " SELECT count(n.qty) as cumul FROM ".MAIN_DB_PREFIX."expensereport_det n";
 				$sql .= " LEFT JOIN  ".MAIN_DB_PREFIX."expensereport e ON e.rowid = n.fk_expensereport";
+				$sql .= " LEFT JOIN  ".MAIN_DB_PREFIX."c_type_fees tf ON tf.id = n.fk_c_type_fees";
 				$sql.= " WHERE e.fk_user_author = ".(int) $this->fk_user_author;
 				$sql.= " AND YEAR(n.date) = ".(int) $arrayDate['year'] ;
-				$sql.= " AND n.fk_c_type_fees = 4";
+				$sql.= " AND tf.code = 'EX_KME' ";
 				$sql.= " AND e.fk_statut = ".(int) ExpenseReport::STATUS_VALIDATED;
+
 				$resql = $this->db->query($sql);
 
 				if ($resql){
