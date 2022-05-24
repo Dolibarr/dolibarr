@@ -21,6 +21,7 @@ ErrorPHPDoesNotSupportCurl=PHP kurulumunuz Curl. desteklemiyor
 ErrorPHPDoesNotSupportCalendar=Your PHP installation does not support php calendar extensions.
 ErrorPHPDoesNotSupportUTF8=PHP kurulumunuz UTF8 işlevlerini desteklemiyor. Dolibarr düzgün çalışamaz. Dolibarr'ı yüklemeden önce bunu çözün.
 ErrorPHPDoesNotSupportIntl=PHP kurulumunuz Intl fonksiyonlarını desteklemiyor.
+ErrorPHPDoesNotSupportMbstring=Your PHP installation does not support mbstring functions.
 ErrorPHPDoesNotSupportxDebug=Your PHP installation does not support extend debug functions.
 ErrorPHPDoesNotSupport=Your PHP installation does not support %s functions.
 ErrorDirDoesNotExists=%s Dizini yoktur.

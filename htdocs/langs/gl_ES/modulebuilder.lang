@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - loan
-ModuleBuilderDesc=Esta ferramenta só debe ser usada por usuarios ou desenvolvedores experimentados. Ofrece utilidades para construír ou editar o seu propio módulo. Aquí está a documentación para o <a href="%s" target="_blank"> desenvolvemento manual alternativo </a>.
+ModuleBuilderDesc=Esta ferramenta só debe ser utilizada por usuarios ou desenvolvedores experimentados. Ofrece utilidades para construír ou editar o seu propio módulo. A documentación para o desenvolvemento <a href="%s" target="_blank" rel="noopener noreferrer">manual alternativo está aquí</a>
 EnterNameOfModuleDesc=Introduza o nome do módulo/aplicación a crear sen espazos. Use maiúsculas para separar palabras (por exemplo: MyModule, EcommerceForShop, SyncWithMySystem ...)
 EnterNameOfObjectDesc=Introduza o nome do obxecto a crear sen espazos. Use maiúsculas para separar palabras (por exemplo: MyObject, Student, Teacher ...). Xerarase o ficheiro de clase CRUD, pero tamén o ficheiro API, páxinas para listar/engadir/editar/eliminar obxectos e ficheiros SQL.
 ModuleBuilderDesc2=Ruta onde se xeran/editan os módulos (primeiro directorio para módulos externos definidos en %s): <strong>%s </strong>
@@ -52,7 +52,7 @@ LanguageFile=Ficheiro para o idioma
 ObjectProperties=Propiedades do obxecto
 ConfirmDeleteProperty=Está certo de que quere eliminar a propiedade <strong>%s </strong>? Isto cambiará o código na clase PHP pero tamén eliminará a columna da definición de obxecto da táboa.
 NotNull=Non NULO
-NotNullDesc=1= Establecer a base de datos como NOT NULL. -1= Permitir valores nulos e forzar o valor NULL se está baleiro ('' ou 0).
+NotNullDesc=1=Establecer a base de datos como NON NULL, 0=Permitir valores nulos, -1=Permitir valores nulos forzando o valor a NULL se está baleiro ('' ou 0)
 SearchAll=Usado para "buscar todo"
 DatabaseIndex=Índice da base de datos
 FileAlreadyExists=O ficheiro %s xa existe
@@ -94,11 +94,11 @@ LanguageDefDesc=Introduza neste ficheiro toda a clave e a tradución para cada f
 MenusDefDesc=Defina aquí os menús proporcionados polo seu módulo
 DictionariesDefDesc=Defina aquí os dicionarios proporcionados polo seu módulo
 PermissionsDefDesc=Defina aquí os novos permisos proporcionados polo seu módulo
-MenusDefDescTooltip=Os menús proporcionados polo seu módulo/aplicación están definidos no array <strong> $this->menús </strong> no ficheiro descriptor do módulo. Pode editar este ficheiro manualmente ou usar o editor incrustado. <br> <br> Nota: Unha vez definido (e reactivado o módulo), os menús tamén son visibles no editor de menú dispoñible para os usuarios administradores en %s.
+MenusDefDescTooltip=Os menús proporcionados polo seu módulo/aplicación defínense na matriz <strong> $this->menus </strong> no ficheiro descritor do módulo. Pode editar este ficheiro manualmente ou usar o editor incorporado. <br> <br> Nota: unha vez definidos (e reactivado o módulo), os menús tamén están visibles no editor de menús dispoñible para os usuarios administradores en %s.
 DictionariesDefDescTooltip=Os dicionarios proporcionados polo seu módulo/aplicación están definidos no array <strong> $this->dicionarios </strong> no ficheiro descriptor do módulo. Pode editar este ficheiro manualmente ou usar o editor incrustado. <br> <br> Nota: Unha vez definido (e reactivado o módulo), os dicionarios tamén son visibles na área de configuración para os usuarios administradores en %s.
 PermissionsDefDescTooltip=Os permisos proporcionados polo seu módulo/aplicación defínense no array <strong> $this->rights </strong> no ficheiro descriptor do módulo. Pode editar este ficheiro manualmente ou usar o editor incrustado. <br> <br> Nota: Unha vez definido (e reactivado o módulo), os permisos son visibles na configuración de permisos predeterminada %s.
 HooksDefDesc=Define na propiedade <b> module_parts ['hooks'] </b>, no descriptor do módulo, o contexto dos hooks que desexa xestionar (a listaxe de contextos pódese atopar mediante unha busca en '<b> initHooks (</b> 'no código principal). <br> Edite o ficheiro de hooks para engadir o código das funcións (as funcións pódense atopar mediante unha busca en' <b> executeHooks </b> 'no código principal).
-TriggerDefDesc=Defina no ficheiro trigger o código que quere executar cando un evento empresarial externo ao seu módulo é executado (eventos rexistrados por outros módulos)
+TriggerDefDesc=Defina no ficheiro de activación o código que quere executar cando se executa un evento empresarial externo ao seu módulo (eventos desencadeados por outros módulos). 
 SeeIDsInUse=Ver identificacións en uso na súa instalación
 SeeReservedIDsRangeHere=Ver o rango de identificacións reservadas
 ToolkitForDevelopers=Kit de ferramentas para desenvolvedores Dolibarr
@@ -110,7 +110,7 @@ DropTableIfEmpty=(Destruír a táboa se está baleira)
 TableDoesNotExists=A táboa %s non existe
 TableDropped=Eliminouse a táboa %s
 InitStructureFromExistingTable=Construír a cadea de array de estruturas dunha táboa existente
-UseAboutPage=Desactivar a páxina sobre
+UseAboutPage=Non xerar a páxina Sobre ...
 UseDocFolder=Desactivar o cartafol de documentación
 UseSpecificReadme=Usar un ReadMe específico
 ContentOfREADMECustomized=Nota: o contido do ficheiro README.md foi substituído polo valor específico definido na configuración de ModuleBuilder.
@@ -127,9 +127,9 @@ UseSpecificEditorURL = Usar unha URL de editor específico
 UseSpecificFamily = Usar unha familia específica
 UseSpecificAuthor = Usar un autor específico
 UseSpecificVersion = Usar unha versión inicial específica
-IncludeRefGeneration=A referencia do obxecto debe xerarse automaticamente
-IncludeRefGenerationHelp=Sinale esta opción se quere incluír código para xestionar a xeración automaticamente da referencia
-IncludeDocGeneration=Quero xerar algúns documentos a partir do obxecto
+IncludeRefGeneration=A referencia do obxecto debe xerarse automaticamente mediante regras de numeración personalizadas
+IncludeRefGenerationHelp=Marque isto se quere incluír código para xestionar a xeración da referencia automaticamente mediante regras de numeración personalizadas
+IncludeDocGeneration=Quero xerar algúns documentos a partir de modelos para o obxecto
 IncludeDocGenerationHelp=Se marca isto, xerarase algún código para engadir unha caixa "Xerar documento" no rexistro.
 ShowOnCombobox=Mostrar o valor en combobox
 KeyForTooltip=Chave para a información sobre ferramentas
@@ -138,10 +138,15 @@ CSSViewClass=CSS para formulario de lectura
 CSSListClass=CSS para a listaxe
 NotEditable=Non editable
 ForeignKey=Chave estranxeira
-TypeOfFieldsHelp=Tipo de campos: <br> varchar (99), double (24,8), real, text, html, datetime, timestamp, integer, integer: ClassName:relativepath/to/classfile.class.php[:1[:filter]] ("1" significa que engadimos un botón + despois do combo para crear o rexistro, "filter" pode ser "status=1 AND fk_user=__USER_ID AND entity IN (__SHARED_ENTITIES__)" por exemplo)
+TypeOfFieldsHelp=Tipo de campos: <br> varchar(99), double(24,8), real, text, html, datetime, timestamp, integer, integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]] <br> '1' significa que engadimos un botón + despois do combo para crear o rexistro <br> 'filter' é unha condición sql, exemplo: 'status=1 AND fk_user=__USER_ID__ AND entity IN (__SHARED_ENTITIES__)'
 AsciiToHtmlConverter=Conversor de ascii a HTML
 AsciiToPdfConverter=Conversor de ascii a PDF
 TableNotEmptyDropCanceled=A táboa non está baleira. Cancelouse a eliminación.
 ModuleBuilderNotAllowed=O creador de módulos está dispoñible pero non permitido ao seu usuario.
 ImportExportProfiles=Importar e exportar perfís
-ValidateModBuilderDesc=Poña 1 se é preciso validar este campo con $ this-> validateField () ou 0 se é precisa a validación 
+ValidateModBuilderDesc=Estableza isto en 1 se quere que o método $this->validateField() do obxecto sexa chamado para validar o contido do campo durante a inserción ou a actualización. Establece 0 se non se precisa validación.
+WarningDatabaseIsNotUpdated=Aviso: a base de datos non se actualiza automaticamente, debe eliminar as táboas e desactivar-habilitar o módulo para que as táboas se creen de novo
+LinkToParentMenu=Menú principal (fk_xxxxmenu)
+ListOfTabsEntries=Lista de entradas de pestanas
+TabsDefDesc=Defina aquí as pestanas que proporciona o seu módulo
+TabsDefDescTooltip=As pestanas proporcionadas polo seu módulo/aplicación defínense na matriz <strong> $this->tabs </strong> no ficheiro descritor do módulo. Pode editar este ficheiro manualmente ou usar o editor incorporado.

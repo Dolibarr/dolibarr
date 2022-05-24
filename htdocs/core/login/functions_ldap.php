@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2008-2021 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -108,9 +109,9 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 			$userSearchFilter = str_replace('%1%', $usertotest, $dolibarr_main_auth_ldap_filter);
 		}
 
-		// If admin login provided
+		// If admin login or ldap auth filter provided
 		// Code to get user in LDAP from an admin connection (may differ from user connection, done later)
-		if ($ldapadminlogin) {
+		if ($ldapadminlogin || $dolibarr_main_auth_ldap_filter) {
 			$result = $ldap->connect_bind();
 			if ($result > 0) {
 				$resultFetchLdapUser = $ldap->fetch($usertotest, $userSearchFilter);
@@ -120,7 +121,7 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 					if ($ldapdebug) {
 						print "DEBUG: User ".$usertotest." must change password<br>\n";
 					}
-					$ldap->close();
+					$ldap->unbind();
 					sleep(1);
 					$langs->load('ldap');
 					$_SESSION["dol_loginmesg"] = $langs->transnoentitiesnoconv("YouMustChangePassNextLogon", $usertotest, $ldap->domainFQDN);
@@ -131,7 +132,7 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 					print "DEBUG: ".$ldap->error."<br>\n";
 				}
 			}
-			$ldap->close();
+			$ldap->unbind();
 		}
 
 		// Forge LDAP user and password to test with them
@@ -156,7 +157,7 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 				// we need to get the real login to use in the ldap answer.
 				if (!empty($conf->global->LDAP_FIELD_LOGIN) && !empty($ldap->login)) {
 					$login = $ldap->login;
-					dol_syslog("functions_ldap::check_user_password_ldap login is now $login (LDAP_FIELD_LOGIN=".$conf->global->LDAP_FIELD_LOGIN.")");
+					dol_syslog("functions_ldap::check_user_password_ldap login is now $login (LDAP_FIELD_LOGIN=".getDolGlobalString('LDAP_FIELD_LOGIN').")");
 				}
 
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -166,14 +167,14 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 
 				$now = dol_now();
 				if ($tmpuser->datestartvalidity && $db->jdate($tmpuser->datestartvalidity) >= $now) {
-					$ldap->close();
+					$ldap->unbind();
 					// Load translation files required by the page
 					$langs->loadLangs(array('main', 'errors'));
 					$_SESSION["dol_loginmesg"] = $langs->transnoentitiesnoconv("ErrorLoginDateValidity");
 					return '--bad-login-validity--';
 				}
 				if ($tmpuser->dateendvalidity && $db->jdate($tmpuser->dateendvalidity) <= dol_get_first_hour($now)) {
-					$ldap->close();
+					$ldap->unbind();
 					// Load translation files required by the page
 					$langs->loadLangs(array('main', 'errors'));
 					$_SESSION["dol_loginmesg"] = $langs->transnoentitiesnoconv("ErrorLoginDateValidity");
@@ -181,7 +182,7 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 				}
 
 				// ldap2dolibarr synchronisation
-				if ($login && !empty($conf->ldap->enabled) && $conf->global->LDAP_SYNCHRO_ACTIVE == 'ldap2dolibarr') {	// ldap2dolibarr synchronisation
+				if ($login && !empty($conf->ldap->enabled) && getDolGlobalInt('LDAP_SYNCHRO_ACTIVE') == Ldap::SYNCHRO_LDAP_TO_DOLIBARR) {	// ldap2dolibarr synchronization
 					dol_syslog("functions_ldap::check_user_password_ldap Sync ldap2dolibarr");
 
 					// On charge les attributs du user ldap
@@ -259,7 +260,7 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 			 ** 53 - Account inactive (manually locked out by administrator)
 			 */
 			dol_syslog("functions_ldap::check_user_password_ldap Authentication KO failed to connect to LDAP for '".$usertotest."'", LOG_NOTICE);
-			if (is_resource($ldap->connection)) {    // If connection ok but bind ko
+			if (is_resource($ldap->connection) || is_object($ldap->connection)) {    // If connection ok but bind ko
 				$ldap->ldapErrorCode = ldap_errno($ldap->connection);
 				$ldap->ldapErrorText = ldap_error($ldap->connection);
 				dol_syslog("functions_ldap::check_user_password_ldap ".$ldap->ldapErrorCode." ".$ldap->ldapErrorText);
@@ -271,7 +272,7 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 			$_SESSION["dol_loginmesg"] = ($ldap->error ? $ldap->error : $langs->transnoentitiesnoconv("ErrorBadLoginPassword"));
 		}
 
-		$ldap->close();
+		$ldap->unbind();
 	}
 
 	return $login;

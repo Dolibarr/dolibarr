@@ -69,41 +69,6 @@ class pdf_standard extends ModelePDFProduct
 	public $version = 'dolibarr';
 
 	/**
-	 * @var int page_largeur
-	 */
-	public $page_largeur;
-
-	/**
-	 * @var int page_hauteur
-	 */
-	public $page_hauteur;
-
-	/**
-	 * @var array format
-	 */
-	public $format;
-
-	/**
-	 * @var int marge_gauche
-	 */
-	public $marge_gauche;
-
-	/**
-	 * @var int marge_droite
-	 */
-	public $marge_droite;
-
-	/**
-	 * @var int marge_haute
-	 */
-	public $marge_haute;
-
-	/**
-	 * @var int marge_basse
-	 */
-	public $marge_basse;
-
-	/**
 	 * Issuer
 	 * @var Societe
 	 */
@@ -138,7 +103,6 @@ class pdf_standard extends ModelePDFProduct
 		$this->marge_basse = isset($conf->global->MAIN_PDF_MARGIN_BOTTOM) ? $conf->global->MAIN_PDF_MARGIN_BOTTOM : 10;
 
 		$this->option_logo = 1; // Display logo
-		$this->option_codeproduitservice = 0; // Display product-service code
 		$this->option_multilang = 1; // Available in several languages
 		$this->option_freetext = 0; // Support add of a personalised text
 
@@ -270,8 +234,8 @@ class pdf_standard extends ModelePDFProduct
 
 				$tab_top = 42;
 				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD) ? 42 : 10);
-				$tab_height = 130;
-				$tab_height_newpage = 150;
+
+				$tab_height = $this->page_hauteur - $tab_top - $heightforfooter - $heightforfreetext;
 
 				// Label of product
 				$pdf->SetFont('', 'B', $default_font_size);
@@ -293,18 +257,21 @@ class pdf_standard extends ModelePDFProduct
 					$pdf->writeHTMLCell(190, 3, $this->marge_gauche, $nexY, $texttoshow, 0, 1);
 					$nexY = $pdf->GetY();
 				}
-				if ($object->weight) {
-					$texttoshow = $langs->trans("Length").' x '.$langs->trans("Width").' x '.$langs->trans("Height").': '.($object->length != '' ? $object->length : '?').' x '.($object->width != '' ? $object->width : '?').' x '.($object->height != '' ? $object->height : '?');
+				if ($object->length) {
+					$texttoshow = $langs->trans("Length") . ' x ' . $langs->trans("Width") . ' x ' . $langs->trans("Height") . ': ' . ($object->length != '' ? $object->length : '?') . ' x ' . ($object->width != '' ? $object->width : '?') . ' x ' . ($object->height != '' ? $object->height : '?');
+					$texttoshow .= ' ' . measuringUnitString(0, "size", $object->length_units);
 					$pdf->writeHTMLCell(190, 3, $this->marge_gauche, $nexY, $texttoshow, 0, 1);
 					$nexY = $pdf->GetY();
 				}
 				if ($object->surface) {
-					$texttoshow = $langs->trans("Area").': '.dol_htmlentitiesbr($object->surface);
+					$texttoshow = $langs->trans("Surface") . ': ' . dol_htmlentitiesbr($object->surface);
+					$texttoshow .= ' ' . measuringUnitString(0, "surface", $object->surface_units);
 					$pdf->writeHTMLCell(190, 3, $this->marge_gauche, $nexY, $texttoshow, 0, 1);
 					$nexY = $pdf->GetY();
 				}
 				if ($object->volume) {
-					$texttoshow = $langs->trans("Volume").': '.dol_htmlentitiesbr($object->volume);
+					$texttoshow = $langs->trans("Volume") . ': ' . dol_htmlentitiesbr($object->volume);
+					$texttoshow .= ' ' . measuringUnitString(0, "volume", $object->volume_units);
 					$pdf->writeHTMLCell(190, 3, $this->marge_gauche, $nexY, $texttoshow, 0, 1);
 					$nexY = $pdf->GetY();
 				}

@@ -31,6 +31,7 @@ ErrorBadDateFormat=O valor '%s' tem o formato de data errada
 ErrorWrongDate=A data não está correta!
 ErrorFailedToWriteInDir=Houve uma falha ao escrever no diretório %s
 ErrorFoundBadEmailInFile=Encontrado uma sintaxe de e-mail incorreta para as linhas %s no arquivo (por exemplo, linha %s com e-mail = %s)
+ErrorSubjectIsRequired=O assunto do email é obrigatório
 ErrorFailedToCreateDir=Error na creação de uma carpeta. Compruebe que 0 usuario del servidor Web tiene derechos de escritura en las carpetas de documentos de Dolibarr. Si 0  parámetro <b>safe_mode</b> está ativo en este PHP, Compruebe que los archivos php dolibarr pertencen ao usuario del servidor Web.
 ErrorNoMailDefinedForThisUser=Nenhum e-mail definido para este usuário
 ErrorFeatureNeedJavascript=Esta funcionalidade requer que o javascript seja ativado para funcionar. Altere isto em Configuração >> Aparência.
@@ -177,3 +178,7 @@ WarningSomeLinesWithNullHourlyRate=Algumas vezes foram registrados por alguns us
 WarningYourLoginWasModifiedPleaseLogin=O seu login foi modificado. Por questões de segurança, você terá de autenticar-se com o seu novo login antes da próxima ação.
 WarningProjectClosed=O projeto está fechado. Você deve reabri-lo primeiro.
 WarningSomeBankTransactionByChequeWereRemovedAfter=Algumas transações bancárias foram removidas após geração do recebimento, incluindo elas. Portanto, o número de cheques e o total de recebimento podem diferir do número e do total na lista.
+RequireValidValue =Valor não é válido
+RequireValidEmail =o endereço de email não é válido
+RequireValidUrl =Requer URL válido
+RequireValidDate =Requer uma data válida

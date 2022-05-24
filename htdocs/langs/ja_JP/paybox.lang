@@ -1,20 +1,20 @@
 # Dolibarr language file - Source file is en_US - paybox
 PayBoxSetup=PayBoxモジュールの設定
-PayBoxDesc=このモジュールは、上の支払いを可能にするためにページを提供して<a href="http://www.paybox.com" target="_blank">切符売り場</a>の顧客によって。これはフリーの支払いのためにまたは特定のDolibarrオブジェクトの支払いに用いることができる(請求書、発注、...)
+PayBoxDesc=このモジュールは、顧客による<a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external"> Paybox</a>での支払いを許可するページを提供する。これは、無料の支払いまたは特定のDolibarrオブジェクト（請求書、注文など）での支払いに使用できる。
 FollowingUrlAreAvailableToMakePayments=以下のURLはDolibarrオブジェクト上で支払いをするために顧客にページを提供するために利用可能 
 PaymentForm=支払い形態
 WelcomeOnPaymentPage=オンライン決済サービスへようこそ
 ThisScreenAllowsYouToPay=この画面では、%sにオンライン決済を行うことができる。
 ThisIsInformationOnPayment=これは、実行する支払いに関する情報。
 ToComplete=完了する
-YourEMail=入金確認を受信する電子メール
+YourEMail=入金確定を受信する電子メール
 Creditor=債権者
 PaymentCode=支払いコード
 PayBoxDoPayment=Payboxで支払う
 YouWillBeRedirectedOnPayBox=あなたが入力するクレジットカード情報をセキュリティで保護された切符売り場のページにリダイレクトされる。
 Continue=次の
-SetupPayBoxToHavePaymentCreatedAutomatically=Payboxによる検証時に支払いが自動的に作成されるように、URL <b> %s</b>を使用してPayboxを設定する。
-YourPaymentHasBeenRecorded=このページでは、あなたの支払が記録されていることを確認する。ありがとうございる。
+SetupPayBoxToHavePaymentCreatedAutomatically=Payboxによる検証済時に支払いが自動的に作成されるように、URL <b> %s</b>を使用してPayboxを設定する。
+YourPaymentHasBeenRecorded=このページでは、あなたの支払が記録されていることを確定する。ありがとうございる。
 YourPaymentHasNotBeenRecorded=お支払いは記録されておらず、取引はキャンセルされている。ありがとうございる。
 AccountParameter=アカウントのパラメータ
 UsageParameter=使用パラメータ

@@ -91,7 +91,7 @@ class modResource extends DolibarrModules
 
 		// Dependencies
 		// List of modules id that must be enabled if this module is enabled
-		$this->depends = array();
+		$this->depends = array('modResource');
 		// List of modules id to disable if this one is disabled
 		$this->requiredby = array('modPlace');
 		// Minimum version of PHP required by module
@@ -185,11 +185,11 @@ class modResource extends DolibarrModules
 
 		// Menus declaration
 		$this->menu[$r] = array(
-			'fk_menu'=>'fk_mainmenu=tools',
+			'fk_menu'=>'fk_mainmenu=agenda',
 			'type'=>'left',
 			'titre'=> 'MenuResourceIndex',
 			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth em92"'),
-			'mainmenu'=>'tools',
+			'mainmenu'=>'agenda',
 			'leftmenu'=> 'resource',
 			'url'=> '/resource/list.php',
 			'langs'=> 'resource',
@@ -201,10 +201,10 @@ class modResource extends DolibarrModules
 		$r++;
 
 		$this->menu[$r++] = array(
-			'fk_menu'=>'fk_mainmenu=tools,fk_leftmenu=resource', //On utilise les ancres définis dans le menu parent déclaré au dessus
+			'fk_menu'=>'fk_mainmenu=agenda,fk_leftmenu=resource', //On utilise les ancres définis dans le menu parent déclaré au dessus
 			'type'=> 'left', // Toujours un menu gauche
 			'titre'=> 'MenuResourceAdd',
-			'mainmenu'=> 'tools',
+			'mainmenu'=> 'agenda',
 			'leftmenu'=> 'resource_add',
 			'url'=> '/resource/card.php?action=create',
 			'langs'=> 'resource',
@@ -216,10 +216,10 @@ class modResource extends DolibarrModules
 		);
 
 		$this->menu[$r++] = array(
-			'fk_menu'=>'fk_mainmenu=tools,fk_leftmenu=resource', //On utilise les ancres définis dans le menu parent déclaré au dessus
+			'fk_menu'=>'fk_mainmenu=agenda,fk_leftmenu=resource', //On utilise les ancres définis dans le menu parent déclaré au dessus
 			'type'=> 'left', // Toujours un menu gauche
 			'titre'=> 'List',
-			'mainmenu'=> 'tools',
+			'mainmenu'=> 'agenda',
 			'leftmenu'=> 'resource_list',
 			'url'=> '/resource/list.php',
 			'langs'=> 'resource',
@@ -301,21 +301,6 @@ class modResource extends DolibarrModules
 	{
 		$sql = array();
 
-		$result = $this->loadTables();
-
 		return $this->_init($sql, $options);
-	}
-
-	/**
-	 * Create tables, keys and data required by module
-	 * Files llx_table1.sql, llx_table1.key.sql llx_data.sql with create table, create keys
-	 * and create data commands must be stored in directory /resource/sql/
-	 * This function is called by this->init
-	 *
-	 * 	@return		int		<=0 if KO, >0 if OK
-	 */
-	protected function loadTables()
-	{
-		return $this->_load_tables('/resource/sql/');
 	}
 }

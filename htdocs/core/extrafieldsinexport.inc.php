@@ -12,7 +12,7 @@ if (empty($keyforselect) || empty($keyforelement) || empty($keyforaliasextra)) {
 
 // Add extra fields
 $sql = "SELECT name, label, type, param, fieldcomputed, fielddefault FROM ".MAIN_DB_PREFIX."extrafields";
-$sql .= " WHERE elementtype = '".$this->db->escape($keyforselect)."' AND type != 'separate' AND entity IN (0, ".$conf->entity.') ORDER BY pos ASC';
+$sql .= " WHERE elementtype = '".$this->db->escape($keyforselect)."' AND type <> 'separate' AND entity IN (0, ".((int) $conf->entity).') ORDER BY pos ASC';
 //print $sql;
 $resql = $this->db->query($sql);
 if ($resql) {    // This can fail when class is used on old database (during migration for example)
@@ -48,7 +48,7 @@ if ($resql) {    // This can fail when class is used on old database (during mig
 			case 'sellist':
 				$tmp = '';
 				$tmpparam = jsonOrUnserialize($obj->param); // $tmp may be array 'options' => array 'c_currencies:code_iso:code_iso' => null
-				if ($tmpparam['options'] && is_array($tmpparam['options'])) {
+				if (is_array($tmpparam) && array_key_exists('options', $tmpparam) &&  $tmpparam['options'] && is_array($tmpparam['options'])) {
 					$tmpkeys = array_keys($tmpparam['options']);
 					$tmp = array_shift($tmpkeys);
 				}

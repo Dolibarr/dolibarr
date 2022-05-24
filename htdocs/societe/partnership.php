@@ -52,7 +52,7 @@ if (!empty($user->socid)) {
 	$socid = $user->socid;
 }
 
-if (empty($id) && $socid && (empty($conf->global->PARTNERSHIP_IS_MANAGED_FOR) || $conf->global->PARTNERSHIP_IS_MANAGED_FOR == 'thirdparty')) {
+if (empty($id) && $socid && (getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR', 'thirdparty') == 'thirdparty')) {
 	$id = $socid;
 }
 
@@ -65,7 +65,7 @@ if ($id > 0) {
 $object = new Partnership($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->partnership->dir_output.'/temp/massgeneration/'.$user->id;
-$hookmanager->initHooks(array('partnershipthirdparty', 'globalcard')); // Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('thirdpartypartnership', 'globalcard')); // Note that conf->hooks_modules contains array
 
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -94,8 +94,8 @@ $usercanclose = $user->rights->partnership->write; // Used by the include of act
 $upload_dir = $conf->partnership->multidir_output[isset($object->entity) ? $object->entity : 1];
 
 
-if (!empty($conf->global->PARTNERSHIP_IS_MANAGED_FOR) && $conf->global->PARTNERSHIP_IS_MANAGED_FOR != 'thirdparty') {
-	accessforbidden();
+if (getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR', 'thirdparty') != 'thirdparty') {
+	accessforbidden('Partnership is not activated for thirdparties');
 }
 if (empty($conf->partnership->enabled)) {
 	accessforbidden();
@@ -132,7 +132,7 @@ $date_end = dol_mktime(0, 0, 0, GETPOST('date_partnership_endmonth', 'int'), GET
 if (empty($reshook)) {
 	$error = 0;
 
-	$backtopage = dol_buildpath('/partnership/partnership.php', 1).'?id='.($id > 0 ? $id : '__ID__');
+	$backtopage = DOL_URL_ROOT.'/partnership/partnership.php?id='.($id > 0 ? $id : '__ID__');
 
 	// Actions when linking object each other
 	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';
@@ -189,7 +189,7 @@ if ($id > 0) {
 		print showValueWithClipboardCPButton(dol_escape_htmltag($societe->code_client));
 		$tmpcheck = $societe->check_codeclient();
 		if ($tmpcheck != 0 && $tmpcheck != -5) {
-			print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
+			print ' <span class="error">('.$langs->trans("WrongCustomerCode").')</span>';
 		}
 		print '</td></tr>';
 	}
@@ -200,7 +200,7 @@ if ($id > 0) {
 		print showValueWithClipboardCPButton(dol_escape_htmltag($societe->code_fournisseur));
 		$tmpcheck = $societe->check_codefournisseur();
 		if ($tmpcheck != 0 && $tmpcheck != -5) {
-			print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
+			print ' <span class="error">('.$langs->trans("WrongSupplierCode").')</span>';
 		}
 		print '</td>';
 		print '</tr>';
@@ -257,7 +257,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<table class="border centpercent tableforfield">'."\n";
 
 		// Common attributes
-		unset($object->fields['fk_soc']);					// Hide field already shown in banner
+		unset($object->fields['fk_soc']); // Hide field already shown in banner
 		include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_view.tpl.php';
 		$forcefieldid = 'socid';
 		$forceobjectid = $object->fk_soc;

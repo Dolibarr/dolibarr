@@ -11,6 +11,7 @@
  * Copyright (C) 2017-2019  Frédéric France     <frederic.france@netlogic.fr>
  * Copyright (C) 2017       André Schild        <a.schild@aarboard.ch>
  * Copyright (C) 2020       Guillaume Alexandre <guillaume@tag-info.fr>
+ * Copyright (C) 2022		Joachim Kueter		<jkueter@gmx.de>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +35,7 @@
 
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 
 
 /**
@@ -59,9 +61,15 @@ class AccountancyExport
 	public static $EXPORT_TYPE_LDCOMPTA10 = 120;
 	public static $EXPORT_TYPE_GESTIMUMV3 = 130;
 	public static $EXPORT_TYPE_GESTIMUMV5 = 135;
+	public static $EXPORT_TYPE_ISUITEEXPERT = 200;
+	// Generic FEC after that
 	public static $EXPORT_TYPE_FEC = 1000;
 	public static $EXPORT_TYPE_FEC2 = 1010;
 
+	/**
+	 * @var DoliDB	Database handler
+	 */
+	public $db;
 
 	/**
 	 * @var string[] Error codes (or messages)
@@ -85,13 +93,15 @@ class AccountancyExport
 	 *
 	 * @param DoliDb $db Database handler
 	 */
-	public function __construct(DoliDB &$db)
+	public function __construct(DoliDB $db)
 	{
-		global $conf;
+		global $conf, $hookmanager;
 
-		$this->db = &$db;
+		$this->db = $db;
 		$this->separator = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
 		$this->end_line = empty($conf->global->ACCOUNTING_EXPORT_ENDLINE) ? "\n" : ($conf->global->ACCOUNTING_EXPORT_ENDLINE == 1 ? "\n" : "\r\n");
+
+		$hookmanager->initHooks(array('accountancyexport'));
 	}
 
 	/**
@@ -99,7 +109,7 @@ class AccountancyExport
 	 *
 	 * @return array of type
 	 */
-	public static function getType()
+	public function getType()
 	{
 		global $langs;
 
@@ -123,7 +133,12 @@ class AccountancyExport
 			self::$EXPORT_TYPE_GESTIMUMV5 => $langs->trans('Modelcsv_Gestinumv5'),
 			self::$EXPORT_TYPE_FEC => $langs->trans('Modelcsv_FEC'),
 			self::$EXPORT_TYPE_FEC2 => $langs->trans('Modelcsv_FEC2'),
+			self::$EXPORT_TYPE_ISUITEEXPERT => 'Export iSuite Expert',
 		);
+
+		// allow modules to define export formats
+		global $hookmanager;
+		$reshook = $hookmanager->executeHooks('getType', $parameters, $listofexporttypes);
 
 		ksort($listofexporttypes, SORT_NUMERIC);
 
@@ -158,9 +173,15 @@ class AccountancyExport
 			self::$EXPORT_TYPE_GESTIMUMV5 => 'gestimumv5',
 			self::$EXPORT_TYPE_FEC => 'fec',
 			self::$EXPORT_TYPE_FEC2 => 'fec2',
+			self::$EXPORT_TYPE_ISUITEEXPERT => 'isuiteexpert',
 		);
 
-		return $formatcode[$type];
+		global $hookmanager;
+		$code = $formatcode[$type];
+		$parameters = array('type' => $type);
+		$reshook = $hookmanager->executeHooks('getFormatCode', $parameters, $code);
+
+		return $code;
 	}
 
 	/**
@@ -168,11 +189,11 @@ class AccountancyExport
 	 *
 	 * @return array of type
 	 */
-	public static function getTypeConfig()
+	public function getTypeConfig()
 	{
 		global $conf, $langs;
 
-		return array(
+		$exporttypes = array(
 			'param' => array(
 				self::$EXPORT_TYPE_CONFIGURABLE => array(
 					'label' => $langs->trans('Modelcsv_configurable'),
@@ -243,6 +264,10 @@ class AccountancyExport
 					'label' => $langs->trans('Modelcsv_FEC2'),
 					'ACCOUNTING_EXPORT_FORMAT' => 'txt',
 				),
+				self::$EXPORT_TYPE_ISUITEEXPERT => array(
+					'label' => 'iSuite Expert',
+					'ACCOUNTING_EXPORT_FORMAT' => 'csv',
+				),
 			),
 			'cr'=> array(
 				'1' => $langs->trans("Unix"),
@@ -253,6 +278,11 @@ class AccountancyExport
 				'txt' => $langs->trans("txt")
 			),
 		);
+
+		global $hookmanager;
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('getTypeConfig', $parameters, $exporttypes);
+		return $exporttypes;
 	}
 
 
@@ -334,8 +364,17 @@ class AccountancyExport
 			case self::$EXPORT_TYPE_FEC2:
 				$this->exportFEC2($TData);
 				break;
+			case self::$EXPORT_TYPE_ISUITEEXPERT :
+				$this->exportiSuiteExpert($TData);
+				break;
 			default:
-				$this->errors[] = $langs->trans('accountancy_error_modelnotfound');
+				global $hookmanager;
+				$parameters = array('format' => $formatexportset);
+				// file contents will be created in the hooked function via print
+				$reshook = $hookmanager->executeHooks('export', $parameters, $TData);
+				if ($reshook != 1) {
+					$this->errors[] = $langs->trans('accountancy_error_modelnotfound');
+				}
 				break;
 		}
 	}
@@ -903,7 +942,8 @@ class AccountancyExport
 		print "ValidDate".$separator;
 		print "Montantdevise".$separator;
 		print "Idevise".$separator;
-		print "DateLimitReglmt";
+		print "DateLimitReglmt".$separator;
+		print "NumFacture";
 		print $end_line;
 
 		foreach ($objectLines as $line) {
@@ -913,8 +953,25 @@ class AccountancyExport
 				$date_creation = dol_print_date($line->date_creation, '%Y%m%d');
 				$date_document = dol_print_date($line->doc_date, '%Y%m%d');
 				$date_lettering = dol_print_date($line->date_lettering, '%Y%m%d');
-				$date_validation = dol_print_date($line->date_validated, '%Y%m%d');
+				$date_validation = dol_print_date($line->date_validation, '%Y%m%d');
 				$date_limit_payment = dol_print_date($line->date_lim_reglement, '%Y%m%d');
+
+				$refInvoice = '';
+				if ($line->doc_type == 'customer_invoice') {
+					// Customer invoice
+					require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+					$invoice = new Facture($this->db);
+					$invoice->fetch($line->fk_doc);
+
+					$refInvoice = $invoice->ref;
+				} elseif ($line->doc_type == 'supplier_invoice') {
+					// Supplier invoice
+					require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+					$invoice = new FactureFournisseur($this->db);
+					$invoice->fetch($line->fk_doc);
+
+					$refInvoice = $invoice->ref_supplier;
+				}
 
 				// FEC:JournalCode
 				print $line->code_journal . $separator;
@@ -947,6 +1004,8 @@ class AccountancyExport
 				print dol_string_unaccent($date_creation) . $separator;
 
 				// FEC:EcritureLib
+				// Clean label operation to prevent problem on export with tab separator & other character
+				$line->label_operation = str_replace(array("\t", "\n", "\r"), " ", $line->label_operation);
 				print dol_string_unaccent($line->label_operation) . $separator;
 
 				// FEC:Debit
@@ -968,10 +1027,15 @@ class AccountancyExport
 				print $line->multicurrency_amount . $separator;
 
 				// FEC:Idevise
-				print $line->multicurrency_code.$separator;
+				print $line->multicurrency_code . $separator;
 
 				// FEC_suppl:DateLimitReglmt
-				print $date_limit_payment;
+				print $date_limit_payment . $separator;
+
+				// FEC_suppl:NumFacture
+				// Clean ref invoice to prevent problem on export with tab separator & other character
+				$refInvoice = str_replace(array("\t", "\n", "\r"), " ", $refInvoice);
+				print dol_trunc(self::toAnsi($refInvoice), 17, 'right', 'UTF-8', 1);
 
 				print $end_line;
 			}
@@ -1009,7 +1073,8 @@ class AccountancyExport
 		print "ValidDate".$separator;
 		print "Montantdevise".$separator;
 		print "Idevise".$separator;
-		print "DateLimitReglmt";
+		print "DateLimitReglmt".$separator;
+		print "NumFacture";
 		print $end_line;
 
 		foreach ($objectLines as $line) {
@@ -1019,8 +1084,25 @@ class AccountancyExport
 				$date_creation = dol_print_date($line->date_creation, '%Y%m%d');
 				$date_document = dol_print_date($line->doc_date, '%Y%m%d');
 				$date_lettering = dol_print_date($line->date_lettering, '%Y%m%d');
-				$date_validation = dol_print_date($line->date_validated, '%Y%m%d');
+				$date_validation = dol_print_date($line->date_validation, '%Y%m%d');
 				$date_limit_payment = dol_print_date($line->date_lim_reglement, '%Y%m%d');
+
+				$refInvoice = '';
+				if ($line->doc_type == 'customer_invoice') {
+					// Customer invoice
+					require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+					$invoice = new Facture($this->db);
+					$invoice->fetch($line->fk_doc);
+
+					$refInvoice = $invoice->ref;
+				} elseif ($line->doc_type == 'supplier_invoice') {
+					// Supplier invoice
+					require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+					$invoice = new FactureFournisseur($this->db);
+					$invoice->fetch($line->fk_doc);
+
+					$refInvoice = $invoice->ref_supplier;
+				}
 
 				// FEC:JournalCode
 				print $line->code_journal . $separator;
@@ -1053,6 +1135,8 @@ class AccountancyExport
 				print $date_document . $separator;
 
 				// FEC:EcritureLib
+				// Clean label operation to prevent problem on export with tab separator & other character
+				$line->label_operation = str_replace(array("\t", "\n", "\r"), " ", $line->label_operation);
 				print dol_string_unaccent($line->label_operation) . $separator;
 
 				// FEC:Debit
@@ -1077,7 +1161,13 @@ class AccountancyExport
 				print $line->multicurrency_code . $separator;
 
 				// FEC_suppl:DateLimitReglmt
-				print $date_limit_payment;
+				print $date_limit_payment . $separator;
+
+				// FEC_suppl:NumFacture
+				// Clean ref invoice to prevent problem on export with tab separator & other character
+				$refInvoice = str_replace(array("\t", "\n", "\r"), " ", $refInvoice);
+				print dol_trunc(self::toAnsi($refInvoice), 17, 'right', 'UTF-8', 1);
+
 
 				print $end_line;
 			}
@@ -1654,6 +1744,8 @@ class AccountancyExport
 
 			print self::trunc($line->label_compte, 60).$separator; //Account label
 			print self::trunc($line->doc_ref, 20).$separator; //Piece
+			// Clean label operation to prevent problem on export with tab separator & other character
+			$line->label_operation = str_replace(array("\t", "\n", "\r"), " ", $line->label_operation);
 			print self::trunc($line->label_operation, 60).$separator; //Operation label
 			print price(abs($line->debit - $line->credit)).$separator; //Amount
 			print $line->sens.$separator; //Direction
@@ -1803,6 +1895,62 @@ class AccountancyExport
 				print 'EUR';
 				print $this->end_line;
 			}
+		}
+	}
+
+	/**
+	* Export format : iSuite Expert
+	*
+	* by OpenSolus [https://opensolus.fr]
+	*
+	* @param array $objectLines data
+	*
+	* @return void
+	*/
+	public function exportiSuiteExpert($objectLines)
+	{
+		$this->separator = ';';
+		$this->end_line = "\r\n";
+
+
+		foreach ($objectLines as $line) {
+			$tab = array();
+
+			$date = dol_print_date($line->doc_date, '%d/%m/%Y');
+
+			$tab[] = $line->piece_num;
+			$tab[] = $date;
+			$tab[] = substr($date, 6, 4);
+			$tab[] = substr($date, 3, 2);
+			$tab[] = substr($date, 0, 2);
+			$tab[] = $line->doc_ref;
+			//Conversion de chaine UTF8 en Latin9
+			$tab[] = mb_convert_encoding(str_replace(' - Compte auxiliaire', '', $line->label_operation), "Windows-1252", 'UTF-8');
+
+			//Calcul de la longueur des numéros de comptes
+			$taille_numero = strlen(length_accountg($line->numero_compte));
+
+			//Création du numéro de client générique
+			$numero_cpt_client = '411';
+			for ($i = 1; $i <= ($taille_numero - 3); $i++) {
+				$numero_cpt_client .= '0';
+			}
+
+			//Création des comptes auxiliaire des clients
+			if (length_accountg($line->numero_compte) == $numero_cpt_client) {
+				$tab[] = rtrim(length_accounta($line->subledger_account), "0");
+			} else {
+				$tab[] = length_accountg($line->numero_compte);
+			}
+			$nom_client = explode(" - ", $line->label_operation);
+			$tab[] = mb_convert_encoding($nom_client[0], "Windows-1252", 'UTF-8');
+			$tab[] = price($line->debit);
+			$tab[] = price($line->credit);
+			$tab[] = price($line->montant);
+			$tab[] = $line->code_journal;
+
+			$separator = $this->separator;
+			print implode($separator, $tab) . $this->end_line;
 		}
 	}
 

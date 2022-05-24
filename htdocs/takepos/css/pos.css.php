@@ -21,8 +21,8 @@
  */
 
 /**
- *		\file       htdocs/theme/eldy/style.css.php
- *		\brief      File for CSS style sheet Eldy
+ *		\file       htdocs/takepos/css/pos.css.php
+ *		\brief      File for CSS style for TakePOS
  */
 
 //if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');	// Not disabled because need to load personalized language
@@ -311,7 +311,7 @@ table.postablelines tr td {
 
 .posinvoiceline td {
 	height: 40px !important;
-	background-color: var(--colorbacklineimpair1);
+	background-color: var(--colorbacklineimpair2);
 }
 
 .postablelines td.linecolht {
@@ -321,7 +321,7 @@ table.postablelines tr td {
 div.paymentbordline
 {
 	width:calc(50% - 16px);
-	background-color:#888;
+	background-color:#aaa;
 	border-radius: 8px;
 	margin-bottom: 4px;
 	display: inline-block;
@@ -352,7 +352,7 @@ div.paymentbordline
 	margin: 0 auto;
 	width: 100%;
 	height: calc(45% - 50px);
-	padding-top: 5px;
+	padding-top: 9px;
 }
 
 .row2{
@@ -377,8 +377,6 @@ div.paymentbordline
 	/* background-color:white; */
 	padding-top: 1px;
 	padding-bottom: 0;
-	padding-right: 5px;
-	padding-left: 5px;
 	min-height: 180px;
 }
 
@@ -390,8 +388,6 @@ div.paymentbordline
 	box-sizing: border-box;
 	padding-top: 0;
 	padding-bottom: 0;
-	padding-right: 5px;
-	padding-left: 5px;
 	min-height: 180px;
 }
 
@@ -402,8 +398,6 @@ div.paymentbordline
 	box-sizing: border-box;
 	padding-top: 0;
 	padding-bottom: 0;
-	padding-right: 5px;
-	padding-left: 5px;
 }
 
 .div4{
@@ -414,8 +408,6 @@ div.paymentbordline
 	font-size: 6px;
 	padding-top: 10px;
 	padding-bottom: 10px;
-	padding-right: 5px;
-	padding-left: 5px;
 }
 
 .div5{
@@ -426,16 +418,27 @@ div.paymentbordline
 	font-size: 6px;
 	padding-top:10px;
 	padding-bottom:10px;
+}
+
+.div1, .div2, .div3, .div4, .div5 {
 	padding-right: 5px;
 	padding-left: 5px;
 }
+.div1, .div4 {
+	padding-left: 8px;
+}
+.div3, .div5 {
+	padding-right: 8px;
+}
+
 
 tr.selected, tr.selected td {
 	/* font-weight: bold; */
 	background-color: rgb(240,230,210) !important;
 }
-.order {
-	color: limegreen;
+.order td {
+	color: green;
+	/* background-color: #f5f5f5; */
 }
 
 .colorwhite {
@@ -518,11 +521,29 @@ div.description_content {
 	margin-left: 4px;
 	font-size: 1.3em;
 }
+.topnav div.login_block_user {
+	display: inline-block;
+	vertical-align: middle;
+	line-height: 50px;
+	height: 50px;
+}
+.userimg.atoplogin img.userphoto, .userimgatoplogin img.userphoto {
+	width: 30px;
+	height: 30px;
+	vertical-align: middle;
+}
 
 @media screen and (max-width: 767px) {
 	.topnav .login_block_other a {
 		padding: 5px 5px;
 		font-size: 1.2em;
+	}
+
+	.div1, .div4 {
+		padding-left: 5px;
+	}
+	.div3, .div5 {
+		padding-right: 5px;
 	}
 }
 
@@ -628,6 +649,7 @@ div#moreinfo, div#infowarehouse {
 
 	.topnav input[type="text"] {
 		max-width: 90px;
+		font-size: 1.15em;
 	}
 
 	.topnav-right {
@@ -647,7 +669,7 @@ div#moreinfo, div#infowarehouse {
 	}
 
 	.row1withhead{
-		height: calc(45% - 100px);
+		height: unset;
 	}
 
 	div#moreinfo, div#infowarehouse {
@@ -756,4 +778,51 @@ div#moreinfo, div#infowarehouse {
   cursor: pointer;
   text-align: center;
   margin: 2px;
+}
+
+.splitsale {
+	float: left;
+	width: 100%;
+	height: 100%;
+	overflow: auto;
+}
+
+.rowsplit {
+	width: 100%;
+	height: 40%;
+}
+
+.headersplit {
+	height: 10%;
+	width: 100%;
+	padding-top: 20px;
+	padding-bottom: 2px;
+}
+
+.headercontent {
+	margin: auto;
+	width: 50%;
+	border: 3px solid black;
+	text-align: center;
+	font-size: 150%;
+	background-color: rgb(233,234,237);
+}
+
+
+@media only screen and (max-width: 767px)
+{
+	.headercontent {
+		width: 80%;
+	}
+
+	.headersplit .headercontent {
+		font-size: 1em;
+	}
+}
+
+
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
 }

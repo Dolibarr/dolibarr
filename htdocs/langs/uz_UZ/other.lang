@@ -258,6 +258,10 @@ PassEncoding=Parolni kodlash
 PermissionsAdd=Ruxsatnomalar qo'shildi
 PermissionsDelete=Ruxsatlar olib tashlandi
 YourPasswordMustHaveAtLeastXChars=Parolingizda kamida <strong> %s </strong> belgilar bo'lishi kerak
+PasswordNeedAtLeastXUpperCaseChars=The password need at least <strong>%s</strong> upper case chars
+PasswordNeedAtLeastXDigitChars=The password need at least <strong>%s</strong> numeric chars
+PasswordNeedAtLeastXSpecialChars=The password need at least <strong>%s</strong> special chars
+PasswordNeedNoXConsecutiveChars=The password must not have <strong>%s</strong> consecutive similar chars
 YourPasswordHasBeenReset=Parolingiz qayta tiklandi
 ApplicantIpAddress=Ariza beruvchining IP-manzili
 SMSSentTo=%s raqamiga SMS yuborildi
@@ -268,6 +272,7 @@ ProjectCreatedByEmailCollector=MSGID %s elektron pochtasidan elektron pochta yig
 TicketCreatedByEmailCollector=MSGID %s elektron pochtasidan elektron pochta yig'uvchisi tomonidan yaratilgan chipta
 OpeningHoursFormatDesc=Ochilish va yopilish soatlarini ajratish uchun a - dan foydalaning. <br> Turli xil intervallarni kiritish uchun bo'sh joydan foydalaning. <br> Misol: 8-12 14-18
 SuffixSessionName=Sessiya nomi uchun qo'shimchalar
+LoginWith=Login with %s
 
 ##### Export #####
 ExportsArea=Eksport maydoni

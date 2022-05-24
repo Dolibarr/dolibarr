@@ -97,6 +97,28 @@ class PaymentVAT extends CommonObject
 	public $fk_user_modif;
 
 	/**
+	 * @var int ID
+	 */
+	public $chid;
+
+	/**
+	 * @var string lib
+	 * @deprecated
+	 * @see $label
+	 */
+	public $lib;
+
+	/**
+	 * @var integer|string datepaye
+	 */
+	public $datepaye;
+
+	/**
+	 * @var integer|string paiementtype
+	 */
+	public $paiementtype;
+
+	/**
 	 *	Constructor
 	 *
 	 *  @param		DoliDB		$db      Database handler
@@ -620,7 +642,7 @@ class PaymentVAT extends CommonObject
 	public function update_fk_bank($id_bank)
 	{
         // phpcs:enable
-		$sql = "UPDATE ".MAIN_DB_PREFIX."payment_vat SET fk_bank = ".((int) $id_bank)." WHERE rowid = ".$this->id;
+		$sql = "UPDATE ".MAIN_DB_PREFIX."payment_vat SET fk_bank = ".((int) $id_bank)." WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update_fk_bank", LOG_DEBUG);
 		$result = $this->db->query($sql);

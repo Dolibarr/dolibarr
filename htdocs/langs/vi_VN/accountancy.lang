@@ -48,7 +48,7 @@ CountriesNotInEEC=Các nước không thuộc EEC
 CountriesInEECExceptMe=Các quốc gia trong EEC ngoại trừ %s
 CountriesExceptMe=Tất cả các quốc gia trừ %s
 AccountantFiles=Export source documents
-ExportAccountingSourceDocHelp=With this tool, you can export the source events (list in CSV and PDFs) that were used to generate your accountancy.
+ExportAccountingSourceDocHelp=With this tool, you can export the source events (list in CSV and PDFs) that are used to generate your accountancy.
 ExportAccountingSourceDocHelp2=To export your journals, use the menu entry %s - %s.
 VueByAccountAccounting=View by accounting account
 VueBySubAccountAccounting=View by accounting subaccount
@@ -62,24 +62,24 @@ MainAccountForSubscriptionPaymentNotDefined=Tài khoản kế toán chính cho t
 AccountancyArea=Khu vực kế toán
 AccountancyAreaDescIntro=Việc sử dụng mô đun kế toán được thực hiện trong một số bước:
 AccountancyAreaDescActionOnce=Các hành động sau thường được thực hiện một lần duy nhất hoặc một lần mỗi năm ...
-AccountancyAreaDescActionOnceBis=Các bước tiếp theo nên được thực hiện để giúp bạn tiết kiệm thời gian trong tương lai bằng cách gợi ý cho bạn tài khoản kế toán mặc định chính xác khi thực hiện ghi nhật ký (viết nhật ký trong Nhật ký và Sổ nhật ký chung)
+AccountancyAreaDescActionOnceBis=Next steps should be done to save you time in future by suggesting you automaticaly the correct default accounting account when transferring data in accounting
 AccountancyAreaDescActionFreq=Các hành động sau đây thường được thực hiện mỗi tháng, tuần hoặc ngày đối với các công ty rất lớn ...
 
-AccountancyAreaDescJournalSetup=BƯỚC %s: Tạo hoặc kiểm tra nội dung danh sách nhật ký của bạn từ menu %s
+AccountancyAreaDescJournalSetup=STEP %s: Check content of your journal list from menu %s
 AccountancyAreaDescChartModel=STEP %s: Check that a model of chart of account exists or create one from menu %s
 AccountancyAreaDescChart=STEP %s: Select and|or complete your chart of account from menu %s
 
 AccountancyAreaDescVat=BƯỚC %s: Xác định tài khoản kế toán cho mỗi mức thuế VAT. Để làm điều này, sử dụng mục menu %s.
 AccountancyAreaDescDefault=BƯỚC %s: Xác định tài khoản kế toán mặc định. Đối với điều này, sử dụng mục menu %s.
-AccountancyAreaDescExpenseReport=BƯỚC %s: Xác định tài khoản kế toán mặc định cho từng loại báo cáo chi phí. Đối với điều này, sử dụng mục menu %s.
+AccountancyAreaDescExpenseReport=STEP %s: Define default accounting accounts for each type of Expense report. For this, use the menu entry %s.
 AccountancyAreaDescSal=BƯỚC %s: Xác định tài khoản kế toán mặc định để thanh toán tiền lương. Đối với điều này, sử dụng mục menu %s.
-AccountancyAreaDescContrib=BƯỚC %s: Xác định tài khoản kế toán mặc định cho các chi phí đặc biệt (thuế khác). Đối với điều này, sử dụng mục menu %s.
+AccountancyAreaDescContrib=STEP %s: Define default accounting accounts for Taxes (special expenses). For this, use the menu entry %s.
 AccountancyAreaDescDonation=BƯỚC %s: Xác định tài khoản kế toán mặc định để quyên góp. Đối với điều này, sử dụng mục menu %s.
 AccountancyAreaDescSubscription=BƯỚC %s: Xác định tài khoản kế toán mặc định cho đăng ký thành viên. Đối với điều này, sử dụng mục menu %s.
 AccountancyAreaDescMisc=BƯỚC %s: Xác định tài khoản mặc định bắt buộc và tài khoản kế toán mặc định cho các giao dịch khác. Đối với điều này, sử dụng mục menu %s.
 AccountancyAreaDescLoan=BƯỚC %s: Xác định tài khoản kế toán mặc định cho các khoản vay. Đối với điều này, sử dụng mục menu %s.
 AccountancyAreaDescBank=BƯỚC %s: Xác định tài khoản kế toán và mã nhật ký cho từng ngân hàng và tài khoản tài chính. Đối với điều này, sử dụng mục menu %s.
-AccountancyAreaDescProd=BƯỚC %s: Xác định tài khoản kế toán trên các sản phẩm/ dịch vụ của bạn. Đối với điều này, sử dụng mục menu %s.
+AccountancyAreaDescProd=STEP %s: Define accounting accounts on your Products/Services. For this, use the menu entry %s.
 
 AccountancyAreaDescBind=BƯỚC %s: Kiểm tra ràng buộc giữa các dòng %s hiện tại và tài khoản kế toán được thực hiện, do đó, ứng dụng sẽ có thể ghi nhật ký giao dịch trong Sổ cái chỉ bằng một cú nhấp chuột. Hoàn thành các ràng buộc còn thiếu. Đối với điều này, sử dụng mục menu %s.
 AccountancyAreaDescWriteRecords=BƯỚC %s: Viết giao dịch vào Sổ Cái. Để làm điều này, hãy vào menu <strong>%s</strong> và nhấp vào nút <strong>%s</strong> .
@@ -112,7 +112,7 @@ MenuAccountancyClosure=Đóng
 MenuAccountancyValidationMovements=Xác nhận các kết chuyển
 ProductsBinding=Tài khoản sản phẩm
 TransferInAccounting=Kế toán chuyển khoản
-RegistrationInAccounting=Kế toán đăng ký
+RegistrationInAccounting=Recording in accounting
 Binding=Liên kết với tài khoản
 CustomersVentilation=Ràng buộc hóa đơn khách hàng
 SuppliersVentilation=Ràng buộc hóa đơn nhà cung cấp
@@ -120,7 +120,7 @@ ExpenseReportsVentilation=Ràng buộc báo cáo chi phí
 CreateMvts=Tạo giao dịch mới
 UpdateMvts=Sửa đổi giao dịch
 ValidTransaction=Xác nhận giao dịch
-WriteBookKeeping=Register transactions in accounting
+WriteBookKeeping=Record transactions in accounting
 Bookkeeping=Sổ cái
 BookkeepingSubAccount=Subledger
 AccountBalance=Số dư tài khoản
@@ -219,12 +219,12 @@ ByPredefinedAccountGroups=Theo nhóm được xác định trước
 ByPersonalizedAccountGroups=Theo nhóm đã cá nhân hóa
 ByYear=Theo năm
 NotMatch=Không được thiết lập
-DeleteMvt=Delete some operation lines from accounting
+DeleteMvt=Delete some lines from accounting
 DelMonth=Tháng cần xóa
 DelYear=Năm cần xóa
 DelJournal=Nhật ký cần xóa
-ConfirmDeleteMvt=This will delete all operation lines of the accounting for the year/month and/or for a specific journal (At least one criterion is required). You will have to reuse the feature '%s' to have the deleted record back in the ledger.
-ConfirmDeleteMvtPartial=This will delete the transaction from the accounting (all operation lines related to the same transaction will be deleted)
+ConfirmDeleteMvt=This will delete all lines in accountancy for the year/month and/or for a specific journal (At least one criterion is required). You will have to reuse the feature '%s' to have the deleted record back in the ledger.
+ConfirmDeleteMvtPartial=This will delete the transaction from the accounting (all lines related to the same transaction will be deleted)
 FinanceJournal=Nhật ký tài chính
 ExpenseReportsJournal=Nhật ký báo cáo chi phí
 DescFinanceJournal=Nhật ký tài chính bao gồm tất cả các loại thanh toán bằng tài khoản ngân hàng
@@ -278,15 +278,15 @@ DescVentilExpenseReportMore=Nếu bạn thiết lập tài khoản kế toán th
 DescVentilDoneExpenseReport=Tham khảo tại đây danh sách các dòng báo cáo chi phí và tài khoản kế toán phí của họ
 
 Closure=Annual closure
-DescClosure=Tham khảo tại đây số lượng kết chuyển theo tháng không được xác nhận và năm tài chính đã mở
-OverviewOfMovementsNotValidated=Bước 1 / Tổng quan về các kết chuyển không được xác nhận. (Cần thiết để đóng một năm tài chính)
-AllMovementsWereRecordedAsValidated=All movements were recorded as validated
-NotAllMovementsCouldBeRecordedAsValidated=Not all movements could be recorded as validated
-ValidateMovements=Xác nhận các kết chuyển
+DescClosure=Consult here the number of movements by month who are not yet validated & locked
+OverviewOfMovementsNotValidated=Overview of movements not validated and locked
+AllMovementsWereRecordedAsValidated=All movements were recorded as validated and locked
+NotAllMovementsCouldBeRecordedAsValidated=Not all movements could be recorded as validated and locked
+ValidateMovements=Validate and lock record...
 DescValidateMovements=Bất kỳ sửa đổi hoặc xóa viết, chữ và xóa sẽ bị cấm. Tất cả các mục cho một thi hành phải được xác nhận nếu không việc đóng sẽ không thể thực hiện được
 
 ValidateHistory=Tự động ràng buộc
-AutomaticBindingDone=Tự động ràng buộc thực hiện xong
+AutomaticBindingDone=Automatic bindings done (%s) - Automatic binding not possible for some record (%s)
 
 ErrorAccountancyCodeIsAlreadyUse=Lỗi, bạn không thể xóa tài khoản kế toán này bởi vì nó được sử dụng
 MvtNotCorrectlyBalanced=Kết chuyển không đúng số dư. Nợ = %s | Tín dụng = %s
@@ -294,14 +294,15 @@ Balancing=Số dư
 FicheVentilation=Thẻ ràng buộc
 GeneralLedgerIsWritten=Giao dịch được ghi trong Sổ Cái
 GeneralLedgerSomeRecordWasNotRecorded=Một số giao dịch không thể được ghi nhật ký. Nếu không có thông báo lỗi khác, điều này có thể là do chúng đã được ghi nhật ký.
-NoNewRecordSaved=Không có thêm hồ sơ để ghi nhật ký
+NoNewRecordSaved=No more record to transfer
 ListOfProductsWithoutAccountingAccount=Danh sách các sản phẩm không ràng buộc với bất kỳ tài khoản kế toán
 ChangeBinding=Thay đổi ràng buộc
 Accounted=Tài khoản trên Sổ cái
 NotYetAccounted=Not yet transferred to accounting
 ShowTutorial=Chương trình hướng dẫn
 NotReconciled=Chưa đối chiếu
-WarningRecordWithoutSubledgerAreExcluded=Warning, all operations without subledger account defined are filtered and excluded from this view
+WarningRecordWithoutSubledgerAreExcluded=Warning, all lines without subledger account defined are filtered and excluded from this view
+AccountRemovedFromCurrentChartOfAccount=Accounting account that does not exist in the current chart of accounts
 
 ## Admin
 BindingOptions=Binding options
@@ -329,8 +330,9 @@ ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Disable binding & transfer in accountanc
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Disable binding & transfer in accountancy on expense reports (expense reports will not be taken into account in accounting)
 
 ## Export
-NotifiedExportDate=Flag exported lines as exported (modification of the lines will not be possible)
-NotifiedValidationDate=Validate the exported entries (modification or deletion of the lines will not be possible)
+NotifiedExportDate=Flag exported lines as Exported <span class="warning">(to modify a line, you will need to delete the whole transaction and re-transfert it into accounting)</span>
+NotifiedValidationDate=Validate and Lock the exported entries <span class="warning">(same effect than the "Closure" feature, modification and deletion of the lines will DEFINITELY not be possible)</span>
+DateValidationAndLock=Date validation and lock
 ConfirmExportFile=Confirmation of the generation of the accounting export file ?
 ExportDraftJournal=Xuất dữ liệu bản nháp nhật ký
 Modelcsv=Mô hình xuất dữ liệu
@@ -387,11 +389,27 @@ SaleExport=Bán hàng xuất khẩu
 SaleEEC=Bán trong EEC
 SaleEECWithVAT=Bán trong EEC với VAT không phải là null, vì vậy chúng tôi cho rằng đây KHÔNG phải là bán hàng nội bộ và tài khoản được đề xuất là tài khoản sản phẩm tiêu chuẩn.
 SaleEECWithoutVATNumber=Bán trong EEC không có VAT nhưng ID VAT của bên thứ ba không được xác định. Chúng tôi dự phòng tài khoản sản phẩm để bán hàng tiêu chuẩn. Bạn có thể sửa ID VAT của bên thứ ba hoặc tài khoản sản phẩm nếu cần.
-
+ForbiddenTransactionAlreadyExported=Forbidden: The transaction has been validated and/or exported.
+ForbiddenTransactionAlreadyValidated=Forbidden: The transaction has been validated.
 ## Dictionary
 Range=Phạm vi tài khoản kế toán
 Calculated=Tính toán
 Formula=Công thức
+
+## Reconcile
+Unlettering=Unreconcile
+AccountancyNoLetteringModified=No reconcile modified
+AccountancyOneLetteringModifiedSuccessfully=One reconcile successfully modified
+AccountancyLetteringModifiedSuccessfully=%s reconcile successfully modified
+AccountancyNoUnletteringModified=No unreconcile modified
+AccountancyOneUnletteringModifiedSuccessfully=One unreconcile successfully modified
+AccountancyUnletteringModifiedSuccessfully=%s unreconcile successfully modified
+
+## Confirm box
+ConfirmMassUnlettering=Bulk Unreconcile confirmation
+ConfirmMassUnletteringQuestion=Are you sure you want to Unreconcile the %s selected record(s)?
+ConfirmMassDeleteBookkeepingWriting=Xác nhận xóa hàng loạt
+ConfirmMassDeleteBookkeepingWritingQuestion=This will delete the transaction from the accounting (all lines related to the same transaction will be deleted) Are you sure you want to delete the %s selected record(s)?
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Một số bước bắt buộc thiết lập không được thực hiện, vui lòng hoàn thành chúng
@@ -404,6 +422,10 @@ NoJournalDefined=Không có nhật ký được xác định
 Binded=Dòng ràng buộc
 ToBind=Dòng để ràng buộc
 UseMenuToSetBindindManualy=Các dòng chưa bị ràng buộc, sử dụng menu <a href="%s">%s</a> để tạo ràng buộc theo cách thủ công
+SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Sorry this module is not compatible with the experimental feature of situation invoices
+AccountancyErrorMismatchLetterCode=Mismatch in reconcile code
+AccountancyErrorMismatchBalanceAmount=The balance (%s) is not equal to 0
+AccountancyErrorLetteringBookkeeping=Errors have occurred concerning the transactions: %s
 
 ## Import
 ImportAccountingEntries=Ghi sổ kế toán

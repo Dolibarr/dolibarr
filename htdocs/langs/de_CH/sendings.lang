@@ -10,7 +10,6 @@ StatusSendingProcessedShort=Fertig
 SendingSheet=Auslieferungen
 WarningNoQtyLeftToSend=Achtung, keine Produkte für den Versand
 ClassifyReception=Lieferung klassifizieren
-ShipmentCreationIsDoneFromOrder=For the moment, creation of a new shipment is done from the Sales Order record.
 ProductQtyInShipmentAlreadySent=Bereits verschickte Artikel dieser Bestellung
 DocumentModelTyphon=Vollständig Dokumentvorlage für die Lieferungscheine (Logo, ...)
 SumOfProductVolumes=Summe der Produktevolumen

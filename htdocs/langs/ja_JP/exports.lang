@@ -38,8 +38,8 @@ FormatedExportDesc2=最初のステップは、事前定義されたデータセ
 FormatedExportDesc3=エクスポートするデータを選択すると、出力ファイルの形式を選択できる。
 Sheet=シート
 NoImportableData=いいえインポート可能なデータがない(データのインポートを可能にするための定義としないモジュール)
-FileSuccessfullyBuilt=ファイルが生成されました
-SQLUsedForExport=データの抽出に使用されるSQLリクエスト
+FileSuccessfullyBuilt=ファイルが生成された
+SQLUsedForExport=データの抽出に使用されるSQL要求
 LineId=行のid
 LineLabel=行のラベル
 LineDescription=ラインの説明
@@ -49,7 +49,7 @@ LineQty=線の量
 LineTotalHT=除く金額ラインの税金
 LineTotalTTC=ラインのための税の額
 LineTotalVAT=ラインの付加価値税の額
-TypeOfLineServiceOrProduct=回線の種類(0 =製品、1 =サービス)
+TypeOfLineServiceOrProduct=行の種類(0 =製品、1 =サービス)
 FileWithDataToImport=インポートするデータを持つファイル
 FileToImport=インポートするソースファイル
 FileMustHaveOneOfFollowingFormat=インポートするファイルは、次のいずれかの形式である必要がある

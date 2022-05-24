@@ -193,8 +193,7 @@ if (!empty($conf->use_javascript_ajax) && $conf->global->MAIN_FEATURES_LEVEL >= 
 
 print '</table>';
 
-print '<br>';
-print '<div align="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></div>';
+print $form->buttonsSaveCancel("Modify", '');
 
 print '</form>';
 

@@ -19,7 +19,7 @@
 ModulePartnershipName=Xestión de Asociacións
 PartnershipDescription=Módulo de xestión de Asociacións
 PartnershipDescriptionLong= Módulo de xestión de Asociacións
-
+Partnership=Asociación
 AddPartnership=Engade asociado
 CancelPartnershipForExpiredMembers=Asociación: cancela a asociación de membros con subscricións caducadas 
 PartnershipCheckBacklink=Asociación: comprobe a ligazón de retroceso referente 
@@ -59,6 +59,7 @@ BacklinkNotFoundOnPartnerWebsite=Non se atopou a ligazón de atraso no sitio web
 ConfirmClosePartnershipAsk=Está certo de querer cancelar esta asociación? 
 PartnershipType=Tipo de asociación
 PartnershipRefApproved=A asociación %s aprobouse
+KeywordToCheckInWebsite=Se quere comprobar que unha determinada palabra clave está presente no sitio web de cada asociado, defina esta palabra clave aquí
 
 #
 # Template Mail
@@ -90,3 +91,4 @@ PartnershipAccepted=Aceptado
 PartnershipRefused=Rexeitado
 PartnershipCanceled=Anulado
 PartnershipManagedFor=Os socios son
+

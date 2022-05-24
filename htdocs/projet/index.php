@@ -56,8 +56,8 @@ if (!$user->rights->projet->lire) {
 	accessforbidden();
 }
 
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 
 $max = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
 
@@ -197,10 +197,10 @@ include DOL_DOCUMENT_ROOT.'/projet/graph_opportunities.inc.php';
 print_projecttasks_array($db, $form, $socid, $projectsListId, 0, 0, $listofoppstatus, array('projectlabel', 'plannedworkload', 'declaredprogress', 'prospectionstatus', 'projectstatus'));
 
 
-print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+print '</div><div class="fichetwothirdright">';
 
 // Latest modified projects
-$sql = "SELECT p.rowid, p.ref, p.title, p.fk_statut as status, p.tms as datem";
+$sql = "SELECT p.rowid, p.ref, p.title, p.dateo, p.datee, p.fk_statut as status, p.tms as datem";
 $sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
 $sql .= ", s.code_client, s.code_compta, s.client";
 $sql .= ", s.code_fournisseur, s.code_compta_fournisseur, s.fournisseur";
@@ -239,8 +239,6 @@ if ($resql) {
 			$projectstatic->id = $obj->rowid;
 			$projectstatic->ref = $obj->ref;
 			$projectstatic->title = $obj->title;
-			$projectstatic->dateo = $obj->dateo;
-			$projectstatic->datep = $obj->datep;
 			$projectstatic->thirdparty_name = $obj->name;
 			$projectstatic->status = $obj->status;
 
@@ -290,7 +288,10 @@ if ($resql) {
 			print '</td>';
 
 			// Date
-			print '<td>'.dol_print_date($db->jdate($obj->datem), 'day').'</td>';
+			$datem = $db->jdate($obj->datem);
+			print '<td class="center" title="'.dol_escape_htmltag($langs->trans("DateModification").': '.dol_print_date($datem, 'dayhour', 'tzuserrel')).'">';
+			print dol_print_date($datem, 'day', 'tzuserrel');
+			print '</td>';
 
 			// Status
 			print '<td class="right">'.$projectstatic->LibStatut($obj->status, 3).'</td>';
@@ -420,7 +421,7 @@ if (empty($conf->global->PROJECT_HIDE_PROJECT_LIST_ON_PROJECT_AREA)) {
 	print_projecttasks_array($db, $form, $socid, $projectsListId, 0, 1, $listofoppstatus, array());
 }
 
-print '</div></div></div>';
+print '</div></div>';
 
 $parameters = array('user' => $user);
 $reshook = $hookmanager->executeHooks('dashboardProjects', $parameters, $projectstatic); // Note that $action and $object may have been modified by hook

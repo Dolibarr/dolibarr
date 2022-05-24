@@ -329,7 +329,7 @@ class Cchargesociales
 
 		if (!$error) {
 			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element;
-			$sql .= ' WHERE id='.$this->id;
+			$sql .= ' WHERE id = '.((int) $this->id);
 
 			$resql = $this->db->query($sql);
 			if (!$resql) {

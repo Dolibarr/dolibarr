@@ -19,78 +19,80 @@
 #
 ModuleEventOrganizationName = Arrangementorganisasjon
 EventOrganizationDescription = Arrangementsorganisasjon gjennom Prosjektmodul
-EventOrganizationDescriptionLong= Manage the organization of an event (show, conferences, attendees or speakers, with public pages for suggestion, vote or registration)
+EventOrganizationDescriptionLong= Administrer organiseringen av et arrangement (show, konferanser, deltakere eller foredragsholdere, med offentlige sider for forslag, stemme eller registrering)
 #
 # Menu
 #
 EventOrganizationMenuLeft = Organiserte arrangementer
 EventOrganizationConferenceOrBoothMenuLeft = Konferanse eller messe
 
-PaymentEvent=Payment of event
+PaymentEvent=Betaling av arrangement
 
 #
 # Admin page
 #
-NewRegistration=Registration
+NewRegistration=Registrering
 EventOrganizationSetup=Oppsett av arrangementorganisasjon
-EventOrganization=Event organization
+EventOrganization=Arrangementsorganisering
 Settings=Innstillinger
 EventOrganizationSetupPage = Konfigurasjonsside for arrangementsorganisasjon
-EVENTORGANIZATION_TASK_LABEL = Label of tasks to create automatically when project is validated
-EVENTORGANIZATION_TASK_LABELTooltip = When you validate an organized event, some tasks can be automatically created in the project<br><br>For example: <br>Send Call for Conference<br>Send Call for Booth<br>Receive call for conferences<br>Receive call for Booth<br>Open subscriptions to events for attendees<br>Send remind of event to speakers<br>Send remind of event to Booth hoster<br>Send remind of event to attendees
-EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = Category to add to third-parties automatically created when someone suggests a conference
-EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = Category to add to third-parties automatically created when they suggests a booth
-EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = Template of email to send after receiving a suggestion of a conference.
-EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH = Template of email to send after receiving a suggestion of a booth.
-EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Template of email to send  after a registration to a booth has been paid.
-EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = Template of email to send after a registration to an event has been paid.
-EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Template of email of massaction to attendes
-EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Template of email of massaction to speakers
-EVENTORGANIZATION_FILTERATTENDEES_CAT = Filter thirdpartie's select list in attendees creation card/form with category
-EVENTORGANIZATION_FILTERATTENDEES_TYPE = Filter thirdpartie's select list in attendees creation card/form with customer type
+EVENTORGANIZATION_TASK_LABEL = Etikett over oppgaver som skal opprettes automatisk når prosjektet er validert
+EVENTORGANIZATION_TASK_LABELTooltip = When you validate an event to organize, some tasks can be automatically created in the project<br><br>For example: <br>Send Call for Conferences<br>Send Call for Booths<br>Validate suggestions of Conferences<br>Validate application for Booths<br>Open subscriptions to the event for attendees<br>Send a remind of the event to speakers<br>Send a remind of the event to Booth hosters<br>Send a remind of the event to attendees
+EVENTORGANIZATION_TASK_LABELTooltip2=Hold tom hvis du ikke trenger å opprette oppgaver automatisk.
+EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = Kategori for å legge til tredjeparter opprettes automatisk når noen foreslår en konferanse
+EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = Kategori som skal legges til tredjeparter opprettes automatisk når de foreslår en stand
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = Mal for e-post som skal sendes etter å ha mottatt et forslag til en konferanse.
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH = Mal for e-post som skal sendes etter å ha mottatt et forslag til stand.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Mal for e-post som skal sendes etter at en påmelding til en stand er betalt.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = Mal for e-post som skal sendes etter at en påmelding til et arrangement er betalt.
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Mal for e-post som skal brukes når du sender e-poster fra masseaksjonen "Send e-poster" til talere
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Mal for e-post som skal brukes når du sender e-poster fra masseaksjonen "Send e-poster" på deltakerlisten
+EVENTORGANIZATION_FILTERATTENDEES_CAT = I skjemaet for å opprette/legge til en deltaker, begrenser listen over tredjeparter til tredjeparter i kategorien
+EVENTORGANIZATION_FILTERATTENDEES_TYPE = I skjemaet for å opprette/legge til en deltaker, begrenser listen over tredjeparter til tredjeparter med arten
 
 #
 # Object
 #
 EventOrganizationConfOrBooth= Konferanse eller messe
-ManageOrganizeEvent = Manage the organization of an event
+ManageOrganizeEvent = Administrer organiseringen av et arrangement
 ConferenceOrBooth = Konferanse eller messe
 ConferenceOrBoothTab = Konferanse eller messe
-AmountPaid = Amount paid
-DateOfRegistration = Date of registration
-ConferenceOrBoothAttendee = Conference Or Booth Attendee
+AmountPaid = Beløpet betalt
+DateOfRegistration = Registreringsdato
+ConferenceOrBoothAttendee = Konferanse- eller standdeltaker
 
 #
 # Template Mail
 #
-YourOrganizationEventConfRequestWasReceived = Your request for conference was received
-YourOrganizationEventBoothRequestWasReceived = Your request for booth was received
-EventOrganizationEmailAskConf = Request for conference
-EventOrganizationEmailAskBooth = Request for booth
-EventOrganizationEmailBoothPayment = Payment of your booth
-EventOrganizationEmailRegistrationPayment = Registration for an event
-EventOrganizationMassEmailAttendees = Communication to attendees
-EventOrganizationMassEmailSpeakers = Communication to speakers
+YourOrganizationEventConfRequestWasReceived = Din forespørsel om konferanse ble mottatt
+YourOrganizationEventBoothRequestWasReceived = Din forespørsel om stand ble mottatt
+EventOrganizationEmailAskConf = Forespørsel om konferanse
+EventOrganizationEmailAskBooth = Forespørsel om stand
+EventOrganizationEmailBoothPayment = Betaling av standen din
+EventOrganizationEmailRegistrationPayment = Påmelding til et arrangement
+EventOrganizationMassEmailAttendees = Kommunikasjon til deltakere
+EventOrganizationMassEmailSpeakers = Kommunikasjon til foredragsholdere
+ToSpeakers=Til foredragsholdere
 
 #
 # Event
 #
-AllowUnknownPeopleSuggestConf=Allow people to suggest conferences
-AllowUnknownPeopleSuggestConfHelp=Allow unknown people to suggest a conference they want to do
-AllowUnknownPeopleSuggestBooth=Allow people to apply for a booth
-AllowUnknownPeopleSuggestBoothHelp=Allow unknown people to apply for a booth
-PriceOfRegistration=Price of registration
-PriceOfRegistrationHelp=Price to pay to register or participate in the event
-PriceOfBooth=Subscription price to stand a booth
-PriceOfBoothHelp=Subscription price to stand a booth
-EventOrganizationICSLink=Link ICS for events
-ConferenceOrBoothInformation=Conference Or Booth informations
-Attendees=Attendees
-ListOfAttendeesOfEvent=List of attendees of the event project
-DownloadICSLink = Download ICS link
-EVENTORGANIZATION_SECUREKEY = Secure Key of the public registration link to a conference
+AllowUnknownPeopleSuggestConf=Tillat folk å foreslå konferanser
+AllowUnknownPeopleSuggestConfHelp=Tillat ukjente personer å foreslå en konferanse de ønsker å holde
+AllowUnknownPeopleSuggestBooth=La folk søke om stand
+AllowUnknownPeopleSuggestBoothHelp=La ukjente søke om stand
+PriceOfRegistration=Pris for registrering
+PriceOfRegistrationHelp=Pris for å registrere seg eller delta i arrangementet
+PriceOfBooth=Abonnementspris for en stand
+PriceOfBoothHelp=Abonnementspris for en stand
+EventOrganizationICSLink=Koble til ICS for konferanser
+ConferenceOrBoothInformation=Informasjon om konferanse eller stand
+Attendees=Deltakere
+ListOfAttendeesOfEvent=Liste over deltakere til arrangementsprosjektet
+DownloadICSLink = Last ned ICS-lenke
+EVENTORGANIZATION_SECUREKEY = Seed to secure the key for the public registration page to suggest a conference
 SERVICE_BOOTH_LOCATION = Service used for the invoice row about a booth location
-SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Service used for the invoice row about an attendee subscription to a conference
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Service used for the invoice row about an attendee subscription to an event
 NbVotes=Number of votes
 #
 # Status
@@ -98,9 +100,9 @@ NbVotes=Number of votes
 EvntOrgDraft = Kladd
 EvntOrgSuggested = Suggested
 EvntOrgConfirmed = Confirmed
-EvntOrgNotQualified = Not Qualified
+EvntOrgNotQualified = Ikke kvalifisert
 EvntOrgDone = Utført
-EvntOrgCancelled = Cancelled
+EvntOrgCancelled = Kansellert
 #
 # Public page
 #
@@ -116,7 +118,7 @@ SuggestConference = Suggest a new conference
 SuggestBooth = Suggest a booth
 ViewAndVote = View and vote for suggested events
 PublicAttendeeSubscriptionGlobalPage = Public link for registration to the event
-PublicAttendeeSubscriptionPage = Public link for registration to this event only
+PublicAttendeeSubscriptionPage = Offentlig lenke for registrering kun til dette arrangementet
 MissingOrBadSecureKey = The security key is invalid or missing
 EvntOrgWelcomeMessage = This form allows you to register as a new participant to the event : <b>%s</b>
 EvntOrgDuration = This conference starts on %s and ends on %s.
@@ -129,7 +131,7 @@ ConferenceIsNotConfirmed=Registration not available, conference is not confirmed
 DateMustBeBeforeThan=%s must be before %s
 DateMustBeAfterThan=%s must be after %s
 
-NewSubscription=Registration
+NewSubscription=Registrering
 OrganizationEventConfRequestWasReceived=Your suggestion for a conference has been received
 OrganizationEventBoothRequestWasReceived=Your request for a booth has been received
 OrganizationEventPaymentOfBoothWasReceived=Your payment for your booth has been recorded
@@ -164,3 +166,4 @@ EmailCompanyForInvoice=Company email (for invoice, if different of attendee emai
 ErrorSeveralCompaniesWithEmailContactUs=Several companies with this email has been found so we can't validate automaticaly your registration. Please contact us at %s for a manual validation
 ErrorSeveralCompaniesWithNameContactUs=Several companies with this name has been found so we can't validate automaticaly your registration. Please contact us at %s for a manual validation
 NoPublicActionsAllowedForThisEvent=No public actions are open to public for this event
+MaxNbOfAttendees=Max number of attendees

@@ -124,25 +124,26 @@ if ($action == 'presend') {
 
 	if ($object->element === 'facture' && !empty($conf->global->INVOICE_EMAIL_SENDER)) {
 		$formmail->frommail = $conf->global->INVOICE_EMAIL_SENDER;
-		$formmail->fromname = '';
+		$formmail->fromname = (!empty($conf->global->INVOICE_EMAIL_SENDER_NAME) ? $conf->global->INVOICE_EMAIL_SENDER_NAME : '');
 		$formmail->fromtype = 'special';
 	}
 	if ($object->element === 'shipping' && !empty($conf->global->SHIPPING_EMAIL_SENDER)) {
 		$formmail->frommail = $conf->global->SHIPPING_EMAIL_SENDER;
-		$formmail->fromname = '';
+		$formmail->fromname = (!empty($conf->global->SHIPPING_EMAIL_SENDER_NAME) ? $conf->global->SHIPPING_EMAIL_SENDER_NAME : '');
 		$formmail->fromtype = 'special';
 	}
 	if ($object->element === 'commande' && !empty($conf->global->COMMANDE_EMAIL_SENDER)) {
 		$formmail->frommail = $conf->global->COMMANDE_EMAIL_SENDER;
-		$formmail->fromname = '';
+		$formmail->fromname = (!empty($conf->global->COMMANDE_EMAIL_SENDER_NAME) ? $conf->global->COMMANDE_EMAIL_SENDER_NAME : '');
+		$formmail->fromtype = 'special';
+	}
+	if ($object->element === 'order_supplier' && !empty($conf->global->ORDER_SUPPLIER_EMAIL_SENDER)) {
+		$formmail->frommail = $conf->global->ORDER_SUPPLIER_EMAIL_SENDER;
+		$formmail->fromname = (!empty($conf->global->ORDER_SUPPLIER_EMAIL_SENDER_NAME) ? $conf->global->ORDER_SUPPLIER_EMAIL_SENDER_NAME : '');
 		$formmail->fromtype = 'special';
 	}
 
 	$formmail->trackid = $trackid;
-	if (!empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 2)) {	// If bit 2 is set
-		include DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$formmail->frommail = dolAddEmailTrackId($formmail->frommail, $trackid);
-	}
 	$formmail->withfrom = 1;
 
 	// Fill list of recipient with email inside <>.
@@ -151,7 +152,7 @@ if ($action == 'presend') {
 		$fuser = new User($db);
 		$fuser->fetch($object->fk_user_author);
 		$liste['thirdparty'] = $fuser->getFullName($outputlangs)." <".$fuser->email.">";
-	} elseif ($object->element == 'partnership' && $conf->global->PARTNERSHIP_IS_MANAGED_FOR == 'member') {
+	} elseif ($object->element == 'partnership' && getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR') == 'member') {
 		$fadherent = new Adherent($db);
 		$fadherent->fetch($object->fk_member);
 		$liste['member'] = $fadherent->getFullName($outputlangs)." <".$fadherent->email.">";
@@ -207,6 +208,9 @@ if ($action == 'presend') {
 	}
 
 	// Make substitution in email content
+	if ($object) {
+		$formmail->setSubstitFromObject($object, $langs);
+	}
 	$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, $arrayoffamiliestoexclude, $object);
 	$substitutionarray['__CHECK_READ__'] = (is_object($object) && is_object($object->thirdparty)) ? '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.urlencode($object->thirdparty->tag).'&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" width="1" height="1" style="width:1px;height:1px" border="0"/>' : '';
 	$substitutionarray['__PERSONALIZED__'] = ''; // deprecated

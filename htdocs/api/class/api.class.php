@@ -110,6 +110,8 @@ class DolibarrApi
 		unset($object->ismultientitymanaged);
 		unset($object->restrictiononfksoc);
 		unset($object->table_rowid);
+		unset($object->pass);
+		unset($object->pass_indatabase);
 
 		// Remove linkedObjects. We should already have linkedObjectsIds that avoid huge responses
 		unset($object->linkedObjects);
@@ -171,6 +173,7 @@ class DolibarrApi
 		unset($object->stats_mrptoproduce);
 
 		unset($object->element);
+		unset($object->element_for_permission);
 		unset($object->fk_element);
 		unset($object->table_element);
 		unset($object->table_element_line);
@@ -292,76 +295,29 @@ class DolibarrApi
 	/**
 	 * Return if a $sqlfilters parameter is valid
 	 *
-	 * @param  string   $sqlfilters     sqlfilter string
-	 * @return boolean                  True if valid, False if not valid
+	 * @param  	string   		$sqlfilters     sqlfilter string
+	 * @param	string			$error			Error message
+	 * @return 	boolean|string   				True if valid, False if not valid
 	 */
-	protected function _checkFilters($sqlfilters)
+	protected function _checkFilters($sqlfilters, &$error = '')
 	{
 		// phpcs:enable
-		//$regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
-		//$tmp=preg_replace_all('/'.$regexstring.'/', '', $sqlfilters);
-		$tmp = $sqlfilters;
-		$ok = 0;
-		$i = 0; $nb = strlen($tmp);
-		$counter = 0;
-		while ($i < $nb) {
-			if ($tmp[$i] == '(') {
-				$counter++;
-			}
-			if ($tmp[$i] == ')') {
-				$counter--;
-			}
-			if ($counter < 0) {
-				$error = "Bad sqlfilters=".$sqlfilters;
-				dol_syslog($error, LOG_WARNING);
-				return false;
-			}
-			$i++;
-		}
-		return true;
+
+		return dolCheckFilters($sqlfilters, $error);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
-	 * Function to forge a SQL criteria
+	 * Function to forge a SQL criteria from a Generic filter string
 	 *
 	 * @param  array    $matches    Array of found string by regex search.
-	 * 								Example: "t.ref:like:'SO-%'" or "t.date_creation:<:'20160101'" or "t.date_creation:<:'2016-01-01 12:30:00'" or "t.nature:is:NULL"
+	 * 								Each entry is 1 and only 1 criteria.
+	 * 								Example: "t.ref:like:'SO-%'", "t.date_creation:<:'20160101'", "t.date_creation:<:'2016-01-01 12:30:00'", "t.nature:is:NULL", "t.field2:isnot:NULL"
 	 * @return string               Forged criteria. Example: "t.field like 'abc%'"
 	 */
 	protected static function _forge_criteria_callback($matches)
 	{
-		// phpcs:enable
-		global $db;
-
-		//dol_syslog("Convert matches ".$matches[1]);
-		if (empty($matches[1])) {
-			return '';
-		}
-		$tmp = explode(':', $matches[1], 3);
-
-		if (count($tmp) < 3) {
-			return '';
-		}
-
-		$operand = preg_replace('/[^a-z0-9\._]/i', '', trim($tmp[0]));
-
-		$operator = strtoupper(preg_replace('/[^a-z<>=]/i', '', trim($tmp[1])));
-		if ($operator == 'NOTLIKE') {
-			$operator = 'NOT LIKE';
-		}
-
-		$tmpescaped = trim($tmp[2]);
-		$regbis = array();
-		if ($operator == 'IN') {
-			$tmpescaped = "(".$db->sanitize($tmpescaped, 1).")";
-		} elseif (preg_match('/^\'(.*)\'$/', $tmpescaped, $regbis)) {
-			$tmpescaped = "'".$db->escape($regbis[1])."'";
-		} else {
-			$tmpescaped = $db->sanitize($db->escape($tmpescaped));
-		}
-
-		return $db->escape($operand).' '.$db->escape($operator)." ".$tmpescaped;
+		return dolForgeCriteriaCallback($matches);
 	}
 }

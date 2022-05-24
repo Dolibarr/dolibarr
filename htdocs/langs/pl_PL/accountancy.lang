@@ -48,7 +48,7 @@ CountriesNotInEEC=Kraje spoza UE
 CountriesInEECExceptMe=Kraje UE oprócz %s
 CountriesExceptMe=Wszystkie kraje oprócz %s
 AccountantFiles=Eksportuj dokumenty źródłowe
-ExportAccountingSourceDocHelp=Za pomocą tego narzędzia możesz wyeksportować zdarzenia źródłowe (listę w formacie CSV i PDF), które zostały użyte do wygenerowania Twojej księgowości.
+ExportAccountingSourceDocHelp=With this tool, you can export the source events (list in CSV and PDFs) that are used to generate your accountancy.
 ExportAccountingSourceDocHelp2=Aby wyeksportować swoje dzienniki, użyj pozycji menu %s - %s.
 VueByAccountAccounting=Wyświetl według konta księgowego
 VueBySubAccountAccounting=Wyświetl według subkonta księgowego
@@ -62,24 +62,24 @@ MainAccountForSubscriptionPaymentNotDefined=Główne konto księgowe dla płatno
 AccountancyArea=Strefa księgowości
 AccountancyAreaDescIntro=Korzystanie z modułu księgowości odbywa się w kilku etapach:
 AccountancyAreaDescActionOnce=Następujące akcje są wykonywane zwykle tylko raz lub raz w roku...
-AccountancyAreaDescActionOnceBis=Należy podjąć kolejne kroki, aby zaoszczędzić czas w przyszłości, sugerując prawidłowe domyślne konto księgowe podczas sporządzania dziennika (zapis w dziennikach i księdze głównej)
+AccountancyAreaDescActionOnceBis=Next steps should be done to save you time in future by suggesting you automaticaly the correct default accounting account when transferring data in accounting
 AccountancyAreaDescActionFreq=Następujące akcje są wykonywane zwykle każdego miesiąca, tygodnia lub dnia dla naprawdę wielkich firm...
 
-AccountancyAreaDescJournalSetup=KROK %s: Utwórz lub sprawdź zawartość listy czasopism z menu %s
+AccountancyAreaDescJournalSetup=STEP %s: Check content of your journal list from menu %s
 AccountancyAreaDescChartModel=KROK %s: Sprawdź, czy istnieje model planu kont lub utwórz go z menu %s
 AccountancyAreaDescChart=KROK %s: Wybierz i | lub uzupełnij swój plan kont z menu %s
 
 AccountancyAreaDescVat=Krok %s: Zdefiniuj konta księgowe dla każdej stawki VAT. W tym celu użyj pozycji menu %s.
 AccountancyAreaDescDefault=KROK %s: Zdefiniuj domyślne konta księgowe. W tym celu użyj pozycji menu %s.
-AccountancyAreaDescExpenseReport=KROK %s: Zdefiniuj domyślne konta księgowe dla każdego typu raportu z wydatków. W tym celu użyj pozycji menu %s.
+AccountancyAreaDescExpenseReport=STEP %s: Define default accounting accounts for each type of Expense report. For this, use the menu entry %s.
 AccountancyAreaDescSal=Krok %s: Zdefiniuj domyślne konta księgowe dla płatności i wynagrodzeń. W tym celu użyj pozycji menu %s.
-AccountancyAreaDescContrib=KROK %s: Zdefiniuj domyślne konta księgowe dla wydatków specjalnych (podatki różne). W tym celu użyj pozycji menu %s.
+AccountancyAreaDescContrib=STEP %s: Define default accounting accounts for Taxes (special expenses). For this, use the menu entry %s.
 AccountancyAreaDescDonation=Krok %s: Zdefiniuj domyśle konta księgowe dla dotacji. W tym celu użyj pozycji menu %s.
 AccountancyAreaDescSubscription=KROK %s: Zdefiniuj domyślne konta księgowe dla subskrypcji członków. W tym celu użyj pozycji menu %s.
 AccountancyAreaDescMisc=KROK %s: Zdefiniuj obowiązkowe konto domyślne i domyślne konta księgowe dla różnych transakcji. W tym celu użyj pozycji menu %s.
 AccountancyAreaDescLoan=KROK %s: Zdefiniuj domyślne konta księgowe dla pożyczek. W tym celu użyj pozycji menu %s.
 AccountancyAreaDescBank=KROK %s: Zdefiniuj konta księgowe i kod arkusza dla każdego konta bankowego i finansowego. W tym celu użyj pozycji menu %s.
-AccountancyAreaDescProd=Krok %s: Zdefiniuj konta księgowe dla swoich produktów/usług. W tym celu użyj pozycji menu %s.
+AccountancyAreaDescProd=STEP %s: Define accounting accounts on your Products/Services. For this, use the menu entry %s.
 
 AccountancyAreaDescBind=KROK %s: Sprawdź powiązanie między istniejącymi liniami %s a kontem księgowym, aby aplikacja mogła zapisywać transakcje w księdze jednym kliknięciem. Uzupełnij brakujące powiązania. W tym celu użyj pozycji menu %s.
 AccountancyAreaDescWriteRecords=Krok %s: Zapisz transakcje do głównej księgi. W tym celu idź do <strong>%s</strong> i kliknij na przycisk <strong>%s</strong>.
@@ -112,7 +112,7 @@ MenuAccountancyClosure=Zamknięte
 MenuAccountancyValidationMovements=Zatwierdź ruchy
 ProductsBinding=Konta produktów
 TransferInAccounting=Przelew w księgowości
-RegistrationInAccounting=Rejestracja w rachunkowości
+RegistrationInAccounting=Recording in accounting
 Binding=Powiązanie z kontami
 CustomersVentilation=Powiązania do faktury klienta
 SuppliersVentilation=Wiązanie faktury dostawcy
@@ -120,7 +120,7 @@ ExpenseReportsVentilation=Wiążący raport z wydatków
 CreateMvts=Utwórz nową transakcję
 UpdateMvts=Modyfikacja transakcji
 ValidTransaction=Potwierdź transakcję
-WriteBookKeeping=Zarejestruj transakcje w księgowości
+WriteBookKeeping=Record transactions in accounting
 Bookkeeping=Księga główna
 BookkeepingSubAccount=Subledger
 AccountBalance=Bilans konta
@@ -219,12 +219,12 @@ ByPredefinedAccountGroups=Według predefiniowanych grup
 ByPersonalizedAccountGroups=Według spersonalizowanych grup
 ByYear=Według roku
 NotMatch=Nie ustawione
-DeleteMvt=Usuń niektóre linie operacyjne z księgowania
+DeleteMvt=Delete some lines from accounting
 DelMonth=Miesiąc do usunięcia
 DelYear=Rok do usunęcia
 DelJournal=Dziennik do usunięcia
-ConfirmDeleteMvt=Spowoduje to usunięcie wszystkich linii operacyjnych z rozliczenia roku / miesiąca i / lub określonego dziennika (wymagane jest co najmniej jedno kryterium). Będziesz musiał ponownie użyć funkcji „%s”, aby usunąć usunięty rekord z powrotem w księdze.
-ConfirmDeleteMvtPartial=Spowoduje to usunięcie transakcji z księgowania (wszystkie wiersze operacji związane z tą samą transakcją zostaną usunięte)
+ConfirmDeleteMvt=This will delete all lines in accountancy for the year/month and/or for a specific journal (At least one criterion is required). You will have to reuse the feature '%s' to have the deleted record back in the ledger.
+ConfirmDeleteMvtPartial=This will delete the transaction from the accounting (all lines related to the same transaction will be deleted)
 FinanceJournal=Dziennik finansów
 ExpenseReportsJournal=Dziennik raportów kosztów
 DescFinanceJournal=Dziennik finansów zawiera wszystkie typy płatności wykonane przez konto bankowe
@@ -278,15 +278,15 @@ DescVentilExpenseReportMore=Jeśli ustawisz konto księgowe na typ wierszy rapor
 DescVentilDoneExpenseReport=Zapoznaj się z listą pozycji raportów wydatków i ich kontem księgowym opłat
 
 Closure=Coroczne zamknięcie
-DescClosure=Sprawdź tutaj liczbę operacji miesięcznych, które nie zostały zatwierdzone, a lata podatkowe już otwarte
-OverviewOfMovementsNotValidated=Krok 1 / Przegląd ruchów, które nie zostały zatwierdzone. (Konieczne do zamknięcia roku podatkowego)
-AllMovementsWereRecordedAsValidated=Wszystkie ruchy zostały zarejestrowane jako zatwierdzone
-NotAllMovementsCouldBeRecordedAsValidated=Nie wszystkie ruchy można było zarejestrować jako zatwierdzone
-ValidateMovements=Zatwierdź ruchy
+DescClosure=Consult here the number of movements by month who are not yet validated & locked
+OverviewOfMovementsNotValidated=Overview of movements not validated and locked
+AllMovementsWereRecordedAsValidated=All movements were recorded as validated and locked
+NotAllMovementsCouldBeRecordedAsValidated=Not all movements could be recorded as validated and locked
+ValidateMovements=Validate and lock record...
 DescValidateMovements=Jakakolwiek modyfikacja lub usunięcie pisma, napisów i usunięcia będzie zabronione. Wszystkie wpisy do ćwiczenia muszą zostać zatwierdzone, w przeciwnym razie zamknięcie nie będzie możliwe
 
 ValidateHistory=Dowiąż automatycznie
-AutomaticBindingDone=Automatyczne dowiązanie ukończone
+AutomaticBindingDone=Automatic bindings done (%s) - Automatic binding not possible for some record (%s)
 
 ErrorAccountancyCodeIsAlreadyUse=Błąd, nie można usunąc tego konta księgowego, ponieważ jest w użyciu
 MvtNotCorrectlyBalanced=Ruch nie jest prawidłowo wyważony. Obciążenie = %s | Kredyt = %s
@@ -294,14 +294,15 @@ Balancing=Balansowy
 FicheVentilation=Karta dowiązania
 GeneralLedgerIsWritten=Transakcje zapisane w księdze głównej
 GeneralLedgerSomeRecordWasNotRecorded=Niektóre transakcje nie mogły zostać zapisane w dzienniku. Jeśli nie ma innego komunikatu o błędzie, jest to prawdopodobnie spowodowane tym, że zostały już zapisane w dzienniku.
-NoNewRecordSaved=Koniec z zapisem do dziennika
+NoNewRecordSaved=No more record to transfer
 ListOfProductsWithoutAccountingAccount=Lista produktów nie dowiązanych do żadnego konta księgowego
 ChangeBinding=Zmień dowiązanie
 Accounted=Rozliczone w księdze
 NotYetAccounted=Not yet transferred to accounting
 ShowTutorial=Pokaż Poradnik
 NotReconciled=Nie pogodzono się
-WarningRecordWithoutSubledgerAreExcluded=Ostrzeżenie, wszystkie operacje bez zdefiniowanego konta księgi podrzędnej są filtrowane i wykluczane z tego widoku
+WarningRecordWithoutSubledgerAreExcluded=Warning, all lines without subledger account defined are filtered and excluded from this view
+AccountRemovedFromCurrentChartOfAccount=Accounting account that does not exist in the current chart of accounts
 
 ## Admin
 BindingOptions=Opcje wiązania
@@ -329,8 +330,9 @@ ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Wyłącz powiązanie i przeniesienie w k
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Wyłącz powiązanie i przeniesienie w księgowości na zestawieniach wydatków (zestawienia wydatków nie będą brane pod uwagę w księgowości)
 
 ## Export
-NotifiedExportDate=Flag exported lines as exported (modification of the lines will not be possible)
-NotifiedValidationDate=Validate the exported entries (modification or deletion of the lines will not be possible)
+NotifiedExportDate=Flag exported lines as Exported <span class="warning">(to modify a line, you will need to delete the whole transaction and re-transfert it into accounting)</span>
+NotifiedValidationDate=Validate and Lock the exported entries <span class="warning">(same effect than the "Closure" feature, modification and deletion of the lines will DEFINITELY not be possible)</span>
+DateValidationAndLock=Date validation and lock
 ConfirmExportFile=Potwierdzenie wygenerowania pliku eksportu księgowości ?
 ExportDraftJournal=Export dziennika projektu
 Modelcsv=Model eksportu
@@ -387,11 +389,27 @@ SaleExport=Sprzedaż eksportowa
 SaleEEC=Sprzedaż w EWG
 SaleEECWithVAT=Sprzedaż w EWG z podatkiem VAT niezerowym, więc przypuszczamy, że NIE jest to sprzedaż wewnątrzwspólnotowa, a sugerowane konto to standardowe konto produktu.
 SaleEECWithoutVATNumber=Sprzedaż w EWG bez podatku VAT, ale identyfikator VAT strony trzeciej nie jest zdefiniowany. Wracamy na konto produktu dla sprzedaży standardowej. W razie potrzeby możesz poprawić identyfikator VAT strony trzeciej lub konto produktu.
-
+ForbiddenTransactionAlreadyExported=Forbidden: The transaction has been validated and/or exported.
+ForbiddenTransactionAlreadyValidated=Forbidden: The transaction has been validated.
 ## Dictionary
 Range=Zakres konta księgowego
 Calculated=Przeliczone
 Formula=Formuła
+
+## Reconcile
+Unlettering=Unreconcile
+AccountancyNoLetteringModified=No reconcile modified
+AccountancyOneLetteringModifiedSuccessfully=One reconcile successfully modified
+AccountancyLetteringModifiedSuccessfully=%s reconcile successfully modified
+AccountancyNoUnletteringModified=No unreconcile modified
+AccountancyOneUnletteringModifiedSuccessfully=One unreconcile successfully modified
+AccountancyUnletteringModifiedSuccessfully=%s unreconcile successfully modified
+
+## Confirm box
+ConfirmMassUnlettering=Bulk Unreconcile confirmation
+ConfirmMassUnletteringQuestion=Are you sure you want to Unreconcile the %s selected record(s)?
+ConfirmMassDeleteBookkeepingWriting=Potwierdzenie usuwania zbiorczego
+ConfirmMassDeleteBookkeepingWritingQuestion=This will delete the transaction from the accounting (all lines related to the same transaction will be deleted) Are you sure you want to delete the %s selected record(s)?
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Niektóre obowiązkowe kroki konfiguracji nie zostały wykonane. Proszę je uzupełnić.
@@ -404,6 +422,10 @@ NoJournalDefined=Nie zdefiniowano dziennika
 Binded=Linie związane
 ToBind=Linie do dowiązania
 UseMenuToSetBindindManualy=Wiersze jeszcze niezwiązane, użyj menu <a href="%s"> %s </a>, aby wykonać powiązanie ręcznie
+SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Sorry this module is not compatible with the experimental feature of situation invoices
+AccountancyErrorMismatchLetterCode=Mismatch in reconcile code
+AccountancyErrorMismatchBalanceAmount=The balance (%s) is not equal to 0
+AccountancyErrorLetteringBookkeeping=Errors have occurred concerning the transactions: %s
 
 ## Import
 ImportAccountingEntries=Zapisy księgowe

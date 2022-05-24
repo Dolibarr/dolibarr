@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - loan
-ModuleBuilderDesc=Detta verktyg får endast användas av erfarna användare eller utvecklare. Det ger verktyg för att bygga eller redigera din egen modul. Dokumentation för alternativ <a href="%s" target="_blank"> manuell utveckling finns här </a>.
+ModuleBuilderDesc=This tool must be used only by experienced users or developers. It provides utilities to build or edit your own module. Documentation for alternative <a href="%s" target="_blank" rel="noopener noreferrer">manual development is here</a>.
 EnterNameOfModuleDesc=Ange namnet på modulen / programmet för att skapa utan mellanslag. Använd stor bokstav för att skilja ord (till exempel: MyModule, EcommerceForShop, SyncWithMySystem ...)
 EnterNameOfObjectDesc=Ange namnet på objektet som ska skapas utan mellanslag. Använd stor bokstav för att skilja ord (till exempel: MyObject, Student, Lärare ...). CRUD klassfilen, men även API-filen, kommer sidor att lista / lägga till / redigera / ta bort objekt och SQL-filer genereras.
 ModuleBuilderDesc2=Vägen där moduler genereras / redigeras (första katalogen för externa moduler definierad i %s): <strong> %s </strong>
@@ -52,7 +52,7 @@ LanguageFile=Fil för språk
 ObjectProperties=Objektegenskaper
 ConfirmDeleteProperty=Är du säker på att du vill ta bort egenskapen <strong> %s </strong>? Detta kommer att ändra kod i PHP-klassen men även ta bort kolumn från tabelldefinition av objekt.
 NotNull=Inte NULL
-NotNullDesc=1 = Ange databas till NOT NULL. -1 = Tillåt nullvärden och tvinga värdet till NULL om det är tomt ('' eller 0).
+NotNullDesc=1=Set database to NOT NULL, 0=Allow null values, -1=Allow null values by forcing value to NULL if empty ('' or 0)
 SearchAll=Används för "sök alla"
 DatabaseIndex=Databasindex
 FileAlreadyExists=Filen %s existerar redan
@@ -94,11 +94,11 @@ LanguageDefDesc=Skriv in i dessa filer, all nyckel och översättning för varje
 MenusDefDesc=Definiera här menyerna som tillhandahålls av din modul
 DictionariesDefDesc=Definiera här ordböckerna som tillhandahålls av din modul
 PermissionsDefDesc=Definiera här de nya behörigheterna från din modul
-MenusDefDescTooltip=Menyerna som tillhandahålls av din modul / applikation definieras i arrayen <strong> $ this-> menyer </strong> i modulbeskrivningsfilen. Du kan redigera den här filen manuellt eller använda den inbäddade redigeraren. <br> <br> Obs! När de väl är definierade (och modulen har aktiverats igen) visas menyer också i menyredigeraren som är tillgängliga för administratörsanvändare på %s.
+MenusDefDescTooltip=The menus provided by your module/application are defined into the array <strong>$this->menus</strong> into the module descriptor file. You can edit manually this file or use the embedded editor.<br><br>Note: Once defined (and the module re-activated), the menus are also visible into the menu editor available to administrator users on %s.
 DictionariesDefDescTooltip=Ordböckerna som tillhandahålls av din modul / applikation definieras i arrayen <strong> $ denna-> ordböcker </strong> i modulbeskrivningsfilen. Du kan redigera den här filen manuellt eller använda den inbäddade redigeraren. <br> <br> Obs: När de väl är definierade (och modulen har aktiverats igen) är ordböcker också synliga i installationsområdet för administratörsanvändare på %s.
 PermissionsDefDescTooltip=Behörigheterna från din modul / applikation definieras i arrayen <strong> $ this-> rights </strong> i modulbeskrivningsfilen. Du kan redigera den här filen manuellt eller använda den inbäddade redigeraren. <br> <br> Obs: När de väl är definierade (och modulen har aktiverats igen), visas behörigheterna i standardbehörighetsinställningen %s.
 HooksDefDesc=Definiera i egenskapen <b> modul_parts ['krokar'] </b> i modulbeskrivningen, kontexten av krokar som du vill hantera (kontextlista kan hittas med en sökning på '<b> initHooks (</b>' i kärnkoden). <br> Redigera krokfilen för att lägga till kod för dina anslutna funktioner (krokbara funktioner kan hittas genom en sökning på '<b> executeHooks </b>' i kärnkod).
-TriggerDefDesc=Define in the trigger file the code that you want to execute when a business event external to your module is executed (events recorded by other modules).
+TriggerDefDesc=Define in the trigger file the code that you want to execute when a business event external to your module is executed (events triggered by other modules).
 SeeIDsInUse=Se ID-er som används i din installation
 SeeReservedIDsRangeHere=Se utbud av reserverade ID-skivor
 ToolkitForDevelopers=Verktygssats för Dolibarr-utvecklare
@@ -110,7 +110,7 @@ DropTableIfEmpty=(Förstör bordet om det är tomt)
 TableDoesNotExists=Tabellen %s existerar inte
 TableDropped=Tabell %s utgår
 InitStructureFromExistingTable=Bygg strukturen array-strängen i en befintlig tabell
-UseAboutPage=Inaktivera den aktuella sidan
+UseAboutPage=Do not generate the About page
 UseDocFolder=Inaktivera dokumentationsmappen
 UseSpecificReadme=Använd en specifik ReadMe
 ContentOfREADMECustomized=Obs! Innehållet i README.md-filen har ersatts med det specifika värde som definierats i installationen av ModuleBuilder.
@@ -127,9 +127,9 @@ UseSpecificEditorURL = Använd en specifik redigeringsadress
 UseSpecificFamily = Använd en specifik familj
 UseSpecificAuthor = Använd en specifik författare
 UseSpecificVersion = Använd en specifik första version
-IncludeRefGeneration=Objektets referens måste genereras automatiskt
-IncludeRefGenerationHelp=Markera detta om du vill inkludera kod för att hantera genereringen av referensen automatiskt
-IncludeDocGeneration=Jag vill skapa några dokument från objektet
+IncludeRefGeneration=The reference of object must be generated automatically by custom numbering rules
+IncludeRefGenerationHelp=Check this if you want to include code to manage the generation of the reference automatically using custom numbering rules
+IncludeDocGeneration=I want to generate some documents from templates for the object
 IncludeDocGenerationHelp=Om du markerar detta genereras en viss kod för att lägga till rutan "Skapa dokument" i posten.
 ShowOnCombobox=Visa värde i kombinationsrutan
 KeyForTooltip=Nyckel för verktygstips
@@ -138,10 +138,15 @@ CSSViewClass=CSS för läsform
 CSSListClass=CSS för lista
 NotEditable=Ej redigerbar
 ForeignKey=Främmande nyckel
-TypeOfFieldsHelp=Typ av fält: <br> varchar (99), dubbel (24,8), real, text, html, datetime, tidsstämpel, heltal, heltal: ClassName: relativepath / to / classfile.class.php [: 1 [: filter]] ('1' betyder att vi lägger till en + -knapp efter kombinationen för att skapa posten, 'filter' kan vara 'status = 1 OCH fk_user = __USER_ID OCH enhet IN (__SHARED_ENTITIES__)' till exempel)
+TypeOfFieldsHelp=Type of fields:<br>varchar(99), double(24,8), real, text, html, datetime, timestamp, integer, integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]]<br>'1' means we add a + button after the combo to create the record<br>'filter' is a sql condition, example: 'status=1 AND fk_user=__USER_ID__ AND entity IN (__SHARED_ENTITIES__)'
 AsciiToHtmlConverter=Ascii till HTML-omvandlare
 AsciiToPdfConverter=Ascii till PDF-omvandlare
 TableNotEmptyDropCanceled=Bordet är inte tomt. Drop har avbrutits.
 ModuleBuilderNotAllowed=Modulbyggaren är tillgänglig men inte tillåten för din användare.
 ImportExportProfiles=Importera och exportera profiler
-ValidateModBuilderDesc=Put 1 if this field need to be validated with $this->validateField() or 0 if validation required
+ValidateModBuilderDesc=Set this to 1 if you want to have the method $this->validateField() of object being called to validate the content of the field during insert or upadate. Set 0 if there is no validation required.
+WarningDatabaseIsNotUpdated=Warning: The database is not updated automatically, you must destroy tables and disable-enable the module to have tables recreated
+LinkToParentMenu=Parent menu (fk_xxxxmenu)
+ListOfTabsEntries=List of tab entries
+TabsDefDesc=Define here the tabs provided by your module
+TabsDefDescTooltip=The tabs provided by your module/application are defined into the array <strong>$this->tabs</strong> into the module descriptor file. You can edit manually this file or use the embedded editor.
