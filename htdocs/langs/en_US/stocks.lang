@@ -177,6 +177,7 @@ ProductStockWarehouseUpdated=Stock limit for alert and desired optimal stock cor
 ProductStockWarehouseDeleted=Stock limit for alert and desired optimal stock correctly deleted
 AddNewProductStockWarehouse=Set new limit for alert and desired optimal stock
 AddStockLocationLine=Decrease quantity then click to split the line
+SplitAllQuantity=Split all quantity in one click
 InventoryDate=Inventory date
 Inventories=Inventories
 NewInventory=New inventory

@@ -70,7 +70,7 @@ function addDispatchLine(index, type, mode)
 	mode = mode || 'qtymissing'
 
 	console.log("fourn/js/lib_dispatch.js.php Split line type="+type+" index="+index+" mode="+mode);
-	if(mode == 'qtymissingconsume') {
+	if(mode == 'qtymissingconsume' || mode == 'allmissingconsume') {
 		var inputId = 'qtytoconsume';
 		var warehouseId = 'idwarehouse';
 	}
@@ -95,12 +95,44 @@ function addDispatchLine(index, type, mode)
 		// If user did not reduced the qty to dispatch on old line, we keep only 1 on old line and the rest on new line
 		if (qtyDispatched == qtyOrdered && qtyDispatched > 1) {
 			qtyDispatched = parseFloat($("#qty_dispatched_"+index).val()) + 1;
-			mode = 'lessone';
+			if(mode != 'allmissingconsume' || mode != 'alltoproduce') mode = 'lessone';
 		}
+        if(mode == 'allmissingconsume' || mode == 'alltoproduce') {
+            qty = parseFloat($($row).data('max-qty'));
+            if(!(qty > 0)) qty = 1;
+            if(!(qtyDispatched > 0)) qtyDispatched = 1;
+        }
 	}
 	console.log("qtyDispatched="+qtyDispatched+" qtyOrdered="+qtyOrdered);
+    if(mode == 'allmissingconsume' || mode == 'alltoproduce') {
+        while(qtyDispatched < qtyOrdered) {
+            addDispatchTR(qtyOrdered, qtyDispatched, index, nbrTrs, warehouseId, inputId, type, qty, mode, $row);
+            qtyDispatched += qty;
+            nbrTrs++;
+            $row = $("tr[name='"+type+'_'+index+"_1']").clone(true);
+        }
+    }
+    else addDispatchTR(qtyOrdered, qtyDispatched, index, nbrTrs, warehouseId, inputId, type, qty, mode, $row)
 
-	if (qtyOrdered <= 1) {
+}
+
+/**
+ * addDispatchTR
+ * Adds new table row for dispatching to multiple stock locations or multiple lot/serial
+ *
+ * @param qtyOrdered    double
+ * @param qtyDispatched double
+ * @param index         int
+ * @param nbrTrs        int
+ * @param warehouseId   int
+ * @param inputId       int
+ * @param type          string
+ * @param qty           double
+ * @param mode          string
+ * @param $row          object
+ */
+function addDispatchTR(qtyOrdered, qtyDispatched, index, nbrTrs, warehouseId, inputId, type, qty, mode, $row) {
+    if (qtyOrdered <= 1) {
 		window.alert("Quantity can't be split");
 	} else if (qtyDispatched >= qtyOrdered) {
 		window.alert("No remain qty to dispatch");
