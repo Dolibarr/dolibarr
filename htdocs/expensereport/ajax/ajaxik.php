@@ -90,7 +90,7 @@ if (empty($fk_expense) || $fk_expense < 0) {
 		} else {
 			$expense = new ExpenseReport($db);
 			$result = $expense->fetch($fk_expense);
-			if ($result){
+			if ($result) {
 				$result = $expense->computeTotalKm($fk_c_exp_tax_cat, $qty, $vatrate);
 				if ($result < 0) {
 					$rep->error = $result;
@@ -101,7 +101,6 @@ if (empty($fk_expense) || $fk_expense < 0) {
 					$rep->response_status = 'success';
 				}
 			}
-
 		}
 	}
 }
