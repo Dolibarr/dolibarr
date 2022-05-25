@@ -778,7 +778,7 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 $formfile = new FormFile($db);
-if ($conf->contrat->enabled) {
+if (!empty($conf->contrat->enabled)) {
 	$formcontract = new FormContract($db);
 }
 if (!empty($conf->projet->enabled)) {
@@ -1229,7 +1229,7 @@ if ($action == 'create') {
 	print '</tr>';
 
 	// Contract
-	if ($conf->contrat->enabled) {
+	if (!empty($conf->contrat->enabled)) {
 		$langs->load('contracts');
 		print '<tr>';
 		print '<td>';
@@ -1512,7 +1512,7 @@ if ($action == 'create') {
 				// editeur wysiwyg
 				if (empty($conf->global->FICHINTER_EMPTY_LINE_DESC)) {
 					require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-					$doleditor = new DolEditor('np_desc', GETPOST('np_desc', 'restricthtml'), '', 100, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_DETAILS, ROWS_2, '90%');
+					$doleditor = new DolEditor('np_desc', GETPOST('np_desc', 'restricthtml'), '', 100, 'dolibarr_details', '', false, true, !empty($conf->global->FCKEDITOR_ENABLE_DETAILS), ROWS_2, '90%');
 					$doleditor->Create();
 				}
 
