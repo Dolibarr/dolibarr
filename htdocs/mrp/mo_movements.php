@@ -934,7 +934,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		}
 		if (!empty($arrayfields['origin']['checked'])) {
 			// Origin of movement
-			print '<td class="nowraponall">'.dol_escape_htmltag($origin).'</td>';
+			print '<td class="nowraponall">'.$origin.'</td>';
 		}
 		if (!empty($arrayfields['m.fk_projet']['checked'])) {
 			// fk_project

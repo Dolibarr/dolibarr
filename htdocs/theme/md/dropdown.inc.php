@@ -400,7 +400,7 @@ a.dropdown-item {
 	content: "\f35d";
 }
 
-.dropdown-item.active, .dropdown-item:hover, .dropdown-item:focus  {
+.dropdown-item.active, .dropdown-item:hover, .dropdown-item:hover::before, .dropdown-item:hover span::before, .dropdown-item:focus  {
 	color: #<?php echo $colortextbackhmenu; ?> !important;
 	text-decoration: none;
 	background: rgb(<?php echo $colorbackhmenu1 ?>);

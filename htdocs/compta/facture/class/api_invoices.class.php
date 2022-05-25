@@ -428,8 +428,8 @@ class Invoices extends DolibarrApi
 
 		$request_data = (object) $request_data;
 
-		$request_data->desc = checkVal($request_data->desc, 'restricthtml');
-		$request_data->label = checkVal($request_data->label);
+		$request_data->desc = sanitizeVal($request_data->desc, 'restricthtml');
+		$request_data->label = sanitizeVal($request_data->label);
 
 		$updateRes = $this->invoice->updateline(
 			$lineid,
@@ -718,8 +718,8 @@ class Invoices extends DolibarrApi
 
 		$request_data = (object) $request_data;
 
-		$request_data->desc = checkVal($request_data->desc, 'restricthtml');
-		$request_data->label = checkVal($request_data->label);
+		$request_data->desc = sanitizeVal($request_data->desc, 'restricthtml');
+		$request_data->label = sanitizeVal($request_data->label);
 
 		// Reset fk_parent_line for no child products and special product
 		if (($request_data->product_type != 9 && empty($request_data->fk_parent_line)) || $request_data->product_type == 9) {
