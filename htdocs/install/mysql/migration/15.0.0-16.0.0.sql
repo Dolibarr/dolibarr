@@ -384,3 +384,18 @@ ALTER TABLE llx_extrafields ADD COLUMN css varchar(128);
 ALTER TABLE llx_extrafields ADD COLUMN cssview varchar(128);
 ALTER TABLE llx_extrafields ADD COLUMN csslist varchar(128);
 
+create table llx_expeditiondet_dispatch
+(
+    rowid             integer AUTO_INCREMENT PRIMARY KEY,
+    fk_expeditiondet  integer NOT NULL,
+    fk_product        integer NOT NULL,
+    fk_entrepot       integer NOT NULL,
+    qty               real
+)ENGINE=innodb;
+
+ALTER TABLE llx_expeditiondet_dispatch ADD INDEX idx_expeditiondet_dispatch_fk_expeditiondet (fk_expeditiondet);
+ALTER TABLE llx_expeditiondet_dispatch ADD INDEX idx_expeditiondet_dispatch_fk_product (fk_product);
+ALTER TABLE llx_expeditiondet_dispatch ADD INDEX idx_expeditiondet_dispatch_fk_entrepot (fk_entrepot);
+ALTER TABLE llx_expeditiondet_dispatch ADD CONSTRAINT fk_expeditiondet_dispatch_fk_expeditiondet FOREIGN KEY (fk_expeditiondet) REFERENCES llx_expeditiondet (rowid);
+ALTER TABLE llx_expeditiondet_dispatch ADD CONSTRAINT fk_expeditiondet_dispatch_fk_product FOREIGN KEY (fk_product) REFERENCES llx_product (rowid);
+ALTER TABLE llx_expeditiondet_dispatch ADD CONSTRAINT fk_expeditiondet_dispatch_fk_entrepot FOREIGN KEY (fk_entrepot) REFERENCES llx_entrepot (rowid);
