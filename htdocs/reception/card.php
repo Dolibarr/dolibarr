@@ -1669,7 +1669,8 @@ if ($action == 'create') {
 		print '<br>';
 
 		print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder centpercent">';
+		print '<table id="tablelines" class="noborder centpercent">';
+		print '<thead>';
 		print '<tr class="liste_titre">';
 		// #
 		if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
@@ -1734,6 +1735,7 @@ if ($action == 'create') {
 			print '<td class="linecoldelete" width="10"></td>';
 		}
 		print "</tr>\n";
+		print '</thead>';
 
 		$var = false;
 
@@ -1799,9 +1801,10 @@ if ($action == 'create') {
 		$arrayofpurchaselinealreadyoutput = array();
 
 		// Loop on each product to send/sent. Warning: $lines must be sorted by ->fk_commandefourndet (it is a regroupment key on output)
+		print '<tbody>';
 		for ($i = 0; $i < $num_prod; $i++) {
 			print '<!-- origin line id = '.(!empty($lines[$i]->origin_line_id) ? $lines[$i]->origin_line_id : 0).' -->'; // id of order line
-			print '<tr class="oddeven">';
+			print '<tr class="oddeven" id="row-'.$lines[$i]->id.'" data-id="'.$lines[$i]->id.'" data-element="'.$lines[$i]->element.'">';
 
 			// #
 			if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
@@ -1819,7 +1822,7 @@ if ($action == 'create') {
 					$label = (!empty($lines[$i]->product->label) ? $lines[$i]->product->label : $lines[$i]->product->product_label);
 				}
 
-				print '<td>';
+				print '<td class="linecoldescription">';
 				if (!array_key_exists($lines[$i]->fk_commandefourndet, $arrayofpurchaselinealreadyoutput)) {
 					$text = $lines[$i]->product->getNomUrl(1);
 					$text .= ' - '.$label;
@@ -1832,7 +1835,7 @@ if ($action == 'create') {
 				}
 				print "</td>\n";
 			} else {
-				print "<td>";
+				print '<td class="linecoldescription">';
 				if (!array_key_exists($lines[$i]->fk_commandefourndet, $arrayofpurchaselinealreadyoutput)) {
 					if ($lines[$i]->product_type == Product::TYPE_SERVICE) {
 						$text = img_object($langs->trans('Service'), 'service');
@@ -1860,7 +1863,7 @@ if ($action == 'create') {
 
 
 			// Qty ordered
-			print '<td class="center">';
+			print '<td class="center linecolqty">';
 			if (!array_key_exists($lines[$i]->fk_commandefourndet, $arrayofpurchaselinealreadyoutput)) {
 				print $lines[$i]->qty_asked;
 			}
@@ -1868,7 +1871,7 @@ if ($action == 'create') {
 
 			// Qty in other receptions (with reception and warehouse used)
 			if ($origin && $origin_id > 0) {
-				print '<td class="center nowrap">';
+				print '<td class="center nowrap linecolqtyinotherreceptions">';
 				if (!array_key_exists($lines[$i]->fk_commandefourndet, $arrayofpurchaselinealreadyoutput)) {
 					foreach ($alreadysent as $key => $val) {
 						if ($lines[$i]->fk_commandefourndet == $key) {
@@ -1939,7 +1942,7 @@ if ($action == 'create') {
 				print '</table></td>';
 			} else {
 				// Qty to receive or received
-				print '<td class="center">'.$lines[$i]->qty.'</td>';
+				print '<td class="center linecolqtytoreceive">'.$lines[$i]->qty.'</td>';
 
 				// Warehouse source
 				if (!empty($conf->stock->enabled)) {
@@ -1959,7 +1962,7 @@ if ($action == 'create') {
 				if (!empty($conf->productbatch->enabled)) {
 					if (isset($lines[$i]->batch)) {
 						print '<!-- Detail of lot -->';
-						print '<td>';
+						print '<td class="linecolbatch">';
 						$detail = '';
 						if ($lines[$i]->product->status_batch) {
 							$detail .= $langs->trans("Batch").': '.$lines[$i]->batch;
@@ -1983,7 +1986,7 @@ if ($action == 'create') {
 			}
 
 			// Weight
-			print '<td class="center">';
+			print '<td class="center linecolweight">';
 			if (!empty($lines[$i]->fk_product_type) && $lines[$i]->fk_product_type == Product::TYPE_PRODUCT) {
 				print $lines[$i]->product->weight * $lines[$i]->qty.' '.measuringUnitString(0, "weight", $lines[$i]->product->weight_units);
 			} else {
@@ -1992,7 +1995,7 @@ if ($action == 'create') {
 			print '</td>';
 
 			// Volume
-			print '<td class="center">';
+			print '<td class="center linecolvolume">';
 			if (!empty($lines[$i]->fk_product_type) && $lines[$i]->fk_product_type == Product::TYPE_PRODUCT) {
 				print $lines[$i]->product->volume * $lines[$i]->qty.' '.measuringUnitString(0, "volume", $lines[$i]->product->volume_units);
 			} else {
@@ -2040,6 +2043,7 @@ if ($action == 'create') {
 				}
 			}
 		}
+		print '</tbody>';
 
 		// TODO Show also lines ordered but not delivered
 
