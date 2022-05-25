@@ -406,8 +406,9 @@ NEW: Increase size of params of actions for emailcollector
 NEW: Invoice list - Use complete country select field with EEC or not
 NEW: mass action delete, no more break if at least one object has child
 NEW: mass action paid on customer invoice list
-NEW: massaction validate on supplier orders list
-NEW: Mass action send email to all attendees of an event.
+NEW: mass action validate on supplier orders list
+NEW: mass action send email to all attendees of an event
+NEW: mass action to switch status on sale / on purchase of a product
 NEW: expense reports: conf to pre-fill start/end dates with bounds of current month
 NEW: Option "Add a link on the PDF to make the online payment"
 NEW: More options to generate PDF (show Frame option, width of picture option)
@@ -428,7 +429,7 @@ NEW: when multiple order linked to facture, show list into note.
 NEW: when we delete several objects with massaction, if somes object has child we must see which objects are concerned and nevertheless delete objects which can be deleted
 NEW: Editing a page in website module keep old page with name .back
 NEW: External backups can be downloaded from the "About info page".
-NEW: Add massaction to switch status on sale / on purchase of a product.
+
 
 
  Modules
@@ -436,36 +437,49 @@ NEW: Stable module Knowledge Management
 NEW: Experimental module Event Organization Management
 NEW: Experimental module Workstations Management
 NEW: Development of module Partnership Management
+OLD: module SimplePOS has been completely removed -> use TakePOS
 
 
 For developers:
 ---------------
 
+API:
+NEW: #18319 REST API - Shipment: Add 'close' action / endpoint / POST method.
+NEW: add API /approve and /makeOrder for purchase orders 
+NEW: API for knowledgemanagement
+NEW: API get list of legal form of business
+NEW: API list of staff units
+NEW: Hidden option API_DISABLE_COMPRESSION is now visible in API setup page.
+
+Hook:
+NEW: add hook 'beforeBodyClose'
+NEW: add hook 'hookGetEntity'
+NEW: add hook 'menuLeftMenuItems' to filter the leftmenu items
+NEW: add hook 'printUnderHeaderPDFline' on invoice PDF templates (can be used for example to add a barcode or more information on header of invoices).
+NEW: add hookmanager on note pages
+NEW: hook after rank update
+NEW: 'printFieldListFrom' hook call on several lists
+
+ModuleBuilder:
+NEW: add the property "copytoclipboard" in modulebuilder
+NEW: Use lang selector when using a field key 'lang' in modulebuilder
+
+Options:
+NEW: add options MAIN_IBAN_IS_NEVER_MANDATORY, MAIN_IBAN_NOT_MANDATORY, PROPAL_NOT_BILLABLE, PROPAL_REOPEN_UNSIGNED_ONLY, PROPOSAL_ARE_NOT_BILLABLE, TICKETS_MESSAGE_FORCE_MAIL
+
+Trigger:
+NEW: add action trigger for member excluded
+
+
 NEW: Introduce method hasRight
 NEW: Can use textarea field into a confirm popup.
 NEW: Can use the result_mode of mysqli driver. Save memory for list count
-NEW: #18319 REST API - Shipment: Add 'close' action / endpoint / POST method.
-NEW: Add API /approve and /makeOrder for purchase orders. 
-NEW: add action trigger for member excluded
-NEW: add option MAIN_IBAN_IS_NEVER_MANDATORY, MAIN_IBAN_NOT_MANDATORY, PROPAL_NOT_BILLABLE, PROPAL_REOPEN_UNSIGNED_ONLY, PROPOSAL_ARE_NOT_BILLABLE, TICKETS_MESSAGE_FORCE_MAIL
-NEW: Add code codebar column on serial/lot structure
-NEW: Add date_valid and date_approve columns in the list of supplier orders
-NEW: add hook `beforeBodyClose`
-NEW: Add hook hookGetEntity.
-NEW: add hookmanager on note pages
-NEW: add hook 'menuLeftMenuItems' to filter the leftmenu items
-NEW: Add the property "copytoclipboard" in modulebuilder
-NEW: api for knowledgemanagement
-NEW: API get list of legal form of business
-NEW: API list of staff units
-NEW: hook after rank update
-NEW: printFieldListFrom hook call on several lists
-NEW: Use lang selector when using a field key 'lang' in modulebuilder
+NEW: add code codebar column on serial/lot structure
+NEW: add date_valid and date_approve columns in the list of supplier orders
 NEW: we need to be able to put more filters on deleteByParentField() function
 NEW: make it easier to set the `keyword`, `keywords` and `description` attributes of an ecm file object
 NEW: Experimental feature to manage user sessions in database
-NEW: Hidden option API_DISABLE_COMPRESSION is now visible in API setup page.
-NEW: Add hook printUnderHeaderPDFline on invoice PDF templates (can be used for example to add a barcode or more information on header of invoices).
+
  
 Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
 * ALL EXTERNAL MODULES THAT WERE NOT CORRECTLY DEVELOPPED WILL NOT WORK ON V15 (All modules that forgot to manage the security token field 
@@ -1322,7 +1336,6 @@ NEW: introduce constant FACTUREFOURN_REUSE_NOTES_ON_CREATE_FROM
 NEW: introducing new modal boxes in TakePOS
 NEW: keep TakePOS terminal when login/logout
 NEW: link on balance to the ledger
-NEW: MAIN_EMAILCOLLECTOR_MAIL_WITHOUT_HEADER const in email collector
 NEW: manage errors on update extra fields in ticket card
 NEW: mass-actions for the event list view
 NEW: more filter for "View change logs"
