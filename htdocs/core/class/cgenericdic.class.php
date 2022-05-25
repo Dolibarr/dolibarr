@@ -251,7 +251,7 @@ class CGenericDic
 		}
 
 		if (count($sqlwhere) > 0) {
-			$sql .= ' WHERE '.implode(' '.$this->db->escape($filtermode).' ', $sqlwhere);
+			$sql .= " WHERE ".implode(' '.$this->db->escape($filtermode).' ', $sqlwhere);
 		}
 		if (!empty($sortfield)) {
 			$sql .= $this->db->order($sortfield, $sortorder);
@@ -323,9 +323,9 @@ class CGenericDic
 		// Update request
 		$sql = "UPDATE ".$this->db->prefix().$this->table_element.' SET';
 		$sql .= " code = ".(isset($this->code) ? "'".$this->db->escape($this->code)."'" : "null").',';
-		$sql .= " ".$fieldlabel.' = '.(isset($this->label) ? "'".$this->db->escape($this->label)."'" : "null").',';
+		$sql .= " ".$fieldlabel." = ".(isset($this->label) ? "'".$this->db->escape($this->label)."'" : "null").',';
 		$sql .= " active = ".(isset($this->active) ? $this->active : "null");
-		$sql .= " WHERE ".$fieldrowid.' = '.((int) $this->id);
+		$sql .= " WHERE ".$fieldrowid." = ".((int) $this->id);
 
 		$this->db->begin();
 
@@ -389,8 +389,8 @@ class CGenericDic
 		// If you need to delete child tables to, you can insert them here
 
 		if (!$error) {
-			$sql = 'DELETE FROM '.$this->db->prefix().$this->table_element;
-			$sql .= ' WHERE '.$fieldrowid.' = '.((int) $this->id);
+			$sql = "DELETE FROM ".$this->db->prefix().$this->table_element;
+			$sql .= " WHERE ".$fieldrowid." = ".((int) $this->id);
 
 			$resql = $this->db->query($sql);
 			if (!$resql) {
