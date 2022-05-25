@@ -251,17 +251,17 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		$objthirdparty = $object->thirdparty;
 
 		$out = '';
-		$permok = $user->rights->agenda->myactions->create;
-		if ((!empty($objthirdparty->id) || !empty($objcon->id)) && $permok) {
-			if (is_object($objthirdparty) && get_class($objthirdparty) == 'Societe') {
-				$out .= '&amp;originid='.$objthirdparty->id.($objthirdparty->id > 0 ? '&amp;socid='.$objthirdparty->id : '');
-			}
-			$out .= (!empty($objcon->id) ? '&amp;contactid='.$objcon->id : '').'&amp;origin=contact&amp;originid='.$object->id.'&amp;percentage=-1&amp;backtopage='.urlencode($_SERVER['PHP_SELF'].($objcon->id > 0 ? '?id='.$objcon->id : ''));
-			$out .= '&amp;datep='.urlencode(dol_print_date(dol_now(), 'dayhourlog'));
-		}
-
 		$newcardbutton = '';
 		if (!empty($conf->agenda->enabled)) {
+			$permok = $user->rights->agenda->myactions->create;
+			if ((!empty($objthirdparty->id) || !empty($objcon->id)) && $permok) {
+				if (is_object($objthirdparty) && get_class($objthirdparty) == 'Societe') {
+					$out .= '&amp;originid='.$objthirdparty->id.($objthirdparty->id > 0 ? '&amp;socid='.$objthirdparty->id : '');
+				}
+				$out .= (!empty($objcon->id) ? '&amp;contactid='.$objcon->id : '').'&amp;origin=contact&amp;originid='.$object->id.'&amp;percentage=-1&amp;backtopage='.urlencode($_SERVER['PHP_SELF'].($objcon->id > 0 ? '?id='.$objcon->id : ''));
+				$out .= '&amp;datep='.urlencode(dol_print_date(dol_now(), 'dayhourlog'));
+			}
+
 			if (!empty($user->rights->agenda->myactions->create) || !empty($user->rights->agenda->allactions->create)) {
 				$newcardbutton .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out);
 			}
