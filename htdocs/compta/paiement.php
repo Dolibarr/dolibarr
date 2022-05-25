@@ -445,6 +445,48 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 						});';
 			print '	});'."\n";
 
+			if ($action == 'add_paiement') {
+				print ' $(document).ready(function () {
+				var payment_form = $("#payment_form");
+				var submit_button = $("#submit_button");
+				var please_wait = $("#please_wait");
+
+				payment_form.submit(function (e) {
+					e.preventDefault();
+					submit_button.hide();
+					please_wait.show();
+					var redirection = false;
+					$(\'input[name="token"]\').val("' . currentToken(). '");
+
+					$.ajax({
+						type: "POST",
+						url: "' . DOL_URL_ROOT . '/compta/ajax/addpayment.php",
+						data: payment_form.serialize(),
+						dataType: "json"
+					}).done(function(data, textStatus, jqXHR) {
+						if (typeof data.error !== "undefined") {
+							$.jnotify(data.error, "error", true, { remove: function(){} });
+        				} else if (typeof data.invoice_id !== "undefined") {
+        					window.location = "' . DOL_URL_ROOT . '/compta/facture/card.php?facid=" + data.invoice_id;
+        					redirection = true;
+        				} else if (typeof data.payment_id !== "undefined") {
+        					window.location = "' . DOL_URL_ROOT . '/compta/paiement/card.php?id=" + data.payment_id;
+        					redirection = true;
+						}
+						//console.log("done", data);
+					}).fail(function(jqXHR, textStatus, errorThrown) {
+						$.jnotify(textStatus + " - " + error, "error", true, { remove: function(){} });
+						//console.log("fail", jqXHR);
+					}).always(function(data, textStatus, jqXHR) { // function(data|jqXHR, textStatus, jqXHR|errorThrown)
+						if (!redirection) {
+							submit_button.show();
+							please_wait.hide();
+						}
+					});
+				});
+			});' . "\n";
+			}
+
 			print '	</script>'."\n";
 		}
 
@@ -841,7 +883,10 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 				$text .= '<br>'.$langs->trans("AllCompletelyPayedInvoiceWillBeClosed");
 				print '<input type="hidden" name="closepaidinvoices" value="'.GETPOST('closepaidinvoices').'">';
 			}
-			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'].'?facid='.$facture->id.'&socid='.$facture->socid.'&type='.$facture->type, $langs->trans('ReceivedCustomersPayments'), $text, 'confirm_paiement', $formquestion, $preselectedchoice);
+			$formconfirm = '<div id="submit_button">';
+			$formconfirm .= $form->formconfirm($_SERVER['PHP_SELF'].'?facid='.$facture->id.'&socid='.$facture->socid.'&type='.$facture->type, $langs->trans('ReceivedCustomersPayments'), $text, 'confirm_paiement', $formquestion, $preselectedchoice);
+			$formconfirm .= '</div>';
+			$formconfirm .= '<div id="please_wait" style="display: none;">'. info_admin('<span class="fa fa-spinner fa-spin"></span> ' . $langs->trans('PleaseBePatient'), 0, 0, 'warning') . '</div>';
 		}
 
 		// Call Hook formConfirm
