@@ -4958,10 +4958,10 @@ function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin 
 		$liste_titre = 'liste_titre_sel';
 	}
 
-	$out .= '<'.$tag.' class="'.$prefix.$liste_titre.'" '.$moreattrib;
+	$tagstart = '<'.$tag.' class="'.$prefix.$liste_titre.'" '.$moreattrib;
 	//$out .= (($field && empty($conf->global->MAIN_DISABLE_WRAPPING_ON_COLUMN_TITLE) && preg_match('/^[a-zA-Z_0-9\s\.\-:&;]*$/', $name)) ? ' title="'.dol_escape_htmltag($langs->trans($name)).'"' : '');
-	$out .= ($name && empty($conf->global->MAIN_DISABLE_WRAPPING_ON_COLUMN_TITLE) && empty($forcenowrapcolumntitle) && !dol_textishtml($name)) ? ' title="'.dol_escape_htmltag($langs->trans($name)).'"' : '';
-	$out .= '>';
+	$tagstart .= ($name && empty($conf->global->MAIN_DISABLE_WRAPPING_ON_COLUMN_TITLE) && empty($forcenowrapcolumntitle) && !dol_textishtml($name)) ? ' title="'.dol_escape_htmltag($langs->trans($name)).'"' : '';
+	$tagstart .= '>';
 
 	if (empty($thead) && $field && empty($disablesortlink)) {    // If this is a sort field
 		$options = preg_replace('/sortfield=([a-zA-Z0-9,\s\.]+)/i', '', (is_scalar($moreparam) ? $moreparam : ''));
@@ -4975,12 +4975,10 @@ function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin 
 		if ($field1 != $sortfield1) { // We are on another field than current sorted field
 			if (preg_match('/^DESC/i', $sortorder)) {
 				$sortordertouseinlink .= str_repeat('desc,', count(explode(',', $field)));
-			} else // We reverse the var $sortordertouseinlink
-			{
+			} else { // We reverse the var $sortordertouseinlink
 				$sortordertouseinlink .= str_repeat('asc,', count(explode(',', $field)));
 			}
-		} else // We are on field that is the first current sorting criteria
-		{
+		} else { // We are on field that is the first current sorting criteria
 			if (preg_match('/^ASC/i', $sortorder)) {	// We reverse the var $sortordertouseinlink
 				$sortordertouseinlink .= str_repeat('desc,', count(explode(',', $field)));
 			} else {
@@ -5019,19 +5017,19 @@ function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin 
 			if (preg_match('/^DESC/', $sortorder)) {
 				//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",0).'</a>';
 				//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",1).'</a>';
-				$sortimg .= '<span class="nowrap">'.img_up("Z-A", 0, 'paddingleft').'</span>';
+				$sortimg .= '<span class="nowrap">'.img_up("Z-A", 0, 'paddingright').'</span>';
 			}
 			if (preg_match('/^ASC/', $sortorder)) {
 				//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",1).'</a>';
 				//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",0).'</a>';
-				$sortimg .= '<span class="nowrap">'.img_down("A-Z", 0, 'paddingleft').'</span>';
+				$sortimg .= '<span class="nowrap">'.img_down("A-Z", 0, 'paddingright').'</span>';
 			}
 		}
 	}
 
-	$out .= $sortimg;
+	$tagend = '</'.$tag.'>';
 
-	$out .= '</'.$tag.'>';
+	$out = $tagstart.$sortimg.$out.$tagend;
 
 	return $out;
 }

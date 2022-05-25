@@ -1200,8 +1200,8 @@ while ($i < min($num, $limit)) {
 		}
 	}
 	if (!empty($arrayfields['d.import_key']['checked'])) {
-		print '<td class="tdoverflowmax100">';
-		print $obj->import_key;
+		print '<td class="tdoverflowmax100 center" title="'.dol_escape_htmltag($obj->import_key).'">';
+		print dol_escape_htmltag($obj->import_key);
 		print "</td>\n";
 		if (!$i) {
 			$totalarray['nbfield']++;
