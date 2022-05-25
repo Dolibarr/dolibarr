@@ -12,6 +12,7 @@ For users:
 NEW: PHP 8.1 compatibility
 NEW: Support for recurring purchase invoices.
 NEW: #20292 Include German public holidays
+NEW: Can show ZATCA QRCode on PDFs
 NEW: #17123 added ExtraFields for Stock Mouvement
 NEW: #20609 : new massaction to assign a sale representatives on a selection of thirdparties
 NEW: #20653 edit discount pourcentage for all lines in one shot

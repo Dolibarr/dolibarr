@@ -2260,3 +2260,5 @@ TextOnly=Text only
 IconOnlyAllTextsOnHover=Icon only - All texts appears under icon on mouse hover menu bar
 IconOnlyTextOnHover=Icon only - Text of icon appears under icon on mouse hover the icon
 IconOnly=Icon only - Text on tooltip only
+INVOICE_ADD_ZATCA_QR_CODE=Show the ZATCA QR code on invoices
+INVOICE_ADD_ZATCA_QR_CODEMore=Some Arabic countries need this QR Code on their invoices
