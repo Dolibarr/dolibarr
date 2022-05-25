@@ -162,7 +162,7 @@ if (empty($reshook)) {
 			$res = $object->add_object_linked('mo', $mo_parent->id);
 		}
 
-		header("Location: ".dol_buildpath('/mrp/mo_list.php', 1));
+		header("Location: ".dol_buildpath('/mrp/mo_card.php?id='.$moline->fk_mo, 1));
 		exit;
 	}
 
