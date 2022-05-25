@@ -715,19 +715,16 @@ class ImportCsv extends ModeleImports
 							}
 							if (!empty($newval) && $arrayrecord[($key - 1)]['type'] > 0) {
 								$socialkey = array_search("socialnetworks", $listfields);
+								$socialnetwork = explode("_", $fieldname)[1];
 								if (empty($listvalues[$socialkey]) || $listvalues[$socialkey] == "null") {
-									$socialnetwork = explode("_", $fieldname)[1];
 									$json = new stdClass();
 									$json->$socialnetwork = $newval;
-									$newvalue = json_encode($json);
-									$listvalues[$socialkey] = "'".$this->db->escape($newvalue)."'";
+									$listvalues[$socialkey] = json_encode($json);
 								} else {
-									$socialnetwork = explode("_", $fieldname)[1];
 									$jsondata = $listvalues[$socialkey];
-									$jsondata = str_replace("'", "", $jsondata);
 									$json = json_decode($jsondata);
 									$json->$socialnetwork = $newval;
-									$listvalues[$socialkey] = "'".$this->db->escape(json_encode($json))."'";
+									$listvalues[$socialkey] = json_encode($json);
 								}
 							}
 						} else {
@@ -745,6 +742,12 @@ class ImportCsv extends ModeleImports
 					$i++;
 				}
 
+				// We db escape social network field because he isn't in field creation
+				if (in_array("socialnetworks", $listfields)) {
+					$socialkey = array_search("socialnetworks", $listfields);
+					$tmpsql =  $listvalues[$socialkey];
+					$listvalues[$socialkey] = "'".$this->db->escape($tmpsql)."'";
+				}
 				// We add hidden fields (but only if there is at least one field to add into table)
 				// We process here all the fields that were declared into the array ->import_fieldshidden_array of the descriptor file.
 				// Previously we processed the ->import_fields_array.
