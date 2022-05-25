@@ -2525,7 +2525,7 @@ if ($action == 'create' && $usercancreate) {
 				}
 
 				// Create intervention
-				if ($conf->ficheinter->enabled) {
+				if (!empty($conf->ficheinter->enabled)) {
 					$langs->load("interventions");
 
 					if ($object->statut > Commande::STATUS_DRAFT && $object->statut < Commande::STATUS_CLOSED && $object->getNbOfServicesLines() > 0) {
