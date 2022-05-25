@@ -10046,7 +10046,7 @@ function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = 
 			$params['confirm'] = array();
 		}
 
-		if (empty($params['confirm'])) {
+		if (empty($params['confirm']['url'])) {
 			$params['confirm']['url'] = $url . (strpos($url, '?') > 0 ? '&' : '?') . 'confirm=yes';
 		}
 
