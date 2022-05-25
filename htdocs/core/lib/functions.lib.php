@@ -10043,9 +10043,11 @@ function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = 
 	// Js Confirm button
 	if ($userRight && !empty($params['confirm'])) {
 		if (!is_array($params['confirm'])) {
-			$params['confirm'] = array(
-				'url' => $url . (strpos($url, '?') > 0 ? '&' : '?') . 'confirm=yes'
-			);
+			$params['confirm'] = array();
+		}
+
+		if (empty($params['confirm'])) {
+			$params['confirm']['url'] = $url . (strpos($url, '?') > 0 ? '&' : '?') . 'confirm=yes';
 		}
 
 		// for js desabled compatibility set $url as call to confirm action and $params['confirm']['url'] to confirmed action
