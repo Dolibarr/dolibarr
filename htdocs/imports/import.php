@@ -1072,14 +1072,14 @@ if ($step == 4 && $datatoimport) {
 		if (!$line["imported"]) {
 			$optionsnotused .= $text;
 		}
-		$optionsall[$code] = array('label'=>$langs->trans($line["label"]), 'required'=>(empty($line["required"]) ? 0 : 1), 'position'=>$line['position']);
+		$optionsall[$code] = array('label'=>$langs->trans($line["label"]), 'required'=>(empty($line["required"]) ? 0 : 1), 'position'=>!empty($line['position']) ? $line['position'] : 0);
 	}
 	// $optionsall is an array of all possible fields. key=>array('label'=>..., 'xxx')
 
 	$height = '32px'; //needs px for css height attribute below
 	$i = 0;
 	$mandatoryfieldshavesource = true;
-
+	$more = "";
 	//var_dump($fieldstarget);
 	//var_dump($optionsall);
 	//exit;
@@ -1100,7 +1100,7 @@ if ($step == 4 && $datatoimport) {
 		$entity = (!empty($objimport->array_import_entities[0][$code]) ? $objimport->array_import_entities[0][$code] : $objimport->array_import_icon[0]);
 
 		$tablealias = preg_replace('/(\..*)$/i', '', $code);
-		$tablename = $objimport->array_import_tables[0][$tablealias];
+		$tablename = !empty($objimport->array_import_tables[0][$tablealias]) ? $objimport->array_import_tables[0][$tablealias] : "";
 
 		$entityicon = !empty($entitytoicon[$entity]) ? $entitytoicon[$entity] : $entity; // $entityicon must string name of picto of the field like 'project', 'company', 'contact', 'modulename', ...
 		$entitylang = $entitytolang[$entity] ? $entitytolang[$entity] : $objimport->array_import_label[0]; // $entitylang must be a translation key to describe object the field is related to, like 'Company', 'Contact', 'MyModyle', ...
@@ -1118,8 +1118,8 @@ if ($step == 4 && $datatoimport) {
 		//var_dump($_SESSION['dol_array_match_file_to_database']);
 		//var_dump($modetoautofillmapping);
 
-		print '<select id="selectorderimport_'.($i+1).'" class="targetselectchange minwidth300" name="select_'.$line["label"].'">';
-		if ($line["imported"]) {
+		print '<select id="selectorderimport_'.($i+1).'" class="targetselectchange minwidth300" name="select_'.($i+1).'">';
+		if (!empty($line["imported"])) {
 			print '<option value="-1">&nbsp;</option>';
 		} else {
 			print '<option selected="" value="-1">&nbsp;</option>';
@@ -1234,7 +1234,7 @@ if ($step == 4 && $datatoimport) {
 				$htmltext .= $langs->trans("DataCodeIDSourceIsInsertedInto").'<br>';
 			}
 		}
-		$htmltext .= $langs->trans("FieldTitle").": <b>".$langs->trans($line["label"])."</b><br>";
+		$htmltext .= $langs->trans("FieldTitle").": <b>".$langs->trans($fieldstarget[$arraykeysfieldtarget[$code-1]]["label"])."</b><br>";
 		$htmltext .= $langs->trans("Table")." -> ".$langs->trans("Field").': <b>'.$tablename." -> ".preg_replace('/^.*\./', '', $code)."</b><br>";
 		print $form->textwithpicto($more, $htmltext);
 		print '</tr>';
