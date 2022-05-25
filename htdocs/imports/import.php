@@ -153,18 +153,6 @@ $htmlother = new FormOther($db);
 $formfile = new FormFile($db);
 
 // Init $array_match_file_to_database from _SESSION
-$serialized_array_match_file_to_database = isset($_SESSION["dol_array_match_file_to_database"]) ? $_SESSION["dol_array_match_file_to_database"] : '';
-$array_match_file_to_database = array();
-$fieldsarray = explode(',', $serialized_array_match_file_to_database);
-foreach ($fieldsarray as $elem) {
-	$tabelem = explode('=', $elem, 2);
-	$key = $tabelem[0];
-	$val = (isset($tabelem[1]) ? $tabelem[1] : '');
-	if ($key && $val) {
-		$array_match_file_to_database[$key] = $val;
-	}
-}
-
 if (empty($array_match_file_to_database)) {
 	$serialized_array_match_file_to_database = isset($_SESSION["dol_array_match_file_to_database_select"]) ? $_SESSION["dol_array_match_file_to_database_select"] : '';
 	$array_match_file_to_database = array();
@@ -1166,10 +1154,10 @@ if ($step == 4 && $datatoimport) {
 				//var_dump($code);
 				//var_dump($tmpselectioninsession);
 				//if ($tmpselectioninsession[$j] == $code) {
-				if ($tmpselectioninsession[($i+1)] == $tmpcode) {
+				if (!empty($tmpselectioninsession[($i+1)]) && $tmpselectioninsession[($i+1)] == $tmpcode) {
 					print ' selected';
 				}
-				print ' data-debug="'.$tmpcode.'-'.$code.'-'.$j.'-'.$tmpselectioninsession[($i+1)].'"';
+				print ' data-debug="'.$tmpcode.'-'.$code.'-'.$j.'-'.(!empty($tmpselectioninsession[($i+1)]) ? $tmpselectioninsession[($i+1)] : "").'"';
 			}
 			print ' data-html="'.dol_escape_htmltag($label).'"';
 			print '>';
