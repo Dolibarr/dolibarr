@@ -43,6 +43,7 @@ $backtopage = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
 $optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 
 $id = GETPOST('id', 'int');
+$IdFk_product = GETPOST('fk_product');
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
@@ -113,6 +114,10 @@ foreach ($object->fields as $key => $val) {
 		);
 	}
 }
+if($IdFk_product){
+    unset($arrayfields['t.fk_product']);
+}
+
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
@@ -476,34 +481,28 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-$product = new Product($db);
-$IdFk_product = GETPOST('search_fk_product');
-if ($IdFk_product > 0 ) {
+
+
+if ($IdFk_product)
+{
+    $product = new Product($db);
     $product->fetch($IdFk_product);
-}
-//var_dump($product);exit;
 
-$head = product_prepare_head($product);
-$titre = $langs->trans("CardProduct".$product->type);
-$picto = ($product->type == Product::TYPE_SERVICE ? 'service' : 'product');
+    $head = product_prepare_head($product);
+    $titre = $langs->trans("CardProduct".$product->type);
+    $picto = ($product->type == Product::TYPE_SERVICE ? 'service' : 'product');
 
-print dol_get_fiche_head($head, 'bom', $titre, -1, $picto);
+    print dol_get_fiche_head($head, 'bom', $titre, -1, $picto);
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1&type='.$product->type.'">'.$langs->trans("BackToList").'</a>';
-$object->next_prev_filter = " fk_product_type = ".$product->type;
+    $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1&type='.$product->type.'">'.$langs->trans("BackToList").'</a>';
+    $product->next_prev_filter = " fk_product_type = ".$product->type;
 
-$shownav = 1;
-if ($user->socid && !in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) {
     $shownav = 0;
+
+    dol_banner_tab($product, '', $linkback, $shownav, '');
 }
 
-dol_banner_tab($product, 'ref', $linkback, $shownav, 'ref');
-
-
-
-
-
-$newcardbutton = dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/bom/bom_card.php?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $user->rights->bom->write);
+$newcardbutton = dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/bom/bom_card.php?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']).'&fk_product='.$IdFk_product, '', $user->rights->bom->write);
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'object_'.$object->picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
 
@@ -563,6 +562,7 @@ foreach ($object->fields as $key => $val) {
 		$cssforfield .= ($cssforfield ? ' ' : '').'right';
 	}
 	if (!empty($arrayfields['t.'.$key]['checked'])) {
+
 		print '<td class="liste_titre'.($cssforfield ? ' '.$cssforfield : '').'">';
 		if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
 			print $form->selectarray('search_'.$key, $val['arrayofkeyval'], (isset($search[$key]) ? $search[$key] : ''), $val['notnull'], 0, 0, '', 1, 0, 0, '', 'maxwidth100', 1);
