@@ -586,7 +586,26 @@ class modSociete extends DolibarrModules
 				'class' => 'Account',
 				'method' => 'fetch',
 				'element' => 'BankAccount'
-		//          ),
+			),
+			's.fk_stcomm' => array(
+				'rule' => 'fetchidfromcodeid',
+				'classfile' => '/core/class/cgenericdic.class.php',
+				'class' => 'CGenericDic',
+				'method' => 'fetch',
+				'dict' => 'DictionaryProspectStatus',
+				'element' => 'c_stcomm',
+				'table_element' => 'c_stcomm'
+			),
+			/*
+			's.fk_prospectlevel' => array(
+				'rule' => 'fetchidfromcodeid',
+				'classfile' => '/core/class/cgenericdic.class.php',
+				'class' => 'CGenericDic',
+				'method' => 'fetch',
+				'dict' => 'DictionaryProspectLevel',
+				'element' => 'c_prospectlevel',
+				'table_element' => 'c_prospectlevel'
+			),*/
 		//          TODO
 		//          's.fk_incoterms' => array(
 		//              'rule' => 'fetchidfromcodeid',
@@ -594,7 +613,7 @@ class modSociete extends DolibarrModules
 		//              'class' => 'Cincoterm',
 		//              'method' => 'fetch',
 		//              'dict' => 'IncotermLabel'
-			)
+		//			)
 		);
 		//$this->import_convertvalue_array[$r]=array('s.fk_soc'=>array('rule'=>'lastrowid',table='t');
 		$this->import_regex_array[$r] = array(//field order as per structure of table llx_societe

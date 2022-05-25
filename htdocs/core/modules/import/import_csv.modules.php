@@ -393,6 +393,9 @@ class ImportCsv extends ModeleImports
 							$newval = $arrayrecord[($key - 1)]['val']; // If type of field into input file is not empty string (so defined into input file), we get value
 						}
 
+						//var_dump($newval);var_dump($val);
+						//var_dump($objimport->array_import_convertvalue[0][$val]);
+
 						// Make some tests on $newval
 
 						// Is it a required field ?
@@ -417,7 +420,7 @@ class ImportCsv extends ModeleImports
 									}
 
 									$newval = preg_replace('/^(id|ref):/i', '', $newval); // Remove id: or ref: that was used to force if field is id or ref
-									//print 'Val is now '.$newval.' and is type '.$isidorref."<br>\n";
+									//print 'Newval is now "'.$newval.'" and is type '.$isidorref."<br>\n";
 
 									if ($isidorref == 'ref') {    // If value into input import file is a ref, we apply the function defined into descriptor
 										$file = (empty($objimport->array_import_convertvalue[0][$val]['classfile']) ? $objimport->array_import_convertvalue[0][$val]['file'] : $objimport->array_import_convertvalue[0][$val]['classfile']);
@@ -432,6 +435,11 @@ class ImportCsv extends ModeleImports
 												break;
 											}
 											$classinstance = new $class($this->db);
+											if ($class == 'CGenericDic') {
+												$classinstance->element = $objimport->array_import_convertvalue[0][$val]['element'];
+												$classinstance->table_element = $objimport->array_import_convertvalue[0][$val]['table_element'];
+											}
+
 											// Try the fetch from code or ref
 											$param_array = array('', $newval);
 											if ($class == 'AccountingAccount') {
@@ -601,7 +609,7 @@ class ImportCsv extends ModeleImports
 											$modForNumber = new $classModForNumber;
 
 											$tmpobject = null;
-											// Set the object when we can
+											// Set the object with the date property when we can
 											if (!empty($objimport->array_import_convertvalue[0][$val]['classobject'])) {
 												$pathForObject = $objimport->array_import_convertvalue[0][$val]['pathobject'];
 												require_once DOL_DOCUMENT_ROOT.$pathForObject;
@@ -748,8 +756,9 @@ class ImportCsv extends ModeleImports
 					$tmpsql =  $listvalues[$socialkey];
 					$listvalues[$socialkey] = "'".$this->db->escape($tmpsql)."'";
 				}
+
 				// We add hidden fields (but only if there is at least one field to add into table)
-				// We process here all the fields that were declared into the array ->import_fieldshidden_array of the descriptor file.
+				// We process here all the fields that were declared into the array $this->import_fieldshidden_array of the descriptor file.
 				// Previously we processed the ->import_fields_array.
 				if (!empty($listfields) && is_array($objimport->array_import_fieldshidden[0])) {
 					// Loop on each hidden fields to add them into listfields/listvalues
@@ -858,7 +867,7 @@ class ImportCsv extends ModeleImports
 								if (empty($keyfield)) {
 									$keyfield = 'rowid';
 								}
-								$sqlSelect .= " WHERE ".$keyfield.' = '.((int) $lastinsertid);
+								$sqlSelect .= " WHERE ".$keyfield." = ".((int) $lastinsertid);
 
 								$resql = $this->db->query($sqlSelect);
 								if ($resql) {

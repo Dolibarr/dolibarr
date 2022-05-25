@@ -86,6 +86,10 @@ class ImportXlsx extends ModeleImports
 
 	public $cachefieldtable = array(); // Array to cache list of value found into fields@tables
 
+	public $nbinsert = 0; // # of insert done during the import
+
+	public $nbupdate = 0; // # of update done during the import
+
 	public $workbook; // temporary import file
 
 	public $record; // current record
@@ -111,19 +115,18 @@ class ImportXlsx extends ModeleImports
 		$this->extension = 'xlsx'; // Extension for generated file by this driver
 		$this->picto = 'mime/xls'; // Picto (This is not used by the example file code as Mime type, too bad ...)
 		$this->version = '1.0'; // Driver version
+
 		// If driver use an external library, put its name here
 		require_once DOL_DOCUMENT_ROOT.'/includes/phpoffice/phpspreadsheet/src/autoloader.php';
 		require_once DOL_DOCUMENT_ROOT.'/includes/Psr/autoloader.php';
 		require_once PHPEXCELNEW_PATH.'Spreadsheet.php';
 		$this->workbook = new Spreadsheet();
 
-		//if ($this->id == 'excel2007new')
-		{
+		// If driver use an external library, put its name here
 		if (!class_exists('ZipArchive')) {	// For Excel2007
 			$langs->load("errors");
 			$this->error = $langs->trans('ErrorPHPNeedModule', 'zip');
 			return -1;
-		}
 		}
 		$this->label_lib = 'PhpSpreadSheet';
 		$this->version_lib = '1.8.0';
@@ -363,8 +366,6 @@ class ImportXlsx extends ModeleImports
 		$warning = 0;
 		$this->errors = array();
 		$this->warnings = array();
-		$this->nbinsert = 0;
-		$this->nbupdate = 0;
 
 		//dol_syslog("import_csv.modules maxfields=".$maxfields." importid=".$importid);
 
@@ -438,6 +439,9 @@ class ImportXlsx extends ModeleImports
 							$newval = $arrayrecord[($key)]['val']; // If type of field into input file is not empty string (so defined into input file), we get value
 						}
 
+						//var_dump($newval);var_dump($val);
+						//var_dump($objimport->array_import_convertvalue[0][$val]);
+
 						// Make some tests on $newval
 
 						// Is it a required field ?
@@ -461,7 +465,7 @@ class ImportXlsx extends ModeleImports
 										$isidorref = 'ref';
 									}
 									$newval = preg_replace('/^(id|ref):/i', '', $newval); // Remove id: or ref: that was used to force if field is id or ref
-									//print 'Val is now '.$newval.' and is type '.$isidorref."<br>\n";
+									//print 'Newval is now "'.$newval.'" and is type '.$isidorref."<br>\n";
 
 									if ($isidorref == 'ref') {    // If value into input import file is a ref, we apply the function defined into descriptor
 										$file = (empty($objimport->array_import_convertvalue[0][$val]['classfile']) ? $objimport->array_import_convertvalue[0][$val]['file'] : $objimport->array_import_convertvalue[0][$val]['classfile']);
@@ -476,6 +480,11 @@ class ImportXlsx extends ModeleImports
 												break;
 											}
 											$classinstance = new $class($this->db);
+											if ($class == 'CGenericDic') {
+												$classinstance->element = $objimport->array_import_convertvalue[0][$val]['element'];
+												$classinstance->table_element = $objimport->array_import_convertvalue[0][$val]['table_element'];
+											}
+
 											// Try the fetch from code or ref
 											$param_array = array('', $newval);
 											if ($class == 'AccountingAccount') {
@@ -674,7 +683,7 @@ class ImportXlsx extends ModeleImports
 										break;
 									}
 									$classinstance = new $class($this->db);
-									$res = call_user_func_array(array($classinstance, $method), array(&$arrayrecord));
+									$res = call_user_func_array(array($classinstance, $method), array(&$arrayrecord, $listfields, $key));
 									$newval = $res; 	// We get new value computed.
 								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'numeric') {
 									$newval = price2num($newval);
@@ -758,19 +767,16 @@ class ImportXlsx extends ModeleImports
 							}
 							if (!empty($newval) && $arrayrecord[($key)]['type'] > 0) {
 								$socialkey = array_search("socialnetworks", $listfields);
+								$socialnetwork = explode("_", $fieldname)[1];
 								if (empty($listvalues[$socialkey]) || $listvalues[$socialkey] == "null") {
-									$socialnetwork = explode("_", $fieldname)[1];
 									$json = new stdClass();
 									$json->$socialnetwork = $newval;
-									$newvalue = json_encode($json);
-									$listvalues[$socialkey] = $newvalue;
+									$listvalues[$socialkey] = json_encode($json);
 								} else {
-									$socialnetwork = explode("_", $fieldname)[1];
 									$jsondata = $listvalues[$socialkey];
-									$jsondata = str_replace("'", "", $jsondata);
 									$json = json_decode($jsondata);
-									$json->$socialnetwork = $this->db->escape($newval);
-									$listvalues[$socialkey] = "'".$this->db->escape(json_encode($json))."'";
+									$json->$socialnetwork = $newval;
+									$listvalues[$socialkey] = json_encode($json);
 								}
 							}
 						} else {
@@ -787,6 +793,13 @@ class ImportXlsx extends ModeleImports
 						}
 					}
 					$i++;
+				}
+
+				// We db escape social network field because he isn't in field creation
+				if (in_array("socialnetworks", $listfields)) {
+					$socialkey = array_search("socialnetworks", $listfields);
+					$tmpsql =  $listvalues[$socialkey];
+					$listvalues[$socialkey] = "'".$this->db->escape($tmpsql)."'";
 				}
 
 				// We add hidden fields (but only if there is at least one field to add into table)
@@ -825,7 +838,7 @@ class ImportXlsx extends ModeleImports
 										break;
 									}
 									$classinstance = new $class($this->db);
-									$res = call_user_func_array(array($classinstance, $method), array(&$arrayrecord, $fieldname, &$listfields, &$listvalues));
+									$res = call_user_func_array(array($classinstance, $method), array(&$arrayrecord, $listfields, $key));
 									$fieldArr = explode('.', $fieldname);
 									if (count($fieldArr) > 0) {
 										$fieldname = $fieldArr[1];
@@ -898,7 +911,7 @@ class ImportXlsx extends ModeleImports
 								if (empty($keyfield)) {
 									$keyfield = 'rowid';
 								}
-								$sqlSelect .= "WHERE " . $keyfield . " = " .((int) $lastinsertid);
+								$sqlSelect .= "WHERE ".$keyfield." = ".((int) $lastinsertid);
 
 								$resql = $this->db->query($sqlSelect);
 								if ($resql) {
@@ -925,7 +938,7 @@ class ImportXlsx extends ModeleImports
 								$data = array_combine($listfields, $listvalues);
 								$set = array();
 								foreach ($data as $key => $val) {
-									$set[] = $key . ' = ' . $val;
+									$set[] = $key." = ".$val;
 								}
 								$sqlstart .= " SET " . implode(', ', $set);
 
