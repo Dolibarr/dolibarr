@@ -27,6 +27,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("mrp", "other"));
@@ -474,6 +475,33 @@ print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
+
+$product = new Product($db);
+$IdFk_product = GETPOST('search_fk_product');
+if ($IdFk_product > 0 ) {
+    $product->fetch($IdFk_product);
+}
+//var_dump($product);exit;
+
+$head = product_prepare_head($product);
+$titre = $langs->trans("CardProduct".$product->type);
+$picto = ($product->type == Product::TYPE_SERVICE ? 'service' : 'product');
+
+print dol_get_fiche_head($head, 'bom', $titre, -1, $picto);
+
+$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1&type='.$product->type.'">'.$langs->trans("BackToList").'</a>';
+$object->next_prev_filter = " fk_product_type = ".$product->type;
+
+$shownav = 1;
+if ($user->socid && !in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) {
+    $shownav = 0;
+}
+
+dol_banner_tab($product, 'ref', $linkback, $shownav, 'ref');
+
+
+
+
 
 $newcardbutton = dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/bom/bom_card.php?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $user->rights->bom->write);
 

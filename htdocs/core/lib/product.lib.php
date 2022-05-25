@@ -50,6 +50,12 @@ function product_prepare_head($object)
 	$head[$h][2] = 'card';
 	$h++;
 
+//    $head[$h][0] = DOL_URL_ROOT."/product/note.php?search_fk_product=".$object->id;
+    $head[$h][0] = DOL_URL_ROOT."/bom/bom_list.php?search_fk_product=".$object->id;
+    $head[$h][1] = $langs->trans("BOM");
+    $head[$h][2] = 'bom';
+    $h++;
+
 	if (!empty($object->status)) {
 		$head[$h][0] = DOL_URL_ROOT."/product/price.php?id=".$object->id;
 		$head[$h][1] = $langs->trans("SellingPrices");
