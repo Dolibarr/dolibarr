@@ -480,7 +480,7 @@ if ($step == 2 && $datatoimport) {
 	$filetoimport = '';
 
 	// Add format informations and link to download example
-	print '<tr class="liste_titre"><td colspan="6">';
+	print '<tr class="liste_titre"><td colspan="5">';
 	print $langs->trans("FileMustHaveOneOfFollowingFormat");
 	print '</td></tr>';
 	$list = $objmodelimport->liste_modeles($db);
@@ -490,9 +490,11 @@ if ($step == 2 && $datatoimport) {
 		$text = $objmodelimport->getDriverDescForKey($key);
 		print '<td>'.$form->textwithpicto($objmodelimport->getDriverLabelForKey($key), $text).'</td>';
 		print '<td style="text-align:center">';
-		print img_picto('', 'download', 'class="paddingright opacitymedium"').'<a href="'.DOL_URL_ROOT.'/imports/emptyexample.php?format='.$key.$param.'" target="_blank" rel="noopener noreferrer">'.$langs->trans("DownloadEmptyExample");
+		print img_picto('', 'download', 'class="paddingright opacitymedium"');
+		print '<a href="'.DOL_URL_ROOT.'/imports/emptyexample.php?format='.$key.$param.'" target="_blank" rel="noopener noreferrer">';
+		print $langs->trans("DownloadEmptyExample");
 		print '</a>';
-		print ' <span class="opacitymedium hideonsmartphone">('.$langs->trans("StarAreMandatory").')</span>';
+		print $form->textwithpicto('', $langs->trans("StarAreMandatory"));
 		print '</td>';
 		// Action button
 		print '<td style="text-align:right">';
@@ -581,7 +583,7 @@ if ($step == 3 && $datatoimport) {
 	print '</td><td style="text-align:right" class="nowrap">';
 	print img_picto('', 'download', 'class="paddingright opacitymedium"').'<a href="'.DOL_URL_ROOT.'/imports/emptyexample.php?format='.$format.$param.'" target="_blank" rel="noopener noreferrer">'.$langs->trans("DownloadEmptyExample");
 	print '</a>';
-	print ' <span class="opacitymedium hideonsmartphone">('.$langs->trans("StarAreMandatory").')</span>';
+	print $form->textwithpicto('', $langs->trans("StarAreMandatory"));
 	print '</td></tr>';
 
 	print '</table>';
