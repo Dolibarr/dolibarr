@@ -3768,6 +3768,7 @@ function dol_trunc($string, $size = 40, $trunc = 'right', $stringencoding = 'UTF
 function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $srconly = 0, $notitle = 0, $alt = '', $morecss = '', $marginleftonlyshort = 2)
 {
 	global $conf, $langs;
+
 	// We forge fullpathpicto for image to $path/img/$picto. By default, we take DOL_URL_ROOT/theme/$conf->theme/img/$picto
 	$url = DOL_URL_ROOT;
 	$theme = isset($conf->theme) ? $conf->theme : null;
@@ -3786,15 +3787,25 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		}
 	} else {
 		$pictowithouttext = preg_replace('/(\.png|\.gif|\.svg)$/', '', $picto);
+		$pictowithouttext = str_replace('object_', '', $pictowithouttext);
 
-		if (strpos($pictowithouttext, 'fontawesome_') !== false) {
-			$pictowithouttext = explode('_', $pictowithouttext);
+		if (strpos($pictowithouttext, 'fontawesome_') !== false || preg_match('/^fa-/', $pictowithouttext)) {
+			// This is a font awesome image 'fonwtawesome_xxx' or 'fa-xxx'
+			$pictowithouttext = str_replace('fa-', '', $pictowithouttext);
+			$pictowithouttextarray = explode('_', $pictowithouttext);
 			$marginleftonlyshort = 0;
 
-			$fakey      = 'fa-'.$pictowithouttext[1];
-			$fa         = $pictowithouttext[2] ? $pictowithouttext[2] : 'fa';
-			$facolor    = $pictowithouttext[3] ? $pictowithouttext[3] : '';
-			$fasize     = $pictowithouttext[4] ? $pictowithouttext[4] : '';
+			if (!empty($pictowithouttextarray[1])) {
+				$fakey      = 'fa-'.$pictowithouttextarray[1];
+				$fa         = empty($pictowithouttextarray[2]) ? 'fa' : $pictowithouttextarray[2];
+				$facolor    = empty($pictowithouttextarray[3]) ? '' : $pictowithouttextarray[3];
+				$fasize     = empty($pictowithouttextarray[4]) ? '' : $pictowithouttextarray[4];
+			} else {
+				$fakey      = 'fa-'.$pictowithouttext;
+				$fa         = 'fa';
+				$facolor    = '';
+				$fasize     = '';
+			}
 
 			// This snippet only needed since function img_edit accepts only one additional parameter: no separate one for css only.
 			// class/style need to be extracted to avoid duplicate class/style validation errors when $moreatt is added to the end of the attributes.
@@ -3820,7 +3831,6 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			return $enabledisablehtml;
 		}
 
-		$pictowithouttext = str_replace('object_', '', $pictowithouttext);
 		if (empty($srconly) && in_array($pictowithouttext, array(
 				'1downarrow', '1uparrow', '1leftarrow', '1rightarrow', '1uparrow_selected', '1downarrow_selected', '1leftarrow_selected', '1rightarrow_selected',
 				'accountancy', 'accounting_account', 'account', 'accountline', 'action', 'add', 'address', 'angle-double-down', 'angle-double-up', 'asset',
