@@ -490,8 +490,8 @@ if ($step == 2 && $datatoimport) {
 		$text = $objmodelimport->getDriverDescForKey($key);
 		print '<td>'.$form->textwithpicto($objmodelimport->getDriverLabelForKey($key), $text).'</td>';
 		print '<td style="text-align:center">';
-		print img_picto('', 'download', 'class="paddingright opacitymedium"');
 		print '<a href="'.DOL_URL_ROOT.'/imports/emptyexample.php?format='.$key.$param.'" target="_blank" rel="noopener noreferrer">';
+		print img_picto('', 'download', 'class="paddingright opacitymedium"');
 		print $langs->trans("DownloadEmptyExample");
 		print '</a>';
 		print $form->textwithpicto('', $langs->trans("StarAreMandatory"));
@@ -581,7 +581,9 @@ if ($step == 3 && $datatoimport) {
 	$text = $objmodelimport->getDriverDescForKey($format);
 	print $form->textwithpicto($objmodelimport->getDriverLabelForKey($format), $text);
 	print '</td><td style="text-align:right" class="nowrap">';
-	print img_picto('', 'download', 'class="paddingright opacitymedium"').'<a href="'.DOL_URL_ROOT.'/imports/emptyexample.php?format='.$format.$param.'" target="_blank" rel="noopener noreferrer">'.$langs->trans("DownloadEmptyExample");
+	print '<a href="'.DOL_URL_ROOT.'/imports/emptyexample.php?format='.$format.$param.'" target="_blank" rel="noopener noreferrer">';
+	print img_picto('', 'download', 'class="paddingright opacitymedium"');
+	print $langs->trans("DownloadEmptyExample");
 	print '</a>';
 	print $form->textwithpicto('', $langs->trans("StarAreMandatory"));
 	print '</td></tr>';
@@ -1647,7 +1649,7 @@ if ($step == 5 && $datatoimport) {
 
 	// Keys for data UPDATE (not INSERT of new data)
 	print '<tr><td>';
-	print $langs->trans("KeysToUseForUpdates");
+	print $form->textwithpicto($langs->trans("KeysToUseForUpdates"), $langs->trans("SelectPrimaryColumnsForUpdateAttempt"));
 	print '</td><td>';
 	if ($action == 'launchsimu') {
 		if (count($updatekeys)) {
@@ -1662,7 +1664,7 @@ if ($step == 5 && $datatoimport) {
 	} else {
 		if (is_array($objimport->array_import_updatekeys[0]) && count($objimport->array_import_updatekeys[0])) {   //TODO dropdown UL is created inside nested SPANS
 			print $form->multiselectarray('updatekeys', $objimport->array_import_updatekeys[0], $updatekeys, 0, 0, '', 1, '80%');
-			print $form->textwithpicto("", $langs->trans("SelectPrimaryColumnsForUpdateAttempt"));
+			//print $form->textwithpicto("", $langs->trans("SelectPrimaryColumnsForUpdateAttempt"));
 		} else {
 			print '<span class="opacitymedium">'.$langs->trans("UpdateNotYetSupportedForThisImport").'</span>';
 		}
