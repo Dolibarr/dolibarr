@@ -54,7 +54,7 @@ $accountingaccount_number = GETPOST('accountingaccount_number', 'alphanohtml');
 $accountingaccount->fetch(null, $accountingaccount_number, true);
 $accountingaccount_label = $accountingaccount->label;
 
-$journal_code = GETPOST('code_journal', 'alpha') ? GETPOST('code_journal', 'alpha') : "OD";
+$journal_code = GETPOST('code_journal', 'alpha') ? GETPOST('code_journal', 'alpha') : "NULL";
 $accountingjournal->fetch(null, $journal_code);
 $journal_label = $accountingjournal->label;
 
