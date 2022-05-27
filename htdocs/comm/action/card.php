@@ -1185,7 +1185,7 @@ if ($action == 'create') {
 	$formactions->form_select_status_action('formaction', $percent, 1, 'complete', 0, 0, 'maxwidth200');
 	print '</td></tr>';
 
-	if ($conf->categorie->enabled) {
+	if (!empty($conf->categorie->enabled)) {
 		// Categories
 		print '<tr><td>'.$langs->trans("Categories").'</td><td>';
 		$cate_arbo = $form->select_all_categories(Categorie::TYPE_ACTIONCOMM, '', 'parent', 64, 0, 1);
@@ -1201,7 +1201,7 @@ if ($action == 'create') {
 
 	print '<table class="border centpercent">';
 
-	if ($conf->societe->enabled) {
+	if (!empty($conf->societe->enabled)) {
 		// Related company
 		print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("ActionOnCompany").'</td><td>';
 		if (GETPOST('socid', 'int') > 0) {
@@ -1693,7 +1693,7 @@ if ($id > 0) {
 		print '</td></tr>';
 
 		// Tags-Categories
-		if ($conf->categorie->enabled) {
+		if (!empty($conf->categorie->enabled)) {
 			print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
 			$cate_arbo = $form->select_all_categories(Categorie::TYPE_ACTIONCOMM, '', 'parent', 64, 0, 1);
 			$c = new Categorie($db);
@@ -1714,7 +1714,7 @@ if ($id > 0) {
 
 		print '<table class="border tableforfield centpercent">';
 
-		if ($conf->societe->enabled) {
+		if (!empty($conf->societe->enabled)) {
 			// Related company
 			print '<tr><td class="titlefieldcreate">'.$langs->trans("ActionOnCompany").'</td>';
 			print '<td>';
@@ -2099,7 +2099,7 @@ if ($id > 0) {
 		}
 
 		// Categories
-		if ($conf->categorie->enabled) {
+		if (!empty($conf->categorie->enabled)) {
 			print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
 			print $form->showCategories($object->id, Categorie::TYPE_ACTIONCOMM, 1);
 			print "</td></tr>";
@@ -2114,7 +2114,7 @@ if ($id > 0) {
 		print '<div class="underbanner clearboth"></div>';
 		print '<table class="border tableforfield centpercent">';
 
-		if ($conf->societe->enabled) {
+		if (!empty($conf->societe->enabled)) {
 			// Related company
 			print '<tr><td class="titlefield">'.$langs->trans("ActionOnCompany").'</td><td>'.($object->thirdparty->id ? $object->thirdparty->getNomUrl(1) : ('<span class="opacitymedium">'.$langs->trans("None").'</span>'));
 			if (is_object($object->thirdparty) && $object->thirdparty->id > 0 && $object->type_code == 'AC_TEL') {
