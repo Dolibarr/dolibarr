@@ -482,9 +482,12 @@ print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 
-
+// print dol_banner_tab and the BOM list of a product
 if ($IdFk_product)
 {
+    print '<input type="hidden" name="fk_product" value="'.$IdFk_product.'">';
+    $param .= '&fk_product='.urlencode($IdFk_product);
+
     $product = new Product($db);
     $product->fetch($IdFk_product);
 

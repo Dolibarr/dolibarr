@@ -50,12 +50,6 @@ function product_prepare_head($object)
 	$head[$h][2] = 'card';
 	$h++;
 
-//    $head[$h][0] = DOL_URL_ROOT."/product/note.php?search_fk_product=".$object->id;
-    $head[$h][0] = DOL_URL_ROOT."/bom/bom_list.php?fk_product=".$object->id;
-    $head[$h][1] = $langs->trans("BOM");
-    $head[$h][2] = 'bom';
-    $h++;
-
 	if (!empty($object->status)) {
 		$head[$h][0] = DOL_URL_ROOT."/product/price.php?id=".$object->id;
 		$head[$h][1] = $langs->trans("SellingPrices");
@@ -124,7 +118,13 @@ function product_prepare_head($object)
 		}
 	}
 
-	// Tab to link resources
+    $head[$h][0] = DOL_URL_ROOT."/bom/bom_list.php?fk_product=".$object->id;
+    $head[$h][1] = $langs->trans("BillOfMaterials");
+    $head[$h][2] = 'bom';
+    $h++;
+
+
+    // Tab to link resources
 	if (!empty($conf->resource->enabled)) {
 		if ($object->isProduct() && !empty($conf->global->RESOURCE_ON_PRODUCTS)) {
 			$head[$h][0] = DOL_URL_ROOT.'/resource/element_resource.php?element=product&ref='.$object->ref;
