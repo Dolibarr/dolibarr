@@ -41,6 +41,8 @@ class mailing_fraise extends MailingTargets
 
 	public $require_module = array('adherent');
 
+	public $enabled = '$conf->adherent->enabled';
+
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */

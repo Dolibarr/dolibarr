@@ -41,6 +41,8 @@ class mailing_partnership extends MailingTargets
 	 */
 	public $db;
 
+	public $enabled = '$conf->partnership->enabled';
+
 
 	/**
 	 *	Constructor
