@@ -181,7 +181,7 @@ $arrayofmode = array(
 	'commande' => 'Orders',
 	'facture' => 'Facture'
 	);
-$title .= ' '.$form->selectarray('mode', $arrayofmode, $mode, 1);
+$title .= ' '.$form->selectarray('mode', $arrayofmode, $mode, 1, 0, 0, '', 1);
 $title .= ' <input type="submit" class="button small" name="refresh" value="'.$langs->trans("Refresh").'">';
 
 
