@@ -40,6 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
@@ -234,6 +235,9 @@ if (empty($reshook)) {
 		// Note: Correct date should be completed with location to have exact GM time of birth.
 		$object->birthday = dol_mktime(0, 0, 0, GETPOST("birthdaymonth", 'int'), GETPOST("birthdayday", 'int'), GETPOST("birthdayyear", 'int'));
 		$object->birthday_alert = GETPOST("birthday_alert", 'alpha');
+
+		//Default language
+		$object->default_lang = GETPOST('default_lang');
 
 		// Fill array 'array_options' with data from add form
 		$ret = $extrafields->setOptionalsFromPost(null, $object);
@@ -437,6 +441,9 @@ if (empty($reshook)) {
 
 			$object->roles = GETPOST("roles", 'array'); // Note GETPOSTISSET("role") is null when combo is empty
 
+			//Default language
+			$object->default_lang = GETPOST('default_lang');
+
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
 			if ($ret < 0) {
@@ -557,6 +564,7 @@ if (empty($reshook)) {
  */
 
 $form = new Form($db);
+$formadmin = new FormAdmin($db);
 $formcompany = new FormCompany($db);
 
 $title = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
@@ -872,6 +880,15 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print $form->selectarray('priv', $selectarray, (GETPOST("priv", 'alpha') ?GETPOST("priv", 'alpha') : $object->priv), 0);
 			print '</td></tr>';
 
+			//Default language
+			if (!empty($conf->global->MAIN_MULTILANGS)) {
+				print '<tr><td>'.$form->editfieldkey('DefaultLang', 'default_lang', '', $object, 0).'</td><td colspan="3" class="maxwidthonsmartphone">'."\n";
+				print $formadmin->select_language(GETPOST('default_lang', 'alpha') ?GETPOST('default_lang', 'alpha') : ($object->default_lang ? $object->default_lang : ''), 'default_lang', 0, 0, 1, 0, 0, 'maxwidth200onsmartphone', 0, 0, 0, null, 1);
+
+				print '</td>';
+				print '</tr>';
+			}
+
 			// Categories
 			if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire)) {
 				print '<tr><td>'.$form->editfieldkey('Categories', 'contcats', '', $object, 0).'</td><td colspan="3">';
@@ -1151,6 +1168,15 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print $form->selectarray('priv', $selectarray, $object->priv, 0);
 			print '</td></tr>';
 
+			//Default language
+			if (!empty($conf->global->MAIN_MULTILANGS)) {
+				print '<tr><td>'.$form->editfieldkey('DefaultLang', 'default_lang', '', $object, 0).'</td><td colspan="3" class="maxwidthonsmartphone">'."\n";
+				print $formadmin->select_language($object->default_lang, 'default_lang', 0, 0, 1, 0, 0, '', 0, 0, 0, null, 1);
+
+				print '</td>';
+				print '</tr>';
+			}
+
 			// Note Public
 			print '<tr><td class="tdtop"><label for="note_public">'.$langs->trans("NotePublic").'</label></td><td colspan="3">';
 			$doleditor = new DolEditor('note_public', $object->note_public, '', 80, 'dolibarr_notes', 'In', 0, false, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PUBLIC) ? 0 : 1, ROWS_3, '90%');
@@ -1360,6 +1386,18 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			} else {
 				print '<span class="opacitymedium">'.$langs->trans("EMailNotDefined").'</span>';
 			}
+			print '</td></tr>';
+		}
+
+		// Default language
+		if (!empty($conf->global->MAIN_MULTILANGS)) {
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+			print '<tr><td>'.$langs->trans("DefaultLang").'</td><td>';
+			//$s=picto_from_langcode($object->default_lang);
+			//print ($s?$s.' ':'');
+			$langs->load("languages");
+			$labellang = ($object->default_lang ? $langs->trans('Language_'.$object->default_lang.'_'.strtoupper($object->default_lang)) : '');
+			print $labellang;
 			print '</td></tr>';
 		}
 

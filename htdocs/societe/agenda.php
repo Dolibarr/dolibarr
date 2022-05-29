@@ -149,15 +149,10 @@ if ($socid > 0) {
 	$objcon = new stdClass();
 
 	$out = '';
-		$newcardbutton = '';
-	if (!empty($conf->agenda->enabled)) {
-		$permok = $user->rights->agenda->myactions->create;
-		if ((!empty($objthirdparty->id) || !empty($objcon->id && $permok) {
-			if (is_object($objthirdparty) && get_class($objthirdparty) == 'Societe') {
-				$out .= '&amp;originid='.$objthirdparty->id.($objthirdparty->id > 0 ? '&amp;socid='.$objthirdparty->id : '').'&amp;backtopage='.urlencode($_SERVER['PHP_SELF'].($objthirdparty->id > 0 ? '?socid='.$objthirdparty->id : ''));
-			}
-			$out .= (!empty($objcon->id) ? '&amp;contactid='.$objcon->id : '').'&amp;percentage=-1';
-			$out .= '&amp;datep='.dol_print_date(dol_now(), 'dayhourlog');
+	$permok = $user->hasRight('agenda', 'myactions', 'create');
+	if ((!empty($objthirdparty->id) || !empty($objcon->id)) && $permok) {
+		if (is_object($objthirdparty) && get_class($objthirdparty) == 'Societe') {
+			$out .= '&amp;originid='.$objthirdparty->id.($objthirdparty->id > 0 ? '&amp;socid='.$objthirdparty->id : '').'&amp;backtopage='.urlencode($_SERVER['PHP_SELF'].($objthirdparty->id > 0 ? '?socid='.$objthirdparty->id : ''));
 		}
 
 		if (!empty($user->rights->agenda->myactions->create) || !empty($user->rights->agenda->allactions->create)) {

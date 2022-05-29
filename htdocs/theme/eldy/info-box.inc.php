@@ -10,7 +10,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
  */
 
 .info-box-module.--external span.info-box-icon-version {
-	background: #bbb;
+	background: rgba(0,0,0,0.2);
 }
 
 .info-box-module.--external.--need-update span.info-box-icon-version{

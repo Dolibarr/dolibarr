@@ -558,8 +558,8 @@ class SupplierInvoices extends DolibarrApi
 
 		$request_data = (object) $request_data;
 
-		$request_data->description = checkVal($request_data->description, 'restricthtml');
-		$request_data->ref_supplier = checkVal($request_data->ref_supplier);
+		$request_data->description = sanitizeVal($request_data->description, 'restricthtml');
+		$request_data->ref_supplier = sanitizeVal($request_data->ref_supplier);
 
 		$updateRes = $this->invoice->addline(
 			$request_data->description,
@@ -625,8 +625,8 @@ class SupplierInvoices extends DolibarrApi
 
 		$request_data = (object) $request_data;
 
-		$request_data->description = checkVal($request_data->description, 'restricthtml');
-		$request_data->ref_supplier = checkVal($request_data->ref_supplier);
+		$request_data->description = sanitizeVal($request_data->description, 'restricthtml');
+		$request_data->ref_supplier = sanitizeVal($request_data->ref_supplier);
 
 		$updateRes = $this->invoice->updateline(
 			$lineid,

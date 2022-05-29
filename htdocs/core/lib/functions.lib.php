@@ -371,6 +371,32 @@ function GETPOSTISSET($paramname)
 }
 
 /**
+ * Return true if the parameter $paramname is submit from a POST OR GET as an array.
+ * Can be used before GETPOST to know if the $check param of GETPOST need to check an array or a string
+ *
+ * @param 	string	$paramname		Name or parameter to test
+ *  @param	int		$method	     Type of method (0 = get then post, 1 = only get, 2 = only post, 3 = post then get)
+ * @return 	bool 				True if we have just submit a POST or GET request with the parameter provided (even if param is empty)
+ */
+function GETPOSTISARRAY($paramname, $method = 0)
+{
+	// for $method test need return the same $val as GETPOST
+	if (empty($method)) {
+		$val = isset($_GET[$paramname]) ? $_GET[$paramname] : (isset($_POST[$paramname]) ? $_POST[$paramname] : '');
+	} elseif ($method == 1) {
+		$val = isset($_GET[$paramname]) ? $_GET[$paramname] : '';
+	} elseif ($method == 2) {
+		$val = isset($_POST[$paramname]) ? $_POST[$paramname] : '';
+	} elseif ($method == 3) {
+		$val = isset($_POST[$paramname]) ? $_POST[$paramname] : (isset($_GET[$paramname]) ? $_GET[$paramname] : '');
+	} else {
+		$val = 'BadFirstParameterForGETPOST';
+	}
+
+	return is_array($val);
+}
+
+/**
  *  Return value of a param into GET or POST supervariable.
  *  Use the property $user->default_values[path]['createform'] and/or $user->default_values[path]['filters'] and/or $user->default_values[path]['sortorder']
  *  Note: The property $user->default_values is loaded by main.php when loading the user.
@@ -660,11 +686,11 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 				$tmpcheck = 'alphanohtml';
 			}
 			foreach ($out as $outkey => $outval) {
-				$out[$outkey] = checkVal($outval, $tmpcheck, $filter, $options);
+				$out[$outkey] = sanitizeVal($outval, $tmpcheck, $filter, $options);
 			}
 		}
 	} else {
-		$out = checkVal($out, $check, $filter, $options);
+		$out = sanitizeVal($out, $check, $filter, $options);
 	}
 
 	// Sanitizing for special parameters.
@@ -713,9 +739,11 @@ function GETPOSTINT($paramname, $method = 0)
 	return (int) GETPOST($paramname, 'int', $method, null, null, 0);
 }
 
+
 /**
- *  Return a value after checking on a rule. A sanitization may also have been done.
+ *  Return a sanitized or empty value after checking value against a rule.
  *
+ *  @deprecated
  *  @param  string|array  	$out	     Value to check/clear.
  *  @param  string  		$check	     Type of check/sanitizing
  *  @param  int     		$filter      Filter to apply when $check is set to 'custom'. (See http://php.net/manual/en/filter.filters.php for détails)
@@ -724,8 +752,23 @@ function GETPOSTINT($paramname, $method = 0)
  */
 function checkVal($out = '', $check = 'alphanohtml', $filter = null, $options = null)
 {
+	return sanitizeVal($out, $check, $filter, $options);
+}
+
+/**
+ *  Return a sanitized or empty value after checking value against a rule.
+ *
+ *  @param  string|array  	$out	     Value to check/clear.
+ *  @param  string  		$check	     Type of check/sanitizing
+ *  @param  int     		$filter      Filter to apply when $check is set to 'custom'. (See http://php.net/manual/en/filter.filters.php for détails)
+ *  @param  mixed   		$options     Options to pass to filter_var when $check is set to 'custom'
+ *  @return string|array    		     Value sanitized (string or array). It may be '' if format check fails.
+ */
+function sanitizeVal($out = '', $check = 'alphanohtml', $filter = null, $options = null)
+{
 	global $conf;
 
+	// TODO : use class "Validate" to perform tests (and add missing tests) if needed for factorize
 	// Check is done after replacement
 	switch ($check) {
 		case 'none':
@@ -2261,7 +2304,7 @@ function dol_bc($var, $moreclass = '')
  */
 function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs = '', $mode = 0, $extralangcode = '')
 {
-	global $conf, $langs;
+	global $conf, $langs, $hookmanager;
 
 	$ret = '';
 	$countriesusingstate = array('AU', 'CA', 'US', 'IN', 'GB', 'ES', 'UK', 'TR', 'CN'); // See also MAIN_FORCE_STATE_INTO_ADDRESS
@@ -2327,6 +2370,14 @@ function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs
 	if ($withcountry) {
 		$langs->load("dict");
 		$ret .= (empty($object->country_code) ? '' : ($ret ? $sep : '').$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$object->country_code)));
+	}
+	if ($hookmanager) {
+		$parameters = array('withcountry' => $withcountry, 'sep' => $sep, 'outputlangs' => $outputlangs,'mode' => $mode, 'extralangcode' => $extralangcode);
+		$reshook = $hookmanager->executeHooks('formatAddress', $parameters, $object);
+		if ($reshook > 0) {
+			$ret = '';
+		}
+		$ret .= $hookmanager->resPrint;
 	}
 
 	return $ret;
@@ -2453,6 +2504,9 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 	} elseif ($format == 'dayhourlog') {
 		// Format not sensitive to language
 		$format = '%Y%m%d%H%M%S';
+	} elseif ($format == 'dayhourlogsmall') {
+		// Format not sensitive to language
+		$format = '%Y%m%d%H%M';
 	} elseif ($format == 'dayhourldap') {
 		$format = '%Y%m%d%H%M%SZ';
 	} elseif ($format == 'dayhourxcard') {
@@ -3714,6 +3768,7 @@ function dol_trunc($string, $size = 40, $trunc = 'right', $stringencoding = 'UTF
 function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $srconly = 0, $notitle = 0, $alt = '', $morecss = '', $marginleftonlyshort = 2)
 {
 	global $conf, $langs;
+
 	// We forge fullpathpicto for image to $path/img/$picto. By default, we take DOL_URL_ROOT/theme/$conf->theme/img/$picto
 	$url = DOL_URL_ROOT;
 	$theme = isset($conf->theme) ? $conf->theme : null;
@@ -3732,15 +3787,25 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		}
 	} else {
 		$pictowithouttext = preg_replace('/(\.png|\.gif|\.svg)$/', '', $picto);
+		$pictowithouttext = str_replace('object_', '', $pictowithouttext);
 
-		if (strpos($pictowithouttext, 'fontawesome_') !== false) {
-			$pictowithouttext = explode('_', $pictowithouttext);
+		if (strpos($pictowithouttext, 'fontawesome_') !== false || preg_match('/^fa-/', $pictowithouttext)) {
+			// This is a font awesome image 'fonwtawesome_xxx' or 'fa-xxx'
+			$pictowithouttext = str_replace('fa-', '', $pictowithouttext);
+			$pictowithouttextarray = explode('_', $pictowithouttext);
 			$marginleftonlyshort = 0;
 
-			$fakey      = 'fa-'.$pictowithouttext[1];
-			$fa         = $pictowithouttext[2] ? $pictowithouttext[2] : 'fa';
-			$facolor    = $pictowithouttext[3] ? $pictowithouttext[3] : '';
-			$fasize     = $pictowithouttext[4] ? $pictowithouttext[4] : '';
+			if (!empty($pictowithouttextarray[1])) {
+				$fakey      = 'fa-'.$pictowithouttextarray[1];
+				$fa         = empty($pictowithouttextarray[2]) ? 'fa' : $pictowithouttextarray[2];
+				$facolor    = empty($pictowithouttextarray[3]) ? '' : $pictowithouttextarray[3];
+				$fasize     = empty($pictowithouttextarray[4]) ? '' : $pictowithouttextarray[4];
+			} else {
+				$fakey      = 'fa-'.$pictowithouttext;
+				$fa         = 'fa';
+				$facolor    = '';
+				$fasize     = '';
+			}
 
 			// This snippet only needed since function img_edit accepts only one additional parameter: no separate one for css only.
 			// class/style need to be extracted to avoid duplicate class/style validation errors when $moreatt is added to the end of the attributes.
@@ -3766,7 +3831,6 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			return $enabledisablehtml;
 		}
 
-		$pictowithouttext = str_replace('object_', '', $pictowithouttext);
 		if (empty($srconly) && in_array($pictowithouttext, array(
 				'1downarrow', '1uparrow', '1leftarrow', '1rightarrow', '1uparrow_selected', '1downarrow_selected', '1leftarrow_selected', '1rightarrow_selected',
 				'accountancy', 'accounting_account', 'account', 'accountline', 'action', 'add', 'address', 'angle-double-down', 'angle-double-up', 'asset',
@@ -4904,10 +4968,10 @@ function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin 
 		$liste_titre = 'liste_titre_sel';
 	}
 
-	$out .= '<'.$tag.' class="'.$prefix.$liste_titre.'" '.$moreattrib;
+	$tagstart = '<'.$tag.' class="'.$prefix.$liste_titre.'" '.$moreattrib;
 	//$out .= (($field && empty($conf->global->MAIN_DISABLE_WRAPPING_ON_COLUMN_TITLE) && preg_match('/^[a-zA-Z_0-9\s\.\-:&;]*$/', $name)) ? ' title="'.dol_escape_htmltag($langs->trans($name)).'"' : '');
-	$out .= ($name && empty($conf->global->MAIN_DISABLE_WRAPPING_ON_COLUMN_TITLE) && empty($forcenowrapcolumntitle) && !dol_textishtml($name)) ? ' title="'.dol_escape_htmltag($langs->trans($name)).'"' : '';
-	$out .= '>';
+	$tagstart .= ($name && empty($conf->global->MAIN_DISABLE_WRAPPING_ON_COLUMN_TITLE) && empty($forcenowrapcolumntitle) && !dol_textishtml($name)) ? ' title="'.dol_escape_htmltag($langs->trans($name)).'"' : '';
+	$tagstart .= '>';
 
 	if (empty($thead) && $field && empty($disablesortlink)) {    // If this is a sort field
 		$options = preg_replace('/sortfield=([a-zA-Z0-9,\s\.]+)/i', '', (is_scalar($moreparam) ? $moreparam : ''));
@@ -4921,12 +4985,10 @@ function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin 
 		if ($field1 != $sortfield1) { // We are on another field than current sorted field
 			if (preg_match('/^DESC/i', $sortorder)) {
 				$sortordertouseinlink .= str_repeat('desc,', count(explode(',', $field)));
-			} else // We reverse the var $sortordertouseinlink
-			{
+			} else { // We reverse the var $sortordertouseinlink
 				$sortordertouseinlink .= str_repeat('asc,', count(explode(',', $field)));
 			}
-		} else // We are on field that is the first current sorting criteria
-		{
+		} else { // We are on field that is the first current sorting criteria
 			if (preg_match('/^ASC/i', $sortorder)) {	// We reverse the var $sortordertouseinlink
 				$sortordertouseinlink .= str_repeat('desc,', count(explode(',', $field)));
 			} else {
@@ -4965,19 +5027,19 @@ function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin 
 			if (preg_match('/^DESC/', $sortorder)) {
 				//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",0).'</a>';
 				//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",1).'</a>';
-				$sortimg .= '<span class="nowrap">'.img_up("Z-A", 0, 'paddingleft').'</span>';
+				$sortimg .= '<span class="nowrap">'.img_up("Z-A", 0, 'paddingright').'</span>';
 			}
 			if (preg_match('/^ASC/', $sortorder)) {
 				//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",1).'</a>';
 				//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",0).'</a>';
-				$sortimg .= '<span class="nowrap">'.img_down("A-Z", 0, 'paddingleft').'</span>';
+				$sortimg .= '<span class="nowrap">'.img_down("A-Z", 0, 'paddingright').'</span>';
 			}
 		}
 	}
 
-	$out .= $sortimg;
+	$tagend = '</'.$tag.'>';
 
-	$out .= '</'.$tag.'>';
+	$out = $tagstart.$sortimg.$out.$tagend;
 
 	return $out;
 }

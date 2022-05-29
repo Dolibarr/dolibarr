@@ -4896,14 +4896,14 @@ class Product extends CommonObject
 		}
 
 		if (!empty($conf->accounting->enabled)) {
-			if ($this->status) {
+			if ($this->status && isset($this->accountancy_code_sell)) {
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 				$label .= '<br>';
 				$label .= '<br><b>'.$langs->trans('ProductAccountancySellCode').':</b> '.length_accountg($this->accountancy_code_sell);
 				$label .= '<br><b>'.$langs->trans('ProductAccountancySellIntraCode').':</b> '.length_accountg($this->accountancy_code_sell_intra);
 				$label .= '<br><b>'.$langs->trans('ProductAccountancySellExportCode').':</b> '.length_accountg($this->accountancy_code_sell_export);
 			}
-			if ($this->status_buy) {
+			if ($this->status_buy && isset($this->accountancy_code_buy)) {
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 				if (empty($this->status)) {
 					$label .= '<br>';
