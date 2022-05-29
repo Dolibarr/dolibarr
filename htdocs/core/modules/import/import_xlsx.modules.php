@@ -863,11 +863,19 @@ class ImportXlsx extends ModeleImports
 					if (!empty($listfields)) {
 						$updatedone = false;
 						$insertdone = false;
+
+						$is_table_category_link = false;
+						$fname = 'rowid';
+						if (strpos($tablename, '_categorie_') !== false) {
+							$is_table_category_link = true;
+							$fname='*';
+						}
+
 						if (!empty($updatekeys)) {
 							// We do SELECT to get the rowid, if we already have the rowid, it's to be used below for related tables (extrafields)
 
 							if (empty($lastinsertid)) {	// No insert done yet for a parent table
-								$sqlSelect = "SELECT rowid FROM " . $tablename;
+								$sqlSelect = "SELECT ".$fname." FROM " . $tablename;
 
 								$data = array_combine($listfields, $listvalues);
 								$where = array();
@@ -886,6 +894,7 @@ class ImportXlsx extends ModeleImports
 									if ($num_rows == 1) {
 										$res = $this->db->fetch_object($resql);
 										$lastinsertid = $res->rowid;
+										if ($is_table_category_link) $lastinsertid = 'linktable'; // used to apply update on tables like llx_categorie_product and avoid being blocked for all file content if at least one entry already exists
 										$last_insert_id_array[$tablename] = $lastinsertid;
 									} elseif ($num_rows > 1) {
 										$this->errors[$error]['lib'] = $langs->trans('MultipleRecordFoundWithTheseFilters', implode(', ', $filters));
@@ -946,6 +955,10 @@ class ImportXlsx extends ModeleImports
 									$keyfield = 'rowid';
 								}
 								$sqlend = " WHERE " . $keyfield . " = ".((int) $lastinsertid);
+
+								if ($is_table_category_link) {
+									$sqlend = " WHERE " . implode(' AND ', $where);
+								}
 
 								$sql = $sqlstart . $sqlend;
 
