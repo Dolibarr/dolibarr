@@ -732,11 +732,11 @@ class AccountingAccount extends CommonObject
 		global $hookmanager;
 
 		// Instantiate hooks for external modules
-		$hookmanager->initHooks(array('accoutancyBindingCalculation'));
+		$hookmanager->initHooks(array('accountancyBindingCalculation'));
 
-		// Execute hook accoutancyBindingCalculation
+		// Execute hook accountancyBindingCalculation
 		$parameters = array('buyer' => $buyer, 'seller' => $seller, 'product' => $product, 'facture' => $facture, 'factureDet' => $factureDet ,'accountingAccount'=>$accountingAccount, $type);
-		$reshook = $hookmanager->executeHooks('accoutancyBindingCalculation', $parameters); // Note that $action and $object may have been modified by some hooks
+		$reshook = $hookmanager->executeHooks('accountancyBindingCalculation', $parameters); // Note that $action and $object may have been modified by some hooks
 
 		if (empty($reshook)) {
 			if ($type == 'customer') {
