@@ -32,8 +32,8 @@ Other licenses apply for some included dependencies. See [COPYRIGHT](https://git
 
 If you have low technical skills and you're looking to install Dolibarr ERP/CRM in just a few clicks, you can use one of the packaged versions:
 
-- [DoliWamp for Windows](https://wiki.dolibarr.org/index.php?title=Dolibarr_for_Windows_(DoliWamp))
-- [DoliDeb for Debian](https://wiki.dolibarr.org/index.php?title=Dolibarr_for_Ubuntu_or_Debian)
+- [DoliWamp for Windows](https://wiki.dolibarr.org/index.php/Dolibarr_for_Windows_(DoliWamp))
+- [DoliDeb for Debian](https://wiki.dolibarr.org/index.php/Dolibarr_for_Ubuntu_or_Debian)
 - DoliRpm for Redhat, Fedora, OpenSuse, Mandriva or Mageia
 
 Releases can be downloaded from [official website](https://www.dolibarr.org/).
