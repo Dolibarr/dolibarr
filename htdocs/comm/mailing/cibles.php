@@ -404,7 +404,7 @@ if ($object->fetch($id) >= 0) {
 					}
 
 					print '<div class="tagtd center">';
-					if ($nbofrecipient >= 0) {
+					if ($nbofrecipient === '' || $nbofrecipient >= 0) {
 						print $nbofrecipient;
 					} else {
 						print $langs->trans("Error").' '.img_error($obj->error);
