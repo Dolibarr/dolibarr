@@ -74,6 +74,9 @@ if (!preg_match('/mainmenu=/', $php_self)) {
 if (preg_match('/'.preg_quote('core/modules/oauth', '/').'/', $php_self)) {
 	$php_self = DOL_URL_ROOT.'/index.php?mainmenu=home';
 }
+$php_self = preg_replace('/(\?|&amp;|&)action=[^&]+/', '\1', $php_self);
+$php_self = preg_replace('/(\?|&amp;|&)massaction=[^&]+/', '\1', $php_self);
+$php_self = preg_replace('/(\?|&amp;|&)token=[^&]+/', '\1', $php_self);
 
 // Javascript code on logon page only to detect user tz, dst_observed, dst_first, dst_second
 $arrayofjs = array(
