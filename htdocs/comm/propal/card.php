@@ -692,7 +692,7 @@ if (empty($reshook)) {
 				$deposit = null;
 				$locationTarget = '';
 
-				$deposit_percent_from_payment_terms = getDictionaryValue(MAIN_DB_PREFIX . 'c_payment_term', 'deposit_percent', $object->cond_reglement_id);
+				$deposit_percent_from_payment_terms = getDictionaryValue('c_payment_term', 'deposit_percent', $object->cond_reglement_id);
 
 				if (
 					!$error && GETPOST('statut', 'int') == $object::STATUS_SIGNED && GETPOST('generate_deposit', 'alpha') == 'on'
@@ -901,7 +901,7 @@ if (empty($reshook)) {
 		$prod_entry_mode = GETPOST('prod_entry_mode');
 		if ($prod_entry_mode == 'free') {
 			$idprod = 0;
-			$tva_tx = (GETPOST('tva_tx') ? price2num(GETPOST('tva_tx')) : 0);
+			$tva_tx = (GETPOST('tva_tx') ? price2num(preg_replace('/\s*\(.*\)/', '', GETPOST('tva_tx'))) : 0);
 		} else {
 			$idprod = GETPOST('idprod', 'int');
 			$tva_tx = '';
@@ -1644,7 +1644,7 @@ if ($action == 'create') {
 
 	// Ref customer
 	print '<tr class="field_ref_client"><td class="titlefieldcreate">'.$langs->trans('RefCustomer').'</td><td class="valuefieldcreate">';
-	print '<input type="text" name="ref_client" value="'.GETPOST('ref_client').'"></td>';
+	print '<input type="text" name="ref_client" value="'.(!empty($ref_client)?$ref_client:GETPOST('ref_client')).'"></td>';
 	print '</tr>';
 
 	// Third party
@@ -1999,7 +1999,7 @@ if ($action == 'create') {
 			array('type' => 'text', 'name' => 'note_private', 'label' => $langs->trans("Note"), 'value' => '')				// Field to complete private note (not replace)
 		);
 
-		$deposit_percent_from_payment_terms = getDictionaryValue(MAIN_DB_PREFIX . 'c_payment_term', 'deposit_percent', $object->cond_reglement_id);
+		$deposit_percent_from_payment_terms = getDictionaryValue('c_payment_term', 'deposit_percent', $object->cond_reglement_id);
 
 		if (! empty($deposit_percent_from_payment_terms) && ! empty($conf->facture->enabled) && ! empty($user->rights->facture->creer)) {
 			require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';

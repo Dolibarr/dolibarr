@@ -134,9 +134,20 @@ class modRecruitment extends DolibarrModules
 		// Example: $this->const=array(1 => array('RECRUITMENT_MYNEWCONST1', 'chaine', 'myvalue', 'This is a constant to add', 1),
 		//                             2 => array('RECRUITMENT_MYNEWCONST2', 'chaine', 'myvalue', 'This is another constant to add', 0, 'current', 1)
 		// );
-		$this->const = array(
-			// 1 => array('RECRUITMENT_MYCONSTANT', 'chaine', 'avalue', 'This is a constant to add', 1, 'allentities', 1)
-		);
+		$r = 0;
+		$this->const[$r][0] = "RECRUITMENT_RECRUITMENTJOBPOSITION_ADDON";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "mod_recruitmentjobposition_standard";
+		$this->const[$r][3] = 'Name of manager to generate recruitment job position ref number';
+		$this->const[$r][4] = 0;
+		$r++;
+
+		$this->const[$r][0] = "RECRUITMENT_RECRUITMENTCANDIDATURE_ADDON";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "mod_recruitmentcandidature_standard";
+		$this->const[$r][3] = 'Name of manager to generate recruitment candidature ref number';
+		$this->const[$r][4] = 0;
+		$r++;
 
 		// Some keys to add into the overwriting translation tables
 		/*$this->overwrite_translation = array(
@@ -179,29 +190,6 @@ class modRecruitment extends DolibarrModules
 
 		// Dictionaries
 		$this->dictionaries = array();
-		/* Example:
-		$this->dictionaries=array(
-			'langs'=>'recruitment',
-			// List of tables we want to see into dictonnary editor
-			'tabname'=>array(MAIN_DB_PREFIX."table1", MAIN_DB_PREFIX."table2", MAIN_DB_PREFIX."table3"),
-			// Label of tables
-			'tablib'=>array("Table1", "Table2", "Table3"),
-			// Request to select fields
-			'tabsql'=>array('SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table1 as f', 'SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table2 as f', 'SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table3 as f'),
-			// Sort order
-			'tabsqlsort'=>array("label ASC", "label ASC", "label ASC"),
-			// List of fields (result of select to show dictionary)
-			'tabfield'=>array("code,label", "code,label", "code,label"),
-			// List of fields (list of fields to edit a record)
-			'tabfieldvalue'=>array("code,label", "code,label", "code,label"),
-			// List of fields (list of fields for insert)
-			'tabfieldinsert'=>array("code,label", "code,label", "code,label"),
-			// Name of columns with primary key (try to always name it 'rowid')
-			'tabrowid'=>array("rowid", "rowid", "rowid"),
-			// Condition to show each dictionary
-			'tabcond'=>array($conf->recruitment->enabled, $conf->recruitment->enabled, $conf->recruitment->enabled)
-		);
-		*/
 
 		// Boxes/Widgets
 		// Add here list of php file(s) stored in recruitment/core/boxes that contains a class to show a widget.
@@ -423,7 +411,7 @@ class modRecruitment extends DolibarrModules
 		$sql = array();
 
 		// Document template
-		$moduledir = 'mymodule';
+		$moduledir = 'recruitment';
 		$myTmpObjects = array();
 		$myTmpObjects['RecruitmentJobPosition'] = array('includerefgeneration'=>1, 'includedocgeneration'=>1);
 
@@ -431,10 +419,10 @@ class modRecruitment extends DolibarrModules
 			if ($myTmpObjectKey == 'MyObject') {
 				continue;
 			}
-			if ($myTmpObjectArray['includerefgeneration']) {
-				$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/mymodule/template_myobjects.odt';
-				$dirodt = DOL_DATA_ROOT.'/doctemplates/mymodule';
-				$dest = $dirodt.'/template_myobjects.odt';
+			if ($myTmpObjectArray['includedocgeneration']) {
+				$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/'.$moduledir.'/template_recruitmentjobposition.odt';
+				$dirodt = DOL_DATA_ROOT.'/doctemplates/'.$moduledir;
+				$dest = $dirodt.'/template_recruitmentjobposition.odt';
 
 				if (file_exists($src) && !file_exists($dest)) {
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -450,6 +438,7 @@ class modRecruitment extends DolibarrModules
 				$sql = array_merge($sql, array(
 					"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'standard_".strtolower($myTmpObjectKey)."' AND type = '".$this->db->escape(strtolower($myTmpObjectKey))."' AND entity = ".((int) $conf->entity),
 					"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('standard_".strtolower($myTmpObjectKey)."','".$this->db->escape(strtolower($myTmpObjectKey))."',".((int) $conf->entity).")",
+
 					"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'generic_".strtolower($myTmpObjectKey)."_odt' AND type = '".$this->db->escape(strtolower($myTmpObjectKey))."' AND entity = ".((int) $conf->entity),
 					"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('generic_".strtolower($myTmpObjectKey)."_odt', '".$this->db->escape(strtolower($myTmpObjectKey))."', ".((int) $conf->entity).")"
 				));

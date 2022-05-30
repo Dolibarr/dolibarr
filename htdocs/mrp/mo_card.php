@@ -162,7 +162,7 @@ if (empty($reshook)) {
 			$res = $object->add_object_linked('mo', $mo_parent->id);
 		}
 
-		header("Location: ".dol_buildpath('/mrp/mo_list.php', 1));
+		header("Location: ".dol_buildpath('/mrp/mo_card.php?id='.$moline->fk_mo, 1));
 		exit;
 	}
 
@@ -648,7 +648,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			if ($object->status == $object::STATUS_VALIDATED) {
 				if ($permissiontoadd) {
 					// TODO Add test that production has not started
-					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_setdraft&confirm=yes">'.$langs->trans("SetToDraft").'</a>';
+					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_setdraft&confirm=yes&token='.newToken().'">'.$langs->trans("SetToDraft").'</a>';
 				}
 			}
 
@@ -687,16 +687,16 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						$nbProduced += $lineproduced['qty'];
 					}
 					if ($nbProduced > 0) {	// If production has started, we can close it
-						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=confirm_produced&confirm=yes">'.$langs->trans("Close").'</a>'."\n";
+						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=confirm_produced&confirm=yes&token='.newToken().'">'.$langs->trans("Close").'</a>'."\n";
 					} else {
 						print '<a class="butActionRefused" href="#" title="'.$langs->trans("GoOnTabProductionToProduceFirst", $langs->transnoentitiesnoconv("Production")).'">'.$langs->trans("Close").'</a>'."\n";
 					}
 
-					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=confirm_close&confirm=yes">'.$langs->trans("Cancel").'</a>'."\n";
+					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=confirm_close&confirm=yes&token='.newToken().'">'.$langs->trans("Cancel").'</a>'."\n";
 				}
 
 				if ($object->status == $object::STATUS_PRODUCED || $object->status == $object::STATUS_CANCELED) {
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=confirm_reopen&confirm=yes">'.$langs->trans("ReOpen").'</a>'."\n";
+					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=confirm_reopen&confirm=yes&token='.newToken().'">'.$langs->trans("ReOpen").'</a>'."\n";
 				}
 			}
 
@@ -738,7 +738,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		$MAXEVENT = 10;
 
-		$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-list-alt imgforviewmode', DOL_URL_ROOT.'/mrp/mo_agenda.php?id='.$object->id);
+		$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/mrp/mo_agenda.php?id='.$object->id);
 
 		// List of actions on element
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';

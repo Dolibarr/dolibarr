@@ -145,7 +145,6 @@ class pdf_timespent extends ModelePDFProjects
 
 		$this->option_logo = 1; // Display logo FAC_PDF_LOGO
 		$this->option_tva = 1; // Manage the vat option FACTURE_TVAOPTION
-		$this->option_codeproduitservice = 1; // Display product-service code
 
 		// Get source company
 		$this->emetteur = $mysoc;
@@ -658,7 +657,7 @@ class pdf_timespent extends ModelePDFProjects
 
 		foreach($object->linkedObjects as $objecttype => $objects)
 		{
-			var_dump($objects);exit;
+			//var_dump($objects);exit;
 			if ($objecttype == 'commande')
 			{
 				$outputlangs->load('orders');

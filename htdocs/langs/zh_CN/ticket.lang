@@ -90,10 +90,10 @@ TicketPublicAccess=以下网址提供不需要识别的公共接口
 TicketSetupDictionaries=The type of ticket, severity and analytic codes are configurable from dictionaries
 TicketParamModule=模块变量设置
 TicketParamMail=电子邮件设置
-TicketEmailNotificationFrom=来自的通知电子邮件
-TicketEmailNotificationFromHelp=用于票据消息通过示例回答
-TicketEmailNotificationTo=通知电子邮件至
-TicketEmailNotificationToHelp=向此地址发送电子邮件通知。
+TicketEmailNotificationFrom=Sender e-mail for ticket answers
+TicketEmailNotificationFromHelp=Sender e-mail for ticket answers sent from Dolibarr
+TicketEmailNotificationTo=Notify ticket creation to this e-mail address
+TicketEmailNotificationToHelp=If present, this e-mail address will be notified of a ticket creation
 TicketNewEmailBodyLabel=Text message sent after creating a ticket
 TicketNewEmailBodyHelp=此处指定的文本将插入到确认从公共界面创建新票证的电子邮件中。有关票务咨询的信息会自动添加。
 TicketParamPublicInterface=公共界面设置
@@ -136,6 +136,18 @@ TicketsPublicNotificationNewMessage=Send email(s) when a new message/comment is 
 TicketsPublicNotificationNewMessageHelp=Send email(s) when a new message is added from public interface (to assigned user or the notifications email to (update) and/or the notifications email to)
 TicketPublicNotificationNewMessageDefaultEmail=Notifications email to (update)
 TicketPublicNotificationNewMessageDefaultEmailHelp=Send an email to this address for each new message notifications if the ticket doesn't have a user assigned to it or if the user doesn't have any known email.
+TicketsAutoReadTicket=Automatically mark the ticket as read (when created from backoffice)
+TicketsAutoReadTicketHelp=Automatically mark the ticket as read when created from backoffice. When ticket is create from the public interface, ticket remains with the status "Not Read".
+TicketsDelayBeforeFirstAnswer=A new ticket should receive a first answer before (hours):
+TicketsDelayBeforeFirstAnswerHelp=If a new ticket has not received an answer after this time period (in hours), an important warning icon will be displayed in the list view.
+TicketsDelayBetweenAnswers=An unresolved ticket should not be unactive during (hours):
+TicketsDelayBetweenAnswersHelp=If an unresolved ticket that has already received an answer has not had further interaction after this time period (in hours), a warning icon will be displayed in the list view.
+TicketsAutoNotifyClose=Automatically notify thirdparty when closing a ticket
+TicketsAutoNotifyCloseHelp=When closing a ticket, you will be proposed to send a message to one of thirdparty's contacts. On mass closing, a message will be sent to one contact of the thirdparty linked to the ticket.
+TicketWrongContact=Provided contact is not part of current ticket contacts. Email not sent.
+TicketChooseProductCategory=Product category for ticket support
+TicketChooseProductCategoryHelp=Select the product category of ticket support. This will be used to automatically link a contract to a ticket.
+
 #
 # Index & list page
 #
@@ -151,6 +163,8 @@ OrderByDateAsc=Sort by ascending date
 OrderByDateDesc=Sort by descending date
 ShowAsConversation=Show as conversation list
 MessageListViewType=Show as table list
+ConfirmMassTicketClosingSendEmail=Automatically send emails when closing tickets
+ConfirmMassTicketClosingSendEmailQuestion=Do you want to notify thirdparties when closing these tickets ?
 
 #
 # Ticket card
@@ -205,12 +219,12 @@ ErrorMailRecipientIsEmptyForSendTicketMessage=收件人是空的。没有电子�
 TicketGoIntoContactTab=请进入“联系人”标签以选择它们
 TicketMessageMailIntro=介绍
 TicketMessageMailIntroHelp=此文本仅在电子邮件的开头添加，不会保存。
-TicketMessageMailIntroLabelAdmin=发送电子邮件时的消息简介
-TicketMessageMailIntroText=Hello,<br>A new response was sent on a ticket that you contact. Here is the message:<br>
-TicketMessageMailIntroHelpAdmin=此文本将在对票证的响应文本之前插入。
+TicketMessageMailIntroLabelAdmin=Introduction text to all ticket answers
+TicketMessageMailIntroText=Hello,<br>A new answer has been added to a ticket that you follow. Here is the message:<br>
+TicketMessageMailIntroHelpAdmin=This text will be inserted before the answer when replying to a ticket from Dolibarr
 TicketMessageMailSignature=签名
 TicketMessageMailSignatureHelp=此文本仅在电子邮件末尾添加，不会保存。
-TicketMessageMailSignatureText=<p>Sincerely,</p><p>--</p>
+TicketMessageMailSignatureText=Message sent by <b>%s</b> via Dolibarr
 TicketMessageMailSignatureLabelAdmin=回复电子邮件的签名
 TicketMessageMailSignatureHelpAdmin=该文本将在响应消息后插入。
 TicketMessageHelp=只有此文本将保存在故障单卡的消息列表中。
@@ -238,9 +252,16 @@ TicketChangeStatus=改变状态
 TicketConfirmChangeStatus=Confirm the status change: %s ?
 TicketLogStatusChanged=Status changed: %s to %s
 TicketNotNotifyTiersAtCreate=不在创建时通知公司
+NotifyThirdpartyOnTicketClosing=Contacts to notify while closing the ticket
+TicketNotifyAllTiersAtClose=All related contacts
+TicketNotNotifyTiersAtClose=No related contact
 Unread=Unread
 TicketNotCreatedFromPublicInterface=Not available. Ticket was not created from public interface.
 ErrorTicketRefRequired=Ticket reference name is required
+TicketsDelayForFirstResponseTooLong=Too much time elapsed since ticket opening without any answer.
+TicketsDelayFromLastResponseTooLong=Too much time elapsed since last answer on this ticket.
+TicketNoContractFoundToLink=No contract was found to be automatically linked to this ticket. Please link a contract manually.
+TicketManyContractsLinked=Many contracts have been automatically linked to this ticket. Make sure to verify which should be chosen.
 
 #
 # Logs
@@ -268,8 +289,9 @@ TicketNewEmailBody=这是一封自动电子邮件，用于确认您已注册新�
 TicketNewEmailBodyCustomer=这是一封自动发送的电子邮件，用于确认刚刚在您的帐户中创建了新的故障单。
 TicketNewEmailBodyInfosTicket=用于监控故障单的信息
 TicketNewEmailBodyInfosTrackId=Ticket tracking number: %s
-TicketNewEmailBodyInfosTrackUrl=您可以通过单击上面的链接查看故障单的进度。
+TicketNewEmailBodyInfosTrackUrl=You can view the progress of the ticket by clicking the following link
 TicketNewEmailBodyInfosTrackUrlCustomer=您可以通过单击以下链接查看特定界面中故障单的进度
+TicketCloseEmailBodyInfosTrackUrlCustomer=You can consult the history of this ticket by clicking the following link
 TicketEmailPleaseDoNotReplyToThisEmail=请不要直接回复此电子邮件！使用该链接回复界面。
 TicketPublicInfoCreateTicket=此表单允许您在我们的管理系统中记录支持服务单。
 TicketPublicPleaseBeAccuratelyDescribe=请准确描述问题。提供尽可能多的信息，以便我们正确识别您的请求。
@@ -291,6 +313,10 @@ NewUser=新建用户
 NumberOfTicketsByMonth=Number of tickets per month
 NbOfTickets=Number of tickets
 # notifications
+TicketCloseEmailSubjectCustomer=Ticket closed
+TicketCloseEmailBodyCustomer=This is an automatic message to notify you that ticket %s has just been closed.
+TicketCloseEmailSubjectAdmin=Ticket closed - Réf %s (public ticket ID %s)
+TicketCloseEmailBodyAdmin=A ticket with ID #%s has just been closed, see information:
 TicketNotificationEmailSubject=票据%s已更新
 TicketNotificationEmailBody=这是一条自动消息，通知您刚刚更新了机票%s
 TicketNotificationRecipient=通知收件人

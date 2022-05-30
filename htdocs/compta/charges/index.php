@@ -153,7 +153,7 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire) {
 
 	$sql = "SELECT c.id, c.libelle as label,";
 	$sql .= " cs.rowid, cs.libelle, cs.fk_type as type, cs.periode, cs.date_ech, cs.amount as total,";
-	$sql .= " pc.rowid as pid, pc.datep, pc.amount as totalpaye, pc.num_paiement as num_payment, pc.fk_bank,";
+	$sql .= " pc.rowid as pid, pc.datep, pc.amount as totalpaid, pc.num_paiement as num_payment, pc.fk_bank,";
 	$sql .= " pct.code as payment_code,";
 	$sql .= " ba.rowid as bid, ba.ref as bref, ba.number as bnumber, ba.account_number, ba.fk_accountancy_journal, ba.label as blabel";
 	$sql .= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c,";
@@ -185,7 +185,7 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire) {
 		$i = 0;
 		$total = 0;
 		$totalnb = 0;
-		$totalpaye = 0;
+		$totalpaid = 0;
 
 		while ($i < min($num, $limit)) {
 			$obj = $db->fetch_object($resql);
@@ -239,15 +239,15 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire) {
 			}
 			// Paid
 			print '<td class="right">';
-			if ($obj->totalpaye) {
-				print price($obj->totalpaye);
+			if ($obj->totalpaid) {
+				print price($obj->totalpaid);
 			}
 			print '</td>';
 			print '</tr>';
 
 			$total = $total + $obj->total;
 			$totalnb = $totalnb + $obj->nb;
-			$totalpaye = $totalpaye + $obj->totalpaye;
+			$totalpaid = $totalpaid + $obj->totalpaid;
 			$i++;
 		}
 		print '<tr class="liste_total"><td colspan="3" class="liste_total">'.$langs->trans("Total").'</td>';
@@ -258,7 +258,7 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire) {
 		if (!empty($conf->banque->enabled)) {
 			print '<td></td>';
 		}
-		print '<td class="liste_total right">'.price($totalpaye)."</td>";
+		print '<td class="liste_total right">'.price($totalpaid)."</td>";
 		print "</tr>";
 	} else {
 		dol_print_error($db);

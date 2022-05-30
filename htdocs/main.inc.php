@@ -1367,11 +1367,11 @@ if (!function_exists("llxHeader")) {
 		print '<body id="mainbody" class="'.$tmpcsstouse.'">'."\n";
 
 		// top menu and left menu area
-		if (empty($conf->dol_hide_topmenu) || GETPOST('dol_invisible_topmenu', 'int')) {
+		if ((empty($conf->dol_hide_topmenu) || GETPOST('dol_invisible_topmenu', 'int')) && !GETPOST('dol_openinpopup', 'aZ09')) {
 			top_menu($head, $title, $target, $disablejs, $disablehead, $arrayofjs, $arrayofcss, $morequerystring, $help_url);
 		}
 
-		if (empty($conf->dol_hide_leftmenu)) {
+		if (empty($conf->dol_hide_leftmenu) && !GETPOST('dol_openinpopup', 'aZ09')) {
 			left_menu('', $help_url, '', '', 1, $title, 1); // $menumanager is retrieved with a global $menumanager inside this function
 		}
 
@@ -2400,6 +2400,14 @@ function printDropdownQuickadd()
 	$items = array(
 		'items' => array(
 			array(
+				"url" => "/adherents/card.php?action=create&amp;mainmenu=members",
+				"title" => "MenuNewMember@members",
+				"name" => "Adherent@members",
+				"picto" => "object_member",
+				"activation" => !empty($conf->adherent->enabled) && $user->rights->adherent->creer, // vs hooking
+				"position" => 5,
+			),
+			array(
 				"url" => "/societe/card.php?action=create&amp;mainmenu=companies",
 				"title" => "MenuNewThirdParty@companies",
 				"name" => "ThirdParty@companies",
@@ -2452,7 +2460,7 @@ function printDropdownQuickadd()
 				"url" => "/supplier_proposal/card.php?action=create&amp;mainmenu=commercial",
 				"title" => "SupplierProposalNew@supplier_proposal",
 				"name" => "SupplierProposal@supplier_proposal",
-				"picto" => "object_propal",
+				"picto" => "supplier_proposal",
 				"activation" => !empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposal->creer, // vs hooking
 				"position" => 70,
 			),
@@ -2460,7 +2468,7 @@ function printDropdownQuickadd()
 				"url" => "/fourn/commande/card.php?action=create&amp;mainmenu=commercial",
 				"title" => "NewSupplierOrderShort@orders",
 				"name" => "SupplierOrder@orders",
-				"picto" => "object_order",
+				"picto" => "supplier_order",
 				"activation" => (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->rights->fournisseur->commande->creer) || (!empty($conf->supplier_order->enabled) && $user->rights->supplier_order->creer), // vs hooking
 				"position" => 80,
 			),
@@ -2468,7 +2476,7 @@ function printDropdownQuickadd()
 				"url" => "/fourn/facture/card.php?action=create&amp;mainmenu=billing",
 				"title" => "NewBill@bills",
 				"name" => "SupplierBill@bills",
-				"picto" => "object_bill",
+				"picto" => "supplier_invoice",
 				"activation" => (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->rights->fournisseur->facture->creer) || (!empty($conf->supplier_invoice->enabled) && $user->rights->supplier_invoice->creer), // vs hooking
 				"position" => 90,
 			),
@@ -2487,6 +2495,14 @@ function printDropdownQuickadd()
 				"picto" => "object_service",
 				"activation" => !empty($conf->service->enabled) && $user->rights->service->creer, // vs hooking
 				"position" => 110,
+			),
+			array(
+				"url" => "/user/card.php?action=create&amp;type=1&amp;mainmenu=home",
+				"title" => "AddUser@users",
+				"name" => "User@users",
+				"picto" => "user",
+				"activation" => $user->rights->user->user->creer, // vs hooking
+				"position" => 500,
 			),
 		),
 	);

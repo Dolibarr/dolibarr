@@ -12,6 +12,7 @@
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2020       Open-Dsi         		<support@open-dsi.fr>
  * Copyright (C) 2021		Frédéric France			<frederic.france@netlogic.fr>
+ * Copyright (C) 2022		Anthony Berton			<anthony.berton@bb2a.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -420,15 +421,15 @@ $prospectstatic->client = 2;
 $prospectstatic->loadCacheOfProspStatus();
 
 
-$title = $langs->trans("ListOfThirdParties");
+$title = $langs->trans("ThirdParties");
 if ($type == 'c' && (empty($search_type) || ($search_type == '1,3'))) {
-	$title = $langs->trans("ListOfCustomers");
+	$title = $langs->trans("Customers");
 }
 if ($type == 'p' && (empty($search_type) || ($search_type == '2,3'))) {
-	$title = $langs->trans("ListOfProspects");
+	$title = $langs->trans("Prospects");
 }
 if ($type == 'f' && (empty($search_type) || ($search_type == '4'))) {
-	$title = $langs->trans("ListOfSuppliers");
+	$title = $langs->trans("Suppliers");
 }
 
 // Select every potentiels, and note each potentiels which fit in search parameters
@@ -677,20 +678,28 @@ $parameters = array('fieldstosearchall' => $fieldstosearchall);
 $reshook = $hookmanager->executeHooks('printFieldListGroupBy', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 
-$sql .= $db->order($sortfield, $sortorder);
-
-// Count total nb of records
+// Count total nb of records with no order and no limits
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
-	$result = $db->query($sql);
-	$nbtotalofrecords = $db->num_rows($result);
+	$resql = $db->query($sql);
+	if ($resql) {
+		$nbtotalofrecords = $db->num_rows($resql);
+	} else {
+		dol_print_error($db);
+	}
+
 	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
+	$db->free($resql);
 }
 
-$sql .= $db->plimit($limit + 1, $offset);
+// Complete request and execute it with limit
+$sql .= $db->order($sortfield, $sortorder);
+if ($limit) {
+	$sql .= $db->plimit($limit + 1, $offset);
+}
 
 $resql = $db->query($sql);
 if (!$resql) {
@@ -699,6 +708,7 @@ if (!$resql) {
 }
 
 $num = $db->num_rows($resql);
+
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
@@ -859,13 +869,10 @@ if (GETPOST('delsoc')) {
 
 // List of mass actions available
 $arrayofmassactions = array(
-'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
-//    'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
+	'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
+	//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 );
 //if($user->rights->societe->creer) $arrayofmassactions['createbills']=$langs->trans("CreateInvoiceForThisCustomer");
-if ($user->rights->societe->supprimer) {
-	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
-}
 if ($user->rights->societe->creer) {
 	$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
 }
@@ -880,6 +887,9 @@ if ($user->rights->societe->creer) {
 }
 if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete', 'preaffecttag', 'preenable', 'preclose'))) {
 	$arrayofmassactions = array();
+}
+if ($user->rights->societe->supprimer) {
+	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
@@ -998,7 +1008,7 @@ if ($moreforfilter) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
+$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')); // This also change content of $arrayfields
 // Show the massaction checkboxes only when this page is not opend from the Extended POS
 if ($massactionbutton && $contextpage != 'poslist') {
 	$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
@@ -1013,6 +1023,13 @@ print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" :
 
 // Fields title search
 print '<tr class="liste_titre_filter">';
+if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+	// Action column
+	print '<td class="liste_titre center actioncolumn">';
+	$searchpicto = $form->showFilterButtons('left');
+	print $searchpicto;
+	print '</td>';
+}
 if (!empty($arrayfields['s.rowid']['checked'])) {
 	print '<td class="liste_titre" data-key="id">';
 	print '<input class="flat searchstring" type="text" name="search_id" size="1" value="'.dol_escape_htmltag($search_id).'">';
@@ -1241,14 +1258,19 @@ if (!empty($arrayfields['s.import_key']['checked'])) {
 	print '<input class="flat searchstring maxwidth50" type="text" name="search_import_key" value="'.dol_escape_htmltag($search_import_key).'">';
 	print '</td>';
 }
-// Action column
-print '<td class="liste_titre center actioncolumn">';
-$searchpicto = $form->showFilterButtons();
-print $searchpicto;
-print '</td>';
+if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+	// Action column
+	print '<td class="liste_titre center actioncolumn">';
+	$searchpicto = $form->showFilterButtons();
+	print $searchpicto;
+	print '</td>';
+}
 
 print "</tr>\n";
 print '<tr class="liste_titre">';
+if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch actioncolumn ');
+}
 if (!empty($arrayfields['s.rowid']['checked'])) {
 	print_liste_field_titre($arrayfields['s.rowid']['label'], $_SERVER["PHP_SELF"], "s.rowid", "", $param, ' data-key="id"', $sortfield, $sortorder, 'actioncolumn ');
 }
@@ -1363,7 +1385,9 @@ if (!empty($arrayfields['s.status']['checked'])) {
 if (!empty($arrayfields['s.import_key']['checked'])) {
 	print_liste_field_titre($arrayfields['s.import_key']['label'], $_SERVER["PHP_SELF"], "s.import_key", "", $param, '', $sortfield, $sortorder, 'center ');
 }
-print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch actioncolumn ');
+if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch actioncolumn ');
+}
 print "</tr>\n";
 
 
@@ -1399,6 +1423,19 @@ while ($i < min($num, $limit)) {
 		print ' onclick="location.href=\'list.php?action=change&contextpage=poslist&idcustomer='.$obj->rowid.'&place='.urlencode($place).'\'"';
 	}
 	print '>';
+
+	// Action column (Show the massaction button only when this page is not opend from the Extended POS)
+	if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+		print '<td class="nowrap center actioncolumn">';
+		if (($massactionbutton || $massaction) && $contextpage != 'poslist') {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+			$selected = 0;
+			if (in_array($obj->rowid, $arrayofselected)) {
+				$selected = 1;
+			}
+			print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
+		print '</td>';
+	}
 	if (!empty($arrayfields['s.rowid']['checked'])) {
 		print '<td class="tdoverflowmax50" data-key="id">';
 		print $obj->rowid;
@@ -1469,7 +1506,7 @@ while ($i < min($num, $limit)) {
 	}
 	// Address
 	if (!empty($arrayfields['s.address']['checked'])) {
-		print '<td>'.dol_escape_htmltag($obj->address).'</td>';
+		print '<td class="tdoverflowmax250" title="'.dol_escape_htmltag($obj->address).'">'.dol_escape_htmltag($obj->address).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -1640,7 +1677,8 @@ while ($i < min($num, $limit)) {
 	if (!empty($arrayfields['s.fk_stcomm']['checked'])) {
 		// Prospect status
 		print '<td class="center nowrap"><div class="nowrap">';
-		print '<div class="inline-block">'.$companystatic->LibProspCommStatut($obj->stcomm_id, 2, $prospectstatic->cacheprospectstatus[$obj->stcomm_id]['label'], $obj->stcomm_picto);
+		print '<div class="inline-block">';
+		print $companystatic->LibProspCommStatut($obj->stcomm_id, 2, $prospectstatic->cacheprospectstatus[$obj->stcomm_id]['label'], $obj->stcomm_picto);
 		print '</div> - <div class="inline-block">';
 		foreach ($prospectstatic->cacheprospectstatus as $key => $val) {
 			$titlealt = 'default';
@@ -1676,7 +1714,7 @@ while ($i < min($num, $limit)) {
 	print $hookmanager->resPrint;
 	// Date creation
 	if (!empty($arrayfields['s.datec']['checked'])) {
-		print '<td class="center nowrap">';
+		print '<td class="center nowraponall">';
 		print dol_print_date($db->jdate($obj->date_creation), 'dayhour', 'tzuser');
 		print '</td>';
 		if (!$i) {
@@ -1685,7 +1723,7 @@ while ($i < min($num, $limit)) {
 	}
 	// Date modification
 	if (!empty($arrayfields['s.tms']['checked'])) {
-		print '<td class="center nowrap">';
+		print '<td class="center nowraponall">';
 		print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
 		print '</td>';
 		if (!$i) {
@@ -1694,7 +1732,7 @@ while ($i < min($num, $limit)) {
 	}
 	// Status
 	if (!empty($arrayfields['s.status']['checked'])) {
-		print '<td class="center nowrap">'.$companystatic->getLibStatut(5).'</td>';
+		print '<td class="center nowraponall">'.$companystatic->getLibStatut(5).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -1707,17 +1745,18 @@ while ($i < min($num, $limit)) {
 			$totalarray['nbfield']++;
 		}
 	}
-
 	// Action column (Show the massaction button only when this page is not opend from the Extended POS)
-	print '<td class="nowrap center actioncolumn">';
-	if (($massactionbutton || $massaction) && $contextpage != 'poslist') {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-		$selected = 0;
-		if (in_array($obj->rowid, $arrayofselected)) {
-			$selected = 1;
+	if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+		print '<td class="nowrap center actioncolumn">';
+		if (($massactionbutton || $massaction) && $contextpage != 'poslist') {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+			$selected = 0;
+			if (in_array($obj->rowid, $arrayofselected)) {
+				$selected = 1;
+			}
+			print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
-		print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+		print '</td>';
 	}
-	print '</td>';
 	if (!$i) {
 		$totalarray['nbfield']++;
 	}

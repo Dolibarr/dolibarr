@@ -40,6 +40,9 @@ create table llx_extrafields
     totalizable     boolean DEFAULT FALSE,                      -- is extrafield totalizable on list
 	langs			varchar(64),								-- example: fileofmymodule@mymodule
 	help            text,                                       -- to store help tooltip
+	css             varchar(128),                               -- to store css on create/update forms
+	cssview         varchar(128),                               -- to store css on view form
+	csslist         varchar(128),                               -- to store css on list
 	fk_user_author	integer,									-- user making creation
 	fk_user_modif	integer,	                                -- user making last change
 	datec			datetime,									-- date de creation

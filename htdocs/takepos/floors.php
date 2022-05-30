@@ -128,22 +128,20 @@ top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 <link rel="stylesheet" href="css/pos.css.php?a=xxx">
 <style type="text/css">
 div.tablediv{
-background-image:url(img/table.gif);
--moz-background-size:100% 100%;
--webkit-background-size:100% 100%;
-background-size:100% 100%;
-height:10%;
-width:10%;
-text-align: center;
-font-size:300%;
-color:white;
+	background-image:url(img/table.gif);
+	-moz-background-size:100% 100%;
+	-webkit-background-size:100% 100%;
+	background-size:100% 100%;
+	height:10%;
+	width:10%;
+	text-align: center;
+	font-size:300%;
+	color:white;
 }
+
+/* Color when a table has a pending order/invoice */
 div.red{
-color:red;
-}
-html, body
-{
-height: 100%;
+	color:red;
 }
 </style>
 
