@@ -483,7 +483,7 @@ print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 
 // print dol_banner_tab and the BOM list of a product
-if ($IdFk_product)
+if ($IdFk_product && $conf->global->BOM_PRODUCT_TAB)
 {
     print '<input type="hidden" name="fk_product" value="'.$IdFk_product.'">';
     $param .= '&fk_product='.urlencode($IdFk_product);
