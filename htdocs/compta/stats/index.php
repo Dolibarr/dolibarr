@@ -407,7 +407,7 @@ for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++) {
 		$cum_ht[$case]=0;
 		$cum[$case]=0;
 
-		
+
 		if ($annee >= $year_start) {	// We ignore $annee < $year_start, we loop on it to be able to make delta, nothing is output.
 			if ($modecompta == 'CREANCES-DETTES') {
 				// Value turnover of month w/o VAT
