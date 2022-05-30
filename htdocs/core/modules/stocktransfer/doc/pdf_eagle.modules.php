@@ -787,6 +787,7 @@ class pdf_eagle extends ModelePdfStockTransfer
 	 */
 	protected function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0)
 	{
+		// phpcs:enable
 		global $conf;
 
 		// Force to disable hidetop and hidebottom
@@ -900,6 +901,7 @@ class pdf_eagle extends ModelePdfStockTransfer
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
+		// phpcs:enable
 		global $conf, $langs, $mysoc;
 
 		$langs->load("orders");
@@ -1164,6 +1166,7 @@ class pdf_eagle extends ModelePdfStockTransfer
 	 */
 	protected function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{
+		// phpcs:enable
 		global $conf;
 		$showdetails = $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
 		return pdf_pagefoot($pdf, $outputlangs, 'SHIPPING_FREE_TEXT', $this->emetteur, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext);
