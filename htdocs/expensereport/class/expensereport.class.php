@@ -2536,6 +2536,108 @@ class ExpenseReport extends CommonObject
 			return -1;
 		}
 	}
+
+	/**
+	 *  \brief Compute the cost of the kilometers expense based on the number of kilometers and the vehicule category
+	 *
+	 *  @param     int		$fk_cat           Category of the vehicule used
+	 *  @param     real		$qty              Number of kilometers
+	 *  @param     real		$tva              VAT rate
+	 *  @return    int              		  <0 if KO, total ttc if OK
+	 */
+	public function computeTotalKm($fk_cat, $qty, $tva)
+	{
+		global $langs,$user,$db,$conf;
+
+
+		$cumulYearQty = 0;
+		$ranges = array();
+		$coef = 0;
+
+
+		if ($fk_cat < 0) {
+			$this->error = $langs->trans('ErrorBadParameterCat');
+			return -1;
+		}
+
+		if ($qty <= 0) {
+			$this->error = $langs->trans('ErrorBadParameterQty');
+			return -1;
+		}
+
+		$currentUser = new User($db);
+		$currentUser->fetch($this->fk_user);
+		$currentUser->getrights('expensereport');
+		//Clean
+		$qty = price2num($qty);
+
+		$sql  = " SELECT r.range_ik, t.ikoffset, t.coef";
+		$sql .= " FROM ".MAIN_DB_PREFIX."expensereport_ik t";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_exp_tax_range r ON r.rowid = t.fk_range";
+		$sql .= " WHERE t.fk_c_exp_tax_cat = ".(int) $fk_cat;
+		$sql .= " ORDER BY r.range_ik ASC";
+
+		dol_syslog("expenseReport::computeTotalkm sql=".$sql, LOG_DEBUG);
+
+		$result = $this->db->query($sql);
+
+		if ($result) {
+			if ($conf->global->EXPENSEREPORT_CALCULATE_MILEAGE_EXPENSE_COEFFICIENT_ON_CURRENT_YEAR) {
+				$arrayDate = dol_getdate(dol_now());
+				$sql = " SELECT count(n.qty) as cumul FROM ".MAIN_DB_PREFIX."expensereport_det n";
+				$sql .= " LEFT JOIN  ".MAIN_DB_PREFIX."expensereport e ON e.rowid = n.fk_expensereport";
+				$sql .= " LEFT JOIN  ".MAIN_DB_PREFIX."c_type_fees tf ON tf.id = n.fk_c_type_fees";
+				$sql.= " WHERE e.fk_user_author = ".(int) $this->fk_user_author;
+				$sql.= " AND YEAR(n.date) = ".(int) $arrayDate['year'] ;
+				$sql.= " AND tf.code = 'EX_KME' ";
+				$sql.= " AND e.fk_statut = ".(int) ExpenseReport::STATUS_VALIDATED;
+
+				$resql = $this->db->query($sql);
+
+				if ($resql) {
+					$obj = $this->db->fetch_object($resql);
+					$cumulYearQty = $obj->cumul;
+				}
+				$qty = $cumulYearQty + $qty;
+			}
+
+			$num = $this->db->num_rows($result);
+
+			if ($num) {
+				for ($i = 0; $i < $num; $i++) {
+					$obj = $this->db->fetch_object($result);
+
+					$ranges[$i] = $obj;
+				}
+
+
+				for ($i = 0; $i < $num; $i++) {
+					if ($i < ($num - 1)) {
+						if ($qty > $ranges[$i]->range_ik && $qty < $ranges[$i+1]->range_ik) {
+							$coef = $ranges[$i]->coef;
+							$offset = $ranges[$i]->ikoffset;
+						}
+					} else {
+						if ($qty > $ranges[$i]->range_ik) {
+							$coef = $ranges[$i]->coef;
+							$offset = $ranges[$i]->ikoffset;
+						}
+					}
+				}
+
+				$total_ht = $coef;
+				//$total_ttc = price2num($total_ht + ( $total_ht * $tva / 100),'MT');
+				return $total_ht;
+			} else {
+				$this->error = $langs->trans('TaxUndefinedForThisCategory');
+				return -1;
+			}
+		} else {
+			$this->error = $this->db->error()." sql=".$sql;
+
+			return -1;
+		}
+	}
 }
 
 
