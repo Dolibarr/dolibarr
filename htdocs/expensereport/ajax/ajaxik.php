@@ -71,21 +71,21 @@ $rep->errorMessage = '';
 
 
 if (empty($fk_expense) || $fk_expense < 0) {
-	$rep->errorMessage =  json_encode(array('error' => $langs->transnoentitiesnoconv('ErrorBadValueForParameter', $fk_expense, 'fk_expense')));
+	$rep->errorMessage =   $langs->transnoentitiesnoconv('ErrorBadValueForParameter', $fk_expense, 'fk_expense');
 } elseif (empty($fk_c_exp_tax_cat) || $fk_c_exp_tax_cat < 0) {
-	$rep->errorMessage =  json_encode(array('error' => $langs->transnoentitiesnoconv('ErrorBadValueForParameter', $fk_c_exp_tax_cat, 'fk_c_exp_tax_cat')));
+	$rep->errorMessage =  $langs->transnoentitiesnoconv('ErrorBadValueForParameter', $fk_c_exp_tax_cat, 'fk_c_exp_tax_cat');
 
 	$rep->response_status = 'error';
 } else {
 	// @see ndfp.class.php:3576 (method: compute_total_km)
 	$expense = new ExpenseReport($db);
 	if ($expense->fetch($fk_expense) <= 0) {
-		$rep->errorMessage =  json_encode(array('error' => $langs->transnoentitiesnoconv('ErrorRecordNotFound'), 'fk_expense' => $fk_expense));
+		$rep->errorMessage =  $langs->transnoentitiesnoconv('ErrorRecordNotFound');
 		$rep->response_status = 'error';
 	} else {
 		$userauthor = new User($db);
 		if ($userauthor->fetch($expense->fk_user_author) <= 0) {
-			$rep->errorMessage =  json_encode(array('error' => $langs->transnoentitiesnoconv('ErrorRecordNotFound'), 'fk_user_author' => $expense->fk_user_author));
+			$rep->errorMessage =  $langs->transnoentitiesnoconv('ErrorRecordNotFound');
 			$rep->response_status = 'error';
 		} else {
 			$expense = new ExpenseReport($db);
