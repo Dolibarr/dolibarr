@@ -2562,10 +2562,10 @@ class ExpenseReport extends CommonObject
 	/**
 	 *  \brief Compute the cost of the kilometers expense based on the number of kilometers and the vehicule category
 	 *
-	 *  @param     $fk_cat           Category of the vehicule used
-	 *  @param     $qty              Number of kilometers
-	 *  @param     $tva              VAT rate
-	 *  @return    int              <0 if KO, total ttc if OK
+	 *  @param     int		$fk_cat           Category of the vehicule used
+	 *  @param     real		$qty              Number of kilometers
+	 *  @param     real		$tva              VAT rate
+	 *  @return    int              		  <0 if KO, total ttc if OK
 	 */
 	public function computeTotalKm($fk_cat, $qty, $tva)
 	{
