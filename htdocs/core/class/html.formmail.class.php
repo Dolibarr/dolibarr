@@ -1629,7 +1629,7 @@ class FormMail extends Form
 					}
 
 					//Online payement link
-					if (!empty(adherent->enabled)) {
+					if (!empty($conf->adherent->enabled)) {
 						$tmparray['__ONLINEPAYMENTLINK_MEMBER__'] = 'OnlinePaymentLinkUniquePerMember';
 					}
 					if (!empty($conf->don->enabled)) {
