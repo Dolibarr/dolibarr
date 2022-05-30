@@ -2626,6 +2626,7 @@ if ($action == 'create') {
 							,success:function(response) {
                                 if (response.response_status == "success"){
                                 jQuery("#value_unit_ht").val(response.data);
+                                jQuery("#value_unit_ht").trigger("change");
                                 jQuery("#value_unit").val("");
                                 }
 							},
