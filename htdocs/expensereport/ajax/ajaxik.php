@@ -76,7 +76,6 @@ if (empty($fk_expense) || $fk_expense < 0) {
 	$rep->errorMessage =  $langs->transnoentitiesnoconv('ErrorBadValueForParameter', $fk_c_exp_tax_cat, 'fk_c_exp_tax_cat');
 
 	$rep->response_status = 'error';
-
 } else {
 	// @see ndfp.class.php:3576 (method: compute_total_km)
 	$expense = new ExpenseReport($db);
