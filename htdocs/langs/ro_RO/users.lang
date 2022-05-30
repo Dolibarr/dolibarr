@@ -124,3 +124,7 @@ ValidatorIsSupervisorByDefault=În mod implicit, validatorul este supervizorul u
 UserPersonalEmail=Email personal
 UserPersonalMobile=Telefon mobil personal
 WarningNotLangOfInterface=Atenţie, aceasta este limba principală pe care o vorbește utilizatorul, nu limba interfeței pe care a ales să o vadă. Pentru a schimba limba interfeței pentru acest utilizator, accesați fila %s 
+DateLastLogin=Data ultimei autentificări
+DatePreviousLogin=Data autentificării anterioare
+IPLastLogin=IP ultima autentificare
+IPPreviousLogin=IP autentificare anterioară

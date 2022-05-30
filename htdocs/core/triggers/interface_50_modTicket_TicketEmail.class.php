@@ -169,7 +169,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 					}
 
 					if ($sendto) {
-						$this->composeAndSendCustomerMessage($sendto, $subject_customer, $body_customer, $see_ticket_customer, $object, $langs, $conf);
+						$this->composeAndSendCustomerMessage($sendto, $subject_customer, $body_customer, $see_ticket_customer, $object, $langs);
 					}
 				}
 
@@ -240,7 +240,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 						unset($linked_contacts);
 					}
 					if ($sendto) {
-						$this->composeAndSendCustomerMessage($sendto, $subject_customer, $body_customer, $see_ticket_customer, $object, $langs, $conf);
+						$this->composeAndSendCustomerMessage($sendto, $subject_customer, $body_customer, $see_ticket_customer, $object, $langs);
 					}
 				}
 				$ok = 1;

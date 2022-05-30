@@ -569,8 +569,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			$cssforfield .= ($cssforfield ? ' ' : '').'center';
 		} elseif ($key == 'status') {
 			$cssforfield .= ($cssforfield ? ' ' : '').'center';
-		}
-		elseif ($key == 'fk_parent_line') {
+		} elseif ($key == 'fk_parent_line') {
 			$cssforfield .= ($cssforfield ? ' ' : '').'center';
 		}
 

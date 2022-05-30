@@ -568,10 +568,9 @@ class Documents extends DolibarrApi
 	{
 		global $db, $conf;
 
-		/*var_dump($modulepart);
-		var_dump($filename);
-		var_dump($filecontent);
-		exit;*/
+		//var_dump($modulepart);
+		//var_dump($filename);
+		//var_dump($filecontent);exit;
 
 		if (empty($modulepart)) {
 			throw new RestException(400, 'Modulepart not provided.');

@@ -99,30 +99,22 @@ class Ctypent // extends CommonObject
 			$this->module = trim($this->module);
 		}
 
-
-
 		// Check parameters
 		// Put here code to add control on parameters values
 
 		// Insert request
 		$sql = "INSERT INTO ".$this->db->prefix()."c_typent(";
-
 		$sql .= "id,";
 		$sql .= "code,";
 		$sql .= "libelle,";
 		$sql .= "active,";
 		$sql .= "module";
-
-
 		$sql .= ") VALUES (";
-
 		$sql .= " ".(!isset($this->id) ? 'NULL' : "'".$this->db->escape($this->id)."'").",";
 		$sql .= " ".(!isset($this->code) ? 'NULL' : "'".$this->db->escape($this->code)."'").",";
 		$sql .= " ".(!isset($this->libelle) ? 'NULL' : "'".$this->db->escape($this->libelle)."'").",";
 		$sql .= " ".(!isset($this->active) ? 'NULL' : "'".$this->db->escape($this->active)."'").",";
 		$sql .= " ".(!isset($this->module) ? 'NULL' : "'".$this->db->escape($this->module)."'")."";
-
-
 		$sql .= ")";
 
 		$this->db->begin();
@@ -276,7 +268,7 @@ class Ctypent // extends CommonObject
 		$error = 0;
 
 		$sql = "DELETE FROM ".$this->db->prefix()."c_typent";
-		$sql .= " WHERE id=".$this->id;
+		$sql .= " WHERE id = ".$this->id;
 
 		$this->db->begin();
 

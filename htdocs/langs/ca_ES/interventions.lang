@@ -66,3 +66,5 @@ RepeatableIntervention=Plantilla d’intervenció
 ToCreateAPredefinedIntervention=Per a crear una intervenció predefinida o recurrent, creeu una intervenció comuna i convertiu-la en plantilla d'intervenció
 ConfirmReopenIntervention=Esteu segur que voleu tornar a obrir la intervenció <b> %s </b>?
 GenerateInter=Generar intervenció
+FichinterNoContractLinked=La intervenció %s s'ha creat sense un contracte vinculat.
+ErrorFicheinterCompanyDoesNotExist=L'empresa no existeix. No s'ha creat la intervenció.

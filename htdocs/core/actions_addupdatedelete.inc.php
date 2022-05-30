@@ -102,10 +102,10 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 
 		//var_dump($key.' '.$value.' '.$object->fields[$key]['type']);
 		$object->$key = $value;
-		if ($val['notnull'] > 0 && $object->$key == '' && !is_null($val['default']) && $val['default'] == '(PROV)') {
+		if (!empty($val['notnull']) && $val['notnull'] > 0 && $object->$key == '' && isset($val['default']) && $val['default'] == '(PROV)') {
 			$object->$key = '(PROV)';
 		}
-		if ($val['notnull'] > 0 && $object->$key == '' && is_null($val['default'])) {
+		if (!empty($val['notnull']) && $val['notnull'] > 0 && $object->$key == '' && !isset($val['default'])) {
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv($val['label'])), null, 'errors');
 		}
@@ -122,7 +122,7 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 
 	// Fill array 'array_options' with data from add form
 	if (!$error) {
-		$ret = $extrafields->setOptionalsFromPost(null, $object);
+		$ret = $extrafields->setOptionalsFromPost(null, $object, '', 1);
 		if ($ret < 0) {
 			$error++;
 		}

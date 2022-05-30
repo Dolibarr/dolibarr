@@ -1051,8 +1051,10 @@ if ($ispaymentok) {
 				include_once DOL_DOCUMENT_ROOT.'/don/class/paymentdonation.class.php';
 				$paiement = new PaymentDonation($db);
 
+				$totalpaid = $FinalPaymentAmt;
+
 				if ($currencyCodeType == $conf->currency) {
-					$paiement->amounts = array($object->id => $FinalPaymentAmt); // Array with all payments dispatching with donation
+					$paiement->amounts = array($object->id => $totalpaid); // Array with all payments dispatching with donation
 				} else {
 					// PaymentDonation does not support multi currency
 					$postactionmessages[] = 'Payment donation can\'t be payed with diffent currency than '.$conf->currency;
@@ -1078,7 +1080,9 @@ if ($ispaymentok) {
 						$postactionmessages[] = 'Payment created';
 						$ispostactionok = 1;
 
-						if ($totalpayed >= $don->getRemainToPay()) $don->setPaid($don->id);
+						if ($totalpaid >= $don->getRemainToPay()) {
+							$don->setPaid($don->id);
+						}
 					}
 				}
 

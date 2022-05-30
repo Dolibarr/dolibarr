@@ -394,10 +394,10 @@ class BonPrelevement extends CommonObject
 					$amounts[$fac->id] = $facs[$i][1];
 					$amountsperthirdparty[$fac->socid][$fac->id] = $facs[$i][1];
 
-					$totalpaye = $fac->getSommePaiement();
+					$totalpaid = $fac->getSommePaiement();
 					$totalcreditnotes = $fac->getSumCreditNotesUsed();
 					$totaldeposits = $fac->getSumDepositsUsed();
-					$alreadypayed = $totalpaye + $totalcreditnotes + $totaldeposits;
+					$alreadypayed = $totalpaid + $totalcreditnotes + $totaldeposits;
 
 					// @TODO Move this after creation of payment
 					if (price2num($alreadypayed + $facs[$i][1], 'MT') == $fac->total_ttc) {
@@ -1066,8 +1066,8 @@ class BonPrelevement extends CommonObject
 					// This also set the property $this->total with amount that is included into file
 					$result = $this->generate($format, $executiondate, $type);
 					if ($result < 0) {
-						/*var_dump($this->error);
-						var_dump($this->invoice_in_error); */
+						//var_dump($this->error);
+						//var_dump($this->invoice_in_error);
 						$error++;
 					}
 				}

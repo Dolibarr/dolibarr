@@ -19,6 +19,7 @@
 use Luracast\Restler\RestException;
 
 dol_include_once('/knowledgemanagement/class/knowledgerecord.class.php');
+dol_include_once('/categories/class/categorie.class.php');
 
 
 
@@ -85,6 +86,39 @@ class KnowledgeManagement extends DolibarrApi
 		return $this->_cleanObjectDatas($this->knowledgerecord);
 	}
 
+	/**
+	 * Get categories for a knowledgerecord object
+	 *
+	 * @param int    $id        ID of knowledgerecord object
+	 * @param string $sortfield Sort field
+	 * @param string $sortorder Sort order
+	 * @param int    $limit     Limit for list
+	 * @param int    $page      Page number
+	 *
+	 * @return mixed
+	 *
+	 * @url GET /knowledgerecords/{id}/categories
+	 */
+	public function getCategories($id, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0)
+	{
+		if (!DolibarrApiAccess::$user->rights->categorie->lire) {
+			throw new RestException(401);
+		}
+
+		$categories = new Categorie($this->db);
+
+		$result = $categories->getListForItem($id, 'knowledgemanagement', $sortfield, $sortorder, $limit, $page);
+
+		if (empty($result)) {
+			throw new RestException(404, 'No category found');
+		}
+
+		if ($result < 0) {
+			throw new RestException(503, 'Error when retrieve category list : '.array_merge(array($categories->error), $categories->errors));
+		}
+
+		return $result;
+	}
 
 	/**
 	 * List knowledgerecords
@@ -218,7 +252,7 @@ class KnowledgeManagement extends DolibarrApi
 		}
 
 		// Clean data
-		// $this->knowledgerecord->abc = checkVal($this->knowledgerecord->abc, 'alphanohtml');
+		// $this->knowledgerecord->abc = sanitizeVal($this->knowledgerecord->abc, 'alphanohtml');
 
 		if ($this->knowledgerecord->create(DolibarrApiAccess::$user)<0) {
 			throw new RestException(500, "Error creating KnowledgeRecord", array_merge(array($this->knowledgerecord->error), $this->knowledgerecord->errors));
@@ -260,7 +294,7 @@ class KnowledgeManagement extends DolibarrApi
 		}
 
 		// Clean data
-		// $this->knowledgerecord->abc = checkVal($this->knowledgerecord->abc, 'alphanohtml');
+		// $this->knowledgerecord->abc = sanitizeVal($this->knowledgerecord->abc, 'alphanohtml');
 
 		if ($this->knowledgerecord->update(DolibarrApiAccess::$user, false) > 0) {
 			return $this->get($id);

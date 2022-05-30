@@ -210,6 +210,8 @@ if (empty($reshook)) {
 				$ret = $object->fetch($id); // Reload to get new records
 				$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			}
+		} else {
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
 
@@ -268,9 +270,9 @@ if (empty($reshook)) {
 		$object->origin_id = $origin_id;
 		$object->fk_project = GETPOST('projectid', 'int');
 		$object->weight = GETPOST('weight', 'int') == '' ? null : GETPOST('weight', 'int');
-		$object->sizeH = GETPOST('sizeH', 'int') == '' ? null : GETPOST('sizeH', 'int');
-		$object->sizeW = GETPOST('sizeW', 'int') == '' ? null : GETPOST('sizeW', 'int');
-		$object->sizeS = GETPOST('sizeS', 'int') == '' ? null : GETPOST('sizeS', 'int');
+		$object->trueHeight = GETPOST('trueHeight', 'int') == '' ? null : GETPOST('trueHeight', 'int');
+		$object->trueWidth = GETPOST('trueWidth', 'int') == '' ? null : GETPOST('trueWidth', 'int');
+		$object->trueDepth = GETPOST('trueDepth', 'int') == '' ? null : GETPOST('trueDepth', 'int');
 		$object->size_units = GETPOST('size_units', 'int');
 		$object->weight_units = GETPOST('weight_units', 'int');
 
@@ -348,8 +350,10 @@ if (empty($reshook)) {
 				}
 				$qty = "qtyl".$i;
 				$comment = "comment".$i;
-				$eatby = "dlc".$i;
-				$sellby = "dluo".$i;
+				// EATBY <-> DLUO see productbatch.class.php
+				// SELLBY <-> DLC
+				$eatby = "dluo".$i;
+				$sellby = "dlc".$i;
 				$batch = "batch".$i;
 				$cost_price = "cost_price".$i;
 
@@ -624,9 +628,11 @@ if (empty($reshook)) {
 						$batch = "batch".$line_id;
 						$dlc = "dlc".$line_id;
 						$dluo = "dluo".$line_id;
-						$eatby = GETPOST($dlc, 'alpha');
+						// EATBY <-> DLUO
+						$eatby = GETPOST($dluo, 'alpha');
 						$eatbydate = str_replace('/', '-', $eatby);
-						$sellby = GETPOST($dluo, 'alpha');
+						// SELLBY <-> DLC
+						$sellby = GETPOST($dlc, 'alpha');
 						$sellbydate = str_replace('/', '-', $sellby);
 						$line->batch = GETPOST($batch, 'alpha');
 						$line->eatby = strtotime($eatbydate);
@@ -637,8 +643,7 @@ if (empty($reshook)) {
 						setEventMessages($line->error, $line->errors, 'errors');
 						$error++;
 					}
-				} else // Product no predefined
-				{
+				} else { // Product no predefined
 					$qty = "qtyl".$line_id;
 					$line->id = $line_id;
 					$line->qty = GETPOST($qty, 'int');
@@ -844,9 +849,9 @@ if ($action == 'create') {
 			// Dim
 			print '<tr><td>';
 			print $langs->trans("Width").' x '.$langs->trans("Height").' x '.$langs->trans("Depth");
-			print ' </td><td colspan="3"><input name="sizeW" size="4" value="'.GETPOST('sizeW', 'int').'">';
-			print ' x <input name="sizeH" size="4" value="'.GETPOST('sizeH', 'int').'">';
-			print ' x <input name="sizeS" size="4" value="'.GETPOST('sizeS', 'int').'">';
+			print ' </td><td colspan="3"><input name="trueWidth" size="4" value="'.GETPOST('trueWidth', 'int').'">';
+			print ' x <input name="trueHeight" size="4" value="'.GETPOST('trueHeight', 'int').'">';
+			print ' x <input name="trueDepth" size="4" value="'.GETPOST('trueDepth', 'int').'">';
 			print ' ';
 			$text = $formproduct->selectMeasuringUnits("size_units", "size", GETPOST('size_units', 'int'), 0, 2);
 			$htmltext = $langs->trans("KeepEmptyForAutoCalculation");
@@ -1664,7 +1669,8 @@ if ($action == 'create') {
 		print '<br>';
 
 		print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder centpercent">';
+		print '<table id="tablelines" class="noborder centpercent">';
+		print '<thead>';
 		print '<tr class="liste_titre">';
 		// #
 		if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
@@ -1729,6 +1735,7 @@ if ($action == 'create') {
 			print '<td class="linecoldelete" width="10"></td>';
 		}
 		print "</tr>\n";
+		print '</thead>';
 
 		$var = false;
 
@@ -1794,9 +1801,10 @@ if ($action == 'create') {
 		$arrayofpurchaselinealreadyoutput = array();
 
 		// Loop on each product to send/sent. Warning: $lines must be sorted by ->fk_commandefourndet (it is a regroupment key on output)
+		print '<tbody>';
 		for ($i = 0; $i < $num_prod; $i++) {
 			print '<!-- origin line id = '.(!empty($lines[$i]->origin_line_id) ? $lines[$i]->origin_line_id : 0).' -->'; // id of order line
-			print '<tr class="oddeven">';
+			print '<tr class="oddeven" id="row-'.$lines[$i]->id.'" data-id="'.$lines[$i]->id.'" data-element="'.$lines[$i]->element.'">';
 
 			// #
 			if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
@@ -1814,7 +1822,7 @@ if ($action == 'create') {
 					$label = (!empty($lines[$i]->product->label) ? $lines[$i]->product->label : $lines[$i]->product->product_label);
 				}
 
-				print '<td>';
+				print '<td class="linecoldescription">';
 				if (!array_key_exists($lines[$i]->fk_commandefourndet, $arrayofpurchaselinealreadyoutput)) {
 					$text = $lines[$i]->product->getNomUrl(1);
 					$text .= ' - '.$label;
@@ -1827,7 +1835,7 @@ if ($action == 'create') {
 				}
 				print "</td>\n";
 			} else {
-				print "<td>";
+				print '<td class="linecoldescription">';
 				if (!array_key_exists($lines[$i]->fk_commandefourndet, $arrayofpurchaselinealreadyoutput)) {
 					if ($lines[$i]->product_type == Product::TYPE_SERVICE) {
 						$text = img_object($langs->trans('Service'), 'service');
@@ -1855,7 +1863,7 @@ if ($action == 'create') {
 
 
 			// Qty ordered
-			print '<td class="center">';
+			print '<td class="center linecolqty">';
 			if (!array_key_exists($lines[$i]->fk_commandefourndet, $arrayofpurchaselinealreadyoutput)) {
 				print $lines[$i]->qty_asked;
 			}
@@ -1863,7 +1871,7 @@ if ($action == 'create') {
 
 			// Qty in other receptions (with reception and warehouse used)
 			if ($origin && $origin_id > 0) {
-				print '<td class="center nowrap">';
+				print '<td class="center nowrap linecolqtyinotherreceptions">';
 				if (!array_key_exists($lines[$i]->fk_commandefourndet, $arrayofpurchaselinealreadyoutput)) {
 					foreach ($alreadysent as $key => $val) {
 						if ($lines[$i]->fk_commandefourndet == $key) {
@@ -1934,7 +1942,7 @@ if ($action == 'create') {
 				print '</table></td>';
 			} else {
 				// Qty to receive or received
-				print '<td class="center">'.$lines[$i]->qty.'</td>';
+				print '<td class="center linecolqtytoreceive">'.$lines[$i]->qty.'</td>';
 
 				// Warehouse source
 				if (!empty($conf->stock->enabled)) {
@@ -1954,7 +1962,7 @@ if ($action == 'create') {
 				if (!empty($conf->productbatch->enabled)) {
 					if (isset($lines[$i]->batch)) {
 						print '<!-- Detail of lot -->';
-						print '<td>';
+						print '<td class="linecolbatch">';
 						$detail = '';
 						if ($lines[$i]->product->status_batch) {
 							$detail .= $langs->trans("Batch").': '.$lines[$i]->batch;
@@ -1978,7 +1986,7 @@ if ($action == 'create') {
 			}
 
 			// Weight
-			print '<td class="center">';
+			print '<td class="center linecolweight">';
 			if (!empty($lines[$i]->fk_product_type) && $lines[$i]->fk_product_type == Product::TYPE_PRODUCT) {
 				print $lines[$i]->product->weight * $lines[$i]->qty.' '.measuringUnitString(0, "weight", $lines[$i]->product->weight_units);
 			} else {
@@ -1987,7 +1995,7 @@ if ($action == 'create') {
 			print '</td>';
 
 			// Volume
-			print '<td class="center">';
+			print '<td class="center linecolvolume">';
 			if (!empty($lines[$i]->fk_product_type) && $lines[$i]->fk_product_type == Product::TYPE_PRODUCT) {
 				print $lines[$i]->product->volume * $lines[$i]->qty.' '.measuringUnitString(0, "volume", $lines[$i]->product->volume_units);
 			} else {
@@ -2035,6 +2043,7 @@ if ($action == 'create') {
 				}
 			}
 		}
+		print '</tbody>';
 
 		// TODO Show also lines ordered but not delivered
 

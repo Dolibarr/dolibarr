@@ -84,9 +84,9 @@ $monthofday = GETPOST('addtimemonth');
 $dayofday = GETPOST('addtimeday');
 $yearofday = GETPOST('addtimeyear');
 
-/*var_dump(GETPOST('remonth'));
-var_dump(GETPOST('button_search_x'));
-var_dump(GETPOST('button_addtime'));*/
+//var_dump(GETPOST('remonth'));
+//var_dump(GETPOST('button_search_x'));
+//var_dump(GETPOST('button_addtime'));
 
 $daytoparse = $now;
 if ($year && $month && $day) {
