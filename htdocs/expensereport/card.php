@@ -2632,10 +2632,6 @@ if ($action == 'create') {
 							},
 
 						});
-
-
-                    }else{
-                        console.log("not a type concerned");
                     }
 
 					/*console.log(event.which);		// discard event tag and arrows
