@@ -2646,14 +2646,11 @@ class ExpenseReport extends CommonObject
 						}
 					}
 				}
-
 				$total_ht = $coef;
-				//$total_ttc = price2num($total_ht + ( $total_ht * $tva / 100),'MT');
 				return $total_ht;
 			} else {
 				$this->error = $langs->trans('TaxUndefinedForThisCategory');
-
-				return -1;
+				return 0;
 			}
 		} else {
 			$this->error = $this->db->error()." sql=".$sql;
