@@ -2615,6 +2615,10 @@ if ($action == 'create') {
 
                     if (type_fee == 4) { // frais_kilométriques
 
+                        if (tax_cat == "" || parseInt(tax_cat) <= 0){
+                            return ;
+                        }
+
 						jQuery.ajax({
 							url: path
 							,async:false
