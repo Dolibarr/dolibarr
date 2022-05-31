@@ -1286,6 +1286,10 @@ class FactureRec extends CommonInvoice
 			$sql .= ' AND rowid = '.((int) $restrictioninvoiceid);
 		}
 		$sql .= $this->db->order('entity', 'ASC');
+
+		//init hooks like in card to have the same result as if we have created the invoices manually 
+		$hookmanager->initHooks(array('invoicecard','globalcard'));
+
 		//print $sql;exit;
 		$parameters = array(
 			'restrictioninvoiceid' => $restrictioninvoiceid,
