@@ -3012,8 +3012,16 @@ function dol_print_socialnetworks($value, $cid, $socid, $type, $dictsocialnetwor
 			}
 		} else {
 			if (!empty($dictsocialnetworks[$type]['url'])) {
+				$tmpvirginurl = preg_replace('/\/?{socialid}/', '', $dictsocialnetworks[$type]['url']);
+				if ($tmpvirginurl) {
+					$value = preg_replace('/'.preg_quote($tmpvirginurl, '/').'\/?/', '', $value);
+				}
 				$link = str_replace('{socialid}', $value, $dictsocialnetworks[$type]['url']);
-				$htmllink .= '&nbsp;<a href="'.dol_sanitizeUrl($link).'" target="_blank" rel="noopener noreferrer">'.dol_escape_htmltag($value).'</a>';
+				if (preg_match('/^https?:\/\//i', $link)) {
+					$htmllink .= '&nbsp;<a href="'.dol_sanitizeUrl($link, 0).'" target="_blank" rel="noopener noreferrer">'.dol_escape_htmltag($value).'</a>';
+				} else {
+					$htmllink .= '&nbsp;<a href="'.dol_sanitizeUrl($link, 1).'" target="_blank" rel="noopener noreferrer">'.dol_escape_htmltag($value).'</a>';
+				}
 			} else {
 				$htmllink .= dol_escape_htmltag($value);
 			}
