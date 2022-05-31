@@ -1287,7 +1287,7 @@ class FactureRec extends CommonInvoice
 		}
 		$sql .= $this->db->order('entity', 'ASC');
 
-		//init hooks like in card to have the same result as if we have created the invoices manually 
+		//init hooks like in card to have the same result as if we have created the invoices manually
 		$hookmanager->initHooks(array('invoicecard','globalcard'));
 
 		//print $sql;exit;
