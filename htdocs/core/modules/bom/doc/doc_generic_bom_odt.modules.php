@@ -169,7 +169,7 @@ class doc_generic_bom_odt extends ModelePDFBom
 			$texte .= '<div id="div_'.get_class($this).'" class="hiddenx">';
 			// Show list of found files
 			foreach ($listoffiles as $file) {
-				$texte .= '- '.$file['name'].' <a href="'.DOL_URL_ROOT.'/document.php?modulepart=boms&file=invoices/'.urlencode(basename($file['name'])).'">'.img_picto('', 'listlight').'</a><br>';
+				$texte .= '- '.$file['name'].' <a href="'.DOL_URL_ROOT.'/document.php?modulepart=doctemplates&file=boms/'.urlencode(basename($file['name'])).'">'.img_picto('', 'listlight').'</a><br>';
 			}
 			$texte .= '</div>';
 		}
@@ -406,10 +406,22 @@ class doc_generic_bom_odt extends ModelePDFBom
 						$foundtagforlines = 0;
 						dol_syslog($e->getMessage(), LOG_INFO);
 					}
+
 					if ($foundtagforlines) {
 						$linenumber = 0;
 						foreach ($object->lines as $line) {
 							$linenumber++;
+
+							if ($line->fk_product > 0) {
+								$line->fetch_product();
+
+								$line->product_ref = $line->product->ref;
+								$line->product_desc = $line->product->description;
+								$line->product_label = $line->product->label;
+								$line->product_type = $line->product->type;
+								$line->product_barcode = $line->product->barcode;
+							}
+
 							$tmparray = $this->get_substitutionarray_lines($line, $outputlangs, $linenumber);
 							complete_substitutions_array($tmparray, $outputlangs, $object, $line, "completesubstitutionarray_lines");
 							// Call the ODTSubstitutionLine hook
