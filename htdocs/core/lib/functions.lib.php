@@ -3012,8 +3012,16 @@ function dol_print_socialnetworks($value, $cid, $socid, $type, $dictsocialnetwor
 			}
 		} else {
 			if (!empty($dictsocialnetworks[$type]['url'])) {
+				$tmpvirginurl = preg_replace('/\/?{socialid}/', '', $dictsocialnetworks[$type]['url']);
+				if ($tmpvirginurl) {
+					$value = preg_replace('/'.preg_quote($tmpvirginurl, '/').'\/?/', '', $value);
+				}
 				$link = str_replace('{socialid}', $value, $dictsocialnetworks[$type]['url']);
-				$htmllink .= '&nbsp;<a href="'.dol_sanitizeUrl($link).'" target="_blank" rel="noopener noreferrer">'.dol_escape_htmltag($value).'</a>';
+				if (preg_match('/^https?:\/\//i', $link)) {
+					$htmllink .= '&nbsp;<a href="'.dol_sanitizeUrl($link, 0).'" target="_blank" rel="noopener noreferrer">'.dol_escape_htmltag($value).'</a>';
+				} else {
+					$htmllink .= '&nbsp;<a href="'.dol_sanitizeUrl($link, 1).'" target="_blank" rel="noopener noreferrer">'.dol_escape_htmltag($value).'</a>';
+				}
 			} else {
 				$htmllink .= dol_escape_htmltag($value);
 			}
@@ -10339,9 +10347,11 @@ function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = 
 	// Js Confirm button
 	if ($userRight && !empty($params['confirm'])) {
 		if (!is_array($params['confirm'])) {
-			$params['confirm'] = array(
-				'url' => $url . (strpos($url, '?') > 0 ? '&' : '?') . 'confirm=yes'
-			);
+			$params['confirm'] = array();
+		}
+
+		if (empty($params['confirm']['url'])) {
+			$params['confirm']['url'] = $url . (strpos($url, '?') > 0 ? '&' : '?') . 'confirm=yes';
 		}
 
 		// for js desabled compatibility set $url as call to confirm action and $params['confirm']['url'] to confirmed action

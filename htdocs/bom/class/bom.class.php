@@ -1301,6 +1301,7 @@ class BOMLine extends CommonObjectLine
 	 */
 	public $childBom = array();
 
+
 	/**
 	 * Constructor
 	 *
