@@ -448,11 +448,11 @@ class ProductFournisseur extends Product
 				// Add price for this quantity to supplier
 				$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_fournisseur_price(";
 				$sql .= " multicurrency_price, multicurrency_unitprice, multicurrency_tx, fk_multicurrency, multicurrency_code,";
-				$sql .= "datec, fk_product, fk_soc, ref_fourn, desc_fourn, fk_user, price, quantity, remise_percent, remise, unitprice, tva_tx, charges, fk_availability, default_vat_code, info_bits, entity, delivery_time_days, supplier_reputation, barcode, fk_barcode_type)";
+				$sql .= "datec, fk_product, fk_soc, ref_fourn, desc_fourn, fk_user, price, quantity, remise_percent, remise, unitprice, tva_tx, charges, fk_availability, default_vat_code, info_bits, entity, delivery_time_days, supplier_reputation, barcode, fk_barcode_type";
 				if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) {
 					$sql .= ", packaging";
 				}
-				$sql .= " values(";
+				$sql .= ") values(";
 				$sql .= (isset($multicurrency_buyprice) ? "'".$this->db->escape(price2num($multicurrency_buyprice))."'" : 'null').",";
 				$sql .= (isset($multicurrency_unitBuyPrice) ? "'".$this->db->escape(price2num($multicurrency_unitBuyPrice))."'" : 'null').",";
 				$sql .= (isset($multicurrency_tx) ? "'".$this->db->escape($multicurrency_tx)."'" : '1').",";
