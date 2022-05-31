@@ -120,6 +120,7 @@ class Mo extends CommonObject
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>1000, 'notnull'=>-1,),
 		'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>1, 'visible'=>0, 'position'=>1010),
 		'status' => array('type'=>'integer', 'label'=>'Status', 'enabled'=>1, 'visible'=>2, 'position'=>1000, 'default'=>0, 'notnull'=>1, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Validated', '2'=>'InProgress', '3'=>'StatusMOProduced', '9'=>'Canceled')),
+		'fk_parent_line' => array('type'=>'integer:MoLine:mrp/class/mo.class.php', 'label'=>'ParentMo', 'enabled'=>1, 'visible'=>0, 'position'=>1020, 'default'=>0, 'notnull'=>0, 'index'=>1,'showoncombobox'=>0),
 	);
 	public $rowid;
 	public $entity;
@@ -201,6 +202,11 @@ class Mo extends CommonObject
 	 */
 	public $lines = array();
 
+	/**
+	 * @var integer	Mo parent line
+	 * */
+
+	public $fk_parent_line;
 
 
 	/**
@@ -1267,15 +1273,18 @@ class Mo extends CommonObject
 
 	/**
 	 * 	Create an array of lines
-	 *
+	 * 	@param string $rolefilter string lines role filter
 	 * 	@return array|int		array of lines if OK, <0 if KO
 	 */
-	public function getLinesArray()
+	public function getLinesArray($rolefilter = '')
 	{
 		$this->lines = array();
 
 		$objectline = new MoLine($this->db);
-		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_mo = '.((int) $this->id)));
+
+		$TFilters = array('customsql'=>'fk_mo = '.((int) $this->id));
+		if (!empty($rolefilter)) $TFilters['role'] = $rolefilter;
+		$result = $objectline->fetchAll('ASC', 'position', 0, 0, $TFilters);
 
 		if (is_numeric($result)) {
 			$this->error = $this->error;
@@ -1380,6 +1389,13 @@ class Mo extends CommonObject
 		$text_stock_options .= (!empty($conf->global->STOCK_CALCULATE_ON_RECEPTION) || !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE) ? '- '.$langs->trans("StockOnReception").'<br>' : '');
 
 		print '<tr class="liste_titre">';
+		// Product or sub-bom
+		print '<td class="linecoldescription">'.$langs->trans('Description');
+		if (!empty($conf->global->BOM_SUB_BOM)) {
+			print ' &nbsp; <a id="show_all" href="#">'.img_picto('', 'folder-open', 'class="paddingright"').$langs->trans("ExpandAll").'</a>&nbsp;&nbsp;';
+			print '<a id="hide_all" href="#">'.img_picto('', 'folder', 'class="paddingright"').$langs->trans("UndoExpandAll").'</a>&nbsp;';
+		}
+		print '</td>';
 		print '<td>'.$langs->trans('Ref').'</td>';
 		print '<td class="right">'.$langs->trans('Qty');
 		if ($this->bom->bomtype == 0) {
@@ -1392,9 +1408,9 @@ class Mo extends CommonObject
 		print '<td class="center">'.$form->textwithpicto($langs->trans("VirtualStock"), $langs->trans("VirtualStockDesc")).'</td>';
 		print '<td class="center">'.$langs->trans('QtyFrozen').'</td>';
 		print '<td class="center">'.$langs->trans('DisableStockChange').'</td>';
-		//print '<td class="right">'.$langs->trans('Efficiency').'</td>';
+		print '<td class="center">'.$langs->trans('MoChildGenerate').'</td>';
 		//print '<td class="center">'.$form->showCheckAddButtons('checkforselect', 1).'</td>';
-		print '<td class="center"></td>';
+		//      print '<td class="center"></td>';
 		print '</tr>';
 		$i = 0;
 
@@ -1478,6 +1494,81 @@ class Mo extends CommonObject
 
 		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
 	}
+
+
+	/**
+	 * Function used to return childs of Mo
+	 *
+	 * @return array if OK, -1 if KO
+	 */
+	public function getMoChilds()
+	{
+
+		$TMoChilds = array();
+		$error = 0;
+
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."mrp_mo as mo_child";
+		$sql.= " WHERE fk_parent_line IN ";
+		$sql.= " (SELECT rowid FROM ".MAIN_DB_PREFIX."mrp_production as line_parent";
+		$sql.= " WHERE fk_mo=".((int) $this->id).")";
+
+		$resql = $this->db->query($sql);
+
+		if ($resql) {
+			if ($this->db->num_rows($resql) > 0) {
+				while ($obj = $this->db->fetch_object($resql)) {
+					$MoChild = new Mo($this->db);
+					$res = $MoChild->fetch($obj->rowid);
+					if ($res > 0) $TMoChilds[$MoChild->id] = $MoChild;
+					else $error++;
+				}
+			}
+		} else {
+			$error++;
+		}
+
+		if ($error) {
+			return -1;
+		} else {
+			return $TMoChilds;
+		}
+	}
+
+	/**
+	 * Function used to return childs of Mo
+	 *
+	 * @return object Mo if OK, -1 if KO, 0 if not exist
+	 */
+	public function getMoParent()
+	{
+
+		$MoParent = new Mo($this->db);
+		$error = 0;
+
+		$sql = "SELECT lineparent.fk_mo as id_moparent FROM ".MAIN_DB_PREFIX."mrp_mo as mo";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."mrp_production lineparent ON mo.fk_parent_line = lineparent.rowid";
+		$sql.= " WHERE mo.rowid = ".((int) $this->id);
+
+		$resql = $this->db->query($sql);
+
+		if ($resql) {
+			if ($this->db->num_rows($resql) > 0) {
+				$obj = $this->db->fetch_object($resql);
+				$res = $MoParent->fetch($obj->id_moparent);
+				if ($res < 0) $error++;
+			} else {
+				return 0;
+			}
+		} else {
+			$error++;
+		}
+
+		if ($error) {
+			return -1;
+		} else {
+			return $MoParent;
+		}
+	}
 }
 
 /**
@@ -1520,7 +1611,7 @@ class MoLine extends CommonObjectLine
 		'role' =>array('type'=>'varchar(10)', 'label'=>'Role', 'enabled'=>1, 'visible'=>-1, 'position'=>145),
 		'fk_mrp_production' =>array('type'=>'integer', 'label'=>'Fk mrp production', 'enabled'=>1, 'visible'=>-1, 'position'=>150),
 		'fk_stock_movement' =>array('type'=>'integer', 'label'=>'StockMovement', 'enabled'=>1, 'visible'=>-1, 'position'=>155),
-		'date_creation' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>160),
+		'date_creation' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>160),
 		'tms' =>array('type'=>'timestamp', 'label'=>'Tms', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>165),
 		'fk_user_creat' =>array('type'=>'integer', 'label'=>'UserCreation', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>170),
 		'fk_user_modif' =>array('type'=>'integer', 'label'=>'UserModification', 'enabled'=>1, 'visible'=>-1, 'position'=>175),
@@ -1671,7 +1762,7 @@ class MoLine extends CommonObjectLine
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 			$i = 0;
-			while ($i < min($limit, $num)) {
+			while ($i < ($limit ? min($limit, $num) : $num)) {
 				$obj = $this->db->fetch_object($resql);
 
 				$record = new self($this->db);

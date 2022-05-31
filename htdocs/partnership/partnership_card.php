@@ -260,7 +260,7 @@ llxHeader('', $title, $help_url);
 
 // Part to create
 if ($action == 'create') {
-	print load_fiche_titre($langs->trans("NewObject", $langs->transnoentitiesnoconv("Partnership")), '', 'object_'.$object->picto);
+	print load_fiche_titre($langs->trans("NewPartnership"), '', 'object_'.$object->picto);
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';

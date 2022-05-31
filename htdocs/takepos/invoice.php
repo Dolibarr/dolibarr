@@ -804,7 +804,7 @@ if (empty($reshook)) {
 			$printer->orderprinter = 1;
 			echo "<script>";
 			echo "var orderprinter1esc='";
-			$ret = $printer->sendToPrinter($invoice, $conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$_SESSION["takeposterminal"]}, $conf->global->{'TAKEPOS_ORDER_PRINTER1_TO_USE'.$_SESSION["takeposterminal"]}); // PRINT TO PRINTER 1
+			$ret = $printer->sendToPrinter($invoice, getDolGlobalInt('TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$_SESSION["takeposterminal"]), getDolGlobalInt('TAKEPOS_ORDER_PRINTER1_TO_USE'.$_SESSION["takeposterminal"])); // PRINT TO PRINTER 1
 			echo "';</script>";
 		}
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set special_code='4' where special_code='1' and fk_facture=".$invoice->id; // Set as printed
@@ -836,7 +836,7 @@ if (empty($reshook)) {
 			$printer->orderprinter = 2;
 			echo "<script>";
 			echo "var orderprinter2esc='";
-			$ret = $printer->sendToPrinter($invoice, $conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$_SESSION["takeposterminal"]}, $conf->global->{'TAKEPOS_ORDER_PRINTER2_TO_USE'.$_SESSION["takeposterminal"]}); // PRINT TO PRINTER 2
+			$ret = $printer->sendToPrinter($invoice, getDolGlobalInt('TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$_SESSION["takeposterminal"]), getDolGlobalInt('TAKEPOS_ORDER_PRINTER2_TO_USE'.$_SESSION["takeposterminal"])); // PRINT TO PRINTER 2
 			echo "';</script>";
 		}
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set special_code='4' where special_code='2' and fk_facture=".$invoice->id; // Set as printed
@@ -868,7 +868,7 @@ if (empty($reshook)) {
 			$printer->orderprinter = 3;
 			echo "<script>";
 			echo "var orderprinter3esc='";
-			$ret = $printer->sendToPrinter($invoice, $conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$_SESSION["takeposterminal"]}, $conf->global->{'TAKEPOS_ORDER_PRINTER3_TO_USE'.$_SESSION["takeposterminal"]}); // PRINT TO PRINTER 3
+			$ret = $printer->sendToPrinter($invoice, getDolGlobalInt('TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$_SESSION["takeposterminal"]), getDolGlobalInt('TAKEPOS_ORDER_PRINTER3_TO_USE'.$_SESSION["takeposterminal"])); // PRINT TO PRINTER 3
 			echo "';</script>";
 		}
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set special_code='4' where special_code='3' and fk_facture=".$invoice->id; // Set as printed
@@ -1444,7 +1444,11 @@ if ($placeid > 0) {
 				if ($line->special_code == "4") {
 					$htmlsupplements[$line->fk_parent_line] .= ' order';
 				}
-				$htmlsupplements[$line->fk_parent_line] .= '" id="'.$line->id.'">';
+				$htmlsupplements[$line->fk_parent_line] .= '" id="'.$line->id.'"';
+				if ($line->special_code == "4") {
+					$htmlsupplements[$line->fk_parent_line] .= ' title="'.dol_escape_htmltag("AlreadyPrinted").'"';
+				}
+				$htmlsupplements[$line->fk_parent_line] .= '>';
 				$htmlsupplements[$line->fk_parent_line] .= '<td class="left">';
 				$htmlsupplements[$line->fk_parent_line] .= img_picto('', 'rightarrow');
 				if ($line->product_label) {
@@ -1483,7 +1487,11 @@ if ($placeid > 0) {
 			if ($line->special_code == "4") {
 				$htmlforlines .= ' order';
 			}
-			$htmlforlines .= '" id="'.$line->id.'">';
+			$htmlforlines .= '" id="'.$line->id.'"';
+			if ($line->special_code == "4") {
+				$htmlforlines .= ' title="'.dol_escape_htmltag("AlreadyPrinted").'"';
+			}
+			$htmlforlines .= '>';
 			$htmlforlines .= '<td class="left">';
 			if (!empty($_SESSION["basiclayout"]) && $_SESSION["basiclayout"] == 1) {
 				$htmlforlines .= '<span class="phoneqty">'.$line->qty."</span> x ";

@@ -880,10 +880,10 @@ if (empty($reshook)) {
 				if (GETPOST('invoiceAvoirWithPaymentRestAmount', 'int') == 1 && $id > 0) {
 					$facture_source = new FactureFournisseur($db); // fetch origin object if not previously defined
 					if ($facture_source->fetch($object->fk_facture_source) > 0) {
-						$totalpaye = $facture_source->getSommePaiement();
+						$totalpaid = $facture_source->getSommePaiement();
 						$totalcreditnotes = $facture_source->getSumCreditNotesUsed();
 						$totaldeposits = $facture_source->getSumDepositsUsed();
-						$remain_to_pay = abs($facture_source->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits);
+						$remain_to_pay = abs($facture_source->total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits);
 
 						$object->addline($langs->trans('invoiceAvoirLineWithPaymentRestAmount'), $remain_to_pay, 0, 0, 0, 1, 0, 0, '', '', 'TTC');
 					}
@@ -1712,8 +1712,8 @@ if (empty($reshook)) {
 		// Set invoice to draft status
 		$object->fetch($id);
 
-		$totalpaye = $object->getSommePaiement();
-		$resteapayer = $object->total_ttc - $totalpaye;
+		$totalpaid = $object->getSommePaiement();
+		$resteapayer = $object->total_ttc - $totalpaid;
 
 		// We check that lines of invoices are exported in accountancy
 		$ventilExportCompta = $object->getVentilExportCompta();
@@ -2597,24 +2597,24 @@ if ($action == 'create') {
 
 		$societe = $object->thirdparty;
 
-		$totalpaye = $object->getSommePaiement();
+		$totalpaid = $object->getSommePaiement();
 		$totalcreditnotes = $object->getSumCreditNotesUsed();
 		$totaldeposits = $object->getSumDepositsUsed();
-		// print "totalpaye=".$totalpaye." totalcreditnotes=".$totalcreditnotes." totaldeposts=".$totaldeposits."
+		// print "totalpaid=".$totalpaid." totalcreditnotes=".$totalcreditnotes." totaldeposts=".$totaldeposits."
 		// selleruserrevenuestamp=".$selleruserevenustamp;
 
 		// We can also use bcadd to avoid pb with floating points
 		// For example print 239.2 - 229.3 - 9.9; does not return 0.
-		// $resteapayer=bcadd($object->total_ttc,$totalpaye,$conf->global->MAIN_MAX_DECIMALS_TOT);
+		// $resteapayer=bcadd($object->total_ttc,$totalpaid,$conf->global->MAIN_MAX_DECIMALS_TOT);
 		// $resteapayer=bcadd($resteapayer,$totalavoir,$conf->global->MAIN_MAX_DECIMALS_TOT);
-		$resteapayer = price2num($object->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits, 'MT');
+		$resteapayer = price2num($object->total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits, 'MT');
 
 		// Multicurrency
 		if (!empty($conf->multicurrency->enabled)) {
-			$multicurrency_totalpaye = $object->getSommePaiement(1);
+			$multicurrency_totalpaid = $object->getSommePaiement(1);
 			$multicurrency_totalcreditnotes = $object->getSumCreditNotesUsed(1);
 			$multicurrency_totaldeposits = $object->getSumDepositsUsed(1);
-			$multicurrency_resteapayer = price2num($object->multicurrency_total_ttc - $multicurrency_totalpaye - $multicurrency_totalcreditnotes - $multicurrency_totaldeposits, 'MT');
+			$multicurrency_resteapayer = price2num($object->multicurrency_total_ttc - $multicurrency_totalpaid - $multicurrency_totalcreditnotes - $multicurrency_totaldeposits, 'MT');
 			// Code to fix case of corrupted data
 			if ($resteapayer == 0 && $multicurrency_resteapayer != 0) {
 				$resteapayer = price2num($multicurrency_resteapayer / $object->multicurrency_tx, 'MT');
@@ -2894,7 +2894,7 @@ if ($action == 'create') {
 		}
 		$morehtmlref .= '</div>';
 
-		$object->totalpaye = $totalpaye; // To give a chance to dol_banner_tab to use already paid amount to show correct status
+		$object->totalpaid = $totalpaid; // To give a chance to dol_banner_tab to use already paid amount to show correct status
 
 		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
@@ -3227,7 +3227,7 @@ if ($action == 'create') {
 
 		// List of payments
 
-		$totalpaye = 0;
+		$totalpaid = 0;
 
 		$sign = 1;
 		if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE) {
@@ -3333,7 +3333,7 @@ if ($action == 'create') {
 					}
 					print '</td>';
 					print '</tr>';
-					$totalpaye += $objp->amount;
+					$totalpaid += $objp->amount;
 					$i++;
 				}
 			} else {
@@ -3343,10 +3343,10 @@ if ($action == 'create') {
 			/*
 			if ($object->paye == 0)
 			{
-				print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans('AlreadyPaid').' :</td><td class="right">'.price($totalpaye).'</td><td></td></tr>';
+				print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans('AlreadyPaid').' :</td><td class="right">'.price($totalpaid).'</td><td></td></tr>';
 				print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("Billed").' :</td><td class="right">'.price($object->total_ttc).'</td><td></td></tr>';
 
-				$resteapayer = $object->total_ttc - $totalpaye;
+				$resteapayer = $object->total_ttc - $totalpaid;
 
 				print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans('RemainderToPay').' :</td>';
 				print '<td class="right'.($resteapayer?' amountremaintopay':'').'">'.price($resteapayer).'</td><td></td></tr>';
@@ -3368,9 +3368,9 @@ if ($action == 'create') {
 				print $langs->trans('AlreadyPaid');
 			}
 			print '</span>';
-			print '</td><td class="right"'.(($totalpaye > 0) ? ' class="amountalreadypaid"' : '').'>'.price($totalpaye).'</td><td>&nbsp;</td></tr>';
+			print '</td><td class="right"'.(($totalpaid > 0) ? ' class="amountalreadypaid"' : '').'>'.price($totalpaid).'</td><td>&nbsp;</td></tr>';
 
-			//$resteapayer = $object->total_ttc - $totalpaye;
+			//$resteapayer = $object->total_ttc - $totalpaid;
 			$resteapayeraffiche = $resteapayer;
 
 			$cssforamountpaymentcomplete = 'amountpaymentcomplete';
@@ -3422,7 +3422,7 @@ if ($action == 'create') {
 				print '<span class="opacitymedium">';
 				print $form->textwithpicto($langs->trans("Discount"), $langs->trans("HelpEscompte"), - 1);
 				print '</span>';
-				print '</td><td class="right">'.price($object->total_ttc - $creditnoteamount - $depositamount - $totalpaye).'</td><td>&nbsp;</td></tr>';
+				print '</td><td class="right">'.price($object->total_ttc - $creditnoteamount - $depositamount - $totalpaid).'</td><td>&nbsp;</td></tr>';
 				$resteapayeraffiche = 0;
 				$cssforamountpaymentcomplete = 'amountpaymentneutral';
 			}
@@ -3432,7 +3432,7 @@ if ($action == 'create') {
 				print '<span class="opacitymedium">';
 				print $form->textwithpicto($langs->trans("Abandoned"), $langs->trans("HelpAbandonBadCustomer"), - 1);
 				print '</span>';
-				print '</td><td class="right">'.price($object->total_ttc - $creditnoteamount - $depositamount - $totalpaye).'</td><td>&nbsp;</td></tr>';
+				print '</td><td class="right">'.price($object->total_ttc - $creditnoteamount - $depositamount - $totalpaid).'</td><td>&nbsp;</td></tr>';
 				// $resteapayeraffiche=0;
 				$cssforamountpaymentcomplete = 'amountpaymentneutral';
 			}
@@ -3442,7 +3442,7 @@ if ($action == 'create') {
 				print '<span class="opacitymedium">';
 				print $form->textwithpicto($langs->trans("ProductReturned"), $langs->trans("HelpAbandonProductReturned"), - 1);
 				print '</span>';
-				print '</td><td class="right">'.price($object->total_ttc - $creditnoteamount - $depositamount - $totalpaye).'</td><td>&nbsp;</td></tr>';
+				print '</td><td class="right">'.price($object->total_ttc - $creditnoteamount - $depositamount - $totalpaid).'</td><td>&nbsp;</td></tr>';
 				$resteapayeraffiche = 0;
 				$cssforamountpaymentcomplete = 'amountpaymentneutral';
 			}
@@ -3456,7 +3456,7 @@ if ($action == 'create') {
 				print '<span class="opacitymedium">';
 				print $form->textwithpicto($langs->trans("Abandoned"), $text, - 1);
 				print '</span>';
-				print '</td><td class="right">'.price($object->total_ttc - $creditnoteamount - $depositamount - $totalpaye).'</td><td>&nbsp;</td></tr>';
+				print '</td><td class="right">'.price($object->total_ttc - $creditnoteamount - $depositamount - $totalpaid).'</td><td>&nbsp;</td></tr>';
 				$resteapayeraffiche = 0;
 				$cssforamountpaymentcomplete = 'amountpaymentneutral';
 			}
@@ -3498,7 +3498,7 @@ if ($action == 'create') {
 			// Total already paid back
 			print '<tr><td colspan="'.$nbcols.'" class="right">';
 			print $langs->trans('AlreadyPaidBack');
-			print ' :</td><td class="right">'.price($sign * $totalpaye).'</td><td>&nbsp;</td></tr>';
+			print ' :</td><td class="right">'.price($sign * $totalpaid).'</td><td>&nbsp;</td></tr>';
 
 			// Billed
 			print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("Billed").' :</td><td class="right">'.price($sign * $object->total_ttc).'</td><td>&nbsp;</td></tr>';
@@ -3691,7 +3691,7 @@ if ($action == 'create') {
 					}
 
 					// For standard invoice with excess paid
-					if ($object->type == FactureFournisseur::TYPE_STANDARD && empty($object->paye) && ($object->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits) < 0 && $usercancreate && empty($discount->id)) {
+					if ($object->type == FactureFournisseur::TYPE_STANDARD && empty($object->paye) && ($object->total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits) < 0 && $usercancreate && empty($discount->id)) {
 						print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=converttoreduc">'.$langs->trans('ConvertExcessPaidToReduc').'</a>';
 					}
 					// For credit note
@@ -3718,7 +3718,7 @@ if ($action == 'create') {
 
 				// Classify 'closed not completely paid' (possible if validated and not yet filed paid)
 				if ($object->statut == FactureFournisseur::STATUS_VALIDATED && $object->paye == 0 && $resteapayer > 0 && (empty($conf->global->SUPPLIER_INVOICE_CAN_SET_PAID_EVEN_IF_PARTIALLY_PAID) || $object->total_ttc != $resteapayer)) {
-					if ($totalpaye > 0 || $totalcreditnotes > 0) {
+					if ($totalpaid > 0 || $totalcreditnotes > 0) {
 						// If one payment or one credit note was linked to this invoice
 						print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=paid">'.$langs->trans('ClassifyPaidPartially').'</a>';
 					} else {

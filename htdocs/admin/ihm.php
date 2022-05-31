@@ -101,9 +101,14 @@ if ($action == 'update') {
 	if ($mode == 'template') {
 		dolibarr_set_const($db, "MAIN_THEME", GETPOST("main_theme", 'aZ09'), 'chaine', 0, '', $conf->entity);
 
-		/*$val=GETPOST('THEME_TOPMENU_DISABLE_IMAGE');
-		if (! $val) dolibarr_del_const($db, 'THEME_TOPMENU_DISABLE_IMAGE', $conf->entity);
-		else dolibarr_set_const($db, 'THEME_TOPMENU_DISABLE_IMAGE', GETPOST('THEME_TOPMENU_DISABLE_IMAGE'), 'chaine', 0, '', $conf->entity);*/
+		if (GETPOSTISSET('THEME_TOPMENU_DISABLE_IMAGE')) {
+			$val=GETPOST('THEME_TOPMENU_DISABLE_IMAGE');
+			if (!$val) {
+				dolibarr_del_const($db, 'THEME_TOPMENU_DISABLE_IMAGE', $conf->entity);
+			} else {
+				dolibarr_set_const($db, 'THEME_TOPMENU_DISABLE_IMAGE', GETPOST('THEME_TOPMENU_DISABLE_IMAGE'), 'chaine', 0, '', $conf->entity);
+			}
+		}
 
 		$val = (implode(',', (colorStringToArray(GETPOST('THEME_ELDY_BACKBODY'), array()))));
 		if ($val == '') {

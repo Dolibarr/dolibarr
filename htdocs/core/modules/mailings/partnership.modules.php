@@ -41,6 +41,8 @@ class mailing_partnership extends MailingTargets
 	 */
 	public $db;
 
+	public $enabled = '$conf->partnership->enabled';
+
 
 	/**
 	 *	Constructor
@@ -164,8 +166,8 @@ class mailing_partnership extends MailingTargets
 	 *	For example if this selector is used to extract 500 different
 	 *	emails from a text file, this function must return 500.
 	 *
-	 *  @param      string	$sql        Requete sql de comptage
-	 *	@return		int					Nb of recipients
+	 *  @param      string			$sql        Requete sql de comptage
+	 *  @return     int|string      			Nb of recipient, or <0 if error, or '' if NA
 	 */
 	public function getNbOfRecipients($sql = '')
 	{
@@ -185,8 +187,7 @@ class mailing_partnership extends MailingTargets
 
 		//print $sql;
 
-		// La requete doit retourner un champ "nb" pour etre comprise
-		// par parent::getNbOfRecipients
+		// La requete doit retourner un champ "nb" pour etre comprise par parent::getNbOfRecipients
 		return parent::getNbOfRecipients($sql);
 	}
 

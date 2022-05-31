@@ -403,7 +403,8 @@ textarea.cke_source:focus
 	box-shadow: none;
 }
 
-th.wrapcolumntitle.liste_titre:not(.maxwidthsearch), td.wrapcolumntitle.liste_titre:not(.maxwidthsearch) {
+th.wrapcolumntitle.liste_titre:not(.maxwidthsearch), td.wrapcolumntitle.liste_titre:not(.maxwidthsearch),
+th.wrapcolumntitle.liste_titre_sel:not(.maxwidthsearch), td.wrapcolumntitle.liste_titre_sel:not(.maxwidthsearch) {
 	overflow: hidden;
 	white-space: nowrap;
 	max-width: 120px;

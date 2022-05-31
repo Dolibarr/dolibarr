@@ -137,7 +137,7 @@ print '<input type="hidden" name="page" value="'.$page.'">';
 
 $sql = "SELECT c.id, c.libelle as type_label,";
 $sql .= " cs.rowid, cs.libelle as label_sc, cs.fk_type as type, cs.periode, cs.date_ech, cs.amount as total, cs.paye,";
-$sql .= " pc.rowid as pid, pc.datep, pc.amount as totalpaye, pc.num_paiement as num_payment, pc.fk_bank,";
+$sql .= " pc.rowid as pid, pc.datep, pc.amount as totalpaid, pc.num_paiement as num_payment, pc.fk_bank,";
 $sql .= " pct.code as payment_code,";
 $sql .= " u.rowid uid, u.lastname, u.firstname, u.email, u.login, u.admin,";
 $sql .= " ba.rowid as bid, ba.ref as bref, ba.number as bnumber, ba.account_number, ba.fk_accountancy_journal, ba.label as blabel, ba.iban_prefix as iban, ba.bic, ba.currency_code, ba.clos";
@@ -253,7 +253,7 @@ if (!$resql) {
 $i = 0;
 $total = 0;
 $totalnb = 0;
-$totalpaye = 0;
+$totalpaid = 0;
 
 while ($i < min($num, $limit)) {
 	$obj = $db->fetch_object($resql);
@@ -346,8 +346,8 @@ while ($i < min($num, $limit)) {
 
 	// Paid
 	print '<td class="right">';
-	if ($obj->totalpaye) {
-		print '<span class="amount">'.price($obj->totalpaye).'</span>';
+	if ($obj->totalpaid) {
+		print '<span class="amount">'.price($obj->totalpaid).'</span>';
 	}
 	print '</td>';
 
@@ -357,7 +357,7 @@ while ($i < min($num, $limit)) {
 
 	$total = $total + $obj->total;
 	$totalnb = $totalnb + $obj->nb;
-	$totalpaye = $totalpaye + $obj->totalpaye;
+	$totalpaid = $totalpaid + $obj->totalpaid;
 	$i++;
 }
 
@@ -373,7 +373,7 @@ if (!empty($conf->banque->enabled)) {
 	print '<td></td>';
 	print '<td></td>';
 }
-print '<td class="liste_total right">'.price($totalpaye)."</td>";
+print '<td class="liste_total right">'.price($totalpaid)."</td>";
 print '<td></td>';
 print "</tr>";
 

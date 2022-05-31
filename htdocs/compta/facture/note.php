@@ -99,7 +99,7 @@ if ($id > 0 || !empty($ref)) {
 
 	$head = facture_prepare_head($object);
 
-	$totalpaye = $object->getSommePaiement();
+	$totalpaid = $object->getSommePaiement();
 
 	print dol_get_fiche_head($head, 'note', $langs->trans("InvoiceCustomer"), -1, 'bill');
 
@@ -148,7 +148,7 @@ if ($id > 0 || !empty($ref)) {
 	}
 	$morehtmlref .= '</div>';
 
-	$object->totalpaid = $totalpaye; // To give a chance to dol_banner_tab to use already paid amount to show correct status
+	$object->totalpaid = $totalpaid; // To give a chance to dol_banner_tab to use already paid amount to show correct status
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '', 0);
 

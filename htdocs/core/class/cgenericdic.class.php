@@ -19,26 +19,26 @@
  */
 
 /**
- * \file    htdocs/core/class/ctyperesource.class.php
+ * \file    htdocs/core/class/cgenericdic.class.php
  * \ingroup resource
  */
 
 /**
- * Class Ctyperesource
+ * Class CGenericDic
  *
  * @see CommonObject
  */
-class Ctyperesource
+class CGenericDic
 {
 	/**
 	 * @var string Id to identify managed objects
 	 */
-	public $element = 'ctyperesource';
+	public $element = 'undefined';	// Will be defined into constructor
 
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
-	public $table_element = 'c_type_resource';
+	public $table_element = 'undefined';	// Will be defined into constructor
 
 	/**
 	 * @var CtyperesourceLine[] Lines
@@ -63,6 +63,8 @@ class Ctyperesource
 	public function __construct(DoliDB $db)
 	{
 		$this->db = $db;
+
+		// Don't forget to set this->element and this->table_element after the construction
 	}
 
 	/**
@@ -76,6 +78,11 @@ class Ctyperesource
 	public function create(User $user, $notrigger = false)
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
+
+		$fieldlabel = 'label';
+		if ($this->table_element == 'c_stcomm') {
+			$fieldlabel = 'libelle';
+		}
 
 		$error = 0;
 
@@ -94,7 +101,7 @@ class Ctyperesource
 		// Insert request
 		$sql = 'INSERT INTO '.$this->db->prefix().$this->table_element.'(';
 		$sql .= 'code,';
-		$sql .= 'label';
+		$sql .= $fieldlabel;
 		$sql .= 'active';
 		$sql .= ') VALUES (';
 		$sql .= ' '.(!isset($this->code) ? 'NULL' : "'".$this->db->escape($this->code)."'").',';
@@ -150,14 +157,21 @@ class Ctyperesource
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
+		$fieldrowid = 'rowid';
+		$fieldlabel = 'label';
+		if ($this->table_element == 'c_stcomm') {
+			$fieldrowid = 'id';
+			$fieldlabel = 'libelle';
+		}
+
 		$sql = "SELECT";
-		$sql .= " t.rowid,";
+		$sql .= " t.".$fieldrowid.",";
 		$sql .= " t.code,";
-		$sql .= " t.label,";
+		$sql .= " t.".$fieldlabel." as label,";
 		$sql .= " t.active";
 		$sql .= " FROM ".$this->db->prefix().$this->table_element." as t";
 		if ($id) {
-			$sql .= " WHERE t.id = ".((int) $id);
+			$sql .= " WHERE t.".$fieldrowid." = ".((int) $id);
 		} elseif ($code) {
 			$sql .= " WHERE t.code = '".$this->db->escape($code)."'";
 		} elseif ($label) {
@@ -170,7 +184,7 @@ class Ctyperesource
 			if ($numrows) {
 				$obj = $this->db->fetch_object($resql);
 
-				$this->id = $obj->rowid;
+				$this->id = $obj->$fieldrowid;
 
 				$this->code = $obj->code;
 				$this->label = $obj->label;
@@ -214,10 +228,17 @@ class Ctyperesource
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
+		$fieldrowid = 'rowid';
+		$fieldlabel = 'label';
+		if ($this->table_element == 'c_stcomm') {
+			$fieldrowid = 'id';
+			$fieldlabel = 'libelle';
+		}
+
 		$sql = "SELECT";
-		$sql .= " t.rowid,";
+		$sql .= " t.".$fieldrowid.",";
 		$sql .= " t.code,";
-		$sql .= " t.label,";
+		$sql .= " t.".$fieldlabel." as label,";
 		$sql .= " t.active";
 		$sql .= " FROM ".$this->db->prefix().$this->table_element." as t";
 
@@ -230,7 +251,7 @@ class Ctyperesource
 		}
 
 		if (count($sqlwhere) > 0) {
-			$sql .= ' WHERE '.implode(' '.$this->db->escape($filtermode).' ', $sqlwhere);
+			$sql .= " WHERE ".implode(' '.$this->db->escape($filtermode).' ', $sqlwhere);
 		}
 		if (!empty($sortfield)) {
 			$sql .= $this->db->order($sortfield, $sortorder);
@@ -246,7 +267,7 @@ class Ctyperesource
 			while ($obj = $this->db->fetch_object($resql)) {
 				$line = new self($this->db);
 
-				$line->id = $obj->rowid;
+				$line->id = $obj->$fieldrowid;
 
 				$line->code = $obj->code;
 				$line->label = $obj->label;
@@ -277,6 +298,13 @@ class Ctyperesource
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
+		$fieldrowid = 'rowid';
+		$fieldlabel = 'label';
+		if ($this->table_element == 'c_stcomm') {
+			$fieldrowid = 'id';
+			$fieldlabel = 'libelle';
+		}
+
 		// Clean parameters
 
 		if (isset($this->code)) {
@@ -293,11 +321,11 @@ class Ctyperesource
 		// Put here code to add a control on parameters values
 
 		// Update request
-		$sql = 'UPDATE '.$this->db->prefix().$this->table_element.' SET';
-		$sql .= ' code = '.(isset($this->code) ? "'".$this->db->escape($this->code)."'" : "null").',';
-		$sql .= ' label = '.(isset($this->label) ? "'".$this->db->escape($this->label)."'" : "null").',';
-		$sql .= ' active = '.(isset($this->active) ? $this->active : "null");
-		$sql .= ' WHERE rowid='.((int) $this->id);
+		$sql = "UPDATE ".$this->db->prefix().$this->table_element.' SET';
+		$sql .= " code = ".(isset($this->code) ? "'".$this->db->escape($this->code)."'" : "null").',';
+		$sql .= " ".$fieldlabel." = ".(isset($this->label) ? "'".$this->db->escape($this->label)."'" : "null").',';
+		$sql .= " active = ".(isset($this->active) ? $this->active : "null");
+		$sql .= " WHERE ".$fieldrowid." = ".((int) $this->id);
 
 		$this->db->begin();
 
@@ -342,6 +370,8 @@ class Ctyperesource
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
+		$fieldrowid = 'rowid';
+
 		$error = 0;
 
 		$this->db->begin();
@@ -359,8 +389,8 @@ class Ctyperesource
 		// If you need to delete child tables to, you can insert them here
 
 		if (!$error) {
-			$sql = 'DELETE FROM '.$this->db->prefix().$this->table_element;
-			$sql .= ' WHERE rowid='.((int) $this->id);
+			$sql = "DELETE FROM ".$this->db->prefix().$this->table_element;
+			$sql .= " WHERE ".$fieldrowid." = ".((int) $this->id);
 
 			$resql = $this->db->query($sql);
 			if (!$resql) {
@@ -441,35 +471,8 @@ class Ctyperesource
 	{
 		$this->id = 0;
 
-		$this->code = '';
-		$this->label = '';
-		$this->active = '';
+		$this->code = 'CODE';
+		$this->label = 'Label';
+		$this->active = 1;
 	}
-}
-
-/**
- * Class CtyperesourceLine
- */
-class CtyperesourceLine
-{
-	/**
-	 * @var int ID
-	 */
-	public $id;
-
-	/**
-	 * @var mixed Sample line property 1
-	 */
-	public $code;
-
-	/**
-	 * @var string Type resource line label
-	 */
-	public $label;
-
-	public $active;
-
-	/**
-	 * @var mixed Sample line property 2
-	 */
 }

@@ -102,6 +102,13 @@ class PaymentVAT extends CommonObject
 	public $chid;
 
 	/**
+	 * @var string lib
+	 * @deprecated
+	 * @see $label
+	 */
+	public $lib;
+
+	/**
 	 * @var integer|string datepaye
 	 */
 	public $datepaye;

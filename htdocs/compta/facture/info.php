@@ -84,7 +84,7 @@ $object->info($object->id);
 $head = facture_prepare_head($object);
 print dol_get_fiche_head($head, 'info', $langs->trans("InvoiceCustomer"), -1, 'bill');
 
-$totalpaye = $object->getSommePaiement();
+$totalpaid = $object->getSommePaiement();
 
 // Invoice content
 
@@ -131,7 +131,7 @@ if (!empty($conf->projet->enabled)) {
 }
 $morehtmlref .= '</div>';
 
-$object->totalpaid = $totalpaye; // To give a chance to dol_banner_tab to use already paid amount to show correct status
+$object->totalpaid = $totalpaid; // To give a chance to dol_banner_tab to use already paid amount to show correct status
 
 dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '', 0);
 

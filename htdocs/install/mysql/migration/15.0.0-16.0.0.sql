@@ -14,7 +14,9 @@
 -- To create a unique index ALTER TABLE llx_table ADD UNIQUE INDEX uk_table_field (field);
 -- To drop an index:        -- VMYSQL4.1 DROP INDEX nomindex on llx_table;
 -- To drop an index:        -- VPGSQL8.2 DROP INDEX nomindex;
--- To make pk to be auto increment (mysql):    -- VMYSQL4.3 ALTER TABLE llx_table CHANGE COLUMN rowid rowid INTEGER NOT NULL AUTO_INCREMENT;
+-- To make pk to be auto increment (mysql):
+-- -- VMYSQL4.3 ALTER TABLE llx_table ADD PRIMARY KEY(rowid);
+-- -- VMYSQL4.3 ALTER TABLE llx_table CHANGE COLUMN rowid rowid INTEGER NOT NULL AUTO_INCREMENT;
 -- To make pk to be auto increment (postgres):
 -- -- VPGSQL8.2 CREATE SEQUENCE llx_table_rowid_seq OWNED BY llx_table.rowid;
 -- -- VPGSQL8.2 ALTER TABLE llx_table ADD PRIMARY KEY (rowid);
@@ -33,7 +35,23 @@
 
 -- Missing in v15 or lower
 
+-- VMYSQL4.3 ALTER TABLE llx_c_civility ADD PRIMARY KEY(rowid);
 -- VMYSQL4.3 ALTER TABLE llx_c_civility CHANGE COLUMN rowid rowid INTEGER NOT NULL AUTO_INCREMENT;
+
+-- VMYSQL4.3 ALTER TABLE llx_c_payment_term ADD PRIMARY KEY(rowid);
+-- VMYSQL4.3 ALTER TABLE llx_c_payment_term CHANGE COLUMN rowid rowid INTEGER NOT NULL AUTO_INCREMENT;
+
+-- VPGSQL8.2 CREATE SEQUENCE llx_c_civility_rowid_seq OWNED BY llx_c_civility.rowid;
+-- VPGSQL8.2 ALTER TABLE llx_c_civility ADD PRIMARY KEY (rowid);
+-- VPGSQL8.2 ALTER TABLE llx_c_civility ALTER COLUMN rowid SET DEFAULT nextval('llx_c_civility_rowid_seq');
+-- VPGSQL8.2 SELECT setval('llx_c_civility_rowid_seq', MAX(rowid)) FROM llx_c_civility;
+
+-- VPGSQL8.2 CREATE SEQUENCE llx_c_payment_term_rowid_seq OWNED BY llx_c_payment_term.rowid;
+-- VPGSQL8.2 ALTER TABLE llx_c_payment_term ADD PRIMARY KEY (rowid);
+-- VPGSQL8.2 ALTER TABLE llx_c_payment_term ALTER COLUMN rowid SET DEFAULT nextval('llx_c_payment_term_rowid_seq');
+-- VPGSQL8.2 SELECT setval('llx_c_payment_term_rowid_seq', MAX(rowid)) FROM llx_c_payment_term;
+
+
 
 ALTER TABLE llx_c_transport_mode ADD UNIQUE INDEX uk_c_transport_mode (code, entity);
 
@@ -118,6 +136,7 @@ ALTER TABLE llx_bank ADD COLUMN amount_main_currency double(24,8) NULL;
 
 -- v16
 
+ALTER TABLE llx_c_stcomm MODIFY COLUMN code VARCHAR(24) NOT NULL;
 ALTER TABLE llx_societe_account DROP FOREIGN KEY llx_societe_account_fk_website;
 
 UPDATE llx_cronjob set label = 'RecurringInvoicesJob' where label = 'RecurringInvoices';
@@ -594,3 +613,8 @@ ALTER TABLE llx_fichinter ADD COLUMN ref_client varchar(255) after ref_ext;
 ALTER TABLE llx_c_holiday_types ADD COLUMN sortorder smallint;
 
 ALTER TABLE llx_expedition MODIFY COLUMN ref_customer varchar(255);
+
+ALTER TABLE llx_extrafields ADD COLUMN css varchar(128);
+ALTER TABLE llx_extrafields ADD COLUMN cssview varchar(128);
+ALTER TABLE llx_extrafields ADD COLUMN csslist varchar(128);
+

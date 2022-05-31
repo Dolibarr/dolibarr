@@ -218,7 +218,7 @@ class MyModuleApi extends DolibarrApi
 		}
 
 		// Clean data
-		// $this->myobject->abc = checkVal($this->myobject->abc, 'alphanohtml');
+		// $this->myobject->abc = sanitizeVal($this->myobject->abc, 'alphanohtml');
 
 		if ($this->myobject->create(DolibarrApiAccess::$user)<0) {
 			throw new RestException(500, "Error creating MyObject", array_merge(array($this->myobject->error), $this->myobject->errors));
@@ -260,7 +260,7 @@ class MyModuleApi extends DolibarrApi
 		}
 
 		// Clean data
-		// $this->myobject->abc = checkVal($this->myobject->abc, 'alphanohtml');
+		// $this->myobject->abc = sanitizeVal($this->myobject->abc, 'alphanohtml');
 
 		if ($this->myobject->update(DolibarrApiAccess::$user, false) > 0) {
 			return $this->get($id);

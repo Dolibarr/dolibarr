@@ -1092,7 +1092,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 			print img_picto($langs->trans('SharedProject'), 'world', 'class="paddingrightonly"');
 			print $langs->trans('SharedProject');
 		} else {
-			print img_picto($langs->trans('SharedProject'), 'private', 'class="paddingrightonly"');
+			print img_picto($langs->trans('PrivateProject'), 'private', 'class="paddingrightonly"');
 			print $langs->trans('PrivateProject');
 		}
 		print '</td></tr>';
@@ -1207,7 +1207,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
             	{
                     var element = jQuery("#opp_status option:selected");
                     var defaultpercent = element.attr("defaultpercent");
-                    var defaultcloseproject = '.$defaultcheckedwhenoppclose.';
+                    var defaultcloseproject = '.((int) $defaultcheckedwhenoppclose).';
                     var elemcode = element.attr("elemcode");
                     var oldpercent = \''.dol_escape_js($object->opp_percent).'\';
 

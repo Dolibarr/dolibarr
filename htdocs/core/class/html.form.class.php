@@ -867,17 +867,17 @@ class Form
 	/**
 	 *  Return combo list of activated countries, into language of user
 	 *
-	 *  @param	string	$selected       		Id or Code or Label of preselected country
-	 *  @param  string	$htmlname       		Name of html select object
-	 *  @param  string	$htmloption     		More html options on select object
-	 *  @param	integer	$maxlength				Max length for labels (0=no limit)
-	 *  @param	string	$morecss				More css class
-	 *  @param	string	$usecodeaskey			''=Use id as key (default), 'code3'=Use code on 3 alpha as key, 'code2"=Use code on 2 alpha as key
-	 *  @param	int		$showempty				Show empty choice
-	 *  @param	int		$disablefavorites		1=Disable favorites,
-	 *  @param	int		$addspecialentries		1=Add dedicated entries for group of countries (like 'European Economic Community', ...)
-	 *  @param	array	$exclude_country_code	Array of country code (iso2) to exclude
-	 *  @param	int		$hideflags				Hide flags
+	 *  @param	string		$selected       		Id or Code or Label of preselected country
+	 *  @param  string		$htmlname       		Name of html select object
+	 *  @param  string		$htmloption     		More html options on select object
+	 *  @param	integer		$maxlength				Max length for labels (0=no limit)
+	 *  @param	string		$morecss				More css class
+	 *  @param	string		$usecodeaskey			''=Use id as key (default), 'code3'=Use code on 3 alpha as key, 'code2"=Use code on 2 alpha as key
+	 *  @param	int|string	$showempty				Show empty choice
+	 *  @param	int			$disablefavorites		1=Disable favorites,
+	 *  @param	int			$addspecialentries		1=Add dedicated entries for group of countries (like 'European Economic Community', ...)
+	 *  @param	array		$exclude_country_code	Array of country code (iso2) to exclude
+	 *  @param	int			$hideflags				Hide flags
 	 *  @return string           				HTML string with select
 	 */
 	public function select_country($selected = '', $htmlname = 'country_id', $htmloption = '', $maxlength = 0, $morecss = 'minwidth300', $usecodeaskey = '', $showempty = 1, $disablefavorites = 0, $addspecialentries = 0, $exclude_country_code = array(), $hideflags = 0)
@@ -926,7 +926,11 @@ class Form
 				}
 
 				if ($showempty) {
-					$out .= '<option value="">&nbsp;</option>'."\n";
+					if (is_numeric($showempty)) {
+						$out .= '<option value="">&nbsp;</option>'."\n";
+					} else {
+						$out .= '<option value="">'.$langs->trans($showempty).'</option>'."\n";
+					}
 				}
 
 				if ($addspecialentries) {	// Add dedicated entries for groups of countries
@@ -1279,7 +1283,6 @@ class Form
 
 			// mode 1
 			$urloption = 'htmlname='.urlencode(str_replace('.', '_', $htmlname)).'&outjson=1&filter='.urlencode($filter).(empty($excludeids) ? '' : '&excludeids='.join(',', $excludeids)).($showtype ? '&showtype='.urlencode($showtype) : '');
-			$out .= ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/societe/ajax/company.php', $urloption, $conf->global->COMPANY_USE_SEARCH_TO_SELECT, 0, $ajaxoptions);
 
 			$out .= '<style type="text/css">.ui-autocomplete { z-index: 1003; }</style>';
 			if (empty($hidelabel)) {
@@ -1294,6 +1297,8 @@ class Form
 			if ($hidelabel == 3) {
 				$out .= img_picto($langs->trans("Search"), 'search');
 			}
+
+			$out .= ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/societe/ajax/company.php', $urloption, $conf->global->COMPANY_USE_SEARCH_TO_SELECT, 0, $ajaxoptions);
 		} else {
 			// Immediate load of all database
 			$out .= $this->select_thirdparty_list($selected, $htmlname, $filter, $showempty, $showtype, $forcecombo, $events, '', 0, $limit, $morecss, $moreparam, $multiple, $excludeids);
@@ -8431,12 +8436,13 @@ class Form
 	/**
 	 *  Show linked object block.
 	 *
-	 *  @param	CommonObject	$object		      Object we want to show links to
-	 *  @param  string          $morehtmlright    More html to show on right of title
-	 *  @param  array           $compatibleImportElementsList  Array of compatibles elements object for "import from" action
-	 *  @return	int							      <0 if KO, >=0 if OK
+	 *  @param	CommonObject	$object		    				Object we want to show links to
+	 *  @param  string          $morehtmlright  				More html to show on right of title
+	 *  @param  array           $compatibleImportElementsList  	Array of compatibles elements object for "import from" action
+	 *  @param	string			$title							Title
+	 *  @return	int							      				<0 if KO, >=0 if OK
 	 */
-	public function showLinkedObjectBlock($object, $morehtmlright = '', $compatibleImportElementsList = false)
+	public function showLinkedObjectBlock($object, $morehtmlright = '', $compatibleImportElementsList = false, $title = 'RelatedObjects')
 	{
 		global $conf, $langs, $hookmanager;
 		global $bc, $action;
@@ -8455,7 +8461,7 @@ class Form
 			$nbofdifferenttypes = count($object->linkedObjects);
 
 			print '<!-- showLinkedObjectBlock -->';
-			print load_fiche_titre($langs->trans('RelatedObjects'), $morehtmlright, '', 0, 0, 'showlinkedobjectblock');
+			print load_fiche_titre($langs->trans($title), $morehtmlright, '', 0, 0, 'showlinkedobjectblock');
 
 
 			print '<div class="div-table-responsive-no-min">';
@@ -8524,11 +8530,6 @@ class Form
 				} elseif ($objecttype == 'delivery') {
 					$tplpath = 'delivery';
 					if (empty($conf->expedition->enabled)) {
-						continue; // Do not show if module disabled
-					}
-				} elseif ($objecttype == 'mo') {
-					$tplpath = 'mrp/mo';
-					if (empty($conf->mrp->enabled)) {
 						continue; // Do not show if module disabled
 					}
 				} elseif ($objecttype == 'ficheinter') {
@@ -9435,7 +9436,6 @@ class Form
 		if ($resql) {
 			// Enhance with select2
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
-			$out .= ajax_combobox($htmlname);
 
 			$out .= '<select class="flat minwidth200'.($morecss ? ' '.$morecss : '').'" id="'.$htmlname.'" name="'.$htmlname.($multiple ? '[]' : '').'" '.($multiple ? 'multiple' : '').' '.($disabled ? ' disabled' : '').'>';
 
@@ -9477,6 +9477,8 @@ class Form
 				$out .= '<option value="" disabled>'.$langs->trans("NoUserGroupDefined").'</option>';
 			}
 			$out .= '</select>';
+
+			$out .= ajax_combobox($htmlname);
 		} else {
 			dol_print_error($this->db);
 		}

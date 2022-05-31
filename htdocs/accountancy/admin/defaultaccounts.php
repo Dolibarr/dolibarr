@@ -81,22 +81,22 @@ $list_account[] = '---Others---';
 $list_account[] = 'ACCOUNTING_VAT_BUY_ACCOUNT';
 $list_account[] = 'ACCOUNTING_VAT_SOLD_ACCOUNT';
 $list_account[] = 'ACCOUNTING_VAT_PAY_ACCOUNT';
-if ($conf->banque->enabled) {
+if (!empty($conf->banque->enabled)) {
 	$list_account[] = 'ACCOUNTING_ACCOUNT_TRANSFER_CASH';
 }
-if ($conf->don->enabled) {
+if (!empty($conf->don->enabled)) {
 	$list_account[] = 'DONATION_ACCOUNTINGACCOUNT';
 }
-if ($conf->adherent->enabled) {
+if (!empty($conf->adherent->enabled)) {
 	$list_account[] = 'ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT';
 }
-if ($conf->loan->enabled) {
+if (!empty($conf->loan->enabled)) {
 	$list_account[] = 'LOAN_ACCOUNTING_ACCOUNT_CAPITAL';
 	$list_account[] = 'LOAN_ACCOUNTING_ACCOUNT_INTEREST';
 	$list_account[] = 'LOAN_ACCOUNTING_ACCOUNT_INSURANCE';
 }
 $list_account[] = 'ACCOUNTING_ACCOUNT_SUSPENSE';
-if ($conf->societe->enabled) {
+if (!empty($conf->societe->enabled)) {
 	$list_account[] = '---Deposits---';
 	$list_account[] = 'ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT';
 }
@@ -246,7 +246,7 @@ foreach ($list_account as $key) {
 	}
 }
 
-if ($conf->societe->enabled) {
+if (!empty($conf->societe->enabled)) {
 	print '<tr class="oddeven">';
 	print '<td>' . img_picto('', 'bill', 'class="pictofixedwidth"') . $langs->trans("UseAuxiliaryAccountOnCustomerDeposit") . '</td>';
 	if (!empty($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER_USE_AUXILIARY_ON_DEPOSIT)) {
