@@ -1743,7 +1743,7 @@ if ($step == 5 && $datatoimport) {
 		}
 		//print $code.'-'.$label;
 		$alias = preg_replace('/(\..*)$/i', '', $label);
-		$listfields[$i] = $langs->trans("Field").' '.$code.'->'.$label;
+		$listfields[$i] = $langs->trans("Column").' '.num2Alpha($code - 1).' -> '.$label;
 	}
 	print count($listfields) ? (join(', ', $listfields)) : $langs->trans("Error");
 	print '</td></tr>';

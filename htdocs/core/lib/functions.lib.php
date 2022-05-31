@@ -185,7 +185,7 @@ function isASecretKey($keyname)
 
 
 /**
- * Return a numeric value into an Excel like column number. So 1 return 'A', 2 returns 'B'..., 27 return 'AA'
+ * Return a numeric value into an Excel like column number. So 0 return 'A', 1 returns 'B'..., 26 return 'AA'
  *
  * @param	int|string		$n		Numeric value
  * @return 	string					Column in Excel format
