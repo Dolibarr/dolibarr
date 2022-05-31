@@ -446,7 +446,7 @@ class ImportXlsx extends ModeleImports
 
 						// Is it a required field ?
 						if (preg_match('/\*/', $objimport->array_import_fields[0][$val]) && ((string) $newval == '')) {
-							$this->errors[$error]['lib'] = $langs->trans('ErrorMissingMandatoryValue', $key);
+							$this->errors[$error]['lib'] = $langs->trans('ErrorMissingMandatoryValue', num2Alpha($key));
 							$this->errors[$error]['type'] = 'NOTNULL';
 							$errorforthistable++;
 							$error++;

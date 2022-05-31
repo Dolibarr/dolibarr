@@ -2350,20 +2350,6 @@ function show_elem($fieldssource, $pos, $key, $var, $nostyle = '')
 
 
 /**
- * Return a numeric into an Excel like column number
- *
- * @param	string		$n		Numeric value
- * @return 	string				Column in Excel format
- */
-function num2Alpha($n)
-{
-	for ($r = ""; $n >= 0; $n = intval($n / 26) - 1)
-		$r = chr($n%26 + 0x41) . $r;
-		return $r;
-}
-
-
-/**
  * Return not used field number
  *
  * @param 	array	$fieldssource	Array of field source

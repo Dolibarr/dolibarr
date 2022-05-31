@@ -183,6 +183,21 @@ function isASecretKey($keyname)
 	return preg_match('/(_pass|password|_pw|_key|securekey|serverkey|secret\d?|p12key|exportkey|_PW_[a-z]+|token)$/i', $keyname);
 }
 
+
+/**
+ * Return a numeric value into an Excel like column number. So 1 return 'A', 2 returns 'B'..., 27 return 'AA'
+ *
+ * @param	int|string		$n		Numeric value
+ * @return 	string					Column in Excel format
+ */
+function num2Alpha($n)
+{
+	for ($r = ""; $n >= 0; $n = intval($n / 26) - 1)
+		$r = chr($n % 26 + 0x41) . $r;
+		return $r;
+}
+
+
 /**
  * Return information about user browser
  *
