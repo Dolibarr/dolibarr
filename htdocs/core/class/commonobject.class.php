@@ -7383,7 +7383,7 @@ abstract class CommonObject
 		} elseif ($type == 'url') {
 			$value = dol_print_url($value, '_blank', 32, 1);
 		} elseif ($type == 'phone') {
-			$value = dol_print_phone($value, '', 0, 0, '', '&nbsp;', 1);
+			$value = dol_print_phone($value, '', 0, 0, '', '&nbsp;', 'phone');
 		} elseif ($type == 'price') {
 			if (!is_null($value) && $value !== '') {
 				$value = price($value, 0, $langs, 0, 0, -1, $conf->currency);
