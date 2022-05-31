@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2006-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2009-2012	Regis Houssin		<regis.houssin@inodbox.com>
+/* Copyright (C) 2006-2012 Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2009-2012 Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
  * Copyright (C) 2012-2016 Juanjo Menent		<jmenent@2byte.es>
  *
@@ -446,7 +446,7 @@ class ImportXlsx extends ModeleImports
 
 						// Is it a required field ?
 						if (preg_match('/\*/', $objimport->array_import_fields[0][$val]) && ((string) $newval == '')) {
-							$this->errors[$error]['lib'] = $langs->trans('ErrorMissingMandatoryValue', $key);
+							$this->errors[$error]['lib'] = $langs->trans('ErrorMissingMandatoryValue', num2Alpha($key - 1));
 							$this->errors[$error]['type'] = 'NOTNULL';
 							$errorforthistable++;
 							$error++;

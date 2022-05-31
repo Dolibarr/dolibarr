@@ -1743,7 +1743,7 @@ if ($step == 5 && $datatoimport) {
 		}
 		//print $code.'-'.$label;
 		$alias = preg_replace('/(\..*)$/i', '', $label);
-		$listfields[$i] = $langs->trans("Field").' '.$code.'->'.$label;
+		$listfields[$i] = $langs->trans("Column").' '.num2Alpha($code - 1).' -> '.$label;
 	}
 	print count($listfields) ? (join(', ', $listfields)) : $langs->trans("Error");
 	print '</td></tr>';
@@ -2346,20 +2346,6 @@ function show_elem($fieldssource, $pos, $key, $var, $nostyle = '')
 
 	print "</div>\n";
 	print "<!-- Box end -->\n\n";
-}
-
-
-/**
- * Return a numeric into an Excel like column number
- *
- * @param	string		$n		Numeric value
- * @return 	string				Column in Excel format
- */
-function num2Alpha($n)
-{
-	for ($r = ""; $n >= 0; $n = intval($n / 26) - 1)
-		$r = chr($n%26 + 0x41) . $r;
-		return $r;
 }
 
 
