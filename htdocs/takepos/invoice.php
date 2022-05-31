@@ -913,7 +913,7 @@ if (empty($reshook)) {
 			$sectionwithinvoicelink .= ' <button id="buttonsend" type="button" onclick="SendTicket('.$placeid.');">'.$langs->trans('SendTicket').'</button>';
 		}
 
-		if ($remaintopay <= 0 && getDolGlobalString('TAKEPOS_AUTO_PRINT_TICKETS')) {
+		if ($remaintopay <= 0 && getDolGlobalString('TAKEPOS_AUTO_PRINT_TICKETS') && $action != "history") {
 			$sectionwithinvoicelink .= '<script type="text/javascript">$("#buttonprint").click();</script>';
 		}
 	}
