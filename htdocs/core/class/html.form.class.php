@@ -8631,27 +8631,27 @@ class Form
 
 			$possiblelinks = array(
 				'propal'=>array(
-					'enabled'=>$conf->propal->enabled,
+					'enabled'=>(!empty($conf->propal->enabled) ? $conf->propal->enabled : 0),
 					'perms'=>1,
 					'label'=>'LinkToProposal',
 					'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_client, t.total_ht FROM ".$this->db->prefix()."societe as s, ".$this->db->prefix()."propal as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('propal').')'),
 				'order'=>array(
-					'enabled'=>$conf->commande->enabled,
+					'enabled'=>(!empty($conf->commande->enabled) ? $conf->commande->enabled : 0),
 					'perms'=>1,
 					'label'=>'LinkToOrder',
 					'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_client, t.total_ht FROM ".$this->db->prefix()."societe as s, ".$this->db->prefix()."commande as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('commande').')'),
 				'invoice'=>array(
-					'enabled'=>$conf->facture->enabled,
+					'enabled'=>(!empty($conf->facture->enabled) ? $conf->facture->enabled : 0),
 					'perms'=>1,
 					'label'=>'LinkToInvoice',
 					'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_client, t.total_ht FROM ".$this->db->prefix()."societe as s, ".$this->db->prefix()."facture as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('invoice').')'),
 				'invoice_template'=>array(
-					'enabled'=>$conf->facture->enabled,
+					'enabled'=>(!empty($conf->facture->enabled) ? $conf->facture->enabled : 0),
 					'perms'=>1,
 					'label'=>'LinkToTemplateInvoice',
 					'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.titre as ref, t.total_ht FROM ".$this->db->prefix()."societe as s, ".$this->db->prefix()."facture_rec as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('invoice').')'),
 				'contrat'=>array(
-					'enabled'=>$conf->contrat->enabled,
+					'enabled'=>(!empty($conf->contrat->enabled) ? $conf->contrat->enabled : 0),
 					'perms'=>1,
 					'label'=>'LinkToContract',
 					'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_customer as ref_client, t.ref_supplier, SUM(td.total_ht) as total_ht
