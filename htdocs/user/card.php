@@ -333,7 +333,7 @@ if (empty($reshook)) {
 
 			$id = $object->create($user);
 			if ($id > 0) {
-				$resPass = '';
+				$resPass = 0;
 				if (GETPOST('password', 'none')) {
 					$resPass = $object->setPassword($user, GETPOST('password', 'none'));
 				}
