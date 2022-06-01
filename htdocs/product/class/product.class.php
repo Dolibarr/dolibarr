@@ -4711,6 +4711,29 @@ class Product extends CommonObject
 		}
 	}
 
+	/**
+	 * Return if a product has children or not
+	 *
+	 * @return	int		<0 if KO, else Number of children (first level only)
+	 */
+	public function hasChildren()
+	{
+		$sql  = "SELECT pa.fk_product_fils as child_id";
+		$sql .= " FROM ".$this->db->prefix()."product_association as pa";
+		$sql .= " WHERE pa.fk_product_pere = ".((int) $this->id);
+
+		$res = $this->db->query($sql);
+		if ($res) {
+			$nb = $this->db->num_rows($res);
+			$this->db->free($res);
+			return $nb;
+		} else {
+			$this->error = $this->db->lasterror().' sql='.$sql;
+			$this->errors[] = $this->error;
+			dol_syslog(__METHOD__.' Error '.$this->error, LOG_ERR);
+			return -1;
+		}
+	}
 
 	/**
 	 *  Return childs of product $id

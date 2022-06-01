@@ -44,6 +44,7 @@ if (!empty($conf->commande->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 }
 require_once DOL_DOCUMENT_ROOT.'/expedition/class/expeditionlinebatch.class.php';
+require_once DOL_DOCUMENT_ROOT.'/expedition/class/expeditionlinedispatch.class.php';
 
 
 /**
@@ -369,8 +370,18 @@ class Expedition extends CommonObject
 				for ($i = 0; $i < $num; $i++) {
 					if (empty($this->lines[$i]->product_type) || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
 						if (!isset($this->lines[$i]->detail_batch)) {	// no batch management
-							if ($this->create_line($this->lines[$i]->entrepot_id, $this->lines[$i]->origin_line_id, $this->lines[$i]->qty, $this->lines[$i]->rang, $this->lines[$i]->array_options) <= 0) {
+							$lineId = $this->create_line($this->lines[$i]->entrepot_id, $this->lines[$i]->origin_line_id, $this->lines[$i]->qty, $this->lines[$i]->rang, $this->lines[$i]->array_options);
+							if (!($lineId > 0)) {
 								$error++;
+							}
+
+							// add dispatch lines
+							if (!$error && isset($this->lines[$i]->detail_dispatch)) {
+								$this->lines[$i]->id = $lineId;
+								$res = $this->create_line_dispatch($this->lines[$i]);
+								if ($res <= 0) {
+									$error++;
+								}
 							}
 						} else {	// with batch management
 							if ($this->create_line_batch($this->lines[$i], $this->lines[$i]->array_options) <= 0) {
@@ -498,6 +509,45 @@ class Expedition extends CommonObject
 							$error++;
 						}
 					}
+				}
+			}
+		}
+
+		if (!$error) {
+			return 1;
+		} else {
+			return -1;
+		}
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 * Create the detail of the expedition line
+	 * Create one record into expeditiondet_dispatch for each child product
+	 *
+	 * @param 	ExpeditionLigne		$line		Object with full information of line ($line->detail_dispatch must be an array of ExpeditionLineDispatch)
+	 * @return	int								<0 if KO, >0 if OK
+	 */
+	public function create_line_dispatch($line)
+	{
+		global $user;
+
+		// phpcs:enable
+		$error = 0;
+
+		// create shipment dispatch lines
+		if (!empty($line->detail_dispatch)) {
+			foreach ($line->detail_dispatch as $line_dispatch) {
+				$line_dispatch->fk_expeditiondet = $line->id;
+				$res = $line_dispatch->create($user);
+				if (!($res > 0)) {
+					$error++;
+					$this->error = $line_dispatch->error;
+					$this->errors[] = $this->error;
+				}
+
+				if ($error) {
+					break;
 				}
 			}
 		}
@@ -758,14 +808,28 @@ class Expedition extends CommonObject
 					if (empty($obj->edbrowid)) {
 						// line without batch detail
 
-						// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record.
-						$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->subprice, $langs->trans("ShipmentValidatedInDolibarr", $numref));
-
-						if ($result < 0) {
+						// add dispatched lines
+						$line_dispatch = new ExpeditionLineDispatch($this->db);
+						$res = $line_dispatch->fetchAll('', '', 0, 0, array('fk_expeditiondet' => $obj->rowid), 'AND', -1); // decrement qty
+						if (!($res >= 0)) {
 							$error++;
-							$this->error = $mouvS->error;
-							$this->errors = array_merge($this->errors, $mouvS->errors);
-							break;
+							$this->error = $line_dispatch->error;
+							$this->errors = array_merge($this->errors, $line_dispatch->error);
+						}
+						if (is_array($line_dispatch->lines)) {
+							$mouvS->detail_dispatch = $line_dispatch->lines;
+						}
+
+						if (!$error) {
+							// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record.
+							$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->subprice, $langs->trans("ShipmentValidatedInDolibarr", $numref));
+
+							if ($result < 0) {
+								$error++;
+								$this->error = $mouvS->error;
+								$this->errors = array_merge($this->errors, $mouvS->errors);
+								break;
+							}
 						}
 					} else {
 						// line with batch detail
@@ -1039,6 +1103,68 @@ class Expedition extends CommonObject
 		}
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 * Add a shipment line with virtual product (children components)
+	 *
+	 * @param	array	$children_line		Array ['qty' => parent qty, 'warehouse_id' => parent warehouse id, 'ix_l' => id of origin line,
+	 *                   			 		'child' => Array['qty' => child quantity , 'warehouse_id' => child warehouse id]]
+	 * @param	array	$array_options		Extrafields array
+	 * @return  int   	0 if KO, >0 if OK
+	 */
+	public function addline_dispatch($children_line, $array_options = 0)
+	{
+		// phpcs:enable
+		global $conf, $langs;
+
+		$num = count($this->lines);
+		if ($children_line['qty'] > 0) {
+			$line = new ExpeditionLigne($this->db);
+			$line->entrepot_id = $children_line['warehouse_id'];
+			$line->fk_origin_line = $children_line['ix_l'];
+			$line->origin_line_id = $line->fk_origin_line; // deprecated
+			$line->qty = $children_line['qty'];
+
+			$line_dispatch_list = array();
+			foreach ($children_line['child'] as $child_product_id => $child_line) {
+				foreach ($child_line as $child) {
+					$child_total_qty = 0;
+					if ($child['qty'] > 0) {
+						$line_dispatch = new ExpeditionLineDispatch($this->db);
+						$line_dispatch->fk_product = $child_product_id;
+						$line_dispatch->qty = $child['qty'];
+						$line_dispatch->fk_entrepot = $child['warehouse_id'];
+						$line_dispatch_list[] = $line_dispatch;
+						$child_total_qty += floatval($line_dispatch->qty);
+					}
+
+					if ($conf->global->STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT) {
+						// load and check dispatched product stock qty
+						$product_dispatch = new Product($this->db);
+						$product_dispatch->fetch($child_product_id);
+
+						if ($product_dispatch->stock_reel < $child_total_qty) {
+							$langs->load("errors");
+							$this->errors[] = $langs->trans('ErrorStockIsNotEnoughToAddProductOnShipment', $child_product_id);
+							dol_syslog(__METHOD__ . ' Error : Product ' . $product_dispatch->ref . ' : ' . $this->errorsToString(), LOG_ERR);
+							$this->db->rollback();
+							return -1;
+						}
+					}
+				}
+			}
+			$line->detail_dispatch = $line_dispatch_list;
+
+			// extrafields
+			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($array_options) && count($array_options) > 0) { // For avoid conflicts if trigger used
+				$line->array_options = $array_options;
+			}
+
+			$this->lines[$num] = $line;
+			return 1;
+		}
+	}
+
 	/**
 	 *  Update database
 	 *
@@ -1260,6 +1386,23 @@ class Expedition extends CommonObject
 							$error++; $this->errors = $this->errors + $mouvS->errors;
 							break;
 						}
+
+						// we try deletion of dispatched lines
+						$line_dispatch = new ExpeditionLineDispatch($this->db);
+						$res = $line_dispatch->fetchAll('', '', 0, 0, array('fk_expeditiondet' => $obj->expeditiondet_id));
+						if (!($res >= 0)) {
+							$error++; $this->errors[] = "Error ".$this->db->lasterror();
+						}
+						if (!$error) {
+							foreach ($line_dispatch->lines as $line) {
+								$result = $mouvS->reception($user, $line->fk_product, $line->fk_entrepot, $line->qty, 0, $langs->trans("ShipmentDeletedInDolibarr", $this->ref)); // Price is set to 0, because we don't want to see WAP changed
+								if ($result < 0) {
+									$error++;
+									$this->errors = $this->errors + $mouvS->errors;
+									break;
+								}
+							}
+						}
 					} else {
 						// We increment stock of batches
 						// We use warehouse selected for each line
@@ -1284,6 +1427,14 @@ class Expedition extends CommonObject
 		if (!$error && $conf->productbatch->enabled) {
 			$shipmentlinebatch = new ExpeditionLineBatch($this->db);
 			if ($shipmentlinebatch->deleteFromShipment($this->id) < 0) {
+				$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			}
+		}
+
+		// delete dispatch expedition line
+		if (!$error) {
+			$shipment_line_dispatch = new ExpeditionLineDispatch($this->db);
+			if ($shipment_line_dispatch->deleteFromShipment($this->id) < 0) {
 				$error++; $this->errors[] = "Error ".$this->db->lasterror();
 			}
 		}
@@ -1444,6 +1595,23 @@ class Expedition extends CommonObject
 							$error++; $this->errors = $this->errors + $mouvS->errors;
 							break;
 						}
+
+						// we try deletion of dispatched lines
+						$line_dispatch = new ExpeditionLineDispatch($this->db);
+						$res = $line_dispatch->fetchAll('', '', 0, 0, array('fk_expeditiondet' => $obj->expeditiondet_id));
+						if (!($res >= 0)) {
+							$error++; $this->errors[] = "Error ".$this->db->lasterror();
+						}
+						if (!$error) {
+							foreach ($line_dispatch->lines as $line) {
+								$result = $mouvS->reception($user, $line->fk_product, $line->fk_entrepot, $line->qty, 0, $langs->trans("ShipmentDeletedInDolibarr", $this->ref)); // Price is set to 0, because we don't want to see WAP changed
+								if ($result < 0) {
+									$error++;
+									$this->errors = $this->errors + $mouvS->errors;
+									break;
+								}
+							}
+						}
 					} else {
 						// We increment stock of batches
 						// We use warehouse selected for each line
@@ -1468,6 +1636,14 @@ class Expedition extends CommonObject
 		if (!$error) {
 			$shipmentlinebatch = new ExpeditionLineBatch($this->db);
 			if ($shipmentlinebatch->deleteFromShipment($this->id) < 0) {
+				$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			}
+		}
+
+		// delete dispatch expedition line
+		if (!$error) {
+			$shipment_line_dispatch = new ExpeditionLineDispatch($this->db);
+			if ($shipment_line_dispatch->deleteFromShipment($this->id) < 0) {
 				$error++; $this->errors[] = "Error ".$this->db->lasterror();
 			}
 		}
@@ -2160,12 +2336,11 @@ class Expedition extends CommonObject
 				$sql .= " ed.rowid, ed.qty, ed.fk_entrepot,";
 				$sql .= " e.ref,";
 				$sql .= " edb.rowid as edbrowid, edb.eatby, edb.sellby, edb.batch, edb.qty as edbqty, edb.fk_origin_stock";
-				$sql .= " FROM ".MAIN_DB_PREFIX."commandedet as cd,";
-				$sql .= " ".MAIN_DB_PREFIX."expeditiondet as ed";
+				$sql .= " FROM ".MAIN_DB_PREFIX."commandedet as cd";
+				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."expeditiondet as ed ON ed.fk_origin_line = cd.rowid";
 				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."expeditiondet_batch as edb on edb.fk_expeditiondet = ed.rowid";
 				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."expedition as e ON ed.fk_expedition = e.rowid";
 				$sql .= " WHERE ed.fk_expedition = ".((int) $this->id);
-				$sql .= " AND cd.rowid = ed.fk_origin_line";
 
 				dol_syslog(get_class($this)."::valid select details", LOG_DEBUG);
 				$resql = $this->db->query($sql);
@@ -2190,12 +2365,27 @@ class Expedition extends CommonObject
 						if (empty($obj->edbrowid)) {
 							// line without batch detail
 
-							// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
-							$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->subprice, $langs->trans("ShipmentClassifyClosedInDolibarr", $obj->ref));
-							if ($result < 0) {
-								$this->error = $mouvS->error;
-								$this->errors = $mouvS->errors;
-								$error++; break;
+							// add dispatched lines
+							$line_dispatch = new ExpeditionLineDispatch($this->db);
+							$res = $line_dispatch->fetchAll('', '', 0, 0, array('fk_expeditiondet' => $obj->rowid), 'AND', -1); // decrement qty
+							if (!($res >= 0)) {
+								$error++;
+								$this->error = $line_dispatch->error;
+								$this->errors = array_merge($this->errors, $line_dispatch->error);
+							}
+							if (is_array($line_dispatch->lines)) {
+								$mouvS->detail_dispatch = $line_dispatch->lines;
+							}
+
+							if (!$error) {
+								// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
+								$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->subprice, $langs->trans("ShipmentClassifyClosedInDolibarr", $obj->ref));
+								if ($result < 0) {
+									$this->error = $mouvS->error;
+									$this->errors = $mouvS->errors;
+									$error++;
+									break;
+								}
 							}
 						} else {
 							// line with batch detail
@@ -2333,12 +2523,13 @@ class Expedition extends CommonObject
 				// TODO possibilite d'expedier a partir d'une propale ou autre origine
 				$sql = "SELECT cd.fk_product, cd.subprice,";
 				$sql .= " ed.rowid, ed.qty, ed.fk_entrepot,";
+				$sql .= " e.ref,";
 				$sql .= " edb.rowid as edbrowid, edb.eatby, edb.sellby, edb.batch, edb.qty as edbqty, edb.fk_origin_stock";
-				$sql .= " FROM ".MAIN_DB_PREFIX."commandedet as cd,";
-				$sql .= " ".MAIN_DB_PREFIX."expeditiondet as ed";
+				$sql .= " FROM ".MAIN_DB_PREFIX."commandedet as cd";
+				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."expeditiondet as ed ON ed.fk_origin_line = cd.rowid";
 				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."expeditiondet_batch as edb on edb.fk_expeditiondet = ed.rowid";
+				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."expedition as e ON ed.fk_expedition = e.rowid";
 				$sql .= " WHERE ed.fk_expedition = ".((int) $this->id);
-				$sql .= " AND cd.rowid = ed.fk_origin_line";
 
 				dol_syslog(get_class($this)."::valid select details", LOG_DEBUG);
 				$resql = $this->db->query($sql);
@@ -2364,18 +2555,33 @@ class Expedition extends CommonObject
 						if (empty($obj->edbrowid)) {
 							// line without batch detail
 
-							// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
-							$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, -$qty, $obj->subprice, $langs->trans("ShipmentUnClassifyCloseddInDolibarr", $numref));
-							if ($result < 0) {
-								$this->error = $mouvS->error;
-								$this->errors = $mouvS->errors;
-								$error++; break;
+							// add dispatched lines
+							$line_dispatch = new ExpeditionLineDispatch($this->db);
+							$res = $line_dispatch->fetchAll('', '', 0, 0, array('fk_expeditiondet' => $obj->rowid), 'AND', 0); // increment qty
+							if (!($res >= 0)) {
+								$error++;
+								$this->error = $line_dispatch->error;
+								$this->errors = array_merge($this->errors, $line_dispatch->error);
+							}
+							if (is_array($line_dispatch->lines)) {
+								$mouvS->detail_dispatch = $line_dispatch->lines;
+							}
+
+							if (!$error) {
+								// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
+								$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, -$qty, $obj->subprice, $langs->trans("ShipmentUnClassifyCloseddInDolibarr", $obj->ref));
+								if ($result < 0) {
+									$this->error = $mouvS->error;
+									$this->errors = $mouvS->errors;
+									$error++;
+									break;
+								}
 							}
 						} else {
 							// line with batch detail
 
 							// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
-							$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, -$qty, $obj->subprice, $langs->trans("ShipmentUnClassifyCloseddInDolibarr", $numref), '', $this->db->jdate($obj->eatby), $this->db->jdate($obj->sellby), $obj->batch, $obj->fk_origin_stock);
+							$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, -$qty, $obj->subprice, $langs->trans("ShipmentUnClassifyCloseddInDolibarr", $obj->ref), '', $this->db->jdate($obj->eatby), $this->db->jdate($obj->sellby), $obj->batch, $obj->fk_origin_stock);
 							if ($result < 0) {
 								$this->error = $mouvS->error;
 								$this->errors = $mouvS->errors;
@@ -2628,6 +2834,11 @@ class ExpeditionLigne extends CommonObjectLine
 	 */
 	public $total_localtax2;
 
+	/**
+	 * @var ExpeditionLineDispatch[] array of dispatched shipment lines
+	 */
+	public $detail_dispatch;
+
 
 	/**
 	 *	Constructor
@@ -2774,6 +2985,17 @@ class ExpeditionLigne extends CommonObjectLine
 		// delete batch expedition line
 		if ($conf->productbatch->enabled) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."expeditiondet_batch";
+			$sql .= " WHERE fk_expeditiondet = ".((int) $this->id);
+
+			if (!$this->db->query($sql)) {
+				$this->errors[] = $this->db->lasterror()." - sql=$sql";
+				$error++;
+			}
+		}
+
+		// delete dispatch expedition line
+		if (!empty($conf->global->PRODUIT_SOUSPRODUITS)) {
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."expeditiondet_dispatch";
 			$sql .= " WHERE fk_expeditiondet = ".((int) $this->id);
 
 			if (!$this->db->query($sql)) {
