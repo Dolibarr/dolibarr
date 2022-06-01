@@ -7320,3 +7320,4 @@ if (is_object($db)) {
 div.flot-text .flot-tick-label .tickLabel, .fa-color-unset {
 	color: unset;
 }
+
