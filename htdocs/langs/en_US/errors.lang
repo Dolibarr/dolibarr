@@ -322,11 +322,6 @@ WarningAvailableOnlyForHTTPSServers=Available only if using HTTPS secured connec
 WarningModuleXDisabledSoYouMayMissEventHere=Module %s has not been enabled. So you may miss a lot of event here.
 WarningPaypalPaymentNotCompatibleWithStrict=The value 'Strict' makes the online payment features not working correctly. Use 'Lax' instead.
 
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-<<<<<<< HEAD
->>>>>>> branch '15.0' of git@github.com:Dolibarr/dolibarr.git
 # Validate
 RequireValidValue = Value not valid
 RequireAtLeastXString = Requires at least %s character(s)
@@ -347,12 +342,3 @@ BadSetupOfField = Error bad setup of field
 BadSetupOfFieldClassNotFoundForValidation = Error bad setup of field : Class not found for validation
 BadSetupOfFieldFileNotFound = Error bad setup of field : File not found for inclusion
 BadSetupOfFieldFetchNotCallable = Error bad setup of field : Fetch not callable on class
-<<<<<<< HEAD
-=======
-=======
-=======
->>>>>>> branch '13.0' of git@github.com:Dolibarr/dolibarr.git
->>>>>>> branch '14.0' of git@github.com:Dolibarr/dolibarr.git
-=======
->>>>>>> branch '14.0' of git@github.com:Dolibarr/dolibarr.git
->>>>>>> branch '15.0' of git@github.com:Dolibarr/dolibarr.git

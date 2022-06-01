@@ -24,7 +24,7 @@ if (empty($conf) || !is_object($conf)) {
 
 global $db;
 
-if (!is_object($form)) {
+if (!empty($form) && !is_object($form)) {
 	$form = new Form($db);
 }
 

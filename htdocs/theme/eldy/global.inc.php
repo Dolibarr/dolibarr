@@ -7631,6 +7631,11 @@ if (!empty($conf->global->THEME_CUSTOM_CSS)) {
 
 ?>
 
+	div.extra_inline_chkbxlst,
+	div.extra_inline_checkbox {
+		min-width:150px;
+	}
+
 /* Must be at end */
 div.flot-text .flot-tick-label .tickLabel, .fa-color-unset {
 	color: unset;

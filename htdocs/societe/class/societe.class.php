@@ -2741,13 +2741,6 @@ class Societe extends CommonObject
 			if (in_array($target, $target_value)) {
 				$linkclose .= ' target="'.dol_escape_htmltag($target).'"';
 			}
-
-			/*
-			$hookmanager->initHooks(array('thirdpartydao'));
-			$parameters=array('id'=>$this->id);
-			$reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-			if ($reshook > 0) $linkclose = $hookmanager->resPrint;
-			*/
 		}
 		$linkstart .= $linkclose.'>';
 		$linkend = '</a>';

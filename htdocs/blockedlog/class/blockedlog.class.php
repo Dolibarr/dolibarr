@@ -152,14 +152,14 @@ class BlockedLog
 
 		/* Supplier
 		if (!empty($conf->fournisseur->enabled)) {
-		 	$this->trackedevents['BILL_SUPPLIER_VALIDATE']='BlockedLogSupplierBillValidate';
+			 $this->trackedevents['BILL_SUPPLIER_VALIDATE']='BlockedLogSupplierBillValidate';
 			$this->trackedevents['BILL_SUPPLIER_DELETE']='BlockedLogSupplierBillDelete';
 			$this->trackedevents['BILL_SUPPLIER_SENTBYMAIL']='BlockedLogSupplierBillSentByEmail'; // Trigger key does not exists, we want just into array to list it as done
-		 	$this->trackedevents['SUPPLIER_DOC_DOWNLOAD']='BlockedLogSupplierBillDownload';		// Trigger key does not exists, we want just into array to list it as done
-		 	$this->trackedevents['SUPPLIER_DOC_PREVIEW']='BlockedLogSupplierBillPreview';		// Trigger key does not exists, we want just into array to list it as done
+			 $this->trackedevents['SUPPLIER_DOC_DOWNLOAD']='BlockedLogSupplierBillDownload';		// Trigger key does not exists, we want just into array to list it as done
+			 $this->trackedevents['SUPPLIER_DOC_PREVIEW']='BlockedLogSupplierBillPreview';		// Trigger key does not exists, we want just into array to list it as done
 
-		 	$this->trackedevents['PAYMENT_SUPPLIER_CREATE']='BlockedLogSupplierBillPaymentCreate';
-		 	$this->trackedevents['PAYMENT_SUPPLIER_DELETE']='BlockedLogsupplierBillPaymentCreate';
+			 $this->trackedevents['PAYMENT_SUPPLIER_CREATE']='BlockedLogSupplierBillPaymentCreate';
+			 $this->trackedevents['PAYMENT_SUPPLIER_DELETE']='BlockedLogsupplierBillPaymentCreate';
 		}
 		 */
 
@@ -173,9 +173,9 @@ class BlockedLog
 
 		/*
 		if (!empty($conf->salary->enabled)) {
-		 	$this->trackedevents['PAYMENT_SALARY_CREATE']='BlockedLogSalaryPaymentCreate';
-		 	$this->trackedevents['PAYMENT_SALARY_MODIFY']='BlockedLogSalaryPaymentCreate';
-		 	$this->trackedevents['PAYMENT_SALARY_DELETE']='BlockedLogSalaryPaymentCreate';
+			 $this->trackedevents['PAYMENT_SALARY_CREATE']='BlockedLogSalaryPaymentCreate';
+			 $this->trackedevents['PAYMENT_SALARY_MODIFY']='BlockedLogSalaryPaymentCreate';
+			 $this->trackedevents['PAYMENT_SALARY_DELETE']='BlockedLogSalaryPaymentCreate';
 		}
 		 */
 
