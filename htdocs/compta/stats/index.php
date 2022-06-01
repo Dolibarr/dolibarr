@@ -256,10 +256,10 @@ $sql .= " ORDER BY dm";
 
 $minyearmonth = $maxyearmonth = 0;
 
-$cum = Array();
-$cum_ht = Array();
-$total_ht = Array();
-$total = Array();
+$cum = array();
+$cum_ht = array();
+$total_ht = array();
+$total = array();
 
 $result = $db->query($sql);
 if ($result) {
