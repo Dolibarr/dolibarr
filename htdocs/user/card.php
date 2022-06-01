@@ -333,18 +333,26 @@ if (empty($reshook)) {
 
 			$id = $object->create($user);
 			if ($id > 0) {
+				$resPass = '';
 				if (GETPOST('password', 'none')) {
-					$object->setPassword($user, GETPOST('password', 'none'));
+					$resPass = $object->setPassword($user, GETPOST('password', 'none'));
 				}
-				if (!empty($conf->categorie->enabled)) {
-					// Categories association
-					$usercats = GETPOST('usercats', 'array');
-					$object->setCategories($usercats);
-				}
-				$db->commit();
+				if($resPass < 0) {
+					$langs->load("errors");
+					$db->rollback();
+					setEventMessages($object->error, $object->errors, 'errors');
+					$action = "create"; // Go back to create page
+				} else {
+					if(! empty($conf->categorie->enabled)) {
+						// Categories association
+						$usercats = GETPOST('usercats', 'array');
+						$object->setCategories($usercats);
+					}
+					$db->commit();
 
-				header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id);
-				exit;
+					header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id);
+					exit;
+				}
 			} else {
 				$langs->load("errors");
 				$db->rollback();
