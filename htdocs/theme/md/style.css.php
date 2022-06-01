@@ -473,7 +473,7 @@ section.setupsection {
 	border-radius: 5px;
 }
 
-.field-error-icon { color: #ea1212; !important; }
+.field-error-icon { color: #ea1212 !important; }
 
 textarea {
 	border-radius: 0;
@@ -3372,7 +3372,7 @@ a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
 	border-right: 1px solid transparent;
 	border-left: 1px solid transparent;
 	border-top: 1px solid transparent;
-	border-bottom: 0px !important;*/
+	border-bottom: 0px !important;
 }
 
 a.tab:hover
@@ -3474,7 +3474,7 @@ input.buttonreset {
 	padding-<?php print $left; ?>: 0px;
 	padding-<?php print $right; ?>: 16px;
 	padding-bottom: 4px;
-	margin-right: 0px 0px;
+	margin-right: 0px;
 }
 .notopnoleftnoright {
 	border-collapse: collapse;
@@ -3714,7 +3714,7 @@ div.refidpadding  {
 }
 div.refid  {
 	font-weight: bold;
-	color: rgb(--colortexttitlenotab);
+	color: var(--colortexttitlenotab);
 	font-size: 160%;
 }
 a.refid {
@@ -3946,12 +3946,12 @@ table.dataTable tr.oddeven {
 
 /* For no hover style */
 td.oddeven, table.nohover tr.impair, table.nohover tr.pair, table.nohover tr.impair td, table.nohover tr.pair td, tr.nohover td, form.nohover, form.nohover:hover {
-	background-color: var(--colorbacklineimpair1) !important; !important;
-	background: var(--colorbacklineimpair1) !important; !important;
+	background-color: var(--colorbacklineimpair1) !important;
+	background: var(--colorbacklineimpair1) !important;
 }
 td.evenodd, tr.nohoverpair td, #trlinefordates td {
-	background-color: var(--colorbacklinepair1) !important; !important;
-	background: var(--colorbacklinepair1) !important; !important;
+	background-color: var(--colorbacklinepair1) !important;
+	background: var(--colorbacklinepair1) !important;
 }
 .trforbreak td {
 	font-weight: bold;
@@ -4088,7 +4088,7 @@ input.liste_titre {
 	white-space: nowrap;
 	line-height: 1.5em;
 }
-}
+
 .noborder tr.liste_total_wrap td, tr.liste_total_wrap td, form.liste_total_wrap div {
 	white-space: normal;
 }
@@ -4117,7 +4117,7 @@ tr.liste_sub_total, tr.liste_sub_total td {
 }
 .paymenttable tr td:first-child, .margintable tr td:first-child
 {
-	//padding-left: 2px;
+	/*padding-left: 2px;*/
 }
 .paymenttable, .margintable tr td {
 	height: 22px;
@@ -4284,7 +4284,7 @@ span.boxstatstext {
 span.boxstatsindicator {
 	font-size: 110%;
 	font-weight: normal;
-	font-color: rgb(<?php print $colortextlink; ?>);
+	color: rgb(<?php print $colortextlink; ?>);
 }
 span.dashboardlineindicator, span.dashboardlineindicatorlate {
 	font-size: 120%;
@@ -6945,7 +6945,7 @@ div.clipboardCPValue.hidewithsize {
 .clipboardCPTextDivInside {
 	position: absolute;
 	background: #EEE;
-	color: 888;
+	color: #888;
 	border: 1px solid #DDD;
 	opacity: 1;
 	z-index: 20;
@@ -7215,3 +7215,4 @@ div#topmenu-bookmark-dropdown {
 div.flot-text .flot-tick-label .tickLabel, .fa-color-unset {
 	color: unset;
 }
+
