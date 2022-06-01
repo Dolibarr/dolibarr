@@ -271,9 +271,7 @@ class MouvementStock extends CommonObject
 		// Define if we must make the stock change (If product type is a service or if stock is used also for services)
 		// Only record into stock tables wil be disabled by this (the rest like writing into lot table or movement of subproucts are done)
 		$movestock = 0;
-		if (($product->type != Product::TYPE_SERVICE || !empty($conf->global->STOCK_SUPPORTS_SERVICES))
-			&& $product->hasChildren()==0)
-		{
+		if (($product->type != Product::TYPE_SERVICE || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) && $product->hasChildren()==0) {
 			$movestock = 1;
 		}
 
