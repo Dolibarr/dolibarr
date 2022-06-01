@@ -3029,10 +3029,19 @@ function dol_print_socialnetworks($value, $cid, $socid, $type, $dictsocialnetwor
 			if (!empty($dictsocialnetworks[$type]['url'])) {
 				$tmpvirginurl = preg_replace('/\/?{socialid}/', '', $dictsocialnetworks[$type]['url']);
 				if ($tmpvirginurl) {
-					$value = preg_replace('/'.preg_quote($tmpvirginurl, '/').'\/?/', '', $value);
+					$value = preg_replace('/^www\.'.preg_quote($tmpvirginurl, '/').'\/?/', '', $value);
+					$value = preg_replace('/^'.preg_quote($tmpvirginurl, '/').'\/?/', '', $value);
+
+					$tmpvirginurl3 = preg_replace('/^https:\/\//i', 'https://www.', $tmpvirginurl);
+					if ($tmpvirginurl3) {
+						$value = preg_replace('/^www\.'.preg_quote($tmpvirginurl3, '/').'\/?/', '', $value);
+						$value = preg_replace('/^'.preg_quote($tmpvirginurl3, '/').'\/?/', '', $value);
+					}
+
 					$tmpvirginurl2 = preg_replace('/^https?:\/\//i', '', $tmpvirginurl);
 					if ($tmpvirginurl2) {
-						$value = preg_replace('/'.preg_quote($tmpvirginurl2, '/').'\/?/', '', $value);
+						$value = preg_replace('/^www\.'.preg_quote($tmpvirginurl2, '/').'\/?/', '', $value);
+						$value = preg_replace('/^'.preg_quote($tmpvirginurl2, '/').'\/?/', '', $value);
 					}
 				}
 				$link = str_replace('{socialid}', $value, $dictsocialnetworks[$type]['url']);
