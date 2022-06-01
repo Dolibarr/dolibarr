@@ -750,13 +750,6 @@ class ImportCsv extends ModeleImports
 					$i++;
 				}
 
-				// We db escape social network field because he isn't in field creation
-				if (in_array("socialnetworks", $listfields)) {
-					$socialkey = array_search("socialnetworks", $listfields);
-					$tmpsql =  $listvalues[$socialkey];
-					$listvalues[$socialkey] = "'".$this->db->escape($tmpsql)."'";
-				}
-
 				// We add hidden fields (but only if there is at least one field to add into table)
 				// We process here all the fields that were declared into the array $this->import_fieldshidden_array of the descriptor file.
 				// Previously we processed the ->import_fields_array.
@@ -819,11 +812,18 @@ class ImportCsv extends ModeleImports
 						$updatedone = false;
 						$insertdone = false;
 
+						$is_table_category_link = false;
+						$fname = 'rowid';
+						if (strpos($tablename, '_categorie_') !== false) {
+							$is_table_category_link = true;
+							$fname='*';
+						}
+
 						if (!empty($updatekeys)) {
 							// We do SELECT to get the rowid, if we already have the rowid, it's to be used below for related tables (extrafields)
 
 							if (empty($lastinsertid)) {	// No insert done yet for a parent table
-								$sqlSelect = "SELECT rowid FROM ".$tablename;
+								$sqlSelect = "SELECT ".$fname." FROM ".$tablename;
 
 								$data = array_combine($listfields, $listvalues);
 								$where = array();
@@ -831,8 +831,18 @@ class ImportCsv extends ModeleImports
 								foreach ($updatekeys as $key) {
 									$col = $objimport->array_import_updatekeys[0][$key];
 									$key = preg_replace('/^.*\./i', '', $key);
-									$where[] = $key.' = '.$data[$key];
-									$filters[] = $col.' = '.$data[$key];
+									if ($conf->socialnetworks->enabled && strpos($key, "socialnetworks") !== false) {
+										$tmp = explode("_", $key);
+										$key = $tmp[0];
+										$socialnetwork = $tmp[1];
+										$jsondata = $data[$key];
+										$json = json_decode($jsondata);
+										$where[] = $key." LIKE '%\"".$socialnetwork."\":\"".$this->db->escape($json->$socialnetwork)."\"%'";
+										$filters[] = $col." LIKE '%\"".$socialnetwork."\":\"".$this->db->escape($json->$socialnetwork)."\"%'";
+									} else {
+										$where[] = $key.' = '.$data[$key];
+										$filters[] = $col.' = '.$data[$key];
+									}
 								}
 								$sqlSelect .= " WHERE ".implode(' AND ', $where);
 
@@ -842,6 +852,7 @@ class ImportCsv extends ModeleImports
 									if ($num_rows == 1) {
 										$res = $this->db->fetch_object($resql);
 										$lastinsertid = $res->rowid;
+										if ($is_table_category_link) $lastinsertid = 'linktable'; // used to apply update on tables like llx_categorie_product and avoid being blocked for all file content if at least one entry already exists
 										$last_insert_id_array[$tablename] = $lastinsertid;
 									} elseif ($num_rows > 1) {
 										$this->errors[$error]['lib'] = $langs->trans('MultipleRecordFoundWithTheseFilters', implode(', ', $filters));
@@ -888,6 +899,13 @@ class ImportCsv extends ModeleImports
 							}
 
 							if (!empty($lastinsertid)) {
+								// We db escape social network field because he isn't in field creation
+								if (in_array("socialnetworks", $listfields)) {
+									$socialkey = array_search("socialnetworks", $listfields);
+									$tmpsql =  $listvalues[$socialkey];
+									$listvalues[$socialkey] = "'".$this->db->escape($tmpsql)."'";
+								}
+
 								// Build SQL UPDATE request
 								$sqlstart = "UPDATE ".$tablename;
 
@@ -902,6 +920,10 @@ class ImportCsv extends ModeleImports
 									$keyfield = 'rowid';
 								}
 								$sqlend = " WHERE ".$keyfield." = ".((int) $lastinsertid);
+
+								if ($is_table_category_link) {
+									$sqlend = " WHERE " . implode(' AND ', $where);
+								}
 
 								$sql = $sqlstart.$sqlend;
 
@@ -921,6 +943,13 @@ class ImportCsv extends ModeleImports
 
 						// Update not done, we do insert
 						if (!$error && !$updatedone) {
+							// We db escape social network field because he isn't in field creation
+							if (in_array("socialnetworks", $listfields)) {
+								$socialkey = array_search("socialnetworks", $listfields);
+								$tmpsql =  $listvalues[$socialkey];
+								$listvalues[$socialkey] = "'".$this->db->escape($tmpsql)."'";
+							}
+
 							// Build SQL INSERT request
 							$sqlstart = "INSERT INTO ".$tablename."(".implode(", ", $listfields).", import_key";
 							$sqlend = ") VALUES(".implode(', ', $listvalues).", '".$this->db->escape($importid)."'";

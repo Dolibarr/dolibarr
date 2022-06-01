@@ -481,7 +481,7 @@ class Task extends CommonObjectLine
 				$newdir = $conf->projet->dir_output.'/'.dol_sanitizeFileName($project->ref).'/'.dol_sanitizeFileName($this->ref);
 				if (file_exists($olddir)) {
 					include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-					$res = dol_move($olddir, $newdir);
+					$res = dol_move_dir($olddir, $newdir);
 					if (!$res) {
 						$langs->load("errors");
 						$this->error = $langs->trans('ErrorFailToRenameDir', $olddir, $newdir);

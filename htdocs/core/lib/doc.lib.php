@@ -128,11 +128,9 @@ function doc_getlinedesc($line, $outputlangs, $hideref = 0, $hidedesc = 0, $issu
 				} else {
 					$ref_prodserv = $prodser->ref; // Show local ref only
 				}
-
-				$ref_prodserv .= " - ";
 			}
 
-			$libelleproduitservice = $prefix_prodserv.$ref_prodserv.$libelleproduitservice;
+			$libelleproduitservice = $prefix_prodserv.$ref_prodserv.($libelleproduitservice ? " - " : "").$libelleproduitservice;
 		}
 	}
 
