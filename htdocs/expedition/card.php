@@ -825,9 +825,9 @@ if (empty($reshook)) {
 								}
 							}
 						} elseif (is_a($line->product, 'Product') && $line->product->hasChildren()) {
-							$line->id = $lines[$i]->id;
+							$line->id = $line_id;
 							$line->entrepot_id = isset($lines[$i]->fk_entrepot) ? $lines[$i]->fk_entrepot : 0;
-							$line->qty = $lines[$i]->qty;
+							$line->qty = GETPOSTISSET('qtyl'.$line_id) ? GETPOST('qtyl'.$line_id, 'int') : $lines[$i]->qty;
 							if ($line->update($user) < 0) {
 								$error++;
 								setEventMessages($line->error, $line->errors, 'errors');
