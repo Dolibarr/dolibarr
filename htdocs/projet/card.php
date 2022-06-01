@@ -1275,7 +1275,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 			// Close
 			if ($object->statut == Project::STATUS_VALIDATED && $user->rights->projet->creer) {
 				if ($userWrite > 0) {
-					print '<a class="butAction" href="card.php?id='.$object->id.'&amp;action=close">'.$langs->trans("Close").'</a>';
+					print '<a class="butAction" href="card.php?id='.$object->id.'&action=close&token='.newToken().'">'.$langs->trans("Close").'</a>';
 				} else {
 					print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('Close').'</a>';
 				}
