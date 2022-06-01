@@ -119,6 +119,8 @@ if ($action == 'update' && !GETPOST("cancel") && $user->rights->projet->creer) {
 				setEventMessages($object->error, $object->errors, 'errors');
 				$action = 'edit';
 			}
+		} else {
+			$action = 'edit';
 		}
 	} else {
 		$action = 'edit';

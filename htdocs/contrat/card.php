@@ -259,10 +259,6 @@ if (empty($reshook)) {
 				}
 
 				$id = $object->create($user);
-				if ($id < 0) {
-					setEventMessages($object->error, $object->errors, 'errors');
-				}
-
 				if ($id > 0) {
 					dol_include_once('/'.$element.'/class/'.$subelement.'.class.php');
 
@@ -373,6 +369,9 @@ if (empty($reshook)) {
 				} else {
 					setEventMessages($object->error, $object->errors, 'errors');
 					$error++;
+				}
+				if ($error) {
+					$action = 'create';
 				}
 			} else {
 				$result = $object->create($user);
