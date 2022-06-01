@@ -1069,9 +1069,9 @@ class ExtraFields
 			$out = '';
 			if ($mode) {
 				$options = array();
-                if($mode == 1) {
-                    $options[-2] = $langs->trans("SelectEmpty");
-                }
+				if($mode == 1) {
+					$options[-2] = $langs->trans("SelectEmpty");
+				}
 				foreach ($param['options'] as $okey => $val) {
 					if ((string) $okey == '') {
 						continue;

@@ -65,12 +65,12 @@ if (!empty($extrafieldsobjectkey) && !empty($search_array_options) && is_array($
 			if (is_array($crit)) {
 				$crit = implode(' ', $crit); // natural_search() expects a string
 			} elseif ($typ === 'select' and is_string($crit)) {
-                $critArray = explode(',', $crit);
-                if(in_array(-2, $critArray)) {
-                    $key = array_search(-2, $critArray);
-                    $critArray[$key] = 0;
-                }
-                $critSelect = "'".implode("','", array_map(array($db, 'escape'), $critArray))."'";
+				$critArray = explode(',', $crit);
+				if(in_array(-2, $critArray)) {
+					$key = array_search(-2, $critArray);
+					$critArray[$key] = 0;
+				}
+				$critSelect = "'".implode("','", array_map(array($db, 'escape'), $critArray))."'";
 				$sql .= " AND (COALESCE(".$extrafieldsobjectprefix.$tmpkey.", 0) IN (".$db->sanitize($critSelect, 1).") )";
 				continue;
 			}
