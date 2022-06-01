@@ -373,10 +373,14 @@ $sql .= "  AND ff.fk_statut > 0";
 $sql .= "  AND ffd.product_type <= 2";
 $sql .= " AND ff.entity IN (".getEntity('facture_fourn', 0).")"; // We don't share object for accountancy
 $sql .= " AND aa.account_number IS NULL";
+if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+	$sql .= " AND ff.type IN (".FactureFournisseur::TYPE_STANDARD.",".FactureFournisseur::TYPE_REPLACEMENT.",".FactureFournisseur::TYPE_CREDIT_NOTE.")";
+} else {
+	$sql .= " AND ff.type IN (".FactureFournisseur::TYPE_STANDARD.",".FactureFournisseur::TYPE_REPLACEMENT.",".FactureFournisseur::TYPE_CREDIT_NOTE.",".FactureFournisseur::TYPE_DEPOSIT.")";
+}
 $sql .= " GROUP BY ffd.fk_code_ventilation,aa.account_number,aa.label";
-$sql .= ' ORDER BY aa.account_number';
 
-dol_syslog('htdocs/accountancy/supplier/index.php');
+dol_syslog('htdocs/accountancy/supplier/index.php sql='.$sql, LOG_DEBUG);
 $resql = $db->query($sql);
 if ($resql) {
 	$num = $db->num_rows($resql);
@@ -474,11 +478,17 @@ $sql .= "  AND ff.datef <= '".$db->idate($search_date_end)."'";
 if (!empty($conf->global->ACCOUNTING_DATE_START_BINDING)) {
 	$sql .= " AND ff.datef >= '".$db->idate($conf->global->ACCOUNTING_DATE_START_BINDING)."'";
 }
+$sql .= " AND ff.entity IN (".getEntity('facture_fourn', 0).")"; // We don't share object for accountancy
 $sql .= "  AND ff.fk_statut > 0";
 $sql .= "  AND ffd.product_type <= 2";
-$sql .= " AND ff.entity IN (".getEntity('facture_fourn', 0).")"; // We don't share object for accountancy
+if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+	$sql .= " AND ff.type IN (".FactureFournisseur::TYPE_STANDARD.", ".FactureFournisseur::TYPE_REPLACEMENT.", ".FactureFournisseur::TYPE_CREDIT_NOTE.")";
+} else {
+	$sql .= " AND ff.type IN (".FactureFournisseur::TYPE_STANDARD.", ".FactureFournisseur::TYPE_REPLACEMENT.", ".FactureFournisseur::TYPE_CREDIT_NOTE.", ".FactureFournisseur::TYPE_DEPOSIT.")";
+}
 $sql .= " AND aa.account_number IS NOT NULL";
 $sql .= " GROUP BY ffd.fk_code_ventilation,aa.account_number,aa.label";
+$sql .= ' ORDER BY aa.account_number';
 
 dol_syslog('htdocs/accountancy/supplier/index.php');
 $resql = $db->query($sql);
@@ -560,9 +570,14 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0) { // This part of code looks strange
 	if (!empty($conf->global->ACCOUNTING_DATE_START_BINDING)) {
 		$sql .= " AND ff.datef >= '".$db->idate($conf->global->ACCOUNTING_DATE_START_BINDING)."'";
 	}
+	$sql .= " AND ff.entity IN (".getEntity('facture_fourn', 0).")"; // We don't share object for accountancy
 	$sql .= "  AND ff.fk_statut > 0";
 	$sql .= "  AND ffd.product_type <= 2";
-	$sql .= " AND ff.entity IN (".getEntity('facture_fourn', 0).")"; // We don't share object for accountancy
+	if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+		$sql .= " AND ff.type IN (".FactureFournisseur::TYPE_STANDARD.", ".FactureFournisseur::TYPE_REPLACEMENT.", ".FactureFournisseur::TYPE_CREDIT_NOTE.")";
+	} else {
+		$sql .= " AND ff.type IN (".FactureFournisseur::TYPE_STANDARD.", ".FactureFournisseur::TYPE_REPLACEMENT.", ".FactureFournisseur::TYPE_CREDIT_NOTE.", ".FactureFournisseur::TYPE_DEPOSIT.")";
+	}
 
 	dol_syslog('htdocs/accountancy/supplier/index.php');
 	$resql = $db->query($sql);
