@@ -186,7 +186,8 @@ class Categorie extends CommonObject
 		'contact'  => 'socpeople',
 		'account'  => 'bank_account', // old for bank account
 		'project'  => 'projet',
-		'warehouse'=> 'entrepot'
+		'warehouse'=> 'entrepot',
+		'knowledgemanagement' => 'knowledgemanagement_knowledgerecord'
 	);
 
 	/**
