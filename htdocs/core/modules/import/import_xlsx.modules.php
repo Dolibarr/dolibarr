@@ -920,7 +920,7 @@ class ImportXlsx extends ModeleImports
 								if (empty($keyfield)) {
 									$keyfield = 'rowid';
 								}
-								$sqlSelect .= "WHERE ".$keyfield." = ".((int) $lastinsertid);
+								$sqlSelect .= " WHERE ".$keyfield." = ".((int) $lastinsertid);
 
 								$resql = $this->db->query($sqlSelect);
 								if ($resql) {
