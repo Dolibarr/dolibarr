@@ -389,6 +389,9 @@ class ActionComm extends CommonObject
 	const EVENT_FINISHED = 100;
 
 
+	public $fields = array();
+
+
 	/**
 	 *      Constructor
 	 *
