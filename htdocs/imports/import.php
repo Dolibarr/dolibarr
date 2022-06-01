@@ -1120,7 +1120,7 @@ if ($step == 4 && $datatoimport) {
 		$j = 0;
 		foreach ($optionsall as $tmpcode => $tmpval) {	// Loop on each entry to add into each combo list.
 			$label = '';
-			if ($tmpval['picto']) {
+			if (!empty($tmpval['picto'])) {
 				$label .= img_picto('', $tmpval['picto'], 'class="pictofixedwidth"');
 			}
 			$label .= $tmpval['required'] ? '<strong>' : '';
