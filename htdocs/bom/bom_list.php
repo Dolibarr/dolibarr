@@ -43,7 +43,7 @@ $backtopage = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
 $optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 
 $id = GETPOST('id', 'int');
-$IdFk_product = GETPOST('fk_product');
+$fk_product = GETPOST('fk_product', 'int');
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
@@ -114,7 +114,7 @@ foreach ($object->fields as $key => $val) {
 		);
 	}
 }
-if($IdFk_product){
+if($fk_product){
     unset($arrayfields['t.fk_product']);
 }
 
@@ -483,13 +483,19 @@ print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 
 // print dol_banner_tab and the BOM list of a product
-if ($IdFk_product && $conf->global->BOM_PRODUCT_TAB)
+if ($fk_product && $conf->global->BOM_PRODUCT_TAB)
 {
-    print '<input type="hidden" name="fk_product" value="'.$IdFk_product.'">';
-    $param .= '&fk_product='.urlencode($IdFk_product);
+    print '<input type="hidden" name="fk_product" value="'.$fk_product.'">';
+    $param .= '&fk_product='.urlencode($fk_product);
 
     $product = new Product($db);
-    $product->fetch($IdFk_product);
+    $product->fetch($fk_product);
+
+    if($product->fetch($fk_product) <= 0)
+    {
+        dol_print_error($db);
+        exit;
+    }
 
     $head = product_prepare_head($product);
     $titre = $langs->trans("CardProduct".$product->type);
@@ -505,7 +511,7 @@ if ($IdFk_product && $conf->global->BOM_PRODUCT_TAB)
     dol_banner_tab($product, '', $linkback, $shownav, '');
 }
 
-$newcardbutton = dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/bom/bom_card.php?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']).'&fk_product='.$IdFk_product, '', $user->rights->bom->write);
+$newcardbutton = dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/bom/bom_card.php?action=create&backtopage='.urlencode($_SERVER['PHP_SELF'].'?fk_product='.$fk_product).'&fk_product='.$fk_product, '', $user->rights->bom->write);
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'object_'.$object->picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
 
