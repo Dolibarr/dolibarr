@@ -799,6 +799,7 @@ if ($step == 4 && $datatoimport) {
 	$minpos = min(count($fieldssource), count($fieldstarget));
 	//var_dump($array_match_file_to_database);
 
+
 	$initialloadofstep4 = false;
 	if (empty($_SESSION['dol_array_match_file_to_database_select'])) {
 		$initialloadofstep4 = true;
@@ -971,6 +972,7 @@ if ($step == 4 && $datatoimport) {
 	print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&file='.urlencode($relativepath).'&step=4'.$param.'" target="_blank" rel="noopener noreferrer">';
 	print img_mime($file, '', 'pictofixedwidth');
 	print $filetoimport;
+	print img_picto($langs->trans("Download"), 'download', 'class="paddingleft opacitymedium"');
 	print '</a>';
 	print '</td></tr>';
 
@@ -1052,21 +1054,19 @@ if ($step == 4 && $datatoimport) {
 	print '</td><td width="50%" class="nopaddingrightimp">';
 
 	// Set the list of all possible target fields in Dolibarr.
-	$optionsnotused = "";
 	$optionsall = array();
 	foreach ($fieldstarget as $code => $line) {
-		$text = '<option value="'.$code.'">';
-		$text .= $langs->trans($line["label"]);
-		if ($line["required"]) {
-			$text .= "*";
+		//var_dump($line);
+		$labeltoshow = $langs->trans($line["label"]);
+		$optionsall[$code] = array('label'=>$labeltoshow, 'required'=>(empty($line["required"]) ? 0 : 1), 'position'=>!empty($line['position']) ? $line['position'] : 0);
+		// TODO Get type from an new array into module descriptor.
+		//$picto = 'email';
+		$picto = '';
+		if ($picto) {
+			$optionsall[$code]['picto'] = $picto;
 		}
-		$text .= '</option>';
-		if (!$line["imported"]) {
-			$optionsnotused .= $text;
-		}
-		$optionsall[$code] = array('label'=>$langs->trans($line["label"]), 'required'=>(empty($line["required"]) ? 0 : 1), 'position'=>!empty($line['position']) ? $line['position'] : 0);
 	}
-	// $optionsall is an array of all possible fields. key=>array('label'=>..., 'xxx')
+	// $optionsall is an array of all possible target fields. key=>array('label'=>..., 'xxx')
 
 	$height = '32px'; //needs px for css height attribute below
 	$i = 0;
@@ -1119,7 +1119,11 @@ if ($step == 4 && $datatoimport) {
 
 		$j = 0;
 		foreach ($optionsall as $tmpcode => $tmpval) {	// Loop on each entry to add into each combo list.
-			$label = $tmpval['required'] ? '<strong>' : '';
+			$label = '';
+			if ($tmpval['picto']) {
+				$label .= img_picto('', $tmpval['picto'], 'class="pictofixedwidth"');
+			}
+			$label .= $tmpval['required'] ? '<strong>' : '';
 			$label .= $tmpval['label'];
 			$label .= $tmpval['required'] ? '*</strong>' : '';
 
@@ -1599,6 +1603,7 @@ if ($step == 5 && $datatoimport) {
 	print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&file='.urlencode($relativepath).'&step=4'.$param.'" target="_blank" rel="noopener noreferrer">';
 	print img_mime($file, '', 'pictofixedwidth');
 	print $filetoimport;
+	print img_picto($langs->trans("Download"), 'download', 'class="paddingleft opacitymedium"');
 	print '</a>';
 	print '</td></tr>';
 
@@ -1743,9 +1748,9 @@ if ($step == 5 && $datatoimport) {
 		}
 		//print $code.'-'.$label;
 		$alias = preg_replace('/(\..*)$/i', '', $label);
-		$listfields[$i] = $langs->trans("Field").' '.$code.'->'.$label;
+		$listfields[$i] = $langs->trans("Column").' '.num2Alpha($code - 1).' -> '.$label;
 	}
-	print count($listfields) ? (join(', ', $listfields)) : $langs->trans("Error");
+	print count($listfields) ? (join(', &nbsp;', $listfields)) : $langs->trans("Error");
 	print '</td></tr>';
 
 	print '</table>';
@@ -2346,20 +2351,6 @@ function show_elem($fieldssource, $pos, $key, $var, $nostyle = '')
 
 	print "</div>\n";
 	print "<!-- Box end -->\n\n";
-}
-
-
-/**
- * Return a numeric into an Excel like column number
- *
- * @param	string		$n		Numeric value
- * @return 	string				Column in Excel format
- */
-function num2Alpha($n)
-{
-	for ($r = ""; $n >= 0; $n = intval($n / 26) - 1)
-		$r = chr($n%26 + 0x41) . $r;
-		return $r;
 }
 
 

@@ -1490,11 +1490,13 @@ if ($id > 0) {
 			}
 
 			if ($valuetoshow != '') {
+				$tooltiphelp = (isset($tabcomplete[$tabname[$id]]['help'][$value]) ? $tabcomplete[$tabname[$id]]['help'][$value] : '');
+
 				$tdsoffields .= '<th'.($class ? ' class="'.$class.'"' : '').'>';
-				if (!empty($tabhelp[$id][$value]) && preg_match('/^http(s*):/i', $tabhelp[$id][$value])) {
-					$tdsoffields .= '<a href="'.$tabhelp[$id][$value].'" target="_blank">'.$valuetoshow.' '.img_help(1, $valuetoshow).'</a>';
-				} elseif (!empty($tabhelp[$id][$value])) {
-					$tdsoffields .= $form->textwithpicto($valuetoshow, $tabhelp[$id][$value]);
+				if ($tooltiphelp && preg_match('/^http(s*):/i', $tooltiphelp)) {
+					$tdsoffields .= '<a href="'.$tooltiphelp.'" target="_blank">'.$valuetoshow.' '.img_help(1, $valuetoshow).'</a>';
+				} elseif ($tooltiphelp) {
+					$tdsoffields .= $form->textwithpicto($valuetoshow, $tooltiphelp);
 				} else {
 					$tdsoffields .= $valuetoshow;
 				}
@@ -1643,8 +1645,8 @@ if ($id > 0) {
 				continue;
 			}
 
-			if (in_array($value, array('label', 'libelle', 'libelle_facture')) && empty($tabhelp[$id][$value])) {
-				$tabhelp[$id][$value] = $langs->trans('LabelUsedByDefault');
+			if (in_array($value, array('label', 'libelle', 'libelle_facture')) && empty($tabcomplete[$tabname[$id]]['help'][$value])) {
+				$tabcomplete[$tabname[$id]]['help'][$value] = $langs->trans('LabelUsedByDefault');
 			}
 
 			// Determines the name of the field in relation to the possible names
@@ -1850,10 +1852,12 @@ if ($id > 0) {
 
 			// Show field title
 			if ($showfield) {
-				if (!empty($tabhelp[$id][$value]) && preg_match('/^http(s*):/i', $tabhelp[$id][$value])) {
-					$newvaluetoshow = '<a href="'.$tabhelp[$id][$value].'" target="_blank">'.$valuetoshow.' '.img_help(1, $valuetoshow).'</a>';
-				} elseif (!empty($tabhelp[$id][$value])) {
-					$newvaluetoshow = $form->textwithpicto($valuetoshow, $tabhelp[$id][$value]);
+				$tooltiphelp = (isset($tabcomplete[$tabname[$id]]['help'][$value]) ? $tabcomplete[$tabname[$id]]['help'][$value] : '');
+
+				if ($tooltiphelp && preg_match('/^http(s*):/i', $tooltiphelp)) {
+					$newvaluetoshow = '<a href="'.$tooltiphelp.'" target="_blank">'.$valuetoshow.' '.img_help(1, $valuetoshow).'</a>';
+				} elseif ($tooltiphelp) {
+					$newvaluetoshow = $form->textwithpicto($valuetoshow, $tooltiphelp);
 				} else {
 					$newvaluetoshow = $valuetoshow;
 				}

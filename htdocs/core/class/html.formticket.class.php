@@ -346,7 +346,7 @@ class FormTicket
 			}
 		}
 
-		if ($conf->knowledgemanagement->enabled) {
+		if (!empty($conf->knowledgemanagement->enabled)) {
 			// KM Articles
 			print '<tr id="KWwithajax"></tr>';
 			print '<!-- Script to manage change of ticket group -->

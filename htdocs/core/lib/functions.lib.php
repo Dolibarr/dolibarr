@@ -183,6 +183,21 @@ function isASecretKey($keyname)
 	return preg_match('/(_pass|password|_pw|_key|securekey|serverkey|secret\d?|p12key|exportkey|_PW_[a-z]+|token)$/i', $keyname);
 }
 
+
+/**
+ * Return a numeric value into an Excel like column number. So 0 return 'A', 1 returns 'B'..., 26 return 'AA'
+ *
+ * @param	int|string		$n		Numeric value
+ * @return 	string					Column in Excel format
+ */
+function num2Alpha($n)
+{
+	for ($r = ""; $n >= 0; $n = intval($n / 26) - 1)
+		$r = chr($n % 26 + 0x41) . $r;
+		return $r;
+}
+
+
 /**
  * Return information about user browser
  *
@@ -3012,8 +3027,16 @@ function dol_print_socialnetworks($value, $cid, $socid, $type, $dictsocialnetwor
 			}
 		} else {
 			if (!empty($dictsocialnetworks[$type]['url'])) {
+				$tmpvirginurl = preg_replace('/\/?{socialid}/', '', $dictsocialnetworks[$type]['url']);
+				if ($tmpvirginurl) {
+					$value = preg_replace('/'.preg_quote($tmpvirginurl, '/').'\/?/', '', $value);
+				}
 				$link = str_replace('{socialid}', $value, $dictsocialnetworks[$type]['url']);
-				$htmllink .= '&nbsp;<a href="'.dol_sanitizeUrl($link).'" target="_blank" rel="noopener noreferrer">'.dol_escape_htmltag($value).'</a>';
+				if (preg_match('/^https?:\/\//i', $link)) {
+					$htmllink .= '&nbsp;<a href="'.dol_sanitizeUrl($link, 0).'" target="_blank" rel="noopener noreferrer">'.dol_escape_htmltag($value).'</a>';
+				} else {
+					$htmllink .= '&nbsp;<a href="'.dol_sanitizeUrl($link, 1).'" target="_blank" rel="noopener noreferrer">'.dol_escape_htmltag($value).'</a>';
+				}
 			} else {
 				$htmllink .= dol_escape_htmltag($value);
 			}
@@ -3768,6 +3791,7 @@ function dol_trunc($string, $size = 40, $trunc = 'right', $stringencoding = 'UTF
 function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $srconly = 0, $notitle = 0, $alt = '', $morecss = '', $marginleftonlyshort = 2)
 {
 	global $conf, $langs;
+
 	// We forge fullpathpicto for image to $path/img/$picto. By default, we take DOL_URL_ROOT/theme/$conf->theme/img/$picto
 	$url = DOL_URL_ROOT;
 	$theme = isset($conf->theme) ? $conf->theme : null;
@@ -3786,15 +3810,25 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		}
 	} else {
 		$pictowithouttext = preg_replace('/(\.png|\.gif|\.svg)$/', '', $picto);
+		$pictowithouttext = str_replace('object_', '', $pictowithouttext);
 
-		if (strpos($pictowithouttext, 'fontawesome_') !== false) {
-			$pictowithouttext = explode('_', $pictowithouttext);
+		if (strpos($pictowithouttext, 'fontawesome_') !== false || preg_match('/^fa-/', $pictowithouttext)) {
+			// This is a font awesome image 'fonwtawesome_xxx' or 'fa-xxx'
+			$pictowithouttext = str_replace('fa-', '', $pictowithouttext);
+			$pictowithouttextarray = explode('_', $pictowithouttext);
 			$marginleftonlyshort = 0;
 
-			$fakey      = 'fa-'.$pictowithouttext[1];
-			$fa         = $pictowithouttext[2] ? $pictowithouttext[2] : 'fa';
-			$facolor    = $pictowithouttext[3] ? $pictowithouttext[3] : '';
-			$fasize     = $pictowithouttext[4] ? $pictowithouttext[4] : '';
+			if (!empty($pictowithouttextarray[1])) {
+				$fakey      = 'fa-'.$pictowithouttextarray[1];
+				$fa         = empty($pictowithouttextarray[2]) ? 'fa' : $pictowithouttextarray[2];
+				$facolor    = empty($pictowithouttextarray[3]) ? '' : $pictowithouttextarray[3];
+				$fasize     = empty($pictowithouttextarray[4]) ? '' : $pictowithouttextarray[4];
+			} else {
+				$fakey      = 'fa-'.$pictowithouttext;
+				$fa         = 'fa';
+				$facolor    = '';
+				$fasize     = '';
+			}
 
 			// This snippet only needed since function img_edit accepts only one additional parameter: no separate one for css only.
 			// class/style need to be extracted to avoid duplicate class/style validation errors when $moreatt is added to the end of the attributes.
@@ -3820,7 +3854,6 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			return $enabledisablehtml;
 		}
 
-		$pictowithouttext = str_replace('object_', '', $pictowithouttext);
 		if (empty($srconly) && in_array($pictowithouttext, array(
 				'1downarrow', '1uparrow', '1leftarrow', '1rightarrow', '1uparrow_selected', '1downarrow_selected', '1leftarrow_selected', '1rightarrow_selected',
 				'accountancy', 'accounting_account', 'account', 'accountline', 'action', 'add', 'address', 'angle-double-down', 'angle-double-up', 'asset',
@@ -4958,10 +4991,10 @@ function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin 
 		$liste_titre = 'liste_titre_sel';
 	}
 
-	$out .= '<'.$tag.' class="'.$prefix.$liste_titre.'" '.$moreattrib;
+	$tagstart = '<'.$tag.' class="'.$prefix.$liste_titre.'" '.$moreattrib;
 	//$out .= (($field && empty($conf->global->MAIN_DISABLE_WRAPPING_ON_COLUMN_TITLE) && preg_match('/^[a-zA-Z_0-9\s\.\-:&;]*$/', $name)) ? ' title="'.dol_escape_htmltag($langs->trans($name)).'"' : '');
-	$out .= ($name && empty($conf->global->MAIN_DISABLE_WRAPPING_ON_COLUMN_TITLE) && empty($forcenowrapcolumntitle) && !dol_textishtml($name)) ? ' title="'.dol_escape_htmltag($langs->trans($name)).'"' : '';
-	$out .= '>';
+	$tagstart .= ($name && empty($conf->global->MAIN_DISABLE_WRAPPING_ON_COLUMN_TITLE) && empty($forcenowrapcolumntitle) && !dol_textishtml($name)) ? ' title="'.dol_escape_htmltag($langs->trans($name)).'"' : '';
+	$tagstart .= '>';
 
 	if (empty($thead) && $field && empty($disablesortlink)) {    // If this is a sort field
 		$options = preg_replace('/sortfield=([a-zA-Z0-9,\s\.]+)/i', '', (is_scalar($moreparam) ? $moreparam : ''));
@@ -4975,12 +5008,10 @@ function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin 
 		if ($field1 != $sortfield1) { // We are on another field than current sorted field
 			if (preg_match('/^DESC/i', $sortorder)) {
 				$sortordertouseinlink .= str_repeat('desc,', count(explode(',', $field)));
-			} else // We reverse the var $sortordertouseinlink
-			{
+			} else { // We reverse the var $sortordertouseinlink
 				$sortordertouseinlink .= str_repeat('asc,', count(explode(',', $field)));
 			}
-		} else // We are on field that is the first current sorting criteria
-		{
+		} else { // We are on field that is the first current sorting criteria
 			if (preg_match('/^ASC/i', $sortorder)) {	// We reverse the var $sortordertouseinlink
 				$sortordertouseinlink .= str_repeat('desc,', count(explode(',', $field)));
 			} else {
@@ -5019,19 +5050,19 @@ function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin 
 			if (preg_match('/^DESC/', $sortorder)) {
 				//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",0).'</a>';
 				//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",1).'</a>';
-				$sortimg .= '<span class="nowrap">'.img_up("Z-A", 0, 'paddingleft').'</span>';
+				$sortimg .= '<span class="nowrap">'.img_up("Z-A", 0, 'paddingright').'</span>';
 			}
 			if (preg_match('/^ASC/', $sortorder)) {
 				//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",1).'</a>';
 				//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",0).'</a>';
-				$sortimg .= '<span class="nowrap">'.img_down("A-Z", 0, 'paddingleft').'</span>';
+				$sortimg .= '<span class="nowrap">'.img_down("A-Z", 0, 'paddingright').'</span>';
 			}
 		}
 	}
 
-	$out .= $sortimg;
+	$tagend = '</'.$tag.'>';
 
-	$out .= '</'.$tag.'>';
+	$out = $tagstart.$sortimg.$out.$tagend;
 
 	return $out;
 }
