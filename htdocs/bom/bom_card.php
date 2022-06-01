@@ -115,7 +115,7 @@ if (empty($reshook)) {
 			}
 		}
 	}
-//    var_dump($backtopage);exit;
+
     if ($cancel) {
         if (!empty($backtopage)) {
             header("Location: ".$backtopage);

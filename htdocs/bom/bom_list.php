@@ -489,9 +489,9 @@ if ($fk_product && $conf->global->BOM_PRODUCT_TAB)
     $param .= '&fk_product='.urlencode($fk_product);
 
     $product = new Product($db);
-    $product->fetch($fk_product);
+    $res = $product->fetch($fk_product);
 
-    if($product->fetch($fk_product) <= 0)
+    if($res <= 0)
     {
         dol_print_error($db);
         exit;
