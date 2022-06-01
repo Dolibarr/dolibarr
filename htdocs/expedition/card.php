@@ -2626,6 +2626,17 @@ if ($action == 'create') {
 						print '</tr>';
 					} elseif (!empty($conf->stock->enabled)) {
 						if ($lines[$i]->fk_product > 0) {
+							if (!empty($conf->global->PRODUIT_SOUSPRODUITS)) {
+								// load line product
+								if (!isset($lines[$i]->product)) {
+									$line_product = new Product($db);
+									$res = $line_product->fetch($lines[$i]->fk_product);
+									if ($res > 0) {
+										$lines[$i]->product = $line_product;
+									}
+								}
+							}
+
 							if ($lines[$i]->entrepot_id > 0) {
 								print '<!-- case edit 2 -->';
 								print '<tr>';
@@ -2648,10 +2659,7 @@ if ($action == 'create') {
 									print '<td> - '.$langs->trans("NA").'</td>';
 									print '</tr>';
 								}
-							} else {
-								print '<!-- case edit 4 -->';
-								//print '<tr><td colspan="3">'.$langs->trans("NotEnoughStock").'</td></tr>';
-
+							} elseif (is_a($lines[$i]->product, 'Product') && $lines[$i]->product->hasChildren()) {
 								print '<tr>';
 								// Qty to ship or shipped
 								print '<td>'.$lines[$i]->qty_shipped.' '.$unit_order.'</td>';
@@ -2660,6 +2668,9 @@ if ($action == 'create') {
 								// Batch number managment
 								print '<td></td>';
 								print '</tr>';
+							} else {
+								print '<!-- case edit 4 -->';
+								print '<tr><td colspan="3">'.$langs->trans("NotEnoughStock").'</td></tr>';
 							}
 						} else {
 							print '<!-- case edit 5 -->';
