@@ -337,13 +337,13 @@ if (empty($reshook)) {
 				if (GETPOST('password', 'none')) {
 					$resPass = $object->setPassword($user, GETPOST('password', 'none'));
 				}
-				if($resPass < 0) {
+				if ($resPass < 0) {
 					$langs->load("errors");
 					$db->rollback();
 					setEventMessages($object->error, $object->errors, 'errors');
 					$action = "create"; // Go back to create page
 				} else {
-					if(! empty($conf->categorie->enabled)) {
+					if (! empty($conf->categorie->enabled)) {
 						// Categories association
 						$usercats = GETPOST('usercats', 'array');
 						$object->setCategories($usercats);
