@@ -3030,6 +3030,10 @@ function dol_print_socialnetworks($value, $cid, $socid, $type, $dictsocialnetwor
 				$tmpvirginurl = preg_replace('/\/?{socialid}/', '', $dictsocialnetworks[$type]['url']);
 				if ($tmpvirginurl) {
 					$value = preg_replace('/'.preg_quote($tmpvirginurl, '/').'\/?/', '', $value);
+					$tmpvirginurl2 = preg_replace('/^https?:\/\//i', '', $tmpvirginurl);
+					if ($tmpvirginurl2) {
+						$value = preg_replace('/'.preg_quote($tmpvirginurl2, '/').'\/?/', '', $value);
+					}
 				}
 				$link = str_replace('{socialid}', $value, $dictsocialnetworks[$type]['url']);
 				if (preg_match('/^https?:\/\//i', $link)) {
