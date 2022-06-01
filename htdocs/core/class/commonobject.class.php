@@ -7389,7 +7389,7 @@ abstract class CommonObject
 				$value = price($value, 0, $langs, 0, 0, -1, $conf->currency);
 			}
 		} elseif ($type == 'select') {
-			$value = $param['options'][$value];
+			$value = isset($param['options'][$value])?$param['options'][$value]:'';
 		} elseif ($type == 'sellist') {
 			$param_list = array_keys($param['options']);
 			$InfoFieldList = explode(":", $param_list[0]);
