@@ -1624,7 +1624,7 @@ class FormMail extends Form
 					if (!empty($conf->commande->enabled)) {
 						$tmparray['__SECUREKEYPAYMENT_ORDER__'] = 'SecureKeyPAYMENTUniquePerOrder';
 					}
-					if (!empty(contrat->enabled)) {
+					if (!empty($conf->contrat->enabled)) {
 						$tmparray['__SECUREKEYPAYMENT_CONTRACTLINE__'] = 'SecureKeyPAYMENTUniquePerContractLine';
 					}
 
