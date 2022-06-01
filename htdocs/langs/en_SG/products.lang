@@ -1,2 +1,3 @@
 # Dolibarr language file - Source file is en_US - products
-AssociatedProductsAbility=Enable Kits (set of several products)
+IncludingProductWithTag=Including products/services with the tag
+UseProductFournDesc=Add a feature to define the product description defined by the vendors (for each vendor reference) in addition to the description for customers

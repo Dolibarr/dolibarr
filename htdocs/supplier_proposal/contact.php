@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("propal", "facture", "orders", "sendings", "companies"));
+$langs->loadLangs(array("propal", "supplier_proposal", "facture", "orders", "sendings", "companies"));
 
 $id		= GETPOST('id', 'int');
 $ref	= GETPOST('ref', 'alpha');
@@ -78,7 +78,7 @@ if ($action == 'addcontact' && $permissiontoedit) {
 	if ($object->fetch($id)) {
 		$result = $object->swapContactStatus(GETPOST('ligne', 'int'));
 	} else {
-		dol_print_error($db);
+		setEventMessages($object->error, $object->errors, 'errors');
 	}
 } elseif ($action == 'deletecontact' && $permissiontoedit) {
 	// Deleting a contact
@@ -89,7 +89,7 @@ if ($action == 'addcontact' && $permissiontoedit) {
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;
 	} else {
-		dol_print_error($db);
+		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
 
@@ -98,9 +98,9 @@ if ($action == 'addcontact' && $permissiontoedit) {
 /*
  * View
  */
-
-$help_url = '';
-llxHeader('', $langs->trans("SupplierProposals"), $help_url);
+$title = $langs->trans('CommRequest')." - ".$langs->trans('ContactsAddresses');
+$help_url = 'EN:Ask_Price_Supplier|FR:Demande_de_prix_fournisseur';
+llxHeader('', $title, $help_url);
 
 $form = new Form($db);
 $formcompany = new FormCompany($db);

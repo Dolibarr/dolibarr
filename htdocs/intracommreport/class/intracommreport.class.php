@@ -286,7 +286,7 @@ class IntracommReport extends CommonObject
 		global $mysoc, $conf;
 
 		if ($type == 'expedition' || $exporttype == 'des') {
-			$sql = 'SELECT f.ref as refinvoice, f.total as total_ht';
+			$sql = 'SELECT f.ref as refinvoice, f.total_ht';
 			$table = 'facture';
 			$table_extraf = 'facture_extrafields';
 			$tabledet = 'facturedet';

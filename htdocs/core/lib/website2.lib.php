@@ -104,10 +104,12 @@ function dolSavePageAlias($filealias, $object, $objectpage)
 		}
 	} elseif (empty($objectpage->lang) || !in_array($objectpage->lang, explode(',', $object->otherlang))) {
 		// Save also alias into all language subdirectories if it is a main language
-		if (empty($conf->global->WEBSITE_DISABLE_MAIN_LANGUAGE_INTO_LANGSUBDIR)) {
+		if (empty($conf->global->WEBSITE_DISABLE_MAIN_LANGUAGE_INTO_LANGSUBDIR) && !empty($object->otherlang)) {
 			$dirname = dirname($filealias);
 			$filename = basename($filealias);
 			foreach (explode(',', $object->otherlang) as $sublang) {
+				// Avoid to erase main alias file if $sublang is empty string
+				if (empty(trim($sublang))) continue;
 				$filealiassub = $dirname.'/'.$sublang.'/'.$filename;
 
 				$aliascontent = '<?php'."\n";
@@ -201,10 +203,6 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 	}
 	// Add translation reference (main language)
 	if ($object->isMultiLang()) {
-		// Add myself
-		$tplcontent .= '<?php if ($_SERVER["PHP_SELF"] == "'.(($object->fk_default_home == $objectpage->id) ? '/' : (($shortlangcode != substr($object->lang, 0, 2)) ? '/'.$shortlangcode : '')).'/'.$objectpage->pageurl.'.php") { ?>'."\n";
-		$tplcontent .= '<link rel="alternate" hreflang="'.$shortlangcode.'" href="'.(($object->fk_default_home == $objectpage->id) ? '/' : (($shortlangcode != substr($object->lang, 0, 2)) ? '/'.$shortlangcode : '').'/'.$objectpage->pageurl.'.php').'" />'."\n";
-
 		// Add page "translation of"
 		$translationof = $objectpage->fk_page;
 		if ($translationof) {
@@ -223,6 +221,7 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 				}
 			}
 		}
+
 		// Add "has translation pages"
 		$sql = 'SELECT rowid as id, lang, pageurl from '.MAIN_DB_PREFIX.'website_page where fk_page IN ('.$db->sanitize($objectpage->id.($translationof ? ', '.$translationof : '')).")";
 		$resql = $db->query($sql);
@@ -242,6 +241,11 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 		} else {
 			dol_print_error($db);
 		}
+
+		// Add myself
+		$tplcontent .= '<?php if ($_SERVER["PHP_SELF"] == "'.(($object->fk_default_home == $objectpage->id) ? '/' : (($shortlangcode != substr($object->lang, 0, 2)) ? '/'.$shortlangcode : '')).'/'.$objectpage->pageurl.'.php") { ?>'."\n";
+		$tplcontent .= '<link rel="alternate" hreflang="'.$shortlangcode.'" href="'.(($object->fk_default_home == $objectpage->id) ? '/' : (($shortlangcode != substr($object->lang, 0, 2)) ? '/'.$shortlangcode : '').'/'.$objectpage->pageurl.'.php').'" />'."\n";
+
 		$tplcontent .= '<?php } ?>'."\n";
 	}
 	// Add manifest.json. Do we have to add it only on home page ?
@@ -279,11 +283,11 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 
 
 /**
- * Save content of the index.php and/or wrapper.php page
+ * Save content of the index.php and/or the wrapper.php page
  *
  * @param	string		$pathofwebsite			Path of website root
  * @param	string		$fileindex				Full path of file index.php
- * @param	string		$filetpl				File tpl the index.php page redirect to
+ * @param	string		$filetpl				File tpl the index.php page redirect to (used only if $fileindex is provided)
  * @param	string		$filewrapper			Full path of file wrapper.php
  * @return	boolean								True if OK
  */

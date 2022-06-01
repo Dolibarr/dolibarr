@@ -120,10 +120,10 @@ class box_activity extends ModeleBoxes
 				$sql .= " WHERE p.entity IN (".getEntity('propal').")";
 				$sql .= " AND p.fk_soc = s.rowid";
 				if (!$user->rights->societe->client->voir && !$user->socid) {
-					$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+					$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 				}
 				if ($user->socid) {
-					$sql .= " AND s.rowid = ".$user->socid;
+					$sql .= " AND s.rowid = ".((int) $user->socid);
 				}
 				$sql .= " AND p.datep >= '".$this->db->idate($tmpdate)."'";
 				$sql .= " AND p.date_cloture IS NULL"; // just unclosed
@@ -210,10 +210,10 @@ class box_activity extends ModeleBoxes
 				$sql .= " WHERE c.entity IN (".getEntity('commande').")";
 				$sql .= " AND c.fk_soc = s.rowid";
 				if (!$user->rights->societe->client->voir && !$user->socid) {
-					$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+					$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 				}
 				if ($user->socid) {
-					$sql .= " AND s.rowid = ".$user->socid;
+					$sql .= " AND s.rowid = ".((int) $user->socid);
 				}
 				$sql .= " AND c.date_commande >= '".$this->db->idate($tmpdate)."'";
 				$sql .= " GROUP BY c.fk_statut";
@@ -297,10 +297,10 @@ class box_activity extends ModeleBoxes
 				$sql .= ")";
 				$sql .= " WHERE f.entity IN (".getEntity('invoice').')';
 				if (!$user->rights->societe->client->voir && !$user->socid) {
-					$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+					$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 				}
 				if ($user->socid) {
-					$sql .= " AND s.rowid = ".$user->socid;
+					$sql .= " AND s.rowid = ".((int) $user->socid);
 				}
 				$sql .= " AND f.fk_soc = s.rowid";
 				$sql .= " AND f.datef >= '".$this->db->idate($tmpdate)."' AND f.paye=1";

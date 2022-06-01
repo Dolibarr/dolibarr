@@ -56,6 +56,51 @@ class FormOther
 		$this->db = $db;
 	}
 
+	/**
+	 * Return HTML code for scanner tool.
+	 * This must be called into an existing <form>
+	 *
+	 * @param	string	$jstoexecuteonadd		Name of javascript function to call
+	 * @return	string						HTML component
+	 */
+	public function getHTMLScannerForm($jstoexecuteonadd = 'barcodscannerjs')
+	{
+		global $langs;
+
+		$out = '';
+
+		$out .= '<!-- Popup for mass barcode scanning -->'."\n";
+		$out .= '<div class="div-for-modal-topright" style="padding: 15px">';
+		$out .= '<center><strong>Barcode scanner tool...</strong></center><br>';
+
+		$out .= '<input type="checkbox" name="barcodeforautodetect" checked="checked"> Autodetect if we scan a product barcode or a lot/serial barcode<br>';
+		$out .= '<input type="checkbox" name="barcodeforproduct"> Scan a product barcode<br>';
+		$out .= '<input type="checkbox" name="barcodeforlotserial"> Scan a product lot or serial number<br>';
+
+		$out .= $langs->trans("QtyToAddAfterBarcodeScan").' <input type="text" name="barcodeproductqty" class="width50 right" value="1"><br>';
+		$out .= '<textarea type="text" name="barcodelist" class="centpercent" autofocus rows="'.ROWS_3.'"></textarea>';
+
+		/*print '<br>'.$langs->trans("or").'<br>';
+
+		print '<br>';
+
+		print '<input type="text" name="barcodelotserial" class="width200"> &nbsp; &nbsp; Qty <input type="text" name="barcodelotserialqty" class="width50 right" value="1"><br>';
+		*/
+		$out .= '<br>';
+		$out .= '<center>';
+		$out .= '<input type="submit" class="button marginleftonly marginrightonly" name="addscan" value="'.$langs->trans("Add").'">';
+		$out .= '<input type="submit" class="button marginleftonly marginrightonly" name="cancel" value="'.$langs->trans("Cancel").'">';
+		$out .= '<br>';
+
+		$out .= '<span class="opacitymedium">'.$langs->trans("FeatureNotYetAvailable").'</span>';
+
+		// TODO Add call of javascript $jstoexecuteonadd so each scan will add qty into the inventory page + an ajax save.
+
+		$out .= '</center>';
+		$out .= '</div>';
+
+		return $out;
+	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
@@ -65,7 +110,7 @@ class FormOther
 	 *    @param    string	$htmlname          Nom de la zone select
 	 *    @param    string	$type              Type des modeles recherches
 	 *    @param    int		$useempty          Show an empty value in list
-	 *    @param    int		$fk_user           User that has created the template (this is set to null to get all export model when EXPORTS_SHARE_MODELS is on)
+	 *    @param    int		$fk_user           User we want templates
 	 *    @return	void
 	 */
 	public function select_export_model($selected = '', $htmlname = 'exportmodelid', $type = '', $useempty = 0, $fk_user = null)
@@ -76,8 +121,8 @@ class FormOther
 		$sql = "SELECT rowid, label, fk_user";
 		$sql .= " FROM ".MAIN_DB_PREFIX."export_model";
 		$sql .= " WHERE type = '".$this->db->escape($type)."'";
-		if (!empty($fk_user)) {
-			$sql .= " AND fk_user IN (0, ".$fk_user.")"; // An export model
+		if (empty($conf->global->EXPORTS_SHARE_MODELS)) {	// EXPORTS_SHARE_MODELS means all templates are visible, whatever is owner.
+			$sql .= " AND fk_user IN (0, ".((int) $fk_user).")";
 		}
 		$sql .= " ORDER BY label";
 		$result = $this->db->query($sql);
@@ -87,6 +132,8 @@ class FormOther
 				print '<option value="-1">&nbsp;</option>';
 			}
 
+			$tmpuser = new User($this->db);
+
 			$num = $this->db->num_rows($result);
 			$i = 0;
 			while ($i < $num) {
@@ -95,8 +142,7 @@ class FormOther
 				$label = $obj->label;
 				if ($obj->fk_user == 0) {
 					$label .= ' <span class="opacitymedium">('.$langs->trans("Everybody").')</span>';
-				} elseif (!empty($conf->global->EXPORTS_SHARE_MODELS) && empty($fk_user) && is_object($user) && $user->id != $obj->fk_user) {
-					$tmpuser = new User($this->db);
+				} elseif ($obj->fk_user > 0) {
 					$tmpuser->fetch($obj->fk_user);
 					$label .= ' <span class="opacitymedium">('.$tmpuser->getFullName($langs).')</span>';
 				}
@@ -126,7 +172,7 @@ class FormOther
 	 *    @param    string	$htmlname          Nom de la zone select
 	 *    @param    string	$type              Type des modeles recherches
 	 *    @param    int		$useempty          Affiche valeur vide dans liste
-	 *    @param    int		$fk_user           User that has created the template (this is set to null to get all export model when EXPORTS_SHARE_MODELS is on)
+	 *    @param    int		$fk_user           User that has created the template
 	 *    @return	void
 	 */
 	public function select_import_model($selected = '', $htmlname = 'importmodelid', $type = '', $useempty = 0, $fk_user = null)
@@ -137,16 +183,18 @@ class FormOther
 		$sql = "SELECT rowid, label, fk_user";
 		$sql .= " FROM ".MAIN_DB_PREFIX."import_model";
 		$sql .= " WHERE type = '".$this->db->escape($type)."'";
-		if (!empty($fk_user)) {
-			$sql .= " AND fk_user IN (0, ".$fk_user.")"; // An export model
+		if (empty($conf->global->EXPORTS_SHARE_MODELS)) {	// EXPORTS_SHARE_MODELS means all templates are visible, whatever is owner.
+			$sql .= " AND fk_user IN (0, ".((int) $fk_user).")";
 		}
-		$sql .= " ORDER BY rowid";
+		$sql .= " ORDER BY label";
 		$result = $this->db->query($sql);
 		if ($result) {
 			print '<select class="flat minwidth200" name="'.$htmlname.'" id="'.$htmlname.'">';
 			if ($useempty) {
 				print '<option value="-1">&nbsp;</option>';
 			}
+
+			$tmpuser = new User($this->db);
 
 			$num = $this->db->num_rows($result);
 			$i = 0;
@@ -156,8 +204,7 @@ class FormOther
 				$label = $obj->label;
 				if ($obj->fk_user == 0) {
 					$label .= ' <span class="opacitymedium">('.$langs->trans("Everybody").')</span>';
-				} elseif (!empty($conf->global->EXPORTS_SHARE_MODELS) && empty($fk_user) && is_object($user) && $user->id != $obj->fk_user) {
-					$tmpuser = new User($this->db);
+				} elseif ($obj->fk_user > 0) {
 					$tmpuser->fetch($obj->fk_user);
 					$label .= ' <span class="opacitymedium">('.$tmpuser->getFullName($langs).')</span>';
 				}
@@ -447,10 +494,10 @@ class FormOther
 		}
 
 		if (empty($user->rights->user->user->lire)) {
-			$sql_usr .= " AND u.rowid = ".$user->id;
+			$sql_usr .= " AND u.rowid = ".((int) $user->id);
 		}
 		if (!empty($user->socid)) {
-			$sql_usr .= " AND u.fk_soc = ".$user->socid;
+			$sql_usr .= " AND u.fk_soc = ".((int) $user->socid);
 		}
 
 		//Add hook to filter on user (for exemple on usergroup define in custom modules)
@@ -474,7 +521,7 @@ class FormOther
 				$sql_usr .= " WHERE u2.entity IN (".getEntity('user').")";
 			}
 
-			$sql_usr .= " AND u2.rowid = sc.fk_user AND sc.fk_soc=".$user->socid;
+			$sql_usr .= " AND u2.rowid = sc.fk_user AND sc.fk_soc = ".((int) $user->socid);
 
 			//Add hook to filter on user (for exemple on usergroup define in custom modules)
 			if (!empty($reshook)) {
@@ -1132,7 +1179,7 @@ class FormOther
 			$selectboxlist .= '<input type="hidden" name="userid" value="'.$user->id.'">';
 			$selectboxlist .= '<input type="hidden" name="areacode" value="'.$areacode.'">';
 			$selectboxlist .= '<input type="hidden" name="boxorder" value="'.$boxorder.'">';
-			$selectboxlist .= Form::selectarray('boxcombo', $arrayboxtoactivatelabel, -1, $langs->trans("ChooseBoxToAdd").'...', 0, 0, '', 0, 0, 0, 'ASC', 'maxwidth150onsmartphone', 0, 'hidden selected', 0, 1);
+			$selectboxlist .= Form::selectarray('boxcombo', $arrayboxtoactivatelabel, -1, $langs->trans("ChooseBoxToAdd").'...', 0, 0, '', 0, 0, 0, 'ASC', 'maxwidth150onsmartphone hideonprint', 0, 'hidden selected', 0, 1);
 			if (empty($conf->use_javascript_ajax)) {
 				$selectboxlist .= ' <input type="submit" class="button" value="'.$langs->trans("AddBox").'">';
 			}
@@ -1159,7 +1206,7 @@ class FormOther
 	        			async: false
 	        		});
 	        		// We force reload to be sure to get all boxes into list
-	        		window.location.search=\'mainmenu='.GETPOST("mainmenu", "aZ09").'&leftmenu='.GETPOST('leftmenu', "aZ09").'&action=delbox\';
+	        		window.location.search=\'mainmenu='.GETPOST("mainmenu", "aZ09").'&leftmenu='.GETPOST('leftmenu', "aZ09").'&action=delbox&token='.newToken().'\';
 	        	}
 	        	else
 	        	{
@@ -1174,14 +1221,15 @@ class FormOther
 	        	jQuery("#boxcombo").change(function() {
 	        	var boxid=jQuery("#boxcombo").val();
 	        		if (boxid > 0) {
+						console.log("A box widget has been selected for addition, we call ajax page to add it.")
 	            		var left_list = cleanSerialize(jQuery("#boxhalfleft").sortable("serialize"));
 	            		var right_list = cleanSerialize(jQuery("#boxhalfright").sortable("serialize"));
 	            		var boxorder = \'A:\' + left_list + \'-B:\' + right_list;
 	    				jQuery.ajax({
-	    					url: \''.DOL_URL_ROOT.'/core/ajax/box.php?boxorder=\'+boxorder+\'&boxid=\'+boxid+\'&zone='.$areacode.'&userid='.$user->id.'\',
-	    			        async: false
-	    		        });
-	        			window.location.search=\'mainmenu='.GETPOST("mainmenu", "aZ09").'&leftmenu='.GETPOST('leftmenu', "aZ09").'&action=addbox&boxid=\'+boxid;
+	    					url: \''.DOL_URL_ROOT.'/core/ajax/box.php?boxorder=\'+boxorder+\'&boxid=\'+boxid+\'&zone='.$areacode.'&userid='.$user->id.'\'
+	    		        }).done(function() {
+	        				window.location.search=\'mainmenu='.GETPOST("mainmenu", "aZ09").'&leftmenu='.GETPOST('leftmenu', "aZ09").'\';
+						});
 	                }
 	        	});';
 			if (!count($arrayboxtoactivatelabel)) {

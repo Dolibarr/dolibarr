@@ -226,7 +226,7 @@ $sql .= " WHERE v.entity IN (".getEntity('payment_various').")";
 
 // Search criteria
 if ($search_ref) {
-	$sql .= " AND v.rowid=".$db->escape($search_ref);
+	$sql .= " AND v.rowid = ".((int) $search_ref);
 }
 if ($search_label) {
 	$sql .= natural_search(array('v.label'), $search_label);
@@ -250,19 +250,19 @@ if ($search_amount_cred) {
 	$sql .= natural_search("v.amount", $search_amount_cred, 1);
 }
 if ($search_bank_account > 0) {
-	$sql .= " AND b.fk_account=".$db->escape($search_bank_account);
+	$sql .= " AND b.fk_account = ".((int) $search_bank_account);
 }
 if ($search_bank_entry > 0) {
-	$sql .= " AND b.fk_account=".$db->escape($search_bank_account);
+	$sql .= " AND b.fk_account = ".((int) $search_bank_account);
 }
 if ($search_accountancy_account > 0) {
-	$sql .= " AND v.accountancy_code=".$db->escape($search_accountancy_account);
+	$sql .= " AND v.accountancy_code = ".((int) $search_accountancy_account);
 }
 if ($search_accountancy_subledger > 0) {
-	$sql .= " AND v.subledger_account=".$db->escape($search_accountancy_subledger);
+	$sql .= " AND v.subledger_account = ".((int) $search_accountancy_subledger);
 }
 if ($typeid > 0) {
-	$sql .= " AND v.fk_typepayment=".$typeid;
+	$sql .= " AND v.fk_typepayment=".((int) $typeid);
 }
 if ($search_all) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
@@ -338,14 +338,13 @@ if ($result) {
 	if ($search_accountancy_subledger > 0) {
 		$param .= '&search_accountancy_subledger='.urlencode($search_accountancy_subledger);
 	}
-
 	if ($optioncss != '') {
-		$param .= '&amp;optioncss='.urlencode($optioncss);
+		$param .= '&optioncss='.urlencode($optioncss);
 	}
 
 	$url = DOL_URL_ROOT.'/compta/bank/various_payment/card.php?action=create';
 	if (!empty($socid)) {
-		$url .= '&socid='.$socid;
+		$url .= '&socid='.urlencode($socid);
 	}
 	$newcardbutton = dolGetButtonTitle($langs->trans('MenuNewVariousPayment'), '', 'fa fa-plus-circle', $url, '', $user->rights->banque->modifier);
 
@@ -423,7 +422,7 @@ if ($result) {
 
 	// Payment type
 	if ($arrayfields['type']['checked']) {
-		print '<td class="liste_titre left">';
+		print '<td class="liste_titre center">';
 		$form->select_types_paiements($typeid, 'typeid', '', 0, 1, 1, 16, 1, 'maxwidth100');
 		print '</td>';
 	}
@@ -498,7 +497,7 @@ if ($result) {
 		print_liste_field_titre($arrayfields['ref']['label'], $_SERVER["PHP_SELF"], 'v.rowid', '', $param, '', $sortfield, $sortorder);
 	}
 	if ($arrayfields['label']['checked']) {
-		print_liste_field_titre($arrayfields['label']['label'], $_SERVER["PHP_SELF"], 'v.label', '', $param, '', $sortfield, $sortorder, 'left ');
+		print_liste_field_titre($arrayfields['label']['label'], $_SERVER["PHP_SELF"], 'v.label', '', $param, '', $sortfield, $sortorder);
 	}
 	if ($arrayfields['datep']['checked']) {
 		print_liste_field_titre($arrayfields['datep']['label'], $_SERVER["PHP_SELF"], 'v.datep,v.rowid', '', $param, '', $sortfield, $sortorder, 'center ');
@@ -507,7 +506,7 @@ if ($result) {
 		print_liste_field_titre($arrayfields['datev']['label'], $_SERVER["PHP_SELF"], 'v.datev,v.rowid', '', $param, '', $sortfield, $sortorder, 'center ');
 	}
 	if ($arrayfields['type']['checked']) {
-		print_liste_field_titre($arrayfields['type']['label'], $_SERVER["PHP_SELF"], 'type', '', $param, '', $sortfield, $sortorder, 'left ');
+		print_liste_field_titre($arrayfields['type']['label'], $_SERVER["PHP_SELF"], 'type', '', $param, '', $sortfield, $sortorder, 'center ');
 	}
 	if ($arrayfields['project']['checked']) {
 		print_liste_field_titre($arrayfields['project']['label'], $_SERVER["PHP_SELF"], 'fk_project', '', $param, '', $sortfield, $sortorder);
@@ -590,7 +589,7 @@ if ($result) {
 
 		// Type
 		if ($arrayfields['type']['checked']) {
-			print '<td>';
+			print '<td class="center">';
 			if ($obj->payment_code) {
 				print $langs->trans("PaymentTypeShort".$obj->payment_code);
 				print ' ';

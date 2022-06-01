@@ -51,8 +51,8 @@ if (GETPOST("modecompta")) {
 	$modecompta = GETPOST("modecompta");
 }
 
-$sortorder = GETPOST("sortorder", 'aZ09');
-$sortfield = GETPOST("sortfield", 'aZ09');
+$sortorder = GETPOST("sortorder", 'aZ09comma');
+$sortfield = GETPOST("sortfield", 'aZ09comma');
 if (!$sortorder) {
 	$sortorder = "asc";
 }
@@ -231,7 +231,7 @@ foreach ($headerparams as $key => $value) {
 
 $catotal = 0;
 if ($modecompta == 'CREANCES-DETTES') {
-	$sql = "SELECT u.rowid as rowid, u.lastname as name, u.firstname as firstname, sum(f.total) as amount, sum(f.total_ttc) as amount_ttc";
+	$sql = "SELECT u.rowid as rowid, u.lastname as name, u.firstname as firstname, sum(f.total_ht) as amount, sum(f.total_ttc) as amount_ttc";
 	$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON f.fk_user_author = u.rowid";
 	$sql .= " WHERE f.fk_statut in (1,2)";
@@ -262,7 +262,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 }
 $sql .= " AND f.entity IN (".getEntity('invoice').")";
 if ($socid) {
-	$sql .= " AND f.fk_soc = ".$socid;
+	$sql .= " AND f.fk_soc = ".((int) $socid);
 }
 $sql .= " GROUP BY u.rowid, u.lastname, u.firstname";
 $sql .= " ORDER BY u.rowid";

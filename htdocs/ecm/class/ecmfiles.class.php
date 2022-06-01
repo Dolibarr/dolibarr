@@ -327,7 +327,11 @@ class EcmFiles extends CommonObject
 		$resql = $this->db->query($sql);
 		if (!$resql) {
 			$error++;
-			$this->errors[] = 'Error '.$this->db->lasterror();
+			if ($this->db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+				$this->errors[] = 'Error DB_ERROR_RECORD_ALREADY_EXISTS : '.$this->db->lasterror();
+			} else {
+				$this->errors[] = 'Error '.$this->db->lasterror();
+			}
 			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 		}
 
@@ -425,10 +429,10 @@ class EcmFiles extends CommonObject
 			//$sql .= " AND t.entity = ".$conf->entity;							// hashforshare already unique
 		} elseif ($src_object_type && $src_object_id) {
 			// Warning: May return several record, and only first one is returned !
-			$sql .= " AND t.src_object_type ='".$this->db->escape($src_object_type)."' AND t.src_object_id = ".$this->db->escape($src_object_id);
+			$sql .= " AND t.src_object_type = '".$this->db->escape($src_object_type)."' AND t.src_object_id = ".((int) $src_object_id);
 			$sql .= " AND t.entity = ".$conf->entity;
 		} else {
-			$sql .= ' AND t.rowid = '.$this->db->escape($id); // rowid already unique
+			$sql .= ' AND t.rowid = '.((int) $id); // rowid already unique
 		}
 
 		$this->db->plimit(1); // When we search on src or on hash of content (hashforfile) to solve hash conflict when several files has same content, we take first one only
@@ -529,7 +533,11 @@ class EcmFiles extends CommonObject
 		$sqlwhere = array();
 		if (count($filter) > 0) {
 			foreach ($filter as $key => $value) {
-				$sqlwhere [] = $key.' LIKE \'%'.$this->db->escape($value).'%\'';
+				if ($key == 't.src_object_id') {
+					$sqlwhere[] = $key.' = '.((int) $value);
+				} else {
+					$sqlwhere[] = $key.' LIKE \'%'.$this->db->escape($value).'%\'';
+				}
 			}
 		}
 		$sql .= ' WHERE 1 = 1';

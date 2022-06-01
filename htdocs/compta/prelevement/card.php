@@ -102,22 +102,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	// Seems to no be used and replaced with $action == 'infocredit'
-	if ($action == 'confirm_credite' && GETPOST('confirm', 'alpha') == 'yes') {
-		if ($object->statut == 2) {
-			$res = -1;
-			setEventMessages('WithdrawalCantBeCreditedTwice', array(), 'errors');
-		} else {
-			$res = $object->set_credite();
-		}
-
-		if ($res >= 0) {
-			header("Location: card.php?id=".$id);
-			exit;
-		}
-	}
-
-	if ($action == 'infotrans' && $user->rights->prelevement->bons->send) {
+	if ($action == 'infotrans' && (($user->rights->prelevement->bons->send && $object->type != 'bank-transfer') || ($user->rights->paymentbybanktransfer->send && $object->type == 'bank-transfer'))) {
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		$dt = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
@@ -150,10 +135,10 @@ if (empty($reshook)) {
 	}
 
 	// Set direct debit order to credited, create payment and close invoices
-	if ($action == 'infocredit' && $user->rights->prelevement->bons->credit) {
+	if ($action == 'infocredit' && (($user->rights->prelevement->bons->credit && $object->type != 'bank-transfer') || ($user->rights->paymentbybanktransfer->debit && $object->type == 'bank-transfer'))) {
 		$dt = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 
-		if ($object->statut == 2) {
+		if (($object->type != 'bank-transfer' && $object->statut == BonPrelevement::STATUS_CREDITED) || ($object->type == 'bank-transfer' && $object->statut == BonPrelevement::STATUS_DEBITED)) {
 			$error = 1;
 			setEventMessages('WithdrawalCantBeCreditedTwice', array(), 'errors');
 		} else {
@@ -184,12 +169,6 @@ if ($id > 0 || $ref) {
 		print '<div class="error">'.$object->getErrorString(GETPOST('error', 'alpha')).'</div>';
 	}
 
-	/*if ($action == 'credite')
-	{
-		print $form->formconfirm("card.php?id=".$object->id,$langs->trans("ClassCredited"),$langs->trans("ClassCreditedConfirm"),"confirm_credite",'',1,1);
-
-	}*/
-
 	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/prelevement/orders_list.php?restore_lastsearch_values=1'.($object->type != 'bank-transfer' ? '' : '&type=bank-transfer').'">'.$langs->trans("BackToList").'</a>';
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref');
@@ -200,7 +179,8 @@ if ($id > 0 || $ref) {
 
 	//print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td>'.$object->getNomUrl(1).'</td></tr>';
 	print '<tr><td class="titlefield">'.$langs->trans("Date").'</td><td>'.dol_print_date($object->datec, 'day').'</td></tr>';
-	print '<tr><td>'.$langs->trans("Amount").'</td><td>'.price($object->amount).'</td></tr>';
+
+	print '<tr><td>'.$langs->trans("Amount").'</td><td><span class="amount">'.price($object->amount).'</span></td></tr>';
 
 	// Status
 	/*
@@ -306,6 +286,7 @@ if ($id > 0 || $ref) {
 	}
 
 	if (!empty($object->date_trans) && $object->date_credit == 0 && $user->rights->prelevement->bons->credit && $action == 'setcredited') {
+		$btnLabel = ($object->type == 'bank-transfer') ? $langs->trans("ClassDebited") : $langs->trans("ClassCredited");
 		print '<form name="infocredit" method="post" action="card.php?id='.$object->id.'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="infocredit">';
@@ -317,27 +298,29 @@ if ($id > 0 || $ref) {
 		print '</td></tr>';
 		print '</table>';
 		print '<br><div class="center"><span class="opacitymedium">'.$langs->trans("ThisWillAlsoAddPaymentOnInvoice").'</span></div>';
-		print '<div class="center"><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("ClassCredited")).'"></div>';
+		print '<div class="center"><input type="submit" class="button" value="'.dol_escape_htmltag($btnLabel).'"></div>';
 		print '</form>';
 		print '<br>';
 	}
 
-
 	// Actions
 	if ($action != 'settransmitted' && $action != 'setcredited') {
-		print "\n<div class=\"tabsAction\">\n";
+		print "\n".'<div class="tabsAction">'."\n";
 
-		if (empty($object->date_trans) && $user->rights->prelevement->bons->send) {
-			print "<a class=\"butAction\" href=\"card.php?action=settransmitted&token='.newToken().'&id=".$object->id."\">".$langs->trans("SetToStatusSent")."</a>";
+		if (empty($object->date_trans)) {
+			if ($object->type == 'bank-transfer') print dolGetButtonAction($langs->trans("SetToStatusSent"), '', 'default', 'card.php?action=settransmitted&token='.newToken().'&id='.$object->id, '', $user->rights->paymentbybanktransfer->send);
+			else print dolGetButtonAction($langs->trans("SetToStatusSent"), '', 'default', 'card.php?action=settransmitted&token='.newToken().'&id='.$object->id, '', $user->rights->prelevement->bons->send);
 		}
 
 		if (!empty($object->date_trans) && $object->date_credit == 0) {
-			print "<a class=\"butAction\" href=\"card.php?action=setcredited&token='.newToken().'&id=".$object->id."\">".$langs->trans("ClassCredited")."</a>";
+			if ($object->type == 'bank-transfer') print dolGetButtonAction($langs->trans("ClassDebited"), '', 'default', 'card.php?action=setcredited&token='.newToken().'&id='.$object->id, '', $user->rights->paymentbybanktransfer->debit);
+			else print dolGetButtonAction($langs->trans("ClassCredited"), '', 'default', 'card.php?action=setcredited&token='.newToken().'&id='.$object->id, '', $user->rights->prelevement->bons->credit);
 		}
 
-		print "<a class=\"butActionDelete\" href=\"card.php?action=delete&token='.newToken().'&id=".$object->id."\">".$langs->trans("Delete")."</a>";
+		if ($object->type == 'bank-transfer') print dolGetButtonAction($langs->trans("Delete"), '', 'delete', 'card.php?action=delete&token='.newToken().'&id='.$object->id, '', $user->rights->paymentbybanktransfer->create);
+		else print dolGetButtonAction($langs->trans("Delete"), '', 'delete', 'card.php?action=delete&token='.newToken().'&id='.$object->id, '', $user->rights->prelevement->bons->creer);
 
-		print "</div>";
+		print '</div>';
 	}
 
 
@@ -380,7 +363,7 @@ if ($id > 0 || $ref) {
 		$num = $db->num_rows($result);
 		$i = 0;
 
-		$urladd = "&amp;id=".$id;
+		$urladd = "&id=".urlencode($id);
 
 		print '<form method="get" action="'.$_SERVER ['PHP_SELF'].'" name="search_form">'."\n";
 		print '<input type="hidden" name="id" value="'.$id.'"/>';
@@ -394,7 +377,7 @@ if ($id > 0 || $ref) {
 		print_barre_liste($langs->trans("Lines"), $page, $_SERVER["PHP_SELF"], $urladd, $sortfield, $sortorder, '', $num, $nbtotalofrecords, '', 0, '', '', $limit);
 
 		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
-		print '<table class="noborder liste" width="100%" cellspacing="0" cellpadding="4">';
+		print '<table class="noborder liste" width="100%" cellpadding="4">';
 		print '<tr class="liste_titre">';
 		print_liste_field_titre("Lines", $_SERVER["PHP_SELF"], "pl.rowid", '', $urladd);
 		print_liste_field_titre("ThirdParty", $_SERVER["PHP_SELF"], "s.nom", '', $urladd);
@@ -413,7 +396,7 @@ if ($id > 0 || $ref) {
 			print "<td>";
 			print $ligne->LibStatut($obj->statut, 2);
 			print "&nbsp;";
-			print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/line.php?id='.$obj->rowid.'&type='.$object->type.'">';
+			print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/line.php?id='.$obj->rowid.'&type='.$object->type.'&token='.newtoken().'">';
 			print sprintf("%06s", $obj->rowid);
 			print '</a></td>';
 
@@ -434,7 +417,7 @@ if ($id > 0 || $ref) {
 					if ($obj->statut == 2) {
 						if ($user->rights->prelevement->bons->credit) {
 							//print '<a class="butActionDelete" href="line.php?action=rejet&id='.$obj->rowid.'">'.$langs->trans("StandingOrderReject").'</a>';
-							print '<a href="line.php?action=rejet&type='.$object->type.'&id='.$obj->rowid.'">'.$langs->trans("StandingOrderReject").'</a>';
+							print '<a href="line.php?action=rejet&type='.$object->type.'&id='.$obj->rowid.'&token='.newtoken().'">'.$langs->trans("StandingOrderReject").'</a>';
 						} else {
 							//print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("StandingOrderReject").'</a>';
 						}

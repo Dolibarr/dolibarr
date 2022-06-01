@@ -37,13 +37,8 @@ $action		= GETPOST('action', 'alpha');
 $confirm	= GETPOST('confirm', 'alpha');
 $id			= GETPOST('id', 'int');
 $ref		= GETPOST('ref', 'alpha');
-$mine = (GETPOST('mode', 'alpha') == 'mine' ? 1 : 0);
+$mine 		= (GETPOST('mode', 'alpha') == 'mine' ? 1 : 0);
 //if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
-
-// Security check
-$socid = 0;
-//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
-$result = restrictedArea($user, 'projet', $id, 'projet&project');
 
 $object = new Project($db);
 
@@ -57,10 +52,10 @@ if ($id > 0 || !empty($ref)) {
 }
 
 // Get parameters
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$limit 		= GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$sortfield	= GETPOST("sortfield", 'alpha');
+$sortorder	= GETPOST("sortorder", 'alpha');
+$page		= GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -82,6 +77,11 @@ if (!$sortfield) {
 	$sortfield = "name";
 }
 
+// Security check
+$socid = 0;
+//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
+$result = restrictedArea($user, 'projet', $id, 'projet&project');
+
 
 
 /*
@@ -95,11 +95,12 @@ include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
  * View
  */
 
-$title = $langs->trans("Project").' - '.$langs->trans("Document").' - '.$object->ref.' '.$object->name;
+$title = $langs->trans('Project').' - '.$langs->trans('Document').' - '.$object->ref.' '.$object->name;
 if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/projectnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
-	$title = $object->ref.' '.$object->name.' - '.$langs->trans("Document");
+	$title = $object->ref.' '.$object->name.' - '.$langs->trans('Document');
 }
-$help_url = "EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
+
+$help_url = 'EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos|DE:Modul_Projekte';
 
 llxHeader('', $title, $help_url);
 
@@ -163,10 +164,10 @@ if ($object->id > 0) {
 
 	print dol_get_fiche_end();
 
-	$modulepart = 'project';
-	$permission = ($userWrite > 0);
+	$modulepart = 'projet';
+	$permissiontoadd = ($userWrite > 0);
 	$permtoedit = ($userWrite > 0);
-	include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
+	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 } else {
 	dol_print_error('', 'NoRecordFound');
 }

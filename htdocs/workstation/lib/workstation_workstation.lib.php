@@ -31,7 +31,7 @@ function workstationPrepareHead($object)
 {
 	global $db, $langs, $conf;
 
-	$langs->load("workstation@workstation");
+	$langs->load("workstation");
 
 	$h = 0;
 	$head = array();
@@ -84,9 +84,9 @@ function workstationPrepareHead($object)
 	//$this->tabs = array(
 	//	'entity:-tabname:Title:@workstation:/workstation/mypage.php?id=__ID__'
 	//); // to remove a tab
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'workstation@workstation');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'workstation');
 
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'workstation@workstation', 'remove');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'workstation', 'remove');
 
 	return $head;
 }

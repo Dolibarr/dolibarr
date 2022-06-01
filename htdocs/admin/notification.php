@@ -47,7 +47,7 @@ $error = 0;
  */
 
 // Action to update or add a constant
-if ($action == 'settemplates') {
+if ($action == 'settemplates' && $user->admin) {
 	$db->begin();
 
 	if (!$error && is_array($_POST)) {
@@ -192,7 +192,8 @@ print "</tr>\n";
 print '<tr class="oddeven"><td>';
 print $langs->trans("NotificationEMailFrom").'</td>';
 print '<td>';
-print '<input size="32" type="email" name="email_from" value="'.$conf->global->NOTIFICATION_EMAIL_FROM.'">';
+print img_picto('', 'email', 'class="pictofixedwidth"');
+print '<input class="width300" type="email" name="email_from" value="'.$conf->global->NOTIFICATION_EMAIL_FROM.'">';
 if (!empty($conf->global->NOTIFICATION_EMAIL_FROM) && !isValidEmail($conf->global->NOTIFICATION_EMAIL_FROM)) {
 	print ' '.img_warning($langs->trans("ErrorBadEMail"));
 }
@@ -243,7 +244,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
 			$elementLabel = $langs->trans('Intervention');
 		} elseif ($notifiedevent['elementtype'] == 'shipping') {
 			$elementLabel = $langs->trans('Shipping');
-		} elseif ($notifiedevent['elementtype'] == 'expensereport') {
+		} elseif ($notifiedevent['elementtype'] == 'expensereport' || $notifiedevent['elementtype'] == 'expense_report') {
 			$elementLabel = $langs->trans('ExpenseReport');
 		}
 
@@ -270,7 +271,16 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
 	}
 
 	$helptext = '';
-	form_constantes($constantes, 3, $helptext);
+	form_constantes($constantes, 3, $helptext, 'EmailTemplate');
+
+	print '<div class="opacitymedium">';
+	print '* '.$langs->trans("GoOntoUserCardToAddMore").'<br>';
+	if (!empty($conf->societe->enabled)) {
+		print '** '.$langs->trans("GoOntoContactCardToAddMore").'<br>';
+	}
+	print '</div>';
+
+	print '<div class="center"><input type="submit" class="button button-save" value="'.$langs->trans("Save").'"></div>';
 } else {
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
@@ -300,7 +310,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
 			$elementLabel = $langs->trans('Intervention');
 		} elseif ($notifiedevent['elementtype'] == 'shipping') {
 			$elementLabel = $langs->trans('Shipping');
-		} elseif ($notifiedevent['elementtype'] == 'expensereport') {
+		} elseif ($notifiedevent['elementtype'] == 'expensereport' || $notifiedevent['elementtype'] == 'expense_report') {
 			$elementLabel = $langs->trans('ExpenseReport');
 		}
 
@@ -314,9 +324,14 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
 
 	print '</td></tr>';
 	print '</table>';
-}
 
-print '<div class="center"><input type="submit" class="button button-save" value="'.$langs->trans("Save").'"></div>';
+	print '<div class="opacitymedium">';
+	print '* '.$langs->trans("GoOntoUserCardToAddMore").'<br>';
+	if (!empty($conf->societe->enabled)) {
+		print '** '.$langs->trans("GoOntoContactCardToAddMore").'<br>';
+	}
+	print '</div>';
+}
 
 print '</form>';
 
@@ -327,6 +342,7 @@ print '<br><br>';
 print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="setfixednotif">';
+print '<input type="hidden" name="page_y" value="">';
 
 print load_fiche_titre($langs->trans("ListOfFixedNotifications"), '', '');
 
@@ -343,29 +359,46 @@ print "</tr>\n";
 foreach ($listofnotifiedevents as $notifiedevent) {
 	$label = $langs->trans("Notify_".$notifiedevent['code']); //!=$langs->trans("Notify_".$notifiedevent['code'])?$langs->trans("Notify_".$notifiedevent['code']):$notifiedevent['label'];
 
+	$elementPicto = $notifiedevent['elementtype'];
 	$elementLabel = $langs->trans(ucfirst($notifiedevent['elementtype']));
 	// Special cases
 	if ($notifiedevent['elementtype'] == 'order_supplier') {
+		$elementPicto = 'supplier_order';
 		$elementLabel = $langs->trans('SupplierOrder');
 	} elseif ($notifiedevent['elementtype'] == 'propal') {
 		$elementLabel = $langs->trans('Proposal');
 	} elseif ($notifiedevent['elementtype'] == 'facture') {
+		$elementPicto = 'bill';
 		$elementLabel = $langs->trans('Bill');
 	} elseif ($notifiedevent['elementtype'] == 'commande') {
+		$elementPicto = 'order';
 		$elementLabel = $langs->trans('Order');
 	} elseif ($notifiedevent['elementtype'] == 'ficheinter') {
+		$elementPicto = 'intervention';
 		$elementLabel = $langs->trans('Intervention');
 	} elseif ($notifiedevent['elementtype'] == 'shipping') {
+		$elementPicto = 'shipment';
 		$elementLabel = $langs->trans('Shipping');
-	} elseif ($notifiedevent['elementtype'] == 'expensereport') {
+	} elseif ($notifiedevent['elementtype'] == 'expensereport' || $notifiedevent['elementtype'] == 'expense_report') {
+		$elementPicto = 'expensereport';
 		$elementLabel = $langs->trans('ExpenseReport');
 	}
 
+	$labelfortrigger = 'AmountHT';
+	$codehasnotrigger = 0;
+	if (preg_match('/^HOLIDAY/', $notifiedevent['code'])) {
+		$codehasnotrigger++;
+	}
+
 	print '<tr class="oddeven">';
-	print '<td>'.$elementLabel.'</td>';
-	print '<td>'.$notifiedevent['code'].'</td>';
-	print '<td>'.$label.'</td>';
 	print '<td>';
+	print img_picto('', $elementPicto, 'class="pictofixedwidth"');
+	print $elementLabel;
+	print '</td>';
+	print '<td>'.$notifiedevent['code'].'</td>';
+	print '<td><span class="opacitymedium">'.$label.'</span></td>';
+	print '<td>';
+	$inputfieldalreadyshown = 0;
 	// Notification with threshold
 	foreach ($conf->global as $key => $val) {
 		if ($val == '' || !preg_match('/^NOTIFICATION_FIXEDEMAIL_'.$notifiedevent['code'].'_THRESHOLD_HIGHER_(.*)/', $key, $reg)) {
@@ -389,24 +422,35 @@ foreach ($listofnotifiedevents as $notifiedevent) {
 		}
 		print $form->textwithpicto($s, $langs->trans("YouCanUseCommaSeparatorForSeveralRecipients").'<br>'.$langs->trans("YouCanAlsoUseSupervisorKeyword"), 1, 'help', '', 0, 2);
 		print '<br>';
+
+		$inputfieldalreadyshown++;
 	}
 	// New entry input fields
-	$s = '<input type="text" size="32" name="NOTIF_'.$notifiedevent['code'].'_new_key" value="">'; // Do not use type="email" here, we must be able to enter a list of email with , separator.
-	print $form->textwithpicto($s, $langs->trans("YouCanUseCommaSeparatorForSeveralRecipients").'<br>'.$langs->trans("YouCanAlsoUseSupervisorKeyword"), 1, 'help', '', 0, 2);
+	if (empty($inputfieldalreadyshown) || !$codehasnotrigger) {
+		$s = '<input type="text" size="32" name="NOTIF_'.$notifiedevent['code'].'_new_key" value="">'; // Do not use type="email" here, we must be able to enter a list of email with , separator.
+		print $form->textwithpicto($s, $langs->trans("YouCanUseCommaSeparatorForSeveralRecipients").'<br>'.$langs->trans("YouCanAlsoUseSupervisorKeyword"), 1, 'help', '', 0, 2);
+	}
 	print '</td>';
 
 	print '<td>';
 	// Notification with threshold
+	$inputfieldalreadyshown = 0;
 	foreach ($conf->global as $key => $val) {
 		if ($val == '' || !preg_match('/^NOTIFICATION_FIXEDEMAIL_'.$notifiedevent['code'].'_THRESHOLD_HIGHER_(.*)/', $key, $reg)) {
 			continue;
 		}
 
-		print $langs->trans("AmountHT").' >= <input type="text" size="4" name="NOTIF_'.$notifiedevent['code'].'_old_'.$reg[1].'_amount" value="'.dol_escape_htmltag($reg[1]).'">';
-		print '<br>';
+		if (!$codehasnotrigger) {
+			print $langs->trans($labelfortrigger).' >= <input type="text" size="4" name="NOTIF_'.$notifiedevent['code'].'_old_'.$reg[1].'_amount" value="'.dol_escape_htmltag($reg[1]).'">';
+			print '<br>';
+
+			$inputfieldalreadyshown++;
+		}
 	}
 	// New entry input fields
-	print $langs->trans("AmountHT").' >= <input type="text" size="4" name="NOTIF_'.$notifiedevent['code'].'_new_amount" value="">';
+	if (!$codehasnotrigger) {
+		print $langs->trans($labelfortrigger).' >= <input type="text" size="4" name="NOTIF_'.$notifiedevent['code'].'_new_amount" value="">';
+	}
 	print '</td>';
 
 	print '<td>';
@@ -417,17 +461,9 @@ foreach ($listofnotifiedevents as $notifiedevent) {
 }
 print '</table>';
 
-print '<div class="opacitymedium">';
-print '* '.$langs->trans("GoOntoUserCardToAddMore").'<br>';
-if (!empty($conf->societe->enabled)) {
-	print '** '.$langs->trans("GoOntoContactCardToAddMore").'<br>';
-}
-
-print '</div>';
-
 print '<br>';
 
-print '<div class="center"><input type="submit" class="button button-save" value="'.$langs->trans("Save").'"></div>';
+print '<div class="center"><input type="submit" class="button button-save reposition" value="'.$langs->trans("Save").'"></div>';
 
 print '</form>';
 

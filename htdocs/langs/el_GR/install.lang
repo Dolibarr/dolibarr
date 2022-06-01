@@ -206,6 +206,7 @@ MigrationUserPhotoPath=Μετανάστευση φωτογραφικών δια�
 MigrationFieldsSocialNetworks=Μετεγκατάσταση χρηστών πεδίων κοινωνικών δικτύων (%s)
 MigrationReloadModule=Επαναφόρτωση ενθεμάτων %s
 MigrationResetBlockedLog=Επαναφορά της μονάδας BlockedLog για τον αλγόριθμο v7
+MigrationImportOrExportProfiles=Migration of import or export profiles (%s)
 ShowNotAvailableOptions=Εμφάνιση μη διαθέσιμων επιλογών
 HideNotAvailableOptions=Απόκρυψη μη διαθέσιμων επιλογών
 ErrorFoundDuringMigration=Παρουσιάστηκε σφάλμα κατά τη διάρκεια της διαδικασίας μετάβασης, επομένως το επόμενο βήμα δεν είναι διαθέσιμο. Για να αγνοήσετε τα σφάλματα, μπορείτε να <a href="%s">κάνετε κλικ εδώ</a> , αλλά η εφαρμογή ή ορισμένες λειτουργίες ενδέχεται να μην λειτουργούν σωστά μέχρι να επιλυθούν τα σφάλματα.

@@ -9,8 +9,12 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
  * -------------------
  */
 
-.info-box-module-external span.info-box-icon-version {
+.info-box-module.--external span.info-box-icon-version {
 	background: #bbb;
+}
+
+.info-box-module.--external.--need-update span.info-box-icon-version{
+	background: #bc9525;
 }
 
 .info-box {
@@ -153,7 +157,7 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 	-webkit-transition: opacity 0.5s, visibility 0s 0.5s;
 	transition: opacity 0.5s, visibility 0s 0.5s;
 }
-.box-flex-item.info-box-module.info-box-module-disabled {
+.box-flex-item.info-box-module.--disabled {
 	/* opacity: 0.6; */
 }
 
@@ -186,7 +190,7 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 }
 .info-box-sm .info-box-module-enabled {
 	/* background: linear-gradient(0.35turn, #fff, #fff, #f6faf8, #e4efe8) */
-	background: linear-gradient(0.4turn, #fff, #fff, #fff, #e4efe8);
+	background: var(--infoboxmoduleenabledbgcolor);
 }
 .info-box-content-warning span.font-status4 {
 	color: #bc9526 !important;
@@ -326,15 +330,15 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	color: #b06080 !important;
 }
 /* Color for customer object */
-.infobox-propal:not(.pictotitle),
-.infobox-facture:not(.pictotitle),
-.infobox-commande:not(.pictotitle) {
+.infobox-propal:not(.pictotitle):not(.error),
+.infobox-facture:not(.pictotitle):not(.error),
+.infobox-commande:not(.pictotitle):not(.error) {
 	color: #65953d !important;
 }
 /* Color for vendor object */
-.infobox-supplier_proposal:not(.pictotitle),
-.infobox-invoice_supplier:not(.pictotitle),
-.infobox-order_supplier:not(.pictotitle){
+.infobox-supplier_proposal:not(.pictotitle):not(.error),
+.infobox-invoice_supplier:not(.pictotitle):not(.error),
+.infobox-order_supplier:not(.pictotitle):not(.error) {
 	color: #599caf !important;
 }
 .infobox-contrat, .infobox-ticket{

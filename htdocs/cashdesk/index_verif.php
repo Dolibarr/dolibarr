@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/cashdesk/include/environnement.php';
 require_once DOL_DOCUMENT_ROOT.'/cashdesk/class/Auth.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("main", "admin", "cashdesk"));
+$langs->loadLangs(array("admin", "cashdesk"));
 
 $username = GETPOST("txtUsername");
 $password = GETPOST("pwdPassword");

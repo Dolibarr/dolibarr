@@ -85,7 +85,7 @@ class InfoBox
 	 *
 	 *  @param	DoliDB		$db				Database handler
 	 *  @param	string		$mode			'available' or 'activated'
-	 *  @param	string		$zone			Name or area (-1 for all, 0 for Homepage, 1 for Accountancy, 2 for xxx, ...)
+	 *  @param	int			$zone			Name or area (-1 for all, 0 for Homepage, 1 for Accountancy, 2 for xxx, ...)
 	 *  @param  User|null   $user	  		Object user to filter
 	 *  @param	array		$excludelist	Array of box id (box.box_id = boxes_def.rowid) to exclude
 	 *  @param  int         $includehidden  Include also hidden boxes
@@ -97,7 +97,6 @@ class InfoBox
 
 		$boxes = array();
 
-		$confuserzone = 'MAIN_BOXES_'.$zone;
 		if ($mode == 'activated') {	// activated
 			$sql = "SELECT b.rowid, b.position, b.box_order, b.fk_user,";
 			$sql .= " d.rowid as box_id, d.file, d.note, d.tms";
@@ -105,7 +104,7 @@ class InfoBox
 			$sql .= " WHERE b.box_id = d.rowid";
 			$sql .= " AND b.entity IN (0,".$conf->entity.")";
 			if ($zone >= 0) {
-				$sql .= " AND b.position = ".$zone;
+				$sql .= " AND b.position = ".((int) $zone);
 			}
 			if (is_object($user)) {
 				$sql .= " AND b.fk_user IN (0,".$user->id.")";
@@ -116,7 +115,7 @@ class InfoBox
 		} else { // available
 			$sql = "SELECT d.rowid as box_id, d.file, d.note, d.tms";
 			$sql .= " FROM ".MAIN_DB_PREFIX."boxes_def as d";
-			$sql .= " WHERE d.entity IN (0,".$conf->entity.")";
+			$sql .= " WHERE d.entity IN (0, ".$conf->entity.")";
 		}
 
 		dol_syslog(get_class()."::listBoxes get default box list for mode=".$mode." userid=".(is_object($user) ? $user->id : '')."", LOG_DEBUG);
@@ -217,7 +216,7 @@ class InfoBox
 	 *  Save order of boxes for area and user
 	 *
 	 *  @param	DoliDB	$db				Database handler
-	 *  @param	string	$zone       	Name of area (0 for Homepage, ...)
+	 *  @param	int		$zone       	Name of area (0 for Homepage, ...)
 	 *  @param  string  $boxorder   	List of boxes with correct order 'A:123,456,...-B:789,321...'
 	 *  @param  int     $userid     	Id of user
 	 *  @return int                   	<0 if KO, 0=Nothing done, > 0 if OK
@@ -254,8 +253,8 @@ class InfoBox
 		// Delete all lines
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."boxes";
 		$sql .= " WHERE entity = ".$conf->entity;
-		$sql .= " AND fk_user = ".$userid;
-		$sql .= " AND position = ".$zone;
+		$sql .= " AND fk_user = ".((int) $userid);
+		$sql .= " AND position = ".((int) $zone);
 
 		dol_syslog(get_class()."::saveboxorder", LOG_DEBUG);
 		$result = $db->query($sql);
@@ -278,14 +277,13 @@ class InfoBox
 						$sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes";
 						$sql .= "(box_id, position, box_order, fk_user, entity)";
 						$sql .= " values (";
-						$sql .= " ".$id.",";
-						$sql .= " ".$zone.",";
+						$sql .= " ".((int) $id).",";
+						$sql .= " ".((int) $zone).",";
 						$sql .= " '".$db->escape($colonne.$ii)."',";
-						$sql .= " ".$userid.",";
-						$sql .= " ".$conf->entity;
+						$sql .= " ".((int) $userid).",";
+						$sql .= " ".((int) $conf->entity);
 						$sql .= ")";
 
-						dol_syslog(get_class()."::saveboxorder", LOG_DEBUG);
 						$result = $db->query($sql);
 						if ($result < 0) {
 							$error++;

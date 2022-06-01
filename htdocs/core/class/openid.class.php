@@ -405,7 +405,7 @@ class SimpleOpenID
 			$url = $conf->global->MAIN_AUTHENTICATION_OPENID_URL;
 		}
 
-		$response = getURLContent($url);
+		$response = getURLContent($url, 'GET', '', 1, array(), array('http', 'https'));
 
 		list($servers, $delegates) = $this->HTML2OpenIDServer($response);
 		if (count($servers) == 0) {
@@ -525,7 +525,7 @@ class SimpleOpenID
 		dol_syslog(get_class($this).'::sendDiscoveryRequestToGetXRDS get XRDS');
 
 		$addheaders = array('Accept: application/xrds+xml');
-		$response = getURLContent($url, 'GET', '', 1, $addheaders);
+		$response = getURLContent($url, 'GET', '', 1, $addheaders, array('http', 'https'), 0);
 		/* response should like this:
 		<?xml version="1.0" encoding="UTF-8"?>
 		<xrds:XRDS xmlns:xrds="xri://$xrds" xmlns="xri://$xrd*($v*2.0)">

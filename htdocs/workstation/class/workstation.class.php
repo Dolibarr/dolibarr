@@ -61,7 +61,7 @@ class Workstation extends CommonObject
 	/**
 	 * @var string String with name of icon for workstation. Must be the part after the 'object_' into object_workstation.png
 	 */
-	public $picto = 'mrp';
+	public $picto = 'workstation';
 
 
 	const STATUS_DISABLED = 0;
@@ -87,7 +87,7 @@ class Workstation extends CommonObject
 	 *  'help' is a string visible as a tooltip on field
 	 *  'showoncombobox' if value of the field must be visible into the label of the combobox that list record
 	 *  'disabled' is 1 if we want to have the field locked by a 'disabled' attribute. In most cases, this is never set into the definition of $fields into class, but is set dynamically by some part of code.
-	 *  'arraykeyval' to set list of value if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel")
+	 *  'arrayofkeyval' to set a list of values if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel"). Note that type can be 'integer' or 'varchar'
 	 *  'autofocusoncreate' to have field having the focus on a create form. Only 1 field should have this property set to 1.
 	 *  'comment' is not used. You can store here any text of your choice. It is not used by application.
 	 *
@@ -100,9 +100,9 @@ class Workstation extends CommonObject
 	 */
 	public $fields=array(
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'css'=>'left', 'comment'=>"Id"),
-		'ref' => array('type'=>'varchar(128)', 'picto'=>'mrp', 'label'=>'Ref', 'enabled'=>'1', 'position'=>10, 'notnull'=>1, 'visible'=>1, 'noteditable'=>'0', 'default'=>'', 'index'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'comment'=>"Reference of object"),
-		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>'1', 'position'=>30, 'notnull'=>1, 'visible'=>1, 'searchall'=>1, 'css'=>'minwidth300', 'showoncombobox'=>'1',),
-		'type' => array('type'=>'select', 'label'=>'Type', 'enabled'=>'1', 'position'=>32, 'default'=>1, 'notnull'=>1, 'visible'=>1, 'arrayofkeyval'=>array('HUMAN'=>'Human', 'MACHINE'=>'Machine', 'BOTH'=>'HumanMachine'),),
+		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>'1', 'position'=>10, 'notnull'=>1, 'visible'=>1, 'noteditable'=>'0', 'default'=>'', 'index'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'comment'=>"Reference of object"),
+		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>'1', 'position'=>30, 'notnull'=>1, 'visible'=>1, 'searchall'=>1, 'css'=>'minwidth300', 'showoncombobox'=>'2',),
+		'type' => array('type'=>'varchar(8)', 'label'=>'Type', 'enabled'=>'1', 'position'=>32, 'default'=>1, 'notnull'=>1, 'visible'=>1, 'arrayofkeyval'=>array('HUMAN'=>'Human', 'MACHINE'=>'Machine', 'BOTH'=>'HumanMachine'),),
 		'note_public' => array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>'1', 'position'=>61, 'notnull'=>0, 'visible'=>0,),
 		'note_private' => array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>'1', 'position'=>62, 'notnull'=>0, 'visible'=>0,),
 		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>'1', 'position'=>500, 'notnull'=>1, 'visible'=>-2,),
@@ -230,7 +230,7 @@ class Workstation extends CommonObject
 		$id = $this->createCommon($user, $notrigger);
 
 		// Usergroups
-		$groups = GETPOST('groups');
+		$groups = GETPOST('groups', 'array:int');
 		if (empty($groups)) {
 			$groups = $this->usergroups; // createFromClone
 		}
@@ -245,7 +245,7 @@ class Workstation extends CommonObject
 		}
 
 		// Resources
-		$resources = GETPOST('resources');
+		$resources = GETPOST('resources', 'array:int');
 		if (empty($resources)) {
 			$resources = $this->resources; // createFromClone
 		}
@@ -486,7 +486,7 @@ class Workstation extends CommonObject
 	{
 
 		// Usergroups
-		$groups = GETPOST('groups');
+		$groups = GETPOST('groups', 'array:int');
 		WorkstationUserGroup::deleteAllGroupsOfWorkstation($this->id);
 		$this->usergroups=array();
 
@@ -499,7 +499,7 @@ class Workstation extends CommonObject
 		}
 
 		// Resources
-		$resources = GETPOST('resources');
+		$resources = GETPOST('resources', 'array:int');
 		WorkstationResource::deleteAllResourcesOfWorkstation($this->id);
 		$this->resources=array();
 		if (!empty($resources)) {
@@ -849,7 +849,7 @@ class Workstation extends CommonObject
 		// phpcs:enable
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
-			//$langs->load("workstation@workstation");
+			//$langs->load("workstation");
 			$this->labelStatus[self::STATUS_DISABLED] = $langs->trans('Disabled');
 			$this->labelStatus[self::STATUS_ENABLED] = $langs->trans('Enabled');
 		}
@@ -927,17 +927,20 @@ class Workstation extends CommonObject
 	{
 		$this->lines = array();
 
+		/*
 		$objectline = new WorkstationLine($this->db);
-		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_workstation = '.$this->id));
+		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_workstation = '.((int) $this->id)));
 
 		if (is_numeric($result)) {
 			$this->error = $this->error;
 			$this->errors = $this->errors;
 			return $result;
-		} else {
-			$this->lines = $result;
-			return $this->lines;
 		}
+
+		$this->lines = $result;
+		*/
+
+		return $this->lines;
 	}
 
 	/**
@@ -948,7 +951,7 @@ class Workstation extends CommonObject
 	public function getNextNumRef()
 	{
 		global $langs, $conf;
-		$langs->load("workstation@workstation");
+		$langs->load("workstation");
 
 		if (empty($conf->global->WORKSTATION_WORKSTATION_ADDON)) {
 			$conf->global->WORKSTATION_WORKSTATION_ADDON = 'mod_workstation_standard';
@@ -1013,7 +1016,7 @@ class Workstation extends CommonObject
 		$result = 0;
 		$includedocgeneration = 0;
 
-		$langs->load("workstation@workstation");
+		$langs->load("workstation");
 
 		if (!dol_strlen($modele)) {
 			$modele = 'standard_workstation';

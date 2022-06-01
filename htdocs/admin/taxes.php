@@ -260,7 +260,7 @@ print "<br>\n";
 
 print '<div class="center">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'" name="button">';
-print '<br/><br/>';
+print '<br><br>';
 print '</div>';
 
 print '</form>';

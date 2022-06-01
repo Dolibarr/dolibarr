@@ -21,7 +21,7 @@
 /**
  *   	\file       htdocs/admin/perms.php
  *      \ingroup    core
- *		\brief      Page d'administration/configuration des permissions par defaut
+ *		\brief      Page to setup default permissions of a new user
  */
 
 require '../main.inc.php';
@@ -64,6 +64,7 @@ if ($action == 'remove') {
  */
 
 $wikihelp = 'EN:Setup_Security|FR:Paramétrage_Sécurité|ES:Configuración_Seguridad';
+
 llxHeader('', $langs->trans("DefaultRights"), $wikihelp);
 
 print load_fiche_titre($langs->trans("SecuritySetup"), '', 'title_setup');
@@ -121,15 +122,15 @@ print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Module").'</td>';
 print '<td class="center">'.$langs->trans("Default").'</td>';
-print '<td class="center">&nbsp;</td>';
+print '<td class="center" width="24">&nbsp;</td>';
 print '<td>'.$langs->trans("Permissions").'</td>';
 if ($user->admin) {
-	print '<td class="right">'.$langs->trans("ID").'</td>';
+	print '<td class="right"></td>';
 }
 print '</tr>'."\n";
 
 //print "xx".$conf->global->MAIN_USE_ADVANCED_PERMS;
-$sql = "SELECT r.id, r.libelle as label, r.module, r.module_position, r.perms, r.subperms, r.bydefault";
+$sql = "SELECT r.id, r.libelle as label, r.module, r.perms, r.subperms, r.module_position, r.bydefault";
 $sql .= " FROM ".MAIN_DB_PREFIX."rights_def as r";
 $sql .= " WHERE r.libelle NOT LIKE 'tou%'"; // On ignore droits "tous"
 $sql .= " AND r.entity = ".((int) $entity);
@@ -147,21 +148,32 @@ if ($result) {
 	while ($i < $num) {
 		$obj = $db->fetch_object($result);
 
-		// If line is for a module that doe snot existe anymore (absent of includes/module), we ignore it
+		// If line is for a module that does not exist anymore (absent of includes/module), we ignore it
 		if (empty($modules[$obj->module])) {
 			$i++;
 			continue;
 		}
 
-		// Save field module_position in database if value is still zero
-		if (empty($obj->module_position)) {
+		$objMod = $modules[$obj->module];
+
+		// Save field module_position in database if value is wrong
+		if (empty($obj->module_position) || (is_object($objMod) && $objMod->isCoreOrExternalModule() == 'external' && $obj->module_position < 100000)) {
 			if (is_object($modules[$obj->module]) && ($modules[$obj->module]->module_position > 0)) {
 				// TODO Define familyposition
-				$family = (!empty($modules[$obj->module]->family_position) ? $modules[$obj->module]->family_position : '');
+				//$familyposition = $modules[$obj->module]->family_position;
 				$familyposition = 0;
-				$sqlupdate = 'UPDATE '.MAIN_DB_PREFIX."rights_def SET module_position = ".((int) $modules[$obj->module]->module_position).",";
+
+				$newmoduleposition = $modules[$obj->module]->module_position;
+
+				// Correct $newmoduleposition position for external modules
+				$objMod = $modules[$obj->module];
+				if (is_object($objMod) && $objMod->isCoreOrExternalModule() == 'external' && $newmoduleposition < 100000) {
+					$newmoduleposition += 100000;
+				}
+
+				$sqlupdate = 'UPDATE '.MAIN_DB_PREFIX."rights_def SET module_position = ".((int) $newmoduleposition).",";
 				$sqlupdate .= " family_position = ".((int) $familyposition);
-				$sqlupdate .= " WHERE module_position = 0 AND module = '".$db->escape($obj->module)."'";
+				$sqlupdate .= " WHERE module_position = ".((int) $obj->module_position)." AND module = '".$db->escape($obj->module)."'";
 				$db->query($sqlupdate);
 			}
 		}
@@ -203,12 +215,12 @@ if ($result) {
 			print '</tr>'."\n";
 		}
 
-		$perm_libelle = (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ($langs->trans("PermissionAdvanced".$obj->id) != ("PermissionAdvanced".$obj->id)) ? $langs->trans("PermissionAdvanced".$obj->id) : (($langs->trans("Permission".$obj->id) != ("Permission".$obj->id)) ? $langs->trans("Permission".$obj->id) : $obj->label));
-
+		print '<!-- '.$obj->module.'->'.$obj->perms.($obj->subperms ? '->'.$obj->subperms : '').' -->'."\n";
 		print '<tr class="oddeven">';
 
 		// Picto and label of module
 		print '<td class="maxwidthonsmartphone tdoverflowonsmartphone">';
+		//print img_object('', $picto, 'class="pictoobjectwidth"').' '.$objMod->getName();
 		print '</td>';
 
 		// Tick
@@ -235,11 +247,24 @@ if ($result) {
 		}
 
 		// Permission and tick
-		print '<td>'.$perm_libelle.'</td>';
+		$permlabel = (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ($langs->trans("PermissionAdvanced".$obj->id) != ("PermissionAdvanced".$obj->id)) ? $langs->trans("PermissionAdvanced".$obj->id) : (($langs->trans("Permission".$obj->id) != ("Permission".$obj->id)) ? $langs->trans("Permission".$obj->id) : $langs->trans($obj->label)));
+		print '<td>';
+		print $permlabel;
+		if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
+			if (preg_match('/_advance$/', $obj->perms)) {
+				print ' <span class="opacitymedium">('.$langs->trans("AdvancedModeOnly").')</span>';
+			}
+		}
+		print '</td>';
 
 		// Permission id
 		if ($user->admin) {
-			print '<td class="right"><span class="opacitymedium">'.$obj->id.'</span></td>';
+			print '<td class="right">';
+			$htmltext = $langs->trans("ID").': '.$obj->id;
+			$htmltext .= '<br>'.$langs->trans("Permission").': user->rights->'.$obj->module.'->'.$obj->perms.($obj->subperms ? '->'.$obj->subperms : '');
+			print $form->textwithpicto('', $htmltext);
+			//print '<span class="opacitymedium">'.$obj->id.'</span>';
+			print '</td>';
 		}
 
 		print '</tr>'."\n";
@@ -251,6 +276,12 @@ if ($result) {
 }
 print '</table>';
 print '</div>';
+
+$parameters = array();
+$reshook = $hookmanager->executeHooks('insertExtraFooter', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
 print dol_get_fiche_end();
 

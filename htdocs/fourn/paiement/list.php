@@ -47,6 +47,9 @@ $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 've
 
 $socid = GETPOST('socid', 'int');
 
+// Security check
+if ($user->socid) $socid = $user->socid;
+
 $search_ref				= GETPOST('search_ref', 'alpha');
 $search_day				= GETPOST('search_day', 'int');
 $search_month = GETPOST('search_month', 'int');
@@ -112,10 +115,12 @@ if ($user->socid) {
 // require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 // $object = new PaiementFourn($db);
 // restrictedArea($user, $object->element);
-if (empty($conf->fournisseur->enabled)) {
+if ((empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD))
+	|| (empty($conf->supplier_invoice->enabled) && !empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD))) {
 	accessforbidden();
 }
-if (!$user->rights->fournisseur->facture->lire) {
+if ((empty($user->rights->fournisseur->facture->lire) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD))
+	|| (empty($user->rights->supplier_invoice->lire) && !empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD))) {
 	accessforbidden();
 }
 
@@ -182,7 +187,7 @@ if (!$user->rights->societe->client->voir) {
 	$sql .= ' AND s.rowid = sc.fk_soc AND sc.fk_user = '.$user->id;
 }
 if ($socid > 0) {
-	$sql .= ' AND f.fk_soc = '.$socid;
+	$sql .= ' AND f.fk_soc = '.((int) $socid);
 }
 if ($search_ref) {
 	$sql .= natural_search('p.ref', $search_ref);
@@ -254,10 +259,10 @@ if ($optioncss != '') {
 if ($search_ref) {
 	$param .= '&search_ref='.urlencode($search_ref);
 }
-if ($saerch_day) {
+if ($search_day) {
 	$param .= '&search_day='.urlencode($search_day);
 }
-if ($saerch_month) {
+if ($search_month) {
 	$param .= '&search_month='.urlencode($search_month);
 }
 if ($search_year) {

@@ -2,6 +2,7 @@
 /* Copyright (C) 2004-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2018	   Nicolas ZABOURI 	<info@inovea-conseil.com>
  * Copyright (C) 2019 Maxime Kohlhaas <maxime@atm-consulting.fr>
+ * Copyright (C) 2021 Ferran Marcet <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -205,7 +206,7 @@ class modBom extends DolibarrModules
 		// Permissions provided by this module
 		$this->rights = array(); // Permission array used by this module
 
-		$r = 0;
+		$r = 1;
 		$this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Read bom of Bom'; // Permission label
 		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
@@ -315,6 +316,142 @@ class modBom extends DolibarrModules
 		$this->export_sql_end[$r] .= ' AND t.entity IN ('.getEntity('bom').')';
 		$r++;
 		/* END MODULEBUILDER EXPORT BILLOFMATERIALS */
+
+		// Imports
+		//--------
+		$r = 0;
+		//Import BOM Header
+
+		$r++;
+		$this->import_code[$r] = 'bom_'.$r;
+		$this->import_label[$r] = 'BillOfMaterials';
+		$this->import_icon[$r] = $this->picto;
+		$this->import_entities_array[$r] = array();
+		$this->import_tables_array[$r] = ['b' => MAIN_DB_PREFIX.'bom_bom', 'extra' => MAIN_DB_PREFIX.'bom_bom_extrafields'];
+		$this->import_tables_creator_array[$r] = ['b' => 'fk_user_creat']; // Fields to store import user id
+		$this->import_fields_array[$r] = [
+			'b.ref'               => 'Document Ref*',
+			'b.label'             => 'BomLabel*',
+			'b.fk_product'        => 'ProductRef*',
+			'b.description'       => 'Description',
+			'b.note_public'       => 'Note',
+			'b.note_private'      => 'NotePrivate',
+			'b.fk_warehouse'      => 'WarehouseRef',
+			'b.qty'               => 'Qty',
+			'b.efficiency'        => 'Efficiency',
+			'b.duration'          => 'Duration',
+			'b.date_creation'     => 'DateCreation',
+			'b.date_valid'        => 'DateValid',
+			'b.fk_user_modif'     => 'ModifiedById',
+			'b.fk_user_valid'     => 'ValidatedById',
+			'b.model_pdf'         => 'Model',
+			'b.status'         	  => 'Status*',
+			'b.bomtype'       	  => 'BomType*'
+
+		];
+
+		// Add extra fields
+		$import_extrafield_sample = array();
+		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'bom_bom' AND entity IN (0, ".$conf->entity.")";
+		$resql = $this->db->query($sql);
+
+		if ($resql) {
+			while ($obj = $this->db->fetch_object($resql)) {
+				$fieldname = 'extra.'.$obj->name;
+				$fieldlabel = ucfirst($obj->label);
+				$this->import_fields_array[$r][$fieldname] = $fieldlabel.($obj->fieldrequired ? '*' : '');
+				$import_extrafield_sample[$fieldname] = $fieldlabel;
+			}
+		}
+		// End add extra fields
+
+		$this->import_fieldshidden_array[$r] = ['extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'bom_bom'];
+		$this->import_regex_array[$r] = [
+			'b.ref' => '(CPV\d{4}-\d{4}|BOM\d{4}-\d{4}|PROV.{1,32}$)'
+		];
+
+		$this->import_updatekeys_array[$r] = ['b.ref' => 'Ref'];
+		$this->import_convertvalue_array[$r] = [
+			'b.fk_product' => [
+				'rule'    => 'fetchidfromref',
+				'file'    => '/product/class/product.class.php',
+				'class'   => 'Product',
+				'method'  => 'fetch',
+				'element' => 'Product'
+			],
+			'b.fk_warehouse' => [
+				'rule'    => 'fetchidfromref',
+				'file'    => '/product/stock/class/entrepot.class.php',
+				'class'   => 'Entrepot',
+				'method'  => 'fetch',
+				'element' => 'Warehouse'
+			],
+			'b.fk_user_valid' => [
+				'rule'    => 'fetchidfromref',
+				'file'    => '/user/class/user.class.php',
+				'class'   => 'User',
+				'method'  => 'fetch',
+				'element' => 'user'
+			],
+			'b.fk_user_modif' => [
+				'rule'    => 'fetchidfromref',
+				'file'    => '/user/class/user.class.php',
+				'class'   => 'User',
+				'method'  => 'fetch',
+				'element' => 'user'
+			],
+		];
+
+		//Import BOM Lines
+		$r++;
+		$this->import_code[$r] = 'bom_lines_'.$r;
+		$this->import_label[$r] = 'BillOfMaterialsLine';
+		$this->import_icon[$r] = $this->picto;
+		$this->import_entities_array[$r] = array();
+		$this->import_tables_array[$r] = ['bd' => MAIN_DB_PREFIX.'bom_bomline', 'extra' => MAIN_DB_PREFIX.'bom_bomline_extrafields'];
+		$this->import_fields_array[$r] = [
+			'bd.fk_bom'         => 'Document Ref*',
+			'bd.fk_product'     => 'ProductRef',
+			'bd.fk_bom_child'   => 'BOMChild',
+			'bd.description'    => 'Description',
+			'bd.qty'            => 'LineQty',
+			'bd.qty_frozen'      => 'LineIsFrozen',
+			'bd.disable_stock_change' => 'Disable Stock Change',
+			'bd.efficiency'     => 'Efficiency',
+			'bd.position'       => 'LinePosition'
+		];
+
+		// Add extra fields
+		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'bom_bomline' AND entity IN (0, ".$conf->entity.")";
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			while ($obj = $this->db->fetch_object($resql)) {
+				$fieldname = 'extra.'.$obj->name;
+				$fieldlabel = ucfirst($obj->label);
+				$this->import_fields_array[$r][$fieldname] = $fieldlabel.($obj->fieldrequired ? '*' : '');
+			}
+		}
+		// End add extra fields
+
+		$this->import_fieldshidden_array[$r] = ['extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'bom_bomline'];
+		$this->import_regex_array[$r] = array();
+		$this->import_updatekeys_array[$r] = ['bd.fk_bom' => 'BOM Id'];
+		$this->import_convertvalue_array[$r] = [
+			'bd.fk_bom' => [
+				'rule'    => 'fetchidfromref',
+				'file'    => '/bom/class/bom.class.php',
+				'class'   => 'BOM',
+				'method'  => 'fetch',
+				'element' => 'bom'
+			],
+			'bd.fk_product' => [
+				'rule'    => 'fetchidfromref',
+				'file'    => '/product/class/product.class.php',
+				'class'   => 'Product',
+				'method'  => 'fetch',
+				'element' => 'Product'
+			],
+		];
 	}
 
 	/**

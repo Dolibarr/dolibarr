@@ -34,7 +34,7 @@ include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 class box_comptes extends ModeleBoxes
 {
 	public $boxcode = "currentaccounts";
-	public $boximg = "object_bill";
+	public $boximg = "bank_account";
 	public $boxlabel = "BoxCurrentAccounts";
 	public $depends = array("banque"); // Box active if module banque active
 

@@ -170,7 +170,7 @@ if ($_SESSION["mailsonde"]) {
 	$cochemail = "checked";
 }
 
-print '<input type="checkbox" name="mailsonde" '.$cochemail.'> '.$langs->trans("ToReceiveEMailForEachVote").'<br>'."\n";
+print '<input type="checkbox" id="mailsonde" name="mailsonde" '.$cochemail.'> <label for="mailsonde">'.$langs->trans("ToReceiveEMailForEachVote").'</label><br>'."\n";
 
 if ($_SESSION['allow_comments']) {
 	$allow_comments = 'checked';
@@ -178,7 +178,7 @@ if ($_SESSION['allow_comments']) {
 if (GETPOSTISSET('allow_comments')) {
 	$allow_comments = GETPOST('allow_comments') ? 'checked' : '';
 }
-print '<input type="checkbox" name="allow_comments" '.$allow_comments.'"> '.$langs->trans('CanComment').'<br>'."\n";
+print '<input type="checkbox" id="allow_comments" name="allow_comments" '.$allow_comments.'"> <label for="allow_comments">'.$langs->trans('CanComment').'</label><br>'."\n";
 
 if ($_SESSION['allow_spy']) {
 	$allow_spy = 'checked';
@@ -186,7 +186,7 @@ if ($_SESSION['allow_spy']) {
 if (GETPOSTISSET('allow_spy')) {
 	$allow_spy = GETPOST('allow_spy') ? 'checked' : '';
 }
-print '<input type="checkbox" name="allow_spy" '.$allow_spy.'> '.$langs->trans('CanSeeOthersVote').'<br>'."\n";
+print '<input type="checkbox" id="allow_spy" name="allow_spy" '.$allow_spy.'> <label for="allow_spy">'.$langs->trans('CanSeeOthersVote').'</label><br>'."\n";
 
 if (GETPOST('choix_sondage')) {
 	if (GETPOST('choix_sondage') == 'date') {

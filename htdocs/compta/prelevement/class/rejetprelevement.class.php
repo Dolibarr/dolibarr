@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
+/* Copyright (C) 2005		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2005-2009	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2010-2013	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2021       OpenDsi					<support@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -98,6 +99,10 @@ class RejetPrelevement
 		$bankaccount = ($this->type == 'bank-transfer' ? $conf->global->PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT : $conf->global->PRELEVEMENT_ID_BANKACCOUNT);
 		$facs = $this->getListInvoices(1);
 
+		require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/ligneprelevement.class.php';
+		$lipre = new LignePrelevement($this->db, $user);
+		$lipre->fetch($id);
+
 		$this->db->begin();
 
 		// Insert refused line into database
@@ -160,7 +165,10 @@ class RejetPrelevement
 			$pai->amounts[$facs[$i][0]] = price2num($facs[$i][1] * ($this->type == 'bank-transfer' ? 1 : -1));
 			$pai->datepaye = $date_rejet;
 			$pai->paiementid = 3; // type of payment: withdrawal
+			$pai->num_paiement = $fac->ref;
 			$pai->num_payment = $fac->ref;
+			$pai->id_prelevement = $this->bon_id;
+			$pai->num_prelevement = $lipre->bon_ref;
 
 			if ($pai->create($this->user) < 0) {
 				// we call with no_commit
@@ -329,7 +337,7 @@ class RejetPrelevement
 
 		$sql = "SELECT pr.date_rejet as dr, motif, afacturer";
 		$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_rejet as pr";
-		$sql .= " WHERE pr.fk_prelevement_lignes =".$rowid;
+		$sql .= " WHERE pr.fk_prelevement_lignes =".((int) $rowid);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -345,11 +353,11 @@ class RejetPrelevement
 
 				return 0;
 			} else {
-				dol_syslog("RejetPrelevement::Fetch Erreur rowid=$rowid numrows=0");
+				dol_syslog("RejetPrelevement::Fetch Erreur rowid=".$rowid." numrows=0");
 				return -1;
 			}
 		} else {
-			dol_syslog("RejetPrelevement::Fetch Erreur rowid=$rowid");
+			dol_syslog("RejetPrelevement::Fetch Erreur rowid=".$rowid);
 			return -2;
 		}
 	}

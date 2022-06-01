@@ -4,6 +4,8 @@
  * Copyright (C) 2005		Simon Tosser			<simon@kornog-computing.com>
  * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2016	    Francis Appels       	<francis.appels@yahoo.com>
+ * Copyright (C) 2021		Noé Cendrier			<noe.cendrier@altairis.fr>
+ * Copyright (C) 2021		Frédéric France			<frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,12 +37,18 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+if (!empty($conf->projet->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+}
+
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'stocks', 'companies', 'categories'));
 
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $confirm = GETPOST('confirm');
+$projectid = GETPOST('projectid', 'int');
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
@@ -99,9 +107,10 @@ if (empty($reshook)) {
 	if ($action == 'add' && $user->rights->stock->creer) {
 		$object->ref = (string) GETPOST("ref", "alpha");
 		$object->fk_parent = (int) GETPOST("fk_parent", "int");
+		$object->fk_project = GETPOST('projectid', 'int');
 		$object->label = (string) GETPOST("libelle", "alpha");
 		$object->description = (string) GETPOST("desc", "alpha");
-		$object->statut      = GETPOST("statut");
+		$object->statut = GETPOST("statut", "int");
 		$object->lieu = (string) GETPOST("lieu", "alpha");
 		$object->address = (string) GETPOST("address", "alpha");
 		$object->zip = (string) GETPOST("zipcode", "alpha");
@@ -129,7 +138,7 @@ if (empty($reshook)) {
 						header("Location: ".$backtopage);
 						exit;
 					} else {
-						header("Location: card.php?id=".$id);
+						header("Location: card.php?id=".urlencode($id));
 						exit;
 					}
 				} else {
@@ -158,10 +167,11 @@ if (empty($reshook)) {
 	}
 
 	// Modification entrepot
-	if ($action == 'update' && $cancel <> $langs->trans("Cancel")) {
+	if ($action == 'update' && !$cancel) {
 		if ($object->fetch($id)) {
 			$object->label = GETPOST("libelle");
 			$object->fk_parent   = GETPOST("fk_parent");
+			$object->fk_project = GETPOST('projectid');
 			$object->description = GETPOST("desc");
 			$object->statut      = GETPOST("statut");
 			$object->lieu        = GETPOST("lieu");
@@ -173,7 +183,7 @@ if (empty($reshook)) {
 			$object->fax = GETPOST("fax");
 
 			// Fill array 'array_options' with data from add form
-			$ret = $extrafields->setOptionalsFromPost(null, $object);
+			$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
 			if ($ret < 0) {
 				$error++;
 			}
@@ -215,6 +225,9 @@ if (empty($reshook)) {
 		if ($error) {
 			$action = 'edit_extras';
 		}
+	} elseif ($action == 'classin' && $usercancreate) {
+		// Link to a project
+		$object->setProject(GETPOST('projectid', 'int'));
 	}
 
 	if ($cancel == $langs->trans("Cancel")) {
@@ -238,6 +251,9 @@ $form = new Form($db);
 $formproduct = new FormProduct($db);
 $formcompany = new FormCompany($db);
 $formfile = new FormFile($db);
+if (!empty($conf->projet->enabled)) {
+	$formproject = new FormProjets($db);
+}
 
 $help_url = 'EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
 llxHeader("", $langs->trans("WarehouseCard"), $help_url);
@@ -266,6 +282,15 @@ if ($action == 'create') {
 	print '<tr><td>'.$langs->trans("AddIn").'</td><td>';
 	print img_picto('', 'stock').$formproduct->selectWarehouses((GETPOSTISSET('fk_parent') ? GETPOST('fk_parent', 'int') : 'ifone'), 'fk_parent', '', 1);
 	print '</td></tr>';
+
+	// Project
+	if (!empty($conf->projet->enabled)) {
+		$langs->load('projects');
+		print '<tr><td>'.$langs->trans('Project').'</td><td colspan="2">';
+		print img_picto('', 'project').$formproject->select_projects(($socid > 0 ? $socid : -1), $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500');
+		print ' <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$soc->id.'&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id.($fac_rec ? '&fac_rec='.$fac_rec : '')).'"><span class="fa fa-plus-circle valignmiddle" title="'.$langs->trans("AddProject").'"></span></a>';
+		print '</td></tr>';
+	}
 
 	// Description
 	print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
@@ -307,7 +332,7 @@ if ($action == 'create') {
 
 	// Status
 	print '<tr><td>'.$langs->trans("Status").'</td><td>';
-	print '<select name="statut" class="flat">';
+	print '<select id="warehousestatus" name="statut" class="flat">';
 	foreach ($object->statuts as $key => $value) {
 		if ($key == 1) {
 			print '<option value="'.$key.'" selected>'.$langs->trans($value).'</option>';
@@ -316,6 +341,7 @@ if ($action == 'create') {
 		}
 	}
 	print '</select>';
+	print ajax_combobox('warehousestatus');
 	print '</td></tr>';
 
 	// Other attributes
@@ -381,6 +407,38 @@ if ($action == 'create') {
 
 			$morehtmlref = '<div class="refidno">';
 			$morehtmlref .= $langs->trans("LocationSummary").' : '.$object->lieu;
+
+			// Project
+			if (!empty($conf->projet->enabled)) {
+				$langs->load("projects");
+				$morehtmlref .= '<br>'.img_picto('', 'project').' '.$langs->trans('Project').' ';
+				if ($usercancreate) {
+					if ($action != 'classify') {
+						$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
+					}
+					if ($action == 'classify') {
+						$projectid = $object->fk_project;
+						$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+						$morehtmlref .= '<input type="hidden" name="action" value="classin">';
+						$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
+						$morehtmlref .= $formproject->select_projects(($socid > 0 ? $socid : -1), $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500');
+						$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+						$morehtmlref .= '</form>';
+					} else {
+						$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+					}
+				} else {
+					if (!empty($object->fk_project)) {
+						$proj = new Project($db);
+						$proj->fetch($object->fk_project);
+						$morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$object->fk_project.'" title="'.$langs->trans('ShowProject').'">';
+						$morehtmlref .= $proj->ref;
+						$morehtmlref .= '</a>';
+					} else {
+						$morehtmlref .= '';
+					}
+				}
+			}
 			$morehtmlref .= '</div>';
 
 			$shownav = 1;
@@ -404,8 +462,10 @@ if ($action == 'create') {
 				print '</td></tr>';
 			}
 
+			print '<tr>';
+
 			// Description
-			print '<tr><td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>'.nl2br($object->description).'</td></tr>';
+			print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>'.dol_htmlentitiesbr($object->description).'</td></tr>';
 
 			$calcproductsunique = $object->nb_different_products();
 			$calcproducts = $object->nb_products();
@@ -488,7 +548,7 @@ if ($action == 'create') {
 			$parameters = array();
 			$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 			if (empty($reshook)) {
-				if (empty($action)) {
+				if (empty($action) || $action == 'classin') {
 					if ($user->rights->stock->creer) {
 						print '<a class="butAction" href="card.php?action=edit&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Modify").'</a>';
 					} else {
@@ -515,6 +575,9 @@ if ($action == 'create') {
 
 			print '<table class="noborder centpercent">';
 			print "<tr class=\"liste_titre\">";
+			$parameters = array();
+			$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters); // Note that $action and $object may have been modified by hook
+			print $hookmanager->resPrint;
 			print_liste_field_titre("Product", "", "p.ref", "&amp;id=".$id, "", "", $sortfield, $sortorder);
 			print_liste_field_titre("Label", "", "p.label", "&amp;id=".$id, "", "", $sortfield, $sortorder);
 			print_liste_field_titre("NumberOfUnit", "", "ps.reel", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
@@ -535,20 +598,60 @@ if ($action == 'create') {
 			if ($user->rights->stock->creer) {
 				print_liste_field_titre('');
 			}
+			// Hook fields
+			$parameters = array('sortfield'=>$sortfield, 'sortorder'=>$sortorder);
+			$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
+			print $hookmanager->resPrint;
 			print "</tr>\n";
 
 			$totalunit = 0;
 			$totalvalue = $totalvaluesell = 0;
 
-			$sql = "SELECT p.rowid as rowid, p.ref, p.label as produit, p.tobatch, p.fk_product_type as type, p.pmp as ppmp, p.price, p.price_ttc, p.entity,";
+			//For MultiCompany PMP per entity
+			$separatedPMP = false;
+			if (!empty($conf->global->MULTICOMPANY_PRODUCT_SHARING_ENABLED) && !empty($conf->global->MULTICOMPANY_PMP_PER_ENTITY_ENABLED)) {
+				$separatedPMP = true;
+			}
+
+			$sql = "SELECT p.rowid as rowid, p.ref, p.label as produit, p.tobatch, p.fk_product_type as type, p.price, p.price_ttc, p.entity,";
+			$sql .= "p.tosell, p.tobuy,";
+			$sql .= "p.accountancy_code_sell,";
+			$sql .= "p.accountancy_code_sell_intra,";
+			$sql .= "p.accountancy_code_sell_export,";
+			$sql .= "p.accountancy_code_buy,";
+			$sql .= "p.accountancy_code_buy_intra,";
+			$sql .= "p.accountancy_code_buy_export,";
+			$sql .= 'p.barcode,';
+			if ($separatedPMP) {
+				$sql .= " pa.pmp as ppmp,";
+			} else {
+				$sql .= " p.pmp as ppmp,";
+			}
 			$sql .= " ps.reel as value";
 			if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 				$sql .= ",fk_unit";
 			}
+			// Add fields from hooks
+			$parameters = array();
+			$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
+			if ($reshook > 0) {			//Note that $sql is replaced if reshook > 0
+				$sql = "";
+			}
+			$sql .= $hookmanager->resPrint;
 			$sql .= " FROM ".MAIN_DB_PREFIX."product_stock as ps, ".MAIN_DB_PREFIX."product as p";
+
+			if ($separatedPMP) {
+				$sql .= ", ".MAIN_DB_PREFIX."product_perentity as pa";
+			}
+
 			$sql .= " WHERE ps.fk_product = p.rowid";
 			$sql .= " AND ps.reel <> 0"; // We do not show if stock is 0 (no product in this warehouse)
-			$sql .= " AND ps.fk_entrepot = ".$object->id;
+			$sql .= " AND ps.fk_entrepot = ".((int) $object->id);
+
+			if ($separatedPMP) {
+				$sql .= " AND pa.fk_product = p.rowid AND pa.entity = ".(int) $conf->entity;
+			}
+
 			$sql .= $db->order($sortfield, $sortorder);
 
 			dol_syslog('List products', LOG_DEBUG);
@@ -576,10 +679,13 @@ if ($action == 'create') {
 						}
 					}
 
-
 					//print '<td>'.dol_print_date($objp->datem).'</td>';
 					print '<tr class="oddeven">';
-					print "<td>";
+
+					$parameters = array('obj'=>$objp);
+					$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
+					print $hookmanager->resPrint;
+
 					$productstatic->id = $objp->rowid;
 					$productstatic->ref = $objp->ref;
 					$productstatic->label = $objp->produit;
@@ -587,11 +693,22 @@ if ($action == 'create') {
 					$productstatic->entity = $objp->entity;
 					$productstatic->status_batch = $objp->tobatch;
 					$productstatic->fk_unit = $objp->fk_unit;
+					$productstatic->status = $objp->tosell;
+					$productstatic->status_buy = $objp->tobuy;
+					$productstatic->barcode = $objp->barcode;
+					$productstatic->accountancy_code_sell = $objp->accountancy_code_sell;
+					$productstatic->accountancy_code_sell_intra = $objp->accountancy_code_sell_intra;
+					$productstatic->accountancy_code_sell_export = $objp->accountancy_code_sell_export;
+					$productstatic->accountancy_code_buy = $objp->accountancy_code_buy;
+					$productstatic->accountancy_code_buy_intra = $objp->accountancy_code_buy_intra;
+					$productstatic->accountancy_code_buy_export = $objp->accountancy_code_buy_export;
+
+					print "<td>";
 					print $productstatic->getNomUrl(1, 'stock', 16);
 					print '</td>';
 
 					// Label
-					print '<td>'.$objp->produit.'</td>';
+					print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($objp->produit).'">'.dol_escape_htmltag($objp->produit).'</td>';
 
 					print '<td class="right">';
 					$valtoshow = price(price2num($objp->value, 'MS'), 0, '', 0, 0); // TODO replace with a qty() function
@@ -609,10 +726,10 @@ if ($action == 'create') {
 						print '</td>';
 					}
 					// Price buy PMP
-					print '<td class="right">'.price(price2num($objp->ppmp, 'MU')).'</td>';
+					print '<td class="right nowraponall">'.price(price2num($objp->ppmp, 'MU')).'</td>';
 
 					// Total PMP
-					print '<td class="right">'.price(price2num($objp->ppmp * $objp->value, 'MT')).'</td>';
+					print '<td class="right amount nowraponall">'.price(price2num($objp->ppmp * $objp->value, 'MT')).'</td>';
 					$totalvalue += price2num($objp->ppmp * $objp->value, 'MT');
 
 					// Price sell min
@@ -672,6 +789,7 @@ if ($action == 'create') {
 				}
 				print '<td class="liste_total">&nbsp;</td>';
 				print '<td class="liste_total">&nbsp;</td>';
+				print '<td class="liste_total">&nbsp;</td>';
 				print '</tr>';
 			} else {
 				dol_print_error($db);
@@ -706,6 +824,16 @@ if ($action == 'create') {
 			print '<tr><td>'.$langs->trans("AddIn").'</td><td>';
 			print $formproduct->selectWarehouses($object->fk_parent, 'fk_parent', '', 1);
 			print '</td></tr>';
+
+			// Project
+			if (!empty($conf->projet->enabled)) {
+				$projectid = $object->fk_project;
+				$langs->load('projects');
+				print '<tr><td>'.$langs->trans('Project').'</td><td colspan="2">';
+				print img_picto('', 'project').$formproject->select_projects(($socid > 0 ? $socid : -1), $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500');
+				print ' <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$soc->id.'&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id.($fac_rec ? '&fac_rec='.$fac_rec : '')).'"><span class="fa fa-plus-circle valignmiddle" title="'.$langs->trans("AddProject").'"></span></a>';
+				print '</td></tr>';
+			}
 
 			// Description
 			print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
@@ -746,7 +874,7 @@ if ($action == 'create') {
 
 			// Status
 			print '<tr><td>'.$langs->trans("Status").'</td><td>';
-			print '<select name="statut" class="flat">';
+			print '<select id="warehousestatus" name="statut" class="flat">';
 			foreach ($object->statuts as $key => $value) {
 				if ($key == $object->statut) {
 					print '<option value="'.$key.'" selected>'.$langs->trans($value).'</option>';
@@ -755,6 +883,8 @@ if ($action == 'create') {
 				}
 			}
 			print '</select>';
+			print ajax_combobox('warehousestatus');
+
 			print '</td></tr>';
 
 			// Other attributes
@@ -814,7 +944,7 @@ if ($action != 'create' && $action != 'edit' && $action != 'delete') {
 	$delallowed = $usercancreate;
 	$modulepart = 'stock';
 
-	print $formfile->showdocuments($modulepart, $object->ref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 0, 0, 0, 28, 0, '', 0, '', $object->default_lang, '', $object);
+	print $formfile->showdocuments($modulepart, $objectref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 0, 0, 0, 28, 0, '', 0, '', $object->default_lang, '', $object);
 	$somethingshown = $formfile->numoffiles;
 
 	print '</div><div class="fichehalfright"><div class="ficheaddleft">';

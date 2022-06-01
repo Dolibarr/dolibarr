@@ -6,7 +6,7 @@
  * Copyright (C) 2015		Jean-François Ferry		<jfefe@aternatik.fr>
  * Copyright (C) 2015		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2017		Alexandre Spangaro		<aspangaro@open-dsi.fr>
- * Copyright (C) 2018		Ferran Marcet			<fmarcet@2byte.es>
+ * Copyright (C) 2018-2021	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2018		Charlene Benke			<charlie@patas-monkey.com>
  * Copyright (C) 2020		Tobias Sekan			<tobias.sekan@startmail.com>
  *
@@ -31,13 +31,6 @@
  */
 
 require '../../main.inc.php';
-
-// Security check
-if ($user->socid) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'facture', $facid, '');
-
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
@@ -59,6 +52,10 @@ $userid = GETPOST('userid', 'int');
 $day = GETPOST('day', 'int');
 $month				= GETPOST('month', 'int');
 $year = GETPOST('year', 'int');
+
+// Security check
+if ($user->socid) $socid = $user->socid;
+$result = restrictedArea($user, 'facture', $facid, '');
 
 $search_ref = GETPOST("search_ref", "alpha");
 $search_company		= GETPOST("search_company", 'alpha');
@@ -197,7 +194,7 @@ if (GETPOST("orphelins", "alpha")) {
 	}
 	$sql .= " WHERE p.entity IN (".getEntity('invoice').")";
 	if (!$user->rights->societe->client->voir && !$socid) {
-		$sql .= " AND sc.fk_user = ".$user->id;
+		$sql .= " AND sc.fk_user = ".((int) $user->id);
 	}
 	if ($socid > 0) {
 		$sql .= " AND f.fk_soc = ".((int) $socid);
@@ -277,6 +274,11 @@ $param .= (GETPOST("orphelins") ? "&orphelins=1" : '');
 $param .= ($search_ref ? "&search_ref=".urlencode($search_ref) : '');
 $param .= ($search_company ? "&search_company=".urlencode($search_company) : '');
 $param .= ($search_amount ? "&search_amount=".urlencode($search_amount) : '');
+$param .= ($search_paymenttype ? "&search_paymenttype=".urlencode($search_paymenttype) : '');
+$param .= ($search_account ? "&search_account=".urlencode($search_account) : '');
+$param .= ($day ? "&day=".urlencode($day) : '');
+$param .= ($month ? "&month=".urlencode($month) : '');
+$param .= ($year ? "&year=".urlencode($year) : '');
 $param .= ($search_payment_num ? "&search_payment_num=".urlencode($search_payment_num) : '');
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
@@ -291,7 +293,6 @@ print '<input type="hidden" name="action" value="list">';
 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-print '<input type="hidden" name="search_status" value="'.$search_status.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 print_barre_liste($langs->trans("ReceivedCustomersPayments"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'bill', 0, '', '', $limit, 0, 0, 1);

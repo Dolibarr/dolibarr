@@ -179,6 +179,7 @@ print dol_get_fiche_head($head, 'settings', $langs->trans("BOMs"), -1, 'bom');
 
 print load_fiche_titre($langs->trans("BOMsNumberingModules"), '', '');
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
@@ -272,7 +273,9 @@ foreach ($dirmodels as $reldir) {
 		}
 	}
 }
-print "</table><br>\n";
+print "</table>";
+print "</div>";
+print "<br>\n";
 
 
 /*
@@ -301,6 +304,7 @@ if ($resql) {
 }
 
 
+print '<div class="div-table-responsive-no-min">';
 print "<table class=\"noborder\" width=\"100%\">\n";
 print "<tr class=\"liste_titre\">\n";
 print '<td>'.$langs->trans("Name").'</td>';
@@ -414,6 +418,7 @@ foreach ($dirmodels as $reldir) {
 }
 
 print '</table>';
+print '</div>';
 print "<br>";
 
 /*
@@ -421,6 +426,8 @@ print "<br>";
  */
 
 print load_fiche_titre($langs->trans("OtherOptions"), '', '');
+
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
@@ -469,6 +476,7 @@ print "</td></tr>\n";
 print '</form>';
 
 print '</table>';
+print '</div>';
 print '<br>';
 
 

@@ -89,7 +89,7 @@ class box_graph_new_vs_close_ticket extends ModeleBoxes
 			$data = array();
 			$totalnb = 0;
 			$sql = "SELECT COUNT(t.datec) as nb";
-			$sql .= " FROM " . MAIN_DB_PREFIX . "ticket as t";
+			$sql .= " FROM ".MAIN_DB_PREFIX."ticket as t";
 			$sql .= " WHERE CAST(t.datec AS DATE) = CURRENT_DATE";
 			$sql .= " AND t.fk_statut <> 8";
 			$sql .= " GROUP BY CAST(t.datec AS DATE)";
@@ -107,7 +107,7 @@ class box_graph_new_vs_close_ticket extends ModeleBoxes
 				dol_print_error($this->db);
 			}
 			$sql = "SELECT COUNT(t.date_close) as nb";
-			$sql .= " FROM " . MAIN_DB_PREFIX . "ticket as t";
+			$sql .= " FROM ".MAIN_DB_PREFIX."ticket as t";
 			$sql .= " WHERE CAST(t.date_close AS DATE) = CURRENT_DATE";
 			$sql .= " AND t.fk_statut = 8";
 			$sql .= " GROUP BY CAST(t.date_close AS DATE)";
@@ -137,6 +137,9 @@ class box_graph_new_vs_close_ticket extends ModeleBoxes
 					$px1->SetDataColor(array_values($colorseries));
 					$px1->SetData($data);
 					$px1->setShowLegend(2);
+					if (!empty($conf->dol_optimize_smallscreen)) {
+						$px1->SetWidth(320);
+					}
 					$px1->SetType(array('pie'));
 					$px1->SetMaxValue($px1->GetCeilMaxValue());
 					$px1->SetShading(3);
@@ -148,8 +151,8 @@ class box_graph_new_vs_close_ticket extends ModeleBoxes
 					$stringtoprint .= $px1->show($totalnb ? 0 : 1);
 				}
 				$stringtoprint .= '</div>';
-				$this->info_box_contents[][]=array(
-					'td' => 'center',
+				$this->info_box_contents[][] = array(
+					'td' => 'class="center"',
 					'text' => $stringtoprint
 				);
 			} else {

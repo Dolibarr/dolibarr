@@ -5,6 +5,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010	   Pierre Morin         <pierre.morin@auguria.net>
  * Copyright (C) 2010	   Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2022	   Ferran Marcet        <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -162,6 +163,11 @@ if (!empty($hashp)) {
 			$modulepart = $moduleparttocheck;
 			$original_file = (($tmp[1] ? $tmp[1].'/' : '').$ecmfile->filename); // this is relative to module dir
 		}
+		$entity = $ecmfile->entity;
+		if ($entity != $conf->entity) {
+			$conf->entity = $entity;
+			$conf->setValues($db);
+		}
 	} else {
 		$langs->load("errors");
 		accessforbidden($langs->trans("ErrorFileNotFoundWithSharedLink"), 0, 0, 1);
@@ -194,8 +200,11 @@ if (!in_array($type, array('text/x-javascript')) && !dolIsAllowedForPreview($ori
 	$type = 'application/octet-stream';
 }
 
-// Security: Delete string ../ into $original_file
-$original_file = str_replace("../", "/", $original_file);
+// Security: Delete string ../ or ..\ into $original_file
+$original_file = preg_replace('/\.\.+/', '..', $original_file);	// Replace '... or more' with '..'
+$original_file = str_replace('../', '/', $original_file);
+$original_file = str_replace('..\\', '/', $original_file);
+
 
 // Find the subdirectory name as the reference
 $refname = basename(dirname($original_file)."/");

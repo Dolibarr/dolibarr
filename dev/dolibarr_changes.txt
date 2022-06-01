@@ -168,6 +168,18 @@ In htdocs/includes/tecnickcom/tcpdf/tcpdf.php
 -       protected $default_monospaced_font = 'courier';
 +       protected $default_monospaced_font = 'freemono';
 
+* In tecnickcom/tcpdf/include/tcpdf_static, in function intToRoman, right at the beginning
+  of the function, replace:
+
+		$roman = '';
+
+with:
+
+		$roman = '';
+		if ($number >= 4000) {
+			// do not represent numbers above 4000 in Roman numerals
+			return strval($number);
+		}
 
 
 
@@ -225,9 +237,6 @@ JQUERYFILETREE:
 
 RESTLER:
 --------
-Change content of file htdocs/includes/restler/framework/Luracast/Restler/explorer/index.html
-
-+With swagger 2:
 
 * Add line into Util.php to complete function
 
@@ -247,6 +256,21 @@ Change content of file htdocs/includes/restler/framework/Luracast/Restler/explor
         }
     	// @CHANGE LDR
         if (!is_string($haystack)) return false;
+
+* Replace  
+
+	$loaders = array_unique(static::$rogueLoaders);
+	
+	with 
+	
+	$loaders = array_unique(static::$rogueLoaders, SORT_REGULAR);
+
+
++With swagger 2 provided into /explorer:
+----------------------------------------
+
+Change content of file htdocs/includes/restler/framework/Luracast/Restler/explorer/index.html
+
 
 
 PARSEDOWN

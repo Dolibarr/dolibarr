@@ -70,9 +70,17 @@ if ($module == 'propal') {
 } elseif ($module == 'project_task') {
 	$permission = $user->rights->projet->creer;
 } elseif ($module == 'invoice_supplier') {
-	$permission = $user->rights->fournisseur->facture->creer;
+	if (empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) {
+		$permission = $user->rights->fournisseur->facture->creer;
+	} else {
+		$permission = $user->rights->supplier_invoice->creer;
+	}
 } elseif ($module == 'order_supplier') {
-	$permission = $user->rights->fournisseur->commande->creer;
+	if (empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) {
+		$permission = $user->rights->fournisseur->commande->creer;
+	} else {
+		$permission = $user->rights->supplier_order->creer;
+	}
 } elseif ($module == 'societe') {
 	$permission = $user->rights->societe->creer;
 } elseif ($module == 'contact') {

@@ -1,8 +1,10 @@
-# ProductBATCH language file - en_US - ProductBATCH
+# ProductBATCH language file - Source file is en_US - ProductBATCH
 ManageLotSerial=Użyj lot / numer seryjny
-ProductStatusOnBatch=Tak (lot / numer seryjny wymagany)
+ProductStatusOnBatch=Tak (wymagana partia)
+ProductStatusOnSerial=Tak (wymagany unikalny numer seryjny)
 ProductStatusNotOnBatch=Nie (lot / numer seryjny nie wykorzystany)
-ProductStatusOnBatchShort=Tak
+ProductStatusOnBatchShort=Partia
+ProductStatusOnSerialShort=Seryjny
 ProductStatusNotOnBatchShort=Nie
 Batch=Lot/Serial
 atleast1batchfield=Data wykorzystania lub data sprzedaży lub Lot / Numer seryjny
@@ -16,9 +18,27 @@ printEatby=Wykorzystaj po: %s
 printSellby=Sprzedaj po: %s
 printQty=Ilość: %d
 AddDispatchBatchLine=Dodaj linię dla przedłużenia wysyłki
-WhenProductBatchModuleOnOptionAreForced=When module Lot/Serial is on, automatic stock decrease  is forced to 'Decrease real stocks on shipping validation' and automatic increase mode is forced to 'Increase real stocks on manual dispatching into warehouses' and can't be edited. Other options can be defined as you want.
+WhenProductBatchModuleOnOptionAreForced=Kiedy moduł Grupa Produktów/Numer Seryjny jest włączony, automatyczne zmniejszenie stanu magazynowego jest wymuszone do 'Zmniejszenia fizycznego stanu magazynowego przy zatwierdzeniu wysyłki' i automatyczne zwiększenie stanu magazynowego jest wymuszone do 'Zwiększenia fizycznego stanu magazynowego przy ręcznym wysyłaniu produktów do magazynu' i nie może być edytowane. Inne opcje mogą być zmienione dowolnie.
 ProductDoesNotUseBatchSerial=Ten produkt nie używa lotu/numeru seryjnego
 ProductLotSetup=Konfiguracja modułu lot/seria
 ShowCurrentStockOfLot=Pokaż aktualny zapas dla pasy produkt/lot
 ShowLogOfMovementIfLot=Pokaż historię przesunięć dla pary produkt/lot
 StockDetailPerBatch=Szczegóły zapasu po locie
+SerialNumberAlreadyInUse=Numer seryjny %s jest już używany dla produktu %s
+TooManyQtyForSerialNumber=Możesz mieć tylko jeden produkt %s dla numeru seryjnego %s
+ManageLotMask=Maska niestandardowa
+CustomMasks=Możliwość zdefiniowania innej maski numeracji dla każdego produktu
+BatchLotNumberingModules=Reguła numeracji do automatycznego generowania numeru partii
+BatchSerialNumberingModules=Reguła numeracji do automatycznego generowania numeru seryjnego (dla produktów o właściwości 1 unikalna partia/seria dla każdego produktu)
+QtyToAddAfterBarcodeScan=Ilość do dodania dla każdego zeskanowanego kodu kreskowego/partii/numeru seryjnego
+LifeTime=Żywotność (w dniach)
+EndOfLife=Koniec życia
+ManufacturingDate=Data produkcji
+DestructionDate=Data zniszczenia
+FirstUseDate=Data pierwszego użycia
+QCFrequency=Częstotliwość kontroli jakości (w dniach)
+ShowAllLots=Show all lots
+HideLots=Hide lots
+#Traceability - qc status
+OutOfOrder=Niesprawny
+InWorkingOrder=Sprawny

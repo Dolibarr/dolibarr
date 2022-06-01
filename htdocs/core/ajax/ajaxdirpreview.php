@@ -54,8 +54,8 @@ if (!isset($mode) || $mode != 'noajax') {    // For ajax call
 	$search_doc_ref = GETPOST('search_doc_ref', 'alpha');
 
 	$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-	$sortfield = GETPOST("sortfield", 'alpha');
-	$sortorder = GETPOST("sortorder", 'alpha');
+	$sortfield = GETPOST("sortfield", 'aZ09comma');
+	$sortorder = GETPOST("sortorder", 'aZ09comma');
 	$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 	if (empty($page) || $page == -1) {
 		$page = 0;
@@ -82,8 +82,8 @@ if (!isset($mode) || $mode != 'noajax') {    // For ajax call
 			//exit;
 		}
 	}
-} else // For no ajax call
-{
+} else {
+	// For no ajax call
 	$rootdirfordoc = $conf->ecm->dir_output;
 
 	$ecmdir = new EcmDirectory($db);
@@ -205,12 +205,14 @@ if ($type == 'directory') {
 		'product',
 		'tax',
 		'project',
+		'project_task',
 		'fichinter',
 		'user',
 		'expensereport',
 		'holiday',
 		'recruitment-recruitmentcandidature',
 		'banque',
+		'chequereceipt',
 		'mrp-mo'
 	);
 
@@ -243,6 +245,8 @@ if ($type == 'directory') {
 		$upload_dir = $conf->tax->dir_output;
 	} elseif ($module == 'project') {
 		$upload_dir = $conf->projet->dir_output;
+	} elseif ($module == 'project_task') {
+		$upload_dir = $conf->projet->dir_output;
 	} elseif ($module == 'fichinter') {
 		$upload_dir = $conf->ficheinter->dir_output;
 	} elseif ($module == 'user') {
@@ -255,8 +259,10 @@ if ($type == 'directory') {
 		$upload_dir = $conf->recruitment->dir_output.'/recruitmentcandidature';
 	} elseif ($module == 'banque') {
 		$upload_dir = $conf->bank->dir_output;
+	} elseif ($module == 'chequereceipt') {
+		$upload_dir = $conf->bank->dir_output.'/checkdeposits';
 	} elseif ($module == 'mrp-mo') {
-		$upload_dir = $conf->mrp->dir_output.'/mo';
+		$upload_dir = $conf->mrp->dir_output;
 	} else {
 		$parameters = array('modulepart'=>$module);
 		$reshook = $hookmanager->executeHooks('addSectionECMAuto', $parameters);
@@ -376,7 +382,7 @@ if ($type == 'directory') {
 		// When we show list of files for ECM files, $filearray contains file list, and directory is defined with modulepart + section into $param
 		// When we show list of files for a directory, $filearray ciontains file list, and directory is defined with modulepart + $relativepath
 		//var_dump("section=".$section." title=".$title." modulepart=".$modulepart." useinecm=".$useinecm." perm=".$perm." relativepath=".$relativepath." param=".$param." url=".$url);
-		$formfile->list_of_documents($filearray, '', $modulepart, $param, 1, $relativepath, $perm, $useinecm, $textifempty, $maxlengthname, $title, $url, 0, $perm);
+		$formfile->list_of_documents($filearray, '', $modulepart, $param, 1, $relativepath, $perm, $useinecm, $textifempty, $maxlengthname, $title, $url, 0, $perm, '', $sortfield, $sortorder);
 	}
 }
 
@@ -430,6 +436,7 @@ if ($useajax || $action == 'delete') {
 }
 
 if ($useajax) {
+	print '<!-- ajaxdirpreview.php: js to manage preview of doc -->'."\n";
 	print '<script type="text/javascript">';
 
 	// Enable jquery handlers on new generated HTML objects (same code than into lib_footer.js.php)

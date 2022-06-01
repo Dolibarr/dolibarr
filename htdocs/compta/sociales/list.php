@@ -38,7 +38,7 @@ if (!empty($conf->projet->enabled)) {
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array('compta', 'banks', 'bills', 'hrm'));
+$langs->loadLangs(array('compta', 'banks', 'bills', 'hrm', 'projects'));
 
 $action				= GETPOST('action', 'aZ09');
 $massaction			= GETPOST('massaction', 'alpha');
@@ -61,7 +61,7 @@ $search_account				= GETPOST('search_account', 'int');
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield			= GETPOST("sortfield", 'alpha');
-$sortorder			= GETPOST("sortorder", 'alpha');
+$sortorder			= GETPOST("sortorder", 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 
 if (empty($page) || $page == -1) {
@@ -195,7 +195,7 @@ $sql .= " WHERE cs.fk_type = c.id";
 $sql .= " AND cs.entity = ".$conf->entity;
 // Search criteria
 if ($search_ref) {
-	$sql .= " AND cs.rowid=".$db->escape($search_ref);
+	$sql .= " AND cs.ref = '".$db->escape($search_ref)."'";
 }
 if ($search_label) {
 	$sql .= natural_search("cs.libelle", $search_label);
@@ -206,7 +206,7 @@ if (!empty($conf->projet->enabled)) {
 	}
 }
 if (!empty($search_users)) {
-	$sql .= ' AND cs.fk_user IN('.implode(', ', $search_users).')';
+	$sql .= ' AND cs.fk_user IN ('.$db->sanitize(implode(', ', $search_users)).')';
 }
 if (!empty($search_type) && $search_type > 0) {
 	$sql .= ' AND cs.fk_mode_reglement='.$search_type;
@@ -218,7 +218,7 @@ if ($search_amount) {
 	$sql .= natural_search("cs.amount", $search_amount, 1);
 }
 if ($search_status != '' && $search_status >= 0) {
-	$sql .= " AND cs.paye = ".$db->escape($search_status);
+	$sql .= " AND cs.paye = ".((int) $search_status);
 }
 $sql .= dolSqlDateFilter("cs.periode", $search_day_lim, $search_month_lim, $search_year_lim);
 //$sql.= dolSqlDateFilter("cs.periode", 0, 0, $year);
@@ -230,8 +230,8 @@ if ($year > 0) {
 	$sql .= "OR (cs.periode IS NULL AND date_format(cs.date_ech, '%Y') = '".$db->escape($year)."')";
 	$sql .= ")";
 }
-if ($search_typeid) {
-	$sql .= " AND cs.fk_type=".$db->escape($search_typeid);
+if ($search_typeid > 0) {
+	$sql .= " AND cs.fk_type = ".((int) $search_typeid);
 }
 $sql .= " GROUP BY cs.rowid, cs.fk_type, cs.fk_user, cs.amount, cs.date_ech, cs.libelle, cs.paye, cs.periode, c.libelle, cs.fk_account, ba.label, ba.ref, ba.number, ba.account_number, ba.iban_prefix, ba.bic, ba.currency_code, ba.clos, pay.code, u.lastname";
 if (!empty($conf->projet->enabled)) {

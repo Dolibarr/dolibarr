@@ -74,6 +74,7 @@ print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="updateoptions">';
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameters").'</td>'."\n";
@@ -99,7 +100,7 @@ if (empty($conf->use_javascript_ajax)) {
 	print $form->selectarray("activate_RESOURCE_USE_SEARCH_TO_SELECT", $arrval, $conf->global->RESOURCE_USE_SEARCH_TO_SELECT);
 	print '</td>';
 	print '<td class="right">';
-	print '<input type="submit" class="button" name="RESOURCE_USE_SEARCH_TO_SELECT" value="'.$langs->trans("Modify").'">';
+	print '<input type="submit" class="button small" name="RESOURCE_USE_SEARCH_TO_SELECT" value="'.$langs->trans("Modify").'">';
 	print '</td>';
 }
 print '</tr>';
@@ -107,7 +108,7 @@ print '</tr>';
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans('DisabledResourceLinkUser').'</td>';
-print '<td>';
+print '<td class="right">';
 echo ajax_constantonoff('RESOURCE_HIDE_ADD_CONTACT_USER');
 print '</td>';
 print '<td></td>';
@@ -116,7 +117,7 @@ print '</tr>';
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans('DisabledResourceLinkContact').'</td>';
-print '<td>';
+print '<td class="right">';
 echo ajax_constantonoff('RESOURCE_HIDE_ADD_CONTACT_THIPARTY');
 print '</td>';
 print '<td></td>';
@@ -125,13 +126,14 @@ print '</tr>';
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans('EnableResourceUsedInEventCheck').'</td>';
-print '<td>';
+print '<td class="right">';
 echo ajax_constantonoff('RESOURCE_USED_IN_EVENT_CHECK');
 print '</td>';
 print '<td></td>';
 print '</tr>';
 
 print '</table>';
+print '</div>';
 
 print '</form>';
 

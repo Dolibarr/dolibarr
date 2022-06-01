@@ -61,18 +61,19 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 	// Filters
 	//print '<form name="listactionsfilter" class="listactionsfilter" action="' . $_SERVER["PHP_SELF"] . '" method="get">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
-	print '<input type="hidden" name="year" value="'.$year.'">';
-	print '<input type="hidden" name="month" value="'.$month.'">';
-	print '<input type="hidden" name="day" value="'.$day.'">';
+	print '<input type="hidden" name="year" value="'.((int) $year).'">';
+	print '<input type="hidden" name="month" value="'.((int) $month).'">';
+	print '<input type="hidden" name="day" value="'.((int) $day).'">';
 	if ($massaction != 'predelete' && $massaction != 'preaffecttag') {		// When $massaction == 'predelete', action may be already output to 'delete' by the mass action system.
 		print '<input type="hidden" name="action" value="'.$action.'">';
 	}
-	print '<input type="hidden" name="search_showbirthday" value="'.$showbirthday.'">';
+	print '<input type="hidden" name="search_showbirthday" value="'.((int) $showbirthday).'">';
 
 	if ($canedit) {
 		print '<div class="divsearchfield">';
+
 		// Type
-		print '<span class="fas fa-square inline-block fawidth30" style=" color: #ddd;" title="'.$langs->trans("Type").'"></span>';
+		print '<span class="fas fa-square inline-block fawidth30" style=" color: #ddd;" title="'.$langs->trans("ActionType").'"></span>';
 		$multiselect = 0;
 		if (!empty($conf->global->MAIN_ENABLE_MULTISELECT_TYPE)) {     // We use an option here because it adds bugs when used on agenda page "peruser" and "list"
 			$multiselect = (!empty($conf->global->AGENDA_USE_EVENT_TYPE));
@@ -80,14 +81,16 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		print $formactions->select_type_actions($actioncode, "search_actioncode", $excludetype, (empty($conf->global->AGENDA_USE_EVENT_TYPE) ? 1 : -1), 0, $multiselect, 0, 'maxwidth500');
 		print '</div>';
 
-		// Assigned to
+		// Assigned to user
 		print '<div class="divsearchfield">';
 		print img_picto($langs->trans("ActionsToDoBy"), 'user', 'class="fawidth30 inline-block"');
-		print $form->select_dolusers($filtert, 'search_filtert', 1, '', !$canedit, '', '', 0, 0, 0, '', 0, '', 'maxwidth500 widthcentpercentminusxx');
+		print $form->select_dolusers($filtert, 'search_filtert', 1, '', !$canedit, '', '', 0, 0, 0, '', 0, '', 'minwidth150 maxwidth500 widthcentpercentminusxx');
 		print '</div>';
+
+		// Assigned to user group
 		print '<div class="divsearchfield">';
 		print img_picto($langs->trans("ToUserOfGroup"), 'object_group', 'class="fawidth30 inline-block"');
-		print $form->select_dolgroups($usergroupid, 'usergroup', 1, '', !$canedit, '', '', '0', false, 'maxwidth500');
+		print $form->select_dolgroups($usergroupid, 'usergroup', 1, '', !$canedit, '', '', '0', false, 'minwidth100 maxwidth500 widthcentpercentminusxx');
 		print '</div>';
 
 		if ($conf->resource->enabled) {
@@ -165,10 +168,10 @@ function show_array_actions_to_do($max = 5)
 	$sql .= " WHERE a.entity IN (".getEntity('agenda').")";
 	$sql .= " AND ((a.percent >= 0 AND a.percent < 100) OR (a.percent = -1 AND a.datep2 > '".$db->idate($now)."'))";
 	if (!$user->rights->societe->client->voir && !$socid) {
-		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	if ($socid) {
-		$sql .= " AND s.rowid = ".$socid;
+		$sql .= " AND s.rowid = ".((int) $socid);
 	}
 	$sql .= " ORDER BY a.datep DESC, a.id DESC";
 	$sql .= $db->plimit($max, 0);
@@ -281,10 +284,10 @@ function show_array_last_actions_done($max = 5)
 	$sql .= " WHERE a.entity IN (".getEntity('agenda').")";
 	$sql .= " AND (a.percent >= 100 OR (a.percent = -1 AND a.datep2 <= '".$db->idate($now)."'))";
 	if (!$user->rights->societe->client->voir && !$socid) {
-		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	if ($socid) {
-		$sql .= " AND s.rowid = ".$socid;
+		$sql .= " AND s.rowid = ".((int) $socid);
 	}
 	$sql .= " ORDER BY a.datep2 DESC";
 	$sql .= $db->plimit($max, 0);

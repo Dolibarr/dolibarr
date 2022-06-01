@@ -70,11 +70,11 @@ foreach ($object->fields as $key => $val) {
 		print $langs->trans($val['label']);
 	}
 	print '</td>';
-	print '<td class="valuefield';
+	print '<td class="valuefield fieldname_'.$key;
 	if ($val['type'] == 'text') {
 		print ' wordbreak';
 	}
-	if ($val['cssview']) {
+	if (!empty($val['cssview'])) {
 		print ' '.$val['cssview'];
 	}
 	print '">';

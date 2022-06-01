@@ -168,9 +168,9 @@ $sql .= " b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type,";
 $sql .= " ba.rowid as bankid, ba.ref as bankref, ba.label as banklabel";
 $sql .= " FROM ".MAIN_DB_PREFIX."bank_account as ba";
 $sql .= ", ".MAIN_DB_PREFIX."bank as b";
-$sql .= " WHERE b.fk_account = ".$acct->id;
+$sql .= " WHERE b.fk_account = ".((int) $acct->id);
 if ($listofnum) {
-	$sql .= " AND b.num_releve IN (".$listofnum.")";
+	$sql .= " AND b.num_releve IN (".$db->sanitize($listofnum, 1).")";
 }
 if (!isset($num)) {
 	$sql .= " OR b.num_releve is null";

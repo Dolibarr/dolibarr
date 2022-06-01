@@ -87,7 +87,7 @@ if ($action == 'vadd' && $cancel != $langs->trans("Cancel") && $user->rights->ad
 	if ($object->setMultiLangs($user) > 0) {
 		$action = '';
 	} else {
-		$action = 'add';
+		$action = 'create';
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
@@ -157,7 +157,7 @@ $form = new Form($db);
 $formadmin = new FormAdmin($db);
 
 $head = member_type_prepare_head($object);
-$titre = $langs->trans("MemberType".$object->type);
+$titre = $langs->trans("MemberType".$object->id);
 
 // Calculate $cnt_trans
 $cnt_trans = 0;
@@ -185,7 +185,7 @@ print "\n<div class=\"tabsAction\">\n";
 
 if ($action == '') {
 	if ($user->rights->produit->creer || $user->rights->service->creer) {
-		print '<a class="butAction" href="'.DOL_URL_ROOT.'/adherents/type_translation.php?action=add&rowid='.$object->id.'">'.$langs->trans("Add").'</a>';
+		print '<a class="butAction" href="'.DOL_URL_ROOT.'/adherents/type_translation.php?action=create&rowid='.$object->id.'">'.$langs->trans("Add").'</a>';
 		if ($cnt_trans > 0) {
 			print '<a class="butAction" href="'.DOL_URL_ROOT.'/adherents/type_translation.php?action=edit&rowid='.$object->id.'">'.$langs->trans("Update").'</a>';
 		}
@@ -208,7 +208,13 @@ if ($action == 'edit') {
 	if (!empty($object->multilangs)) {
 		foreach ($object->multilangs as $key => $value) {
 			$s = picto_from_langcode($key);
-			print '<br>'.($s ? $s.' ' : '').' <b>'.$langs->trans('Language_'.$key).':</b> <a href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&action=delete&token='.newToken().'&langtodelete='.$key.'">'.img_delete('', 'class="valigntextbottom"')."</a><br>";
+			print '<br>';
+			print '<div class="inline-block marginbottomonly">';
+			print ($s ? $s.' ' : '').'<b>'.$langs->trans('Language_'.$key).':</b>';
+			print '</div>';
+			print '<div class="inline-block marginbottomonly floatright">';
+			print '<a href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&action=delete&token='.newToken().'&langtodelete='.$key.'">'.img_delete('', 'class="valigntextbottom"')."</a><br>";
+			print '</div>';
 
 			print '<div class="underbanner clearboth"></div>';
 			print '<table class="border centpercent">';
@@ -231,11 +237,17 @@ if ($action == 'edit') {
 	print '</div>';
 
 	print '</form>';
-} elseif ($action != 'add') {
+} elseif ($action != 'create') {
 	if (!empty($object->multilangs)) {
 		foreach ($object->multilangs as $key => $value) {
 			$s = picto_from_langcode($key);
-			print ($s ? $s.' ' : '')." <b>".$langs->trans('Language_'.$key).":</b> ".'<a href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&action=delete&token='.newToken().'&langtodelete='.$key.'">'.img_delete('', 'class="valigntextbottom"').'</a>';
+			print '<div class="inline-block marginbottomonly">';
+			print ($s ? $s.' ' : '').'<b>'.$langs->trans('Language_'.$key).':</b>';
+			print '</div>';
+			print '<div class="inline-block marginbottomonly floatright">';
+			print '<a href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&action=delete&token='.newToken().'&langtodelete='.$key.'">'.img_delete('', 'class="valigntextbottom"').'</a>';
+			print '</div>';
+
 
 			print '<div class="fichecenter">';
 			print '<div class="underbanner clearboth"></div>';
@@ -244,9 +256,11 @@ if ($action == 'edit') {
 			print '<tr><td class="tdtop">'.$langs->trans('Description').'</td><td>'.$object->multilangs[$key]["description"].'</td></tr>';
 			print '</table>';
 			print '</div>';
+
+			print '<br>';
 		}
 	}
-	if (!$cnt_trans && $action != 'add') {
+	if (!$cnt_trans && $action != 'create') {
 		print '<div class="opacitymedium">'.$langs->trans('NoTranslation').'</div>';
 	}
 }
@@ -257,7 +271,7 @@ if ($action == 'edit') {
  * Form to add a new translation
  */
 
-if ($action == 'add' && $user->rights->adherent->configurer) {
+if ($action == 'create' && $user->rights->adherent->configurer) {
 	//WYSIWYG Editor
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 

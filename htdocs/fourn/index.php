@@ -65,7 +65,7 @@ if (!$user->rights->societe->client->voir && !$socid) {
 }
 $sql .= " WHERE cf.fk_soc = s.rowid ";
 if (!$user->rights->societe->client->voir && !$socid) {
-	$sql .= " AND sc.fk_user = ".$user->id;
+	$sql .= " AND sc.fk_user = ".((int) $user->id);
 }
 $sql .= " AND cf.entity = ".$conf->entity;
 $sql .= " GROUP BY cf.fk_statut";
@@ -99,7 +99,7 @@ if ($resql) {
 
 
 // Draft orders
-if (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled)) {
+if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled)) {
 	$langs->load("orders");
 
 	$sql = "SELECT cf.rowid, cf.ref, cf.total_ttc,";
@@ -111,12 +111,12 @@ if (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUP
 	}
 	$sql .= " WHERE cf.fk_soc = s.rowid";
 	if (!$user->rights->societe->client->voir && !$socid) {
-		$sql .= " AND sc.fk_user = ".$user->id;
+		$sql .= " AND sc.fk_user = ".((int) $user->id);
 	}
 	$sql .= " AND cf.entity = ".$conf->entity;
 	$sql .= " AND cf.fk_statut = 0";
 	if ($socid) {
-		$sql .= " AND cf.fk_soc = ".$socid;
+		$sql .= " AND cf.fk_soc = ".((int) $socid);
 	}
 
 	$resql = $db->query($sql);
@@ -157,7 +157,7 @@ if (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUP
 }
 
 // Draft invoices
-if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_invoice->enabled)) && $user->rights->fournisseur->facture->lire) {
+if (((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_invoice->enabled)) && $user->rights->fournisseur->facture->lire) {
 	$sql = "SELECT ff.ref_supplier, ff.rowid, ff.total_ttc, ff.type";
 	$sql .= ", s.nom as name, s.rowid as socid";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as ff";
@@ -167,12 +167,12 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 	}
 	$sql .= " WHERE s.rowid = ff.fk_soc";
 	if (!$user->rights->societe->client->voir && !$socid) {
-		$sql .= " AND sc.fk_user = ".$user->id;
+		$sql .= " AND sc.fk_user = ".((int) $user->id);
 	}
 	$sql .= " AND ff.entity = ".$conf->entity;
 	$sql .= " AND ff.fk_statut = 0";
 	if ($socid) {
-		$sql .= " AND f.fk_soc = ".$socid;
+		$sql .= " AND f.fk_soc = ".((int) $socid);
 	}
 
 	$resql = $db->query($sql);
@@ -240,10 +240,10 @@ $sql .= " WHERE s.fk_stcomm = st.id";
 $sql .= " AND s.fournisseur = 1";
 $sql .= " AND s.entity IN (".getEntity('societe').")";
 if (!$user->rights->societe->client->voir && !$socid) {
-	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 if ($socid) {
-	$sql .= " AND s.rowid = ".$socid;
+	$sql .= " AND s.rowid = ".((int) $socid);
 }
 $sql .= " ORDER BY s.tms DESC";
 $sql .= $db->plimit($max, 0);

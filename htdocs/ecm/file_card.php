@@ -36,10 +36,6 @@ $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 
-if (!$user->rights->ecm->setup) {
-	accessforbidden();
-}
-
 // Get parameters
 $socid = GETPOST("socid", "int");
 
@@ -71,7 +67,7 @@ if (!$section) {
 	dol_print_error('', 'Error, section parameter missing');
 	exit;
 }
-$urlfile = (string) dol_sanitizePathName(GETPOST("urlfile"));
+$urlfile = (string) dol_sanitizePathName(GETPOST("urlfile"), '_', 0);
 if (!$urlfile) {
 	dol_print_error('', "ErrorParamNotDefined");
 	exit;
@@ -105,6 +101,14 @@ if ($result < 0) {
 	exit;
 }
 
+// Permissions
+$permtoread = $user->rights->ecm->read;
+$permtoadd = $user->rights->ecm->setup;
+$permtoupload = $user->rights->ecm->upload;
+
+if (!$permtoread) {
+	accessforbidden();
+}
 
 
 /*
@@ -123,11 +127,11 @@ if ($cancel) {
 }
 
 // Rename file
-if ($action == 'update') {
+if ($action == 'update' && $permtoadd) {
 	$error = 0;
 
 	$oldlabel = GETPOST('urlfile', 'alpha');
-	$newlabel = dol_sanitizeFileName(GETPOST('label', 'alpha'));
+	$newlabel = dol_sanitizeFileName(GETPOST('label', 'alpha'), '_', 0);
 	$shareenabled = GETPOST('shareenabled', 'alpha');
 
 	//$db->begin();
@@ -201,7 +205,7 @@ if ($action == 'update') {
 			$object->fullpath_orig = '';
 			$object->gen_or_uploaded = 'unknown';
 			$object->description = ''; // indexed content
-			$object->keyword = ''; // keyword content
+			$object->keywords = ''; // keyword content
 			$result = $object->create($user);
 			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'warnings');

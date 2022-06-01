@@ -437,7 +437,7 @@ class CUnits // extends CommonObject
 	 */
 	public function unitConverter($value, $fk_unit, $fk_new_unit = 0)
 	{
-		$value = doubleval(price2num($value));
+		$value = floatval(price2num($value));
 		$fk_unit = intval($fk_unit);
 
 		// Calcul en unité de base
@@ -469,10 +469,10 @@ class CUnits // extends CommonObject
 		if ($unit) {
 			// TODO : if base exist in unit dictionary table remove this convertion exception and update convertion infos in database exemple time hour currently scale 3600 will become scale 2 base 60
 			if ($unit->unit_type == 'time') {
-				return doubleval($unit->scale);
+				return floatval($unit->scale);
 			}
 
-			return pow($base, doubleval($unit->scale));
+			return pow($base, floatval($unit->scale));
 		}
 
 		return 0;

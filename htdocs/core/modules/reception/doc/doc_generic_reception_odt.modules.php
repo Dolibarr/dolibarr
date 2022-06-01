@@ -62,8 +62,7 @@ class doc_generic_reception_odt extends ModelePdfReception
 	{
 		global $conf, $langs, $mysoc;
 
-		$langs->load("main");
-		$langs->load("companies");
+		$langs->loadLangs(array("main", "companies"));
 
 		$this->db = $db;
 		$this->name = "ODT templates";
@@ -80,18 +79,18 @@ class doc_generic_reception_odt extends ModelePdfReception
 		$this->marge_haute = 0;
 		$this->marge_basse = 0;
 
-		$this->option_logo = 1; // Affiche logo
-		$this->option_tva = 0; // Gere option tva RECEPTION_TVAOPTION
-		$this->option_modereg = 0; // Affiche mode reglement
-		$this->option_condreg = 0; // Affiche conditions reglement
-		$this->option_codeproduitservice = 0; // Affiche code produit-service
-		$this->option_multilang = 1; // Dispo en plusieurs langues
-		$this->option_escompte = 0; // Affiche si il y a eu escompte
+		$this->option_logo = 1; // Display logo
+		$this->option_tva = 0; // Manage the vat option RECEPTION_TVAOPTION
+		$this->option_modereg = 0; // Display payment mode
+		$this->option_condreg = 0; // Display payment terms
+		$this->option_codeproduitservice = 0; // Display product-service code
+		$this->option_multilang = 1; // Available in several languages
+		$this->option_escompte = 0; // Displays if there has been a discount
 		$this->option_credit_note = 0; // Support credit notes
 		$this->option_freetext = 1; // Support add of a personalised text
 		$this->option_draft_watermark = 0; // Support add of a watermark on drafts
 
-		// Recupere emetteur
+		// Get source company
 		$this->emetteur = $mysoc;
 		if (!$this->emetteur->country_code) {
 			$this->emetteur->country_code = substr($langs->defaultlang, -2); // By default if not defined
@@ -153,7 +152,7 @@ class doc_generic_reception_odt extends ModelePdfReception
 		$texte .= $conf->global->RECEPTION_ADDON_PDF_ODT_PATH;
 		$texte .= '</textarea>';
 		$texte .= '</div><div style="display: inline-block; vertical-align: middle;">';
-		$texte .= '<input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button">';
+		$texte .= '<input type="submit" class="button small" value="'.$langs->trans("Modify").'" name="Button">';
 		$texte .= '<br></div></div>';
 
 		// Scan directories
@@ -173,6 +172,11 @@ class doc_generic_reception_odt extends ModelePdfReception
 			}
 			$texte .= '</div>';
 		}
+		// Add input to upload a new template file.
+		$texte .= '<div>'.$langs->trans("UploadNewTemplate").' <input type="file" name="uploadfile">';
+		$texte .= '<input type="hidden" value="RECEPTION_ADDON_PDF_ODT_PATH" name="keyforuploaddir">';
+		$texte .= '<input type="submit" class="button small" value="'.dol_escape_htmltag($langs->trans("Upload")).'" name="upload">';
+		$texte .= '</div>';
 
 		$texte .= '</td>';
 
@@ -223,10 +227,7 @@ class doc_generic_reception_odt extends ModelePdfReception
 		$sav_charset_output = $outputlangs->charset_output;
 		$outputlangs->charset_output = 'UTF-8';
 
-		$outputlangs->load("main");
-		$outputlangs->load("dict");
-		$outputlangs->load("companies");
-		$outputlangs->load("bills");
+		$outputlangs->loadLangs(array("main", "dict", "companies", "bills"));
 
 		if ($conf->reception->dir_output."/reception") {
 			// If $object is id instead of object
@@ -282,23 +283,31 @@ class doc_generic_reception_odt extends ModelePdfReception
 				//print "conf->societe->dir_temp=".$conf->societe->dir_temp;
 
 				dol_mkdir($conf->reception->dir_temp);
+				if (!is_writable($conf->reception->dir_temp)) {
+					$this->error = "Failed to write in temp directory ".$conf->reception->dir_temp;
+					dol_syslog('Error in write_file: '.$this->error, LOG_ERR);
+					return -1;
+				}
 
-
-				// If BILLING contact defined on invoice, we use it
+				// If CUSTOMER contact defined on reception, we use it
 				$usecontact = false;
-				$arrayidcontact = $object->getIdContact('external', 'BILLING');
+				$arrayidcontact = $object->getIdContact('external', 'CUSTOMER');
 				if (count($arrayidcontact) > 0) {
 					$usecontact = true;
 					$result = $object->fetch_contact($arrayidcontact[0]);
 				}
 
 				// Recipient name
+				$contactobject = null;
 				if (!empty($usecontact)) {
-					if ($usecontact && ($object->contact->fk_soc != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)))) {
-						$socobject = $object->contact;
+					// We can use the company of contact instead of thirdparty company
+					if ($object->contact->socid != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT))) {
+						$object->contact->fetch_thirdparty();
+						$socobject = $object->contact->thirdparty;
+						$contactobject = $object->contact;
 					} else {
 						$socobject = $object->thirdparty;
-						// if we have a BILLING contact and we dont use it as recipient we store the contact object for later use
+						// if we have a CUSTOMER contact and we dont use it as thirdparty recipient we store the contact object for later use
 						$contactobject = $object->contact;
 					}
 				} else {
@@ -314,6 +323,7 @@ class doc_generic_reception_odt extends ModelePdfReception
 				'__TOTAL_VAT__' => $object->total_tva
 				);
 				complete_substitutions_array($substitutionarray, $langs, $object);
+
 				// Call the ODTSubstitution hook
 				$parameters = array('file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs, 'substitutionarray'=>&$substitutionarray);
 				$reshook = $hookmanager->executeHooks('ODTSubstitution', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
@@ -339,6 +349,7 @@ class doc_generic_reception_odt extends ModelePdfReception
 					);
 				} catch (Exception $e) {
 					$this->error = $e->getMessage();
+					dol_syslog($e->getMessage(), LOG_INFO);
 					return -1;
 				}
 				// After construction $odfHandler->contentXml contains content and
@@ -355,67 +366,23 @@ class doc_generic_reception_odt extends ModelePdfReception
 					dol_syslog($e->getMessage(), LOG_INFO);
 				}
 
-				// Make substitutions into odt of user info
-				$tmparray = $this->get_substitutionarray_user($user, $outputlangs);
-				//var_dump($tmparray); exit;
-				foreach ($tmparray as $key => $value) {
-					try {
-						if (preg_match('/logo$/', $key)) { // Image
-							//var_dump($value);exit;
-							if (file_exists($value)) {
-								$odfHandler->setImage($key, $value);
-							} else {
-								$odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
-							}
-						} else // Text
-						{
-							$odfHandler->setVars($key, $value, true, 'UTF-8');
-						}
-					} catch (OdfException $e) {
-						dol_syslog($e->getMessage(), LOG_INFO);
-					}
+				// Define substitution array
+				$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
+				$array_object_from_properties = $this->get_substitutionarray_each_var_object($object, $outputlangs);
+				$array_objet = $this->get_substitutionarray_object($object, $outputlangs);
+				$array_user = $this->get_substitutionarray_user($user, $outputlangs);
+				$array_soc = $this->get_substitutionarray_mysoc($mysoc, $outputlangs);
+				$array_thirdparty = $this->get_substitutionarray_thirdparty($socobject, $outputlangs);
+				$array_other = $this->get_substitutionarray_other($outputlangs);
+				// retrieve contact information for use in object as contact_xxx tags
+				$array_thirdparty_contact = array();
+				if ($usecontact && is_object($contactobject)) {
+					$array_thirdparty_contact = $this->get_substitutionarray_contact($contactobject, $outputlangs, 'contact');
 				}
-				// Make substitutions into odt of mysoc
-				$tmparray = $this->get_substitutionarray_mysoc($mysoc, $outputlangs);
-				//var_dump($tmparray); exit;
-				foreach ($tmparray as $key => $value) {
-					try {
-						if (preg_match('/logo$/', $key)) {	// Image
-							//var_dump($value);exit;
-							if (file_exists($value)) {
-								$odfHandler->setImage($key, $value);
-							} else {
-								$odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
-							}
-						} else // Text
-						{
-							$odfHandler->setVars($key, $value, true, 'UTF-8');
-						}
-					} catch (OdfException $e) {
-						dol_syslog($e->getMessage(), LOG_INFO);
-					}
-				}
-				// Make substitutions into odt of thirdparty
-				$tmparray = $this->get_substitutionarray_thirdparty($socobject, $outputlangs);
-				foreach ($tmparray as $key => $value) {
-					try {
-						if (preg_match('/logo$/', $key)) {	// Image
-							if (file_exists($value)) {
-								$odfHandler->setImage($key, $value);
-							} else {
-								$odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
-							}
-						} else // Text
-						{
-							$odfHandler->setVars($key, $value, true, 'UTF-8');
-						}
-					} catch (OdfException $e) {
-						dol_syslog($e->getMessage(), LOG_INFO);
-					}
-				}
-				// Replace tags of object + external modules
-				$tmparray = $this->get_substitutionarray_reception($object, $outputlangs);
+
+				$tmparray = array_merge($substitutionarray, $array_object_from_properties, $array_user, $array_soc, $array_thirdparty, $array_objet, $array_other, $array_thirdparty_contact);
 				complete_substitutions_array($tmparray, $outputlangs, $object);
+
 				// Call the ODTSubstitution hook
 				$parameters = array('odfHandler'=>&$odfHandler, 'file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs, 'substitutionarray'=>&$tmparray);
 				$reshook = $hookmanager->executeHooks('ODTSubstitution', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
@@ -437,25 +404,36 @@ class doc_generic_reception_odt extends ModelePdfReception
 				}
 				// Replace tags of lines
 				try {
-					$listlines = $odfHandler->setSegment('lines');
-					foreach ($object->lines as $line) {
-						$tmparray = $this->get_substitutionarray_reception_lines($line, $outputlangs);
-						complete_substitutions_array($tmparray, $outputlangs, $object, $line, "completesubstitutionarray_lines");
-						// Call the ODTSubstitutionLine hook
-						$parameters = array('odfHandler'=>&$odfHandler, 'file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs, 'substitutionarray'=>&$tmparray, 'line'=>$line);
-						$reshook = $hookmanager->executeHooks('ODTSubstitutionLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
-						foreach ($tmparray as $key => $val) {
-							try {
-								$listlines->setVars($key, $val, true, 'UTF-8');
-							} catch (OdfException $e) {
-								dol_syslog($e->getMessage(), LOG_INFO);
-							} catch (SegmentException $e) {
-								dol_syslog($e->getMessage(), LOG_INFO);
-							}
-						}
-						$listlines->merge();
+					$foundtagforlines = 1;
+					try {
+						$listlines = $odfHandler->setSegment('lines');
+					} catch (OdfException $e) {
+						// We may arrive here if tags for lines not present into template
+						$foundtagforlines = 0;
+						dol_syslog($e->getMessage(), LOG_INFO);
 					}
-					$odfHandler->mergeSegment($listlines);
+					if ($foundtagforlines) {
+						$linenumber = 0;
+						foreach ($object->lines as $line) {
+							$linenumber++;
+							$tmparray = $this->get_substitutionarray_reception_lines($line, $outputlangs);
+							complete_substitutions_array($tmparray, $outputlangs, $object, $line, "completesubstitutionarray_lines");
+							// Call the ODTSubstitutionLine hook
+							$parameters = array('odfHandler'=>&$odfHandler, 'file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs, 'substitutionarray'=>&$tmparray, 'line'=>$line);
+							$reshook = $hookmanager->executeHooks('ODTSubstitutionLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+							foreach ($tmparray as $key => $val) {
+								try {
+									$listlines->setVars($key, $val, true, 'UTF-8');
+								} catch (OdfException $e) {
+									dol_syslog($e->getMessage(), LOG_INFO);
+								} catch (SegmentException $e) {
+									dol_syslog($e->getMessage(), LOG_INFO);
+								}
+							}
+							$listlines->merge();
+						}
+						$odfHandler->mergeSegment($listlines);
+					}
 				} catch (OdfException $e) {
 					$this->error = $e->getMessage();
 					dol_syslog($this->error, LOG_WARNING);
@@ -482,6 +460,7 @@ class doc_generic_reception_odt extends ModelePdfReception
 						$odfHandler->exportAsAttachedPDF($file);
 					} catch (Exception $e) {
 						$this->error = $e->getMessage();
+						dol_syslog($e->getMessage(), LOG_INFO);
 						return -1;
 					}
 				} else {
@@ -489,6 +468,7 @@ class doc_generic_reception_odt extends ModelePdfReception
 						$odfHandler->saveToDisk($file);
 					} catch (Exception $e) {
 						$this->error = $e->getMessage();
+						dol_syslog($e->getMessage(), LOG_INFO);
 						return -1;
 					}
 				}
@@ -500,6 +480,8 @@ class doc_generic_reception_odt extends ModelePdfReception
 				}
 
 				$odfHandler = null; // Destroy object
+
+				$this->result = array('fullpath'=>$file);
 
 				return 1; // Success
 			} else {

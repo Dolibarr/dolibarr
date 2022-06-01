@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2012      Nicolas Villa aka Boyquotes http://informetic.fr
  * Copyright (C) 2013      Florian Henry       <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2019 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2013-2021 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2019      Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -23,7 +23,6 @@
  *  \ingroup    cron
  *  \brief      Lists Jobs
  */
-
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
@@ -68,7 +67,7 @@ $mode = GETPOST('mode', 'aZ09');
 $search_status = (GETPOSTISSET('search_status') ?GETPOST('search_status', 'int') : GETPOST('status', 'int'));
 $search_label = GETPOST("search_label", 'alpha');
 $search_module_name = GETPOST("search_module_name", 'alpha');
-$search_lastresult = GETPOST("search_lastresult", "alpha");
+$search_lastresult = GETPOST("search_lastresult", "alphawithlgt");
 $securitykey = GETPOST('securitykey', 'alpha');
 
 $outputdir = $conf->cron->dir_output;
@@ -202,7 +201,7 @@ if (empty($reshook)) {
 	$permissiontodelete = $user->rights->cron->delete;
 	$uploaddir = $conf->cron->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
-	if ($permissiontoadd) {
+	if ($massaction && $permissiontoadd) {
 		$tmpcron = new Cronjob($db);
 		foreach ($toselect as $id) {
 			$result = $tmpcron->fetch($id);
@@ -350,24 +349,21 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
 $stringcurrentdate = $langs->trans("CurrentHour").': '.dol_print_date(dol_now(), 'dayhour');
 
-if ($action == 'delete') {
-	print $form->formconfirm($_SERVER['PHP_SELF']."?id=".$id.$param, $langs->trans("CronDelete"), $langs->trans("CronConfirmDelete"), "confirm_delete", '', '', 1);
-}
 if ($action == 'execute') {
 	print $form->formconfirm($_SERVER['PHP_SELF']."?id=".$id.'&securitykey='.$securitykey.$param, $langs->trans("CronExecute"), $langs->trans("CronConfirmExecute"), "confirm_execute", '', '', 1);
 }
 
 // List of mass actions available
 $arrayofmassactions = array(
-//'presend'=>$langs->trans("SendByMail"),
-//'builddoc'=>$langs->trans("PDFMerge"),
-	'enable'=>$langs->trans("CronStatusActiveBtn"),
-	'disable'=>$langs->trans("CronStatusInactiveBtn"),
+//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
+//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
+	'enable'=>img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("CronStatusActiveBtn"),
+	'disable'=>img_picto('', 'uncheck', 'class="pictofixedwidth"').$langs->trans("CronStatusInactiveBtn"),
 );
 if ($user->rights->cron->delete) {
-	$arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
+	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
-if (in_array($massaction, array('presend', 'predelete'))) {
+if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete'))) {
 	$arrayofmassactions = array();
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
@@ -406,6 +402,12 @@ if ($mode == 'modulesetup') {
 
 print_barre_liste($pagetitle, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, ($mode == 'modulesetup' ? '' : 'title_setup'), 0, $newcardbutton, '', $limit);
 
+// Add code for pre mass action (confirmation or email presend form)
+$topicmail = "SendCronRef";
+$modelmail = "cron";
+$objecttmp = new Cronjob($db);
+$trackid = 'cron'.$object->id;
+include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 $text = $langs->trans("HoursOnThisPageAreOnServerTZ").' '.$stringcurrentdate.'<br>';
 if (!empty($conf->global->CRON_WARNING_DELAY_HOURS)) {
@@ -476,7 +478,7 @@ if ($num > 0) {
 		if (empty($obj)) {
 			break;
 		}
-		if (!verifCond($obj->test)) {
+		if (isset($obj->test) && !verifCond($obj->test)) {
 			continue; // Discard line with test = false
 		}
 
@@ -597,7 +599,7 @@ if ($num > 0) {
 		print '</td>';
 
 		// Output of last run
-		print '<td>';
+		print '<td class="small">';
 		if (!empty($obj->lastoutput)) {
 			print dol_trunc(nl2br($obj->lastoutput), 50);
 		}

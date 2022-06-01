@@ -47,7 +47,7 @@ $massaction = GETPOST('massaction', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'actioncommlist'; // To manage different context of search
 $resourceid = GETPOST("search_resourceid", "int") ?GETPOST("search_resourceid", "int") : GETPOST("resourceid", "int");
 $pid = GETPOST("search_projectid", 'int', 3) ?GETPOST("search_projectid", 'int', 3) : GETPOST("projectid", 'int', 3);
-$search_status = (GETPOST("search_status", 'alpha') != '') ?GETPOST("search_status", 'alpha') : GETPOST("status", 'alpha');
+$search_status = (GETPOST("search_status", 'aZ09') != '') ? GETPOST("search_status", 'aZ09') : GETPOST("status", 'aZ09');
 $type = GETPOST('search_type', 'alphanohtml') ?GETPOST('search_type', 'alphanohtml') : GETPOST('type', 'alphanohtml');
 $optioncss = GETPOST('optioncss', 'alpha');
 $year = GETPOST("year", 'int');
@@ -106,7 +106,8 @@ $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if ($page == -1 || $page == null) {
+if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
+	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
 }
 $offset = $limit * $page;
@@ -320,7 +321,7 @@ if ($search_title != '') {
 	$param .= '&search_title='.urlencode($search_title);
 }
 if ($search_note != '') {
-	$param .= '&search_note='.$search_note;
+	$param .= '&search_note='.urlencode($search_note);
 }
 if (GETPOST('datestartday', 'int')) {
 	$param .= '&datestartday='.GETPOST('datestartday', 'int');
@@ -355,10 +356,10 @@ $arrayofmassactions = array(
 	'set_all_events_to_finished' => $langs->trans("SetAllEventsToFinished"),
 );
 if ($user->rights->agenda->allactions->delete) {
-	$arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
+	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
 if ($user->rights->agenda->myactions->create) {
-	$arrayofmassactions['preaffecttag'] = '<span class="fa fa-tag paddingrightonly"></span>'.$langs->trans("AffectTag");
+	$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
 }
 if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete','preaffecttag'))) {
 	$arrayofmassactions = array();
@@ -390,7 +391,7 @@ $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // N
 $sql .= $hookmanager->resPrint;
 
 $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."actioncomm_extrafields as ef ON (a.id = ef.fk_object) ";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."actioncomm_extrafields as ef ON (a.id = ef.fk_object)";
 if (!$user->rights->societe->client->voir && !$socid) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
 }
@@ -446,7 +447,7 @@ if ($pid) {
 	$sql .= " AND a.fk_project=".((int) $pid);
 }
 if (!$user->rights->societe->client->voir && !$socid) {
-	$sql .= " AND (a.fk_soc IS NULL OR sc.fk_user = ".$user->id.")";
+	$sql .= " AND (a.fk_soc IS NULL OR sc.fk_user = ".((int) $user->id).")";
 }
 if ($socid > 0) {
 	$sql .= " AND s.rowid = ".((int) $socid);
@@ -520,6 +521,7 @@ $sql .= $db->order($sortfield, $sortorder);
 
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+	// TODO Set and use an optimized request in $sqlforcount with no fields and no useless join to caluclate nb of records
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
 	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
@@ -576,8 +578,8 @@ if ($resql) {
 	//print dol_get_fiche_end();
 
 	// Add link to show birthdays
-	$link = '';
 	/*
+	$link = '';
 	if (empty($conf->use_javascript_ajax))
 	{
 		$newparam=$param;   // newparam is for birthday links
@@ -606,13 +608,13 @@ if ($resql) {
 	$viewmode = '';
 	$viewmode .= '<a class="btnTitle btnTitleSelected reposition" href="'.DOL_URL_ROOT.'/comm/action/list.php?action=show_list&restore_lastsearch_values=1'.$paramnoactionodate.'">';
 	//$viewmode .= '<span class="fa paddingleft imgforviewmode valignmiddle btnTitle-icon">';
-	$viewmode .= img_picto($langs->trans("List"), 'object_list-alt', 'class="pictoactionview block"');
+	$viewmode .= img_picto($langs->trans("List"), 'object_list', 'class="imgforviewmode pictoactionview block"');
 	//$viewmode .= '</span>';
 	$viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone">'.$langs->trans("ViewList").'</span></a>';
 
 	$viewmode .= '<a class="btnTitle reposition" href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_month&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').$paramnoactionodate.'">';
 	//$viewmode .= '<span class="fa paddingleft imgforviewmode valignmiddle btnTitle-icon">';
-	$viewmode .= img_picto($langs->trans("ViewCal"), 'object_calendar', 'class="pictoactionview block"');
+	$viewmode .= img_picto($langs->trans("ViewCal"), 'object_calendarmonth', 'class="pictoactionview block"');
 	//$viewmode .= '</span>';
 	$viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone">'.$langs->trans("ViewCal").'</span></a>';
 
@@ -828,14 +830,20 @@ if ($resql) {
 		$actionstatic->label = $obj->label;
 		$actionstatic->location = $obj->location;
 		$actionstatic->note_private = dol_htmlentitiesbr($obj->note);
+		$actionstatic->datep = $db->jdate($obj->dp);
+		$actionstatic->percentage = $obj->percent;
 
-		$actionstatic->fetchResources();
+		// Initialize $this->userassigned && this->socpeopleassigned array && this->userownerid
+		// but only if we need it
+		if (!empty($arrayfields['a.fk_contact']['checked'])) {
+			$actionstatic->fetchResources();
+		}
 
 		print '<tr class="oddeven">';
 
 		// Ref
 		if (!empty($arrayfields['a.id']['checked'])) {
-			print '<td>';
+			print '<td class="nowraponall">';
 			print $actionstatic->getNomUrl(1, -1);
 			print '</td>';
 		}
@@ -896,16 +904,7 @@ if ($resql) {
 			print '<td class="center nowraponall">';
 			print dol_print_date($db->jdate($obj->dp), $formatToUse, 'tzuser');
 			$late = 0;
-			if ($obj->percent == 0 && $obj->dp && $db->jdate($obj->dp) < ($now - $delay_warning)) {
-				$late = 1;
-			}
-			if ($obj->percent == 0 && !$obj->dp && $obj->dp2 && $db->jdate($obj->dp) < ($now - $delay_warning)) {
-				$late = 1;
-			}
-			if ($obj->percent > 0 && $obj->percent < 100 && $obj->dp2 && $db->jdate($obj->dp2) < ($now - $delay_warning)) {
-				$late = 1;
-			}
-			if ($obj->percent > 0 && $obj->percent < 100 && !$obj->dp2 && $obj->dp && $db->jdate($obj->dp) < ($now - $delay_warning)) {
+			if ($actionstatic->hasDelay() && $actionstatic->percentage >= 0 && $actionstatic->percentage < 100 ) {
 				$late = 1;
 			}
 			if ($late) {
@@ -1006,7 +1005,7 @@ if ($resql) {
 		}
 		if (!empty($arrayfields['a.percent']['checked'])) {
 			// Status/Percent
-			$datep = $db->jdate($obj->datep);
+			$datep = $db->jdate($obj->dp);
 			print '<td align="center" class="nowrap">'.$actionstatic->LibStatut($obj->percent, 5, 0, $datep).'</td>';
 		}
 		// Action column

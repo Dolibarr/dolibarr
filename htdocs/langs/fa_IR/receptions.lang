@@ -36,7 +36,7 @@ StatsOnReceptionsOnlyValidated=آمارهائی که تنها بر اساس در
 SendReceptionByEMail=ارسال دریافت‌کالا توسط رایانامه
 SendReceptionRef=تسلیم دریافت‌کالا %s
 ActionsOnReception=رخداد‌های دریافت‌کالا
-ReceptionCreationIsDoneFromOrder=فعلا، ایجاد «دریافت‌کالا» تنها از کارت سفارش انجام می‌گیرد
+ReceptionCreationIsDoneFromOrder=For the moment, creation of a new reception is done from the Purchase Order record.
 ReceptionLine=سطر دریافت‌کالا
 ProductQtyInReceptionAlreadySent=این تعداد محصول از سفارش باز فروش قبلا ارسال شده است
 ProductQtyInSuppliersReceptionAlreadyRecevied=این تعداد محصول از سفارش باز تامین‌‌کننده قبلا دریافت شده است
@@ -44,4 +44,5 @@ ValidateOrderFirstBeforeReception=ابتدا باید سفارش را تائید
 ReceptionsNumberingModules=واحد شماره‌گذاری برای دریافت‌ها
 ReceptionsReceiptModel=قالب اسناد دریافت‌کالا
 NoMorePredefinedProductToDispatch=No more predefined products to dispatch
-
+ReceptionExist=A reception exists
+ByingPrice=Bying price

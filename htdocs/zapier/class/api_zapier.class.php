@@ -104,6 +104,7 @@ class ZapierApi extends DolibarrApi
 		if (!DolibarrApiAccess::$user->rights->zapier->read) {
 			throw new RestException(401);
 		}
+
 		$arraychoices = array(
 			'invoices' => 'Invoices',
 			'orders' => 'Orders',
@@ -142,6 +143,10 @@ class ZapierApi extends DolibarrApi
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '')
 	{
 		global $db, $conf;
+
+		if (!DolibarrApiAccess::$user->rights->zapier->read) {
+			throw new RestException(401);
+		}
 
 		$obj_ret = array();
 
@@ -194,7 +199,7 @@ class ZapierApi extends DolibarrApi
 			if (!DolibarrApi::_checkFilters($sqlfilters)) {
 				throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
 			}
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
 			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
@@ -242,6 +247,7 @@ class ZapierApi extends DolibarrApi
 		if (!DolibarrApiAccess::$user->rights->zapier->write) {
 			throw new RestException(401);
 		}
+
 		// Check mandatory fields
 		$fields = array(
 			'url',
@@ -313,6 +319,7 @@ class ZapierApi extends DolibarrApi
 		if (!DolibarrApiAccess::$user->rights->zapier->delete) {
 			throw new RestException(401);
 		}
+
 		$result = $this->hook->fetch($id);
 		if (!$result) {
 			throw new RestException(404, 'Hook not found');

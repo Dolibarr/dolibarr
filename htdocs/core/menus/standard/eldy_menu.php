@@ -206,6 +206,7 @@ class MenuManager
 					$canonnexturl = preg_replace('/\?.*$/', '', $nexturl);
 					//var_dump($canonrelurl);
 					//var_dump($canonnexturl);
+
 					print '<ul>'."\n";
 					if (($canonrelurl != $canonnexturl && !in_array($val['mainmenu'], array('tools')))
 						|| (strpos($canonrelurl, '/product/index.php') !== false || strpos($canonrelurl, '/compta/bank/list.php') !== false)) {
@@ -225,15 +226,18 @@ class MenuManager
 						print '</li>'."\n";
 					}
 
+					/*
 					if ($val['level'] == 0) {
 						if ($val['enabled']) {
 							$lastlevel[0] = 'enabled';
-						} elseif ($showmenu) {                 // Not enabled but visible (so greyed)
+						} elseif ($showmenu) {
+							// Not enabled but visible (so greyed)
 							$lastlevel[0] = 'greyed';
 						} else {
 							$lastlevel[0] = 'hidden';
 						}
 					}
+					*/
 
 					$lastlevel2 = array();
 					foreach ($submenu->liste as $key2 => $val2) {		// $val['url','titre','level','enabled'=0|1|2,'target','mainmenu','leftmenu'
@@ -313,7 +317,14 @@ class MenuManager
 					print '</ul>';
 				}
 				if ($val['enabled'] == 2) {
-					print '<font class="vsmenudisabled">'.$val['titre'].'</font>';
+					print '<font class="vsmenudisabled">';
+					// Add font-awesome
+					if ($val['level'] == 0 && !empty($val['prefix'])) {
+						print $val['prefix'];
+					}
+
+					print $val['titre'];
+					print '</font>';
 				}
 				print '</li>';
 				print '</ul>'."\n";

@@ -66,22 +66,18 @@ class FormProduct
 	 *                      				    'warehouseclosed' = select products from closed warehouses,
 	 *                      				    'warehouseinternal' = select products from warehouses for internal correct/transfer only
 	 * @param	boolean	    $sumStock		    sum total stock of a warehouse, default true
-	 * @param	string      $exclude            warehouses ids to exclude
+	 * @param	array       $exclude            warehouses ids to exclude
 	 * @param   bool|int    $stockMin           [=false] Value of minimum stock to filter or false not not filter by minimum stock
 	 * @param   string      $orderBy            [='e.ref'] Order by
 	 * @return  int                             Nb of loaded lines, 0 if already loaded, <0 if KO
 	 * @throws  Exception
 	 */
-	public function loadWarehouses($fk_product = 0, $batch = '', $status = '', $sumStock = true, $exclude = '', $stockMin = false, $orderBy = 'e.ref')
+	public function loadWarehouses($fk_product = 0, $batch = '', $status = '', $sumStock = true, $exclude = array(), $stockMin = false, $orderBy = 'e.ref')
 	{
 		global $conf, $langs;
 
 		if (empty($fk_product) && count($this->cache_warehouses)) {
 			return 0; // Cache already loaded and we do not want a list with information specific to a product
-		}
-
-		if (is_array($exclude)) {
-			$excludeGroups = implode("','", $exclude);
 		}
 
 		$warehouseStatus = array();
@@ -97,7 +93,7 @@ class FormProduct
 		}
 
 		$sql = "SELECT e.rowid, e.ref as label, e.description, e.fk_parent";
-		if (!empty($fk_product)) {
+		if (!empty($fk_product) && $fk_product > 0) {
 			if (!empty($batch)) {
 				$sql .= ", pb.qty as stock";
 			} else {
@@ -108,7 +104,7 @@ class FormProduct
 		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."entrepot as e";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps on ps.fk_entrepot = e.rowid";
-		if (!empty($fk_product)) {
+		if (!empty($fk_product) && $fk_product > 0) {
 			$sql .= " AND ps.fk_product = ".((int) $fk_product);
 			if (!empty($batch)) {
 				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_batch as pb on pb.fk_product_stock = ps.rowid AND pb.batch = '".$this->db->escape($batch)."'";
@@ -121,17 +117,17 @@ class FormProduct
 			$sql .= " AND e.statut = 1";
 		}
 
-		if (!empty($exclude)) {
+		if (is_array($exclude) && !empty($exclude)) {
 			$sql .= ' AND e.rowid NOT IN('.$this->db->sanitize(implode(',', $exclude)).')';
 		}
 
 		// minimum stock
 		if ($stockMin !== false) {
-			if (!empty($fk_product)) {
+			if (!empty($fk_product) && $fk_product > 0) {
 				if (!empty($batch)) {
-					$sql .= " AND pb.qty > ".$this->db->escape($stockMin);
+					$sql .= " AND pb.qty > ".((float) $stockMin);
 				} else {
-					$sql .= " AND ps.reel > ".$this->db->escape($stockMin);
+					$sql .= " AND ps.reel > ".((float) $stockMin);
 				}
 			}
 		}
@@ -141,7 +137,7 @@ class FormProduct
 
 			// minimum stock
 			if ($stockMin !== false) {
-				$sql .= " HAVING sum(ps.reel) > ".$this->db->escape($stockMin);
+				$sql .= " HAVING sum(ps.reel) > ".((float) $stockMin);
 			}
 		}
 		$sql .= " ORDER BY ".$orderBy;
@@ -220,7 +216,7 @@ class FormProduct
 	 *  @param	int	    	$forcecombo		    1=Force combo iso ajax select2
 	 *  @param	array	    $events			            Events to add to select2
 	 *  @param  string      $morecss                    Add more css classes to HTML select
-	 *  @param	string	    $exclude            Warehouses ids to exclude
+	 *  @param	array	    $exclude            Warehouses ids to exclude
 	 *  @param  int         $showfullpath       1=Show full path of name (parent ref into label), 0=Show only ref of current warehouse
 	 *  @param  bool|int    $stockMin           [=false] Value of minimum stock to filter or false not not filter by minimum stock
 	 *  @param  string      $orderBy            [='e.ref'] Order by
@@ -228,7 +224,7 @@ class FormProduct
 	 *
 	 *  @throws Exception
 	 */
-	public function selectWarehouses($selected = '', $htmlname = 'idwarehouse', $filterstatus = '', $empty = 0, $disabled = 0, $fk_product = 0, $empty_label = '', $showstock = 0, $forcecombo = 0, $events = array(), $morecss = 'minwidth200', $exclude = '', $showfullpath = 1, $stockMin = false, $orderBy = 'e.ref')
+	public function selectWarehouses($selected = '', $htmlname = 'idwarehouse', $filterstatus = '', $empty = 0, $disabled = 0, $fk_product = 0, $empty_label = '', $showstock = 0, $forcecombo = 0, $events = array(), $morecss = 'minwidth200', $exclude = array(), $showfullpath = 1, $stockMin = false, $orderBy = 'e.ref')
 	{
 		global $conf, $langs, $user, $hookmanager;
 
@@ -238,7 +234,7 @@ class FormProduct
 		if (empty($conf->global->ENTREPOT_EXTRA_STATUS)) {
 			$filterstatus = '';
 		}
-		if (!empty($fk_product)) {
+		if (!empty($fk_product) && $fk_product > 0) {
 			$this->cache_warehouses = array();
 		}
 
@@ -340,11 +336,11 @@ class FormProduct
 			print '<form method="POST" action="'.$page.'">';
 			print '<input type="hidden" name="action" value="setwarehouse">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
-			print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
+			print '<table class="nobordernopadding">';
 			print '<tr><td>';
 			print $this->selectWarehouses($selected, $htmlname, '', $addempty);
 			print '</td>';
-			print '<td class="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+			print '<td class="left"><input type="submit" class="button smallpaddingimp" value="'.$langs->trans("Modify").'"></td>';
 			print '</tr></table></form>';
 		} else {
 			if ($selected) {
@@ -386,11 +382,13 @@ class FormProduct
 	 *  @param  string		$default             Preselected value
 	 *  @param  int|string	$adddefault			 1=Add empty unit called "Default", ''=Add empty value
 	 *  @param  int         $mode                1=Use short label as value, 0=Use rowid, 2=Use scale (power)
+	 *  @param	string		$morecss			 More CSS
 	 *  @return string
 	 */
-	public function selectMeasuringUnits($name = 'measuring_units', $measuring_style = '', $default = '0', $adddefault = 0, $mode = 0)
+	public function selectMeasuringUnits($name = 'measuring_units', $measuring_style = '', $default = '0', $adddefault = 0, $mode = 0, $morecss = 'maxwidth125')
 	{
 		global $langs, $conf, $mysoc, $db;
+
 		$langs->load("other");
 
 		$return = '';
@@ -416,7 +414,7 @@ class FormProduct
 			dol_print_error($db);
 			return -1;
 		} else {
-			$return .= '<select class="flat" name="'.$name.'">';
+			$return .= '<select class="flat'.($morecss ? ' '.$morecss : '').'" name="'.$name.'" id="'.$name.'">';
 			if ($adddefault || $adddefault === '') {
 				$return .= '<option value="0">'.($adddefault ? $langs->trans("Default") : '').'</option>';
 			}
@@ -448,6 +446,8 @@ class FormProduct
 			}
 			$return .= '</select>';
 		}
+
+		$return .= ajax_combobox($name);
 
 		return $return;
 	}
@@ -551,8 +551,8 @@ class FormProduct
 		$out = '';
 		$productIdArray = array();
 		if (!is_array($objectLines) || !count($objectLines)) {
-			if (!empty($fk_product)) {
-				$productIdArray[] = $fk_product;
+			if (!empty($fk_product) && $fk_product > 0) {
+				$productIdArray[] = (int) $fk_product;
 			}
 		} else {
 			foreach ($objectLines as $line) {
@@ -574,8 +574,8 @@ class FormProduct
 		if ($empty) {
 			$out .= '<option value="-1">'.($empty_label ? $empty_label : '&nbsp;').'</option>';
 		}
-		if (!empty($fk_product)) {
-			$productIdArray = array($fk_product); // only show lot stock for product
+		if (!empty($fk_product) && $fk_product > 0) {
+			$productIdArray = array((int) $fk_product); // only show lot stock for product
 		} else {
 			foreach ($this->cache_lot as $key => $value) {
 				$productIdArray[] = $key;

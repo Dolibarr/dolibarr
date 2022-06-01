@@ -35,10 +35,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 // Load translation files required by the page
 $langs->load("categories");
 
-if (!$user->rights->categorie->lire) {
-	accessforbidden();
-}
-
 $id = GETPOST('id', 'int');
 $type = (GETPOST('type', 'aZ09') ? GETPOST('type', 'aZ09') : Categorie::TYPE_PRODUCT);
 $catname = GETPOST('catname', 'alpha');
@@ -47,6 +43,13 @@ $nosearch = GETPOST('nosearch', 'int');
 $categstatic = new Categorie($db);
 if (is_numeric($type)) {
 	$type = Categorie::$MAP_ID_TO_CODE[$type]; // For backward compatibility
+}
+
+// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array('categoryindex'));
+
+if (!$user->rights->categorie->lire) {
+	accessforbidden();
 }
 
 
@@ -184,7 +187,7 @@ foreach ($fulltree as $key => $val) {
 			? $categstatic->getObjectsInCateg("account", 1)			// Categorie::TYPE_ACCOUNT is "bank_account" instead of "account"
 			: $categstatic->getObjectsInCateg($type, 1);
 
-		$counter = "<td class='left' width='40px;'>".(is_countable($elements) ? count($elements) : '0')."</td>";
+		$counter = "<td class='left' width='40px;'>".(is_array($elements) ? count($elements) : '0')."</td>";
 	}
 
 	$color = $categstatic->color ? ' style="background: #'.sprintf("%06s", $categstatic->color).';"' : ' style="background: #bbb"';
@@ -203,10 +206,14 @@ foreach ($fulltree as $key => $val) {
 	$entry .= '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$val['id'].'&type='.$type.$moreparam.'&backtolist='.urlencode($_SERVER["PHP_SELF"].'?type='.$type).'">'.img_view().'</a>';
 	$entry .= '</td>';
 	$entry .= '<td class="right" width="20px;">';
-	$entry .= '<a class="editfielda" href="'.DOL_URL_ROOT.'/categories/edit.php?id='.$val['id'].'&type='.$type.$moreparam.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?type='.$type).'">'.img_edit().'</a>';
+	if ($user->rights->categorie->creer) {
+		$entry .= '<a class="editfielda" href="' . DOL_URL_ROOT . '/categories/edit.php?id=' . $val['id'] . '&type=' . $type . $moreparam . '&backtopage=' . urlencode($_SERVER["PHP_SELF"] . '?type=' . $type) . '">' . img_edit() . '</a>';
+	}
 	$entry .= '</td>';
 	$entry .= '<td class="right" width="20px;">';
-	$entry .= '<a class="deletefilelink" href="'.DOL_URL_ROOT.'/categories/viewcat.php?action=delete&token='.newToken().'&id='.$val['id'].'&type='.$type.$moreparam.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?type='.$type.$moreparam).'&backtolist='.urlencode($_SERVER["PHP_SELF"].'?type='.$type.$moreparam).'">'.img_delete().'</a>';
+	if ($user->rights->categorie->supprimer) {
+		$entry .= '<a class="deletefilelink" href="' . DOL_URL_ROOT . '/categories/viewcat.php?action=delete&token=' . newToken() . '&id=' . $val['id'] . '&type=' . $type . $moreparam . '&backtopage=' . urlencode($_SERVER["PHP_SELF"] . '?type=' . $type . $moreparam) . '&backtolist=' . urlencode($_SERVER["PHP_SELF"] . '?type=' . $type . $moreparam) . '">' . img_delete() . '</a>';
+	}
 	$entry .= '</td>';
 
 	$entry .= '</tr>';
@@ -216,16 +223,27 @@ foreach ($fulltree as $key => $val) {
 }
 
 
-//print_barre_liste('', 0, $_SERVER["PHP_SELF"], '', '', '', '', 0, 0, '', 0, $newcardbutton, '', 0, 1, 1);
+$nbofentries = (count($data) - 1);
 
-print '<table class="liste nohover" width="100%">';
+$morethan1level = 0;
+foreach ($data as $record) {
+	if (!empty($record['fk_menu']) && $record['fk_menu'] > 0) {
+		$morethan1level = 1;
+	}
+}
+
+
+print '<table class="liste nohover centpercent">';
 print '<tr class="liste_titre"><td>'.$langs->trans("Categories").'</td><td></td><td class="right">';
-if (!empty($conf->use_javascript_ajax)) {
-	print '<div id="iddivjstreecontrol"><a class="notasortlink" href="#">'.img_picto('', 'folder', 'class="paddingright"').$langs->trans("UndoExpandAll").'</a> | <a class="notasortlink" href="#">'.img_picto('', 'folder-open', 'class="paddingright"').$langs->trans("ExpandAll").'</a></div>';
+if ($morethan1level && !empty($conf->use_javascript_ajax)) {
+	print '<div id="iddivjstreecontrol">';
+	print '<a class="notasortlink" href="#">'.img_picto('', 'folder', 'class="paddingright"').'<span class="hideonsmartphone">'.$langs->trans("UndoExpandAll").'</span></a>';
+	print ' | ';
+	print '<a class="notasortlink" href="#">'.img_picto('', 'folder-open', 'class="paddingright"').'<span class="hideonsmartphone">'.$langs->trans("ExpandAll").'</span></a>';
+	print '</div>';
 }
 print '</td></tr>';
 
-$nbofentries = (count($data) - 1);
 if ($nbofentries > 0) {
 	print '<tr class="pair"><td colspan="3">';
 	tree_recur($data, $data[0], 0);

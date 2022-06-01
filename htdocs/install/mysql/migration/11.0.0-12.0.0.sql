@@ -43,6 +43,8 @@ create table llx_commande_fournisseur_dispatch_extrafields
 
 ALTER TABLE llx_commande_fournisseur_dispatch_extrafields ADD INDEX idx_commande_fournisseur_dispatch_extrafields (fk_object);
 
+ALTER TABLE llx_product_fournisseur_price ADD COLUMN packaging double(24,8) DEFAULT 1;
+
 UPDATE llx_accounting_system SET fk_country = NULL, active = 0 WHERE pcg_version = 'SYSCOHADA';
 
 create table llx_c_shipment_package_type
@@ -352,4 +354,7 @@ INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,tracking,active)
 INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,tracking,active) VALUES (13,'DPD', 'DPD', NULL, 'https://www.dpd.fr/trace/{TRACKID}', 0);
 INSERT INTO llx_c_shipment_mode (rowid,code,libelle,description,tracking,active) VALUES (14,'MAINFREIGHT', 'Mainfreight', NULL, 'https://www.mainfreight.com/track?{TRACKID}', 0);
 
+
+UPDATE llx_menu SET perms = '$user->rights->societe->creer' WHERE titre = 'MenuNewThirdParty' AND url = '/societe/card.php?mainmenu=companies&amp;action=create';
+UPDATE llx_menu SET url = '/societe/list.php?mainmenu=companies&amp;leftmenu=thirdparties' WHERE titre = 'List' AND url = '/societe/list.php?mainmenu=companies&amp;action=create';
 

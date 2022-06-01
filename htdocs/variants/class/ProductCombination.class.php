@@ -511,10 +511,10 @@ class ProductCombination
 			if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
 				for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++) {
 					if ($parent->multiprices[$i] != '' || isset($this->combination_price_levels[$i]->variation_price)) {
-						$new_type = $parent->multiprices_base_type[$i];
+						$new_type = empty($parent->multiprices_base_type[$i]) ? 'HT' : $parent->multiprices_base_type[$i];
 						$new_min_price = $parent->multiprices_min[$i];
-						$variation_price = doubleval(!isset($this->combination_price_levels[$i]->variation_price) ? $this->variation_price : $this->combination_price_levels[$i]->variation_price);
-						$variation_price_percentage = doubleval(!isset($this->combination_price_levels[$i]->variation_price_percentage) ? $this->variation_price_percentage : $this->combination_price_levels[$i]->variation_price_percentage);
+						$variation_price = floatval(!isset($this->combination_price_levels[$i]->variation_price) ? $this->variation_price : $this->combination_price_levels[$i]->variation_price);
+						$variation_price_percentage = floatval(!isset($this->combination_price_levels[$i]->variation_price_percentage) ? $this->variation_price_percentage : $this->combination_price_levels[$i]->variation_price_percentage);
 
 						if ($parent->prices_by_qty_list[$i]) {
 							$new_psq = 1;
@@ -536,7 +536,14 @@ class ProductCombination
 							$new_price += $variation_price;
 						}
 
-						$child->updatePrice($new_price, $new_type, $user, $new_vat, $new_min_price, $i, $new_npr, $new_psq);
+						$ret = $child->updatePrice($new_price, $new_type, $user, $new_vat, $new_min_price, $i, $new_npr, $new_psq, 0, array(), $parent->default_vat_code);
+
+						if ($ret < 0) {
+							$this->db->rollback();
+							$this->error = $child->error;
+							$this->errors = $child->errors;
+							return $ret;
+						}
 					}
 				}
 			} else {
@@ -558,7 +565,14 @@ class ProductCombination
 					$new_price += $this->variation_price;
 				}
 
-				$child->updatePrice($new_price, $new_type, $user, $new_vat, $new_min_price, 1, $new_npr, $new_psq);
+				$ret = $child->updatePrice($new_price, $new_type, $user, $new_vat, $new_min_price, 1, $new_npr, $new_psq);
+
+				if ($ret < 0) {
+					$this->db->rollback();
+					$this->error = $child->error;
+					$this->errors = $child->errors;
+					return $ret;
+				}
 			}
 
 			$this->db->commit();
@@ -567,6 +581,8 @@ class ProductCombination
 		}
 
 		$this->db->rollback();
+		$this->error = $child->error;
+		$this->errors = $child->errors;
 		return -1;
 	}
 
@@ -1093,9 +1109,9 @@ class ProductCombinationLevel
 		}
 
 		$this->id = $obj->rowid;
-		$this->fk_product_attribute_combination = doubleval($obj->fk_product_attribute_combination);
+		$this->fk_product_attribute_combination = floatval($obj->fk_product_attribute_combination);
 		$this->fk_price_level = intval($obj->fk_price_level);
-		$this->variation_price = doubleval($obj->variation_price);
+		$this->variation_price = floatval($obj->variation_price);
 		$this->variation_price_percentage = (bool) $obj->variation_price_percentage;
 
 		return 1;
@@ -1129,7 +1145,7 @@ class ProductCombinationLevel
 		// Update
 		if (!empty($this->id)) {
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-			$sql .= ' SET variation_price = '.doubleval($this->variation_price).' , variation_price_percentage = '.intval($this->variation_price_percentage);
+			$sql .= ' SET variation_price = '.floatval($this->variation_price).' , variation_price_percentage = '.intval($this->variation_price_percentage);
 			$sql .= ' WHERE rowid = '.((int) $this->id);
 
 			$res = $this->db->query($sql);
@@ -1147,7 +1163,7 @@ class ProductCombinationLevel
 			$sql .= ") VALUES (";
 			$sql .= (int) $this->fk_product_attribute_combination;
 			$sql .= ", ".intval($this->fk_price_level);
-			$sql .= ", ".doubleval($this->variation_price);
+			$sql .= ", ".floatval($this->variation_price);
 			$sql .= ", ".intval($this->variation_price_percentage);
 			$sql .= ")";
 

@@ -218,8 +218,8 @@ class Ticket extends CommonObject
 	const STATUS_IN_PROGRESS = 3;
 	const STATUS_NEED_MORE_INFO = 5;
 	const STATUS_WAITING = 7;			// on hold
-	const STATUS_CLOSED = 8;
-	const STATUS_CANCELED = 9;
+	const STATUS_CLOSED = 8;			// Closed - Solved
+	const STATUS_CANCELED = 9;			// Closed - Not solved
 
 
 	/**
@@ -241,7 +241,7 @@ class Ticket extends CommonObject
 	 *  'help' is a 'TranslationString' to use to show a tooltip on field. You can also use 'TranslationString:keyfortooltiponlick' for a tooltip on click.
 	 *  'showoncombobox' if value of the field must be visible into the label of the combobox that list record
 	 *  'disabled' is 1 if we want to have the field locked by a 'disabled' attribute. In most cases, this is never set into the definition of $fields into class, but is set dynamically by some part of code.
-	 *  'arraykeyval' to set list of value if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel")
+	 *  'arrayofkeyval' to set list of value if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel")
 	 *  'autofocusoncreate' to have field having the focus on a create form. Only 1 field should have this property set to 1.
 	 *  'comment' is not used. You can store here any text of your choice. It is not used by application.
 	 *
@@ -272,8 +272,8 @@ class Ticket extends CommonObject
 		'message' => array('type'=>'text', 'label'=>'Message', 'visible'=>-2, 'enabled'=>1, 'position'=>540, 'notnull'=>-1,),
 		'email_msgid' => array('type'=>'varchar(255)', 'label'=>'EmailMsgID', 'visible'=>-2, 'enabled'=>1, 'position'=>540, 'notnull'=>-1, 'help'=>'EmailMsgIDDesc'),
 		'progress' => array('type'=>'varchar(100)', 'label'=>'Progression', 'visible'=>-1, 'enabled'=>1, 'position'=>540, 'notnull'=>-1, 'css'=>'right', 'help'=>"", 'isameasure'=>1),
-		'resolution' => array('type'=>'integer', 'label'=>'Resolution', 'visible'=>-1, 'enabled'=>1, 'position'=>550, 'notnull'=>1),
-		'fk_statut' => array('type'=>'integer', 'label'=>'Status', 'visible'=>1, 'enabled'=>1, 'position'=>600, 'notnull'=>1, 'index'=>1, 'arrayofkeyval'=>array(0 => 'Unread', 1 => 'Read', 3 => 'Answered', 4 => 'Assigned', 5 => 'InProgress', 6 => 'Waiting', 8 => 'Closed', 9 => 'Deleted')),
+		'resolution' => array('type'=>'integer', 'label'=>'Resolution', 'visible'=>-1, 'enabled'=>'$conf->global->TICKET_ENABLE_RESOLUTION', 'position'=>550, 'notnull'=>1),
+		'fk_statut' => array('type'=>'integer', 'label'=>'Status', 'visible'=>1, 'enabled'=>1, 'position'=>600, 'notnull'=>1, 'index'=>1, 'arrayofkeyval'=>array(0 => 'Unread', 1 => 'Read', 3 => 'Answered', 4 => 'Assigned', 5 => 'InProgress', 6 => 'Waiting', 8 => 'SolvedClosed', 9 => 'Deleted')),
 		'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>900),
 	);
 	// END MODULEBUILDER PROPERTIES
@@ -286,6 +286,8 @@ class Ticket extends CommonObject
 	 */
 	public function __construct($db)
 	{
+		global $conf;
+
 		$this->db = $db;
 
 		$this->statuts_short = array(
@@ -294,8 +296,8 @@ class Ticket extends CommonObject
 			self::STATUS_ASSIGNED => 'Assigned',
 			self::STATUS_IN_PROGRESS => 'InProgress',
 			self::STATUS_WAITING => 'OnHold',
-			self::STATUS_NEED_MORE_INFO => 'NeedMoreInformation',
-			self::STATUS_CLOSED => 'Closed',
+			self::STATUS_NEED_MORE_INFO => 'NeedMoreInformationShort',
+			self::STATUS_CLOSED => 'SolvedClosed',
 			self::STATUS_CANCELED => 'Canceled'
 		);
 		$this->statuts = array(
@@ -305,7 +307,7 @@ class Ticket extends CommonObject
 			self::STATUS_IN_PROGRESS => 'InProgress',
 			self::STATUS_WAITING => 'OnHold',
 			self::STATUS_NEED_MORE_INFO => 'NeedMoreInformation',
-			self::STATUS_CLOSED => 'Closed',
+			self::STATUS_CLOSED => 'SolvedClosed',
 			self::STATUS_CANCELED => 'Canceled'
 		);
 	}
@@ -459,7 +461,7 @@ class Ticket extends CommonObject
 			$sql .= " ".(!isset($this->progress) ? '0' : "'".$this->db->escape($this->progress)."'").",";
 			$sql .= " ".(!isset($this->timing) ? 'NULL' : "'".$this->db->escape($this->timing)."'").",";
 			$sql .= " ".(!isset($this->type_code) ? 'NULL' : "'".$this->db->escape($this->type_code)."'").",";
-			$sql .= " ".(!isset($this->category_code) ? 'NULL' : "'".$this->db->escape($this->category_code)."'").",";
+			$sql .= " ".(empty($this->category_code) || $this->category_code == '-1' ? 'NULL' : "'".$this->db->escape($this->category_code)."'").",";
 			$sql .= " ".(!isset($this->severity_code) ? 'NULL' : "'".$this->db->escape($this->severity_code)."'").",";
 			$sql .= " ".(!isset($this->datec) || dol_strlen($this->datec) == 0 ? 'NULL' : "'".$this->db->idate($this->datec)."'").",";
 			$sql .= " ".(!isset($this->date_read) || dol_strlen($this->date_read) == 0 ? 'NULL' : "'".$this->db->idate($this->date_read)."'").",";
@@ -531,7 +533,7 @@ class Ticket extends CommonObject
 		global $langs;
 
 		// Check parameters
-		if (!$id && !$track_id && !$ref && !$email_msgid) {
+		if (empty($id) && empty($ref) && empty($track_id) && empty($email_msgid)) {
 			$this->error = 'ErrorWrongParameters';
 			dol_print_error(get_class($this)."::fetch ".$this->error);
 			return -1;
@@ -719,17 +721,17 @@ class Ticket extends CommonObject
 					if (is_array($value) && count($value) > 0) {
 						$sql .= 'AND '.$key.' IN ('.$this->db->sanitize(implode(',', $value)).')';
 					} else {
-						$sql .= ' AND '.$key.' = '.$this->db->escape($value);
+						$sql .= ' AND '.$key.' = '.((int) $value);
 					}
 				} else {
-					$sql .= ' AND '.$key.' LIKE \'%'.$value.'%\'';
+					$sql .= ' AND '.$key.' LIKE \'%'.$this->db->escape($value).'%\'';
 				}
 			}
 		}
 		if (!$user->rights->societe->client->voir && !$user->socid) {
-			$sql .= " AND t.fk_soc = sc.fk_soc AND sc.fk_user = ".$user->id;
+			$sql .= " AND t.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		} elseif ($user->socid) {
-			$sql .= " AND t.fk_soc = ".$user->socid;
+			$sql .= " AND t.fk_soc = ".((int) $user->socid);
 		}
 
 		$sql .= " ORDER BY ".$sortfield.' '.$sortorder;
@@ -1112,10 +1114,10 @@ class Ticket extends CommonObject
 	}
 
 	/**
-	 * print selected status
+	 * Print selected status
 	 *
-	 * @param string    $selected   selected status
-	 * @return void
+	 * @param 	string    $selected   	Selected status
+	 * @return 	void
 	 */
 	public function printSelectStatus($selected = "")
 	{
@@ -1124,9 +1126,9 @@ class Ticket extends CommonObject
 
 
 	/**
-	 *      Charge dans cache la liste des types de tickets (paramétrable dans dictionnaire)
+	 * Load into a cache the types of tickets (setup done into dictionaries)
 	 *
-	 *      @return int             Number of lines loaded, 0 if already loaded, <0 if KO
+	 * @return 	int       Number of lines loaded, 0 if already loaded, <0 if KO
 	 */
 	public function loadCacheTypesTickets()
 	{
@@ -1452,7 +1454,7 @@ class Ticket extends CommonObject
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."ticket";
 		if ($id_assign_user > 0) {
-			$sql .= " SET fk_user_assign=".$id_assign_user.", fk_statut = ".Ticket::STATUS_ASSIGNED;
+			$sql .= " SET fk_user_assign=".((int) $id_assign_user).", fk_statut = ".Ticket::STATUS_ASSIGNED;
 		} else {
 			$sql .= " SET fk_user_assign=null, fk_statut = ".Ticket::STATUS_READ;
 		}
@@ -1669,7 +1671,7 @@ class Ticket extends CommonObject
 		$actioncomm->userassigned = array($user->id);
 		$actioncomm->userownerid = $user->id;
 		$actioncomm->datep = $now;
-		$actioncomm->percentage = 100;
+		$actioncomm->percentage = -1; // percentage is not relevant for punctual events
 		$actioncomm->elementtype = 'ticket';
 		$actioncomm->fk_element = $this->id;
 
@@ -1747,21 +1749,22 @@ class Ticket extends CommonObject
 	/**
 	 *    Close a ticket
 	 *
-	 *    @param    User    $user      User that close
-	 *    @return   int		           <0 if KO, >0 if OK
+	 *    @param    User    $user      	User that close
+	 *    @param	int		$mode		0=Close solved, 1=Close abandonned
+	 *    @return   int		           	<0 if KO, >0 if OK
 	 */
-	public function close(User $user)
+	public function close(User $user, $mode = 0)
 	{
 		global $conf, $langs;
 
-		if ($this->fk_statut != Ticket::STATUS_CLOSED) { // not closed
+		if ($this->fk_statut != Ticket::STATUS_CLOSED && $this->fk_statut != Ticket::STATUS_CANCELED) { // not closed
 			$this->db->begin();
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."ticket";
-			$sql .= " SET fk_statut=".Ticket::STATUS_CLOSED.", progress=100, date_close='".$this->db->idate(dol_now())."'";
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " SET fk_statut=".($mode ? Ticket::STATUS_CANCELED : Ticket::STATUS_CLOSED).", progress=100, date_close='".$this->db->idate(dol_now())."'";
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
-			dol_syslog(get_class($this)."::close sql=".$sql);
+			dol_syslog(get_class($this)."::close mode=".$mode);
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$error = 0;
@@ -1829,19 +1832,21 @@ class Ticket extends CommonObject
 	public function searchSocidByEmail($email, $type = '0', $filters = array(), $clause = 'AND')
 	{
 		$thirdparties = array();
+		$exact = 0;
 
 		// Generation requete recherche
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe";
 		$sql .= " WHERE entity IN (".getEntity('ticket', 1).")";
 		if (!empty($type)) {
 			if ($type == 1 || $type == 2) {
-				$sql .= " AND client = ".$type;
+				$sql .= " AND client = ".((int) $type);
 			} elseif ($type == 3) {
 				$sql .= " AND fournisseur = 1";
 			}
 		}
 		if (!empty($email)) {
-			if (!$exact) {
+			if (empty($exact)) {
+				$regs = array();
 				if (preg_match('/^([\*])?[^*]+([\*])?$/', $email, $regs) && count($regs) > 1) {
 					$email = str_replace('*', '%', $email);
 				} else {
@@ -1853,15 +1858,11 @@ class Ticket extends CommonObject
 				$sql .= "(";
 			}
 
-			if (!$case) {
-				$sql .= "email LIKE '".$this->db->escape($email)."'";
-			} else {
-				$sql .= "email LIKE BINARY '".$this->db->escape($email)."'";
-			}
+			$sql .= "email LIKE '".$this->db->escape($email)."'";
 		}
 		if (is_array($filters) && !empty($filters)) {
 			foreach ($filters as $field => $value) {
-				$sql .= " ".$clause." ".$field." LIKE BINARY '".$this->db->escape($value)."'";
+				$sql .= " ".$clause." ".$field." LIKE '".$this->db->escape($value)."'";
 			}
 			if (!empty($email)) {
 				$sql .= ")";
@@ -2917,9 +2918,9 @@ class Ticket extends CommonObject
 
 		$sql = "SELECT p.rowid, p.ref, p.datec as datec";
 		$sql .= " FROM ".MAIN_DB_PREFIX."ticket as p";
-		if (!$user->rights->societe->client->voir && !$user->socid) {
+		if ($conf->societe->enabled && !$user->rights->societe->client->voir && !$user->socid) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON p.fk_soc = sc.fk_soc";
-			$sql .= " WHERE sc.fk_user = ".$user->id;
+			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
 			$clause = " AND";
 		}
 		$sql .= $clause." p.entity IN (".getEntity('ticket').")";
@@ -2927,7 +2928,7 @@ class Ticket extends CommonObject
 			$sql .= " AND p.fk_statut NOT IN (".Ticket::STATUS_CLOSED.", ".Ticket::STATUS_CANCELED.")";
 		}
 		if ($user->socid) {
-			$sql .= " AND p.fk_soc = ".$user->socid;
+			$sql .= " AND p.fk_soc = ".((int) $user->socid);
 		}
 
 		$resql = $this->db->query($sql);
@@ -2985,7 +2986,7 @@ class Ticket extends CommonObject
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON p.fk_soc = s.rowid";
 		if (!$user->rights->societe->client->voir && !$user->socid) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
-			$sql .= " WHERE sc.fk_user = ".$user->id;
+			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
 			$clause = "AND";
 		}
 		$sql .= " ".$clause." p.entity IN (".getEntity('ticket').")";

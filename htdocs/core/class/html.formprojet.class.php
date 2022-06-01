@@ -350,7 +350,7 @@ class FormProjets
 			$sql .= " AND (p.fk_soc=0 OR p.fk_soc IS NULL)";
 		}
 		if ($socid > 0) {
-			$sql .= " AND (p.fk_soc=".$socid." OR p.fk_soc IS NULL)";
+			$sql .= " AND (p.fk_soc=".((int) $socid)." OR p.fk_soc IS NULL)";
 		}
 		$sql .= " ORDER BY p.ref, t.ref ASC";
 
@@ -505,7 +505,17 @@ class FormProjets
 		}
 
 		$linkedtothirdparty = false;
-		if (!in_array($table_element, array('don', 'expensereport_det', 'expensereport', 'loan', 'stock_mouvement', 'payment_salary', 'payment_various', 'chargesociales'))) {
+		if (!in_array($table_element, array(
+			'don',
+			'expensereport_det',
+			'expensereport', 'loan',
+			'stock_mouvement',
+			'payment_salary',
+			'payment_various',
+			'salary',
+			'chargesociales',
+			'entrepot')
+		)) {
 			$linkedtothirdparty = true;
 		}
 

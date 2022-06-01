@@ -67,7 +67,7 @@ if (empty($dolibarr_nocache)) {
 }
 
 
-require DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
+include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
 if (defined('THEME_ONLY_CONSTANT')) {
 	return;
 }
@@ -751,7 +751,7 @@ div#moreinfo, div#infowarehouse {
   border: none;
   color: white;
   background-color: #8c907e;
-  padding: 14px 28px;
+  padding: 14px 0px;
   font-size: 16px;
   cursor: pointer;
   text-align: center;

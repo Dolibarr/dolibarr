@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2017  Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2013-2017  Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2018  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2013-2021  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2017       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
  *
@@ -260,7 +260,7 @@ if ($action == "confirm_update") {
 			if ($mode != '_tmp') {
 				setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
 			}
-			$action = 'update';
+			$action = '';
 			$id = $object->id;
 			$piece_num = $object->piece_num;
 		}
@@ -537,6 +537,22 @@ if ($action == 'create') {
 		print '</td>';
 		print '</tr>';
 
+		// Date document creation
+		print '<tr>';
+		print '<td class="titlefield">'.$langs->trans("DateExport").'</td>';
+		print '<td>';
+		print $object->date_export ? dol_print_date($object->date_export, 'dayhour') : '&nbsp;';
+		print '</td>';
+		print '</tr>';
+
+		// Date document creation
+		print '<tr>';
+		print '<td class="titlefield">'.$langs->trans("DateValidation").'</td>';
+		print '<td>';
+		print $object->date_validation ? dol_print_date($object->date_validation, 'dayhour') : '&nbsp;';
+		print '</td>';
+		print '</tr>';
+
 		// Validate
 		/*
 		print '<tr>';
@@ -563,7 +579,7 @@ if ($action == 'create') {
 		{
 		 $sqlmid = 'SELECT rowid as ref';
 			$sqlmid .= " FROM ".MAIN_DB_PREFIX."facture as fac";
-			$sqlmid .= " WHERE fac.rowid=" . $object->fk_doc;
+			$sqlmid .= " WHERE fac.rowid=" . ((int) $object->fk_doc);
 			dol_syslog("accountancy/bookkeeping/card.php::sqlmid=" . $sqlmid, LOG_DEBUG);
 			$resultmid = $db->query($sqlmid);
 			if ($resultmid) {
@@ -619,9 +635,19 @@ if ($action == 'create') {
 				print_liste_field_titre("LabelOperation");
 				print_liste_field_titre("Debit", "", "", "", "", 'class="right"');
 				print_liste_field_titre("Credit", "", "", "", "", 'class="right"');
-				print_liste_field_titre("Action", "", "", "", "", 'width="60" class="center"');
+				if (empty($object->date_validation)) {
+					print_liste_field_titre("Action", "", "", "", "", 'width="60" class="center"');
+				} else {
+					print_liste_field_titre("");
+				}
 
 				print "</tr>\n";
+
+				// Empty line is the first line of $object->linesmvt
+				// So we must get the first line (the empty one) and pu it at the end of the array
+				// in order to display it correctly to the user
+				$empty_line = array_shift($object->linesmvt);
+				$object->linesmvt[]= $empty_line;
 
 				foreach ($object->linesmvt as $line) {
 					print '<tr class="oddeven">';
@@ -653,7 +679,33 @@ if ($action == 'create') {
 						print '<input type="hidden" name="id" value="'.$line->id.'">'."\n";
 						print '<input type="submit" class="button" name="update" value="'.$langs->trans("Update").'">';
 						print '</td>';
+					} elseif (empty($line->numero_compte) || (empty($line->debit) && empty($line->credit))) {
+						if ($action == "" || $action == 'add') {
+							print '<!-- td columns in add mode -->';
+							print '<td>';
+							print $formaccounting->select_account('', 'accountingaccount_number', 1, array(), 1, 1, '');
+							print '</td>';
+							print '<td>';
+							// TODO For the moment we keep a free input text instead of a combo. The select_auxaccount has problem because:
+							// It does not use the setup of "key pressed" to select a thirdparty and this hang browser on large databases.
+							// Also, it is not possible to use a value that is not in the list.
+							// Also, the label is not automatically filled when a value is selected.
+							if (!empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX)) {
+								print $formaccounting->select_auxaccount('', 'subledger_account', 1, 'maxwidth250', '', 'subledger_label');
+							} else {
+								print '<input type="text" class="maxwidth150" name="subledger_account" value="" placeholder="' . dol_escape_htmltag($langs->trans("SubledgerAccount")) . '">';
+							}
+							print '<br><input type="text" class="maxwidth150" name="subledger_label" value="" placeholder="' . dol_escape_htmltag($langs->trans("SubledgerAccountLabel")) . '">';
+							print '</td>';
+							print '<td><input type="text" class="minwidth200" name="label_operation" value="' . $label_operation . '"/></td>';
+							print '<td class="right"><input type="text" size="6" class="right" name="debit" value=""/></td>';
+							print '<td class="right"><input type="text" size="6" class="right" name="credit" value=""/></td>';
+							print '<td>';
+							print '<input type="submit" class="button" name="save" value="' . $langs->trans("Add") . '">';
+							print '</td>';
+						}
 					} else {
+						print '<!-- td columns in display mode -->';
 						$accountingaccount->fetch(null, $line->numero_compte, true);
 						print '<td>'.$accountingaccount->getNomUrl(0, 1, 1, '', 0).'</td>';
 						print '<td>'.length_accounta($line->subledger_account);
@@ -662,21 +714,25 @@ if ($action == 'create') {
 						}
 						print '</td>';
 						print '<td>'.$line->label_operation.'</td>';
-						print '<td class="nowrap right">'.price($line->debit).'</td>';
-						print '<td class="nowrap right">'.price($line->credit).'</td>';
+						print '<td class="right nowraponall amount">'.price($line->debit).'</td>';
+						print '<td class="right nowraponall amount">'.price($line->credit).'</td>';
 
 						print '<td class="center">';
-						print '<a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?action=update&id='.$line->id.'&piece_num='.urlencode($line->piece_num).'&mode='.urlencode($mode).'&token='.urlencode(newToken()).'">';
-						print img_edit('', 0, 'class="marginrightonly"');
-						print '</a> &nbsp;';
-
-						$actiontodelete = 'delete';
-						if ($mode == '_tmp' || $action != 'delmouv') {
-							$actiontodelete = 'confirm_delete';
+						if (empty($line->date_export) && empty($line->date_validation)) {
+							print '<a class="editfielda reposition" href="' . $_SERVER["PHP_SELF"] . '?action=update&id=' . $line->id . '&piece_num=' . urlencode($line->piece_num) . '&mode=' . urlencode($mode) . '&token=' . urlencode(newToken()) . '">';
+							print img_edit('', 0, 'class="marginrightonly"');
+							print '</a> &nbsp;';
 						}
 
-						print '<a href="'.$_SERVER["PHP_SELF"].'?action='.$actiontodelete.'&id='.$line->id.'&piece_num='.urlencode($line->piece_num).'&mode='.urlencode($mode).'&token='.urlencode(newToken()).'">';
-						print img_delete();
+						if (empty($line->date_validation)) {
+							$actiontodelete = 'delete';
+							if ($mode == '_tmp' || $action != 'delmouv') {
+								$actiontodelete = 'confirm_delete';
+							}
+
+							print '<a href="' . $_SERVER["PHP_SELF"] . '?action=' . $actiontodelete . '&id=' . $line->id . '&piece_num=' . urlencode($line->piece_num) . '&mode=' . urlencode($mode) . '&token=' . urlencode(newToken()) . '">';
+							print img_delete();
+						}
 
 						print '</a>';
 						print '</td>';
@@ -691,32 +747,8 @@ if ($action == 'create') {
 					setEventMessages(null, array($langs->trans('MvtNotCorrectlyBalanced', $total_debit, $total_credit)), 'warnings');
 				}
 
-				if ($action == "" || $action == 'add') {
-					print '<tr class="oddeven">';
-					print '<!-- td columns in add mode -->';
-					print '<td>';
-					print $formaccounting->select_account('', 'accountingaccount_number', 1, array(), 1, 1, '');
-					print '</td>';
-					print '<td>';
-					// TODO For the moment we keep a free input text instead of a combo. The select_auxaccount has problem because:
-					// It does not use the setup of "key pressed" to select a thirdparty and this hang browser on large databases.
-					// Also, it is not possible to use a value that is not in the list.
-					// Also, the label is not automatically filled when a value is selected.
-					if (!empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX)) {
-						print $formaccounting->select_auxaccount('', 'subledger_account', 1);
-					} else {
-						print '<input type="text" class="maxwidth150" name="subledger_account" value="" placeholder="'.dol_escape_htmltag($langs->trans("SubledgerAccount")).'">';
-					}
-					print '<br><input type="text" class="maxwidth150" name="subledger_label" value="" placeholder="'.dol_escape_htmltag($langs->trans("SubledgerAccountLabel")).'">';
-					print '</td>';
-					print '<td><input type="text" class="minwidth200" name="label_operation" value="'.$label_operation.'"/></td>';
-					print '<td class="right"><input type="text" size="6" class="right" name="debit" value=""/></td>';
-					print '<td class="right"><input type="text" size="6" class="right" name="credit" value=""/></td>';
-					print '<td><input type="submit" class="button" name="save" value="'.$langs->trans("Add").'"></td>';
-					print '</tr>';
-				}
 				print '</table>';
-
+				print '</div>';
 
 				if ($mode == '_tmp' && $action == '') {
 					print '<br>';

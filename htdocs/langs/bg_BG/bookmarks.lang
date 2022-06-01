@@ -19,3 +19,4 @@ UseAnExternalHttpLinkOrRelativeDolibarrLink=Използвайте външен 
 ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Изберете дали страницата да бъде отворена в текущия или в нов раздел
 BookmarksManagement=Управление на отметки
 BookmarksMenuShortCut=Ctrl + shift + M
+NoBookmarks=No bookmarks defined

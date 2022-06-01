@@ -182,10 +182,10 @@ class PaymentLoan extends CommonObject
 			$sql .= " fk_typepayment, num_payment, note_private, note_public, fk_user_creat, fk_bank)";
 			$sql .= " VALUES (".$this->chid.", '".$this->db->idate($now)."',";
 			$sql .= " '".$this->db->idate($this->datep)."',";
-			$sql .= " ".$this->amount_capital.",";
-			$sql .= " ".$this->amount_insurance.",";
-			$sql .= " ".$this->amount_interest.",";
-			$sql .= " ".$this->paymenttype.", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note_private)."', '".$this->db->escape($this->note_public)."', ".$user->id.",";
+			$sql .= " ".price2num($this->amount_capital).",";
+			$sql .= " ".price2num($this->amount_insurance).",";
+			$sql .= " ".price2num($this->amount_interest).",";
+			$sql .= " ".((int) $this->paymenttype).", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note_private)."', '".$this->db->escape($this->note_public)."', ".$user->id.",";
 			$sql .= " 0)";
 
 			dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -332,7 +332,6 @@ class PaymentLoan extends CommonObject
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."payment_loan SET";
-
 		$sql .= " fk_loan=".(isset($this->fk_loan) ? $this->fk_loan : "null").",";
 		$sql .= " datec=".(dol_strlen($this->datec) != 0 ? "'".$this->db->idate($this->datec)."'" : 'null').",";
 		$sql .= " tms=".(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
@@ -347,7 +346,6 @@ class PaymentLoan extends CommonObject
 		$sql .= " fk_bank=".(isset($this->fk_bank) ? $this->fk_bank : "null").",";
 		$sql .= " fk_user_creat=".(isset($this->fk_user_creat) ? $this->fk_user_creat : "null").",";
 		$sql .= " fk_user_modif=".(isset($this->fk_user_modif) ? $this->fk_user_modif : "null")."";
-
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
@@ -389,7 +387,7 @@ class PaymentLoan extends CommonObject
 
 		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_url";
-			$sql .= " WHERE type='payment_loan' AND url_id=".$this->id;
+			$sql .= " WHERE type='payment_loan' AND url_id=".((int) $this->id);
 
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql = $this->db->query($sql);

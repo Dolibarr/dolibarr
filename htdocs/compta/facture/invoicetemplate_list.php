@@ -2,12 +2,12 @@
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2013      Florian Henry	    <florian.henry@open-concept.pro>
- * Copyright (C) 2013      Juanjo Menent	    <jmenent@2byte.es>
- * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
+ * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
+ * Copyright (C) 2013      Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2015      Jean-François Ferry  <jfefe@aternatik.fr>
  * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
- * Copyright (C) 2015      Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2016      Meziane Sof		<virtualsof@yahoo.fr>
+ * Copyright (C) 2015-2021 Alexandre Spangaro   <aspangaro@open-dsi.fr>
+ * Copyright (C) 2016      Meziane Sof          <virtualsof@yahoo.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,8 +50,7 @@ $confirm    = GETPOST('confirm', 'alpha');
 $cancel     = GETPOST('cancel', 'alpha');
 $toselect   = GETPOST('toselect', 'array');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'invoicetemplatelist'; // To manage different context of search
-
-$socid = GETPOST('socid', 'int');
+$optioncss = GETPOST('optioncss', 'alpha');
 
 $socid = GETPOST('socid', 'int');
 
@@ -127,20 +126,22 @@ $permissiontoedit = $user->rights->facture->creer; // Used by the include of act
 $arrayfields = array(
 	'f.titre'=>array('label'=>"Ref", 'checked'=>1),
 	's.nom'=>array('label'=>"ThirdParty", 'checked'=>1),
-	'f.total'=>array('label'=>"AmountHT", 'checked'=>1),
-	'f.tva'=>array('label'=>"AmountVAT", 'checked'=>1),
+	'f.total_ht'=>array('label'=>"AmountHT", 'checked'=>1),
+	'f.total_tva'=>array('label'=>"AmountVAT", 'checked'=>1),
 	'f.total_ttc'=>array('label'=>"AmountTTC", 'checked'=>1),
 	'f.fk_mode_reglement'=>array('label'=>"PaymentMode", 'checked'=>0),
 	'f.fk_cond_reglement'=>array('label'=>"PaymentTerm", 'checked'=>0),
-	'recurring'=>array('label'=>"RecurringInvoiceTemplate", 'checked'=>1),
+	'recurring'=>array('label'=>"RecurringInvoice", 'checked'=>1),
 	'f.frequency'=>array('label'=>"Frequency", 'checked'=>1),
 	'f.unit_frequency'=>array('label'=>"FrequencyUnit", 'checked'=>1),
 	'f.nb_gen_done'=>array('label'=>"NbOfGenerationDoneShort", 'checked'=>1),
 	'f.date_last_gen'=>array('label'=>"DateLastGenerationShort", 'checked'=>1),
 	'f.date_when'=>array('label'=>"NextDateToExecutionShort", 'checked'=>1),
-	'status'=>array('label'=>"Status", 'checked'=>1, 'position'=>100),
-	'f.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
-	'f.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>500),
+	'f.fk_user_author'=>array('label'=>"UserCreation", 'checked'=>0, 'position'=>500),
+	'f.fk_user_modif'=>array('label'=>"UserModification", 'checked'=>0, 'position'=>505),
+	'f.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>520),
+	'f.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>525),
+	'status'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000),
 );
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
@@ -241,6 +242,7 @@ if (!empty($conf->projet->enabled)) {
 }
 $companystatic = new Societe($db);
 $invoicerectmp = new FactureRec($db);
+$tmpuser = new User($db);
 
 $now = dol_now();
 $tmparray = dol_getdate($now);
@@ -251,9 +253,9 @@ $today = dol_mktime(23, 59, 59, $tmparray['mon'], $tmparray['mday'], $tmparray['
  *  List mode
  */
 
-$sql = "SELECT s.nom as name, s.rowid as socid, f.rowid as facid, f.titre as title, f.total, f.tva as total_vat, f.total_ttc, f.frequency, f.unit_frequency,";
+$sql = "SELECT s.nom as name, s.rowid as socid, f.rowid as facid, f.titre as title, f.total_ht, f.total_tva, f.total_ttc, f.frequency, f.unit_frequency,";
 $sql .= " f.nb_gen_done, f.nb_gen_max, f.date_last_gen, f.date_when, f.suspended,";
-$sql .= " f.datec, f.tms,";
+$sql .= " f.datec, f.fk_user_author, f.tms, f.fk_user_modif,";
 $sql .= " f.fk_cond_reglement, f.fk_mode_reglement";
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
@@ -275,7 +277,7 @@ if (!$user->rights->societe->client->voir && !$socid) {
 $sql .= " WHERE f.fk_soc = s.rowid";
 $sql .= ' AND f.entity IN ('.getEntity('invoice').')';
 if (!$user->rights->societe->client->voir && !$socid) {
-	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 if ($search_ref) {
 	$sql .= natural_search('f.titre', $search_ref);
@@ -287,10 +289,10 @@ if ($search_societe) {
 	$sql .= natural_search('s.nom', $search_societe);
 }
 if ($search_montant_ht != '') {
-	$sql .= natural_search('f.total', $search_montant_ht, 1);
+	$sql .= natural_search('f.total_ht', $search_montant_ht, 1);
 }
 if ($search_montant_vat != '') {
-	$sql .= natural_search('f.tva', $search_montant_vat, 1);
+	$sql .= natural_search('f.total_tva', $search_montant_vat, 1);
 }
 if ($search_montant_ttc != '') {
 	$sql .= natural_search('f.total_ttc', $search_montant_ttc, 1);
@@ -327,7 +329,11 @@ if ($search_status != '' && $search_status >= -1) {
 $sql .= dolSqlDateFilter('f.date_last_gen', $search_day, $search_month, $search_year);
 $sql .= dolSqlDateFilter('f.date_when', $search_day_date_when, $search_month_date_when, $search_year_date_when);
 
-$sql .= $db->order($sortfield, $sortorder);
+$tmpsortfield = $sortfield;
+if ($tmpsortfield == 'recurring') {
+	$tmpsortfield = 'f.frequency';
+}
+$sql .= $db->order($tmpsortfield, $sortorder);
 
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
@@ -394,7 +400,7 @@ if ($resql) {
 	if ($search_payment_term != '') {
 		$param .= '&search_payment_term='.urlencode($search_payment_term);
 	}
-	if ($search_recurring != '' && $search_recurrning != '-1') {
+	if ($search_recurring != '' && $search_recurring != '-1') {
 		$param .= '&search_recurring='.urlencode($search_recurring);
 	}
 	if ($search_frequency > 0) {
@@ -455,13 +461,13 @@ if ($resql) {
 	if (!empty($arrayfields['s.nom']['checked'])) {
 		print '<td class="liste_titre left"><input class="flat" type="text" size="8" name="search_societe" value="'.dol_escape_htmltag($search_societe).'"></td>';
 	}
-	if (!empty($arrayfields['f.total']['checked'])) {
+	if (!empty($arrayfields['f.total_ht']['checked'])) {
 		// Amount net
 		print '<td class="liste_titre right">';
 		print '<input class="flat" type="text" size="5" name="search_montant_ht" value="'.dol_escape_htmltag($search_montant_ht).'">';
 		print '</td>';
 	}
-	if (!empty($arrayfields['f.tva']['checked'])) {
+	if (!empty($arrayfields['f.total_tva']['checked'])) {
 		// Amount Vat
 		print '<td class="liste_titre right">';
 		print '<input class="flat" type="text" size="5" name="search_montant_vat" value="'.dol_escape_htmltag($search_montant_vat).'">';
@@ -535,6 +541,16 @@ if ($resql) {
 	$parameters = array('arrayfields'=>$arrayfields);
 	$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
+	// User creation
+	if (!empty($arrayfields['f.fk_user_author']['checked'])) {
+		print '<td class="liste_titre">';
+		print '</td>';
+	}
+	// User modification
+	if (!empty($arrayfields['f.fk_user_modif']['checked'])) {
+		print '<td class="liste_titre">';
+		print '</td>';
+	}
 	// Date creation
 	if (!empty($arrayfields['f.datec']['checked'])) {
 		print '<td class="liste_titre">';
@@ -553,7 +569,7 @@ if ($resql) {
 			1=>$langs->trans("Active"),
 			-1=>$langs->trans("Disabled"),
 		);
-		print $form->selectarray('search_status', $liststatus, $search_status, -2);
+		print $form->selectarray('search_status', $liststatus, $search_status, -2, 0, 0, '', 0, 0, 0, '', 'width100');
 		print '</td>';
 	}
 	// Action column
@@ -570,11 +586,11 @@ if ($resql) {
 	if (!empty($arrayfields['s.nom']['checked'])) {
 		print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER['PHP_SELF'], "s.nom", "", $param, "", $sortfield, $sortorder);
 	}
-	if (!empty($arrayfields['f.total']['checked'])) {
-		print_liste_field_titre($arrayfields['f.total']['label'], $_SERVER['PHP_SELF'], "f.total", "", $param, 'class="right"', $sortfield, $sortorder);
+	if (!empty($arrayfields['f.total_ht']['checked'])) {
+		print_liste_field_titre($arrayfields['f.total_ht']['label'], $_SERVER['PHP_SELF'], "f.total_ht", "", $param, 'class="right"', $sortfield, $sortorder);
 	}
-	if (!empty($arrayfields['f.tva']['checked'])) {
-		print_liste_field_titre($arrayfields['f.tva']['label'], $_SERVER['PHP_SELF'], "f.tva", "", $param, 'class="right"', $sortfield, $sortorder);
+	if (!empty($arrayfields['f.total_tva']['checked'])) {
+		print_liste_field_titre($arrayfields['f.total_tva']['label'], $_SERVER['PHP_SELF'], "f.total_tva", "", $param, 'class="right"', $sortfield, $sortorder);
 	}
 	if (!empty($arrayfields['f.total_ttc']['checked'])) {
 		print_liste_field_titre($arrayfields['f.total_ttc']['label'], $_SERVER['PHP_SELF'], "f.total_ttc", "", $param, 'class="right"', $sortfield, $sortorder);
@@ -602,6 +618,12 @@ if ($resql) {
 	}
 	if (!empty($arrayfields['f.date_when']['checked'])) {
 		print_liste_field_titre($arrayfields['f.date_when']['label'], $_SERVER['PHP_SELF'], "f.date_when", "", $param, 'align="center"', $sortfield, $sortorder);
+	}
+	if (!empty($arrayfields['f.fk_user_author']['checked'])) {
+		print_liste_field_titre($arrayfields['f.fk_user_author']['label'], $_SERVER['PHP_SELF'], "f.fk_user_author", "", $param, 'align="center"', $sortfield, $sortorder);
+	}
+	if (!empty($arrayfields['f.fk_user_modif']['checked'])) {
+		print_liste_field_titre($arrayfields['f.fk_user_modif']['label'], $_SERVER['PHP_SELF'], "f.fk_user_modif", "", $param, 'align="center"', $sortfield, $sortorder);
 	}
 	if (!empty($arrayfields['f.datec']['checked'])) {
 		print_liste_field_titre($arrayfields['f.datec']['label'], $_SERVER['PHP_SELF'], "f.datec", "", $param, 'align="center"', $sortfield, $sortorder);
@@ -636,6 +658,9 @@ if ($resql) {
 			$invoicerectmp->nb_gen_max = $objp->nb_gen_max;
 			$invoicerectmp->nb_gen_done = $objp->nb_gen_done;
 			$invoicerectmp->ref = $objp->title;
+			$invoicerectmp->total_ht = $objp->total_ht;
+			$invoicerectmp->total_tva = $objp->total_tva;
+			$invoicerectmp->total_ttc = $objp->total_ttc;
 
 			print '<tr class="oddeven">';
 
@@ -654,25 +679,25 @@ if ($resql) {
 					$totalarray['nbfield']++;
 				}
 			}
-			if (!empty($arrayfields['f.total']['checked'])) {
-				print '<td class="nowrap right amount">'.price($objp->total).'</td>'."\n";
+			if (!empty($arrayfields['f.total_ht']['checked'])) {
+				print '<td class="nowrap right amount">'.price($objp->total_ht).'</td>'."\n";
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
 				if (!$i) {
-					$totalarray['pos'][$totalarray['nbfield']] = 'f.total';
+					$totalarray['pos'][$totalarray['nbfield']] = 'f.total_ht';
 				}
-				$totalarray['val']['f.total'] += $objp->total;
+				$totalarray['val']['f.total_ht'] += $objp->total_ht;
 			}
-			if (!empty($arrayfields['f.tva']['checked'])) {
-				print '<td class="nowrap right amount">'.price($objp->total_vat).'</td>'."\n";
+			if (!empty($arrayfields['f.total_tva']['checked'])) {
+				print '<td class="nowrap right amount">'.price($objp->total_tva).'</td>'."\n";
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
 				if (!$i) {
-					$totalarray['pos'][$totalarray['nbfield']] = 'f.tva';
+					$totalarray['pos'][$totalarray['nbfield']] = 'f.total_tva';
 				}
-				$totalarray['val']['f.tva'] += $objp->total_vat;
+				$totalarray['val']['f.total_tva'] += $objp->total_tva;
 			}
 			if (!empty($arrayfields['f.total_ttc']['checked'])) {
 				print '<td class="nowrap right amount">'.price($objp->total_ttc).'</td>'."\n";
@@ -702,8 +727,9 @@ if ($resql) {
 					$totalarray['nbfield']++;
 				}
 			}
+			// Is it a recurring invoice
 			if (!empty($arrayfields['recurring']['checked'])) {
-				print '<td class="center">'.yn($objp->frequency ? 1 : 0).'</td>';
+				print '<td class="center">'.($objp->frequency ? img_picto($langs->trans("Frequency").': '.$objp->frequency.' '.$objp->unit_frequency, 'recurring', 'class="opacitymedium"').' ' : '').yn($objp->frequency ? 1 : 0).'</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
@@ -755,6 +781,28 @@ if ($resql) {
 					$totalarray['nbfield']++;
 				}
 			}
+			if (!empty($arrayfields['f.fk_user_author']['checked'])) {
+				print '<td class="center tdoverflowmax150">';
+				if ($objp->fk_user_author > 0) {
+					$tmpuser->fetch($objp->fk_user_author);
+					print $tmpuser->getNomUrl(1);
+				}
+				print '</td>';
+				if (!$i) {
+					$totalarray['nbfield']++;
+				}
+			}
+			if (!empty($arrayfields['f.fk_user_modif']['checked'])) {
+				print '<td class="center tdoverflowmax150">';
+				if ($objp->fk_user_author > 0) {
+					$tmpuser->fetch($objp->fk_user_author);
+					print $tmpuser->getNomUrl(1);
+				}
+				print '</td>';
+				if (!$i) {
+					$totalarray['nbfield']++;
+				}
+			}
 			if (!empty($arrayfields['f.datec']['checked'])) {
 				print '<td class="center">';
 				print dol_print_date($db->jdate($objp->datec), 'dayhour');
@@ -789,12 +837,13 @@ if ($resql) {
 				}
 			}
 			// Action column
-			print '<td class="center">';
+			print '<td class="center tdoverflowmax125">';
 			if ($user->rights->facture->creer && empty($invoicerectmp->suspended)) {
 				if ($invoicerectmp->isMaxNbGenReached()) {
 					print $langs->trans("MaxNumberOfGenerationReached");
 				} elseif (empty($objp->frequency) || $db->jdate($objp->date_when) <= $today) {
 					print '<a href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create&amp;socid='.$objp->socid.'&amp;fac_rec='.$objp->facid.'">';
+					print img_picto($langs->trans("CreateBill"), 'add', 'class="paddingrightonly"');
 					print $langs->trans("CreateBill").'</a>';
 				} else {
 					print $form->textwithpicto('', $langs->trans("DateIsNotEnough"));

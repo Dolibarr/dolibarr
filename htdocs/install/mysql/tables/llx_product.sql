@@ -40,8 +40,8 @@ create table llx_product
   customcode                    varchar(32),                        -- Optionnal custom code
   fk_country                    integer DEFAULT NULL,               -- Optionnal id of original country
   fk_state                      integer DEFAULT NULL,               -- Optionnal id of original state/province
-  price                         double(24,8) DEFAULT 0,
-  price_ttc                     double(24,8) DEFAULT 0,
+  price                         double(24,8) DEFAULT 0,				-- price without tax
+  price_ttc                     double(24,8) DEFAULT 0,				-- price inc vat (but not localtax1 nor localtax2)
   price_min                     double(24,8) DEFAULT 0,
   price_min_ttc                 double(24,8) DEFAULT 0,
   price_base_type               varchar(3)   DEFAULT 'HT',
@@ -59,7 +59,7 @@ create table llx_product
   tobuy                         tinyint      DEFAULT 1,             -- Product you buy
   onportal                      tinyint      DEFAULT 0,	            -- If it is a product you sell and you want to sell it on portal (module website must be on)
   tobatch                       tinyint      DEFAULT 0 NOT NULL,    -- Is it a product that need a batch management (eat-by or lot management)
-  batch_mask			        varchar(32),                        -- If the product has batch feature, you may want to use a batch mask per product
+  batch_mask			        varchar(32)  DEFAULT NULL,          -- If the product has batch feature, you may want to use a batch mask per product
   fk_product_type               integer      DEFAULT 0,             -- Type of product: 0 for regular product, 1 for service, 9 for other (used by external module)
   duration                      varchar(6),
   seuil_stock_alerte            float      DEFAULT NULL,
@@ -94,6 +94,8 @@ create table llx_product
   fk_default_warehouse          integer      DEFAULT NULL,
   canvas                        varchar(32)  DEFAULT NULL,
   finished                      tinyint      DEFAULT NULL,          -- see dictionnary c_product_nature
+  lifetime                      integer      DEFAULT NULL,
+  qc_frequency 					integer 	 DEFAULT NULL,			-- Quality control periodicity
   hidden                        tinyint      DEFAULT 0,             -- Not used. Deprecated.
   import_key                    varchar(14),                        -- Import key
   model_pdf                     varchar(255),                       -- model save dodument used

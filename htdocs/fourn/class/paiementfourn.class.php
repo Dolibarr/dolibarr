@@ -83,7 +83,7 @@ class PaiementFourn extends Paiement
 	 *	Load payment object
 	 *
 	 *	@param	int		$id         Id if payment to get
-	 *  @param	string	$ref		Ref of payment to get (currently ref = id but this may change in future)
+	 *  @param	string	$ref		Ref of payment to get
 	 *  @param	int		$fk_bank	Id of bank line associated to payment
 	 *  @return int		            <0 if KO, -2 if not found, >0 if OK
 	 */
@@ -101,9 +101,9 @@ class PaiementFourn extends Paiement
 		if ($id > 0) {
 			$sql .= ' AND p.rowid = '.((int) $id);
 		} elseif ($ref) {
-			$sql .= ' AND p.rowid = '.$ref;
-		} elseif ($fk_bank) {
-			$sql .= ' AND p.fk_bank = '.$fk_bank;
+			$sql .= " AND p.ref = '".$this->db->escape($ref)."'";
+		} elseif ($fk_bank > 0) {
+			$sql .= ' AND p.fk_bank = '.((int) $fk_bank);
 		}
 		//print $sql;
 
@@ -223,14 +223,73 @@ class PaiementFourn extends Paiement
 							// If we want to closed paid invoices
 							if ($closepaidinvoices) {
 								$paiement = $invoice->getSommePaiement();
-								//$creditnotes=$invoice->getSumCreditNotesUsed();
-								$creditnotes = 0;
-								//$deposits=$invoice->getSumDepositsUsed();
-								$deposits = 0;
+								$creditnotes=$invoice->getSumCreditNotesUsed();
+								//$creditnotes = 0;
+								$deposits=$invoice->getSumDepositsUsed();
+								//$deposits = 0;
 								$alreadypayed = price2num($paiement + $creditnotes + $deposits, 'MT');
 								$remaintopay = price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits, 'MT');
 								if ($remaintopay == 0) {
-									$result = $invoice->setPaid($user, '', '');
+									// If invoice is a down payment, we also convert down payment to discount
+									if ($invoice->type == FactureFournisseur::TYPE_DEPOSIT) {
+										$amount_ht = $amount_tva = $amount_ttc = array();
+										$multicurrency_amount_ht = $multicurrency_amount_tva = $multicurrency_amount_ttc = array();
+
+										// Insert one discount by VAT rate category
+										require_once DOL_DOCUMENT_ROOT . '/core/class/discount.class.php';
+										$discount = new DiscountAbsolute($this->db);
+										$discount->fetch('', 0, $invoice->id);
+										if (empty($discount->id)) {    // If the invoice was not yet converted into a discount (this may have been done manually before we come here)
+											$discount->discount_type = 1; // Supplier discount
+											$discount->description = '(DEPOSIT)';
+											$discount->fk_soc = $invoice->socid;
+											$discount->fk_invoice_supplier_source = $invoice->id;
+
+											// Loop on each vat rate
+											$i = 0;
+											foreach ($invoice->lines as $line) {
+												if ($line->total_ht != 0) {    // no need to create discount if amount is null
+													$amount_ht[$line->tva_tx] += $line->total_ht;
+													$amount_tva[$line->tva_tx] += $line->total_tva;
+													$amount_ttc[$line->tva_tx] += $line->total_ttc;
+													$multicurrency_amount_ht[$line->tva_tx] += $line->multicurrency_total_ht;
+													$multicurrency_amount_tva[$line->tva_tx] += $line->multicurrency_total_tva;
+													$multicurrency_amount_ttc[$line->tva_tx] += $line->multicurrency_total_ttc;
+													$i++;
+												}
+											}
+
+											foreach ($amount_ht as $tva_tx => $xxx) {
+												$discount->amount_ht = abs($amount_ht[$tva_tx]);
+												$discount->amount_tva = abs($amount_tva[$tva_tx]);
+												$discount->amount_ttc = abs($amount_ttc[$tva_tx]);
+												$discount->multicurrency_amount_ht = abs($multicurrency_amount_ht[$tva_tx]);
+												$discount->multicurrency_amount_tva = abs($multicurrency_amount_tva[$tva_tx]);
+												$discount->multicurrency_amount_ttc = abs($multicurrency_amount_ttc[$tva_tx]);
+												$discount->tva_tx = abs($tva_tx);
+
+												$result = $discount->create($user);
+												if ($result < 0) {
+													$error++;
+													break;
+												}
+											}
+										}
+
+										if ($error) {
+											setEventMessages($discount->error, $discount->errors, 'errors');
+											$error++;
+										}
+									}
+
+									// Set invoice to paid
+									if (!$error) {
+										$result = $invoice->setPaid($user, '', '');
+										if ($result < 0) {
+											$this->error = $invoice->error;
+											$error++;
+										}
+									}
 								} else {
 									dol_syslog("Remain to pay for invoice ".$facid." not null. We do nothing.");
 								}

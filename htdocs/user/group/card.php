@@ -1,10 +1,10 @@
 <?php
 /* Copyright (C) 2005		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2005-2015	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2017	Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2011		Herve Prot			<herve.prot@symeos.com>
- * Copyright (C) 2012		Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2018		Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2005-2021	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2011		Herve Prot				<herve.prot@symeos.com>
+ * Copyright (C) 2012		Florian Henry			<florian.henry@open-concept.pro>
+ * Copyright (C) 2018		Juanjo Menent			<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 
 /**
  *       \file       htdocs/user/group/card.php
- *       \brief      Onglet groupes utilisateurs
+ *       \brief      Tab of a user group
  */
 
 require '../../main.inc.php';
@@ -138,7 +138,11 @@ if (empty($reshook)) {
 				if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
 					$object->entity = 0;
 				} else {
-					$object->entity = GETPOST("entity");
+					if ($conf->entity == 1 && $user->admin && !$user->entity) {		// Same permissions test than the one used to show the combo of entities into the form
+						$object->entity = GETPOSTISSET("entity") ? GETPOST("entity") : $conf->entity;
+					} else {
+						$object->entity = $conf->entity;
+					}
 				}
 
 				$db->begin();
@@ -206,7 +210,7 @@ if (empty($reshook)) {
 			$object->note	= dol_htmlcleanlastbr(trim(GETPOST("note", 'restricthtml')));
 
 			// Fill array 'array_options' with data from add form
-			$ret = $extrafields->setOptionalsFromPost(null, $object);
+			$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
 			if ($ret < 0) {
 				$error++;
 			}
@@ -411,7 +415,7 @@ if ($action == 'create') {
 					print '<table class="noborder centpercent">'."\n";
 					print '<tr class="liste_titre"><td class="titlefield liste_titre">'.$langs->trans("NonAffectedUsers").'</td>'."\n";
 					print '<td class="liste_titre">';
-					print $form->select_dolusers('', 'user', 1, $exclude, 0, '', '', $object->entity, 0, 0, '', 0, '', 'maxwidth300');
+					print $form->select_dolusers('', 'user', 1, $exclude, 0, '', '', $object->entity, 0, 0, '', 0, '', 'minwidth200 maxwidth500');
 					print ' &nbsp; ';
 					print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
 					print '<input type="submit" class="button buttongen" value="'.$langs->trans("Add").'">';
@@ -424,6 +428,7 @@ if ($action == 'create') {
 				 * Group members
 				 */
 
+				print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 				print '<table class="noborder centpercent">';
 				print '<tr class="liste_titre">';
 				print '<td class="liste_titre">'.$langs->trans("Login").'</td>';
@@ -436,7 +441,7 @@ if ($action == 'create') {
 				if (!empty($object->members)) {
 					foreach ($object->members as $useringroup) {
 						print '<tr class="oddeven">';
-						print '<td>';
+						print '<td class="tdoverflowmax150">';
 						print $useringroup->getNomUrl(-1, '', 0, 0, 24, 0, 'login');
 						if ($useringroup->admin && !$useringroup->entity) {
 							print img_picto($langs->trans("SuperAdministrator"), 'redstar');
@@ -461,6 +466,7 @@ if ($action == 'create') {
 					print '<tr><td colspan="6" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 				}
 				print "</table>";
+				print '</div>';
 			}
 
 			print "<br>";

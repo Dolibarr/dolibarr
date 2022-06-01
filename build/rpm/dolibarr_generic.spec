@@ -67,7 +67,8 @@ Requires: httpd, php >= 5.3.0, php-cli, php-gd, php-ldap, php-imap, php-mbstring
 Requires: mysql-server, mysql 
 Requires: php-mysqli >= 4.1.0 
 %endif
-%endif
+%endif%_datadir/dolibarr/htdocs/eventorganization
+
 %endif
 
 # Set yes to build test package, no for release (this disable need of /usr/bin/php not found by OpenSuse)
@@ -265,6 +266,7 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/don
 %_datadir/dolibarr/htdocs/ecm
 %_datadir/dolibarr/htdocs/emailcollector
+%_datadir/dolibarr/htdocs/eventorganization
 %_datadir/dolibarr/htdocs/expedition
 %_datadir/dolibarr/htdocs/expensereport
 %_datadir/dolibarr/htdocs/exports
@@ -278,6 +280,7 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/includes
 %_datadir/dolibarr/htdocs/install
 %_datadir/dolibarr/htdocs/intracommreport
+%_datadir/dolibarr/htdocs/knowledgemanagement
 %_datadir/dolibarr/htdocs/langs/HOWTO-Translation.txt
 %_datadir/dolibarr/htdocs/loan
 %_datadir/dolibarr/htdocs/mailmanspip
@@ -286,6 +289,7 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/mrp
 %_datadir/dolibarr/htdocs/multicurrency
 %_datadir/dolibarr/htdocs/opensurvey
+%_datadir/dolibarr/htdocs/partnership
 %_datadir/dolibarr/htdocs/paybox
 %_datadir/dolibarr/htdocs/paypal
 %_datadir/dolibarr/htdocs/printing
@@ -307,6 +311,7 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/variants
 %_datadir/dolibarr/htdocs/webservices
 %_datadir/dolibarr/htdocs/website
+%_datadir/dolibarr/htdocs/workstation
 %_datadir/dolibarr/htdocs/zapier
 %_datadir/dolibarr/htdocs/*.ico
 %_datadir/dolibarr/htdocs/*.patch

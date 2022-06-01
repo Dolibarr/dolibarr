@@ -21,14 +21,14 @@
  *		\brief      Page to purge files (temporary or not)
  */
 
+if (! defined('CSRFCHECK_WITH_TOKEN')) {
+	define('CSRFCHECK_WITH_TOKEN', '1');		// Force use of CSRF protection with tokens even for GET
+}
+
 require '../../main.inc.php';
 include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 $langs->load("admin");
-
-if (!$user->admin) {
-	accessforbidden();
-}
 
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
@@ -42,10 +42,15 @@ if (!empty($conf->syslog->enabled)) {
 	$filelog = preg_replace('/DOL_DATA_ROOT/i', DOL_DATA_ROOT, $filelog);
 }
 
+if (!$user->admin) {
+	accessforbidden();
+}
+
 
 /*
  *	Actions
  */
+
 if ($action == 'purge' && !preg_match('/^confirm/i', $choice) && ($choice != 'allfiles' || $confirm == 'yes')) {
 	// Increase limit of time. Works only if we are not in safe mode
 	$ExecTimeLimit = 600;
@@ -105,7 +110,7 @@ if (!empty($conf->syslog->enabled)) {
 
 print '<input type="radio" name="choice" id="choicetempfiles" value="tempfiles"';
 print (!$choice || $choice == 'tempfiles' || $choice == 'allfiles') ? ' checked' : '';
-print '> <label for="choicetempfiles">'.$langs->trans("PurgeDeleteTemporaryFiles").'</label><br><br>';
+print '> <label for="choicetempfiles">'.$langs->trans("PurgeDeleteTemporaryFilesShort").'</label><br><br>';
 
 print '<input type="radio" name="choice" id="choiceallfiles" value="confirm_allfiles"';
 print ($choice && $choice == 'confirm_allfiles') ? ' checked' : '';

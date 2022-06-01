@@ -166,7 +166,7 @@ if ($action == 'add') {
 
 	// on récupère les enregistrements
 	$object->fetch($id);
-
+	$res = $object->fetch_lines();
 	// on transfert les données de l'un vers l'autre
 	if ($object->socid > 0) {
 		$newinter->socid = $object->socid;
@@ -178,6 +178,7 @@ if ($action == 'add') {
 
 	$newinter->entity = $object->entity;
 	$newinter->duree = $object->duree;
+	$newinter->datei = $object->date;
 
 	$newinter->description = $object->description;
 	$newinter->note_private = $object->note_private;
@@ -194,7 +195,7 @@ if ($action == 'add') {
 	if ($newfichinterid > 0) {
 		// Now we add line of details
 		foreach ($object->lines as $line) {
-			$newinter->addline($user, $newfichinterid, $line->desc, '', $line->duree, '');
+			$newinter->addline($user, $newfichinterid, $line->desc, $line->datei, $line->duree, '');
 		}
 
 		// on update le nombre d'inter crée à partir du modèle
@@ -388,7 +389,7 @@ if ($action == 'create') {
 
 		$sql = 'SELECT l.rowid, l.description, l.duree';
 		$sql .= " FROM ".MAIN_DB_PREFIX."fichinterdet as l";
-		$sql .= " WHERE l.fk_fichinter= ".$object->id;
+		$sql .= " WHERE l.fk_fichinter= ".((int) $object->id);
 		//$sql.= " AND l.fk_product is null ";
 		$sql .= " ORDER BY l.rang";
 
@@ -600,7 +601,7 @@ if ($action == 'create') {
 				print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
 				print '<input type="hidden" name="action" value="setfrequency">';
 				print '<input type="hidden" name="token" value="'.newToken().'">';
-				print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
+				print '<table class="nobordernopadding">';
 				print '<tr><td>';
 				print '<input type="text" name="frequency" value="'.$object->frequency.'" size="5">&nbsp;';
 				print $form->selectarray('unit_frequency', array('d'=>$langs->trans('Day'), 'm'=>$langs->trans('Month'), 'y'=>$langs->trans('Year')), ($object->unit_frequency ? $object->unit_frequency : 'm'));
@@ -743,7 +744,7 @@ if ($action == 'create') {
 				print '<div class="inline-block divButAction">';
 				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=createfrommodel&token='.newToken().'';
 				print '&socid='.$object->thirdparty->id.'&id='.$object->id.'">';
-				print $langs->trans("CreateFichInter").'</a></div>';
+				print $langs->trans("AddIntervention").'</a></div>';
 			}
 
 			if ($user->rights->ficheinter->supprimer) {
@@ -771,10 +772,10 @@ if ($action == 'create') {
 		$sql .= " WHERE f.fk_soc = s.rowid";
 		$sql .= " AND f.entity = ".$conf->entity;
 		if ($socid) {
-			$sql .= " AND s.rowid = ".$socid;
+			$sql .= " AND s.rowid = ".((int) $socid);
 		}
 		if (!$user->rights->societe->client->voir && !$socid) {
-			$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+			$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		if ($search_ref) {
 			$sql .= natural_search('f.titre', $search_ref);

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2006-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2021 Gaëtan MAISON <gm@ilad.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -154,6 +155,11 @@ class DolEditor
 				} else {
 					$skin = 'moono-lisa'; // default with ckeditor 4.6 : moono-lisa
 				}
+				if (!empty($conf->global->FCKEDITOR_ENABLE_SCAYT_AUTOSTARTUP)) {
+					$scaytautostartup = 'scayt_autoStartup: true,';
+				} else {
+					$scaytautostartup = '/*scayt is disable*/'; // Disable by default
+				}
 
 				$htmlencode_force = preg_match('/_encoded$/', $this->toolbarname) ? 'true' : 'false';
 
@@ -178,6 +184,8 @@ class DolEditor
             						width: '.($this->width ? '\''.$this->width.'\'' : '\'\'').',
             						height: '.$this->height.',
                                     skin: \''.$skin.'\',
+                                    '.$scaytautostartup.'
+                                    scayt_sLang: \''.$langs->getDefaultLang().'\',
                                     language: \''.$langs->defaultlang.'\',
                                     textDirection: \''.$langs->trans("DIRECTION").'\',
                                     on :

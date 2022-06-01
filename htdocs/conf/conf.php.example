@@ -341,7 +341,6 @@ $dolibarr_cron_allow_cli='0';
 //$dolibarr_js_CKEDITOR='/javascript/ckeditor';
 //$dolibarr_js_JQUERY='/javascript/jquery';
 //$dolibarr_js_JQUERY_UI='/javascript/jquery-ui';
-//$dolibarr_js_JQUERY_FLOT='/javascript/flot';
 // Value to overwrite some path to use font instead of embedded one
 //$dolibarr_font_DOL_DEFAULT_TTF="/usr/share/fonts/truetype/ttf-dejavu/DejaVuSans.ttf";
 //$dolibarr_font_DOL_DEFAULT_TTF_BOLD="/usr/share/fonts/truetype/ttf-dejavu/DejaVuSans-Bold.ttf";

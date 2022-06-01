@@ -71,13 +71,13 @@ class ReceptionStats extends Stats
 		//$this->where.= " AND c.fk_soc = s.rowid AND c.entity = ".$conf->entity;
 		$this->where .= " AND c.entity = ".$conf->entity;
 		if (!$user->rights->societe->client->voir && !$this->socid) {
-			$this->where .= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = ".$user->id;
+			$this->where .= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		if ($this->socid) {
-			$this->where .= " AND c.fk_soc = ".$this->socid;
+			$this->where .= " AND c.fk_soc = ".((int) $this->socid);
 		}
 		if ($this->userid > 0) {
-			$this->where .= ' AND c.fk_user_author = '.$this->userid;
+			$this->where .= ' AND c.fk_user_author = '.((int) $this->userid);
 		}
 	}
 

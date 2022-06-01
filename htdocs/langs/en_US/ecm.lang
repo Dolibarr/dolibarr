@@ -41,3 +41,7 @@ FileNotYetIndexedInDatabase=File not yet indexed into database (try to re-upload
 ExtraFieldsEcmFiles=Extrafields Ecm Files
 ExtraFieldsEcmDirectories=Extrafields Ecm Directories
 ECMSetup=ECM Setup
+GenerateImgWebp=Duplicate all images with another version with .webp format
+ConfirmGenerateImgWebp=If you confirm, you will generate an image in .webp format for all images currently into this folder (subfolders are not included)...
+ConfirmImgWebpCreation=Confirm all images duplication
+SucessConvertImgWebp=Images successfully duplicated

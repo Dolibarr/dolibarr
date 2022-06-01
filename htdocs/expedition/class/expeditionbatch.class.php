@@ -151,10 +151,8 @@ class ExpeditionLineBatch extends CommonObject
 	 */
 	public static function deletefromexp($db, $id_expedition)
 	{
-		$id_expedition = (int) $id_expedition;
-
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX.self::$_table_element;
-		$sql .= " WHERE fk_expeditiondet in (SELECT rowid FROM ".MAIN_DB_PREFIX."expeditiondet WHERE fk_expedition=".$id_expedition.")";
+		$sql .= " WHERE fk_expeditiondet in (SELECT rowid FROM ".MAIN_DB_PREFIX."expeditiondet WHERE fk_expedition=".((int) $id_expedition).")";
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		if ($db->query($sql)) {
@@ -188,7 +186,7 @@ class ExpeditionLineBatch extends CommonObject
 		}
 		$sql .= " FROM ".MAIN_DB_PREFIX.self::$_table_element." as eb";
 		if ($fk_product > 0) {
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_lot as pl ON pl.batch = eb.batch AND pl.fk_product = ".$fk_product;
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_lot as pl ON pl.batch = eb.batch AND pl.fk_product = ".((int) $fk_product);
 		}
 		$sql .= " WHERE fk_expeditiondet=".(int) $id_line_expdet;
 

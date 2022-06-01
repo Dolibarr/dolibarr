@@ -102,7 +102,6 @@ AuthenticationDoesNotAllowSendNewPassword=o modo de autentificação de Dolibarr
 EnableGDLibraryDesc=Instale ou ative a biblioteca GD da sua instalação PHP para usar esta opção.
 ProfIdShortDesc=<b>Prof Id %s</b> é uma informação dePendente do país do Fornecedor.<br>Por Exemplo, para o país  <b>%s</b>, é o código <b>%s</b>.
 StatsByNumberOfUnits=Estatisticas para soma das quantidades nos produtos/servicos
-StatsByNumberOfEntities=Estatísticas em número de entidades de referência (nº. de faturas ou ordens ...)
 NumberOfProposals=Numero de propostas
 NumberOfCustomerOrders=Número de pedidos de vendas
 NumberOfCustomerInvoices=Numero de faturas de clientes

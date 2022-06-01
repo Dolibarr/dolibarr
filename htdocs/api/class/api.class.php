@@ -72,23 +72,27 @@ class DolibarrApi
 		//$this->r->setSupportedFormats('jsonFormat');
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
-	 * Executed method when API is called without parameter
+	 * Check and convert a string depending on its type/name.
 	 *
 	 * Display a short message an return a http code 200
 	 *
-	 * @return array
+	 * @param	string		$field		Field name
+	 * @param	string		$value		Value to check/clean
+	 * @param	stdClass	$object		Object
+	 * @return 	string					Value cleaned
 	 */
-	/* Disabled, most APIs does not share same signature for method index
-	function index()
+	protected function _checkValForAPI($field, $value, $object)
 	{
-		return array(
-			'success' => array(
-				'code' => 200,
-				'message' => __class__.' is up and running!'
-			)
-		);
-	}*/
+		// phpcs:enable
+		// TODO Use type detected in $object->fields
+		if (in_array($field, array('note', 'note_private', 'note_public', 'desc', 'description'))) {
+			return checkVal($value, 'restricthtml');
+		} else {
+			return checkVal($value, 'alphanohtml');
+		}
+	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
@@ -120,6 +124,16 @@ class DolibarrApi
 		unset($object->ref_previous);
 		unset($object->ref_next);
 		unset($object->ref_int);
+		unset($object->imgWidth);
+		unset($object->imgHeight);
+		unset($object->barcode_type_code);
+		unset($object->barcode_type_label);
+
+		unset($object->mode_reglement);		// We use mode_reglement_id now
+		unset($object->cond_reglement);		// We use cond_reglement_id now
+		unset($object->note);				// We use note_public or note_private now
+		unset($object->contact);			// We use contact_id now
+		unset($object->thirdparty);			// We use thirdparty_id or fk_soc or socid now
 
 		unset($object->projet); // Should be fk_project
 		unset($object->project); // Should be fk_project
@@ -133,6 +147,12 @@ class DolibarrApi
 		unset($object->timespent_fk_user);
 		unset($object->timespent_note);
 		unset($object->fk_delivery_address);
+		unset($object->modelpdf);
+		unset($object->sendtoid);
+		unset($object->name_bis);
+		unset($object->newref);
+		unset($object->alreadypaid);
+		unset($object->openid);
 
 		unset($object->statuts);
 		unset($object->statuts_short);
@@ -165,15 +185,16 @@ class DolibarrApi
 
 		unset($object->region);
 		unset($object->region_code);
+		unset($object->country);
+		unset($object->state);
+		unset($object->state_code);
+		unset($object->departement);
+		unset($object->departement_code);
 
 		unset($object->libelle_statut);
 		unset($object->libelle_paiement);
 
 		unset($object->prefix_comm);
-
-		unset($object->sendtoid);
-		unset($object->name_bis);
-		unset($object->newref);
 
 		if (!isset($object->table_element) || $object->table_element != 'ticket') {
 			unset($object->comments);
@@ -305,8 +326,9 @@ class DolibarrApi
 	/**
 	 * Function to forge a SQL criteria
 	 *
-	 * @param  array    $matches       Array of found string by regex search. Example: "t.ref:like:'SO-%'" or "t.date_creation:<:'20160101'" or "t.nature:is:NULL"
-	 * @return string                  Forged criteria. Example: "t.field like 'abc%'"
+	 * @param  array    $matches    Array of found string by regex search.
+	 * 								Example: "t.ref:like:'SO-%'" or "t.date_creation:<:'20160101'" or "t.date_creation:<:'2016-01-01 12:30:00'" or "t.nature:is:NULL"
+	 * @return string               Forged criteria. Example: "t.field like 'abc%'"
 	 */
 	protected static function _forge_criteria_callback($matches)
 	{
@@ -317,18 +339,29 @@ class DolibarrApi
 		if (empty($matches[1])) {
 			return '';
 		}
-		$tmp = explode(':', $matches[1]);
+		$tmp = explode(':', $matches[1], 3);
+
 		if (count($tmp) < 3) {
 			return '';
 		}
 
-		$tmpescaped = $tmp[2];
+		$operand = preg_replace('/[^a-z0-9\._]/i', '', trim($tmp[0]));
+
+		$operator = strtoupper(preg_replace('/[^a-z<>=]/i', '', trim($tmp[1])));
+		if ($operator == 'NOTLIKE') {
+			$operator = 'NOT LIKE';
+		}
+
+		$tmpescaped = trim($tmp[2]);
 		$regbis = array();
-		if (preg_match('/^\'(.*)\'$/', $tmpescaped, $regbis)) {
+		if ($operator == 'IN') {
+			$tmpescaped = "(".$db->sanitize($tmpescaped, 1).")";
+		} elseif (preg_match('/^\'(.*)\'$/', $tmpescaped, $regbis)) {
 			$tmpescaped = "'".$db->escape($regbis[1])."'";
 		} else {
-			$tmpescaped = $db->escape($tmpescaped);
+			$tmpescaped = $db->sanitize($db->escape($tmpescaped));
 		}
-		return $db->escape($tmp[0]).' '.strtoupper($db->escape($tmp[1]))." ".$tmpescaped;
+
+		return $db->escape($operand).' '.$db->escape($operator)." ".$tmpescaped;
 	}
 }

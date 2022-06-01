@@ -164,12 +164,12 @@ class PaymentSalary extends CommonObject
 		$this->db->begin();
 
 		if ($totalamount != 0) {
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."payment_salary (fk_salary, datec, datep, amount,";
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."payment_salary (entity, fk_salary, datec, datep, amount,";
 			$sql .= " fk_typepayment, num_payment, note, fk_user_author, fk_bank)";
-			$sql .= " VALUES ($this->chid, '".$this->db->idate($now)."',";
+			$sql .= " VALUES (".((int) $conf->entity).", ".((int) $this->chid).", '".$this->db->idate($now)."',";
 			$sql .= " '".$this->db->idate($this->datepaye)."',";
-			$sql .= " ".$totalamount.",";
-			$sql .= " ".$this->paiementtype.", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note)."', ".$user->id.",";
+			$sql .= " ".price2num($totalamount).",";
+			$sql .= " ".((int) $this->paiementtype).", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note)."', ".((int) $user->id).",";
 			$sql .= " 0)";
 
 			$resql = $this->db->query($sql);
@@ -477,7 +477,7 @@ class PaymentSalary extends CommonObject
 	 *      All payment properties must have been set first like after a call to create().
 	 *
 	 *      @param	User	$user               Object of user making payment
-	 *      @param  string	$mode               'payment_sc'
+	 *      @param  string	$mode               'payment_salary'
 	 *      @param  string	$label              Label to use in bank record
 	 *      @param  int		$accountid          Id of bank account to do link with
 	 *      @param  string	$emetteur_nom       Name of transmitter
@@ -516,8 +516,8 @@ class PaymentSalary extends CommonObject
 				$this->datev
 			);
 
-			// Mise a jour fk_bank dans llx_paiement.
-			// On connait ainsi le paiement qui a genere l'ecriture bancaire
+			// Update fk_bank into llx_paiement_salary.
+			// so we know the payment that was used to generated the bank entry.
 			if ($bank_line_id > 0) {
 				$result = $this->update_fk_bank($bank_line_id);
 				if ($result <= 0) {
@@ -525,9 +525,12 @@ class PaymentSalary extends CommonObject
 					dol_print_error($this->db);
 				}
 
-				// Add link 'payment', 'payment_supplier', 'payment_sc' in bank_url between payment and bank transaction
+				// Add link 'payment_salary' in bank_url between payment and bank transaction
 				$url = '';
-				if ($mode == 'payment_salary') $url = DOL_URL_ROOT.'/salaries/payment_salary/card.php?id=';
+				if ($mode == 'payment_salary') {
+					$url = DOL_URL_ROOT.'/salaries/payment_salary/card.php?id=';
+				}
+
 				if ($url) {
 					$result = $acc->add_url_line($bank_line_id, $this->id, $url, '(paiement)', $mode);
 					if ($result <= 0) {
@@ -536,14 +539,31 @@ class PaymentSalary extends CommonObject
 					}
 				}
 
-				// Add link 'company' in bank_url between invoice and bank transaction (for each invoice concerned by payment)
-				$linkaddedforthirdparty = array();
+				// Add link 'user' in bank_url between user and bank transaction
 				foreach ($this->amounts as $key => $value) {
-					if ($mode == 'payment_salary') {
-						$salary = new Salary($this->db);
-						$salary->fetch($key);
-						$result = $acc->add_url_line($bank_line_id, $salary->id, DOL_URL_ROOT.'/salaries/card.php?id=', '('.$salary->label.')', 'salary');
-						if ($result <= 0) dol_print_error($this->db);
+					if (!$error) {
+						if ($mode == 'payment_salary') {
+							$salary = new Salary($this->db);
+							$salary->fetch($key);
+							$salary->fetch_user($salary->fk_user);
+
+							$fuser = $salary->user;
+
+							if ($fuser->id > 0) {
+								$result = $acc->add_url_line(
+									$bank_line_id,
+									$fuser->id,
+									DOL_URL_ROOT.'/user/card.php?id=',
+									$fuser->getFullName($langs),
+									'user'
+									);
+							}
+							if ($result <= 0) {
+								$this->error = $this->db->lasterror();
+								dol_syslog(get_class($this) . '::addPaymentToBank ' . $this->error);
+								$error++;
+							}
+						}
 					}
 				}
 			} else {

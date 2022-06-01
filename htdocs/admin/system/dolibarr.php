@@ -51,7 +51,7 @@ if ($action == 'getlastversion') {
 	$result = getURLContent('https://sourceforge.net/projects/dolibarr/rss');
 	//var_dump($result['content']);
 	if (function_exists('simplexml_load_string')) {
-		$sfurl = simplexml_load_string($result['content']);
+		$sfurl = simplexml_load_string($result['content'], 'SimpleXMLElement', LIBXML_NOCDATA|LIBXML_NONET);
 	} else {
 		setEventMessages($langs->trans("ErrorPHPDoesNotSupport", "xml"), null, 'errors');
 	}
@@ -139,8 +139,8 @@ if (preg_match('/[a-z]+/i', $version)) {
 }
 
 print '</td></tr>'."\n";
-print '<tr class="oddeven"><td>'.$langs->trans("VersionLastUpgrade").' ('.$langs->trans("Database").')</td><td>'.$conf->global->MAIN_VERSION_LAST_UPGRADE.'</td></tr>'."\n";
-print '<tr class="oddeven"><td>'.$langs->trans("VersionLastInstall").'</td><td>'.$conf->global->MAIN_VERSION_LAST_INSTALL.'</td></tr>'."\n";
+print '<tr class="oddeven"><td>'.$langs->trans("VersionLastUpgrade").' ('.$langs->trans("Database").')</td><td>'.getDolGlobalString('MAIN_VERSION_LAST_UPGRADE').'</td></tr>'."\n";
+print '<tr class="oddeven"><td>'.$langs->trans("VersionLastInstall").'</td><td>'.getDolGlobalString('MAIN_VERSION_LAST_INSTALL').'</td></tr>'."\n";
 print '</table>';
 print '</div>';
 print '<br>';
@@ -309,57 +309,58 @@ print '<br>';
 
 // Parameters in conf.php file (when a parameter start with ?, it is shown only if defined)
 $configfileparameters = array(
-		'dolibarr_main_url_root' => $langs->trans("URLRoot"),
-		'?dolibarr_main_url_root_alt' => $langs->trans("URLRoot").' (alt)',
-		'dolibarr_main_document_root'=> $langs->trans("DocumentRootServer"),
-		'?dolibarr_main_document_root_alt' => $langs->trans("DocumentRootServer").' (alt)',
-		'dolibarr_main_data_root' => $langs->trans("DataRootServer"),
-		'dolibarr_main_instance_unique_id' => $langs->trans("InstanceUniqueID"),
-		'separator1' => '',
-		'dolibarr_main_db_host' => $langs->trans("DatabaseServer"),
-		'dolibarr_main_db_port' => $langs->trans("DatabasePort"),
-		'dolibarr_main_db_name' => $langs->trans("DatabaseName"),
-		'dolibarr_main_db_type' => $langs->trans("DriverType"),
-		'dolibarr_main_db_user' => $langs->trans("DatabaseUser"),
-		'dolibarr_main_db_pass' => $langs->trans("DatabasePassword"),
-		'dolibarr_main_db_character_set' => $langs->trans("DBStoringCharset"),
-		'dolibarr_main_db_collation' => $langs->trans("DBSortingCollation"),
-		'?dolibarr_main_db_prefix' => $langs->trans("Prefix"),
-		'separator2' => '',
-		'dolibarr_main_authentication' => $langs->trans("AuthenticationMode"),
-		'?multicompany_transverse_mode'=>  $langs->trans("MultiCompanyMode"),
-		'separator'=> '',
-		'?dolibarr_main_auth_ldap_login_attribute' => 'dolibarr_main_auth_ldap_login_attribute',
-		'?dolibarr_main_auth_ldap_host' => 'dolibarr_main_auth_ldap_host',
-		'?dolibarr_main_auth_ldap_port' => 'dolibarr_main_auth_ldap_port',
-		'?dolibarr_main_auth_ldap_version' => 'dolibarr_main_auth_ldap_version',
-		'?dolibarr_main_auth_ldap_dn' => 'dolibarr_main_auth_ldap_dn',
-		'?dolibarr_main_auth_ldap_admin_login' => 'dolibarr_main_auth_ldap_admin_login',
-		'?dolibarr_main_auth_ldap_admin_pass' => 'dolibarr_main_auth_ldap_admin_pass',
-		'?dolibarr_main_auth_ldap_debug' => 'dolibarr_main_auth_ldap_debug',
-		'separator3' => '',
-		'?dolibarr_lib_ADODB_PATH' => 'dolibarr_lib_ADODB_PATH',
-		'?dolibarr_lib_FPDF_PATH' => 'dolibarr_lib_FPDF_PATH',
-		'?dolibarr_lib_TCPDF_PATH' => 'dolibarr_lib_TCPDF_PATH',
-		'?dolibarr_lib_FPDI_PATH' => 'dolibarr_lib_FPDI_PATH',
-		'?dolibarr_lib_TCPDI_PATH' => 'dolibarr_lib_TCPDI_PATH',
-		'?dolibarr_lib_NUSOAP_PATH' => 'dolibarr_lib_NUSOAP_PATH',
-		'?dolibarr_lib_GEOIP_PATH' => 'dolibarr_lib_GEOIP_PATH',
-		'?dolibarr_lib_ODTPHP_PATH' => 'dolibarr_lib_ODTPHP_PATH',
-		'?dolibarr_lib_ODTPHP_PATHTOPCLZIP' => 'dolibarr_lib_ODTPHP_PATHTOPCLZIP',
-		'?dolibarr_js_CKEDITOR' => 'dolibarr_js_CKEDITOR',
-		'?dolibarr_js_JQUERY' => 'dolibarr_js_JQUERY',
-		'?dolibarr_js_JQUERY_UI' => 'dolibarr_js_JQUERY_UI',
-		'?dolibarr_font_DOL_DEFAULT_TTF' => 'dolibarr_font_DOL_DEFAULT_TTF',
-		'?dolibarr_font_DOL_DEFAULT_TTF_BOLD' => 'dolibarr_font_DOL_DEFAULT_TTF_BOLD',
-		'separator4' => '',
-		'dolibarr_main_prod' => 'Production mode (Hide all error messages)',
-		'dolibarr_main_restrict_os_commands' => 'Restrict CLI commands for backups',
-		'dolibarr_main_restrict_ip' => 'Restrict access to some IPs only',
-		'?dolibarr_mailing_limit_sendbyweb' => 'Limit nb of email sent by page',
-		'?dolibarr_mailing_limit_sendbycli' => 'Limit nb of email sent by cli',
-		'?dolibarr_strict_mode' => 'Strict mode is on/off',
-		'?dolibarr_nocsrfcheck' => 'Disable CSRF security checks'
+	'dolibarr_main_prod' => 'Production mode (Hide all error messages)',
+	'dolibarr_main_instance_unique_id' => $langs->trans("InstanceUniqueID"),
+	'separator0' => '',
+	'dolibarr_main_url_root' => $langs->trans("URLRoot"),
+	'?dolibarr_main_url_root_alt' => $langs->trans("URLRoot").' (alt)',
+	'dolibarr_main_document_root'=> $langs->trans("DocumentRootServer"),
+	'?dolibarr_main_document_root_alt' => $langs->trans("DocumentRootServer").' (alt)',
+	'dolibarr_main_data_root' => $langs->trans("DataRootServer"),
+	'separator1' => '',
+	'dolibarr_main_db_host' => $langs->trans("DatabaseServer"),
+	'dolibarr_main_db_port' => $langs->trans("DatabasePort"),
+	'dolibarr_main_db_name' => $langs->trans("DatabaseName"),
+	'dolibarr_main_db_type' => $langs->trans("DriverType"),
+	'dolibarr_main_db_user' => $langs->trans("DatabaseUser"),
+	'dolibarr_main_db_pass' => $langs->trans("DatabasePassword"),
+	'dolibarr_main_db_character_set' => $langs->trans("DBStoringCharset"),
+	'dolibarr_main_db_collation' => $langs->trans("DBSortingCollation"),
+	'?dolibarr_main_db_prefix' => $langs->trans("DatabasePrefix"),
+	'separator2' => '',
+	'dolibarr_main_authentication' => $langs->trans("AuthenticationMode"),
+	'?multicompany_transverse_mode'=>  $langs->trans("MultiCompanyMode"),
+	'separator'=> '',
+	'?dolibarr_main_auth_ldap_login_attribute' => 'dolibarr_main_auth_ldap_login_attribute',
+	'?dolibarr_main_auth_ldap_host' => 'dolibarr_main_auth_ldap_host',
+	'?dolibarr_main_auth_ldap_port' => 'dolibarr_main_auth_ldap_port',
+	'?dolibarr_main_auth_ldap_version' => 'dolibarr_main_auth_ldap_version',
+	'?dolibarr_main_auth_ldap_dn' => 'dolibarr_main_auth_ldap_dn',
+	'?dolibarr_main_auth_ldap_admin_login' => 'dolibarr_main_auth_ldap_admin_login',
+	'?dolibarr_main_auth_ldap_admin_pass' => 'dolibarr_main_auth_ldap_admin_pass',
+	'?dolibarr_main_auth_ldap_debug' => 'dolibarr_main_auth_ldap_debug',
+	'separator3' => '',
+	'?dolibarr_lib_ADODB_PATH' => 'dolibarr_lib_ADODB_PATH',
+	'?dolibarr_lib_FPDF_PATH' => 'dolibarr_lib_FPDF_PATH',
+	'?dolibarr_lib_TCPDF_PATH' => 'dolibarr_lib_TCPDF_PATH',
+	'?dolibarr_lib_FPDI_PATH' => 'dolibarr_lib_FPDI_PATH',
+	'?dolibarr_lib_TCPDI_PATH' => 'dolibarr_lib_TCPDI_PATH',
+	'?dolibarr_lib_NUSOAP_PATH' => 'dolibarr_lib_NUSOAP_PATH',
+	'?dolibarr_lib_GEOIP_PATH' => 'dolibarr_lib_GEOIP_PATH',
+	'?dolibarr_lib_ODTPHP_PATH' => 'dolibarr_lib_ODTPHP_PATH',
+	'?dolibarr_lib_ODTPHP_PATHTOPCLZIP' => 'dolibarr_lib_ODTPHP_PATHTOPCLZIP',
+	'?dolibarr_js_CKEDITOR' => 'dolibarr_js_CKEDITOR',
+	'?dolibarr_js_JQUERY' => 'dolibarr_js_JQUERY',
+	'?dolibarr_js_JQUERY_UI' => 'dolibarr_js_JQUERY_UI',
+	'?dolibarr_font_DOL_DEFAULT_TTF' => 'dolibarr_font_DOL_DEFAULT_TTF',
+	'?dolibarr_font_DOL_DEFAULT_TTF_BOLD' => 'dolibarr_font_DOL_DEFAULT_TTF_BOLD',
+	'separator4' => '',
+	'dolibarr_main_restrict_os_commands' => 'Restrict CLI commands for backups',
+	'dolibarr_main_restrict_ip' => 'Restrict access to some IPs only',
+	'?dolibarr_mailing_limit_sendbyweb' => 'Limit nb of email sent by page',
+	'?dolibarr_mailing_limit_sendbycli' => 'Limit nb of email sent by cli',
+	'?dolibarr_strict_mode' => 'Strict mode is on/off',
+	'?dolibarr_nocsrfcheck' => 'Disable CSRF security checks'
 );
 
 print '<div class="div-table-responsive-no-min">';
@@ -400,8 +401,10 @@ foreach ($configfileparameters as $key => $value) {
 			if (in_array($newkey, array('dolibarr_main_db_pass', 'dolibarr_main_auth_ldap_admin_pass'))) {
 				if (empty($dolibarr_main_prod)) {
 					print '<!-- '.${$newkey}.' -->';
+					print showValueWithClipboardCPButton(${$newkey}, 0, '********');
+				} else {
+					print '**********';
 				}
-				print '**********';
 			} elseif ($newkey == 'dolibarr_main_url_root' && preg_match('/__auto__/', ${$newkey})) {
 				print ${$newkey}.' => '.constant('DOL_MAIN_URL_ROOT');
 			} elseif ($newkey == 'dolibarr_main_document_root_alt') {
@@ -420,9 +423,14 @@ foreach ($configfileparameters as $key => $value) {
 				}
 			} elseif ($newkey == 'dolibarr_main_instance_unique_id') {
 				//print $conf->file->instance_unique_id;
-				global $dolibarr_main_cookie_cryptkey;
-				$valuetoshow = ${$newkey} ? ${$newkey} : $dolibarr_main_cookie_cryptkey; // Use $dolibarr_main_instance_unique_id first then $dolibarr_main_cookie_cryptkey
-				print $valuetoshow;
+				global $dolibarr_main_cookie_cryptkey, $dolibarr_main_instance_unique_id;
+				$valuetoshow = $dolibarr_main_instance_unique_id ? $dolibarr_main_instance_unique_id : $dolibarr_main_cookie_cryptkey; // Use $dolibarr_main_instance_unique_id first then $dolibarr_main_cookie_cryptkey
+				if (empty($dolibarr_main_prod)) {
+					print '<!-- '.${$newkey}.' -->';
+					print showValueWithClipboardCPButton($valuetoshow, 0, '********');
+				} else {
+					print '**********';
+				}
 				if (empty($valuetoshow)) {
 					print img_warning("EditConfigFileToAddEntry", 'dolibarr_main_instance_unique_id');
 				}
@@ -497,7 +505,7 @@ if ($resql) {
 		$obj = $db->fetch_object($resql);
 
 		print '<tr class="oddeven">';
-		print '<td class="tdoverflowmax300">'.$obj->name.'</td>'."\n";
+		print '<td class="tdoverflowmax600" title="'.dol_escape_htmltag($obj->name).'">'.dol_escape_htmltag($obj->name).'</td>'."\n";
 		print '<td class="tdoverflowmax300">';
 		if (isASecretKey($obj->name)) {
 			if (empty($dolibarr_main_prod)) {

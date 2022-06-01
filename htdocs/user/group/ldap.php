@@ -67,8 +67,8 @@ if ($action == 'dolibarr2ldap') {
 	if ($result > 0) {
 		$info = $object->_load_ldap_info();
 
-		// Get a gid number for objectclass PosixGroup
-		if (in_array('posixGroup', $info['objectclass'])) {
+		// Get a gid number for objectclass PosixGroup if none was provided
+		if (empty($info[$conf->global->LDAP_GROUP_FIELD_GROUPID]) && in_array('posixGroup', $info['objectclass'])) {
 			$info['gidNumber'] = $ldap->getNextGroupGid('LDAP_KEY_GROUPS');
 		}
 

@@ -89,6 +89,7 @@ class modHRM extends DolibarrModules
 		$this->rights = array(); // Permission array used by this module
 		$r = 0;
 
+		/*
 		$this->rights[$r][0] = 4001;
 		$this->rights[$r][1] = 'See employees';
 		$this->rights[$r][3] = 0;
@@ -116,7 +117,7 @@ class modHRM extends DolibarrModules
 		$this->rights[$r][4] = 'employee';
 		$this->rights[$r][5] = 'export';
 		$r++;
-
+		*/
 
 		// Menus
 		//-------

@@ -93,6 +93,7 @@ if ($resql) {
 	$num = $db->num_rows($resql);
 	$i = 0;
 	$oldemail = 'none';
+	$oldsalerepresentative = '';
 	$olduid = 0;
 	$oldlang = '';
 	$total = 0;

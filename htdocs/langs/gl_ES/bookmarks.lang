@@ -19,3 +19,4 @@ UseAnExternalHttpLinkOrRelativeDolibarrLink=Usar unha externa/absoluta URL (http
 ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Escolla se debe abrir a páxina nesta xanela ou nunha nova xanela
 BookmarksManagement=Xestión de marcadores
 BookmarksMenuShortCut=Ctrl + shift + m
+NoBookmarks=Bookmarks non definidos

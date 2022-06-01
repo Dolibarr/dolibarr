@@ -108,7 +108,7 @@ abstract class DoliDB implements Database
 	 * Sanitize a string for SQL forging
 	 *
 	 * @param   string 	$stringtosanitize 	String to escape
-	 * @param   int		$allowsimplequote 	Allow simple quote
+	 * @param   int		$allowsimplequote 	1=Allow simple quotes in string. When string is used as a list of SQL string ('aa', 'bb', ...)
 	 * @return  string                      String escaped
 	 */
 	public function sanitize($stringtosanitize, $allowsimplequote = 0)
@@ -319,16 +319,22 @@ abstract class DoliDB implements Database
 	 * Return first result from query as object
 	 * Note : This method executes a given SQL query and retrieves the first row of results as an object. It should only be used with SELECT queries
 	 * Dont add LIMIT to your query, it will be added by this method
-	 * @param string $sql the sql query string
-	 * @return bool| object
+	 *
+	 * @param 	string 				$sql 	The sql query string
+	 * @return 	bool|int|object    			False on failure, 0 on empty, object on success
 	 */
 	public function getRow($sql)
 	{
-		$sql .= ' LIMIT 1;';
+		$sql .= ' LIMIT 1';
 
 		$res = $this->query($sql);
 		if ($res) {
-			return $this->fetch_object($res);
+			$obj = $this->fetch_object($res);
+			if ($obj) {
+				return $obj;
+			} else {
+				return 0;
+			}
 		}
 
 		return false;

@@ -36,7 +36,7 @@ StatsOnReceptionsOnlyValidated=Estatísticas realizadas únicamente sobre as rec
 SendReceptionByEMail=Enviar recepción por correo electrónico
 SendReceptionRef=Envío da recepción %s
 ActionsOnReception=Eventos sobre a recepción
-ReceptionCreationIsDoneFromOrder=Polo momento, a creación dunha nova recepción faise a partir da tarxeta de pedimento.
+ReceptionCreationIsDoneFromOrder=Polo momento, a creación dunha nova recepción faise a partir do rexistro de pedimento de provedor. 
 ReceptionLine=Liña de recepción
 ProductQtyInReceptionAlreadySent=Cantidade de produto do pedimento de cliente aberto xa enviado
 ProductQtyInSuppliersReceptionAlreadyRecevied=Cantidade de produto en pedimentos a proveedores xa recibidos
@@ -44,4 +44,5 @@ ValidateOrderFirstBeforeReception=Primeiro debe validar o pedimento antes de pod
 ReceptionsNumberingModules=Módulo de numeración para recepcións
 ReceptionsReceiptModel=Modeloss de documentos para recepcións.
 NoMorePredefinedProductToDispatch=Non hai máis produtos predefinidos para enviar
-
+ReceptionExist=Xa hai unha recepción
+ByingPrice=Prezo de compra

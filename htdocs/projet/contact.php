@@ -239,11 +239,13 @@ if (($action == 'deleteline' || $action == 'deletecontact') && $user->rights->pr
  * View
  */
 
-$title = $langs->trans("ProjectContact").' - '.$object->ref.' '.$object->name;
+$title = $langs->trans('ProjectContact').' - '.$object->ref.' '.$object->name;
 if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/projectnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
-	$title = $object->ref.' '.$object->name.' - '.$langs->trans("ProjectContact");
+	$title = $object->ref.' '.$object->name.' - '.$langs->trans('ProjectContact');
 }
-$help_url = "EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
+
+$help_url = 'EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos|DE:Modul_Projekte';
+
 llxHeader('', $title, $help_url);
 
 $form = new Form($db);

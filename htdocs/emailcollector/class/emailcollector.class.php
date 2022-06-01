@@ -89,7 +89,7 @@ class EmailCollector extends CommonObject
 	 *  'help' is a string visible as a tooltip on field
 	 *  'comment' is not used. You can store here any text of your choice. It is not used by application.
 	 *  'showoncombobox' if value of the field must be visible into the label of the combobox that list record
-	 *  'arraykeyval' to set list of value if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel")
+	 *  'arrayofkeyval' to set list of value if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel")
 	 */
 
 	// BEGIN MODULEBUILDER PROPERTIES
@@ -193,8 +193,9 @@ class EmailCollector extends CommonObject
 	 */
 	public $datelastresult;
 
-
+	public $codelastresult;
 	public $lastresult;
+	public $datelastok;
 	// END MODULEBUILDER PROPERTIES
 
 	public $filters;
@@ -274,7 +275,7 @@ class EmailCollector extends CommonObject
 			}
 		}
 
-		if (is_array($this->filters) && count($this->filters)) {
+		if (is_array($this->actions) && count($this->actions)) {
 			$emailcollectoroperation = new EmailCollectorAction($this->db);
 
 			foreach ($this->actions as $operation) {
@@ -323,6 +324,9 @@ class EmailCollector extends CommonObject
 		// Clear fields
 		$object->ref = "copy_of_".$object->ref;
 		$object->title = $langs->trans("CopyOf")." ".$object->title;
+		if (empty($object->host)) {
+			$object->host = 'imap.example.com';
+		}
 		// ...
 		// Clear extrafields that are unique
 		if (is_array($object->array_options) && count($object->array_options) > 0) {
@@ -653,6 +657,9 @@ class EmailCollector extends CommonObject
 	 */
 	public function initAsSpecimen()
 	{
+		$this->host = 'localhost';
+		$this->login = 'alogin';
+
 		$this->initAsSpecimenCommon();
 	}
 
@@ -845,11 +852,11 @@ class EmailCollector extends CommonObject
 				$regexstring = '';
 				//$transformationstring='';
 				$regforregex = array();
-				if (preg_match('/^EXTRACT:([a-zA-Z0-9]+):(.*):([^:])$/', $valueforproperty, $regforregex)) {
+				if (preg_match('/^EXTRACT:([a-zA-Z0-9_]+):(.*):([^:])$/', $valueforproperty, $regforregex)) {
 					$sourcefield = $regforregex[1];
 					$regexstring = $regforregex[2];
 					//$transofrmationstring=$regforregex[3];
-				} elseif (preg_match('/^EXTRACT:([a-zA-Z0-9]+):(.*)$/', $valueforproperty, $regforregex)) {
+				} elseif (preg_match('/^EXTRACT:([a-zA-Z0-9_]+):(.*)$/', $valueforproperty, $regforregex)) {
 					$sourcefield = $regforregex[1];
 					$regexstring = $regforregex[2];
 				}
@@ -947,9 +954,9 @@ class EmailCollector extends CommonObject
 
 		require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 
-		dol_syslog("EmailCollector::doCollectOneCollector start", LOG_DEBUG);
+		dol_syslog("EmailCollector::doCollectOneCollector start for id=".$this->id, LOG_DEBUG);
 
-		$langs->loadLangs(array("project", "companies", "mails", "errors", "ticket", "agenda"));
+		$langs->loadLangs(array("project", "companies", "mails", "errors", "ticket", "agenda", "commercial"));
 
 		$error = 0;
 		$this->output = '';
@@ -1195,15 +1202,20 @@ class EmailCollector extends CommonObject
 			$iforemailloop = 0;
 			foreach ($arrayofemail as $imapemail) {
 				if ($nbemailprocessed > 1000) {
-					break; // Do not process more than 1000 email per launch (this is a different protection than maxnbcollectedpercollect
+					break; // Do not process more than 1000 email per launch (this is a different protection than maxnbcollectedpercollect)
 				}
 
 				$iforemailloop++;
 
+				// GET header and overview datas
+
 				$header = imap_fetchheader($connection, $imapemail, 0);
+				$overview = imap_fetch_overview($connection, $imapemail, 0);
+
+				/* print $header; var_dump($overview); */
+
+				// Process $header of email
 				$header = preg_replace('/\r\n\s+/m', ' ', $header); // When a header line is on several lines, merge lines
-				/*print $header;
-				print $header;*/
 
 				$matches = array();
 				preg_match_all('/([^: ]+): (.+?(?:\r\n\s(?:.+?))*)\r\n/m', $header, $matches);
@@ -1293,9 +1305,6 @@ class EmailCollector extends CommonObject
 				$this->db->begin();
 
 
-				// GET Email meta datas
-				$overview = imap_fetch_overview($connection, $imapemail, 0);
-
 				dol_syslog("msgid=".$overview[0]->message_id." date=".dol_print_date($overview[0]->udate, 'dayrfc', 'gmt')." from=".$overview[0]->from." to=".$overview[0]->to." subject=".$overview[0]->subject);
 
 				$overview[0]->subject = $this->decodeSMTPSubject($overview[0]->subject);
@@ -1305,9 +1314,13 @@ class EmailCollector extends CommonObject
 				// Removed emojis
 				$overview[0]->subject = preg_replace('/[\x{10000}-\x{10FFFF}]/u', "\xEF\xBF\xBD", $overview[0]->subject);
 
-				// Parse IMAP email structure
+				// GET IMAP email structure/content
+
 				global $htmlmsg, $plainmsg, $charset, $attachments;
+
 				$this->getmsg($connection, $imapemail);
+
+				//print $plainmsg; var_dump($plainmsg); exit;
 
 				//$htmlmsg,$plainmsg,$charset,$attachments
 				$messagetext = $plainmsg ? $plainmsg : dol_string_nohtmltag($htmlmsg, 0);
@@ -1610,7 +1623,7 @@ class EmailCollector extends CommonObject
 
 					// Make Operation
 					dol_syslog("Execute action ".$operation['type']." actionparam=".$operation['actionparam'].' thirdpartystatic->id='.$thirdpartystatic->id.' contactstatic->id='.$contactstatic->id.' projectstatic->id='.$projectstatic->id);
-					dol_syslog("Execute action fk_element_id=".$fk_element_id." fk_element_type=".$fk_element_type);
+					dol_syslog("Execute action fk_element_id=".$fk_element_id." fk_element_type=".$fk_element_type);	// If a Dolibarr tracker id is found, we should now the id of object
 
 					$actioncode = 'EMAIL_IN';
 					// If we scan the Sent box, we use the code for out email
@@ -1636,13 +1649,15 @@ class EmailCollector extends CommonObject
 					if ($operation['type'] == 'loadthirdparty' || $operation['type'] == 'loadandcreatethirdparty') {
 						if (empty($operation['actionparam'])) {
 							$errorforactions++;
-							$this->error = "Action loadthirdparty or loadandcreatethirdparty has empty parameter. Must be a rule like 'SET:xxx' or 'EXTRACT:(body|subject):regex' to define how to set or extract data";
+							$this->error = "Action loadthirdparty or loadandcreatethirdparty has empty parameter. Must be a rule like 'name=HEADER:^From:(.*);' or 'name=SET:xxx' or 'name=EXTRACT:(body|subject):regex where 'name' can be replaced with 'id' or 'email' to define how to set or extract data. More properties can also be set, for example client=SET:2;";
 							$this->errors[] = $this->error;
 						} else {
 							$actionparam = $operation['actionparam'];
+							$idtouseforthirdparty = '';
 							$nametouseforthirdparty = '';
+							$emailtouseforthirdparty = '';
 
-							// $this->actionparam = 'SET:aaa' or 'EXTRACT:BODY:....'
+							// $actionparam = 'param=SET:aaa' or 'param=EXTRACT:BODY:....'
 							$arrayvaluetouse = dolExplodeIntoArray($actionparam, ';', '=');
 							foreach ($arrayvaluetouse as $propertytooverwrite => $valueforproperty) {
 								$sourcestring = '';
@@ -1650,7 +1665,7 @@ class EmailCollector extends CommonObject
 								$regexstring = '';
 								$regforregex = array();
 
-								if (preg_match('/^EXTRACT:([a-zA-Z0-9]+):(.*)$/', $valueforproperty, $regforregex)) {
+								if (preg_match('/^EXTRACT:([a-zA-Z0-9_]+):(.*)$/', $valueforproperty, $regforregex)) {
 									$sourcefield = $regforregex[1];
 									$regexstring = $regforregex[2];
 								}
@@ -1670,10 +1685,18 @@ class EmailCollector extends CommonObject
 										if (preg_match('/'.$regexstring.'/ms', $sourcestring, $regforval)) {
 											//var_dump($regforval[count($regforval)-1]);exit;
 											// Overwrite param $tmpproperty
-											$nametouseforthirdparty = isset($regforval[count($regforval) - 1]) ? trim($regforval[count($regforval) - 1]) : null;
+											if ($propertytooverwrite == 'id') {
+												$idtouseforthirdparty = isset($regforval[count($regforval) - 1]) ? trim($regforval[count($regforval) - 1]) : null;
+											} elseif ($propertytooverwrite == 'email') {
+												$emailtouseforthirdparty = isset($regforval[count($regforval) - 1]) ? trim($regforval[count($regforval) - 1]) : null;
+											} else {
+												$nametouseforthirdparty = isset($regforval[count($regforval) - 1]) ? trim($regforval[count($regforval) - 1]) : null;
+											}
 										} else {
 											// Regex not found
+											$idtouseforthirdparty = null;
 											$nametouseforthirdparty = null;
+											$emailtouseforthirdparty = null;
 										}
 										//var_dump($object->$tmpproperty);exit;
 									} else {
@@ -1685,7 +1708,13 @@ class EmailCollector extends CommonObject
 								} elseif (preg_match('/^(SET|SETIFEMPTY):(.*)$/', $valueforproperty, $reg)) {
 									//if (preg_match('/^options_/', $tmpproperty)) $object->array_options[preg_replace('/^options_/', '', $tmpproperty)] = $reg[1];
 									//else $object->$tmpproperty = $reg[1];
-									$nametouseforthirdparty = $reg[2];
+									if ($propertytooverwrite == 'id') {
+										$idtouseforthirdparty = $reg[2];
+									} elseif ($propertytooverwrite == 'email') {
+										$emailtouseforthirdparty = $reg[2];
+									} else {
+										$nametouseforthirdparty = $reg[2];
+									}
 								} else {
 									$errorforactions++;
 									$this->error = 'Bad syntax for description of action parameters: '.$actionparam;
@@ -1694,8 +1723,8 @@ class EmailCollector extends CommonObject
 								}
 							}
 
-							if (!$errorforactions && $nametouseforthirdparty) {
-								$result = $thirdpartystatic->fetch(0, $nametouseforthirdparty);
+							if (!$errorforactions && ($idtouseforthirdparty || $emailtouseforthirdparty || $nametouseforthirdparty)) {
+								$result = $thirdpartystatic->fetch($idtouseforthirdparty, $nametouseforthirdparty, '', '', '', '', '', '', '', '', $emailtouseforthirdparty);
 								if ($result < 0) {
 									$errorforactions++;
 									$this->error = 'Error when getting thirdparty with name '.$nametouseforthirdparty.' (may be 2 record exists with same name ?)';
@@ -1703,23 +1732,30 @@ class EmailCollector extends CommonObject
 									break;
 								} elseif ($result == 0) {
 									if ($operation['type'] == 'loadthirdparty') {
-										dol_syslog("Third party with name ".$nametouseforthirdparty." was not found");
+										dol_syslog("Third party with id=".$idtouseforthirdparty." email=".$emailtouseforthirdparty." name=".$nametouseforthirdparty." was not found");
 
 										$errorforactions++;
 										$this->error = 'ErrorFailedToLoadThirdParty';
 										$this->errors[] = 'ErrorFailedToLoadThirdParty';
 									} elseif ($operation['type'] == 'loadandcreatethirdparty') {
-										dol_syslog("Third party with name ".$nametouseforthirdparty." was not found. We try to create it.");
+										dol_syslog("Third party with id=".$idtouseforthirdparty." email=".$emailtouseforthirdparty." name=".$nametouseforthirdparty." was not found. We try to create it.");
 
 										// Create thirdparty
 										$thirdpartystatic->name = $nametouseforthirdparty;
 										if ($fromtext != $nametouseforthirdparty) {
 											$thirdpartystatic->name_alias = $fromtext;
 										}
-										$thirdpartystatic->email = $from;
+										$thirdpartystatic->email = ($emailtouseforthirdparty ? $emailtouseforthirdparty : $from);
 
 										// Overwrite values with values extracted from source email
 										$errorforthisaction = $this->overwritePropertiesOfObject($thirdpartystatic, $operation['actionparam'], $messagetext, $subject, $header);
+
+										if ($thirdpartystatic->client && empty($thirdpartystatic->code_client)) {
+											$thirdpartystatic->code_client = 'auto';
+										}
+										if ($thirdpartystatic->fournisseur && empty($thirdpartystatic->code_fournisseur)) {
+											$thirdpartystatic->code_fournisseur = 'auto';
+										}
 
 										if ($errorforthisaction) {
 											$errorforactions++;

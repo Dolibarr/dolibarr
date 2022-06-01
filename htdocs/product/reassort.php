@@ -146,11 +146,11 @@ if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_units as u on p.fk_unit = u.rowid';
 }
 // We'll need this table joined to the select in order to filter by categ
-if ($search_categ) {
+if ($search_categ > 0) {
 	$sql .= ", ".MAIN_DB_PREFIX."categorie_product as cp";
 }
 $sql .= " WHERE p.entity IN (".getEntity('product').")";
-if ($search_categ) {
+if ($search_categ > 0) {
 	$sql .= " AND p.rowid = cp.fk_product"; // Join for the needed table to filter by categ
 }
 if ($sall) {
@@ -189,8 +189,8 @@ if ($fourn_id > 0) {
 	$sql .= " AND p.rowid = pf.fk_product AND pf.fk_soc = ".((int) $fourn_id);
 }
 // Insert categ filter
-if ($search_categ) {
-	$sql .= " AND cp.fk_categorie = ".$db->escape($search_categ);
+if ($search_categ > 0) {
+	$sql .= " AND cp.fk_categorie = ".((int) $search_categ);
 }
 $sql .= " GROUP BY p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type, p.entity,";
 $sql .= " p.fk_product_type, p.tms, p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte, p.desiredstock";
@@ -267,7 +267,7 @@ if ($resql) {
 	if ($search_sale) {
 		$param .= "&search_sale=".urlencode($search_sale);
 	}
-	if ($search_categ) {
+	if ($search_categ > 0) {
 		$param .= "&search_categ=".urlencode($search_categ);
 	}
 	if ($toolowstock) {
@@ -344,7 +344,7 @@ if ($resql) {
 	if ($toolowstock) {
 		$param .= "&toolowstock=".urlencode($toolowstock);
 	}
-	if ($search_categ) {
+	if ($search_categ > 0) {
 		$param .= "&search_categ=".urlencode($search_categ);
 	}
 

@@ -39,6 +39,7 @@ $id = GETPOST("facid", "int");
 $ref = GETPOST("ref", 'alpha');
 
 $object = new Facture($db);
+
 $extrafields = new ExtraFields($db);
 
 // Fetch optionals attributes and labels
@@ -68,6 +69,13 @@ $title = $langs->trans('InvoiceCustomer')." - ".$langs->trans('Info');
 $help_url = "EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes";
 
 llxHeader('', $title, $help_url);
+
+if (empty($object->id)) {
+	$langs->load('errors');
+	echo '<div class="error">'.$langs->trans("ErrorRecordNotFound").'</div>';
+	llxFooter();
+	exit;
+}
 
 $object->fetch_thirdparty();
 

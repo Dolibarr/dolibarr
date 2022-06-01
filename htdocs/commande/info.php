@@ -62,7 +62,9 @@ if (!$object->fetch($id, $ref) > 0) {
 
 $form = new Form($db);
 
-llxHeader('', $langs->trans('Order'), 'EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes');
+$title = $langs->trans('Order')." - ".$langs->trans('Info');
+$help_url = 'EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes|DE:Modul_Kundenaufträge';
+llxHeader('', $title, $help_url);
 
 $object->fetch_thirdparty();
 $object->info($object->id);

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010-2015 Regis Houssin       <regis.houssin@inodbox.com>
+/* Copyright (C) 2010-2021 Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2017      Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -49,6 +49,9 @@ if (!defined('NOREQUIRETRAN')) {
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
 
+// Security check
+// This is done later into view.
+
 
 /*
  * View
@@ -59,16 +62,16 @@ top_httphead();
 print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
 // Registering the location of boxes
-if (GETPOST('roworder', 'alpha', 2) && GETPOST('table_element_line', 'aZ09', 2)
-	&& GETPOST('fk_element', 'aZ09', 2) && GETPOST('element_id', 'int', 2)) {
-	$roworder = GETPOST('roworder', 'alpha', 2);
-	$table_element_line = GETPOST('table_element_line', 'aZ09', 2);
-	$fk_element = GETPOST('fk_element', 'aZ09', 2);
-	$element_id = GETPOST('element_id', 'int', 2);
+if (GETPOST('roworder', 'alpha', 3) && GETPOST('table_element_line', 'aZ09', 3)
+	&& GETPOST('fk_element', 'aZ09', 3) && GETPOST('element_id', 'int', 3)) {
+	$roworder = GETPOST('roworder', 'alpha', 3);
+	$table_element_line = GETPOST('table_element_line', 'aZ09', 3);
+	$fk_element = GETPOST('fk_element', 'aZ09', 3);
+	$element_id = GETPOST('element_id', 'int', 3);
 
 	dol_syslog("AjaxRow roworder=".$roworder." table_element_line=".$table_element_line." fk_element=".$fk_element." element_id=".$element_id, LOG_DEBUG);
 
-	// Make test on pemrission
+	// Make test on permission
 	$perm = 0;
 	if ($table_element_line == 'propaldet' && $user->rights->propal->creer) {
 		$perm = 1;
@@ -76,7 +79,7 @@ if (GETPOST('roworder', 'alpha', 2) && GETPOST('table_element_line', 'aZ09', 2)
 		$perm = 1;
 	} elseif ($table_element_line == 'facturedet' && $user->rights->facture->creer) {
 		$perm = 1;
-	} elseif ($table_element_line == 'facturerecdet' && $user->rights->facture->creer) {
+	} elseif ($table_element_line == 'facturedet_rec' && $user->rights->facture->creer) {
 		$perm = 1;
 	} elseif ($table_element_line == 'ecm_files' && $user->rights->ecm->creer) {
 		$perm = 1;
@@ -86,11 +89,17 @@ if (GETPOST('roworder', 'alpha', 2) && GETPOST('table_element_line', 'aZ09', 2)
 		$perm = 1;
 	} elseif ($table_element_line == 'mrp_production' && $user->rights->mrp->write) {
 		$perm = 1;
-	} elseif ($table_element_line == 'supplier_proposaldet' && $user->rights->supplier_proposal->write) {
+	} elseif ($table_element_line == 'supplier_proposaldet' && $user->rights->supplier_proposal->creer) {
 		$perm = 1;
-	} elseif ($table_element_line == 'commande_fournisseurdet' && $user->rights->fourn->commande->creer) {
+	} elseif ($table_element_line == 'commande_fournisseurdet' && $user->rights->fournisseur->commande->creer) {
 		$perm = 1;
-	} elseif ($table_element_line == 'facture_fourn_det' && $user->rights->fourn->facture->creer) {
+	} elseif ($table_element_line == 'facture_fourn_det' && $user->rights->fournisseur->facture->creer) {
+		$perm = 1;
+	} elseif ($table_element_line == 'ecm_files' && $fk_element == 'fk_product' && (!empty($user->rights->produit->creer) || !empty($user->rights->service->creer))) {
+		$perm = 1;
+	} elseif ($table_element_line == 'ecm_files' && $fk_element == 'fk_ticket' && !empty($user->rights->ticket->write)) {
+		$perm = 1;
+	} elseif ($table_element_line == 'projet_task' && $fk_element == 'fk_projet' && $user->rights->projet->creer) {
 		$perm = 1;
 	} else {
 		$tmparray = explode('_', $table_element_line);
@@ -101,7 +110,10 @@ if (GETPOST('roworder', 'alpha', 2) && GETPOST('table_element_line', 'aZ09', 2)
 	}
 
 	if (! $perm) {
+		// We should not be here. If we are not allowed to reorder rows, feature should not be visible on script.
+		// If we are here, it is a hack attempt, so we report a warning.
 		print 'Bad permission to modify position of lines for object in table '.$table_element_line;
+		dol_syslog('Bad permission to modify position of lines for object in table='.$table_element_line.', fk_element='.$fk_element, LOG_WARNING);
 		accessforbidden('Bad permission to modify position of lines for object in table '.$table_element_line);
 	}
 

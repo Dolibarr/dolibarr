@@ -144,7 +144,7 @@ if ($snom) {
 	$sql .= natural_search('s.nom', $snom);
 }
 if ($suser) {
-	$sql .= natural_search('u.login', $suser);
+	natural_search(array('u.lastname', 'u.firstname', 'u.login'), $suser);
 }
 if ($sttc) {
 	$sql .= natural_search('cf.total_ttc', $sttc, 1);
@@ -154,7 +154,7 @@ if ($sall) {
 	$sql .= natural_search(array('cf.ref', 'cf.note'), $sall);
 }
 if (!empty($socid)) {
-	$sql .= ' AND s.rowid = '.$socid;
+	$sql .= ' AND s.rowid = '.((int) $socid);
 }
 if (GETPOST('statut', 'int')) {
 	$sql .= ' AND fk_statut = '.GETPOST('statut', 'int');

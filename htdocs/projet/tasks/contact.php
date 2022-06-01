@@ -40,16 +40,17 @@ $confirm = GETPOST('confirm', 'alpha');
 $withproject = GETPOST('withproject', 'int');
 $project_ref = GETPOST('project_ref', 'alpha');
 
-// Security check
-$socid = 0;
-//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
-//$result = restrictedArea($user, 'projet', $id, 'projet_task');
-if (!$user->rights->projet->lire) {
-	accessforbidden();
-}
-
 $object = new Task($db);
 $projectstatic = new Project($db);
+
+if ($id > 0 || $ref) {
+	$object->fetch($id, $ref);
+}
+
+// Security check
+$socid = 0;
+
+restrictedArea($user, 'projet', $object->fk_project, 'projet&project');
 
 
 /*

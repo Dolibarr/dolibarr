@@ -72,6 +72,8 @@ if ($object->fetch($id, $ref)) {
 	$upload_dir = $conf->facture->dir_output."/".dol_sanitizeFileName($object->ref);
 }
 
+$permissiontoadd = $user->rights->facture->creer;
+
 // Security check
 if ($user->socid) {
 	$socid = $user->socid;
@@ -89,6 +91,14 @@ include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 /*
  * View
  */
+
+if (empty($object->id)) {
+	llxHeader();
+	$langs->load('errors');
+	echo '<div class="error">'.$langs->trans("ErrorRecordNotFound").'</div>';
+	llxFooter();
+	exit;
+}
 
 $title = $langs->trans('InvoiceCustomer')." - ".$langs->trans('Documents');
 
@@ -179,10 +189,10 @@ if ($id > 0 || !empty($ref)) {
 		print dol_get_fiche_end();
 
 		$modulepart = 'facture';
-		$permission = $user->rights->facture->creer;
+		$permissiontoadd = $user->rights->facture->creer;
 		$permtoedit = $user->rights->facture->creer;
 		$param = '&id='.$object->id;
-		include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
+		include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 	} else {
 		dol_print_error($db);
 	}

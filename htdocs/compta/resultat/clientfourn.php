@@ -9,6 +9,7 @@
  * Copyright (C) 2014       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2020       Maxime DEMAREST         <maxime@indelog.fr>
+ * Copyright (C) 2021       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +34,7 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
+require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -366,12 +368,12 @@ if ($modecompta == 'BOOKKEEPING') {
 	}
 } else {
 	/*
-	 * Factures clients
+	 * Customer invoices
 	 */
 	print '<tr class="trforbreak"><td colspan="4">'.$langs->trans("CustomersInvoices").'</td></tr>';
 
 	if ($modecompta == 'CREANCES-DETTES') {
-		$sql = "SELECT s.nom as name, s.rowid as socid, sum(f.total) as amount_ht, sum(f.total_ttc) as amount_ttc";
+		$sql = "SELECT s.nom as name, s.rowid as socid, sum(f.total_ht) as amount_ht, sum(f.total_ttc) as amount_ttc";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 		$sql .= ", ".MAIN_DB_PREFIX."facture as f";
 		$sql .= " WHERE f.fk_soc = s.rowid";
@@ -386,8 +388,8 @@ if ($modecompta == 'BOOKKEEPING') {
 		}
 	} elseif ($modecompta == 'RECETTES-DEPENSES') {
 		/*
-		 * Liste des paiements (les anciens paiements ne sont pas vus par cette requete car, sur les
-		 * vieilles versions, ils n'etaient pas lies via paiement_facture. On les ajoute plus loin)
+		 * List of payments (old payments are not seen by this query because, on older versions, they were not linked via payment_invoice.
+		 * old versions, they were not linked via payment_invoice. They are added later)
 		 */
 		$sql = "SELECT s.nom as name, s.rowid as socid, sum(pf.amount) as amount_ttc";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
@@ -403,7 +405,7 @@ if ($modecompta == 'BOOKKEEPING') {
 	}
 	$sql .= " AND f.entity IN (".getEntity('invoice').")";
 	if ($socid) {
-		$sql .= " AND f.fk_soc = ".$socid;
+		$sql .= " AND f.fk_soc = ".((int) $socid);
 	}
 	$sql .= " GROUP BY name, socid";
 	$sql .= $db->order($sortfield, $sortorder);
@@ -434,7 +436,7 @@ if ($modecompta == 'BOOKKEEPING') {
 		dol_print_error($db);
 	}
 
-	// On ajoute les paiements clients anciennes version, non lie par paiement_facture
+	// We add the old customer payments, not linked by payment_invoice
 	if ($modecompta == 'RECETTES-DEPENSES') {
 		$sql = "SELECT 'Autres' as name, '0' as idp, sum(p.amount) as amount_ttc";
 		$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
@@ -614,9 +616,9 @@ if ($modecompta == 'BOOKKEEPING') {
 		}
 	}
 
-	$sql .= " AND f.entity = ".$conf->entity;
+	$sql .= " AND f.entity = ".((int) $conf->entity);
 	if ($socid) {
-		$sql .= " AND f.fk_soc = ".$socid;
+		$sql .= " AND f.fk_soc = ".((int) $socid);
 	}
 	$sql .= " GROUP BY name, socid";
 	$sql .= $db->order($sortfield, $sortorder);
@@ -673,7 +675,7 @@ if ($modecompta == 'BOOKKEEPING') {
 
 
 	/*
-	 * Charges sociales non deductibles
+	 * Social / Fiscal contributions who are not deductible
 	 */
 
 	print '<tr class="trforbreak"><td colspan="4">'.$langs->trans("SocialContributionsNondeductibles").'</td></tr>';
@@ -760,7 +762,7 @@ if ($modecompta == 'BOOKKEEPING') {
 
 
 	/*
-	 * Charges sociales deductibles
+	 * Social / Fiscal contributions who are deductible
 	 */
 
 	print '<tr class="trforbreak"><td colspan="4">'.$langs->trans("SocialContributionsDeductibles").'</td></tr>';
@@ -855,20 +857,29 @@ if ($modecompta == 'BOOKKEEPING') {
 
 		if ($modecompta == 'CREANCES-DETTES' || $modecompta == 'RECETTES-DEPENSES') {
 			if ($modecompta == 'CREANCES-DETTES') {
-				$column = 'p.datev';
+				$column = 's.dateep';	// We use the date of end of period of salary
+
+				$sql = "SELECT u.rowid, u.firstname, u.lastname, s.fk_user as fk_user, s.label as label, date_format($column,'%Y-%m') as dm, sum(s.amount) as amount";
+				$sql .= " FROM ".MAIN_DB_PREFIX."salary as s";
+				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = s.fk_user";
+				$sql .= " WHERE s.entity IN (".getEntity('salary').")";
+				if (!empty($date_start) && !empty($date_end)) {
+					$sql .= " AND $column >= '".$db->idate($date_start)."' AND $column <= '".$db->idate($date_end)."'";
+				}
+				$sql .= " GROUP BY u.rowid, u.firstname, u.lastname, s.fk_user, s.label, dm";
 			} else {
 				$column = 'p.datep';
+				$sql = "SELECT u.rowid, u.firstname, u.lastname, s.fk_user as fk_user, p.label as label, date_format($column,'%Y-%m') as dm, sum(p.amount) as amount";
+				$sql .= " FROM ".MAIN_DB_PREFIX."payment_salary as p";
+				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."salary as s ON s.rowid = p.fk_salary";
+				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = s.fk_user";
+				$sql .= " WHERE p.entity IN (".getEntity('payment_salary').")";
+				if (!empty($date_start) && !empty($date_end)) {
+					$sql .= " AND $column >= '".$db->idate($date_start)."' AND $column <= '".$db->idate($date_end)."'";
+				}
+				$sql .= " GROUP BY u.rowid, u.firstname, u.lastname, s.fk_user, p.label, dm";
 			}
 
-			$sql = "SELECT u.rowid, u.firstname, u.lastname, p.fk_user, p.label as label, date_format($column,'%Y-%m') as dm, sum(p.amount) as amount";
-			$sql .= " FROM ".MAIN_DB_PREFIX."payment_salary as p";
-			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid=p.fk_user";
-			$sql .= " WHERE p.entity IN (".getEntity('payment_salary').")";
-			if (!empty($date_start) && !empty($date_end)) {
-				$sql .= " AND $column >= '".$db->idate($date_start)."' AND $column <= '".$db->idate($date_end)."'";
-			}
-
-			$sql .= " GROUP BY u.rowid, u.firstname, u.lastname, p.fk_user, p.label, dm";
 			$newsortfield = $sortfield;
 			if ($newsortfield == 's.nom, s.rowid') {
 				$newsortfield = 'u.firstname, u.lastname';
@@ -882,7 +893,7 @@ if ($modecompta == 'BOOKKEEPING') {
 			$sql .= $db->order($newsortfield, $sortorder);
 		}
 
-		dol_syslog("get payment salaries");
+		dol_syslog("get salaries");
 		$result = $db->query($sql);
 		$subtotal_ht = 0;
 		$subtotal_ttc = 0;
@@ -900,7 +911,10 @@ if ($modecompta == 'BOOKKEEPING') {
 
 					print '<tr class="oddeven"><td>&nbsp;</td>';
 
-					print "<td>".$langs->trans("Salary")." <a href=\"".DOL_URL_ROOT."/salaries/list.php?filtre=s.fk_user=".$obj->fk_user."\">".$obj->firstname." ".$obj->lastname."</a></td>\n";
+					$userstatic = new User($db);
+					$userstatic->fetch($obj->fk_user);
+
+					print "<td>".$langs->trans("Salary")." <a href=\"".DOL_URL_ROOT."/salaries/list.php?search_user=".urlencode($userstatic->getFullName($langs))."\">".$obj->firstname." ".$obj->lastname."</a></td>\n";
 
 					if ($modecompta == 'CREANCES-DETTES') {
 						print '<td class="right"><span class="amount">'.price(-$obj->amount).'</span></td>';
@@ -931,7 +945,7 @@ if ($modecompta == 'BOOKKEEPING') {
 
 
 	/*
-	 * Expense
+	 * Expense report
 	 */
 
 	if (!empty($conf->expensereport->enabled)) {
@@ -1087,7 +1101,7 @@ if ($modecompta == 'BOOKKEEPING') {
 	}
 
 	/*
-	 * Payement Loan
+	 * Payment Loan
 	 */
 
 	if (!empty($conf->global->ACCOUNTING_REPORTS_INCLUDE_LOAN) && !empty($conf->loan->enabled) && ($modecompta == 'CREANCES-DETTES' || $modecompta == "RECETTES-DEPENSES")) {
@@ -1153,7 +1167,7 @@ if ($modecompta == 'BOOKKEEPING') {
 		if ($modecompta == 'CREANCES-DETTES') {
 			// VAT to pay
 			$amount = 0;
-			$sql = "SELECT date_format(f.datef,'%Y-%m') as dm, sum(f.tva) as amount";
+			$sql = "SELECT date_format(f.datef,'%Y-%m') as dm, sum(f.total_tva) as amount";
 			$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
 			$sql .= " WHERE f.fk_statut IN (1,2)";
 			if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
@@ -1208,7 +1222,7 @@ if ($modecompta == 'BOOKKEEPING') {
 			print '<td class="right"><span class="amount">'.price($amount)."</span></td>\n";
 			print "</tr>\n";
 
-			// VAT to retreive
+			// VAT to retrieve
 			$amount = 0;
 			$sql = "SELECT date_format(f.datef,'%Y-%m') as dm, sum(f.total_tva) as amount";
 			$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";

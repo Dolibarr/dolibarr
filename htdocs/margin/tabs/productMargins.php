@@ -39,10 +39,6 @@ $fieldtype = (!empty($ref) ? 'ref' : 'rowid');
 if (!empty($user->socid)) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
-if (empty($user->rights->margins->liretous)) {
-	accessforbidden();
-}
 
 $object = new Product($db);
 
@@ -63,6 +59,12 @@ if (!$sortfield) {
 	$sortfield = "f.datef";
 }
 
+$result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
+
+if (empty($user->rights->margins->liretous)) {
+	accessforbidden();
+}
+
 
 /*
  * View
@@ -76,22 +78,20 @@ if ($id > 0 || !empty($ref)) {
 	$result = $object->fetch($id, $ref);
 
 	$title = $langs->trans('ProductServiceCard');
-	$helpurl = '';
+	$help_url = '';
 	$shortlabel = dol_trunc($object->label, 16);
 	if (GETPOST("type") == '0' || ($object->type == Product::TYPE_PRODUCT)) {
 		$title = $langs->trans('Product')." ".$shortlabel." - ".$langs->trans('Card');
-		$helpurl = 'EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
+		$help_url = 'EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
 	}
 	if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE)) {
 		$title = $langs->trans('Service')." ".$shortlabel." - ".$langs->trans('Card');
-		$helpurl = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
+		$help_url = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
 	}
 
-	llxHeader('', $title, $helpurl);
+	llxHeader('', $title, $help_url);
 
-	/*
-	 *  En mode visu
-	 */
+	// View mode
 	if ($result > 0) {
 		$head = product_prepare_head($object);
 		$titre = $langs->trans("CardProduct".$object->type);
@@ -106,23 +106,23 @@ if ($id > 0 || !empty($ref)) {
 		print '<div class="fichecenter">';
 
 		print '<div class="underbanner clearboth"></div>';
-		print '<table class="border tableforfield" width="100%">';
+		print '<table class="border tableforfield centpercent">';
 
 		// Total Margin
-		print '<tr><td class="titlefield">'.$langs->trans("TotalMargin").'</td><td colspan="3">';
-		print '<span id="totalMargin"></span>'; // set by jquery (see below)
+		print '<tr><td class="titlefield">'.$langs->trans("TotalMargin").'</td><td>';
+		print '<span id="totalMargin" class="amount"></span>'; // set by jquery (see below)
 		print '</td></tr>';
 
 		// Margin Rate
 		if (!empty($conf->global->DISPLAY_MARGIN_RATES)) {
-			print '<tr><td>'.$langs->trans("MarginRate").'</td><td colspan="3">';
+			print '<tr><td>'.$langs->trans("MarginRate").'</td><td>';
 			print '<span id="marginRate"></span>'; // set by jquery (see below)
 			print '</td></tr>';
 		}
 
 		// Mark Rate
 		if (!empty($conf->global->DISPLAY_MARK_RATES)) {
-			print '<tr><td>'.$langs->trans("MarkRate").'</td><td colspan="3">';
+			print '<tr><td>'.$langs->trans("MarkRate").'</td><td>';
 			print '<span id="markRate"></span>'; // set by jquery (see below)
 			print '</td></tr>';
 		}
@@ -137,7 +137,7 @@ if ($id > 0 || !empty($ref)) {
 
 		if ($user->rights->facture->lire) {
 			$sql = "SELECT s.nom as name, s.rowid as socid, s.code_client,";
-			$sql .= " f.rowid as facid, f.ref, f.total as total_ht,";
+			$sql .= " f.rowid as facid, f.ref, f.total_ht,";
 			$sql .= " f.datef, f.paye, f.fk_statut as statut, f.type,";
 			if (!$user->rights->societe->client->voir && !$socid) {
 				$sql .= " sc.fk_soc, sc.fk_user,";
@@ -156,9 +156,9 @@ if ($id > 0 || !empty($ref)) {
 			$sql .= " AND f.fk_statut > 0";
 			$sql .= " AND f.entity IN (".getEntity('invoice').")";
 			$sql .= " AND d.fk_facture = f.rowid";
-			$sql .= " AND d.fk_product =".$object->id;
+			$sql .= " AND d.fk_product = ".((int) $object->id);
 			if (!$user->rights->societe->client->voir && !$socid) {
-				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			if (!empty($socid)) {
 				$sql .= " AND f.fk_soc = $socid";
@@ -169,7 +169,7 @@ if ($id > 0 || !empty($ref)) {
 			if (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 2) {
 				$sql .= " AND d.buy_price_ht <> 0";
 			}
-			$sql .= " GROUP BY s.nom, s.rowid, s.code_client, f.rowid, f.ref, f.total, f.datef, f.paye, f.fk_statut, f.type";
+			$sql .= " GROUP BY s.nom, s.rowid, s.code_client, f.rowid, f.ref, f.total_ht, f.datef, f.paye, f.fk_statut, f.type";
 			if (!$user->rights->societe->client->voir && !$socid) {
 				$sql .= ", sc.fk_soc, sc.fk_user";
 			}
@@ -225,12 +225,12 @@ if ($id > 0 || !empty($ref)) {
 						print "</td>\n";
 						print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"), "company").' '.dol_trunc($objp->name, 44).'</a></td>';
 						print "<td>".$objp->code_client."</td>\n";
-						print "<td class=\"center\">";
+						print '<td class="center">';
 						print dol_print_date($db->jdate($objp->datef), 'day')."</td>";
-						print "<td class=\"right\">".price(price2num($objp->selling_price, 'MT'))."</td>\n";
-						print "<td class=\"right\">".price(price2num($objp->buying_price, 'MT'))."</td>\n";
-						print "<td class=\"right\">".price(price2num($objp->qty, 'MT'))."</td>\n";
-						print "<td class=\"right\">".price(price2num($objp->marge, 'MT'))."</td>\n";
+						print '<td class="right amount">'.price(price2num($objp->selling_price, 'MT'))."</td>\n";
+						print '<td class="right amount">'.price(price2num($objp->buying_price, 'MT'))."</td>\n";
+						print '<td class="right">'.price(price2num($objp->qty, 'MT'))."</td>\n";
+						print '<td class="right amount">'.price(price2num($objp->marge, 'MT'))."</td>\n";
 						if (!empty($conf->global->DISPLAY_MARGIN_RATES)) {
 							print "<td class=\"right\">".(($marginRate === '') ? 'n/a' : price(price2num($marginRate, 'MT'))."%")."</td>\n";
 						}
@@ -258,10 +258,10 @@ if ($id > 0 || !empty($ref)) {
 				}
 				print '<tr class="liste_total">';
 				print '<td colspan=4>'.$langs->trans('TotalMargin')."</td>";
-				print '<td class="right">'.price(price2num($cumul_vente, 'MT'))."</td>\n";
-				print '<td class="right">'.price(price2num($cumul_achat, 'MT'))."</td>\n";
+				print '<td class="right amount">'.price(price2num($cumul_vente, 'MT'))."</td>\n";
+				print '<td class="right amount">'.price(price2num($cumul_achat, 'MT'))."</td>\n";
 				print '<td class="right">'.price(price2num($cumul_qty, 'MT'))."</td>\n";
-				print '<td class="right">'.price(price2num($totalMargin, 'MT'))."</td>\n";
+				print '<td class="right amount">'.price(price2num($totalMargin, 'MT'))."</td>\n";
 				if (!empty($conf->global->DISPLAY_MARGIN_RATES)) {
 					print '<td class="right">'.(($marginRate === '') ? 'n/a' : price(price2num($marginRate, 'MT'))."%")."</td>\n";
 				}

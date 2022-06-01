@@ -71,7 +71,7 @@ class FactureStats extends Stats
 			$object = new Facture($this->db);
 			$this->from = MAIN_DB_PREFIX.$object->table_element." as f";
 			$this->from_line = MAIN_DB_PREFIX.$object->table_element_line." as tl";
-			$this->field = 'total';
+			$this->field = 'total_ht';
 			$this->field_line = 'total_ht';
 		}
 		if ($mode == 'supplier') {
@@ -86,16 +86,16 @@ class FactureStats extends Stats
 		$this->where = " f.fk_statut >= 0";
 		$this->where .= " AND f.entity IN (".getEntity('invoice').")";
 		if (!$user->rights->societe->client->voir && !$this->socid) {
-			$this->where .= " AND f.fk_soc = sc.fk_soc AND sc.fk_user = ".$user->id;
+			$this->where .= " AND f.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		if ($mode == 'customer') {
 			$this->where .= " AND (f.fk_statut <> 3 OR f.close_code <> 'replaced')"; // Exclude replaced invoices as they are duplicated (we count closed invoices for other reasons)
 		}
 		if ($this->socid) {
-			$this->where .= " AND f.fk_soc = ".$this->socid;
+			$this->where .= " AND f.fk_soc = ".((int) $this->socid);
 		}
 		if ($this->userid > 0) {
-			$this->where .= ' AND f.fk_user_author = '.$this->userid;
+			$this->where .= ' AND f.fk_user_author = '.((int) $this->userid);
 		}
 		if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
 			$this->where .= " AND f.type IN (0,1,2,5)";

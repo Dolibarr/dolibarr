@@ -102,13 +102,13 @@ if ($attachment) {
 
 
 // List of targets fields
-$headerlinefields = array();
-$contentlinevalues = array();
+$headerlinefields = array();	// Array of fields (label to show)
+$contentlinevalues = array();	// Array of example values
 $i = 0;
 foreach ($fieldstarget as $code => $label) {
 	$withoutstar = preg_replace('/\*/', '', $fieldstarget[$code]);
 	$headerlinefields[] = $langs->transnoentities($withoutstar).($withoutstar != $fieldstarget[$code] ? '*' : '').' ('.$code.')';
-	$contentlinevalues[] = $valuestarget[$code];
+	$contentlinevalues[] = (isset($valuestarget[$code]) ? $valuestarget[$code] : '');
 }
 //var_dump($headerlinefields);
 //var_dump($contentlinevalues);

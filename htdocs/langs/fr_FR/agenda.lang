@@ -4,7 +4,7 @@ Actions=Événements
 Agenda=Agenda
 TMenuAgenda=Agenda
 Agendas=Agendas
-LocalAgenda=Calendrier interne
+LocalAgenda=Calendrier par défaut
 ActionsOwnedBy=Propriétaire de l'événement
 ActionsOwnedByShort=Propriétaire
 AffectedTo=Affecté à
@@ -20,7 +20,7 @@ MenuToDoActions=Événements incomplets
 MenuDoneActions=Événements terminés
 MenuToDoMyActions=Mes événem. incomplets
 MenuDoneMyActions=Mes événem. terminés
-ListOfEvents=Liste des événements (calendrier interne)
+ListOfEvents=Liste des événements (calendrier par défaut)
 ActionsAskedBy=Événements enregistrés par
 ActionsToDoBy=Événements affectés à
 ActionsDoneBy=Événements réalisés par
@@ -38,6 +38,7 @@ ActionsEvents=Événements pour lesquels Dolibarr doit insérer un évènement d
 EventRemindersByEmailNotEnabled=Les rappels d'événement par email n'ont pas été activés dans la configuration du module %s.
 ##### Agenda event labels #####
 NewCompanyToDolibarr=Tiers %s créé
+COMPANY_MODIFYInDolibarr=Tiers %s modifié
 COMPANY_DELETEInDolibarr=Tiers  %s supprimé
 ContractValidatedInDolibarr=Contrat %s validé
 CONTRACT_DELETEInDolibarr=Contrat %s supprimé
@@ -63,6 +64,7 @@ ShipmentClassifyClosedInDolibarr=Expédition %s classée payée
 ShipmentUnClassifyCloseddInDolibarr=Expédition %s réouverte
 ShipmentBackToDraftInDolibarr=Expédition %s remise au statut brouillon
 ShipmentDeletedInDolibarr=Expédition %s supprimée
+ShipmentCanceledInDolibarr=Expédition %s annulée
 ReceptionValidatedInDolibarr=Réception %s validée
 OrderCreatedInDolibarr=Commande %s créée
 OrderValidatedInDolibarr=Commande %s validée
@@ -87,6 +89,7 @@ OrderDeleted=Commande supprimée
 InvoiceDeleted=Facture supprimée
 DraftInvoiceDeleted=Facture brouillon supprimée
 CONTACT_CREATEInDolibarr=Contact/Adresse %s créé
+CONTACT_MODIFYInDolibarr=Contact %s modifié
 CONTACT_DELETEInDolibarr=Contact/Adresse %s supprimé
 PRODUCT_CREATEInDolibarr=Produit %s créé
 PRODUCT_MODIFYInDolibarr=Produit %s modifié
@@ -119,6 +122,7 @@ MRP_MO_UNVALIDATEInDolibarr=OF mis à l'état de brouillon
 MRP_MO_PRODUCEDInDolibarr=OF réalisé
 MRP_MO_DELETEInDolibarr=OF supprimé
 MRP_MO_CANCELInDolibarr=OF annulé
+PAIDInDolibarr=%s payé
 ##### End agenda events #####
 AgendaModelModule=Modèle de document pour les événements
 DateActionStart=Date de début
@@ -130,7 +134,7 @@ AgendaUrlOptions4=<b>logint=%s</b>pour limiter l'export aux actions assignées �
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> pour restreindre aux événements associés au projet <b>__PROJECT_ID__</b>.
 AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> pour exclure les événements automatiques.
 AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b> pour inclure les événements de type congé.
-AgendaShowBirthdayEvents=Anniversaires de contacts
+AgendaShowBirthdayEvents=Anniversaires des contacts
 AgendaHideBirthdayEvents=Masquer les anniversaires de contacts
 Busy=Occupé
 ExportDataset_event1=Liste des événements de l'agenda
@@ -167,3 +171,4 @@ ReminderType=Type de rappel
 AddReminder=Créer une notification de rappel automatique pour cet événement
 ErrorReminderActionCommCreation=Erreur lors de la création de la notification de rappel pour cet événement
 BrowserPush=Notification par Popup navigateur
+ActiveByDefault=Activé par défaut

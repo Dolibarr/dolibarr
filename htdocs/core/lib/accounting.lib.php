@@ -1,9 +1,9 @@
 <?php
 /* Copyright (C) 2013-2014 Olivier Geffroy      <jeff@jeffinfo.com>
- * Copyright (C) 2013-2017 Alexandre Spangaro   <aspangaro@open-dsi.fr>
+ * Copyright (C) 2013-2021 Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2014      Florian Henry        <florian.henry@open-concept.pro>
- * Copyright (C) 2019      Eric Seigne         <eric.seigne@cap-rel.fr>
- * Copyright (C) 2021		Frédéric France		<frederic.france@netlogic.fr>
+ * Copyright (C) 2019      Eric Seigne          <eric.seigne@cap-rel.fr>
+ * Copyright (C) 2021      Frédéric France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -103,7 +103,7 @@ function length_accountg($account)
 		return $account;
 	}
 
-	$g = $conf->global->ACCOUNTING_LENGTH_GACCOUNT;
+	$g = getDolGlobalInt('ACCOUNTING_LENGTH_GACCOUNT');
 	if (!is_empty($g)) {
 		// Clean parameters
 		$i = strlen($account);
@@ -142,7 +142,7 @@ function length_accounta($accounta)
 		return $accounta;
 	}
 
-	$a = $conf->global->ACCOUNTING_LENGTH_AACCOUNT;
+	$a = getDolGlobalInt('ACCOUNTING_LENGTH_AACCOUNT');
 	if (!is_empty($a)) {
 		// Clean parameters
 		$i = strlen($accounta);
@@ -277,8 +277,8 @@ function getDefaultDatesForTransfer()
 	// Period by default on transfer (0: previous month | 1: current month | 2: fiscal year)
 	$periodbydefaultontransfer = (empty($conf->global->ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER) ? 0 : $conf->global->ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER);
 	if ($periodbydefaultontransfer == 2) {
-		$sql = "SELECT date_start, date_end from ".MAIN_DB_PREFIX."accounting_fiscalyear ";
-		$sql .= " where date_start < '".$db->idate(dol_now())."' and date_end > '".$db->idate(dol_now())."'";
+		$sql = "SELECT date_start, date_end FROM ".MAIN_DB_PREFIX."accounting_fiscalyear ";
+		$sql .= " WHERE date_start < '".$db->idate(dol_now())."' AND date_end > '".$db->idate(dol_now())."'";
 		$sql .= $db->plimit(1);
 		$res = $db->query($sql);
 		if ($res->num_rows > 0) {
@@ -288,6 +288,9 @@ function getDefaultDatesForTransfer()
 		} else {
 			$month_start = ($conf->global->SOCIETE_FISCAL_MONTH_START ? ($conf->global->SOCIETE_FISCAL_MONTH_START) : 1);
 			$year_start = dol_print_date(dol_now(), '%Y');
+			if ($conf->global->SOCIETE_FISCAL_MONTH_START > dol_print_date(dol_now(), '%m')) {
+				$year_start = $year_start - 1;
+			}
 			$year_end = $year_start + 1;
 			$month_end = $month_start - 1;
 			if ($month_end < 1) {

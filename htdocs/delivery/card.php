@@ -114,7 +114,7 @@ if ($action == 'add') {
 		$idl = "idl".$i;
 		$qtytouse = price2num(GETPOST($qty));
 		if ($qtytouse > 0) {
-			$object->addline(GETPOST($idl), price2num($qtytouse));
+			$object->addline(GETPOST($idl), price2num($qtytouse), $arrayoptions);
 		}
 	}
 
@@ -249,7 +249,9 @@ include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
  *	View
  */
 
-llxHeader('', $langs->trans('Delivery'), 'Livraison');
+$title = $langs->trans('Delivery');
+
+llxHeader('', $title, 'Livraison');
 
 $form = new Form($db);
 $formfile = new FormFile($db);
@@ -542,8 +544,8 @@ if ($action == 'create') {    // Create. Seems to no be used
 						if (!empty($conf->global->MAIN_MULTILANGS) && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
 							$outputlangs = $langs;
 							$newlang = '';
-							if (empty($newlang) && !empty($_REQUEST['lang_id'])) {
-								$newlang = $_REQUEST['lang_id'];
+							if (empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+								$newlang = GETPOST('lang_id', 'aZ09');
 							}
 							if (empty($newlang)) {
 								$newlang = $object->thirdparty->default_lang;
@@ -601,23 +603,26 @@ if ($action == 'create') {    // Create. Seems to no be used
 					print "</tr>";
 
 					// Display lines extrafields
-					if (!empty($extrafields)) {
+					//if (!empty($extrafields)) {
 						$colspan = 2;
 						$mode = ($object->statut == 0) ? 'edit' : 'view';
 
 						$object->lines[$i]->fetch_optionals();
 
-						if ($action == 'create_delivery') {
-							$srcLine = new ExpeditionLigne($db);
+					if ($action == 'create_delivery') {
+						$srcLine = new ExpeditionLigne($db);
 
+						$extrafields->fetch_name_optionals_label($srcLine->table_element);
+						$srcLine->id = $expedition->lines[$i]->id;
+						$srcLine->fetch_optionals();
+
+						$object->lines[$i]->array_options = array_merge($object->lines[$i]->array_options, $srcLine->array_options);
+					} else {
+							$srcLine = new DeliveryLine($db);
 							$extrafields->fetch_name_optionals_label($srcLine->table_element);
-							$srcLine->id = $expedition->lines[$i]->id;
-							$srcLine->fetch_optionals();
-
-							$object->lines[$i]->array_options = array_merge($object->lines[$i]->array_options, $srcLine->array_options);
-						}
-						print $object->lines[$i]->showOptionals($extrafields, $mode, array('style' => 'class="oddeven"', 'colspan' => $colspan), $i);
 					}
+						print $object->lines[$i]->showOptionals($extrafields, $mode, array('style' => 'class="oddeven"', 'colspan' => $colspan), '');
+					//}
 				}
 
 				$i++;
@@ -659,7 +664,7 @@ if ($action == 'create') {    // Create. Seems to no be used
 			}
 			print "\n";
 
-			print '<table width="100%" cellspacing="2"><tr><td width="50%" valign="top">';
+			print '<div class="fichecenter"><div class="fichehalfleft">';
 
 			/*
 			  * Documents generated
@@ -687,11 +692,11 @@ if ($action == 'create') {    // Create. Seems to no be used
 			}
 
 
-			print '</td><td valign="top" width="50%">';
+			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
-			// Rien a droite
+			// Nothing on right
 
-			print '</td></tr></table>';
+			print '</div></div></div>';
 		} else {
 			/* Expedition non trouvee */
 			print "Expedition inexistante ou acces refuse";

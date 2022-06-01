@@ -68,7 +68,7 @@ $pagenext = $page + 1;
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $object = new User($db);
 $extrafields = new ExtraFields($db);
-$diroutputmassaction = $conf->mymodule->dir_output.'/temp/massgeneration/'.$user->id;
+$diroutputmassaction = $conf->user->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('userlist'));
 
 // Fetch optionals attributes and labels
@@ -124,9 +124,9 @@ $arrayfields = array(
 	'u.office_phone'=>array('label'=>"PhonePro", 'checked'=>1, 'position'=>31),
 	'u.user_mobile'=>array('label'=>"PhoneMobile", 'checked'=>1, 'position'=>32),
 	'u.email'=>array('label'=>"EMail", 'checked'=>1, 'position'=>35),
-	'u.api_key'=>array('label'=>"ApiKey", 'checked'=>0, 'position'=>40, "enabled"=>($conf->api->enabled && $user->admin)),
+	'u.api_key'=>array('label'=>"ApiKey", 'checked'=>0, 'position'=>40, "enabled"=>(!empty($conf->api->enabled) && $user->admin)),
 	'u.fk_soc'=>array('label'=>"Company", 'checked'=>($contextpage == 'employeelist' ? 0 : 1), 'position'=>45),
-	'u.salary'=>array('label'=>"Salary", 'checked'=>1, 'position'=>80, 'enabled'=>($conf->salaries->enabled && !empty($user->rights->salaries->readall))),
+	'u.salary'=>array('label'=>"Salary", 'checked'=>1, 'position'=>80, 'enabled'=>(!empty($conf->salaries->enabled) && !empty($user->rights->salaries->readall))),
 	'u.datelastlogin'=>array('label'=>"LastConnexion", 'checked'=>1, 'position'=>100),
 	'u.datepreviouslogin'=>array('label'=>"PreviousConnexion", 'checked'=>0, 'position'=>110),
 	'u.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
@@ -154,6 +154,7 @@ $search_email = GETPOST('search_email', 'alpha');
 $search_api_key = GETPOST('search_api_key', 'alphanohtml');
 $search_statut = GETPOST('search_statut', 'intcomma');
 $search_thirdparty = GETPOST('search_thirdparty', 'alpha');
+$search_warehouse = GETPOST('search_warehouse', 'alpha');
 $search_supervisor = GETPOST('search_supervisor', 'intcomma');
 $optioncss = GETPOST('optioncss', 'alpha');
 $search_categ = GETPOST("search_categ", 'int');
@@ -181,8 +182,15 @@ if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
 
 $error = 0;
 
-if (!$user->rights->user->user->lire && !$user->admin) {
-	accessforbidden();
+// Permission to list
+if ($mode == 'employee') {
+	if (empty($user->rights->salaries->read)) {
+		accessforbidden();
+	}
+} else {
+	if (empty($user->rights->user->user->lire) && empty($user->admin)) {
+		accessforbidden();
+	}
 }
 
 $childids = $user->getAllChildIds(1);
@@ -223,6 +231,7 @@ if (empty($reshook)) {
 		$search_email = "";
 		$search_statut = "";
 		$search_thirdparty = "";
+		$search_warehouse = "";
 		$search_supervisor = "";
 		$search_api_key = "";
 		$search_datelastlogin = "";
@@ -336,7 +345,7 @@ $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // N
 $sql .= preg_replace('/^,/', '', $hookmanager->resPrint);
 $sql = preg_replace('/,\s*$/', '', $sql);
 $sql .= " FROM ".MAIN_DB_PREFIX."user as u";
-if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
+if (key_exists('label', $extrafields->attributes[$object->table_element]) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (u.rowid = ef.fk_object)";
 }
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON u.fk_soc = s.rowid";
@@ -361,6 +370,9 @@ if ($search_supervisor > 0) {
 }
 if ($search_thirdparty != '') {
 	$sql .= natural_search(array('s.nom'), $search_thirdparty);
+}
+if ($search_warehouse > 0) {
+	$sql .= natural_search(array('u.fk_warehouse'), $search_warehouse);
 }
 if ($search_login != '') {
 	$sql .= natural_search("u.login", $search_login);
@@ -405,13 +417,16 @@ if ($catid == -2) {
 	$sql .= " AND cu.fk_categorie IS NULL";
 }
 if ($search_categ > 0) {
-	$sql .= " AND cu.fk_categorie = ".$db->escape($search_categ);
+	$sql .= " AND cu.fk_categorie = ".((int) $search_categ);
 }
 if ($search_categ == -2) {
 	$sql .= " AND cu.fk_categorie IS NULL";
 }
+if ($search_warehouse > 0) {
+	$sql .= " AND u.fk_warehouse = ".((int) $search_warehouse);
+}
 if ($mode == 'employee' && empty($user->rights->salaries->readall)) {
-	$sql .= " AND u.fk_user IN (".$db->sanitize(join(',', $childids)).")";
+	$sql .= " AND u.rowid IN (".$db->sanitize(join(',', $childids)).")";
 }
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
@@ -517,7 +532,10 @@ if ($mode != '') {
 	$param .= '&amp;mode='.urlencode($mode);
 }
 if ($search_categ > 0) {
-	$param .= "&amp;search_categ=".urlencode($search_categ);
+	$param .= '&amp;search_categ='.urlencode($search_categ);
+}
+if ($search_warehouse > 0) {
+	$param .= '&amp;search_warehouse='.urlencode($search_warehouse);
 }
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
@@ -525,15 +543,15 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 // List of mass actions available
 $arrayofmassactions = array();
 if ($permissiontoadd) {
-	$arrayofmassactions['disable'] = $langs->trans("DisableUser");
+	$arrayofmassactions['disable'] = img_picto('', 'close_title', 'class="pictofixedwidth"').$langs->trans("DisableUser");
 }
 if ($permissiontoadd) {
-	$arrayofmassactions['reactivate'] = $langs->trans("Reactivate");
+	$arrayofmassactions['reactivate'] = img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Reactivate");
 }
 if ($permissiontoadd) {
-	$arrayofmassactions['preaffecttag'] = '<span class="fa fa-tag paddingrightonly"></span>'.$langs->trans("AffectTag");
+	$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
 }
-//if ($permissiontodelete) $arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
+//if ($permissiontodelete) $arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').'&ensp;'.$langs->trans("Delete");
 
 if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete', 'preaffecttag'))) {
 	$arrayofmassactions = array();
@@ -553,13 +571,13 @@ print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 $url = DOL_URL_ROOT.'/user/card.php?action=create'.($mode == 'employee' ? '&employee=1' : '').'&leftmenu=';
 if (!empty($socid)) {
-	$url .= '&socid='.$socid;
+	$url .= '&socid='.urlencode($socid);
 }
 
 $newcardbutton = dolGetButtonTitle($langs->trans('NewUser'), '', 'fa fa-plus-circle', $url, '', $permissiontoadd);
 
 $moreparam = array('morecss'=>'btnTitleSelected');
-$morehtmlright .= dolGetButtonTitle($langs->trans("List"), '', 'fa fa-list paddingleft imgforviewmode', DOL_URL_ROOT.'/user/list.php'.(($search_statut != '' && $search_statut >= 0) ? '?search_statut='.$search_statut : ''), '', 1, $moreparam);
+$morehtmlright = dolGetButtonTitle($langs->trans("List"), '', 'fa fa-list paddingleft imgforviewmode', DOL_URL_ROOT.'/user/list.php'.(($search_statut != '' && $search_statut >= 0) ? '?search_statut='.$search_statut : ''), '', 1, $moreparam);
 $moreparam = array('morecss'=>'marginleftonly');
 $morehtmlright .= dolGetButtonTitle($langs->trans("HierarchicView"), '', 'fa fa-stream paddingleft imgforviewmode', DOL_URL_ROOT.'/user/hierarchy.php'.(($search_statut != '' && $search_statut >= 0) ? '?search_statut='.$search_statut : ''), '', 1, $moreparam);
 
@@ -595,8 +613,17 @@ $moreforfilter = '';
 // Filter on categories
 if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire) {
 	$moreforfilter .= '<div class="divsearchfield">';
-	$moreforfilter .= $langs->trans('Categories').': ';
-	$moreforfilter .= $formother->select_categories(Categorie::TYPE_USER, $search_categ, 'search_categ', 1);
+	$tmptitle = $langs->trans('Category');
+	$moreforfilter .= img_picto($langs->trans("Category"), 'category', 'class="pictofixedwidth"').$formother->select_categories(Categorie::TYPE_USER, $search_categ, 'search_categ', 1, $tmptitle);
+	$moreforfilter .= '</div>';
+}
+// Filter on warehouse
+if (!empty($conf->stock->enabled) && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE_USER)) {
+	require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
+	$formproduct = new FormProduct($db);
+	$moreforfilter .= '<div class="divsearchfield">';
+	$tmptitle = $langs->trans('Warehouse');
+	$moreforfilter .= img_picto($tmptitle, 'stock', 'class="pictofixedwidth"').$formproduct->selectWarehouses($search_warehouse, 'search_warehouse', '', $tmptitle, 0, 0, $tmptitle);
 	$moreforfilter .= '</div>';
 }
 
@@ -654,10 +681,10 @@ if (!empty($arrayfields['u.accountancy_code']['checked'])) {
 	print '<td class="liste_titre"><input type="text" name="search_accountancy_code" class="maxwidth50" value="'.$search_accountancy_code.'"></td>';
 }
 if (!empty($arrayfields['u.office_phone']['checked'])) {
-	print '<td class="liste_titre"><input type="text" name="search_phonepro" class="maxwidth75" value="'.$search_phonepro.'"></td>';
+	print '<td class="liste_titre"><input type="text" name="search_phonepro" class="maxwidth50" value="'.$search_phonepro.'"></td>';
 }
 if (!empty($arrayfields['u.user_mobile']['checked'])) {
-	print '<td class="liste_titre"><input type="text" name="search_phonemobile" class="maxwidth75" value="'.$search_phonemobile.'"></td>';
+	print '<td class="liste_titre"><input type="text" name="search_phonemobile" class="maxwidth50" value="'.$search_phonemobile.'"></td>';
 }
 if (!empty($arrayfields['u.email']['checked'])) {
 	print '<td class="liste_titre"><input type="text" name="search_email" class="maxwidth75" value="'.$search_email.'"></td>';
@@ -724,7 +751,7 @@ if (!empty($arrayfields['u.gender']['checked'])) {
 	print_liste_field_titre("Gender", $_SERVER['PHP_SELF'], "u.gender", $param, "", "", $sortfield, $sortorder);
 }
 if (!empty($arrayfields['u.employee']['checked'])) {
-	print_liste_field_titre("Employee", $_SERVER['PHP_SELF'], "u.employee", $param, "", "", $sortfield, $sortorder);
+	print_liste_field_titre("Employee", $_SERVER['PHP_SELF'], "u.employee", $param, "", "", $sortfield, $sortorder, 'center ');
 }
 if (!empty($arrayfields['u.fk_user']['checked'])) {
 	print_liste_field_titre("HierarchicalResponsible", $_SERVER['PHP_SELF'], "u.fk_user", $param, "", "", $sortfield, $sortorder);
@@ -781,7 +808,7 @@ print '</tr>'."\n";
 
 // Detect if we need a fetch on each output line
 $needToFetchEachLine = 0;
-if (is_array($extrafields->attributes[$object->table_element]['computed']) && count($extrafields->attributes[$object->table_element]['computed']) > 0) {
+if (key_exists('computed', $extrafields->attributes[$object->table_element]) && is_array($extrafields->attributes[$object->table_element]['computed']) && count($extrafields->attributes[$object->table_element]['computed']) > 0) {
 	foreach ($extrafields->attributes[$object->table_element]['computed'] as $key => $val) {
 		if (preg_match('/\$object/', $val)) {
 			$needToFetchEachLine++; // There is at least one compute field that use $object
@@ -794,6 +821,7 @@ if (is_array($extrafields->attributes[$object->table_element]['computed']) && co
 // --------------------------------------------------------------------
 $i = 0;
 $totalarray = array();
+$totalarray['nbfield'] = 0;
 $arrayofselected = is_array($toselect) ? $toselect : array();
 while ($i < ($limit ? min($num, $limit) : $num)) {
 	$obj = $db->fetch_object($resql);
@@ -801,12 +829,14 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		break; // Should not happen
 	}
 
+	if (empty($obj->country_code)) $obj->country_code = '';		// TODO Add join in select with country table to get country_code
+
 	// Store properties in $object
 	$object->setVarsFromFetchObj($obj);
 
 	$userstatic->id = $obj->rowid;
 	$userstatic->admin = $obj->admin;
-	$userstatic->ref = $obj->label;
+	$userstatic->ref = $obj->rowid;
 	$userstatic->login = $obj->login;
 	$userstatic->statut = $obj->statut;
 	$userstatic->office_phone = $obj->office_phone;
@@ -821,9 +851,22 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 
 	$li = $userstatic->getNomUrl(-1, '', 0, 0, 24, 1, 'login', '', 1);
 
+	$canreadhrmdata = 0;
+	if ((!empty($conf->salaries->enabled) && !empty($user->rights->salaries->read) && in_array($obj->rowid, $childids))
+		|| (!empty($conf->salaries->enabled) && !empty($user->rights->salaries->readall))
+		|| (!empty($conf->hrm->enabled) && !empty($user->rights->hrm->employee->read))) {
+			$canreadhrmdata = 1;
+	}
+	$canreadsecretapi = 0;
+	if ($user->id = $obj->rowid || !empty($user->admin)) {	// Current user or admin
+		$canreadsecretapi = 1;
+	}
+
 	print '<tr class="oddeven">';
+
+	// Login
 	if (!empty($arrayfields['u.login']['checked'])) {
-		print '<td class="nowraponall">';
+		print '<td class="nowraponall tdoverflowmax150">';
 		print $li;
 		if (!empty($conf->multicompany->enabled) && $obj->admin && !$obj->entity) {
 			print img_picto($langs->trans("SuperAdministrator"), 'redstar', 'class="valignmiddle paddingleft"');
@@ -836,13 +879,13 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		}
 	}
 	if (!empty($arrayfields['u.lastname']['checked'])) {
-		  print '<td class="tdoverflowmax150">'.$obj->lastname.'</td>';
+		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->lastname).'">'.dol_escape_htmltag($obj->lastname).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 	if (!empty($arrayfields['u.firstname']['checked'])) {
-		print '<td class="tdoverflowmax150">'.$obj->firstname.'</td>';
+		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->lastname).'">'.dol_escape_htmltag($obj->firstname).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -857,8 +900,9 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			$totalarray['nbfield']++;
 		}
 	}
+	// Employee yes/no
 	if (!empty($arrayfields['u.employee']['checked'])) {
-		print '<td>'.yn($obj->employee).'</td>';
+		print '<td class="center">'.yn($obj->employee).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -900,33 +944,42 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			$totalarray['nbfield']++;
 		}
 	}
+
 	if (!empty($arrayfields['u.office_phone']['checked'])) {
-		print "<td>".dol_print_phone($obj->office_phone, $obj->country_code, 0, $obj->rowid, 'AC_TEL', ' ', 'phone')."</td>\n";
+		print '<td>'.dol_print_phone($obj->office_phone, $obj->country_code, 0, $obj->rowid, 'AC_TEL', ' ', 'phone')."</td>\n";
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 	if (!empty($arrayfields['u.user_mobile']['checked'])) {
-		print "<td>".dol_print_phone($obj->user_mobile, $obj->country_code, 0, $obj->rowid, 'AC_TEL', ' ', 'mobile')."</td>\n";
+		print '<td>'.dol_print_phone($obj->user_mobile, $obj->country_code, 0, $obj->rowid, 'AC_TEL', ' ', 'mobile')."</td>\n";
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 	if (!empty($arrayfields['u.email']['checked'])) {
-		print '<td class="tdoverflowmax150">'.dol_print_email($obj->email, $obj->rowid, $obj->socid, 'AC_EMAIL', 0, 0, 1)."</td>\n";
+		print '<td class="tdoverflowmax150">'.dol_print_email($obj->email, $obj->rowid, $obj->fk_soc, 'AC_EMAIL', 0, 0, 1)."</td>\n";
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 	if (!empty($arrayfields['u.api_key']['checked'])) {
-		print '<td>'.$obj->api_key.'</td>';
+		print '<td>';
+		if ($obj->api_key) {
+			if ($canreadsecretapi) {
+				print $obj->api_key;
+			} else {
+				print '<span class="opacitymedium">'.$langs->trans("Hidden").'</span>';
+			}
+		}
+		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 	if (!empty($arrayfields['u.fk_soc']['checked'])) {
 		print '<td class="tdoverflowmax200">';
-		if ($obj->fk_soc) {
+		if ($obj->fk_soc > 0) {
 			$companystatic->id = $obj->fk_soc;
 			$companystatic->name = $obj->name;
 			$companystatic->canvas = $obj->canvas;
@@ -960,7 +1013,15 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 
 	// Salary
 	if (!empty($arrayfields['u.salary']['checked'])) {
-		print '<td class="nowraponall right">'.($obj->salary ? price($obj->salary) : '').'</td>';
+		print '<td class="nowraponall right amount">';
+		if ($obj->salary) {
+			if ($canreadhrmdata) {
+				print price($obj->salary);
+			} else {
+				print '<span class="opacitymedium">'.$langs->trans("Hidden").'</span>';
+			}
+		}
+		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}

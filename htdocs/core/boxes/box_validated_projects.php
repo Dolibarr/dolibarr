@@ -118,7 +118,7 @@ class box_validated_projects extends ModeleBoxes
 			if ($projectsListId) {
 				$sql .= ' AND p.rowid IN ('.$this->db->sanitize($projectsListId).')'; // Only project we ara allowed
 			}
-			$sql .= " AND t.rowid NOT IN (SELECT fk_task FROM ".MAIN_DB_PREFIX."projet_task_time WHERE fk_user =".$user->id.")";
+			$sql .= " AND t.rowid NOT IN (SELECT fk_task FROM ".MAIN_DB_PREFIX."projet_task_time WHERE fk_user = ".((int) $user->id).")";
 			$sql .= " GROUP BY p.rowid, p.ref, p.fk_soc, p.dateo";
 			$sql .= " ORDER BY p.dateo ASC";
 

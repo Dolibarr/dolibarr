@@ -281,6 +281,8 @@ $form = new Form($db);
 $pagetitle = $langs->trans('ResourceElementPage');
 llxHeader('', $pagetitle, '');
 
+$now = dol_now();
+$delay_warning = $conf->global->MAIN_DELAY_ACTIONS_TODO * 24 * 60 * 60;
 
 // Load available resource, declared by modules
 $ret = count($object->available_resources);

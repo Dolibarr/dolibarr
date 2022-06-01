@@ -119,8 +119,6 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
 			//case 'USER_NEW_PASSWORD':
 			//case 'USER_ENABLEDISABLE':
 			//case 'USER_DELETE':
-			//case 'USER_SETINGROUP':
-			//case 'USER_REMOVEFROMGROUP':
 
 			// Actions
 			//case 'ACTION_MODIFY':

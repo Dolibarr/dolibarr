@@ -110,14 +110,13 @@ print '
     }
 
     a.alilevel0 {
-        background-image: url(\''.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/next.png\') !important;
+        background-image: url(\''.DOL_URL_ROOT.'/theme/'.urlencode($conf->theme).'/img/next.png\') !important;
         background-repeat: no-repeat !important;
         background-position-x: 10px;
         background-position-y: 16px;
         padding: 1em 15px 1em 40px;
     }
     li.lilevel0 font.vsmenudisabled {
-        /* background-image: url(/dolibarr_dev/htdocs/theme/eldy/img/next.png) !important; */
         background-repeat: no-repeat !important;
         background-position-x: 10px;
         background-position-y: 16px;
@@ -178,6 +177,9 @@ print '
         white-space: nowrap;
         display: block;
     }
+	.vsmenudisabled .fa, .vsmenudisabled .fas, .vsmenudisabled .far {
+	    color: #aaa !important;
+	}
 </style>
 
 <script type="text/javascript">

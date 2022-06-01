@@ -30,7 +30,6 @@ require_once DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php";
  */
 class box_graph_ticket_by_severity extends ModeleBoxes
 {
-
 	public $boxcode = "box_ticket_by_severity";
 	public $boximg = "ticket";
 	public $boxlabel;
@@ -153,7 +152,7 @@ class box_graph_ticket_by_severity extends ModeleBoxes
 				}
 				foreach ($listofoppcode as $rowid => $code) {
 					$dataseries[] = array(
-						'label' => $langs->getLabelFromKey($this->db, 'TicketSeverityShort' . $code, 'c_ticket_category', 'code', 'label', $code),
+						'label' => $langs->getLabelFromKey($this->db, 'TicketSeverityShort' . $code, 'c_ticket_severity', 'code', 'label', $code),
 						'data' => (empty($data[$code]) ? 0 : $data[$code])
 					);
 				}
@@ -168,16 +167,17 @@ class box_graph_ticket_by_severity extends ModeleBoxes
 				$mesg = $px1->isGraphKo();
 				$totalnb = 0;
 				if (!$mesg) {
-					$px1->SetDataColor(array_values($colorseriesstat));
+					//$px1->SetDataColor(array_values($colorseriesstat));
 					$data = array();
 					$legend = array();
 					foreach ($dataseries as $value) {
 						$data[] = array($value['label'], $value['data']);
 						$totalnb += $value['data'];
 					}
+
 					$px1->SetData($data);
-					$px1->setShowLegend(2);
-					$px1->SetType(array('pie'));
+					$px1->setShowLegend(0);
+					$px1->SetType(array('bars'));
 					$px1->SetLegend($legend);
 					$px1->SetMaxValue($px1->GetCeilMaxValue());
 					//$px1->SetHeight($HEIGHT);

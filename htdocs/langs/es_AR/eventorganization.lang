@@ -1,0 +1,4 @@
+# Dolibarr language file - Source file is en_US - eventorganization
+EventOrganizationDescriptionLong=Manage the organization of an event (show, conferences, attendees or speakers, with public pages for suggestion, vote or registration)
+Settings=Ajustes
+EvntOrgDone =Hecho

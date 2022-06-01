@@ -1,8 +1,10 @@
-# ProductBATCH language file - en_US - ProductBATCH
+# ProductBATCH language file - Source file is en_US - ProductBATCH
 ManageLotSerial=Använd batch/serie-nummer
-ProductStatusOnBatch=Ja (batch/sere-nummer krävs)
+ProductStatusOnBatch=Ja (tillverkning/serienummer krävs)
+ProductStatusOnSerial=Ja (Unikt serienummer krävs)
 ProductStatusNotOnBatch=Nej (batch/serie-nummer används ej)
-ProductStatusOnBatchShort=Ja
+ProductStatusOnBatchShort=Parti
+ProductStatusOnSerialShort=Serie
 ProductStatusNotOnBatchShort=Nej
 Batch=Batch/Serie
 atleast1batchfield=Bäst före-datum eller Batch/Serie-nummer
@@ -16,9 +18,27 @@ printEatby=Äter med:%s
 printSellby=Sälj-med :%s
 printQty=Antal: %d
 AddDispatchBatchLine=Lägg en linje för Hållbarhet avsändning
-WhenProductBatchModuleOnOptionAreForced=När modulen Lot / Serial är på, är automatisk lagerminskning tvungen att "Minska reella lager vid fraktvalidering" och automatisk ökningsläge är tvungen att "Öka reella lager vid manuell leverans till lager" och kan inte redigeras. Andra alternativ kan definieras som du vill.
+WhenProductBatchModuleOnOptionAreForced=När modulen Lot / Serial är på, är automatisk lagerminskning tvungen att "Minska reella lager vid fraktbekräftande" och automatisk ökningsläge är tvungen att "Öka reella lager vid manuell leverans till lager" och kan inte redigeras. Andra alternativ kan definieras som du vill.
 ProductDoesNotUseBatchSerial=Denna produkt använder ej batch/serie-nummer
 ProductLotSetup=Inställning av batch/serie modul
 ShowCurrentStockOfLot=Visa aktuellt lager för sammansatt produkt/parti
 ShowLogOfMovementIfLot=Visa statestik för sammansatt produkt/parti
 StockDetailPerBatch=Detaljlager för parti
+SerialNumberAlreadyInUse=Serienummer %s är redan använt för produkt %s
+TooManyQtyForSerialNumber=Du kan bara ha en produkt %s för serienummer %s
+ManageLotMask=Anpassad mask
+CustomMasks=Möjlighet att definiera en annan numreringsmask för varje produkt
+BatchLotNumberingModules=Numreringsregel för automatisk generering av partinummer
+BatchSerialNumberingModules=Numreringsregel för automatisk generering av serienummer (för produkter med egendom 1 unikt parti / serienummer för varje produkt)
+QtyToAddAfterBarcodeScan=Antal att lägga till för varje streckkod/parti/serienummer skannat
+LifeTime=Livslängd (i dagar)
+EndOfLife=Livslängd
+ManufacturingDate=Tillverkningsdatum
+DestructionDate=Raseringsdatum
+FirstUseDate=Första användningsdatum
+QCFrequency=Kvalitetskontrollsperiod (i dagar)
+ShowAllLots=Show all lots
+HideLots=Hide lots
+#Traceability - qc status
+OutOfOrder=Ej tillgänglig
+InWorkingOrder=I fungerande skick

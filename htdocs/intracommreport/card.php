@@ -203,7 +203,7 @@ if ($id > 0 && $action != 'edit') {
 			);
 		}
 		print $form->formconfirm(
-			"card.php?rowid=".$id,
+			"card.php?rowid=".urlencode($id),
 			$langs->trans("DeleteReport"),
 			$langs->trans("ConfirmDeleteReport"),
 			"confirm_delete",

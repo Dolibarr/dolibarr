@@ -1,8 +1,10 @@
-# ProductBATCH language file - en_US - ProductBATCH
+# ProductBATCH language file - Source file is en_US - ProductBATCH
 ManageLotSerial=Utilitza el número de lot/sèrie
-ProductStatusOnBatch=Sí (es requereix un lot/sèrie)
+ProductStatusOnBatch=Sí (es requereix lot)
+ProductStatusOnSerial=Sí (es requereix un número de sèrie únic)
 ProductStatusNotOnBatch=No (lot/sèrie no utilitzat)
-ProductStatusOnBatchShort=Si
+ProductStatusOnBatchShort=Lot
+ProductStatusOnSerialShort=En sèrie
 ProductStatusNotOnBatchShort=No
 Batch=Lot/Sèrie
 atleast1batchfield=Data de caducitat o data de venda o número de lot/sèrie
@@ -22,3 +24,21 @@ ProductLotSetup=Configuració del mòdul lot/sèries
 ShowCurrentStockOfLot=Mostra l'estoc actual de la parella producte/lot
 ShowLogOfMovementIfLot=Mostra el registre de moviments de la parella producte/lot
 StockDetailPerBatch=Detall d’estoc per lot
+SerialNumberAlreadyInUse=El número de sèrie %s ja s’utilitza per al producte %s
+TooManyQtyForSerialNumber=Només podeu tenir un producte %s per al número de sèrie %s
+ManageLotMask=Màscara personalitzada
+CustomMasks=Opció per definir una màscara de numeració diferent per a cada producte
+BatchLotNumberingModules=Regla de numeració per a la generació automàtica del número de lot
+BatchSerialNumberingModules=Regla de numeració per a la generació automàtica de número de sèrie (per a productes amb la propietat 1 lot / sèrie únic per a cada producte)
+QtyToAddAfterBarcodeScan=Quantitat per afegir per a cada codi de barres / lot / sèrie escanejat
+LifeTime=Vida útil (en dies)
+EndOfLife=Final de la vida
+ManufacturingDate=Data de fabricació
+DestructionDate=Data de destrucció
+FirstUseDate=Data del primer ús
+QCFrequency=Freqüència de control de qualitat (en dies)
+ShowAllLots=Show all lots
+HideLots=Hide lots
+#Traceability - qc status
+OutOfOrder=No funciona
+InWorkingOrder=En procés

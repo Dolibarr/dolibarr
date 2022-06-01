@@ -611,7 +611,7 @@ foreach ($dirmodels as $reldir) {
 	}
 }
 
-print '</table><br/>';
+print '</table><br>';
 
 
 
@@ -750,7 +750,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS)) {
 		}
 	}
 
-	print '</table><br/>';
+	print '</table><br>';
 }
 
 

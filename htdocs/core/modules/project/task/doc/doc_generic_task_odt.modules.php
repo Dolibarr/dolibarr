@@ -50,10 +50,10 @@ if (!empty($conf->facture->enabled)) {
 if (!empty($conf->commande->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 }
-if (!empty($conf->fournisseur->enabled)) {
+if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_invoice->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 }
-if (!empty($conf->fournisseur->enabled)) {
+if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 }
 if (!empty($conf->contrat->enabled)) {
@@ -121,21 +121,21 @@ class doc_generic_task_odt extends ModelePDFTask
 		$this->marge_haute = 0;
 		$this->marge_basse = 0;
 
-		$this->option_logo = 1; // Affiche logo
-		$this->option_tva = 0; // Gere option tva COMMANDE_TVAOPTION
-		$this->option_modereg = 0; // Affiche mode reglement
-		$this->option_condreg = 0; // Affiche conditions reglement
-		$this->option_codeproduitservice = 0; // Affiche code produit-service
-		$this->option_multilang = 0; // Dispo en plusieurs langues
-		$this->option_escompte = 0; // Affiche si il y a eu escompte
+		$this->option_logo = 1; // Display logo
+		$this->option_tva = 0; // Manage the vat option COMMANDE_TVAOPTION
+		$this->option_modereg = 0; // Display payment mode
+		$this->option_condreg = 0; // Display payment terms
+		$this->option_codeproduitservice = 0; // Display product-service code
+		$this->option_multilang = 0; // Available in several languages
+		$this->option_escompte = 0; // Displays if there has been a discount
 		$this->option_credit_note = 0; // Support credit notes
 		$this->option_freetext = 1; // Support add of a personalised text
 		$this->option_draft_watermark = 0; // Support add of a watermark on drafts
 
-		// Recupere emetteur
+		// Get source company
 		$this->emetteur = $mysoc;
 		if (!$this->emetteur->pays_code) {
-			$this->emetteur->pays_code = substr($langs->defaultlang, -2); // Par defaut, si n'etait pas defini
+			$this->emetteur->pays_code = substr($langs->defaultlang, -2); // By default, if was not defined
 		}
 	}
 
@@ -416,7 +416,7 @@ class doc_generic_task_odt extends ModelePDFTask
 		$texte .= $conf->global->PROJECT_TASK_ADDON_PDF_ODT_PATH;
 		$texte .= '</textarea>';
 		$texte .= '</div><div style="display: inline-block; vertical-align: middle;">';
-		$texte .= '<input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button">';
+		$texte .= '<input type="submit" class="button small" value="'.$langs->trans("Modify").'" name="Button">';
 		$texte .= '<br></div></div>';
 
 		// Scan directories
@@ -524,6 +524,11 @@ class doc_generic_task_odt extends ModelePDFTask
 				//print "conf->societe->dir_temp=".$conf->societe->dir_temp;
 
 				dol_mkdir($conf->projet->dir_temp);
+				if (!is_writable($conf->projet->dir_temp)) {
+					$this->error = "Failed to write in temp directory ".$conf->projet->dir_temp;
+					dol_syslog('Error in write_file: '.$this->error, LOG_ERR);
+					return -1;
+				}
 
 				$socobject = $project->thirdparty;
 
@@ -657,7 +662,7 @@ class doc_generic_task_odt extends ModelePDFTask
 					$sql .= ", u.lastname, u.firstname";
 					$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as t";
 					$sql .= " , ".MAIN_DB_PREFIX."user as u";
-					$sql .= " WHERE t.fk_task =".$object->id;
+					$sql .= " WHERE t.fk_task =".((int) $object->id);
 					$sql .= " AND t.fk_user = u.rowid";
 					$sql .= " ORDER BY t.task_date DESC";
 

@@ -69,7 +69,7 @@ class MyModuleApi extends DolibarrApi
 	 */
 	public function get($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->mymodule->read) {
+		if (!DolibarrApiAccess::$user->rights->mymodule->myobject->read) {
 			throw new RestException(401);
 		}
 
@@ -145,20 +145,20 @@ class MyModuleApi extends DolibarrApi
 			$sql .= " AND t.fk_soc = sc.fk_soc";
 		}
 		if ($restrictonsocid && $socid) {
-			$sql .= " AND t.fk_soc = ".$socid;
+			$sql .= " AND t.fk_soc = ".((int) $socid);
 		}
 		if ($restrictonsocid && $search_sale > 0) {
 			$sql .= " AND t.rowid = sc.fk_soc"; // Join for the needed table to filter by sale
 		}
 		// Insert sale filter
 		if ($restrictonsocid && $search_sale > 0) {
-			$sql .= " AND sc.fk_user = ".$search_sale;
+			$sql .= " AND sc.fk_user = ".((int) $search_sale);
 		}
 		if ($sqlfilters) {
 			if (!DolibarrApi::_checkFilters($sqlfilters)) {
 				throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
 			}
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
 			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
@@ -205,15 +205,20 @@ class MyModuleApi extends DolibarrApi
 	 */
 	public function post($request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->mymodule->write) {
+		if (!DolibarrApiAccess::$user->rights->mymodule->myobject->write) {
 			throw new RestException(401);
 		}
+
 		// Check mandatory fields
 		$result = $this->_validate($request_data);
 
 		foreach ($request_data as $field => $value) {
-			$this->myobject->$field = $value;
+			$this->myobject->$field = $this->_checkValForAPI($field, $value, $this->myobject);
 		}
+
+		// Clean data
+		// $this->myobject->abc = checkVal($this->myobject->abc, 'alphanohtml');
+
 		if ($this->myobject->create(DolibarrApiAccess::$user)<0) {
 			throw new RestException(500, "Error creating MyObject", array_merge(array($this->myobject->error), $this->myobject->errors));
 		}
@@ -233,7 +238,7 @@ class MyModuleApi extends DolibarrApi
 	 */
 	public function put($id, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->mymodule->write) {
+		if (!DolibarrApiAccess::$user->rights->mymodule->myobject->write) {
 			throw new RestException(401);
 		}
 
@@ -250,8 +255,11 @@ class MyModuleApi extends DolibarrApi
 			if ($field == 'id') {
 				continue;
 			}
-			$this->myobject->$field = $value;
+			$this->myobject->$field = $this->_checkValForAPI($field, $value, $this->myobject);
 		}
+
+		// Clean data
+		// $this->myobject->abc = checkVal($this->myobject->abc, 'alphanohtml');
 
 		if ($this->myobject->update(DolibarrApiAccess::$user, false) > 0) {
 			return $this->get($id);
@@ -272,7 +280,7 @@ class MyModuleApi extends DolibarrApi
 	 */
 	public function delete($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->mymodule->delete) {
+		if (!DolibarrApiAccess::$user->rights->mymodule->myobject->delete) {
 			throw new RestException(401);
 		}
 		$result = $this->myobject->fetch($id);

@@ -29,7 +29,7 @@
 require_once DOL_DOCUMENT_ROOT.'/core/modules/expedition/modules_expedition.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
-
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 /**
  *	Class to build sending documents with model espadon
@@ -139,7 +139,7 @@ class pdf_espadon extends ModelePdfExpedition
 		$this->marge_haute = isset($conf->global->MAIN_PDF_MARGIN_TOP) ? $conf->global->MAIN_PDF_MARGIN_TOP : 10;
 		$this->marge_basse = isset($conf->global->MAIN_PDF_MARGIN_BOTTOM) ? $conf->global->MAIN_PDF_MARGIN_BOTTOM : 10;
 
-		$this->option_logo = 1;
+		$this->option_logo = 1; // Display logo
 
 		// Get source company
 		$this->emetteur = $mysoc;
@@ -201,14 +201,13 @@ class pdf_espadon extends ModelePdfExpedition
 					continue;
 				}
 
-				$objphoto = new Product($this->db);
 				$objphoto->fetch($object->lines[$i]->fk_product);
 
 				if (!empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) {
 					$pdir = get_exdir($object->lines[$i]->fk_product, 2, 0, 0, $objphoto, 'product').$object->lines[$i]->fk_product."/photos/";
 					$dir = $conf->product->dir_output.'/'.$pdir;
 				} else {
-					$pdir = get_exdir(0, 2, 0, 0, $objphoto, 'product').dol_sanitizeFileName($objphoto->ref).'/';
+					$pdir = get_exdir(0, 0, 0, 0, $objphoto, 'product');
 					$dir = $conf->product->dir_output.'/'.$pdir;
 				}
 
@@ -318,13 +317,13 @@ class pdf_espadon extends ModelePdfExpedition
 					$pdf->useTemplate($tplidx);
 				}
 				$pagenb++;
-				$this->_pagehead($pdf, $object, 1, $outputlangs);
+				$top_shift = $this->_pagehead($pdf, $object, 1, $outputlangs);
 				$pdf->SetFont('', '', $default_font_size - 1);
 				$pdf->MultiCell(0, 3, ''); // Set interline to 3
 				$pdf->SetTextColor(0, 0, 0);
 
 				$tab_top = 90;
-				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD) ? 42 : 10);
+				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD) ? 42 + $top_shift: 10);
 				$tab_height = 130;
 				$tab_height_newpage = 150;
 
@@ -361,17 +360,14 @@ class pdf_espadon extends ModelePdfExpedition
 				}
 
 				if (!empty($notetoshow) || !empty($object->tracking_number)) {
-					$tab_top = 88 + $height_incoterms;
-					$tab_top_alt = $tab_top;
-
-					$pdf->SetFont('', 'B', $default_font_size - 2);
-					$pdf->writeHTMLCell(60, 4, $this->posxdesc - 1, $tab_top - 1, $outputlangs->transnoentities("TrackingNumber")." : ".$object->tracking_number, 0, 1, false, true, 'L');
-
-					$tab_top_alt = $pdf->GetY();
-					//$tab_top_alt += 1;
+					$tab_top -= 2;
 
 					// Tracking number
 					if (!empty($object->tracking_number)) {
+						$pdf->SetFont('', 'B', $default_font_size - 2);
+						$pdf->writeHTMLCell(60, 4, $this->posxdesc - 1, $tab_top - 1, $outputlangs->transnoentities("TrackingNumber") . " : " . $object->tracking_number, 0, 1, false, true, 'L');
+
+						$tab_top_alt = $pdf->GetY();
 						$object->getUrlTrackingStatus($object->tracking_number);
 						if (!empty($object->tracking_url)) {
 							if ($object->shipping_method_id > 0) {
@@ -390,28 +386,124 @@ class pdf_espadon extends ModelePdfExpedition
 								$pdf->SetFont('', 'B', $default_font_size - 2);
 								$pdf->writeHTMLCell(60, 4, $this->posxdesc - 1, $tab_top_alt, $label, 0, 1, false, true, 'L');
 
-								$tab_top_alt = $pdf->GetY();
+								$tab_top = $pdf->GetY();
 							}
 						}
 					}
 
+
 					// Notes
+					$pagenb = $pdf->getPage();
 					if (!empty($notetoshow)) {
-						$pdf->SetFont('', '', $default_font_size - 1); // In loop to manage multi-page
-						$pdf->writeHTMLCell(190, 3, $this->posxdesc - 1, $tab_top_alt, dol_htmlentitiesbr($notetoshow), 0, 1);
+						$tab_top -= 2;
+
+						$tab_width = $this->page_largeur - $this->marge_gauche - $this->marge_droite;
+						$pageposbeforenote = $pagenb;
+
+						$substitutionarray = pdf_getSubstitutionArray($outputlangs, null, $object);
+						complete_substitutions_array($substitutionarray, $outputlangs, $object);
+						$notetoshow = make_substitutions($notetoshow, $substitutionarray, $outputlangs);
+						$notetoshow = convertBackOfficeMediasLinksToPublicLinks($notetoshow);
+
+						$pdf->startTransaction();
+
+						$pdf->SetFont('', '', $default_font_size - 1);
+						$pdf->writeHTMLCell(190, 3, $this->posxdesc - 1, $tab_top, dol_htmlentitiesbr($notetoshow), 0, 1);
+						// Description
+						$pageposafternote = $pdf->getPage();
+						$posyafter = $pdf->GetY();
+
+						if ($pageposafternote > $pageposbeforenote) {
+							$pdf->rollbackTransaction(true);
+
+							// prepare pages to receive notes
+							while ($pagenb < $pageposafternote) {
+								$pdf->AddPage();
+								$pagenb++;
+								if (!empty($tplidx)) $pdf->useTemplate($tplidx);
+								if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
+								// $this->_pagefoot($pdf,$object,$outputlangs,1);
+								$pdf->setTopMargin($tab_top_newpage);
+								// The only function to edit the bottom margin of current page to set it.
+								$pdf->setPageOrientation('', 1, $heightforfooter + $heightforfreetext);
+							}
+
+							// back to start
+							$pdf->setPage($pageposbeforenote);
+							$pdf->setPageOrientation('', 1, $heightforfooter + $heightforfreetext);
+							$pdf->SetFont('', '', $default_font_size - 1);
+							$pdf->writeHTMLCell(190, 3, $this->posxdesc - 1, $tab_top, dol_htmlentitiesbr($notetoshow), 0, 1);
+							$pageposafternote = $pdf->getPage();
+
+							$posyafter = $pdf->GetY();
+
+							if ($posyafter > ($this->page_hauteur - ($heightforfooter + $heightforfreetext + 20))) {	// There is no space left for total+free text
+								$pdf->AddPage('', '', true);
+								$pagenb++;
+								$pageposafternote++;
+								$pdf->setPage($pageposafternote);
+								$pdf->setTopMargin($tab_top_newpage);
+								// The only function to edit the bottom margin of current page to set it.
+								$pdf->setPageOrientation('', 1, $heightforfooter + $heightforfreetext);
+								//$posyafter = $tab_top_newpage;
+							}
+
+
+							// apply note frame to previous pages
+							$i = $pageposbeforenote;
+							while ($i < $pageposafternote) {
+								$pdf->setPage($i);
+
+
+								$pdf->SetDrawColor(128, 128, 128);
+								// Draw note frame
+								if ($i > $pageposbeforenote) {
+									$height_note = $this->page_hauteur - ($tab_top_newpage + $heightforfooter);
+									$pdf->Rect($this->marge_gauche, $tab_top_newpage - 1, $tab_width, $height_note + 1);
+								} else {
+									$height_note = $this->page_hauteur - ($tab_top + $heightforfooter);
+									$pdf->Rect($this->marge_gauche, $tab_top - 1, $tab_width, $height_note + 1);
+								}
+
+								// Add footer
+								$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
+								$this->_pagefoot($pdf, $object, $outputlangs, 1);
+
+								$i++;
+							}
+
+							// apply note frame to last page
+							$pdf->setPage($pageposafternote);
+							if (!empty($tplidx)) $pdf->useTemplate($tplidx);
+							if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
+							$height_note = $posyafter - $tab_top_newpage;
+							$pdf->Rect($this->marge_gauche, $tab_top_newpage - 1, $tab_width, $height_note + 1);
+						} else // No pagebreak
+						{
+							$pdf->commitTransaction();
+							$posyafter = $pdf->GetY();
+							$height_note = $posyafter - $tab_top;
+							$pdf->Rect($this->marge_gauche, $tab_top - 1, $tab_width, $height_note + 1);
+
+
+							if ($posyafter > ($this->page_hauteur - ($heightforfooter + $heightforfreetext + 20))) {
+								// not enough space, need to add page
+								$pdf->AddPage('', '', true);
+								$pagenb++;
+								$pageposafternote++;
+								$pdf->setPage($pageposafternote);
+								if (!empty($tplidx)) $pdf->useTemplate($tplidx);
+								if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
+
+								$posyafter = $tab_top_newpage;
+							}
+						}
+
+						$tab_height = $tab_height - $height_note;
+						$tab_top = $posyafter + 6;
+					} else {
+						$height_note = 0;
 					}
-
-					$nexY = $pdf->GetY();
-					$height_note = $nexY - $tab_top;
-
-					// Rect takes a length in 3rd parameter
-					$pdf->SetDrawColor(192, 192, 192);
-					$pdf->Rect($this->marge_gauche, $tab_top - 1, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $height_note + 1);
-
-					$tab_height = $tab_height - $height_note;
-					$tab_top = $nexY + 6;
-				} else {
-					$height_note = 0;
 				}
 
 
@@ -420,13 +512,15 @@ class pdf_espadon extends ModelePdfExpedition
 
 				// Table simulation to know the height of the title line
 				$pdf->startTransaction();
-				$this->pdfTabTitles($pdf, $tab_top, $tab_height, $outputlangs, $hidetop);
+				$this->pdfTabTitles($pdf, $tab_top, $tab_height, $outputlangs);
 				$pdf->rollbackTransaction(true);
 
 
 				$nexY = $tab_top + $this->tabTitleHeight;
 
 				// Loop on each lines
+				$pageposbeforeprintlines = $pdf->getPage();
+				$pagenb = $pageposbeforeprintlines;
 				for ($i = 0; $i < $nblines; $i++) {
 					$curY = $nexY;
 					$pdf->SetFont('', '', $default_font_size - 1); // Into loop to work with multipage
@@ -514,7 +608,7 @@ class pdf_espadon extends ModelePdfExpedition
 						$posYAfterDescription = $pdf->GetY();
 					}
 
-					$nexY = $pdf->GetY();
+					$nexY = max($pdf->GetY(), $posYAfterImage);
 					$pageposafter = $pdf->getPage();
 
 					$pdf->setPage($pageposbefore);
@@ -590,7 +684,7 @@ class pdf_espadon extends ModelePdfExpedition
 					// Detect if some page were added automatically and output _tableau for past pages
 					while ($pagenb < $pageposafter) {
 						$pdf->setPage($pagenb);
-						if ($pagenb == 1) {
+						if ($pagenb == $pageposbeforeprintlines) {
 							$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1);
 						} else {
 							$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1);
@@ -995,7 +1089,7 @@ class pdf_espadon extends ModelePdfExpedition
 			$pdf->SetTextColor(0, 0, 0);
 			$pdf->SetFont('', '', $default_font_size - 2);
 			$pdf->SetXY($posx, $posy - 5);
-			$pdf->MultiCell(66, 5, $outputlangs->transnoentities("Sender").":", 0, 'L');
+			$pdf->MultiCell($widthrecbox, 5, $outputlangs->transnoentities("Sender"), 0, 'L');
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetFillColor(230, 230, 230);
 			$pdf->MultiCell($widthrecbox, $hautcadre, "", 0, 'R', 1);
@@ -1023,7 +1117,7 @@ class pdf_espadon extends ModelePdfExpedition
 			}
 
 			// Recipient name
-			if ($usecontact && ($object->contact->fk_soc != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)))) {
+			if ($usecontact && ($object->contact->socid != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)))) {
 				$thirdparty = $object->contact;
 			} else {
 				$thirdparty = $object->thirdparty;
@@ -1048,7 +1142,7 @@ class pdf_espadon extends ModelePdfExpedition
 			$pdf->SetTextColor(0, 0, 0);
 			$pdf->SetFont('', '', $default_font_size - 2);
 			$pdf->SetXY($posx + 2, $posy - 5);
-			$pdf->MultiCell($widthrecbox, 5, $outputlangs->transnoentities("Recipient").":", 0, 'L');
+			$pdf->MultiCell($widthrecbox, 5, $outputlangs->transnoentities("Recipient"), 0, 'L');
 			$pdf->Rect($posx, $posy, $widthrecbox, $hautcadre);
 
 			// Show recipient name

@@ -148,25 +148,8 @@ if ($action == 'other') {
 	$value = GETPOST('activate_FillProductDescAuto', 'alpha');
 	$res = dolibarr_set_const($db, "PRODUIT_AUTOFILL_DESC", $value, 'chaine', 0, '', $conf->entity);
 
-	if ($value) {
-		$sql_test = "SELECT count(desc_fourn) as cpt FROM ".MAIN_DB_PREFIX."product_fournisseur_price WHERE 1";
-		$resql = $db->query($sql_test);
-		if (!$resql && $db->lasterrno == 'DB_ERROR_NOSUCHFIELD') { // if the field does not exist, we create it
-			$sql_new = "ALTER TABLE ".MAIN_DB_PREFIX."product_fournisseur_price ADD COLUMN desc_fourn text";
-			$resql_new = $db->query($sql_new);
-		}
-	}
-
 	$value = GETPOST('activate_useProdSupplierPackaging', 'alpha');
 	$res = dolibarr_set_const($db, "PRODUCT_USE_SUPPLIER_PACKAGING", $value, 'chaine', 0, '', $conf->entity);
-	if ($value) {
-		$sql_test = "SELECT count(packaging) as cpt FROM ".MAIN_DB_PREFIX."product_fournisseur_price WHERE 1";
-		$resql = $db->query($sql_test);
-		if (!$resql && $db->lasterrno == 'DB_ERROR_NOSUCHFIELD') { // if the field does not exist, we create it
-			$sql_new = "ALTER TABLE ".MAIN_DB_PREFIX."product_fournisseur_price ADD COLUMN packaging double(24,8) DEFAULT 1";
-			$resql_new = $db->query($sql_new);
-		}
-	}
 }
 
 if ($action == 'specimen') { // For products
@@ -295,13 +278,14 @@ $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 print load_fiche_titre($langs->trans("ProductCodeChecker"), '', '');
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">'."\n";
 print '<tr class="liste_titre">'."\n";
 print '  <td>'.$langs->trans("Name").'</td>';
 print '  <td>'.$langs->trans("Description").'</td>';
 print '  <td>'.$langs->trans("Example").'</td>';
 print '  <td class="center" width="80">'.$langs->trans("Status").'</td>';
-print '  <td class="center" width="60">'.$langs->trans("ShortInfo").'</td>';
+print '  <td class="center"></td>';
 print "</tr>\n";
 
 foreach ($dirproduct as $dirroot) {
@@ -333,7 +317,7 @@ foreach ($dirproduct as $dirroot) {
 				print '<tr class="oddeven">'."\n";
 				print '<td width="140">'.$modCodeProduct->name.'</td>'."\n";
 				print '<td>'.$modCodeProduct->info($langs).'</td>'."\n";
-				print '<td class="nowrap">'.$modCodeProduct->getExample($langs).'</td>'."\n";
+				print '<td class="nowrap"><span class="opacitymedium">'.$modCodeProduct->getExample($langs).'</span></td>'."\n";
 
 				if (!empty($conf->global->PRODUCT_CODEPRODUCT_ADDON) && $conf->global->PRODUCT_CODEPRODUCT_ADDON == $file) {
 					print '<td class="center">'."\n";
@@ -366,6 +350,7 @@ foreach ($dirproduct as $dirroot) {
 	}
 }
 print '</table>';
+print '</div>';
 
 // Module to build doc
 $def = array();
@@ -390,13 +375,14 @@ print '<br>';
 
 print load_fiche_titre($langs->trans("ProductDocumentTemplates"), '', '');
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
 print '<td class="center" width="60">'.$langs->trans("Status")."</td>\n";
 print '<td class="center" width="60">'.$langs->trans("Default")."</td>\n";
-print '<td class="center" width="80">'.$langs->trans("ShortInfo").'</td>';
+print '<td class="center"></td>';
 print '<td class="center" width="80">'.$langs->trans("Preview").'</td>';
 print "</tr>\n";
 
@@ -499,6 +485,8 @@ foreach ($dirmodels as $reldir) {
 }
 
 print '</table>';
+print '</div>';
+
 print "<br>";
 
 /*
@@ -507,14 +495,17 @@ print "<br>";
 
 print "<br>";
 
-print load_fiche_titre($langs->trans("ProductOtherConf"), '', '');
-
 
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="other">';
 print '<input type="hidden" name="page_y" value="">';
 
+
+print load_fiche_titre($langs->trans("ProductOtherConf"), '', '');
+
+
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameters").'</td>'."\n";
@@ -592,6 +583,40 @@ print $form->selectPriceBaseType($conf->global->PRODUCT_PRICE_BASE_TYPE, "price_
 print '</td>';
 print '</tr>';
 
+if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) {
+	print '<tr class="oddeven">';
+	print '<td>'.$langs->trans("UseProductFournDesc").'</td>';
+	print '<td class="right">';
+	print $form->selectyesno("activate_useProdFournDesc", (!empty($conf->global->PRODUIT_FOURN_TEXTS) ? $conf->global->PRODUIT_FOURN_TEXTS : 0), 1);
+	print '</td>';
+	print '</tr>';
+
+	print '<tr class="oddeven">';
+	print '<td>'.$langs->trans("UseProductSupplierPackaging").'</td>';
+	print '<td align="right">';
+	print $form->selectyesno("activate_useProdSupplierPackaging", (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING) ? $conf->global->PRODUCT_USE_SUPPLIER_PACKAGING : 0), 1);
+	print '</td>';
+	print '</tr>';
+}
+
+print '</table>';
+print '</div>';
+
+print '<div class="center">';
+print '<input type="submit" class="button reposition" value="'.$langs->trans("Modify").'">';
+print '</div>';
+
+
+print load_fiche_titre($langs->trans("UserInterface"), '', '');
+
+
+print '<div class="div-table-responsive-no-min">';
+print '<table class="noborder centpercent">';
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("Parameters").'</td>'."\n";
+print '<td class="right" width="60">'.$langs->trans("Value").'</td>'."\n";
+print '</tr>'."\n";
+
 // Use Ajax form to select a product
 
 print '<tr class="oddeven">';
@@ -624,9 +649,10 @@ if (empty($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)) {
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("OnProductSelectAddProductDesc").'</td>';
 print '<td class="right">';
+print '<!-- PRODUIT_AUTOFILL_DESC -->';
 print $form->selectarray(
 	"activate_FillProductDescAuto",
-	array(1=>'AutoFillFormFieldBeforeSubmit', 0=>'DoNotAutofillButAutoConcat', -1=>'DoNotUseDescriptionOfProdut'),
+	array(0=>'DoNotAutofillButAutoConcat', 1=>'AutoFillFormFieldBeforeSubmit', 2=>'DoNotUseDescriptionOfProdut'),
 	empty($conf->global->PRODUIT_AUTOFILL_DESC) ? 0 : $conf->global->PRODUIT_AUTOFILL_DESC,
 	0,
 	0,
@@ -636,7 +662,7 @@ print $form->selectarray(
 	0,
 	0,
 	'',
-	'maxwidth400',
+	'minwidth100imp maxwidth400',
 	1
 );
 print '</td>';
@@ -678,22 +704,6 @@ if (!empty($conf->global->MAIN_MULTILANGS)) {
 	print '<td>'.$langs->trans("ViewProductDescInThirdpartyLanguageAbility").'</td>';
 	print '<td class="right">';
 	print $form->selectyesno("activate_viewProdTextsInThirdpartyLanguage", (!empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE) ? $conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE : 0), 1);
-	print '</td>';
-	print '</tr>';
-}
-
-if (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) {
-	print '<tr class="oddeven">';
-	print '<td>'.$langs->trans("UseProductFournDesc").'</td>';
-	print '<td class="right">';
-	print $form->selectyesno("activate_useProdFournDesc", (!empty($conf->global->PRODUIT_FOURN_TEXTS) ? $conf->global->PRODUIT_FOURN_TEXTS : 0), 1);
-	print '</td>';
-	print '</tr>';
-
-	print '<tr class="oddeven">';
-	print '<td>'.$langs->trans("UseProductSupplierPackaging").'</td>';
-	print '<td align="right">';
-	print $form->selectyesno("activate_useProdSupplierPackaging", (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING) ? $conf->global->PRODUCT_USE_SUPPLIER_PACKAGING : 0), 1);
 	print '</td>';
 	print '</tr>';
 }
@@ -753,6 +763,7 @@ if (!empty($conf->global->PRODUCT_CANVAS_ABILITY)) {
 }
 
 print '</table>';
+print '</div>';
 
 print '<div class="center">';
 print '<input type="submit" class="button reposition" value="'.$langs->trans("Modify").'">';

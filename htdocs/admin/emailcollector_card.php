@@ -103,6 +103,7 @@ $debuginfo = '';
 
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
@@ -236,7 +237,6 @@ if ($action == 'confirm_collect') {
 
 	$action = '';
 }
-
 
 
 
@@ -434,6 +434,14 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				$connectstringtarget = $connectstringserver.$object->getEncodedUtf7($targetdir);
 			}
 
+			$timeoutconnect = empty($conf->global->MAIN_USE_CONNECT_TIMEOUT) ? 10 : $conf->global->MAIN_USE_CONNECT_TIMEOUT;
+			$timeoutread = empty($conf->global->MAIN_USE_RESPONSE_TIMEOUT) ? 30 : $conf->global->MAIN_USE_RESPONSE_TIMEOUT;
+
+			dol_syslog("imap_open connectstring=".$connectstringsource." login=".$object->login." password=".$object->password." timeoutconnect=".$timeoutconnect." timeoutread=".$timeoutread);
+
+			imap_timeout(IMAP_OPENTIMEOUT, $timeoutconnect);
+			imap_timeout(IMAP_READTIMEOUT, $timeoutread);
+
 			$connection = imap_open($connectstringsource, $object->login, $object->password);
 		} catch (Exception $e) {
 			print $e->getMessage();
@@ -449,12 +457,15 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		if (function_exists('imap_last_error')) {
 			$morehtml .= '<br>'.imap_last_error();
 		}
+		dol_syslog("Error ".$morehtml, LOG_WARNING);
 		//var_dump(imap_errors())
 	} else {
+		dol_syslog("Imap connected. Now we call imap_num_msg()");
 		$morehtml .= imap_num_msg($connection);
 	}
 
 	if ($connection) {
+		dol_syslog("Imap close");
 		imap_close($connection);
 	}
 
@@ -482,13 +493,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
 
 	// Filters
-	print '<div class="div-table-responsive">';
-	print '<table class="border centpercent tableforfield">';
-	print '<tr class="liste_titre">';
+	print '<div class="div-table-responsive-no-min">';
+	print '<table id="tablelineoffilters" class="noborder margintable noshadow">';
+	print '<tr class="liste_titre nodrag nodrop">';
 	print '<td>'.$form->textwithpicto($langs->trans("Filters"), $langs->trans("EmailCollectorFilterDesc")).'</td><td></td><td></td>';
 	print '</tr>';
 	// Add filter
-	print '<tr class="oddeven">';
+	print '<tr class="oddeven nodrag nodrop">';
 	print '<td>';
 	$arrayoftypes = array(
 		'from'=>array('label'=>'MailFrom', 'data-placeholder'=>$langs->trans('SearchString')),
@@ -518,7 +529,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		'isnotanswer'=>array('label'=>'IsNotAnAnswer', 'data-noparam'=>1),
 		'isanswer'=>array('label'=>'IsAnAnswer', 'data-noparam'=>1)
 	);
-	print $form->selectarray('filtertype', $arrayoftypes, '', 1, 0, 0, '', 1, 0, 0, '', 'maxwidth500', 1, '', 2);
+	print $form->selectarray('filtertype', $arrayoftypes, '', 1, 0, 0, '', 1, 0, 0, '', 'maxwidth300', 1, '', 2);
 
 	print "\n";
 	print '<script>';
@@ -542,7 +553,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '</td><td>';
 	print '<input type="text" name="rulevalue" id="rulevalue">';
 	print '</td>';
-	print '<td class="right"><input type="submit" name="addfilter" id="addfilter" class="flat button" value="'.$langs->trans("Add").'"></td>';
+	print '<td class="right"><input type="submit" name="addfilter" id="addfilter" class="flat button small" value="'.$langs->trans("Add").'"></td>';
 	print '</tr>';
 	// List filters
 	foreach ($object->filters as $rulefilter) {
@@ -568,12 +579,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	// Operations
 	print '<div class="div-table-responsive">';
-	print '<table id="tablelines" class="noborder noshadow tableforfield">';
-	print '<tr class="liste_titre">';
+	print '<table id="tablelines" class="noborder margintable noshadow">';
+	print '<tr class="liste_titre nodrag nodrop">';
 	print '<td>'.$form->textwithpicto($langs->trans("EmailcollectorOperations"), $langs->trans("EmailcollectorOperationsDesc")).'</td><td></td><td></td><td></td>';
 	print '</tr>';
 	// Add operation
-	print '<tr class="oddeven">';
+	print '<tr class="oddeven nodrag nodrop">';
 	print '<td>';
 	$arrayoftypes = array(
 		'loadthirdparty'=>$langs->trans('LoadThirdPartyFromName', $langs->transnoentities("ThirdPartyName")),
@@ -609,7 +620,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$htmltext = $langs->transnoentitiesnoconv("OperationParamDesc");
 	print $form->textwithpicto('', $htmltext, 1, 'help', '', 0, 2, 'operationparamtt');
 	print '</td>';
-	print '<td class="right"><input type="submit" name="addoperation" id="addoperation" class="flat button" value="'.$langs->trans("Add").'"></td>';
+	print '<td class="right"><input type="submit" name="addoperation" id="addoperation" class="flat button small" value="'.$langs->trans("Add").'"></td>';
 	print '</tr>';
 	// List operations
 	$nboflines = count($object->actions);
@@ -630,12 +641,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			print $form->textwithpicto('', $langs->transnoentitiesnoconv('EmailCollectorLoadThirdPartyHelp'));
 		}
 		print '</td>';
-		print '<td class="wordbreak">';
+		print '<td class="wordbreak minwidth300">';
 		if ($action == 'editoperation' && $ruleaction['id'] == $operationid) {
 			print '<input type="text" class="quatrevingtquinzepercent" name="operationparam2" value="'.$ruleaction['actionparam'].'"><br>';
-			print '<input type="hidden" name="rowidoperation2" value="'.$ruleaction['id'].'"><br>';
-			print '<input type="submit" class="button button-save" name="saveoperation2" value="'.$langs->trans("Save").'">';
-			print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
+			print '<input type="hidden" name="rowidoperation2" value="'.$ruleaction['id'].'">';
+			print '<input type="submit" class="button small button-save" name="saveoperation2" value="'.$langs->trans("Save").'">';
+			print '<input type="submit" class="button small button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 		} else {
 			print $ruleaction['actionparam'];
 		}

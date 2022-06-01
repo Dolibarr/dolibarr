@@ -95,9 +95,14 @@ $projectset = ($mine ? $mine : (empty($user->rights->projet->all->lire) ? 0 : 2)
 $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, $projectset, 1);
 //var_dump($projectsListId);
 
-llxHeader("", $langs->trans("Projects"), "EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos");
 
-$title = $langs->trans("ProjectsArea");
+$title = $langs->trans('ProjectsArea');
+
+$help_url = 'EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos|DE:Modul_Projekte';
+
+llxHeader('', $title, $help_url);
+
+
 //if ($mine) $title=$langs->trans("MyProjectsArea");
 
 
@@ -134,7 +139,7 @@ print_barre_liste($form->textwithpicto($title, $tooltiphelp), 0, $_SERVER["PHP_S
 
 
 // Get list of ponderated percent and colors for each status
-include_once DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
+include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
 $listofoppstatus = array(); $listofopplabel = array(); $listofoppcode = array(); $colorseries = array();
 $sql = "SELECT cls.rowid, cls.code, cls.percent, cls.label";
 $sql .= " FROM ".MAIN_DB_PREFIX."c_lead_status as cls";
@@ -147,7 +152,7 @@ if ($resql) {
 	while ($i < $num) {
 		$objp = $db->fetch_object($resql);
 		$listofoppstatus[$objp->rowid] = $objp->percent;
-		$listofopplabel[$objp->rowid] = $objp->label;
+		$listofopplabel[$objp->rowid] = $objp->label;		// default label if translation from "OppStatus".code not found.
 		$listofoppcode[$objp->rowid] = $objp->code;
 		switch ($objp->code) {
 			case 'PROSP':
@@ -182,39 +187,6 @@ if ($resql) {
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
-
-if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {     // This is useless due to the global search combo
-	// Search project
-	if (!empty($conf->projet->enabled) && $user->rights->projet->lire) {
-		$listofsearchfields['search_project'] = array('text'=>'Project');
-	}
-
-	if (count($listofsearchfields)) {
-		print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
-		print '<input type="hidden" name="token" value="'.newToken().'">';
-		print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder nohover centpercent">';
-		$i = 0;
-		foreach ($listofsearchfields as $key => $value) {
-			if ($i == 0) {
-				print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
-			}
-			print '<tr>';
-			print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label></td><td><input type="text" class="flat inputsearch" name="'.$key.'" id="'.$key.'" size="18"></td>';
-			if ($i == 0) {
-				print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
-			}
-			print '</tr>';
-			$i++;
-		}
-		print '</table>';
-		print '</div>';
-		print '</form>';
-		print '<br>';
-	}
-}
-
-
 /*
  * Statistics
  */
@@ -241,7 +213,7 @@ if ($mine || empty($user->rights->projet->all->lire)) {
 	$sql .= " AND p.rowid IN (".$db->sanitize($projectsListId).")"; // If we have this test true, it also means projectset is not 2
 }
 if ($socid) {
-	$sql .= " AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
+	$sql .= " AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".((int) $socid).")";
 }
 $sql .= " ORDER BY p.tms DESC";
 $sql .= $db->plimit($max, 0);
@@ -251,7 +223,7 @@ if ($resql) {
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
-	print '<th colspan="4">'.$langs->trans("LatestModifiedProjects", $max).'</th>';
+	print '<th colspan="5">'.$langs->trans("LatestModifiedProjects", $max).'</th>';
 	print '</tr>';
 
 	$num = $db->num_rows($resql);
@@ -305,12 +277,22 @@ if ($resql) {
 
 			print '</td>';
 
+			// Label
+			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->title).'">';
+			print $projectstatic->title;
+			print '</td>';
+
+			// Thirdparty
 			print '<td class="nowrap">';
 			if ($companystatic->id > 0) {
 				print $companystatic->getNomUrl(1, 'company', 16);
 			}
 			print '</td>';
+
+			// Date
 			print '<td>'.dol_print_date($db->jdate($obj->datem), 'day').'</td>';
+
+			// Status
 			print '<td class="right">'.$projectstatic->LibStatut($obj->status, 3).'</td>';
 			print '</tr>';
 			$i++;

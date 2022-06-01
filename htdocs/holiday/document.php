@@ -93,23 +93,6 @@ if (($id > 0) || $ref) {
 	}
 }
 
-/*$cancreate = 0;
-
-if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->holiday->writeall_advance)) {
-	$cancreate = 1;
-}
-if (!empty($user->rights->holiday->write) && in_array($fuserid, $childids)) {
-	$cancreate = 1;
-}
-
-$candelete = 0;
-if (!empty($user->rights->holiday->delete)) {
-	$candelete = 1;
-}
-if ($object->statut == Holiday::STATUS_DRAFT && $user->rights->holiday->write && in_array($object->fk_user, $childids)) {
-	$candelete = 1;
-}
-*/
 
 $upload_dir = $conf->holiday->dir_output.'/'.get_exdir(0, 0, 0, 1, $object, '');
 $modulepart = 'holiday';
@@ -137,7 +120,9 @@ $form = new Form($db);
 
 $listhalfday = array('morning'=>$langs->trans("Morning"), "afternoon"=>$langs->trans("Afternoon"));
 
-llxHeader("", "", $langs->trans("InterventionCard"));
+$title = $langs->trans('InterventionCard');
+
+llxHeader('', $title);
 
 
 if ($object->id) {
@@ -349,10 +334,10 @@ if ($object->id) {
 
 
 	$modulepart = 'holiday';
-	$permission = $user->rights->holiday->write;
+	$permissiontoadd = $user->rights->holiday->write;
 	$permtoedit = $user->rights->holiday->write;
 	$param = '&id='.$object->id;
-	include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
+	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 } else {
 	print $langs->trans("ErrorUnknown");
 }

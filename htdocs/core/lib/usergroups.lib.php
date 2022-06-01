@@ -110,7 +110,7 @@ function user_prepare_head($object)
 		$nbNote = 0;
 		$sql = "SELECT COUNT(n.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."notify_def as n";
-		$sql .= " WHERE fk_user = ".$object->id;
+		$sql .= " WHERE fk_user = ".((int) $object->id);
 		$resql = $db->query($sql);
 		if ($resql) {
 			$num = $db->num_rows($resql);
@@ -339,11 +339,11 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 
 	$thumbsbyrow = 6;
 	print '<div class="div-table-responsive-no-min">';
-	print '<table class="noborder centpercent'.($edit ? ' editmode' : '').' tableforfield">';
+	print '<table class="noborder centpercent'.($edit ? ' editmode' : '').'">';
 
 	// Title
 	if ($foruserprofile) {
-		print '<tr class="liste_titre"><th class="titlefieldcreate">'.$langs->trans("Parameter").'</th><th>'.$langs->trans("DefaultValue").'</th>';
+		print '<tr class="liste_titre"><th class="titlefieldmiddle">'.$langs->trans("Parameter").'</th><th>'.$langs->trans("DefaultValue").'</th>';
 		print '<th colspan="2">&nbsp;</th>';
 		print '</tr>';
 
@@ -359,7 +359,7 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 			$dirthemestring .= '"'.$dirtheme.'" ';
 		}
 
-		print '<tr class="liste_titre"><th class="titlefieldcreate">';
+		print '<tr class="liste_titre"><th class="titlefieldmiddle">';
 		print $form->textwithpicto($langs->trans("DefaultSkin"), $langs->trans("ThemeDir").' : '.$dirthemestring);
 		print '</th>';
 		print '<th class="right">';
@@ -409,9 +409,9 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 						print '<img class="img-skinthumb shadow" src="'.$url.'" alt="'.$title.'" title="'.$title.'" style="border: none; margin-bottom: 5px;">';
 						print '</a><br>';
 						if ($subdir == $selected_theme) {
-							print '<input '.($edit ? '' : 'disabled').' type="radio" class="themethumbs" style="border: 0px;" checked name="main_theme" value="'.$subdir.'"> <b>'.$subdir.'</b>';
+							print '<input '.($edit ? '' : 'disabled').' type="radio" class="themethumbs" style="border: 0px;" id="main_theme'.$subdir.'" checked name="main_theme" value="'.$subdir.'"><label for="main_theme'.$subdir.'"> <b>'.$subdir.'</b></label>';
 						} else {
-							print '<input '.($edit ? '' : 'disabled').' type="radio" class="themethumbs" style="border: 0px;" name="main_theme" value="'.$subdir.'"> '.$subdir;
+							print '<input '.($edit ? '' : 'disabled').' type="radio" class="themethumbs" style="border: 0px;" id="main_theme'.$subdir.'" name="main_theme" value="'.$subdir.'"><label for="main_theme'.$subdir.'"> '.$subdir.'</label>';
 						}
 						print '</div>';
 
@@ -448,7 +448,7 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 		// Nothing
 	} else {
 		// Show logo
-		print '<tr class="oddeven"><td class="titlefieldcreate">'.$langs->trans("EnableShowLogo").'</td><td>';
+		print '<tr class="oddeven"><td class="titlefieldmiddle">'.$langs->trans("EnableShowLogo").'</td><td>';
 		if ($edit) {
 			print ajax_constantonoff('MAIN_SHOW_LOGO', array(), null, 0, 0, 1);
 			//print $form->selectyesno('MAIN_SHOW_LOGO', $conf->global->MAIN_SHOW_LOGO, 1);
@@ -906,7 +906,7 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 	}
 
 	// Use MAIN_OPTIMIZEFORTEXTBROWSER
-	if ($foruserprofile) {
+	if ($foruserprofile && !empty($fuser->conf->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 		//$default=yn($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER);
 		$default = $langs->trans('No');
 		print '<tr class="oddeven">';
@@ -953,7 +953,7 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 
 
 	// Use MAIN_OPTIMIZEFORTEXTBROWSER
-	if ($foruserprofile) {
+	if ($foruserprofile && !empty($fuser->conf->MAIN_OPTIMIZEFORCOLORBLIND)) {
 		//$default=yn($conf->global->MAIN_OPTIMIZEFORCOLORBLIND);
 		$default = $langs->trans('No');
 		print '<tr class="oddeven">';

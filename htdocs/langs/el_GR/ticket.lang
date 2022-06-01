@@ -34,7 +34,8 @@ TicketDictResolution=Εισιτήριο - Ανάλυση
 
 TicketTypeShortCOM=Εμπορική ερώτηση
 TicketTypeShortHELP=Αίτημα για λειτουργική βοήθεια
-TicketTypeShortISSUE=Θέμα, σφάλμα ή πρόβλημα
+TicketTypeShortISSUE=Issue or bug
+TicketTypeShortPROBLEM=Πρόβλημα
 TicketTypeShortREQUEST=Αίτημα αλλαγής ή βελτίωσης
 TicketTypeShortPROJET=Έργο
 TicketTypeShortOTHER=Άλλο
@@ -43,6 +44,8 @@ TicketSeverityShortLOW=Χαμηλή
 TicketSeverityShortNORMAL=Κανονικός
 TicketSeverityShortHIGH=Υψηλή
 TicketSeverityShortBLOCKING=Critical, Blocking
+
+TicketCategoryShortOTHER=Άλλο
 
 ErrorBadEmailAddress=Το πεδίο &#39;%s&#39; είναι εσφαλμένο
 MenuTicketMyAssign=Τα εισιτήριά μου
@@ -54,22 +57,25 @@ TypeContact_ticket_internal_SUPPORTTEC=Εκχωρημένος χρήστης
 TypeContact_ticket_external_SUPPORTCLI=Παρακολούθηση επαφών πελατών / συμβάντων
 TypeContact_ticket_external_CONTRIBUTOR=Εξωτερικός συνεργάτης
 
-OriginEmail=Πηγή ηλεκτρονικού ταχυδρομείου
+OriginEmail=Reporter Email
 Notify_TICKET_SENTBYMAIL=Στείλτε μήνυμα εισιτηρίου μέσω ηλεκτρονικού ταχυδρομείου
 
 # Status
 Read=Ανάγνωση
 Assigned=Ανατεθεί
 InProgress=Σε εξέλιξη
-NeedMoreInformation=Αναμονή για πληροφορίες
+NeedMoreInformation=Waiting for reporter feedback
+NeedMoreInformationShort=Waiting for feedback
 Answered=Απαντήθηκε
 Waiting=Αναμονή
-Closed=Έκλεισε
+SolvedClosed=Solved
 Deleted=Διαγράφηκε
 
 # Dict
 Type=Τύπος
 Severity=Δριμύτητα
+TicketGroupIsPublic=Group is public
+TicketGroupIsPublicDesc=If a ticket group is public, it will be visible in the form when creating a ticket from the public interface
 
 # Email templates
 MailToSendTicketMessage=Για να στείλετε email από το μήνυμα εισιτηρίων
@@ -114,8 +120,8 @@ TicketsShowModuleLogo=Εμφανίστε το λογότυπο της ενότη
 TicketsShowModuleLogoHelp=Ενεργοποιήστε αυτήν την επιλογή για να αποκρύψετε τη λειτουργική μονάδα λογότυπου στις σελίδες της δημόσιας διασύνδεσης
 TicketsShowCompanyLogo=Εμφανίστε το λογότυπο της εταιρείας στο δημόσιο περιβάλλον
 TicketsShowCompanyLogoHelp=Ενεργοποιήστε αυτήν την επιλογή για να αποκρύψετε το λογότυπο της κύριας εταιρείας στις σελίδες της δημόσιας διασύνδεσης
-TicketsEmailAlsoSendToMainAddress=Επίσης, αποστέλλετε ειδοποίηση στην κύρια διεύθυνση ηλεκτρονικού ταχυδρομείου
-TicketsEmailAlsoSendToMainAddressHelp=Ενεργοποιήστε αυτή την επιλογή για να στείλετε ένα μήνυμα ηλεκτρονικού ταχυδρομείου στη διεύθυνση &quot;Ειδοποίηση ηλεκτρονικού ταχυδρομείου από&quot; (δείτε την παρακάτω ρύθμιση)
+TicketsEmailAlsoSendToMainAddress=Also send a notification to the main email address
+TicketsEmailAlsoSendToMainAddressHelp=Enable this option to also send an email to the address defined into setup "%s" (see tab "%s")
 TicketsLimitViewAssignedOnly=Περιορίστε την εμφάνιση σε εισιτήρια που έχουν εκχωρηθεί στον τρέχοντα χρήστη (δεν είναι αποτελεσματικά για εξωτερικούς χρήστες, πάντα περιορίζονται στο τρίτο μέρος από το οποίο εξαρτώνται)
 TicketsLimitViewAssignedOnlyHelp=Μόνο εισιτήρια που έχουν εκχωρηθεί στον τρέχοντα χρήστη θα είναι ορατά. Δεν ισχύει για χρήστη με δικαιώματα διαχείρισης εισιτηρίων.
 TicketsActivatePublicInterface=Ενεργοποιήστε τη δημόσια διεπαφή
@@ -126,10 +132,10 @@ TicketNumberingModules=Μονάδα αρίθμησης εισιτηρίων
 TicketsModelModule=Document templates for tickets
 TicketNotifyTiersAtCreation=Ειδοποιήστε τρίτο μέρος στη δημιουργία
 TicketsDisableCustomerEmail=Πάντα να απενεργοποιείτε τα μηνύματα ηλεκτρονικού ταχυδρομείου όταν δημιουργείται ένα εισιτήριο από τη δημόσια διασύνδεση
-TicketsPublicNotificationNewMessage=Send email(s) when a new message is added
+TicketsPublicNotificationNewMessage=Send email(s) when a new message/comment is added to a ticket
 TicketsPublicNotificationNewMessageHelp=Send email(s) when a new message is added from public interface (to assigned user or the notifications email to (update) and/or the notifications email to)
 TicketPublicNotificationNewMessageDefaultEmail=Notifications email to (update)
-TicketPublicNotificationNewMessageDefaultEmailHelp=Send email new message notifications to this address if the ticket don't have a user assigned or the user don't have a email.
+TicketPublicNotificationNewMessageDefaultEmailHelp=Send an email to this address for each new message notifications if the ticket doesn't have a user assigned to it or if the user doesn't have any known email.
 #
 # Index & list page
 #
@@ -158,7 +164,7 @@ CreatedBy=Δημιουργήθηκε από
 NewTicket=Νέο εισιτήριο
 SubjectAnswerToTicket=Απάντηση εισιτηρίου
 TicketTypeRequest=Τύπος αιτήματος
-TicketCategory=Ομάδα
+TicketCategory=Ticket categorization
 SeeTicket=Δείτε εισιτήριο
 TicketMarkedAsRead=Το εισιτήριο έχει επισημανθεί ως αναγνωσμένο
 TicketReadOn=Συνέχισε να διαβάζεις
@@ -176,15 +182,17 @@ MessageSuccessfullyAdded=Το εισιτήριο προστέθηκε
 TicketMessageSuccessfullyAdded=Το μήνυμα προστέθηκε με επιτυχία
 TicketMessagesList=Λίστα μηνυμάτων
 NoMsgForThisTicket=Δεν υπάρχει μήνυμα για αυτό το εισιτήριο
-Properties=Ταξινόμηση
+TicketProperties=Classification
 LatestNewTickets=Τελευταία %s νεότερα εισιτήρια (δεν διαβάζονται)
 TicketSeverity=Δριμύτητα
 ShowTicket=Δείτε εισιτήριο
 RelatedTickets=Σχετικά εισιτήρια
 TicketAddIntervention=Δημιουργία παρέμβασης
-CloseTicket=Κλείστε το εισιτήριο
-CloseATicket=Κλείστε ένα εισιτήριο
+CloseTicket=Close|Solve ticket
+AbandonTicket=Abandon ticket
+CloseATicket=Close|Solve a ticket
 ConfirmCloseAticket=Επιβεβαιώστε το κλείσιμο εισιτηρίου
+ConfirmAbandonTicket=Do you confirm the closing of the ticket to status 'Abandonned'
 ConfirmDeleteTicket=Επιβεβαιώστε τη διαγραφή του εισιτηρίου
 TicketDeletedSuccess=Το εισιτήριο διαγράφηκε με επιτυχία
 TicketMarkedAsClosed=Το εισιτήριο επισημαίνεται ως κλειστό
@@ -209,6 +217,7 @@ TicketMessageHelp=Μόνο αυτό το κείμενο θα αποθηκευτ�
 TicketMessageSubstitutionReplacedByGenericValues=Οι μεταβλητές αντικατάστασης αντικαθίστανται από γενικές τιμές.
 TimeElapsedSince=Χρόνος που πέρασε από τότε
 TicketTimeToRead=Ο χρόνος που παρέμενε πριν διαβάσετε
+TicketTimeElapsedBeforeSince=Time elapsed before / since
 TicketContacts=Επαφές εισιτήριο
 TicketDocumentsLinked=Έγγραφα που συνδέονται με το εισιτήριο
 ConfirmReOpenTicket=Επιβεβαιώστε ξανανοίξτε αυτό το εισιτήριο;
@@ -302,3 +311,14 @@ BoxLastModifiedTicket=Τελευταία τροποποιημένα εισιτή
 BoxLastModifiedTicketDescription=Τα τελευταία τροποποιημένα εισιτήρια %s
 BoxLastModifiedTicketContent=
 BoxLastModifiedTicketNoRecordedTickets=Δεν υπάρχουν πρόσφατα τροποποιημένα εισιτήρια
+BoxTicketType=Distribution of open tickets by type
+BoxTicketSeverity=Number of open tickets by severity
+BoxNoTicketSeverity=No tickets opened
+BoxTicketLastXDays=Number of new tickets by days the last %s days
+BoxTicketLastXDayswidget = Number of new tickets by days the last X days
+BoxNoTicketLastXDays=No new tickets the last %s days
+BoxNumberOfTicketByDay=Number of new tickets by day
+BoxNewTicketVSClose=Number of tickets versus closed tickets (today)
+TicketCreatedToday=Ticket created today
+TicketClosedToday=Ticket closed today
+KMFoundForTicketGroup=We found topics and FAQs that may answers your question, thanks to check them before submitting the ticket

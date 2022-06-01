@@ -166,12 +166,12 @@ if ($socid > 0) {
 	if (!empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
 		print '<br>';
 
-		$param = '&socid='.$socid;
+		$param = '&socid='.urlencode($socid);
 		if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
-			$param .= '&contextpage='.$contextpage;
+			$param .= '&contextpage='.urlencode($contextpage);
 		}
 		if ($limit > 0 && $limit != $conf->liste_limit) {
-			$param .= '&limit='.$limit;
+			$param .= '&limit='.urlencode($limit);
 		}
 
 		print load_fiche_titre($langs->trans("ActionsOnCompany"), $newcardbutton, '');

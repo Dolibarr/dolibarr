@@ -73,7 +73,21 @@ if (!$sortorder) {
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('agendathirdparty'));
 
-$result = restrictedArea($user, 'produit|service', $id, 'product&product');
+$object = new Product($db);
+if ($id > 0 || !empty($ref)) {
+	$object->fetch($id, $ref);
+}
+
+if ($object->id > 0) {
+	if ($object->type == $object::TYPE_PRODUCT) {
+		restrictedArea($user, 'produit', $object->id, 'product&product', '', '');
+	}
+	if ($object->type == $object::TYPE_SERVICE) {
+		restrictedArea($user, 'service', $object->id, 'product&product', '', '');
+	}
+} else {
+	restrictedArea($user, 'produit|service', 0, 'product&product', '', '');
+}
 
 
 /*
@@ -121,10 +135,13 @@ if ($id > 0 || $ref) {
 	$result = $object->fetch($id, $ref);
 
 	$title = $langs->trans("Agenda");
+
+	$help_url = 'EN:Module_Agenda_En|FR:Module_Agenda';
+
 	if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/productnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
 		$title = $object->name." - ".$title;
 	}
-	llxHeader('', $title);
+	llxHeader('', $title, $help_url);
 
 	if (!empty($conf->notification->enabled)) {
 		$langs->load("mails");

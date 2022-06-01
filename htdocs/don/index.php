@@ -89,7 +89,7 @@ print load_fiche_titre($langs->trans("DonationsArea"), '', 'object_donation');
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
-if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {     // This is useless due to the global search combo
+if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {     // TODO Add a search into global search combo so we can remove this
 	if (!empty($conf->don->enabled) && $user->rights->don->lire) {
 		$listofsearchfields['search_donation'] = array('text'=>'Donation');
 	}
@@ -120,7 +120,7 @@ if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {     // This is usel
 $dataseries = array();
 $colorseries = array();
 
-include_once DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
+include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
 
 print '<table class="noborder nohover centpercent">';
 print '<tr class="liste_titre">';
@@ -174,8 +174,8 @@ foreach ($listofstatus as $status) {
 	print '<tr class="oddeven">';
 	print '<td><a href="list.php?search_status='.$status.'">'.$donstatic->LibStatut($status, 4).'</a></td>';
 	print '<td class="right">'.(!empty($nb[$status]) ? $nb[$status] : '&nbsp;').'</td>';
-	print '<td class="right">'.(!empty($nb[$status]) ?price($somme[$status], 'MT') : '&nbsp;').'</td>';
-	print '<td class="right">'.(!empty($nb[$status]) ?price(price2num($somme[$status] / $nb[$status], 'MT')) : '&nbsp;').'</td>';
+	print '<td class="right nowraponall amount">'.(!empty($nb[$status]) ? price($somme[$status], 'MT') : '&nbsp;').'</td>';
+	print '<td class="right nowraponall">'.(!empty($nb[$status]) ?price(price2num($somme[$status] / $nb[$status], 'MT')) : '&nbsp;').'</td>';
 	$totalnb += (!empty($nb[$status]) ? $nb[$status] : 0);
 	$total += (!empty($somme[$status]) ? $somme[$status] : 0);
 	print "</tr>";
@@ -183,9 +183,9 @@ foreach ($listofstatus as $status) {
 
 print '<tr class="liste_total">';
 print '<td>'.$langs->trans("Total").'</td>';
-print '<td class="right">'.$totalnb.'</td>';
-print '<td class="right">'.price($total, 'MT').'</td>';
-print '<td class="right">'.($totalnb ?price(price2num($total / $totalnb, 'MT')) : '&nbsp;').'</td>';
+print '<td class="right nowraponall">'.$totalnb.'</td>';
+print '<td class="right nowraponall">'.price($total, 'MT').'</td>';
+print '<td class="right nowraponall">'.($totalnb ?price(price2num($total / $totalnb, 'MT')) : '&nbsp;').'</td>';
 print '</tr>';
 print "</table>";
 
@@ -233,7 +233,7 @@ if ($resql) {
 			print dolGetFirstLastname($obj->lastname, $obj->firstname);
 			print '</td>';
 
-			print '<td class="right nobordernopadding">';
+			print '<td class="right nobordernopadding nowraponall amount">';
 			print price($obj->amount, 1);
 			print '</td>';
 

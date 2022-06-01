@@ -116,8 +116,10 @@ if ($action == 'set_DONATION_ACCOUNTINGACCOUNT') {
 
 	if (!$error) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+		$action = '';	// To avoid to execute next actions
 	} else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
+		$action = '';	// To avoid to execute next actions
 	}
 }
 
@@ -132,14 +134,15 @@ if ($action == 'set_DONATION_MESSAGE') {
 
 	if (!$error) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+		$action = '';	// To avoid to execute next actions
 	} else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
+		$action = '';	// To avoid to execute next actions
 	}
 }
 
-/*
- * Action
- */
+// Other cases
+$reg = array();
 if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg)) {
 	$code = $reg[1];
 	if (dolibarr_set_const($db, $code, 1, 'chaine', 0, '', $conf->entity) > 0) {

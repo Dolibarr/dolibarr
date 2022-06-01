@@ -226,6 +226,7 @@ if (empty($conf->cron->enabled)) {
 		// Get the max frequency of reminder
 		if ($job->id > 0) {
 			if ($job->status != $job::STATUS_ENABLED) {
+				$langs->load("cron");
 				print '<span class="opacitymedium warning">'.$langs->trans("JobXMustBeEnabled", $langs->transnoentitiesnoconv("sendEmailsReminder")).'</span>';
 			} else {
 				print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_AGENDA_REMINDER_EMAIL&amp;token='.newToken().'">'.img_picto($langs->trans('Enabled'), 'switch_on').'</a>';

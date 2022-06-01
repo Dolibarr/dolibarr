@@ -643,13 +643,12 @@ class MultiCurrency extends CommonObject
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 
-		$urlendpoint = 'http://apilayer.net/api/live?access_key='.$key;
-		//$urlendpoint.='&format=1';
-		$urlendpoint .= (empty($conf->global->MULTICURRENCY_APP_SOURCE) ? '' : '&source='.$conf->global->MULTICURRENCY_APP_SOURCE);
+		$urlendpoint = 'http://api.currencylayer.com/live?access_key='.$key;
+		$urlendpoint .= '&source=' . (empty($conf->global->MULTICURRENCY_APP_SOURCE) ? 'USD' : $conf->global->MULTICURRENCY_APP_SOURCE);
 
 		dol_syslog("Call url endpoint ".$urlendpoint);
 
-		$resget = getURLContent($urlendpoint, 'GET', '', 1, array(), array('http', 'https'), 1);
+		$resget = getURLContent($urlendpoint);
 
 		if ($resget['content']) {
 			$response = $resget['content'];

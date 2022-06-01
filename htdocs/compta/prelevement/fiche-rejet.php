@@ -40,7 +40,7 @@ if ($user->socid > 0) {
 }
 
 // Get supervariables
-$prev_id = GETPOST('id', 'int');
+$id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 
 $type = GETPOST('type', 'aZ09');
@@ -77,8 +77,8 @@ if (!$user->rights->paymentbybanktransfer->read && $object->type == 'bank-transf
 
 llxHeader('', $langs->trans("WithdrawalsReceipts"));
 
-if ($prev_id > 0 || $ref) {
-	if ($object->fetch($prev_id, $ref) >= 0) {
+if ($id > 0 || $ref) {
+	if ($object->fetch($id, $ref) >= 0) {
 		$head = prelevement_prepare_head($object);
 		print dol_get_fiche_head($head, 'rejects', $langs->trans("WithdrawalsReceipts"), -1, 'payment');
 
@@ -170,15 +170,15 @@ $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
 $sql .= " , ".MAIN_DB_PREFIX."prelevement_lignes as pl";
 $sql .= " , ".MAIN_DB_PREFIX."societe as s";
 $sql .= " , ".MAIN_DB_PREFIX."prelevement_rejet as pr";
-$sql .= " WHERE p.rowid=".$object->id;
+$sql .= " WHERE p.rowid=".((int) $object->id);
 $sql .= " AND pl.fk_prelevement_bons = p.rowid";
 $sql .= " AND p.entity = ".$conf->entity;
 $sql .= " AND pl.fk_soc = s.rowid";
 $sql .= " AND pl.statut = 3 ";
 $sql .= " AND pr.fk_prelevement_lignes = pl.rowid";
-if ($socid) {
+/*if ($socid) {
 	$sql .= " AND s.rowid = ".((int) $socid);
-}
+}*/
 $sql .= " ORDER BY pl.amount DESC";
 
 // Count total nb of records
@@ -202,7 +202,7 @@ if ($resql) {
 
 	print"\n<!-- debut table -->\n";
 	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
-	print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+	print '<table class="noborder" width="100%" cellpadding="4">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Line").'</td><td>'.$langs->trans("ThirdParty").'</td><td class="right">'.$langs->trans("Amount").'</td>';
 	print '<td>'.$langs->trans("Reason").'</td><td align="center">'.$langs->trans("ToBill").'</td><td class="center">'.$langs->trans("Invoice").'</td></tr>';

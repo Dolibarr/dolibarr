@@ -76,7 +76,7 @@ class Hook extends CommonObject
 	 *  'help' is a string visible as a tooltip on field
 	 *  'comment' is not used. You can store here any text of your choice. It is not used by application.
 	 *  'showoncombobox' if value of the field must be visible into the label of the combobox that list record
-	 *  'arraykeyval' to set list of value if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel")
+	 *  'arrayofkeyval' to set list of value if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel")
 	 */
 
 	/**
@@ -121,8 +121,7 @@ class Hook extends CommonObject
 			'position' => 30,
 			'searchall' => 1,
 			'css' => 'minwidth200',
-			'help' => 'Hook url',
-			'showoncombobox' => 1,
+			'help' => 'Hook url'
 		),
 		'module' => array(
 			'type' => 'varchar(128)',
@@ -132,8 +131,7 @@ class Hook extends CommonObject
 			'position' => 30,
 			'searchall' => 1,
 			'css' => 'minwidth200',
-			'help' => 'Hook module',
-			'showoncombobox' => 1,
+			'help' => 'Hook module'
 		),
 		'action' => array(
 			'type' => 'varchar(128)',
@@ -143,8 +141,7 @@ class Hook extends CommonObject
 			'position' => 30,
 			'searchall' => 1,
 			'css' => 'minwidth200',
-			'help' => 'Hook action trigger',
-			'showoncombobox' => 1,
+			'help' => 'Hook action trigger'
 		),
 		'event' => array(
 			'type' => 'varchar(255)',

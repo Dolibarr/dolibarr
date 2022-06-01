@@ -77,6 +77,7 @@ class box_external_rss extends ModeleBoxes
 		$this->max = $max;
 
 		// On recupere numero de param de la boite
+		$reg = array();
 		preg_match('/^([0-9]+) /', $this->paramdef, $reg);
 		$site = $reg[1];
 
@@ -149,7 +150,7 @@ class box_external_rss extends ModeleBoxes
 				//$item['atom_content']
 			}
 			if (is_numeric($date)) {
-				$date = dol_print_date($date, "dayhour");
+				$date = dol_print_date($date, "dayhour", 'tzuserrel');
 			}
 
 			$isutf8 = utf8_check($title);

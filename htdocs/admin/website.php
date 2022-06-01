@@ -48,8 +48,8 @@ if (!$user->admin) {
 
 $acts[0] = "activate";
 $acts[1] = "disable";
-$actl[0] = img_picto($langs->trans("Disabled"), 'switch_off');
-$actl[1] = img_picto($langs->trans("Activated"), 'switch_on');
+$actl[0] = img_picto($langs->trans("Disabled"), 'switch_off', 'class="size15x"');
+$actl[1] = img_picto($langs->trans("Activated"), 'switch_on', 'class="size15x"');
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
@@ -490,6 +490,9 @@ if ($id) {
 				}
 			}
 		}
+		if (!isset($obj->position)) {
+			$obj->position = 1;
+		}
 
 		fieldListWebsites($fieldlist, $obj, $tabname[$id], 'add');
 
@@ -499,8 +502,6 @@ if ($id) {
 		}
 		print '</td>';
 		print "</tr>";
-
-		$colspan = count($fieldlist) + 2;
 	}
 
 	print '</table>';

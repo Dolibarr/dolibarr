@@ -187,7 +187,7 @@ function societe_prepare_head(Societe $object)
 	}
 
 	// Related items
-	if ((!empty($conf->commande->enabled) || !empty($conf->propal->enabled) || !empty($conf->facture->enabled) || !empty($conf->ficheinter->enabled) || !empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled))
+	if ((!empty($conf->commande->enabled) || !empty($conf->propal->enabled) || !empty($conf->facture->enabled) || !empty($conf->ficheinter->enabled) || (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled))
 		&& empty($conf->global->THIRPARTIES_DISABLE_RELATED_OBJECT_TAB)) {
 		$head[$h][0] = DOL_URL_ROOT.'/societe/consumption.php?socid='.$object->id;
 		$head[$h][1] = $langs->trans("Referers");
@@ -227,7 +227,7 @@ function societe_prepare_head(Societe $object)
 		if (empty($conf->stripe->enabled)) {
 			$sql .= " AND n.stripe_card_ref IS NULL";
 		} else {
-			$sql .= " AND (n.stripe_card_ref IS NULL OR (n.stripe_card_ref IS NOT NULL AND n.status = ".$servicestatus."))";
+			$sql .= " AND (n.stripe_card_ref IS NULL OR (n.stripe_card_ref IS NOT NULL AND n.status = ".((int) $servicestatus)."))";
 		}
 
 		$resql = $db->query($sql);
@@ -270,6 +270,19 @@ function societe_prepare_head(Societe $object)
 		}
 		$head[$h][2] = 'website';
 		$h++;
+	}
+
+	if (getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR') == 'thirdparty') {
+		if (!empty($user->rights->partnership->read)) {
+			$nbPartnership = is_array($object->partnerships) ? count($object->partnerships) : 0;
+			$head[$h][0] = DOL_URL_ROOT.'/societe/partnership.php?socid='.$object->id;
+			$head[$h][1] = $langs->trans("Partnership");
+			$head[$h][2] = 'partnership';
+			if ($nbPartnership > 0) {
+				$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbPartnership.'</span>';
+			}
+			$h++;
+		}
 	}
 
 	// Show more tabs from modules
@@ -504,11 +517,11 @@ function getCountry($searchkey, $withcode = '', $dbtouse = 0, $outputlangs = '',
 
 	$sql = "SELECT rowid, code, label FROM ".MAIN_DB_PREFIX."c_country";
 	if (is_numeric($searchkey)) {
-		$sql .= " WHERE rowid=".$searchkey;
+		$sql .= " WHERE rowid = ".((int) $searchkey);
 	} elseif (!empty($searchkey)) {
-		$sql .= " WHERE code='".$db->escape($searchkey)."'";
+		$sql .= " WHERE code = '".$db->escape($searchkey)."'";
 	} else {
-		$sql .= " WHERE label='".$db->escape($searchlabel)."'";
+		$sql .= " WHERE label = '".$db->escape($searchlabel)."'";
 	}
 
 	$resql = $dbtouse->query($sql);
@@ -571,7 +584,7 @@ function getState($id, $withcode = '', $dbtouse = 0, $withregion = 0, $outputlan
 
 	$sql = "SELECT d.rowid as id, d.code_departement as code, d.nom as name, d.active, c.label as country, c.code as country_code, r.code_region as region_code, r.nom as region_name FROM";
 	$sql .= " ".MAIN_DB_PREFIX."c_departements as d, ".MAIN_DB_PREFIX."c_regions as r,".MAIN_DB_PREFIX."c_country as c";
-	$sql .= " WHERE d.fk_region=r.code_region and r.fk_pays=c.rowid and d.rowid=".$id;
+	$sql .= " WHERE d.fk_region=r.code_region and r.fk_pays=c.rowid and d.rowid=".((int) $id);
 	$sql .= " AND d.active = 1 AND r.active = 1 AND c.active = 1";
 	$sql .= " ORDER BY c.code, d.code_departement";
 
@@ -715,10 +728,7 @@ function getCountriesInEEC()
 	global $conf, $db;
 	$country_code_in_EEC = array();
 
-	if (!empty($conf->global->MAIN_COUNTRIES_IN_EEC)) {
-		// For example MAIN_COUNTRIES_IN_EEC = 'AT,BE,BG,CY,CZ,DE,DK,EE,ES,FI,FR,GB,GR,HR,NL,HU,IE,IM,IT,LT,LU,LV,MC,MT,PL,PT,RO,SE,SK,SI,UK'
-		$country_code_in_EEC = explode(',', $conf->global->MAIN_COUNTRIES_IN_EEC);
-	} elseif (!empty($conf->cache['country_code_in_EEC'])) {
+	if (!empty($conf->cache['country_code_in_EEC'])) {
 		// Use of cache to reduce number of database requests
 		$country_code_in_EEC = $conf->cache['country_code_in_EEC'];
 	} else {
@@ -754,7 +764,7 @@ function isInEEC($object)
 		return false;
 	}
 
-	$country_code_in_EEC = getCountriesInEEC();
+	$country_code_in_EEC = getCountriesInEEC();		// This make a database call but there is a cache done into $conf->cache['country_code_in_EEC']
 
 	//print "dd".$object->country_code;
 	return in_array($object->country_code, $country_code_in_EEC);
@@ -939,11 +949,11 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
 		't.email',
 	);
 	//Social media
-	foreach ($socialnetworks as $key => $value) {
-		if ($value['active']) {
-			$searchAddressPhoneDBFields['t.'.$key] = "t.socialnetworks->'$.".$key."'";
-		}
-	}
+	//    foreach ($socialnetworks as $key => $value) {
+	//        if ($value['active']) {
+	//            $searchAddressPhoneDBFields['t.'.$key] = "t.socialnetworks->'$.".$key."'";
+	//        }
+	//    }
 
 	if (!$sortorder) {
 		$sortorder = "ASC";
@@ -963,9 +973,9 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
 
 	$contactstatic->fields = array(
 		'name'      =>array('type'=>'varchar(128)', 'label'=>'Name', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1),
-		'poste'     =>array('type'=>'varchar(128)', 'label'=>'PostOrFunction', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>20),
-		'address'   =>array('type'=>'varchar(128)', 'label'=>'Address', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>30),
-		'role'      =>array('type'=>'checkbox', 'label'=>'Role', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>40),
+		'poste'     =>array('type'=>'varchar(128)', 'label'=>'PostOrFunction', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>2, 'index'=>1, 'position'=>20),
+		'address'   =>array('type'=>'varchar(128)', 'label'=>'Address', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>3, 'index'=>1, 'position'=>30),
+		'role'      =>array('type'=>'checkbox', 'label'=>'Role', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>4, 'index'=>1, 'position'=>40),
 		'statut'    =>array('type'=>'integer', 'label'=>'Status', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'default'=>0, 'index'=>1, 'position'=>50, 'arrayofkeyval'=>array(0=>$contactstatic->LibStatut(0, 1), 1=>$contactstatic->LibStatut(1, 1))),
 	);
 
@@ -1075,7 +1085,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople_extrafields as ef on (t.rowid = ef.fk_object)";
 	$sql .= " WHERE t.fk_soc = ".$object->id;
 	if ($search_status != '' && $search_status != '-1') {
-		$sql .= " AND t.statut = ".$db->escape($search_status);
+		$sql .= " AND t.statut = ".((int) $search_status);
 	}
 	if ($search_name) {
 		$sql .= natural_search(array('t.lastname', 't.firstname'), $search_name);
@@ -1448,7 +1458,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 		if (is_object($objcon) && $objcon->id > 0) {
 			$force_filter_contact = true;
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."actioncomm_resources as r ON a.id = r.fk_actioncomm";
-			$sql .= " AND r.element_type = '".$db->escape($objcon->table_element)."' AND r.fk_element = ".$objcon->id;
+			$sql .= " AND r.element_type = '".$db->escape($objcon->table_element)."' AND r.fk_element = ".((int) $objcon->id);
 		}
 
 		if (is_object($filterobj) && in_array(get_class($filterobj), array('Societe', 'Client', 'Fournisseur'))) {
@@ -1457,7 +1467,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."element_resources as er";
 			$sql .= " ON er.resource_type = 'dolresource'";
 			$sql .= " AND er.element_id = a.id";
-			$sql .= " AND er.resource_id = ".$filterobj->id;
+			$sql .= " AND er.resource_id = ".((int) $filterobj->id);
 		} elseif (is_object($filterobj) && get_class($filterobj) == 'Project') {
 			/* Nothing */
 		} elseif (is_object($filterobj) && get_class($filterobj) == 'Adherent') {
@@ -1479,46 +1489,46 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 		$sql .= " WHERE a.entity IN (".getEntity('agenda').")";
 		if ($force_filter_contact === false) {
 			if (is_object($filterobj) && in_array(get_class($filterobj), array('Societe', 'Client', 'Fournisseur')) && $filterobj->id) {
-				$sql .= " AND a.fk_soc = ".$filterobj->id;
+				$sql .= " AND a.fk_soc = ".((int) $filterobj->id);
 			} elseif (is_object($filterobj) && get_class($filterobj) == 'Dolresource') {
 				/* Nothing */
 			} elseif (is_object($filterobj) && get_class($filterobj) == 'Project' && $filterobj->id) {
-				$sql .= " AND a.fk_project = ".$filterobj->id;
+				$sql .= " AND a.fk_project = ".((int) $filterobj->id);
 			} elseif (is_object($filterobj) && get_class($filterobj) == 'Adherent') {
 				$sql .= " AND a.fk_element = m.rowid AND a.elementtype = 'member'";
 				if ($filterobj->id) {
-					$sql .= " AND a.fk_element = ".$filterobj->id;
+					$sql .= " AND a.fk_element = ".((int) $filterobj->id);
 				}
 			} elseif (is_object($filterobj) && get_class($filterobj) == 'CommandeFournisseur') {
 				$sql .= " AND a.fk_element = o.rowid AND a.elementtype = 'order_supplier'";
 				if ($filterobj->id) {
-					$sql .= " AND a.fk_element = ".$filterobj->id;
+					$sql .= " AND a.fk_element = ".((int) $filterobj->id);
 				}
 			} elseif (is_object($filterobj) && get_class($filterobj) == 'Product') {
 				$sql .= " AND a.fk_element = o.rowid AND a.elementtype = 'product'";
 				if ($filterobj->id) {
-					$sql .= " AND a.fk_element = ".$filterobj->id;
+					$sql .= " AND a.fk_element = ".((int) $filterobj->id);
 				}
 			} elseif (is_object($filterobj) && get_class($filterobj) == 'Ticket') {
 				$sql .= " AND a.fk_element = o.rowid AND a.elementtype = 'ticket'";
 				if ($filterobj->id) {
-					$sql .= " AND a.fk_element = ".$filterobj->id;
+					$sql .= " AND a.fk_element = ".((int) $filterobj->id);
 				}
 			} elseif (is_object($filterobj) && get_class($filterobj) == 'BOM') {
 				$sql .= " AND a.fk_element = o.rowid AND a.elementtype = 'bom'";
 				if ($filterobj->id) {
-					$sql .= " AND a.fk_element = ".$filterobj->id;
+					$sql .= " AND a.fk_element = ".((int) $filterobj->id);
 				}
 			} elseif (is_object($filterobj) && get_class($filterobj) == 'Contrat') {
 				$sql .= " AND a.fk_element = o.rowid AND a.elementtype = 'contract'";
 				if ($filterobj->id) {
-					$sql .= " AND a.fk_element = ".$filterobj->id;
+					$sql .= " AND a.fk_element = ".((int) $filterobj->id);
 				}
 			} elseif (is_object($filterobj) && is_array($filterobj->fields) && is_array($filterobj->fields['rowid']) && is_array($filterobj->fields['ref']) && $filterobj->table_element && $filterobj->element) {
 				// Generic case
 				$sql .= " AND a.fk_element = o.rowid AND a.elementtype = '".$db->escape($filterobj->element).($module ? '@'.$module : '')."'";
 				if ($filterobj->id) {
-					$sql .= " AND a.fk_element = ".$filterobj->id;
+					$sql .= " AND a.fk_element = ".((int) $filterobj->id);
 				}
 			}
 		}
@@ -1538,7 +1548,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 					$sql .= "OR (";
 				}
 				if (!empty($code)) {
-					addEventTypeSQL($sql, $code, $donetodo, $now, $filters, "");
+					addEventTypeSQL($sql, $code);
 				}
 				if ($key != 0) {
 					$sql .= ")";
@@ -1546,8 +1556,10 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 			}
 			$sql .= ')';
 		} elseif (!empty($actioncode)) {
-			addEventTypeSQL($sql, $actioncode, $donetodo, $now, $filters);
+			addEventTypeSQL($sql, $actioncode);
 		}
+
+		addOtherFilterSQL($sql, $donetodo, $now, $filters);
 
 		if (is_array($actioncode)) {
 			foreach ($actioncode as $code) {
@@ -1616,8 +1628,8 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 
 						'contact_id'=>$obj->fk_contact,
 						'socpeopleassigned' => $contactaction->socpeopleassigned,
-						'lastname'=>$obj->lastname,
-						'firstname'=>$obj->firstname,
+						'lastname' => empty($obj->lastname) ? '' : $obj->lastname,
+						'firstname' => empty($obj->firstname) ? '' : $obj->firstname,
 						'fk_element'=>$obj->fk_element,
 						'elementtype'=>$obj->elementtype,
 						// Type of event
@@ -1902,7 +1914,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 			}
 
 			// Status
-			$out .= '<td class="nowrap center">'.$actionstatic->LibStatut($histo[$key]['percent'], 3, 0, $histo[$key]['datestart']).'</td>';
+			$out .= '<td class="nowrap center">'.$actionstatic->LibStatut($histo[$key]['percent'], 2, 0, $histo[$key]['datestart']).'</td>';
 
 			// Actions
 			$out .= '<td></td>';
@@ -1940,7 +1952,7 @@ function show_subsidiaries($conf, $langs, $db, $object)
 
 	$sql = "SELECT s.rowid, s.client, s.fournisseur, s.nom as name, s.name_alias, s.email, s.address, s.zip, s.town, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur, s.canvas";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-	$sql .= " WHERE s.parent = ".$object->id;
+	$sql .= " WHERE s.parent = ".((int) $object->id);
 	$sql .= " AND s.entity IN (".getEntity('societe').")";
 	$sql .= " ORDER BY s.nom";
 
@@ -1951,7 +1963,9 @@ function show_subsidiaries($conf, $langs, $db, $object)
 		$socstatic = new Societe($db);
 
 		print load_fiche_titre($langs->trans("Subsidiaries"), '', '');
-		print "\n".'<table class="noborder centpercent">'."\n";
+
+		print "\n".'<div class="div-table-responsive-no-min">'."\n";
+		print '<table class="noborder centpercent">'."\n";
 
 		print '<tr class="liste_titre"><td>'.$langs->trans("Company").'</td>';
 		print '<td>'.$langs->trans("Address").'</td><td>'.$langs->trans("Zip").'</td>';
@@ -1979,17 +1993,17 @@ function show_subsidiaries($conf, $langs, $db, $object)
 
 			print '<tr class="oddeven">';
 
-			print '<td>';
+			print '<td class="tdoverflowmax150">';
 			print $socstatic->getNomUrl(1);
 			print '</td>';
 
-			print '<td>'.$obj->address.'</td>';
-			print '<td>'.$obj->zip.'</td>';
-			print '<td>'.$obj->town.'</td>';
-			print '<td>'.$obj->code_client.'</td>';
+			print '<td class="tdoverflowmax400" title="'.dol_escape_htmltag($obj->address).'">'.dol_escape_htmltag($obj->address).'</td>';
+			print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($obj->zip).'">'.$obj->zip.'</td>';
+			print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($obj->town).'">'.$obj->town.'</td>';
+			print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($obj->code_client).'">'.$obj->code_client.'</td>';
 
 			print '<td class="center">';
-			print '<a href="'.DOL_URL_ROOT.'/societe/card.php?socid='.$obj->rowid.'&amp;action=edit">';
+			print '<a class="editfielda" href="'.DOL_URL_ROOT.'/societe/card.php?socid='.((int) $obj->rowid).'&action=edit">';
 			print img_edit();
 			print '</a></td>';
 
@@ -1997,6 +2011,7 @@ function show_subsidiaries($conf, $langs, $db, $object)
 			$i++;
 		}
 		print "\n</table>\n";
+		print '</div>'."\n";
 	}
 
 	print "<br>\n";
@@ -2008,13 +2023,10 @@ function show_subsidiaries($conf, $langs, $db, $object)
  *
  *		@param	string		$sql		    $sql modified
  * 		@param	string	    $actioncode		Action code
- * 		@param	string		$donetodo		donetodo
- * 		@param	string		$now		    now
- * 		@param	string		$filters		array
  * 		@param	string		$sqlANDOR		"AND", "OR" or "" sql condition
  * 		@return	string      sql request
  */
-function addEventTypeSQL(&$sql, $actioncode, $donetodo, $now, $filters, $sqlANDOR = "AND")
+function addEventTypeSQL(&$sql, $actioncode, $sqlANDOR = "AND")
 {
 	global $conf, $db;
 	// Condition on actioncode
@@ -2040,6 +2052,23 @@ function addEventTypeSQL(&$sql, $actioncode, $donetodo, $now, $filters, $sqlANDO
 			$sql .= " $sqlANDOR c.code = '".$db->escape($actioncode)."'";
 		}
 	}
+
+	return $sql;
+}
+
+/**
+ * 		Add Event Type SQL
+ *
+ *		@param	string		$sql		    $sql modified
+ * 		@param	string		$donetodo		donetodo
+ * 		@param	string		$now		    now
+ * 		@param	string		$filters		array
+ * 		@return	string      sql request
+ */
+function addOtherFilterSQL(&$sql, $donetodo, $now, $filters)
+{
+	global $conf, $db;
+	// Condition on actioncode
 
 	if ($donetodo == 'todo') {
 		$sql .= " AND ((a.percent >= 0 AND a.percent < 100) OR (a.percent = -1 AND a.datep > '".$db->idate($now)."'))";
@@ -2070,7 +2099,7 @@ function addMailingEventTypeSQL($actioncode, $objcon, $filterobj)
 		$langs->load("mails");
 
 		$sql2 = "SELECT m.rowid as id, m.titre as label, mc.date_envoi as dp, mc.date_envoi as dp2, '100' as percent, 'mailing' as type";
-		$sql2 .= ", '' as fk_element, '' as elementtype, '' as contact_id";
+		$sql2 .= ", null as fk_element, '' as elementtype, null as contact_id";
 		$sql2 .= ", 'AC_EMAILING' as acode, '' as alabel, '' as apicto";
 		$sql2 .= ", u.rowid as user_id, u.login as user_login, u.photo as user_photo, u.firstname as user_firstname, u.lastname as user_lastname"; // User that valid action
 		if (is_object($filterobj) && get_class($filterobj) == 'Societe') {

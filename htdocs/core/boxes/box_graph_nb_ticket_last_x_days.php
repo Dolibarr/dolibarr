@@ -168,8 +168,9 @@ class box_graph_nb_ticket_last_x_days extends ModeleBoxes
 					$totalnb += $value['data'];
 				}
 				$px1->SetData($data);
-				$px1->setShowLegend(2);
-				$px1->SetType(array('bar'));
+				//$px1->setShowLegend(2);
+				$px1->setShowLegend(0);
+				$px1->SetType(array('bars'));
 				$px1->SetLegend(array($langs->trans('BoxNumberOfTicketByDay')));
 				$px1->SetMaxValue($px1->GetCeilMaxValue());
 				$px1->SetHeight(192);

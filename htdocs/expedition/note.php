@@ -89,7 +89,7 @@ $form = new Form($db);
 
 if ($id > 0 || !empty($ref)) {
 	$head = shipping_prepare_head($object);
-	print dol_get_fiche_head($head, 'note', $langs->trans("Shipment"), -1, 'sending');
+	print dol_get_fiche_head($head, 'note', $langs->trans("Shipment"), -1, $object->picto);
 
 
 	// Shipment card

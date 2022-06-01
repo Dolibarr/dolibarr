@@ -260,13 +260,13 @@ class Cchargesociales
 		// Update request
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET';
 		$sql .= ' libelle = '.(isset($this->libelle) ? "'".$this->db->escape($this->libelle)."'" : "null").',';
-		$sql .= ' deductible = '.(isset($this->deductible) ? $this->deductible : "null").',';
-		$sql .= ' active = '.(isset($this->active) ? $this->active : "null").',';
+		$sql .= ' deductible = '.(isset($this->deductible) ? ((int) $this->deductible) : "null").',';
+		$sql .= ' active = '.(isset($this->active) ? ((int) $this->active) : "null").',';
 		$sql .= ' code = '.(isset($this->code) ? "'".$this->db->escape($this->code)."'" : "null").',';
-		$sql .= ' fk_pays = '.(isset($this->fk_pays) ? $this->fk_pays : "null").',';
+		$sql .= ' fk_pays = '.((isset($this->fk_pays) && $this->fk_pays > 0) ? ((int) $this->fk_pays) : "null").',';
 		$sql .= ' module = '.(isset($this->module) ? "'".$this->db->escape($this->module)."'" : "null").',';
 		$sql .= ' accountancy_code = '.(isset($this->accountancy_code) ? "'".$this->db->escape($this->accountancy_code)."'" : "null");
-		$sql .= ' WHERE id='.$this->id;
+		$sql .= ' WHERE id='.((int) $this->id);
 
 		$this->db->begin();
 

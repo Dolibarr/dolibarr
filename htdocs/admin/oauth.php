@@ -91,6 +91,7 @@ print dol_get_fiche_head($head, 'services', '', -1, 'technic');
 
 print '<span class="opacitymedium">'.$langs->trans("ListOfSupportedOauthProviders").'</span><br><br>';
 
+print '<div class="div-table-responsive">';
 print '<table class="noborder centpercent">';
 
 $i = 0;
@@ -145,6 +146,7 @@ foreach ($list as $key) {
 }
 
 print '</table>'."\n";
+print '</div>';
 
 print dol_get_fiche_end();
 

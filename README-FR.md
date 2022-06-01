@@ -8,9 +8,11 @@ Il est simple d'utilisation et modulaire, vous permettant de n'activez que les f
 
 ![ScreenShot](https://www.dolibarr.org/medias/dolibarr_screenshot1_1920x1080.jpg)
 
+
 ## LICENCE
 
 Dolibarr est distribué sous les termes de la licence GNU General Public License v3+ ou supérieure.
+
 
 ## INSTALLER DOLIBARR
 
@@ -52,6 +54,7 @@ Vous pouvez aussi utiliser un serveur Web et une base de données prise en charg
 
 - Suivez les instructions de l'installateur
 
+
 ## METTRE A JOUR DOLIBARR
 
 Pour mettre à jour Dolibarr depuis une vieille version vers celle ci:
@@ -64,9 +67,11 @@ Pour mettre à jour Dolibarr depuis une vieille version vers celle ci:
 
 *Note: Le processus de migration peut être lancé manuellement et plusieurs fois, sans risque, en appelant la page /install/*
 
+
 ## CE QUI EST NOUVEAU
 
-Voir fichier ChangeLog.
+See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog) file.
+
 
 ## CE QUE DOLIBARR PEUT FAIRE
 
@@ -82,15 +87,17 @@ Voir fichier ChangeLog.
 - Calendrier/Agenda partagé (avec export ical, vcal)
 - Suivi des opportunités et/ou projets (suivi de rentabilité incluant les factures, notes de frais, temps consommé valorisé, ...)
 - Gestion de contrats de services
-- Gestion de stock
+- Gestion de stock et inventaires
 - Gestion des expéditions
 - Gestion des demandes de congès
 - Gestion des notes de frais
+- Gestion de recrutement
 - GED (Gestion Electronique de Documents)
 - EMailings de masse
 - Réalisation de sondages
+- Gestion d'adhérents
 - Point de vente/Caisse enregistreuse
-- …
+- … (près de 100 modules disponibles en standard, près de 1000 autre sur la place de marché d'extensions)
 
 ### Autres modules
 
@@ -135,18 +142,21 @@ Voir fichier ChangeLog.
 
 Dolibarr peut aussi être étendu à volonté avec l'ajout de module/applications externes développées par des développeus tiers, disponible sur [DoliStore](https://www.dolistore.com).
 
+
 ## CE QUE DOLIBARR NE PEUT PAS (ENCORE) FAIRE
 
 Voici un liste de fonctionnalités pas encore gérées par Dolibarr:
 
-- Dolibarr ne contient pas de module de Gestion de la paie.
+- Dolibarr ne contient pas de module de génération de feuille de paie.
 - Les tâches du module de gestion de projets n'ont pas de dépendances entre elle.
 - Dolibarr n'embarque pas de Webmail intégré nativement.
 - Dolibarr ne fait pas le café (pas encore).
 
+
 ## DOCUMENTATION
 
 La documentation utilisateur, développeur et traducteur est disponible sous forme de ressources de la communauté via le site [Wiki](https://wiki.dolibarr.org).
+
 
 ## CONTRIBUER
 
@@ -154,11 +164,13 @@ Ce projet existe grâce à ses nombreux contributeurs [[Contribuer](https://gith
 
 <a href="https://github.com/Dolibarr/dolibarr/graphs/contributors"><img src="https://opencollective.com/dolibarr/contributors.svg?width=890&button=false" /></a>
 
+
 ## CREDITS
 
 Dolibarr est le résultat du travail de nombreux contributeurs depuis des années et utilise des librairies d'autres contributeurs.
 
 Voir le fichier [COPYRIGHT](https://github.com/Dolibarr/dolibarr/blob/develop/COPYRIGHT)
+
 
 ## ACTUALITES ET RESEAUX SOCIAUX
 

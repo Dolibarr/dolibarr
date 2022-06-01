@@ -32,7 +32,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
  */
 class FormAccounting extends Form
 {
-
 	private $options_cache = array();
 
 	/**
@@ -87,7 +86,7 @@ class FormAccounting extends Form
 			$sql .= " WHERE active = 1";
 			$sql .= " AND entity = ".$conf->entity;
 			if ($nature && is_numeric($nature)) {
-				$sql .= " AND nature = ".$nature;
+				$sql .= " AND nature = ".((int) $nature);
 			}
 			$sql .= " ORDER BY code";
 
@@ -167,7 +166,7 @@ class FormAccounting extends Form
 			$sql .= " WHERE active = 1";
 			$sql .= " AND entity = ".$conf->entity;
 			if ($nature && is_numeric($nature)) {
-				$sql .= " AND nature = ".$nature;
+				$sql .= " AND nature = ".((int) $nature);
 			}
 			$sql .= " ORDER BY code";
 
@@ -243,7 +242,7 @@ class FormAccounting extends Form
 			$sql .= " WHERE c.active = 1";
 			$sql .= " AND c.category_type = 0";
 			if (empty($allcountries)) {
-				$sql .= " AND c.fk_country = ".$mysoc->country_id;
+				$sql .= " AND c.fk_country = ".((int) $mysoc->country_id);
 			}
 			$sql .= " ORDER BY c.label ASC";
 		} else {
@@ -275,8 +274,10 @@ class FormAccounting extends Form
 					if ($obj->rowid == $selected) {
 						$out .= ' selected';
 					}
-					$out .= '>'.($maxlen ? dol_trunc($obj->type, $maxlen) : $obj->type);
-					$out .= ' ('.$obj->range_account.')';
+					$out .= '>';
+					$titletoshow = dol_string_nohtmltag(($maxlen ? dol_trunc($obj->type, $maxlen) : $obj->type).' ('.$obj->range_account.')');
+					$out .= dol_escape_htmltag($titletoshow);
+					$out .= '</option>';
 					$i++;
 				}
 				$out .= '</select>';
@@ -433,67 +434,77 @@ class FormAccounting extends Form
 	/**
 	 * Return list of auxilary accounts. Cumulate list from customers, suppliers and users.
 	 *
-	 * @param string   $selectid       Preselected pcg_type
-	 * @param string   $htmlname       Name of field in html form
-	 * @param int      $showempty      Add an empty field
-	 * @param string   $morecss        More css
-	 * @return string                  String with HTML select
+	 * @param string   		$selectid       Preselected pcg_type
+	 * @param string   		$htmlname       Name of field in html form
+	 * @param int|string    $showempty      Add an empty field
+	 * @param string   		$morecss        More css
+	 * @param string   		$usecache       Key to use to store result into a cache. Next call with same key will reuse the cache.
+	 * @return string       	   			String with HTML select
 	 */
-	public function select_auxaccount($selectid, $htmlname = 'account_num_aux', $showempty = 0, $morecss = 'maxwidth250')
+	public function select_auxaccount($selectid, $htmlname = 'account_num_aux', $showempty = 0, $morecss = 'maxwidth250', $usecache = '')
 	{
 		// phpcs:enable
 
 		$aux_account = array();
 
-		// Auxiliary thirdparties account
-		$sql = "SELECT code_compta, code_compta_fournisseur, nom as name";
-		$sql .= " FROM ".MAIN_DB_PREFIX."societe";
-		$sql .= " WHERE entity IN (".getEntity('societe').")";
-		$sql .= " AND client IN (1,3) OR fournisseur = 1";
-
-		dol_syslog(get_class($this)."::select_auxaccount", LOG_DEBUG);
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			while ($obj = $this->db->fetch_object($resql)) {
-				if (!empty($obj->code_compta)) {
-					$aux_account[$obj->code_compta] = $obj->code_compta.' <span class="opacitymedium">('.$obj->name.')</span>';
-				}
-				if (!empty($obj->code_compta_fournisseur)) {
-					$aux_account[$obj->code_compta_fournisseur] = $obj->code_compta_fournisseur.' <span class="opacitymedium">('.$obj->name.')</span>';
-				}
-			}
+		if ($usecache && !empty($this->options_cache[$usecache])) {
+			$aux_account = $aux_account + $this->options_cache[$usecache]; // We use + instead of array_merge because we don't want to reindex key from 0
 		} else {
-			$this->error = "Error ".$this->db->lasterror();
-			dol_syslog(get_class($this)."::select_auxaccount ".$this->error, LOG_ERR);
-			return -1;
-		}
+			dol_syslog(get_class($this)."::select_auxaccount", LOG_DEBUG);
 
-		ksort($aux_account);
+			// Auxiliary thirdparties account
+			$sql = "SELECT code_compta, code_compta_fournisseur, nom as name";
+			$sql .= " FROM ".MAIN_DB_PREFIX."societe";
+			$sql .= " WHERE entity IN (".getEntity('societe').")";
+			$sql .= " AND (client IN (1,3) OR fournisseur = 1)";
 
-		$this->db->free($resql);
-
-		// Auxiliary user account
-		$sql = "SELECT DISTINCT accountancy_code, lastname, firstname ";
-		$sql .= " FROM ".MAIN_DB_PREFIX."user";
-		$sql .= " WHERE entity IN (".getEntity('user').")";
-		$sql .= " ORDER BY accountancy_code";
-		dol_syslog(get_class($this)."::select_auxaccount", LOG_DEBUG);
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			while ($obj = $this->db->fetch_object($resql)) {
-				if (!empty($obj->accountancy_code)) {
-					$aux_account[$obj->accountancy_code] = $obj->accountancy_code.' <span class="opacitymedium">('.dolGetFirstLastname($obj->firstname, $obj->lastname).')</span>';
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				while ($obj = $this->db->fetch_object($resql)) {
+					if (!empty($obj->code_compta)) {
+						$aux_account[$obj->code_compta] = $obj->code_compta.' <span class="opacitymedium">('.$obj->name.')</span>';
+					}
+					if (!empty($obj->code_compta_fournisseur)) {
+						$aux_account[$obj->code_compta_fournisseur] = $obj->code_compta_fournisseur.' <span class="opacitymedium">('.$obj->name.')</span>';
+					}
 				}
+			} else {
+				$this->error = "Error ".$this->db->lasterror();
+				dol_syslog(get_class($this)."::select_auxaccount ".$this->error, LOG_ERR);
+				return -1;
 			}
-		} else {
-			$this->error = "Error ".$this->db->lasterror();
-			dol_syslog(get_class($this)."::select_auxaccount ".$this->error, LOG_ERR);
-			return -1;
+
+			ksort($aux_account);
+
+			$this->db->free($resql);
+
+			// Auxiliary user account
+			$sql = "SELECT DISTINCT accountancy_code, lastname, firstname ";
+			$sql .= " FROM ".MAIN_DB_PREFIX."user";
+			$sql .= " WHERE entity IN (".getEntity('user').")";
+			$sql .= " ORDER BY accountancy_code";
+
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				while ($obj = $this->db->fetch_object($resql)) {
+					if (!empty($obj->accountancy_code)) {
+						$aux_account[$obj->accountancy_code] = $obj->accountancy_code.' <span class="opacitymedium">('.dolGetFirstLastname($obj->firstname, $obj->lastname).')</span>';
+					}
+				}
+			} else {
+				$this->error = "Error ".$this->db->lasterror();
+				dol_syslog(get_class($this)."::select_auxaccount ".$this->error, LOG_ERR);
+				return -1;
+			}
+			$this->db->free($resql);
+
+			if ($usecache) {
+				$this->options_cache[$usecache] = $aux_account;
+			}
 		}
-		$this->db->free($resql);
 
 		// Build select
-		$out .= Form::selectarray($htmlname, $aux_account, $selectid, $showempty, 0, 0, '', 0, 0, 0, '', $morecss, 1);
+		$out .= Form::selectarray($htmlname, $aux_account, $selectid, ($showempty ? (is_numeric($showempty) ? 1 : $showempty): 0), 0, 0, '', 0, 0, 0, '', $morecss, 1);
 
 		return $out;
 	}

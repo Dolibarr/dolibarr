@@ -1,0 +1,22 @@
+# Dolibarr language file - Source file is en_US - marque pages
+AddThisPageToBookmarks=Бетбелгілерге ағымдағы бетті қосыңыз
+Bookmark=Бетбелгі
+Bookmarks=Бетбелгілер
+ListOfBookmarks=Бетбелгілер тізімі
+EditBookmarks=Бетбелгілерді тізімдеу/өңдеу
+NewBookmark=Жаңа бетбелгі
+ShowBookmark=Бетбелгіні көрсету
+OpenANewWindow=Жаңа қойынды ашыңыз
+ReplaceWindow=Ағымдағы қойынды ауыстырыңыз
+BookmarkTargetNewWindowShort=Жаңа қойынды
+BookmarkTargetReplaceWindowShort=Ағымдағы қойынды
+BookmarkTitle=Бетбелгі атауы
+UrlOrLink=URL
+BehaviourOnClick=Бетбелгі URL таңдалған кездегі әрекет
+CreateBookmark=Бетбелгі жасау
+SetHereATitleForLink=Бетбелгіге атау қойыңыз
+UseAnExternalHttpLinkOrRelativeDolibarrLink=Сыртқы/абсолютті сілтемені (https: // URL) немесе ішкі/салыстырмалы сілтемені пайдаланыңыз (/DOLIBARR_ROOT/htdocs/...)
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Байланыстырылған бет ағымдағы қойындыда немесе жаңа қойындыда ашылатынын таңдаңыз
+BookmarksManagement=Бетбелгілерді басқару
+BookmarksMenuShortCut=Ctrl + shift + m
+NoBookmarks=No bookmarks defined

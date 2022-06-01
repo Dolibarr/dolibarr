@@ -29,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/salaries/class/paymentsalary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 // Load translation files required by the page
-$langs->load("bills");
+$langs->loadLangs(array("banks", "bills"));
 
 $action = GETPOST('action', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
@@ -78,7 +78,7 @@ if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'y
 		$action = 'create';
 	}
 	if (!empty($conf->banque->enabled) && !(GETPOST("accountid", 'int') > 0)) {
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("AccountToCredit")), null, 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("AccountToDebit")), null, 'errors');
 		$error++;
 		$action = 'create';
 	}
@@ -223,6 +223,7 @@ if ($action == 'create') {
 	print '<tr>';
 	print '<td class="fieldrequired">'.$langs->trans('AccountToDebit').'</td>';
 	print '<td>';
+	print img_picto('', 'bank_account', 'class="pictofixedwidth"');
 	$form->select_comptes(GETPOSTISSET("accountid") ? GETPOST("accountid", 'int') : $salary->accountid, "accountid", 0, '', 1); // Show opend bank account list
 	print '</td></tr>';
 
@@ -285,9 +286,10 @@ if ($action == 'create') {
 			if (!empty($conf->use_javascript_ajax)) {
 				print img_picto("Auto fill", 'rightarrow', "class='AutoFillAmount' data-rowid='".$namef."' data-value='".($objp->amount - $sumpaid)."'");
 			} */
-			$remaintopay = $objp->amount - $sumpaid;
-			print '<input type=hidden class="sum_remain" name="'.$nameRemain.'" value="'.$remaintopay.'">';
-			print '<input type="text" size="8" name="'.$namef.'" id="'.$namef.'" value="'.$remaintopay.'">';
+			$valuetoshow = GETPOSTISSET($namef) ? GETPOST($namef) : ($objp->amount - $sumpaid);
+
+			print '<input type=hidden class="sum_remain" name="'.$nameRemain.'" value="'.$valuetoshow.'">';
+			print '<input type="text" class="right width75" name="'.$namef.'" id="'.$namef.'" value="'.$valuetoshow.'">';
 		} else {
 			print '-';
 		}
@@ -313,8 +315,10 @@ if ($action == 'create') {
 	print "</table>";
 
 	// Bouton Save payment
-	print '<br><div class="center"><input type="checkbox" checked name="closepaidsalary"> '.$langs->trans("ClosePaidSalaryAutomatically");
-	print '<br><input type="submit" class="button" name="save" value="'.$langs->trans('ToMakePayment').'">';
+	print '<br>';
+	print '<div class="center">';
+	print '<div class="paddingbottom"><input type="checkbox" checked name="closepaidsalary" id="closepaidsalary"><label for="closepaidsalary">'.$langs->trans("ClosePaidSalaryAutomatically").'</label></div>';
+	print '<input type="submit" class="button" name="save" value="'.$langs->trans('ToMakePayment').'">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
 	print '</div>';

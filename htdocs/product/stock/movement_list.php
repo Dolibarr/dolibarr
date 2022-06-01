@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2015		Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2018		Ferran Marcet			<fmarcet@2byte.es>
+ * Copyright (C) 2018-2022	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -86,6 +86,7 @@ $search_user = trim(GETPOST("search_user"));
 $search_batch = trim(GETPOST("search_batch"));
 $search_qty = trim(GETPOST("search_qty"));
 $search_type_mouvement = GETPOST('search_type_mouvement', 'int');
+$search_fk_projet=GETPOST("search_fk_projet", 'int');
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -135,11 +136,11 @@ $arrayfields = array(
 	//'m.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
 	//'m.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>500)
 );
-if (!empty($conf->global->PRODUCT_DISABLE_EATBY)) {
-	unset($arrayfields['pl.eatby']);
-}
 if (!empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
 	unset($arrayfields['pl.sellby']);
+}
+if (!empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+	unset($arrayfields['pl.eatby']);
 }
 
 // Security check
@@ -198,6 +199,7 @@ if (empty($reshook)) {
 		$search_user = "";
 		$search_batch = "";
 		$search_qty = '';
+		$search_fk_projet=0;
 		$sall = "";
 		$toselect = '';
 		$search_array_options = array();
@@ -541,13 +543,16 @@ if ($search_warehouse != '' && $search_warehouse != '-1') {
 	$sql .= natural_search('e.rowid', $search_warehouse, 2);
 }
 if (!empty($search_user)) {
-	$sql .= natural_search('u.login', $search_user);
+	$sql .= natural_search(array('u.lastname', 'u.firstname', 'u.login'), $search_user);
 }
 if (!empty($search_batch)) {
 	$sql .= natural_search('m.batch', $search_batch);
 }
 if (!empty($product_id)) {
 	$sql .= natural_search('p.rowid', $product_id);
+}
+if (!empty($search_fk_projet) && $search_fk_projet != '-1') {
+	$sql .= natural_search('m.fk_projet', $search_fk_projet);
 }
 if ($search_qty != '') {
 	$sql .= natural_search('m.value', $search_qty, 1);
@@ -623,6 +628,38 @@ if ($resql) {
 
 		$morehtmlref = '<div class="refidno">';
 		$morehtmlref .= $langs->trans("LocationSummary").' : '.$object->lieu;
+
+		// Project
+		if (!empty($conf->projet->enabled)) {
+			$langs->load("projects");
+			$morehtmlref .= '<br>'.img_picto('', 'project').' '.$langs->trans('Project').' ';
+			if ($usercancreate && 1 == 2) {
+				if ($action != 'classify') {
+					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
+				}
+				if ($action == 'classify') {
+					$projectid = $object->fk_project;
+					$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+					$morehtmlref .= '<input type="hidden" name="action" value="classin">';
+					$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
+					$morehtmlref .= $formproject->select_projects(($socid > 0 ? $socid : -1), $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500');
+					$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+					$morehtmlref .= '</form>';
+				} else {
+					$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+				}
+			} else {
+				if (!empty($object->fk_project)) {
+					$proj = new Project($db);
+					$proj->fetch($object->fk_project);
+					$morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$object->fk_project.'" title="'.$langs->trans('ShowProject').'">';
+					$morehtmlref .= $proj->ref;
+					$morehtmlref .= '</a>';
+				} else {
+					$morehtmlref .= '';
+				}
+			}
+		}
 		$morehtmlref .= '</div>';
 
 		$shownav = 1;
@@ -808,12 +845,12 @@ if ($resql) {
 
 	// List of mass actions available
 	$arrayofmassactions = array(
-	//    'presend'=>$langs->trans("SendByMail"),
-	//    'builddoc'=>$langs->trans("PDFMerge"),
+	//    'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
+	//    'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 	);
 	// By default, we should never accept deletion of stock movement.
 	if (!empty($conf->global->STOCK_ALLOW_DELETE_OF_MOVEMENT) && $permissiontodelete) {
-		$arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
+		$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 	}
 	if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete'))) {
 		$arrayofmassactions = array();
@@ -857,7 +894,7 @@ if ($resql) {
 
 	$moreforfilter = '';
 
-	$parameters = array();
+	$parameters = array('arrayfields'=>&$arrayfields);
 	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters); // Note that $action and $object may have been modified by hook
 	if (empty($reshook)) {
 		$moreforfilter .= $hookmanager->resPrint;
@@ -1093,6 +1130,24 @@ if ($resql) {
 		$userstatic->email = $objp->user_email;
 		$userstatic->statut = $objp->user_status;
 
+		// Multilangs
+		if (!empty($conf->global->MAIN_MULTILANGS)) {  // If multilang is enabled
+			// TODO Use a cache
+			$sql = "SELECT label";
+			$sql .= " FROM ".MAIN_DB_PREFIX."product_lang";
+			$sql .= " WHERE fk_product=".$objp->rowid;
+			$sql .= " AND lang='".$db->escape($langs->getDefaultLang())."'";
+			$sql .= " LIMIT 1";
+
+			$result = $db->query($sql);
+			if ($result) {
+				$objtp = $db->fetch_object($result);
+				if (!empty($objtp->label)) {
+					$objp->produit = $objtp->label;
+				}
+			}
+		}
+
 		$productstatic->id = $objp->rowid;
 		$productstatic->ref = $objp->product_ref;
 		$productstatic->label = $objp->produit;
@@ -1126,10 +1181,10 @@ if ($resql) {
 		print '<tr class="oddeven">';
 		// Id movement
 		if (!empty($arrayfields['m.rowid']['checked'])) {
-			print '<td>';
+			print '<td class="nowraponall">';
 			print img_picto($langs->trans("StockMovement"), 'movement', 'class="pictofixedwidth"');
 			print $objp->mid;
-			print '</td>'; // This is primary not movement id
+			print '</td>'; // This is primary key not movement ref
 		}
 		if (!empty($arrayfields['m.datem']['checked'])) {
 			// Date
@@ -1223,6 +1278,14 @@ if ($resql) {
 			}
 			print '</td>';
 		}
+
+		// Extra fields
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
+		// Fields from hook
+		$parameters = array('arrayfields'=>$arrayfields, 'objp'=>$objp, 'i'=>$i, 'totalarray'=>&$totalarray);
+		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
+		print $hookmanager->resPrint;
+
 		// Action column
 		print '<td class="nowrap center">';
 		if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined

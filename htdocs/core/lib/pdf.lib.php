@@ -12,6 +12,7 @@
  * Copyright (C) 2015-2016  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2019       Lenin Rivas           	<lenin.rivas@servcom-it.com>
  * Copyright (C) 2020       Nicolas ZABOURI         <info@inovea-conseil.com>
+ * Copyright (C) 2021		Anthony Berton       	<bertonanthony@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +34,42 @@
  *	\brief      Set of functions used for PDF generation
  *	\ingroup    core
  */
+
+
+/**
+ *  Return array head with list of tabs to view object informations.
+ *
+ *  @return	array   	        head array with tabs
+ */
+function pdf_admin_prepare_head()
+{
+	global $langs, $conf, $user;
+
+	$h = 0;
+	$head = array();
+
+	$head[$h][0] = DOL_URL_ROOT.'/admin/pdf.php';
+	$head[$h][1] = $langs->trans("Common");
+	$head[$h][2] = 'general';
+	$h++;
+
+	// Show more tabs from modules
+	// Entries must be declared in modules descriptor with line
+	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'pdf_admin');
+
+	if (!empty($conf->propal->enabled)) {
+		$head[$h][0] = DOL_URL_ROOT.'/admin/pdf_other.php';
+		$head[$h][1] = $langs->trans("Other");
+		$head[$h][2] = 'other';
+		$h++;
+	}
+
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'pdf_admin', 'remove');
+
+	return $head;
+}
 
 
 /**
@@ -668,8 +705,8 @@ function pdf_pagehead(&$pdf, $outputlangs, $page_height)
 {
 	global $conf;
 
-	// Add a background image on document
-	if (!empty($conf->global->MAIN_USE_BACKGROUND_ON_PDF)) {		// Warning, this option make TCPDF generation being crazy and some content disappeared behind the image
+	// Add a background image on document only if good setup of const
+	if (!empty($conf->global->MAIN_USE_BACKGROUND_ON_PDF) && ($conf->global->MAIN_USE_BACKGROUND_ON_PDF != '-1')) {		// Warning, this option make TCPDF generation being crazy and some content disappeared behind the image
 		$pdf->SetAutoPageBreak(0, 0); // Disable auto pagebreak before adding image
 		$pdf->Image($conf->mycompany->dir_output.'/logos/'.$conf->global->MAIN_USE_BACKGROUND_ON_PDF, (isset($conf->global->MAIN_USE_BACKGROUND_ON_PDF_X) ? $conf->global->MAIN_USE_BACKGROUND_ON_PDF_X : 0), (isset($conf->global->MAIN_USE_BACKGROUND_ON_PDF_Y) ? $conf->global->MAIN_USE_BACKGROUND_ON_PDF_Y : 0), 0, $page_height);
 		$pdf->SetAutoPageBreak(1, 0); // Restore pagebreak
@@ -942,6 +979,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 
 	$outputlangs->load("dict");
 	$line = '';
+	$reg = array();
 
 	$dims = $pdf->getPageDimensions();
 
@@ -1022,11 +1060,11 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 	}
 	// Capital
 	if ($fromcompany->capital) {
-		$tmpamounttoshow = price2num($fromcompany->capital); // This field is a free string
+		$tmpamounttoshow = price2num($fromcompany->capital); // This field is a free string or a float
 		if (is_numeric($tmpamounttoshow) && $tmpamounttoshow > 0) {
 			$line3 .= ($line3 ? " - " : "").$outputlangs->transnoentities("CapitalOf", price($tmpamounttoshow, 0, $outputlangs, 0, 0, 0, $conf->currency));
-		} else {
-			$line3 .= ($line3 ? " - " : "").$outputlangs->transnoentities("CapitalOf", $tmpamounttoshow, $outputlangs);
+		} elseif (!empty($fromcompany->capital)) {
+			$line3 .= ($line3 ? " - " : "").$outputlangs->transnoentities("CapitalOf", $fromcompany->capital, $outputlangs);
 		}
 	}
 	// Prof Id 1
@@ -1196,7 +1234,7 @@ function pdf_writeLinkedObjects(&$pdf, $object, $outputlangs, $posx, $posy, $w, 
 /**
  *	Output line description into PDF
  *
- *  @param  TCPDF				$pdf               PDF object
+ *  @param  TCPDF			$pdf               	PDF object
  *	@param	Object			$object				Object
  *	@param	int				$i					Current line number
  *  @param  Translate		$outputlangs		Object lang for output
@@ -1236,6 +1274,7 @@ function pdf_writelinedesc(&$pdf, $object, $i, $outputlangs, $w, $h, $posx, $pos
 
 		// Fix bug of some HTML editors that replace links <img src="http://localhostgit/viewimage.php?modulepart=medias&file=image/efd.png" into <img src="http://localhostgit/viewimage.php?modulepart=medias&amp;file=image/efd.png"
 		// We make the reverse, so PDF generation has the real URL.
+		$nbrep = 0;
 		$labelproductservice = preg_replace('/(<img[^>]*src=")([^"]*)(&amp;)([^"]*")/', '\1\2&\4', $labelproductservice, -1, $nbrep);
 
 		//var_dump($labelproductservice);exit;
@@ -1288,38 +1327,36 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 			$translatealsoifmodified = (!empty($conf->global->MAIN_MULTILANG_TRANSLATE_EVEN_IF_MODIFIED)); // By default if value was modified manually, we keep it (no translation because we don't have it)
 
 			// TODO Instead of making a compare to see if param was modified, check that content contains reference translation. If yes, add the added part to the new translation
-			// ($textwasmodified is replaced with $textwasmodifiedorcompleted and we add completion).
+			// ($textwasnotmodified is replaced with $textwasmodifiedorcompleted and we add completion).
 
 			// Set label
-			// If we want another language, and if label is same than default language (we did force it to a specific value), we can use translation.
+			// If we want another language, and if label is same than default language (we did not force it to a specific value), we can use translation.
 			//var_dump($outputlangs->defaultlang.' - '.$langs->defaultlang.' - '.$label.' - '.$prodser->label);exit;
-			$textwasmodified = ($label == $prodser->label);
-			if (!empty($prodser->multilangs[$outputlangs->defaultlang]["label"]) && ($textwasmodified || $translatealsoifmodified)) {
+			$textwasnotmodified = ($label == $prodser->label);
+			if (!empty($prodser->multilangs[$outputlangs->defaultlang]["label"]) && ($textwasnotmodified || $translatealsoifmodified)) {
 				$label = $prodser->multilangs[$outputlangs->defaultlang]["label"];
 			}
 
 			// Set desc
 			// Manage HTML entities description test because $prodser->description is store with htmlentities but $desc no
-			$textwasmodified = false;
+			$textwasnotmodified = false;
 			if (!empty($desc) && dol_textishtml($desc) && !empty($prodser->description) && dol_textishtml($prodser->description)) {
-				$textwasmodified = (strpos(dol_html_entity_decode($desc, ENT_QUOTES | ENT_HTML5), dol_html_entity_decode($prodser->description, ENT_QUOTES | ENT_HTML5)) !== false);
+				$textwasnotmodified = (strpos(dol_html_entity_decode($desc, ENT_QUOTES | ENT_HTML5), dol_html_entity_decode($prodser->description, ENT_QUOTES | ENT_HTML5)) !== false);
 			} else {
-				$textwasmodified = ($desc == $prodser->description);
+				$textwasnotmodified = ($desc == $prodser->description);
 			}
-			if (!empty($prodser->multilangs[$outputlangs->defaultlang]["description"]) && ($textwasmodified || $translatealsoifmodified)) {
+			if (!empty($prodser->multilangs[$outputlangs->defaultlang]["description"]) && ($textwasnotmodified || $translatealsoifmodified)) {
 				$desc = $prodser->multilangs[$outputlangs->defaultlang]["description"];
 			}
 
 			// Set note
-			$textwasmodified = ($note == $prodser->note);
-			if (!empty($prodser->multilangs[$outputlangs->defaultlang]["note"]) && ($textwasmodified || $translatealsoifmodified)) {
-				$note = $prodser->multilangs[$outputlangs->defaultlang]["note"];
+			$textwasnotmodified = ($note == $prodser->note_public);
+			if (!empty($prodser->multilangs[$outputlangs->defaultlang]["other"]) && ($textwasnotmodified || $translatealsoifmodified)) {
+				$note = $prodser->multilangs[$outputlangs->defaultlang]["other"];
 			}
 		}
-	} elseif ($object->element == 'facture' || $object->element == 'facturefourn') {
-		if ($object->type == $object::TYPE_DEPOSIT) {
-			$desc = str_replace('(DEPOSIT)', $outputlangs->trans('Deposit'), $desc);
-		}
+	} elseif (($object->element == 'facture' || $object->element == 'facturefourn') && preg_match('/^\(DEPOSIT\).+/', $desc)) { // We must not replace '(DEPOSIT)' when it is alone, it will be translated and detailed later
+		$desc = str_replace('(DEPOSIT)', $outputlangs->trans('Deposit'), $desc);
 	}
 
 	// Description short of product line
@@ -2050,9 +2087,9 @@ function pdf_getlineprogress($object, $i, $outputlangs, $hidedetails = 0, $hookm
 			return '';
 		}
 		if (empty($hidedetails) || $hidedetails > 1) {
-			if ($conf->global->SITUATION_DISPLAY_DIFF_ON_PDF) {
+			if (!empty($conf->global->SITUATION_DISPLAY_DIFF_ON_PDF)) {
 				$prev_progress = 0;
-				if (method_exists($object, 'get_prev_progress')) {
+				if (method_exists($object->lines[$i], 'get_prev_progress')) {
 					$prev_progress = $object->lines[$i]->get_prev_progress($object->id);
 				}
 				$result = round($object->lines[$i]->situation_percent - $prev_progress, 1).'%';

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2012-2018  Charlene BENKE 	<charlie@patas-monkey.com>
- * Copyright (C) 2015-2020  Frederic France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2015-2021  Frederic France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -150,7 +150,7 @@ class box_task extends ModeleBoxes
 			}
 
 			$sql = "SELECT pt.rowid, pt.ref, pt.fk_projet, pt.fk_task_parent, pt.datec, pt.dateo, pt.datee, pt.datev, pt.label, pt.description, pt.duration_effective, pt.planned_workload, pt.progress";
-			$sql .= ", p.rowid project_id, p.ref project_ref, p.title project_title";
+			$sql .= ", p.rowid project_id, p.ref project_ref, p.title project_title, p.fk_statut";
 
 			$sql .= " FROM ".MAIN_DB_PREFIX."projet_task as pt";
 			$sql .= " JOIN ".MAIN_DB_PREFIX."projet as p ON (pt.fk_projet = p.rowid)";

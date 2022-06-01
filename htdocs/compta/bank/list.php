@@ -95,8 +95,8 @@ if (!$sortorder) {
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $object = new Account($db);
-$hookmanager->initHooks(array('bankaccountlist'));
 $extrafields = new ExtraFields($db);
+$hookmanager->initHooks(array('bankaccountlist'));
 
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -129,6 +129,8 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
+$permissiontoadd = $user->rights->banque->modifier;
+$permissiontodelete = $user->rights->banque->configurer;
 
 /*
  * Actions
@@ -162,7 +164,6 @@ if (empty($reshook)) {
 	// Mass actions
 	$objectclass = 'Account';
 	$objectlabel = 'FinancialAccount';
-	$permissiontoadd = $user->rights->banque->modifier;
 	$uploaddir = $conf->banque->dir_output;
 	include DOL_DOCUMENT_ROOT . '/core/actions_massactions.inc.php';
 }
@@ -287,27 +288,28 @@ if ($optioncss != '') {
 }
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
+// Add $param from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object); // Note that $action and $object may have been modified by hook
+$param .= $hookmanager->resPrint;
 
 // List of mass actions available
 $arrayofmassactions = array(
-//    'presend'=>$langs->trans("SendByMail"),
-//    'builddoc'=>$langs->trans("PDFMerge"),
+//    'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
+//    'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 );
-if ($user->rights->banque->supprimer) {
-	$arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
+if ($permissiontodelete) {
+	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
 if ($user->rights->banque->modifier) {
-	$arrayofmassactions['preaffecttag'] = '<span class="fa fa-tag paddingrightonly"></span>'.$langs->trans("AffectTag");
+	$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
 }
 if (in_array($massaction, array('presend', 'predelete','preaffecttag'))) {
 	$arrayofmassactions = array();
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
-$newcardbutton = dolGetButtonTitle($langs->trans('NewFinancialAccount'), '', 'fa fa-plus-circle', 'card.php?action=create', '', $user->rights->banque->configurer);
-
-// Lines of title fields
-print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 if ($optioncss != '') {
 	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 }
@@ -316,8 +318,12 @@ print '<input type="hidden" name="formfilteraction" id="formfilteraction" value=
 print '<input type="hidden" name="action" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
+
 print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="search_status" value="'.$search_status.'">';
+
+$newcardbutton = dolGetButtonTitle($langs->trans('NewFinancialAccount'), '', 'fa fa-plus-circle', 'card.php?action=create', '', $user->rights->banque->configurer);
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'bank_account', 0, $newcardbutton, '', $limit, 1);
 
@@ -342,7 +348,7 @@ if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire) {
 
 // Bank accounts
 $parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object); // Note that $action and $object may have been modified by hook
 if (empty($reshook)) {
 	$moreforfilter .= $hookmanager->resPrint;
 } else {
@@ -357,11 +363,14 @@ if (!empty($moreforfilter)) {
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
+$selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
-print '<div class="div-table-responsive">';
-print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
+print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
-print '<tr class="liste_titre_filter">';
+// Fields title search
+// --------------------------------------------------------------------
+print '<tr class="liste_titre">';
 
 // Ref
 if (!empty($arrayfields['b.ref']['checked'])) {
@@ -411,7 +420,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 
 // Fields from hook
 $parameters = array('arrayfields'=>$arrayfields);
-$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 // Date creation
 if (!empty($arrayfields['b.datec']['checked'])) {
@@ -438,13 +447,14 @@ if (!empty($arrayfields['balance']['checked'])) {
 	print '<td class="liste_titre"></td>';
 }
 // Action column
-print '<td class="liste_titre valignmiddle">';
-$searchpicto = $form->showFilterAndCheckAddButtons($massactionbutton ? 1 : 0, 'checkforselect', 1);
+print '<td class="liste_titre maxwidthsearch">';
+$searchpicto = $form->showFilterButtons();
 print $searchpicto;
 print '</td>';
-print '</tr>';
+print '</tr>'."\n";
 
-// Fields title
+// Fields title label
+// --------------------------------------------------------------------
 print '<tr class="liste_titre">';
 if (!empty($arrayfields['b.ref']['checked'])) {
 	print_liste_field_titre($arrayfields['b.ref']['label'], $_SERVER["PHP_SELF"], 'b.ref', '', $param, '', $sortfield, $sortorder);
@@ -493,6 +503,7 @@ print "</tr>\n";
 
 
 $totalarray = array();
+$totalarray['nbfield'] = 0;
 $found = 0;
 $i = 0;
 $lastcurrencycode = '';
@@ -527,7 +538,7 @@ foreach ($accounts as $key => $type) {
 
 	// Label
 	if (!empty($arrayfields['b.label']['checked'])) {
-		print '<td>'.$objecttmp->label.'</td>';
+		print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($objecttmp->label).'">'.dol_escape_htmltag($objecttmp->label).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -535,7 +546,7 @@ foreach ($accounts as $key => $type) {
 
 	// Account type
 	if (!empty($arrayfields['accountype']['checked'])) {
-		print '<td>';
+		print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($objecttmp->type_lib[$objecttmp->type]).'">';
 		print $objecttmp->type_lib[$objecttmp->type];
 		print '</td>';
 		if (!$i) {
@@ -545,7 +556,7 @@ foreach ($accounts as $key => $type) {
 
 	// Number
 	if (!empty($arrayfields['b.number']['checked'])) {
-		print '<td>'.$objecttmp->number.'</td>';
+		print '<td>'.dol_escape_htmltag($objecttmp->number).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -553,13 +564,15 @@ foreach ($accounts as $key => $type) {
 
 	// Account number
 	if (!empty($arrayfields['b.account_number']['checked'])) {
-		print '<td>';
+		print '<td class="tdoverflowmax250">';
 		if (!empty($conf->accounting->enabled) && !empty($objecttmp->account_number)) {
 			$accountingaccount = new AccountingAccount($db);
 			$accountingaccount->fetch('', $objecttmp->account_number, 1);
-			print $accountingaccount->getNomUrl(0, 1, 1, '', 1);
+			print '<span title="'.dol_escape_htmltag($accountingaccount->account_number.' - '.$accountingaccount->label).'">';
+			print $accountingaccount->getNomUrl(0, 1, 1, '', 0);
+			print '</span>';
 		} else {
-			print $objecttmp->account_number;
+			print '<span title="'.dol_escape_htmltag($objecttmp->account_number).'">'.$objecttmp->account_number.'</span>';
 		}
 		print '</td>';
 		if (!$i) {
@@ -670,7 +683,9 @@ foreach ($accounts as $key => $type) {
 	// Balance
 	if (!empty($arrayfields['balance']['checked'])) {
 		print '<td class="nowraponall right">';
-		print '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?id='.$objecttmp->id.'">'.price($solde, 0, $langs, 1, -1, -1, $objecttmp->currency_code).'</a>';
+		print '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?id='.$objecttmp->id.'">';
+		print '<span class="amount">'.price($solde, 0, $langs, 1, -1, -1, $objecttmp->currency_code).'</span>';
+		print '</a>';
 		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;

@@ -59,7 +59,7 @@ class modGeneratePassStandard extends ModeleGenPassword
 	public function __construct($db, $conf, $langs, $user)
 	{
 		$this->id = "standard";
-		$this->length = 10;
+		$this->length = 12;
 
 		$this->db = $db;
 		$this->conf = $conf;
@@ -99,7 +99,7 @@ class modGeneratePassStandard extends ModeleGenPassword
 		$password = "";
 
 		// define possible characters
-		$possible = "0123456789bcdfghjkmnpqrstvwxyz";
+		$possible = "0123456789qwertyuiopasdfghjklzxcvbnmASDFGHJKLZXCVBNMQWERTYUIOP";
 
 		// set up a counter
 		$i = 0;
@@ -107,10 +107,13 @@ class modGeneratePassStandard extends ModeleGenPassword
 		// add random characters to $password until $length is reached
 		while ($i < $this->length) {
 			// pick a random character from the possible ones
-			$char = substr($possible, mt_rand(0, dol_strlen($possible) - 1), 1);
+			if (function_exists('random_int')) {	// Cryptographic random
+				$char = substr($possible, random_int(0, dol_strlen($possible) - 1), 1);
+			} else {
+				$char = substr($possible, mt_rand(0, dol_strlen($possible) - 1), 1);
+			}
 
-			// we don't want this character if it's already in the password
-			if (!strstr($password, $char)) {
+			if (substr_count($password, $char) <= 6) {	// we don't want this character if it's already 5 times in the password
 				$password .= $char;
 				$i++;
 			}

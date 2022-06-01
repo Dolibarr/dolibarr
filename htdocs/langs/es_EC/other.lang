@@ -114,7 +114,6 @@ EnableGDLibraryDesc=Instale o active la biblioteca GD en su instalación de PHP 
 ProfIdShortDesc=</b>Prof Id%s</b> es una información que depende de un tercer país.</b> Por ejemplo, para el país <b>%s</b>, es el código <b>%s</b>.
 DolibarrDemo=Demostración de ERP/CRM de Dolibarr
 StatsByNumberOfUnits=Estadísticas de suma de cantidad de productos/servicios
-StatsByNumberOfEntities=Estadísticas en número de entidades referentes (n.° de factura, o pedido ...)
 NumberOfProposals=Número de propuestas
 NumberOfCustomerOrders=Número de pedidos de ventas
 NumberOfCustomerInvoices=Número de facturas de clientes

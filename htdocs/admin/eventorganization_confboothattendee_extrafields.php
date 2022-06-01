@@ -63,17 +63,19 @@ require DOL_DOCUMENT_ROOT.'/core/actions_extrafields.inc.php';
  * View
  */
 
+$help_url = '';
+$page_name = 'EventOrganizationSetup';
 
-llxHeader('', $langs->trans("EventOrganizationSetup"), $help_url);
+llxHeader('', $langs->trans($page_name), $help_url);
 
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
-print load_fiche_titre($langs->trans("EventOrganizationSetup"), $linkback, 'title_setup');
+print load_fiche_titre($langs->trans($page_name), $linkback, 'title_setup');
 
 
 $head = eventorganizationAdminPrepareHead();
 
-print dol_get_fiche_head($head, 'conferenceorboothattendee_extrafields', $langs->trans("ConferenceOrBoothAttendeeExtraFields"), -1, 'account');
+print dol_get_fiche_head($head, 'conferenceorboothattendee_extrafields', $langs->trans("ConferenceOrBoothAttendeeExtraFields"), -1, 'eventorganization');
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 

@@ -916,13 +916,13 @@ function getListOfProductsOrServices($authentication, $filterproduct)
 		$sql .= " WHERE entity=".$conf->entity;
 		foreach ($filterproduct as $key => $val) {
 			if ($key == 'type' && $val >= 0) {
-				$sql .= " AND fk_product_type = ".$db->escape($val);
+				$sql .= " AND fk_product_type = ".((int) $val);
 			}
 			if ($key == 'status_tosell') {
-				$sql .= " AND tosell = ".$db->escape($val);
+				$sql .= " AND tosell = ".((int) $val);
 			}
 			if ($key == 'status_tobuy') {
-				$sql .= " AND tobuy = ".$db->escape($val);
+				$sql .= " AND tobuy = ".((int) $val);
 			}
 		}
 		$resql = $db->query($sql);

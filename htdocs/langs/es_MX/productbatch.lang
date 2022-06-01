@@ -1,6 +1,7 @@
 # Dolibarr language file - Source file is en_US - productbatch
 ManageLotSerial=Usar el número de lote/serie
 ProductStatusOnBatch=Sí (lote/serie) requerido
+ProductStatusOnSerial=Sí (numero de serie único requerido)
 ProductStatusNotOnBatch=No (lote/serie no utilizado)
 atleast1batchfield=Fecha de caducidad o Fecha de venta o número de Lote/serie
 batch_number=Número de Lote/Serie
@@ -17,3 +18,6 @@ ProductLotSetup=Configuración del módulo lote/serie
 ShowCurrentStockOfLot=Mostrar las existencias actuales para la relación producto/lote
 ShowLogOfMovementIfLot=Mostrar el registro de los movimientos para la  relación producto/lote
 StockDetailPerBatch=Detalle de las existencias por lote
+SerialNumberAlreadyInUse=El número de serie %s ya se encuentra utilizado por el producto %s
+QtyToAddAfterBarcodeScan=Cantidad a agregar para cada código de barras/lote/serie escaneado
+EndOfLife=Vida útil

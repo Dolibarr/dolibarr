@@ -164,10 +164,10 @@ if ($object->id) {
 	print dol_get_fiche_end();
 
 	$modulepart = 'tax';
-	$permission = $user->rights->tax->charges->creer;
-	$permtoedit = $user->rights->fournisseur->facture->creer;
+	$permissiontoadd = $user->rights->tax->charges->creer;
+	$permtoedit = $user->rights->tax->charges->creer;
 	$param = '&id='.$object->id;
-	include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
+	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 } else {
 	print $langs->trans("ErrorUnknown");
 }

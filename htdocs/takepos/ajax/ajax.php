@@ -60,11 +60,11 @@ if (empty($user->rights->takepos->run)) {
 if ($action == 'getProducts') {
 	$object = new Categorie($db);
 	if ($category == "supplements") {
-		$category = $conf->global->TAKEPOS_SUPPLEMENTS_CATEGORY;
+		$category = getDolGlobalInt('TAKEPOS_SUPPLEMENTS_CATEGORY');
 	}
 	$result = $object->fetch($category);
 	if ($result > 0) {
-		$prods = $object->getObjectsInCateg("product", 0, 0, 0, $conf->global->TAKEPOS_SORTPRODUCTFIELD, 'ASC');
+		$prods = $object->getObjectsInCateg("product", 0, 0, 0, getDolGlobalString('TAKEPOS_SORTPRODUCTFIELD'), 'ASC');
 		// Removed properties we don't need
 		if (is_array($prods) && count($prods) > 0) {
 			foreach ($prods as $prod) {

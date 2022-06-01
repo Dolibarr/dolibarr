@@ -155,6 +155,10 @@ class Proposals extends DolibarrApi
 	{
 		global $db, $conf;
 
+		if (!DolibarrApiAccess::$user->rights->propal->lire) {
+			throw new RestException(401);
+		}
+
 		$obj_ret = array();
 
 		// case of external user, $thirdparty_ids param is ignored and replaced by user's socid
@@ -195,7 +199,7 @@ class Proposals extends DolibarrApi
 			if (!DolibarrApi::_checkFilters($sqlfilters)) {
 				throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
 			}
-			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
 			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
@@ -324,6 +328,9 @@ class Proposals extends DolibarrApi
 
 		$request_data = (object) $request_data;
 
+		$request_data->desc = checkVal($request_data->desc, 'restricthtml');
+		$request_data->label = checkVal($request_data->label);
+
 		$updateRes = $this->propal->addline(
 			$request_data->desc,
 			$request_data->subprice,
@@ -333,8 +340,8 @@ class Proposals extends DolibarrApi
 			$request_data->localtax2_tx,
 			$request_data->fk_product,
 			$request_data->remise_percent,
-			'HT',
-			0,
+			$request_data->price_base_type ? $request_data->price_base_type : 'HT',
+			$request_data->subprice,
 			$request_data->info_bits,
 			$request_data->product_type,
 			$request_data->rang,
@@ -388,6 +395,9 @@ class Proposals extends DolibarrApi
 
 		$request_data = (object) $request_data;
 
+		$request_data->desc = checkVal($request_data->desc, 'restricthtml');
+		$request_data->label = checkVal($request_data->label);
+
 		$propalline = new PropaleLigne($this->db);
 		$result = $propalline->fetch($lineid);
 		if ($result <= 0) {
@@ -403,7 +413,7 @@ class Proposals extends DolibarrApi
 			isset($request_data->localtax1_tx) ? $request_data->localtax1_tx : $propalline->localtax1_tx,
 			isset($request_data->localtax2_tx) ? $request_data->localtax2_tx : $propalline->localtax2_tx,
 			isset($request_data->desc) ? $request_data->desc : $propalline->desc,
-			'HT',
+			isset($request_data->price_base_type) ? $request_data->price_base_type : 'HT',
 			isset($request_data->info_bits) ? $request_data->info_bits : $propalline->info_bits,
 			isset($request_data->special_code) ? $request_data->special_code : $propalline->special_code,
 			isset($request_data->fk_parent_line) ? $request_data->fk_parent_line : $propalline->fk_parent_line,
@@ -762,7 +772,7 @@ class Proposals extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		$result = $this->propal->cloture(DolibarrApiAccess::$user, $status, $note_private, $notrigger);
+		$result = $this->propal->closeProposal(DolibarrApiAccess::$user, $status, $note_private, $notrigger);
 		if ($result == 0) {
 			throw new RestException(304, 'Error nothing done. May be object is already closed');
 		}

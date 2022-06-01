@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - orders
+SaleOrderLines=Sales order lines
 StatusOrderDeliveredShort=Emitido
-PDFEinsteinDescription=A complete order model
 StatusSupplierOrderDraftShort=A validar
 StatusSupplierOrderValidatedShort=Validada
 StatusSupplierOrderDelivered=Emitido

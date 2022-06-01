@@ -34,13 +34,9 @@ require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 // Translations
 $langs->loadLangs(array("admin", "eventorganization"));
 
-// Access control
-if (!$user->admin) {
-	accessforbidden();
-}
-
 // Parameters
 $action = GETPOST('action', 'aZ09');
+$cancel = GETPOST('cancel', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 
 $value = GETPOST('value', 'alpha');
@@ -52,23 +48,38 @@ $arrayofparameters = array(
 	'EVENTORGANIZATION_TASK_LABEL'=>array('type'=>'textarea','enabled'=>1),
 	'EVENTORGANIZATION_CATEG_THIRDPARTY_CONF'=>array('type'=>'category:'.Categorie::TYPE_CUSTOMER, 'enabled'=>1),
 	'EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH'=>array('type'=>'category:'.Categorie::TYPE_CUSTOMER, 'enabled'=>1),
-	//'EVENTORGANIZATION_FILTERATTENDEES_CAT'=>array('type'=>'category:'.Categorie::TYPE_CUSTOMER, 'enabled'=>1),
-	//'EVENTORGANIZATION_FILTERATTENDEES_TYPE'=>array('type'=>'thirdparty_type:', 'enabled'=>1),
-	'EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF'=>array('type'=>'emailtemplate:eventorganization_send', 'enabled'=>1),
-	'EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH'=>array('type'=>'emailtemplate:eventorganization_send', 'enabled'=>1),
-	'EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH'=>array('type'=>'emailtemplate:eventorganization_send', 'enabled'=>1),
-	'EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT'=>array('type'=>'emailtemplate:eventorganization_send', 'enabled'=>1),
-	'EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER'=>array('type'=>'emailtemplate:eventorganization_send', 'enabled'=>1),
-	'EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES'=>array('type'=>'emailtemplate:eventorganization_send', 'enabled'=>1),
+	'EVENTORGANIZATION_FILTERATTENDEES_CAT'=>array('type'=>'category:'.Categorie::TYPE_CUSTOMER, 'enabled'=>1),
+	'EVENTORGANIZATION_FILTERATTENDEES_TYPE'=>array('type'=>'thirdparty_type:', 'enabled'=>1),
+	'EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF'=>array('type'=>'emailtemplate:conferenceorbooth', 'enabled'=>1),
+	'EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH'=>array('type'=>'emailtemplate:conferenceorbooth', 'enabled'=>1),
+	'EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH'=>array('type'=>'emailtemplate:conferenceorbooth', 'enabled'=>1),
+	'EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT'=>array('type'=>'emailtemplate:conferenceorbooth', 'enabled'=>1),
+	'EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER'=>array('type'=>'emailtemplate:conferenceorbooth', 'enabled'=>1),
+	'EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES'=>array('type'=>'emailtemplate:conferenceorbooth', 'enabled'=>1),
+	'EVENTORGANIZATION_SECUREKEY'=>array('type'=>'securekey', 'enabled'=>1),
+	'SERVICE_BOOTH_LOCATION'=>array('type'=>'product', 'enabled'=>1),
+	'SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION'=>array('type'=>'product', 'enabled'=>1),
 );
 
 $error = 0;
 $setupnotempty = 0;
 
+$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+
+// Access control
+if (empty($user->admin)) {
+	accessforbidden();
+}
+
+
 
 /*
  * Actions
  */
+
+if ($cancel) {
+	$action  ='';
+}
 
 if ((float) DOL_VERSION >= 6) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
@@ -179,15 +190,14 @@ if ($action == 'updateMask') {
 
 $form = new Form($db);
 
-//$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
-
 $page_name = "EventOrganizationSetup";
+
 llxHeader('', $langs->trans($page_name));
 
 // Subheader
 $linkback = '<a href="'.($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1').'">'.$langs->trans("BackToModuleList").'</a>';
 
-print load_fiche_titre($langs->trans($page_name), $linkback, 'eventorganization');
+print load_fiche_titre($langs->trans($page_name), $linkback, 'title_setup');
 
 // Configuration header
 $head = eventorganizationAdminPrepareHead();
@@ -203,7 +213,7 @@ if ($action == 'edit') {
 	print '<input type="hidden" name="action" value="update">';
 
 	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre"><td class="titlefieldcreate">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
 	foreach ($arrayofparameters as $constname => $val) {
 		if ($val['enabled']==1) {
@@ -254,9 +264,34 @@ if ($action == 'edit') {
 			} elseif (preg_match('/thirdparty_type/', $val['type'])) {
 				require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 				$formcompany = new FormCompany($db);
-				print $formcompany->selectProspectCustomerType($conf->global->{$constname}, $constname);
+				print $formcompany->selectProspectCustomerType($conf->global->{$constname}, $constname, 'customerorprospect', 'form', '', 1);
+			} elseif ($val['type'] == 'securekey') {
+				print '<input required="required" type="text" class="flat" id="'.$constname.'" name="'.$constname.'" value="'.(GETPOST($constname, 'alpha') ?GETPOST($constname, 'alpha') : $conf->global->{$constname}).'" size="40">';
+				if (!empty($conf->use_javascript_ajax)) {
+					print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token'.$constname.'" class="linkobject"');
+				}
+				if (!empty($conf->use_javascript_ajax)) {
+					print "\n".'<script type="text/javascript">';
+					print '$(document).ready(function () {
+                        $("#generate_token'.$constname.'").click(function() {
+                	        $.get( "'.DOL_URL_ROOT.'/core/ajax/security.php", {
+                		      action: \'getrandompassword\',
+                		      generic: true
+    				        },
+    				        function(token) {
+    					       $("#'.$constname.'").val(token);
+            				});
+                         });
+                    });';
+					print '</script>';
+				}
+			} elseif ($val['type'] == 'product') {
+				if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) {
+					$selected = (empty($conf->global->$constname) ? '' : $conf->global->$constname);
+					$form->select_produits($selected, $constname, '', 0);
+				}
 			} else {
-				print '<input name="'.$constname.'"  class="flat '.(empty($val['css']) ? 'minwidth200' : $val['css']).'" value="'.$conf->global->{$constname}.'">';
+				print '<input name="' . $constname . '"  class="flat ' . (empty($val['css']) ? 'minwidth200' : $val['css']) . '" value="' . $conf->global->{$constname} . '">';
 			}
 			print '</td></tr>';
 		}
@@ -264,7 +299,9 @@ if ($action == 'edit') {
 	print '</table>';
 
 	print '<br><div class="center">';
-	print '<input class="button button-save" type="submit" value="'.$langs->trans("Save").'">';
+	print '<input class="button button-save" type="submit" name="save" value="'.$langs->trans("Save").'">';
+	print ' &nbsp; ';
+	print '<input class="button button-cancel" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
 	print '</div>';
 
 	print '</form>';
@@ -272,7 +309,7 @@ if ($action == 'edit') {
 } else {
 	if (!empty($arrayofparameters)) {
 		print '<table class="noborder centpercent">';
-		print '<tr class="liste_titre"><td class="titlefieldcreate">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+		print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
 		foreach ($arrayofparameters as $constname => $val) {
 			if ($val['enabled']==1) {
@@ -324,6 +361,14 @@ if ($action == 'edit') {
 						print $langs->trans("Customer");
 					} elseif ($conf->global->{$constname}==0) {
 						print $langs->trans("NorProspectNorCustomer");
+					}
+				} elseif ($val['type'] == 'product') {
+					$product = new Product($db);
+					$resprod = $product->fetch($conf->global->{$constname});
+					if ($resprod > 0) {
+						print $product->getNomUrl(1);
+					} elseif ($resprod < 0) {
+						setEventMessages(null, $object->errors, "errors");
 					}
 				} else {
 					print  $conf->global->{$constname};

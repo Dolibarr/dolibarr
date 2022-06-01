@@ -2,14 +2,15 @@
 /* Copyright (C) 2002-2004  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005       Marc Barilley / Ocebo   <marc@ocebo.com>
- * Copyright (C) 2012      Cédric Salvador       <csalvador@gpcsolutions.fr>
- * Copyright (C) 2014      Raphaël Doursenaud    <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2014      Marcos García 		 <marcosgdf@gmail.com>
- * Copyright (C) 2015      Juanjo Menent		 <jmenent@2byte.es>
- * Copyright (C) 2018      Ferran Marcet		 <fmarcet@2byte.es>
- * Copyright (C) 2018      Thibault FOUCART		 <support@ptibogxiv.net>
+ * Copyright (C) 2012       Cédric Salvador       <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2014       Raphaël Doursenaud    <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2014       Marcos García 		 <marcosgdf@gmail.com>
+ * Copyright (C) 2015       Juanjo Menent		 <jmenent@2byte.es>
+ * Copyright (C) 2018       Ferran Marcet		 <fmarcet@2byte.es>
+ * Copyright (C) 2018       Thibault FOUCART		 <support@ptibogxiv.net>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2020      Andreu Bisquerra Gaya <jove@bisquerra.com>
+ * Copyright (C) 2020       Andreu Bisquerra Gaya <jove@bisquerra.com>
+ * Copyright (C) 2021       OpenDsi					<support@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -413,8 +414,15 @@ class Paiement extends CommonObject
 								$outputlangs = new Translate("", $conf);
 								$outputlangs->setDefaultLang($newlang);
 							}
+
+							$hidedetails = ! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0;
+							$hidedesc = ! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0;
+							$hideref = !empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0;
+
 							$ret = $invoice->fetch($facid); // Reload to get new records
-							$result = $invoice->generateDocument($invoice->model_pdf, $outputlangs);
+
+							$result = $invoice->generateDocument($invoice->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+
 							if ($result < 0) {
 								setEventMessages($invoice->error, $invoice->errors, 'errors');
 								$error++;
@@ -475,7 +483,7 @@ class Paiement extends CommonObject
 
 		// Verifier si paiement porte pas sur une facture classee
 		// Si c'est le cas, on refuse la suppression
-		$billsarray = $this->getBillsArray('fk_statut > 1');
+		$billsarray = $this->getBillsArray('f.fk_statut > 1');
 		if (is_array($billsarray)) {
 			if (count($billsarray)) {
 				$this->error = "ErrorDeletePaymentLinkedToAClosedInvoiceNotPossible";
@@ -698,6 +706,17 @@ class Paiement extends CommonObject
 					);
 				}
 
+				// Add link 'InvoiceRefused' in bank_url
+				if (! $error && $label == '(InvoiceRefused)') {
+					$result=$acc->add_url_line(
+						$bank_line_id,
+						$this->id_prelevement,
+						DOL_URL_ROOT.'/compta/prelevement/card.php?id=',
+						$this->num_prelevement,
+						'withdraw'
+					);
+				}
+
 				if (!$error && !$notrigger) {
 					// Appel des triggers
 					$result = $this->call_trigger('PAYMENT_ADD_TO_BANK', $user);
@@ -781,7 +800,7 @@ class Paiement extends CommonObject
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX.'bank';
 			$sql .= " SET dateo = '".$this->db->idate($date)."', datev = '".$this->db->idate($date)."'";
-			$sql .= " WHERE rowid IN (SELECT fk_bank FROM ".MAIN_DB_PREFIX."bank_url WHERE type = '".$this->db->escape($type)."' AND url_id = ".$this->id.")";
+			$sql .= " WHERE rowid IN (SELECT fk_bank FROM ".MAIN_DB_PREFIX."bank_url WHERE type = '".$this->db->escape($type)."' AND url_id = ".((int) $this->id).")";
 			$sql .= " AND rappro = 0";
 
 			$result = $this->db->query($sql);

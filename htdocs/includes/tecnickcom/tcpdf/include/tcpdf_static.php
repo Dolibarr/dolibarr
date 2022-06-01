@@ -1440,6 +1440,10 @@ class TCPDF_STATIC {
 	 */
 	public static function intToRoman($number) {
 		$roman = '';
+		if ($number >= 4000) {
+			// do not represent numbers above 4000 in Roman numerals
+			return strval($number);
+		}
 		while ($number >= 1000) {
 			$roman .= 'M';
 			$number -= 1000;

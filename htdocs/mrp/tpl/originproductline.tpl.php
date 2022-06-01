@@ -26,7 +26,7 @@ if (!is_object($form)) {
 	$form = new Form($db);
 }
 
-$qtytoconsumeforline = $this->tpl['qty'] / $this->tpl['efficiency'];
+$qtytoconsumeforline = $this->tpl['qty'] / ( ! empty($this->tpl['efficiency']) ? $this->tpl['efficiency'] : 1 );
 /*if ((empty($this->tpl['qty_frozen']) && $this->tpl['qty_bom'] > 1)) {
 	$qtytoconsumeforline = $qtytoconsumeforline / $this->tpl['qty_bom'];
 }*/

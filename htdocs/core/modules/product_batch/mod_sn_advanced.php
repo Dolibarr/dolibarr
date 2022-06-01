@@ -80,9 +80,19 @@ class mod_sn_advanced extends ModeleNumRefBatch
 
 		// Parametrage du prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskSN" value="'.$conf->global->SN_ADVANCED_MASK.'">', $tooltip, 1, 1).'</td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskSN" value="'.$conf->global->SN_ADVANCED_MASK.'">', $tooltip, 1, 1).'</td>';
 
 		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
+
+		// Option to enable custom masks per product
+		$texte .= '<td class="right">';
+		if ($conf->global->PRODUCTBATCH_SN_USE_PRODUCT_MASKS) {
+			$texte .= '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmaskssn&amp;value=0">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+		} else {
+			$texte .= '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmaskssn&amp;value=1">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+		}
+		$texte .= ' '.$langs->trans('CustomMasks')."\n";
+		$texte .= '</td>';
 
 		$texte .= '</tr>';
 
@@ -129,16 +139,16 @@ class mod_sn_advanced extends ModeleNumRefBatch
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 		// We get cursor rule
-		$mask = $conf->global->BATCH_ADVANCED_MASK;
+		$mask = $conf->global->SN_ADVANCED_MASK;
 
 		if (!$mask)	{
 			$this->error = 'NotConfigured';
 			return 0;
 		}
 
-		$date = $object->date;
+		$date = dol_now();
 
-		$numFinal = get_next_value($db, $mask, 'product_sn', 'ref', '', null, $date);
+		$numFinal = get_next_value($db, $mask, 'product_lot', 'batch', '', null, $date);
 
 		return  $numFinal;
 	}

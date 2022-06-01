@@ -40,8 +40,13 @@ if ($conf->deplacement->enabled) {
 if ($conf->expensereport->enabled) {
 	require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 }
-require_once DOL_DOCUMENT_ROOT.'/recruitment/class/recruitmentcandidature.class.php';
-require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
+if ($conf->recruitment->enabled) {
+	require_once DOL_DOCUMENT_ROOT.'/recruitment/class/recruitmentcandidature.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/recruitment/class/recruitmentjobposition.class.php';
+}
+if ($conf->holiday->enabled) {
+	require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
+}
 
 $hookmanager = new HookManager($db);
 $hookmanager->initHooks('hrmindex');
@@ -60,10 +65,6 @@ if (empty($conf->global->MAIN_INFO_SOCIETE_NOM) || empty($conf->global->MAIN_INF
 	$setupcompanynotcomplete = 1;
 }
 
-$holiday = new Holiday($db);
-$holidaystatic = new Holiday($db);
-$staticrecruitmentcandidature = new RecruitmentCandidature($db);
-
 $max = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
 
 
@@ -73,7 +74,8 @@ $max = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
 
 // Update sold
 if (!empty($conf->holiday->enabled) && !empty($setupcompanynotcomplete)) {
-	$result = $holiday->updateBalance();
+	$holidaystatic = new Holiday($db);
+	$result = $holidaystatic->updateBalance();
 }
 
 
@@ -84,7 +86,9 @@ if (!empty($conf->holiday->enabled) && !empty($setupcompanynotcomplete)) {
 $childids = $user->getAllChildIds();
 $childids[] = $user->id;
 
-llxHeader('', $langs->trans('HRMArea'));
+$title = $langs->trans('HRMArea');
+
+llxHeader('', $title, '');
 
 print load_fiche_titre($langs->trans("HRMArea"), '', 'hrm');
 
@@ -142,6 +146,7 @@ if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {     // This is usel
 
 if (!empty($conf->holiday->enabled)) {
 	if (empty($conf->global->HOLIDAY_HIDE_BALANCE)) {
+		$holidaystatic = new Holiday($db);
 		$user_id = $user->id;
 
 		print '<div class="div-table-responsive-no-min">';
@@ -152,9 +157,9 @@ if (!empty($conf->holiday->enabled)) {
 
 		$out = '';
 		$nb_holiday = 0;
-		$typeleaves = $holiday->getTypes(1, 1);
+		$typeleaves = $holidaystatic->getTypes(1, 1);
 		foreach ($typeleaves as $key => $val) {
-			$nb_type = $holiday->getCPforUser($user->id, $val['rowid']);
+			$nb_type = $holidaystatic->getCPforUser($user->id, $val['rowid']);
 			$nb_holiday += $nb_type;
 			$out .= ' - '.($langs->trans($val['code']) != $val['code'] ? $langs->trans($val['code']) : $val['label']).': <strong>'.($nb_type ? price2num($nb_type) : 0).'</strong><br>';
 		}
@@ -177,15 +182,15 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 // Latest leave requests
 if (!empty($conf->holiday->enabled) && $user->rights->holiday->read) {
 	$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.login, u.email, u.photo, u.statut as user_status,";
-	$sql .= " x.rowid, x.rowid as ref, x.fk_type, x.date_debut as date_start, x.date_fin as date_end, x.halfday, x.tms as dm, x.statut as status";
+	$sql .= " x.rowid, x.ref, x.fk_type, x.date_debut as date_start, x.date_fin as date_end, x.halfday, x.tms as dm, x.statut as status";
 	$sql .= " FROM ".MAIN_DB_PREFIX."holiday as x, ".MAIN_DB_PREFIX."user as u";
 	$sql .= " WHERE u.rowid = x.fk_user";
 	$sql .= " AND x.entity = ".$conf->entity;
 	if (empty($user->rights->holiday->readall)) {
 		$sql .= ' AND x.fk_user IN ('.$db->sanitize(join(',', $childids)).')';
 	}
-	//if (!$user->rights->societe->client->voir && !$user->socid) $sql.= " AND x.fk_soc = s. rowid AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-	//if (!empty($socid)) $sql.= " AND x.fk_soc = ".$socid;
+	//if (!$user->rights->societe->client->voir && !$user->socid) $sql.= " AND x.fk_soc = s. rowid AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
+	//if (!empty($socid)) $sql.= " AND x.fk_soc = ".((int) $socid);
 	$sql .= $db->order("x.tms", "DESC");
 	$sql .= $db->plimit($max, 0);
 
@@ -228,8 +233,8 @@ if (!empty($conf->holiday->enabled) && $user->rights->holiday->read) {
 
 				print '<tr class="oddeven">';
 				print '<td class="nowraponall">'.$holidaystatic->getNomUrl(1).'</td>';
-				print '<td class="tdoverflowmax150">'.$userstatic->getNomUrl(-1, 'leave').'</td>';
-				print '<td>'.$typeleaves[$obj->fk_type]['label'].'</td>';
+				print '<td class="tdoverflowmax125">'.$userstatic->getNomUrl(-1, 'leave').'</td>';
+				print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($langs->trans($typeleaves[$obj->fk_type]['code'])).'">'.dol_escape_htmltag($langs->trans($typeleaves[$obj->fk_type]['code'])).'</td>';
 
 				$starthalfday = ($obj->halfday == -1 || $obj->halfday == 2) ? 'afternoon' : 'morning';
 				$endhalfday = ($obj->halfday == 1 || $obj->halfday == 2) ? 'morning' : 'afternoon';
@@ -265,8 +270,8 @@ if (!empty($conf->expensereport->enabled) && $user->rights->expensereport->lire)
 	if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)) {
 		$sql .= ' AND x.fk_user_author IN ('.$db->sanitize(join(',', $childids)).')';
 	}
-	//if (!$user->rights->societe->client->voir && !$user->socid) $sql.= " AND x.fk_soc = s. rowid AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-	//if (!empty($socid)) $sql.= " AND x.fk_soc = ".$socid;
+	//if (!$user->rights->societe->client->voir && !$user->socid) $sql.= " AND x.fk_soc = s. rowid AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
+	//if (!empty($socid)) $sql.= " AND x.fk_soc = ".((int) $socid);
 	$sql .= $db->order("x.tms", "DESC");
 	$sql .= $db->plimit($max, 0);
 
@@ -305,11 +310,11 @@ if (!empty($conf->expensereport->enabled) && $user->rights->expensereport->lire)
 				$userstatic->photo = $obj->photo;
 
 				print '<tr class="oddeven">';
-				print '<td class="nowraponall">'.$expensereportstatic->getNomUrl(1).'</td>';
+				print '<td class="tdoverflowmax200">'.$expensereportstatic->getNomUrl(1).'</td>';
 				print '<td class="tdoverflowmax150">'.$userstatic->getNomUrl(-1).'</td>';
-				print '<td class="right">'.price($obj->total_ttc).'</td>';
+				print '<td class="right amount">'.price($obj->total_ttc).'</td>';
 				print '<td class="right">'.dol_print_date($db->jdate($obj->dm), 'day').'</td>';
-				print '<td class="right nowrap" width="16">'.$expensereportstatic->LibStatut($obj->status, 3).'</td>';
+				print '<td class="right nowraponall" width="16">'.$expensereportstatic->LibStatut($obj->status, 3).'</td>';
 				print '</tr>';
 
 				$i++;
@@ -328,20 +333,23 @@ if (!empty($conf->expensereport->enabled) && $user->rights->expensereport->lire)
 
 // Last modified job position
 if (!empty($conf->recruitment->enabled) && $user->rights->recruitment->recruitmentjobposition->read) {
-	$sql = "SELECT rc.rowid, rc.ref, rc.email, rc.lastname, rc.firstname, rc.date_creation, rc.tms, rc.status";
+	$staticrecruitmentcandidature = new RecruitmentCandidature($db);
+	$staticrecruitmentjobposition = new RecruitmentJobPosition($db);
+	$sql = "SELECT rc.rowid, rc.ref, rc.email, rc.lastname, rc.firstname, rc.date_creation, rc.tms, rc.status,";
+	$sql.= " rp.rowid as jobid, rp.ref as jobref, rp.label";
 	$sql .= " FROM ".MAIN_DB_PREFIX."recruitment_recruitmentcandidature as rc";
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."recruitment_recruitmentjobposition as s ON rc.fk_recruitmentjobposition = s.rowid";
-	if (!$user->rights->societe->client->voir && !$socid) {
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."recruitment_recruitmentjobposition as rp ON rc.fk_recruitmentjobposition = rp.rowid";
+	if ($conf->societe->enabled && !$user->rights->societe->client->voir && !$socid) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
-	$sql .= " WHERE rc.entity IN (".getEntity($staticrecruitmentjobposition->element).")";
-	if (!$user->rights->societe->client->voir && !$socid) {
-		$sql .= " AND s.fk_soc = sc.fk_soc AND sc.fk_user = ".$user->id;
+	$sql .= " WHERE rc.entity IN (".getEntity($staticrecruitmentcandidature->element).")";
+	if ($conf->societe->enabled && !$user->rights->societe->client->voir && !$socid) {
+		$sql .= " AND rp.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	if ($socid) {
-		$sql .= " AND s.fk_soc = $socid";
+		$sql .= " AND rp.fk_soc = $socid";
 	}
-	$sql .= " ORDER BY rc.tms DESC";
+	$sql .= $db->order("rc.tms", "DESC");
 	$sql .= $db->plimit($max, 0);
 
 	$resql = $db->query($sql);
@@ -352,8 +360,8 @@ if (!empty($conf->recruitment->enabled) && $user->rights->recruitment->recruitme
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
-		print '<th colspan="2">';
-		print $langs->trans("BoxTitleLatestModifiedCandidatures", $max);
+		print '<th colspan="3">';
+		print $langs->trans("BoxTitleLatestModifiedCandidatures", min($max, $num));
 		print '</th>';
 		print '<th class="right" colspan="2"><a href="'.DOL_URL_ROOT.'/recruitment/recruitmentcandidature_list.php?sortfield=t.tms&sortorder=DESC">'.$langs->trans("FullList").'</th>';
 		print '</tr>';
@@ -368,11 +376,15 @@ if (!empty($conf->recruitment->enabled) && $user->rights->recruitment->recruitme
 				$staticrecruitmentcandidature->firstname = $objp->firstname;
 				$staticrecruitmentcandidature->lastname = $objp->lastname;
 
+				$staticrecruitmentjobposition->id = $objp->jobid;
+				$staticrecruitmentjobposition->ref = $objp->jobref;
+				$staticrecruitmentjobposition->label = $objp->label;
+
 				print '<tr class="oddeven">';
-				print '<td class="nowrap">'.$staticrecruitmentcandidature->getNomUrl(1, '').'</td>';
-				print '<td class="right nowrap">';
-				print "</td>";
-				print '<td class="right nowrap">'.dol_print_date($db->jdate($objp->tms), 'day')."</td>";
+				print '<td class="nowraponall">'.$staticrecruitmentcandidature->getNomUrl(1, '').'</td>';
+				print '<td class="tdoverflowmax150">'.$staticrecruitmentcandidature->getFullName($langs).'</td>';
+				print '<td class="nowraponall">'.$staticrecruitmentjobposition->getNomUrl(1).'</td>';
+				print '<td class="right nowrap">'.dol_print_date($db->jdate($objp->tms), 'day').'</td>';
 				print '<td class="right nowrap" width="16">';
 				print $staticrecruitmentcandidature->getLibStatut(3);
 				print "</td>";

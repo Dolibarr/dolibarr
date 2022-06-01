@@ -72,6 +72,7 @@ if ($setterminal > 0) {
 
 if ($setcurrency != "") {
 	$_SESSION["takeposcustomercurrency"] = $setcurrency;
+	// We will recalculate amount for foreign currency at next call of invoice.php when $_SESSION["takeposcustomercurrency"] differs from invoice->multicurrency_code.
 }
 
 $_SESSION["urlfrom"] = '/takepos/index.php';
@@ -289,6 +290,8 @@ function LoadProducts(position, issubcat) {
 		if (currentcat==val.fk_parent) {
 			$("#prodivdesc"+ishow).show();
 			$("#prodesc"+ishow).text(val.label);
+			$("#probutton"+ishow).text(val.label);
+			$("#probutton"+ishow).show();
 			$("#proprice"+ishow).attr("class", "hidden");
 			$("#proprice"+ishow).html("");
 			$("#proimg"+ishow).attr("src","genimg/index.php?query=cat&id="+val.rowid);
@@ -386,6 +389,8 @@ function MoreProducts(moreorless) {
 			if (typeof (data[idata]) == "undefined") {
 				$("#prodivdesc"+ishow).hide();
 				$("#prodesc"+ishow).text("");
+				$("#probutton"+ishow).text("");
+				$("#probutton"+ishow).hide();
 				$("#proprice"+ishow).attr("class", "");
 				$("#proprice"+ishow).html("");
 				$("#proimg"+ishow).attr("src","genimg/empty.png");
@@ -396,6 +401,8 @@ function MoreProducts(moreorless) {
 				//Only show products with status=1 (for sell)
 				$("#prodivdesc"+ishow).show();
 				$("#prodesc"+ishow).text(data[parseInt(idata)]['label']);
+				$("#probutton"+ishow).text(data[parseInt(idata)]['label']);
+				$("#probutton"+ishow).show();
 				if (data[parseInt(idata)]['price_formated']) {
 					$("#proprice"+ishow).attr("class", "productprice");
 					$("#proprice"+ishow).html(data[parseInt(idata)]['price_formated']);
@@ -486,7 +493,8 @@ function FreeZone() {
 
 function TakeposOrderNotes() {
 	console.log("Open box to order notes");
-	$.colorbox({href:"freezone.php?action=addnote&place="+place+"&idline="+selectedline, onClosed: function () { Refresh(); },width:"80%", height:"250px", transition:"none", iframe:"true", title:"<?php echo $langs->trans("OrderNotes"); ?>"});
+	ModalBox('ModalNote');
+	$("#textinput").focus();
 }
 
 function Refresh() {
@@ -543,6 +551,8 @@ function Search2(keyCodeForEnter) {
 			for (i = 0; i < <?php echo $MAXPRODUCT ?>; i++) {
 				if (typeof (data[i]) == "undefined") {
 					$("#prodesc" + i).text("");
+					$("#probutton" + i).text("");
+					$("#probutton" + i).hide();
 					$("#proprice" + i).attr("class", "hidden");
 					$("#proprice" + i).html("");
 					$("#proimg" + i).attr("src", "genimg/empty.png");
@@ -556,6 +566,8 @@ function Search2(keyCodeForEnter) {
 				var titlestring = <?php echo $titlestring; ?>;
 				$("#prodesc" + i).text(data[i]['label']);
 				$("#prodivdesc" + i).show();
+				$("#probutton" + i).text(data[i]['label']);
+				$("#probutton" + i).show();
 				if (data[i]['price_formated']) {
 					$("#proprice" + i).attr("class", "productprice");
 					$("#proprice" + i).html(data[i]['price_formated']);
@@ -691,11 +703,12 @@ function TakeposPrintingTemp(){
 }
 
 function OpenDrawer(){
-	console.log("OpenDrawer call ajax url http://<?php print $conf->global->TAKEPOS_PRINT_SERVER; ?>:8111/print");
+	console.log("OpenDrawer call ajax url http://<?php print getDolGlobalString('TAKEPOS_PRINT_SERVER'); ?>:8111/print");
 	$.ajax({
 		type: "POST",
+		data: { token: 'notrequired' },
 		<?php
-		if (filter_var($conf->global->TAKEPOS_PRINT_SERVER, FILTER_VALIDATE_URL) == true) {
+		if (getDolGlobalString('TAKEPOS_PRINT_SERVER') && filter_var($conf->global->TAKEPOS_PRINT_SERVER, FILTER_VALIDATE_URL) == true) {
 			echo "url: '".$conf->global->TAKEPOS_PRINT_SERVER."/printer/drawer.php',";
 		} else {
 			echo "url: 'http://".$conf->global->TAKEPOS_PRINT_SERVER.":8111/print',";
@@ -706,10 +719,11 @@ function OpenDrawer(){
 }
 
 function DolibarrOpenDrawer() {
-	console.log("DolibarrOpenDrawer call ajax url /takepos/ajax/ajax.php?action=opendrawer&term=<?php print $_SESSION["takeposterminal"] ?>");
+	console.log("DolibarrOpenDrawer call ajax url /takepos/ajax/ajax.php?action=opendrawer&term=<?php print urlencode($_SESSION["takeposterminal"]); ?>");
 	$.ajax({
 		type: "GET",
-		url: "<?php print dol_buildpath('/takepos/ajax/ajax.php', 1).'?action=opendrawer&term='.$_SESSION["takeposterminal"]; ?>",
+		data: { token: '<?php echo currentToken(); ?>' },
+		url: "<?php print DOL_URL_ROOT.'/takepos/ajax/ajax.php?action=opendrawer&term='.urlencode($_SESSION["takeposterminal"]); ?>",
 	});
 }
 
@@ -754,7 +768,7 @@ function ModalBox(ModalID)
 
 function DirectPayment(){
 	console.log("DirectPayment");
-	$("#poslines").load("invoice.php?place="+place+"&action=valid&pay=<?php echo $langs->trans("cash"); ?>", function() {
+	$("#poslines").load("invoice.php?place="+place+"&action=valid&pay=LIQ", function() {
 	});
 }
 
@@ -766,7 +780,8 @@ function WeighingScale(){
 	console.log("Weighing Scale");
 	$.ajax({
 		type: "POST",
-		url: '<?php print $conf->global->TAKEPOS_PRINT_SERVER; ?>/scale/index.php',
+		data: { token: 'notrequired' },
+		url: '<?php print getDolGlobalString('TAKEPOS_PRINT_SERVER'); ?>/scale/index.php',
 	})
 	.done(function( editnumber ) {
 		$("#poslines").load("invoice.php?action=updateqty&place="+place+"&idline="+selectedline+"&number="+editnumber, function() {
@@ -784,9 +799,11 @@ $( document ).ready(function() {
 	if ($_SESSION["takeposterminal"] == "") {
 		print "ModalBox('ModalTerminal');";
 	}
-	if ($conf->global->TAKEPOS_CONTROL_CASH_OPENING) {
+
+	if (getDolGlobalString('TAKEPOS_CONTROL_CASH_OPENING')) {
 		$sql = "SELECT rowid, status FROM ".MAIN_DB_PREFIX."pos_cash_fence WHERE";
-		$sql .= " entity = ".$conf->entity." AND ";
+		$sql .= " entity = ".((int) $conf->entity)." AND ";
+		$sql .= " posnumber = ".((int) $_SESSION["takeposterminal"])." AND ";
 		$sql .= " date_creation > '".$db->idate(dol_get_first_hour(dol_now()))."'";
 		$resql = $db->query($sql);
 		if ($resql) {
@@ -803,7 +820,7 @@ $( document ).ready(function() {
 
 <body class="bodytakepos" style="overflow: hidden;">
 <?php
-$keyCodeForEnter = $conf->global->{'CASHDESK_READER_KEYCODE_FOR_ENTER'.$_SESSION['takeposterminal']} > 0 ? $conf->global->{'CASHDESK_READER_KEYCODE_FOR_ENTER'.$_SESSION['takeposterminal']} : '';
+$keyCodeForEnter = getDolGlobalInt('CASHDESK_READER_KEYCODE_FOR_ENTER'.$_SESSION['takeposterminal']) > 0 ? getDolGlobalInt('CASHDESK_READER_KEYCODE_FOR_ENTER'.$_SESSION['takeposterminal']) : '';
 ?>
 <div class="container">
 
@@ -847,7 +864,8 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 				<div class="login_block_other">
 				<input type="text" id="search" name="search" onkeyup="Search2(<?php echo $keyCodeForEnter; ?>);" placeholder="<?php echo $langs->trans("Search"); ?>" autofocus>
 				<a onclick="ClearSearch();"><span class="fa fa-backspace"></span></a>
-				<a onclick="window.location.href='<?php echo DOL_URL_ROOT.'/'; ?>';"><span class="fas fa-home"></span></a>
+				<a href="<?php echo DOL_URL_ROOT.'/'; ?>" target="backoffice" rel="opener"><!-- we need rel="opener" here, we are on same domain and we need to be able to reuse this tab several times -->
+				<span class="fas fa-home"></span></a>
 				<?php if (empty($conf->dol_use_jmobile)) { ?>
 				<a class="hideonsmartphone" onclick="FullScreen();"><span class="fa fa-expand-arrows-alt"></span></a>
 				<?php } ?>
@@ -920,6 +938,20 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 </div>
 </div>
 
+<!-- Modal Note -->
+<div id="ModalNote" class="modal">
+	<div class="modal-content">
+		<div class="modal-header">
+		<span class="close" href="#" onclick="document.getElementById('ModalNote').style.display = 'none';">&times;</span>
+		<h3><?php print $langs->trans("Note"); ?></h3>
+	</div>
+	<div class="modal-body">
+		<input type="text" class="block" id="textinput">
+		<button type="button" class="block" onclick="SetNote(); document.getElementById('ModalNote').style.display = 'none';">OK</button>
+	</div>
+</div>
+</div>
+
 	<div class="row1<?php if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 		print 'withhead';
 					} ?>">
@@ -949,36 +981,39 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 <?php
 
 // TakePOS setup check
-$sql = "SELECT code, libelle FROM ".MAIN_DB_PREFIX."c_paiement";
-$sql .= " WHERE entity IN (".getEntity('c_paiement').")";
-$sql .= " AND active = 1";
-$sql .= " ORDER BY libelle";
+if (isset($_SESSION["takeposterminal"]) && $_SESSION["takeposterminal"]) {
+	$sql = "SELECT code, libelle FROM " . MAIN_DB_PREFIX . "c_paiement";
+	$sql .= " WHERE entity IN (" . getEntity('c_paiement') . ")";
+	$sql .= " AND active = 1";
+	$sql .= " ORDER BY libelle";
 
-$resql = $db->query($sql);
-$paiementsModes = array();
-if ($resql) {
-	while ($obj = $db->fetch_object($resql)) {
-		$paycode = $obj->code;
-		if ($paycode == 'LIQ') {
-			$paycode = 'CASH';
-		}
-		if ($paycode == 'CHQ') {
-			$paycode = 'CHEQUE';
-		}
+	$resql          = $db->query($sql);
+	$paiementsModes = array();
+	if ($resql) {
+		while ( $obj = $db->fetch_object($resql) ) {
+			$paycode = $obj->code;
+			if ($paycode == 'LIQ') {
+				$paycode = 'CASH';
+			}
+			if ($paycode == 'CHQ') {
+				$paycode = 'CHEQUE';
+			}
 
-		$constantforkey = "CASHDESK_ID_BANKACCOUNT_".$paycode.$_SESSION["takeposterminal"];
-		//var_dump($constantforkey.' '.$conf->global->$constantforkey);
-		if (!empty($conf->global->$constantforkey) && $conf->global->$constantforkey > 0) {
-			array_push($paiementsModes, $obj);
+			$constantforkey = "CASHDESK_ID_BANKACCOUNT_" . $paycode . $_SESSION["takeposterminal"];
+			//var_dump($constantforkey.' '.$conf->global->$constantforkey);
+			if ( ! empty($conf->global->$constantforkey) && $conf->global->$constantforkey > 0) {
+				array_push($paiementsModes, $obj);
+			}
 		}
+	}
+
+	if (empty($paiementsModes)) {
+		$langs->load('errors');
+		setEventMessages($langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("TakePOS")), null, 'errors');
+		setEventMessages($langs->trans("ProblemIsInSetupOfTerminal", $_SESSION["takeposterminal"]), null, 'errors');
 	}
 }
 
-if (empty($paiementsModes)) {
-	$langs->load('errors');
-	setEventMessages($langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("TakePOS")), null, 'errors');
-	setEventMessages($langs->trans("ProblemIsInSetupOfTerminal", $_SESSION["takeposterminal"]), null, 'errors');
-}
 if (count($maincategories) == 0) {
 	if ($conf->global->TAKEPOS_ROOT_CATEGORY_ID > 0) {
 		$tmpcategory = new Categorie($db);
@@ -1007,41 +1042,41 @@ $menus[$r++] = array('title'=>'<span class="fa fa-cube paddingrightonly"></span>
 $menus[$r++] = array('title'=>'<span class="fa fa-percent paddingrightonly"></span><div class="trunc">'.$langs->trans("Reduction").'</div>', 'action'=>'Reduction();');
 $menus[$r++] = array('title'=>'<span class="far fa-money-bill-alt paddingrightonly"></span><div class="trunc">'.$langs->trans("Payment").'</div>', 'action'=>'CloseBill();');
 
-if ($conf->global->TAKEPOS_DIRECT_PAYMENT) {
+if (getDolGlobalString('TAKEPOS_DIRECT_PAYMENT')) {
 	$menus[$r++] = array('title'=>'<span class="far fa-money-bill-alt paddingrightonly"></span><div class="trunc">'.$langs->trans("DirectPayment").' <span class="opacitymedium">('.$langs->trans("Cash").')</span></div>', 'action'=>'DirectPayment();');
 }
 
 // BAR RESTAURANT specific menu
-if ($conf->global->TAKEPOS_BAR_RESTAURANT) {
+if (getDolGlobalString('TAKEPOS_BAR_RESTAURANT')) {
 	if ($conf->global->TAKEPOS_ORDER_PRINTERS) {
-		$menus[$r++] = array('title'=>$langs->trans("Order"), 'action'=>'TakeposPrintingOrder();');
+		$menus[$r++] = array('title'=>'<span class="fa fa-blender-phone paddingrightonly"></span><div class="trunc">'.$langs->trans("Order").'</span>', 'action'=>'TakeposPrintingOrder();');
 	}
 	//Button to print receipt before payment
-	if ($conf->global->TAKEPOS_BAR_RESTAURANT) {
-		if ($conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector") {
-			if (filter_var($conf->global->TAKEPOS_PRINT_SERVER, FILTER_VALIDATE_URL) == true) {
+	if (getDolGlobalString('TAKEPOS_BAR_RESTAURANT')) {
+		if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") {
+			if (getDolGlobalString('TAKEPOS_PRINT_SERVER') && filter_var($conf->global->TAKEPOS_PRINT_SERVER, FILTER_VALIDATE_URL) == true) {
 				$menus[$r++] = array('title'=>'<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("Receipt").'</div>', 'action'=>'TakeposConnector(placeid);');
 			} else {
 				$menus[$r++] = array('title'=>'<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("Receipt").'</div>', 'action'=>'TakeposPrinting(placeid);');
 			}
-		} elseif ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter") {
+		} elseif (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "receiptprinter") {
 			$menus[$r++] = array('title'=>'<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("Receipt").'</div>', 'action'=>'DolibarrTakeposPrinting(placeid);');
 		} else {
 			$menus[$r++] = array('title'=>'<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("Receipt").'</div>', 'action'=>'Print(placeid);');
 		}
 	}
-	if ($conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector" && $conf->global->TAKEPOS_ORDER_NOTES == 1) {
-		$menus[$r++] = array('title'=>'<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("OrderNotes").'</div>', 'action'=>'TakeposOrderNotes();');
+	if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector" && getDolGlobalString('TAKEPOS_ORDER_NOTES') == 1) {
+		$menus[$r++] = array('title'=>'<span class="fa fa-sticky-note paddingrightonly"></span><div class="trunc">'.$langs->trans("OrderNotes").'</div>', 'action'=>'TakeposOrderNotes();');
 	}
-	if ($conf->global->TAKEPOS_SUPPLEMENTS) {
+	if (getDolGlobalString('TAKEPOS_SUPPLEMENTS')) {
 		$menus[$r++] = array('title'=>'<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("ProductSupplements").'</div>', 'action'=>'LoadProducts(\'supplements\');');
 	}
 }
 
-if ($conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector") {
+if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") {
 	$menus[$r++] = array('title'=>'<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("DOL_OPEN_DRAWER").'</div>', 'action'=>'OpenDrawer();');
 }
-if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter") {
+if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "receiptprinter") {
 	$menus[$r++] = array(
 		'title' => '<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("DOL_OPEN_DRAWER").'</div>',
 		'action' => 'DolibarrOpenDrawer();',
@@ -1049,8 +1084,10 @@ if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter") {
 }
 
 $sql = "SELECT rowid, status, entity FROM ".MAIN_DB_PREFIX."pos_cash_fence WHERE";
-$sql .= " entity = ".$conf->entity." AND ";
+$sql .= " entity = ".((int) $conf->entity)." AND ";
+$sql .= " posnumber = ".((int) $_SESSION["takeposterminal"])." AND ";
 $sql .= " date_creation > '".$db->idate(dol_get_first_hour(dol_now()))."'";
+
 $resql = $db->query($sql);
 if ($resql) {
 	$num = $db->num_rows($resql);
@@ -1083,7 +1120,7 @@ if (!empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 	$menus[$r++] = array('title'=>'<span class="fa fa-sign-out-alt paddingrightonly"></span><div class="trunc">'.$langs->trans("Logout").'</div>', 'action'=>'window.location.href=\''.DOL_URL_ROOT.'/user/logout.php\';');
 }
 
-if ($conf->global->TAKEPOS_WEIGHING_SCALE) {
+if (!empty($conf->global->TAKEPOS_WEIGHING_SCALE)) {
 	$menus[$r++] = array('title'=>'<span class="fa fa-balance-scale paddingrightonly"></span><div class="trunc">'.$langs->trans("WeighingScale").'</div>', 'action'=>'WeighingScale();');
 }
 
@@ -1095,12 +1132,12 @@ if ($conf->global->TAKEPOS_WEIGHING_SCALE) {
 		foreach ($menus as $menu) {
 			$i++;
 			if (count($menus) > 12 and $i == 12) {
-				echo '<button style="'.$menu['style'].'" type="button" id="actionnext" class="actionbutton" onclick="MoreActions('.count($menus).');">'.$langs->trans("Next").'</button>';
-				echo '<button style="display: none;" type="button" id="action'.$i.'" class="actionbutton" onclick="'.$menu['action'].'">'.$menu['title'].'</button>';
+				echo '<button style="'.(empty($menu['style']) ? '' : $menu['style']).'" type="button" id="actionnext" class="actionbutton" onclick="MoreActions('.count($menus).');">'.$langs->trans("Next").'</button>';
+				echo '<button style="display: none;" type="button" id="action'.$i.'" class="actionbutton" onclick="'.(empty($menu['action']) ? '' : $menu['action']).'">'.$menu['title'].'</button>';
 			} elseif ($i > 12) {
-				echo '<button style="display: none;" type="button" id="action'.$i.'" class="actionbutton" onclick="'.$menu['action'].'">'.$menu['title'].'</button>';
+				echo '<button style="display: none;" type="button" id="action'.$i.'" class="actionbutton" onclick="'.(empty($menu['action']) ? '' : $menu['action']).'">'.$menu['title'].'</button>';
 			} else {
-				echo '<button style="'.$menu['style'].'" type="button" id="action'.$i.'" class="actionbutton" onclick="'.$menu['action'].'">'.$menu['title'].'</button>';
+				echo '<button style="'.(empty($menu['style']) ? '' : $menu['style']).'" type="button" id="action'.$i.'" class="actionbutton" onclick="'.(empty($menu['action']) ? '' : $menu['action']).'">'.$menu['title'].'</button>';
 			}
 		}
 
@@ -1140,7 +1177,7 @@ if ($conf->global->TAKEPOS_WEIGHING_SCALE) {
 					//echo '<img class="imgwrapper" src="img/arrow-next-top.png" height="100%" id="catimg'.$count.'" />';
 					echo '<span class="fa fa-chevron-right centerinmiddle" style="font-size: 5em;"></span>';
 				} else {
-					if (!$conf->global->TAKEPOS_HIDE_CATEGORY_IMAGES) {
+					if (!getDolGlobalString('TAKEPOS_HIDE_CATEGORY_IMAGES')) {
 						echo '<img class="imgwrapper" height="100%" id="catimg'.$count.'" />';
 					}
 				}
@@ -1179,7 +1216,7 @@ if ($conf->global->TAKEPOS_WEIGHING_SCALE) {
 						//echo '<img class="imgwrapper" src="img/arrow-next-top.png" height="100%" id="proimg'.$count.'" />';
 						print '<span class="fa fa-chevron-right centerinmiddle" style="font-size: 5em;"></span>';
 					} else {
-						if ($conf->global->TAKEPOS_HIDE_PRODUCT_IMAGES) {
+						if (getDolGlobalString('TAKEPOS_HIDE_PRODUCT_IMAGES')) {
 							echo '<button type="button" id="probutton'.$count.'" class="productbutton" style="display: none;"></button>';
 						} else {
 							print '<div class="" id="proprice'.$count.'"></div>';
@@ -1187,7 +1224,7 @@ if ($conf->global->TAKEPOS_WEIGHING_SCALE) {
 						}
 					}
 					?>
-					<?php if ($count != ($MAXPRODUCT - 2) && $count != ($MAXPRODUCT - 1) && !$conf->global->TAKEPOS_HIDE_PRODUCT_IMAGES) { ?>
+					<?php if ($count != ($MAXPRODUCT - 2) && $count != ($MAXPRODUCT - 1) && !getDolGlobalString('TAKEPOS_HIDE_PRODUCT_IMAGES')) { ?>
 					<div class="description" id="prodivdesc<?php echo $count; ?>">
 						<div class="description_content" id="prodesc<?php echo $count; ?>"></div>
 					</div>

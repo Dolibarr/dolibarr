@@ -48,6 +48,7 @@ create table llx_adherent
   state_id         integer,
   country          integer,
   email            varchar(255),
+  url              varchar(255) NULL,
 
   socialnetworks   text DEFAULT NULL,           -- json with socialnetworks
   skype            varchar(255),                -- deprecated

@@ -117,11 +117,11 @@ class ActionsDatapolicy
 				$object->state_id = '';
 				$object->skype = '';
 				$object->country_id = '';
-				$object->note_private = $object->note_private.'<br/>'.$langs->trans('ANONYMISER_AT', dol_print_date(time()));
+				$object->note_private = $object->note_private.'<br>'.$langs->trans('ANONYMISER_AT', dol_print_date(time()));
 
 				if ($object->update($object->id, $user, 0)) {
 					// On supprime les contacts associé
-					$sql = "DELETE FROM ".MAIN_DB_PREFIX."socpeople WHERE fk_soc = ".$object->id;
+					$sql = "DELETE FROM ".MAIN_DB_PREFIX."socpeople WHERE fk_soc = ".((int) $object->id);
 					$this->db->query($sql);
 
 					setEventMessages($langs->trans('ANONYMISER_SUCCESS'), array());
@@ -133,7 +133,7 @@ class ActionsDatapolicy
 			header('Content-Disposition: attachment; filename=datapolicy_portabilite.csv');
 			header('Pragma: no-cache');
 			$object->fetch(GETPOST('socid'));
-			echo 'Name;Fistname;Civility;Thirdparty;Function;Address;ZipCode;City;Department;Country;Email;Pro Phone;Perso Phone;Mobile Phone;Instant Mail;Birthday;'.PHP_EOL;
+			echo 'Name;Firstname;Civility;Thirdparty;Function;Address;ZipCode;City;Department;Country;Email;Pro Phone;Perso Phone;Mobile Phone;Instant Mail;Birthday;'.PHP_EOL;
 			echo $object->name.';';
 			echo ';';
 			echo ';';
@@ -157,7 +157,7 @@ class ActionsDatapolicy
 			header('Pragma: no-cache');
 			$soc = $object->fetch_thirdparty();
 
-			echo 'Name;Fistname;Civility;Thirdparty;Function;Address;ZipCode;City;Department;Country;Email;Pro Phone;Perso Phone;Mobile Phone;Instant Mail;Birthday;'.PHP_EOL;
+			echo 'Name;Firstname;Civility;Thirdparty;Function;Address;ZipCode;City;Department;Country;Email;Pro Phone;Perso Phone;Mobile Phone;Instant Mail;Birthday;'.PHP_EOL;
 			echo $object->lastname.';';
 			echo $object->firstname.';';
 			echo $object->getCivilityLabel().';';
@@ -181,7 +181,7 @@ class ActionsDatapolicy
 			header('Content-Disposition: attachment; filename=datapolicy_portabilite.csv');
 			header('Pragma: no-cache');
 			$soc = $object->fetch_thirdparty();
-			echo 'Name;Fistname;Civility;Thirdparty;Function;Address;ZipCode;City;Department;Country;Email;Pro Phone;Perso Phone;Mobile Phone;Instant Mail;Birthday;'.PHP_EOL;
+			echo 'Name;Firstname;Civility;Thirdparty;Function;Address;ZipCode;City;Department;Country;Email;Pro Phone;Perso Phone;Mobile Phone;Instant Mail;Birthday;'.PHP_EOL;
 			echo $object->lastname.';';
 			echo $object->firstname.';';
 			echo $object->getCivilityLabel().';';
@@ -196,7 +196,6 @@ class ActionsDatapolicy
 			echo $object->phone_pro.';';
 			echo $object->phone_perso.';';
 			echo $object->phone_mobile.';';
-			echo $object->jabberid.';';
 			echo dol_print_date($object->birth).';';
 			exit;
 		} elseif ($parameters['currentcontext'] == 'contactcard' && $action == 'send_datapolicy') {

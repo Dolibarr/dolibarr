@@ -36,7 +36,7 @@ StatsOnReceptionsOnlyValidated=Statistik yang dilakukan pada penerimaan hanya ya
 SendReceptionByEMail=Kirim penerimaan melalui email
 SendReceptionRef=Pengajuan penerimaan %s
 ActionsOnReception=Agenda penerimaan
-ReceptionCreationIsDoneFromOrder=Untuk sementara waktu, pembuatan penerimaan baru dilakukan dari kartu pesanan.
+ReceptionCreationIsDoneFromOrder=Untuk sementara pembuatan penerimaan baru dilakukan dari record Purchase Order.
 ReceptionLine=Jalur penerimaan
 ProductQtyInReceptionAlreadySent=Kuantitas produk dari pesanan penjualan terbuka sudah dikirim
 ProductQtyInSuppliersReceptionAlreadyRecevied=Kuantitas produk dari pesanan pemasok terbuka sudah diterima
@@ -44,4 +44,5 @@ ValidateOrderFirstBeforeReception=Anda harus terlebih dahulu memvalidasi pesanan
 ReceptionsNumberingModules=Modul penomoran untuk penerimaan
 ReceptionsReceiptModel=Templat dokumen untuk penerimaan
 NoMorePredefinedProductToDispatch=Tidak ada lagi produk yang telah ditentukan untuk dikirim
-
+ReceptionExist=Resepsi ada
+ByingPrice=Bying price

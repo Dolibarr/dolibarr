@@ -168,6 +168,7 @@ abstract class CommonInvoice extends CommonObject
 
 		$discountstatic = new DiscountAbsolute($this->db);
 		$result = $discountstatic->getSumDepositsUsed($this, $multicurrency);
+
 		if ($result >= 0) {
 			return $result;
 		} else {
@@ -462,7 +463,7 @@ abstract class CommonInvoice extends CommonObject
 			$type = 'supplier_invoice';
 		}
 
-		$sql = " SELECT COUNT(ab.rowid) as nb FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as ab WHERE ab.doc_type='".$this->db->escape($type)."' AND ab.fk_doc = ".$this->id;
+		$sql = " SELECT COUNT(ab.rowid) as nb FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as ab WHERE ab.doc_type='".$this->db->escape($type)."' AND ab.fk_doc = ".((int) $this->id);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
@@ -604,10 +605,10 @@ abstract class CommonInvoice extends CommonObject
 		$sqltemp = 'SELECT c.type_cdr, c.nbjour, c.decalage';
 		$sqltemp .= ' FROM '.MAIN_DB_PREFIX.'c_payment_term as c';
 		if (is_numeric($cond_reglement)) {
-			$sqltemp .= " WHERE c.rowid=".$cond_reglement;
+			$sqltemp .= " WHERE c.rowid=".((int) $cond_reglement);
 		} else {
 			$sqltemp .= " WHERE c.entity IN (".getEntity('c_payment_term').")";
-			$sqltemp .= " AND c.code='".$this->db->escape($cond_reglement)."'";
+			$sqltemp .= " AND c.code = '".$this->db->escape($cond_reglement)."'";
 		}
 
 		dol_syslog(get_class($this).'::calculate_date_lim_reglement', LOG_DEBUG);

@@ -49,7 +49,7 @@ if (!$mode) {
 }
 
 $username = GETPOST('username', 'alphanohtml');
-$passwordhash = GETPOST('passwordhash', 'alpha');
+$passworduidhash = GETPOST('passworduidhash', 'alpha');
 $conf->entity = (GETPOST('entity', 'int') ? GETPOST('entity', 'int') : 1);
 
 // Instantiate hooks of thirdparty module only if not already define
@@ -85,19 +85,23 @@ if ($reshook < 0) {
 
 if (empty($reshook)) {
 	// Validate new password
-	if ($action == 'validatenewpassword' && $username && $passwordhash) {
+	if ($action == 'validatenewpassword' && $username && $passworduidhash) {
 		$edituser = new User($db);
-		$result = $edituser->fetch('', $_GET["username"]);
+		$result = $edituser->fetch('', $username);
 		if ($result < 0) {
 			$message = '<div class="error">'.dol_escape_htmltag($langs->trans("ErrorLoginDoesNotExists", $username)).'</div>';
 		} else {
-			if (dol_verifyHash($edituser->pass_temp, $passwordhash)) {
+			global $dolibarr_main_instance_unique_id;
+
+			//print $edituser->pass_temp.'-'.$edituser->id.'-'.$dolibarr_main_instance_unique_id.' '.$passworduidhash;
+			if ($edituser->pass_temp && dol_verifyHash($edituser->pass_temp.'-'.$edituser->id.'-'.$dolibarr_main_instance_unique_id, $passworduidhash)) {
 				// Clear session
 				unset($_SESSION['dol_login']);
-				$_SESSION['dol_loginmesg'] = $langs->trans('NewPasswordValidated'); // Save message for the session page
+				$_SESSION['dol_loginmesg'] = $langs->transnoentitiesnoconv('NewPasswordValidated'); // Save message for the session page
 
 				$newpassword = $edituser->setPassword($user, $edituser->pass_temp, 0);
 				dol_syslog("passwordforgotten.php new password for user->id=".$edituser->id." validated in database");
+
 				header("Location: ".DOL_URL_ROOT.'/');
 				exit;
 			} else {
@@ -124,7 +128,7 @@ if (empty($reshook)) {
 			}
 
 			if ($result <= 0 && $edituser->error == 'USERNOTFOUND') {
-				$message = '<div class="warning paddingtopbottom'.(empty($conf->global->MAIN_LOGIN_BACKGROUND) ? '' : ' backgroundsemitransparent').'">';
+				$message = '<div class="warning paddingtopbottom'.(empty($conf->global->MAIN_LOGIN_BACKGROUND) ? '' : ' backgroundsemitransparent boxshadow').'">';
 				if (!$isanemail) {
 					$message .= $langs->trans("IfLoginExistPasswordRequestSent");
 				} else {
@@ -143,7 +147,7 @@ if (empty($reshook)) {
 					} else {
 						// Success
 						if ($edituser->send_password($user, $newpassword, 1) > 0) {
-							$message = '<div class="warning paddingtopbottom'.(empty($conf->global->MAIN_LOGIN_BACKGROUND) ? '' : ' backgroundsemitransparent').'">';
+							$message = '<div class="warning paddingtopbottom'.(empty($conf->global->MAIN_LOGIN_BACKGROUND) ? '' : ' backgroundsemitransparent boxshadow').'">';
 							if (!$isanemail) {
 								$message .= $langs->trans("IfLoginExistPasswordRequestSent");
 							} else {

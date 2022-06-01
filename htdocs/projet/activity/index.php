@@ -108,40 +108,8 @@ print_barre_liste($form->textwithpicto($title, $tooltiphelp), 0, $_SERVER["PHP_S
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
+/* Show list of project today */
 
-if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {     // This is useless due to the global search combo
-	// Search project
-	if (!empty($conf->projet->enabled) && $user->rights->projet->lire) {
-		$listofsearchfields['search_task'] = array('text'=>'Task');
-	}
-
-	if (count($listofsearchfields)) {
-		print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
-		print '<input type="hidden" name="token" value="'.newToken().'">';
-		print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder nohover centpercent">';
-		$i = 0;
-		foreach ($listofsearchfields as $key => $value) {
-			if ($i == 0) {
-				print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
-			}
-			print '<tr '.$bc[false].'>';
-			print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label></td><td><input type="text" class="flat inputsearch" name="'.$key.'" id="'.$key.'" size="18"></td>';
-			if ($i == 0) {
-				print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
-			}
-			print '</tr>';
-			$i++;
-		}
-		print '</table>';
-		print '</div>';
-		print '</form>';
-		print '<br>';
-	}
-}
-
-
-/* Affichage de la liste des projets d'aujourd'hui */
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
@@ -154,9 +122,9 @@ $sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql .= ", ".MAIN_DB_PREFIX."projet_task as t";
 $sql .= ", ".MAIN_DB_PREFIX."projet_task_time as tt";
 $sql .= " WHERE t.fk_projet = p.rowid";
-$sql .= " AND p.entity = ".$conf->entity;
+$sql .= " AND p.entity = ".((int) $conf->entity);
 $sql .= " AND tt.fk_task = t.rowid";
-$sql .= " AND tt.fk_user = ".$user->id;
+$sql .= " AND tt.fk_user = ".((int) $user->id);
 $sql .= " AND task_date BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month, $day, $year))."' AND '".$db->idate(dol_mktime(23, 59, 59, $month, $day, $year))."'";
 $sql .= " AND p.rowid in (".$db->sanitize($projectsListId).")";
 $sql .= " GROUP BY p.rowid, p.ref, p.title, p.public";
@@ -207,9 +175,9 @@ $sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql .= ", ".MAIN_DB_PREFIX."projet_task as t";
 $sql .= ", ".MAIN_DB_PREFIX."projet_task_time as tt";
 $sql .= " WHERE t.fk_projet = p.rowid";
-$sql .= " AND p.entity = ".$conf->entity;
+$sql .= " AND p.entity = ".((int) $conf->entity);
 $sql .= " AND tt.fk_task = t.rowid";
-$sql .= " AND tt.fk_user = ".$user->id;
+$sql .= " AND tt.fk_user = ".((int) $user->id);
 $sql .= " AND task_date BETWEEN '".$db->idate(dol_time_plus_duree(dol_mktime(0, 0, 0, $month, $day, $year), -1, 'd'))."' AND '".$db->idate(dol_time_plus_duree(dol_mktime(23, 59, 59, $month, $day, $year), -1, 'd'))."'";
 $sql .= " AND p.rowid in (".$db->sanitize($projectsListId).")";
 $sql .= " GROUP BY p.rowid, p.ref, p.title, p.public";
@@ -263,9 +231,9 @@ if ($db->type != 'pgsql')
 	$sql.= " , ".MAIN_DB_PREFIX."projet_task as t";
 	$sql.= " , ".MAIN_DB_PREFIX."projet_task_time as tt";
 	$sql.= " WHERE t.fk_projet = p.rowid";
-	$sql.= " AND p.entity = ".$conf->entity;
+	$sql.= " AND p.entity = ".((int) $conf->entity);
 	$sql.= " AND tt.fk_task = t.rowid";
-	$sql.= " AND tt.fk_user = ".$user->id;
+	$sql.= " AND tt.fk_user = ".((int) $user->id);
 	$sql.= " AND task_date >= '".$db->idate(dol_get_first_day($year, $month)).'" AND ...";
 	$sql.= " AND p.rowid in (".$db->sanitize($projectsListId).")";
 	$sql.= " GROUP BY p.rowid, p.ref, p.title";
@@ -319,9 +287,9 @@ if (!empty($conf->global->PROJECT_TASK_TIME_MONTH)) {
 	$sql .= ", ".MAIN_DB_PREFIX."projet_task as t";
 	$sql .= ", ".MAIN_DB_PREFIX."projet_task_time as tt";
 	$sql .= " WHERE t.fk_projet = p.rowid";
-	$sql .= " AND p.entity = ".$conf->entity;
+	$sql .= " AND p.entity = ".((int) $conf->entity);
 	$sql .= " AND tt.fk_task = t.rowid";
-	$sql .= " AND tt.fk_user = ".$user->id;
+	$sql .= " AND tt.fk_user = ".((int) $user->id);
 	$sql .= " AND task_date BETWEEN '".$db->idate(dol_get_first_day($year, $month))."' AND '".$db->idate(dol_get_last_day($year, $month))."'";
 	$sql .= " AND p.rowid in (".$db->sanitize($projectsListId).")";
 	$sql .= " GROUP BY p.rowid, p.ref, p.title, p.public";
@@ -365,9 +333,9 @@ if (!empty($conf->global->PROJECT_TASK_TIME_YEAR)) {
 	$sql .= ", ".MAIN_DB_PREFIX."projet_task as t";
 	$sql .= ", ".MAIN_DB_PREFIX."projet_task_time as tt";
 	$sql .= " WHERE t.fk_projet = p.rowid";
-	$sql .= " AND p.entity = ".$conf->entity;
+	$sql .= " AND p.entity = ".((int) $conf->entity);
 	$sql .= " AND tt.fk_task = t.rowid";
-	$sql .= " AND tt.fk_user = ".$user->id;
+	$sql .= " AND tt.fk_user = ".((int) $user->id);
 	$sql .= " AND YEAR(task_date) = '".strftime("%Y", $now)."'";
 	$sql .= " AND p.rowid in (".$db->sanitize($projectsListId).")";
 	$sql .= " GROUP BY p.rowid, p.ref, p.title, p.public";
@@ -454,10 +422,10 @@ if (empty($conf->global->PROJECT_HIDE_TASKS) && !empty($conf->global->PROJECT_SH
 		$sql .= " AND p.rowid IN (".$db->sanitize($projectsListId).")"; // project i have permission on
 	}
 	if ($mine) {     // this may duplicate record if we are contact twice
-		$sql .= " AND ect.fk_c_type_contact IN (".$db->sanitize(join(',', array_keys($listoftaskcontacttype))).") AND ect.element_id = t.rowid AND ect.fk_socpeople = ".$user->id;
+		$sql .= " AND ect.fk_c_type_contact IN (".$db->sanitize(join(',', array_keys($listoftaskcontacttype))).") AND ect.element_id = t.rowid AND ect.fk_socpeople = ".((int) $user->id);
 	}
 	if ($socid) {
-		$sql .= " AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
+		$sql .= " AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".((int) $socid).")";
 	}
 	$sql .= " AND p.fk_statut=1";
 	$sql .= " GROUP BY p.ref, p.title, p.rowid, p.fk_statut, p.fk_opp_status, p.public, t.label, t.rowid, t.planned_workload, t.duration_effective, t.progress, t.dateo, t.datee";

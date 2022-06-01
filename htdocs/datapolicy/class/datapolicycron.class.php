@@ -54,27 +54,26 @@ class DataPolicyCron
 		$errormsg = '';
 		$nbupdated = $nbdeleted = 0;
 
-		// FIXME Removed hardcoded values of id
+		// FIXME Exclude data from the selection if there is at least 1 invoice.
 		$arrayofparameters = array(
 			'DATAPOLICIES_TIERS_CLIENT' => array(
 				'sql' => "
                     SELECT s.rowid FROM ".MAIN_DB_PREFIX."societe as s
-                    WHERE (s.fk_forme_juridique IN (11, 12, 13, 15, 17, 18, 19, 35, 60, 312, 316, 401, 600, 700, 1005) OR s.fk_typent = 8)
-                    AND s.entity = %d
+                    WHERE s.entity = %d
                     AND s.client = 1
                     AND s.fournisseur = 0
                     AND s.tms < DATE_SUB(NOW(), INTERVAL %d MONTH)
-                    AND s.rowid NOT IN (
-                        SELECT DISTINCT a.fk_soc
-                        FROM ".MAIN_DB_PREFIX."actioncomm as a
-                        WHERE a.tms > DATE_SUB(NOW(), INTERVAL %d MONTH)
-                        AND a.fk_soc IS NOT NULL
+					AND NOT EXISTS (
+                        SELECT id FROM ".MAIN_DB_PREFIX."actioncomm as a WHERE a.fk_soc = s.rowid AND a.tms > DATE_SUB(NOW(), INTERVAL %d MONTH)
+                    )
+					AND NOT EXISTS (
+                        SELECT rowid FROM ".MAIN_DB_PREFIX."facture as f WHERE f.fk_soc = s.rowid
                     )
                 ",
 				"class" => "Societe",
 				"file" => DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php',
 				'fields_anonym' => array(
-					'name' => $langs->trans('ANONYME'),
+					'name' => 'MAKEANONYMOUS',
 					'name_bis' => '',
 					'name_alias' => '',
 					'address' => '',
@@ -87,29 +86,28 @@ class DataPolicyCron
 					'state' => '',
 					'country' => '',
 					'state_id' => '',
-					'skype' => '',
+					'socialnetworks' => '',
 					'country_id' => '',
 				)
 			),
 			'DATAPOLICIES_TIERS_PROSPECT' => array(
 				'sql' => "
                     SELECT s.rowid FROM ".MAIN_DB_PREFIX."societe as s
-                    WHERE (s.fk_forme_juridique IN (11, 12, 13, 15, 17, 18, 19, 35, 60, 312, 316, 401, 600, 700, 1005) OR s.fk_typent = 8)
-                    AND s.entity = %d
+                    WHERE s.entity = %d
                     AND s.client = 2
                     AND s.fournisseur = 0
                     AND s.tms < DATE_SUB(NOW(), INTERVAL %d MONTH)
-                    AND s.rowid NOT IN (
-                        SELECT DISTINCT a.fk_soc
-                        FROM ".MAIN_DB_PREFIX."actioncomm as a
-                        WHERE a.tms > DATE_SUB(NOW(), INTERVAL %d MONTH)
-                        AND a.fk_soc IS NOT NULL
+					AND NOT EXISTS (
+                        SELECT id FROM ".MAIN_DB_PREFIX."actioncomm as a WHERE a.fk_soc = s.rowid AND a.tms > DATE_SUB(NOW(), INTERVAL %d MONTH)
+                    )
+					AND NOT EXISTS (
+                        SELECT rowid FROM ".MAIN_DB_PREFIX."facture as f WHERE f.fk_soc = s.rowid
                     )
                 ",
 				"class" => "Societe",
 				"file" => DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php',
 				'fields_anonym' => array(
-					'name' => $langs->trans('ANONYME'),
+					'name' => 'MAKEANONYMOUS',
 					'name_bis' => '',
 					'name_alias' => '',
 					'address' => '',
@@ -122,29 +120,28 @@ class DataPolicyCron
 					'state' => '',
 					'country' => '',
 					'state_id' => '',
-					'skype' => '',
+					'socialnetworks' => '',
 					'country_id' => '',
 				)
 			),
 			'DATAPOLICIES_TIERS_PROSPECT_CLIENT' => array(
 				'sql' => "
                     SELECT s.rowid FROM ".MAIN_DB_PREFIX."societe as s
-                    WHERE (s.fk_forme_juridique  IN (11, 12, 13, 15, 17, 18, 19, 35, 60, 312, 316, 401, 600, 700, 1005) OR s.fk_typent = 8)
-                    AND s.entity = %d
+                    WHERE s.entity = %d
                     AND s.client = 3
                     AND s.fournisseur = 0
                     AND s.tms < DATE_SUB(NOW(), INTERVAL %d MONTH)
-                    AND s.rowid NOT IN (
-                        SELECT DISTINCT a.fk_soc
-                        FROM ".MAIN_DB_PREFIX."actioncomm as a
-                        WHERE a.tms > DATE_SUB(NOW(), INTERVAL %d MONTH)
-                        AND a.fk_soc IS NOT NULL
+					AND NOT EXISTS (
+                        SELECT id FROM ".MAIN_DB_PREFIX."actioncomm as a WHERE a.fk_soc = s.rowid AND a.tms > DATE_SUB(NOW(), INTERVAL %d MONTH)
+                    )
+					AND NOT EXISTS (
+                        SELECT rowid FROM ".MAIN_DB_PREFIX."facture as f WHERE f.fk_soc = s.rowid
                     )
                 ",
 				"class" => "Societe",
 				"file" => DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php',
 				'fields_anonym' => array(
-					'name' => $langs->trans('ANONYME'),
+					'name' => 'MAKEANONYMOUS',
 					'name_bis' => '',
 					'name_alias' => '',
 					'address' => '',
@@ -157,29 +154,28 @@ class DataPolicyCron
 					'state' => '',
 					'country' => '',
 					'state_id' => '',
-					'skype' => '',
+					'socialnetworks' => '',
 					'country_id' => '',
 				)
 			),
 			'DATAPOLICIES_TIERS_NIPROSPECT_NICLIENT' => array(
 				'sql' => "
                     SELECT s.rowid FROM ".MAIN_DB_PREFIX."societe as s
-                    WHERE (s.fk_forme_juridique  IN (11, 12, 13, 15, 17, 18, 19, 35, 60, 312, 316, 401, 600, 700, 1005) OR s.fk_typent = 8)
-                    AND s.entity = %d
+                    WHERE s.entity = %d
                     AND s.client = 0
                     AND s.fournisseur = 0
                     AND s.tms < DATE_SUB(NOW(), INTERVAL %d MONTH)
-                    AND s.rowid NOT IN (
-                        SELECT DISTINCT a.fk_soc
-                        FROM ".MAIN_DB_PREFIX."actioncomm as a
-                        WHERE a.tms > DATE_SUB(NOW(), INTERVAL %d MONTH)
-                        AND a.fk_soc IS NOT NULL
+					AND NOT EXISTS (
+                        SELECT id FROM ".MAIN_DB_PREFIX."actioncomm as a WHERE a.fk_soc = s.rowid AND a.tms > DATE_SUB(NOW(), INTERVAL %d MONTH)
+                    )
+					AND NOT EXISTS (
+                        SELECT rowid FROM ".MAIN_DB_PREFIX."facture as f WHERE f.fk_soc = s.rowid
                     )
                 ",
 				"class" => "Societe",
 				"file" => DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php',
 				'fields_anonym' => array(
-					'name' => $langs->trans('ANONYME'),
+					'name' => 'MAKEANONYMOUS',
 					'name_bis' => '',
 					'name_alias' => '',
 					'address' => '',
@@ -192,28 +188,27 @@ class DataPolicyCron
 					'state' => '',
 					'country' => '',
 					'state_id' => '',
-					'skype' => '',
+					'socialnetworks' => '',
 					'country_id' => '',
 				)
 			),
 			'DATAPOLICIES_TIERS_FOURNISSEUR' => array(
 				'sql' => "
                     SELECT s.rowid FROM ".MAIN_DB_PREFIX."societe as s
-                    WHERE (s.fk_forme_juridique  IN (11, 12, 13, 15, 17, 18, 19, 35, 60, 312, 316, 401, 600, 700, 1005) OR s.fk_typent = 8)
-                    AND s.entity = %d
+                    WHERE s.entity = %d
                     AND s.fournisseur = 1
                     AND s.tms < DATE_SUB(NOW(), INTERVAL %d MONTH)
-                    AND s.rowid NOT IN (
-                        SELECT DISTINCT a.fk_soc
-                        FROM ".MAIN_DB_PREFIX."actioncomm as a
-                        WHERE a.tms > DATE_SUB(NOW(), INTERVAL %d MONTH)
-                        AND a.fk_contact IS NOT NULL
+					AND NOT EXISTS (
+                        SELECT id FROM ".MAIN_DB_PREFIX."actioncomm as a WHERE a.fk_soc = s.rowid AND a.tms > DATE_SUB(NOW(), INTERVAL %d MONTH)
+                    )
+					AND NOT EXISTS (
+                        SELECT rowid FROM ".MAIN_DB_PREFIX."facture as f WHERE f.fk_soc = s.rowid
                     )
                 ",
 				"class" => "Societe",
 				"file" => DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php',
 				'fields_anonym' => array(
-					'name' => $langs->trans('ANONYME'),
+					'name' => 'MAKEANONYMOUS',
 					'name_bis' => '',
 					'name_alias' => '',
 					'address' => '',
@@ -226,7 +221,7 @@ class DataPolicyCron
 					'state' => '',
 					'country' => '',
 					'state_id' => '',
-					'skype' => '',
+					'socialnetworks' => '',
 					'country_id' => '',
 				)
 			),
@@ -238,17 +233,17 @@ class DataPolicyCron
                     AND c.tms < DATE_SUB(NOW(), INTERVAL %d MONTH)
                     AND s.client = 1
                     AND s.fournisseur = 0
-                    AND c.rowid NOT IN (
-                        SELECT DISTINCT a.fk_contact
-                        FROM ".MAIN_DB_PREFIX."actioncomm as a
-                        WHERE a.tms > DATE_SUB(NOW(), INTERVAL %d MONTH)
-                        AND a.fk_contact IS NOT NULL
+					AND NOT EXISTS (
+                        SELECT id FROM ".MAIN_DB_PREFIX."actioncomm as a WHERE a.fk_contact = c.rowid AND a.tms > DATE_SUB(NOW(), INTERVAL %d MONTH)
+                    )
+					AND NOT EXISTS (
+                        SELECT rowid FROM ".MAIN_DB_PREFIX."facture as f WHERE f.fk_soc = s.rowid
                     )
                 ",
 				"class" => "Contact",
 				"file" => DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php',
 				'fields_anonym' => array(
-					'lastname' => $langs->trans('ANONYME'),
+					'lastname' => 'MAKEANONYMOUS',
 					'firstname' => '',
 					'civility_id' => '',
 					'poste' => '',
@@ -264,8 +259,7 @@ class DataPolicyCron
 					'state' => '',
 					'country' => '',
 					'state_id' => '',
-					'skype' => '',
-					'jabberid' => '',
+					'socialnetworks' => '',
 					'country_id' => '',
 				)
 			),
@@ -277,17 +271,17 @@ class DataPolicyCron
                     AND c.tms < DATE_SUB(NOW(), INTERVAL %d MONTH)
                     AND s.client = 2
                     AND s.fournisseur = 0
-                    AND c.rowid NOT IN (
-                        SELECT DISTINCT a.fk_contact
-                        FROM ".MAIN_DB_PREFIX."actioncomm as a
-                        WHERE a.tms > DATE_SUB(NOW(), INTERVAL %d MONTH)
-                        AND a.fk_contact IS NOT NULL
+					AND NOT EXISTS (
+                        SELECT id FROM ".MAIN_DB_PREFIX."actioncomm as a WHERE a.fk_contact = c.rowid AND a.tms > DATE_SUB(NOW(), INTERVAL %d MONTH)
+                    )
+					AND NOT EXISTS (
+                        SELECT rowid FROM ".MAIN_DB_PREFIX."facture as f WHERE f.fk_soc = s.rowid
                     )
                 ",
 				"class" => "Contact",
 				"file" => DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php',
 				'fields_anonym' => array(
-					'lastname' => $langs->trans('ANONYME'),
+					'lastname' => 'MAKEANONYMOUS',
 					'firstname' => '',
 					'civility_id' => '',
 					'poste' => '',
@@ -303,8 +297,7 @@ class DataPolicyCron
 					'state' => '',
 					'country' => '',
 					'state_id' => '',
-					'skype' => '',
-					'jabberid' => '',
+					'socialnetworks' => '',
 					'country_id' => '',
 				)
 			),
@@ -316,17 +309,17 @@ class DataPolicyCron
                     AND c.tms < DATE_SUB(NOW(), INTERVAL %d MONTH)
                     AND s.client = 3
                     AND s.fournisseur = 0
-                    AND c.rowid NOT IN (
-                        SELECT DISTINCT a.fk_contact
-                        FROM ".MAIN_DB_PREFIX."actioncomm as a
-                        WHERE a.tms > DATE_SUB(NOW(), INTERVAL %d MONTH)
-                        AND a.fk_contact IS NOT NULL
+					AND NOT EXISTS (
+                        SELECT id FROM ".MAIN_DB_PREFIX."actioncomm as a WHERE a.fk_contact = c.rowid AND a.tms > DATE_SUB(NOW(), INTERVAL %d MONTH)
+                    )
+					AND NOT EXISTS (
+                        SELECT rowid FROM ".MAIN_DB_PREFIX."facture as f WHERE f.fk_soc = s.rowid
                     )
                 ",
 				"class" => "Contact",
 				"file" => DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php',
 				'fields_anonym' => array(
-					'lastname' => $langs->trans('ANONYME'),
+					'lastname' => 'MAKEANONYMOUS',
 					'firstname' => '',
 					'civility_id' => '',
 					'poste' => '',
@@ -342,8 +335,7 @@ class DataPolicyCron
 					'state' => '',
 					'country' => '',
 					'state_id' => '',
-					'skype' => '',
-					'jabberid' => '',
+					'socialnetworks' => '',
 					'country_id' => '',
 				)
 			),
@@ -355,17 +347,17 @@ class DataPolicyCron
                     AND c.tms < DATE_SUB(NOW(), INTERVAL %d MONTH)
                     AND s.client = 0
                     AND s.fournisseur = 0
-                    AND c.rowid NOT IN (
-                        SELECT DISTINCT a.fk_contact
-                        FROM ".MAIN_DB_PREFIX."actioncomm as a
-                        WHERE a.tms > DATE_SUB(NOW(), INTERVAL %d MONTH)
-                        AND a.fk_contact IS NOT NULL
+					AND NOT EXISTS (
+                        SELECT id FROM ".MAIN_DB_PREFIX."actioncomm as a WHERE a.fk_contact = c.rowid AND a.tms > DATE_SUB(NOW(), INTERVAL %d MONTH)
+                    )
+					AND NOT EXISTS (
+                        SELECT rowid FROM ".MAIN_DB_PREFIX."facture as f WHERE f.fk_soc = s.rowid
                     )
                 ",
 				"class" => "Contact",
 				"file" => DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php',
 				'fields_anonym' => array(
-					'lastname' => $langs->trans('ANONYME'),
+					'lastname' => 'MAKEANONYMOUS',
 					'firstname' => '',
 					'civility_id' => '',
 					'poste' => '',
@@ -381,8 +373,7 @@ class DataPolicyCron
 					'state' => '',
 					'country' => '',
 					'state_id' => '',
-					'skype' => '',
-					'jabberid' => '',
+					'socialnetworks' => '',
 					'country_id' => '',
 				)
 			),
@@ -393,17 +384,17 @@ class DataPolicyCron
                     WHERE c.entity = %d
                     AND c.tms < DATE_SUB(NOW(), INTERVAL %d MONTH)
                     AND s.fournisseur = 1
-                    AND c.rowid NOT IN (
-                        SELECT DISTINCT a.fk_contact
-                        FROM ".MAIN_DB_PREFIX."actioncomm as a
-                        WHERE a.tms > DATE_SUB(NOW(), INTERVAL %d MONTH)
-                        AND a.fk_contact IS NOT NULL
+					AND NOT EXISTS (
+                        SELECT id FROM ".MAIN_DB_PREFIX."actioncomm as a WHERE a.fk_contact = c.rowid AND a.tms > DATE_SUB(NOW(), INTERVAL %d MONTH)
+                    )
+					AND NOT EXISTS (
+                        SELECT rowid FROM ".MAIN_DB_PREFIX."facture as f WHERE f.fk_soc = s.rowid
                     )
                 ",
 				"class" => "Contact",
 				"file" => DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php',
 				'fields_anonym' => array(
-					'lastname' => $langs->trans('ANONYME'),
+					'lastname' => 'MAKEANONYMOUS',
 					'firstname' => '',
 					'civility_id' => '',
 					'poste' => '',
@@ -419,8 +410,7 @@ class DataPolicyCron
 					'state' => '',
 					'country' => '',
 					'state_id' => '',
-					'skype' => '',
-					'jabberid' => '',
+					'socialnetworks' => '',
 					'country_id' => '',
 				)
 			),
@@ -429,19 +419,15 @@ class DataPolicyCron
                     SELECT a.rowid FROM ".MAIN_DB_PREFIX."adherent as a
                     WHERE a.entity = %d
                     AND a.tms < DATE_SUB(NOW(), INTERVAL %d MONTH)
-                    AND a.rowid NOT IN (
-                        SELECT DISTINCT a.fk_element
-                        FROM ".MAIN_DB_PREFIX."actioncomm as a
-                        WHERE a.tms > DATE_SUB(NOW(), INTERVAL %d MONTH)
-                        AND a.elementtype LIKE 'member'
-                        AND a.fk_element IS NOT NULL
+					AND NOT EXISTS (
+                        SELECT id FROM ".MAIN_DB_PREFIX."actioncomm as a WHERE a.fk_element = a.rowid AND a.tms > DATE_SUB(NOW(), INTERVAL %d MONTH) AND a.elementtype LIKE 'member'
                     )
                 ",
 				"class" => "Adherent",
 				"file" => DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php',
 				'fields_anonym' => array(
-					'lastname' => $langs->trans('ANONYME'),
-					'firstname' => $langs->trans('ANONYME'),
+					'lastname' => 'MAKEANONYMOUS',
+					'firstname' => 'MAKEANONYMOUS',
 					'civility_id' => '',
 					'societe' => '',
 					'address' => '',
@@ -456,7 +442,7 @@ class DataPolicyCron
 					'state' => '',
 					'country' => '',
 					'state_id' => '',
-					'skype' => '',
+					'socialnetworks' => '',
 					'country_id' => '',
 				)
 			),
@@ -483,27 +469,27 @@ class DataPolicyCron
 						$object->fetch($obj->rowid);
 						$object->id = $obj->rowid;
 
-						if ($object->isObjectUsed($obj->rowid) > 0) {			// If object to clean is used
-							foreach ($params['fields_anonym'] as $fields => $val) {
-								$object->$fields = $val;
-							}
-							$result = $object->update($obj->rowid, $user);
-							if ($result > 0) {
-								if ($params['class'] == 'Societe') {
-									// We delete contacts of thirdparty
-									$sql = "DELETE FROM ".MAIN_DB_PREFIX."socpeople WHERE fk_soc = ".$obj->rowid;
-									$result = $this->db->query($sql);
-									if ($result < 0) {
-										$errormsg = $this->db->lasterror();
-										$error++;
+						$action = 'anonymize';	// TODO Offer also action "delete" in setup of module
+
+						if ($action == 'anonymize') {
+							if ($object->isObjectUsed($obj->rowid) == 0) {			// If object to clean is used
+								foreach ($params['fields_anonym'] as $fields => $val) {
+									if ($val == 'MAKEANONYMOUS') {
+										$object->$fields = $fields.'-anonymous-'.$obj->rowid;
+									} else {
+										$object->$fields = $val;
 									}
 								}
-							} else {
-								$errormsg = $object->error;
-								$error++;
+								$result = $object->update($obj->rowid, $user);
+								if ($result > 0) {
+									$errormsg = $object->error;
+									$error++;
+								}
+								$nbupdated++;
 							}
-							$nbupdated++;
-						} else {											// If object to clean is not used
+						}
+
+						if ($action == 'delete') {									// If object to clean is not used
 							if ($object->element == 'adherent') {
 								$result = $object->delete($obj->rowid, $user);
 							} else {

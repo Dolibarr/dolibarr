@@ -78,7 +78,7 @@ class Contact extends CommonObject
 	 *  'help' is a string visible as a tooltip on field
 	 *  'showoncombobox' if value of the field must be visible into the label of the combobox that list record
 	 *  'disabled' is 1 if we want to have the field locked by a 'disabled' attribute. In most cases, this is never set into the definition of $fields into class, but is set dynamically by some part of code.
-	 *  'arraykeyval' to set list of value if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel")
+	 *  'arrayofkeyval' to set list of value if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel")
 	 *  'comment' is not used. You can store here any text of your choice. It is not used by application.
 	 *
 	 *  Note: To have value dynamic, you can set value to 0 in definition and edit the value on the fly into the constructor.
@@ -90,38 +90,38 @@ class Contact extends CommonObject
 	 */
 	public $fields = array(
 		'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
-		'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'position'=>15),
-		'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>20),
-		'fk_soc' =>array('type'=>'integer', 'label'=>'ThirdParty', 'enabled'=>1, 'visible'=>1, 'position'=>25, 'searchall'=>1),
 		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>3, 'notnull'=>1, 'position'=>30, 'index'=>1),
 		'ref_ext' =>array('type'=>'varchar(255)', 'label'=>'Ref ext', 'enabled'=>1, 'visible'=>3, 'position'=>35),
 		'civility' =>array('type'=>'varchar(6)', 'label'=>'Civility', 'enabled'=>1, 'visible'=>3, 'position'=>40),
 		'lastname' =>array('type'=>'varchar(50)', 'label'=>'Lastname', 'enabled'=>1, 'visible'=>1, 'position'=>45, 'showoncombobox'=>1, 'searchall'=>1),
 		'firstname' =>array('type'=>'varchar(50)', 'label'=>'Firstname', 'enabled'=>1, 'visible'=>1, 'position'=>50, 'showoncombobox'=>1, 'searchall'=>1),
+		'poste' =>array('type'=>'varchar(80)', 'label'=>'PostOrFunction', 'enabled'=>1, 'visible'=>-1, 'position'=>52),
 		'address' =>array('type'=>'varchar(255)', 'label'=>'Address', 'enabled'=>1, 'visible'=>-1, 'position'=>55),
 		'zip' =>array('type'=>'varchar(25)', 'label'=>'Zip', 'enabled'=>1, 'visible'=>1, 'position'=>60),
-		'town' =>array('type'=>'text', 'label'=>'Town', 'enabled'=>1, 'visible'=>1, 'position'=>65),
+		'town' =>array('type'=>'text', 'label'=>'Town', 'enabled'=>1, 'visible'=>-1, 'position'=>65),
 		'fk_departement' =>array('type'=>'integer', 'label'=>'Fk departement', 'enabled'=>1, 'visible'=>3, 'position'=>70),
 		'fk_pays' =>array('type'=>'integer', 'label'=>'Fk pays', 'enabled'=>1, 'visible'=>3, 'position'=>75),
+		'fk_soc' =>array('type'=>'integer', 'label'=>'ThirdParty', 'enabled'=>1, 'visible'=>1, 'position'=>77, 'searchall'=>1),
 		'birthday' =>array('type'=>'date', 'label'=>'Birthday', 'enabled'=>1, 'visible'=>3, 'position'=>80),
-		'poste' =>array('type'=>'varchar(80)', 'label'=>'PostOrFunction', 'enabled'=>1, 'visible'=>-1, 'position'=>85),
 		'phone' =>array('type'=>'varchar(30)', 'label'=>'Phone', 'enabled'=>1, 'visible'=>1, 'position'=>90, 'searchall'=>1),
-		'phone_perso' =>array('type'=>'varchar(30)', 'label'=>'PhonePerso', 'enabled'=>1, 'visible'=>1, 'position'=>95, 'searchall'=>1),
+		'phone_perso' =>array('type'=>'varchar(30)', 'label'=>'PhonePerso', 'enabled'=>1, 'visible'=>-1, 'position'=>95, 'searchall'=>1),
 		'phone_mobile' =>array('type'=>'varchar(30)', 'label'=>'PhoneMobile', 'enabled'=>1, 'visible'=>1, 'position'=>100, 'searchall'=>1),
-		'fax' =>array('type'=>'varchar(30)', 'label'=>'Fax', 'enabled'=>1, 'visible'=>1, 'position'=>105, 'searchall'=>1),
+		'fax' =>array('type'=>'varchar(30)', 'label'=>'Fax', 'enabled'=>1, 'visible'=>-1, 'position'=>105, 'searchall'=>1),
 		'email' =>array('type'=>'varchar(255)', 'label'=>'Email', 'enabled'=>1, 'visible'=>1, 'position'=>110, 'searchall'=>1),
 		'socialnetworks' =>array('type'=>'text', 'label'=>'SocialNetworks', 'enabled'=>1, 'visible'=>3, 'position'=>115),
 		'photo' =>array('type'=>'varchar(255)', 'label'=>'Photo', 'enabled'=>1, 'visible'=>3, 'position'=>170),
 		'priv' =>array('type'=>'smallint(6)', 'label'=>'ContactVisibility', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>175),
-		'fk_stcommcontact' =>array('type'=>'integer', 'label'=>'Fk stcommcontact', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>220),
+		'fk_stcommcontact' =>array('type'=>'integer', 'label'=>'ProspectStatus', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>220),
 		'fk_prospectlevel' =>array('type'=>'varchar(12)', 'label'=>'ProspectLevel', 'enabled'=>1, 'visible'=>-1, 'position'=>255),
 		'no_email' =>array('type'=>'smallint(6)', 'label'=>'No_Email', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>180),
-		'fk_user_creat' =>array('type'=>'integer', 'label'=>'UserAuthor', 'enabled'=>1, 'visible'=>3, 'position'=>185),
-		'fk_user_modif' =>array('type'=>'integer', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>3, 'position'=>190),
 		'note_private' =>array('type'=>'text', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>3, 'position'=>195, 'searchall'=>1),
 		'note_public' =>array('type'=>'text', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>3, 'position'=>200, 'searchall'=>1),
 		'default_lang' =>array('type'=>'varchar(6)', 'label'=>'Default lang', 'enabled'=>1, 'visible'=>3, 'position'=>205),
 		'canvas' =>array('type'=>'varchar(32)', 'label'=>'Canvas', 'enabled'=>1, 'visible'=>3, 'position'=>210),
+		'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'position'=>300),
+		'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>305),
+		'fk_user_creat' =>array('type'=>'integer', 'label'=>'UserAuthor', 'enabled'=>1, 'visible'=>3, 'position'=>310),
+		'fk_user_modif' =>array('type'=>'integer', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>3, 'position'=>315),
 		'statut' =>array('type'=>'tinyint(4)', 'label'=>'Status', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>500),
 		'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-1, 'position'=>1000),
 	);
@@ -165,7 +165,8 @@ class Contact extends CommonObject
 	/**
 	 * @var int Thirdparty ID
 	 */
-	public $socid;
+	public $socid;		// both socid and fk_soc are used
+	public $fk_soc;		// both socid and fk_soc are used
 
 	/**
 	 * @var int 0=inactive, 1=active
@@ -385,13 +386,13 @@ class Contact extends CommonObject
 		if (!$user->rights->societe->client->voir && !$user->socid) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe as s";
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-			$sql .= " WHERE sp.fk_soc = s.rowid AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+			$sql .= " WHERE sp.fk_soc = s.rowid AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			$clause = "AND";
 		}
 		$sql .= ' '.$clause.' sp.entity IN ('.getEntity($this->element).')';
-		$sql .= " AND (sp.priv='0' OR (sp.priv='1' AND sp.fk_user_creat=".$user->id."))";
+		$sql .= " AND (sp.priv='0' OR (sp.priv='1' AND sp.fk_user_creat=".((int) $user->id)."))";
 		if ($user->socid > 0) {
-			$sql .= " AND sp.fk_soc = ".$user->socid;
+			$sql .= " AND sp.fk_soc = ".((int) $user->socid);
 		}
 
 		$resql = $this->db->query($sql);
@@ -455,18 +456,18 @@ class Contact extends CommonObject
 		$sql .= ") VALUES (";
 		$sql .= "'".$this->db->idate($now)."',";
 		if ($this->socid > 0) {
-			$sql .= " ".$this->db->escape($this->socid).",";
+			$sql .= " ".((int) $this->socid).",";
 		} else {
 			$sql .= "null,";
 		}
 		$sql .= "'".$this->db->escape($this->lastname)."',";
 		$sql .= "'".$this->db->escape($this->firstname)."',";
-		$sql .= " ".($user->id > 0 ? "'".$this->db->escape($user->id)."'" : "null").",";
-		$sql .= " ".$this->db->escape($this->priv).",";
+		$sql .= " ".($user->id > 0 ? ((int) $user->id) : "null").",";
+		$sql .= " ".((int) $this->priv).",";
 		$sql .= " 0,";
-		$sql .= " ".$this->db->escape($this->statut).",";
+		$sql .= " ".((int) $this->statut).",";
 		$sql .= " ".(!empty($this->canvas) ? "'".$this->db->escape($this->canvas)."'" : "null").",";
-		$sql .= " ".$this->db->escape($this->entity).",";
+		$sql .= " ".((int) $this->entity).",";
 		$sql .= "'".$this->db->escape($this->ref_ext)."',";
 		$sql .= " ".(!empty($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null");
 		$sql .= ")";
@@ -539,14 +540,13 @@ class Contact extends CommonObject
 		$this->entity = ((isset($this->entity) && is_numeric($this->entity)) ? $this->entity : $conf->entity);
 
 		// Clean parameters
+		$this->ref_ext = trim($this->ref_ext);
 		$this->lastname = trim($this->lastname) ?trim($this->lastname) : trim($this->lastname);
 		$this->firstname = trim($this->firstname);
 		$this->email = trim($this->email);
 		$this->phone_pro = trim($this->phone_pro);
 		$this->phone_perso = trim($this->phone_perso);
 		$this->phone_mobile = trim($this->phone_mobile);
-		$this->jabberid = trim($this->jabberid);
-		$this->skype = trim($this->skype);
 		$this->photo = trim($this->photo);
 		$this->fax = trim($this->fax);
 		$this->zip = (empty($this->zip) ? '' : trim($this->zip));
@@ -561,18 +561,19 @@ class Contact extends CommonObject
 		}
 		$this->db->begin();
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET ";
+		$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET";
 		if ($this->socid > 0) {
-			$sql .= " fk_soc='".$this->db->escape($this->socid)."',";
+			$sql .= " fk_soc = ".((int) $this->socid).",";
 		} elseif ($this->socid == -1) {
-			$sql .= " fk_soc=null,";
+			$sql .= " fk_soc = NULL,";
 		}
-		$sql .= "  civility='".$this->db->escape($this->civility_code)."'";
+		$sql .= " civility='".$this->db->escape($this->civility_code)."'";
 		$sql .= ", lastname='".$this->db->escape($this->lastname)."'";
 		$sql .= ", firstname='".$this->db->escape($this->firstname)."'";
 		$sql .= ", address='".$this->db->escape($this->address)."'";
 		$sql .= ", zip='".$this->db->escape($this->zip)."'";
 		$sql .= ", town='".$this->db->escape($this->town)."'";
+		$sql .= ", ref_ext = ".(!empty($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : "NULL");
 		$sql .= ", fk_pays=".($this->country_id > 0 ? $this->country_id : 'NULL');
 		$sql .= ", fk_departement=".($this->state_id > 0 ? $this->state_id : 'NULL');
 		$sql .= ", poste='".$this->db->escape($this->poste)."'";
@@ -581,21 +582,21 @@ class Contact extends CommonObject
 		$sql .= ", socialnetworks = '".$this->db->escape(json_encode($this->socialnetworks))."'";
 		$sql .= ", photo='".$this->db->escape($this->photo)."'";
 		$sql .= ", birthday=".($this->birthday ? "'".$this->db->idate($this->birthday)."'" : "null");
-		$sql .= ", note_private = ".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null");
-		$sql .= ", note_public = ".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null");
-		$sql .= ", phone = ".(isset($this->phone_pro) ? "'".$this->db->escape($this->phone_pro)."'" : "null");
-		$sql .= ", phone_perso = ".(isset($this->phone_perso) ? "'".$this->db->escape($this->phone_perso)."'" : "null");
-		$sql .= ", phone_mobile = ".(isset($this->phone_mobile) ? "'".$this->db->escape($this->phone_mobile)."'" : "null");
+		$sql .= ", note_private = ".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "NULL");
+		$sql .= ", note_public = ".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "NULL");
+		$sql .= ", phone = ".(isset($this->phone_pro) ? "'".$this->db->escape($this->phone_pro)."'" : "NULL");
+		$sql .= ", phone_perso = ".(isset($this->phone_perso) ? "'".$this->db->escape($this->phone_perso)."'" : "NULL");
+		$sql .= ", phone_mobile = ".(isset($this->phone_mobile) ? "'".$this->db->escape($this->phone_mobile)."'" : "NULL");
 		$sql .= ", priv = '".$this->db->escape($this->priv)."'";
 		$sql .= ", fk_prospectcontactlevel = '".$this->db->escape($this->fk_prospectlevel)."'";
 		if (isset($this->stcomm_id)) {
 			$sql .= ", fk_stcommcontact = ".($this->stcomm_id > 0 || $this->stcomm_id == -1 ? $this->stcomm_id : "0");
 		}
-		$sql .= ", statut = ".$this->db->escape($this->statut);
+		$sql .= ", statut = ".((int) $this->statut);
 		$sql .= ", fk_user_modif=".($user->id > 0 ? "'".$this->db->escape($user->id)."'" : "NULL");
 		$sql .= ", default_lang=".($this->default_lang ? "'".$this->db->escape($this->default_lang)."'" : "NULL");
-		$sql .= ", entity = ".$this->db->escape($this->entity);
-		$sql .= " WHERE rowid=".$this->db->escape($id);
+		$sql .= ", entity = ".((int) $this->entity);
+		$sql .= " WHERE rowid=".((int) $id);
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -885,30 +886,32 @@ class Contact extends CommonObject
 			$this->error = $this->db->lasterror();
 		}
 
-		// Mis a jour alerte birthday
-		if (!empty($this->birthday_alert)) {
-			//check existing
-			$sql_check = "SELECT rowid FROM ".MAIN_DB_PREFIX."user_alert WHERE type=1 AND fk_contact=".$this->db->escape($id)." AND fk_user=".$user->id;
-			$result_check = $this->db->query($sql_check);
-			if (!$result_check || ($this->db->num_rows($result_check) < 1)) {
-				//insert
-				$sql = "INSERT INTO ".MAIN_DB_PREFIX."user_alert(type,fk_contact,fk_user) ";
-				$sql .= "VALUES (1,".$this->db->escape($id).",".$user->id.")";
+		if ($user) {
+			// Update birthday alert
+			if (!empty($this->birthday_alert)) {
+				//check existing
+				$sql_check = "SELECT rowid FROM " . MAIN_DB_PREFIX . "user_alert WHERE type = 1 AND fk_contact = " . ((int) $id) . " AND fk_user = " . ((int) $user->id);
+				$result_check = $this->db->query($sql_check);
+				if (!$result_check || ($this->db->num_rows($result_check) < 1)) {
+					//insert
+					$sql = "INSERT INTO " . MAIN_DB_PREFIX . "user_alert(type, fk_contact, fk_user) ";
+					$sql .= "VALUES (1," . ((int) $id) . "," . ((int) $user->id) . ")";
+					$result = $this->db->query($sql);
+					if (!$result) {
+						$error++;
+						$this->error = $this->db->lasterror();
+					}
+				} else {
+					$result = true;
+				}
+			} else {
+				$sql = "DELETE FROM " . MAIN_DB_PREFIX . "user_alert ";
+				$sql .= "WHERE type=1 AND fk_contact=" . ((int) $id) . " AND fk_user=" . ((int) $user->id);
 				$result = $this->db->query($sql);
 				if (!$result) {
 					$error++;
 					$this->error = $this->db->lasterror();
 				}
-			} else {
-				$result = true;
-			}
-		} else {
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_alert ";
-			$sql .= "WHERE type=1 AND fk_contact=".$this->db->escape($id)." AND fk_user=".$user->id;
-			$result = $this->db->query($sql);
-			if (!$result) {
-				$error++;
-				$this->error = $this->db->lasterror();
 			}
 		}
 
@@ -1025,7 +1028,8 @@ class Contact extends CommonObject
 				$this->country_code = $obj->country_id ? $obj->country_code : '';
 				$this->country			= $obj->country_id ? ($langs->trans('Country'.$obj->country_code) != 'Country'.$obj->country_code ? $langs->transnoentities('Country'.$obj->country_code) : $obj->country) : '';
 
-				$this->socid			= $obj->fk_soc;
+				$this->fk_soc			= $obj->fk_soc;		// Both fk_soc and socid are used
+				$this->socid			= $obj->fk_soc;		// Both fk_soc and socid are used
 				$this->socname			= $obj->socname;
 				$this->poste			= $obj->poste;
 				$this->statut = $obj->statut;
@@ -1066,7 +1070,7 @@ class Contact extends CommonObject
 				// Search Dolibarr user linked to this contact
 				$sql = "SELECT u.rowid ";
 				$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
-				$sql .= " WHERE u.fk_socpeople = ".$this->id;
+				$sql .= " WHERE u.fk_socpeople = ".((int) $this->id);
 
 				$resql = $this->db->query($sql);
 				if ($resql) {
@@ -1089,7 +1093,7 @@ class Contact extends CommonObject
 				if ($user) {
 					$sql = "SELECT fk_user";
 					$sql .= " FROM ".MAIN_DB_PREFIX."user_alert";
-					$sql .= " WHERE fk_user = ".$user->id." AND fk_contact = ".$this->db->escape($id);
+					$sql .= " WHERE fk_user = ".((int) $user->id)." AND fk_contact = ".((int) $id);
 
 					$resql = $this->db->query($sql);
 					if ($resql) {
@@ -1160,7 +1164,7 @@ class Contact extends CommonObject
 		$sql = "SELECT tc.element, count(ec.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as tc";
 		$sql .= " WHERE ec.fk_c_type_contact = tc.rowid";
-		$sql .= " AND fk_socpeople = ".$this->id;
+		$sql .= " AND fk_socpeople = ".((int) $this->id);
 		$sql .= " AND tc.source = 'external'";
 		$sql .= " GROUP BY tc.element";
 
@@ -1190,10 +1194,11 @@ class Contact extends CommonObject
 	}
 
 	/**
-	 *   	Efface le contact de la base
+	 *	Delete a contact from database
+	 *  // TODO Add $user as first param
 	 *
-	 *   	@param		int		$notrigger		Disable all trigger
-	 *		@return		int						<0 if KO, >0 if OK
+	 *  @param		int		$notrigger		Disable all trigger
+	 *	@return		int						<0 if KO, >0 if OK
 	 */
 	public function delete($notrigger = 0)
 	{
@@ -1208,7 +1213,7 @@ class Contact extends CommonObject
 			$sql = "SELECT ec.rowid";
 			$sql .= " FROM ".MAIN_DB_PREFIX."element_contact ec,";
 			$sql .= " ".MAIN_DB_PREFIX."c_type_contact tc";
-			$sql .= " WHERE ec.fk_socpeople=".$this->id;
+			$sql .= " WHERE ec.fk_socpeople=".((int) $this->id);
 			$sql .= " AND ec.fk_c_type_contact=tc.rowid";
 			$sql .= " AND tc.source='external'";
 			dol_syslog(__METHOD__, LOG_DEBUG);
@@ -1221,7 +1226,7 @@ class Contact extends CommonObject
 					$obj = $this->db->fetch_object($resql);
 
 					$sqldel = "DELETE FROM ".MAIN_DB_PREFIX."element_contact";
-					$sqldel .= " WHERE rowid = ".$obj->rowid;
+					$sqldel .= " WHERE rowid = ".((int) $obj->rowid);
 					dol_syslog(__METHOD__, LOG_DEBUG);
 					$result = $this->db->query($sqldel);
 					if (!$result) {
@@ -1239,7 +1244,7 @@ class Contact extends CommonObject
 
 		if (!$error) {
 			// Remove Roles
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_contacts WHERE fk_socpeople = ".$this->id;
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_contacts WHERE fk_socpeople = ".((int) $this->id);
 			dol_syslog(__METHOD__, LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
@@ -1251,7 +1256,7 @@ class Contact extends CommonObject
 
 		if (!$error) {
 			// Remove Roles
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_contacts WHERE fk_socpeople = ".$this->id;
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_contacts WHERE fk_socpeople = ".((int) $this->id);
 			dol_syslog(__METHOD__, LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
@@ -1263,7 +1268,7 @@ class Contact extends CommonObject
 
 		if (!$error) {
 			// Remove category
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_contact WHERE fk_socpeople = ".$this->id;
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_contact WHERE fk_socpeople = ".((int) $this->id);
 			dol_syslog(__METHOD__, LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
@@ -1324,7 +1329,7 @@ class Contact extends CommonObject
 		$sql = "SELECT c.rowid, c.datec as datec, c.fk_user_creat,";
 		$sql .= " c.tms as tms, c.fk_user_modif";
 		$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as c";
-		$sql .= " WHERE c.rowid = ".$this->db->escape($id);
+		$sql .= " WHERE c.rowid = ".((int) $id);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -1724,7 +1729,7 @@ class Contact extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe_contacts as sc, ".MAIN_DB_PREFIX."c_type_contact as tc";
 		$sql .= " WHERE tc.rowid = sc.fk_c_type_contact";
 		$sql .= " AND tc.source = 'external' AND tc.active=1";
-		$sql .= " AND sc.fk_socpeople = ".$this->id;
+		$sql .= " AND sc.fk_socpeople = ".((int) $this->id);
 		$sql .= " AND sc.entity IN (".getEntity('societe').')';
 
 		$resql = $this->db->query($sql);
@@ -1770,10 +1775,10 @@ class Contact extends CommonObject
 		$sql = "SELECT sc.fk_socpeople as id, sc.fk_c_type_contact";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_type_contact tc";
 		$sql .= ", ".MAIN_DB_PREFIX."societe_contacts sc";
-		$sql .= " WHERE sc.fk_soc =".$this->socid;
+		$sql .= " WHERE sc.fk_soc =".((int) $this->socid);
 		$sql .= " AND sc.fk_c_type_contact=tc.rowid";
-		$sql .= " AND tc.element='".$this->db->escape($element)."'";
-		$sql .= " AND tc.active=1";
+		$sql .= " AND tc.element = '".$this->db->escape($element)."'";
+		$sql .= " AND tc.active = 1";
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -2037,7 +2042,7 @@ class Contact extends CommonObject
 					$obj = $this->db->fetch_object($resql);
 					$noemail = $obj->nb;
 					if (empty($noemail)) {
-						$sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing_unsubscribe(email, entity, date_creat) VALUES ('".$this->db->escape($this->email)."', ".$this->db->escape(getEntity('mailing', 0)).", '".$this->db->idate(dol_now())."')";
+						$sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing_unsubscribe(email, entity, date_creat) VALUES ('".$this->db->escape($this->email)."', ".getEntity('mailing', 0).", '".$this->db->idate(dol_now())."')";
 						$resql = $this->db->query($sql);
 						if (!$resql) {
 							$error++;
@@ -2051,7 +2056,7 @@ class Contact extends CommonObject
 					$this->errors[] = $this->error;
 				}
 			} else {
-				$sql = "DELETE FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE email = '".$this->db->escape($this->email)."' AND entity = ".$this->db->escape(getEntity('mailing', 0));
+				$sql = "DELETE FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE email = '".$this->db->escape($this->email)."' AND entity IN (".getEntity('mailing', 0).")";
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$error++;

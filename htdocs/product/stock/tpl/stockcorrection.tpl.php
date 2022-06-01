@@ -120,16 +120,16 @@ if (!empty($conf->productbatch->enabled) &&
 	print '</td>';
 	print '</tr>';
 	print '<tr>';
-	if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
-		print '<td>'.$langs->trans("EatByDate").'</td><td>';
-		$eatbyselected = dol_mktime(0, 0, 0, GETPOST('eatbymonth'), GETPOST('eatbyday'), GETPOST('eatbyyear'));
-		print $form->selectDate($eatbyselected, 'eatby', '', '', 1, "");
-		print '</td>';
-	}
 	if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
 		print '<td>'.$langs->trans("SellByDate").'</td><td>';
 		$sellbyselected = dol_mktime(0, 0, 0, GETPOST('sellbymonth'), GETPOST('sellbyday'), GETPOST('sellbyyear'));
 		print $form->selectDate($sellbyselected, 'sellby', '', '', 1, "");
+		print '</td>';
+	}
+	if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+		print '<td>'.$langs->trans("EatByDate").'</td><td>';
+		$eatbyselected = dol_mktime(0, 0, 0, GETPOST('eatbymonth'), GETPOST('eatbyday'), GETPOST('eatbyyear'));
+		print $form->selectDate($eatbyselected, 'eatby', '', '', 1, "");
 		print '</td>';
 	}
 	print '</tr>';
@@ -155,7 +155,10 @@ print '<td>'.$langs->trans("MovementLabel").'</td>';
 print '<td>';
 print '<input type="text" name="label" class="minwidth300" value="'.$valformovementlabel.'">';
 print '</td>';
-print '<td>'.$langs->trans("InventoryCode").'</td><td><input class="maxwidth100onsmartphone" name="inventorycode" id="inventorycode" value="'.(GETPOSTISSET("inventorycode") ? GETPOST("inventorycode", 'alpha') : dol_print_date(dol_now(), '%y%m%d%H%M%S')).'"></td>';
+print '<td>'.$langs->trans("InventoryCode").'</td>';
+print '<td>';
+print '<input class="maxwidth100onsmartphone" name="inventorycode" id="inventorycode" value="'.(GETPOSTISSET("inventorycode") ? GETPOST("inventorycode", 'alpha') : dol_print_date(dol_now(), '%Y%m%d%H%M%S')).'">';
+print '</td>';
 print '</tr>';
 
 print '</table>';

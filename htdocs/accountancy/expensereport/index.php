@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("compta", "bills", "other", "main", "accountancy"));
+$langs->loadLangs(array("compta", "bills", "other", "accountancy"));
 
 $month_start = ($conf->global->SOCIETE_FISCAL_MONTH_START ? ($conf->global->SOCIETE_FISCAL_MONTH_START) : 1);
 if (GETPOST("year", 'int')) {
@@ -103,13 +103,13 @@ if ($action == 'validatehistory') {
 		$sql1 = "UPDATE ".MAIN_DB_PREFIX."expensereport_det";
 		$sql1 .= " SET fk_code_ventilation = accnt.rowid";
 		$sql1 .= " FROM ".MAIN_DB_PREFIX."c_type_fees as t, ".MAIN_DB_PREFIX."accounting_account as accnt , ".MAIN_DB_PREFIX."accounting_system as syst";
-		$sql1 .= " WHERE ".MAIN_DB_PREFIX."expensereport_det.fk_c_type_fees = t.id  AND accnt.fk_pcg_version = syst.pcg_version AND syst.rowid=".$conf->global->CHARTOFACCOUNTS.' AND accnt.entity = '.$conf->entity;
+		$sql1 .= " WHERE ".MAIN_DB_PREFIX."expensereport_det.fk_c_type_fees = t.id  AND accnt.fk_pcg_version = syst.pcg_version AND syst.rowid = ".((int) $conf->global->CHARTOFACCOUNTS).' AND accnt.entity = '.$conf->entity;
 		$sql1 .= " AND accnt.active = 1 AND t.accountancy_code = accnt.account_number";
 		$sql1 .= " AND ".MAIN_DB_PREFIX."expensereport_det.fk_code_ventilation = 0";
 	} else {
 		$sql1 = "UPDATE ".MAIN_DB_PREFIX."expensereport_det as erd, ".MAIN_DB_PREFIX."c_type_fees as t, ".MAIN_DB_PREFIX."accounting_account as accnt , ".MAIN_DB_PREFIX."accounting_system as syst";
 		$sql1 .= " SET erd.fk_code_ventilation = accnt.rowid";
-		$sql1 .= " WHERE erd.fk_c_type_fees = t.id AND accnt.fk_pcg_version = syst.pcg_version AND syst.rowid=".$conf->global->CHARTOFACCOUNTS.' AND accnt.entity = '.$conf->entity;
+		$sql1 .= " WHERE erd.fk_c_type_fees = t.id AND accnt.fk_pcg_version = syst.pcg_version AND syst.rowid = ".((int) $conf->global->CHARTOFACCOUNTS).' AND accnt.entity = '.$conf->entity;
 		$sql1 .= " AND accnt.active = 1 AND t.accountancy_code=accnt.account_number";
 		$sql1 .= " AND erd.fk_code_ventilation = 0";
 	}
@@ -154,8 +154,8 @@ print_barre_liste($langs->trans("OverviewOfAmountOfLinesNotBound"), '', '', '', 
 
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
-print '<tr class="liste_titre"><td width="200">'.$langs->trans("Account").'</td>';
-print '<td width="200" class="left">'.$langs->trans("Label").'</td>';
+print '<tr class="liste_titre"><td class="minwidth100">'.$langs->trans("Account").'</td>';
+print '<td class="left">'.$langs->trans("Label").'</td>';
 for ($i = 1; $i <= 12; $i++) {
 	$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1) - 1;
 	if ($j > 12) {
@@ -188,6 +188,7 @@ $sql .= " AND er.fk_statut IN (".ExpenseReport::STATUS_APPROVED.", ".ExpenseRepo
 $sql .= " AND er.entity IN (".getEntity('expensereport', 0).")"; // We don't share object for accountancy
 $sql .= " AND aa.account_number IS NULL";
 $sql .= " GROUP BY erd.fk_code_ventilation,aa.account_number,aa.label";
+$sql .= ' ORDER BY aa.account_number';
 
 dol_syslog('/accountancy/expensereport/index.php:: sql='.$sql);
 $resql = $db->query($sql);
@@ -197,7 +198,7 @@ if ($resql) {
 	while ($row = $db->fetch_row($resql)) {
 		print '<tr class="oddeven"><td>';
 		if ($row[0] == 'tobind') {
-			print $langs->trans("Unknown");
+			print '<span class="opacitymedium">'.$langs->trans("Unknown").'</span>';
 		} else {
 			print length_accountg($row[0]);
 		}
@@ -210,10 +211,10 @@ if ($resql) {
 		}
 		print '</td>';
 		for ($i = 2; $i <= 12; $i++) {
-			print '<td class="nowrap right">'.price($row[$i]).'</td>';
+			print '<td class="right nowraponall amount">'.price($row[$i]).'</td>';
 		}
-		print '<td class="nowrap right">'.price($row[13]).'</td>';
-		print '<td class="nowrap right"><b>'.price($row[14]).'</b></td>';
+		print '<td class="right nowraponall amount">'.price($row[13]).'</td>';
+		print '<td class="right nowraponall amount"><b>'.price($row[14]).'</b></td>';
 		print '</tr>';
 	}
 	$db->free($resql);
@@ -233,8 +234,8 @@ print_barre_liste($langs->trans("OverviewOfAmountOfLinesBound"), '', '', '', '',
 
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
-print '<tr class="liste_titre"><td width="200">'.$langs->trans("Account").'</td>';
-print '<td width="200" class="left">'.$langs->trans("Label").'</td>';
+print '<tr class="liste_titre"><td class="minwidth100">'.$langs->trans("Account").'</td>';
+print '<td class="left">'.$langs->trans("Label").'</td>';
 for ($i = 1; $i <= 12; $i++) {
 	$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1) - 1;
 	if ($j > 12) {
@@ -276,7 +277,7 @@ if ($resql) {
 	while ($row = $db->fetch_row($resql)) {
 		print '<tr class="oddeven"><td>';
 		if ($row[0] == 'tobind') {
-			print $langs->trans("Unknown");
+			print '<span class="opacitymedium">'.$langs->trans("Unknown").'</span>';
 		} else {
 			print length_accountg($row[0]);
 		}
@@ -290,10 +291,10 @@ if ($resql) {
 		}
 		print '</td>';
 		for ($i = 2; $i <= 12; $i++) {
-			print '<td class="nowrap right">'.price($row[$i]).'</td>';
+			print '<td class="right nowraponall amount">'.price($row[$i]).'</td>';
 		}
-		print '<td class="nowrap right">'.price($row[13]).'</td>';
-		print '<td class="nowrap right"><b>'.price($row[14]).'</b></td>';
+		print '<td class="right nowraponall amount">'.price($row[13]).'</td>';
+		print '<td class="right nowraponall amount"><b>'.price($row[14]).'</b></td>';
 		print '</tr>';
 	}
 	$db->free($resql);
@@ -314,7 +315,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0) { // This part of code looks strange
 
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre"><td width="400" class="left">'.$langs->trans("Total").'</td>';
+	print '<tr class="liste_titre"><td class="left">'.$langs->trans("Total").'</td>';
 	for ($i = 1; $i <= 12; $i++) {
 		$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1) - 1;
 		if ($j > 12) {
@@ -352,9 +353,9 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0) { // This part of code looks strange
 		while ($row = $db->fetch_row($resql)) {
 			print '<tr><td>'.$row[0].'</td>';
 			for ($i = 1; $i <= 12; $i++) {
-				print '<td class="nowrap right">'.price($row[$i]).'</td>';
+				print '<td class="right nowraponall amount">'.price($row[$i]).'</td>';
 			}
-			print '<td class="nowrap right"><b>'.price($row[13]).'</b></td>';
+			print '<td class="right nowraponall amount"><b>'.price($row[13]).'</b></td>';
 			print '</tr>';
 		}
 

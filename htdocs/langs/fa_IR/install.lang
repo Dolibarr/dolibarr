@@ -206,6 +206,7 @@ MigrationUserPhotoPath=انتقال مسیرهای تصاویر مربوط به 
 MigrationFieldsSocialNetworks=Migration of users fields social networks (%s)
 MigrationReloadModule=بارگذاری دوبارۀ واحد %s
 MigrationResetBlockedLog=بازنشانی واحد BlockedLog  برای الگوریتم نسخۀ 7
+MigrationImportOrExportProfiles=Migration of import or export profiles (%s)
 ShowNotAvailableOptions=نمایش گزینه‌های خارج‌ازدسترس
 HideNotAvailableOptions=پنهان کردن گزینه‌های خارج از دسترس
 ErrorFoundDuringMigration=خطا(ها)ئی که در طول انجام انتقال گزارش می‌شوند و منجر به این می‌شوند گام بعدی فعال نباشد. برای نادیده گرفتن خطاها شما باید <a href="%s">اینجا کلیک کنید</a>، اما ممکن است برنامه یا برخی قابلیت‌ها تا زمانی که خطاها رفع نشود، کار نکند.

@@ -171,7 +171,7 @@ class RemiseCheque extends CommonObject
 		$sql .= "'".$this->db->idate($now)."'";
 		$sql .= ", '".$this->db->idate($now)."'";
 		$sql .= ", ".$user->id;
-		$sql .= ", ".$account_id;
+		$sql .= ", ".((int) $account_id);
 		$sql .= ", 0";
 		$sql .= ", 0";
 		$sql .= ", 0";
@@ -290,7 +290,7 @@ class RemiseCheque extends CommonObject
 		$this->db->begin();
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."bordereau_cheque";
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 		$sql .= " AND entity = ".$conf->entity;
 
 		$resql = $this->db->query($sql);
@@ -344,7 +344,7 @@ class RemiseCheque extends CommonObject
 		if ($this->errno == 0 && $numref) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."bordereau_cheque";
 			$sql .= " SET statut = 1, ref = '".$this->db->escape($numref)."'";
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 			$sql .= " AND entity = ".$conf->entity;
 			$sql .= " AND statut = 0";
 
@@ -585,7 +585,7 @@ class RemiseCheque extends CommonObject
 			$sql .= ", ".MAIN_DB_PREFIX."bordereau_cheque as bc";
 			$sql .= " WHERE b.fk_account = ba.rowid";
 			$sql .= " AND b.fk_bordereau = bc.rowid";
-			$sql .= " AND bc.rowid = ".$this->id;
+			$sql .= " AND bc.rowid = ".((int) $this->id);
 			$sql .= " AND bc.entity = ".$conf->entity;
 			$sql .= " ORDER BY b.dateo ASC, b.rowid ASC";
 
@@ -615,6 +615,7 @@ class RemiseCheque extends CommonObject
 			// We save charset_output to restore it because write_file can change it if needed for
 			// output format that does not support UTF8.
 			$sav_charseSupprimert_output = $outputlangs->charset_output;
+
 			$result = $docmodel->write_file($this, $conf->bank->dir_output.'/checkdeposits', $this->ref, $outputlangs);
 			if ($result > 0) {
 				//$outputlangs->charset_output=$sav_charset_output;
@@ -661,7 +662,7 @@ class RemiseCheque extends CommonObject
 			$sql = "UPDATE ".MAIN_DB_PREFIX."bordereau_cheque";
 			$sql .= " SET amount = ".price2num($total);
 			$sql .= ", nbcheque = ".((int) $nb);
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 			$sql .= " AND entity = ".$conf->entity;
 
 			$resql = $this->db->query($sql);
@@ -851,7 +852,7 @@ class RemiseCheque extends CommonObject
 		if ($user->rights->banque->cheque) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."bordereau_cheque";
 			$sql .= " SET date_bordereau = ".($date ? "'".$this->db->idate($date)."'" : 'null');
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog("RemiseCheque::set_date", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -880,8 +881,8 @@ class RemiseCheque extends CommonObject
 		// phpcs:enable
 		if ($user->rights->banque->cheque) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."bordereau_cheque";
-			$sql .= " SET ref = '".$ref."'";
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " SET ref = '".$this->db->escape($ref)."'";
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog("RemiseCheque::set_number", LOG_DEBUG);
 			$resql = $this->db->query($sql);

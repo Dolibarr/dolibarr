@@ -207,6 +207,9 @@ if (!empty($conf->adherent->enabled)) {
 if (!empty($conf->agenda->enabled)) {
 	$tmparray['comm/action/index.php?mainmenu=agenda&leftmenu='] = 'Agenda';
 }
+if (!empty($conf->ticket->enabled)) {
+	$tmparray['ticket/list.php?mainmenu=ticket&leftmenu='] = 'Tickets';
+}
 
 $head = user_prepare_head($object);
 
@@ -231,19 +234,9 @@ if ($action == 'edit') {
 
 	dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
 
-	if (!empty($conf->use_javascript_ajax)) {/*
-		print '<script type="text/javascript" language="javascript">
-		jQuery(document).ready(function() {
-			$("#main_lang_default").change(function() {
-				$("#check_MAIN_LANG_DEFAULT").prop("checked", true);
-			});
-			$("#main_size_liste_limit").keyup(function() {
-				if ($(this).val().length) $("#check_SIZE_LISTE_LIMIT").prop("checked", true);
-				else $("#check_SIZE_LISTE_LIMIT").prop("checked", false);
-			});
-		});
-		</script>';*/
-	}
+	print dol_get_fiche_end();
+
+
 	if (!empty($conf->use_javascript_ajax)) {
 		print '<script type="text/javascript" language="javascript">
         jQuery(document).ready(function() {
@@ -282,11 +275,11 @@ if ($action == 'edit') {
 
 	clearstatcache();
 
-	print '<table class="noborder centpercent tableforfield">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("DefaultValue").'</td><td>&nbsp;</td><td>'.$langs->trans("PersonalValue").'</td></tr>';
 
 	// Language by default
-	print '<tr class="oddeven"><td>'.$langs->trans("Language").'</td>';
+	print '<tr class="oddeven"><td class="titlefieldmiddle">'.$langs->trans("Language").'</td>';
 	print '<td>';
 	$s = picto_from_langcode($conf->global->MAIN_LANG_DEFAULT);
 	print $s ? $s.' ' : '';
@@ -337,8 +330,6 @@ if ($action == 'edit') {
 	// Theme
 	showSkins($object, (($user->admin || empty($dolibarr_main_demo)) ? 1 : 0), true);
 
-	print dol_get_fiche_end();
-
 
 	print '<div class="center">';
 	print '<input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'">';
@@ -352,8 +343,12 @@ if ($action == 'edit') {
 
 	dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
 
-	print '<table class="noborder centpercent tableforfield">';
-	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("DefaultValue").'</td><td>&nbsp;</td><td>'.$langs->trans("PersonalValue").'</td></tr>';
+	print dol_get_fiche_end();
+
+
+	print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+	print '<table class="noborder centpercent">';
+	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("DefaultValue").'</td><td>&nbsp;</td><td>'.$langs->trans("PersonalValue").'</td></tr>';
 
 	// Language
 	print '<tr class="oddeven"><td>'.$langs->trans("Language").'</td>';
@@ -378,10 +373,12 @@ if ($action == 'edit') {
 	print empty($dolibarr_main_demo) ? '' : ' disabled="disabled"'; // Disabled for demo
 	print '> '.$langs->trans("UsePersonalValue").'</td>';
 	print '<td>';
-	if (!empty($tmparray[$object->conf->MAIN_LANDING_PAGE])) {
-		print $langs->trans($tmparray[$object->conf->MAIN_LANDING_PAGE]);
-	} else {
-		print $object->conf->MAIN_LANDING_PAGE;
+	if (!empty($object->conf->MAIN_LANDING_PAGE)) {
+		if (!empty($tmparray[$object->conf->MAIN_LANDING_PAGE])) {
+			print $langs->trans($tmparray[$object->conf->MAIN_LANDING_PAGE]);
+		} else {
+			print $object->conf->MAIN_LANDING_PAGE;
+		}
 	}
 	//print $form->selectarray('MAIN_LANDING_PAGE', $tmparray, (! empty($object->conf->MAIN_LANDING_PAGE)?$object->conf->MAIN_LANDING_PAGE:''), 0, 0, 0, '', 1);
 	print '</td></tr>';
@@ -404,13 +401,13 @@ if ($action == 'edit') {
 	print '<td class="nowrap" width="20%"><input class="oddeven" type="checkbox" disabled '.(!empty($object->conf->MAIN_SIZE_LISTE_LIMIT) ? " checked" : "").'> '.$langs->trans("UsePersonalValue").'</td>';
 	print '<td>'.(!empty($object->conf->MAIN_SIZE_LISTE_LIMIT) ? $object->conf->MAIN_SIZE_LISTE_LIMIT : '&nbsp;').'</td></tr>';
 
-	print '</table><br>';
+	print '</table>';
+	print '</div>';
+	print '<br>';
 
 
 	// Skin
 	showSkins($object, 0, true);
-
-	print dol_get_fiche_end();
 
 
 	print '<div class="tabsAction">';

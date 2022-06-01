@@ -66,19 +66,14 @@ class box_graph_nb_tickets_type extends ModeleBoxes
 	public function loadBox($max = 5)
 	{
 		global $conf, $user, $langs;
+		global $theme_datacolor, $badgeStatus8;
 
-		$badgeStatus0 = '#cbd3d3'; // draft
-		$badgeStatus1 = '#bc9526'; // validated
-		$badgeStatus1b = '#bc9526'; // validated
-		$badgeStatus2 = '#9c9c26'; // approved
-		$badgeStatus3 = '#bca52b';
-		$badgeStatus4 = '#25a580'; // Color ok
-		$badgeStatus4b = '#25a580'; // Color ok
-		$badgeStatus5 = '#cad2d2';
-		$badgeStatus6 = '#cad2d2';
-		$badgeStatus7 = '#baa32b';
+		require_once DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php";
+		require_once DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/theme_vars.inc.php";
+
+
 		$badgeStatus8 = '#993013';
-		$badgeStatus9 = '#e7f0f0';
+
 		$text = $langs->trans("BoxTicketType");
 		$this->info_box_head = array(
 			'text' => $text,
@@ -98,29 +93,22 @@ class box_graph_nb_tickets_type extends ModeleBoxes
 			if ($resql) {
 				$num = $this->db->num_rows($resql);
 				$i = 0;
+				$newcolorkey = 0;
+				$colorused = array();
 				while ($i < $num) {
 					$objp = $this->db->fetch_object($resql);
 					$listofoppcode[$objp->rowid] = $objp->code;
 					$listofopplabel[$objp->rowid] = $objp->label;
-					switch ($objp->code) {
-						case 'COM':
-							$colorseriesstat[$objp->rowid] = $badgeStatus1;
-							break;
-						case 'HELP':
-							$colorseriesstat[$objp->rowid] = $badgeStatus2;
-							break;
-						case 'ISSUE':
-							$colorseriesstat[$objp->rowid] = $badgeStatus3;
-							break;
-						case 'REQUEST':
-							$colorseriesstat[$objp->rowid] = $badgeStatus4;
-							break;
-						case 'OTHER':
-							$colorseriesstat[$objp->rowid] = $badgeStatus5;
-							break;
-						default:
-							break;
+					if (empty($colorused[$objp->code])) {
+						if ($objp->code == 'ISSUE') {
+							$colorused[$objp->code] = $badgeStatus8;
+						} else {
+							$colorused[$objp->code] = colorArrayToHex($theme_datacolor[$newcolorkey]);
+							$newcolorkey++;
+						}
 					}
+					$colorseriesstat[$objp->rowid] = $colorused[$objp->code];
+
 					$i++;
 				}
 			} else {
@@ -143,7 +131,7 @@ class box_graph_nb_tickets_type extends ModeleBoxes
 				}
 				foreach ($listofoppcode as $rowid => $code) {
 					$dataseries[] = array(
-						'label' => $langs->getLabelFromKey($this->db, 'TicketTypeShort' . $code, 'c_ticket_category', 'code', 'label', $code),
+						'label' => $langs->getLabelFromKey($this->db, 'TicketTypeShort' . $code, 'c_ticket_type', 'code', 'label', $code),
 						'data' => (empty($data[$code]) ? 0 : $data[$code])
 					);
 				}
@@ -168,6 +156,9 @@ class box_graph_nb_tickets_type extends ModeleBoxes
 					}
 					$px1->SetData($data);
 					$px1->setShowLegend(2);
+					if (!empty($conf->dol_optimize_smallscreen)) {
+						$px1->SetWidth(320);
+					}
 					$px1->SetType(array('pie'));
 					$px1->SetLegend($legend);
 					$px1->SetMaxValue($px1->GetCeilMaxValue());

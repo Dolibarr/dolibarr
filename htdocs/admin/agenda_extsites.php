@@ -3,6 +3,7 @@
  * Copyright (C) 2011-2015	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2015       Jean-François Ferry		<jfefe@aternatik.fr>
  * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2021		Frédéric France			<frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -158,14 +159,6 @@ print dol_get_fiche_head($head, 'extsites', $langs->trans("Agenda"), -1, 'action
 print '<span class="opacitymedium">'.$langs->trans("AgendaExtSitesDesc")."</span><br>\n";
 print "<br>\n";
 
-
-$selectedvalue = $conf->global->AGENDA_DISABLE_EXT;
-if ($selectedvalue == 1) {
-	$selectedvalue = 0;
-} else {
-	$selectedvalue = 1;
-}
-
 print "<table class=\"noborder\" width=\"100%\">";
 
 print "<tr class=\"liste_titre\">";
@@ -226,15 +219,15 @@ while ($i <= $MAXAGENDA) {
 	// Nb
 	print '<td width="180" class="nowrap">'.$langs->trans("AgendaExtNb", $key)."</td>";
 	// Name
-	print '<td><input type="text" class="flat hideifnotset" name="AGENDA_EXT_NAME'.$key.'" value="'.(GETPOST('AGENDA_EXT_NAME'.$key) ?GETPOST('AGENDA_EXT_NAME'.$key, 'alpha') : $conf->global->$name).'" size="28"></td>';
+	print '<td><input type="text" class="flat hideifnotset" name="AGENDA_EXT_NAME'.$key.'" value="'.(GETPOST('AGENDA_EXT_NAME'.$key) ?GETPOST('AGENDA_EXT_NAME'.$key, 'alpha') : getDolGlobalString($name)).'" size="28"></td>';
 	// URL
-	print '<td><input type="url" class="flat hideifnotset" name="AGENDA_EXT_SRC'.$key.'" value="'.(GETPOST('AGENDA_EXT_SRC'.$key) ?GETPOST('AGENDA_EXT_SRC'.$key, 'alpha') : $conf->global->$src).'" size="60"></td>';
+	print '<td><input type="url" class="flat hideifnotset" name="AGENDA_EXT_SRC'.$key.'" value="'.(GETPOST('AGENDA_EXT_SRC'.$key) ?GETPOST('AGENDA_EXT_SRC'.$key, 'alpha') : getDolGlobalString($src)).'" size="60"></td>';
 	// Offset TZ
-	print '<td><input type="text" class="flat hideifnotset" name="AGENDA_EXT_OFFSETTZ'.$key.'" value="'.(GETPOST('AGENDA_EXT_OFFSETTZ'.$key) ?GETPOST('AGENDA_EXT_OFFSETTZ'.$key) : $conf->global->$offsettz).'" size="2"></td>';
+	print '<td><input type="text" class="flat hideifnotset" name="AGENDA_EXT_OFFSETTZ'.$key.'" value="'.(GETPOST('AGENDA_EXT_OFFSETTZ'.$key) ? GETPOST('AGENDA_EXT_OFFSETTZ'.$key) : getDolGlobalString($offsettz)).'" size="2"></td>';
 	// Color (Possible colors are limited by Google)
 	print '<td class="nowrap right">';
 	//print $formadmin->selectColor($conf->global->$color, "google_agenda_color".$key, $colorlist);
-	print $formother->selectColor((GETPOST("AGENDA_EXT_COLOR".$key) ?GETPOST("AGENDA_EXT_COLOR".$key) : $conf->global->$color), "AGENDA_EXT_COLOR".$key, 'extsitesconfig', 1, '', 'hideifnotset');
+	print $formother->selectColor((GETPOST("AGENDA_EXT_COLOR".$key) ?GETPOST("AGENDA_EXT_COLOR".$key) : getDolGlobalString($color)), "AGENDA_EXT_COLOR".$key, 'extsitesconfig', 1, '', 'hideifnotset');
 	print '</td>';
 	print "</tr>";
 	$i++;

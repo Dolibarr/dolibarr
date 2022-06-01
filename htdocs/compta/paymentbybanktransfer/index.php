@@ -112,7 +112,7 @@ $sql .= " AND pfd.traite = 0";
 $sql .= " AND pfd.ext_payment_id IS NULL";
 $sql .= " AND pfd.fk_facture_fourn = f.rowid";
 if (!$user->rights->societe->client->voir && !$socid) {
-	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 if ($socid) {
 	$sql .= " AND f.fk_soc = ".((int) $socid);
@@ -185,6 +185,7 @@ $limit = 5;
 $sql = "SELECT p.rowid, p.ref, p.amount, p.datec, p.statut";
 $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
 $sql .= " WHERE p.type = 'bank-transfer'";
+$sql .= " AND p.entity IN (".getEntity('invoice').")";
 $sql .= " ORDER BY datec DESC";
 $sql .= $db->plimit($limit);
 

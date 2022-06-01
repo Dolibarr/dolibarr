@@ -71,7 +71,7 @@ abstract class CommonObjectLine extends CommonObject
 	{
 		global $langs;
 
-		if (!$this->fk_unit) {
+		if (empty($this->fk_unit)) {
 			return '';
 		}
 
@@ -86,7 +86,7 @@ abstract class CommonObjectLine extends CommonObject
 			$label_type = 'code';
 		}
 
-		$sql = 'select '.$label_type.', code from '.MAIN_DB_PREFIX.'c_units where rowid='.$this->fk_unit;
+		$sql = 'select '.$label_type.', code from '.MAIN_DB_PREFIX.'c_units where rowid = '.((int) $this->fk_unit);
 		$resql = $this->db->query($sql);
 		if ($resql && $this->db->num_rows($resql) > 0) {
 			$res = $this->db->fetch_array($resql);

@@ -211,11 +211,12 @@ if ($action == 'update') {
 	dolibarr_set_const($db, "MAIN_DEFAULT_WORKING_DAYS", GETPOST("MAIN_DEFAULT_WORKING_DAYS", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_DEFAULT_WORKING_HOURS", GETPOST("MAIN_DEFAULT_WORKING_HOURS", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 
+	dolibarr_set_const($db, "MAIN_BUGTRACK_ENABLELINK", GETPOST("MAIN_BUGTRACK_ENABLELINK", 'alpha'), 'chaine', 0, '', $conf->entity);
+
 	dolibarr_set_const($db, "MAIN_FIRSTNAME_NAME_POSITION", GETPOST("MAIN_FIRSTNAME_NAME_POSITION", 'aZ09'), 'chaine', 0, '', $conf->entity);
 
 	dolibarr_set_const($db, "MAIN_MOTD", dol_htmlcleanlastbr(GETPOST("main_motd", 'restricthtml')), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_HOME", dol_htmlcleanlastbr(GETPOST("main_home", 'restricthtml')), 'chaine', 0, '', $conf->entity);
-	//dolibarr_set_const($db, "MAIN_BUGTRACK_ENABLELINK", GETPOST('MAIN_BUGTRACK_ENABLELINK', 'aZ09'), 'chaine', 0, '', $conf->entity);
 	//dolibarr_set_const($db, "MAIN_HELP_DISABLELINK", GETPOST("MAIN_HELP_DISABLELINK", 'aZ09'), 'chaine', 0, '', 0); // Param for all entities
 
 	$varforimage = 'imagebackground'; $dirforimage = $conf->mycompany->dir_output.'/logos/';
@@ -254,7 +255,7 @@ if ($action == 'update') {
 
 	$_SESSION["mainmenu"] = ""; // Le gestionnaire de menu a pu changer
 
-	header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup");
+	header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup".(GETPOSTISSET('page_y', 'int') ? '&page_y='.GETPOST('page_y', 'int') : ''));
 	exit;
 }
 
@@ -280,6 +281,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 print '<form enctype="multipart/form-data" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';
+print '<input type="hidden" name="page_y" value="">';
 
 clearstatcache();
 
@@ -291,8 +293,9 @@ print '</tr>';
 
 // Default language
 print '<tr class="oddeven"><td>'.$langs->trans("DefaultLanguage").'</td><td>';
+print img_picto('', 'language', 'class="pictofixedwidth"');
 print $formadmin->select_language($conf->global->MAIN_LANG_DEFAULT, 'MAIN_LANG_DEFAULT', 1, null, '', 0, 0, 'minwidth300', 2);
-print '<input class="button button-save" type="submit" name="submit" value="'.$langs->trans("Save").'">';
+//print '<input class="button button-save smallpaddingimp" type="submit" name="submit" value="'.$langs->trans("Save").'">';
 print '</td>';
 print '</tr>';
 
@@ -302,17 +305,30 @@ print ajax_constantonoff("MAIN_MULTILANGS", array(), $conf->entity, 0, 0, 1, 0);
 print '</td>';
 print '</tr>';
 
-print '</table><br>'."\n";
+print '</table>'."\n";
 print '</div>';
+
+print '<br>';
+print '<div class="center">';
+print '<input class="button button-save" type="submit" name="submit" value="'.$langs->trans("Save").'">';
+print '</div>';
+
+print '<br><br>';
 
 // Themes and themes options
 showSkins(null, 1);
 print '<br>';
+print '<div class="center">';
+print '<input class="button button-save reposition" type="submit" name="submit" value="'.$langs->trans("Save").'">';
+print '</div>';
+
+print '<br><br>';
 
 // Other
 print '<div class="div-table-responsive-no-min">';
-print '<table summary="otherparameters" class="noborder centpercent editmode">';
-print '<tr class="liste_titre"><th>'.$langs->trans("Miscellaneous").'</th><th></th>';
+print '<table summary="otherparameters" class="noborder centpercent editmode tableforfield">';
+print '<tr class="liste_titre"><th class="titlefieldmiddle">'.$langs->trans("Miscellaneous").'</th>';
+print '<th></th>';
 print '<th width="20">&nbsp;</tg>';
 print '</tr>';
 
@@ -401,8 +417,7 @@ print '</tr>';
 
 // Show bugtrack link
 print '<tr class="oddeven"><td>'.$langs->trans("ShowBugTrackLink", $langs->transnoentitiesnoconv("FindBug")).'</td><td>';
-print ajax_constantonoff("MAIN_BUGTRACK_ENABLELINK", array(), $conf->entity, 0, 0, 1, 0);
-//print $form->selectyesno('MAIN_BUGTRACK_ENABLELINK', $conf->global->MAIN_BUGTRACK_ENABLELINK, 1);
+print '<input type="text" name="MAIN_BUGTRACK_ENABLELINK" value="'.(empty($conf->global->MAIN_BUGTRACK_ENABLELINK) ? 'github' : $conf->global->MAIN_BUGTRACK_ENABLELINK).'">';
 print '</td>';
 print '<td width="20">&nbsp;</td>';
 print '</tr>';
@@ -439,10 +454,17 @@ print '</div>';
 
 print '<br>';
 
+print '<div class="center">';
+print '<input class="button button-save reposition" type="submit" name="submit" value="'.$langs->trans("Save").'">';
+print '</div>';
+
+print '<br><br>';
+
 // Other
 print '<div class="div-table-responsive-no-min">';
-print '<table summary="edit" class="noborder centpercent editmode">';
-print '<tr class="liste_titre"><th>'.$langs->trans("LoginPage").'</th><th></th>';
+print '<table summary="edit" class="noborder centpercent editmode tableforfield">';
+print '<tr class="liste_titre"><th class="titlefieldmiddle">'.$langs->trans("LoginPage").'</th>';
+print '<th></th>';
 print '<th width="20">&nbsp;</th>';
 print '</tr>';
 
@@ -474,7 +496,7 @@ $disabled = '';
 if (!empty($conf->global->ADD_UNSPLASH_LOGIN_BACKGROUND)) {
 	$disabled = ' disabled="disabled"';
 }
-print '<input type="file" class="flat class=minwidth200" name="imagebackground" id="imagebackground"'.$disabled.'>';
+print '<input type="file" class="flat maxwidthinputfileonsmartphone" name="imagebackground" id="imagebackground"'.$disabled.'>';
 if ($disabled) {
 	print '('.$langs->trans("DisabledByOptionADD_UNSPLASH_LOGIN_BACKGROUND").') ';
 }
@@ -482,7 +504,7 @@ if (!empty($conf->global->MAIN_LOGIN_BACKGROUND)) {
 	print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=removebackgroundlogin">'.img_delete($langs->trans("Delete")).'</a>';
 	if (file_exists($conf->mycompany->dir_output.'/logos/'.$conf->global->MAIN_LOGIN_BACKGROUND)) {
 		print ' &nbsp; ';
-		print '<img class="paddingleft valignmiddle" width="100px" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/'.$conf->global->MAIN_LOGIN_BACKGROUND).'">';
+		print '<img class="paddingleft valignmiddle" width="100" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/'.$conf->global->MAIN_LOGIN_BACKGROUND).'">';
 	}
 } else {
 	print '<img class="paddingleft valignmiddle" width="100" src="'.DOL_URL_ROOT.'/public/theme/common/nophoto.png">';
@@ -495,7 +517,7 @@ print '</div>';
 
 print '<br>';
 print '<div class="center">';
-print '<input class="button button-save" type="submit" name="submit" value="'.$langs->trans("Save").'">';
+print '<input class="button button-save reposition" type="submit" name="submit" value="'.$langs->trans("Save").'">';
 print '</div>';
 
 print '</form>';

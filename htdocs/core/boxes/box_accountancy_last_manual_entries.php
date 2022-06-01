@@ -33,7 +33,7 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 class box_accountancy_last_manual_entries extends ModeleBoxes
 {
 	public $boxcode = "accountancy_last_manual_entries";
-	public $boximg = "object_invoice";
+	public $boximg = "accounting";
 	public $boxlabel = "BoxLastManualEntries";
 	public $depends = array("accounting");
 
@@ -116,7 +116,7 @@ class box_accountancy_last_manual_entries extends ModeleBoxes
 					);
 
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="right"',
+						'td' => 'class="center nowraponall"',
 						'text' => dol_print_date($date, 'day'),
 						'asis' => 1,
 					);

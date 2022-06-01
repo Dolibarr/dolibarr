@@ -46,6 +46,9 @@ $position = GETPOST("position", "int");
 $backtopage = GETPOST('backtopage', 'alpha');
 
 $object = new Bookmark($db);
+if ($id > 0) {
+	$object->fetch($id);
+}
 
 
 /*
@@ -133,7 +136,7 @@ $form = new Form($db);
 $head = array();
 $h = 1;
 
-$head[$h][0] = $_SERVER["PHP_SELF"].($object->id ? 'id='.$object->id : '');
+$head[$h][0] = $_SERVER["PHP_SELF"].($object->id ? '?id='.$object->id : '');
 $head[$h][1] = $langs->trans("Bookmark");
 $head[$h][2] = 'card';
 $h++;
@@ -153,25 +156,25 @@ if ($action == 'create') {
 
 	print load_fiche_titre($langs->trans("NewBookmark"));
 
-	print dol_get_fiche_head($head, $hselected, $langs->trans("Bookmark"), 0, 'bookmark');
+	print dol_get_fiche_head($head, $hselected, $langs->trans("Bookmark"), -1, 'bookmark');
 
 	print '<table class="border centpercent tableforfieldcreate">';
 
-	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("BookmarkTitle").'</td><td><input id="titlebookmark" class="flat minwidth300" name="title" value="'.dol_escape_htmltag($title).'"></td><td class="hideonsmartphone">'.$langs->trans("SetHereATitleForLink").'</td></tr>';
+	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("BookmarkTitle").'</td><td><input id="titlebookmark" class="flat minwidth300" name="title" value="'.dol_escape_htmltag($title).'"></td><td class="hideonsmartphone"><span class="opacitymedium">'.$langs->trans("SetHereATitleForLink").'</span></td></tr>';
 	dol_set_focus('#titlebookmark');
 
 	// Url
-	print '<tr><td class="fieldrequired">'.$langs->trans("UrlOrLink").'</td><td><input class="flat quatrevingtpercent" name="url" value="'.dol_escape_htmltag($url).'"></td><td class="hideonsmartphone">'.$langs->trans("UseAnExternalHttpLinkOrRelativeDolibarrLink").'</td></tr>';
+	print '<tr><td class="fieldrequired">'.$langs->trans("UrlOrLink").'</td><td><input class="flat quatrevingtpercent" name="url" value="'.dol_escape_htmltag($url).'"></td><td class="hideonsmartphone"><span class="opacitymedium">'.$langs->trans("UseAnExternalHttpLinkOrRelativeDolibarrLink").'</span></td></tr>';
 
 	// Target
 	print '<tr><td>'.$langs->trans("BehaviourOnClick").'</td><td>';
 	$liste = array(0=>$langs->trans("ReplaceWindow"), 1=>$langs->trans("OpenANewWindow"));
-	print $form->selectarray('target', $liste, 1);
-	print '</td><td class="hideonsmartphone">'.$langs->trans("ChooseIfANewWindowMustBeOpenedOnClickOnBookmark").'</td></tr>';
+	print $form->selectarray('target', $liste, GETPOSTISSET('target') ? GETPOST('target', 'int') : 1);
+	print '</td><td class="hideonsmartphone"><span class="opacitymedium">'.$langs->trans("ChooseIfANewWindowMustBeOpenedOnClickOnBookmark").'</span></td></tr>';
 
 	// Owner
-	print '<tr><td>'.$langs->trans("Owner").'</td><td>';
-	print img_picto('', 'user').' '.$form->select_dolusers(GETPOSTISSET('userid') ? GETPOST('userid', 'int') : $user->id, 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
+	print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
+	print img_picto('', 'user').' '.$form->select_dolusers(GETPOSTISSET('userid') ? GETPOST('userid', 'int') : $user->id, 'userid', 0, '', 0, ($user->admin ? '' : array($user->id)), '', 0, 0, 0, '', ($user->admin) ? 1 : 0, '', 'maxwidth300');
 	print '</td><td class="hideonsmartphone">&nbsp;</td></tr>';
 
 	// Position
@@ -193,20 +196,6 @@ if ($action == 'create') {
 
 
 if ($id > 0 && !preg_match('/^add/i', $action)) {
-	/*
-	 * Fact bookmark mode or visually edition
-	 */
-	$object->fetch($id);
-
-	$hselected = 'card';
-	$head = array(
-		array(
-			'',
-			$langs->trans('Card'),
-			'card'
-		)
-	);
-
 	if ($action == 'edit') {
 		print '<form name="edit" method="POST" action="'.$_SERVER["PHP_SELF"].'" enctype="multipart/form-data">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -215,7 +204,6 @@ if ($id > 0 && !preg_match('/^add/i', $action)) {
 		print '<input type="hidden" name="urlsource" value="'.DOL_URL_ROOT.'/bookmarks/card.php?id='.$object->id.'">';
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	}
-
 
 	print dol_get_fiche_head($head, $hselected, $langs->trans("Bookmark"), -1, 'bookmark');
 
@@ -259,7 +247,10 @@ if ($id > 0 && !preg_match('/^add/i', $action)) {
 	if ($action == 'edit') {
 		print '<input class="flat minwidth500 quatrevingtpercent" name="url" value="'.(GETPOSTISSET("url") ? GETPOST("url") : $object->url).'">';
 	} else {
-		print '<a href="'.(preg_match('/^http/i', $object->url) ? $object->url : DOL_URL_ROOT.$object->url).'"'.($object->target ? ' target="_blank"' : '').'>'.$object->url.'</a>';
+		print '<a href="'.(preg_match('/^http/i', $object->url) ? $object->url : DOL_URL_ROOT.$object->url).'"'.($object->target ? ' target="_blank"' : '').'>';
+		print img_picto('', 'globe', 'class="paddingright"');
+		print $object->url;
+		print '</a>';
 	}
 	print '</td></tr>';
 
@@ -277,7 +268,7 @@ if ($id > 0 && !preg_match('/^add/i', $action)) {
 	}
 	print '</td></tr>';
 
-	print '<tr><td>'.$langs->trans("Owner").'</td><td>';
+	print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
 	if ($action == 'edit' && $user->admin) {
 		print img_picto('', 'user').' '.$form->select_dolusers(GETPOSTISSET('userid') ? GETPOST('userid', 'int') : ($object->fk_user ? $object->fk_user : ''), 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
 	} else {
@@ -286,7 +277,7 @@ if ($id > 0 && !preg_match('/^add/i', $action)) {
 			$fuser->fetch($object->fk_user);
 			print $fuser->getNomUrl(1);
 		} else {
-			print $langs->trans("Public");
+			print '<span class="opacitymedium">'.$langs->trans("Everybody").'</span>';
 		}
 	}
 	print '</td></tr>';

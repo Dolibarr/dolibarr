@@ -184,6 +184,11 @@ class Website extends CommonObject
 		$tmparray = explode(',', $this->otherlang);
 		if (is_array($tmparray)) {
 			foreach ($tmparray as $key => $val) {
+				// It possible we have empty val here if postparam WEBSITE_OTHERLANG is empty or set like this : 'en,,sv' or 'en,sv,'
+				if (empty(trim($val))) {
+					unset($tmparray[$key]);
+					continue;
+				}
 				$tmparray[$key] = preg_replace('/[_-].*$/', '', trim($val)); // en_US or en-US -> en
 			}
 			$this->otherlang = join(',', $tmparray);
@@ -496,6 +501,11 @@ class Website extends CommonObject
 		$tmparray = explode(',', $this->otherlang);
 		if (is_array($tmparray)) {
 			foreach ($tmparray as $key => $val) {
+				// It possible we have empty val here if postparam WEBSITE_OTHERLANG is empty or set like this : 'en,,sv' or 'en,sv,'
+				if (empty(trim($val))) {
+					unset($tmparray[$key]);
+					continue;
+				}
 				$tmparray[$key] = preg_replace('/[_-].*$/', '', trim($val)); // en_US or en-US -> en
 			}
 			$this->otherlang = join(',', $tmparray);
@@ -626,7 +636,7 @@ class Website extends CommonObject
 	}
 
 	/**
-	 * Load an object from its id and create a new one in database.
+	 * Load a website its id and create a new one in database.
 	 * This copy website directories, regenerate all the pages + alias pages and recreate the medias link.
 	 *
 	 * @param	User	$user		User making the clone
@@ -767,8 +777,8 @@ class Website extends CommonObject
 				$filetpl = $pathofwebsitenew.'/page'.$newidforhome.'.tpl.php';
 				$filewrapper = $pathofwebsitenew.'/wrapper.php';
 
-				// Generate the index.php page to be the home page
-				//-------------------------------------------------
+				// Re-generates the index.php page to be the home page, and re-generates the wrapper.php
+				//--------------------------------------------------------------------------------------
 				$result = dolSaveIndexPage($pathofwebsitenew, $fileindex, $filetpl, $filewrapper);
 			}
 		}
@@ -1081,6 +1091,12 @@ class Website extends CommonObject
 			}
 		}
 
+		$line = "\n-- For Dolibarr v14+ --;\n";
+		$line .= "UPDATE llx_website SET lang = '".$this->db->escape($this->fk_default_lang)."' WHERE rowid = __WEBSITE_ID__;\n";
+		$line .= "UPDATE llx_website SET otherlang = '".$this->db->escape($this->otherlang)."' WHERE rowid = __WEBSITE_ID__;\n";
+		$line .= "\n";
+		fputs($fp, $line);
+
 		fclose($fp);
 		if (!empty($conf->global->MAIN_UMASK)) {
 			@chmod($filesql, octdec($conf->global->MAIN_UMASK));
@@ -1262,7 +1278,7 @@ class Website extends CommonObject
 	}
 
 	/**
-	 * Rebuild all files of a containers of a website. TODO Add other files too.
+	 * Rebuild all files of a containers of a website. Rebuild also the wrapper.php file. TODO Add other files too.
 	 * Note: Files are already regenerated during importWebSite so this function is useless when importing a website.
 	 *
 	 * @return 	int						<0 if KO, >=0 if OK
@@ -1329,6 +1345,13 @@ class Website extends CommonObject
 			}
 
 			$i++;
+		}
+
+		if (!$error) {
+			// Save wrapper.php
+			$pathofwebsite = $conf->website->dir_output.'/'.$object->ref;
+			$filewrapper = $pathofwebsite.'/wrapper.php';
+			dolSaveIndexPage($pathofwebsite, '', '', $filewrapper);
 		}
 
 		if ($error) {

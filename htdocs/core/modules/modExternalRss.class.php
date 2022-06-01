@@ -100,6 +100,7 @@ class modExternalRss extends DolibarrModules
 		$result = $this->db->query($sql);
 		if ($result) {
 			while ($obj = $this->db->fetch_object($result)) {
+				$reg = array();
 				if (preg_match('/EXTERNAL_RSS_TITLE_([0-9]+)/i', $obj->name, $reg)) {
 					// Definie la boite si on a trouvee une ancienne configuration
 					//$this->boxes[$reg[1]][0] = "(ExternalRSSInformations)";

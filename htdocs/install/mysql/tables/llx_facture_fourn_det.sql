@@ -31,6 +31,7 @@ create table llx_facture_fourn_det
   pu_ttc            double(24,8), -- unit price with tax
   qty               real,         -- quantity of product/service
   remise_percent	real       DEFAULT 0,				-- % de la remise ligne (exemple 20%)
+  fk_remise_except	integer    NULL,					-- Lien vers table des remises fixes
   vat_src_code		varchar(10)  DEFAULT '',			-- Vat code used as source of vat fields. Not strict foreign key here.
   tva_tx            double(6,3),  -- TVA taux product/service
   localtax1_tx      double(6,3)  DEFAULT 0,    -- localtax1 rate

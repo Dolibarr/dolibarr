@@ -108,13 +108,6 @@ if ($action == 'addcontact' && $user->rights->expedition->creer) {
 		dol_print_error($db);
 	}
 }
-/*
-elseif ($action == 'setaddress' && $user->rights->expedition->creer)
-{
-	$object->fetch($id);
-	$result=$object->setDeliveryAddress($_POST['fk_address']);
-	if ($result < 0) dol_print_error($db,$object->error);
-}*/
 
 
 /*
@@ -143,7 +136,7 @@ if ($id > 0 || !empty($ref)) {
 	$langs->trans("OrderCard");
 
 	$head = shipping_prepare_head($object);
-	print dol_get_fiche_head($head, 'contact', $langs->trans("Shipment"), -1, 'sending');
+	print dol_get_fiche_head($head, 'contact', $langs->trans("Shipment"), -1, $object->picto);
 
 
 	// Shipment card

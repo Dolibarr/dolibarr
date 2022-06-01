@@ -66,6 +66,8 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 			return 0; // Module not active, we do nothing
 		}
 
+		$ret = 0;
+
 		// Proposals to order
 		if ($action == 'PROPAL_CLOSE_SIGNED') {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
@@ -191,8 +193,9 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 		if ($action == 'BILL_SUPPLIER_VALIDATE') {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
-			// First classify billed the order to allow the proposal classify process
-			if (!empty($conf->fournisseur->enabled) && !empty($conf->global->WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER)) {
+			// Firstly, we set to purchase order to "Billed" if WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER is set.
+			// After we will set proposals
+			if (((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) && !empty($conf->global->WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER)) {
 				$object->fetchObjectLinked('', 'order_supplier', $object->id, $object->element);
 				if (!empty($object->linkedObjects)) {
 					$totalonlinkedelements = 0;
@@ -205,13 +208,15 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 					if ($this->shouldClassify($conf, $totalonlinkedelements, $object->total_ht)) {
 						foreach ($object->linkedObjects['order_supplier'] as $element) {
 							$ret = $element->classifyBilled($user);
+							if ($ret < 0) {
+								return $ret;
+							}
 						}
 					}
 				}
-				return $ret;
 			}
 
-			// Second classify billed the proposal.
+			// Secondly, we set to linked Proposal to "Billed" if WORKFLOW_INVOICE_CLASSIFY_BILLED_SUPPLIER_PROPOSAL is set.
 			if (!empty($conf->supplier_proposal->enabled) && !empty($conf->global->WORKFLOW_INVOICE_CLASSIFY_BILLED_SUPPLIER_PROPOSAL)) {
 				$object->fetchObjectLinked('', 'supplier_proposal', $object->id, $object->element);
 				if (!empty($object->linkedObjects)) {
@@ -225,11 +230,35 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 					if ($this->shouldClassify($conf, $totalonlinkedelements, $object->total_ht)) {
 						foreach ($object->linkedObjects['supplier_proposal'] as $element) {
 							$ret = $element->classifyBilled($user);
+							if ($ret < 0) {
+								return $ret;
+							}
 						}
 					}
 				}
-				return $ret;
 			}
+
+			// Then set reception to "Billed" if WORKFLOW_BILL_ON_RECEPTION is set
+			if (!empty($conf->reception->enabled) && !empty($conf->global->WORKFLOW_BILL_ON_RECEPTION)) {
+				$object->fetchObjectLinked('', 'reception', $object->id, $object->element);
+				if (!empty($object->linkedObjects)) {
+					$totalonlinkedelements = 0;
+					foreach ($object->linkedObjects['reception'] as $element) {
+						if ($element->statut == Reception::STATUS_VALIDATED) $totalonlinkedelements += $element->total_ht;
+					}
+					dol_syslog("Amount of linked reception = ".$totalonlinkedelements.", of invoice = ".$object->total_ht.", egality is ".($totalonlinkedelements == $object->total_ht), LOG_DEBUG);
+					if ($totalonlinkedelements == $object->total_ht) {
+						foreach ($object->linkedObjects['reception'] as $element) {
+							$ret = $element->set_billed();
+							if ($ret < 0) {
+								return $ret;
+							}
+						}
+					}
+				}
+			}
+
+			return $ret;
 		}
 
 		// Invoice classify billed order
@@ -264,7 +293,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				$qtyordred = array();
 				require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 
-				//find all shippement on order origin
+				// Find all shipments on order origin
 				$order = new Commande($this->db);
 				$ret = $order->fetch($object->origin_id);
 				if ($ret < 0) {
@@ -309,36 +338,13 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				$diff_array = array_diff_assoc($qtyordred, $qtyshipped);
 				if (count($diff_array) == 0) {
 					//No diff => mean everythings is shipped
-					$ret = $object->setStatut(Commande::STATUS_CLOSED, $object->origin_id, $object->origin, 'ORDER_CLOSE');
+					$ret = $order->setStatut(Commande::STATUS_CLOSED, $object->origin_id, $object->origin, 'ORDER_CLOSE');
 					if ($ret < 0) {
-						$this->error = $object->error;
-						$this->errors = $object->errors;
+						$this->error = $order->error;
+						$this->errors = $order->errors;
 						return $ret;
 					}
 				}
-			}
-		}
-		 // classify billed reception
-		if ($action == 'BILL_SUPPLIER_VALIDATE') {
-			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id, LOG_DEBUG);
-
-			if (!empty($conf->reception->enabled) && !empty($conf->global->WORKFLOW_BILL_ON_RECEPTION)) {
-				$object->fetchObjectLinked('', 'reception', $object->id, $object->element);
-				if (!empty($object->linkedObjects)) {
-					$totalonlinkedelements = 0;
-					foreach ($object->linkedObjects['reception'] as $element) {
-						if ($element->statut == Reception::STATUS_VALIDATED) {
-							$totalonlinkedelements += $element->total_ht;
-						}
-					}
-					dol_syslog("Amount of linked proposals = ".$totalonlinkedelements.", of invoice = ".$object->total_ht.", egality is ".($totalonlinkedelements == $object->total_ht), LOG_DEBUG);
-					if ($totalonlinkedelements == $object->total_ht) {
-						foreach ($object->linkedObjects['reception'] as $element) {
-							$ret = $element->setBilled();
-						}
-					}
-				}
-				return $ret;
 			}
 		}
 

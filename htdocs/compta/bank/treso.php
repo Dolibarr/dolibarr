@@ -98,7 +98,91 @@ if (GETPOST("account") || GETPOST("ref")) {
 
 	print dol_get_fiche_end();
 
-	print '<br>';
+
+	// Remainder to pay in future
+	$sqls = array();
+
+	// Customer invoices
+	$sql = "SELECT 'invoice' as family, f.rowid as objid, f.ref as ref, f.total_ttc, f.type, f.date_lim_reglement as dlr,";
+	$sql .= " s.rowid as socid, s.nom as name, s.fournisseur";
+	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON f.fk_soc = s.rowid";
+	$sql .= " WHERE f.entity IN  (".getEntity('invoice').")";
+	$sql .= " AND f.paye = 0 AND f.fk_statut = 1"; // Not paid
+	$sql .= " AND (f.fk_account IN (0, ".$object->id.") OR f.fk_account IS NULL)"; // Id bank account of invoice
+	$sql .= " ORDER BY dlr ASC";
+	$sqls[] = $sql;
+
+	// Supplier invoices
+	$sql = " SELECT 'invoice_supplier' as family, ff.rowid as objid, ff.ref as ref, ff.ref_supplier as ref_supplier, (-1*ff.total_ttc) as total_ttc, ff.type, ff.date_lim_reglement as dlr,";
+	$sql .= " s.rowid as socid, s.nom as name, s.fournisseur";
+	$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as ff";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON ff.fk_soc = s.rowid";
+	$sql .= " WHERE ff.entity = ".$conf->entity;
+	$sql .= " AND ff.paye = 0 AND fk_statut = 1"; // Not paid
+	$sql .= " AND (ff.fk_account IN (0, ".$object->id.") OR ff.fk_account IS NULL)"; // Id bank account of supplier invoice
+	$sql .= " ORDER BY dlr ASC";
+	$sqls[] = $sql;
+
+	// Social contributions
+	$sql = " SELECT 'social_contribution' as family, cs.rowid as objid, cs.libelle as ref, (-1*cs.amount) as total_ttc, ccs.libelle as type, cs.date_ech as dlr,";
+	$sql .= " 0 as socid, 'noname' as name, 0 as fournisseur";
+	$sql .= " FROM ".MAIN_DB_PREFIX."chargesociales as cs";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_chargesociales as ccs ON cs.fk_type = ccs.id";
+	$sql .= " WHERE cs.entity = ".$conf->entity;
+	$sql .= " AND cs.paye = 0"; // Not paid
+	$sql .= " AND (cs.fk_account IN (0, ".$object->id.") OR cs.fk_account IS NULL)"; // Id bank account of social contribution
+	$sql .= " ORDER BY dlr ASC";
+	$sqls[] = $sql;
+
+	// others sql
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('addMoreSQL', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	if (empty($reshook) and isset($hookmanager->resArray['sql'])) {
+		$sqls[] = $hookmanager->resArray['sql'];
+	}
+
+	$error = 0;
+	$tab_sqlobjOrder = array();
+	$tab_sqlobj = array();
+	$nbtotalofrecords = 0;
+
+	foreach ($sqls as $sql) {
+		$resql = $db->query($sql);
+		if ($resql) {
+			$nbtotalofrecords += $db->num_rows($resql);
+			while ($sqlobj = $db->fetch_object($resql)) {
+				$tmpobj = new stdClass();
+				$tmpobj->family = $sqlobj->family;
+				$tmpobj->objid = $sqlobj->objid;
+				$tmpobj->ref = $sqlobj->ref;
+				$tmpobj->total_ttc = $sqlobj->total_ttc;
+				$tmpobj->type = $sqlobj->type;
+				$tmpobj->dlr = $db->jdate($sqlobj->dlr);
+				$tmpobj->socid = $sqlobj->socid;
+				$tmpobj->name = $sqlobj->name;
+				$tmpobj->fournisseur = $sqlobj->fournisseur;
+
+				$tab_sqlobj[] = $tmpobj;
+				$tab_sqlobjOrder[] = $db->jdate($sqlobj->dlr);
+			}
+			$db->free($resql);
+		} else {
+			$error++;
+		}
+	}
+
+	$param = '';
+	$sortfield = '';
+	$sortorder = '';
+	$massactionbutton = '';
+	$num = 0;
+	$picto = '';
+	$morehtml = '';
+	$limit = 0;
+
+	print_barre_liste($langs->trans("RemainderToPay"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, $picto, 0, $morehtml, '', $limit, 0, 0, 1);
+
 
 	$solde = $object->solde(0);
 	if ($conf->global->MULTICOMPANY_INVOICE_SHARING_ENABLED) {
@@ -130,85 +214,9 @@ if (GETPOST("account") || GETPOST("ref")) {
 	print '<td class="nowrap right">'.price($solde).'</td>';
 	print '</tr>';
 
-
-	print '<tr class="liste_titre">';
-	print '<td class="left" colspan="'.$colspan.'">'.$langs->trans("RemainderToPay").'</td>';
-	print '<td class="nowrap right">&nbsp;</td>';
-	print '</tr>';
-
-
-	// Remainder to pay in future
-	$sqls = array();
-
-	// Customer invoices
-	$sql = "SELECT 'invoice' as family, f.rowid as objid, f.ref as ref, f.total_ttc, f.type, f.date_lim_reglement as dlr,";
-	$sql .= " s.rowid as socid, s.nom as name, s.fournisseur";
-	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON f.fk_soc = s.rowid";
-	$sql .= " WHERE f.entity IN  (".getEntity('invoice').")";
-	$sql .= " AND f.paye = 0 AND f.fk_statut = 1"; // Not paid
-	$sql .= " AND (f.fk_account IN (0, ".$object->id.") OR f.fk_account IS NULL)"; // Id bank account of invoice
-	$sql .= " ORDER BY dlr ASC";
-	$sqls[] = $sql;
-
-	// Supplier invoices
-	$sql = " SELECT 'invoice_supplier' as family, ff.rowid as objid, ff.ref as ref, ff.ref_supplier as ref_supplier, (-1*ff.total_ttc) as total_ttc, ff.type, ff.date_lim_reglement as dlr,";
-	$sql .= " s.rowid as socid, s.nom as name, s.fournisseur";
-	$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as ff";
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON ff.fk_soc = s.rowid";
-	$sql .= " WHERE ff.entity = ".$conf->entity;
-	$sql .= " AND ff.paye = 0 AND fk_statut = 1"; // Not paid
-	$sql .= " AND (ff.fk_account IN (0, ".$object->id.") OR ff.fk_account IS NULL)"; // Id bank account of supplier invoice
-	$sql .= " ORDER BY dlr ASC";
-	$sqls[] = $sql;
-
-	// Social contributions
-	$sql = " SELECT 'social_contribution' as family, cs.rowid as objid, cs.libelle as ref, (-1*cs.amount) as total_ttc, ccs.libelle as type, cs.date_ech as dlr";
-	$sql .= ", cs.fk_account";
-	$sql .= " FROM ".MAIN_DB_PREFIX."chargesociales as cs";
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_chargesociales as ccs ON cs.fk_type = ccs.id";
-	$sql .= " WHERE cs.entity = ".$conf->entity;
-	$sql .= " AND cs.paye = 0"; // Not paid
-	$sql .= " AND (cs.fk_account IN (0, ".$object->id.") OR cs.fk_account IS NULL)"; // Id bank account of social contribution
-	$sql .= " ORDER BY dlr ASC";
-	$sqls[] = $sql;
-
-	// others sql
-	$parameters = array();
-	$reshook = $hookmanager->executeHooks('addMoreSQL', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-	if (empty($reshook) and isset($hookmanager->resArray['sql'])) {
-		$sqls[] = $hookmanager->resArray['sql'];
-	}
-
-	$error = 0;
-	$tab_sqlobjOrder = array();
-	$tab_sqlobj = array();
-
-	foreach ($sqls as $sql) {
-		$resql = $db->query($sql);
-		if ($resql) {
-			while ($sqlobj = $db->fetch_object($resql)) {
-				$tab_sqlobj[] = $sqlobj;
-				$tab_sqlobjOrder[] = $db->jdate($sqlobj->dlr);
-			}
-			$db->free($resql);
-		} else {
-			$error++;
-		}
-	}
-
 	// Sort array
 	if (!$error) {
 		array_multisort($tab_sqlobjOrder, $tab_sqlobj);
-
-		// Apply distinct filter
-		foreach ($tab_sqlobj as $key => $value) {
-			$tab_sqlobj[$key] = "'".serialize($value)."'";
-		}
-		$tab_sqlobj = array_unique($tab_sqlobj);
-		foreach ($tab_sqlobj as $key => $value) {
-			$tab_sqlobj[$key] = unserialize(trim($value, "'"));
-		}
 
 		$num = count($tab_sqlobj);
 
@@ -218,60 +226,60 @@ if (GETPOST("account") || GETPOST("ref")) {
 			$refcomp = '';
 			$totalpayment = '';
 
-			$obj = array_shift($tab_sqlobj);
+			$tmpobj = array_shift($tab_sqlobj);
 
-			if ($obj->family == 'invoice_supplier') {
+			if ($tmpobj->family == 'invoice_supplier') {
 				$showline = 1;
 				// Uncomment this line to avoid to count suppliers credit note (ff.type = 2)
-				//$showline=(($obj->total_ttc < 0 && $obj->type != 2) || ($obj->total_ttc > 0 && $obj->type == 2))
+				//$showline=(($tmpobj->total_ttc < 0 && $tmpobj->type != 2) || ($tmpobj->total_ttc > 0 && $tmpobj->type == 2))
 				if ($showline) {
-					$ref = $obj->ref;
+					$ref = $tmpobj->ref;
 					$facturefournstatic->ref = $ref;
-					$facturefournstatic->id = $obj->objid;
-					$facturefournstatic->type = $obj->type;
+					$facturefournstatic->id = $tmpobj->objid;
+					$facturefournstatic->type = $tmpobj->type;
 					$ref = $facturefournstatic->getNomUrl(1, '');
 
-					$societestatic->id = $obj->socid;
-					$societestatic->name = $obj->name;
+					$societestatic->id = $tmpobj->socid;
+					$societestatic->name = $tmpobj->name;
 					$refcomp = $societestatic->getNomUrl(1, '', 24);
 
 					$totalpayment = -1 * $facturefournstatic->getSommePaiement(); // Payment already done
 				}
 			}
-			if ($obj->family == 'invoice') {
-				$facturestatic->ref = $obj->ref;
-				$facturestatic->id = $obj->objid;
-				$facturestatic->type = $obj->type;
+			if ($tmpobj->family == 'invoice') {
+				$facturestatic->ref = $tmpobj->ref;
+				$facturestatic->id = $tmpobj->objid;
+				$facturestatic->type = $tmpobj->type;
 				$ref = $facturestatic->getNomUrl(1, '');
 
-				$societestatic->id = $obj->socid;
-				$societestatic->name = $obj->name;
+				$societestatic->id = $tmpobj->socid;
+				$societestatic->name = $tmpobj->name;
 				$refcomp = $societestatic->getNomUrl(1, '', 24);
 
 				$totalpayment = $facturestatic->getSommePaiement(); // Payment already done
 				$totalpayment += $facturestatic->getSumDepositsUsed();
 				$totalpayment += $facturestatic->getSumCreditNotesUsed();
 			}
-			if ($obj->family == 'social_contribution') {
-				$socialcontribstatic->ref = $obj->ref;
-				$socialcontribstatic->id = $obj->objid;
-				$socialcontribstatic->label = $obj->type;
+			if ($tmpobj->family == 'social_contribution') {
+				$socialcontribstatic->ref = $tmpobj->ref;
+				$socialcontribstatic->id = $tmpobj->objid;
+				$socialcontribstatic->label = $tmpobj->type;
 				$ref = $socialcontribstatic->getNomUrl(1, 24);
 
 				$totalpayment = -1 * $socialcontribstatic->getSommePaiement(); // Payment already done
 			}
 
-			$parameters = array('obj' => $obj, 'ref' => $ref, 'refcomp' => $refcomp, 'totalpayment' => $totalpayment);
-			$reshook = $hookmanager->executeHooks('moreFamily', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+			$parameters = array('obj' => $tmpobj, 'ref' => $ref, 'refcomp' => $refcomp, 'totalpayment' => $totalpayment);
+			$reshook = $hookmanager->executeHooks('moreFamily', $parameters, $tmpobject, $action); // Note that $action and $tmpobject may have been modified by hook
 			if (empty($reshook)) {
 				$ref = isset($hookmanager->resArray['ref']) ? $hookmanager->resArray['ref'] : $ref;
 				$refcomp = isset($hookmanager->resArray['refcomp']) ? $hookmanager->resArray['refcomp'] : $refcomp;
 				$totalpayment = isset($hookmanager->resArray['totalpayment']) ? $hookmanager->resArray['totalpayment'] : $totalpayment;
 			}
 
-			$total_ttc = $obj->total_ttc;
+			$total_ttc = $tmpobj->total_ttc;
 			if ($totalpayment) {
-				$total_ttc = $obj->total_ttc - $totalpayment;
+				$total_ttc = $tmpobj->total_ttc - $totalpayment;
 			}
 			$solde += $total_ttc;
 
@@ -280,26 +288,26 @@ if (GETPOST("account") || GETPOST("ref")) {
 				// Show line
 				print '<tr class="oddeven">';
 				print '<td>';
-				if ($obj->dlr) {
-					print dol_print_date($db->jdate($obj->dlr), "day");
+				if ($tmpobj->dlr) {
+					print dol_print_date($tmpobj->dlr, "day");
 				} else {
 					print $langs->trans("NotDefined");
 				}
 				print "</td>";
 				print "<td>".$ref."</td>";
 				if ($conf->global->MULTICOMPANY_INVOICE_SHARING_ENABLED) {
-					if ($obj->family == 'invoice') {
-						$mc->getInfo($obj->entity);
+					if ($tmpobj->family == 'invoice') {
+						$mc->getInfo($tmpobj->entity);
 						print "<td>".$mc->label."</td>";
 					} else {
 						print "<td></td>";
 					}
 				}
 				print "<td>".$refcomp."</td>";
-				if ($obj->total_ttc < 0) {
+				if ($tmpobj->total_ttc < 0) {
 					print '<td class="nowrap right">'.price(abs($total_ttc))."</td><td>&nbsp;</td>";
 				};
-				if ($obj->total_ttc >= 0) {
+				if ($tmpobj->total_ttc >= 0) {
 					print '<td>&nbsp;</td><td class="nowrap right">'.price($total_ttc)."</td>";
 				};
 				print '<td class="nowrap right">'.price($solde).'</td>';

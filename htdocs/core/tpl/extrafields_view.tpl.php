@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2014	Maxime Kohlhaas		<support@atm-consulting.fr>
  * Copyright (C) 2014	Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2021		Frédéric France		<frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,7 +60,7 @@ if ($reshook < 0) {
 
 
 //var_dump($extrafields->attributes[$object->table_element]);
-if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]['label'])) {
+if (empty($reshook) && isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label'])) {
 	$lastseparatorkeyfound = '';
 	$extrafields_collapse_num = '';
 	$extrafields_collapse_num_old = '';
@@ -155,6 +156,7 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 			//var_dump($user->rights);
 			$permok = false;
 			$keyforperm = $object->element;
+
 			if ($object->element == 'fichinter') {
 				$keyforperm = 'ficheinter';
 			}
@@ -162,10 +164,18 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 				$permok = !empty($user->rights->$keyforperm->creer) || !empty($user->rights->$keyforperm->create) || !empty($user->rights->$keyforperm->write);
 			}
 			if ($object->element == 'order_supplier') {
-				$permok = $user->rights->fournisseur->commande->creer;
+				if (empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) {
+					$permok = $user->rights->fournisseur->commande->creer;
+				} else {
+					$permok = $user->rights->supplier_order->creer;
+				}
 			}
 			if ($object->element == 'invoice_supplier') {
-				$permok = $user->rights->fournisseur->facture->creer;
+				if (empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) {
+					$permok = $user->rights->fournisseur->facture->creer;
+				} else {
+					$permok = $user->rights->supplier_invoice->creer;
+				}
 			}
 			if ($object->element == 'shipping') {
 				$permok = $user->rights->expedition->creer;
@@ -182,16 +192,24 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 			if ($object->element == 'mo') {
 				$permok = $user->rights->mrp->write;
 			}
+			if ($object->element == 'contact') {
+				$permok = $user->rights->societe->contact->creer;
+			}
+			if ($object->element == 'salary') {
+				$permok = $user->rights->salaries->read;
+			}
 
 			$isdraft = ((isset($object->statut) && $object->statut == 0) || (isset($object->status) && $object->status == 0));
 			if (($isdraft || !empty($extrafields->attributes[$object->table_element]['alwayseditable'][$tmpkeyextra]))
 				&& $permok && $enabled != 5 && ($action != 'edit_extras' || GETPOST('attribute') != $tmpkeyextra)
 				&& empty($extrafields->attributes[$object->table_element]['computed'][$tmpkeyextra])) {
-				$fieldid = 'id';
+				$fieldid = empty($forcefieldid) ? 'id' : $forcefieldid;
+				$valueid = empty($forceobjectid) ? $object->id : $forceobjectid;
 				if ($object->table_element == 'societe') {
 					$fieldid = 'socid';
 				}
-				print '<td class="right"><a class="reposition editfielda" href="'.$_SERVER['PHP_SELF'].'?'.$fieldid.'='.$object->id.'&action=edit_extras&attribute='.$tmpkeyextra.'&ignorecollapsesetup=1">'.img_edit().'</a></td>';
+
+				print '<td class="right"><a class="reposition editfielda" href="'.$_SERVER['PHP_SELF'].'?'.$fieldid.'='.$valueid.'&action=edit_extras&attribute='.$tmpkeyextra.'&ignorecollapsesetup=1">'.img_edit().'</a></td>';
 			}
 			print '</tr></table>';
 			print '</td>';
@@ -245,7 +263,6 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 			print '</tr>'."\n";
 		}
 	}
-
 
 	// Add code to manage list depending on others
 	// TODO Test/enhance this with a more generic solution

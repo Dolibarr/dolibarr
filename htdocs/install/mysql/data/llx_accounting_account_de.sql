@@ -345,6 +345,7 @@ INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, acc
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1398, 'SKR03', '0', '997', '1393', 'Pauschalwertberichtigung auf Forderungen mit einer Restlaufzeit von mehr als 1 Jahr');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1399, 'SKR03', '0', '998', '1393', 'Einzelwertberichtigungen auf Forderungen mit einer Restlaufzeit bis zu 1 Jahr');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1400, 'SKR03', '0', '999', '1393', 'Einzelwertberichtigungen auf Forderungen mit einer Restlaufzeit von mehr als 1 Jahr');
+
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1403, 'SKR03', '1', '1000', '0', 'Kasse');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1404, 'SKR03', '1', '1010', '1403', 'Nebenkasse 1');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1405, 'SKR03', '1', '1020', '1403', 'Nebenkasse 2');
@@ -2705,7 +2706,7 @@ INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, acc
 
 
 -- SKR04
--- Some lines of SKR04 has been disabled because the fiel account_parent is wrong, it must be the rowid of parent line and not the account_number of parent line 
+-- Some lines of SKR04 has been disabled because the field account_parent were wrong or there is a doubt, it must be the rowid of parent line and not the account_number of parent line 
 
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3838, 'SKR04', 'Anlagevermögen', 100, 0, 'Entgeltlich erworbene Konzessionen, gewerbliche Schutzrechte und ähnliche Rechte und Werte sowie Lizenzen an solchen Rechten und Werten');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3839, 'SKR04', 'Anlagevermögen', 110, 3838, 'Konzessionen');
@@ -2724,35 +2725,35 @@ INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, acc
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3852, 'SKR04', 'Anlagevermögen', 170, 0, 'Geleistete Anzahlungen auf immaterielle Vermögensgegenstände');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3853, 'SKR04', 'Anlagevermögen', 179, 0, 'Anzahlungen auf Geschäfts- oder Firmenwert');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3854, 'SKR04', 'Anlagevermögen', 200, 0, 'Grundstücke, grundstücksgleiche Rechte und Bauten einschließlich der Bauten auf fremden Grundstück');
---INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3855, 'SKR04', 'Anlagevermögen', 210, 3854, Grundstücksgleiche Rechte ohne Bauten');
---INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3856, 'SKR04', 'Anlagevermögen', 215, 3854, Unbebaute Grundstücke');
---INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3857, 'SKR04', 'Anlagevermögen', 220, 3854, Grundstücksgleiche Rechte (Erbbaurecht, Dauerwohnrecht, unbebaute Grundstücke)');
---INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3858, 'SKR04', 'Anlagevermögen', 225, 3854, Grundstücke mit Substanzverkehr');
---INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3859, 'SKR04', 'Anlagevermögen', 229, 3854, Grundstücksanteil des häuslichen Arbeitszimmers');
---INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3860, 'SKR04', 'Anlagevermögen', 230, 3854, Bauten auf eigenen Grundstücken und grundstücksgleichen Rechten');
---INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3861, 'SKR04', 'Anlagevermögen', 235, 3854, Grundstückswerte eigener bebauter Grundstücke');
---INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3862, 'SKR04', 'Anlagevermögen', 240, 3854, Geschäftsbauten');
---INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3863, 'SKR04', 'Anlagevermögen', 250, 3854, Fabrikbauten');
---INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3864, 'SKR04', 'Anlagevermögen', 260, 3854, Andere Bauten');
---INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3865, 'SKR04', 'Anlagevermögen', 270, 3854, Garagen');
---INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3866, 'SKR04', 'Anlagevermögen', 280, 3854, Außenanlagen für Geschäfts-, Fabrik- und andere Bauten');
---INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3867, 'SKR04', 'Anlagevermögen', 285, 3854, Hof- und Wegbefestigungen');
---INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3868, 'SKR04', 'Anlagevermögen', 290, 3854, Einrichtungen für Geschäfts-. Fabrik- und andere Bauten');
---INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3869, 'SKR04', 'Anlagevermögen', 300, 3854, Wohnbauten');
---INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3870, 'SKR04', 'Anlagevermögen', 305, 3854, Garagen');
---INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3871, 'SKR04', 'Anlagevermögen', 310, 3854, Außenanlagen');
---INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3872, 'SKR04', 'Anlagevermögen', 315, 3854, Hof- und Wegbefestigungen');
---INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3873, 'SKR04', 'Anlagevermögen', 320, 3854, Einrichtungen für Wohnbauten');
---INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3874, 'SKR04', 'Anlagevermögen', 329, 3854, Gebäudeteil des häuslichen Arbeitszimmers');
---INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3875, 'SKR04', 'Anlagevermögen', 330, 3854, Bauten auf fremden Grundstücken');
---INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3876, 'SKR04', 'Anlagevermögen', 340, 3854, Geschäftsbauten');
---INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3877, 'SKR04', 'Anlagevermögen', 350, 3854, Fabrikbauten');
---INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3878, 'SKR04', 'Anlagevermögen', 360, 3854, Wohnbauten');
---INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3879, 'SKR04', 'Anlagevermögen', 370, 3854, Andere Bauten');
---INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3880, 'SKR04', 'Anlagevermögen', 380, 3854, Garagen');
---INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3881, 'SKR04', 'Anlagevermögen', 390, 3854, Außenanlagen');
---INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3882, 'SKR04', 'Anlagevermögen', 395, 3854, Hof- und Wegbefestigungen');
---INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3883, 'SKR04', 'Anlagevermögen', 398, 3854, Einrichtungen für Geschäfts-. Fabrik-, Wohn- und andere Bauten');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3855, 'SKR04', 'Anlagevermögen', 210, 3854, 'Grundstücksgleiche Rechte ohne Bauten');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3856, 'SKR04', 'Anlagevermögen', 215, 3854,'Unbebaute Grundstücke');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3857, 'SKR04', 'Anlagevermögen', 220, 3854, 'Grundstücksgleiche Rechte (Erbbaurecht, Dauerwohnrecht, unbebaute Grundstücke)');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3858, 'SKR04', 'Anlagevermögen', 225, 3854, 'Grundstücke mit Substanzverkehr');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3859, 'SKR04', 'Anlagevermögen', 229, 3854, 'Grundstücksanteil des häuslichen Arbeitszimmers');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3860, 'SKR04', 'Anlagevermögen', 230, 3854, 'Bauten auf eigenen Grundstücken und grundstücksgleichen Rechten');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3861, 'SKR04', 'Anlagevermögen', 235, 3854, 'Grundstückswerte eigener bebauter Grundstücke');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3862, 'SKR04', 'Anlagevermögen', 240, 3854, 'Geschäftsbauten');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3863, 'SKR04', 'Anlagevermögen', 250, 3854, 'Fabrikbauten');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3864, 'SKR04', 'Anlagevermögen', 260, 3854, 'Andere Bauten');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3865, 'SKR04', 'Anlagevermögen', 270, 3854, 'Garagen');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3866, 'SKR04', 'Anlagevermögen', 280, 3854, 'Außenanlagen für Geschäfts-, Fabrik- und andere Bauten');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3867, 'SKR04', 'Anlagevermögen', 285, 3854, 'Hof- und Wegbefestigungen');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3868, 'SKR04', 'Anlagevermögen', 290, 3854, 'Einrichtungen für Geschäfts-. Fabrik- und andere Bauten');
+--INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3869, 'SKR04', 'Anlagevermögen', 300, 3854, 'Wohnbauten');
+--INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3870, 'SKR04', 'Anlagevermögen', 305, 3854, 'Garagen');
+--INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3871, 'SKR04', 'Anlagevermögen', 310, 3854, 'Außenanlagen');
+--INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3872, 'SKR04', 'Anlagevermögen', 315, 3854, 'Hof- und Wegbefestigungen');
+--INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3873, 'SKR04', 'Anlagevermögen', 320, 3854, 'Einrichtungen für Wohnbauten');
+--INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3874, 'SKR04', 'Anlagevermögen', 329, 3854, 'Gebäudeteil des häuslichen Arbeitszimmers');
+--INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3875, 'SKR04', 'Anlagevermögen', 330, 3854, 'Bauten auf fremden Grundstücken');
+--INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3876, 'SKR04', 'Anlagevermögen', 340, 3854, 'Geschäftsbauten');
+--INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3877, 'SKR04', 'Anlagevermögen', 350, 3854, 'Fabrikbauten');
+--INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3878, 'SKR04', 'Anlagevermögen', 360, 3854, 'Wohnbauten');
+--INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3879, 'SKR04', 'Anlagevermögen', 370, 3854, 'Andere Bauten');
+--INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3880, 'SKR04', 'Anlagevermögen', 380, 3854, 'Garagen');
+--INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3881, 'SKR04', 'Anlagevermögen', 390, 3854, 'Außenanlagen');
+--INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3882, 'SKR04', 'Anlagevermögen', 395, 3854, 'Hof- und Wegbefestigungen');
+--INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3883, 'SKR04', 'Anlagevermögen', 398, 3854, 'Einrichtungen für Geschäfts-. Fabrik-, Wohn- und andere Bauten');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3884, 'SKR04', 'Anlagevermögen', 400, 0, 'Technische Anlagen und Maschinen');
 --INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3885, 'SKR04', 'Anlagevermögen', 420, 3884, 'Technische Anlagen');
 --INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3886, 'SKR04', 'Anlagevermögen', 440, 3884, 'Maschinen');
@@ -4238,6 +4239,7 @@ INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, acc
 --INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 5366, 'SKR04', 'Fremdkapitalkonten', 3865, 3800, 'Umsatzsteuer in Folgeperiode fällig (§§ 13 Abs. 1 Nr. 6, 13b Abs. 2 UStG)');
 --INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 5367, 'SKR04', 'Fremdkapitalkonten', 3900, 3, 'Passive Rechnungsabgrenzung');
 --INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 5368, 'SKR04', 'Fremdkapitalkonten', 3950, 3900, 'Abgrenzung unterjährig pauschal gebuchter Abschreibungen für BWA');
+
 --INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 5369, 'SKR04', 'Betriebliche Erträge', 4, 4, 'Betriebliche Erträge');
 --INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 5370, 'SKR04', 'Betriebliche Erträge', 4000, 4, 'Umsatzerlöse');
 --INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 5371, 'SKR04', 'Betriebliche Erträge', 4001, 4000, '(zur freien Verfügung)');
@@ -5591,6 +5593,7 @@ INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, acc
 --INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 6719, 'SKR04', 'Betriebliche Aufwendungen', 6992, 6, 'Verwaltungskosten');
 --INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 6720, 'SKR04', 'Betriebliche Aufwendungen', 6994, 6, 'Vertriebskosten');
 --INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 6721, 'SKR04', 'Betriebliche Aufwendungen', 6999, 6, 'Gegenkonto 6990-6998');
+
 --INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 6722, 'SKR04', 'Weitere Erträge und Aufwendungen', 7, 7, 'Weitere Erträge und Aufwendungen');
 --INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 6723, 'SKR04', 'Weitere Erträge und Aufwendungen', 7000, 7, 'Erträge aus Beteiligungen');
 --INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 6724, 'SKR04', 'Weitere Erträge und Aufwendungen', 7004, 7000, 'Erträge aus Beteiligungen an Personengesellschaften (verbundene Unternehmen), § 9 GewStG bzw. § 18 EStG');
@@ -5862,6 +5865,7 @@ INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, acc
 --INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 6990, 'SKR04', 'Weitere Erträge und Aufwendungen', 7898, 7, '(zur freien Verfügung)');
 --INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 6991, 'SKR04', 'Weitere Erträge und Aufwendungen', 7899, 7, '(zur freien Verfügung)');
 --INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 6992, 'SKR04', 'Weitere Erträge und Aufwendungen', 7900, 7, '(reserviertes Konto)');
+
 --INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 6993, 'SKR04', 'Zur freien Verfügung', 8, 8, 'Zur freien Verfügung');
 --INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 6994, 'SKR04', 'Zur freien Verfügung', 8000, 8, 'Zur freien Verfügung');
 --INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 6995, 'SKR04', 'Zur freien Verfügung', 8001, 8, 'Zur freien Verfügung');
@@ -6863,6 +6867,7 @@ INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, acc
 --INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 7991, 'SKR04', 'Zur freien Verfügung', 8997, 8, 'Zur freien Verfügung');
 --INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 7992, 'SKR04', 'Zur freien Verfügung', 8998, 8, 'Zur freien Verfügung');
 --INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 7993, 'SKR04', 'Zur freien Verfügung', 8999, 8, 'Zur freien Verfügung');
+
 --INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 7994, 'SKR04', 'Vortrags-, Kapital-, Korrektur- und statistische Konten', 9, 9, 'Vortrags-, Kapital-, Korrektur- und statistische Konten');
 --INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 7995, 'SKR04', 'Vortrags-, Kapital-, Korrektur- und statistische Konten',  9000, 9, 'Saldenvorträge, Sachkonten');
 --INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 7996, 'SKR04', 'Vortrags-, Kapital-, Korrektur- und statistische Konten',  9001, 9000, 'Saldenvorträge, Sachkonten');

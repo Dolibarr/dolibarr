@@ -124,13 +124,15 @@ if ($id > 0 || !empty($ref)) {
 	$upload_dir = $conf->mymodule->multidir_output[$object->entity ? $object->entity : $conf->entity]."/myobject/".get_exdir(0, 0, 0, 1, $object);
 }
 
-// Security check - Protection if external user
+$permissiontoadd = $user->rights->mymodule->myobject->write; // Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles.inc.php
+
+// Security check (enable the most restrictive one)
 //if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
-//$result = restrictedArea($user, 'mymodule', $object->id);
-
-$permissiontoadd = $user->rights->mymodule->myobject->write; // Used by the include of actions_addupdatedelete.inc.php
-
+//$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
+//restrictedArea($user, $object->element, $object->id, $object->table_element, '', 'fk_soc', 'rowid', $isdraft);
+//if (empty($conf->mymodule->enabled)) accessforbidden();
+//if (!$permissiontoread) accessforbidden();
 
 
 /*
@@ -157,7 +159,7 @@ if ($object->id) {
 	 */
 	$head = myobjectPrepareHead($object);
 
-	print dol_get_fiche_head($head, 'document', $langs->trans("MyObject"), -1, $object->picto);
+	print dol_get_fiche_head($head, 'document', '', -1, $object->picto);
 
 
 	// Build file list
@@ -231,8 +233,8 @@ if ($object->id) {
 	print dol_get_fiche_end();
 
 	$modulepart = 'mymodule';
-	//$permission = $user->rights->mymodule->myobject->write;
-	$permission = 1;
+	//$permissiontoadd = $user->rights->mymodule->myobject->write;
+	$permissiontoadd = 1;
 	//$permtoedit = $user->rights->mymodule->myobject->write;
 	$permtoedit = 1;
 	$param = '&id='.$object->id;
@@ -240,7 +242,7 @@ if ($object->id) {
 	//$relativepathwithnofile='myobject/' . dol_sanitizeFileName($object->id).'/';
 	$relativepathwithnofile = 'myobject/'.dol_sanitizeFileName($object->ref).'/';
 
-	include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
+	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 } else {
 	accessforbidden('', 0, 1);
 }

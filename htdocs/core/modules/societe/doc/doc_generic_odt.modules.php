@@ -76,12 +76,12 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 		$this->marge_haute = 0;
 		$this->marge_basse = 0;
 
-		$this->option_logo = 1; // Affiche logo
+		$this->option_logo = 1; // Display logo
 
 		// Retrieves transmitter
 		$this->emetteur = $mysoc;
 		if (!$this->emetteur->country_code) {
-			$this->emetteur->country_code = substr($langs->defaultlang, -2); // Par defaut, si n'etait pas defini
+			$this->emetteur->country_code = substr($langs->defaultlang, -2); // By default, if was not defined
 		}
 	}
 
@@ -141,7 +141,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 		$texte .= '</textarea>';
 		$texte .= '</td>';
 		$texte .= '<td class="center">&nbsp; ';
-		$texte .= '<input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button">';
+		$texte .= '<input type="submit" class="button small" value="'.$langs->trans("Modify").'" name="Button">';
 		$texte .= '</td>';
 		$texte .= '</tr>';
 		$texte .= '</table>';
@@ -167,7 +167,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 		// Add input to upload a new template file.
 		$texte .= '<div>'.$langs->trans("UploadNewTemplate").' <input type="file" name="uploadfile">';
 		$texte .= '<input type="hidden" value="COMPANY_ADDON_PDF_ODT_PATH" name="keyforuploaddir">';
-		$texte .= '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Upload")).'" name="upload">';
+		$texte .= '<input type="submit" class="button small" value="'.dol_escape_htmltag($langs->trans("Upload")).'" name="upload">';
 		$texte .= '</div>';
 		$texte .= '</td>';
 
@@ -266,6 +266,11 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 				//exit;
 
 				dol_mkdir($conf->societe->multidir_temp[$object->entity]);
+				if (!is_writable($conf->societe->multidir_temp[$object->entity])) {
+					$this->error = "Failed to write in temp directory ".$conf->societe->multidir_temp[$object->entity];
+					dol_syslog('Error in write_file: '.$this->error, LOG_ERR);
+					return -1;
+				}
 
 				// Open and load template
 				require_once ODTPHP_PATH.'odf.php';

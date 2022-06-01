@@ -76,13 +76,13 @@ function check_user_password_dolibarr($usertotest, $passwordtotest, $entitytotes
 				if ($obj->datestartvalidity && $db->jdate($obj->datestartvalidity) > $now) {
 					// Load translation files required by the page
 					$langs->loadLangs(array('main', 'errors'));
-					$_SESSION["dol_loginmesg"] = $langs->trans("ErrorLoginDateValidity");
+					$_SESSION["dol_loginmesg"] = $langs->transnoentitiesnoconv("ErrorLoginDateValidity");
 					return '--bad-login-validity--';
 				}
 				if ($obj->dateendvalidity && $db->jdate($obj->dateendvalidity) < dol_get_first_hour($now)) {
 					// Load translation files required by the page
 					$langs->loadLangs(array('main', 'errors'));
-					$_SESSION["dol_loginmesg"] = $langs->trans("ErrorLoginDateValidity");
+					$_SESSION["dol_loginmesg"] = $langs->transnoentitiesnoconv("ErrorLoginDateValidity");
 					return '--bad-login-validity--';
 				}
 
@@ -106,7 +106,7 @@ function check_user_password_dolibarr($usertotest, $passwordtotest, $entitytotes
 				if ($cryptType == 'auto') {
 					if (dol_verifyHash($passtyped, $passcrypted, '0')) {
 						$passok = true;
-						dol_syslog("functions_dolibarr::check_user_password_dolibarr Authentification ok - ".$cryptType." of pass is ok");
+						dol_syslog("functions_dolibarr::check_user_password_dolibarr Authentification ok - hash ".$cryptType." of pass is ok");
 					}
 				}
 
@@ -129,7 +129,7 @@ function check_user_password_dolibarr($usertotest, $passwordtotest, $entitytotes
 					// Load translation files required by the page
 					$langs->loadLangs(array('main', 'errors'));
 
-					$_SESSION["dol_loginmesg"] = $langs->trans("ErrorBadLoginPassword");
+					$_SESSION["dol_loginmesg"] = $langs->transnoentitiesnoconv("ErrorBadLoginPassword");
 				}
 
 				// We must check entity
@@ -153,7 +153,7 @@ function check_user_password_dolibarr($usertotest, $passwordtotest, $entitytotes
 				// Load translation files required by the page
 				$langs->loadLangs(array('main', 'errors'));
 
-				$_SESSION["dol_loginmesg"] = $langs->trans("ErrorBadLoginPassword");
+				$_SESSION["dol_loginmesg"] = $langs->transnoentitiesnoconv("ErrorBadLoginPassword");
 			}
 		} else {
 			dol_syslog("functions_dolibarr::check_user_password_dolibarr Authentication KO db error for '".$usertotest."' error=".$db->lasterror(), LOG_ERR);

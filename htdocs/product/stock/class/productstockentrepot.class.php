@@ -280,10 +280,10 @@ class ProductStockEntrepot extends CommonObject
 			$sql .= ' AND '.implode(' '.$filtermode.' ', $sqlwhere);
 		}
 
-		if (!empty($fk_product)) {
-			$sql .= ' AND fk_product = '.$fk_product;
-		} elseif (!empty($fk_entrepot)) {
-			$sql .= ' AND fk_entrepot = '.$fk_entrepot;
+		if (!empty($fk_product) && $fk_product > 0) {
+			$sql .= ' AND fk_product = '.((int) $fk_product);
+		} elseif (!empty($fk_entrepot) && $fk_entrepot > 0) {
+			$sql .= ' AND fk_entrepot = '.((int) $fk_entrepot);
 		}
 		// "elseif" used instead of "if" because getting list with specified fk_product and specified fk_entrepot would be the same as doing a fetch
 

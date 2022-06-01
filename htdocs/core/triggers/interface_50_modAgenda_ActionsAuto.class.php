@@ -110,6 +110,17 @@ class InterfaceActionsAuto extends DolibarrTriggers
 
 			$object->sendtoid = 0;
 			$object->socid = $object->id;
+		} elseif ($action == 'COMPANY_MODIFY') {
+			// Load translation files required by the page
+			$langs->loadLangs(array("agenda", "other", "companies"));
+
+			if (empty($object->actionmsg2)) {
+				$object->actionmsg2 = $langs->transnoentities("COMPANY_MODIFYInDolibarr", $object->name);
+			}
+			$object->actionmsg = $langs->transnoentities("COMPANY_MODIFYInDolibarr", $object->name);
+
+			$object->sendtoid = 0;
+			$object->socid = $object->id;
 		} elseif ($action == 'COMPANY_SENTBYMAIL') {
 			// Load translation files required by the page
 			$langs->loadLangs(array("agenda", "other", "orders"));
@@ -128,6 +139,17 @@ class InterfaceActionsAuto extends DolibarrTriggers
 				$object->actionmsg2 = $langs->transnoentities("CONTACT_CREATEInDolibarr", $object->getFullName($langs));
 			}
 			$object->actionmsg = $langs->transnoentities("CONTACT_CREATEInDolibarr", $object->getFullName($langs));
+
+			$object->sendtoid = array($object->id => $object->id);
+			$object->socid = $object->socid;
+		} elseif ($action == 'CONTACT_MODIFY') {
+			// Load translation files required by the page
+			$langs->loadLangs(array("agenda", "other", "companies"));
+
+			if (empty($object->actionmsg2)) {
+				$object->actionmsg2 = $langs->transnoentities("CONTACT_MODIFYInDolibarr", $object->name);
+			}
+			$object->actionmsg = $langs->transnoentities("CONTACT_MODIFYInDolibarr", $object->name);
 
 			$object->sendtoid = array($object->id => $object->id);
 			$object->socid = $object->socid;
@@ -522,12 +544,17 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			$object->sendtoid = 0;
 		} elseif ($action == 'ORDER_SUPPLIER_REFUSE') {
 			// Load translation files required by the page
-			$langs->loadLangs(array("agenda", "other", "orders"));
+			$langs->loadLangs(array("agenda", "other", "orders", "main"));
 
 			if (empty($object->actionmsg2)) {
 				$object->actionmsg2 = $langs->transnoentities("OrderRefusedInDolibarr", $object->ref);
 			}
 			$object->actionmsg = $langs->transnoentities("OrderRefusedInDolibarr", $object->ref);
+
+			if (!empty($object->refuse_note)) {
+				$object->actionmsg .= '<br>';
+				$object->actionmsg .= $langs->trans("Reason") . ': '.$object->refuse_note;
+			}
 
 			$object->sendtoid = 0;
 		} elseif ($action == 'ORDER_SUPPLIER_SUBMIT') {
@@ -909,7 +936,11 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			}
 		}
 
-		$object->actionmsg = dol_concatdesc($langs->transnoentities("Author").': '.$user->login, $object->actionmsg);
+		if (!empty($user->login)) {
+			$object->actionmsg = dol_concatdesc($langs->transnoentities("Author").': '.$user->login, $object->actionmsg);
+		} elseif (isset($object->origin_email)) {
+			$object->actionmsg = dol_concatdesc($langs->transnoentities("Author").': '.$object->origin_email, $object->actionmsg);
+		}
 
 		dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
@@ -942,6 +973,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			$societeforaction->fetch($object->socid);
 		} elseif (isset($object->fk_soc) && $object->fk_soc > 0) {
 			$societeforaction->fetch($object->fk_soc);
+		} elseif (isset($object->thirdparty) && isset($object->thirdparty->id) && $object->thirdparty->id > 0) {
+			$societeforaction = $object->thirdparty;
 		}
 
 		$projectid = isset($object->fk_project) ? $object->fk_project : 0;

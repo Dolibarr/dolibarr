@@ -163,7 +163,7 @@ class Events // extends CommonObject
 		$sql .= "prefix_session";
 		$sql .= ") VALUES (";
 		$sql .= " '".$this->db->escape($this->type)."',";
-		$sql .= " ".$conf->entity.",";
+		$sql .= " ".((int) $conf->entity).",";
 		$sql .= " '".$this->db->escape(getUserRemoteIP())."',";
 		$sql .= " ".($this->user_agent ? "'".$this->db->escape(dol_trunc($this->user_agent, 250))."'" : 'NULL').",";
 		$sql .= " '".$this->db->idate($this->dateevent)."',";

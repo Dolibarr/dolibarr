@@ -29,7 +29,7 @@ AssetsLines=Active
 DeleteType=Şterge
 DeleteAnAssetType=Ștergeți un tip de activ
 ConfirmDeleteAssetType=Sigur doriți să ștergeți acest tip de activ?
-ShowTypeCard=Arată tipul ' %s'
+ShowTypeCard=Arată tipul '%s'
 
 # Module label 'ModuleAssetsName'
 ModuleAssetsName = Active
@@ -42,24 +42,26 @@ ModuleAssetsDesc = Descrierea activelor
 AssetsSetup = Configurarea activelor
 Settings = Configurări
 AssetsSetupPage = Pagină de configurare a activelor
-ExtraFieldsAssetsType = Atribute complementare (tipul de activ)
+ExtraFieldsAssetsType = Atribute complementare (tip de activ)
 AssetsType=Tipul activului
-AssetsTypeId=ID de tip activ
-AssetsTypeLabel=Eticheta de tip activ
+AssetsTypeId=ID tip de activ
+AssetsTypeLabel=Etichetă tip de activ
 AssetsTypes=Tipuri de active
 
 #
 # Menu
 #
-MenuAssets = Bunuri
+MenuAssets = Active
 MenuNewAsset = Activ nou
-MenuTypeAssets = Tip activ
-MenuListAssets = Lista
+MenuTypeAssets = Tip active
+MenuListAssets = Listă
 MenuNewTypeAssets = Nou
-MenuListTypeAssets = Lista
+MenuListTypeAssets = Listă
 
 #
 # Module
 #
+Asset=Activ
 NewAssetType=Tip de activ nou
 NewAsset=Activ nou
+ConfirmDeleteAsset=Sigur doriți să ștergeți acest activ?

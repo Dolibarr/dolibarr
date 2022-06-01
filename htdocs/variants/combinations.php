@@ -30,10 +30,13 @@ $langs->loadLangs(array("products", "other"));
 $id = GETPOST('id', 'int');
 $valueid = GETPOST('valueid', 'int');
 $ref = GETPOST('ref', 'alpha');
-$weight_impact = GETPOST('weight_impact', 'alpha');
-$price_impact = GETPOST('price_impact', 'alpha');
+$weight_impact = price2num(GETPOST('weight_impact', 'alpha'), 2);
 $price_impact_percent = (bool) GETPOST('price_impact_percent');
-
+if ($price_impact_percent) {
+	$price_impact = price2num(GETPOST('price_impact', 'alpha'), 2);
+} else {
+	$price_impact = price2num(GETPOST('price_impact', 'alpha'), 'MU');
+}
 $level_price_impact = GETPOST('level_price_impact', 'array');
 $level_price_impact_percent = GETPOST('level_price_impact_percent', 'array');
 
@@ -51,7 +54,6 @@ $delete_product = GETPOST('delete_product', 'alpha');
 // Security check
 $fieldvalue = (!empty($id) ? $id : $ref);
 $fieldtype = (!empty($ref) ? 'ref' : 'rowid');
-$result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 
 $prodstatic = new Product($db);
 $prodattr = new ProductAttribute($db);
@@ -64,8 +66,6 @@ if ($id > 0 || $ref) {
 
 $selectedvariant = $_SESSION['addvariant_'.$object->id];
 
-$permissiontoread = $user->rights->produit->lire || $user->rights->service->lire;
-
 // Security check
 if (empty($conf->variants->enabled)) {
 	accessforbidden('Module not enabled');
@@ -73,8 +73,17 @@ if (empty($conf->variants->enabled)) {
 if ($user->socid > 0) { // Protection if external user
 	accessforbidden();
 }
-//$result = restrictedArea($user, 'variant');
-if (!$permissiontoread) accessforbidden();
+
+if ($object->id > 0) {
+	if ($object->type == $object::TYPE_PRODUCT) {
+		restrictedArea($user, 'produit', $object->id, 'product&product', '', '');
+	}
+	if ($object->type == $object::TYPE_SERVICE) {
+		restrictedArea($user, 'service', $object->id, 'product&product', '', '');
+	}
+} else {
+	restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
+}
 
 
 /*
@@ -239,7 +248,7 @@ if (($action == 'add' || $action == 'create') && empty($massaction) && !GETPOST(
 		exit();
 	}
 
-	$prodcomb->variation_weight = $weight_impact;
+	$prodcomb->variation_weight = price2num($weight_impact);
 
 	// for conf PRODUIT_MULTIPRICES
 	if ($conf->global->PRODUIT_MULTIPRICES) {
@@ -350,15 +359,25 @@ if (!empty($id) || !empty($ref)) {
 	$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?type='.$object->type.'">'.$langs->trans("BackToList").'</a>';
 	$object->next_prev_filter = " fk_product_type = ".$object->type;
 
-	dol_banner_tab($object, 'ref', $linkback, ($user->socid ? 0 : 1), 'ref', '', '', '', 0, '', '', 1);
+	dol_banner_tab($object, 'ref', $linkback, ($user->socid ? 0 : 1), 'ref', '', '', '', 0, '', '');
 
 	print '<div class="fichecenter">';
 
 	print '<div class="underbanner clearboth"></div>';
-	print '<table class="border tableforfield" width="100%">';
+	print '<table class="border centpercent tableforfield">';
+
+	// Type
+	if (!empty($conf->product->enabled) && !empty($conf->service->enabled)) {
+		$typeformat = 'select;0:'.$langs->trans("Product").',1:'.$langs->trans("Service");
+		print '<tr><td class="titlefieldcreate">';
+		print (empty($conf->global->PRODUCT_DENY_CHANGE_PRODUCT_TYPE)) ? $form->editfieldkey("Type", 'fk_product_type', $object->type, $object, $usercancreate, $typeformat) : $langs->trans('Type');
+		print '</td><td>';
+		print $form->editfieldval("Type", 'fk_product_type', $object->type, $object, $usercancreate, $typeformat);
+		print '</td></tr>';
+	}
 
 	// TVA
-	print '<tr><td class="titlefield">'.$langs->trans("DefaultTaxRate").'</td><td>';
+	print '<tr><td class="titlefieldcreate">'.$langs->trans("DefaultTaxRate").'</td><td>';
 
 	$positiverates = '';
 	if (price2num($object->tva_tx)) {
@@ -408,9 +427,6 @@ if (!empty($id) || !empty($ref)) {
 		print '&nbsp;';
 	}
 	print "</td></tr>\n";
-
-
-
 
 	print "</table>\n";
 
@@ -727,7 +743,7 @@ if (!empty($id) || !empty($ref)) {
 				$prodstatic->fetch($prodcomb->fk_product_child);
 
 				print $form->formconfirm(
-					"combinations.php?id=".$id."&valueid=".$valueid,
+					"combinations.php?id=".urlencode($id)."&valueid=".urlencode($valueid),
 					$langs->trans('Delete'),
 					$langs->trans('ProductCombinationDeleteDialog', $prodstatic->ref),
 					"confirm_deletecombination",

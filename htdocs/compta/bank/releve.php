@@ -116,7 +116,7 @@ if ($_GET["rel"] == 'prev') {
 	$sql = "SELECT DISTINCT(b.num_releve) as num";
 	$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
 	$sql .= " WHERE b.num_releve < '".$db->escape($numref)."'";
-	$sql .= " AND b.fk_account = ".$object->id;
+	$sql .= " AND b.fk_account = ".((int) $object->id);
 	$sql .= " ORDER BY b.num_releve DESC";
 
 	dol_syslog("htdocs/compta/bank/releve.php", LOG_DEBUG);
@@ -134,7 +134,7 @@ if ($_GET["rel"] == 'prev') {
 	$sql = "SELECT DISTINCT(b.num_releve) as num";
 	$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
 	$sql .= " WHERE b.num_releve > '".$db->escape($numref)."'";
-	$sql .= " AND b.fk_account = ".$object->id;
+	$sql .= " AND b.fk_account = ".((int) $object->id);
 	$sql .= " ORDER BY b.num_releve ASC";
 
 	dol_syslog("htdocs/compta/bank/releve.php", LOG_DEBUG);
@@ -165,7 +165,7 @@ $sql .= " WHERE b.num_releve='".$db->escape($numref)."'";
 if (empty($numref)) {
 	$sql .= " OR b.num_releve is null";
 }
-$sql .= " AND b.fk_account = ".$object->id;
+$sql .= " AND b.fk_account = ".((int) $object->id);
 $sql .= " AND b.fk_account = ba.rowid";
 $sql .= $db->order("b.datev, b.datec", "ASC"); // We add date of creation to have correct order when everything is done the same day
 
@@ -179,8 +179,8 @@ $sqlrequestforbankline = $sql;
 
 if ($action == 'confirm_editbankreceipt' && !empty($oldbankreceipt) && !empty($newbankreceipt)) {
 	// TODO Add a test to check newbankreceipt does not exists yet
-	$sqlupdate = 'UPDATE '.MAIN_DB_PREFIX.'bank';
-	$sqlupdate .= ' SET num_releve = "'.$db->escape($newbankreceipt).'" WHERE num_releve = "'.$db->escape($oldbankreceipt).'" AND fk_account = '.((int) $id);
+	$sqlupdate = "UPDATE ".MAIN_DB_PREFIX."bank SET num_releve = '".$db->escape($newbankreceipt)."'";
+	$sqlupdate .= " WHERE num_releve = '".$db->escape($oldbankreceipt)."' AND fk_account = ".((int) $id);
 	$result = $db->query($sqlupdate);
 	if ($result < 0) {
 		dol_print_error($db);
@@ -331,8 +331,8 @@ if (empty($numref)) {
 				} else {
 					print '<input type="hidden" name="oldbankreceipt" value="'.$objp->numr.'">';
 					print '<input type="text" name="newbankreceipt" value="'.$objp->numr.'">';
-					print '<input type="submit" class="button" name="actionnewbankreceipt" value="'.$langs->trans("Rename").'">';
-					print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
+					print '<input type="submit" class="button small" name="actionnewbankreceipt" value="'.$langs->trans("Rename").'">';
+					print '<input type="submit" class="button button-cancel small" name="cancel" value="'.$langs->trans("Cancel").'">';
 				}
 				print '</td>';
 
@@ -340,7 +340,7 @@ if (empty($numref)) {
 				$sql = "SELECT sum(b.amount) as amount";
 				$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
 				$sql .= " WHERE b.num_releve < '".$db->escape($objp->numr)."'";
-				$sql .= " AND b.fk_account = ".$object->id;
+				$sql .= " AND b.fk_account = ".((int) $object->id);
 				$resql = $db->query($sql);
 				if ($resql) {
 					$obj = $db->fetch_object($resql);
@@ -353,7 +353,7 @@ if (empty($numref)) {
 				$sql = "SELECT sum(b.amount) as amount";
 				$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
 				$sql .= " WHERE b.num_releve = '".$db->escape($objp->numr)."'";
-				$sql .= " AND b.fk_account = ".$object->id;
+				$sql .= " AND b.fk_account = ".((int) $object->id);
 				$resql = $db->query($sql);
 				if ($resql) {
 					$obj = $db->fetch_object($resql);
@@ -364,7 +364,7 @@ if (empty($numref)) {
 
 				print '<td class="center">';
 				if ($user->rights->banque->consolidate && $action != 'editbankreceipt') {
-					print '<a href="'.$_SERVER["PHP_SELF"].'?account='.$object->id.($page > 0 ? '&page='.$page : '').'&action=editbankreceipt&brref='.$objp->numr.'">'.img_edit().'</a>';
+					print '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?account='.$object->id.($page > 0 ? '&page='.$page : '').'&action=editbankreceipt&brref='.$objp->numr.'">'.img_edit().'</a>';
 				}
 				print '</td>';
 
@@ -421,7 +421,7 @@ if (empty($numref)) {
 	$sql = "SELECT sum(b.amount) as amount";
 	$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
 	$sql .= " WHERE b.num_releve < '".$db->escape($numref)."'";
-	$sql .= " AND b.fk_account = ".$object->id;
+	$sql .= " AND b.fk_account = ".((int) $object->id);
 
 	$resql = $db->query($sql);
 	if ($resql) {
@@ -605,8 +605,8 @@ if (empty($numref)) {
 				$sql .= " FROM ".MAIN_DB_PREFIX."bank_categ as ct";
 				$sql .= ", ".MAIN_DB_PREFIX."bank_class as cl";
 				$sql .= " WHERE ct.rowid = cl.fk_categ";
-				$sql .= " AND ct.entity = ".$conf->entity;
-				$sql .= " AND cl.lineid = ".$objp->rowid;
+				$sql .= " AND ct.entity = ".((int) $conf->entity);
+				$sql .= " AND cl.lineid = ".((int) $objp->rowid);
 
 				$resc = $db->query($sql);
 				if ($resc) {
@@ -669,6 +669,7 @@ if (empty($numref)) {
     		var current = $(this);
     		current.click(function()
     		{
+				console.log("We click on ajaxforbankoperationchange");
 				var url = "'.$urlajax.'&"+current.attr("href").split("?")[1];
     			$.get(url, function(data)
     			{

@@ -135,11 +135,11 @@ $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'entrepot as e on ps.fk_entrepot = e.rowid'
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_batch as pb on pb.fk_product_stock = ps.rowid'; // Detail for each lot on each warehouse
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_lot as pl on pl.fk_product = p.rowid AND pl.batch = pb.batch'; // Link on unique key
 // We'll need this table joined to the select in order to filter by categ
-if ($search_categ) {
+if ($search_categ > 0) {
 	$sql .= ", ".MAIN_DB_PREFIX."categorie_product as cp";
 }
 $sql .= " WHERE p.entity IN (".getEntity('product').")";
-if ($search_categ) {
+if ($search_categ > 0) {
 	$sql .= " AND p.rowid = cp.fk_product"; // Join for the needed table to filter by categ
 }
 if ($sall) {
@@ -178,8 +178,8 @@ if ($fourn_id > 0) {
 	$sql .= " AND p.rowid = pf.fk_product AND pf.fk_soc = ".((int) $fourn_id);
 }
 // Insert categ filter
-if ($search_categ) {
-	$sql .= " AND cp.fk_categorie = ".$db->escape($search_categ);
+if ($search_categ > 0) {
+	$sql .= " AND cp.fk_categorie = ".((int) $search_categ);
 }
 if ($search_warehouse) {
 	$sql .= natural_search("e.ref", $search_warehouse);
@@ -277,7 +277,7 @@ if ($resql) {
 	if ($search_sale) {
 		$param .= "&search_sale=".urlencode($search_sale);
 	}
-	if ($search_categ) {
+	if ($search_categ > 0) {
 		$param .= "&search_categ=".urlencode($search_categ);
 	}
 	/*if ($eatby)		$param.="&eatby=".$eatby;
@@ -343,10 +343,10 @@ if ($resql) {
 	print '<td class="liste_titre center"><input class="flat" type="text" name="search_batch" size="6" value="'.$search_batch.'"></td>';
 	print '<td class="liste_titre right">&nbsp;</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
-	if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+	if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
 		print '<td class="liste_titre">&nbsp;</td>';
 	}
-	if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
+	if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
 		print '<td class="liste_titre">&nbsp;</td>';
 	}
 	print '<td class="liste_titre">&nbsp;</td>';
@@ -367,11 +367,11 @@ if ($resql) {
 	print_liste_field_titre("Warehouse", $_SERVER["PHP_SELF"], "e.ref", $param, "", '', $sortfield, $sortorder);
 	//print_liste_field_titre("DesiredStock", $_SERVER["PHP_SELF"], "p.desiredstock",$param,"",'',$sortfield,$sortorder, 'right );
 	print_liste_field_titre("Batch", $_SERVER["PHP_SELF"], "pb.batch", $param, "", '', $sortfield, $sortorder, 'center ');
-	if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
-		print_liste_field_titre("EatByDate", $_SERVER["PHP_SELF"], "pb.eatby", $param, "", '', $sortfield, $sortorder, 'center ');
-	}
 	if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
 		print_liste_field_titre("SellByDate", $_SERVER["PHP_SELF"], "pb.sellby", $param, "", '', $sortfield, $sortorder, 'center ');
+	}
+	if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+		print_liste_field_titre("EatByDate", $_SERVER["PHP_SELF"], "pb.eatby", $param, "", '', $sortfield, $sortorder, 'center ');
 	}
 	print_liste_field_titre("PhysicalStock", $_SERVER["PHP_SELF"], "stock_physique", $param, "", '', $sortfield, $sortorder, 'right ');
 	// TODO Add info of running suppliers/customers orders
@@ -470,23 +470,30 @@ if ($resql) {
 		}
 		print '</td>';
 
-		if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
-			print '<td class="center">'.dol_print_date($db->jdate($objp->eatby), 'day').'</td>';
-		}
 		if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
 			print '<td class="center">'.dol_print_date($db->jdate($objp->sellby), 'day').'</td>';
 		}
+
+		if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+			print '<td class="center">'.dol_print_date($db->jdate($objp->eatby), 'day').'</td>';
+		}
+
 		print '<td class="right">';
 		//if ($objp->seuil_stock_alerte && ($objp->stock_physique < $objp->seuil_stock_alerte)) print img_warning($langs->trans("StockTooLow")).' ';
 		print $objp->stock_physique;
 		print '</td>';
+
 		print '<td class="right">';
 		print img_picto($langs->trans("StockMovement"), 'movement', 'class="pictofixedwidth"');
 		print '<a href="'.DOL_URL_ROOT.'/product/stock/movement_list.php?idproduct='.$product_static->id.'&search_warehouse='.$objp->fk_entrepot.'&search_batch='.($objp->batch != 'Undefined' ? $objp->batch : 'Undefined').'">'.$langs->trans("Movements").'</a>';
 		print '</td>';
+
 		print '<td class="right nowrap">'.$product_static->LibStatut($objp->statut, 5, 0).'</td>';
+
 		print '<td class="right nowrap">'.$product_static->LibStatut($objp->tobuy, 5, 1).'</td>';
+
 		print '<td></td>';
+
 		print "</tr>\n";
 		$i++;
 	}

@@ -81,17 +81,19 @@ $backtopage = GETPOST('backtopage', 'alpha');
 
 $form = new Form($db);
 
+$help_url = '';
 $page_name = "MyModuleAbout";
-llxHeader('', $langs->trans($page_name));
+
+llxHeader('', $langs->trans($page_name), $help_url);
 
 // Subheader
 $linkback = '<a href="'.($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1').'">'.$langs->trans("BackToModuleList").'</a>';
 
-print load_fiche_titre($langs->trans($page_name), $linkback, 'object_mymodule@mymodule');
+print load_fiche_titre($langs->trans($page_name), $linkback, 'title_setup');
 
 // Configuration header
 $head = mymoduleAdminPrepareHead();
-print dol_get_fiche_head($head, 'about', '', 0, 'mymodule@mymodule');
+print dol_get_fiche_head($head, 'about', $langs->trans($page_name), 0, 'mymodule@mymodule');
 
 dol_include_once('/mymodule/core/modules/modMyModule.class.php');
 $tmpmodule = new modMyModule($db);

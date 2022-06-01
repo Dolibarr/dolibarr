@@ -378,7 +378,7 @@ if ($cats < 0) {
 				? $categstatic->getObjectsInCateg("account", 1)			// Categorie::TYPE_ACCOUNT is "bank_account" instead of "account"
 				: $categstatic->getObjectsInCateg($type, 1);
 
-			$counter = "<td class='left' width='40px;'>".(is_countable($elements) ? count($elements) : '0')."</td>";
+			$counter = "<td class='left' width='40px;'>".(is_array($elements) ? count($elements) : '0')."</td>";
 		}
 
 		$color = $categstatic->color ? ' style="background: #'.sprintf("%06s", $categstatic->color).';"' : ' style="background: #bbb"';
@@ -754,6 +754,7 @@ if ($type == Categorie::TYPE_CONTACT) {
 		$num = count($contacts);
 		$nbtotalofrecords = '';
 		$newcardbutton = '';
+		$objsoc = new Societe($db);
 		print_barre_liste($langs->trans("Contact"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'contact', 0, $newcardbutton, '', $limit);
 
 		print '<table class="noborder centpercent">'."\n";
@@ -770,6 +771,11 @@ if ($type == Categorie::TYPE_CONTACT) {
 				print "\t".'<tr class="oddeven">'."\n";
 				print '<td class="nowrap" valign="top">';
 				print $contact->getNomUrl(1, 'category');
+				if ($contact->socid > 0) {
+					$objsoc->fetch($contact->socid);
+					print ' - ';
+					print $objsoc->getNomUrl(1, 'contact');
+				}
 				print "</td>\n";
 				// Link to delete from category
 				print '<td class="right">';

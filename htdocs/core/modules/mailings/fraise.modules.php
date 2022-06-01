@@ -252,7 +252,7 @@ class mailing_fraise extends MailingTargets
 		}
 		$sql .= " , ".MAIN_DB_PREFIX."adherent_type as ta";
 		$sql .= " WHERE a.entity IN (".getEntity('member').") AND a.email <> ''"; // Note that null != '' is false
-		$sql .= " AND a.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".$this->db->escape($mailing_id).")";
+		$sql .= " AND a.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".((int) $mailing_id).")";
 		// Filter on status
 		if (GETPOST("filter") == '-1') {
 			$sql .= " AND a.statut=-1";

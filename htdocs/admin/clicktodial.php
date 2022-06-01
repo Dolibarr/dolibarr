@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2020 Laurent Destailleur  <eldy@users.sourceforge.org>
+ * Copyright (C) 2005-2021 Laurent Destailleur  <eldy@users.sourceforge.org>
  * Copyright (C) 2011-2013 Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -20,7 +20,7 @@
 /**
  *   \file       htdocs/admin/clicktodial.php
  *   \ingroup    clicktodial
- *   \brief      Page to setup module clicktodial
+ *   \brief      Page to setup module ClickToDial
  */
 
 require '../main.inc.php';
@@ -99,7 +99,12 @@ print '<input class="quatrevingtpercent" type="text" id="CLICKTODIAL_URL" name="
 print ajax_autoselect('CLICKTODIAL_URL');
 print '<br>';
 print $langs->trans("ClickToDialUrlDesc").'<br>';
-print $langs->trans("Example").':<br>http://myphoneserver/mypage?login=__LOGIN__&password=__PASS__&caller=__PHONEFROM__&called=__PHONETO__';
+print '<br>';
+print '<span class="opacitymedium">';
+print $langs->trans("Example").':<br>';
+print 'http://myphoneserver/mypage?login=__LOGIN__&password=__PASS__&caller=__PHONEFROM__&called=__PHONETO__<br>';
+print 'sip:__PHONETO__@my.sip.server';
+print '</span>';
 
 //if (! empty($user->clicktodial_url))
 //{
@@ -129,7 +134,7 @@ if (!empty($conf->global->CLICKTODIAL_URL)) {
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print $langs->trans("LinkToTestClickToDial", $user->login).' : ';
 	print '<input class="flat" type="text" name="phonefortest" value="'.dol_escape_htmltag($phonefortest).'">';
-	print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("RefreshPhoneLink")).'">';
+	print '<input type="submit" class="button small" value="'.dol_escape_htmltag($langs->trans("RefreshPhoneLink")).'">';
 	print '</form>';
 
 	$setupcomplete = 1;
@@ -144,7 +149,7 @@ if (!empty($conf->global->CLICKTODIAL_URL)) {
 	}
 
 	if ($setupcomplete) {
-		print $langs->trans("LinkToTest", $user->login).': '.dol_print_phone($phonefortest, '', 0, 0, 'AC_TEL');
+		print $langs->trans("LinkToTest", $user->login).': '.dol_print_phone($phonefortest, '', 0, 0, 'AC_TEL', '', 1);
 	} else {
 		$langs->load("errors");
 		print '<div class="warning">'.$langs->trans("WarningClickToDialUserSetupNotComplete").'</div>';

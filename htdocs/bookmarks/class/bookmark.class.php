@@ -219,7 +219,7 @@ class Bookmark extends CommonObject
 		$sql .= " ,title = '".$this->db->escape($this->title)."'";
 		$sql .= " ,favicon = '".$this->db->escape($this->favicon)."'";
 		$sql .= " ,position = ".(int) $this->position;
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog("Bookmark::update", LOG_DEBUG);
 		if ($this->db->query($sql)) {

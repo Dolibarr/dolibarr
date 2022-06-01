@@ -319,9 +319,9 @@ class Utils
 			}
 			if ($dolibarr_main_db_character_set == 'utf8mb4') {
 				// We save output into utf8mb4 charset
-				$param .= " --default-character-set=utf8mb4";
+				$param .= " --default-character-set=utf8mb4 --no-tablespaces";
 			} else {
-				$param .= " --default-character-set=utf8"; // We always save output into utf8 charset
+				$param .= " --default-character-set=utf8 --no-tablespaces"; // We always save output into utf8 charset
 			}
 			$paramcrypted = $param;
 			$paramclear = $param;
@@ -354,12 +354,21 @@ class Utils
 					$execmethod = 1;
 				}
 
-				dol_syslog("Utils::dumpDatabase execmethod=".$execmethod." command:".$fullcommandcrypted, LOG_DEBUG);
+				dol_syslog("Utils::dumpDatabase execmethod=".$execmethod." command:".$fullcommandcrypted, LOG_INFO);
+
+
+				/* If value has been forced with a php_admin_value, this has no effect. Example of value: '512M' */
+				$MemoryLimit = getDolGlobalString('MAIN_MEMORY_LIMIT_DUMP');
+				if (!empty($MemoryLimit)) {
+					@ini_set('memory_limit', $MemoryLimit);
+				}
+
 
 				// TODO Replace with executeCLI function
 				if ($execmethod == 1) {
 					$output_arr = array();
 					$retval = null;
+
 					exec($fullcommandclear, $output_arr, $retval);
 
 					if ($retval != 0) {
@@ -376,9 +385,9 @@ class Utils
 									continue;
 								}
 								fwrite($handle, $read.($execmethod == 2 ? '' : "\n"));
-								if (preg_match('/'.preg_quote('-- Dump completed').'/i', $read)) {
+								if (preg_match('/'.preg_quote('-- Dump completed', '/').'/i', $read)) {
 									$ok = 1;
-								} elseif (preg_match('/'.preg_quote('SET SQL_NOTES=@OLD_SQL_NOTES').'/i', $read)) {
+								} elseif (preg_match('/'.preg_quote('SET SQL_NOTES=@OLD_SQL_NOTES', '/').'/i', $read)) {
 									$ok = 1;
 								}
 							}
@@ -388,21 +397,23 @@ class Utils
 				if ($execmethod == 2) {	// With this method, there is no way to get the return code, only output
 					$handlein = popen($fullcommandclear, 'r');
 					$i = 0;
-					while (!feof($handlein)) {
-						$i++; // output line number
-						$read = fgets($handlein);
-						// Exclude warning line we don't want
-						if ($i == 1 && preg_match('/Warning.*Using a password/i', $read)) {
-							continue;
+					if ($handlein) {
+						while (!feof($handlein)) {
+							$i++; // output line number
+							$read = fgets($handlein);
+							// Exclude warning line we don't want
+							if ($i == 1 && preg_match('/Warning.*Using a password/i', $read)) {
+								continue;
+							}
+							fwrite($handle, $read);
+							if (preg_match('/'.preg_quote('-- Dump completed').'/i', $read)) {
+								$ok = 1;
+							} elseif (preg_match('/'.preg_quote('SET SQL_NOTES=@OLD_SQL_NOTES').'/i', $read)) {
+								$ok = 1;
+							}
 						}
-						fwrite($handle, $read);
-						if (preg_match('/'.preg_quote('-- Dump completed').'/i', $read)) {
-							$ok = 1;
-						} elseif (preg_match('/'.preg_quote('SET SQL_NOTES=@OLD_SQL_NOTES').'/i', $read)) {
-							$ok = 1;
-						}
+						pclose($handlein);
 					}
-					pclose($handlein);
 				}
 
 
@@ -593,12 +604,16 @@ class Utils
 	/**
 	 * Execute a CLI command.
 	 *
-	 * @param 	string	$command		Command line to execute.
-	 * @param 	string	$outputfile		Output file (used only when method is 2). For exemple $conf->admin->dir_temp.'/out.tmp';
-	 * @param	int		$execmethod		0=Use default method (that is 1 by default), 1=Use the PHP 'exec', 2=Use the 'popen' method
-	 * @return	array					array('result'=>...,'output'=>...,'error'=>...). result = 0 means OK.
+	 * @param 	string	$command			Command line to execute.
+	 * 										Warning: The command line is sanitize so can't contains any redirection char '>'. Use param $redirectionfile if you need it.
+	 * @param 	string	$outputfile			A path for an output file (used only when method is 2). For example: $conf->admin->dir_temp.'/out.tmp';
+	 * @param	int		$execmethod			0=Use default method (that is 1 by default), 1=Use the PHP 'exec', 2=Use the 'popen' method
+	 * @param	string	$redirectionfile	If defined, a redirection of output to this files is added.
+	 * @param	int		$noescapecommand	1=Do not escape command. Warning: Using this parameter need you alreay sanitized the command. if not, it will lead to security vulnerability.
+	 * 										This parameter is provided for backward compatibility with external modules. Always use 0 in core.
+	 * @return	array						array('result'=>...,'output'=>...,'error'=>...). result = 0 means OK.
 	 */
-	public function executeCLI($command, $outputfile, $execmethod = 0)
+	public function executeCLI($command, $outputfile, $execmethod = 0, $redirectionfile = null, $noescapecommand = 0)
 	{
 		global $conf, $langs;
 
@@ -606,7 +621,12 @@ class Utils
 		$output = '';
 		$error = '';
 
-		$command = escapeshellcmd($command);
+		if (empty($noescapecommand)) {
+			$command = escapeshellcmd($command);
+		}
+		if ($redirectionfile) {
+			$command .= " > ".dol_sanitizePathName($redirectionfile);
+		}
 		$command .= " 2>&1";
 
 		if (!empty($conf->global->MAIN_EXEC_USE_POPEN)) {

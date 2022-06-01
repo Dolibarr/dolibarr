@@ -366,20 +366,20 @@ if ($ok && GETPOST('standard', 'alpha')) {
 					$sql2 = "SELECT COUNT(*) as nb";
 					$sql2 .= " FROM ".MAIN_DB_PREFIX."const as c";
 					$sql2 .= " WHERE name = 'MAIN_MODULE_".$name."'";
-					$sql2 .= " AND entity = ".$obj->entity;
+					$sql2 .= " AND entity = ".((int) $obj->entity);
 					$resql2 = $db->query($sql2);
 					if ($resql2) {
 						$obj2 = $db->fetch_object($resql2);
 						if ($obj2 && $obj2->nb == 0) {
 							// Module not found, so we can remove entry
-							$sqldelete = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = '".$db->escape($obj->name)."' AND entity = ".$obj->entity;
+							$sqldelete = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = '".$db->escape($obj->name)."' AND entity = ".((int) $obj->entity);
 
 							if (GETPOST('standard', 'alpha') == 'confirmed') {
 								$db->query($sqldelete);
 
-								print '<tr><td>Widget '.$obj->name.' set in entity '.$obj->entity.' with value '.$obj->value.' -> Module '.$name.' not enabled in entity '.$obj->entity.', we delete record</td></tr>';
+								print '<tr><td>Widget '.$obj->name.' set in entity '.$obj->entity.' with value '.$obj->value.' -> Module '.$name.' not enabled in entity '.((int) $obj->entity).', we delete record</td></tr>';
 							} else {
-								print '<tr><td>Widget '.$obj->name.' set in entity '.$obj->entity.' with value '.$obj->value.' -> Module '.$name.' not enabled in entity '.$obj->entity.', we should delete record (not done, mode test)</td></tr>';
+								print '<tr><td>Widget '.$obj->name.' set in entity '.$obj->entity.' with value '.$obj->value.' -> Module '.$name.' not enabled in entity '.((int) $obj->entity).', we should delete record (not done, mode test)</td></tr>';
 							}
 						} else {
 							//print '<tr><td>Constant '.$obj->name.' set in entity '.$obj->entity.' with value '.$obj->value.' -> Module found in entity '.$obj->entity.', we keep record</td></tr>';
@@ -424,23 +424,23 @@ if ($ok && GETPOST('standard', 'alpha')) {
 					$sql2 = "SELECT COUNT(*) as nb";
 					$sql2 .= " FROM ".MAIN_DB_PREFIX."const as c";
 					$sql2 .= " WHERE name = 'MAIN_MODULE_".strtoupper($module)."'";
-					$sql2 .= " AND entity = ".$obj->entity;
+					$sql2 .= " AND entity = ".((int) $obj->entity);
 					$sql2 .= " AND value <> 0";
 					$resql2 = $db->query($sql2);
 					if ($resql2) {
 						$obj2 = $db->fetch_object($resql2);
 						if ($obj2 && $obj2->nb == 0) {
 							// Module not found, so we canremove entry
-							$sqldeletea = "DELETE FROM ".MAIN_DB_PREFIX."boxes WHERE entity = ".$obj->entity." AND box_id IN (SELECT rowid FROM ".MAIN_DB_PREFIX."boxes_def WHERE file = '".$db->escape($obj->file)."' AND entity = ".$obj->entity.")";
-							$sqldeleteb = "DELETE FROM ".MAIN_DB_PREFIX."boxes_def WHERE file = '".$db->escape($obj->file)."' AND entity = ".$obj->entity;
+							$sqldeletea = "DELETE FROM ".MAIN_DB_PREFIX."boxes WHERE entity = ".((int) $obj->entity)." AND box_id IN (SELECT rowid FROM ".MAIN_DB_PREFIX."boxes_def WHERE file = '".$db->escape($obj->file)."' AND entity = ".((int) $obj->entity).")";
+							$sqldeleteb = "DELETE FROM ".MAIN_DB_PREFIX."boxes_def WHERE file = '".$db->escape($obj->file)."' AND entity = ".((int) $obj->entity);
 
 							if (GETPOST('standard', 'alpha') == 'confirmed') {
 								$db->query($sqldeletea);
 								$db->query($sqldeleteb);
 
-								print '<tr><td>Constant '.$obj->file.' set in boxes_def for entity '.$obj->entity.' but MAIN_MODULE_'.strtoupper($module).' not defined in entity '.$obj->entity.', we delete record</td></tr>';
+								print '<tr><td>Constant '.$obj->file.' set in boxes_def for entity '.$obj->entity.' but MAIN_MODULE_'.strtoupper($module).' not defined in entity '.((int) $obj->entity).', we delete record</td></tr>';
 							} else {
-								print '<tr><td>Constant '.$obj->file.' set in boxes_def for entity '.$obj->entity.' but MAIN_MODULE_'.strtoupper($module).' not defined in entity '.$obj->entity.', we should delete record (not done, mode test)</td></tr>';
+								print '<tr><td>Constant '.$obj->file.' set in boxes_def for entity '.$obj->entity.' but MAIN_MODULE_'.strtoupper($module).' not defined in entity '.((int) $obj->entity).', we should delete record (not done, mode test)</td></tr>';
 							}
 						} else {
 							//print '<tr><td>Constant '.$obj->name.' set in entity '.$obj->entity.' with value '.$obj->value.' -> Module found in entity '.$obj->entity.', we keep record</td></tr>';
@@ -565,7 +565,7 @@ if ($ok && GETPOST('restore_user_pictures', 'alpha')) {
 				$filetotestsmall = $dolibarr_main_data_root.'/users/'.substr(sprintf('%08d', $obj->rowid), -1, 1).'/'.substr(sprintf('%08d', $obj->rowid), -2, 1).'/thumbs/'.$name.'_small'.$ext;
 				$filetotestmini = $dolibarr_main_data_root.'/users/'.substr(sprintf('%08d', $obj->rowid), -1, 1).'/'.substr(sprintf('%08d', $obj->rowid), -2, 1).'/thumbs/'.$name.'_mini'.$ext;
 				$exists = dol_is_file($filetotest);
-				print 'Check user '.$obj->rowid.' lastname='.$obj->lastname.' fistname='.$obj->firstname.' photo='.$obj->photo.' file '.$filetotest." exists=".$exists."<br>\n";
+				print 'Check user '.$obj->rowid.' lastname='.$obj->lastname.' firstname='.$obj->firstname.' photo='.$obj->photo.' file '.$filetotest." exists=".$exists."<br>\n";
 				if ($exists) {
 					$filetarget = $dolibarr_main_data_root.'/users/'.$obj->rowid.'/'.$name.$ext;
 					$filetargetsmall = $dolibarr_main_data_root.'/users/'.$obj->rowid.'/thumbs/'.$name.'_small'.$ext;
@@ -1178,9 +1178,9 @@ if ($ok && GETPOST('clean_perm_table', 'alpha')) {
 
 	$listofmods = '';
 	foreach ($conf->modules as $key => $val) {
-		$listofmods .= ($listofmods ? ',' : '')."'".$val."'";
+		$listofmods .= ($listofmods ? ',' : '')."'".$db->escape($val)."'";
 	}
-	$sql = 'SELECT id, libelle as label, module from '.MAIN_DB_PREFIX.'rights_def WHERE module NOT IN ('.$db->sanitize($listofmods).') AND id > 100000';
+	$sql = "SELECT id, libelle as label, module from ".MAIN_DB_PREFIX."rights_def WHERE module NOT IN (".$db->sanitize($listofmods, 1).") AND id > 100000";
 	$resql = $db->query($sql);
 	if ($resql) {
 		$num = $db->num_rows($resql);
@@ -1191,7 +1191,7 @@ if ($ok && GETPOST('clean_perm_table', 'alpha')) {
 				if ($obj->id > 0) {
 					print '<tr><td>Found line with id '.$obj->id.', label "'.$obj->label.'" of module "'.$obj->module.'" to delete';
 					if (GETPOST('clean_perm_table', 'alpha') == 'confirmed') {
-						$sqldelete = 'DELETE FROM '.MAIN_DB_PREFIX.'rights_def WHERE id = '.$obj->id;
+						$sqldelete = "DELETE FROM ".MAIN_DB_PREFIX."rights_def WHERE id = ".((int) $obj->id);
 						$resqldelete = $db->query($sqldelete);
 						if (!$resqldelete) {
 							dol_print_error($db);

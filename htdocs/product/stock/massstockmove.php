@@ -209,7 +209,7 @@ if ($action == 'createmovements' && !empty($user->rights->stock->mouvement->cree
 					);
 					if ($result1 < 0) {
 						$error++;
-						setEventMessages($product->errors, $product->errorss, 'errors');
+						setEventMessages($product->error, $product->errors, 'errors');
 					}
 
 					// Add stock
@@ -224,7 +224,7 @@ if ($action == 'createmovements' && !empty($user->rights->stock->mouvement->cree
 					);
 					if ($result2 < 0) {
 						$error++;
-						setEventMessages($product->errors, $product->errorss, 'errors');
+						setEventMessages($product->error, $product->errors, 'errors');
 					}
 				} else {
 					$arraybatchinfo = $product->loadBatchInfo($batch);
@@ -253,7 +253,7 @@ if ($action == 'createmovements' && !empty($user->rights->stock->mouvement->cree
 					);
 					if ($result1 < 0) {
 						$error++;
-						setEventMessages($product->errors, $product->errorss, 'errors');
+						setEventMessages($product->error, $product->errors, 'errors');
 					}
 
 					// Add stock
@@ -271,7 +271,7 @@ if ($action == 'createmovements' && !empty($user->rights->stock->mouvement->cree
 					);
 					if ($result2 < 0) {
 						$error++;
-						setEventMessages($product->errors, $product->errorss, 'errors');
+						setEventMessages($product->error, $product->errors, 'errors');
 					}
 				}
 			} else {
@@ -443,6 +443,7 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes') {
  */
 
 $now = dol_now();
+$error = 0;
 
 $form = new Form($db);
 $formproduct = new FormProduct($db);
@@ -681,9 +682,9 @@ $db->close();
 /**
  * Verify if $haystack startswith $needle
  *
- * @param String $haystack string to test
- * @param String $needle string to find
- * @return false if Ko true else
+ * @param string $haystack string to test
+ * @param string $needle string to find
+ * @return bool false if Ko true else
  */
 function startsWith($haystack, $needle)
 {
@@ -695,8 +696,8 @@ function startsWith($haystack, $needle)
  * Fetch object with ref
  *
  * @param Object $static_object static object to fetch
- * @param String $tmp_ref ref of the object to fetch
- * @return <0 if Ko or Id of object
+ * @param string $tmp_ref ref of the object to fetch
+ * @return int <0 if Ko or Id of object
  */
 function fetchref($static_object, $tmp_ref)
 {

@@ -367,8 +367,8 @@ if ($resql) {
 
 
 print '<div class="div-table-responsive-no-min">';
-print "<table class=\"noborder\" width=\"100%\">\n";
-print "<tr class=\"liste_titre\">\n";
+print '<table class="noborder centpercent">'."\n";
+print '<tr class="liste_titre">'."\n";
 print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
 print '<td class="center" width="60">'.$langs->trans("Status")."</td>\n";
@@ -498,6 +498,7 @@ print load_fiche_titre($langs->trans("SuggestedPaymentModesIfNotDefinedInOrder")
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.newToken().'" />';
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
@@ -584,6 +585,8 @@ if (empty($conf->facture->enabled)) {
 }
 print "</td></tr>";
 print "</table>";
+print '</div>';
+
 print "</form>";
 
 
@@ -594,6 +597,8 @@ print '<br>';
  */
 
 print load_fiche_titre($langs->trans("OtherOptions"), '', '');
+
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
@@ -704,6 +709,8 @@ if ($conf->stock->enabled) {
 */
 
 print '</table>';
+print '</div>';
+
 print '<br>';
 
 
@@ -712,6 +719,8 @@ print '<br>';
  */
 
 print load_fiche_titre($langs->trans("Notifications"), '', '');
+
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
@@ -725,6 +734,7 @@ print '</td><td class="right">';
 print "</td></tr>\n";
 
 print '</table>';
+print '</div>';
 
 // End of page
 llxFooter();

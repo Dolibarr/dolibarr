@@ -195,7 +195,6 @@ if ($resql) {
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans('Salary').'</td>';
-	print '<td>'.$langs->trans('Type').'</td>';
 	print '<td>'.$langs->trans('Label').'</td>';
 	print '<td class="right">'.$langs->trans('ExpectedToPay').'</td>';
 	print '<td class="center">'.$langs->trans('Status').'</td>';
@@ -211,11 +210,6 @@ if ($resql) {
 			print '<td>';
 			$salary->fetch($objp->scid);
 			print $salary->getNomUrl(1);
-			print "</td>\n";
-			// Type
-			print '<td>';
-			print $salary->type_label;
-			/*print $salary->type;*/
 			print "</td>\n";
 			// Label
 			print '<td>'.$objp->label.'</td>';

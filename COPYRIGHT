@@ -1,52 +1,63 @@
 
-License
--------
+Copyright and license
+----------------------
 
-Dolibarr is released under the terms of the GNU General Public License as
-published by the Free Software Foundation; either version 3 of the License,
-or (at your option) any later version (GPL-3+).
-More information: https://www.gnu.org/licenses/gpl-3.0.txt
+The Dolibarr software as a whole is distributed under the GNU General Public License as published by the Free Software Foundation;
+either version 3 of the License, or (at your option) any later version (GPL-3+). More information: https://www.gnu.org/licenses/gpl-3.0.txt.
+A copy of this license is available in the COPYING file.
+Dolibarr depends on third-party components and code snippets released under their own license (obviously, all compatible with the one of Dolibarr).
+These dependencies are listed in the bottom of this file.
 
-Dolibarr uses some external libraries released under different licenses. This is compatibility summary:
+
+The Dolibarr images resources (available in the doc directory) is distributed under the Creative Commons Attribution 4.0 International license (CC BY 4.0).
+
+
+The name Dolibarr is a trademark initially registered by Laurent Destailleur and ceased to the Dolibarr foundation. You can use the name Dolibarr
+for your own need as long as you follow the rules defined on the page https://wiki.dolibarr.org/index.php/Rules_to_use_the_brand_name_%22Dolibarr%22   
+The use of the name DoliStore is also restricted to the same rules defined on https://wiki.dolibarr.org/index.php/Rules_to_use_the_brand_name_%22Dolibarr%22
+
+
+
+Licence of dependencies of third-party components used by Dolibarr (all compatible with the Licence of Dolibarr):
 
 Component              Version       License                     GPL Compatible  Usage
 -------------------------------------------------------------------------------------
 PHP libraries:
-AdoDb-Date             0.36          Modified BSD License        Yes             Date convertion (not into rpm package)
+ADOdb-Date             0.36          Modified BSD License        Yes             Date convertion (not into rpm package)
 CKEditor               4.12.1        LGPL-2.1+                   Yes             Editor WYSIWYG
 EvalMath               1.0           BSD                         Yes             Safe math expressions evaluation
 Escpos-php             2.2           MIT License                 Yes             Thermal receipt printer library, for use with ESC/POS compatible printers
-GeoIP2                 0.2.0         LGPL-2.1+                   Yes             Lib to make geoip convert
+GeoIP2                 0.2.0         Apache License 2.0          Yes             Lib to make geoip convert
 Mobiledetect           2.8.34        MIT License                 Yes             Detect mobile devices browsers
 NuSoap                 0.9.5         LGPL 2.1+                   Yes             Library to develop SOAP Web services (not into rpm and deb package)
 PEAR Mail_MIME         1.8.9         BSD                         Yes             NuSoap dependency
 ParseDown              1.6           MIT License                 Yes             Markdown parser
 PCLZip                 2.8.4         LGPL-3+                     Yes             Library to zip/unzip files             
-PHPDebugBar            1.15.1        MIT License	             Yes             Used only by the module "debugbar" for developers
-PHPSpreadSheet         ?             LGPL-2.1+                   Yes             Read/Write XLS files, read ODS files
+PHPDebugBar            1.15.1        MIT License                 Yes             Used only by the module "debugbar" for developers
+PHPSpreadSheet         1.8.2         LGPL-2.1+                   Yes             Read/Write XLS files, read ODS files
 php-iban               1.4.7         LGPL-3+                     Yes             Parse and validate IBAN (and IIBAN) bank account information in PHP
 PHPoAuthLib            0.8.2         MIT License                 Yes             Library to provide oauth1 and oauth2 to different service
 PHPPrintIPP            1.3           GPL-2+                      Yes             Library to send print IPP requests
-PSR/Logs			   1.0										                 Library for logs (used by DebugBar)
-PSR/simple-cache	   ?										                 Library for cache (used by PHPSpreadSheet)
+PSR/Logs               1.0                                                       Library for logs (used by DebugBar)
+PSR/simple-cache       ?             MIT License                 Yes             Library for cache (used by PHPSpreadSheet)
 Restler                3.1.1         LGPL-3+                     Yes             Library to develop REST Web services (+ swagger-ui js lib into dir explorer)
 Sabre                  3.2.2         BSD                         Yes             DAV support
-Swift Mailer           5.4.2-DEV     MIT license                 Yes             Comprehensive mailing tools for PHP
-Stripe                 7.67.0        MIT licence                 Yes             Library for Stripe module
+Swift Mailer           5.4.2-DEV     MIT License                 Yes             Comprehensive mailing tools for PHP
+Stripe                 7.67.0        MIT Licence                 Yes             Library for Stripe module
 TCPDF                  6.3.2         LGPL-3+                     Yes             PDF generation
 TCPDI                  1.0.0         LGPL-3+ / Apache 2.0        Yes             FPDI replacement
 
 JS libraries:
 Ace                    1.4.8         BSD                         Yes             JS library to get code syntaxique coloration in a textarea.
-ChartJS				   2.9.4         MIT License                 Yes             JS library for graph
+ChartJS                2.9.4         MIT License                 Yes             JS library for graph
 jQuery                 3.5.1         MIT License                 Yes             JS library
 jQuery UI              1.12.1        GPL and MIT License         Yes             JS library plugin UI
-jQuery select2         4.0.13         GPL and Apache License      Yes             JS library plugin for sexier multiselect. Warning: 4.0.6+ create troubles without patching css
+jQuery select2         4.0.13        GPL and Apache License      Yes             JS library plugin for sexier multiselect. Warning: 4.0.6+ create troubles without patching css
 jQuery blockUI         2.70.0        GPL and MIT License         Yes             JS library plugin blockUI (to use ajax popups)
 jQuery Colorpicker     1.1           MIT License                 Yes             JS library for color picker for a defined list of colors
 jQuery JCrop           0.9.8         GPL and MIT License         Yes             JS library plugin Crop (to crop images)
 jQuery Jeditable       1.7.1         GPL and MIT License         Yes             JS library plugin jeditable (to edit in place)
-jQuery jNotify         1.1.00        Apache Software License 2.0 Yes             JS library plugin jNotify (to use ajax popups)
+jQuery jNotify         1.1.00        Apache License 2.0          Yes             JS library plugin jNotify (to use ajax popups)
 jQuery jPicker         1.1.6         GPL and MIT License         Yes             JS library for color picker with not defined list of colors
 jQuery jqueryFileTree  1.0.1         GPL and MIT License         Yes             JS library for filetree
 jQuery jquerytreeview  1.4.1         MIT License                 Yes             JS library for filetree
@@ -54,20 +65,19 @@ jQuery TableDnD        0.6           GPL and MIT License         Yes            
 jQuery Timepicker      1.1.0         GPL and MIT License         Yes             JS library Timepicker addon for Datepicker
 jsGanttImproved        2.7.3         BSD License                 Yes             JS library (to build Gantt reports)
 JsTimezoneDetect       1.0.6         MIT License                 Yes             JS library to detect user timezone
-SwaggerUI			   2.0.24		 GPL-2+                      Yes             JS library to offer the REST API explorer
+SwaggerUI              2.2.10        GPL-2+                      Yes             JS library to offer the REST API explorer
 
 Image libraries:
 Octicons               8.1           MIT                         Yes
 
 Font libraries:
-Fontawesome            5.13          Font Awesome Free licence   Yes
+Fontawesome            5.13          Font Awesome Free Licence   Yes
 
 
-For licenses compatibility informations:
-https://www.gnu.org/licenses/licenses.en.html
+For more licenses compatibility informations: https://www.gnu.org/licenses/licenses.en.html
 
 
-Copyright / Authors
+Authors
 -------------------
 
 See page https://github.com/Dolibarr/dolibarr/graphs/contributors

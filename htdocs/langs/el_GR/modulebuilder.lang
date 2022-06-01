@@ -85,7 +85,7 @@ ListOfPermissionsDefined=Λίστα καθορισμένων δικαιωμάτ�
 SeeExamples=Δείτε παραδείγματα εδώ
 EnabledDesc=Προϋπόθεση να είναι ενεργό αυτό το πεδίο (Παραδείγματα: 1 ή $ conf-&gt; global-&gt; MYMODULE_MYOPTION)
 VisibleDesc=Is the field visible ? (Examples: 0=Never visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create), 5=Visible on list end view form only (not create, not update).<br><br>Using a negative value means field is not shown by default on list but can be selected for viewing).<br><br>It can be an expression, for example:<br>preg_match('/public/', $_SERVER['PHP_SELF'])?0:1<br>($user->rights->holiday->define_holiday ? 1 : 0)
-DisplayOnPdfDesc=Εμφανίστε αυτό το πεδίο σε συμβατά έγγραφα PDF, μπορείτε να διαχειριστείτε τη θέση με το πεδίο "Θέση". <br/> Επί του παρόντος, γνωστά μοντέλα συμβατούς PDF είναι: Ερατοσθένης ο Κυρηναίος (σειρά), espadon (πλοίο), σφουγγάρι (τιμολόγια), κυανό (propal / εισαγωγικά), cornas (αύξων προμηθευτή) <br/> <br/> <strong> Για εγγράφου: </strong> <br/> 0 = δεν εμφανίζονται <br/> 1 = οθόνη <br/> 2 = εμφανιστεί μόνο αν δεν αδειάσει <br/> <br/> <strong> Για τις γραμμές εγγράφου: </strong> <br/> 0 = δεν εμφανίζονται <br/> 1 = εμφανίζονται σε μια στήλη <br/> 3 = οθόνη στη στήλη περιγραφή γραμμή μετά την περιγραφή <br/> 4 = οθόνη στη στήλη περιγραφή μετά την περιγραφή μόνο αν δεν είναι άδεια
+DisplayOnPdfDesc=Display this field on compatible PDF documents, you can manage position with "Position" field.<br>Currently, known compatibles PDF models are : eratosthene (order), espadon (ship), sponge (invoices), cyan (propal/quotation), cornas (supplier order)<br><br><strong>For document :</strong><br>0 = not displayed <br>1 = display<br>2 = display only if not empty<br><br><strong>For document lines :</strong><br>0 = not displayed <br>1 = displayed in a column<br>3 = display in line description column after the description<br>4 = display in description column after the description only if not empty
 DisplayOnPdf=Εμφάνιση σε PDF
 IsAMeasureDesc=Μπορεί η τιμή του πεδίου να συσσωρευτεί για να πάρει ένα σύνολο σε λίστα; (Παραδείγματα: 1 ή 0)
 SearchAllDesc=Χρησιμοποιείται το πεδίο για την αναζήτηση από το εργαλείο γρήγορης αναζήτησης; (Παραδείγματα: 1 ή 0)
@@ -98,7 +98,7 @@ MenusDefDescTooltip=Τα μενού που παρέχονται από την ε
 DictionariesDefDescTooltip=Τα λεξικά που παρέχονται από την υπομονάδα / εφαρμογή σας καθορίζονται στη συστοιχία <strong>$ this-&gt; λεξικά</strong> στο αρχείο περιγραφής του module. Μπορείτε να επεξεργαστείτε χειροκίνητα αυτό το αρχείο ή να χρησιμοποιήσετε τον ενσωματωμένο επεξεργαστή. <br><br> Σημείωση: Αφού οριστεί (και ενεργοποιηθεί ξανά η ενότητα), τα λεξικά είναι επίσης ορατά στην περιοχή εγκατάστασης σε χρήστες διαχειριστή στο %s.
 PermissionsDefDescTooltip=Τα δικαιώματα που παρέχονται από την ενότητα/εφαρμογή σας καθορίζονται στη συστοιχία <strong> $ this-> rights </strong> στην ενότητα περιγραφής αρχείου. Μπορείτε να επεξεργαστείτε χειροκίνητα αυτό το αρχείο ή να χρησιμοποιήσετε τον ενσωματωμένο επεξεργαστή. <br> <br> Σημείωση: Μόλις οριστεί (και ενεργοποιηθεί ξανά η ενότητα), τα δικαιώματα είναι ορατά στην προεπιλεγμένη ρύθμιση %s.
 HooksDefDesc=Ορίστε στην <b>ιδιότητα module_parts [&#39;hooks&#39;]</b> , στον περιγραφέα της μονάδας, το πλαίσιο των άγκιστρων που θέλετε να διαχειριστείτε (η λίστα των πλαισίων μπορεί να βρεθεί από μια αναζήτηση στο &#39; <b>initHooks</b> &#39; <b>(</b> &#39;in core code). <br> Επεξεργαστείτε το αρχείο αγκίστρου για να προσθέσετε τον κώδικα των αγκιστρωμένων λειτουργιών σας (οι συναρπαστικές λειτουργίες μπορούν να βρεθούν με μια αναζήτηση στο &#39; <b>executeHooks</b> &#39; στον βασικό κώδικα).
-TriggerDefDesc=Ορίστε στο αρχείο σκανδάλης τον κώδικα που θέλετε να εκτελέσετε για κάθε εκδήλωση που εκτελείται.
+TriggerDefDesc=Define in the trigger file the code that you want to execute when a business event external to your module is executed (events recorded by other modules).
 SeeIDsInUse=Δείτε τα αναγνωριστικά που χρησιμοποιούνται στην εγκατάσταση σας
 SeeReservedIDsRangeHere=Δείτε το φάσμα των αποκλειστικών αναγνωριστικών
 ToolkitForDevelopers=Εργαλειοθήκη για προγραμματιστές Dolibarr
@@ -133,7 +133,9 @@ IncludeDocGeneration=Θέλω να δημιουργήσω κάποια έγγρ�
 IncludeDocGenerationHelp=Εάν το ελέγξετε αυτό, θα δημιουργηθεί κάποιος κώδικας για να προσθέσετε ένα πλαίσιο &quot;Δημιουργία εγγράφου&quot; στην εγγραφή.
 ShowOnCombobox=Δείξτε την αξία σε συνδυασμό
 KeyForTooltip=Κλειδί για επεξήγηση εργαλείου
-CSSClass=CSS Class
+CSSClass=CSS for edit/create form
+CSSViewClass=CSS for read form
+CSSListClass=CSS for list
 NotEditable=Δεν είναι δυνατή η επεξεργασία
 ForeignKey=Ξένο κλειδί
 TypeOfFieldsHelp=Τύπος πεδίων: <br> varchar (99), διπλό (24,8), πραγματικό, κείμενο, html, datetime, timestamp, ακέραιος, ακέραιος: ClassName: relativepath / to / classfile.class.php [: 1 [: filter] προσθέτουμε ένα κουμπί + μετά το σύνθετο για να δημιουργήσουμε την εγγραφή, το &#39;φίλτρο&#39; μπορεί να είναι &#39;status = 1 AND fk_user = __USER_ID ΚΑΙ η οντότητα IN (__SHARED_ENTITIES__)&#39; για παράδειγμα)
@@ -141,3 +143,5 @@ AsciiToHtmlConverter=Μεταροπέας από Ascii σε HTML
 AsciiToPdfConverter=Μεταροπέας από Ascii σε PDF
 TableNotEmptyDropCanceled=Table not empty. Drop has been canceled.
 ModuleBuilderNotAllowed=The module builder is available but not allowed to your user.
+ImportExportProfiles=Import and export profiles
+ValidateModBuilderDesc=Put 1 if this field need to be validated with $this->validateField() or 0 if validation required

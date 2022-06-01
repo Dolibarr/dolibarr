@@ -52,7 +52,7 @@ $result = restrictedArea($user, 'adherent');
 if (GETPOST('addbox')) {
 	// Add box (when submit is done from a form when ajax disabled)
 	require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
-	$zone = GETPOST('areacode', 'aZ09');
+	$zone = GETPOST('areacode', 'int');
 	$userid = GETPOST('userid', 'int');
 	$boxorder = GETPOST('boxorder', 'aZ09');
 	$boxorder .= GETPOST('boxcombo', 'aZ09');
@@ -155,42 +155,10 @@ if ($result) {
 	$db->free();
 }
 
-$searchbox = '';
-if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {     // This is useless due to the global search combo
-	// Search contact/address
-	if (!empty($conf->adherent->enabled) && $user->rights->adherent->lire) {
-		$listofsearchfields['search_member'] = array('text'=>'Member');
-	}
-
-	if (count($listofsearchfields)) {
-		$searchbox .='<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
-		$searchbox .='<input type="hidden" name="token" value="'.newToken().'">';
-		$searchbox .='<div class="div-table-responsive-no-min">';
-		$searchbox .='<table class="noborder nohover centpercent">';
-		$i = 0;
-		foreach ($listofsearchfields as $key => $value) {
-			if ($i == 0) {
-				$searchbox .='<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
-			}
-			$searchbox .='<tr class="oddeven">';
-			$searchbox .='<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label>:</td><td><input type="text" class="flat inputsearch" name="'.$key.'" id="'.$key.'" size="18"></td>';
-			if ($i == 0) {
-				$searchbox .='<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
-			}
-			$searchbox .='</tr>';
-			$i++;
-		}
-		$searchbox .='</table>';
-		$searchbox .='</div>';
-		$searchbox .='</form>';
-		$searchbox .='<br>';
-	}
-}
-
-
 /*
  * Statistics
  */
+
 $boxgraph = '';
 if ($conf->use_javascript_ajax) {
 	$boxgraph .='<div class="div-table-responsive-no-min">';
@@ -258,7 +226,7 @@ print '<div class="fichecenter fichecenterbis">';
 print '<div class="twocolumns">';
 
 print '<div class="firstcolumn fichehalfleft boxhalfleft" id="boxhalfleft">';
-print $searchbox;
+
 print $boxgraph;
 
 print $resultboxes['boxlista'];

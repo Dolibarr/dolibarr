@@ -206,7 +206,7 @@ dol_banner_tab($object, 'socid', $linkback, ($user->socid ? 0 : 1), 'rowid', 'no
 print '<div class="fichecenter">';
 
 print '<div class="underbanner clearboth"></div>';
-print '<table class="border centpercent">';
+print '<table class="border centpercent tableforfield">';
 
 if (!empty($conf->global->SOCIETE_USEPREFIX)) { // Old not used prefix field
 	print '<tr><td class="titlefield">'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';

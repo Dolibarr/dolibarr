@@ -196,9 +196,10 @@ $(document).ready(function() {
 		var capital=price2numjs($(idcap).val());
 		console.log("Change montly amount echeance="+echeance+" idcap="+idcap+" capital="+capital);
 		$.ajax({
+			  method: "GET",
 			  dataType: 'json',
 			  url: 'calcmens.php',
-			  data: { echeance: echeance, mens: mens, capital:capital, rate:<?php echo $object->rate / 100; ?> , nbterm : <?php echo $object->nbterm; ?>},
+			  data: { echeance: echeance, mens: mens, capital:capital, rate:<?php echo $object->rate / 100; ?>, nbterm: <?php echo $object->nbterm; ?>, token: '<?php echo currentToken(); ?>' },
 			  success: function(data) {
 				$.each(data, function(index, element) {
 					var idcap_res='#hi_capital'+index;

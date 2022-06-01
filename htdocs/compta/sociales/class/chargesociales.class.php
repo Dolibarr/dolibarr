@@ -147,7 +147,7 @@ class ChargeSociales extends CommonObject
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as p ON cs.fk_mode_reglement = p.id';
 		$sql .= ' WHERE cs.entity IN ('.getEntity('tax').')';
 		if ($ref) {
-			$sql .= " AND cs.rowid = ".$ref;
+			$sql .= " AND cs.ref = '".$this->db->escape($ref)."'";
 		} else {
 			$sql .= " AND cs.rowid = ".((int) $id);
 		}
@@ -197,7 +197,7 @@ class ChargeSociales extends CommonObject
 	{
 		$newamount = price2num($this->amount, 'MT');
 
-		// Validation parametres
+		// Validation of parameters
 		if (!$newamount > 0 || empty($this->date_ech) || empty($this->periode)) {
 			return false;
 		}
@@ -301,7 +301,7 @@ class ChargeSociales extends CommonObject
 
 		// Delete payments
 		if (!$error) {
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."paiementcharge WHERE fk_charge=".$this->id;
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."paiementcharge WHERE fk_charge=".((int) $this->id);
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if (!$resql) {

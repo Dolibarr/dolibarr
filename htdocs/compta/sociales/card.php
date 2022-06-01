@@ -134,12 +134,17 @@ if ($action == 'setbankaccount' && $user->rights->tax->charges->creer) {
 // Delete social contribution
 if ($action == 'confirm_delete' && $confirm == 'yes') {
 	$object->fetch($id);
-	$result = $object->delete($user);
-	if ($result > 0) {
-		header("Location: list.php");
-		exit;
+	$totalpaye = $object->getSommePaiement();
+	if (empty($totalpaye)) {
+		$result = $object->delete($user);
+		if ($result > 0) {
+			header("Location: list.php");
+			exit;
+		} else {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	} else {
-		setEventMessages($object->error, $object->errors, 'errors');
+		setEventMessages($langs->trans('DisabledBecausePayments'), null, 'errors');
 	}
 }
 
@@ -235,17 +240,26 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->rights->tax->char
 			$object->label = $langs->trans("CopyOf").' '.$object->label;
 		}
 
-		if (GETPOST('clone_for_next_month', 'int')) {
+		if (GETPOST('clone_for_next_month', 'int')) {	// This can be true only if TAX_ADD_CLONE_FOR_NEXT_MONTH_CHECKBOX has been set
 			$object->periode = dol_time_plus_duree($object->periode, 1, 'm');
 			$object->date_ech = dol_time_plus_duree($object->date_ech, 1, 'm');
 		} else {
+			// Note dateech is often a little bit higher than dateperiod
 			$newdateperiod = dol_mktime(0, 0, 0, GETPOST('clone_periodmonth', 'int'), GETPOST('clone_periodday', 'int'), GETPOST('clone_periodyear', 'int'));
 			$newdateech = dol_mktime(0, 0, 0, GETPOST('clone_date_echmonth', 'int'), GETPOST('clone_date_echday', 'int'), GETPOST('clone_date_echyear', 'int'));
 			if ($newdateperiod) {
 				$object->periode = $newdateperiod;
+				if (empty($newdateech)) {
+					$object->date_ech = $object->periode;
+				}
 			}
 			if ($newdateech) {
 				$object->date_ech = $newdateech;
+				if (empty($newdateperiod)) {
+					// TODO We can here get dol_get_last_day of previous month:
+					// $object->periode = dol_get_last_day(year of $object->date_ech - 1m, month or $object->date_ech -1m)
+					$object->periode = $object->date_ech;
+				}
 			}
 		}
 
@@ -410,9 +424,9 @@ if ($id > 0) {
 		// Clone confirmation
 		if ($action === 'clone') {
 			$formquestion = array(
-				array('type' => 'text', 'name' => 'clone_label', 'label' => $langs->trans("Label"), 'value' => $langs->trans("CopyOf").' '.$object->label),
+				array('type' => 'text', 'name' => 'clone_label', 'label' => $langs->trans("Label"), 'value' => $langs->trans("CopyOf").' '.$object->label, 'tdclass'=>'fieldrequired'),
 			);
-			if (!empty($conf->global->TAX_ADD_CLON_FOR_NEXT_MONTH_CHECKBOX)) {
+			if (!empty($conf->global->TAX_ADD_CLONE_FOR_NEXT_MONTH_CHECKBOX)) {
 				$formquestion[] = array('type' => 'checkbox', 'name' => 'clone_for_next_month', 'label' => $langs->trans("CloneTaxForNextMonth"), 'value' => 1);
 			} else {
 				$formquestion[] = array('type' => 'date', 'name' => 'clone_date_ech', 'label' => $langs->trans("Date"), 'value' => -1);
@@ -762,8 +776,10 @@ if ($id > 0) {
 			}
 
 			// Delete
-			if ($user->rights->tax->charges->supprimer) {
+			if ($user->rights->tax->charges->supprimer && empty($totalpaye)) {
 				print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.DOL_URL_ROOT.'/compta/sociales/card.php?id='.$object->id.'&amp;action=delete&amp;token='.newToken().'">'.$langs->trans("Delete").'</a></div>';
+			} else {
+				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.(dol_escape_htmltag($langs->trans("DisabledBecausePayments"))).'">'.$langs->trans("Delete").'</a></div>';
 			}
 
 			print "</div>";

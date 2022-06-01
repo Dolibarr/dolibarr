@@ -13,7 +13,7 @@ You can freely use, study, modify or distribute it according to its licence.
 
 You can use it as a standalone application or as a web application to access it from the Internet or a LAN.
 
-Dolibarr has a large community ready to help you, free forums and [officially preferred partners ready to offer commercial support should you need it](https://partners.dolibarr.org)
+Dolibarr has a large community ready to help you, free forums and [preferred partners ready to offer commercial support should you need it](https://partners.dolibarr.org)
 
 ![ScreenShot](https://www.dolibarr.org/medias/dolibarr_screenshot1_1920x1080.jpg)
 
@@ -97,48 +97,80 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 
 ### Main application/modules (all optional)
 
-- Customers, Prospects (Leads) and/or Suppliers directory + Contacts
-- Members/Membership management 
-- Products and/or Services catalog
-- Commercial proposals management
-- Customer & Supplier Orders management
-- Invoices and payment management
-- Shipping management
-- Warehouse/Stock management
-- Manufacturing Orders
-- Bank accounts management
-- Direct debit orders management (European SEPA)
-- Accounting management
-- Shared calendar/agenda (with ical and vcal export for third party tools integration)
-- Opportunities or Leads management
-- Projects & Tasks management
-- Ticket System
-- Contracts management
-- Interventions management
-- Employee's leave requests management
-- Expense reports
-- Timesheets
-- Electronic Document Management (EDM)
-- Foundations members management
-- Point of Sale (POS)
-- …
+- Third-Parties Management: Customers, Prospects (Leads) and/or Suppliers + Contacts 
+- Members/Membership/Foundation management 
+
+ Product Management 
+- Products and/or Services catalog 
+- Stock / Warehouse management + Inventory 
+- Barcodes 
+- Batches / Lots / Serials 
+- Product Variants 
+- Bill of Materials (BOM)
+- Manufacturing Orders 
+
+ Customer/Sales Management 
+- Customers/Prospects + Contacts management 
+- Opportunities or Leads management 
+- Commercial proposals management 
+- Customer Orders management 
+- Contracts/Subscription management 
+- Interventions management 
+- Ticket System 
+- Shipping management 
+- Customer Invoices/Credit notes and payment management 
+- Point of Sale (POS) 
+
+ Supplier/Purchase Management 
+- Suppliers/Vendors + Contacts 
+- Supplier (price) requests 
+- Purchase Orders management 
+- Delivery/Receiption 
+- Supplier Invoices/credit notes and payment management 
+- INCOTERMS 
+
+ Finance / Accounting 
+- Invoices / Payments 
+- Bank accounts management 
+- Direct debit orders management (European SEPA) 
+- Accounting management 
+- Donations management 
+- Loan management 
+- Margins 
+- Reports 
+
+ Collaboration 
+- Shared calendar/agenda (with ical and vcal export for third party tools integration) 
+- Projects & Tasks management 
+- Ticket System 
+- Surveys
+
+ HR 
+- Employee's leave requests management 
+- Expense reports 
+- Recruitment management 
+- Timesheets 
+
 
 ### Other application/modules
 
+- Electronic Document Management (EDM)
 - Bookmarks management
-- Donations management
 - Reporting
-- Surveys
 - Data export/import
-- Barcodes support
+- Barcodes
 - Margin calculations
 - LDAP connectivity
 - ClickToDial integration
 - Mass emailing
 - RSS integration
 - Skype integration
+- Social platforms linking
 - Payment platforms integration (PayPal, Stripe, Paybox...)
-- …
+- Email-Collector
+
+(around 100 modules available by default, 1000+ on the addon market place)
+
 
 ### Other general features
 
@@ -147,14 +179,11 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 - Multi-Users and groups with finely grained rights
 - Multi-Currency
 - Multi-Company (by adding of an external module)
-
 - Very user friendly and easy to use
 - customizable Dashboard
 - Highly customizable: enable only the modules you need, add user personalized fields, choose your skin, several menu managers (can be used by internal users as a back-office with a particular menu, or by external users as a front-office with another one)
-
 - APIs (REST, SOAP)
 - Code that is easy to understand, maintain and develop (PHP with no heavy framework; trigger and hook architecture)
-
 - Support a lot of country specific features:
   - Spanish Tax RE and ISPF
   - French NPR VAT rate (VAT called "Non Perçue Récupérable" for DOM-TOM)
@@ -165,13 +194,16 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
   - Compatible with European GDPR rules
   - ...
 - Flexible PDF & ODT generation for invoices, proposals, orders...
-- …
+- ...
 
 
 ### System Environment / Requirements
 
-- Works with PHP 5.6+ and MariaDB 5.0.3+, MySQL 5.0.3+ or PostgreSQL 8.1.4+ (See requirements on the [Wiki](https://wiki.dolibarr.org/index.php/Prerequisite))
+- PHP
+- MariaDB, MySQL or PostgreSQL 
 - Compatible with all Cloud solutions that match PHP & MySQL or PostgreSQL prerequisites.
+
+See exact requirements on the [Wiki](https://wiki.dolibarr.org/index.php/Prerequisite)
 
 
 ### Extending

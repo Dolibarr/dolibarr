@@ -19,3 +19,4 @@ UseAnExternalHttpLinkOrRelativeDolibarrLink=Brug et eksternt / absolut link (htt
 ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Vælg om den tilknyttede side skal åbnes i den aktuelle fane eller en ny fane
 BookmarksManagement=Bogmærker forvaltning
 BookmarksMenuShortCut=Ctrl + shift + m
+NoBookmarks=Ingen bogmærker defineret

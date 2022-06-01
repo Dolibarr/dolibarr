@@ -72,7 +72,7 @@ $permissiontoadd = (($object->id == $user->id) || (!empty($user->rights->user->u
 if ($user->socid) {
 	$id = $user->socid;
 }
-$result = restrictedArea($user, 'user', '', '');
+$result = restrictedArea($user, 'user', '', '', 'user');
 
 
 /*
@@ -97,7 +97,7 @@ if ($action == 'add') {
 		$db->begin();
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def";
-		$sql .= " WHERE fk_user=".$id." AND fk_action=".$actionid;
+		$sql .= " WHERE fk_user=".((int) $id)." AND fk_action=".((int) $actionid);
 		if ($db->query($sql)) {
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."notify_def (datec,fk_user, fk_action)";
 			$sql .= " VALUES ('".$db->idate($now)."',".$id.",".$actionid.")";
@@ -204,11 +204,11 @@ if ($result > 0) {
 	// Add notification form
 	//  print load_fiche_titre($langs->trans("AddNewNotification"), '', '');
 
-	print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="post">';
+	print '<form action="'.$_SERVER["PHP_SELF"].'?id='.urlencode($id).'" method="POST">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 
-	$param = "&id=".$id;
+	$param = "&id=".urlencode($id);
 
 	// Line with titles
 	/*  print '<table width="100%" class="noborder">';
@@ -226,13 +226,14 @@ if ($result > 0) {
 	// List of notifications enabled for contacts
 	$sql = "SELECT n.rowid, n.type,";
 	$sql .= " a.code, a.label,";
-	$sql .= " c.rowid as userid, c.lastname, c.firstname, c.email";
+	$sql .= " c.rowid as userid, c.entity, c.login, c.lastname, c.firstname, c.email, c.statut as status";
 	$sql .= " FROM ".MAIN_DB_PREFIX."c_action_trigger as a,";
 	$sql .= " ".MAIN_DB_PREFIX."notify_def as n,";
 	$sql .= " ".MAIN_DB_PREFIX."user c";
 	$sql .= " WHERE a.rowid = n.fk_action";
 	$sql .= " AND c.rowid = n.fk_user";
-	$sql .= " AND c.rowid = ".$object->id;
+	$sql .= " AND c.rowid = ".((int) $object->id);
+	$sql .= " AND c.entity IN (".getEntity('user').')';
 
 	$resql = $db->query($sql);
 	if ($resql) {
@@ -311,6 +312,9 @@ if ($result > 0) {
 				$userstatic->id = $obj->userid;
 				$userstatic->lastname = $obj->lastname;
 				$userstatic->firstname = $obj->firstname;
+				$userstatic->email = $obj->email;
+				$userstatic->statut = $obj->status;
+
 				print '<tr class="oddeven"><td>'.$userstatic->getNomUrl(1);
 				if ($obj->type == 'email') {
 					if (isValidEmail($obj->email)) {
@@ -405,7 +409,7 @@ if ($result > 0) {
 	$sql .= " ".MAIN_DB_PREFIX."notify as n";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as c ON n.fk_user = c.rowid";
 	$sql .= " WHERE a.rowid = n.fk_action";
-	$sql .= " AND n.fk_user = ".$object->id;
+	$sql .= " AND n.fk_user = ".((int) $object->id);
 	$sql .= $db->order($sortfield, $sortorder);
 
 	// Count total nb of records
@@ -437,7 +441,7 @@ if ($result > 0) {
 	}
 
 	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'" name="formfilter">';
-	if ($optioncss != '') {
+	if (isset($optioncss) && $optioncss != '') {
 		print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 	}
 	print '<input type="hidden" name="token" value="'.newToken().'">';

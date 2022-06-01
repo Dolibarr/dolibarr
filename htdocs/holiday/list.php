@@ -117,7 +117,7 @@ $search_month_end    = GETPOST('search_month_end', 'int');
 $search_year_end     = GETPOST('search_year_end', 'int');
 $search_employee     = GETPOST('search_employee', 'int');
 $search_valideur     = GETPOST('search_valideur', 'int');
-$search_status       = GETPOST('search_statut', 'int');
+$search_status       = GETPOSTISSET('search_status') ? GETPOST('search_status', 'int') : GETPOST('search_statut', 'int');
 $search_type         = GETPOST('search_type', 'int');
 
 // Initialize technical objects
@@ -434,12 +434,12 @@ if ($resql) {
 
 	// List of mass actions available
 	$arrayofmassactions = array(
-		//'generate_doc'=>$langs->trans("ReGeneratePDF"),
-		//'builddoc'=>$langs->trans("PDFMerge"),
-		//'presend'=>$langs->trans("SendByMail"),
+		//'generate_doc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("ReGeneratePDF"),
+		//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
+		//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 	);
 	if (!empty($user->rights->holiday->delete)) {
-		$arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
+		$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 	}
 	if (in_array($massaction, array('presend', 'predelete'))) {
 		$arrayofmassactions = array();
@@ -484,9 +484,16 @@ if ($resql) {
 
 		print '<div class="tabsAction">';
 
-		$canedit = (($user->id == $user_id && $user->rights->holiday->write) || ($user->id != $user_id && (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->holiday->writeall_advance))));
+		$cancreate = 0;
+		if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->holiday->writeall))
+			|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->holiday->writeall_advance))) {
+				$cancreate = 1;
+		}
+		if (!empty($user->rights->holiday->write) && in_array($user_id, $childids)) {
+			$cancreate = 1;
+		}
 
-		if ($canedit) {
+		if ($cancreate) {
 			print '<a href="'.DOL_URL_ROOT.'/holiday/card.php?action=create&fuserid='.$user_id.'" class="butAction">'.$langs->trans("AddCP").'</a>';
 		}
 
@@ -627,6 +634,12 @@ if ($resql) {
 		print '</td>';
 	}
 
+	// End date
+	if (!empty($arrayfields['cp.date_valid']['checked'])) {
+		print '<td class="liste_titre center nowraponall">';
+		print '</td>';
+	}
+
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 	// Fields from hook
@@ -636,7 +649,7 @@ if ($resql) {
 
 	// Create date
 	if (!empty($arrayfields['cp.date_create']['checked'])) {
-		print '<td class="liste_titre center nowraponall">';
+		print '<td class="liste_titre center width200">';
 		print '<input class="flat valignmiddle maxwidth25" type="text" maxlength="2" name="search_month_create" value="'.dol_escape_htmltag($search_month_create).'">';
 		$formother->select_year($search_year_create, 'search_year_create', 1, $min_year, 0);
 		print '</td>';
@@ -644,7 +657,7 @@ if ($resql) {
 
 	// Create date
 	if (!empty($arrayfields['cp.tms']['checked'])) {
-		print '<td class="liste_titre center nowraponall">';
+		print '<td class="liste_titre center width200">';
 		print '<input class="flat valignmiddle maxwidth25" type="text" maxlength="2" name="search_month_update" value="'.dol_escape_htmltag($search_month_update).'">';
 		$formother->select_year($search_year_update, 'search_year_update', 1, $min_year, 0);
 		print '</td>';
@@ -652,8 +665,8 @@ if ($resql) {
 
 	// Status
 	if (!empty($arrayfields['cp.statut']['checked'])) {
-		print '<td class="liste_titre maxwidthonsmartphone maxwidth200 right">';
-		$object->selectStatutCP($search_status, 'search_status');
+		print '<td class="liste_titre right">';
+		$object->selectStatutCP($search_status, 'search_status', 'minwidth125');
 		print '</td>';
 	}
 
@@ -686,6 +699,9 @@ if ($resql) {
 	}
 	if (!empty($arrayfields['cp.date_fin']['checked'])) {
 		print_liste_field_titre($arrayfields['cp.date_fin']['label'], $_SERVER["PHP_SELF"], "cp.date_fin", "", $param, '', $sortfield, $sortorder, 'center ');
+	}
+	if (!empty($arrayfields['cp.date_valid']['checked'])) {
+		print_liste_field_titre($arrayfields['cp.date_valid']['label'], $_SERVER["PHP_SELF"], "cp.date_valid", "", $param, '', $sortfield, $sortorder, 'center ');
 	}
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
@@ -722,6 +738,7 @@ if ($resql) {
 
 		$i = 0;
 		$totalarray = array();
+		$totalarray['nbfield'] = 0;
 		while ($i < min($num, $limit)) {
 			$obj = $db->fetch_object($resql);
 
@@ -729,6 +746,7 @@ if ($resql) {
 			$holidaystatic->id = $obj->rowid;
 			$holidaystatic->ref = ($obj->ref ? $obj->ref : $obj->rowid);
 			$holidaystatic->statut = $obj->status;
+			$holidaystatic->date_debut = $db->jdate($obj->date_debut);
 
 			// User
 			$userstatic->id = $obj->fk_user;
@@ -779,7 +797,7 @@ if ($resql) {
 				}
 			}
 			if (!empty($arrayfields['cp.fk_type']['checked'])) {
-				print '<td>';
+				print '<td class="minwidth100">';
 				$labeltypeleavetoshow = ($langs->trans($typeleaves[$obj->fk_type]['code']) != $typeleaves[$obj->fk_type]['code'] ? $langs->trans($typeleaves[$obj->fk_type]['code']) : $typeleaves[$obj->fk_type]['label']);
 				print empty($typeleaves[$obj->fk_type]['label']) ? $langs->trans("TypeWasDisabledOrRemoved", $obj->fk_type) : $labeltypeleavetoshow;
 				print '</td>';
@@ -789,7 +807,7 @@ if ($resql) {
 			}
 			if (!empty($arrayfields['duration']['checked'])) {
 				print '<td class="right">';
-				$nbopenedday = num_open_day($db->jdate($obj->date_debut, 1), $db->jdate($obj->date_fin, 1), 0, 1, $obj->halfday);
+				$nbopenedday = num_open_day($db->jdate($obj->date_debut, 1), $db->jdate($obj->date_fin, 1), 0, 1, $obj->halfday);	// user jdate(..., 1) because num_open_day need UTC dates
 				print $nbopenedday.' '.$langs->trans('DurationDays');
 				print '</td>';
 				if (!$i) {
@@ -814,6 +832,18 @@ if ($resql) {
 					$totalarray['nbfield']++;
 				}
 			}
+			if (!empty($arrayfields['cp.date_valid']['checked'])) {		// date_valid is both date_valid but also date_approval
+				print '<td class="center">';
+				print dol_print_date($db->jdate($obj->date_valid), 'day');
+				print '</td>';
+				if (!$i) $totalarray['nbfield']++;
+			}
+			/*if (!empty($arrayfields['cp.date_approve']['checked'])) {
+				 print '<td class="center">';
+				 print dol_print_date($db->jdate($obj->date_approve), 'day');
+				 print '</td>';
+				 if (!$i) $totalarray['nbfield']++;
+			 }*/
 
 			// Extra fields
 			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
