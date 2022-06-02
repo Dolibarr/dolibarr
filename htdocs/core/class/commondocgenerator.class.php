@@ -586,6 +586,7 @@ abstract class CommonDocGenerator
 			'line_product_label'=>(empty($line->product_label) ? '' : $line->product_label),
 			'line_product_type'=>(empty($line->product_type) ? '' : $line->product_type),
 			'line_product_barcode'=>(empty($line->product_barcode) ? '' : $line->product_barcode),
+			'line_product_desc'=>(empty($line->product_desc) ? '' : $line->product_desc),
 
 			'line_desc'=>$line->desc,
 			'line_vatrate'=>vatrate($line->tva_tx, true, $line->info_bits),
