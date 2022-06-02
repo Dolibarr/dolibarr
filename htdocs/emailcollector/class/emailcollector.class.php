@@ -1911,7 +1911,7 @@ class EmailCollector extends CommonObject
 							$sql = "SELECT rowid as id FROM " . MAIN_DB_PREFIX . "user WHERE email LIKE '%" . $from . "%'";
 							$resql = $this->db->query($sql);
 							if ($resql->num_rows == 0) {
-								$this->errors = 'User Not allowed to add documents';
+								$this->errors[] = 'User Not allowed to add documents';
 							}
 							$arrayobject = array(
 								'propale' => array('table' => 'propal',
@@ -2043,7 +2043,7 @@ class EmailCollector extends CommonObject
 										$path = ($objectmanaged->entity > 1 ? "/" . $objectmanaged->entity : '');
 										$dirs[] = DOL_DATA_ROOT . $path . "/" . $elementpath . '/' . dol_sanitizeFileName($objectmanaged->ref) . '/';
 									} else {
-										$this->errors = 'object not found';
+										$this->errors[] = 'object not found';
 									}
 								}
 							}
@@ -2053,12 +2053,12 @@ class EmailCollector extends CommonObject
 
 									$resr = saveAttachment($target, $prefix . '_' . $filename, $content);
 									if ($resr == -1) {
-										$this->errors = 'Doc not saved';
+										$this->errors[] = 'Doc not saved';
 									}
 								}
 							}
 						} else {
-							$this->errors = 'no joined piece';
+							$this->errors[] = 'no joined piece';
 						}
 					} elseif ($operation['type'] == 'project') {
 						// Create project / lead
