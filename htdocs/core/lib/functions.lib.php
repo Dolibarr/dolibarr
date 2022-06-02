@@ -9326,7 +9326,7 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 
 				$reg = array();
 				preg_match('/([<>=]+)/', $crit, $reg);
-				if ($reg[1]) {
+				if (!empty($reg[1])) {
 					$operator = $reg[1];
 				}
 				if ($newcrit != '') {
