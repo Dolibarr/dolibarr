@@ -3174,7 +3174,7 @@ if ($action == 'create') {
 
 	// Standard invoice
 	print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
-	$tmp = '<input type="radio" id="radio_standard" name="type" value="0"'.(GETPOST('type') == 0 ? ' checked' : '').'> ';
+	$tmp = '<input type="radio" id="radio_standard" name="type" value="0"'.(GETPOST('type', 'int') ? '' : ' checked').'> ';
 	$tmp  = $tmp.'<label for="radio_standard" >'.$langs->trans("InvoiceStandardAsk").'</label>';
 	$desc = $form->textwithpicto($tmp, $langs->transnoentities("InvoiceStandardDesc"), 1, 'help', '', 0, 3);
 	print '<table class="nobordernopadding"><tr>';
