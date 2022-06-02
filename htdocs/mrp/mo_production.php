@@ -850,7 +850,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					print '<input id="qty_ordered'.$suffix.'" type="hidden" value="'.$line->qty.'">';
 					print '<input id="qty_dispatched'.$suffix.'" type="hidden" value="'.$alreadyconsumed.'">';
 
-					print '<tr>';
+					print '<tr data-line-id="'.$line->id.'">';
 					// Product
 					print '<td>'.$tmpproduct->getNomUrl(1);
 					print '<br><span class="opacitymedium small">'.$tmpproduct->label.'</span>';
@@ -919,7 +919,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					}
 					// Lot
 					if ($conf->productbatch->enabled) {
-						print '<td></td>';
+						print '<td align="right" class="splitall">';
+						if (($action == 'consumeorproduce' || $action == 'consumeandproduceall') && $tmpproduct->status_batch == 2) print img_picto($langs->trans('SplitAllQuantity'), 'split.png', 'class="splitbutton splitallbutton field-error-icon" data-max-qty="1" onClick="addDispatchLine('.$line->id.', \'batch\', \'allmissingconsume\')"');
+						print '</td>';
 					}
 					// Action delete line
 					if ($permissiontodelete) {
@@ -995,7 +997,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					if (in_array($action, array('consumeorproduce', 'consumeandproduceall'))) {
 						$i = 1;
 						print '<!-- Enter line to consume -->'."\n";
-						print '<tr name="batch_'.$line->id.'_'.$i.'">';
+						$maxQty = 1; //TODO later manage max lot number
+						print '<tr data-max-qty="'.$maxQty.'" name="batch_'.$line->id.'_'.$i.'">';
 						print '<td><span class="opacitymedium">'.$langs->trans("ToConsume").'</span></td>';
 						$preselected = (GETPOSTISSET('qty-'.$line->id.'-'.$i) ? GETPOST('qty-'.$line->id.'-'.$i) : max(0, $line->qty - $alreadyconsumed));
 						if ($action == 'consumeorproduce' && !GETPOSTISSET('qty-'.$line->id.'-'.$i)) {
@@ -1239,7 +1242,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					print '<td>'; // Warehouse
 					print '</td>';
 					if ($conf->productbatch->enabled) {
-						print '<td></td>'; // Lot
+						print '<td align="right"  class="splitall">';
+						if (($action == 'consumeorproduce' || $action == 'consumeandproduceall') && $tmpproduct->status_batch == 2) print img_picto($langs->trans('SplitAllQuantity'), 'split.png', 'class="splitbutton splitallbutton field-error-icon" onClick="addDispatchLine('.$line->id.', \'batch\', \'alltoproduce\')"'); //
+						print '</td>';
 					}
 
 					if ($permissiontodelete && $line->origin_type == 'free') {
@@ -1293,7 +1298,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 					if (in_array($action, array('consumeorproduce', 'consumeandproduceall'))) {
 						print '<!-- Enter line to produce -->'."\n";
-						print '<tr name="batch_'.$line->id.'_'.$i.'">';
+						$maxQty = 1; //TODO later manage max lot number
+						print '<tr data-max-qty="'.$maxQty.'" name="batch_'.$line->id.'_'.$i.'">';
 						print '<td><span class="opacitymedium">'.$langs->trans("ToProduce").'</span></td>';
 						$preselected = (GETPOSTISSET('qtytoproduce-'.$line->id.'-'.$i) ? GETPOST('qtytoproduce-'.$line->id.'-'.$i) : max(0, $line->qty - $alreadyproduced));
 						if ($action == 'consumeorproduce' && !GETPOSTISSET('qtytoproduce-'.$line->id.'-'.$i)) {
