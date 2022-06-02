@@ -1108,7 +1108,7 @@ class Expedition extends CommonObject
 	 * Add a shipment line with virtual product (children components)
 	 *
 	 * @param	array	$children_line		Array ['qty' => parent qty, 'warehouse_id' => parent warehouse id, 'ix_l' => id of origin line,
-	 *                   			 		'child' => Array['qty' => child quantity , 'warehouse_id' => child warehouse id]]
+	 *                   			 		'child' => Array "fk_product_parent-fk_product" (as key) => ['qty' => child quantity , 'warehouse_id' => child warehouse id]]
 	 * @param	array	$array_options		Extrafields array
 	 * @return  int   	0 if KO, >0 if OK
 	 */
@@ -1126,29 +1126,39 @@ class Expedition extends CommonObject
 			$line->qty = $children_line['qty'];
 
 			$line_dispatch_list = array();
-			foreach ($children_line['child'] as $child_product_id => $child_line) {
+			foreach ($children_line['child'] as $suffix_id => $child_line) {
 				foreach ($child_line as $child) {
-					$child_total_qty = 0;
-					if ($child['qty'] > 0) {
-						$line_dispatch = new ExpeditionLineDispatch($this->db);
-						$line_dispatch->fk_product = $child_product_id;
-						$line_dispatch->qty = $child['qty'];
-						$line_dispatch->fk_entrepot = $child['warehouse_id'];
-						$line_dispatch_list[] = $line_dispatch;
-						$child_total_qty += floatval($line_dispatch->qty);
+					$child_fk_product = 0;
+					$child_product_and_parent_id_list = explode('-', $suffix_id);
+					if (count($child_product_and_parent_id_list) > 0) {
+						$child_fk_product_parent = intval($child_product_and_parent_id_list[0]);
+						$child_fk_product = intval($child_product_and_parent_id_list[1]);
 					}
 
-					if ($conf->global->STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT) {
-						// load and check dispatched product stock qty
-						$product_dispatch = new Product($this->db);
-						$product_dispatch->fetch($child_product_id);
+					if ($child_fk_product > 0 && $child_fk_product_parent > 0) {
+						$child_total_qty = 0;
+						if ($child['qty'] > 0) {
+							$line_dispatch = new ExpeditionLineDispatch($this->db);
+							$line_dispatch->fk_product = $child_fk_product;
+							$line_dispatch->fk_product_parent = $child_fk_product_parent;
+							$line_dispatch->qty = $child['qty'];
+							$line_dispatch->fk_entrepot = $child['warehouse_id'];
+							$line_dispatch_list[] = $line_dispatch;
+							$child_total_qty += floatval($line_dispatch->qty);
+						}
 
-						if ($product_dispatch->stock_reel < $child_total_qty) {
-							$langs->load("errors");
-							$this->errors[] = $langs->trans('ErrorStockIsNotEnoughToAddProductOnShipment', $child_product_id);
-							dol_syslog(__METHOD__ . ' Error : Product ' . $product_dispatch->ref . ' : ' . $this->errorsToString(), LOG_ERR);
-							$this->db->rollback();
-							return -1;
+						if ($conf->global->STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT) {
+							// load and check dispatched product stock qty
+							$product_dispatch = new Product($this->db);
+							$product_dispatch->fetch($child_fk_product);
+
+							if ($product_dispatch->stock_reel < $child_total_qty) {
+								$langs->load("errors");
+								$this->errors[] = $langs->trans('ErrorStockIsNotEnoughToAddProductOnShipment', $child_fk_product);
+								dol_syslog(__METHOD__ . ' Error : Product ' . $product_dispatch->ref . ' : ' . $this->errorsToString(), LOG_ERR);
+								$this->db->rollback();
+								return -1;
+							}
 						}
 					}
 				}

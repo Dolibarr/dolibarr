@@ -23,6 +23,7 @@ create table llx_expeditiondet_dispatch
   rowid             integer AUTO_INCREMENT PRIMARY KEY,
   fk_expeditiondet  integer NOT NULL,
   fk_product        integer NOT NULL,
+  fk_product_parent integer NOT NULL,
   fk_entrepot       integer NOT NULL,
   qty               real
 )ENGINE=innodb;

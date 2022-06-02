@@ -79,6 +79,11 @@ class ExpeditionLineDispatch
 	/**
 	 * @var int ID
 	 */
+	public $fk_product_parent;
+
+	/**
+	 * @var int ID
+	 */
 	public $fk_entrepot;
 
 	/**
@@ -116,6 +121,9 @@ class ExpeditionLineDispatch
 		if (isset($this->fk_product)) {
 			$this->fk_product = trim($this->fk_product);
 		}
+		if (isset($this->fk_product_parent)) {
+			$this->fk_product_parent = trim($this->fk_product_parent);
+		}
 		if (isset($this->fk_entrepot)) {
 			$this->fk_entrepot = trim($this->fk_entrepot);
 		}
@@ -127,11 +135,13 @@ class ExpeditionLineDispatch
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element."(";
 		$sql .= "fk_expeditiondet";
 		$sql .= ", fk_product";
+		$sql .= ", fk_product_parent";
 		$sql .= ", fk_entrepot";
 		$sql .= ", qty";
 		$sql .= ") VALUES (";
 		$sql .= " ".(!isset($this->fk_expeditiondet) ? 'NULL' : "'".$this->db->escape($this->fk_expeditiondet)."'");
 		$sql .= ", ".(!isset($this->fk_product) ? 'NULL' : "'".$this->db->escape($this->fk_product)."'");
+		$sql .= ", ".(!isset($this->fk_product_parent) ? 'NULL' : "'".$this->db->escape($this->fk_product_parent)."'");
 		$sql .= ", ".(!isset($this->fk_entrepot) ? 'NULL' : "'".$this->db->escape($this->fk_entrepot)."'");
 		$sql .= ", ".(!isset($this->qty) ? 'NULL' : "'".$this->db->escape($this->qty)."'");
 		$sql .= ")";
@@ -175,6 +185,7 @@ class ExpeditionLineDispatch
 		$sql .= " t.rowid";
 		$sql .= ", t.fk_expeditiondet";
 		$sql .= ", t.fk_product";
+		$sql .= ", t.fk_product_parent";
 		$sql .= ", t.fk_entrepot";
 		$sql .= ", t.qty";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
@@ -189,6 +200,7 @@ class ExpeditionLineDispatch
 				$this->id = $obj->rowid;
 				$this->fk_expeditiondet = $obj->fk_expeditiondet;
 				$this->fk_product = $obj->fk_product;
+				$this->fk_product_parent = $obj->fk_product_parent;
 				$this->fk_entrepot = $obj->fk_entrepot;
 				$this->qty = $obj->qty;
 			}
@@ -222,6 +234,7 @@ class ExpeditionLineDispatch
 		$sql .= " t.rowid";
 		$sql .= ", t.fk_expeditiondet";
 		$sql .= ", t.fk_product";
+		$sql .= ", t.fk_product_parent";
 		$sql .= ", t.fk_entrepot";
 		$sql .= ", t.qty";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
@@ -260,6 +273,7 @@ class ExpeditionLineDispatch
 				$line->fk_expeditiondet = $obj->fk_expeditiondet;
 				$line->fk_entrepot = $obj->fk_entrepot;
 				$line->fk_product = $obj->fk_product;
+				$line->fk_product_parent = $obj->fk_product_parent;
 				if ($mvt_type == -1) {
 					$line->qty = -$obj->qty;
 				} else {
@@ -297,6 +311,9 @@ class ExpeditionLineDispatch
 		if (isset($this->fk_product)) {
 			$this->fk_product = trim($this->fk_product);
 		}
+		if (isset($this->fk_product_parent)) {
+			$this->fk_product_parent = trim($this->fk_product_parent);
+		}
 		if (isset($this->fk_entrepot)) {
 			$this->fk_entrepot = trim($this->fk_entrepot);
 		}
@@ -308,6 +325,7 @@ class ExpeditionLineDispatch
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
 		$sql .= " fk_expeditiondet=".(isset($this->fk_expeditiondet) ? $this->fk_expeditiondet : "null");
 		$sql .= ", fk_product=".(isset($this->fk_product) ? $this->fk_product : "null");
+		$sql .= ", fk_product_parent=".(isset($this->fk_product_parent) ? $this->fk_product_parent : "null");
 		$sql .= ", fk_entrepot=".(isset($this->fk_entrepot) ? $this->fk_entrepot : "null");
 		$sql .= ", qty=".(isset($this->qty) ? $this->qty : "null");
 		$sql .= " WHERE rowid=".((int) $this->id);

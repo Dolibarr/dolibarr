@@ -29,11 +29,11 @@ var ExpeditionLineDispatcher = function(jQuery) {
 	 *
 	 * @param	{string}		prefix			Dispatcher prefix
 	 * @param	{string}		lineId			Dispatcher line id (suffix)
-	 * @param	{string}		componentId		Dispatcher component id (suffix)
+	 * @param	{string}		suffixId		Dispatcher suffix id (suffix)
 	 */
-	this.addLine = function(prefix, lineId, componentId) {
+	this.addLine = function(prefix, lineId, suffixId) {
 		// dispatcher suffix
-		var suffix = lineId+'_'+componentId;
+		var suffix = lineId+'_'+suffixId;
 
 		// nb lines dispatched
 		var nbLine = jQuery('tr[name^="'+prefix+suffix+'"]').length;
