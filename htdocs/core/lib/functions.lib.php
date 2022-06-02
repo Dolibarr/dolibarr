@@ -13,7 +13,7 @@
  * Copyright (C) 2014		Cédric GROSS				<c.gross@kreiz-it.fr>
  * Copyright (C) 2014-2015	Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
- * Copyright (C) 2018-2021  Frédéric France             <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2022  Frédéric France             <frederic.france@netlogic.fr>
  * Copyright (C) 2019       Thibault Foucart            <support@ptibogxiv.net>
  * Copyright (C) 2020       Open-Dsi         			<support@open-dsi.fr>
  * Copyright (C) 2021       Gauthier VERDOL         	<gauthier.verdol@atm-consulting.fr>
@@ -66,6 +66,17 @@ function getDolGlobalInt($key, $default = 0)
 	global $conf;
 	// return $conf->global->$key ?? $default;
 	return (int) (empty($conf->global->$key) ? $default : $conf->global->$key);
+}
+
+/**
+ * Is Dolibarr module enabled
+ * @param string $module module name to check
+ * @return int
+ */
+function isModEnabled($module)
+{
+	global $conf;
+	return !empty($conf->$module->enabled);
 }
 
 /**
