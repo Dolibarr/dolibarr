@@ -4703,8 +4703,19 @@ class Product extends CommonObject
 			$prods = array();
 			while ($rec = $this->db->fetch_array($res)) {
 				if (!empty($alreadyfound[$rec['rowid']])) {
-					dol_syslog(get_class($this).'::getChildsArbo the product id='.$rec['rowid'].' was already found at a higher level in tree. We discard to avoid infinite loop', LOG_WARNING);
-					continue;
+					// determine if child product was already found and it's a virtual product (has Children)
+					$children_nb = 0;
+					$child_product_id = $rec['rowid'];
+					if ($child_product_id > 0) {
+						$child_product = new self($this->db);
+						if ($child_product->fetch($child_product_id) > 0) {
+							$children_nb = $child_product->hasChildren();
+						}
+					}
+					if ($children_nb != 0) { // security limit
+						dol_syslog(get_class($this) . '::getChildsArbo the product id=' . $rec['rowid'] . ' was already found at a higher level in tree. We discard to avoid infinite loop', LOG_WARNING);
+						continue;
+					}
 				}
 				$alreadyfound[$rec['rowid']] = 1;
 				$prods[$rec['rowid']] = array(

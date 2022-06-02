@@ -327,12 +327,12 @@ if (empty($reshook)) {
 
 					$totalqty += $children_line[$i]['qty'];
 
-					$children_product_ids = GETPOST($children_input_name, 'alphanohtml');
-					$children_product_id_list = explode(',', $children_product_ids);
-					if (!empty($children_product_id_list)) {
-						foreach ($children_product_id_list as $child_product_id) {
+					$children_suffix_ids = GETPOST($children_input_name, 'alphanohtml');
+					$children_suffix_id_list = explode(',', $children_suffix_ids);
+					if (!empty($children_suffix_id_list)) {
+						foreach ($children_suffix_id_list as $child_suffix_id) {
 							$j = 0;
-							$dispatcher_suffix = $i . '_' . $child_product_id;
+							$dispatcher_suffix = $i . '_' . $child_suffix_id;
 
 							// child line from multiple stock locations
 							$child_qty_input_name = $dispatcher_prefix . 'qty_' . $dispatcher_suffix . '_' . $j;
@@ -342,22 +342,22 @@ if (empty($reshook)) {
 								$child_fk_entrepot = intval(GETPOST($child_warehouse_input_name, 'int'));
 								if (!($child_qty > 0)) {
 									$error++;
-									$error_msg = $langs->trans('Product') . ' ' . $child_product_id . ' - ' . $langs->trans('Line') . ' ' . ($i + 1);
+									$error_msg = $langs->trans('Product') . ' ' . $child_suffix_id . ' - ' . $langs->trans('Line') . ' ' . ($j + 1);
 									$error_msg .= ' : ' . $langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('QtyToShip'));
 									setEventMessages($error_msg, null, 'errors');
 								}
 								if (!($child_fk_entrepot > 0)) {
 									$error++;
-									$error_msg = $langs->trans('Product') . ' ' . $child_product_id . ' - ' . $langs->trans('Line') . ' ' . ($i + 1);
+									$error_msg = $langs->trans('Product') . ' ' . $child_suffix_id . ' - ' . $langs->trans('Line') . ' ' . ($j + 1);
 									$error_msg .= ' : ' . $langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Warehouse'));
 									setEventMessages($error_msg, null, 'errors');
 								}
 
 								// save child line of warehouse
-								if (!isset($children_line[$i]['child'][$child_product_id])) {
-									$children_line[$i]['child'][$child_product_id] = array();
+								if (!isset($children_line[$i]['child'][$child_suffix_id])) {
+									$children_line[$i]['child'][$child_suffix_id] = array();
 								}
-								$children_line[$i]['child'][$child_product_id][] = array(
+								$children_line[$i]['child'][$child_suffix_id][] = array(
 									'qty' => $child_qty,
 									'warehouse_id' => $child_fk_entrepot,
 								);
@@ -1596,23 +1596,28 @@ if ($action == 'create') {
 								$product->get_sousproduits_arbo();
 								$prods_arbo = $product->get_arbo_each_prod($qtyProdCom);
 								if (count($prods_arbo) > 0) {
-									// all product components (and sub-components)
-									$children_product_id_list = array();
+									// all suffix id components (and sub-components)
+									$children_suffix_id_list = array();
 
 									// get already dispatched lines
 									$component_dispatch_line_list[$indiceAsked] = array();
 									if (isset($children_line[$indiceAsked]) && isset($children_line[$indiceAsked]['child'])) {
-										foreach ($children_line[$indiceAsked]['child'] as $child_product_id => $child_line) {
+										foreach ($children_line[$indiceAsked]['child'] as $suffix_id => $child_line) {
 											$subj = 0;
 											foreach ($child_line as $child) {
-												$component_dispatch_line_list[$indiceAsked][$child_product_id][] = array(
-													'id' => $indiceAsked,
-													'line' => $subj,
-													'fk_product' => $child_product_id,
-													'qty' => $child['qty'],
-													'fk_entrepot' => $child['warehouse_id'],
-												);
-												$subj++;
+												$child_fk_product = 0;
+												$child_product_and_parent_id_list = explode('-', $suffix_id);
+												if (count($child_product_and_parent_id_list) > 0) {
+													$child_fk_product = intval($child_product_and_parent_id_list[1]);
+													$component_dispatch_line_list[$indiceAsked][$suffix_id][] = array(
+														'id' => $indiceAsked,
+														'line' => $subj,
+														'fk_product' => $child_fk_product,
+														'qty' => $child['qty'],
+														'fk_entrepot' => $child['warehouse_id'],
+													);
+													$subj++;
+												}
 											}
 										}
 									}
@@ -1628,7 +1633,9 @@ if ($action == 'create') {
 										$component_product_id = $component_product->id;
 										$component_product_type = $component_product->type;
 										$component_qty_need = $quantityToBeDelivered * $component_qty_multiply;
-										$dispatcher_suffix = $indiceAsked . '_' . $component_product_id;
+										$component_product_id_parent = $value['id_parent'];
+										$dispatcher_suffix_id = $component_product_id_parent.'-'.$component_product_id;
+										$dispatcher_suffix = $indiceAsked . '_' . $dispatcher_suffix_id;
 										$img = '';
 										if (!empty($conf->stock->enabled) && ($component_product_type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES))) {
 											if ($value['stock'] < $component_qty_need) {
@@ -1659,17 +1666,17 @@ if ($action == 'create') {
 
 										if ($has_children === false) {
 											if ($component_product_type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
-												$children_product_id_list[] = $component_product_id;
+												$children_suffix_id_list[] = $dispatcher_suffix_id;
 											}
 
-											if (!isset($component_dispatch_line_list[$indiceAsked][$component_product_id])) {
-												$component_dispatch_line_list[$indiceAsked][$component_product_id] = array();
+											if (!isset($component_dispatch_line_list[$indiceAsked][$dispatcher_suffix_id])) {
+												$component_dispatch_line_list[$indiceAsked][$dispatcher_suffix_id] = array();
 												$subj = 0;
 												$component_dispatch = new ExpeditionLineDispatch($db);
 												$res = $component_dispatch->fetchAll('', '', 0, 0, array('fk_expeditiondet' => $line->id, 'fk_product' => $component_product_id));
 												if ($res >= 0) {
 													if (empty($component_dispatch->lines)) {
-														$component_dispatch_line_list[$indiceAsked][$component_product_id][] = array(
+														$component_dispatch_line_list[$indiceAsked][$dispatcher_suffix_id][] = array(
 															'id' => $indiceAsked,
 															'line' => $subj,
 															'fk_product' => $component_product_id,
@@ -1679,7 +1686,8 @@ if ($action == 'create') {
 														$subj++;
 													} else {
 														foreach ($component_dispatch->lines as $component_dispatch_line) {
-															$component_dispatch_line_list[$indiceAsked][$component_product_id][] = array(
+															$dispatch_line_suffix_id = $component_dispatch_line->fk_product_parent.'-'.$component_dispatch_line->fk_product;
+															$component_dispatch_line_list[$indiceAsked][$dispatch_line_suffix_id][] = array(
 																'id' => $indiceAsked,
 																'line' => $subj,
 																'fk_product' => $component_dispatch_line->fk_product,
@@ -1692,11 +1700,11 @@ if ($action == 'create') {
 												}
 											}
 
-											if (!empty($component_dispatch_line_list[$indiceAsked][$component_product_id])) {
+											if (!empty($component_dispatch_line_list[$indiceAsked][$dispatcher_suffix_id])) {
 												// all js lines
 												$out_js_line = '';
-												foreach ($component_dispatch_line_list[$indiceAsked][$component_product_id] as $component_dispatch_line) {
-													$dispatcher_suffix = $component_dispatch_line['id'] . '_' . $component_dispatch_line['fk_product'];
+												foreach ($component_dispatch_line_list[$indiceAsked][$dispatcher_suffix_id] as $component_dispatch_line) {
+													$dispatcher_suffix = $component_dispatch_line['id'] . '_' . $dispatcher_suffix_id;
 													$dispatcher_suffix_with_line = $dispatcher_suffix . '_' . $component_dispatch_line['line'];
 													// component values
 													$component_qty = $component_dispatch_line['qty'];
@@ -1740,7 +1748,7 @@ if ($action == 'create') {
 																print img_picto('', 'split.png');
 																$out_js_line .= 'jQuery("td[name=\"' . $dispatcher_prefix . 'action_' . $dispatcher_suffix_with_line . '\"]").click(function(){';
 																$out_js_line .= '	var expeditionDetDispatcher = new ExpeditionLineDispatcher(jQuery);';
-																$out_js_line .= ' 	expeditionDetDispatcher.addLine("' . $dispatcher_prefix . '", "' . $component_dispatch_line['id'] . '", "' . $component_dispatch_line['fk_product'] . '");';
+																$out_js_line .= ' 	expeditionDetDispatcher.addLine("' . $dispatcher_prefix . '", "' . $component_dispatch_line['id'] . '", "' . $dispatcher_suffix_id . '");';
 																$out_js_line .= '});';
 															}
 														}
@@ -1755,8 +1763,8 @@ if ($action == 'create') {
 									}
 
 									// post all children product ids
-									if (!empty($children_product_id_list)) {
-										print '<input type="hidden" name="' . $dispatcher_prefix . 'children_' . $indiceAsked . '" value="' . implode(',', $children_product_id_list) . '" />';
+									if (!empty($children_suffix_id_list)) {
+										print '<input type="text" name="' . $dispatcher_prefix . 'children_' . $indiceAsked . '" value="' . implode(',', $children_suffix_id_list) . '" />';
 									}
 
 									// script
