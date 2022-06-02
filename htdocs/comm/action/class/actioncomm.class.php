@@ -1131,7 +1131,7 @@ class ActionComm extends CommonObject
 			if (empty($this->type_code)) {
 				$cactioncomm = new CActionComm($this->db);
 				$result = $cactioncomm->fetch($this->type_id);
-				if ($result>=0) {
+				if ($result >= 0 && !empty($cactioncomm->code)) {
 					$this->type_code = $cactioncomm->code;
 				}
 			}
