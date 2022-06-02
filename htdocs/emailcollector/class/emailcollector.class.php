@@ -1904,6 +1904,7 @@ class EmailCollector extends CommonObject
 						}
 					} elseif ($operation['type'] == 'recordjoinpiece') {
 						$pj = getAttachments($imapemail, $connection);
+						$data = array();
 						foreach ($pj as $key => $val) {
 							$data[$val['filename']] = getFileData($imapemail, $val['pos'], $val['type'], $connection);
 						}
@@ -2010,7 +2011,7 @@ class EmailCollector extends CommonObject
 
 							$hookmanager->initHooks(array('emailcolector'));
 							$parameters = array('arrayobject' => $arrayobject);
-							$reshook = $hookmanager->executeHooks('addmoduletoeamailcollectorjoinpiece', $parameters);    // Note that $action and $object may have been modified by some hooks
+							$reshook = $hookmanager->executeHooks('addmoduletoeamailcollectorjoinpiece', $parameters, $data);    // Note that $action and $object may have been modified by some hooks
 							if ($reshook > 0) $arrayobject = $hookmanager->resArray;
 
 							$resultobj = array();
