@@ -344,15 +344,15 @@ if ($action == 'shipped' && $permissiontoadd) {
 		$error = 0;
 		foreach ($toselect as $checked) {
 			if ($objecttmp->fetch($checked)) {
-				if ($objecttmp->statut == 1) {
+				if ($objecttmp->statut == 1 || $objecttmp->statut == 2) {
 					if ($objecttmp->cloture($user)) {
-						setEventMessage($objecttmp->ref." ".$langs->trans('PassedInOpenStatus'), 'mesgs');
+						setEventMessage($objecttmp->ref." ".$langs->trans('PassedInShippedStatus'), 'mesgs');
 					} else {
-						setEventMessage($langs->trans('CantBeValidated'), 'errors');
+						setEventMessage($langs->trans('YouCantShipThis'), 'errors');
 						$error++;
 					}
 				} else {
-					setEventMessage($objecttmp->ref." ".$langs->trans('IsNotADraft'), 'errors');
+					setEventMessage($objecttmp->ref." ".$langs->trans('MustBeValidatedBefore'), 'errors');
 					$error++;
 				}
 			} else {

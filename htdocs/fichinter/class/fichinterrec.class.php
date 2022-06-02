@@ -349,7 +349,7 @@ class FichinterRec extends Fichinter
 	{
 		// phpcs:enable
 		$sql = 'SELECT l.rowid, l.fk_product, l.product_type, l.label as custom_label, l.description, ';
-		$sql .= ' l.price, l.qty, l.tva_tx, l.remise, l.remise_percent, l.subprice, l.duree, ';
+		$sql .= ' l.price, l.qty, l.tva_tx, l.remise, l.remise_percent, l.subprice, l.duree, l.date, ';
 		$sql .= ' l.total_ht, l.total_tva, l.total_ttc,';
 		$sql .= ' l.rang, l.special_code,';
 		$sql .= ' l.fk_unit, p.ref as product_ref, p.fk_product_type as fk_product_type,';
@@ -366,7 +366,6 @@ class FichinterRec extends Fichinter
 			while ($i < $num) {
 				$objp = $this->db->fetch_object($result);
 				$line = new FichinterLigne($this->db);
-
 				$line->id = $objp->rowid;
 				$line->label = $objp->custom_label; // Label line
 				$line->desc = $objp->description; // Description line
@@ -384,8 +383,6 @@ class FichinterRec extends Fichinter
 				$line->remise_percent = $objp->remise_percent;
 				$line->fk_remise_except = $objp->fk_remise_except;
 				$line->fk_product = $objp->fk_product;
-				$line->date_start = $objp->date_start;
-				$line->date_end = $objp->date_end;
 				$line->date_start = $objp->date_start;
 				$line->date_end = $objp->date_end;
 				$line->info_bits = $objp->info_bits;
