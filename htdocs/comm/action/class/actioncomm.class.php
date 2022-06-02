@@ -1128,6 +1128,12 @@ class ActionComm extends CommonObject
 		$sql .= " SET percent = '".$this->db->escape($this->percentage)."'";
 		if ($this->type_id > 0) {
 			$sql .= ", fk_action = '".$this->db->escape($this->type_id)."'";
+			$cactioncomm = new CActionComm($this->db);
+			$result = $cactioncomm->fetch($this->type_id);
+			if ($result>=0) {
+				$sql .= ", code = '" . $this->db->escape($cactioncomm->code) . "'";
+			}
+
 		}
 		$sql .= ", label = ".($this->label ? "'".$this->db->escape($this->label)."'" : "null");
 		$sql .= ", datep = ".(strval($this->datep) != '' ? "'".$this->db->idate($this->datep)."'" : 'null');
