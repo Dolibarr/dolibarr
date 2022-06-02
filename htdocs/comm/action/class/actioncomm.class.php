@@ -1133,7 +1133,6 @@ class ActionComm extends CommonObject
 			if ($result>=0) {
 				$sql .= ", code = '" . $this->db->escape($cactioncomm->code) . "'";
 			}
-
 		}
 		$sql .= ", label = ".($this->label ? "'".$this->db->escape($this->label)."'" : "null");
 		$sql .= ", datep = ".(strval($this->datep) != '' ? "'".$this->db->idate($this->datep)."'" : 'null');
