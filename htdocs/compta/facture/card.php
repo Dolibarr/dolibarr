@@ -2843,7 +2843,8 @@ if ($action == 'create') {
 	}
 
 	$currency_code = $conf->currency;
-
+	$fk_account = 0;
+	
 	// Load objectsrc
 	$remise_absolue = 0;
 	if (!empty($origin) && !empty($originid)) {
@@ -3580,7 +3581,7 @@ if ($action == 'create') {
 	if (!empty($conf->banque->enabled)) {
 		print '<tr><td>'.$langs->trans('BankAccount').'</td><td colspan="2">';
 		print img_picto('', 'bank_account', 'class="pictofixedwidth"');
-		print $form->select_comptes($fk_account, 'fk_account', 0, '', 1, '', 0, 'maxwidth200 widthcentpercentminusx', 1);
+		print $form->select_comptes(($fk_account < 0 ? '' : $fk_account), 'fk_account', 0, '', 1, '', 0, 'maxwidth200 widthcentpercentminusx', 1);
 		print '</td></tr>';
 	}
 
