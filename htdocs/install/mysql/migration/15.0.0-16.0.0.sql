@@ -403,3 +403,5 @@ ALTER TABLE llx_extrafields ADD COLUMN css varchar(128);
 ALTER TABLE llx_extrafields ADD COLUMN cssview varchar(128);
 ALTER TABLE llx_extrafields ADD COLUMN csslist varchar(128);
 
+ALTER TABLE llx_cronjob ADD COLUMN email_alert varchar(128);
+ 
