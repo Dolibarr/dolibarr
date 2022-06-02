@@ -2008,6 +2008,7 @@ class EmailCollector extends CommonObject
 									'object' => 'Mo'),
 							);
 
+							global $hookmanager;
 							$hookmanager->initHooks(array('emailcolector'));
 							$parameters = array('arrayobject' => $arrayobject);
 							$reshook = $hookmanager->executeHooks('addmoduletoeamailcollectorjoinpiece', $parameters);    // Note that $action and $object may have been modified by some hooks
