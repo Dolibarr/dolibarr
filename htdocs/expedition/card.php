@@ -1781,7 +1781,7 @@ if ($action == 'create') {
 
 									// post all children product ids
 									if (!empty($children_suffix_id_list)) {
-										print '<input type="text" name="' . $dispatcher_prefix . 'children_' . $indiceAsked . '" value="' . implode(',', $children_suffix_id_list) . '" />';
+										print '<input type="hidden" name="' . $dispatcher_prefix . 'children_' . $indiceAsked . '" value="' . implode(',', $children_suffix_id_list) . '" />';
 									}
 
 									// script
