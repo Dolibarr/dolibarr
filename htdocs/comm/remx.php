@@ -353,7 +353,7 @@ if ($socid > 0) {
 			print '</td></tr>';
 		}
 		print '<tr><td class="titlefield fieldrequired">'.$langs->trans("AmountHT").'</td>';
-		print '<td><input type="text" size="5" name="amount_ht" value="'.price2num(GETPOST("amount_ht")).'">';
+		print '<td><input type="text" size="5" name="amount_ht" value="'.price2num(GETPOST("amount_ht")).'" autofocus>';
 		print '<span class="hideonsmartphone">&nbsp;'.$langs->trans("Currency".$conf->currency).'</span></td></tr>';
 		print '<tr><td>'.$langs->trans("VAT").'</td>';
 		print '<td>';
