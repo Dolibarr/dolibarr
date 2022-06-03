@@ -78,6 +78,8 @@ class BonPrelevement extends CommonObject
 	public $statut; // 0-Wait, 1-Trans, 2-Done
 	public $labelStatus = array();
 
+	public $factures = array();
+
 	public $invoice_in_error = array();
 	public $thirdparty_in_error = array();
 
@@ -913,6 +915,7 @@ class BonPrelevement extends CommonObject
 			$this->db->begin();
 
 			$now = dol_now();
+			$ref = '';
 
 			/*
 			 * Process order generation

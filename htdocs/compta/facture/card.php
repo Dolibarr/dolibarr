@@ -5008,7 +5008,7 @@ if ($action == 'create') {
 				$paymentstatic->datepaye = $db->jdate($objp->dp);
 				$paymentstatic->ref = $objp->ref;
 				$paymentstatic->num_payment = $objp->num_payment;
-				$paymentstatic->payment_code = $objp->payment_code;
+				$paymentstatic->paiementcode = $objp->payment_code;
 
 				print '<tr class="oddeven"><td class="nowraponall">';
 				print $paymentstatic->getNomUrl(1);
