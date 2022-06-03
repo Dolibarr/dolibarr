@@ -703,7 +703,7 @@ class User extends CommonObject
 		$moduleRightsMapping = array(
 			'product' => 'produit',	// We must check $user->rights->produit...
 		);
-		
+
 		$rightsPath = $module;
 		if (!empty($moduleRightsMapping[$rightsPath])) {
 			$rightsPath = $moduleRightsMapping[$rightsPath];
@@ -732,7 +732,7 @@ class User extends CommonObject
 		}
 		if ($permlevel1 == 'recruitmentcandidature') {
 			$permlevel1 = 'recruitmentjobposition';
-		}		
+		}
 
 		//var_dump($module.' '.$permlevel1.' '.$permlevel2);
 		if (empty($rightsPath) || empty($this->rights) || empty($this->rights->$rightsPath) || empty($permlevel1)) {
