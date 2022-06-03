@@ -283,6 +283,10 @@ ErrorAttributeIsUsedIntoProduct=Denne attribut bruges i en eller flere produktva
 ErrorAttributeValueIsUsedIntoProduct=Denne attributværdi bruges i en eller flere produktvarianter
 ErrorPaymentInBothCurrency=Fejl, alle beløb skal indtastes i samme kolonne
 ErrorYouTryToPayInvoicesInACurrencyFromBankWithAnotherCurrency=Du forsøger at betale fakturaer i valutaen %s fra en konto med valutaen %s
+ErrorInvoiceLoadThirdParty=Kan ikke indlæse tredjepartsobjekt for faktura "%s"
+ErrorInvoiceLoadThirdPartyKey=Tredjepartsnøgle "%s" ikke indstillet til faktura "%s"
+ErrorDeleteLineNotAllowedByObjectStatus=Slet linje er ikke tilladt af den faktiske objektstatus
+ErrorAjaxRequestFailed=Anmodningen mislykkedes
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Din PHP-parameter upload_max_filesize (%s) er højere end PHP-parameter post_max_size (%s). Dette er ikke en ensartet opsætning.
@@ -318,6 +322,11 @@ WarningAvailableOnlyForHTTPSServers=Kun tilgængelig, hvis du bruger HTTPS-sikre
 WarningModuleXDisabledSoYouMayMissEventHere=Modul %s er ikke aktiveret. Så du går måske glip af en masse begivenheder her.
 WarningPaypalPaymentNotCompatibleWithStrict=Værdien 'Strict' gør, at onlinebetalingsfunktionerne ikke fungerer korrekt. Brug 'Lax' i stedet.
 
+<<<<<<< HOVED
+=======
+<<<<<<< HOVED
+<<<<<<< HOVED
+>>>>>>> gren '15.0' af git@github.com:Dolibarr/dolibarr.git
 # Validate
 RequireValidValue = Værdien er ikke gyldig
 RequireAtLeastXString = Kræver mindst %s karakter (er)
@@ -338,3 +347,12 @@ BadSetupOfField = Fejl ved dårlig opsætning af feltet
 BadSetupOfFieldClassNotFoundForValidation = Fejl ved dårlig opsætning af feltet: Klassen blev ikke fundet til validering
 BadSetupOfFieldFileNotFound = Fejl ved dårlig opsætning af feltet: Filen blev ikke fundet til inkludering
 BadSetupOfFieldFetchNotCallable = Fejl dårlig opsætning af felt: Hentning kan ikke kaldes på klassen
+<<<<<<< HOVED
+=======
+=======
+=======
+>>>>>>> gren '15.0' af git@github.com:Dolibarr/dolibarr.git
+>>>>>>> gren '15.0' af git@github.com:Dolibarr/dolibarr.git
+=======
+>>>>>>> gren '15.0' af git@github.com:Dolibarr/dolibarr.git
+>>>>>>> gren '15.0' af git@github.com:Dolibarr/dolibarr.git

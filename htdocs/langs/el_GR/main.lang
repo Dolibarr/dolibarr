@@ -1174,3 +1174,6 @@ ConfirmAllocateCommercial=Επιβεβαίωση ορισμού αντιπροσ
 ConfirmAllocateCommercialQuestion=Είστε σίγουροι ότι θέλετε να ορίσετε τις επιλεγμένες εγγραφές %s;
 CommercialsAffected=Εκπρόσωποι πωλήσεων που αφορά
 CommercialAffected=Εκπρόσωποι πωλήσεων που αφορά
+YourMessage=Το μήνυμα σας
+YourMessageHasBeenReceived=Το μήνυμά σας έχει ληφθεί. Θα απαντήσουμε ή θα επικοινωνήσουμε μαζί σας το συντομότερο δυνατό.
+UrlToCheck=URL για έλεγχο

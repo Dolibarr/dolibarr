@@ -1,7 +1,6 @@
 # Dolibarr language file - Source file is en_US - products
 ProductRef=Produkt-Nr.
 Create=Erstelle
-Reference=Referenz
 ProductVatMassChange=Globale MWST - Änderung
 ProductVatMassChangeDesc=Dieses Werkzeug ändert den MWST Satz <b><u>aller</u></b> Produkte und Dienstleistungen im ganzen System!
 ProductAccountancyBuyCode=Buchhaltungskonto (Einkauf)
@@ -32,8 +31,6 @@ SellingPriceTTC=Verkaufspreis (inkl. MwSt.)
 SellingMinPriceTTC=Mindestverkaufspreis (inkl. MWST)
 CostPriceDescription=In dieses Feld kannst du deinen freien Durchschnittspreis dieses Produktes eintragen.\nZum Beispiel den durchschnittlichen EP plus deine Verarbeitungs und Vertriebskosten.
 CostPriceUsage=Dieser Wert hilft bei der Margenbestimmung
-PurchasedAmount=Eingekaufte Menge
-MinPrice=Mindestverkaufspreis
 EditSellingPriceLabel=Preisschild anpassen
 CantBeLessThanMinPrice=Der Verkaufspreis darf den Mindestpreis für dieses Produkt (%s ohne MwSt.) nicht unterschreiten. Diese Meldung kann auch angezeigt werden, wenn Sie einen zu hohen Rabatt geben.
 SupplierRef=Verkäufer SKU (Artikelnummer)

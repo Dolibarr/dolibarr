@@ -182,6 +182,7 @@ DONATION_ACCOUNTINGACCOUNT=حساب حساب‌داری ثبت کمک و اعا�
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=حساب حساب‌داری ثبت اشتراک‌ها
 
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Accounting account by default to register customer deposit
+UseAuxiliaryAccountOnCustomerDeposit=Use sub-accounts on customer deposit lines
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Accounting account by default for the bought products (used if not defined in the product sheet)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Accounting account by default for the bought products in EEC (used if not defined in the product sheet)
@@ -289,7 +290,7 @@ ValidateHistory=بندکردن خودکار
 AutomaticBindingDone=Automatic bindings done (%s) - Automatic binding not possible for some record (%s)
 
 ErrorAccountancyCodeIsAlreadyUse=خطا! شما نمی‌توانید این حساب حساب‌داری را حذف کنید، زیرا در حال استفاده است.
-MvtNotCorrectlyBalanced=جابجائی به درستی انجام نشد. بدهی = %s | اعتبار= %s
+MvtNotCorrectlyBalanced=Movement not correctly balanced. Debit = %s & Credit = %s
 Balancing=تعدیل
 FicheVentilation=بندشدن کارت
 GeneralLedgerIsWritten=تراکنش‌ها در دفترکل درج شده

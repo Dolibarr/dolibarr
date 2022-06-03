@@ -1,14 +1,17 @@
 # Dolibarr language file - Source file is en_US - loan
 ModuleBuilderDesc=Rhaid i'r offeryn hwn gael ei ddefnyddio gan ddefnyddwyr neu ddatblygwyr profiadol yn unig. Mae'n darparu cyfleustodau i adeiladu neu olygu eich modiwl eich hun. Mae dogfennau ar gyfer datblygiad llaw <a href="%s" target="_blank" rel="noopener noreferrer"> amgen yma </a> .
-EnterNameOfModuleDesc=Rhowch enw'r modiwl/cymhwysiad i'w greu heb fylchau. Defnyddiwch briflythrennau i wahanu geiriau (Er enghraifft: MyModule, EcommerceForShop, SyncWithMySystem...)
-EnterNameOfObjectDesc=Rhowch enw'r gwrthrych i'w greu heb fylchau. Defnyddiwch briflythrennau i wahanu geiriau (Er enghraifft: MyObject, Student, Teacher...). Bydd ffeil dosbarth CRUD, ond hefyd ffeil API, tudalennau i restru/ychwanegu/golygu/dileu gwrthrych a ffeiliau SQL yn cael eu cynhyrchu.
+EnterNameOfModuleDesc=Enter the name of the module/application to create with no spaces. Use uppercase to separate words (For example: MyModule, EcommerceForShop, SyncWithMySystem...)
+EnterNameOfObjectDesc=Enter the name of the object to create with no spaces. Use uppercase to separate words (For example: MyObject, Student, Teacher...). The CRUD class file, but also API file, pages to list/add/edit/delete object and SQL files will be generated.
+EnterNameOfDictionaryDesc=Enter the name of the dictionary to create with no spaces. Use uppercase to separate words (For example: MyDico...). The class file, but also the SQL file will be generated.
 ModuleBuilderDesc2=Llwybr lle mae modiwlau'n cael eu cynhyrchu/golygu (cyfeirlyfr cyntaf ar gyfer modiwlau allanol wedi'i ddiffinio i %s): <strong> %s </strong>
 ModuleBuilderDesc3=Modiwlau a gynhyrchwyd/golygu a ddarganfuwyd: <strong> %s </strong>
 ModuleBuilderDesc4=Mae modiwl yn cael ei ganfod fel un 'golygadwy' pan fo'r ffeil <strong> %s </strong> yn bodoli yng ngwraidd cyfeiriadur modiwlau
 NewModule=Modiwl newydd
 NewObjectInModulebuilder=Gwrthrych newydd
+NewDictionary=New dictionary
 ModuleKey=Allwedd modiwl
 ObjectKey=Allwedd gwrthrych
+DicKey=Dictionary key
 ModuleInitialized=Modiwl wedi'i gychwyn
 FilesForObjectInitialized=Ffeiliau ar gyfer gwrthrych newydd '%s' wedi'u cychwyn
 FilesForObjectUpdated=Ffeiliau ar gyfer gwrthrych '%s' wedi'u diweddaru (ffeiliau .sql a ffeil .class.php)
