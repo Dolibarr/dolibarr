@@ -90,7 +90,6 @@ foreach ($object->fields as $key => $val) {
 		$search[$key.'_dtend'] = dol_mktime(23, 59, 59, GETPOST('search_'.$key.'_dtendmonth', 'int'), GETPOST('search_'.$key.'_dtendday', 'int'), GETPOST('search_'.$key.'_dtendyear', 'int'));
 	}
 }
-
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array();
 foreach ($object->fields as $key => $val) {
@@ -279,6 +278,9 @@ if (empty($reshook)) {
 			//var_dump($listofobjectthirdparties);exit;
 		}
 	}
+}
+if(!empty($fk_product)){
+    $search['fk_product'] = $fk_product;
 }
 
 
