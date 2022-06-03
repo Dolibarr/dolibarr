@@ -118,16 +118,16 @@ function product_prepare_head($object)
 		}
 	}
 
-    if(!empty($conf->global->BOM_PRODUCT_TAB)){
-        $head[$h][0] = DOL_URL_ROOT."/bom/bom_list.php?fk_product=".$object->id;
-        $head[$h][1] = $langs->trans("BillOfMaterials");
-        $head[$h][2] = 'bom';
-        $h++;
-    }
+	if (!empty($conf->global->BOM_PRODUCT_TAB)) {
+		$head[$h][0] = DOL_URL_ROOT."/bom/bom_list.php?fk_product=".$object->id;
+		$head[$h][1] = $langs->trans("BillOfMaterials");
+		$head[$h][2] = 'bom';
+		$h++;
+	}
 
 
 
-    // Tab to link resources
+	// Tab to link resources
 	if (!empty($conf->resource->enabled)) {
 		if ($object->isProduct() && !empty($conf->global->RESOURCE_ON_PRODUCTS)) {
 			$head[$h][0] = DOL_URL_ROOT.'/resource/element_resource.php?element=product&ref='.$object->ref;

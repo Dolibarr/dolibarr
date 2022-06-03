@@ -116,13 +116,13 @@ if (empty($reshook)) {
 		}
 	}
 
-    if ($cancel) {
-        if (!empty($backtopage)) {
-            header("Location: ".$backtopage);
-            exit;
-        }
-        $action = '';
-    }
+	if ($cancel) {
+		if (!empty($backtopage)) {
+			header("Location: ".$backtopage);
+			exit;
+		}
+		$action = '';
+	}
 
 	$triggermodname = 'BOM_MODIFY'; // Name of trigger action code to execute when we modify record
 
