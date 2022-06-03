@@ -586,7 +586,26 @@ class modSociete extends DolibarrModules
 				'class' => 'Account',
 				'method' => 'fetch',
 				'element' => 'BankAccount'
-		//          ),
+			),
+			's.fk_stcomm' => array(
+				'rule' => 'fetchidfromcodeid',
+				'classfile' => '/core/class/cgenericdic.class.php',
+				'class' => 'CGenericDic',
+				'method' => 'fetch',
+				'dict' => 'DictionaryProspectStatus',
+				'element' => 'c_stcomm',
+				'table_element' => 'c_stcomm'
+			),
+			/*
+			's.fk_prospectlevel' => array(
+				'rule' => 'fetchidfromcodeid',
+				'classfile' => '/core/class/cgenericdic.class.php',
+				'class' => 'CGenericDic',
+				'method' => 'fetch',
+				'dict' => 'DictionaryProspectLevel',
+				'element' => 'c_prospectlevel',
+				'table_element' => 'c_prospectlevel'
+			),*/
 		//          TODO
 		//          's.fk_incoterms' => array(
 		//              'rule' => 'fetchidfromcodeid',
@@ -594,7 +613,7 @@ class modSociete extends DolibarrModules
 		//              'class' => 'Cincoterm',
 		//              'method' => 'fetch',
 		//              'dict' => 'IncotermLabel'
-			)
+		//			)
 		);
 		//$this->import_convertvalue_array[$r]=array('s.fk_soc'=>array('rule'=>'lastrowid',table='t');
 		$this->import_regex_array[$r] = array(//field order as per structure of table llx_societe
@@ -674,6 +693,15 @@ class modSociete extends DolibarrModules
 			's.code_compta' => 'CustomerAccountancyCode',
 			's.code_compta_fournisseur' => 'SupplierAccountancyCode'
 		);
+		if (!empty($conf->socialnetworks->enabled)) {
+			$sql = "SELECT code, label FROM ".MAIN_DB_PREFIX."c_socialnetworks WHERE active = 1";
+			$resql = $this->db->query($sql);
+			while ($obj = $this->db->fetch_object($resql)) {
+				$fieldname = 's.socialnetworks_'.$obj->code;
+				$fieldlabel = ucfirst($obj->label);
+				$this->import_updatekeys_array[$r][$fieldname] = $fieldlabel;
+			}
+		}
 		// Add profids as criteria to search duplicates
 		$langs->load("companies");
 		$i=1;

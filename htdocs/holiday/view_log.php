@@ -306,6 +306,9 @@ print '</div>';
 print '<br>';
 
 $moreforfilter = '';
+$morefilter = '';
+$disabled = 0;
+$include = '';
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $selectedfields = '';

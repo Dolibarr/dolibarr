@@ -616,9 +616,18 @@ foreach ($accounts as $key => $type) {
 
 	// Transactions to reconcile
 	if (!empty($arrayfields['toreconcile']['checked'])) {
-		print '<td class="center tdoverflowmax125">';
-
 		$conciliate = $objecttmp->canBeConciliated();
+
+		$labeltoshow = '';
+		if ($conciliate == -2) {
+			$labeltoshow = $langs->trans("CashAccount");
+		} elseif ($conciliate == -3) {
+			$labeltoshow = $langs->trans("Closed");
+		} elseif (empty($objecttmp->rappro)) {
+			$labeltoshow = $langs->trans("ConciliationDisabled");
+		}
+
+		print '<td class="center tdoverflowmax125"'.($labeltoshow ? ' title="'.dol_escape_htmltag($labeltoshow).'"' : '').'>';
 		if ($conciliate == -2) {
 			print '<span class="opacitymedium">'.$langs->trans("CashAccount").'</span>';
 		} elseif ($conciliate == -3) {
@@ -630,7 +639,7 @@ foreach ($accounts as $key => $type) {
 			if ($result < 0) {
 				setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
 			} else {
-				print '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?action=reconcile&sortfield=b.datev,b.dateo,b.rowid&sortorder=desc,desc,desc&id='.$objecttmp->id.'&search_account='.$objecttmp->id.'&search_conciliated=0&contextpage=banktransactionlist">';
+				print '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?action=reconcile&sortfield=b.datev,b.dateo,b.rowid&sortorder=asc,asc,asc&id='.$objecttmp->id.'&search_account='.$objecttmp->id.'&search_conciliated=0&contextpage=banktransactionlist">';
 				print '<span class="badge badge-info classfortooltip" title="'.dol_htmlentities($langs->trans("TransactionsToConciliate")).'">';
 				print $result->nbtodo;
 				print '</span>';

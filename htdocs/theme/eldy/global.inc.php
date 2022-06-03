@@ -149,7 +149,8 @@ select.vmenusearchselectcombo {
 	background-color: unset;
 }
 
-table.liste th.wrapcolumntitle.liste_titre:not(.maxwidthsearch), table.liste td.wrapcolumntitle.liste_titre:not(.maxwidthsearch) {
+table.liste th.wrapcolumntitle.liste_titre:not(.maxwidthsearch), table.liste td.wrapcolumntitle.liste_titre:not(.maxwidthsearch),
+table.liste th.wrapcolumntitle.liste_titre_sel:not(.maxwidthsearch), table.liste td.wrapcolumntitle.liste_titre_sel:not(.maxwidthsearch) {
 	overflow: hidden;
 	white-space: nowrap;
 	max-width: 100px;
@@ -226,6 +227,9 @@ input {
 	line-height: 1.3em;
 	padding: 4px;
 	padding-left: 5px;
+}
+.tableforfield input {
+	padding: 2px;
 }
 select {
 	padding-top: 4px;
@@ -7629,6 +7633,11 @@ if (!empty($conf->global->THEME_CUSTOM_CSS)) {
 }
 
 ?>
+
+	div.extra_inline_chkbxlst,
+	div.extra_inline_checkbox {
+		min-width:150px;
+	}
 
 /* Must be at end */
 div.flot-text .flot-tick-label .tickLabel, .fa-color-unset {

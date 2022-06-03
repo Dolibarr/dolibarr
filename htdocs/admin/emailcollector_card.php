@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2018 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2022 Charlene Benke	   <charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -592,15 +593,15 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		'recordjoinpiece'=>'AttachJoinedDocumentsToObject',
 		'recordevent'=>'RecordEvent');
 	$arrayoftypesnocondition = $arrayoftypes;
-	if ($conf->projet->enabled) {
+	if (!empty($conf->projet->enabled)) {
 		$arrayoftypes['project'] = 'CreateLeadAndThirdParty';
 	}
 	$arrayoftypesnocondition['project'] = 'CreateLeadAndThirdParty';
-	if ($conf->ticket->enabled) {
+	if (!empty($conf->ticket->enabled)) {
 		$arrayoftypes['ticket'] = 'CreateTicketAndThirdParty';
 	}
 	$arrayoftypesnocondition['ticket'] = 'CreateTicketAndThirdParty';
-	if ($conf->recruitment->enabled) {
+	if (!empty($conf->recruitment->enabled)) {
 		$arrayoftypes['candidature'] = 'CreateCandidature';
 	}
 	$arrayoftypesnocondition['candidature'] = 'CreateCandidature';

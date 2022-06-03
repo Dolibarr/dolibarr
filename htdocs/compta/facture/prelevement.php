@@ -352,9 +352,9 @@ if ($object->id > 0) {
 	if (!empty($conf->projet->enabled)) {
 		$langs->load("projects");
 		$morehtmlref .= '<br>'.$langs->trans('Project').' ';
-		if ($user->rights->facture->creer) {
+		if ($usercancreate) {
 			if ($action != 'classify') {
-				//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+				//$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
 				$morehtmlref .= ' : ';
 			}
 			if ($action == 'classify') {
@@ -395,12 +395,12 @@ if ($object->id > 0) {
 	print '<table class="border centpercent tableforfield">';
 
 	// Type
-	print '<tr><td class="titlefield">'.$langs->trans('Type').'</td><td colspan="3">';
+	print '<tr><td class="titlefield fieldname_type">'.$langs->trans('Type').'</td><td colspan="3">';
 	print '<span class="badgeneutral">';
 	print $object->getLibType();
 	print '</span>';
 	if ($object->module_source) {
-		print ' <span class="opacitymediumbycolor">('.$langs->trans("POS").' '.$object->module_source.' - '.$langs->trans("Terminal").' '.$object->pos_source.')</span>';
+		print ' <span class="opacitymediumbycolor paddingleft">('.$langs->trans("POS").' '.$object->module_source.' - '.$langs->trans("Terminal").' '.$object->pos_source.')</span>';
 	}
 	if ($object->type == $object::TYPE_REPLACEMENT) {
 		if ($type == 'bank-transfer') {
@@ -409,16 +409,16 @@ if ($object->id > 0) {
 			$facreplaced = new Facture($db);
 		}
 		$facreplaced->fetch($object->fk_facture_source);
-		print ' ('.$langs->transnoentities("ReplaceInvoice", $facreplaced->getNomUrl(1)).')';
+		print ' <span class="opacitymediumbycolor paddingleft">'.$langs->transnoentities("ReplaceInvoice", $facreplaced->getNomUrl(1)).'</span>';
 	}
-	if ($object->type == $object::TYPE_CREDIT_NOTE) {
+	if ($object->type == $object::TYPE_CREDIT_NOTE && !empty($object->fk_facture_source)) {
 		if ($type == 'bank-transfer') {
 			$facusing = new FactureFournisseur($db);
 		} else {
 			$facusing = new Facture($db);
 		}
 		$facusing->fetch($object->fk_facture_source);
-		print ' ('.$langs->transnoentities("CorrectInvoice", $facusing->getNomUrl(1)).')';
+		print ' <span class="opacitymediumbycolor paddingleft">'.$langs->transnoentities("CorrectInvoice", $facusing->getNomUrl(1)).'</span>';
 	}
 
 	$facidavoir = $object->getListIdAvoirFromInvoice();
@@ -433,20 +433,22 @@ if ($object->id > 0) {
 			$facavoir->fetch($facid);
 			$invoicecredits[] = $facavoir->getNomUrl(1);
 		}
-		print ' ('.$langs->transnoentities("InvoiceHasAvoir") . (count($invoicecredits) ? ' ' : '') . implode(',', $invoicecredits) . ')';
+		print ' <span class="opacitymediumbycolor paddingleft">'.$langs->transnoentities("InvoiceHasAvoir");
+		print ' '. (count($invoicecredits) ? ' ' : '') . implode(',', $invoicecredits);
+		print '</span>';
 	}
 	/*
-	if ($facidnext > 0)
-	{
+	if ($objectidnext > 0) {
 		$facthatreplace=new Facture($db);
-		$facthatreplace->fetch($facidnext);
-		print ' ('.$langs->transnoentities("ReplacedByInvoice",$facthatreplace->getNomUrl(1)).')';
+		$facthatreplace->fetch($objectidnext);
+		print ' <span class="opacitymediumbycolor paddingleft">'.str_replace('{s1}', $facthatreplace->getNomUrl(1), $langs->transnoentities("ReplacedByInvoice", '{s1}')).'</span>';
 	}
 	*/
 	print '</td></tr>';
 
-	// Discounts
-	print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="3">';
+	// Relative and absolute discounts
+	print '<!-- Discounts -->'."\n";
+	print '<tr><td>'.$langs->trans('DiscountStillRemaining').'</td><td colspan="3">';
 
 	if ($type == 'bank-transfer') {
 		//$societe = new Fournisseur($db);

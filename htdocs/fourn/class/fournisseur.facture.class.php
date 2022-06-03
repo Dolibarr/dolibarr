@@ -2354,20 +2354,21 @@ class FactureFournisseur extends CommonInvoice
 			$info_bits = 0;
 		}
 
-		if ($idproduct) {
-			$product = new Product($this->db);
-			$result = $product->fetch($idproduct);
-			$product_type = $product->type;
-		} else {
-			$product_type = $type;
-		}
-
 		//Fetch current line from the database and then clone the object and set it in $oldline property
 		$line = new SupplierInvoiceLine($this->db);
 		$line->fetch($id);
 		$line->fetch_optionals();
 
 		$staticline = clone $line;
+
+		if ($idproduct) {
+			$product = new Product($this->db);
+			$result = $product->fetch($idproduct);
+			$product_type = $product->type;
+		} else {
+			$idproduct = $staticline->fk_product;
+			$product_type = $type;
+		}
 
 		$line->oldline = $staticline;
 		$line->context = $this->context;

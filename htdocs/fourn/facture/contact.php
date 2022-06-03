@@ -176,7 +176,9 @@ if ($id > 0 || !empty($ref)) {
 
 		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
+		/*
 		print '<div class="fichecenter">';
+		print '<div class="fichehalfleft">';
 		print '<div class="underbanner clearboth"></div>';
 
 		print '<table class="border centpercent tableforfield">';
@@ -189,12 +191,12 @@ if ($id > 0 || !empty($ref)) {
 		if ($object->type == FactureFournisseur::TYPE_REPLACEMENT) {
 			$facreplaced = new FactureFournisseur($db);
 			$facreplaced->fetch($object->fk_facture_source);
-			print ' ('.$langs->transnoentities("ReplaceInvoice", $facreplaced->getNomUrl(1)).')';
+			print ' '.$langs->transnoentities("ReplaceInvoice", $facreplaced->getNomUrl(1));
 		}
 		if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE) {
 			$facusing = new FactureFournisseur($db);
 			$facusing->fetch($object->fk_facture_source);
-			print ' ('.$langs->transnoentities("CorrectInvoice", $facusing->getNomUrl(1)).')';
+			print ' '.$langs->transnoentities("CorrectInvoice", $facusing->getNomUrl(1));
 		}
 
 		$facidavoir = $object->getListIdAvoirFromInvoice();
@@ -205,12 +207,12 @@ if ($id > 0 || !empty($ref)) {
 				$facavoir->fetch($facid);
 				$invoicecredits[] = $facavoir->getNomUrl(1);
 			}
-			print ' ('.$langs->transnoentities("InvoiceHasAvoir") . (count($invoicecredits) ? ' ' : '') . implode(',', $invoicecredits) . ')';
+			print ' '.$langs->transnoentities("InvoiceHasAvoir") . (count($invoicecredits) ? ' ' : '') . implode(',', $invoicecredits);
 		}
 		//if ($facidnext > 0) {
 		//	$facthatreplace = new FactureFournisseur($db);
 		//	$facthatreplace->fetch($facidnext);
-		//	print ' ('.$langs->transnoentities("ReplacedByInvoice", $facthatreplace->getNomUrl(1)).')';
+		//	print ' '.$langs->transnoentities("ReplacedByInvoice", $facthatreplace->getNomUrl(1));
 		//}
 		print '</td></tr>';
 
@@ -218,6 +220,13 @@ if ($id > 0 || !empty($ref)) {
 		print '<tr><td>'.$form->editfieldkey("Label", 'label', $object->label, $object, 0).'</td><td>';
 		print $form->editfieldval("Label", 'label', $object->label, $object, 0);
 		print '</td></tr>';
+
+		print '</table>';
+
+		print '</div><div class="fichehalfright">';
+		print '<div class="underbanner clearboth"></div>';
+
+		print '<table class="border centpercent tableforfield">';
 
 		// Amount
 		print '<tr><td>'.$langs->trans('AmountHT').'</td><td>'.price($object->total_ht, 1, $langs, 0, -1, -1, $conf->currency).'</td></tr>';
@@ -238,10 +247,15 @@ if ($id > 0 || !empty($ref)) {
 		print '<tr><td>'.$langs->trans('AmountTTC').'</td><td>'.price($object->total_ttc, 1, $langs, 0, -1, -1, $conf->currency).'</td></tr>';
 
 		print "</table>";
+		print '</div>';
+
+		print '</div>';
+		*/
 
 		print dol_get_fiche_end();
 
-		print '<br>';
+		//print '<div class="clearboth"></div>';
+		//print '<br>';
 
 		// Contacts lines
 		include DOL_DOCUMENT_ROOT.'/core/tpl/contacts.tpl.php';

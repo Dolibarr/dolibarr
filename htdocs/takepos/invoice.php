@@ -913,7 +913,7 @@ if (empty($reshook)) {
 			$sectionwithinvoicelink .= ' <button id="buttonsend" type="button" onclick="SendTicket('.$placeid.');">'.$langs->trans('SendTicket').'</button>';
 		}
 
-		if ($remaintopay <= 0 && getDolGlobalString('TAKEPOS_AUTO_PRINT_TICKETS')) {
+		if ($remaintopay <= 0 && getDolGlobalString('TAKEPOS_AUTO_PRINT_TICKETS') && $action != "history") {
 			$sectionwithinvoicelink .= '<script type="text/javascript">$("#buttonprint").click();</script>';
 		}
 	}
@@ -1446,7 +1446,7 @@ if ($placeid > 0) {
 				}
 				$htmlsupplements[$line->fk_parent_line] .= '" id="'.$line->id.'"';
 				if ($line->special_code == "4") {
-					$htmlsupplements[$line->fk_parent_line] .= ' title="'.dol_escape_htmltag("AlreadyPrinted").'"';
+					$htmlsupplements[$line->fk_parent_line] .= ' title="'.dol_escape_htmltag($langs->trans("AlreadyPrinted")).'"';
 				}
 				$htmlsupplements[$line->fk_parent_line] .= '>';
 				$htmlsupplements[$line->fk_parent_line] .= '<td class="left">';
@@ -1489,7 +1489,7 @@ if ($placeid > 0) {
 			}
 			$htmlforlines .= '" id="'.$line->id.'"';
 			if ($line->special_code == "4") {
-				$htmlforlines .= ' title="'.dol_escape_htmltag("AlreadyPrinted").'"';
+				$htmlforlines .= ' title="'.dol_escape_htmltag($langs->trans("AlreadyPrinted")).'"';
 			}
 			$htmlforlines .= '>';
 			$htmlforlines .= '<td class="left">';
