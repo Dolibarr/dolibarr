@@ -187,8 +187,8 @@ class Menubase
 		$this->mainmenu = trim($this->mainmenu);
 		$this->leftmenu = trim($this->leftmenu);
 		$this->fk_menu = (int) $this->fk_menu; // If -1, fk_mainmenu and fk_leftmenu must be defined
-		$this->fk_mainmenu = trim($this->fk_mainmenu);
-		$this->fk_leftmenu = trim($this->fk_leftmenu);
+		$this->fk_mainmenu = trim((string) $this->fk_mainmenu);
+		$this->fk_leftmenu = trim((string) $this->fk_leftmenu);
 		$this->position = (int) $this->position;
 		$this->url = trim($this->url);
 		$this->target = trim($this->target);
