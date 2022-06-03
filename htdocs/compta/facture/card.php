@@ -2844,7 +2844,7 @@ if ($action == 'create') {
 
 	$currency_code = $conf->currency;
 	$fk_account = 0;
-	
+
 	// Load objectsrc
 	$remise_absolue = 0;
 	if (!empty($origin) && !empty($originid)) {
