@@ -357,8 +357,8 @@ class StockTransfer extends CommonObject
 	/**
 	 * Used to sort lines by rank
 	 *
-	 * @param $a	1st element to test
-	 * @param $b	1st element to test
+	 * @param	Object	$a		1st element to test
+	 * @param	Object	$b		2nd element to test
 	 * @return int
 	 */
 	public function cmp($a, $b)
