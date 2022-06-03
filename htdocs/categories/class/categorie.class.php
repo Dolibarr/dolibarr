@@ -37,6 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+require_once DOL_DOCUMENT_ROOT.'/knowledgemanagement/class/knowledgerecord.class.php';
 
 
 /**
@@ -825,7 +826,7 @@ class Categorie extends CommonObject
 	/**
 	 * Return list of fetched instance of elements having this category
 	 *
-	 * @param   string     	$type       Type of category ('customer', 'supplier', 'contact', 'product', 'member', ...)
+	 * @param   string     	$type       Type of category ('customer', 'supplier', 'contact', 'product', 'member', 'knowledge_management' ...)
 	 * @param   int        	$onlyids    Return only ids of objects (consume less memory)
 	 * @param	int			$limit		Limit
 	 * @param	int			$offset		Offset

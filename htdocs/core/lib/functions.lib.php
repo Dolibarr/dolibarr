@@ -13,7 +13,7 @@
  * Copyright (C) 2014		Cédric GROSS				<c.gross@kreiz-it.fr>
  * Copyright (C) 2014-2015	Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
- * Copyright (C) 2018-2021  Frédéric France             <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2022  Frédéric France             <frederic.france@netlogic.fr>
  * Copyright (C) 2019       Thibault Foucart            <support@ptibogxiv.net>
  * Copyright (C) 2020       Open-Dsi         			<support@open-dsi.fr>
  * Copyright (C) 2021       Gauthier VERDOL         	<gauthier.verdol@atm-consulting.fr>
@@ -66,6 +66,17 @@ function getDolGlobalInt($key, $default = 0)
 	global $conf;
 	// return $conf->global->$key ?? $default;
 	return (int) (empty($conf->global->$key) ? $default : $conf->global->$key);
+}
+
+/**
+ * Is Dolibarr module enabled
+ * @param string $module module name to check
+ * @return int
+ */
+function isModEnabled($module)
+{
+	global $conf;
+	return !empty($conf->$module->enabled);
 }
 
 /**
@@ -1552,6 +1563,11 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
 		}
 	}
 
+	// Check if we have a forced suffix
+	if (defined('USESUFFIXINLOG')) {
+		$suffixinfilename .= constant('USESUFFIXINLOG');
+	}
+
 	if ($ident < 0) {
 		foreach ($conf->loghandlers as $loghandlerinstance) {
 			$loghandlerinstance->setIdent($ident);
@@ -2750,7 +2766,7 @@ function dol_mktime($hour, $minute, $second, $month, $day, $year, $gm = 'auto', 
 	}
 	//var_dump($localtz);
 	//var_dump($year.'-'.$month.'-'.$day.'-'.$hour.'-'.$minute);
-	$dt = new DateTime(null, $localtz);
+	$dt = new DateTime('now', $localtz);
 	$dt->setDate((int) $year, (int) $month, (int) $day);
 	$dt->setTime((int) $hour, (int) $minute, (int) $second);
 	$date = $dt->getTimestamp(); // should include daylight saving time
@@ -3029,7 +3045,20 @@ function dol_print_socialnetworks($value, $cid, $socid, $type, $dictsocialnetwor
 			if (!empty($dictsocialnetworks[$type]['url'])) {
 				$tmpvirginurl = preg_replace('/\/?{socialid}/', '', $dictsocialnetworks[$type]['url']);
 				if ($tmpvirginurl) {
-					$value = preg_replace('/'.preg_quote($tmpvirginurl, '/').'\/?/', '', $value);
+					$value = preg_replace('/^www\.'.preg_quote($tmpvirginurl, '/').'\/?/', '', $value);
+					$value = preg_replace('/^'.preg_quote($tmpvirginurl, '/').'\/?/', '', $value);
+
+					$tmpvirginurl3 = preg_replace('/^https:\/\//i', 'https://www.', $tmpvirginurl);
+					if ($tmpvirginurl3) {
+						$value = preg_replace('/^www\.'.preg_quote($tmpvirginurl3, '/').'\/?/', '', $value);
+						$value = preg_replace('/^'.preg_quote($tmpvirginurl3, '/').'\/?/', '', $value);
+					}
+
+					$tmpvirginurl2 = preg_replace('/^https?:\/\//i', '', $tmpvirginurl);
+					if ($tmpvirginurl2) {
+						$value = preg_replace('/^www\.'.preg_quote($tmpvirginurl2, '/').'\/?/', '', $value);
+						$value = preg_replace('/^'.preg_quote($tmpvirginurl2, '/').'\/?/', '', $value);
+					}
 				}
 				$link = str_replace('{socialid}', $value, $dictsocialnetworks[$type]['url']);
 				if (preg_match('/^https?:\/\//i', $link)) {
@@ -9313,7 +9342,7 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 
 				$reg = array();
 				preg_match('/([<>=]+)/', $crit, $reg);
-				if ($reg[1]) {
+				if (!empty($reg[1])) {
 					$operator = $reg[1];
 				}
 				if ($newcrit != '') {

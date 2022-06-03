@@ -2912,15 +2912,15 @@ if ($action == 'create') {
 		if ($object->type == FactureFournisseur::TYPE_REPLACEMENT) {
 			$facreplaced = new FactureFournisseur($db);
 			$facreplaced->fetch($object->fk_facture_source);
-			print ' ('.$langs->transnoentities("ReplaceInvoice", $facreplaced->getNomUrl(1)).')';
+			print ' &nbsp; '.$langs->transnoentities("ReplaceInvoice", $facreplaced->getNomUrl(1));
 		}
 		if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE) {
 			$facusing = new FactureFournisseur($db);
 			if ($object->fk_facture_source > 0) {
 				$facusing->fetch($object->fk_facture_source);
-				print ' ('.$langs->transnoentities("CorrectInvoice", $facusing->getNomUrl(1)).')';
+				print ' &nbsp; '.$langs->transnoentities("CorrectInvoice", $facusing->getNomUrl(1));
 			} else {
-				print ' ('.$langs->transnoentities("CorrectedInvoiceNotFound").')';
+				print ' &nbsp; '.$langs->transnoentities("CorrectedInvoiceNotFound");
 			}
 		}
 
@@ -2968,7 +2968,8 @@ if ($action == 'create') {
 
 
 		// Relative and absolute discounts
-		print '<!-- Discounts --><tr><td>'.$langs->trans('Discounts');
+		print '<!-- Discounts -->'."\n";
+		print '<tr><td>'.$langs->trans('DiscountStillRemaining');
 		print '</td><td>';
 
 		$thirdparty = $societe;

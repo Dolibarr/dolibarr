@@ -374,8 +374,8 @@ ALTER TABLE llx_contratdet ADD COLUMN rang integer DEFAULT 0 AFTER info_bits;
 
 ALTER TABLE llx_actioncomm MODIFY COLUMN note mediumtext;
 
-DELETE FROM llx_boxes WHERE box_id IN (select rowid FROM llx_boxes_def WHERE file IN ('box_bom.php@bom', 'box_bom.php'));
-DELETE FROM llx_boxes_def WHERE file IN ('box_bom.php@bom', 'box_bom.php');
+DELETE FROM llx_boxes WHERE box_id IN (select rowid FROM llx_boxes_def WHERE file IN ('box_bom.php@bom', 'box_bom.php', 'box_members.php', 'box_last_modified_ticket', 'box_members_last_subscriptions', 'box_members_last_modified', 'box_members_subscriptions_by_year'));
+DELETE FROM llx_boxes_def WHERE file IN ('box_bom.php@bom', 'box_bom.php', 'box_members.php', 'box_last_modified_ticket', 'box_members_last_subscriptions', 'box_members_last_modified', 'box_members_subscriptions_by_year');
 
 ALTER TABLE llx_takepos_floor_tables ADD UNIQUE(entity,label);
 
@@ -403,3 +403,5 @@ ALTER TABLE llx_extrafields ADD COLUMN css varchar(128);
 ALTER TABLE llx_extrafields ADD COLUMN cssview varchar(128);
 ALTER TABLE llx_extrafields ADD COLUMN csslist varchar(128);
 
+ALTER TABLE llx_cronjob ADD COLUMN email_alert varchar(128);
+ 

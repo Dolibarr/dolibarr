@@ -2649,7 +2649,9 @@ abstract class CommonObject
 
 			$sql = 'UPDATE '.$this->db->prefix().$this->table_element;
 			$sql .= " SET ".$fieldname." = ".(($id > 0 || $id == '0') ? ((int) $id) : 'NULL');
-			$sql .= " , deposit_percent = " . (! empty($deposit_percent) ? "'".$this->db->escape($deposit_percent)."'" : 'NULL');
+			if (in_array($this->table_element, array('propal', 'commande'))) {
+				$sql .= " , deposit_percent = " . (empty($deposit_percent) ? 'NULL' : "'".$this->db->escape($deposit_percent)."'");
+			}
 			$sql .= ' WHERE rowid='.((int) $this->id);
 
 			if ($this->db->query($sql)) {
@@ -7389,7 +7391,7 @@ abstract class CommonObject
 				$value = price($value, 0, $langs, 0, 0, -1, $conf->currency);
 			}
 		} elseif ($type == 'select') {
-			$value = $param['options'][$value];
+			$value = isset($param['options'][$value])?$param['options'][$value]:'';
 		} elseif ($type == 'sellist') {
 			$param_list = array_keys($param['options']);
 			$InfoFieldList = explode(":", $param_list[0]);

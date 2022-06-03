@@ -1383,7 +1383,8 @@ class Expedition extends CommonObject
 					if ($conf->productbatch->enabled) {
 						$lotArray = $shipmentlinebatch->fetchAll($obj->expeditiondet_id);
 						if (!is_array($lotArray)) {
-							$error++; $this->errors[] = "Error ".$this->db->lasterror();
+							$error++;
+							$this->errors[] = "Error ".$this->db->lasterror();
 						}
 					}
 
@@ -1393,7 +1394,8 @@ class Expedition extends CommonObject
 						// We use warehouse selected for each line
 						$result = $mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $obj->qty, 0, $langs->trans("ShipmentCanceledInDolibarr", $this->ref)); // Price is set to 0, because we don't want to see WAP changed
 						if ($result < 0) {
-							$error++; $this->errors = $this->errors + $mouvS->errors;
+							$error++;
+							$this->errors = array_merge($this->errors, $mouvS->errors);
 							break;
 						}
 
@@ -1419,7 +1421,8 @@ class Expedition extends CommonObject
 						foreach ($lotArray as $lot) {
 							$result = $mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $lot->qty, 0, $langs->trans("ShipmentCanceledInDolibarr", $this->ref), $lot->eatby, $lot->sellby, $lot->batch); // Price is set to 0, because we don't want to see WAP changed
 							if ($result < 0) {
-								$error++; $this->errors = $this->errors + $mouvS->errors;
+								$error++;
+								$this->errors = array_merge($this->errors, $mouvS->errors);
 								break;
 							}
 						}
@@ -1602,7 +1605,8 @@ class Expedition extends CommonObject
 						// We use warehouse selected for each line
 						$result = $mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $obj->qty, 0, $langs->trans("ShipmentDeletedInDolibarr", $this->ref)); // Price is set to 0, because we don't want to see WAP changed
 						if ($result < 0) {
-							$error++; $this->errors = $this->errors + $mouvS->errors;
+							$error++;
+							$this->errors = array_merge($this->errors, $mouvS->errors);
 							break;
 						}
 
@@ -1628,7 +1632,8 @@ class Expedition extends CommonObject
 						foreach ($lotArray as $lot) {
 							$result = $mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $lot->qty, 0, $langs->trans("ShipmentDeletedInDolibarr", $this->ref), $lot->eatby, $lot->sellby, $lot->batch); // Price is set to 0, because we don't want to see WAP changed
 							if ($result < 0) {
-								$error++; $this->errors = $this->errors + $mouvS->errors;
+								$error++;
+								$this->errors = array_merge($this->errors, $mouvS->errors);
 								break;
 							}
 						}
@@ -2405,7 +2410,8 @@ class Expedition extends CommonObject
 							if ($result < 0) {
 								$this->error = $mouvS->error;
 								$this->errors = $mouvS->errors;
-								$error++; break;
+								$error++;
+								break;
 							}
 						}
 					}
@@ -2595,7 +2601,8 @@ class Expedition extends CommonObject
 							if ($result < 0) {
 								$this->error = $mouvS->error;
 								$this->errors = $mouvS->errors;
-								$error++; break;
+								$error++;
+								break;
 							}
 						}
 					}

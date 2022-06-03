@@ -1936,7 +1936,7 @@ PressF5AfterChangingThis=Press CTRL+F5 on keyboard or clear your browser cache a
 NotSupportedByAllThemes=Will works with core themes, may not be supported by external themes
 BackgroundColor=Background color
 TopMenuBackgroundColor=Background color for Top menu
-TopMenuDisableImages=Hide images in Top menu
+TopMenuDisableImages=Icon or Text in Top menu
 LeftMenuBackgroundColor=Background color for Left menu
 BackgroundTableTitleColor=Background color for Table title line
 BackgroundTableTitleTextColor=Text color for Table title line
@@ -2080,7 +2080,7 @@ EmailCollectorExampleToCollectTicketRequestsDesc=Collect emails that match some 
 EmailCollectorExampleToCollectTicketRequests=Example collecting the ticket request (first message only)
 EmailCollectorExampleToCollectAnswersFromExternalEmailSoftwareDesc=Scan your mailbox "Sent" directory to find emails that was sent as an answer of another email directly from your email software and not from Dolibarr. If such an email is found, the event of answer is recorded into Dolibarr
 EmailCollectorExampleToCollectAnswersFromExternalEmailSoftware=Example collecting e-mail answers sent from an external e-mail software
-EmailCollectorExampleToCollectDolibarrAnswersDesc=Collect all emails that are an answer of an email sent from your application. An event (Module Agenda must be enabled) with the email response will be recorded at the good place. For example, if your send a commercial proposal, order, invoice or message for a ticket by email from the application, and your customer answers your email, the system will automatically catch the answer and add it into your ERP.
+EmailCollectorExampleToCollectDolibarrAnswersDesc=Collect all emails that are an answer of an email sent from your application. An event (Module Agenda must be enabled) with the email response will be recorded at the good place. For example, if you send a commercial proposal, order, invoice or message for a ticket by email from the application, and the recipient answers your email, the system will automatically catch the answer and add it into your ERP.
 EmailCollectorExampleToCollectDolibarrAnswers=Example collecting all ingoing messages being answers to messages sent from Dolibarr'
 EmailCollectorExampleToCollectLeadsDesc=Collect emails that match some rules and create automatically a lead (Module Project must be enabled) with the email informations. You can use this collector if you want to follow your lead using the module Project (1 lead = 1 project), so your leads will be automatically generated. If the collector Collect_Responses is also enabled, when you send an email from your leads, proposals or any other object, you may also see answers of your customers or partners directly on the application.<br>Note: With this initial example, the title of the lead is generated including the email. If the thirdparty can't be found in database (new customer), the lead will be attached to the thirdparty with ID 1.
 EmailCollectorExampleToCollectLeads=Example collecting leads

@@ -228,6 +228,9 @@ input {
 	padding: 4px;
 	padding-left: 5px;
 }
+.tableforfield input {
+	padding: 2px;
+}
 select {
 	padding-top: 4px;
 	padding-right: 4px;

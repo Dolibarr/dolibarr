@@ -177,7 +177,7 @@ if ($id > 0 || !empty($ref)) {
 
 		print dol_get_fiche_end();
 
-		print '<br>';
+		//print '<br>';
 
 		// Contacts lines (modules that overwrite templates must declare this into descriptor)
 		$dirtpls = array_merge($conf->modules_parts['tpl'], array('/core/tpl'));

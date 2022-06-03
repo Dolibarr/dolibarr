@@ -4,7 +4,8 @@
  * Copyright (C) 2010-2011 Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2015-2017 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2015-2017 Nicolas ZABOURI      <info@inovea-conseil.com>
- * Copyright (C) 2018-2021  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2021 Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2022	   Charlene Benke       <charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1611,36 +1612,36 @@ class FormMail extends Form
 			if ($onlinepaymentenabled && !empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
 				$tmparray['__SECUREKEYPAYMENT__'] = $conf->global->PAYMENT_SECURITY_TOKEN;
 				if (!empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
-					if ($conf->adherent->enabled) {
+					if (!empty($conf->adherent->enabled)) {
 						$tmparray['__SECUREKEYPAYMENT_MEMBER__'] = 'SecureKeyPAYMENTUniquePerMember';
 					}
-					if ($conf->donation->enabled) {
+					if (!empty($conf->don->enabled)) {
 						$tmparray['__SECUREKEYPAYMENT_DONATION__'] = 'SecureKeyPAYMENTUniquePerDonation';
 					}
-					if ($conf->facture->enabled) {
+					if (!empty($conf->facture->enabled)) {
 						$tmparray['__SECUREKEYPAYMENT_INVOICE__'] = 'SecureKeyPAYMENTUniquePerInvoice';
 					}
-					if ($conf->commande->enabled) {
+					if (!empty($conf->commande->enabled)) {
 						$tmparray['__SECUREKEYPAYMENT_ORDER__'] = 'SecureKeyPAYMENTUniquePerOrder';
 					}
-					if ($conf->contrat->enabled) {
+					if (!empty($conf->contrat->enabled)) {
 						$tmparray['__SECUREKEYPAYMENT_CONTRACTLINE__'] = 'SecureKeyPAYMENTUniquePerContractLine';
 					}
 
 					//Online payement link
-					if ($conf->adherent->enabled) {
+					if (!empty($conf->adherent->enabled)) {
 						$tmparray['__ONLINEPAYMENTLINK_MEMBER__'] = 'OnlinePaymentLinkUniquePerMember';
 					}
-					if ($conf->donation->enabled) {
+					if (!empty($conf->don->enabled)) {
 						$tmparray['__ONLINEPAYMENTLINK_DONATION__'] = 'OnlinePaymentLinkUniquePerDonation';
 					}
-					if ($conf->facture->enabled) {
+					if (!empty($conf->facture->enabled)) {
 						$tmparray['__ONLINEPAYMENTLINK_INVOICE__'] = 'OnlinePaymentLinkUniquePerInvoice';
 					}
-					if ($conf->commande->enabled) {
+					if (!empty($conf->commande->enabled)) {
 						$tmparray['__ONLINEPAYMENTLINK_ORDER__'] = 'OnlinePaymentLinkUniquePerOrder';
 					}
-					if ($conf->contrat->enabled) {
+					if (!empty($conf->contrat->enabled)) {
 						$tmparray['__ONLINEPAYMENTLINK_CONTRACTLINE__'] = 'OnlinePaymentLinkUniquePerContractLine';
 					}
 				}

@@ -693,6 +693,15 @@ class modSociete extends DolibarrModules
 			's.code_compta' => 'CustomerAccountancyCode',
 			's.code_compta_fournisseur' => 'SupplierAccountancyCode'
 		);
+		if (!empty($conf->socialnetworks->enabled)) {
+			$sql = "SELECT code, label FROM ".MAIN_DB_PREFIX."c_socialnetworks WHERE active = 1";
+			$resql = $this->db->query($sql);
+			while ($obj = $this->db->fetch_object($resql)) {
+				$fieldname = 's.socialnetworks_'.$obj->code;
+				$fieldlabel = ucfirst($obj->label);
+				$this->import_updatekeys_array[$r][$fieldname] = $fieldlabel;
+			}
+		}
 		// Add profids as criteria to search duplicates
 		$langs->load("companies");
 		$i=1;
