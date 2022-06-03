@@ -2059,6 +2059,7 @@ VATIsUsedIsOff=Note: The option to use Sales Tax or VAT has been set to <strong>
 SwapSenderAndRecipientOnPDF=Swap sender and recipient address position on PDF documents
 FeatureSupportedOnTextFieldsOnly=Warning, feature supported on text fields and combo lists only. Also an URL parameter action=create or action=edit must be set OR page name must end with 'new.php' to trigger this feature.
 EmailCollector=Email collector
+EmailCollectors=Emails collectors
 EmailCollectorDescription=Add a scheduled job and a setup page to scan regularly email boxes (using IMAP protocol) and record emails received into your application, at the right place and/or create some records automatically (like leads).
 NewEmailCollector=New Email Collector
 EMailHost=Host of email IMAP server
@@ -2073,7 +2074,7 @@ DateLastCollectResult=Date of latest collect try
 DateLastcollectResultOk=Date of latest collect success
 LastResult=Latest result
 EmailCollectorHideMailHeaders=Do not include the content of email header into the saved content of collected e-mails
-EmailCollectorHideMailHeadersHelp=When enabled, e-mail headers are not added at the end of the email content that is saved as events.
+EmailCollectorHideMailHeadersHelp=When enabled, e-mail headers are not added at the end of the email content that is saved as an agenda event.
 EmailCollectorConfirmCollectTitle=Email collect confirmation
 EmailCollectorConfirmCollect=Do you want to run this collector now?
 EmailCollectorExampleToCollectTicketRequestsDesc=Collect emails that match some rules and create automatically a ticket (Module Ticket must be enabled) with the email informations. You can use this collector if you provide some support by email, so your ticket request will be automatically generated. Activate also Collect_Responses to collect answers of your client directly on the ticket view (you must reply from Dolibarr).
