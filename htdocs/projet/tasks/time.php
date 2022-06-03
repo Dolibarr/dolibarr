@@ -246,16 +246,16 @@ if (($action == 'updateline' || $action == 'updatesplitline') && !$cancel && $us
 
 	if (!$error) {
 		if (GETPOST('taskid', 'int') != $id) {		// GETPOST('taskid') is id of new task
-			$id = GETPOST('taskid', 'int');
+			$id_temp = GETPOST('taskid', 'int'); // Should not overwrite $id
 
 			$object->fetchTimeSpent(GETPOST('lineid', 'int'));
 
 			$result = 0;
 			if (in_array($object->timespent_fk_user, $childids) || $user->rights->projet->all->creer) {
-				$result = $object->delTimeSpent($user);
+				$result = $object->delTimeSpent($user); 
 			}
 
-			$object->fetch($id, $ref);
+			$object->fetch($id_temp, $ref); // Should call $id_temp not $id
 
 			$object->timespent_note = GETPOST("timespent_note_line", 'alpha');
 			$object->timespent_old_duration = GETPOST("old_duration");
