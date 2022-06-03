@@ -2761,7 +2761,7 @@ function dol_mktime($hour, $minute, $second, $month, $day, $year, $gm = 'auto', 
 	}
 	//var_dump($localtz);
 	//var_dump($year.'-'.$month.'-'.$day.'-'.$hour.'-'.$minute);
-	$dt = new DateTime('', $localtz);
+	$dt = new DateTime('now', $localtz);
 	$dt->setDate((int) $year, (int) $month, (int) $day);
 	$dt->setTime((int) $hour, (int) $minute, (int) $second);
 	$date = $dt->getTimestamp(); // should include daylight saving time
