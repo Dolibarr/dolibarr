@@ -279,8 +279,8 @@ if (empty($reshook)) {
 		}
 	}
 }
-if(!empty($fk_product)){
-    $search['fk_product'] = $fk_product;
+if (!empty($fk_product)) {
+	$search['fk_product'] = $fk_product;
 }
 
 
