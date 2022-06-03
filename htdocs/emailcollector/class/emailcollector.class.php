@@ -1281,7 +1281,7 @@ class EmailCollector extends CommonObject
 				if ($searchfilterisanswer > 0) {
 					if (empty($headers['In-Reply-To'])) {
 						$nbemailprocessed++;
-						dol_syslog(" Discarded - Email is not an answer (no In-Reply-To header");
+						dol_syslog(" Discarded - Email is not an answer (no In-Reply-To header)");
 						continue; // Exclude email
 					}
 					// Note: we can have
