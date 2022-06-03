@@ -920,7 +920,9 @@ class Form
 				}
 
 				if (empty($disablefavorites)) {
-					array_multisort($favorite, SORT_DESC, $label, SORT_ASC, $countryArray);
+					$array1_sort_order = SORT_DESC;
+					$array2_sort_order = SORT_ASC;
+					array_multisort($favorite, $array1_sort_order, $label, $array2_sort_order, $countryArray);
 				} else {
 					$countryArray = dol_sort_array($countryArray, 'label');
 				}

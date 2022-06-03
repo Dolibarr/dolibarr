@@ -2529,7 +2529,8 @@ function printDropdownQuickadd()
 		foreach ($items['items'] as $key => $row) {
 			$position[$key] = $row['position'];
 		}
-		array_multisort($position, SORT_ASC, $items['items']);
+		$array1_sort_order = SORT_ASC;
+		array_multisort($position, $array1_sort_order, $items['items']);
 	}
 
 	foreach ($items['items'] as $item) {

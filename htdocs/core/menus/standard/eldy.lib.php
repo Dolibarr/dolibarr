@@ -879,7 +879,8 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 		//      foreach ($menu_array as $key => $row) {
 		//          $position[$key] = $row['position'];
 		//      }
-		//      array_multisort($position, SORT_ASC, $menu_array);
+		//		$array1_sort_order = SORT_ASC;
+		//      array_multisort($position, $array1_sort_order, $menu_array);
 	}
 
 	// TODO Use the position property in menu_array to reorder the $menu_array
