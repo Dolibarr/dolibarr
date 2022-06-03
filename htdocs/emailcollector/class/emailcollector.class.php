@@ -1266,12 +1266,14 @@ class EmailCollector extends CommonObject
 				if ($searchfilterdoltrackid > 0) {
 					if (empty($headers['References']) || !preg_match('/@'.preg_quote($host, '/').'/', $headers['References'])) {
 						$nbemailprocessed++;
+						dol_syslog(" Discarded - No header References found");
 						continue; // Exclude email
 					}
 				}
 				if ($searchfilternodoltrackid > 0) {
 					if (!empty($headers['References']) && preg_match('/@'.preg_quote($host, '/').'/', $headers['References'])) {
 						$nbemailprocessed++;
+						dol_syslog(" Discarded - Header References found and matching signature of application");
 						continue; // Exclude email
 					}
 				}
@@ -1279,6 +1281,7 @@ class EmailCollector extends CommonObject
 				if ($searchfilterisanswer > 0) {
 					if (empty($headers['In-Reply-To'])) {
 						$nbemailprocessed++;
+						dol_syslog(" Discarded - Email is not an answer (no In-Reply-To header");
 						continue; // Exclude email
 					}
 					// Note: we can have
@@ -1292,6 +1295,7 @@ class EmailCollector extends CommonObject
 
 					if (!$isanswer) {
 						$nbemailprocessed++;
+						dol_syslog(" Discarded - Email is not an answer (no RE prefix in subject)");
 						continue; // Exclude email
 					}
 				}
@@ -1307,6 +1311,7 @@ class EmailCollector extends CommonObject
 						//if ($headers['In-Reply-To'] != $headers['Message-ID'] && !empty($headers['References']) && strpos($headers['References'], $headers['Message-ID']) !== false) $isanswer = 1;
 						if ($isanswer) {
 							$nbemailprocessed++;
+							dol_syslog(" Discarded - Email is an answer");
 							continue; // Exclude email
 						}
 					}

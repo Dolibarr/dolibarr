@@ -2059,7 +2059,7 @@ VATIsUsedIsOff=Note: The option to use Sales Tax or VAT has been set to <strong>
 SwapSenderAndRecipientOnPDF=Swap sender and recipient address position on PDF documents
 FeatureSupportedOnTextFieldsOnly=Warning, feature supported on text fields and combo lists only. Also an URL parameter action=create or action=edit must be set OR page name must end with 'new.php' to trigger this feature.
 EmailCollector=Email collector
-EmailCollectors=Emails collectors
+EmailCollectors=Email collectors
 EmailCollectorDescription=Add a scheduled job and a setup page to scan regularly email boxes (using IMAP protocol) and record emails received into your application, at the right place and/or create some records automatically (like leads).
 NewEmailCollector=New Email Collector
 EMailHost=Host of email IMAP server
