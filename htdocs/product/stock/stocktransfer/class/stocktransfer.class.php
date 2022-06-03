@@ -62,6 +62,11 @@ class StockTransfer extends CommonObject
 	 */
 	public $picto = 'stock';
 
+	public $date_prevue_depart;
+	public $date_prevue_arrivee;
+	public $date_reelle_depart;
+	public $date_reelle_arrivee;
+
 
 	const STATUS_DRAFT = 0;
 	const STATUS_VALIDATED = 1;
