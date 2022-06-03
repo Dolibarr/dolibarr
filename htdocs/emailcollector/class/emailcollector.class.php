@@ -1259,7 +1259,7 @@ class EmailCollector extends CommonObject
 				$headers['Subject'] = $this->decodeSMTPSubject($headers['Subject']);
 
 
-				dol_syslog("** Process email ".$iforemailloop." References: ".$headers['References']);
+				dol_syslog("** Process email ".$iforemailloop." References: ".$headers['References']." Subject: ".$headers['Subject']);
 				//print "Process mail ".$iforemailloop." Subject: ".dol_escape_htmltag($headers['Subject'])." References: ".dol_escape_htmltag($headers['References'])." In-Reply-To: ".dol_escape_htmltag($headers['In-Reply-To'])."<br>\n";
 
 				// If there is a filter on trackid
