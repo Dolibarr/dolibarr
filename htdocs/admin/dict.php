@@ -4,7 +4,7 @@
  * Copyright (C) 2004		Benoit Mortier			<benoit.mortier@opensides.be>
  * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2010-2022	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2011-2021	Philippe Grand			<philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2022	Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2011		Remy Younes				<ryounes@gmail.com>
  * Copyright (C) 2012-2015	Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2012		Christophe Battarel		<christophe.battarel@ltairis.fr>
@@ -851,7 +851,7 @@ if (empty($reshook)) {
 			if ($tabrowid[$id]) {
 				// Get free id for insert
 				$newid = 0;
-				$sql = "SELECT MAX(".$tabrowid[$id].") as newid FROM ".MAIN_DB_PREFIX.$tabname[$id];
+				$sql = "SELECT MAX(" . $tabrowid[$id] . ") as newid FROM " . $tabname[$id];
 				$result = $db->query($sql);
 				if ($result) {
 					$obj = $db->fetch_object($result);
@@ -862,10 +862,10 @@ if (empty($reshook)) {
 			}
 
 			// Add new entry
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX.$tabname[$id]." (";
+			$sql = "INSERT INTO " . $tabname[$id] . " (";
 			// List of fields
 			if ($tabrowid[$id] && !in_array($tabrowid[$id], $listfieldinsert)) {
-				$sql .= $tabrowid[$id].",";
+				$sql .= $tabrowid[$id] . ",";
 			}
 			$sql .= $tabfieldinsert[$id];
 			$sql .= ",active)";
@@ -1002,7 +1002,7 @@ if (empty($reshook)) {
 			$rowidcol = "rowid";
 		}
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX.$tabname[$id]." WHERE ".$rowidcol." = '".$db->escape($rowid)."'".($entity != '' ? " AND entity = ".(int) $entity : '');
+		$sql = "DELETE FROM " . $tabname[$id] . " WHERE " . $rowidcol . " = '" . $db->escape($rowid) . "'" . ($entity != '' ? " AND entity = " . (int) $entity : '');
 
 		dol_syslog("delete", LOG_DEBUG);
 		$result = $db->query($sql);
