@@ -1563,6 +1563,11 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
 		}
 	}
 
+	// Check if we have a forced suffix
+	if (defined('USESUFFIXINLOG')) {
+		$suffixinfilename .= constant('USESUFFIXINLOG');
+	}
+
 	if ($ident < 0) {
 		foreach ($conf->loghandlers as $loghandlerinstance) {
 			$loghandlerinstance->setIdent($ident);
