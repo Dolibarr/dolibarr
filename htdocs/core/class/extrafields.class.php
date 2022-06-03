@@ -1667,13 +1667,14 @@ class ExtraFields
 						}
 					} else {
 						$translabel = '';
-						if (!empty($obj->{$InfoFieldList[1]})) {
+						//$obj->{$InfoFieldList[1]} = '';
+						if (!empty(isset($obj->{$InfoFieldList[1]}) ? $obj->{$InfoFieldList[1]} : '')) {
 							$translabel = $langs->trans($obj->{$InfoFieldList[1]});
 						}
-						if ($translabel != $obj->{$InfoFieldList[1]}) {
+						if ($translabel != isset($obj->{$InfoFieldList[1]}) ? $obj->{$InfoFieldList[1]} : '') {
 							$value = dol_trunc($translabel, 18);
 						} else {
-							$value = $obj->{$InfoFieldList[1]};
+							$value = isset($obj->{$InfoFieldList[1]}) ? $obj->{$InfoFieldList[1]} : '';
 						}
 					}
 				} else {
