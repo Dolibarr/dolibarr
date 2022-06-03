@@ -173,7 +173,7 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 				$this->lastTime = $now;
 			}
 
-			$message = date("Y-m-d H:i:s", time()).$delay." ".sprintf("%-7s", $logLevels[$content['level']])." ".sprintf("%-15s", $content['ip'])." ".($this->ident > 0 ?str_pad('', $this->ident, ' ') : '').$content['message'];
+			$message = dol_print_date(dol_now(), "standard").$delay." ".sprintf("%-7s", $logLevels[$content['level']])." ".sprintf("%-15s", $content['ip'])." ".($this->ident > 0 ?str_pad('', $this->ident, ' ') : '').$content['message'];
 			fwrite($filefd, $message."\n");
 			fclose($filefd);
 			@chmod($logfile, octdec(empty($conf->global->MAIN_UMASK) ? '0664' : $conf->global->MAIN_UMASK));
