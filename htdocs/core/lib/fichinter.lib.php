@@ -3,7 +3,7 @@
  * Copyright (C) 2007		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2016		Gilles Poirier 		   <glgpoirier@gmail.com>
- * Copyright (C) 2018		charlene Benke 		   <charlie@patas-monkey.com>
+ * Copyright (C) 20182-2022	Charlene Benke 		   <charlene@patas-monkey.com>
 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -64,7 +64,7 @@ function fichinter_prepare_head($object)
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'intervention');
 
 	// Tab to link resources
-	if ($conf->resource->enabled) {
+	if (!empty($conf->resource->enabled)) {
 		require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
 		$objectres = new Dolresource($db);
 		$linked_resources = $objectres->getElementResources('fichinter', $object->id);
