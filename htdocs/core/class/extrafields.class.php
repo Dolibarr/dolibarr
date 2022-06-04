@@ -817,7 +817,8 @@ class ExtraFields
 		$array_name_label = array();
 
 		// We should not have several time this request. If we have, there is some optimization to do by calling a simple $extrafields->fetch_optionals() in top of code and not into subcode
-		$sql = "SELECT rowid, name, label, type, size, elementtype, fieldunique, fieldrequired, param, pos, alwayseditable, perms, langs, list, printable, totalizable, fielddefault, fieldcomputed, entity, enabled, help";
+		$sql = "SELECT rowid, name, label, type, size, elementtype, fieldunique, fieldrequired, param, pos, alwayseditable, perms, langs, list, printable, totalizable, fielddefault, fieldcomputed, entity, enabled, help,";
+		$sql .= " css, cssview, csslist";
 		$sql .= " FROM ".$this->db->prefix()."extrafields";
 		//$sql.= " WHERE entity IN (0,".$conf->entity.")";    // Filter is done later
 		if ($elementtype) {
@@ -866,6 +867,9 @@ class ExtraFields
 					$this->attributes[$tab->elementtype]['entityid'][$tab->name] = $tab->entity;
 					$this->attributes[$tab->elementtype]['enabled'][$tab->name] = $tab->enabled;
 					$this->attributes[$tab->elementtype]['help'][$tab->name] = $tab->help;
+					$this->attributes[$tab->elementtype]['css'][$tab->name] = $tab->css;
+					$this->attributes[$tab->elementtype]['cssview'][$tab->name] = $tab->cssview;
+					$this->attributes[$tab->elementtype]['csslist'][$tab->name] = $tab->csslist;
 
 					$this->attributes[$tab->elementtype]['loaded'] = 1;
 				}
@@ -1838,7 +1842,7 @@ class ExtraFields
 	}
 
 	/**
-	 * Return tag to describe alignement to use for this extrafield
+	 * Return the CSS to use for this extrafield into list
 	 *
 	 * @param   string	$key            		Key of attribute
 	 * @param	string	$extrafieldsobjectkey	If defined, use the new method to get extrafields data
@@ -1854,29 +1858,33 @@ class ExtraFields
 			$type = $this->attribute_type[$key];
 		}
 
-		$align = '';
+		$cssstring = '';
 
 		if ($type == 'date') {
-			$align = "center";
+			$cssstring = "center";
 		} elseif ($type == 'datetime') {
-			$align = "center";
+			$cssstring = "center";
 		} elseif ($type == 'int') {
-			$align = "right";
+			$cssstring = "right";
 		} elseif ($type == 'price') {
-			$align = "right";
+			$cssstring = "right";
 		} elseif ($type == 'double') {
-			$align = "right";
+			$cssstring = "right";
 		} elseif ($type == 'boolean') {
-			$align = "center";
+			$cssstring = "center";
 		} elseif ($type == 'radio') {
-			$align = "center";
+			$cssstring = "center";
 		} elseif ($type == 'checkbox') {
-			$align = "center";
+			$cssstring = "center";
 		} elseif ($type == 'price') {
-			$align = "right";
+			$cssstring = "right";
 		}
 
-		return $align;
+		if (!empty($this->attributes[$extrafieldsobjectkey]['csslist'][$key])) {
+			$cssstring .= ($cssstring ? ' ' : '').$this->attributes[$extrafieldsobjectkey]['csslist'][$key];
+		}
+
+		return $cssstring;
 	}
 
 	/**
