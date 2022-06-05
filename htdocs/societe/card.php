@@ -1139,6 +1139,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			$object->country = $tmparray['label'];
 		}
 		$object->forme_juridique_code = GETPOST('forme_juridique_code');
+
+		// We set multicurrency_code if enabled
+		if (!empty($conf->multicurrency->enabled)) {
+			$object->multicurrency_code = GETPOST('multicurrency_code') ? GETPOST('multicurrency_code') : $conf->currency;
+		}
 		/* Show create form */
 
 		$linkback = "";
@@ -1259,6 +1264,16 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
                         	document.formsoc.submit();
                         });
                      });';
+				print '</script>'."\n";
+			}
+			if (!empty($conf->multicurrency->enabled)) {
+				print '<script type="text/javascript">';
+				print '$(document).ready(function () {
+						$("#multicurrency_code").change(function() {
+							document.formsoc.action.value="create";
+							document.formsoc.submit();
+						});
+					 });';
 				print '</script>'."\n";
 			}
 		}
@@ -1605,8 +1620,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		// Capital
 		print '<tr><td>'.$form->editfieldkey('Capital', 'capital', '', $object, 0).'</td>';
 		print '<td colspan="3"><input type="text" name="capital" id="capital" class="maxwidth100" value="'.$object->capital.'"> ';
-		print '<span class="hideonsmartphone">'.$langs->trans("Currency".$conf->currency).'</span></td></tr>';
-
+		if (!empty($conf->multicurrency->enabled)) {
+			print '<span class="hideonsmartphone">'.$langs->trans("Currency".$object->multicurrency_code).'</span></td></tr>';
+		} else {
+			print '<span class="hideonsmartphone">'.$langs->trans("Currency".$conf->currency).'</span></td></tr>';
+		}
 		if (!empty($conf->global->MAIN_MULTILANGS)) {
 			print '<tr><td>'.$form->editfieldkey('DefaultLang', 'default_lang', '', $object, 0).'</td><td colspan="3" class="maxwidthonsmartphone">'."\n";
 			print img_picto('', 'language', 'class="pictofixedwidth"').$formadmin->select_language(GETPOST('default_lang', 'alpha') ? GETPOST('default_lang', 'alpha') : ($object->default_lang ? $object->default_lang : ''), 'default_lang', 0, 0, 1, 0, 0, 'maxwidth200onsmartphone');
@@ -1656,7 +1674,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<tr>';
 			print '<td>'.$form->editfieldkey('Currency', 'multicurrency_code', '', $object, 0).'</td>';
 			print '<td colspan="3" class="maxwidthonsmartphone">';
-			print $form->selectMultiCurrency(($object->multicurrency_code ? $object->multicurrency_code : $conf->currency), 'multicurrency_code', 1);
+			print $form->selectMultiCurrency((GETPOSTISSET('multicurrency_code') ? GETPOST('multicurrency_code') : $object->multicurrency_code), 'multicurrency_code', 1);
 			print '</td></tr>';
 		}
 
@@ -1854,6 +1872,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					$object->country_code = $tmparray['code'];
 					$object->country = $tmparray['label'];
 				}
+				
+				// We set multicurrency_code if enabled
+				if (!empty($conf->multicurrency->enabled)) {
+					$object->multicurrency_code = GETPOST('multicurrency_code') ? GETPOST('multicurrency_code') : $object->multicurrency_code;
+				}
 			}
 
 			if ($object->localtax1_assuj == 0) {
@@ -1942,6 +1965,17 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
                 })';
 				print '</script>'."\n";
+
+				if (!empty($conf->multicurrency->enabled)) {
+					print "\n".'<script type="text/javascript">';
+					print '$(document).ready(function () {
+							$("#multicurrency_code").change(function() {
+								document.formsoc.action.value="edit";
+								document.formsoc.submit();
+							});
+						 });';
+					print '</script>'."\n";
+				}
 			}
 
 			print '<form enctype="multipart/form-data" action="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'" method="post" name="formsoc">';
@@ -2285,7 +2319,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<tr><td>'.$form->editfieldkey('Capital', 'capital', '', $object, 0).'</td>';
 			print '<td colspan="3"><input type="text" name="capital" id="capital" size="10" value="';
 			print $object->capital != '' ? dol_escape_htmltag(price($object->capital)) : '';
-			print '"> <span class="hideonsmartphone">'.$langs->trans("Currency".$conf->currency).'</span></td></tr>';
+			if (!empty($conf->multicurrency->enabled)) {
+				print '"> <span class="hideonsmartphone">'.$langs->trans("Currency".$object->multicurrency_code).'</span></td></tr>';
+			} else {
+				print '"> <span class="hideonsmartphone">'.$langs->trans("Currency".$conf->currency).'</span></td></tr>';
+			}
 
 			// Default language
 			if (!empty($conf->global->MAIN_MULTILANGS)) {
@@ -2340,7 +2378,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '<tr>';
 				print '<td>'.$form->editfieldkey('Currency', 'multicurrency_code', '', $object, 0).'</td>';
 				print '<td colspan="3" class="maxwidthonsmartphone">';
-				print $form->selectMultiCurrency(($object->multicurrency_code ? $object->multicurrency_code : $conf->currency), 'multicurrency_code', 1);
+				print $form->selectMultiCurrency((GETPOSTISSET('multicurrency_code') ? GETPOST('multicurrency_code') : $object->multicurrency_code), 'multicurrency_code', 1);
 				print '</td></tr>';
 			}
 
@@ -2763,7 +2801,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		// Capital
 		print '<tr><td>'.$langs->trans('Capital').'</td><td>';
 		if ($object->capital) {
-			print price($object->capital, '', $langs, 0, -1, -1, $conf->currency);
+			if (!empty($conf->multicurrency->enabled)) {
+				print price($object->capital, '', $langs, 0, -1, -1, $object->multicurrency_code);
+			} else {
+				print price($object->capital, '', $langs, 0, -1, -1, $conf->currency);
+			}
 		} else {
 			print '&nbsp;';
 		}
