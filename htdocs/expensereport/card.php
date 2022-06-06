@@ -2377,7 +2377,7 @@ if ($action == 'create') {
 
 						// Quantity
 						print '<td class="right">';
-						print '<input type="text" min="0" class="right maxwidth50" id="input_qty" name="qty" value="'.dol_escape_htmltag($line->qty).'" />';  // We must be able to enter decimal qty
+						print '<input type="text" min="0" class="input_qty right maxwidth50"  name="qty" value="'.dol_escape_htmltag($line->qty).'" />';  // We must be able to enter decimal qty
 						print '</td>';
 
 						//print '<td class="right">'.$langs->trans('AmountHT').'</td>';
@@ -2559,7 +2559,7 @@ if ($action == 'create') {
 
 				// Quantity
 				print '<td class="right inputqty">';
-				print '<input type="text" min="0" class="right maxwidth50" id="input_qty" name="qty" value="'.dol_escape_htmltag($qty ? $qty : 1).'">'; // We must be able to enter decimal qty
+				print '<input type="text" min="0" class=" input_qty right maxwidth50"  name="qty" value="'.dol_escape_htmltag($qty ? $qty : 1).'">'; // We must be able to enter decimal qty
 				print '</td>';
 
 				// Picture
@@ -2598,12 +2598,12 @@ if ($action == 'create') {
 				});
 
                 /* unit price coéf calculation */
-                jQuery("#input_qty, #fk_c_type_fees, #select_fk_c_exp_tax_cat, #vatrate ").change(function(event) {
+                jQuery(".input_qty, #fk_c_type_fees, #select_fk_c_exp_tax_cat, #vatrate ").change(function(event) {
 
                     let type_fee = jQuery("#fk_c_type_fees").find(":selected").val();
                     let tax_cat = jQuery("#select_fk_c_exp_tax_cat").find(":selected").val();
                     let tva = jQuery("#vatrate").find(":selected").val();
-                    let qty = jQuery("#input_qty").val();
+                    let qty = jQuery(".input_qty").val();
 
 
 
