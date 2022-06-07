@@ -84,7 +84,32 @@ if ($action == 'addcontact' && $user->rights->ticket->write) {
 	if ($result > 0 && ($id > 0 || (!empty($track_id)))) {
 		$contactid = (GETPOST('userid', 'int') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
 		$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
-		$result = $object->add_contact($contactid, $typeid, GETPOST("source", 'aZ09'));
+
+		$error = 0;
+
+		$codecontact = dol_getIdFromCode($db, $typeid, 'c_type_contact', 'rowid', 'code');
+		if ($codecontact=='SUPPORTTEC') {
+			$internal_contacts = $object->listeContact(-1, 'internal', 0, 'SUPPORTTEC');
+			foreach ($internal_contacts as $key => $contact) {
+				if ($contact['id'] !== $contactid) {
+					//print "user à effacer : ".$useroriginassign;
+					$result = $object->delete_contact($contact['rowid']);
+					if ($result<0) {
+						$error ++;
+						setEventMessages($object->error, $object->errors, 'errors');
+					}
+				}
+			}
+			$ret = $object->assignUser($user, $contactid);
+			if ($ret < 0) {
+				$error ++;
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
+		}
+
+		if (empty($error)) {
+			$result = $object->add_contact($contactid, $typeid, GETPOST("source", 'aZ09'));
+		}
 	}
 
 	if ($result >= 0) {
