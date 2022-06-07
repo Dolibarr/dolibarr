@@ -391,16 +391,19 @@ function pdfBuildThirdpartyName($thirdparty, Translate $outputlangs, $includeali
 	$socname = '';
 
 	if ($thirdparty instanceof Societe) {
-		$socname .= $thirdparty->name;
-		if (($includealias || $conf->global->PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME) == 1 && !empty($thirdparty->name_alias)) {
-			$socname .= " - ".$thirdparty->name_alias;
-			if ($conf->global->PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME == 2) {
-				$socname = '';
+		$socname = $thirdparty->name;
+		if (($includealias || getDolGlobalInt('PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME')) && !empty($thirdparty->name_alias)) {
+			if (getDolGlobalInt('PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME') == 2) {
 				$socname = $thirdparty->name_alias." - ".$thirdparty->name;
+			} else {
+				$socname = $thirdparty->name." - ".$thirdparty->name_alias;
 			}
 		}
 	} elseif ($thirdparty instanceof Contact) {
 		$socname = $thirdparty->socname;
+		if (($includealias || getDolGlobalInt('PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME')) && !empty($thirdparty->name_alias)) {
+			// TODO PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME not completely implemented
+		}
 	} else {
 		throw new InvalidArgumentException('Parameter 1 $thirdparty is not a Societe nor Contact');
 	}

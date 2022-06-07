@@ -570,11 +570,13 @@ print '</td></tr>';
 
 // Show alias in thirdparty name
 
-print '<tr class="oddeven"><td>'.$langs->trans("PDF_THIRDPARTY_NAME_TO_SHOW_IS").'</td><td>';
+/* Disabled because not yet completely implemented (does not work when we force a contact on object)
+print '<tr class="oddeven"><td>'.$langs->trans("PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME").'</td><td>';
 if ($conf->use_javascript_ajax) {
-	$arrval = array('0' => '', '1' => $langs->trans("THIRDPARTY_ALIAS"), '2' => $langs->trans("ALIAS_THIRDPARTY"));
-	print $form->selectarray("PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME", $arrval, $conf->global->PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME);
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("THIRDPARTY_ALIAS"), '2' => $langs->trans("ALIAS_THIRDPARTY"));
+	print $form->selectarray("PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME", $arrval, getDolGlobalInt('PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME'));
 }
+*/
 
 // Show online payment link on invoices
 
