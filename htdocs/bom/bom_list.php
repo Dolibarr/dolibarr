@@ -113,7 +113,7 @@ foreach ($object->fields as $key => $val) {
 		);
 	}
 }
-if ($fk_product) {
+if ($fk_product && $conf->global->BOM_PRODUCT_TAB) {
 	unset($arrayfields['t.fk_product']);
 }
 
@@ -279,7 +279,7 @@ if (empty($reshook)) {
 		}
 	}
 }
-if(!empty($fk_product)){
+if(!empty($fk_product && $conf->global->BOM_PRODUCT_TAB)){
     $search['fk_product'] = $fk_product;
 }
 
@@ -509,9 +509,11 @@ if ($fk_product && $conf->global->BOM_PRODUCT_TAB) {
 	$shownav = 0;
 
 	dol_banner_tab($product, '', $linkback, $shownav, '');
+
+    $newcardbutton = dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/bom/bom_card.php?action=create&backtopage='.urlencode($_SERVER['PHP_SELF'].'?fk_product='.$fk_product).'&fk_product='.$fk_product, '', $user->rights->bom->write);
 }
 
-$newcardbutton = dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/bom/bom_card.php?action=create&backtopage='.urlencode($_SERVER['PHP_SELF'].'?fk_product='.$fk_product).'&fk_product='.$fk_product, '', $user->rights->bom->write);
+else $newcardbutton = dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/bom/bom_card.php?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $user->rights->bom->write);
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'object_'.$object->picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
 
