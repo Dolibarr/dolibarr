@@ -533,23 +533,23 @@ if ($action == 'create') {
 		print '<tr>';
 		print '<td class="titlefield">'.$langs->trans("DateCreation").'</td>';
 		print '<td>';
-		print $object->date_creation ? dol_print_date($object->date_creation, 'day') : '&nbsp;';
+		print $object->date_creation ? dol_print_date($db->jdate($object->date_creation), 'day') : '&nbsp;';
 		print '</td>';
 		print '</tr>';
 
-		// Date document creation
+		// Date document export
 		print '<tr>';
 		print '<td class="titlefield">'.$langs->trans("DateExport").'</td>';
 		print '<td>';
-		print $object->date_export ? dol_print_date($object->date_export, 'dayhour') : '&nbsp;';
+		print $object->date_export ? dol_print_date($db->jdate($object->date_export), 'dayhour') : '&nbsp;';
 		print '</td>';
 		print '</tr>';
 
-		// Date document creation
+		// Date document validation
 		print '<tr>';
 		print '<td class="titlefield">'.$langs->trans("DateValidation").'</td>';
 		print '<td>';
-		print $object->date_validation ? dol_print_date($object->date_validation, 'dayhour') : '&nbsp;';
+		print $object->date_validation ? dol_print_date($db->jdate($object->date_validation), 'dayhour') : '&nbsp;';
 		print '</td>';
 		print '</tr>';
 
