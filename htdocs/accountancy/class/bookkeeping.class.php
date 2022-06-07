@@ -1725,33 +1725,6 @@ class BookKeeping extends CommonObject
 			// Add an empty line when transaction is validated to permit to add new line manually
 			if ($mode != "_tmp") {
 				$line = new BookKeepingLine();
-
-				$line->id = $obj->rowid;
-
-				$line->doc_date = $this->db->jdate($obj->doc_date);
-				$line->doc_type = $obj->doc_type;
-				$line->doc_ref = $obj->doc_ref;
-				$line->fk_doc = $obj->fk_doc;
-				$line->fk_docdet = $obj->fk_docdet;
-				$line->thirdparty_code = $obj->thirdparty_code;
-				$line->subledger_account = $obj->subledger_account;
-				$line->subledger_label = $obj->subledger_label;
-				$line->numero_compte = $obj->numero_compte;
-				$line->label_compte = $obj->label_compte;
-				$line->label_operation = $obj->label_operation;
-				$line->debit = $obj->debit;
-				$line->credit = $obj->credit;
-				$line->montant = $obj->amount;
-				$line->amount = $obj->amount;
-				$line->sens = $obj->sens;
-				$line->code_journal = $obj->code_journal;
-				$line->journal_label = $obj->journal_label;
-				$line->piece_num = $obj->piece_num;
-				$line->date_creation = $obj->date_creation;
-				$line->date_modification = $obj->date_modification;
-				$line->date_export = $obj->date_export;
-				$line->date_validation = $obj->date_validation;
-
 				$this->linesmvt[] = $line;
 			}
 			while ($obj = $this->db->fetch_object($result)) {
