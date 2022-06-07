@@ -51,7 +51,7 @@ $fuserid 		= (GETPOST('fuserid', 'int') ?GETPOST('fuserid', 'int') : $user->id);
 $users 			=  (GETPOST('users', 'array') ?GETPOST('users', 'array') : array($user->id));
 $groups 		= GETPOST('groups', 'array') ;
 $socid 			= GETPOST('socid', 'int');
-$autoApproval 	= GETPOST('autoApproval','int');
+$autoValidation 	= GETPOST('autoValidation','int');
 $AutoSendMail   = GETPOST('AutoSendMail','int');
 // Load translation files required by the page
 $langs->loadLangs(array("other", "holiday", "mails", "trips"));
@@ -323,26 +323,26 @@ if (empty($reshook)) {
 						}else{
 							// AUTO APPROUVAL /VALIDATED
 							//@TODO changer le nom si approuved / validated
-							if ($autoApproval){
+							if ($autoValidation){
 								$htemp = new Holiday($db);
 								$htemp->fetch ($result);
-								// must set the status before approve call ...
-								$htemp->statut = Holiday::STATUS_VALIDATED;
-								// $resultApproved = $htemp->approve($approverid);
 
-								//@todo à voir avec nico validated ou approuved ?
+								$htemp->statut = Holiday::STATUS_VALIDATED;
 								$resultValidated = $htemp->update($approverid);
 
 								if ($resultValidated < 0 ){
 									setEventMessages($object->error, $object->errors, 'errors');
 									$error++;
 								}
+								// we can auto send mail if we are in auto validation behavior
+								//@todo jquery disable if checkbox autovalidation unchecked
+								if ($AutoSendMail && !$error){
+									// send a mail to the user
+									sendMail($result, $cancreate, $now, $autoValidation);
+								}
 							}
 
-							if ($AutoSendMail && !$error){
-								// send a mail to the user
-								sendMail($result, $cancreate, $now);
-							}
+
 
 						}
 					}
@@ -985,9 +985,16 @@ llxFooter();
 if (is_object($db)) {
 	$db->close();
 }
-
-// automatic send mail
-function sendMail ($id, $cancreate, $now){
+/**
+ * we send email to validator  for current leave request (id)
+ * @param $id
+ * @param $cancreate
+ * @param $now
+ * @param $autoValidation
+ * @return void
+ * @throws Exception
+ */
+function sendMail ($id, $cancreate, $now, $autoValidation){
 
 	global $db, $user, $conf, $langs;
 
@@ -1000,7 +1007,7 @@ function sendMail ($id, $cancreate, $now){
 		if ($object->statut == Holiday::STATUS_DRAFT && $cancreate) {
 			$object->oldcopy = dol_clone($object);
 
-			$object->statut = Holiday::STATUS_VALIDATED;
+			if ($autoValidation) $object->statut = Holiday::STATUS_VALIDATED;
 
 			$verif = $object->validate($user);
 
