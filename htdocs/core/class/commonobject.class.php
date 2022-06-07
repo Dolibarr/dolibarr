@@ -8000,7 +8000,11 @@ abstract class CommonObject
 						}
 						// Convert float submited string into real php numeric (value in memory must be a php numeric)
 						if (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('price', 'double'))) {
-							$value = (GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix) || $value) ? price2num($value) : $this->array_options['options_'.$key];
+							if (GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix) || $value) {
+								$value = price2num($value);
+							} elseif (isset($this->array_options['options_'.$key])) {
+								$value = $this->array_options['options_'.$key];
+							}
 						}
 
 						// HTML, text, select, integer and varchar: take into account default value in database if in create mode
