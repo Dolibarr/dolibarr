@@ -638,12 +638,12 @@ if (is_object($db)) {
 	$db->close();
 }
 /**
- * we send email to validator  for current leave request (id)
+ * send email to validator for current leave represented by (id)
  * @param $id
  * @param $cancreate
  * @param $now
  * @param $autoValidation
- * @return void
+ * @return string|void
  * @throws Exception
  */
 function sendMail ($id, $cancreate, $now, $autoValidation){
@@ -670,6 +670,8 @@ function sendMail ($id, $cancreate, $now, $autoValidation){
 				$destinataire->fetch($object->fk_validator);
 				$emailTo = $destinataire->email;
 
+				//@todo make object return errors
+				//@todo remove redisrection here !
 				if (!$emailTo) {
 					dol_syslog("Expected validator has no email, so we redirect directly to finished page without sending email");
 					header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
@@ -736,17 +738,23 @@ function sendMail ($id, $cancreate, $now, $autoValidation){
 					setEventMessages($mail->error, $mail->errors, 'warnings');
 					$action = '';
 				} else {
+					//@todo make object return errors
+					//@todo remove redisrection here !
 					header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 					exit;
 				}
 			} else {
+				//@todo make object return errors
+				//@todo remove redisrection here !
 				setEventMessages($object->error, $object->errors, 'errors');
 				$action = '';
 			}
 		}
 	}else{
+		//@todo make object return errors
+		//@todo remove redisrection here !
 		setEventMessage($langs->trans('ErrorloadUserOnSendingMail'),'warning');
 	}
 
-
+   return 'objerrors';
 }
