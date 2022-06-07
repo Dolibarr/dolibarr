@@ -104,11 +104,18 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 
 print getNumberInvoicesPieChart('customers');
 print '<br>';
-print getNumberInvoicesPieChart('fourn');
-print '<br>';
+
+if (!empty($conf->fournisseur->enabled)) {
+	print getNumberInvoicesPieChart('fourn');
+	print '<br>';
+}
+
 print getCustomerInvoiceDraftTable($max, $socid);
-print '<br>';
-print getDraftSupplierTable($max, $socid);
+
+if (!empty($conf->fournisseur->enabled)) {
+	print '<br>';
+	print getDraftSupplierTable($max, $socid);
+}
 
 print '</div><div class="fichetwothirdright">';
 
