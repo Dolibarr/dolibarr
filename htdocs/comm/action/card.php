@@ -1912,7 +1912,7 @@ if ($id > 0) {
 		$linkback = '';
 		// Link to other agenda views
 		$linkback .= '<a href="'.DOL_URL_ROOT.'/comm/action/list.php?mode=show_list&restore_lastsearch_values=1">';
-		$linkback .= img_picto($langs->trans("BackToList"), 'object_list', 'class="pictoactionview pictofixedwidth"');
+		$linkback .= img_picto($langs->trans("BackToList"), 'object_calendarlist', 'class="pictoactionview pictofixedwidth"');
 		$linkback .= '<span class="hideonsmartphone">'.$langs->trans("BackToList").'</span>';
 		$linkback .= '</a>';
 		$linkback .= '</li>';
