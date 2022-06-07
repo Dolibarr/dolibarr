@@ -1078,7 +1078,7 @@ class Societe extends CommonObject
 			}
 		}
 
-		if (!empty($error)) {
+		if (empty($error)) {
 			dol_syslog(get_class($this)."::create_individual success");
 			$this->db->commit();
 		} else {
