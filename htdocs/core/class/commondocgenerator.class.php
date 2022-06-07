@@ -421,8 +421,9 @@ abstract class CommonDocGenerator
 
 		$resarray = array(
 			$array_key.'_id'=>$object->id,
-			$array_key.'_ref'=>$object->ref,
-			$array_key.'_ref_ext'=>$object->ref_ext,
+			$array_key.'_ref' => (property_exists($object, 'ref') ? $object->ref : ''),
+			$array_key.'_label' => (property_exists($object, 'label') ? $object->label : ''),
+			$array_key.'_ref_ext' => (property_exists($object, 'ref_ext') ? $object->ref_ext : ''),
 			$array_key.'_ref_customer'=>(!empty($object->ref_client) ? $object->ref_client : (empty($object->ref_customer) ? '' : $object->ref_customer)),
 			$array_key.'_ref_supplier'=>(!empty($object->ref_fournisseur) ? $object->ref_fournisseur : (empty($object->ref_supplier) ? '' : $object->ref_supplier)),
 			$array_key.'_source_invoice_ref'=>$invoice_source->ref,
@@ -443,7 +444,7 @@ abstract class CommonDocGenerator
 			$array_key.'_payment_term_code'=>$object->cond_reglement_code,
 			$array_key.'_payment_term'=>($outputlangs->transnoentitiesnoconv('PaymentCondition'.$object->cond_reglement_code) != 'PaymentCondition'.$object->cond_reglement_code ? $outputlangs->transnoentitiesnoconv('PaymentCondition'.$object->cond_reglement_code) : ($object->cond_reglement_doc ? $object->cond_reglement_doc : $object->cond_reglement)),
 
-			$array_key.'_incoterms'=>(method_exists($object, 'display_incoterms') ? $object->display_incoterms() : ''),
+			$array_key.'_incoterms' => (method_exists($object, 'display_incoterms') ? $object->display_incoterms() : ''),
 
 			$array_key.'_bank_iban'=>$bank_account->iban,
 			$array_key.'_bank_bic'=>$bank_account->bic,
@@ -820,8 +821,9 @@ abstract class CommonDocGenerator
 				if (!empty($value)) {
 					if (!is_array($value) && !is_object($value)) {
 						$array_other['object_'.$key] = $value;
-					}
-					if (is_array($value) && $recursive) {
+					} elseif (is_array($value) && $recursive) {
+						$array_other['object_'.$key] = $this->get_substitutionarray_each_var_object($value, $outputlangs, false);
+					} elseif (is_object($value) && $recursive) {
 						$array_other['object_'.$key] = $this->get_substitutionarray_each_var_object($value, $outputlangs, false);
 					}
 				}
