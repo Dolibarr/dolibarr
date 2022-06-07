@@ -252,7 +252,7 @@ if (($action == 'updateline' || $action == 'updatesplitline') && !$cancel && $us
 
 			$result = 0;
 			if (in_array($object->timespent_fk_user, $childids) || $user->rights->projet->all->creer) {
-				$result = $object->delTimeSpent($user); 
+				$result = $object->delTimeSpent($user);
 			}
 
 			$object->fetch($id_temp, $ref); // Should call $id_temp not $id
