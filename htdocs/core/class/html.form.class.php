@@ -4977,7 +4977,7 @@ class Form
 						if (!empty($input['label'])) {
 							$more .= $input['label'].'</div><div class="tagtd left">';
 						}
-						$more .= $this->selectarray($input['name'], $input['values'], $input['default'], $show_empty, $key_in_label, $value_as_key, $moreattr, $translate, $maxlen, $disabled, $sort, $morecss);
+						$more .= $this->selectarray($input['name'], $input['values'], isset($input['default'])?$input['default']:'', $show_empty, $key_in_label, $value_as_key, $moreattr, $translate, $maxlen, $disabled, $sort, $morecss);
 						$more .= '</div></div>'."\n";
 					} elseif ($input['type'] == 'checkbox') {
 						$more .= '<div class="tagtr">';
