@@ -1671,13 +1671,15 @@ class ExtraFields
 						}
 					} else {
 						$translabel = '';
-						if (!empty($obj->{$InfoFieldList[1]})) {
-							$translabel = $langs->trans($obj->{$InfoFieldList[1]});
+						$tmppropname = $InfoFieldList[1];
+						//$obj->$tmppropname = '';
+						if (!empty(isset($obj->$tmppropname) ? $obj->$tmppropname : '')) {
+							$translabel = $langs->trans($obj->$tmppropname);
 						}
-						if ($translabel != $obj->{$InfoFieldList[1]}) {
+						if ($translabel != (isset($obj->$tmppropname) ? $obj->$tmppropname : '')) {
 							$value = dol_trunc($translabel, 18);
 						} else {
-							$value = $obj->{$InfoFieldList[1]};
+							$value = isset($obj->$tmppropname) ? $obj->$tmppropname : '';
 						}
 					}
 				} else {
