@@ -1266,16 +1266,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
                      });';
 				print '</script>'."\n";
 			}
-			if (!empty($conf->multicurrency->enabled)) {
-				print '<script type="text/javascript">';
-				print '$(document).ready(function () {
-						$("#multicurrency_code").change(function() {
-							document.formsoc.action.value="create";
-							document.formsoc.submit();
-						});
-					 });';
-				print '</script>'."\n";
-			}
 		}
 
 		dol_htmloutput_mesg(is_numeric($error) ? '' : $error, $errors, 'error');
@@ -1674,7 +1664,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<tr>';
 			print '<td>'.$form->editfieldkey('Currency', 'multicurrency_code', '', $object, 0).'</td>';
 			print '<td colspan="3" class="maxwidthonsmartphone">';
-			print $form->selectMultiCurrency((GETPOSTISSET('multicurrency_code') ? GETPOST('multicurrency_code') : $object->multicurrency_code), 'multicurrency_code', 1);
+			print $form->selectMultiCurrency((GETPOSTISSET('multicurrency_code') ? GETPOST('multicurrency_code') : ($object->multicurrency_code ? $object->multicurrency_code : $conf->currency)), 'multicurrency_code', 1);
 			print '</td></tr>';
 		}
 
@@ -1965,17 +1955,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
                 })';
 				print '</script>'."\n";
-
-				if (!empty($conf->multicurrency->enabled)) {
-					print "\n".'<script type="text/javascript">';
-					print '$(document).ready(function () {
-							$("#multicurrency_code").change(function() {
-								document.formsoc.action.value="edit";
-								document.formsoc.submit();
-							});
-						 });';
-					print '</script>'."\n";
-				}
 			}
 
 			print '<form enctype="multipart/form-data" action="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'" method="post" name="formsoc">';
@@ -2378,7 +2357,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '<tr>';
 				print '<td>'.$form->editfieldkey('Currency', 'multicurrency_code', '', $object, 0).'</td>';
 				print '<td colspan="3" class="maxwidthonsmartphone">';
-				print $form->selectMultiCurrency((GETPOSTISSET('multicurrency_code') ? GETPOST('multicurrency_code') : $object->multicurrency_code), 'multicurrency_code', 1);
+				print $form->selectMultiCurrency((GETPOSTISSET('multicurrency_code') ? GETPOST('multicurrency_code') : ($object->multicurrency_code ? $object->multicurrency_code : $conf->currency)), 'multicurrency_code', 1);
 				print '</td></tr>';
 			}
 
