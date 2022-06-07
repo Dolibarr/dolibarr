@@ -387,7 +387,6 @@ if (empty($reshook)) {
 			// Si déjà un user assigné on le supprime des contacts
 			if ($useroriginassign > 0) {
 				$internal_contacts = $object->listeContact(-1, 'internal', 0, 'SUPPORTTEC');
-
 				foreach ($internal_contacts as $key => $contact) {
 					if ($contact['id'] !== $usertoassign) {
 						$result = $object->delete_contact($contact['rowid']);
