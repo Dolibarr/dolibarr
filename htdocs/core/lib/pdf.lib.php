@@ -392,8 +392,12 @@ function pdfBuildThirdpartyName($thirdparty, Translate $outputlangs, $includeali
 
 	if ($thirdparty instanceof Societe) {
 		$socname .= $thirdparty->name;
-		if (($includealias || !empty($conf->global->PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME)) && !empty($thirdparty->name_alias)) {
+		if (($includealias || $conf->global->PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME) == 1 && !empty($thirdparty->name_alias)) {
 			$socname .= " - ".$thirdparty->name_alias;
+			if ($conf->global->PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME == 2) {
+				$socname = '';
+				$socname = $thirdparty->name_alias." - ".$thirdparty->name;
+			}
 		}
 	} elseif ($thirdparty instanceof Contact) {
 		$socname = $thirdparty->socname;
