@@ -2780,7 +2780,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		// Capital
 		print '<tr><td>'.$langs->trans('Capital').'</td><td>';
 		if ($object->capital) {
-			if (!empty($conf->multicurrency->enabled)) {
+			if (!empty($conf->multicurrency->enabled) && !empty($object->multicurrency_code)) {
 				print price($object->capital, '', $langs, 0, -1, -1, $object->multicurrency_code);
 			} else {
 				print price($object->capital, '', $langs, 0, -1, -1, $conf->currency);
