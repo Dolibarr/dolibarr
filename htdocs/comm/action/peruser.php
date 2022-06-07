@@ -624,7 +624,6 @@ if ($type) {
 	$sql .= " AND ca.id = ".((int) $type);
 }
 if ($status == '0') {
-
 	$sql .= " AND a.percent = 0";
 }
 if ($status == '-1') {
