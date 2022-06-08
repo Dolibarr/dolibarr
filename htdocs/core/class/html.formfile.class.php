@@ -1470,7 +1470,7 @@ class FormFile
 						print '<td class="valignmiddle right actionbuttons nowraponall"><!-- action on files -->';
 						if ($useinecm == 1 || $useinecm == 5) {	// ECM manual tree only
 							// $section is inside $param
-							$newparam .= preg_replace('/&file=.*$/', '', $param); // We don't need param file=
+							$newparam = preg_replace('/&file=.*$/', '', $param); // We don't need param file=
 							$backtopage = DOL_URL_ROOT.'/ecm/index.php?&section_dir='.urlencode($relativepath).$newparam;
 							print '<a class="editfielda editfilelink" href="'.DOL_URL_ROOT.'/ecm/file_card.php?urlfile='.urlencode($file['name']).$param.'&backtopage='.urlencode($backtopage).'" rel="'.urlencode($file['name']).'">'.img_edit('default', 0, 'class="paddingrightonly"').'</a>';
 						}
