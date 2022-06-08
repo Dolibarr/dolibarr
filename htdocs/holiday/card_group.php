@@ -591,9 +591,9 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 		print '</td>';
 		print '</tr>';
 
-		//auto APPROVAL ON CREATE
+		//auto validation ON CREATE
 		print '<tr><td>'.$langs->trans("AutoApprovalOnCreate").'</td><td>';
-		print '<input type="checkbox" name="autoApproval" value="1"'.($autoApproval ? ' checked="checked"' : '').'>';
+		print '<input type="checkbox" name="autoValidation" value="1"'.($autoValidation ? ' checked="checked"' : '').'>';
 		print '</td></tr>'."\n";
 
 
