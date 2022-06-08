@@ -49,10 +49,10 @@ $id 			= GETPOST('id', 'int');
 $ref 			= GETPOST('ref', 'alpha');
 $fuserid 		= (GETPOST('fuserid', 'int') ?GETPOST('fuserid', 'int') : $user->id);
 $users 			=  (GETPOST('users', 'array') ?GETPOST('users', 'array') : array($user->id));
-$groups 		= GETPOST('groups', 'array') ;
+$groups 		= GETPOST('groups', 'array');
 $socid 			= GETPOST('socid', 'int');
-$autoValidation 	= GETPOST('autoValidation','int');
-$AutoSendMail   = GETPOST('AutoSendMail','int');
+$autoValidation 	= GETPOST('autoValidation', 'int');
+$AutoSendMail   = GETPOST('AutoSendMail', 'int');
 // Load translation files required by the page
 $langs->loadLangs(array("other", "holiday", "mails", "trips"));
 
@@ -162,9 +162,8 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
-
 			$users 		=  GETPOST('users', 'array');
-			$groups 	=  GETPOST('groups', 'array') ;
+			$groups 	=  GETPOST('groups', 'array');
 
 			$date_debut = dol_mktime(0, 0, 0, GETPOST('date_debut_month'), GETPOST('date_debut_day'), GETPOST('date_debut_year'));
 			$date_fin = dol_mktime(0, 0, 0, GETPOST('date_fin_month'), GETPOST('date_fin_day'), GETPOST('date_fin_year'));
@@ -209,7 +208,7 @@ if (empty($reshook)) {
 				}
 			}
 			// If no groups and no users
-			if (empty($groups) && empty($users)){
+			if (empty($groups) && empty($users)) {
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("User")), null, 'errors');
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Group")), null, 'errors');
 				$error++;
@@ -259,7 +258,6 @@ if (empty($reshook)) {
 
 
 			if (!$error) {
-
 				$TusersToProcess = array();
 
 				/** GROUPS */
@@ -290,10 +288,10 @@ if (empty($reshook)) {
 						$userError = new User($db);
 						$result = $userError->fetch($u);
 
-						if ($result){
-							setEventMessages($langs->trans("UseralreadyCPexist",$userError->firstname . ' '. $userError->lastname), null, 'errors');
-						}else{
-							setEventMessages($langs->trans("ErrorUserFetch",$u), null, 'errors');
+						if ($result) {
+							setEventMessages($langs->trans("UseralreadyCPexist", $userError->firstname . ' '. $userError->lastname), null, 'errors');
+						} else {
+							setEventMessages($langs->trans("ErrorUserFetch", $u), null, 'errors');
 						}
 
 						$error++;
@@ -305,7 +303,6 @@ if (empty($reshook)) {
 					$db->begin();
 					// non errors we can insert all
 					foreach ($TusersToProcess as $u) {
-
 						$object = new Holiday($db);
 						$object->fk_user = $u;
 						$object->description = $description;
@@ -320,30 +317,27 @@ if (empty($reshook)) {
 						if ($result <= 0) {
 							setEventMessages($object->error, $object->errors, 'errors');
 							$error++;
-						}else{
+						} else {
 							// AUTO APPROUVAL /VALIDATED
 							//@TODO changer le nom si approuved / validated
-							if ($autoValidation){
+							if ($autoValidation) {
 								$htemp = new Holiday($db);
-								$htemp->fetch ($result);
+								$htemp->fetch($result);
 
 								$htemp->statut = Holiday::STATUS_VALIDATED;
 								$resultValidated = $htemp->update($approverid);
 
-								if ($resultValidated < 0 ){
+								if ($resultValidated < 0 ) {
 									setEventMessages($object->error, $object->errors, 'errors');
 									$error++;
 								}
 								// we can auto send mail if we are in auto validation behavior
 								//@todo jquery disable if checkbox autovalidation unchecked
-								if ($AutoSendMail && !$error){
+								if ($AutoSendMail && !$error) {
 									// send a mail to the user
 									sendMail($result, $cancreate, $now, $autoValidation);
 								}
 							}
-
-
-
 						}
 					}
 				}
@@ -475,7 +469,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 
 		$resql = $db->query($sql);
 		$Tgroup = array();
-		while ($obj = $db->fetch_object($resql)){
+		while ($obj = $db->fetch_object($resql)) {
 			$Tgroup[$obj->rowid] = $obj->nom;
 		}
 		print $form->multiselectarray('groups', $Tgroup, GETPOST('groups', 'array'), '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
@@ -493,15 +487,14 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 
 
 		if ($cancreate && !$cancreateall) {
-
-		}else{
+		} else {
 			//$sql .= ' AND u.fk_user = '.$user->id;
 			//$sql .=  ' OR u.rowid ='.$user->id;
 		}
 
 		$resql = $db->query($sql);
-		if ($resql){
-			while ($obj = $db->fetch_object($resql)){
+		if ($resql) {
+			while ($obj = $db->fetch_object($resql)) {
 				$userlist[$obj->rowid] = $obj->firstname . ' '. $obj->lastname;
 			}
 		}
@@ -646,7 +639,8 @@ if (is_object($db)) {
  * @return string|void
  * @throws Exception
  */
-function sendMail ($id, $cancreate, $now, $autoValidation){
+function sendMail($id, $cancreate, $now, $autoValidation)
+{
 
 	global $db, $user, $conf, $langs;
 
@@ -654,7 +648,7 @@ function sendMail ($id, $cancreate, $now, $autoValidation){
 
 	$result = $object->fetch($id);
 
-	if ($result){
+	if ($result) {
 		// If draft and owner of leave
 		if ($object->statut == Holiday::STATUS_DRAFT && $cancreate) {
 			$object->oldcopy = dol_clone($object);
@@ -750,11 +744,11 @@ function sendMail ($id, $cancreate, $now, $autoValidation){
 				$action = '';
 			}
 		}
-	}else{
+	} else {
 		//@todo make object return errors
 		//@todo remove redisrection here !
-		setEventMessage($langs->trans('ErrorloadUserOnSendingMail'),'warning');
+		setEventMessage($langs->trans('ErrorloadUserOnSendingMail'), 'warning');
 	}
 
-   return 'objerrors';
+	return 'objerrors';
 }
