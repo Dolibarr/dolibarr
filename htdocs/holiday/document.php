@@ -124,6 +124,7 @@ $title = $langs->trans("Leave").' - '.$langs->trans("Files");
 
 llxHeader('', $title);
 
+$edit = false;
 
 if ($object->id) {
 	$valideur = new User($db);

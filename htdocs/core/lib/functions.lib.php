@@ -10045,7 +10045,7 @@ function getDictionaryValue($tablename, $field, $id, $checkentity = false, $rowi
 		$resql = $db->query($sql);
 		if ($resql) {
 			while ($obj = $db->fetch_object($resql)) {
-				$dictvalues[$obj->{$rowidfield}] = $obj;
+				$dictvalues[$obj->{$rowidfield}] = $obj;	// $obj is stdClass
 			}
 		} else {
 			dol_print_error($db);
@@ -10056,7 +10056,8 @@ function getDictionaryValue($tablename, $field, $id, $checkentity = false, $rowi
 
 	if (!empty($dictvalues[$id])) {
 		// Found
-		return $dictvalues[$id]->{$field};
+		$tmp = $dictvalues[$id];
+		return (property_exists($tmp, $field) ? $tmp->$field : '');
 	} else {
 		// Not found
 		return '';
