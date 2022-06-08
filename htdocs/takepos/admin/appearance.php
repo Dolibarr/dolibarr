@@ -117,6 +117,49 @@ $array = array(1=>"1", 2=>"2", 3=>"3", 4=>"4", 5=>"5", 6=>"6");
 print $form->selectarray('TAKEPOS_LINES_TO_SHOW', $array, (empty($conf->global->TAKEPOS_LINES_TO_SHOW) ? '2' : $conf->global->TAKEPOS_LINES_TO_SHOW), 0);
 print "</td></tr>\n";
 
+// D'ont display category
+print '<tr class="oddeven"><td>';
+print $langs->trans('HideCategories');
+print '<td colspan="2">';
+print ajax_constantonoff("TAKEPOS_HIDE_CATEGORIES", array(), $conf->entity, 0, 0, 1, 0);
+print "</td></tr>\n";
+
+// Hide stock on line 
+print '<tr class="oddeven"><td>';
+print $langs->trans('HideStockOnLine');
+print '<td colspan="2">';
+print ajax_constantonoff("TAKEPOS_HIDE_STOCK_ON_LINE", array(), $conf->entity, 0, 0, 1, 0);
+print "</td></tr>\n";
+
+// Only the products in stock
+print '<tr class="oddeven"><td>';
+print $langs->trans('ShowOnlyProductInStock');
+print '<td colspan="2">';
+print ajax_constantonoff("TAKEPOS_PRODUCT_IN_STOCK", array(), $conf->entity, 0, 0, 1, 0);
+print "</td></tr>\n";
+
+// View description of the categories
+print '<tr class="oddeven"><td>';
+print $langs->trans('ShowCategoryDescription');
+print '<td colspan="2">';
+print ajax_constantonoff("TAKEPOS_SHOW_CATEGORY_DESCRIPTION", array(), $conf->entity, 0, 0, 1, 0);
+print "</td></tr>\n";
+
+// View reference of products
+print '<tr class="oddeven"><td>';
+print $langs->trans('ShowProductReference');
+print '<td colspan="2">';
+print ajax_constantonoff("TAKEPOS_SHOW_PRODUCT_REFERENCE", array(), $conf->entity, 0, 0, 1, 0);
+print "</td></tr>\n";
+
+// Use price excl. taxes (HT) and not price incl. taxes (TTC)
+print '<tr class="oddeven"><td>';
+print $langs->trans('UsePriceHT');
+print '<td colspan="2">';
+print ajax_constantonoff("TAKEPOS_CHANGE_PRICE_HT", array(), $conf->entity, 0, 0, 1, 0);
+print "</td></tr>\n";
+
+
 print '</table>';
 
 print $form->buttonsSaveCancel("Save", '');
