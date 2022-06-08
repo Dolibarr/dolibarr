@@ -318,8 +318,8 @@ if (empty($reshook)) {
 							setEventMessages($object->error, $object->errors, 'errors');
 							$error++;
 						} else {
-							// AUTO APPROUVAL /VALIDATED
-							//@TODO changer le nom si approuved / validated
+
+							//@TODO changer le nom si validated
 							if ($autoValidation) {
 								$htemp = new Holiday($db);
 								$htemp->fetch($result);
@@ -332,10 +332,11 @@ if (empty($reshook)) {
 									$error++;
 								}
 								// we can auto send mail if we are in auto validation behavior
-								//@todo jquery disable if checkbox autovalidation unchecked
+
 								if ($AutoSendMail && !$error) {
 									// send a mail to the user
-									sendMail($result, $cancreate, $now, $autoValidation);
+									$returnSendMail = sendMail($result, $cancreate, $now, $autoValidation);
+									if (!empty($returnSendMail->msg))  setEventMessage($returnSendMail->msg,$returnSendMail->style);
 								}
 							}
 						}
@@ -413,6 +414,13 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 
 		print '<script type="text/javascript">
 		$( document ).ready(function() {
+
+            if( $("input[name=autoValidation]").is(":checked") ){
+    			$("#AutoSendMail").prop("disabled", false);
+			} else {
+				$("#AutoSendMail").prop("disabled", true);
+			}
+
 			$("input.button-save").click("submit", function(e) {
 				console.log("Call valider()");
 	    	    if (document.demandeCP.date_debut_.value != "")
@@ -438,7 +446,16 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 		           alert("'.dol_escape_js($langs->transnoentities('NoDateDebut')).'");
 		           return false;
 		        }
-	       	});
+	       	})
+
+	       	$("#autoValidation").change(function(){
+                  if( $("input[name=autoValidation]").is(":checked") ){
+    					$("#AutoSendMail").prop("disabled", false);
+				} else {
+					$("#AutoSendMail").prop("disabled", true);
+                    $("#AutoSendMail").prop("checked", false);
+				}
+	       	})
 		});
        </script>'."\n";
 
@@ -448,11 +465,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 		print '<input type="hidden" name="token" value="'.newToken().'" />'."\n";
 		print '<input type="hidden" name="action" value="add" />'."\n";
 
-
-
 		print dol_get_fiche_head();
-
-		//print '<span>'.$langs->trans('DelayToRequestCP',$object->getConfCP('delayForRequest')).'</span><br><br>';
 
 		print '<table class="border centpercent">';
 		print '<tbody>';
@@ -484,13 +497,6 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 		$sql = ' SELECT DISTINCT u.rowid,u.lastname,u.firstname from '.MAIN_DB_PREFIX.'user as  u';
 		$sql .= ' WHERE  1=1 ';
 		$sql .= !empty($morefilter) ? $morefilter : '';
-
-
-		if ($cancreate && !$cancreateall) {
-		} else {
-			//$sql .= ' AND u.fk_user = '.$user->id;
-			//$sql .=  ' OR u.rowid ='.$user->id;
-		}
 
 		$resql = $db->query($sql);
 		if ($resql) {
@@ -586,13 +592,13 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 
 		//auto validation ON CREATE
 		print '<tr><td>'.$langs->trans("AutoApprovalOnCreate").'</td><td>';
-		print '<input type="checkbox" name="autoValidation" value="1"'.($autoValidation ? ' checked="checked"' : '').'>';
+		print '<input type="checkbox" id="autoValidation" name="autoValidation" value="1"'.($autoValidation ? ' checked="checked"' : '').'>';
 		print '</td></tr>'."\n";
 
 
 		//no auto SEND MAIL
 		print '<tr><td>'.$langs->trans("AutoSendMail").'</td><td>';
-		print '<input type="checkbox" name="AutoSendMail" value="1"'.($AutoSendMail ? ' checked="checked"' : '').'>';
+		print '<input type="checkbox"  id="AutoSendMail" name="AutoSendMail" value="1"'.($AutoSendMail ? ' checked="checked"' : '').'>';
 		print '</td></tr>'."\n";
 
 		// Description
@@ -641,6 +647,11 @@ if (is_object($db)) {
  */
 function sendMail($id, $cancreate, $now, $autoValidation)
 {
+	$objStd = new stdClass();
+	$objStd->msg = '';
+	$objStd->status = 'success';
+	$objStd->error = 0;
+	$objStd->style = '';
 
 	global $db, $user, $conf, $langs;
 
@@ -657,19 +668,21 @@ function sendMail($id, $cancreate, $now, $autoValidation)
 
 			$verif = $object->validate($user);
 
-			// If no SQL error, we redirect to the request form
 			if ($verif > 0) {
 				// To
 				$destinataire = new User($db);
 				$destinataire->fetch($object->fk_validator);
 				$emailTo = $destinataire->email;
 
-				//@todo make object return errors
-				//@todo remove redisrection here !
+
 				if (!$emailTo) {
 					dol_syslog("Expected validator has no email, so we redirect directly to finished page without sending email");
-					header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
-					exit;
+
+					$objStd->error++;
+					$objStd->msg = $langs->trans('ErroremailTo');
+					$objStd->status = 'error';
+					$objStd->style="warnings";
+					return $objStd;
 				}
 
 				// From
@@ -729,26 +742,34 @@ function sendMail($id, $cancreate, $now, $autoValidation)
 				$result = $mail->sendfile();
 
 				if (!$result) {
-					setEventMessages($mail->error, $mail->errors, 'warnings');
-					$action = '';
+
+					$objStd->error++;
+					$objStd->msg = $langs->trans('ErroreSendmail');
+					$objStd->style="warnings";
+					$objStd->status = 'error';
 				} else {
-					//@todo make object return errors
-					//@todo remove redisrection here !
-					header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
-					exit;
+
+					$objStd->msg = $langs->trans('mailSended');
 				}
+
+				return $objStd;
 			} else {
-				//@todo make object return errors
-				//@todo remove redisrection here !
-				setEventMessages($object->error, $object->errors, 'errors');
-				$action = '';
+
+				$objStd->error++;
+				$objStd->msg = $langs->trans('ErroreVerif');
+				$objStd->status = 'error';
+				$objStd->style="errors";
+				return $objStd;
 			}
 		}
 	} else {
-		//@todo make object return errors
-		//@todo remove redisrection here !
-		setEventMessage($langs->trans('ErrorloadUserOnSendingMail'), 'warning');
+
+		$objStd->error++;
+		$objStd->msg = $langs->trans('ErrorloadUserOnSendingMail');
+		$objStd->status = 'error';
+		$objStd->style="warnings";
+		return $objStd;
 	}
 
-	return 'objerrors';
+	return $objStd;
 }
