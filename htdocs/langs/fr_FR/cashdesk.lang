@@ -141,4 +141,4 @@ HideStockOnLine=Masquer le stock en ligne
 ShowOnlyProductInStock=Affficher les produits en stock 
 ShowCategoryDescription=Afficher la description des catégories
 ShowProductReference=Afficher la référence des produits
-UsePriceHT= Changer le prix HT et non en TTC
+UsePriceHT= Utiliser le prix HT et non en TTC

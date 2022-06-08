@@ -141,4 +141,4 @@ HideStockOnLine=Hide stock on line
 ShowOnlyProductInStock=Show the products in stock 
 ShowCategoryDescription=Show category description
 ShowProductReference=Show reference of products
-UsePriceHT=Change price excl. taxes and not price incl. taxes
+UsePriceHT=Use price excl. taxes and not price incl. taxes
