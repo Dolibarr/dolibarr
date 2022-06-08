@@ -1171,6 +1171,7 @@ class Task extends CommonObject
 		$sql .= ", fk_user";
 		$sql .= ", datec";
 		$sql .= ", note";
+		$sql .= ", datec";
 		$sql .= ") VALUES (";
 		$sql .= $this->id;
 		$sql .= ", '".$this->db->idate($this->timespent_date)."'";
@@ -1180,6 +1181,7 @@ class Task extends CommonObject
 		$sql .= ", ".$this->timespent_fk_user;
 		$sql .= ", '".$this->db->idate($now)."'";
 		$sql .= ", ".(isset($this->timespent_note) ? "'".$this->db->escape($this->timespent_note)."'" : "null");
+		$sql .= ", '".$this->db->idate($now)."'";
 		$sql .= ")";
 
 		$resql = $this->db->query($sql);

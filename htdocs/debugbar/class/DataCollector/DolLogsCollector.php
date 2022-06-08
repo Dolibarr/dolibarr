@@ -73,7 +73,7 @@ class DolLogsCollector extends MessagesCollector
 	{
 		global $conf;
 
-		$uselogfile = $conf->global->DEBUGBAR_USE_LOGFILE;
+		$uselogfile = $conf->global->DEBUGBAR_USE_LOG_FILE;
 
 		if ($uselogfile) {
 			$this->getStorageLogs($this->path);
