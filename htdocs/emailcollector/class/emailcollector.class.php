@@ -38,6 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php'; // 
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php'; // supplier order
 require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php'; // supplier proposal
 require_once DOL_DOCUMENT_ROOT."/reception/class/reception.class.php"; // reception
+include_once DOL_DOCUMENT_ROOT.'/emailcollector/lib/emailcollector.lib.php';
 //require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php'; // Holidays (leave request)
 //require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php'; // expernse report
 
@@ -504,7 +505,7 @@ class EmailCollector extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
 	{
-		global $conf, $langs, $hookmanager;
+		global $conf, $langs, $action, $hookmanager;
 
 		if (!empty($conf->dol_no_mouse_hover)) {
 			$notooltip = 1; // Force disable tooltips
@@ -537,13 +538,6 @@ class EmailCollector extends CommonObject
 			}
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
 			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
-
-			/*
-			 $hookmanager->initHooks(array('myobjectdao'));
-			 $parameters=array('id'=>$this->id);
-			 $reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-			 if ($reshook > 0) $linkclose = $hookmanager->resPrint;
-			 */
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 		}
@@ -562,7 +556,6 @@ class EmailCollector extends CommonObject
 		$result .= $linkend;
 		//if ($withpicto != 2) $result.=(($addlabel && $this->label) ? $sep . dol_trunc($this->label, ($addlabel > 1 ? $addlabel : 0)) : '');
 
-		global $action, $hookmanager;
 		$hookmanager->initHooks(array('emailcollectordao'));
 		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
@@ -973,6 +966,7 @@ class EmailCollector extends CommonObject
 	public function doCollectOneCollector()
 	{
 		global $conf, $langs, $user;
+		global $hookmanager;
 
 		//$conf->global->SYSLOG_FILE = 'DOL_DATA_ROOT/dolibarr_mydedicatedlofile.log';
 
@@ -1934,7 +1928,7 @@ class EmailCollector extends CommonObject
 							$sql = "SELECT rowid as id FROM " . MAIN_DB_PREFIX . "user WHERE email LIKE '%" . $from . "%'";
 							$resql = $this->db->query($sql);
 							if ($this->db->num_rows($resql) == 0) {
-								$this->errors = 'User Not allowed to add documents';
+								$this->errors[] = 'User Not allowed to add documents';
 							}
 							$arrayobject = array(
 								'propale' => array('table' => 'propal',
@@ -2031,10 +2025,16 @@ class EmailCollector extends CommonObject
 									'object' => 'Mo'),
 							);
 
+							if (!is_object($hookmanager)) {
+								include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+								$hookmanager = new HookManager($this->db);
+							}
 							$hookmanager->initHooks(array('emailcolector'));
 							$parameters = array('arrayobject' => $arrayobject);
 							$reshook = $hookmanager->executeHooks('addmoduletoeamailcollectorjoinpiece', $parameters);    // Note that $action and $object may have been modified by some hooks
-							if ($reshook > 0) $arrayobject = $hookmanager->resArray;
+							if ($reshook > 0) {
+								$arrayobject = $hookmanager->resArray;
+							}
 
 							$resultobj = array();
 
@@ -2066,7 +2066,7 @@ class EmailCollector extends CommonObject
 										$path = ($objectmanaged->entity > 1 ? "/" . $objectmanaged->entity : '');
 										$dirs[] = DOL_DATA_ROOT . $path . "/" . $elementpath . '/' . dol_sanitizeFileName($objectmanaged->ref) . '/';
 									} else {
-										$this->errors = 'object not found';
+										$this->errors[] = 'object not found';
 									}
 								}
 							}
@@ -2076,12 +2076,12 @@ class EmailCollector extends CommonObject
 
 									$resr = saveAttachment($target, $prefix . '_' . $filename, $content);
 									if ($resr == -1) {
-										$this->errors = 'Doc not saved';
+										$this->errors[] = 'Doc not saved';
 									}
 								}
 							}
 						} else {
-							$this->errors = 'no joined piece';
+							$this->errors[] = 'no joined piece';
 						}
 					} elseif ($operation['type'] == 'project') {
 						// Create project / lead
@@ -2394,8 +2394,6 @@ class EmailCollector extends CommonObject
 					} elseif (substr($operation['type'], 0, 4) == 'hook') {
 						// Create event specific on hook
 						// this code action is hook..... for support this call
-						global $hookmanager;
-
 						if (!is_object($hookmanager)) {
 							include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 							$hookmanager = new HookManager($this->db);
@@ -2420,9 +2418,9 @@ class EmailCollector extends CommonObject
 							'header'=>$header,
 							'attachments'=>$attachments,
 						);
-						$res = $hookmanager->executeHooks('doCollectOneCollector', $parameters, $this, $operation['type']);
+						$reshook = $hookmanager->executeHooks('doCollectOneCollector', $parameters, $this, $operation['type']);
 
-						if ($res < 0) {
+						if ($reshook < 0) {
 							$errorforthisaction++;
 							$this->error = $hookmanager->resPrint;
 						}
