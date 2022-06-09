@@ -247,7 +247,7 @@ if (($action == 'updateline' || $action == 'updatesplitline') && !$cancel && $us
 	if (!$error) {
 		if (GETPOST('taskid', 'int') != $id) {		// GETPOST('taskid') is id of new task
 			$id_temp = GETPOST('taskid', 'int'); // should not overwrite $id
-			
+
 
 			$object->fetchTimeSpent(GETPOST('lineid', 'int'));
 
