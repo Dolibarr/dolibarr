@@ -597,9 +597,13 @@ class BookKeeping extends CommonObject
 		if (empty($this->credit)) {
 			$this->credit = 0;
 		}
+		if (empty($this->montant)) {
+			$this->montant = 0;
+		}
 
 		$this->debit = price2num($this->debit, 'MT');
 		$this->credit = price2num($this->credit, 'MT');
+		$this->montant = price2num($this->montant, 'MT');
 
 		$now = dol_now();
 

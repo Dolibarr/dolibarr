@@ -604,6 +604,7 @@ if ($action == 'create') {
 		print '<br>';
 
 		$result = $object->fetchAllPerMvt($piece_num, $mode);	// This load $object->linesmvt
+
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		} else {
@@ -643,9 +644,14 @@ if ($action == 'create') {
 
 				print "</tr>\n";
 
-				// Add an empty line
-				$line = new BookKeepingLine();
-				$object->linesmvt[] = $line;
+				// Add an empty line if there is not yet
+				if (!empty($object->linesmvt[0])) {
+					$tmpline = $object->linesmvt[0];
+					if (!empty($tmpline->numero_compte)) {
+						$line = new BookKeepingLine();
+						$object->linesmvt[] = $line;
+					}
+				}
 
 				foreach ($object->linesmvt as $line) {
 					print '<tr class="oddeven">';
