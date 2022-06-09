@@ -675,7 +675,6 @@ class User extends CommonObject
 	public function hasRight($module, $permlevel1, $permlevel2 = '')
 	{
 		global $conf;
-
 		// For compatibility with bad naming permissions on module
 		$moduletomoduletouse = array(
 			'contract' => 'contrat',
