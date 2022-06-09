@@ -306,6 +306,17 @@ script:
   echo
 
 - |
+  echo "Checking missing debug"
+  # Ensure we catch errors
+  set -e
+  # Exclusions are defined in the ruleset.xml file
+  #if [ "$TRAVIS_PULL_REQUEST" = "false" ] && [ "$TRAVIS_PHP_VERSION" = "7.4.22" ]; then
+     var-dump-check --extensions php --tracy --exclude htdocs/includes --exclude test/ .
+  #fi
+  set +e
+  echo
+
+- |
   export INSTALL_FORCED_FILE=htdocs/install/install.forced.php
   echo "Setting up Dolibarr $INSTALL_FORCED_FILE to test installation"
   # Ensure we catch errors
