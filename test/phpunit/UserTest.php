@@ -263,11 +263,11 @@ class UserTest extends PHPUnit\Framework\TestCase
 
 	/**
 	 * testUserHasRight
-	 * 
+	 *
 	 * @param User $localobject User
 	 * @return void
 	*/
-	
+
 	public function testUserHasRight()
 	{
 		global $conf,$user,$langs,$db;
@@ -282,17 +282,17 @@ class UserTest extends PHPUnit\Framework\TestCase
 		*/
 
 		print __METHOD__." id=". $user->id ."\n";
-		//$this->assertNotEquals($user->date_creation, '');		
-		$user->addrights(0, 'supplier_proposal');				
-		
-		$this->assertEquals($user->hasRight('member', ''), 0);		
+		//$this->assertNotEquals($user->date_creation, '');
+		$user->addrights(0, 'supplier_proposal');
+
+		$this->assertEquals($user->hasRight('member', ''), 0);
 		$this->assertEquals($user->hasRight('member', 'member'), 0);$this->assertEquals($user->hasRight('product', 'member', 'read'), 0);
 		$this->assertEquals($user->hasRight('member', 'member'), 0);$this->assertEquals($user->hasRight('produit', 'member', 'read'), 0);
 		$user->clearrights();
 		//print __METHOD__. $user->hasRight('module', 'level11');
 		return $user;
 	}
-	
+
 	/**
 	 * testUserSetPassword
 	 *
