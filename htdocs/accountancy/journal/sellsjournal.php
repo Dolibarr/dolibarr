@@ -105,7 +105,7 @@ if (!GETPOSTISSET('date_startmonth') && (empty($date_start) || empty($date_end))
 	$date_end = dol_get_last_day($pastmonthyear, $pastmonth, false);
 }
 
-$sql = "SELECT f.rowid, f.ref, f.type, f.datef as df, f.ref_client, f.date_lim_reglement as dlr, f.close_code,";
+$sql = "SELECT f.rowid, f.ref, f.type, f.datef as df, f.ref_client, f.date_lim_reglement as dlr, f.close_code, f.retained_warranty";
 $sql .= " fd.rowid as fdid, fd.description, fd.product_type, fd.total_ht, fd.total_tva, fd.total_localtax1, fd.total_localtax2, fd.tva_tx, fd.total_ttc, fd.situation_percent, fd.vat_src_code,";
 $sql .= " s.rowid as socid, s.nom as name, s.code_client, s.code_fournisseur,";
 if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
@@ -177,6 +177,7 @@ if ($result) {
 	// Variables
 	$cptcli = (($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER != "")) ? $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER : 'NotDefined';
 	$cpttva = (!empty($conf->global->ACCOUNTING_VAT_SOLD_ACCOUNT)) ? $conf->global->ACCOUNTING_VAT_SOLD_ACCOUNT : 'NotDefined';
+	$compta_warranty = (($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY != "")) ? $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY : 'NotDefined';
 
 	$i = 0;
 	while ($i < $num) {
@@ -247,7 +248,13 @@ if ($result) {
 			$tablocaltax2[$obj->rowid][$compta_localtax2] = 0;
 		}
 
-		$tabttc[$obj->rowid][$compta_soc] += $obj->total_ttc * $situation_ratio;
+		$total_ttc = $obj->total_ttc * $situation_ratio;
+		if (!empty($conf->global->INVOICE_USE_RETAINED_WARRANTY) && $obj->retained_warranty > 0) {
+			$retained_warranty = (double)price2num($total_ttc * $obj->retained_warranty / 100, 'MT');
+			$tabttc[$obj->rowid][$compta_warranty] += $retained_warranty;
+			$total_ttc -= $retained_warranty;
+		}
+		$tabttc[$obj->rowid][$compta_soc] += $total_ttc;
 		$tabht[$obj->rowid][$compta_prod] += $obj->total_ht * $situation_ratio;
 		if (empty($line->tva_npr)) {
 			$tabtva[$obj->rowid][$compta_tva] += $obj->total_tva * $situation_ratio; // We ignore line if VAT is a NPR

@@ -96,6 +96,9 @@ if ($conf->loan->enabled) {
 if ($conf->societe->enabled) {
 	$list_account[] = 'ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT';
 }
+if (!empty($conf->global->INVOICE_USE_RETAINED_WARRANTY)) {
+	$list_account[] = 'ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY';
+}
 
 /*
  * Actions
