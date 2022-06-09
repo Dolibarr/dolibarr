@@ -12,6 +12,7 @@
  * Copyright (C) 2015       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2022		Charlene Benke          <charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -435,7 +436,12 @@ if (empty($reshook)) {
 			// Modifie valeur des champs
 			$i = 0;
 			foreach ($listfieldmodify as $field) {
-				$keycode = $listfieldvalue[$i];
+				// entity not present on listfieldmodify array
+				if ($field == 'entity') {
+					$keycode = $field;
+					$_POST[$keycode] = $conf->entity;
+				} else
+					$keycode = $listfieldvalue[$i];
 				if ($field == 'lang') {
 					$keycode = 'langcode';
 				}
@@ -458,9 +464,6 @@ if (empty($reshook)) {
 				}
 				if ($field == 'content_lines') {
 					$_POST['content_lines'] = $_POST['content_lines-'.$rowid];
-				}
-				if ($field == 'entity') {
-					$_POST[$keycode] = $conf->entity;
 				}
 
 				if ($i) {
