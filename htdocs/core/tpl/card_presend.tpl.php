@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C)    2017-2018 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C)    2022	  Charlene Benke <charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,11 +59,11 @@ if ($action == 'presend') {
 	// Define output language
 	$outputlangs = $langs;
 	$newlang = '';
-	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
-		$newlang = GETPOST('lang_id', 'aZ09');
-	}
-	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
+	if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
 		$newlang = $object->thirdparty->default_lang;
+		if (GETPOST('lang_id', 'aZ09')) {
+			$newlang = GETPOST('lang_id', 'aZ09');
+		}		
 	}
 
 	if (!empty($newlang)) {
