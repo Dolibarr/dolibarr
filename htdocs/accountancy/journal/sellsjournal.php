@@ -105,7 +105,7 @@ if (!GETPOSTISSET('date_startmonth') && (empty($date_start) || empty($date_end))
 	$date_end = dol_get_last_day($pastmonthyear, $pastmonth, false);
 }
 
-$sql = "SELECT f.rowid, f.ref, f.type, f.datef as df, f.ref_client, f.date_lim_reglement as dlr, f.close_code, f.retained_warranty";
+$sql = "SELECT f.rowid, f.ref, f.type, f.datef as df, f.ref_client, f.date_lim_reglement as dlr, f.close_code, f.retained_warranty,";
 $sql .= " fd.rowid as fdid, fd.description, fd.product_type, fd.total_ht, fd.total_tva, fd.total_localtax1, fd.total_localtax2, fd.tva_tx, fd.total_ttc, fd.situation_percent, fd.vat_src_code,";
 $sql .= " s.rowid as socid, s.nom as name, s.code_client, s.code_fournisseur,";
 if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
@@ -167,6 +167,7 @@ if ($result) {
 	$tabht = array();
 	$tabtva = array();
 	$def_tva = array();
+	$tabwarranty = array();
 	$tabttc = array();
 	$tablocaltax1 = array();
 	$tablocaltax2 = array();
@@ -177,7 +178,6 @@ if ($result) {
 	// Variables
 	$cptcli = (($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER != "")) ? $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER : 'NotDefined';
 	$cpttva = (!empty($conf->global->ACCOUNTING_VAT_SOLD_ACCOUNT)) ? $conf->global->ACCOUNTING_VAT_SOLD_ACCOUNT : 'NotDefined';
-	$compta_warranty = (($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY != "")) ? $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY : 'NotDefined';
 
 	$i = 0;
 	while ($i < $num) {
@@ -251,7 +251,7 @@ if ($result) {
 		$total_ttc = $obj->total_ttc * $situation_ratio;
 		if (!empty($conf->global->INVOICE_USE_RETAINED_WARRANTY) && $obj->retained_warranty > 0) {
 			$retained_warranty = (double)price2num($total_ttc * $obj->retained_warranty / 100, 'MT');
-			$tabttc[$obj->rowid][$compta_warranty] += $retained_warranty;
+			$tabwarranty[$obj->rowid][$compta_soc] += $retained_warranty;
 			$total_ttc -= $retained_warranty;
 		}
 		$tabttc[$obj->rowid][$compta_soc] += $total_ttc;
@@ -306,6 +306,10 @@ if ($action == 'writebookkeeping') {
 
 	$accountingaccountcustomer->fetch(null, $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER, true);
 
+	$accountingaccountcustomerwarranty = new AccountingAccount($db);
+
+	$accountingaccountcustomerwarranty->fetch(null, $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY, true);
+
 	foreach ($tabfac as $key => $val) {		// Loop on each invoice
 		$errorforline = 0;
 
@@ -350,6 +354,55 @@ if ($action == 'writebookkeeping') {
 			$error++;
 			$errorforline++;
 			setEventMessages($langs->trans('ErrorInvoiceContainsLinesNotYetBounded', $val['ref']), null, 'errors');
+		}
+
+		// Warranty
+		if (!$errorforline) {
+			foreach ($tabwarranty[$key] as $k => $mt) {
+				$bookkeeping = new BookKeeping($db);
+				$bookkeeping->doc_date = $val["date"];
+				$bookkeeping->date_lim_reglement = $val["datereg"];
+				$bookkeeping->doc_ref = $val["ref"];
+				$bookkeeping->date_creation = $now;
+				$bookkeeping->doc_type = 'customer_invoice';
+				$bookkeeping->fk_doc = $key;
+				$bookkeeping->fk_docdet = 0; // Useless, can be several lines that are source of this record to add
+				$bookkeeping->thirdparty_code = $companystatic->code_client;
+
+				$bookkeeping->subledger_account = $tabcompany[$key]['code_compta'];
+				$bookkeeping->subledger_label = $tabcompany[$key]['name'];
+
+				$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY;
+				$bookkeeping->label_compte = $accountingaccountcustomerwarranty->label;
+
+				$bookkeeping->label_operation = dol_trunc($companystatic->name, 16).' - '.$invoicestatic->ref.' - '.$langs->trans("Retainedwarranty");
+				$bookkeeping->montant = $mt;
+				$bookkeeping->sens = ($mt >= 0) ? 'D' : 'C';
+				$bookkeeping->debit = ($mt >= 0) ? $mt : 0;
+				$bookkeeping->credit = ($mt < 0) ? -$mt : 0;
+				$bookkeeping->code_journal = $journal;
+				$bookkeeping->journal_label = $langs->transnoentities($journal_label);
+				$bookkeeping->fk_user_author = $user->id;
+				$bookkeeping->entity = $conf->entity;
+
+				$totaldebit += $bookkeeping->debit;
+				$totalcredit += $bookkeeping->credit;
+
+				$result = $bookkeeping->create($user);
+				if ($result < 0) {
+					if ($bookkeeping->error == 'BookkeepingRecordAlreadyExists') {	// Already exists
+						$error++;
+						$errorforline++;
+						$errorforinvoice[$key] = 'alreadyjournalized';
+						//setEventMessages('Transaction for ('.$bookkeeping->doc_type.', '.$bookkeeping->fk_doc.', '.$bookkeeping->fk_docdet.') were already recorded', null, 'warnings');
+					} else {
+						$error++;
+						$errorforline++;
+						$errorforinvoice[$key] = 'other';
+						setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
+					}
+				}
+			}
 		}
 
 		// Thirdparty
@@ -851,6 +904,36 @@ if (empty($action) || $action == 'view') {
 			print "</td>";
 			print '<td class="right"></td>';
 			print '<td class="right"></td>';
+			print "</tr>";
+		}
+
+		// Warranty
+		foreach ($tabwarranty[$key] as $k => $mt) {
+			print '<tr class="oddeven">';
+			print "<!-- Thirdparty -->";
+			print "<td>".$date."</td>";
+			print "<td>".$invoicestatic->getNomUrl(1)."</td>";
+			// Account
+			print "<td>";
+			$accountoshow = length_accountg($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY);
+			if (($accountoshow == "") || $accountoshow == 'NotDefined') {
+				print '<span class="error">'.$langs->trans("MainAccountForCustomersNotDefined").'</span>';
+			} else {
+				print $accountoshow;
+			}
+			print '</td>';
+			// Subledger account
+			print "<td>";
+			$accountoshow = length_accounta($k);
+			if (($accountoshow == "") || $accountoshow == 'NotDefined') {
+				print '<span class="error">'.$langs->trans("ThirdpartyAccountNotDefined").'</span>';
+			} else {
+				print $accountoshow;
+			}
+			print '</td>';
+			print "<td>".$companystatic->getNomUrl(0, 'customer', 16).' - '.$invoicestatic->ref.' - '.$langs->trans("Retainedwarranty")."</td>";
+			print '<td class="right nowraponall amount">'.($mt >= 0 ? price($mt) : '')."</td>";
+			print '<td class="right nowraponall amount">'.($mt < 0 ? price(-$mt) : '')."</td>";
 			print "</tr>";
 		}
 
