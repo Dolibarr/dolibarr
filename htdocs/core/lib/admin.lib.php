@@ -1665,7 +1665,7 @@ function form_constantes($tableau, $strictw3c = 0, $helptext = '', $text = 'Valu
 				print 'mymailmanlist<br>';
 				print 'mymailmanlist1,mymailmanlist2<br>';
 				print 'TYPE:Type1:mymailmanlist1,TYPE:Type2:mymailmanlist2<br>';
-				if ($conf->categorie->enabled) {
+				if (isModEnabled('categorie')) {
 					print 'CATEG:Categ1:mymailmanlist1,CATEG:Categ2:mymailmanlist2<br>';
 				}
 				print '</div>';
@@ -1697,7 +1697,7 @@ function form_constantes($tableau, $strictw3c = 0, $helptext = '', $text = 'Valu
 					print "</textarea>\n";
 				} elseif ($obj->type == 'html') {
 					require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-					$doleditor = new DolEditor('constvalue'.(empty($strictw3c) ? '' : ($strictw3c == 3 ? '_'.$const : '[]')), $obj->value, '', 160, 'dolibarr_notes', '', false, false, $conf->fckeditor->enabled, ROWS_5, '90%');
+					$doleditor = new DolEditor('constvalue'.(empty($strictw3c) ? '' : ($strictw3c == 3 ? '_'.$const : '[]')), $obj->value, '', 160, 'dolibarr_notes', '', false, false, isModEnabled('fckeditor'), ROWS_5, '90%');
 					$doleditor->Create();
 				} elseif ($obj->type == 'yesno') {
 					print $form->selectyesno('constvalue'.(empty($strictw3c) ? '' : ($strictw3c == 3 ? '_'.$const : '[]')), $obj->value, 1);
@@ -1944,14 +1944,14 @@ function email_admin_prepare_head()
 		$head[$h][2] = 'common';
 		$h++;
 
-		if (!empty($conf->mailing->enabled)) {
+		if (isModEnabled('mailing')) {
 			$head[$h][0] = DOL_URL_ROOT."/admin/mails_emailing.php";
 			$head[$h][1] = $langs->trans("OutGoingEmailSetupForEmailing", $langs->transnoentitiesnoconv("EMailing"));
 			$head[$h][2] = 'common_emailing';
 			$h++;
 		}
 
-		if (!empty($conf->ticket->enabled)) {
+		if (isModEnabled('ticket')) {
 			$head[$h][0] = DOL_URL_ROOT."/admin/mails_ticket.php";
 			$head[$h][1] = $langs->trans("OutGoingEmailSetupForEmailing", $langs->transnoentitiesnoconv("Ticket"));
 			$head[$h][2] = 'common_ticket';
