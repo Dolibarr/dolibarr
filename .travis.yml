@@ -170,6 +170,10 @@ before_script:
     which phpcs
     phpcs --version | head -
     phpcs -i | head -
+    # Check PHP Vardump check version
+    echo "PHP Vardump check version"
+    which var_dump_check
+    var_dump_check --version
     # Check PHPUnit version
     echo "PHPUnit version"
     which phpunit
