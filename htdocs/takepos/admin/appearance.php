@@ -124,7 +124,7 @@ print '<td colspan="2">';
 print ajax_constantonoff("TAKEPOS_HIDE_CATEGORIES", array(), $conf->entity, 0, 0, 1, 0);
 print "</td></tr>\n";
 
-// Hide stock on line 
+// Hide stock on line
 print '<tr class="oddeven"><td>';
 print $langs->trans('HideStockOnLine');
 print '<td colspan="2">';
