@@ -2066,7 +2066,7 @@ class ExtraFields
 				} elseif (in_array($key_type, array('checkbox', 'chkbxlst'))) {
 					$value_arr = GETPOST("options_".$key, 'array'); // check if an array
 					if (!empty($value_arr)) {
-						$value_key = implode($value_arr, ',');
+						$value_key = implode(',', $value_arr);
 					} else {
 						$value_key = '';
 					}
