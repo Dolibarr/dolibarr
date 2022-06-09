@@ -54,6 +54,7 @@ TypeOfLineServiceOrProduct=Type of line (0=product, 1=service)
 FileWithDataToImport=File with data to import
 FileToImport=Source file to import
 FileMustHaveOneOfFollowingFormat=File to import must have one of following formats
+DownloadEmptyExampleShort=Download a sample file
 DownloadEmptyExample=Download a template file with examples and information on fields you can import
 StarAreMandatory=Into the template file, all fields with a * are mandatory fields
 ChooseFormatOfFileToImport=Choose the file format to use as import file format by clicking on the %s icon to select it...
