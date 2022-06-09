@@ -167,7 +167,7 @@ if ($permok) {
 
 //print '<div class="tabsAction">';
 $morehtmlcenter = '';
-if (!empty($conf->agenda->enabled)) {
+if (isModEnabled('agenda')) {
 	$addActionBtnRight = !empty($user->rights->agenda->myactions->create) || !empty($user->rights->agenda->allactions->create);
 	$morehtmlcenter .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'&socid='.$object->socid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id), '', $addActionBtnRight);
 }
