@@ -311,7 +311,7 @@ script:
   set -e
   # Exclusions are defined in the ruleset.xml file
   #if [ "$TRAVIS_PULL_REQUEST" = "false" ] && [ "$TRAVIS_PHP_VERSION" = "7.4.22" ]; then
-     var-dump-check --extensions php --tracy --exclude htdocs/includes --exclude test/ .
+     var-dump-check --extensions php --tracy --exclude htdocs/includes --exclude test/ --exclude public/test/ .
   #fi
   set +e
   echo
