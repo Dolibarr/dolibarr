@@ -1722,11 +1722,6 @@ class BookKeeping extends CommonObject
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result) {
-			// Add an empty line when transaction is validated to permit to add new line manually
-			if ($mode != "_tmp") {
-				$line = new BookKeepingLine();
-				$this->linesmvt[] = $line;
-			}
 			while ($obj = $this->db->fetch_object($result)) {
 				$line = new BookKeepingLine();
 
