@@ -643,11 +643,9 @@ if ($action == 'create') {
 
 				print "</tr>\n";
 
-				// Empty line is the first line of $object->linesmvt
-				// So we must get the first line (the empty one) and pu it at the end of the array
-				// in order to display it correctly to the user
-				$empty_line = array_shift($object->linesmvt);
-				$object->linesmvt[]= $empty_line;
+				// Add an empty line
+				$line = new BookKeepingLine();
+				$object->linesmvt[] = $line;
 
 				foreach ($object->linesmvt as $line) {
 					print '<tr class="oddeven">';
