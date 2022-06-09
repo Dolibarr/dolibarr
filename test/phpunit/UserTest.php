@@ -78,7 +78,7 @@ class UserTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return void
 	 */
-	public static function setUpBeforeClass()
+	public static function setUpBeforeClass() : void
 	{
 		global $conf,$user,$langs,$db;
 
@@ -96,7 +96,7 @@ class UserTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	public static function tearDownAfterClass()
+	public static function tearDownAfterClass() : void
 	{
 		global $conf,$user,$langs,$db;
 		$db->rollback();
@@ -109,7 +109,7 @@ class UserTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	protected function setUp()
+	protected function setUp() : void
 	{
 		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -125,7 +125,7 @@ class UserTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	protected function tearDown()
+	protected function tearDown() : void
 	{
 		print __METHOD__."\n";
 	}
@@ -261,6 +261,38 @@ class UserTest extends PHPUnit\Framework\TestCase
 		return $localobject;
 	}
 
+	/**
+	 * testUserHasRight
+	 * 
+	 * @param User $localobject User
+	 * @return void
+	*/
+	
+	public function testUserHasRight()
+	{
+		global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
+
+		/*$result=$localobject->setstatus(0);
+		print __METHOD__." id=".$localobject->id." result=".$result."\n";
+		$this->assertLessThan($result, 0);
+		*/
+
+		print __METHOD__." id=". $user->id ."\n";
+		//$this->assertNotEquals($user->date_creation, '');		
+		$user->addrights(0, 'supplier_proposal');				
+		
+		$this->assertEquals($user->hasRight('member', ''), 0);		
+		$this->assertEquals($user->hasRight('member', 'member'), 0);$this->assertEquals($user->hasRight('product', 'member', 'read'), 0);
+		$this->assertEquals($user->hasRight('member', 'member'), 0);$this->assertEquals($user->hasRight('produit', 'member', 'read'), 0);
+		$user->clearrights();
+		//print __METHOD__. $user->hasRight('module', 'level11');
+		return $user;
+	}
+	
 	/**
 	 * testUserSetPassword
 	 *
