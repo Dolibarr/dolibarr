@@ -264,10 +264,8 @@ class UserTest extends PHPUnit\Framework\TestCase
 	/**
 	 * testUserHasRight
 	 *
-	 * @param User $localobject User
-	 * @return void
-	*/
-
+	 * @return  void
+	 */
 	public function testUserHasRight()
 	{
 		global $conf,$user,$langs,$db;
@@ -275,7 +273,6 @@ class UserTest extends PHPUnit\Framework\TestCase
 		$user=$this->savuser;
 		$langs=$this->savlangs;
 		$db=$this->savdb;
-
 		/*$result=$localobject->setstatus(0);
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 		$this->assertLessThan($result, 0);
