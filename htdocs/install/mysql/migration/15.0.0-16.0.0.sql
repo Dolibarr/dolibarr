@@ -51,7 +51,10 @@
 -- VPGSQL8.2 ALTER TABLE llx_c_payment_term ALTER COLUMN rowid SET DEFAULT nextval('llx_c_payment_term_rowid_seq');
 -- VPGSQL8.2 SELECT setval('llx_c_payment_term_rowid_seq', MAX(rowid)) FROM llx_c_payment_term;
 
-
+ALTER TABLE llx_element_tag ADD COLUMN entity INTEGER DEFAULT 1 NOT NULL;
+ALTER TABLE llx_element_tag ADD COLUMN lang varchar(5) not null;
+ALTER TABLE llx_element_tag ADD COLUMN tag varchar(255) not null;
+ALTER TABLE llx_element_tag ADD COLUMN element varchar(64) not null;
 
 ALTER TABLE llx_c_transport_mode ADD UNIQUE INDEX uk_c_transport_mode (code, entity);
 
@@ -59,7 +62,7 @@ ALTER TABLE llx_c_shipment_mode MODIFY COLUMN tracking varchar(255) NULL;
 
 ALTER TABLE llx_holiday ADD COLUMN nb_open_day double(24,8) DEFAULT NULL;
 
-ALTER TABLE llx_element_tag ADD COLUMN fk_categorie INTEGER;
+--ALTER TABLE llx_element_tag ADD COLUMN fk_categorie INTEGER;
 
 
 insert into llx_c_type_resource (code, label, active) values ('RES_ROOMS', 'Rooms',  1);
