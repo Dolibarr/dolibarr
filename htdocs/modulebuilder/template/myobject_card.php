@@ -87,13 +87,15 @@ $langs->loadLangs(array("mymodule@mymodule", "other"));
 // Get parameters
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
+$lineid   = GETPOST('lineid', 'int');
+
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'myobjectcard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
-$lineid   = GETPOST('lineid', 'int');
+$dol_openinpopup = GETPOST('dol_openinpopup', 'aZ09');
 
 // Initialize technical objects
 $object = new MyObject($db);
@@ -333,6 +335,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	if ($action == 'deleteline') {
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$lineid, $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_deleteline', '', 0, 1);
 	}
+
 	// Clone confirmation
 	if ($action == 'clone') {
 		// Create an array for form
@@ -340,8 +343,17 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneAsk', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
 	}
 
-	// Confirmation of action xxxx
+	// Confirmation of action xxxx (You can use it for xxx = 'close', xxx = 'reopen', ...)
 	if ($action == 'xxx') {
+		$text = $langs->trans('ConfirmActionMyObject', $object->ref);
+		/*if (! empty($conf->notification->enabled))
+		{
+			require_once DOL_DOCUMENT_ROOT . '/core/class/notify.class.php';
+			$notify = new Notify($db);
+			$text .= '<br>';
+			$text .= $notify->confirmMessage('MYOBJECT_CLOSE', $object->socid, $object);
+		}*/
+
 		$formquestion = array();
 		/*
 		$forcecombo=0;
@@ -579,7 +591,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		$MAXEVENT = 10;
 
-		$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-list-alt imgforviewmode', dol_buildpath('/mymodule/myobject_agenda.php', 1).'?id='.$object->id);
+		$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-bars imgforviewmode', dol_buildpath('/mymodule/myobject_agenda.php', 1).'?id='.$object->id);
 
 		// List of actions on element
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';

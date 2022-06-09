@@ -87,8 +87,8 @@ if ($action == 'add_payment') {
 		// Read possible payments
 		foreach ($_POST as $key => $value) {
 			if (substr($key, 0, 7) == 'amount_') {
-				$amounts[$expensereport->fk_user_author] = price2num($_POST[$key]);
-				$total += price2num($_POST[$key]);
+				$amounts[$expensereport->fk_user_author] = price2num(GETPOST($key));
+				$total += price2num(GETPOST($key));
 			}
 		}
 
@@ -212,7 +212,7 @@ if ($action == 'create' || empty($action)) {
 	if ($resql) {
 		$obj = $db->fetch_object($resql);
 		$sumpaid = $obj->total;
-		$db->free();
+		$db->free($resql);
 	}
 	print '<tr><td>'.$langs->trans("AlreadyPaid").'</td><td>'.price($sumpaid, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
 	print '<tr><td class="tdtop">'.$langs->trans("RemainderToPay").'</td><td>'.price($total - $sumpaid, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';

@@ -79,8 +79,8 @@ class Paiement extends CommonObject
 	public $pos_change = 0; // Excess received in TakePOS cash payment
 
 	public $author;
-	public $paiementid; // Type of payment. Id saved into fields fk_paiement on llx_paiement
-	public $paiementcode; // Code of payment.
+	public $paiementid; 	// ID of mode of payment. Is saved into fields fk_paiement on llx_paiement = id of llx_c_paiement
+	public $paiementcode; 	// Code of mode of payment.
 
 	/**
 	 * @var string Type of payment label
@@ -108,6 +108,16 @@ class Paiement extends CommonObject
 	 * @var string Id of external payment mode
 	 */
 	public $ext_payment_id;
+
+	/**
+	 * @var string Id of prelevement
+	 */
+	public $id_prelevement;
+
+	/**
+	 * @var string num_prelevement
+	 */
+	public $num_prelevement;
 
 	/**
 	 * @var string Name of external payment mode
@@ -340,6 +350,7 @@ class Paiement extends CommonObject
 				if (is_numeric($amount) && $amount <> 0) {
 					$amount = price2num($amount);
 					$sql = "INSERT INTO ".MAIN_DB_PREFIX."paiement_facture (fk_facture, fk_paiement, amount, multicurrency_amount)";
+					// TODO Add multicurrency_code and multicurrency_tx
 					$sql .= " VALUES (".((int) $facid).", ".((int) $this->id).", ".((float) $amount).", ".((float) $this->multicurrency_amounts[$key]).")";
 
 					dol_syslog(get_class($this).'::create Amount line '.$key.' insert paiement_facture', LOG_DEBUG);
@@ -418,7 +429,8 @@ class Paiement extends CommonObject
 									}
 
 									if ($error) {
-										setEventMessages($discount->error, $discount->errors, 'errors');
+										$this->error = $discount->error;
+										$this->errors = $discount->errors;
 										$error++;
 									}
 								}
@@ -459,7 +471,8 @@ class Paiement extends CommonObject
 							$result = $invoice->generateDocument($invoice->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 
 							if ($result < 0) {
-								setEventMessages($invoice->error, $invoice->errors, 'errors');
+								$this->error = $invoice->error;
+								$this->errors = $invoice->errors;
 								$error++;
 							}
 						}
@@ -620,16 +633,19 @@ class Paiement extends CommonObject
 				return -1;
 			}
 
-			$this->db->begin();
-
 			$this->fk_account = $accountid;
 
+			dol_syslog("addPaymentToBank ".$user->id.", ".$mode.", ".$label.", ".$this->fk_account.", ".$emetteur_nom.", ".$emetteur_banque);
+
 			include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-
-			dol_syslog("$user->id, $mode, $label, $this->fk_account, $emetteur_nom, $emetteur_banque");
-
 			$acc = new Account($this->db);
 			$result = $acc->fetch($this->fk_account);
+			if ($result < 0) {
+				$error++;
+				return -1;
+			}
+
+			$this->db->begin();
 
 			$totalamount = $this->amount;
 			$totalamount_main_currency = null;
@@ -1196,7 +1212,7 @@ class Paiement extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $mode = 'withlistofinvoices', $notooltip = 0, $morecss = '')
 	{
-		global $conf, $langs;
+		global $conf, $langs, $hookmanager;
 
 		if (!empty($conf->dol_no_mouse_hover)) {
 			$notooltip = 1; // Force disable tooltips
@@ -1215,6 +1231,9 @@ class Paiement extends CommonObject
 			} else {	// Hours was set to real date of payment (special case for POS for example)
 				$label .= dol_print_date($dateofpayment, 'dayhour', 'tzuser');
 			}
+		}
+		if ($this->amount) {
+			$label .= '<br><strong>'.$langs->trans("Amount").':</strong> '.price($this->amount, 0, $langs, 1, -1, -1, $conf->currency);
 		}
 		if ($mode == 'withlistofinvoices') {
 			$arraybill = $this->getBillsArray();
@@ -1254,7 +1273,15 @@ class Paiement extends CommonObject
 			$result .= ($this->ref ? $this->ref : $this->id);
 		}
 		$result .= $linkend;
-
+		global $action;
+		$hookmanager->initHooks(array($this->element . 'dao'));
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
+		}
 		return $result;
 	}
 

@@ -152,32 +152,32 @@ if ($action == 'add') {
 	$langs->load("errors");
 
 	$error = 0;
-	if (!$error && !$_POST['menu_handler']) {
+	if (!$error && !GETPOST('menu_handler')) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("MenuHandler")), null, 'errors');
 		$action = 'create';
 		$error++;
 	}
-	if (!$error && !$_POST['type']) {
+	if (!$error && !GETPOST('type')) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Type")), null, 'errors');
 		$action = 'create';
 		$error++;
 	}
-	if (!$error && !$_POST['url']) {
+	if (!$error && !GETPOST('url')) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("URL")), null, 'errors');
 		$action = 'create';
 		$error++;
 	}
-	if (!$error && !$_POST['titre']) {
+	if (!$error && !GETPOST('titre')) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Title")), null, 'errors');
 		$action = 'create';
 		$error++;
 	}
-	if (!$error && $_POST['menuId'] && $_POST['type'] == 'top') {
+	if (!$error && GETPOST('menuId') && GETPOST('type') == 'top') {
 		setEventMessages($langs->trans("ErrorTopMenuMustHaveAParentWithId0"), null, 'errors');
 		$action = 'create';
 		$error++;
 	}
-	if (!$error && !$_POST['menuId'] && $_POST['type'] == 'left') {
+	if (!$error && !GETPOST('menuId') && GETPOST('type') == 'left') {
 		setEventMessages($langs->trans("ErrorLeftMenuMustHaveAParentId"), null, 'errors');
 		$action = 'create';
 		$error++;

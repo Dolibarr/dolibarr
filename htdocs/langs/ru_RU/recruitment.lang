@@ -74,3 +74,5 @@ JobClosedTextCanceled=Вакансия закрыта.
 ExtrafieldsJobPosition=Дополнительные атрибуты (должности)
 ExtrafieldsApplication=Дополнительные атрибуты (заявления о приеме на работу)
 MakeOffer=Сделай предложение
+WeAreRecruiting=Мы набираем. Это список вакансий, которые необходимо заполнить...
+NoPositionOpen=На данный момент открытых позиций нет

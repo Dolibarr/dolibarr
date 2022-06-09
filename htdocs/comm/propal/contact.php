@@ -107,12 +107,6 @@ if ($action == 'addcontact' && $user->rights->propale->creer) {
 		dol_print_error($db);
 	}
 }
-/*
-elseif ($action == 'setaddress' && $user->rights->propale->creer)
-{
-	$result=$object->setDeliveryAddress($_POST['fk_address']);
-	if ($result < 0) dol_print_error($db,$object->error);
-}*/
 
 
 /*

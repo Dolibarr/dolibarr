@@ -64,10 +64,10 @@ function print_auguria_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout
 	// Show/Hide vertical menu. The hamburger icon for .menuhider action.
 	if ($mode != 'jmobile' && $mode != 'topnb' && $usemenuhider && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 		$showmode = 1;
-		$classname = 'class="tmenu menuhider"';
+		$classname = 'class="tmenu menuhider nohover"';
 		$idsel = 'menu';
 
-		$menu->add('#', (!empty($conf->global->THEME_TOPMENU_DISABLE_IMAGE) ? '<span class="fa fa-bars"></span>' : ''), 0, $showmode, $atarget, "xxx", '', 0, $id, $idsel, $classname);
+		$menu->add('#', (getDolGlobalInt('THEME_TOPMENU_DISABLE_IMAGE') == 1 ? '<span class="fa fa-bars"></span>' : ''), 0, $showmode, $atarget, "xxx", '', 0, $id, $idsel, $classname);
 	}
 
 	$num = count($newTabMenu);
@@ -231,22 +231,31 @@ function print_text_menu_entry_auguria($text, $showmode, $url, $id, $idsel, $cla
 {
 	global $langs;
 
+	$classnameimg = str_replace('class="', 'class="tmenuimage ', $classname);
+	$classnametxt = str_replace('class="', 'class="tmenulabel ', $classname);
+
 	if ($showmode == 1) {
-		print '<a class="tmenuimage" tabindex="-1" href="'.$url.'"'.($atarget ? ' target="'.$atarget.'"' : '').' title="'.dol_escape_htmltag($text).'">';
-		print '<div class="'.$id.' '.$idsel.' topmenuimage"><span class="'.$id.' tmenuimage" id="mainmenuspan_'.$idsel.'"></span></div>';
+		print '<a '.$classnametxt.' tabindex="-1" href="'.$url.'"'.($atarget ? ' target="'.$atarget.'"' : '').' title="'.dol_escape_htmltag($text).'">';
+		print '<div class="'.$id.' '.$idsel.' topmenuimage"><span class="'.$id.' tmenuimageforpng" id="mainmenuspan_'.$idsel.'"></span></div>';
 		print '</a>';
-		print '<a '.$classname.' id="mainmenua_'.$idsel.'" href="'.$url.'"'.($atarget ? ' target="'.$atarget.'"' : '').' title="'.dol_escape_htmltag($text).'">';
-		print '<span class="mainmenuaspan">';
-		print $text;
-		print '</span>';
-		print '</a>';
+		if (empty($conf->global->THEME_TOPMENU_DISABLE_TEXT)) {
+			print '<a '.$classnameimg.' id="mainmenua_'.$idsel.'" href="'.$url.'"'.($atarget ? ' target="'.$atarget.'"' : '').' title="'.dol_escape_htmltag($text).'">';
+			print '<span class="mainmenuaspan">';
+			print $text;
+			print '</span>';
+			print '</a>';
+		}
 	} elseif ($showmode == 2) {
-		print '<div class="'.$id.' '.$idsel.' topmenuimage tmenudisabled"><span class="'.$id.'" id="mainmenuspan_'.$idsel.'"></span></div>';
-		print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">';
-		print '<span class="mainmenuaspan">';
-		print $text;
-		print '</span>';
-		print '</a>';
+		print '<div '.$classnameimg.' title="'.dol_escape_htmltag($text.' - '.$langs->trans("NotAllowed")).'">';
+		print '<div class="'.$id.' '.$idsel.' topmenuimage tmenudisabled"><span class="'.$id.' tmenuimageforpng tmenudisabled" id="mainmenuspan_'.$idsel.'"></span></div>';
+		print '</div>';
+		if (empty($conf->global->THEME_TOPMENU_DISABLE_TEXT)) {
+			print '<span '.$classnametxt.' id="mainmenua_'.$idsel.'" href="#" title="'.dol_escape_htmltag($text.' - '.$langs->trans("NotAllowed")).'">';
+			print '<span class="mainmenuaspan">';
+			print $text;
+			print '</span>';
+			print '</span>';
+		}
 	}
 }
 
@@ -330,7 +339,7 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 	$newmenu = $menuArbo->menuLeftCharger($newmenu, $mainmenu, $leftmenu, ($user->socid ? 1 : 0), 'auguria', $tabMenu);
 
 	// We update newmenu for special dynamic menus
-	if ($conf->banque->enabled && $user->rights->banque->lire && $mainmenu == 'bank') {	// Entry for each bank account
+	if (!empty($conf->banque->enabled) && $user->rights->banque->lire && $mainmenu == 'bank') {	// Entry for each bank account
 		include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php'; // Required for to get Account::TYPE_CASH for example
 
 		$sql = "SELECT rowid, label, courant, rappro, courant";
@@ -410,7 +419,7 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 
 					// To enable when page exists
 					if (empty($conf->global->ACCOUNTANCY_SHOW_DEVELOP_JOURNAL)) {
-						if ($nature == 'various' || $nature == 'hasnew' || $nature == 'inventory') {
+						if ($nature == 'hasnew' || $nature == 'inventory') {
 							$nature = '';
 						}
 					}

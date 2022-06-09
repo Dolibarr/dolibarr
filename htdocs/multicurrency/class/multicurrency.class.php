@@ -493,20 +493,20 @@ class MultiCurrency extends CommonObject
 	 /**
 	  * Get id of currency from code
 	  *
-	  * @param  DoliDB	$db		    object db
+	  * @param  DoliDB	$dbs	    object db
 	  * @param  string	$code	    code value search
 	  *
 	  * @return int                 0 if not found, >0 if OK
 	  */
-	public static function getIdFromCode($db, $code)
+	public static function getIdFromCode($dbs, $code)
 	{
 		global $conf;
 
-		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."multicurrency WHERE code = '".$db->escape($code)."' AND entity = ".$conf->entity;
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."multicurrency WHERE code = '".$dbs->escape($code)."' AND entity = ".((int) $conf->entity);
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
-		$resql = $db->query($sql);
-		if ($resql && $obj = $db->fetch_object($resql)) {
+		$resql = $dbs->query($sql);
+		if ($resql && $obj = $dbs->fetch_object($resql)) {
 			return $obj->rowid;
 		} else {
 			return 0;
@@ -516,38 +516,38 @@ class MultiCurrency extends CommonObject
 	 /**
 	  * Get id and rate of currency from code
 	  *
-	  * @param DoliDB	$db		        Object db
+	  * @param DoliDB	$dbs	        Object db
 	  * @param string	$code	        Code value search
 	  * @param integer	$date_document	Date from document (propal, order, invoice, ...)
 	  *
 	  * @return 	array	[0] => id currency
 	  *						[1] => rate
 	  */
-	public static function getIdAndTxFromCode($db, $code, $date_document = '')
+	public static function getIdAndTxFromCode($dbs, $code, $date_document = '')
 	{
 		global $conf;
 
 		$sql1 = "SELECT m.rowid, mc.rate FROM ".MAIN_DB_PREFIX."multicurrency m";
 
 		$sql1 .= ' LEFT JOIN '.MAIN_DB_PREFIX.'multicurrency_rate mc ON (m.rowid = mc.fk_multicurrency)';
-		$sql1 .= " WHERE m.code = '".$db->escape($code)."'";
+		$sql1 .= " WHERE m.code = '".$dbs->escape($code)."'";
 		$sql1 .= " AND m.entity IN (".getEntity('multicurrency').")";
 		$sql2 = '';
 		if (!empty($conf->global->MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE) && !empty($date_document)) {	// Use last known rate compared to document date
 			$tmparray = dol_getdate($date_document);
-			$sql2 .= " AND mc.date_sync <= '".$db->idate(dol_mktime(23, 59, 59, $tmparray['mon'], $tmparray['mday'], $tmparray['year'], true))."'";
+			$sql2 .= " AND mc.date_sync <= '".$dbs->idate(dol_mktime(23, 59, 59, $tmparray['mon'], $tmparray['mday'], $tmparray['year'], true))."'";
 		}
 		$sql3 = " ORDER BY mc.date_sync DESC LIMIT 1";
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
-		$resql = $db->query($sql1.$sql2.$sql3);
+		$resql = $dbs->query($sql1.$sql2.$sql3);
 
-		if ($resql && $obj = $db->fetch_object($resql)) {
+		if ($resql && $obj = $dbs->fetch_object($resql)) {
 			return array($obj->rowid, $obj->rate);
 		} else {
 			if (!empty($conf->global->MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE)) {
-				$resql = $db->query($sql1.$sql3);
-				if ($resql && $obj = $db->fetch_object($resql)) {
+				$resql = $dbs->query($sql1.$sql3);
+				if ($resql && $obj = $dbs->fetch_object($resql)) {
 					return array($obj->rowid, $obj->rate);
 				}
 			}
@@ -559,11 +559,11 @@ class MultiCurrency extends CommonObject
 	/**
 	 * Get the conversion of amount with invoice rate
 	 *
-	 * @param	int		$fk_facture		id of facture
-	 * @param	double	$amount			amount to convert
-	 * @param	string	$way			'dolibarr' mean the amount is in dolibarr currency
-	 * @param	string	$table			facture or facture_fourn
-	 * @return	double					amount converted
+	 * @param	int				$fk_facture				id of facture
+	 * @param	double			$amount					amount to convert
+	 * @param	string			$way					'dolibarr' mean the amount is in dolibarr currency
+	 * @param	string			$table					facture or facture_fourn
+	 * @return	double|boolean 							amount converted or false if conversion fails
 	 */
 	public static function getAmountConversionFromInvoiceRate($fk_facture, $amount, $way = 'dolibarr', $table = 'facture')
 	{
@@ -576,16 +576,16 @@ class MultiCurrency extends CommonObject
 				return price2num($amount / $multicurrency_tx, 'MU');
 			}
 		} else {
-			return $amount;
+			return false;
 		}
 	}
 
 	/**
 	 *  Get current invoite rate
 	 *
-	 *  @param	int 	$fk_facture 	id of facture
-	 *  @param 	string 	$table 			facture or facture_fourn
-	 *  @return bool
+	 *  @param	int 		$fk_facture 	id of facture
+	 *  @param 	string 		$table 			facture or facture_fourn
+	 *  @return float|bool					Rate of currency or false if error
 	 */
 	public static function getInvoiceRate($fk_facture, $table = 'facture')
 	{
@@ -746,7 +746,7 @@ class CurrencyRate extends CommonObjectLine
 	 */
 	public function __construct(DoliDB $db)
 	{
-		$this->db = &$db;
+		$this->db = $db;
 
 		return 1;
 	}

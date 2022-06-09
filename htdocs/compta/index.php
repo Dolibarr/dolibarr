@@ -102,15 +102,20 @@ print load_fiche_titre($langs->trans("AccountancyTreasuryArea"), '', 'bill');
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
-//print getCustomerInvoicePieChart($socid);
 print getNumberInvoicesPieChart('customers');
 print '<br>';
-print getNumberInvoicesPieChart('fourn');
-//print getPurchaseInvoicePieChart($socid);
-print '<br>';
+
+if (!empty($conf->fournisseur->enabled)) {
+	print getNumberInvoicesPieChart('fourn');
+	print '<br>';
+}
+
 print getCustomerInvoiceDraftTable($max, $socid);
-print '<br>';
-print getDraftSupplierTable($max, $socid);
+
+if (!empty($conf->fournisseur->enabled)) {
+	print '<br>';
+	print getDraftSupplierTable($max, $socid);
+}
 
 print '</div><div class="fichetwothirdright">';
 
@@ -210,11 +215,11 @@ if (!empty($conf->facture->enabled) && !empty($user->rights->facture->lire)) {
 				print '<td class="nobordernopadding nowraponall">';
 				print $tmpinvoice->getNomUrl(1, '');
 				print '</td>';
-				print '<td width="20" class="nobordernopadding nowrap">';
 				if ($tmpinvoice->hasDelay()) {
+					print '<td width="20" class="nobordernopadding nowrap">';
 					print img_warning($langs->trans("Late"));
+					print '</td>';
 				}
-				print '</td>';
 				print '<td width="16" class="nobordernopadding hideonsmartphone right">';
 				$filename = dol_sanitizeFileName($obj->ref);
 				$filedir = $conf->facture->dir_output.'/'.dol_sanitizeFileName($obj->ref);
@@ -527,9 +532,8 @@ if (!empty($conf->tax->enabled) && !empty($user->rights->tax->charges->lire)) {
 
 					if ($i >= $max) {
 						$othernb += 1;
+						$tot_ttc += $obj->amount;
 						$i++;
-						$total_ht += $obj->total_ht;
-						$total_ttc += $obj->total_ttc;
 						continue;
 					}
 

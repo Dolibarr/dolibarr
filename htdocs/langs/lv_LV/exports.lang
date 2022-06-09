@@ -53,8 +53,8 @@ TypeOfLineServiceOrProduct=Veids (0=produkts, 1=pakalpojums)
 FileWithDataToImport=Fails ar datiem, lai importētu
 FileToImport=Avota fails, kas jāimportē
 FileMustHaveOneOfFollowingFormat=Importa failam ir jābūt šādam formātam
-DownloadEmptyExample=Lejupielādējiet veidnes failu ar lauka satura informāciju
-StarAreMandatory=* ir obligāti aizpildāmi lauki
+DownloadEmptyExample=Download a template file with examples and information on fields you can import
+StarAreMandatory=Into the template file, all fields with a * are mandatory fields
 ChooseFormatOfFileToImport=Izvēlieties faila formātu, ko izmantot kā importa faila formātu, noklikšķinot uz %s ikonas, lai to atlasītu ...
 ChooseFileToImport=Augšupielādējiet failu, pēc tam noklikšķiniet uz %s ikonas, lai atlasītu failu kā avota importa failu ...
 SourceFileFormat=Avota faila formāts
@@ -135,3 +135,6 @@ NbInsert=Ievietoto līniju skaits: %s
 NbUpdate=Atjaunināto līniju skaits: %s
 MultipleRecordFoundWithTheseFilters=Ar šiem filtriem tika atrasti vairāki ieraksti: %s
 StocksWithBatch=Produktu krājumi un atrašanās vieta (noliktava) ar partijas / sērijas numuru
+WarningFirstImportedLine=Pirmā rindiņa(-as) netiks importēta(-as) ar pašreizējo atlasi
+NotUsedFields=Datu bāzes lauki netiek izmantoti
+SelectImportFieldsSource = Izvēlieties avota faila laukus, kurus vēlaties importēt, un to mērķa lauku datu bāzē, izvēloties laukus katrā atlases lodziņā, vai atlasiet iepriekš definētu importēšanas profilu:

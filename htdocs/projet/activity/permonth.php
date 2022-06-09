@@ -196,7 +196,7 @@ if ($action == 'addtime' && $user->rights->projet->lire && GETPOST('assigntask')
 }
 
 if ($action == 'addtime' && $user->rights->projet->lire) {
-	$timetoadd = $_POST['task'];
+	$timetoadd = GETPOST('task');
 	if (empty($timetoadd)) {
 		setEventMessages($langs->trans("ErrorTimeSpentIsEmpty"), null, 'errors');
 	} else {
@@ -239,7 +239,8 @@ if ($action == 'addtime' && $user->rights->projet->lire) {
 
 			if (!$updateoftaskdone) {  // Check to update progress if no update were done on task.
 				$object->fetch($taskid);
-				//var_dump($object->progress);var_dump(GETPOST($taskid . 'progress', 'int')); exit;
+				//var_dump($object->progress);
+				//var_dump(GETPOST($taskid . 'progress', 'int')); exit;
 				if ($object->progress != GETPOST($taskid.'progress', 'int')) {
 					$object->progress = GETPOST($taskid.'progress', 'int');
 					$result = $object->update($user);

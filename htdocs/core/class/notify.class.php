@@ -4,6 +4,7 @@
  * Copyright (C) 2014	   Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2018 	   Philippe Grand		<philippe.grand@atoo-net.com>
  * Copyright (C) 2021 	   Thibault FOUCART		<support@ptibogxiv.net>
+ * Copyright (C) 2022      Anthony Berton     	<anthony.berton@bb2a.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -208,10 +209,10 @@ class Notify
 		if (!$error) {
 			if ($socid >= 0 && in_array('thirdparty', $scope)) {
 				$sql = "SELECT a.code, c.email, c.rowid";
-				$sql .= " FROM ".MAIN_DB_PREFIX."notify_def as n,";
-				$sql .= " ".MAIN_DB_PREFIX."socpeople as c,";
-				$sql .= " ".MAIN_DB_PREFIX."c_action_trigger as a,";
-				$sql .= " ".MAIN_DB_PREFIX."societe as s";
+				$sql .= " FROM ".$this->db->prefix()."notify_def as n,";
+				$sql .= " ".$this->db->prefix()."socpeople as c,";
+				$sql .= " ".$this->db->prefix()."c_action_trigger as a,";
+				$sql .= " ".$this->db->prefix()."societe as s";
 				$sql .= " WHERE n.fk_contact = c.rowid";
 				$sql .= " AND a.rowid = n.fk_action";
 				$sql .= " AND n.fk_soc = s.rowid";
@@ -248,9 +249,9 @@ class Notify
 		if (!$error) {
 			if ($userid >= 0 && in_array('user', $scope)) {
 				$sql = "SELECT a.code, c.email, c.rowid";
-				$sql .= " FROM ".MAIN_DB_PREFIX."notify_def as n,";
-				$sql .= " ".MAIN_DB_PREFIX."user as c,";
-				$sql .= " ".MAIN_DB_PREFIX."c_action_trigger as a";
+				$sql .= " FROM ".$this->db->prefix()."notify_def as n,";
+				$sql .= " ".$this->db->prefix()."user as c,";
+				$sql .= " ".$this->db->prefix()."c_action_trigger as a";
 				$sql .= " WHERE n.fk_user = c.rowid";
 				$sql .= " AND a.rowid = n.fk_action";
 				$sql .= $sqlnotifcode;
@@ -355,16 +356,25 @@ class Notify
 		global $dolibarr_main_url_root;
 		global $action;
 
-		if (!in_array($notifcode, Notify::$arrayofnotifsupported)) {
-			return 0;
-		}
-
-		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 		if (!is_object($hookmanager)) {
 			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 			$hookmanager = new HookManager($this->db);
 		}
 		$hookmanager->initHooks(array('notification'));
+
+		$parameters = array('notifcode' => $notifcode);
+		$reshook = $hookmanager->executeHooks('notifsupported', $parameters, $object, $action);
+		if (empty($reshook)) {
+			if (!empty($hookmanager->resArray['arrayofnotifsupported'])) {
+				Notify::$arrayofnotifsupported = array_merge(Notify::$arrayofnotifsupported, $hookmanager->resArray['arrayofnotifsupported']);
+			}
+		}
+
+		if (!in_array($notifcode, Notify::$arrayofnotifsupported)) {
+			return 0;
+		}
+
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		dol_syslog(get_class($this)."::send notifcode=".$notifcode.", object=".$object->id);
 
@@ -395,10 +405,10 @@ class Notify
 		if (!empty($object->socid) && $object->socid > 0) {
 			$sql .= "SELECT 'tocontactid' as type_target, c.email, c.rowid as cid, c.lastname, c.firstname, c.default_lang,";
 			$sql .= " a.rowid as adid, a.label, a.code, n.rowid, n.type";
-			$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as c,";
-			$sql .= " ".MAIN_DB_PREFIX."c_action_trigger as a,";
-			$sql .= " ".MAIN_DB_PREFIX."notify_def as n,";
-			$sql .= " ".MAIN_DB_PREFIX."societe as s";
+			$sql .= " FROM ".$this->db->prefix()."socpeople as c,";
+			$sql .= " ".$this->db->prefix()."c_action_trigger as a,";
+			$sql .= " ".$this->db->prefix()."notify_def as n,";
+			$sql .= " ".$this->db->prefix()."societe as s";
 			$sql .= " WHERE n.fk_contact = c.rowid AND a.rowid = n.fk_action";
 			$sql .= " AND n.fk_soc = s.rowid";
 			$sql .= " AND c.statut = 1";
@@ -415,9 +425,9 @@ class Notify
 		// Check notification per user
 		$sql .= "SELECT 'touserid' as type_target, c.email, c.rowid as cid, c.lastname, c.firstname, c.lang as default_lang,";
 		$sql .= " a.rowid as adid, a.label, a.code, n.rowid, n.type";
-		$sql .= " FROM ".MAIN_DB_PREFIX."user as c,";
-		$sql .= " ".MAIN_DB_PREFIX."c_action_trigger as a,";
-		$sql .= " ".MAIN_DB_PREFIX."notify_def as n";
+		$sql .= " FROM ".$this->db->prefix()."user as c,";
+		$sql .= " ".$this->db->prefix()."c_action_trigger as a,";
+		$sql .= " ".$this->db->prefix()."notify_def as n";
 		$sql .= " WHERE n.fk_user = c.rowid AND a.rowid = n.fk_action";
 		$sql .= " AND c.statut = 1";
 		if (is_numeric($notifcode)) {
@@ -577,6 +587,13 @@ class Notify
 								$labeltouse = $conf->global->ACTION_CREATE_TEMPLATE;
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextActionAdded", $link);
 								break;
+							default:
+								$object_type = $object->element;
+								$dir_output = $conf->$object_type->multidir_output[$object->entity ? $object->entity : $conf->entity]."/".get_exdir(0, 0, 0, 1, $object, $object_type);
+								$template = $notifcode.'_TEMPLATE';
+								$labeltouse = $conf->global->$template;
+								$mesg = $outputlangs->transnoentitiesnoconv('Notify_'.$notifcode).' '.$newref.' '.$dir_output;
+							break;
 						}
 
 						include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
@@ -608,7 +625,7 @@ class Notify
 							$mimefilename_list[] = $ref.".pdf";
 						}
 
-						$parameters = array('notifcode'=>$notifcode, 'sendto'=>$sendto, 'replyto'=>$replyto, 'file'=>$filename_list, 'mimefile'=>$mimetype_list, 'filename'=>$mimefilename_list);
+						$parameters = array('notifcode'=>$notifcode, 'sendto'=>$sendto, 'replyto'=>$replyto, 'file'=>$filename_list, 'mimefile'=>$mimetype_list, 'filename'=>$mimefilename_list, 'outputlangs'=>$outputlangs, 'labeltouse'=>$labeltouse);
 						if (!isset($action)) {
 							$action = '';
 						}
@@ -644,10 +661,10 @@ class Notify
 
 						if ($mailfile->sendfile()) {
 							if ($obj->type_target == 'touserid') {
-								$sql = "INSERT INTO ".MAIN_DB_PREFIX."notify (daten, fk_action, fk_soc, fk_user, type, objet_type, type_target, objet_id, email)";
+								$sql = "INSERT INTO ".$this->db->prefix()."notify (daten, fk_action, fk_soc, fk_user, type, objet_type, type_target, objet_id, email)";
 								$sql .= " VALUES ('".$this->db->idate(dol_now())."', ".((int) $notifcodedefid).", ".($object->socid > 0 ? ((int) $object->socid) : 'null').", ".((int) $obj->cid).", '".$this->db->escape($obj->type)."', '".$this->db->escape($object_type)."', '".$this->db->escape($obj->type_target)."', ".((int) $object->id).", '".$this->db->escape($obj->email)."')";
 							} else {
-								$sql = "INSERT INTO ".MAIN_DB_PREFIX."notify (daten, fk_action, fk_soc, fk_contact, type, objet_type, type_target, objet_id, email)";
+								$sql = "INSERT INTO ".$this->db->prefix()."notify (daten, fk_action, fk_soc, fk_contact, type, objet_type, type_target, objet_id, email)";
 								$sql .= " VALUES ('".$this->db->idate(dol_now())."', ".((int) $notifcodedefid).", ".($object->socid > 0 ? ((int) $object->socid) : 'null').", ".((int) $obj->cid).", '".$this->db->escape($obj->type)."', '".$this->db->escape($object_type)."', '".$this->db->escape($obj->type_target)."', ".((int) $object->id).", '".$this->db->escape($obj->email)."')";
 							}
 							if (!$this->db->query($sql)) {
@@ -812,6 +829,11 @@ class Notify
 						$object_type = 'action';
 						$mesg = $langs->transnoentitiesnoconv("EMailTextActionAdded", $link);
 						break;
+					default:
+						$object_type = $object->element;
+						$dir_output = $conf->$object_type->multidir_output[$object->entity ? $object->entity : $conf->entity]."/".get_exdir(0, 0, 0, 1, $object, $object_type);
+						$mesg = $langs->transnoentitiesnoconv('Notify_'.$notifcode).' '.$newref;
+						break;
 				}
 				$ref = dol_sanitizeFileName($newref);
 				$pdf_path = $dir_output."/".$ref."/".$ref.".pdf";
@@ -879,7 +901,7 @@ class Notify
 					);
 
 					if ($mailfile->sendfile()) {
-						$sql = "INSERT INTO ".MAIN_DB_PREFIX."notify (daten, fk_action, fk_soc, fk_contact, type, type_target, objet_type, objet_id, email)";
+						$sql = "INSERT INTO ".$this->db->prefix()."notify (daten, fk_action, fk_soc, fk_contact, type, type_target, objet_type, objet_id, email)";
 						$sql .= " VALUES ('".$this->db->idate(dol_now())."', ".((int) $notifcodedefid).", ".($object->socid > 0 ? ((int) $object->socid) : 'null').", null, 'email', 'tofixedemail', '".$this->db->escape($object_type)."', ".((int) $object->id).", '".$this->db->escape($conf->global->$param)."')";
 						if (!$this->db->query($sql)) {
 							dol_print_error($this->db);

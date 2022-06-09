@@ -537,13 +537,6 @@ class Hook extends CommonObject
 			}
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
 			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
-
-			/*
-			 $hookmanager->initHooks(array('hookdao'));
-			 $parameters=array('id'=>$this->id);
-			 $reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-			 if ($reshook > 0) $linkclose = $hookmanager->resPrint;
-			 */
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 		}
@@ -565,7 +558,7 @@ class Hook extends CommonObject
 		$hookmanager->initHooks(array('hookdao'));
 		$parameters = array(
 			'id' => $this->id,
-			'getnomurl' => $result,
+			'getnomurl' => &$result,
 		);
 		// Note that $action and $object may have been modified by some hooks
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action);

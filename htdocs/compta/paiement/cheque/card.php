@@ -83,8 +83,7 @@ $usercandelete = $user->rights->banque->cheque;
 if ($action == 'setdate' && $user->rights->banque->cheque) {
 	$result = $object->fetch(GETPOST('id', 'int'));
 	if ($result > 0) {
-		//print "x ".$_POST['liv_month'].", ".$_POST['liv_day'].", ".$_POST['liv_year'];
-		$date = dol_mktime(0, 0, 0, $_POST['datecreate_month'], $_POST['datecreate_day'], $_POST['datecreate_year']);
+		$date = dol_mktime(0, 0, 0, GETPOST('datecreate_month', 'int'), GETPOST('datecreate_day', 'int'), GETPOST('datecreate_year', 'int'));
 
 		$result = $object->set_date($user, $date);
 		if ($result < 0) {
@@ -124,7 +123,7 @@ if ($action == 'setref' && $user->rights->banque->cheque) {
 }
 
 if ($action == 'create' && GETPOST("accountid", "int") > 0 && $user->rights->banque->cheque) {
-	if (is_array($_POST['toRemise'])) {
+	if (is_array(GETPOST('toRemise'))) {
 		$result = $object->create($user, GETPOST("accountid", "int"), 0, GETPOST('toRemise'));
 		if ($result > 0) {
 			if ($object->statut == 1) {     // If statut is validated, we build doc

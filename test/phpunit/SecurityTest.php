@@ -579,7 +579,7 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		$_POST["backtopage"]='javascripT&javascript#javascriptxjavascript3a alert(1)';
 		$result=GETPOST("backtopage");
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals('x3a alert(1)', $result, 'Test for backtopage param');
+		$this->assertEquals('x3aalert(1)', $result, 'Test for backtopage param');
 
 		return $result;
 	}
@@ -854,12 +854,12 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		include_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 
 		$s = '(($reloadedobj = new Task($db)) && ($reloadedobj->fetchNoCompute($object->id) > 0) && ($secondloadedobj = new Project($db)) && ($secondloadedobj->fetchNoCompute($reloadedobj->fk_project) > 0)) ? $secondloadedobj->ref : "Parent project not found"';
-		$result=dol_eval($s, 1, 1, '');
+		$result=dol_eval($s, 1, 1, '2');
 		print "result = ".$result."\n";
 		$this->assertEquals('Parent project not found', $result);
 
 		$s = '(($reloadedobj = new Task($db)) && ($reloadedobj->fetchNoCompute($object->id) > 0) && ($secondloadedobj = new Project($db)) && ($secondloadedobj->fetchNoCompute($reloadedobj->fk_project) > 0)) ? $secondloadedobj->ref : \'Parent project not found\'';
-		$result=dol_eval($s, 1, 1, '');
+		$result=dol_eval($s, 1, 1, '2');
 		print "result = ".$result."\n";
 		$this->assertEquals('Parent project not found', $result);
 
@@ -895,12 +895,18 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 		print "result = ".$result."\n";
 		$this->assertEquals('358080.38', $result);
 
+		global $leftmenu;	// Used into strings to eval
 
-		global $leftmenu;
-		$leftmenu = 'admintools';
-		$result=dol_eval('$conf->currency && preg_match(\'/^(admintools|all)/\',$leftmenu)', 1, 0, '2');
+		$leftmenu = 'AAA';
+		$result=dol_eval('$conf->currency && preg_match(\'/^(AAA|BBB)/\',$leftmenu)', 1, 1, '1');
 		print "result = ".$result."\n";
 		$this->assertTrue($result);
+
+		// Same with syntax error
+		$leftmenu = 'XXX';
+		$result=dol_eval('$conf->currency && preg_match(\'/^(AAA|BBB)/\',$leftmenu)', 1, 1, '1');
+		print "result = ".$result."\n";
+		$this->assertFalse($result);
 
 
 		// Case with param onlysimplestring = 1
@@ -940,6 +946,6 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 
 		$login=checkLoginPassEntity('admin', 'admin', 1, array('forceuser'));
 		print __METHOD__." login=".$login."\n";
-		$this->assertEquals($login, '');    // Expected '' because should failed because login 'auto' does not exists
+		$this->assertEquals('', $login, 'Error');    // Expected '' because should failed because login 'auto' does not exists
 	}
 }

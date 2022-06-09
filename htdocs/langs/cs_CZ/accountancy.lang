@@ -62,24 +62,24 @@ MainAccountForSubscriptionPaymentNotDefined=Účet hlavního účtu je platba p�
 AccountancyArea=Účetní oblast
 AccountancyAreaDescIntro=Použití účetního modulu se provádí v několika krocích:
 AccountancyAreaDescActionOnce=Tyto akce jsou obvykle prováděny pouze jednou, nebo jednou za rok ...
-AccountancyAreaDescActionOnceBis=Další kroky by měly být provedeny, abyste ušetřili čas v budoucnu tím, že vám při vytváření žurnálu navrhujete správný výchozí účetní účet (zápis do časopisů a hlavní knihy)
+AccountancyAreaDescActionOnceBis=Next steps should be done to save you time in future by suggesting you automaticaly the correct default accounting account when transferring data in accounting
 AccountancyAreaDescActionFreq=Tyto akce jsou proto zpravidla prováděny každý měsíc, týden nebo den pro velmi velké společnosti ...
 
-AccountancyAreaDescJournalSetup=KROK %s: Vytvořte nebo zkontrolujte obsah vašeho seznamu časopisů z nabídky %s
+AccountancyAreaDescJournalSetup=STEP %s: Check content of your journal list from menu %s
 AccountancyAreaDescChartModel=KROK %s: Zkontrolujte, zda existuje model účtové osnovy, nebo vytvořte jeden z nabídky %s.
 AccountancyAreaDescChart=KROK %s: Vyberte a | nebo dokončete svůj účtový graf z nabídky %s
 
 AccountancyAreaDescVat=KROK %s: Definujte účetní účty pro každou DPH. K tomu použijte položku nabídky %s.
 AccountancyAreaDescDefault=KROK %s: Definujte výchozí účetní účty. K tomu použijte položku nabídky %s.
-AccountancyAreaDescExpenseReport=KROK %s: Definujte výchozí účetní účty pro každý typ výkazu výdajů. K tomu použijte položku nabídky %s.
+AccountancyAreaDescExpenseReport=STEP %s: Define default accounting accounts for each type of Expense report. For this, use the menu entry %s.
 AccountancyAreaDescSal=KROK %s: Definujte výchozí účty pro výplatu mezd. K tomu použijte položku nabídky %s.
-AccountancyAreaDescContrib=KROK %s: Definujte výchozí účetní účty pro zvláštní výdaje (různé daně). K tomu použijte položku nabídky %s.
+AccountancyAreaDescContrib=STEP %s: Define default accounting accounts for Taxes (special expenses). For this, use the menu entry %s.
 AccountancyAreaDescDonation=KROK %s: Definujte výchozí účetní účty pro dárcovství. K tomu použijte položku nabídky %s.
 AccountancyAreaDescSubscription=KROK %s: Definujte výchozí účetní účty pro členské předplatné. K tomu použijte položku nabídky %s.
 AccountancyAreaDescMisc=KROK %s: Definujte povinné výchozí účty a výchozí účetní účty pro různé transakce. K tomu použijte položku nabídky %s.
 AccountancyAreaDescLoan=KROK %s: Definujte výchozí účetní účty pro úvěry. K tomu použijte položku nabídky %s.
 AccountancyAreaDescBank=KROK %s: Definujte účetní účty a kód časopisu pro jednotlivé bankovní a finanční účty. K tomu použijte položku nabídky %s.
-AccountancyAreaDescProd=KROK %s: Definujte účetní účty ve vašich produktech / službách. K tomu použijte položku nabídky %s.
+AccountancyAreaDescProd=STEP %s: Define accounting accounts on your Products/Services. For this, use the menu entry %s.
 
 AccountancyAreaDescBind=KROK %s: Zkontrolujte vazbu mezi existujícími řádky %s a účetní účet se provádí, takže aplikace bude schopna provádět evidenci transakcí v Ledgeru jedním klepnutím. Vyplňte chybějící vazby. K tomu použijte položku nabídky %s.
 AccountancyAreaDescWriteRecords=KROK %s: Napište transakce do knihy. K tomu přejděte do menu <strong> %s </strong> a klikněte na tlačítko <strong> %s </strong>.
@@ -112,7 +112,7 @@ MenuAccountancyClosure=Uzavření
 MenuAccountancyValidationMovements=Ověřte pohyby
 ProductsBinding=Produkty účty
 TransferInAccounting=Transfer v účetnictví
-RegistrationInAccounting=Registrace v účetnictví
+RegistrationInAccounting=Recording in accounting
 Binding=Vazba na účetní závěrky
 CustomersVentilation=Zákaznické fakturační závazky
 SuppliersVentilation=Závazná faktura dodavatele
@@ -120,7 +120,7 @@ ExpenseReportsVentilation=Záväzná zpráva o výdajích
 CreateMvts=Vytvořit novou transakci
 UpdateMvts=Modifikace transakce
 ValidTransaction=Ověřte transakci
-WriteBookKeeping=Register transactions in accounting
+WriteBookKeeping=Record transactions in accounting
 Bookkeeping=účetní kniha
 BookkeepingSubAccount=Subledger
 AccountBalance=Zůstatek na účtu
@@ -182,6 +182,7 @@ DONATION_ACCOUNTINGACCOUNT=Účtování účet registrovaných darů
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Účtovací účet pro registraci předplatného
 
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Accounting account by default to register customer deposit
+UseAuxiliaryAccountOnCustomerDeposit=Use sub-accounts on customer deposit lines
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Účetní účet ve výchozím nastavení pro zakoupené produkty (používá se, pokud není definováno v produktovém listu)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Účetní účet ve výchozím nastavení u zakoupených produktů v EHS (používá se, pokud není definováno v produktovém listu)
@@ -219,12 +220,12 @@ ByPredefinedAccountGroups=Podle předdefinovaných skupin
 ByPersonalizedAccountGroups=Individuálními skupinami
 ByYear=Podle roku
 NotMatch=Nenastaveno
-DeleteMvt=Delete some operation lines from accounting
+DeleteMvt=Delete some lines from accounting
 DelMonth=Měsíc k odstranění
 DelYear=Odstrannění roku
 DelJournal=Journal, který chcete smazat
-ConfirmDeleteMvt=This will delete all operation lines of the accounting for the year/month and/or for a specific journal (At least one criterion is required). You will have to reuse the feature '%s' to have the deleted record back in the ledger.
-ConfirmDeleteMvtPartial=This will delete the transaction from the accounting (all operation lines related to the same transaction will be deleted)
+ConfirmDeleteMvt=This will delete all lines in accountancy for the year/month and/or for a specific journal (At least one criterion is required). You will have to reuse the feature '%s' to have the deleted record back in the ledger.
+ConfirmDeleteMvtPartial=This will delete the transaction from the accounting (all lines related to the same transaction will be deleted)
 FinanceJournal=Finanční deník
 ExpenseReportsJournal=Výdajové zprávy journal
 DescFinanceJournal=Finanční deník včetně všech typů plateb prostřednictvím bankovního účtu
@@ -278,30 +279,31 @@ DescVentilExpenseReportMore=Pokud nastavíte účetní účet na řádcích výk
 DescVentilDoneExpenseReport=Poraďte se zde seznam v souladu se zprávami výdajů a jejich poplatků účtování účtu
 
 Closure=Annual closure
-DescClosure=Zde se podívejte na počet pohybů za měsíc, kteří nejsou validováni a fiskální roky již otevřeny
-OverviewOfMovementsNotValidated=Krok 1 / Přehled pohybů neověřených. (Nezbytné uzavřít fiskální rok)
-AllMovementsWereRecordedAsValidated=All movements were recorded as validated
-NotAllMovementsCouldBeRecordedAsValidated=Not all movements could be recorded as validated
-ValidateMovements=Ověřte pohyby
+DescClosure=Consult here the number of movements by month who are not yet validated & locked
+OverviewOfMovementsNotValidated=Overview of movements not validated and locked
+AllMovementsWereRecordedAsValidated=All movements were recorded as validated and locked
+NotAllMovementsCouldBeRecordedAsValidated=Not all movements could be recorded as validated and locked
+ValidateMovements=Validate and lock record...
 DescValidateMovements=Jakékoli úpravy nebo vymazání písem, nápisů a vymazání budou zakázány. Všechny přihlášky na cvičení musí být validovány, jinak nebude možné uzavřít
 
 ValidateHistory=Ověřit automaticky
 AutomaticBindingDone=Automatic bindings done (%s) - Automatic binding not possible for some record (%s)
 
 ErrorAccountancyCodeIsAlreadyUse=Chyba, nelze odstranit tento účetní účet, protože ho zrovna používáte
-MvtNotCorrectlyBalanced=Pohyb není správně vyvážený. Debit = %s | Úvěr = %s
+MvtNotCorrectlyBalanced=Movement not correctly balanced. Debit = %s & Credit = %s
 Balancing=Vyvažování
 FicheVentilation=Ověřovací karta
 GeneralLedgerIsWritten=Transakce jsou zapsány do knihy
 GeneralLedgerSomeRecordWasNotRecorded=Některé transakce nemohly být zveřejněny. Pokud se neobjeví žádná další chybová zpráva, je to pravděpodobně proto, že byly již publikovány.
-NoNewRecordSaved=Žádný další záznam, který by se publikoval
+NoNewRecordSaved=No more record to transfer
 ListOfProductsWithoutAccountingAccount=Seznam výrobků, které nejsou vázány na kterémkoli účetním účtu
 ChangeBinding=Změnit vazby
 Accounted=Účtováno v knize
 NotYetAccounted=Not yet transferred to accounting
 ShowTutorial=Zobrazit výuku
 NotReconciled=Nesladěno
-WarningRecordWithoutSubledgerAreExcluded=Warning, all operations without subledger account defined are filtered and excluded from this view
+WarningRecordWithoutSubledgerAreExcluded=Warning, all lines without subledger account defined are filtered and excluded from this view
+AccountRemovedFromCurrentChartOfAccount=Accounting account that does not exist in the current chart of accounts
 
 ## Admin
 BindingOptions=Binding options
@@ -329,8 +331,9 @@ ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Disable binding & transfer in accountanc
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Disable binding & transfer in accountancy on expense reports (expense reports will not be taken into account in accounting)
 
 ## Export
-NotifiedExportDate=Flag exported lines as exported (modification of the lines will not be possible)
-NotifiedValidationDate=Validate the exported entries (modification or deletion of the lines will not be possible)
+NotifiedExportDate=Flag exported lines as Exported <span class="warning">(to modify a line, you will need to delete the whole transaction and re-transfert it into accounting)</span>
+NotifiedValidationDate=Validate and Lock the exported entries <span class="warning">(same effect than the "Closure" feature, modification and deletion of the lines will DEFINITELY not be possible)</span>
+DateValidationAndLock=Date validation and lock
 ConfirmExportFile=Confirmation of the generation of the accounting export file ?
 ExportDraftJournal=Exportovat deník návrhu
 Modelcsv=Model exportu
@@ -394,6 +397,21 @@ Range=Řada účetních účtu
 Calculated=počítáno
 Formula=Vzorec
 
+## Reconcile
+Unlettering=Unreconcile
+AccountancyNoLetteringModified=No reconcile modified
+AccountancyOneLetteringModifiedSuccessfully=One reconcile successfully modified
+AccountancyLetteringModifiedSuccessfully=%s reconcile successfully modified
+AccountancyNoUnletteringModified=No unreconcile modified
+AccountancyOneUnletteringModifiedSuccessfully=One unreconcile successfully modified
+AccountancyUnletteringModifiedSuccessfully=%s unreconcile successfully modified
+
+## Confirm box
+ConfirmMassUnlettering=Bulk Unreconcile confirmation
+ConfirmMassUnletteringQuestion=Are you sure you want to Unreconcile the %s selected record(s)?
+ConfirmMassDeleteBookkeepingWriting=Hromadné smazání potvrzení
+ConfirmMassDeleteBookkeepingWritingQuestion=This will delete the transaction from the accounting (all lines related to the same transaction will be deleted) Are you sure you want to delete the %s selected record(s)?
+
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Některé povinné kroky nastavení nebyly provedeny, vyplňte je
 ErrorNoAccountingCategoryForThisCountry=Účetnictví skupiny účtů není k dispozici pro země %s (viz Home - instalace - slovníky)
@@ -406,6 +424,9 @@ Binded=linky vázané
 ToBind=Linky k vazbě
 UseMenuToSetBindindManualy=Řádky, které ještě nejsou vázány, použijte nabídku <a href="%s"> %s </a> k vytvoření vazby ručně
 SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Sorry this module is not compatible with the experimental feature of situation invoices
+AccountancyErrorMismatchLetterCode=Mismatch in reconcile code
+AccountancyErrorMismatchBalanceAmount=The balance (%s) is not equal to 0
+AccountancyErrorLetteringBookkeeping=Errors have occurred concerning the transactions: %s
 
 ## Import
 ImportAccountingEntries=Účetní zápisy

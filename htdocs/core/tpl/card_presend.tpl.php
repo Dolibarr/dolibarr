@@ -124,26 +124,24 @@ if ($action == 'presend') {
 
 	if ($object->element === 'facture' && !empty($conf->global->INVOICE_EMAIL_SENDER)) {
 		$formmail->frommail = $conf->global->INVOICE_EMAIL_SENDER;
-		$formmail->fromname = '';
+		$formmail->fromname = (!empty($conf->global->INVOICE_EMAIL_SENDER_NAME) ? $conf->global->INVOICE_EMAIL_SENDER_NAME : '');
 		$formmail->fromtype = 'special';
 	}
 	if ($object->element === 'shipping' && !empty($conf->global->SHIPPING_EMAIL_SENDER)) {
 		$formmail->frommail = $conf->global->SHIPPING_EMAIL_SENDER;
-		$formmail->fromname = '';
+		$formmail->fromname = (!empty($conf->global->SHIPPING_EMAIL_SENDER_NAME) ? $conf->global->SHIPPING_EMAIL_SENDER_NAME : '');
 		$formmail->fromtype = 'special';
 	}
 	if ($object->element === 'commande' && !empty($conf->global->COMMANDE_EMAIL_SENDER)) {
 		$formmail->frommail = $conf->global->COMMANDE_EMAIL_SENDER;
-		$formmail->fromname = '';
+		$formmail->fromname = (!empty($conf->global->COMMANDE_EMAIL_SENDER_NAME) ? $conf->global->COMMANDE_EMAIL_SENDER_NAME : '');
 		$formmail->fromtype = 'special';
 	}
 	if ($object->element === 'order_supplier' && !empty($conf->global->ORDER_SUPPLIER_EMAIL_SENDER)) {
 		$formmail->frommail = $conf->global->ORDER_SUPPLIER_EMAIL_SENDER;
-		$formmail->fromname = '';
+		$formmail->fromname = (!empty($conf->global->ORDER_SUPPLIER_EMAIL_SENDER_NAME) ? $conf->global->ORDER_SUPPLIER_EMAIL_SENDER_NAME : '');
 		$formmail->fromtype = 'special';
 	}
-
-
 
 	$formmail->trackid = $trackid;
 	$formmail->withfrom = 1;
@@ -154,7 +152,7 @@ if ($action == 'presend') {
 		$fuser = new User($db);
 		$fuser->fetch($object->fk_user_author);
 		$liste['thirdparty'] = $fuser->getFullName($outputlangs)." <".$fuser->email.">";
-	} elseif ($object->element == 'partnership' && $conf->global->PARTNERSHIP_IS_MANAGED_FOR == 'member') {
+	} elseif ($object->element == 'partnership' && getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR') == 'member') {
 		$fadherent = new Adherent($db);
 		$fadherent->fetch($object->fk_member);
 		$liste['member'] = $fadherent->getFullName($outputlangs)." <".$fadherent->email.">";

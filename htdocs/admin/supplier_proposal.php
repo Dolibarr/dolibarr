@@ -38,6 +38,8 @@ if (!$user->admin) {
 
 $action = GETPOST('action', 'aZ09');
 $value = GETPOST('value', 'alpha');
+$modulepart = GETPOST('modulepart', 'aZ09');	// Used by actions_setmoduleoptions.inc.php
+
 $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');
 $type = 'supplier_proposal';
@@ -496,7 +498,7 @@ print '<input type="submit" class="button button-edit" value="'.$langs->trans("M
 print "</td></tr>\n";
 print '</form>';
 
-if ($conf->banque->enabled) {
+if (!empty($conf->banque->enabled)) {
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_PROPOSAL").'</td><td>&nbsp;</td><td class="right">';
 	if (!empty($conf->use_javascript_ajax)) {

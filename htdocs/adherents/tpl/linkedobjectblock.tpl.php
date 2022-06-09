@@ -23,7 +23,7 @@ if (empty($conf) || !is_object($conf)) {
 	exit;
 }
 
-echo "<!-- BEGIN PHP TEMPLATE adherents/tpl/linkedopjectblock.tpl.php -->\n";
+echo "<!-- BEGIN PHP TEMPLATE adherents/tpl/linkedobjectblock.tpl.php -->\n";
 
 global $user;
 

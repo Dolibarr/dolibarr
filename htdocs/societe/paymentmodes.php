@@ -545,7 +545,9 @@ if (empty($reshook)) {
 					$resql = $db->query($sql);
 				}
 			}
-			//var_dump($sql);	var_dump($newcu);		var_dump($num); exit;
+			//var_dump($sql);
+			//var_dump($newcu);
+			//var_dump($num); exit;
 
 			if (!$error) {
 				$stripecu = $newcu;
@@ -750,12 +752,12 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 	print '<table class="border tableforfield centpercent">';
 
 	// Type Prospect/Customer/Supplier
-	print '<tr><td class="titlefield">'.$langs->trans('NatureOfThirdParty').'</td><td>';
+	print '<tr><td class="titlefield">'.$langs->trans('NatureOfThirdParty').'</td><td colspan="2">';
 	print $object->getTypeUrl(1);
 	print '</td></tr>';
 
 	if (!empty($conf->global->SOCIETE_USEPREFIX)) {  // Old not used prefix field
-		print '<tr><td class="titlefield">'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
+		print '<tr><td class="titlefield">'.$langs->trans('Prefix').'</td><td colspan="2">'.$object->prefix_comm.'</td></tr>';
 	}
 
 	if ($object->client) {
@@ -1426,7 +1428,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 					$out .= $formadmin->select_language($defaultlang, 'lang_idrib'.$rib->id, 0, 0, 0, 0, 0, $morecss);
 				}
 				// Button
-				$genbutton = '<input class="button buttongen" id="'.$forname.'_generatebutton" name="'.$forname.'_generatebutton"';
+				$genbutton = '<input class="button buttongen reposition nomargintop nomarginbottom" id="'.$forname.'_generatebutton" name="'.$forname.'_generatebutton"';
 				$genbutton .= ' type="submit" value="'.$buttonlabel.'"';
 				if (!$allowgenifempty && !is_array($modellist) && empty($modellist)) {
 					$genbutton .= ' disabled';
@@ -1529,7 +1531,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 	$out.= ajax_combobox('model');
 	//print $out;
 	$buttonlabel=$langs->trans("Generate");
-	$genbutton = '<input class="button buttongen" id="'.$forname.'_generatebutton" name="'.$forname.'_generatebutton"';
+	$genbutton = '<input class="button buttongen reposition nomargintop nomarginbottom" id="'.$forname.'_generatebutton" name="'.$forname.'_generatebutton"';
 	$genbutton.= ' type="submit" value="'.$buttonlabel.'"';
 	$genbutton.= '>';
 	print $genbutton;
@@ -1681,7 +1683,7 @@ if ($socid && $action == 'editcard' && $permissiontoaddupdatepaymentinformation)
 	print '<tr><td class="fieldrequired">'.$langs->trans("ExpiryDate").'</td>';
 	print '<td>';
 	print $formother->select_month($companypaymentmode->exp_date_month, 'exp_date_month', 1);
-	print $formother->select_year($companypaymentmode->exp_date_year, 'exp_date_year', 1, 5, 10, 0, 0, '', 'marginleftonly');
+	print $formother->selectyear($companypaymentmode->exp_date_year, 'exp_date_year', 1, 5, 10, 0, 0, '', 'marginleftonly');
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("CVN").'</td>';
@@ -1839,7 +1841,7 @@ if ($socid && $action == 'createcard' && $permissiontoaddupdatepaymentinformatio
 	print '<tr><td class="fieldrequired">'.$langs->trans("ExpiryDate").'</td>';
 	print '<td>';
 	print $formother->select_month(GETPOST('exp_date_month', 'int'), 'exp_date_month', 1);
-	print $formother->select_year(GETPOST('exp_date_year', 'int'), 'exp_date_year', 1, 5, 10, 0, 0, '', 'marginleftonly');
+	print $formother->selectyear(GETPOST('exp_date_year', 'int'), 'exp_date_year', 1, 5, 10, 0, 0, '', 'marginleftonly');
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("CVN").'</td>';

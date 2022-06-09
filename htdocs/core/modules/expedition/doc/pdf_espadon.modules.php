@@ -120,7 +120,7 @@ class pdf_espadon extends ModelePdfExpedition
 	 *
 	 *	@param	DoliDB	$db		Database handler
 	 */
-	public function __construct($db = 0)
+	public function __construct(DoliDB $db)
 	{
 		global $conf, $langs, $mysoc;
 
@@ -649,7 +649,7 @@ class pdf_espadon extends ModelePdfExpedition
 
 
 					if ($this->getColumnStatus('weight')) {
-						$this->printStdColumnContent($pdf, $curY, 'weight', $weighttxt.(($weighttxt && $voltxt) ? '<br>' : '').$voltxt, array('html'=>1));
+						$this->printStdColumnContent($pdf, $curY, 'weight', $weighttxt.(($weighttxt && $voltxt) ? '<br>' : '').$voltxt);
 						$nexY = max($pdf->GetY(), $nexY);
 					}
 

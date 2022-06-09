@@ -163,7 +163,7 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 if (GETPOST('cancel', 'alpha')) {
 	$action = 'list'; $massaction = '';
 }
-if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend' && $massaction != 'confirm_createbills') {
+if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
 	$massaction = '';
 }
 
@@ -201,7 +201,7 @@ if (empty($reshook)) {
 		$filter_opcloture = "";
 		$mode = '';
 		$filter = '';
-		$toselect = '';
+		$toselect = array();
 		$search_array_options = array();
 	}
 }
@@ -326,25 +326,25 @@ if (!empty($filter_opouvertureprevue) && $filter_opouvertureprevue != -1 && $fil
 	$sql .= " AND cd.date_ouverture_prevue ".$filter_opouvertureprevue." '".$db->idate($filter_dateouvertureprevue_start)."'";
 }
 if (!empty($filter_opouvertureprevue) && $filter_opouvertureprevue == ' BETWEEN ') {
-	$sql .= " AND '".$db->idate($filter_dateouvertureprevue_end)."'";
+	$sql .= " AND cd.date_ouverture_prevue ".$filter_opouvertureprevue." '".$db->idate($filter_dateouvertureprevue_start)."' AND '".$db->idate($filter_dateouvertureprevue_end)."'";
 }
 if (!empty($filter_op1) && $filter_op1 != -1 && $filter_op1 != ' BETWEEN ' && $filter_date1_start != '') {
 	$sql .= " AND cd.date_ouverture ".$filter_op1." '".$db->idate($filter_date1_start)."'";
 }
 if (!empty($filter_op1) && $filter_op1 == ' BETWEEN ') {
-	$sql .= " AND '".$db->idate($filter_date1_end)."'";
+	$sql .= " AND cd.date_ouverture ".$filter_op1." '".$db->idate($filter_date1_start)."' AND '".$db->idate($filter_date1_end)."'";
 }
 if (!empty($filter_op2) && $filter_op2 != -1 && $filter_op2 != ' BETWEEN ' && $filter_date2_start != '') {
 	$sql .= " AND cd.date_fin_validite ".$filter_op2." '".$db->idate($filter_date2_start)."'";
 }
 if (!empty($filter_op2) && $filter_op2 == ' BETWEEN ') {
-	$sql .= " AND '".$db->idate($filter_date2_end)."'";
+	$sql .= " AND cd.date_fin_validite ".$filter_op2." '".$db->idate($filter_date2_start)."' AND '".$db->idate($filter_date2_end)."'";
 }
 if (!empty($filter_opcloture) && $filter_opcloture != ' BETWEEN ' && $filter_opcloture != -1 && $filter_datecloture_start != '') {
 	$sql .= " AND cd.date_cloture ".$filter_opcloture." '".$db->idate($filter_datecloture_start)."'";
 }
 if (!empty($filter_opcloture) && $filter_opcloture == ' BETWEEN ') {
-	$sql .= " AND '".$db->idate($filter_datecloture_end)."'";
+	$sql .= " AND cd.date_cloture ".$filter_opcloture." '".$db->idate($filter_datecloture_start)."' AND '".$db->idate($filter_datecloture_end)."'";
 }
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';

@@ -157,7 +157,6 @@ class pdf_cyan extends ModelePDFPropales
 		$this->option_tva = 1; // Manage the vat option FACTURE_TVAOPTION
 		$this->option_modereg = 1; // Display payment mode
 		$this->option_condreg = 1; // Display payment terms
-		$this->option_codeproduitservice = 1; // Display product-service code
 		$this->option_multilang = 1; // Available in several languages
 		$this->option_escompte = 0; // Displays if there has been a discount
 		$this->option_credit_note = 0; // Support credit notes
@@ -1044,6 +1043,11 @@ class pdf_cyan extends ModelePDFPropales
 		}
 
 		$posxval = 52;
+		if (!empty($conf->global->MAIN_PDF_DATE_TEXT)) {
+			$displaydate = "daytext";
+		} else {
+			$displaydate = "day";
+		}
 
 		// Show shipping date
 		if (!empty($object->delivery_date)) {
@@ -1054,7 +1058,7 @@ class pdf_cyan extends ModelePDFPropales
 			$pdf->MultiCell(80, 4, $titre, 0, 'L');
 			$pdf->SetFont('', '', $default_font_size - 2);
 			$pdf->SetXY($posxval, $posy);
-			$dlp = dol_print_date($object->delivery_date, "daytext", false, $outputlangs, true);
+			$dlp = dol_print_date($object->delivery_date, $displaydate, false, $outputlangs, true);
 			$pdf->MultiCell(80, 4, $dlp, 0, 'L');
 
 			$posy = $pdf->GetY() + 1;
@@ -1084,6 +1088,9 @@ class pdf_cyan extends ModelePDFPropales
 			$pdf->SetXY($posxval, $posy);
 			$lib_condition_paiement = $outputlangs->transnoentities("PaymentCondition".$object->cond_reglement_code) != ('PaymentCondition'.$object->cond_reglement_code) ? $outputlangs->transnoentities("PaymentCondition".$object->cond_reglement_code) : $outputlangs->convToOutputCharset($object->cond_reglement_doc ? $object->cond_reglement_doc : $object->cond_reglement_label);
 			$lib_condition_paiement = str_replace('\n', "\n", $lib_condition_paiement);
+			if ($object->deposit_percent > 0) {
+				$lib_condition_paiement = str_replace('__DEPOSIT_PERCENT__', $object->deposit_percent, $lib_condition_paiement);
+			}
 			$pdf->MultiCell(67, 4, $lib_condition_paiement, 0, 'L');
 
 			$posy = $pdf->GetY() + 3;
@@ -1638,10 +1645,16 @@ class pdf_cyan extends ModelePDFPropales
 			}
 		}
 
+		if (!empty($conf->global->MAIN_PDF_DATE_TEXT)) {
+			$displaydate = "daytext";
+		} else {
+			$displaydate = "day";
+		}
+
 		$posy += 4;
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
-		$pdf->MultiCell($w, 3, $outputlangs->transnoentities("Date")." : ".dol_print_date($object->date, "day", false, $outputlangs, true), '', 'R');
+		$pdf->MultiCell($w, 3, $outputlangs->transnoentities("Date")." : ".dol_print_date($object->date, $displaydate, false, $outputlangs, true), '', 'R');
 
 		$posy += 4;
 		$pdf->SetXY($posx, $posy);
@@ -1651,7 +1664,7 @@ class pdf_cyan extends ModelePDFPropales
 		if (!empty($conf->global->PDF_USE_ALSO_LANGUAGE_CODE) && is_object($outputlangsbis)) {
 			$title .= ' - '.$outputlangsbis->transnoentities("DateEndPropal");
 		}
-		$pdf->MultiCell($w, 3, $title." : ".dol_print_date($object->fin_validite, "day", false, $outputlangs, true), '', 'R');
+		$pdf->MultiCell($w, 3, $title." : ".dol_print_date($object->fin_validite, $displaydate, false, $outputlangs, true), '', 'R');
 
 		if (empty($conf->global->MAIN_PDF_HIDE_CUSTOMER_CODE) && $object->thirdparty->code_client) {
 			$posy += 4;

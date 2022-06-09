@@ -108,9 +108,9 @@ if ($action == 'confirm_validate' && $confirm == 'yes' &&
 	}
 }
 
-if ($action == 'setnum_paiement' && !empty($_POST['num_paiement'])) {
+if ($action == 'setnum_paiement' && GETPOST('num_paiement')) {
 	$object->fetch($id);
-	$res = $object->update_num($_POST['num_paiement']);
+	$res = $object->update_num(GETPOST('num_paiement'));
 	if ($res === 0) {
 		setEventMessages($langs->trans('PaymentNumberUpdateSucceeded'), null, 'mesgs');
 	} else {
@@ -118,7 +118,7 @@ if ($action == 'setnum_paiement' && !empty($_POST['num_paiement'])) {
 	}
 }
 
-if ($action == 'setdatep' && !empty($_POST['datepday'])) {
+if ($action == 'setdatep' && GETPOST('datepday')) {
 	$object->fetch($id);
 	$datepaye = dol_mktime(GETPOST('datephour', 'int'), GETPOST('datepmin', 'int'), GETPOST('datepsec', 'int'), GETPOST('datepmonth', 'int'), GETPOST('datepday', 'int'), GETPOST('datepyear', 'int'));
 	$res = $object->update_date($datepaye);

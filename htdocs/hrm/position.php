@@ -160,9 +160,9 @@ if (empty($reshook)) {
 	$backurlforlist = dol_buildpath('/hrm/position_list.php', 1);
 	//$backtopage = dol_buildpath('/hrm/position.php', 1) . '?fk_job=' . ($fk_job > 0 ? $fk_job : '__ID__');
 
-	if (empty($backtopage) || ($cancel && empty($fk_job))) {
+	if (empty($backtopage) || ($cancel && $fk_job <= 0)) {
 		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
-			if (empty($fk_job) && (($action != 'add' && $action != 'create') || $cancel)) {
+			if ($fk_job == -1 && (($action != 'add' && $action != 'create') || $cancel)) {
 				$backtopage = $backurlforlist;
 			} else {
 				if ($fk_job > 0) {
@@ -631,7 +631,7 @@ function DisplayPositionList()
 	print '<input type="hidden" name="page" value="' . $page . '">';
 	print '<input type="hidden" name="contextpage" value="' . $contextpage . '">';
 
-	$newcardbutton = dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', dol_buildpath('/hrm/position.php', 1) . '?action=create&backtopage=' . urlencode($_SERVER['PHP_SELF'].'?fk_job=' . $fk_job).'&fk_job=' . $fk_job, '', $permissiontoadd);
+	$newcardbutton = dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', dol_buildpath('/hrm/position.php', 1).'?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']).'&fk_job='.((int) $fk_job), '', $permissiontoadd);
 
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'object_' . $object->picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
 
@@ -914,9 +914,6 @@ if ($action == 'create') {
 	}
 
 	print dol_get_fiche_head(array(), '');
-
-	// Set some default values
-	//if (! GETPOSTISSET('fieldname')) $_POST['fieldname'] = 'myvalue';
 
 	print '<table class="border centpercent tableforfieldcreate">' . "\n";
 

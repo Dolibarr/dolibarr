@@ -180,31 +180,10 @@ class modZapier extends DolibarrModules
 		// 'stock'            to add a tab in stock view
 		// 'thirdparty'       to add a tab in third party view
 		// 'user'             to add a tab in user view
+
 		// Dictionaries
 		$this->dictionaries = array();
-		/* Example:
-		$this->dictionaries=array(
-			'langs'=>'mylangfile@zapier',
-			// List of tables we want to see into dictonnary editor
-			'tabname'=>array(MAIN_DB_PREFIX."table1",MAIN_DB_PREFIX."table2",MAIN_DB_PREFIX."table3"),
-			// Label of tables
-			'tablib'=>array("Table1","Table2","Table3"),
-			// Request to select fields
-			'tabsql'=>array('SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table1 as f','SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table2 as f','SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table3 as f'),
-			// Sort order
-			'tabsqlsort'=>array("label ASC","label ASC","label ASC"),
-			// List of fields (result of select to show dictionary)
-			'tabfield'=>array("code,label","code,label","code,label"),
-			// List of fields (list of fields to edit a record)
-			'tabfieldvalue'=>array("code,label","code,label","code,label"),
-			// List of fields (list of fields for insert)
-			'tabfieldinsert'=>array("code,label","code,label","code,label"),
-			// Name of columns with primary key (try to always name it 'rowid')
-			'tabrowid'=>array("rowid","rowid","rowid"),
-			// Condition to show each dictionary
-			'tabcond'=>array($conf->zapier->enabled,$conf->zapier->enabled,$conf->zapier->enabled)
-		);
-		*/
+
 		// Boxes/Widgets
 		// Add here list of php file(s) stored in zapier/core/boxes that contains class to show a widget.
 		$this->boxes = array(
@@ -281,6 +260,11 @@ class modZapier extends DolibarrModules
 	 */
 	public function init($options = '')
 	{
+		$result = $this->_load_tables('/install/mysql/', 'zapier');
+		if ($result < 0) {
+			return -1; // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
+		}
+
 		// Create extrafields
 		//include_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 		//$extrafields = new ExtraFields($this->db);
@@ -289,7 +273,9 @@ class modZapier extends DolibarrModules
 		//$result3=$extrafields->addExtraField('myattr3', "New Attr 3 label", 'varchar', 1, 10, 'bank_account', 0, 0, '', '', 1, '', 0, 0, '', '', 'zapier@zapier', '$conf->zapier->enabled');
 		//$result4=$extrafields->addExtraField('myattr4', "New Attr 4 label", 'select',  1,  3, 'thirdparty',   0, 1, '', array('options'=>array('code1'=>'Val1','code2'=>'Val2','code3'=>'Val3')), 1,'', 0, 0, '', '', 'zapier@zapier', '$conf->zapier->enabled');
 		//$result5=$extrafields->addExtraField('myattr5', "New Attr 5 label", 'text',    1, 10, 'user',         0, 0, '', '', 1, '', 0, 0, '', '', 'zapier@zapier', '$conf->zapier->enabled');
+
 		$sql = array();
+
 		return $this->_init($sql, $options);
 	}
 

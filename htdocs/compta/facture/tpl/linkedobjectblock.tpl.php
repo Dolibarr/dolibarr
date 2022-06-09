@@ -23,7 +23,7 @@ if (empty($conf) || !is_object($conf)) {
 	exit;
 }
 
-print "<!-- BEGIN PHP TEMPLATE compta/facture/tpl/linkedopjectblock.tpl.php -->\n";
+print "<!-- BEGIN PHP TEMPLATE compta/facture/tpl/linkedobjectblock.tpl.php -->\n";
 
 global $user;
 global $noMoreLinkedObjectBlockAfter;

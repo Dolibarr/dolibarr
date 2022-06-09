@@ -62,6 +62,9 @@ $label = GETPOST('label', 'alpha');
 $actioncode = GETPOST('actioncode');
 $fk_user = GETPOST('userid', 'int');
 
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('taxcard', 'globalcard'));
+
 // Initialize technical objects
 $object = new ChargeSociales($db);
 $extrafields = new ExtraFields($db);
@@ -97,7 +100,7 @@ $result = restrictedArea($user, 'tax', $object->id, 'chargesociales', 'charges')
  * Actions
  */
 
-$parameters = array();
+$parameters = array('socid' => $socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -163,8 +166,8 @@ if ($action == 'setbankaccount' && $user->rights->tax->charges->creer) {
 // Delete social contribution
 if ($action == 'confirm_delete' && $confirm == 'yes') {
 	$object->fetch($id);
-	$totalpaye = $object->getSommePaiement();
-	if (empty($totalpaye)) {
+	$totalpaid = $object->getSommePaiement();
+	if (empty($totalpaid)) {
 		$result = $object->delete($user);
 		if ($result > 0) {
 			header("Location: list.php");
@@ -446,10 +449,12 @@ if ($id > 0) {
 	$object = new ChargeSociales($db);
 	$result = $object->fetch($id);
 
+	$formconfirm = '';
+
 	if ($result > 0) {
 		$head = tax_prepare_head($object);
 
-		$totalpaye = $object->getSommePaiement();
+		$totalpaid = $object->getSommePaiement();
 
 		// Clone confirmation
 		if ($action === 'clone') {
@@ -464,25 +469,36 @@ if ($id > 0) {
 				$formquestion[] = array('type' => 'text', 'name' => 'amount', 'label' => $langs->trans("Amount"), 'value' => price($object->amount), 'morecss' => 'width100');
 			}
 
-			print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneTax', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 280);
+			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneTax', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 280);
 		}
 
 
 		if ($action == 'paid') {
 			$text = $langs->trans('ConfirmPaySocialContribution');
-			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans('PaySocialContribution'), $text, "confirm_paid", '', '', 2);
+			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans('PaySocialContribution'), $text, "confirm_paid", '', '', 2);
 		}
 
 		// Confirmation of the removal of the Social Contribution
 		if ($action == 'delete') {
 			$text = $langs->trans('ConfirmDeleteSocialContribution');
-			print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans('DeleteSocialContribution'), $text, 'confirm_delete', '', '', 2);
+			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans('DeleteSocialContribution'), $text, 'confirm_delete', '', '', 2);
 		}
 
 		if ($action == 'edit') {
 			print "<form name=\"charge\" action=\"".$_SERVER["PHP_SELF"]."?id=$object->id&amp;action=update\" method=\"post\">";
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 		}
+		// Call Hook formConfirm
+		$parameters = array('formConfirm' => $formconfirm, 'lineid' => $lineid);
+		$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+		if (empty($reshook)) {
+			$formconfirm .= $hookmanager->resPrint;
+		} elseif ($reshook > 0) {
+			$formconfirm = $hookmanager->resPrint;
+		}
+
+		// Print form confirm
+		print $formconfirm;
 
 		print dol_get_fiche_head($head, 'card', $langs->trans("SocialContribution"), -1, 'bill');
 
@@ -535,11 +551,11 @@ if ($id > 0) {
 					$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
 					$morehtmlref .= '<input type="hidden" name="action" value="classin">';
 					$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
-					$morehtmlref .= $formproject->select_projects(0, $object->fk_project, 'fk_project', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+					$morehtmlref .= $formproject->select_projects(0, $object->fk_project, 'fk_project', 0, 0, 1, 0, 1, 0, 0, '', 1);
 					$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 					$morehtmlref .= '</form>';
 				} else {
-					$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+					$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, 0, $object->fk_project, 'none', 0, 0, 0, 1);
 				}
 			} else {
 				if (!empty($object->fk_project)) {
@@ -560,7 +576,7 @@ if ($id > 0) {
 
 		$linkback = '<a href="'.DOL_URL_ROOT.'/compta/sociales/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-		$object->totalpaye = $totalpaye; // To give a chance to dol_banner_tab to use already paid amount to show correct status
+		$object->totalpaid = $totalpaid; // To give a chance to dol_banner_tab to use already paid amount to show correct status
 
 		dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlright);
 
@@ -674,7 +690,7 @@ if ($id > 0) {
 		//print $sql;
 		$resql = $db->query($sql);
 		if ($resql) {
-			$totalpaye = 0;
+			$totalpaid = 0;
 
 			$num = $db->num_rows($resql);
 			$i = 0;
@@ -732,7 +748,7 @@ if ($id > 0) {
 					}
 					print '<td class="right"><span class="amount">'.price($objp->amount)."</span></td>\n";
 					print "</tr>";
-					$totalpaye += $objp->amount;
+					$totalpaid += $objp->amount;
 					$i++;
 				}
 			} else {
@@ -741,10 +757,10 @@ if ($id > 0) {
 				print '</tr>';
 			}
 
-			print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("AlreadyPaid").' :</td><td class="right">'.price($totalpaye)."</td></tr>\n";
+			print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("AlreadyPaid").' :</td><td class="right">'.price($totalpaid)."</td></tr>\n";
 			print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("AmountExpected").' :</td><td class="right">'.price($object->amount)."</td></tr>\n";
 
-			$resteapayer = $object->amount - $totalpaye;
+			$resteapayer = $object->amount - $totalpaid;
 			$cssforamountpaymentcomplete = 'amountpaymentcomplete';
 
 			print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("RemainderToPay")." :</td>";
@@ -804,7 +820,7 @@ if ($id > 0) {
 			}
 
 			// Delete
-			if ($user->rights->tax->charges->supprimer && empty($totalpaye)) {
+			if ($user->rights->tax->charges->supprimer && empty($totalpaid)) {
 				print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.DOL_URL_ROOT.'/compta/sociales/card.php?id='.$object->id.'&action=delete&token='.newToken().'">'.$langs->trans("Delete").'</a></div>';
 			} else {
 				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.(dol_escape_htmltag($langs->trans("DisabledBecausePayments"))).'">'.$langs->trans("Delete").'</a></div>';
@@ -847,7 +863,7 @@ if ($id > 0) {
 			/*
 			 $MAXEVENT = 10;
 
-			 $morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-list-alt imgforviewmode', dol_buildpath('/mymodule/myobject_agenda.php', 1).'?id='.$object->id);
+			 $morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-bars imgforviewmode', dol_buildpath('/mymodule/myobject_agenda.php', 1).'?id='.$object->id);
 
 			 // List of actions on element
 			 include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';

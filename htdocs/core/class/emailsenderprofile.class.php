@@ -56,6 +56,8 @@ class EmailSenderProfile extends CommonObject
 	 */
 	public $picto = 'emailsenderprofile';
 
+	public $fk_user_creat;
+
 
 	const STATUS_DISABLED = 0;
 	const STATUS_ENABLED = 1;
@@ -347,9 +349,9 @@ class EmailSenderProfile extends CommonObject
 	 */
 	public function info($id)
 	{
-		$sql = 'SELECT rowid, date_creation as datec, tms as datem';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
-		$sql .= ' WHERE t.rowid = '.((int) $id);
+		$sql = "SELECT rowid, date_creation as datec, tms as datem";
+		$sql .= " FROM ".$this->db->prefix().$this->table_element." as t";
+		$sql .= " WHERE t.rowid = ".((int) $id);
 		$result = $this->db->query($sql);
 		if ($result) {
 			if ($this->db->num_rows($result)) {

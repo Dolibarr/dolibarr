@@ -59,6 +59,7 @@ BacklinkNotFoundOnPartnerWebsite=在合作夥伴網站上找不到反向連結
 ConfirmClosePartnershipAsk=您確定要取消此合作關係嗎？
 PartnershipType=合作夥伴類型
 PartnershipRefApproved=合作夥伴 %s 已核准
+KeywordToCheckInWebsite=如果您想檢查給定關鍵字是否出現在每個合作夥伴的網站中，請在此處定義此關鍵字
 
 #
 # Template Mail
@@ -90,3 +91,4 @@ PartnershipAccepted=已接受
 PartnershipRefused=已拒絕
 PartnershipCanceled=已取消
 PartnershipManagedFor=合作夥伴是
+

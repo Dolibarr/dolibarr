@@ -956,11 +956,11 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 			$err++;
 		} else {
 			$obj = $this->db->fetch_object($resql);
-			$tmp = array();
-			if ($obj->note) {
-				$tmp = json_decode($obj->note, true);
-			}
 			if ($obj) {
+				$tmp = array();
+				if ($obj->note) {
+					$tmp = json_decode($obj->note, true);
+				}
 				return array(
 					'authorid' => $tmp['authorid'],
 					'ip' => $tmp['ip'],
@@ -1054,16 +1054,16 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps,PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Create tables and keys required by module:
-	 * - Files module.sql with create table instructions
-	 * - Then modules.key.sql with create keys instructions
+	 * - Files table.sql or table-module.sql with create table instructions
+	 * - Then table.key.sql or table-module.key.sql with create keys instructions
 	 * - Then data_xxx.sql (usualy provided by external modules only)
 	 * - Then update_xxx.sql (usualy provided by external modules only)
-	 * Files must be stored in directory defined by reldir (Example: '/install/mysql/tables' or '/module/sql/')
+	 * Files must be stored in subdirectory 'tables' or 'data' into directory $reldir (Example: '/install/mysql/' or '/module/sql/')
 	 * This function may also be called by :
-	 * - _load_tables('/install/mysql/tables/', 'modulename') into the this->init() of core module descriptors.
+	 * - _load_tables('/install/mysql/', 'modulename') into the this->init() of core module descriptors.
 	 * - _load_tables('/mymodule/sql/') into the this->init() of external module descriptors.
 	 *
-	 * @param  	string 	$reldir 			Relative directory where to scan files. Example: '/install/mysql/tables' or '/module/sql/'
+	 * @param  	string 	$reldir 			Relative directory where to scan files. Example: '/install/mysql/' or '/module/sql/'
 	 * @param	string	$onlywithsuffix		Only with the defined suffix
 	 * @return 	int             			<=0 if KO, >0 if OK
 	 */
@@ -1084,112 +1084,147 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		$ok = 1;
 		foreach ($conf->file->dol_document_root as $dirroot) {
 			if ($ok) {
-				$dir = $dirroot.$reldir;
+				$dirsql = $dirroot.$reldir;
 				$ok = 0;
 
-				$handle = @opendir($dir); // Dir may not exists
-				if (is_resource($handle)) {
-					$dirfound++;
+				// We will loop on xxx/, xxx/tables/, xxx/data/
+				$listofsubdir = array('', 'tables/', 'data/');
+				if ($this->db->type == 'pgsql') {
+					$listofsubdir[] = '../pgsql/functions/';
+				}
 
-					// Run llx_mytable.sql files, then llx_mytable_*.sql
-					$files = array();
-					while (($file = readdir($handle)) !== false) {
-						$files[] = $file;
-					}
-					sort($files);
-					foreach ($files as $file) {
-						if ($onlywithsuffix) {
-							if (!preg_match('/\-'.preg_quote($onlywithsuffix, '/').'\./i', $file)) {
-								//print 'File '.$file.' does not match suffix '.$onlywithsuffix.' so it is discarded<br>'."\n";
-								continue;
-							} else {
-								//print 'File '.$file.' match suffix '.$onlywithsuffix.' so we keep it<br>'."\n";
+				foreach ($listofsubdir as $subdir) {
+					$dir = $dirsql.$subdir;
+
+					$handle = @opendir($dir); // Dir may not exists
+					if (is_resource($handle)) {
+						$dirfound++;
+
+						// Run llx_mytable.sql files, then llx_mytable_*.sql
+						$files = array();
+						while (($file = readdir($handle)) !== false) {
+							$files[] = $file;
+						}
+						sort($files);
+						foreach ($files as $file) {
+							if ($onlywithsuffix) {
+								if (!preg_match('/\-'.preg_quote($onlywithsuffix, '/').'\./i', $file)) {
+									//print 'File '.$file.' does not match suffix '.$onlywithsuffix.' so it is discarded<br>'."\n";
+									continue;
+								} else {
+									//print 'File '.$file.' match suffix '.$onlywithsuffix.' so we keep it<br>'."\n";
+								}
+							}
+							if (preg_match('/\.sql$/i', $file) && !preg_match('/\.key\.sql$/i', $file) && substr($file, 0, 4) == 'llx_') {
+								$result = run_sql($dir.$file, empty($conf->global->MAIN_DISPLAY_SQL_INSTALL_LOG) ? 1 : 0, '', 1);
+								if ($result <= 0) {
+									$error++;
+								}
 							}
 						}
-						if (preg_match('/\.sql$/i', $file) && !preg_match('/\.key\.sql$/i', $file) && substr($file, 0, 4) == 'llx_' && substr($file, 0, 4) != 'data') {
-							$result = run_sql($dir.$file, empty($conf->global->MAIN_DISPLAY_SQL_INSTALL_LOG) ? 1 : 0, '', 1);
-							if ($result <= 0) {
-								$error++;
+
+						rewinddir($handle);
+
+						// Run llx_mytable.key.sql files (Must be done after llx_mytable.sql) then then llx_mytable_*.key.sql
+						$files = array();
+						while (($file = readdir($handle)) !== false) {
+							$files[] = $file;
+						}
+						sort($files);
+						foreach ($files as $file) {
+							if ($onlywithsuffix) {
+								if (!preg_match('/\-'.preg_quote($onlywithsuffix, '/').'\./i', $file)) {
+									//print 'File '.$file.' does not match suffix '.$onlywithsuffix.' so it is discarded<br>'."\n";
+									continue;
+								} else {
+									//print 'File '.$file.' match suffix '.$onlywithsuffix.' so we keep it<br>'."\n";
+								}
+							}
+							if (preg_match('/\.key\.sql$/i', $file) && substr($file, 0, 4) == 'llx_') {
+								$result = run_sql($dir.$file, empty($conf->global->MAIN_DISPLAY_SQL_INSTALL_LOG) ? 1 : 0, '', 1);
+								if ($result <= 0) {
+									$error++;
+								}
 							}
 						}
-					}
 
-					rewinddir($handle);
+						rewinddir($handle);
 
-					// Run llx_mytable.key.sql files (Must be done after llx_mytable.sql) then then llx_mytable_*.key.sql
-					$files = array();
-					while (($file = readdir($handle)) !== false) {
-						$files[] = $file;
-					}
-					sort($files);
-					foreach ($files as $file) {
-						if ($onlywithsuffix) {
-							if (!preg_match('/\-'.preg_quote($onlywithsuffix, '/').'\./i', $file)) {
-								//print 'File '.$file.' does not match suffix '.$onlywithsuffix.' so it is discarded<br>'."\n";
-								continue;
-							} else {
-								//print 'File '.$file.' match suffix '.$onlywithsuffix.' so we keep it<br>'."\n";
+						// Run functions-xxx.sql files (Must be done after llx_mytable.key.sql)
+						$files = array();
+						while (($file = readdir($handle)) !== false) {
+							$files[] = $file;
+						}
+						sort($files);
+						foreach ($files as $file) {
+							if ($onlywithsuffix) {
+								if (!preg_match('/\-'.preg_quote($onlywithsuffix, '/').'\./i', $file)) {
+									//print 'File '.$file.' does not match suffix '.$onlywithsuffix.' so it is discarded<br>'."\n";
+									continue;
+								} else {
+									//print 'File '.$file.' match suffix '.$onlywithsuffix.' so we keep it<br>'."\n";
+								}
+							}
+							if (preg_match('/\.sql$/i', $file) && !preg_match('/\.key\.sql$/i', $file) && substr($file, 0, 9) == 'functions') {
+								$result = run_sql($dir.$file, empty($conf->global->MAIN_DISPLAY_SQL_INSTALL_LOG) ? 1 : 0, '', 1);
+								if ($result <= 0) {
+									$error++;
+								}
 							}
 						}
-						if (preg_match('/\.key\.sql$/i', $file) && substr($file, 0, 4) == 'llx_' && substr($file, 0, 4) != 'data') {
-							$result = run_sql($dir.$file, empty($conf->global->MAIN_DISPLAY_SQL_INSTALL_LOG) ? 1 : 0, '', 1);
-							if ($result <= 0) {
-								$error++;
+
+						rewinddir($handle);
+
+						// Run data_xxx.sql files (Must be done after llx_mytable.key.sql)
+						$files = array();
+						while (($file = readdir($handle)) !== false) {
+								   $files[] = $file;
+						}
+						sort($files);
+						foreach ($files as $file) {
+							if ($onlywithsuffix) {
+								if (!preg_match('/\-'.preg_quote($onlywithsuffix, '/').'\./i', $file)) {
+									//print 'File '.$file.' does not match suffix '.$onlywithsuffix.' so it is discarded<br>'."\n";
+									continue;
+								} else {
+									//print 'File '.$file.' match suffix '.$onlywithsuffix.' so we keep it<br>'."\n";
+								}
+							}
+							if (preg_match('/\.sql$/i', $file) && !preg_match('/\.key\.sql$/i', $file) && substr($file, 0, 4) == 'data') {
+								$result = run_sql($dir.$file, empty($conf->global->MAIN_DISPLAY_SQL_INSTALL_LOG) ? 1 : 0, '', 1);
+								if ($result <= 0) {
+									$error++;
+								}
 							}
 						}
-					}
 
-					rewinddir($handle);
+						rewinddir($handle);
 
-					// Run data_xxx.sql files (Must be done after llx_mytable.key.sql)
-					$files = array();
-					while (($file = readdir($handle)) !== false) {
-							   $files[] = $file;
-					}
-					sort($files);
-					foreach ($files as $file) {
-						if ($onlywithsuffix) {
-							if (!preg_match('/\-'.preg_quote($onlywithsuffix, '/').'\./i', $file)) {
-								//print 'File '.$file.' does not match suffix '.$onlywithsuffix.' so it is discarded<br>'."\n";
-								continue;
-							} else {
-								//print 'File '.$file.' match suffix '.$onlywithsuffix.' so we keep it<br>'."\n";
+						// Run update_xxx.sql files
+						$files = array();
+						while (($file = readdir($handle)) !== false) {
+								   $files[] = $file;
+						}
+						sort($files);
+						foreach ($files as $file) {
+							if ($onlywithsuffix) {
+								if (!preg_match('/\-'.preg_quote($onlywithsuffix, '/').'\./i', $file)) {
+									//print 'File '.$file.' does not match suffix '.$onlywithsuffix.' so it is discarded<br>'."\n";
+									continue;
+								} else {
+									//print 'File '.$file.' match suffix '.$onlywithsuffix.' so we keep it<br>'."\n";
+								}
+							}
+							if (preg_match('/\.sql$/i', $file) && !preg_match('/\.key\.sql$/i', $file) && substr($file, 0, 6) == 'update') {
+								$result = run_sql($dir.$file, empty($conf->global->MAIN_DISPLAY_SQL_INSTALL_LOG) ? 1 : 0, '', 1);
+								if ($result <= 0) {
+									$error++;
+								}
 							}
 						}
-						if (preg_match('/\.sql$/i', $file) && !preg_match('/\.key\.sql$/i', $file) && substr($file, 0, 4) == 'data') {
-							$result = run_sql($dir.$file, empty($conf->global->MAIN_DISPLAY_SQL_INSTALL_LOG) ? 1 : 0, '', 1);
-							if ($result <= 0) {
-								$error++;
-							}
-						}
-					}
 
-					rewinddir($handle);
-
-					// Run update_xxx.sql files
-					$files = array();
-					while (($file = readdir($handle)) !== false) {
-							   $files[] = $file;
+						closedir($handle);
 					}
-					sort($files);
-					foreach ($files as $file) {
-						if ($onlywithsuffix) {
-							if (!preg_match('/\-'.preg_quote($onlywithsuffix, '/').'\./i', $file)) {
-								//print 'File '.$file.' does not match suffix '.$onlywithsuffix.' so it is discarded<br>'."\n";
-								continue;
-							} else {
-								//print 'File '.$file.' match suffix '.$onlywithsuffix.' so we keep it<br>'."\n";
-							}
-						}
-						if (preg_match('/\.sql$/i', $file) && !preg_match('/\.key\.sql$/i', $file) && substr($file, 0, 6) == 'update') {
-							$result = run_sql($dir.$file, empty($conf->global->MAIN_DISPLAY_SQL_INSTALL_LOG) ? 1 : 0, '', 1);
-							if ($result <= 0) {
-								$error++;
-							}
-						}
-					}
-
-					closedir($handle);
 				}
 
 				if ($error == 0) {
@@ -2252,6 +2287,8 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		$entity = $conf->entity;
 
 		if (is_array($this->module_parts) && !empty($this->module_parts)) {
+			dol_syslog(get_class($this)."::delete_module_parts", LOG_DEBUG);
+
 			foreach ($this->module_parts as $key => $value) {
 				// If entity is defined
 				if (is_array($value) && isset($value['entity'])) {
@@ -2262,7 +2299,6 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 				$sql .= " WHERE ".$this->db->decrypt('name')." LIKE '".$this->db->escape($this->const_name)."_".strtoupper($key)."'";
 				$sql .= " AND entity = ".((int) $entity);
 
-				dol_syslog(get_class($this)."::delete_const_".$key."", LOG_DEBUG);
 				if (!$this->db->query($sql)) {
 					$this->error = $this->db->lasterror();
 					$err++;

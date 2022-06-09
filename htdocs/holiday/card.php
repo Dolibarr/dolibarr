@@ -49,6 +49,7 @@ $confirm = GETPOST('confirm', 'alpha');
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $fuserid = (GETPOST('fuserid', 'int') ?GETPOST('fuserid', 'int') : $user->id);
+$socid = GETPOST('socid', 'int');
 
 // Load translation files required by the page
 $langs->loadLangs(array("other", "holiday", "mails", "trips"));
@@ -654,7 +655,7 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'confirm_refuse' && GETPOST('confirm', 'alpha') == 'yes') {
-		if (!empty($_POST['detail_refuse'])) {
+		if (GETPOST('detail_refuse')) {
 			$object->fetch($id);
 
 			// If status pending validation and validator = user
@@ -905,6 +906,8 @@ $help_url = 'EN:Module_Holiday';
 
 llxHeader('', $title, $help_url);
 
+$edit = false;
+
 if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 	// If user has no permission to create a leave
 	if ((in_array($fuserid, $childids) && empty($user->rights->holiday->write)) || (!in_array($fuserid, $childids) && (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->holiday->writeall_advance)))) {
@@ -987,6 +990,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 			print dol_get_fiche_head('', '', '', -1);
 
 			$out = '';
+			$nb_holiday = 0;
 			$typeleaves = $object->getTypes(1, 1);
 			foreach ($typeleaves as $key => $val) {
 				$nb_type = $object->getCPforUser($user->id, $val['rowid']);
@@ -1561,6 +1565,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 			print '</div><div class="fichehalfright">';
 
 			$MAXEVENT = 10;
+			$morehtmlright = '';
 
 			// List of actions on element
 			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';

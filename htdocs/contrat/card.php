@@ -40,6 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/contract/modules_contract.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 if (!empty($conf->propal->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 }
@@ -247,6 +248,10 @@ if (empty($reshook)) {
 				}
 				if ($element == 'propal') {
 					$element = 'comm/propal'; $subelement = 'propal';
+				}
+				if ($element == 'invoice' || $element == 'facture') {
+					$element = 'compta/facture';
+					$subelement = 'facture';
 				}
 
 				$object->origin    = $origin;
@@ -528,9 +533,9 @@ if (empty($reshook)) {
 			$localtax2_tx = get_localtax($tva_tx, 2, $object->thirdparty, $mysoc, $tva_npr);
 
 			// ajout prix achat
-			$fk_fournprice = $_POST['fournprice'];
-			if (!empty($_POST['buying_price'])) {
-				$pa_ht = $_POST['buying_price'];
+			$fk_fournprice = GETPOST('fournprice');
+			if (GETPOST('buying_price')) {
+				$pa_ht = GETPOST('buying_price');
 			} else {
 				$pa_ht = null;
 			}
@@ -1038,6 +1043,10 @@ if ($action == 'create') {
 			}
 			if ($element == 'propal') {
 				$element = 'comm/propal'; $subelement = 'propal';
+			}
+			if ($element == 'invoice' || $element == 'facture') {
+				$element = 'compta/facture';
+				$subelement = 'facture';
 			}
 
 			dol_include_once('/'.$element.'/class/'.$subelement.'.class.php');
@@ -2017,62 +2026,73 @@ if ($action == 'create') {
 			$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 			if (empty($reshook)) {
+				$params = array(
+					'attr' => array(
+						'title' => '',
+						'class' => 'classfortooltip'
+					)
+				);
+
 				// Send
 				if (empty($user->socid)) {
 					if ($object->statut == 1) {
 						if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->contrat->creer)) {
-							print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&token='.newToken().'&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a></div>';
+							print dolGetButtonAction($langs->trans('SendMail'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&token='.newToken().'&mode=init#formmailbeforetitle', '', true, $params);
 						} else {
-							print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#">'.$langs->trans('SendMail').'</a></div>';
+							print dolGetButtonAction($langs->trans('SendMail'), '', 'default', '#', '', false, $params);
 						}
 					}
 				}
 
 				if ($object->statut == 0 && $nbofservices) {
 					if ($user->rights->contrat->creer) {
-						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=valid&amp;token='.newToken().'">'.$langs->trans("Validate").'</a></div>';
+						print dolGetButtonAction($langs->trans('Validate'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=valid&amp;token='.newToken(), '', true, $params);
 					} else {
-						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("Validate").'</a></div>';
+						$params['attr']['title'] = $langs->trans("NotEnoughPermissions");
+						print dolGetButtonAction($langs->trans('Validate'), '', 'default', '#', '', false, $params);
 					}
 				}
 				if ($object->statut == 1) {
 					if ($user->rights->contrat->creer) {
-						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=reopen&token='.newToken().'">'.$langs->trans("Modify").'</a></div>';
+						print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=reopen&token='.newToken(), '', true, $params);
 					} else {
-						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("Modify").'</a></div>';
+						$params['attr']['title'] = $langs->trans("NotEnoughPermissions");
+						print dolGetButtonAction($langs->trans('Modify'), '', 'default', '#', '', false, $params);
 					}
 				}
 
 				if (!empty($conf->commande->enabled) && $object->statut > 0 && $object->nbofservicesclosed < $nbofservices) {
 					$langs->load("orders");
 					if ($user->rights->commande->creer) {
-						print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/commande/card.php?action=create&token='.newToken().'&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->thirdparty->id.'">'.$langs->trans("CreateOrder").'</a></div>';
+						print dolGetButtonAction($langs->trans('CreateOrder'), '', 'default', DOL_URL_ROOT.'/commande/card.php?action=create&token='.newToken().'&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->thirdparty->id, '', true, $params);
 					} else {
-						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("CreateOrder").'</a></div>';
+						$params['attr']['title'] = $langs->trans("NotEnoughPermissions");
+						print dolGetButtonAction($langs->trans('CreateOrder'), '', 'default', '#', '', false, $params);
 					}
 				}
 
 				if (!empty($conf->facture->enabled) && $object->statut > 0) {
 					$langs->load("bills");
 					if ($user->rights->facture->creer) {
-						print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->thirdparty->id.'">'.$langs->trans("CreateBill").'</a></div>';
+						print dolGetButtonAction($langs->trans('CreateBill'), '', 'default', DOL_URL_ROOT.'/compta/facture/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->thirdparty->id, '', true, $params);
 					} else {
-						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("CreateBill").'</a></div>';
+						$params['attr']['title'] = $langs->trans("NotEnoughPermissions");
+						print dolGetButtonAction($langs->trans('CreateBill'), '', 'default', '#', '', false, $params);
 					}
 				}
 
 				if ($object->nbofservicesclosed > 0 || $object->nbofserviceswait > 0) {
 					if ($user->rights->contrat->activer) {
-						print '<div class="inline-block divButAction"><a class="butAction" id="btnactivateall" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=activate&amp;token='.newToken().'">'.$langs->trans("ActivateAllContracts").'</a></div>';
+						print dolGetButtonAction($langs->trans('ActivateAllContracts'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=activate&amp;token='.newToken(), '', true, $params);
 					} else {
-						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" id="btnactivateall" href="#">'.$langs->trans("ActivateAllContracts").'</a></div>';
+						print dolGetButtonAction($langs->trans('ActivateAllContracts'), '', 'default', '#', '', false, $params);
 					}
 				}
 				if ($object->nbofservicesclosed < $nbofservices) {
 					if ($user->rights->contrat->desactiver) {
-						print '<div class="inline-block divButAction"><a class="butAction" id="btncloseall" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=close&amp;token='.newToken().'">'.$langs->trans("CloseAllContracts").'</a></div>';
+						print dolGetButtonAction($langs->trans('CloseAllContracts'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=close&amp;token='.newToken(), '', true, $params);
 					} else {
-						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" id="btncloseall" href="#">'.$langs->trans("CloseAllContracts").'</a></div>';
+						print dolGetButtonAction($langs->trans('CloseAllContracts'), '', 'default', '#', '', false, $params);
 					}
 
 					//if (! $numactive)
@@ -2094,16 +2114,17 @@ if ($action == 'create') {
 
 				// Clone
 				if ($user->rights->contrat->creer) {
-					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;socid='.$object->socid.'&amp;action=clone&amp;token='.newToken().'&amp;object='.$object->element.'">'.$langs->trans("ToClone").'</a></div>';
+					print dolGetButtonAction($langs->trans('ToClone'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;socid='.$object->socid.'&amp;action=clone&amp;token='.newToken(), '', true, $params);
 				}
 
 				// On peut supprimer entite si
 				// - Droit de creer + mode brouillon (erreur creation)
 				// - Droit de supprimer
 				if (($user->rights->contrat->creer && $object->statut == $object::STATUS_DRAFT) || $user->rights->contrat->supprimer) {
-					print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().'">'.$langs->trans("Delete").'</a></div>';
+					print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), '', true, $params);
 				} else {
-					print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans("Delete").'</a></div>';
+					$params['attr']['title'] = $langs->trans("NotAllowed");
+					print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), '', false, $params);
 				}
 			}
 
@@ -2139,7 +2160,7 @@ if ($action == 'create') {
 
 			$MAXEVENT = 10;
 
-			$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-list-alt imgforviewmode', DOL_URL_ROOT.'/contrat/agenda.php?id='.$object->id);
+			$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/contrat/agenda.php?id='.$object->id);
 
 			// List of actions on element
 			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';

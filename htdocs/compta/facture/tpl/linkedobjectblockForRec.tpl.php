@@ -24,7 +24,7 @@ if (empty($conf) || !is_object($conf)) {
 }
 
 
-print "<!-- BEGIN PHP TEMPLATE compta/facture/tpl/linkedopjectblockForRec.tpl.php -->\n";
+print "<!-- BEGIN PHP TEMPLATE compta/facture/tpl/linkedobjectblockForRec.tpl.php -->\n";
 
 
 global $user;

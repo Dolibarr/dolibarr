@@ -77,6 +77,9 @@ if (isset($_SESSION['email_customer'])) {
 
 $object = new Ticket($db);
 
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('ticketpubliclist', 'globalcard'));
+
 if (empty($conf->ticket->enabled)) {
 	accessforbidden('', 0, 0, 1);
 }
@@ -217,7 +220,7 @@ if ($action == "view_ticketlist") {
 		$search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 		$filter = array();
-		$param = 'action=view_ticketlist';
+		$param = '&action=view_ticketlist';
 		if (!empty($entity) && !empty($conf->multicompany->enabled)) {
 			$param .= '&entity='.$entity;
 		}
@@ -246,7 +249,7 @@ if ($action == "view_ticketlist") {
 		);
 
 		// Extra fields
-		if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
+		if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 			foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
 				if ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate') {
 					$arrayfields["ef.".$key] = array('label' => $extrafields->attributes[$object->table_element]['label'][$key], 'checked' => ($extrafields->attributes[$object->table_element]['list'][$key] < 0) ? 0 : 1, 'position' => $extrafields->attributes[$object->table_element]['pos'][$key], 'enabled' =>(abs($extrafields->attributes[$object->table_element]['list'][$key]) != 3) && $extrafields->attributes[$object->table_element]['perms'][$key]);
@@ -339,7 +342,7 @@ if ($action == "view_ticketlist") {
 		$sql .= " t.tms,";
 		$sql .= " type.label as type_label, category.label as category_label, severity.label as severity_label";
 		// Add fields for extrafields
-		if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
+		if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 			foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
 				$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
 			}
@@ -359,7 +362,7 @@ if ($action == "view_ticketlist") {
 		}
 		$sql .= " WHERE t.entity IN (".getEntity('ticket').")";
 		$sql .= " AND ((tc.source = 'external'";
-		$sql .= " AND tc.element='".$db->escape($object->dao->element)."'";
+		$sql .= " AND tc.element='".$db->escape($object->element)."'";
 		$sql .= " AND tc.active=1)";
 		$sql .= " OR (sp.email='".$db->escape($_SESSION['email_customer'])."'";
 		$sql .= " OR s.email='".$db->escape($_SESSION['email_customer'])."'";
@@ -395,7 +398,7 @@ if ($action == "view_ticketlist") {
 			$resql = $db->query($sql);
 			if ($resql) {
 				$num = $db->num_rows($resql);
-				print_barre_liste($langs->trans('TicketList'), $page, 'public/list.php', $param, $sortfield, $sortorder, '', $num, $num_total, 'ticket');
+				print_barre_liste($langs->trans('TicketList'), $page, '/public/ticket/list.php', $param, $sortfield, $sortorder, '', $num, $num_total, 'ticket');
 
 				// Search bar
 				print '<form method="POST" action="'.$_SERVER['PHP_SELF'].(!empty($entity) && !empty($conf->multicompany->enabled)?'?entity='.$entity:'').'" id="searchFormList" >'."\n";
@@ -406,6 +409,11 @@ if ($action == "view_ticketlist") {
 
 				$varpage = empty($contextpage) ? $url_page_current : $contextpage;
 				$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
+
+				// allow to display information before list
+				$parameters=array('arrayfields'=>$arrayfields);
+				$reshook=$hookmanager->executeHooks('printFieldListHeader', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
+				print $hookmanager->resPrint;
 
 				print '<table class="liste '.($moreforfilter ? "listwithfilterbefore" : "").'">';
 
@@ -647,13 +655,13 @@ if ($action == "view_ticketlist") {
 					}
 
 					// Extra fields
-					if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
+					if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 						foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
 							if (!empty($arrayfields["ef.".$key]['checked'])) {
 								print '<td';
-								$align = $extrafields->getAlignFlag($key);
-								if ($align) {
-									print ' align="'.$align.'"';
+								$cssstring = $extrafields->getAlignFlag($key, $object->table_element);
+								if ($cssstring) {
+									print ' class="'.$cssstring.'"';
 								}
 								print '>';
 								$tmpkey = 'options_'.$key;
@@ -698,7 +706,7 @@ if ($action == "view_ticketlist") {
 			}
 		}
 	} else {
-		print '<div class="error">Not Allowed<br><a href="'.$_SERVER['PHP_SELF'].'?track_id='.$object->dao->track_id.'">'.$langs->trans('Back').'</a></div>';
+		print '<div class="error">Not Allowed<br><a href="'.$_SERVER['PHP_SELF'].'?track_id='.$object->track_id.'">'.$langs->trans('Back').'</a></div>';
 	}
 } else {
 	print '<p class="center">'.$langs->trans("TicketPublicMsgViewLogIn").'</p>';

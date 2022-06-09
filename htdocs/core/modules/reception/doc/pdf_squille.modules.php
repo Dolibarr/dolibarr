@@ -44,7 +44,7 @@ class pdf_squille extends ModelePdfReception
 	 *
 	 *	@param	DoliDB	$db		Database handler
 	 */
-	public function __construct($db = 0)
+	public function __construct(DoliDB $db)
 	{
 		global $conf, $langs, $mysoc;
 

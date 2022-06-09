@@ -13,8 +13,9 @@
  * Copyright (C) 2014      Marcos García            <marcosgdf@gmail.com>
  * Copyright (C) 2016      Ferran Marcet            <fmarcet@2byte.es>
  * Copyright (C) 2018      Nicolas ZABOURI			<info@inovea-conseil.com>
- * Copyright (C) 2019-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2022  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2020		Tobias Sekan			<tobias.sekan@startmail.com>
+ * Copyright (C) 2022      Gauthier VERDOL     		<gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -330,7 +331,6 @@ class SupplierProposal extends CommonObject
 			$supplier_proposalligne->subprice = -$remise->amount_ht;
 			$supplier_proposalligne->fk_product = 0; // Id produit predefini
 			$supplier_proposalligne->qty = 1;
-			$supplier_proposalligne->remise = 0;
 			$supplier_proposalligne->remise_percent = 0;
 			$supplier_proposalligne->rang = -1;
 			$supplier_proposalligne->info_bits = 2;
@@ -621,6 +621,11 @@ class SupplierProposal extends CommonObject
 				// Reorder if child line
 				if (!empty($fk_parent_line)) {
 					$this->line_order(true, 'DESC');
+				} elseif ($ranktouse > 0 && $ranktouse <= count($this->lines)) { // Update all rank of all other lines
+					$linecount = count($this->lines);
+					for ($ii = $ranktouse; $ii <= $linecount; $ii++) {
+						$this->updateRangOfLine($this->lines[$ii - 1]->id, $ii + 1);
+					}
 				}
 
 				// Mise a jour informations denormalisees au niveau de la propale meme
@@ -2470,7 +2475,7 @@ class SupplierProposal extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $get_params = '', $notooltip = 0, $save_lastsearch_value = -1, $addlinktonotes = 0)
 	{
-		global $langs, $conf, $user;
+		global $langs, $conf, $user, $hookmanager;
 
 		if (!empty($conf->dol_no_mouse_hover)) {
 			$notooltip = 1; // Force disable tooltips
@@ -2553,7 +2558,15 @@ class SupplierProposal extends CommonObject
 				$result .= '</span>';
 			}
 		}
-
+		global $action;
+		$hookmanager->initHooks(array($this->element . 'dao'));
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
+		}
 		return $result;
 	}
 
@@ -2688,6 +2701,23 @@ class SupplierProposal extends CommonObject
 		);
 
 		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+	}
+
+	/**
+	 * Function used to replace a product id with another one.
+	 *
+	 * @param DoliDB $db Database handler
+	 * @param int $origin_id Old product id
+	 * @param int $dest_id New product id
+	 * @return bool
+	 */
+	public static function replaceProduct(DoliDB $db, $origin_id, $dest_id)
+	{
+		$tables = array(
+			'supplier_proposaldet'
+		);
+
+		return CommonObject::commonReplaceProduct($db, $origin_id, $dest_id, $tables);
 	}
 }
 
@@ -2974,9 +3004,6 @@ class SupplierProposalLine extends CommonObjectLine
 		}
 		if (empty($this->rang)) {
 			$this->rang = 0;
-		}
-		if (empty($this->remise)) {
-			$this->remise = 0;
 		}
 		if (empty($this->remise_percent)) {
 			$this->remise_percent = 0;
@@ -3274,7 +3301,7 @@ class SupplierProposalLine extends CommonObjectLine
 
 			if (!$error && !$notrigger) {
 				// Call trigger
-				$result = $this->call_trigger('LINESUPPLIER_PROPOSAL_UPDATE', $user);
+				$result = $this->call_trigger('LINESUPPLIER_PROPOSAL_MODIFY', $user);
 				if ($result < 0) {
 					$this->db->rollback();
 					return -1;

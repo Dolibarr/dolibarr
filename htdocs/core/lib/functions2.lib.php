@@ -628,7 +628,7 @@ function dol_print_object_info($object, $usetable = 0)
 		if ($usetable) {
 			print '<tr><td class="titlefield">';
 		}
-		print $langs->trans("ConciliatedBy");
+		print $langs->trans("ReconciledBy");
 		if ($usetable) {
 			print '</td><td>';
 		} else {
@@ -1368,6 +1368,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 		$numFinal = $ref;
 	} elseif ($mode == 'next') {
 		$counter++;
+		$maskrefclient_counter = 0;
 
 		// If value for $counter has a length higher than $maskcounter chars
 		if ($counter >= pow(10, dol_strlen($maskcounter))) {
@@ -1398,7 +1399,6 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 			$maskrefclient_maskLike = str_replace(dol_string_nospecial('{'.$maskrefclient.'}'), $maskrefclient_clientcode.str_pad("", dol_strlen($maskrefclient_maskcounter), "_"), $maskrefclient_maskLike);
 
 			// Get counter in database
-			$maskrefclient_counter = 0;
 			$maskrefclient_sql = "SELECT MAX(".$maskrefclient_sqlstring.") as val";
 			$maskrefclient_sql .= " FROM ".MAIN_DB_PREFIX.$table;
 			//$sql.= " WHERE ".$field." not like '(%'";
@@ -1451,14 +1451,17 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 		// Now we replace the counter
 		$maskbefore = '{'.$masktri.'}';
 		$maskafter = str_pad($counter, dol_strlen($maskcounter), "0", STR_PAD_LEFT);
-		//print 'x'.$maskbefore.'-'.$maskafter.'y';
+		//print 'x'.$numFinal.' - '.$maskbefore.' - '.$maskafter.'y';exit;
 		$numFinal = str_replace($maskbefore, $maskafter, $numFinal);
 
 		// Now we replace the refclient
 		if ($maskrefclient) {
-			//print "maskrefclient=".$maskrefclient." maskwithonlyymcode=".$maskwithonlyymcode." maskwithnocode=".$maskwithnocode." maskrefclient_clientcode=".$maskrefclient_clientcode."\n<br>";exit;
+			//print "maskrefclient=".$maskrefclient." maskrefclient_counter=".$maskrefclient_counter." maskwithonlyymcode=".$maskwithonlyymcode." maskwithnocode=".$maskwithnocode." maskrefclient_clientcode=".$maskrefclient_clientcode." maskrefclient_maskcounter=".$maskrefclient_maskcounter."\n<br>";exit;
 			$maskrefclient_maskbefore = '{'.$maskrefclient.'}';
-			$maskrefclient_maskafter = $maskrefclient_clientcode.str_pad($maskrefclient_counter, dol_strlen($maskrefclient_maskcounter), "0", STR_PAD_LEFT);
+			$maskrefclient_maskafter = $maskrefclient_clientcode;
+			if (dol_strlen($maskrefclient_maskcounter) > 0) {
+				$maskrefclient_maskafter .= str_pad($maskrefclient_counter, dol_strlen($maskrefclient_maskcounter), "0", STR_PAD_LEFT);
+			}
 			$numFinal = str_replace($maskrefclient_maskbefore, $maskrefclient_maskafter, $numFinal);
 		}
 
@@ -2226,6 +2229,11 @@ function dolGetElementUrl($objectid, $objecttype, $withpicto = 0, $option = '')
 		$classpath = 'product/stock/class';
 		$classfile = 'entrepot';
 		$classname = 'Entrepot';
+	} elseif ($objecttype == 'facturerec') {
+		$classpath = 'compta/facture/class';
+		$classfile = 'facture-rec';
+		$classname = 'FactureRec';
+		$module='facture';
 	}
 
 	if (!empty($conf->$module->enabled)) {

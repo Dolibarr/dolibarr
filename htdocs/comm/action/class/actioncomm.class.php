@@ -124,14 +124,15 @@ class ActionComm extends CommonObject
 	public $label;
 
 	/**
+	 * @var string Agenda event label
+	 * @deprecated Use $label
+	 */
+	public $libelle;
+
+	/**
 	 * @var integer Date creation record (datec)
 	 */
 	public $datec;
-
-	/**
-	 * @var integer Date end record (datef)
-	 */
-	public $datef;
 
 	/**
 	 * @var integer Duration (duree)
@@ -173,6 +174,21 @@ class ActionComm extends CommonObject
 	public $datep;
 
 	/**
+	 * @var integer Date action end (datef)
+	 */
+	public $datef;
+
+	/**
+	 * @var integer This is date start action (datep) but modified to not be outside calendar view.
+	 */
+	public $date_start_in_calendar;
+
+	/**
+	 * @var integer This is date end action (datef) but modified to not be outside calendar view.
+	 */
+	public $date_end_in_calendar;
+
+	/**
 	 * @var integer Date action end (datep2)
 	 */
 	public $datep2;
@@ -187,6 +203,11 @@ class ActionComm extends CommonObject
 	 * @var int 1=Event on full day
 	 */
 	public $fulldayevent = 0;
+
+	/**
+	 * @var int 1=???
+	 */
+	public $ponctuel;
 
 	/**
 	 * @var integer Percentage
@@ -219,8 +240,7 @@ class ActionComm extends CommonObject
 	public $userownerid;
 
 	/**
-	 * @var int Id of user done (deprecated)
-	 * @deprecated
+	 * @var int Id of user that has done the event. Used only if AGENDA_ENABLE_DONEBY is set.
 	 */
 	public $userdoneid;
 
@@ -238,20 +258,6 @@ class ActionComm extends CommonObject
 	 * @var array	Array of reminders
 	 */
 	public $reminders = array();
-
-	/**
-	 * @var User Object user of owner
-	 * @deprecated
-	 * @see $userownerid
-	 */
-	public $usertodo;
-
-	/**
-	 * @var User Object user that did action
-	 * @deprecated
-	 * @see $userdoneid
-	 */
-	public $userdone;
 
 	/**
 	 * @var int thirdparty id linked to action
@@ -381,6 +387,9 @@ class ActionComm extends CommonObject
 	 * Typical value for a event that is in a finished state
 	 */
 	const EVENT_FINISHED = 100;
+
+
+	public $fields = array();
 
 
 	/**
@@ -772,7 +781,7 @@ class ActionComm extends CommonObject
 		$sql .= " a.fk_contact, a.percent as percentage,";
 		$sql .= " a.fk_element as elementid, a.elementtype,";
 		$sql .= " a.priority, a.fulldayevent, a.location, a.transparency,";
-		$sql .= " a.email_msgid, a.email_subject, a.email_from, a.email_to, a.email_tocc, a.email_tobcc, a.errors_to,";
+		$sql .= " a.email_msgid, a.email_subject, a.email_from, a.email_sender, a.email_to, a.email_tocc, a.email_tobcc, a.errors_to,";
 		$sql .= " c.id as type_id, c.type as type_type, c.code as type_code, c.libelle as type_label, c.color as type_color, c.picto as type_picto,";
 		$sql .= " s.nom as socname,";
 		$sql .= " u.firstname, u.lastname as lastname,";
@@ -831,18 +840,17 @@ class ActionComm extends CommonObject
 				$this->usermodid = $obj->fk_user_mod;
 
 				if (!is_object($this->author)) {
-					$this->author = new stdClass(); // To avoid warning
+					$this->author = new User($this->db); // To avoid warning
 				}
 				$this->author->id = $obj->fk_user_author; // deprecated
 				$this->author->firstname = $obj->firstname; // deprecated
 				$this->author->lastname = $obj->lastname; // deprecated
 				if (!is_object($this->usermod)) {
-					$this->usermod = new stdClass(); // To avoid warning
+					$this->usermod = new User($this->db); // To avoid warning
 				}
 				$this->usermod->id = $obj->fk_user_mod; // deprecated
 
 				$this->userownerid = $obj->fk_user_action;
-				$this->userdoneid = $obj->fk_user_done;
 				$this->priority				= $obj->priority;
 				$this->fulldayevent			= $obj->fulldayevent;
 				$this->location				= $obj->location;
@@ -862,6 +870,16 @@ class ActionComm extends CommonObject
 				$this->num_vote = $obj->num_vote;
 				$this->event_paid = $obj->event_paid;
 				$this->status = $obj->status;
+
+				//email information
+				$this->email_msgid=$obj->email_msgid;
+				$this->email_from=$obj->email_from;
+				$this->email_sender=$obj->email_sender;
+				$this->email_to=$obj->email_to;
+				$this->email_tocc=$obj->email_tocc;
+				$this->email_tobcc=$obj->email_tobcc;
+				$this->email_subject=$obj->email_subject;
+				$this->errors_to=$obj->errors_to;
 
 				$this->fetch_optionals();
 
@@ -1142,18 +1160,18 @@ class ActionComm extends CommonObject
 		$sql .= ", datep2 = ".(strval($this->datef) != '' ? "'".$this->db->idate($this->datef)."'" : 'null');
 		$sql .= ", durationp = ".(isset($this->durationp) && $this->durationp >= 0 && $this->durationp != '' ? "'".$this->db->escape($this->durationp)."'" : "null"); // deprecated
 		$sql .= ", note = '".$this->db->escape($this->note_private)."'";
-		$sql .= ", fk_project =".($this->fk_project > 0 ? $this->fk_project : "null");
-		$sql .= ", fk_soc =".($socid > 0 ? $socid : "null");
-		$sql .= ", fk_contact =".($contactid > 0 ? $contactid : "null");
+		$sql .= ", fk_project =".($this->fk_project > 0 ? ((int) $this->fk_project) : "null");
+		$sql .= ", fk_soc =".($socid > 0 ? ((int) $socid) : "null");
+		$sql .= ", fk_contact =".($contactid > 0 ? ((int) $contactid) : "null");
 		$sql .= ", priority = '".$this->db->escape($this->priority)."'";
 		$sql .= ", fulldayevent = '".$this->db->escape($this->fulldayevent)."'";
 		$sql .= ", location = ".($this->location ? "'".$this->db->escape($this->location)."'" : "null");
 		$sql .= ", transparency = '".$this->db->escape($this->transparency)."'";
-		$sql .= ", fk_user_mod = ".$user->id;
-		$sql .= ", fk_user_action = ".($userownerid > 0 ? "'".$this->db->escape($userownerid)."'" : "null");
-		$sql .= ", fk_user_done = ".($userdoneid > 0 ? "'".$this->db->escape($userdoneid)."'" : "null");
+		$sql .= ", fk_user_mod = ".((int) $user->id);
+		$sql .= ", fk_user_action = ".($userownerid > 0 ? ((int) $userownerid) : "null");
+		$sql .= ", fk_user_done = ".($userdoneid > 0 ? ((int) $userdoneid) : "null");
 		if (!empty($this->fk_element)) {
-			$sql .= ", fk_element=".($this->fk_element ? $this->db->escape($this->fk_element) : "null");
+			$sql .= ", fk_element=".($this->fk_element ? ((int) $this->fk_element) : "null");
 		}
 		if (!empty($this->elementtype)) {
 			$sql .= ", elementtype=".($this->elementtype ? "'".$this->db->escape($this->elementtype)."'" : "null");
@@ -1213,11 +1231,14 @@ class ActionComm extends CommonObject
 
 				if (!empty($this->socpeopleassigned)) {
 					$already_inserted = array();
-					foreach (array_keys($this->socpeopleassigned) as $id) {
+					foreach (array_keys($this->socpeopleassigned) as $key => $val) {
+						if (!is_array($val)) {	// For backward compatibility when val=id
+							$val = array('id'=>$val);
+						}
 						if (!empty($already_inserted[$val['id']])) continue;
 
 						$sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm_resources(fk_actioncomm, element_type, fk_element, mandatory, transparency, answer_status)";
-						$sql .= " VALUES(".((int) $this->id).", 'socpeople', ".((int) $id).", 0, 0, 0)";
+						$sql .= " VALUES(".((int) $this->id).", 'socpeople', ".((int) $val['id']).", 0, 0, 0)";
 
 						$resql = $this->db->query($sql);
 						if (!$resql) {
@@ -1451,9 +1472,9 @@ class ActionComm extends CommonObject
 
 
 	/**
-	 *  Return label of status
+	 *  Return the label of the status
 	 *
-	 *  @param	int		$mode           0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *  @param  int		$mode           0=Long label, 1=Short label, 2=Picto+Short label, 3=Picto, 4=Picto+Short label, 5=Short label+Picto, 6=Picto+Long label, 7=Very short label+Picto
 	 *  @param  int		$hidenastatus   1=Show nothing if status is "Not applicable"
 	 *  @return string          		String with status
 	 */
@@ -1585,8 +1606,25 @@ class ActionComm extends CommonObject
 		if (isset($this->transparency)) {
 			$tooltip .= '<br><b>'.$langs->trans('Busy').':</b> '.yn($this->transparency);
 		}
+		if (!empty($this->email_msgid)) {
+			$langs->load("mails");
+			$tooltip .= '<br>';
+			//$tooltip .= '<br><b>'.img_picto('', 'email').' '.$langs->trans("Email").'</b>';
+			$tooltip .= '<br><b>'.$langs->trans('MailTopic').':</b> '.$this->email_subject;
+			$tooltip .= '<br><b>'.$langs->trans('MailFrom').':</b> '.str_replace(array('<', '>'), array('&amp;lt', '&amp;gt'), $this->email_from);
+			$tooltip .= '<br><b>'.$langs->trans('MailTo').':</b> '.str_replace(array('<', '>'), array('&amp;lt', '&amp;gt'), $this->email_to);
+			if (!empty($this->email_tocc)) {
+				$tooltip .= '<br><b>'.$langs->trans('MailCC').':</b> '.str_replace(array('<', '>'), array('&amp;lt', '&amp;gt'), $this->email_tocc);
+			}
+			/* Disabled because bcc must remain by defintion not visible
+			if (!empty($this->email_tobcc)) {
+				$tooltip .= '<br><b>'.$langs->trans('MailCCC').':</b> '.$this->email_tobcc;
+			} */
+		}
 		if (!empty($this->note_private)) {
-			$tooltip .= '<br><b>'.$langs->trans('Note').':</b> '.(dol_textishtml($this->note_private) ? str_replace(array("\r", "\n"), "", $this->note_private) : str_replace(array("\r", "\n"), '<br>', $this->note_private));
+			$tooltip .= '<br><br><b>'.$langs->trans('Description').':</b><br>';
+			$texttoshow = dolGetFirstLineOfText($this->note_private, 10);
+			$tooltip .= (dol_textishtml($texttoshow) ? str_replace(array("\r", "\n"), "", $texttoshow) : str_replace(array("\r", "\n"), '<br>', $texttoshow));
 		}
 		$linkclose = '';
 		//if (!empty($conf->global->AGENDA_USE_EVENT_TYPE) && $this->type_color)
@@ -1597,15 +1635,8 @@ class ActionComm extends CommonObject
 				$label = $langs->trans("ShowAction");
 				$linkclose .= ' alt="'.dol_escape_htmltag($tooltip, 1).'"';
 			}
-			$linkclose .= ' title="'.dol_escape_htmltag($tooltip, 1).'"';
+			$linkclose .= ' title="'.dol_escape_htmltag($tooltip, 1, 0, '', 1).'"';
 			$linkclose .= ' class="'.$classname.' classfortooltip"';
-
-			/*
-			$hookmanager->initHooks(array('actiondao'));
-			$parameters=array('id'=>$this->id);
-			$reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-			$linkclose = ($hookmanager->resPrint ? $hookmanager->resPrint : $linkclose);
-			*/
 		} else {
 			$linkclose .= ' class="'.$classname.'"';
 		}
@@ -1640,41 +1671,39 @@ class ActionComm extends CommonObject
 		}
 
 		if ($withpicto == 2) {
-			$libelle = $label;
 			if (!empty($conf->global->AGENDA_USE_EVENT_TYPE)) {
-				$libelle = $labeltype;
+				$label = $labeltype;
 			}
-			$libelleshort = '';
+			$labelshort = '';
 		} else {
-			$libelle = (empty($this->libelle) ? $label : $this->libelle.(($label && $label != $this->libelle) ? ' '.$label : ''));
-			if (!empty($conf->global->AGENDA_USE_EVENT_TYPE) && empty($libelle)) {
-				$libelle = $labeltype;
+			if (!empty($conf->global->AGENDA_USE_EVENT_TYPE) && empty($label)) {
+				$label = $labeltype;
 			}
 			if ($maxlength < 0) {
-				$libelleshort = $this->ref;
+				$labelshort = $this->ref;
 			} else {
-				$libelleshort = dol_trunc($libelle, $maxlength);
+				$labelshort = dol_trunc($label, $maxlength);
 			}
 		}
 
 		if ($withpicto) {
 			if (!empty($conf->global->AGENDA_USE_EVENT_TYPE)) {	// Add code into ()
 				if ($labeltype) {
-					$libelle .= (preg_match('/'.preg_quote($labeltype, '/').'/', $libelle) ? '' : ' ('.$langs->transnoentities("Action".$this->type_code).')');
+					$label .= (preg_match('/'.preg_quote($labeltype, '/').'/', $label) ? '' : ' ('.$langs->transnoentities("Action".$this->type_code).')');
 				}
 			}
 		}
 
 		$result .= $linkstart;
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $langs->trans("ShowAction").': '.$libelle), ($overwritepicto ? $overwritepicto : 'action'), (($this->type_color && $overwritepicto) ? 'style="color: #'.$this->type_color.' !important;" ' : '').($notooltip ? 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'"' : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+			$result .= img_object(($notooltip ? '' : $langs->trans("ShowAction").': '.$label), ($overwritepicto ? $overwritepicto : 'action'), (($this->type_color && $overwritepicto) ? 'style="color: #'.$this->type_color.' !important;" ' : '').($notooltip ? 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'"' : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
 		}
-		$result .= $libelleshort;
+		$result .= $labelshort;
 		$result .= $linkend;
 
 		global $action;
 		$hookmanager->initHooks(array('actiondao'));
-		$parameters = array('id'=>$this->id, 'getnomurl'=>$result);
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -2213,6 +2242,26 @@ class ActionComm extends CommonObject
 		);
 
 		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+	}
+
+	/**
+	 *  Function used to replace a product id with another one.
+	 *
+	 *  @param DoliDB $dbs Database handler
+	 *  @param int $origin_id Old product id
+	 *  @param int $dest_id New product id
+	 *  @return bool
+	 */
+	public static function replaceProduct(DoliDB $dbs, $origin_id, $dest_id)
+	{
+		$sql = 'UPDATE ' . MAIN_DB_PREFIX . 'actioncomm SET fk_element = ' . ((int) $dest_id) . ' WHERE elementtype="product" AND fk_element = '.((int) $origin_id);
+		// using $dbs, not $this->db because function is static
+		if (!$dbs->query($sql)) {
+			//$this->errors = $dbs->lasterror();
+			return false;
+		}
+
+		return true;
 	}
 
 	/**

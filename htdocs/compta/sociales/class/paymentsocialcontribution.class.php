@@ -101,11 +101,27 @@ class PaymentSocialContribution extends CommonObject
 	public $fk_user_modif;
 
 	/**
+	 * @var int ID
+	 */
+	public $chid;
+
+	/**
+	 * @var integer|string datepaye
+	 */
+	public $datepaye;
+
+	/**
+	 * @var integer|string paiementtype
+	 */
+	public $paiementtype;
+
+
+	/**
 	 *	Constructor
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-	public function __construct($db)
+	public function __construct(DoliDB $db)
 	{
 		$this->db = $db;
 	}

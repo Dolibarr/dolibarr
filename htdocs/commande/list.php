@@ -40,6 +40,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+if (!empty($conf->margin->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmargin.class.php';
+}
 require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
@@ -187,6 +190,10 @@ $arrayfields = array(
 	'c.multicurrency_total_ttc'=>array('label'=>'MulticurrencyAmountTTC', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1), 'position'=>110),
 	'u.login'=>array('label'=>"Author", 'checked'=>1, 'position'=>115),
 	'sale_representative'=>array('label'=>"SaleRepresentativesOfThirdParty", 'checked'=>0, 'position'=>116),
+	'total_pa' => array('label' => (getDolGlobalString('MARGIN_TYPE') == '1' ? 'BuyingPrice' : 'CostPrice'), 'checked' => 0, 'position' => 300, 'enabled' => (empty($conf->margin->enabled) || !$user->rights->margins->liretous ? 0 : 1)),
+	'total_margin' => array('label' => 'Margin', 'checked' => 0, 'position' => 301, 'enabled' => (empty($conf->margin->enabled) || !$user->rights->margins->liretous ? 0 : 1)),
+	'total_margin_rate' => array('label' => 'MarginRate', 'checked' => 0, 'position' => 302, 'enabled' => (empty($conf->margin->enabled) || !$user->rights->margins->liretous || empty($conf->global->DISPLAY_MARGIN_RATES) ? 0 : 1)),
+	'total_mark_rate' => array('label' => 'MarkRate', 'checked' => 0, 'position' => 303, 'enabled' => (empty($conf->margin->enabled) || !$user->rights->margins->liretous || empty($conf->global->DISPLAY_MARK_RATES) ? 0 : 1)),
 	'c.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>120),
 	'c.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>125),
 	'c.date_cloture'=>array('label'=>"DateClosing", 'checked'=>0, 'position'=>130),
@@ -194,6 +201,7 @@ $arrayfields = array(
 	'c.note_private'=>array('label'=>'NotePrivate', 'checked'=>0, 'enabled'=>(empty($conf->global->MAIN_LIST_ALLOW_PRIVATE_NOTES)), 'position'=>140),
 	'shippable'=>array('label'=>"Shippable", 'checked'=>1,'enabled'=>(!empty($conf->expedition->enabled)), 'position'=>990),
 	'c.facture'=>array('label'=>"Billed", 'checked'=>1, 'enabled'=>(empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT)), 'position'=>995),
+	'c.import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>999),
 	'c.fk_statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000)
 );
 // Extra fields
@@ -259,7 +267,7 @@ if (empty($reshook)) {
 		$search_project = '';
 		$search_status = '';
 		$search_billed = '';
-		$toselect = '';
+		$toselect = array();
 		$search_array_options = array();
 		$search_categ_cus = 0;
 		$search_datecloture_start = '';
@@ -294,6 +302,352 @@ if (empty($reshook)) {
 	$uploaddir = $conf->commande->multidir_output[$conf->entity];
 	$triggersendname = 'ORDER_SENTBYMAIL';
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
+
+	if ($massaction == 'confirm_createbills') {   // Create bills from orders.
+		$orders = GETPOST('toselect', 'array');
+		$createbills_onebythird = GETPOST('createbills_onebythird', 'int');
+		$validate_invoices = GETPOST('validate_invoices', 'int');
+
+		$errors = array();
+
+		$TFact = array();
+		$TFactThird = array();
+		$TFactThirdNbLines = array();
+
+		$nb_bills_created = 0;
+		$lastid= 0;
+		$lastref = '';
+
+		$db->begin();
+
+		foreach ($orders as $id_order) {
+			$cmd = new Commande($db);
+			if ($cmd->fetch($id_order) <= 0) {
+				continue;
+			}
+			$cmd->fetch_thirdparty();
+
+			$objecttmp = new Facture($db);
+			if (!empty($createbills_onebythird) && !empty($TFactThird[$cmd->socid])) {
+				// If option "one bill per third" is set, and an invoice for this thirdparty was already created, we re-use it.
+				$objecttmp = $TFactThird[$cmd->socid];
+			} else {
+				// If we want one invoice per order or if there is no first invoice yet for this thirdparty.
+				$objecttmp->socid = $cmd->socid;
+				$objecttmp->thirdparty = $cmd->thirdparty;
+
+				$objecttmp->type = $objecttmp::TYPE_STANDARD;
+				$objecttmp->cond_reglement_id = !empty($cmd->cond_reglement_id) ? $cmd->cond_reglement_id : $cmd->thirdparty->cond_reglement_id;
+				$objecttmp->mode_reglement_id = !empty($cmd->mode_reglement_id) ? $cmd->mode_reglement_id : $cmd->thirdparty->mode_reglement_id;
+
+				$objecttmp->fk_project = $cmd->fk_project;
+				$objecttmp->multicurrency_code = $cmd->multicurrency_code;
+				if (empty($createbills_onebythird)) {
+					$objecttmp->ref_client = $cmd->ref_client;
+				}
+
+				$datefacture = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
+				if (empty($datefacture)) {
+					$datefacture = dol_now();
+				}
+
+				$objecttmp->date = $datefacture;
+				$objecttmp->origin    = 'commande';
+				$objecttmp->origin_id = $id_order;
+
+				$objecttmp->array_options = $cmd->array_options; // Copy extrafields
+
+				$res = $objecttmp->create($user);
+
+				if ($res > 0) {
+					$nb_bills_created++;
+					$lastref = $objecttmp->ref;
+					$lastid = $objecttmp->id;
+
+					$TFactThird[$cmd->socid] = $objecttmp;
+					$TFactThirdNbLines[$cmd->socid] = 0; //init nblines to have lines ordered by expedition and rang
+				} else {
+					$langs->load("errors");
+					$errors[] = $cmd->ref.' : '.$langs->trans($objecttmp->errors[0]);
+					$error++;
+				}
+			}
+
+			if ($objecttmp->id > 0) {
+				$res = $objecttmp->add_object_linked($objecttmp->origin, $id_order);
+
+				if ($res == 0) {
+					$errors[] = $cmd->ref.' : '.$langs->trans($objecttmp->errors[0]);
+					$error++;
+				}
+
+				if (!$error) {
+					$lines = $cmd->lines;
+					if (empty($lines) && method_exists($cmd, 'fetch_lines')) {
+						$cmd->fetch_lines();
+						$lines = $cmd->lines;
+					}
+
+					$fk_parent_line = 0;
+					$num = count($lines);
+
+					for ($i = 0; $i < $num; $i++) {
+						$desc = ($lines[$i]->desc ? $lines[$i]->desc : '');
+						// If we build one invoice for several orders, we must put the ref of order on the invoice line
+						if (!empty($createbills_onebythird)) {
+							$desc = dol_concatdesc($desc, $langs->trans("Order").' '.$cmd->ref.' - '.dol_print_date($cmd->date, 'day'));
+						}
+
+						if ($lines[$i]->subprice < 0) {
+							// Negative line, we create a discount line
+							$discount = new DiscountAbsolute($db);
+							$discount->fk_soc = $objecttmp->socid;
+							$discount->amount_ht = abs($lines[$i]->total_ht);
+							$discount->amount_tva = abs($lines[$i]->total_tva);
+							$discount->amount_ttc = abs($lines[$i]->total_ttc);
+							$discount->tva_tx = $lines[$i]->tva_tx;
+							$discount->fk_user = $user->id;
+							$discount->description = $desc;
+							$discountid = $discount->create($user);
+							if ($discountid > 0) {
+								$result = $objecttmp->insert_discount($discountid);
+								//$result=$discount->link_to_invoice($lineid,$id);
+							} else {
+								setEventMessages($discount->error, $discount->errors, 'errors');
+								$error++;
+								break;
+							}
+						} else {
+							// Positive line
+							$product_type = ($lines[$i]->product_type ? $lines[$i]->product_type : 0);
+							// Date start
+							$date_start = false;
+							if ($lines[$i]->date_debut_prevue) {
+								$date_start = $lines[$i]->date_debut_prevue;
+							}
+							if ($lines[$i]->date_debut_reel) {
+								$date_start = $lines[$i]->date_debut_reel;
+							}
+							if ($lines[$i]->date_start) {
+								$date_start = $lines[$i]->date_start;
+							}
+							//Date end
+							$date_end = false;
+							if ($lines[$i]->date_fin_prevue) {
+								$date_end = $lines[$i]->date_fin_prevue;
+							}
+							if ($lines[$i]->date_fin_reel) {
+								$date_end = $lines[$i]->date_fin_reel;
+							}
+							if ($lines[$i]->date_end) {
+								$date_end = $lines[$i]->date_end;
+							}
+							// Reset fk_parent_line for no child products and special product
+							if (($lines[$i]->product_type != 9 && empty($lines[$i]->fk_parent_line)) || $lines[$i]->product_type == 9) {
+								$fk_parent_line = 0;
+							}
+
+							// Extrafields
+							if (method_exists($lines[$i], 'fetch_optionals')) {
+								$lines[$i]->fetch_optionals();
+								$array_options = $lines[$i]->array_options;
+							}
+
+							$objecttmp->context['createfromclone'];
+
+							$rang = $lines[$i]->rang;
+							//there may already be rows from previous orders
+							if (!empty($createbills_onebythird))
+								$rang = $TFactThirdNbLines[$cmd->socid];
+
+							$result = $objecttmp->addline(
+								$desc,
+								$lines[$i]->subprice,
+								$lines[$i]->qty,
+								$lines[$i]->tva_tx,
+								$lines[$i]->localtax1_tx,
+								$lines[$i]->localtax2_tx,
+								$lines[$i]->fk_product,
+								$lines[$i]->remise_percent,
+								$date_start,
+								$date_end,
+								0,
+								$lines[$i]->info_bits,
+								$lines[$i]->fk_remise_except,
+								'HT',
+								0,
+								$product_type,
+								$rang,
+								$lines[$i]->special_code,
+								$objecttmp->origin,
+								$lines[$i]->rowid,
+								$fk_parent_line,
+								$lines[$i]->fk_fournprice,
+								$lines[$i]->pa_ht,
+								$lines[$i]->label,
+								$array_options,
+								100,
+								0,
+								$lines[$i]->fk_unit
+							);
+							if ($result > 0) {
+								$lineid = $result;
+								if (!empty($createbills_onebythird)) //increment rang to keep order
+									$TFactThirdNbLines[$rcp->socid]++;
+							} else {
+								$lineid = 0;
+								$error++;
+								break;
+							}
+							// Defined the new fk_parent_line
+							if ($result > 0 && $lines[$i]->product_type == 9) {
+								$fk_parent_line = $result;
+							}
+						}
+					}
+				}
+			}
+
+			//$cmd->classifyBilled($user);        // Disabled. This behavior must be set or not using the workflow module.
+
+			if (!empty($createbills_onebythird) && empty($TFactThird[$cmd->socid])) {
+				$TFactThird[$cmd->socid] = $objecttmp;
+			} else {
+				$TFact[$objecttmp->id] = $objecttmp;
+			}
+		}
+
+		// Build doc with all invoices
+		$TAllFact = empty($createbills_onebythird) ? $TFact : $TFactThird;
+		$toselect = array();
+
+		if (!$error && $validate_invoices) {
+			$massaction = $action = 'builddoc';
+
+			foreach ($TAllFact as &$objecttmp) {
+				$result = $objecttmp->validate($user);
+				if ($result <= 0) {
+					$error++;
+					setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+					break;
+				}
+
+				$id = $objecttmp->id; // For builddoc action
+
+				// Builddoc
+				$donotredirect = 1;
+				$upload_dir = $conf->facture->dir_output;
+				$permissiontoadd = $user->rights->facture->creer;
+
+				// Call action to build doc
+				$savobject = $object;
+				$object = $objecttmp;
+				include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
+				$object = $savobject;
+			}
+
+			$massaction = $action = 'confirm_createbills';
+		}
+
+		if (!$error) {
+			$db->commit();
+
+			if ($nb_bills_created == 1) {
+				$texttoshow = $langs->trans('BillXCreated', '{s1}');
+				$texttoshow = str_replace('{s1}', '<a href="'.DOL_URL_ROOT.'/compta/facture/card.php?id='.urlencode($lastid).'">'.$lastref.'</a>', $texttoshow);
+				setEventMessages($texttoshow, null, 'mesgs');
+			} else {
+				setEventMessages($langs->trans('BillCreated', $nb_bills_created), null, 'mesgs');
+			}
+
+			// Make a redirect to avoid to bill twice if we make a refresh or back
+			$param = '';
+			if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
+				$param .= '&contextpage='.urlencode($contextpage);
+			}
+			if ($limit > 0 && $limit != $conf->liste_limit) {
+				$param .= '&limit='.urlencode($limit);
+			}
+			if ($sall) {
+				$param .= '&sall='.urlencode($sall);
+			}
+			if ($socid > 0) {
+				$param .= '&socid='.urlencode($socid);
+			}
+			if ($search_status != '') {
+				$param .= '&search_status='.urlencode($search_status);
+			}
+			if ($search_orderday) {
+				$param .= '&search_orderday='.urlencode($search_orderday);
+			}
+			if ($search_ordermonth) {
+				$param .= '&search_ordermonth='.urlencode($search_ordermonth);
+			}
+			if ($search_orderyear) {
+				$param .= '&search_orderyear='.urlencode($search_orderyear);
+			}
+			if ($search_deliveryday) {
+				$param .= '&search_deliveryday='.urlencode($search_deliveryday);
+			}
+			if ($search_deliverymonth) {
+				$param .= '&search_deliverymonth='.urlencode($search_deliverymonth);
+			}
+			if ($search_deliveryyear) {
+				$param .= '&search_deliveryyear='.urlencode($search_deliveryyear);
+			}
+			if ($search_ref) {
+				$param .= '&search_ref='.urlencode($search_ref);
+			}
+			if ($search_company) {
+				$param .= '&search_company='.urlencode($search_company);
+			}
+			if ($search_ref_customer) {
+				$param .= '&search_ref_customer='.urlencode($search_ref_customer);
+			}
+			if ($search_user > 0) {
+				$param .= '&search_user='.urlencode($search_user);
+			}
+			if ($search_sale > 0) {
+				$param .= '&search_sale='.urlencode($search_sale);
+			}
+			if ($search_total_ht != '') {
+				$param .= '&search_total_ht='.urlencode($search_total_ht);
+			}
+			if ($search_total_vat != '') {
+				$param .= '&search_total_vat='.urlencode($search_total_vat);
+			}
+			if ($search_total_ttc != '') {
+				$param .= '&search_total_ttc='.urlencode($search_total_ttc);
+			}
+			if ($search_project_ref >= 0) {
+				$param .= "&search_project_ref=".urlencode($search_project_ref);
+			}
+			if ($show_files) {
+				$param .= '&show_files='.urlencode($show_files);
+			}
+			if ($optioncss != '') {
+				$param .= '&optioncss='.urlencode($optioncss);
+			}
+			if ($billed != '') {
+				$param .= '&billed='.urlencode($billed);
+			}
+
+			header("Location: ".$_SERVER['PHP_SELF'].'?'.$param);
+			exit;
+		} else {
+			$db->rollback();
+
+			$action = 'create';
+			$_GET["origin"] = $_POST["origin"];
+			$_GET["originid"] = $_POST["originid"];
+			if (!empty($errors)) {
+				setEventMessages(null, $errors, 'errors');
+			} else {
+				setEventMessages("Error", null, 'errors');
+			}
+			$error++;
+		}
+	}
 }
 if ($action == 'validate' && $permissiontoadd) {
 	if (GETPOST('confirm') == 'yes') {
@@ -311,7 +665,7 @@ if ($action == 'validate' && $permissiontoadd) {
 					if ($objecttmp->valid($user, $idwarehouse)) {
 						setEventMessage($langs->trans('hasBeenValidated', $objecttmp->ref), 'mesgs');
 					} else {
-						setEventMessage($langs->trans('CantBeValidated'), 'errors');
+						setEventMessage($objecttmp->error, $objecttmp->errors, 'errors');
 						$error++;
 					}
 				} else {
@@ -407,6 +761,10 @@ $now = dol_now();
 $form = new Form($db);
 $formother = new FormOther($db);
 $formfile = new FormFile($db);
+$formmargin = null;
+if (!empty($conf->margin->enabled)) {
+	$formmargin = new FormMargin($db);
+}
 $companystatic = new Societe($db);
 $formcompany = new FormCompany($db);
 $projectstatic = new Project($db);
@@ -429,8 +787,8 @@ $sql .= ' c.date_valid, c.date_commande, c.note_public, c.note_private, c.date_l
 $sql .= ' c.date_creation as date_creation, c.tms as date_update, c.date_cloture as date_cloture,';
 $sql .= ' p.rowid as project_id, p.ref as project_ref, p.title as project_label,';
 $sql .= ' u.login, u.lastname, u.firstname, u.email as user_email, u.statut as user_statut, u.entity, u.photo, u.office_phone, u.office_fax, u.user_mobile, u.job, u.gender,';
-$sql .= ' c.fk_cond_reglement,c.fk_mode_reglement,c.fk_shipping_method,';
-$sql .= ' c.fk_input_reason';
+$sql .= ' c.fk_cond_reglement,c.deposit_percent,c.fk_mode_reglement,c.fk_shipping_method,';
+$sql .= ' c.fk_input_reason, c.import_key';
 if (($search_categ_cus > 0) || ($search_categ_cus == -2)) {
 	$sql .= ", cc.fk_categorie, cc.fk_soc";
 }
@@ -657,12 +1015,12 @@ if ($resql) {
 	if ($socid > 0) {
 		$soc = new Societe($db);
 		$soc->fetch($socid);
-		$title = $langs->trans('ListOfOrders').' - '.$soc->name;
+		$title = $langs->trans('CustomersOrders').' - '.$soc->name;
 		if (empty($search_company)) {
 			$search_company = $soc->name;
 		}
 	} else {
-		$title = $langs->trans('ListOfOrders');
+		$title = $langs->trans('CustomersOrders');
 	}
 	if (strval($search_status) == '0') {
 		$title .= ' - '.$langs->trans('StatusOrderDraftShort');
@@ -963,7 +1321,7 @@ if ($resql) {
 	$moreforfilter = '';
 
 	// If the user can view prospects other than his'
-	if ($user->rights->societe->client->voir || $socid) {
+	if ($user->rights->user->user->lire) {
 		$langs->load("commercial");
 		$moreforfilter .= '<div class="divsearchfield">';
 		$tmptitle = $langs->trans('ThirdPartiesOfSaleRepresentative');
@@ -1121,7 +1479,7 @@ if ($resql) {
 	// Payment term
 	if (!empty($arrayfields['c.fk_cond_reglement']['checked'])) {
 		print '<td class="liste_titre">';
-		$form->select_conditions_paiements($search_fk_cond_reglement, 'search_fk_cond_reglement', -1, 1, 1);
+		$form->select_conditions_paiements($search_fk_cond_reglement, 'search_fk_cond_reglement', 1, 1, 1);
 		print '</td>';
 	}
 	// Payment mode
@@ -1193,6 +1551,22 @@ if ($resql) {
 	if (!empty($arrayfields['sale_representative']['checked'])) {
 		print '<td class="liste_titre"></td>';
 	}
+	if (!empty($arrayfields['total_pa']['checked'])) {
+		print '<td class="liste_titre right">';
+		print '</td>';
+	}
+	if (!empty($arrayfields['total_margin']['checked'])) {
+		print '<td class="liste_titre right">';
+		print '</td>';
+	}
+	if (!empty($arrayfields['total_margin_rate']['checked'])) {
+		print '<td class="liste_titre right">';
+		print '</td>';
+	}
+	if (!empty($arrayfields['total_mark_rate']['checked'])) {
+		print '<td class="liste_titre right">';
+		print '</td>';
+	}
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 	// Fields from hook
@@ -1246,6 +1620,11 @@ if ($resql) {
 	if (!empty($arrayfields['c.facture']['checked'])) {
 		print '<td class="liste_titre maxwidthonsmartphone" align="center">';
 		print $form->selectyesno('search_billed', $search_billed, 1, 0, 1, 1);
+		print '</td>';
+	}
+	// Import key
+	if (!empty($arrayfields['c.import_key']['checked'])) {
+		print '<td class="liste_titre maxwidthonsmartphone" align="center">';
 		print '</td>';
 	}
 	// Status
@@ -1354,6 +1733,18 @@ if ($resql) {
 	if (!empty($arrayfields['sale_representative']['checked'])) {
 		print_liste_field_titre($arrayfields['sale_representative']['label'], $_SERVER["PHP_SELF"], "", "", "$param", '', $sortfield, $sortorder);
 	}
+	if (!empty($arrayfields['total_pa']['checked'])) {
+		print_liste_field_titre($arrayfields['total_pa']['label'], $_SERVER['PHP_SELF'], '', '', $param, 'class="right"', $sortfield, $sortorder);
+	}
+	if (!empty($arrayfields['total_margin']['checked'])) {
+		print_liste_field_titre($arrayfields['total_margin']['label'], $_SERVER['PHP_SELF'], '', '', $param, 'class="right"', $sortfield, $sortorder);
+	}
+	if (!empty($arrayfields['total_margin_rate']['checked'])) {
+		print_liste_field_titre($arrayfields['total_margin_rate']['label'], $_SERVER['PHP_SELF'], '', '', $param, 'class="right"', $sortfield, $sortorder);
+	}
+	if (!empty($arrayfields['total_mark_rate']['checked'])) {
+		print_liste_field_titre($arrayfields['total_mark_rate']['label'], $_SERVER['PHP_SELF'], '', '', $param, 'class="right"', $sortfield, $sortorder);
+	}
 
 	$totalarray = array(
 		'nbfield' => 0,
@@ -1397,6 +1788,9 @@ if ($resql) {
 	if (!empty($arrayfields['c.facture']['checked'])) {
 		print_liste_field_titre($arrayfields['c.facture']['label'], $_SERVER["PHP_SELF"], 'c.facture', '', $param, '', $sortfield, $sortorder, 'center ');
 	}
+	if (!empty($arrayfields['c.import_key']['checked'])) {
+		print_liste_field_titre($arrayfields['c.import_key']['label'], $_SERVER["PHP_SELF"], "c.import_key", "", $param, '', $sortfield, $sortorder, 'center ');
+	}
 	if (!empty($arrayfields['c.fk_statut']['checked'])) {
 		print_liste_field_titre($arrayfields['c.fk_statut']['label'], $_SERVER["PHP_SELF"], "c.fk_statut", "", $param, '', $sortfield, $sortorder, 'center ');
 	}
@@ -1413,7 +1807,22 @@ if ($resql) {
 	$generic_product = new Product($db);
 	$userstatic = new User($db);
 	$i = 0;
-	while ($i < min($num, $limit)) {
+
+	$with_margin_info = false;
+	if (!empty($conf->margin->enabled) && (
+			!empty($arrayfields['total_pa']['checked'])
+			|| !empty($arrayfields['total_margin']['checked'])
+			|| !empty($arrayfields['total_margin_rate']['checked'])
+			|| !empty($arrayfields['total_mark_rate']['checked'])
+		)
+	) {
+		$with_margin_info = true;
+	}
+	$total_ht = 0;
+	$total_margin = 0;
+
+	$last_num = min($num, $limit);
+	while ($i < $last_num) {
 		$obj = $db->fetch_object($resql);
 
 		$notshippable = 0;
@@ -1455,17 +1864,20 @@ if ($resql) {
 		$projectstatic->ref = $obj->project_ref;
 		$projectstatic->title = $obj->project_label;
 
+		$marginInfo = array();
+		if ($with_margin_info === true) {
+			$generic_commande->fetch_lines();
+			$marginInfo = $formmargin->getMarginInfosArray($generic_commande);
+			$total_ht += $obj->total_ht;
+			$total_margin += $marginInfo['total_margin'];
+		}
+
 		print '<tr class="oddeven">';
 
 		// Ref
 		if (!empty($arrayfields['c.ref']['checked'])) {
 			print '<td class="nowraponall">';
 			print $generic_commande->getNomUrl(1, ($search_status != 2 ? 0 : $obj->fk_statut), 0, 0, 0, 1, 1);
-
-			// Warning late icon and note
-			if ($generic_commande->hasDelay()) {
-				print img_picto($langs->trans("Late").' : '.$generic_commande->showDelay(), "warning");
-			}
 
 			$filename = dol_sanitizeFileName($obj->ref);
 			$filedir = $conf->commande->multidir_output[$conf->entity].'/'.dol_sanitizeFileName($obj->ref);
@@ -1590,6 +2002,10 @@ if ($resql) {
 		if (!empty($arrayfields['c.date_commande']['checked'])) {
 			print '<td class="center">';
 			print dol_print_date($db->jdate($obj->date_commande), 'day');
+			// Warning late icon and note
+			if ($generic_commande->hasDelay()) {
+				print img_picto($langs->trans("Late").' : '.$generic_commande->showDelay(), "warning");
+			}
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1616,7 +2032,7 @@ if ($resql) {
 		// Payment terms
 		if (!empty($arrayfields['c.fk_cond_reglement']['checked'])) {
 			print '<td>';
-			$form->form_conditions_reglement($_SERVER['PHP_SELF'], $obj->fk_cond_reglement, 'none');
+			$form->form_conditions_reglement($_SERVER['PHP_SELF'], $obj->fk_cond_reglement, 'none', 0, '', 1, $obj->deposit_percent);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1792,6 +2208,49 @@ if ($resql) {
 			}
 		}
 
+		// Total buying or cost price
+		if (!empty($arrayfields['total_pa']['checked'])) {
+			print '<td class="right nowrap">'.price($marginInfo['pa_total']).'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Total margin
+		if (!empty($arrayfields['total_margin']['checked'])) {
+			print '<td class="right nowrap">'.price($marginInfo['total_margin']).'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+			if (!$i) {
+				$totalarray['pos'][$totalarray['nbfield']] = 'total_margin';
+			}
+			$totalarray['val']['total_margin'] += $marginInfo['total_margin'];
+		}
+		// Total margin rate
+		if (!empty($arrayfields['total_margin_rate']['checked'])) {
+			print '<td class="right nowrap">'.(($marginInfo['total_margin_rate'] == '') ? '' : price($marginInfo['total_margin_rate'], null, null, null, null, 2).'%').'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Total mark rate
+		if (!empty($arrayfields['total_mark_rate']['checked'])) {
+			print '<td class="right nowrap">'.(($marginInfo['total_mark_rate'] == '') ? '' : price($marginInfo['total_mark_rate'], null, null, null, null, 2).'%').'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+			if (!$i) {
+				$totalarray['pos'][$totalarray['nbfield']] = 'total_mark_rate';
+			}
+			if ($i >= $last_num - 1) {
+				if (!empty($total_ht)) {
+					$totalarray['val']['total_mark_rate'] = price2num($total_margin * 100 / $total_ht, 'MT');
+				} else {
+					$totalarray['val']['total_mark_rate'] = '';
+				}
+			}
+		}
+
 		// Extra fields
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 		// Fields from hook
@@ -1831,8 +2290,8 @@ if ($resql) {
 
 		// Note public
 		if (!empty($arrayfields['c.note_public']['checked'])) {
-			print '<td align="center" class="nowrap">';
-			print dol_escape_htmltag($obj->note_public);
+			print '<td class="center">';
+			print dol_string_nohtmltag($obj->note_public);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1841,8 +2300,8 @@ if ($resql) {
 
 		// Note private
 		if (!empty($arrayfields['c.note_private']['checked'])) {
-			print '<td align="center" class="nowrap">';
-			print dol_escape_htmltag($obj->note_private);
+			print '<td class="center">';
+			print dol_string_nohtmltag($obj->note_private);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1955,6 +2414,13 @@ if ($resql) {
 		// Billed
 		if (!empty($arrayfields['c.facture']['checked'])) {
 			print '<td class="center">'.yn($obj->billed).'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Import key
+		if (!empty($arrayfields['c.import_key']['checked'])) {
+			print '<td class="nowrap center">'.$obj->import_key.'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

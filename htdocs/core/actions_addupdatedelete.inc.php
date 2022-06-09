@@ -28,7 +28,13 @@
 // $permissiontodelete must be defined
 // $backurlforlist must be defined
 // $backtopage may be defined
+// $noback may be defined
 // $triggermodname may be defined
+
+$hidedetails = isset($hidedetails) ? $hidedetails : '';
+$hidedesc = isset($hidedesc) ? $hidedesc : '';
+$hideref = isset($hideref) ? $hideref : '';
+
 
 if (!empty($permissionedit) && empty($permissiontoadd)) {
 	$permissiontoadd = $permissionedit; // For backward compatibility
@@ -101,10 +107,10 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 
 		//var_dump($key.' '.$value.' '.$object->fields[$key]['type']);
 		$object->$key = $value;
-		if ($val['notnull'] > 0 && $object->$key == '' && !is_null($val['default']) && $val['default'] == '(PROV)') {
+		if (!empty($val['notnull']) && $val['notnull'] > 0 && $object->$key == '' && isset($val['default']) && $val['default'] == '(PROV)') {
 			$object->$key = '(PROV)';
 		}
-		if ($val['notnull'] > 0 && $object->$key == '' && is_null($val['default'])) {
+		if (!empty($val['notnull']) && $val['notnull'] > 0 && $object->$key == '' && !isset($val['default'])) {
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv($val['label'])), null, 'errors');
 		}
@@ -121,7 +127,7 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 
 	// Fill array 'array_options' with data from add form
 	if (!$error) {
-		$ret = $extrafields->setOptionalsFromPost(null, $object);
+		$ret = $extrafields->setOptionalsFromPost(null, $object, '', 1);
 		if ($ret < 0) {
 			$error++;
 		}
@@ -137,8 +143,11 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 			}
 			$urltogo = $backtopage ? str_replace('__ID__', $result, $backtopage) : $backurlforlist;
 			$urltogo = preg_replace('/--IDFORBACKTOPAGE--/', $object->id, $urltogo); // New method to autoselect project after a New on another form object creation
-			header("Location: ".$urltogo);
-			exit;
+
+			if (!empty($noback)) {
+				header("Location: " . $urltogo);
+				exit;
+			}
 		} else {
 			$error++;
 			// Creation KO
@@ -255,6 +264,12 @@ if ($action == 'update' && !empty($permissiontoadd)) {
 		$result = $object->update($user);
 		if ($result > 0) {
 			$action = 'view';
+			$urltogo = $backtopage ? str_replace('__ID__', $result, $backtopage) : $backurlforlist;
+			$urltogo = preg_replace('/--IDFORBACKTOPAGE--/', $object->id, $urltogo); // New method to autoselect project after a New on another form object creation
+			if ($urltogo) {
+				header("Location: " . $urltogo);
+				exit;
+			}
 		} else {
 			$error++;
 			// Creation KO
@@ -305,8 +320,10 @@ if ($action == 'confirm_delete' && !empty($permissiontodelete)) {
 		// Delete OK
 		setEventMessages("RecordDeleted", null, 'mesgs');
 
-		header("Location: ".$backurlforlist);
-		exit;
+		if (!empty($noback)) {
+			header("Location: " . $backurlforlist);
+			exit;
+		}
 	} else {
 		$error++;
 		if (!empty($object->errors)) {
@@ -349,8 +366,10 @@ if ($action == 'confirm_deleteline' && $confirm == 'yes' && !empty($permissionto
 
 		setEventMessages($langs->trans('RecordDeleted'), null, 'mesgs');
 
-		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
-		exit;
+		if (!empty($noback)) {
+			header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $object->id);
+			exit;
+		}
 	} else {
 		$error++;
 		setEventMessages($object->error, $object->errors, 'errors');
@@ -367,10 +386,10 @@ if ($action == 'confirm_validate' && $confirm == 'yes' && $permissiontoadd) {
 			if (method_exists($object, 'generateDocument')) {
 				$outputlangs = $langs;
 				$newlang = '';
-				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+				if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
-				if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
+				if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
 					$newlang = $object->thirdparty->default_lang;
 				}
 				if (!empty($newlang)) {
@@ -488,8 +507,10 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && !empty($permissiontoadd))
 				$newid = $result;
 			}
 
-			header("Location: ".$_SERVER['PHP_SELF'].'?id='.$newid); // Open record of new object
-			exit;
+			if (!empty($noback)) {
+				header("Location: " . $_SERVER['PHP_SELF'] . '?id=' . $newid); // Open record of new object
+				exit;
+			}
 		} else {
 			$error++;
 			setEventMessages($objectutil->error, $objectutil->errors, 'errors');

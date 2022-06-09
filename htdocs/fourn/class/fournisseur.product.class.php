@@ -414,7 +414,7 @@ class ProductFournisseur extends Product
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				// Call trigger
-				$result = $this->call_trigger('SUPPLIER_PRODUCT_BUYPRICE_UPDATE', $user);
+				$result = $this->call_trigger('SUPPLIER_PRODUCT_BUYPRICE_MODIFY', $user);
 				if ($result < 0) {
 					$error++;
 				}
@@ -973,6 +973,23 @@ class ProductFournisseur extends Product
 	}
 
 	/**
+	 * Function used to replace a product id with another one.
+	 *
+	 * @param DoliDB $db Database handler
+	 * @param int $origin_id Old product id
+	 * @param int $dest_id New product id
+	 * @return bool
+	 */
+	public static function replaceProduct(DoliDB $db, $origin_id, $dest_id)
+	{
+		$tables = array(
+			'product_fournisseur_price'
+		);
+
+		return CommonObject::commonReplaceProduct($db, $origin_id, $dest_id, $tables);
+	}
+
+	/**
 	 *    List supplier prices log of a supplier price
 	 *
 	 *    @param    int     $product_fourn_price_id Id of supplier price
@@ -1081,7 +1098,7 @@ class ProductFournisseur extends Product
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
 	{
-		global $db, $conf, $langs;
+		global $db, $conf, $langs, $hookmanager;
 
 		if (!empty($conf->dol_no_mouse_hover)) {
 			$notooltip = 1; // Force disable tooltips
@@ -1216,6 +1233,15 @@ class ProductFournisseur extends Product
 		$result .= $linkend;
 		//if ($withpicto != 2) $result.=(($addlabel && $this->label) ? $sep . dol_trunc($this->label, ($addlabel > 1 ? $addlabel : 0)) : '');
 
+		global $action;
+		$hookmanager->initHooks(array($this->element . 'dao'));
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
+		}
 		return $result;
 	}
 

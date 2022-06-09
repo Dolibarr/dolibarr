@@ -461,6 +461,13 @@ if (empty($reshook) && $action == 'add') {
 					}
 				}
 
+				// Modify $moreparam so we are sure to see the event we have just created, whatever are the default value of filter on next page.
+				/*$moreparam .= ($moreparam ? '&' : '').'search_actioncode=0';
+				 $moreparam .= ($moreparam ? '&' : '').'search_status=-1';
+				 $moreparam .= ($moreparam ? '&' : '').'search_filtert='.$object->userownerid;
+				 */
+				$moreparam .= ($moreparam ? '&' : '').'disabledefaultvalues=1';
+
 				if ($error) {
 					$db->rollback();
 				} else {
@@ -674,7 +681,7 @@ if (empty($reshook) && $action == 'update') {
 					$object->errors[] = $object->error;
 				} else {
 					if ($db->num_rows($resql) > 0) {
-						// already in use
+						// Resource already in use
 						$error++;
 						$object->error = $langs->trans('ErrorResourcesAlreadyInUse').' : ';
 						while ($obj = $db->fetch_object($resql)) {
@@ -853,7 +860,7 @@ if (empty($reshook) && GETPOST('actionmove', 'alpha') == 'mupdate') {
 					$object->errors[] = $object->error;
 				} else {
 					if ($db->num_rows($resql) > 0) {
-						// already in use
+						// Resource already in use
 						$error++;
 						$object->error = $langs->trans('ErrorResourcesAlreadyInUse').' : ';
 						while ($obj = $db->fetch_object($resql)) {
@@ -952,16 +959,17 @@ if ($action == 'create') {
 						console.log("setdatefields");
                         setdatefields();
                     });
+
                     $("#selectcomplete").change(function() {
-                        if ($("#selectcomplete").val() == 100)
-                        {
+						console.log("we change the complete status - set the doneby");
+                        if ($("#selectcomplete").val() == 100) {
                             if ($("#doneby").val() <= 0) $("#doneby").val(\''.((int) $user->id).'\');
                         }
-                        if ($("#selectcomplete").val() == 0)
-                        {
+                        if ($("#selectcomplete").val() == 0) {
                             $("#doneby").val(-1);
                         }
                     });
+
                     $("#actioncode").change(function() {
                         if ($("#actioncode").val() == \'AC_RDV\') $("#dateend").addClass("fieldrequired");
                         else $("#dateend").removeClass("fieldrequired");
@@ -1019,59 +1027,15 @@ if ($action == 'create') {
 	print '<tr><td'.(empty($conf->global->AGENDA_USE_EVENT_TYPE) ? ' class="fieldrequired titlefieldcreate"' : '').'>'.$langs->trans("Label").'</td><td><input type="text" id="label" name="label" class="soixantepercent" value="'.GETPOST('label').'"></td></tr>';
 
 	// Full day
-	print '<tr><td><label for="fullday">'.$langs->trans("EventOnFullDay").'</label></td><td><input type="checkbox" id="fullday" name="fullday" '.(GETPOST('fullday') ? ' checked' : '').'></td></tr>';
+	print '<tr><td><span class="fieldrequired">'.$langs->trans("Date").'</span></td><td class="valignmiddle height30 small"><input type="checkbox" id="fullday" name="fullday" '.(GETPOST('fullday') ? ' checked' : '').'><label for="fullday">'.$langs->trans("EventOnFullDay").'</label>';
 
-	$datep = ($datep ? $datep : (is_null($object->datep) ? '' : $object->datep));
-	if (GETPOST('datep', 'int', 1)) {
-		$datep = dol_stringtotime(GETPOST('datep', 'int', 1), 'tzuser');
-	}
-	$datef = ($datef ? $datef : $object->datef);
-	if (GETPOST('datef', 'int', 1)) {
-		$datef = dol_stringtotime(GETPOST('datef', 'int', 1), 'tzuser');
-	}
-	if (empty($datef) && !empty($datep)) {
-		if (GETPOST("actioncode", 'aZ09') == 'AC_RDV' || empty($conf->global->AGENDA_USE_EVENT_TYPE_DEFAULT)) {
-			$datef = dol_time_plus_duree($datep, (empty($conf->global->AGENDA_AUTOSET_END_DATE_WITH_DELTA_HOURS) ? 1 : $conf->global->AGENDA_AUTOSET_END_DATE_WITH_DELTA_HOURS), 'h');
-		}
-	}
-
-	// Date start
-	print '<tr><td class="nowrap">';
-	print '<span class="fieldrequired">'.$langs->trans("DateActionStart").'</span>';
-	print ' - ';
-	print '<span id="dateend"'.(GETPOST("actioncode", 'aZ09') == 'AC_RDV' ? ' class="fieldrequired"' : '').'>'.$langs->trans("DateActionEnd").'</span>';
-	print '</td><td>';
-	if (GETPOST("afaire") == 1) {
-		print $form->selectDate($datep, 'ap', 1, 1, 0, "action", 1, 2, 0, 'fulldaystart', '', '', '', 1, '', '', 'tzuserrel'); // Empty value not allowed for start date and hours if "todo"
-	} else {
-		print $form->selectDate($datep, 'ap', 1, 1, 1, "action", 1, 2, 0, 'fulldaystart', '', '', '', 1, '', '', 'tzuserrel');
-	}
-	print ' <span class="hideonsmartphone">&nbsp; &nbsp; - &nbsp; &nbsp;</span> ';
-	//print ' - ';
-	if (GETPOST("afaire") == 1) {
-		print $form->selectDate($datef, 'p2', 1, 1, 1, "action", 1, 0, 0, 'fulldayend', '', '', '', 1, '', '', 'tzuserrel');
-	} else {
-		print $form->selectDate($datef, 'p2', 1, 1, 1, "action", 1, 0, 0, 'fulldayend', '', '', '', 1, '', '', 'tzuserrel');
-	}
-	print '</td></tr>';
-
-	// Date end
-	/*print '<tr><td>';
-	print '<span id="dateend"'.(GETPOST("actioncode", 'aZ09') == 'AC_RDV' ? ' class="fieldrequired"' : '').'>'.$langs->trans("DateActionEnd").'</span>';
-	print '</td>';
-	print '<td>';
-	if (GETPOST("afaire") == 1) {
-		print $form->selectDate($datef, 'p2', 1, 1, 1, "action", 1, 2, 0, 'fulldayend');
-	} else {
-		print $form->selectDate($datef, 'p2', 1, 1, 1, "action", 1, 2, 0, 'fulldayend');
-	}
-	print '</td></tr>';*/
-
-	// Dev in progress
+	// Recurring event
 	$userepeatevent = ($conf->global->MAIN_FEATURES_LEVEL == 2 ? 1 : 0);
 	if ($userepeatevent) {
 		// Repeat
-		print '<tr><td></td><td colspan="3">';
+		//print '<tr><td></td><td colspan="3" class="opacitymedium">';
+		print ' &nbsp; &nbsp; &nbsp; &nbsp; <div class="opacitymedium inline-block">';
+		print img_picto($langs->trans("Recurrence"), 'recurring', 'class="paddingright2"');
 		print '<input type="hidden" name="recurid" value="'.$object->recurid.'">';
 		$selectedrecurrulefreq = 'no';
 		$selectedrecurrulebymonthday = '';
@@ -1120,34 +1084,51 @@ if ($action == 'create') {
 					});
 				});
 				</script>';
-		print '</td></tr>';
+		print '</div>';
+		//print '</td></tr>';
 	}
 
-	// Status
-	print '<tr><td>'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td>';
-	print '<td>';
-	$percent = $complete !=='' ? $complete : -1;
-	if (GETPOSTISSET('status')) {
-		$percent = GETPOST('status');
-	} elseif (GETPOSTISSET('percentage')) {
-		$percent = GETPOST('percentage', 'int');
-	} else {
-		if ($complete == '0' || GETPOST("afaire") == 1) {
-			$percent = '0';
-		} elseif ($complete == 100 || GETPOST("afaire") == 2) {
-			$percent = 100;
-		}
-	}
-	$formactions->form_select_status_action('formaction', $percent, 1, 'complete', 0, 0, 'maxwidth200');
 	print '</td></tr>';
 
-	// Location
-	if (empty($conf->global->AGENDA_DISABLE_LOCATION)) {
-		print '<tr><td>'.$langs->trans("Location").'</td><td><input type="text" name="location" class="minwidth300 maxwidth150onsmartphone" value="'.(GETPOST('location') ? GETPOST('location') : $object->location).'"></td></tr>';
+	$datep = ($datep ? $datep : (is_null($object->datep) ? '' : $object->datep));
+	if (GETPOST('datep', 'int', 1)) {
+		$datep = dol_stringtotime(GETPOST('datep', 'int', 1), 'tzuser');
+	}
+	$datef = ($datef ? $datef : $object->datef);
+	if (GETPOST('datef', 'int', 1)) {
+		$datef = dol_stringtotime(GETPOST('datef', 'int', 1), 'tzuser');
+	}
+	if (empty($datef) && !empty($datep)) {
+		if (GETPOST("actioncode", 'aZ09') == 'AC_RDV' || empty($conf->global->AGENDA_USE_EVENT_TYPE_DEFAULT)) {
+			$datef = dol_time_plus_duree($datep, (empty($conf->global->AGENDA_AUTOSET_END_DATE_WITH_DELTA_HOURS) ? 1 : $conf->global->AGENDA_AUTOSET_END_DATE_WITH_DELTA_HOURS), 'h');
+		}
 	}
 
+	// Date start
+	print '<tr><td class="nowrap">';
+	/*
+	print '<span class="fieldrequired">'.$langs->trans("DateActionStart").'</span>';
+	print ' - ';
+	print '<span id="dateend"'.(GETPOST("actioncode", 'aZ09') == 'AC_RDV' ? ' class="fieldrequired"' : '').'>'.$langs->trans("DateActionEnd").'</span>';
+	*/
+	print '</td><td>';
+	if (GETPOST("afaire") == 1) {
+		print $form->selectDate($datep, 'ap', 1, 1, 0, "action", 1, 2, 0, 'fulldaystart', '', '', '', 1, '', '', 'tzuserrel'); // Empty value not allowed for start date and hours if "todo"
+	} else {
+		print $form->selectDate($datep, 'ap', 1, 1, 1, "action", 1, 2, 0, 'fulldaystart', '', '', '', 1, '', '', 'tzuserrel');
+	}
+	print ' <span class="hideonsmartphone">&nbsp; &nbsp; - &nbsp; &nbsp;</span> ';
+	if (GETPOST("afaire") == 1) {
+		print $form->selectDate($datef, 'p2', 1, 1, 1, "action", 1, 0, 0, 'fulldayend', '', '', '', 1, '', '', 'tzuserrel');
+	} else {
+		print $form->selectDate($datef, 'p2', 1, 1, 1, "action", 1, 0, 0, 'fulldayend', '', '', '', 1, '', '', 'tzuserrel');
+	}
+	print '</td></tr>';
+
+	print '<tr><td class="">&nbsp;</td><td></td></tr>';
+
 	// Assigned to
-	print '<tr><td class="tdtop nowrap">'.$langs->trans("ActionAffectedTo").'</td><td>';
+	print '<tr><td class="tdtop nowrap"><span class="fieldrequired">'.$langs->trans("ActionAffectedTo").'</span></td><td>';
 	$listofuserid = array();
 	$listofcontactid = array();
 	$listofotherid = array();
@@ -1181,7 +1162,30 @@ if ($action == 'create') {
 		print '</td></tr>';
 	}
 
-	if ($conf->categorie->enabled) {
+	// Location
+	if (empty($conf->global->AGENDA_DISABLE_LOCATION)) {
+		print '<tr><td>'.$langs->trans("Location").'</td><td><input type="text" name="location" class="minwidth300 maxwidth150onsmartphone" value="'.(GETPOST('location') ? GETPOST('location') : $object->location).'"></td></tr>';
+	}
+
+	// Status
+	print '<tr><td>'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td>';
+	print '<td>';
+	$percent = $complete !=='' ? $complete : -1;
+	if (GETPOSTISSET('status')) {
+		$percent = GETPOST('status');
+	} elseif (GETPOSTISSET('percentage')) {
+		$percent = GETPOST('percentage', 'int');
+	} else {
+		if ($complete == '0' || GETPOST("afaire") == 1) {
+			$percent = '0';
+		} elseif ($complete == 100 || GETPOST("afaire") == 2) {
+			$percent = 100;
+		}
+	}
+	$formactions->form_select_status_action('formaction', $percent, 1, 'complete', 0, 0, 'maxwidth200');
+	print '</td></tr>';
+
+	if (!empty($conf->categorie->enabled)) {
 		// Categories
 		print '<tr><td>'.$langs->trans("Categories").'</td><td>';
 		$cate_arbo = $form->select_all_categories(Categorie::TYPE_ACTIONCOMM, '', 'parent', 64, 0, 1);
@@ -1197,7 +1201,7 @@ if ($action == 'create') {
 
 	print '<table class="border centpercent">';
 
-	if ($conf->societe->enabled) {
+	if (!empty($conf->societe->enabled)) {
 		// Related company
 		print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("ActionOnCompany").'</td><td>';
 		if (GETPOST('socid', 'int') > 0) {
@@ -1523,6 +1527,7 @@ if ($id > 0) {
 		if (!empty($conf->global->AGENDA_USE_EVENT_TYPE)) {
 			print '<tr><td class="fieldrequired">'.$langs->trans("Type").'</td><td colspan="3">';
 			if ($object->type_code != 'AC_OTH_AUTO') {
+				print img_picto($langs->trans("ActionType"), 'square', 'class="fawidth30 inline-block" style="color: #ddd;"');
 				print $formactions->select_type_actions(GETPOST("actioncode", 'aZ09') ? GETPOST("actioncode", 'aZ09') : $object->type_code, "actioncode", "systemauto", 0, 0, 0, 1);
 			} else {
 				print '<input type="hidden" name="actioncode" value="'.$object->type_code.'">';
@@ -1533,40 +1538,19 @@ if ($id > 0) {
 		}
 
 		// Title
-		print '<tr><td class="fieldrequired">'.$langs->trans("Title").'</td><td colspan="3"><input type="text" name="label" class="soixantepercent" value="'.$object->label.'"></td></tr>';
+		print '<tr><td'.(empty($conf->global->AGENDA_USE_EVENT_TYPE) ? ' class="fieldrequired titlefieldcreate"' : '').'>'.$langs->trans("Title").'</td><td colspan="3"><input type="text" name="label" class="soixantepercent" value="'.$object->label.'"></td></tr>';
 
 		// Full day event
-		print '<tr><td>'.$langs->trans("EventOnFullDay").'</td><td colspan="3"><input type="checkbox" id="fullday" name="fullday" '.($object->fulldayevent ? ' checked' : '').'></td></tr>';
+		print '<tr><td><span class="fieldrequired">'.$langs->trans("Date").'</span></td><td colspan="3" class="valignmiddle height30 small"><input type="checkbox" id="fullday" name="fullday" '.($object->fulldayevent ? ' checked' : '').'>';
+		print '<label for="fullday">'.$langs->trans("EventOnFullDay").'</label>';
 
-		// Date start - end
-		print '<tr><td class="nowrap">';
-		print '<span class="fieldrequired">'.$langs->trans("DateActionStart").'</span>';
-		print ' - ';
-		print '<span id="dateend"'.($object->type_code == 'AC_RDV' ? ' class="fieldrequired"' : '').'>'.$langs->trans("DateActionEnd").'</span>';
-		print '</td><td td colspan="3">';
-		$tzforfullday = getDolGlobalString('MAIN_STORE_FULL_EVENT_IN_GMT');
-		if (GETPOST("afaire") == 1) {
-			print $form->selectDate($datep ? $datep : $object->datep, 'ap', 1, 1, 0, "action", 1, 1, 0, 'fulldaystart', '', '', '', 1, '', '', $object->fulldayevent ? ($tzforfullday ? $tzforfullday : 'tzuserrel') : 'tzuserrel');
-		} elseif (GETPOST("afaire") == 2) {
-			print $form->selectDate($datep ? $datep : $object->datep, 'ap', 1, 1, 1, "action", 1, 1, 0, 'fulldaystart', '', '', '', 1, '', '', $object->fulldayevent ? ($tzforfullday ? $tzforfullday : 'tzuserrel') : 'tzuserrel');
-		} else {
-			print $form->selectDate($datep ? $datep : $object->datep, 'ap', 1, 1, 1, "action", 1, 1, 0, 'fulldaystart', '', '', '', 1, '', '', $object->fulldayevent ? ($tzforfullday ? $tzforfullday : 'tzuserrel') : 'tzuserrel');
-		}
-		print ' - ';
-		if (GETPOST("afaire") == 1) {
-			print $form->selectDate($datef ? $datef : $object->datef, 'p2', 1, 1, 1, "action", 1, 1, 0, 'fulldayend', '', '', '', 1, '', '', $object->fulldayevent ? ($tzforfullday ? $tzforfullday : 'tzuserrel') : 'tzuserrel');
-		} elseif (GETPOST("afaire") == 2) {
-			print $form->selectDate($datef ? $datef : $object->datef, 'p2', 1, 1, 1, "action", 1, 1, 0, 'fulldayend', '', '', '', 1, '', '', $object->fulldayevent ? ($tzforfullday ? $tzforfullday : 'tzuserrel') : 'tzuserrel');
-		} else {
-			print $form->selectDate($datef ? $datef : $object->datef, 'p2', 1, 1, 1, "action", 1, 1, 0, 'fulldayend', '', '', '', 1, '', '', $object->fulldayevent ? ($tzforfullday ? $tzforfullday : 'tzuserrel') : 'tzuserrel');
-		}
-		print '</td></tr>';
-
-		// Dev in progress
+		// Recurring event
 		$userepeatevent = ($conf->global->MAIN_FEATURES_LEVEL == 2 ? 1 : 0);
 		if ($userepeatevent) {
 			// Repeat
-			print '<tr><td></td><td colspan="3">';
+			//print '<tr><td></td><td colspan="3">';
+			print ' &nbsp; &nbsp; &nbsp; &nbsp; <div class="opacitymedium inline-block">';
+			print img_picto($langs->trans("Recurrence"), 'recurring', 'class="paddingright2"');
 			print '<input type="hidden" name="recurid" value="'.$object->recurid.'">';
 			$selectedrecurrulefreq = 'no';
 			$selectedrecurrulebymonthday = '';
@@ -1615,19 +1599,37 @@ if ($id > 0) {
 					});
 				});
 				</script>';
-			print '</td></tr>';
+			print '</div>';
+			//print '</td></tr>';
 		}
-
-		// Status
-		print '<tr><td class="nowrap">'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td colspan="3">';
-		$percent = GETPOSTISSET("percentage") ? GETPOST("percentage", "int") : $object->percentage;
-		$formactions->form_select_status_action('formaction', $percent, 1, 'complete', 0, 0, 'maxwidth200');
 		print '</td></tr>';
 
-		// Location
-		if (empty($conf->global->AGENDA_DISABLE_LOCATION)) {
-			print '<tr><td>'.$langs->trans("Location").'</td><td colspan="3"><input type="text" name="location" class="width500" value="'.$object->location.'"></td></tr>';
+		// Date start - end
+		print '<tr><td class="nowrap">';
+		/*print '<span class="fieldrequired">'.$langs->trans("DateActionStart").'</span>';
+		print ' - ';
+		print '<span id="dateend"'.($object->type_code == 'AC_RDV' ? ' class="fieldrequired"' : '').'>'.$langs->trans("DateActionEnd").'</span>';
+		*/
+		print '</td><td td colspan="3">';
+		$tzforfullday = getDolGlobalString('MAIN_STORE_FULL_EVENT_IN_GMT');
+		if (GETPOST("afaire") == 1) {
+			print $form->selectDate($datep ? $datep : $object->datep, 'ap', 1, 1, 0, "action", 1, 1, 0, 'fulldaystart', '', '', '', 1, '', '', $object->fulldayevent ? ($tzforfullday ? $tzforfullday : 'tzuserrel') : 'tzuserrel');
+		} elseif (GETPOST("afaire") == 2) {
+			print $form->selectDate($datep ? $datep : $object->datep, 'ap', 1, 1, 1, "action", 1, 1, 0, 'fulldaystart', '', '', '', 1, '', '', $object->fulldayevent ? ($tzforfullday ? $tzforfullday : 'tzuserrel') : 'tzuserrel');
+		} else {
+			print $form->selectDate($datep ? $datep : $object->datep, 'ap', 1, 1, 1, "action", 1, 1, 0, 'fulldaystart', '', '', '', 1, '', '', $object->fulldayevent ? ($tzforfullday ? $tzforfullday : 'tzuserrel') : 'tzuserrel');
 		}
+		print ' <span class="hideonsmartphone">&nbsp; &nbsp; - &nbsp; &nbsp;</span> ';
+		if (GETPOST("afaire") == 1) {
+			print $form->selectDate($datef ? $datef : $object->datef, 'p2', 1, 1, 1, "action", 1, 0, 0, 'fulldayend', '', '', '', 1, '', '', $object->fulldayevent ? ($tzforfullday ? $tzforfullday : 'tzuserrel') : 'tzuserrel');
+		} elseif (GETPOST("afaire") == 2) {
+			print $form->selectDate($datef ? $datef : $object->datef, 'p2', 1, 1, 1, "action", 1, 0, 0, 'fulldayend', '', '', '', 1, '', '', $object->fulldayevent ? ($tzforfullday ? $tzforfullday : 'tzuserrel') : 'tzuserrel');
+		} else {
+			print $form->selectDate($datef ? $datef : $object->datef, 'p2', 1, 1, 1, "action", 1, 0, 0, 'fulldayend', '', '', '', 1, '', '', $object->fulldayevent ? ($tzforfullday ? $tzforfullday : 'tzuserrel') : 'tzuserrel');
+		}
+		print '</td></tr>';
+
+		print '<tr><td class="">&nbsp;</td><td></td></tr>';
 
 		// Assigned to
 		$listofuserid = array(); // User assigned
@@ -1678,8 +1680,20 @@ if ($id > 0) {
 			print $form->select_dolusers($object->userdoneid > 0 ? $object->userdoneid : -1, 'doneby', 1);
 			print '</td></tr>';
 		}
+
+		// Location
+		if (empty($conf->global->AGENDA_DISABLE_LOCATION)) {
+			print '<tr><td>'.$langs->trans("Location").'</td><td colspan="3"><input type="text" name="location" class="width500" value="'.$object->location.'"></td></tr>';
+		}
+
+		// Status
+		print '<tr><td class="nowrap">'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td colspan="3">';
+		$percent = GETPOSTISSET("percentage") ? GETPOST("percentage", "int") : $object->percentage;
+		$formactions->form_select_status_action('formaction', $percent, 1, 'complete', 0, 0, 'maxwidth200');
+		print '</td></tr>';
+
 		// Tags-Categories
-		if ($conf->categorie->enabled) {
+		if (!empty($conf->categorie->enabled)) {
 			print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
 			$cate_arbo = $form->select_all_categories(Categorie::TYPE_ACTIONCOMM, '', 'parent', 64, 0, 1);
 			$c = new Categorie($db);
@@ -1700,7 +1714,7 @@ if ($id > 0) {
 
 		print '<table class="border tableforfield centpercent">';
 
-		if ($conf->societe->enabled) {
+		if (!empty($conf->societe->enabled)) {
 			// Related company
 			print '<tr><td class="titlefieldcreate">'.$langs->trans("ActionOnCompany").'</td>';
 			print '<td>';
@@ -1786,7 +1800,7 @@ if ($id > 0) {
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 		// Editeur wysiwyg
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-		$doleditor = new DolEditor('note', $object->note_private, '', 200, 'dolibarr_notes', 'In', true, true, $conf->fckeditor->enabled, ROWS_5, '90%');
+		$doleditor = new DolEditor('note', $object->note_private, '', 120, 'dolibarr_notes', 'In', true, true, $conf->fckeditor->enabled, ROWS_4, '90%');
 		$doleditor->Create();
 		print '</td></tr>';
 
@@ -1898,7 +1912,7 @@ if ($id > 0) {
 		$linkback = '';
 		// Link to other agenda views
 		$linkback .= '<a href="'.DOL_URL_ROOT.'/comm/action/list.php?mode=show_list&restore_lastsearch_values=1">';
-		$linkback .= img_picto($langs->trans("BackToList"), 'object_list', 'class="pictoactionview pictofixedwidth"');
+		$linkback .= img_picto($langs->trans("BackToList"), 'object_calendarlist', 'class="pictoactionview pictofixedwidth"');
 		$linkback .= '<span class="hideonsmartphone">'.$langs->trans("BackToList").'</span>';
 		$linkback .= '</a>';
 		$linkback .= '</li>';
@@ -2085,7 +2099,7 @@ if ($id > 0) {
 		}
 
 		// Categories
-		if ($conf->categorie->enabled) {
+		if (!empty($conf->categorie->enabled)) {
 			print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
 			print $form->showCategories($object->id, Categorie::TYPE_ACTIONCOMM, 1);
 			print "</td></tr>";
@@ -2100,7 +2114,7 @@ if ($id > 0) {
 		print '<div class="underbanner clearboth"></div>';
 		print '<table class="border tableforfield centpercent">';
 
-		if ($conf->societe->enabled) {
+		if (!empty($conf->societe->enabled)) {
 			// Related company
 			print '<tr><td class="titlefield">'.$langs->trans("ActionOnCompany").'</td><td>'.($object->thirdparty->id ? $object->thirdparty->getNomUrl(1) : ('<span class="opacitymedium">'.$langs->trans("None").'</span>'));
 			if (is_object($object->thirdparty) && $object->thirdparty->id > 0 && $object->type_code == 'AC_TEL') {
