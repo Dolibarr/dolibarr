@@ -78,7 +78,7 @@ class UserTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return void
 	 */
-	public static function setUpBeforeClass() 
+	public static function setUpBeforeClass()
 	{
 		global $conf,$user,$langs,$db;
 
@@ -125,7 +125,7 @@ class UserTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	protected function tearDown() 
+	protected function tearDown()
 	{
 		print __METHOD__."\n";
 	}
