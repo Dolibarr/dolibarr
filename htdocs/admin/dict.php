@@ -585,6 +585,10 @@ complete_dictionary_with_modules($taborder, $tabname, $tablib, $tabsql, $tabsqls
 $i = 0;
 foreach ($tabcomplete as $key => $value) {
 	$i++;
+	// When a dictionnary is commented
+	if (!isset($tabcond[$i])) {
+		continue;
+	}
 	$tabcomplete[$key]['id'] = $i;
 	$tabcomplete[$key]['cond'] = $tabcond[$i];
 	$tabcomplete[$key]['rowid'] = $tabrowid[$i];
@@ -607,7 +611,7 @@ if (empty($sortfield)) {
 	$tmp1 = explode(',', empty($tabcomplete[$keytable]['sqlsort']) ? '' : $tabcomplete[$keytable]['sqlsort']);
 	$tmp2 = explode(' ', $tmp1[0]);
 	$sortfield = preg_replace('/^.*\./', '', $tmp2[0]);
-	$sortorder = $tmp2[1];
+	$sortorder = (!empty($tmp2[1]) ? $tmp2[1] : '');
 	//var_dump($sortfield);var_dump($sortorder);
 }
 
@@ -842,12 +846,15 @@ if (empty($reshook)) {
 			$_POST["code"] = preg_replace('/[^a-zA-Z0-9\-\+]/', '', GETPOST("code"));
 		}
 
+		$tablename = $tabname[$id];
+		$tablename = preg_replace('/^'.preg_quote(MAIN_DB_PREFIX, '/').'/', '', $tablename);
+
 		// If check ok and action add, add the line
 		if ($ok && GETPOST('actionadd')) {
 			if ($tabrowid[$id]) {
 				// Get free id for insert
 				$newid = 0;
-				$sql = "SELECT MAX(".$tabrowid[$id].") as newid FROM ".MAIN_DB_PREFIX.$tabname[$id];
+				$sql = "SELECT MAX(".$tabrowid[$id].") as newid FROM ".MAIN_DB_PREFIX.$tablename;
 				$result = $db->query($sql);
 				if ($result) {
 					$obj = $db->fetch_object($result);
@@ -858,7 +865,7 @@ if (empty($reshook)) {
 			}
 
 			// Add new entry
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX.$tabname[$id]." (";
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX.$tablename." (";
 			// List of fields
 			if ($tabrowid[$id] && !in_array($tabrowid[$id], $listfieldinsert)) {
 				$sql .= $tabrowid[$id].",";
@@ -883,7 +890,7 @@ if (empty($reshook)) {
 				} elseif ($value == 'taux' || $value == 'localtax1') {
 					$_POST[$keycode] = price2num(GETPOST($keycode), 8);	// Note that localtax2 can be a list of rates separated by coma like X:Y:Z
 				} elseif ($value == 'entity') {
-					$_POST[$keycode] = getEntity($tabname[$id]);
+					$_POST[$keycode] = getEntity($tablename);
 				}
 
 				if ($i) {
@@ -934,7 +941,7 @@ if (empty($reshook)) {
 			}
 
 			// Modify entry
-			$sql = "UPDATE ".MAIN_DB_PREFIX.$tabname[$id]." SET ";
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$tablename." SET ";
 			// Modifie valeur des champs
 			if ($tabrowid[$id] && !in_array($tabrowid[$id], $listfieldmodify)) {
 				$sql .= $tabrowid[$id]."=";
@@ -952,7 +959,7 @@ if (empty($reshook)) {
 				} elseif ($field == 'taux' || $field == 'localtax1') {
 					$_POST[$keycode] = price2num(GETPOST($keycode), 8);	// Note that localtax2 can be a list of rates separated by coma like X:Y:Z
 				} elseif ($field == 'entity') {
-					$_POST[$keycode] = getEntity($tabname[$id]);
+					$_POST[$keycode] = getEntity($tablename);
 				}
 
 				if ($i) {
@@ -979,7 +986,7 @@ if (empty($reshook)) {
 				$sql .= " WHERE ".$rowidcol." = ".((int) $rowid);
 			}
 			if (in_array('entity', $listfieldmodify)) {
-				$sql .= " AND entity = ".((int) getEntity($tabname[$id], 0));
+				$sql .= " AND entity = ".((int) getEntity($tablename, 0));
 			}
 
 			dol_syslog("actionmodify", LOG_DEBUG);
@@ -998,7 +1005,10 @@ if (empty($reshook)) {
 			$rowidcol = "rowid";
 		}
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX.$tabname[$id]." WHERE ".$rowidcol." = '".$db->escape($rowid)."'".($entity != '' ? " AND entity = ".(int) $entity : '');
+		$tablename = $tabname[$id];
+		$tablename = preg_replace('/^'.preg_quote(MAIN_DB_PREFIX, '/').'/', '', $tablename);
+
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX.$tablename." WHERE ".$rowidcol." = '".$db->escape($rowid)."'".($entity != '' ? " AND entity = ".(int) $entity : '');
 
 		dol_syslog("delete", LOG_DEBUG);
 		$result = $db->query($sql);
@@ -1486,11 +1496,13 @@ if ($id > 0) {
 			}
 
 			if ($valuetoshow != '') {
+				$tooltiphelp = (isset($tabcomplete[$tabname[$id]]['help'][$value]) ? $tabcomplete[$tabname[$id]]['help'][$value] : '');
+
 				$tdsoffields .= '<th'.($class ? ' class="'.$class.'"' : '').'>';
-				if (!empty($tabhelp[$id][$value]) && preg_match('/^http(s*):/i', $tabhelp[$id][$value])) {
-					$tdsoffields .= '<a href="'.$tabhelp[$id][$value].'" target="_blank">'.$valuetoshow.' '.img_help(1, $valuetoshow).'</a>';
-				} elseif (!empty($tabhelp[$id][$value])) {
-					$tdsoffields .= $form->textwithpicto($valuetoshow, $tabhelp[$id][$value]);
+				if ($tooltiphelp && preg_match('/^http(s*):/i', $tooltiphelp)) {
+					$tdsoffields .= '<a href="'.$tooltiphelp.'" target="_blank">'.$valuetoshow.' '.img_help(1, $valuetoshow).'</a>';
+				} elseif ($tooltiphelp) {
+					$tdsoffields .= $form->textwithpicto($valuetoshow, $tooltiphelp);
 				} else {
 					$tdsoffields .= $valuetoshow;
 				}
@@ -1639,8 +1651,8 @@ if ($id > 0) {
 				continue;
 			}
 
-			if (in_array($value, array('label', 'libelle', 'libelle_facture')) && empty($tabhelp[$id][$value])) {
-				$tabhelp[$id][$value] = $langs->trans('LabelUsedByDefault');
+			if (in_array($value, array('label', 'libelle', 'libelle_facture')) && empty($tabcomplete[$tabname[$id]]['help'][$value])) {
+				$tabcomplete[$tabname[$id]]['help'][$value] = $langs->trans('LabelUsedByDefault');
 			}
 
 			// Determines the name of the field in relation to the possible names
@@ -1846,10 +1858,12 @@ if ($id > 0) {
 
 			// Show field title
 			if ($showfield) {
-				if (!empty($tabhelp[$id][$value]) && preg_match('/^http(s*):/i', $tabhelp[$id][$value])) {
-					$newvaluetoshow = '<a href="'.$tabhelp[$id][$value].'" target="_blank">'.$valuetoshow.' '.img_help(1, $valuetoshow).'</a>';
-				} elseif (!empty($tabhelp[$id][$value])) {
-					$newvaluetoshow = $form->textwithpicto($valuetoshow, $tabhelp[$id][$value]);
+				$tooltiphelp = (isset($tabcomplete[$tabname[$id]]['help'][$value]) ? $tabcomplete[$tabname[$id]]['help'][$value] : '');
+
+				if ($tooltiphelp && preg_match('/^http(s*):/i', $tooltiphelp)) {
+					$newvaluetoshow = '<a href="'.$tooltiphelp.'" target="_blank">'.$valuetoshow.' '.img_help(1, $valuetoshow).'</a>';
+				} elseif ($tooltiphelp) {
+					$newvaluetoshow = $form->textwithpicto($valuetoshow, $tooltiphelp);
 				} else {
 					$newvaluetoshow = $valuetoshow;
 				}

@@ -99,6 +99,8 @@ TicketNewEmailBodyHelp=Teksten som er angitt her, vil bli satt inn i epostbekref
 TicketParamPublicInterface=Oppsett av offentlig grensesnitt
 TicketsEmailMustExist=Krever en eksisterende epostadresse for å opprette en supportseddel
 TicketsEmailMustExistHelp=I det offentlige grensesnittet må epostadressen allerede finnes i databasen for å kunne opprette en ny supportseddel.
+TicketCreateThirdPartyWithContactIfNotExist=Spør navn og firmanavn for ukjente e-poster.
+TicketCreateThirdPartyWithContactIfNotExistHelp=Check if a thirdparty or a contact exists for the email entered. If not, ask a name and a company name to create a third party with contact.
 PublicInterface=Offentlig grensesnitt
 TicketUrlPublicInterfaceLabelAdmin=Alternativ nettadresse for offentlig grensesnitt
 TicketUrlPublicInterfaceHelpAdmin=Det er mulig å definere et alias til webserveren og dermed gjøre tilgjengelig det offentlige grensesnittet med en annen nettadresse (serveren må fungere som en proxy på denne nye nettadressen)
@@ -261,7 +263,7 @@ ErrorTicketRefRequired=Billettreferansenavn kreves
 TicketsDelayForFirstResponseTooLong=Too much time elapsed since ticket opening without any answer.
 TicketsDelayFromLastResponseTooLong=Too much time elapsed since last answer on this ticket.
 TicketNoContractFoundToLink=No contract was found to be automatically linked to this ticket. Please link a contract manually.
-TicketManyContractsLinked=Many contracts have been automatically linked to this ticket. Make sure to verify which should be chosen.
+TicketManyContractsLinked=Mange kontrakter er automatisk knyttet til denne billetten. Sørg for å bekrefte hvilken som skal velges.
 
 #
 # Logs

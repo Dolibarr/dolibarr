@@ -135,8 +135,13 @@ class Proposals extends DolibarrApi
 		}
 
 		// Add external contacts ids.
-		$this->propal->contacts_ids = $this->propal->liste_contact(-1, 'external', $contact_list);
+		$tmparray = $this->propal->liste_contact(-1, 'external', $contact_list);
+		if (is_array($tmparray)) {
+			$this->propal->contacts_ids = $tmparray;
+		}
+
 		$this->propal->fetchObjectLinked();
+
 		return $this->_cleanObjectDatas($this->propal);
 	}
 
@@ -228,7 +233,10 @@ class Proposals extends DolibarrApi
 				$proposal_static = new Propal($this->db);
 				if ($proposal_static->fetch($obj->rowid)) {
 					// Add external contacts ids
-					$proposal_static->contacts_ids = $proposal_static->liste_contact(-1, 'external', 1);
+					$tmparray = $proposal_static->liste_contact(-1, 'external', 1);
+					if (is_array($tmparray)) {
+						$proposal_static->contacts_ids = $tmparray;
+					}
 					$obj_ret[] = $this->_cleanObjectDatas($proposal_static);
 				}
 				$i++;
@@ -343,8 +351,8 @@ class Proposals extends DolibarrApi
 
 		$request_data = (object) $request_data;
 
-		$request_data->desc = checkVal($request_data->desc, 'restricthtml');
-		$request_data->label = checkVal($request_data->label);
+		$request_data->desc = sanitizeVal($request_data->desc, 'restricthtml');
+		$request_data->label = sanitizeVal($request_data->label);
 
 		$updateRes = $this->propal->addline(
 			$request_data->desc,
@@ -488,8 +496,8 @@ class Proposals extends DolibarrApi
 
 		$request_data = (object) $request_data;
 
-		$request_data->desc = checkVal($request_data->desc, 'restricthtml');
-		$request_data->label = checkVal($request_data->label);
+		$request_data->desc = sanitizeVal($request_data->desc, 'restricthtml');
+		$request_data->label = sanitizeVal($request_data->label);
 
 		$propalline = new PropaleLigne($this->db);
 		$result = $propalline->fetch($lineid);

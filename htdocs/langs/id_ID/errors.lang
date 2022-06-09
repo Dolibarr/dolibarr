@@ -283,6 +283,10 @@ ErrorAttributeIsUsedIntoProduct=This attribute is used in one or more product va
 ErrorAttributeValueIsUsedIntoProduct=This attribute value is used in one or more product variants
 ErrorPaymentInBothCurrency=Error, all amounts must be entered in the same column
 ErrorYouTryToPayInvoicesInACurrencyFromBankWithAnotherCurrency=You try to pay invoices in the currency %s from an account with the currency %s
+ErrorInvoiceLoadThirdParty=Can't load third-party object for invoice "%s"
+ErrorInvoiceLoadThirdPartyKey=Third-party key "%s" no set for invoice "%s"
+ErrorDeleteLineNotAllowedByObjectStatus=Delete line is not allowed by actual object status
+ErrorAjaxRequestFailed=Request failed
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Parameter PHP Anda upload_max_filesize (%s) lebih tinggi dari parameter PHP post_max_size (%s). Ini bukan pengaturan yang konsisten.
@@ -318,6 +322,11 @@ WarningAvailableOnlyForHTTPSServers=Hanya tersedia jika menggunakan koneksi aman
 WarningModuleXDisabledSoYouMayMissEventHere=Modul %s belum diaktifkan. Jadi Anda mungkin melewatkan banyak acara di sini.
 WarningPaypalPaymentNotCompatibleWithStrict=Nilai 'Strict' membuat fitur pembayaran online tidak berfungsi dengan baik. Gunakan 'Lax' sebagai gantinya.
 
+<<<<<<< KEPALA
+=======
+<<<<<<< KEPALA
+<<<<<<< KEPALA
+>>>>>>> branch '15.0' of git@github.com:Dolibarr/dolibarr.git
 # Validate
 RequireValidValue = Nilai tidak valid
 RequireAtLeastXString = Memerlukan setidaknya %s karakter
@@ -338,3 +347,12 @@ BadSetupOfField = Salah pengaturan bidang yang buruk
 BadSetupOfFieldClassNotFoundForValidation = Salah pengaturan bidang yang buruk: Kelas tidak ditemukan untuk validasi
 BadSetupOfFieldFileNotFound = Salah pengaturan bidang yang buruk: File tidak ditemukan untuk dimasukkan
 BadSetupOfFieldFetchNotCallable = Salah pengaturan bidang yang buruk: Ambil tidak dapat dipanggil di kelas
+<<<<<<< KEPALA
+=======
+=======
+=======
+>>>>>>> branch '15.0' of git@github.com:Dolibarr/dolibarr.git
+>>>>>>> branch '15.0' of git@github.com:Dolibarr/dolibarr.git
+=======
+>>>>>>> branch '15.0' of git@github.com:Dolibarr/dolibarr.git
+>>>>>>> branch '15.0' of git@github.com:Dolibarr/dolibarr.git

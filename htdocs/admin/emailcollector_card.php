@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2018 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2022 Charlene Benke	   <charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -359,47 +360,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$linkback = '<a href="'.DOL_URL_ROOT.'/admin/emailcollector_list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
 	$morehtmlref = '<div class="refidno">';
-	/*
-		// Ref bis
-		$morehtmlref.=$form->editfieldkey("RefBis", 'ref_client', $object->ref_client, $object, $user->rights->emailcollector->creer, 'string', '', 0, 1);
-		$morehtmlref.=$form->editfieldval("RefBis", 'ref_client', $object->ref_client, $object, $user->rights->emailcollector->creer, 'string', '', null, null, '', 1);
-		// Thirdparty
-		$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $soc->getNomUrl(1);
-		// Project
-		if (! empty($conf->projet->enabled))
-		{
-			$langs->load("projects");
-			$morehtmlref.='<br>'.$langs->trans('Project') . ' ';
-			if ($user->rights->emailcollector->creer)
-			{
-				if ($action != 'classify')
-				{
-					$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
-					if ($action == 'classify') {
-						//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
-						$morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
-						$morehtmlref.='<input type="hidden" name="action" value="classin">';
-						$morehtmlref.='<input type="hidden" name="token" value="'.newToken().'">';
-						$morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
-						$morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
-						$morehtmlref.='</form>';
-					} else {
-						$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
-					}
-				}
-			} else {
-				if (! empty($object->fk_project)) {
-					$proj = new Project($db);
-					$proj->fetch($object->fk_project);
-					$morehtmlref.='<a href="'.DOL_URL_ROOT.'/projet/card.php?id=' . $object->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
-					$morehtmlref.=$proj->ref;
-					$morehtmlref.='</a>';
-				} else {
-					$morehtmlref.='';
-				}
-			}
-		}
-	*/
 	$morehtmlref .= '</div>';
 
 	$morehtml = $langs->trans("NbOfEmailsInInbox").' : ';
@@ -561,7 +521,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$rulefilterobj->fetch($rulefilter['id']);
 
 		print '<tr class="oddeven">';
-		print '<td>';
+		print '<td title="'.dol_escape_htmltag($langs->trans("Filter").': '.$rulefilter['type']).'">';
 		print $langs->trans($arrayoftypes[$rulefilter['type']]['label']);
 		print '</td>';
 		print '<td>'.$rulefilter['rulevalue'].'</td>';
@@ -583,24 +543,22 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<tr class="liste_titre nodrag nodrop">';
 	print '<td>'.img_picto('', 'technic', 'class="pictofixedwidth"').$form->textwithpicto($langs->trans("EmailcollectorOperations"), $langs->trans("EmailcollectorOperationsDesc")).'</td><td></td><td></td><td></td>';
 	print '</tr>';
-	// Add operation
-	print '<tr class="oddeven nodrag nodrop">';
-	print '<td>';
+
 	$arrayoftypes = array(
 		'loadthirdparty'=>$langs->trans('LoadThirdPartyFromName', $langs->transnoentities("ThirdPartyName")),
 		'loadandcreatethirdparty'=>$langs->trans('LoadThirdPartyFromNameOrCreate', $langs->transnoentities("ThirdPartyName")),
 		'recordjoinpiece'=>'AttachJoinedDocumentsToObject',
 		'recordevent'=>'RecordEvent');
 	$arrayoftypesnocondition = $arrayoftypes;
-	if ($conf->projet->enabled) {
+	if (!empty($conf->projet->enabled)) {
 		$arrayoftypes['project'] = 'CreateLeadAndThirdParty';
 	}
 	$arrayoftypesnocondition['project'] = 'CreateLeadAndThirdParty';
-	if ($conf->ticket->enabled) {
+	if (!empty($conf->ticket->enabled)) {
 		$arrayoftypes['ticket'] = 'CreateTicketAndThirdParty';
 	}
 	$arrayoftypesnocondition['ticket'] = 'CreateTicketAndThirdParty';
-	if ($conf->recruitment->enabled) {
+	if (!empty($conf->recruitment->enabled)) {
 		$arrayoftypes['candidature'] = 'CreateCandidature';
 	}
 	$arrayoftypesnocondition['candidature'] = 'CreateCandidature';
@@ -617,6 +575,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		}
 	}
 
+	// Add operation
+	print '<tr class="oddeven nodrag nodrop">';
+	print '<td>';
 	print $form->selectarray('operationtype', $arrayoftypes, '', 1, 0, 0, '', 1, 0, 0, '', 'maxwidth300', 1);
 	print '</td><td>';
 	print '<input type="text" name="operationparam">';
@@ -637,7 +598,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$ruleactionobj->fetch($ruleaction['id']);
 
 		print '<tr class="drag drop oddeven" id="row-'.$ruleaction['id'].'">';
-		print '<td>';
+		print '<td title="'.dol_escape_htmltag($langs->trans("Operation").': '.$ruleaction['type']).'">';
 		print '<!-- type of action: '.$ruleaction['type'].' -->';
 		if (array_key_exists($ruleaction['type'], $arrayoftypes)) {
 			print $langs->trans($arrayoftypes[$ruleaction['type']]);

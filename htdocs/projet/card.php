@@ -55,6 +55,8 @@ $dol_openinpopup = GETPOST('dol_openinpopup', 'aZ09');
 $status = GETPOST('status', 'int');
 $opp_status = GETPOST('opp_status', 'int');
 $opp_percent = price2num(GETPOST('opp_percent', 'alpha'));
+$objcanvas = GETPOST("objcanvas", "alpha");
+$comefromclone = GETPOST("comefromclone", "alpha");
 
 if ($id == '' && $ref == '' && ($action != "create" && $action != "add" && $action != "update" && !GETPOST("cancel"))) {
 	accessforbidden();
@@ -1090,7 +1092,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 			print img_picto($langs->trans('SharedProject'), 'world', 'class="paddingrightonly"');
 			print $langs->trans('SharedProject');
 		} else {
-			print img_picto($langs->trans('SharedProject'), 'private', 'class="paddingrightonly"');
+			print img_picto($langs->trans('PrivateProject'), 'private', 'class="paddingrightonly"');
 			print $langs->trans('PrivateProject');
 		}
 		print '</td></tr>';
@@ -1205,7 +1207,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
             	{
                     var element = jQuery("#opp_status option:selected");
                     var defaultpercent = element.attr("defaultpercent");
-                    var defaultcloseproject = '.$defaultcheckedwhenoppclose.';
+                    var defaultcloseproject = '.((int) $defaultcheckedwhenoppclose).';
                     var elemcode = element.attr("elemcode");
                     var oldpercent = \''.dol_escape_js($object->opp_percent).'\';
 

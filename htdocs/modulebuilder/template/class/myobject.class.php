@@ -151,6 +151,12 @@ class MyObject extends CommonObject
 	public $amount;
 
 	/**
+	 * @var int Thirdparty ID
+	 */
+	public $socid;		// both socid and fk_soc are used
+	public $fk_soc;		// both socid and fk_soc are used
+
+	/**
 	 * @var int Status
 	 */
 	public $status;
@@ -918,11 +924,19 @@ class MyObject extends CommonObject
 		if ($result) {
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
+
 				$this->id = $obj->rowid;
-				if (!empty($obj->fk_user_author)) {
+
+				if (!empty($obj->fk_user_creat)) {
 					$cuser = new User($this->db);
-					$cuser->fetch($obj->fk_user_author);
+					$cuser->fetch($obj->fk_user_creat);
 					$this->user_creation = $cuser;
+				}
+
+				if (!empty($obj->fk_user_modif)) {
+					$muser = new User($this->db);
+					$muser->fetch($obj->fk_user_modif);
+					$this->user_modification = $muser;
 				}
 
 				if (!empty($obj->fk_user_valid)) {
@@ -931,15 +945,11 @@ class MyObject extends CommonObject
 					$this->user_validation = $vuser;
 				}
 
-				if (!empty($obj->fk_user_cloture)) {
-					$cluser = new User($this->db);
-					$cluser->fetch($obj->fk_user_cloture);
-					$this->user_cloture = $cluser;
-				}
-
 				$this->date_creation     = $this->db->jdate($obj->datec);
 				$this->date_modification = $this->db->jdate($obj->datem);
-				$this->date_validation   = $this->db->jdate($obj->datev);
+				if (!empty($obj->datev)) {
+					$this->date_validation   = $this->db->jdate($obj->datev);
+				}
 			}
 
 			$this->db->free($result);

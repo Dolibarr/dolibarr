@@ -58,7 +58,7 @@ if (!$sortorder) {
 	$sortorder = "ASC";
 }
 if (!$sortfield) {
-	$sortfield = "fullname";
+	$sortfield = "name";
 }
 
 $ecmdir = new EcmDirectory($db);

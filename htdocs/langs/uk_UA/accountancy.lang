@@ -182,6 +182,7 @@ DONATION_ACCOUNTINGACCOUNT=Обліковий рахунок для реєстр
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Обліковий запис для реєстрації підписок
 
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Обліковий рахунок за замовчуванням для реєстрації депозиту клієнта
+UseAuxiliaryAccountOnCustomerDeposit=Use sub-accounts on customer deposit lines
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Обліковий рахунок за замовчуванням для купленої продукції (використовується, якщо не визначено в товарному аркуші)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Обліковий рахунок за замовчуванням для купленої продукції в ЄЕС (використовується, якщо не визначено в товарному аркуші)
@@ -289,7 +290,7 @@ ValidateHistory=Прив’язувати автоматично
 AutomaticBindingDone=Автоматичне прив’язування виконано (%s) – Автоматичне прив’язування неможливе для деяких записів (%s)
 
 ErrorAccountancyCodeIsAlreadyUse=Error, you cannot delete this accounting account because it is used
-MvtNotCorrectlyBalanced=Неправильно збалансований рух. Дебет = %s | Кредит = %s
+MvtNotCorrectlyBalanced=Movement not correctly balanced. Debit = %s & Credit = %s
 Balancing=Балансування
 FicheVentilation=Картка для прив'язки
 GeneralLedgerIsWritten=Операції записуються в Книгу

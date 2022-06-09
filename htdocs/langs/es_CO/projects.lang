@@ -4,7 +4,6 @@ ProjectId=Projecto ID
 ProjectLabel=Etiqueta del proyecto
 ProjectsArea=Area de proyectos
 SharedProject=Todos
-PrivateProject=Contactos del proyecto
 ProjectsImContactFor=Proyectos para los que soy un contacto explícito
 AllAllowedProjects=Todo el proyecto que puedo leer (mío + público)
 ProjectsPublicDesc=Esta vista presenta todos los proyectos que se le permite leer.

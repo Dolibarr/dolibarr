@@ -4113,6 +4113,7 @@ function migrate_delete_old_files($db, $langs, $conf)
 		'/core/modules/facture/pdf_oursin.modules.php',
 		'/core/modules/export/export_excel.modules.php',
 		'/core/modules/export/export_excel2007new.modules.php',
+		'/core/boxes/box_members.php',
 
 		'/api/class/api_generic.class.php',
 		'/categories/class/api_category.class.php',

@@ -389,6 +389,9 @@ class ActionComm extends CommonObject
 	const EVENT_FINISHED = 100;
 
 
+	public $fields = array();
+
+
 	/**
 	 *      Constructor
 	 *
@@ -1142,8 +1145,16 @@ class ActionComm extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX."actioncomm ";
 		$sql .= " SET percent = '".$this->db->escape($this->percentage)."'";
 		if ($this->type_id > 0) {
-			$sql .= ", fk_action = '".$this->db->escape($this->type_id)."'";
+			$sql .= ", fk_action = ".(int) $this->type_id;
+			if (empty($this->type_code)) {
+				$cactioncomm = new CActionComm($this->db);
+				$result = $cactioncomm->fetch($this->type_id);
+				if ($result >= 0 && !empty($cactioncomm->code)) {
+					$this->type_code = $cactioncomm->code;
+				}
+			}
 		}
+		$sql .= ", code = " . (isset($this->type_code)? "'".$this->db->escape($this->type_code) . "'":"null");
 		$sql .= ", label = ".($this->label ? "'".$this->db->escape($this->label)."'" : "null");
 		$sql .= ", datep = ".(strval($this->datep) != '' ? "'".$this->db->idate($this->datep)."'" : 'null');
 		$sql .= ", datep2 = ".(strval($this->datef) != '' ? "'".$this->db->idate($this->datef)."'" : 'null');
@@ -1220,11 +1231,14 @@ class ActionComm extends CommonObject
 
 				if (!empty($this->socpeopleassigned)) {
 					$already_inserted = array();
-					foreach (array_keys($this->socpeopleassigned) as $id) {
+					foreach (array_keys($this->socpeopleassigned) as $key => $val) {
+						if (!is_array($val)) {	// For backward compatibility when val=id
+							$val = array('id'=>$val);
+						}
 						if (!empty($already_inserted[$val['id']])) continue;
 
 						$sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm_resources(fk_actioncomm, element_type, fk_element, mandatory, transparency, answer_status)";
-						$sql .= " VALUES(".((int) $this->id).", 'socpeople', ".((int) $id).", 0, 0, 0)";
+						$sql .= " VALUES(".((int) $this->id).", 'socpeople', ".((int) $val['id']).", 0, 0, 0)";
 
 						$resql = $this->db->query($sql);
 						if (!$resql) {
@@ -1623,12 +1637,6 @@ class ActionComm extends CommonObject
 			}
 			$linkclose .= ' title="'.dol_escape_htmltag($tooltip, 1, 0, '', 1).'"';
 			$linkclose .= ' class="'.$classname.' classfortooltip"';
-			/*
-			$hookmanager->initHooks(array('actiondao'));
-			$parameters=array('id'=>$this->id);
-			$reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-			$linkclose = ($hookmanager->resPrint ? $hookmanager->resPrint : $linkclose);
-			*/
 		} else {
 			$linkclose .= ' class="'.$classname.'"';
 		}

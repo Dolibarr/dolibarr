@@ -403,7 +403,8 @@ textarea.cke_source:focus
 	box-shadow: none;
 }
 
-th.wrapcolumntitle.liste_titre:not(.maxwidthsearch), td.wrapcolumntitle.liste_titre:not(.maxwidthsearch) {
+th.wrapcolumntitle.liste_titre:not(.maxwidthsearch), td.wrapcolumntitle.liste_titre:not(.maxwidthsearch),
+th.wrapcolumntitle.liste_titre_sel:not(.maxwidthsearch), td.wrapcolumntitle.liste_titre_sel:not(.maxwidthsearch) {
 	overflow: hidden;
 	white-space: nowrap;
 	max-width: 120px;
@@ -487,7 +488,7 @@ section.setupsection {
 	border-radius: 5px;
 }
 
-.field-error-icon { color: #ea1212; !important; }
+.field-error-icon { color: #ea1212 !important; }
 
 textarea {
 	border-radius: 0;
@@ -3569,7 +3570,7 @@ td.border, div.tagtable div div.border {
 	left: 0;
 	top: 0;
 	max-width: 150px !important;
-	//background-color: inherit;
+	/*background-color: inherit;*/
 	background-color: gainsboro;
 	z-index: 2;
 }
@@ -3582,7 +3583,7 @@ td.border, div.tagtable div div.border {
 	right: 0;
 	top: 0;
 	max-width: 150px !important;
-	//background-color: inherit;
+	/*background-color: inherit;*/
 	background-color: gainsboro;
 	z-index: 2;
 }
@@ -4163,7 +4164,7 @@ tr.liste_sub_total, tr.liste_sub_total td {
 }
 .paymenttable tr td:first-child, .margintable tr td:first-child
 {
-	//padding-left: 2px;
+	/*padding-left: 2px;*/
 }
 .paymenttable, .margintable tr td {
 	height: 22px;
@@ -7319,3 +7320,4 @@ if (is_object($db)) {
 div.flot-text .flot-tick-label .tickLabel, .fa-color-unset {
 	color: unset;
 }
+

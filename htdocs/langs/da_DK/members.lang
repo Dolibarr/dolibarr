@@ -218,3 +218,5 @@ XExternalUserCreated=%s oprettet ekstern(e) bruger(e)
 ForceMemberNature=Tving medlemmernes natur (enkeltperson eller selskab)
 CreateDolibarrLoginDesc=Oprettelsen af et brugerlogin for medlemmer giver dem mulighed for at oprette forbindelse til applikationen. Afhængigt af de godkendte tilladelser vil de f.eks. Selv kunne konsultere eller ændre deres fil.
 CreateDolibarrThirdPartyDesc=En tredjepart er den juridiske enhed, der vil blive brugt på fakturaen, hvis du beslutter dig for at generere faktura for hvert bidrag. Du vil kunne oprette det senere under registreringen af bidraget.
+MemberFirstname=Medlemmets fornavn
+MemberLastname=Medlemmets efternavn

@@ -291,7 +291,7 @@ if ($action == 'create') {
 		print "</tr>\n";
 		$total += $objp->total;
 		$total_ttc += $objp->total_ttc;
-		$totalrecu += $objp->am;
+		$totalrecu += $objp->amount;
 		$i++;
 	}
 	if ($i > 1) {

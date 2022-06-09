@@ -14,10 +14,10 @@ EventsNb=イベント数
 ListOfActions=イベントのリスト
 EventReports=イベント報告書s
 Location=場所
-ToUserOfGroup=グループ内の任意のユーザーに割り当てられたイベント
+ToUserOfGroup=グループ内の任意のユーザに割り当てられたイベント
 EventOnFullDay=一日のイベント
-MenuToDoActions=すべての不完全なイベント
-MenuDoneActions=すべての終了イベント
+MenuToDoActions=全不完全なイベント
+MenuDoneActions=全終了イベント
 MenuToDoMyActions=私の不完全なイベント
 MenuDoneMyActions=私の終了イベント
 ListOfEvents=イベントのリスト（デフォルトのカレンダ）
@@ -28,7 +28,7 @@ ActionAssignedTo=イベントに影響を受けた
 ViewCal=月間表示
 ViewDay=日表示
 ViewWeek=週ビュー
-ViewPerUser=ユーザービューごと
+ViewPerUser=ユーザビューごと
 ViewPerType=種別ビューごと
 AutoActions= 議題の自動充填
 AgendaAutoActionDesc= ここで、Dolibarrが議題で自動的に作成するイベントを定義できる。何もチェックされていない場合、手動アクションのみがログに含まれ、議題に表示される。オブジェクトに対して実行されたビジネスアクション(検証、状態変更)の自動追跡は保存されない。
@@ -130,9 +130,9 @@ AgendaModelModule=イベントのドキュメントテンプレート
 DateActionStart=開始日
 DateActionEnd=終了日
 AgendaUrlOptions1=また、出力をフィルタリングするには、次のパラメータを追加することができる。
-AgendaUrlOptions3= <b> logina = %s </b>は、出力をユーザーが所有するアクションに制限する<b>%s</b>。
-AgendaUrlOptionsNotAdmin= <b> logina =！%s </b>は、出力をユーザーが所有していないアクションに制限する<b> %s</b>。
-AgendaUrlOptions4= <b> logint = %s </b>は、出力をユーザー<b> %s </b>(所有者など)に割り当てられたアクションに制限する。
+AgendaUrlOptions3= <b> logina = %s </b>は、出力をユーザが所有するアクションに制限する<b>%s</b>。
+AgendaUrlOptionsNotAdmin= <b> logina =！%s </b>は、出力をユーザが所有していないアクションに制限する<b> %s</b>。
+AgendaUrlOptions4= <b> logint = %s </b>は、出力をユーザ<b> %s </b>(所有者など)に割り当てられたアクションに制限する。
 AgendaUrlOptionsProject= <b> project = __ PROJECT_ID__ </b>は、出力をプロジェクト<b> __PROJECT_ID__</b>にリンクされたアクションに制限する。
 AgendaUrlOptionsNotAutoEvent= 自動イベントを除外するには、<b> notactiontype = systemauto</b>。
 AgendaUrlOptionsIncludeHolidays= <b> includeholidays = 1 </b>は、休日のイベントを含む。
@@ -145,7 +145,7 @@ DefaultWorkingHours=1日のデフォルトの労働時間(例：9-18)
 # External Sites ical
 ExportCal=輸出カレンダー
 ExtSites=外部カレンダーをインポートする
-ExtSitesEnableThisTool=議題に外部カレンダー(グローバル設定で定義)を表示する。ユーザーが定義した外部カレンダーには影響しない。
+ExtSitesEnableThisTool=議題に外部カレンダー(グローバル設定で定義)を表示する。ユーザが定義した外部カレンダーには影響しない。
 ExtSitesNbOfAgenda=カレンダーの数
 AgendaExtNb=カレンダー番号%s
 ExtSiteUrlAgenda=。iCalファイルにアクセスするためのURL
@@ -164,9 +164,9 @@ EveryMonth=毎月
 DayOfMonth=曜日
 DayOfWeek=曜日
 DateStartPlusOne=開始日+1時間
-SetAllEventsToTodo=すべてのイベントをToDoに設定する
-SetAllEventsToInProgress=すべてのイベントを進行中に設定する
-SetAllEventsToFinished=すべてのイベントを終了に設定する
+SetAllEventsToTodo=全イベントをToDoに設定する
+SetAllEventsToInProgress=全イベントを進行中に設定する
+SetAllEventsToFinished=全イベントを終了に設定する
 ReminderTime=イベント前のリマインダー期間
 TimeType=期間種別
 ReminderType=コールバック種別

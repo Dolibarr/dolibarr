@@ -131,6 +131,13 @@ class Contact extends CommonObject
 	public $civility;
 
 	/**
+	 * @var string The civilite code, not an integer
+	 * @deprecated
+	 * @see $civility_code
+	 */
+	public $civilite;
+
+	/**
 	 * @var string Address
 	 */
 	public $address;
@@ -1468,13 +1475,6 @@ class Contact extends CommonObject
 			}
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
 			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
-
-			/*
-				$hookmanager->initHooks(array('contactdao'));
-				$parameters=array('id'=>$this->id);
-				$reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-				if ($reshook > 0) $linkclose = $hookmanager->resPrint;
-				*/
 		}
 
 		$linkstart = '<a href="'.$url.'"';

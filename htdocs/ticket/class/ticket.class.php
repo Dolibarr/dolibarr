@@ -496,6 +496,13 @@ class Ticket extends CommonObject
 				}
 			}
 
+			if (!$error && $this->fk_user_assign > 0) {
+				if ($this->add_contact($this->fk_user_assign, 'SUPPORTTEC', 'internal') < 0) {
+					$error++;
+				}
+			}
+
+
 			//Update extrafield
 			if (!$error) {
 				$result = $this->insertExtraFields();
@@ -2192,6 +2199,10 @@ class Ticket extends CommonObject
 
 		if ($source == 'external' || $source == 'thirdparty') {
 			$sql .= " AND tc.source = 'external'";
+		}
+
+		if (!empty($code)) {
+			$sql .= " AND tc.code = '".$this->db->escape($code)."'";
 		}
 
 		$sql .= " AND tc.active=1";

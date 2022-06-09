@@ -80,6 +80,13 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 	public $fk_commandefourndet;
 
 	public $qty;
+	public $qty_asked;
+
+	public $libelle;
+	public $desc;
+	public $tva_tx;
+	public $vat_src_code;
+	public $ref_supplier;
 
 	/**
 	 * @var int ID

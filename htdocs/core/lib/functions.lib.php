@@ -13,7 +13,7 @@
  * Copyright (C) 2014		Cédric GROSS				<c.gross@kreiz-it.fr>
  * Copyright (C) 2014-2015	Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
- * Copyright (C) 2018-2021  Frédéric France             <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2022  Frédéric France             <frederic.france@netlogic.fr>
  * Copyright (C) 2019       Thibault Foucart            <support@ptibogxiv.net>
  * Copyright (C) 2020       Open-Dsi         			<support@open-dsi.fr>
  * Copyright (C) 2021       Gauthier VERDOL         	<gauthier.verdol@atm-consulting.fr>
@@ -66,6 +66,17 @@ function getDolGlobalInt($key, $default = 0)
 	global $conf;
 	// return $conf->global->$key ?? $default;
 	return (int) (empty($conf->global->$key) ? $default : $conf->global->$key);
+}
+
+/**
+ * Is Dolibarr module enabled
+ * @param string $module module name to check
+ * @return int
+ */
+function isModEnabled($module)
+{
+	global $conf;
+	return !empty($conf->$module->enabled);
 }
 
 /**
@@ -182,6 +193,21 @@ function isASecretKey($keyname)
 {
 	return preg_match('/(_pass|password|_pw|_key|securekey|serverkey|secret\d?|p12key|exportkey|_PW_[a-z]+|token)$/i', $keyname);
 }
+
+
+/**
+ * Return a numeric value into an Excel like column number. So 0 return 'A', 1 returns 'B'..., 26 return 'AA'
+ *
+ * @param	int|string		$n		Numeric value
+ * @return 	string					Column in Excel format
+ */
+function num2Alpha($n)
+{
+	for ($r = ""; $n >= 0; $n = intval($n / 26) - 1)
+		$r = chr($n % 26 + 0x41) . $r;
+		return $r;
+}
+
 
 /**
  * Return information about user browser
@@ -368,6 +394,32 @@ function GETPOSTISSET($paramname)
 	}
 
 	return $isset;
+}
+
+/**
+ * Return true if the parameter $paramname is submit from a POST OR GET as an array.
+ * Can be used before GETPOST to know if the $check param of GETPOST need to check an array or a string
+ *
+ * @param 	string	$paramname		Name or parameter to test
+ *  @param	int		$method	     Type of method (0 = get then post, 1 = only get, 2 = only post, 3 = post then get)
+ * @return 	bool 				True if we have just submit a POST or GET request with the parameter provided (even if param is empty)
+ */
+function GETPOSTISARRAY($paramname, $method = 0)
+{
+	// for $method test need return the same $val as GETPOST
+	if (empty($method)) {
+		$val = isset($_GET[$paramname]) ? $_GET[$paramname] : (isset($_POST[$paramname]) ? $_POST[$paramname] : '');
+	} elseif ($method == 1) {
+		$val = isset($_GET[$paramname]) ? $_GET[$paramname] : '';
+	} elseif ($method == 2) {
+		$val = isset($_POST[$paramname]) ? $_POST[$paramname] : '';
+	} elseif ($method == 3) {
+		$val = isset($_POST[$paramname]) ? $_POST[$paramname] : (isset($_GET[$paramname]) ? $_GET[$paramname] : '');
+	} else {
+		$val = 'BadFirstParameterForGETPOST';
+	}
+
+	return is_array($val);
 }
 
 /**
@@ -660,11 +712,11 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 				$tmpcheck = 'alphanohtml';
 			}
 			foreach ($out as $outkey => $outval) {
-				$out[$outkey] = checkVal($outval, $tmpcheck, $filter, $options);
+				$out[$outkey] = sanitizeVal($outval, $tmpcheck, $filter, $options);
 			}
 		}
 	} else {
-		$out = checkVal($out, $check, $filter, $options);
+		$out = sanitizeVal($out, $check, $filter, $options);
 	}
 
 	// Sanitizing for special parameters.
@@ -713,9 +765,11 @@ function GETPOSTINT($paramname, $method = 0)
 	return (int) GETPOST($paramname, 'int', $method, null, null, 0);
 }
 
+
 /**
- *  Return a value after checking on a rule. A sanitization may also have been done.
+ *  Return a sanitized or empty value after checking value against a rule.
  *
+ *  @deprecated
  *  @param  string|array  	$out	     Value to check/clear.
  *  @param  string  		$check	     Type of check/sanitizing
  *  @param  int     		$filter      Filter to apply when $check is set to 'custom'. (See http://php.net/manual/en/filter.filters.php for détails)
@@ -724,8 +778,23 @@ function GETPOSTINT($paramname, $method = 0)
  */
 function checkVal($out = '', $check = 'alphanohtml', $filter = null, $options = null)
 {
+	return sanitizeVal($out, $check, $filter, $options);
+}
+
+/**
+ *  Return a sanitized or empty value after checking value against a rule.
+ *
+ *  @param  string|array  	$out	     Value to check/clear.
+ *  @param  string  		$check	     Type of check/sanitizing
+ *  @param  int     		$filter      Filter to apply when $check is set to 'custom'. (See http://php.net/manual/en/filter.filters.php for détails)
+ *  @param  mixed   		$options     Options to pass to filter_var when $check is set to 'custom'
+ *  @return string|array    		     Value sanitized (string or array). It may be '' if format check fails.
+ */
+function sanitizeVal($out = '', $check = 'alphanohtml', $filter = null, $options = null)
+{
 	global $conf;
 
+	// TODO : use class "Validate" to perform tests (and add missing tests) if needed for factorize
 	// Check is done after replacement
 	switch ($check) {
 		case 'none':
@@ -1494,6 +1563,11 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
 		}
 	}
 
+	// Check if we have a forced suffix
+	if (defined('USESUFFIXINLOG')) {
+		$suffixinfilename .= constant('USESUFFIXINLOG');
+	}
+
 	if ($ident < 0) {
 		foreach ($conf->loghandlers as $loghandlerinstance) {
 			$loghandlerinstance->setIdent($ident);
@@ -2115,9 +2189,9 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 			$morehtmlstatus .= '<span class="statusrefbuy">'.$object->getLibStatut(6, 1).'</span>';
 		}
 	} elseif (in_array($object->element, array('facture', 'invoice', 'invoice_supplier', 'chargesociales', 'loan', 'tva', 'salary'))) {
-		$tmptxt = $object->getLibStatut(6, $object->totalpaye);
+		$tmptxt = $object->getLibStatut(6, $object->totalpaid);
 		if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3)) {
-			$tmptxt = $object->getLibStatut(5, $object->totalpaye);
+			$tmptxt = $object->getLibStatut(5, $object->totalpaid);
 		}
 		$morehtmlstatus .= $tmptxt;
 	} elseif ($object->element == 'contrat' || $object->element == 'contract') {
@@ -2261,7 +2335,7 @@ function dol_bc($var, $moreclass = '')
  */
 function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs = '', $mode = 0, $extralangcode = '')
 {
-	global $conf, $langs;
+	global $conf, $langs, $hookmanager;
 
 	$ret = '';
 	$countriesusingstate = array('AU', 'CA', 'US', 'IN', 'GB', 'ES', 'UK', 'TR', 'CN'); // See also MAIN_FORCE_STATE_INTO_ADDRESS
@@ -2327,6 +2401,14 @@ function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs
 	if ($withcountry) {
 		$langs->load("dict");
 		$ret .= (empty($object->country_code) ? '' : ($ret ? $sep : '').$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$object->country_code)));
+	}
+	if ($hookmanager) {
+		$parameters = array('withcountry' => $withcountry, 'sep' => $sep, 'outputlangs' => $outputlangs,'mode' => $mode, 'extralangcode' => $extralangcode);
+		$reshook = $hookmanager->executeHooks('formatAddress', $parameters, $object);
+		if ($reshook > 0) {
+			$ret = '';
+		}
+		$ret .= $hookmanager->resPrint;
 	}
 
 	return $ret;
@@ -2453,6 +2535,9 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 	} elseif ($format == 'dayhourlog') {
 		// Format not sensitive to language
 		$format = '%Y%m%d%H%M%S';
+	} elseif ($format == 'dayhourlogsmall') {
+		// Format not sensitive to language
+		$format = '%Y%m%d%H%M';
 	} elseif ($format == 'dayhourldap') {
 		$format = '%Y%m%d%H%M%SZ';
 	} elseif ($format == 'dayhourxcard') {
@@ -2681,7 +2766,7 @@ function dol_mktime($hour, $minute, $second, $month, $day, $year, $gm = 'auto', 
 	}
 	//var_dump($localtz);
 	//var_dump($year.'-'.$month.'-'.$day.'-'.$hour.'-'.$minute);
-	$dt = new DateTime(null, $localtz);
+	$dt = new DateTime('now', $localtz);
 	$dt->setDate((int) $year, (int) $month, (int) $day);
 	$dt->setTime((int) $hour, (int) $minute, (int) $second);
 	$date = $dt->getTimestamp(); // should include daylight saving time
@@ -2958,8 +3043,29 @@ function dol_print_socialnetworks($value, $cid, $socid, $type, $dictsocialnetwor
 			}
 		} else {
 			if (!empty($dictsocialnetworks[$type]['url'])) {
+				$tmpvirginurl = preg_replace('/\/?{socialid}/', '', $dictsocialnetworks[$type]['url']);
+				if ($tmpvirginurl) {
+					$value = preg_replace('/^www\.'.preg_quote($tmpvirginurl, '/').'\/?/', '', $value);
+					$value = preg_replace('/^'.preg_quote($tmpvirginurl, '/').'\/?/', '', $value);
+
+					$tmpvirginurl3 = preg_replace('/^https:\/\//i', 'https://www.', $tmpvirginurl);
+					if ($tmpvirginurl3) {
+						$value = preg_replace('/^www\.'.preg_quote($tmpvirginurl3, '/').'\/?/', '', $value);
+						$value = preg_replace('/^'.preg_quote($tmpvirginurl3, '/').'\/?/', '', $value);
+					}
+
+					$tmpvirginurl2 = preg_replace('/^https?:\/\//i', '', $tmpvirginurl);
+					if ($tmpvirginurl2) {
+						$value = preg_replace('/^www\.'.preg_quote($tmpvirginurl2, '/').'\/?/', '', $value);
+						$value = preg_replace('/^'.preg_quote($tmpvirginurl2, '/').'\/?/', '', $value);
+					}
+				}
 				$link = str_replace('{socialid}', $value, $dictsocialnetworks[$type]['url']);
-				$htmllink .= '&nbsp;<a href="'.$link.'" target="_blank" rel="noopener noreferrer">'.dol_escape_htmltag($value).'</a>';
+				if (preg_match('/^https?:\/\//i', $link)) {
+					$htmllink .= '&nbsp;<a href="'.dol_sanitizeUrl($link, 0).'" target="_blank" rel="noopener noreferrer">'.dol_escape_htmltag($value).'</a>';
+				} else {
+					$htmllink .= '&nbsp;<a href="'.dol_sanitizeUrl($link, 1).'" target="_blank" rel="noopener noreferrer">'.dol_escape_htmltag($value).'</a>';
+				}
 			} else {
 				$htmllink .= dol_escape_htmltag($value);
 			}
@@ -3714,6 +3820,7 @@ function dol_trunc($string, $size = 40, $trunc = 'right', $stringencoding = 'UTF
 function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $srconly = 0, $notitle = 0, $alt = '', $morecss = '', $marginleftonlyshort = 2)
 {
 	global $conf, $langs;
+
 	// We forge fullpathpicto for image to $path/img/$picto. By default, we take DOL_URL_ROOT/theme/$conf->theme/img/$picto
 	$url = DOL_URL_ROOT;
 	$theme = isset($conf->theme) ? $conf->theme : null;
@@ -3732,15 +3839,25 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		}
 	} else {
 		$pictowithouttext = preg_replace('/(\.png|\.gif|\.svg)$/', '', $picto);
+		$pictowithouttext = str_replace('object_', '', $pictowithouttext);
 
-		if (strpos($pictowithouttext, 'fontawesome_') !== false) {
-			$pictowithouttext = explode('_', $pictowithouttext);
+		if (strpos($pictowithouttext, 'fontawesome_') !== false || preg_match('/^fa-/', $pictowithouttext)) {
+			// This is a font awesome image 'fonwtawesome_xxx' or 'fa-xxx'
+			$pictowithouttext = str_replace('fa-', '', $pictowithouttext);
+			$pictowithouttextarray = explode('_', $pictowithouttext);
 			$marginleftonlyshort = 0;
 
-			$fakey      = 'fa-'.$pictowithouttext[1];
-			$fa         = $pictowithouttext[2] ? $pictowithouttext[2] : 'fa';
-			$facolor    = $pictowithouttext[3] ? $pictowithouttext[3] : '';
-			$fasize     = $pictowithouttext[4] ? $pictowithouttext[4] : '';
+			if (!empty($pictowithouttextarray[1])) {
+				$fakey      = 'fa-'.$pictowithouttextarray[1];
+				$fa         = empty($pictowithouttextarray[2]) ? 'fa' : $pictowithouttextarray[2];
+				$facolor    = empty($pictowithouttextarray[3]) ? '' : $pictowithouttextarray[3];
+				$fasize     = empty($pictowithouttextarray[4]) ? '' : $pictowithouttextarray[4];
+			} else {
+				$fakey      = 'fa-'.$pictowithouttext;
+				$fa         = 'fa';
+				$facolor    = '';
+				$fasize     = '';
+			}
 
 			// This snippet only needed since function img_edit accepts only one additional parameter: no separate one for css only.
 			// class/style need to be extracted to avoid duplicate class/style validation errors when $moreatt is added to the end of the attributes.
@@ -3766,12 +3883,11 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			return $enabledisablehtml;
 		}
 
-		$pictowithouttext = str_replace('object_', '', $pictowithouttext);
 		if (empty($srconly) && in_array($pictowithouttext, array(
 				'1downarrow', '1uparrow', '1leftarrow', '1rightarrow', '1uparrow_selected', '1downarrow_selected', '1leftarrow_selected', '1rightarrow_selected',
 				'accountancy', 'accounting_account', 'account', 'accountline', 'action', 'add', 'address', 'angle-double-down', 'angle-double-up', 'asset',
 				'bank_account', 'barcode', 'bank', 'bell', 'bill', 'billa', 'billr', 'billd', 'bookmark', 'bom', 'briefcase-medical', 'bug', 'building',
-				'card', 'calendar', 'calendarmonth', 'calendarweek', 'calendarday', 'calendarperuser', 'calendarpertype',
+				'card', 'calendarlist', 'calendar', 'calendarmonth', 'calendarweek', 'calendarday', 'calendarperuser', 'calendarpertype',
 				'cash-register', 'category', 'chart', 'check', 'clock', 'close_title', 'cog', 'collab', 'company', 'contact', 'country', 'contract', 'conversation', 'cron', 'cubes',
 				'currency', 'multicurrency',
 				'delete', 'dolly', 'dollyrevert', 'donation', 'download', 'dynamicprice',
@@ -3831,7 +3947,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'sign-out'=>'sign-out-alt',
 				'switch_off'=>'toggle-off', 'switch_on'=>'toggle-on', 'switch_on_red'=>'toggle-on', 'check'=>'check', 'bookmark'=>'star',
 				'bank'=>'university', 'close_title'=>'times', 'delete'=>'trash', 'filter'=>'filter',
-				'list-alt'=>'list-alt', 'calendar'=>'calendar-alt', 'calendarmonth'=>'calendar-alt', 'calendarweek'=>'calendar-week', 'calendarday'=>'calendar-day', 'calendarperuser'=>'table',
+				'list-alt'=>'list-alt', 'calendarlist'=>'bars', 'calendar'=>'calendar-alt', 'calendarmonth'=>'calendar-alt', 'calendarweek'=>'calendar-week', 'calendarday'=>'calendar-day', 'calendarperuser'=>'table',
 				'intervention'=>'ambulance', 'invoice'=>'file-invoice-dollar', 'currency'=>'dollar-sign', 'multicurrency'=>'dollar-sign', 'order'=>'file-invoice',
 				'error'=>'exclamation-triangle', 'warning'=>'exclamation-triangle',
 				'other'=>'square',
@@ -4904,10 +5020,10 @@ function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin 
 		$liste_titre = 'liste_titre_sel';
 	}
 
-	$out .= '<'.$tag.' class="'.$prefix.$liste_titre.'" '.$moreattrib;
+	$tagstart = '<'.$tag.' class="'.$prefix.$liste_titre.'" '.$moreattrib;
 	//$out .= (($field && empty($conf->global->MAIN_DISABLE_WRAPPING_ON_COLUMN_TITLE) && preg_match('/^[a-zA-Z_0-9\s\.\-:&;]*$/', $name)) ? ' title="'.dol_escape_htmltag($langs->trans($name)).'"' : '');
-	$out .= ($name && empty($conf->global->MAIN_DISABLE_WRAPPING_ON_COLUMN_TITLE) && empty($forcenowrapcolumntitle) && !dol_textishtml($name)) ? ' title="'.dol_escape_htmltag($langs->trans($name)).'"' : '';
-	$out .= '>';
+	$tagstart .= ($name && empty($conf->global->MAIN_DISABLE_WRAPPING_ON_COLUMN_TITLE) && empty($forcenowrapcolumntitle) && !dol_textishtml($name)) ? ' title="'.dol_escape_htmltag($langs->trans($name)).'"' : '';
+	$tagstart .= '>';
 
 	if (empty($thead) && $field && empty($disablesortlink)) {    // If this is a sort field
 		$options = preg_replace('/sortfield=([a-zA-Z0-9,\s\.]+)/i', '', (is_scalar($moreparam) ? $moreparam : ''));
@@ -4921,12 +5037,10 @@ function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin 
 		if ($field1 != $sortfield1) { // We are on another field than current sorted field
 			if (preg_match('/^DESC/i', $sortorder)) {
 				$sortordertouseinlink .= str_repeat('desc,', count(explode(',', $field)));
-			} else // We reverse the var $sortordertouseinlink
-			{
+			} else { // We reverse the var $sortordertouseinlink
 				$sortordertouseinlink .= str_repeat('asc,', count(explode(',', $field)));
 			}
-		} else // We are on field that is the first current sorting criteria
-		{
+		} else { // We are on field that is the first current sorting criteria
 			if (preg_match('/^ASC/i', $sortorder)) {	// We reverse the var $sortordertouseinlink
 				$sortordertouseinlink .= str_repeat('desc,', count(explode(',', $field)));
 			} else {
@@ -4965,19 +5079,19 @@ function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin 
 			if (preg_match('/^DESC/', $sortorder)) {
 				//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",0).'</a>';
 				//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",1).'</a>';
-				$sortimg .= '<span class="nowrap">'.img_up("Z-A", 0, 'paddingleft').'</span>';
+				$sortimg .= '<span class="nowrap">'.img_up("Z-A", 0, 'paddingright').'</span>';
 			}
 			if (preg_match('/^ASC/', $sortorder)) {
 				//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",1).'</a>';
 				//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",0).'</a>';
-				$sortimg .= '<span class="nowrap">'.img_down("A-Z", 0, 'paddingleft').'</span>';
+				$sortimg .= '<span class="nowrap">'.img_down("A-Z", 0, 'paddingright').'</span>';
 			}
 		}
 	}
 
-	$out .= $sortimg;
+	$tagend = '</'.$tag.'>';
 
-	$out .= '</'.$tag.'>';
+	$out = $tagstart.$sortimg.$out.$tagend;
 
 	return $out;
 }
@@ -9228,7 +9342,7 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 
 				$reg = array();
 				preg_match('/([<>=]+)/', $crit, $reg);
-				if ($reg[1]) {
+				if (!empty($reg[1])) {
 					$operator = $reg[1];
 				}
 				if ($newcrit != '') {
@@ -9931,7 +10045,7 @@ function getDictionaryValue($tablename, $field, $id, $checkentity = false, $rowi
 		$resql = $db->query($sql);
 		if ($resql) {
 			while ($obj = $db->fetch_object($resql)) {
-				$dictvalues[$obj->{$rowidfield}] = $obj;
+				$dictvalues[$obj->{$rowidfield}] = $obj;	// $obj is stdClass
 			}
 		} else {
 			dol_print_error($db);
@@ -9942,7 +10056,8 @@ function getDictionaryValue($tablename, $field, $id, $checkentity = false, $rowi
 
 	if (!empty($dictvalues[$id])) {
 		// Found
-		return $dictvalues[$id]->{$field};
+		$tmp = $dictvalues[$id];
+		return (property_exists($tmp, $field) ? $tmp->$field : '');
 	} else {
 		// Not found
 		return '';
@@ -10277,9 +10392,11 @@ function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = 
 	// Js Confirm button
 	if ($userRight && !empty($params['confirm'])) {
 		if (!is_array($params['confirm'])) {
-			$params['confirm'] = array(
-				'url' => $url . (strpos($url, '?') > 0 ? '&' : '?') . 'confirm=yes'
-			);
+			$params['confirm'] = array();
+		}
+
+		if (empty($params['confirm']['url'])) {
+			$params['confirm']['url'] = $url . (strpos($url, '?') > 0 ? '&' : '?') . 'confirm=yes';
 		}
 
 		// for js desabled compatibility set $url as call to confirm action and $params['confirm']['url'] to confirmed action

@@ -182,6 +182,7 @@ DONATION_ACCOUNTINGACCOUNT=Számviteli fiók az adományok regisztrálásához
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Számviteli fiók az előfizetések regisztrálásához
 
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Alapértelmezés szerint számlaszámla az ügyfél befizetésének regisztrálásához
+UseAuxiliaryAccountOnCustomerDeposit=Használjon alszámlákat az ügyfelek betéti sorain
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Alapértelmezés szerint a vásárolt termékek számviteli fiókja (használjuk, ha nincs megadva a terméklapon)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Alapértelmezés szerint az EGK-ban vásárolt termékek számviteli fiókja (használjuk, ha nincs megadva a terméklapon)
@@ -289,7 +290,7 @@ ValidateHistory=Automatikus kötés
 AutomaticBindingDone=Automatikus összerendelés megtörtént (%s) - Az automatikus kötés bizonyos rekordokhoz (%s) nem lehetséges
 
 ErrorAccountancyCodeIsAlreadyUse=Hiba, nem törölheti ezt a fiókot, mert használatban van
-MvtNotCorrectlyBalanced=A mozgás nincs megfelelően kiegyensúlyozva. Terhelés = %s | Hitel = %s
+MvtNotCorrectlyBalanced=A mozgás nem megfelelően kiegyensúlyozott. Terhelés = %s és jóváírás = %s
 Balancing=Egyensúlyozás
 FicheVentilation=Kötőkártya
 GeneralLedgerIsWritten=A tranzakciók a főkönyvbe vannak írva

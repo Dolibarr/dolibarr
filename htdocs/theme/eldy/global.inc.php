@@ -149,7 +149,8 @@ select.vmenusearchselectcombo {
 	background-color: unset;
 }
 
-table.liste th.wrapcolumntitle.liste_titre:not(.maxwidthsearch), table.liste td.wrapcolumntitle.liste_titre:not(.maxwidthsearch) {
+table.liste th.wrapcolumntitle.liste_titre:not(.maxwidthsearch), table.liste td.wrapcolumntitle.liste_titre:not(.maxwidthsearch),
+table.liste th.wrapcolumntitle.liste_titre_sel:not(.maxwidthsearch), table.liste td.wrapcolumntitle.liste_titre_sel:not(.maxwidthsearch) {
 	overflow: hidden;
 	white-space: nowrap;
 	max-width: 100px;
@@ -227,6 +228,9 @@ input {
 	padding: 4px;
 	padding-left: 5px;
 }
+.tableforfield input {
+	padding: 2px;
+}
 select {
 	padding-top: 4px;
 	padding-right: 4px;
@@ -281,7 +285,7 @@ div.tabBar textarea:focus {
 	border: 1px solid #aaa !important;
 }
 input:focus:not(.button):not(.select2-search__field):not(#top-bookmark-search-input):not(.search_component_input):not(.input-search-takepos),
- select:focus, .select2-container--open .select2-selection--single {
+ select:focus, .select2-container--open [aria-expanded="false"].select2-selection--single {
 /* div.tabBar input:focus, div.tabBar select:focus { */
 	border-bottom: 1px solid #666 !important;
 	border-bottom-left-radius: 0 !important;
@@ -6024,7 +6028,7 @@ span.select2.select2-container.select2-container--default {
 }
 span.select2.select2-container.select2-container--default {
 	<?php if (empty($conf->global->THEME_SHOW_BORDER_ON_INPUT)) { ?>
-	//border-bottom: solid 1px var(--inputbordercolor);
+	/*border-bottom: solid 1px var(--inputbordercolor);*/
 	<?php } ?>
 }
 
@@ -6341,6 +6345,17 @@ span#select2-boxbookmark-container {
 
 ul.select2-results__options li {
 	font-size: 0.95em;
+}
+
+@media only screen and (min-width: 767px)
+{
+	.select2-container.select2-container--open .select2-dropdown.ui-dialog {
+		min-width: 200px !important;
+	}
+	.select2-container--open .select2-dropdown--below {
+		border-top: 1px solid var(--inputbordercolor);
+		/* border-top: 1px solid #aaaaaa; */
+	}
 }
 
 
@@ -7629,6 +7644,11 @@ if (!empty($conf->global->THEME_CUSTOM_CSS)) {
 }
 
 ?>
+
+	div.extra_inline_chkbxlst,
+	div.extra_inline_checkbox {
+		min-width:150px;
+	}
 
 /* Must be at end */
 div.flot-text .flot-tick-label .tickLabel, .fa-color-unset {

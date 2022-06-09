@@ -827,7 +827,7 @@ if ($object->id > 0) {
 		$sql .= ", p.total_tva";
 		$sql .= ", p.total_ttc";
 		$sql .= ", p.ref, p.ref_client, p.remise";
-		$sql .= ", p.datep as dp, p.fin_validite as date_limit";
+		$sql .= ", p.datep as dp, p.fin_validite as date_limit, p.entity";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."c_propalst as c";
 		$sql .= " WHERE p.fk_soc = s.rowid AND p.fk_statut = c.id";
 		$sql .= " AND s.rowid = ".((int) $object->id);
@@ -887,7 +887,7 @@ if ($object->id > 0) {
 						}
 					}
 					$relativepath = dol_sanitizeFileName($objp->ref).'/'.dol_sanitizeFileName($objp->ref).'.pdf';
-					print $formfile->showPreview($file_list, $propal_static->element, $relativepath, 0, $param);
+					print $formfile->showPreview($file_list, $propal_static->element, $relativepath, 0);
 				}
 				// $filename = dol_sanitizeFileName($objp->ref);
 				// $filedir = $conf->propal->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
@@ -1226,7 +1226,7 @@ if ($object->id > 0) {
 	 * Latest interventions
 	 */
 	if (!empty($conf->ficheinter->enabled) && $user->rights->ficheinter->lire) {
-		$sql = "SELECT s.nom, s.rowid, f.rowid as id, f.ref, f.fk_statut, f.duree as duration, f.datei as startdate";
+		$sql = "SELECT s.nom, s.rowid, f.rowid as id, f.ref, f.fk_statut, f.duree as duration, f.datei as startdate, f.entity";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."fichinter as f";
 		$sql .= " WHERE f.fk_soc = s.rowid";
 		$sql .= " AND s.rowid = ".((int) $object->id);
@@ -1261,7 +1261,7 @@ if ($object->id > 0) {
 				print '<td class="nowraponall">';
 				print $fichinter_static->getNomUrl(1);
 				// Preview
-				$filedir = $conf->fichinter->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
+				$filedir = $conf->ficheinter->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
 				$file_list = null;
 				if (!empty($filedir)) {
 					$file_list = dol_dir_list($filedir, 'files', 0, '', '(\.meta|_preview.*.*\.png)$', 'date', SORT_DESC);
@@ -1283,7 +1283,7 @@ if ($object->id > 0) {
 						}
 					}
 					$relativepath = dol_sanitizeFileName($objp->ref).'/'.dol_sanitizeFileName($objp->ref).'.pdf';
-					print $formfile->showPreview($file_list, $fichinter_static->element, $relativepath, 0, $param);
+					print $formfile->showPreview($file_list, $fichinter_static->element, $relativepath, 0);
 				}
 				// $filename = dol_sanitizeFileName($objp->ref);
 				// $filedir = $conf->fichinter->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);

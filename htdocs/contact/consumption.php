@@ -153,16 +153,16 @@ print '</td></tr>';
 
 if ($object->thirdparty->client) {
 	$thirdTypeArray['customer'] = $langs->trans("customer");
-	if ($conf->propal->enabled && $user->rights->propal->lire) {
+	if (!empty($conf->propal->enabled) && $user->rights->propal->lire) {
 		$elementTypeArray['propal'] = $langs->transnoentitiesnoconv('Proposals');
 	}
-	if ($conf->commande->enabled && $user->rights->commande->lire) {
+	if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
 		$elementTypeArray['order'] = $langs->transnoentitiesnoconv('Orders');
 	}
-	if ($conf->facture->enabled && $user->rights->facture->lire) {
+	if (!empty($conf->facture->enabled) && $user->rights->facture->lire) {
 		$elementTypeArray['invoice'] = $langs->transnoentitiesnoconv('Invoices');
 	}
-	if ($conf->contrat->enabled && $user->rights->contrat->lire) {
+	if (!empty($conf->contrat->enabled) && $user->rights->contrat->lire) {
 		$elementTypeArray['contract'] = $langs->transnoentitiesnoconv('Contracts');
 	}
 }
@@ -366,7 +366,7 @@ $param .= "&socid=".urlencode($socid);
 $param .= "&type_element=".urlencode($type_element);
 
 $total_qty = 0;
-
+$num=0;
 if ($sql_select) {
 	$resql = $db->query($sql);
 	if (!$resql) {
