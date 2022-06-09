@@ -135,11 +135,11 @@ $confirm			= GETPOST('confirm', 'alpha');
 $step				= (GETPOST('step') ? GETPOST('step') : 1);
 $import_name = GETPOST('import_name');
 $hexa				= GETPOST('hexa');
-$importmodelid = GETPOST('importmodelid');
+$importmodelid = GETPOST('importmodelid', 'int');
 $excludefirstline = (GETPOST('excludefirstline') ? GETPOST('excludefirstline') : 2);
 $endatlinenb		= (GETPOST('endatlinenb') ? GETPOST('endatlinenb') : '');
 $updatekeys			= (GETPOST('updatekeys', 'array') ? GETPOST('updatekeys', 'array') : array());
-$separator			= (GETPOST('separator', 'nohtml') ? GETPOST('separator', 'nohtml') : (!empty($conf->global->IMPORT_CSV_SEPARATOR_TO_USE) ? $conf->global->IMPORT_CSV_SEPARATOR_TO_USE : ','));
+$separator			= (GETPOST('separator', 'nohtml') ? GETPOST('separator', 'nohtml', 3) : '');
 $enclosure			= (GETPOST('enclosure', 'nohtml') ? GETPOST('enclosure', 'nohtml') : '"');
 $separator_used     = str_replace('\t', "\t", $separator);
 
@@ -753,6 +753,34 @@ if ($step == 4 && $datatoimport) {
 	$model = $format;
 	$list = $objmodelimport->liste_modeles($db);
 
+	if (empty($separator)) {
+		$separator = (empty($conf->global->IMPORT_CSV_SEPARATOR_TO_USE) ? ',' : $conf->global->IMPORT_CSV_SEPARATOR_TO_USE);
+	}
+
+	// The separator has been defined, if it is a unique char, we check it is valid by reading the source file
+	if ($model == 'csv' && strlen($separator) == 1 && !GETPOSTISSET('separator')) {
+		// Count the char in first line of file.
+		$fh = fopen($conf->import->dir_temp.'/'.$filetoimport, 'r');
+		if ($fh) {
+			$sline = fgets($fh, 1000000);
+			fclose($fh);
+			$nboccurence = substr_count($sline, $separator);
+			$nboccurencea = substr_count($sline, ',');
+			$nboccurenceb = substr_count($sline, ';');
+			//var_dump($nboccurence." ".$nboccurencea." ".$nboccurenceb);exit;
+			if ($nboccurence == 0) {
+				if ($nboccurencea > 2) {
+					$separator = ',';
+				} elseif ($nboccurenceb > 2) {
+					$separator = ';';
+				}
+			}
+		}
+	}
+
+	// The value to use
+	$separator_used = str_replace('\t', "\t", $separator);
+
 	// Create classe to use for import
 	$dir = DOL_DOCUMENT_ROOT."/core/modules/import/";
 	$file = "import_".$model.".modules.php";
@@ -947,7 +975,7 @@ if ($step == 4 && $datatoimport) {
 	if ($model == 'csv') {
 		print '<tr><td>'.$langs->trans("CsvOptions").'</td>';
 		print '<td>';
-		print '<form>';
+		print '<form method="POST">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" value="'.$step.'" name="step">';
 		print '<input type="hidden" value="'.$format.'" name="format">';
@@ -998,6 +1026,7 @@ if ($step == 4 && $datatoimport) {
 	print '<input type="hidden" name="separator" value="'.dol_escape_htmltag($separator).'">';
 	print '<input type="hidden" name="enclosure" value="'.dol_escape_htmltag($enclosure).'">';
 
+	// Import profile to use/load
 	print '<div class="marginbottomonly">';
 	print '<span class="opacitymedium">';
 	$s = $langs->trans("SelectImportFieldsSource", '{s1}');
@@ -1240,47 +1269,9 @@ if ($step == 4 && $datatoimport) {
 
 	print '</td></tr>';
 
-	// List of not imported fields
-	/*
-	print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("NotUsedFields").'</td></tr>';
-
-	print '<tr valign="top"><td width="50%">';
-
-	print "\n<!-- Box ignore container -->\n";
-	print '<div id="right" class="connectedSortable">'."\n";
-
-	$nbofnotimportedfields = 0;
-	foreach ($fieldstarget as $key => $val) {
-		if (!$fieldstarget[$key]['imported']) {
-			//
-			$nbofnotimportedfields++;
-			show_elem($fieldstarget, $key, '', $var, 'nostyle');
-			//print '> '.$lefti.'-'.$key;
-			$listofkeys[$key] = 1;
-			$lefti++;
-		}
-	}
-
-	// Print one more empty field
-	$newkey = getnewkey($fieldssource, $listofkeys);
-	show_elem($fieldssource, $newkey, '', $var, 'nostyle');
-	//print '> '.$lefti.'-'.$newkey;
-	$listofkeys[$newkey] = 1;
-	$nbofnotimportedfields++;
-
-	print "</div>\n";
-	print "<!-- End box ignore container -->\n";
-
-	print '</td>';
-	print '<td width="50%">';
-	$i = 0;
-	while ($i < $nbofnotimportedfields) {
-		// Print empty cells
-		show_elem('', '', 'none', $var, 'nostyle');
-		$i++;
-	}
-	print '</td></tr>';
-	*/
+	// Lines for remark
+	print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Remark").'</td></tr>';
+	print '<tr><td colspan="2"><div id="div-mandatory-target-fields-not-mapped"></div></td></tr>';
 
 	print '</table>';
 	print '</div>';
@@ -1291,6 +1282,19 @@ if ($step == 4 && $datatoimport) {
 		print 'var previousselectedvalueimport = "0";'."\n";
 		print 'var previousselectedlabelimport = "0";'."\n";
 		print 'var arrayofselectedvalues = [];'."\n";
+		print 'var arrayoftargetfields = [];'."\n";
+		print 'var arrayoftargetmandatoryfields = [];'."\n";
+
+		// Loop on $fieldstarget (seems sorted by 'position') to store php array into javascript array
+		$tmpi = 0;
+		foreach ($fieldstarget as $key => $val) {
+			print "arrayoftargetfields[".$tmpi."] = '".dol_escape_js($langs->trans($val['label']))."'; ";
+			if ($val['required']) {
+				print "arrayoftargetmandatoryfields[".$tmpi."] = '".dol_escape_js($key)."'; ";
+			}
+			$tmpi++;
+		}
+		print "\n";
 
 		print '$(document).ready(function () {'."\n";
 
@@ -1350,6 +1354,27 @@ if ($step == 4 && $datatoimport) {
 		print "				console.log('Select order saved');\n";
 		print "			},\n";
 		print '		});'."\n";
+
+		// Now we loop on all target fields that are mandatory to show if they are not mapped yet.
+		print '     console.log(arrayselectedfields);';
+		print '     console.log(arrayoftargetmandatoryfields);';
+		print "     listtoshow = '';";
+		print "     nbelement = arrayoftargetmandatoryfields.length
+					for (let i = 0; i < nbelement; i++) {
+						if (arrayoftargetmandatoryfields[i] && ! arrayselectedfields.includes(arrayoftargetmandatoryfields[i])) {
+							console.log(arrayoftargetmandatoryfields[i]+' not mapped');
+							listtoshow = listtoshow + (listtoshow ? ', ' : '') + '<b>' + arrayoftargetfields[i] + '*</b>';
+						}
+                    }
+					console.log(listtoshow);
+					if (listtoshow) {
+						listtoshow = '".dol_escape_js(img_warning($langs->trans("MandatoryTargetFieldsNotMapped")).' '.$langs->trans("MandatoryTargetFieldsNotMapped")).": ' + listtoshow;
+						$('#div-mandatory-target-fields-not-mapped').html(listtoshow);
+					} else {
+						$('#div-mandatory-target-fields-not-mapped').html('<span class=\"opacitymedium\">".dol_escape_js($langs->trans("AllTargetMandatoryFieldsAreMapped"))."</span>');
+					}
+		";
+
 		print '};'."\n";
 
 		// If we make a change on a selectbox
@@ -1422,8 +1447,13 @@ if ($step == 4 && $datatoimport) {
 		print '<td></td>';
 		print '</tr>';
 
+		$nameofimportprofile = str_replace(' ', '-', $langs->trans("ImportProfile").' '.$titleofmodule.' '.dol_print_date(dol_now('gmt'), 'dayxcard'));
+		if (is_object($objimport)) {
+			$nameofimportprofile = $objimport->model_name;
+		}
+
 		print '<tr class="oddeven">';
-		print '<td><input name="import_name" value=""></td>';
+		print '<td><input name="import_name" class="minwidth300" value="'.$nameofimportprofile.'"></td>';
 		print '<td>';
 		$arrayvisibility = array('private'=>$langs->trans("Private"), 'all'=>$langs->trans("Everybody"));
 		print $form->selectarray('visibility', $arrayvisibility, 'private');
