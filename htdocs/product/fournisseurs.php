@@ -1076,9 +1076,9 @@ END;
 
 						// Supplier ref
 						if ($usercancreate) { // change required right here
-							print '<td>'.$productfourn->getNomUrl().'</td>';
+							print '<td class="tdoverflowmax150">'.$productfourn->getNomUrl().'</td>';
 						} else {
-							print '<td>'.$productfourn->fourn_ref.'</td>';
+							print '<td class="tdoverflowmax150">'.dol_escape_htmltag($productfourn->fourn_ref).'</td>';
 						}
 
 						// Availability
@@ -1109,13 +1109,13 @@ END;
 
 						// Price for the quantity
 						print '<td class="right">';
-						print $productfourn->fourn_price ?price($productfourn->fourn_price) : "";
+						print $productfourn->fourn_price ? '<span class="amount">'.price($productfourn->fourn_price).'</span>' : "";
 						print '</td>';
 
 						if (!empty($conf->multicurrency->enabled)) {
 							// Price for the quantity in currency
 							print '<td class="right">';
-							print $productfourn->fourn_multicurrency_price ? price($productfourn->fourn_multicurrency_price) : "";
+							print $productfourn->fourn_multicurrency_price ? '<span class="amount">'.price($productfourn->fourn_multicurrency_price).'</span>' : "";
 							print '</td>';
 						}
 
