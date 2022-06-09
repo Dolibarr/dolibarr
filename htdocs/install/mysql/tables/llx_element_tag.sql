@@ -1,5 +1,6 @@
 -- ============================================================================
 -- Copyright (C) 2021 Maxime Kohlhaas       <support@atm-consulting.fr>
+-- Copyright (C) 2022 Charlene Benke        <charlene@patas-monkey.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -19,7 +20,10 @@
 create table llx_element_tag
 (
   rowid integer AUTO_INCREMENT PRIMARY KEY,
-  fk_categorie  integer NOT NULL,
-  fk_element  integer NOT NULL,
+  entity			  integer DEFAULT 1 NOT NULL,			-- multi company id
+  lang				  varchar(5) NOT NULL,
+  tag				    varchar(255) NOT NULL,
+  fk_element		integer NOT NULL,
+  element			  varchar(64) NOT NULL,
   import_key    varchar(14)
 )ENGINE=innodb;
