@@ -108,7 +108,7 @@ if (empty($reshook)) {
 		$search_field2 = '';
 		$search_date_creation = '';
 		$search_date_update = '';
-		$toselect = '';
+		$toselect = array();
 		$search_array_options = array();
 	}
 }
@@ -257,6 +257,7 @@ if ($resql) {
 	$trackid = 'prod'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
+	print '<div class="div-table-responsive-no-min">';
 	print '<table class="liste centpercent">';
 
 	// Fields title search
@@ -357,7 +358,7 @@ if ($resql) {
 	}
 	$db->free($resql);
 
-	print "</table>";
+	print "</table></div>";
 
 	print '</form>';
 } else {

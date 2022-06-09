@@ -65,4 +65,6 @@ InterLineDesc=Intervensjonsbeskrivelse-linje
 RepeatableIntervention=Intervensjon-mal
 ToCreateAPredefinedIntervention=Hvis du vil lage et forhåndsdefinert eller tilbakevendende intervensjon, oppretter du en vanlig intervensjon og konverterer den til intervensjonsmal
 ConfirmReopenIntervention=Er du sikker på at du vil gjenåpne intervensjonen <b> %s </b>?
-GenerateInter=Generate intervention
+GenerateInter=Generer intervensjon
+FichinterNoContractLinked=Intervensjon %s er opprettet uten en tilknyttet kontrakt.
+ErrorFicheinterCompanyDoesNotExist=Selskapet eksisterer ikke. Intervensjon er ikke opprettet.

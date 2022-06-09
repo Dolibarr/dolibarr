@@ -41,12 +41,23 @@ function recruitmentjobpositionPrepareHead($object)
 	$head[$h][2] = 'card';
 	$h++;
 
-	if ($conf->global->MAIN_FEATURES_LEVEL >= 1) {
-		$head[$h][0] = dol_buildpath("/recruitment/recruitmentjobposition_applications.php", 1).'?id='.$object->id;
-		$head[$h][1] = $langs->trans("Candidatures");
-		$head[$h][2] = 'candidatures';
-		$h++;
+	$head[$h][0] = dol_buildpath("/recruitment/recruitmentcandidature_list.php", 1).'?id='.$object->id;
+	$head[$h][1] = $langs->trans("Candidatures");
+	$sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."recruitment_recruitmentcandidature WHERE fk_recruitmentjobposition = ".((int) $object->id);
+	$resql = $db->query($sql);
+	if ($resql) {
+		$obj = $db->fetch_object($resql);
+		if ($obj) {
+			$nCandidature = $obj->nb;
+			if ($nCandidature > 0) {
+				$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nCandidature.'</span>';
+			}
+		}
+	} else {
+		dol_print_error($db);
 	}
+	$head[$h][2] = 'candidatures';
+	$h++;
 
 	if (isset($object->fields['note_public']) || isset($object->fields['note_private'])) {
 		$nbNote = 0;
@@ -124,7 +135,7 @@ function getPublicJobPositionUrl($mode, $ref = '', $localorexternal = 0)
 		$urltouse = $urlwithroot;
 	}
 
-	$out = $urltouse.'/public/recruitment/view.php?ref='.($mode ? '<font color="#666666">' : '').$ref.($mode ? '</font>' : '');
+	$out = $urltouse.'/public/recruitment/view.php?ref='.($mode ? '<span style="color: #666666">' : '').$ref.($mode ? '</span>' : '');
 	/*if (!empty($conf->global->RECRUITMENT_SECURITY_TOKEN))
 	{
 		if (empty($conf->global->RECRUITMENT_SECURITY_TOKEN)) $out .= '&securekey='.urlencode($conf->global->RECRUITMENT_SECURITY_TOKEN);

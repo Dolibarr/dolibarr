@@ -86,23 +86,21 @@ class FormActions
                 	select_status();
 
                     $('#select' + htmlname).change(function() {
+						console.log('We change field select '+htmlname);
                         select_status();
                     });
-                    // FIXME use another method for update combobox
-                    //$('#val' + htmlname).change(function() {
-                        //select_status();
-                    //});
                 });
 
                 function select_status() {
                     var defaultvalue = $('#select' + htmlname).val();
+					console.log('val='+defaultvalue);
                     var percentage = $('input[name=percentage]');
                     var selected = '".(isset($selected) ? dol_escape_js($selected) : '')."';
                     var value = (selected>0?selected:(defaultvalue>=0?defaultvalue:''));
 
                     percentage.val(value);
 
-                    if (defaultvalue == -1) {
+                    if (defaultvalue == 'na' || defaultvalue == -1) {
 						percentage.prop('disabled', true);
                         $('.hideifna').hide();
                     }
@@ -131,7 +129,7 @@ class FormActions
 			}
 			print '<select '.($canedit ? '' : 'disabled ').'name="'.$htmlname.'" id="select'.$htmlname.'" class="flat'.($morecss ? ' '.$morecss : '').'">';
 			if ($showempty) {
-				print '<option value=""'.($selected == '' ? ' selected' : '').'>&nbsp;</option>';
+				print '<option value="-1"'.($selected == '' ? ' selected' : '').'>&nbsp;</option>';
 			}
 			foreach ($listofstatus as $key => $val) {
 				print '<option value="'.$key.'"'.(($selected == $key && strlen($selected) == strlen($key)) || (($selected > 0 && $selected < 100) && $key == '50') ? ' selected' : '').'>'.$val.'</option>';
@@ -178,7 +176,8 @@ class FormActions
 		$sortfield = 'a.datep,a.id';
 		$sortorder = 'DESC,DESC';
 
-		$listofactions = ActionComm::getActions($this->db, $socid, $object->id, $typeelement, '', $sortfield, $sortorder, ($max ? ($max + 1) : 0));
+		$actioncomm = new ActionComm($this->db);
+		$listofactions = $actioncomm->getActions($socid, $object->id, $typeelement, '', $sortfield, $sortorder, ($max ? ($max + 1) : 0));
 		if (!is_array($listofactions)) {
 			dol_print_error($this->db, 'FailedToGetActions');
 		}
@@ -221,10 +220,14 @@ class FormActions
 			if ($typeelement == 'project') {
 				$projectid = $object->id;
 			}
+			$taskid = 0;
+			if ($typeelement == 'task') {
+				$taskid = $object->id;
+			}
 
 			$newcardbutton = '';
 			if (!empty($conf->agenda->enabled) && !empty($user->rights->agenda->myactions->create)) {
-				$url = DOL_URL_ROOT.'/comm/action/card.php?action=create&amp;datep='.urlencode(dol_print_date(dol_now(), 'dayhourlog', 'tzuser')).'&amp;origin='.urlencode($typeelement).'&amp;originid='.$object->id.((!empty($object->socid) && $object->socid > 0) ? '&amp;socid='.$object->socid : ((!empty($socid) && $socid > 0) ? '&amp;socid='.$socid : '')).($projectid > 0 ? '&amp;projectid='.$projectid : '').'&amp;backtopage='.urlencode($urlbacktopage);
+				$url = DOL_URL_ROOT.'/comm/action/card.php?action=create&token='.newToken().'&datep='.urlencode(dol_print_date(dol_now(), 'dayhourlog', 'tzuser')).'&origin='.urlencode($typeelement).'&originid='.((int) $object->id).((!empty($object->socid) && $object->socid > 0) ? '&socid='.((int) $object->socid) : ((!empty($socid) && $socid > 0) ? '&socid='.((int) $socid) : '')).($projectid > 0 ? '&projectid='.((int) $projectid) : '').($taskid > 0 ? '&taskid='.((int) $taskid) : '').'&backtopage='.urlencode($urlbacktopage);
 				$newcardbutton .= dolGetButtonTitle($langs->trans("AddEvent"), '', 'fa fa-plus-circle', $url);
 			}
 
@@ -256,7 +259,6 @@ class FormActions
 					}
 
 					$ref = $actioncomm->getNomUrl(1, -1);
-					$label = $actioncomm->getNomUrl(0, 36);
 
 					print '<tr class="oddeven">';
 
@@ -301,7 +303,7 @@ class FormActions
 					print '</td>';
 
 					// Label
-					print '<td>'.$label.'</td>';
+					print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($actioncomm->label).'">'.$actioncomm->getNomUrl(0, 36).'</td>';
 
 					// Date
 					print '<td class="center nowraponall">'.dol_print_date($actioncomm->datep, 'dayhour', 'tzuserrel');
@@ -347,14 +349,14 @@ class FormActions
 	 *  @param	array|string	$selected       Type pre-selected (can be 'manual', 'auto' or 'AC_xxx'). Can be an array too.
 	 *  @param  string		    $htmlname       Name of select field
 	 *  @param	string		    $excludetype	A type to exclude ('systemauto', 'system', '')
-	 *  @param	integer		    $onlyautoornot	1=Group all type AC_XXX into 1 line AC_MANUAL. 0=Keep details of type, -1=Keep details and add a combined line "All manual"
+	 *  @param	integer		    $onlyautoornot	1=Group all type AC_XXX into 1 line AC_MANUAL. 0=Keep details of type, -1=Keep details and add a combined line "All manual", -2=Combined line is disabled (not implemented yet)
 	 *  @param	int		        $hideinfohelp	1=Do not show info help, 0=Show, -1=Show+Add info to tell how to set default value
 	 *  @param  int		        $multiselect    1=Allow multiselect of action type
 	 *  @param  int             $nooutput       1=No output
 	 *  @param	string			$morecss		More css to add to SELECT component.
 	 * 	@return	string
 	 */
-	public function select_type_actions($selected = '', $htmlname = 'actioncode', $excludetype = '', $onlyautoornot = 0, $hideinfohelp = 0, $multiselect = 0, $nooutput = 0, $morecss = '')
+	public function select_type_actions($selected = '', $htmlname = 'actioncode', $excludetype = '', $onlyautoornot = 0, $hideinfohelp = 0, $multiselect = 0, $nooutput = 0, $morecss = 'minwidth300')
 	{
 		// phpcs:enable
 		global $langs, $user, $form, $conf;
@@ -368,7 +370,7 @@ class FormActions
 		$caction = new CActionComm($this->db);
 
 		// Suggest a list with manual events or all auto events
-		$arraylist = $caction->liste_array(1, 'code', $excludetype, $onlyautoornot);
+		$arraylist = $caction->liste_array(1, 'code', $excludetype, $onlyautoornot, '', 0);		// If we use param 'all' instead of 'code', there is no group by include in answer but the key 'type' of answer array contains the key for the group by.
 		if (empty($multiselect)) {
 			// Add empty line at start only if no multiselect
 			array_unshift($arraylist, '&nbsp;');
@@ -394,7 +396,7 @@ class FormActions
 			}
 			$out .= $form->multiselectarray($htmlname, $arraylist, $selected, 0, 0, 'centpercent', 0, 0);
 		} else {
-			$out .= $form->selectarray($htmlname, $arraylist, $selected, 0, 0, 0, '', 0, 0, 0, '', 'minwidth300'.($morecss ? ' '.$morecss : ''), 1);
+			$out .= $form->selectarray($htmlname, $arraylist, $selected, 0, 0, 0, '', 0, 0, 0, '', $morecss, 1);
 		}
 
 		if ($user->admin && empty($onlyautoornot) && $hideinfohelp <= 0) {

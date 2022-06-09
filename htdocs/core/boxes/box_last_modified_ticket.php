@@ -96,7 +96,7 @@ class box_last_modified_ticket extends ModeleBoxes
 
 			$sql .= " WHERE t.entity IN (".getEntity('ticket').')';
 			//  		$sql.= " AND e.rowid = er.fk_event";
-			//if (!$user->rights->societe->client->voir && !$user->socid) $sql.= " WHERE s.rowid = sc.fk_soc AND sc.fk_user = " .((int) $user->id);
+			//if (empty($user->rights->societe->client->voir) && !$user->socid) $sql.= " WHERE s.rowid = sc.fk_soc AND sc.fk_user = " .((int) $user->id);
 			if ($user->socid) {
 				$sql .= " AND t.fk_soc = ".((int) $user->socid);
 			}
@@ -177,15 +177,15 @@ class box_last_modified_ticket extends ModeleBoxes
 				}
 
 				if ($num == 0) {
-					$this->info_box_contents[$i][0] = array('td' => 'class="center"', 'text'=>$langs->trans("BoxLastModifiedTicketNoRecordedTickets"));
+					$this->info_box_contents[$i][0] = array('td' => '', 'text'=>'<span class="opacitymedium">'.$langs->trans("BoxLastModifiedTicketNoRecordedTickets").'</span>');
 				}
 			} else {
 				dol_print_error($this->db);
 			}
 		} else {
 			$this->info_box_contents[0][0] = array(
-				'td' => 'class="left"',
-				'text' => $langs->trans("ReadPermissionNotAllowed"),
+				'td' => '',
+				'text' => '<span class="opacitymedium">'.$langs->trans("ReadPermissionNotAllowed").'</span>',
 			);
 		}
 	}

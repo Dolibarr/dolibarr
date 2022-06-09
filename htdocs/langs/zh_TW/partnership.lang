@@ -19,7 +19,7 @@
 ModulePartnershipName=合作夥伴關係管理
 PartnershipDescription=合作夥伴管理模組
 PartnershipDescriptionLong= 合作夥伴管理模組
-
+Partnership=合夥
 AddPartnership=增加合作夥伴
 CancelPartnershipForExpiredMembers=合作夥伴：取消訂閱過期會員的合作關係
 PartnershipCheckBacklink=合作夥伴：檢查參考反向連結
@@ -58,7 +58,8 @@ ManagePartnership=管理合作夥伴
 BacklinkNotFoundOnPartnerWebsite=在合作夥伴網站上找不到反向連結
 ConfirmClosePartnershipAsk=您確定要取消此合作關係嗎？
 PartnershipType=合作夥伴類型
-PartnershipRefApproved=Partnership %s approved
+PartnershipRefApproved=合作夥伴 %s 已核准
+KeywordToCheckInWebsite=如果您想檢查給定關鍵字是否出現在每個合作夥伴的網站中，請在此處定義此關鍵字
 
 #
 # Template Mail
@@ -78,8 +79,8 @@ YourPartnershipRefusedContent=我們通知您，您的合作請求已被拒絕�
 YourPartnershipAcceptedContent=我們通知您，您的合作請求已被接受。
 YourPartnershipCanceledContent=我們通知您，您的合作夥伴關係已被取消。
 
-CountLastUrlCheckError=Number of errors for last URL check
-LastCheckBacklink=Date of last URL check
+CountLastUrlCheckError=上次檢查網址的錯誤數量
+LastCheckBacklink=上次檢查網址的日期
 ReasonDeclineOrCancel=拒絕原因
 
 #
@@ -90,3 +91,4 @@ PartnershipAccepted=已接受
 PartnershipRefused=已拒絕
 PartnershipCanceled=已取消
 PartnershipManagedFor=合作夥伴是
+

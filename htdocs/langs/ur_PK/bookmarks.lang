@@ -1,0 +1,22 @@
+# Dolibarr language file - Source file is en_US - marque pages
+AddThisPageToBookmarks=موجودہ صفحہ کو بُک مارکس میں شامل کریں۔
+Bookmark=بک مارک
+Bookmarks=بک مارکس
+ListOfBookmarks=بک مارکس کی فہرست
+EditBookmarks=بُک مارکس کی فہرست/ترمیم کریں۔
+NewBookmark=نیا بک مارک
+ShowBookmark=بُک مارک دکھائیں۔
+OpenANewWindow=ایک نیا ٹیب کھولیں۔
+ReplaceWindow=موجودہ ٹیب کو تبدیل کریں۔
+BookmarkTargetNewWindowShort=نیا ٹیب
+BookmarkTargetReplaceWindowShort=موجودہ ٹیب
+BookmarkTitle=بک مارک نام
+UrlOrLink=URL
+BehaviourOnClick=ایک بک مارک URL منتخب ہونے پر برتاؤ
+CreateBookmark=بک مارک بنائیں
+SetHereATitleForLink=بک مارک کے لیے ایک نام سیٹ کریں۔
+UseAnExternalHttpLinkOrRelativeDolibarrLink=ایک بیرونی/مطلق لنک (https://externalurl.com) یا اندرونی/رشتہ دار لنک (/mypage.php) استعمال کریں۔ آپ tel:0123456 کی طرح فون بھی استعمال کر سکتے ہیں۔
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=منتخب کریں کہ منسلک صفحہ موجودہ ٹیب میں کھلنا چاہیے یا نئے ٹیب میں
+BookmarksManagement=بُک مارکس کا انتظام
+BookmarksMenuShortCut=Ctrl + shift + m
+NoBookmarks=کوئی بک مارکس کی وضاحت نہیں کی گئی ہے۔

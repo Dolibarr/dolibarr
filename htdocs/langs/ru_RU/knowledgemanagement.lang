@@ -48,3 +48,7 @@ KnowledgeRecordExtraFields = Дополнительные поля для зап
 GroupOfTicket=Группа тикетов
 YouCanLinkArticleToATicketCategory=Вы можете привязать запись к группе тикетов (чтобы запись предлагалась во время квалификации новых тикетов)
 SuggestedForTicketsInGroup=Предлагается для тикетов, когда группа
+
+SetObsolete=Set as obsolete
+ConfirmCloseKM=Do you confirm the closing of this article as obsolete ?
+ConfirmReopenKM=Do you want to restore this article to status "Validated" ?

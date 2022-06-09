@@ -37,17 +37,18 @@ EventOrganization=Tadbirni tashkil qilish
 Settings=Sozlamalar
 EventOrganizationSetupPage = Tadbirni tashkil etish sahifasi
 EVENTORGANIZATION_TASK_LABEL = Loyiha tasdiqlanganda avtomatik ravishda yaratiladigan vazifalar yorlig'i
-EVENTORGANIZATION_TASK_LABELTooltip = Agar tashkil etilgan tadbirda tasdiqlashimiz bo'lsa, ba'zi vazifalar avtomatik ravishda Masalan loyiha <br> <br> yaratilgan bo'lishi mumkin: konferensiyasi uchun <br> Send qo'ng'iroq <br> tashrif buyurganlar uchun voqealarga ochiq obuna <br> But uchun qo'ng'iroq olish <br> konferentsiyalar uchun qo'ng'iroq olish <br> But chaqiraman yuborish <br> Tadbirni ma'ruzachilarga eslatib turish
+EVENTORGANIZATION_TASK_LABELTooltip = When you validate an event to organize, some tasks can be automatically created in the project <br>  <br> For example:  <br> Send Call for Conferences <br> Send Call for Booths <br> Validate suggestions of Conferences <br> Validate application for Booths <br> Open subscriptions to the event for attendees <br> Ma'ruzachilarga voqea haqida eslatma yuborish <br> Booth hostersga voqea haqida eslatma yuborish <br> Ishtirokchilarga voqea haqida eslatma yuborish
+EVENTORGANIZATION_TASK_LABELTooltip2=Vazifalarni avtomatik ravishda yaratish kerak bo'lmasa, bo'sh qoldiring.
 EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = Kimdir konferentsiya taklif qilganda avtomatik ravishda tuziladigan uchinchi tomonlarga qo'shiladigan toifadir
 EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = Uchinchi shaxslarga qo'shiladigan toifani, ular stendni taklif qilganda avtomatik ravishda yaratiladi
 EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = Konferentsiya taklifini olgandan so'ng yuborish uchun elektron pochta shablonini.
 EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH = Stend taklifini olgandan keyin yuborish uchun elektron pochta shablonini.
-EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Stendga ro'yxatdan o'tgandan so'ng yuboriladigan elektron pochta shabloni to'langan.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Stendga ro'yxatdan o'tgandan keyin to'langan elektron pochta shablonini yuborish.
 EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = Tadbirga ro'yxatdan o'tgandan so'ng yuboriladigan elektron pochta shablonini.
-EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Ishtirokchilarga ommaviy massaj elektron pochta shablonini
-EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Spikerlarga ommaviy elektron pochta orqali yuborilgan shablon
-EVENTORGANIZATION_FILTERATTENDEES_CAT = Uchinchi tomonning tanlangan ro'yxatini ishtirokchilarni yaratish kartasida / toifadagi katakchasida filtrlang
-EVENTORGANIZATION_FILTERATTENDEES_TYPE = Uchinchi tomonning tanlangan ro'yxatini ishtirokchilarni yaratish kartasida / mijozning turiga qarab shaklda filtrlang
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Massajdan elektron pochta xabarlarini jo'natishda foydalanish uchun elektron pochta shabloni "Elektron pochta xabarlarini jo'natish" karnaylarga
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Ishtirokchilar ro'yxatidagi "E-pochta xabarlarini yuborish" massajidan elektron pochta xabarlarini yuborishda foydalanish uchun elektron pochta shabloni
+EVENTORGANIZATION_FILTERATTENDEES_CAT = Ishtirokchini yaratish/qo'shish shaklida uchinchi shaxslar ro'yxatini toifadagi uchinchi shaxslarga cheklaydi
+EVENTORGANIZATION_FILTERATTENDEES_TYPE = Ishtirokchini yaratish/qo'shish shaklida, tabiat bilan uchinchi shaxslar ro'yxatini cheklaydi
 
 #
 # Object
@@ -71,26 +72,27 @@ EventOrganizationEmailBoothPayment = Stendingizning to'lovi
 EventOrganizationEmailRegistrationPayment = Tadbir uchun ro'yxatdan o'tish
 EventOrganizationMassEmailAttendees = Ishtirokchilar bilan aloqa
 EventOrganizationMassEmailSpeakers = Spikerlar bilan aloqa
+ToSpeakers=Spikerlarga
 
 #
 # Event
 #
-AllowUnknownPeopleSuggestConf=Allow people to suggest conferences
-AllowUnknownPeopleSuggestConfHelp=Allow unknown people to suggest a conference they want to do
-AllowUnknownPeopleSuggestBooth=Allow people to apply for a booth
-AllowUnknownPeopleSuggestBoothHelp=Allow unknown people to apply for a booth
+AllowUnknownPeopleSuggestConf=Odamlarga konferentsiya taklif qilishiga ruxsat bering
+AllowUnknownPeopleSuggestConfHelp=Noma'lum odamlarga o'zlari xohlagan konferentsiyani taklif qilishlariga ruxsat bering
+AllowUnknownPeopleSuggestBooth=Odamlarga stendga murojaat qilishlariga ruxsat bering
+AllowUnknownPeopleSuggestBoothHelp=Noma'lum odamlarga stendga murojaat qilishlariga ruxsat bering
 PriceOfRegistration=Ro'yxatdan o'tish narxi
 PriceOfRegistrationHelp=Ro'yxatdan o'tish yoki tadbirda qatnashish uchun to'lanadigan narx
 PriceOfBooth=Stendda turish uchun obuna narxi
 PriceOfBoothHelp=Stendda turish uchun obuna narxi
-EventOrganizationICSLink=Voqealar uchun ICS-ni bog'lang
+EventOrganizationICSLink=Konferentsiyalar uchun ICS havolasi
 ConferenceOrBoothInformation=Konferentsiya yoki stend ma'lumotlari
 Attendees=Ishtirokchilar
 ListOfAttendeesOfEvent=Loyiha ishtirokchilari ro'yxati
 DownloadICSLink = ICS havolasini yuklab oling
-EVENTORGANIZATION_SECUREKEY = Konferentsiyaga ochiq ro'yxatdan o'tishning havfli kaliti
+EVENTORGANIZATION_SECUREKEY = Konferentsiyani taklif qilish uchun ommaviy ro'yxatga olish sahifasi kalitini himoya qilish uchun urug'
 SERVICE_BOOTH_LOCATION = Stend joylashgan joy haqida hisob-faktura qatori uchun ishlatiladigan xizmat
-SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Konferentsiyaga qatnashuvchi obuna haqida hisob-faktura satrida ishlatiladigan xizmat
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Tadbir ishtirokchisining obunasi haqidagi hisob-faktura qatori uchun foydalanilgan xizmat
 NbVotes=Ovozlar soni
 #
 # Status
@@ -106,9 +108,9 @@ EvntOrgCancelled = Bekor qilindi
 #
 SuggestForm = Takliflar sahifasi
 SuggestOrVoteForConfOrBooth = Taklif yoki ovoz berish uchun sahifa
-EvntOrgRegistrationHelpMessage = Here, you can vote for a conference or suggest a new one for the event. You can also apply to have a booth during the event.
-EvntOrgRegistrationConfHelpMessage = Here, you can suggest a new conference to animate during the event.
-EvntOrgRegistrationBoothHelpMessage = Here, you can apply to have a booth during the event.
+EvntOrgRegistrationHelpMessage = Bu yerda siz konferentsiya uchun ovoz berishingiz yoki tadbir uchun yangisini taklif qilishingiz mumkin. Shuningdek, tadbir davomida stendga ega bo'lish uchun ariza topshirishingiz mumkin.
+EvntOrgRegistrationConfHelpMessage = Bu yerda siz tadbir davomida jonlantirish uchun yangi konferentsiya taklif qilishingiz mumkin.
+EvntOrgRegistrationBoothHelpMessage = Bu erda siz tadbir davomida stendga ega bo'lish uchun ariza berishingiz mumkin.
 ListOfSuggestedConferences = Tavsiya etilgan konferentsiyalar ro'yxati
 ListOfSuggestedBooths = Tavsiya etilgan kabinalar ro'yxati
 ListOfConferencesOrBooths=Loyiha konferentsiyalari yoki stendlari ro'yxati
@@ -136,10 +138,10 @@ OrganizationEventPaymentOfBoothWasReceived=Stend uchun to'lovingiz qayd etildi
 OrganizationEventPaymentOfRegistrationWasReceived=Tadbirni ro'yxatdan o'tkazish uchun to'lovingiz qayd etildi
 OrganizationEventBulkMailToAttendees=Bu sizning tadbirda ishtirokchi sifatida ishtirok etishingizni eslatadi
 OrganizationEventBulkMailToSpeakers=Bu sizning ma'ruzachi sifatida tadbirda ishtirok etishingizni eslatadi
-OrganizationEventLinkToThirdParty=Link to third party (customer, supplier or partner)
+OrganizationEventLinkToThirdParty=Uchinchi shaxsga havola (mijoz, yetkazib beruvchi yoki hamkor)
 
-NewSuggestionOfBooth=Application for a booth
-NewSuggestionOfConference=Application for a conference
+NewSuggestionOfBooth=Stend uchun ariza
+NewSuggestionOfConference=Konferentsiya uchun ariza
 
 #
 # Vote page
@@ -157,10 +159,11 @@ ConfAttendeeSubscriptionConfirmation = Tadbirga obunangizni tasdiqlash
 Attendee = Ishtirokchi
 PaymentConferenceAttendee = Konferentsiya qatnashchilarining to'lovlari
 PaymentBoothLocation = Stend joylashgan joy uchun to'lov
-DeleteConferenceOrBoothAttendee=Remove attendee
+DeleteConferenceOrBoothAttendee=Ishtirokchini olib tashlash
 RegistrationAndPaymentWereAlreadyRecorder=<b> %s </b> elektron pochta uchun ro'yxatdan o'tish va to'lov allaqachon qayd qilingan.
 EmailAttendee=Ishtirokchining elektron pochtasi
 EmailCompanyForInvoice=Kompaniyaning elektron pochtasi (hisob -faktura uchun, agar ishtirokchining elektron pochtasi boshqacha bo'lsa)
 ErrorSeveralCompaniesWithEmailContactUs=Bu elektron pochtaga ega bo'lgan bir nechta kompaniyalar topildi, shuning uchun biz sizning ro'yxatdan o'tishingizni avtomatik tarzda tasdiqlay olmaymiz. Iltimos, qo'lda tekshirish uchun %s biz bilan bog'laning
 ErrorSeveralCompaniesWithNameContactUs=Bu nomdagi bir nechta kompaniyalar topilgan, shuning uchun biz sizning ro'yxatdan o'tishingizni avtomatik tarzda tasdiqlay olmaymiz. Iltimos, qo'lda tekshirish uchun %s biz bilan bog'laning
-NoPublicActionsAllowedForThisEvent=No public actions are open to public for this event
+NoPublicActionsAllowedForThisEvent=Ushbu tadbir uchun ochiq aksiyalar ochiq emas
+MaxNbOfAttendees=Maksimal ishtirokchilar soni

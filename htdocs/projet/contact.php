@@ -94,7 +94,7 @@ if ($action == 'addcontact') {
 		foreach ($task_array as $task) {
 			$task_already_affected=false;
 			$personsLinked = $task->liste_contact(-1, $source);
-			if (!is_array($personsLinked) && coun($personsLinked) < 0) {
+			if (!is_array($personsLinked) && count($personsLinked) < 0) {
 				setEventMessage($object->error, 'errors');
 			} else {
 				foreach ($personsLinked as $person) {
@@ -294,13 +294,13 @@ if ($id > 0 || !empty($ref)) {
 	// Title
 	$morehtmlref .= $object->title;
 	// Thirdparty
-	if ($object->thirdparty->id > 0) {
+	if (!empty($object->thirdparty->id) && $object->thirdparty->id > 0) {
 		$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1, 'project');
 	}
 	$morehtmlref .= '</div>';
 
 	// Define a complementary filter for search of next/prev ref.
-	if (!$user->rights->projet->all->lire) {
+	if (empty($user->rights->projet->all->lire)) {
 		$objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
 		$object->next_prev_filter = " rowid IN (".$db->sanitize(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
 	}
@@ -349,8 +349,10 @@ if ($id > 0 || !empty($ref)) {
 	// Visibility
 	print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
 	if ($object->public) {
+		print img_picto($langs->trans('SharedProject'), 'world', 'class="paddingrightonly"');
 		print $langs->trans('SharedProject');
 	} else {
+		print img_picto($langs->trans('PrivateProject'), 'private', 'class="paddingrightonly"');
 		print $langs->trans('PrivateProject');
 	}
 	print '</td></tr>';
@@ -374,7 +376,10 @@ if ($id > 0 || !empty($ref)) {
 		// Opportunity Amount
 		print '<tr><td>'.$langs->trans("OpportunityAmount").'</td><td>';
 		if (strcmp($object->opp_amount, '')) {
-			print price($object->opp_amount, '', $langs, 0, 0, 0, $conf->currency);
+			print '<span class="amount">'.price($object->opp_amount, '', $langs, 0, 0, 0, $conf->currency).'</span>';
+			if (strcmp($object->opp_percent, '')) {
+				print ' &nbsp; &nbsp; &nbsp; <span title="'.dol_escape_htmltag($langs->trans('OpportunityWeightedAmount')).'"><span class="opacitymedium">'.$langs->trans("Weighted").'</span>: <span class="amount">'.price($object->opp_amount * $object->opp_percent / 100, 0, $langs, 1, 0, -1, $conf->currency).'</span></span>';
+			}
 		}
 		print '</td></tr>';
 	}
@@ -394,7 +399,7 @@ if ($id > 0 || !empty($ref)) {
 	// Budget
 	print '<tr><td>'.$langs->trans("Budget").'</td><td>';
 	if (strcmp($object->budget_amount, '')) {
-		print price($object->budget_amount, '', $langs, 0, 0, 0, $conf->currency);
+		print '<span class="amount">'.price($object->budget_amount, '', $langs, 0, 0, 0, $conf->currency).'</span>';
 	}
 	print '</td></tr>';
 
@@ -406,10 +411,9 @@ if ($id > 0 || !empty($ref)) {
 
 	print '</div>';
 	print '<div class="fichehalfright">';
-	print '<div class="ficheaddleft">';
 	print '<div class="underbanner clearboth"></div>';
 
-	print '<table class="border tableforfield" width="100%">';
+	print '<table class="border tableforfield centpercent">';
 
 	// Description
 	print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
@@ -425,7 +429,6 @@ if ($id > 0 || !empty($ref)) {
 
 	print '</table>';
 
-	print '</div>';
 	print '</div>';
 	print '</div>';
 

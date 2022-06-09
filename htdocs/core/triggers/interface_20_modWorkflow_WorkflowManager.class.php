@@ -134,7 +134,6 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 		// classify billed order & billed propososal
 		if ($action == 'BILL_VALIDATE') {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-			$ret = 0;
 
 			// First classify billed the order to allow the proposal classify process
 			if (!empty($conf->commande->enabled) && !empty($conf->workflow->enabled) && !empty($conf->global->WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER)) {
@@ -174,11 +173,11 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				}
 			}
 
-			if (! empty($conf->expedition->enabled) && ! empty($conf->workflow->enabled) && ! empty($conf->global->WORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE)) {
+			if (!empty($conf->expedition->enabled) && !empty($conf->workflow->enabled) && !empty($conf->global->WORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE)) {
 				/** @var Facture $object */
 				$object->fetchObjectLinked('', 'shipping', $object->id, $object->element);
 
-				if (! empty($object->linkedObjects)) {
+				if (!empty($object->linkedObjects)) {
 					/** @var Expedition $shipment */
 					$shipment = array_shift($object->linkedObjects['shipping']);
 
@@ -189,7 +188,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 			return $ret;
 		}
 
-		// classify billed order & billed propososal
+		// classify billed order & billed proposal
 		if ($action == 'BILL_SUPPLIER_VALIDATE') {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
@@ -244,12 +243,14 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				if (!empty($object->linkedObjects)) {
 					$totalonlinkedelements = 0;
 					foreach ($object->linkedObjects['reception'] as $element) {
-						if ($element->statut == Reception::STATUS_VALIDATED) $totalonlinkedelements += $element->total_ht;
+						if ($element->statut == Reception::STATUS_VALIDATED) {
+							$totalonlinkedelements += $element->total_ht;
+						}
 					}
 					dol_syslog("Amount of linked reception = ".$totalonlinkedelements.", of invoice = ".$object->total_ht.", egality is ".($totalonlinkedelements == $object->total_ht), LOG_DEBUG);
 					if ($totalonlinkedelements == $object->total_ht) {
 						foreach ($object->linkedObjects['reception'] as $element) {
-							$ret = $element->set_billed();
+							$ret = $element->setBilled();
 							if ($ret < 0) {
 								return $ret;
 							}
@@ -285,10 +286,16 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 			}
 		}
 
-		if ($action == 'SHIPPING_VALIDATE') {
+		// If we validate or close a shipment
+		if (($action == 'SHIPPING_VALIDATE') || ($action == 'SHIPPING_CLOSED')) {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
-			if (!empty($conf->commande->enabled) && !empty($conf->expedition->enabled) && !empty($conf->workflow->enabled) && !empty($conf->global->WORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING)) {
+			if (!empty($conf->commande->enabled) && !empty($conf->expedition->enabled) && !empty($conf->workflow->enabled) &&
+				(
+					(!empty($conf->global->WORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING) && ($action == 'SHIPPING_VALIDATE')) ||
+					(!empty($conf->global->WORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED) && ($action == 'SHIPPING_CLOSED'))
+				)
+			) {
 				$qtyshipped = array();
 				$qtyordred = array();
 				require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
@@ -348,6 +355,130 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 			}
 		}
 
+		// If we validate or close a shipment
+		if (($action == 'RECEPTION_VALIDATE') || ($action == 'RECEPTION_CLOSED')) {
+			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+
+			if ((!empty($conf->fournisseur->enabled) || !empty($conf->supplier_order->enabled)) && !empty($conf->reception->enabled) && !empty($conf->workflow->enabled) &&
+				(
+					(!empty($conf->global->WORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION) && ($action == 'RECEPTION_VALIDATE')) ||
+					(!empty($conf->global->WORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED) && ($action == 'RECEPTION_CLOSED'))
+				)
+			) {
+				$qtyshipped = array();
+				$qtyordred = array();
+				require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
+
+				// Find all reception on purchase order origin
+				$order = new CommandeFournisseur($this->db);
+				$ret = $order->fetch($object->origin_id);
+				if ($ret < 0) {
+					$this->error = $order->error;
+					$this->errors = $order->errors;
+					return $ret;
+				}
+				$ret = $order->fetchObjectLinked($order->id, 'supplier_order', null, 'reception');
+				if ($ret < 0) {
+					$this->error = $order->error;
+					$this->errors = $order->errors;
+					return $ret;
+				}
+				//Build array of quantity received by product for a purchase order
+				if (is_array($order->linkedObjects) && count($order->linkedObjects) > 0) {
+					foreach ($order->linkedObjects as $type => $shipping_array) {
+						if ($type == 'reception' && is_array($shipping_array) && count($shipping_array) > 0) {
+							foreach ($shipping_array as $shipping) {
+								if (is_array($shipping->lines) && count($shipping->lines) > 0) {
+									foreach ($shipping->lines as $shippingline) {
+										$qtyshipped[$shippingline->fk_product] += $shippingline->qty;
+									}
+								}
+							}
+						}
+					}
+				}
+
+				//Build array of quantity ordered to be received
+				if (is_array($order->lines) && count($order->lines) > 0) {
+					foreach ($order->lines as $orderline) {
+						// Exclude lines not qualified for shipment, similar code is found into calcAndSetStatusDispatch() for vendors
+						if (empty($conf->global->STOCK_SUPPORTS_SERVICES) && $orderline->product_type > 0) {
+							continue;
+						}
+						$qtyordred[$orderline->fk_product] += $orderline->qty;
+					}
+				}
+				//dol_syslog(var_export($qtyordred,true),LOG_DEBUG);
+				//dol_syslog(var_export($qtyshipped,true),LOG_DEBUG);
+				//Compare array
+				$diff_array = array_diff_assoc($qtyordred, $qtyshipped);
+				if (count($diff_array) == 0) {
+					//No diff => mean everythings is received
+					$ret = $order->setStatut(CommandeFournisseur::STATUS_RECEIVED_COMPLETELY, $object->origin_id, $object->origin, 'SUPPLIER_ORDER_CLOSE');
+					if ($ret < 0) {
+						$this->error = $order->error;
+						$this->errors = $order->errors;
+						return $ret;
+					}
+				}
+			}
+		}
+
+		if ($action == 'TICKET_CREATE') {
+			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+			// Auto link contract
+			if (!empty($conf->contract->enabled) && !empty($conf->ticket->enabled) && !empty($conf->ficheinter->enabled) && !empty($conf->workflow->enabled) && !empty($conf->global->WORKFLOW_TICKET_LINK_CONTRACT) && !empty($conf->global->TICKET_PRODUCT_CATEGORY) && !empty($object->fk_soc)) {
+				$societe = new Societe($this->db);
+				$company_ids = (empty($conf->global->WORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS)) ? [$object->fk_soc] : $societe->getParentsForCompany($object->fk_soc, [$object->fk_soc]);
+
+				$contrat = new Contrat($this->db);
+				$number_contracts_found = 0;
+				foreach ($company_ids as $company_id) {
+					$contrat->socid = $company_id;
+					$list = $contrat->getListOfContracts($option = 'all', $status = [Contrat::STATUS_DRAFT, Contrat::STATUS_VALIDATED], $product_categories = [$conf->global->TICKET_PRODUCT_CATEGORY], $line_status = [ContratLigne::STATUS_INITIAL, ContratLigne::STATUS_OPEN]);
+					if (is_array($list) && !empty($list)) {
+						$number_contracts_found = count($list);
+						if ($number_contracts_found == 1) {
+							$contractid = $list[0]->id;
+							$object->setContract($contractid);
+							break;
+						} elseif ($number_contracts_found > 1) {
+							foreach ($list as $linked_contract) {
+								$object->setContract($linked_contract->id);
+								// don't set '$contractid' so it is not used when creating an intervention.
+							}
+							if (empty(NOLOGIN)) setEventMessage($langs->trans('TicketManyContractsLinked'), 'warnings');
+							break;
+						}
+					}
+				}
+				if ($number_contracts_found == 0) {
+					if (empty(NOLOGIN)) setEventMessage($langs->trans('TicketNoContractFoundToLink'), 'mesgs');
+				}
+			}
+			// Automatically create intervention
+			if (!empty($conf->ficheinter->enabled) && !empty($conf->ticket->enabled) && !empty($conf->workflow->enabled) && !empty($conf->global->WORKFLOW_TICKET_CREATE_INTERVENTION)) {
+				$fichinter = new Fichinter($this->db);
+				$fichinter->socid = (int) $object->fk_soc;
+				$fichinter->fk_project = $projectid;
+				$fichinter->fk_contrat = (int) $object->fk_contract;
+				$fichinter->author = $user->id;
+				$fichinter->model_pdf = (!empty($conf->global->FICHEINTER_ADDON_PDF)) ? $conf->global->FICHEINTER_ADDON_PDF : 'soleil';
+				$fichinter->origin = $object->element;
+				$fichinter->origin_id = $object->id;
+
+				// Extrafields
+				$extrafields = new ExtraFields($this->db);
+				$extrafields->fetch_name_optionals_label($fichinter->table_element);
+				$array_options = $extrafields->getOptionalsFromPost($fichinter->table_element);
+				$fichinter->array_options = $array_options;
+
+				$id = $fichinter->create($user);
+				if ($id <= 0) {
+					setEventMessages($fichinter->error, null, 'errors');
+				}
+			}
+		}
 		return 0;
 	}
 

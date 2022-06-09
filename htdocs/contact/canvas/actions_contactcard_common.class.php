@@ -105,7 +105,7 @@ abstract class ActionsContactCardCommon
 
 		if ($action == 'create' || $action == 'edit') {
 			if ($conf->use_javascript_ajax) {
-				$this->tpl['ajax_selectcountry'] = "\n".'<script type="text/javascript" language="javascript">
+				$this->tpl['ajax_selectcountry'] = "\n".'<script type="text/javascript">
 				jQuery(document).ready(function () {
 						jQuery("#selectcountry_id").change(function() {
 							document.formsoc.action.value="'.$action.'";

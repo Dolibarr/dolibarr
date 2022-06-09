@@ -52,7 +52,7 @@ $langs->loadLangs(array("admin", "compta"));
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (!$user->rights->accounting->fiscalyear->write) {              // If we can read accounting records, we should be able to see fiscal year.
+if (empty($user->rights->accounting->fiscalyear->write)) {              // If we can read accounting records, we should be able to see fiscal year.
 	accessforbidden();
 }
 
@@ -127,7 +127,6 @@ if ($result) {
 	$title = $langs->trans('AccountingPeriods');
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $params, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy', 0, $addbutton, '', $limit, 1);
 
-	// Load attribute_label
 	print '<div class="div-table-responsive">';
 	print '<table class="tagtable liste centpercent">';
 	print '<tr class="liste_titre">';

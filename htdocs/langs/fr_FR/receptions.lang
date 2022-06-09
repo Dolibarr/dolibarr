@@ -1,5 +1,6 @@
 # Dolibarr language file - Source file is en_US - receptions
-ReceptionsSetup=Configuration de la réception de produits
+ReceptionDescription=Gestion de la réception des fournisseurs (Créer des documents de réception)
+ReceptionsSetup=Configuration de la réception des fournisseurs
 RefReception=Réf. Réception
 Reception=Réception
 Receptions=Réceptions
@@ -23,7 +24,9 @@ ReceptionsAndReceivingForSameOrder=Réceptions et reçus pour cette commande
 ReceptionsToValidate=Réceptions à valider
 StatusReceptionCanceled=Annulé
 StatusReceptionDraft=Brouillon
-StatusReceptionValidated=Validée (produits à envoyer ou envoyés)
+StatusReceptionValidated=Validée (produits à envoyer ou déjà envoyés)
+StatusReceptionValidatedToReceive=Validé (produits à recevoir)
+StatusReceptionValidatedReceived=Validé (produits reçus)
 StatusReceptionProcessed=Traités
 StatusReceptionDraftShort=Brouillon
 StatusReceptionValidatedShort=Validé
@@ -46,3 +49,6 @@ ReceptionsReceiptModel=Modèles de document pour les réceptions
 NoMorePredefinedProductToDispatch=Plus de produits prédéfinis à expédier
 ReceptionExist=Une réception existe
 ByingPrice=Prix d'achat
+ReceptionBackToDraftInDolibarr=Réception %s retourné en brouillon
+ReceptionClassifyClosedInDolibarr=Reception %s classée Fermée
+ReceptionUnClassifyCloseddInDolibarr=Réception %s ré-ouverte

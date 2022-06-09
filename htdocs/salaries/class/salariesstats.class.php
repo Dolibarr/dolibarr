@@ -20,7 +20,7 @@
 /**
  *  \file       htdocs/salaries/class/salariesstats.class.php
  *  \ingroup    salaries
- *  \brief      Fichier de la classe de gestion des stats des salaires
+ *  \brief      File of class for statistics on salaries
  */
 include_once DOL_DOCUMENT_ROOT.'/core/class/stats.class.php';
 include_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
@@ -69,7 +69,7 @@ class SalariesStats extends Stats
 		if (is_array($this->userid) && count($this->userid) > 0) {
 			$this->where .= ' AND fk_user IN ('.$this->db->sanitize(join(',', $this->userid)).')';
 		} elseif ($this->userid > 0) {
-			$this->where .= ' AND fk_user = '.$this->userid;
+			$this->where .= " AND fk_user = ".((int) $this->userid);
 		}
 	}
 

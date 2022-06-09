@@ -9,6 +9,7 @@ ErrorBadMXDomain=%s elektron pochtasi noto'g'ri ko'rinadi (domenda MX yozuvi mav
 ErrorBadUrl=Url %s noto'g'ri
 ErrorBadValueForParamNotAString=Parametringiz uchun yomon qiymat. Odatda tarjima etishmayotganida qo'shiladi.
 ErrorRefAlreadyExists=<b> %s </b> ma'lumotnomasi allaqachon mavjud.
+ErrorTitleAlreadyExists=Sarlavha <b> %s </b> allaqachon mavjud.
 ErrorLoginAlreadyExists=%s-ga kirish allaqachon mavjud.
 ErrorGroupAlreadyExists=%s guruhi allaqachon mavjud.
 ErrorEmailAlreadyExists=%s elektron pochtasi allaqachon mavjud.
@@ -27,7 +28,9 @@ ErrorThisContactIsAlreadyDefinedAsThisType=Ushbu kontakt allaqachon ushbu turdag
 ErrorCashAccountAcceptsOnlyCashMoney=Ushbu bank hisobvarag'i kassa hisobvarag'i hisoblanadi, shuning uchun u faqat naqd turdagi to'lovlarni qabul qiladi.
 ErrorFromToAccountsMustDiffers=Bank hisob raqamlarining manbalari va maqsadlari boshqacha bo'lishi kerak.
 ErrorBadThirdPartyName=Uchinchi tomon nomi uchun noto'g'ri qiymat
+ForbiddenBySetupRules=O'rnatish qoidalari bilan taqiqlangan
 ErrorProdIdIsMandatory=%s majburiydir
+ErrorAccountancyCodeCustomerIsMandatory=%s mijozining buxgalteriya kodi majburiydir
 ErrorBadCustomerCodeSyntax=Mijoz kodi uchun noto'g'ri sintaksis
 ErrorBadBarCodeSyntax=Shtrixli kod uchun noto'g'ri sintaksis. Ehtimol, siz shtrix-kodning yomon turini o'rnatdingiz yoki skanerlangan qiymatga mos kelmaydigan raqamlash uchun shtrix-niqobni aniqladingiz.
 ErrorCustomerCodeRequired=Mijoz kodi talab qilinadi
@@ -64,7 +67,7 @@ ErrorDestinationAlreadyExists=<b> %s </b> ismli boshqa fayl allaqachon mavjud.
 ErrorPartialFile=Fayl server tomonidan to'liq qabul qilinmadi.
 ErrorNoTmpDir=Vaqtinchalik to'g'ridan-to'g'ri %s mavjud emas.
 ErrorUploadBlockedByAddon=Yuklash PHP / Apache plaginlari tomonidan bloklangan.
-ErrorFileSizeTooLarge=Fayl hajmi juda katta.
+ErrorFileSizeTooLarge=Fayl hajmi juda katta yoki fayl taqdim etilmagan.
 ErrorFieldTooLong=%s maydoni juda uzun.
 ErrorSizeTooLongForIntType=Int turi uchun juda uzun (maksimal %s raqam)
 ErrorSizeTooLongForVarcharType=Ip turi uchun o'lcham juda uzun (%s belgilar maksimal)
@@ -111,6 +114,7 @@ ErrorFailedToLoadRSSFile=RSS tasmasini ololmadi. Xato xabarlari etarli ma'lumot 
 ErrorForbidden=Ruxsat yo'q. <br> Siz o'chirib qo'yilgan modulning sahifasiga, maydoniga yoki xususiyatiga yoki autentifikatsiya qilingan sessiyada bo'lmasdan yoki foydalanuvchingizga ruxsat berilmagan holda kirishga harakat qilasiz.
 ErrorForbidden2=Ushbu kirish uchun ruxsat sizning Dolibarr administratoringiz tomonidan %s-> %s menyusidan aniqlanishi mumkin.
 ErrorForbidden3=Dolibarr autentifikatsiya qilingan seans orqali ishlatilmaydi. Autentifikatsiyani qanday boshqarishni bilish uchun Dolibarrni sozlash bo'yicha hujjatlarni ko'rib chiqing (htaccess, mod_auth yoki boshqa ...).
+ErrorForbidden4=Eslatma: ushbu login uchun mavjud sessiyalarni yo'q qilish uchun brauzeringiz cookie-fayllarini tozalang.
 ErrorNoImagickReadimage=Imagick sinfi ushbu PHP-da mavjud emas. Hech qanday oldindan ko'rish mumkin emas. Administrator ushbu yorliqni O'rnatish - Displey menyusidan o'chirib qo'yishi mumkin.
 ErrorRecordAlreadyExists=Yozuv allaqachon mavjud
 ErrorLabelAlreadyExists=Ushbu yorliq allaqachon mavjud
@@ -271,6 +275,18 @@ CheckVersionFail=Versiyani tekshirib bo'lmadi
 ErrorWrongFileName=Fayl nomida __SOMETHING__ bo'lishi mumkin emas
 ErrorNotInDictionaryPaymentConditions=To'lov shartlari lug'atida yo'q, iltimos o'zgartiring.
 ErrorIsNotADraft=%s qoralama emas
+ErrorExecIdFailed="ID" buyrug'ini bajarib bo'lmadi
+ErrorBadCharIntoLoginName=Kirish nomidagi ruxsatsiz belgi
+ErrorRequestTooLarge=Xato, soʻrov juda katta
+ErrorNotApproverForHoliday=Siz %s tark etishni tasdiqlovchi emassiz
+ErrorAttributeIsUsedIntoProduct=Ushbu atribut bir yoki bir nechta mahsulot variantida qo'llaniladi
+ErrorAttributeValueIsUsedIntoProduct=Ushbu atribut qiymati bir yoki bir nechta mahsulot variantida ishlatiladi
+ErrorPaymentInBothCurrency=Xato, barcha summalar bitta ustunga kiritilishi kerak
+ErrorYouTryToPayInvoicesInACurrencyFromBankWithAnotherCurrency=Hisob-fakturalarni %s valyutasidagi hisobdan %s valyutasida to‘lashga harakat qilasiz.
+ErrorInvoiceLoadThirdParty=“%s” invoys uchun uchinchi tomon obyektini yuklab bo‘lmadi
+ErrorInvoiceLoadThirdPartyKey=“%s” uchinchi tomon kaliti “%s” invoys uchun sozlanmagan
+ErrorDeleteLineNotAllowedByObjectStatus=Haqiqiy ob'ekt holati bo'yicha qatorni o'chirishga ruxsat berilmaydi
+ErrorAjaxRequestFailed=So‘rov bajarilmadi
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=PHP parametringiz upload_max_filesize (%s) PHP post_max_size (%s) parametridan yuqori. Bu izchil o'rnatish emas.
@@ -306,12 +322,18 @@ WarningAvailableOnlyForHTTPSServers=Faqat HTTPS xavfsiz ulanishidan foydalanish 
 WarningModuleXDisabledSoYouMayMissEventHere=%s moduli yoqilmagan. Shunday qilib, siz bu erda ko'plab tadbirlarni o'tkazib yuborishingiz mumkin.
 WarningPaypalPaymentNotCompatibleWithStrict="Qat'iy" qiymati onlayn to'lov xususiyatlarining noto'g'ri ishlashiga olib keladi. Buning o'rniga "Lax" dan foydalaning.
 
+<<<<<<< BOSH
+=======
+<<<<<<< BOSH
+<<<<<<< BOSH
+>>>>>>> git@github.com ning '15.0' filiali:Dolibarr/dolibarr.git
 # Validate
 RequireValidValue = Qiymat yaroqsiz
 RequireAtLeastXString = Kamida %s belgi kerak
 RequireXStringMax = Maksimal %s belgidan iborat bo'lishi kerak
 RequireAtLeastXDigits = Kamida %s ta raqamni talab qiladi
 RequireXDigitsMax = Maksimal %s raqam (lar) ni talab qiladi
+RequireValidNumeric = Raqamli qiymat talab qiladi
 RequireValidEmail = E -pochta manzili yaroqsiz
 RequireMaxLength = Uzunligi %s belgidan kam bo'lishi kerak
 RequireMinLength = Uzunlik %s char (lar) dan oshishi kerak
@@ -325,3 +347,12 @@ BadSetupOfField = Maydonni noto'g'ri sozlashda xato
 BadSetupOfFieldClassNotFoundForValidation = Maydonni noto'g'ri o'rnatish xatosi: Tasdiqlash uchun sinf topilmadi
 BadSetupOfFieldFileNotFound = Maydonni noto'g'ri o'rnatishda xato: Faylni kiritish uchun topilmadi
 BadSetupOfFieldFetchNotCallable = Maydonni noto'g'ri o'rnatish xatosi: Sinfda qo'ng'iroq qilib bo'lmaydi
+<<<<<<< BOSH
+=======
+=======
+=======
+>>>>>>> git@github.com ning '15.0' filiali:Dolibarr/dolibarr.git
+>>>>>>> git@github.com ning '15.0' filiali:Dolibarr/dolibarr.git
+=======
+>>>>>>> git@github.com ning '15.0' filiali:Dolibarr/dolibarr.git
+>>>>>>> git@github.com ning '15.0' filiali:Dolibarr/dolibarr.git

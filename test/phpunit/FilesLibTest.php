@@ -401,10 +401,14 @@ class FilesLibTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
+		// Format zip
+		print "\n";
+		print 'testDolCompressUnCompress zip'."\n";
+
 		$format='zip';
 		$filein=dirname(__FILE__).'/Example_import_company_1.csv';
 		$fileout=$conf->admin->dir_temp.'/test.'.$format;
-		$dirout=$conf->admin->dir_temp.'/test';
+		$dirout=$conf->admin->dir_temp.'/testdir'.$format;
 
 		dol_delete_file($fileout);
 		$count=0;
@@ -417,18 +421,50 @@ class FilesLibTest extends PHPUnit\Framework\TestCase
 		$conf->logbuffer=array();
 
 		$result=dol_compress_file($filein, $fileout, $format, $errorstring);
-		print __METHOD__." result=".$result."\n";
+		print __METHOD__." compress result=".$result."\n";
 		print join(', ', $conf->logbuffer);
 		$this->assertGreaterThanOrEqual(1, $result, "Pb with dol_compress_file on ".$filein." into ".$fileout." : ".$errorstring);
 
 		$result=dol_uncompress($fileout, $dirout);
-		print __METHOD__." result=".join(',', $result)."\n";
+		print __METHOD__." uncompress result=".join(',', $result)."\n";
 		$this->assertEquals(0, count($result), "Pb with dol_uncompress_file of file ".$fileout);
 
+		// Format gz
+		print "\n";
+		print 'testDolCompressUnCompress gz'."\n";
+
+		$format='gz';
+		$filein=dirname(__FILE__).'/Example_import_company_1.csv';
+		$fileout=$conf->admin->dir_temp.'/test.'.$format;
+		$dirout=$conf->admin->dir_temp.'/testdir'.$format;
+
+		dol_delete_file($fileout);
+		$count=0;
+		dol_delete_dir_recursive($dirout, $count, 1);
+
+		$errorstring = '';
+
+		dol_mkdir($conf->admin->dir_temp);
+		$conf->global->MAIN_ENABLE_LOG_TO_HTML=1; $conf->syslog->enabled=1; $_REQUEST['logtohtml']=1;
+		$conf->logbuffer=array();
+
+		$result=dol_compress_file($filein, $fileout, $format, $errorstring);
+		print __METHOD__." compress result=".$result."\n";
+		print join(', ', $conf->logbuffer);
+		$this->assertGreaterThanOrEqual(1, $result, "Pb with dol_compress_file on ".$filein." into ".$fileout." : ".$errorstring);
+
+		$result=dol_uncompress($fileout, $dirout);
+		print __METHOD__." uncompress result=".join(',', $result)."\n";
+		print join(', ', $conf->logbuffer);
+		$this->assertEquals(0, count($result), "Pb with dol_uncompress_file of file ".$fileout);
+
+
+		// Test compression of a directory
+		// $dirout is $conf->admin->dir_temp.'/testdirgz'
 		$excludefiles = '/(\.back|\.old|\.log|documents[\/\\\]admin[\/\\\]documents[\/\\\])/i';
 		if (preg_match($excludefiles, 'a/temp/b')) { echo '----- Regex OK -----'."\n"; }
-		$result=dol_compress_dir($dirout, $conf->admin->dir_temp.'/testdir.zip', 'zip', $excludefiles);
-		print __METHOD__." result=".$result."\n";
+		$result=dol_compress_dir($dirout, $conf->admin->dir_temp.'/testcompressdirzip.zip', 'zip', $excludefiles);
+		print __METHOD__." dol_compress_dir result=".$result."\n";
 		print join(', ', $conf->logbuffer);
 		$this->assertGreaterThanOrEqual(1, $result, "Pb with dol_compress_dir of ".$dirout." into ".$conf->admin->dir_temp.'/testdir.zip');
 	}
@@ -465,6 +501,10 @@ class FilesLibTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
+
+		if (empty($user->rights->facture)) {
+			$user->rights->facture = new stdClass();
+		}
 
 		//$dummyuser=new User($db);
 		//$result=restrictedArea($dummyuser,'societe');
@@ -518,5 +558,73 @@ class FilesLibTest extends PHPUnit\Framework\TestCase
 		// We restore user properties
 		$user->rights->facture->lire = $savpermlire;
 		$user->rights->facture->creer = $savpermcreer;
+	}
+
+	/**
+	 * testDolDirMove
+	 *
+	 * @return void
+	 */
+	public function testDolDirMove()
+	{
+		global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
+
+		// To test a move of empty directory that should work
+		$dirsrcpath = $conf->admin->dir_temp.'/directory';
+		$dirdestpath = $conf->admin->dir_temp.'/directory2';
+		$file=dirname(__FILE__).'/Example_import_company_1.csv';
+		dol_mkdir($dirsrcpath);
+		dol_delete_dir_recursive($dirdestpath, 0, 1);
+		$result=dol_move_dir($dirsrcpath, $dirdestpath, 1, 1, 1);
+		print __METHOD__." result=".$result."\n";
+		$this->assertTrue($result, 'move of directory with empty directory');
+
+		// To test a move on existing directory with overwrite
+		dol_mkdir($dirsrcpath);
+		$result=dol_move_dir($dirsrcpath, $dirdestpath, 1, 1, 1);
+		print __METHOD__." result=".$result."\n";
+		$this->assertTrue($result, 'move of directory on existing directory with empty directory');
+
+		// To test a move on existing directory without overwrite
+		dol_mkdir($dirsrcpath);
+		$result=dol_move_dir($dirsrcpath, $dirdestpath, 0, 1, 1);
+		print __METHOD__." result=".$result."\n";
+		$this->assertFalse($result, 'move of directory on existing directory without overwrite');
+
+		// To test a move with a file to rename in src directory
+		dol_mkdir($dirsrcpath);
+		dol_delete_dir_recursive($dirdestpath, 0, 1);
+		dol_copy($file, $dirsrcpath.'/directory_file.csv');
+		$result=dol_move_dir($dirsrcpath, $dirdestpath, 1, 1, 1);
+		print __METHOD__." result=".$result."\n";
+		$this->assertTrue($result, 'move of directory with file in directory');
+
+		// To test a move without a file to rename in src directory
+		dol_mkdir($dirsrcpath);
+		dol_delete_dir_recursive($dirdestpath, 0, 1);
+		dol_copy($file, $dirsrcpath.'/file.csv');
+		$result=dol_move_dir($dirsrcpath, $dirdestpath, 1, 1, 1);
+		print __METHOD__." result=".$result."\n";
+		$this->assertTrue($result, 'move of directory with file whitout rename needed in directory');
+
+		// To test a move with a directory to rename in src directory
+		dol_mkdir($dirsrcpath);
+		dol_delete_dir_recursive($dirdestpath, 0, 1);
+		dol_mkdir($dirsrcpath.'/directory');
+		$result=dol_move_dir($dirsrcpath, $dirdestpath, 1, 1, 1);
+		print __METHOD__." result=".$result."\n";
+		$this->assertTrue($result, 'move of directory with file with rename needed in directory');
+
+		// To test a move without a directory to rename in src directory
+		dol_mkdir($dirsrcpath);
+		dol_delete_dir_recursive($dirdestpath, 0, 1);
+		dol_mkdir($dirsrcpath.'/notorename');
+		$result=dol_move_dir($dirsrcpath, $dirdestpath, 1, 1, 1);
+		print __METHOD__." result=".$result."\n";
+		$this->assertTrue($result, 'move of directory with directory whitout rename needed in directory');
 	}
 }

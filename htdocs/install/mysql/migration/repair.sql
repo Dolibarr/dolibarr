@@ -557,3 +557,15 @@ UPDATE llx_facturedet SET situation_percent = 100 WHERE situation_percent IS NUL
 
 DELETE FROM llx_rights_def WHERE module = 'hrm' AND perms = 'employee';
 
+
+-- Sequence to fix the content of llx_bank.amount_main_currency
+-- Note: amount is amount in currency of bank account
+-- Note: pamount is always amount into the main currency
+-- Note: pmulticurrencyamount is in currency of invoice 
+-- Note: amount_main_currency must be amount in main currency
+-- DROP TABLE tmp_bank;
+-- CREATE TABLE tmp_bank SELECT b.rowid, b.amount, p.rowid as pid, p.amount as pamount, p.multicurrency_amount as pmulticurrencyamount FROM llx_bank as b INNER JOIN llx_bank_url as bu ON bu.fk_bank=b.rowid AND bu.type = 'payment' INNER JOIN llx_paiement as p ON bu.url_id = p.rowid WHERE p.multicurrency_amount <> 0 AND p.multicurrency_amount <> p.amount;
+-- UPDATE llx_bank as b SET b.amount_main_currency = (SELECT tb.pamount FROM tmp_bank as tb WHERE tb.rowid = b.rowid) WHERE b.amount_main_currency IS NULL;
+-- DROP TABLE tmp_bank2;
+-- CREATE TABLE tmp_bank2 SELECT b.rowid, b.amount, p.rowid as pid, p.amount as pamount, p.multicurrency_amount as pmulticurrencyamount FROM llx_bank as b INNER JOIN llx_bank_url as bu ON bu.fk_bank=b.rowid AND bu.type = 'payment_supplier' INNER JOIN llx_paiementfourn as p ON bu.url_id = p.rowid WHERE p.multicurrency_amount <> 0 AND p.multicurrency_amount <> p.amount;
+-- UPDATE llx_bank as b SET b.amount_main_currency = (SELECT tb.pamount FROM tmp_bank2 as tb WHERE tb.rowid = b.rowid) WHERE b.amount_main_currency IS NULL;

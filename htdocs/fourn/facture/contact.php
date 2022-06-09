@@ -46,6 +46,7 @@ if ($user->socid) {
 	$socid = $user->socid;
 }
 $result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture');
+$hookmanager->initHooks(array('invoicesuppliercardcontact'));
 
 $object = new FactureFournisseur($db);
 
@@ -142,7 +143,7 @@ if ($id > 0 || !empty($ref)) {
 			$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 			if ($user->rights->facture->creer) {
 				if ($action != 'classify') {
-					//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+					//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 					$morehtmlref .= ' : ';
 				}
 				if ($action == 'classify') {
@@ -160,9 +161,10 @@ if ($id > 0 || !empty($ref)) {
 				if (!empty($object->fk_project)) {
 					$proj = new Project($db);
 					$proj->fetch($object->fk_project);
-					$morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$object->fk_project.'" title="'.$langs->trans('ShowProject').'">';
-					$morehtmlref .= $proj->ref;
-					$morehtmlref .= '</a>';
+					$morehtmlref .= ' : '.$proj->getNomUrl(1);
+					if ($proj->title) {
+						$morehtmlref .= ' - '.$proj->title;
+					}
 				} else {
 					$morehtmlref .= '';
 				}
@@ -170,11 +172,13 @@ if ($id > 0 || !empty($ref)) {
 		}
 		$morehtmlref .= '</div>';
 
-		$object->totalpaye = $alreadypaid; // To give a chance to dol_banner_tab to use already paid amount to show correct status
+		$object->totalpaid = $alreadypaid; // To give a chance to dol_banner_tab to use already paid amount to show correct status
 
 		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
+		/*
 		print '<div class="fichecenter">';
+		print '<div class="fichehalfleft">';
 		print '<div class="underbanner clearboth"></div>';
 
 		print '<table class="border centpercent tableforfield">';
@@ -187,12 +191,12 @@ if ($id > 0 || !empty($ref)) {
 		if ($object->type == FactureFournisseur::TYPE_REPLACEMENT) {
 			$facreplaced = new FactureFournisseur($db);
 			$facreplaced->fetch($object->fk_facture_source);
-			print ' ('.$langs->transnoentities("ReplaceInvoice", $facreplaced->getNomUrl(1)).')';
+			print ' '.$langs->transnoentities("ReplaceInvoice", $facreplaced->getNomUrl(1));
 		}
 		if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE) {
 			$facusing = new FactureFournisseur($db);
 			$facusing->fetch($object->fk_facture_source);
-			print ' ('.$langs->transnoentities("CorrectInvoice", $facusing->getNomUrl(1)).')';
+			print ' '.$langs->transnoentities("CorrectInvoice", $facusing->getNomUrl(1));
 		}
 
 		$facidavoir = $object->getListIdAvoirFromInvoice();
@@ -203,12 +207,12 @@ if ($id > 0 || !empty($ref)) {
 				$facavoir->fetch($facid);
 				$invoicecredits[] = $facavoir->getNomUrl(1);
 			}
-			print ' ('.$langs->transnoentities("InvoiceHasAvoir") . (count($invoicecredits) ? ' ' : '') . implode(',', $invoicecredits) . ')';
+			print ' '.$langs->transnoentities("InvoiceHasAvoir") . (count($invoicecredits) ? ' ' : '') . implode(',', $invoicecredits);
 		}
 		//if ($facidnext > 0) {
 		//	$facthatreplace = new FactureFournisseur($db);
 		//	$facthatreplace->fetch($facidnext);
-		//	print ' ('.$langs->transnoentities("ReplacedByInvoice", $facthatreplace->getNomUrl(1)).')';
+		//	print ' '.$langs->transnoentities("ReplacedByInvoice", $facthatreplace->getNomUrl(1));
 		//}
 		print '</td></tr>';
 
@@ -216,6 +220,13 @@ if ($id > 0 || !empty($ref)) {
 		print '<tr><td>'.$form->editfieldkey("Label", 'label', $object->label, $object, 0).'</td><td>';
 		print $form->editfieldval("Label", 'label', $object->label, $object, 0);
 		print '</td></tr>';
+
+		print '</table>';
+
+		print '</div><div class="fichehalfright">';
+		print '<div class="underbanner clearboth"></div>';
+
+		print '<table class="border centpercent tableforfield">';
 
 		// Amount
 		print '<tr><td>'.$langs->trans('AmountHT').'</td><td>'.price($object->total_ht, 1, $langs, 0, -1, -1, $conf->currency).'</td></tr>';
@@ -236,10 +247,15 @@ if ($id > 0 || !empty($ref)) {
 		print '<tr><td>'.$langs->trans('AmountTTC').'</td><td>'.price($object->total_ttc, 1, $langs, 0, -1, -1, $conf->currency).'</td></tr>';
 
 		print "</table>";
+		print '</div>';
+
+		print '</div>';
+		*/
 
 		print dol_get_fiche_end();
 
-		print '<br>';
+		//print '<div class="clearboth"></div>';
+		//print '<br>';
 
 		// Contacts lines
 		include DOL_DOCUMENT_ROOT.'/core/tpl/contacts.tpl.php';

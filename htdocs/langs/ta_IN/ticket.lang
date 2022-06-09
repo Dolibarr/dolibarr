@@ -1,0 +1,350 @@
+# en_US lang file for module ticket
+# Copyright (C) 2013  Jean-François FERRY <hello@librethic.io>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+
+Module56000Name=டிக்கெட்டுகள்
+Module56000Desc=வெளியீடு அல்லது கோரிக்கை மேலாண்மைக்கான டிக்கெட் அமைப்பு
+
+Permission56001=டிக்கெட்டுகளைப் பார்க்கவும்
+Permission56002=டிக்கெட்டுகளை மாற்றவும்
+Permission56003=டிக்கெட்டுகளை நீக்கு
+Permission56004=டிக்கெட்டுகளை நிர்வகிக்கவும்
+Permission56005=அனைத்து மூன்றாம் தரப்பினரின் டிக்கெட்டுகளையும் பார்க்கவும் (வெளிப்புற பயனர்களுக்கு பயனுள்ளதாக இல்லை, எப்போதும் அவர்கள் சார்ந்திருக்கும் மூன்றாம் தரப்பினருக்கு மட்டுமே)
+
+TicketDictType=டிக்கெட் - வகைகள்
+TicketDictCategory=டிக்கெட் - குழுக்கள்
+TicketDictSeverity=டிக்கெட் - தீவிரங்கள்
+TicketDictResolution=டிக்கெட் - தீர்மானம்
+
+TicketTypeShortCOM=வணிக கேள்வி
+TicketTypeShortHELP=செயல்பாட்டு உதவிக்கான கோரிக்கை
+TicketTypeShortISSUE=சிக்கல் அல்லது பிழை
+TicketTypeShortPROBLEM=பிரச்சனை
+TicketTypeShortREQUEST=மாற்றம் அல்லது மேம்படுத்தல் கோரிக்கை
+TicketTypeShortPROJET=திட்டம்
+TicketTypeShortOTHER=மற்றவை
+
+TicketSeverityShortLOW=குறைந்த
+TicketSeverityShortNORMAL=இயல்பானது
+TicketSeverityShortHIGH=உயர்
+TicketSeverityShortBLOCKING=விமர்சனம், தடுப்பது
+
+TicketCategoryShortOTHER=மற்றவை
+
+ErrorBadEmailAddress=புலம் '%s' தவறானது
+MenuTicketMyAssign=எனது டிக்கெட்டுகள்
+MenuTicketMyAssignNonClosed=எனது திறந்த டிக்கெட்டுகள்
+MenuListNonClosed=டிக்கெட்டுகளைத் திறக்கவும்
+
+TypeContact_ticket_internal_CONTRIBUTOR=பங்களிப்பாளர்
+TypeContact_ticket_internal_SUPPORTTEC=ஒதுக்கப்பட்ட பயனர்
+TypeContact_ticket_external_SUPPORTCLI=வாடிக்கையாளர் தொடர்பு / சம்பவம் கண்காணிப்பு
+TypeContact_ticket_external_CONTRIBUTOR=வெளி பங்களிப்பாளர்
+
+OriginEmail=நிருபர் மின்னஞ்சல்
+Notify_TICKET_SENTBYMAIL=மின்னஞ்சல் மூலம் டிக்கெட் செய்தியை அனுப்பவும்
+
+# Status
+Read=படி
+Assigned=ஒதுக்கப்படும்
+InProgress=நடந்து கொண்டிருக்கிறது
+NeedMoreInformation=நிருபர் கருத்துக்காக காத்திருக்கிறேன்
+NeedMoreInformationShort=கருத்துக்காக காத்திருக்கிறேன்
+Answered=பதிலளித்தார்
+Waiting=காத்திருக்கிறது
+SolvedClosed=தீர்க்கப்பட்டது
+Deleted=நீக்கப்பட்டது
+
+# Dict
+Type=வகை
+Severity=தீவிரம்
+TicketGroupIsPublic=குழு பொது
+TicketGroupIsPublicDesc=ஒரு டிக்கெட் குழு பொதுவில் இருந்தால், பொது இடைமுகத்திலிருந்து டிக்கெட்டை உருவாக்கும் போது அது படிவத்தில் தெரியும்
+
+# Email templates
+MailToSendTicketMessage=டிக்கெட் செய்தியிலிருந்து மின்னஞ்சல் அனுப்ப
+
+#
+# Admin page
+#
+TicketSetup=டிக்கெட் தொகுதி அமைப்பு
+TicketSettings=அமைப்புகள்
+TicketSetupPage=
+TicketPublicAccess=அடையாளம் தேவைப்படாத பொது இடைமுகம் பின்வரும் url இல் உள்ளது
+TicketSetupDictionaries=டிக்கெட்டின் வகை, தீவிரம் மற்றும் பகுப்பாய்வு குறியீடுகள் அகராதிகளிலிருந்து கட்டமைக்கப்படுகின்றன
+TicketParamModule=தொகுதி மாறி அமைவு
+TicketParamMail=மின்னஞ்சல் அமைப்பு
+TicketEmailNotificationFrom=Sender e-mail for ticket answers
+TicketEmailNotificationFromHelp=Sender e-mail for ticket answers sent from Dolibarr
+TicketEmailNotificationTo=Notify ticket creation to this e-mail address
+TicketEmailNotificationToHelp=If present, this e-mail address will be notified of a ticket creation
+TicketNewEmailBodyLabel=டிக்கெட்டை உருவாக்கிய பிறகு அனுப்பப்பட்ட குறுஞ்செய்தி
+TicketNewEmailBodyHelp=பொது இடைமுகத்திலிருந்து புதிய டிக்கெட்டை உருவாக்குவதை உறுதிப்படுத்தும் மின்னஞ்சலில் இங்கு குறிப்பிடப்பட்டுள்ள உரை செருகப்படும். டிக்கெட்டின் ஆலோசனை பற்றிய தகவல்கள் தானாகவே சேர்க்கப்படும்.
+TicketParamPublicInterface=பொது இடைமுக அமைப்பு
+TicketsEmailMustExist=டிக்கெட்டை உருவாக்க, ஏற்கனவே உள்ள மின்னஞ்சல் முகவரி தேவை
+TicketsEmailMustExistHelp=பொது இடைமுகத்தில், புதிய டிக்கெட்டை உருவாக்க தரவுத்தளத்தில் மின்னஞ்சல் முகவரி ஏற்கனவே நிரப்பப்பட்டிருக்க வேண்டும்.
+PublicInterface=பொது இடைமுகம்
+TicketUrlPublicInterfaceLabelAdmin=பொது இடைமுகத்திற்கான மாற்று URL
+TicketUrlPublicInterfaceHelpAdmin=இணைய சேவையகத்திற்கு மாற்றுப்பெயரை வரையறுத்து, மற்றொரு URL உடன் பொது இடைமுகத்தை கிடைக்கச் செய்யலாம் (இந்த புதிய URL இல் சேவையகம் ஒரு ப்ராக்ஸியாக செயல்பட வேண்டும்)
+TicketPublicInterfaceTextHomeLabelAdmin=பொது இடைமுகத்தின் வரவேற்பு உரை
+TicketPublicInterfaceTextHome=நீங்கள் ஒரு ஆதரவு டிக்கெட்டை உருவாக்கலாம் அல்லது அதன் அடையாளங்காட்டி டிராக்கிங் டிக்கெட்டில் இருந்து ஏற்கனவே உள்ளதைப் பார்க்கலாம்.
+TicketPublicInterfaceTextHomeHelpAdmin=இங்கே வரையறுக்கப்பட்ட உரை பொது இடைமுகத்தின் முகப்புப் பக்கத்தில் தோன்றும்.
+TicketPublicInterfaceTopicLabelAdmin=இடைமுக தலைப்பு
+TicketPublicInterfaceTopicHelp=இந்த உரை பொது இடைமுகத்தின் தலைப்பாக தோன்றும்.
+TicketPublicInterfaceTextHelpMessageLabelAdmin=செய்தி உள்ளீட்டிற்கு உதவி உரை
+TicketPublicInterfaceTextHelpMessageHelpAdmin=இந்த உரை பயனரின் செய்தி உள்ளீடு பகுதிக்கு மேலே தோன்றும்.
+ExtraFieldsTicket=கூடுதல் பண்புக்கூறுகள்
+TicketCkEditorEmailNotActivated=HTML எடிட்டர் செயல்படுத்தப்படவில்லை. அதைப் பெற, FCKEDITOR_ENABLE_MAIL உள்ளடக்கத்தை 1க்கு வைக்கவும்.
+TicketsDisableEmail=டிக்கெட் உருவாக்கம் அல்லது செய்தி பதிவு செய்ய மின்னஞ்சல்களை அனுப்ப வேண்டாம்
+TicketsDisableEmailHelp=இயல்பாக, புதிய டிக்கெட்டுகள் அல்லது செய்திகள் உருவாக்கப்படும் போது மின்னஞ்சல்கள் அனுப்பப்படும். *அனைத்து* மின்னஞ்சல் அறிவிப்புகளையும் முடக்க இந்த விருப்பத்தை இயக்கவும்
+TicketsLogEnableEmail=மின்னஞ்சல் மூலம் பதிவை இயக்கு
+TicketsLogEnableEmailHelp=ஒவ்வொரு மாற்றத்திலும், டிக்கெட்டுடன் தொடர்புடைய **ஒவ்வொரு தொடர்புக்கும்** மின்னஞ்சல் அனுப்பப்படும்.
+TicketParams=பரம்ஸ்
+TicketsShowModuleLogo=பொது இடைமுகத்தில் தொகுதியின் லோகோவைக் காட்டவும்
+TicketsShowModuleLogoHelp=பொது இடைமுகத்தின் பக்கங்களில் லோகோ தொகுதியை மறைக்க இந்த விருப்பத்தை இயக்கவும்
+TicketsShowCompanyLogo=பொது இடைமுகத்தில் நிறுவனத்தின் லோகோவைக் காட்டவும்
+TicketsShowCompanyLogoHelp=பொது இடைமுகத்தின் பக்கங்களில் முக்கிய நிறுவனத்தின் லோகோவை மறைக்க இந்த விருப்பத்தை இயக்கவும்
+TicketsEmailAlsoSendToMainAddress=முக்கிய மின்னஞ்சல் முகவரிக்கும் அறிவிப்பை அனுப்பவும்
+TicketsEmailAlsoSendToMainAddressHelp="%s" அமைப்பில் வரையறுக்கப்பட்டுள்ள முகவரிக்கு மின்னஞ்சலை அனுப்ப இந்த விருப்பத்தை இயக்கவும் ("%s" தாவலைப் பார்க்கவும்)
+TicketsLimitViewAssignedOnly=தற்போதைய பயனருக்கு ஒதுக்கப்பட்ட டிக்கெட்டுகளுக்கு காட்சியைக் கட்டுப்படுத்தவும் (வெளிப்புற பயனர்களுக்கு பயனுள்ளதாக இல்லை, எப்போதும் அவர்கள் சார்ந்திருக்கும் மூன்றாம் தரப்பினருக்கு மட்டுமே)
+TicketsLimitViewAssignedOnlyHelp=தற்போதைய பயனருக்கு ஒதுக்கப்பட்ட டிக்கெட்டுகள் மட்டுமே தெரியும். டிக்கெட் மேலாண்மை உரிமைகளைக் கொண்ட பயனருக்குப் பொருந்தாது.
+TicketsActivatePublicInterface=பொது இடைமுகத்தை செயல்படுத்தவும்
+TicketsActivatePublicInterfaceHelp=பொது இடைமுகம் எந்த பார்வையாளர்களையும் டிக்கெட்டுகளை உருவாக்க அனுமதிக்கிறது.
+TicketsAutoAssignTicket=டிக்கெட்டை உருவாக்கிய பயனரைத் தானாகவே ஒதுக்கவும்
+TicketsAutoAssignTicketHelp=டிக்கெட்டை உருவாக்கும் போது, பயனர் தானாகவே டிக்கெட்டுக்கு ஒதுக்கப்படலாம்.
+TicketNumberingModules=டிக்கெட் எண்ணும் தொகுதி
+TicketsModelModule=டிக்கெட்டுகளுக்கான ஆவண வார்ப்புருக்கள்
+TicketNotifyTiersAtCreation=உருவாக்கும்போது மூன்றாம் தரப்பினருக்கு அறிவிக்கவும்
+TicketsDisableCustomerEmail=பொது இடைமுகத்திலிருந்து டிக்கெட் உருவாக்கப்படும்போது மின்னஞ்சல்களை எப்போதும் முடக்கவும்
+TicketsPublicNotificationNewMessage=டிக்கெட்டில் புதிய செய்தி/கருத்து சேர்க்கப்படும் போது மின்னஞ்சல்(களை) அனுப்பவும்
+TicketsPublicNotificationNewMessageHelp=பொது இடைமுகத்திலிருந்து ஒரு புதிய செய்தி சேர்க்கப்படும் போது மின்னஞ்சலை (களை) அனுப்பவும் (ஒதுக்கப்பட்ட பயனருக்கு அல்லது அறிவிப்புகள் மின்னஞ்சலுக்கு (புதுப்பித்தல்) மற்றும்/அல்லது அறிவிப்புகள் மின்னஞ்சலுக்கு)
+TicketPublicNotificationNewMessageDefaultEmail=இதற்கான அறிவிப்புகள் மின்னஞ்சல் (புதுப்பிப்பு)
+TicketPublicNotificationNewMessageDefaultEmailHelp=டிக்கெட்டில் ஒரு பயனர் நியமிக்கப்படாவிட்டாலோ அல்லது பயனருக்குத் தெரிந்த மின்னஞ்சல் ஏதும் இல்லை என்றாலோ ஒவ்வொரு புதிய செய்தி அறிவிப்புகளுக்கும் இந்த முகவரிக்கு மின்னஞ்சலை அனுப்பவும்.
+TicketsAutoReadTicket=Automatically mark the ticket as read (when created from backoffice)
+TicketsAutoReadTicketHelp=Automatically mark the ticket as read when created from backoffice. When ticket is create from the public interface, ticket remains with the status "Not Read".
+TicketsDelayBeforeFirstAnswer=A new ticket should receive a first answer before (hours):
+TicketsDelayBeforeFirstAnswerHelp=If a new ticket has not received an answer after this time period (in hours), an important warning icon will be displayed in the list view.
+TicketsDelayBetweenAnswers=An unresolved ticket should not be unactive during (hours):
+TicketsDelayBetweenAnswersHelp=If an unresolved ticket that has already received an answer has not had further interaction after this time period (in hours), a warning icon will be displayed in the list view.
+TicketsAutoNotifyClose=Automatically notify thirdparty when closing a ticket
+TicketsAutoNotifyCloseHelp=When closing a ticket, you will be proposed to send a message to one of thirdparty's contacts. On mass closing, a message will be sent to one contact of the thirdparty linked to the ticket.
+TicketWrongContact=Provided contact is not part of current ticket contacts. Email not sent.
+TicketChooseProductCategory=Product category for ticket support
+TicketChooseProductCategoryHelp=Select the product category of ticket support. This will be used to automatically link a contract to a ticket.
+
+#
+# Index & list page
+#
+TicketsIndex=டிக்கெட் பகுதி
+TicketList=டிக்கெட்டுகளின் பட்டியல்
+TicketAssignedToMeInfos=இந்தப் பக்கம் தற்போதைய பயனரால் உருவாக்கப்பட்ட அல்லது ஒதுக்கப்பட்ட டிக்கெட் பட்டியலைக் காட்டுகிறது
+NoTicketsFound=டிக்கெட் கிடைக்கவில்லை
+NoUnreadTicketsFound=படிக்காத டிக்கெட் எதுவும் இல்லை
+TicketViewAllTickets=அனைத்து டிக்கெட்டுகளையும் பார்க்கவும்
+TicketViewNonClosedOnly=திறந்த டிக்கெட்டுகளை மட்டும் பார்க்கவும்
+TicketStatByStatus=நிலைப்படி டிக்கெட்டுகள்
+OrderByDateAsc=ஏறுவரிசையின்படி வரிசைப்படுத்தவும்
+OrderByDateDesc=இறங்கு தேதியின்படி வரிசைப்படுத்தவும்
+ShowAsConversation=உரையாடல் பட்டியலாகக் காட்டு
+MessageListViewType=அட்டவணைப் பட்டியலாகக் காட்டு
+ConfirmMassTicketClosingSendEmail=Automatically send emails when closing tickets
+ConfirmMassTicketClosingSendEmailQuestion=Do you want to notify thirdparties when closing these tickets ?
+
+#
+# Ticket card
+#
+Ticket=டிக்கெட்
+TicketCard=டிக்கெட் அட்டை
+CreateTicket=டிக்கெட்டை உருவாக்கவும்
+EditTicket=டிக்கெட்டை திருத்தவும்
+TicketsManagement=டிக்கெட் மேலாண்மை
+CreatedBy=உருவாக்கியது
+NewTicket=புதிய டிக்கெட்
+SubjectAnswerToTicket=டிக்கெட் பதில்
+TicketTypeRequest=கோரிக்கை வகை
+TicketCategory=டிக்கெட் வகைப்பாடு
+SeeTicket=சீட்டைப் பார்க்கவும்
+TicketMarkedAsRead=டிக்கெட் படித்ததாகக் குறிக்கப்பட்டுள்ளது
+TicketReadOn=படிக்கவும்
+TicketCloseOn=கடைசி நாள்
+MarkAsRead=டிக்கெட்டைப் படித்ததாகக் குறிக்கவும்
+TicketHistory=டிக்கெட் வரலாறு
+AssignUser=பயனருக்கு ஒதுக்கவும்
+TicketAssigned=டிக்கெட் இப்போது ஒதுக்கப்பட்டுள்ளது
+TicketChangeType=வகையை மாற்றவும்
+TicketChangeCategory=பகுப்பாய்வு குறியீட்டை மாற்றவும்
+TicketChangeSeverity=தீவிரத்தை மாற்றவும்
+TicketAddMessage=ஒரு செய்தியைச் சேர்க்கவும்
+AddMessage=ஒரு செய்தியைச் சேர்க்கவும்
+MessageSuccessfullyAdded=டிக்கெட் சேர்க்கப்பட்டது
+TicketMessageSuccessfullyAdded=செய்தி வெற்றிகரமாக சேர்க்கப்பட்டது
+TicketMessagesList=செய்தி பட்டியல்
+NoMsgForThisTicket=இந்த டிக்கெட்டுக்கு செய்தி இல்லை
+TicketProperties=வகைப்பாடு
+LatestNewTickets=சமீபத்திய %s புதிய டிக்கெட்டுகள் (படிக்கவில்லை)
+TicketSeverity=தீவிரம்
+ShowTicket=சீட்டைப் பார்க்கவும்
+RelatedTickets=தொடர்புடைய டிக்கெட்டுகள்
+TicketAddIntervention=தலையீட்டை உருவாக்குங்கள்
+CloseTicket=மூடு|டிக்கெட்டை தீர்க்கவும்
+AbandonTicket=டிக்கெட்டை கைவிடு
+CloseATicket=மூடு|ஒரு டிக்கெட்டை தீர்க்கவும்
+ConfirmCloseAticket=டிக்கெட் மூடுவதை உறுதிப்படுத்தவும்
+ConfirmAbandonTicket='கைவிடப்பட்டது' என்ற நிலைக்கு டிக்கெட் மூடப்படுவதை உறுதிப்படுத்துகிறீர்களா?
+ConfirmDeleteTicket=டிக்கெட் நீக்குவதை உறுதிப்படுத்தவும்
+TicketDeletedSuccess=டிக்கெட் வெற்றிகரமாக நீக்கப்பட்டது
+TicketMarkedAsClosed=டிக்கெட் மூடப்பட்டதாகக் குறிக்கப்பட்டது
+TicketDurationAuto=கணக்கிடப்பட்ட காலம்
+TicketDurationAutoInfos=தலையீடு தொடர்பான கால அளவு தானாகவே கணக்கிடப்படுகிறது
+TicketUpdated=டிக்கெட் புதுப்பிக்கப்பட்டது
+SendMessageByEmail=மின்னஞ்சல் மூலம் செய்தி அனுப்பவும்
+TicketNewMessage=புதிய தகவல்
+ErrorMailRecipientIsEmptyForSendTicketMessage=பெறுநர் காலியாக உள்ளார். மின்னஞ்சல் அனுப்பவில்லை
+TicketGoIntoContactTab=அவற்றைத் தேர்ந்தெடுக்க, "தொடர்புகள்" தாவலுக்குச் செல்லவும்
+TicketMessageMailIntro=அறிமுகம்
+TicketMessageMailIntroHelp=இந்த உரை மின்னஞ்சலின் தொடக்கத்தில் மட்டுமே சேர்க்கப்படும் மற்றும் சேமிக்கப்படாது.
+TicketMessageMailIntroLabelAdmin=Introduction text to all ticket answers
+TicketMessageMailIntroText=Hello,<br>A new answer has been added to a ticket that you follow. Here is the message:<br>
+TicketMessageMailIntroHelpAdmin=This text will be inserted before the answer when replying to a ticket from Dolibarr
+TicketMessageMailSignature=கையெழுத்து
+TicketMessageMailSignatureHelp=இந்த உரை மின்னஞ்சலின் முடிவில் மட்டுமே சேர்க்கப்படும் மற்றும் சேமிக்கப்படாது.
+TicketMessageMailSignatureText=Message sent by <b>%s</b> via Dolibarr
+TicketMessageMailSignatureLabelAdmin=பதில் மின்னஞ்சலின் கையொப்பம்
+TicketMessageMailSignatureHelpAdmin=பதில் செய்திக்குப் பிறகு இந்த உரை செருகப்படும்.
+TicketMessageHelp=டிக்கெட் கார்டில் உள்ள செய்தி பட்டியலில் இந்த உரை மட்டுமே சேமிக்கப்படும்.
+TicketMessageSubstitutionReplacedByGenericValues=மாற்று மாறிகள் பொதுவான மதிப்புகளால் மாற்றப்படுகின்றன.
+TimeElapsedSince=அதிலிருந்து காலம் கழிந்தது
+TicketTimeToRead=படிக்கும் முன் நேரம் கடந்துவிட்டது
+TicketTimeElapsedBeforeSince=முன் / பின் நேரம் கழிந்தது
+TicketContacts=தொடர்பு டிக்கெட்
+TicketDocumentsLinked=டிக்கெட்டுடன் இணைக்கப்பட்ட ஆவணங்கள்
+ConfirmReOpenTicket=இந்த டிக்கெட்டை மீண்டும் திறப்பதை உறுதிப்படுத்தவா?
+TicketMessageMailIntroAutoNewPublicMessage=%s என்ற தலைப்பில் ஒரு புதிய செய்தி டிக்கெட்டில் வெளியிடப்பட்டது:
+TicketAssignedToYou=டிக்கெட் ஒதுக்கப்பட்டது
+TicketAssignedEmailBody=%s மூலம் #%s டிக்கெட் உங்களுக்கு ஒதுக்கப்பட்டுள்ளது
+MarkMessageAsPrivate=செய்தியை தனிப்பட்டதாகக் குறிக்கவும்
+TicketMessagePrivateHelp=இந்த செய்தி வெளிப்புற பயனர்களுக்கு காட்டப்படாது
+TicketEmailOriginIssuer=டிக்கெட்டுகளின் தோற்றத்தில் வழங்குபவர்
+InitialMessage=ஆரம்ப செய்தி
+LinkToAContract=ஒப்பந்தத்திற்கான இணைப்பு
+TicketPleaseSelectAContract=ஒரு ஒப்பந்தத்தைத் தேர்ந்தெடுக்கவும்
+UnableToCreateInterIfNoSocid=மூன்றாம் தரப்பினர் வரையறுக்கப்படாதபோது தலையீட்டை உருவாக்க முடியாது
+TicketMailExchanges=அஞ்சல் பரிமாற்றங்கள்
+TicketInitialMessageModified=ஆரம்ப செய்தி மாற்றப்பட்டது
+TicketMessageSuccesfullyUpdated=செய்தி வெற்றிகரமாக புதுப்பிக்கப்பட்டது
+TicketChangeStatus=நிலையை மாற்றவும்
+TicketConfirmChangeStatus=நிலை மாற்றத்தை உறுதிப்படுத்தவும்: %s ?
+TicketLogStatusChanged=நிலை மாற்றப்பட்டது: %s to %s
+TicketNotNotifyTiersAtCreate=உருவாக்கும்போது நிறுவனத்தை அறிவிக்க வேண்டாம்
+NotifyThirdpartyOnTicketClosing=Contacts to notify while closing the ticket
+TicketNotifyAllTiersAtClose=All related contacts
+TicketNotNotifyTiersAtClose=No related contact
+Unread=படிக்காதது
+TicketNotCreatedFromPublicInterface=கிடைக்கவில்லை. பொது இடைமுகத்திலிருந்து டிக்கெட் உருவாக்கப்படவில்லை.
+ErrorTicketRefRequired=டிக்கெட் குறிப்பு பெயர் தேவை
+TicketsDelayForFirstResponseTooLong=Too much time elapsed since ticket opening without any answer.
+TicketsDelayFromLastResponseTooLong=Too much time elapsed since last answer on this ticket.
+TicketNoContractFoundToLink=No contract was found to be automatically linked to this ticket. Please link a contract manually.
+TicketManyContractsLinked=Many contracts have been automatically linked to this ticket. Make sure to verify which should be chosen.
+
+#
+# Logs
+#
+TicketLogMesgReadBy=%s டிக்கெட்டை %s படித்தார்
+NoLogForThisTicket=இந்த டிக்கெட்டுக்கான பதிவு இன்னும் இல்லை
+TicketLogAssignedTo=%s டிக்கெட் %sக்கு ஒதுக்கப்பட்டது
+TicketLogPropertyChanged=டிக்கெட் %s மாற்றப்பட்டது: %s இலிருந்து %s என வகைப்பாடு
+TicketLogClosedBy=%s டிக்கெட்டை %s மூடியது
+TicketLogReopen=டிக்கெட் %s மீண்டும் திறக்கப்பட்டது
+
+#
+# Public pages
+#
+TicketSystem=டிக்கெட் அமைப்பு
+ShowListTicketWithTrackId=டிராக் ஐடியிலிருந்து டிக்கெட் பட்டியலைக் காண்பி
+ShowTicketWithTrackId=டிராக் ஐடியிலிருந்து டிக்கெட்டைக் காண்பி
+TicketPublicDesc=நீங்கள் ஒரு ஆதரவு டிக்கெட்டை உருவாக்கலாம் அல்லது ஏற்கனவே உள்ள ஐடியிலிருந்து சரிபார்க்கலாம்.
+YourTicketSuccessfullySaved=டிக்கெட் வெற்றிகரமாக சேமிக்கப்பட்டது!
+MesgInfosPublicTicketCreatedWithTrackId=ஐடி %s மற்றும் Ref %s உடன் புதிய டிக்கெட் உருவாக்கப்பட்டது.
+PleaseRememberThisId=நாங்கள் பின்னர் உங்களிடம் கேட்கக்கூடிய கண்காணிப்பு எண்ணை வைத்துக் கொள்ளவும்.
+TicketNewEmailSubject=டிக்கெட் உருவாக்கம் உறுதிப்படுத்தல் - Ref %s (பொது டிக்கெட் ஐடி %s)
+TicketNewEmailSubjectCustomer=புதிய ஆதரவு டிக்கெட்
+TicketNewEmailBody=நீங்கள் புதிய டிக்கெட்டைப் பதிவுசெய்துள்ளீர்கள் என்பதை உறுதிப்படுத்தும் தானியங்கி மின்னஞ்சல் இது.
+TicketNewEmailBodyCustomer=இது உங்கள் கணக்கில் புதிய டிக்கெட் உருவாக்கப்பட்டது என்பதை உறுதிப்படுத்தும் தானியங்கி மின்னஞ்சல்.
+TicketNewEmailBodyInfosTicket=டிக்கெட்டை கண்காணிப்பதற்கான தகவல்
+TicketNewEmailBodyInfosTrackId=டிக்கெட் கண்காணிப்பு எண்: %s
+TicketNewEmailBodyInfosTrackUrl=You can view the progress of the ticket by clicking the following link
+TicketNewEmailBodyInfosTrackUrlCustomer=பின்வரும் இணைப்பைக் கிளிக் செய்வதன் மூலம் குறிப்பிட்ட இடைமுகத்தில் டிக்கெட்டின் முன்னேற்றத்தைக் காணலாம்
+TicketCloseEmailBodyInfosTrackUrlCustomer=You can consult the history of this ticket by clicking the following link
+TicketEmailPleaseDoNotReplyToThisEmail=இந்த மின்னஞ்சலுக்கு நேரடியாக பதிலளிக்க வேண்டாம்! இடைமுகத்தில் பதிலளிக்க இணைப்பைப் பயன்படுத்தவும்.
+TicketPublicInfoCreateTicket=எங்கள் நிர்வாக அமைப்பில் ஆதரவு டிக்கெட்டை பதிவு செய்ய இந்தப் படிவம் உங்களை அனுமதிக்கிறது.
+TicketPublicPleaseBeAccuratelyDescribe=சிக்கலை சரியாக விவரிக்கவும். உங்கள் கோரிக்கையைச் சரியாகக் கண்டறிய எங்களை அனுமதிக்க, முடிந்தவரை அதிகமான தகவல்களை வழங்கவும்.
+TicketPublicMsgViewLogIn=டிக்கெட் கண்காணிப்பு ஐடியை உள்ளிடவும்
+TicketTrackId=பொது கண்காணிப்பு ஐடி
+OneOfTicketTrackId=உங்கள் கண்காணிப்பு ஐடி ஒன்று
+ErrorTicketNotFound=கண்காணிப்பு ஐடி %s கொண்ட டிக்கெட் கிடைக்கவில்லை!
+Subject=பொருள்
+ViewTicket=டிக்கெட்டைப் பார்க்கவும்
+ViewMyTicketList=எனது டிக்கெட் பட்டியலைப் பார்க்கவும்
+ErrorEmailMustExistToCreateTicket=பிழை: எங்கள் தரவுத்தளத்தில் மின்னஞ்சல் முகவரி இல்லை
+TicketNewEmailSubjectAdmin=புதிய டிக்கெட் உருவாக்கப்பட்டது - Ref %s (பொது டிக்கெட் ஐடி %s)
+TicketNewEmailBodyAdmin= <p> டிக்கெட் இப்போது ஐடி #%s உடன் உருவாக்கப்பட்டது, தகவலைப் பார்க்கவும்: </p>
+SeeThisTicketIntomanagementInterface=நிர்வாக இடைமுகத்தில் டிக்கெட்டைப் பார்க்கவும்
+TicketPublicInterfaceForbidden=டிக்கெட்டுகளுக்கான பொது இடைமுகம் இயக்கப்படவில்லை
+ErrorEmailOrTrackingInvalid=ஐடி அல்லது மின்னஞ்சலைக் கண்காணிப்பதற்கான மோசமான மதிப்பு
+OldUser=பழைய பயனர்
+NewUser=புதிய பயனர்
+NumberOfTicketsByMonth=ஒரு மாதத்திற்கான டிக்கெட்டுகளின் எண்ணிக்கை
+NbOfTickets=டிக்கெட்டுகளின் எண்ணிக்கை
+# notifications
+TicketCloseEmailSubjectCustomer=Ticket closed
+TicketCloseEmailBodyCustomer=This is an automatic message to notify you that ticket %s has just been closed.
+TicketCloseEmailSubjectAdmin=Ticket closed - Réf %s (public ticket ID %s)
+TicketCloseEmailBodyAdmin=A ticket with ID #%s has just been closed, see information:
+TicketNotificationEmailSubject=டிக்கெட் %s புதுப்பிக்கப்பட்டது
+TicketNotificationEmailBody=%s டிக்கெட் புதுப்பிக்கப்பட்டதைத் தெரிவிக்கும் தானியங்கி செய்தி இது
+TicketNotificationRecipient=அறிவிப்பு பெறுபவர்
+TicketNotificationLogMessage=பதிவு செய்தி
+TicketNotificationEmailBodyInfosTrackUrlinternal=இடைமுகத்தில் டிக்கெட்டைப் பார்க்கவும்
+TicketNotificationNumberEmailSent=அறிவிப்பு மின்னஞ்சல் அனுப்பப்பட்டது: %s
+
+ActionsOnTicket=டிக்கெட்டில் நிகழ்வுகள்
+
+#
+# Boxes
+#
+BoxLastTicket=சமீபத்தில் உருவாக்கப்பட்ட டிக்கெட்டுகள்
+BoxLastTicketDescription=சமீபத்திய %s டிக்கெட்டுகளை உருவாக்கியது
+BoxLastTicketContent=
+BoxLastTicketNoRecordedTickets=சமீபத்தில் படிக்காத டிக்கெட்டுகள் இல்லை
+BoxLastModifiedTicket=சமீபத்திய திருத்தப்பட்ட டிக்கெட்டுகள்
+BoxLastModifiedTicketDescription=சமீபத்திய %s திருத்தப்பட்ட டிக்கெட்டுகள்
+BoxLastModifiedTicketContent=
+BoxLastModifiedTicketNoRecordedTickets=சமீபத்தில் திருத்தப்பட்ட டிக்கெட்டுகள் இல்லை
+BoxTicketType=வகை மூலம் திறந்த டிக்கெட் விநியோகம்
+BoxTicketSeverity=தீவிரத்தின் அடிப்படையில் திறந்த டிக்கெட்டுகளின் எண்ணிக்கை
+BoxNoTicketSeverity=டிக்கெட் எதுவும் திறக்கப்படவில்லை
+BoxTicketLastXDays=கடந்த %s நாட்களில் புதிய டிக்கெட்டுகளின் எண்ணிக்கை
+BoxTicketLastXDayswidget = கடந்த X நாட்களின் புதிய டிக்கெட்டுகளின் எண்ணிக்கை
+BoxNoTicketLastXDays=கடந்த %s நாட்களில் புதிய டிக்கெட் இல்லை
+BoxNumberOfTicketByDay=நாளுக்கு நாள் புதிய டிக்கெட்டுகளின் எண்ணிக்கை
+BoxNewTicketVSClose=மூடப்பட்ட டிக்கெட்டுகளுக்கு எதிராக டிக்கெட்டுகளின் எண்ணிக்கை (இன்று)
+TicketCreatedToday=டிக்கெட் இன்று உருவாக்கப்பட்டது
+TicketClosedToday=இன்று டிக்கெட் முடிந்தது
+KMFoundForTicketGroup=உங்கள் கேள்விக்கு பதிலளிக்கக்கூடிய தலைப்புகள் மற்றும் அடிக்கடி கேட்கப்படும் கேள்விகளைக் கண்டறிந்துள்ளோம், டிக்கெட்டைச் சமர்ப்பிக்கும் முன் அவற்றைச் சரிபார்த்ததற்கு நன்றி

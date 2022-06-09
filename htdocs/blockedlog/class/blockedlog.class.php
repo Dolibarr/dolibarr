@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2017      ATM Consulting      <contact@atm-consulting.fr>
- * Copyright (C) 2017-2020 Laurent Destailleur <eldy@destailleur.fr>
+/* Copyright (C) 2017       ATM Consulting      <contact@atm-consulting.fr>
+ * Copyright (C) 2017-2020  Laurent Destailleur <eldy@destailleur.fr>
+ * Copyright (C) 2022 		charlene benke		<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -139,76 +140,53 @@ class BlockedLog
 
 		$this->trackedevents = array();
 
-		if ($conf->facture->enabled) {
+		if (!empty($conf->facture->enabled)) {
 			$this->trackedevents['BILL_VALIDATE'] = 'logBILL_VALIDATE';
-		}
-		if ($conf->facture->enabled) {
 			$this->trackedevents['BILL_DELETE'] = 'logBILL_DELETE';
-		}
-		if ($conf->facture->enabled) {
 			$this->trackedevents['BILL_SENTBYMAIL'] = 'logBILL_SENTBYMAIL';
-		}
-		if ($conf->facture->enabled) {
 			$this->trackedevents['DOC_DOWNLOAD'] = 'BlockedLogBillDownload';
-		}
-		if ($conf->facture->enabled) {
 			$this->trackedevents['DOC_PREVIEW'] = 'BlockedLogBillPreview';
-		}
-		if ($conf->facture->enabled) {
 			$this->trackedevents['PAYMENT_CUSTOMER_CREATE'] = 'logPAYMENT_CUSTOMER_CREATE';
-		}
-		if ($conf->facture->enabled) {
 			$this->trackedevents['PAYMENT_CUSTOMER_DELETE'] = 'logPAYMENT_CUSTOMER_DELETE';
 		}
 
 		/* Supplier
-		 if ($conf->fournisseur->enabled) $this->trackedevents['BILL_SUPPLIER_VALIDATE']='BlockedLogSupplierBillValidate';
-		 if ($conf->fournisseur->enabled) $this->trackedevents['BILL_SUPPLIER_DELETE']='BlockedLogSupplierBillDelete';
-		 if ($conf->fournisseur->enabled) $this->trackedevents['BILL_SUPPLIER_SENTBYMAIL']='BlockedLogSupplierBillSentByEmail'; // Trigger key does not exists, we want just into array to list it as done
-		 if ($conf->fournisseur->enabled) $this->trackedevents['SUPPLIER_DOC_DOWNLOAD']='BlockedLogSupplierBillDownload';		// Trigger key does not exists, we want just into array to list it as done
-		 if ($conf->fournisseur->enabled) $this->trackedevents['SUPPLIER_DOC_PREVIEW']='BlockedLogSupplierBillPreview';		// Trigger key does not exists, we want just into array to list it as done
+		if (!empty($conf->fournisseur->enabled)) {
+			 $this->trackedevents['BILL_SUPPLIER_VALIDATE']='BlockedLogSupplierBillValidate';
+			$this->trackedevents['BILL_SUPPLIER_DELETE']='BlockedLogSupplierBillDelete';
+			$this->trackedevents['BILL_SUPPLIER_SENTBYMAIL']='BlockedLogSupplierBillSentByEmail'; // Trigger key does not exists, we want just into array to list it as done
+			 $this->trackedevents['SUPPLIER_DOC_DOWNLOAD']='BlockedLogSupplierBillDownload';		// Trigger key does not exists, we want just into array to list it as done
+			 $this->trackedevents['SUPPLIER_DOC_PREVIEW']='BlockedLogSupplierBillPreview';		// Trigger key does not exists, we want just into array to list it as done
 
-		 if ($conf->fournisseur->enabled) $this->trackedevents['PAYMENT_SUPPLIER_CREATE']='BlockedLogSupplierBillPaymentCreate';
-		 if ($conf->fournisseur->enabled) $this->trackedevents['PAYMENT_SUPPLIER_DELETE']='BlockedLogsupplierBillPaymentCreate';
+			 $this->trackedevents['PAYMENT_SUPPLIER_CREATE']='BlockedLogSupplierBillPaymentCreate';
+			 $this->trackedevents['PAYMENT_SUPPLIER_DELETE']='BlockedLogsupplierBillPaymentCreate';
+		}
 		 */
 
-		if ($conf->don->enabled) {
+		if (!empty($conf->don->enabled)) {
 			$this->trackedevents['DON_VALIDATE'] = 'logDON_VALIDATE';
-		}
-		if ($conf->don->enabled) {
 			$this->trackedevents['DON_DELETE'] = 'logDON_DELETE';
-		}
-		//if ($conf->don->enabled) $this->trackedevents['DON_SENTBYMAIL']='logDON_SENTBYMAIL';
-
-		if ($conf->don->enabled) {
+			//$this->trackedevents['DON_SENTBYMAIL']='logDON_SENTBYMAIL';
 			$this->trackedevents['DONATION_PAYMENT_CREATE'] = 'logDONATION_PAYMENT_CREATE';
-		}
-		if ($conf->don->enabled) {
 			$this->trackedevents['DONATION_PAYMENT_DELETE'] = 'logDONATION_PAYMENT_DELETE';
 		}
 
 		/*
-		 if ($conf->salary->enabled) $this->trackedevents['PAYMENT_SALARY_CREATE']='BlockedLogSalaryPaymentCreate';
-		 if ($conf->salary->enabled) $this->trackedevents['PAYMENT_SALARY_MODIFY']='BlockedLogSalaryPaymentCreate';
-		 if ($conf->salary->enabled) $this->trackedevents['PAYMENT_SALARY_DELETE']='BlockedLogSalaryPaymentCreate';
+		if (!empty($conf->salary->enabled)) {
+			 $this->trackedevents['PAYMENT_SALARY_CREATE']='BlockedLogSalaryPaymentCreate';
+			 $this->trackedevents['PAYMENT_SALARY_MODIFY']='BlockedLogSalaryPaymentCreate';
+			 $this->trackedevents['PAYMENT_SALARY_DELETE']='BlockedLogSalaryPaymentCreate';
+		}
 		 */
 
-		if ($conf->adherent->enabled) {
+		if (!empty($conf->adherent->enabled)) {
 			$this->trackedevents['MEMBER_SUBSCRIPTION_CREATE'] = 'logMEMBER_SUBSCRIPTION_CREATE';
-		}
-		if ($conf->adherent->enabled) {
 			$this->trackedevents['MEMBER_SUBSCRIPTION_MODIFY'] = 'logMEMBER_SUBSCRIPTION_MODIFY';
-		}
-		if ($conf->adherent->enabled) {
 			$this->trackedevents['MEMBER_SUBSCRIPTION_DELETE'] = 'logMEMBER_SUBSCRIPTION_DELETE';
 		}
-		if ($conf->banque->enabled) {
+		if (!empty($conf->banque->enabled)) {
 			$this->trackedevents['PAYMENT_VARIOUS_CREATE'] = 'logPAYMENT_VARIOUS_CREATE';
-		}
-		if ($conf->banque->enabled) {
 			$this->trackedevents['PAYMENT_VARIOUS_MODIFY'] = 'logPAYMENT_VARIOUS_MODIFY';
-		}
-		if ($conf->banque->enabled) {
 			$this->trackedevents['PAYMENT_VARIOUS_DELETE'] = 'logPAYMENT_VARIOUS_DELETE';
 		}
 		// $conf->global->BANK_ENABLE_POS_CASHCONTROL must be set to 1 by all external POS modules
@@ -320,12 +298,12 @@ class BlockedLog
 				$this->error++;
 			}
 		} elseif ($this->action == 'MODULE_SET') {
-			return '<i class="opacitymedium">System to track events into unalterable logs were enabled</i>';
+			return '<i class="opacitymedium">'.$langs->trans("BlockedLogEnabled").'</i>';
 		} elseif ($this->action == 'MODULE_RESET') {
 			if ($this->signature == '0000000000') {
-				return '<i class="opacitymedium">System to track events into unalterable logs were disabled after some recording were done. We saved a special Fingerprint to track the chain as broken.</i>';
+				return '<i class="opacitymedium">'.$langs->trans("BlockedLogDisabled").'</i>';
 			} else {
-				return '<i class="opacitymedium">System to track events into unalterable logs were disabled. This is possible because no record were done yet.</i>';
+				return '<i class="opacitymedium">'.$langs->trans("BlockedLogDisabledBis").'</i>';
 			}
 		}
 
@@ -796,7 +774,7 @@ class BlockedLog
 	{
 
 		$res = $this->db->query("UPDATE ".MAIN_DB_PREFIX."blockedlog SET certified=1 WHERE rowid=".((int) $this->id));
-		if ($res === false) {
+		if (!$res) {
 			return false;
 		}
 

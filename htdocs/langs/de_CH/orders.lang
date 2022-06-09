@@ -7,7 +7,6 @@ PdfOrderTitle=Bestellung
 OrderLine=Bestellservice
 OrderDateShort=Bestelldatum
 NewOrder=Neue Bestellung
-SaleOrderLines=Sales order lines
 CustomerOrder=Kundenbestellungen
 CustomersOrdersRunning=Aktuelle Kundenbestellungen
 CustomersOrdersAndOrdersLines=Kundenbestellungen und Details

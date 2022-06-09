@@ -151,7 +151,6 @@ $sqlusedforexport = '';
 $head = array();
 $upload_dir = $conf->export->dir_temp.'/'.$user->id;
 
-//$usefilters=($conf->global->MAIN_FEATURES_LEVEL > 1);
 $usefilters = 1;
 
 // Security check
@@ -389,7 +388,7 @@ if ($step == 4 && $action == 'submitFormField') {
 		$_SESSION["export_filtered_fields"] = array();
 		foreach ($objexport->array_export_TypeFields[0] as $code => $type) {	// $code: s.fieldname $value: Text|Boolean|List:ccc
 			$newcode = (string) preg_replace('/\./', '_', $code);
-			//print 'xxx '.$code."=".$newcode."=".$type."=".$_POST[$newcode]."\n<br>";
+			//print 'xxx '.$code."=".$newcode."=".$type."=".GETPOST($newcode)."\n<br>";
 			$check = 'alphanohtml';
 			$filterqualified = 1;
 			if (!GETPOSTISSET($newcode) || GETPOST($newcode, $check) == '') {
@@ -520,7 +519,7 @@ if ($step == 2 && $datatoexport) {
 	print '<span class="opacitymedium">'.$langs->trans("SelectExportFields").'</span> ';
 	$htmlother->select_export_model($exportmodelid, 'exportmodelid', $datatoexport, 1, $user->id);
 	print ' ';
-	print '<input type="submit" class="button" value="'.$langs->trans("Select").'">';
+	print '<input type="submit" class="button small" value="'.$langs->trans("Select").'">';
 	print '</div>';
 	print '</form>';
 
@@ -869,12 +868,18 @@ if ($step == 4 && $datatoexport) {
 	print '<td>'.$list.'</td>';
 	print '</tr>';
 
-	// List of filtered fiels
+	// List of filtered fields
 	if (isset($objexport->array_export_TypeFields[0]) && is_array($objexport->array_export_TypeFields[0])) {
 		print '<tr><td>'.$langs->trans("FilteredFields").'</td>';
 		$list = '';
 		if (!empty($array_filtervalue)) {
 			foreach ($array_filtervalue as $code => $value) {
+				if (preg_match('/^FormSelect:/', $objexport->array_export_TypeFields[0][$code])) {
+					// We discard this filter if it is a FromSelect field with a value of -1.
+					if ($value == -1) {
+						continue;
+					}
+				}
 				if (isset($objexport->array_export_fields[0][$code])) {
 					$list .= ($list ? ', ' : '');
 					if (isset($array_filtervalue[$code]) && preg_match('/^\s*[<>]/', $array_filtervalue[$code])) {
@@ -1016,7 +1021,7 @@ if ($step == 4 && $datatoexport) {
 		print $form->selectarray('visibility', $arrayvisibility, 'private');
 		print '</td>';
 		print '<td class="right">';
-		print '<input type="submit" class="button reposition button-save" value="'.$langs->trans("Save").'">';
+		print '<input type="submit" class="button reposition button-save small" value="'.$langs->trans("Save").'">';
 		print '</td></tr>';
 
 		$tmpuser = new User($db);
@@ -1149,6 +1154,12 @@ if ($step == 5 && $datatoexport) {
 		$list = '';
 		if (!empty($array_filtervalue)) {
 			foreach ($array_filtervalue as $code => $value) {
+				if (preg_match('/^FormSelect:/', $objexport->array_export_TypeFields[0][$code])) {
+					// We discard this filter if it is a FromSelect field with a value of -1.
+					if ($value == -1) {
+						continue;
+					}
+				}
 				if (isset($objexport->array_export_fields[0][$code])) {
 					$list .= ($list ? ', ' : '');
 					if (isset($array_filtervalue[$code]) && preg_match('/^\s*[<>]/', $array_filtervalue[$code])) {
@@ -1213,7 +1224,7 @@ if ($step == 5 && $datatoexport) {
 
 	// Show existing generated documents
 	// NB: La fonction show_documents rescanne les modules qd genallowed=1, sinon prend $liste
-	print $formfile->showdocuments('export', '', $upload_dir, $_SERVER["PHP_SELF"].'?step=5&datatoexport='.$datatoexport, $liste, 1, (!empty($_POST['model']) ? $_POST['model'] : 'csv'), 1, 1, 0, 0, 0, '', 'none', '', '', '');
+	print $formfile->showdocuments('export', '', $upload_dir, $_SERVER["PHP_SELF"].'?step=5&datatoexport='.$datatoexport, $liste, 1, (GETPOST('model') ? GETPOST('model') : 'csv'), 1, 1, 0, 0, 0, '', 'none', '', '', '');
 }
 
 llxFooter();

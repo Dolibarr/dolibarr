@@ -65,12 +65,13 @@ $cancel = GETPOST('cancel', 'alpha');
 // Security check
 $fieldvalue = (!empty($id) ? $id : (!empty($ref) ? $ref : ''));
 $fieldtype = (!empty($ref) ? 'ref' : 'rowid');
+$socid = 0;
 if ($user->socid) {
 	$socid = $user->socid;
 }
 
 $result = restrictedArea($user, 'banque', $accountoldid, 'bank_account');
-if (!$user->rights->banque->lire && !$user->rights->banque->consolidate) {
+if (empty($user->rights->banque->lire) && empty($user->rights->banque->consolidate)) {
 	accessforbidden();
 }
 
@@ -124,7 +125,11 @@ if ($user->rights->banque->modifier && $action == "update") {
 	$error = 0;
 
 	$acline = new AccountLine($db);
-	$acline->fetch($rowid);
+	$result = $acline->fetch($rowid);
+	if ($result <= 0) {
+		dol_syslog('Failed to read bank line with id '.$rowid, LOG_WARNING);	// This happens due to old bug that has set fk_account to null.
+		$acline->id = $rowid;
+	}
 
 	$acsource = new Account($db);
 	$acsource->fetch($accountoldid);
@@ -263,10 +268,14 @@ $form = new Form($db);
 
 llxHeader('', $langs->trans("BankTransaction"));
 
+$arrayselected = array();
+
 $c = new Categorie($db);
 $cats = $c->containing($rowid, Categorie::TYPE_BANK_LINE);
-foreach ($cats as $cat) {
-	$arrayselected[] = $cat->id;
+if (is_array($cats)) {
+	foreach ($cats as $cat) {
+		$arrayselected[] = $cat->id;
+	}
 }
 
 $head = bankline_prepare_head($rowid);
@@ -325,11 +334,12 @@ if ($result) {
 		// Bank account
 		print '<tr><td class="titlefieldcreate">'.$langs->trans("Account").'</td>';
 		print '<td>';
-		if (!$objp->rappro && !$bankline->getVentilExportCompta()) {
-			print img_picto('', 'bank_account', 'class="paddingright"');
-			print $form->select_comptes($acct->id, 'accountid', 0, '', 0, '', 0, '', 1);
-		} else {
+		// $objp->fk_account may be not > 0 if data was lost by an old bug. In such a case, we let a chance to user to fix it.
+		if (($objp->rappro || $bankline->getVentilExportCompta()) && $objp->fk_account > 0) {
 			print $acct->getNomUrl(1, 'transactions', 'reflabel');
+		} else {
+			print img_picto('', 'bank_account', 'class="paddingright"');
+			print $form->select_comptes($acct->id, 'accountid', 0, '', ($acct->id > 0 ? $acct->id : 1), '', 0, '', 1);
 		}
 		print '</td>';
 		print '</tr>';
@@ -576,6 +586,16 @@ if ($result) {
 			// Bank line
 			print '<tr><td class="toptd">'.$form->editfieldkey('RubriquesTransactions', 'custcats', '', $object, 0).'</td><td>';
 			$cate_arbo = $form->select_all_categories(Categorie::TYPE_BANK_LINE, null, 'parent', null, null, 1);
+
+			$arrayselected = array();
+
+			$c = new Categorie($db);
+			$cats = $c->containing($bankline->id, Categorie::TYPE_BANK_LINE);
+			if (is_array($cats)) {
+				foreach ($cats as $cat) {
+					$arrayselected[] = $cat->id;
+				}
+			}
 			print img_picto('', 'category', 'class="paddingright"').$form->multiselectarray('custcats', $cate_arbo, $arrayselected, null, null, null, null, "90%");
 			print "</td></tr>";
 		}
