@@ -1216,7 +1216,7 @@ class Project extends CommonObject
 		if (!empty($this->date_start)) {
 			$label .= ($label ? '<br>' : '').'<b>'.$langs->trans('DateStart').': </b>'.dol_print_date($this->date_start, 'day'); // The space must be after the : to not being explode when showing the title in img_picto
 		}
-		if (!empty($this->date_ent)) {
+		if (!empty($this->date_end)) {
 			$label .= ($label ? '<br>' : '').'<b>'.$langs->trans('DateEnd').': </b>'.dol_print_date($this->date_end, 'day'); // The space must be after the : to not being explode when showing the title in img_picto
 		}
 		if ($moreinpopup) {
