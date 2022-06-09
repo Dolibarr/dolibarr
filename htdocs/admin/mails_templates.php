@@ -440,8 +440,7 @@ if (empty($reshook)) {
 				if ($field == 'entity') {
 					$keycode = $field;
 					$_POST[$keycode] = $conf->entity;
-				} else
-					$keycode = $listfieldvalue[$i];
+				} else $keycode = $listfieldvalue[$i];
 				if ($field == 'lang') {
 					$keycode = 'langcode';
 				}
