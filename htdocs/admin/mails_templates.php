@@ -608,8 +608,6 @@ $sql .= $db->plimit($listlimit + 1, $offset);
 
 llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', '');
 
-$arrayofselected = is_array($toselect) ? $toselect : array();
-
 $param = '';
 if (!empty($mode)) {
 	$param .= '&mode='.urlencode($mode);
@@ -617,8 +615,8 @@ if (!empty($mode)) {
 if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 	$param .= '&contextpage='.urlencode($contextpage);
 }
-if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&limit='.urlencode($limit);
+if ($listlimit > 0 && $listlimit != $conf->liste_limit) {
+	$param .= '&listlimit='.urlencode($listlimit);
 }
 if (!empty($search) && is_array($search)) {
 	foreach ($search as $key => $val) {
@@ -633,9 +631,7 @@ if (!empty($search) && is_array($search)) {
 		}
 	}
 }
-if ($optioncss != '') {
-	$param .= '&optioncss='.urlencode($optioncss);
-}
+
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 // Add $param from hooks
