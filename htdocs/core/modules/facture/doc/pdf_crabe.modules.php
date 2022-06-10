@@ -618,7 +618,7 @@ class pdf_crabe extends ModelePDFFactures
 									$pdf->useTemplate($tplidx);
 								}
 								if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
-									$this->_pagehead($pdf, $object, 1, $outputlangs);
+									$this->_pagehead($pdf, $object, 0, $outputlangs);
 								}
 								$pdf->setPage($pageposafter + 1);
 							}
@@ -814,7 +814,7 @@ class pdf_crabe extends ModelePDFFactures
 						}
 						$pagenb++;
 						if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
-							$this->_pagehead($pdf, $object, 1, $outputlangs);
+							$this->_pagehead($pdf, $object, 0, $outputlangs);
 						}
 					}
 				}
@@ -939,7 +939,7 @@ class pdf_crabe extends ModelePDFFactures
 						$pdf->useTemplate($tplidx);
 					}
 					if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
-						$this->_pagehead($pdf, $object, 1, $outputlangs);
+						$this->_pagehead($pdf, $object, 0, $outputlangs);
 					}
 					$pdf->setPage($current_page);
 					$this->_tableau_versements_header($pdf, $object, $outputlangs, $default_font_size, $tab3_posx, $tab3_top + $y - 3, $tab3_width, $tab3_height);
@@ -1001,7 +1001,7 @@ class pdf_crabe extends ModelePDFFactures
 						$pdf->useTemplate($tplidx);
 					}
 					if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
-						$this->_pagehead($pdf, $object, 1, $outputlangs);
+						$this->_pagehead($pdf, $object, 0, $outputlangs);
 					}
 					$pdf->setPage($current_page);
 					$this->_tableau_versements_header($pdf, $object, $outputlangs, $default_font_size, $tab3_posx, $tab3_top + $y - 3, $tab3_width, $tab3_height);
