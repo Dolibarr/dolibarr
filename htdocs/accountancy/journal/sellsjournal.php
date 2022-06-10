@@ -250,7 +250,7 @@ if ($result) {
 
 		$total_ttc = $obj->total_ttc * $situation_ratio;
 		if (!empty($conf->global->INVOICE_USE_RETAINED_WARRANTY) && $obj->retained_warranty > 0) {
-			$retained_warranty = (double)price2num($total_ttc * $obj->retained_warranty / 100, 'MT');
+			$retained_warranty = (double) price2num($total_ttc * $obj->retained_warranty / 100, 'MT');
 			$tabwarranty[$obj->rowid][$compta_soc] += $retained_warranty;
 			$total_ttc -= $retained_warranty;
 		}
