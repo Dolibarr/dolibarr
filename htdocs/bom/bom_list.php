@@ -27,6 +27,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("mrp", "other"));
@@ -42,6 +43,7 @@ $backtopage = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
 $optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 
 $id = GETPOST('id', 'int');
+$fk_product = GETPOST('fk_product', 'int');
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
@@ -88,7 +90,6 @@ foreach ($object->fields as $key => $val) {
 		$search[$key.'_dtend'] = dol_mktime(23, 59, 59, GETPOST('search_'.$key.'_dtendmonth', 'int'), GETPOST('search_'.$key.'_dtendday', 'int'), GETPOST('search_'.$key.'_dtendyear', 'int'));
 	}
 }
-
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array();
 foreach ($object->fields as $key => $val) {
@@ -112,6 +113,10 @@ foreach ($object->fields as $key => $val) {
 		);
 	}
 }
+if ($fk_product && $conf->global->BOM_PRODUCT_TAB) {
+	unset($arrayfields['t.fk_product']);
+}
+
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
@@ -273,6 +278,9 @@ if (empty($reshook)) {
 			//var_dump($listofobjectthirdparties);exit;
 		}
 	}
+}
+if (!empty($fk_product && $conf->global->BOM_PRODUCT_TAB)) {
+	$search['fk_product'] = $fk_product;
 }
 
 
@@ -475,7 +483,35 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-$newcardbutton = dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/bom/bom_card.php?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $user->rights->bom->write);
+
+// print dol_banner_tab and the BOM list of a product
+if ($fk_product && $conf->global->BOM_PRODUCT_TAB) {
+	print '<input type="hidden" name="fk_product" value="'.$fk_product.'">';
+	$param .= '&fk_product='.urlencode($fk_product);
+
+	$product = new Product($db);
+	$res = $product->fetch($fk_product);
+
+	if ($res <= 0) {
+		dol_print_error($db);
+		exit;
+	}
+
+	$head = product_prepare_head($product);
+	$titre = $langs->trans("CardProduct".$product->type);
+	$picto = ($product->type == Product::TYPE_SERVICE ? 'service' : 'product');
+
+	print dol_get_fiche_head($head, 'bom', $titre, -1, $picto);
+
+	$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1&type='.$product->type.'">'.$langs->trans("BackToList").'</a>';
+	$product->next_prev_filter = " fk_product_type = ".$product->type;
+
+	$shownav = 0;
+
+	dol_banner_tab($product, '', $linkback, $shownav, '');
+
+	$newcardbutton = dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/bom/bom_card.php?action=create&backtopage='.urlencode($_SERVER['PHP_SELF'].'?fk_product='.$fk_product).'&fk_product='.$fk_product, '', $user->rights->bom->write);
+} else $newcardbutton = dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/bom/bom_card.php?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $user->rights->bom->write);
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'object_'.$object->picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
 
