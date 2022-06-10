@@ -682,6 +682,25 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 			continue;
 		}
 
+		// Warranty
+		foreach ($tabwarranty[$key] as $k => $mt) {
+			//if ($mt) {
+			print '"'.$key.'"'.$sep;
+			print '"'.$date.'"'.$sep;
+			print '"'.$val["ref"].'"'.$sep;
+			print '"'.utf8_decode(dol_trunc($companystatic->name, 32)).'"'.$sep;
+			print '"'.length_accounta(html_entity_decode($k)).'"'.$sep;
+			print '"'.length_accountg($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY).'"'.$sep;
+			print '"'.length_accounta(html_entity_decode($k)).'"'.$sep;
+			print '"'.$langs->trans("Thirdparty").'"'.$sep;
+			print '"'.utf8_decode(dol_trunc($companystatic->name, 16)).' - '.$invoicestatic->ref.' - '.$langs->trans("Retainedwarranty").'"'.$sep;
+			print '"'.($mt >= 0 ? price($mt) : '').'"'.$sep;
+			print '"'.($mt < 0 ? price(-$mt) : '').'"'.$sep;
+			print '"'.$journal.'"';
+			print "\n";
+			//}
+		}
+
 		// Third party
 		foreach ($tabttc[$key] as $k => $mt) {
 			//if ($mt) {
