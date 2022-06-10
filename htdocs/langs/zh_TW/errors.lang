@@ -283,6 +283,10 @@ ErrorAttributeIsUsedIntoProduct=此屬性用於一個或多個產品變異
 ErrorAttributeValueIsUsedIntoProduct=此屬性值用於一個或多個產品變異
 ErrorPaymentInBothCurrency=錯誤，所有金額必須輸入於同一列
 ErrorYouTryToPayInvoicesInACurrencyFromBankWithAnotherCurrency=您嘗試從貨幣 %s 的帳戶支付貨幣 %s 的發票
+ErrorInvoiceLoadThirdParty=Can't load third-party object for invoice "%s"
+ErrorInvoiceLoadThirdPartyKey=Third-party key "%s" no set for invoice "%s"
+ErrorDeleteLineNotAllowedByObjectStatus=Delete line is not allowed by actual object status
+ErrorAjaxRequestFailed=Request failed
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=您的PHP參數upload_max_filesize（%s）高於PHP參數post_max_size（%s）。這不是相同的設定。
@@ -318,6 +322,11 @@ WarningAvailableOnlyForHTTPSServers=僅在使用 HTTPS 安全連線時可用。
 WarningModuleXDisabledSoYouMayMissEventHere=模組 %s 尚未啟用。所以你可能會在這裡錯過很多事件。
 WarningPaypalPaymentNotCompatibleWithStrict=數值 'Strict' 使得線上支付功能無法正常工作。改用“Lax”。
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+>>>>>>> branch '15.0' of git@github.com:Dolibarr/dolibarr.git
 # Validate
 RequireValidValue = 數值無效
 RequireAtLeastXString = 至少需要%s個字元
@@ -338,3 +347,12 @@ BadSetupOfField = 欄位設定錯誤
 BadSetupOfFieldClassNotFoundForValidation = 欄位設定錯誤:沒有發現可驗證的Class
 BadSetupOfFieldFileNotFound = 欄位設定錯誤:未找到要包含的檔案
 BadSetupOfFieldFetchNotCallable = 欄位設定錯誤:無法在Class上調用獲取
+<<<<<<< HEAD
+=======
+=======
+=======
+>>>>>>> branch '15.0' of git@github.com:Dolibarr/dolibarr.git
+>>>>>>> branch '15.0' of git@github.com:Dolibarr/dolibarr.git
+=======
+>>>>>>> branch '15.0' of git@github.com:Dolibarr/dolibarr.git
+>>>>>>> branch '15.0' of git@github.com:Dolibarr/dolibarr.git

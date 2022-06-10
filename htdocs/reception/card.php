@@ -1029,7 +1029,7 @@ if ($action == 'create') {
 				print '<td class="center">'.$langs->trans("QtyReceived").'</td>';
 				print '<td class="center">'.$langs->trans("QtyToReceive");
 				if (!empty($conf->global->STOCK_CALCULATE_ON_RECEPTION || $conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE)) {
-					print '<td>'.$langs->trans("ByingPrice").'</td>';
+					print '<td>'.$langs->trans("BuyingPrice").'</td>';
 				}
 				if (empty($conf->productbatch->enabled)) {
 					print ' <br>(<a href="#" id="autofill">'.$langs->trans("Fill").'</a>';
@@ -1184,7 +1184,7 @@ if ($action == 'create') {
 							$defaultqty = GETPOST('qtyl'.$indiceAsked, 'int');
 						}
 						print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
-						print '<input name="qtyl'.$indiceAsked.'" id="qtyl'.$indiceAsked.'" type="text" size="4" value="'.$deliverableQty.'">';
+						print '<input class="right" name="qtyl'.$indiceAsked.'" id="qtyl'.$indiceAsked.'" type="text" size="4" value="'.$deliverableQty.'">';
 					} else {
 						print $langs->trans("NA");
 					}
@@ -1192,7 +1192,7 @@ if ($action == 'create') {
 
 					if (!empty($conf->global->STOCK_CALCULATE_ON_RECEPTION) || !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE)) {
 						print '<td>';
-						print '<input name="cost_price'.$indiceAsked.'" id="cost_price'.$indiceAsked.'" value="'.$cost_price.'">';
+						print '<input class="width75 right" name="cost_price'.$indiceAsked.'" id="cost_price'.$indiceAsked.'" value="'.$cost_price.'">';
 						print '</td>';
 					}
 

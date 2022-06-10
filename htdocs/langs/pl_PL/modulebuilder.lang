@@ -1,14 +1,17 @@
 # Dolibarr language file - Source file is en_US - loan
 ModuleBuilderDesc=This tool must be used only by experienced users or developers. It provides utilities to build or edit your own module. Documentation for alternative <a href="%s" target="_blank" rel="noopener noreferrer">manual development is here</a>.
-EnterNameOfModuleDesc=Wpisz nazwę bez spacji modułu/aplikacji do utworzenia. Używaj wielkich liter do oddzielania słów (na przykład: MyModule, EcommerceForShop, SyncWithMySystem, ...)
-EnterNameOfObjectDesc=Wpisz nazwę (bez spacji) obiektu do utworzenia. Używaj wielkich liter do oddzielania słów (na przykład: MyObject, Student, Teacher, ...). Zostanie wygenerowany plik klasy CRUD, ale także plik API, strony do wyświetlenia/dodania/edycji/usunięcia obiektu oraz pliki SQL.
+EnterNameOfModuleDesc=Enter the name of the module/application to create with no spaces. Use uppercase to separate words (For example: MyModule, EcommerceForShop, SyncWithMySystem...)
+EnterNameOfObjectDesc=Enter the name of the object to create with no spaces. Use uppercase to separate words (For example: MyObject, Student, Teacher...). The CRUD class file, but also API file, pages to list/add/edit/delete object and SQL files will be generated.
+EnterNameOfDictionaryDesc=Enter the name of the dictionary to create with no spaces. Use uppercase to separate words (For example: MyDico...). The class file, but also the SQL file will be generated.
 ModuleBuilderDesc2=Ścieżka, w której moduły są generowane/edytowane (pierwszy katalog dla modułów zewnętrznych zdefiniowany w %s): <strong> %s </strong>
 ModuleBuilderDesc3=Znaleziono wygenerowane/edytowalne moduły: <strong> %s </strong>
 ModuleBuilderDesc4=Moduł jest wykrywany jako „edytowalny”, gdy plik <strong> %s </strong> istnieje w katalogu głównym modułu
 NewModule=Nowy moduł
 NewObjectInModulebuilder=Nowy obiekt
+NewDictionary=New dictionary
 ModuleKey=Klucz modułu
 ObjectKey=Klucz obiektu
+DicKey=Dictionary key
 ModuleInitialized=Zainicjowano moduł
 FilesForObjectInitialized=Zainicjowano pliki dla nowego obiektu „%s”
 FilesForObjectUpdated=Zaktualizowano pliki obiektu „%s” (pliki .sql i .class.php)

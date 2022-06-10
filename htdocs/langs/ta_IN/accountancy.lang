@@ -182,6 +182,7 @@ DONATION_ACCOUNTINGACCOUNT=நன்கொடைகளை பதிவு செ
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=சந்தாக்களை பதிவு செய்ய கணக்கியல் கணக்கு
 
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=வாடிக்கையாளர் வைப்புத்தொகையை பதிவு செய்ய இயல்புநிலையாக கணக்கு கணக்கு
+UseAuxiliaryAccountOnCustomerDeposit=Use sub-accounts on customer deposit lines
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=வாங்கிய பொருட்களுக்கான இயல்புநிலை கணக்கு கணக்கு (தயாரிப்பு தாளில் வரையறுக்கப்படவில்லை என்றால் பயன்படுத்தப்படும்)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=EEC இல் வாங்கிய தயாரிப்புகளுக்கான இயல்புநிலை கணக்கு கணக்கு (தயாரிப்பு தாளில் வரையறுக்கப்படவில்லை என்றால் பயன்படுத்தப்படும்)
@@ -289,7 +290,7 @@ ValidateHistory=தானாக பிணைக்கவும்
 AutomaticBindingDone=தானியங்கி பிணைப்புகள் செய்யப்பட்டன (%s) - சில பதிவுகளுக்கு தானியங்கு பிணைப்பு சாத்தியமில்லை (%s)
 
 ErrorAccountancyCodeIsAlreadyUse=பிழை, இந்தக் கணக்கியல் கணக்கு பயன்படுத்தப்படுவதால் உங்களால் நீக்க முடியாது
-MvtNotCorrectlyBalanced=இயக்கம் சரியாக சமநிலையில் இல்லை. பற்று = %s | கடன் = %s
+MvtNotCorrectlyBalanced=Movement not correctly balanced. Debit = %s & Credit = %s
 Balancing=சமநிலைப்படுத்துதல்
 FicheVentilation=பைண்டிங் கார்டு
 GeneralLedgerIsWritten=பரிவர்த்தனைகள் லெட்ஜரில் எழுதப்பட்டுள்ளன

@@ -1,14 +1,17 @@
 # Dolibarr language file - Source file is en_US - loan
 ModuleBuilderDesc=Esta herramienta solo debe ser utilizada por usuarios o desarrolladores experimentados. Proporciona utilidades para crear o editar su propio módulo. La documentación para el desarrollo manual alternativo <a href="%s" target="_blank" rel="noopener noreferrer"> está aquí </a>.
-EnterNameOfModuleDesc=Introduce el nombre del módulo/aplicación a crear sin espacios. Utilice mayúsculas para separar palabras (Por ejemplo: MiModulo, EcommerceParaTienda, SincronizarConMiSistema...)
-EnterNameOfObjectDesc=Introduce el nombre del objeto a crear sin espacios. Usa mayúsculas para separar palabras (Por ejemplo: MiObjeto, Estudiante, Profesor...). El archivo de clase CRUD, pero también archivo API, páginas para listar/añadir/editar/eliminar objetos y archivos SQL serán generados.
+EnterNameOfModuleDesc=Enter the name of the module/application to create with no spaces. Use uppercase to separate words (For example: MyModule, EcommerceForShop, SyncWithMySystem...)
+EnterNameOfObjectDesc=Enter the name of the object to create with no spaces. Use uppercase to separate words (For example: MyObject, Student, Teacher...). The CRUD class file, but also API file, pages to list/add/edit/delete object and SQL files will be generated.
+EnterNameOfDictionaryDesc=Enter the name of the dictionary to create with no spaces. Use uppercase to separate words (For example: MyDico...). The class file, but also the SQL file will be generated.
 ModuleBuilderDesc2=Ruta donde los módulos son generados/editados (primer directorio para módulos externos definido en %s): <strong>%s</strong>
 ModuleBuilderDesc3=Módulos generados/editables encontrados: <strong>%s</strong>
 ModuleBuilderDesc4=Un módulo se detecta como 'editable' cuando el archivo <strong>%s</strong> existe en la raíz del directorio del módulo
 NewModule=Nuevo módulo
 NewObjectInModulebuilder=Nuevo objeto
+NewDictionary=New dictionary
 ModuleKey=Clave del módulo
 ObjectKey=Clave del objeto
+DicKey=Dictionary key
 ModuleInitialized=Módulo inicializado
 FilesForObjectInitialized=Ficheros para el nuevo objeto '%s' inicializado
 FilesForObjectUpdated=Ficheros del objeto '%s' actualizado (ficheros .sql y fichero .class.php)

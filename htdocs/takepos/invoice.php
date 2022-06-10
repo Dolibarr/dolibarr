@@ -204,7 +204,7 @@ if (empty($reshook)) {
 			}
 		}
 
-		if ($bankaccount <= 0 && $pay != "delayed") {
+		if ($bankaccount <= 0 && $pay != "delayed" && !empty($conf->banque->enabled)) {
 			$errormsg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BankAccount"));
 			$error++;
 		}
@@ -1446,7 +1446,7 @@ if ($placeid > 0) {
 				}
 				$htmlsupplements[$line->fk_parent_line] .= '" id="'.$line->id.'"';
 				if ($line->special_code == "4") {
-					$htmlsupplements[$line->fk_parent_line] .= ' title="'.dol_escape_htmltag("AlreadyPrinted").'"';
+					$htmlsupplements[$line->fk_parent_line] .= ' title="'.dol_escape_htmltag($langs->trans("AlreadyPrinted")).'"';
 				}
 				$htmlsupplements[$line->fk_parent_line] .= '>';
 				$htmlsupplements[$line->fk_parent_line] .= '<td class="left">';
@@ -1489,7 +1489,7 @@ if ($placeid > 0) {
 			}
 			$htmlforlines .= '" id="'.$line->id.'"';
 			if ($line->special_code == "4") {
-				$htmlforlines .= ' title="'.dol_escape_htmltag("AlreadyPrinted").'"';
+				$htmlforlines .= ' title="'.dol_escape_htmltag($langs->trans("AlreadyPrinted")).'"';
 			}
 			$htmlforlines .= '>';
 			$htmlforlines .= '<td class="left">';

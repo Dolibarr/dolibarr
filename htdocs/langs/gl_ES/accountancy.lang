@@ -182,6 +182,7 @@ DONATION_ACCOUNTINGACCOUNT=Conta contable de rexistro de doacións/subvencións
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Conta contable de rexistro subscricións
 
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Conta contable por defecto para rexistrar os ingresos realizados polo cliente
+UseAuxiliaryAccountOnCustomerDeposit=Use subcontas nas liñas de depósito de clientes
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Conta contable predeterminada para os produtos comprados (usada se non está definida na folla de produtos)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Conta contable predeterminada para os produtos comprados na CEE (usada se non está definida na folla de produto)
@@ -289,7 +290,7 @@ ValidateHistory=Contabilizar automáticamente
 AutomaticBindingDone=Ligazóns automáticas finalizadas (%s) -A ligazón automática non é posible para algún rexistro (%s) 
 
 ErrorAccountancyCodeIsAlreadyUse=Erro, non pode eliminar esta conta xa que está a ser utilizada
-MvtNotCorrectlyBalanced=Asento contabilizado incorrectamente. Debe=%s. Haber=%s
+MvtNotCorrectlyBalanced=Asento con balance contable incorrecto. Débito = %s e crédito = %s
 Balancing=Saldo
 FicheVentilation=Ficha contable
 GeneralLedgerIsWritten=Transaccións escritas no Libro Maior

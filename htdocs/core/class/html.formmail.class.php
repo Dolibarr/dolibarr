@@ -1697,4 +1697,9 @@ class ModelMail
 	public $content_lines;
 	public $lang;
 	public $joinfiles;
+
+	/**
+	 * @var string Module the template is dedicated for
+	 */
+	public $module;
 }

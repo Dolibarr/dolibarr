@@ -424,3 +424,6 @@ PMPExpected=Forventet PMP
 ExpectedValuation=Forventet værdiansættelse
 PMPReal=Ægte PMP
 RealValuation=Virkelig værdiansættelse
+ConfirmEditExtrafield = Vælg det ekstrafelt, du vil ændre
+ConfirmEditExtrafieldQuestion = Er du sikker på, at du vil ændre dette ekstrafelt?
+ModifyValueExtrafields = Ændre værdien af et ekstrafelt

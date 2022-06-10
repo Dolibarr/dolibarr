@@ -259,7 +259,6 @@ class FormActions
 					}
 
 					$ref = $actioncomm->getNomUrl(1, -1);
-					$label = $actioncomm->getNomUrl(0, 36);
 
 					print '<tr class="oddeven">';
 
@@ -304,7 +303,7 @@ class FormActions
 					print '</td>';
 
 					// Label
-					print '<td>'.$label.'</td>';
+					print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($actioncomm->label).'">'.$actioncomm->getNomUrl(0, 36).'</td>';
 
 					// Date
 					print '<td class="center nowraponall">'.dol_print_date($actioncomm->datep, 'dayhour', 'tzuserrel');

@@ -1,8 +1,6 @@
 # Dolibarr language file - Source file is en_US - ecm
 ECMSectionManual=Manuelle Ordner
 ECMSectionAuto=Automatische Ordner
-ECMSectionsManual=Manuelle Hierarchie
-ECMSectionsAuto=Automatische Hierarchie
 ECMSections=Ordner
 ECMAddSection=Ordner hinzufügen
 ECMNbOfFilesInDir=Anzahl der Dateien in Ordner

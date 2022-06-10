@@ -1,14 +1,17 @@
 # Dolibarr language file - Source file is en_US - loan
 ModuleBuilderDesc=This tool must be used only by experienced users or developers. It provides utilities to build or edit your own module. Documentation for alternative <a href="%s" target="_blank" rel="noopener noreferrer">manual development is here</a>.
-EnterNameOfModuleDesc=输入要创建的模块/应用的名称，不含空格。使用大写字母分隔单词（例如：MyModule，EcommerceForShop，SyncWithMySystem ......）
-EnterNameOfObjectDesc=输入要创建的对象的名称，不包含空格。使用大写字母分隔单词（例如：MyObject，Student，Teacher ...）。将会生成包含CRUD方法的类文件，同时生成API文件，同时生成"列表/添加/编辑/删除"对象的页面和SQL文件。
+EnterNameOfModuleDesc=Enter the name of the module/application to create with no spaces. Use uppercase to separate words (For example: MyModule, EcommerceForShop, SyncWithMySystem...)
+EnterNameOfObjectDesc=Enter the name of the object to create with no spaces. Use uppercase to separate words (For example: MyObject, Student, Teacher...). The CRUD class file, but also API file, pages to list/add/edit/delete object and SQL files will be generated.
+EnterNameOfDictionaryDesc=Enter the name of the dictionary to create with no spaces. Use uppercase to separate words (For example: MyDico...). The class file, but also the SQL file will be generated.
 ModuleBuilderDesc2=Path where modules are generated/edited (first directory for external modules defined into %s): <strong>%s</strong>
 ModuleBuilderDesc3=找到生成/可编辑的模块：<strong> %s </strong>
 ModuleBuilderDesc4=当模块目录的根目录中存在<strong> %s </strong>文件时，模块被检测为“可编辑”
 NewModule=新模块
 NewObjectInModulebuilder=New object
+NewDictionary=New dictionary
 ModuleKey=模块名
 ObjectKey=对象名
+DicKey=Dictionary key
 ModuleInitialized=模块已初始化
 FilesForObjectInitialized=初始化新对象'%s'的文件
 FilesForObjectUpdated=对象'%s'的文件已更新（.sql文件和.class.php文件）

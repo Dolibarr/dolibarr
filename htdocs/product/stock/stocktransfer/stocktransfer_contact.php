@@ -126,7 +126,7 @@ $formother = new FormOther($db);
 
 if ($object->id > 0) {
 	$head = stocktransferPrepareHead($object);
-	dol_fiche_head($head, 'contact', $langs->trans("StockTransfer"), -1, 'stock');
+	print dol_get_fiche_head($head, 'contact', $langs->trans("StockTransfer"), -1, 'stock');
 
 
 	// Proposal card
@@ -178,7 +178,7 @@ if ($object->id > 0) {
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '', 0, '', '', 1);
 
-	dol_fiche_end();
+	print dol_get_fiche_end();
 
 	$user->rights->stocktransfer->write = $user->rights->stocktransfer->stocktransfer->write;
 	// Contacts lines (modules that overwrite templates must declare this into descriptor)

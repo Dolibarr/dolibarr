@@ -246,6 +246,7 @@ class doc_generic_bom_odt extends ModelePDFBom
 			}
 
 			$object->fetch_thirdparty();
+			$object->fetch_product();
 
 			$dir = $conf->bom->multidir_output[isset($object->entity) ? $object->entity : 1];
 			$objectref = dol_sanitizeFileName($object->ref);

@@ -178,14 +178,12 @@ $sql .= ', u.rowid as userid, u.login, u.lastname, u.firstname';
 $sql .= ', c.code as paiement_type, c.libelle as paiement_libelle';
 $sql .= ', ba.rowid as bid, ba.ref as bref, ba.label as blabel, ba.number, ba.account_number as account_number, ba.iban_prefix, ba.bic, ba.currency_code, ba.fk_accountancy_journal as accountancy_journal';
 $sql .= ', SUM(pndf.amount)';
-
 $sql .= ' FROM '.MAIN_DB_PREFIX.'payment_expensereport AS pndf';
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'expensereport AS ndf ON ndf.rowid=pndf.fk_expensereport';
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement AS c ON pndf.fk_typepayment = c.id';
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user AS u ON u.rowid = ndf.fk_user_author';
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON pndf.fk_bank = b.rowid';
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as ba ON b.fk_account = ba.rowid';
-
 $sql .= ' WHERE ndf.entity IN ('.getEntity("expensereport").')';
 
 // RESTRICT RIGHTS
@@ -226,7 +224,7 @@ if ($search_all) {
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 
-$sql .= ' GROUP BY pndf.rowid, pndf.datep, pndf.amount, pndf.num_payment, u.login, u.lastname, u.firstname, c.code, c.libelle,';
+$sql .= ' GROUP BY pndf.rowid, pndf.datep, pndf.amount, pndf.num_payment, u.rowid, u.login, u.lastname, u.firstname, c.code, c.libelle,';
 $sql .= ' ba.rowid, ba.ref, ba.label, ba.number, ba.account_number, ba.iban_prefix, ba.bic, ba.currency_code, ba.fk_accountancy_journal';
 
 $sql .= $db->order($sortfield, $sortorder);
@@ -419,6 +417,9 @@ print '</td>';
 
 print '</tr>';
 
+$totalarray = array();
+$totalarray['nbfield'] = 0;
+
 print '<tr class="liste_titre">';
 if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER_IN_LIST)) {
 	print_liste_field_titre('#', $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder);
@@ -460,8 +461,12 @@ foreach ($arrayfields as $column) {
 	}
 }
 
+// Loop on record
+// --------------------------------------------------------------------
 $i = 0;
+$savnbfield = $totalarray['nbfield'];
 $totalarray = array();
+$totalarray['nbfield'] = 0;
 while ($i < min($num, $limit)) {
 	$objp = $db->fetch_object($resql);
 
@@ -563,7 +568,11 @@ while ($i < min($num, $limit)) {
 			$totalarray['nbfield']++;
 		}
 		$totalarray['pos'][$checkedCount] = 'amount';
-		$totalarray['val']['amount'] += $objp->pamount;
+		if (empty($totalarray['val']['amount'])) {
+			$totalarray['val']['amount'] = $objp->pamount;
+		} else {
+			$totalarray['val']['amount'] += $objp->pamount;
+		}
 	}
 
 	// Buttons

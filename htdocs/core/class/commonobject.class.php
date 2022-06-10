@@ -2649,7 +2649,9 @@ abstract class CommonObject
 
 			$sql = 'UPDATE '.$this->db->prefix().$this->table_element;
 			$sql .= " SET ".$fieldname." = ".(($id > 0 || $id == '0') ? ((int) $id) : 'NULL');
-			$sql .= " , deposit_percent = " . (! empty($deposit_percent) ? "'".$this->db->escape($deposit_percent)."'" : 'NULL');
+			if (in_array($this->table_element, array('propal', 'commande'))) {
+				$sql .= " , deposit_percent = " . (empty($deposit_percent) ? 'NULL' : "'".$this->db->escape($deposit_percent)."'");
+			}
 			$sql .= ' WHERE rowid='.((int) $this->id);
 
 			if ($this->db->query($sql)) {
@@ -7998,7 +8000,11 @@ abstract class CommonObject
 						}
 						// Convert float submited string into real php numeric (value in memory must be a php numeric)
 						if (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('price', 'double'))) {
-							$value = (GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix) || $value) ? price2num($value) : $this->array_options['options_'.$key];
+							if (GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix) || $value) {
+								$value = price2num($value);
+							} elseif (isset($this->array_options['options_'.$key])) {
+								$value = $this->array_options['options_'.$key];
+							}
 						}
 
 						// HTML, text, select, integer and varchar: take into account default value in database if in create mode

@@ -1,14 +1,17 @@
 # Dolibarr language file - Source file is en_US - loan
 ModuleBuilderDesc=This tool must be used only by experienced users or developers. It provides utilities to build or edit your own module. Documentation for alternative <a href="%s" target="_blank" rel="noopener noreferrer">manual development is here</a>.
-EnterNameOfModuleDesc=Introduza o nome do módulo/aplicação a criar, sem espaços. Use maiúsculas para separar palavras (Por exemplo: MyModule, EcommerceForShop, SyncWithMySystem ...)
-EnterNameOfObjectDesc=Digite o nome do objeto para criar sem espaços. Use letras maiúsculas para separar palavras (por exemplo: MyObject, Student, Teacher ...). O arquivo de classe CRUD, mas também o arquivo da API, serão geradas páginas para listar / adicionar / editar / excluir objetos e arquivos SQL.
+EnterNameOfModuleDesc=Enter the name of the module/application to create with no spaces. Use uppercase to separate words (For example: MyModule, EcommerceForShop, SyncWithMySystem...)
+EnterNameOfObjectDesc=Enter the name of the object to create with no spaces. Use uppercase to separate words (For example: MyObject, Student, Teacher...). The CRUD class file, but also API file, pages to list/add/edit/delete object and SQL files will be generated.
+EnterNameOfDictionaryDesc=Enter the name of the dictionary to create with no spaces. Use uppercase to separate words (For example: MyDico...). The class file, but also the SQL file will be generated.
 ModuleBuilderDesc2=Path where modules are generated/edited (first directory for external modules defined into %s): <strong>%s</strong>
 ModuleBuilderDesc3=Módulos gerados / editáveis ​​encontrados: <strong>%s</strong>
 ModuleBuilderDesc4=Um módulo é detectado como 'editável' quando o arquivo <strong> %s </ strong> existe na raiz do diretório do módulo
 NewModule=Novo módulo
 NewObjectInModulebuilder=Novo objeto
+NewDictionary=New dictionary
 ModuleKey=Chave do módulo
 ObjectKey=Chave do objeto
+DicKey=Dictionary key
 ModuleInitialized=Módulo inicializado
 FilesForObjectInitialized=Arquivos para o novo objeto '%s' inicializado
 FilesForObjectUpdated=Arquivos para o objeto '%s' atualizado (arquivos .sql e arquivo .class.php)

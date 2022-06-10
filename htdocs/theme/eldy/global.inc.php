@@ -285,7 +285,7 @@ div.tabBar textarea:focus {
 	border: 1px solid #aaa !important;
 }
 input:focus:not(.button):not(.select2-search__field):not(#top-bookmark-search-input):not(.search_component_input):not(.input-search-takepos),
- select:focus, .select2-container--open .select2-selection--single {
+ select:focus, .select2-container--open [aria-expanded="false"].select2-selection--single {
 /* div.tabBar input:focus, div.tabBar select:focus { */
 	border-bottom: 1px solid #666 !important;
 	border-bottom-left-radius: 0 !important;
@@ -6028,7 +6028,7 @@ span.select2.select2-container.select2-container--default {
 }
 span.select2.select2-container.select2-container--default {
 	<?php if (empty($conf->global->THEME_SHOW_BORDER_ON_INPUT)) { ?>
-	//border-bottom: solid 1px var(--inputbordercolor);
+	/*border-bottom: solid 1px var(--inputbordercolor);*/
 	<?php } ?>
 }
 
@@ -6345,6 +6345,17 @@ span#select2-boxbookmark-container {
 
 ul.select2-results__options li {
 	font-size: 0.95em;
+}
+
+@media only screen and (min-width: 767px)
+{
+	.select2-container.select2-container--open .select2-dropdown.ui-dialog {
+		min-width: 200px !important;
+	}
+	.select2-container--open .select2-dropdown--below {
+		border-top: 1px solid var(--inputbordercolor);
+		/* border-top: 1px solid #aaaaaa; */
+	}
 }
 
 

@@ -111,6 +111,9 @@ if ($resql) {
 			$arrayOfValidBankAccount[$conf->global->$accountname] = $conf->global->$accountname;
 			$arrayOfValidPaymentModes[] = $obj;
 		}
+		if (empty($conf->banque->enabled)) {
+			if ($paycode == 'CASH' || $paycode == 'CB') $arrayOfValidPaymentModes[] = $obj;
+		}
 	}
 }
 ?>

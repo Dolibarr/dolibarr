@@ -879,7 +879,8 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 		//      foreach ($menu_array as $key => $row) {
 		//          $position[$key] = $row['position'];
 		//      }
-		//      array_multisort($position, SORT_ASC, $menu_array);
+		//		$array1_sort_order = SORT_ASC;
+		//      array_multisort($position, $array1_sort_order, $menu_array);
 	}
 
 	// TODO Use the position property in menu_array to reorder the $menu_array
@@ -2002,7 +2003,7 @@ function get_left_menu_products($mainmenu, &$newmenu, $usemenuhider = 1, $leftme
 				$newmenu->add("/variants/list.php", $langs->trans("VariantAttributes"), 1, $user->rights->produit->lire);
 			}
 			if (isModEnabled('propal') || (isModEnabled('commande') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled('facture') || isModEnabled('fournisseur') || isModEnabled('supplier_proposal') || isModEnabled('supplier_order') || isModEnabled('supplier_invoice')) {
-				$newmenu->add("/product/stats/card.php?id=all&leftmenu=stats&type=0", $langs->trans("Statistics"), 1, $user->rights->produit->lire && $user->rights->propale->lire);
+				$newmenu->add("/product/stats/card.php?id=all&leftmenu=stats&type=0", $langs->trans("Statistics"), 1, $user->rights->produit->lire);
 			}
 
 			// Categories
@@ -2019,7 +2020,7 @@ function get_left_menu_products($mainmenu, &$newmenu, $usemenuhider = 1, $leftme
 			$newmenu->add("/product/card.php?leftmenu=service&amp;action=create&amp;type=1", $langs->trans("NewService"), 1, $user->rights->service->creer);
 			$newmenu->add("/product/list.php?leftmenu=service&amp;type=1", $langs->trans("List"), 1, $user->rights->service->lire);
 			if (isModEnabled('propal') || isModEnabled('commande') || isModEnabled('facture') || (isModEnabled('fournisseur') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled('supplier_proposal') || isModEnabled('supplier_order') || isModEnabled('supplier_invoice')) {
-				$newmenu->add("/product/stats/card.php?id=all&leftmenu=stats&type=1", $langs->trans("Statistics"), 1, $user->rights->service->lire || $user->rights->product->lire);
+				$newmenu->add("/product/stats/card.php?id=all&leftmenu=stats&type=1", $langs->trans("Statistics"), 1, $user->rights->service->lire);
 			}
 			// Categories
 			if (isModEnabled('categorie')) {

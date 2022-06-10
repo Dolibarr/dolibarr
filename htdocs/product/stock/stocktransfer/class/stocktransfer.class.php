@@ -62,6 +62,11 @@ class StockTransfer extends CommonObject
 	 */
 	public $picto = 'stock';
 
+	public $date_prevue_depart;
+	public $date_prevue_arrivee;
+	public $date_reelle_depart;
+	public $date_reelle_arrivee;
+
 
 	const STATUS_DRAFT = 0;
 	const STATUS_VALIDATED = 1;
@@ -357,8 +362,8 @@ class StockTransfer extends CommonObject
 	/**
 	 * Used to sort lines by rank
 	 *
-	 * @param $a	1st element to test
-	 * @param $b	1st element to test
+	 * @param	Object	$a		1st element to test
+	 * @param	Object	$b		2nd element to test
 	 * @return int
 	 */
 	public function cmp($a, $b)

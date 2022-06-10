@@ -391,12 +391,19 @@ function pdfBuildThirdpartyName($thirdparty, Translate $outputlangs, $includeali
 	$socname = '';
 
 	if ($thirdparty instanceof Societe) {
-		$socname .= $thirdparty->name;
-		if (($includealias || !empty($conf->global->PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME)) && !empty($thirdparty->name_alias)) {
-			$socname .= " - ".$thirdparty->name_alias;
+		$socname = $thirdparty->name;
+		if (($includealias || getDolGlobalInt('PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME')) && !empty($thirdparty->name_alias)) {
+			if (getDolGlobalInt('PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME') == 2) {
+				$socname = $thirdparty->name_alias." - ".$thirdparty->name;
+			} else {
+				$socname = $thirdparty->name." - ".$thirdparty->name_alias;
+			}
 		}
 	} elseif ($thirdparty instanceof Contact) {
 		$socname = $thirdparty->socname;
+		if (($includealias || getDolGlobalInt('PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME')) && !empty($thirdparty->name_alias)) {
+			// TODO PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME not completely implemented
+		}
 	} else {
 		throw new InvalidArgumentException('Parameter 1 $thirdparty is not a Societe nor Contact');
 	}
@@ -2352,13 +2359,13 @@ function pdf_getLinkedObjects(&$object, $outputlangs)
 			if (count($objects) > 1 && count($objects) <= (getDolGlobalInt("MAXREFONDOC") ? getDolGlobalInt("MAXREFONDOC") : 10)) {
 				$object->note_public = dol_concatdesc($object->note_public, '<br>'.$outputlangs->transnoentities("RefOrder").' : <br>');
 				foreach ($objects as $elementobject) {
-					$object->note_public = dol_concatdesc($object->note_public, $outputlangs->transnoentities($elementobject->ref).($elementobject->ref_client ? ' ('.$elementobject->ref_client.')' : '').($elementobject->ref_supplier ? ' ('.$elementobject->ref_supplier.')' : '').' ');
+					$object->note_public = dol_concatdesc($object->note_public, $outputlangs->transnoentities($elementobject->ref).(!empty($elementobject->ref_client) ? ' ('.$elementobject->ref_client.')' : '').(!empty($elementobject->ref_supplier) ? ' ('.$elementobject->ref_supplier.')' : '').' ');
 					$object->note_public = dol_concatdesc($object->note_public, $outputlangs->transnoentities("OrderDate").' : '.dol_print_date($elementobject->date, 'day', '', $outputlangs).'<br>');
 				}
 			} elseif (count($objects) == 1) {
 				$elementobject = array_shift($objects);
 				$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("RefOrder");
-				$linkedobjects[$objecttype]['ref_value'] = $outputlangs->transnoentities($elementobject->ref).($elementobject->ref_client ? ' ('.$elementobject->ref_client.')' : '').($elementobject->ref_supplier ? ' ('.$elementobject->ref_supplier.')' : '');
+				$linkedobjects[$objecttype]['ref_value'] = $outputlangs->transnoentities($elementobject->ref).(!empty($elementobject->ref_client) ? ' ('.$elementobject->ref_client.')' : '').(!empty($elementobject->ref_supplier) ? ' ('.$elementobject->ref_supplier.')' : '');
 				$linkedobjects[$objecttype]['date_title'] = $outputlangs->transnoentities("OrderDate");
 				$linkedobjects[$objecttype]['date_value'] = dol_print_date($elementobject->date, 'day', '', $outputlangs);
 			}

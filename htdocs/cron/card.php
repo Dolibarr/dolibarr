@@ -546,21 +546,24 @@ if (($action == "create") || ($action == "edit")) {
 	$linkback = '<a href="'.DOL_URL_ROOT.'/cron/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 	$morehtmlref = '<div class="refidno">';
+	$morehtmlref .= $langs->trans($object->label);
 	$morehtmlref .= '</div>';
 
 	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref);
 
 	// box add_jobs_box
 	print '<div class="fichecenter">';
+	print '<div class="fichehalfleft">';
+
 	print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent tableforfield">';
 
-	print '<tr><td class="titlefield">';
+	/*print '<tr><td class="titlefield">';
 	print $langs->trans('CronLabel')."</td>";
 	print "<td>".$langs->trans($object->label);
-	print "</td></tr>";
+	print "</td></tr>";*/
 
-	print "<tr><td>";
+	print '<tr><td class="titlefield">';
 	print $langs->trans('CronType')."</td><td>";
 	print $formCron->select_typejob('jobtype', $object->jobtype, 1);
 	print "</td></tr>";
@@ -605,11 +608,11 @@ if (($action == "create") || ($action == "edit")) {
 	if (!empty($conf->multicompany->enabled)) {
 		print '<tr><td>';
 		print $langs->trans('Entity')."</td><td>";
-		if (!$object->entity) {
-			print $langs->trans("AllEntities");
+		if (empty($object->entity)) {
+			print img_picto($langs->trans("AllEntities"), 'entity', 'class="pictofixedwidth"').$langs->trans("AllEntities");
 		} else {
 			$mc->getInfo($object->entity);
-			print $mc->label;
+			print img_picto($langs->trans("AllEntities"), 'entity', 'class="pictofixedwidth"').$mc->label;
 		}
 		print "</td></tr>";
 	}
@@ -617,10 +620,8 @@ if (($action == "create") || ($action == "edit")) {
 	print '</table>';
 	print '</div>';
 
-	print '<br>';
+	print '<div class="fichehalfright">';
 
-
-	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent tableforfield">';
 
@@ -693,11 +694,11 @@ if (($action == "create") || ($action == "edit")) {
 	print "</td></tr>";
 
 	print '</table>';
-	print '</div>';
+
 
 	print '<br>';
 
-	print '<div class="fichecenter">';
+
 	print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent tableforfield">';
 
@@ -736,7 +737,11 @@ if (($action == "create") || ($action == "edit")) {
 	print "</td></tr>";
 
 	print '</table>';
+
 	print '</div>';
+
+	print '<div class="clearboth"></div>';
+
 
 	print dol_get_fiche_end();
 

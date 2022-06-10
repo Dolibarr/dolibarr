@@ -1,14 +1,17 @@
 # Dolibarr language file - Source file is en_US - loan
 ModuleBuilderDesc=This tool must be used only by experienced users or developers. It provides utilities to build or edit your own module. Documentation for alternative <a href="%s" target="_blank" rel="noopener noreferrer">manual development is here</a>.
-EnterNameOfModuleDesc=Nhập tên của mô-đun / ứng dụng để tạo không có khoảng trắng. Sử dụng chữ hoa để phân tách các từ (Ví dụ: MyModule, ECommerceForShop, SyncWithMySystem ...)
-EnterNameOfObjectDesc=Nhập tên của đối tượng để tạo không có khoảng trắng. Sử dụng chữ hoa để phân tách các từ (Ví dụ: MyObject, Student, Teacher ...). Tệp lớp CRUD, nhưng cũng là tệp API, các trang để liệt kê/thêm/chỉnh sửa/xóa đối tượng và các tệp SQL sẽ được tạo.
+EnterNameOfModuleDesc=Enter the name of the module/application to create with no spaces. Use uppercase to separate words (For example: MyModule, EcommerceForShop, SyncWithMySystem...)
+EnterNameOfObjectDesc=Enter the name of the object to create with no spaces. Use uppercase to separate words (For example: MyObject, Student, Teacher...). The CRUD class file, but also API file, pages to list/add/edit/delete object and SQL files will be generated.
+EnterNameOfDictionaryDesc=Enter the name of the dictionary to create with no spaces. Use uppercase to separate words (For example: MyDico...). The class file, but also the SQL file will be generated.
 ModuleBuilderDesc2=Đường dẫn nơi các mô-đun được tạo/chỉnh sửa (thư mục đầu tiên cho các mô-đun bên ngoài được xác định vào %s): <strong>%s</strong>
 ModuleBuilderDesc3=Các mô-đun được tạo / chỉnh sửa được tìm thấy: <strong>%s</strong>
 ModuleBuilderDesc4=Một mô-đun được phát hiện là 'có thể chỉnh sửa' khi tệp <strong>%s</strong> tồn tại trong thư mục gốc của mô-đun
 NewModule=Mô-đun mới
 NewObjectInModulebuilder=Đối tượng mới
+NewDictionary=New dictionary
 ModuleKey=Khóa mô-đun
 ObjectKey=Khóa đối tượng
+DicKey=Dictionary key
 ModuleInitialized=Mô-đun được khởi tạo
 FilesForObjectInitialized=Các tệp cho đối tượng mới '%s' được khởi tạo
 FilesForObjectUpdated=Các tệp cho đối tượng '%s' được cập nhật (tệp .sql và tệp .class.php)
