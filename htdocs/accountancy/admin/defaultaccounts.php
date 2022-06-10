@@ -84,6 +84,9 @@ $list_account[] = 'ACCOUNTING_VAT_PAY_ACCOUNT';
 if (!empty($conf->banque->enabled)) {
 	$list_account[] = 'ACCOUNTING_ACCOUNT_TRANSFER_CASH';
 }
+if (!empty($conf->global->INVOICE_USE_RETAINED_WARRANTY)) {
+	$list_account[] = 'ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY';
+}
 if (!empty($conf->don->enabled)) {
 	$list_account[] = 'DONATION_ACCOUNTINGACCOUNT';
 }
