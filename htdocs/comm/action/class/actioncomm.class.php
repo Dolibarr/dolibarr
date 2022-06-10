@@ -2515,12 +2515,13 @@ class ActionComm extends CommonObject
 	 * @param int		$percent	The new percent value for the event
 	 * @return int					1 when update of the event was suscessfull, otherwise -1
 	 */
-	public function updatePercent($id, $percent)
+	public function updatePercent($id, $percent, $usermodid)
 	{
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."actioncomm ";
 		$sql .= " SET percent = ".(int) $percent;
+		if ($usermodid > 0) $sql .= ", fk_user_mod = ".$usermodid;
 		$sql .= " WHERE id = ".((int) $id);
 
 		if ($this->db->query($sql)) {
