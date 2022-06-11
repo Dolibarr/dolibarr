@@ -259,7 +259,7 @@ if (empty($reshook)) {
 
 			if (!$error) {
 				$TusersToProcess = array();
- 				// usergroup  select
+				// usergroup  select
 				/** GROUPS */
 				$sql = ' SELECT DISTINCT u.rowid,u.lastname,u.firstname from ' . MAIN_DB_PREFIX . 'user as  u';
 				$sql .= ' LEFT JOIN  ' . MAIN_DB_PREFIX . 'usergroup_user as ug on ug.fk_user = u.rowid  ';
