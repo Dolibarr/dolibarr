@@ -584,7 +584,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		print "</form>\n";
 
-		print mrpCollapseBomManagement();
+		mrpCollapseBomManagement();
 	}
 
 

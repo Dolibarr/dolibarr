@@ -275,7 +275,7 @@ if ($action == 'create') {
 
 	print dol_get_fiche_end();
 
-	print mrpCollapseBomManagement();
+	mrpCollapseBomManagement();
 
 	?>
 	<script>
