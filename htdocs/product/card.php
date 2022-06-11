@@ -56,7 +56,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/product/modules_product.class.php'
 if (!empty($conf->propal->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 }
-if (!empty($conf->facture->enabled)) {
+if (isModEnabled('facture')) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 }
 if (!empty($conf->commande->enabled)) {
@@ -76,7 +76,7 @@ $langs->loadLangs(array('products', 'other'));
 if (!empty($conf->stock->enabled)) {
 	$langs->load("stocks");
 }
-if (!empty($conf->facture->enabled)) {
+if (isModEnabled('facture')) {
 	$langs->load("bills");
 }
 if (!empty($conf->productbatch->enabled)) {
@@ -2814,7 +2814,7 @@ if (!empty($conf->global->PRODUCT_ADD_FORM_ADD_TO) && $object->id && ($action ==
 	}
 
 	// Factures
-	if (!empty($conf->facture->enabled) && $user->rights->facture->creer) {
+	if (isModEnabled('facture') && $user->rights->facture->creer) {
 		$invoice = new Facture($db);
 
 		$langs->load("bills");

@@ -159,7 +159,7 @@ if ($object->thirdparty->client) {
 	if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
 		$elementTypeArray['order'] = $langs->transnoentitiesnoconv('Orders');
 	}
-	if (!empty($conf->facture->enabled) && $user->rights->facture->lire) {
+	if (isModEnabled('facture') && $user->rights->facture->lire) {
 		$elementTypeArray['invoice'] = $langs->transnoentitiesnoconv('Invoices');
 	}
 	if (!empty($conf->contrat->enabled) && $user->rights->contrat->lire) {

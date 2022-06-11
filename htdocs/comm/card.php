@@ -40,10 +40,8 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-if (!empty($conf->facture->enabled)) {
+if (isModEnabled('facture')) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-}
-if (!empty($conf->facture->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
 }
 if (!empty($conf->propal->enabled)) {
@@ -77,7 +75,7 @@ if (!empty($conf->commande->enabled)) {
 if (!empty($conf->expedition->enabled)) {
 	$langs->load("sendings");
 }
-if (!empty($conf->facture->enabled)) {
+if (isModEnabled('facture')) {
 	$langs->load("bills");
 }
 if (!empty($conf->projet->enabled)) {
@@ -741,7 +739,7 @@ if ($object->id > 0) {
 		}
 	}
 
-	if (!empty($conf->facture->enabled) && $user->rights->facture->lire) {
+	if (isModEnabled('facture') && $user->rights->facture->lire) {
 		// Box factures
 		$tmp = $object->getOutstandingBills('customer', 0);
 		$outstandingOpened = $tmp['opened'];
@@ -1311,7 +1309,7 @@ if ($object->id > 0) {
 	/*
 	 *   Latest invoices templates
 	 */
-	if (!empty($conf->facture->enabled) && $user->rights->facture->lire) {
+	if (isModEnabled('facture') && $user->rights->facture->lire) {
 		$sql = 'SELECT f.rowid as id, f.titre as ref';
 		$sql .= ', f.total_ht';
 		$sql .= ', f.total_tva';
@@ -1406,7 +1404,7 @@ if ($object->id > 0) {
 	/*
 	 *   Latest invoices
 	 */
-	if (!empty($conf->facture->enabled) && $user->rights->facture->lire) {
+	if (isModEnabled('facture') && $user->rights->facture->lire) {
 		$sql = 'SELECT f.rowid as facid, f.ref, f.type';
 		$sql .= ', f.total_ht';
 		$sql .= ', f.total_tva';
@@ -1569,7 +1567,7 @@ if ($object->id > 0) {
 				print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/deplacement/card.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddTrip").'</a></div>';
 			}
 
-			if (!empty($conf->facture->enabled) && $object->status == 1) {
+			if (isModEnabled('facture') && $object->status == 1) {
 				if (empty($user->rights->facture->creer)) {
 					print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("NotAllowed")).'" href="#">'.$langs->trans("AddBill").'</a></div>';
 				} else {

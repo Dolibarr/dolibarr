@@ -1659,7 +1659,7 @@ if ($action == 'create') {
 				}
 
 				// Invoicing
-				if (!empty($conf->facture->enabled) && $object->statut > Fichinter::STATUS_DRAFT) {
+				if (isModEnabled('facture') && $object->statut > Fichinter::STATUS_DRAFT) {
 					$langs->load("bills");
 					if ($object->statut < Fichinter::STATUS_BILLED) {
 						if ($user->rights->facture->creer) {

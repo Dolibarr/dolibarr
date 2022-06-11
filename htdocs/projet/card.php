@@ -1326,7 +1326,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 					$langs->load("orders");
 					print dolGetButtonAction('', $langs->trans('CreateOrder'), 'default', DOL_URL_ROOT.'/commande/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid, '');
 				}
-				if (!empty($conf->facture->enabled) && $user->rights->facture->creer) {
+				if (isModEnabled('facture') && $user->rights->facture->creer) {
 					$langs->load("bills");
 					print dolGetButtonAction('', $langs->trans('CreateBill'), 'default', DOL_URL_ROOT.'/compta/facture/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid, '');
 				}

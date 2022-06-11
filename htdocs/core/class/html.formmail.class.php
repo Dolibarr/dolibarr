@@ -1618,7 +1618,7 @@ class FormMail extends Form
 					if (!empty($conf->don->enabled)) {
 						$tmparray['__SECUREKEYPAYMENT_DONATION__'] = 'SecureKeyPAYMENTUniquePerDonation';
 					}
-					if (!empty($conf->facture->enabled)) {
+					if (isModEnabled('facture')) {
 						$tmparray['__SECUREKEYPAYMENT_INVOICE__'] = 'SecureKeyPAYMENTUniquePerInvoice';
 					}
 					if (!empty($conf->commande->enabled)) {
@@ -1635,7 +1635,7 @@ class FormMail extends Form
 					if (!empty($conf->don->enabled)) {
 						$tmparray['__ONLINEPAYMENTLINK_DONATION__'] = 'OnlinePaymentLinkUniquePerDonation';
 					}
-					if (!empty($conf->facture->enabled)) {
+					if (isModEnabled('facture')) {
 						$tmparray['__ONLINEPAYMENTLINK_INVOICE__'] = 'OnlinePaymentLinkUniquePerInvoice';
 					}
 					if (!empty($conf->commande->enabled)) {

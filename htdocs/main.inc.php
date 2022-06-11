@@ -2445,7 +2445,7 @@ function printDropdownQuickadd()
 				"title" => "NewBill@bills",
 				"name" => "Bill@bills",
 				"picto" => "object_bill",
-				"activation" => !empty($conf->facture->enabled) && $user->rights->facture->creer, // vs hooking
+				"activation" => isModEnabled('facture') && $user->rights->facture->creer, // vs hooking
 				"position" => 50,
 			),
 			array(

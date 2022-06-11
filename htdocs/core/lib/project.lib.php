@@ -126,7 +126,7 @@ function project_prepare_head(Project $project, $moreparam = '')
 
 	if (((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled))
 		|| !empty($conf->propal->enabled) || !empty($conf->commande->enabled)
-		|| !empty($conf->facture->enabled) || !empty($conf->contrat->enabled)
+		|| isModEnabled('facture') || !empty($conf->contrat->enabled)
 		|| !empty($conf->ficheinter->enabled) || !empty($conf->agenda->enabled) || !empty($conf->deplacement->enabled) || !empty($conf->stock->enabled)) {
 		$nbElements = 0;
 		// Enable caching of thirdrparty count Contacts
@@ -144,10 +144,10 @@ function project_prepare_head(Project $project, $moreparam = '')
 			if (!empty($conf->commande->enabled)) {
 				$nbElements += $project->getElementCount('order', 'commande');
 			}
-			if (!empty($conf->facture->enabled)) {
+			if (isModEnabled('facture')) {
 				$nbElements += $project->getElementCount('invoice', 'facture');
 			}
-			if (!empty($conf->facture->enabled)) {
+			if (isModEnabled('facture')) {
 				$nbElements += $project->getElementCount('invoice_predefined', 'facture_rec');
 			}
 			if (!empty($conf->supplier_proposal->enabled)) {

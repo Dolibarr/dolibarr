@@ -209,7 +209,7 @@ $found = 0;
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("DeStockOnBill").'</td>';
 print '<td class="right">';
-if (!empty($conf->facture->enabled)) {
+if (isModEnabled('facture')) {
 	if ($conf->use_javascript_ajax) {
 		print ajax_constantonoff('STOCK_CALCULATE_ON_BILL', array(), null, 0, 0, 0, 2, 1);
 	} else {

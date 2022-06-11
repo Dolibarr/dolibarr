@@ -120,7 +120,7 @@ if (!empty($conf->propal->enabled)) {
 }
 
 
-if (!empty($conf->facture->enabled)) {
+if (isModEnabled('facture')) {
 	print load_fiche_titre($langs->trans("Invoices"), '', '');
 
 	print '<div class="div-table-responsive-no-min">';
