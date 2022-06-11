@@ -259,7 +259,7 @@ if (empty($reshook)) {
 
 			if (!$error) {
 				$TusersToProcess = array();
-
+ 				// usergroup  select
 				/** GROUPS */
 				$sql = ' SELECT DISTINCT u.rowid,u.lastname,u.firstname from ' . MAIN_DB_PREFIX . 'user as  u';
 				$sql .= ' LEFT JOIN  ' . MAIN_DB_PREFIX . 'usergroup_user as ug on ug.fk_user = u.rowid  ';
@@ -268,15 +268,13 @@ if (empty($reshook)) {
 
 				if ($resql) {
 					while ($obj = $db->fetch_object($resql)) {
-						if (!array_key_exists($obj->rowid, $TusersToProcess))
-							$TusersToProcess[] = $obj->rowid;
+						$TusersToProcess[$obj->rowid] = $obj->rowid;
 					}
 				}
 				/** USERS  */
 				if (is_array($users) && count($users) > 0) {
 					foreach ($users as $u) {
-						if (!array_key_exists($u, $TusersToProcess))
-							$TusersToProcess[] = $u;
+							$TusersToProcess[$u] = $u;
 					}
 				}
 				foreach ($TusersToProcess as $u) {
