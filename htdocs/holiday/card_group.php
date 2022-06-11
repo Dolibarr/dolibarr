@@ -316,7 +316,6 @@ if (empty($reshook)) {
 							setEventMessages($object->error, $object->errors, 'errors');
 							$error++;
 						} else {
-
 							//@TODO changer le nom si validated
 							if ($autoValidation) {
 								$htemp = new Holiday($db);
@@ -334,7 +333,7 @@ if (empty($reshook)) {
 								if ($AutoSendMail && !$error) {
 									// send a mail to the user
 									$returnSendMail = sendMail($result, $cancreate, $now, $autoValidation);
-									if (!empty($returnSendMail->msg))  setEventMessage($returnSendMail->msg,$returnSendMail->style);
+									if (!empty($returnSendMail->msg))  setEventMessage($returnSendMail->msg, $returnSendMail->style);
 								}
 							}
 						}
@@ -740,19 +739,16 @@ function sendMail($id, $cancreate, $now, $autoValidation)
 				$result = $mail->sendfile();
 
 				if (!$result) {
-
 					$objStd->error++;
 					$objStd->msg = $langs->trans('ErroreSendmail');
 					$objStd->style="warnings";
 					$objStd->status = 'error';
 				} else {
-
 					$objStd->msg = $langs->trans('mailSended');
 				}
 
 				return $objStd;
 			} else {
-
 				$objStd->error++;
 				$objStd->msg = $langs->trans('ErroreVerif');
 				$objStd->status = 'error';
@@ -761,7 +757,6 @@ function sendMail($id, $cancreate, $now, $autoValidation)
 			}
 		}
 	} else {
-
 		$objStd->error++;
 		$objStd->msg = $langs->trans('ErrorloadUserOnSendingMail');
 		$objStd->status = 'error';
