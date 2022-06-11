@@ -281,7 +281,7 @@ if (empty($reshook)) {
 					// Check if there is already holiday for this period pour chaque user
 					$verifCP = $object->verifDateHolidayCP($u, $date_debut, $date_fin, $halfday);
 					if (!$verifCP) {
-						setEventMessages($langs->trans("alreadyCPexist"), null, 'errors');
+						//setEventMessages($langs->trans("alreadyCPexist"), null, 'errors');
 
 						$userError = new User($db);
 						$result = $userError->fetch($u);
@@ -342,7 +342,7 @@ if (empty($reshook)) {
 				// If no SQL error we redirect to the request card
 				if (!$error) {
 					$db->commit();
-					header('Location: '.DOL_URL_ROOT.'/holiday/list.php?restore_lastsearch_values=1');
+					header('Location: '.DOL_URL_ROOT.'/holiday/list.php');
 					exit;
 				} else {
 					$db->rollback();
@@ -414,9 +414,26 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 
             if( $("input[name=autoValidation]").is(":checked") ){
     			$("#AutoSendMail").prop("disabled", false);
+                $("#AutoSendMail").prop("checked", true);
+
 			} else {
 				$("#AutoSendMail").prop("disabled", true);
+                $("#AutoSendMail").prop("checked", false);
 			}
+
+            $("input[name=autoValidation]").click( function(e) {
+				console.log("chang")
+
+                if( $("input[name=autoValidation]").is(":checked") ){
+					$("#AutoSendMail").prop("disabled", false);
+					$("#AutoSendMail").prop("checked", true);
+				} else {
+					$("#AutoSendMail").prop("disabled", true);
+					$("#AutoSendMail").prop("checked", false);
+				}
+            });
+
+
 
 			$("input.button-save").click("submit", function(e) {
 				console.log("Call valider()");
@@ -588,7 +605,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 		print '</tr>';
 
 		//auto validation ON CREATE
-		print '<tr><td>'.$langs->trans("AutoApprovalOnCreate").'</td><td>';
+		print '<tr><td>'.$langs->trans("AutoValidationOnCreate").'</td><td>';
 		print '<input type="checkbox" id="autoValidation" name="autoValidation" value="1"'.($autoValidation ? ' checked="checked"' : '').'>';
 		print '</td></tr>'."\n";
 
@@ -658,10 +675,10 @@ function sendMail($id, $cancreate, $now, $autoValidation)
 
 	if ($result) {
 		// If draft and owner of leave
-		if ($object->statut == Holiday::STATUS_DRAFT && $cancreate) {
+		if ($object->statut == Holiday::STATUS_VALIDATED && $cancreate) {
 			$object->oldcopy = dol_clone($object);
 
-			if ($autoValidation) $object->statut = Holiday::STATUS_VALIDATED;
+			//if ($autoValidation) $object->statut = Holiday::STATUS_VALIDATED;
 
 			$verif = $object->validate($user);
 
