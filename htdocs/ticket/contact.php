@@ -137,6 +137,16 @@ if ($action == 'swapstatut' && $user->rights->ticket->write) {
 // Efface un contact
 if ($action == 'deletecontact' && $user->rights->ticket->write) {
 	if ($object->fetch($id, '', $track_id)) {
+		$internal_contacts = $object->listeContact(-1, 'internal', 0, 'SUPPORTTEC');
+		foreach ($internal_contacts as $key => $contact) {
+			if ($contact['rowid'] == $lineid && $object->fk_user_assign==$contact['id']) {
+				$ret = $object->assignUser($user, null);
+				if ($ret < 0) {
+					$error ++;
+					setEventMessages($object->error, $object->errors, 'errors');
+				}
+			}
+		}
 		$result = $object->delete_contact($lineid);
 
 		if ($result >= 0) {

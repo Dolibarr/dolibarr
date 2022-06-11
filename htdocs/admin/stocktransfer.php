@@ -174,10 +174,10 @@ print load_fiche_titre($langs->trans($page_name), $linkback, 'stock');
 
 // Configuration header
 $head = stocktransferAdminPrepareHead();
-dol_fiche_head($head, 'settings', '', -1, "stocktransfer@stocktransfer");
+print dol_get_fiche_head($head, 'settings', '', -1, "stocktransfer@stocktransfer");
 
 // Setup page goes here
-echo '<span class="opacitymedium">'.$langs->trans("StockTransferSetupPage").'</span>';
+print '<span class="opacitymedium">'.$langs->trans("StockTransferSetupPage").'</span>';
 
 
 /*if ($action == 'edit')
@@ -478,7 +478,7 @@ if (empty($setupnotempty)) {
 }
 
 // Page end
-dol_fiche_end();
+print dol_get_fiche_end();
 
 llxFooter();
 $db->close();

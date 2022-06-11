@@ -66,7 +66,7 @@ $object->info($object->id);
 $head = actions_prepare_head($object);
 print dol_get_fiche_head($head, 'info', $langs->trans("Action"), -1, 'action');
 
-$linkback = img_picto($langs->trans("BackToList"), 'object_list', 'class="hideonsmartphone pictoactionview"');
+$linkback = img_picto($langs->trans("BackToList"), 'object_calendarlist', 'class="hideonsmartphone pictoactionview"');
 $linkback .= '<a href="'.DOL_URL_ROOT.'/comm/action/index.php">'.$langs->trans("BackToList").'</a>';
 
 // Link to other agenda views
