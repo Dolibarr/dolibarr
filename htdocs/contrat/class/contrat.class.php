@@ -2690,6 +2690,7 @@ class ContratLigne extends CommonObjectLine
 	public $date_cloture; // date end real
 
 	public $tva_tx;
+	public $vat_src_code;
 	public $localtax1_tx;
 	public $localtax2_tx;
 	public $localtax1_type; // Local tax 1 type
