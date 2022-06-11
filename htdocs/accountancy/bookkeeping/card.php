@@ -158,9 +158,8 @@ if ($action == "confirm_update") {
 	}
 } elseif ($action == 'add') {
 	$error = 0;
-	
-	foreach ($accountingaccount_number as $key => $value){
-		
+
+	foreach ($accountingaccount_number as $key => $value) {
 		$accountingaccount->fetch(null, $accountingaccount_number[$key], true);
 		$accountingaccount_label[$key] = $accountingaccount->label[$key];
 
@@ -209,7 +208,7 @@ if ($action == "confirm_update") {
 			if ($result < 0) {
 				$error++;
 				setEventMessages($object->error, $object->errors, 'errors');
-			} 
+			}
 		}
 	}
 	if (empty($error)) {
@@ -218,10 +217,9 @@ if ($action == "confirm_update") {
 		}
 		$debit = 0;
 		$credit = 0;
-	
+
 		$action = '';
 	}
-
 } elseif ($action == "confirm_delete") {
 	$object = new BookKeeping($db);
 
@@ -655,7 +653,7 @@ if ($action == 'create') {
 				}
 
 				print "</tr>\n";
-				
+
 				// In _tmp mode the first line is empty so we remove it
 				if ($mode == "_tmp") {
 					array_shift($object->linesmvt);
