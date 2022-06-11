@@ -4,6 +4,7 @@
  * Copyright (C) 2013-2021  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2017       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2022       Waël Almoman            <info@almoman.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -155,65 +156,72 @@ if ($action == "confirm_update") {
 			}
 		}
 	}
-} elseif ($action == "add") {
+} elseif ($action == 'add') {
 	$error = 0;
+	
+	foreach ($accountingaccount_number as $key => $value){
+		
+		$accountingaccount->fetch(null, $accountingaccount_number[$key], true);
+		$accountingaccount_label[$key] = $accountingaccount->label[$key];
 
-	if ((floatval($debit) != 0.0) && (floatval($credit) != 0.0)) {
-		$error++;
-		setEventMessages($langs->trans('ErrorDebitCredit'), null, 'errors');
-		$action = '';
-	}
-	if (empty($accountingaccount_number) || $accountingaccount_number == '-1') {
-		$error++;
-		setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("AccountAccountingShort")), null, 'errors');
-		$action = '';
-	}
-
-	if (!$error) {
-		$object = new BookKeeping($db);
-
-		$object->numero_compte = $accountingaccount_number;
-		$object->subledger_account = $subledger_account;
-		$object->subledger_label = $subledger_label;
-		$object->label_compte = $accountingaccount_label;
-		$object->label_operation = $label_operation;
-		$object->debit = $debit;
-		$object->credit = $credit;
-		$object->doc_date = (string) GETPOST('doc_date', 'alpha');
-		$object->doc_type = (string) GETPOST('doc_type', 'alpha');
-		$object->piece_num = $piece_num;
-		$object->doc_ref = (string) GETPOST('doc_ref', 'alpha');
-		$object->code_journal = $journal_code;
-		$object->journal_label = $journal_label;
-		$object->fk_doc = GETPOSTINT('fk_doc');
-		$object->fk_docdet = GETPOSTINT('fk_docdet');
-
-		if (floatval($debit) != 0.0) {
-			$object->montant = $debit; // deprecated
-			$object->amount = $debit;
-			$object->sens = 'D';
-		}
-
-		if (floatval($credit) != 0.0) {
-			$object->montant = $credit; // deprecated
-			$object->amount = $credit;
-			$object->sens = 'C';
-		}
-
-		$result = $object->createStd($user, false, $mode);
-		if ($result < 0) {
-			setEventMessages($object->error, $object->errors, 'errors');
-		} else {
-			if ($mode != '_tmp') {
-				setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
-			}
-
-			$debit = 0;
-			$credit = 0;
-
+		if ((floatval($debit[$key]) != 0.0) && (floatval($credit[$key]) != 0.0)) {
+			$error++;
+			setEventMessages($langs->trans('ErrorDebitCredit'), null, 'errors');
 			$action = '';
 		}
+		if (empty($accountingaccount_number[$key]) || $accountingaccount_number[$key] == '-1') {
+			$error++;
+			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("AccountAccountingShort")), null, 'errors');
+			$action = '';
+		}
+
+		if (!$error) {
+			$object = new BookKeeping($db);
+			$object->numero_compte = $accountingaccount_number[$key];
+			$object->subledger_account = $subledger_account[$key];
+			$object->subledger_label = $subledger_label[$key];
+			$object->label_compte = $accountingaccount_label[$key];
+			$object->label_operation = $label_operation[$key];
+			$object->debit = price2num($debit[$key]);
+			$object->credit = price2num($credit[$key]);
+			$object->doc_date = (string) GETPOST('doc_date', 'alpha');
+			$object->doc_type = (string) GETPOST('doc_type', 'alpha');
+			$object->piece_num = $piece_num;
+			$object->doc_ref = (string) GETPOST('doc_ref', 'alpha');
+			$object->code_journal = $journal_code;
+			$object->journal_label = $journal_label;
+			$object->fk_doc = GETPOSTINT('fk_doc');
+			$object->fk_docdet = GETPOSTINT('fk_docdet');
+
+			if (floatval($debit[$key]) != 0.0) {
+				$object->montant = $object->debit; // deprecated
+				$object->amount = $object->debit;
+				$object->sens = 'D';
+			}
+
+			if (floatval($credit[$key]) != 0.0) {
+				$object->montant = $object->credit; // deprecated
+				$object->amount = $object->credit;
+				$object->sens = 'C';
+			}
+
+			$result = $object->createStd($user, false, $mode);
+			if ($result < 0) {
+				$error++;
+				setEventMessages($object->error, $object->errors, 'errors');
+			} 
+		}
 	}
+	if (empty($error)) {
+		if ($mode != '_tmp') {
+			setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
+		}
+		$debit = 0;
+		$credit = 0;
+	
+		$action = '';
+	}
+
 } elseif ($action == "confirm_delete") {
 	$object = new BookKeeping($db);
 
@@ -647,17 +655,26 @@ if ($action == 'create') {
 				}
 
 				print "</tr>\n";
-
-				// Add an empty line if there is not yet
-				if (!empty($object->linesmvt[0])) {
-					$tmpline = $object->linesmvt[0];
-					if (!empty($tmpline->numero_compte)) {
-						$line = new BookKeepingLine();
-						$object->linesmvt[] = $line;
-					}
+				
+				// In _tmp mode the first line is empty so we remove it
+				if ($mode == "_tmp") {
+					array_shift($object->linesmvt);
 				}
 
+				// Add an empty line at the end to be able to add transaction
+				$line = new BookKeepingLine();
+				$object->linesmvt[] = $line;
+
+				// Add a second line empty line if there is not yet
+				if (empty($object->linesmvt[1])) {
+					$line = new BookKeepingLine();
+					$object->linesmvt[] = $line;
+				}
+
+				$count_line = count($object->linesmvt);
+				$num_line = 0;
 				foreach ($object->linesmvt as $line) {
+					$num_line++;
 					print '<tr class="oddeven">';
 					$total_debit += $line->debit;
 					$total_credit += $line->credit;
@@ -691,7 +708,7 @@ if ($action == 'create') {
 						if ($action == "" || $action == 'add') {
 							print '<!-- td columns in add mode -->';
 							print '<td>';
-							print $formaccounting->select_account('', 'accountingaccount_number', 1, array(), 1, 1, '');
+							print $formaccounting->select_account('', 'accountingaccount_number[]', 1, array(), 1, 1, '');
 							print '</td>';
 							print '<td>';
 							// TODO For the moment we keep a free input text instead of a combo. The select_auxaccount has problem because:
@@ -699,18 +716,21 @@ if ($action == 'create') {
 							// Also, it is not possible to use a value that is not in the list.
 							// Also, the label is not automatically filled when a value is selected.
 							if (!empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX)) {
-								print $formaccounting->select_auxaccount('', 'subledger_account', 1, 'maxwidth250', '', 'subledger_label');
+								print $formaccounting->select_auxaccount('', 'subledger_account[]', 1, 'maxwidth250', '', 'subledger_label');
 							} else {
-								print '<input type="text" class="maxwidth150" name="subledger_account" value="" placeholder="' . dol_escape_htmltag($langs->trans("SubledgerAccount")) . '">';
+								print '<input type="text" class="maxwidth150" name="subledger_account[]" value="" placeholder="' . dol_escape_htmltag($langs->trans("SubledgerAccount")) . '">';
 							}
-							print '<br><input type="text" class="maxwidth150" name="subledger_label" value="" placeholder="' . dol_escape_htmltag($langs->trans("SubledgerAccountLabel")) . '">';
+							print '<br><input type="text" class="maxwidth150" name="subledger_label[]" value="" placeholder="' . dol_escape_htmltag($langs->trans("SubledgerAccountLabel")) . '">';
 							print '</td>';
-							print '<td><input type="text" class="minwidth200" name="label_operation" value="' . $label_operation . '"/></td>';
-							print '<td class="right"><input type="text" size="6" class="right" name="debit" value=""/></td>';
-							print '<td class="right"><input type="text" size="6" class="right" name="credit" value=""/></td>';
-							print '<td>';
-							print '<input type="submit" class="button" name="save" value="' . $langs->trans("Add") . '">';
-							print '</td>';
+							print '<td><input type="text" class="minwidth200" name="label_operation[]" value="' . $label_operation[$key] . '"/></td>';
+							print '<td class="right"><input type="text" size="6" class="right" name="debit[]" value="" /></td>';
+							print '<td class="right"><input type="text" size="6" class="right" name="credit[]" value="" /></td>';
+							// Add button should not appear twice
+							if ($num_line === $count_line) {
+								print '<td><input type="submit" class="button" name="save" value="' . $langs->trans("Add") . '"></td>';
+							} else {
+								print '<td class="right"></td>';
+							}
 						}
 					} else {
 						print '<!-- td columns in display mode -->';
