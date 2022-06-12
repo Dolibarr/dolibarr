@@ -109,7 +109,7 @@ class box_members_last_modified extends ModeleBoxes
 				while ($line < $num) {
 					$objp = $this->db->fetch_object($result);
 					$datec = $this->db->jdate($objp->datec);
-					$datem = $this->db->jdate($objp->tms);
+					$datem = $this->db->jdate($objp->datem);
 
 					$memberstatic->lastname = $objp->lastname;
 					$memberstatic->firstname = $objp->firstname;
