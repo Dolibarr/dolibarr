@@ -2513,9 +2513,10 @@ class ActionComm extends CommonObject
 	 *
 	 * @param int		$id			The id of the event
 	 * @param int		$percent	The new percent value for the event
+	 * @param int		$usermodid	The user who modified the percent
 	 * @return int					1 when update of the event was suscessfull, otherwise -1
 	 */
-	public function updatePercent($id, $percent, $usermodid)
+	public function updatePercent($id, $percent, $usermodid = 0)
 	{
 		$this->db->begin();
 
