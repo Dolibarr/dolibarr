@@ -258,7 +258,7 @@ class Products extends DolibarrApi
 
 							if (is_array($product_static->stock_warehouse)) {
 								foreach ($product_static->stock_warehouse as $keytmp => $valtmp) {
-									if (isset($this->product->stock_warehouse[$keytmp]->detail_batc) && is_array($product_static->stock_warehouse[$keytmp]->detail_batch)) {
+									if (isset($this->product->stock_warehouse[$keytmp]->detail_batch) && is_array($product_static->stock_warehouse[$keytmp]->detail_batch)) {
 										foreach ($product_static->stock_warehouse[$keytmp]->detail_batch as $keytmp2 => $valtmp2) {
 											unset($product_static->stock_warehouse[$keytmp]->detail_batch[$keytmp2]->db);
 										}
@@ -2045,7 +2045,7 @@ class Products extends DolibarrApi
 
 			if (is_array($this->product->stock_warehouse)) {
 				foreach ($this->product->stock_warehouse as $keytmp => $valtmp) {
-					if (isset($this->product->stock_warehouse[$keytmp]->detail_batc) && is_array($this->product->stock_warehouse[$keytmp]->detail_batch)) {
+					if (isset($this->product->stock_warehouse[$keytmp]->detail_batch) && is_array($this->product->stock_warehouse[$keytmp]->detail_batch)) {
 						foreach ($this->product->stock_warehouse[$keytmp]->detail_batch as $keytmp2 => $valtmp2) {
 							unset($this->product->stock_warehouse[$keytmp]->detail_batch[$keytmp2]->db);
 						}
