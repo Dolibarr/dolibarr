@@ -468,6 +468,25 @@ function show_stats_for_company($product, $socid)
 		print '</td>';
 		print '</tr>';
 	}
+	// Customer template invoices
+	if (!empty($conf->facture->enabled) && $user->rights->facture->lire) {
+		$nblines++;
+		$ret = $product->load_stats_facturerec($socid);
+		if ($ret < 0) {
+			dol_print_error($db);
+		}
+		$langs->load("bills");
+		print '<tr><td>';
+		print '<a href="facturerec.php?id='.$product->id.'">'.img_object('', 'bill', 'class="pictofixedwidth"').$langs->trans("RecurringInvoiceTemplate").'</a>';
+		print '</td><td class="right">';
+		print $product->stats_facture['customers'];
+		print '</td><td class="right">';
+		print $product->stats_facturerec['nb'];
+		print '</td><td class="right">';
+		print $product->stats_facturerec['qty'];
+		print '</td>';
+		print '</tr>';
+	}
 	// Supplier invoices
 	if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->rights->fournisseur->facture->lire) || (!empty($conf->supplier_invoice->enabled) && $user->rights->supplier_invoice->lire)) {
 		$nblines++;
