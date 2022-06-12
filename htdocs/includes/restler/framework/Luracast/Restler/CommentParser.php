@@ -420,7 +420,7 @@ class CommentParser
                 $exception = $v1;
                 array_shift($value);
             }
-        } elseif (count($value) && is_numeric($value[0])) {
+        } elseif (count($value) && isset($value[0]) && is_numeric($value[0])) {
             $code = $value[0];
             array_shift($value);
         }
