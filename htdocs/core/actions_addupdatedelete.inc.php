@@ -137,7 +137,7 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 		$result = $object->create($user);
 		if ($result > 0) {
 			// Creation OK
-			if ($conf->categorie->enabled && method_exists($object, 'setCategories')) {
+			if (isModEnabled('categorie') && method_exists($object, 'setCategories')) {
 				$categories = GETPOST('categories', 'array:int');
 				$object->setCategories($categories);
 			}
@@ -244,7 +244,7 @@ if ($action == 'update' && !empty($permissiontoadd)) {
 			}
 		}
 
-		if ($conf->categorie->enabled) {
+		if (isModEnabled('categorie')) {
 			$categories = GETPOST('categories', 'array');
 			if (method_exists($object, 'setCategories')) {
 				$object->setCategories($categories);

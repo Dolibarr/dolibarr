@@ -204,7 +204,7 @@ if (!empty($conf->comptabilite->enabled) || !empty($conf->accounting->enabled)) 
 if (!empty($conf->adherent->enabled)) {
 	$tmparray['adherents/index.php?mainmenu=members&leftmenu='] = 'MembersArea';
 }
-if (!empty($conf->agenda->enabled)) {
+if (isModEnabled('agenda')) {
 	$tmparray['comm/action/index.php?mainmenu=agenda&leftmenu='] = 'Agenda';
 }
 if (!empty($conf->ticket->enabled)) {

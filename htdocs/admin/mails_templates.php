@@ -196,7 +196,7 @@ if (!empty($conf->propal->enabled) && !empty($user->rights->propal->lire)) {
 if (!empty($conf->commande->enabled) && !empty($user->rights->commande->lire)) {
 	$elementList['order_send'] = img_picto('', 'order', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToSendOrder'));
 }
-if (!empty($conf->facture->enabled) && !empty($user->rights->facture->lire)) {
+if (isModEnabled('facture') && !empty($user->rights->facture->lire)) {
 	$elementList['facture_send'] = img_picto('', 'bill', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToSendInvoice'));
 }
 if (!empty($conf->expedition->enabled)) {
@@ -226,7 +226,7 @@ if (!empty($conf->ticket->enabled) && !empty($user->rights->ticket->read)) {
 if (!empty($conf->expensereport->enabled) && !empty($user->rights->expensereport->lire)) {
 	$elementList['expensereport_send'] = img_picto('', 'trip', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToTExpenseReport'));
 }
-if (!empty($conf->agenda->enabled)) {
+if (isModEnabled('agenda')) {
 	$elementList['actioncomm_send'] = img_picto('', 'action', 'class="paddingright"').dol_escape_htmltag($langs->trans('MailToSendEventPush'));
 }
 if (!empty($conf->eventorganization->enabled) && !empty($user->rights->eventorganization->read)) {

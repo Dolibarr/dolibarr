@@ -105,7 +105,7 @@ if (!empty($conf->commande->enabled) && empty($conf->global->MAIN_SEARCHFORM_CUS
 if (!empty($conf->expedition->enabled) && empty($conf->global->MAIN_SEARCHFORM_CUSTOMER_SHIPMENT_DISABLED) && $user->rights->expedition->lire) {
 	$arrayresult['searchintoshipment'] = array('position'=>80, 'img'=>'object_shipment', 'label'=>$langs->trans("SearchIntoCustomerShipments", $search_boxvalue), 'text'=>img_picto('', 'object_shipment', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoCustomerShipments", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/expedition/list.php'.($search_boxvalue ? '?sall='.urlencode($search_boxvalue) : ''));
 }
-if (!empty($conf->facture->enabled) && empty($conf->global->MAIN_SEARCHFORM_CUSTOMER_INVOICE_DISABLED) && $user->rights->facture->lire) {
+if (isModEnabled('facture') && empty($conf->global->MAIN_SEARCHFORM_CUSTOMER_INVOICE_DISABLED) && $user->rights->facture->lire) {
 	$arrayresult['searchintoinvoice'] = array('position'=>90, 'img'=>'object_bill', 'label'=>$langs->trans("SearchIntoCustomerInvoices", $search_boxvalue), 'text'=>img_picto('', 'object_bill', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoCustomerInvoices", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/compta/facture/list.php'.($search_boxvalue ? '?sall='.urlencode($search_boxvalue) : ''));
 }
 
@@ -120,7 +120,7 @@ if (((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_S
 }
 
 // Customer payments
-if (!empty($conf->facture->enabled) && empty($conf->global->MAIN_SEARCHFORM_CUSTOMER_INVOICE_DISABLED) && $user->rights->facture->lire) {
+if (isModEnabled('facture') && empty($conf->global->MAIN_SEARCHFORM_CUSTOMER_INVOICE_DISABLED) && $user->rights->facture->lire) {
 	$arrayresult['searchintocustomerpayments'] = array(
 		'position'=>170,
 		'img'=>'object_payment',

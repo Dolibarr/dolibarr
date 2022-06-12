@@ -8502,13 +8502,13 @@ class Form
 				// To work with non standard path
 				if ($objecttype == 'facture') {
 					$tplpath = 'compta/'.$element;
-					if (empty($conf->facture->enabled)) {
+					if (!isModEnabled('facture')) {
 						continue; // Do not show if module disabled
 					}
 				} elseif ($objecttype == 'facturerec') {
 					$tplpath = 'compta/facture';
 					$tplname = 'linkedobjectblockForRec';
-					if (empty($conf->facture->enabled)) {
+					if (!isModEnabled('facture')) {
 						continue; // Do not show if module disabled
 					}
 				} elseif ($objecttype == 'propal') {
@@ -8644,12 +8644,12 @@ class Form
 					'label'=>'LinkToOrder',
 					'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_client, t.total_ht FROM ".$this->db->prefix()."societe as s, ".$this->db->prefix()."commande as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('commande').')'),
 				'invoice'=>array(
-					'enabled'=>(!empty($conf->facture->enabled) ? $conf->facture->enabled : 0),
+					'enabled'=>isModEnabled('facture'),
 					'perms'=>1,
 					'label'=>'LinkToInvoice',
 					'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_client, t.total_ht FROM ".$this->db->prefix()."societe as s, ".$this->db->prefix()."facture as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('invoice').')'),
 				'invoice_template'=>array(
-					'enabled'=>(!empty($conf->facture->enabled) ? $conf->facture->enabled : 0),
+					'enabled'=>isModEnabled('facture'),
 					'perms'=>1,
 					'label'=>'LinkToTemplateInvoice',
 					'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.titre as ref, t.total_ht FROM ".$this->db->prefix()."societe as s, ".$this->db->prefix()."facture_rec as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$this->db->sanitize($listofidcompanytoscan).') AND t.entity IN ('.getEntity('invoice').')'),

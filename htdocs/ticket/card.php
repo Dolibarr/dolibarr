@@ -1125,7 +1125,7 @@ if ($action == 'create' || $action == 'presend') {
 		print '<div class="underbanner clearboth"></div>';
 
 		// Categories
-		if ($conf->categorie->enabled) {
+		if (isModEnabled('categorie')) {
 			print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 
 			print '<table class="border tableforfield centpercent noborderbottom">';

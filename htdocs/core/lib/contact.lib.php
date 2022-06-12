@@ -92,7 +92,7 @@ function contact_prepare_head(Contact $object)
 	}
 
 	// Related items
-	if (!empty($conf->commande->enabled) || !empty($conf->propal->enabled) || !empty($conf->facture->enabled) || !empty($conf->ficheinter->enabled) || (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) {
+	if (!empty($conf->commande->enabled) || !empty($conf->propal->enabled) || isModEnabled('facture') || !empty($conf->ficheinter->enabled) || (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) {
 		$head[$tab][0] = DOL_URL_ROOT.'/contact/consumption.php?id='.$object->id;
 		$head[$tab][1] = $langs->trans("Referers");
 		$head[$tab][2] = 'consumption';
@@ -133,7 +133,7 @@ function contact_prepare_head(Contact $object)
 	// Agenda / Events
 	$head[$tab][0] = DOL_URL_ROOT.'/contact/agenda.php?id='.$object->id;
 	$head[$tab][1] = $langs->trans("Events");
-	if (!empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
+	if (isModEnabled('agenda') && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
 		$head[$tab][1] .= '/';
 		$head[$tab][1] .= $langs->trans("Agenda");
 	}

@@ -696,7 +696,7 @@ if (empty($reshook)) {
 
 				if (
 					!$error && GETPOST('statut', 'int') == $object::STATUS_SIGNED && GETPOST('generate_deposit', 'alpha') == 'on'
-					&& ! empty($deposit_percent_from_payment_terms) && ! empty($conf->facture->enabled) && ! empty($user->rights->facture->creer)
+					&& ! empty($deposit_percent_from_payment_terms) && isModEnabled('facture') && !empty($user->rights->facture->creer)
 				) {
 					require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 
@@ -2001,7 +2001,7 @@ if ($action == 'create') {
 
 		$deposit_percent_from_payment_terms = getDictionaryValue('c_payment_term', 'deposit_percent', $object->cond_reglement_id);
 
-		if (! empty($deposit_percent_from_payment_terms) && ! empty($conf->facture->enabled) && ! empty($user->rights->facture->creer)) {
+		if (!empty($deposit_percent_from_payment_terms) && isModEnabled('facture') && ! empty($user->rights->facture->creer)) {
 			require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 
 			$object->fetchObjectLinked();
@@ -2801,7 +2801,7 @@ if ($action == 'create') {
 
 				// Create an invoice and classify billed
 				if ($object->statut == Propal::STATUS_SIGNED && empty($conf->global->PROPOSAL_ARE_NOT_BILLABLE)) {
-					if (!empty($conf->facture->enabled) && $usercancreateinvoice) {
+					if (isModEnabled('facture') && $usercancreateinvoice) {
 						print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("CreateBill").'</a>';
 					}
 

@@ -2071,7 +2071,7 @@ if ($action == 'create') {
 					}
 				}
 
-				if (!empty($conf->facture->enabled) && $object->statut > 0) {
+				if (isModEnabled('facture') && $object->statut > 0) {
 					$langs->load("bills");
 					if ($user->rights->facture->creer) {
 						print dolGetButtonAction($langs->trans('CreateBill'), '', 'default', DOL_URL_ROOT.'/compta/facture/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->thirdparty->id, '', true, $params);

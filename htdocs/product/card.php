@@ -56,7 +56,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/product/modules_product.class.php'
 if (!empty($conf->propal->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 }
-if (!empty($conf->facture->enabled)) {
+if (isModEnabled('facture')) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 }
 if (!empty($conf->commande->enabled)) {
@@ -76,7 +76,7 @@ $langs->loadLangs(array('products', 'other'));
 if (!empty($conf->stock->enabled)) {
 	$langs->load("stocks");
 }
-if (!empty($conf->facture->enabled)) {
+if (isModEnabled('facture')) {
 	$langs->load("bills");
 }
 if (!empty($conf->productbatch->enabled)) {
@@ -2127,7 +2127,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 
 			// Tags-Categories
-			if ($conf->categorie->enabled) {
+			if (isModEnabled('categorie')) {
 				print '<tr><td>'.$langs->trans("Categories").'</td><td>';
 				$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, '', 'parent', 64, 0, 1);
 				$c = new Categorie($db);
@@ -2632,7 +2632,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
 			// Categories
-			if ($conf->categorie->enabled) {
+			if (isModEnabled('categorie')) {
 				print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
 				print $form->showCategories($object->id, Categorie::TYPE_PRODUCT, 1);
 				print "</td></tr>";
@@ -2814,7 +2814,7 @@ if (!empty($conf->global->PRODUCT_ADD_FORM_ADD_TO) && $object->id && ($action ==
 	}
 
 	// Factures
-	if (!empty($conf->facture->enabled) && $user->rights->facture->creer) {
+	if (isModEnabled('facture') && $user->rights->facture->creer) {
 		$invoice = new Facture($db);
 
 		$langs->load("bills");
