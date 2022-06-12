@@ -635,7 +635,7 @@ while ($i < count($arrayOfValidPaymentModes)) {
 	$i = $i + 1;
 }
 
-if (!empty($conf->stripe->enabled) && !empty($conf->global->STRIPE_CARD_PRESENT)) {
+if (!empty($conf->stripe->enabled) && isset($keyforstripeterminalbank) && !empty($conf->global->STRIPE_CARD_PRESENT)) {
 	$keyforstripeterminalbank = "CASHDESK_ID_BANKACCOUNT_STRIPETERMINAL".$_SESSION["takeposterminal"];
 	print '<span id="StripeTerminal"></span>';
 	if (!empty($conf->global->$keyforstripeterminalbank)) {
