@@ -195,7 +195,7 @@ foreach ($list_account_main as $key) {
 	print '</td>';
 	// Value
 	print '<td class="right">'; // Do not force class=right, or it align also the content of the select box
-	print $formaccounting->select_account(!empty($conf->global->$key), $key, 1, '', 1, 1, 'minwidth100 maxwidth300 maxwidthonsmartphone', 'accountsmain');
+	print $formaccounting->select_account($conf->global->$key, $key, 1, '', 1, 1, 'minwidth100 maxwidth300 maxwidthonsmartphone', 'accountsmain');
 	print '</td>';
 	print '</tr>';
 }
