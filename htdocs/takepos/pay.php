@@ -103,7 +103,7 @@ function fetchConnectionToken() {
  * View
  */
 
-if (!empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha'))) {
+if (!empty($conf->stripe->enabled) && isset($keyforstripeterminalbank) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha'))) {
 	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), '', 'warning', 1);
 }
 
@@ -524,7 +524,7 @@ $action_buttons = array(
 	),
 );
 $numpad = $conf->global->TAKEPOS_NUMPAD;
-if (!empty($conf->stripe->enabled) && !empty($conf->global->STRIPE_CARD_PRESENT)) {
+if (!empty($conf->stripe->enabled) && isset($keyforstripeterminalbank) && !empty($conf->global->STRIPE_CARD_PRESENT)) {
 	print '<span id="card-present-alert">';
 	dol_htmloutput_mesg($langs->trans('ConnectingToStripeTerminal', 'Stripe'), '', 'warning', 1);
 	print '</span>';
