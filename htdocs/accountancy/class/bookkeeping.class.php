@@ -597,9 +597,13 @@ class BookKeeping extends CommonObject
 		if (empty($this->credit)) {
 			$this->credit = 0;
 		}
+		if (empty($this->montant)) {
+			$this->montant = 0;
+		}
 
 		$this->debit = price2num($this->debit, 'MT');
 		$this->credit = price2num($this->credit, 'MT');
+		$this->montant = price2num($this->montant, 'MT');
 
 		$now = dol_now();
 
@@ -1650,11 +1654,10 @@ class BookKeeping extends CommonObject
 			$this->doc_date = $this->db->jdate($obj->doc_date);
 			$this->doc_ref = $obj->doc_ref;
 			$this->doc_type = $obj->doc_type;
-			$this->date_creation = $obj->date_creation;
-			$this->date_modification = $obj->date_modification;
-			$this->date_export = $obj->date_export;
-			$this->date_validation = $obj->date_validated;
-			$this->date_validation = $obj->date_validation;
+			$this->date_creation = $this->db->jdate($obj->date_creation);
+			$this->date_modification = $this->db->jdate($obj->date_modification);
+			$this->date_export = $this->db->jdate($obj->date_export);
+			$this->date_validation = $this->db->jdate($obj->date_validation);
 		} else {
 			$this->error = "Error ".$this->db->lasterror();
 			dol_syslog(__METHOD__.$this->error, LOG_ERR);
