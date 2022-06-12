@@ -104,6 +104,10 @@ if ($action == 'setvalue' && $user->admin) {
 	if (!$result > 0) {
 		$error++;
 	}
+	$result = dolibarr_set_const($db, "STRIPE_LOCATION", GETPOST('STRIPE_LOCATION', 'alpha'), 'chaine', 0, '', $conf->entity);
+	if (!$result > 0) {
+		$error++;
+	}
 	$result = dolibarr_set_const($db, "ONLINE_PAYMENT_CSS_URL", GETPOST('ONLINE_PAYMENT_CSS_URL', 'alpha'), 'chaine', 0, '', $conf->entity);
 	if (!$result > 0) {
 		$error++;
@@ -361,6 +365,56 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {	// What is this for ?
 	print $langs->trans("BankAccountForBankTransfer").'</td><td>';
 	print img_picto('', 'bank_account').' ';
 	$form->select_comptes($conf->global->STRIPE_BANK_ACCOUNT_FOR_BANKTRANSFERS, 'STRIPE_BANK_ACCOUNT_FOR_BANKTRANSFERS', 0, '', 1);
+	print '</td></tr>';
+}
+
+// Card Present for Stripe Terminal
+if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {	// TODO Not used by current code
+	print '<tr class="oddeven"><td>';
+	print $langs->trans("STRIPE_CARD_PRESENT").'</td><td>';
+	if ($conf->use_javascript_ajax) {
+		print ajax_constantonoff('STRIPE_CARD_PRESENT');
+	} else {
+		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+		print $form->selectarray("STRIPE_CARD_PRESENT", $arrval, $conf->global->STRIPE_CARD_PRESENT);
+	}
+	print '</td></tr>';
+}
+
+// Locations for Stripe Terminal
+if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {	// TODO Not used by current code
+	print '<tr class="oddeven"><td>';
+	print $langs->trans("STRIPE_LOCATION").'</td><td>';
+	$service = 'StripeTest';
+	$servicestatus = 0;
+	if (!empty($conf->global->STRIPE_LIVE) && !GETPOST('forcesandbox', 'alpha')) {
+		$service = 'StripeLive';
+		$servicestatus = 1;
+	}
+	global $stripearrayofkeysbyenv;
+	$site_account = $stripearrayofkeysbyenv[$servicestatus]['secret_key'];
+	\Stripe\Stripe::setApiKey($site_account);
+	if (!empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha'))) {
+		$service = 'StripeTest';
+		$servicestatus = '0';
+		dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), '', 'warning');
+	} else {
+		$service = 'StripeLive';
+		$servicestatus = '1';
+	}
+	$stripe = new Stripe($db);
+	$stripeacc = $stripe->getStripeAccount($service);
+	if ($stripeacc) {
+		$locations = \Stripe\Terminal\Location::all('', array("stripe_account" => $stripeacc));
+	} else {
+		$locations = \Stripe\Terminal\Location::all();
+	}
+	$location = array();
+	$location[""] = $langs->trans("EmptyLocation");
+	foreach ($locations as $locations) {
+		$location[$locations->id] = $locations->display_name;
+	}
+	print $form->selectarray("STRIPE_LOCATION", $location, $conf->global->STRIPE_LOCATION);
 	print '</td></tr>';
 }
 
