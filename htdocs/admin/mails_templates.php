@@ -169,8 +169,6 @@ $tabhelp[25] = array(
 );
 
 
-$elementList = array();
-
 // We save list of template email Dolibarr can manage. This list can found by a grep into code on "->param['models']"
 $elementList = array();
 // Add all and none after the sort
@@ -435,7 +433,14 @@ if (empty($reshook)) {
 			// Modifie valeur des champs
 			$i = 0;
 			foreach ($listfieldmodify as $field) {
-				$keycode = $listfieldvalue[$i];
+				if ($field == 'entity') {
+					// entity not present on listfieldmodify array
+					$keycode = $field;
+					$_POST[$keycode] = $conf->entity;
+				} else {
+					$keycode = $listfieldvalue[$i];
+				}
+
 				if ($field == 'lang') {
 					$keycode = 'langcode';
 				}
@@ -458,9 +463,6 @@ if (empty($reshook)) {
 				}
 				if ($field == 'content_lines') {
 					$_POST['content_lines'] = $_POST['content_lines-'.$rowid];
-				}
-				if ($field == 'entity') {
-					$_POST[$keycode] = $conf->entity;
 				}
 
 				if ($i) {
