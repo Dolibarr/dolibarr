@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2018	Andreu Bisquerra	<jove@bisquerra.com>
+ * Copyright (C) 2021	Thibault FOUCART	<support@ptibogxiv.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,6 +41,7 @@ if (!defined('NOREQUIREHTML')) {
 
 require '../main.inc.php'; // Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 
 $langs->loadLangs(array("main", "bills", "cashdesk", "banks"));
 
@@ -51,10 +53,59 @@ if (empty($user->rights->takepos->run)) {
 	accessforbidden();
 }
 
+if (!empty($conf->stripe->enabled)) {
+	$service = 'StripeTest';
+	$servicestatus = 0;
+	if (!empty($conf->global->STRIPE_LIVE) && !GETPOST('forcesandbox', 'alpha')) {
+		$service = 'StripeLive';
+		$servicestatus = 1;
+	}
+
+	// Force to use the correct API key
+	global $stripearrayofkeysbyenv;
+	$site_account = $stripearrayofkeysbyenv[$servicestatus]['publishable_key'];
+
+	$stripe = new Stripe($db);
+	$stripeacc = $stripe->getStripeAccount($service); // Get Stripe OAuth connect account (no remote access to Stripe here)
+	$stripecu = $stripe->getStripeCustomerAccount($object->id, $servicestatus, $site_account); // Get remote Stripe customer 'cus_...' (no remote access to Stripe here)
+	$keyforstripeterminalbank = "CASHDESK_ID_BANKACCOUNT_STRIPETERMINAL".$_SESSION["takeposterminal"];
+	?>
+<script src="https://js.stripe.com/terminal/v1/"></script>
+<script>
+var terminal = StripeTerminal.create({
+  onFetchConnectionToken: fetchConnectionToken,
+  onUnexpectedReaderDisconnect: unexpectedDisconnect,
+});
+function unexpectedDisconnect() {
+  // In this function, your app should notify the user that the reader disconnected.
+  // You can also include a way to attempt to reconnect to a reader.
+  console.log("Disconnected from reader")
+}
+function fetchConnectionToken() {
+	<?php
+	$urlconnexiontoken = DOL_URL_ROOT.'/stripe/ajax/ajax.php?action=getConnexionToken&servicestatus='.$servicestatus;
+	if (!empty($conf->global->STRIPE_LOCATION)) $urlconnexiontoken .= '&location='.$conf->global->STRIPE_LOCATION;
+	if (!empty($stripeacc)) $urlconnexiontoken .= '&stripeacc='.$stripeacc;
+	?>
+  // Do not cache or hardcode the ConnectionToken. The SDK manages the ConnectionToken's lifecycle.
+  return fetch('<?php echo $urlconnexiontoken; ?>', { method: "POST" })
+	.then(function(response) {
+	  return response.json();
+	})
+	.then(function(data) {
+	  return data.secret;
+	});
+}
+</script>
+<?php }
 
 /*
  * View
  */
+
+if (!empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha'))) {
+	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), '', 'warning', 1);
+}
 
 $invoice = new Facture($db);
 if ($invoiceid > 0) {
@@ -72,6 +123,57 @@ if ($invoiceid > 0) {
 		$invoice->fetch($invoiceid);
 	}
 }
+
+?>
+<script>
+	<?php
+	if ($invoice->type != $invoice::TYPE_CREDIT_NOTE) {
+		if (empty($conf->global->$keyforstripeterminalbank)) { ?>
+		const config = {simulated: <?php if (empty($servicestatus) && !empty($conf->global->STRIPE_TERMINAL_SIMULATED)) { ?> true <?php } else { ?> false <?php } ?>
+			<?php if (!empty($conf->global->STRIPE_LOCATION)) { ?>, location: '<?php echo $conf->global->STRIPE_LOCATION; ?>'<?php } ?>} 
+  terminal.discoverReaders(config).then(function(discoverResult) {
+	if (discoverResult.error) {
+	  console.log('Failed to discover: ', discoverResult.error);
+	} else if (discoverResult.discoveredReaders.length === 0) {
+	  console.log('No available readers.');
+	} else {
+	  // You should show the list of discoveredReaders to the
+	  // cashier here and let them select which to connect to (see below).
+	  selectedReader = discoverResult.discoveredReaders[0];
+	  //console.log('terminal.discoverReaders', selectedReader); // only active for development
+	  
+	  terminal.connectReader(selectedReader).then(function(connectResult) {
+		if (connectResult.error) {
+		document.getElementById("card-present-alert").innerHTML = '<div class="error">'+connectResult.error.message+'</div>';
+		  console.log('Failed to connect: ', connectResult.error);
+		} else {
+		document.getElementById("card-present-alert").innerHTML = '';
+		  console.log('Connected to reader: ', connectResult.reader.label);
+		  if (document.getElementById("StripeTerminal")) {
+			  document.getElementById("StripeTerminal").innerHTML = '<button type="button" class="calcbutton2" onclick="ValidateStripeTerminal();"><span class="fa fa-2x fa-credit-card iconwithlabel"></span><br>'+connectResult.reader.label+'</button>';
+			}
+		}
+	  });
+
+	}
+  });
+		<?php } else { ?>
+	terminal.connectReader(<?php echo json_encode($stripe->getSelectedReader($conf->global->$keyforstripeterminalbank, $stripeacc, $servicestatus)); ?>).then(function(connectResult) {
+		if (connectResult.error) {
+		document.getElementById("card-present-alert").innerHTML = '<div class="error clearboth">'+connectResult.error.message+'</div>';	
+			  console.log('Failed to connect: ', connectResult.error);
+		} else {
+		document.getElementById("card-present-alert").innerHTML = '';
+			console.log('Connected to reader: ', connectResult.reader.label);
+		  if (document.getElementById("StripeTerminal")) {
+			  document.getElementById("StripeTerminal").innerHTML = '<button type="button" class="calcbutton2" onclick="ValidateStripeTerminal();"><span class="fa fa-2x fa-credit-card iconwithlabel"></span><br>'+connectResult.reader.label+'</button>';
+			}
+		}
+	  });
+
+		<?php } } ?>
+</script>
+<?php
 
 $arrayofcss = array('/takepos/css/pos.css.php');
 $arrayofjs = array();
@@ -223,6 +325,112 @@ if ($conf->global->TAKEPOS_NUMPAD == 0) {
 		});
 	}
 
+	function fetchPaymentIntentClientSecret(amount, invoiceid) {
+	  const bodyContent = JSON.stringify({ amount : amount, invoiceid : invoiceid });
+  <?php
+	$urlpaymentintent = DOL_URL_ROOT.'/stripe/ajax/ajax.php?action=createPaymentIntent&servicestatus='.$servicestatus;
+	if (!empty($stripeacc)) $urlpaymentintent .= '&stripeacc='.$stripeacc;
+	?>
+  return fetch('<?php echo $urlpaymentintent; ?>', {
+	method: "POST",
+	headers: {
+	  'Content-Type': 'application/json'
+	},
+	body: bodyContent
+  })
+  .then(function(response) {
+	return response.json();
+  })
+  .then(function(data) {
+	return data.client_secret;
+  });
+	}
+
+
+	function capturePaymentIntent(paymentIntentId) {
+	const bodyContent = JSON.stringify({"id": paymentIntentId})
+  <?php
+	$urlpaymentintent = DOL_URL_ROOT.'/stripe/ajax/ajax.php?action=capturePaymentIntent&servicestatus='.$servicestatus;
+	if (!empty($stripeacc)) $urlpaymentintent .= '&stripeacc='.$stripeacc;
+	?>
+  return fetch('<?php echo $urlpaymentintent; ?>', {
+	method: "POST",
+	headers: {
+	  'Content-Type': 'application/json'
+	},
+	body: bodyContent
+  })
+  .then(function(response) {
+	return response.json();
+  })
+  .then(function(data) {
+	return data.client_secret;
+  });
+	}
+
+
+	function ValidateStripeTerminal() {
+		console.log("Launch ValidateStripeTerminal");
+		var invoiceid = <?php echo($invoiceid > 0 ? $invoiceid : 0); ?>;
+		var accountid = $("#selectaccountid").val();
+		var amountpayed = $("#change1").val();
+		var excess = $("#change2").val();
+		if (amountpayed > <?php echo $invoice->getRemainToPay(); ?>) {
+			amountpayed = <?php echo $invoice->getRemainToPay(); ?>;
+		}
+		if (amountpayed == 0) {
+			amountpayed = <?php echo $invoice->getRemainToPay(); ?>;
+		}
+
+		console.log("Pay with terminal ", amountpayed);
+
+		fetchPaymentIntentClientSecret(amountpayed, invoiceid).then(function(client_secret) {
+			<?php if (empty($servicestatus) && !empty($conf->global->STRIPE_TERMINAL_SIMULATED)) { ?>
+	  terminal.setSimulatorConfiguration({testCardNumber: '<?php echo $conf->global->STRIPE_TERMINAL_SIMULATED; ?>'});
+			<?php } ?>
+		document.getElementById("card-present-alert").innerHTML = '<div class="warning clearboth"><?php echo $langs->trans('PaymentSendToStripeTerminal'); ?></div>';	
+	  terminal.collectPaymentMethod(client_secret).then(function(result) {
+	  if (result.error) {
+		// Placeholder for handling result.error
+		document.getElementById("card-present-alert").innerHTML = '<div class="error clearboth">'+result.error.message+'</div>';
+	  } else {
+		document.getElementById("card-present-alert").innerHTML = '<div class="warning clearboth"><?php echo $langs->trans('PaymentBeingProcessed'); ?></div>';
+		  console.log('terminal.collectPaymentMethod', result.paymentIntent);
+		  terminal.processPayment(result.paymentIntent).then(function(result) {
+		  if (result.error) {
+			document.getElementById("card-present-alert").innerHTML = '<div class="error clearboth">'+result.error.message+'</div>';  
+			console.log(result.error)
+		} else if (result.paymentIntent) {
+			  paymentIntentId = result.paymentIntent.id;
+			  console.log('terminal.processPayment', result.paymentIntent);
+			  capturePaymentIntent(paymentIntentId).then(function(client_secret) {
+				if (result.error) {
+				// Placeholder for handling result.error
+				document.getElementById("card-present-alert").innerHTML = '<div class="error clearboth">'+result.error.message+'</div>';
+				console.log("error when capturing paymentIntent", result.error);
+			  } else {
+				document.getElementById("card-present-alert").innerHTML = '<div class="warning clearboth"><?php echo $langs->trans('PaymentValidated'); ?></div>'; 
+				console.log("Capture paymentIntent successfull "+paymentIntentId);
+				  parent.$("#poslines").load("invoice.php?place=<?php echo $place; ?>&action=valid&pay=CB&amount="+amountpayed+"&excess="+excess+"&invoiceid="+invoiceid+"&accountid="+accountid, function() {
+			if (amountpayed > <?php echo $remaintopay; ?> || amountpayed == <?php echo $remaintopay; ?> || amountpayed==0 ) {
+				console.log("Close popup");
+				parent.$.colorbox.close();
+			}
+			else {
+				console.log("Amount is not comple, so we do NOT close popup and reload it.");
+				location.reload();
+			}
+		});
+
+			}
+			});	
+		  }
+		});
+	  }
+	});
+  });
+	}
+
 	function ValidateSumup() {
 		console.log("Launch ValidateSumup");
 		<?php $_SESSION['SMP_CURRENT_PAYMENT'] = "NEW" ?>
@@ -271,7 +479,7 @@ if (!empty($conf->global->TAKEPOS_CUSTOMER_DISPLAY)) {
 ?>
 </script>
 
-<div style="position:relative; padding-top: 20px; left:5%; height:150px; width:90%;">
+<div style="position:relative; padding-top: 20px; left:5%; height:140px; width:90%;">
 	<div class="paymentbordline paymentbordlinetotal center">
 		<span class="takepospay colorwhite"><?php echo $langs->trans('TotalTTC'); ?>: <span id="totaldisplay" class="colorwhite"><?php echo price($invoice->total_ttc, 1, '', 1, -1, -1, $invoice->multicurrency_code); ?></span></span>
 	</div>
@@ -299,7 +507,6 @@ if (!empty($conf->global->TAKEPOS_CUSTOMER_DISPLAY)) {
 	}
 	?>
 </div>
-
 <div style="position:absolute; left:5%; height:52%; width:90%;">
 <?php
 $action_buttons = array(
@@ -317,7 +524,11 @@ $action_buttons = array(
 	),
 );
 $numpad = $conf->global->TAKEPOS_NUMPAD;
-
+if (!empty($conf->stripe->enabled) && !empty($conf->global->STRIPE_CARD_PRESENT)) {
+	print '<span id="card-present-alert">';
+	dol_htmloutput_mesg($langs->trans('ConnectingToStripeTerminal', 'Stripe'), '', 'warning', 1);
+	print '</span>';
+}
 print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '7' : '10').');">'.($numpad == 0 ? '7' : '10').'</button>';
 print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '8' : '20').');">'.($numpad == 0 ? '8' : '20').'</button>';
 print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '9' : '50').');">'.($numpad == 0 ? '9' : '50').'</button>';
@@ -424,8 +635,18 @@ while ($i < count($arrayOfValidPaymentModes)) {
 	$i = $i + 1;
 }
 
-$keyforsumupbank = "CASHDESK_ID_BANKACCOUNT_SUMUP".$_SESSION["takeposterminal"];
+if (!empty($conf->stripe->enabled) && !empty($conf->global->STRIPE_CARD_PRESENT)) {
+	$keyforstripeterminalbank = "CASHDESK_ID_BANKACCOUNT_STRIPETERMINAL".$_SESSION["takeposterminal"];
+	print '<span id="StripeTerminal"></span>';
+	if (!empty($conf->global->$keyforstripeterminalbank)) {
+	} else {
+		$langs->loadLangs(array("errors", "admin"));
+		//print '<button type="button" class="calcbutton2 disabled" title="'.$langs->trans("SetupNotComplete").'">TerminalOff</button>';
+	}
+}
+
 if ($conf->global->TAKEPOS_ENABLE_SUMUP) {
+	$keyforsumupbank = "CASHDESK_ID_BANKACCOUNT_SUMUP".$_SESSION["takeposterminal"];
 	if (!empty($conf->global->$keyforsumupbank)) {
 		print '<button type="button" class="calcbutton2" onclick="ValidateSumup();">Sumup</button>';
 	} else {
