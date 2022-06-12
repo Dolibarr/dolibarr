@@ -92,13 +92,13 @@ if ($action == 'getConnexionToken') {
 
 		$fulltag='INV='.$object->id.'.CUS='.$object->thirdparty->id;
 		$tag=null;
-		$fulltag=dol_string_unaccent($fulltag);  
+		$fulltag=dol_string_unaccent($fulltag);
 
 		$stripe = new Stripe($db);
 		$customer = $stripe->customerStripe($object->thirdparty, $stripeacc, $servicestatus, 1);
 
 		$intent = $stripe->getPaymentIntent($json_obj->amount, $object->multicurrency_code, null, 'Stripe payment: '.$fulltag.(is_object($object)?' ref='.$object->ref:''), $object, $customer, $stripeacc, $servicestatus, 1, 'terminal', false, null, 0, 1);
-		
+
 		echo json_encode(array('client_secret' => $intent->client_secret));
 	} catch (Error $e) {
 		http_response_code(500);
