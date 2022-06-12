@@ -415,7 +415,7 @@ class SkillRank extends CommonObject
 			foreach ($filter as $key => $value) {
 				if ($key == 't.rowid') {
 					$sqlwhere[] = $key.'='.$value;
-				} elseif (in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
+				} elseif ($key !='customsql' && in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
 					$sqlwhere[] = $key.' = \''.$this->db->idate($value).'\'';
 				} elseif ($key == 'customsql') {
 					$sqlwhere[] = $value;
