@@ -1659,13 +1659,13 @@ abstract class CommonObject
 		// phpcs:enable
 		global $conf;
 
-		if (empty($this->socid) && empty($this->fk_soc) && empty($this->fk_thirdparty) && empty($force_thirdparty_id)) {
+		if (empty($this->socid) && empty($this->fk_soc) && empty($force_thirdparty_id)) {
 			return 0;
 		}
 
 		require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
-		$idtofetch = isset($this->socid) ? $this->socid : (isset($this->fk_soc) ? $this->fk_soc : $this->fk_thirdparty);
+		$idtofetch = isset($this->socid) ? $this->socid : (isset($this->fk_soc) ? $this->fk_soc : 0);
 		if ($force_thirdparty_id) {
 			$idtofetch = $force_thirdparty_id;
 		}

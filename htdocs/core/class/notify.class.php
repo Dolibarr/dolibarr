@@ -847,6 +847,7 @@ class Notify
 					$mimefilename_list[] = $ref.".pdf";
 				}
 
+				$message = '';
 				$message .= $langs->transnoentities("YouReceiveMailBecauseOfNotification2", $application, $mysoc->name)."\n";
 				$message .= "\n";
 				$message .= $mesg;

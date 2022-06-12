@@ -4362,6 +4362,7 @@ class Form
 				print ' selected';
 			}
 			print '>';
+			$value = '';
 			if ($format == 0) {
 				$value = ($maxlength ?dol_trunc($arraytypes['label'], $maxlength) : $arraytypes['label']);
 			} elseif ($format == 1) {
@@ -9374,16 +9375,16 @@ class Form
 	/**
 	 *	Return select list of groups
 	 *
-	 *  @param	string	$selected       Id group preselected
-	 *  @param  string	$htmlname       Field name in form
-	 *  @param  int		$show_empty     0=liste sans valeur nulle, 1=ajoute valeur inconnue
-	 *  @param  string	$exclude        Array list of groups id to exclude
-	 * 	@param	int		$disabled		If select list must be disabled
-	 *  @param  string	$include        Array list of groups id to include
-	 * 	@param	int		$enableonly		Array list of groups id to be enabled. All other must be disabled
-	 * 	@param	string	$force_entity	'0' or Ids of environment to force
-	 * 	@param	bool	$multiple		add [] in the name of element and add 'multiple' attribut (not working with ajax_autocompleter)
-	 *  @param  string	$morecss		More css to add to html component
+	 *  @param	string			$selected       Id group preselected
+	 *  @param  string			$htmlname       Field name in form
+	 *  @param  int				$show_empty     0=liste sans valeur nulle, 1=ajoute valeur inconnue
+	 *  @param  string|array	$exclude        Array list of groups id to exclude
+	 * 	@param	int				$disabled		If select list must be disabled
+	 *  @param  string|array	$include        Array list of groups id to include
+	 * 	@param	int				$enableonly		Array list of groups id to be enabled. All other must be disabled
+	 * 	@param	string			$force_entity	'0' or Ids of environment to force
+	 * 	@param	bool			$multiple		add [] in the name of element and add 'multiple' attribut (not working with ajax_autocompleter)
+	 *  @param  string			$morecss		More css to add to html component
 	 *  @return	string
 	 *  @see select_dolusers()
 	 */

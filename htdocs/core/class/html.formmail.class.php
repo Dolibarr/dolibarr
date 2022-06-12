@@ -116,6 +116,7 @@ class FormMail extends Form
 	 * @var int|string|array
 	 */
 	public $withto; // Show recipient emails
+	public $withreplyto;
 
 	/**
 	 * @var int|string 0 = Do not Show free text for recipient emails
@@ -1672,6 +1673,8 @@ class FormMail extends Form
 
 /**
  * ModelMail
+ *
+ * Object of table llx_c_email_templates
  */
 class ModelMail
 {
@@ -1684,6 +1687,16 @@ class ModelMail
 	 * @var string Model mail label
 	 */
 	public $label;
+
+	/**
+	 * @var int Owner of email template
+	 */
+	public $fk_user;
+
+	/**
+	 * @var int Is template private
+	 */
+	public $private;
 
 	/**
 	 * @var string Model mail topic
@@ -1702,4 +1715,9 @@ class ModelMail
 	 * @var string Module the template is dedicated for
 	 */
 	public $module;
+
+	/**
+	 * @var int Position of template in a combo list
+	 */
+	public $position;
 }
